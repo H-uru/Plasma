@@ -1,0 +1,138 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_UPDATE DIALOGEX 0, 0, 128, 105
+STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | 
+    WS_THICKFRAME
+CAPTION "Parable Update"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Build:",IDC_STATIC,7,8,18,8
+    COMBOBOX        IDC_BUILD_COMBO,27,6,90,167,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "Download",IDC_DL_BUTTON,34,86,56,16,WS_DISABLED
+    LISTBOX         IDC_STATUS_LIST,7,36,110,11,LBS_NOINTEGRALHEIGHT | 
+                    LBS_NOSEL | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER | 
+                    0x1,7,54,110,16
+    LTEXT           "Latest Updates:",IDC_STATIC,7,26,51,8
+    CONTROL         "xx.x MB of updates to download",IDC_DL_TEXT,"Static",
+                    SS_LEFTNOWORDWRAP | WS_GROUP,7,74,110,8
+END
+
+IDD_PLASMAUPDATE_LOGIN DIALOGEX 0, 0, 150, 102
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Login"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,48,62,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,48,80,50,14
+    EDITTEXT        IDC_USERNAME,7,17,135,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PASSWORD,7,45,135,12,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Username",IDC_STATIC,7,7,134,8
+    LTEXT           "Password",IDC_STATIC,7,35,136,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_UPDATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 121
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 98
+    END
+
+    IDD_PLASMAUPDATE_LOGIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 143
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 95
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON                ICON                    "Dirt.ICO"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

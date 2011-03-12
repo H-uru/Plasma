@@ -1,0 +1,538 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#include ""../MaxComponent/plComponent.rc""\r\n"
+    "#include ""../MaxPlasmaMtls/MaxPlasmaMtls.rc""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_COMP_PANEL DIALOGEX 0, 0, 108, 100
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "List1",IDC_COMPLIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | 
+                    LVS_EDITLABELS | LVS_NOCOLUMNHEADER | WS_BORDER | 
+                    WS_TABSTOP,4,4,100,81,WS_EX_CLIENTEDGE
+    CTEXT           "",IDC_NUM_TARGS,4,88,19,9,SS_SUNKEN
+    PUSHBUTTON      "<",IDC_BACK,25,87,12,11,BS_LEFT | BS_BOTTOM | 
+                    WS_DISABLED
+    PUSHBUTTON      ">",IDC_FORWARD,39,87,12,11,BS_CENTER | BS_BOTTOM | 
+                    WS_DISABLED
+    PUSHBUTTON      "Ref'd By...",IDC_REF_BY_BUTTON,58,87,45,11
+END
+
+IDD_SCENEVIEWER DIALOG  0, 0, 222, 146
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "SceneViewer Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Update every",IDC_UPDATE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,103,55,10
+    CONTROL         "",IDC_EDIT,"CustEdit",WS_TABSTOP,65,103,18,10
+    CONTROL         "",IDC_SPINNER,"SpinnerControl",WS_TABSTOP,83,103,7,10
+    PUSHBUTTON      "Reshade",IDC_RESHADE,7,117,46,13,WS_DISABLED
+    PUSHBUTTON      "Browse...",IDC_DIR,173,23,42,12
+    LTEXT           "seconds",IDC_STATIC,92,103,28,11
+    LTEXT           "Client Path:",IDC_STATIC,7,13,37,8
+    CONTROL         "Custom1",IDC_CLIENT_PATH,"CustEdit",WS_TABSTOP,7,23,163,
+                    12
+    CONTROL         "Reuse data from previous run",IDC_REUSE_DATA,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,55,109,10
+    GROUPBOX        "Update",IDC_STATIC,1,91,218,51
+    GROUPBOX        "Setup",IDC_STATIC,1,2,218,84
+    COMBOBOX        IDC_EXE,66,39,50,54,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "Start",IDC_START,87,68,46,13
+    LTEXT           "Client Executable:",IDC_STATIC,7,41,58,8
+END
+
+IDD_GET_LOCATION DIALOG  0, 0, 112, 125
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Set A Location"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,4,107,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,57,107,50,14
+    LISTBOX         IDC_LIST_LOC,4,48,103,43,LBS_SORT | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "a\na\na\na\na",IDC_PROMPT,4,5,103,41
+    CONTROL         "Use selection for any other objects without a location",
+                    IDC_CHECK_DEFAULT,"Button",BS_AUTOCHECKBOX | 
+                    BS_MULTILINE | WS_TABSTOP,7,85,97,20
+END
+
+IDD_COMP_MAIN DIALOGEX 0, 0, 111, 95
+STYLE DS_SETFONT | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | 
+    WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Component Manager"
+MENU IDR_COMP_MENU
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Tree1",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_EDITLABELS | 
+                    TVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,4,3,102,32,
+                    WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Attach to Selected Object(s)",IDC_ATTACH,4,37,102,14,
+                    WS_DISABLED
+    LTEXT           "Component Comments:",IDC_COMMENT_TEXT,4,53,74,8
+    EDITTEXT        IDC_COMMENTS,4,63,102,28,ES_MULTILINE | ES_AUTOVSCROLL | 
+                    ES_READONLY | ES_WANTRETURN | WS_VSCROLL
+END
+
+IDD_AGE_DESC DIALOGEX 0, 0, 316, 283
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Age Description Manager"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Create New...",IDC_AGE_NEW,12,238,51,13
+    PUSHBUTTON      "New...",IDC_PAGE_NEW,269,38,32,13
+    CONTROL         "DateTimePicker1",IDC_DATE,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | DTS_UPDOWN | WS_TABSTOP,170,161,53,12
+    CONTROL         "DateTimePicker2",IDC_TIME,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | DTS_UPDOWN | WS_TABSTOP | 0x8,226,161,
+                    56,12
+    CONTROL         "",IDC_DAYLEN_EDIT,"CustEdit",WS_TABSTOP,226,179,18,10
+    CONTROL         "",IDC_DAYLEN_SPINNER,"SpinnerControl",WS_TABSTOP,244,
+                    179,7,10
+    DEFPUSHBUTTON   "Close",IDOK,120,262,50,14
+    LTEXT           "Start Date and Time (in Current Timezone):",IDC_STATIC,
+                    158,152,137,8
+    LTEXT           "Day Length:",IDC_STATIC,184,179,40,8
+    LTEXT           "hours",IDC_STATIC,254,179,18,8
+    LTEXT           "Pages:",IDC_STATIC,153,38,23,8
+    GROUPBOX        "Age Description",IDC_STATIC,150,140,153,67
+    LTEXT           "Max Capacity:",IDC_STATIC,178,193,46,8
+    CONTROL         "",IDC_CAP_EDIT,"CustEdit",WS_TABSTOP,226,192,18,10
+    CONTROL         "",IDC_CAP_SPINNER,"SpinnerControl",WS_TABSTOP,244,192,7,
+                    10
+    LTEXT           "players",IDC_STATIC,254,193,23,8
+    PUSHBUTTON      "Delete",IDC_PAGE_DEL,269,53,32,13
+    LISTBOX         IDC_PAGE_LIST,179,38,88,68,LBS_SORT | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "",IDC_SEQPREFIX_EDIT,"CustEdit",WS_DISABLED | 
+                    WS_TABSTOP,214,221,18,10
+    CONTROL         "",IDC_SEQPREFIX_SPIN,"SpinnerControl",WS_DISABLED | 
+                    WS_TABSTOP,232,221,7,10
+    LTEXT           "Sequence Prefix:",IDC_STATIC,156,222,55,8
+    GROUPBOX        "Ages",IDC_AGELIST_STATIC,7,36,132,221
+    GROUPBOX        "Description for Cleft",IDC_AGEDESC,145,7,164,250
+    GROUPBOX        "Registry Settings",IDC_STATIC,150,210,153,41
+    CONTROL         "Reserved/Global",IDC_RSVDCHECK,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,157,235,70,10
+    PUSHBUTTON      "Edit...",IDC_EDITREG,246,226,50,14
+    CONTROL         "Tree1",IDC_AGE_LIST,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_DISABLEDRAGDROP | 
+                    TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | TVS_FULLROWSELECT | 
+                    WS_TABSTOP,11,48,124,185,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Check Out",IDC_AGE_CHECKOUT,150,18,50,14,WS_DISABLED
+    PUSHBUTTON      "Check In",IDC_AGE_CHECKIN,202,18,50,14,WS_DISABLED
+    PUSHBUTTON      "Undo Chk Out",IDC_AGE_UNDOCHECKOUT,254,18,50,14,
+                    WS_DISABLED
+    CONTROL         "Don't load with age",IDC_ADM_DONTLOAD,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,181,100,77,10
+    CONTROL         "Load if matching age SDL var",IDC_ADM_LOADSDL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,181,111,110,10
+    GROUPBOX        "Branch",IDC_STATIC,7,7,132,29
+    COMBOBOX        IDC_BRANCHCOMBO,12,17,122,110,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Local only",IDC_ADM_LOCAL_ONLY,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,181,120,48,10
+    CONTROL         "Volatile",IDC_ADM_VOLATILE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,181,129,39,10
+END
+
+IDD_AGE_NAME DIALOG  0, 0, 112, 39
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_AGE_NAME,4,6,103,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Create",IDOK,4,22,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,57,22,50,14
+END
+
+IDD_UTILS_RES DIALOG  0, 0, 189, 197
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Resource Browser"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,42,180,50,14
+    CONTROL         "Tree1",IDC_REG_TREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | WS_BORDER | WS_TABSTOP,
+                    5,4,179,172
+    PUSHBUTTON      "Refresh",IDC_REFRESH,97,180,50,14
+END
+
+IDD_UTILS DIALOG  0, 0, 108, 27
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Resource Browser...",IDC_RES,16,6,76,14
+END
+
+IDD_FIND_TEXTURE DIALOG  0, 0, 249, 215
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Texture Find and Replace"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Close",IDCANCEL,100,199,50,14
+    EDITTEXT        IDC_FIND_EDIT,61,3,87,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Update Results",IDC_UPDATE_BUTTON,152,3,58,12
+    LTEXT           "Texture Name:",IDC_STATIC,7,5,48,8
+    CONTROL         "List2",IDC_TEXTURE_LIST,"SysListView32",LVS_REPORT | 
+                    LVS_SORTASCENDING | WS_BORDER | WS_TABSTOP,7,18,235,139
+    PUSHBUTTON      "Replace All...",IDC_REPLACE_ALL_BUTTON,152,162,58,12,
+                    WS_DISABLED
+    LTEXT           "Replace With:",IDC_STATIC,7,164,46,8
+    PUSHBUTTON      "(none)",IDC_REPLACE_BUTTON,61,162,87,12,WS_DISABLED
+    LTEXT           "Set Export Size:",IDC_STATIC,7,179,51,8
+    PUSHBUTTON      "Set All...",IDC_SET_ALL_BUTTON,152,178,58,12,
+                    WS_DISABLED
+    COMBOBOX        IDC_SIZE_COMBO,61,177,87,173,CBS_DROPDOWNLIST | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_EXPORT DIALOG  0, 0, 222, 185
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Plasma Export"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_CLIENT_PATH,8,22,159,12,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Browse...",IDC_DIR,170,22,42,12
+    CONTROL         "Preshade Geometry",IDC_PRESHADE_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,40,78,10
+    CONTROL         "Physicals Only",IDC_PHYSICAL_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,102,40,61,10
+    CONTROL         "Current File",IDC_RADIO_FILE,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,7,85,51,10
+    CONTROL         "Directory",IDC_RADIO_DIR,"Button",BS_AUTORADIOBUTTON,7,
+                    114,44,10
+    COMBOBOX        IDC_PAGE_COMBO,43,97,78,83,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_GROUP | WS_TABSTOP
+    EDITTEXT        IDC_EXPORT_PATH,20,127,147,12,ES_AUTOHSCROLL | 
+                    ES_READONLY
+    PUSHBUTTON      "Browse...",IDC_BROWSE_EXPORT,170,127,42,12
+    LTEXT           "Last Export Took:",IDC_LAST_EXPORT,6,151,209,11,
+                    SS_SUNKEN
+    DEFPUSHBUTTON   "Export",IDC_EXPORT,59,167,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,113,167,50,14
+    LTEXT           "Client Path:",IDC_STATIC,8,12,37,8
+    GROUPBOX        "Options",IDC_STATIC,2,2,217,66
+    LTEXT           "Page:",IDC_STATIC,21,99,20,8
+    GROUPBOX        "Export",IDC_STATIC,2,71,217,75
+    CONTROL         "Regenerate Lightmaps",IDC_LIGHTMAP_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,52,87,10
+END
+
+IDD_REF_BY DIALOG  0, 0, 174, 162
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION
+CAPTION "Referenced By"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Close",IDC_CLOSE,61,144,50,14
+    LISTBOX         IDC_REF_LIST,4,21,165,118,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Double-click on a component name to select the nodes it is attached to.",
+                    IDC_STATIC,4,2,155,16
+END
+
+IDD_AGE_SEQNUM DIALOG  0, 0, 314, 226
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Assigning a New Sequence Number"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "Age title goes here",IDC_AGEMSG,7,7,296,13
+    LTEXT           "ADM Manager Message Goes here",IDC_ADMMSG,7,84,289,34
+    DEFPUSHBUTTON   "Yes, choose a new sequence number for a NORMAL age",
+                    IDYES,43,129,221,16
+    PUSHBUTTON      "Yes, choose a new sequence number for a GLOBAL age",
+                    IDNO,43,151,221,16
+    PUSHBUTTON      "No, do not choose a sequence number;  I'll take my chances",
+                    IDCANCEL,43,175,221,16
+    LTEXT           "Info Message Goes Here",IDC_INFOMSG,7,22,296,44
+END
+
+IDD_AGE_CHECKIN DIALOG  0, 0, 186, 95
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Age is checked out..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Save changes and check in",IDYES,24,33,138,14
+    PUSHBUTTON      "Undo check out and discard changes",IDNO,24,53,138,14
+    LTEXT           "The current age file you are switching away from is checked out. What do you wish to do?",
+                    IDC_STATIC,7,9,172,18
+    DEFPUSHBUTTON   "Cancel",IDCANCEL,24,71,138,14
+END
+
+IDD_AGE_SAVEYESNO DIALOG  0, 0, 186, 61
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Local age has changed..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Save",IDYES,16,36,46,14
+    PUSHBUTTON      "Discard",IDNO,70,36,46,14
+    LTEXT           "The current age file you are switching away from has been altered. Do you wish to keep your changes?",
+                    IDC_STATIC,7,9,172,18
+    DEFPUSHBUTTON   "Cancel",IDCANCEL,123,36,46,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_COMP_PANEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 93
+    END
+
+    IDD_SCENEVIEWER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 215
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 139
+    END
+
+    IDD_GET_LOCATION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 105
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_COMP_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 104
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_AGE_DESC, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 276
+    END
+
+    IDD_AGE_NAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 105
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 32
+    END
+
+    IDD_UTILS_RES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 182
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 190
+    END
+
+    IDD_UTILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 20
+    END
+
+    IDD_FIND_TEXTURE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 242
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 208
+    END
+
+    IDD_EXPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 215
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 178
+    END
+
+    IDD_REF_BY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 167
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 155
+    END
+
+    IDD_AGE_SEQNUM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 307
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 219
+    END
+
+    IDD_AGE_CHECKIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_AGE_SAVEYESNO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 54
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_CURSOR_UP           BITMAP                  "../../Plasma/Apps/plClient/res/cursor_up.bmp"
+IDB_CURSOR_DOWN         BITMAP                  "../../Plasma/Apps/plClient/res/cursor_down.bmp"
+IDB_CURSOR_RIGHT        BITMAP                  "../../Plasma/Apps/plClient/res/cursor_right.bmp"
+IDB_CURSOR_LEFT         BITMAP                  "../../Plasma/Apps/plClient/res/cursor_left.bmp"
+IDB_CURSOR_OPEN         BITMAP                  "../../Plasma/Apps/plClient/res/cursor_open.bmp"
+IDB_CURSOR_GRAB         BITMAP                  "../../Plasma/Apps/plClient/res/cursor_grab.bmp"
+IDB_CURSOR_CLICKED      BITMAP                  "../../Plasma/Apps/plClient/res/cursor_clicked.bmp"
+IDB_CURSOR_POISED       BITMAP                  "../../Plasma/Apps/plClient/res/cursor_poised.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_COMP_MENU MENU 
+BEGIN
+    POPUP "Tools"
+    BEGIN
+        MENUITEM "Remove Unused Components",    ID_REMOVE_UNUSED
+        MENUITEM SEPARATOR
+        MENUITEM "Refresh View",                ID_REFRESH
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ACT1_DESC           "Save Selected (with components)"
+    IDS_ACT1_NAME           "Save Selected..."
+    IDS_ACT2_DESC           "Merge File (with components)"
+    IDS_ACT2_NAME           "Merge..."
+    IDS_ACT3_NAME           "Component Manager..."
+    IDS_ACT4_NAME           "Resource Collector..."
+    IDS_ACT5_NAME           "Age Description Manager..."
+    IDS_ACT6_NAME           "Copy Components..."
+    IDS_ACT7_NAME           "SceneViewer..."
+    IDS_ACT8_DESC           "Lock Selected"
+    IDS_ACT8_NAME           "Lock"
+    IDS_ACT9_DESC           "Unlock Selected"
+    IDS_ACT9_NAME           "Unlock"
+    IDS_ACT10_NAME          "Texture Find and Replace..."
+    IDS_PLASMA_EXPORT       "Plasma Export..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ACT11_NAME          "ResetXform"
+    IDS_ACT11_DESC          "Reset Transform"
+    IDS_ACT12_NAME          "Select NonRend"
+    IDS_ACT12_DESC          "Select NonRenderables"
+    IDS_ACT_CAT             "Plasma"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#include "../MaxComponent/plComponent.rc"
+#include "../MaxPlasmaMtls/MaxPlasmaMtls.rc"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

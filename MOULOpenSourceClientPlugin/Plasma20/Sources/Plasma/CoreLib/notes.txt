@@ -1,0 +1,3 @@
+-Removed code for matrices, planes, xformTriangles, and lights from hsGeometry3.
+
+Would like something generic here for consistent error handling. m&p

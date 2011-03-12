@@ -1,0 +1,1042 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>Release Notes - AGEIA PhysX SDK 2.6</title>
+  <link rel="stylesheet" href="stylesheet.css" type="text/css">
+</head>
+<body>
+<!--img alt="" src="docs/images/PhysXlogo.png" align="middle"--> <br>
+<hr style="width: 100%; height: 2px;"> <br>
+<br>
+<h1 style="text-align: center;">Release Notes - AGEIA PhysX SDK 2.6.0</h1>
+<h2 style="text-align: center;">28<sup>th</sup> September 2006</h2>
+<p style="text-align: center;">&nbsp; </p>
+<h2>What's New In AGEIA PhysX 2.6 </h2>
+<blockquote>
+  <h4>Hardware/Software Rigid Bodies </h4>
+  <ul>
+    <li>There is a new joint projection mode, NX_JPM_LINEAR_MINDIST, that uses only
+    linear projection for improved performance. </li>
+    <li>A new stack overflow protection scheme is in place, where too-large stack   allocations are replaced by heap allocations when needed. If heap allocations   are suddenly causing a slowdown, the threshold for this fallback can be set   using NxFoundationSDK::setAllocaThreshold().</li>
+    <li>Fixed: Raycasts missing on the exact boundary of a heightfield.</li>
+    <li> Fixed: Filtering does not work correctly with HSM.</li>
+    <li>Fixed (SW): DistanceJoint will not work properly when attachment points coincide in worldspace.</li>
+    <li>Fixed: No contacts generated in Capsule-Capsule collision when capsule segments intersect.</li>
+    <li>Fixed: No contacts generated in capsule-convex collision when capsule penetrates convex.</li>
+    <li>Fixed: CCD collision response in FW scenes. </li>
+  </ul>
+  <h4>Hardware Fluids</h4>
+  <ul>
+    <li>Fluid collision improvements including support for a
+		collision distance between fluid particles and rigid
+		body geometry which is maintained during the
+		simulation
+		(NxFluidDesc::collisionDistanceMutliplier).</li>
+	<li>A new method, NxScene::cookFluidMeshHotspot, allows
+		for preparing static mesh, height field and convex
+		shapes for fluid collision, preventing on-the-fly
+		cooking.</li>
+	<li>More information about particles including particle
+		flags, IDs and notifications for particle
+		creations/deletions.</li>
+	<li>New runtime switches for degrading simulation
+		fidelity on heavy system load.</li>
+    <li> Fluids emitters are now attached to shapes not actors. </li>
+  </ul>
+  <h4>Hardware/Software Cloth</h4>
+  <ul>
+    <li>Cloth metal - a combination of deformable cloth and
+        nondeformable rigid body, useful for sheet metal and
+        similar objects. This mode can be activated by
+        attaching a piece of cloth to a rigid body via the
+        NxCloth::attachToCore method.</li>
+    <li>Cloth self collision is now implemented and can be activated by means of
+      NxClothFlag::NX_CLF_SELFCOLLISION.</li>
+  </ul>
+  <h4>Hardware Scene Manager(HSM)</h4>
+  <ul>
+    <li>The HSM now uses Compartments, allowing the utilization of multiple PhysX cards
+      in future versions.</li>
+    <li>The interface of the HSM has been completely revised.</li>
+  </ul>
+  <h4>Performance</h4>
+  <ul>
+    <li>The performance of some scenes with many kinematic actors and/or a lot of broadphase activity has been improved.</li>
+    <li>Fluid collision performance improved, especially for dynamic convex shapes.</li>
+  </ul>
+  <h4>Serialization</h4>
+  <ul>
+    <li>A new serialization library has been introduced called NxuStream</li>
+    <li>This is a source code library with an easy to use interface.</li>
+    <li>SampleAssetExport and SampleSceneExport demonstrate how to use this library.</li>
+    <li>It is now possible to serialize to and from an XML file format, as a high speed binary file, and in COLLADA 1.4.1 physics.</li>
+  </ul>  
+  <h4>Documentation</h4>
+  <ul>
+    <li>Many small corrections and fixes for the user guide and API
+      reference.</li>
+    <li>Information in the User's Guide pertaining to hardware has been concentrated in one place.</li>
+    <li>User guide documentation for:
+        <ul>
+          <li>Compartments</li>
+          <li>Training programs</li>
+          <li>Cloth Metal</li>
+        </ul>
+    </li>
+  </ul>
+  <h4>Installer</h4>
+  <ul>
+    <li>The client installers have been replaced by a single client installer.  This installer is based on the MSI/WISE installer which was distributed in the past.  There is no longer an NSIS based installer.</li>
+  </ul>
+</blockquote>
+<h2>Supported Platforms</h2>
+<blockquote>
+  <h4>Runtime</h4>
+  <ul>
+    <li>Software Runtime for Microsoft Windows XP (32bit and 64bit
+            editions; Pentium III / Athlon XP and higher only) </li>
+    <li>Software Runtime for Microsoft Windows Vista (32bit
+            edition; Pentium III / Athlon XP and higher only) </li>
+    <li>AGEIA PhysX Hardware Runtime for Microsoft Windows XP
+            (32bit and 64bit editions) </li>
+    <li>AGEIA PhysX Hardware Runtime for Microsoft Windows Vista
+            (32bit and 64bit editions) </li>
+    <li>Microsoft XBox360 </li>
+    <li>Sony Play Station 3 (provided by Sony)</li>
+    <li>Software Runtime for SuSE Enterprise Linux 10.0 (alpha release; 32bit and 64bit
+            editions; Pentium III / Athlon XP and higher only)</li>
+    <li>Software Runtime for Red Hat Enterprise Linux WS 4.0 (alpha release; 32bit and 64bit
+            editions; Pentium III / Athlon XP and higher only)<br></li>
+
+  </ul>
+  <h4>Development </h4>
+  <ul>
+    <li> Microsoft Windows XP </li>
+    <li> Microsoft Visual Studio .NET 2003 </li>
+    <li> Microsoft Visual Studio .NET 2005 </li>
+    <li> Microsoft XBox360 development tools </li>
+    <li> Sony Playstation 3 development tools</li>
+    <li> SuSE Enterprise Linux 10.0 (alpha release)</li>
+    <li> Red Hat Enterprise Linux 4.0 WS (alpha release)<br>
+   </li>
+</ul>
+</blockquote>
+<h2><br>
+  
+Known Issues And Limitations</h2>
+<blockquote>
+  <h4>Hardware/Software Rigid Bodies</h4>
+  <ul>
+    <li>Objects may not get woken if they lose contact but their bounds still overlap.</li>
+    <li> Objects may have difficulty falling asleep if they have alternating bounds overlaps with non sleeping bodies.</li>
+    <li>Joint projection may cause instability in the D6 joint.</li>
+    <li> joints may pull off each other when the mass relationship is not properly set up </li>
+    <li> joints' behavior may differ when actors are in very small size. </li>
+  </ul>
+  <h4>Hardware Fluids</h4>
+  <ul>
+  <li>Dynamic fluid - mesh shape collision isn't supported anymore.</li>
+    <li>Dynamic convex shapes are limited to 64 planes for
+      fluid collision. If a convex consists of more than 64
+      planes, only the first 64 planes are taken into consideration for 
+	  collision. If this is the case it may happen that particles collide 
+	  with the axis aligned bounding box of the convex shape.</li>
+	<li>If fluid particles are located more than 
+	  32768*NxFluidDesc::kernelRadiusMultiplier/NxFluidDesc::restParticlesPerMeter
+	  units far from the world origin, collision and SPH computations will fail.
+	</li>
+      <li>If particles get trapped between two dynamic rigid
+          bodies, they jitter within the penetration depth of
+          the rigid bodies.</li>
+      <li> Switching from no-particle-interaction mode to mixed mode or even sph mode can cause instabilities in the simulation. </li>
+      <li> Fluids have a limit on the packet number. It's 1024. </li>
+      <li> Max 4096 new Particles per time step can be added by the function of NxFluid::addParticles(). </li>
+      <li>16 Mbytes are reserved on the PPUs external memory
+          for cooked static collision geometry for fluids. If
+          this is exceeded during runtime collision geometry is
+          dropped and a debug message
+          &quot;Hardware heap ran out of memory&quot; is generated. The call
+          NxScene::cookFluidMeshHotspot can't cause this, since
+          it only cooks data and doesn't transfer the data to
+          the PPUs external memory yet.</li>
+	  <li>If more than 8192 static triangles are located in the range 
+	      of a fluid packet, triangles will be dropped. 
+		  A debug message is generated in this case.
+    </li>
+  </ul>
+  <h4>Hardware/Software Cloth</h4>
+  <ul>
+    <li>A self-collision enabled cloth can still intersect itself due to high relative 
+      velocities of cloth particles, small cloth thickness, multiple collisions with
+    other objects or user interaction.</li>
+    <li>Untangling is not yet supported.</li>
+    <li>Collision handling between different pieces of cloth is not yet supported.</li>
+    <li>Supported core bodies for cloth metal are boxes,
+        spheres, capsules and compounds of spheres.</li>
+    <li>The metal deformation is penetration based. This
+        means that if the rigid body solver leaves a big
+        penetration, the result looks more dramatic. Thus, in
+        some range, the deformation is not predictable.
+        However, the cloth is moved towards the colliding
+        body by the penetrationDepth parameter at an impact
+        so the penetration just varies around this value.</li>	
+    <li> Attaching a low density actor to cloth in NX_CLOTH_ATTACHMENT_TWOWAY mode can cause unstable simulation. </li>
+    <li> When the density of object collision with cloth is too high, the objects can easily penetrate cloth, even in very low speed. </li>
+    <li> In some cases a cloth can slip through a concave corner or a valley edge during mesh or terrain collisions. (Workaround: Increase the cloth's thickness or bending stiffness) </li>
+  </ul>
+  <h4>Hardware Scene Manager(HSM) </h4>
+  <ul>
+  <li>dynamic triangle meshes are not supported anymore.</li>
+  <li> Objects in compartments are not visualized.</li>
+  <li> Hardware objects from different hardware compartments do not interact (i.e., cloth and rigid). </li>
+  </ul>
+  <h4>Serialization</h4>
+<ul>
+<li>COLLADA does not retain all of the physics data in our SDK. It will not retain heightfields, wheel shapes, CCD information, cloth, fluids, or a number of other items that are not in the COLLADA 1.4.1 specification.
+ </li>
+</ul>
+  <h4>Installers</h4>
+  <ul>
+    <li> The AGEIA PhysX SDK must be installed to run samples as they
+      rely on DLLs contained within the main SDK installer.</li>
+  </ul>
+  <h4>Windows Device Driver</h4>
+  <ul>
+    <li> No known issues.</li>
+  </ul>
+  <h4>Tools</h4>
+  <ul>
+    <li> There is currently no support for content creation tools in the Linux SDK release.</li>
+  </ul>
+</blockquote>
+
+<h1 style="TEXT-ALIGN: center">Release Notes - AGEIA PhysX SDK
+2.5.1</h1>
+
+<h2 style="TEXT-ALIGN: center">17<sup>th</sup> August 2006</h2>
+
+<p style="TEXT-ALIGN: center">&nbsp;</p>
+
+<h2>What's New In AGEIA PhysX 2.5.1</h2>
+
+<blockquote>
+    <h4>General</h4>
+    <ul>
+        <li>The NxPhysicsSDK object is now reference counted, and
+            thus all NxCreatePhysicsSDK()/NxCreatePhysicsSDKWithID()
+            calls should be matched with an NxReleasePhysicsSDK()
+            call. </li>
+    </ul>
+    <h4>Hardware/Software Rigid Bodies</h4>
+    <ul>
+        <li>The following HW Rigid Body optimizations have been
+            introduced. <ul>
+                <li>Improved mesh cooking </li>
+                <li>Optimized narrow phase collision detection </li>
+                <li>Optimized broad phase collision detection </li>
+                <li>Optimized dynamics solver</li>
+            </ul>
+            <p>These optimizations are expected to improve
+            performance with no significant change to the
+            behavior of the simulation. </p>
+        </li>
+    </ul>
+    <h4>Windows Device Driver</h4>
+    <ul>
+        <li>Microsoft Windows XP 32bit and 64bit now supported.
+            Allows for 32bit software which use AGEIA PhysX
+            hardware to run on Microsoft Windows XP 64bit. </li>
+    </ul>
+</blockquote>
+
+<h2>Supported Platforms</h2>
+
+<blockquote>
+    <h4>Runtime</h4>
+    <ul>
+        <li>Software Runtime for Microsoft Windows XP (32bit and 64bit
+            editions) </li>
+	<li>Software Runtime for Microsoft Windows Vista (32bit
+            edition) </li>
+        <li>AGEIA PhysX Hardware Runtime for Microsoft Windows XP
+            (32bit and 64bit editions) </li>
+        <li>AGEIA PhysX Hardware Runtime for Microsoft Windows Vista
+            (32bit edition) </li>
+        <li>Microsoft XBox360 </li>
+        <li>Sony Play Station 3 (provided by Sony)<br>
+      </li>
+    </ul>
+    <h4>Development </h4>
+    <ul>
+        <li>Microsoft Windows XP </li>
+        <li>Microsoft Visual Studio .NET 2003 </li>
+        <li>Microsoft XBox360 development tools (August 2006 XDK
+            v3529) </li>
+        <li>Sony Playstation 3 development tools</li>
+    </ul>
+</blockquote>
+
+<p><a name="knownissues251"></a></p>
+
+<h2><br>
+Known Issues And Limitations</h2>
+
+<p><br>
+Below is a list of new issues and limitations; this is an
+addition to the <a href="#knownissues250">list from 2.5.0</a>. </p>
+
+<blockquote>
+    <h4>Windows Device Driver</h4>
+    <ul>
+        <li>Since the AGEIA PhysX Properties Control Panel Applet
+            is a 32-bit DLL, it does not appear in the Control
+            Panel automatically under 64-bit Windows. The user
+            must enable 32-bit Control Panel icons for it to
+            appear.</li>
+    </ul>
+    <h4>Hardware/Software Rigid Bodies</h4>
+    <ul>
+        <li>If shapes are added to an actor containing a single
+            triangle mesh shape in a HW scene, collisions with
+            the triangle mesh shape will no longer work. The
+            problem lies in the transition from single shape
+            actor to a compound, which means that compound actors
+            can be created with triangle mesh shapes either by
+            specifying all shapes directly in the descriptor, or
+            by making sure that the triangle mesh is never the
+            only shape in the actor. </li>
+    </ul>
+</blockquote>
+
+<h1 style="text-align: center;">Release Notes - AGEIA PhysX SDK 2.5.0</h1>
+<h2 style="text-align: center;">30<sup>th</sup> June 2006</h2>
+<p style="text-align: center;">&nbsp;</p>
+<h2>What's New In AGEIA PhysX 2.5</h2>
+<blockquote>
+  <h4>Hardware/Software Rigid Bodies</h4>
+  <ul>
+    <li> Sweep API - Allows swept shape queries against a scene. </li>
+    <li> Active Transform Notification - Provides a list of actors which
+      have been updated. </li>
+    <li> Sleep Events - Provides a notification when an actor wakes up or
+      goes to sleep. </li>
+    <li> Kinetic Energy Based Sleeping - An improved criteria for
+      deciding if an actor should sleep. This is now the default. </li>
+    <li> Reduced overhead for sleeping actors. </li>
+    <li> Contact Modification - A callback is provided which allows the
+      user to modify contacts between the near phase and solver. </li>
+    <li> Fine grained threading is now enabled on the PC - parallel near
+      phase and solver. </li>
+    <li> Version Controlled Cooking - Cooking is now versioned along with
+      the runtime. </li>
+    <li> New/Delete has been cleaned up in many places and all calls
+      should now go through the user supplied memory allocator. </li>
+    <li> Adaptive force improvements - The adaptive force optimization is
+      now only applied to groups of objects which are in contact with a
+      static object, for example a stack resting on the floor. </li>
+    <li> The ratio property of a pulley joint is a force ratio rather
+      than a distance ratio. </li>
+    <li> The gear ratio of joints take into account the inertial
+      properties of the bodies involved. This affects the way forces are
+      propagated.</li>
+    <li> All joint types and collision primitives have software fall
+      backs in hardware scenes. </li>
+    <li> Full contact callbacks and modifiable contacts available in HW
+      scenes, but with substantial performance overhead. </li>
+    <li> Up to 64K shapes, 64K bodies, and 64K D6 joints may be created
+      in hardware scenes (but note the limitation below concerning active
+      object counts.)</li>
+  </ul>
+  <h4>Hardware Fluids</h4>
+  <ul>
+    <li> Fluid surfaces allow triangle meshes surfaces to be generated
+      for fluids on the PPU. Basic fluid surface feature set includes:
+      <ul>
+        <li> Depth smoothing </li>
+        <li> Multiple fluid surfaces associated with fluids<br>
+        </li>
+        <li> User defined particles supported </li>
+      </ul>
+    </li>
+    <li> Two Way Interaction - Fluids can now exert a force on a rigid
+      body. </li>
+    <li> NX_FF_ENABLED flag added - This allows simulation to be enabled
+      and disabled for fluids. By default the flag is set. When turning the
+      flag off (on NxFluid), the next fluid step is not carried out.
+      Particles are not copied to the user buffers </li>
+    <li> NX_SF_FLUID_DRAIN_INVERTED - Removed for performance reasons.
+      There are workarounds to get the same effect.</li>
+  </ul>
+  <h4>Hardware/Software Cloth</h4>
+  <ul>
+    <li> Basic feature set:
+      <ul>
+        <li> stretching and bending resistance </li>
+        <li> two way rigid body interaction </li>
+        <li> attachments </li>
+        <li> damping and friction </li>
+        <li> tearing </li>
+        <li> pressure</li>
+      </ul>
+    </li>
+  </ul>
+  <h4>Hardware Scene Manager(HSM)</h4>
+  <ul>
+    <li> Two way hardware rigid body and cloth interaction. </li>
+    <li> Two way fluid and rigid body interaction. </li>
+    <li> One way managed rigid body versus primary scene rigid body
+      interaction, including:</li>
+    <li> Software material table mirrored to the managed scenes. </li>
+    <li> Software static meshes are paged to managed scenes. </li>
+    <li> Group based filtering mirrored to the managed scenes. </li>
+    <li> Ray cast results include query performed against managed scenes. </li>
+  </ul>
+  <h4>Performance</h4>
+  <ul>
+    <li> Sleeping objects are much faster, not consuming any CPU in 2.5 </li>
+    <li> New friction model in 2.5 is somewhat faster, showing up in
+      stacking scenarios </li>
+    <li> Anisotropic friction, per-triangle materials and terrain height
+      fields run somewhat slower than in 2.4 </li>
+    <li> All joint types but the D6 run somewhat slower in 2.5 </li>
+    <li> Hardware rigid body scenes consume more CPU cycles than in 2.4 </li>
+    <li> Running a scene on multiple threads now consumes memory
+      proportional to the number of threads concurrently within the SDK
+      rather than the number of threads which have entered the SDK since
+      creation.</li>
+    <li> Xbox 360 Optimization:
+        <ul>
+          <li>VMX128 rigid body constraint
+            solver.</li>
+          <li>VMX128 cloth solver.</li>
+          <li>VMX128 optimizations to box-box,
+            convex-mesh and convex-convex collision detection.</li>
+          <li>VMX128 midphase optimization for sphere-mesh, capsule-mesh,
+            OBB-mesh</li>
+          <li>VMX128 some small optimization for CCD.<br>
+          </li>
+       </ul>
+    </li>
+  	    <li>PlayStation3 PPU only version significantly faster due to changes in Vector library.</li>
+ </ul>
+  <h4>Rocket</h4>
+  <ul>
+    <li> Updated interface using menu items in addition to onscreen
+      buttons. </li>
+    <li> Support for Cloth </li>
+    <li> Support for Fluids </li>
+    <li> Support for NxUStream </li>
+    <li> (For details, see the Rocket documentation included in the Tools
+      Installer)</li>
+  </ul>
+  <h4>Installers</h4>
+  <ul>
+    <li> With the high/low level split in the SDK, the source code
+      installer will not contain sources for low level components </li>
+    <li> 2.5.0 includes a tools installer. For beta and beyond, it will
+      include Rocket, a 3DStudio Max plugin and a Maya plugin. </li>
+    <li> Tool developers can now specify the version of cooking they want
+      to use. </li>
+    <li> Applications no longer need to include the PhysXLoader (that is
+      now in the System32 folder)</li>
+  </ul>
+  <h4>Documentation</h4>
+  <ul>
+    <li>Many small corrections and fixes for the user guide and API
+      reference.</li>
+    <li>User guide and API reference documentation for:
+        <ul>
+          <li>Fluid surfaces</li>
+          <li>Contact modification callback</li>
+          <li>Sweep tests</li>
+          <li>Active transform notification</li>
+          <li>Sleep events</li>
+          <li>Hardware scene manager<br>
+          </li>
+          <li>Cloth tearing and pressure<br>
+          </li>
+          <li>Mesh auto paging<br>
+          </li>
+        </ul>
+    </li>
+    <li>Updates to the tutorials and samples pages.</li>
+  </ul>
+  <h4>Windows Device Driver</h4>
+  <ul>
+    <li> Support for PCIExpress Cards </li>
+  </ul>
+</blockquote>
+<h2>Supported Platforms</h2>
+<blockquote>
+  <h4>Runtime</h4>
+  <ul>
+    <li> Software Runtime for Microsoft Windows XP (32bit editions) </li>
+    <li> AGEIA PhysX Hardware Runtime for Microsoft Windows XP (32bit
+      editions) </li>
+    <li> Microsoft XBox360 </li>
+    <li> Sony Play Station 3 (provided by Sony)<br>
+    </li>
+  </ul>
+  <h4>Development </h4>
+  <ul>
+    <li> Microsoft Windows XP </li>
+    <li> Microsoft Visual Studio .NET 2003 </li>
+    <li> Microsoft Visual Studio .NET 2005 (not supported, project files
+      only)<br>
+    </li>
+    <li> Microsoft XBox360 development tools </li>
+    <li> Sony Playstation 3 development tools<br>
+    </li>
+  </ul>
+</blockquote>
+<h2><br>
+  
+Known Issues And Limitations</h2>
+<blockquote>
+  <h4>Hardware/Software Rigid Bodies</h4>
+  <ul>
+    <li> Joint types other than D6, spherical and revolute are partially
+      simulated in software. </li>
+    <li> For HW D6 joints, Only angular orientation drive &amp; linear
+      position drive are&nbsp;supported, i.e. slerp drive &amp; velocity
+      drive are not supported. </li>
+    <li> Wheel shape and joint parameters may need tweaking due to solver
+      changes. </li>
+    <li> Spherical and revolute joint behavior may differ from 2.4. </li>
+    <li> All joint break limits are specified as a maximum impulse and
+      might need to be adjusted. </li>
+    <li> User break notification now reports an impulse which is clamped
+      to the break impulse. </li>
+    <li> The friction model has changed. It should now be somewhat
+      stiffer. In addition friction is applied as soon as a contact is
+      created. </li>
+    <li> Mesh-Mesh collision detection is always performed in software(in
+      particular PMaps). </li>
+    <li> Mesh based height field collisions and height field collisions
+      are performed in software. </li>
+    <li> Wheel shapes are simulated in software. </li>
+    <li> Mesh and height field collisions are performed in software if
+      the mesh/height field has multiple materials defined. </li>
+    <li> Anisotropic friction is partially performed in software. </li>
+    <li> User contact reports and contact modification have quite a large
+      performance hit. </li>
+    <li> The result of sweep tests which are initially penetrating is
+      currently undefined. </li>
+    <li> Only boxes and capsules are supported by the sweep API as swept
+      objects. (spheres are emulated as capsules of zero length). </li>
+    <li> Sweep tests against planes, wheel shapes, and height fields are
+      not supported. </li>
+    <li> All sweep tests are synchronous(NX_SF_ASYNC is not supported). </li>
+    <li> Trigger shapes do not take part in CCD (Continuous Collision
+      Detection). </li>
+    <li> The methods isSleeping() and isGroupSleeping() now return the
+      same value. </li>
+    <li> Contact forces are not reported unless NX_NOTIFY_FORCES is set </li>
+    <li> Scene statistics no longer report the number and maximum number
+      of contacts, axis constraints or solver bodies </li>
+    <li> Hardware rigid body scenes support at most 4K active bodies. The
+      following additional restrictions are expected to be removed or
+      significantly alleviated during beta: at most 8K active shapes (shapes
+      whose pose is linked to active bodies), 4K active joints, and 4K
+      software fall back constraints. Note: these are counts for active
+      objects, sleeping objects are not included in the limits.<br>
+    </li>
+    <li> The hardware broad phase supports at most 4080 actors. Broad
+      phase runs in hardware only if the NX_SF_RESTRICTED_SCENE flag is set
+      on the scene. Otherwise broad phase runs in software even in hardware
+      scenes, and there are no size restrictions.</li>
+    <li> Joint pose projection is not hardware accelerated </li>
+    <li> Hardware convexes are limited to 32 vertices and 32 faces. Convexes will fallback
+      to software above these limits.</li>
+  </ul>
+  <h4>Hardware Fluids</h4>
+  <ul>
+    <li>Maximum of 32767 particles per fluid.</li>
+    <li> Only limited fluid surface depth smoothing is supported in
+      hardware with filter size = 3. </li>
+    <li> Silhouette smoothing for fluid surfaces is not supported in
+      hardware. </li>
+    <li> Fluid surface resolution is limited to no more than 256x256, so
+      in the initial state, if the resolution is beyond the limitation,
+      NxImplicitScreenMeshDesc::isValid() will give an assert error. But if
+      this resolution is changed during application program running, it will
+      be automatically clamped to the maximum value. </li>
+    <li> Quadtree hierarchy mesh is not supported in hardware for fluid
+      surfaces.<br>
+    </li>
+    <li> Two way interaction may be unstable with resting
+      particle-RB-contacts. </li>
+    <li> If the fluid hits packets which contain a high triangle density,
+      fluid mesh cooking on the host might become the bottleneck. However
+      there is logic to prevent detailed cooking when the load is too high.
+      Also cooking is now taking place in a separate thread, which removes
+      frame rate hick ups.</li>
+  </ul>
+  <h4>Hardware/Software Cloth<br>
+  </h4>
+  <ul>
+    <li> Convexes up to 120 planes </li>
+    <li> Only cloth particle collision detection (no cloth triangle
+      collision detection) </li>
+    <li>&lt; 1024 attached particles per cloth (limit might be removed
+      before release) </li>
+    <li>&lt; 1024 colliding shapes (limit might be removed before
+      release) </li>
+    <li> Wild movement of the cloth in connection with high bending
+      stiffness can get the cloth into an entangled state. It looks like the
+      cloth would locally stick to itself. This is a local self collision
+      issue. Workaround: reduce bending stiffness. </li>
+    <li> Squeezing cloth between rigid bodies can cause jittering.
+      Workaround: reduce cloth thickness. </li>
+    <li> For small meshes (&lt; 256 vertices) it is more efficient to
+      merge several of them into one cloth than creating a cloth instance for
+      each individual mesh. These meshes do not need to be connected (e.g.
+      multiple leaves of a plant).</li>
+  </ul>
+  <h4>Hardware Scene Manager(HSM)</h4>
+  <ul>
+    <li> Only group based collision reports are supported by the HSM. </li>
+    <li> Only a single managed hardware scene is supported by the HSM. </li>
+    <li> Effectors between hardware actors are not supported. </li>
+    <li> Actor and Shape pair flags not supported by the HSM. </li>
+    <li> Scene stats for hardware objects controlled by the HSM are not
+      supported. </li>
+    <li> Hardware rigid bodies do not exhibit two way interaction with
+      software objects under the HSM. </li>
+    <li> Hardware objects from separate scenes do not interact(e.g. rigid
+      body, cloth, fluids) under the HSM. </li>
+    <li> Dynamic height fields mirrored into the cloth and fluid scenes
+      will only supply 64 triangles, the rest will be silently dropped. </li>
+    <li> Shapes mirrored into the slave scene(cloth, rigid body, fluids)
+      will not be updated until they are mirrored/un-mirrored. This means if
+      you change a shape property(e.g. sphere radius) the hardware objects
+      will not be updated. </li>
+    <li> In the hardware rigid body scene only dynamic objects are
+      mirrored to the software scene.</li>
+  </ul>
+  <h4>Rocket</h4>
+  <ul>
+    <li> No known issues.</li>
+  </ul>
+  <h4>Installers</h4>
+  <ul>
+    <li> The AGEIA PhysX SDK must be installed to run samples as they
+      rely on DLLs contained within the main SDK installer.</li>
+  </ul>
+  <h4>Windows Device Driver</h4>
+  <ul>
+    <li> No known issues.</li>
+  </ul>
+</blockquote>
+<br>
+<br>
+<ol>
+</ol>
+<hr>
+<h1 style="text-align: center;">Release Notes - AGEIA PhysX SDK 2.4.0</h1>
+<h2 style="text-align: center;">23<sup>rd</sup> February 2006</h2>
+<h2>AGEIA PhysX SDK Build Component</h2>
+<h3>What's New?</h3>
+<ol>
+  <li> Documentation and Samples for new features. </li>
+  <li> A number of smaller documentation corrections and
+clarifications. </li>
+</ol>
+<h3>Platforms Supported</h3>
+Development:
+<ul>
+  <li> Microsoft Windows XP (32bit editions) </li>
+  <li> Microsoft Visual Studio .NET 2003 </li>
+  <li> Microsoft Visual Studio .NET 2003 with the XBox360 development
+kit. </li>
+</ul>
+Not Supported for Development:
+<ul>
+  <li> Microsoft Windows XP x64 Edition (and all other 64bit editions) </li>
+  <li> Microsoft Visual Studio .NET 2005 (project files not provided /
+not tested) </li>
+  <li> Microsoft Visual C++ 6 (project files not provided / not tested)
+  </li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ul>
+  <li> The AGEIA PhysX SDK Build Component and AGEIA PhysX Software
+Runtime Component must be installed to run samples and training
+programs, since they rely on DLLs contained within the runtime
+component. </li>
+</ul>
+<h3>Version</h3>
+2.4.0
+<h2>AGEIA PhysX Software Runtime Component</h2>
+<h3>What's New?</h3>
+<ol>
+  <li> Dynamic vs Dynamic CCD support </li>
+  <li> Support for heightfield shapes </li>
+  <li> User thread control. </li>
+  <li> Fine grained threading of the simulation(available only on
+XBox360) </li>
+  <li> Additional overlap tests for shapes </li>
+  <li> Hardware scene manager, allows fluids to interact with rigid
+bodies. </li>
+</ol>
+<h3>Platforms Supported (Runtime)</h3>
+<ul>
+  <li> Microsoft Windows XP (32bit editions) </li>
+  <li> Microsoft XBox 360 </li>
+  <li> Sony PlayStation3 (provided by Sony)</li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ol>
+  <li> The AGEIA PhysX SDK must be installed to run samples as they
+rely on DLLs contained within the main SDK installer. </li>
+</ol>
+<h3>Version</h3>
+2.4.0
+<h2>Hardware Rigid Bodies (AGEIA PhysX Driver)</h2>
+<h3>What's New?</h3>
+<ol>
+  <li> Many optimizations and Bug fixes. </li>
+  <li> D6 joint support. The D6 supports the following features:
+breaking and signaling, angular orientation drive and gears, </li>
+  <li> The simulation no longer locks up on firmware crashes. Instead a
+flag passed to fetchResults () which is set on an error. </li>
+  <li> A new error reporting tool allows the driver to record the
+simulation state leading up to a crash to allow analysis and bug
+fixing. </li>
+</ol>
+<h3>Platforms Supported (Runtime)</h3>
+<ul>
+  <li> Microsoft Windows XP (32bit editions) with an AGEIA PhysX Card </li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ol>
+  <li> There is a limit of 2048 D6 joints per scene. </li>
+  <li> Only angular D6 drives are supported. All other types of drive
+are not supported. </li>
+  <li> D6 joint pose projection is disabled. </li>
+</ol>
+<h3>Version</h3>
+2.4.0
+<h2>Hardware Fluids (AGEIA PhysX Driver)</h2>
+<h3>What's New?</h3>
+<ol>
+  <li> The AGEIA PhysX SDK now has a hardware scene manager, which
+allows fluids to be created in a software scene. The hardware scene
+manager takes care of mesh cooking and mirroring actors into the
+hardware scene. </li>
+  <li> Support for more dynamic shapes in a fluid scene: convex mesh,
+box, capsule, sphere </li>
+  <li> The following unimplemented API calls have been removed:
+    <ul>
+      <li> NX_FF_MESH_INCLUDE_SEPARATED </li>
+      <li> void NxFluid::setCollisionGroup(NxCollisionGroup group); </li>
+      <li> NxU32 NxFluid::getCollisionGroup(); </li>
+      <li> NxImplicitMesh* NxFluid::createSurfaceMesh(const
+NxImplicitMeshDesc&amp; mesh); </li>
+      <li> void NxFluid::releaseSurfaceMesh(); </li>
+      <li> NxImplicitMesh* NxFluid::getSurfaceMesh(); </li>
+      <li> NxFluid::getDynamicActorReactionSmoothing () </li>
+      <li> NxFluid::setDynamicActorReactionSmoothing(NxReal smooth) </li>
+      <li> NxFluid::getDynamicActorReactionScaling() </li>
+      <li> NxFluid::setDynamicActorReactionScaling(NxReal scale) </li>
+      <li> NxFluid::setOnSeparationAction (NxFluidParticleAction
+action, bool val) </li>
+      <li> NxFluid::getOnSeparationAction(NxFluidParticleAction action)
+      </li>
+      <li> NxFluid::setOnCollision(NxFluidParticleAction action, bool
+val) </li>
+      <li> NxFluid::getOnCollision(NxFluidParticleAction action) </li>
+      <li> NxFluid::setOnLifetimeExpired(NxFluidParticleAction action,
+bool val) </li>
+      <li> NxFluid::getOnLifetimeExpired(NxFluidParticleAction action) </li>
+      <li> typedef NxU16 NxFluidGroup; </li>
+      <li> void NxFluid::setFluidGroup(NxFluidGroup group) </li>
+      <li> NxU32 NxFluid::getFluidGroup() </li>
+      <li> NxU32 NxFluidDesc::onSeparation; </li>
+      <li> NxU32 NxFluidDesc::onCollision; </li>
+      <li> NxU32 NxFluidDesc::onLifetimeExpired; </li>
+      <li> NxReal NxFluidDesc::dynamicActorReactionSmoothing ; </li>
+      <li> NxReal NxFluidDesc::dynamicActorReactionScaling; </li>
+      <li> NxReal NxFluidDesc::collisionGroup; </li>
+      <li> class NxImplicitMesh </li>
+      <li> void NxPhysicsSDK::setFluidGroupPairFlags() </li>
+      <li> NxPhysicsSDK::getFluidGroupPairFlags() </li>
+      <li> NxScene::setUserFluidContactReport() </li>
+      <li> NxScene:: getUserFluidContactReport() </li>
+      <li> NxImplicitMesh * NxScene::createImplicitMesh(); </li>
+      <li> Void NxScene::releaseImplicitMesh(); </li>
+      <li> NxScene::getNbImplicitMeshes </li>
+      <li> NxImplicitMesh** NxScene::getImplicitMeshes() </li>
+      <li> class NxUserFluidContactReport </li>
+      <li> NxFluidCollisionMethod::NX_F_DYNAMIC_ACTOR_REACTION </li>
+    </ul>
+  </li>
+</ol>
+<h3>Platforms Supported (Runtime)</h3>
+<ul>
+  <li> Microsoft Windows XP (32bit editions) with an AGEIA PhysX Card </li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ol>
+  <li> The maximum number of capsules are limited to 1024 in a scene. </li>
+  <li> The maximum number of boxes in a scene is limited to 1024. </li>
+  <li> Spheres are emulated as capsule of zero height, so they share
+the same limitation as capsules. </li>
+</ol>
+<h3>Version</h3>
+2.4.0
+<h2>Cloth </h2>
+<h3>What's New?</h3>
+<ol>
+  <li> Software only cloth support (see the user guide for further
+details) </li>
+  <li> Collision filtering. </li>
+  <li> Support for tearing and pressure. </li>
+</ol>
+<h3>Platforms Supported (Runtime)</h3>
+<ul>
+  <li> Microsoft Windows XP (32bit editions) </li>
+  <li> Microsoft XBox 360 </li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ol>
+  <li> A cloth can bend too much and get stuck in itself. Workaround:
+use less bending stiffness or variate the bending stiffness over time. </li>
+</ol>
+<h3>Version</h3>
+2.4.0
+<h2>Tools</h2>
+<h3>What's New?</h3>
+<ol>
+  <li> NxuStream- Support for serialization of the physical scene.
+Supported formats include binary, Ascii(write only) and Collada </li>
+  <li> Visual Remote Debugger - View the physical representation used
+by a game in real time and gather statistics and profiling information.
+  </li>
+</ol>
+<h3>Platforms Supported (Runtime)</h3>
+<ul>
+  <li> Microsoft Windows XP (32bit editions) </li>
+  <li> Microsoft XBox 360 </li>
+  <li> Sony PlayStation3 (provided by Sony) </li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ol>
+  <li> NxuStreamdoes not import Collada files created with other
+libraries correctly. </li>
+  <li> Visual Remote Debugger connections must be enabled immediately
+after initializing the SDK, otherwise the connection is likely to fail
+(because object creation data, etc, is lost). For example:
+    <pre>// Create Physics SDK ...<br><br>gPhysicsSDK-&gt;getFoundationSDK().getRemoteDebugger()-&gt;connect ("localhost", 5425); <br></pre>
+  </li>
+  <li> Reading profiler data at the same time the Visual Remote
+Debugger is connected is not supported. Profiler data will not be
+returned to the user when they call NxScene::readProfileData() if the
+debugger is connected. </li>
+</ol>
+<h3>Version</h3>
+2.4.0
+<hr>
+<h1 style="text-align: center;">Release Notes - AGEIA PhysX SDK 2.3.2</h1>
+<h2 style="text-align: center;">6<sup>th</sup> January 2006</h2>
+<h2>AGEIA PhysX SDK Build Component</h2>
+<h3>What's New?</h3>
+<ol>
+  <li> It is no longer possible for end users to load PhysXCore.dll
+from the application directory. The correct version is now loaded by
+PhysXLoader from "Program Files\Ageia Technologies" </li>
+  <li> Installer improvements. </li>
+  <li> Fixes to sample project files. </li>
+  <li> Foundation.lib included with the XBox 360 installer. </li>
+  <li> Lots of documentation improvements. </li>
+</ol>
+<h3>Platforms Supported</h3>
+Development:
+<ul>
+  <li> Microsoft Windows XP (32bit editions) </li>
+  <li> Microsoft Visual Studio .NET 2003 </li>
+  <li> Microsoft Visual Studio .NET 2003 with the XBox360 development
+kit. Not Supported for Development: </li>
+  <li> Microsoft Windows XP x64 Edition (and all other 64bit editions) </li>
+  <li> Microsoft Visual Studio .NET 2005 (project files not provided /
+not tested) </li>
+  <li> Microsoft Visual C++ 6 (project files not provided / not tested)
+  </li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ul>
+  <li> The AGEIA PhysX SDK Build Component and AGEIA PhysX Software
+Runtime Component must be installed to run samples and training
+programs, since they rely on DLLs contained within these components. </li>
+</ul>
+<h3>Version</h3>
+2.3.2
+<h2>AGEIA PhysX Software Runtime Component</h2>
+<h3>What's New?</h3>
+<ol>
+  <li> Improved convex hull generation algorithm(the old method is
+still available using a flag) </li>
+  <li> Character controller fixes. </li>
+  <li> Fix for distance joints not being breakable. </li>
+  <li> Additional overlap/intersection queries. </li>
+  <li> Fix for performance issues related to SSE denormal handling on
+some machines. </li>
+</ol>
+<h3>Platforms Supported (Runtime)</h3>
+<ul>
+  <li> Microsoft Windows XP (32bit editions) </li>
+  <li> Microsoft XBox 360 </li>
+  <li> Sony PlayStation3 (provided by Sony) </li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ol>
+  <li> When statically linked(for example on XBox360) calling
+NxInitCooking() overwrites parameters set when calling
+NxCreatePhysicsSDK(). For example the error stream is reset. This
+occurs because the variables are shared when statically linked.<br>
+Workaround: Supply the same parameters to NxInitCooking() and
+NxCreatePhysicsSDK() </li>
+  <li> In some cases convex hull generation can fail for degenerate
+input.<br>
+Workaround: Supply geometry without degenerate sets of points (edges
+and planes). Use the legacy convex hull generation(see
+NX_CF_USE_LEGACY_COOKER). </li>
+</ol>
+<h3>Version</h3>
+2.3.2
+<h2>Hardware Rigid Bodies (AGEIA PhysX Driver)</h2>
+<h3>What's New?</h3>
+<ol>
+  <li> Many bug fixes and optimizations. </li>
+  <li> Fix getWorldBounds () for triangle mesh shapes. </li>
+  <li> Driver error reporting in fetchResults() </li>
+</ol>
+<h3>Platforms Supported (Runtime)</h3>
+<ul>
+  <li> Microsoft Windows XP (32bit editions) with an AGEIA PhysX Card </li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ol>
+  <li> See the API references for details concerning which API
+functions are supported. </li>
+  <li> At most 2000 shapes can be present in a scene at once (this
+includes both static and dynamic shapes). </li>
+  <li> Precision limitations suggest that physics behavior may not be
+stable or correct more than 1000 units from the origin. </li>
+  <li> Rigid body scenes occupy 32MB of memory on the card, so that
+absolutely no more than three scenes may be present on the card at
+once. </li>
+  <li> The following is an important but non-exhaustive list of SDK
+features which are not supported: joints, continuous collision, contact
+notification, many debugging visualization, contact notifications,
+triggers, per shape skin width. </li>
+  <li> Convex hulls are limited in this release to have at most 32
+vertices and 32 faces. </li>
+  <li> Using terrain meshes on hardware requires making use of the new
+mesh paging API. When a mesh is cooked, it is divided into a number of
+hardware pages, and these pages must be manually moved to the card by
+the application for any collision to take place.<br>
+The number of pages into which a mesh will be cooked is variable, and
+will depend on the degree of local convexity in the mesh. However, at
+least 500 triangles should fit into a mesh page, and the allocation of
+16MB of mesh data supports 256 pages, which allows for the presence of
+more than 100,000 triangles on the card. Note that when a page is
+removed from the card, the space occupied by that mesh page is not
+freed until after the physics has been stepped. No data yet exists for
+the performance of paging meshes on and off the card; however as a
+baseline the raw transmission of a mesh page by DMA requires half a
+millisecond.<br>
+As in the software SDK, in the absence of ATT it is easy for thin
+objects to tunnel through the mesh; in particular collisions will not
+be detected with objects whose center lies beneath the mesh. </li>
+  <li> Due to limitations of the friction model, objects sliding on a
+triangle mesh may not have correct frictional behavior. Per-triangle
+materials are not supported. </li>
+</ol>
+<h3>Version</h3>
+2.3.2
+<h2>Hardware Fluids (AGEIA PhysX Driver)</h2>
+<h3>What's New?</h3>
+<ol>
+  <li> Many bug fixes and optimizations. </li>
+  <li> Fluid scenes are created in a special hardware scene. </li>
+  <li> Fix to intermittent crash bug when adding a mesh to a fluid
+scene. </li>
+  <li> Better input validation for the fluid mesh cooker. </li>
+  <li> Driver error reporting in fetchResults() </li>
+  <li> The Fluid can be configured with the new parameter
+"motionLimitMultiplier". The user can define how far a particle can
+travel during one timestep. This is important for tuning the memory
+size consumed by the static mesh cooked for fluid collision. The
+parameter effectively limits the maximal velocity of a particle. See
+the user guide for more details. </li>
+  <li> If the user is interested in a more coarse simulation of fluids
+which supports sprays and puddles, but works less well on deep pools,
+he can choose this new simulation mode which alternates the simulation
+between simple particles (without inter particle forces) and SPH
+simulation. See NxFluidSimulationMethod::NX_F_MIXED_MODE and
+NxFluidDesc::simulationMethod in the documentation. </li>
+</ol>
+<h3>Platforms Supported (Runtime)</h3>
+<ul>
+  <li> Microsoft Windows XP (32bit editions) with an AGEIA PhysX Card </li>
+</ul>
+<h3>Known Issues and Limitations</h3>
+<ol>
+  <li> See the API references for details concerning which API
+functions are supported </li>
+  <li> Collision detection only supported with static triangle meshes
+and convex meshes. </li>
+  <li> The number of convex shapes interacting at the same time with
+one fluid is restricted to 1024 convexes. The user may add more dynamic
+convex actors to the fluid hardware scene, though. If more than 1024
+convexes are moving within the AABB of the fluid, some will be ignored
+for collision. </li>
+  <li> One dynamic convex is restricted to 64 triangles. If a convex
+with more than 64 triangles is added to the fluid hardware scene, some
+triangles are ignored for collision. </li>
+  <li> The user can only provide one pre-cooked static mesh per fluid
+scene. All fluids added to the scene have to be compatible to the
+static mesh structure, i.e. have the same restParticlesPerMeter,
+kernelRadiusMultiplier, packetSizeMultiplier. </li>
+  <li> Issue: Max PPU Connections (15): If multiple fluids are created,
+the maximal possible number of PPU connections can be reached. One
+connection is used for the static mesh interface (per scene), and one
+for each fluid created. If the maximum of connections is reached, the
+fluid creation returns NULL.<br>
+Workaround: Don't create too many scenes and fluids. A fluid hardware
+scene uses one connection and every fluid uses another one. </li>
+  <li> Crashing call to createFluidHardwareTriangleMesh (): This call
+may crash if running out of PPU connections or PPU memory. <br>
+Workaround: Try to save on hardware rigid body scenes and hardware
+fluid scenes, as well as fluids. Try to reduce the maximal number of
+particles for the fluids. A main issue might be the cooked fluid static
+triangle mesh size. </li>
+  <li> Fluid memory consumption can be approximated as:<br>
+NxFluid: constant(~2.5Mb) + 11 * maxParticles * 64 Bytes<br>
+Triangle Mesh: Depends upon:-
+    <ul>
+      <li> Cooked Geometry </li>
+      <li> restParticlesPerMeter </li>
+      <li> kernelRadiusMultiplier </li>
+      <li> motionLimitMultiplier </li>
+      <li> packetSizeMultiplier </li>
+    </ul>
+Fluids can be allocated from all of the cards onboard memory. However
+when hardware rigid bodies are used they compete for memory. </li>
+  <li> Issue: Slowdown on creating and releasing fluids in a row: The
+reason for this issue has not been determined. This doesn't happen when
+releasing the scene too.<br>
+Workaround: Create fluids once and reuse them. Recreation may lead to
+fragmentation on the PPU memory, which is bad anyway. </li>
+</ol>
+<h3>Version</h3>
+2.3.2
+<hr>
+<pre>Old Release Notes / Changelog<br><br>2.3 - 2005.08.15<br>==================<br>- XBOX 360, PS3 support. (may require files separate from windows installer package)<br>- improved API reference documentation, doc comments.<br>- new static vs. dynamic continuous collision detection based on CCD Skeletons<br>- NxConvexShape introduced as independent class of NxTriangleMeshShape<br>- NxWheelShape introduced for better raycast car support<br>- added API to support selection between hardware and software implementation.<br>- NxMaterial::programData API replaced with strongly typed spring member.  Behavior is unchanged.<br>- debug rendering API simplified.  NxUserDebugRenderable removed, NxDebugRenderable interface class replaced by a simple struct.<br>- more strict parameter checking in several places<br>- removed raycast based CCD<br>- removed FPU manipulation API functions.<br>- intel assembly implementation of NxMath::sincos().<br>- changed implementation of NxMath::rand()<br>- replaced buggy TransformPlane() with correct NxPlane::transform() and NxPlane::inverseTransform().<br>- added NxQUat::fromAxisAngleFast() and NxQuat::invert().<br>- modified implementations for NxQUat::rot, invRot (), and ::transform().<br>- removed NX_MF_CONVEX and NX_COMPUTE_CONVEX from NxMeshFlags of NxSimpleTriangleMesh<br>- removed NX_NUM_SLEEP_FRAMES macro<br><br>2.2, 2.1.3 - 2005.03.21<br><br>==================<br><br>- new abstract core implementation for hardware compatibility<br>- lots of new features for the D6Joint.<br>- materials API completely rewritten<br>- new mesh cooking library.  Raw meshes must be preprocessed by the cooking library before being handed to the SDK.  This makes creation of meshes at runtime much faster.<br>- new character motion controller library<br>- new extensions library<br>- new external utils library<br>- Foundation SDK has been merged into the Physics SDK.  Specifically:<br>    - there is no more foundation.dll<br>    - the user must no longer link to foundation.lib<br>    - API documentation for the foundation SDK is now part of the Physics SDK API documentation.<br>    - the function exports of the foundation.dll are now exported from physics.dll<br>    - the member functions from foundation shape API classes (NxSphere, NxBox, etc.) that were calling foundation exports have been removed.  Here is a list with  the corresponding replacement export that must be called by the user instead:<br>    <br>    Old Member Function								Replacement Function<br><br>    NxSphere::NxSphere(unsigned nb_verts, const NxVec3* verts)			NxComputeSphere(sphere, nb_verts, verts);<br>    NxSphere::NxSphere(const NxSphere&amp; sphere0, const NxSphere&amp; sphere1)	NxMergeSpheres(sphere, sphere0, sphere1);<br>    NxSphere::compute(unsigned nb_verts, const NxVec3* verts)			NxComputeSphere(sphere, nb_verts, verts);<br>    NxSphere::fastCompute(unsigned nb_verts, const NxVec3* verts)		NxFastComputeSphere(sphere, nb_verts, verts);<br>    NxBox::containsPoint(const NxVec3&amp; p)					NxBoxContainsPoint(box, p);<br>    NxBox::create(const NxBounds3&amp; aabb, const NxMat34&amp; mat)			NxCreateBox(box, aabb, mat);<br>    NxBox::computePlanes(NxPlane* planes)					NxComputeBoxPlanes(box, planes);<br>    NxBox::computePoints(NxVec3* pts) const					NxComputeBoxPoints(box, pts);<br>    NxBox::computeVertexNormals(NxVec3* pts) const				NxComputeBoxVertexNormals(box, pts);<br>    NxBox::getEdges()								NxGetBoxEdges();<br>    NxBox::getEdgesAxes()							NxGetBoxEdgesAxes();<br>    NxBox::getTriangles()							NxGetBoxTriangles();<br>    NxBox::getLocalEdgeNormals()						NxGetBoxLocalEdgeNormals();<br>    NxBox::computeWorldEdgeNormal(NxU32 edge_index, NxVec3&amp; world_normal)	NxComputeBoxWorldEdgeNormal(box, edge_index, world_normal);<br>    NxBox::computeCapsule(NxCapsule&amp; capsule)					NxComputeCapsuleAroundBox(box, capsule);<br>    NxBox::isInside(const NxBox&amp; box)						NxIsBoxAInsideBoxB(box, box);<br>    NxRay::distanceSquared(const NxVec3&amp; point, NxF32* t = NULL)		NxComputeDistanceSquared(ray, point, t);<br>    NxRay::distance(const NxVec3&amp; point, NxF32* t = NULL)			sqrtf(NxComputeDistanceSquared(ray, point, t));<br>    NxSegment::squareDistance(const NxVec3&amp; point, NxF32* t=NULL)		NxComputeSquareDistance(segment, point, t);<br>    NxSegment::distance(const NxVec3&amp; point, NxF32* t =  NULL)			sqrtf(NxComputeSquareDistance(segment,point, t));<br>    NxCapsule::computeOBB(NxBox&amp;box)						NxComputeBoxAroundCapsule(capsule, box);<br>    NxCapsule::contains(const NxVec3&amp; pt)					NxComputeSquareDistance(capsule, point) &lt;= radius*radius;<br>    NxCapsule::contains(const NxSphere&amp; sphere)					NxF32 d = radius - sphere.radius; if(d&gt; =  0.0f) return NxComputeSquareDistance(capsule, sphere.center) &lt; = d*d; else return false;<br>    NxCapsule::contains(const NxCapsule&amp; capsule)				contains(NxSphere(capsule.p0, capsule.radius)) &amp;&amp; contains(NxSphere(capsule.p1, capsule.radius));<br><br>    Users will need to replace any calls to the old member function to the corresponding replacement function.    <br>- NxProfiler class deleted<br>- removed virtual NxProfilingZone * NxFoundationSDK::createProfilingZone(const char * x) = 0;<br>- NxArray no longer derives from NxAllocateable<br>- removed NxComputeVolumeIntegrals from API <br>- removed obsolete Foundation/include/NxBlank.h<br>- removed obsolete Foundation/include/NxList.h<br>- added NxActor::getMaxAngularVelocity ()<br>- added NxActor::get/setSolverIterationCount()<br>- added Physics/src/Physics.h: contains #define's from /src/Nxp.h which are just used from inide the SDK and should not be visible from outside<br>    all files in the /src including Nxp.h now include Physics.h<br>- removed is...() (e.g. isBox()) functions from NxShapes and NxJoints<br>    updated samples: added static castings for on NxShape and NxJoint to the appropriate type instead of calling the is function <br>    (e.g static_cast<nxboxshape
+ *="">(s) instead of s-&gt;isBox())<br>- added NxPlane    NxPlaneShape::getPlane() const;<br>- removed methods deprecated in 2.1.2<br>- added NxScene &amp;NxActor::getScene() const;<br>- added NxPhysicsSDK&amp; NxScene::getPhysicsSDK() const; <br>- added NxJoint&amp; NxActor::getScene() const; <br>- removed NX_INLINE  void NxFPU::NxSinCos(NxF32&amp; c, NxF32&amp; s, NxF32 f); <br>- added NX_INLINE static void NxMath::sinCos(NxF32 &amp; c, NxF32 &amp; s, NxF32 f); <br>- new NX_ACCELERATION force mode. <br>- new getScene() method for objects contained in scene. <br>- moved public enums from various classes to Nxp.h <br>- new shape flag NX_SF_POINT_CONTACT_FORCE and NxContactStreamIterator::getPointNormalForce() for returning per-point contact forces. <br>- improved validation in NxJointLimitSoftDesc::isValid() <br>- added function NxGetValue(NxCookingValue). <br>- motor for pulley joint <br>- added NxU32 NxScene::setThreadAffinityMask(NxU32 mask) <br>- replaced MIN_SEPARATION_FOR_PENALTY with NxShape::get/setSkinWidth(), and a global skin width parameter. <br>- new 128 bit mask based collision filtering (NxShape::getGroupsMask(), NxGroupsMask) <br>- new NxRaycastBit NX_RAYCAST_FACE_NORMAL for retrieving non-smoothed normals. <br>- new method NxCapsuleShape::getWorldCapsule() <br>- new method NxSphereShape::getWorldSphere() - new NxScene::getNbStaticShapes(), getNbDynamicShapes(). <br>- new triangleIDs for raycasting. <br>- removed support for pmap-less nonconvex nonheightfield mesh-mesh collision detection which was working poorly. <br>- removed obsolete parameter NX_MESH_MESH_LEVEL <br>- removed obsolete parameter NX_MESH_HINT_SPEED - removed NxActor::setDynamic(). Workaround: Create the initially static actor as a kinematic. Later turn off the kinematic state.<br><br>2.1.2  - 2004.11.08<br><br>==================<br><br>- more strict error checking<br>- multithreaded implementation - shape descriptors in NxActorDesc can now be allocated using a custom allocator.<br>- fluid API - NX_MESH_SMOOTH_SPHERE_COLLISIONS now disabled by default<br>- made mesh instances default to flat and not smooth sphere mode <br>- removed neccesarily reentrant method NxContactPair::setPairNotify(NxU32). Workaround: use any of the<br>several different ways to set actor flags.  <br>- actor group and actor group pair flags <br>- raycast car support, including: - New + improved 'multipatch' friction implementation. Fringe benefits are that rare contact situations with multiple contact normals or materials-per-triangle are now handled correctly. <br>- Capsule shapes now have a 'swept shape' mode that can be used to get raycast wheel behavior. This is enabled with the new NX_SWEPT_SHAPE flag in NxCapsuleShapeDesc.<br>- programData member in NxMaterial <br>- NX_MF_SPRING_CONTACT flag of NxMaterial, and the appropriate code to emit suspension-spring-like contacts when this is enabled. <br>- SampleRaycast car <br>- Reworked applyForce code: <br>- removed these methods of NxActor because they were causing user confusion (they were hoping that it did more than just read back what they have previously set...) setForce (), setTorque(), getForce(), getTorque()<br> The replacement for setForce/setTorque is calling addForce/addTorque just once (per frame).<br> The replacement of getForce ()/getTorque() is to keep track of the forces you add.<br>- removed the variables: NxBodyDesc::initialForce, NxBodyDesc::initialTorque. The replacement for initialForce, initialTorque is addForce/addTorque after creating the object.<br>- forces act over the entire time step, including all substeps<br>- NxMaterial's vectors are now in shape space not in actor space.<br>- added 3 new joint types: - Distance - Pulley - Fixed<br>- kinematics perform move over a whole step, not a substep<br>- added methods to add impulses and velocity changes <br>- exception handling in SDK off, was enabled by mistake in 2.1.1<br>- implemented more material combine modes<br>- fixed a debug rendering crash bug<br>- fixed debug rendering extra lines and zero length lines bugs<br>- NX_VISUALIZE_COLLISION_NORMALS now defaults to zero.<br>- raycasting based approximate continuous collision detection (enable using NX_CONTINUOUS_CD)<br>- faster raycasting, now also supports segment queries<br>- 'one shot' scene collision queries<br>- added access to internal mesh data<br><br>2.1.1 - 2004.07.15<br> ==================<br>- convex-mesh collision detection<br>- convex meshes viewer scene<br>- broken joints deletion process cleared up<br>- raycasting against compounds fix<br>- NX_NOTIFY_ON_START_TOUCH bug fixed<br>- bugs related to jointing bodies to kinematics fixed<br>- crash fixed when switching body from kinematic to dynamic<br>- implemented contact and friction force feedback in contact report<br>- joints to kinematic bodies now projected correctly<br>- removed reduced simulation mode for joints<br>- made it possible to set a different number of solver iterations per body<br>- added adaptive force parameter - improved solver: bodies don't pop out of other bodies  as fast as before<br>- improved solver: non-reduced mode joints work better<br>- fixed rotating spheres and longs solver problem<br>- fixed solver instability on very thin objects<br>- visual C++ .NET project files <br>- fixed several box-capsule contact generation bugs<br>- added more error messages regarding broken joints<br>- removed '#'-s in filenames of monster truck demos<br>- updated docs with more information on releasing actors and broken joints <br>- added angular projection for revolute joints<br>- fixed some bias scaling related bugs in friction and joint setup code<br>- fixed uninitialized variable bug in viewer<br>- removed obsolete files from foundation<br>- extended ODF files to permit specification of joint projection<br>- fixed joint projection bug <br>- fixed fat lines rendering bug in viewer <br>- fixed some doc bugs <br>- fixed bug regarding kinematic bodies going to sleep <br>- fixed sphere joint limit visualization bug<br>- visualization flag for shapes, bodies, and joints <br>- added docs on masses of trigger shapes <br>- added FAQ section to SDK docs<br>- simplified versioning mechanism <br>- renamed ShapeDesc::triggerFlags into ShapeDesc::flags. <br>- fixed bug regarding deletion of trigger shapes <br>- removed personal edition copy protection scheme<br>2.1 - 2004.05.15<br>=================<br>- Pulled  enums and typedefs out of classes. For example NxSomeClass::SOME_FLAG is now  NX_SOME_FLAG. <br>- NxCollisionGroup changed from an enum to an int. <br>- NxCollisionGroup 0 no longer has special meaning. Static-static collision detection is automatically  not performed. <br>- Actors, Shapes and Joints now have setName () getName() methods for debugging convenience. <br>- Removed support for dynamic meshes flag <br>- Optimized mesh inertia tensor computation <br>- Removed dynamic and default mesh classes from Foundation <br>- Replaced NxUserTriangleMesh with NxSimpleTriangleMesh, changed the way meshes are provided to the SDK - User's meshes are now copied, not referenced <br>- Materials are now stored in a global list and indexed by shapes, not actors. <br>- New material per triangles feature (for all mesh-primitive combinations) <br>- Added sleep velocity thresholds<br>- Changed SLEEP_LIN_VEL_SQUARED to SLEEP_DEFAULT_LIN_VEL_QUARED&amp; also angular <br>- Documented NX_MIN_SEPARATION_FOR_PENALTY in manual.<br>- Removed quaternion accessor functions and made elements public. <br>- Added NxMat34::getColumnMajor44(), NxMat34::setColumnMajor44() for ez 4x4 graphics matrix conversion. <br>- Added X get*() methods which return the matrix value instead of copying it to a destination address. void get*(X) methods are now  deprecated. <br>- Fixed bug with kinematicactors (were generating useless contacts) <br>- Fixed bug with raycasting against compounds (was returning internal compound shapes &amp; wasn't testing collision groups) <br>- RunFor() timing params are now scene properties. <br>- Asynchronous API added. runFor is deprecated. <br>- Removed NxUserContactReport::onPairCreated() due to performance concerns! Users must take care to      notice that their implementing code no longer does anything / never gets called!! We don't have a full replacement for this mechanism yet. For now NxScene::setActorPairFlags() is the  best bet. <br>- Added CoreDump mechanism. <br>- Maya exporter <br>- ConvexMesh-ConvexMesh Collision Detection <br>- Four new sample programs: SampleConvex, SampleGameLevel, SampleMaterials, SampleMeshMaterials <br>- Got rid of NxActor's localToGlobalSpace, globalToLocalSpace, localToGlobalSpaceDirection, globalToLocalSpaceDirection . because the implementation transformed between the wrong spaces. To get the old behavior,  use this code: NxMat34 cmpose; actor-&gt;setCMassGlobalPose(cmpose); worldPositon = cmpose * bodyPosition;<br>    //localToGlobalSpace bodyPositon = cmpose %    worldPosition;<br>    //globalToLocalSpace worldDirection = cmpose.M *    bodyDirection;<br>    <br>    //localToGlobalSpaceDirection bodyDirection = cmpose.M %    worldDirection;<br>    //globalToLocalSpaceDirection To get the proper    behavior, use this code: worldPositon = actor-&gt;getGlobalPoseReference() * bodyPosition;<br>    //localToGlobalSpace bodyPositon = actor-&gt;getGlobalPoseReference() %    worldPosition;<br>    //globalToLocalSpace worldDirection = actor-&gt;getGlobalPoseReference().M *    bodyDirection;<br>    <br>    //localToGlobalSpaceDirection bodyDirection = actor-&gt;getGlobalPoseReference().M %    worldDirection;<br>    //globalToLocalSpaceDirection <br>- Removed NxScene::enablePair, isEnabledPair. They are replaced by the  new get/setPairFlags (). The old behavior maps to  the new calls like so: /** <br>enables or disables collision detection between a pair of actors. Initially all pairs are enabled. Collision detection between two shapes a and b occurs if: NxPhysicsSDK::getGroupCollisionFlag(a-&gt;getGroup(), b-&gt;getGroup()) &amp;&amp; isEnabledPair(a-&gt;getActor(),b-&gt;getActor()) is true. Note: a and b may not refer to the same shape. */ NX_INLINE void enablePair (NxActor&amp;,<br>    NxActor&amp;,<br>    bool enable)                    { if (enable) setPairFlags(a,b, getPairFlags(a,b) | NX_IGNORE_PAIR); else<br>            setPairFlags(a,b, getPairFlags(a,b) &amp; ~NX_IGNORE_PAIR);<br>        }<br>            /** Queries the value set by the above call. */ NX_INLINE bool isEnabledPair(NxActor&amp;a, NxActor&amp;b) = 0 {<br>                    return getPairFlags(a,b) &amp; 1;<br>        }<br>2.03 - 2004.04.08<br>=================<br>-B<br><br>AM Feb 20 fixed: inertia tensors of meshes are wrong -B<br>AM Feb 22 fixed: syntax error in NxQuat template's slerp code -B<br>AM Feb 22 fixed: setGlobalAxis/setGlobalAnchor in NxJoint and NxJointDesc transform to body space, while the local frames are documented as being in actor space, as they should be -B<br>AM Feb 22 releasing/in any way changing static actor doesn't notify its joints (incl: making it dynamic) == &gt; workaround for now is to use NULL for static actors when jointing<br>-B AM Feb 22 fixed: Spellcheck api doc comments<br>-B AM Feb 22 new feature: kinematic motion of bodies<br>-B AM Mar 5 fixed: Several class doc comments are not immediately followed by the class declaration so doxygen ignores them.<br>-B AM Mar 02 fixed: Sleeping code is time step sensitive:  With small dt stuff goes to sleep unrealistically fast.<br>-B AM Mar 05 fixed: Deleting while in bbox vis mode causes a crash<br>-B PT Mar 20 Fixed crash when running empty simulation<br>-B AM Mar 20 Improved capsule contact generation for parallell case. <br>-B PT Mar 22 Additional parameter in NxActor::wakeUp<br><br>API Changes<br><br>- replaced bitfields with enum flags (impacts aniso friction and joints)<br><br>Other changes<br><br>- removed all templates except NxArray<br>- Added 3 new samples<br>- fixed various contact stream iterator problems<br>- updated docs with kinematic bodies infos<br>- added this change log<br><br>2.02 - 2004.02.19<br>=================<br>Collision SDK and RB SDK Merged<br>Substance SDK Discontinued<br>Most of the tech completely rewritten - hence no change list.<br><br><br>1.91 - 2003.07.07<br>=================<br>Rigid Body SDK: get hinge angle and velocity query, for both artic and lagrange .<br>Rigid Body SDK: fixed: penetration correction of lagrange jointed stuff is worse than articulated stuff<br>Rigid Body SDK: fixed: dense grid of contacts acts weird (Pierre showed that this is fixed but we have no good repro)<br>Rigid Body SDK: changed solver to no sub iters (5x faster), and correct bounce correction<br>    -- now big stacks go to sleep slower<br>    -- boxes don't bounce up straight anymore<br>Rigid Body SDK: removed obsolete rigid sdk params<br>Rigid Body SDK: very redundant contacts are working.<br>Rigid Body SDK: stuff can be created in sleeping mode, even if jointed.<br>Rigid Body SDK: fixed: Articulations don't fall asleep<br>Collision SDK: heightfield mode for meshes<br>Foundation SDK: fixed inplace matrix transpose bug<br>Collision SDK: test cave configuration for terrains<br>Collision SDK: upgrated to opcode 1.3<br>Collision SDK: fixed a bug in mesh-mesh that didn't seem to be having any bad effects.  <br>Foundation SDK: all stl gotten rid of<br>Foundation SDK: array class with decent memory management<br>Viewer: vs7 build of viewer<br>Tools: flexporter was exporting spheres wrong (made them off-center with a nonzero offset)<br>Rigid Body SDK: fixed: the asymetry of the fixed and prismatic joint leads to breakage if the bodies are not ordered right (it creates a different response.)    Collision SDK: capsules integrated (Simon)<br>Rigid Body SDK: new contact solver combines Pierre's work<br>Rigid Body SDK: created fixed joint<br>Demo: gears demo<br>Demo: bride demo<br>Rigid Body SDK: added bias for limits.<br>Collision SDK: fixed a bug in sphere-sphere penetration computation <br>Foundation SDK: Spelling Error in Nx.h: "usually becase you have passed"<br>Rigid Body SDK: Spelling Error in NxRigidBodySDK.h: "byt": Larger values may fix exploding systems byt introduces constraint error.<br>Collision SDK: fixed incorrect computation of box-sphere penetration in the special case of the sphere center being embedded in the box.<br>Rigid Body SDK: fixed a bug regarding the deletion of effectors not removed from scene<br>Rigid Body SDK: fixed a bug regarding removal of joints, bodies, and effectors from one of multiple scenes, where they were not added<br>Rigid Body SDK: fixed a bug regarding the duplicate addition of effectors to a scene<br>Rigid Body SDK: fixed a bug with non-invertable response of fixed articulation<br>Viewer: fixed non pow2 texture widths are loaded badly (jpg format)<br>Collision SDK: Fixed a bug in mesh vs. line<br>Collision SDK: Fixed a bug in heightfield vs. box<br>Collision SDK: Fixed a bug in mesh vs. plane<br>Rigid Body SDK: fixed explosion on constraining missing featherstone dofs.<br>1.9<br>All SDKs: Codewarrior compiler compatibility -- renamed overloaded method names<br>All SDKs: Professional Edition DLLs<br>Rigid Body SDK: Fixed a crash bug related to deleting certain joints or bodies<br>Rigid Body SDK: Completely rewritten solver<br>Foundation SDK: changed memory allocation in foundation, + other misc stuff so other SDKs don't have to link with foundation<br><br>1.8 - 2003.06.01<br>=================<br>Rigid Body SDK: gravity applied if group is not sleeping<br>Rigid Body SDK: normal forces have different magnitudes, not real normal forces, just an estimate (this is a problem)<br>Rigid Body SDK: frict scaling params removed.<br>Rigid Body SDK: frict coeffs changed, new ranges<br>Rigid Body SDK: FAST linear time contact solver has good friction model!<br>Rigid Body SDK: FAST linear time contact solver!<br>Rigid Body SDK: add API method to purge limit planes.<br>Rigid Body SDK: applyImpulses () should checks f[i], and early outs if it is zero.<br>Collision SDK: sweep and prune broad phase, new NxBroadPhase<br>Collision SDK: caching of near phase results when there was no movement.<br>Collision SDK: redone exact mesh-box<br>Collision SDK: redone exact mesh-sphere<br>Collision SDK: fixed iterators in scene and shapeSet so that calling getNext () after hasMore() returns zero doesn't result in access violation. Actually, now hasMore () is redundant.<br>Viewer: changed default friction and restitution coeffs in viewer.<br>Viewer: don't pose change notify unless neccesary<br>Viewer: punching of bodies<br>Viewer: better mesh visualization<br><br>1.6 - 2003.02.21<br>=================<br>Viewer: delete bodies in viewer demos by right-dragging a body and then pressing delete.<br>Viewer: monster truck can now be driven even if some wheels have been deleted.<br>Viewer: tweaked monster truck car controller for torque based driving.<br>Viewer: Granny support for articulated characters ('ragdolls') (only available for Rad Game Tools Granny licensees)<br>Viewer: inertia tensor can be specified explicitly in the body block of an ods file<br>Viewer: Made a real collision veto joint in viewer<br>Collision SDK: fixed bug in mesh-box colldet (thanks to Jason Zisk of nFusion)<br>Collision SDK: mesh data structure can be visualized by appropriate setting SDK param.<br>Collision SDK: removed STL from hashGridSpace + optimized it a bit<br>Collision SDK: new contact groups methods, removed corresp. group methods from hashGridSpace.<br>Collision SDK: new pairwise contact disabling methods<br>Rigid Body SDK: hugely improved performance of hinge and prismatic joints, see the monster truck demo for an example.<br>Rigid Body SDK: NxBody::createClone()<br>Rigid Body SDK: customizeable damping in NxJoint, works only for chains of hinge and prismatic joints.<br>Rigid Body SDK: fixed defect in joint limit plane iteration.<br>Rigid Body SDK: fixed implementation bug of bool Scene::hasMoreJoints().<br>Rigid Body SDK: joint and body scene removal / addition / deletion error checking.<br>Rigid Body SDK: setVelocity / momentum only wakes bodies if the set vel is high.<br>More orderly shortcuts in startmenu.<br>More demos.<br>New licensing scheme (registry stuff goes to HKEY_CURRENT_USER, we don't mail reg files anymore.)<br>No more double precision libs shipped in personal edition (ask if you still want them)<br>updated docs<br><br>1.51 - 2003.01.09<br>=================<br>Fixed vsync slowdown problem in viewer<br>Frame rate limited to physics rate (usually 50 Hz)<br>single precision floating point DLLs for collision SDK and RB SDK(F32 suffix)<br>doc bug fixes<br><br>1.5<br>=================<br>Substance SDK<br>userErrorStream has new reportError member<br>Foundation SDK as DLL<br>substance SDK support in viewer<br>breaking joints was broken in 1.45, fixed.<br>mesh-box collision detection implemented<br>matrix ops of the form Mx::op(A,B) first write to a temp object in case A.op(A,B) is called.<br>also same for vector cross product.<br>fixed bug regarding edge-edge colldet penetration depth compute.<br>improved mesh-sphere<br>added fracturable vase and road blocks to monster truck demo<br><br>1.45 - 2002.12.02<br>=================<br>updated simple demos<br>added colldet block and sim params block to demo scripts.<br>obstacle support removed<br>mass = 0 bodies can have material properties<br>getBodies method in NxJoint<br>fixed hashspace problem<br>solver params settable from scripts<br>fixed box-box bug<br>stuff stuck in air now wake up<br>thin rod spin limiting by max angular velocity<br>joint support improved for Juice<br><br>1.44 - 2002.10.30<br>=================<br>mesh-mesh collision detection added<br>mesh-sphere collision detection added<br>mesh-line collision detection added<br>mesh-plane collision detection added<br>internal parameters exposed<br>doc bugs fixed<br>full screen mode put back<br>box-sphere collision penetration depth fix<br>isAttachedByJoint typo<br>NxSphere, etc. can have release() called on it directly.<br><br>1.431<br>=================<br>mass adaptive drag force strength in viewer<br><br>1.43 - 2002.10.15<br>=================<br>additions and fixes in viewer and rigid body documentation (thanks to Nate and Pierre)<br>memory leak fix in viewer (thanks to Mete)<br>domino demo failure<br>included Pierre's new toboggan demo<br><br>1.42 - 2002.10.08<br>=================<br>fixed installer problem (DLL placement)<br><br>1.41 - 2002.10.03<br>=================<br>memory manager issues<br>readme for max exporter<br>shortcuts to viewer doc and projects<br>readme file correction<br><br>1.4 - 2002.08.25 <br>================<br>first public SDK release<br><br><br>==EOF==</nxboxshape></pre>
+<hr style="width: 100%; height: 2px;"> <a> <br>
+</a>Copyright &copy 2006 AGEIA Technologies Inc, Suite 118, 82 Pioneer Way,
+Mountain View, CA 94041 U.S.A. All rights reserved. www.ageia.com
+</body>
+</html>

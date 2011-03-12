@@ -1,0 +1,23 @@
+#===============================================
+# Changing an SDL record? Be sure to leave the 
+# legacy record intact and make changes in
+# a new copy of the record. - eap
+#===============================================
+
+#
+# State Description Language for 
+# physical changes to an object
+#
+
+STATEDESC physical
+{
+	VERSION 2
+	VAR POINT3 	position[1] DEFAULT=(0,0,0)
+	VAR QUATERNION orientation[1] DEFAULT=(0,0,0,1)
+	VAR VECTOR3 linear[1] DEFAULT=(0,0,0)
+	VAR VECTOR3 angular[1] DEFAULT=(0,0,0)
+	VAR PLKEY subworld[1]
+
+}
+
+

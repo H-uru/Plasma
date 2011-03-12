@@ -1,0 +1,682 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_LIGHT_PARAM DIALOG DISCARDABLE  0, 0, 108, 60
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Diffuse:",IDC_LIGHT_DIFFUSE,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,36,5,38,10
+    CONTROL         "User1",IDC_LIGHT_COLOR,"ColorSwatch",WS_GROUP,80,4,22,
+                    12
+    LTEXT           "Multiplier:",IDC_STATIC,27,39,30,8
+    CONTROL         "",IDC_LMULT,"CustEdit",WS_GROUP | WS_TABSTOP,59,39,26,
+                    10
+    CONTROL         "",IDC_LMULTSPINNER,"SpinnerControl",WS_GROUP,86,39,7,10
+    CONTROL         "Specular:",IDC_AFFECT_SPECULAR,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,36,20,42,10
+    CONTROL         "User1",IDC_LIGHT_COLOR_SPECULAR,"ColorSwatch",WS_GROUP,
+                    80,19,22,12
+    CONTROL         "On",IDC_LIGHT_ON,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
+                    WS_TABSTOP,7,12,24,10
+    CONTROL         "STUB-Ambient Only",IDC_AMBIENT_ONLY_STUB,"Button",
+                    BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,0,50,32,9
+END
+
+IDD_SPOTLIGHT DIALOG DISCARDABLE  0, 0, 108, 120
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Light Cone:",IDC_STATIC,2,1,103,75,WS_GROUP
+    CONTROL         "Show Cone ",IDC_SHOW_CONE,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,5,11,50,10
+    CONTROL         "Overshoot",IDC_OVERSHOOT,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,57,11,45,10
+    RTEXT           "Hotspot:",ID_STATIC,12,25,33,8
+    CONTROL         "",IDC_LHOTSIZE,"CustEdit",WS_GROUP | WS_TABSTOP,49,24,
+                    36,10
+    CONTROL         "",IDC_LHOTSIZESPINNER,"SpinnerControl",WS_GROUP,86,24,7,
+                    10
+    RTEXT           "Falloff:",IDC_STATIC,12,36,33,8
+    CONTROL         "",IDC_LFALLOFF,"CustEdit",WS_GROUP | WS_TABSTOP,49,35,
+                    36,10
+    CONTROL         "",IDC_LFALLOFFSPINNER,"SpinnerControl",WS_GROUP,86,35,7,
+                    10
+    CONTROL         "Circle",IDC_CIRCLE_LIGHT,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,11,48,30,10
+    CONTROL         "Rectangle",IDC_RECT_LIGHT,"Button",BS_AUTORADIOBUTTON,
+                    49,48,45,10
+    RTEXT           "Aspect:",IDC_STATIC,4,61,24,8
+    CONTROL         "",IDC_LASPECT,"CustEdit",WS_GROUP | WS_TABSTOP,29,61,23,
+                    10
+    CONTROL         "",IDC_LASPECT_SPIN,"SpinnerControl",WS_GROUP,53,61,7,10
+    PUSHBUTTON      "Bitmap Fit...",IDC_BITMAP_FIT,62,60,40,12,WS_GROUP
+    GROUPBOX        "Projector Map:",IDC_STATIC,2,78,103,26,WS_GROUP
+    CONTROL         "",IDC_PROJECTOR,"Button",BS_AUTOCHECKBOX | BS_RIGHT | 
+                    WS_GROUP | WS_TABSTOP,9,90,9,8
+    CONTROL         "Custom1",IDC_PROJ_MAPNAME,"CustButton",WS_GROUP | 
+                    WS_TABSTOP,21,88,67,12
+    LTEXT           "Target Distance:",IDC_STATIC,6,108,55,10
+    RTEXT           "XXXXX",IDC_TARG_DISTANCE,65,108,36,8
+END
+
+IDD_FREE_SPOTLIGHT DIALOG DISCARDABLE  0, 0, 108, 178
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Light Cone:",IDC_STATIC,2,2,103,39,WS_GROUP
+    CONTROL         "Show Cone ",IDC_SHOW_CONE,"Button",BS_AUTOCHECKBOX | 
+                    NOT WS_VISIBLE | WS_GROUP | WS_TABSTOP,6,13,14,10
+    RTEXT           "Hotspot:",IDC_STATIC,12,14,33,8
+    CONTROL         "",IDC_LHOTSIZE,"CustEdit",WS_GROUP | WS_TABSTOP,49,14,
+                    36,10
+    CONTROL         "",IDC_LHOTSIZESPINNER,"SpinnerControl",WS_GROUP,86,14,7,
+                    10
+    RTEXT           "Falloff:",IDC_STATIC,12,25,33,8
+    CONTROL         "",IDC_LFALLOFF,"CustEdit",WS_GROUP | WS_TABSTOP,49,25,
+                    36,10
+    CONTROL         "",IDC_LFALLOFFSPINNER,"SpinnerControl",WS_GROUP,86,25,7,
+                    10
+    GROUPBOX        "Projector Map:",IDC_STATIC,1,42,104,132,WS_GROUP
+    CONTROL         "Map:",IDC_PROJECTOR,"Button",BS_AUTOCHECKBOX | BS_RIGHT | 
+                    WS_GROUP | WS_TABSTOP,5,52,28,10
+    CONTROL         "Custom1",IDC_PROJ_MAPNAME,"CustButton",WS_GROUP | 
+                    WS_TABSTOP,35,52,68,11
+    CONTROL         "Illuminate",IDC_ILLUMINATE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,11,76,48,10
+    GROUPBOX        "Mode",IDC_STATIC,5,66,92,58
+    CONTROL         "Add",IDC_ADD,"Button",BS_AUTORADIOBUTTON | WS_GROUP | 
+                    WS_TABSTOP,11,87,48,10
+    CONTROL         "Multiply",IDC_MULT,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,11,98,48,10
+    CONTROL         "Brighten",IDC_MADD,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,11,109,48,10
+    GROUPBOX        "Texture",IDC_STATIC,5,126,91,40
+    CONTROL         "Don't Compress",IDC_PROJ_NOCOMPRESS,"Button",
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_GROUP | WS_TABSTOP,11,138,
+                    67,10
+    CONTROL         "Don't Mip",IDC_PROJ_NOMIP,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFT | WS_GROUP | WS_TABSTOP,11,150,67,10
+END
+
+IDD_OMNI DIALOG DISCARDABLE  0, 0, 108, 20
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Map:",IDC_PROJECTOR,"Button",BS_AUTOCHECKBOX | BS_RIGHT | 
+                    WS_GROUP | WS_TABSTOP,4,5,27,10
+    CONTROL         "Custom1",IDC_PROJ_MAPNAME,"CustButton",WS_GROUP | 
+                    WS_TABSTOP,32,4,73,12
+END
+
+IDD_LIGHT_ATTEN DIALOG DISCARDABLE  0, 0, 108, 72
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "                              ",IDC_STATIC,4,2,100,65,
+                    WS_GROUP
+    CONTROL         "Use Attenuation",IDC_LIGHT_ATTENBOOL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,11,2,67,10
+    LTEXT           "Max Distance:",IDC_STATIC,7,16,46,8
+    CONTROL         "",IDC_LIGHT_ATTEN,"CustEdit",WS_GROUP | WS_TABSTOP,55,
+                    15,36,10
+    CONTROL         "",IDC_LIGHT_ATTEN_SPIN,"SpinnerControl",WS_GROUP,92,15,
+                    7,10
+    CONTROL         "Linear Falloff",IDC_LIGHT_ATTEN_LINEAR_RADIO,"Button",
+                    BS_AUTORADIOBUTTON,11,30,56,10
+    CONTROL         "Quadratic Falloff",IDC_LIGHT_ATTEN_QUAD_RADIO,"Button",
+                    BS_AUTORADIOBUTTON,11,41,67,10
+    CONTROL         "No Falloff",IDC_LIGHT_ATTEN_NONE_RADIO,"Button",
+                    BS_AUTORADIOBUTTON,11,52,46,10
+END
+
+IDD_LIGHT_SHADOW3 DIALOG DISCARDABLE  0, 0, 108, 212
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Use Global Settings",IDC_GLOBAL_SET,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,5,76,10
+    GROUPBOX        "Shadow Type:",IDC_STATIC,1,17,105,30,WS_GROUP
+    CONTROL         "Shadow Maps",IDC_SHADOW_MAPS,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,6,26,72,10
+    CONTROL         "Ray-Traced Shadows",IDC_RAY_TRACED_SHADOWS,"Button",
+                    BS_AUTORADIOBUTTON,6,35,87,10
+    GROUPBOX        "Shadow Maps:",IDC_STATIC,1,51,105,42,WS_GROUP
+    LTEXT           "Bias",IDC_STATIC,9,60,14,8
+    CONTROL         "",IDC_MAP_BIAS,"CustEdit",WS_GROUP | WS_TABSTOP,4,69,21,
+                    10
+    CONTROL         "",IDC_MAP_BIAS_SPIN,"SpinnerControl",WS_GROUP,25,69,8,
+                    10
+    LTEXT           "Size",IDC_STATIC,43,60,15,8
+    CONTROL         "",IDC_MAP_SIZE,"CustEdit",WS_GROUP | WS_TABSTOP,35,69,
+                    26,10
+    CONTROL         "",IDC_MAP_SIZE_SPIN,"SpinnerControl",WS_GROUP,61,69,8,
+                    10
+    LTEXT           "Smp Range",IDC_STATIC,67,60,38,8
+    CONTROL         "",IDC_MAP_RANGE,"CustEdit",WS_GROUP | WS_TABSTOP,73,69,
+                    21,10
+    CONTROL         "",IDC_MAP_RANGE_SPIN,"SpinnerControl",WS_GROUP,94,69,8,
+                    10
+    CONTROL         "Absolute Map Bias",IDC_ABS_MAP_BIAS,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,81,72,10
+    GROUPBOX        "Ray Traced Shadows:",IDC_STATIC,1,97,105,24,WS_GROUP
+    RTEXT           "Bias:",IDC_STATIC,23,109,20,8
+    CONTROL         "",IDC_RT_BIAS,"CustEdit",WS_GROUP | WS_TABSTOP,47,108,
+                    21,10
+    CONTROL         "",IDC_RT_BIAS_SPIN,"SpinnerControl",WS_GROUP,68,108,7,
+                    10
+    GROUPBOX        "Shadow Color:",IDC_STATIC,1,125,105,41,WS_GROUP
+    CONTROL         "User1",IDC_SHADOW_COLOR,"ColorSwatch",WS_GROUP,5,140,25,
+                    12
+    RTEXT           "Map:",IDC_STATIC,56,131,18,8
+    CONTROL         "Custom1",IDC_SHADPROJ_MAPNAME,"CustButton",WS_GROUP | 
+                    WS_TABSTOP,32,140,69,12
+    CONTROL         "Light Affects Shadow Color",IDC_LT_EFFECT_SHADCOL,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,4,154,
+                    99,10
+    GROUPBOX        "Atmospheric Shadowing:",IDC_STATIC,1,171,105,38,
+                    WS_GROUP
+    CONTROL         "On",IDC_ATMOS_SHADOWS,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,7,184,27,10
+    LTEXT           "Opacity:",IDC_STATIC,40,184,27,8
+    CONTROL         "",IDC_ATM_OPACITY,"CustEdit",WS_GROUP | WS_TABSTOP,68,
+                    183,27,10
+    CONTROL         "",IDC_ATM_OPACITY_SPIN,"SpinnerControl",WS_GROUP,95,183,
+                    8,10
+    LTEXT           "Color Amount:",IDC_STATIC,23,196,45,8
+    CONTROL         "",IDC_ATM_COLAMT,"CustEdit",WS_GROUP | WS_TABSTOP,68,
+                    195,27,10
+    CONTROL         "",IDC_ATM_COLAMT_SPIN,"SpinnerControl",WS_GROUP,95,195,
+                    8,10
+END
+
+IDD_LIGHT_SHADOW2 DIALOG DISCARDABLE  0, 0, 108, 146
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Object Shadows:",IDC_STATIC,1,1,105,97,WS_GROUP
+    CONTROL         "On",IDC_OBJECT_SHADOWS,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,5,11,22,10
+    COMBOBOX        IDC_SHADOW_TYPE,9,22,91,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_GROUP | WS_TABSTOP
+    CONTROL         "Use Global Settings",IDC_GLOBAL_SET,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,36,78,10
+    RTEXT           "Color:",IDC_STATIC,4,55,19,8
+    CONTROL         "User1",IDC_SHADOW_COLOR,"ColorSwatch",WS_GROUP,24,53,15,
+                    12
+    LTEXT           "Dens.",IDC_STATIC,44,55,20,8
+    CONTROL         "",IDC_SHAD_MULT,"CustEdit",WS_GROUP | WS_TABSTOP,66,54,
+                    27,10
+    CONTROL         "",IDC_SHAD_MULT_SPIN,"SpinnerControl",WS_GROUP,94,54,7,
+                    10
+    CONTROL         "Map:",IDC_USE_SHAD_COLMAP,"Button",BS_AUTOCHECKBOX | 
+                    BS_RIGHT | WS_GROUP | WS_TABSTOP,5,70,30,10
+    CONTROL         "Custom1",IDC_SHADPROJ_MAPNAME,"CustButton",WS_GROUP | 
+                    WS_TABSTOP,35,69,66,12
+    CONTROL         "Light Affects Shadow Color",IDC_LT_EFFECT_SHADCOL,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,85,98,
+                    10
+    GROUPBOX        "Atmosphere Shadows:",IDC_STATIC,1,103,105,40,WS_GROUP
+    CONTROL         "On",IDC_ATMOS_SHADOWS,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,6,113,22,10
+    LTEXT           "Opacity:",IDC_STATIC,39,117,27,8
+    CONTROL         "",IDC_ATM_OPACITY,"CustEdit",WS_GROUP | WS_TABSTOP,67,
+                    116,27,10
+    CONTROL         "",IDC_ATM_OPACITY_SPIN,"SpinnerControl",WS_GROUP,94,116,
+                    8,10
+    LTEXT           "Color Amount:",IDC_STATIC,22,129,45,8
+    CONTROL         "",IDC_ATM_COLAMT,"CustEdit",WS_GROUP | WS_TABSTOP,67,
+                    128,27,10
+    CONTROL         "",IDC_ATM_COLAMT_SPIN,"SpinnerControl",WS_GROUP,94,128,
+                    8,10
+END
+
+IDD_LIGHT_SHADOW1 DIALOG DISCARDABLE  0, 0, 108, 142
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Object Shadows:",IDC_STATIC,1,1,105,94,WS_GROUP
+    CONTROL         "On",IDC_OBJECT_SHADOWS,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,8,12,22,10
+    COMBOBOX        IDC_SHADOW_TYPE,34,12,69,64,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Use Global Settings",IDC_GLOBAL_SET,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,26,76,10
+    LTEXT           "Shadow Density:",IDC_STATIC,6,46,54,8
+    CONTROL         "",IDC_SHAD_MULT,"CustEdit",WS_GROUP | WS_TABSTOP,65,45,
+                    27,10
+    CONTROL         "",IDC_SHAD_MULT_SPIN,"SpinnerControl",WS_GROUP,93,45,7,
+                    10
+    RTEXT           "Color:",IDC_STATIC,5,56,22,8
+    RTEXT           "Map:",IDC_STATIC,49,56,18,8
+    CONTROL         "User1",IDC_SHADOW_COLOR,"ColorSwatch",WS_GROUP,5,65,22,
+                    12
+    CONTROL         "Custom1",IDC_SHADPROJ_MAPNAME,"CustButton",WS_GROUP | 
+                    WS_TABSTOP,28,65,61,12
+    CONTROL         "",IDC_USE_SHAD_COLMAP,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,92,66,9,10
+    CONTROL         "Light Affects Shadow Color",IDC_LT_EFFECT_SHADCOL,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,81,99,
+                    10
+    GROUPBOX        "Atmospheric Shadows:",IDC_STATIC,1,99,105,40,WS_GROUP
+    CONTROL         "On",IDC_ATMOS_SHADOWS,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,8,109,22,10
+    LTEXT           "Opacity:",IDC_STATIC,39,113,27,8
+    CONTROL         "",IDC_ATM_OPACITY,"CustEdit",WS_GROUP | WS_TABSTOP,67,
+                    112,27,10
+    CONTROL         "",IDC_ATM_OPACITY_SPIN,"SpinnerControl",WS_GROUP,94,112,
+                    8,10
+    LTEXT           "Color Amount:",IDC_STATIC,22,125,45,8
+    CONTROL         "",IDC_ATM_COLAMT,"CustEdit",WS_GROUP | WS_TABSTOP,67,
+                    124,27,10
+    CONTROL         "",IDC_ATM_COLAMT_SPIN,"SpinnerControl",WS_GROUP,94,124,
+                    8,10
+END
+
+IDD_SHADOWMAP_PARAMS DIALOG DISCARDABLE  0, 0, 108, 48
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Bias:",IDC_STATIC,3,5,17,8
+    CONTROL         "",IDC_SHADBIAS,"CustEdit",WS_GROUP | WS_TABSTOP,22,4,21,
+                    10
+    CONTROL         "",IDC_SHADBIAS_SPIN,"SpinnerControl",WS_GROUP,44,4,7,10
+    RTEXT           "Size:",IDC_STATIC,53,5,17,8
+    CONTROL         "",IDC_SHADSIZE,"CustEdit",WS_GROUP | WS_TABSTOP,73,4,21,
+                    10
+    CONTROL         "",IDC_SHADSIZE_SPIN,"SpinnerControl",WS_GROUP,95,4,7,10
+    RTEXT           "Sample Range:",IDC_STATIC,5,20,53,8
+    CONTROL         "",IDC_SHADSAMPLE_RANGE,"CustEdit",WS_GROUP | WS_TABSTOP,
+                    61,19,21,10
+    CONTROL         "",IDC_SHADSAMPLE_RANGE_SPIN,"SpinnerControl",WS_GROUP,
+                    83,19,7,10
+    CONTROL         "Absolute Map Bias",IDC_ABSOLUTE_MAPBIAS,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,10,34,81,10
+END
+
+IDD_PROJ_DIRECTIONAL DIALOG DISCARDABLE  0, 0, 108, 179
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Width:",ID_STATIC,12,31,22,8
+    CONTROL         "",IDC_WIDTH,"CustEdit",WS_GROUP | WS_TABSTOP,37,30,36,
+                    10
+    CONTROL         "",IDC_WIDTHSPINNER,"SpinnerControl",WS_GROUP,74,30,7,10
+    LTEXT           "Height:",IDC_STATIC,10,42,24,8
+    CONTROL         "",IDC_HEIGHT,"CustEdit",WS_GROUP | WS_TABSTOP,37,42,36,
+                    10
+    CONTROL         "",IDC_HEIGHTSPINNER,"SpinnerControl",WS_GROUP,74,42,7,
+                    10
+    CONTROL         "Custom1",IDC_PROJ_MAPNAME,"CustButton",WS_TABSTOP,9,13,
+                    88,12
+    LTEXT           "Range:",IDC_STATIC,10,54,24,8
+    CONTROL         "",IDC_DEPTH,"CustEdit",WS_GROUP | WS_TABSTOP,37,54,36,
+                    10
+    CONTROL         "",IDC_DEPTHSPINNER,"SpinnerControl",WS_GROUP,74,54,7,10
+    LTEXT           "Projector Map:",IDC_STATIC,9,4,47,8
+    CONTROL         "Illuminate",IDC_ILLUMINATE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,11,79,48,10
+    GROUPBOX        "Mode",IDC_STATIC,5,69,92,58
+    CONTROL         "Add",IDC_ADD,"Button",BS_AUTORADIOBUTTON | WS_GROUP | 
+                    WS_TABSTOP,11,90,48,10
+    CONTROL         "Multiply",IDC_MULT,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,11,101,48,10
+    CONTROL         "Brighten",IDC_MADD,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,11,112,48,10
+    GROUPBOX        "Texture",IDC_STATIC,5,130,91,40
+    CONTROL         "Don't Compress",IDC_PROJ_NOCOMPRESS,"Button",
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_GROUP | WS_TABSTOP,11,142,
+                    67,10
+    CONTROL         "Don't Mip",IDC_PROJ_NOMIP,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFT | WS_GROUP | WS_TABSTOP,11,154,67,10
+END
+
+IDD_LIGHT_ANIM DIALOG DISCARDABLE  0, 0, 108, 74
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_NAMES,27,7,76,52,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Auto-start",IDC_AUTO_START,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,25,46,10
+    CONTROL         "Loop",IDC_LOOP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,
+                    39,32,10
+    COMBOBOX        IDC_LOOPS,38,37,65,54,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Refresh",IDC_REFRESH,3,55,35,15
+    LTEXT           "Name:",IDC_STATIC,4,9,22,8
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 4,0,0,0
+ PRODUCTVERSION 4,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "TECH: dan.silva (of AutoDesk) and allred, ryan (of CyanWorlds...)\0"
+            VALUE "CompanyName", "CyanWorlds.com\0"
+            VALUE "FileDescription", "plRealTimeLights plugin\0"
+            VALUE "FileVersion", "4.0.0.0\0"
+            VALUE "InternalName", "plRTLights\0"
+            VALUE "LegalCopyright", "Copyright © 2001 CyanWorlds.com\0"
+            VALUE "LegalTrademarks", "3D Studio MAX, Biped, Character Studio, Heidi, Kinetix and Physique are registered trademarks and 3ds max, combustion, Discreet, DWG Unplugged, DXF, FLI and FLC are trademarks of Autodesk, Inc.\0"
+            VALUE "OriginalFilename", "plRealTimeLights.dlo\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "3ds max\0"
+            VALUE "ProductVersion", "4.0.0.0\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_SHADOWMAP_PARAMS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 7
+    END
+
+    IDD_LIGHT_ANIM, DIALOG
+    BEGIN
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 69
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DB_TARGET           "Target"
+    IDS_DB_DOT_TARGET       ".Target"
+    IDS_DB_OMNI             "RT Omni"
+    IDS_DB_TARGET_SPOT      "Target Spot"
+    IDS_DB_DIRECTIONAL      "RT Directional"
+    IDS_DB_FREE_SPOT        "RT Spot"
+    IDS_DB_NONE             "None"
+    IDS_DB_PROJDIR          "RT Proj Direct"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DB_OMNI_CLASS       "Plasma Omni"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DB_COLOR            "Color"
+    IDS_DB_ASPECT_RATIO     "Aspect Ratio"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DB_MULTIPLIER       "Multiplier"
+    IDS_DB_ATTENSTART       "Attenuation Far Start"
+    IDS_DB_ATTENEND         "Attenuation Far End"
+    IDS_DB_HOTSIZE          "Hotspot"
+    IDS_DB_FALLSIZE         "Falloff"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DB_TDIST            "Target Distance"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_EXCLUDE__        "Exclude.."
+    IDS_DS_INCLUDE__        "Include.."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_LIGHTCOL         "Diffuse Color"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_TDIRECTIONAL     "Target Direct"
+    IDS_DS_TDIRECT          "Direct"
+    IDS_DS_TDIR_LIGHT       "Target Directional Light"
+    IDS_DS_ATTENSTARTNEAR   "Attenuation Near Start"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DB_GENERAL_PARAMS   "General Parameters"
+    IDS_DB_DIR_PARAMS       "Directional Parameters"
+    IDS_DB_SPOT_PARAMS      "Spotlight Parameters"
+    IDS_DB_SHADOW_PARAMS    "Shadow Parameters"
+    IDS_DB_SELECT_TO_FIT    " Select Image File to Fit "
+    IDS_DB_OMNI_LIGHT       "Omni Light"
+    IDS_DB_DIR_LIGHT        "Free Directional Light"
+    IDS_DB_DIRECT           "FDirect"
+    IDS_DB_FSPOT            "Fspot"
+    IDS_DB_SPOT             "Spot"
+    IDS_DB_LIGHT            "RTLight"
+    IDS_DB_TAPE             "Tape"
+    IDS_DB_GENERAL          "General"
+    IDS_DB_TARGET_SPOT_CLASS "Target Spot"
+    IDS_DB_TAPE_CLASS       "Tape"
+    IDS_LIGHT_ANIM          "Animation Parameters"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_ATTENENDNEAR     "Attenuation Near End"
+    IDS_PROJ_PARAMS         "Projection Parameters"
+    IDS_DS_CONTRAST         "Contrast"
+    IDS_PROJWIDTH           "Projection Width"
+    IDS_PROJHEIGHT          "Projection Height"
+    IDS_PROJDEPTH           "Projection Depth"
+    IDS_DS_DIFFSOFT         "Diffuse Soften"
+    IDS_DS_SHADCOL          "Shadow Color"
+    IDS_DS_SETTYPE          "Set Type"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DB_DIRECTIONAL_CLASS "RT Directional"
+    IDS_DS_TDIRECTIONAL_CLASS "Target Direct"
+    IDS_DB_FREE_SPOT_CLASS  "RT Spot"
+    IDS_DB_SLAVECONTROL_CLASS "SlaveControl"
+    IDS_DB_TARGET_CLASS     "Target"
+    IDS_DB_PROJDIR_CLASS    "RT Projected Direct"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_AP_SLICEON          "Slice On"
+    IDS_AP_SLICETO          "Slice To"
+    IDS_AP_SLICEFROM        "Slice From"
+    IDS_DECAY_NONE          "None"
+    IDS_DECAY_INVERSE       "Inverse"
+    IDS_DECAY_INVSQ         "Inverse Square"
+    IDS_ATTEN_PARAM         "Attenuation Parameters"
+    IDS_DECAY_RADIUS        "Decay Falloff"
+    IDS_ATMOS_OPACITY       "Atmosphere Opacity"
+    IDS_ATMOS_COLAMT        "Atmosphere Color Amount"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_PROJMAP          "Projection Map"
+    IDS_DS_SHADPROJMAP      "Shadow Projection Map"
+    IDS_DS_SHAD_GEN         "Shadow Parameters"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_SETSHADTYPE      "Set Shadow Type"
+    IDS_PW_CV               "CV"
+    IDS_SHAD_DENSITY        "Shadow Density"
+    IDS_DOF                 "Depth Of Field"
+    IDS_DOF_ENABLE          "Enable"
+    IDS_DOF_FSTOP           "fStop"
+    IDS_TH_VIZ_TEXT         "VIZ Text"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_RTLIGHT_ON          "LightOn"
+    IDS_LIGHT_GEN_PARAMS    "General Parameters"
+    IDS_LIGHT_ATTEN_PARAMSS "Attenuation Parameters"
+    IDS_LIGHT_SPOT_PARAMS   "Spot Light Parameters"
+    IDS_DS_HUE              "Hue"
+    IDS_DS_SAT              "Saturation"
+    IDS_DS_VAL              "Value"
+    IDS_DS_DIFFON           "Diffuse On"
+    IDS_DS_SPEC             "Specularity"
+    IDS_DS_AMBI             "Ambient Only"
+    IDS_DS_USENEAR          "Use Near Atten"
+    IDS_DS_SHOWNEARRANGES   "Show Near Ranges (Atten)"
+    IDS_DS_USEFARATTEN      "Use Far Atten"
+    IDS_DS_SHOWFARRANGES    "Show Far Ranges (Atten)"
+    IDS_DB_DECAY_STATE      "Decay State"
+    IDS_DS_SHOWDECAY        "Show Decay"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_SHOWCONE         "Show Cone"
+    IDS_DS_OVERSHOOT        "Overshoot On"
+    IDS_DS_LIGHTSHAPE_RATIO "Light Shape Ratio"
+    IDS_DB_LIGHTTYPE        "Light Type"
+    IDS_DS_RED              "Red"
+    IDS_DS_GREEN            "Green"
+    IDS_DS_BLUE             "Blue"
+    IDS_LIGHT_SHADOWS       "Shadow Parameters"
+    IDS_DS_USESHADOWSS      "Shadows On"
+    IDS_DS_USESHADOWGLOBS   "Use Shadow Global"
+    IDS_DS_SHADCOLORS       "Shadow Color"
+    IDS_DS_DENSITYSHADOWS   "Shadow Density"
+    IDS_DS_USESHADOWMAPS    "Use Shadow Maps"
+    IDS_DS_SHADOWMAPBUTTONS "Shadow Map Button"
+    IDS_DS_LIGHTEFFECTS_SHADS "Light Effect Shadows Bool"
+    IDS_DS_ATMOS_SHADS      "Atmospheric Shadows Bool"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_ATMOS_SHAD_OPACS "Atmospheric Shadow Opacity"
+    IDS_DS_ATMOS_SHAD_COLORS "Atmospheric Shadow Color Amount"
+    IDS_LIGHT_SHADOWMAP_PARAMSS "Shadow Map Params"
+    IDS_DS_SHADOWMAP_BIASS  "Shadow Map Bias"
+    IDS_DS_SHADOWMAP_SIZES  "Shadow Map Size"
+    IDS_DS_SHADOWMAP_SAMPLESS "Shadow Map Sample Range"
+    IDS_DS_SHADOWMAP_ABSOLULTE_BIASS "Absolute Map Bias"
+    IDS_DS_CASTSHADOWSS     "Cast Shadows"
+    IDS_DS_LIGHT_ATTEN_SLIDER "Atten Slider"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_SPECCOL          "Specular Color"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

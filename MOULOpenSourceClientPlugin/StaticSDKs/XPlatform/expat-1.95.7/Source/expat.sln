@@ -1,0 +1,86 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "expat", "lib\expat.vcproj", "{99ACAECA-2C32-4E24-B162-26687AB9C87B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "expat_static", "lib\expat_static.vcproj", "{170D8E27-945D-47E2-9031-F893E22C058F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "expatw", "lib\expatw.vcproj", "{4473BB4C-E512-45F8-A810-27A1688113DF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "expatw_static", "lib\expatw_static.vcproj", "{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "expatw_static_xbox", "lib\expatw_static_xbox.vcproj", "{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Profile = Profile
+		Profile_FastCap = Profile_FastCap
+		Release = Release
+		Release_LTCG = Release_LTCG
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Debug.ActiveCfg = Debug|Win32
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Debug.Build.0 = Debug|Win32
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Profile.ActiveCfg = Release|Win32
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Profile.Build.0 = Release|Win32
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Profile_FastCap.ActiveCfg = Release|Win32
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Profile_FastCap.Build.0 = Release|Win32
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Release.ActiveCfg = Release|Win32
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Release.Build.0 = Release|Win32
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Release_LTCG.ActiveCfg = Release|Win32
+		{99ACAECA-2C32-4E24-B162-26687AB9C87B}.Release_LTCG.Build.0 = Release|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Debug.ActiveCfg = Debug|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Debug.Build.0 = Debug|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Profile.ActiveCfg = Release|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Profile.Build.0 = Release|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Profile_FastCap.ActiveCfg = Release|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Profile_FastCap.Build.0 = Release|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Release.ActiveCfg = Release|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Release.Build.0 = Release|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Release_LTCG.ActiveCfg = Release|Win32
+		{170D8E27-945D-47E2-9031-F893E22C058F}.Release_LTCG.Build.0 = Release|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Debug.ActiveCfg = Debug|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Debug.Build.0 = Debug|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Profile.ActiveCfg = Debug|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Profile.Build.0 = Debug|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Profile_FastCap.ActiveCfg = Debug|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Profile_FastCap.Build.0 = Debug|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Release.ActiveCfg = Release|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Release.Build.0 = Release|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Release_LTCG.ActiveCfg = Release|Win32
+		{4473BB4C-E512-45F8-A810-27A1688113DF}.Release_LTCG.Build.0 = Release|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Debug.ActiveCfg = Debug|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Debug.Build.0 = Debug|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Profile.ActiveCfg = Debug|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Profile.Build.0 = Debug|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Profile_FastCap.ActiveCfg = Debug|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Profile_FastCap.Build.0 = Debug|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Release.ActiveCfg = Release|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Release.Build.0 = Release|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Release_LTCG.ActiveCfg = Release|Win32
+		{716F7CB2-1E3A-4AB5-9E81-E5D61E972072}.Release_LTCG.Build.0 = Release|Win32
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Debug.ActiveCfg = Debug|Xbox
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Debug.Build.0 = Debug|Xbox
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Profile.ActiveCfg = Profile|Xbox
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Profile.Build.0 = Profile|Xbox
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Release.ActiveCfg = Release|Xbox
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Release.Build.0 = Release|Xbox
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{8357A40B-7550-41E2-AFEE-AEFB1C3403FB}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

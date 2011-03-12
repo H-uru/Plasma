@@ -1,0 +1,4 @@
+
+Collection of geometry intersection routines between various primitives, e.g. TriList/Box, Box/Box, Box/Sphere, etc.
+
+Mesh types will often convert themselves to appropriate type, and call from this lib when queried for intersection.

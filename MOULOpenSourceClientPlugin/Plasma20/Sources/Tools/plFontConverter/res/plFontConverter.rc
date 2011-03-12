@@ -1,0 +1,277 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_APPICON             ICON    DISCARDABLE     "icon1.ico"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOG DISCARDABLE  0, 0, 247, 57
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About plFontConverter"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,190,7,50,14
+    ICON            IDI_APPICON,IDC_STATIC,11,8,20,20
+    LTEXT           "plFontConverter\n\nA simple Plasma 2.0 utility for converting public font formats into our own bitmap font format",
+                    IDC_STATIC,40,7,140,43
+END
+
+IDD_MAINDIALOG DIALOGEX 100, 100, 241, 170
+STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_ACCEPTFILES
+CAPTION "plFontConverter"
+MENU IDR_APPMENU
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Export P2F...",ID_FILE_EXPORT,184,7,50,14
+    LTEXT           "Face:",IDC_STATIC,7,9,19,8
+    LTEXT           "Size:",IDC_STATIC,10,26,16,8
+    EDITTEXT        IDC_FACE,27,7,148,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FSIZE,27,24,30,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Starting glyph:",IDC_STATIC,10,43,46,8
+    LTEXT           "Glyph count:",IDC_STATIC,87,43,41,8
+    LTEXT           "0",IDC_STARTG,58,42,22,12,SS_SUNKEN
+    LTEXT           "0",IDC_GCOUNT,130,42,22,12,SS_SUNKEN
+    LTEXT           "Bitmap width:",IDC_STATIC,13,58,43,8
+    LTEXT           "0",IDC_WIDTH,58,57,22,12,SS_SUNKEN
+    LTEXT           "Bitmap height:",IDC_STATIC,83,58,46,8
+    LTEXT           "0",IDC_HEIGHT,130,57,22,12,SS_SUNKEN
+    LTEXT           "BPP:",IDC_STATIC,160,57,17,8
+    LTEXT           "0",IDC_BPP,179,56,22,12,SS_SUNKEN
+    CONTROL         "",IDC_PREVIEW,"Static",SS_WHITEFRAME | SS_SUNKEN | NOT 
+                    WS_VISIBLE,7,73,227,73
+    CONTROL         "Bold",IDC_BOLD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,
+                    26,30,10
+    CONTROL         "Italic",IDC_ITALIC,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,97,26,31,10
+    EDITTEXT        IDC_PREVTEXT,7,149,227,14,ES_AUTOHSCROLL
+END
+
+IDD_FONCHOOSER DIALOG DISCARDABLE  0, 0, 166, 161
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "FON Resource List"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,109,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,109,24,50,14
+    LTEXT           "Choose which resource to import:",IDC_STATIC,7,7,93,18
+    LISTBOX         IDC_RESLIST,7,27,97,127,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_PROGRESS DIALOG DISCARDABLE  0, 0, 230, 25
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Importing font..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",PBS_SMOOTH | 
+                    WS_BORDER,7,7,216,11
+END
+
+IDD_FREETYPE DIALOG DISCARDABLE  0, 0, 234, 68
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "FreeType Import Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,177,47,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,115,47,50,14
+    LTEXT           "Render Point Size:",IDC_STATIC,7,10,60,8
+    EDITTEXT        IDC_PSIZE,70,8,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Monochrome",IDC_BITDEPTH,"Button",BS_AUTORADIOBUTTON,
+                    120,27,57,10
+    CONTROL         "Grayscale",IDC_BITDEPTH2,"Button",BS_AUTORADIOBUTTON,
+                    180,27,47,10
+    LTEXT           "Screen Resolution:",IDC_STATIC,7,28,61,8
+    EDITTEXT        IDC_RES,70,26,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Max Character:",IDC_STATIC,132,10,49,8
+    EDITTEXT        IDC_MAXCHAR,183,8,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    PUSHBUTTON      "Batch...",IDC_BATCH,7,47,50,14
+END
+
+IDD_FREETYPEBATCH DIALOG DISCARDABLE  0, 0, 234, 114
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "FreeType Import Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,177,93,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,115,93,50,14
+    LTEXT           "Render Point Sizes:",IDC_STATIC,7,10,63,8
+    EDITTEXT        IDC_PSIZE,71,8,156,14,ES_AUTOHSCROLL
+    CONTROL         "Monochrome",IDC_BITDEPTH,"Button",BS_AUTORADIOBUTTON,58,
+                    58,57,10
+    CONTROL         "Grayscale",IDC_BITDEPTH2,"Button",BS_AUTORADIOBUTTON,
+                    118,58,47,10
+    LTEXT           "Screen Resolution:",IDC_STATIC,117,41,61,8
+    EDITTEXT        IDC_RES,180,39,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Max Character:",IDC_STATIC,15,41,49,8
+    EDITTEXT        IDC_MAXCHAR,67,39,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    GROUPBOX        "Common Settings",IDC_STATIC,7,27,220,45
+    LTEXT           "Font name:",IDC_STATIC,7,77,36,8
+    EDITTEXT        IDC_FONTNAME,49,75,178,14,ES_AUTOHSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 240
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 50
+    END
+
+    IDD_MAINDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 234
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 163
+    END
+
+    IDD_FONCHOOSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 159
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 154
+    END
+
+    IDD_PROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 223
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 18
+    END
+
+    IDD_FREETYPE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 227
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 61
+    END
+
+    IDD_FREETYPEBATCH, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 227
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 107
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_APPMENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Import FNT...",               ID_FILE_FNT
+        MENUITEM "Import BDF...",               ID_FILE_BDF
+        MENUITEM "Import FON...",               ID_FILE_FON
+        MENUITEM "Open P2F...",                 ID_FILE_P2F
+        MENUITEM "Batch Convert TrueType...",   ID_FILE_TRUETYPE
+        MENUITEM SEPARATOR
+        MENUITEM "Export P2F...",               ID_FILE_EXPORT
+        MENUITEM SEPARATOR
+        MENUITEM "About...",                    ID_FILE_ABOUT
+        MENUITEM "Exit",                        ID_FILE_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS DISCARDABLE 
+BEGIN
+    "A",            ID_FILE_ABOUT,          VIRTKEY, CONTROL, NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
