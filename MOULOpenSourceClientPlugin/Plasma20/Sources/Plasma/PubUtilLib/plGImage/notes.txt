@@ -1,0 +1,2 @@
+
+Moving hsRect here since it doesn't have a lot to do with transforms. mf

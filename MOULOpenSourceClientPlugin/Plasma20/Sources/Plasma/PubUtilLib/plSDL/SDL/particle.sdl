@@ -1,0 +1,17 @@
+#===============================================
+# Changing an SDL record? Be sure to leave the 
+# legacy record intact and make changes in
+# a new copy of the record. - eap
+#===============================================
+
+#
+# State Description for a morph sequence modifier
+# 99% of the particle systems won't need this (and won't save state)
+# This is intended for cloned systems that attach to the avatar.
+#
+
+STATEDESC ParticleSystem
+{
+	VERSION 1
+	VAR INT	numParticles[1] DEFAULT=0
+}

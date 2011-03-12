@@ -1,0 +1,35 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: speexenc - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\JASONC~1.JAS\LOCALS~1\Temp\RSPAD1.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/speexenc.pdb" /debug /machine:I386 /out:"Debug/speexenc.exe" /pdbtype:sept 
+".\Debug\getopt.obj"
+".\Debug\getopt1.obj"
+".\Debug\speexenc.obj"
+".\Debug\wav_io.obj"
+"\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\win32\libspeex\Debug\libspeex.lib"
+]
+Creating command line "link.exe @C:\DOCUME~1\JASONC~1.JAS\LOCALS~1\Temp\RSPAD1.tmp"
+<h3>Output Window</h3>
+Linking...
+speexenc.obj : error LNK2001: unresolved external symbol _ogg_stream_clear
+speexenc.obj : error LNK2001: unresolved external symbol _ogg_stream_pageout
+speexenc.obj : error LNK2001: unresolved external symbol _ogg_stream_flush
+speexenc.obj : error LNK2001: unresolved external symbol _ogg_stream_packetin
+speexenc.obj : error LNK2001: unresolved external symbol _ogg_stream_init
+Debug/speexenc.exe : fatal error LNK1120: 5 unresolved externals
+Error executing link.exe.
+
+
+
+<h3>Results</h3>
+speexenc.exe - 6 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

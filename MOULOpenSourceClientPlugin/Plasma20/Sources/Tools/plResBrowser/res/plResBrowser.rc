@@ -1,0 +1,214 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_APPICON             ICON                    "icon1.ico"
+IDI_INDEXICON           ICON                    "icon2.ico"
+IDI_DATAICON            ICON                    "indexico.ico"
+IDI_PATCHICON           ICON                    "dataicon.ico"
+IDI_MERGEDDATAICON      ICON                    "mergedda.ico"
+IDI_MERGEDINDEXICON     ICON                    "mergedin.ico"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_APPMENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...",                    ID_FILE_OPEN
+        MENUITEM "Open &Directory...",          ID_FILE_OPENDIRECTORY
+        MENUITEM SEPARATOR
+        MENUITEM "Save Selected Object",        ID_FILE_SAVESELECTED
+        MENUITEM SEPARATOR
+        MENUITEM "Find Object...\tCtrl+F",      ID_FILE_FINDOBJECT
+        MENUITEM "Find Next\tF3",               ID_FILE_FINDNEXT
+        MENUITEM "Show Only Loadable",          ID_FILE_ONLYLOAD
+        MENUITEM SEPARATOR
+        MENUITEM "About...",                    ID_FILE_ABOUT
+        MENUITEM "Exit",                        ID_FILE_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_INFODLG DIALOGEX 0, 0, 186, 281
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Object Information",IDC_STATIC,4,168,178,67
+    RTEXT           "Name:",IDC_STATIC,17,180,22,8
+    LTEXT           "",IDC_NAME,42,179,129,10,SS_SUNKEN | NOT WS_GROUP
+    GROUPBOX        "Page Information",IDC_STATIC,4,2,178,163
+    RTEXT           "Age:",IDC_STATIC,45,14,16,8
+    LTEXT           "",IDC_AGE,63,14,107,10,SS_SUNKEN | NOT WS_GROUP
+    RTEXT           "Page:",IDC_STATIC,41,28,20,8
+    LTEXT           "",IDC_PAGE,63,28,107,10,SS_SUNKEN | NOT WS_GROUP
+    RTEXT           "Location:",IDC_STATIC,31,43,30,8
+    LTEXT           "",IDC_LOCATION,64,43,74,10,SS_SUNKEN | NOT WS_GROUP
+    CONTROL         "Reserved",IDC_RESERVED,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,64,66,10,10
+    RTEXT           "Class:",IDC_STATIC,19,195,20,8
+    LTEXT           "",IDC_CLASS,42,194,129,10,SS_SUNKEN | NOT WS_GROUP
+    RTEXT           "Start Pos:",IDC_STARTPOS_LABEL,7,221,32,8
+    LTEXT           "",IDC_STARTPOS,42,220,55,10,SS_SUNKEN | NOT WS_GROUP
+    RTEXT           "Size:",IDC_SIZE_LABEL,103,221,17,8
+    LTEXT           "",IDC_LENGTH,124,220,47,10,SS_SUNKEN | NOT WS_GROUP
+    LTEXT           "Reserved",IDC_STATIC,76,67,31,8
+    PUSHBUTTON      "Find",ID_FILE_FINDOBJECT,4,259,50,14
+    PUSHBUTTON      "Find Next",ID_FILE_FINDNEXT,58,259,50,14
+    RTEXT           "Data Version:",IDC_STATIC,17,79,44,8
+    LTEXT           "",IDC_DATAVERSION,64,79,48,10,SS_SUNKEN | NOT WS_GROUP
+    RTEXT           "Checksum:",IDC_STATIC,25,139,36,8
+    LTEXT           "",IDC_IDXCHECKSUM,64,139,53,10,SS_SUNKEN | NOT WS_GROUP
+    PUSHBUTTON      "Verify Page",ID_FILE_VERIFYPAGE,130,259,50,14
+    RTEXT           "Checksum type:",IDC_STATIC,9,151,52,8
+    LTEXT           "",IDC_CHECKSUMTYPE,64,152,89,10,SS_SUNKEN | NOT 
+                    WS_GROUP
+    CONTROL         "View values as hex",IDC_SHOWASHEX,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,105,241,77,10
+    CONTROL         "",IDC_LOCAL_ONLY,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,64,57,11,8
+    LTEXT           "Local Only",IDC_STATIC,76,57,34,8
+    CONTROL         "",IDC_BUILTIN,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,116,67,11,8
+    CONTROL         "",IDC_VOLATILE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,116,57,11,8
+    LTEXT           "Built-In",IDC_STATIC,129,67,22,8
+    LTEXT           "Volatile",IDC_STATIC,129,57,24,8
+END
+
+IDD_ABOUT DIALOG  0, 0, 247, 57
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About plResBrowser"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,190,7,50,14
+    ICON            IDI_APPICON,IDC_STATIC,11,8,21,20
+    LTEXT           "plResBrowser\nA simple Plasma 2.0 packfile browsing utility\nCopyright (C) 2002 Cyan Worlds, Inc.\n\nWho needs log files?",
+                    IDC_STATIC,40,7,140,43
+END
+
+IDD_FINDOBJ DIALOG  0, 0, 228, 46
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Find Object"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_SEARCHSTRING,13,19,146,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Find",IDOK,171,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,171,24,50,14
+    GROUPBOX        "Object Name",IDC_STATIC,7,7,157,32
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 240
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 50
+    END
+
+    IDD_FINDOBJ, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 39
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS 
+BEGIN
+    "F",            ID_FILE_FINDOBJECT,     VIRTKEY, CONTROL, NOINVERT
+    VK_F3,          ID_FILE_FINDNEXT,       VIRTKEY, NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

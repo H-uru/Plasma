@@ -1,0 +1,28 @@
+#===============================================
+# Changing an SDL record? Be sure to leave the 
+# legacy record intact and make changes in
+# a new copy of the record. - eap
+#===============================================
+
+#
+# State Description for a morph sequence modifier
+#
+
+STATEDESC MorphSet
+{
+	VERSION 2
+	VAR PLKEY		mesh[1] DEFAULT=nil
+	VAR BYTE		weights[] DEFAULT=0
+}
+
+STATEDESC MorphSequence   
+{
+	VERSION 2
+
+	# User data. The avatar sets this so that it can later differentiate between
+	# various records in the vault
+	VAR BYTE		targetID[1] DEFAULT=0
+
+	VAR $MorphSet	morphs[]
+}
+
