@@ -1,0 +1,1 @@
+-Didn't include hsGTransform.cpp,h because it references hsSceneObject, and plTMController.

@@ -1,0 +1,15 @@
+#===============================================
+# Changing an SDL record? Be sure to leave the 
+# legacy record intact and make changes in
+# a new copy of the record. - eap
+#===============================================
+
+#
+# State Description Language for Exclude Regions
+#
+
+STATEDESC XRegion
+{
+	VERSION 1
+	VAR BOOL		cleared[1]			DEFAULT=false	# is it cleared
+}

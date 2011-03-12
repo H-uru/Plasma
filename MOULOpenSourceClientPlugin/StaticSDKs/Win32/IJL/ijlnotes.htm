@@ -1,0 +1,157 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft FrontPage 4.0">
+<TITLE>Intel® JPEG Library Release Notes</TITLE>
+<link rel="stylesheet" type="text/css" href="doc/css/ijl.css">
+</HEAD>
+<BODY TEXT="#000000" LINK="#0000ff" VLINK="#800080" BGCOLOR="#ffffff">
+<h1 ALIGN="left">Intel&reg;  JPEG Library v1.51 </h1>
+
+<h1 ALIGN="left"> Product Release Notes </h1>
+<h2>Contents</h2>
+<P><A HREF="#Overview">Intel® JPEG&nbsp; Library 1.51</A> <BR>
+<A HREF="#System_Requirements">System Requirements</A><BR>
+<A HREF="#Compilers">Compiler Support </A><BR>
+<A HREF="#License_Definitions">License Definitions</A> <BR>
+<A HREF="#Installation">Installation</A> <BR>
+<A HREF="#Library_Use">Library Use</A><BR>
+<A HREF="#Whats_New">What's New in Version 1.51</A><BR>
+<A HREF="#History">History</A><BR>
+<A HREF="#Known_Limitations">Known Limitations in Version 1.51</A> <BR>
+<a HREF="#Technical_Support">Technical Support and Feedback</a> <BR>
+<A NAME="Overview"></P>
+</A>
+<A NAME="Overview"><h2>Intel® JPEG Library 1.51</h2>
+</A><P>The Intel® JPEG Library (IJL) is a software library for application developers that provides high performance JPEG encoding and decoding of full color and grayscale still
+images.</P>
+<P>The IJL was designed for use on Intel® architecture platforms and has been tuned for speed and efficient memory usage. Additionally, the IJL was developed to take advantage of MMX™,
+Streaming SIMD Extensions (SSE), and SSE-2 technology if
+present.</P>
+<P>The IJL provides an easy-to-use programming interface without sacrificing low-level JPEG control to advanced developers. The IJL also includes a substantial amount of functionality that is not included in the ISO JPEG standard. This added functionality is typically necessary when working with JPEG images, and includes pre-processing and post-processing options like sampling and color space conversions.</P>
+<P>Additional information on this software as well as other libraries is
+available at the <a href="http://developer.intel.com/software/products/perflib/">Intel Performance
+Libraries web site</a>.<br>
+</P>
+<h2><A NAME="System_Requirements">System Requirements</h2>
+</A>
+<P>The Intel  JPEG Library requires the following software and hardware:</P>
+<P>Recommended hardware: A Pentium&reg; II,&nbsp; Pentium <font face="Arial">III</font>, or Pentium 4 processor-based PC with memory appropriate to the image sizes needed.</P>
+<P>Software Requirements: Microsoft* Windows* 95, 98, ME*, 2000, or Microsoft Windows NT* 3.51 or 4.0.</P>
+<h2><a name="Compilers">Compiler Support</a></h2>
+<P>Intel&reg; C++ Compiler, Borland* C++ 5, or Microsoft* Visual C++* 4.2 or
+later. Other compatible compilers have not been tested extensively but might work.</P>
+<h2><A NAME="License_Definitions">License Definitions</h2>
+</A>
+<P>Please see the license file <a href="ijllic.htm">ijllic.htm</a>
+for the license definitions and restrictions on the library.</P>
+<h2><A NAME="Installation">Installation</h2>
+</A>
+<P>You can install the IJL package by downloading and running the appropriate self-extracting installation files from the Web site.
+Check the <a href="http://developer.intel.com/software/products/perflib/ijl/">Intel JPEG
+Library</a> site for updates, when available.</P>
+<h2><A NAME="Library_Use">Library Use</A></h2><P>To get started using the library, the following steps are required:</P>
+
+<UL>
+<LI>Include the file &quot;ijl.h&quot; in your program. </LI>
+<LI>Call the IJL interface. </LI>
+<LI>Link to the file ijl.lib in the lib directory. </LI>
+<LI>Put the DLL ijl15.dll in your path before executing your program.</LI></UL>
+
+<h2><a name="Whats_New">What’s New in the Intel JPEG Library Version 1.51</a></h2>
+
+<p>New Features:</p>
+
+<ul>
+  <li>Microsoft* Visual Basic* example extended to demonstrate how to work with
+    a memory buffer</li>
+</ul>
+<p>Fixed Bugs:</p>
+
+<ul>
+  <li>Multi-thread safety restored</li>
+  <li>Now properly auto-detects processor type</li>
+  <li>Now writing JPEG comments properly</li>
+  <li>No longer crashing when decoding corrupted JPEG images</li>
+  <li>Now encoding/decoding progressive JPEG images properly</li>
+  <li>Now decoding a Region of Interest (ROI) from progressive JPEG images</li>
+  <li>Rounding error fixed in the Microsoft* Visual Basic* example</li>
+  <li>JPGView example now stores BMP files in top-down order instead of
+    bottom-up</li>
+</ul>
+<h2><A NAME="History">History</A></h2>
+<p>New in Version 1.5:</p>
+
+<ul>
+  <li>Optimizations for the Pentium <font face="Arial"> III</font> and Pentium 4 processors</li>
+  <li>Support for Microsoft* Visual Basic*</li>
+  <li>A more accurate DCT</li>
+  <li>Encoding of progressive images</li>
+  <li>Reading of embedded thumbnails</li>
+  <li>Reading/Writing of JPEG comments</li>
+  <li>Reading/Writing of DPI information</li>
+  <li>Raw quantization and Huffman tables can be read at decode time</li>
+  <li>YCbCr (4:2:2) supported as input to encoder and output from decoder</li>
+  <li>Raw DCT coefficients and raw sampled data supported as input to decoder
+    and output from decoder</li>
+</ul>
+<p>Bugs fixed in 1.5:&nbsp;</p>
+<ul>
+  <li>JPG files are properly truncated of extra data before writing</li>
+  <li>JPGSizeBytes no longer ignored on ijlWrite</li>
+  <li>No dynamic buffer overruns if output buffer is too small</li>
+  <li>No longer misinterpreting coefficients when first AC coefficient is -1 and
+    first DC coefficient is negative</li>
+  <li>A single-line distortion problem was fixed</li>
+  <li>Some&nbsp; image corruptions at encode time was fixed</li>
+  <li>Path searching is correct when path contains localized characters/ UNICODE</li>
+  <li>IJL now recognizes images encoded with a ZORAN* chip</li>
+</ul>
+<p>New in Version 1.1:</p>
+
+<UL>
+<LI>Delphi support</LI>
+<LI>ijl_ipl.pdf corrected to refer to version 2.x of the Intel&reg; Image Processing Library</LI>
+<LI>Examples in the manual were corrected</LI>
+<LI><A NAME="Known_Limitations">Bug in subsampled decoding that made images look "washed out" was fixed</LI></A></UL>
+
+<h2><A NAME="Known_Limitations">Known Limitations In Version 1.51</h2>
+
+<UL>
+<LI></A>PLSInfo.exe and the Performance Libraries dispatching mechanism are not supported. </LI>
+</UL>
+
+<H2><a NAME="Technical_Support">Technical Support and Feedback</a></H2>
+<p>All interactive support for the Intel JPEG Library is handled through the Intel® Performance
+Libraries section of the Intel® Premier Support web-based support system. In order to access support for this product, you will need an account on Intel Premier Support. Register for an account at the Intel Premier Support Registration Page.&nbsp;<br>
+Once you have an account, you can login to the Intel Premier Support Web site.&nbsp;<p>
+If you have forgotten your password, please contact quad.support@intel.com.  If you have questions pertaining to the
+auto accounts registration process, please contact pto.quad@intel.com.  For all support questions, please submit an issue at
+<a href="https://premier.intel.com/">https://premier.intel.com/</a>.<p>
+To submit an issue via the Intel Premier Support website:
+<ul>
+  <li>
+Go to <a href="https://premier.intel.com/">https://premier.intel.com/</a>&nbsp;</li>
+  <li>Type in your Premier Support Login and Password.<br>
+Click the "Submit" button.</li>
+  <li>Read the Confidentiality Statement and click the "I Accept" button.</li>
+  <li>Click on the "Submit Issue" link in the left navigation bar.</li>
+  <li>
+Choose "Initiatives, technologies &amp; tools" from the "Product Type" drop-down list.</li>
+  <li>
+Choose "Intel® Performance Libraries" from the "Product Name" drop-down list.</li>
+  <li>Enter your question and complete the fields in the windows that follow to successfully submit the issue.&nbsp;</li>
+</ul>
+<p>
+Contact us with your suggestions or problem reports using your Intel Premier Support account. A technical support engineer will respond within one (1) Intel business day.
+</p>
+
+<p><font face="Arial,HELVETICA" size="1">Intel, the Intel logo, and Pentium are
+registered trademarks of Intel Corporation.<br>
+MMX is a trademark of Intel Corporation.<br>
+*Other names and brands may be claimed as the property of others.</p>
+<p>Copyright 2001, Intel Corporation, All Rights Reserved.</p>
+</font>
+
+</BODY>
+</HTML>

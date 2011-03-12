@@ -1,0 +1,72 @@
+#===============================================
+# Changing an SDL record? Be sure to leave the 
+# legacy record intact and make changes in
+# a new copy of the record. - eap
+#===============================================
+
+
+#
+# Animation State Description
+#
+
+
+#
+# Defines the state of an animation controller
+#
+STATEDESC AnimTimeConvert
+{
+	VERSION 5	
+	VAR INT			flags[1]				DEFAULT=0
+	VAR FLOAT		lastStateAnimTime[1]	DEFAULT=0
+	VAR FLOAT		loopEnd[1]				DEFAULT=0
+	VAR FLOAT		loopBegin[1]			DEFAULT=0
+	VAR FLOAT		speed[1]				DEFAULT=1
+	VAR CREATABLE	speedEaseCurve[1]
+	VAR BYTE		currentEaseCurve[1]		DEFAULT=0	# 0=nil, 1=easeIn, 2=easeOut, 3=speed
+	VAR TIME		currentEaseBeginWorldTime[1]	DEFAULT=0
+	VAR TIME		lastStateChange[1]		DEFAULT=0
+}
+STATEDESC AnimTimeConvert
+{
+	VERSION 6	
+	VAR INT			flags[1]				DEFAULT=0
+	VAR FLOAT		lastStateAnimTime[1]	DEFAULT=0
+	VAR FLOAT		loopEnd[1]				DEFAULT=0
+	VAR FLOAT		loopBegin[1]			DEFAULT=0
+	VAR FLOAT		speed[1]				DEFAULT=1
+	VAR BYTE		currentEaseCurve[1]		DEFAULT=0	# 0=nil, 1=easeIn, 2=easeOut, 3=speed
+	VAR TIME		currentEaseBeginWorldTime[1]	DEFAULT=0
+	VAR TIME		lastStateChange[1]		DEFAULT=0
+}
+
+#
+# TOP LEVEL
+# Describes the state of an animated object (non-material) 
+#
+STATEDESC AGMaster
+{
+	VERSION 5
+	VAR $AnimTimeConvert	atcs[]						# variable length list 
+	VAR BYTE				blends[]		
+}
+
+#
+# TOP LEVEL
+# Describes the state of an animated layer
+#
+STATEDESC Layer
+{
+	VERSION 6
+	VAR $AnimTimeConvert	atc[1]
+
+	VAR INT			passThruChannels[1]	DEFAULT=0
+	VAR FLOAT		transform[]			# Size will be 0 or 16, depending on whether we own the channel
+
+	VAR BYTE		channelData[]		# A byte array for the channels below. Its size
+										# will depend on the layer's fOwnedChannels.
+	#VAR RGB8		preshadeColor[1]	DEFAULT=(1,1,1)
+	#VAR RGB8		runtimeColor[1]		DEFAULT=(1,1,1)		
+	#VAR RGB8		ambientColor[1]		DEFAULT=(1,1,1)
+	#VAR BYTE		opacity[1]			DEFAULT=255
+}
+

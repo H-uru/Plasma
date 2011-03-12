@@ -1,0 +1,29 @@
+#===============================================
+# Changing an SDL record? Be sure to leave the 
+# legacy record intact and make changes in
+# a new copy of the record. - eap
+#===============================================
+
+#
+# State Description Language for sounds
+#
+
+STATEDESC SoundState
+{
+	VERSION 1
+	VAR FLOAT		desiredVolume[1]	DEFAULT=0		# 0 to 1
+	VAR TIME		time[1]				DEFAULT=0		# time sound was started
+	VAR BOOL		playing[1]			DEFAULT=false	# is it playing
+}
+
+#
+# Describes the sound state for a sceneObject
+# TOPLEVEL
+#
+STATEDESC Sound
+{
+	VERSION 1
+	VAR $SoundState		sounds[]	# List of soundStates on a sceneObject
+}
+
+

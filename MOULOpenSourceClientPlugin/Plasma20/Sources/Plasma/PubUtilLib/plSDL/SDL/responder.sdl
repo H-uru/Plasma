@@ -1,0 +1,24 @@
+#===============================================
+# Changing an SDL record? Be sure to leave the 
+# legacy record intact and make changes in
+# a new copy of the record. - eap
+#===============================================
+
+#
+# State Description Language for a responder
+#
+
+STATEDESC Responder
+{
+	VERSION 3
+	VAR INT		curState[1]		DEFAULT=0			# The current state (first index for fCommandList)
+
+	VAR INT		curCommand[1]	DEFAULT=-1			# The command we are currently waiting to send
+														# (or -1 if we're not sending)
+	VAR	BOOL	netRequest[1]	DEFAULT=false		# Was the last trigger a net request
+	VAR INT		completedEvents[]					# Which events that commands are waiting on have completed
+	VAR BOOL	enabled[1]		DEFAULT=true
+	VAR PLKEY	playerKey[1]						# The player who triggered this last
+	VAR PLKEY	triggerer[1]						# Whoever triggered us (for sending notify callbacks)
+}
+

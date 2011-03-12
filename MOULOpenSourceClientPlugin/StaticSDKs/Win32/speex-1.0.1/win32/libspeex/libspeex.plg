@@ -1,0 +1,116 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: libspeex - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\JASONC~1.JAS\LOCALS~1\Temp\RSPD08.tmp" with contents
+[
+/nologo /ML /GX /Ox /Ot /Og /Oi /Ob2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Fp"Release/libspeex.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\bits.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\cb_search.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\exc_10_16_table.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\exc_10_32_table.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\exc_20_32_table.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\exc_5_256_table.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\exc_5_64_table.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\exc_8_128_table.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\filters.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\gain_table.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\gain_table_lbr.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\hexc_10_32_table.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\hexc_table.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\high_lsp_tables.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\lpc.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\lsp.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\lsp_tables_nb.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\ltp.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\math_approx.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\misc.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\modes.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\nb_celp.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\quant_lsp.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\sb_celp.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\speex_callbacks.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\speex_header.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\stereo.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\vbr.c"
+"C:\Documents and Settings\JasonC.JASON-C-2K\Desktop\speex\speex-1.0.1\speex-1.0.1\libspeex\vq.c"
+]
+Creating command line "cl.exe @C:\DOCUME~1\JASONC~1.JAS\LOCALS~1\Temp\RSPD08.tmp" 
+Creating temporary file "C:\DOCUME~1\JASONC~1.JAS\LOCALS~1\Temp\RSPD09.tmp" with contents
+[
+/nologo /out:"Release\libspeex.lib" 
+".\Release\bits.obj"
+".\Release\cb_search.obj"
+".\Release\exc_10_16_table.obj"
+".\Release\exc_10_32_table.obj"
+".\Release\exc_20_32_table.obj"
+".\Release\exc_5_256_table.obj"
+".\Release\exc_5_64_table.obj"
+".\Release\exc_8_128_table.obj"
+".\Release\filters.obj"
+".\Release\gain_table.obj"
+".\Release\gain_table_lbr.obj"
+".\Release\hexc_10_32_table.obj"
+".\Release\hexc_table.obj"
+".\Release\high_lsp_tables.obj"
+".\Release\lpc.obj"
+".\Release\lsp.obj"
+".\Release\lsp_tables_nb.obj"
+".\Release\ltp.obj"
+".\Release\math_approx.obj"
+".\Release\misc.obj"
+".\Release\modes.obj"
+".\Release\nb_celp.obj"
+".\Release\quant_lsp.obj"
+".\Release\sb_celp.obj"
+".\Release\speex_callbacks.obj"
+".\Release\speex_header.obj"
+".\Release\stereo.obj"
+".\Release\vbr.obj"
+".\Release\vq.obj"
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\JASONC~1.JAS\LOCALS~1\Temp\RSPD09.tmp"
+<h3>Output Window</h3>
+Compiling...
+bits.c
+cb_search.c
+exc_10_16_table.c
+exc_10_32_table.c
+exc_20_32_table.c
+exc_5_256_table.c
+exc_5_64_table.c
+exc_8_128_table.c
+filters.c
+gain_table.c
+gain_table_lbr.c
+hexc_10_32_table.c
+hexc_table.c
+high_lsp_tables.c
+lpc.c
+lsp.c
+lsp_tables_nb.c
+ltp.c
+math_approx.c
+misc.c
+modes.c
+nb_celp.c
+quant_lsp.c
+sb_celp.c
+speex_callbacks.c
+speex_header.c
+stereo.c
+vbr.c
+vq.c
+Creating library...
+
+
+
+<h3>Results</h3>
+libspeex.lib - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

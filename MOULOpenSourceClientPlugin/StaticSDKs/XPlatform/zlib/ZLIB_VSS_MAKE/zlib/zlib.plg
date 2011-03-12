@@ -1,0 +1,74 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: zlib - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\thamer\LOCALS~1\Temp\RSP25.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"Debug/zlib.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\StaticSDKs\XPlatform\zlib\src\adler32.c"
+"C:\StaticSDKs\XPlatform\zlib\src\compress.c"
+"C:\StaticSDKs\XPlatform\zlib\src\crc32.c"
+"C:\StaticSDKs\XPlatform\zlib\src\deflate.c"
+"C:\StaticSDKs\XPlatform\zlib\src\gzio.c"
+"C:\StaticSDKs\XPlatform\zlib\src\infblock.c"
+"C:\StaticSDKs\XPlatform\zlib\src\infcodes.c"
+"C:\StaticSDKs\XPlatform\zlib\src\inffast.c"
+"C:\StaticSDKs\XPlatform\zlib\src\inflate.c"
+"C:\StaticSDKs\XPlatform\zlib\src\inftrees.c"
+"C:\StaticSDKs\XPlatform\zlib\src\infutil.c"
+"C:\StaticSDKs\XPlatform\zlib\src\maketree.c"
+"C:\StaticSDKs\XPlatform\zlib\src\trees.c"
+"C:\StaticSDKs\XPlatform\zlib\src\uncompr.c"
+"C:\StaticSDKs\XPlatform\zlib\src\zutil.c"
+]
+Creating command line "cl.exe @C:\DOCUME~1\thamer\LOCALS~1\Temp\RSP25.tmp" 
+Creating temporary file "C:\DOCUME~1\thamer\LOCALS~1\Temp\RSP26.tmp" with contents
+[
+/nologo /out:"Debug\zlibd.lib" 
+.\Debug\adler32.obj
+.\Debug\compress.obj
+.\Debug\crc32.obj
+.\Debug\deflate.obj
+.\Debug\gzio.obj
+.\Debug\infblock.obj
+.\Debug\infcodes.obj
+.\Debug\inffast.obj
+.\Debug\inflate.obj
+.\Debug\inftrees.obj
+.\Debug\infutil.obj
+.\Debug\maketree.obj
+.\Debug\trees.obj
+.\Debug\uncompr.obj
+.\Debug\zutil.obj
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\thamer\LOCALS~1\Temp\RSP26.tmp"
+<h3>Output Window</h3>
+Compiling...
+adler32.c
+compress.c
+crc32.c
+deflate.c
+gzio.c
+infblock.c
+infcodes.c
+inffast.c
+inflate.c
+inftrees.c
+infutil.c
+maketree.c
+trees.c
+uncompr.c
+zutil.c
+Creating library...
+
+
+
+<h3>Results</h3>
+zlibd.lib - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

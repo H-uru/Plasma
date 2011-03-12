@@ -1,0 +1,40 @@
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=iso-8859-1">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META content="text/html; charset=iso-8859-1" http-equiv=Content-Type>
+<META content="MSHTML 5.00.3103.1000" name=GENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=#fffbf0>
+<DIV><FONT face=Arial size=2>
+<H4><A name=_dx_sound_cones_dxaudio></A>Sound Cones</H4>
+<P>A sound with no orientation has the same amplitude at a given distance in all 
+directions. A sound with an orientation is loudest in the direction of 
+orientation. The model that describes the loudness of the oriented sound is 
+called a sound cone. Sound cones are made up of an inside (or inner) cone and an 
+outside (or outer) cone. </P>
+<P>At any angle within the inner cone, the volume of the sound is just what it 
+would be if there were no cone, after taking into account the basic volume of 
+the buffer, the distance from the listener, the listener's orientation, and so 
+on. </P>
+<P>At any angle outside the outer cone, the normal volume is attenuated by a 
+factor set by the application. The outside cone volume is expressed in 
+hundredths of decibels and is a negative value, because it represents 
+attenuation from the default volume of 0.</P>
+<P>Between the inner and outer cones is a zone of transition from the inside 
+volume to the outside volume. The volume decreases as the angle increases.</P>
+<P>The following illustration shows the concept of sound cones.</P>
+<P><IMG alt="" border=0 
+src="http://www.msdn.microsoft.com/library/psdk/directx/dx8_c/hh/directx8_c/images/soundcon.gif"></P>
+<P>Every 3-D sound buffer has a sound cone, but by default a buffer behaves like 
+an omnidirectional sound source, because the outside volume is not attenuated, 
+and the inside and outside cone angles are 360 degrees. Unless the application 
+changes these values, the sound does not have any apparent orientation.</P>
+<P>Designing sound cones properly can add dramatic effects to your application. 
+For example, you could position a sound source in the center of a room, setting 
+its orientation toward an open door in a hallway. Then set the angle of the 
+inside cone so that it extends to the width of the doorway, make the outside 
+cone a bit wider, and set the outside cone volume to inaudible. A listener 
+moving along the hallway will begin to hear the sound only when near the 
+doorway, and the sound will be loudest as the listener passes in front of the 
+open door.</P></FONT></DIV></BODY></HTML>
