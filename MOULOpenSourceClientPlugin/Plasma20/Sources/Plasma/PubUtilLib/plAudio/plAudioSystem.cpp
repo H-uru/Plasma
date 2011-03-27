@@ -28,7 +28,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "alc.h"
 #include "efx.h"
 #include <MMREG.H>
+#ifdef EAX_SDK_AVAILABLE
 #include <eax.h>
+#endif
 
 #include "hsTimer.h"
 #include "hsGeometry3.h"
@@ -209,10 +211,12 @@ void plAudioSystem::IEnumerateDevices()
 					if(major > 1 || (major == 1 && minor >= 1))
 					{
 						hsBool supportsEAX = false;
+#ifdef EAX_SDK_AVAILABLE
 						if(alIsExtensionPresent((ALchar *)"EAX4.0") || alIsExtensionPresent((ALchar *) "EAX4.0Emulated"))		
 						{
 							supportsEAX = true;
 						}
+#endif
 						DeviceDescriptor desc(devices, supportsEAX);
 						fDeviceList.push_back(desc);
 					}

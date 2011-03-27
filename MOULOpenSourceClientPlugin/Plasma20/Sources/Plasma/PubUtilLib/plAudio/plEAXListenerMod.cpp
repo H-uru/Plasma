@@ -29,6 +29,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //																			//
 //////////////////////////////////////////////////////////////////////////////
 
+#ifndef EAX_SDK_AVAILABLE
+#include <EFX-Util.h>
+#endif
 #include "hsTypes.h"
 #include "plEAXListenerMod.h"
 #include "../plIntersect/plSoftVolume.h"
@@ -37,7 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioSystem.h"
 #include "../pnMessage/plAudioSysMsg.h" 
 
+#ifdef EAX_SDK_AVAILABLE
 #include <eax-util.h>
+#endif
 
 
 plEAXListenerMod::plEAXListenerMod()
@@ -47,7 +52,9 @@ plEAXListenerMod::plEAXListenerMod()
 	fRegistered = false;
 	fGetsMessages = false;
 
+#ifdef EAX_SDK_AVAILABLE
 	memcpy( fListenerProps, &REVERB_ORIGINAL_PRESETS[ ORIGINAL_GENERIC ], sizeof( EAXREVERBPROPERTIES ) );
+#endif
 }
 
 plEAXListenerMod::~plEAXListenerMod()
@@ -216,7 +223,9 @@ void plEAXListenerMod::Write( hsStream* s, hsResMgr* mgr )
 
 void	plEAXListenerMod::SetFromPreset( UInt32 preset )
 {
+#ifdef EAX_SDK_AVAILABLE
 	memcpy( fListenerProps, &REVERB_ORIGINAL_PRESETS[ preset ], sizeof( EAXREVERBPROPERTIES ) );
+#endif
 }
 
 float	plEAXListenerMod::GetStrength( void )

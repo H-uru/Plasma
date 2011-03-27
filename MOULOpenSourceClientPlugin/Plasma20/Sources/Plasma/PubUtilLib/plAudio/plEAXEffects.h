@@ -43,7 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plDSoundBuffer;
 class plEAXListenerMod;
 
+#ifdef EAX_SDK_AVAILABLE
 typedef struct _EAXREVERBPROPERTIES EAXREVERBPROPERTIES;
+#else
+#include <EFX-Util.h>
+#endif
 
 class plEAXListener 
 {	

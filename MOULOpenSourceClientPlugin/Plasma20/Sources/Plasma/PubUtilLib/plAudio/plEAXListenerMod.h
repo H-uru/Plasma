@@ -37,7 +37,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plMessage;
 class plSoftVolume;
+#ifdef EAX_SDK_AVAILABLE
 typedef struct _EAXREVERBPROPERTIES EAXREVERBPROPERTIES;
+#endif
 
 class plEAXListenerMod : public plSingleModifier
 {

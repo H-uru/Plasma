@@ -35,8 +35,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEAXEffects.h"
 
 #include "plAudioCaps.h"
+#ifdef EAX_SDK_AVAILABLE
 #include <eax.h>
 #include <eaxlegacy.h>
+#endif
 #include <DShow.h>
 
 #include "../plStatusLog/plStatusLog.h"
@@ -197,6 +199,7 @@ void plAudioCapsDetector::EnumerateAudioDevices()
 
 hsBool	plAudioCapsDetector::IDetectEAX(  )
 {
+#ifdef EAX_SDK_AVAILABLE
 	hsBool gotSupport = true;
 
 	if(!alIsExtensionPresent((ALchar *)"EAX4.0"))		// is eax 4 supported
@@ -217,4 +220,8 @@ hsBool	plAudioCapsDetector::IDetectEAX(  )
 		kLogMe 0xff00ff00, "EAX 4 available");
 	}	
 	return gotSupport;
+#else
+	kLogMe 0xff00ff00, "EAX disabled in this build");
+	return false;
+#endif
 }
