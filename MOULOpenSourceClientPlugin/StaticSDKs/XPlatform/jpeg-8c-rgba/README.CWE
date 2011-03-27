@@ -1,0 +1,5 @@
+This is a slightly modified version of the jpeg library. A new color space
+is added, "JCS_RGBA", for reading from/writing to jpeg files using the format
+expected by the CyanWorlds.com Engine. This code does not pretend to provide
+more RGBA support than needed for the CyanWorlds.com Engine.
+
