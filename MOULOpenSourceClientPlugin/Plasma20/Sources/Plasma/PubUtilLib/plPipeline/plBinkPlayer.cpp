@@ -26,7 +26,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsConfig.h"
 #include "hsWindows.h"
 #include "hsTypes.h"
+#ifdef BINK_SDK_AVAILABLE
 #include "BINK.h"
+#endif
 #include <d3d9.h>
 #include "plDXPipeline.h"
 #include "plBinkPlayer.h"
@@ -117,11 +119,13 @@ hsBool plBinkPlayer::Init( hsWindowHndl hWnd )
 	{
 		hr = fSoundDevice->SetCooperativeLevel( hWnd, DSSCL_PRIORITY );
 	}
+#ifdef BINK_SDK_AVAILABLE
 	if(SUCCEEDED(hr))
 	{
 		return BinkSoundUseDirectSound( fSoundDevice );	// must be before open		
 	}
 	BinkSetSoundTrack(0, nil);
+#endif
 
 	return true;
 }
@@ -167,6 +171,7 @@ void plBinkPlayer::SetFileName(const char* fileName)
 
 hsBool plBinkPlayer::Start(plPipeline* pipe,  hsWindowHndl hWnd) 
 {
+#ifdef BINK_SDK_AVAILABLE
 	// If we haven't got a movie to play, we're done.
 	if( !fFileName )
 		return false;
@@ -218,10 +223,14 @@ hsBool plBinkPlayer::Start(plPipeline* pipe,  hsWindowHndl hWnd)
 	}
 
 	return true;
+#else
+	return false;
+#endif /* BINK_SDK_AVAILABLE */
 }
 
 void plBinkPlayer::ISetVerts()
 {
+#ifdef BINK_SDK_AVAILABLE
 	float sizeX = float(fBink->Width) / float(fPipeline->Width());
 	float sizeY = float(fBink->Height) / float(fPipeline->Height());
 
@@ -247,10 +256,12 @@ void plBinkPlayer::ISetVerts()
 	fVerts[3].y += sizeY;
 	fVerts[3].u = 1.0f;
 	fVerts[3].v = 0.0f;
+#endif
 }
 
 hsBool plBinkPlayer::IGetFrame()
 {
+#ifdef BINK_SDK_AVAILABLE
 	HRESULT hr;
 	D3DLOCKED_RECT locked_rect;
 	// Get the next frame
@@ -272,6 +283,9 @@ hsBool plBinkPlayer::IGetFrame()
 		BinkNextFrame(fBink);
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 hsBool plBinkPlayer::ICheckFadingFrom()
@@ -283,7 +297,9 @@ hsBool plBinkPlayer::ICheckFadingFrom()
 		{
 			// We're done, go into normal mode
 			fFadeState = kFadeNone;
+#ifdef BINK_SDK_AVAILABLE
 			BinkPause(fBink, false);
+#endif
 		}
 		else
 		{
@@ -310,7 +326,9 @@ hsBool plBinkPlayer::ICheckFadingTo()
 			{
 				fFadeState = kFadeTo;
 				fFadeStart = hsTimer::GetSeconds();
+#ifdef BINK_SDK_AVAILABLE
 				BinkPause(fBink, true);
+#endif
 			}
 			else
 			{
@@ -324,7 +342,9 @@ hsBool plBinkPlayer::ICheckFadingTo()
 			if( fFadeParm >= 1.f )
 			{
 				fFadeState = kFadeNone;
+#ifdef BINK_SDK_AVAILABLE
 				BinkPause(fBink, false);
+#endif
 			}
 			else
 			{
@@ -345,11 +365,18 @@ hsBool plBinkPlayer::INotFadingTo()
 
 hsBool plBinkPlayer::IAtEnd()
 {
+#ifdef BINK_SDK_AVAILABLE
 	return fBink->FrameNum == fBink->Frames;
+#else
+	return true;
+#endif
 }
 
 hsBool plBinkPlayer::NextFrame()
 {
+#ifndef BINK_SDK_AVAILABLE
+	return false;
+#endif
 	if( !fFileName )
 		return false;
 
@@ -366,11 +393,13 @@ hsBool plBinkPlayer::NextFrame()
 		return Stop();
 	}
 
+#ifdef BINK_SDK_AVAILABLE
 	if ( !BinkWait( fBink ) )  
 	{
 		if( !IGetFrame() )
 			return false;
 	}
+#endif
 
 	if( fFadeState == kFadeNone )
 		fCurrColor = fColor;
@@ -385,7 +414,9 @@ hsBool plBinkPlayer::Pause(hsBool on)
 		switch( fFadeState )
 		{
 		case kFadeNone:
+#ifdef BINK_SDK_AVAILABLE
 			BinkPause(fBink, on);
+#endif
 			break;
 		case kFadeFrom:
 			if( on )
@@ -439,7 +470,9 @@ hsBool plBinkPlayer::Stop()
 
 	if( fBink )
 	{
+#ifdef BINK_SDK_AVAILABLE
 		BinkClose( fBink );
+#endif
 		fBink = nil;
 	}
 
@@ -485,8 +518,10 @@ void plBinkPlayer::ISetVolume(hsScalar v, int background)
 	if( volume != fVolume[track] )
 	{
 		fVolume[track] = volume;
+#ifdef BINK_SDK_AVAILABLE
 		if( fBink )
 			BinkSetVolume(fBink, fTracks[track], fVolume[track]);
+#endif
 	}
 }
 

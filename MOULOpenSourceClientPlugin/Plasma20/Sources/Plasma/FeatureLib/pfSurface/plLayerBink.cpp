@@ -27,7 +27,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // I'm not really sure what of this is platform dependent. Shouldn't get compiled
 // into servers stuff (Unix/Linux), but should work on the Mac. If you're trying to
 // compile on one of those platforms and hit problems, let me know - mf
+#ifdef BINK_SDK_AVAILABLE
 #include "bink.h"
+#endif
 
 #include "hsTypes.h"
 #include "hsUtils.h"
@@ -36,6 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLayerBink.h"
 #include "../plGImage/plMipmap.h"
 
+#ifdef BINK_SDK_AVAILABLE
 #if HS_BUILD_FOR_WIN32
 typedef HBINK (CALLBACK *BINKOPEN)(char *,int);
 typedef Int32 (CALLBACK *BINKCOPYTOBUFFER)(HBINK, void*, s32,u32,u32,u32, int);
@@ -66,15 +69,21 @@ static BINKDOFRAME			fBinkDoFrame = nil;
 static BINKGOTO				fBinkGoto = nil;	
 #endif // HS_BUILD_FOR_WIN32
 static int					fBinkRef = 0;
+#endif /* BINK_SDK_AVAILABLE */
 
 #include "hsTypes.h"
 #include "plLayerBink.h"
 
+#ifdef BINK_SDK_AVAILABLE
 #define GetBink()	((HBINK)(fHBink))
+#else
+#define GetBink()	fHBink
+#endif
 #define SetBink(f)	(fHBink = f)
 
 plLayerBink::plLayerBink()
 {
+#ifdef BINK_SDK_AVAILABLE
 #if HS_BUILD_FOR_WIN32
 	if (fBinkRef == 0)
 	{
@@ -94,32 +103,39 @@ plLayerBink::plLayerBink()
 	}
 	fBinkRef++;
 #endif // HS_BUILD_FOR_WIN32
+#endif /* BINK_SDK_AVAILABLE */
 	SetBink(nil);
 	fFPS = 0.f;
 }
 
 plLayerBink::~plLayerBink()
 {
+#ifdef BINK_SDK_AVAILABLE
 #if HS_BUILD_FOR_WIN32
 	if( !--fBinkRef )
 	{
 		FreeLibrary( fBinkLib );
 	}
 #endif // HS_BUILD_FOR_WIN32
+#endif
 }
 
 hsBool plLayerBink::IInit()
 {
+#ifdef BINK_SDK_AVAILABLE
 	SetBink(BinkOpen(fMovieName, BINKALPHA));
 	if (!GetBink())
+#endif
 		return ISetFault("Failed to open Bink");
 
+#ifdef BINK_SDK_AVAILABLE
 	hsScalar nSecs = (GetBink()->Frames-1)*(hsScalar)(GetBink()->FrameRateDiv)/(hsScalar)(GetBink()->FrameRate);
 	ISetLength(nSecs);
 	ISetSize(GetBink()->Width, GetBink()->Height);
 	fFPS = float(GetBink()->FrameRate) / float(GetBink()->FrameRateDiv) + 0.5f;
 
 	return true;
+#endif
 }
 
 Int32 plLayerBink::ISecsToFrame(hsScalar secs)
@@ -139,6 +155,7 @@ hsBool plLayerBink::IGetCurrentFrame()
 			return ISetFault("previously failed but still calling Bink::IGetCurrentFrame()");
 	}
 
+#ifdef BINK_SDK_AVAILABLE
 	ICheckBitmap();
 
 	Int32 frame = fCurrentFrame + 1; // Bink Counts frames from frame 1
@@ -185,17 +202,20 @@ hsBool plLayerBink::IGetCurrentFrame()
 		i++;
 	}
 #endif
+#endif /* BINK_SDK_AVAILABLE */
 
 	return false;
 }
 
 hsBool plLayerBink::IRelease()
 {
+#ifdef BINK_SDK_AVAILABLE
 	if(GetBink())
 	{
 		BinkClose(GetBink());
 		SetBink(nil);
 		return false;
 	}
+#endif
 	return true;
 }
