@@ -30,10 +30,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsPoint2.h"
 #include "hsTemplates.h"
 #include "hsWindowHndl.h"
+#ifdef BINK_SDK_AVAILABLE
 #include "../../../../StaticSDKs/Win32/Bink/inc/bink.h"
+#else
+#define U32 UInt32
+#endif
 
 
+#ifdef BINK_SDK_AVAILABLE
 struct BINK;
+#endif
 struct D3DVertex;
 class plDXPipeline;
 struct IDirect3DTexture9;
@@ -139,7 +145,11 @@ class plBinkPlayer
 
 		char*				fFileName; // for id
 
+#ifdef BINK_SDK_AVAILABLE
 		BINK*				fBink;				// main bink object 
+#else
+		void*				fBink;
+#endif
 		plDXPipeline*		fPipeline;
 		IDirect3DTexture9*	fTexture;
 		D3DVertex			fVerts[4];
