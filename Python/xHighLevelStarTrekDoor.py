@@ -131,10 +131,10 @@ class xHighLevelStarTrekDoor(ptModifier):
             print "HighLevelStarTrekDoor.OnSDLNotify: Player who updated SDL: ", playerID
             if playerID == 0 and self.sceneobject.isLocallyOwned():
                 if doorClosed == 0:
-                    self.SendNote("respOpenDoor.run(self.key,fastforward=1)")
+                    self.SendNote("respOpenDoor;1")
                     self.UpdateDoorState(doorSDLstates['open'])
                 elif doorClosed == 1:
-                    self.SendNote("respCloseDoor.run(self.key,fastforward=1)")
+                    self.SendNote("respCloseDoor;1")
                     self.UpdateDoorState(doorSDLstates['closed'])
 
     ##########################################
@@ -184,7 +184,7 @@ class xHighLevelStarTrekDoor(ptModifier):
                     #print "xHighLevelStarTrekDoor: Timer set to : %d" % self.respondertime
                     #PtAtTimeCallback(self.key,self.respondertime,1)
                     print "xHighLevelStarTrekDoor: Playing command: %s" % (code)
-                    exec code
+                    self.ExecCode(code)
                     if self.DoorStack[0].find('fastforward=1') != -1:
                         self.UpdateRespStack()
                 return
@@ -271,7 +271,7 @@ class xHighLevelStarTrekDoor(ptModifier):
             print "Playing command: %s" % (code)
             #print "xHighLevelStarTrekDoor: Timer set to : %d" % self.respondertime
             #PtAtTimeCallback(self.key,self.respondertime,1)
-            exec code
+            self.ExecCode(code)
             if self.DoorStack[0].find('fastforward=1') != -1:
                 self.DoorStack.pop(0)
 
@@ -288,11 +288,11 @@ class xHighLevelStarTrekDoor(ptModifier):
                 return            
 
             if self.DoorState == doorSDLstates['opening']:
-                self.SendNote("respOpenDoor.run(self.key,netPropagate=0)")
+                self.SendNote("respOpenDoor;0")
                 print "xHighLevelStarTrekDoor: Notifying Clients to play Open Door Responder"
 
             elif self.DoorState == doorSDLstates['closing']:
-                self.SendNote("respCloseDoor.run(self.key,netPropagate=0)")
+                self.SendNote("respCloseDoor;0")
                 print "xHighLevelStarTrekDoor: Notifying Clients to play Close Door Responder"
 
             elif self.DoorState == doorSDLstates['open']:
@@ -322,3 +322,18 @@ class xHighLevelStarTrekDoor(ptModifier):
 
             elif self.DoorState == doorSDLstates['movingclosed'] or self.DoorState == doorSDLstates['closing']:
                 self.UpdateDoorState(doorSDLstates['closed'])
+
+    def ExecCode(self,code):
+        chunks = code.split(';')
+        tag = chunks[0];
+        fastForward = int(code[1])
+        if tag == "respOpenDoor":
+            if fastForward == 1:
+                respOpenDoor.run(self.key,fastforward=1)
+            else:
+                respOpenDoor.run(self.key,netPropagate=0)
+        elif tag == "respCloseDoor":
+            if fastForward == 1:
+                respCloseDoor.run(self.key,fastforward=1)
+            else:
+                respCloseDoor.run(self.key,netPropagate=0)
