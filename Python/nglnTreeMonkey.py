@@ -116,7 +116,7 @@ class nglnTreeMonkey(ptResponder):
                 print "List is only one command long, so I'm playing it"
                 code = stackList[0]
                 print "Playing command: %s" % (code)
-                exec code
+                self.ExecCode(code)
 
         elif id == respMonkeyAct.id and self.sceneobject.isLocallyOwned():
             print "Callback was from responder, and I own the age, so Logic Time"
@@ -137,7 +137,7 @@ class nglnTreeMonkey(ptResponder):
                 print "List has at least one item ready to play"
                 code = stackList[0]
                 print "Playing command: %s" % (code)
-                exec code
+                self.ExecCode(code)
 
         else:
             print "Callback from something else?"
@@ -155,9 +155,9 @@ class nglnTreeMonkey(ptResponder):
             NewCumulative = eval( "Cumulative + " + MonkeyState + "Pct" )
             if PickABehavior > Cumulative and PickABehavior <= NewCumulative:
                 if MonkeyState == "Off":
-                    self.SendNote("respMonkeyOff.run(self.key)")
+                    self.SendNote("respMonkeyOff")
                 else:
-                    respString = "respMonkeyAct.run(self.key, state='" + str(MonkeyState) + "')"
+                    respString = ("respMonkeyAct;%s" % (MonkeyState))
                     self.SendNote(respString)
                 print "nglnTreeMonkey: Attempting Tree Monkey Anim: %s" % (MonkeyState)
                 if LightsOn:
@@ -189,7 +189,7 @@ class nglnTreeMonkey(ptResponder):
     def MonkeyAppears(self):
         whichtree = whrandom.randint(0,2)
         respSpawnPt.run(self.key, state=str(whichtree))
-        self.SendNote("respMonkeyAct.run(self.key, state='Up')")
+        self.SendNote("respMonkeyAct;Up")
         print "nglnTreeMonkey: Tree Monkey is climbing Tree: %d" % (whichtree)
 
     ###########################
@@ -265,7 +265,14 @@ class nglnTreeMonkey(ptResponder):
             if self.sceneobject.isLocallyOwned():
                 print "nglnTreeMonkey.OnBackdoorMsg: Work!"
                 if param == "up":
-                    self.SendNote("respMonkeyAct.run(self.key, state='Up')")
+                    self.SendNote("respMonkeyAct;Up")
                 elif param == "tree":
                     self.MonkeyAppears()
 
+    def ExecCode(self, code):
+        if code == "respMonkeyOff":
+            respMonkeyOff.run(self.key)
+        elif code.find("respMonkeyAct") != -1:
+            chunks = code.split(';')
+            ecMonkeyState = chunks[1]
+            respMonkeyAct.run(self.key, state=ecMonkeyState)
