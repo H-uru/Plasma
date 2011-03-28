@@ -465,7 +465,7 @@ class ercaPelletRoom(ptResponder):
 #                return
             print "RespSpitPellet callback"
             #TakePellet = 0
-            self.SendNote('self.UpdateTakePellet(%d)' % (0))
+            self.SendNote('0')
             #ActTakePellet.enableActivator()
             PtAtTimeCallback(self.key,10,1)
             #ISpit = 0
@@ -474,7 +474,7 @@ class ercaPelletRoom(ptResponder):
             print "ActTakePellet callback"
             #ActTakePellet.disableActivator()
             #TakePellet = 1
-            self.SendNote('self.UpdateTakePellet(%d)' % (1))
+            self.SendNote('1')
             cam = ptCamera()
             cam.disableFirstPersonOverride()
             cam.undoFirstPerson()
@@ -495,7 +495,7 @@ class ercaPelletRoom(ptResponder):
             print "ActPelletToSilo callback"
             iLink = 1
             #TakePellet = 2
-            self.SendNote('self.UpdateTakePellet(%d)' % (2))
+            self.SendNote('2')
             MltStgLinkPellet.gotoStage(Toucher, 1,dirFlag=1,isForward=1)
             PtAtTimeCallback(self.key,0.6,3)
         
@@ -503,7 +503,7 @@ class ercaPelletRoom(ptResponder):
             print "ActPelletToCave callback"
             iLink = 1
             #TakePellet = 2
-            self.SendNote('self.UpdateTakePellet(%d)' % (2))
+            self.SendNote('2')
             MltStgLinkPellet.gotoStage(Toucher, 2,dirFlag=1,isForward=1)
             PtAtTimeCallback(self.key,0.6,4)
         
@@ -605,7 +605,7 @@ class ercaPelletRoom(ptResponder):
             #print "incoming event: %s" % (events[0][1])
             code = events[0][1]
             #print "playing command: %s" % (code)
-            exec code            
+            self.ExecCode(code)  
 
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
@@ -615,7 +615,7 @@ class ercaPelletRoom(ptResponder):
             if TakePellet == 1:
                 print "ercaPelletRoom.OnControlKeyEvent(): hit exit key"
                 #TakePellet = 0
-                self.SendNote('self.UpdateTakePellet(%d)' % (0))
+                self.SendNote('0')
                 #ActTakePellet.enableActivator()
                 PtDisableControlKeyEvents(self.key)
                 MltStgLinkPellet.gotoStage(Toucher, 0,newTime=1.2,dirFlag=1,isForward=0)
@@ -624,7 +624,7 @@ class ercaPelletRoom(ptResponder):
             if TakePellet == 1:
                 print "ercaPelletRoom.OnControlKeyEvent(): hit movement key"
                 #TakePellet = 0
-                self.SendNote('self.UpdateTakePellet(%d)' % (0))
+                self.SendNote('0')
                 #ActTakePellet.enableActivator()
                 PtDisableControlKeyEvents(self.key)
                 MltStgLinkPellet.gotoStage(Toucher, 0,newTime=1.2,dirFlag=1,isForward=0)
@@ -645,14 +645,14 @@ class ercaPelletRoom(ptResponder):
                 RespDropPellet.run(self.key,state="taken")
                 #print "taken"
                 #TakePellet = 0
-                #self.SendNote('self.UpdateTakePellet(%d)' % (0))
+                #self.SendNote('0')
                 PtAtTimeCallback(self.key,10,6)
             else:
                 #ActTakePellet.disableActivator()
                 RespDropPellet.run(self.key,state="normal")
                 if TakePellet == 1:
                     #TakePellet = 0
-                    self.SendNote('self.UpdateTakePellet(%d)' % (0))
+                    self.SendNote('0')
                     print "onTimer, TakePellet = 1"
                     if Toucher:
                         MltStgLinkPellet.gotoStage(Toucher, 0,newTime=1.2,dirFlag=1,isForward=0)
@@ -667,7 +667,7 @@ class ercaPelletRoom(ptResponder):
         elif id == 5:
             RespTouchPellet.run(self.key,state="Untouch")
         elif id == 6:
-            self.SendNote('self.UpdateTakePellet(%d)' % (0))
+            self.SendNote('0')
 
 
     def IFlushPellets(self):
@@ -719,6 +719,7 @@ class ercaPelletRoom(ptResponder):
         notify.send()
 
 
+
     def OnClickToLinkToPelletCaveFromErcana(self):
         ageVault = ptAgeVault()
         ageInfoNode = ageVault.getAgeInfo()
@@ -765,3 +766,8 @@ class ercaPelletRoom(ptResponder):
         #linkMgr.linkToAge(als)
         linkMgr.linkToAge(als,"TouchPellet")
 
+
+    def ExecCode(self,code):
+        takePellet = int(code)
+        if takePellet >= 0 and takePellet <= 2:
+            self.UpdateTakePellet(takePellet);
