@@ -138,7 +138,7 @@ class grsnTrnCtrDoors(ptResponder):
                     print "grsnTrnCtrDoors: List is only one command long, so I'm playing it"
                     code = self.grsnDoorStack[0]
                     print "grsnTrnCtrDoors: Playing command: %s" % (code)
-                    exec code
+                    self.ExecCode(code)
 
             ############################################################################################################
             elif events[0][1].find('DoorState') != 1 and events[0][1].find('rgnTriggerEnter') == -1 and events[0][1].find('rgnTriggerExit') == -1 and events[0][1].find('Responder') == -1:
@@ -160,7 +160,7 @@ class grsnTrnCtrDoors(ptResponder):
                     print "grsnTrnCtrDoors: Door state is now %d" % self.grsnDoorState
           
                     if self.sceneobject.isLocallyOwned():
-                        self.SendNote("doorOpenResponder.run(self.key,netPropagate=0)")
+                        self.SendNote("doorOpenResponder")
                      
                 elif curState == doorSDLstates['open']:
                     self.grsnDoorState = doorSDLstates['open']
@@ -175,7 +175,7 @@ class grsnTrnCtrDoors(ptResponder):
                     print "grsnTrnCtrDoors: Door state is now %d" % self.grsnDoorState
 
                     if self.sceneobject.isLocallyOwned():
-                        self.SendNote("doorCloseResponder.run(self.key,netPropagate=0)")                                    
+                        self.SendNote("doorCloseResponder")                                    
 
                 elif curState == doorSDLstates['opentoclose']:
                     self.grsnDoorState = doorSDLstates['opentoclose']
@@ -281,8 +281,14 @@ class grsnTrnCtrDoors(ptResponder):
             print "grsnTrnCtrDoors: There's at lest one more Resp to play."
             code = self.grsnDoorStack[0]            
             print "Playing command: %s" % (code)
-            exec code
+            self.ExecCode(code)
 
     def UpdateDoorState (self, StateNum):
         self.SDL['grsnDoorState'] = (StateNum,)
         self.SendNote('DoorState='+str(StateNum))
+
+    def ExecCode(self, code):
+        if code == "doorOpenResponder":
+            doorOpenResponder.run(self.key,netPropagate=0)
+        elif code == "doorCloseResponder":
+            doorCloseResponder.run(self.key,netPropagate=0)
