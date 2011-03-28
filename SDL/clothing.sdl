@@ -1,0 +1,71 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#===============================================
+# Changing an SDL record? Be sure to leave the 
+# legacy record intact and make changes in
+# a new copy of the record. - eap
+#===============================================
+
+#
+# State Description for an avatar's clothing
+#
+
+
+#
+# Helper SDL desc
+# Defines an item of clothing 
+#
+STATEDESC clothingItem
+{
+	VERSION 3		# version is an int	
+	VAR PLKEY	item[1]
+	VAR RGB8	tint[1]	DEFAULT=(1,1,1)
+	VAR RGB8	tint2[1] DEFAULT=(1,1,1)
+}
+
+#
+# Helper SDL desc
+# Defines appearance options 
+#
+STATEDESC appearanceOptions 
+{
+	VERSION 2
+	VAR RGB8 skinTint[1] DEFAULT=(1,1,1)
+	VAR BYTE faceBlends[] DEFAULT=0;
+}
+
+# 
+# Top level SDL desc
+# A variable-length list of clothing items
+#
+STATEDESC clothing   
+{
+	VERSION 4
+	VAR $clothingItem wardrobe[]
+	VAR $appearanceOptions appearance[1]
+	VAR	PLKEY linkInAnim[1]	DEFAULT=nil
+}
+

@@ -1,0 +1,280 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#
+# State Description Language for Neighborhood02, aka Kirel
+
+STATEDESC Neighborhood02
+{
+	VERSION 3
+
+## DEFAULTOPTION=VAULT Content ##
+
+    VAR AGETIMEOFDAY nb01TimeOfDay[1]
+
+# Boolean variables
+    VAR BOOL    nb01AyhoheekAccountingFunc[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01BulletinBoardVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsBlueVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsConstruction01Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsConstruction02Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsConstruction03Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsConstruction04Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsGreatZeroVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsHarborVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsMoving01Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsMoving02Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsMoving03Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ClockFunc[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CommunityAreaConstructionVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ConesVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DniPaperVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01FansFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01FireMarbles1Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01FireMarbles2Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL	nb01FountainWaterVis[1]        DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01GardenBugsVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01GardenLightsFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01JourneyCloth1Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01JourneyCloth2Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkBookEderVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkBookGarrisonVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkBookTeledahnVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkRoomDoorFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01RatCreatureVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01TelescopeVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01WaterfallVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DRCInfoBoardsVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01YeeshaPage07Vis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01PlayerImagerVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL	nb01DRCImagerVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01HappyNewYearVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01WebCamVis[1]       DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01HoodInfoImagerVis[1]  DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ThanksgivingVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkBookNexusVis[1]   DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01Poetry1JournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01KiNexusJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR STRING32  nb01DRCImagerInbox[1] DEFAULTOPTION=VAULT
+
+# Performance variables
+    VAR BOOL    nb01BahroBoatsRun[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BYTE    nb01CallSoundChance[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DarkShapeSwimsRun[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+# State variables
+	VAR BYTE	nb01Ayhoheek5Man1State[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01CommunityAreaState[1]    DEFAULT=2 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01CityLightsArchState[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01LakeLightState[1]    DEFAULT=4 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01PrivateRoomsState[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01PuzzleWallState[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    
+	VAR BOOL	nb01CmnRmSpeech[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    
+    
+## Age Mechanisms   ##
+
+	VAR BOOL	nb01BlueLightOn[1]  DEFAULT=0
+	VAR BOOL	nb01GreenLightOn[1] DEFAULT=0 
+	VAR BOOL	nb01OrangeLightOn[1]    DEFAULT=0
+	VAR BOOL	nb01LinkRoomDoor01Closed[1] DEFAULT=1
+	VAR BOOL	nb01LinkRoomDoor02Closed[1] DEFAULT=1
+	VAR BOOL	nb01ClassroomDoorClosed[1]  DEFAULT=1
+	VAR BOOL	nb01PrivateRoomsOuterDoorClosed[1]  DEFAULT=1
+	VAR BOOL	nb01PrivateRoomsOuterDoorEnabled[1] DEFAULT=0
+	VAR BOOL	nb01PrivateRoom01Closed[1]  DEFAULT=0
+	VAR BOOL	nb01PrivateRoom02Closed[1]  DEFAULT=0
+	VAR BOOL	nb01PrivateRoom03Closed[1]  DEFAULT=0
+	VAR BOOL	nb01PrivateRoom04Closed[1]  DEFAULT=0
+	VAR BOOL	nb01PrivateRoom05Closed[1]  DEFAULT=0
+	VAR BOOL	nb01FireworksOnBalcony[1]  DEFAULT=0
+	VAR BOOL	nb01FireworksOnBanner[1]  DEFAULT=0
+	VAR BOOL	nb01FireworksOnFountain[1]  DEFAULT=0
+
+# Neighborhood Customization options #
+
+    VAR BOOL    nb01BeachBallVis[1]          DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ClockVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01GardenFungusVis[1]       DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01GardenLightsVis[1]       DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DestructionCracksVis[1]  DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LanternsVis[1]           DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LampOption01Vis[1]       DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01OldImager01Vis[1]        DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01OldImager02Vis[1]        DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01WaterfallTorchesVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ResidenceAdditionsVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BYTE    nb01StainedWindowOption[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+#GZ Marker visibility
+    VAR BOOL    nb01GZMarkerVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Randomized object appear/disappear
+    VAR BOOL    nb01YeeshaPage07Enabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BYTE    nb01YeeshaPage07Chance[1]      DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01YeeshaPage07Proximity[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    nb01DarkShapeSwimsEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BYTE    nb01DarkShapeSwimsChance[1]      DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DarkShapeSwimsProximity[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    nb01BahroBoatsEnabled[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BYTE    nb01BahroBoatsChance[1]          DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01BahroBoatsProximity[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Neighborhood02
+{
+	VERSION 4
+
+## DEFAULTOPTION=VAULT Content ##
+
+    VAR AGETIMEOFDAY nb01TimeOfDay[1]
+
+# Boolean variables
+    VAR BOOL    nb01AyhoheekAccountingFunc[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01BulletinBoardVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsBlueVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsConstruction01Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsConstruction02Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsConstruction03Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsConstruction04Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsGreatZeroVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsHarborVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsMoving01Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsMoving02Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CityLightsMoving03Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ClockFunc[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01CommunityAreaConstructionVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ConesVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DniPaperVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01FansFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01FireMarbles1Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01FireMarbles2Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL	nb01FountainWaterVis[1]        DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01GardenBugsVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01GardenLightsFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01JourneyCloth1Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01JourneyCloth2Vis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkBookEderVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkBookGarrisonVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkBookTeledahnVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkRoomDoorFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01RatCreatureVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01TelescopeVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01WaterfallVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DRCInfoBoardsVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01YeeshaPage07Vis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01PlayerImagerVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL	nb01DRCImagerVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01HappyNewYearVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01WebCamVis[1]       DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01HoodInfoImagerVis[1]  DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ThanksgivingVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LinkBookNexusVis[1]   DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01Poetry1JournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01KiNexusJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR STRING32  nb01DRCImagerInbox[1] DEFAULTOPTION=VAULT
+
+# Performance variables
+    VAR BOOL    nb01BahroBoatsRun[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BYTE    nb01CallSoundChance[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DarkShapeSwimsRun[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+# State variables
+	VAR BYTE	nb01Ayhoheek5Man1State[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01CommunityAreaState[1]    DEFAULT=2 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01CityLightsArchState[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01LakeLightState[1]    DEFAULT=4 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01PrivateRoomsState[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BYTE	nb01PuzzleWallState[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    
+	VAR BOOL	nb01CmnRmSpeech[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    
+    
+## Age Mechanisms   ##
+
+	VAR BOOL	nb01BlueLightOn[1]  DEFAULT=0
+	VAR BOOL	nb01GreenLightOn[1] DEFAULT=0 
+	VAR BOOL	nb01OrangeLightOn[1]    DEFAULT=0
+	VAR BOOL	nb01LinkRoomDoor01Closed[1] DEFAULT=1
+	VAR BOOL	nb01LinkRoomDoor02Closed[1] DEFAULT=1
+	VAR BOOL	nb01ClassroomDoorClosed[1]  DEFAULT=1
+	VAR BOOL	nb01PrivateRoomsOuterDoorClosed[1]  DEFAULT=1
+	VAR BOOL	nb01PrivateRoomsOuterDoorEnabled[1] DEFAULT=0
+	VAR BOOL	nb01PrivateRoom01Closed[1]  DEFAULT=0
+	VAR BOOL	nb01PrivateRoom02Closed[1]  DEFAULT=0
+	VAR BOOL	nb01PrivateRoom03Closed[1]  DEFAULT=0
+	VAR BOOL	nb01PrivateRoom04Closed[1]  DEFAULT=0
+	VAR BOOL	nb01PrivateRoom05Closed[1]  DEFAULT=0
+	VAR BOOL	nb01FireworksOnBalcony[1]  DEFAULT=0
+	VAR BOOL	nb01FireworksOnBanner[1]  DEFAULT=0
+	VAR BOOL	nb01FireworksOnFountain[1]  DEFAULT=0
+
+# Neighborhood Customization options #
+
+    VAR BOOL    nb01BeachBallVis[1]          DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ClockVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01GardenFungusVis[1]       DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01GardenLightsVis[1]       DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DestructionCracksVis[1]  DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LanternsVis[1]           DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01LampOption01Vis[1]       DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01OldImager01Vis[1]        DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01OldImager02Vis[1]        DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01WaterfallTorchesVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01ResidenceAdditionsVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BYTE    nb01StainedWindowOption[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Guild Shirts
+    VAR BOOL    nb02GuildShirt01[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb02GuildShirt02[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb02GuildShirt03[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb02GuildShirt04[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb02GuildShirt05[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+#GZ Marker visibility
+    VAR BOOL    nb01GZMarkerVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Randomized object appear/disappear
+    VAR BOOL    nb01YeeshaPage07Enabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BYTE    nb01YeeshaPage07Chance[1]      DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01YeeshaPage07Proximity[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    nb01DarkShapeSwimsEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BYTE    nb01DarkShapeSwimsChance[1]      DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01DarkShapeSwimsProximity[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    nb01BahroBoatsEnabled[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BYTE    nb01BahroBoatsChance[1]          DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    nb01BahroBoatsProximity[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+
+}

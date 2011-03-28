@@ -1,0 +1,14 @@
+StartDateTime=0000000000
+DayLength=24.000000
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=-5
+ReleaseVersion=0
+Page=Female,2
+Page=Female01,4
+Page=Female02,5
+Page=Female04,7
+Page=Male,1
+Page=Male01,3
+Page=Male02,6
+Page=Male04,8

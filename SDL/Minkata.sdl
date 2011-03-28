@@ -1,0 +1,142 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#==============================================================
+# READ:	When modifying an SDL record, do *not* modify the
+#	existing record. You must copy and paste a new version
+#	below the current one and make your changes there.
+#==============================================================
+
+
+#
+# State Description Language for Minkata
+
+STATEDESC Minkata
+{
+	VERSION 1
+
+# Boolean variables
+    VAR BOOL    minkHikingBootsVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+}
+
+STATEDESC Minkata
+{
+	VERSION 2
+
+# Boolean variables
+    VAR BOOL    minkHikingBootsVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    minkIsDayTime[1]                   DEFAULT=1 DEFAULTOPTION=hidden
+
+}
+
+STATEDESC Minkata
+{
+	VERSION 3
+
+# Boolean variables
+    VAR BOOL    minkHikingBootsVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    minkIsDayTime[1]                   DEFAULT=1 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkSymbolPart01[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart02[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart03[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart04[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart05[1]                DEFAULT=0 DEFAULTOPTION=hidden
+
+}
+
+STATEDESC Minkata
+{
+	VERSION 4
+
+# Boolean variables
+    VAR BOOL    minkHikingBootsVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    minkIsDayTime[1]                   DEFAULT=1 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkSymbolPart01[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart02[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart03[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart04[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart05[1]                DEFAULT=0 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkCalendarSpark06[1]    	   DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Minkata
+{
+	VERSION 5
+
+# Boolean variables
+    VAR BOOL    minkHikingBootsVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    minkIsDayTime[1]                   DEFAULT=1 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkSymbolPart01[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart02[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart03[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart04[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart05[1]                DEFAULT=0 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkSymbolShow01[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolShow02[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolShow03[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolShow04[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolShow05[1]                DEFAULT=0 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkCalendarSpark06[1]    	   DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Minkata
+{
+	VERSION 6
+
+# Boolean variables
+    VAR BOOL    minkHikingBootsVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    minkIsDayTime[1]                   DEFAULT=1 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkSymbolPart01[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart02[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart03[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart04[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolPart05[1]                DEFAULT=0 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkSymbolShow01[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolShow02[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolShow03[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolShow04[1]                DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolShow05[1]                DEFAULT=0 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkSymbolTouch01[1]               DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolTouch02[1]               DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolTouch03[1]               DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolTouch04[1]               DEFAULT=0 DEFAULTOPTION=hidden
+    VAR BOOL    minkSymbolTouch05[1]               DEFAULT=0 DEFAULTOPTION=hidden
+
+    VAR BOOL    minkCalendarSpark06[1]    	       DEFAULT=0 DEFAULTOPTION=VAULT
+
+}

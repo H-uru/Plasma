@@ -1,0 +1,198 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#==============================================================
+# READ:	When modifying an SDL record, do *not* modify the
+#	existing record. You must copy and paste a new version
+#	below the current one and make your changes there.
+#==============================================================
+
+#
+# State Description Language for Cleft
+# The order and contents of this file directly correlate with clftEmgrPhase0.py
+
+STATEDESC Cleft
+{
+	VERSION 21
+
+# Boolean variables
+
+    VAR BOOL    clftJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+
+    VAR BOOL    clftAgeSDLWindmillLocked[1] DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftAgeSDLWindmillRunning[1] DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftJourneysVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaBookVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftZandiVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaPage08Vis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftBridgeCollapse[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBucketLowered[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftKitchenDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftOfficeDoorClosed[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftTomahnaActive[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftSceneYeeshaUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftSceneBahroUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelN[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelS[1]    DEFAULT=5 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelE[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelW[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftWindmillUnstuck[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaShowJC[1]    DEFAULT=0 DISPLAYOPTION=red
+}
+
+STATEDESC Cleft
+{
+	VERSION 22
+
+# Boolean variables
+
+    VAR BOOL    clftJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftZandiShirtVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    clftAtrusGogglesVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+
+    VAR BOOL    clftAgeSDLWindmillLocked[1] DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftAgeSDLWindmillRunning[1] DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftJourneysVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaBookVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftZandiVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaPage08Vis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftBridgeCollapse[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBucketLowered[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftKitchenDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftOfficeDoorClosed[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftTomahnaActive[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftSceneYeeshaUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftSceneBahroUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelN[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelS[1]    DEFAULT=5 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelE[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelW[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftWindmillUnstuck[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaShowJC[1]    DEFAULT=0 DISPLAYOPTION=red
+}
+
+
+STATEDESC Cleft
+{
+	VERSION 23
+
+# Boolean variables
+
+    VAR BOOL    clftJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftZandiShirtVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftAtrusGogglesVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+
+    VAR BOOL    clftAgeSDLWindmillLocked[1] DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftAgeSDLWindmillRunning[1] DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftJourneysVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaBookVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftZandiVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaPage08Vis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftBridgeCollapse[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBucketLowered[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftKitchenDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftOfficeDoorClosed[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftTomahnaActive[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftSceneYeeshaUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftSceneBahroUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelN[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelS[1]    DEFAULT=5 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelE[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelW[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftWindmillUnstuck[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaShowJC[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftIsCleftDone[1]    DEFAULT=0 DISPLAYOPTION=red
+}
+
+
+STATEDESC Cleft
+{
+	VERSION 24
+
+# Boolean variables
+
+    VAR BOOL    clftJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftZandiShirtVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftAtrusGogglesVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftYeeshaPage19Vis[1]    DEFAULT=0 DISPLAYOPTION=VAULT
+
+# Age Mechanics
+
+    VAR BOOL    clftAgeSDLWindmillLocked[1] DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftAgeSDLWindmillRunning[1] DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftJourneysVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaBookVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftZandiVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaPage08Vis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftBridgeCollapse[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBucketLowered[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftKitchenDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftOfficeDoorClosed[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftTomahnaActive[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftSceneYeeshaUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftSceneBahroUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelN[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelS[1]    DEFAULT=5 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelE[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelW[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftWindmillUnstuck[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaShowJC[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftIsCleftDone[1]    DEFAULT=0 DISPLAYOPTION=red
+}
+

@@ -1,0 +1,15 @@
+StartDateTime=0946713600
+DayLength=24.000000
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=10
+ReleaseVersion=0
+Page=GuildInfo-Cartographers,9
+Page=GuildInfo-Greeters,7
+Page=GuildInfo-Maintainers,6
+Page=GuildInfo-Messengers,8
+Page=GuildInfo-Writers,5
+Page=krelClassRm,2
+Page=krelCommonRm,3
+Page=krelKirel,1
+Page=krelPrivateRm,4

@@ -1,0 +1,343 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#
+# State Description Language for the BahroCave
+
+STATEDESC Ahnonay
+{
+	VERSION 1
+	#current sphere for linking in from temple
+	VAR BYTE    ahnyCurrentSphere[1]   DEFAULT=1 
+
+
+}
+
+STATEDESC Ahnonay
+{
+	VERSION 2
+	#current sphere for linking in from temple
+	VAR BYTE	ahnyCurrentSphere[1]   DEFAULT=0 
+	VAR BYTE	ahnyCurrentSaveCloth[2] DEFAULT=0
+
+}
+
+STATEDESC Ahnonay
+{
+	VERSION 3
+
+    ## SPHERE 1 SDLs ##
+    VAR BOOL    ahnyCurrent[1]              DEFAULT=1  DISPLAYOPTION=red
+    VAR BYTE    ahnyQuabs[1]                DEFAULT=20 DISPLAYOPTION=red
+    VAR BOOL    ahnyHutDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+
+
+    ## SPHERE 2 SDLs ##
+    VAR BOOL    ahnyYeeshaPageStormVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+
+
+    ## SPHERE 3 SDLs ##
+
+
+    ## SPHERE 4 SDLs ##
+    VAR BOOL    ahnyKadishDoor[1]           DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyKadishWindows[1]        DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyHubDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyImagerSphere[1]         DEFAULT=1  DISPLAYOPTION=red
+    VAR INT     ahnyDniTimer[1]             DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyVogLocation[1]          DEFAULT=0
+
+    ## Reward Clothing ##
+
+    VAR BOOL    ahnyPubJacketVis[1]         DEFAULT=1  DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Ahnonay
+{
+	VERSION 4
+
+    ## SPHERE 1 SDLs ##
+    VAR BOOL    ahnyCurrent[1]              DEFAULT=1  DISPLAYOPTION=red
+    VAR BYTE    ahnyQuabs[1]                DEFAULT=20 DISPLAYOPTION=red
+    VAR BOOL    ahnyHutDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnySphere01Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     ahnyQuabsLastUpdate[1]      DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 2 SDLs ##
+    VAR BOOL    ahnyYeeshaPageStormVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+    VAR BYTE    ahnySphere02Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BYTE    ahnySphere02Trees[15]       DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 3 SDLs ##
+    VAR BYTE    ahnySphere03Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 4 SDLs ##
+    VAR BOOL    ahnyKadishDoor[1]           DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyKadishWindows[1]        DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyHubDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyImagerSphere[1]         DEFAULT=1  DISPLAYOPTION=red
+    VAR INT     ahnyDniTimer[1]             DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyVogLocation[1]          DEFAULT=0
+
+    ## Reward Clothing ##
+    VAR BOOL    ahnyPubJacketVis[1]         DEFAULT=1  DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Ahnonay
+{
+	VERSION 5
+
+    VAR INT     ahnyCurrentSphere[1]        DEFAULT=1  DISPLAYOPTION=hidden
+
+    ## SPHERE 1 SDLs ##
+    VAR BOOL    ahnyCurrent[1]              DEFAULT=1  DISPLAYOPTION=red
+    VAR BYTE    ahnyQuabs[1]                DEFAULT=20 DISPLAYOPTION=red
+    VAR BOOL    ahnyHutDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnySphere01Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     ahnyQuabsLastUpdate[1]      DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 2 SDLs ##
+    VAR BOOL    ahnyYeeshaPageStormVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+    VAR BYTE    ahnySphere02Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BYTE    ahnySphere02Trees[15]       DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 3 SDLs ##
+    VAR BYTE    ahnySphere03Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 4 SDLs ##
+    VAR BOOL    ahnyKadishDoor[1]           DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyKadishWindows[1]        DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyHubDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyImagerSphere[1]         DEFAULT=1  DISPLAYOPTION=red
+    VAR INT     ahnyDniTimer[1]             DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyVogLocation[1]          DEFAULT=0
+
+    ## Reward Clothing ##
+    VAR BOOL    ahnyPubJacketVis[1]         DEFAULT=1  DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Ahnonay
+{
+	VERSION 6
+
+    VAR INT     ahnyCurrentSphere[1]        DEFAULT=1  DISPLAYOPTION=hidden
+
+    ## SPHERE 1 SDLs ##
+    VAR BOOL    ahnyCurrent[1]              DEFAULT=1  DISPLAYOPTION=red
+    VAR BYTE    ahnyQuabs[1]                DEFAULT=20 DISPLAYOPTION=red
+    VAR BOOL    ahnyHutDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnySphere01Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     ahnyQuabsLastUpdate[1]      DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 2 SDLs ##
+    VAR BOOL    ahnyYeeshaPageStormVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+    VAR BYTE    ahnySphere02Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BYTE    ahnySphere02Trees[15]       DEFAULT=1  DISPLAYOPTION=hidden
+
+    ## SPHERE 3 SDLs ##
+    VAR BYTE    ahnySphere03Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    ahnyYeeshaPageClockVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+
+    ## SPHERE 4 SDLs ##
+    VAR BOOL    ahnyKadishDoor[1]           DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyKadishWindows[1]        DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyHubDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyImagerSphere[1]         DEFAULT=1  DISPLAYOPTION=red
+    VAR INT     ahnyDniTimer[1]             DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyVogLocation[1]          DEFAULT=0
+
+    ## Reward Clothing ##
+    VAR BOOL    ahnyPubJacketVis[1]         DEFAULT=1  DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Ahnonay
+{
+	VERSION 7
+
+    VAR INT     ahnyCurrentSphere[1]        DEFAULT=1  DISPLAYOPTION=hidden
+    VAR INT     ahnyCurrentOffset[1]        DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 1 SDLs ##
+    VAR BOOL    ahnyCurrent[1]              DEFAULT=1  DISPLAYOPTION=red
+    VAR BYTE    ahnyQuabs[1]                DEFAULT=20 DISPLAYOPTION=red
+    VAR BOOL    ahnyHutDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnySphere01Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     ahnyQuabsLastUpdate[1]      DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 2 SDLs ##
+    VAR BOOL    ahnyYeeshaPageStormVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+    VAR BYTE    ahnySphere02Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BYTE    ahnySphere02Trees[15]       DEFAULT=1  DISPLAYOPTION=hidden
+
+    ## SPHERE 3 SDLs ##
+    VAR BYTE    ahnySphere03Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    ahnyYeeshaPageClockVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+
+    ## SPHERE 4 SDLs ##
+    VAR BOOL    ahnyKadishDoor[1]           DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyKadishWindows[1]        DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyHubDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyImagerSphere[1]         DEFAULT=1  DISPLAYOPTION=red
+    VAR INT     ahnyDniTimer[1]             DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyVogLocation[1]          DEFAULT=0
+
+    ## Reward Clothing ##
+    VAR BOOL    ahnyPubJacketVis[1]         DEFAULT=1  DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Ahnonay
+{
+	VERSION 8
+
+    VAR INT     ahnyCurrentSphere[1]        DEFAULT=1  DISPLAYOPTION=hidden
+    VAR INT     ahnyCurrentOffset[1]        DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 1 SDLs ##
+    VAR BOOL    ahnyCurrent[1]              DEFAULT=1  DISPLAYOPTION=red
+    VAR BYTE    ahnyQuabs[1]                DEFAULT=20 DISPLAYOPTION=red
+    VAR BOOL    ahnyHutDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnySphere01Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     ahnyQuabsLastUpdate[1]      DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 2 SDLs ##
+    VAR BOOL    ahnyYeeshaPageStormVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+    VAR BYTE    ahnySphere02Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BYTE    ahnySphere02Trees[15]       DEFAULT=1  DISPLAYOPTION=hidden
+
+    ## SPHERE 3 SDLs ##
+    VAR BYTE    ahnySphere03Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    ahnyYeeshaPageClockVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+
+    ## SPHERE 4 SDLs ##
+    VAR BYTE    ahnySphere04Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    ahnyKadishDoor[1]           DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyKadishWindows[1]        DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyHubDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyImagerSphere[1]         DEFAULT=1  DISPLAYOPTION=red
+    VAR INT     ahnyDniTimer[1]             DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyVogLocation[1]          DEFAULT=0
+
+    ## Reward Clothing ##
+    VAR BOOL    ahnyPubJacketVis[1]         DEFAULT=1  DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Ahnonay
+{
+	VERSION 9
+
+    VAR INT     ahnyCurrentSphere[1]        DEFAULT=1  DISPLAYOPTION=hidden
+    VAR INT     ahnyCurrentOffset[1]        DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 1 SDLs ##
+    VAR BOOL    ahnyCurrent[1]              DEFAULT=1  DISPLAYOPTION=red
+    VAR BYTE    ahnyQuabs[1]                DEFAULT=20 DISPLAYOPTION=red
+    VAR BOOL    ahnyHutDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnySphere01Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     ahnyQuabsLastUpdate[1]      DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 2 SDLs ##
+    VAR BOOL    ahnyYeeshaPageStormVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+    VAR BYTE    ahnySphere02Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BYTE    ahnySphere02Trees[15]       DEFAULT=1  DISPLAYOPTION=hidden
+
+    ## SPHERE 3 SDLs ##
+    VAR BYTE    ahnySphere03Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    ahnyYeeshaPageClockVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+
+    ## SPHERE 4 SDLs ##
+    VAR BYTE    ahnySphere04Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    ahnyKadishDoor[1]           DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyKadishWindows[1]        DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyHubDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyImagerSphere[1]         DEFAULT=1  DISPLAYOPTION=red
+    VAR INT     ahnyDniTimer[1]             DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyVogLocation[1]          DEFAULT=0
+
+    ## Reward Clothing ##
+    VAR BOOL    ahnyPubJacketVis[1]         DEFAULT=1  DEFAULTOPTION=VAULT
+    
+	# Save Cloths
+    VAR BOOL	ahnyGotSaveCloth1[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth2[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth3[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth4[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth5[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth6[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth7[1]		DEFAULT=0 DISPLAYOPTION=red
+    
+}
+
+STATEDESC Ahnonay
+{
+	VERSION 10
+
+    VAR INT     ahnyCurrentSphere[1]        DEFAULT=1  DISPLAYOPTION=hidden
+    VAR INT     ahnyCurrentOffset[1]        DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 1 SDLs ##
+    VAR BOOL    ahnyCurrent[1]              DEFAULT=1  DISPLAYOPTION=red
+    VAR BYTE    ahnyQuabs[1]                DEFAULT=20 DISPLAYOPTION=red
+    VAR BOOL    ahnyHutDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnySphere01Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     ahnyQuabsLastUpdate[1]      DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## SPHERE 2 SDLs ##
+    VAR BOOL    ahnyYeeshaPageStormVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+    VAR BYTE    ahnySphere02Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BYTE    ahnySphere02Trees[15]       DEFAULT=1  DISPLAYOPTION=hidden
+
+    ## SPHERE 3 SDLs ##
+    VAR BYTE    ahnySphere03Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    ahnyYeeshaPageClockVis[1]   DEFAULT=0  DEFAULTOPTION=VAULT
+
+    ## SPHERE 4 SDLs ##
+    VAR BYTE    ahnySphere04Occupied[25]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    ahnyKadishDoor[1]           DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyKadishWindows[1]        DEFAULT=0  DISPLAYOPTION=red
+    VAR BOOL    ahnyHubDoor[1]              DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyImagerSphere[1]         DEFAULT=1  DISPLAYOPTION=red
+    VAR INT     ahnyDniTimer[1]             DEFAULT=0  DISPLAYOPTION=red
+    VAR BYTE    ahnyVogLocation[1]          DEFAULT=0
+	VAR INT     ahnyVogOccupant[1]          DEFAULT=0  DISPLAYOPTION=hidden
+
+    ## Reward Clothing ##
+    VAR BOOL    ahnyPubJacketVis[1]         DEFAULT=1  DEFAULTOPTION=VAULT
+    
+	# Save Cloths
+    VAR BOOL	ahnyGotSaveCloth1[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth2[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth3[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth4[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth5[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth6[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ahnyGotSaveCloth7[1]		DEFAULT=0 DISPLAYOPTION=red
+    
+}

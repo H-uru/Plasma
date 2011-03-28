@@ -1,0 +1,772 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#
+# State Description Language for Er'Cana
+
+STATEDESC Ercana
+{
+	VERSION 25
+
+## Age Mechanics ##
+
+# Harvester
+    VAR BOOL    ercaHrvstrPwrOn[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrReverse[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrCarPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrCarLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingsOk[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingLeverDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrMoving[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloA
+    VAR BOOL    ercaSiloA1Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA1Gate[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloB
+    VAR BOOL    ercaSiloBPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# ControlRoom
+    VAR BYTE    ercaCtrlImgrView[1]   DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlMixBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlOvenBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# PlantExterior
+    VAR BOOL    ercaPool1Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaDebrisPushed[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBackpack2[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+# SiloC
+    VAR BOOL    ercaBakeryPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven1Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaOven2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven3Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven4Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevBusy[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL     ercaMayBake[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaBakeFinishTime[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloD
+    VAR INT     ercaPellet1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet5[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPelletMachine[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaPelletChamber[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaFlushLever[1]   DEFAULT=0 DISPLAYOPTION=red
+
+}
+
+STATEDESC ercaOvenScope
+{
+	VERSION 1
+	VAR INT   boolOperated[1]
+	VAR INT   OperatorID[1]
+
+}
+
+STATEDESC Ercana
+{
+	VERSION 26
+
+## Age Mechanics ##
+
+# Harvester
+    VAR BOOL    ercaHrvstrPwrOn[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrReverse[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrCarPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrCarLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingsOk[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingLeverDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrMoving[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloA
+    VAR BOOL    ercaSiloA1Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA1Gate[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloB
+    VAR BOOL    ercaSiloBPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# ControlRoom
+    VAR BYTE    ercaCtrlImgrView[1]   DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlMixBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlOvenBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# PlantExterior
+    VAR BOOL    ercaPool1Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaDebrisPushed[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBackpack2[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+# SiloC
+    VAR BOOL    ercaBakeryPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven1Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaOven2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven3Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven4Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevBusy[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL     ercaMayBake[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaBakeFinishTime[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloD
+    VAR INT     ercaPellet1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet5[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPelletMachine[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaPelletChamber[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaFlushLever[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# Boolean variables
+
+    VAR BOOL    ercaCalendarSpark05[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPagePlantVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Ercana
+{
+	VERSION 27
+
+## Age Mechanics ##
+
+# Harvester
+    VAR BOOL    ercaHrvstrPwrOn[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrReverse[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrCarPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrCarLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingsOk[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingLeverDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrMoving[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloA
+    VAR BOOL    ercaSiloA1Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA1Gate[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloB
+    VAR BOOL    ercaSiloBPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# ControlRoom
+    VAR BYTE    ercaCtrlImgrView[1]   DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlMixBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlOvenBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# PlantExterior
+    VAR BOOL    ercaPool1Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaDebrisPushed[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloC
+    VAR BOOL    ercaBakeryPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven1Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaOven2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven3Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven4Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevBusy[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL     ercaMayBake[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaBakeFinishTime[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloD
+    VAR INT     ercaPellet1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet5[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPelletMachine[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaPelletChamber[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaFlushLever[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# Boolean variables
+
+    VAR BOOL    ercaCalendarSpark05[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPagePlantVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaBackpackVis[1]    		DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Ercana
+{
+	VERSION 28
+
+## Age Mechanics ##
+
+# Harvester
+    VAR BOOL    ercaHrvstrPwrOn[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrReverse[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrCarPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrCarLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingsOk[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingLeverDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrMoving[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloA
+    VAR BOOL    ercaSiloA1Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA1Gate[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloB
+    VAR BOOL    ercaSiloBPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# ControlRoom
+    VAR BYTE    ercaCtrlImgrView[1]   DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlMixBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlOvenBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# PlantExterior
+    VAR BOOL    ercaPool1Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaDebrisPushed[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloC
+    VAR BOOL    ercaBakeryPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven1Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaOven2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven3Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven4Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevBusy[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL     ercaMayBake[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaBakeFinishTime[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloD
+    VAR INT     ercaPellet1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet5[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPelletMachine[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaPelletChamber[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaFlushLever[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# Boolean variables
+
+    VAR BOOL    ercaCalendarSpark05[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPagePlantVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPageFiremarblesVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaBackpackVis[1]    		DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Ercana
+{
+	VERSION 29
+
+## Age Mechanics ##
+
+# Harvester
+    VAR BOOL    ercaHrvstrPwrOn[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrReverse[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrCarPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrCarLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingsOk[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingLeverDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrMoving[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloA
+    VAR BOOL    ercaSiloA1Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA1Gate[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloB
+    VAR BOOL    ercaSiloBPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# ControlRoom
+    VAR BYTE    ercaCtrlImgrView[1]   DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlMixBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlOvenBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# PlantExterior
+    VAR BOOL    ercaPool1Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaDebrisPushed[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloC
+    VAR BOOL    ercaBakeryPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven1Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaOven2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven3Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven4Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevBusy[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL     ercaMayBake[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaBakeFinishTime[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloD
+    VAR INT     ercaPellet1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet5[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPelletMachine[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaPelletChamber[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaFlushLever[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# Boolean variables
+
+    VAR BOOL    ercaCalendarSpark05[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPagePlantsVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPageFiremarblesVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaBackpackVis[1]    		DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+
+STATEDESC Ercana
+{
+	VERSION 30
+
+## Age Mechanics ##
+
+# Harvester
+    VAR BOOL    ercaHrvstrPwrOn[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrReverse[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrCarPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrCarLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingsOk[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingLeverDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrMoving[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloA
+    VAR BOOL    ercaSiloA1Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA1Gate[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloB
+    VAR BOOL    ercaSiloBPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# ControlRoom
+    VAR BYTE    ercaCtrlImgrView[1]   DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlMixBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlOvenBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# PlantExterior
+    VAR BOOL    ercaPool1Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaDebrisPushed[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloC
+    VAR BOOL    ercaBakeryPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven1Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaOven2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven3Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven4Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevBusy[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL     ercaMayBake[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaBakeFinishTime[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloD
+    VAR INT     ercaPellet1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet5[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPelletMachine[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaPelletChamber[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaFlushLever[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# Boolean variables
+
+    VAR BOOL    ercaCalendarSpark05[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPagePlantsVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPageFiremarblesVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaBackpackVis[1]    		DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BYTE	ercaSaveClothsHit[1]		DEFAULT=0 DISPLAYOPTION=red
+
+}
+
+STATEDESC Ercana
+{
+	VERSION 31
+
+## Age Mechanics ##
+
+# Harvester
+    VAR BOOL    ercaHrvstrPwrOn[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrReverse[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrCarPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrCarLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingsOk[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingLeverDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrMoving[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloA
+    VAR BOOL    ercaSiloA1Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA1Gate[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloB
+    VAR BOOL    ercaSiloBPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# ControlRoom
+    VAR BYTE    ercaCtrlImgrView[1]   DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlMixBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlOvenBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# PlantExterior
+    VAR BOOL    ercaPool1Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaDebrisPushed[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloC
+    VAR BOOL    ercaBakeryPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven1Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaOven2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven3Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven4Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevBusy[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL     ercaMayBake[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaBakeFinishTime[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloD
+    VAR INT     ercaPellet1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet5[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPelletMachine[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaPelletChamber[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaFlushLever[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# Boolean variables
+
+    VAR BOOL    ercaCalendarSpark07[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPagePlantsVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPageFiremarblesVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaBackpackVis[1]    		DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BYTE	ercaSaveClothsHit[1]		DEFAULT=0 DISPLAYOPTION=red
+
+}
+
+
+STATEDESC Ercana
+{
+	VERSION 32
+
+## Age Mechanics ##
+
+# Harvester
+    VAR BOOL    ercaHrvstrPwrOn[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrReverse[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    ercaHrvstrCarPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrCarLevDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingsOk[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrWingLeverDown[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaHrvstrMoving[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloA
+    VAR BOOL    ercaSiloA1Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaSiloA1Gate[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloB
+    VAR BOOL    ercaSiloBPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# ControlRoom
+    VAR BYTE    ercaCtrlImgrView[1]   DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlMixBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaCtrlOvenBtn[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# PlantExterior
+    VAR BOOL    ercaPool1Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool1Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool2Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool3Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Blades[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Hatch[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Valve[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPool4Empty[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaDebrisPushed[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloC
+    VAR BOOL    ercaBakeryPwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven1Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaOven2Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven3Pwr[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaOven4Pwr[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevPos[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaBakeryElevBusy[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTimeSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaAmountSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE     ercaTempSlider4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL     ercaMayBake[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaBakeFinishTime[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# SiloD
+    VAR INT     ercaPellet1[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet2[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet3[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet4[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR INT     ercaPellet5[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaPelletMachine[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    ercaPelletChamber[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    ercaFlushLever[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# Boolean variables
+
+    VAR BOOL    ercaCalendarSpark07[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPagePlantsVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaYeeshaPageFiremarblesVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ercaBackpackVis[1]    		DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Save Cloths
+    VAR BOOL	ercaGotSaveCloth1[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ercaGotSaveCloth2[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ercaGotSaveCloth3[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ercaGotSaveCloth4[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ercaGotSaveCloth5[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ercaGotSaveCloth6[1]		DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	ercaGotSaveCloth7[1]		DEFAULT=0 DISPLAYOPTION=red
+
+}
+
+

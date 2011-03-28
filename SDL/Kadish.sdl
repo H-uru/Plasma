@@ -1,0 +1,837 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#==============================================================
+# READ:	When modifying an SDL record, do *not* modify the
+#	existing record. You must copy and paste a new version
+#	below the current one and make your changes there.
+#==============================================================
+
+
+
+#
+# State Description Language for KadishTolesa
+
+STATEDESC Kadish
+{
+	VERSION 25
+    
+#############
+# Content variables
+#############
+    VAR BOOL    kdshTreasureBook10Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    #VAR BOOL    kdshJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT  # in kadish gallery in the city
+
+    VAR BOOL    kdshBahroDoorClosed[1]      DEFAULT=1
+
+    VAR BOOL    kdshYeeshaVaultLinkBook[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+#############
+# Tree Ring Puzzle in the Forest/Courtyard
+#############
+#scope 1
+    VAR BOOL    boolOperatedScope01[1]    DEFAULT=0
+    VAR INT    OperatorIDScope01[1]    DEFAULT=0
+    VAR BYTE    OuterRing01[1]    DEFAULT=1
+    VAR BYTE    MiddleRing01[1]    DEFAULT=1
+    VAR BYTE    InnerRing01[1]    DEFAULT=1
+#scope 2
+    VAR BOOL    boolOperatedScope02[1]    DEFAULT=0
+    VAR INT    OperatorIDScope02[1]    DEFAULT=0
+    VAR BYTE    OuterRing02[1]    DEFAULT=1
+    VAR BYTE    MiddleRing02[1]    DEFAULT=1
+    VAR BYTE    InnerRing02[1]    DEFAULT=1
+#scope 3
+    VAR BOOL    boolOperatedScope03[1]    DEFAULT=0
+    VAR INT    OperatorIDScope03[1]    DEFAULT=0
+    VAR BYTE    OuterRing03[1]    DEFAULT=1
+    VAR BYTE    MiddleRing03[1]    DEFAULT=1
+    VAR BYTE    InnerRing03[1]    DEFAULT=1
+    
+    VAR BOOL     TreeRingDoorClosed[1] DEFAULT=1
+    
+#############
+# Shadow Path Puzzle
+#############
+
+    VAR BOOL    ShadowPathLight01[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight02[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight03[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight04[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight05[1]   DEFAULT=0
+    VAR BOOL    ShadowPathSolved[1]   DEFAULT=0
+    
+#############
+# Glow In The Dark Puzzle
+#############
+    VAR BOOL     RoofClosed[1]   DEFAULT = 1
+    VAR BOOL     GlowCharged[1] DEFAULT = 0
+    VAR INT     TimeOpened[1]   DEFAULT = 0
+    VAR BOOL     GlowInTheDarkSolved[1]   DEFAULT = 0
+    
+
+    
+#############
+# Pillar Puzzle
+#############
+	VAR BYTE		pheight01[1]   DEFAULT=0
+	VAR BYTE		pheight02[1]   DEFAULT=0
+	VAR BYTE		pheight03[1]   DEFAULT=0
+	VAR BYTE		pheight04[1]   DEFAULT=0
+	VAR BYTE		budget[1]   DEFAULT=8
+
+	VAR BOOL		PillarsOccupied[1]    DEFAULT=0
+	VAR BOOL		PillarsResetting[1]    DEFAULT=0
+    
+    VAR BOOL	SecretDoorClosed[1]    DEFAULT=1
+    VAR BOOL     PillarRoomSolved[1]   DEFAULT = 0
+
+
+#############
+# Vault Puzzle
+#############
+	VAR BOOL	VCPboolOperated[1] DEFAULT=0
+	VAR INT		VCPOperatorID[1] DEFAULT=-1
+
+    VAR BYTE   ButtonsPushed[1] DEFAULT=0
+    VAR BOOL	VaultClosed[1]    DEFAULT=1
+
+
+
+}
+
+
+#
+# State Description Language for KadishTolesa
+
+STATEDESC Kadish
+{
+	VERSION 26
+    
+#############
+# Content variables
+#############
+    VAR BOOL    kdshTreasureBook10Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    #VAR BOOL    kdshJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT  # in kadish gallery in the city
+
+    VAR BOOL    kdshBahroDoorClosed[1]      DEFAULT=1
+
+    VAR BOOL    kdshYeeshaVaultLinkBook[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+#############
+# Tree Ring Puzzle in the Forest/Courtyard
+#############
+#scope 1
+    VAR BOOL    boolOperatedScope01[1]    DEFAULT=0
+    VAR INT    OperatorIDScope01[1]    DEFAULT=0
+    VAR BYTE    OuterRing01[1]    DEFAULT=1
+    VAR BYTE    MiddleRing01[1]    DEFAULT=1
+    VAR BYTE    InnerRing01[1]    DEFAULT=1
+#scope 2
+    VAR BOOL    boolOperatedScope02[1]    DEFAULT=0
+    VAR INT    OperatorIDScope02[1]    DEFAULT=0
+    VAR BYTE    OuterRing02[1]    DEFAULT=1
+    VAR BYTE    MiddleRing02[1]    DEFAULT=1
+    VAR BYTE    InnerRing02[1]    DEFAULT=1
+#scope 3
+    VAR BOOL    boolOperatedScope03[1]    DEFAULT=0
+    VAR INT    OperatorIDScope03[1]    DEFAULT=0
+    VAR BYTE    OuterRing03[1]    DEFAULT=1
+    VAR BYTE    MiddleRing03[1]    DEFAULT=1
+    VAR BYTE    InnerRing03[1]    DEFAULT=1
+    
+    VAR BOOL     TreeRingDoorClosed[1] DEFAULT=1
+    
+#############
+# Shadow Path Puzzle
+#############
+
+    VAR BOOL    ShadowPathLight01[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight02[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight03[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight04[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight05[1]   DEFAULT=0
+    VAR BOOL    ShadowPathSolved[1]   DEFAULT=0
+    
+#############
+# Glow In The Dark Puzzle
+#############
+    VAR BOOL     RoofClosed[1]   DEFAULT = 1
+    VAR BOOL     GlowCharged[1] DEFAULT = 0
+    VAR INT     TimeOpened[1]   DEFAULT = 0
+    VAR BOOL     GlowInTheDarkSolved[1]   DEFAULT = 0
+    
+
+    
+#############
+# Pillar Puzzle
+#############
+	VAR BYTE		pheight01[1]   DEFAULT=0
+	VAR BYTE		pheight02[1]   DEFAULT=0
+	VAR BYTE		pheight03[1]   DEFAULT=0
+	VAR BYTE		pheight04[1]   DEFAULT=0
+	VAR BYTE		budget[1]   DEFAULT=8
+
+	VAR BOOL		PillarsOccupied[1]    DEFAULT=0
+	VAR BOOL		PillarsResetting[1]    DEFAULT=0
+    
+    VAR BOOL	SecretDoorClosed[1]    DEFAULT=1
+    VAR BOOL     PillarRoomSolved[1]   DEFAULT = 0
+
+
+#############
+# Vault Puzzle
+#############
+	VAR BOOL	VCPboolOperated[1] DEFAULT=0
+	VAR INT		VCPOperatorID[1] DEFAULT=-1
+
+    VAR INT   ButtonsPushed[1] DEFAULT=0
+    VAR BOOL	VaultClosed[1]    DEFAULT=1
+
+
+
+}
+
+# State Description Language for KadishTolesa
+
+STATEDESC Kadish
+{
+	VERSION 27
+    
+#############
+# Content variables
+#############
+    VAR BOOL    kdshTreasureBook10Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    #VAR BOOL    kdshJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT  # in kadish gallery in the city
+
+    VAR BOOL    kdshBahroDoorClosed[1]      DEFAULT=1
+
+    VAR BOOL    kdshYeeshaVaultLinkBook[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshNexusStationVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+#############
+# Tree Ring Puzzle in the Forest/Courtyard
+#############
+#scope 1
+    VAR BOOL    boolOperatedScope01[1]    DEFAULT=0
+    VAR INT    OperatorIDScope01[1]    DEFAULT=0
+    VAR BYTE    OuterRing01[1]    DEFAULT=1
+    VAR BYTE    MiddleRing01[1]    DEFAULT=1
+    VAR BYTE    InnerRing01[1]    DEFAULT=1
+#scope 2
+    VAR BOOL    boolOperatedScope02[1]    DEFAULT=0
+    VAR INT    OperatorIDScope02[1]    DEFAULT=0
+    VAR BYTE    OuterRing02[1]    DEFAULT=1
+    VAR BYTE    MiddleRing02[1]    DEFAULT=1
+    VAR BYTE    InnerRing02[1]    DEFAULT=1
+#scope 3
+    VAR BOOL    boolOperatedScope03[1]    DEFAULT=0
+    VAR INT    OperatorIDScope03[1]    DEFAULT=0
+    VAR BYTE    OuterRing03[1]    DEFAULT=1
+    VAR BYTE    MiddleRing03[1]    DEFAULT=1
+    VAR BYTE    InnerRing03[1]    DEFAULT=1
+    
+    VAR BOOL     TreeRingDoorClosed[1] DEFAULT=1
+    
+#############
+# Shadow Path Puzzle
+#############
+
+    VAR BOOL    ShadowPathLight01[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight02[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight03[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight04[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight05[1]   DEFAULT=0
+    VAR BOOL    ShadowPathSolved[1]   DEFAULT=0
+    
+#############
+# Glow In The Dark Puzzle
+#############
+    VAR BOOL     RoofClosed[1]   DEFAULT = 1
+    VAR BOOL     GlowCharged[1] DEFAULT = 0
+    VAR INT     TimeOpened[1]   DEFAULT = 0
+    VAR BOOL     GlowInTheDarkSolved[1]   DEFAULT = 0
+    
+
+    
+#############
+# Pillar Puzzle
+#############
+	VAR BYTE		pheight01[1]   DEFAULT=0
+	VAR BYTE		pheight02[1]   DEFAULT=0
+	VAR BYTE		pheight03[1]   DEFAULT=0
+	VAR BYTE		pheight04[1]   DEFAULT=0
+	VAR BYTE		budget[1]   DEFAULT=8
+
+	VAR BOOL		PillarsOccupied[1]    DEFAULT=0
+	VAR BOOL		PillarsResetting[1]    DEFAULT=0
+    
+    VAR BOOL	SecretDoorClosed[1]    DEFAULT=1
+    VAR BOOL     PillarRoomSolved[1]   DEFAULT = 0
+
+
+#############
+# Vault Puzzle
+#############
+	VAR BOOL	VCPboolOperated[1] DEFAULT=0
+	VAR INT		VCPOperatorID[1] DEFAULT=-1
+
+    VAR INT   ButtonsPushed[1] DEFAULT=0
+    VAR BOOL	VaultClosed[1]    DEFAULT=1
+
+
+
+}
+
+
+STATEDESC Kadish
+{
+	VERSION 28
+    
+#############
+# Content variables
+#############
+    VAR BOOL    kdshTreasureBook10Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    #VAR BOOL    kdshJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT  # in kadish gallery in the city
+
+    VAR BOOL    kdshBahroDoorClosed[1]      DEFAULT=1
+
+    VAR BOOL    kdshYeeshaVaultLinkBook[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshNexusStationVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshHelmetVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+#############
+# Tree Ring Puzzle in the Forest/Courtyard
+#############
+#scope 1
+    VAR BOOL    boolOperatedScope01[1]    DEFAULT=0
+    VAR INT    OperatorIDScope01[1]    DEFAULT=0
+    VAR BYTE    OuterRing01[1]    DEFAULT=1
+    VAR BYTE    MiddleRing01[1]    DEFAULT=1
+    VAR BYTE    InnerRing01[1]    DEFAULT=1
+#scope 2
+    VAR BOOL    boolOperatedScope02[1]    DEFAULT=0
+    VAR INT    OperatorIDScope02[1]    DEFAULT=0
+    VAR BYTE    OuterRing02[1]    DEFAULT=1
+    VAR BYTE    MiddleRing02[1]    DEFAULT=1
+    VAR BYTE    InnerRing02[1]    DEFAULT=1
+#scope 3
+    VAR BOOL    boolOperatedScope03[1]    DEFAULT=0
+    VAR INT    OperatorIDScope03[1]    DEFAULT=0
+    VAR BYTE    OuterRing03[1]    DEFAULT=1
+    VAR BYTE    MiddleRing03[1]    DEFAULT=1
+    VAR BYTE    InnerRing03[1]    DEFAULT=1
+    
+    VAR BOOL     TreeRingDoorClosed[1] DEFAULT=1
+    
+#############
+# Shadow Path Puzzle
+#############
+
+    VAR BOOL    ShadowPathLight01[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight02[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight03[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight04[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight05[1]   DEFAULT=0
+    VAR BOOL    ShadowPathSolved[1]   DEFAULT=0
+    
+#############
+# Glow In The Dark Puzzle
+#############
+    VAR BOOL     RoofClosed[1]   DEFAULT = 1
+    VAR BOOL     GlowCharged[1] DEFAULT = 0
+    VAR INT     TimeOpened[1]   DEFAULT = 0
+    VAR BOOL     GlowInTheDarkSolved[1]   DEFAULT = 0
+    
+
+    
+#############
+# Pillar Puzzle
+#############
+	VAR BYTE		pheight01[1]   DEFAULT=0
+	VAR BYTE		pheight02[1]   DEFAULT=0
+	VAR BYTE		pheight03[1]   DEFAULT=0
+	VAR BYTE		pheight04[1]   DEFAULT=0
+	VAR BYTE		budget[1]   DEFAULT=8
+
+	VAR BOOL		PillarsOccupied[1]    DEFAULT=0
+	VAR BOOL		PillarsResetting[1]    DEFAULT=0
+    
+    VAR BOOL	SecretDoorClosed[1]    DEFAULT=1
+    VAR BOOL     PillarRoomSolved[1]   DEFAULT = 0
+
+
+#############
+# Vault Puzzle
+#############
+	VAR BOOL	VCPboolOperated[1] DEFAULT=0
+	VAR INT		VCPOperatorID[1] DEFAULT=-1
+
+    VAR INT   ButtonsPushed[1] DEFAULT=0
+    VAR BOOL	VaultClosed[1]    DEFAULT=1
+
+
+
+}
+
+
+
+STATEDESC Kadish
+{
+	VERSION 29
+    
+#############
+# Content variables
+#############
+    VAR BOOL    kdshTreasureBook10Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    #VAR BOOL    kdshJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT  # in kadish gallery in the city
+
+    VAR BOOL    kdshBahroDoorClosed[1]      DEFAULT=1
+
+    VAR BOOL    kdshYeeshaVaultLinkBook[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshNexusStationVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshHelmetVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshMystBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+#############
+# Tree Ring Puzzle in the Forest/Courtyard
+#############
+#scope 1
+    VAR BOOL    boolOperatedScope01[1]    DEFAULT=0
+    VAR INT    OperatorIDScope01[1]    DEFAULT=0
+    VAR BYTE    OuterRing01[1]    DEFAULT=1
+    VAR BYTE    MiddleRing01[1]    DEFAULT=1
+    VAR BYTE    InnerRing01[1]    DEFAULT=1
+#scope 2
+    VAR BOOL    boolOperatedScope02[1]    DEFAULT=0
+    VAR INT    OperatorIDScope02[1]    DEFAULT=0
+    VAR BYTE    OuterRing02[1]    DEFAULT=1
+    VAR BYTE    MiddleRing02[1]    DEFAULT=1
+    VAR BYTE    InnerRing02[1]    DEFAULT=1
+#scope 3
+    VAR BOOL    boolOperatedScope03[1]    DEFAULT=0
+    VAR INT    OperatorIDScope03[1]    DEFAULT=0
+    VAR BYTE    OuterRing03[1]    DEFAULT=1
+    VAR BYTE    MiddleRing03[1]    DEFAULT=1
+    VAR BYTE    InnerRing03[1]    DEFAULT=1
+    
+    VAR BOOL     TreeRingDoorClosed[1] DEFAULT=1
+    
+#############
+# Shadow Path Puzzle
+#############
+
+    VAR BOOL    ShadowPathLight01[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight02[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight03[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight04[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight05[1]   DEFAULT=0
+    VAR BOOL    ShadowPathSolved[1]   DEFAULT=0
+    
+#############
+# Glow In The Dark Puzzle
+#############
+    VAR BOOL     RoofClosed[1]   DEFAULT = 1
+    VAR BOOL     GlowCharged[1] DEFAULT = 0
+    VAR INT     TimeOpened[1]   DEFAULT = 0
+    VAR BOOL     GlowInTheDarkSolved[1]   DEFAULT = 0
+    
+
+    
+#############
+# Pillar Puzzle
+#############
+	VAR BYTE		pheight01[1]   DEFAULT=0
+	VAR BYTE		pheight02[1]   DEFAULT=0
+	VAR BYTE		pheight03[1]   DEFAULT=0
+	VAR BYTE		pheight04[1]   DEFAULT=0
+	VAR BYTE		budget[1]   DEFAULT=8
+
+	VAR BOOL		PillarsOccupied[1]    DEFAULT=0
+	VAR BOOL		PillarsResetting[1]    DEFAULT=0
+    
+    VAR BOOL	SecretDoorClosed[1]    DEFAULT=1
+    VAR BOOL     PillarRoomSolved[1]   DEFAULT = 0
+
+
+#############
+# Vault Puzzle
+#############
+	VAR BOOL	VCPboolOperated[1] DEFAULT=0
+	VAR INT		VCPOperatorID[1] DEFAULT=-1
+
+    VAR INT   ButtonsPushed[1] DEFAULT=0
+    VAR BOOL	VaultClosed[1]    DEFAULT=1
+
+
+
+}
+
+
+
+STATEDESC Kadish
+{
+	VERSION 30
+    
+#############
+# Content variables
+#############
+    VAR BOOL    kdshTreasureBook10Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    #VAR BOOL    kdshJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT  # in kadish gallery in the city
+
+    VAR BOOL    kdshBahroDoorClosed[1]      DEFAULT=1
+
+    VAR BOOL    kdshYeeshaVaultLinkBook[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshNexusStationVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshHelmetVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshMystBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshCalendarSpark02[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+#############
+# Tree Ring Puzzle in the Forest/Courtyard
+#############
+#scope 1
+    VAR BOOL    boolOperatedScope01[1]    DEFAULT=0
+    VAR INT    OperatorIDScope01[1]    DEFAULT=0
+    VAR BYTE    OuterRing01[1]    DEFAULT=1
+    VAR BYTE    MiddleRing01[1]    DEFAULT=1
+    VAR BYTE    InnerRing01[1]    DEFAULT=1
+#scope 2
+    VAR BOOL    boolOperatedScope02[1]    DEFAULT=0
+    VAR INT    OperatorIDScope02[1]    DEFAULT=0
+    VAR BYTE    OuterRing02[1]    DEFAULT=1
+    VAR BYTE    MiddleRing02[1]    DEFAULT=1
+    VAR BYTE    InnerRing02[1]    DEFAULT=1
+#scope 3
+    VAR BOOL    boolOperatedScope03[1]    DEFAULT=0
+    VAR INT    OperatorIDScope03[1]    DEFAULT=0
+    VAR BYTE    OuterRing03[1]    DEFAULT=1
+    VAR BYTE    MiddleRing03[1]    DEFAULT=1
+    VAR BYTE    InnerRing03[1]    DEFAULT=1
+    
+    VAR BOOL     TreeRingDoorClosed[1] DEFAULT=1
+    
+#############
+# Shadow Path Puzzle
+#############
+
+    VAR BOOL    ShadowPathLight01[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight02[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight03[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight04[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight05[1]   DEFAULT=0
+    VAR BOOL    ShadowPathSolved[1]   DEFAULT=0
+    
+#############
+# Glow In The Dark Puzzle
+#############
+    VAR BOOL     RoofClosed[1]   DEFAULT = 1
+    VAR BOOL     GlowCharged[1] DEFAULT = 0
+    VAR INT     TimeOpened[1]   DEFAULT = 0
+    VAR BOOL     GlowInTheDarkSolved[1]   DEFAULT = 0
+    
+
+    
+#############
+# Pillar Puzzle
+#############
+	VAR BYTE		pheight01[1]   DEFAULT=0
+	VAR BYTE		pheight02[1]   DEFAULT=0
+	VAR BYTE		pheight03[1]   DEFAULT=0
+	VAR BYTE		pheight04[1]   DEFAULT=0
+	VAR BYTE		budget[1]   DEFAULT=8
+
+	VAR BOOL		PillarsOccupied[1]    DEFAULT=0
+	VAR BOOL		PillarsResetting[1]    DEFAULT=0
+    
+    VAR BOOL	SecretDoorClosed[1]    DEFAULT=1
+    VAR BOOL     PillarRoomSolved[1]   DEFAULT = 0
+
+
+#############
+# Vault Puzzle
+#############
+	VAR BOOL	VCPboolOperated[1] DEFAULT=0
+	VAR INT		VCPOperatorID[1] DEFAULT=-1
+
+    VAR INT   ButtonsPushed[1] DEFAULT=0
+    VAR BOOL	VaultClosed[1]    DEFAULT=1
+
+
+
+}
+
+STATEDESC Kadish
+{
+	VERSION 31
+    
+#############
+# Content variables
+#############
+    VAR BOOL    kdshTreasureBook10Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    #VAR BOOL    kdshJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT  # in kadish gallery in the city
+
+    VAR BOOL    kdshBahroDoorClosed[1]      DEFAULT=1
+
+    VAR BOOL    kdshYeeshaVaultLinkBook[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshNexusStationVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshHelmetVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshMystBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshCalendarSpark02[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshYeeshaPageButterfliesVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshYeeshaPageTreeVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+#############
+# Tree Ring Puzzle in the Forest/Courtyard
+#############
+#scope 1
+    VAR BOOL    boolOperatedScope01[1]    DEFAULT=0
+    VAR INT    OperatorIDScope01[1]    DEFAULT=0
+    VAR BYTE    OuterRing01[1]    DEFAULT=1
+    VAR BYTE    MiddleRing01[1]    DEFAULT=1
+    VAR BYTE    InnerRing01[1]    DEFAULT=1
+#scope 2
+    VAR BOOL    boolOperatedScope02[1]    DEFAULT=0
+    VAR INT    OperatorIDScope02[1]    DEFAULT=0
+    VAR BYTE    OuterRing02[1]    DEFAULT=1
+    VAR BYTE    MiddleRing02[1]    DEFAULT=1
+    VAR BYTE    InnerRing02[1]    DEFAULT=1
+#scope 3
+    VAR BOOL    boolOperatedScope03[1]    DEFAULT=0
+    VAR INT    OperatorIDScope03[1]    DEFAULT=0
+    VAR BYTE    OuterRing03[1]    DEFAULT=1
+    VAR BYTE    MiddleRing03[1]    DEFAULT=1
+    VAR BYTE    InnerRing03[1]    DEFAULT=1
+    
+    VAR BOOL     TreeRingDoorClosed[1] DEFAULT=1
+    
+#############
+# Shadow Path Puzzle
+#############
+
+    VAR BOOL    ShadowPathLight01[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight02[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight03[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight04[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight05[1]   DEFAULT=0
+    VAR BOOL    ShadowPathSolved[1]   DEFAULT=0
+    
+#############
+# Glow In The Dark Puzzle
+#############
+    VAR BOOL     RoofClosed[1]   DEFAULT = 1
+    VAR BOOL     GlowCharged[1] DEFAULT = 0
+    VAR INT     TimeOpened[1]   DEFAULT = 0
+    VAR BOOL     GlowInTheDarkSolved[1]   DEFAULT = 0
+    
+
+    
+#############
+# Pillar Puzzle
+#############
+	VAR BYTE		pheight01[1]   DEFAULT=0
+	VAR BYTE		pheight02[1]   DEFAULT=0
+	VAR BYTE		pheight03[1]   DEFAULT=0
+	VAR BYTE		pheight04[1]   DEFAULT=0
+	VAR BYTE		budget[1]   DEFAULT=8
+
+	VAR BOOL		PillarsOccupied[1]    DEFAULT=0
+	VAR BOOL		PillarsResetting[1]    DEFAULT=0
+    
+    VAR BOOL	SecretDoorClosed[1]    DEFAULT=1
+    VAR BOOL     PillarRoomSolved[1]   DEFAULT = 0
+
+
+#############
+# Vault Puzzle
+#############
+	VAR BOOL	VCPboolOperated[1] DEFAULT=0
+	VAR INT		VCPOperatorID[1] DEFAULT=-1
+
+    VAR INT   ButtonsPushed[1] DEFAULT=0
+    VAR BOOL	VaultClosed[1]    DEFAULT=1
+
+
+
+}
+
+STATEDESC Kadish
+{
+	VERSION 32
+    
+#############
+# Content variables
+#############
+    VAR BOOL    kdshTreasureBook10Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT  # in kadish gallery in the city
+
+    VAR BOOL    kdshBahroDoorClosed[1]      DEFAULT=1
+
+    VAR BOOL    kdshYeeshaVaultLinkBook[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshNexusStationVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshHelmetVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshMystBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshCalendarSpark02[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshYeeshaPageButterfliesVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    kdshYeeshaPageTreeVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    kdshTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+#############
+# Tree Ring Puzzle in the Forest/Courtyard
+#############
+#scope 1
+    VAR BOOL    boolOperatedScope01[1]    DEFAULT=0
+    VAR INT    OperatorIDScope01[1]    DEFAULT=0
+    VAR BYTE    OuterRing01[1]    DEFAULT=1
+    VAR BYTE    MiddleRing01[1]    DEFAULT=1
+    VAR BYTE    InnerRing01[1]    DEFAULT=1
+#scope 2
+    VAR BOOL    boolOperatedScope02[1]    DEFAULT=0
+    VAR INT    OperatorIDScope02[1]    DEFAULT=0
+    VAR BYTE    OuterRing02[1]    DEFAULT=1
+    VAR BYTE    MiddleRing02[1]    DEFAULT=1
+    VAR BYTE    InnerRing02[1]    DEFAULT=1
+#scope 3
+    VAR BOOL    boolOperatedScope03[1]    DEFAULT=0
+    VAR INT    OperatorIDScope03[1]    DEFAULT=0
+    VAR BYTE    OuterRing03[1]    DEFAULT=1
+    VAR BYTE    MiddleRing03[1]    DEFAULT=1
+    VAR BYTE    InnerRing03[1]    DEFAULT=1
+    
+    VAR BOOL     TreeRingDoorClosed[1] DEFAULT=1
+    
+#############
+# Shadow Path Puzzle
+#############
+
+    VAR BOOL    ShadowPathLight01[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight02[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight03[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight04[1]   DEFAULT=0
+    VAR BOOL     ShadowPathLight05[1]   DEFAULT=0
+    VAR BOOL    ShadowPathSolved[1]   DEFAULT=0
+    
+#############
+# Glow In The Dark Puzzle
+#############
+    VAR BOOL     RoofClosed[1]   DEFAULT = 1
+    VAR BOOL     GlowCharged[1] DEFAULT = 0
+    VAR INT     TimeOpened[1]   DEFAULT = 0
+    VAR BOOL     GlowInTheDarkSolved[1]   DEFAULT = 0
+    
+
+    
+#############
+# Pillar Puzzle
+#############
+	VAR BYTE		pheight01[1]   DEFAULT=0
+	VAR BYTE		pheight02[1]   DEFAULT=0
+	VAR BYTE		pheight03[1]   DEFAULT=0
+	VAR BYTE		pheight04[1]   DEFAULT=0
+	VAR BYTE		budget[1]   DEFAULT=8
+
+	VAR BOOL		PillarsOccupied[1]    DEFAULT=0
+	VAR BOOL		PillarsResetting[1]    DEFAULT=0
+    
+    VAR BOOL	SecretDoorClosed[1]    DEFAULT=1
+    VAR BOOL     PillarRoomSolved[1]   DEFAULT = 0
+
+
+#############
+# Vault Puzzle
+#############
+	VAR BOOL	VCPboolOperated[1] DEFAULT=0
+	VAR INT		VCPOperatorID[1] DEFAULT=-1
+
+    VAR INT   ButtonsPushed[1] DEFAULT=0
+    VAR BOOL	VaultClosed[1]    DEFAULT=1
+
+
+
+}
+

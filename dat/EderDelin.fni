@@ -1,0 +1,5 @@
+
+Graphics.Renderer.Setyon 250
+Graphics.Renderer.Fog.SetDefEXP2 250 1
+Graphics.Renderer.Fog.SetDefColor .5 .35 .3
+Graphics.Renderer.SetClearColor .5 .35 .3

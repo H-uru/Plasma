@@ -1,0 +1,11 @@
+StartDateTime=0000000000
+DayLength=24.000000
+MaxCapacity=2
+LingerTime=180
+SequencePrefix=1
+ReleaseVersion=0
+Page=ItinerantBugCloud,3
+Page=KemoCreatureVis,2
+Page=kemoGarden,4
+Page=kemoStorm,5
+Page=trailerCamPage,1

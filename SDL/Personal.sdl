@@ -1,0 +1,2372 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#==============================================================
+# READ:	When modifying an SDL record, do *not* modify the
+#	existing record. You must copy and paste a new version
+#	below the current one and make your changes there.
+#==============================================================
+
+
+STATEDESC Personal
+{
+    VERSION 16
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 #sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # imager addition
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # Zandi's junk
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # Rain
+    
+#    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # second bookcase
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 18
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 #sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # imager addition
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # Zandi's junk
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # Rain
+    
+#    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # second bookcase
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+}
+
+STATEDESC Personal
+{
+    VERSION 19
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 #sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # imager addition
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # Zandi's junk
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # Rain
+    
+#    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # second bookcase
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Personal
+{
+    VERSION 20
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 #sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # imager addition
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # Zandi's junk
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # Rain
+    
+#    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # second bookcase
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+}
+
+STATEDESC Personal
+{
+    VERSION 21
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 #sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # imager addition
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # Zandi's junk
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # Rain
+    
+#    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # second bookcase
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC Personal
+{
+    VERSION 22
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 #sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 23
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 #sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 24
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 #sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # Butterflies
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 25
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 26
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 27
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # grass
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # thunderstorm
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 28
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # grass
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # thunderstorm
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 29
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # thunderstorm
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # grass
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 30
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # thunderstorm
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # grass
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+
+
+}
+
+
+
+STATEDESC Personal
+{
+    VERSION 31
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # thunderstorm
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # grass
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL	psnlCalendarStone01[1]	DEFAULT=0	# January	- Garrison
+    VAR BOOL	psnlCalendarStone02[1]	DEFAULT=0	# February	- Kadish
+    VAR BOOL	psnlCalendarStone03[1]	DEFAULT=0	# March		- ?
+    VAR BOOL	psnlCalendarStone04[1]	DEFAULT=0	# April		- ?
+    VAR BOOL	psnlCalendarStone05[1]	DEFAULT=0	# May		- ?
+    VAR BOOL	psnlCalendarStone06[1]	DEFAULT=0	# June		- ?
+    VAR BOOL	psnlCalendarStone07[1]	DEFAULT=0	# July		- ?
+    VAR BOOL	psnlCalendarStone08[1]	DEFAULT=0	# August	- ?
+    VAR BOOL	psnlCalendarStone09[1]	DEFAULT=0	# September	- ?
+    VAR BOOL	psnlCalendarStone10[1]	DEFAULT=0	# October	- ?
+    VAR BOOL	psnlCalendarStone11[1]	DEFAULT=0	# November	- ?
+    VAR BOOL	psnlCalendarStone12[1]	DEFAULT=0	# December	- ?
+
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 32
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+    VAR BOOL    psnlGotCityBook[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # thunderstorm
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # grass
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL	psnlCalendarStone01[1]	DEFAULT=0	# January	- Garrison (TrainingCenterHallway)
+    VAR BOOL	psnlCalendarStone02[1]	DEFAULT=0	# February	- Kadish (PillarRoom)
+    VAR BOOL	psnlCalendarStone03[1]	DEFAULT=0	# March		- Gira (Canyon)
+    VAR BOOL	psnlCalendarStone04[1]	DEFAULT=0	# April		- Garrison (Prison)
+    VAR BOOL	psnlCalendarStone05[1]	DEFAULT=0	# May		- Ercana (?)
+    VAR BOOL	psnlCalendarStone06[1]	DEFAULT=0	# June		- Descent (TreasureBookShaft)
+    VAR BOOL	psnlCalendarStone07[1]	DEFAULT=0	# July		- ?
+    VAR BOOL	psnlCalendarStone08[1]	DEFAULT=0	# August	- ?
+    VAR BOOL	psnlCalendarStone09[1]	DEFAULT=0	# September	- ?
+    VAR BOOL	psnlCalendarStone10[1]	DEFAULT=0	# October	- ?
+    VAR BOOL	psnlCalendarStone11[1]	DEFAULT=0	# November	- ?
+    VAR BOOL	psnlCalendarStone12[1]	DEFAULT=0	# December	- ?
+
+
+}
+
+STATEDESC Personal
+{
+    VERSION 33
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+    VAR BOOL    psnlGotCityBook[1]     DEFAULT=0
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # grass
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # ercana plants
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+    VAR BOOL	psnlBahroWedge07[1]	DEFAULT=0	# Negilahn
+    VAR BOOL	psnlBahroWedge08[1]	DEFAULT=0	# Dereno
+    VAR BOOL	psnlBahroWedge09[1]	DEFAULT=0	# Payiferen
+    VAR BOOL	psnlBahroWedge10[1]	DEFAULT=0	# Tetsonot
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL	psnlCalendarStone01[1]	DEFAULT=0	# January	- Garrison (TrainingCenterHallway)
+    VAR BOOL	psnlCalendarStone02[1]	DEFAULT=0	# February	- Kadish (PillarRoom)
+    VAR BOOL	psnlCalendarStone03[1]	DEFAULT=0	# March		- Gira (Canyon)
+    VAR BOOL	psnlCalendarStone04[1]	DEFAULT=0	# April		- Garrison (Prison)
+    VAR BOOL	psnlCalendarStone05[1]	DEFAULT=0	# May		- Ercana (?)
+    VAR BOOL	psnlCalendarStone06[1]	DEFAULT=0	# June		- Descent (TreasureBookShaft)
+    VAR BOOL	psnlCalendarStone07[1]	DEFAULT=0	# July		- ?
+    VAR BOOL	psnlCalendarStone08[1]	DEFAULT=0	# August	- ?
+    VAR BOOL	psnlCalendarStone09[1]	DEFAULT=0	# September	- ?
+    VAR BOOL	psnlCalendarStone10[1]	DEFAULT=0	# October	- ?
+    VAR BOOL	psnlCalendarStone11[1]	DEFAULT=0	# November	- ?
+    VAR BOOL	psnlCalendarStone12[1]	DEFAULT=0	# December	- ?
+
+
+}
+
+STATEDESC Personal
+{
+    VERSION 34
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+    VAR BOOL    psnlGotCityBook[1]     DEFAULT=0
+    VAR STRING32    psnlMusicBoxCurrentSong[1] DEFAULT=""
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # grass
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # ercana plants
+
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+    VAR BOOL	psnlBahroWedge07[1]	DEFAULT=0	# Negilahn
+    VAR BOOL	psnlBahroWedge08[1]	DEFAULT=0	# Dereno
+    VAR BOOL	psnlBahroWedge09[1]	DEFAULT=0	# Payiferen
+    VAR BOOL	psnlBahroWedge10[1]	DEFAULT=0	# Tetsonot
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL	psnlCalendarStone01[1]	DEFAULT=0	# January	- Garrison (TrainingCenterHallway)
+    VAR BOOL	psnlCalendarStone02[1]	DEFAULT=0	# February	- Kadish (PillarRoom)
+    VAR BOOL	psnlCalendarStone03[1]	DEFAULT=0	# March		- Gira (Canyon)
+    VAR BOOL	psnlCalendarStone04[1]	DEFAULT=0	# April		- Garrison (Prison)
+    VAR BOOL	psnlCalendarStone05[1]	DEFAULT=0	# May		- Ercana (?)
+    VAR BOOL	psnlCalendarStone06[1]	DEFAULT=0	# June		- Descent (TreasureBookShaft)
+    VAR BOOL	psnlCalendarStone07[1]	DEFAULT=0	# July		- ?
+    VAR BOOL	psnlCalendarStone08[1]	DEFAULT=0	# August	- ?
+    VAR BOOL	psnlCalendarStone09[1]	DEFAULT=0	# September	- ?
+    VAR BOOL	psnlCalendarStone10[1]	DEFAULT=0	# October	- ?
+    VAR BOOL	psnlCalendarStone11[1]	DEFAULT=0	# November	- ?
+    VAR BOOL	psnlCalendarStone12[1]	DEFAULT=0	# December	- ?
+
+
+}
+
+STATEDESC Personal
+{
+    VERSION 35
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+    VAR BOOL    psnlGotCityBook[1]     DEFAULT=0
+    VAR STRING32    psnlMusicBoxCurrentSong[1] DEFAULT=""
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # grass
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # ercana plants
+    VAR BYTE    YeeshaPage24[1]  DEFAULT=0 # thunderstorm
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+    VAR BOOL	psnlBahroWedge07[1]	DEFAULT=0	# Negilahn
+    VAR BOOL	psnlBahroWedge08[1]	DEFAULT=0	# Dereno
+    VAR BOOL	psnlBahroWedge09[1]	DEFAULT=0	# Payiferen
+    VAR BOOL	psnlBahroWedge10[1]	DEFAULT=0	# Tetsonot
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL	psnlCalendarStone01[1]	DEFAULT=0	# January	- Garrison (TrainingCenterHallway)
+    VAR BOOL	psnlCalendarStone02[1]	DEFAULT=0	# February	- Kadish (PillarRoom)
+    VAR BOOL	psnlCalendarStone03[1]	DEFAULT=0	# March		- Gira (Canyon)
+    VAR BOOL	psnlCalendarStone04[1]	DEFAULT=0	# April		- Garrison (Prison)
+    VAR BOOL	psnlCalendarStone05[1]	DEFAULT=0	# May		- Ercana (?)
+    VAR BOOL	psnlCalendarStone06[1]	DEFAULT=0	# June		- Descent (TreasureBookShaft)
+    VAR BOOL	psnlCalendarStone07[1]	DEFAULT=0	# July		- ?
+    VAR BOOL	psnlCalendarStone08[1]	DEFAULT=0	# August	- ?
+    VAR BOOL	psnlCalendarStone09[1]	DEFAULT=0	# September	- ?
+    VAR BOOL	psnlCalendarStone10[1]	DEFAULT=0	# October	- ?
+    VAR BOOL	psnlCalendarStone11[1]	DEFAULT=0	# November	- ?
+    VAR BOOL	psnlCalendarStone12[1]	DEFAULT=0	# December	- ?
+
+
+}
+
+STATEDESC Personal
+{
+    VERSION 36
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+    VAR BOOL    psnlGotCityBook[1]     DEFAULT=0
+    VAR STRING32    psnlMusicBoxCurrentSong[1] DEFAULT=""
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # grass
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # ercana plants
+    VAR BYTE    YeeshaPage24[1]  DEFAULT=0 # thunderstorm
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+    VAR BOOL	psnlBahroWedge07[1]	DEFAULT=0	# Negilahn
+    VAR BOOL	psnlBahroWedge08[1]	DEFAULT=0	# Dereno
+    VAR BOOL	psnlBahroWedge09[1]	DEFAULT=0	# Payiferen
+    VAR BOOL	psnlBahroWedge10[1]	DEFAULT=0	# Tetsonot
+    VAR BOOL	psnlBahroWedge11[1]	DEFAULT=0	# Minkata
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL	psnlCalendarStone01[1]	DEFAULT=0	# January	- Garrison (TrainingCenterHallway)
+    VAR BOOL	psnlCalendarStone02[1]	DEFAULT=0	# February	- Kadish (PillarRoom)
+    VAR BOOL	psnlCalendarStone03[1]	DEFAULT=0	# March		- Gira (Canyon)
+    VAR BOOL	psnlCalendarStone04[1]	DEFAULT=0	# April		- Garrison (Prison)
+    VAR BOOL	psnlCalendarStone05[1]	DEFAULT=0	# May		- Ercana (?)
+    VAR BOOL	psnlCalendarStone06[1]	DEFAULT=0	# June		- Descent (TreasureBookShaft)
+    VAR BOOL	psnlCalendarStone07[1]	DEFAULT=0	# July		- ?
+    VAR BOOL	psnlCalendarStone08[1]	DEFAULT=0	# August	- ?
+    VAR BOOL	psnlCalendarStone09[1]	DEFAULT=0	# September	- ?
+    VAR BOOL	psnlCalendarStone10[1]	DEFAULT=0	# October	- ?
+    VAR BOOL	psnlCalendarStone11[1]	DEFAULT=0	# November	- ?
+    VAR BOOL	psnlCalendarStone12[1]	DEFAULT=0	# December	- ?
+
+
+}
+
+STATEDESC Personal
+{
+    VERSION 37
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+    VAR BOOL    psnlGotCityBook[1]     DEFAULT=0
+    VAR STRING32    psnlMusicBoxCurrentSong[1] DEFAULT=""
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # grass
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # ercana plants
+    VAR BYTE    YeeshaPage24[1]  DEFAULT=0 # thunderstorm
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+    VAR BOOL	psnlBahroWedge07[1]	DEFAULT=0	# Negilahn
+    VAR BOOL	psnlBahroWedge08[1]	DEFAULT=0	# Dereno
+    VAR BOOL	psnlBahroWedge09[1]	DEFAULT=0	# Payiferen
+    VAR BOOL	psnlBahroWedge10[1]	DEFAULT=0	# Tetsonot
+    VAR BOOL	psnlBahroWedge11[1]	DEFAULT=0	# Minkata
+    VAR BOOL	psnlBahroWedge12[1]	DEFAULT=0	# Ercana
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL	psnlCalendarStone01[1]	DEFAULT=0	# January	- Garrison (TrainingCenterHallway)
+    VAR BOOL	psnlCalendarStone02[1]	DEFAULT=0	# February	- Kadish (PillarRoom)
+    VAR BOOL	psnlCalendarStone03[1]	DEFAULT=0	# March		- Gira (Canyon)
+    VAR BOOL	psnlCalendarStone04[1]	DEFAULT=0	# April		- Garrison (Prison)
+    VAR BOOL	psnlCalendarStone05[1]	DEFAULT=0	# May		- Ercana (?)
+    VAR BOOL	psnlCalendarStone06[1]	DEFAULT=0	# June		- Descent (TreasureBookShaft)
+    VAR BOOL	psnlCalendarStone07[1]	DEFAULT=0	# July		- ?
+    VAR BOOL	psnlCalendarStone08[1]	DEFAULT=0	# August	- ?
+    VAR BOOL	psnlCalendarStone09[1]	DEFAULT=0	# September	- ?
+    VAR BOOL	psnlCalendarStone10[1]	DEFAULT=0	# October	- ?
+    VAR BOOL	psnlCalendarStone11[1]	DEFAULT=0	# November	- ?
+    VAR BOOL	psnlCalendarStone12[1]	DEFAULT=0	# December	- ?
+
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 38
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+    VAR BOOL    psnlGotCityBook[1]     DEFAULT=0
+    VAR STRING32    psnlMusicBoxCurrentSong[1] DEFAULT=""
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # grass
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # ercana plants
+    VAR BYTE    YeeshaPage24[1]  DEFAULT=0 # thunderstorm
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+    VAR BOOL	psnlBahroWedge07[1]	DEFAULT=0	# Negilahn
+    VAR BOOL	psnlBahroWedge08[1]	DEFAULT=0	# Dereno
+    VAR BOOL	psnlBahroWedge09[1]	DEFAULT=0	# Payiferen
+    VAR BOOL	psnlBahroWedge10[1]	DEFAULT=0	# Tetsonot
+    VAR BOOL	psnlBahroWedge11[1]	DEFAULT=0	# Minkata
+    VAR BOOL	psnlBahroWedge12[1]	DEFAULT=0	# Ercana
+    VAR BOOL	psnlBahroWedge13[1]	DEFAULT=0	# Ahnonay
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL	psnlCalendarStone01[1]	DEFAULT=0	# January	- Garrison (TrainingCenterHallway)
+    VAR BOOL	psnlCalendarStone02[1]	DEFAULT=0	# February	- Kadish (PillarRoom)
+    VAR BOOL	psnlCalendarStone03[1]	DEFAULT=0	# March		- Gira (Canyon)
+    VAR BOOL	psnlCalendarStone04[1]	DEFAULT=0	# April		- Garrison (Prison)
+    VAR BOOL	psnlCalendarStone05[1]	DEFAULT=0	# May		- Ercana (?)
+    VAR BOOL	psnlCalendarStone06[1]	DEFAULT=0	# June		- Descent (TreasureBookShaft)
+    VAR BOOL	psnlCalendarStone07[1]	DEFAULT=0	# July		- ?
+    VAR BOOL	psnlCalendarStone08[1]	DEFAULT=0	# August	- ?
+    VAR BOOL	psnlCalendarStone09[1]	DEFAULT=0	# September	- ?
+    VAR BOOL	psnlCalendarStone10[1]	DEFAULT=0	# October	- ?
+    VAR BOOL	psnlCalendarStone11[1]	DEFAULT=0	# November	- ?
+    VAR BOOL	psnlCalendarStone12[1]	DEFAULT=0	# December	- ?
+
+
+}
+
+
+STATEDESC Personal
+{
+    VERSION 39
+
+## Age Mechanics
+
+    VAR BOOL	psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL	ShelfABoolOperated[1]    DEFAULT=0
+    VAR INT	ShelfAUserID[1]    DEFAULT=0
+    VAR BOOL    psnlBlindsClosed[1] DEFAULT=1
+    VAR BOOL    psnlClosetClosed[1] DEFAULT=1
+    VAR BOOL    CleftVisited[1]     DEFAULT=0
+    VAR BOOL    psnlCleftTotemOpen[1]     DEFAULT=0
+    VAR BOOL    psnlCleftSolved[1]     DEFAULT=0
+    VAR BOOL    psnlGotCityBook[1]     DEFAULT=0
+    VAR STRING32    psnlMusicBoxCurrentSong[1] DEFAULT=""
+
+
+## Yeesha Pages
+    VAR BYTE    YeeshaPage1[1]  DEFAULT=0 # sun and moon
+    VAR BYTE    YeeshaPage2[1]  DEFAULT=0 # waterfall
+    VAR BYTE    YeeshaPage3[1]  DEFAULT=0 # hut decal / interior rug
+    VAR BYTE    YeeshaPage4[1]  DEFAULT=0 # hut roof (swap)
+    VAR BYTE    YeeshaPage5[1]  DEFAULT=0 # jumping pinnacles
+    VAR BYTE    YeeshaPage6[1]  DEFAULT=0 # dock
+    VAR BYTE    YeeshaPage7[1]  DEFAULT=0 # kickable physicals
+    VAR BYTE    YeeshaPage8[1]  DEFAULT=0 # Rain
+    VAR BYTE    YeeshaPage9[1]  DEFAULT=0 # music player
+    VAR BYTE    YeeshaPage10[1]  DEFAULT=0 # the tree
+
+    VAR BYTE    YeeshaPage11[1]  DEFAULT=0 # second bookcase
+    VAR BYTE    YeeshaPage12[1]  DEFAULT=0 # imager addition
+    
+#   VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # Zandi's junk
+
+    VAR BYTE    YeeshaPage13[1]  DEFAULT=0 # butterflies
+    VAR BYTE    YeeshaPage14[1]  DEFAULT=0 # fireplace
+    VAR BYTE    YeeshaPage15[1]  DEFAULT=0 # bench
+    VAR BYTE    YeeshaPage16[1]  DEFAULT=0 # firemarbles
+    VAR BYTE    YeeshaPage17[1]  DEFAULT=0 # lush
+    VAR BYTE    YeeshaPage18[1]  DEFAULT=0 # clock
+    VAR BYTE    YeeshaPage19[1]  DEFAULT=0 # birds
+    VAR BYTE    YeeshaPage20[1]  DEFAULT=0 # calendar/bridge
+    VAR BYTE    YeeshaPage21[1]  DEFAULT=0 # maple trees
+    VAR BYTE    YeeshaPage22[1]  DEFAULT=0 # grass
+    VAR BYTE    YeeshaPage23[1]  DEFAULT=0 # ercana plants
+    VAR BYTE    YeeshaPage24[1]  DEFAULT=0 # thunderstorm
+    VAR BYTE    YeeshaPage25[1]  DEFAULT=0 # Bahro poles
+
+    VAR INT    YP10LastTreeGrowth[1] DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE    CurrentPage[36]  DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+   VAR BYTE  TeledahnPoleState[1]    DEFAULT=0
+   VAR BYTE  KadishPoleState[1]      DEFAULT=0
+   VAR BYTE  GardenPoleState[1]      DEFAULT=0
+   VAR BYTE  GarrisonPoleState[1]    DEFAULT=0
+
+   VAR BOOL  TeledahnEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GarrisonEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  GardenEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+   VAR BOOL  KadishEnabled[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL  FirstWeekClothing[1]  DEFAULT=0  DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+   VAR STRING32  RewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Other Stuff
+   VAR BOOL  psnlBugsVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+   VAR STRING32  GlobalRewardClothing[1]  DEFAULTOPTION = VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+   VAR BOOL  GPSEnabled[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL	psnlBahroWedge01[1]	DEFAULT=0	# Garrison
+    VAR BOOL	psnlBahroWedge02[1]	DEFAULT=0	# Gira/Kemo
+    VAR BOOL	psnlBahroWedge03[1]	DEFAULT=0	# Kadish
+    VAR BOOL	psnlBahroWedge04[1]	DEFAULT=0	# Teledahn
+    VAR BOOL	psnlBahroWedge05[1]	DEFAULT=0	# Delin
+    VAR BOOL	psnlBahroWedge06[1]	DEFAULT=0	# Tsogal
+    VAR BOOL	psnlBahroWedge07[1]	DEFAULT=0	# Negilahn
+    VAR BOOL	psnlBahroWedge08[1]	DEFAULT=0	# Dereno
+    VAR BOOL	psnlBahroWedge09[1]	DEFAULT=0	# Payiferen
+    VAR BOOL	psnlBahroWedge10[1]	DEFAULT=0	# Tetsonot
+    VAR BOOL	psnlBahroWedge11[1]	DEFAULT=0	# Minkata
+    VAR BOOL	psnlBahroWedge12[1]	DEFAULT=0	# Ercana
+    VAR BOOL	psnlBahroWedge13[1]	DEFAULT=0	# Ahnonay
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL	psnlCalendarStone01[1]	DEFAULT=0	# January	- Garrison (TrainingCenterHallway)
+    VAR BOOL	psnlCalendarStone02[1]	DEFAULT=0	# February	- Kadish (PillarRoom)
+    VAR BOOL	psnlCalendarStone03[1]	DEFAULT=0	# March		- Gira (Canyon)
+    VAR BOOL	psnlCalendarStone04[1]	DEFAULT=0	# April		- Garrison (Prison)
+    VAR BOOL	psnlCalendarStone05[1]	DEFAULT=0	# May		- Ercana (?)
+    VAR BOOL	psnlCalendarStone06[1]	DEFAULT=0	# June		- Descent (TreasureBookShaft)
+    VAR BOOL	psnlCalendarStone07[1]	DEFAULT=0	# July		- ?
+    VAR BOOL	psnlCalendarStone08[1]	DEFAULT=0	# August	- ?
+    VAR BOOL	psnlCalendarStone09[1]	DEFAULT=0	# September	- ?
+    VAR BOOL	psnlCalendarStone10[1]	DEFAULT=0	# October	- ?
+    VAR BOOL	psnlCalendarStone11[1]	DEFAULT=0	# November	- ?
+    VAR BOOL	psnlCalendarStone12[1]	DEFAULT=0	# December	- ?
+## Guild Alliance SDL
+    VAR INT     guildAlliance[1] DEFAULT=0
+}

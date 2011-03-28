@@ -1,0 +1,6 @@
+StartDateTime=0000000000
+DayLength=24
+MaxCapacity=10
+SequencePrefix=5
+ReleaseVersion=0
+Page=spyroom,0

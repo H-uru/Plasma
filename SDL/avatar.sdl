@@ -1,0 +1,175 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#===============================================
+# Changing an SDL record? Be sure to leave the 
+# legacy record intact and make changes in
+# a new copy of the record. - eap
+#===============================================
+
+#
+# Avatar State Description
+# You might want to read these from the bottom of the file up to get the top-down perspective
+#
+
+#
+# Defines a standard anim stage (used by the genericBrain)
+#
+STATEDESC standardStage
+{
+	VERSION 2
+	VAR STRING32 name[1]
+	VAR SHORT	numLoops[1]			DEFAULT=0	# -1=loopForever
+	VAR BYTE	forward[1]			DEFAULT=0	# 0=none, 1=kbd, 2=auto
+	VAR BYTE	backward[1]			DEFAULT=0	# 0=none, 1=kbd
+	VAR BYTE	stageAdvance[1]		DEFAULT=0	# 0=none, 1=auto
+	VAR BYTE	stageRegress[1]		DEFAULT=0	# 0=none, 1=auto
+	VAR BOOL	notifyEnter[1]		DEFAULT=false
+	VAR BOOL	notifyLoop[1]		DEFAULT=false
+	VAR BOOL	notifyStageAdvance[1]	DEFAULT=false
+	VAR BOOL	notifyStageRegress[1]	DEFAULT=false
+	VAR BOOL	useGlobalCoords[1]	DEFAULT=false
+    VAR FLOAT	localTime[1]		DEFAULT=0
+    VAR FLOAT	length[1]			DEFAULT=0
+    VAR	SHORT	currentLoop[1]		DEFAULT=0
+    VAR	BOOL	isAttached[1]		DEFAULT=false
+}
+STATEDESC standardStage
+{
+	VERSION 3
+	VAR STRING32 name[1]
+	VAR SHORT	numLoops[1]			DEFAULT=0	# -1=loopForever
+	VAR BYTE	forward[1]			DEFAULT=0	# 0=none, 1=kbd, 2=auto
+	VAR BYTE	backward[1]			DEFAULT=0	# 0=none, 1=kbd
+	VAR BYTE	stageAdvance[1]		DEFAULT=0	# 0=none, 1=auto
+	VAR BYTE	stageRegress[1]		DEFAULT=0	# 0=none, 1=auto
+	VAR BOOL	notifyEnter[1]		DEFAULT=false
+	VAR BOOL	notifyLoop[1]		DEFAULT=false
+	VAR BOOL	notifyStageAdvance[1]	DEFAULT=false
+	VAR BOOL	notifyStageRegress[1]	DEFAULT=false
+	VAR BOOL	useGlobalCoords[1]	DEFAULT=false
+    VAR FLOAT	localTime[1]		DEFAULT=0
+    VAR	SHORT	currentLoop[1]		DEFAULT=0
+    VAR	BOOL	isAttached[1]		DEFAULT=false
+}
+
+#
+# State for the plAvBrainGeneric
+#
+STATEDESC	genericBrain
+{
+	VERSION 3
+	VAR BOOL			noBrain[1]				DEFAULT=true	# set if not a brain	
+	VAR $standardStage	stages[]
+	VAR BYTE			currentStage[1]			DEFAULT=0
+	VAR	BOOL			freezePhysicalAtEnd[1]	DEFAULT=false
+	VAR PLKEY			callbackRcvr[1]
+	VAR BOOL			movingForward[1]		DEFAULT=true
+	VAR BYTE			exitFlags[1]			DEFAULT=0
+	VAR BYTE			type[1]									# could be byte
+	VAR BYTE			mode[1]									# could be byte
+	VAR FLOAT			fadeIn[1]				DEFAULT=1.0
+	VAR FLOAT			fadeOut[1]				DEFAULT=1.0
+	VAR BYTE			moveMode[1]								# could be byte
+	VAR BYTE			bodyUsage[1]							# could be byte
+}
+
+#
+# State for the plAvBrainClimb
+#
+STATEDESC climbBrain
+{
+	VERSION 1
+	VAR INT				curMode[1]
+	VAR INT				nextMode[1]
+	VAR INT				allowedDirections[1]
+	VAR INT				allowedDismounts[1]
+	VAR FLOAT			vertProbeLength[1]
+	VAR FLOAT			horizProbeLength[1]
+	VAR BOOL			curStageAttached[1]
+	VAR INT				curStage[1]
+	VAR FLOAT			curStageTime[1]
+	VAR FLOAT			curStageStrength[1]
+	VAR BOOL			exitStageAttached[1]
+	VAR INT				exitStage[1]
+	VAR FLOAT			exitStageTime[1]
+	VAR BOOL			exitStageStrength[1]
+}
+
+STATEDESC driveBrain
+{
+	VERSION 1
+	VAR	INT unUsed[1]
+}
+
+#
+# A pseudo-union structure. It looks like it contains several varying-length
+# arrays, but in reality only one of them has anything in it, and only one
+# brain at that.
+STATEDESC	brainUnion
+{
+	VERSION 1
+	VAR		$genericBrain	fGenericBrain[]
+	VAR		$climbBrain		fClimbBrain[]
+	VAR		$driveBrain		fDriveBrain[]
+}
+
+#
+# The base block contains state for the plAvBrainHuman (which all avatars must have)
+# and a variable-length state of brains of varying type.
+#
+STATEDESC avatar
+{
+	VERSION 5	
+	VAR		$brainUnion		brainStack[]
+	VAR		BYTE			invisibilityLevel[1]	DEFAULT=0		# 0 means visible, >0 is CCR level of invisibility
+}
+
+STATEDESC avatar
+{
+	VERSION 6	
+	VAR		$brainUnion		brainStack[]
+	VAR		BYTE			invisibilityLevel[1]	DEFAULT=0		# 0 means visible, >0 is CCR level of invisibility
+
+	VAR POINT3 position[1]	DEFAULT=(0,0,0)
+	VAR FLOAT rotation[1]	DEFAULT=0.0
+	VAR PLKEY subworld[1]
+}
+
+STATEDESC avatar
+{
+	VERSION 7
+	VAR		$brainUnion		brainStack[]
+	VAR		BYTE			invisibilityLevel[1]	DEFAULT=0		# 0 means visible, >0 is CCR level of invisibility
+}
+
+STATEDESC avatarPhysical
+{
+	VERSION 1
+
+	VAR POINT3 position[1]	DEFAULT=(0,0,0)
+	VAR FLOAT rotation[1]	DEFAULT=0.0
+	VAR PLKEY subworld[1]
+}

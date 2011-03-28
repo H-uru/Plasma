@@ -1,0 +1,898 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#==============================================================
+# READ:	When modifying an SDL record, do *not* modify the
+#	existing record. You must copy and paste a new version
+#	below the current one and make your changes there.
+#==============================================================
+
+#
+# State Description Language for Garrison
+
+
+STATEDESC Garrison
+{
+	VERSION 12
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+	
+}
+
+
+STATEDESC Garrison
+{
+	VERSION 13
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+	
+}
+
+
+
+
+STATEDESC Garrison
+{
+	VERSION 17
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# climbing wall variables
+
+	VAR BYTE		northWall[171]
+	VAR BYTE		southWall[171]
+	VAR BYTE		southCount[1]
+	VAR BYTE		northCount[1]
+	VAR BYTE		southCountLimit[1]
+	VAR BYTE		northCountLimit[1]
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR BYTE		nChairState[1]
+	VAR BYTE		sChairState[1]
+	VAR BYTE		lastChangedIndexS[1]
+	VAR BYTE		lastChangedIndexN[1]
+
+}
+
+STATEDESC Garrison
+{
+	VERSION 18
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# climbing wall variables
+
+	VAR BYTE		northWall[171]
+	VAR BYTE		southWall[171]
+	VAR BYTE		southCount[1]
+	VAR BYTE		northCount[1]
+	VAR BYTE		southCountLimit[1]
+	VAR BYTE		northCountLimit[1]
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR BYTE		nChairState[1]
+	VAR BYTE		sChairState[1]
+	VAR BYTE		lastChangedIndexS[1]
+	VAR BYTE		lastChangedIndexN[1]
+	VAR INT			nWallPlayer[1]
+	VAR INT			sWallPlayer[1]
+}
+
+STATEDESC Garrison
+{
+	VERSION 19
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnWallInfoJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# climbing wall variables
+
+	VAR BYTE		northWall[171]
+	VAR BYTE		southWall[171]
+	VAR BYTE		southCount[1]
+	VAR BYTE		northCount[1]
+	VAR BYTE		southCountLimit[1]
+	VAR BYTE		northCountLimit[1]
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR BYTE		nChairState[1]
+	VAR BYTE		sChairState[1]
+	VAR BYTE		lastChangedIndexS[1]
+	VAR BYTE		lastChangedIndexN[1]
+	VAR INT			nWallPlayer[1]
+	VAR INT			sWallPlayer[1]
+}
+
+STATEDESC Garrison
+{
+	VERSION 20
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnWallInfoJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnBahroStoneToShaftVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# climbing wall variables
+
+	VAR BYTE		northWall[171]
+	VAR BYTE		southWall[171]
+	VAR BYTE		southCount[1]
+	VAR BYTE		northCount[1]
+	VAR BYTE		southCountLimit[1]
+	VAR BYTE		northCountLimit[1]
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR BYTE		nChairState[1]
+	VAR BYTE		sChairState[1]
+	VAR BYTE		lastChangedIndexS[1]
+	VAR BYTE		lastChangedIndexN[1]
+	VAR INT			nWallPlayer[1]
+	VAR INT			sWallPlayer[1]
+}
+
+STATEDESC Garrison
+{
+	VERSION 21
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnWallInfoJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnBahroStoneToShaftVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# climbing wall variables
+
+	VAR BYTE		northWall[20]
+	VAR BYTE		southWall[20]
+	VAR BYTE		southCount[1]
+	VAR BYTE		northCount[1]
+	VAR BYTE		southCountLimit[1]
+	VAR BYTE		northCountLimit[1]
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR BYTE		nChairState[1]
+	VAR BYTE		sChairState[1]
+	VAR BYTE		lastChangedIndexS[1]
+	VAR BYTE		lastChangedIndexN[1]
+	VAR INT			nWallPlayer[1]
+	VAR INT			sWallPlayer[1]
+}
+
+STATEDESC Garrison
+{
+	VERSION 22
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnWallInfoJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnBahroStoneToShaftVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# climbing wall variables
+
+	VAR BYTE		northWall[20]
+	VAR BYTE		southWall[20]
+	VAR BYTE		southCount[1]
+	VAR BYTE		northCount[1]
+	VAR BYTE		southCountLimit[1]
+	VAR BYTE		northCountLimit[1]
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR BYTE		nChairState[1]
+	VAR BYTE		sChairState[1]
+	VAR BYTE		lastChangedIndexS[1]
+	VAR BYTE		lastChangedIndexN[1]
+	VAR INT			nWallPlayer[1]
+	VAR INT			sWallPlayer[1]
+	VAR BYTE		grsnClimbingWallEnabled[1] DEFAULT=1 DEFAULTOPTION=VAULT
+}
+
+
+STATEDESC Garrison
+{
+	VERSION 23
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnWallInfoJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnBahroStoneToShaftVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# climbing wall variables
+
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR INT			nWallPlayer[1]
+	VAR INT			sWallPlayer[1]
+	VAR BYTE		grsnClimbingWallEnabled[1] DEFAULT=0 DEFAULTOPTION=VAULT
+}
+
+
+
+STATEDESC Garrison
+{
+	VERSION 24
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnWallInfoJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnBahroStoneToShaftVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnWellFirstFloorBlocker[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# climbing wall variables
+
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR INT			nWallPlayer[1]
+	VAR INT			sWallPlayer[1]
+	VAR BYTE		grsnClimbingWallEnabled[1] DEFAULT=0 DEFAULTOPTION=VAULT
+}
+
+
+
+#
+# sdl for climbing to 2nd floor in grsn
+
+STATEDESC grsn1stFloorClimb
+{
+	VERSION 2	
+	VAR INT		intSDLClimber[1] DEFAULT=(-1)
+	VAR INT		intSDLDescender[1] DEFAULT=(-1)
+}
+
+
+#
+# sdl for well power in grsn
+
+STATEDESC grsnPowerOn
+{
+	VERSION 2	
+	VAR BOOL		intWellPowerOn[1] DEFAULT=(0)
+}
+
+#
+# sdl for gear ride
+
+STATEDESC grsnGearRide
+{
+	VERSION 2
+	VAR INT		avatarRidingGear[10]
+	VAR BOOL		crackOpen[1] DEFAULT=(0)
+	VAR BOOL		exitOpen[1] DEFAULT=(0)
+	VAR INT		avatarWithExitCam[10]
+	
+}
+
+
+STATEDESC GarrisonTrnCtrExtTrans
+{
+	VERSION 2
+	VAR INT		avatarToTeleport[10]	
+}
+
+
+
+
+STATEDESC Garrison
+{
+	VERSION 25
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnWallInfoJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnBahroStoneToShaftVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnWellFirstFloorBlocker[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnCalendarSpark01[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+# climbing wall variables
+
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR INT			nWallPlayer[1]
+	VAR INT			sWallPlayer[1]
+	VAR BYTE		grsnClimbingWallEnabled[1] DEFAULT=0 DEFAULTOPTION=VAULT
+}
+
+
+STATEDESC Garrison
+{
+	VERSION 26
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnWallInfoJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnBahroStoneToShaftVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnWellFirstFloorBlocker[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnCalendarSpark01[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL 	grsnCalendarSpark04[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+	VAR BOOL	grsnMainSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnUpElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDnElevSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnDoorSwitchOn[1]		DEFAULT=0 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake01On[1]		DEFAULT=1 DEFAULTOPTION=VAULT	
+	VAR BOOL	grsnGearBrake02On[1]		DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+	VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT 
+    	VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+	VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+# climbing wall variables
+
+	VAR INT			nChairOccupant[1]
+	VAR INT			sChairOccupant[1]
+	VAR INT			nWallPlayer[1]
+	VAR INT			sWallPlayer[1]
+	VAR BYTE		grsnClimbingWallEnabled[1] DEFAULT=0 DEFAULTOPTION=VAULT
+}
+

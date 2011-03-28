@@ -1,0 +1,54 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#==============================================================
+# READ:	When modifying an SDL record, do *not* modify the
+#	existing record. You must copy and paste a new version
+#	below the current one and make your changes there.
+#==============================================================
+
+
+#
+# State Description Language for Tetsonot
+
+STATEDESC Tetsonot
+{
+    VERSION 1
+
+    # Pod Power
+    VAR INT         tetsBatteryCharge[1]            DEFAULT=100 DISPLAYOPTION=hidden
+    VAR BYTE        tetsBatteryCapacity[1]          DEFAULT=100 DEFAULTOPTION=VAULT
+    VAR INT         tetsBatteryLastUpdated[1]       DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        tetsPodLights[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        tetsSpeaker01[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        tetsSpeaker02[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        tetsSpeaker03[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        tetsSpeaker04[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        tetsSpotlight01[1]              DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        tetsSpotlight02[1]              DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        tetsSpotlight03[1]              DEFAULT=0   DEFAULTOPTION=VAULT
+
+}
+

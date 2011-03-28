@@ -1,0 +1,273 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+#==============================================================
+# READ:	When modifying an SDL record, do *not* modify the
+#	existing record. You must copy and paste a new version
+#	below the current one and make your changes there.
+#==============================================================
+
+
+#
+# State Description Language for Negilahn
+
+STATEDESC Negilahn
+{
+	VERSION 6
+
+    VAR AGETIMEOFDAY NegilahnTimeOfDay[1]
+
+# Boolean variables
+    VAR BOOL    boolPodPower[1]             DEFAULT=0   DEFAULTOPTION=VAULT
+    
+#   VAR BOOL    boolSpeaker01[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL    boolSpeaker02[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL    boolSpeaker03[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+#   VAR BOOL    boolSpeaker04[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+
+    VAR BOOL    boolSpotlight01[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL    boolSpotlight02[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL    boolSpotlight03[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+
+    VAR INT     BatteryCharge[1]            DEFAULT=10  DISPLAYOPTION=hidden
+    VAR BOOL    boolBatteryCharged[1]       DEFAULT=1   DISPLAYOPTION=hidden
+    VAR BYTE    BatteryCapacity[1]          DEFAULT=100 DEFAULTOPTION=VAULT
+    VAR INT     BatteryLastUpdated[1]       DEFAULT=0   DISPLAYOPTION=hidden        
+
+    VAR INT     MonkeyTimeLastSeen[1]       DEFAULT=0   DISPLAYOPTION=hidden
+    VAR INT     HopperBirdTimeLastSeen[1]   DEFAULT=0   DISPLAYOPTION=hidden    
+
+}
+
+#==============================================================
+# READ:	When modifying an SDL record, do *not* modify the
+#	existing record. You must copy and paste a new version
+#	below the current one and make your changes there.
+#==============================================================
+
+
+#
+# State Description Language for Negilahn
+
+STATEDESC Negilahn
+{
+	VERSION 10
+
+    VAR AGETIMEOFDAY NegilahnTimeOfDay[1]
+
+# Boolean variables
+        VAR BOOL    boolPodPower[1]             DEFAULT=0   DEFAULTOPTION=VAULT
+
+	VAR BOOL    boolPodPowerLever[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL    boolBatteryCharged[1]    	DEFAULT=1 DISPLAYOPTION=hidden
+    	VAR BOOL    boolBatteryChargedAndOn[1]  DEFAULT=0 DISPLAYOPTION=hidden
+    
+    
+    	VAR BOOL    boolSpeaker01[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL    boolSpeaker02[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL    boolSpeaker03[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL    boolSpeaker04[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+
+    	VAR BOOL    boolSpotlight01[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL    boolSpotlight02[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    	VAR BOOL    boolSpotlight03[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+	
+    	VAR INT     BatteryCharge[1] 		DEFAULT=10 DISPLAYOPTION=hidden
+    	VAR BOOL    boolBatteryCharged[1]       DEFAULT=1   DISPLAYOPTION=hidden
+    	VAR BYTE    BatteryCapacity[1] 		DEFAULT=100 DEFAULTOPTION=VAULT
+    	VAR INT     BatteryLastUpdated[1]  	DEFAULT = 0 DISPLAYOPTION=hidden        
+	
+    	VAR BYTE    MonkeyPopulation[1] 	DEFAULT=0 DISPLAYOPTION=hidden
+    	VAR INT     MonkeyTimeLastSeen[1] 	DEFAULT=0 DISPLAYOPTION=hidden
+    
+    	VAR BYTE    UrwinPopulation[1] 		DEFAULT=0 DISPLAYOPTION=hidden    
+    	VAR INT     UrwinTimeLastSeen[1] 	DEFAULT=0 DISPLAYOPTION=hidden 
+
+    	VAR INT     HopperBirdTimeLastSeen[1]   DEFAULT=0   DISPLAYOPTION=hidden    
+
+}
+
+STATEDESC Negilahn
+{
+    VERSION 11
+
+    VAR AGETIMEOFDAY NegilahnTimeOfDay[1]
+
+    # Pod Power
+    VAR INT         BatteryCharge[1]            DEFAULT=10  DISPLAYOPTION=hidden
+    VAR BYTE        BatteryCapacity[1]          DEFAULT=100 DEFAULTOPTION=VAULT
+    VAR INT         BatteryLastUpdated[1]       DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        boolPodLights[1]            DEFAULT=0   DEFAULTOPTION=VAULT  # <- change in max
+    VAR BOOL        boolSpeaker01[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker02[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker03[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker04[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpotlight01[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpotlight02[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpotlight03[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+
+    # Monkey Stuff
+    VAR STRING32    MonkeySpawnTimes[1]                     DEFAULTOPTION=hidden
+    VAR INT         MonkeyLastUpdated[1]        DEFAULT=0   DISPLAYOPTION=hidden
+
+    # Urwin Stuff
+    VAR STRING32    UrwinSpawnTimes[1]                      DISPLAYOPTION=hidden
+    VAR INT         UrwinLastUpdated[1]         DEFAULT=0   DISPLAYOPTION=hidden
+
+}
+
+
+STATEDESC Negilahn
+{
+    VERSION 12
+
+    VAR AGETIMEOFDAY NegilahnTimeOfDay[1]
+
+    # Pod Power
+    VAR INT         BatteryCharge[1]            DEFAULT=10  DISPLAYOPTION=hidden
+    VAR BYTE        BatteryCapacity[1]          DEFAULT=100 DEFAULTOPTION=VAULT
+    VAR INT         BatteryLastUpdated[1]       DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        boolPodLights[1]            DEFAULT=0   DEFAULTOPTION=VAULT  # <- change in max
+    VAR BOOL        boolSpeaker01[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker02[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker03[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker04[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpotlight01[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpotlight02[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpotlight03[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+
+    # Monkey Stuff
+    VAR STRING32    MonkeySpawnTimes[1]                     DEFAULTOPTION=hidden
+    VAR INT         MonkeyLastUpdated[1]        DEFAULT=0   DISPLAYOPTION=hidden
+
+    # Urwin Stuff
+    VAR STRING32    UrwinSpawnTimes[1]                      DISPLAYOPTION=hidden
+    VAR INT         UrwinLastUpdated[1]         DEFAULT=0   DISPLAYOPTION=hidden
+
+    #Boolean variables
+    VAR BOOL        nglnYeeshaPageLushVis[1]    DEFAULT=0   DEFAULTOPTION=VAULT
+
+
+}
+
+
+STATEDESC Negilahn
+{
+    VERSION 13
+
+    VAR AGETIMEOFDAY NegilahnTimeOfDay[1]
+
+    # Pod Power
+    VAR INT         BatteryCharge[1]            DEFAULT=10  DISPLAYOPTION=hidden
+    VAR BYTE        BatteryCapacity[1]          DEFAULT=100 DEFAULTOPTION=VAULT
+    VAR INT         BatteryLastUpdated[1]       DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        boolPodLights[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker01[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker02[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker03[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpeaker04[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpotlight01[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpotlight02[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        boolSpotlight03[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+
+    # Monkey Stuff
+    VAR STRING32    MonkeySpawnTimes[1]                     DEFAULTOPTION=hidden
+    VAR INT         MonkeyLastUpdated[1]        DEFAULT=0   DISPLAYOPTION=hidden
+
+    # Urwin Stuff
+    VAR STRING32    UrwinSpawnTimes[1]                      DISPLAYOPTION=hidden
+    VAR INT         UrwinLastUpdated[1]         DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        UrwinOnTheProwl[1]          DEFAULT=0   DISPLAYOPTION=hidden
+
+    #Boolean variables
+    VAR BOOL        nglnYeeshaPageLushVis[1]    DEFAULT=0   DEFAULTOPTION=VAULT
+
+
+}
+
+
+STATEDESC Negilahn
+{
+    VERSION 14
+
+    # Pod Power
+    VAR INT         nglnBatteryCharge[1]        DEFAULT=100 DISPLAYOPTION=hidden
+    VAR BYTE        nglnBatteryCapacity[1]      DEFAULT=100 DEFAULTOPTION=VAULT
+    VAR INT         nglnBatteryLastUpdated[1]   DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        nglnPodLights[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpeaker01[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpeaker02[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpeaker03[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpeaker04[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpotlight01[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpotlight02[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpotlight03[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+
+    # Monkey Stuff
+    VAR STRING32    MonkeySpawnTimes[1]                     DEFAULTOPTION=hidden
+    VAR INT         MonkeyLastUpdated[1]        DEFAULT=0   DISPLAYOPTION=hidden
+
+    # Urwin Stuff
+    VAR STRING32    UrwinSpawnTimes[1]                      DISPLAYOPTION=hidden
+    VAR INT         UrwinLastUpdated[1]         DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        UrwinOnTheProwl[1]          DEFAULT=0   DISPLAYOPTION=hidden
+
+    #Boolean variables
+    VAR BOOL        nglnYeeshaPageLushVis[1]    DEFAULT=0   DEFAULTOPTION=VAULT
+
+
+}
+
+STATEDESC Negilahn
+{
+    VERSION 15
+
+    # Pod Power
+    VAR INT         nglnBatteryCharge[1]        DEFAULT=100 DISPLAYOPTION=hidden
+    VAR BYTE        nglnBatteryCapacity[1]      DEFAULT=100 DEFAULTOPTION=VAULT
+    VAR INT         nglnBatteryLastUpdated[1]   DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        nglnPodLights[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpeaker01[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpeaker02[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpeaker03[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpeaker04[1]            DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpotlight01[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpotlight02[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        nglnSpotlight03[1]          DEFAULT=0   DEFAULTOPTION=VAULT
+
+    # Monkey Stuff
+    VAR INT         MonkeySpawnTimes[20]        DEFAULT=0   DEFAULTOPTION=hidden
+    VAR INT         MonkeyLastUpdated[1]        DEFAULT=0   DISPLAYOPTION=hidden
+
+    # Urwin Stuff
+    VAR INT         UrwinSpawnTimes[20]         DEFAULT=0   DISPLAYOPTION=hidden
+    VAR INT         UrwinLastUpdated[1]         DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        UrwinOnTheProwl[1]          DEFAULT=0   DISPLAYOPTION=hidden
+
+    #Boolean variables
+    VAR BOOL        nglnYeeshaPageLushVis[1]    DEFAULT=0   DEFAULTOPTION=VAULT
+
+
+}

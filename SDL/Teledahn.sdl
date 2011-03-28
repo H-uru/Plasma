@@ -1,0 +1,938 @@
+# /*==LICENSE==*
+# 
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+# 
+# *==LICENSE==*/
+
+
+#==============================================================
+# READ:	When modifying an SDL record, do *not* modify the
+#	existing record. You must copy and paste a new version
+#	below the current one and make your changes there.
+#==============================================================
+
+#
+# State Description Language for Teledahn
+
+
+STATEDESC Teledahn
+{
+	VERSION 26
+
+# Boolean variables
+    VAR BOOL    tldnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    tldnTreasureBook07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnPumpSwitchFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT # Makes the center lever disappear at the WRCC.
+
+# State variables
+    VAR BYTE	tldnHarpoonState[1]    DEFAULT=0 DEFAULTOPTION=VAULT # 0 = No harpoons pages loaded. 1 = tldnHarpoonState01a Loaded. 2 = tldnHarpoonState01b Loaded
+
+## Age Mechanics ##
+
+# Power Tower
+    VAR BYTE     tldnPwrTwrPumpCount[1] DEFAULT=0 DISPLAYOPTION=red # 0-3, 3 = tower raised
+    VAR BOOL    tldnMainPowerOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomPowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGateShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGatePowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    
+# Buckets
+    VAR BOOL    tldnBucketsMoving[1]    DEFAULT=0   DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnBucketContinuousLoopMode[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBucketLowerLeverPulled[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    boolCanEnterABucket[1]   DEFAULT=1 DISPLAYOPTION=hidden DISPLAYOPTION=red
+
+
+
+# Elevator
+    VAR BOOL    tldnElevatorLocked[1]       DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    tldnElevatorCurrentFloor[1]       DEFAULT=2 DISPLAYOPTION=red DISPLAYOPTION=hidden
+    VAR BOOL    tldnElevatorIdle[1]       DEFAULT=1 DISPLAYOPTION=red DISPLAYOPTION=hidden
+
+# Workroom
+    VAR BOOL    tldnWorkRmLightSwitch01On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch02On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch03On[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# InShroom
+    VAR BOOL    tldnCabinDrained[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchOpen[1]        DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchLocked[1]      DEFAULT=1 DISPLAYOPTION=red
+    
+# Uppershroom
+    VAR BOOL    tldnAquariumOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnAquariumLightOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShuttersOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    
+# WarShroom
+    VAR BOOL    tldnOuterDoorClosed[1]     DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnCatwalkDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    
+# ShroomieGate
+    VAR BOOL    tldnShroomieGateUp[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBrokenBridgeLowered[1]      DEFAULT=0 DISPLAYOPTION=red
+
+# Bahro Door
+    VAR BOOL    tldnBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+
+# SlaveOffice
+    VAR BOOL    tldnSecretDoorOpen[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Vapor Miner Hits
+    VAR BOOL    tldnRockAVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockBVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockCVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockDVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Slave Cave
+    VAR BOOL    tldnSlaveActivePanel01[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel03[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel05[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel07[1]    DEFAULT=0 DISPLAYOPTION=red
+    
+# Bump Bridge 
+    VAR BOOL    tldnLagoonBridgeStuck[1] DEFAULT=1 DISPLAYOPTION=red  
+    VAR BOOL    tldnLagoonBridgeRaised[1] DEFAULT=1 DISPLAYOPTION=red 
+
+# Shroomie Creature
+    VAR INT    ShroomieTotalTimesSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    VAR INT    ShroomieTimeLastSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    
+
+
+}
+
+
+#
+# State Description Language for Teledahn
+
+
+STATEDESC Teledahn
+{
+	VERSION 27
+
+# Boolean variables
+    VAR BOOL    tldnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    tldnTreasureBook07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnPumpSwitchFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT # Makes the center lever disappear at the WRCC.
+
+# State variables
+    VAR BYTE	tldnHarpoonState[1]    DEFAULT=0 DEFAULTOPTION=VAULT # 0 = No harpoons pages loaded. 1 = tldnHarpoonState01a Loaded. 2 = tldnHarpoonState01b Loaded
+
+## Age Mechanics ##
+
+# Power Tower
+    VAR BYTE     tldnPwrTwrPumpCount[1] DEFAULT=0 DISPLAYOPTION=red # 0-3, 3 = tower raised
+    VAR BOOL    tldnMainPowerOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomPowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGateShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGatePowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    
+# Buckets
+    VAR BOOL    tldnBucketsMoving[1]    DEFAULT=0   DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnBucketContinuousLoopMode[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBucketLowerLeverPulled[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    boolCanEnterABucket[1]   DEFAULT=1 DISPLAYOPTION=hidden DISPLAYOPTION=red
+
+
+
+# Elevator
+    VAR BOOL    tldnElevatorLocked[1]       DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    tldnElevatorCurrentFloor[1]       DEFAULT=2 DISPLAYOPTION=red DISPLAYOPTION=hidden
+    VAR BOOL    tldnElevatorIdle[1]       DEFAULT=1 DISPLAYOPTION=red DISPLAYOPTION=hidden
+
+# Workroom
+    VAR BOOL    tldnWorkRmLightSwitch01On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch02On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch03On[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# InShroom
+    VAR BOOL    tldnCabinDrained[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchOpen[1]        DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchLocked[1]      DEFAULT=1 DISPLAYOPTION=red
+    
+# Uppershroom
+    VAR BOOL    tldnAquariumOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnAquariumLightOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShuttersOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    
+# WarShroom
+    VAR BOOL    tldnOuterDoorClosed[1]     DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnCatwalkDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    
+# ShroomieGate
+    VAR BOOL    tldnShroomieGateUp[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBrokenBridgeLowered[1]      DEFAULT=0 DISPLAYOPTION=red
+
+# Bahro Door
+    VAR BOOL    tldnBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+
+# SlaveOffice
+    VAR BOOL    tldnSecretDoorOpen[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Vapor Miner Hits
+    VAR BOOL    tldnRockAVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockBVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockCVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockDVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Slave Cave - Control Panels
+    VAR BOOL    tldnSlaveActivePanel01[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel03[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel05[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel07[1]    DEFAULT=0 DISPLAYOPTION=red
+    
+# Bump Bridge 
+    VAR BOOL    tldnLagoonBridgeStuck[1] DEFAULT=1 DISPLAYOPTION=red  
+    VAR BOOL    tldnLagoonBridgeRaised[1] DEFAULT=1 DISPLAYOPTION=red 
+
+# Shroomie Creature
+    VAR INT    ShroomieTotalTimesSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    VAR INT    ShroomieTimeLastSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    
+# More Slave Cave - Pressure Plates
+    VAR BOOL    tldnSlaveActivePlate01[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate03[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate05[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate07[1]    DEFAULT=0 DISPLAYOPTION=red
+
+
+}
+
+
+#
+# State Description Language for Teledahn
+
+
+STATEDESC Teledahn
+{
+	VERSION 28
+
+# Boolean variables
+    VAR BOOL    tldnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    tldnTreasureBook07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnPumpSwitchFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT # Makes the center lever disappear at the WRCC.
+
+# State variables
+    VAR BYTE	tldnHarpoonState[1]    DEFAULT=0 DEFAULTOPTION=VAULT # 0 = No harpoons pages loaded. 1 = tldnHarpoonState01a Loaded. 2 = tldnHarpoonState01b Loaded
+
+## Age Mechanics ##
+
+# Power Tower
+    VAR BYTE     tldnPwrTwrPumpCount[1] DEFAULT=0 DISPLAYOPTION=red # 0-3, 3 = tower raised
+    VAR BOOL    tldnMainPowerOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomPowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGateShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGatePowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    
+# Buckets
+    VAR BOOL    tldnBucketsMoving[1]    DEFAULT=0   DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnBucketContinuousLoopMode[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBucketLowerLeverPulled[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    boolCanEnterABucket[1]   DEFAULT=1 DISPLAYOPTION=hidden DISPLAYOPTION=red
+
+
+
+# Elevator
+    VAR BOOL    tldnElevatorLocked[1]       DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    tldnElevatorCurrentFloor[1]       DEFAULT=2 DISPLAYOPTION=red DISPLAYOPTION=hidden
+    VAR BOOL    tldnElevatorIdle[1]       DEFAULT=1 DISPLAYOPTION=red DISPLAYOPTION=hidden
+
+# Workroom
+    VAR BOOL    tldnWorkRmLightSwitch01On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch02On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch03On[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# InShroom
+    VAR BOOL    tldnCabinDrained[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchOpen[1]        DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchLocked[1]      DEFAULT=1 DISPLAYOPTION=red
+    
+# Uppershroom
+    VAR BOOL    tldnAquariumOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnAquariumLightOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShuttersOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    
+# WarShroom
+    VAR BOOL    tldnOuterDoorClosed[1]     DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnCatwalkDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    
+# ShroomieGate
+    VAR BOOL    tldnShroomieGateUp[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBrokenBridgeLowered[1]      DEFAULT=0 DISPLAYOPTION=red
+
+# Bahro Door
+    VAR BOOL    tldnBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+
+# SlaveOffice
+    VAR BOOL    tldnSecretDoorOpen[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnTieDyeVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+# Vapor Miner Hits
+    VAR BOOL    tldnRockAVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockBVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockCVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockDVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Slave Cave - Control Panels
+    VAR BOOL    tldnSlaveActivePanel01[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel03[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel05[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel07[1]    DEFAULT=0 DISPLAYOPTION=red
+    
+# Bump Bridge 
+    VAR BOOL    tldnLagoonBridgeStuck[1] DEFAULT=1 DISPLAYOPTION=red  
+    VAR BOOL    tldnLagoonBridgeRaised[1] DEFAULT=1 DISPLAYOPTION=red 
+
+# Shroomie Creature
+    VAR INT    ShroomieTotalTimesSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    VAR INT    ShroomieTimeLastSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    
+# More Slave Cave - Pressure Plates
+    VAR BOOL    tldnSlaveActivePlate01[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate03[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate05[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate07[1]    DEFAULT=0 DISPLAYOPTION=red
+
+
+}
+
+# State Description Language for Teledahn
+
+
+STATEDESC Teledahn
+{
+	VERSION 29
+
+# Boolean variables
+    VAR BOOL    tldnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    tldnTreasureBook07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnPumpSwitchFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT # Makes the center lever disappear at the WRCC.
+
+# State variables
+    VAR BYTE	tldnHarpoonState[1]    DEFAULT=0 DEFAULTOPTION=VAULT # 0 = No harpoons pages loaded. 1 = tldnHarpoonState01a Loaded. 2 = tldnHarpoonState01b Loaded
+
+## Age Mechanics ##
+
+# Power Tower
+    VAR BYTE     tldnPwrTwrPumpCount[1] DEFAULT=0 DISPLAYOPTION=red # 0-3, 3 = tower raised
+    VAR BOOL    tldnMainPowerOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomPowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGateShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGatePowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    
+# Buckets
+    VAR BOOL    tldnBucketsMoving[1]    DEFAULT=0   DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnBucketContinuousLoopMode[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBucketLowerLeverPulled[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    boolCanEnterABucket[1]   DEFAULT=1 DISPLAYOPTION=hidden DISPLAYOPTION=red
+
+
+
+# Elevator
+    VAR BOOL    tldnElevatorLocked[1]       DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    tldnElevatorCurrentFloor[1]       DEFAULT=2 DISPLAYOPTION=red DISPLAYOPTION=hidden
+    VAR BOOL    tldnElevatorIdle[1]       DEFAULT=1 DISPLAYOPTION=red DISPLAYOPTION=hidden
+
+# Workroom
+    VAR BOOL    tldnWorkRmLightSwitch01On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch02On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch03On[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# InShroom
+    VAR BOOL    tldnCabinDrained[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchOpen[1]        DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchLocked[1]      DEFAULT=1 DISPLAYOPTION=red
+    
+# Uppershroom
+    VAR BOOL    tldnAquariumOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnAquariumLightOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShuttersOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnNexusStationVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    
+# WarShroom
+    VAR BOOL    tldnOuterDoorClosed[1]     DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnCatwalkDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    
+# ShroomieGate
+    VAR BOOL    tldnShroomieGateUp[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBrokenBridgeLowered[1]      DEFAULT=0 DISPLAYOPTION=red
+
+# Bahro Door
+    VAR BOOL    tldnBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+
+# SlaveOffice
+    VAR BOOL    tldnSecretDoorOpen[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnTieDyeVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+# Vapor Miner Hits
+    VAR BOOL    tldnRockAVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockBVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockCVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockDVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Slave Cave - Control Panels
+    VAR BOOL    tldnSlaveActivePanel01[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel03[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel05[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel07[1]    DEFAULT=0 DISPLAYOPTION=red
+    
+# Bump Bridge 
+    VAR BOOL    tldnLagoonBridgeStuck[1] DEFAULT=1 DISPLAYOPTION=red  
+    VAR BOOL    tldnLagoonBridgeRaised[1] DEFAULT=1 DISPLAYOPTION=red 
+
+# Shroomie Creature
+    VAR INT    ShroomieTotalTimesSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    VAR INT    ShroomieTimeLastSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    
+# More Slave Cave - Pressure Plates
+    VAR BOOL    tldnSlaveActivePlate01[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate03[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate05[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate07[1]    DEFAULT=0 DISPLAYOPTION=red
+
+
+}
+
+
+
+STATEDESC Teledahn
+{
+	VERSION 30
+
+# Boolean variables
+    VAR BOOL    tldnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    tldnTreasureBook07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnPumpSwitchFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT # Makes the center lever disappear at the WRCC.
+
+# State variables
+    VAR BYTE	tldnHarpoonState[1]    DEFAULT=0 DEFAULTOPTION=VAULT # 0 = No harpoons pages loaded. 1 = tldnHarpoonState01a Loaded. 2 = tldnHarpoonState01b Loaded
+
+## Age Mechanics ##
+
+# Power Tower
+    VAR BYTE     tldnPwrTwrPumpCount[1] DEFAULT=0 DISPLAYOPTION=red # 0-3, 3 = tower raised
+    VAR BOOL    tldnMainPowerOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomPowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGateShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGatePowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    
+# Buckets
+    VAR BOOL    tldnBucketsMoving[1]    DEFAULT=0   DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnBucketContinuousLoopMode[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBucketLowerLeverPulled[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    boolCanEnterABucket[1]   DEFAULT=1 DISPLAYOPTION=hidden DISPLAYOPTION=red
+
+
+
+# Elevator
+    VAR BOOL    tldnElevatorLocked[1]       DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    tldnElevatorCurrentFloor[1]       DEFAULT=2 DISPLAYOPTION=red DISPLAYOPTION=hidden
+    VAR BOOL    tldnElevatorIdle[1]       DEFAULT=1 DISPLAYOPTION=red DISPLAYOPTION=hidden
+
+# Workroom
+    VAR BOOL    tldnWorkRmLightSwitch01On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch02On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch03On[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# InShroom
+    VAR BOOL    tldnCabinDrained[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchOpen[1]        DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchLocked[1]      DEFAULT=1 DISPLAYOPTION=red
+    
+# Uppershroom
+    VAR BOOL    tldnAquariumOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnAquariumLightOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShuttersOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnNexusStationVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    
+# WarShroom
+    VAR BOOL    tldnOuterDoorClosed[1]     DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnCatwalkDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    
+# ShroomieGate
+    VAR BOOL    tldnShroomieGateUp[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBrokenBridgeLowered[1]      DEFAULT=0 DISPLAYOPTION=red
+
+# Bahro Door
+    VAR BOOL    tldnBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+
+# SlaveOffice
+    VAR BOOL    tldnSecretDoorOpen[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnTieDyeVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+# Vapor Miner Hits
+    VAR BOOL    tldnRockAVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockBVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockCVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockDVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Slave Cave - Control Panels
+    VAR BOOL    tldnSlaveActivePanel01[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel03[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel05[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel07[1]    DEFAULT=0 DISPLAYOPTION=red
+    
+# Bump Bridge 
+    VAR BOOL    tldnLagoonBridgeStuck[1] DEFAULT=1 DISPLAYOPTION=red  
+    VAR BOOL    tldnLagoonBridgeRaised[1] DEFAULT=1 DISPLAYOPTION=red 
+
+# Shroomie Creature
+    VAR INT    ShroomieTotalTimesSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    VAR INT    ShroomieTimeLastSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    
+# More Slave Cave - Pressure Plates
+    VAR BOOL    tldnSlaveActivePlate01[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate03[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate05[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate07[1]    DEFAULT=0 DISPLAYOPTION=red
+
+    VAR BOOL    tldnSlaveCaveSecretDoorVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnSlaveCaveSecretDoorOpen[1]    DEFAULT=0 DEFAULTOPTION=red
+
+}
+
+
+STATEDESC Teledahn
+{
+	VERSION 31
+
+# Boolean variables
+    VAR BOOL    tldnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    tldnTreasureBook07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnPumpSwitchFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT # Makes the center lever disappear at the WRCC.
+
+# State variables
+    VAR BYTE	tldnHarpoonState[1]    DEFAULT=0 DEFAULTOPTION=VAULT # 0 = No harpoons pages loaded. 1 = tldnHarpoonState01a Loaded. 2 = tldnHarpoonState01b Loaded
+
+## Age Mechanics ##
+
+# Power Tower
+    VAR BYTE     tldnPwrTwrPumpCount[1] DEFAULT=0 DISPLAYOPTION=red # 0-3, 3 = tower raised
+    VAR BOOL    tldnMainPowerOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomPowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGateShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGatePowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    
+# Buckets
+    VAR BOOL    tldnBucketsMoving[1]    DEFAULT=0   DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnBucketContinuousLoopMode[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBucketLowerLeverPulled[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    boolCanEnterABucket[1]   DEFAULT=1 DISPLAYOPTION=hidden DISPLAYOPTION=red
+
+
+
+# Elevator
+    VAR BOOL    tldnElevatorLocked[1]       DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    tldnElevatorCurrentFloor[1]       DEFAULT=2 DISPLAYOPTION=red DISPLAYOPTION=hidden
+    VAR BOOL    tldnElevatorIdle[1]       DEFAULT=1 DISPLAYOPTION=red DISPLAYOPTION=hidden
+
+# Workroom
+    VAR BOOL    tldnWorkRmLightSwitch01On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch02On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch03On[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# InShroom
+    VAR BOOL    tldnCabinDrained[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchOpen[1]        DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchLocked[1]      DEFAULT=1 DISPLAYOPTION=red
+    
+# Uppershroom
+    VAR BOOL    tldnAquariumOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnAquariumLightOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShuttersOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnNexusStationVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    
+# WarShroom
+    VAR BOOL    tldnOuterDoorClosed[1]     DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnCatwalkDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    
+# ShroomieGate
+    VAR BOOL    tldnShroomieGateUp[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBrokenBridgeLowered[1]      DEFAULT=0 DISPLAYOPTION=red
+
+# Bahro Door
+    VAR BOOL    tldnBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+
+# SlaveOffice
+    VAR BOOL    tldnSecretDoorOpen[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnTieDyeVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+# Vapor Miner Hits
+    VAR BOOL    tldnRockAVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockBVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockCVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockDVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Slave Cave - Control Panels
+    VAR BOOL    tldnSlaveActivePanel01[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel03[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel05[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel07[1]    DEFAULT=0 DISPLAYOPTION=red
+    
+# Bump Bridge 
+    VAR BOOL    tldnLagoonBridgeStuck[1] DEFAULT=1 DISPLAYOPTION=red  
+    VAR BOOL    tldnLagoonBridgeRaised[1] DEFAULT=1 DISPLAYOPTION=red 
+
+# Shroomie Creature
+    VAR INT    ShroomieTotalTimesSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    VAR INT    ShroomieTimeLastSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    
+# More Slave Cave - Pressure Plates
+    VAR BOOL    tldnSlaveActivePlate01[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate03[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate05[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate07[1]    DEFAULT=0 DISPLAYOPTION=red
+
+    VAR BOOL    tldnSlaveCaveSecretDoorVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnSlaveCaveSecretDoorOpen[1]    DEFAULT=0 DEFAULTOPTION=red
+
+}
+
+
+STATEDESC Teledahn
+{
+	VERSION 32
+
+# Boolean variables
+    VAR BOOL    tldnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    tldnTreasureBook07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnPumpSwitchFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT # Makes the center lever disappear at the WRCC.
+
+# State variables
+    VAR BYTE	tldnHarpoonState[1]    DEFAULT=0 DEFAULTOPTION=VAULT # 0 = No harpoons pages loaded. 1 = tldnHarpoonState01a Loaded. 2 = tldnHarpoonState01b Loaded
+
+## Age Mechanics ##
+
+# Power Tower
+    VAR BYTE     tldnPwrTwrPumpCount[1] DEFAULT=0 DISPLAYOPTION=red # 0-3, 3 = tower raised
+    VAR BOOL    tldnMainPowerOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomPowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGateShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGatePowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    
+# Buckets
+    VAR BOOL    tldnBucketContinuousLoopMode[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBucketLowerLeverPulled[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    tldnBucketState[2]      DEFAULT=0 DISPLAYOPTION=hidden
+    # tldnBucketState[0] = State, tldnBucketState[1] = fastforward
+    # States:
+    #   1=Stop, 2=QRun, 3=QBoardQRun, 4=Run, 5=Dump, 6=QStop, 7=DumpQBoard, 8=DumpQStop, 9=DumpQBoardQStop, 10=QBoard, 11=Boarded
+    VAR INT     tldnRiders[4]           DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     tldnBucketAtEntry[1]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    tldnShrmDoorOpen[1]     DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     tldnBucketAtDump[1]     DEFAULT=-1  DISPLAYOPTION=hidden
+
+
+# Elevator
+    VAR BOOL    tldnElevatorLocked[1]       DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    tldnElevatorCurrentFloor[1]       DEFAULT=2 DISPLAYOPTION=red DISPLAYOPTION=hidden
+    VAR BOOL    tldnElevatorIdle[1]       DEFAULT=1 DISPLAYOPTION=red DISPLAYOPTION=hidden
+
+# Workroom
+    VAR BOOL    tldnWorkRmLightSwitch01On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch02On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch03On[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# InShroom
+    VAR BOOL    tldnCabinDrained[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchOpen[1]        DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchLocked[1]      DEFAULT=1 DISPLAYOPTION=red
+    
+# Uppershroom
+    VAR BOOL    tldnAquariumOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnAquariumLightOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShuttersOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnNexusStationVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    
+# WarShroom
+    VAR BOOL    tldnOuterDoorClosed[1]     DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnCatwalkDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    
+# ShroomieGate
+    VAR BOOL    tldnShroomieGateUp[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBrokenBridgeLowered[1]      DEFAULT=0 DISPLAYOPTION=red
+
+# Bahro Door
+    VAR BOOL    tldnBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+
+# SlaveOffice
+    VAR BOOL    tldnSecretDoorOpen[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnTieDyeVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+# Vapor Miner Hits
+    VAR BOOL    tldnRockAVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockBVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockCVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockDVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Slave Cave - Control Panels
+    VAR BOOL    tldnSlaveActivePanel01[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel03[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel05[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel07[1]    DEFAULT=0 DISPLAYOPTION=red
+    
+# Bump Bridge 
+    VAR BOOL    tldnLagoonBridgeStuck[1] DEFAULT=1 DISPLAYOPTION=red  
+    VAR BOOL    tldnLagoonBridgeRaised[1] DEFAULT=1 DISPLAYOPTION=red 
+
+# Shroomie Creature
+    VAR INT    ShroomieTotalTimesSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    VAR INT    ShroomieTimeLastSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    
+# More Slave Cave - Pressure Plates
+    VAR BOOL    tldnSlaveActivePlate01[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate03[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate05[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate07[1]    DEFAULT=0 DISPLAYOPTION=red
+
+    VAR BOOL    tldnSlaveCaveSecretDoorVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnSlaveCaveSecretDoorOpen[1]    DEFAULT=0 DEFAULTOPTION=red
+
+}
+
+STATEDESC Teledahn
+{
+	VERSION 33
+
+# Boolean variables
+    VAR BOOL    tldnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    tldnTreasureBook07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnYeeshaPage06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnPumpSwitchFunc[1]    DEFAULT=1 DEFAULTOPTION=VAULT # Makes the center lever disappear at the WRCC.
+
+    VAR BOOL    tldnCalendarSpark09[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+# State variables
+    VAR BYTE	tldnHarpoonState[1]    DEFAULT=0 DEFAULTOPTION=VAULT # 0 = No harpoons pages loaded. 1 = tldnHarpoonState01a Loaded. 2 = tldnHarpoonState01b Loaded
+
+## Age Mechanics ##
+
+# Power Tower
+    VAR BYTE     tldnPwrTwrPumpCount[1] DEFAULT=0 DISPLAYOPTION=red # 0-3, 3 = tower raised
+    VAR BOOL    tldnMainPowerOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkroomPowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGateShaftOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShroomieGatePowerOn[1]      DEFAULT=0 DISPLAYOPTION=hidden DISPLAYOPTION=red
+    
+# Buckets
+    VAR BOOL    tldnBucketContinuousLoopMode[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBucketLowerLeverPulled[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BYTE    tldnBucketState[2]      DEFAULT=0 DISPLAYOPTION=hidden
+    # tldnBucketState[0] = State, tldnBucketState[1] = fastforward
+    # States:
+    #   1=Stop, 2=QRun, 3=QBoardQRun, 4=Run, 5=Dump, 6=QStop, 7=DumpQBoard, 8=DumpQStop, 9=DumpQBoardQStop, 10=QBoard, 11=Boarded
+    VAR INT     tldnRiders[4]           DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     tldnBucketAtEntry[1]    DEFAULT=0  DISPLAYOPTION=hidden
+    VAR BOOL    tldnShrmDoorOpen[1]     DEFAULT=0  DISPLAYOPTION=hidden
+    VAR INT     tldnBucketAtDump[1]     DEFAULT=-1  DISPLAYOPTION=hidden
+
+
+# Elevator
+    VAR BOOL    tldnElevatorLocked[1]       DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    tldnElevatorCurrentFloor[1]       DEFAULT=2 DISPLAYOPTION=red DISPLAYOPTION=hidden
+    VAR BOOL    tldnElevatorIdle[1]       DEFAULT=1 DISPLAYOPTION=red DISPLAYOPTION=hidden
+
+# Workroom
+    VAR BOOL    tldnWorkRmLightSwitch01On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch02On[1]   DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnWorkRmLightSwitch03On[1]   DEFAULT=0 DISPLAYOPTION=red
+
+# InShroom
+    VAR BOOL    tldnCabinDrained[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchOpen[1]        DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnHatchLocked[1]      DEFAULT=1 DISPLAYOPTION=red
+    
+# Uppershroom
+    VAR BOOL    tldnAquariumOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnAquariumLightOn[1]      DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnShuttersOpen[1]     DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnNexusStationVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    
+# WarShroom
+    VAR BOOL    tldnOuterDoorClosed[1]     DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnCatwalkDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    
+# ShroomieGate
+    VAR BOOL    tldnShroomieGateUp[1]   DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnBrokenBridgeLowered[1]      DEFAULT=0 DISPLAYOPTION=red
+
+# Bahro Door
+    VAR BOOL    tldnBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+
+# SlaveOffice
+    VAR BOOL    tldnSecretDoorOpen[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnTieDyeVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+# Vapor Miner Hits
+    VAR BOOL    tldnRockAVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockBVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockCVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnRockDVaporHit[1]    DEFAULT=0 DISPLAYOPTION=red
+
+# Slave Cave - Control Panels
+    VAR BOOL    tldnSlaveActivePanel01[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel03[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel05[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePanel07[1]    DEFAULT=0 DISPLAYOPTION=red
+    
+# Bump Bridge 
+    VAR BOOL    tldnLagoonBridgeStuck[1] DEFAULT=1 DISPLAYOPTION=red  
+    VAR BOOL    tldnLagoonBridgeRaised[1] DEFAULT=1 DISPLAYOPTION=red 
+
+# Shroomie Creature
+    VAR INT    ShroomieTotalTimesSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    VAR INT    ShroomieTimeLastSeen[1] DEFAULT=0 DISPLAYOPTION=hidden
+    
+# More Slave Cave - Pressure Plates
+    VAR BOOL    tldnSlaveActivePlate01[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate02[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate03[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate04[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate05[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate06[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    tldnSlaveActivePlate07[1]    DEFAULT=0 DISPLAYOPTION=red
+
+    VAR BOOL    tldnSlaveCaveSecretDoorVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnSlaveCaveSecretDoorOpen[1]    DEFAULT=0 DEFAULTOPTION=red
+
+}

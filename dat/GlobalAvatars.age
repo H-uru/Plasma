@@ -1,0 +1,9 @@
+StartDateTime=0000007200
+DayLength=24
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=-6
+ReleaseVersion=0
+Page=Audio,3
+Page=Female,2
+Page=Male,1

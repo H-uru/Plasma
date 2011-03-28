@@ -1,0 +1,8 @@
+StartDateTime=0946718065
+DayLength=15.718056
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=30
+ReleaseVersion=0
+Page=DrnoExterior,1
+Page=DrnoPod,2
