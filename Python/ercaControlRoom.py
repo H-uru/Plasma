@@ -484,7 +484,7 @@ class ercaControlRoom(ptResponder):
 #                print "playerID: %d has ENTERED tunnel: %d" % (playerID,rgn)
 #            else:
 #                print "playerID: %d has EXITED tunnel: %d" % (playerID,rgn)
-            self.SendNote('UpdateTunnelRgn;%d;%d;%d' % (rgn,state,playerID))
+            self.SendNote('%d;%d;%d' % (rgn,state,playerID))
 
         elif id == (-1):
             #print "incoming event: %s" % (events[0][1])
@@ -560,9 +560,8 @@ class ercaControlRoom(ptResponder):
         notify.send()
 
     def ExecCode(self, code):
-        if code.find('UpdateTunnelRgn') != -1:
-            chunks = code.split(';')
-            ecRgn = int(code[1])
-            ecstate = int(code[2])
-            ecPlayerID = int(code[3])
-            self.UpdateTunnelRgn(ecRgn,ecState,ecplayerID)
+        chunks = code.split(';')
+        ecRgn = int(code[1])
+        ecstate = int(code[2])
+        ecPlayerID = int(code[3])
+        self.UpdateTunnelRgn(ecRgn,ecState,ecplayerID)
