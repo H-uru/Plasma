@@ -155,7 +155,7 @@ class payiUrwinBrain(ptResponder):
                 print "List is only one command long, so I'm playing it"
                 code = stackList[0]
                 print "Playing command: %s" % (code)
-                exec code
+                self.ExecCode(code)
 
         elif state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]:
             if id == respUrwinSfx.id:
@@ -180,24 +180,24 @@ class payiUrwinBrain(ptResponder):
                             print "Urwin will take %d more steps..." % (StepsToTake)
                             if whrandom.randint(0,2):
                                 print "Urwin walks one way."
-                                self.SendNote("respUrwin_Walk_Loop01.run(self.key)")
+                                self.SendNote("respUrwin_Walk_Loop01")
                                 if boolBatteryChargedAndOn:
                                     respUrwinSfx.run(self.key, state="Walk01")
                             else:
                                 print "Urwin walks the other way."
-                                self.SendNote("respUrwin_Walk_Loop02.run(self.key)")
+                                self.SendNote("respUrwin_Walk_Loop02")
                                 if boolBatteryChargedAndOn:
                                     respUrwinSfx.run(self.key, state="Walk02")
 
                         else: # 10% to Sniff
                             print "Urwin smells something..."
-                            self.SendNote("respUrwin_Walk_ToWalkSniff.run(self.key)")
+                            self.SendNote("respUrwin_Walk_ToWalkSniff")
                             if boolBatteryChargedAndOn:
                                 respUrwinSfx.run(self.key, state="Walk2Sniff")
 
                     else:
                         print "Urwin is tired and stops walking"
-                        self.SendNote("respUrwin_Walk_ToIdle.run(self.key)")
+                        self.SendNote("respUrwin_Walk_ToIdle")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Walk2Idle")
 
@@ -206,19 +206,19 @@ class payiUrwinBrain(ptResponder):
                     pct = whrandom.randint(0,2)
                     if pct == 2:
                         print "Urwin smells something good!"
-                        self.SendNote("respUrwin_WalkSniff.run(self.key)")
+                        self.SendNote("respUrwin_WalkSniff")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Sniff")
 
                     elif pct == 1:
                         print "Urwin found food!"
-                        self.SendNote("respUrwin_WalkSniff_ToEat.run(self.key)")
+                        self.SendNote("respUrwin_WalkSniff_ToEat")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Sniff2Eat")
 
                     else:
                         print "Urwin says nevermind, back to walking."
-                        self.SendNote("respUrwin_WalkSniff_ToWalk.run(self.key)")
+                        self.SendNote("respUrwin_WalkSniff_ToWalk")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Sniff2Walk")
 
@@ -227,19 +227,19 @@ class payiUrwinBrain(ptResponder):
                     pct = whrandom.randint(0,2)
                     if pct == 2:
                         print "Urwin lost interest in the food."
-                        self.SendNote("respUrwin_Eat_ToIdle.run(self.key)")
+                        self.SendNote("respUrwin_Eat_ToIdle")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Eat2Idle")
 
                     elif pct == 1:
                         print "Urwin is still searching for the food."
-                        self.SendNote("respUrwin_Eat_ToWalkSniff.run(self.key)")
+                        self.SendNote("respUrwin_Eat_ToWalkSniff")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Eat2Sniff")
 
                     else:
                         print "Urwin scoops up the food!"
-                        self.SendNote("respUrwin_Eat_Scoop.run(self.key)")
+                        self.SendNote("respUrwin_Eat_Scoop")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Scoop")
 
@@ -247,31 +247,31 @@ class payiUrwinBrain(ptResponder):
                     pct = whrandom.randint(0,4)
                     if pct == 4:
                         print "Urwin scoops up the food!"
-                        self.SendNote("respUrwin_Eat_Scoop.run(self.key)")
+                        self.SendNote("respUrwin_Eat_Scoop")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Scoop")
 
                     elif pct == 3:
                         print "Urwin shakes the food!"
-                        self.SendNote("respUrwin_Eat_Shake.run(self.key)")
+                        self.SendNote("respUrwin_Eat_Shake")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Shake")
 
                     elif pct == 2:
                         print "Urwin swallows the food!"
-                        self.SendNote("respUrwin_Eat_Swallow.run(self.key)")
+                        self.SendNote("respUrwin_Eat_Swallow")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Swallow")
 
                     elif pct == 1:
                         print "Urwin lost interest in the food."
-                        self.SendNote("respUrwin_Eat_ToIdle.run(self.key)")
+                        self.SendNote("respUrwin_Eat_ToIdle")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Eat2Idle")
 
                     else:
                         print "Urwin is still searching for the food."
-                        self.SendNote("respUrwin_Eat_ToWalkSniff.run(self.key)")
+                        self.SendNote("respUrwin_Eat_ToWalkSniff")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Eat2Sniff")
 
@@ -280,31 +280,31 @@ class payiUrwinBrain(ptResponder):
                     pct = whrandom.randint(0,4)
                     if pct == 4:
                         print "Urwin idles one way."
-                        self.SendNote("respUrwin_Idle_01.run(self.key)")
+                        self.SendNote("respUrwin_Idle_01")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Idle01")
 
                     elif pct == 3:
                         print "Urwin idles the other way."
-                        self.SendNote("respUrwin_Idle_02.run(self.key)")
+                        self.SendNote("respUrwin_Idle_02")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Idle02")
 
                     elif pct == 2:
                         print "Urwin calls home!"
-                        self.SendNote("respUrwin_Idle_Vocalize.run(self.key)")
+                        self.SendNote("respUrwin_Idle_Vocalize")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Vocalize")
 
                     elif pct == 1:
                         print "Urwin gets hungry."
-                        self.SendNote("respUrwin_Idle_ToEat.run(self.key)")
+                        self.SendNote("respUrwin_Idle_ToEat")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Idle2Eat")
 
                     else:
                         print "Urwin is done resting, back to walking."
-                        self.SendNote("respUrwin_Idle_ToWalk.run(self.key)")
+                        self.SendNote("respUrwin_Idle_ToWalk")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Idle2Walk")
 
@@ -324,7 +324,7 @@ class payiUrwinBrain(ptResponder):
                 print "List has at least one item ready to play"
                 code = stackList[0]
                 print "Playing command: %s" % (code)
-                exec code
+                self.ExecCode(code)
 
         else:
             print "Callback from something else?"
@@ -340,11 +340,11 @@ class payiUrwinBrain(ptResponder):
         print "Urwin has decided to take %d steps." % (StepsToTake)
 
         if whrandom.randint(0,1):
-            self.SendNote("respUrwin_Walk_Loop01.run(self.key)")
+            self.SendNote("respUrwin_Walk_Loop01")
             if boolBatteryChargedAndOn:
                 respUrwinSfx.run(self.key, state="Walk01")
         else:
-            self.SendNote("respUrwin_Walk_Loop02.run(self.key)")
+            self.SendNote("respUrwin_Walk_Loop02")
             if boolBatteryChargedAndOn:
                 respUrwinSfx.run(self.key, state="Walk02")
         UrwinMasterAnim.animation.resume()
@@ -482,3 +482,47 @@ class payiUrwinBrain(ptResponder):
                     kFirstMorningSpawn = 1
                     self.InitNewSDLVars()
 
+    def ExecCode(self, code):
+        if code.find("respUrwin") != -1:
+            chunks = code.split('_')
+            ecState = chunks[1]
+            ecAction = chunks[2]
+            if ecState == "Idle":
+                if ecAction == "01":
+                    respUrwin_Idle_01.run(self.key)
+                elif ecAction == "02":
+                    respUrwin_Idle_02.run(self.key)
+                elif ecAction == "Vocalize":
+                    respUrwin_Idle_Vocalize.run(self.key)
+                elif ecAction == "ToEat":
+                    respUrwin_Idle_ToEat.run(self.key)
+                elif ecAction == "ToWalk":
+                    respUrwin_Idle_ToWalk.run(self.key)
+            elif ecState == "Walk":
+                if ecAction == "Loop01":
+                    respUrwin_Walk_Loop01.run(self.key)
+                elif ecAction == "Loop02":
+                    respUrwin_Walk_Loop02.run(self.key)
+                elif ecAction == "ToWalkSniff":
+                    respUrwin_Walk_ToWalkSniff.run(self.key)
+                elif ecAction == "ToIdle":
+                    respUrwin_Walk_ToIdle.run(self.key)
+            elif ecState == "WalkSniff":
+                if ecAction == "ToEat":
+                    respUrwin_WalkSniff_ToEat.run(self.key)
+                elif ecAction == "ToWalk":
+                    respUrwin_WalkSniff_ToWalk.run(self.key)
+                else:
+                    respUrwin_WalkSniff.run(self.key)
+            elif ecState == "Eat":
+                if ecAction == "ToIdle":
+                    respUrwin_Eat_ToIdle.run(self.key)
+                elif ecAction == "ToWalkSniff":
+                    respUrwin_Eat_ToWalkSniff.run(self.key)
+                elif ecAction == "Scoop":
+                    respUrwin_Eat_Scoop.run(self.key)
+                elif ecAction == "Shake":
+                    respUrwin_Eat_Shake.run(self.key)
+                elif ecAction == "Swallow":
+                    respUrwin_Eat_Swallow.run(self.key)
+                    
