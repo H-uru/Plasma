@@ -64,22 +64,8 @@ from xMarkerGameKIDisplay import * #Support to display user-created marker game 
 # personal age SDL helper
 from xPsnlVaultSDL import *
 
-kJalakMiniIconBtn = 1200
-kJalakRandomBtn = 1201
-kJalakExtremeBtn = 1202
-kJalakWallToggleBtn = 1203
-kJalakColumnsLowBtn = 1204
-kJalakColumnsMedBtn = 1205
-kJalakColumnsHighBtn = 1206
-kJalakRampBtn = 1207
-kJalakSphereBtn = 1208
-kJalakBigBoxBtn = 1209
-kJalakLilBoxBtn = 1210
-kJalakRectangleBtn = 1211
-kJalakDestroyBtn = 1212
-JalakBtnStates = [   str(kJalakRandomBtn),str(kJalakExtremeBtn),str(kJalakWallToggleBtn),str(kJalakColumnsLowBtn),\
-                str(kJalakColumnsMedBtn),str(kJalakColumnsHighBtn),str(kJalakRampBtn),str(kJalakSphereBtn),\
-                str(kJalakBigBoxBtn),str(kJalakLilBoxBtn),str(kJalakRectangleBtn),str(kJalakDestroyBtn)]
+# jalak constants
+from jlakConstants import *
 
 # define the attributes that will be entered in max
 KIBlackbar = ptAttribGUIDialog(1,"The Blackbar dialog")
@@ -680,15 +666,6 @@ gMarkerGottenNumber = 0
 
 #message waiting system globals:
 kMessageWait = xEnum.Enum("createMarker, changeMarkerName")
-
-# =====================================
-# Jalak GUI constants
-kSphere = "Sphere"
-kLilBox = "LilBox"
-kBigBox = "BigBox"
-kRamp = "Ramp"
-kRect = "Rect"
-kJalakBtnDelaySeconds = 0.4
 
 # Jalak GUI globals
 jlakGUIButtons = []
@@ -3357,30 +3334,7 @@ class xKI(ptModifier):
 
 
     def SendJalakBtnHit(self,btnID):
-        if btnID == kJalakRandomBtn:
-            self.SendNote('self.AutoColumns(%d)' % (3))
-        elif btnID == kJalakExtremeBtn:
-            self.SendNote('self.AutoColumns(%d)' % (4))
-        elif btnID == kJalakWallToggleBtn:
-            self.SendNote('self.ToggleWall()')
-        elif btnID == kJalakColumnsLowBtn:
-            self.SendNote('self.AutoColumns(%d)' % (0))
-        elif btnID == kJalakColumnsMedBtn:
-            self.SendNote('self.AutoColumns(%d)' % (1))
-        elif btnID == kJalakColumnsHighBtn:
-            self.SendNote('self.AutoColumns(%d)' % (2))
-        elif btnID == kJalakRampBtn:
-            self.SendNote('self.DropWidget("%s")' % (kRamp))
-        elif btnID == kJalakSphereBtn:
-            self.SendNote('self.DropWidget("%s")' % (kSphere))
-        elif btnID == kJalakBigBoxBtn:
-            self.SendNote('self.DropWidget("%s")' % (kBigBox))
-        elif btnID == kJalakLilBoxBtn:
-            self.SendNote('self.DropWidget("%s")' % (kLilBox))
-        elif btnID == kJalakRectangleBtn:
-            self.SendNote('self.DropWidget("%s")' % (kRect))
-        elif btnID == kJalakDestroyBtn:
-            self.SendNote('self.ResetWidgets()')
+        self.SendNote('%d' % (btnID))
 
 
     def SendNote(self,ExtraInfo):

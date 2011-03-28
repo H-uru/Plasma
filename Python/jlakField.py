@@ -36,6 +36,9 @@ import xRandom
 import string
 
 
+# Shared xKI/jlakField constants
+from jlakConstants import *
+
 objColumns = ptAttribSceneobjectList(1,"obj: column phys")
 animColumn = ptAttribAnimation(2,"anim: columns",byObject=1)
 objSpheres = ptAttribSceneobjectList(3,"obj: spheres")
@@ -70,11 +73,6 @@ listObjCols = []
 byteColumns = []
 listSfxCols = []
 kMaxEachWidget = 4
-kSphere = "Sphere"
-kLilBox = "LilBox"
-kBigBox = "BigBox"
-kRamp = "Ramp"
-kRect = "Rect"
 kEmoteTimerID = 500
 kSFXCompleteID= 501
 kEmoteTimer = 2.0
@@ -459,7 +457,7 @@ class jlakField(ptResponder):
                 print "incoming event: %s" % (events[0][1])
                 code = events[0][1]
                 print "playing command: %s" % (code)
-                exec code
+                self.ExecCode(code)
 
 
     def CalcPos(self,id,dir):
@@ -810,6 +808,33 @@ class jlakField(ptResponder):
                 self.ResetWidgets()
             else:
                 print "invalid reset parameter, can only use 'widgets' for now"
+
+    def ExecCode(self, code):
+        btnID = int(code)
+        if btnID == kJalakRandomBtn:
+            self.AutoColumns(3)
+        elif btnID == kJalakExtremeBtn:
+            self.AutoColumns(4)
+        elif btnID == kJalakWallToggleBtn:
+            self.ToggleWall()
+        elif btnID == kJalakColumnsLowBtn:
+            self.AutoColumns(0)
+        elif btnID == kJalakColumnsMedBtn:
+            self.AutoColumns(1)
+        elif btnID == kJalakColumnsHighBtn:
+            self.AutoColumns(2)
+        elif btnID == kJalakRampBtn:
+            self.DropWidget(kRamp)
+        elif btnID == kJalakSphereBtn:
+            self.DropWidget(kSphere)
+        elif btnID == kJalakBigBoxBtn:
+            self.DropWidget(kBigBox)
+        elif btnID == kJalakLilBoxBtn:
+            self.DropWidget(kLilBox)
+        elif btnID == kJalakRectangleBtn:
+            self.DropWidget(kRect)
+        elif btnID == kJalakDestroyBtn:
+            self.ResetWidgets()
 
 
 
