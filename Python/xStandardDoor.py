@@ -246,18 +246,10 @@ class xStandardDoor(ptResponder):
                 if ageSDL[stringSDLVarClosed.value][0]: 
                     # doorClosed changed to true (close the door)
                     try:
-                        if tag == "fromOutside":
-                            self.SendNote('respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(%d),self.key),fastforward=%d,netPropagate=0)' % (playerID, fastforward), playerID)
+                        OkTags = ["fromOutside", "fromInside", "fromAuto", "fastForward"]
+                        if tag in OkTags:
+                            self.SendNote('%s;%d;%d;true' % (tag, playerID, fastForward), playerID)
                             print 'xStandardDoor.OnSDLNotify():\tClosing ', tag 
-                        elif tag == "fromInside":
-                            self.SendNote('respCloseInt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(%d),self.key),fastforward=%d,netPropagate=0)' % (playerID, fastforward), playerID)
-                            print 'xStandardDoor.OnSDLNotify():\tClosing ', tag
-                        elif tag == "fromAuto":
-                            self.SendNote('respAutoClose.run(self.key,fastforward=%d,netPropagate=0)' % fastforward, playerID)
-                            print 'xStandardDoor.OnSDLNotify():\tClosing ', tag
-                        elif tag == "fastforward":
-                            self.SendNote('respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(%d),self.key),fastforward=1,netPropagate=0)' % playerID, playerID)
-                            print 'xStandardDoor.OnSDLNotify():\tClosing ', tag
                         else:
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s" % (tag)) # ok if from vaultmanager
                             fastforward = 1
@@ -277,11 +269,9 @@ class xStandardDoor(ptResponder):
                 else:
                     # doorClosed changed to false (open the door)
                     try:
-                        if tag == "fromOutside":
-                            self.SendNote('respOpenExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(%d),self.key),fastforward=%d,netPropagate=0)' % (playerID, fastforward), playerID)
-                            print 'xStandardDoor.OnSDLNotify():\tOpening ', tag
-                        elif tag == "fromInside" or playerID == 0:
-                            self.SendNote('respOpenInt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(%d),self.key),fastforward=%d,netPropagate=0)' % (playerID, fastforward), playerID)
+                        OkTags = ["fromOutside", "fromInside"]
+                        if tag in OkTags:
+                            self.SendNote('%s;%d;%d;false' % (tag, playerID, fastForward), playerID)
                             print 'xStandardDoor.OnSDLNotify():\tOpening ', tag
                         else:
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s" % (tag))
@@ -308,7 +298,7 @@ class xStandardDoor(ptResponder):
                 print "xStandardDoor: List is only one command long, so I'm playing it"
                 code = self.DoorStack[0]
                 print "xStandardDoor: Playing command: %s" % (code)
-                exec code
+                self.ExecCode(code)
                 return
 
         # reenable clickables after door open/close anim runs
@@ -353,4 +343,26 @@ class xStandardDoor(ptResponder):
             print "xStandardDoor: There's at lest one more Resp to play."
             code = self.DoorStack[0]            
             print "Playing command: %s" % (code)
-            exec code
+            self.ExecCode(code)
+
+    def ExecCode (self, code):
+        chunks = code.split(';')
+        tag = chunks[0];
+        playerId = int(code[1])
+        fastForward = int(code[2])
+        doorClosed = code[3]
+        if doorClosed == "true": # no easy way to convert strings to bools in python
+            if tag == "fromOutside":
+                respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
+            elif tag == "fromInside":
+                respCloseInt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
+            elif tag == "fromAuto":
+                respAutoClose.run(self.key,fastforward=fastForward,netPropagate=0)
+            elif tag == "fastforward":
+                respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=1,netPropagate=0)
+            
+        else:
+            if tag == "fromOutside":
+                respOpenExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
+            elif tag == "fromInside" or playerId == 0:
+                respOpenInt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
