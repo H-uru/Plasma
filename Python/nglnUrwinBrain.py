@@ -139,7 +139,7 @@ class nglnUrwinBrain(ptResponder):
                 print "List is only one command long, so I'm playing it"
                 code = stackList[0]
                 print "Playing command: %s" % (code)
-                exec code
+                self.ExecCode(code)
 
         elif state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]:
             if id == respUrwinSfx.id:
@@ -161,25 +161,25 @@ class nglnUrwinBrain(ptResponder):
                         # 90% chance of continuing walk loop
                         if whrandom.randint(0,9):
                             print "Urwin will take %d more steps..." % (StepsToTake)
-                            self.SendNote("respUrwinWalkLoop.run(self.key)")
+                            self.SendNote("respUrwinWalkLoop")
                             if boolBatteryChargedAndOn:
                                 respUrwinSfx.run(self.key, state="WalkLoop")
                         # 10% to eat
                         else:
                             print "Urwin is hungry and decides to eat"
-                            self.SendNote("respUrwinEat.run(self.key)")
+                            self.SendNote("respUrwinEat")
                             if boolBatteryChargedAndOn:
                                 respUrwinSfx.run(self.key, state="Eat")
                     else:
                         print "Urwin is tired and stops walking"
                         PtAtTimeCallback(self.key, 0.666, 3)
-                        self.SendNote("respUrwinWalkToIdle.run(self.key)")
+                        self.SendNote("respUrwinWalkToIdle")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="WalkToIdle")
 
                 elif id == respUrwinEat.id:
                     print "Urwin is done eating and continues walking"
-                    self.SendNote("respUrwinWalkLoop.run(self.key)")
+                    self.SendNote("respUrwinWalkLoop")
                     if boolBatteryChargedAndOn:
                         respUrwinSfx.run(self.key, state="WalkLoop")
 
@@ -193,7 +193,7 @@ class nglnUrwinBrain(ptResponder):
                     # 33% to go back to walking
                     else:
                         print "Urwin is rested and goes back to walking"
-                        self.SendNote("respUrwinIdleToWalk.run(self.key)")
+                        self.SendNote("respUrwinIdleToWalk")
                         UrwinMasterAnim.animation.resume()
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="IdleToWalk")
@@ -214,7 +214,7 @@ class nglnUrwinBrain(ptResponder):
                 print "List has at least one item ready to play"
                 code = stackList[0]
                 print "Playing command: %s" % (code)
-                exec code
+                self.ExecCode(code)
 
         else:
             print "Callback from something else?"
@@ -228,13 +228,13 @@ class nglnUrwinBrain(ptResponder):
         # 66% chance of idling
         if whrandom.randint(0,2):
             print "Urwin is being lazy and just idling"
-            self.SendNote("respUrwinIdle.run(self.key)")
+            self.SendNote("respUrwinIdle")
             if boolBatteryChargedAndOn:
                 respUrwinSfx.run(self.key, state="Idle")
         # 33% to vocalize
         else:
             print "Urwin is calling home."
-            self.SendNote("respUrwinVocalize.run(self.key)")
+            self.SendNote("respUrwinVocalize")
             if boolBatteryChargedAndOn:
                 respUrwinSfx.run(self.key, state="Vocalize")
 
@@ -248,7 +248,7 @@ class nglnUrwinBrain(ptResponder):
         StepsToTake = whrandom.randint(minsteps, maxsteps)
         print "Urwin has decided to take %d steps." % (StepsToTake)
 
-        self.SendNote("respUrwinWalkLoop.run(self.key)")
+        self.SendNote("respUrwinWalkLoop")
         UrwinMasterAnim.animation.resume()
         if boolBatteryChargedAndOn:
             respUrwinSfx.run(self.key, state="WalkLoop")
@@ -380,3 +380,16 @@ class nglnUrwinBrain(ptResponder):
                     kFirstMorningSpawn = 1
                     self.InitNewSDLVars()
 
+    def ExecCode(self, code):
+        if code == "respUrwinIdle":
+            respUrwinIdle.run(self.key)
+        elif code == "respUrwinIdleToWalk":
+            respUrwinIdleToWalk.run(self.key)
+        elif code == "respUrwinWalkLoop":
+            respUrwinWalkLoop.run(self.key)
+        elif code == "respUrwinWalkToIdle":
+            respUrwinWalkToIdle.run(self.key)
+        elif code == "respUrwinEat":
+            respUrwinEat.run(self.key)
+        elif code == "respUrwinVocalize":
+            respUrwinVocalize.run(self.key)
