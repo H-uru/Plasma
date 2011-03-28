@@ -162,7 +162,7 @@ class grtzAccessDoors(ptResponder):
                     print "grtzAccessDoors: List is only one command long, so I'm playing it"
                     code = self.grtzDoorStack[0]
                     print "grtzAccessDoors: Playing command: %s" % (code)
-                    exec code
+                    self.ExecCode(code)
 
             ############################################################################################################
             elif events[0][1].find('DoorState') != 1 and events[0][1].find('rgnTriggerEnter') == -1 and events[0][1].find('rgnTriggerExit') == -1 and events[0][1].find('Responder') == -1 and events[0][1].find('rgnTriggerFail') == -1:
@@ -256,7 +256,7 @@ class grtzAccessDoors(ptResponder):
             print "grtzAccessDoors: There's at lest one more Resp to play."
             code = self.grtzDoorStack[0]            
             print "Playing command: %s" % (code)
-            exec code
+            self.ExecCode(code)
 
     def UpdateDoorState (self, StateNum):
         if StateNum != self.grtzDoorState:
@@ -265,14 +265,21 @@ class grtzAccessDoors(ptResponder):
             self.SendNote('DoorState='+str(StateNum))
 
             if self.grtzDoorState == doorSDLstates['opening']:
-                self.SendNote("doorResponder.run(self.key,state='OpenTheDoor',netPropagate=0)")
+                self.SendNote("doorResponderOpen")
                 print "grtzAccessDoors: Notifying Clients to play Open Door Responder"
 
             elif self.grtzDoorState == doorSDLstates['closing']:
-                self.SendNote("doorResponder.run(self.key,state='CloseTheDoor',netPropagate=0)")
+                self.SendNote("doorResponderClose")
                 print "grtzAccessDoors: Notifying Clients to play Close Door Responder"
 
             elif self.grtzDoorState == doorSDLstates['closedfail']:                                        
-                self.SendNote("doorResponder.run(self.key,state='NoAccess',netPropagate=0)")
+                self.SendNote("doorResponderNoAccess")
                 print "grtzAccessDoors: Notifying Clients to play Failed Door Responder"
 
+    def ExecCode(self, code):
+        if code == "doorResponderOpen":
+            self.SendNote("doorResponder.run(self.key,state='OpenTheDoor',netPropagate=0)")
+        elif code == "doorResponderClose":
+            self.SendNote("doorResponder.run(self.key,state='CloseTheDoor',netPropagate=0)")
+        elif code == "doorResponderNoAccess":
+            self.SendNote("doorResponder.run(self.key,state='NoAccess',netPropagate=0)")
