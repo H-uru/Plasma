@@ -360,7 +360,6 @@ class xStandardDoor(ptResponder):
                 respAutoClose.run(self.key,fastforward=fastForward,netPropagate=0)
             elif tag == "fastforward":
                 respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=1,netPropagate=0)
-            
         else:
             if tag == "fromOutside":
                 respOpenExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
