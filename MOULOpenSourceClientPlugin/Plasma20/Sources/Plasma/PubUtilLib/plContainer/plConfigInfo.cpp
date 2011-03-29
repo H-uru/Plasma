@@ -25,6 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plConfigInfo.h"
 
+#include "hsTypes.h"
 #include "hsStlUtils.h"
 #include <fstream>
 #include <algorithm>

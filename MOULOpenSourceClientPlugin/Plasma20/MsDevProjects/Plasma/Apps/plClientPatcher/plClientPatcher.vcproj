@@ -62,7 +62,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../../Sources/Plasma/NucleusLib;../../../../Sources/Plasma/PubUtilLib;../../../../Sources/Plasma/CoreLib;../../../../Sources/Plasma/NucleusLib/inc"
+				AdditionalIncludeDirectories="../../../../Sources/Plasma/NucleusLib;../../../../Sources/Plasma/PubUtilLib;../../../../Sources/Plasma/CoreLib;../../../../Sources/Plasma/NucleusLib/inc;../../../../../StaticSDKs/Win32/OpenSSL/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"

@@ -61,8 +61,8 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../../Sources/Plasma/CoreLib;../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib/inc;../../../../../StaticSDKs/Win32/PhysX/Physics/include;../../../../../StaticSDKs/Win32/PhysX/PhysXLoader/include;../../../../../StaticSDKs/Win32/PhysX/Cooking/include;../../../../../StaticSDKs/Win32/PhysX/Foundation/include;../../../../../StaticSDKs/Win32/PhysX/NxCharacter/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				AdditionalIncludeDirectories="../../../../Sources/Plasma/CoreLib;../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib/inc;../../../../../StaticSDKs/Win32/PhysX/Physics/include;../../../../../StaticSDKs/Win32/PhysX/PhysXLoader/include;../../../../../StaticSDKs/Win32/PhysX/Cooking/include;../../../../../StaticSDKs/Win32/PhysX/Foundation/include;../../../../../StaticSDKs/Win32/PhysX/NxCharacter/include;../../../../../StaticSDKs/Win32/OpenSSL/include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;NX_PHYSICS_SDK_VERSION (( NX_SDK_VERSION_MAJOR &lt;&lt;24)+(NX_SDK_VERSION_MINOR &lt;&lt;16)+(NX_SDK_VERSION_BUGFIX &lt;&lt;8) + 0)"
 				RuntimeLibrary="2"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"

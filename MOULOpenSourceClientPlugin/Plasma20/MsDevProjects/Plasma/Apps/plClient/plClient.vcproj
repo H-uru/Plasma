@@ -105,7 +105,7 @@ xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\PhysX\Bin\win32\PhysXLoader.dll ..\..\.
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/Include&quot;;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/PC&quot;;../../../../../StaticSDKs/Win32/HawkVoice/src;../../../../../StaticSDKs/Win32/HawkVoice/Release;../../../../../StaticSDKs/Win32/dx9.0c/include;../../../../Sources/Plasma/CoreLib;../../../../Sources/Plasma/NucleusLib;../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib;../../../../Sources/Plasma/PubUtilLib/inc;../../../../Sources/Plasma/FeatureLib;../../../../Sources/Plasma/FeatureLib/inc;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/pyconfig_static&quot;;../../../../../StaticSDKs/Win32/PlatformSDK/Include"
+				AdditionalIncludeDirectories="&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/Include&quot;;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/PC&quot;;../../../../../StaticSDKs/Win32/HawkVoice/src;../../../../../StaticSDKs/Win32/HawkVoice/Release;../../../../../StaticSDKs/Win32/dx9.0c/include;../../../../Sources/Plasma/CoreLib;../../../../Sources/Plasma/NucleusLib;../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib;../../../../Sources/Plasma/PubUtilLib/inc;../../../../Sources/Plasma/FeatureLib;../../../../Sources/Plasma/FeatureLib/inc;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/pyconfig_static&quot;;../../../../../StaticSDKs/Win32/PlatformSDK/Include;&quot;../../../../../StaticSDKs/Win32/OpenAL 1.1 with EFX SDK/include&quot;;../../../../../StaticSDKs/Win32/OpenSSL/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -124,11 +124,11 @@ xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\PhysX\Bin\win32\PhysXLoader.dll ..\..\.
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winhttp.lib ogg_static.lib vorbis_static.lib vorbisfile_static.lib strmiids.lib eax.lib wininet.lib vfw32.lib winmm.lib ijl15l.lib libcrypto.a ws2_32.lib version.lib odbc32.lib odbccp32.lib eaxguid.lib libspeex.lib binkw32.lib Rpcrt4.lib largeint.lib Iphlpapi.lib OpenAL32.lib"
+				AdditionalDependencies="winhttp.lib ogg_static.lib vorbis_static.lib vorbisfile_static.lib strmiids.lib wininet.lib vfw32.lib winmm.lib libjpeg.lib libeay32.lib ws2_32.lib version.lib odbc32.lib odbccp32.lib libspeex.lib Rpcrt4.lib largeint.lib Iphlpapi.lib OpenAL32.lib"
 				OutputFile=".\Release/plClient.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="&quot;..\..\..\..\..\StaticSDKs\XPlatform\expat-1.95.7\StaticLibs\Win32&quot;;&quot;..\..\..\..\..\StaticSDKs\Win32\speex-1.0.1\Win32\libspeex\Release&quot;;..\..\..\..\..\StaticSDKs\Win32\Bink\lib;..\..\..\..\..\StaticSDKs\Win32\eax\lib;..\..\..\..\..\StaticSDKs\Win32\oggvorbis\lib;..\..\..\..\..\STATICSDKS\XPLATFORM\STLPORT\lib;..\..\..\..\..\STATICSDKS\Win32\ijl\lib;..\..\..\..\..\StaticSDKs\Win32\WMSDK\lib;..\..\..\..\..\StaticSDKs\Win32\OpenSSL\lib;..\..\..\..\..\StaticSDKs\Win32\dx9.0csdk\lib;..\..\..\..\..\StaticSDKs\Win32\PhysX\lib\win32;..\..\..\..\..\StaticSDKs\Win32\OpenAL 1.1 with EFX SDK\libs\Win32;..\..\..\..\..\StaticSDKs\Win32\PlatformSDK\Lib"
+				AdditionalLibraryDirectories="&quot;..\..\..\..\..\StaticSDKs\XPlatform\expat-1.95.7\StaticLibs\Win32&quot;;&quot;..\..\..\..\..\StaticSDKs\Win32\speex-1.0.1\Win32\libspeex\Release&quot;;..\..\..\..\..\StaticSDKs\Win32\Bink\lib;..\..\..\..\..\StaticSDKs\Win32\oggvorbis\lib;..\..\..\..\..\STATICSDKS\XPLATFORM\STLPORT\lib;..\..\..\..\..\StaticSDKs\Win32\WMSDK\lib;..\..\..\..\..\StaticSDKs\Win32\OpenSSL\lib;..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\x86;..\..\..\..\..\StaticSDKs\Win32\PhysX\lib\win32;&quot;..\..\..\..\..\StaticSDKs\Win32\OpenAL 1.1 with EFX SDK\libs\Win32&quot;;..\..\..\..\..\StaticSDKs\Win32\PlatformSDK\Lib;&quot;..\..\..\..\..\StaticSDKs\XPlatform\jpeg-8c-rgba&quot;"
 				IgnoreDefaultLibraryNames="libc.lib,libci.lib,libcmt.lib"
 				GenerateDebugInformation="TRUE"
 				AssemblyDebug="1"
@@ -155,8 +155,8 @@ xcopy /Y /E /I ..\..\..\..\Sources\Plasma\PubUtilLib\plSDL\SDL\*.sdl ..\..\..\..
 xcopy /Y /E /I ..\..\..\..\Scripts\Python\plasma\*.py ..\..\..\..\test\python\plasma
 xcopy /Y /E /I ..\..\..\..\Scripts\Python\system\*.py ..\..\..\..\test\python\system
 xcopy /Y /E /I ..\..\..\..\Scripts\Python\system\*.pyd ..\..\..\..\test\python\system
-xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\EAX\lib\eax.dll ..\..\..\..\test\
-xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\Bink\lib\binkw32.dll ..\..\..\..\test\
+REM xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\EAX\lib\eax.dll ..\..\..\..\test\
+REM xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\Bink\lib\binkw32.dll ..\..\..\..\test\
 xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\PhysX\Bin\win32\NxCharacter.dll ..\..\..\..\test\
 xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\PhysX\Bin\win32\NxCooking.dll ..\..\..\..\test\
 xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\PhysX\Bin\win32\NxExtensions.dll ..\..\..\..\test\
@@ -529,7 +529,7 @@ xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\PhysX\Bin\win32\PhysXLoader.dll ..\..\.
 			Name="Text"
 			Filter="*.txt">
 			<File
-				RelativePath="..\..\..\..\Docs\ReleaseNotes.txt">
+				RelativePath="..\..\..\..\Docs\ReleaseNotes\ReleaseNotes.txt">
 			</File>
 		</Filter>
 		<Filter
@@ -551,22 +551,22 @@ xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\PhysX\Bin\win32\PhysXLoader.dll ..\..\.
 				Name="DX9"
 				Filter="">
 				<File
-					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\d3dx9.lib">
+					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\x86\d3dx9.lib">
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\dinput8.lib">
+					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\x86\dinput8.lib">
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\dplayx.lib">
+					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\x86\dplayx.lib">
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\dsound.lib">
+					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\x86\dsound.lib">
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\DxErr9.lib">
+					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\x86\DxErr9.lib">
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\dxguid.lib">
+					RelativePath="..\..\..\..\..\StaticSDKs\Win32\DX9.0c\Lib\x86\dxguid.lib">
 				</File>
 			</Filter>
 			<Filter

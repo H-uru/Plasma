@@ -22,7 +22,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../../../Sources/Plasma/FeatureLib/inc;../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib/inc;../../../../Sources/Plasma/CoreLib;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/Include&quot;;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/PC&quot;;../../../../SDKs/XPlatform/Cypython-2.3.3/pyconfig_static"
+				AdditionalIncludeDirectories="../../../../Sources/Plasma/FeatureLib/inc;../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib/inc;../../../../Sources/Plasma/CoreLib;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/Include&quot;;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/PC&quot;;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/pyconfig_static&quot;;&quot;../../../../../StaticSDKs/Win32/OpenAL 1.1 with EFX SDK/include&quot;;../../../../../StaticSDKs/Win32/OpenSSL/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
