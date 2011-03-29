@@ -348,9 +348,9 @@ class xStandardDoor(ptResponder):
     def ExecCode (self, code):
         chunks = code.split(';')
         tag = chunks[0];
-        playerId = int(code[1])
-        fastForward = int(code[2])
-        doorClosed = code[3]
+        playerId = int(chunks[1])
+        fastForward = int(chunks[2])
+        doorClosed = chunks[3]
         if doorClosed == "true": # no easy way to convert strings to bools in python
             if tag == "fromOutside":
                 respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
