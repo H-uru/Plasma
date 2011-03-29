@@ -73,7 +73,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib/inc;../../../../Sources/Plasma/CoreLib"
+				AdditionalIncludeDirectories="../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib/inc;../../../../Sources/Plasma/CoreLib;../../../../../StaticSDKs/Win32/OpenSSL/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"

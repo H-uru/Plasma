@@ -31,8 +31,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // havok (must be first)
-#include <hkmath/quaternion.h>
-#include <hkmath/quaternion.h>
+//#include <hkmath/quaternion.h>
+//#include <hkmath/quaternion.h>
 
 // singular
 #include "plMatrixChannel.h"

@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../../Sources/Plasma/CoreLib;../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib/inc;../../../../Sources/Plasma/FeatureLib/inc;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/Include&quot;;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/pyconfig_static&quot;;../../../../../StaticSDKs/Win32/dx9.0c/include"
+				AdditionalIncludeDirectories="../../../../Sources/Plasma/CoreLib;../../../../Sources/Plasma/NucleusLib/inc;../../../../Sources/Plasma/PubUtilLib/inc;../../../../Sources/Plasma/FeatureLib/inc;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/Include&quot;;&quot;../../../../SDKs/XPlatform/Cypython-2.3.3/pyconfig_static&quot;;../../../../../StaticSDKs/Win32/dx9.0c/include;&quot;../../../../../StaticSDKs/Win32/OpenAL 1.1 with EFX SDK/include&quot;;../../../../../StaticSDKs/Win32/OpenSSL/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -83,14 +83,14 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ogg_static.lib vorbis_static.lib vorbisfile_static.lib strmiids.lib eax.lib wininet.lib vfw32.lib winmm.lib libcrypto.a ws2_32.lib version.lib odbc32.lib odbccp32.lib eaxguid.lib binkw32.lib d3dx9.lib dinput8.lib dplayx.lib dsound.lib dxerr9.lib dxguid.lib zlib.lib libspeex.lib OpenAL32.lib Rpcrt4.lib ijl15l.lib NxCharacter.lib PhysXLoader.lib"
+				AdditionalDependencies="ogg_static.lib vorbis_static.lib vorbisfile_static.lib strmiids.lib wininet.lib vfw32.lib winmm.lib libeay32.lib ws2_32.lib version.lib odbc32.lib odbccp32.lib d3dx9.lib dinput8.lib dplayx.lib dsound.lib dxerr9.lib dxguid.lib zlib.lib libspeex.lib OpenAL32.lib Rpcrt4.lib NxCharacter.lib PhysXLoader.lib libjpeg.lib"
 				OutputFile="$(OutDir)/plPageOptimizer.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\..\..\StaticSDKs\Win32\Bink\lib;..\..\..\..\..\StaticSDKs\Win32\eax\lib;..\..\..\..\..\StaticSDKs\Win32\oggvorbis\lib;..\..\..\..\..\STATICSDKS\Win32\ijl\lib;..\..\..\..\..\StaticSDKs\Win32\WMSDK\lib;..\..\..\..\..\StaticSDKs\Win32\OpenSSL\lib;..\..\..\..\..\StaticSDKs\Win32\dx9.0c\lib;..\..\..\..\SDKs\XPlatform\ODE\lib\win32;&quot;..\..\..\..\..\StaticSDKs\XPlatform\expat-1.95.7\StaticLibs&quot;;..\..\..\..\..\StaticSDKs\XPlatform\zlib\lib;&quot;..\..\..\..\..\StaticSDKs\Win32\speex-1.0.1\Win32\libspeex\Release&quot;;&quot;..\..\..\..\..\StaticSDKs\Win32\OpenAL 1.1 with EFX SDK\libs\Win32&quot;;&quot;..\..\..\..\..\StaticSDKs\XPlatform\expat-1.95.7\StaticLibs\Win32&quot;;..\..\..\..\..\StaticSDKs\Win32\PhysX\lib\win32"
-				IgnoreDefaultLibraryNames="libc.lib,libci.lib"
+				AdditionalLibraryDirectories="..\..\..\..\..\StaticSDKs\Win32\Bink\lib;..\..\..\..\..\StaticSDKs\Win32\eax\lib;..\..\..\..\..\StaticSDKs\Win32\oggvorbis\lib;..\..\..\..\..\STATICSDKS\Win32\ijl\lib;..\..\..\..\..\StaticSDKs\Win32\WMSDK\lib;..\..\..\..\..\StaticSDKs\Win32\OpenSSL\lib;..\..\..\..\..\StaticSDKs\Win32\dx9.0c\lib\x86;..\..\..\..\SDKs\XPlatform\ODE\lib\win32;&quot;..\..\..\..\..\StaticSDKs\XPlatform\expat-1.95.7\StaticLibs&quot;;..\..\..\..\..\StaticSDKs\XPlatform\zlib\lib;&quot;..\..\..\..\..\StaticSDKs\Win32\speex-1.0.1\Win32\libspeex\Release&quot;;&quot;..\..\..\..\..\StaticSDKs\Win32\OpenAL 1.1 with EFX SDK\libs\Win32&quot;;&quot;..\..\..\..\..\StaticSDKs\XPlatform\expat-1.95.7\StaticLibs\Win32&quot;;..\..\..\..\..\StaticSDKs\Win32\PhysX\lib\win32;&quot;../../../../../StaticSDKs/XPlatform/jpeg-8c-rgba&quot;"
+				IgnoreDefaultLibraryNames="libc.lib,libci.lib,libcmt.lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
-				OptimizeReferences="2"
+				OptimizeReferences="1"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"/>
 			<Tool

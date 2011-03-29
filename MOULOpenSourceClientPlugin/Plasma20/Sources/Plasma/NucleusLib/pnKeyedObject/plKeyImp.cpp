@@ -27,6 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsKeyedObject.h"
 #include "hsResMgr.h"
+#include "hsTypes.h"
 #include "../pnMessage/plRefMsg.h"
 #include "../pnMessage/plSelfDestructMsg.h"
 #include "hsTimer.h"
