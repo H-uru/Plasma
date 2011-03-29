@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#include <hkmath/vector3.h>
-#include <hkdynamics/entity/rigidbody.h>
+//#include <hkmath/vector3.h>
+//#include <hkdynamics/entity/rigidbody.h>
 #include "plAntiGravAction.h"		// descends from Havok class, so must be included first, like havok objects
 
 // singular

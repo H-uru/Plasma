@@ -22,7 +22,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../../../Sources/Plasma/PubUtilLib,../../../../Sources/Plasma/FeatureLib,../../../../Sources/Plasma/NucleusLib,../../../../Sources/Plasma/NucleusLib/inc,../../../../../StaticSDKs/XPlatform/STLport/stlport,../../../../Sources/Plasma/PubUtilLib/inc,../../../../Sources/Plasma/CoreLib"
+				AdditionalIncludeDirectories="../../../../Sources/Plasma/PubUtilLib;../../../../Sources/Plasma/FeatureLib;../../../../Sources/Plasma/NucleusLib;../../../../Sources/Plasma/NucleusLib/inc;../../../../../StaticSDKs/XPlatform/STLport/stlport;../../../../Sources/Plasma/PubUtilLib/inc;../../../../Sources/Plasma/CoreLib;&quot;../../../../../StaticSDKs/Win32/OpenAL 1.1 with EFX SDK/include&quot;;../../../../../StaticSDKs/Win32/OpenSSL/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
