@@ -810,33 +810,36 @@ class jlakField(ptResponder):
                 print "invalid reset parameter, can only use 'widgets' for now"
 
     def ExecCode(self, code):
-        btnID = int(code)
-        if btnID == kJalakRandomBtn:
-            self.AutoColumns(3)
-        elif btnID == kJalakExtremeBtn:
-            self.AutoColumns(4)
-        elif btnID == kJalakWallToggleBtn:
-            self.ToggleWall()
-        elif btnID == kJalakColumnsLowBtn:
-            self.AutoColumns(0)
-        elif btnID == kJalakColumnsMedBtn:
-            self.AutoColumns(1)
-        elif btnID == kJalakColumnsHighBtn:
-            self.AutoColumns(2)
-        elif btnID == kJalakRampBtn:
-            self.DropWidget(kRamp)
-        elif btnID == kJalakSphereBtn:
-            self.DropWidget(kSphere)
-        elif btnID == kJalakBigBoxBtn:
-            self.DropWidget(kBigBox)
-        elif btnID == kJalakLilBoxBtn:
-            self.DropWidget(kLilBox)
-        elif btnID == kJalakRectangleBtn:
-            self.DropWidget(kRect)
-        elif btnID == kJalakDestroyBtn:
-            self.ResetWidgets()
-
-
+        try:
+            btnID = int(code)
+            if btnID == kJalakRandomBtn:
+                self.AutoColumns(3)
+            elif btnID == kJalakExtremeBtn:
+                self.AutoColumns(4)
+            elif btnID == kJalakWallToggleBtn:
+                self.ToggleWall()
+            elif btnID == kJalakColumnsLowBtn:
+                self.AutoColumns(0)
+            elif btnID == kJalakColumnsMedBtn:
+                self.AutoColumns(1)
+            elif btnID == kJalakColumnsHighBtn:
+                self.AutoColumns(2)
+            elif btnID == kJalakRampBtn:
+                self.DropWidget(kRamp)
+            elif btnID == kJalakSphereBtn:
+                self.DropWidget(kSphere)
+            elif btnID == kJalakBigBoxBtn:
+                self.DropWidget(kBigBox)
+            elif btnID == kJalakLilBoxBtn:
+                self.DropWidget(kLilBox)
+            elif btnID == kJalakRectangleBtn:
+                self.DropWidget(kRect)
+            elif btnID == kJalakDestroyBtn:
+                self.ResetWidgets()
+            else:
+                print "jlakField.ExecCode(): ERROR! Invalid btnID %d." % (btnID)
+        except:
+            print "jlakField.ExecCode(): ERROR! Invalid code '%s'." % (code)
 
 #ColumnPos  AnimStart
 #   19      570

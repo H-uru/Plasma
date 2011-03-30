@@ -316,7 +316,7 @@ class payiUrwinBrain(ptResponder):
                     if boolBatteryChargedAndOn:
                         respUrwinSfx.run(self.key, state="disappear")
 
-        elif id in range(3,20) and not self.sceneobject.isLocallyOwned():
+        elif id in range(3,21) and not self.sceneobject.isLocallyOwned():
             print "Callback was from responder, and I DON'T own the age, so I'll try playing the next item in list"
             old = stackList.pop(0)
             print "Popping off: %s" % (old)
@@ -483,46 +483,68 @@ class payiUrwinBrain(ptResponder):
                     self.InitNewSDLVars()
 
     def ExecCode(self, code):
-        if code.find("respUrwin") != -1:
-            chunks = code.split('_')
-            ecState = chunks[1]
-            ecAction = chunks[2]
-            if ecState == "Idle":
-                if ecAction == "01":
-                    respUrwin_Idle_01.run(self.key)
-                elif ecAction == "02":
-                    respUrwin_Idle_02.run(self.key)
-                elif ecAction == "Vocalize":
-                    respUrwin_Idle_Vocalize.run(self.key)
-                elif ecAction == "ToEat":
-                    respUrwin_Idle_ToEat.run(self.key)
-                elif ecAction == "ToWalk":
-                    respUrwin_Idle_ToWalk.run(self.key)
-            elif ecState == "Walk":
-                if ecAction == "Loop01":
-                    respUrwin_Walk_Loop01.run(self.key)
-                elif ecAction == "Loop02":
-                    respUrwin_Walk_Loop02.run(self.key)
-                elif ecAction == "ToWalkSniff":
-                    respUrwin_Walk_ToWalkSniff.run(self.key)
-                elif ecAction == "ToIdle":
-                    respUrwin_Walk_ToIdle.run(self.key)
-            elif ecState == "WalkSniff":
-                if ecAction == "ToEat":
-                    respUrwin_WalkSniff_ToEat.run(self.key)
-                elif ecAction == "ToWalk":
-                    respUrwin_WalkSniff_ToWalk.run(self.key)
+        global stackList
+        try:
+            if code.find("respUrwin") != -1:
+                chunks = code.split('_')
+                ecState = chunks[1]
+                if len(chunks) > 2:
+                    ecAction = chunks[2]
                 else:
-                    respUrwin_WalkSniff.run(self.key)
-            elif ecState == "Eat":
-                if ecAction == "ToIdle":
-                    respUrwin_Eat_ToIdle.run(self.key)
-                elif ecAction == "ToWalkSniff":
-                    respUrwin_Eat_ToWalkSniff.run(self.key)
-                elif ecAction == "Scoop":
-                    respUrwin_Eat_Scoop.run(self.key)
-                elif ecAction == "Shake":
-                    respUrwin_Eat_Shake.run(self.key)
-                elif ecAction == "Swallow":
-                    respUrwin_Eat_Swallow.run(self.key)
-                    
+                    ecAction = ""
+                if ecState == "Idle":
+                    if ecAction == "01":
+                        respUrwin_Idle_01.run(self.key)
+                    elif ecAction == "02":
+                        respUrwin_Idle_02.run(self.key)
+                    elif ecAction == "Vocalize":
+                        respUrwin_Idle_Vocalize.run(self.key)
+                    elif ecAction == "ToEat":
+                        respUrwin_Idle_ToEat.run(self.key)
+                    elif ecAction == "ToWalk":
+                        respUrwin_Idle_ToWalk.run(self.key)
+                    else:            
+                        print "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction)
+                        stackList.pop(0)
+                elif ecState == "Walk":
+                    if ecAction == "Loop01":
+                        respUrwin_Walk_Loop01.run(self.key)
+                    elif ecAction == "Loop02":
+                        respUrwin_Walk_Loop02.run(self.key)
+                    elif ecAction == "ToWalkSniff":
+                        respUrwin_Walk_ToWalkSniff.run(self.key)
+                    elif ecAction == "ToIdle":
+                        respUrwin_Walk_ToIdle.run(self.key)
+                    else:            
+                        print "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction)
+                        stackList.pop(0)
+                elif ecState == "WalkSniff":
+                    if ecAction == "ToEat":
+                        respUrwin_WalkSniff_ToEat.run(self.key)
+                    elif ecAction == "ToWalk":
+                        respUrwin_WalkSniff_ToWalk.run(self.key)
+                    else:
+                        respUrwin_WalkSniff.run(self.key)
+                elif ecState == "Eat":
+                    if ecAction == "ToIdle":
+                        respUrwin_Eat_ToIdle.run(self.key)
+                    elif ecAction == "ToWalkSniff":
+                        respUrwin_Eat_ToWalkSniff.run(self.key)
+                    elif ecAction == "Scoop":
+                        respUrwin_Eat_Scoop.run(self.key)
+                    elif ecAction == "Shake":
+                        respUrwin_Eat_Shake.run(self.key)
+                    elif ecAction == "Swallow":
+                        respUrwin_Eat_Swallow.run(self.key)
+                    else:            
+                        print "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction)
+                        stackList.pop(0)
+                else:            
+                    print "payiUrwinBrain.ExecCode(): ERROR! Invalid ecState '%s'." % (ecState)
+                    stackList.pop(0)
+            else:            
+                print "payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code)
+                stackList.pop(0)
+        except:
+            print "payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            stackList.pop(0)

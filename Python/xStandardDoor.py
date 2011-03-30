@@ -246,9 +246,9 @@ class xStandardDoor(ptResponder):
                 if ageSDL[stringSDLVarClosed.value][0]: 
                     # doorClosed changed to true (close the door)
                     try:
-                        OkTags = ["fromOutside", "fromInside", "fromAuto", "fastForward"]
+                        OkTags = ["fromOutside", "fromInside", "fromAuto", "fastforward"]
                         if tag in OkTags:
-                            self.SendNote('%s;%d;%d;true' % (tag, playerID, fastForward), playerID)
+                            self.SendNote('%s;%d;%d;true' % (tag, playerID, fastforward), playerID)
                             print 'xStandardDoor.OnSDLNotify():\tClosing ', tag 
                         else:
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s" % (tag)) # ok if from vaultmanager
@@ -260,7 +260,7 @@ class xStandardDoor(ptResponder):
                             else:
                                 PtDebugPrint("xStandardDoor.OnSDLNotify():\tWARNING: door set to neither manual close nor auto close, can't close")
                     except:
-                        print "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: $s" % (VARname,tag)
+                        print "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s" % (VARname,tag)
                     if fastforward: # reenable clickables and xregion state via responder won't happen so do it manually
                         if boolEnableOK:
                             actExterior.enable()
@@ -271,14 +271,14 @@ class xStandardDoor(ptResponder):
                     try:
                         OkTags = ["fromOutside", "fromInside"]
                         if tag in OkTags:
-                            self.SendNote('%s;%d;%d;false' % (tag, playerID, fastForward), playerID)
+                            self.SendNote('%s;%d;%d;false' % (tag, playerID, fastforward), playerID)
                             print 'xStandardDoor.OnSDLNotify():\tOpening ', tag
                         else:
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s" % (tag))
                             fastforward = 1
                             respOpenExt.run(self.key,fastforward=fastforward)
                     except:
-                        print "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: $s" % (VARname,tag)
+                        print "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s" % (VARname,tag)
                         fastforward = 1
                         respOpenExt.run(self.key,fastforward=fastforward)
                     if fastforward: # reenable clickables and xregion state via responder won't happen so do it manually
@@ -346,22 +346,32 @@ class xStandardDoor(ptResponder):
             self.ExecCode(code)
 
     def ExecCode (self, code):
-        chunks = code.split(';')
-        tag = chunks[0];
-        playerId = int(chunks[1])
-        fastForward = int(chunks[2])
-        doorClosed = chunks[3]
-        if doorClosed == "true": # no easy way to convert strings to bools in python
-            if tag == "fromOutside":
-                respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
-            elif tag == "fromInside":
-                respCloseInt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
-            elif tag == "fromAuto":
-                respAutoClose.run(self.key,fastforward=fastForward,netPropagate=0)
-            elif tag == "fastforward":
-                respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=1,netPropagate=0)
-        else:
-            if tag == "fromOutside":
-                respOpenExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
-            elif tag == "fromInside" or playerId == 0:
-                respOpenInt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
+        try:
+            chunks = code.split(';')
+            tag = chunks[0];
+            playerId = int(chunks[1])
+            fastForward = int(chunks[2])
+            doorClosed = chunks[3]
+            if doorClosed == "true": # no easy way to convert strings to bools in python
+                if tag == "fromOutside":
+                    respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
+                elif tag == "fromInside":
+                    respCloseInt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
+                elif tag == "fromAuto":
+                    respAutoClose.run(self.key,fastforward=fastForward,netPropagate=0)
+                elif tag == "fastforward":
+                    respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=1,netPropagate=0)
+                else:
+                    print "xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag)
+                    self.DoorStack.pop(0)
+            else:
+                if tag == "fromOutside":
+                    respOpenExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
+                elif tag == "fromInside" or playerId == 0:
+                    respOpenInt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
+                else:
+                    print "xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag)
+                    self.DoorStack.pop(0)
+        except:
+            print "xStandardDoor.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            self.DoorStack.pop(0)

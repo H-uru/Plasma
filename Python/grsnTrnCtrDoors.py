@@ -292,3 +292,6 @@ class grsnTrnCtrDoors(ptResponder):
             doorOpenResponder.run(self.key,netPropagate=0)
         elif code == "doorCloseResponder":
             doorCloseResponder.run(self.key,netPropagate=0)
+        else:
+            print "grsnTrnCtrDoors.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            self.grsnDoorStack.pop(0)

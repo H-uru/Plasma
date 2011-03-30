@@ -273,6 +273,13 @@ class nglnTreeMonkey(ptResponder):
         if code == "respMonkeyOff":
             respMonkeyOff.run(self.key)
         elif code.find("respMonkeyAct") != -1:
-            chunks = code.split(';')
-            ecMonkeyState = chunks[1]
-            respMonkeyAct.run(self.key, state=ecMonkeyState)
+            try:
+                chunks = code.split(';')
+                ecMonkeyState = chunks[1]
+                respMonkeyAct.run(self.key, state=ecMonkeyState)
+            except:
+                print "nglnTreeMonkey.ExecCode(): ERROR! Invalid code '%s'." % (code)
+                stackList.pop(0)
+        else:
+            print "nglnTreeMonkey.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            stackList.pop(0)

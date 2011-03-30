@@ -381,6 +381,7 @@ class nglnUrwinBrain(ptResponder):
                     self.InitNewSDLVars()
 
     def ExecCode(self, code):
+        global stackList
         if code == "respUrwinIdle":
             respUrwinIdle.run(self.key)
         elif code == "respUrwinIdleToWalk":
@@ -393,3 +394,6 @@ class nglnUrwinBrain(ptResponder):
             respUrwinEat.run(self.key)
         elif code == "respUrwinVocalize":
             respUrwinVocalize.run(self.key)
+        else:
+            print "nglnUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            stackList.pop(0)

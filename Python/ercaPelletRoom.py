@@ -768,6 +768,9 @@ class ercaPelletRoom(ptResponder):
 
 
     def ExecCode(self,code):
-        takePellet = int(code)
-        if takePellet >= 0 and takePellet <= 2:
-            self.UpdateTakePellet(takePellet);
+        try:
+            takePellet = int(code)
+            if takePellet >= 0 and takePellet <= 2:
+                self.UpdateTakePellet(takePellet);
+        except:
+            print "ercaPelletRoom.ExecCode(): ERROR! Invalid code '%s'." % (code)

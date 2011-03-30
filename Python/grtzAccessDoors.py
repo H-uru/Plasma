@@ -278,8 +278,11 @@ class grtzAccessDoors(ptResponder):
 
     def ExecCode(self, code):
         if code == "doorResponderOpen":
-            self.SendNote("doorResponder.run(self.key,state='OpenTheDoor',netPropagate=0)")
+            doorResponder.run(self.key,state='OpenTheDoor',netPropagate=0)
         elif code == "doorResponderClose":
-            self.SendNote("doorResponder.run(self.key,state='CloseTheDoor',netPropagate=0)")
+            doorResponder.run(self.key,state='CloseTheDoor',netPropagate=0)
         elif code == "doorResponderNoAccess":
-            self.SendNote("doorResponder.run(self.key,state='NoAccess',netPropagate=0)")
+            doorResponder.run(self.key,state='NoAccess',netPropagate=0)
+        else:
+            print "grtzAccessDoors.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            self.grtzDoorStack.pop(0)

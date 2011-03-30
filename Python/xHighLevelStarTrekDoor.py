@@ -324,16 +324,23 @@ class xHighLevelStarTrekDoor(ptModifier):
                 self.UpdateDoorState(doorSDLstates['closed'])
 
     def ExecCode(self,code):
-        chunks = code.split(';')
-        tag = chunks[0];
-        fastForward = int(code[1])
-        if tag == "respOpenDoor":
-            if fastForward == 1:
-                respOpenDoor.run(self.key,fastforward=1)
+        try:
+            chunks = code.split(';')
+            tag = chunks[0];
+            fastForward = int(chunks[1])
+            if tag == "respOpenDoor":
+                if fastForward == 1:
+                    respOpenDoor.run(self.key,fastforward=1)
+                else:
+                    respOpenDoor.run(self.key,netPropagate=0)
+            elif tag == "respCloseDoor":
+                if fastForward == 1:
+                    respCloseDoor.run(self.key,fastforward=1)
+                else:
+                    respCloseDoor.run(self.key,netPropagate=0)
             else:
-                respOpenDoor.run(self.key,netPropagate=0)
-        elif tag == "respCloseDoor":
-            if fastForward == 1:
-                respCloseDoor.run(self.key,fastforward=1)
-            else:
-                respCloseDoor.run(self.key,netPropagate=0)
+                print "xHighLevelStarTrekDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag)
+                self.DoorStack.pop(0)
+        except:
+            print "xStandardDoor.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            self.DoorStack.pop(0)
