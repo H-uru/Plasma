@@ -69,7 +69,6 @@ typedef unsigned long long  qword;
 
 typedef size_t              unsigned_ptr;
 
-typedef unsigned short      wchar_t;
 typedef wchar_t             wchar;
 
 #define kPosInfinity16		(32767)
