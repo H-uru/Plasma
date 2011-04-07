@@ -259,7 +259,7 @@ void plNetObjectDebugger::LogMsgIfMatch(const char* msg) const
 	std::string tmp = msg;
 	hsStrLower((char*)tmp.c_str());
 	std::string objTag="object";
-	char* c=strstr(tmp.c_str(), objTag.c_str());
+	const char* c=strstr(tmp.c_str(), objTag.c_str());
 	if (c && c != tmp.c_str())
 	{
 		c+=objTag.size();

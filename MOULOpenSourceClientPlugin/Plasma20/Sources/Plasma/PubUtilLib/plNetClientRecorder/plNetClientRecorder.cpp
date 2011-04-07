@@ -66,7 +66,7 @@ void plNetClientRecorder::IMakeFilename(const char* recName, char* path)
 	CreateDirectory(path, NULL);
 #endif
 
-	char* lastDot = strrchr(recName, '.');
+	const char* lastDot = strrchr(recName, '.');
 	if (lastDot)
 		strncat(path, recName, lastDot-recName);
 	else

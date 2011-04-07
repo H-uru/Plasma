@@ -1225,7 +1225,8 @@ static ENetError FixupPlayerName (wchar * name) {
 	// Trim leading and trailing whitespace and convert
 	// multiple internal spaces into only one space
 	unsigned nonSpaceChars = 0;
-	for (wchar *src = name, *dst = name; *src; ) {
+	wchar *dst = name;
+	for (wchar *src = name; *src; ) {
 		// Skip whitespace
 		while (*src && ICharIsSpace(*src))
 			src++;

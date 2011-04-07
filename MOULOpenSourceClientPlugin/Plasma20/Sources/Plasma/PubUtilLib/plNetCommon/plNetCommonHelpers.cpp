@@ -31,6 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../pnNetCommon/plGenericVar.h"
 #include "../plCompression/plZlibCompress.h"
 #include <algorithm>
+#include <iterator>
 
 
 ////////////////////////////////////////////////////////////////////
