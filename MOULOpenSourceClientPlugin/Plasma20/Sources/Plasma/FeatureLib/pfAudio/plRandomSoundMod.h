@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRandomSoundMod_inc
 #define plRandomSoundMod_inc
 
-#include "../pfAnimation/plRandomCommandMod.h"
+#include "pfAnimation/plRandomCommandMod.h"
 class plSound;
 struct hsPoint3;
 

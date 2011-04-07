@@ -28,9 +28,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plRandomCommandMod.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../pnMessage/plEventCallbackMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
 #include "plgDispatch.h"
 #include "hsTimer.h"
 #include "hsUtils.h"

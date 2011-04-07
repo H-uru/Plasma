@@ -27,16 +27,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plViewFaceModifier.h"
 #include "plgDispatch.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 #include "hsFastMath.h"
 #include "plPipeline.h"
 
-#include "../plMessage/plRenderMsg.h"
-#include "../plMessage/plListenerMsg.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plMessage/plRenderMsg.h"
+#include "plMessage/plListenerMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plAvatar/plArmatureMod.h"
 
 plViewFaceModifier::plViewFaceModifier()
 :	fFacePoint(0,0,0),

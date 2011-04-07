@@ -27,9 +27,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plBlower_inc
 #define plBlower_inc
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsGeometry3.h"
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 #include "hsTemplates.h"
 
 class plSceneObject;
