@@ -432,8 +432,6 @@ static void INetCliAuthCreatePlayerRequestCallback (
 	void *							param,
     const NetCliAuthPlayerInfo &	playerInfo
 ) {
-	ref(param);
-	
 	if (IS_NET_ERROR(result)) {
 		LogMsg(kLogDebug, L"Create player failed: %s", NetErrorToString(result));
 	}
@@ -506,8 +504,6 @@ static void INetCliAuthChangePasswordCallback (
 	ENetError		result,
 	void *			param
 ) {
-	ref(param);
-
 	if (IS_NET_ERROR(result)) {
 		LogMsg(kLogDebug, L"Change password failed: %s", NetErrorToString(result));
 	}
