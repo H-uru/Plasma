@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 
 #if HS_BUILD_FOR_WIN32
@@ -57,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if HS_BUILD_FOR_UNIX
 #include <unistd.h>
-#include <errno.h>
 #include <utime.h>
 #endif
 

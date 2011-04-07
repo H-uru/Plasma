@@ -146,12 +146,12 @@ bool GuidIsNil (const Uuid & uuid) {
 const wchar * GuidToString (const Uuid & uuid, wchar * dst, unsigned chars) {
 	wchar * src;
 	RPC_STATUS s;
-	s = UuidToStringW( (GUID *) &uuid, &src );
+	s = UuidToStringW( (GUID *) &uuid, (RPC_WSTR*)&src );
 	if (RPC_S_OK == s)
         StrCopy(dst, src, chars);
     else
         StrCopy(dst, L"", chars);
-	RpcStringFreeW(&src);
+	RpcStringFreeW( (RPC_WSTR *)&src );
     return dst;
 }
 
