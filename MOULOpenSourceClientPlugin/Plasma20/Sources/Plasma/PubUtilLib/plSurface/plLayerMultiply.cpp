@@ -134,7 +134,7 @@ UInt32 plLayerMultiply::Eval(double wSecs, UInt32 frame, UInt32 ignore)
 
 hsBool plLayerMultiply::MsgReceive(plMessage* msg)
 {
-	return plLayerMultiply::MsgReceive(msg);
+	return plLayerInterface::MsgReceive(msg);
 }
 
 void plLayerMultiply::SetPreshadeColor(const hsColorRGBA& col)
