@@ -222,7 +222,7 @@ plMipmap	*plJPEG::IRead( hsStream *inStream )
 #else
 			case JCS_GRAYSCALE:
 			case JCS_YCbCr:
-				cinfo.out_color_space = JCS_RGBA;
+				cinfo.out_color_space = JCS_RGB;
 				break;
 #endif
 
@@ -389,7 +389,7 @@ hsBool	plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 		cinfo.image_width = source->GetWidth();
 		cinfo.image_height = source->GetHeight();
 		cinfo.input_components = 4;
-		cinfo.in_color_space = JCS_RGBA;
+		cinfo.in_color_space = JCS_RGB;
 
 		jpeg_set_defaults( &cinfo );
 #endif
