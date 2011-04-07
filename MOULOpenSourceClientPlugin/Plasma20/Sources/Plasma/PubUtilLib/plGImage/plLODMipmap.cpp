@@ -92,7 +92,7 @@ void plLODMipmap::SetLOD(int lod)
 {
 	hsAssert(fBase, "UnInitialized");
 
-	const kMaxLOD = 5;
+	const int kMaxLOD = 5;
 	if( lod > kMaxLOD )
 		lod = kMaxLOD;
 	if( lod >= fBase->GetNumLevels() )

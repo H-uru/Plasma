@@ -170,7 +170,7 @@ plQuatTimeScale::~plQuatTimeScale()
 {
 }
 
-plQuatTimeScale::IsStoppedAt(double time)
+hsBool plQuatTimeScale::IsStoppedAt(double time)
 {
 	return fTimeSource->IsStoppedAt(time);
 }

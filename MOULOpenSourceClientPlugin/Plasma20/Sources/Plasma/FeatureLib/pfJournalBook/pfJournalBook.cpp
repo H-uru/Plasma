@@ -422,8 +422,8 @@ public:
 	pfBookMultiLineEditProc(pfBookData *owner) { bookData = owner; }
 	virtual ~pfBookMultiLineEditProc() {}
 
-	virtual OnEndOfControlList(Int32 cursorPos) { bookData->HitEndOfControlList(cursorPos); }
-	virtual OnBeginningOfControlList(Int32 cursorPos) { bookData->HitBeginningOfControlList(cursorPos); }
+	virtual void OnEndOfControlList(Int32 cursorPos) { bookData->HitEndOfControlList(cursorPos); }
+	virtual void OnBeginningOfControlList(Int32 cursorPos) { bookData->HitBeginningOfControlList(cursorPos); }
 };
 
 //// Book data class /////////////////////////////////////////////////////////

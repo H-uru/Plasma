@@ -234,7 +234,7 @@ plMatrixTimeScale::~plMatrixTimeScale()
 
 // IsStoppedAt ----------------------------
 // ------------
-plMatrixTimeScale::IsStoppedAt(double time)
+hsBool plMatrixTimeScale::IsStoppedAt(double time)
 {
 	return fTimeSource->IsStoppedAt(time);
 }

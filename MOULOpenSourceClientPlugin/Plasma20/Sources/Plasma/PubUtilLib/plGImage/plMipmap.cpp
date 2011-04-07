@@ -191,7 +191,7 @@ UInt32  plMipmap::Read( hsStream *s )
 
 	// Decide to clamp if we were told to
 	int	clampBy = fGlobalNumLevelsToChop;
-	const kMaxSkipLevels = 1;
+	const int kMaxSkipLevels = 1;
 	if( clampBy > kMaxSkipLevels )
 		clampBy = kMaxSkipLevels;
 	if( fFlags & kNoMaxSize )
