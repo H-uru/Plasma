@@ -145,6 +145,9 @@ protected:
 	plSimulationInterface * IGetSI(const plAGModifier *modifier) const;
 	plObjInterface * IGetGI(const plAGModifier *modifier, UInt16 classIdx) const;
 
+	// Allow plAGModifier to declare IGet?? as friends
+	friend class plAGModifier;
+
 	// -- members --
 	plAGChannel *fChannel;
 	hsBool fEnabled;

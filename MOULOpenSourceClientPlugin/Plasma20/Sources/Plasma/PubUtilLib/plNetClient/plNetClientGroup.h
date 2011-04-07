@@ -83,7 +83,11 @@ public:
 	{ 
 		std::set<OwnedGroup>::iterator it=IFind(grpId);
 		if (it != fGroups.end())
-			(*it).fOwnIt=ownIt;
+		{
+			OwnedGroup grp(it->fGroup, it->fOwnIt);
+			fGroups.erase(it);
+			fGroups.insert(grp);
+		}
 		else
 		{
 			ISetGroupDesc(grpId);
