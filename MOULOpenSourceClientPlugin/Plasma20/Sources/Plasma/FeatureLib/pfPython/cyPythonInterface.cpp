@@ -1904,7 +1904,12 @@ hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Int32* size)
 {
 	PyObject *s;		// the python string object where the marsalled object wil go
 	// convert object to a marshalled string python object
+#if (PY_MAJOR_VERSION == 2) && (PY_MINOR_VERSION < 4)
 	s = PyMarshal_WriteObjectToString(pyobj);
+#else
+    s = PyMarshal_WriteObjectToString(pyobj, 0);
+#endif
+
 	// did it actually do it?
 	if ( s != NULL )
 	{
