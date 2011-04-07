@@ -159,8 +159,6 @@ void IMarker::RecvTeamAssigned (const Srv2Cli_Marker_TeamAssigned & msg, void * 
 
 //============================================================================
 void IMarker::RecvGameType (const Srv2Cli_Marker_GameType & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -168,8 +166,6 @@ void IMarker::RecvGameType (const Srv2Cli_Marker_GameType & msg, void * param) {
 
 //============================================================================
 void IMarker::RecvGameStarted (const Srv2Cli_Marker_GameStarted & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -177,8 +173,6 @@ void IMarker::RecvGameStarted (const Srv2Cli_Marker_GameStarted & msg, void * pa
 
 //============================================================================
 void IMarker::RecvGamePaused (const Srv2Cli_Marker_GamePaused & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -186,8 +180,6 @@ void IMarker::RecvGamePaused (const Srv2Cli_Marker_GamePaused & msg, void * para
 
 //============================================================================
 void IMarker::RecvGameReset (const Srv2Cli_Marker_GameReset & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -195,8 +187,6 @@ void IMarker::RecvGameReset (const Srv2Cli_Marker_GameReset & msg, void * param)
 
 //============================================================================
 void IMarker::RecvGameOver (const Srv2Cli_Marker_GameOver & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -204,8 +194,6 @@ void IMarker::RecvGameOver (const Srv2Cli_Marker_GameOver & msg, void * param) {
 
 //============================================================================
 void IMarker::RecvGameNameChanged (const Srv2Cli_Marker_GameNameChanged & msg, void * param) {
-	ref(param);
-	
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -213,8 +201,6 @@ void IMarker::RecvGameNameChanged (const Srv2Cli_Marker_GameNameChanged & msg, v
 
 //============================================================================
 void IMarker::RecvTimeLimitChanged (const Srv2Cli_Marker_TimeLimitChanged & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -222,8 +208,6 @@ void IMarker::RecvTimeLimitChanged (const Srv2Cli_Marker_TimeLimitChanged & msg,
 
 //============================================================================
 void IMarker::RecvGameDeleted (const Srv2Cli_Marker_GameDeleted & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -234,8 +218,6 @@ void IMarker::RecvGameDeleted (const Srv2Cli_Marker_GameDeleted & msg, void * pa
 
 //============================================================================
 void IMarker::RecvMarkerAdded (const Srv2Cli_Marker_MarkerAdded & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -243,8 +225,6 @@ void IMarker::RecvMarkerAdded (const Srv2Cli_Marker_MarkerAdded & msg, void * pa
 
 //============================================================================
 void IMarker::RecvMarkerDeleted (const Srv2Cli_Marker_MarkerDeleted & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -252,8 +232,6 @@ void IMarker::RecvMarkerDeleted (const Srv2Cli_Marker_MarkerDeleted & msg, void 
 
 //============================================================================
 void IMarker::RecvMarkerNameChanged (const Srv2Cli_Marker_MarkerNameChanged & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -261,8 +239,6 @@ void IMarker::RecvMarkerNameChanged (const Srv2Cli_Marker_MarkerNameChanged & ms
 
 //============================================================================
 void IMarker::RecvMarkerCaptured (const Srv2Cli_Marker_MarkerCaptured & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());

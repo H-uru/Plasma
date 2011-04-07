@@ -63,9 +63,6 @@ AUTO_INIT_FUNC(hsExeErrorInit) {
 //============================================================================
 static void DoAssert (int line, const char file[], const char msg[]) {
 
-    ref(line);
-    ref(file);
-
     ErrorMinimizeAppWindow();
 
 	#ifdef HS_BUILD_FOR_WIN32
@@ -234,11 +231,6 @@ void DebugMsgV (const char fmt[], va_list args) {
     if (s_critsect)
         s_critsect->Leave();
 
-#else
-
-    ref(fmt);
-    ref(args);
-
 #endif
 }
 
@@ -250,10 +242,6 @@ void __cdecl DebugMsg (const char fmt[], ...) {
     va_start(args, fmt);
     DebugMsgV(fmt, args);
     va_end(args);
-
-#else
-
-    ref(fmt);
 
 #endif
 }

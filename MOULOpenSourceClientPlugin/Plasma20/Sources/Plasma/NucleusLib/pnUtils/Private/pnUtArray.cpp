@@ -77,7 +77,6 @@ unsigned CBaseArray::CalcAllocGrowth (unsigned newAlloc, unsigned oldAlloc, unsi
 
 //===========================================================================
 void * CBaseArray::ReallocPtr (void * ptr, unsigned bytes) {
-    ref(ptr);
     void * newPtr = nil;
     if (bytes) {
         newPtr = ALLOCFLAGS(bytes, ARR_MEMORY_FLAGS);

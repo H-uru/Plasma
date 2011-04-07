@@ -143,7 +143,7 @@ static void Rc4Codec (
     unsigned        sourceBytes,
     const void *    sourceData
 ) {
-    ref(encrypt);  // RC4 uses the same algorithm to both encrypt and decrypt
+    // RC4 uses the same algorithm to both encrypt and decrypt
     dest->SetCount(sourceBytes);
     RC4((RC4_KEY *)key->handle, sourceBytes, (const unsigned char *)sourceData, dest->Ptr());
 }
@@ -155,7 +155,7 @@ static void Rc4Codec (
     unsigned        bytes,
     void *          data
 ) {
-    ref(encrypt);  // RC4 uses the same algorithm to both encrypt and decrypt
+    // RC4 uses the same algorithm to both encrypt and decrypt
     byte * temp = ALLOCA(byte, bytes);
     RC4((RC4_KEY *)key->handle, bytes, (const unsigned char *)data, temp);
     MemCopy(data, temp, bytes);
@@ -165,7 +165,7 @@ static void Rc4Codec (
 
 //===========================================================================
 void KeyRc4::Codec (bool encrypt, ARRAY(byte) * dest, unsigned sourceBytes, const void * sourceData) {
-	ref(encrypt);  // RC4 uses the same algorithm to both encrypt and decrypt
+	// RC4 uses the same algorithm to both encrypt and decrypt
 	dest->SetCount(sourceBytes);
 
 	byte *       destDataPtr   = (byte *)dest->Ptr();
@@ -365,8 +365,6 @@ void CryptKeyGenerate (
 		break;
 
 		case kCryptRsa:
-			ref(keyBits);
-			ref(publicData);
 		#if 0
 			KeyRsa::KeyGen(
 				keyBits,

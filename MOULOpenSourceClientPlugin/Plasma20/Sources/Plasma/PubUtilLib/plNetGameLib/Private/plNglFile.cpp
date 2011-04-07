@@ -547,8 +547,6 @@ static void AsyncLookupCallback (
 	unsigned			addrCount,
 	const NetAddress	addrs[]
 ) {
-	ref(param);
-
     if (!addrCount) {
 		ReportNetError(kNetProtocolCli2File, kNetErrNameLookupFailed);
 		return;
@@ -777,7 +775,6 @@ void CliFileConn::Dispatch (const Cli2File_MsgHeader * msg) {
 bool CliFileConn::Recv_PingReply (
 	const File2Cli_PingReply * msg
 ) {
-	ref(msg);
 	return true;
 }
 
@@ -858,7 +855,6 @@ bool BuildIdRequestTrans::Recv (
 	const byte	msg[],
 	unsigned	bytes
 ) {
-	ref(bytes);
 	const File2Cli_BuildIdReply & reply = *(const File2Cli_BuildIdReply *) msg;
 
 	if (IS_NET_ERROR(reply.result)) {
@@ -944,7 +940,6 @@ bool ManifestRequestTrans::Recv (
 ) {
 	m_timeoutAtMs = TimeGetMs() + NetTransGetTimeoutMs(); // Reset the timeout counter
 
-	ref(bytes);
 	const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
 
 	dword numFiles = reply.numFiles;
@@ -1157,7 +1152,6 @@ bool DownloadRequestTrans::Recv (
 ) {
 	m_timeoutAtMs = TimeGetMs() + NetTransGetTimeoutMs(); // Reset the timeout counter
 
-	ref(bytes);
 	const File2Cli_FileDownloadReply & reply = *(const File2Cli_FileDownloadReply *) msg;
 
 	dword byteCount = reply.byteCount;

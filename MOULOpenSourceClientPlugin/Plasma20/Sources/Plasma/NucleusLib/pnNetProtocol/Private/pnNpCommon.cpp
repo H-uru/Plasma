@@ -140,8 +140,6 @@ static inline bool ICompareStringI (const T lhs[], const T rhs[]) {
 
 //============================================================================
 static inline bool ICompareArray (const byte lhs[], const byte rhs[]) {
-	ref(lhs);
-	ref(rhs);
 	return false;
 }
 

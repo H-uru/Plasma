@@ -135,7 +135,6 @@ void IHeek::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 
 //============================================================================
 void IHeek::RecvPlayGame (const Srv2Cli_Heek_PlayGame & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -143,7 +142,6 @@ void IHeek::RecvPlayGame (const Srv2Cli_Heek_PlayGame & msg, void * param) {
 
 //============================================================================
 void IHeek::RecvGoodbye (const Srv2Cli_Heek_Goodbye & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -151,7 +149,6 @@ void IHeek::RecvGoodbye (const Srv2Cli_Heek_Goodbye & msg, void * param) {
 
 //============================================================================
 void IHeek::RecvWelcome (const Srv2Cli_Heek_Welcome & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -159,7 +156,6 @@ void IHeek::RecvWelcome (const Srv2Cli_Heek_Welcome & msg, void * param) {
 
 //============================================================================
 void IHeek::RecvDrop (const Srv2Cli_Heek_Drop & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -167,7 +163,6 @@ void IHeek::RecvDrop (const Srv2Cli_Heek_Drop & msg, void * param) {
 
 //============================================================================
 void IHeek::RecvSetup (const Srv2Cli_Heek_Setup & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -175,7 +170,6 @@ void IHeek::RecvSetup (const Srv2Cli_Heek_Setup & msg, void * param) {
 
 //============================================================================
 void IHeek::RecvLightState (const Srv2Cli_Heek_LightState & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -183,7 +177,6 @@ void IHeek::RecvLightState (const Srv2Cli_Heek_LightState & msg, void * param) {
 
 //============================================================================
 void IHeek::RecvInterfaceState (const Srv2Cli_Heek_InterfaceState & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -191,7 +184,6 @@ void IHeek::RecvInterfaceState (const Srv2Cli_Heek_InterfaceState & msg, void * 
 
 //============================================================================
 void IHeek::RecvCountdownState (const Srv2Cli_Heek_CountdownState & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -199,7 +191,6 @@ void IHeek::RecvCountdownState (const Srv2Cli_Heek_CountdownState & msg, void * 
 
 //============================================================================
 void IHeek::RecvWinLose (const Srv2Cli_Heek_WinLose & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -207,7 +198,6 @@ void IHeek::RecvWinLose (const Srv2Cli_Heek_WinLose & msg, void * param) {
 
 //============================================================================
 void IHeek::RecvGameWin (const Srv2Cli_Heek_GameWin & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -215,7 +205,6 @@ void IHeek::RecvGameWin (const Srv2Cli_Heek_GameWin & msg, void * param) {
 
 //============================================================================
 void IHeek::RecvPointUpdate (const Srv2Cli_Heek_PointUpdate & msg, void * param) {
-	ref(param);
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());

@@ -597,15 +597,10 @@ bool CCmdParser::IsSpecified (const wchar name[]) const {
 
 //===========================================================================
 void CCmdParser::OnError (const wchar str[], ECmdError errorCode, const wchar arg[], const wchar value[]) {
-    ref(str);
-    ref(errorCode);
-    ref(arg);
-    ref(value);
 }
 
 //===========================================================================
 bool CCmdParser::OnExtra (const wchar str[]) {
-    ref(str);
     return false;
 }
 

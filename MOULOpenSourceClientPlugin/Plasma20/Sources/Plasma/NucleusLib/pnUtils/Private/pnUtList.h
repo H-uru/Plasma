@@ -122,7 +122,6 @@ CBaseLink::CBaseLink () {
 
 //===========================================================================
 CBaseLink::CBaseLink (const CBaseLink & source) {
-    ref(source);
 #ifdef HS_DEBUGGING
     if (source.IsLinked())
         FATAL("No copy constructor");
@@ -137,7 +136,6 @@ CBaseLink::~CBaseLink () {
 
 //===========================================================================
 CBaseLink & CBaseLink::operator= (const CBaseLink & source) {
-    ref(source);
 #ifdef HS_DEBUGGING
     FATAL("No assignment operator");
 #endif
@@ -348,7 +346,6 @@ CBaseList::CBaseList () {
 //===========================================================================
 CBaseList::CBaseList (const CBaseList & source) {
     m_linkOffset = LINK_OFFSET_UNINIT;   
-    ref(source);
 }
 
 //===========================================================================
@@ -359,7 +356,6 @@ CBaseList::~CBaseList () {
 
 //===========================================================================
 CBaseList & CBaseList::operator= (const CBaseList & source) {
-    ref(source);
     return *this;
 }
 

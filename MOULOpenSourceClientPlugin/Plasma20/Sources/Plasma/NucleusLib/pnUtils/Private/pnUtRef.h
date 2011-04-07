@@ -86,7 +86,6 @@ public:
 		ASSERT(!zeroed);
 		#endif
         long prev = AtomicAdd(&m_ref, 1);
-        ref(tag);
         REFTRACE("Inc %p %s: %u", this, tag, prev+1);
         return prev+1;
     }
@@ -103,7 +102,6 @@ public:
 		ASSERT(!zeroed);
 		#endif
         long prev = AtomicAdd(&m_ref, n);
-        ref(tag);
         REFTRACE("Inc %p %s: %u", this, tag, prev+n);
         return prev+n;
     }
@@ -133,7 +131,6 @@ public:
 			#endif
             OnZeroRef();
         }
-        ref(tag);
         REFTRACE("Dec %p %s: %u", this, tag, prev-1);
         return prev-1;
     }
@@ -145,8 +142,6 @@ public:
 		#ifdef HS_DEBUGGING
 		ASSERT(!zeroed);
 		#endif
-        ref(oldTag);
-        ref(newTag);
         REFTRACE("Inc %p %s: (xfer)", this, newTag);
         REFTRACE("Dec %p %s: (xfer)", this, oldTag);
     }

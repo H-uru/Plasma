@@ -88,8 +88,6 @@ AsyncThreadTaskList::~AsyncThreadTaskList () {
 
 //===========================================================================
 static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
-	ref(thread);
-	
     PerfAddCounter(kAsyncPerfThreadTaskThreadsActive, 1);
 
     for (;;) {
@@ -250,7 +248,6 @@ void AsyncThreadTaskAdd (
     ASSERT(taskList);
     ASSERT(callback);
     ASSERT(priority == kThreadTaskPriorityNormal);
-    ref(priority);
 
     // Allocate a new task record
     ThreadTask * task   = NEW(ThreadTask);

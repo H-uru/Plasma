@@ -127,7 +127,6 @@ namespace pnNetCli {
 static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
 		byte * temp, * heap = NULL;
-		ref(temp);
 
 	if (cli->mode == kNetCliModeEncrypted) {
 		// Encrypt data...
@@ -224,7 +223,6 @@ static void BufferedSendData (
 		return;
 
 	unsigned_ptr const * const msgEnd = msg + fieldCount;
-	ref(msgEnd);
 
 	const NetMsgInitSend * sendMsg = NetMsgChannelFindSendMessage(cli->channel, msg[0]);
 	ASSERT(msg[0] == sendMsg->msg.messageId);
@@ -990,7 +988,6 @@ bool NetCliDispatch (
 		if (cli->mode == kNetCliModeEncrypted) {
 			// Decrypt data...
 			byte * temp, * heap = NULL;
-			ref(temp);
 
 #ifndef NO_ENCRYPTION
 			if (bytes <= 2048)
@@ -1008,7 +1005,6 @@ bool NetCliDispatch (
 			// Add data to accumulator and dispatch
 			cli->input.Add(bytes, data);
 			bool result = DispatchData(cli, param);
-			ref(result);
 
 #ifdef SERVER
 			cli->recvDispatch = result;

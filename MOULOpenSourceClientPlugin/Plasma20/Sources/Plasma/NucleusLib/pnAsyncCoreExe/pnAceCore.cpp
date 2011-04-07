@@ -75,7 +75,6 @@ static void DoTransgamingCheck () {
 
 //===========================================================================
 static void IAsyncInitUseW9x () {
-	ref(IAsyncInitUseW9x);
 #ifdef HS_BUILD_FOR_WIN32
 	W9xGetApi(&g_api);
 #else
@@ -85,7 +84,6 @@ static void IAsyncInitUseW9x () {
 
 //===========================================================================
 static void IAsyncInitUseNt () {
-	ref(IAsyncInitUseNt);
 #ifdef HS_BUILD_FOR_WIN32
 	NtGetApi(&g_api);
 #else
@@ -95,7 +93,6 @@ static void IAsyncInitUseNt () {
 
 //===========================================================================
 static void IAsyncInitUseUnix () {
-	ref(IAsyncInitUseUnix);
 #ifdef HS_BUILD_FOR_UNIX
 	#error Unix I/O not implemented yet
 	UxGetApi(&g_api);
@@ -106,7 +103,6 @@ static void IAsyncInitUseUnix () {
 
 //===========================================================================
 static void IAsyncInitForClient () {
-	ref(IAsyncInitForClient);
 #ifdef HS_BUILD_FOR_WIN32
 	DoTransgamingCheck();
 	if (s_transgaming) {
@@ -124,7 +120,6 @@ static void IAsyncInitForClient () {
 
 //===========================================================================
 static void IAsyncInitForServer () {
-	ref(IAsyncInitForServer);
 #ifdef HS_BUILD_FOR_WIN32
 	IAsyncInitUseNt();
 #elif HS_BUILD_FOR_UNIX

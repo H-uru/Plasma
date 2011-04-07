@@ -189,8 +189,6 @@ void IGameMgr::RecvGameInstance (const Srv2Cli_GameMgr_GameInstance & msg, void 
 
 //============================================================================
 void IGameMgr::RecvInviteReceived (const Srv2Cli_GameMgr_InviteReceived & msg, void * param) {
-	ref(param);
-
 	pfGameMgrMsg * gameMgrMsg = NEWZERO(pfGameMgrMsg);
 	gameMgrMsg->Set(msg);
 	for (unsigned i = 0; i < s_receivers.Count(); ++i)
@@ -200,8 +198,6 @@ void IGameMgr::RecvInviteReceived (const Srv2Cli_GameMgr_InviteReceived & msg, v
 
 //============================================================================
 void IGameMgr::RecvInviteRevoked (const Srv2Cli_GameMgr_InviteRevoked & msg, void * param) {
-	ref(param);
-
 	pfGameMgrMsg * gameMgrMsg = NEWZERO(pfGameMgrMsg);
 	gameMgrMsg->Set(msg);
 	for (unsigned i = 0; i < s_receivers.Count(); ++i)
@@ -571,31 +567,23 @@ void IGameCli::Recv (GameMsgHeader * msg, void * param) {
 
 //============================================================================
 void IGameCli::RecvPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg, void * param) {
-	ref(param);
-
 	++playerCount;
 	gameCli->OnPlayerJoined(msg);
 }
 
 //============================================================================
 void IGameCli::RecvPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg, void * param) {
-	ref(param);
-
 	--playerCount;
 	gameCli->OnPlayerLeft(msg);
 }
 
 //============================================================================
 void IGameCli::RecvInviteFailed (const Srv2Cli_Game_InviteFailed & msg, void * param) {
-	ref(param);
-
 	gameCli->OnInviteFailed(msg);
 }
 
 //============================================================================
 void IGameCli::RecvOwnerChange (const Srv2Cli_Game_OwnerChange & msg, void * param) {
-	ref(param);
-
 	gameCli->OnOwnerChange(msg);
 }
 

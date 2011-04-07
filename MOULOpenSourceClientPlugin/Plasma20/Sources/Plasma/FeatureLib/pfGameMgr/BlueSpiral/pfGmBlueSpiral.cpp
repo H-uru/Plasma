@@ -134,8 +134,6 @@ void IBlueSpiral::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 
 //============================================================================
 void IBlueSpiral::RecvClothOrder (const Srv2Cli_BlueSpiral_ClothOrder & msg, void * param) {
-	ref(param);
-	
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -143,8 +141,6 @@ void IBlueSpiral::RecvClothOrder (const Srv2Cli_BlueSpiral_ClothOrder & msg, voi
 
 //============================================================================
 void IBlueSpiral::RecvSuccessfulHit (const Srv2Cli_BlueSpiral_SuccessfulHit & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -152,8 +148,6 @@ void IBlueSpiral::RecvSuccessfulHit (const Srv2Cli_BlueSpiral_SuccessfulHit & ms
 
 //============================================================================
 void IBlueSpiral::RecvGameWon (const Srv2Cli_BlueSpiral_GameWon & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -161,8 +155,6 @@ void IBlueSpiral::RecvGameWon (const Srv2Cli_BlueSpiral_GameWon & msg, void * pa
 
 //============================================================================
 void IBlueSpiral::RecvGameOver (const Srv2Cli_BlueSpiral_GameOver & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
@@ -170,8 +162,6 @@ void IBlueSpiral::RecvGameOver (const Srv2Cli_BlueSpiral_GameOver & msg, void * 
 
 //============================================================================
 void IBlueSpiral::RecvGameStarted (const Srv2Cli_BlueSpiral_GameStarted & msg, void * param) {
-	ref(param);
-
 	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
 	gameCliMsg->Set(gameCli, msg);
 	gameCliMsg->Send(gameCli->GetReceiver());
