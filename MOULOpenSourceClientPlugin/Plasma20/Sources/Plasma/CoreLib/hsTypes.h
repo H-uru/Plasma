@@ -294,16 +294,6 @@ typedef hsColor32 hsRGBAColor32;
 
 /****************************************************************************
 *
-*   ref
-*   References a variable to prevent compiler warnings
-*
-***/
-
-#define  ref(a)  ((void *)&(a))
-
-
-/****************************************************************************
-*
 *   UNIQUE_SYMBOL
 *   Creates a symbol that is unique within a file
 *

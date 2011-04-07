@@ -94,9 +94,9 @@ struct Uuid {
     inline bool operator ! ()                  const { return GuidIsNil(*this); }
     inline bool operator <  (const Uuid & rhs) const { return GuidCompare(*this, rhs) < 0; }
     inline bool operator == (const Uuid & rhs) const { return GuidsAreEqual(*this, rhs); }
-    inline bool operator == (int rhs)          const { ref(rhs); ASSERT(!rhs); return GuidsAreEqual(*this, kNilGuid); }
+    inline bool operator == (int rhs)          const { ASSERT(!rhs); return GuidsAreEqual(*this, kNilGuid); }
     inline bool operator != (const Uuid & rhs) const { return !GuidsAreEqual(*this, rhs); }
-    inline bool operator != (int rhs)          const { ref(rhs); ASSERT(!rhs); return !GuidsAreEqual(*this, kNilGuid); }
+    inline bool operator != (int rhs)          const { ASSERT(!rhs); return !GuidsAreEqual(*this, kNilGuid); }
 };
 #include <PopPack.h>
 

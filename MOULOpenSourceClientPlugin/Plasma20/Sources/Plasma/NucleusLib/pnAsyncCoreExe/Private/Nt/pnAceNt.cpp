@@ -228,8 +228,6 @@ static void INtOpDispatch (
 
 //===========================================================================
 static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
-	ref(thread);
-	
     ThreadDenyBlock();
 
     unsigned sleepMs    = INFINITE;
@@ -324,7 +322,6 @@ void INtConnCompleteOperation (NtObject * ntObj) {
         return;
 
     DWORD err = GetLastError();
-    ref(err);
     switch (ntObj->ioType) {
         case kNtFile:
             INtFileDelete((NtFile *) ntObj);

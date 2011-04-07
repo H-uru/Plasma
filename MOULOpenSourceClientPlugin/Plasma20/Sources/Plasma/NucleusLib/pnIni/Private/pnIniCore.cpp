@@ -725,9 +725,6 @@ unsigned IniGetBoundedValue (
     unsigned            maxVal,
     unsigned            defVal
 ) {
-    ref(key);
-    ref(section);
-
 	if (!value)
 		return defVal;
 

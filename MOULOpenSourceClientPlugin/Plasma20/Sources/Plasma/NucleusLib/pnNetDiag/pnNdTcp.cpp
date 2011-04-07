@@ -138,8 +138,6 @@ static bool Recv_PingReply (
     unsigned        bytes,
     void *
 ) {
-	ref(bytes);
-	
     const Auth2Cli_PingReply & reply = *(const Auth2Cli_PingReply *)msg;
     
 	AuthTrans * trans;
@@ -399,8 +397,6 @@ static bool AuthSocketNotifyCallback (
 //============================================================================
 static bool Recv_File2Cli_ManifestReply (FileConn * conn, const File2Cli_ManifestReply & msg) {
 
-	ref(conn);
-	
 	FileTrans * trans;
 	s_critsect.Enter();
 	{

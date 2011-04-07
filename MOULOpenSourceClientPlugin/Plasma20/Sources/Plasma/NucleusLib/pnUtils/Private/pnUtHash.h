@@ -203,7 +203,6 @@ TBaseHashTable<T>::TBaseHashTable () {
 //===========================================================================
 template<class T>
 TBaseHashTable<T>::TBaseHashTable (const TBaseHashTable<T> & source) {
-    ref(source);
 #ifdef HS_DEBUGGING
     FATAL("No copy constructor");
 #endif
@@ -213,7 +212,6 @@ TBaseHashTable<T>::TBaseHashTable (const TBaseHashTable<T> & source) {
 //===========================================================================
 template<class T>
 TBaseHashTable<T> & TBaseHashTable<T>::operator= (const TBaseHashTable<T> & source) {
-    ref(source);
 #ifdef HS_DEBUGGING
     FATAL("No assignment operator");
 #endif
@@ -329,7 +327,6 @@ const T * TBaseHashTable<T>::Next (const T * object) const {
 template<class T>
 void TBaseHashTable<T>::Order (T * linkedObject, ELinkType linkType, T * existingObject) {
     THashLink<T> & link = GetLink(linkedObject);
-    ref(link);
     ASSERT(link.m_linkToFull.IsLinked());
     m_fullList.Link(linkedObject, linkType, existingObject);
 }

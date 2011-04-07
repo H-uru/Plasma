@@ -396,8 +396,6 @@ static void AsyncLookupCallback (
 	unsigned			addrCount,
 	const NetAddress	addrs[]
 ) {
-	ref(name);
-	
 	ConnectParam * cp = (ConnectParam *)param;
 
 	if (!addrCount) {

@@ -370,10 +370,6 @@ static void DownloadCallback (
 ) {
 	s_numConnectFailures = 0;
 	
-	ref(result);
-	ref(param);
-	ref(filename);
-	
 	ManifestFile *mf = (ManifestFile *)param;
 	if (IS_NET_ERROR(result) && s_running && !s_patchError) {
 		if (result == kNetErrFileNotFound) {
@@ -716,8 +712,6 @@ static void ThinManifestCallback (
 ){
 	s_numConnectFailures = 0;
 
-	ref(group);
-
 	plLauncherInfo * info = (plLauncherInfo *) param;
 	char text[256];
 	StrPrintf(text, arrsize(text), "Checking for updates...");
@@ -815,8 +809,6 @@ static void FileSrvIpAddressCallback (
 	void *			param,
 	const wchar		addr[]
 ) {
-	ref(param);
-
 	NetCliGateKeeperDisconnect();
 
 	if (IS_NET_ERROR(result)) {
@@ -944,7 +936,6 @@ void UruPrepProc (void * param) {
 void PlayerStopProc (void * param) {
 	s_running = false;
 	plLauncherInfo *info = (plLauncherInfo *) param;
-	ref(param);
 	//TerminateProcess(s_pi.hProcess, kExitCodeTerminated);
 	info->stopCallback(kStatusOk, nil);
 }
