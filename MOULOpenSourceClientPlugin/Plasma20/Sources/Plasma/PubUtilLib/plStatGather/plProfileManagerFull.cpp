@@ -444,7 +444,7 @@ const wchar* plProfileManagerFull::GetProfilePath()
 void plProfileManagerFull::ILogStats()
 {
 	wchar statFilename[256];
-	swprintf(statFilename, L"%s%s.csv", GetProfilePath(), fLogAgeName.c_str());
+	swprintf(statFilename, 256, L"%s%s.csv", GetProfilePath(), fLogAgeName.c_str());
 
 	bool exists = plFileUtils::FileExists(statFilename);
 
