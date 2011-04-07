@@ -65,9 +65,9 @@ private:
 		plPhysical* SecondPhysical() const;
 	};
 
-	void IStartCollision(CollidePair& cp);
-	void IStopCollision(CollidePair& cp);
-	void IUpdateCollision(CollidePair& cp);
+	void IStartCollision(const CollidePair& cp);
+	void IStopCollision(const CollidePair& cp);
+	void IUpdateCollision(const CollidePair& cp);
 	void IProcessSlide(plPhysicalSndGroup* sndA, plPhysicalSndGroup* sndB, hsScalar strength);
 	
 	typedef std::set<CollidePair> CollideSet;

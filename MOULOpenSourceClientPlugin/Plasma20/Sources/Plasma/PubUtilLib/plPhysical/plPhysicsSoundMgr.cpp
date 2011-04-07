@@ -24,6 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <algorithm>
+#include <iterator>
 #include "hsTimer.h"
 #include "plPhysicsSoundMgr.h"
 #include "plPhysicalSndGroup.h"
@@ -68,7 +69,7 @@ void plPhysicsSoundMgr::Update()
 	fCurCollisions.clear();
 }
 
-void plPhysicsSoundMgr::IStartCollision(CollidePair& cp)
+void plPhysicsSoundMgr::IStartCollision(const CollidePair& cp)
 {
 	hsVector3 v1, v2;
 	const hsScalar strengthThreshold = 20.0f;
@@ -104,7 +105,7 @@ void plPhysicsSoundMgr::IStartCollision(CollidePair& cp)
 	}
 }
 
-void plPhysicsSoundMgr::IStopCollision(CollidePair& cp)
+void plPhysicsSoundMgr::IStopCollision(const CollidePair& cp)
 {
 	plPhysical* physicalA = cp.FirstPhysical();
 	plPhysical* physicalB = cp.SecondPhysical();
@@ -130,7 +131,7 @@ void plPhysicsSoundMgr::IStopCollision(CollidePair& cp)
 	}
 }
 
-void plPhysicsSoundMgr::IUpdateCollision(CollidePair& cp)
+void plPhysicsSoundMgr::IUpdateCollision(const CollidePair& cp)
 {
 	const hsScalar slideThreshhold = 0.f;	
 	hsVector3 v1, v2;

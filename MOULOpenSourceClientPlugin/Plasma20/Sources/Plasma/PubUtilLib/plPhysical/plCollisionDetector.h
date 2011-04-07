@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDetectorModifier.h"
 #include "hsGeometry3.h"
-#include <list.h>
+#include <list>
 #include <set>
 class plMessage;
 class plCameraMsg;
