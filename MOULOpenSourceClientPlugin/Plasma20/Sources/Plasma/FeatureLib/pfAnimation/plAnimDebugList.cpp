@@ -28,14 +28,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsTimer.h"
 #include "plAnimDebugList.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerAnimation.h"
-#include "../plAvatar/plAGMasterMod.h"
-#include "../plAvatar/plAGAnimInstance.h"
-#include "../plAvatar/plAGAnim.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plPipeline/plDebugText.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerAnimation.h"
+#include "plAvatar/plAGMasterMod.h"
+#include "plAvatar/plAGAnimInstance.h"
+#include "plAvatar/plAGAnim.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plPipeline/plDebugText.h"
 
 void plAnimDebugList::AddObjects(char *subString)
 {

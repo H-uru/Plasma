@@ -28,9 +28,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plBlower.h"
 #include "plgDispatch.h"
 #include "hsFastMath.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnMessage/plTimeMsg.h"
 #include "hsTimer.h"
 
 plRandom plBlower::fRandom;

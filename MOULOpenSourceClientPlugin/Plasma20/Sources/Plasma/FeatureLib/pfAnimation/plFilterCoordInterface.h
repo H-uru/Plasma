@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plFilterCoordInterface_inc
 #define plFilterCoordInterface_inc
 
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 class plFilterCoordInterface : public plCoordinateInterface
 {

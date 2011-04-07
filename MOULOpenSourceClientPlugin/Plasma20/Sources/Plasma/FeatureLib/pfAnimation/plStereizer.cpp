@@ -32,11 +32,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStereizer.h"
 #include "plLineFollowMod.h"
 
-#include "../plMessage/plListenerMsg.h"
+#include "plMessage/plListenerMsg.h"
 #include "plgDispatch.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 #include "hsFastMath.h"
 

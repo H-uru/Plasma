@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightModifier_inc
 #define plLightModifier_inc
 
-#include "../../PubUtilLib/plModifier/plSimpleModifier.h"
+#include "plModifier/plSimpleModifier.h"
 #include "hsGeometry3.h"
 
 class plController;

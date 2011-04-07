@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSimpleModifier_inc
 #define plSimpleModifier_inc
 
-#include "../pnModifier/plModifier.h"
-#include "../pnNetCommon/plSynchedValue.h"
+#include "pnModifier/plModifier.h"
+#include "pnNetCommon/plSynchedValue.h"
 #include "../plInterp/plAnimTimeConvert.h"
 
 class plSceneObject;

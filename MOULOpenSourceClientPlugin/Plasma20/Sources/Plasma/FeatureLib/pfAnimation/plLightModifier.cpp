@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plLightModifier.h"
-#include "../plGLight/plLightInfo.h"
-#include "../plInterp/plController.h"
+#include "plGLight/plLightInfo.h"
+#include "plInterp/plController.h"
 
 #include "hsStream.h"
 #include "hsResMgr.h"
