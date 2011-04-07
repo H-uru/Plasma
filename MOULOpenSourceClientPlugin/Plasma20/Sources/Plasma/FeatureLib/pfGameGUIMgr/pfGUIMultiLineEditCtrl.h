@@ -52,10 +52,10 @@ public:
 	virtual ~pfGUIMultiLineEditProc() {}
 
 	// we've hit the end of the control list (by moving the cursor)
-	virtual OnEndOfControlList(Int32 cursorPos) {}
+	virtual void OnEndOfControlList(Int32 cursorPos) {}
 
 	// we've hit the beginning of the control ist (by moving the cursor)
-	virtual OnBeginningOfControlList(Int32 cursorPos) {}
+	virtual void OnBeginningOfControlList(Int32 cursorPos) {}
 };
 
 class pfGUIMultiLineEditCtrl : public pfGUIControlMod

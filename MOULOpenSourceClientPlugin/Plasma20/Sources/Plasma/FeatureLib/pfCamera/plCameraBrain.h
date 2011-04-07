@@ -222,7 +222,7 @@ public:
 	plCameraBrain1_Drive(plCameraModifier1* pMod);
 	~plCameraBrain1_Drive();
 
-	static SetSensitivity(hsScalar f) { fTurnRate = f; }
+	static void SetSensitivity(hsScalar f) { fTurnRate = f; }
 	
 	CLASSNAME_REGISTER( plCameraBrain1_Drive );
 	GETINTERFACE_ANY( plCameraBrain1_Drive, plCameraBrain1 );

@@ -424,7 +424,7 @@ hsBool plAvAnimTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double
 }
 
 // PROCESS
-plAvAnimTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvAnimTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
 {
 	// the only reason we need this function is to watch the animation until it fades out
 	hsBool result = false;
@@ -648,7 +648,7 @@ hsBool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, dou
 }
 
 // PROCESS
-plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
 {
 	// *** if we are under mouse control, adjust it here
 

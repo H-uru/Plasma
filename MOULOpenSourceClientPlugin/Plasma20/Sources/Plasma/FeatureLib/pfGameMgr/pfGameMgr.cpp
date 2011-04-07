@@ -48,7 +48,7 @@ struct Factory : THashKeyVal<Uuid> {
 	const GameTypeReg &	reg;
 
 	Factory (const GameTypeReg & reg);
-	operator= (const Factory &);	// not impl
+	Factory& operator= (const Factory &);	// not impl
 };
 
 //============================================================================

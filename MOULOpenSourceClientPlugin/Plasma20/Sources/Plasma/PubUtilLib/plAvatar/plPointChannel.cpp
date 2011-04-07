@@ -157,7 +157,7 @@ plPointTimeScale::~plPointTimeScale()
 
 // IsStoppedAt ---------------------------
 // ------------
-plPointTimeScale::IsStoppedAt(double time)
+hsBool plPointTimeScale::IsStoppedAt(double time)
 {
 	return fTimeSource->IsStoppedAt(time);
 }
