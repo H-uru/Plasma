@@ -44,6 +44,19 @@ void 	hsStrLower(char *s);
 char *	hsFormatStr(const char * fmt, ...);	// You are responsible for returned memory.
 char *	hsFormatStrV(const char * fmt, va_list args);	// You are responsible for returned memory.
 
+// Use "correct" stricmp based on the selected compiler / library
+#ifdef _MSC_VER
+#define stricmp _stricmp
+#define strnicmp _strnicmp
+#define wcsicmp _wcsicmp
+#define wcsnicmp _wcsnicmp
+#else
+#define stricmp strcasecmp
+#define strnicmp strncasecmp
+#define wcsicmp wcscasecmp
+#define wcsnicmp wcsncasecmp
+#endif
+
 
 //	A pstring has a length byte at the beginning, and no trailing 0
 char*	hsP2CString(const UInt8 pstring[], char cstring[]);
