@@ -7024,6 +7024,7 @@ PF_CONSOLE_CMD( Python,							// Group name
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS
+#ifdef HAVE_CYPYTHONIDE
 PF_CONSOLE_CMD( Python,
 			    UsePythonDebugger,
 				"",
@@ -7031,6 +7032,7 @@ PF_CONSOLE_CMD( Python,
 {
 	PythonInterface::UsePythonDebugger(true);
 }
+#endif
 
 
 #include "../pfMessage/pfBackdoorMsg.h"
