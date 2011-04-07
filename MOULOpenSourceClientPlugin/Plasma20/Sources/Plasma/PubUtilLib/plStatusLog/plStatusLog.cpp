@@ -456,15 +456,15 @@ bool plStatusLog::IReOpen( void )
 			ext = L".elf";
 #endif
 		wchar fileToOpen[MAX_PATH];
-		swprintf(fileToOpen, L"%s.0%s", fileNoExt, ext);
+		swprintf(fileToOpen, MAX_PATH, L"%s.0%s", fileNoExt, ext);
 		if (!(fFlags & kDontRotateLogs))
 		{
 			wchar work[MAX_PATH], work2[MAX_PATH];
-			swprintf(work, L"%s.3%s",fileNoExt,ext);
+			swprintf(work, MAX_PATH, L"%s.3%s",fileNoExt,ext);
 			_wremove(work);
-			swprintf(work2, L"%s.2%s",fileNoExt,ext);
+			swprintf(work2, MAX_PATH, L"%s.2%s",fileNoExt,ext);
 			_wrename(work2, work);
-			swprintf(work, L"%s.1%s",fileNoExt,ext);
+			swprintf(work, MAX_PATH, L"%s.1%s",fileNoExt,ext);
 			_wrename(work, work2);
 			_wrename(fileToOpen, work);
 		}
