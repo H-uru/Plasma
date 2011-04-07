@@ -471,8 +471,8 @@ void pyDynamicText::AddPlasmaClasses(PyObject *m)
 void pyDynamicText::AddPlasmaConstantsClasses(PyObject *m)
 {
 	PYTHON_ENUM_START(PtJustify);
-	PYTHON_ENUM_ELEMENT(PtJustify, kCenter, plDynamicTextMap::Justify::kCenter);
-	PYTHON_ENUM_ELEMENT(PtJustify, kLeftJustify, plDynamicTextMap::Justify::kLeftJustify);
-	PYTHON_ENUM_ELEMENT(PtJustify, kRightJustify, plDynamicTextMap::Justify::kRightJustify);
+	PYTHON_ENUM_ELEMENT(PtJustify, kCenter, plDynamicTextMap::kCenter);
+	PYTHON_ENUM_ELEMENT(PtJustify, kLeftJustify, plDynamicTextMap::kLeftJustify);
+	PYTHON_ENUM_ELEMENT(PtJustify, kRightJustify, plDynamicTextMap::kRightJustify);
 	PYTHON_ENUM_END(m, PtJustify);
 }

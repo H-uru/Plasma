@@ -169,7 +169,7 @@ PyObject* pyImage::LoadJPEGFromDisk(const wchar* filename, UInt16 width, UInt16 
 	{
 		if (width > 0 && height > 0)
 		{
-			if (!theMipmap->ResizeNicely(width, height, plMipmap::ScaleFilter::kDefaultFilter))
+			if (!theMipmap->ResizeNicely(width, height, plMipmap::kDefaultFilter))
 			{
 				delete theMipmap;
 				PYTHON_RETURN_NONE;

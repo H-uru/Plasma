@@ -1247,7 +1247,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
 		if (pNtfyMsg)
 		{
 			// remember if this was a Local Broad cast or not
-			fLocalNotify = (pNtfyMsg->HasBCastFlag(plMessage ::plBCastFlags::kNetNonLocal)) ? false : true;
+			fLocalNotify = (pNtfyMsg->HasBCastFlag(plMessage::kNetNonLocal)) ? false : true;
 
 			// create a list for the event records
 			PyObject* levents = PyList_New(0); // start with a list of no elements
