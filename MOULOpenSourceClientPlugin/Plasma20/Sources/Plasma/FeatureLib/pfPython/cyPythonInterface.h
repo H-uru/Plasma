@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include <python.h>
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 #include "../../Apps/CyPythonIDE/plCyDebug/plCyDebServer.h"
 #endif
 
@@ -66,7 +66,7 @@ private:
 	static PyObject* dbgSlice;	// time slice function for the debug window
 	static plStatusLog* dbgLog;
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 	static bool usePythonDebugger;
 	static bool requestedExit;
 	static plCyDebServer debugServer;
@@ -212,7 +212,7 @@ public:
 	//
 	static pyKey* GetpyKeyFromPython(PyObject* pkey);
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 	static bool UsePythonDebugger() { return usePythonDebugger; }
 	static void UsePythonDebugger(bool use) { usePythonDebugger = use; }
 
