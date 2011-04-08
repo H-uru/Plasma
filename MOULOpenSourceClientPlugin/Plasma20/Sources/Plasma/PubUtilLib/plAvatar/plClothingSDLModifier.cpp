@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClothingLayout.h"
 #include "plArmatureMod.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plSDLModifierMsg.h"
-#include "../plSDL/plSDL.h"
-#include "../pnKeyedObject/plKeyImp.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plSDLModifierMsg.h"
+#include "plSDL/plSDL.h"
+#include "pnKeyedObject/plKeyImp.h"
 
 // static vars
 char plClothingSDLModifier::kStrItem[]="item";

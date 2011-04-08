@@ -46,15 +46,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdio>
 
 // other
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plMessage/plSimStateMsg.h"
-#include "../plStatusLog/plStatusLog.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../plPipeline/plDebugText.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plMessage/plSimStateMsg.h"
+#include "plStatusLog/plStatusLog.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "plPipeline/plDebugText.h"
 
 #ifdef DEBUG_MULTISTAGE
 #include "plAvatarMgr.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 #endif
 
 

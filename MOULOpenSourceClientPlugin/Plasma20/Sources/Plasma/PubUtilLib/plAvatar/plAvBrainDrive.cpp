@@ -34,11 +34,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // other includes
 #include "hsQuat.h"
-#include "../plMessage/plSimStateMsg.h"
-#include "../pnMessage/plCameraMsg.h"
+#include "plMessage/plSimStateMsg.h"
+#include "pnMessage/plCameraMsg.h"
 
 // messages
-#include "../plMessage/plInputEventMsg.h"
+#include "plMessage/plInputEventMsg.h"
 
 // CTOR default
 plAvBrainDrive::plAvBrainDrive()

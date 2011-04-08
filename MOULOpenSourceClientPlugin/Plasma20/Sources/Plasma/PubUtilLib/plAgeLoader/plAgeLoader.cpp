@@ -32,28 +32,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plBackgroundDownloader.h"
 #include "process.h"	// for getpid()
 
-#include "../pnProduct/pnProduct.h"
+#include "pnProduct/pnProduct.h"
 
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
-#include "../plScene/plRelevanceMgr.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plAgeDescription/plAgeDescription.h"
-#include "../plSDL/plSDL.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plRegistryNode.h"
-#include "../plResMgr/plResManager.h"
-#include "../plFile/plEncryptedStream.h"
+#include "plScene/plRelevanceMgr.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plAgeDescription/plAgeDescription.h"
+#include "plSDL/plSDL.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plRegistryNode.h"
+#include "plResMgr/plResManager.h"
+#include "plFile/plEncryptedStream.h"
 
 /// TEMP HACK TO LOAD CONSOLE INIT FILES ON AGE LOAD
-#include "../plMessage/plConsoleMsg.h"
-#include "../plMessage/plLoadAvatarMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
 
 
 extern	hsBool	gDataServerLocal;

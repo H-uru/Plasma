@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 #include "hsColorRGBA.h"
-#include "../pnTimer/plTimedValue.h"
+#include "pnTimer/plTimedValue.h"
 
 class hsStream;
 

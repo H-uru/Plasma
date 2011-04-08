@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWaveSetBase.h"
 
 #include "hsResMgr.h"
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 
 plWaveSetBase::plWaveSetBase()
 {

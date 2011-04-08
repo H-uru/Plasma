@@ -26,17 +26,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatarSDLModifier.h"
 #include "plArmatureMod.h"
 
-#include "../plAvatar/plArmatureMod.h"
-#include "../plAvatar/plAvBrainGeneric.h"
-#include "../plAvatar/plAvBrainClimb.h"
-#include "../plAvatar/plAvBrainDrive.h"
-#include "../plAvatar/plAnimStage.h"
-#include "../plAvatar/plAvCallbackAction.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plSDLModifierMsg.h"
-#include "../plSDL/plSDL.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../pnAsyncCore/pnAsyncCore.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainGeneric.h"
+#include "plAvatar/plAvBrainClimb.h"
+#include "plAvatar/plAvBrainDrive.h"
+#include "plAvatar/plAnimStage.h"
+#include "plAvatar/plAvCallbackAction.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plSDLModifierMsg.h"
+#include "plSDL/plSDL.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "pnAsyncCore/pnAsyncCore.h"
 
 // static vars
 char	plAvatarPhysicalSDLModifier::kStrPosition[] = "position";

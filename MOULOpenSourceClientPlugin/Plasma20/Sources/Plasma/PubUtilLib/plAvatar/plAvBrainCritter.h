@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvBrain.h"
 #include "hsTemplates.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 class plArmatureMod;
 class plWalkingController;

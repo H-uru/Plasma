@@ -30,9 +30,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAntiGravAction.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plHavok1/plHKPhysical.h"
-#include "../plAvatar/plSwimRegion.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plHavok1/plHKPhysical.h"
+#include "plAvatar/plSwimRegion.h"
 #include "hsTimer.h"
 
 // This is meant to be a specific physicsAction for the swim behavior

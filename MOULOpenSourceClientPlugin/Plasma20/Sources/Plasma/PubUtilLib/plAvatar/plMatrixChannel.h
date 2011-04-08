@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // global
 #include "hsTypes.h"		// you need types to include Matrix
 #include "hsMatrix44.h"
-#include "../plTransform/hsAffineParts.h"
+#include "plTransform/hsAffineParts.h"
 
 // local prototypes
 class plQuatChannel;

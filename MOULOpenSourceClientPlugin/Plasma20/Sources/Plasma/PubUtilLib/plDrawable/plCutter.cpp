@@ -35,12 +35,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Test hack
 #include "plDrawableSpans.h"
 #include "plDrawableGenerator.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../plScene/plSceneNode.h"
-#include "../plScene/plPageTreeMgr.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "plScene/plSceneNode.h"
+#include "plScene/plPageTreeMgr.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 void plCutter::Read(hsStream* stream, hsResMgr* mgr)
 {

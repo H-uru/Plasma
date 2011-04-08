@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvatarTasks.h"
 #include "hsQuat.h"
-#include "..\CoreLib\hsGeometry3.h"
+#include "hsGeometry3.h"
 
 class plArmatureMod;
 class plArmatureBrain;

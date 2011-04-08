@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScalarChannel.h"
 
 // other
-#include "../plInterp/plAnimTimeConvert.h"
+#include "plInterp/plAnimTimeConvert.h"
 
 // declarations
 class plAGChannel;

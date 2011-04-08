@@ -45,10 +45,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // other local
 #include "plAvDefs.h"
 
-#include "../pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plSimulationInterface.h"
 
 #include "hsMatrix44.h"
-#include "../plNetCommon/plNetCommon.h"
+#include "plNetCommon/plNetCommon.h"
 
 #include <float.h>
 

@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
 
-#include "../pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plSynchedObject.h"
 
 #pragma warning(disable: 4284)
 #include <deque>

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClothingSDLModifier_inc
 #define plClothingSDLModifier_inc
 
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plDynaTorpedoMgr.h"
 
-#include "../plMessage/plBulletMsg.h"
+#include "plMessage/plBulletMsg.h"
 
 #include "plCutter.h"
 
@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plTweak.h"
 
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 
 static const UInt32 kNumPrintIDs = 0;
 

@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "plProfile.h"
 
-#include "../plIntersect/plVolumeIsect.h"
-#include "../plMath/hsRadixSort.h"
+#include "plIntersect/plVolumeIsect.h"
+#include "plMath/hsRadixSort.h"
 
 static hsBitVector scratchTotVec;
 static hsBitVector scratchBitVec;

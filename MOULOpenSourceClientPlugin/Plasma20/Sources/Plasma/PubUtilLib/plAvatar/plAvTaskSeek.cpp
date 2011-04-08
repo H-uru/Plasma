@@ -41,12 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvCallbackAction.h"
 
 // other
-#include "../plMessage/plAvatarMsg.h"
-#include "../pnMessage/plCameraMsg.h"
-#include "../pnInputCore/plControlEventCodes.h"
-#include "../plPipeline/plDebugText.h"
-#include "../plStatusLog/plStatusLog.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "plMessage/plAvatarMsg.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnInputCore/plControlEventCodes.h"
+#include "plPipeline/plDebugText.h"
+#include "plStatusLog/plStatusLog.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 #include "hsTimer.h"
 #include "plgDispatch.h"
 

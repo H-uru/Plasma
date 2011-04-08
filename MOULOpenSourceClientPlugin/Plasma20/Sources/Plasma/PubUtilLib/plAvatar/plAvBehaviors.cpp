@@ -27,9 +27,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvBrainHuman.h"
 #include "plArmatureMod.h"
 #include "plAGAnimInstance.h"
-#include "../plMessage/plAvatarMsg.h"
+#include "plMessage/plAvatarMsg.h"
 
-#include "../plPipeline/plDebugText.h"
+#include "plPipeline/plDebugText.h"
 
 plArmatureBehavior::plArmatureBehavior() : fAnim(nil), fArmature(nil), fBrain(nil), fIndex((UInt8)-1), fFlags(0) {}
 

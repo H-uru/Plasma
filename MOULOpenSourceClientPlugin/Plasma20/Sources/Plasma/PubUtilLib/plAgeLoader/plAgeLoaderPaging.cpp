@@ -31,17 +31,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "../plMessage/plAgeLoadedMsg.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../plProgressMgr/plProgressMgr.h"
-#include "../plSDL/plSDL.h"
-#include "../pnDispatch/plDispatch.h"
-#include "../plResMgr/plResManager.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plProgressMgr/plProgressMgr.h"
+#include "plSDL/plSDL.h"
+#include "pnDispatch/plDispatch.h"
+#include "plResMgr/plResManager.h"
 
-#include "../plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetClientMgr.h"
 
 //
 // if room is reserved or for animations, don't report it to the server.

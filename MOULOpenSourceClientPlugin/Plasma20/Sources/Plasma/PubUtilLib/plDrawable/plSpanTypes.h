@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBounds.h"
 #include "hsMatrix44.h"
 
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 class hsGMaterial;
 class plGeometrySpan;

@@ -26,11 +26,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInstanceDrawInterface.h"
 #include "plSharedMesh.h"
 #include "plMorphSequence.h"
-#include "../plMessage/plReplaceGeometryMsg.h"
+#include "plMessage/plReplaceGeometryMsg.h"
 #include "plDrawableSpans.h"
 #include "plGeometrySpan.h"
-#include "../plScene/plSceneNode.h"
-#include "../pnMessage/plDISpansMsg.h"
+#include "plScene/plSceneNode.h"
+#include "pnMessage/plDISpansMsg.h"
 #include "hsResMgr.h"
 
 plInstanceDrawInterface::plInstanceDrawInterface() : plDrawInterface(), fTargetID(-1) {}

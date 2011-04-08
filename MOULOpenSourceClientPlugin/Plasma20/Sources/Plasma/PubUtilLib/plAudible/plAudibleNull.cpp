@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnKeyedObject/plKey.h"
 
 hsVector3	plAudibleNull::GetVelocity(int index) const
 {

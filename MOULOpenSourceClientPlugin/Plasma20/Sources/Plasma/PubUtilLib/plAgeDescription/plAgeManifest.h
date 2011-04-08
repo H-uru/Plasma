@@ -37,9 +37,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsTemplates.h"
 #include "hsUtils.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
-#include "../plFile/plInitFileReader.h"
-#include "../plEncryption/plChecksum.h"
+#include "plUnifiedTime/plUnifiedTime.h"
+#include "plFile/plInitFileReader.h"
+#include "plEncryption/plChecksum.h"
 
 
 //// Small Container Classes for a Single File ///////////////////////////////

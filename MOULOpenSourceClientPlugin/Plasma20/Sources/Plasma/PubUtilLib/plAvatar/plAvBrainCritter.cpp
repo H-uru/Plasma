@@ -37,13 +37,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 
-#include "../plMessage/plAIMsg.h"
+#include "plMessage/plAIMsg.h"
 
-#include "../plPipeline/plDebugText.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plMath/plRandom.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetTransport/plNetTransportMember.h"
+#include "plPipeline/plDebugText.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plMath/plRandom.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetTransport/plNetTransportMember.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvBrainHuman.h"
 #include "plAvBrain.h"
 #include "plAvCallbackAction.h"
-#include "../plMessage/plRideAnimatedPhysMsg.h"
+#include "plMessage/plRideAnimatedPhysMsg.h"
 
 
 void plAvBrainRideAnimatedPhysical::Activate(plArmatureModBase *avMod)

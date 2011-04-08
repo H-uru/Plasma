@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvBrain.h"
 
 // other
-#include "../plPipeline/plDebugText.h"
+#include "plPipeline/plDebugText.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //

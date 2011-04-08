@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // other
 // #include "../pnMessage/plRefMsg.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../pnMessage/plSDLModifierMsg.h"
-#include "../pnMessage/plSDLNotificationMsg.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pnMessage/plSDLModifierMsg.h"
+#include "pnMessage/plSDLNotificationMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 ////////////////
 // PLAGMASTERMOD

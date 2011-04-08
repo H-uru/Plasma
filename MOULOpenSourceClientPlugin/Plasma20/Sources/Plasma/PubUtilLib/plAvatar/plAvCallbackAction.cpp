@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plAvCallbackAction.h"
-#include "../plMessage/plLOSHitMsg.h"
+#include "plMessage/plLOSHitMsg.h"
 
 #include "plArmatureMod.h" // for LOS enum type
 #include "plMatrixChannel.h"

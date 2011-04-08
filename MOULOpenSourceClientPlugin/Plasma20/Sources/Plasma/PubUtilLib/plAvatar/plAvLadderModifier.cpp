@@ -23,7 +23,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../plAvatar/plAvCallbackAction.h"
+#include "plAvatar/plAvCallbackAction.h"
 
 #include "hsTypes.h"
 
@@ -43,19 +43,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 //other
-#include "../plMessage/plCollideMsg.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../plStatusLog/plStatusLog.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnMessage/plEnableMsg.h"
+#include "plMessage/plCollideMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "plStatusLog/plStatusLog.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plEnableMsg.h"
 
-#include "../pnMessage/plTimeMsg.h"
+#include "pnMessage/plTimeMsg.h"
 #include "plgDispatch.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../plModifier/plDetectorLog.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plModifier/plDetectorLog.h"
 
 enum NotifyType
 {

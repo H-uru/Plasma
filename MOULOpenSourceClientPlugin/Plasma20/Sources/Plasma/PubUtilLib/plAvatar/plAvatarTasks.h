@@ -34,9 +34,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvDefs.h"
 
 #include "hsQuat.h"
-#include "../CoreLib/hsGeometry3.h"
-#include "../CoreLib/hsMatrix44.h"
-#include "../pnKeyedObject/plKey.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "pnKeyedObject/plKey.h"
 
 class plAGAnim;
 class plAGAnimInstance;

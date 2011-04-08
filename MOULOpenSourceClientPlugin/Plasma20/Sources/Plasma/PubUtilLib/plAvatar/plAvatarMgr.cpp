@@ -41,34 +41,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // global
 #include "hsResMgr.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetApp.h"
 #include "plgDispatch.h"
 #include "hsTimer.h"
 
 // other
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../pfCCR/plCCRMgr.h" // Only included for defined constants. 
-#include "../plNetTransport/plNetTransport.h"
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../plModifier/plSpawnModifier.h"
-#include "../plModifier/plMaintainersMarkerModifier.h"
-#include "../plVault/plDniCoordinateInfo.h"
-#include "../plMath/plRandom.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plResMgr/plKeyFinder.h"
+#include "pfCCR/plCCRMgr.h" // Only included for defined constants. 
+#include "plNetTransport/plNetTransport.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plModifier/plSpawnModifier.h"
+#include "plModifier/plMaintainersMarkerModifier.h"
+#include "plVault/plDniCoordinateInfo.h"
+#include "plMath/plRandom.h"
 
-#include "../pnMessage/plPlayerPageMsg.h"
-#include "../pnMessage/plWarpMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
-#include "../plMessage/plMemberUpdateMsg.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plAvCoopMsg.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plMessage/plMemberUpdateMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plAvCoopMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "plStatusLog/plStatusLog.h"
 
 // The static single instance, allocated on demand by GetInstance()
 plAvatarMgr		*plAvatarMgr::fInstance = nil;

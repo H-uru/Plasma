@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "memory.h"
+#include <memory.h>
 
 #include "hsTypes.h"
 #include "plGeoSpanDice.h"

@@ -32,13 +32,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatarMgr.h"
 
 // global
-#include <hsMatrix44.h>
+#include "hsMatrix44.h"
 
 // other
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-//#include "../pnMessage/plWarpMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+//#include "pnMessage/plWarpMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 
 // plNPCSpawnMod ctor

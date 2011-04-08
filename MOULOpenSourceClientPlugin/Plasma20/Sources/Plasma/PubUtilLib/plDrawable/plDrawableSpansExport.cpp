@@ -43,19 +43,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSpaceTree.h"
 #include "plSpaceTreeMaker.h"		// This is fun and amusing and wonderful to have here.
 									// Keep it here forever.
-#include "../plSurface/hsGMaterial.h"
-#include "../plPipeline/plFogEnvironment.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../pnMessage/plNodeRefMsg.h" // for NodeRefMsg
-#include "../plMessage/plDeviceRecreateMsg.h"
-#include "../plPipeline/plGBufferGroup.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
-#include "../plGImage/plBitmap.h"
-#include "../plGLight/plLightInfo.h"
+#include "plSurface/hsGMaterial.h"
+#include "plPipeline/plFogEnvironment.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h" // for NodeRefMsg
+#include "plMessage/plDeviceRecreateMsg.h"
+#include "plPipeline/plGBufferGroup.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
+#include "plGImage/plBitmap.h"
+#include "plGLight/plLightInfo.h"
 #include "plgDispatch.h"
 
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 //#define VERT_LOG
 

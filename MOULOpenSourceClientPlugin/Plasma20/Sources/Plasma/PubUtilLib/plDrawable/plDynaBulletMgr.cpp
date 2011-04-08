@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDynaBulletMgr.h"
 #include "plDynaDecal.h"
 
-#include "../plMessage/plBulletMsg.h"
+#include "plMessage/plBulletMsg.h"
 
 #include "plCutter.h"
 
@@ -38,11 +38,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 
 
 #include "hsFastMath.h"
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 static plRandom sRand;
 
 

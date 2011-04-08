@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWaveSetBase_inc
 #define plWaveSetBase_inc
 
-#include "../pnModifier/plMultiModifier.h"
+#include "pnModifier/plMultiModifier.h"
 #include "hsGeometry3.h"
 
 class hsGMaterial;

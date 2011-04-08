@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 #include "plRenderLevel.h"
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 
 // Making light white and dark black by default, because this is really
 // redundant. The handling of what color unlit and fully lit map to is

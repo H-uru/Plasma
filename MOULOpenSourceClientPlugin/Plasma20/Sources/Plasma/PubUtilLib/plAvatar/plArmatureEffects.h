@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plArmatureEffects_inc
 #define plArmatureEffects_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "hsTemplates.h"
 #include "hsBitVector.h"
 

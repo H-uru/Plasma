@@ -26,12 +26,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plSpaceTreeMaker.h"
-#include "../plMath/hsRadixSort.h"
-#include "../plDrawable/plSpaceTree.h"
+#include "plMath/hsRadixSort.h"
+#include "plDrawable/plSpaceTree.h"
 
 #include "hsUtils.h" // for testing, get hsRand()
 #include "hsTimer.h"
-#include "../plIntersect/plVolumeIsect.h"
+#include "plIntersect/plVolumeIsect.h"
 
 //#define MF_DO_TIMES
 

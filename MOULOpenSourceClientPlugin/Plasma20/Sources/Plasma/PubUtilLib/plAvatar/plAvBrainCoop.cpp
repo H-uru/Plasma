@@ -39,14 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatarMgr.h"
 
 // other
-#include "../plScene/plSceneNode.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "plScene/plSceneNode.h"
+#include "pnNetCommon/plNetApp.h"
 
 // messages
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plAvCoopMsg.h"
-#include "../plMessage/plPickedMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plAvCoopMsg.h"
+#include "plMessage/plPickedMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //

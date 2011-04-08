@@ -39,43 +39,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPrintShape.h"
 
-#include "../plAvatar/plArmatureMod.h"
+#include "plAvatar/plArmatureMod.h"
 
-#include "../plParticleSystem/plParticleSystem.h"
-#include "../plParticleSystem/plParticleEmitter.h"
+#include "plParticleSystem/plParticleSystem.h"
+#include "plParticleSystem/plParticleEmitter.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
-#include "../plScene/plPageTreeMgr.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
+#include "plScene/plPageTreeMgr.h"
 
-#include "../plPipeline/plGBufferGroup.h"
-#include "../plPipeline/hsGDeviceRef.h"
+#include "plPipeline/plGBufferGroup.h"
+#include "plPipeline/hsGDeviceRef.h"
 
-#include "../plMessage/plAgeLoadedMsg.h"
-#include "../plMessage/plDynaDecalEnableMsg.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plDynaDecalEnableMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
 #include "plgDispatch.h"
 
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 #include "hsFastMath.h"
 
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include "../pnMessage/plPipeResMakeMsg.h"
+#include "pnMessage/plPipeResMakeMsg.h"
 
 // Stuff for creating a bumpenv decal on demand.
-#include "../plGImage/plMipmap.h"
-#include "../plSurface/plLayer.h"
-#include "../plMessage/plLayRefMsg.h"
+#include "plGImage/plMipmap.h"
+#include "plSurface/plLayer.h"
+#include "plMessage/plLayRefMsg.h"
 
 //### Hackage
-#include "../plMessage/plRenderMsg.h"
-#include "../plMessage/plListenerMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "plMessage/plListenerMsg.h"
 #include "plPipeline.h"
 
 #include "plTweak.h"

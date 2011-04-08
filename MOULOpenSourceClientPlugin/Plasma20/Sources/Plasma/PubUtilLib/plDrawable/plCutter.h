@@ -27,12 +27,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCutter_inc
 #define plCutter_inc
 
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "hsBounds.h"
-#include "../plIntersect/plVolumeIsect.h"
+#include "plIntersect/plVolumeIsect.h"
 #include "hsColorRGBA.h"
 
 struct hsPoint3;

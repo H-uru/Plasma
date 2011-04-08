@@ -43,20 +43,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 // other
-#include "../pnNetCommon/plSDLTypes.h"
-#include "../pnMessage/plCameraMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plInputEventMsg.h"
-#include "../plMessage/plSimStateMsg.h"
-#include "../plMessage/plConsoleMsg.h"
-#include "../plPipeline/plDebugText.h"
-#include "../plInputCore/plAvatarInputInterface.h"
-#include "../plMessage/plInputIfaceMgrMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plSimStateMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plPipeline/plDebugText.h"
+#include "plInputCore/plAvatarInputInterface.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
 
 #ifdef DEBUG_MULTISTAGE
 #include "plAvatarMgr.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 #endif
 
 hsBool plAvBrainGeneric::fForce3rdPerson = true;

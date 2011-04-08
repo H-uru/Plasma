@@ -63,12 +63,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 // other
-#include "../plPipeline/plDebugText.h"
-#include "../plMessage/plSimStateMsg.h"
-#include "../plMessage/plLOSHitMsg.h"
-#include "../plMessage/plLOSRequestMsg.h"
-#include "../plMessage/plClimbEventMsg.h"
-#include "../pnNetCommon/plSDLTypes.h"
+#include "plPipeline/plDebugText.h"
+#include "plMessage/plSimStateMsg.h"
+#include "plMessage/plLOSHitMsg.h"
+#include "plMessage/plLOSRequestMsg.h"
+#include "plMessage/plClimbEventMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
 
 /////////////////////////////////////////////////////////////////
 //

@@ -42,15 +42,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsUtils.h"
 
 // other
-#include "../plMessage/plAvCoopMsg.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plInputIfaceMgrMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "plMessage/plAvCoopMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plPhysical.h"
-#include "../pnTimer/plTimerCallbackManager.h"
-#include "../plMessage/plTimerCallbackMsg.h"
+#include "pnTimer/plTimerCallbackManager.h"
+#include "plMessage/plTimerCallbackMsg.h"
 
 const unsigned kAbortTimer = 1;
 const float kAbortTimerDuration = 15; // 15 seconds

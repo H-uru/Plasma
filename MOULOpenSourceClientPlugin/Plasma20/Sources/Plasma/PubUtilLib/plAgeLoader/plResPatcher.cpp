@@ -25,22 +25,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plResPatcher.h"
 
-#include "../NucleusLib/inc/hsResMgr.h"
+#include "hsResMgr.h"
 
-#include "../plAgeDescription/plAgeManifest.h"
-#include "../plResMgr/plResManager.h"
-#include "../plFile/plFileUtils.h"
-#include "../plFile/plEncryptedStream.h"
-#include "../plCompression/plZlibStream.h"
-#include "../plAudioCore/plAudioFileReader.h"
-#include "../plProgressMgr/plProgressMgr.h"
+#include "plAgeDescription/plAgeManifest.h"
+#include "plResMgr/plResManager.h"
+#include "plFile/plFileUtils.h"
+#include "plFile/plEncryptedStream.h"
+#include "plCompression/plZlibStream.h"
+#include "plAudioCore/plAudioFileReader.h"
+#include "plProgressMgr/plProgressMgr.h"
 
-#include "../pnAsyncCore/pnAsyncCore.h"
-#include "../pnNetCli/pnNetCli.h"
-#include "../plNetGameLib/plNetGameLib.h"
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetCli/pnNetCli.h"
+#include "plNetGameLib/plNetGameLib.h"
 
-#include "../pnDispatch/plDispatch.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "pnDispatch/plDispatch.h"
+#include "plStatusLog/plStatusLog.h"
 
 static const unsigned kMaxDownloadTries = 10;
 
