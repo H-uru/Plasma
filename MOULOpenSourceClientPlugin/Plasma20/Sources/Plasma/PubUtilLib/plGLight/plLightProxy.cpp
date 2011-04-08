@@ -27,9 +27,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plLightProxy.h"
 #include "plLightInfo.h"
-#include "../plDrawable/plDrawableSpans.h"
-#include "../plDrawable/plDrawableGenerator.h"
-#include "../pnMessage/plProxyDrawMsg.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "pnMessage/plProxyDrawMsg.h"
 
 plLightProxy::plLightProxy()
 :	plProxyGen(hsColorRGBA().Set(0,0,0,1.f), hsColorRGBA().Set(0.5f,1.0,0.5f,1.f), 0.2f),

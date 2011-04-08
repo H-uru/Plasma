@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plHardRegion.h"
 
 #include "plgDispatch.h"
-#include "../plMessage/plRenderMsg.h"
+#include "plMessage/plRenderMsg.h"
 #include "plPipeline.h"
 
 plHardRegion::plHardRegion() 

@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
-#include "../plIntersect/plClosest.h"
+#include "plIntersect/plClosest.h"
 
 static const hsScalar kDefLength = 5.f;
 

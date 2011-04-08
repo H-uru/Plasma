@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 # Find all 3rd-party libraries that are required
 find_package(OpenSSL REQUIRED)
 find_package(OpenAL REQUIRED)
+find_package(ZLIB REQUIRED)
 
 option(EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 

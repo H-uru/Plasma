@@ -26,18 +26,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plShadowCaster.h"
-#include "../plMessage/plShadowCastMsg.h"
+#include "plMessage/plShadowCastMsg.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
 
-#include "../plDrawable/plDrawableSpans.h"
-#include "../plDrawable/plSpanTypes.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plSpanTypes.h"
 
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
-#include "../plMessage/plRenderMsg.h"
+#include "plMessage/plRenderMsg.h"
 
 #include "plgDispatch.h"
 

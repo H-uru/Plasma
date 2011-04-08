@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define HSCONTROLLER_inc
 
 #include "HeadSpin.h"
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 #include "hsColorRGBA.h"
 #include "hsKeys.h"
 #include "hsTemplates.h"

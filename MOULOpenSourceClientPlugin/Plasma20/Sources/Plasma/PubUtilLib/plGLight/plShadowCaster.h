@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShadowCaster_inc
 #define plShadowCaster_inc
 
-#include "../pnModifier/plMultiModifier.h"
+#include "pnModifier/plMultiModifier.h"
 #include "hsBounds.h"
 #include "hsTemplates.h"
 

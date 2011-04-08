@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsStream;
 class hsResMgr;
 
-#include "../pnModifier/plMultiModifier.h"
+#include "pnModifier/plMultiModifier.h"
 
 class plLightSpace : public plMultiModifier
 {

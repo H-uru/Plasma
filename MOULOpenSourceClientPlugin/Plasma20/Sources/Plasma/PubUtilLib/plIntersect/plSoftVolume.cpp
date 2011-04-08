@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSoftVolume.h"
 
 #include "plgDispatch.h"
-#include "../plMessage/plListenerMsg.h"
+#include "plMessage/plListenerMsg.h"
 
 plSoftVolume::plSoftVolume() 
 :	fListenState(0),

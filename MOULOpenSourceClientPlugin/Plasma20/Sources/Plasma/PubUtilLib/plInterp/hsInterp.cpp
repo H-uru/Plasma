@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "hsInterp.h"
-#include "../plTransform/hsAffineParts.h"
+#include "plTransform/hsAffineParts.h"
 #include "hsColorRGBA.h"
 #include "hsPoint2.h"
 

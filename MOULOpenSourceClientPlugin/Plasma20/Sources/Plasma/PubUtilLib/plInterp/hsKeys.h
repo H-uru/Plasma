@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "hsQuat.h"
-#include "../plTransform/hsAffineParts.h"
+#include "plTransform/hsAffineParts.h"
 #include "hsMatrix33.h"
 #include "hsMatrix44.h"
 

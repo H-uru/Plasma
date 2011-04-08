@@ -31,13 +31,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLightInfo.h"
 #include "plShadowCaster.h"
 
-#include "../plIntersect/plVolumeIsect.h"
-#include "../plMessage/plShadowCastMsg.h"
-#include "../plMessage/plRenderMsg.h"
+#include "plIntersect/plVolumeIsect.h"
+#include "plMessage/plShadowCastMsg.h"
+#include "plMessage/plRenderMsg.h"
 
-#include "../plDrawable/plDrawableSpans.h"
+#include "plDrawable/plDrawableSpans.h"
 
-#include "../plScene/plVisMgr.h"
+#include "plScene/plVisMgr.h"
 
 #include "hsBounds.h"
 #include "plgDispatch.h"

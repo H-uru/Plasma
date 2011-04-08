@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLightSpace.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
-#include "../plMessage/plLightRefMsg.h"
-#include "../plMessage/plCollideMsg.h"
+#include "plMessage/plLightRefMsg.h"
+#include "plMessage/plCollideMsg.h"
 #include "plgDispatch.h"
 
 

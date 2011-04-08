@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsInterp.h"
 #include "hsResMgr.h"
 
-#include "../plTransform/hsEuler.h"
+#include "plTransform/hsEuler.h"
 #include "plAnimTimeConvert.h"
 
 /////////////////////////////////////////////
