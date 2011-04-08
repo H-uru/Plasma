@@ -27,11 +27,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDL.h"
 #include "hsStlUtils.h"
 
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnMessage/plMessage.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnMessage/plMessage.h"
 
-#include "../plUnifiedTime/plUnifiedTime.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 
 const UInt8 plVarDescriptor::kVersion=3;		// for Read/Write format
 

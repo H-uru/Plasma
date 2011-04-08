@@ -26,35 +26,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAutoProfile.h"
 
 #include "plgDispatch.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetClient/plNetLinkingMgr.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetLinkingMgr.h"
 
 #include "hsStream.h"
 #include "hsTimer.h"
-#include "../plMessage/plAgeLoadedMsg.h"
-#include "../pnTimer/plTimerCallbackManager.h"
-#include "../plMessage/plTimerCallbackMsg.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../plModifier/plSpawnModifier.h"
-#include "../plMessage/plConsoleMsg.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../plAgeLoader/plAgeLoader.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "pnTimer/plTimerCallbackManager.h"
+#include "plMessage/plTimerCallbackMsg.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plModifier/plSpawnModifier.h"
+#include "plMessage/plConsoleMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "plAgeLoader/plAgeLoader.h"
 #include "plProfileManagerFull.h"
-#include "../plFile/plFileUtils.h"
+#include "plFile/plFileUtils.h"
 
-#include "../plPipeline/plDebugText.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "plPipeline/plDebugText.h"
+#include "pnMessage/plTimeMsg.h"
 
-#include "../plStatusLog/plStatusLog.h"
-#include "../plVault/plVault.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plVault/plVault.h"
 
-#include "../plContainer/plConfigInfo.h" // for plStringList
+#include "plContainer/plConfigInfo.h" // for plStringList
 
 // For taking screenshots
-#include "../plGImage/plMipmap.h"
-#include "../Apps/plClient/plClient.h"
-#include "../plJPEG/plJPEG.h"
+#include "plGImage/plMipmap.h"
+#include "../../Apps/plClient/plClient.h"
+#include "plJPEG/plJPEG.h"
 #include "plPipeline.h"
 
 #include <algorithm>

@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLayerAnimation_inc
 
 #include "plLayerInterface.h"
-#include "../plInterp/plAnimTimeConvert.h"
+#include "plInterp/plAnimTimeConvert.h"
 
 class plMessage;
 class plController;

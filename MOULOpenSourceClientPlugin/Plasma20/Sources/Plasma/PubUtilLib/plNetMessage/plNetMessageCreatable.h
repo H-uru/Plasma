@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // kept separate for a reason
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 #include "plNetMessage.h"
 
 // NON CREATABLES

@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
-#include "../../NucleusLib/pnModifier/plModifier.h"
-#include "../pnNetCommon/plSynchedValue.h"
-#include "../CoreLib/hsColorRGBA.h"
-#include "../CoreLib/hsMatrix44.h"
+#include "pnModifier/plModifier.h"
+#include "pnNetCommon/plSynchedValue.h"
+#include "hsColorRGBA.h"
+#include "hsMatrix44.h"
 #include "plEffectTargetInfo.h"
 
 class plPipeline;

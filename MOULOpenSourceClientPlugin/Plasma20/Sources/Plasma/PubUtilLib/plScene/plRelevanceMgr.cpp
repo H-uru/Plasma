@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plRelevanceMgr.h"
 #include "plRelevanceRegion.h"
-#include "../plIntersect/plRegionBase.h"
+#include "plIntersect/plRegionBase.h"
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
 

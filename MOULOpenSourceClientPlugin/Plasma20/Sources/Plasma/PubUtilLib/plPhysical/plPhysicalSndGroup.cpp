@@ -35,9 +35,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsResMgr.h"
 #include "plPhysicalSndGroup.h"
-#include "../plAudio/plSound.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../plMessage/plAnimCmdMsg.h"
+#include "plAudio/plSound.h"
+#include "pnMessage/plRefMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
 
 
 plPhysicalSndGroup::plPhysicalSndGroup() : fPlayingSlideSound(false)

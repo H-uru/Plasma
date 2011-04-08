@@ -23,34 +23,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../plAvatar/plAvCallbackAction.h"
+#include "plAvatar/plAvCallbackAction.h"
 
 #include "hsTypes.h"
 #include "plCollisionDetector.h"
-#include "../plMessage/plCollideMsg.h"
+#include "plMessage/plCollideMsg.h"
 #include "plgDispatch.h"
-#include "../plMessage/plActivatorMsg.h"
-#include "../pnMessage/plCameraMsg.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../plMessage/plInputIfaceMgrMsg.h"
-#include "../pnInputCore/plControlEventCodes.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../plNetClient/plNetLinkingMgr.h"
+#include "plMessage/plActivatorMsg.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
+#include "pnInputCore/plControlEventCodes.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plNetClient/plNetLinkingMgr.h"
 
 #include "plPhysical.h"
 
-#include "../pnMessage/plPlayerPageMsg.h"
-#include "../plMessage/plSimStateMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "plMessage/plSimStateMsg.h"
 
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../plAvatar/plAvBrainDrive.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plAvatar/plAvBrainDrive.h"
 
-#include "../plModifier/plDetectorLog.h"
+#include "plModifier/plDetectorLog.h"
 
 #define USE_PHYSX_MULTIPLE_CAMREGION_ENTER 1
 #define USE_PHYSX_COLLISION_FLUTTER_WORKAROUND 1

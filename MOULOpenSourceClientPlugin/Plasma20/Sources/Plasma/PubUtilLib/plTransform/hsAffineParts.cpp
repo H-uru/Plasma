@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsAffineParts.h"
-#include "../plInterp/hsInterp.h"
+#include "plInterp/hsInterp.h"
 #include "hsStream.h"
 
 #include "plProfile.h"

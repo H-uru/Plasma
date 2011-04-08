@@ -30,15 +30,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSceneNode.h"
 #include "plRenderRequest.h"
 
-#include "../plPipeline/plRenderTarget.h"
+#include "plPipeline/plRenderTarget.h"
 
-#include "../plMessage/plRenderRequestMsg.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../plMessage/plRenderMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plRenderMsg.h"
 
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 #include "plDrawable.h"
 #include "plPipeline.h"
 #include "plgDispatch.h"

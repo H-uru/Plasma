@@ -25,13 +25,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPhysicalProxy.h"
 #include "plPhysical.h"
-#include "../plPhysX/plPXPhysicalControllerCore.h"
-#include "../plDrawable/plDrawableSpans.h"
-#include "../plDrawable/plDrawableGenerator.h"
-#include "../pnMessage/plProxyDrawMsg.h"
+#include "plPhysX/plPXPhysicalControllerCore.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "pnMessage/plProxyDrawMsg.h"
 
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayer.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayer.h"
 
 plPhysicalProxy::plPhysicalProxy()
 :	plProxyGen(hsColorRGBA().Set(0,0,0,1.f), hsColorRGBA().Set(1.f,0.8f,0.2f,1.f), 0.5f),

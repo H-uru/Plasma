@@ -26,12 +26,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plLayerInterface.h"
-#include "../plMessage/plLayRefMsg.h"
+#include "plMessage/plLayRefMsg.h"
 #include "plLayer.h"
 #include "hsMatrix44.h"
 #include "hsGMatState.h"
 #include "hsResMgr.h"
-#include "../pnNetCommon/plSDLTypes.h"
+#include "pnNetCommon/plSDLTypes.h"
 
 plLayerInterface::plLayerInterface() 
 :	fUnderLay(nil),

@@ -32,8 +32,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plVisMgr.h"
 
-#include "../pnMessage/plEnableMsg.h"
-#include "../plIntersect/plRegionBase.h"
+#include "pnMessage/plEnableMsg.h"
+#include "plIntersect/plRegionBase.h"
 
 plVisRegion::plVisRegion()
 :	fIndex(0),

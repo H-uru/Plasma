@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsStream.h"
 #include "plSDL.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetApp.h"
 
 const UInt8 plStateDescriptor::kVersion=1;		// for Read/Write format
 

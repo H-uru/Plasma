@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plVersion.h"
-#include "../pnFactory/plFactory.h"
+#include "pnFactory/plFactory.h"
 #include <vector>
 
 #include "plCreatableIndex.h"

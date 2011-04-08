@@ -27,31 +27,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plSceneNode.h"
-#include "../pnDispatch/plDispatch.h"
-#include "../plMessage/plNodeCleanupMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
+#include "pnDispatch/plDispatch.h"
+#include "plMessage/plNodeCleanupMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
 
 #include "hsStream.h"
 #include "hsResMgr.h"
 
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 #include "plDrawable.h"
 #include "plPhysical.h"
 #include "plAudible.h"
-#include "../plGLight/plLightInfo.h"
-#include "../pnMessage/plRefMsg.h"
+#include "plGLight/plLightInfo.h"
+#include "pnMessage/plRefMsg.h"
 #include "plPipeline.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../plDrawable/plSpaceTreeMaker.h"
-#include "../plDrawable/plSpaceTree.h"
+#include "pnKeyedObject/plKey.h"
+#include "plDrawable/plSpaceTreeMaker.h"
+#include "plDrawable/plSpaceTree.h"
 #include "plPageTreeMgr.h"
 #include "plOccluder.h"
 
 //MFHORSE
 //BLACK
 // temp hack for debugging
-#include "../plDrawable/plDrawableSpans.h"
-#include "../pnKeyedObject/plKeyImp.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "pnKeyedObject/plKeyImp.h"
 
 plSceneNode::plSceneNode()
 :	fDepth(0),

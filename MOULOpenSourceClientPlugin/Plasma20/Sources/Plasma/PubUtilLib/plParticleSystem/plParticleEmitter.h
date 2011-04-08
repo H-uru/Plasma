@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 #include "hsBounds.h"
-#include "../pnNetCommon/plSynchedValue.h"
-#include "../CoreLib/hsColorRGBA.h"
+#include "pnNetCommon/plSynchedValue.h"
+#include "hsColorRGBA.h"
 
 class hsBounds3Ext;
 class plParticleSystem;

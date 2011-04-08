@@ -24,8 +24,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plSDL.h"
-#include "../pnMessage/plSDLNotificationMsg.h"
-#include "algorithm"
+#include "pnMessage/plSDLNotificationMsg.h"
+#include <algorithm>
 
 // static 
 UInt32 plStateChangeNotifier::fCurrentPlayerID = 0;

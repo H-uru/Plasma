@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plRelevanceRegion.h"
 #include "plRelevanceMgr.h"
-#include "../plIntersect/plRegionBase.h"
+#include "plIntersect/plRegionBase.h"
 
 void plRelevanceRegion::Read(hsStream* s, hsResMgr* mgr)
 {

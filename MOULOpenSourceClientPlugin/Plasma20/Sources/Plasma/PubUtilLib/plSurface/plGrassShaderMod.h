@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLGRASSSHADERMOD_INC
 #define PLGRASSSHADERMOD_INC
 
-#include "../pnModifier/plModifier.h"
+#include "pnModifier/plModifier.h"
 
 class plSceneObject;
 class hsGMaterial;
