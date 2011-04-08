@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 	if we don't keep them with class headers, which tend to be more volatile.
 */
 
-#include "../CoreLib/hsGeometry3.h"			// for the hsVector3, below
+#include "hsGeometry3.h"			// for the hsVector3, below
 
 
 // animation alignment types (used by "calcanimalignment")

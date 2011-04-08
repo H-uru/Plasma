@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInstanceDrawInterface_inc
 #define plInstanceDrawInterface_inc
 
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
 
 class plDrawableSpans;
 class plSharedMesh;

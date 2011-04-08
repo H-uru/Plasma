@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plZlibStream.h"
-#include "zlib.h"
+#include <zlib.h>
 
 voidpf ZlibAlloc(voidpf opaque, uInt items, uInt size)
 {

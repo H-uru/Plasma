@@ -28,9 +28,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStlUtils.h"
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnNetBase/pnNetBase.h"
-#include "../plEncryption/plChecksum.h"
+#include "pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
+#include "plEncryption/plChecksum.h"
 
 
 class plManifest;

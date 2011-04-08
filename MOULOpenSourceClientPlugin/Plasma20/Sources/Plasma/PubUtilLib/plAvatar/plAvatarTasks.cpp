@@ -45,22 +45,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // other
 #include "plgDispatch.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../plMessage/plOneShotCallbacks.h"
-#include "../plMessage/plConsoleMsg.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plPipeline/plDebugText.h"
-#include "../plInputCore/plInputInterfaceMgr.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetCommon/plNetCommon.h"
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../pfMessage/pfKIMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plOneShotCallbacks.h"
+#include "plMessage/plConsoleMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plPipeline/plDebugText.h"
+#include "plInputCore/plInputInterfaceMgr.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "pfMessage/pfKIMsg.h"
 
 // for console hack
 hsBool plAvOneShotTask::fForce3rdPerson = true;
-#include "../pnMessage/plCameraMsg.h"
+#include "pnMessage/plCameraMsg.h"
 
 /////////////
 //

@@ -27,11 +27,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPointChannel.h"
 #include "plMatrixChannel.h"
 
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plAudioInterface.h"
-#include "../plInterp/plAnimTimeConvert.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "plInterp/plAnimTimeConvert.h"
 
 #include "hsMatrix44.h"
 

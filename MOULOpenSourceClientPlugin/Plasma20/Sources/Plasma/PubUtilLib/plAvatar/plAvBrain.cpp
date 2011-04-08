@@ -35,11 +35,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsQuat.h"
 
 // other
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plPipeline/plDebugText.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plPipeline/plDebugText.h"
 
 // messages
-#include "../plMessage/plAvatarMsg.h"
+#include "plMessage/plAvatarMsg.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////

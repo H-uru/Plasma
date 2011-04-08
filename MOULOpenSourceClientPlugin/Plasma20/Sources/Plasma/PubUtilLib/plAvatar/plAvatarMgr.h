@@ -33,8 +33,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlSortUtils.h"
 #include "hsGeometry3.h"
 
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../plMessage/plLoadAvatarMsg.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "plMessage/plLoadAvatarMsg.h"
 
 // This is still pretty much a hack, but it's a compartmentalized hack instead of the previous
 // interwoven spaghetti hack.

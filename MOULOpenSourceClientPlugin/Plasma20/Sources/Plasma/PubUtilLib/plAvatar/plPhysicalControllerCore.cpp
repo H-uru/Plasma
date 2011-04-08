@@ -24,17 +24,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plPhysicalControllerCore.h"
-#include "../plMessage/plLOSHitMsg.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../../NucleusLib/inc/plPhysical.h"
-#include "../../NucleusLib/pnMessage/plCorrectionMsg.h"
+#include "plMessage/plLOSHitMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plPhysical.h"
+#include "pnMessage/plCorrectionMsg.h"
 #include "plSwimRegion.h"
 #include "plArmatureMod.h" // for LOS enum type
 #include "plMatrixChannel.h"
 #include "hsTimer.h"
-#include "../plPhysx/plSimulationMgr.h"
-#include "../plPhysx/plPXPhysical.h"
-#include "../pnMessage/plSetNetGroupIDMsg.h"
+#include "plPhysx/plSimulationMgr.h"
+#include "plPhysx/plPXPhysical.h"
+#include "pnMessage/plSetNetGroupIDMsg.h"
 #define kSWIMRADIUS 1.1f
 #define kSWIMHEIGHT 2.8f
 #define kGENERICCONTROLLERRADIUS 1.1f

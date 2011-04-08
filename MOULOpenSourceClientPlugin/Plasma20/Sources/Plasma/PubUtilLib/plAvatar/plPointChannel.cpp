@@ -27,13 +27,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScalarChannel.h"
 #include "hsResMgr.h"
 
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plAudioInterface.h"
-#include "../plInterp/plController.h"
-#include "../plInterp/plAnimTimeConvert.h"
-#include "../plGLight/plLightInfo.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "plInterp/plController.h"
+#include "plInterp/plAnimTimeConvert.h"
+#include "plGLight/plLightInfo.h"
 
 //////////////
 // PLPOINTSRCE

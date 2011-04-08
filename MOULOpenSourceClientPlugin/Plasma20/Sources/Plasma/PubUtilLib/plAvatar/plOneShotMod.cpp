@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 // other
-#include "../plMessage/plAvatarMsg.h"
+#include "plMessage/plAvatarMsg.h"
 
 // CTOR()
 plOneShotMod::plOneShotMod()

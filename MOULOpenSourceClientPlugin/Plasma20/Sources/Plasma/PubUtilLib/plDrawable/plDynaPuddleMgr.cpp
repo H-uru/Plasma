@@ -34,10 +34,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 
-#include "../plMessage/plAvatarFootMsg.h"
+#include "plMessage/plAvatarFootMsg.h"
 
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plAvatar/plArmatureMod.h"
 
 static const UInt32 kNumPrintIDs = 2;
 static const UInt32 kPrintIDs[kNumPrintIDs] =

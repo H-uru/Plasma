@@ -26,9 +26,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAVATARCLOTHING_INC
 #define PLAVATARCLOTHING_INC
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnNetCommon/plSynchedObject.h"
-#include "../CoreLib/hsColorRGBA.h"
+#include "pnUtils/pnUtils.h"
+#include "pnNetCommon/plSynchedObject.h"
+#include "hsColorRGBA.h"
 #include "hsBitVector.h"
 #include "plClothingLayout.h"
 

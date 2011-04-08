@@ -47,14 +47,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 // other
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plAudioInterface.h"
-#include "../plInterp/plController.h"
-#include "../plInterp/plAnimTimeConvert.h"
-#include "../plInterp/hsInterp.h"
-#include "../plTransform/hsAffineParts.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "plInterp/plController.h"
+#include "plInterp/plAnimTimeConvert.h"
+#include "plInterp/hsInterp.h"
+#include "plTransform/hsAffineParts.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //

@@ -27,9 +27,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMorphSequence.h"
 #include "plSharedMesh.h"
 #include "hsResMgr.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plSDLModifierMsg.h"
-#include "../plSDL/plSDL.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plSDLModifierMsg.h"
+#include "plSDL/plSDL.h"
 
 // static vars
 char plMorphSequenceSDLMod::kStrMorphArrayDescName[]="MorphArray";

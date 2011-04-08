@@ -37,10 +37,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 // other
-#include "../plGLight/plLightInfo.h"
-#include "../plInterp/plController.h"
-#include "../plInterp/plAnimTimeConvert.h"
-#include "../plSDL/plSDL.h"
+#include "plGLight/plLightInfo.h"
+#include "plInterp/plController.h"
+#include "plInterp/plAnimTimeConvert.h"
+#include "plSDL/plSDL.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////////////

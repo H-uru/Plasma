@@ -32,8 +32,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#include "../pnModifier/plSingleModifier.h"	// base class
-#include "../pnKeyedobject/plKey.h"			// for the notification keys
+#include "pnModifier/plSingleModifier.h"	// base class
+#include "pnKeyedobject/plKey.h"			// for the notification keys
 #include "hsTemplates.h"					// for the array they're kept in
 
 /////////////////////////////////////////////////////////////////////////////////////////

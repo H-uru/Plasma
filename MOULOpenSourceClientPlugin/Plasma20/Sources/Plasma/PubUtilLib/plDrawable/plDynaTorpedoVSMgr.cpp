@@ -31,13 +31,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWaveSetBase.h"
 #include "plRipVSConsts.h"
 
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 #include "hsStream.h"
 #include "hsResMgr.h"
 
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 
 plDynaTorpedoVSMgr::plDynaTorpedoVSMgr()
 :	fWaveSetBase(nil)

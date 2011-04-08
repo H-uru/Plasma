@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSHAREDMESH_INC
 #define PLSHAREDMESH_INC
 
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnMessage/plMessage.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnMessage/plMessage.h"
 
 class plGeometrySpan;
 class plDrawableSpans;

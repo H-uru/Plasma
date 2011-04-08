@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 // other
-#include "../plMessage/plAnimCmdMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //

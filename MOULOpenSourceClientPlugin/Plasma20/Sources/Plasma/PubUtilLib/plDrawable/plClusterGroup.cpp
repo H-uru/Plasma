@@ -30,14 +30,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSpanTemplate.h"
 #include "plCluster.h"
 
-#include "../pnMessage/plTimeMsg.h"
+#include "pnMessage/plTimeMsg.h"
 
-#include "../plScene/plVisMgr.h"
-#include "../plScene/plVisRegion.h"
+#include "plScene/plVisMgr.h"
+#include "plScene/plVisRegion.h"
 
-#include "../plSurface/hsGMaterial.h"
+#include "plSurface/hsGMaterial.h"
 
-#include "../plGLight/plLightInfo.h"
+#include "plGLight/plLightInfo.h"
 
 #include "plDrawableSpans.h"
 
@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //STUB
 #include "plgDispatch.h"
-#include "../plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
 
 plClusterGroup::plClusterGroup()
 :	fSceneNode(nil),

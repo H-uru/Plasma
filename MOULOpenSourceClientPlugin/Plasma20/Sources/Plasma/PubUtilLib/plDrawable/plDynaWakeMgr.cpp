@@ -38,17 +38,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include "../plMessage/plDynaDecalEnableMsg.h"
-#include "../plMessage/plRippleShapeMsg.h"
+#include "plMessage/plDynaDecalEnableMsg.h"
+#include "plMessage/plRippleShapeMsg.h"
 
-#include "../plMessage/plAvatarMsg.h"
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plAvatar/plArmatureMod.h"
 
-#include "../plInterp/plAnimPath.h"
+#include "plInterp/plAnimPath.h"
 
 #include "hsFastMath.h"
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 static plRandom sRand;
 
 

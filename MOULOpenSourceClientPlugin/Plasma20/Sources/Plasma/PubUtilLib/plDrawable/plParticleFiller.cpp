@@ -35,16 +35,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plViewTransform.h"
 
 // Getting at the destination data
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../plDrawable/plDrawableSpans.h"
-#include "../plPipeline/plGBufferGroup.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plPipeline/plGBufferGroup.h"
 
 // For shading
-#include "../plGLight/plLightInfo.h"
+#include "plGLight/plLightInfo.h"
 
 // Getting at the source data
-#include "../plParticleSystem/plParticleEmitter.h"
-#include "../plParticleSystem/plParticle.h"
+#include "plParticleSystem/plParticleEmitter.h"
+#include "plParticleSystem/plParticle.h"
 
 static hsScalar sInvDelSecs;
 

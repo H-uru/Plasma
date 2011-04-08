@@ -35,14 +35,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAccessGeometry.h"
 #include "plAccessSpan.h"
 
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
-#include "../plScene/plSceneNode.h"
-#include "../plScene/plPageTreeMgr.h"
+#include "plScene/plSceneNode.h"
+#include "plScene/plPageTreeMgr.h"
 
 // Stuff for cursor los
-#include "../plInputCore/plInputDevice.h"
+#include "plInputCore/plInputDevice.h"
 #include "plPipeline.h"
 
 

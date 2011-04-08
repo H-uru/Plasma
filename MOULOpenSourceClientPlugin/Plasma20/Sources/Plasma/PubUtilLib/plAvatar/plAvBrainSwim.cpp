@@ -55,17 +55,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalControllerCore.h"
 #include "plAvCallbackAction.h"
 // other
-#include "../plPhysical/plCollisionDetector.h"
-#include "../plPipeline/plDebugText.h"
+#include "plPhysical/plCollisionDetector.h"
+#include "plPipeline/plDebugText.h"
 
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plSwimMsg.h"
-#include "../plMessage/plLOSRequestMsg.h"
-#include "../plMessage/plLOSHitMsg.h"
-#include "../plMessage/plInputEventMsg.h"
-#include "../plMessage/plSimStateMsg.h"
-#include "../pnMessage/plCameraMsg.h"
-#include "../pfMessage/plArmatureEffectMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plSwimMsg.h"
+#include "plMessage/plLOSRequestMsg.h"
+#include "plMessage/plLOSHitMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plSimStateMsg.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pfMessage/plArmatureEffectMsg.h"
 
 class plSwimBehavior : public plArmatureBehavior
 {

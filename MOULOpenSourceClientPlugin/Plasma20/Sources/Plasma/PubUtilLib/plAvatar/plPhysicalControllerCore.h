@@ -28,9 +28,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "hsTemplates.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../plPhysical/plSimDefs.h"
-#include "../pnMessage/plMessage.h"
+#include "pnKeyedObject/plKey.h"
+#include "plPhysical/plSimDefs.h"
+#include "pnMessage/plMessage.h"
 
 #include "hsQuat.h"
 #define PHYSX_ONLY_TRIGGER_FROM_KINEMATIC 1

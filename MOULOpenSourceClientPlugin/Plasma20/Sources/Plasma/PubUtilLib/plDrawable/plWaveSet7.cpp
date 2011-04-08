@@ -40,52 +40,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDynaDecal.h"
 #include "plDynaRippleVSMgr.h"
 
-#include "../plMessage/plRenderMsg.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "pnMessage/plTimeMsg.h"
 
-#include "../pnMessage/plObjRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
 
 #include "plgDispatch.h"
 #include "plPipeline.h"
 
 #include "hsResMgr.h"
 
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
 
 #include "plPhysical.h"
-#include "../plMessage/plSimInfluenceMsg.h"
+#include "plMessage/plSimInfluenceMsg.h"
 
-#include "../plSurface/hsGMaterial.h"
-#include "../plDrawable/plDrawableSpans.h"
-#include "../plDrawable/plDrawableGenerator.h"
+#include "plSurface/hsGMaterial.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plDrawableGenerator.h"
 
-#include "../plMessage/plAvatarMsg.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plAvatar/plArmatureMod.h"
 
-#include "../plGImage/plMipmap.h"
-#include "../plGImage/plCubicEnvironmap.h"
-#include "../plSurface/plLayer.h"
-#include "../plMessage/plLayRefMsg.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plCubicEnvironmap.h"
+#include "plSurface/plLayer.h"
+#include "plMessage/plLayRefMsg.h"
 
-#include "../plSurface/plShader.h"
+#include "plSurface/plShader.h"
 
-#include "../plPipeline/plRenderTarget.h"
-#include "../plScene/plRenderRequest.h"
-#include "../plMessage/plRenderRequestMsg.h"
-#include "../plScene/plPageTreeMgr.h"
+#include "plPipeline/plRenderTarget.h"
+#include "plScene/plRenderRequest.h"
+#include "plMessage/plRenderRequestMsg.h"
+#include "plScene/plPageTreeMgr.h"
 
-#include "../plPipeline/plDynamicEnvMap.h"
+#include "plPipeline/plDynamicEnvMap.h"
 
-#include "../plGImage/plBumpMapGen.h"
+#include "plGImage/plBumpMapGen.h"
 
-#include "../plMessage/plMatRefMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plMatRefMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
 
 #include "plTweak.h"
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-#include "../plStatusLog/plStatusLog.h"
-#include "../plPipeline/plPlates.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plPipeline/plPlates.h"
 #endif // PLASMA_EXTERNAL_RELEASE
 
 using namespace plShaderID;

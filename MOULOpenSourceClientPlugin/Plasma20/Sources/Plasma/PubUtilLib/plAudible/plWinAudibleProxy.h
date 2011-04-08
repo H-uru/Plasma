@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWinAudibleProxy_inc
 #define plWinAudibleProxy_inc
 
-#include "../plDrawable/plProxyGen.h"
+#include "plDrawable/plProxyGen.h"
 
 class plWinAudible;
 

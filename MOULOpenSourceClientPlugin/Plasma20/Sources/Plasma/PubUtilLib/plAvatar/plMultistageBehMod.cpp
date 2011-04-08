@@ -36,15 +36,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 //other
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plMultistageMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plInputCore/plAvatarInputInterface.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plMultistageMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plInputCore/plAvatarInputInterface.h"
 
 #ifdef DEBUG_MULTISTAGE
 #include "plAvatarMgr.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 #endif
 
 plMultistageBehMod::plMultistageBehMod() : fStages(nil), fFreezePhys(false), fSmartSeek(false), fReverseFBControlsOnRelease(false), fNetProp(true), fNetForce(false)

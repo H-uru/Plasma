@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 
 #include "plAccessSpan.h"
 

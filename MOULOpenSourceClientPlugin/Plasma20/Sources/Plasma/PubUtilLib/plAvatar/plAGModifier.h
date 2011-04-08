@@ -32,10 +32,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLAGMODIFIER_H
 
 #include "hsTypes.h"							// need for plSingleModifier
-#include "../pnModifier/plSingleModifier.h"		// inherited
+#include "pnModifier/plSingleModifier.h"		// inherited
 
 // local
-#include "../plAvatar/plScalarChannel.h"
+#include "plAvatar/plScalarChannel.h"
 
 // stl
 #include "hsStlUtils.h"

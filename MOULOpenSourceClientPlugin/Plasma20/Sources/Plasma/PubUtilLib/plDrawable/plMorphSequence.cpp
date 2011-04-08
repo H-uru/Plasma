@@ -31,16 +31,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAccessGeometry.h"
 #include "plAccessVtxSpan.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 #include "plDrawableSpans.h"
 #include "plInstanceDrawInterface.h"
 
 #include "hsResMgr.h"
 #include "plgDispatch.h"
-#include "../plMessage/plRenderMsg.h"
+#include "plMessage/plRenderMsg.h"
 
 #include "plSharedMesh.h"
 

@@ -27,13 +27,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plActivePrintShape.h"
 
-#include "../plMessage/plRippleShapeMsg.h"
+#include "plMessage/plRippleShapeMsg.h"
 
 #include "hsStream.h"
 #include "hsResMgr.h"
 
 #include "plgDispatch.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "pnMessage/plTimeMsg.h"
 
 plActivePrintShape::plActivePrintShape()
 :	fShapeMsg(nil)
