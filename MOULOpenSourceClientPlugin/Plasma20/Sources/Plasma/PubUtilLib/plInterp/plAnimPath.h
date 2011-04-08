@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
-#include "../plTransform/hsAffineParts.h"
-#include "../pnFactory/plCreatable.h"
+#include "plTransform/hsAffineParts.h"
+#include "pnFactory/plCreatable.h"
 
 class plCompoundController;
 

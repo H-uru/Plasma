@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plModulator_inc
 #define plModulator_inc
 
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 
 struct hsMatrix44;
 struct hsPoint3;

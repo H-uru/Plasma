@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPointShadowMaster.h"
 #include "plShadowSlave.h"
 #include "plShadowCaster.h"
-#include "../plMessage/plShadowCastMsg.h"
+#include "plMessage/plShadowCastMsg.h"
 
 #include "plLightInfo.h"
 

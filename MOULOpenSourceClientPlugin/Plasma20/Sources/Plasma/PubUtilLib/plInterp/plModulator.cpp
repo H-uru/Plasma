@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plController.h"
 
-#include "../plIntersect/plVolumeIsect.h"
+#include "plIntersect/plVolumeIsect.h"
 
 plModulator::plModulator()
 :	fVolume(nil),

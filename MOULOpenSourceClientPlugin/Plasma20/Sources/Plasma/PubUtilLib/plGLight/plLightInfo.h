@@ -27,10 +27,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightInfo_inc
 #define plLightInfo_inc
 
-#include "../pnSceneObject/plObjInterface.h"
+#include "pnSceneObject/plObjInterface.h"
 #include "hsMatrix44.h"
 #include "hsColorRGBA.h"
-#include "../plIntersect/plVolumeIsect.h"
+#include "plIntersect/plVolumeIsect.h"
 #include "hsBitVector.h"
 
 class hsStream;

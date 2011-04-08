@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plBitmap_h
 #define _plBitmap_h
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 class hsResMgr;
 class plFilterMask;

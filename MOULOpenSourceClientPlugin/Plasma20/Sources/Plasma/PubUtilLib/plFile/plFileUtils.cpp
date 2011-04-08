@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStringTokenizer.h"
 #include "hsWindows.h"
 
-#include "../plUnifiedTime/plUnifiedTime.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 
 #include "plSecureStream.h" // for the default key
 

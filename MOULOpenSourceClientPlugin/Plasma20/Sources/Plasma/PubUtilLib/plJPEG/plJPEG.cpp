@@ -39,17 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsExceptions.h"
 #include "hsUtils.h"
-#include "../plGImage/plMipmap.h"
+#include "plGImage/plMipmap.h"
 
 #ifdef IJL_SDK_AVAILABLE
 #ifndef HS_BUILD_FOR_WIN32
 #error Currently the JPEG libraries don't build for anything but Win32. If you're building this on a non-Win32 platform....WHY??
 #endif
 
-#include "../../../../../StaticSDKs/Win32/IJL/include/ijl.h"
+#include <ijl.h>
 #else
-#include "jpeglib.h"
-#include "jerror.h"
+#include <jpeglib.h>
+#include <jerror.h>
 #endif
 
 //// Local Statics ////////////////////////////////////////////////////////////
