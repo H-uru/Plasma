@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "pyDniCoordinates.h"
-#include "../plVault/plDniCoordinateInfo.h"
+#include "plVault/plDniCoordinateInfo.h"
 #ifndef BUILDING_PYPLASMA
-#include "../plAvatar/plAvatarMgr.h"
+#include "plAvatar/plAvatarMgr.h"
 #include "pyVault.h"
 #endif
 

@@ -31,7 +31,7 @@ class plStateDataRecord;
 class plSimpleStateVariable;
 
 #include "hsStlUtils.h"
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 #include <python.h>
 #include "pyGlueHelpers.h"

@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyStream.h"
 
-#include "../plFile/plEncryptedStream.h"
+#include "plFile/plEncryptedStream.h"
 
 pyStream::pyStream()
 : fStream( nil )

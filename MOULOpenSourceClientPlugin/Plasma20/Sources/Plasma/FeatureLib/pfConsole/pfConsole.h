@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfConsole_h
 
 #include "hsTypes.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 
 class plPipeline;

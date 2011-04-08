@@ -58,17 +58,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeline.h"
 #include "plgDispatch.h"
-#include "../plGImage/plMipmap.h"
-#include "../plGImage/plTGAWriter.h"
-#include "../pfMessage/pfGameGUIMsg.h"
-#include "../../NucleusLib/inc/hsResMgr.h"
-#include "../pfGameGUIMgr/pfGUICtrlGenerator.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plAnimStage.h"
-#include "../plAvatar/plAvBrainGeneric.h"
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../pnKeyedObject/plFixedKey.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plTGAWriter.h"
+#include "pfMessage/pfGameGUIMsg.h"
+#include "hsResMgr.h"
+#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plAnimStage.h"
+#include "plAvatar/plAvBrainGeneric.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plMessage/plAvatarMsg.h"
+#include "pnKeyedObject/plFixedKey.h"
 
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
@@ -218,7 +218,7 @@ PF_CONSOLE_CMD( Game, SwitchDialog, "string olddlgName, string newdlgName", "Hid
 
 PF_CONSOLE_SUBGROUP( Game, GUI )
 
-#include "../pfGameGUIMgr/pfGUICtrlGenerator.h"
+#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
 
 static hsColorRGBA	sDynCtrlColor = hsColorRGBA().Set( 1, 1, 1, 1 ), sDynCtrlTextColor = hsColorRGBA().Set( 0, 0, 0, 1 );
 
@@ -259,7 +259,7 @@ PF_CONSOLE_CMD( Game_GUI, CreateDialog, "string name", "" )
 
 
 //#include "../pfKI/pfKI.h"
-#include "../pfMessage/pfKIMsg.h"
+#include "pfMessage/pfKIMsg.h"
 
 PF_CONSOLE_CMD( Game, EnterChatMode, "", "Enters in-game chat mode" )
 {
@@ -377,7 +377,7 @@ PF_CONSOLE_CMD( Game, SetChatFadeDelay, "float delayInSecs", "Sets the time in s
 	plgDispatch::MsgSend( msg );
 }
 
-#include "../plAvatar/plArmatureMod.h"
+#include "plAvatar/plArmatureMod.h"
 
 PF_CONSOLE_CMD( Game, LimitAvatarLOD, "int newLOD", "Zero is (always) highest detail; 2 is (currently) lowest." )
 {
@@ -442,7 +442,7 @@ PF_CONSOLE_CMD( Game, SetLocalClientAsAdmin, "bool enable", "Makes chat messages
 }
 #endif
 
-#include "../pfConditional/plObjectInBoxConditionalObject.h"
+#include "pfConditional/plObjectInBoxConditionalObject.h"
 
 PF_CONSOLE_CMD( Game, BreakVolumeSensors, "bool break", "reverts to old broken volume sensor logic" )
 {

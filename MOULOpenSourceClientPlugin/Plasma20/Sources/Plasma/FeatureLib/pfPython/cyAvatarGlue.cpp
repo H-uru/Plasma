@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyColor.h"
 #include "pySceneObject.h"
 
-#include "../plAvatar/plAvBrainHuman.h"
+#include "plAvatar/plAvBrainHuman.h"
 
 #include <python.h>
 

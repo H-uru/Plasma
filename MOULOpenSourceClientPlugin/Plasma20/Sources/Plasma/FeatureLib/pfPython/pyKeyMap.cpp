@@ -32,8 +32,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKeyMap.h"
 
 
-#include "../plInputCore/plInputInterfaceMgr.h"
-#include "../pnInputCore/plKeyMap.h"
+#include "plInputCore/plInputInterfaceMgr.h"
+#include "pnInputCore/plKeyMap.h"
 
 // conversion functions
 const char* pyKeyMap::ConvertVKeyToChar( UInt32 vk, UInt32 flags )

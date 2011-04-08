@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
 #include "hsBitVector.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 #include <python.h>
 #include "pyGlueHelpers.h"

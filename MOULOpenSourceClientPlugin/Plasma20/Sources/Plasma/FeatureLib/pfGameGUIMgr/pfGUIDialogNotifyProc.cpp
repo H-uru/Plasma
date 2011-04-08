@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUIListBoxMod.h"
 #include "pfGUIEditBoxMod.h"
 
-#include "../pfMessage/pfGUINotifyMsg.h"
+#include "pfMessage/pfGUINotifyMsg.h"
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"

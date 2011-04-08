@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pySDL.h"
 #include "pyAgeLinkStruct.h"
 
-#include "../plVault/plVault.h"
-#include "../plMessage/plVaultNotifyMsg.h"
+#include "plVault/plVault.h"
+#include "plMessage/plVaultNotifyMsg.h"
 #include <python.h>
 
 #ifndef BUILDING_PYPLASMA

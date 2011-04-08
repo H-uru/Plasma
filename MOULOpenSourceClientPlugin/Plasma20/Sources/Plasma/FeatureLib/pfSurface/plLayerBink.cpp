@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 
 #include "plLayerBink.h"
-#include "../plGImage/plMipmap.h"
+#include "plGImage/plMipmap.h"
 
 #ifdef BINK_SDK_AVAILABLE
 #if HS_BUILD_FOR_WIN32

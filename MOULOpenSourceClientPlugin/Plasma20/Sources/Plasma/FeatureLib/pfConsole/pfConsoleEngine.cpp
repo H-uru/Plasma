@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCmd.h"
 #include "pfConsoleContext.h"
 
-#include "../plFile/plEncryptedStream.h"
+#include "plFile/plEncryptedStream.h"
 
 
 const Int32		pfConsoleEngine::fMaxNumParams = 16;

@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVault.h"
 #endif
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
 // should only be created from C++ side
 pyVaultChronicleNode::pyVaultChronicleNode(RelVaultNode* nfsNode)

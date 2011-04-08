@@ -30,13 +30,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "pyKey.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "plgDispatch.h"
 #include "plPythonFileMod.h"
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 #include "hsResMgr.h"
 #include "pySceneObject.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 
 pyKey::pyKey()
 {

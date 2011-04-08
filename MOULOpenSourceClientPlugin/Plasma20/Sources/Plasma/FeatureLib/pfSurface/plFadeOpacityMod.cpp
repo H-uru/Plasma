@@ -29,20 +29,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFadeOpacityLay.h"
 
-#include "../plMessage/plRenderMsg.h"
-#include "../plMessage/plMatRefMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "plMessage/plMatRefMsg.h"
 
-#include "../plSurface/hsGMaterial.h"
+#include "plSurface/hsGMaterial.h"
 
-#include "../plDrawable/plVisLOSMgr.h"
-#include "../plDrawable/plAccessGeometry.h"
-#include "../plDrawable/plAccessSpan.h"
-#include "../plDrawable/plDrawableSpans.h"
+#include "plDrawable/plVisLOSMgr.h"
+#include "plDrawable/plAccessGeometry.h"
+#include "plDrawable/plAccessSpan.h"
+#include "plDrawable/plDrawableSpans.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
 
-#include "../plScene/plVisMgr.h"
+#include "plScene/plVisMgr.h"
 
 #include "plgDispatch.h"
 #include "plPipeline.h"

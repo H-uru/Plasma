@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyVaultMarkerGameNode.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
 // should only be created from C++ side
 pyVaultMarkerGameNode::pyVaultMarkerGameNode(RelVaultNode* nfsNode)

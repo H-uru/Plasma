@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plFacingConditionalObject_inc
 #define plFacingConditionalObject_inc
 
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"
+#include "pnModifier/plConditionalObject.h"
 
 class plSceneObject;
 

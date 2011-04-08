@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plFadeOpacityMod_inc
 
 #include "hsGeometry3.h"
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsTemplates.h"
 
 class plPipeline;

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plArmatureEffectMsg_inc
 #define plArmatureEffectMsg_inc
 
-#include "../pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
 
 class plArmatureEffectMsg : public plEventCallbackMsg
 {

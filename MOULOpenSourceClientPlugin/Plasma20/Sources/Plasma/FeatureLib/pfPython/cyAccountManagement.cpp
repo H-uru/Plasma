@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "cyAccountManagement.h"
 
-#include "../plNetClientComm/plNetClientComm.h"
+#include "plNetClientComm/plNetClientComm.h"
 
 bool cyAccountManagement::IsSubscriptionActive()
 {

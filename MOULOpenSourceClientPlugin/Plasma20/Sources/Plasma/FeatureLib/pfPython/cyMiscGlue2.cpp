@@ -31,9 +31,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyEnum.h"
 
 // for enums
-#include "..\plNetCommon\plNetCommon.h"
-#include "..\plResMgr\plLocalization.h"
-#include "..\plMessage\plLOSRequestMsg.h"
+#include "plNetCommon\plNetCommon.h"
+#include "plResMgr\plLocalization.h"
+#include "plMessage\plLOSRequestMsg.h"
 
 #include <python.h>
 

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyEnum.h"
 #include "pyColor.h"
 
-#include "../pfGameGUIMgr/pfGUIMultiLineEditCtrl.h"
+#include "pfGameGUIMgr/pfGUIMultiLineEditCtrl.h"
 #include <python.h>
 
 // glue functions

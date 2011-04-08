@@ -26,18 +26,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h" // TEMP, for STL warnings
 #include "pySceneObject.h"
 
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "cyAvatar.h"
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plResMgr/plResManager.h"
-#include "../pnMessage/plCameraMsg.h"
-#include "../pfCamera/plCameraModifier.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plResMgr/plResManager.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pfCamera/plCameraModifier.h"
+#include "plAvatar/plArmatureMod.h"
 #include "plPhysical.h"
-#include "../plModifier/plResponderModifier.h"
-#include "../plModifier/plLogicModifier.h"
-#include "../pfPython/plPythonFileMod.h"
+#include "plModifier/plResponderModifier.h"
+#include "plModifier/plLogicModifier.h"
+#include "pfPython/plPythonFileMod.h"
 
 #include "pyMatrix44.h"
 #include "pyKey.h"
@@ -529,7 +529,7 @@ hsBool pySceneObject::IsAvatar()
 	return false;
 }
 
-#include "../plAvatar/plAvCallbackAction.h"
+#include "plAvatar/plAvCallbackAction.h"
 
 PyObject* pySceneObject::GetAvatarVelocity()
 {
@@ -808,8 +808,8 @@ std::vector<PyObject*> pySceneObject::GetPythonMods()
 
 
 
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 void pySceneObject::Animate()
 {
@@ -922,8 +922,8 @@ void pySceneObject::FFResponder(int state)
 	}
 }
 
-#include "../pnSceneObject/plAudioInterface.h"
-#include "../NucleusLib/inc/plAudible.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "NucleusLib/inc/plAudible.h"
 
 void pySceneObject::SetSoundFilename(int index, const char* filename, bool isCompressed)
 {

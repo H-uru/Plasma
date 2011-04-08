@@ -33,8 +33,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMESCOREMGR_PFGAMESCOREMGR_H
 
 #include "hsTypes.h"
-#include "../pnNetBase/pnNetBase.h"
-#include "../pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnUtils/pnUtils.h"
 
 struct NetGameRank;
 

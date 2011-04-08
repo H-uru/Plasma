@@ -48,17 +48,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeLinkStruct.h"
 #include "pySDL.h"
 
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "cyPythonInterface.h"
 
-#include "../plVault/plVault.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetClient/plNetLinkingMgr.h"
-#include "../plNetClientComm/plNetClientComm.h"
-#include "../plMessage/plVaultNotifyMsg.h"
+#include "plVault/plVault.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetLinkingMgr.h"
+#include "plNetClientComm/plNetClientComm.h"
+#include "plMessage/plVaultNotifyMsg.h"
 
-#include "../plSDL/plSDL.h"
+#include "plSDL/plSDL.h"
 
 
 //============================================================================

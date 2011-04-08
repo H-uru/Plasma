@@ -32,28 +32,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsUtils.h"
-#include "../plResMgr/plLocalization.h"
+#include "plResMgr/plLocalization.h"
 
-#include "../plFile/hsFiles.h"
-#include "../plFile/plEncryptedStream.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plFile/hsFiles.h"
+#include "plFile/plEncryptedStream.h"
+#include "plStatusLog/plStatusLog.h"
 
 #include "pfLocalizedString.h"
 #include "pfLocalizationMgr.h"
 #include "pfLocalizationDataMgr.h"
 
-#include "expat.h"
+#include <expat.h>
 
 #include <stack>
 
 #if HS_BUILD_FOR_MAC
 #include <bxwchar.h>
 #endif
-
-// Add ..\..\..\..\..\StaticSDKs\XPlatform\expat-1.95.7\StaticLibs\Win32 to your
-// lib include path if you include this file.
-#pragma comment(lib, "libexpatwMT.lib")
-
 
 //////////////////////////////////////////////////////////////////////
 //

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "hsBitVector.h"
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 
 cyDraw::cyDraw(plKey sender, plKey recvr)
 {

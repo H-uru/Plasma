@@ -32,8 +32,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyColor.h"
 #include "cyPythonInterface.h"
 
-#include "../pfGameGUIMgr/pfGameGUIMgr.h"
-#include "../pfGameGUIMgr/pfGUIPopUpMenu.h"
+#include "pfGameGUIMgr/pfGameGUIMgr.h"
+#include "pfGameGUIMgr/pfGUIPopUpMenu.h"
 
 #include "pyGUIPopUpMenu.h"
 
@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGUIControlDynamicText.h"
 #include "pyGUIControlMultiLineEdit.h"
 
-#include "../pfGameGUIMgr/pfGUIControlHandlers.h"
+#include "pfGameGUIMgr/pfGUIControlHandlers.h"
 
 #define kGetMenuPtr( ret ) if( fGCkey == nil ) return ret; \
 			pfGUIPopUpMenu *menu = pfGUIPopUpMenu::ConvertNoRef( fGCkey->ObjectIsLoaded() ); \

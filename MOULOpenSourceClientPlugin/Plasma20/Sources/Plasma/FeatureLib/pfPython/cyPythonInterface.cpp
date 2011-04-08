@@ -78,8 +78,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPythonSDLModifier.h"
 
 // For printing to the log
-#include "../plStatusLog/plStatusLog.h"
-#include "../plNetGameLib/plNetGameLib.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plNetGameLib/plNetGameLib.h"
 
 // vault
 #include "pyVaultNode.h"

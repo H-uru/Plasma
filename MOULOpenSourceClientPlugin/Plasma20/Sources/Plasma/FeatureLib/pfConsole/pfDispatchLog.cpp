@@ -25,9 +25,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTimer.h"
 #include "pfDispatchLog.h"
-#include "../plStatusLog/plStatusLog.h"
-#include "../pnMessage/plMessage.h"
-#include "../pnKeyedObject/plKey.h"
+#include "plStatusLog/plStatusLog.h"
+#include "pnMessage/plMessage.h"
+#include "pnKeyedObject/plKey.h"
 #include "hsWindows.h"
 
 bool DumpSpecificMsgInfo(plMessage* msg, std::string& info);
@@ -171,11 +171,11 @@ void plDispatchLog::RemoveFilterExactType(UInt16 type)
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-#include "../pnMessage/plClientMsg.h"
-#include "../pfMessage/pfKIMsg.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plResMgr/plPageInfo.h"
+#include "pnMessage/plClientMsg.h"
+#include "pfMessage/pfKIMsg.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plResMgr/plPageInfo.h"
 
 static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
 {

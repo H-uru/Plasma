@@ -29,8 +29,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pySceneObject.h"
 #include "pyAgeInfoStruct.h"
 #include "pyGeometry3.h"
-#include "../NucleusLib/inc/plPipeline.h"
-#include "../pnNetBase/pnNetBase.h"
+#include "NucleusLib/inc/plPipeline.h"
+#include "pnNetBase/pnNetBase.h"
 
 #include <python.h>
 

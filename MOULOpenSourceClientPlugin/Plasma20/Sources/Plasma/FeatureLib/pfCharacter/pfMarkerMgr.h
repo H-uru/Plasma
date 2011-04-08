@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfMarkerMgr_h_inc
 #define pfMarkerMgr_h_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include <map>
 
 class plStatusLog;

@@ -25,12 +25,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plAnimationEventConditionalObject.h"
-#include "../pnInputCore/plKeyDef.h"
-#include "../plModifier/plSimpleModifier.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
+#include "pnInputCore/plKeyDef.h"
+#include "plModifier/plSimpleModifier.h"
+#include "pnModifier/plLogicModBase.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-#include "../plMessage/plAnimCmdMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
 
 plAnimationEventConditionalObject::plAnimationEventConditionalObject(plKey pTargetModifier) :
 fTarget(pTargetModifier),

@@ -27,9 +27,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "pfCameraProxy.h"
 #include "plVirtualCamNeu.h"
-#include "../plDrawable/plDrawableGenerator.h"
-#include "../pnMessage/plProxyDrawMsg.h"
-#include "../plScene/plSceneNode.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "pnMessage/plProxyDrawMsg.h"
+#include "plScene/plSceneNode.h"
 
 plCameraProxy::plCameraProxy()
 :	plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.2f),

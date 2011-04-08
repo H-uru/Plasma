@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfDispatchLog_inc
 #define pfDispatchLog_inc
 
-#include "../pnDispatch/plDispatchLogBase.h"
+#include "pnDispatch/plDispatchLogBase.h"
 #include "hsBitVector.h"
 
 class plStatusLog;

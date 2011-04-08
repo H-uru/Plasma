@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_FEATURELIB_PFSECUREPRELOADER_PFSECUREPRELOADERCREATABLE_H
 #define PLASMA20_SOURCES_PLASMA_FEATURELIB_PFSECUREPRELOADER_PFSECUREPRELOADERCREATABLE_H
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "pfSecurePreloader.h"
 REGISTER_NONCREATABLE(pfSecurePreloader);

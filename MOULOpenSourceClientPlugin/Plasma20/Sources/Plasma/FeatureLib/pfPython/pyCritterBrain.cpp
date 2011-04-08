@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyCritterBrain.h"
 #include "pyGeometry3.h"
 
-#include "..\plAvatar\plAvBrainCritter.h"
+#include "plAvatar/plAvBrainCritter.h"
 
 pyCritterBrain::pyCritterBrain(): fBrain(nil) {}
 

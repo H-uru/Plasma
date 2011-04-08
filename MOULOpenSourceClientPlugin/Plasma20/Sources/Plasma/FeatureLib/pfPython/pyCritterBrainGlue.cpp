@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyEnum.h"
 #include "pyGeometry3.h"
 
-#include "..\plMessage\plAIMsg.h"
+#include "plMessage/plAIMsg.h"
 
 #include <python.h>
 

@@ -37,123 +37,123 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCmd.h"
 #include "plgDispatch.h"
 
-#include "../plAgeLoader/plAgeLoader.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plPipeline/plDebugText.h"
-#include "../plPipeline/plPipeDebugFlags.h"
-#include "../plMessage/plMovieMsg.h"
-#include "../plDrawable/plDrawableSpans.h"
+#include "plAgeLoader/plAgeLoader.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plPipeline/plDebugText.h"
+#include "plPipeline/plPipeDebugFlags.h"
+#include "plMessage/plMovieMsg.h"
+#include "plDrawable/plDrawableSpans.h"
 #include "plPipeline.h"
-#include "../pfCamera/plCameraModifier.h"
-#include "../pfCamera/plVirtualCamNeu.h"
-#include "../pfCamera/plCameraBrain.h"
-#include "../plResMgr/plResManager.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plKeyImp.h"
-#include "../pnModifier/plLogicModBase.h"
-#include "../plModifier/plSDLModifier.h"
-#include "../plSDL/plSDL.h"
-#include "../pfCharacter/plPlayerModifier.h"
-#include "../plSurface/plLayerDepth.h"
-#include "../plSurface/plLayerOr.h"
-#include "../plSurface/plLayerOr.h"
-#include "../plAudio/plAudioSystem.h"
-#include "../plAudio/plVoiceChat.h"
-#include "../plAudio/plWinMicLevel.h"
-#include "../plPipeline/plFogEnvironment.h"
-#include "../plPipeline/plPlates.h"
-#include "../plPipeline/plDynamicEnvMap.h"
-#include "../../NucleusLib/inc/hsTimer.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../pnMessage/plEnableMsg.h"
-#include "../pnMessage/plAudioSysMsg.h"
-#include "../plMessage/plListenerMsg.h"
-#include "../pfAudio/plListener.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plOneShotMsg.h"
-#include "../plVault/plVault.h"
+#include "pfCamera/plCameraModifier.h"
+#include "pfCamera/plVirtualCamNeu.h"
+#include "pfCamera/plCameraBrain.h"
+#include "plResMgr/plResManager.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnModifier/plLogicModBase.h"
+#include "plModifier/plSDLModifier.h"
+#include "plSDL/plSDL.h"
+#include "pfCharacter/plPlayerModifier.h"
+#include "plSurface/plLayerDepth.h"
+#include "plSurface/plLayerOr.h"
+#include "plSurface/plLayerOr.h"
+#include "plAudio/plAudioSystem.h"
+#include "plAudio/plVoiceChat.h"
+#include "plAudio/plWinMicLevel.h"
+#include "plPipeline/plFogEnvironment.h"
+#include "plPipeline/plPlates.h"
+#include "plPipeline/plDynamicEnvMap.h"
+#include "hsTimer.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plAudioSysMsg.h"
+#include "plMessage/plListenerMsg.h"
+#include "pfAudio/plListener.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plOneShotMsg.h"
+#include "plVault/plVault.h"
 #include "../../Apps/plClient/plClient.h"
 #include "pfConsole.h"
 #include "pfConsoleContext.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plModifier/plSimpleModifier.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plAvatarTasks.h"
-#include "../plAvatar/plAvBrainGeneric.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plModifier/plSimpleModifier.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plAvatarTasks.h"
+#include "plAvatar/plAvBrainGeneric.h"
 //#include "../plHavok1/plSimulationMgr.h"
 
-#include "../plMessage/plConsoleMsg.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../pnMessage/plCameraMsg.h"
-#include "../pnMessage/plSoundMsg.h"
-#include "../pnMessage/plEventCallbackMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pfAnimation/plAnimDebugList.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plSoundMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pfAnimation/plAnimDebugList.h"
 
-#include "../pnMessage/plNodeChangeMsg.h"
-#include "../pnMessage/plProxyDrawMsg.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plAttachMsg.h"
-#include "../plMessage/plSimInfluenceMsg.h"
-#include "../plMessage/plSimStateMsg.h"
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../pfMessage/pfKIMsg.h"
+#include "pnMessage/plNodeChangeMsg.h"
+#include "pnMessage/plProxyDrawMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plAttachMsg.h"
+#include "plMessage/plSimInfluenceMsg.h"
+#include "plMessage/plSimStateMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "pfMessage/pfKIMsg.h"
 
-#include "../plInputCore/plInputInterfaceMgr.h"
-#include "../plInputCore/plInputManager.h"
-#include "../plInputCore/plInputDevice.h"
-#include "../plInputCore/plAvatarInputInterface.h"
-#include "../plMessage/plInputEventMsg.h"
-#include "../pnInputCore/plKeyMap.h"
+#include "plInputCore/plInputInterfaceMgr.h"
+#include "plInputCore/plInputManager.h"
+#include "plInputCore/plInputDevice.h"
+#include "plInputCore/plAvatarInputInterface.h"
+#include "plMessage/plInputEventMsg.h"
+#include "pnInputCore/plKeyMap.h"
 
-#include "../plParticleSystem/plParticleSystem.h"
-#include "../plParticleSystem/plConvexVolume.h"
-#include "../plParticleSystem/plParticleEffect.h"
-#include "../plParticleSystem/plParticleGenerator.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plScene/plSceneNode.h"
-#include "../plScene/plPageTreeMgr.h"
-#include "../plScene/plPostEffectMod.h"
-#include "../pnMessage/plNodeRefMsg.h"
+#include "plParticleSystem/plParticleSystem.h"
+#include "plParticleSystem/plConvexVolume.h"
+#include "plParticleSystem/plParticleEffect.h"
+#include "plParticleSystem/plParticleGenerator.h"
+#include "plSurface/hsGMaterial.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plScene/plSceneNode.h"
+#include "plScene/plPageTreeMgr.h"
+#include "plScene/plPostEffectMod.h"
+#include "pnMessage/plNodeRefMsg.h"
 //#include "../pnMessage/plWarpMsg.h"
 #include "hsResMgr.h"
 
-#include "../plParticleSystem/plParticleSystem.h"
-#include "../plMessage/plParticleUpdateMsg.h"
+#include "plParticleSystem/plParticleSystem.h"
+#include "plMessage/plParticleUpdateMsg.h"
 
-#include "../plDrawable/plDynaBulletMgr.h"
+#include "plDrawable/plDynaBulletMgr.h"
 
-#include "../plGImage/plMipmap.h"
-#include "../plGImage/plTGAWriter.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plTGAWriter.h"
 
-#include "../plGLight/plShadowCaster.h"
-#include "../plGLight/plShadowMaster.h"
+#include "plGLight/plShadowCaster.h"
+#include "plGLight/plShadowMaster.h"
 
 // begin for agedefn test
 #include "hsStream.h"
-#include "../plAgeDescription/plAgeDescription.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
+#include "plAgeDescription/plAgeDescription.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 //end for agedefn test
 
-#include "../../PubUtilLib/plFile/hsFiles.h"
-#include "../../NucleusLib/pnSceneObject/plAudioInterface.h"
+#include "plFile/hsFiles.h"
+#include "pnSceneObject/plAudioInterface.h"
 
-#include "../plStatusLog/plStatusLog.h"
-#include "../pnTimer/pnBuildDates.h"
+#include "plStatusLog/plStatusLog.h"
+#include "pnTimer/pnBuildDates.h"
 
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
-#include "../Corelib/hsUtils.h"
+#include "hsUtils.h"
 
-#include "../pfPython/cyPythonInterface.h"
-#include "../pfPython/plPythonSDLModifier.h"
+#include "pfPython/cyPythonInterface.h"
+#include "pfPython/plPythonSDLModifier.h"
 
-#include "../plResMgr/plResManagerHelper.h"
-#include "../plResMgr/plResMgrSettings.h"
-#include "../plResMgr/plLocalization.h"
+#include "plResMgr/plResManagerHelper.h"
+#include "plResMgr/plResMgrSettings.h"
+#include "plResMgr/plLocalization.h"
 
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
@@ -436,7 +436,7 @@ PF_CONSOLE_BASE_CMD( SampleCmd3, "int, ...", "Sample command #3" )
 
 #ifndef LIMIT_CONSOLE_COMMANDS
 
-#include "../plMessage/plTransitionMsg.h"
+#include "plMessage/plTransitionMsg.h"
 
 PF_CONSOLE_BASE_CMD( FadeIn, "float len, bool hold", "Sample command #1" )
 {
@@ -495,7 +495,7 @@ PF_CONSOLE_BASE_CMD( DumpLogs, "string folderName", "Dumps all current logs to t
 
 PF_CONSOLE_GROUP( Stats )
 
-#include "../plStatGather/plProfileManagerFull.h"
+#include "plStatGather/plProfileManagerFull.h"
 
 PF_CONSOLE_CMD( Stats, Show,	// Group name, Function name
 				"...",			// Params
@@ -625,7 +625,7 @@ PF_CONSOLE_CMD(Stats, RemoveDetailVar, "string stat", "Removes the specified var
 	plProfileManagerFull::Instance().RemoveDetailVar(params[0]);
 }
 
-#include "../plStatGather/plAutoProfile.h"
+#include "plStatGather/plAutoProfile.h"
 
 PF_CONSOLE_CMD(Stats, AutoProfile, "...", "Performs an automated profile in all the ages. Optional: Specify an age name to do just that age")
 {
@@ -1618,7 +1618,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, TakeScreenshot, "...", "Takes a shot of the c
 	}
 }
 
-#include "../pfSurface/plGrabCubeMap.h"
+#include "pfSurface/plGrabCubeMap.h"
 
 PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeMap, 
 			   "string sceneObject, string prefix", 
@@ -1652,7 +1652,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeCam,
 	grabCube.GrabCube(pfConsole::GetPipeline(), pos, pref, clearColor);
 }
 
-#include "../plJPEG/plJPEG.h"
+#include "plJPEG/plJPEG.h"
 
 PF_CONSOLE_CMD( Graphics_Renderer, TakeJPEGScreenshot, "...", "Takes a shot of the current frame and saves it to the given file" )
 {
@@ -1702,7 +1702,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, TakeJPEGScreenshot, "...", "Takes a shot of t
 	}
 }
 
-#include "../plGImage/plAVIWriter.h"
+#include "plGImage/plAVIWriter.h"
 
 PF_CONSOLE_CMD( Graphics_Renderer, AVIWrite, "...", "Saves each frame to an AVI file" )
 {
@@ -2484,7 +2484,7 @@ PF_CONSOLE_CMD( App,		// groupName
 	PrintString( str );
 }
 
-#include "../plInputCore/plSceneInputInterface.h"
+#include "plInputCore/plSceneInputInterface.h"
 
 PF_CONSOLE_CMD( App,		// groupName
 			   ShowLOS,		// fxnName
@@ -3295,7 +3295,7 @@ PF_CONSOLE_CMD(Logic, ListResponders, "", "Prints the names of the loaded respon
 	}
 }
 
-#include "../plModifier/plResponderModifier.h"
+#include "plModifier/plResponderModifier.h"
 
 PF_CONSOLE_CMD(Logic, ResponderAnimCue, "", "Toggle box being drawn on screen when a responder starts an anim")
 {
@@ -3310,7 +3310,7 @@ PF_CONSOLE_CMD(Logic, ResponderNoLog, "string prefix", "Don't log responders tha
 	plResponderModifier::NoLogString(params[0]);
 }
 
-#include "../plModifier/plDetectorLog.h"
+#include "plModifier/plDetectorLog.h"
 PF_CONSOLE_CMD(Logic, WriteDetectorLog, "", "Write detector log to logfile")
 {
 	DetectorDoLogfile();
@@ -4268,7 +4268,7 @@ PF_CONSOLE_CMD( Quality,
 	PrintString(str);
 }
 
-#include "../plSurface/plShaderTable.h"
+#include "plSurface/plShaderTable.h"
 
 PF_CONSOLE_CMD( Quality,
 					Cap,
@@ -4295,10 +4295,10 @@ PF_CONSOLE_CMD( Quality,
 
 #ifndef LIMIT_CONSOLE_COMMANDS
 
-#include "../plDrawable/plSharedMesh.h"
-#include "../plDrawable/plAccessGeometry.h"
-#include "../plDrawable/plMorphSequence.h"
-#include "../plAvatar/plAvatarClothing.h"
+#include "plDrawable/plSharedMesh.h"
+#include "plDrawable/plAccessGeometry.h"
+#include "plDrawable/plMorphSequence.h"
+#include "plAvatar/plAvatarClothing.h"
 
 PF_CONSOLE_GROUP( Access )
 
@@ -4600,7 +4600,7 @@ PF_CONSOLE_CMD( Access,
 	PrintString(str);
 }
 
-#include "../pfSurface/plFadeOpacityMod.h"
+#include "pfSurface/plFadeOpacityMod.h"
 
 PF_CONSOLE_CMD( Access,
 					Fade,
@@ -4644,7 +4644,7 @@ PF_CONSOLE_CMD( Access,
 
 }
 
-#include "../plDrawable/plVisLOSMgr.h"
+#include "plDrawable/plVisLOSMgr.h"
 
 static plSceneObject* losObj = nil;
 
@@ -4731,7 +4731,7 @@ PF_CONSOLE_CMD( Access,
 
 }
 
-#include "../plMessage/plBulletMsg.h"
+#include "plMessage/plBulletMsg.h"
 
 plSceneObject* gunObj = nil;
 hsScalar gunRadius = 1.f;
@@ -4851,8 +4851,8 @@ PF_CONSOLE_CMD( Access,
 
 #ifndef LIMIT_CONSOLE_COMMANDS
 
-#include "../plDrawable/plWaveSet7.h"
-#include "../plDrawable/plFixedWaterState7.h"
+#include "plDrawable/plWaveSet7.h"
+#include "plDrawable/plFixedWaterState7.h"
 PF_CONSOLE_GROUP( Wave )
 
 PF_CONSOLE_SUBGROUP( Wave, Set)		// Creates a sub-group under a given group
@@ -5696,7 +5696,7 @@ PF_CONSOLE_CMD( SceneObject, Detach,			// Group name, Function name
 
 #ifndef LIMIT_CONSOLE_COMMANDS
 
-#include "../plPhysX/plPXPhysicalControllerCore.h"
+#include "plPhysX/plPXPhysicalControllerCore.h"
 
 PF_CONSOLE_GROUP( Physics )
 
@@ -5932,7 +5932,7 @@ PF_CONSOLE_CMD( Physics, ClearLog, "", "Clear the physics log.")
 	plSimulationMgr::ClearLog();
 }
 */
-#include "../plPhysical/plPhysicalSDLModifier.h"
+#include "plPhysical/plPhysicalSDLModifier.h"
 
 PF_CONSOLE_CMD(Physics, LogSDL, "int level", "Turn logging of physics SDL state on or off. 0=off 1=send/receive only 2=any attempt")
 {
@@ -5940,7 +5940,7 @@ PF_CONSOLE_CMD(Physics, LogSDL, "int level", "Turn logging of physics SDL state 
 	plPhysicalSDLModifier::SetLogLevel(level);
 }
 
-#include "../plPhysX/plSimulationMgr.h"
+#include "plPhysX/plSimulationMgr.h"
 PF_CONSOLE_CMD(Physics, ExtraProfile, "", "Toggle extra simulation profiling")
 {
 	char str[256];
@@ -6709,10 +6709,10 @@ PF_CONSOLE_CMD( Animation,
 ////////////////////////////////////////////////////////////////////////
 #ifndef LIMIT_CONSOLE_COMMANDS
 
-#include "../plAvatar/plArmatureMod.h"
-#include "../plAvatar/plAvatarClothing.h"
-#include "../plAvatar/plClothingLayout.h"
-#include "../pfMessage/plClothingMsg.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarClothing.h"
+#include "plAvatar/plClothingLayout.h"
+#include "pfMessage/plClothingMsg.h"
 
 PF_CONSOLE_GROUP( Clothing ) // Defines a main command group
 
@@ -7013,7 +7013,7 @@ PF_CONSOLE_CMD( Python,							// Group name
 }
 
 
-#include "../pfPython/cyMisc.h"
+#include "pfPython/cyMisc.h"
 
 PF_CONSOLE_CMD( Python,							// Group name
 				SetLoggingLevel,				// Function name
@@ -7035,7 +7035,7 @@ PF_CONSOLE_CMD( Python,
 #endif
 
 
-#include "../pfMessage/pfBackdoorMsg.h"
+#include "pfMessage/pfBackdoorMsg.h"
 PF_CONSOLE_CMD( Python,
 			    Backdoor,
 				"string target, ...",	// Params

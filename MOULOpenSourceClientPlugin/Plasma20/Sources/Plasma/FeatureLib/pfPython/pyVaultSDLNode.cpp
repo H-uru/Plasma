@@ -32,9 +32,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultSDLNode.h"
 #include "pySDL.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
-#include "../plSDL/plSDL.h"
+#include "plSDL/plSDL.h"
 
 // should only be created from C++ side
 pyVaultSDLNode::pyVaultSDLNode(RelVaultNode* nfsNode)

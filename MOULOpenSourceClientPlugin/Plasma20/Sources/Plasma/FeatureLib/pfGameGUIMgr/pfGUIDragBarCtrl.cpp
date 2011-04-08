@@ -38,11 +38,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGameGUIMgr.h"
 #include "pfGUIDialogMod.h"
 
-#include "../plInputCore/plInputInterface.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../pfMessage/pfGameGUIMsg.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../plAvatar/plAGModifier.h"
+#include "plInputCore/plInputInterface.h"
+#include "pnMessage/plRefMsg.h"
+#include "pfMessage/pfGameGUIMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plAvatar/plAGModifier.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 

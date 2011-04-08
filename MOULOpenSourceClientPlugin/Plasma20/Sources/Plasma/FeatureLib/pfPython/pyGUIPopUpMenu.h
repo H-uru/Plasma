@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "../pfGameGUIMgr/pfGUIPopUpMenu.h"
+#include "pfGameGUIMgr/pfGUIPopUpMenu.h"
 
 #include "pyKey.h"
 

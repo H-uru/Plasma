@@ -27,13 +27,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsGeometry3.h"
 #include "plgDispatch.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../plMessage/plInterestingPing.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "plMessage/plInterestingPing.h"
 #include "hsBounds.h"
 #include "plInterestingModifier.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnKeyedObject/plKey.h"
 
 
 hsScalar plInterestingModifier::fInterestRadius		= 100.0f;

@@ -26,9 +26,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClothingMsg_inc
 #define plClothingMsg_inc
 
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "hsStream.h"
-#include "../CoreLib/hsColorRGBA.h"
+#include "hsColorRGBA.h"
 
 class hsResMgr;
 

@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "pyMarkerMgr.h"
-#include "../pfMessage/pfMarkerMsg.h"
+#include "pfMessage/pfMarkerMsg.h"
 #include "pyEnum.h"
 
 #include <python.h>

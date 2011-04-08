@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVirtualCam1_inc
 #define plVirtualCam1_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "hsMatrix44.h"
 #include "hsBitVector.h"
 

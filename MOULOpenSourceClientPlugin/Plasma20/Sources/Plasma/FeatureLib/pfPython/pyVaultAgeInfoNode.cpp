@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyNetLinkingMgr.h"
 #include "pyAgeInfoStruct.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
 // should only be created from C++ side
 pyVaultAgeInfoNode::pyVaultAgeInfoNode(RelVaultNode* nfsNode)

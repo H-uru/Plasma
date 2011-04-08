@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
-#include "../pnInputCore/plKeyMap.h"
+#include "pnInputCore/plKeyMap.h"
 
 #include <python.h>
 #include "pyGlueHelpers.h"

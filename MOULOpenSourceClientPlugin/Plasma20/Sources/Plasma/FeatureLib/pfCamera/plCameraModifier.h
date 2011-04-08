@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCameraModifier_inc
 #define plCameraModifier_inc
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
 #include "hsTemplates.h"

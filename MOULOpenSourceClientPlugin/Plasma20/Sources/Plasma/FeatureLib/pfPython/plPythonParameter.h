@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPythonParameter_h_inc
 #define plPythonParameter_h_inc
 
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 //
 //  This is the data for the parameters (or attributes) for the PythonFile components

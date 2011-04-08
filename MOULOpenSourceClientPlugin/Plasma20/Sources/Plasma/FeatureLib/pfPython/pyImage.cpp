@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyMisc.h"
 
 #ifndef BUILDING_PYPLASMA
-#include "../plGImage/plMipmap.h"
+#include "plGImage/plMipmap.h"
 #endif
 
 #ifndef BUILDING_PYPLASMA
@@ -148,7 +148,7 @@ UInt32 pyImage::GetHeight()
 	return 0;
 }
 
-#include "../plJPEG/plJPEG.h"
+#include "plJPEG/plJPEG.h"
 void pyImage::SaveAsJPEG(const wchar* fileName, UInt8 quality)
 {
 	if (quality <= 0 || quality > 100)
@@ -161,7 +161,7 @@ void pyImage::SaveAsJPEG(const wchar* fileName, UInt8 quality)
 }
 
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 PyObject* pyImage::LoadJPEGFromDisk(const wchar* filename, UInt16 width, UInt16 height)
 {
 	plMipmap* theMipmap = plJPEG::Instance().ReadFromFile(filename);

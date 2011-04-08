@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfMovieEventMsg_h_inc
 #define pfMovieEventMsg_h_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class pfMovieEventMsg : public plMessage
 {

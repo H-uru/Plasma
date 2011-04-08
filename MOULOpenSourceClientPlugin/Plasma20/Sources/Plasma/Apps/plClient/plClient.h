@@ -36,9 +36,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsUtils.h"
 #include "hsStlUtils.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../plScene/plRenderRequest.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/plUoid.h"
+#include "plScene/plRenderRequest.h"
 
 class plSceneNode;
 class plPipeline;

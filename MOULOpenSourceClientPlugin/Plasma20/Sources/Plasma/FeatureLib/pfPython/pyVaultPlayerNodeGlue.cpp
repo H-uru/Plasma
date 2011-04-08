@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultPlayerNode.h"
 #include "pyAgeInfoStruct.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 #include <python.h>
 
 // glue functions

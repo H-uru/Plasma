@@ -38,46 +38,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "pcSmallRect.h"
 #include "plgDispatch.h"
-#include "../pfGameGUIMgr/pfGUIDialogMod.h"
-#include "../pfGameGUIMgr/pfGUIControlMod.h"
-#include "../pfGameGUIMgr/pfGUICheckBoxCtrl.h"
-#include "../pfGameGUIMgr/pfGUIDialogHandlers.h"
-#include "../pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
-#include "../pfGameGUIMgr/pfGUIClickMapCtrl.h"
-#include "../pfGameGUIMgr/pfGUIButtonMod.h"
-#include "../pfGameGUIMgr/pfGUIProgressCtrl.h"
-#include "../pfGameGUIMgr/pfGUIMultiLineEditCtrl.h"
+#include "pfGameGUIMgr/pfGUIDialogMod.h"
+#include "pfGameGUIMgr/pfGUIControlMod.h"
+#include "pfGameGUIMgr/pfGUICheckBoxCtrl.h"
+#include "pfGameGUIMgr/pfGUIDialogHandlers.h"
+#include "pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
+#include "pfGameGUIMgr/pfGUIClickMapCtrl.h"
+#include "pfGameGUIMgr/pfGUIButtonMod.h"
+#include "pfGameGUIMgr/pfGUIProgressCtrl.h"
+#include "pfGameGUIMgr/pfGUIMultiLineEditCtrl.h"
 
-#include "../pfMessage/pfGUINotifyMsg.h"
-#include "../plGImage/plMipmap.h"
-#include "../plGImage/plDynamicTextMap.h"
-#include "../plPipeline/hsGDeviceRef.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../plMessage/plLayRefMsg.h"
-#include "../plMessage/plMatRefMsg.h"
-#include "../plSurface/plLayerInterface.h"
-#include "../plSurface/plLayer.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plAgeLoader/plAgeLoader.h"
-#include "../pfSurface/plLayerBink.h"
+#include "pfMessage/pfGUINotifyMsg.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plDynamicTextMap.h"
+#include "plPipeline/hsGDeviceRef.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "plMessage/plLayRefMsg.h"
+#include "plMessage/plMatRefMsg.h"
+#include "plSurface/plLayerInterface.h"
+#include "plSurface/plLayer.h"
+#include "plSurface/hsGMaterial.h"
+#include "plAgeLoader/plAgeLoader.h"
+#include "pfSurface/plLayerBink.h"
 
 // So we can do image searches in our local age
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plResMgr/plKeyFinder.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plResMgr/plKeyFinder.h"
 
 // For notify sends
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnTimer/plTimerCallbackManager.h"
-#include "../plMessage/plTimerCallbackMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnTimer/plTimerCallbackManager.h"
+#include "plMessage/plTimerCallbackMsg.h"
 
 // For custom cursors
-#include "../plInputCore/plInputInterface.h"
+#include "plInputCore/plInputInterface.h"
 
 // For measuring text
-#include "../plGImage/plFont.h"
+#include "plGImage/plFont.h"
 
 // For SFX
 #include "hsTimer.h"
@@ -2477,7 +2477,7 @@ void	pfJournalBook::IFreeSource( void )
 // image name.
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-#include "../plJPEG/plJPEG.h"
+#include "plJPEG/plJPEG.h"
 #endif
 
 plKey	pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc )

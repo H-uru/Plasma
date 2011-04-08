@@ -52,13 +52,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultSystemNode.h"
 #endif
 
-#include "../plGImage/plMipmap.h"
+#include "plGImage/plMipmap.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
 #ifndef BUILDING_PYPLASMA
-#include "../pnNetCommon/plNetApp.h"
-#include "../plNetClientComm/plNetClientComm.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plNetClientComm/plNetClientComm.h"
 #endif
 
 #include <exception>

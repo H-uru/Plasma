@@ -24,8 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "pyVaultChronicleNode.h"
-
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 #include <python.h>
 
 // glue functions

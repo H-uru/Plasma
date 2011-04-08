@@ -31,26 +31,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsole.h"
 #include "pfConsoleEngine.h"
-#include "../plPipeline/plDebugText.h"
-#include "../plInputCore/plInputDevice.h"
-#include "../plInputCore/plInputInterface.h"
-#include "../plInputCore/plInputInterfaceMgr.h"
-#include "../pnInputCore/plKeyMap.h"
-#include "../pnInputCore/plKeyDef.h"
-#include "../plMessage/plInputEventMsg.h"
-#include "../plMessage/plConsoleMsg.h"
-#include "../plMessage/plInputIfaceMgrMsg.h"
-#include "../pnKeyedObject/plFixedKey.h"
+#include "plPipeline/plDebugText.h"
+#include "plInputCore/plInputDevice.h"
+#include "plInputCore/plInputInterface.h"
+#include "plInputCore/plInputInterfaceMgr.h"
+#include "pnInputCore/plKeyMap.h"
+#include "pnInputCore/plKeyDef.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
+#include "pnKeyedObject/plFixedKey.h"
 #include "hsTimer.h"
 #include "plgDispatch.h"
 #include "plPipeline.h"
 #include "hsConfig.h"
 
-#include "../pfPython/cyPythonInterface.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "pfPython/cyPythonInterface.h"
+#include "plNetClient/plNetClientMgr.h"
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-#include "../pfGameMgr/pfGameMgr.h"
+#include "pfGameMgr/pfGameMgr.h"
 #endif // PLASMA_EXTERNAL_RELEASE
 
 

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultSDLNode.h"
 #include "pySDL.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 #include <python.h>
 
 // glue functions

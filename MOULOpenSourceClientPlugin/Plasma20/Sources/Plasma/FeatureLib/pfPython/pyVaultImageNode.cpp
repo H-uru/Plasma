@@ -38,10 +38,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyMisc.h"
 
 #include "hsResMgr.h"
-#include "../plGImage/plMipmap.h"
-#include "../plVault/plVault.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "plGImage/plMipmap.h"
+#include "plVault/plVault.h"
+#include "pnMessage/plRefMsg.h"
+#include "plNetClient/plNetClientMgr.h"
 
 
 static unsigned s_keyseq;

@@ -31,9 +31,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyColor.h"
 #include "cyPythonInterface.h"
-
-#include "../pfGameGUIMgr/pfGameGUIMgr.h"
-#include "../pfGameGUIMgr/pfGUIPopUpMenu.h"
+#include "pfGameGUIMgr/pfGameGUIMgr.h"
+#include "pfGameGUIMgr/pfGUIPopUpMenu.h"
 
 #include "pyGUISkin.h"
 

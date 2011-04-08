@@ -38,8 +38,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <python.h>
 #include "pyGlueHelpers.h"
 
-#include "../pfPython/pyVaultNode.h"
-#include "../pfPython/pyVaultPlayerInfoNode.h"
+#include "pfPython/pyVaultNode.h"
+#include "pfPython/pyVaultPlayerInfoNode.h"
 
 class pyAgeInfoStruct;
 struct RelVaultNode;

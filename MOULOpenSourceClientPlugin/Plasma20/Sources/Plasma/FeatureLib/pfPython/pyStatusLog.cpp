@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyStatusLog.h"
 
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 pyStatusLog::pyStatusLog( plStatusLog* log/*=nil */)
 : fLog( log )
