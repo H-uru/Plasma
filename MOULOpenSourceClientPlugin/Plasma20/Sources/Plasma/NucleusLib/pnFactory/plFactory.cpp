@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsUtils.h"
 
 // For class names
-#include "../NucleusLib/inc/plCreatableStrings.h"
+#include "plCreatableStrings.h"
 
 
 static plFactory*	theFactory = nil;

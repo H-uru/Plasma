@@ -157,8 +157,6 @@ static void	ReplaceEmailParams (EmailParams	* newParams) {
 
 //============================================================================
 static EmailParams * GetEmailParamsIncRef () {
-	ref(GetEmailParamsIncRef);
-
 	EmailParams	* params;
 	
 	SAFE_CRITSECT_ENTER();
@@ -259,8 +257,6 @@ static unsigned ProcessErrorLog (
     const char		programName[],
     const char		errorType[]
 ) {
-	ref(programName);
-	ref(errorType);
 	
 	LogWriteToDisk(log);
 	
@@ -670,8 +666,6 @@ static LONG	ProcessException (const char occasion[], EXCEPTION_POINTERS * ep) {
 
 //============================================================================
 static LONG	WINAPI ExceptionFilter (EXCEPTION_POINTERS * ep) {
-	ref(ExceptionFilter);
-	
 	LONG result	= ProcessException("Unhandled Exception", ep);
 
 	// If the instruction pointer is inside	CrashFunc then this	exception
@@ -783,9 +777,7 @@ static void ProcessDeadlock_CS (const char occasion[], bool crashIt = true) {
 
 //============================================================================
 static void DeadlockCheckProc (void *) {
-	ref(DeadlockCheckProc);
-
-	while (s_running) {
+    while (s_running) {
 		Sleep(5 * 1000);
 
 		if (!s_deadlockEnabled)
