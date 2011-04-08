@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plTimerCallbackMsg_inc
 #define plTimerCallbackMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsStream.h"
 
 class hsResMgr;

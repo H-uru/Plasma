@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDynaDecalEnableMsg_inc
 #define plDynaDecalEnableMsg_inc
 
-#include "../pnMessage/plMessage.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnMessage/plMessage.h"
+#include "pnKeyedObject/plKey.h"
 
 class hsStream;
 class hsResMgr;

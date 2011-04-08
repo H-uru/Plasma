@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCCRMsg_h
 #define plCCRMsg_h
 
-#include "../pnMessage/plMessage.h"
-#include "../plNetCommon/plNetCommon.h"
+#include "pnMessage/plMessage.h"
+#include "plNetCommon/plNetCommon.h"
 
 //
 // Abstract Baseclass for CCR messages.

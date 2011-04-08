@@ -29,10 +29,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plLoadAvatarMsg.h"
 #include "hsResMgr.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plSynchedObject.h"
 
-#include "../plAvatar/plAvatarTasks.h"
+#include "plAvatar/plAvatarTasks.h"
 
 
 //////////////////

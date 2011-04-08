@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMovieMsg_inc
 #define plMovieMsg_inc
 
-#include "../pnMessage/plMessage.h"
-#include "../pnKeyedObject/plFixedKey.h"
+#include "pnMessage/plMessage.h"
+#include "pnKeyedObject/plFixedKey.h"
 #include "hsPoint2.h"
 #include "hsTemplates.h"
 

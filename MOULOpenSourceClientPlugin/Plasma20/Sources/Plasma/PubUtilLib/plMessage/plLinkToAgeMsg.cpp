@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsUtils.h"
 #include "plgDispatch.h"
-#include "../plNetCommon/plNetServerSessionInfo.h"
-#include "../plNetCommon/plNetCommon.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plNetCommon/plNetCommon.h"
 #include "hsBitVector.h"
 
 

@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plLoadCloneMsg.h"
 #include "hsUtils.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 
 class plAvTask;
 

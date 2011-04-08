@@ -29,8 +29,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSIMINFLUENCEMSG_H
 #define PLSIMINFLUENCEMSG_H
 /*
-#include "../../NucleusLib/pnMessage/plSimulationMsg.h"
-#include "../../CoreLib/hsGeometry3.h"
+#include "pnMessage/plSimulationMsg.h"
+#include "hsGeometry3.h"
 
 ////////////
 //

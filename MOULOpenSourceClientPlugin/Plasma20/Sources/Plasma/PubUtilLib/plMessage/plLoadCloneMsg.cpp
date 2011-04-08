@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 // other
-#include "../pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetApp.h"
 #include "hsTypes.h"
 
 

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInterestingPing_inc
 #define plInterestingPing_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
 

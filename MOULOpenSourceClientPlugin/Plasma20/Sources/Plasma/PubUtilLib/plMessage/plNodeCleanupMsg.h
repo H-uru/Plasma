@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plNodeCleanupMsg_h
 #define _plNodeCleanupMsg_h
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plNodeCleanupMsg : public plMessage
 {

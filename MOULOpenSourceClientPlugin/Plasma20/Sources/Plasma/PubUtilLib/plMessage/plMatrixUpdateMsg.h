@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMatrixUpdateMsg_inc
 #define plMatrixUpdateMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsMatrix44.h"
 
 class plMatrixUpdateMsg : public plMessage

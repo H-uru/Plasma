@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plLOSRequestMsg.h"
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 
 plLOSRequestMsg::plLOSRequestMsg()
 	: fRequestID(0),

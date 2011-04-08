@@ -38,11 +38,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "hsTypes.h"
-#include "../pnUtils/pnUtils.h"
-#include "../pnNetBase/pnNetBase.h"
-#include "../plNetCommon/plNetServerSessionInfo.h"
-#include "../plNetCommon/plNetCommonHelpers.h"
-#include "../plMessage/plNetCommMsgs.h"
+#include "pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plNetCommon/plNetCommonHelpers.h"
+#include "plMessage/plNetCommMsgs.h"
 
 
 class plNetMessage;

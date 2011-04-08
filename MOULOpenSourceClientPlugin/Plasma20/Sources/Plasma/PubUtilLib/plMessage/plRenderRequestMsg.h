@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRenderRequestMsg_inc
 #define plRenderRequestMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsRefCnt.h"
 
 class plRenderRequest;

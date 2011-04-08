@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLoadAgeMsg_INC
 #define plLoadAgeMsg_INC
 
-#include "../pnMessage/plMessage.h"
-#include "../plUUID/plUUID.h"
+#include "pnMessage/plMessage.h"
+#include "plUUID/plUUID.h"
 #include "hsUtils.h"
 
 //

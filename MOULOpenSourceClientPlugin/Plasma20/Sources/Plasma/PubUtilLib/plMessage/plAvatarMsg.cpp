@@ -29,11 +29,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsResMgr.h"
 
-#include "../pnKeyedObject/plKey.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #ifndef SERVER
-#include "../plAvatar/plAvBrain.h"
+#include "plAvatar/plAvBrain.h"
 #endif
 
 

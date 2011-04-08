@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAgeLoadedMsg_INC
 #define plAgeLoadedMsg_INC
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnMessage/plMessage.h"
+#include "pnUtils/pnUtils.h"
+#include "pnMessage/plMessage.h"
 
 //
 // A msg sent locally when pending pages are done loading or unloading.

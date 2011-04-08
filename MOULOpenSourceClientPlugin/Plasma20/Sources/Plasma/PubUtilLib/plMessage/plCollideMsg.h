@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLCOLLIDEMSG_INC
 #define PLCOLLIDEMSG_INC
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plCollideMsg : public plMessage
 {

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDynamicEnvMapMsg_inc
 #define plDynamicEnvMapMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 #include "hsGeometry3.h"
 #include "hsColorRGBA.h"

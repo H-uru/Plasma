@@ -34,8 +34,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 // other
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plCoopCoordinator.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plCoopCoordinator.h"
 
 // plAvCoopMsg -----------
 // ------------

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClimbMsg_h
 #define plClimbMsg_h
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 /** \class plClimbMsg
 	Things you can say with a climb message:

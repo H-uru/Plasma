@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plParticleUpdateMsg_inc
 #define plParticleUpdateMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 #include "hsBitVector.h"

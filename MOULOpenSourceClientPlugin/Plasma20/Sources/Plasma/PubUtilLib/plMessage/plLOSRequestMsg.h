@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef	plLOSRequestMsg_inc
 #define	plLOSRequestMsg_inc
 
-#include "../pnMessage/plMessage.h"
-#include "../plPhysical/plSimDefs.h"
+#include "pnMessage/plMessage.h"
+#include "plPhysical/plSimDefs.h"
 #include "hsGeometry3.h"
 
 class plLOSRequestMsg :	public plMessage

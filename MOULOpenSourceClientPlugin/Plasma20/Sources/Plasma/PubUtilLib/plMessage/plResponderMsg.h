@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plResponderMsg_inc
 #define plResponderMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 // Derive your message from this class if you need to know the key of the avatar
 // that activated your responder

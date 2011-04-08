@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLNETCLIENTMGRMSG_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLNETCLIENTMGRMSG_H
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 
 class plNetClientMgrMsg : public plMessage {

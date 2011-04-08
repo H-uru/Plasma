@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef NO_AV_MSGS
 
 #include "hsGeometry3.h"
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plAvBrainCritter;
 
