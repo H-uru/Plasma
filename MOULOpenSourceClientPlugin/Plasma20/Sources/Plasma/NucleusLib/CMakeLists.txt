@@ -1,3 +1,5 @@
+add_definitions(-D_LIB)
+
 add_subdirectory(pnAddrInfo)
 add_subdirectory(pnAsyncCore)
 add_subdirectory(pnAsyncCoreExe)

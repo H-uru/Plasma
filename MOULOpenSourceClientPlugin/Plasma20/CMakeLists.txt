@@ -20,10 +20,6 @@ set(PLASMA_TARGETS Client
 set_property(CACHE PLASMA_TARGETS PROPERTY STRINGS
              "Client" "Server" "Patcher" "Ethereal" "NoAvMsgs")
 
-if(PLASMA_TARGETS STREQUAL "Client")
-	add_definitions(-DCLIENT)
-endif(PLASMA_TARGETS STREQUAL "Client")
-
 if(PLASMA_TARGETS STREQUAL "Patcher")
 	add_definitions(-DPATCHER)
 endif(PLASMA_TARGETS STREQUAL "Patcher")
