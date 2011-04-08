@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plParticle_inc
 
 #include "hsGeometry3.h"
-#include "../CoreLib/hsColorRGBA.h"
+#include "hsColorRGBA.h"
 
 // The meat of the particle. These classes, in combination with the plParticleEmitter that spawned it,
 // should contain everything specific to a particle, necessary to build a renderable poly to represent a 

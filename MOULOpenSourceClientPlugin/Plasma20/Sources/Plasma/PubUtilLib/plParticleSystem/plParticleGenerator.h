@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plParticleGenerator_inc
 
 #include "hsGeometry3.h"
-#include "../pnNetCommon/plSynchedValue.h"
+#include "pnNetCommon/plSynchedValue.h"
 class plParticleEmitter;
 class plScalarController;
 

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPostEffectMod_inc
 #define plPostEffectMod_inc
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 
 #include "hsMatrix44.h"
 #include "hsBitVector.h"

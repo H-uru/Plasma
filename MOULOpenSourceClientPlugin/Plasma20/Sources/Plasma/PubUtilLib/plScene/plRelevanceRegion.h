@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRelevanceRegion_inc
 #define plRelevanceRegion_inc
 
-#include "../pnSceneObject/plObjInterface.h"
+#include "pnSceneObject/plObjInterface.h"
 
 class plRelevanceMgr;
 class plRegionBase;

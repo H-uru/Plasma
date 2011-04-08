@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPageInfo.h"
 #include "hsUtils.h"
 #include "hsStream.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 #include "plVersion.h"
 
 static UInt32		sCurrPageInfoVersion = 6;

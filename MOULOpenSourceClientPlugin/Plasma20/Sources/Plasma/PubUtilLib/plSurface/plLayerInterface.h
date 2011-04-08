@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerInterface_inc
 #define plLayerInterface_inc
 
-#include "../pnNetCommon/plSynchedValue.h"
-#include "../pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plSynchedValue.h"
+#include "pnNetCommon/plSynchedObject.h"
 #include "hsGMatState.h"
 
 struct hsMatrix44;

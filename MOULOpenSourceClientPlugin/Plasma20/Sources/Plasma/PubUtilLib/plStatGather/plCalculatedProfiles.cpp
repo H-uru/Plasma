@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plProfile.h"
 #include "plProfileManager.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "hsTimer.h"
 
 plProfile_CreateCounter("Age Upload BitsPerSec", "Network", UploadAgeBitsPerSec);

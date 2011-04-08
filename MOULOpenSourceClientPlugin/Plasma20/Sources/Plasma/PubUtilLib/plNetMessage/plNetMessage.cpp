@@ -30,17 +30,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetMsgVersion.h"
 #include "plCreatableIndex.h"
 
-#include "../pnKeyedObject/plKeyImp.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnNetCommon/plNetSharedState.h"
-#include "../pnMessage/plMessage.h"
-#include "../pnNetCommon/pnNetCommon.h"
-#include "../pnNetCommon/plGenericVar.h"
-#include "../pnFactory/plFactory.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnNetCommon/plNetSharedState.h"
+#include "pnMessage/plMessage.h"
+#include "pnNetCommon/pnNetCommon.h"
+#include "pnNetCommon/plGenericVar.h"
+#include "pnFactory/plFactory.h"
 
-#include "../plVault/plVault.h"
-#include "../plNetCommon/plNetCommon.h"
-#include "../plSDL/plSDL.h"
+#include "plVault/plVault.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plSDL/plSDL.h"
 
 #if defined(HS_BUILD_FOR_UNIX)
 #include <sys/socket.h>

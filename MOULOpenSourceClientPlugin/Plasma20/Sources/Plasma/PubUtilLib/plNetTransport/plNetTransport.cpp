@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plNetTransport.h"
 #include "plNetTransportMember.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plNetClient/plNetClientMgr.h"
 #include <algorithm>
 
 plNetTransport::~plNetTransport()

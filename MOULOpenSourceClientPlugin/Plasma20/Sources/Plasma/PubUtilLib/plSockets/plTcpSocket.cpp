@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plTcpSocket.h"
 #include "plFdSet.h"
-#include "../pnNetCommon/plNetAddress.h"
+#include "pnNetCommon/plNetAddress.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <sys/types.h>

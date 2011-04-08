@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRegistryNode.h"
 #include "plRegistryKeyList.h"
 #include "plPageInfo.h"
-#include "../pnFactory/plFactory.h"
+#include "pnFactory/plFactory.h"
 #include "hsUtils.h"
 #include "plCreatableIndex.h"
 

@@ -26,19 +26,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plLayer.h"
-#include "../plMessage/plAnimCmdMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "hsMatrix44.h"
 #include "hsGMatState.inl"
-#include "../plMessage/plLayRefMsg.h"
-#include "../plGImage/plBitmap.h"
-#include "../plPipeline/hsGDeviceRef.h"
+#include "plMessage/plLayRefMsg.h"
+#include "plGImage/plBitmap.h"
+#include "plPipeline/hsGDeviceRef.h"
 #include "plShader.h"
 
 #include "plPipeline.h"
 #include "plgDispatch.h"
-#include "../pnMessage/plPipeResMakeMsg.h"
+#include "pnMessage/plPipeResMakeMsg.h"
 
 plLayer::plLayer()
 {

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAutoProfile_h_inc
 #define plAutoProfile_h_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 class plAutoProfile : public hsKeyedObject
 {

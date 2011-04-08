@@ -32,11 +32,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSystem.h"
 #include "plParticleEmitter.h"
 #include "plParticleGenerator.h"
-#include "../CoreLib/hsColorRGBA.h"
-#include "../plMessage/plParticleUpdateMsg.h"
-#include "../plInterp/plController.h"
+#include "hsColorRGBA.h"
+#include "plMessage/plParticleUpdateMsg.h"
+#include "plInterp/plController.h"
 #include "hsResMgr.h"
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 
 static const hsScalar DEFAULT_INVERSE_MASS = 1.f;
 

@@ -33,8 +33,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsRefCnt.h"
 #include "hsBitVector.h"
 
-#include "../pnKeyedObject/plKey.h"
-#include "../plMessage/plRenderRequestMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "plMessage/plRenderRequestMsg.h"
 
 class plRenderTarget;
 class plPageTreeMgr;

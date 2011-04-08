@@ -33,21 +33,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../plMessage/plRenderMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
-#include "../plMessage/plParticleUpdateMsg.h"
-#include "../plInterp/plController.h"
-#include "../plSurface/hsGMaterial.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnMessage/plTimeMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plParticleUpdateMsg.h"
+#include "plInterp/plController.h"
+#include "plSurface/hsGMaterial.h"
 #include "plPipeline.h"
 #include "hsTimer.h"
 #include "plProfile.h"
 #include "plTweak.h"
 
-#include "../plDrawable/plParticleFiller.h"
+#include "plDrawable/plParticleFiller.h"
 
 plProfile_CreateCounter("Num Particles", "Particles", NumParticles);
 

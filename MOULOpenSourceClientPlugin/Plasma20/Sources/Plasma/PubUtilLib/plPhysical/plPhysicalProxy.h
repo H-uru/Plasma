@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysicalProxy_inc
 #define plPhysicalProxy_inc
 
-#include "../plDrawable/plProxyGen.h"
+#include "plDrawable/plProxyGen.h"
 
 class plDrawableSpans;
 class hsGMaterial;

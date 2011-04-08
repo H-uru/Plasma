@@ -27,13 +27,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 #include "plPhysical.h"
-#include "../plSDL/plSDL.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "plSDL/plSDL.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnNetCommon/plNetApp.h"
 #include "hsQuat.h"
-//#include "../plHavok1/plSimulationMgr.h"
-#include "../plStatusLog/plStatusLog.h"
+//#include "plHavok1/plSimulationMgr.h"
+#include "plStatusLog/plStatusLog.h"
 
 // static vars
 static const char* kStrLinear		= "linear";

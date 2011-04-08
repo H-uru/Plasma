@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plRegistryKeyList_h_inc
 
 #include "hsTypes.h"
-#include "../pnKeyedObject/plKeyImp.h"
+#include "pnKeyedObject/plKeyImp.h"
 #include <vector>
 #include <set>
 

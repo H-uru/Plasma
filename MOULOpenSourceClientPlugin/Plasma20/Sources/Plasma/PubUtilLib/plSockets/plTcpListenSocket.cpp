@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plTcpListenSocket.h"
-#include "../pnNetCommon/plNetAddress.h"
+#include "pnNetCommon/plNetAddress.h"
 
 
 // Initialize a socket for listening

@@ -26,9 +26,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSDLMod.h"
 #include "plParticleSystem.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plSDL/plSDL.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plSDL/plSDL.h"
+#include "pnKeyedObject/plKey.h"
 
 // static vars
 char plParticleSDLMod::kStrNumParticles[]="numParticles";

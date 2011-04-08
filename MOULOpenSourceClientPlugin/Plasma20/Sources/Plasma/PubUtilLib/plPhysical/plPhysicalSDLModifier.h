@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysicalSDLModifier_inc
 #define plPhysicalSDLModifier_inc
 
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 class plStateDataRecord;
 class plStatusLog;

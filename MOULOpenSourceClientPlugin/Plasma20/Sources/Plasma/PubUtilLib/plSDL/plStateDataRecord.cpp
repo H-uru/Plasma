@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "plSDL.h"
 
-#include "../plNetMessage/plNetMessage.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "plNetMessage/plNetMessage.h"
+#include "pnNetCommon/plNetApp.h"
 
 const char* plSDL::kAgeSDLObjectName = {"AgeSDLHook"};
 

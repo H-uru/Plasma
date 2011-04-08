@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRelevanceMgr_inc
 #define plRelevanceMgr_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "hsBitVector.h"

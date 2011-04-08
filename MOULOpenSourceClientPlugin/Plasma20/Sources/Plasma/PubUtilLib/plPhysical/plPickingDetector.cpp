@@ -25,14 +25,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plPickingDetector.h"
-#include "../plMessage/plActivatorMsg.h"
-#include "../plMessage/plPickedMsg.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plFakeOutMsg.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "plMessage/plActivatorMsg.h"
+#include "plMessage/plPickedMsg.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plFakeOutMsg.h"
+#include "pnNetCommon/plNetApp.h"
 #include "plgDispatch.h"
 
 

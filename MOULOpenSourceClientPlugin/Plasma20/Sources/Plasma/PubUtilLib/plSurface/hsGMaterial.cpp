@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plLayerInterface.h"
 #include "plLayer.h"
-#include "../plMessage/plMatRefMsg.h"
+#include "plMessage/plMatRefMsg.h"
 #include "plProfile.h"
 
 plProfile_CreateTimer("MaterialAnims", "Animation", MaterialAnims);

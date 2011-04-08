@@ -50,24 +50,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "hsStringTokenizer.h"
 #include "hsGeometry3.h"
-#include "../plSDL/plSDL.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
-#include "../plNetCommon/plNetCommon.h"
-#include "../plNetCommon/plNetServerSessionInfo.h"
-#include "../plNetCommon/plSpawnPointInfo.h"
-#include "../pnDispatch/plDispatch.h"
+#include "plSDL/plSDL.h"
+#include "plUnifiedTime/plUnifiedTime.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plNetCommon/plSpawnPointInfo.h"
+#include "pnDispatch/plDispatch.h"
 #include "plDniCoordinateInfo.h"
-#include "../plGImage/plMipmap.h"
-#include "../plJPEG/plJPEG.h"
-#include "../plMessage/plVaultNotifyMsg.h"
-#include "../plNetClientComm/plNetClientComm.h"
+#include "plGImage/plMipmap.h"
+#include "plJPEG/plJPEG.h"
+#include "plMessage/plVaultNotifyMsg.h"
+#include "plNetClientComm/plNetClientComm.h"
 
 #define KI_CONSTANTS_ONLY
-#include "../../FeatureLib/pfMessage/pfKIMsg.h"	// for KI level constants =(
+#include "pfMessage/pfKIMsg.h"	// for KI level constants =(
 #undef KI_CONSTANTS_ONLY
 #pragma warning(pop)
 
-#include "../plNetGameLib/plNetGameLib.h"
+#include "plNetGameLib/plNetGameLib.h"
 
 #endif	// def CLIENT
 

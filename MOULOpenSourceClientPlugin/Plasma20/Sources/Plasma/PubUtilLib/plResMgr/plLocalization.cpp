@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plLocalization.h"
-#include "../plFile/plFileUtils.h"
+#include "plFile/plFileUtils.h"
 #include "hsUtils.h"
 
 plLocalization::Language plLocalization::fLanguage = plLocalization::kEnglish;

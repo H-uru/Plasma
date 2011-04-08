@@ -27,11 +27,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plRenderRequest.h"
 #include "plPageTreeMgr.h"
-#include "../plPipeline/plRenderTarget.h"
+#include "plPipeline/plRenderTarget.h"
 #include "hsFastMath.h"
 #include "hsStream.h"
 #include "plPipeline.h"
-#include "../plMessage/plRenderRequestMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
 #include "plgDispatch.h"
 #include "plVisMgr.h"
 

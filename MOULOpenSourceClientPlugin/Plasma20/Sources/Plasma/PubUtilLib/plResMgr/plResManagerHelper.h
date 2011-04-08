@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsTemplates.h"
 #include "plRegistryHelpers.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 // Defined as a project setting so we can do this right
 //#define MCN_RESMGR_DEBUGGING

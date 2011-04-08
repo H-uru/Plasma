@@ -34,11 +34,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsUtils.h"
 #include "hsStlUtils.h"
 
-#include "../pnFactory/plCreatable.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnFactory/plCreatable.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
 
-#include "../plUnifiedTime/plUnifiedTime.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 
 namespace plSDL
 {

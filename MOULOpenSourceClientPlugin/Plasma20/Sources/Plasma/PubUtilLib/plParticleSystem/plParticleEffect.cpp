@@ -33,9 +33,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plPipeline.h"
 #include "hsFastMath.h"
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 #include "plParticleSystem.h"
-#include "../plMessage/plParticleUpdateMsg.h"
+#include "plMessage/plParticleUpdateMsg.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 plParticleCollisionEffect::plParticleCollisionEffect()

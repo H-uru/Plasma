@@ -26,15 +26,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfileManagerFull.h"
 #include "plProfileManager.h"
 
-#include "../plPipeline/plDebugText.h"
-#include "../plPipeline/plPlates.h"
+#include "plPipeline/plDebugText.h"
+#include "plPipeline/plPlates.h"
 
 #include "plCalculatedProfiles.h"
 
 #include "hsStream.h"
-#include "../pnUtils/pnUtils.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
-#include "../plFile/plFileUtils.h"
+#include "pnUtils/pnUtils.h"
+#include "plUnifiedTime/plUnifiedTime.h"
+#include "plFile/plFileUtils.h"
 
 plProfileManagerFull::plProfileManagerFull() :
 	fVars(plProfileManager::Instance().fVars),
@@ -427,7 +427,7 @@ const wchar* plProfileManagerFull::GetProfilePath()
 		plFileUtils::CreateDir(profilePath);
 	
 		wchar buff[256];
-		swprintf(buff, L"%02d-%02d-%04d_%02d-%02d//",
+		swprintf(buff, 256, L"%02d-%02d-%04d_%02d-%02d//",
 			curTime.GetMonth(),
 			curTime.GetDay(),
 			curTime.GetYear(),

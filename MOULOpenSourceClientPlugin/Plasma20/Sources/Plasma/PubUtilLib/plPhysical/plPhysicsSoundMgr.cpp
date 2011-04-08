@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plPhysicsSoundMgr.h"
 #include "plPhysicalSndGroup.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../plStatusLog/plStatusLog.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../FeatureLib/pfAudio/plRandomSoundMod.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pfAudio/plRandomSoundMod.h"
 
 #define MIN_VOLUME 0.0001f
 

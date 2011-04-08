@@ -29,21 +29,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "plSDL.h"
 
-#include "../pnProduct/pnProduct.h"
-#include "../pnFactory/plCreatable.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plKeyImp.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnNetCommon/pnNetCommon.h"
+#include "pnProduct/pnProduct.h"
+#include "pnFactory/plCreatable.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/pnNetCommon.h"
 
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plUnifiedTime/plClientUnifiedTime.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plUnifiedTime/plClientUnifiedTime.h"
 
 
-#include "../plResMgr/plResManager.h"
-#include "../plUnifiedTime/plClientUnifiedTime.h"
+#include "plResMgr/plResManager.h"
+#include "plUnifiedTime/plClientUnifiedTime.h"
 
 
 /*****************************************************************************
