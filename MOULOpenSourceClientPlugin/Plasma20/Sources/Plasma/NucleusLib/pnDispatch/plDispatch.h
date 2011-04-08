@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "plgDispatch.h"
 #include "hsThread.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 #pragma warning(disable: 4284)
 
