@@ -33,21 +33,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "hsTemplates.h"
 #include "plGeneric.h"
-#include "../pnNetCommon/plNetServers.h"
-#include "../pnNetCommon/plNetGroup.h"
-#include "../pnFactory/plCreatable.h"
-#include "../pnFactory/plFactory.h"
-#include "../plUnifiedTime/plClientUnifiedTime.h"
-#include "../plNetCommon/plNetServerSessionInfo.h"
-#include "../plNetCommon/plNetCommon.h"
-#include "../plNetCommon/plNetCommonHelpers.h"
-#include "../plNetCommon/plNetCommonConstants.h"
+#include "pnNetCommon/plNetServers.h"
+#include "pnNetCommon/plNetGroup.h"
+#include "pnFactory/plCreatable.h"
+#include "pnFactory/plFactory.h"
+#include "plUnifiedTime/plClientUnifiedTime.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plNetCommon/plNetCommonHelpers.h"
+#include "plNetCommon/plNetCommonConstants.h"
 
-#include "../plStreamLogger/plStreamLogger.h"
+#include "plStreamLogger/plStreamLogger.h"
 
 #include "plNetMsgHelpers.h"
 
-#include "../pnNetBase/pnNetBase.h"
+#include "pnNetBase/pnNetBase.h"
 
 #include <sstream>
 

@@ -31,21 +31,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClientComm.h"
 
-#include "../pnAsyncCore/pnAsyncCore.h"
-#include "../pnProduct/pnProduct.h"
-#include "../pnNetCli/pnNetCli.h"
-#include "../plNetGameLib/plNetGameLib.h"
-#include "../pnIni/pnIni.h"
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnProduct/pnProduct.h"
+#include "pnNetCli/pnNetCli.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "pnIni/pnIni.h"
 
-#include "../plMessage/plNetCommMsgs.h"
-#include "../plMessage/plNetClientMgrMsg.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../plNetCommon/plNetCommon.h"
-#include "../plVault/plVault.h"
-#include "../plMessage/plAccountUpdateMsg.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "plMessage/plNetCommMsgs.h"
+#include "plMessage/plNetClientMgrMsg.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plVault/plVault.h"
+#include "plMessage/plAccountUpdateMsg.h"
+#include "plNetClient/plNetClientMgr.h"
 
-#include "../../FeatureLib/pfMessage/pfKIMsg.h"
+#include "pfMessage/pfKIMsg.h"
 
 #include "hsResMgr.h"
 

@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStream.h"
-#include "../pnMessage/plMessageWithCallbacks.h"
+#include "pnMessage/plMessageWithCallbacks.h"
 
 class plTransitionMsg : public plMessageWithCallbacks
 {

@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSIMSTATEMSG_INC
 #define PLSIMSTATEMSG_INC
 
-#include "../pnMessage/plSimulationMsg.h"
+#include "pnMessage/plSimulationMsg.h"
 
 // use a nil key to return to main world
 // otherwise pass in the key of the world you're going to.

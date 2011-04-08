@@ -26,9 +26,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVaultNotifyMsg_h_inc
 #define plVaultNotifyMsg_h_inc
 
-#include "../pnMessage/plMessage.h"
-#include "../plNetCommon/plNetCommonHelpers.h"
-#include "../plNetCommon/plNetCommon.h"
+#include "pnMessage/plMessage.h"
+#include "plNetCommon/plNetCommonHelpers.h"
+#include "plNetCommon/plNetCommon.h"
 
 class plVaultNotifyMsg : public plMessage
 {

@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDeviceRecreateMsg_h
 #define _plDeviceRecreateMsg_h
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plDeviceRecreateMsg : public plMessage
 {

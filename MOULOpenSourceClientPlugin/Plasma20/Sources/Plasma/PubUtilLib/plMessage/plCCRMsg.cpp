@@ -26,9 +26,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plCCRMsg.h"
 
-#include "../pnNetCommon/plNetApp.h"
-#include "../plResMgr/plResManager.h"
-#include "../plNetCommon/plNetCommon.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plResMgr/plResManager.h"
+#include "plNetCommon/plNetCommon.h"
 
 void plCCRPetitionMsg::Read(hsStream* stream, hsResMgr* mgr) 
 {

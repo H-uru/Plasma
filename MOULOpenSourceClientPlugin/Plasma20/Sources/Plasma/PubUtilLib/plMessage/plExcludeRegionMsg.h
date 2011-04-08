@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plExcludeRegionMsg_inc
 #define plExcludeRegionMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class hsStream;
 

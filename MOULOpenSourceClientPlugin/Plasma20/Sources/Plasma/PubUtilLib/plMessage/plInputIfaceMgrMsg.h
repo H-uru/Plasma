@@ -35,8 +35,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
-#include "../pnMessage/plMessage.h"
-#include "../pnUtils/pnUtils.h"
+#include "pnMessage/plMessage.h"
+#include "pnUtils/pnUtils.h"
 
 class plInputInterface;
 class plInputIfaceMgrMsg : public plMessage

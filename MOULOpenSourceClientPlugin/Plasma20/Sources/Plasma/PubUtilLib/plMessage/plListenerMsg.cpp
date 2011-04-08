@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plListenerMsg.h"
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plFixedKey.h"
 
 
 void plListenerMsg::Read(hsStream* s, hsResMgr* mgr) 

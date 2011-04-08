@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plActivatorMsg_inc
 #define plActivatorMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
 
 class hsStream;

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMultistageMsg_inc
 #define plMultistageMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsBitVector.h"
 
 // Messages sent to a MultistageModifier.

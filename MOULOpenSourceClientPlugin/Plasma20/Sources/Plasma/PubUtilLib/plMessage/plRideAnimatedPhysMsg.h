@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_RIDE_ANIMATED_PHYS_MSG
 #define PL_RIDE_ANIMATED_PHYS_MSG
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plRideAnimatedPhysMsg : public plMessage
 {

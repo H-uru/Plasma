@@ -29,9 +29,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 #include "hsTimer.h"
-#include "../pnNetCommon/pnNetCommon.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnFactory/plCreatable.h"
+#include "pnNetCommon/pnNetCommon.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnFactory/plCreatable.h"
 
 ////////////////////////////////////////////////////////////////////
 

@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  Its up to the receiver to decide if they are interested in that particular room
 //
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plRoomLoadNotifyMsg : public plMessage
 {

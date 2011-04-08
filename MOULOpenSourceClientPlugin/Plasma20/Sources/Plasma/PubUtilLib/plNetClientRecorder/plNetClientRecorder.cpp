@@ -27,20 +27,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsTimer.h"
 
-#include "../plNetMessage/plNetMessage.h"
+#include "plNetMessage/plNetMessage.h"
 #include "plCreatableIndex.h"
 #include "hsResMgr.h"
 #include "plgDispatch.h"
-#include "../plSDL/plSDL.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "plSDL/plSDL.h"
+#include "pnNetCommon/plNetApp.h"
 
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../plMessage/plLoadAvatarMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
 
-#include "../plStatusLog/plStatusLog.h"
-#include "../plFile/hsFiles.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plFile/hsFiles.h"
 
 plNetClientRecorder::plNetClientRecorder(TimeWrapper* timeWrapper) :
 fTimeWrapper(timeWrapper)

@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDynamicTextMsg_h
 #define _plDynamicTextMsg_h
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsColorRGBA.h"
 
 class plDynamicTextMap;

@@ -33,10 +33,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLNETCOMMMSGS_H
 
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnNetBase/pnNetBase.h"
-#include "../pnMessage/plMessage.h"
-#include "../pnNetProtocol/pnNetProtocol.h"
+#include "pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnMessage/plMessage.h"
+#include "pnNetProtocol/pnNetProtocol.h"
 
 
 class plNetCommReplyMsg : public plMessage {

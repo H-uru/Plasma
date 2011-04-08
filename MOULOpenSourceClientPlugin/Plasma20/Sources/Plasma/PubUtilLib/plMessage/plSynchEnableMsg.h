@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSynchEnableMsg_h
 #define plSynchEnableMsg_h
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 //
 // Push or pop a cmd to enable/disable dirty state tracking.

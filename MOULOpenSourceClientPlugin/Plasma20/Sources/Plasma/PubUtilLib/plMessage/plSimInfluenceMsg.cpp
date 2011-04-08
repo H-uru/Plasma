@@ -23,8 +23,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../plMessage/plSimInfluenceMsg.h"
-#include "../../CoreLib/hsStream.h"
+#include "plMessage/plSimInfluenceMsg.h"
+#include "hsStream.h"
 /*
 
 void plSimInfluenceMsg::Read(hsStream *stream, hsResMgr *mgr)

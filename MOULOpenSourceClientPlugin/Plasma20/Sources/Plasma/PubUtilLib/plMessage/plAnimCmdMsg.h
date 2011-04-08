@@ -27,12 +27,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimCmdMsg_inc
 #define plAnimCmdMsg_inc
 
-#include "../pnMessage/plMessageWithCallbacks.h"
+#include "pnMessage/plMessageWithCallbacks.h"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
-#include "../plInterp/plAnimEaseTypes.h"
-#include "../plInterp/plAnimTimeConvert.h"
+#include "plInterp/plAnimEaseTypes.h"
+#include "plInterp/plAnimTimeConvert.h"
 
 class plAGAnimInstance;
 

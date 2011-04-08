@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInputEventMsg_inc
 #define plInputEventMsg_inc
 
-#include "../pnMessage/plMessage.h"
-#include "../pnInputCore/plControlDefinition.h"
+#include "pnMessage/plMessage.h"
+#include "pnInputCore/plControlDefinition.h"
 #include "hsGeometry3.h"
 #include "hsStream.h"
 #include "hsUtils.h"

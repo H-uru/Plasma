@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAvatarFootMsg_inc
 #define plAvatarFootMsg_inc
 
-#include "../pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
 
 class hsStream;
 class hsResMgr;

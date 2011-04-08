@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSwimMsg_h
 #define plSwimMsg_h
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 /** \class plSwimMsg
 	You're either entering the pool, or leaving. Those are the only swim messages right now.

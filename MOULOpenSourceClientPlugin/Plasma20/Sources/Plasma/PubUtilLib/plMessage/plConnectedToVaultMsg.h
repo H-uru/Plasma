@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConnectedToVaultMsg_INC
 #define plConnectedToVaultMsg_INC
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 //
 // A msg sent locally (once) when the client has successfully connected to the vault.

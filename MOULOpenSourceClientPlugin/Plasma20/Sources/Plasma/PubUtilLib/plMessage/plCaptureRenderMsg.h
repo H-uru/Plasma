@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCaptureRenderMsg_inc
 #define plCaptureRenderMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plMipmap;
 

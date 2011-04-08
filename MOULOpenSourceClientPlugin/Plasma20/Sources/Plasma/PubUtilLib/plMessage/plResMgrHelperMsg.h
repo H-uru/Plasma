@@ -29,8 +29,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStream.h"
-#include "../pnMessage/plMessage.h"
-#include "../plResMgr/plResManagerHelper.h"
+#include "pnMessage/plMessage.h"
+#include "plResMgr/plResManagerHelper.h"
 
 class plResManagerHelper;
 class plResMgrHelperMsg : public plMessage

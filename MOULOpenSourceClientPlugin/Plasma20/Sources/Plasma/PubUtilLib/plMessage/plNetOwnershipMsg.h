@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetOwnershipMsg_INC
 
 #include "hsStlUtils.h"
-#include "../pnMessage/plMessage.h"
-#include "../plNetMessage/plNetMessage.h"
+#include "pnMessage/plMessage.h"
+#include "plNetMessage/plNetMessage.h"
 
 //
 // A msg sent locally when this client changes ownership of a group of objects

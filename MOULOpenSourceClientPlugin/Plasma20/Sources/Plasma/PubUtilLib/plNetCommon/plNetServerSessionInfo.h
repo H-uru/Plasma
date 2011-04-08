@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
-#include "../pnFactory/plCreatable.h"
-#include "../pnNetCommon/plNetServers.h"
-#include "../plNetCommon/plSpawnPointInfo.h"
-#include "../plUUID/plUUID.h"
+#include "pnFactory/plCreatable.h"
+#include "pnNetCommon/plNetServers.h"
+#include "plNetCommon/plSpawnPointInfo.h"
+#include "plUUID/plUUID.h"
 
 
 class hsStream;

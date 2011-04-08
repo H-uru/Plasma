@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetVoiceListMsg_inc
 #define plNetVoiceListMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsTemplates.h"
 
 class plNetVoiceListMsg : public plMessage
