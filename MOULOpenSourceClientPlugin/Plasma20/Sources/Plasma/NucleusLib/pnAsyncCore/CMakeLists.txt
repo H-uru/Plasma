@@ -3,10 +3,10 @@ include_directories(../../NucleusLib)
 
 set(pnAsyncCore_HEADERS
     Pch.h
+    pnAsyncCore.h
 )
 
 set(pnAsyncCore_PRIVATE
-    pnAsyncCore.h
     Private/pnAcAllIncludes.h
     Private/pnAcCore.h
     Private/pnAcIo.h

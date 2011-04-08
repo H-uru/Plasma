@@ -777,7 +777,7 @@ static void ProcessDeadlock_CS (const char occasion[], bool crashIt = true) {
 
 //============================================================================
 static void DeadlockCheckProc (void *) {
-    while (s_running) {
+	while (s_running) {
 		Sleep(5 * 1000);
 
 		if (!s_deadlockEnabled)
