@@ -30,4 +30,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 
-#include "../pfCCR/plCCRMgr.h"
+#include "pfCCR/plCCRMgr.h"

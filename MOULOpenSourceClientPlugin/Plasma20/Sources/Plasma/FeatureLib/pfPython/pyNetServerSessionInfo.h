@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pyNetServerSessionInfo_h_inc
 
 #include "hsTypes.h"
-#include "../plNetCommon/plNetServerSessionInfo.h"
-#include "../plUUID/plUUID.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plUUID/plUUID.h"
 
 #include <python.h>
 #include "pyGlueHelpers.h"

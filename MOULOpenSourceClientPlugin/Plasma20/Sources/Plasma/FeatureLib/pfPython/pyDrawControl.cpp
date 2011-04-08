@@ -36,10 +36,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #ifndef BUILDING_PYPLASMA
-#include "../plMessage/plInputEventMsg.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../plInputCore/plInputDevice.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plMessage/plInputEventMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "plInputCore/plInputDevice.h"
+#include "plAvatar/plArmatureMod.h"
 #endif
 
 void pyDrawControl::SetGamma2(hsScalar gamma)
@@ -58,7 +58,7 @@ void pyDrawControl::SetGamma2(hsScalar gamma)
 }
 
 #ifndef BUILDING_PYPLASMA
-#include "../plGLight/plShadowMaster.h"
+#include "plGLight/plShadowMaster.h"
 #endif
 
 void pyDrawControl::SetShadowVisDistance(hsScalar distance)
@@ -78,7 +78,7 @@ hsScalar pyDrawControl::GetShadowVisDistance()
 }
 
 #ifndef BUILDING_PYPLASMA
-#include "../plGLight/plShadowCaster.h"
+#include "plGLight/plShadowCaster.h"
 #endif
 
 void pyDrawControl::EnableShadows()

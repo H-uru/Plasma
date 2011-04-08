@@ -31,11 +31,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyAudioControl.h"
 
-#include "../plAudio/plAudioSystem.h"
-#include "../plAudio/plVoiceChat.h"
-#include "../plAudio/plWinMicLevel.h"
+#include "plAudio/plAudioSystem.h"
+#include "plAudio/plVoiceChat.h"
+#include "plAudio/plWinMicLevel.h"
 
-#include "../plAudio/plAudioCaps.h"
+#include "plAudio/plAudioCaps.h"
 
 // Sets the master volume of a given audio channel
 void pyAudioControl::SetSoundFXVolume( hsScalar volume )

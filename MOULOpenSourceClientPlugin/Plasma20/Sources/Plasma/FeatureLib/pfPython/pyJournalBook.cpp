@@ -30,13 +30,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////
 
 #include "pyJournalBook.h"
-#include "../pfJournalBook/pfJournalBook.h"
+#include "pfJournalBook/pfJournalBook.h"
 
 #include "cyAnimation.h"
 #include "pyColor.h"
 #include "pyImage.h"
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 
 UInt32	pyJournalBook::fNextKeyID = 0;
 

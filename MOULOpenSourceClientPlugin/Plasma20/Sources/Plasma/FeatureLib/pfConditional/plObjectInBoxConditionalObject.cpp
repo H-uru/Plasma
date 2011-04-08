@@ -25,14 +25,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plObjectInBoxConditionalObject.h"
-#include "../../PubUtilLib/plPhysical/plDetectorModifier.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
-#include "../../PubUtilLib/plMessage/plActivatorMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnMessage/plFakeOutMsg.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "plPhysical/plDetectorModifier.h"
+#include "pnModifier/plLogicModBase.h"
+#include "plMessage/plActivatorMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plFakeOutMsg.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plAvatar/plArmatureMod.h"
+#include "pnSceneObject/plSceneObject.h"
 
 bool plVolumeSensorConditionalObject::makeBriceHappyVar = true;
 
@@ -277,8 +277,8 @@ void plVolumeSensorConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 	stream->WriteSwap32(fType);
 	stream->WriteBool(fFirst);
 }
-#include "../pnMessage/plPlayerPageMsg.h"
-#include "../../NucleusLib/inc/plgDispatch.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "plgDispatch.h"
 hsBool plVolumeSensorConditionalObjectNoArbitration::MsgReceive(plMessage* msg)
 {
 	plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);

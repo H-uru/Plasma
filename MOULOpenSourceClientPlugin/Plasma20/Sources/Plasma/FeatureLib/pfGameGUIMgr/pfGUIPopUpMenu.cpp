@@ -46,24 +46,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayer.h"
-#include "../plGImage/plDynamicTextMap.h"
-#include "../plMessage/plLayRefMsg.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayer.h"
+#include "plGImage/plDynamicTextMap.h"
+#include "plMessage/plLayRefMsg.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnMessage/plIntRefMsg.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
 
-#include "../plScene/plPostEffectMod.h"
-#include "../plScene/plSceneNode.h"
-#include "../pnMessage/plClientMsg.h"
+#include "plScene/plPostEffectMod.h"
+#include "plScene/plSceneNode.h"
+#include "pnMessage/plClientMsg.h"
 
 #include "plViewTransform.h"
-#include "../plPipeline/plDebugText.h"
+#include "plPipeline/plDebugText.h"
 
 
 class pfPopUpKeyGenerator
@@ -715,7 +715,7 @@ hsGMaterial	*pfGUIPopUpMenu::ICreateDynMaterial( void )
 //// Build ///////////////////////////////////////////////////////////////////
 //	Constructs a shiny new pop-up menu at runtime, complete with trimmings
 
-#include "../plJPEG/plJPEG.h"
+#include "plJPEG/plJPEG.h"
 
 pfGUIPopUpMenu	*pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent, hsScalar x, hsScalar y, const plLocation &destLoc )
 {

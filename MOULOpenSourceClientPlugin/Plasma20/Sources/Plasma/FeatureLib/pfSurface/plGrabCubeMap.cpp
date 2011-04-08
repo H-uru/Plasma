@@ -36,14 +36,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsColorRGBA.h"
 #include "hsBounds.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
 
-#include "../plGImage/plMipmap.h"
+#include "plGImage/plMipmap.h"
 
-#include "../plJPEG/plJPEG.h"
+#include "plJPEG/plJPEG.h"
 
-#include "../plMessage/plRenderRequestMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
 
 plGrabCubeRenderRequest::plGrabCubeRenderRequest()
 :	fQuality(75)

@@ -38,41 +38,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsole.h"
 #include "hsResMgr.h"
 
-#include "../pfMessage/plArmatureEffectMsg.h"
+#include "pfMessage/plArmatureEffectMsg.h"
 
-#include "../plMessage/plOneShotMsg.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plInputEventMsg.h"
-#include "../plMessage/plSimStateMsg.h"
-#include "../plMessage/plCCRMsg.h"
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
+#include "plMessage/plOneShotMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plSimStateMsg.h"
+#include "plMessage/plCCRMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
-#include "../plModifier/plSpawnModifier.h"
+#include "plModifier/plSpawnModifier.h"
 
-#include "../plResMgr/plKeyFinder.h"
+#include "plResMgr/plKeyFinder.h"
 
-#include "../plAvatar/plArmatureMod.h"
-#include "../plAvatar/plAvBrainCritter.h"
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../plAvatar/plAvBrainSwim.h"
-#include "../plAvatar/plAvBrainGeneric.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plSeekPointMod.h"
-#include "../plAvatar/plOneShotMod.h"
-#include "../plAvatar/plAGAnim.h"
-#include "../plAvatar/plAvBrainUser.h"
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../plAvatar/plNPCSpawnMod.h"
-#include "../plAvatar/plAGAnimInstance.h"
-#include "../plAvatar/plArmatureEffects.h"
-#include "../plAvatar/plAvTaskSeek.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainCritter.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plAvatar/plAvBrainSwim.h"
+#include "plAvatar/plAvBrainGeneric.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plSeekPointMod.h"
+#include "plAvatar/plOneShotMod.h"
+#include "plAvatar/plAGAnim.h"
+#include "plAvatar/plAvBrainUser.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plAvatar/plNPCSpawnMod.h"
+#include "plAvatar/plAGAnimInstance.h"
+#include "plAvatar/plArmatureEffects.h"
+#include "plAvatar/plAvTaskSeek.h"
 
 //#include "../plHavok1/plSimulationMgr.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plDrawable/plInstanceDrawInterface.h"
-#include "../plDrawable/plDrawableSpans.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plDrawable/plInstanceDrawInterface.h"
+#include "plDrawable/plDrawableSpans.h"
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 
@@ -119,7 +119,7 @@ PF_CONSOLE_SUBGROUP( Avatar, LOD )
 
 #endif // LIMIT_CONSOLE_COMMANDS
 
-#include "../plAvatar/plAnimStage.h"
+#include "plAvatar/plAnimStage.h"
 
 plAvBrainHuman * GetMainAvatarBrain()
 {
@@ -440,7 +440,7 @@ PF_CONSOLE_CMD( Avatar, PopBrain, "", "Remove the topmost brain from the avatar.
 	}
 }
 
-#include "../plScene/plRelevanceMgr.h"
+#include "plScene/plRelevanceMgr.h"
 
 PF_CONSOLE_CMD( Avatar, 
 			   MarkRelevanceRegion,
@@ -746,7 +746,7 @@ PF_CONSOLE_CMD( Avatar_LOD,  GetLODDistance, "", "Get Distance for switching Ava
 
 
 
-#include "../plAvatar/plAvBrainClimb.h"
+#include "plAvatar/plAvBrainClimb.h"
 
 PF_CONSOLE_CMD( Avatar_Climb, Start, "string direction", "Specify initial mount direction: up, down, left, right")
 {

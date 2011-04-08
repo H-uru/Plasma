@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyColor.h"
 
-#include "../pfMessage/pfMovieEventMsg.h"
+#include "pfMessage/pfMovieEventMsg.h"
 #include <python.h>
 
 // glue functions

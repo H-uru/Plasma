@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plGrabCubeMap_inc
 #define plGrabCubeMap_inc
 
-#include "../plScene/plRenderRequest.h"
+#include "plScene/plRenderRequest.h"
 
 class plSceneObject;
 class plPipeline;

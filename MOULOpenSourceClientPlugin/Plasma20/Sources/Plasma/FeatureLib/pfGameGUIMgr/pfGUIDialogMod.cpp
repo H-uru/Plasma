@@ -36,18 +36,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUIDialogHandlers.h"
 #include "pfGUIDialogNotifyProc.h"
 #include "pfGUIListElement.h"
-#include "../plScene/plPostEffectMod.h"
+#include "plScene/plPostEffectMod.h"
 
-#include "../pnMessage/plRefMsg.h"
-#include "../pfMessage/pfGameGUIMsg.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../plScene/plSceneNode.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnMessage/plRefMsg.h"
+#include "pfMessage/pfGameGUIMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plScene/plSceneNode.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"
@@ -386,7 +386,7 @@ void	pfGUIDialogMod::UpdateInterestingThings( hsScalar mouseX, hsScalar mouseY, 
 //// HandleMouseEvent ////////////////////////////////////////////////////////
 
 #ifdef HS_DEBUGGING		 // Debugging bounds rects
-#include "../plPipeline/plDebugText.h"
+#include "plPipeline/plDebugText.h"
 #endif
 
 hsBool		pfGUIDialogMod::HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY,

@@ -35,9 +35,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfGUIPopUpMenu.h"		// For skins
 
-#include "../plGImage/plDynamicTextMap.h"
-#include "../plGImage/hsCodecManager.h"
-#include "../plPipeline/plDebugText.h"		// To quickly and hackily get the screen size in pixels
+#include "plGImage/plDynamicTextMap.h"
+#include "plGImage/hsCodecManager.h"
+#include "plPipeline/plDebugText.h"		// To quickly and hackily get the screen size in pixels
 #include "hsResMgr.h"
 
 

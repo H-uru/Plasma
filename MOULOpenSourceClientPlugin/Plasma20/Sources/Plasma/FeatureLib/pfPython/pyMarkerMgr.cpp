@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyMarkerMgr.h"
 
-#include "../pfCharacter/pfMarkerMgr.h"
+#include "pfCharacter/pfMarkerMgr.h"
 
 void pyMarkerMgr::AddMarker(double x, double y, double z, UInt32 id, bool justCreated)
 {

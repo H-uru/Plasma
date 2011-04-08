@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsTemplates.h"
-#include "../pnInputCore/plKeyDef.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnInputCore/plKeyDef.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include <vector>
 
 class plPipeline;

@@ -26,20 +26,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyPhysics.h"
 
 #include "plgDispatch.h"
-#include "../pnMessage/plEnableMsg.h"
-#include "../pnMessage/plWarpMsg.h"
-#include "../plMessage/plSimInfluenceMsg.h"
-#include "../plMessage/plSimStateMsg.h"
-#include "../plMessage/plLinearVelocityMsg.h"
-#include "../plMessage/plAngularVelocityMsg.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "plMessage/plSimInfluenceMsg.h"
+#include "plMessage/plSimStateMsg.h"
+#include "plMessage/plLinearVelocityMsg.h"
+#include "plMessage/plAngularVelocityMsg.h"
 
 #include "pyGeometry3.h"
 #include "pyMatrix44.h"
 #include "pyKey.h"
 #include "hsQuat.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnKeyedObject/plKey.h"
 
 cyPhysics::cyPhysics(plKey sender, plKey recvr)
 {

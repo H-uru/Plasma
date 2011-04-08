@@ -31,8 +31,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "plgDispatch.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../pnMessage/plEventCallbackMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
 
 #include "cyAnimation.h"
 

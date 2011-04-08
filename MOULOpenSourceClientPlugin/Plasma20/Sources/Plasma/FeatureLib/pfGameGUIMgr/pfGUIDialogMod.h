@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUIDialogMod_h
 
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "pfGameGUIMgr.h"
 #include "hsMatrix44.h"
 

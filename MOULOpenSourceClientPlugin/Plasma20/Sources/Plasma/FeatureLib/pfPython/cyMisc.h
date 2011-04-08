@@ -44,7 +44,7 @@ class pyPoint3;
 #include <python.h>
 #include "hsTypes.h"
 #include "hsStlUtils.h"
-#include "../pnUtils/pnUtils.h"
+#include "pnUtils/pnUtils.h"
 
 class pyGUIDialog;
 class plPipeline;

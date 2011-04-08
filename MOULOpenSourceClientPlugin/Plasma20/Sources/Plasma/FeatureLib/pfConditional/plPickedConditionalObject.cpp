@@ -25,10 +25,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plPickedConditionalObject.h"
-#include "../../PubUtilLib/plPhysical/plDetectorModifier.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
+#include "plPhysical/plDetectorModifier.h"
+#include "pnModifier/plLogicModBase.h"
 
-#include "../plMessage/plActivatorMsg.h"
+#include "plMessage/plActivatorMsg.h"
 
 plPickedConditionalObject::plPickedConditionalObject()
 {

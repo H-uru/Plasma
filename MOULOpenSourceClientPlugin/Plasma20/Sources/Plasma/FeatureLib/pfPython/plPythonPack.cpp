@@ -27,9 +27,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "plPythonPack.h"
 #include "hsStream.h"
-#include "../plFile/hsFiles.h"
-#include "../plFile/plSecureStream.h"
-#include "../plFile/plStreamSource.h"
+#include "plFile/hsFiles.h"
+#include "plFile/plSecureStream.h"
+#include "plFile/plStreamSource.h"
 #include "hsStlSortUtils.h"
 #include "marshal.h"
 

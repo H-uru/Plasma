@@ -31,12 +31,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "plgDispatch.h"
-#include "../plMessage/plDynamicTextMsg.h"
+#include "plMessage/plDynamicTextMsg.h"
 #include "pyKey.h"
 #include "plPythonFileMod.h"
 #include "pyColor.h"
 #include "pyImage.h"
-#include "../plGImage/plDynamicTextMap.h"
+#include "plGImage/plDynamicTextMap.h"
 
 #include "pyDynamicText.h"
 

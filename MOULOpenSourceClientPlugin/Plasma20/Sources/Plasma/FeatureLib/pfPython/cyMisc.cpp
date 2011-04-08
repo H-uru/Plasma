@@ -27,32 +27,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-#include "../plResMgr/plKeyFinder.h"
+#include "plResMgr/plKeyFinder.h"
 
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../plMessage/plConsoleMsg.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../plMessage/plExcludeRegionMsg.h"
-#include "../plMessage/plInputEventMsg.h"
-#include "../plMessage/plInputIfaceMgrMsg.h"
-#include "../pnMessage/plCmdIfaceModMsg.h"
-#include "../pnMessage/plAttachMsg.h"
-#include "../plMessage/plTimerCallbackMsg.h"
-#include "../plMessage/plNetVoiceListMsg.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../pnMessage/plCameraMsg.h"
-#include "../pnTimer/plTimerCallbackManager.h"
-#include "../plVault/plVault.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetClient/plNetLinkingMgr.h"
-#include "../plNetTransport/plNetTransport.h"
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plMultistageBehMod.h"
-#include "../plAvatar/plAvBrainCritter.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plExcludeRegionMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
+#include "pnMessage/plCmdIfaceModMsg.h"
+#include "pnMessage/plAttachMsg.h"
+#include "plMessage/plTimerCallbackMsg.h"
+#include "plMessage/plNetVoiceListMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnTimer/plTimerCallbackManager.h"
+#include "plVault/plVault.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetLinkingMgr.h"
+#include "plNetTransport/plNetTransport.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plMultistageBehMod.h"
+#include "plAvatar/plAvBrainCritter.h"
 #include "pyCritterBrain.h"
 #include "cyPythonInterface.h"
 #include "pyKey.h"
@@ -66,29 +66,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeInfoStruct.h"
 #include "pyAgeLinkStruct.h"
 #include "pyAlarm.h"
-#include "../pfMessage/pfKIMsg.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../pfCamera/plVirtualCamNeu.h"
-#include "../plPipeline/plDynamicEnvMap.h"
+#include "pfMessage/pfKIMsg.h"
+#include "plNetMessage/plNetMessage.h"
+#include "pfCamera/plVirtualCamNeu.h"
+#include "plPipeline/plDynamicEnvMap.h"
 
-#include "../pfGameGUIMgr/pfGameGUIMgr.h"
-#include "../pfGameGUIMgr/pfGUIDialogMod.h"
+#include "pfGameGUIMgr/pfGameGUIMgr.h"
+#include "pfGameGUIMgr/pfGUIDialogMod.h"
 #include "pyGUIDialog.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
-#include "../plMessage/plCCRMsg.h"
-#include "../plAgeLoader/plAgeLoader.h"
+#include "plMessage/plCCRMsg.h"
+#include "plAgeLoader/plAgeLoader.h"
 
-#include "../plResMgr/plLocalization.h"
-#include "../plGLight/plLightInfo.h"
+#include "plResMgr/plLocalization.h"
+#include "plGLight/plLightInfo.h"
 
-#include "../plInputCore/plAvatarInputInterface.h"
-#include "../plInputCore/plInputDevice.h"
+#include "plInputCore/plAvatarInputInterface.h"
+#include "plInputCore/plInputDevice.h"
 
-#include "../plVault/plAgeInfoSource.h"
+#include "plVault/plAgeInfoSource.h"
 
-#include "../pfLocalizationMgr/pfLocalizationMgr.h"
+#include "pfLocalizationMgr/pfLocalizationMgr.h"
 
 //// Static Class Stuff //////////////////////////////////////////////////////
 plPipeline* cyMisc::fPipeline = nil;
@@ -937,7 +937,7 @@ PyObject* cyMisc::GetLocalPlayer()
 
 
 #if 1
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 //
 // TEMP SCREEN PRINT CODE FOR NON-DBG TEXT DISPLAY
 //
@@ -955,7 +955,7 @@ void cyMisc::PrintToScreen(const char* msg)
 #endif
 
 #include "plPipeline.h"
-#include "../plGImage/plMipmap.h"
+#include "plGImage/plMipmap.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1402,7 +1402,7 @@ void cyMisc::PageOutNode(const char* nodeName)
 }
 
 
-#include "../plAvatar/plArmatureMod.h"
+#include "plAvatar/plArmatureMod.h"
 /////////////////////////////////////////////////////////////////////////////
 //
 //  Function   : LimitAvatarLOD
@@ -1418,7 +1418,7 @@ void cyMisc::LimitAvatarLOD(int LODlimit)
 
 
 
-#include "../plPipeline/plFogEnvironment.h"
+#include "plPipeline/plFogEnvironment.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1716,9 +1716,9 @@ bool cyMisc::UsingUnicode()
 //
 //
 //
-#include "../plMessage/plParticleUpdateMsg.h"
-#include "../plParticleSystem/plParticleSystem.h"
-#include "../plParticleSystem/plParticleEffect.h"
+#include "plMessage/plParticleUpdateMsg.h"
+#include "plParticleSystem/plParticleSystem.h"
+#include "plParticleSystem/plParticleEffect.h"
 void cyMisc::TransferParticlesToKey(pyKey& fromKey, pyKey& toKey, int numParticles)
 {
 	plKey frKey = fromKey.getKey();
@@ -1908,7 +1908,7 @@ void cyMisc::SetLightColorValue(pyKey& light, std::string lightName, hsScalar r,
 	}
 }
 
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 void cyMisc::SetLightAnimationOn(pyKey& light, std::string lightName, hsBool start)
 {
 	// lightName is the name of the light object attached to the light that we want to talk to
@@ -2001,7 +2001,7 @@ void cyMisc::RegisterForControlEventMessages(hsBool on, pyKey& k)
 //
 // PURPOSE    : To request an LOS from a point on the screen
 //
-#include "../plMessage/plLOSRequestMsg.h"
+#include "plMessage/plLOSRequestMsg.h"
 bool cyMisc::RequestLOSScreen(pyKey &selfkey, Int32 ID, hsScalar xPos, hsScalar yPos, hsScalar distance, int what, int reportType)
 {
 	plPipeline* pipe = selfkey.GetPipeline();
@@ -2058,7 +2058,7 @@ bool cyMisc::RequestLOSScreen(pyKey &selfkey, Int32 ID, hsScalar xPos, hsScalar 
 //
 // PURPOSE    : Check is there is something visible in the path from StartPoint to EndPoint
 //
-#include "../plDrawable/plVisLOSMgr.h"
+#include "plDrawable/plVisLOSMgr.h"
 PyObject* cyMisc::CheckVisLOS(pyPoint3 startPoint, pyPoint3 endPoint)
 {
 	if (plVisLOSMgr::Instance())
@@ -2152,7 +2152,7 @@ bool cyMisc::IsEnterChatModeKeyBound()
 //
 // PURPOSE    : Shoots from screen coordinates, a bullet and makes a mark on objects that know about bullet holes
 //
-#include "../plMessage/plBulletMsg.h"
+#include "plMessage/plBulletMsg.h"
 void cyMisc::ShootBulletFromScreen(pyKey &selfkey, hsScalar xPos, hsScalar yPos, hsScalar radius, hsScalar range)
 {
 	plPipeline* pipe = selfkey.GetPipeline();
@@ -2388,7 +2388,7 @@ int cyMisc::GetKILevel()
 //
 // the following are for recording and rebuilding the camera stack
 
-#include "../pfCamera/plCameraModifier.h"
+#include "pfCamera/plCameraModifier.h"
 
 int cyMisc::GetNumCameras()
 {
@@ -2477,7 +2477,7 @@ void cyMisc::RecenterCamera()
 	pCam->Send();
 }
 
-#include "../plMessage/plTransitionMsg.h"
+#include "plMessage/plTransitionMsg.h"
 
 void cyMisc::FadeIn(float lenTime, bool holdFlag, bool noSound)
 {
@@ -2525,7 +2525,7 @@ void cyMisc::SetAlarm( float secs, PyObject * cb, UInt32 cbContext )
 //
 // PURPOSE    : captures the screen and saves it as a jpeg
 //
-#include "../plJPEG/plJPEG.h"
+#include "plJPEG/plJPEG.h"
 void cyMisc::SaveScreenShot(const char* fileName, int x, int y, int quality)
 {
 	if ( cyMisc::GetPipeline() )
@@ -2548,7 +2548,7 @@ void cyMisc::SaveScreenShot(const char* fileName, int x, int y, int quality)
 // PURPOSE    : This starts a screen capture in motion. It will be capture on the next
 //              update and a plCaptureRenderMsg when its ready
 //
-#include "../plPipeline/plCaptureRender.h"
+#include "plPipeline/plCaptureRender.h"
 void cyMisc::StartScreenCapture(pyKey& selfkey)
 {
 	cyMisc::StartScreenCaptureWH(selfkey, 800, 600);
@@ -2560,7 +2560,7 @@ void cyMisc::StartScreenCaptureWH(pyKey& selfkey, UInt16 width, UInt16 height)
 }
 
 
-#include "../plAvatar/plAvatarClothing.h"
+#include "plAvatar/plAvatarClothing.h"
 void cyMisc::WearMaintainerSuit(pyKey& key, hsBool wear)
 {
 	// run on all machines, but only affects us if we call it on our local guy (who props it to others himself)

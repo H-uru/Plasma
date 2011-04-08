@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "hsCritSect.h"
 #include "hsStream.h"
-#include "../plFile/plSecureStream.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "plFile/plSecureStream.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 
 class plOperationProgress;

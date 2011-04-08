@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfMarkerMsg_h_inc
 #define pfMarkerMsg_h_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 struct hsPoint3;
 
 class pfMarkerMsg : public plMessage

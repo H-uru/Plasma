@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyEnum.h"
 #include "pyAgeLinkStruct.h"
 
-#include "../plNetCommon/plNetCommon.h"
+#include "plNetCommon/plNetCommon.h"
 #include <python.h>
 
 #ifndef BUILDING_PYPLASMA

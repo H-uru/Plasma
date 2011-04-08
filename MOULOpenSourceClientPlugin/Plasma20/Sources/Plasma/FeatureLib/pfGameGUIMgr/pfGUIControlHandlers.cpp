@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUIControlMod.h"
 #include "pfGUIDialogMod.h"
 
-#include "../plMessage/plConsoleMsg.h"
+#include "plMessage/plConsoleMsg.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 

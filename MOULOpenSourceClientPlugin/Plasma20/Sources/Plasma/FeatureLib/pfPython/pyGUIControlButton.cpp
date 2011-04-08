@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 
 #include "pyGUIControlButton.h"
-#include "../pfGameGUIMgr/pfGUIButtonMod.h"
+#include "pfGameGUIMgr/pfGUIButtonMod.h"
 
 pyGUIControlButton::pyGUIControlButton(pyKey& gckey) : pyGUIControl(gckey)
 {

@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyEnum.h"
 
-#include "../plMessage/plAccountUpdateMsg.h"
+#include "plMessage/plAccountUpdateMsg.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsSubscriptionActive, "Returns true if the current player is a paying subscriber")
 {

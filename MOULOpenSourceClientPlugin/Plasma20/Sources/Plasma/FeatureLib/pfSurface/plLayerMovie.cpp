@@ -30,9 +30,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsUtils.h"
 
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../plGImage/plMipmap.h"
-#include "../plPipeline/hsGDeviceRef.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plGImage/plMipmap.h"
+#include "plPipeline/hsGDeviceRef.h"
 
 plLayerMovie::plLayerMovie()
 :	fMovieName(nil),

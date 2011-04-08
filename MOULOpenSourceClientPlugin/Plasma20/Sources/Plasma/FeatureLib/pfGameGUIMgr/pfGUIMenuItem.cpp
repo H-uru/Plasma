@@ -38,9 +38,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUIDialogMod.h"
 #include "pfGUIPopUpMenu.h"
 
-#include "../plInputCore/plInputInterface.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../plGImage/plDynamicTextMap.h"
+#include "plInputCore/plInputInterface.h"
+#include "pnMessage/plRefMsg.h"
+#include "plGImage/plDynamicTextMap.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 

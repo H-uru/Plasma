@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfMarkerInfo_h_inc
 #define pfMarkerInfo_h_inc
 
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
 #include "hsGeometry3.h"
 
 class plMessage;

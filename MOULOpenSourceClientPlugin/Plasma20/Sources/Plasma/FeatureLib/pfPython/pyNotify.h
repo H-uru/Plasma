@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "../pnMessage/plNotifyMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 #include "pyKey.h"
 #include "pyGeometry3.h"

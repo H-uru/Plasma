@@ -35,9 +35,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeLinkStruct.h"
 #include "pySpawnPointInfo.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
-#include "../plNetCommon/plSpawnPointInfo.h"
+#include "plNetCommon/plSpawnPointInfo.h"
 
 // should only be created from C++ side
 pyVaultAgeLinkNode::pyVaultAgeLinkNode(RelVaultNode* nfsNode)

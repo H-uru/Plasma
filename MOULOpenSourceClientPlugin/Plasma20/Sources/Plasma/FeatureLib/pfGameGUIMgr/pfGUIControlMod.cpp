@@ -37,22 +37,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUIDialogHandlers.h"
 #include "pfGUIListElement.h"	// Includes dropTargetProc
 
-#include "../pnMessage/plRefMsg.h"
-#include "../pnMessage/plEnableMsg.h"
-#include "../pfMessage/pfGameGUIMsg.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plAudioInterface.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pfMessage/pfGameGUIMsg.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plAudioInterface.h"
 
-#include "../plGImage/plDynamicTextMap.h"
-#include "../plSurface/plLayer.h"
-#include "../plMessage/plRenderMsg.h"
-#include "../pnMessage/plSoundMsg.h"
+#include "plGImage/plDynamicTextMap.h"
+#include "plSurface/plLayer.h"
+#include "plMessage/plRenderMsg.h"
+#include "pnMessage/plSoundMsg.h"
 #include "plPipeline.h"
 
-#include "../plDrawable/plAccessGeometry.h"
-#include "../plDrawable/plAccessSpan.h"
-#include "../plDrawable/plAccessVtxSpan.h"
+#include "plDrawable/plAccessGeometry.h"
+#include "plDrawable/plAccessSpan.h"
+#include "plDrawable/plAccessVtxSpan.h"
 
 #include "pfGUIPopUpMenu.h"		// For skin, can we move that please? Thank you
 

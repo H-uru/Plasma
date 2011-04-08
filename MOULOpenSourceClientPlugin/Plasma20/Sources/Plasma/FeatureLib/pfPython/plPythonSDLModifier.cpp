@@ -31,13 +31,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "cyMisc.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plAgeDescription/plAgeDescription.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plAgeDescription/plAgeDescription.h"
 
-#include "../plSDL/plSDL.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "plSDL/plSDL.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plNetClient/plNetClientMgr.h"
 
 plStateDataRecord * GetAgeSDL()
 {

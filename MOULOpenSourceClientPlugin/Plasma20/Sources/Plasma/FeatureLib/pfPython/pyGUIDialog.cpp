@@ -32,8 +32,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyColor.h"
 #include "cyPythonInterface.h"
 
-#include "../pfGameGUIMgr/pfGameGUIMgr.h"
-#include "../pfGameGUIMgr/pfGUIDialogMod.h"
+#include "pfGameGUIMgr/pfGameGUIMgr.h"
+#include "pfGameGUIMgr/pfGUIDialogMod.h"
 
 #include "pyGUIDialog.h"
 
@@ -51,10 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGUIControlClickMap.h"
 
 // specific value controls
-#include "../pfGameGUIMgr/pfGUIKnobCtrl.h"
-#include "../pfGameGUIMgr/pfGUIUpDownPairMod.h"
+#include "pfGameGUIMgr/pfGUIKnobCtrl.h"
+#include "pfGameGUIMgr/pfGUIUpDownPairMod.h"
 
-#include "../plInputCore/plInputInterface.h"
+#include "plInputCore/plInputInterface.h"
 
 pyGUIDialog::pyGUIDialog(pyKey& gckey)
 {

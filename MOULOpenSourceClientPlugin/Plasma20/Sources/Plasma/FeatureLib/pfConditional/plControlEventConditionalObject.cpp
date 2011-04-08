@@ -25,9 +25,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plControlEventConditionalObject.h"
-#include "../plPhysical/plDetectorModifier.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
-#include "../plMessage/plInputEventMsg.h"
+#include "plPhysical/plDetectorModifier.h"
+#include "pnModifier/plLogicModBase.h"
+#include "plMessage/plInputEventMsg.h"
 
 plControlEventConditionalObject::plControlEventConditionalObject()
 {

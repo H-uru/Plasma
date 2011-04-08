@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultFolderNode.h"
 
 #include "hsUtils.h"
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
 // should only be created from C++ side
 pyVaultFolderNode::pyVaultFolderNode( RelVaultNode* nfsNode )

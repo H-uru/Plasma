@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //																			//
 //////////////////////////////////////////////////////////////////////////////
 
-#include "../pfMessage/pfKIMsg.h"
+#include "pfKIMsg.h"
 
 
 const char* pfKIMsg::kChronicleKILevel = "PlayerKILevel";

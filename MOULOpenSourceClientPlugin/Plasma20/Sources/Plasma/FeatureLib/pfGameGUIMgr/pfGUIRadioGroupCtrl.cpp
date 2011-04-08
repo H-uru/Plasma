@@ -35,8 +35,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUICheckBoxCtrl.h"
 #include "pfGUIControlHandlers.h"
 
-#include "../pnMessage/plRefMsg.h"
-#include "../pfMessage/pfGameGUIMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pfMessage/pfGameGUIMsg.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 

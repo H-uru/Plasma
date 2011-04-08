@@ -31,8 +31,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyMoviePlayer.h"
 
-#include "../plMessage/plMovieMsg.h"
-#include "../pfMessage/pfMovieEventMsg.h"
+#include "plMessage/plMovieMsg.h"
+#include "pfMessage/pfMovieEventMsg.h"
 
 pyMoviePlayer::pyMoviePlayer(const char* movieName,pyKey& selfKey)
 {

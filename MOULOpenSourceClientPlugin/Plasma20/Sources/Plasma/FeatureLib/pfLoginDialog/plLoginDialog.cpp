@@ -25,12 +25,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plLoginDialog.h"
 #include "resource.h"
-#include "../plNetCommon/plNetCommonConstants.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../plHttpServer/plHttpResponse.h"
-#include "../plSDL/plSDL.h"
-#include "../plFile/hsFiles.h"
-#include "../plNetMessage/plNetCommonMessage.h"
+#include "plNetCommon/plNetCommonConstants.h"
+#include "plNetMessage/plNetMessage.h"
+// #include "plHttpServer/plHttpResponse.h"
+#include "plSDL/plSDL.h"
+#include "plFile/hsFiles.h"
+#include "plNetMessage/plNetCommonMessage.h"
 
 // 'this' : used in base member initializer list
 #pragma warning(disable:4355)

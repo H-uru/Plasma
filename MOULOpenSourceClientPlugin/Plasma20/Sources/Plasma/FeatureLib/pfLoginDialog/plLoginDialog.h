@@ -26,9 +26,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLoginDialog_h_inc
 #define plLoginDialog_h_inc
 
-#include "../plWndCtrls/plWndCtrls.h"
-#include "../plEncryption/plChallengeResponse.h"
-#include "../pnNetCommon/plNetAddress.h"
+#include "plWndCtrls/plWndCtrls.h"
+// #include "plEncryption/plChallengeResponse.h"
+#include "pnNetCommon/plNetAddress.h"
 
 class plMainDialog;
 class plNetMsgAuthenticateChallenge;

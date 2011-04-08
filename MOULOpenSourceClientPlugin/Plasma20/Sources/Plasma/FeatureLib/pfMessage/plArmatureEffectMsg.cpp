@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsStream.h"
 #include "plArmatureEffectMsg.h"
-#include "../plAvatar/plArmatureEffects.h"
+#include "plAvatar/plArmatureEffects.h"
 
 plArmatureEffectStateMsg::plArmatureEffectStateMsg() : 
 	fSurface(plArmatureEffectsMgr::kFootNoSurface), fAddSurface(false) {}

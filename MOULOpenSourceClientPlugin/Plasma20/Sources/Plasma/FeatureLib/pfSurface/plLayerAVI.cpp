@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plLayerAVI.h"
-#include "../plGImage/plMipmap.h"
+#include "plGImage/plMipmap.h"
 
 #if HS_BUILD_FOR_WIN32
 class plAVIFileInfo

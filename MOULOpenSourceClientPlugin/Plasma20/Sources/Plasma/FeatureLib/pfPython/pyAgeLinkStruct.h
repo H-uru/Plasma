@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
-#include "../plNetCommon/plNetServerSessionInfo.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
 #include "pyAgeInfoStruct.h"
 
 #include <python.h>

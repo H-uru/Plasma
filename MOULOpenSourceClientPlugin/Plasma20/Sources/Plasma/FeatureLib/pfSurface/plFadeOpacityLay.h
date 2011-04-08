@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plFadeOpacityLay_inc
 #define plFadeOpacityLay_inc
 
-#include "../plSurface/plLayerInterface.h"
+#include "plSurface/plLayerInterface.h"
 
 
 class plFadeOpacityLay : public plLayerInterface

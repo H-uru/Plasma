@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
 
-#include "../pnNetBase/pnNetBase.h"
+#include "pnNetBase/pnNetBase.h"
 
 struct RelVaultNode;
 

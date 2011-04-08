@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerMovie_inc
 #define plLayerMovie_inc
 
-#include "../plSurface/plLayerAnimation.h"
-#include "../plInterp/plAnimTimeConvert.h"
+#include "plSurface/plLayerAnimation.h"
+#include "plInterp/plAnimTimeConvert.h"
 
 class plMessage;
 class hsStream;

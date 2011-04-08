@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
-#include "../pfCCR/plCCRMgr.h"
+#include "pfCCR/plCCRMgr.h"
 
 
 #endif // pyCCRMgr_h_inc

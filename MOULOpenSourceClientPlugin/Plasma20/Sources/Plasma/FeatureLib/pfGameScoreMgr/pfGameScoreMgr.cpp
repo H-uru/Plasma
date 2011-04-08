@@ -25,9 +25,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pfGameScoreMgr.h"
 
-#include "../pnUtils/pnUtils.h"
-#include "../plNetGameLib/plNetGameLib.h"
-#include "../pnNetProtocol/pnNetProtocol.h"
+#include "pnUtils/pnUtils.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "pnNetProtocol/pnNetProtocol.h"
 
 //============================================================================
 pfGameScore::pfGameScore()

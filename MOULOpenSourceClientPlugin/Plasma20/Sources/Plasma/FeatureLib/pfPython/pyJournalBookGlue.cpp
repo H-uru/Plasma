@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyImage.h"
 
-#include "../pfJournalBook/pfJournalBook.h"
+#include "pfJournalBook/pfJournalBook.h"
 #include <python.h>
 
 // glue functions

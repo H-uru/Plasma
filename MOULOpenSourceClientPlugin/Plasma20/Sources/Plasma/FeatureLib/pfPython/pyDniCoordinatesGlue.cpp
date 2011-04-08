@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pyDniCoordinates.h"
 #include "pyGeometry3.h"
-#include "../plVault/plDniCoordinateInfo.h"
+#include "plVault/plDniCoordinateInfo.h"
 
 #include <python.h>
 

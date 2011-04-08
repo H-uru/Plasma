@@ -26,21 +26,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMarkerInfo.h"
 #include "pfMarkerMgr.h"
 
-#include "../plModifier/plGameMarkerModifier.h"
+#include "plModifier/plGameMarkerModifier.h"
 
-#include "../plMessage/plLoadCloneMsg.h"
-#include "../pnMessage/plWarpMsg.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../pnMessage/plEnableMsg.h"
-#include "../pnMessage/plSoundMsg.h"
-#include "../pnSceneObject/plAudioInterface.h"
+#include "plMessage/plLoadCloneMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plSoundMsg.h"
+#include "pnSceneObject/plAudioInterface.h"
 
 // For Init
-#include "../pnMessage/plClientMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plKeyFinder.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plKeyFinder.h"
 
 plUoid pfMarkerInfo::fMarkerUoid;
 

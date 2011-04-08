@@ -25,8 +25,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plLocalPlayerIntersectPlaneConditionalObject.h"
-#include "../../PubUtilLib/plPhysical/plDetectorModifier.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
+#include "plPhysical/plDetectorModifier.h"
+#include "pnModifier/plLogicModBase.h"
 
 plLocalPlayerIntersectPlaneConditionalObject::plLocalPlayerIntersectPlaneConditionalObject()
 {

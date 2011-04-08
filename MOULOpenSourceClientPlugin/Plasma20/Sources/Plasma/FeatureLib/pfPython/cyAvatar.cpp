@@ -27,16 +27,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "plgDispatch.h"
-#include "../plAvatar/plAvatarMgr.h"
+#include "plAvatar/plAvatarMgr.h"
 
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../plMessage/plOneShotCallbacks.h"
-#include "../plMessage/plOneShotMsg.h"
-#include "../plMessage/plMultistageMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../plGImage/plMipmap.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plOneShotCallbacks.h"
+#include "plMessage/plOneShotMsg.h"
+#include "plMessage/plMultistageMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "plGImage/plMipmap.h"
 #include "pyKey.h"
 #include "pySceneObject.h"
 #include "pyColor.h"
@@ -44,25 +44,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyPythonInterface.h"
 #include "cyMisc.h"
 
-#include "../plAvatar/plOneShotMod.h"
-#include "../plAvatar/plMultistageBehMod.h"
-#include "../plAvatar/plAvatarClothing.h"
-#include "../plAvatar/plClothingLayout.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../plAvatar/plAvBrainHuman.h"		// needed to call the emote
-#include "../plAvatar/plAGAnim.h"			// to get the BodyUsage enum
-#include "../plInputCore/plAvatarInputInterface.h"
+#include "plAvatar/plOneShotMod.h"
+#include "plAvatar/plMultistageBehMod.h"
+#include "plAvatar/plAvatarClothing.h"
+#include "plAvatar/plClothingLayout.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"		// needed to call the emote
+#include "plAvatar/plAGAnim.h"			// to get the BodyUsage enum
+#include "plInputCore/plAvatarInputInterface.h"
 #include "plPhysical.h"
-#include "../plMessage/plSimStateMsg.h"
+#include "plMessage/plSimStateMsg.h"
 
-#include "../pnNetCommon/plNetApp.h"
-#include "../plVault/plVault.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plVault/plVault.h"
 
-#include "../plDrawable/plSharedMesh.h"
+#include "plDrawable/plSharedMesh.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plDrawable/plMorphSequence.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plDrawable/plMorphSequence.h"
 
 
 ///////////////////////////////////////////////////////////////////////////

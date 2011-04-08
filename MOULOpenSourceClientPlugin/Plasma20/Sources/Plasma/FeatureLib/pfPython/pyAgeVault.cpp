@@ -44,13 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pySDL.h"
 
 
-#include "../plVault/plVault.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetClient/plNetLinkingMgr.h"
-#include "../plNetTransport/plNetTransport.h"
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../plSDL/plSDL.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "plVault/plVault.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetLinkingMgr.h"
+#include "plNetTransport/plNetTransport.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plSDL/plSDL.h"
+#include "pnNetCommon/plNetApp.h"
 
 pyAgeVault::pyAgeVault() {
 }

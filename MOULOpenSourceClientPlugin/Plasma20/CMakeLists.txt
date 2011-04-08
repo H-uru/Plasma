@@ -4,11 +4,15 @@ cmake_minimum_required(VERSION 2.8)
 # Find all 3rd-party libraries that are required
 find_package(OpenSSL REQUIRED)
 find_package(OpenAL REQUIRED)
+find_package(PythonLibs REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(EXPAT REQUIRED)
 find_package(ZLIB REQUIRED)
 
 option(EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 
-#TODO: Don't hard code this
+# TODO: are there any other build types which are useful for us?
+>>>>>>> Finish the port of FeatureLib to CMake
 add_definitions(-DBUILD_TYPE=BUILD_TYPE_LIVE)
 
 if(EXTERNAL_RELEASE)

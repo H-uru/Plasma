@@ -30,10 +30,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyKey.h"
 
-#include "../pfGameGUIMgr/pfGUIListBoxMod.h"
-#include "../pfGameGUIMgr/pfGUIListElement.h"
-#include "../pfGameGUIMgr/pfGUIDialogMod.h"
-#include "../plGImage/plDynamicTextMap.h"
+#include "pfGameGUIMgr/pfGUIListBoxMod.h"
+#include "pfGameGUIMgr/pfGUIListElement.h"
+#include "pfGameGUIMgr/pfGUIDialogMod.h"
+#include "plGImage/plDynamicTextMap.h"
 
 #include "pyGUIControlListBox.h"
 #include "pyGUIDialog.h"

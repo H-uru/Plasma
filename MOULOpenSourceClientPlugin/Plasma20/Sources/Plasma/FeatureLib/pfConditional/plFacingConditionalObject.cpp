@@ -26,14 +26,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plFacingConditionalObject.h"
 #include "plgDispatch.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
-#include "../plMessage/plActivatorMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnMessage/plFakeOutMsg.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "pnModifier/plLogicModBase.h"
+#include "plMessage/plActivatorMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plFakeOutMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
 plFacingConditionalObject::plFacingConditionalObject() :
 fTolerance(-1.0f),

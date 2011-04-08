@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pySDL.h"
-#include "../plSDL/plSDL.h"
+#include "plSDL/plSDL.h"
 
 ///////////////////////////////////////////////////////////////////////////
 

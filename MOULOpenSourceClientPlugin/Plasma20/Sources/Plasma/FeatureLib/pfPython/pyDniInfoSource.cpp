@@ -23,10 +23,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../pnUtils/pnUtils.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
-#include "../plVault/plAgeInfoSource.h"
-#include "../plVault/plVault.h"
+#include "pnUtils/pnUtils.h"
+#include "plUnifiedTime/plUnifiedTime.h"
+#include "plVault/plAgeInfoSource.h"
+#include "plVault/plVault.h"
 #include "pyDniInfoSource.h"
 #include "pyDniCoordinates.h"
 

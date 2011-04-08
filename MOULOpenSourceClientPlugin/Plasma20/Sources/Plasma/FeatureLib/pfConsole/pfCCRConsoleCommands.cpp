@@ -38,8 +38,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 #include "pfConsoleCmd.h"
 #include "pfConsole.h"
-#include "../pfCCR/plCCRMgr.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "pfCCR/plCCRMgr.h"
+#include "plNetClient/plNetClientMgr.h"
 
 //// This is here so Microsoft VC won't decide to "optimize" this file out
 // YOU ALSO NEED TO CALL THIS FXN

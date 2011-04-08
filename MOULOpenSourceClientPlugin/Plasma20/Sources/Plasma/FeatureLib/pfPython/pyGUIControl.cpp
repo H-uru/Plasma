@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 ///////////////////////////////////////////////
 
-#include "../pfGameGUIMgr/pfGUIControlMod.h"
-#include "../pfGameGUIMgr/pfGUIDialogMod.h"
+#include "pfGameGUIMgr/pfGUIControlMod.h"
+#include "pfGameGUIMgr/pfGUIDialogMod.h"
 
 #include "pyKey.h"
 #include "pyGUIControl.h"

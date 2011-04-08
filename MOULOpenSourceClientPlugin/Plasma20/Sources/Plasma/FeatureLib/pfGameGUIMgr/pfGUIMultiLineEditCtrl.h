@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUIControlMod.h"
 #include "hsTemplates.h"
 
-#include "../plInputCore/plInputDevice.h"
+#include "plInputCore/plInputDevice.h"
 
 class plMessage;
 class hsGMaterial;

@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUIDialogNotifyProc_h
 
 #include "pfGUIDialogHandlers.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 class plGUIControlMod;
 

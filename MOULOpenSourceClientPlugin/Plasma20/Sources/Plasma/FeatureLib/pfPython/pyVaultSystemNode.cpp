@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultAgeLinkNode.h"
 #include "pyVaultFolderNode.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
 // should only be created from C++ side
 pyVaultSystemNode::pyVaultSystemNode(RelVaultNode* nfsNode)

@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyKey.h"
 
-#include "../pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
-#include "../plGImage/plDynamicTextMap.h"
+#include "pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
+#include "plGImage/plDynamicTextMap.h"
 #include "pyDynamicText.h"
 
 #include "pyGUIControlDynamicText.h"

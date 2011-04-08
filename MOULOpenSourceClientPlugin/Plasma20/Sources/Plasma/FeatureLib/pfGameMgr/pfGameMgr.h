@@ -33,17 +33,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMEMGR_PFGAMEMGR_H
 
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnNetBase/pnNetBase.h"
-#include "../pnAsyncCore/pnAsyncCore.h"
-#include "../pnNetCli/pnNetCli.h"
-#include "../pnProduct/pnProduct.h"
-#include "../plNetGameLib/plNetGameLib.h"
+#include "pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetCli/pnNetCli.h"
+#include "pnProduct/pnProduct.h"
+#include "plNetGameLib/plNetGameLib.h"
 
 #pragma warning(push, 0)
 // These includes produce lots of warnings on W4
-#include "../pnMessage/plMessage.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnMessage/plMessage.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #pragma warning(pop)
 
 

@@ -37,52 +37,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCmd.h"
 #include "plgDispatch.h"
 
-#include "../plAgeLoader/plAgeLoader.h"
-#include "../plNetClient/plNetObjectDebugger.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetClient/plNetLinkingMgr.h"
-#include "../plAgeLoader/plResPatcher.h"
-#include "../../NucleusLib/inc/hsResMgr.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plKeyImp.h"
-#include "../pnModifier/plLogicModBase.h"
-#include "../pfCharacter/plPlayerModifier.h"
-#include "../../NucleusLib/inc/hsTimer.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../pnMessage/plEnableMsg.h"
-#include "../pnMessage/plAudioSysMsg.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plOneShotMsg.h"
-#include "../plMessage/plConsoleMsg.h"
+#include "plAgeLoader/plAgeLoader.h"
+#include "plNetClient/plNetObjectDebugger.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetLinkingMgr.h"
+#include "plAgeLoader/plResPatcher.h"
+#include "hsResMgr.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnModifier/plLogicModBase.h"
+#include "pfCharacter/plPlayerModifier.h"
+#include "hsTimer.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plAudioSysMsg.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plOneShotMsg.h"
+#include "plMessage/plConsoleMsg.h"
 #include "../../Apps/plClient/plClient.h"
 #include "pfConsole.h"
-#include "../plResMgr/plKeyFinder.h"
+#include "plResMgr/plKeyFinder.h"
 #include "hsResMgr.h"
 
 // begin for agedefn test
 #include "hsStream.h"
-#include "../plAgeDescription/plAgeDescription.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
+#include "plAgeDescription/plAgeDescription.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 //end for agedefn test
 
-#include "../../PubUtilLib/plFile/hsFiles.h"
+#include "plFile/hsFiles.h"
 
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
-#include "../plNetCommon/plSpawnPointInfo.h"
+#include "plNetCommon/plSpawnPointInfo.h"
 
-#include "../plSDL/plSDL.h"
+#include "plSDL/plSDL.h"
 
-#include "../plNetGameLib/plNetGameLib.h"
+#include "plNetGameLib/plNetGameLib.h"
 
-#include "../pfGameMgr/pfGameMgr.h"
+#include "pfGameMgr/pfGameMgr.h"
 
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
@@ -624,7 +624,7 @@ PF_CONSOLE_CMD( Net_DebugObject,		// groupName
 		plNetObjectDebugger::GetInstance()->ClearAllDebugObjects();
 }
 
-#include "../pfPython/plPythonSDLModifier.h"
+#include "pfPython/plPythonSDLModifier.h"
 PF_CONSOLE_CMD( Net_DebugObject,		// groupName
 			   DumpAgeSDLHook,		// fxnName
 			   "bool dirtyOnly", // paramList

@@ -33,9 +33,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUIControlMod_h
 
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsBounds.h"
-#include "../plMessage/plInputEventMsg.h"
+#include "plMessage/plInputEventMsg.h"
 #include "pfGameGUIMgr.h"
 #include "hsColorRGBA.h"
 #include "hsRefCnt.h"
