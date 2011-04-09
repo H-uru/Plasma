@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plImageLibMod_inc
 
 #include "hsTemplates.h"
-#include "../pnModifier/plSingleModifier.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnModifier/plSingleModifier.h"
+#include "pnKeyedObject/plKey.h"
 
 class plBitmap;
 class plImageLibMod : public plSingleModifier

@@ -38,27 +38,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plAvatarInputInterface.h"
 
-#include "../pnInputCore/plKeyMap.h"
-#include "../plMessage/plInputEventMsg.h"
+#include "pnInputCore/plKeyMap.h"
+#include "plMessage/plInputEventMsg.h"
 
 #include "plInputInterfaceMgr.h"
 #include "plInputManager.h"
 #include "plInputDevice.h"
 
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plProxyDrawMsg.h"
-#include "../pnMessage/plCmdIfaceModMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plProxyDrawMsg.h"
+#include "pnMessage/plCmdIfaceModMsg.h"
 
 // DEHACK
 // used to run debug drawing stuff only; should never be checked in with this enabled
  #if 0
-#include "../FeatureLib/pfCamera/plVirtualCam.h"
-#include "../plDrawable/plDrawableSpans.h"
+#include "FeatureLib/pfCamera/plVirtualCam.h"
+#include "plDrawable/plDrawableSpans.h"
  #endif
 
-#include "../plAudio/plVoiceChat.h"
+#include "plAudio/plVoiceChat.h"
 #include "plInputDevice.h"
 #include "plInputManager.h"
 #include "hsResMgr.h"
@@ -66,10 +66,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsConfig.h"
 #include "hsMatrix44.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
-#include "../pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetApp.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 

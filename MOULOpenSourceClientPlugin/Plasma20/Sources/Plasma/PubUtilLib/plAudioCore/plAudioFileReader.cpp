@@ -39,13 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioCore.h"
 //#include "hsTimer.h"
 #include "hsUtils.h"
-#include "../plFile/hsFiles.h"
-#include "../plFile/plFileUtils.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
+#include "plFile/hsFiles.h"
+#include "plFile/plFileUtils.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 #include "plBufferedFileReader.h"
 #include "plFastWavReader.h"
-#include "../plAudio/plOGGCodec.h"
-#include "../plAudio/plWavFile.h"
+#include "plOGGCodec.h"
+#include "plWavFile.h"
 
 #define kCacheDirName	"streamingCache"
 

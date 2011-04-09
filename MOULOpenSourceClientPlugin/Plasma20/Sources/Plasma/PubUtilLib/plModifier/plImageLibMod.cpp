@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plImageLibMod.h"
 
-#include "../plGImage/plBitmap.h"
-#include "../pnMessage/plRefMsg.h"
+#include "plGImage/plBitmap.h"
+#include "pnMessage/plRefMsg.h"
 
 #include "hsTimer.h"
 #include "hsStream.h"

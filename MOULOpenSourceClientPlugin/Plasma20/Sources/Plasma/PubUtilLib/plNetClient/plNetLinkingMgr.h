@@ -29,9 +29,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 #include "hsBitVector.h"
-#include "../plNetCommon/plNetServerSessionInfo.h"
-#include "../plNetCommon/plNetCommon.h"
-#include "../plMessage/plLinkToAgeMsg.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plMessage/plLinkToAgeMsg.h"
 
 class plMessage;
 struct plNCAgeJoiner;

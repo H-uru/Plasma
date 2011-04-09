@@ -26,10 +26,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plNetClientMgr.h"
 
-#include "../pnNetCommon/pnNetCommon.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "pnNetCommon/pnNetCommon.h"
+#include "pnMessage/plTimeMsg.h"
 
-#include "../plNetClientRecorder/plNetClientRecorder.h"
+#include "plNetClientRecorder/plNetClientRecorder.h"
 
 //
 // make a recording of current play

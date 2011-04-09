@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include "hsStlUtils.h"
 #include <mmsystem.h>
-#include "../plAudioCore/plAudioFileReader.h"
+#include "plAudioFileReader.h"
 
 
 struct plSoundMarker

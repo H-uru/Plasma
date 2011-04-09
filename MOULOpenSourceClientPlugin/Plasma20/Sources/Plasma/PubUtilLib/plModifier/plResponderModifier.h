@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plResponderModifier_inc
 
 #include "hsStlUtils.h"
-#include "../pnModifier/plSingleModifier.h"
-#include "../pnMessage/plMessage.h"
+#include "pnModifier/plSingleModifier.h"
+#include "pnMessage/plMessage.h"
 
 
 class plNotifyMsg;

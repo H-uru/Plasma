@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsStlUtils.h"
 #include "plNetCommonHelpers.h"
-#include "../pnNetCommon/plGenericVar.h"
-#include "../plCompression/plZlibCompress.h"
+#include "pnNetCommon/plGenericVar.h"
+#include "plCompression/plZlibCompress.h"
 #include <algorithm>
 #include <iterator>
 

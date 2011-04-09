@@ -35,17 +35,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 #include "plInputDevice.h"
 #include "plDInputDevice.h"
-#include "../plMessage/plInputEventMsg.h"
+#include "plMessage/plInputEventMsg.h"
 #include "plInputInterfaceMgr.h"
 #include "hsStream.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
 #include "plgDispatch.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../pnMessage/plCmdIfaceModMsg.h"
-#include "../pnMessage/plPlayerPageMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnMessage/plCmdIfaceModMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
 
 hsBool	plInputManager::fUseDInput = false;
 UInt8	plInputManager::bRecenterMouse = 0;

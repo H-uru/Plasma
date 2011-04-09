@@ -30,9 +30,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsQuat.h"
 #include "hsMatrix44.h"
 
-#include "NxVec3.h"
-#include "NxQuat.h"
-#include "NxMat34.h"
+#include <NxVec3.h>
+#include <NxQuat.h>
+#include <NxMat34.h>
 
 // Converts to and from the PhysX types
 namespace plPXConvert

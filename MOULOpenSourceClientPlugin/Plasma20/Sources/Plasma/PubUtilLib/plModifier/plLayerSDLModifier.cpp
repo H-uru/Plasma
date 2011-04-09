@@ -25,8 +25,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsMatrix44.h"
 #include "plLayerSDLModifier.h"
-#include "../plSDL/plSDL.h"
-#include "../plSurface/plLayerAnimation.h"
+#include "plSDL/plSDL.h"
+#include "plSurface/plLayerAnimation.h"
 
 // static vars
 char plLayerSDLModifier::kStrAtc[]="atc";

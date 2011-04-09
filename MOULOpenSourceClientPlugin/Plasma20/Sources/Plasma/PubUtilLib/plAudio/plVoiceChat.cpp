@@ -27,28 +27,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include "hsTimer.h"
 #include "hsResMgr.h"
-#include "al.h"
-#include "alc.h"
+#include <al.h>
+#include <alc.h>
 #include "plDSoundBuffer.h"
-#include "speex.h"
-#include "speex_bits.h"
+#include <speex.h>
+#include <speex_bits.h>
 #include "hsGeometry3.h"
 #include "plVoiceChat.h"
 #include "plAudioSystem.h"
 #include "plgDispatch.h"
-#include "../plAudible/plWinAudible.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../plPipeline/plPlates.h"
+#include "plAudible/plWinAudible.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plPipeline/plPlates.h"
 #include "hsConfig.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plArmatureMod.h"
 #include "hsQuat.h"
-#include "../plAudioCore/plAudioCore.h"
+#include "plAudioCore/plAudioCore.h"
 
 // DEBUG for printing to the console
-#include "../plMessage/plConsoleMsg.h"
-#include "../plPipeline/plDebugText.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plPipeline/plDebugText.h"
+#include "plStatusLog/plStatusLog.h"
 
 #define MICROPHONE			121
 #define TALKING				122

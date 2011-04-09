@@ -32,15 +32,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWin32Sound.h"
 #include "plDSoundBuffer.h"
 #include "plAudioSystem.h"
-#include "../plAudioCore/plSoundBuffer.h"
-#include "../plAudioCore/plSoundDeswizzler.h"
-#include "../pnMessage/plEventCallbackMsg.h"
-#include "../pnMessage/plAudioSysMsg.h"
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../plMessage/plAvatarMsg.h"
+#include "plAudioCore/plSoundBuffer.h"
+#include "plAudioCore/plSoundDeswizzler.h"
+#include "pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plAudioSysMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plAvatarMsg.h"
 
-#include "../plPipeline/plPlates.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plPipeline/plPlates.h"
+#include "plStatusLog/plStatusLog.h"
 
 plProfile_Extern(MemSounds);
 plProfile_CreateAsynchTimer( "Static Shove Time", "Sound", StaticSndShoveTime );

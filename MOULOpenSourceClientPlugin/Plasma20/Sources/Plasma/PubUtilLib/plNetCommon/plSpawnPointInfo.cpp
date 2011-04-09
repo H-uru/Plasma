@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plSpawnPointInfo.h"
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsStream.h"
 #include "hsBitVector.h"
 

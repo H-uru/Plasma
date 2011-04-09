@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysXCreatable_inc
 #define plPhysXCreatable_inc
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "plPXPhysical.h"
 

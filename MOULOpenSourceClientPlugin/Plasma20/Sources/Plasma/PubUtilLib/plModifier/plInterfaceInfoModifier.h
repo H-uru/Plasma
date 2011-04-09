@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInterfaceInfoMod_inc
 #define plInterfaceInfoMod_inc
 
-#include "../pnModifier/plSingleModifier.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnModifier/plSingleModifier.h"
+#include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
 
 class plInterfaceInfoModifier : public plSingleModifier

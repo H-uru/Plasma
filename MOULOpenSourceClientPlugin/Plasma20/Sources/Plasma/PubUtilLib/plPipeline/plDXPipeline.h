@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 #include "plDXSettings.h"
 
-#include "../plSurface/plLayerInterface.h"
+#include "plSurface/plLayerInterface.h"
 #include "hsMatrix44.h"
 #include "plFogEnvironment.h"
 #include "hsG3DDeviceSelector.h"
@@ -448,7 +448,7 @@ protected:
 	hsBool			IAvatarSort(plDrawableSpans* d, const hsTArray<Int16>& visList);
 	void			IBlendVertsIntoBuffer( plSpan* span, 
 											hsMatrix44* matrixPalette, int numMatrices,
-											UInt8 *src, UInt8 format, UInt32 srcStride, 
+											const UInt8 *src, UInt8 format, UInt32 srcStride, 
 											UInt8 *dest, UInt32 destStride, UInt32 count, UInt16 localUVWChans );
 	hsBool			ISoftwareVertexBlend( plDrawableSpans* drawable, const hsTArray<Int16>& visList );
 

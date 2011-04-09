@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plGameMarkerModifier.h"
-#include "../plMessage/plCollideMsg.h"
+#include "plMessage/plCollideMsg.h"
 
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
 hsBool plGameMarkerModifier::MsgReceive(plMessage* msg)
 {

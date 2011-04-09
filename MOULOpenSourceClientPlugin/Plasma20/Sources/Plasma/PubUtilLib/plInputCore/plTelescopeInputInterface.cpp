@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputInterfaceMgr.h"
 #include "plInputManager.h"
 #include "plInputDevice.h"
-#include "../pnInputCore/plKeyMap.h"
+#include "pnInputCore/plKeyMap.h"
 
 #include "plgDispatch.h"
 

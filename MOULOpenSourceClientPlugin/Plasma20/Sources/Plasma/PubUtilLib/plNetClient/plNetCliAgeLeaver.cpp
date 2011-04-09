@@ -33,18 +33,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
 
-#include "../pnMessage/plTimeMsg.h"
+#include "pnMessage/plTimeMsg.h"
 
-#include "../plNetClientComm/plNetClientComm.h"
-#include "../plNetGameLib/plNetGameLib.h"
-#include "../plAgeLoader/plAgeLoader.h"
-#include "../plAgeLoader/plBackgroundDownloader.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plVault/plVault.h"
+#include "plNetClientComm/plNetClientComm.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plAgeLoader/plAgeLoader.h"
+#include "plAgeLoader/plBackgroundDownloader.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plVault/plVault.h"
 
-#include "../plMessage/plLoadAgeMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
-#include "../plMessage/plInputIfaceMgrMsg.h"
+#include "plMessage/plLoadAgeMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
 
 
 

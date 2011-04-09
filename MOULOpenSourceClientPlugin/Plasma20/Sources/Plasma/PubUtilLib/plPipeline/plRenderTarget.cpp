@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeline.h"
 #include "plgDispatch.h"
-#include "../pnMessage/plPipeResMakeMsg.h"
+#include "pnMessage/plPipeResMakeMsg.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //// plRenderTarget Functions /////////////////////////////////////////////////

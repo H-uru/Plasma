@@ -24,8 +24,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plMaintainersMarkerModifier.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plAvatar/plAvatarMgr.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plAvatar/plAvatarMgr.h"
 
 void plMaintainersMarkerModifier::AddTarget(plSceneObject* so)
 {

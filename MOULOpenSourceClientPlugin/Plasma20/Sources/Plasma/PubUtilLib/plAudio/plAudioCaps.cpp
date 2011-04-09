@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "al.h"
-#include "alc.h"
+#include <al.h>
+#include <alc.h>
 #include "plEAXEffects.h"
 
 #include "plAudioCaps.h"
@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #include <DShow.h>
 
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 #define MAX_NUM_SOURCES 128
 #define kLogMe if( fLog != nil ) fLog->AddLineF( 

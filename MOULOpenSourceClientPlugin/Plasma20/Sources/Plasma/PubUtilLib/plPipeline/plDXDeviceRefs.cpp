@@ -48,15 +48,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXTextureRef.h"
 #include "plDXRenderTargetRef.h"
 #include "plGBufferGroup.h"
-#include "../plDrawable/plGeometrySpan.h"
-#include "../plDrawable/plDrawableSpans.h"
-#include "../plGLight/plLightInfo.h"
+#include "plDrawable/plGeometrySpan.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plGLight/plLightInfo.h"
 #include "plRenderTarget.h"
 #include "plCubicRenderTarget.h"
 #include "plDynamicEnvMap.h"
 
 #include "plProfile.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 plProfile_CreateMemCounter("Vertices", "Memory", MemVertex);
 plProfile_CreateMemCounter("Indices", "Memory", MemIndex);

@@ -35,12 +35,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDSoundBuffer.h"
 #include "plAudioSystem.h"
 
-#include "../plAudioCore/plAudioFileReader.h"
-#include "../plAudioCore/plSoundBuffer.h"
-#include "../plAudioCore/plSoundDeswizzler.h"
-#include "../pnMessage/plSoundMsg.h"
-#include "../pnMessage/plEventCallbackMsg.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plAudioCore/plAudioFileReader.h"
+#include "plAudioCore/plSoundBuffer.h"
+#include "plAudioCore/plSoundDeswizzler.h"
+#include "pnMessage/plSoundMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
+#include "plStatusLog/plStatusLog.h"
 
 #define STREAMING_UPDATE_MS 200
 

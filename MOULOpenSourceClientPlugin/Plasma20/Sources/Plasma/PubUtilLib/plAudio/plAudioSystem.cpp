@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "al.h"
-#include "alc.h"
-#include "efx.h"
+#include <al.h>
+#include <alc.h>
+#include <efx.h>
 #include <MMREG.H>
 #ifdef EAX_SDK_AVAILABLE
 #include <eax.h>
@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "plgDispatch.h"
 #include "plProfile.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 #include "plSound.h"
 #include "plAudioCaps.h"
@@ -46,14 +46,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEAXListenerMod.h"
 #include "plVoiceChat.h"
 
-#include "../pnMessage/plAudioSysMsg.h"
-#include "../plMessage/plRenderMsg.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "pnMessage/plAudioSysMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "pnMessage/plTimeMsg.h"
 
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
 
 
 #define SAFE_RELEASE(p) if(p){ p->Release(); p = nil; }

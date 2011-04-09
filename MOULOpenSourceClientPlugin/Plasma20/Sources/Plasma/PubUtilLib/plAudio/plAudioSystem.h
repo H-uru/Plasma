@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindowHndl.h"
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 #define DEFAULT_AUDIO_DEVICE_NAME "Generic Software"
 

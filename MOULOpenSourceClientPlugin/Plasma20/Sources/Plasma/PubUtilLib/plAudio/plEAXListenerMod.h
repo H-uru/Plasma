@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plEAXListenerMod_h
 
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 
 class plMessage;
 class plSoftVolume;

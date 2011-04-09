@@ -35,13 +35,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientMsgHandler.h"
 #include "plNetClientStats.h"		// STATS Counters
 
-#include "../pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetApp.h"
 
-#include "../plNetTransport/plNetTransport.h"
-#include "../plEncryption/plChecksum.h"
-#include "../plNetCommon/plNetServerSessionInfo.h"
-#include "../plNetClientComm/plNetClientComm.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
+#include "plNetTransport/plNetTransport.h"
+#include "plEncryption/plChecksum.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plNetClientComm/plNetClientComm.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 #pragma warning(disable: 4284)
 
 ////////////////////////////////////////////////////////////////////

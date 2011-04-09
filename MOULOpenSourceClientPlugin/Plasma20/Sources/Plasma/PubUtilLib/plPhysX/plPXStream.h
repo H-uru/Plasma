@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plPXStream_h_inc
 
 #include "hsStream.h"
-#include "NxPhysics.h"
-#include "NxStream.h"
+#include <NxPhysics.h>
+#include <NxStream.h>
 
 // A super simple wrapper to convert a Plasma stream into a PhysX one
 class plPXStream : public NxStream

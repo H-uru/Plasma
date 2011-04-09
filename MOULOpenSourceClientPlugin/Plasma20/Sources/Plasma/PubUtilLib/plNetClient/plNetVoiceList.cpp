@@ -27,10 +27,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plNetClientMgr.h"
 #include "plNetVoiceList.h"
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../pnMessage/plSoundMsg.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "pnMessage/plSoundMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "plStatusLog/plStatusLog.h"
 
 // statics
 float plNetListenList::kUpdateInterval=0.5f;

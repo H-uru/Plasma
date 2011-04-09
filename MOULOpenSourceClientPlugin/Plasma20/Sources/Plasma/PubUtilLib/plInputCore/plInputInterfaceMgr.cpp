@@ -40,24 +40,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputInterface.h"
 #include "plInputDevice.h"		// For mouse device stuff
 
-#include "../pnInputCore/plKeyMap.h"
-#include "../plMessage/plInputEventMsg.h"
-#include "../plMessage/plInputIfaceMgrMsg.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../pnMessage/plCmdIfaceModMsg.h"
-#include "../pnMessage/plPlayerPageMsg.h"
+#include "pnInputCore/plKeyMap.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnMessage/plCmdIfaceModMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
 
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
 
-#include "../pnNetCommon/plNetApp.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plNetClient/plNetClientMgr.h"
 
 #include "hsResMgr.h"
 #include "plgDispatch.h"
 #include "plProfile.h"
-#include "../plResMgr/plLocalization.h"
+#include "plResMgr/plLocalization.h"
 
 plProfile_CreateTimer("Input", "Update", Input);
 

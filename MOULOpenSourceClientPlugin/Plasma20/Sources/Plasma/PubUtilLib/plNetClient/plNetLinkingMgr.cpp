@@ -28,25 +28,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCliAgeJoiner.h"
 #include "plNetCliAgeLeaver.h"
 
-#include "../plNetTransport/plNetTransportMember.h"		// OfferLinkToPlayer()
+#include "plNetTransport/plNetTransportMember.h"		// OfferLinkToPlayer()
 
 #include "plgDispatch.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plNetCommon/plNetCommon.h"
-#include "../plVault/plVault.h"
-#include "../pnNetCommon/pnNetCommon.h"
-#include "../plMessage/plVaultNotifyMsg.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../plFile/hsFiles.h"
-#include "../plMessage/plNCAgeJoinerMsg.h"
-#include "../plVault/plVault.h"
+#include "pnMessage/plTimeMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plVault/plVault.h"
+#include "pnNetCommon/pnNetCommon.h"
+#include "plMessage/plVaultNotifyMsg.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plFile/hsFiles.h"
+#include "plMessage/plNCAgeJoinerMsg.h"
+#include "plVault/plVault.h"
 
 
 /*****************************************************************************

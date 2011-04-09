@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPXPhysicalController_h_inc
 #define plPXPhysicalController_h_inc
 
-#include "../plAvatar/plAvCallbackAction.h"
+#include "plAvatar/plAvCallbackAction.h"
 #include "hsQuat.h"
 
 #define PHYSX_ONLY_TRIGGER_FROM_KINEMATIC 1

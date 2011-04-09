@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plFogEnvironment_h
 #define _plFogEnvironment_h
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "hsTypes.h"
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"

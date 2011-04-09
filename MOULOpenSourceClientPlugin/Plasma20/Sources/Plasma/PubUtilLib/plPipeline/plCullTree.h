@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsBitVector.h"
 #include "plCuller.h"
-#include "../plScene/plCullPoly.h"
+#include "plScene/plCullPoly.h"
 
 #ifdef HS_DEBUGGING
 #define DEBUG_POINTERS

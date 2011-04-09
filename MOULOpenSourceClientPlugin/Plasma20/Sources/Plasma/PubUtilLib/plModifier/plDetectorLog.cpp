@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plDetectorLog.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 // Don't bother logging detectors in the external release, since it isn't written to disk
 #ifdef PLASMA_EXTERNAL_RELEASE

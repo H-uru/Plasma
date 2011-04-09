@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <EFX-Util.h>
 #endif
 #include "plEAXEffects.h"
-#include "../plAudioCore/plAudioCore.h"
+#include "plAudioCore/plAudioCore.h"
 #include "plDSoundBuffer.h"
 #include "hsTemplates.h"
 #include "plEAXListenerMod.h"
@@ -44,14 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioSystem.h"
 #include <al.h>
 
-#include <dmusici.h>
 #include <dxerr9.h>
 #ifdef EAX_SDK_AVAILABLE
 #include <eax.h>
 #include <eax-util.h>
 #include <eaxlegacy.h>
 #endif
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 #define kDebugLog	if( myLog != nil ) myLog->AddLineF(
 

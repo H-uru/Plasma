@@ -36,20 +36,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "hsStream.h"
 
-#include "../plMessage/plRenderRequestMsg.h"
-#include "../plMessage/plDynamicEnvMapMsg.h"
-#include "../pfCamera/plCameraModifier.h"
-#include "../pfCamera/plVirtualCamNeu.h"
-#include "../plMessage/plRenderMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
-#include "../plMessage/plLayRefMsg.h"
-#include "../pnMessage/plPipeResMakeMsg.h"
-#include "../pnMessage/plRefMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
+#include "plMessage/plDynamicEnvMapMsg.h"
+#include "pfCamera/plCameraModifier.h"
+#include "pfCamera/plVirtualCamNeu.h"
+#include "plMessage/plRenderMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plLayRefMsg.h"
+#include "pnMessage/plPipeResMakeMsg.h"
+#include "pnMessage/plRefMsg.h"
 
-#include "../plScene/plVisRegion.h"
-#include "../plScene/plVisMgr.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plSurface/plLayer.h"
+#include "plScene/plVisRegion.h"
+#include "plScene/plVisMgr.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plSurface/plLayer.h"
 
 plDynamicEnvMap::plDynamicEnvMap()
 :	fPos(0,0,0),

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plResponderSDLModifier_inc
 #define plResponderSDLModifier_inc
 
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 //
 // This modifier is responsible for sending and recving responder state

@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plSoundSDLModifier.h"
-#include "../plSDL/plSDL.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plAudioInterface.h"
-#include "../plAudio/plSound.h"
+#include "plSDL/plSDL.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "plAudio/plSound.h"
 
 // static vars
 char plSoundSDLModifier::kStrVolume[]="desiredVolume";

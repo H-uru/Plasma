@@ -29,12 +29,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 #include "hsStream.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../pnMessage/plRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "hsTimer.h"
-// #include "../pfConditional/plAnimationEventConditionalObject.h"
-#include "../plMessage/plAnimCmdMsg.h"
+// #include "pfConditional/plAnimationEventConditionalObject.h"
+#include "plMessage/plAnimCmdMsg.h"
 
 plSimpleModifier::plSimpleModifier()
 : 

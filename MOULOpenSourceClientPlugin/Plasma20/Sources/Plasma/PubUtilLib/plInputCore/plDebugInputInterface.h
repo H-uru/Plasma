@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDebugInputInterface_h
 
 #include "plInputInterface.h"
-#include "../pnInputCore/plInputMap.h"
+#include "pnInputCore/plInputMap.h"
 
 
 //// Class Definition ////////////////////////////////////////////////////////

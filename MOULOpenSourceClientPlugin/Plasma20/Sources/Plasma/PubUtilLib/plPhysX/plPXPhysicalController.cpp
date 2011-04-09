@@ -27,21 +27,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSimulationMgr.h"
 #include "plPXPhysical.h"
 #include "plPXConvert.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plCorrectionMsg.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plDrawable/plDrawableGenerator.h"
-#include "../plPhysical/plPhysicalProxy.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plCorrectionMsg.h"
+#include "plAvatar/plArmatureMod.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "plPhysical/plPhysicalProxy.h"
 
-#include "../pnMessage/plSetNetGroupIDMsg.h"
-#include "../plMessage/plCollideMsg.h"
+#include "pnMessage/plSetNetGroupIDMsg.h"
+#include "plMessage/plCollideMsg.h"
 
-#include "NxPhysics.h"
-#include "ControllerManager.h" 
-#include "NxCapsuleController.h"
-#include "NxCapsuleShape.h"
+#include <NxPhysics.h>
+#include <ControllerManager.h>
+#include <NxCapsuleController.h>
+#include <NxCapsuleShape.h>
 
 #define kPhysxSkinWidth 0.1f
 #define kPhysZOffset ((fRadius + (fHeight / 2)) + kPhysxSkinWidth)
@@ -60,7 +60,7 @@ hsBool plPXPhysicalController::fDebugDisplay = false;
 
 static ControllerManager gControllerMgr;
 static std::vector<plPXPhysicalController*> gControllers;
-static gRebuildCache = false;
+static bool gRebuildCache = false;
 
 // KLUDGE: From plPXPhysical.cpp
 bool CompareMatrices(const hsMatrix44 &matA, const hsMatrix44 &matB, float tolerance);

@@ -32,16 +32,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputDevice.h"
 #include "plInputManager.h"
 #include "plAvatarInputInterface.h"
-#include "../plMessage/plInputEventMsg.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "pnMessage/plTimeMsg.h"
 #include "hsUtils.h"
 #include "plgDispatch.h"
 
-#include "../plPipeline/plPlates.h"
-#include "../plPipeline/plDebugText.h"
+#include "plPipeline/plPlates.h"
+#include "plPipeline/plDebugText.h"
 
 #include "hsWindows.h"
-#include "../NucleusLib/inc/plPipeline.h"
+#include "plPipeline.h"
 
 // base size of the cursor 
 #define CURSOR_SIZE_X 0.0675f	

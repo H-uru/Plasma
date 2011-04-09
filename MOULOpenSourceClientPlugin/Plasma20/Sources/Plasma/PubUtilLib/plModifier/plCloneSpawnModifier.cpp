@@ -26,15 +26,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCloneSpawnModifier.h"
 
 #include "hsResMgr.h"
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plKeyFinder.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "../plScene/plSceneNode.h"
-#include "../pnMessage/plClientMsg.h"
+#include "plScene/plSceneNode.h"
+#include "pnMessage/plClientMsg.h"
 #include "plgDispatch.h"
-#include "../pnMessage/plWarpMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
 
 plCloneSpawnModifier::plCloneSpawnModifier() : fTemplateName(nil), fExportTime(false)
 {

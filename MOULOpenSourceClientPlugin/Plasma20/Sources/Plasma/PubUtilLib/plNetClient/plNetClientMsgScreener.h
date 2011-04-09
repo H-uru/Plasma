@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetClientMsgScreener_h
 #define plNetClientMsgScreener_h
 
-#include "../plNetCommon/plNetMsgScreener.h"
+#include "plNetCommon/plNetMsgScreener.h"
 
 //
 // Client-side version

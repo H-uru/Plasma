@@ -38,12 +38,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDSoundBuffer.h"
 
 #include "plAudioSystem.h"
-#include "../plAudioCore/plSoundBuffer.h"
-#include "../plAudioCore/plSoundDeswizzler.h"
+#include "plAudioCore/plSoundBuffer.h"
+#include "plAudioCore/plSoundDeswizzler.h"
 #include "plgDispatch.h"
-#include "../pnMessage/plSoundMsg.h"
+#include "pnMessage/plSoundMsg.h"
 
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 #include "plProfile.h"
 #include "hsResMgr.h"
 

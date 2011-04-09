@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeResReq.h"
 
-#include "../plGImage/plBitmap.h"
+#include "plGImage/plBitmap.h"
 
 #define ASSERT_ABSOLUTE		hsAssert( !fProportionalViewport, "Cannot perform this on a proportional RenderTarget" );
 #define ASSERT_PROPORTIONAL	hsAssert( fProportionalViewport, "Cannot perform this on an absolute RenderTarget" );

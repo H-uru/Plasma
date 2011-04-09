@@ -26,19 +26,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLOSDispatch.h"
 #include "plSimulationMgr.h"
 #include "plgDispatch.h"
-#include "../plMessage/plLOSRequestMsg.h"
-#include "../plMessage/plLOSHitMsg.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plModifier/plLogicModifier.h"
+#include "plMessage/plLOSRequestMsg.h"
+#include "plMessage/plLOSHitMsg.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plModifier/plLogicModifier.h"
 #include "plPXPhysical.h"
 #include "plPXPhysicalControllerCore.h"
 #include "plPXConvert.h"
 
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plArmatureMod.h"
 
-#include "NxPhysics.h"
+#include <NxPhysics.h>
 
 #include "plProfile.h"
 plProfile_Extern(LineOfSight);

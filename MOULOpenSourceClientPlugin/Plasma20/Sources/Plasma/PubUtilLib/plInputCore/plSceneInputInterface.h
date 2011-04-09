@@ -34,8 +34,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInputInterface.h"
 #include "hsGeometry3.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnUtils/pnUtils.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnUtils/pnUtils.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
 		

@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plTelescopeInputInterface_h
 
 #include "plInputInterface.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
 		

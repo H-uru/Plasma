@@ -25,15 +25,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plSDLModifier.h"
 
-#include "../pnNetCommon/plSynchedObject.h"
-#include "../pnDispatch/plDispatch.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plSDLModifierMsg.h"
+#include "pnNetCommon/plSynchedObject.h"
+#include "pnDispatch/plDispatch.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plSDLModifierMsg.h"
 
-#include "../plNetMessage/plNetMessage.h"
-#include "../plSDL/plSDL.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetClient/plNetObjectDebugger.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plSDL/plSDL.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetObjectDebugger.h"
 
 plSDLModifier::plSDLModifier() : fStateCache(nil), fSentOrRecvdState(false)
 {

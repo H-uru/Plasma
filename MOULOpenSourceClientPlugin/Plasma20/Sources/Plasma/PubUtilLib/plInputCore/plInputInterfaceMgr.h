@@ -36,10 +36,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plInputInterfaceMgr_h
 #define _plInputInterfaceMgr_h
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
-#include "../pnInputCore/plKeyMap.h"
+#include "pnInputCore/plKeyMap.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
 

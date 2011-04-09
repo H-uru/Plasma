@@ -1,18 +1,24 @@
 project(CyanWorldsEngine)
 cmake_minimum_required(VERSION 2.8)
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 # Find all 3rd-party libraries that are required
 find_package(OpenSSL REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(PythonLibs REQUIRED)
-find_package(ZLIB REQUIRED)
 find_package(EXPAT REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(PHYSX REQUIRED)  #TODO: Not required if we aren't building the client
+find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the client
+find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
+find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
+#find_package(BINK REQUIRED)  #TODO: Find Bink, but don't require it if plPipeline isn't built...
+#                                    Or better yet, just eliminate bink altogether
 
 option(EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 
-# TODO: are there any other build types which are useful for us?
->>>>>>> Finish the port of FeatureLib to CMake
+#TODO: Don't hard code this
 add_definitions(-DBUILD_TYPE=BUILD_TYPE_LIVE)
 
 if(EXTERNAL_RELEASE)
