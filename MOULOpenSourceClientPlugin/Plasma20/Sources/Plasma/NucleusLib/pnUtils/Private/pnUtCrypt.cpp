@@ -32,13 +32,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Pch.h"
 #pragma hdrstop
 
-#include "openssl/md5.h"
-#include "openssl/sha.h"
+#include <openssl/md5.h>
+#include <openssl/sha.h>
 
 // OpenSSL's RC4 algorithm has bugs and randomly corrupts data
 //#define OPENSSL_RC4
 #ifdef OPENSSL_RC4
-#include "openssl/rc4.h"
+#include <openssl/rc4.h>
 #endif
 
 /*****************************************************************************

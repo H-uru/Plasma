@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plTimerCallbackManager_Defined
 
 #include "hsScalar.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "hsTemplates.h"
 
 class plMessage;
