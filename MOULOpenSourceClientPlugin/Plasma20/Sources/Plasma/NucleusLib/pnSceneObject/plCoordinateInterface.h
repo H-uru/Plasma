@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plObjInterface.h"
 #include "hsTemplates.h"
 #include "hsMatrix44.h"
-#include "../pnNetCommon/plSynchedValue.h"
+#include "pnNetCommon/plSynchedValue.h"
 
 class hsStream;
 class hsResMgr;

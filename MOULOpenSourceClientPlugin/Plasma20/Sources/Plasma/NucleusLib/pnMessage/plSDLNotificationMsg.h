@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSDLNotificationMsg_inc
 #define plSDLNotificationMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plSimpleStateVariable;
 class plSDLNotificationMsg : public plMessage

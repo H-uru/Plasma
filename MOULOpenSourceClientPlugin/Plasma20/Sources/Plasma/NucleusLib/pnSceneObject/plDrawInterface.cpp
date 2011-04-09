@@ -32,9 +32,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plgDispatch.h"
 #include "plSceneObject.h"
-#include "../pnMessage/plEnableMsg.h"
-#include "../pnMessage/plIntRefMsg.h"
-#include "../pnMessage/plDISpansMsg.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plDISpansMsg.h"
 
 plDrawInterface::plDrawInterface()
 {

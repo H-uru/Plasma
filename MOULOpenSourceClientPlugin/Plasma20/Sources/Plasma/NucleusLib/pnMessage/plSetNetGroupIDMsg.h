@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSetNetGroupIDMsg_h_inc
 
 #include "plMessage.h"
-#include "../pnNetCommon/plNetGroup.h"
+#include "pnNetCommon/plNetGroup.h"
 
 // Send this to a SynchedObject to change its NetGroupID
 class plSetNetGroupIDMsg : public plMessage

@@ -26,13 +26,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClientMsg_inc
 #define plClientMsg_inc
 
-#include "../pnMessage/plMessage.h"
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plMessage.h"
+#include "pnMessage/plRefMsg.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "hsUtils.h"
 #include "hsStlUtils.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 
 //
 // Handles various types of client (app) msgs, relating 

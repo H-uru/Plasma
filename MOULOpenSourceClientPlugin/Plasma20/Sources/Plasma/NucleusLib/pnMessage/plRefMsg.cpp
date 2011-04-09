@@ -29,8 +29,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 plRefMsg::plRefMsg()
 : fRef(nil), fOldRef(nil), fContext(0)

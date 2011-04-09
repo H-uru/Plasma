@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSIMULATIONMSG_H
 #define PLSIMULATIONMSG_H
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 // PLSIMULATIONMSG
 // Virtual base class for all messages which are specific to the simulation interface

@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetResMgr_h
 #define plNetResMgr_h
 
-#include "../plResMgr/plResManager.h"
-#include "../pnKeyedObject/plKey.h"
+#include "plResMgr/plResManager.h"
+#include "pnKeyedObject/plKey.h"
 
 //
 // plNetResMgr - Keys? Disk? What? Nah, we'll just create new ones and give them to ya

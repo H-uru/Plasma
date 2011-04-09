@@ -26,13 +26,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMsgForwarder.h"
 #include "hsResMgr.h"
 #include "hsTypes.h"
-#include "../pnMessage/plMessage.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnNetCommon/plSynchedObject.h"
+#include "pnMessage/plMessage.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plSynchedObject.h"
 
-#include "../pnMessage/plSelfDestructMsg.h"
-#include "../pnMessage/plMessageWithCallbacks.h"
+#include "pnMessage/plSelfDestructMsg.h"
+#include "pnMessage/plMessageWithCallbacks.h"
 
 
 class plForwardCallback

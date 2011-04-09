@@ -33,12 +33,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNGAMEMGR_PNGAMEMGR_H
 
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnNetBase/pnNetBase.h"
-#include "../pnAsyncCore/pnAsyncCore.h"
-#include "../pnNetCli/pnNetCli.h"
-#include "../pnProduct/pnProduct.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetCli/pnNetCli.h"
+#include "pnProduct/pnProduct.h"
+#include "pnKeyedObject/plKey.h"
 
 #include "hsGeometry3.h"
 

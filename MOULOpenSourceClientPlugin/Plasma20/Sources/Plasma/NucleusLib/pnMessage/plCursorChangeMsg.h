@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // this message is to fake out a gadget to see if it would potentially trigger...
 //
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsBitVector.h"
 
 class hsStream;

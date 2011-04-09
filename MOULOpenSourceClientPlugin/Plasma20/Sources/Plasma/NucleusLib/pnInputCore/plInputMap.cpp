@@ -24,12 +24,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 // plInputDevice.cpp
-#include "STRING"
+#include <string>
 
 #include "plInputMap.h"
 #include "plKeyMap.h"
 #include "hsUtils.h"
-#include "../plResMgr/plLocalization.h"
+#include "plResMgr/plLocalization.h"
 
 ControlEventCode plInputMap::ConvertCharToControlCode(const char* c)
 {

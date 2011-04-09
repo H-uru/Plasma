@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMessage_inc
 #define plMessage_inc
 
-#include "../pnFactory/plCreatable.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnFactory/plCreatable.h"
+#include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
 #include "hsStlUtils.h"
 

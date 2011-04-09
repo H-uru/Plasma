@@ -28,14 +28,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnNetCommon/plGenericVar.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnNetCommon/plNetSharedState.h"
-#include "../../PubUtilLib/plNetMessage/plNetMessage.h"	// breaks project dependancy levels
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnMessage/plEnableMsg.h"
-#include "../pnMessage/plServerReplyMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnNetCommon/plGenericVar.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetSharedState.h"
+#include "plNetMessage/plNetMessage.h"	// breaks project dependancy levels
+#include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plServerReplyMsg.h"
 
 void plLogicModBase::ConsoleTrigger(plKey playerKey)
 {

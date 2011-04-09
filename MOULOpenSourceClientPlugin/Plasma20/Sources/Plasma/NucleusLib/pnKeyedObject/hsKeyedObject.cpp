@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsKeyedObject.h"
 #include "plKeyImp.h"
 #include "hsResMgr.h"
-#include "../pnDispatch/plDispatch.h"
-#include "../pnMessage/plSelfDestructMsg.h"
+#include "pnDispatch/plDispatch.h"
+#include "pnMessage/plSelfDestructMsg.h"
 
 void hsKeyedObject::SetKey(plKey k)              
 {

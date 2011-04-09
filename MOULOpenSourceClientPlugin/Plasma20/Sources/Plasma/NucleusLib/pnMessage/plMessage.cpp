@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLMESSAGE_PRIVATE
 #include "plMessage.h"
 #include "hsStream.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
 #include "hsTemplates.h"

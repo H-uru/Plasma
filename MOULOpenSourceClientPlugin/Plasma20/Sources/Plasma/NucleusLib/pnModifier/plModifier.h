@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plModifier_inc
 #define plModifier_inc
 
-#include "../pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plSynchedObject.h"
 
 class hsStream;
 class hsResMgr;

@@ -27,10 +27,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plObjInterface.h"
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "plSceneObject.h"
-#include "../pnMessage/plIntRefMsg.h"
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plEnableMsg.h"
 
 
 plObjInterface::plObjInterface()
