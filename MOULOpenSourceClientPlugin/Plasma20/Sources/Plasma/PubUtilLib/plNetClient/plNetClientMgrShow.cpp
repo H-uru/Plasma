@@ -26,13 +26,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
 
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "../plPipeline/plPlates.h"
-#include "../plPipeline/plDebugText.h"
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../plScene/plRelevanceMgr.h"
+#include "plPipeline/plPlates.h"
+#include "plPipeline/plDebugText.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plScene/plRelevanceMgr.h"
 
 //
 // Code which displays stuff on the screen

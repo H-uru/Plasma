@@ -27,11 +27,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plDecalEnableMod.h"
-#include "../plMessage/plDynaDecalEnableMsg.h"
-#include "../plMessage/plCollideMsg.h"
+#include "plMessage/plDynaDecalEnableMsg.h"
+#include "plMessage/plCollideMsg.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plAvatar/plArmatureMod.h"
 
 #include "hsTimer.h"
 #include "hsStream.h"

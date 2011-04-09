@@ -30,29 +30,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetObjectDebugger.h"
 #include "plNetClientMsgScreener.h"
 
-#include "../pnNetCommon/plSynchedObject.h"
-#include "../pnNetCommon/plSDLTypes.h"
-#include "../pnMessage/plCameraMsg.h"
+#include "pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "pnMessage/plCameraMsg.h"
 
-#include "../plNetClientRecorder/plNetClientRecorder.h"
-#include "../plMessage/plLoadCloneMsg.h"
-#include "../plMessage/plLoadAvatarMsg.h"
-#include "../plAvatar/plAvatarClothing.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../plMessage/plCCRMsg.h"
-#include "../plVault/plVault.h"
-#include "../plContainer/plConfigInfo.h"
-#include "../plDrawable/plMorphSequence.h"
-#include "../plParticleSystem/plParticleSystem.h"
-#include "../plParticleSystem/plParticleSDLMod.h"
-#include "../plResMgr/plLocalization.h"
+#include "plNetClientRecorder/plNetClientRecorder.h"
+#include "plMessage/plLoadCloneMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
+#include "plAvatar/plAvatarClothing.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plMessage/plCCRMsg.h"
+#include "plVault/plVault.h"
+#include "plContainer/plConfigInfo.h"
+#include "plDrawable/plMorphSequence.h"
+#include "plParticleSystem/plParticleSystem.h"
+#include "plParticleSystem/plParticleSDLMod.h"
+#include "plResMgr/plLocalization.h"
 
-#include "../../FeatureLib/pfMessage/pfKIMsg.h"	// TMP
+#include "pfMessage/pfKIMsg.h"	// TMP
 
-#include "../plNetGameLib/plNetGameLib.h"
-#include "../plSDL/plSDL.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plSDL/plSDL.h"
 
 //
 // request members list from server

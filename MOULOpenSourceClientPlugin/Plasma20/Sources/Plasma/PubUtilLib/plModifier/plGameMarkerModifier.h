@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plGameMarkerModifier_h_inc
 #define plGameMarkerModifier_h_inc
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 
 class plGameMarkerModifier : public plSingleModifier
 {

@@ -27,15 +27,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include "hsTypes.h"
 #ifdef BINK_SDK_AVAILABLE
-#include "BINK.h"
+#include <BINK.h>
 #endif
 #include <d3d9.h>
 #include "plDXPipeline.h"
 #include "plBinkPlayer.h"
 #include "plDXBufferRefs.h"
 #include "hsPoint2.h"
-#include "../pnMessage/plMessage.h"
-#include "../plResMgr/plLocalization.h"
+#include "pnMessage/plMessage.h"
+#include "plResMgr/plLocalization.h"
 
 #include "hsTimer.h"
 #include <dsound.h>

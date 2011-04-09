@@ -35,28 +35,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
-#include "../pnMessage/plPlayerPageMsg.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "pnMessage/plTimeMsg.h"
 
-#include "../plNetClientComm/plNetClientComm.h"
-#include "../plAgeLoader/plAgeLoader.h"
-#include "../plAgeLoader/plBackgroundDownloader.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plVault/plVault.h"
+#include "plNetClientComm/plNetClientComm.h"
+#include "plAgeLoader/plAgeLoader.h"
+#include "plAgeLoader/plBackgroundDownloader.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plVault/plVault.h"
 
-#include "../plNetMessage/plNetMessage.h"
+#include "plNetMessage/plNetMessage.h"
 
-#include "../plMessage/plNetCommMsgs.h"
-#include "../plMessage/plAgeLoadedMsg.h"
-#include "../plMessage/plInputIfaceMgrMsg.h"
-#include "../plMessage/plNetClientMgrMsg.h"
+#include "plMessage/plNetCommMsgs.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
+#include "plMessage/plNetClientMgrMsg.h"
 
-#include "../plProgressMgr/plProgressMgr.h"
-#include "../pnDispatch/plDispatch.h"
-#include "../plResMgr/plResManager.h"
+#include "plProgressMgr/plProgressMgr.h"
+#include "pnDispatch/plDispatch.h"
+#include "plResMgr/plResManager.h"
 
 
 /*****************************************************************************

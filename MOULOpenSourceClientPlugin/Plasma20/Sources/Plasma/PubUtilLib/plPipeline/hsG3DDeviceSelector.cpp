@@ -39,9 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_OPEN_GL
 #if HS_BUILD_FOR_WIN32
-#include "gls.h"
-#include "glswgl.h"
-#include "glext.h"
+#include <gls.h>
+#include <glswgl.h>
+#include <glext.h>
 #endif
 #endif
 

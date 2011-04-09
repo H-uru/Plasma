@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include <sstream>
 #include "plNetCommon.h"
-#include "../pnMessage/plMessage.h"
-#include "../plSockets/plNet.h"
+#include "pnMessage/plMessage.h"
+#include "plSockets/plNet.h"
 
 plClientGuid::plClientGuid()
 :fPlayerID(0)

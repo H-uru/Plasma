@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plStatusLogDrawer_h
 #define _plStatusLogDrawer_h
 
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 
 //// plStatusLogDrawer Class Definition ////////////////////////////////////////////

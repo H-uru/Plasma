@@ -29,16 +29,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifndef MF_FRONTBUFF_CAPTURE
 
-#include "../plGImage/plMipmap.h"
-#include "../plMessage/plCaptureRenderMsg.h"
+#include "plGImage/plMipmap.h"
+#include "plMessage/plCaptureRenderMsg.h"
 #include "plPipeline.h"
 #include "plRenderTarget.h"
-#include "../plScene/plPageTreeMgr.h"
-#include "../plScene/plPostEffectMod.h"
+#include "plScene/plPageTreeMgr.h"
+#include "plScene/plPostEffectMod.h"
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 
-#include "../pfGameGUIMgr/pfGameGUIMgr.h"
+#include "pfGameGUIMgr/pfGameGUIMgr.h"
 
 // CaptureRenderRequest
 //

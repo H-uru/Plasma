@@ -27,13 +27,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTemplates.h"
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnUtils/pnUtils.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
-#include "../plStatusLog/plStatusLog.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plAgeLoader/plAgeLoader.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plAgeLoader/plAgeLoader.h"
 
 plNetObjectDebugger::DebugObject::DebugObject(const char* objName, plLocation& loc, UInt32 flags) : 
 fLoc(loc), 

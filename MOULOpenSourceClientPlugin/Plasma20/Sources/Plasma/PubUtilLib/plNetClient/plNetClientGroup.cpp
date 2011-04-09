@@ -25,8 +25,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsResMgr.h"
 #include "plNetClientGroup.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plResMgr/plPageInfo.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plResMgr/plPageInfo.h"
 
 //
 // cache room desc string, from fID

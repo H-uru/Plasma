@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetClientGroup_h
 
 #include "hsStlUtils.h"
-#include "../../NucleusLib/pnNetCommon/plNetGroup.h"
+#include "pnNetCommon/plNetGroup.h"
 
 //
 // represents a collection of net groups.

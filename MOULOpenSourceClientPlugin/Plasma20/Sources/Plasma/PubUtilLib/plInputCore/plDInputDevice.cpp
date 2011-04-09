@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDInputDevice.h"
 #include "plgDispatch.h"
-#include "../plMessage/plInputEventMsg.h"
+#include "plMessage/plInputEventMsg.h"
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 //

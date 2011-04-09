@@ -29,17 +29,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "plNetClientMgr.h"
 
-#include "../plNetMessage/plNetMessage.h"
-#include "../pnNetCommon/plNetServers.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnKeyedObject/plKey.h"
+#include "plNetMessage/plNetMessage.h"
+#include "pnNetCommon/plNetServers.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../plMessage/plMemberUpdateMsg.h"
-#include "../plMessage/plNetVoiceListMsg.h"
-#include "../plStatusLog/plStatusLog.h"
-#include "../plVault/plVault.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plMessage/plMemberUpdateMsg.h"
+#include "plMessage/plNetVoiceListMsg.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plVault/plVault.h"
 
 
 #define SAME_TALK_AND_LISTEN

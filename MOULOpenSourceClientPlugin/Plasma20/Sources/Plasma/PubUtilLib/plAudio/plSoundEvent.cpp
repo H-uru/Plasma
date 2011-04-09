@@ -37,8 +37,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSoundEvent.h"
 
 #include "plgDispatch.h"
-#include "../pnMessage/plEventCallbackMsg.h"
-#include "../pnMessage/plSoundMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plSoundMsg.h"
 #include "plSound.h"
 
 plSoundEvent::plSoundEvent( Types type, plSound *owner )

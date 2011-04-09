@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plCullTree.h"
-#include "../plDrawable/plSpaceTree.h"
+#include "plDrawable/plSpaceTree.h"
 #include "hsFastMath.h"
 #include "hsColorRGBA.h"
 #include "plProfile.h"

@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifndef MF_FRONTBUFF_CAPTURE
 
-#include "../plScene/plRenderRequest.h"
+#include "plScene/plRenderRequest.h"
 
 class plRenderTarget;
 class plCaptureRenderMsg;

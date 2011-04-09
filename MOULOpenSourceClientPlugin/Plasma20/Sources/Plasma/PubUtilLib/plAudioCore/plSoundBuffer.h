@@ -36,10 +36,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plSoundBuffer_h
 #define _plSoundBuffer_h
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "plAudioCore.h"
 #include "plAudioFileReader.h"
-#include "../pnUtils/pnUtils.h"
+#include "pnUtils/pnUtils.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
 

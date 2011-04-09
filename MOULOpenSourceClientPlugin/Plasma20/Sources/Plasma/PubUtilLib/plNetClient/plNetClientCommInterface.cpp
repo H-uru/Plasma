@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
 
-#include "../plNetClientRecorder/plNetClientRecorder.h"
-#include "../plNetMessage/plNetMessage.h"
+#include "plNetClientRecorder/plNetClientRecorder.h"
+#include "plNetMessage/plNetMessage.h"
 
 #include "plgDispatch.h"
 

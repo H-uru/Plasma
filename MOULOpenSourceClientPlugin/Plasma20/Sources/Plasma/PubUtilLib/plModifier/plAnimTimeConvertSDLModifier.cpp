@@ -25,8 +25,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTimer.h"
 #include "plAnimTimeConvertSDLModifier.h"
-#include "../plSDL/plSDL.h"
-#include "../plInterp/plAnimTimeConvert.h"
+#include "plSDL/plSDL.h"
+#include "plInterp/plAnimTimeConvert.h"
 
 // static vars
 char plAnimTimeConvertSDLModifier::AnimTimeConvertVarNames::kStrFlags[]="flags";

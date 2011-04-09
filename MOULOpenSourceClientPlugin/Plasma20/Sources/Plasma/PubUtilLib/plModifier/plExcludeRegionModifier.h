@@ -26,10 +26,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plExcludeRegionModifier_inc
 #define plExcludeRegionModifier_inc
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsMatrix44.h"
 #include "hsTemplates.h"
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 //
 // Moves all of the avatars out of the area it's SceneObject occupies and makes it

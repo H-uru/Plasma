@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plBufferedFileReader_h
 #define _plBufferedFileReader_h
 
-#include "../plAudioCore/plAudioFileReader.h"
+#include "plAudioCore/plAudioFileReader.h"
 
 
 //// Class Definition ////////////////////////////////////////////////////////

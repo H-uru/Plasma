@@ -27,17 +27,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include "hsTypes.h"
 //#include "hsGeometry3.h"
 //#include "plgDispatch.h"
-//#include "../pnSceneObject/plDrawInterface.h"
-//#include "../pnSceneObject/plCoordinateInterface.h"
+//#include "pnSceneObject/plDrawInterface.h"
+//#include "pnSceneObject/plCoordinateInterface.h"
 //#include "hsBounds.h"
 #include "plSpawnModifier.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plAvatar/plAvatarMgr.h"
-//#include "../pnMessage/plTimeMsg.h"
-//#include "../pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plAvatar/plAvatarMgr.h"
+//#include "pnMessage/plTimeMsg.h"
+//#include "pnKeyedObject/plKey.h"
 
-//#include "../plMessage/plSpawnRequestMsg.h"
-//#include "../plMessage/plSpawnModMsg.h"
+//#include "plMessage/plSpawnRequestMsg.h"
+//#include "plMessage/plSpawnModMsg.h"
 
 //hsBool plSpawnModifier::MsgReceive(plMessage* msg)
 //{

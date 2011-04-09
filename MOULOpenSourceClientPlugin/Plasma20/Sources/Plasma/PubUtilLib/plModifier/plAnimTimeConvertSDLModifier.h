@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimTimeConvertSDLModifier_inc
 #define plAnimTimeConvertSDLModifier_inc
 
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 //
 // This modifier (abstract baseclass) handles sending and recving 

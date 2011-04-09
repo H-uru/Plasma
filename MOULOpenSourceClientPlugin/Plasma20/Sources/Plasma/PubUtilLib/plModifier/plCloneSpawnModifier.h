@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCloneSpawnModifier_inc
 #define plCloneSpawnModifier_inc
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 
 class plCloneSpawnModifier : public plSingleModifier
 {

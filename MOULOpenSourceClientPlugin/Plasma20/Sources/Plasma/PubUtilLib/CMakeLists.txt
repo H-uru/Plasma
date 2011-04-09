@@ -3,8 +3,8 @@ add_definitions(-D_LIB)
 add_subdirectory(plAgeDescription)
 add_subdirectory(plAgeLoader)
 add_subdirectory(plAudible)
-#add_subdirectory(plAudio)              # TODO: DirectX
-#add_subdirectory(plAudioCore)          # TODO: DirectX
+add_subdirectory(plAudio)
+add_subdirectory(plAudioCore)
 add_subdirectory(plAvatar)
 add_subdirectory(plCompression)
 add_subdirectory(plContainer)
@@ -17,24 +17,24 @@ add_subdirectory(plFile)
 #add_subdirectory(plGImage)
 add_subdirectory(plGLight)
 #add_subdirectory(plGRenderProcs)       # Not being used by any current slns
-#add_subdirectory(plInputCore)          # TODO: DirectX
+add_subdirectory(plInputCore)
 add_subdirectory(plInterp)
 add_subdirectory(plIntersect)
 add_subdirectory(plJPEG)
 add_subdirectory(plMath)
 add_subdirectory(plMessage)
-#add_subdirectory(plModifier)           # TODO: PhysX
-#add_subdirectory(plNetClient)          # TODO: STLport
+add_subdirectory(plModifier)
+add_subdirectory(plNetClient)
 add_subdirectory(plNetClientComm)
 add_subdirectory(plNetClientRecorder)
-#add_subdirectory(plNetCommon)          # TODO: STLport
+add_subdirectory(plNetCommon)
 add_subdirectory(plNetGameLib)
 add_subdirectory(plNetMessage)
 add_subdirectory(plNetTransport)
 add_subdirectory(plParticleSystem)
 add_subdirectory(plPhysical)
-#add_subdirectory(plPhysX)              # TODO: PhysX
-#add_subdirectory(plPipeline)           # TODO: Bink, DirectX
+add_subdirectory(plPhysX)
+add_subdirectory(plPipeline)
 add_subdirectory(plProgressMgr)
 add_subdirectory(plResMgr)
 add_subdirectory(plScene)

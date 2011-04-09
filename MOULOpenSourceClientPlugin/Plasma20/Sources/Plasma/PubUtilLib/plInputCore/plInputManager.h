@@ -31,8 +31,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <windows.h>
 #include "hsTypes.h"
 #include "hsTemplates.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnInputCore/plInputMap.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnInputCore/plInputMap.h"
 
 class plDInputMgr;
 class plInputDevice;

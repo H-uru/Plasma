@@ -32,12 +32,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../plFile/plFileUtils.h"
-#include "../plFile/hsFiles.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
-#include "../pnUtils/pnUtils.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "pnMessage/plRefMsg.h"
+#include "plFile/plFileUtils.h"
+#include "plFile/hsFiles.h"
+#include "plUnifiedTime/plUnifiedTime.h"
+#include "pnUtils/pnUtils.h"
+#include "plStatusLog/plStatusLog.h"
 #include "hsTimer.h"
 
 static bool s_running;

@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if 1	// for debugging
 #include "plCreatableIndex.h"	
-#include "../plModifier/plResponderModifier.h"
-#include "../plSurface/plLayerAnimation.h"
+#include "plModifier/plResponderModifier.h"
+#include "plSurface/plLayerAnimation.h"
 #endif
 
 #include "hsStream.h"
@@ -36,38 +36,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include "../plNetMessage/plNetMessage.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnModifier/plModifier.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../pnMessage/plNodeChangeMsg.h"
-#include "../pnMessage/plPlayerPageMsg.h"
+#include "plNetMessage/plNetMessage.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnModifier/plModifier.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plNodeChangeMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
 
-#include "../plScene/plSceneNode.h"
-#include "../plScene/plRelevanceMgr.h"
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plAgeDescription/plAgeDescription.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plSDL/plSDL.h"
+#include "plScene/plSceneNode.h"
+#include "plScene/plRelevanceMgr.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plAgeDescription/plAgeDescription.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plSDL/plSDL.h"
 
 /// TEMP HACK TO LOAD CONSOLE INIT FILES ON AGE LOAD
-#include "../plMessage/plConsoleMsg.h"
-#include "../plMessage/plLoadAvatarMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
 
-#include "../plAgeLoader/plResPatcher.h"
-#include "../plProgressMgr/plProgressMgr.h"
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plRegistryNode.h"
-#include "../plResMgr/plResManager.h"
+#include "plAgeLoader/plResPatcher.h"
+#include "plProgressMgr/plProgressMgr.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plRegistryNode.h"
+#include "plResMgr/plResManager.h"
 
-#include "process.h"	// for getpid()
+#ifdef _MSC_VER
+#include <process.h>	// for getpid()
+#else
+#include <sys/types.h>
+#include <unistd.h>
+#endif
 
 extern	hsBool	gDataServerLocal;
 

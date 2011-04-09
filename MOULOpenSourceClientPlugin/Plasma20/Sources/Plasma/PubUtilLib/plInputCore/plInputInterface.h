@@ -51,8 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 // Needed for UNIX Build
 //  only windows will let you predeclare an enum
-#include "../../NucleusLib/pnInputCore/plKeyDef.h"
-#include "../../NucleusLib/pnInputCore/plControlEventCodes.h"
+#include "pnInputCore/plKeyDef.h"
+#include "pnInputCore/plControlEventCodes.h"
 
 
 //// Class Definition ////////////////////////////////////////////////////////

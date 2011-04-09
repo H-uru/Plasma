@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsUtils.h"
 
-#include "plWavFile.h"
+#include "plAudioCore/plWavFile.h"
 
 
 //// Constructor/Destructor //////////////////////////////////////////////////

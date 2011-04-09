@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plSimulationMgr.h"
 
-#include "NxPhysics.h"
+#include <NxPhysics.h>
 
 #include "hsTimer.h"
 #include "plProfile.h"
@@ -33,14 +33,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPXPhysicalControllerCore.h"
 #include "plPXConvert.h"
 #include "plLOSDispatch.h"
-#include "../plPhysical/plPhysicsSoundMgr.h"
-#include "../plStatusLog/plStatusLog.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnNetCommon/plSDLTypes.h"
-#include "../plMessage/plCollideMsg.h"
+#include "plPhysical/plPhysicsSoundMgr.h"
+#include "plStatusLog/plStatusLog.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "plMessage/plCollideMsg.h"
 
-#include "../plModifier/plDetectorLog.h"
+#include "plModifier/plDetectorLog.h"
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 bool plSimulationMgr::fDisplayAwakeActors=false;

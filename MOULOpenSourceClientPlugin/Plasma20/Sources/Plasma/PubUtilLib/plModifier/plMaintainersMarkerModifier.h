@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaintainersMarkerModifier_inc
 #define plMaintainersMarkerModifier_inc
 
-#include "../pnModifier/plMultiModifier.h"
-#include "../pnMessage/plMessage.h"
+#include "pnModifier/plMultiModifier.h"
+#include "pnMessage/plMessage.h"
 
 
 class plMaintainersMarkerModifier : public plMultiModifier

@@ -35,15 +35,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWin32Sound.h"
 #include "plAudioSystem.h"
 #include "plDSoundBuffer.h"
-#include "plWavFile.h"
+#include "plAudioCore/plWavFile.h"
 
-#include "../plAudible/plWinAudible.h"
-#include "../plNetMessage/plNetMessage.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnMessage/plSoundMsg.h"
-#include "../pnMessage/plEventCallbackMsg.h"
-#include "../plPipeline/plPlates.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plAudible/plWinAudible.h"
+#include "plNetMessage/plNetMessage.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnMessage/plSoundMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
+#include "plPipeline/plPlates.h"
+#include "plStatusLog/plStatusLog.h"
 
 plProfile_CreateMemCounter("Sounds", "Memory", MemSounds);
 plProfile_Extern(SoundPlaying);

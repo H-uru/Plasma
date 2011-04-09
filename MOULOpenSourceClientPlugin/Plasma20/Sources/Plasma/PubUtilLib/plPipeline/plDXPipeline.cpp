@@ -61,40 +61,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 //#include "hsGEnviron.h"
 #include "plProfile.h"
-#include "../plMessage/plDeviceRecreateMsg.h"
-#include "../pnMessage/plSelfDestructMsg.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
-#include "../plSurface/plLayerShadowBase.h"
-#include "../plGImage/plMipmap.h"
-#include "../plGImage/plCubicEnvironmap.h"
-#include "../plDrawable/plDrawableSpans.h"
-#include "../plDrawable/plGeometrySpan.h"
-#include "../plDrawable/plSpaceTree.h"
-#include "../plDrawable/plDrawableGenerator.h"
-#include "../plDrawable/plSpanTypes.h"
-#include "../plDrawable/plAccessSpan.h"
-#include "../plDrawable/plAuxSpan.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
+#include "plMessage/plDeviceRecreateMsg.h"
+#include "pnMessage/plSelfDestructMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
+#include "plSurface/plLayerShadowBase.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plCubicEnvironmap.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plGeometrySpan.h"
+#include "plDrawable/plSpaceTree.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "plDrawable/plSpanTypes.h"
+#include "plDrawable/plAccessSpan.h"
+#include "plDrawable/plAuxSpan.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
 #include "hsFastMath.h"
-#include "../plGLight/plLightInfo.h"
-#include "../plParticleSystem/plParticleEmitter.h"
-#include "../plParticleSystem/plParticle.h"
-#include "../plAvatar/plAvatarClothing.h"
+#include "plGLight/plLightInfo.h"
+#include "plParticleSystem/plParticleEmitter.h"
+#include "plParticleSystem/plParticle.h"
+#include "plAvatar/plAvatarClothing.h"
 #include "plDebugText.h"
 #include "plFogEnvironment.h"
 #include "plDXTextFont.h"
 #include "plGBufferGroup.h"
 #include "hsTimer.h"
 #include "plgDispatch.h"
-#include "../plScene/plRenderRequest.h"
-#include "../plScene/plVisMgr.h"
+#include "plScene/plRenderRequest.h"
+#include "plScene/plVisMgr.h"
 #include "plRenderTarget.h"
 #include "plCubicRenderTarget.h"
 #include "plDynamicEnvMap.h"
-#include "../../FeatureLib/pfCamera/plVirtualCamNeu.h"
+#include "pfCamera/plVirtualCamNeu.h"
 
 #include "plDXBufferRefs.h"
 #include "plDXTextureRef.h"
@@ -103,32 +103,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXVertexShader.h"
 #include "plDXPixelShader.h"
 
-#include "../plGLight/plShadowSlave.h"
-#include "../plGLight/plShadowCaster.h"
+#include "plGLight/plShadowSlave.h"
+#include "plGLight/plShadowCaster.h"
 
 #include "hsGMatState.inl"
 
-#include "../plSurface/plShader.h"
+#include "plSurface/plShader.h"
 #include "plDXVertexShader.h"
 #include "plDXPixelShader.h"
 
-#include "../pnMessage/plPipeResMakeMsg.h"
+#include "pnMessage/plPipeResMakeMsg.h"
 #include "plPipeResReq.h"
-#include "../pnNetCommon/plNetApp.h"	// for dbg logging
-#include "../../FeatureLib/pfCamera/plVirtualCamNeu.h"
-#include "../../FeatureLib/pfCamera/plCameraModifier.h"
-#include "../plResMgr/plLocalization.h"
+#include "pnNetCommon/plNetApp.h"	// for dbg logging
+#include "pfCamera/plVirtualCamNeu.h"
+#include "pfCamera/plCameraModifier.h"
+#include "plResMgr/plLocalization.h"
 
 
 // mf horse - test hack, nuke this later
-#include "../plSurface/plLayerDepth.h"
+#include "plSurface/plLayerDepth.h"
 
-#include "../plGImage/hsCodecManager.h"
-//#include "../plGImage/hsDXTDirectXCodec.h"
+#include "plGImage/hsCodecManager.h"
+//#include "plGImage/hsDXTDirectXCodec.h"
 
 #ifdef HS_DEBUGGING
 // This is so VC++ will let us view the contents of plIcicle::fOwnerKey
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #endif
 
 #include "plCullTree.h"
@@ -10559,7 +10559,7 @@ inline void inlTESTPOINT(const hsPoint3& destP,
 
 void	plDXPipeline::IBlendVertsIntoBuffer( plSpan* span, 
 											  hsMatrix44* matrixPalette, int numMatrices,
-											  UInt8 *src, UInt8 format, UInt32 srcStride, 
+											  const UInt8 *src, UInt8 format, UInt32 srcStride, 
 											  UInt8 *dest, UInt32 destStride, UInt32 count,
 											  UInt16 localUVWChans )
 {

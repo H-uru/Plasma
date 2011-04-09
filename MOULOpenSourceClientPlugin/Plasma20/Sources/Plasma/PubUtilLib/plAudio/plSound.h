@@ -41,10 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "plEAXEffects.h"
-#include "../pnNetCommon/plSynchedObject.h"
-#include "../plAvatar/plAGChannel.h"
-#include "../plAvatar/plAGApplicator.h"
-#include "../plAudioCore/plSoundBuffer.h"
+#include "pnNetCommon/plSynchedObject.h"
+#include "plAvatar/plAGChannel.h"
+#include "plAvatar/plAGApplicator.h"
+#include "plAudioCore/plSoundBuffer.h"
 
 class hsResMgr;
 class hsStream;

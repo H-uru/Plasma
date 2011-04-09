@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plOGGCodec_h
 #define _plOGGCodec_h
 
-#include "../plAudioCore/plAudioFileReader.h"
+#include "plAudioFileReader.h"
 
 
 //// Class Definition ////////////////////////////////////////////////////////

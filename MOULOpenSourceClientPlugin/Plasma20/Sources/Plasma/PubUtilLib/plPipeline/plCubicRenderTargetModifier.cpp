@@ -42,12 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable.h"
 #include "hsBounds.h"
 
-#include "../plScene/plRenderRequest.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../plMessage/plRenderRequestMsg.h"
+#include "plScene/plRenderRequest.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnMessage/plTimeMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
 

@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsConfig.h"
 #include "hsStlUtils.h"
-#include "../pnFactory/plCreatable.h"
-#include "../plUUID/plUUID.h"
+#include "pnFactory/plCreatable.h"
+#include "plUUID/plUUID.h"
 
 class plClientGuid : public plCreatable
 {

@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnNetCommon/plNetApp.h"
 
 class hsKeyedObject;
 class plStatusLog;

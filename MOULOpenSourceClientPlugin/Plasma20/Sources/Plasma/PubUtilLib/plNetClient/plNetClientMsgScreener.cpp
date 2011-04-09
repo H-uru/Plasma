@@ -26,12 +26,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientMsgScreener.h"
 #include "plNetLinkingMgr.h"
 
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnMessage/plMessage.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnMessage/plMessage.h"
 
-#include "../plStatusLog/plStatusLog.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plArmatureMod.h"
 
 ///////////////////////////////////////////////////////////////
 // CLIENT Version

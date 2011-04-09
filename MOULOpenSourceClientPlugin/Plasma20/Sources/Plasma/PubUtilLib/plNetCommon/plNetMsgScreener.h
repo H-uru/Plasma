@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetMsgScreener_h
 #define plNetMsgScreener_h
 
-#include "../pnKeyedObject/plKey.h"
-#include "../plStatusLog/plLoggable.h"
+#include "pnKeyedObject/plKey.h"
+#include "plStatusLog/plLoggable.h"
 
 //
 // Class which decides what game messages are allowed to be sent to the server.

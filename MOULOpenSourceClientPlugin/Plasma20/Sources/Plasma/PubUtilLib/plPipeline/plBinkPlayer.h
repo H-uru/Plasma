@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsWindowHndl.h"
 #ifdef BINK_SDK_AVAILABLE
-#include "../../../../StaticSDKs/Win32/Bink/inc/bink.h"
+#include <bink.h>
 #else
 #define U32 UInt32
 #endif

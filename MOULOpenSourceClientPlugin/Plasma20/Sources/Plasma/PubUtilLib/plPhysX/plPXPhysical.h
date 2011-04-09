@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPhysical.h"	
 #include "hsMatrix44.h"
-#include "../plPhysical/plSimDefs.h"
+#include "plPhysical/plSimDefs.h"
 #include "hsBitVector.h"
 #include "hsUtils.h"
 

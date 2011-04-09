@@ -24,30 +24,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plExcludeRegionModifier.h"
-#include "../plMessage/plExcludeRegionMsg.h"
+#include "plMessage/plExcludeRegionMsg.h"
 #include "hsTemplates.h"
 #include "hsResMgr.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 #include "plDetectorLog.h"
 // For MsgReceive
-#include "../plMessage/plCollideMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "plMessage/plCollideMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
 // For IClear and IRelease
-#include "../pnMessage/plWarpMsg.h"
-#include "../plMessage/plAvatarMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "plMessage/plAvatarMsg.h"
 #include "plPhysical.h"
-#include "../plPhysical/plSimDefs.h"
-#include "../plAvatar/plAvCallbackAction.h"
+#include "plPhysical/plSimDefs.h"
+#include "plAvatar/plAvCallbackAction.h"
 
-#include "../plAvatar/plAvBrainGeneric.h"
+#include "plAvatar/plAvBrainGeneric.h"
 
-#include "../plSDL/plSDL.h"
-#include "../pnMessage/plSDLModifierMsg.h"
+#include "plSDL/plSDL.h"
+#include "pnMessage/plSDLModifierMsg.h"
 //for hack
-#include "../plPhysX/plPXPhysical.h"
-#include "../plPhysX/plPXPhysicalControllerCore.h"
-#include "NxCapsule.h"
+#include "plPhysX/plPXPhysical.h"
+#include "plPhysX/plPXPhysicalControllerCore.h"
+#include <NxCapsule.h>
 static plPhysical* GetPhysical(plSceneObject* obj)
 {
 	if (obj)

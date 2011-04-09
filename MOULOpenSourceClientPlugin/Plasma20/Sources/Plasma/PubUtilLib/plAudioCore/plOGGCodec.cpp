@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plOGGCodec.h"
 
 #include "hsTimer.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetApp.h"
 
 plOGGCodec::DecodeFormat	plOGGCodec::fDecodeFormat = plOGGCodec::k16bitSigned;
 UInt8						plOGGCodec::fDecodeFlags = 0;
