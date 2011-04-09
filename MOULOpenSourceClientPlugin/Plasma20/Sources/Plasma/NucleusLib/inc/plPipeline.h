@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPipeline_inc
 #define plPipeline_inc
 
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 #include "hsGMatState.h"
 #include "hsTemplates.h"
 #include "hsStlUtils.h"

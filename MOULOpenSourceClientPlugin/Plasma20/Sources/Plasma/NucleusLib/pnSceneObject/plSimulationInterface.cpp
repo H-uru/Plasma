@@ -31,13 +31,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "plSceneObject.h"
-#include "../pnMessage/plEnableMsg.h"
-#include "../pnMessage/plIntRefMsg.h"
-#include "../pnMessage/plWarpMsg.h"
-#include "../pnMessage/plSimulationSynchMsg.h"
-#include "../pnMessage/plSimulationMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "pnMessage/plSimulationSynchMsg.h"
+#include "pnMessage/plSimulationMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnKeyedObject/plKey.h"
 
 plSimulationInterface::plSimulationInterface() : fPhysical(nil)
 {

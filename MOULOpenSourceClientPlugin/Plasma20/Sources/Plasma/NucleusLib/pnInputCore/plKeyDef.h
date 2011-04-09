@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if HS_BUILD_FOR_WIN32
 
-#include "windows.h"
+#include <windows.h>
 
 #define VK_BACK_QUOTE	0xc0
 //

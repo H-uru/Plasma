@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDrawable_inc
 #define plDrawable_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "plLoadMask.h"
 #include "hsTemplates.h"
 #include "plRenderLevel.h"

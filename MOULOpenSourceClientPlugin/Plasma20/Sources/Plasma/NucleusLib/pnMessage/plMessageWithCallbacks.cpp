@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plMessageWithCallbacks.h"
 #include "plEventCallbackMsg.h"
-#include "../pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plSynchedObject.h"
 #include "plgDispatch.h"
 #include "hsBitVector.h"
 

@@ -28,11 +28,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSceneObject_inc
 
 #include "hsBitVector.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../pnNetCommon/plSynchedObject.h"
-#include "../pnNetCommon/plSynchedValue.h"
-#include "../pnModifier/plModifier.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plSynchedValue.h"
+#include "pnModifier/plModifier.h"
 #include "hsStream.h"
 
 class plObjInterface;

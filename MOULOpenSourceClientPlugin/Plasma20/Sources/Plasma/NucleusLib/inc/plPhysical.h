@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysical_inc
 #define plPhysical_inc
 
-#include "../pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plSynchedObject.h"
 #include "hsTemplates.h"
 
 struct hsMatrix44;

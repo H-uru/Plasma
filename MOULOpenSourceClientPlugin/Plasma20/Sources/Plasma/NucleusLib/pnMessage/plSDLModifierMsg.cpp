@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plSDLModifierMsg.h"
-#include "../PubUtilLib/plSDL/plSDL.h"	// ugh.
+#include "plSDL/plSDL.h"	// ugh.
 
 plSDLModifierMsg::plSDLModifierMsg(const char* sdlName, Action a) : 
 	fSDLName(nil),

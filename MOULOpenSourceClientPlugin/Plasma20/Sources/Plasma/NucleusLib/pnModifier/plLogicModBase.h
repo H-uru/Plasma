@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLogicModBase_inc
 
 #include "plSingleModifier.h"
-#include "../pnNetCommon/plSynchedValue.h"
+#include "pnNetCommon/plSynchedValue.h"
 #include "hsTemplates.h"
 
 class plConditionalObject;
