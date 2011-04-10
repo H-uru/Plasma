@@ -49,7 +49,7 @@ import string
 import xCensor
 import xLinkingBookDefs
 import xBookGUIs
-import whrandom
+import random
 import re   #used for CoD Fix
 import os   #used for saving pictures locally
 import glob #used for saving pictures locally
@@ -4238,9 +4238,9 @@ class xKI(ptModifier):
 ####===> for testing only
 #            # play with the lights just for a test
 #            # pick random indicator
-#            indicator = whrandom.randrange(kminiMarkerIndicator01,kminiMarkerIndicatorLast+1)
+#            indicator = random.randrange(kminiMarkerIndicator01,kminiMarkerIndicatorLast+1)
 #            # pick random light
-#            lcolor = whrandom.choice(gMarkerColors.values())
+#            lcolor = random.choice(gMarkerColors.values())
 #            # light it
 #            mcb = ptGUIControlProgress(KIMini.dialog.getControlFromTag(indicator))
 #            mcb.setValue(lcolor)

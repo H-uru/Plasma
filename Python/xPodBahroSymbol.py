@@ -32,7 +32,7 @@ Author: Derek Odell
 
 from Plasma import *
 from PlasmaTypes import *
-import whrandom
+import random
 
 # define the attributes that will be entered in max
 respBahroSymbol         = ptAttribResponder(1, "resp: Bahro Symbol", ["beginning","middle","end"], netForce=1)
@@ -108,7 +108,7 @@ class xPodBahroSymbol(ptResponder):
         if timeWhenSymbolAppearsToday > PtGetDniTime():
             timeTillSymbolAppears = timeWhenSymbolAppearsToday - PtGetDniTime()
             PtAtTimeCallback(self.key, timeTillSymbolAppears, 1)
-            print "xGlobalDoor.key: %d%s" % (whrandom.randint(0,100), hex(int(timeTillSymbolAppears + 1234)))
+            print "xGlobalDoor.key: %d%s" % (random.randint(0,100), hex(int(timeTillSymbolAppears + 1234)))
         else:
             print "xPodBahroSymbol: You missed the symbol for today."
 

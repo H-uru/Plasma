@@ -277,7 +277,7 @@ class xJourneyClothsGen2(ptModifier):
             print "xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow."
             
     def RandomBahroSounds(self):
-        whichsound = xRandom.whrandom.randint(1, 4)
+        whichsound = xRandom.random.randint(1, 4)
         print "whichsound = ", whichsound
         
         if whichsound == 1:
@@ -295,7 +295,7 @@ class xJourneyClothsGen2(ptModifier):
         wingflap = xRandom.randint(1, 2)
         
         if wingflap > 1:
-            #whichflap = xRandom.whrandom.randint(1, 4)
+            #whichflap = xRandom.random.randint(1, 4)
             whichflap = whichsound
             print "whichflap = ", whichflap
             

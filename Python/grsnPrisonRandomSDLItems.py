@@ -32,7 +32,7 @@ Randomizes contents of the Garrison Prison Cell
 
 from Plasma import *
 from PlasmaTypes import *
-import whrandom
+import random
 
 #globals
 kMinNumItems = 1
@@ -76,13 +76,13 @@ class grsnPrisonRandomSDLItems(ptResponder):
         ageSDL = PtGetAgeSDL()
         
         # pick items to display
-        whrandom.seed()
+        random.seed()
 
-        ItemsToPick = whrandom.randint(kMinNumItems, kMaxNumItems)
+        ItemsToPick = random.randint(kMinNumItems, kMaxNumItems)
         AlreadyPicked = [ ]
 
         while len(AlreadyPicked) < ItemsToPick:
-            randitem = whrandom.choice(AllItems)
+            randitem = random.choice(AllItems)
             if randitem not in AlreadyPicked:
                 AlreadyPicked.append (randitem)
     
@@ -148,7 +148,7 @@ class grsnPrisonRandomSDLItems(ptResponder):
             else:
                 PtDebugPrint ("grsnPrisonRandomItems: You've been to the Prison before.")
                 
-                chance = whrandom.random()
+                chance = random.random()
                 ageSDL = PtGetAgeSDL()
                 if chance > (1-kChanceOfYP):
                     ageSDL["grsnYeeshaPage02Vis"] = (1,)

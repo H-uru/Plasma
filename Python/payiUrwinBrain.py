@@ -34,7 +34,7 @@ Controls the appearance and behavior of the Payiferen Urwin Bird
 
 from Plasma import *
 from PlasmaTypes import *
-import whrandom
+import random
 
 # define the attributes that will be entered in max
 UrwinFlipSide_A                 = ptAttribAnimation(1, "Urwin Flip Anim A", netForce=1)
@@ -93,7 +93,7 @@ class payiUrwinBrain(ptResponder):
 
     ############################
     def OnFirstUpdate(self):
-        whrandom.seed()
+        random.seed()
 
     ############################
     def OnServerInitComplete(self):
@@ -171,14 +171,14 @@ class payiUrwinBrain(ptResponder):
                 if id == respUrwin_Walk_Loop01.id or id == respUrwin_Walk_Loop02.id or id == respUrwin_WalkSniff_ToWalk.id or id == respUrwin_Idle_ToWalk.id:
                     UrwinMasterAnim.animation.resume()
                     if StepsToTake == 0:
-                        StepsToTake = whrandom.randint(minsteps, maxsteps)
+                        StepsToTake = random.randint(minsteps, maxsteps)
                         print "We should have steps, so Urwin has decided to take %d steps." % (StepsToTake)
                     
                     StepsToTake = StepsToTake - 1
                     if StepsToTake:
-                        if whrandom.randint(0,9): # 90% chance of continuing walk loop
+                        if random.randint(0,9): # 90% chance of continuing walk loop
                             print "Urwin will take %d more steps..." % (StepsToTake)
-                            if whrandom.randint(0,2):
+                            if random.randint(0,2):
                                 print "Urwin walks one way."
                                 self.SendNote("respUrwin_Walk_Loop01")
                                 if boolBatteryChargedAndOn:
@@ -203,7 +203,7 @@ class payiUrwinBrain(ptResponder):
 
                 elif id == respUrwin_Walk_ToWalkSniff.id or id == respUrwin_WalkSniff.id or id == respUrwin_Eat_ToWalkSniff.id:
                     UrwinMasterAnim.animation.resume()
-                    pct = whrandom.randint(0,2)
+                    pct = random.randint(0,2)
                     if pct == 2:
                         print "Urwin smells something good!"
                         self.SendNote("respUrwin_WalkSniff")
@@ -224,7 +224,7 @@ class payiUrwinBrain(ptResponder):
 
                 elif id == respUrwin_WalkSniff_ToEat.id or id == respUrwin_Idle_ToEat.id:
                     UrwinMasterAnim.animation.stop()
-                    pct = whrandom.randint(0,2)
+                    pct = random.randint(0,2)
                     if pct == 2:
                         print "Urwin lost interest in the food."
                         self.SendNote("respUrwin_Eat_ToIdle")
@@ -244,7 +244,7 @@ class payiUrwinBrain(ptResponder):
                             respUrwinSfx.run(self.key, state="Scoop")
 
                 elif id == respUrwin_Eat_Scoop.id or id == respUrwin_Eat_Shake.id or id == respUrwin_Eat_Swallow.id:
-                    pct = whrandom.randint(0,4)
+                    pct = random.randint(0,4)
                     if pct == 4:
                         print "Urwin scoops up the food!"
                         self.SendNote("respUrwin_Eat_Scoop")
@@ -277,7 +277,7 @@ class payiUrwinBrain(ptResponder):
 
                 elif id == respUrwin_Idle_01.id or id == respUrwin_Idle_02.id or id == respUrwin_Eat_ToIdle.id or id == respUrwin_Walk_ToIdle.id or id == respUrwin_Idle_Vocalize.id:
                     UrwinMasterAnim.animation.stop()
-                    pct = whrandom.randint(0,4)
+                    pct = random.randint(0,4)
                     if pct == 4:
                         print "Urwin idles one way."
                         self.SendNote("respUrwin_Idle_01")
@@ -336,10 +336,10 @@ class payiUrwinBrain(ptResponder):
         ageSDL = PtGetAgeSDL()
         boolBatteryChargedAndOn = ageSDL["payiPodLights"][0]
 
-        StepsToTake = whrandom.randint(minsteps, maxsteps)
+        StepsToTake = random.randint(minsteps, maxsteps)
         print "Urwin has decided to take %d steps." % (StepsToTake)
 
-        if whrandom.randint(0,1):
+        if random.randint(0,1):
             self.SendNote("respUrwin_Walk_Loop01")
             if boolBatteryChargedAndOn:
                 respUrwinSfx.run(self.key, state="Walk01")
@@ -360,7 +360,7 @@ class payiUrwinBrain(ptResponder):
                 print "UrwinBrain.OnTimer: Time for the Urwin to return."
                 ageSDL["UrwinOnTheProwl"] = (1,)
 
-                if whrandom.randint(0,1):
+                if random.randint(0,1):
                     UrwinFlipSide_A.animation.play()
                 else:
                     UrwinFlipSide_B.animation.play()
@@ -408,13 +408,13 @@ class payiUrwinBrain(ptResponder):
         # which is in the first 44.5 percent of the day. So we're
         # generating a number from 0 to 445 and dividing by 1000 to get
         # something roughly in that timeframe.
-        randnum = float(whrandom.randint(0,kFirstMorningSpawn))
+        randnum = float(random.randint(0,kFirstMorningSpawn))
         firstTime = int((randnum / 1000.0) * kDayLengthInSeconds) + beginningOfToday
         print "payiUrwinBrain: Generated a valid spawn time: %d" % (firstTime)
         spawnTimes = [firstTime]
 
         while type(spawnTimes[-1]) == type(long(1)):
-            randnum = whrandom.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
+            randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
                 print "payiUrwinBrain: Generated a valid spawn time: %d" % (newTime)

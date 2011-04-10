@@ -33,7 +33,7 @@ Controls Imager which currently displays Yeesha Page #8
 
 from Plasma import *
 from PlasmaTypes import *
-import whrandom
+import random
 import time
 import PlasmaControlKeys
 
@@ -71,7 +71,7 @@ class clftYeeshaPageImager(ptModifier):
         AgeStartedIn = PtGetAgeName()
 
         PtUnloadDialog("YeeshaPageGUI")
-        whrandom.seed()
+        random.seed()
         self.CloseImager(1)
 
 

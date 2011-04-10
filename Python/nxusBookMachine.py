@@ -43,7 +43,7 @@ import time
 import xLocTools
 
 import string
-import whrandom
+import random
 
 import xVisitorUtils
 
@@ -711,7 +711,7 @@ class nxusBookMachine(ptModifier):
                     if (name in kRandomizeVars):
                         var = dataRecord.findVar(name)
                         if var.getType() == PtSDLVarType.kBool: # there are only bool values right now
-                            if whrandom.random() >= 0.5:
+                            if random.random() >= 0.5:
                                 PtDebugPrint( 'IRandomizeNeighborhood: Setting var "' + name + '" to true' )
                                 var.setBool(1)
                             else:
@@ -721,7 +721,7 @@ class nxusBookMachine(ptModifier):
                             PtDebugPrint( 'IRandomizeNeighborhood: Var "' + name + '" has an unknown type! Not randomizing' )
                     elif (name in kVarRestrictions):
                         var = dataRecord.findVar(name)
-                        value = int(whrandom.random() * len(kVarRestrictions[name]))
+                        value = int(random.random() * len(kVarRestrictions[name]))
                         if (var.getType() == PtSDLVarType.kInt) or (var.getType() == PtSDLVarType.kByte):
                             PtDebugPrint( 'IRandomizeNeighborhood: Setting var "' + name + '" to ' + str(kVarRestrictions[name][value]) )
                             var.setInt(kVarRestrictions[name][value])

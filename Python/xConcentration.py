@@ -32,7 +32,7 @@ Author: Pete Gage
 
 from Plasma import *
 from PlasmaTypes import *
-from whrandom import *
+from random import *
 
 import PlasmaControlKeys
 
@@ -186,7 +186,7 @@ class xConcentration(ptModifier):
                         dtext.textmap.flush()
 
 def BuildPuzList():
-    g = whrandom()
+    g = random()
     p = []
     #size=matrix.value(self)
     for x in range(1033): # fills the list with a number coinciding with its position

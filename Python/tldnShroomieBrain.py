@@ -33,7 +33,7 @@ Controls the appearance and behavior of Shroomie
 
 from Plasma import *
 from PlasmaTypes import *
-import whrandom
+import random
 
 # define the attributes that will be entered in max
 actLever = ptAttribActivator(1, "act: Feeder Lever")
@@ -98,7 +98,7 @@ class tldnShroomieBrain(ptResponder):
         print "__init__tldnShroomieBrain v.", version,".2"
 
     def OnFirstUpdate(self):
-        whrandom.seed()
+        random.seed()
 
     def OnServerInitComplete(self):
         try:
@@ -174,7 +174,7 @@ class tldnShroomieBrain(ptResponder):
             
 
     def WillShroomieBeSeen(self,probability):
-        randnum = whrandom.randint(0,100)
+        randnum = random.randint(0,100)
         
         #~ print "randnum = ",randnum,"probability = ", probability*100
         
@@ -192,7 +192,7 @@ class tldnShroomieBrain(ptResponder):
 
         if spawn == 1: # it was the lever pull which attracted Shroomie
             tldnMainPowerOn = ageSDL["tldnMainPowerOn"][0]
-            whichbehavior = whrandom.randint(1,4)
+            whichbehavior = random.randint(1,4)
             
             if tldnMainPowerOn:
                 print "tldnShroomieBrain: The Power Tower noise has scared Shroomie. He'll come, but not very close."
@@ -201,7 +201,7 @@ class tldnShroomieBrain(ptResponder):
             else:                 #Determine how far out Shroomie will be seen. Added 12/12/2004
                 print "tldnShroomieBrain: The Power Tower is down, so Shroomie isn't scared by the noise."
 
-                howclose = whrandom.randint(1,100)
+                howclose = random.randint(1,100)
                 if howclose == 1:
                     NearOrFar = "Near"
                 elif howclose > 1 and howclose < 50:
@@ -211,13 +211,13 @@ class tldnShroomieBrain(ptResponder):
             
             
         else: # it was entering a shoreside zone that attracted Shroomie
-            whichbehavior = whrandom.randint(2,4)
+            whichbehavior = random.randint(2,4)
             NearOrFar = "Far"
             
         print "tldnShroomieBrain: whichbehavior = ",whichbehavior," NearOrFar = ",NearOrFar
 
 
-        whichspawnpoint = whrandom.randint(1,5)
+        whichspawnpoint = random.randint(1,5)
 
 
         if NearOrFar == "Near":

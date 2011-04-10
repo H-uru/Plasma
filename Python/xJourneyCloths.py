@@ -33,7 +33,7 @@ Manages the 10 Journey Cloths in Phase 0
 
 from Plasma import *
 from PlasmaTypes import *
-import whrandom
+import random
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 
@@ -85,7 +85,7 @@ class xJourneyCloths(ptModifier):
         print "__init__xJourneyCloths v.", version
 
     def OnServerInitComplete(self):
-        whrandom.seed()
+        random.seed()
 
     def OnNotify(self,state,id,events):
         global ClothInUse
@@ -197,7 +197,7 @@ class xJourneyCloths(ptModifier):
             print "xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow."
             
     def RandomBahroSounds(self):
-        whichsound = whrandom.randint(1, 4)
+        whichsound = random.randint(1, 4)
         print "whichsound = ", whichsound
         
         if whichsound == 1:
@@ -212,10 +212,10 @@ class xJourneyCloths(ptModifier):
         elif whichsound == 4:
             PlayBahro04.run(self.key)
 
-        wingflap = whrandom.randint(1, 4)
+        wingflap = random.randint(1, 4)
         
         if wingflap > 1:
-            whichflap = whrandom.randint(1, 4)
+            whichflap = random.randint(1, 4)
             print "whichflap = ", whichflap
             
             if whichflap == 1:

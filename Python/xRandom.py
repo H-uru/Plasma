@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #
 # May 2003 - Adam Van Ornum
 
-import whrandom
+import random
 import math
 
 _MAX_SERIES = 1
@@ -38,22 +38,22 @@ _lastvalue = None
 
 def seed(var = 0):
     if type(var) == type(1):
-        whrandom.seed(var)
+        random.seed(var)
     else:
-        whrandom.seed()
+        random.seed()
 
 def randint(start, stop):
     global _lastvalue
     global _series_length
     global _MAX_SERIES
     
-    newInt = whrandom.randint(start, stop)
+    newInt = random.randint(start, stop)
 
     if type(_lastvalue) != type(None) and newInt == _lastvalue:
         if _series_length >= _MAX_SERIES:
             iter = 0
             while newInt == _lastvalue and iter < _MAX_ITERATIONS:
-                newInt = whrandom.randint(start, stop)
+                newInt = random.randint(start, stop)
                 iter = iter + 1
             if newInt == _lastvalue and iter >= _MAX_ITERATIONS:
                 raise "Problem with randomness: over max series length and can't find a new number"
@@ -80,12 +80,12 @@ def shuffle(theList):
         numIter = int(n * math.log(n))
 
         for x in range(numIter):
-            idx1 = whrandom.randint(0, nmo)
-            idx2 = whrandom.randint(0, nmo)
+            idx1 = random.randint(0, nmo)
+            idx2 = random.randint(0, nmo)
 
             while idx1 == idx2:
-                idx1 = whrandom.randint(0, nmo)
-                idx2 = whrandom.randint(0, nmo)
+                idx1 = random.randint(0, nmo)
+                idx2 = random.randint(0, nmo)
 
             theList[idx1], theList[idx2] = theList[idx2], theList[idx1]
 
@@ -102,15 +102,15 @@ class xRandom:
         self._range = None
 
     def seed(self, var = 0):
-        whrandom.seed(var)
+        random.seed(var)
 
     def randint(self, start, stop):
-        newInt = whrandom.randint(start, stop)
+        newInt = random.randint(start, stop)
 
         if type(_lastvalue) != type(None) and newInt == self._lastvalue:
             if self._series_length >= self._MAX_SERIES:
                 while newInt == _lastvalue:
-                    newInt = whrandom.randint(start, stop)
+                    newInt = random.randint(start, stop)
                 self._lastvalue = newInt
                 self._series_length = 1
             else:
@@ -131,7 +131,7 @@ class xRandom:
     def getUniqueInt(self):
         numTries = 0
         if type(self._range) == type( (0,) ):
-            newInt = whrandom.randint(self._range[0], self._range[1])
+            newInt = random.randint(self._range[0], self._range[1])
             numTries += 1
 
             if (self._range[1] - self._range[0] + 1) <= len(self._currentSequence):
@@ -140,7 +140,7 @@ class xRandom:
                 return newInt
             else:
                 while newInt in self._currentSequence:
-                    newInt = whrandom.randint(self._range[0], self._range[1])
+                    newInt = random.randint(self._range[0], self._range[1])
                     numTries += 1
 
                 self._currentSequence.append(newInt)

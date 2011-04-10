@@ -175,7 +175,7 @@ class grsnTrnCtrDoors(ptResponder):
                     print "grsnTrnCtrDoors: Door state is now %d" % self.grsnDoorState
 
                     if self.sceneobject.isLocallyOwned():
-                        self.SendNote("doorCloseResponder")                                    
+                        self.SendNote("doorCloseResponder")
 
                 elif curState == doorSDLstates['opentoclose']:
                     self.grsnDoorState = doorSDLstates['opentoclose']

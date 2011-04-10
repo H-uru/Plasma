@@ -34,7 +34,7 @@ Controls the appearance and behavior of the Negilahn Tree Monkey
 
 from Plasma import *
 from PlasmaTypes import *
-import whrandom
+import random
 
 # define the attributes that will be entered in max
 respSpawnPt = ptAttribResponder(1, "resp: Spawn Point", ['0','1','2'], netForce=1)
@@ -68,7 +68,7 @@ class nglnTreeMonkey(ptResponder):
 
     ###########################
     def OnFirstUpdate(self):
-        whrandom.seed()
+        random.seed()
 
     ###########################
     def OnServerInitComplete(self):
@@ -145,7 +145,7 @@ class nglnTreeMonkey(ptResponder):
     ###########################
     def RandomBehavior(self):
         ageSDL = PtGetAgeSDL()
-        PickABehavior = whrandom.randint(1,100)
+        PickABehavior = random.randint(1,100)
         #~ print "PickABehavior = ",PickABehavior
         LightsOn = ageSDL["nglnPodLights"][0]
         posMonkeyStates = ['Idle','Eat','Alarmed','Vocalize','Off']
@@ -187,7 +187,7 @@ class nglnTreeMonkey(ptResponder):
 
     ###########################
     def MonkeyAppears(self):
-        whichtree = whrandom.randint(0,2)
+        whichtree = random.randint(0,2)
         respSpawnPt.run(self.key, state=str(whichtree))
         self.SendNote("respMonkeyAct;Up")
         print "nglnTreeMonkey: Tree Monkey is climbing Tree: %d" % (whichtree)
@@ -215,13 +215,13 @@ class nglnTreeMonkey(ptResponder):
         # which is in the first 31.8 percent of the day. So we're
         # generating a number from 0 to 318 and dividing by 1000 to get
         # something roughly in that timeframe.
-        randnum = float(whrandom.randint(0,318))
+        randnum = float(random.randint(0,318))
         firstTime = int((randnum / 1000.0) * kDayLengthInSeconds) + beginningOfToday
         print "nglnTreeMonkey: Generated a valid spawn time: %d" % (firstTime)
         spawnTimes = [firstTime]
 
         while type(spawnTimes[-1]) == type(long(1)):
-            randnum = whrandom.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
+            randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
                 print "nglnTreeMonkey: Generated a valid spawn time: %d" % (newTime)

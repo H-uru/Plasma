@@ -34,7 +34,7 @@ Controls the appearance and behavior of the Negilahn Urwin Bird
 
 from Plasma import *
 from PlasmaTypes import *
-import whrandom
+import random
 
 # define the attributes that will be entered in max
 UrwinMasterAnim         = ptAttribAnimation(1, "Urwin Master Anim", netForce=1)
@@ -77,7 +77,7 @@ class nglnUrwinBrain(ptResponder):
 
     ############################
     def OnFirstUpdate(self):
-        whrandom.seed()
+        random.seed()
 
     ############################
     def OnServerInitComplete(self):
@@ -159,7 +159,7 @@ class nglnUrwinBrain(ptResponder):
                     StepsToTake = StepsToTake - 1
                     if StepsToTake:
                         # 90% chance of continuing walk loop
-                        if whrandom.randint(0,9):
+                        if random.randint(0,9):
                             print "Urwin will take %d more steps..." % (StepsToTake)
                             self.SendNote("respUrwinWalkLoop")
                             if boolBatteryChargedAndOn:
@@ -188,7 +188,7 @@ class nglnUrwinBrain(ptResponder):
 
                 elif id == respUrwinIdle.id or id == respUrwinVocalize.id:
                     # 66% chance of picking another random behaviour
-                    if whrandom.randint(0,2):
+                    if random.randint(0,2):
                         self.RandomBehavior()
                     # 33% to go back to walking
                     else:
@@ -226,7 +226,7 @@ class nglnUrwinBrain(ptResponder):
         boolBatteryChargedAndOn = ageSDL["nglnPodLights"][0]
 
         # 66% chance of idling
-        if whrandom.randint(0,2):
+        if random.randint(0,2):
             print "Urwin is being lazy and just idling"
             self.SendNote("respUrwinIdle")
             if boolBatteryChargedAndOn:
@@ -245,7 +245,7 @@ class nglnUrwinBrain(ptResponder):
         ageSDL = PtGetAgeSDL()
         boolBatteryChargedAndOn = ageSDL["nglnPodLights"][0]
 
-        StepsToTake = whrandom.randint(minsteps, maxsteps)
+        StepsToTake = random.randint(minsteps, maxsteps)
         print "Urwin has decided to take %d steps." % (StepsToTake)
 
         self.SendNote("respUrwinWalkLoop")
@@ -306,13 +306,13 @@ class nglnUrwinBrain(ptResponder):
         # which is in the first 44.5 percent of the day. So we're
         # generating a number from 0 to 445 and dividing by 1000 to get
         # something roughly in that timeframe.
-        randnum = float(whrandom.randint(0,kFirstMorningSpawn))
+        randnum = float(random.randint(0,kFirstMorningSpawn))
         firstTime = int((randnum / 1000.0) * kDayLengthInSeconds) + beginningOfToday
         print "nglnUrwinBrain: Generated a valid spawn time: %d" % (firstTime)
         spawnTimes = [firstTime]
 
         while type(spawnTimes[-1]) == type(long(1)):
-            randnum = whrandom.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
+            randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
                 print "nglnUrwinBrain: Generated a valid spawn time: %d" % (newTime)

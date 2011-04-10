@@ -34,7 +34,7 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
-import whrandom
+import random
 import time
 import copy
 import PlasmaControlKeys
@@ -133,7 +133,7 @@ class clftImager(ptResponder):
 
 
     def OnFirstUpdate(self):
-        whrandom.seed()
+        random.seed()
         #self.ageSDL = PtGetAgeSDL()
         #self.ageSDL.setFlags(stringSDLVarPanelE.value,1,1)
         #self.ageSDL.sendToClients(stringSDLVarPanelE.value)
@@ -465,7 +465,7 @@ class clftImager(ptResponder):
                                 # this timer value is approximate right now
                                 #PtAtTimeCallback(self.key, 204.2, kFinished)
                             elif PlayFinal == 0 and PlayFull == 0 and PlayTPOT == 0:
-                                stopvision = whrandom.randint(minstoptime, maxstoptime)
+                                stopvision = random.randint(minstoptime, maxstoptime)
                                 print "\tImager will autoshut off in %d seconds" % (stopvision)
                                 PtAtTimeCallback(self.key, stopvision, kVision)
                             elif PlayFull == 1:

@@ -33,7 +33,7 @@ Controls Zandi for Phase0 dialog
 
 from Plasma import *
 from PlasmaTypes import *
-import whrandom
+import random
 import time
 import PlasmaControlKeys
 import xEnum
@@ -96,7 +96,7 @@ class clftNpcZandi(ptModifier):
         self.LastSpeech = -1
         self.PlayOnFinish = 0
 
-        whrandom.seed()
+        random.seed()
 
         vault = ptVault()
         #~ entry = vault.findChronicleEntry("JourneyClothProgress")
@@ -288,7 +288,7 @@ class clftNpcZandi(ptModifier):
         print "last speech:", self.LastSpeech
 
         self.IsTalking = 1
-        stage = whrandom.randint(1,5)
+        stage = random.randint(1,5)
         sdl = PtGetAgeSDL()
 
         if self.PlayWelcome2 and clicked:
@@ -530,7 +530,7 @@ class clftNpcZandi(ptModifier):
             else:
                 self.LastSpeech = 11
                 sayings = ["welcome", "welcome2", "dryheat", "keepexploring", "steak", "pizza", "interrupt"]
-                usesaying = whrandom.randint(2,6)
+                usesaying = random.randint(2,6)
                 useSpeech = sayings[usesaying]
 
                 self.ZandiFace = "ZandiRand0" + str( usesaying - 1) + "Face"
