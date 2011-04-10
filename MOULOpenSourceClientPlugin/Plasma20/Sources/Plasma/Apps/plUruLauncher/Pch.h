@@ -36,6 +36,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <process.h>
 #include <time.h>
+
+#include <winsock2.h>
+#include <windows.h>
+#include <WinHttp.h>
+
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnAsyncCore/pnAsyncCore.h"
@@ -45,9 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEncryption/plChecksum.h"
 
 #include "plCompression/plZlibStream.h"
-#include "../plClientPatcher/UruPlayer.h"
+#include "plClientPatcher/UruPlayer.h"
 
 #include "plLauncherInfo.h"
 #include "Intern.h"
-#include "WinHttp.h"
 
