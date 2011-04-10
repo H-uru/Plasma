@@ -1,6 +1,7 @@
 include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 include_directories("../../NucleusLib/inc")
+include_directories("../../PubUtilLib")
 
 set(pnKeyedObject_HEADERS
 	hsKeyedObject.h

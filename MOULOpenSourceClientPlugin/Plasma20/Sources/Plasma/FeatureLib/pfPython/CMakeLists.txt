@@ -9,10 +9,6 @@ include_directories(${PYTHON_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${OPENSSL_INCLUDE_DIR})
 
-if(WIN32)
-	add_definitions(-DWIN32)
-endif(WIN32)
-
 set(pfPython_SOURCES
 	cyAccountManagement.cpp
 	cyAnimation.cpp
