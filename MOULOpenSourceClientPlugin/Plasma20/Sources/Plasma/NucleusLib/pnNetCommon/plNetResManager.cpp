@@ -45,11 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "plNetResManager.h"
-#include "../pnKeyedObject/plKeyImp.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnFactory/plCreatable.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnFactory/plCreatable.h"
+#include "pnNetCommon/plNetApp.h"
 #include "hsStream.h" 
 
 plNetResManager::plNetResManager()

@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plNetApp.h"
 #include "hsStlUtils.h"
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 plNetApp* plNetApp::fInstance = nil;
 plNetObjectDebuggerBase* plNetObjectDebuggerBase::fInstance=nil;

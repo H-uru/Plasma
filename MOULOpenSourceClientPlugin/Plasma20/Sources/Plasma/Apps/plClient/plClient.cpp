@@ -960,7 +960,7 @@ void plClient::SetHoldLoadRequests(bool hold)
 		ILoadNextRoom();
 }
 
-#include "../plResMgr/plPageInfo.h"
+#include "plResMgr/plPageInfo.h"
 
 void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 {
