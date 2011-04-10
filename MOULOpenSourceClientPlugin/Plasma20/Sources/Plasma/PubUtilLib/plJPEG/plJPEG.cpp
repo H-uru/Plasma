@@ -222,7 +222,7 @@ plMipmap	*plJPEG::IRead( hsStream *inStream )
 #else
 			case JCS_GRAYSCALE:
 			case JCS_YCbCr:
-				cinfo.out_color_space = JCS_RGBA;
+				cinfo.out_color_space = JCS_RGB;
 				break;
 #endif
 
@@ -270,11 +270,27 @@ plMipmap	*plJPEG::IRead( hsStream *inStream )
 		if( sLastErrCode != IJL_OK )
 			throw( false );
 #else
+		JSAMPROW jbuffer;
+		int row_stride = cinfo.output_width * cinfo.output_components;
+		int out_stride = cinfo.output_width * 4;  // Decompress to RGBA
+		jbuffer = TRACKED_NEW JSAMPLE[row_stride];
+
+		UInt8 *destp = (UInt8 *)newMipmap->GetImage();
 		while( cinfo.output_scanline < cinfo.output_height )
 		{
-			UInt8 *startp = newMipmap->GetAddr8( 0, cinfo.output_scanline );
-			(void) jpeg_read_scanlines( &cinfo, &startp, 1 );
+			(void) jpeg_read_scanlines( &cinfo, &jbuffer, 1 );
+			(void) memset( destp, 0xFF, out_stride );
+			
+			for( size_t pixel = 0; pixel < cinfo.output_width; ++pixel )
+			{
+				(void) memcpy( destp + (pixel * 4),
+				               jbuffer + (pixel * cinfo.output_components),
+				               cinfo.out_color_components );
+			}
 		}
+
+		(void) jpeg_finish_decompress(&cinfo);
+		delete [] jbuffer;
 #endif
 
 		// Sometimes life just sucks
@@ -388,8 +404,8 @@ hsBool	plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 #else
 		cinfo.image_width = source->GetWidth();
 		cinfo.image_height = source->GetHeight();
-		cinfo.input_components = 4;
-		cinfo.in_color_space = JCS_RGBA;
+		cinfo.input_components = 3;
+		cinfo.in_color_space = JCS_RGB;
 
 		jpeg_set_defaults( &cinfo );
 #endif
@@ -421,12 +437,25 @@ hsBool	plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 		if( sLastErrCode != IJL_OK )
 			throw( false );
 #else
+		JSAMPROW jbuffer;
+		int in_stride = cinfo.image_width * 4;  // Input is always RGBA
+		int row_stride = cinfo.image_width * cinfo.input_components;
+		jbuffer = TRACKED_NEW JSAMPLE[row_stride];
+
+		UInt8 *srcp = (UInt8 *)source->GetImage();
 		while( cinfo.next_scanline < cinfo.image_height )
 		{
-			UInt8 *startp = source->GetAddr8( 0, cinfo.next_scanline );
-			(void) jpeg_write_scanlines( &cinfo, &startp, 1 );
+			for( size_t pixel = 0; pixel < cinfo.image_width; ++pixel )
+			{
+				(void) memcpy( jbuffer + (pixel * cinfo.input_components),
+				               srcp + (pixel * 4), cinfo.input_components );
+			}
+
+			(void) jpeg_write_scanlines( &cinfo, &jbuffer, 1 );
 		}
+
 		jpeg_finish_compress( &cinfo );
+		delete [] jbuffer;
 #endif
 		
 #ifdef IJL_SDK_AVAILABLE
