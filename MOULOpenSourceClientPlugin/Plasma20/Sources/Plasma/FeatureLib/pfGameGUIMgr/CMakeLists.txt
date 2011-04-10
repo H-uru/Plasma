@@ -15,6 +15,7 @@ set(pfGameGUIMgr_SOURCES
 	pfGUIDialogMod.cpp
 	pfGUIDialogNotifyProc.cpp
 	pfGUIDragBarCtrl.cpp
+	pfGUIDraggableMod.cpp
 	pfGUIDynDisplayCtrl.cpp
 	pfGUIEditBoxMod.cpp
 	pfGUIKnobCtrl.cpp

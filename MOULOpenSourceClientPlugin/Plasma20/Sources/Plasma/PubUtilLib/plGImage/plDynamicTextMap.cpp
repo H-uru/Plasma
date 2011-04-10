@@ -42,14 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 #include "hsUtils.h"
 #include "hsMatrix44.h"
-#include "../plPipeline/hsGDeviceRef.h"
-#include "../plMessage/plDynamicTextMsg.h"
-#include "../pnKeyedObject/plKey.h"
+#include "plPipeline/hsGDeviceRef.h"
+#include "plMessage/plDynamicTextMsg.h"
+#include "pnKeyedObject/plKey.h"
 #include "plProfile.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 #include "plFont.h"
 #include "plFontCache.h"
-#include "../plResMgr/plLocalization.h"
+#include "plResMgr/plLocalization.h"
 
 
 plProfile_CreateMemCounter("DynaTextMem", "PipeC", DynaTextMem);

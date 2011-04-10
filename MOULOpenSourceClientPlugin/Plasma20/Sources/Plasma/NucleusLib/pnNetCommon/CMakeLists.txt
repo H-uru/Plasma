@@ -27,6 +27,7 @@ set(pnNetCommon_SOURCES
 	plSDLTypes.cpp
 	plSynchedObject.cpp
 	plSynchedValue.cpp
+	pnNetCommon.cpp
 )
 
 add_library(pnNetCommon STATIC ${pnNetCommon_HEADERS} ${pnNetCommon_SOURCES})

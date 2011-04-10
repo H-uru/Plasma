@@ -14,7 +14,7 @@ add_subdirectory(plEncryption)
 add_subdirectory(plFile)
 #add_subdirectory(plGClip)              # Not being used by any current slns
 #add_subdirectory(plGeometry)           # Not being used by any current slns
-#add_subdirectory(plGImage)
+add_subdirectory(plGImage)
 add_subdirectory(plGLight)
 #add_subdirectory(plGRenderProcs)       # Not being used by any current slns
 add_subdirectory(plInputCore)

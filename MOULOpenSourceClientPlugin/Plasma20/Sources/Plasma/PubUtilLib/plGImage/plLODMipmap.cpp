@@ -28,11 +28,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLODMipmap.h"
 
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnMessage/plRefMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnMessage/plRefMsg.h"
 
-#include "../plPipeline/hsGDeviceRef.h"
+#include "plPipeline/hsGDeviceRef.h"
 
 
 plLODMipmap::plLODMipmap() 

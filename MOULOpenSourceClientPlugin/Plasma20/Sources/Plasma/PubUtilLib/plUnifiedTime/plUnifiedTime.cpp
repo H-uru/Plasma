@@ -200,7 +200,7 @@ const plUnifiedTime & plUnifiedTime::operator=(const plUnifiedTime * src)
 
 const plUnifiedTime & plUnifiedTime::operator=(time_t src)
 {
-	fSecs = src;
+	fSecs = (UInt32)src;
 	fMicros = 0;
 	return *this;
 }
@@ -222,7 +222,7 @@ const plUnifiedTime & plUnifiedTime::operator=(const struct timeval & src)
 const plUnifiedTime & plUnifiedTime::operator=(const struct tm & src)
 {
 	struct tm atm = src;
-	fSecs = mktime(&atm);	// this won't work after 2030 something, sorry
+	fSecs = (UInt32)mktime(&atm);	// this won't work after 2030 something, sorry
 	return *this;
 }
 
@@ -268,7 +268,7 @@ hsBool plUnifiedTime::SetTime(short year, short month, short day, short hour, sh
 	atm.tm_mon = month - 1;
 	atm.tm_year = year - 1900;
 	atm.tm_isdst = dst;
-	fSecs = mktime(&atm);	// this won't work after 2030 something, sorry
+	fSecs = (UInt32)mktime(&atm);	// this won't work after 2030 something, sorry
 	if (fSecs == -1)
 		return false;
 	if (fMicros >= 1000000)
