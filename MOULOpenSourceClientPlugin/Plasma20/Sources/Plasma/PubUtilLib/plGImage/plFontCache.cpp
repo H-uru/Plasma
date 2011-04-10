@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFontCache.h"
 
 #include "plFont.h"
-#include "../plStatusLog/plStatusLog.h"
-#include "../plFile/hsFiles.h"
-#include "../pnMessage/plRefMsg.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plFile/hsFiles.h"
+#include "pnMessage/plRefMsg.h"
 
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 
 
 char	*plFontCache::kCustFontExtension = ".prf";

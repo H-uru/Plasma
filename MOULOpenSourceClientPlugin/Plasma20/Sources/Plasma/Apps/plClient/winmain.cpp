@@ -30,34 +30,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define DETACH_EXE  // Microsoft trick to force loading of exe to memory 
 #ifdef DETACH_EXE
-	#include "dmdfm.h"		// Windows Load EXE into memory suff
+	#include <dmdfm.h>		// Windows Load EXE into memory suff
 #endif
 
+#include <winsock2.h>
+#include <windows.h>
+#include <WinHttp.h>
 
 #include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsUtils.h"
 #include "plClient.h"
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetClient/plNetLinkingMgr.h"
-#include "../plInputCore/plInputManager.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetLinkingMgr.h"
+#include "plInputCore/plInputManager.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 #include "plPipeline.h"
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plLocalization.h"
-#include "../plFile/plEncryptedStream.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plLocalization.h"
+#include "plFile/plEncryptedStream.h"
 
-#include "../plStatusLog/plStatusLog.h"
-#include "../pnProduct/pnProduct.h"
-#include "../plNetGameLib/plNetGameLib.h"
-#include "../plFile/plFileUtils.h"
+#include "plStatusLog/plStatusLog.h"
+#include "pnProduct/pnProduct.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plFile/plFileUtils.h"
 
-#include "../plPhysX/plSimulationMgr.h"
+#include "plPhysX/plSimulationMgr.h"
 
-#include "res\resource.h"
+#include "res/resource.h"
 
-#include <shellapi.h>
-#include "WinHttp.h"
+//#include <shellapi.h>
 //
 // Defines
 //
@@ -1274,7 +1276,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 {
 	static ShaDigest namePassHash;
 	static LoginDialogParam* loginParam;
-	static showAuthFailed = false;
+	static bool showAuthFailed = false;
 
 	switch( uMsg )
 	{
@@ -1948,11 +1950,11 @@ bool IsExpired()
 		void* desc = nil;
 		if (VerQueryValue(data, "\\StringFileInfo\\040904B0\\FileDescription", &desc, &descLen))
 		{
-			char* buildDateStart = strstr((const char*)desc, " - Built ");
+			const char* buildDateStart = strstr((const char*)desc, " - Built ");
 			if (buildDateStart)
 			{
 				buildDateStart += strlen(" - Built ");
-				char* buildDateEnd = strstr(buildDateStart, " at");
+				const char* buildDateEnd = strstr(buildDateStart, " at");
 				if (buildDateEnd)
 				{
 					int len = buildDateEnd-buildDateStart;

@@ -209,6 +209,7 @@ set(pfPython_GLUE
 	pyColorGlue.cpp
 	pyCritterBrainGlue.cpp
 	pyDniCoordinatesGlue.cpp
+	pyDniInfoSourceGlue.cpp
 	pyDrawControlGlue.cpp
 	pyDynamicTextGlue.cpp
 	pyGameScoreGlue.cpp
@@ -278,6 +279,7 @@ set(pfPython_GAME_GLUE
 	Games/pyGameMgrMsg.cpp
 	Games/pyGameMgrMsg.h
 	Games/pyGameMgrMsg.cpp
+	Games/pyGameMgrMsgGlue.cpp
 )
 
 set(pfPython_TTT
@@ -295,7 +297,7 @@ set(pfPython_HEEK
 	Games/Heek/pyHeekGameGlue.cpp
 	Games/Heek/pyHeekMsg.cpp
 	Games/Heek/pyHeekMsg.h
-	Games/Heek/pyHeekGameGlue.cpp
+	Games/Heek/pyHeekMsgGlue.cpp
 )
 
 set(pfPython_MARKER

@@ -39,13 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 
 #include <ddraw.h>
-#include <d3d.h>
+#include <d3d9.h>
 
 #include "hsTypes.h"
 #include "hsDXTDirectXCodec.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"
-#include "../plPipeline/hsGDDrawDllLoad.h"
+#include "plPipeline/hsGDDrawDllLoad.h"
 
 namespace {
 	typedef HRESULT(WINAPI * DIRECTDRAWCREATEEX)( GUID*, VOID**, REFIID, IUnknown* );

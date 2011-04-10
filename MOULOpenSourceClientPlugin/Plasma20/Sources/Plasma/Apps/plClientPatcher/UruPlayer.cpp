@@ -478,7 +478,7 @@ static void ProcessManifestEntry (void * param, ENetError error) {
 		s_workingDir,
 		p->mr->manifest[p->index].clientName
 	);
-	dword start = TimeGetTime() / kTimeIntervalsPerMs;
+	dword start = (dword)(TimeGetTime() / kTimeIntervalsPerMs);
 	if(!MD5Check(path, p->mr->manifest[p->index].md5)) {
 		p->mr->critsect.Enter();
 		p->mr->indices.Add(p->index);

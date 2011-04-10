@@ -28,19 +28,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pfAllCreatables_inc
 
 
-#include "../pfCharacter/pfCharacterCreatable.h"
-#include "../pfCamera/pfCameraCreatable.h"
-#include "../pfAnimation/pfAnimationCreatable.h"
-#include "../pfConditional/plConditionalObjectCreatable.h"
-#include "../pfConsole/pfConsoleCreatable.h"
-#include "../pfSurface/pfSurfaceCreatable.h"
-#include "../pfMessage/pfMessageCreatable.h"
-#include "../pfAudio/pfAudioCreatable.h"
-#include "../pfPython/pfPythonCreatable.h"
-#include "../pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "../pfCCR/plCCRCreatable.h"
-#include "../pfJournalBook/pfJournalBookCreatable.h"
-#include "../pfGameMgr/pfGameMgrCreatables.h"
-#include "../pfSecurePreloader/pfSecurePreloaderCreatable.h"
+#include "pfCharacter/pfCharacterCreatable.h"
+#include "pfCamera/pfCameraCreatable.h"
+#include "pfAnimation/pfAnimationCreatable.h"
+#include "pfConditional/plConditionalObjectCreatable.h"
+#include "pfConsole/pfConsoleCreatable.h"
+#include "pfSurface/pfSurfaceCreatable.h"
+#include "pfMessage/pfMessageCreatable.h"
+#include "pfAudio/pfAudioCreatable.h"
+#include "pfPython/pfPythonCreatable.h"
+#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
+#include "pfCCR/plCCRCreatable.h"
+#include "pfJournalBook/pfJournalBookCreatable.h"
+#include "pfGameMgr/pfGameMgrCreatables.h"
+#include "pfSecurePreloader/pfSecurePreloaderCreatable.h"
 
 #endif // pfAllCreatables_inc

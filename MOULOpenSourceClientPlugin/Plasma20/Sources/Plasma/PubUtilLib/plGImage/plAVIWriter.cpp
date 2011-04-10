@@ -32,10 +32,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTimer.h"
 #include "plMipmap.h"
-#include "../plMessage/plRenderMsg.h"
+#include "plMessage/plRenderMsg.h"
 #include "plPipeline.h"
-#include "../pnDispatch/plDispatch.h"
-#include "../pnKeyedObject/plFixedKey.h"
+#include "pnDispatch/plDispatch.h"
+#include "pnKeyedObject/plFixedKey.h"
 
 bool plAVIWriter::fInitialized = false;
 

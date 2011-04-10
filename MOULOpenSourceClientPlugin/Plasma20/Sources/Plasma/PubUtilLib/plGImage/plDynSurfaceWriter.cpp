@@ -46,10 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 #include "hsUtils.h"
 #include "hsMatrix44.h"
-#include "../plMessage/plDynamicTextMsg.h"
-#include "../pnKeyedObject/plKey.h"
+#include "plMessage/plDynamicTextMsg.h"
+#include "pnKeyedObject/plKey.h"
 #include "plProfile.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 #include "plWinFontCache.h"
 
 
