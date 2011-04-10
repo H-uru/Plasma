@@ -16,16 +16,30 @@ find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the clie
 #find_package(BINK REQUIRED)  #TODO: Find Bink, but don't require it if plPipeline isn't built...
 #                                    Or better yet, just eliminate bink altogether
 
-option(EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
+option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 
-#TODO: Don't hard code this
-add_definitions(-DBUILD_TYPE=BUILD_TYPE_LIVE)
-
-if(EXTERNAL_RELEASE)
+if(PLASMA_EXTERNAL_RELEASE)
 	add_definitions(-DPLASMA_EXTERNAL_RELEASE)
-endif(EXTERNAL_RELEASE)
+endif(PLASMA_EXTERNAL_RELEASE)
 
-set(PLASMA_TARGETS Client
+set(PLASMA_BUILD_TYPE "Live"
+	CACHE STRING "Which type of client to build")
+set_property(CACHE PLASMA_BUILD_TYPE PROPERTY STRINGS
+             "Dev" "QA" "Test" "Beta" "Live")
+
+if(PLASMA_BUILD_TYPE STREQUAL "Dev")
+	add_definitions(-DBUILD_TYPE=BUILD_TYPE_DEV)
+elseif(PLASMA_BUILD_TYPE STREQUAL "QA")
+	add_definitions(-DBUILD_TYPE=BUILD_TYPE_QA)
+elseif(PLASMA_BUILD_TYPE STREQUAL "Test")
+	add_definitions(-DBUILD_TYPE=BUILD_TYPE_TEST)
+elseif(PLASMA_BUILD_TYPE STREQUAL "Beta")
+	add_definitions(-DBUILD_TYPE=BUILD_TYPE_BETA)
+elseif(PLASMA_BUILD_TYPE STREQUAL "Live")
+	add_definitions(-DBUILD_TYPE=BUILD_TYPE_LIVE)
+endif(PLASMA_BUILD_TYPE STREQUAL "Dev")
+
+set(PLASMA_TARGETS "Client"
     CACHE STRING "Which set of plasma targets to build and use")
 set_property(CACHE PLASMA_TARGETS PROPERTY STRINGS
              "Client" "Server" "Patcher" "Ethereal" "NoAvMsgs")
