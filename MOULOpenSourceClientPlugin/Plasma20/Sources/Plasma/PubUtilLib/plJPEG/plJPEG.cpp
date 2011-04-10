@@ -419,7 +419,7 @@ hsBool	plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 		jcProps.jquality = fWriteQuality;
 #else
 		cinfo.jpeg_width = source->GetWidth(); // default
-		cinfo.jpeg_width = source->GetHeight(); // default
+		cinfo.jpeg_height = source->GetHeight(); // default
 		cinfo.jpeg_color_space = JCS_YCbCr; // default
 		// not sure how to set 4:1:1 but supposedly it's the default
 		jpeg_set_quality( &cinfo, fWriteQuality, TRUE );
