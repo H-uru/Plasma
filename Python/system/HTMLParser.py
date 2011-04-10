@@ -26,7 +26,7 @@ commentclose = re.compile(r'--\s*>')
 tagfind = re.compile('[a-zA-Z][-.a-zA-Z0-9:_]*')
 attrfind = re.compile(
     r'\s*([a-zA-Z_][-.:a-zA-Z_0-9]*)(\s*=\s*'
-    r'(\'[^\']*\'|"[^"]*"|[-a-zA-Z0-9./,:;+*%?!&$\(\)_#=~]*))?')
+    r'(\'[^\']*\'|"[^"]*"|[-a-zA-Z0-9./,:;+*%?!&$\(\)_#=~@]*))?')
 
 locatestarttagend = re.compile(r"""
   <[a-zA-Z][-.a-zA-Z0-9:_]*          # tag name
@@ -175,6 +175,9 @@ class HTMLParser(markupbase.ParserBase):
                     i = self.updatepos(i, k)
                     continue
                 else:
+                    if ";" in rawdata[i:]: #bail by consuming &#
+                        self.handle_data(rawdata[0:2])
+                        i = self.updatepos(i, 2)
                     break
             elif startswith('&', i):
                 match = entityref.match(rawdata, i)
@@ -207,19 +210,6 @@ class HTMLParser(markupbase.ParserBase):
             self.handle_data(rawdata[i:n])
             i = self.updatepos(i, n)
         self.rawdata = rawdata[i:]
-
-    # Internal -- parse comment, return end or -1 if not terminated
-    def parse_comment(self, i, report=1):
-        rawdata = self.rawdata
-        assert rawdata[i:i+4] == '<!--', 'unexpected call to parse_comment()'
-        match = commentclose.search(rawdata, i+4)
-        if not match:
-            return -1
-        if report:
-            j = match.start()
-            self.handle_comment(rawdata[i+4: j])
-        j = match.end()
-        return j
 
     # Internal -- parse processing instr, return end or -1 if not terminated
     def parse_pi(self, i):
@@ -272,8 +262,8 @@ class HTMLParser(markupbase.ParserBase):
                          - self.__starttag_text.rfind("\n")
             else:
                 offset = offset + len(self.__starttag_text)
-            self.error("junk characters in start tag: %s"
-                       % `rawdata[k:endpos][:20]`)
+            self.error("junk characters in start tag: %r"
+                       % (rawdata[k:endpos][:20],))
         if end.endswith('/>'):
             # XHTML-style empty tag: <span attr="value" />
             self.handle_startendtag(tag, attrs)
@@ -324,7 +314,7 @@ class HTMLParser(markupbase.ParserBase):
         j = match.end()
         match = endtagfind.match(rawdata, i) # </ + tag + >
         if not match:
-            self.error("bad end tag: %s" % `rawdata[i:j]`)
+            self.error("bad end tag: %r" % (rawdata[i:j],))
         tag = match.group(1)
         self.handle_endtag(tag.lower())
         self.clear_cdata_mode()
@@ -368,15 +358,33 @@ class HTMLParser(markupbase.ParserBase):
         pass
 
     def unknown_decl(self, data):
-        self.error("unknown declaration: " + `data`)
+        self.error("unknown declaration: %r" % (data,))
 
     # Internal -- helper to remove special character quoting
+    entitydefs = None
     def unescape(self, s):
         if '&' not in s:
             return s
-        s = s.replace("&lt;", "<")
-        s = s.replace("&gt;", ">")
-        s = s.replace("&apos;", "'")
-        s = s.replace("&quot;", '"')
-        s = s.replace("&amp;", "&") # Must be last
-        return s
+        def replaceEntities(s):
+            s = s.groups()[0]
+            if s[0] == "#":
+                s = s[1:]
+                if s[0] in ['x','X']:
+                    c = int(s[1:], 16)
+                else:
+                    c = int(s)
+                return unichr(c)
+            else:
+                # Cannot use name2codepoint directly, because HTMLParser supports apos,
+                # which is not part of HTML 4
+                import htmlentitydefs
+                if HTMLParser.entitydefs is None:
+                    entitydefs = HTMLParser.entitydefs = {'apos':u"'"}
+                    for k, v in htmlentitydefs.name2codepoint.iteritems():
+                        entitydefs[k] = unichr(v)
+                try:
+                    return self.entitydefs[s]
+                except KeyError:
+                    return '&'+s+';'
+
+        return re.sub(r"&(#?[xX]?(?:[0-9a-fA-F]+|\w{1,8}));", replaceEntities, s)

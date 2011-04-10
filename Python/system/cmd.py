@@ -107,32 +107,49 @@ class Cmd:
         """
 
         self.preloop()
-        if intro is not None:
-            self.intro = intro
-        if self.intro:
-            self.stdout.write(str(self.intro)+"\n")
-        stop = None
-        while not stop:
-            if self.cmdqueue:
-                line = self.cmdqueue.pop(0)
-            else:
-                if self.use_rawinput:
-                    try:
-                        line = raw_input(self.prompt)
-                    except EOFError:
-                        line = 'EOF'
+        if self.use_rawinput and self.completekey:
+            try:
+                import readline
+                self.old_completer = readline.get_completer()
+                readline.set_completer(self.complete)
+                readline.parse_and_bind(self.completekey+": complete")
+            except ImportError:
+                pass
+        try:
+            if intro is not None:
+                self.intro = intro
+            if self.intro:
+                self.stdout.write(str(self.intro)+"\n")
+            stop = None
+            while not stop:
+                if self.cmdqueue:
+                    line = self.cmdqueue.pop(0)
                 else:
-                    self.stdout.write(self.prompt)
-                    self.stdout.flush()
-                    line = self.stdin.readline()
-                    if not len(line):
-                        line = 'EOF'
+                    if self.use_rawinput:
+                        try:
+                            line = raw_input(self.prompt)
+                        except EOFError:
+                            line = 'EOF'
                     else:
-                        line = line[:-1] # chop \n
-            line = self.precmd(line)
-            stop = self.onecmd(line)
-            stop = self.postcmd(stop, line)
-        self.postloop()
+                        self.stdout.write(self.prompt)
+                        self.stdout.flush()
+                        line = self.stdin.readline()
+                        if not len(line):
+                            line = 'EOF'
+                        else:
+                            line = line.rstrip('\r\n')
+                line = self.precmd(line)
+                stop = self.onecmd(line)
+                stop = self.postcmd(stop, line)
+            self.postloop()
+        finally:
+            if self.use_rawinput and self.completekey:
+                try:
+                    import readline
+                    readline.set_completer(self.old_completer)
+                except ImportError:
+                    pass
+
 
     def precmd(self, line):
         """Hook method executed just before the command line is
@@ -147,28 +164,20 @@ class Cmd:
 
     def preloop(self):
         """Hook method executed once when the cmdloop() method is called."""
-        if self.completekey:
-            try:
-                import readline
-                self.old_completer = readline.get_completer()
-                readline.set_completer(self.complete)
-                readline.parse_and_bind(self.completekey+": complete")
-            except ImportError:
-                pass
+        pass
 
     def postloop(self):
         """Hook method executed once when the cmdloop() method is about to
         return.
 
         """
-        if self.completekey:
-            try:
-                import readline
-                readline.set_completer(self.old_completer)
-            except ImportError:
-                pass
+        pass
 
     def parseline(self, line):
+        """Parse the line into a command name and a string containing
+        the arguments.  Returns a tuple containing (command, args, line).
+        'command' and 'args' may be None if the line couldn't be parsed.
+        """
         line = line.strip()
         if not line:
             return None, None, line
@@ -272,19 +281,15 @@ class Cmd:
             return None
 
     def get_names(self):
-        # Inheritance says we have to look in class and
-        # base classes; order is not important.
-        names = []
-        classes = [self.__class__]
-        while classes:
-            aclass = classes.pop(0)
-            if aclass.__bases__:
-                classes = classes + list(aclass.__bases__)
-            names = names + dir(aclass)
-        return names
+        # This method used to pull in base class attributes
+        # at a time dir() didn't do it yet.
+        return dir(self.__class__)
 
     def complete_help(self, *args):
-        return self.completenames(*args)
+        commands = set(self.completenames(*args))
+        topics = set(a[5:] for a in self.get_names()
+                     if a.startswith('help_' + args[0]))
+        return list(commands | topics)
 
     def do_help(self, arg):
         if arg:

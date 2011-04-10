@@ -49,7 +49,9 @@ by the way the __import__ hook is used by the Python interpreter.)  It
 would also do wise to install a different version of reload().
 
 """
-
+from warnings import warnpy3k, warn
+warnpy3k("the ihooks module has been removed in Python 3.0", stacklevel=2)
+del warnpy3k
 
 import __builtin__
 import imp
@@ -273,8 +275,8 @@ class ModuleLoader(BasicModuleLoader):
             elif type == PKG_DIRECTORY:
                 m = self.hooks.load_package(name, filename, file)
             else:
-                raise ImportError, "Unrecognized module type (%s) for %s" % \
-                      (`type`, name)
+                raise ImportError, "Unrecognized module type (%r) for %s" % \
+                      (type, name)
         finally:
             if file: file.close()
         m.__file__ = filename
@@ -299,8 +301,8 @@ class FancyModuleLoader(ModuleLoader):
             if inittype not in (PY_COMPILED, PY_SOURCE):
                 if initfile: initfile.close()
                 raise ImportError, \
-                    "Bad type (%s) for __init__ module in package %s" % (
-                    `inittype`, name)
+                    "Bad type (%r) for __init__ module in package %s" % (
+                    inittype, name)
             path = [filename]
             file = initfile
             realfilename = initfilename
@@ -322,7 +324,13 @@ class FancyModuleLoader(ModuleLoader):
         if path:
             m.__path__ = path
         m.__file__ = filename
-        exec code in m.__dict__
+        try:
+            exec code in m.__dict__
+        except:
+            d = self.hooks.modules_dict()
+            if name in d:
+                del d[name]
+            raise
         return m
 
 
@@ -393,8 +401,9 @@ class ModuleImporter(BasicModuleImporter):
 
     """A module importer that supports packages."""
 
-    def import_module(self, name, globals=None, locals=None, fromlist=None):
-        parent = self.determine_parent(globals)
+    def import_module(self, name, globals=None, locals=None, fromlist=None,
+                      level=-1):
+        parent = self.determine_parent(globals, level)
         q, tail = self.find_head_package(parent, str(name))
         m = self.load_tail(q, tail)
         if not fromlist:
@@ -403,21 +412,50 @@ class ModuleImporter(BasicModuleImporter):
             self.ensure_fromlist(m, fromlist)
         return m
 
-    def determine_parent(self, globals):
-        if not globals or not "__name__" in globals:
+    def determine_parent(self, globals, level=-1):
+        if not globals or not level:
             return None
-        pname = globals['__name__']
-        if "__path__" in globals:
-            parent = self.modules[pname]
-            assert globals is parent.__dict__
-            return parent
-        if '.' in pname:
-            i = pname.rfind('.')
-            pname = pname[:i]
-            parent = self.modules[pname]
-            assert parent.__name__ == pname
-            return parent
-        return None
+        pkgname = globals.get('__package__')
+        if pkgname is not None:
+            if not pkgname and level > 0:
+                raise ValueError, 'Attempted relative import in non-package'
+        else:
+            # __package__ not set, figure it out and set it
+            modname = globals.get('__name__')
+            if modname is None:
+                return None
+            if "__path__" in globals:
+                # __path__ is set so modname is already the package name
+                pkgname = modname
+            else:
+                # normal module, work out package name if any
+                if '.' not in modname:
+                    if level > 0:
+                        raise ValueError, ('Attempted relative import in '
+                                           'non-package')
+                    globals['__package__'] = None
+                    return None
+                pkgname = modname.rpartition('.')[0]
+            globals['__package__'] = pkgname
+        if level > 0:
+            dot = len(pkgname)
+            for x in range(level, 1, -1):
+                try:
+                    dot = pkgname.rindex('.', 0, dot)
+                except ValueError:
+                    raise ValueError('attempted relative import beyond '
+                                     'top-level package')
+            pkgname = pkgname[:dot]
+        try:
+            return sys.modules[pkgname]
+        except KeyError:
+            if level < 1:
+                warn("Parent module '%s' not found while handling "
+                     "absolute import" % pkgname, RuntimeWarning, 1)
+                return None
+            else:
+                raise SystemError, ("Parent module '%s' not loaded, cannot "
+                                    "perform relative import" % pkgname)
 
     def find_head_package(self, parent, name):
         if '.' in name:
@@ -438,7 +476,7 @@ class ModuleImporter(BasicModuleImporter):
             parent = None
             q = self.import_it(head, qname, parent)
             if q: return q, tail
-        raise ImportError, "No module named " + qname
+        raise ImportError, "No module named '%s'" % qname
 
     def load_tail(self, q, tail):
         m = q
@@ -449,7 +487,7 @@ class ModuleImporter(BasicModuleImporter):
             mname = "%s.%s" % (m.__name__, head)
             m = self.import_it(head, mname, m)
             if not m:
-                raise ImportError, "No module named " + mname
+                raise ImportError, "No module named '%s'" % mname
         return m
 
     def ensure_fromlist(self, m, fromlist, recursive=0):
@@ -467,11 +505,13 @@ class ModuleImporter(BasicModuleImporter):
                 subname = "%s.%s" % (m.__name__, sub)
                 submod = self.import_it(sub, subname, m)
                 if not submod:
-                    raise ImportError, "No module named " + subname
+                    raise ImportError, "No module named '%s'" % subname
 
     def import_it(self, partname, fqname, parent, force_load=0):
         if not partname:
-            raise ValueError, "Empty module name"
+            # completely empty module name should only happen in
+            # 'from . import' or __import__("")
+            return parent
         if not force_load:
             try:
                 return self.modules[fqname]

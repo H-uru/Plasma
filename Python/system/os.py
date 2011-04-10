@@ -1,9 +1,9 @@
-r"""OS routines for Mac, DOS, NT, or Posix depending on what system we're on.
+r"""OS routines for Mac, NT, or Posix depending on what system we're on.
 
 This exports:
-  - all functions from posix, nt, os2, mac, or ce, e.g. unlink, stat, etc.
-  - os.path is one of the modules posixpath, ntpath, or macpath
-  - os.name is 'posix', 'nt', 'os2', 'mac', 'ce' or 'riscos'
+  - all functions from posix, nt, os2, or ce, e.g. unlink, stat, etc.
+  - os.path is one of the modules posixpath, or ntpath
+  - os.name is 'posix', 'nt', 'os2', 'ce' or 'riscos'
   - os.curdir is a string representing the current directory ('.' or ':')
   - os.pardir is a string representing the parent directory ('..' or '::')
   - os.sep is the (or a most common) pathname separator ('/' or ':' or '\\')
@@ -12,6 +12,7 @@ This exports:
   - os.pathsep is the component separator used in $PATH etc
   - os.linesep is the line separator in text files ('\r' or '\n' or '\r\n')
   - os.defpath is the default search path for executables
+  - os.devnull is the file path of the null device ('/dev/null', etc.)
 
 Programs that import and use 'os' stand a better chance of being
 portable between different platforms.  Of course, they must then
@@ -22,13 +23,14 @@ and opendir), and leave all pathname manipulation to os.path
 
 #'
 
-import sys
+import sys, errno
 
 _names = sys.builtin_module_names
 
 # Note:  more names are added to __all__ later.
-__all__ = ["altsep", "curdir", "pardir", "sep", "pathsep", "linesep",
-           "defpath", "name", "path"]
+__all__ = ["altsep", "curdir", "pardir", "sep", "extsep", "pathsep", "linesep",
+           "defpath", "name", "path", "devnull",
+           "SEEK_SET", "SEEK_CUR", "SEEK_END"]
 
 def _get_exports_list(module):
     try:
@@ -44,7 +46,6 @@ if 'posix' in _names:
         from posix import _exit
     except ImportError:
         pass
-
     import posixpath as path
 
     import posix
@@ -59,7 +60,6 @@ elif 'nt' in _names:
         from nt import _exit
     except ImportError:
         pass
-
     import ntpath as path
 
     import nt
@@ -78,25 +78,11 @@ elif 'os2' in _names:
         import ntpath as path
     else:
         import os2emxpath as path
+        from _emx_link import link
 
     import os2
     __all__.extend(_get_exports_list(os2))
     del os2
-
-elif 'mac' in _names:
-    name = 'mac'
-    linesep = '\r'
-    from mac import *
-    try:
-        from mac import _exit
-    except ImportError:
-        pass
-
-    import macpath as path
-
-    import mac
-    __all__.extend(_get_exports_list(mac))
-    del mac
 
 elif 'ce' in _names:
     name = 'ce'
@@ -131,9 +117,16 @@ else:
     raise ImportError, 'no os specific module found'
 
 sys.modules['os.path'] = path
-from os.path import curdir, pardir, sep, pathsep, defpath, extsep, altsep
+from os.path import (curdir, pardir, sep, pathsep, defpath, extsep, altsep,
+    devnull)
 
 del _names
+
+# Python uses fixed values for the SEEK_ constants; they are mapped
+# to native constants if necessary in posixmodule.c
+SEEK_SET = 0
+SEEK_CUR = 1
+SEEK_END = 2
 
 #'
 
@@ -153,13 +146,20 @@ def makedirs(name, mode=0777):
     if not tail:
         head, tail = path.split(head)
     if head and tail and not path.exists(head):
-        makedirs(head, mode)
+        try:
+            makedirs(head, mode)
+        except OSError, e:
+            # be happy if someone already created the path
+            if e.errno != errno.EEXIST:
+                raise
+        if tail == curdir:           # xxx/newdir/. exists if xxx/newdir exists
+            return
     mkdir(name, mode)
 
 def removedirs(name):
     """removedirs(path)
 
-    Super-rmdir; remove a leaf directory and empty all intermediate
+    Super-rmdir; remove a leaf directory and all empty intermediate
     ones.  Works like rmdir except that, if the leaf directory is
     successfully removed, directories corresponding to rightmost path
     segments will be pruned away until either the whole path is
@@ -206,7 +206,7 @@ def renames(old, new):
 
 __all__.extend(["makedirs", "removedirs", "renames"])
 
-def walk(top, topdown=True, onerror=None):
+def walk(top, topdown=True, onerror=None, followlinks=False):
     """Directory tree generator.
 
     For each directory in the directory tree rooted at top (including top
@@ -242,6 +242,10 @@ def walk(top, topdown=True, onerror=None):
     to abort the walk.  Note that the filename is available as the
     filename attribute of the exception object.
 
+    By default, os.walk does not follow symbolic links to subdirectories on
+    systems that support them.  In order to get this functionality, set the
+    optional argument 'followlinks' to true.
+
     Caution:  if you pass a relative pathname for top, don't change the
     current working directory between resumptions of walk.  walk never
     changes the current directory, and assumes that the client doesn't
@@ -249,8 +253,9 @@ def walk(top, topdown=True, onerror=None):
 
     Example:
 
+    import os
     from os.path import join, getsize
-    for root, dirs, files in walk('python/Lib/email'):
+    for root, dirs, files in os.walk('python/Lib/email'):
         print root, "consumes",
         print sum([getsize(join(root, name)) for name in files]),
         print "bytes in", len(files), "non-directory files"
@@ -258,7 +263,7 @@ def walk(top, topdown=True, onerror=None):
             dirs.remove('CVS')  # don't visit CVS directories
     """
 
-    from os.path import join, isdir, islink
+    islink, join, isdir = path.islink, path.join, path.isdir
 
     # We may not have read permission for top, in which case we can't
     # get a list of the files the directory contains.  os.path.walk
@@ -284,9 +289,9 @@ def walk(top, topdown=True, onerror=None):
     if topdown:
         yield top, dirs, nondirs
     for name in dirs:
-        path = join(top, name)
-        if not islink(path):
-            for x in walk(path, topdown, onerror):
+        new_path = join(top, name)
+        if followlinks or not islink(new_path):
+            for x in walk(new_path, topdown, onerror, followlinks):
                 yield x
     if not topdown:
         yield top, dirs, nondirs
@@ -331,7 +336,7 @@ def execlpe(file, *args):
     execvpe(file, args[:-1], env)
 
 def execvp(file, args):
-    """execp(file, args)
+    """execvp(file, args)
 
     Execute the executable file (which is searched for along $PATH)
     with argument list args, replacing the current process.
@@ -350,8 +355,6 @@ def execvpe(file, args, env):
 __all__.extend(["execl","execle","execlp","execlpe","execvp","execvpe"])
 
 def _execvpe(file, args, env=None):
-    from errno import ENOENT, ENOTDIR
-
     if env is not None:
         func = execve
         argrest = (args, env)
@@ -377,7 +380,7 @@ def _execvpe(file, args, env=None):
             func(fullname, *argrest)
         except error, e:
             tb = sys.exc_info()[2]
-            if (e.errno != ENOENT and e.errno != ENOTDIR
+            if (e.errno != errno.ENOENT and e.errno != errno.ENOTDIR
                 and saved_exc is None):
                 saved_exc = e
                 saved_tb = tb
@@ -427,15 +430,35 @@ else:
                 def __delitem__(self, key):
                     unsetenv(key)
                     del self.data[key.upper()]
+                def clear(self):
+                    for key in self.data.keys():
+                        unsetenv(key)
+                        del self.data[key]
+                def pop(self, key, *args):
+                    unsetenv(key)
+                    return self.data.pop(key.upper(), *args)
             def has_key(self, key):
                 return key.upper() in self.data
             def __contains__(self, key):
                 return key.upper() in self.data
             def get(self, key, failobj=None):
                 return self.data.get(key.upper(), failobj)
-            def update(self, dict):
-                for k, v in dict.items():
-                    self[k] = v
+            def update(self, dict=None, **kwargs):
+                if dict:
+                    try:
+                        keys = dict.keys()
+                    except AttributeError:
+                        # List of (key, value)
+                        for k, v in dict:
+                            self[k] = v
+                    else:
+                        # got keys
+                        # cannot use items(), since mappings
+                        # may not have them.
+                        for k in keys:
+                            self[k] = dict[k]
+                if kwargs:
+                    self.update(kwargs)
             def copy(self):
                 return dict(self)
 
@@ -447,9 +470,22 @@ else:
             def __setitem__(self, key, item):
                 putenv(key, item)
                 self.data[key] = item
-            def update(self, dict):
-                for k, v in dict.items():
-                    self[k] = v
+            def update(self,  dict=None, **kwargs):
+                if dict:
+                    try:
+                        keys = dict.keys()
+                    except AttributeError:
+                        # List of (key, value)
+                        for k, v in dict:
+                            self[k] = v
+                    else:
+                        # got keys
+                        # cannot use items(), since mappings
+                        # may not have them.
+                        for k in keys:
+                            self[k] = dict[k]
+                if kwargs:
+                    self.update(kwargs)
             try:
                 unsetenv
             except NameError:
@@ -458,6 +494,13 @@ else:
                 def __delitem__(self, key):
                     unsetenv(key)
                     del self.data[key]
+                def clear(self):
+                    for key in self.data.keys():
+                        unsetenv(key)
+                        del self.data[key]
+                def pop(self, key, *args):
+                    unsetenv(key)
+                    return self.data.pop(key, *args)
             def copy(self):
                 return dict(self)
 
@@ -471,11 +514,7 @@ def getenv(key, default=None):
 __all__.append("getenv")
 
 def _exists(name):
-    try:
-        eval(name)
-        return True
-    except NameError:
-        return False
+    return name in globals()
 
 # Supply spawn*() (probably only for Unix)
 if _exists("fork") and not _exists("spawnv") and _exists("execv"):
@@ -579,6 +618,10 @@ otherwise return -SIG, where SIG is the signal that killed it. """
         env = args[-1]
         return spawnve(mode, file, args[:-1], env)
 
+
+    __all__.extend(["spawnv", "spawnve", "spawnl", "spawnle",])
+
+
 if _exists("spawnvp"):
     # At the moment, Windows doesn't implement spawnvp[e],
     # so it won't have spawnlp[e] either.
@@ -604,31 +647,69 @@ otherwise return -SIG, where SIG is the signal that killed it. """
         return spawnvpe(mode, file, args[:-1], env)
 
 
-    __all__.extend(["spawnlp","spawnlpe","spawnv", "spawnve","spawnvp",
-                    "spawnvpe","spawnl","spawnle",])
+    __all__.extend(["spawnvp", "spawnvpe", "spawnlp", "spawnlpe",])
 
 
 # Supply popen2 etc. (for Unix)
 if _exists("fork"):
     if not _exists("popen2"):
         def popen2(cmd, mode="t", bufsize=-1):
-            import popen2
-            stdout, stdin = popen2.popen2(cmd, bufsize)
-            return stdin, stdout
+            """Execute the shell command 'cmd' in a sub-process.  On UNIX, 'cmd'
+            may be a sequence, in which case arguments will be passed directly to
+            the program without shell intervention (as with os.spawnv()).  If 'cmd'
+            is a string it will be passed to the shell (as with os.system()). If
+            'bufsize' is specified, it sets the buffer size for the I/O pipes.  The
+            file objects (child_stdin, child_stdout) are returned."""
+            import warnings
+            msg = "os.popen2 is deprecated.  Use the subprocess module."
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
+            import subprocess
+            PIPE = subprocess.PIPE
+            p = subprocess.Popen(cmd, shell=isinstance(cmd, basestring),
+                                 bufsize=bufsize, stdin=PIPE, stdout=PIPE,
+                                 close_fds=True)
+            return p.stdin, p.stdout
         __all__.append("popen2")
 
     if not _exists("popen3"):
         def popen3(cmd, mode="t", bufsize=-1):
-            import popen2
-            stdout, stdin, stderr = popen2.popen3(cmd, bufsize)
-            return stdin, stdout, stderr
+            """Execute the shell command 'cmd' in a sub-process.  On UNIX, 'cmd'
+            may be a sequence, in which case arguments will be passed directly to
+            the program without shell intervention (as with os.spawnv()).  If 'cmd'
+            is a string it will be passed to the shell (as with os.system()). If
+            'bufsize' is specified, it sets the buffer size for the I/O pipes.  The
+            file objects (child_stdin, child_stdout, child_stderr) are returned."""
+            import warnings
+            msg = "os.popen3 is deprecated.  Use the subprocess module."
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
+            import subprocess
+            PIPE = subprocess.PIPE
+            p = subprocess.Popen(cmd, shell=isinstance(cmd, basestring),
+                                 bufsize=bufsize, stdin=PIPE, stdout=PIPE,
+                                 stderr=PIPE, close_fds=True)
+            return p.stdin, p.stdout, p.stderr
         __all__.append("popen3")
 
     if not _exists("popen4"):
         def popen4(cmd, mode="t", bufsize=-1):
-            import popen2
-            stdout, stdin = popen2.popen4(cmd, bufsize)
-            return stdin, stdout
+            """Execute the shell command 'cmd' in a sub-process.  On UNIX, 'cmd'
+            may be a sequence, in which case arguments will be passed directly to
+            the program without shell intervention (as with os.spawnv()).  If 'cmd'
+            is a string it will be passed to the shell (as with os.system()). If
+            'bufsize' is specified, it sets the buffer size for the I/O pipes.  The
+            file objects (child_stdin, child_stdout_stderr) are returned."""
+            import warnings
+            msg = "os.popen4 is deprecated.  Use the subprocess module."
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
+            import subprocess
+            PIPE = subprocess.PIPE
+            p = subprocess.Popen(cmd, shell=isinstance(cmd, basestring),
+                                 bufsize=bufsize, stdin=PIPE, stdout=PIPE,
+                                 stderr=subprocess.STDOUT, close_fds=True)
+            return p.stdin, p.stdout
         __all__.append("popen4")
 
 import copy_reg as _copy_reg
@@ -657,3 +738,22 @@ try:
                      _make_statvfs_result)
 except NameError: # statvfs_result may not exist
     pass
+
+if not _exists("urandom"):
+    def urandom(n):
+        """urandom(n) -> str
+
+        Return a string of n random bytes suitable for cryptographic use.
+
+        """
+        try:
+            _urandomfd = open("/dev/urandom", O_RDONLY)
+        except (OSError, IOError):
+            raise NotImplementedError("/dev/urandom (or equivalent) not found")
+        try:
+            bs = b""
+            while n > len(bs):
+                bs += read(_urandomfd, n - len(bs))
+        finally:
+            close(_urandomfd)
+        return bs

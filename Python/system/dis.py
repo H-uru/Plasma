@@ -6,8 +6,12 @@ import types
 from opcode import *
 from opcode import __all__ as _opcodes_all
 
-__all__ = ["dis","disassemble","distb","disco"] + _opcodes_all
+__all__ = ["dis", "disassemble", "distb", "disco",
+           "findlinestarts", "findlabels"] + _opcodes_all
 del _opcodes_all
+
+_have_code = (types.MethodType, types.FunctionType, types.CodeType,
+              types.ClassType, type)
 
 def dis(x=None):
     """Disassemble classes, methods, functions, or code.
@@ -18,7 +22,7 @@ def dis(x=None):
     if x is None:
         distb()
         return
-    if type(x) is types.InstanceType:
+    if isinstance(x, types.InstanceType):
         x = x.__class__
     if hasattr(x, 'im_func'):
         x = x.im_func
@@ -28,10 +32,7 @@ def dis(x=None):
         items = x.__dict__.items()
         items.sort()
         for name, x1 in items:
-            if type(x1) in (types.MethodType,
-                            types.FunctionType,
-                            types.CodeType,
-                            types.ClassType):
+            if isinstance(x1, _have_code):
                 print "Disassembly of %s:" % name
                 try:
                     dis(x1)
@@ -60,21 +61,8 @@ def distb(tb=None):
 def disassemble(co, lasti=-1):
     """Disassemble a code object."""
     code = co.co_code
-
-    byte_increments = [ord(c) for c in co.co_lnotab[0::2]]
-    line_increments = [ord(c) for c in co.co_lnotab[1::2]]
-    table_length = len(byte_increments) # == len(line_increments)
-
-    lineno = co.co_firstlineno
-    table_index = 0
-    while (table_index < table_length
-           and byte_increments[table_index] == 0):
-        lineno += line_increments[table_index]
-        table_index += 1
-    addr = 0
-    line_incr = 0
-
     labels = findlabels(code)
+    linestarts = dict(findlinestarts(co))
     n = len(code)
     i = 0
     extended_arg = 0
@@ -82,20 +70,10 @@ def disassemble(co, lasti=-1):
     while i < n:
         c = code[i]
         op = ord(c)
-
-        if i >= addr:
-            lineno += line_incr
-            while table_index < table_length:
-                addr += byte_increments[table_index]
-                line_incr = line_increments[table_index]
-                table_index += 1
-                if line_incr:
-                    break
-            else:
-                addr = sys.maxint
+        if i in linestarts:
             if i > 0:
                 print
-            print "%3d"%lineno,
+            print "%3d" % linestarts[i],
         else:
             print '   ',
 
@@ -103,7 +81,7 @@ def disassemble(co, lasti=-1):
         else: print '   ',
         if i in labels: print '>>',
         else: print '  ',
-        print `i`.rjust(4),
+        print repr(i).rjust(4),
         print opname[op].ljust(20),
         i = i+1
         if op >= HAVE_ARGUMENT:
@@ -112,13 +90,13 @@ def disassemble(co, lasti=-1):
             i = i+2
             if op == EXTENDED_ARG:
                 extended_arg = oparg*65536L
-            print `oparg`.rjust(5),
+            print repr(oparg).rjust(5),
             if op in hasconst:
-                print '(' + `co.co_consts[oparg]` + ')',
+                print '(' + repr(co.co_consts[oparg]) + ')',
             elif op in hasname:
                 print '(' + co.co_names[oparg] + ')',
             elif op in hasjrel:
-                print '(to ' + `i + oparg` + ')',
+                print '(to ' + repr(i + oparg) + ')',
             elif op in haslocal:
                 print '(' + co.co_varnames[oparg] + ')',
             elif op in hascompare:
@@ -137,22 +115,20 @@ def disassemble_string(code, lasti=-1, varnames=None, names=None,
     while i < n:
         c = code[i]
         op = ord(c)
-        if op == opmap['SET_LINENO'] and i > 0:
-            print # Extra blank line
         if i == lasti: print '-->',
         else: print '   ',
         if i in labels: print '>>',
         else: print '  ',
-        print `i`.rjust(4),
+        print repr(i).rjust(4),
         print opname[op].ljust(15),
         i = i+1
         if op >= HAVE_ARGUMENT:
             oparg = ord(code[i]) + ord(code[i+1])*256
             i = i+2
-            print `oparg`.rjust(5),
+            print repr(oparg).rjust(5),
             if op in hasconst:
                 if constants:
-                    print '(' + `constants[oparg]` + ')',
+                    print '(' + repr(constants[oparg]) + ')',
                 else:
                     print '(%d)'%oparg,
             elif op in hasname:
@@ -161,7 +137,7 @@ def disassemble_string(code, lasti=-1, varnames=None, names=None,
                 else:
                     print '(%d)'%oparg,
             elif op in hasjrel:
-                print '(to ' + `i + oparg` + ')',
+                print '(to ' + repr(i + oparg) + ')',
             elif op in haslocal:
                 if varnames:
                     print '(' + varnames[oparg] + ')',
@@ -199,6 +175,27 @@ def findlabels(code):
                     labels.append(label)
     return labels
 
+def findlinestarts(code):
+    """Find the offsets in a byte code which are start of lines in the source.
+
+    Generate pairs (offset, lineno) as described in Python/compile.c.
+
+    """
+    byte_increments = [ord(c) for c in code.co_lnotab[0::2]]
+    line_increments = [ord(c) for c in code.co_lnotab[1::2]]
+
+    lastlineno = None
+    lineno = code.co_firstlineno
+    addr = 0
+    for byte_incr, line_incr in zip(byte_increments, line_increments):
+        if byte_incr:
+            if lineno != lastlineno:
+                yield (addr, lineno)
+                lastlineno = lineno
+            addr += byte_incr
+        lineno += line_incr
+    if lineno != lastlineno:
+        yield (addr, lineno)
 
 def _test():
     """Simple test program to disassemble a file."""

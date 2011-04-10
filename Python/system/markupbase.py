@@ -1,4 +1,10 @@
-"""Shared support for scanning document type declarations in HTML and XHTML."""
+"""Shared support for scanning document type declarations in HTML and XHTML.
+
+This module is used as a foundation for the HTMLParser and sgmllib
+modules (indirectly, for htmllib as well).  It has no documented
+public API and should not be used directly.
+
+"""
 
 import re
 
@@ -70,13 +76,16 @@ class ParserBase:
         rawdata = self.rawdata
         j = i + 2
         assert rawdata[i:j] == "<!", "unexpected call to parse_declaration"
+        if rawdata[j:j+1] == ">":
+            # the empty comment <!>
+            return j + 1
         if rawdata[j:j+1] in ("-", ""):
             # Start of comment followed by buffer boundary,
             # or just a buffer boundary.
             return -1
         # A simple, practical version could look like: ((name|stringlit) S*) + '>'
         n = len(rawdata)
-        if rawdata[j:j+1] == '--': #comment
+        if rawdata[j:j+2] == '--': #comment
             # Locate --.*-- as the body of the comment
             return self.parse_comment(i)
         elif rawdata[j] == '[': #marked section
@@ -124,14 +133,14 @@ class ParserBase:
                     self.error("unexpected '[' char in declaration")
             else:
                 self.error(
-                    "unexpected %s char in declaration" % `rawdata[j]`)
+                    "unexpected %r char in declaration" % rawdata[j])
             if j < 0:
                 return j
         return -1 # incomplete
 
     # Internal -- parse a marked section
     # Override this to handle MS-word extension syntax <![if word]>content<![endif]>
-    def parse_marked_section( self, i, report=1 ):
+    def parse_marked_section(self, i, report=1):
         rawdata= self.rawdata
         assert rawdata[i:i+3] == '<![', "unexpected call to parse_marked_section()"
         sectName, j = self._scan_name( i+3, i )
@@ -144,7 +153,7 @@ class ParserBase:
             # look for MS Office ]> ending
             match= _msmarkedsectionclose.search(rawdata, i+3)
         else:
-            self.error('unknown status keyword %s in marked section' % `rawdata[i+3:j]`)
+            self.error('unknown status keyword %r in marked section' % rawdata[i+3:j])
         if not match:
             return -1
         if report:
@@ -180,8 +189,7 @@ class ParserBase:
                     return -1
                 if s != "<!":
                     self.updatepos(declstartpos, j + 1)
-                    self.error("unexpected char in internal subset (in %s)"
-                               % `s`)
+                    self.error("unexpected char in internal subset (in %r)" % s)
                 if (j + 2) == n:
                     # end of buffer; incomplete
                     return -1
@@ -199,7 +207,7 @@ class ParserBase:
                 if name not in ("attlist", "element", "entity", "notation"):
                     self.updatepos(declstartpos, j + 2)
                     self.error(
-                        "unknown declaration %s in internal subset" % `name`)
+                        "unknown declaration %r in internal subset" % name)
                 # handle the individual names
                 meth = getattr(self, "_parse_doctype_" + name)
                 j = meth(j, declstartpos)
@@ -230,7 +238,7 @@ class ParserBase:
                 j = j + 1
             else:
                 self.updatepos(declstartpos, j)
-                self.error("unexpected char %s in internal subset" % `c`)
+                self.error("unexpected char %r in internal subset" % c)
         # end of buffer reached
         return -1
 
@@ -376,7 +384,8 @@ class ParserBase:
             return name.lower(), m.end()
         else:
             self.updatepos(declstartpos, i)
-            self.error("expected name token")
+            self.error("expected name token at %r"
+                       % rawdata[declstartpos:declstartpos+20])
 
     # To be overridden -- handlers for unknown objects
     def unknown_decl(self, data):
