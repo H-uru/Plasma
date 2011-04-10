@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,51 +28,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKIJournalCover*1#0.hsm"><font size=10 face=courier color=000000><margin left=62 right=62 top=62 bottom=48><p align=center>Le KI
 
-<p align=left>Fonctions de base - Le chiffre 3 (écrit en D'ni) apparaît sur le côté de tous les appareils... pour symboliser 3 fonctions ?  Il y en a bien plus que ça.  3 fonctions principales ?  En tout cas, le nom est pratique : KI.
+<p align=left>Fonctions de base - Le chiffre 3 (Ã©crit en D'ni) apparaÃ®t sur le cÃ´tÃ© de tous les appareils... pour symboliser 3 fonctionsÂ ?  Il y en a bien plus que Ã§a.  3 fonctions principalesÂ ?  En tout cas, le nom est pratiqueÂ : KI.
 
-1. L'interface Nexus - le Nexus semble n'être qu'un décodeur pour les données du KI. Les KI permettent aux utilisateurs de proposer ou de refuser l'accès d'un Livre à d'autres KI. Je crois qu'on peut les faire fonctionner de la même façon pour des quartiers.  Le nom des Âges définis dans le KI apparaît dans le Nexus. Enfin, ça devrait marcher... 
+1. L'interface Nexus - le Nexus semble n'Ãªtre qu'un dÃ©codeur pour les donnÃ©es du KI. Les KI permettent aux utilisateurs de proposer ou de refuser l'accÃ¨s d'un Livre Ã  d'autres KI. Je crois qu'on peut les faire fonctionner de la mÃªme faÃ§on pour des quartiers.  Le nom des Ã‚ges dÃ©finis dans le KI apparaÃ®t dans le Nexus. Enfin, Ã§a devrait marcher... 
 
-2. Communication interpersonnelle - bien entendu, il s'agit de la fonction la plus importante : des communications vocales ou textuelles envoyées vers les autres utilisateurs de KI. Inter- ou Intra-Âge - ça n'a pas l'air d'avoir d'importance. 
+2. Communication interpersonnelle - bien entendu, il s'agit de la fonction la plus importanteÂ : des communications vocales ou textuelles envoyÃ©es vers les autres utilisateurs de KI. Inter- ou Intra-Ã‚ge - Ã§a n'a pas l'air d'avoir d'importance. 
 
-3. Capture d'image, stockage et transfert - Une pression unique sur l'un des boutons permet de réaliser un cliché et de le stocker dans un répertoire approprié de l'Âge. Les images peuvent être envoyées vers d'autres KI ou chargées dans certains imageurs (selon les versions). Il semblerait que les serveurs principaux s'occupaient de la coordination de ces fonctions - on risque d'avoir du mal à les faire fonctionner à nouveau. 
+3. Capture d'image, stockage et transfert - Une pression unique sur l'un des boutons permet de rÃ©aliser un clichÃ© et de le stocker dans un rÃ©pertoire appropriÃ© de l'Ã‚ge. Les images peuvent Ãªtre envoyÃ©es vers d'autres KI ou chargÃ©es dans certains imageurs (selon les versions). Il semblerait que les serveurs principaux s'occupaient de la coordination de ces fonctions - on risque d'avoir du mal Ã  les faire fonctionner Ã  nouveau. 
 
-4. Éléments de journal, stockage et transfert - très simple. Permet d'écrire des notes et de les stocker. Un fois de plus, ce sont les serveurs qui permettent les transferts... D'un KI vers un KI ou d'un KI vers un imageur. 
+4. Ã‰lÃ©ments de journal, stockage et transfert - trÃ¨s simple. Permet d'Ã©crire des notes et de les stocker. Un fois de plus, ce sont les serveurs qui permettent les transferts... D'un KI vers un KI ou d'un KI vers un imageur. 
 
-5. Marqueurs - l'appareil permet de récupérer des marqueurs dans un Âge,  à l'emplacement où se situe l'utilisateur. Les fonctionnalités semblent nombreuses, ici - Il faut que j'effectue d'autres recherches.  On peut peut-être coupler cette fonctionnalité et en savoir plus sur le problème du GZ... intéressant.
+5. Marqueurs - l'appareil permet de rÃ©cupÃ©rer des marqueurs dans un Ã‚ge,  Ã  l'emplacement oÃ¹ se situe l'utilisateur. Les fonctionnalitÃ©s semblent nombreuses, ici - Il faut que j'effectue d'autres recherches.  On peut peut-Ãªtre coupler cette fonctionnalitÃ© et en savoir plus sur le problÃ¨me du GZ... intÃ©ressant.
 
-6. Portes - dans cet Âge, le KI (même dans sa version la plus basique) permet d'ouvrir les portes de Niveau 1. Les portes de Niveau 2 et 3 exigent une version supérieure. 
+6. Portes - dans cet Ã‚ge, le KI (mÃªme dans sa version la plus basique) permet d'ouvrir les portes de Niveau 1. Les portes de Niveau 2 et 3 exigent une version supÃ©rieure. 
 
 
 
-Ces appareils sont bien plus polyvalents que je ne l'aurais imaginé. Le « distributeur » est capable de fournir au moins cinq versions différentes. Peut-être même plus. Les fonctionnalités varient énormément d'une version à une autre.  Il devait y avoir un système pour contrôler et surveiller ces appareils... mais où ?
+Ces appareils sont bien plus polyvalents que je ne l'aurais imaginÃ©. Le Â«Â distributeurÂ Â» est capable de fournir au moins cinq versions diffÃ©rentes. Peut-Ãªtre mÃªme plus. Les fonctionnalitÃ©s varient Ã©normÃ©ment d'une version Ã  une autre.  Il devait y avoir un systÃ¨me pour contrÃ´ler et surveiller ces appareils... mais oÃ¹Â ?
 
-L'imageur intégré à la machine est étonnamment compact et efficace.  Il utilise ce petit système de compression « matriciel » (mais le mot ne convient pas)... il faut que je comprenne ce truc.  La projection est vraiment puissante pour un truc qui tient sur le plat de la main. 
+L'imageur intÃ©grÃ© Ã  la machine est Ã©tonnamment compact et efficace.  Il utilise ce petit systÃ¨me de compression Â«Â matricielÂ Â» (mais le mot ne convient pas)... il faut que je comprenne ce truc.  La projection est vraiment puissante pour un truc qui tient sur le plat de la main. 
 
 
 
 Marqueurs 
 
-Finalité : il s'agissait peut-être d'un outil d'entraînement réservé aux Conservateurs. Les marqueurs pouvaient être définis et les nouvelles recrues ou les rangs inférieurs parcouraient la « piste ».
+FinalitÃ©Â : il s'agissait peut-Ãªtre d'un outil d'entraÃ®nement rÃ©servÃ© aux Conservateurs. Les marqueurs pouvaient Ãªtre dÃ©finis et les nouvelles recrues ou les rangs infÃ©rieurs parcouraient la Â«Â pisteÂ Â».
 
-Interface : les KI interagissent avec les marqueurs de 3 façons.
+InterfaceÂ : les KI interagissent avec les marqueurs de 3 faÃ§ons.
 
-« Capture par équipe » - une fois tous les marqueurs placés, deux équipes peuvent les ramasser. Le KI enregistre le marqueur à l'équipe appropriée. Les marqueurs peuvent disparaître après un temps limite ou une fois qu'ils ont tous été enregistrés. Les marqueurs doivent tous se trouver dans le même Âge.  Test : est-il possible de réinitialiser les marqueurs ?
+Â«Â Capture par Ã©quipeÂ Â» - une fois tous les marqueurs placÃ©s, deux Ã©quipes peuvent les ramasser. Le KI enregistre le marqueur Ã  l'Ã©quipe appropriÃ©e. Les marqueurs peuvent disparaÃ®tre aprÃ¨s un temps limite ou une fois qu'ils ont tous Ã©tÃ© enregistrÃ©s. Les marqueurs doivent tous se trouver dans le mÃªme Ã‚ge.  TestÂ : est-il possible de rÃ©initialiser les marqueursÂ ?
 
-« Défense » - une fois de plus, nécessite deux équipes. Les marqueurs ne disparaissent qu'après un temps limite prédéterminé. Un marqueur ne disparaît pas après avoir été activé, mais le serveur garde en mémoire l'équipe qui le « défend ». À la fin du temps défini, le serveur comptabilise les marqueurs détenus par chaque équipe. Les marqueurs doivent tous se trouver dans le même Âge.
+Â«Â DÃ©fenseÂ Â» - une fois de plus, nÃ©cessite deux Ã©quipes. Les marqueurs ne disparaissent qu'aprÃ¨s un temps limite prÃ©dÃ©terminÃ©. Un marqueur ne disparaÃ®t pas aprÃ¨s avoir Ã©tÃ© activÃ©, mais le serveur garde en mÃ©moire l'Ã©quipe qui le Â«Â dÃ©fendÂ Â». Ã€ la fin du temps dÃ©fini, le serveur comptabilise les marqueurs dÃ©tenus par chaque Ã©quipe. Les marqueurs doivent tous se trouver dans le mÃªme Ã‚ge.
 
-« Capture solo » - seul un KI peut enregistrer les marqueurs. Les marqueurs contiennent également du texte. La série de marqueurs peut être envoyée d'un KI à un autre n'importe où dans le système. Les marqueurs peuvent être placés dans n'importe quel Âge. 
+Â«Â Capture soloÂ Â» - seul un KI peut enregistrer les marqueurs. Les marqueurs contiennent Ã©galement du texte. La sÃ©rie de marqueurs peut Ãªtre envoyÃ©e d'un KI Ã  un autre n'importe oÃ¹ dans le systÃ¨me. Les marqueurs peuvent Ãªtre placÃ©s dans n'importe quel Ã‚ge. 
 
-Les marqueurs semblent identiques à ceux produits par le Grand Zéro. En fait, je suis persuadé qu'il s'agit de la même technologie. On peut même penser que les KI communiquent avec le Zéro et inscrivent ces marqueurs à l'endroit où ils sont enregistrés. Mais cette théorie pose certains problèmes... la conservation des marqueurs, etc...
+Les marqueurs semblent identiques Ã  ceux produits par le Grand ZÃ©ro. En fait, je suis persuadÃ© qu'il s'agit de la mÃªme technologie. On peut mÃªme penser que les KI communiquent avec le ZÃ©ro et inscrivent ces marqueurs Ã  l'endroit oÃ¹ ils sont enregistrÃ©s. Mais cette thÃ©orie pose certains problÃ¨mes... la conservation des marqueurs, etc...
 
 
 
 Enregistrement des KI
 
-Un KI peut surveiller un autre KI sur 3 niveaux :
+Un KI peut surveiller un autre KI sur 3 niveauxÂ :
 
-Intra-Âge : tout autre KI se trouvant dans le même Âge est identifié et affiché. 
+Intra-Ã‚geÂ : tout autre KI se trouvant dans le mÃªme Ã‚ge est identifiÃ© et affichÃ©. 
 
-De KI à KI : tout KI individuel peut-être enregistré et retrouvé. Du coup, quel que soit l'emplacement du KI, les journaux, photos, etc. peuvent être transférés. Cette fonction était peut-être utilisée lors de certaines missions par équipe provisoires ou semi-permanentes.  Dans notre cas, ça permettra de fournir une « liste d'amis ».
+De KI Ã  KIÂ : tout KI individuel peut-Ãªtre enregistrÃ© et retrouvÃ©. Du coup, quel que soit l'emplacement du KI, les journaux, photos, etc. peuvent Ãªtre transfÃ©rÃ©s. Cette fonction Ã©tait peut-Ãªtre utilisÃ©e lors de certaines missions par Ã©quipe provisoires ou semi-permanentes.  Dans notre cas, Ã§a permettra de fournir une Â«Â liste d'amisÂ Â».
 
-Groupes : Le KI reconnaît également les groupes connectés d'une façon ou d'une autre au Nexus. Il semble possible, avec une bonne configuration, de prendre en charge des listes de quartiers grâce à cette fonction.
+GroupesÂ : Le KI reconnaÃ®t Ã©galement les groupes connectÃ©s d'une faÃ§on ou d'une autre au Nexus. Il semble possible, avec une bonne configuration, de prendre en charge des listes de quartiers grÃ¢ce Ã  cette fonction.
 """

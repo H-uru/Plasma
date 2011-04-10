@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,32 +28,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingAsemlefJournalCover_eng*1#0.hsm"><font size=16 face=Sam><margin right=62 left=62 top=48><p align=center>Le Roi Asemlef
 
-<p align=left>Il monta sur le trône en 5999 ED à l'âge de 54 ans. 
+<p align=left>Il monta sur le trÃ´ne en 5999 ED Ã  l'Ã¢ge de 54 ans. 
 
-Asemlef récupéra le peuple dans un état philosophiquement confus (à cause de l'Observateur, de Gish et du Grand Roi/Tevahr), mais technologiquement avancé (constructions nombreuses, exploitations minières et inventions scientifiques). Tout en essayant de diminuer l'influence de l'extérieur sur leur culture, l'expension fut rapide à l'intérieur de la caverne. Leur esprit combatif, qui avait marqué leur passé, était en veille*. 
+Asemlef rÃ©cupÃ©ra le peuple dans un Ã©tat philosophiquement confus (Ã  cause de l'Observateur, de Gish et du Grand Roi/Tevahr), mais technologiquement avancÃ© (constructions nombreuses, exploitations miniÃ¨res et inventions scientifiques). Tout en essayant de diminuer l'influence de l'extÃ©rieur sur leur culture, l'expension fut rapide Ã  l'intÃ©rieur de la caverne. Leur esprit combatif, qui avait marquÃ© leur passÃ©, Ã©tait en veille*. 
 
-Asemlef maintint la tendance pacifique en évitant d'isoler les citoyens et en accueillant tout le monde favorablement, quelles que soient leurs croyances. 
+Asemlef maintint la tendance pacifique en Ã©vitant d'isoler les citoyens et en accueillant tout le monde favorablement, quelles que soient leurs croyances. 
 
-Il semblerait qu'il ne prenait position pour aucune des diverses idéologies religieuses autour de lui et qu'il promettait un accès égalitaire à la propriété, à l'aide gouvernementale, etc. et ce pour toutes les factions religieuses.
+Il semblerait qu'il ne prenait position pour aucune des diverses idÃ©ologies religieuses autour de lui et qu'il promettait un accÃ¨s Ã©galitaire Ã  la propriÃ©tÃ©, Ã  l'aide gouvernementale, etc. et ce pour toutes les factions religieuses.
 
-Et sans mépris pour les autres credo, il parvint à maintenir le sien, inconnus des D'ni jusqu'alors. Bien que ce fait ne fut jamais reconnu publiquement par Asemlef, l'opinion publique et les archives historiques s'accordent à montrer du doigt de nombreux serviteurs utilisés par Asemlef, provenant pour la plupart d'autres Âges. Apparemment, Asemlef organisait des défis entre ses « serviteurs ». Il est difficile de trouver des détails, mais il semble que ces défis étaient variés, allant de la traque, par Asemlef en personne, aux combats entre les serviteurs, à la manière des gladiateurs. Il est intéressant de noter que l'opinion publique était plutôt indifférente à ces défis, quelle que soit leur nature.  
+Et sans mÃ©pris pour les autres credo, il parvint Ã  maintenir le sien, inconnus des D'ni jusqu'alors. Bien que ce fait ne fut jamais reconnu publiquement par Asemlef, l'opinion publique et les archives historiques s'accordent Ã  montrer du doigt de nombreux serviteurs utilisÃ©s par Asemlef, provenant pour la plupart d'autres Ã‚ges. Apparemment, Asemlef organisait des dÃ©fis entre ses Â«Â serviteursÂ Â». Il est difficile de trouver des dÃ©tails, mais il semble que ces dÃ©fis Ã©taient variÃ©s, allant de la traque, par Asemlef en personne, aux combats entre les serviteurs, Ã  la maniÃ¨re des gladiateurs. Il est intÃ©ressant de noter que l'opinion publique Ã©tait plutÃ´t indiffÃ©rente Ã  ces dÃ©fis, quelle que soit leur nature.  
 
-Au lieu de développer des croyances philosophiques ou religieuses, Asemlef concentra ses efforts sur l'expansion des mines, la construction de nouveaux quartiers et la répartition égalitaire pour toutes les classes de la culture et des privilèges sociaux. Sur le sujet de l'ingérence extérieure, Asemlef admit publiquement que les mots d'ordre donnés aux Guildes par son père n'étaient pas réalistes et que l'ingérence extérieure serait toujours nécessaire, dans une certaine mesure. Conscient que ce commentaire lui apporterait les foudres de certaines factions, il fut le premier Roi à inviter publiquement les factions les plus extrêmes (qui refusaient toute ingérence extérieure) pour de nombreuses réunions de négociation dans son palais.
+Au lieu de dÃ©velopper des croyances philosophiques ou religieuses, Asemlef concentra ses efforts sur l'expansion des mines, la construction de nouveaux quartiers et la rÃ©partition Ã©galitaire pour toutes les classes de la culture et des privilÃ¨ges sociaux. Sur le sujet de l'ingÃ©rence extÃ©rieure, Asemlef admit publiquement que les mots d'ordre donnÃ©s aux Guildes par son pÃ¨re n'Ã©taient pas rÃ©alistes et que l'ingÃ©rence extÃ©rieure serait toujours nÃ©cessaire, dans une certaine mesure. Conscient que ce commentaire lui apporterait les foudres de certaines factions, il fut le premier Roi Ã  inviter publiquement les factions les plus extrÃªmes (qui refusaient toute ingÃ©rence extÃ©rieure) pour de nombreuses rÃ©unions de nÃ©gociation dans son palais.
 
-Aucune décision ne fut prise pendant ces réunions. Pourtant, les factions finirent par se calmer et par admettre qu'une décision commune pourrait être prise à l'avenir. 
-
-
-À la même époque, deux écrivains importants de la Guilde des Écrivains démissionnèrent pour rejoindre les Écrivains de Yahvo*. Jusqu'alors, le groupe, persuadé que son rôle était d'écrire l'Âge parfait*, était relativement restreint.
-
-À l'instar des Écrivains de Yahvo, la plupart des factions populaires ou des cultes centraient leur idéologie sur Yahvo, d'une façon ou d'une autre. Les anciens cultes (comme l'Arbre et la Pierre sacrée) avaient disparus, laissant derrière eux bon nombre de désaccords sur les croyances de Yahvo.
-
-Asemlef mourut en 6284 ED à l'âge de 339 ans, passant le trône à son troisième fils (le plus jeune).
+Aucune dÃ©cision ne fut prise pendant ces rÃ©unions. Pourtant, les factions finirent par se calmer et par admettre qu'une dÃ©cision commune pourrait Ãªtre prise Ã  l'avenir. 
 
 
-* Selon « La ligne de Kerath », écrit par Fhal en 6985.
+Ã€ la mÃªme Ã©poque, deux Ã©crivains importants de la Guilde des Ã‰crivains dÃ©missionnÃ¨rent pour rejoindre les Ã‰crivains de Yahvo*. Jusqu'alors, le groupe, persuadÃ© que son rÃ´le Ã©tait d'Ã©crire l'Ã‚ge parfait*, Ã©tait relativement restreint.
 
-* Il est intéressant de noter que les Écrivains de Yahvo deviendront plus tard l'une des trois plus grosses sectes de D'ni.
+Ã€ l'instar des Ã‰crivains de Yahvo, la plupart des factions populaires ou des cultes centraient leur idÃ©ologie sur Yahvo, d'une faÃ§on ou d'une autre. Les anciens cultes (comme l'Arbre et la Pierre sacrÃ©e) avaient disparus, laissant derriÃ¨re eux bon nombre de dÃ©saccords sur les croyances de Yahvo.
 
-* La plupart des D'ni croyaient qu'après l'Âge du Jugement se trouvait l'Âge parfait ou l'Âge de Jakooth. Évidemment, tout le monde essayait de vivre l'Âge parfait, mais les méthodes pour obtenir ces fins étaient diverses et variées.
+Asemlef mourut en 6284 ED Ã  l'Ã¢ge de 339 ans, passant le trÃ´ne Ã  son troisiÃ¨me fils (le plus jeune).
+
+
+* Selon Â«Â La ligne de KerathÂ Â», Ã©crit par Fhal en 6985.
+
+* Il est intÃ©ressant de noter que les Ã‰crivains de Yahvo deviendront plus tard l'une des trois plus grosses sectes de D'ni.
+
+* La plupart des D'ni croyaient qu'aprÃ¨s l'Ã‚ge du Jugement se trouvait l'Ã‚ge parfait ou l'Ã‚ge de Jakooth. Ã‰videmment, tout le monde essayait de vivre l'Ã‚ge parfait, mais les mÃ©thodes pour obtenir ces fins Ã©taient diverses et variÃ©es.
 
 """

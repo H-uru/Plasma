@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -28,20 +29,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 xJournalContents = """<cover src="xUruCreditsJournalCover*1#0.hsm"><font face=Uru size=24 spacing=-10 color=000000><margin right=32 left=32 top=22 bottom=23><p align=left><font size=26><p align=center>Programmation<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Mark T. Finch<p align=right>Graphisme, Architecture principale
 <p align=left>Mark H. DeForest<p align=right>Interface Python
-<p align=left>Mustafa Thamer<p align=right>Réseau, Serveurs de jeu
-<p align=left>Robert J. Emanuele<p align=right>Réseau, Systèmes
+<p align=left>Mustafa Thamer<p align=right>RÃ©seau, Serveurs de jeu
+<p align=left>Robert J. Emanuele<p align=right>RÃ©seau, SystÃ¨mes
 <p align=left>Colin Bonstead<p align=right>Outils physiques
 <p align=left>Chris J. Purvis<p align=right>Programmation du client
 <p align=left>Bob Zasio<p align=right>Animations des avatars
-<p align=left>Eric S. Anderson<p align=right>Bases de données, Serveurs de jeu
+<p align=left>Eric S. Anderson<p align=right>Bases de donnÃ©es, Serveurs de jeu
 <p align=left>Jeff Lundin<p align=right>Script de l'Interface
 <p align=left>Jason M. Calvert<p align=right>Audio
 <p align=left>Mathew C. Burrack<p align=right>Interface audio
 <p align=left>Matthew B. MacLaurin<p align=right>Comportement des avatars
 <p align=left>Paul A. Querna<p align=right>Outils
-<p align=left>Harvey Chapman<p align=right>Systèmes
+<p align=left>Harvey Chapman<p align=right>SystÃ¨mes
 <font spacing=-18>
-<font size=26><p align=center>Modélisation des mondes<font spacing=-5>
+<font size=26><p align=center>ModÃ©lisation des mondes<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Douglas T. McBride<p align=right>Graphiste technique Sr.
 <p align=left>Chris Doyle<p align=right>Graphiste technique
 <p align=left>Adam Van Ornum<p align=right>Graphiste technique
@@ -68,8 +69,8 @@ xJournalContents = """<cover src="xUruCreditsJournalCover*1#0.hsm"><font face=Ur
 <font size=24 spacing=-10><p align=left>Rand Miller<p align=right>Directeur
 <p align=left>Brice Tebbs<p align=right>Producteur
 <font spacing=-18>
-<font size=26><p align=center>Assurance Qualité<font spacing=-5>
-<font size=24 spacing=-10><p align=left>Eric G. Votava<p align=right>Responsable des ingénieurs AQ
+<font size=26><p align=center>Assurance QualitÃ©<font spacing=-5>
+<font size=24 spacing=-10><p align=left>Eric G. Votava<p align=right>Responsable des ingÃ©nieurs AQ
 <p align=left>Lloyd Bell<p align=right>Responsable de l'AQ
 <p align=left>Ryan B. Persch<p align=right>Responsable du test
 <p align=left>Greg J. Miranda<p align=right>Responsable du test
@@ -88,43 +89,43 @@ xJournalContents = """<cover src="xUruCreditsJournalCover*1#0.hsm"><font face=Ur
 <p align=left>Ryan S. J. Miller<p align=right>Responsable de la conception du jeu
 <p align=left>Bill Slease<p align=right>Directeur du contenu en ligne
 <p align=left>Stephan Martiniere<p align=right>Dir. de la conception artistique
-<p align=left>Patti VanHeel<p align=right>Web, Rédactrice technique
+<p align=left>Patti VanHeel<p align=right>Web, RÃ©dactrice technique
 <p align=left>Ryan J. Warzecha<p align=right>Analyste du contenu en ligne
 <font spacing=-18>
 <font size=26><p align=center>Support administratif<font spacing=-5>
-<font size=24 spacing=-10><p align=left>Tony Fryman<p align=right>Président
+<font size=24 spacing=-10><p align=left>Tony Fryman<p align=right>PrÃ©sident
 <p align=left>Mark Dobratz<p align=right>Chef de projet
 <p align=left>Susan R. Bonds<p align=right>Co-Productrice
 <p align=left>Chris Brandkamp<p align=right>VP Business
-<p align=left>John M. Biggs<p align=right>Responsable des systèmes
+<p align=left>John M. Biggs<p align=right>Responsable des systÃ¨mes
 <p align=left>Mark Klammer<p align=right>Directeur financier
 <p align=left>Byron R. Heinemann<p align=right>Maintenance & surprises
-<p align=left>Eloise McCloskey<p align=right>Comptabilité
-<pb><font size=26><p align=center>Développement supplémentaire<font spacing=-5>
+<p align=left>Eloise McCloskey<p align=right>ComptabilitÃ©
+<pb><font size=26><p align=center>DÃ©veloppement supplÃ©mentaire<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Peter Gage<p align=right>Graphiste technique
-<p align=left>William Stoneham<p align=right>Graphiste cinématiques
+<p align=left>William Stoneham<p align=right>Graphiste cinÃ©matiques
 <p align=left>James Beattie<p align=right>Programmation
-<p align=left>Nathan Reidt<p align=right>Graphiste cinématiques
+<p align=left>Nathan Reidt<p align=right>Graphiste cinÃ©matiques
 <p align=left>Christian Piccolo<p align=right>Concepteur
 <p align=left>Robert Grace<p align=right>Concepteur
 <p align=left>Ryan Allred<p align=right>Programmation
 <p align=left>Jeff Oswalt<p align=right>Communications
 <p align=left>Tricia (Bland) Kinder<p align=right>Assistante administrative
 <p align=left>Paul Gallagher<p align=right>Programmation
-<p align=left>Brian Kulig<p align=right>Graphiste cinématiques
+<p align=left>Brian Kulig<p align=right>Graphiste cinÃ©matiques
 <p align=left>Kyle Wilson<p align=right>Programmation
-<p align=left>Terry Schmidbauer<p align=right>Graphiste cinématiques
+<p align=left>Terry Schmidbauer<p align=right>Graphiste cinÃ©matiques
 <p align=left>Adrian Stone<p align=right>Programmation
 <p align=left>T. Elliot Cannon<p align=right>Concepteur
-<p align=left>Craig Voigt<p align=right>Graphiste cinématiques
+<p align=left>Craig Voigt<p align=right>Graphiste cinÃ©matiques
 <p align=left>Eric Ellis<p align=right>Programmation
 <p align=left>John Brooks<p align=right>AQ
 <p align=left>Brad Halpin<p align=right>Programmation
-<pb><font size=26><p align=center>Développement supplémentaire (suite.)<font spacing=-5>
+<pb><font size=26><p align=center>DÃ©veloppement supplÃ©mentaire (suite.)<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Scott Ellwanger<p align=right>Stagiaire AQ
 <p align=left>Bret Carlson<p align=right>Stagiaire conception
 <font spacing=-18>
-<font size=26><p align=center>Prestataires indépendents<font spacing=-5>
+<font size=26><p align=center>Prestataires indÃ©pendents<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Ocala Bellows<p align=right>Conception
 <p align=left>Mark Engberg/Colab<p align=right>Conception de l'architecture
 <p align=left>Thom Schillinger<p align=right>Conception graphique
@@ -147,7 +148,7 @@ xJournalContents = """<cover src="xUruCreditsJournalCover*1#0.hsm"><font face=Ur
 <p align=left>Melinda Russell<p align=right>Rivenchan
 <p align=left>Catherine Reymond<p align=right>BlasterCalm
 <font spacing=-18>
-<font size=26><p align=center>Test supplémentaire<font spacing=-5>
+<font size=26><p align=center>Test supplÃ©mentaire<font spacing=-5>
 <font size=24 spacing=-10><p align=center>Robyn Miller
 Alex Miller
 Kevin Bishopp
@@ -159,14 +160,14 @@ Jason Hanson
 Lloyd Woodall
 Paul O'Russa
 Mark VanDyke
-<pb><font size=26><p align=center>Un grand merci à<font spacing=-5>
+<pb><font size=26><p align=center>Un grand merci Ã <font spacing=-5>
 <font size=24 spacing=-10><p align=left>Jeff Zandi<p align=right>Preafter
 <p align=left>Yves Guillemot<p align=right>Ubisoft
 <p align=left>Gilles Langourieux<p align=right>Ubisoft
 <p align=left>Joe Ybarra<p align=right>Ubisoft
-<p align=left>Sébastien Puel<p align=right>Ubisoft
+<p align=left>SÃ©bastien Puel<p align=right>Ubisoft
 <p align=left>Masami Maeda<p align=right>Sunsoft
-<p align=left>Épouses et familles	
+<p align=left>Ã‰pouses et familles	
 <p align=left>Eloise, Dana, Debbie<p align=right>La Guilde des Traiteurs
 <p align=left>Jeff Shelby	
 <p align=left>Dan Adler	
@@ -174,8 +175,8 @@ Mark VanDyke
 <p align=left>Michelle, et al<p align=right>Out West Espresso
 <p align=left>Arnaldo Roman
 
-<font size=24><p align=center>Remerciements tout particuliers à plus de 4,000+ Beta-Testeurs !
-<font size=26><p align=center>Crédits supplémentaires à 
+<font size=24><p align=center>Remerciements tout particuliers Ã  plus de 4,000+ Beta-TesteursÂ !
+<font size=26><p align=center>CrÃ©dits supplÃ©mentaires Ã  
 www.cyan.com/urucredits
 
 <pb><font size=26><p align=center>Ubisoft<font spacing=-5>
@@ -184,62 +185,62 @@ Responsable en chef d'Ubi.com (Monde)
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>Joe Ybarra
 VP de Production<font spacing=-5>
-<font size=24 spacing=-10><p align=left>Sébastien Puel<p align=right>Producteur
+<font size=24 spacing=-10><p align=left>SÃ©bastien Puel<p align=right>Producteur
 <p align=left>Erik Zwerling<p align=right>Producteur
 <p align=left>Jean-Christophe Pelletier<p align=right>Assistant de production
 <p align=left>Patricia A. Pizer<p align=right>Analyste de jeu Senior
 <p align=left>Pierre Rivest<p align=right>Analyste de jeu
-<p align=left>Katherine Postma<p align=right>Responsable de communauté
+<p align=left>Katherine Postma<p align=right>Responsable de communautÃ©
 <font spacing=-18>
-<font size=24 spacing=-10><p align=center>Un grand merci à Jean-Marc Broyer.
+<font size=24 spacing=-10><p align=center>Un grand merci Ã  Jean-Marc Broyer.
 <font spacing=-18>
-<font size=26><p align=center>Équipe Support clientèle<font spacing=-5>
+<font size=26><p align=center>Ã‰quipe Support clientÃ¨le<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Marc-Alexandre Plouffe<p align=right>Responsable SC
 <p align=left>Jason Di Valerio<p align=right>SC
 <p align=left>Jessica Fortin<p align=right>SC
 <p align=left>Simon Cuccioletta<p align=right>SC
-<pb><font size=26><p align=center>Responsables Support clientèle<font spacing=-5>
+<pb><font size=26><p align=center>Responsables Support clientÃ¨le<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Daniel Germain<p align=right>Mode solo
 <p align=left>Michael Morehouse<p align=right>En ligne (ubi.com)
 <font spacing=-18>
 <font size=24 spacing=-10><p align=left>Karine Renaud<p align=right>Graphiste 
-<p align=left>Michel Gauthier<p align=right>Intégrateur Web 
+<p align=left>Michel Gauthier<p align=right>IntÃ©grateur Web 
 <p align=left>Karine Martel<p align=right>Conception Web
 <font spacing=-18> 
-<font size=26><p align=center>Assurance Qualité<font spacing=-5>
+<font size=26><p align=center>Assurance QualitÃ©<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Sylvie Tremblay<p align=right>Responsable AQ
 <p align=left>Gabriel Dubuc<p align=right>Testeur
-<p align=left>Jean-François Giguère<p align=right>Testeur
+<p align=left>Jean-FranÃ§ois GiguÃ¨re<p align=right>Testeur
 <p align=left>Martin Michaud<p align=right>Testeur
-<p align=left>Véronique Fortin<p align=right>Testeuse
+<p align=left>VÃ©ronique Fortin<p align=right>Testeuse
 <p align=left>Lyne Archambault<p align=right>Testeuse
-<p align=left>Jean-Sébastien Primeau<p align=right>Testeur
-<p align=left>Jean-Sébastien Charbonneau<p align=right>Testeur
+<p align=left>Jean-SÃ©bastien Primeau<p align=right>Testeur
+<p align=left>Jean-SÃ©bastien Charbonneau<p align=right>Testeur
 <p align=left>Martin Hamel<p align=right>Testeur
 <p align=left>Pierre-Yves Savard<p align=right>Testeur
 <p align=left>Patrick Melanson<p align=right>Testeur
 <p align=left>Marc Thonon<p align=right>Testeur
 <p align=left>Martin Amos<p align=right>Testeur
 <p align=left>Yannick Gervais<p align=right>Testeur
-<p align=left>François Arguin<p align=right>Testeur
+<p align=left>FranÃ§ois Arguin<p align=right>Testeur
 <font spacing=-20>
-<font size=26><p align=center>Réseau et systèmes<font spacing=-8>
+<font size=26><p align=center>RÃ©seau et systÃ¨mes<font spacing=-8>
 <font size=24 spacing=-10><p align=left>Andrej Todosic<p align=right>Chef de groupe
-<p align=left>Ludwig Gamache<p align=right>Responsable des opérations
-<p align=left>Andy Mac Curdy<p align=right>Ingénieur logiciel Senior
-<p align=left>Denis Bertrand<p align=right>Architecture système
-<p align=left>Wei-Tang Huang<p align=right>Architecture système
-<p align=left>Shane Akhgar<p align=right>Architecture système Sr.
-<p align=left>Eric Garrigues<p align=right>Administrateur réseau (Europe)
-<p align=left>José Covatta<p align=right>Programmation
+<p align=left>Ludwig Gamache<p align=right>Responsable des opÃ©rations
+<p align=left>Andy Mac Curdy<p align=right>IngÃ©nieur logiciel Senior
+<p align=left>Denis Bertrand<p align=right>Architecture systÃ¨me
+<p align=left>Wei-Tang Huang<p align=right>Architecture systÃ¨me
+<p align=left>Shane Akhgar<p align=right>Architecture systÃ¨me Sr.
+<p align=left>Eric Garrigues<p align=right>Administrateur rÃ©seau (Europe)
+<p align=left>JosÃ© Covatta<p align=right>Programmation
 <font spacing=-20>
-<font size=26><p align=center>Système de facturation<font spacing=-8>
-<font size=24 spacing=-10><p align=left>Serge Ménard<p align=right>Responsable de développement
-<p align=left>Perry Stathopoulos<p align=right>Développeur
-<p align=left>Sébastien Hinse<p align=right>Responsable BdD
-<p align=left>Stéphanie Cassie<p align=right>Responsable du test 
-<p align=left>Frank Zhang<p align=right>Développement réseau de facturation
-<p align=left>Olivier Paris<p align=right>Directeur du développement
+<font size=26><p align=center>SystÃ¨me de facturation<font spacing=-8>
+<font size=24 spacing=-10><p align=left>Serge MÃ©nard<p align=right>Responsable de dÃ©veloppement
+<p align=left>Perry Stathopoulos<p align=right>DÃ©veloppeur
+<p align=left>SÃ©bastien Hinse<p align=right>Responsable BdD
+<p align=left>StÃ©phanie Cassie<p align=right>Responsable du test 
+<p align=left>Frank Zhang<p align=right>DÃ©veloppement rÃ©seau de facturation
+<p align=left>Olivier Paris<p align=right>Directeur du dÃ©veloppement
 <font spacing=-18>
 <font size=26><p align=center>Europe<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Gregory Champoux<p align=right>Responsable de gestion de comm.
@@ -247,7 +248,7 @@ VP de Production<font spacing=-5>
 <p align=left>Ian Chambers<p align=right>Directeur du Marketing
 <p align=left>Diane Peyredieu<p align=right>Responsable en chef
 <font spacing=-18>
-<font size=26><p align=center>Amérique du Nord<font spacing=-5>
+<font size=26><p align=center>AmÃ©rique du Nord<font spacing=-5>
 <font size=24 spacing=-10><p align=left>John Billington<p align=right>Directeur du Marketing
 <p align=left>Ron Meiners<p align=right>Responsable de gestion de comm.
 <p align=left>Sam Copur<p align=right>Gestion de comm.
@@ -267,20 +268,20 @@ VP de Production<font spacing=-5>
 <p align=left>Sylvain Brunet<p align=right>Enregistrement des voix
 <p align=left>Anne Langourieux<p align=right>Assistante de production
 <p align=left>Jean-Marc Broyer<p align=right>Producteur
-<p align=left>Karen Vernimmen<p align=right>Productrice exécutive
+<p align=left>Karen Vernimmen<p align=right>Productrice exÃ©cutive
 <p align=right>Ubi Sound Studio (France)
 
 <font size=26><p align=center>Localisation<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Coralie Martin<p align=right>Responsable de la localisation
-<p align=left>Loïc Jacolin<p align=right>Chef de projet Localisation
+<p align=left>LoÃ¯c Jacolin<p align=right>Chef de projet Localisation
 
 <font size=26 spacing=-10><p align=center>Enregistrements<font spacing=-10>
-<font size=24 spacing=-10><p align=center>Hifi-génie Productions
+<font size=24 spacing=-10><p align=center>Hifi-gÃ©nie Productions
 <pb><font size=26 spacing=-18><p align=center>Acteurs voix<font spacing=-5>
 <font size=24 spacing=-10><p align=center>Xavier Kemmlein (France)<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Bernard Bollet<p align=right>Atrus
 <p align=left>Nathalie Homs<p align=right>Yeesha
-<p align=left>Antoine Tomé<p align=right>Zandi
+<p align=left>Antoine TomÃ©<p align=right>Zandi
 <font spacing=-18>
 <font size=24><p align=center>Partnertrans. (Allemagne)<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Stephan Schlehberger<p align=right>Atrus
@@ -288,7 +289,7 @@ VP de Production<font spacing=-5>
 <p align=left>Karl-Heinz Tafel<p align=right>Zandi
 <font spacing=-18>
 <font size=24><p align=center>Betafix Services, S.L. (Espagne)<font spacing=-5>
-<font size=24 spacing=-10><p align=left>Juanjo López<p align=right>Atrus
+<font size=24 spacing=-10><p align=left>Juanjo LÃ³pez<p align=right>Atrus
 <p align=left>Pilar Santigosa<p align=right>Yeesha
 <p align=left>Manuel Bellido<p align=right>Zandi
 <font spacing=-18>
@@ -296,19 +297,19 @@ VP de Production<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Dario Oppido<p align=right>Atrus
 <p align=left>Grazia Verasani<p align=right>Yeesha
 <p align=left>Lello Lombardi<p align=right>Zandi
-<pb><font size=26><p align=center>Légal (Audio)<font spacing=-5>
+<pb><font size=26><p align=center>LÃ©gal (Audio)<font spacing=-5>
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>Friends of Sironka Dance Troupe
-Certains sons et certains enregistrements vocaux sont fournis par The Friends of Sironka Dance Troupe, sous licence non-exclusive de Cyan, utilisé avec leur autorisation.
+Certains sons et certains enregistrements vocaux sont fournis par The Friends of Sironka Dance Troupe, sous licence non-exclusive de Cyan, utilisÃ© avec leur autorisation.
 
-<font size=24 spacing=-10>"Burn you up, Burn you down" interprété par Peter Gabriel
-Écrit par Peter Gabriel, Neil Sparkes et Karl Wallinger
-Publié par Real World Music Limited/Universal Music Limited
-Peter Gabriel apparaît avec l'aimable autorisation de Real World Records'/Geffen Records et EMI Records
+<font size=24 spacing=-10>"Burn you up, Burn you down" interprÃ©tÃ© par Peter Gabriel
+Ã‰crit par Peter Gabriel, Neil Sparkes et Karl Wallinger
+PubliÃ© par Real World Music Limited/Universal Music Limited
+Peter Gabriel apparaÃ®t avec l'aimable autorisation de Real World Records'/Geffen Records et EMI Records
 
 Didier Lord
-Directeur Général Ubi Music
-<pb><font size=26><p align=center>Légal (Outils)<font spacing=-5>
+Directeur GÃ©nÃ©ral Ubi Music
+<pb><font size=26><p align=center>LÃ©gal (Outils)<font spacing=-5>
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>Bink
 Utilise Bink Video. Copyright (C) 1997-2003 par RAD Game Tools, Inc.
@@ -327,16 +328,16 @@ Havok.com (tm), (c) copyright 1999-2000 Telekinesys Research Limited
 <pb><font size=26><p align=center>Licences Open Source<font spacing=-5>
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>OpenSSL
-Copyright (c) 2000 The Apache Software Foundation. Tous droits réservés.
+Copyright (c) 2000 The Apache Software Foundation. Tous droits rÃ©servÃ©s.
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>Free Type
-Le projet FreeType est sous copyright (c) 1996-2000 par David Turner, Robert Wilhelm et Werner Lemberg. Tous droits réservés.
+Le projet FreeType est sous copyright (c) 1996-2000 par David Turner, Robert Wilhelm et Werner Lemberg. Tous droits rÃ©servÃ©s.
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>Python
-Copyright (c) 2001, 2002 Python Software Foundation. Tous droits réservés.
+Copyright (c) 2001, 2002 Python Software Foundation. Tous droits rÃ©servÃ©s.
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>Boost
-Copyright (c) 2002 CrystalClear Software, inc. La permission d'utiliser, de copier, de distribuer et de vendre ce logiciel, quelles qu'en soient les fins, est accordée sans frais.
+Copyright (c) 2002 CrystalClear Software, inc. La permission d'utiliser, de copier, de distribuer et de vendre ce logiciel, quelles qu'en soient les fins, est accordÃ©e sans frais.
 <font spacing=-18>
 <pb><font size=24 spacing=-10><p align=center>OggVorbis
 Copyright (c) 2003, Xiph.Org Foundation
@@ -345,7 +346,7 @@ Copyright (c) 2003, Xiph.Org Foundation
 Copyright (c) 2002-2003, Jean-Marc Vlin/Xiph.Org Foundation
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>LibJpeg
-Les versions de Libpng 1.0.7, 1 juillet 2000, jusqu'à 1.2.5, 3 octobre 2002, sont sous copyright (c) 2000-2002
+Les versions de Libpng 1.0.7, 1 juillet 2000, jusqu'Ã  1.2.5, 3 octobre 2002, sont sous copyright (c) 2000-2002
 Glenn Randers-Pehrson
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>zLib

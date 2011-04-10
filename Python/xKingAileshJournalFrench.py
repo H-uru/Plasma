@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,15 +28,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingAileshJournalCover_eng*1#0.hsm"><font size=16 face=Sam color=000000><margin left=62 right=62 top=48><p align=center>Le Roi Ailesh
 
-<p align=left>Ailesh monta sur le trône à l'occasion des cérémonies du couronnement de l'année 120 ED à l'âge de 170 ans. Bien qu'apparemment, Ailesh n'ait jamais été membre de la Guilde des Écrivains de Garternay, il passa les cinquante premières années de sa vie avec Ri'neref (après sa révocation) à travailler sur le Livre de D'ni. Lorsque la Guilde des Écrivains D'ni fut formée en 8 ED, Ri'neref s'arrangea pour placer Ailesh au poste de Grand maître de la Guilde. 
+<p align=left>Ailesh monta sur le trÃ´ne Ã  l'occasion des cÃ©rÃ©monies du couronnement de l'annÃ©e 120 ED Ã  l'Ã¢ge de 170 ans. Bien qu'apparemment, Ailesh n'ait jamais Ã©tÃ© membre de la Guilde des Ã‰crivains de Garternay, il passa les cinquante premiÃ¨res annÃ©es de sa vie avec Ri'neref (aprÃ¨s sa rÃ©vocation) Ã  travailler sur le Livre de D'ni. Lorsque la Guilde des Ã‰crivains D'ni fut formÃ©e en 8 ED, Ri'neref s'arrangea pour placer Ailesh au poste de Grand maÃ®tre de la Guilde. 
 
-En tant que Grand maître, il travailla avec Ri'neref sur l'écriture du nouveau Serment de la Guilde des Écrivains. Le Serment, prononcé par chaque membre, resta en l'état (en dehors de quelques modifications mineures) jusqu'en 9400 ED. 
+En tant que Grand maÃ®tre, il travailla avec Ri'neref sur l'Ã©criture du nouveau Serment de la Guilde des Ã‰crivains. Le Serment, prononcÃ© par chaque membre, resta en l'Ã©tat (en dehors de quelques modifications mineures) jusqu'en 9400 ED. 
 
-Des documents indiquent qu'Ailesh a modelé sa vie sur celle de Ri'neref. Il refusa de se construire tant qu'aucune Bibliothèque publique ne serait ouverte. Il soutint fermement l'ouverture d'un endroit où chaque citoyen pourrait avoir accès aux Livres. En dépit de divergences sans importance sur des détails sans importance, le bâtiment fut terminé en 233 ED. Pourtant, à l'instar de son mentor, Ailesh continua à refuser de se construire un palais.   
+Des documents indiquent qu'Ailesh a modelÃ© sa vie sur celle de Ri'neref. Il refusa de se construire tant qu'aucune BibliothÃ¨que publique ne serait ouverte. Il soutint fermement l'ouverture d'un endroit oÃ¹ chaque citoyen pourrait avoir accÃ¨s aux Livres. En dÃ©pit de divergences sans importance sur des dÃ©tails sans importance, le bÃ¢timent fut terminÃ© en 233 ED. Pourtant, Ã  l'instar de son mentor, Ailesh continua Ã  refuser de se construire un palais.   
 
-Le règne d'Ailesh fut très similaire à celui de Ri'neref. Il y eut un engouement général pour de nouveaux idéaux et des lois D'ni, ce qui favorisa la cote d'Ailesh, qui put mener un règne sans problème majeur.  
+Le rÃ¨gne d'Ailesh fut trÃ¨s similaire Ã  celui de Ri'neref. Il y eut un engouement gÃ©nÃ©ral pour de nouveaux idÃ©aux et des lois D'ni, ce qui favorisa la cote d'Ailesh, qui put mener un rÃ¨gne sans problÃ¨me majeur.  
 
-Avant la naissance de son troisième fils en 256 ED, les archives indiquent qu'une période d'appréhension à propos de la succession démarra. Les deux grands fils d'Ailesh étaient plutôt rebelles et ne semblaient pas être de bons candidats à la couronne. Tout au moins était-ce l'opinion publique. Cependant, quand le troisième fils d'Ailesh grandit, il devint évident pour le peuple (les archives ne précisent pas pourquoi) que le garçon poursuivrait les idéaux de son père. Ailesh écouta probablement l'opinion publique, car il décida que son troisième fils lui succéderait. 
+Avant la naissance de son troisiÃ¨me fils en 256 ED, les archives indiquent qu'une pÃ©riode d'apprÃ©hension Ã  propos de la succession dÃ©marra. Les deux grands fils d'Ailesh Ã©taient plutÃ´t rebelles et ne semblaient pas Ãªtre de bons candidats Ã  la couronne. Tout au moins Ã©tait-ce l'opinion publique. Cependant, quand le troisiÃ¨me fils d'Ailesh grandit, il devint Ã©vident pour le peuple (les archives ne prÃ©cisent pas pourquoi) que le garÃ§on poursuivrait les idÃ©aux de son pÃ¨re. Ailesh Ã©couta probablement l'opinion publique, car il dÃ©cida que son troisiÃ¨me fils lui succÃ©derait. 
 
-Ailesh mourut de mort naturelle à l'âge de 350 ans.
+Ailesh mourut de mort naturelle Ã  l'Ã¢ge de 350 ans.
 """

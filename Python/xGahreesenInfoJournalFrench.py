@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,141 +28,141 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xGahreesenInfoJournalCover_eng*1#0.hsm"><font size=10 face=courier color=000000><margin left=62 right=62 top=62 bottom=48><p align=center>Analyse
 
-<p align=left>Auteur : Simpson (retranscription d'enregistrements audio)
+<p align=left>AuteurÂ : Simpson (retranscription d'enregistrements audio)
 
-Âge : Gahreesen
+Ã‚geÂ : Gahreesen
 
-Date : 11/12/01-06/04/02 Plusieurs voyages
+DateÂ : 11/12/01-06/04/02 Plusieurs voyages
 
-Bon, déjà, une chose semble évidente : cet endroit a été construit pour des raisons de sécurité. Personne ne pourrait écrire une liaison jusqu'ici. C'était un « local technique » des Conservateurs et apparemment, l'endroit n'était pas prévu pour le Membre de Guilde ordinaire. Ce que je veux dire, c'est que son accès était limité aux membres d'un certain rang. 
+Bon, dÃ©jÃ , une chose semble Ã©videnteÂ : cet endroit a Ã©tÃ© construit pour des raisons de sÃ©curitÃ©. Personne ne pourrait Ã©crire une liaison jusqu'ici. C'Ã©tait un Â«Â local techniqueÂ Â» des Conservateurs et apparemment, l'endroit n'Ã©tait pas prÃ©vu pour le Membre de Guilde ordinaire. Ce que je veux dire, c'est que son accÃ¨s Ã©tait limitÃ© aux membres d'un certain rang. 
 
-Maintenant, de là à savoir comment ils ont obtenu la première liaison, je n'en ai pas la moindre idée. Ça s'est probablement passé pendant la construction du bâtiment. Il semble évident que ça n'arrivera plus, à moins qu'un événement incroyable ne survienne. 
+Maintenant, de lÃ  Ã  savoir comment ils ont obtenu la premiÃ¨re liaison, je n'en ai pas la moindre idÃ©e. Ã‡a s'est probablement passÃ© pendant la construction du bÃ¢timent. Il semble Ã©vident que Ã§a n'arrivera plus, Ã  moins qu'un Ã©vÃ©nement incroyable ne survienne. 
 
-Il faudrait que je précise que Kodama a des théories à propos de ce qu'aurait pu contenir l'Âge jusqu'à présent. Il aurait pu servir à abriter des sortes de « forces spéciales » des Conservateurs. À partir de la moitié des années 8000. Puis c'est devenu une espèce de département de recherche et de développement pour la Guilde des Conservateurs. Je ne sais pas pourquoi, mais il me paraissait important d'en parler. On parle souvent de ce genre de groupes dans d'autres documents que Kodama a trouvés. 
+Il faudrait que je prÃ©cise que Kodama a des thÃ©ories Ã  propos de ce qu'aurait pu contenir l'Ã‚ge jusqu'Ã  prÃ©sent. Il aurait pu servir Ã  abriter des sortes de Â«Â forces spÃ©cialesÂ Â» des Conservateurs. Ã€ partir de la moitiÃ© des annÃ©es 8000. Puis c'est devenu une espÃ¨ce de dÃ©partement de recherche et de dÃ©veloppement pour la Guilde des Conservateurs. Je ne sais pas pourquoi, mais il me paraissait important d'en parler. On parle souvent de ce genre de groupes dans d'autres documents que Kodama a trouvÃ©s. 
 
-Entrée
+EntrÃ©e
 
-Pour commencer, je parierai ma paye que toutes les personnes qui ont ne serait-ce que posé le pied dans cette salle étaient des officiels haut-gradés ou quelque chose dans le genre. Je n'ai pas de preuves, mais j'en ai l'intime conviction. Je ne crois pas que les conservateurs de cet endroit y recevaient leurs copains ou leurs copines pour faire la fête. Le Livre de liaison était enfoui, perdu dans les salles obscures de la Guilde des Conservateurs. Je suis sûr qu'à l'époque où il était utilisé, il était très bien gardé. 
+Pour commencer, je parierai ma paye que toutes les personnes qui ont ne serait-ce que posÃ© le pied dans cette salle Ã©taient des officiels haut-gradÃ©s ou quelque chose dans le genre. Je n'ai pas de preuves, mais j'en ai l'intime conviction. Je ne crois pas que les conservateurs de cet endroit y recevaient leurs copains ou leurs copines pour faire la fÃªte. Le Livre de liaison Ã©tait enfoui, perdu dans les salles obscures de la Guilde des Conservateurs. Je suis sÃ»r qu'Ã  l'Ã©poque oÃ¹ il Ã©tait utilisÃ©, il Ã©tait trÃ¨s bien gardÃ©. 
 
-On peut voir au premier coup d'oeil que cette entrée était extrêmement sûre. Des murs épais, une seule porte, une fenêtre en hauteur (peut-être pour un tireur). Même si on parvenait à y introduire une bombe, il n'est pas sûr qu'elle ferait du dégât. 
+On peut voir au premier coup d'oeil que cette entrÃ©e Ã©tait extrÃªmement sÃ»re. Des murs Ã©pais, une seule porte, une fenÃªtre en hauteur (peut-Ãªtre pour un tireur). MÃªme si on parvenait Ã  y introduire une bombe, il n'est pas sÃ»r qu'elle ferait du dÃ©gÃ¢t. 
 
-J'aime beaucoup les symboles des Conservateurs au sol et un peu partout. Comme si je risquais d'oublier où j'étais. 
+J'aime beaucoup les symboles des Conservateurs au sol et un peu partout. Comme si je risquais d'oublier oÃ¹ j'Ã©tais. 
 
 
 Salle d'attente
 
-Bon, les visiteurs sont escortés jusqu'à cette petite salle d'attente. Il y a une fenêtre sur le côté. On dirait presque un guichet. Peut-être pour déposer des armes ou des objets non autorisés à l'intérieur. Comme des Livres, par exemple. Je suis sûr qu'ils n'autorisaient pas les livres, là-dedans. 
+Bon, les visiteurs sont escortÃ©s jusqu'Ã  cette petite salle d'attente. Il y a une fenÃªtre sur le cÃ´tÃ©. On dirait presque un guichet. Peut-Ãªtre pour dÃ©poser des armes ou des objets non autorisÃ©s Ã  l'intÃ©rieur. Comme des Livres, par exemple. Je suis sÃ»r qu'ils n'autorisaient pas les livres, lÃ -dedans. 
 
-Oui, ça devait servir aux livres. Il y a encore un guichet de l'autre côté, mais celui-ci a l'air différent. Je suis sûr que ce sont des cages à scarabées, qu'on voit de l'autre côté. Des scarabées chercheurs d'encre. Quelqu'un m'a justement dit qu'on faisait référence à ces bestioles dans tout un tas de documents. Bon, ce qui est sûr, c'est qu'on ne pouvait pas sortir de cette pièce avec un Livre. 
+Oui, Ã§a devait servir aux livres. Il y a encore un guichet de l'autre cÃ´tÃ©, mais celui-ci a l'air diffÃ©rent. Je suis sÃ»r que ce sont des cages Ã  scarabÃ©es, qu'on voit de l'autre cÃ´tÃ©. Des scarabÃ©es chercheurs d'encre. Quelqu'un m'a justement dit qu'on faisait rÃ©fÃ©rence Ã  ces bestioles dans tout un tas de documents. Bon, ce qui est sÃ»r, c'est qu'on ne pouvait pas sortir de cette piÃ¨ce avec un Livre. 
 
-En plus, les portes ne peuvent pas être ouvertes en même temps. Donc, même si quelqu'un parvenait à infiltrer l'entrée, il serait impossible d'ouvrir ces énormes portes pour sortir de la salle d'attente. 
+En plus, les portes ne peuvent pas Ãªtre ouvertes en mÃªme temps. Donc, mÃªme si quelqu'un parvenait Ã  infiltrer l'entrÃ©e, il serait impossible d'ouvrir ces Ã©normes portes pour sortir de la salle d'attente. 
 
 Couloirs
 
-Apparemment, le couloir parcourait toute la circonférence du bâtiment. Il y a un paquet de pièces. Bon, j'essayerai de les ouvrir une par une. Mais d'abord, il y a un ascenseur. Le problème, c'est qu'il a l'air en panne. Je me demande s'il en a toujours été ainsi. Je suppose que ça ne fait que renforcer la sécurité. Et une fois dans les couloirs, il n'y avait plus nulle part où aller. Surtout s'ils ne veulent pas que les gens accèdent plus loin. 
+Apparemment, le couloir parcourait toute la circonfÃ©rence du bÃ¢timent. Il y a un paquet de piÃ¨ces. Bon, j'essayerai de les ouvrir une par une. Mais d'abord, il y a un ascenseur. Le problÃ¨me, c'est qu'il a l'air en panne. Je me demande s'il en a toujours Ã©tÃ© ainsi. Je suppose que Ã§a ne fait que renforcer la sÃ©curitÃ©. Et une fois dans les couloirs, il n'y avait plus nulle part oÃ¹ aller. Surtout s'ils ne veulent pas que les gens accÃ¨dent plus loin. 
 
 Casiers
 
-À mon avis, tous les livres apportés dans cet Âge étaient gardés dans les casiers. Il est probable que les travailleurs ou les visiteurs réguliers y déposaient aussi leur équipement, mais je peux me tromper. Apparemment, on y laissait du matériel de conservateur : des marqueurs, des casques, etc... C'est plutôt le foutoir, maintenant. 
+Ã€ mon avis, tous les livres apportÃ©s dans cet Ã‚ge Ã©taient gardÃ©s dans les casiers. Il est probable que les travailleurs ou les visiteurs rÃ©guliers y dÃ©posaient aussi leur Ã©quipement, mais je peux me tromper. Apparemment, on y laissait du matÃ©riel de conservateurÂ : des marqueurs, des casques, etc... C'est plutÃ´t le foutoir, maintenant. 
 
 KI
 
-Ok, les choses commencent à s'éclaircir un peu. Je viens d'avoir une longue conversation avec Laxman et j'ai épluché divers documents traitant de la ville que Nick m'a passés. Apparemment, l'état actuel de l'Âge est loin de son état d'origine. 
+Ok, les choses commencent Ã  s'Ã©claircir un peu. Je viens d'avoir une longue conversation avec Laxman et j'ai Ã©pluchÃ© divers documents traitant de la ville que Nick m'a passÃ©s. Apparemment, l'Ã©tat actuel de l'Ã‚ge est loin de son Ã©tat d'origine. 
 
-Le KI a été une avancée cruciale pour tous les citoyens et pas seulement pour la Guilde. On a découvert qu'ils étaient sur le point de distribuer les KI au public au moment de la chute. Timing impeccable. 
+Le KI a Ã©tÃ© une avancÃ©e cruciale pour tous les citoyens et pas seulement pour la Guilde. On a dÃ©couvert qu'ils Ã©taient sur le point de distribuer les KI au public au moment de la chute. Timing impeccable. 
 
-On dirait qu'ils avaient fait des rénovations pour préparer les vagues de visiteurs qui devaient passer récupérer leur KI. Finalement, ma théorie sur les copains et les copines était complètement erronée. Il y avait bien des gens de tous les horizons ici, en tout cas dans les sections autorisées. Kodama m'a permis de me corriger. Nous avons trouvé de nombreux livres dans les quartiers, dont le Livre des Conservateurs auquel je fais référence plus haut. Au temps pour moi. 
+On dirait qu'ils avaient fait des rÃ©novations pour prÃ©parer les vagues de visiteurs qui devaient passer rÃ©cupÃ©rer leur KI. Finalement, ma thÃ©orie sur les copains et les copines Ã©tait complÃ¨tement erronÃ©e. Il y avait bien des gens de tous les horizons ici, en tout cas dans les sections autorisÃ©es. Kodama m'a permis de me corriger. Nous avons trouvÃ© de nombreux livres dans les quartiers, dont le Livre des Conservateurs auquel je fais rÃ©fÃ©rence plus haut. Au temps pour moi. 
 
-Les visiteurs arrivent donc et empruntent les portes. Ensuite, ils sont inspectés par les scarabées pour voir s'ils ont des livres, puis ils traversent le couloir pour finir dans la salle des KI. Ils prennent un KI et ils ressortent par la liaison. Les gardes surveillent probablement l'ascenseur qui monte, celui qui se trouve juste derrière cette pièce. Si des visiteurs amènent des objets interdits, ils sont rapidement escortés de l'autre côté de la salle des casiers, où ils sont renvoyés chez eux avec un nouveau KI. 
+Les visiteurs arrivent donc et empruntent les portes. Ensuite, ils sont inspectÃ©s par les scarabÃ©es pour voir s'ils ont des livres, puis ils traversent le couloir pour finir dans la salle des KI. Ils prennent un KI et ils ressortent par la liaison. Les gardes surveillent probablement l'ascenseur qui monte, celui qui se trouve juste derriÃ¨re cette piÃ¨ce. Si des visiteurs amÃ¨nent des objets interdits, ils sont rapidement escortÃ©s de l'autre cÃ´tÃ© de la salle des casiers, oÃ¹ ils sont renvoyÃ©s chez eux avec un nouveau KI. 
 
-Cela expliquerait tout l'équipement de Conservateur qu'on retrouve dans la salle des casiers. En plus, c'est bien en vue. Ça impressionne les visiteurs. 
+Cela expliquerait tout l'Ã©quipement de Conservateur qu'on retrouve dans la salle des casiers. En plus, c'est bien en vue. Ã‡a impressionne les visiteurs. 
 
-Entrepôt
+EntrepÃ´t
 
-Il y a un paquet d'objets intéressants là-dedans et je suis sûr que la plupart des visiteurs n'ont pas l'occasion de découvrir tout ça. L'effondrement du plafond est impressionnant, mais Engberg nous assure que la structure de l'endroit a l'air solide. Il commencera des inspections plus détaillées bientôt. 
+Il y a un paquet d'objets intÃ©ressants lÃ -dedans et je suis sÃ»r que la plupart des visiteurs n'ont pas l'occasion de dÃ©couvrir tout Ã§a. L'effondrement du plafond est impressionnant, mais Engberg nous assure que la structure de l'endroit a l'air solide. Il commencera des inspections plus dÃ©taillÃ©es bientÃ´t. 
 
-Apparemment, ces caisses sont remplies de matériel d'entretien pour les KI ou de pièces détachées, etc... Je ne sais pas vraiment. Laxman a intérêt à bien inspecter les lieux. Je suis sûr qu'il adore mettre le nez dans tout ça. C'est loin d'être mon cas. 
+Apparemment, ces caisses sont remplies de matÃ©riel d'entretien pour les KI ou de piÃ¨ces dÃ©tachÃ©es, etc... Je ne sais pas vraiment. Laxman a intÃ©rÃªt Ã  bien inspecter les lieux. Je suis sÃ»r qu'il adore mettre le nez dans tout Ã§a. C'est loin d'Ãªtre mon cas. 
 
-Cages à scarabées
+Cages Ã  scarabÃ©es
 
-Cet effondrement est bien pratique. Je ne sais pas comment ils étaient censés accéder aux cages à scarabées sans cet effondrement. Je me demande bien comment ils faisaient. Par une liaison, peut-être. Quoi qu'il en soit, je suis content que ces cages soient destinées aux scarabées. Il y a des symboles à l'avant des cages et pas mal de restes dans les cages les plus sales. Il va falloir nettoyer tout ça. Je me demande quand ils sont morts.
+Cet effondrement est bien pratique. Je ne sais pas comment ils Ã©taient censÃ©s accÃ©der aux cages Ã  scarabÃ©es sans cet effondrement. Je me demande bien comment ils faisaient. Par une liaison, peut-Ãªtre. Quoi qu'il en soit, je suis content que ces cages soient destinÃ©es aux scarabÃ©es. Il y a des symboles Ã  l'avant des cages et pas mal de restes dans les cages les plus sales. Il va falloir nettoyer tout Ã§a. Je me demande quand ils sont morts.
 
-Ah, tiens, puisqu'on parle d'accès, je me pose une autre question. Comment faisaient-ils pour accéder au premier étage ? Les ascenseurs ignorent l'étage du milieu. Pour plus de sécurité, sans doute.
+Ah, tiens, puisqu'on parle d'accÃ¨s, je me pose une autre question. Comment faisaient-ils pour accÃ©der au premier Ã©tageÂ ? Les ascenseurs ignorent l'Ã©tage du milieu. Pour plus de sÃ©curitÃ©, sans doute.
 
-Premier étage
+Premier Ã©tage
 
-La destruction a été plus importante que je ne l'aurais cru. On dirait que ça a déchiré une section du mur extérieur. Je vais sortir d'ici jusqu'à ce qu'Engberg puisse revenir. 
+La destruction a Ã©tÃ© plus importante que je ne l'aurais cru. On dirait que Ã§a a dÃ©chirÃ© une section du mur extÃ©rieur. Je vais sortir d'ici jusqu'Ã  ce qu'Engberg puisse revenir. 
 
-Ça a pris quelques jours, mais je suis de retour. Je ne suis pas un expert, donc je vais me contenter de suivre les conseils d'Engberg. Il prétend que cette structure est une des constructions les plus solides qu'il ait eu l'occasion de voir. Il m'assure que l'endroit est parfaitement sûr. Si je meurs ici et que quelqu'un retrouve cet enregistrement, ce serait gentil qu'il le poursuive en justice. 
+Ã‡a a pris quelques jours, mais je suis de retour. Je ne suis pas un expert, donc je vais me contenter de suivre les conseils d'Engberg. Il prÃ©tend que cette structure est une des constructions les plus solides qu'il ait eu l'occasion de voir. Il m'assure que l'endroit est parfaitement sÃ»r. Si je meurs ici et que quelqu'un retrouve cet enregistrement, ce serait gentil qu'il le poursuive en justice. 
 
-Le premier étage ressemble beaucoup au rez-de-chaussée. Un couloir périphérique et un certain nombre de pièces au centre. Je dois garder à l'esprit que très peu de gens se sont déjà promenés dans ces couloirs. Il n'y a aucun accès. Ni ascenseur, ni escaliers, rien du tout. Je suppose que le seul moyen d'y arriver était un Livre de Liaison, probablement situé quelque part dans la ville. Il y a peut-être un moyen d'arrêter ces ascenseurs au milieu, mais je ne sais pas comment. Quoi qu'il en soit, cet étage était totalement sécurisé. Réservé aux accès par livre. 
+Le premier Ã©tage ressemble beaucoup au rez-de-chaussÃ©e. Un couloir pÃ©riphÃ©rique et un certain nombre de piÃ¨ces au centre. Je dois garder Ã  l'esprit que trÃ¨s peu de gens se sont dÃ©jÃ  promenÃ©s dans ces couloirs. Il n'y a aucun accÃ¨s. Ni ascenseur, ni escaliers, rien du tout. Je suppose que le seul moyen d'y arriver Ã©tait un Livre de Liaison, probablement situÃ© quelque part dans la ville. Il y a peut-Ãªtre un moyen d'arrÃªter ces ascenseurs au milieu, mais je ne sais pas comment. Quoi qu'il en soit, cet Ã©tage Ã©tait totalement sÃ©curisÃ©. RÃ©servÃ© aux accÃ¨s par livre. 
 
 
 
 Salle de garde
 
-C'est à côté de la salle d'observation - enfin, je suppose qu'il s'agit d'une salle d'observation. Ça ressemble à une salle de garde. Apparemment, ils restaient ici pendant de très longues périodes. Il y a des lits, ici, et des canapés. Je suppose que ces types assuraient la surveillance pendant l'arrivée des visiteurs. 
+C'est Ã  cÃ´tÃ© de la salle d'observation - enfin, je suppose qu'il s'agit d'une salle d'observation. Ã‡a ressemble Ã  une salle de garde. Apparemment, ils restaient ici pendant de trÃ¨s longues pÃ©riodes. Il y a des lits, ici, et des canapÃ©s. Je suppose que ces types assuraient la surveillance pendant l'arrivÃ©e des visiteurs. 
 
 Casiers des gardes
 
-Encore des casiers, comme ceux de l'étage inférieur, mais ceux-ci contiennent de l'équipement lourd. Je suis sûr que Watson voudra inspecter ce truc et fera tout pour que ça reste bien fermé. En fait, je ne vais même pas détailler tout ce qu'il y a ici. Laxman pourra écrire un rapport sur ce truc plus tard. Je dirai que je ne savais pas que les D'ni possédaient ce genre de technologie. 
+Encore des casiers, comme ceux de l'Ã©tage infÃ©rieur, mais ceux-ci contiennent de l'Ã©quipement lourd. Je suis sÃ»r que Watson voudra inspecter ce truc et fera tout pour que Ã§a reste bien fermÃ©. En fait, je ne vais mÃªme pas dÃ©tailler tout ce qu'il y a ici. Laxman pourra Ã©crire un rapport sur ce truc plus tard. Je dirai que je ne savais pas que les D'ni possÃ©daient ce genre de technologie. 
 
 Salle des machines
 
-Je comprends maintenant pourquoi cet étage est si protégé. Apparemment, tout le système d'alimentation du bâtiment est ici. Quelle construction incroyable. Le bâtiment tout entier était apparemment alimenté par une source d'eau souterraine qui le faisait tourner. Ils ont construit une énorme roue qui s'engrène dans des indentations au sol et produit ainsi une source d'énergie. C'est vraiment un travail de titan. Étonnant. 
+Je comprends maintenant pourquoi cet Ã©tage est si protÃ©gÃ©. Apparemment, tout le systÃ¨me d'alimentation du bÃ¢timent est ici. Quelle construction incroyable. Le bÃ¢timent tout entier Ã©tait apparemment alimentÃ© par une source d'eau souterraine qui le faisait tourner. Ils ont construit une Ã©norme roue qui s'engrÃ¨ne dans des indentations au sol et produit ainsi une source d'Ã©nergie. C'est vraiment un travail de titan. Ã‰tonnant. 
 
-C'est quand même un système compliqué. On dirait que l'alimentation était parfois coupée, car on trouve des contrôles placés en évidence pour arrêter et redémarrer le système. Je me dirige vers le haut.
+C'est quand mÃªme un systÃ¨me compliquÃ©. On dirait que l'alimentation Ã©tait parfois coupÃ©e, car on trouve des contrÃ´les placÃ©s en Ã©vidence pour arrÃªter et redÃ©marrer le systÃ¨me. Je me dirige vers le haut.
 
 Le toit
 
-C'est impressionnant. Je trouvais déjà le bâtiment massif. Mais la portion principale est gigantesque. Et elle pivote, en plus. Je suis ahuri par la quantité de travail effectué pour sécuriser l'endroit. Ça crève les yeux. C'est presque drôle d'imaginer des membres du gouvernement faire le même chemin que moi. Incroyable. 
+C'est impressionnant. Je trouvais dÃ©jÃ  le bÃ¢timent massif. Mais la portion principale est gigantesque. Et elle pivote, en plus. Je suis ahuri par la quantitÃ© de travail effectuÃ© pour sÃ©curiser l'endroit. Ã‡a crÃ¨ve les yeux. C'est presque drÃ´le d'imaginer des membres du gouvernement faire le mÃªme chemin que moi. Incroyable. 
 
-Pour atteindre l'autre côté, on dirait qu'il faut sauter du pont jusqu'au pic rocheux. Depuis qu'on est arrivés, c'est le premier endroit où on réussit à éviter d'utiliser une liaison. Et encore, il ne faut pas le rater. Si on le rate, il suffit d'attendre d'être en face de cette structure colossale. J'imagine une armée en train d'essayer d'assiéger l'endroit. Tous tassés sur ce petit pic rocheux, attendant que les ponts pivotent. Hé hé. --Mais qu'est-ce que ? Mon Dieu...
+Pour atteindre l'autre cÃ´tÃ©, on dirait qu'il faut sauter du pont jusqu'au pic rocheux. Depuis qu'on est arrivÃ©s, c'est le premier endroit oÃ¹ on rÃ©ussit Ã  Ã©viter d'utiliser une liaison. Et encore, il ne faut pas le rater. Si on le rate, il suffit d'attendre d'Ãªtre en face de cette structure colossale. J'imagine une armÃ©e en train d'essayer d'assiÃ©ger l'endroit. Tous tassÃ©s sur ce petit pic rocheux, attendant que les ponts pivotent. HÃ© hÃ©. --Mais qu'est-ce queÂ ? Mon Dieu...
 
-Les créatures. Ces trucs sortent tout droit d'un film d'horreur. Ça fait un petit moment que je suis ici. On n'en voit pas souvent, mais à chaque fois que j'en vois une débarquer, je suis terrorisé. Je commence à comprendre toutes ces protections. Si ça se trouve, toutes ces défenses ont été installées pour éloigner les créatures, plutôt que pour garder les visiteurs à l'intérieur. Je crois qu'il ne faut pas aller se promener dans ces bois ou alors avec un gros fusil. 
+Les crÃ©atures. Ces trucs sortent tout droit d'un film d'horreur. Ã‡a fait un petit moment que je suis ici. On n'en voit pas souvent, mais Ã  chaque fois que j'en vois une dÃ©barquer, je suis terrorisÃ©. Je commence Ã  comprendre toutes ces protections. Si Ã§a se trouve, toutes ces dÃ©fenses ont Ã©tÃ© installÃ©es pour Ã©loigner les crÃ©atures, plutÃ´t que pour garder les visiteurs Ã  l'intÃ©rieur. Je crois qu'il ne faut pas aller se promener dans ces bois ou alors avec un gros fusil. 
 
-Encore un pont, pour accéder à la section principale de la structure. Encore des sécurités. On dirait que la plate-forme entre les ponts est bien érodée. À une époque, les ponts à traverser permettaient peut-être d'assurer que seuls des groupes de taille gérables approcheraient le bâtiment, un par un - mais je suis sûr que c'était plus facile que ça ne l'est maintenant. L'érosion de la plate-forme entre les ponts ne facilite pas la tâche. Je suppose que les Conservateurs préfèreraient l'endroit dans son état actuel. 
+Encore un pont, pour accÃ©der Ã  la section principale de la structure. Encore des sÃ©curitÃ©s. On dirait que la plate-forme entre les ponts est bien Ã©rodÃ©e. Ã€ une Ã©poque, les ponts Ã  traverser permettaient peut-Ãªtre d'assurer que seuls des groupes de taille gÃ©rables approcheraient le bÃ¢timent, un par un - mais je suis sÃ»r que c'Ã©tait plus facile que Ã§a ne l'est maintenant. L'Ã©rosion de la plate-forme entre les ponts ne facilite pas la tÃ¢che. Je suppose que les Conservateurs prÃ©fÃ¨reraient l'endroit dans son Ã©tat actuel. 
 
 Vestiaires
 
-Je ne sais pas trop comment appeler ces endroits, mais ça fait vaguement penser à des vestiaires. Je les appellerai donc comme ça. Il n'y a pas grand-chose, ici. On dirait que chaque pont a son propre vestiaire, relié par un autre groupe de portes, etc... Il n'y pas l'air d'y avoir de système de décompression ou de décontamination dans ces pièces. On dirait vraiment que ces pièces ne servent qu'à placer de nouvelles portes. Encore un endroit bien gardé. 
+Je ne sais pas trop comment appeler ces endroits, mais Ã§a fait vaguement penser Ã  des vestiaires. Je les appellerai donc comme Ã§a. Il n'y a pas grand-chose, ici. On dirait que chaque pont a son propre vestiaire, reliÃ© par un autre groupe de portes, etc... Il n'y pas l'air d'y avoir de systÃ¨me de dÃ©compression ou de dÃ©contamination dans ces piÃ¨ces. On dirait vraiment que ces piÃ¨ces ne servent qu'Ã  placer de nouvelles portes. Encore un endroit bien gardÃ©. 
 
-Centre d'entraînement
+Centre d'entraÃ®nement
 
-J'étais sur le point de détailler chaque pièce ici, mais après avoir un peu visité, je crois que je vais simplement donner une vue d'ensemble. 
+J'Ã©tais sur le point de dÃ©tailler chaque piÃ¨ce ici, mais aprÃ¨s avoir un peu visitÃ©, je crois que je vais simplement donner une vue d'ensemble. 
 
-Il y a trois types de pièces dans le bâtiment, deux de chaque type. Il y a deux salles de contrôle, une pourpre et une jaune, deux salles d'affichage, une pourpre et une jaune et deux salles de conférence. Bien qu'elles ne soient pas colorées, je suppose qu'il y en avait une pour chaque « équipe ». 
+Il y a trois types de piÃ¨ces dans le bÃ¢timent, deux de chaque type. Il y a deux salles de contrÃ´le, une pourpre et une jaune, deux salles d'affichage, une pourpre et une jaune et deux salles de confÃ©rence. Bien qu'elles ne soient pas colorÃ©es, je suppose qu'il y en avait une pour chaque Â«Â Ã©quipeÂ Â». 
 
-Le bâtiment entier semble centré sur un mur massif en plein milieu. Les salles de contrôle permettent de contrôler le mur, les salles d'affichage affichent les uniformes portés à l'intérieur du mur (enfin, ce n'est qu'une supposition) et les salles de conférence devaient permettre aux visiteurs importants et aux membres du gouvernement de disserter sur les gens qui s'entraînaient dans l'enceinte de ces murs. Voyons donc.
+Le bÃ¢timent entier semble centrÃ© sur un mur massif en plein milieu. Les salles de contrÃ´le permettent de contrÃ´ler le mur, les salles d'affichage affichent les uniformes portÃ©s Ã  l'intÃ©rieur du mur (enfin, ce n'est qu'une supposition) et les salles de confÃ©rence devaient permettre aux visiteurs importants et aux membres du gouvernement de disserter sur les gens qui s'entraÃ®naient dans l'enceinte de ces murs. Voyons donc.
 
-Commençons par les salles de contrôle. 
+CommenÃ§ons par les salles de contrÃ´le. 
 
 
 
-Salles de contrôle
+Salles de contrÃ´le
 
-Je ne vais pas détailler les contrôles du mur dans ce doc. Je laisserai ça à Laxman. Quoi qu'il en soit, ce panneau contrôle le mur. On utilisait le mur pour s'entraîner et pour tester diverses combinaisons. À mon avis, la pièce centrale doit pouvoir devenir brûlante, glaciale, enfumée ou tout ce qui leur passait par la tête, et assez rapidement. C'était une sorte de compétition - ce serait à qui arriverait le premier en haut. Les équipes décidaient des obstacles et les membres faisaient la course.
+Je ne vais pas dÃ©tailler les contrÃ´les du mur dans ce doc. Je laisserai Ã§a Ã  Laxman. Quoi qu'il en soit, ce panneau contrÃ´le le mur. On utilisait le mur pour s'entraÃ®ner et pour tester diverses combinaisons. Ã€ mon avis, la piÃ¨ce centrale doit pouvoir devenir brÃ»lante, glaciale, enfumÃ©e ou tout ce qui leur passait par la tÃªte, et assez rapidement. C'Ã©tait une sorte de compÃ©tition - ce serait Ã  qui arriverait le premier en haut. Les Ã©quipes dÃ©cidaient des obstacles et les membres faisaient la course.
 
-Il y a un tunnel sur le côté qui relie la salle d'affichage et la salle de contrôle. 
+Il y a un tunnel sur le cÃ´tÃ© qui relie la salle d'affichage et la salle de contrÃ´le. 
 
 Salles d'affichage
 
-Je ne suis pas sûr que ces salles aient été conçues pour l'affichage. Bah, peut-être après tout. Quoi qu'il en soit, il y a quelques vieilles combinaisons de Conservateurs là-dedans. Et il y a aussi le dernier modèle de combinaison de Conservateur (la peau). En fait, je devrais plutôt dire : il y a la machine pour enfiler le dernier modèle de combinaison de Conservateur. 
+Je ne suis pas sÃ»r que ces salles aient Ã©tÃ© conÃ§ues pour l'affichage. Bah, peut-Ãªtre aprÃ¨s tout. Quoi qu'il en soit, il y a quelques vieilles combinaisons de Conservateurs lÃ -dedans. Et il y a aussi le dernier modÃ¨le de combinaison de Conservateur (la peau). En fait, je devrais plutÃ´t direÂ : il y a la machine pour enfiler le dernier modÃ¨le de combinaison de Conservateur. 
 
-Plus je la regarde, plus je la trouve incroyable. La combinaison était une seconde peau et conférait des pouvoirs de liaison, etc... tout intégré. Ça fait très hi-tech pour un costume de Conservateur. C'est très impressionnant, en tout cas. Le Conservateur se laissait tomber le long de la paroi et pendant sa chute, vers le mur, la combinaison était placée sur son corps. Je les supplie de me laisser essayer, mais le CRD refuse catégoriquement qu'on y touche. Laxman a déjà mis quelqu'un dessus, pour essayer d'en savoir plus. Je veux passer le premier quand ils décideront d'essayer.
+Plus je la regarde, plus je la trouve incroyable. La combinaison Ã©tait une seconde peau et confÃ©rait des pouvoirs de liaison, etc... tout intÃ©grÃ©. Ã‡a fait trÃ¨s hi-tech pour un costume de Conservateur. C'est trÃ¨s impressionnant, en tout cas. Le Conservateur se laissait tomber le long de la paroi et pendant sa chute, vers le mur, la combinaison Ã©tait placÃ©e sur son corps. Je les supplie de me laisser essayer, mais le CRD refuse catÃ©goriquement qu'on y touche. Laxman a dÃ©jÃ  mis quelqu'un dessus, pour essayer d'en savoir plus. Je veux passer le premier quand ils dÃ©cideront d'essayer.
 
-Je crois qu'on peut considérer ces pièces comme des sortes de vestiaires pour les équipes.  
+Je crois qu'on peut considÃ©rer ces piÃ¨ces comme des sortes de vestiaires pour les Ã©quipes.  
 
-Salles de conférence
+Salles de confÃ©rence
 
-Bon je suppose que c'est ici que les huiles s'asseyaient et vantaient les mérites de leurs Conservateurs. Évidemment, ils sont placés de façon à voir le mur et des écrans d'affichage montrent les motifs construits et « joués » sur le mur. On ne saura jamais le fin mot de l'histoire, mais j'imagine bien les Maîtres de Guilde admirer leurs hommes les uns contre les autres, prêts à les envoyer dans des Âges avec des boules de feu radioactives pour vérifier la solidité de leurs combinaisons. 
+Bon je suppose que c'est ici que les huiles s'asseyaient et vantaient les mÃ©rites de leurs Conservateurs. Ã‰videmment, ils sont placÃ©s de faÃ§on Ã  voir le mur et des Ã©crans d'affichage montrent les motifs construits et Â«Â jouÃ©sÂ Â» sur le mur. On ne saura jamais le fin mot de l'histoire, mais j'imagine bien les MaÃ®tres de Guilde admirer leurs hommes les uns contre les autres, prÃªts Ã  les envoyer dans des Ã‚ges avec des boules de feu radioactives pour vÃ©rifier la soliditÃ© de leurs combinaisons. 
 
-Étages supérieurs
+Ã‰tages supÃ©rieurs
 
-Je ne vais pas monter, mais je crois que les étages supérieurs étaient utilisés comme cellules de prison. La technologie D'ni était typique. Ils avaient un unique Livre de Liaison pour accéder à toutes les cellules. Comme le bâtiment pivotait sans cesse, un mécanisme de liaison synchronisée très compliqué était associé au Livre. Le timing de la liaison déterminait la cellule de destination. Apparemment, c'était très précis. 
+Je ne vais pas monter, mais je crois que les Ã©tages supÃ©rieurs Ã©taient utilisÃ©s comme cellules de prison. La technologie D'ni Ã©tait typique. Ils avaient un unique Livre de Liaison pour accÃ©der Ã  toutes les cellules. Comme le bÃ¢timent pivotait sans cesse, un mÃ©canisme de liaison synchronisÃ©e trÃ¨s compliquÃ© Ã©tait associÃ© au Livre. Le timing de la liaison dÃ©terminait la cellule de destination. Apparemment, c'Ã©tait trÃ¨s prÃ©cis. 
 
-Tiens, puisqu'on parle de liaison. Ce bâtiment pivote aussi. Et apparemment, la plupart des visiteurs arrivaient par le puits, alors qu'il y avait des livres menant directement dans le bâtiment. Je suis sûr qu'il y en avait. La plupart d'entre eux utilisaient probablement de mécanisme de synchronisation pour atteindre les différentes pièces. Encore un autre système inventé par ces types. Je suis persuadé qu'il y en a encore plus. 
+Tiens, puisqu'on parle de liaison. Ce bÃ¢timent pivote aussi. Et apparemment, la plupart des visiteurs arrivaient par le puits, alors qu'il y avait des livres menant directement dans le bÃ¢timent. Je suis sÃ»r qu'il y en avait. La plupart d'entre eux utilisaient probablement de mÃ©canisme de synchronisation pour atteindre les diffÃ©rentes piÃ¨ces. Encore un autre systÃ¨me inventÃ© par ces types. Je suis persuadÃ© qu'il y en a encore plus. 
 
-Je me demande où se trouvaient leurs principaux laboratoires de recherche ? Et mieux encore, où dormaient-il ? Et où mangeaient-ils ? 
+Je me demande oÃ¹ se trouvaient leurs principaux laboratoires de rechercheÂ ? Et mieux encore, oÃ¹ dormaient-ilÂ ? Et oÃ¹ mangeaient-ilsÂ ? 
 
 """

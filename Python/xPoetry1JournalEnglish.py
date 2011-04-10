@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -31,46 +32,46 @@ xJournalContents = """<cover src="xPoetry1JrnlCover_eng*1#0.hsm"><font size=10 f
 
 Submitted by: Domahreh
 
-Borne on a torrent sea of seer’s fire,
-   Clairvoyance bellowed from old Oorpah’s throat,
+Borne on a torrent sea of seerâ€™s fire,
+   Clairvoyance bellowed from old Oorpahâ€™s throat,
 Her eyes revolving with sightless desire
-      To be the mouthpiece of Yahvo’s command.
+      To be the mouthpiece of Yahvoâ€™s command.
       O Trumpet of the Maker! You did send
 
 Us promise: Stone shall comfort her affright
    And soothe his cry with noble recommend:
-“Great King, Great Leader, Hail!”
+â€œGreat King, Great Leader, Hail!â€
                                              In solemn rite,
       When twenty-five times twenty-five years passed
-      Ri’Neref’s sovereignty, the Arch was blessed
+      Riâ€™Nerefâ€™s sovereignty, the Arch was blessed
 
 Beneath which each new monarch would attend
-   His empire’s birth and make prophetic test
+   His empireâ€™s birth and make prophetic test
 In hopes of greatness. Weep not that the hand
       Of raving anarchy seized and defiled
-      The D’ni crown! Lament that chaste blood spilled
+      The Dâ€™ni crown! Lament that chaste blood spilled
 
-From vital fountains!—yet civil unrest,
+From vital fountains!â€”yet civil unrest,
    Cruel-seeming fate, tossed Koreen, queen, and child
 Unborn on to the ruddy lake. Each blast
       Of war-wind almost rent their swollen sail,
       Propelling them towards the hidden isle,
 
 Towards safety. And, as prophesy foretold,
-   When ‘twixt the Arch’s legs their vessel’s hull
+   When â€˜twixt the Archâ€™s legs their vesselâ€™s hull
 Passed through, its upcast shadow flaming gold
       From every edge, the queen brought forth a son.
       And he cried out unto the regal stone,
 
 And soothing lullaby it did recall;
    The waters soft illumination shone
-And not a ripple marred the ocean’s lull.
+And not a ripple marred the oceanâ€™s lull.
       Unharmed, the greater family did retire
       To their protected Age for thirty year
 
 And did youthful Ahlesendar return,
    Reclaim the crown, and overwhelm the war.
-Rejoice, then, every D’ni citizen!
+Rejoice, then, every Dâ€™ni citizen!
       For it was this prophetic king who taught
       From violent Root shall New Start be born out.
 
@@ -92,8 +93,8 @@ Cry, oh cry for the ones who die
 At the foot of war's cruel throne.
 The living weep and the dead ones sleep
 As cold as fallen stone.
-How long? How long must the funeral song—
-The dirge, the lamentation—
+How long? How long must the funeral songâ€”
+The dirge, the lamentationâ€”
 Both day and night mark the fear-wracked plight
 Of the suffering D'ni nation?
 
@@ -108,7 +109,7 @@ Say those who still remember.
 
 Sing, oh sing for the great high king
 Now reclaims his mighty throne!
-Hope's bright flame burns— D'ni's king returns
+Hope's bright flame burnsâ€” D'ni's king returns
 Through the ancient arch of stone!
 Sing joyful songs for he rights cruel wrongs
 And tyrants cower before him.
@@ -122,16 +123,16 @@ Submitted by: Kehl: Creator of Simple Words
 
 Past, long past. Deep in the dark
 Of myst memories an ancient wrote
-words of coming truth: “The Arch
-welcomes the reign of the great one…”
+words of coming truth: â€œThe Arch
+welcomes the reign of the great oneâ€¦â€
 
 While wicked wars ravaged on, the
 Young one waited among the Garo-hevtee,
-Taken out among the branches—
+Taken out among the branchesâ€”
 Terokh Jeruth. When will he wake?
 
 Biding time after narrow escape from
-Such nuhdahtahv b’fahsee. Peril from
+Such nuhdahtahv bâ€™fahsee. Peril from
 The warlike Pento and pursuit forcing
 Koreen from his home.
 
@@ -140,15 +141,15 @@ Under the Arch prophetic. One of whom
 Oorpah told beyond his age of Garternay,
 One would rise above all.
 
-Mothers, of Pento, of D’ni mourn over sons
+Mothers, of Pento, of Dâ€™ni mourn over sons
 slain. Soft and fair tears flow swiftly
 to the lake, filling it full of sorrow.
 All cry out: Ahlsendar return to us!
 
 And the young king soon sailed through
-Kerath’s Arch, his ship the harbinger of
-horror’s death. The once war times now ended
-and all D’ni rejoices in his coming.
+Kerathâ€™s Arch, his ship the harbinger of
+horrorâ€™s death. The once war times now ended
+and all Dâ€™ni rejoices in his coming.
 
 Ahlsendar, our Great One, Arch-born,
 Arch-returned, bastion of peace for us.
@@ -156,7 +157,7 @@ Tears of joyous celebration cover all,
 true happiness again.
 
 Our place in the Great Tree preserved,
-and the Great One’s salvation remembered.
+and the Great Oneâ€™s salvation remembered.
 
 
 
@@ -174,15 +175,15 @@ Never to waken, minds cold with frost.
 Eager for life, not yet to live, 
 First live to come, last dead to lie. 
 All this has passed, because great shame 
-Was passed on cursed Ae’garis’ name.
+Was passed on cursed Aeâ€™garisâ€™ name.
 
 Whose cart of death in sleep was found,
 Long years before, while sleepless bound,
 Ahlsendar, the king, was crowned.
 For not just in statesmanship did he rule,
-Fulfilling in greatness: the prophesy’s tool,
+Fulfilling in greatness: the prophesyâ€™s tool,
 The legacy left him he passed on, 
-Telling a time with D’ni gone.
+Telling a time with Dâ€™ni gone.
 Of other things as well as that,
 The new tree falling, stricken dead.
 As survivors found a missing thread.

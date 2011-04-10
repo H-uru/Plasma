@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -36,7 +37,7 @@ Negilahn was one of the first features added to our museum in 8797 at the reques
 
 You will notice that all of our Pods, including Negilahn's, have a few special features. Fortunately, solar power enables our pods to function without outside power sources. However, though our pods will gain power throughout with minimal energy usage, heavy usage will also drain energy units fairly quickly. Be careful to not use up a Pod's energy before nightfall or you may miss out on some sights.  
 
-Before you visit Negilahn, we'd like to take a minute to get you acquainted with the creatures that live there. Please remember that while we have placed our Pod in an optimal position, you are visiting a natural habitat and we have no control over when and where you see our friends in Negilahn…or if you will see anything at all. Our pods do have sound and scent emitters that will attract Negilahn's inhabitants although, again, these are real animals and there are no guarantees. 
+Before you visit Negilahn, we'd like to take a minute to get you acquainted with the creatures that live there. Please remember that while we have placed our Pod in an optimal position, you are visiting a natural habitat and we have no control over when and where you see our friends in Negilahnâ€¦or if you will see anything at all. Our pods do have sound and scent emitters that will attract Negilahn's inhabitants although, again, these are real animals and there are no guarantees. 
 
 Remember too, that all reactions to what you do in Negilahn are not always immediately evident. 
 

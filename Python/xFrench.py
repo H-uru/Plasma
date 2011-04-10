@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -28,25 +29,25 @@ from PlasmaVaultConstants import *
 
 #============================
 #--- vault folder node names
-xFolderIDToFolderName = {    PtVaultStandardNodes.kUserDefinedNode:"Défini par l'utilisateur",\
-                            PtVaultStandardNodes.kInboxFolder:"Boîte de réception",\
+xFolderIDToFolderName = {    PtVaultStandardNodes.kUserDefinedNode:"DÃ©fini par l'utilisateur",\
+                            PtVaultStandardNodes.kInboxFolder:"BoÃ®te de rÃ©ception",\
                             PtVaultStandardNodes.kBuddyListFolder:"Amis", \
-                            PtVaultStandardNodes.kIgnoreListFolder:"Liste à ignorer",\
-                            PtVaultStandardNodes.kPeopleIKnowAboutFolder:"Récents",\
+                            PtVaultStandardNodes.kIgnoreListFolder:"Liste Ã  ignorer",\
+                            PtVaultStandardNodes.kPeopleIKnowAboutFolder:"RÃ©cents",\
                             PtVaultStandardNodes.kChronicleFolder:"Chronique",\
                             PtVaultStandardNodes.kAvatarOutfitFolder:"Armoire",\
-                            PtVaultStandardNodes.kAgeTypeJournalFolder:"Journaux d'Âges",\
-                            PtVaultStandardNodes.kSubAgesFolder:"Sous-Âges",\
+                            PtVaultStandardNodes.kAgeTypeJournalFolder:"Journaux d'Ã‚ges",\
+                            PtVaultStandardNodes.kSubAgesFolder:"Sous-Ã‚ges",\
                             PtVaultStandardNodes.kHoodMembersFolder:"Voisins",\
                             PtVaultStandardNodes.kAllPlayersFolder:"Tous les joueurs",\
-                            PtVaultStandardNodes.kAgeMembersFolder:"Joueurs de l'Âge",\
-                            PtVaultStandardNodes.kAgeJournalsFolder:"Dossiers des journaux d'Âges",\
+                            PtVaultStandardNodes.kAgeMembersFolder:"Joueurs de l'Ã‚ge",\
+                            PtVaultStandardNodes.kAgeJournalsFolder:"Dossiers des journaux d'Ã‚ges",\
                             PtVaultStandardNodes.kCanVisitFolder:"Visiteurs potentiels",\
-                            PtVaultStandardNodes.kAgeOwnersFolder:"Propriétaires",\
+                            PtVaultStandardNodes.kAgeOwnersFolder:"PropriÃ©taires",\
                             PtVaultStandardNodes.kPublicAgesFolder:"Quartiers publics",\
-                            PtVaultStandardNodes.kAgesIOwnFolder:"Âges possédés",\
-                            PtVaultStandardNodes.kAgesICanVisitFolder:"Âges visitables",\
-                            PtVaultStandardNodes.kAvatarClosetFolder:"Armoire à avatar",\
+                            PtVaultStandardNodes.kAgesIOwnFolder:"Ã‚ges possÃ©dÃ©s",\
+                            PtVaultStandardNodes.kAgesICanVisitFolder:"Ã‚ges visitables",\
+                            PtVaultStandardNodes.kAvatarClosetFolder:"Armoire Ã  avatar",\
                         }
 
 #============================
@@ -55,7 +56,7 @@ xMayorOfNeighborhood = "Maire"
 xMemberOfNeighborhood = "Membre"
 
 #--- neighborhood status strings
-xNeighborhoodPrivate = "privé"
+xNeighborhoodPrivate = "privÃ©"
 xNeighborhoodPublic = "public"
 
 #--- date and time display Formats (as described by time.strftime python standard module)
@@ -63,23 +64,23 @@ xDateTimeFormat = "%d/%m/%y  %H:%M"
 xDateFormat = "%d/%m/%y"
 
 # --- Imager Text Message Format
-xImagerMessage = "De : %s\nObjet : %s\n\n%s"
+xImagerMessage = "DeÂ : %s\nObjetÂ : %s\n\n%s"
 
 # --- Hood welcome message
-xHoodWelcome = "Bienvenue à %s. Pour plus d'informations, rendez-vous dans la salle de classe"
+xHoodWelcome = "Bienvenue Ã  %s. Pour plus d'informations, rendez-vous dans la salle de classe"
 
 # --- Bookshelf deletion messages
-xDeleteNeighborhoodBook = "Êtes-vous sûr(e) de vouloir supprimer ce Livre et ainsi perdre votre inscription dans ce quartier ?"
-xDeleteBook = "Êtes-vous sûr(e) de vouloir supprimer ce Livre et ainsi annuler votre progression dans cet Âge ?"
+xDeleteNeighborhoodBook = "ÃŠtes-vous sÃ»r(e) de vouloir supprimer ce Livre et ainsi perdre votre inscription dans ce quartier ?"
+xDeleteBook = "ÃŠtes-vous sÃ»r(e) de vouloir supprimer ce Livre et ainsi annuler votre progression dans cet Ã‚ge ?"
 
 # --- Age name localization stuff
 xNeighborhood = "Quartier"
 xTranslatedAgeNames = {
     # City link-in points
     "Ferry Terminal": "Terminal de ferry",
-    "Tokotah Alley": "Allée Tokotah",
-    "Palace Alcove": "Alcôve du palais",
-    "Library Courtyard": "Cour de la bibliothèque",
+    "Tokotah Alley": "AllÃ©e Tokotah",
+    "Palace Alcove": "AlcÃ´ve du palais",
+    "Library Courtyard": "Cour de la bibliothÃ¨que",
     "Concert Hall Foyer": "Hall de la salle de concert",
     # Age names
     "Eder Kemo": "Eder Kemo",
@@ -91,7 +92,7 @@ xTranslatedAgeNames = {
     "Relto": "Relto",
     "Teledahn": "Teledahn",
     # Great Zero link-in points
-    "Great Zero Observation": "Grand Zéro observation",
+    "Great Zero Observation": "Grand ZÃ©ro observation",
     "Great Zero": "Great Zero",
 }
 xPossesive = "de"

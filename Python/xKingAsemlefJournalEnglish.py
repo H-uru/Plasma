@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -33,7 +34,7 @@ Asemlef inherited a people who were philosophically confused (The Watcher vs. Gi
 
 Asemlef continued the peaceful trends by attempting to isolate no one, but instead welcoming everyone and any beliefs they might have had. 
 
-It seems, he took no stance on any of the varying religious ideologies being passed around and allowed any and all religious factions equal access to property, government help, etc…
+It seems, he took no stance on any of the varying religious ideologies being passed around and allowed any and all religious factions equal access to property, government help, etcâ€¦
 
 While disregarding no beliefs, he was able to hold his own, some of which were unknown to D'ni up to that point. Though never stated publicly by Asemlef, common opinion, and historical records, point toward numerous servants being used by Asemlef, most brought from outside Ages. More so, were the apparent challenges Asemlef held with these "servants". Details are hard to find, but it seems as though these challenges ranged from hunts, by Asemlef himself, to gladiator style battles between the servants. It should be noted that regardless of what actions occurred, there was little public outcry against them.  
 

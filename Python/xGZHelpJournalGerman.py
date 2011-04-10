@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,65 +28,65 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKIJournalCover*1#0.hsm"><font size=10 face=courier color=000000><margin left=62 right=62 top=62 bottom=48><p align=center>
 
-<p align=left>Willkommen zum Großen Nullpunkt! 
+<p align=left>Willkommen zum GroÃŸen Nullpunkt! 
 
-Sie werden feststellen, dass die Große Nullpunkt-Anlage aus verschiedenen Bereichen und Geräten besteht. Wir bitten, die große Menge an Informationen zu entschuldigen, aber die Mechanismen und Systeme sind sehr komplex. 
+Sie werden feststellen, dass die GroÃŸe Nullpunkt-Anlage aus verschiedenen Bereichen und GerÃ¤ten besteht. Wir bitten, die groÃŸe Menge an Informationen zu entschuldigen, aber die Mechanismen und Systeme sind sehr komplex. 
 
 Vorbereich
 
-Sie befinden sich zurzeit im Vorbereich der Großen Nullpunkt-Anlage. Sie können die eigentliche Anlage durch das kleine Fenster sehen, allerdings ist es nicht möglich, den Hof durch den Vorbereich zu betreten. Um dorthin zu kommen, müssen Sie 15 Große-Nullpunkt-Marker (GNM) in das System übertragen und dann über Ihren Nexus eine Verbindung zum Hof benutzen. 
+Sie befinden sich zurzeit im Vorbereich der GroÃŸen Nullpunkt-Anlage. Sie kÃ¶nnen die eigentliche Anlage durch das kleine Fenster sehen, allerdings ist es nicht mÃ¶glich, den Hof durch den Vorbereich zu betreten. Um dorthin zu kommen, mÃ¼ssen Sie 15 GroÃŸe-Nullpunkt-Marker (GNM) in das System Ã¼bertragen und dann Ã¼ber Ihren Nexus eine Verbindung zum Hof benutzen. 
 
-Übertragung der Große-Nullpunkt-Marker (GNM)
+Ãœbertragung der GroÃŸe-Nullpunkt-Marker (GNM)
 
-Die Große-Nullpunkt-Marker sind problemlos überall in der Höhle zu finden und mit der folgenden Anleitung genauso mühelos in das System zu übertragen. 
+Die GroÃŸe-Nullpunkt-Marker sind problemlos Ã¼berall in der HÃ¶hle zu finden und mit der folgenden Anleitung genauso mÃ¼helos in das System zu Ã¼bertragen. 
 
-1. Stellen Sie sicher, dass Sie KI-Version 2.0 oder höher besitzen. Falls Sie noch nicht in Gahreesen waren und sich Ihre KI geholt haben, müssen Sie dies zuerst nachholen. Weitere Informationen finden Sie in Ihrer Gemeinde. 
+1. Stellen Sie sicher, dass Sie KI-Version 2.0 oder hÃ¶her besitzen. Falls Sie noch nicht in Gahreesen waren und sich Ihre KI geholt haben, mÃ¼ssen Sie dies zuerst nachholen. Weitere Informationen finden Sie in Ihrer Gemeinde. 
 
-2. Wenn Sie KI-Version 2.0 oder höher besitzen, müssen Sie diese für die Benutzung mit den Marker-Koordinaten aktualisieren. Dies können Sie problemlos tun, indem Sie Ihre KI in die Übertragungsmaschine in diesem Raum legen. Wenn Sie Ihre KI zum ersten Mal dort hineinlegen, wird das System Ihre KI entsprechend aktualisieren. Wenn Sie 15 farbige Lichter auf Ihrer KI sehen, können Sie diese zum Einlesen von Marker-Koordinaten verwenden. 
+2. Wenn Sie KI-Version 2.0 oder hÃ¶her besitzen, mÃ¼ssen Sie diese fÃ¼r die Benutzung mit den Marker-Koordinaten aktualisieren. Dies kÃ¶nnen Sie problemlos tun, indem Sie Ihre KI in die Ãœbertragungsmaschine in diesem Raum legen. Wenn Sie Ihre KI zum ersten Mal dort hineinlegen, wird das System Ihre KI entsprechend aktualisieren. Wenn Sie 15 farbige Lichter auf Ihrer KI sehen, kÃ¶nnen Sie diese zum Einlesen von Marker-Koordinaten verwenden. 
 
-3. Suchen Sie GNMs. Sie befinden sich an den unterschiedlichsten Orten in dieser Höhle. Bitte beachten Sie, dass sich die Marker an den seltsamsten Orten in der Höhle befinden können und nicht nur entlang der vorgegebenen Wege. Beachten Sie auch, dass Sie die Marker erst sehen können, wenn Sie sich ihnen mit einer entsprechenden KI bis auf ca. 8 Meter genähert haben. 
+3. Suchen Sie GNMs. Sie befinden sich an den unterschiedlichsten Orten in dieser HÃ¶hle. Bitte beachten Sie, dass sich die Marker an den seltsamsten Orten in der HÃ¶hle befinden kÃ¶nnen und nicht nur entlang der vorgegebenen Wege. Beachten Sie auch, dass Sie die Marker erst sehen kÃ¶nnen, wenn Sie sich ihnen mit einer entsprechenden KI bis auf ca. 8 Meter genÃ¤hert haben. 
 
-4. Wenn Sie einen GNM gefunden haben, müssen Sie die Einlese-Taste auf Ihrer KI drücken. Wenn eines der bunten Lichter aufleuchtet, so hat die KI den GNM eingelesen. 
+4. Wenn Sie einen GNM gefunden haben, mÃ¼ssen Sie die Einlese-Taste auf Ihrer KI drÃ¼cken. Wenn eines der bunten Lichter aufleuchtet, so hat die KI den GNM eingelesen. 
 
-5. Nachdem Sie 15 GNMs gefunden haben (auf Ihrer KI leuchten 15 Lichter), müssen Sie hierher in den Vorbereich zurückkehren und die GNMs in das System übertragen. Dazu können Sie die gleiche Maschine benutzen, mit der Sie Ihre KI aktualisiert haben. 
+5. Nachdem Sie 15 GNMs gefunden haben (auf Ihrer KI leuchten 15 Lichter), mÃ¼ssen Sie hierher in den Vorbereich zurÃ¼ckkehren und die GNMs in das System Ã¼bertragen. Dazu kÃ¶nnen Sie die gleiche Maschine benutzen, mit der Sie Ihre KI aktualisiert haben. 
 
-Hof der Großen-Nullpunkt-Anlage 
+Hof der GroÃŸen-Nullpunkt-Anlage 
 
-1. Nachdem Sie 15 GNMs übertragen haben, finden Sie in Ihrem Nexus eine neue Verbindung.  Diese Verbindung bringt Sie in den Hof der Großen-Nullpunkt-Anlage, dem Zentralpunkt des Großen-Nullpunkt-Neutrino-Verteilers. 
+1. Nachdem Sie 15 GNMs Ã¼bertragen haben, finden Sie in Ihrem Nexus eine neue Verbindung.  Diese Verbindung bringt Sie in den Hof der GroÃŸen-Nullpunkt-Anlage, dem Zentralpunkt des GroÃŸen-Nullpunkt-Neutrino-Verteilers. 
 
-2. In diesem Hof finden Sie eine weitere Übertragungsmaschine sowie eine Reihe von Türen im hinteren Bereich des Raums. 
+2. In diesem Hof finden Sie eine weitere Ãœbertragungsmaschine sowie eine Reihe von TÃ¼ren im hinteren Bereich des Raums. 
 
-Zugang zum Großen Nullpunkt-Kalibrationszentrum
+Zugang zum GroÃŸen Nullpunkt-Kalibrationszentrum
 
-1. Das Kalibrationszentrum hinter dem Hof, kann erst erreicht werden, wenn eine KI mindestens 30 GNMs eingelesen und übertragen hat (15 mehr als für das Erreichen des Hofes notwendig sind). Das Einlesen verläuft nach dem bereits oben beschriebenen Verfahren: Sie sehen 15 Lichter auf Ihrer KI. Wenn Sie GNMs finden, leuchten diese Lichter auf,
+1. Das Kalibrationszentrum hinter dem Hof, kann erst erreicht werden, wenn eine KI mindestens 30 GNMs eingelesen und Ã¼bertragen hat (15 mehr als fÃ¼r das Erreichen des Hofes notwendig sind). Das Einlesen verlÃ¤uft nach dem bereits oben beschriebenen Verfahren: Sie sehen 15 Lichter auf Ihrer KI. Wenn Sie GNMs finden, leuchten diese Lichter auf,
 
-2. Sobald Sie weitere 15 (also insgesamt 30) GNMs im Vorraum oder im Hof übertragen haben, werden sich die Türen zum Kalibrationszentrum automatisch für Sie öffnen. 
+2. Sobald Sie weitere 15 (also insgesamt 30) GNMs im Vorraum oder im Hof Ã¼bertragen haben, werden sich die TÃ¼ren zum Kalibrationszentrum automatisch fÃ¼r Sie Ã¶ffnen. 
 
-Das Große-Nullpunkt-Kalibrationszentrum
+Das GroÃŸe-Nullpunkt-Kalibrationszentrum
 
-1. Die wichtigsten Elemente des Kalibrationszentrums sind die vier Wartungseinheiten des Großen Nullpunkts (GNWE) im hinteren Bereich und das Kalibrierungsbildgerät (KB). 
+1. Die wichtigsten Elemente des Kalibrationszentrums sind die vier Wartungseinheiten des GroÃŸen Nullpunkts (GNWE) im hinteren Bereich und das KalibrierungsbildgerÃ¤t (KB). 
 
-2. Sobald Sie 30 GNMs an den Maschinen im Vorraum oder im Hof übertragen haben, erhalten Sie Zugang zu diesen Geräten und haben die Möglichkeit eine neue Art Marker mit der Bezeichnung Große-Nullpunkt-Kalibrierungsmarker (GNKM) zu entdecken. 
+2. Sobald Sie 30 GNMs an den Maschinen im Vorraum oder im Hof Ã¼bertragen haben, erhalten Sie Zugang zu diesen GerÃ¤ten und haben die MÃ¶glichkeit eine neue Art Marker mit der Bezeichnung GroÃŸe-Nullpunkt-Kalibrierungsmarker (GNKM) zu entdecken. 
 
-Große-Nullpunkt-Kalibrierungsmarker (GNKM)
+GroÃŸe-Nullpunkt-Kalibrierungsmarker (GNKM)
 
-1. GNKMs funktionieren ähnlich wie GNMs, allerdings gibt es zwei Unterschiede: Zum einen sind GNKM immer sichtbar, sobald sie einer Person zugewiesen worden. Mit anderen Worten: anders als GNM, die nur erscheinen, wenn sie eine KI um Umkreis von ca. 8 Metern entdecken, sind GNKM nur für den sichtbar, dem sie zugewiesen wurden. Außerdem werden GNKM nicht über die Einlesetaste Ihrer KI aktiviert, sondern indem Sie mit Ihrem Körper durch sie durchlaufen.
+1. GNKMs funktionieren Ã¤hnlich wie GNMs, allerdings gibt es zwei Unterschiede: Zum einen sind GNKM immer sichtbar, sobald sie einer Person zugewiesen worden. Mit anderen Worten: anders als GNM, die nur erscheinen, wenn sie eine KI um Umkreis von ca. 8 Metern entdecken, sind GNKM nur fÃ¼r den sichtbar, dem sie zugewiesen wurden. AuÃŸerdem werden GNKM nicht Ã¼ber die Einlesetaste Ihrer KI aktiviert, sondern indem Sie mit Ihrem KÃ¶rper durch sie durchlaufen.
 
-2. Um eine GNKM-Mission zugewiesen zu bekommen, müssen Sie eine der GNWE finden und dort eine der 14 verfügbaren Missionen auswählen. Die Anzahl der GNKMs und die Position dieser Marker variieren von Mission zu Mission. Bei allen Missionen wird die Zeit genommen. Die Zeitmessung beginnt, wenn der erste Marker eingelesen wird und endet, wenn der letzte Marker eingelesen wurde. Sie können eine Mission wiederholen, um sie in kürzerer Zeit zu beenden.
+2. Um eine GNKM-Mission zugewiesen zu bekommen, mÃ¼ssen Sie eine der GNWE finden und dort eine der 14 verfÃ¼gbaren Missionen auswÃ¤hlen. Die Anzahl der GNKMs und die Position dieser Marker variieren von Mission zu Mission. Bei allen Missionen wird die Zeit genommen. Die Zeitmessung beginnt, wenn der erste Marker eingelesen wird und endet, wenn der letzte Marker eingelesen wurde. Sie kÃ¶nnen eine Mission wiederholen, um sie in kÃ¼rzerer Zeit zu beenden.
 
-3. Bitte beachten Sie, dass eine Mission nur einer Person zugewiesen wird. Ähnlich wie bei den Lichtern für die GNMs, sehen Sie auf einer Seite Ihrer KI eine Reihe Lichter, die der Zahl der GNKMs der Mission entsprechen. Nachdem Sie alle Marker eingelesen haben, indem Sie durch sie durchgelaufen sind, müssen die Marker über eine GNWE im Große-Nullpunkt-Kalibrationszentrum übertragen werden. 
+3. Bitte beachten Sie, dass eine Mission nur einer Person zugewiesen wird. Ã„hnlich wie bei den Lichtern fÃ¼r die GNMs, sehen Sie auf einer Seite Ihrer KI eine Reihe Lichter, die der Zahl der GNKMs der Mission entsprechen. Nachdem Sie alle Marker eingelesen haben, indem Sie durch sie durchgelaufen sind, mÃ¼ssen die Marker Ã¼ber eine GNWE im GroÃŸe-Nullpunkt-Kalibrationszentrum Ã¼bertragen werden. 
 
-4. Beachten Sie, dass die in der GNWE angezeigte Zeit Ihre eigene Bestzeit und nicht die anderer Besucher ist. Die Gesamtbestzeiten werden normalerweise über die KI übermittelt und ständig aktualisiert. 
+4. Beachten Sie, dass die in der GNWE angezeigte Zeit Ihre eigene Bestzeit und nicht die anderer Besucher ist. Die Gesamtbestzeiten werden normalerweise Ã¼ber die KI Ã¼bermittelt und stÃ¤ndig aktualisiert. 
 
-5. Wenn zwei Personen die gleiche Mission ausführen wollen, so müssen sie die gleiche Mission auswählen, um auch die gleichen Marker sehen zu können. Denken Sie daran, dass Sie die Marker in Ihre eigene KI einlesen müssen, um die Mission abschließen zu können. Sie können sich eine Mission nicht teilen.
+5. Wenn zwei Personen die gleiche Mission ausfÃ¼hren wollen, so mÃ¼ssen sie die gleiche Mission auswÃ¤hlen, um auch die gleichen Marker sehen zu kÃ¶nnen. Denken Sie daran, dass Sie die Marker in Ihre eigene KI einlesen mÃ¼ssen, um die Mission abschlieÃŸen zu kÃ¶nnen. Sie kÃ¶nnen sich eine Mission nicht teilen.
 
-Wir vom DRC hoffen, dass Ihnen diese Missionen helfen werden, die Stadt und die Höhle besser zu verstehen und dass Sie begreifen, dass der Erfolg bei der Kalibrierung des Großen Nullpunkts auch von Ihnen abhängt. Wir danken Ihnen herzlich für Ihre Unterstützung. 
+Wir vom DRC hoffen, dass Ihnen diese Missionen helfen werden, die Stadt und die HÃ¶hle besser zu verstehen und dass Sie begreifen, dass der Erfolg bei der Kalibrierung des GroÃŸen Nullpunkts auch von Ihnen abhÃ¤ngt. Wir danken Ihnen herzlich fÃ¼r Ihre UnterstÃ¼tzung. 
 
-Kalibrierungsbildgerät (KB)
+KalibrierungsbildgerÃ¤t (KB)
 
-1. Als Anzeige dafür, wie die Kalibrierung voranschreitet, wird das Kalibrierungsbildgerät (KB) unterschiedliche Bilder des aktuellen Zustands anzeigen. Je nachdem, wie weit eine Stufe der Kalibrierung fortgeschritten ist, werden die Bilder leichter oder schwerer zu erkennen sein.  
+1. Als Anzeige dafÃ¼r, wie die Kalibrierung voranschreitet, wird das KalibrierungsbildgerÃ¤t (KB) unterschiedliche Bilder des aktuellen Zustands anzeigen. Je nachdem, wie weit eine Stufe der Kalibrierung fortgeschritten ist, werden die Bilder leichter oder schwerer zu erkennen sein.  
 
-2. Victor Laxman wird die Bilder für diese dynamischen "Fortschrittsberichte" festlegen. 
+2. Victor Laxman wird die Bilder fÃ¼r diese dynamischen "Fortschrittsberichte" festlegen. 
 
-Nochmals vielen Dank für Ihren Besuch des Großen Nullpunkts. Wir danken für Ihr Verständnis und Ihre Unterstützung. 
+Nochmals vielen Dank fÃ¼r Ihren Besuch des GroÃŸen Nullpunkts. Wir danken fÃ¼r Ihr VerstÃ¤ndnis und Ihre UnterstÃ¼tzung. 
 """

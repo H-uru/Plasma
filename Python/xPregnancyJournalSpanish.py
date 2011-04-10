@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,16 +28,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xPregnancyJournalCover_eng*1#0.hsm"><font size=18 face=Tricia color=982A2A style=b><margin left=62 right=62 top=48><p align=center>Embarazos
 
-<p align=left>Esto si que es sorprendente. No lo puedo decir con seguridad pero parece bastante claro que las mujeres D'ni sólo eran fértiles durante un "día" D'ni cada dos "meses" D'ni. En términos terrestres sería algo así como treinta horas de cada setenta y dos días. 
+<p align=left>Esto si que es sorprendente. No lo puedo decir con seguridad pero parece bastante claro que las mujeres D'ni sÃ³lo eran fÃ©rtiles durante un "dÃ­a" D'ni cada dos "meses" D'ni. En tÃ©rminos terrestres serÃ­a algo asÃ­ como treinta horas de cada setenta y dos dÃ­as. 
 
-Si esto fuese cierto, explicaría unas cuantas cosas. Primero, por qué había tan pocos niños en un pueblo que vivía trescientos años y segundo las grandes celebraciones de los embarazos.
+Si esto fuese cierto, explicarÃ­a unas cuantas cosas. Primero, por quÃ© habÃ­a tan pocos niÃ±os en un pueblo que vivÃ­a trescientos aÃ±os y segundo las grandes celebraciones de los embarazos.
 
-Todo lo que sé, es que por lo general estas celebraciones estaban limitadas a los miembros de la familia, aun cuando éstas fuesen bastante extensas. Había muchas oraciones a Yahvo y también bendiciones por parte de los miembros de la familia. Estas "bendiciones", generalmente, incluían juramentos y ruegos a Yahvo para cuidar de la mujer embarazada y del niño en los meses siguientes.  
+Todo lo que sÃ©, es que por lo general estas celebraciones estaban limitadas a los miembros de la familia, aun cuando Ã©stas fuesen bastante extensas. HabÃ­a muchas oraciones a Yahvo y tambiÃ©n bendiciones por parte de los miembros de la familia. Estas "bendiciones", generalmente, incluÃ­an juramentos y ruegos a Yahvo para cuidar de la mujer embarazada y del niÃ±o en los meses siguientes.  
 
-Como he mencionado en otras zonas, se tenía la creencia de que las mujeres embarazadas eran mucho más intuitivas y por ello parte de las experiencias del embarazo usaban esa intuición para obtener revelaciones de Yahvo (aunque no formaba parte de la ceremonia oficial). También se esperaba que las mujeres hicieran mucha meditación religiosa durante este tiempo, así que no voy a entrar en detalles ahora. Se esperaba que esta meditación sirviera principalmente para guiar a la mujer en el futuro de su hijo, este propósito era tomado muy en serio. 
+Como he mencionado en otras zonas, se tenÃ­a la creencia de que las mujeres embarazadas eran mucho mÃ¡s intuitivas y por ello parte de las experiencias del embarazo usaban esa intuiciÃ³n para obtener revelaciones de Yahvo (aunque no formaba parte de la ceremonia oficial). TambiÃ©n se esperaba que las mujeres hicieran mucha meditaciÃ³n religiosa durante este tiempo, asÃ­ que no voy a entrar en detalles ahora. Se esperaba que esta meditaciÃ³n sirviera principalmente para guiar a la mujer en el futuro de su hijo, este propÃ³sito era tomado muy en serio. 
 
-Mientras que los embarazos dentro del matrimonio eran motivo de grandes celebraciones, no se puede decir lo mismo de los embarazos fuera del matrimonio. Todo lo que puedo decir es que cualquier mujer que se quedaba embarazada debía casarse inmediatamente y que cualquier hijo concebido fuera del matrimonio no podía entrar en ningún Gremio durante toda su vida. Tampoco se esperaban revelaciones de esa clase de madres. Esto era a una lacra para una mujer de clase baja, ya que su hijo nunca podría asistir a ningún Gremio de la clase alta.  
+Mientras que los embarazos dentro del matrimonio eran motivo de grandes celebraciones, no se puede decir lo mismo de los embarazos fuera del matrimonio. Todo lo que puedo decir es que cualquier mujer que se quedaba embarazada debÃ­a casarse inmediatamente y que cualquier hijo concebido fuera del matrimonio no podÃ­a entrar en ningÃºn Gremio durante toda su vida. Tampoco se esperaban revelaciones de esa clase de madres. Esto era a una lacra para una mujer de clase baja, ya que su hijo nunca podrÃ­a asistir a ningÃºn Gremio de la clase alta.  
 
-Por lo que sé, la gestación duraba un año. Diez meses D'ni, unos 290 días D'ni, el equivalente a un año terrestre. No he encontrado ningún documento relativo a partos múltiples.
+Por lo que sÃ©, la gestaciÃ³n duraba un aÃ±o. Diez meses D'ni, unos 290 dÃ­as D'ni, el equivalente a un aÃ±o terrestre. No he encontrado ningÃºn documento relativo a partos mÃºltiples.
 
 """

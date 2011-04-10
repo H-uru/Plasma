@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,21 +28,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xClassStructureJournalCover_eng*1#0.hsm"><font size=18 face=Tricia color=982A2A style=b><margin left=62 right=62 top=48><p align=center>Structure de Classes
 
-<p align=left>Il semblerait que ma conclusion initiale à propos des structures de classes soit fausse. Bien qu'au départ, rien ne laissait à penser l'apparition d'une société de classes, cet idéal disparut rapidement. En 9400 ED, sept classes distinctes existaient. 
+<p align=left>Il semblerait que ma conclusion initiale Ã  propos des structures de classes soit fausse. Bien qu'au dÃ©part, rien ne laissait Ã  penser l'apparition d'une sociÃ©tÃ© de classes, cet idÃ©al disparut rapidement. En 9400 ED, sept classes distinctes existaient. 
 
-L'Élite - Les Seigneurs et les Grands maîtres des Guildes majeures. Des citoyens privés pouvaient être acceptés, mais des ressources abondantes étaient alors nécessaires. Seule l'élite possédait des bibliothèques personnelles de Livres et des Îles privées. 
+L'Ã‰lite - Les Seigneurs et les Grands maÃ®tres des Guildes majeures. Des citoyens privÃ©s pouvaient Ãªtre acceptÃ©s, mais des ressources abondantes Ã©taient alors nÃ©cessaires. Seule l'Ã©lite possÃ©dait des bibliothÃ¨ques personnelles de Livres et des Ãles privÃ©es. 
  
-Il y eut quelques tentatives visant à aider et à unifier les autres, mais je ne suis pas sûre que ça ait été très bénéfique. Les Bibliothèques publiques, les bourses universitaires des Guildes majeures, la rénovation des quartiers les plus pauvres, tout cela semblait plus politique et n'indiquait pas une réelle volonté de changer. Ce qui n'a rien d'étonnant, je suppose.
+Il y eut quelques tentatives visant Ã  aider et Ã  unifier les autres, mais je ne suis pas sÃ»re que Ã§a ait Ã©tÃ© trÃ¨s bÃ©nÃ©fique. Les BibliothÃ¨ques publiques, les bourses universitaires des Guildes majeures, la rÃ©novation des quartiers les plus pauvres, tout cela semblait plus politique et n'indiquait pas une rÃ©elle volontÃ© de changer. Ce qui n'a rien d'Ã©tonnant, je suppose.
 
-Les membres de Guildes - Même si les classes inférieures pouvaient assister à leurs enseignements, il semble que le parcours de fin d'études ait été bien trop cher et prestigieux pour permettre à quiconque d'y parvenir. En conséquence, les diplômés devinrent une classe à part. Une classe d'un très haut niveau, d'ailleurs. 
+Les membres de Guildes - MÃªme si les classes infÃ©rieures pouvaient assister Ã  leurs enseignements, il semble que le parcours de fin d'Ã©tudes ait Ã©tÃ© bien trop cher et prestigieux pour permettre Ã  quiconque d'y parvenir. En consÃ©quence, les diplÃ´mÃ©s devinrent une classe Ã  part. Une classe d'un trÃ¨s haut niveau, d'ailleurs. 
 
-La Classe supérieure - Il s'agit de la plus basse des trois classes supérieures. Ces citoyens avaient réussi à faire vivre des entreprises privées et ainsi à fournir nombre de services à l'élite, comme les banques, les bars, etc. La plupart n'avaient pas suivi l'éducation d'une Guilde majeure, mais ils possédaient assez d'argent pour acheter leur ascension vers les classes supérieures. 
+La Classe supÃ©rieure - Il s'agit de la plus basse des trois classes supÃ©rieures. Ces citoyens avaient rÃ©ussi Ã  faire vivre des entreprises privÃ©es et ainsi Ã  fournir nombre de services Ã  l'Ã©lite, comme les banques, les bars, etc. La plupart n'avaient pas suivi l'Ã©ducation d'une Guilde majeure, mais ils possÃ©daient assez d'argent pour acheter leur ascension vers les classes supÃ©rieures. 
 
-La Classe moyenne - Principalement des commerçants et assimilés. Ils étaient capables d'acheter certains produits de luxe des D'ni, mais étaient bien loin de la considération de l'élite. Il était bien rare qu'ils possèdent des Livres ou des Âges personnels. Il semblerait que la plupart des recrues des Guildes mineures provenaient de cette classe.  
+La Classe moyenne - Principalement des commerÃ§ants et assimilÃ©s. Ils Ã©taient capables d'acheter certains produits de luxe des D'ni, mais Ã©taient bien loin de la considÃ©ration de l'Ã©lite. Il Ã©tait bien rare qu'ils possÃ¨dent des Livres ou des Ã‚ges personnels. Il semblerait que la plupart des recrues des Guildes mineures provenaient de cette classe.  
 
-Le Haut prolétariat - Il s'agissait du plus élevé des prolétariats, principalement constitué d'ouvriers ayant passé la majeure partie de leur vie dans des Âges étrangers (avant que ce soit interdit, bien entendu). Il semblerait que les membres de cette classe, comme ceux des deux autres plus basses, ne possédaient pas leurs propres Livres. 
+Le Haut prolÃ©tariat - Il s'agissait du plus Ã©levÃ© des prolÃ©tariats, principalement constituÃ© d'ouvriers ayant passÃ© la majeure partie de leur vie dans des Ã‚ges Ã©trangers (avant que ce soit interdit, bien entendu). Il semblerait que les membres de cette classe, comme ceux des deux autres plus basses, ne possÃ©daient pas leurs propres Livres. 
 
-Le Prolétariat - Peut-être vaudrait-il mieux les appeler simplement les pauvres ? Mais il existait en fait clairement deux classes de pauvres. Ce prolétariat fut relégué dans ses quartiers. Il était rarement représenté dans la classe moyenne et encore moins dans les classes supérieures. Ils auront peut-être été exploités comme servants, bien que cette pratique ne soit pas très bien perçue. 
+Le ProlÃ©tariat - Peut-Ãªtre vaudrait-il mieux les appeler simplement les pauvresÂ ? Mais il existait en fait clairement deux classes de pauvres. Ce prolÃ©tariat fut relÃ©guÃ© dans ses quartiers. Il Ã©tait rarement reprÃ©sentÃ© dans la classe moyenne et encore moins dans les classes supÃ©rieures. Ils auront peut-Ãªtre Ã©tÃ© exploitÃ©s comme servants, bien que cette pratique ne soit pas trÃ¨s bien perÃ§ue. 
 
-Le Sous-prolétariat ?   - On trouve parfois, mais rarement, des références aux « Moindres » (une sous-classe non définie ?). Je manque de données pour éclaircir ce point.
+Le Sous-prolÃ©tariatÂ ?   - On trouve parfois, mais rarement, des rÃ©fÃ©rences aux Â«Â MoindresÂ Â» (une sous-classe non dÃ©finieÂ ?). Je manque de donnÃ©es pour Ã©claircir ce point.
 """

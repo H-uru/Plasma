@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -28,13 +29,13 @@ This module contains all the strings that need to localized for the Nexus
 """
 
 xCategoryLabel01 = U"Emplacements ville"
-xCategoryLabel02 = U"Liaisons privées"
+xCategoryLabel02 = U"Liaisons privÃ©es"
 xCategoryLabel03 = U"Liaisons publiques"
 xCategoryLabel04 = U"Liaisons perso."
 xCategoryLabel05 = U"Cavernes"
 
-xLinkDeleteConfirm = U"Êtes-vous sûr(e) de vouloir supprimer cette liaison vers %s ?"
-xHoodCreateConfirm = U"Êtes-vous sûr(e) de vouloir créer un nouveau quartier ? Cliquez sur Oui pour transférer votre inscription en cours."
+xLinkDeleteConfirm = U"ÃŠtes-vous sÃ»r(e) de vouloir supprimer cette liaison vers %sÂ ?"
+xHoodCreateConfirm = U"ÃŠtes-vous sÃ»r(e) de vouloir crÃ©er un nouveau quartierÂ ? Cliquez sur Oui pour transfÃ©rer votre inscription en cours."
 
 xCityNames = [ U"Caverne 1", U"Caverne 2", U"Caverne 3", U"Caverne 4", U"Caverne 5" ]
 xUsingCityInstance = U"Utilisant une liaison vers %s"
@@ -42,7 +43,7 @@ xUsingCityInstance = U"Utilisant une liaison vers %s"
 xNameHeader = U"Nom"
 xPopulationHeader = U"Population"
 xCityPopulation = U"Population actuelle : %d Population maximum : %d"
-xCityFull = U"Ae'gura est actuellement saturée. Réessayez plus tard."
+xCityFull = U"Ae'gura est actuellement saturÃ©e. RÃ©essayez plus tard."
 
-xHoodPrivate = U"Rendre privé"
+xHoodPrivate = U"Rendre privÃ©"
 xHoodPublic = U"Rendre public"

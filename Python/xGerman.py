@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -43,7 +44,7 @@ xFolderIDToFolderName = {    PtVaultStandardNodes.kUserDefinedNode:"Benutzerdefi
                             PtVaultStandardNodes.kAgeJournalsFolder:"Ordner der Welten-Journale",\
                             PtVaultStandardNodes.kCanVisitFolder:"Besucher",\
                             PtVaultStandardNodes.kAgeOwnersFolder:"Besitzer",\
-                            PtVaultStandardNodes.kPublicAgesFolder:"÷ffentliche Nachbarschaften",\
+                            PtVaultStandardNodes.kPublicAgesFolder:"√ñffentliche Nachbarschaften",\
                             PtVaultStandardNodes.kAgesIOwnFolder:"Meine Welten",\
                             PtVaultStandardNodes.kAgesICanVisitFolder:"Welten, die ich besuchen kann",\
                             PtVaultStandardNodes.kAvatarClosetFolder:"Avatar-Schrank",\
@@ -56,7 +57,7 @@ xMemberOfNeighborhood = "Mitglied"
 
 #--- neighborhood status strings
 xNeighborhoodPrivate = "Privat"
-xNeighborhoodPublic = "÷ffentlich"
+xNeighborhoodPublic = "√ñffentlich"
 
 #--- date and time display Formats (as described by time.strftime python standard module)
 xDateTimeFormat = "%d/%m/%y  %H:%M"
@@ -69,15 +70,15 @@ xImagerMessage = "Von: %s\nBetreff: %s\n\n%s"
 xHoodWelcome = "Willkommen in %s - Weitere Infos erhalten Sie im Klassenraum"
 
 # --- Bookshelf deletion messages
-xDeleteNeighborhoodBook = "Wollen Sie das Buch wirklich lˆschen? Dabei geht Ihr Mitgliedschaft in dieser Gemeinde verloren."
-xDeleteBook = "Wollen Sie das Buch wirklich lˆschen? Dabei geht Ihr Fortschritt in dieser Welt verloren."
+xDeleteNeighborhoodBook = "Wollen Sie das Buch wirklich l√∂schen? Dabei geht Ihr Mitgliedschaft in dieser Gemeinde verloren."
+xDeleteBook = "Wollen Sie das Buch wirklich l√∂schen? Dabei geht Ihr Fortschritt in dieser Welt verloren."
 
 # --- Age name localization stuff
 xNeighborhood = "Gemeinde"
 xTranslatedAgeNames = {
     # City link-in points
-    "Ferry Terminal": "F‰hren-Terminal",
-    "Tokotah Alley": "Tokotah-Straﬂe",
+    "Ferry Terminal": "F√§hren-Terminal",
+    "Tokotah Alley": "Tokotah-Stra√üe",
     "Palace Alcove": "Palast-Alkove",
     "Library Courtyard": "Bibliothekshof",
     "Concert Hall Foyer": "Konzerthallen-Foyer",
@@ -91,7 +92,7 @@ xTranslatedAgeNames = {
     "Relto": "Relto",
     "Teledahn": "Teledahn",
     # Great Zero link-in points
-    "Great Zero Observation": "Groﬂen Nullpunkt Beobachtung",
+    "Great Zero Observation": "Gro√üen Nullpunkt Beobachtung",
     "Great Zero": "Great Zero",
 }
 xPossesive = "de"

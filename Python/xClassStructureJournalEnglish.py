@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -35,7 +36,7 @@ Quite a few obvious attempts to reach out and unify the classes although I'm not
 
 Guild Members - Yes it was possible for the lower classes to attend but it seems by the end the schools were far too expensive and prestigious to allow for such. As a result, the graduates became a class among themselves. And a very high one at that. 
 
-Upper Class - The lowest of the three higher classes. Such citizens had succeeded in private enterprise and most likely provide the elite with their banks, pubs, etc…No Major Guild education for the most part, but enough money to buy their way into the upper classes. 
+Upper Class - The lowest of the three higher classes. Such citizens had succeeded in private enterprise and most likely provide the elite with their banks, pubs, etcâ€¦No Major Guild education for the most part, but enough money to buy their way into the upper classes. 
 
 Middle Class - Mostly shop-owners and the like. Able to afford some luxuries of D'ni but still considered far from the Elite. Rare but possible for them to own Books as well as Private Ages. Seemed to make up most of the Minor Guild enrollment.  
 

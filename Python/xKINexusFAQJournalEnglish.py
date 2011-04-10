@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -41,57 +42,57 @@ The DRC
 
 THE KI
 
-Clicking on the Book icon in the center of the Big KI will create a Journal entry just like pressing <F6> will, and pressing on the white circle above that (It's supposed to be an eye, continuing the theme of the Guild of Maintainers; you see their seal here and there if you watch for them) you can take a picture, just like if you pressed <F5>. To delete a Journal Entry, a Picture, or even a Buddy from your list, click on the D'ni zero ìî on the far right side of the screen.
+Clicking on the Book icon in the center of the Big KI will create a Journal entry just like pressing <F6> will, and pressing on the white circle above that (It's supposed to be an eye, continuing the theme of the Guild of Maintainers; you see their seal here and there if you watch for them) you can take a picture, just like if you pressed <F5>. To delete a Journal Entry, a Picture, or even a Buddy from your list, click on the D'ni zero ‚Äú‚Äù on the far right side of the screen.
 
-On the right hand side, you will see some circular shapes. These are toggles, and in order of top to bottom, will allow you to: Show/Stop showing the Main KI Window, Mute the sound, and Switch between broadcasting text chats and private chatting. At the very bottom, thereís a small white circle, clicking that will shut the Big KI down. On the left is a glowing circle, of sorts; this represents the calibration function. This is not yet implemented, but it does serve two uses: one, this is what the markers will look like when you set up a Marker game, and two, there is a line that slides from above to the center of the glowing circle. This line will give you an indication of how well the servers are transmitting the game information to you. If the line isn't moving, neither are you. 
+On the right hand side, you will see some circular shapes. These are toggles, and in order of top to bottom, will allow you to: Show/Stop showing the Main KI Window, Mute the sound, and Switch between broadcasting text chats and private chatting. At the very bottom, there‚Äôs a small white circle, clicking that will shut the Big KI down. On the left is a glowing circle, of sorts; this represents the calibration function. This is not yet implemented, but it does serve two uses: one, this is what the markers will look like when you set up a Marker game, and two, there is a line that slides from above to the center of the glowing circle. This line will give you an indication of how well the servers are transmitting the game information to you. If the line isn't moving, neither are you. 
 
 
 How do I invite someone to one of my ages?
 
-This is a tricky process, but it can also be managed in a number of different ways. One way is to share your Relto Book (You do this by opening your book, clicking on the page that reads, ìshare this bookî, and then using the book cursor to click on the person you want to share with. If you miss the first time, keep trying, but clicking repeatedly in rapid succession won't help.). Once your friend is in your Relto, you can then go to your bookshelf and flip the metal tab on the book you wish to share (see illustration). Once that's done, your friend may then use the book as usual, and they will link to your Age. (You can leave the tab flipped up before you invite your friend over, too.)
+This is a tricky process, but it can also be managed in a number of different ways. One way is to share your Relto Book (You do this by opening your book, clicking on the page that reads, ‚Äúshare this book‚Äù, and then using the book cursor to click on the person you want to share with. If you miss the first time, keep trying, but clicking repeatedly in rapid succession won't help.). Once your friend is in your Relto, you can then go to your bookshelf and flip the metal tab on the book you wish to share (see illustration). Once that's done, your friend may then use the book as usual, and they will link to your Age. (You can leave the tab flipped up before you invite your friend over, too.)
 
-Another way to do this is to open up your KI, and select the middle icon. (This is ìPlayer Viewî.) Locate the name of the player you wish to add and click on it. You can click on the lists to the left of the screen, or click on the category lists down the middle (under the icons) until you see the name you want on the right. When you find the name you want click on it once. The name you selected should appear in the box above the icons. Also, small triangles pointing to certain categories should have appeared. Scroll down that center list until you find the name of the Age you want to invite your friend to, and click on the triangle beside it. When the triangle vanishes, that means your friend should have received the invitation.
+Another way to do this is to open up your KI, and select the middle icon. (This is ‚ÄúPlayer View‚Äù.) Locate the name of the player you wish to add and click on it. You can click on the lists to the left of the screen, or click on the category lists down the middle (under the icons) until you see the name you want on the right. When you find the name you want click on it once. The name you selected should appear in the box above the icons. Also, small triangles pointing to certain categories should have appeared. Scroll down that center list until you find the name of the Age you want to invite your friend to, and click on the triangle beside it. When the triangle vanishes, that means your friend should have received the invitation.
 
 
 How do I add a person to my buddy list?
 
 Open up the main KI screen.
 
-Select the middle icon. (This is ìPlayer Viewî.)
+Select the middle icon. (This is ‚ÄúPlayer View‚Äù.)
 
 Locate the name of the player you wish to add and click on it. You can click on the lists to the left of the screen, or click on the category lists down the middle (under the icons) until you see the name you want on the right. When you find the name you want click on it once.
 
 The name you selected should appear in the box above the icons. Also, small triangles pointing to certain categories should have appeared.
 
-Click the triangle pointing to the category ìBuddiesî.
+Click the triangle pointing to the category ‚ÄúBuddies‚Äù.
 
-The name you selected should appear in the list on the far left, under ìBuddiesî.
+The name you selected should appear in the list on the far left, under ‚ÄúBuddies‚Äù.
 
-óORó
+‚ÄîOR‚Äî
 
 Select the category "Buddies"
 
-Select ì<add buddy by ID>î
+Select ‚Äú<add buddy by ID>‚Äù
 
 Type in the KI number given to you by your friend.
 
-Once you hit return, they should appear in the list on the far left, under ìBuddiesî.
+Once you hit return, they should appear in the list on the far left, under ‚ÄúBuddies‚Äù.
 
 
 How do I join a neighborhood?
 
-You need to have a friend invite you through their Relto. This is the only way to join a neighborhood, but not the only way to visit one. See above, ìHow do I invite someone to one of my ages?î A friend brought into the game using /invite will be part of your neighborhood, as well. See ìInvitation Commandsî.
+You need to have a friend invite you through their Relto. This is the only way to join a neighborhood, but not the only way to visit one. See above, ‚ÄúHow do I invite someone to one of my ages?‚Äù A friend brought into the game using /invite will be part of your neighborhood, as well. See ‚ÄúInvitation Commands‚Äù.
 
 
 What is a marker?
 
 A marker is a function of the KI that has multiple uses. They resemble floating; glowing spheres, and can be used in games similar to Easter Egg Hunts (Capture), Capture The Flag (Hold), or a Paper Chase (Quest) (A leads to B, B leads to C, etc.).
 
-To create a Marker Game, you must first have your KI calibrated. (Details to follow.) Once this is done, either type in ì/createmarkerfolderî without the quotes, or press <F8>. The Main KI window should open, showing you the Marker creation dialog. Click ìEdit Gameî. Choose the Type of game you wish to set up. If you select Hold or Capture, you will be asked to set a time limit. Without hitting ìDone Editingî, close your KI window. (Press <F2> or click the round thingy on the top right hand side.) Move around the Age to the places you want to place a marker. Place a marker by pressing <F7>. You can place one anywhere you can get to. When you have placed all the markers you're going to, open you KI main window again. Click on the Marker List. You will see all the markers you've placed. From here you can change the name of a given marker, or delete it completely. When you are satisfied, click ìDone Editingî and then ìPlay Gameî.
+To create a Marker Game, you must first have your KI calibrated. (Details to follow.) Once this is done, either type in ‚Äú/createmarkerfolder‚Äù without the quotes, or press <F8>. The Main KI window should open, showing you the Marker creation dialog. Click ‚ÄúEdit Game‚Äù. Choose the Type of game you wish to set up. If you select Hold or Capture, you will be asked to set a time limit. Without hitting ‚ÄúDone Editing‚Äù, close your KI window. (Press <F2> or click the round thingy on the top right hand side.) Move around the Age to the places you want to place a marker. Place a marker by pressing <F7>. You can place one anywhere you can get to. When you have placed all the markers you're going to, open you KI main window again. Click on the Marker List. You will see all the markers you've placed. From here you can change the name of a given marker, or delete it completely. When you are satisfied, click ‚ÄúDone Editing‚Äù and then ‚ÄúPlay Game‚Äù.
 
 If you've chosen a Capture or Hold game, you can now begin inviting others. You can invite everyone from the current Age, or individuals one at a time. When they join, they will be split up into teams automatically and be shown on all participants' KI's.
 
-If you've chosen a Quest, clicking ìPlay Gameî will start you on your way. A display will show you the Markers you've found and the ones you've yet to find.
+If you've chosen a Quest, clicking ‚ÄúPlay Game‚Äù will start you on your way. A display will show you the Markers you've found and the ones you've yet to find.
 
 
 How many pictures does the KI store?
@@ -113,9 +114,9 @@ How do I make a journal entry?
 
 Activate your KI so that it rests in the Top left corner of the screen. (The manual refers to this as the Mini KI.) In the very center, you will see an open book icon. Click that. The Journal dialog will start immediately.
 
-óORó Press <F6>.
+‚ÄîOR‚Äî Press <F6>.
 
-The Journal function can be very useful for keeping notes of your travels through D'ni, and it can be used as a kind of mail system, referred to by some as ìKI-mailî. (It's a pun, you see... ìKIî-mail...? Get it? ìKIî-mail? Oh, never mind. I guess you had to be there. ). Simply create your Journal entry and then transfer it using the method described below.
+The Journal function can be very useful for keeping notes of your travels through D'ni, and it can be used as a kind of mail system, referred to by some as ‚ÄúKI-mail‚Äù. (It's a pun, you see... ‚ÄúKI‚Äù-mail...? Get it? ‚ÄúKI‚Äù-mail? Oh, never mind. I guess you had to be there. ). Simply create your Journal entry and then transfer it using the method described below.
 
 
 How do I take a picture?
@@ -124,7 +125,7 @@ First orient yourself to wherever it is you want to take a picture of. If you do
 
 Activate your KI so that it rests in the Top left corner of the screen. (The manual refers to this as the Mini KI.) Just above the open book icon, you will see a picture of an eye. Click that. You should then be presented with the Main KI screen and the image you wanted. From here, you can move the picture to another Category, or send a copy to a friend.
 
-óORó Press <F5>.
+‚ÄîOR‚Äî Press <F5>.
 
 
 How do I transfer an item?

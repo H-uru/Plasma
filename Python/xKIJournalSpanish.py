@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,25 +28,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKIJournalCover*1#0.hsm"><font size=10 face=courier color=000000><margin left=62 right=62 top=62 bottom=48><p align=center>El KI
 
-<p align=left>Funciones B·sicas - El 3 D'ni de la parte posterior de todos estos dispositivos... ø3 funciones?  Sin duda significa algo m·s que eso.  ø3 funciones principales?  En cualquier caso, es un nombre adecuado: KI.
+<p align=left>Funciones B√°sicas - El 3 D'ni de la parte posterior de todos estos dispositivos... ¬ø3 funciones?  Sin duda significa algo m√°s que eso.  ¬ø3 funciones principales?  En cualquier caso, es un nombre adecuado: KI.
 
-1. Interfaz del Nexo - El Nexo parece ser un simple intÈrprete de la informaciÛn del KI. El KI permite al usuario proporcionar o rechazar el acceso al Libro a los otros KIs. Creo que podemos hacer que esto tambiÈn funcione con los sectores.  Los nombres de las Eras definidas en el KI aparecen en el Nexo. O deberÌa... 
+1. Interfaz del Nexo - El Nexo parece ser un simple int√©rprete de la informaci√≥n del KI. El KI permite al usuario proporcionar o rechazar el acceso al Libro a los otros KIs. Creo que podemos hacer que esto tambi√©n funcione con los sectores.  Los nombres de las Eras definidas en el KI aparecen en el Nexo. O deber√≠a... 
 
-2. ComunicaciÛn Interpersonal - Obviamente es la funciÛn m·s importante: comunicaciÛn de texto o voz con otros usuarios de KIs. Si es Entre-Era o Intra-Era parece carecer de importancia. 
+2. Comunicaci√≥n Interpersonal - Obviamente es la funci√≥n m√°s importante: comunicaci√≥n de texto o voz con otros usuarios de KIs. Si es Entre-Era o Intra-Era parece carecer de importancia. 
 
-3. Captura de im·genes, Almacenamiento y Transferencia - Una simple pulsaciÛn de botÛn captura una imagen y la guarda dentro del directorio de la Era apropiada. Las im·genes tambiÈn se pueden enviar a otros KIs y cargarlas en ciertos dispositivos de im·genes (dependiendo de las versiones). Parece que los principales servidores coordinan esta funciÛn - puede que sea difÌcil reactivarla. 
+3. Captura de im√°genes, Almacenamiento y Transferencia - Una simple pulsaci√≥n de bot√≥n captura una imagen y la guarda dentro del directorio de la Era apropiada. Las im√°genes tambi√©n se pueden enviar a otros KIs y cargarlas en ciertos dispositivos de im√°genes (dependiendo de las versiones). Parece que los principales servidores coordinan esta funci√≥n - puede que sea dif√≠cil reactivarla. 
 
-4. Entradas en el Diario, Almacenamiento y Transferencia - Es bastante sencillo. Escribe notas y gu·rdalas. Una vez m·s el servidor se encargar· de la transferencia de diarios... KI-a-KI o KI-a-dispositvo de imagenes. 
+4. Entradas en el Diario, Almacenamiento y Transferencia - Es bastante sencillo. Escribe notas y gu√°rdalas. Una vez m√°s el servidor se encargar√° de la transferencia de diarios... KI-a-KI o KI-a-dispositvo de imagenes. 
 
-5. Marcadores - la habilidad del operador para soltar y recoger marcadores en el lugar actual de una Era. AquÌ los niveles de funcionalidad requieren m·s investigaciÛn.  Quiz·s esta caracterÌstica pueda ser de ayuda con los problemas del GC... interesante.
+5. Marcadores - la habilidad del operador para soltar y recoger marcadores en el lugar actual de una Era. Aqu√≠ los niveles de funcionalidad requieren m√°s investigaci√≥n.  Quiz√°s esta caracter√≠stica pueda ser de ayuda con los problemas del GC... interesante.
 
-6. Puertas - En esta Era, el KI (incluso en su nivel m·s b·sico) permitir· acceder a puertas abiertas en el Nivel 1. Los Niveles 2 y 3 requieren versiones superiores. 
+6. Puertas - En esta Era, el KI (incluso en su nivel m√°s b√°sico) permitir√° acceder a puertas abiertas en el Nivel 1. Los Niveles 2 y 3 requieren versiones superiores. 
 
 
 
-Hay una gran variedad de estos dispositivos, m·s de los que inicialmente imaginamos. El "dispensador" es capaz de distribuir al menos cinco o m·s versiones. El conjunto de las caracterÌsticas es variado. Tiene que haber habido un sistema para controlar y localizar estos dispositivos... øpero dÛnde?
+Hay una gran variedad de estos dispositivos, m√°s de los que inicialmente imaginamos. El "dispensador" es capaz de distribuir al menos cinco o m√°s versiones. El conjunto de las caracter√≠sticas es variado. Tiene que haber habido un sistema para controlar y localizar estos dispositivos... ¬øpero d√≥nde?
 
-El dispositivo de im·genes incorporado en la unidad es sorprendentemente compacto y eficaz. Utiliza el mismo maldito sistema de compresiÛn de "estructuras", no encuentro una palabra mejor... tendrÈ que descodificarlo. Para ser algo que cabe en una mano, es un proyector muy potente. 
+El dispositivo de im√°genes incorporado en la unidad es sorprendentemente compacto y eficaz. Utiliza el mismo maldito sistema de compresi√≥n de "estructuras", no encuentro una palabra mejor... tendr√© que descodificarlo. Para ser algo que cabe en una mano, es un proyector muy potente. 
 
 
 
@@ -53,15 +54,15 @@ Marcadores
 
 Funciones: Puede que sea una herramienta de entrenamiento para los Reparadores. Los marcadores pueden colocarse y recogerse y/o limitarse a echar un vistazo por el "camino".
 
-Interfaz: El KI interact˙a de 3 maneras con los marcadores.
+Interfaz: El KI interact√∫a de 3 maneras con los marcadores.
 
-"Captura en equipo" - una vez que se han colocado todos los marcadores, hay dos equipos que podr·n recoger marcadores. El KI anotar· el marcador al equipo correspondiente. Los marcadores desaparecer·n despuÈs de un cierto tiempo o despuÈs de que todos ellos hayan sido registrados. Los Marcadores deber·n estar en la misma Era.  Prueba: øSe pueden reiniciar los marcadores?
+"Captura en equipo" - una vez que se han colocado todos los marcadores, hay dos equipos que podr√°n recoger marcadores. El KI anotar√° el marcador al equipo correspondiente. Los marcadores desaparecer√°n despu√©s de un cierto tiempo o despu√©s de que todos ellos hayan sido registrados. Los Marcadores deber√°n estar en la misma Era.  Prueba: ¬øSe pueden reiniciar los marcadores?
 
-"PosesiÛn" - de nuevo dos equipos. Los marcadores sÛlo desaparecer·n una vez que el lÌmite de tiempo preestablecido se haya cumplido. Los Marcadores no desaparecen al ser activados, aunque el servidor guarda un registro del equipo que los "posee". Al finalizar el lÌmite de tiempo, el Servidor hace un resumen del equipo que posea m·s marcadores. Los marcadores deber·n estar en la misma Era.
+"Posesi√≥n" - de nuevo dos equipos. Los marcadores s√≥lo desaparecer√°n una vez que el l√≠mite de tiempo preestablecido se haya cumplido. Los Marcadores no desaparecen al ser activados, aunque el servidor guarda un registro del equipo que los "posee". Al finalizar el l√≠mite de tiempo, el Servidor hace un resumen del equipo que posea m√°s marcadores. Los marcadores deber√°n estar en la misma Era.
 
-"Captura individual" - solamente hay un solo KI que puede registrar marcadores. Los marcadores tambiÈn pueden llevar texto. Se podr· enviar un lote completo de marcadores desde un KI a otro KI a cualquier otra parte del sistema. Los marcadores se podr·n colocar en cualquier Era.   
+"Captura individual" - solamente hay un solo KI que puede registrar marcadores. Los marcadores tambi√©n pueden llevar texto. Se podr√° enviar un lote completo de marcadores desde un KI a otro KI a cualquier otra parte del sistema. Los marcadores se podr√°n colocar en cualquier Era.   
 
-Los marcadores en sÌ son idÈnticos a los producidos por el Gran Cero. De hecho, tengo la certeza de que se ha utilizado la misma tecnologÌa, por no decir la del mismo Gran Cero. Es posible que los KIs se estÈn comunicando con el mismo Cero y estÈn escribiendo estas marcas en cualquier parte donde quiera que estÈn registradas. Problemas con esa teorÌa... marcadores de reparaciÛn, etc...
+Los marcadores en s√≠ son id√©nticos a los producidos por el Gran Cero. De hecho, tengo la certeza de que se ha utilizado la misma tecnolog√≠a, por no decir la del mismo Gran Cero. Es posible que los KIs se est√©n comunicando con el mismo Cero y est√©n escribiendo estas marcas en cualquier parte donde quiera que est√©n registradas. Problemas con esa teor√≠a... marcadores de reparaci√≥n, etc...
 
 
 
@@ -69,9 +70,9 @@ Registro de KI
 
 Seguimientos del KI sobre otros KIs en 3 niveles:
 
-Entre-Era: Cualquier otro KI dentro de la Era est· registrado y aparecer· visible. 
+Entre-Era: Cualquier otro KI dentro de la Era est√° registrado y aparecer√° visible. 
 
-KI-a-KI: Se podr· registrar cualquier KI individual para hacer seguimientos especÌficos. Como consecuencia, no importa dÛnde estÈ ese KI, en diarios, en fotos, etc. se podr· enviar y la comunicaciÛn podr· establecerse. Puede que esto se utilizara en misiones de equipo temporales o semipermanentes.  Para nuestros objetivos - una 'ølista de amigos?'
+KI-a-KI: Se podr√° registrar cualquier KI individual para hacer seguimientos espec√≠ficos. Como consecuencia, no importa d√≥nde est√© ese KI, en diarios, en fotos, etc. se podr√° enviar y la comunicaci√≥n podr√° establecerse. Puede que esto se utilizara en misiones de equipo temporales o semipermanentes.  Para nuestros objetivos - una '¬ølista de amigos?'
 
-Grupos: El KI tambiÈn reconocer· a los grupos que de alguna manera estÈn relacionados con el Nexo. Si est· debidamente configurado parece posible que esta funciÛn soporte las listas de los Sectores. 
+Grupos: El KI tambi√©n reconocer√° a los grupos que de alguna manera est√©n relacionados con el Nexo. Si est√° debidamente configurado parece posible que esta funci√≥n soporte las listas de los Sectores. 
 """

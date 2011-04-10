@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -33,9 +34,9 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=26>Teledahn
 
-<font size=22>La vérité d'un homme se trouve dans l'obscurité, sous la surface. La lumière risque de ne révéler que ce que les hommes veulent que l'on voit.
+<font size=22>La vÃ©ritÃ© d'un homme se trouve dans l'obscuritÃ©, sous la surface. La lumiÃ¨re risque de ne rÃ©vÃ©ler que ce que les hommes veulent que l'on voit.
 
-<font size=18>Regeltavok Oorpah - Livre 9, Entrée 221, Ligne 29
+<font size=18>Regeltavok Oorpah - Livre 9, EntrÃ©e 221, Ligne 29
 
 
 
@@ -49,9 +50,9 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=26>Gahreesen
 
-<font size=22>Les lois créées par les fiers sont leur sécurité et causera leur perte. De telles lois transforment la désobéissance en vertu et l'obéissance en péché.
+<font size=22>Les lois crÃ©Ã©es par les fiers sont leur sÃ©curitÃ© et causera leur perte. De telles lois transforment la dÃ©sobÃ©issance en vertu et l'obÃ©issance en pÃ©chÃ©.
 
-<font size=18>Regeltavok Oorpah - Livre 12, Entrée 32, Ligne 134
+<font size=18>Regeltavok Oorpah - Livre 12, EntrÃ©e 32, Ligne 134
 
 
 
@@ -67,9 +68,9 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=26>Kadish Tolesa
 
-<font size=22>L'homme révèle sa véritable nature quand il est caché. Un coup d'oeil superficiel peut tromper. Regardez attentivement, méditez et reconnaissez ce qui est caché.
+<font size=22>L'homme rÃ©vÃ¨le sa vÃ©ritable nature quand il est cachÃ©. Un coup d'oeil superficiel peut tromper. Regardez attentivement, mÃ©ditez et reconnaissez ce qui est cachÃ©.
 
-<font size=18>Regeltavok Oorpah - Livre 9, Entrée 221, Ligne 77
+<font size=18>Regeltavok Oorpah - Livre 9, EntrÃ©e 221, Ligne 77
 
 
 
@@ -83,9 +84,9 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=26>Eder Kemo et Eder Gira
 
-<font size=22>Lorsqu'on prend tout à quelqu'un, le seul espoir qui lui reste est ce qu'un autre peut lui donner. Grâce à cette offrande, les deux sont rachetés.
+<font size=22>Lorsqu'on prend tout Ã  quelqu'un, le seul espoir qui lui reste est ce qu'un autre peut lui donner. GrÃ¢ce Ã  cette offrande, les deux sont rachetÃ©s.
 
-<font size=18>Regeltavok Oorpah - Livre 2, Entrée 1 071, Ligne 54
+<font size=18>Regeltavok Oorpah - Livre 2, EntrÃ©e 1Â 071, Ligne 54
 
 
 <img src="xDniEIGHT*1#0.hsm" align=center blend=alpha resize=no>

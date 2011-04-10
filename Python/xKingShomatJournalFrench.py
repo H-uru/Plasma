@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,21 +28,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingShomatJournalCover*1#0.hsm"><font size=16 face=Nick color=000000><margin right=62 left=62 top=46>Le Roi Shomat
 
-<p align=left>Shomat monta sur le trône en 300 ED (de l'Ère D'ni) à l'âge de 44 ans. Avant son couronnement, il était membre de la Guilde des Écrivains. Il continua à étudier son art grâce à des mentors privés pendant de longues années. On raconte que les idées dénaturées que Shomat afficha plus tard étaient probablement dues au manque d'éducation dans une Guilde. 
+<p align=left>Shomat monta sur le trÃ´ne en 300 ED (de l'Ãˆre D'ni) Ã  l'Ã¢ge de 44 ans. Avant son couronnement, il Ã©tait membre de la Guilde des Ã‰crivains. Il continua Ã  Ã©tudier son art grÃ¢ce Ã  des mentors privÃ©s pendant de longues annÃ©es. On raconte que les idÃ©es dÃ©naturÃ©es que Shomat afficha plus tard Ã©taient probablement dues au manque d'Ã©ducation dans une Guilde. 
 
-Son règne fut un règne en dents de scie, en partie à cause de l'énorme tension qui existait entre Shomat et ses frères plus âgés. Les deux frères, malgré un certain respect, firent tout ce qui était en leur pouvoir pour perturber le règne de Shomat.  
+Son rÃ¨gne fut un rÃ¨gne en dents de scie, en partie Ã  cause de l'Ã©norme tension qui existait entre Shomat et ses frÃ¨res plus Ã¢gÃ©s. Les deux frÃ¨res, malgrÃ© un certain respect, firent tout ce qui Ã©tait en leur pouvoir pour perturber le rÃ¨gne de Shomat.  
 
-L'une des premières choses que Shomat ordonna fut la construction d'un palais. Lorsqu'il fut terminé en 347 ED, Shomat s'y installa avec sa famille, mais ses frères refusèrent de le suivre et gardèrent leurs maisons. Un tel acte fut considéré comme extrêmement irrespectueux envers la famille et l'écart entre Shomat et ses frères se creusa encore un peu plus. 
+L'une des premiÃ¨res choses que Shomat ordonna fut la construction d'un palais. Lorsqu'il fut terminÃ© en 347 ED, Shomat s'y installa avec sa famille, mais ses frÃ¨res refusÃ¨rent de le suivre et gardÃ¨rent leurs maisons. Un tel acte fut considÃ©rÃ© comme extrÃªmement irrespectueux envers la famille et l'Ã©cart entre Shomat et ses frÃ¨res se creusa encore un peu plus. 
 
-Il y eut aussi des tensions dans la famille de Shomat mais aussi dans la culture à propos du luxe obscène du palais. Des jardins richement ornés se trouvaient sur le terrain « physique » et des Âges « jardins » furent également écrits avec des liaisons directes depuis le palais. La rumeur prétendait que ces Âges « jardins » avaient été débarrassés de leurs habitants pour permettre à Shomat de s'y détendre. Que ce soit vrai ou pas, Shomat déclara souvent publiquement que les D'ni avaient besoin d'Âges qui les serviraient. C'était une première pour la société. Et ces déclarations étaient en totale contradiction avec les enseignements des Guildes : les D'ni étaient censés « servir » les Âges.  
+Il y eut aussi des tensions dans la famille de Shomat mais aussi dans la culture Ã  propos du luxe obscÃ¨ne du palais. Des jardins richement ornÃ©s se trouvaient sur le terrain Â«Â physiqueÂ Â» et des Ã‚ges Â«Â jardinsÂ Â» furent Ã©galement Ã©crits avec des liaisons directes depuis le palais. La rumeur prÃ©tendait que ces Ã‚ges Â«Â jardinsÂ Â» avaient Ã©tÃ© dÃ©barrassÃ©s de leurs habitants pour permettre Ã  Shomat de s'y dÃ©tendre. Que ce soit vrai ou pas, Shomat dÃ©clara souvent publiquement que les D'ni avaient besoin d'Ã‚ges qui les serviraient. C'Ã©tait une premiÃ¨re pour la sociÃ©tÃ©. Et ces dÃ©clarations Ã©taient en totale contradiction avec les enseignements des GuildesÂ : les D'ni Ã©taient censÃ©s Â«Â servirÂ Â» les Ã‚ges.  
 
-Apparemment, les tensions devinrent trop intenses. Certains racontent qu'elles rendirent Shomat fou. En 387 ED, ses deux frères disparurent et ne furent jamais retrouvés. On raconte souvent que Shomat aurait écrit un Âge de Mort et qu'il y aurait envoyé ses deux frères, mais ce ne fut jamais prouvé. 
+Apparemment, les tensions devinrent trop intenses. Certains racontent qu'elles rendirent Shomat fou. En 387 ED, ses deux frÃ¨res disparurent et ne furent jamais retrouvÃ©s. On raconte souvent que Shomat aurait Ã©crit un Ã‚ge de Mort et qu'il y aurait envoyÃ© ses deux frÃ¨res, mais ce ne fut jamais prouvÃ©. 
 
-Quoi qu'il en soit, ce fut l'une des premières crises pour le peuple de D'ni et il ne tarda pas à réagir. On assigna une prophétesse* à Shomat en 400 ED afin de le guider sur la voie de Yahvo*. Pendant les 155 années suivantes de son règne, il semble que le peuple considéra Shomat comme un meilleur Roi. La prophétesse fut d'un excellent conseil pour Shomat et finit par le convaincre de choisir le fils de l'un de ses amis proches comme héritier de la couronne. Ses propres enfants étaient apparemment « incontrôlables ». On découvrit plus tard que c'était la lignée de cet enfant qui conduisit finalement à la naissance du Grand Roi.
+Quoi qu'il en soit, ce fut l'une des premiÃ¨res crises pour le peuple de D'ni et il ne tarda pas Ã  rÃ©agir. On assigna une prophÃ©tesse* Ã  Shomat en 400 ED afin de le guider sur la voie de Yahvo*. Pendant les 155 annÃ©es suivantes de son rÃ¨gne, il semble que le peuple considÃ©ra Shomat comme un meilleur Roi. La prophÃ©tesse fut d'un excellent conseil pour Shomat et finit par le convaincre de choisir le fils de l'un de ses amis proches comme hÃ©ritier de la couronne. Ses propres enfants Ã©taient apparemment Â«Â incontrÃ´lablesÂ Â». On dÃ©couvrit plus tard que c'Ã©tait la lignÃ©e de cet enfant qui conduisit finalement Ã  la naissance du Grand Roi.
 
-Shomat mourut de mort naturelle à l'âge de 299 ans.
+Shomat mourut de mort naturelle Ã  l'Ã¢ge de 299 ans.
 
 
-* Les femmes avaient la réputation de communiquer mieux avec Yahvo que les hommes. Du coup, la plupart des prophètes étaient des femmes
+* Les femmes avaient la rÃ©putation de communiquer mieux avec Yahvo que les hommes. Du coup, la plupart des prophÃ¨tes Ã©taient des femmes
 
-* Le choix des prophétesses pour guider les Rois commença avec Shomat et devint une tradition pour tous les autres Rois de D'ni. Le Roi choisissait généralement s'il préférait un prophète ou une prophétesse"""
+* Le choix des prophÃ©tesses pour guider les Rois commenÃ§a avec Shomat et devint une tradition pour tous les autres Rois de D'ni. Le Roi choisissait gÃ©nÃ©ralement s'il prÃ©fÃ©rait un prophÃ¨te ou une prophÃ©tesse"""

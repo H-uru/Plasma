@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -31,8 +32,8 @@ This module contains all the strings that need to localized for the Options Menu
 #---------
 # Startup Help text
 #xSUHWelcome = "Bienvenido a Uru"
-#xSUHSomeHelp = "Para Moverte - Los cursores\nPara Seleccionar - Pulsa el Ratón \n\nPara Correr - La tecla Mayús\nPara Saltar - La barra Espaciadora"
-#xSUHForMore = 'Para ver más opciones e información, pulsa en "?" de la esquina inferior derecha.'
+#xSUHSomeHelp = "Para Moverte - Los cursores\nPara Seleccionar - Pulsa el RatÃ³n \n\nPara Correr - La tecla MayÃºs\nPara Saltar - La barra Espaciadora"
+#xSUHForMore = 'Para ver mÃ¡s opciones e informaciÃ³n, pulsa en "?" de la esquina inferior derecha.'
 #xSUHOkBtnText = "Aceptar"
 xSUHHelpTitle = "Bienvenido a Uru"
 xSUHWalkText = "Andar"
@@ -47,7 +48,7 @@ xSUHMouseRunText = "Correr"
 xSUHSelectText = "Seleccionar"
 xSUHMousePanCam = "Mirar alrededor"
 xSUHMouseBackwards = "Retrocede"
-xSUHMousePresetsTitle = "Preajustes ratón"
+xSUHMousePresetsTitle = "Preajustes ratÃ³n"
 xSUHMouseNormalText = "Normal"
 xSUHMouseNoviceText = "Novato"
 xSUHOkButton = "Aceptar"
@@ -59,9 +60,9 @@ xOptionsKeyMapText = "Mapa Teclas"
 xOptionsSettingText = "Ajustes del Juego"
 xOptionsTrailerText = "Avance de URU Live"
 xOptionsHelpText = "Ayuda"
-xOptionsCreditsText = "Créditos de URU"
+xOptionsCreditsText = "CrÃ©ditos de URU"
 xOptionsQuitText = "Salir de URU"
-xOptionsCalibrationText = "Calibración"
+xOptionsCalibrationText = "CalibraciÃ³n"
 xOptionsResumeText = "Reanudar URU"
 xOptionsDefaultsText = "Predet."
 xOptionsGoBackText = "Volver"
@@ -69,9 +70,9 @@ xOptionsDemoTrailerText = "Avance de URU"
 
 #--------
 # In Game Help Dialog
-xIGHHeaderText = "Ayuda Rápida"
-xIGMHelpMessage = "Moverse - Los cursores (o el botón Izqdo. del Ratón)\nSaltar - La barra Espaciadora\nCorrer - Mayús\n\nActivar/Seleccionar - Pulsa el botón izqdo. del Ratón (cursor lleno)\nRetroceder - El cursor Abajo, Esc, o la tecla Retroceso \n\nCambiar Vista - F1\nMirar - Arrastrar pulsando el botón dcho. del Ratón\n\n\n(Consultar el manual para obtener más ayuda.)"
-xIGMCCRBtnText = "Contactar con el Servicio de Atención al Cliente >>"
+xIGHHeaderText = "Ayuda RÃ¡pida"
+xIGMHelpMessage = "Moverse - Los cursores (o el botÃ³n Izqdo. del RatÃ³n)\nSaltar - La barra Espaciadora\nCorrer - MayÃºs\n\nActivar/Seleccionar - Pulsa el botÃ³n izqdo. del RatÃ³n (cursor lleno)\nRetroceder - El cursor Abajo, Esc, o la tecla Retroceso \n\nCambiar Vista - F1\nMirar - Arrastrar pulsando el botÃ³n dcho. del RatÃ³n\n\n\n(Consultar el manual para obtener mÃ¡s ayuda.)"
+xIGMCCRBtnText = "Contactar con el Servicio de AtenciÃ³n al Cliente >>"
 
 #-----------
 # Key Map 1 Dialog
@@ -89,7 +90,7 @@ xKMNextText = "Siguiente >>"
 #-----------
 # Key Map 2 Dialog
 xKMReltoBook = "Libro de Relto"
-xKMOptionMenu = "Menú de Opciones"
+xKMOptionMenu = "MenÃº de Opciones"
 xKMToggleKI = "Alternar KI"
 xKMTakePicture = "tomar una foto"
 xKMCreateJournal = "Crear Diario"
@@ -104,7 +105,7 @@ xKMPrevText = "<< Anterior"
 xGSVolumeHeader = "Controles del volumen"
 xGSVolSoundFXText = "Efectos de sonido"
 xGSVolMuteText = "Sin sonido"
-xGSVolMusicText = "Música"
+xGSVolMusicText = "MÃºsica"
 xGSVolAmbientText = "Sonido ambiental"
 xGSVoiceHeader = "Voz del otro jugador"
 xGSMyVoiceHeader = "Mi voz"
@@ -118,17 +119,17 @@ xGSAdvancedBtnText = "Avanzado >>"
 # Advance Game settings dialog
 xAGSAdvanceHeader = "Ajustes avanzados"
 xAGSShadowQualityText = "Calidad de las sombras"
-xAGSQuickerCameraText = "Cámara más suave"
-xAGSMouseTurn = "Sensibilidad del Ratón"
-xAGSSoundPriority = "Número de sonidos"
+xAGSQuickerCameraText = "CÃ¡mara mÃ¡s suave"
+xAGSMouseTurn = "Sensibilidad del RatÃ³n"
+xAGSSoundPriority = "NÃºmero de sonidos"
 xAGSPreviousBtnText = "<< Anterior"
-xAGSMouseInvertText = "Invertir vista del ratón"
+xAGSMouseInvertText = "Invertir vista del ratÃ³n"
 xAGSWalkAndPan = "Caminar y ver"
 xAGSStayInFirstPerson = "Permanecer en 1ra persona"
 xAGSClickToTurn = "Pulsar para girar"
 
 #------------------------
 # Calibration dialog
-xCalMessageText = "CALIBRADO DEL MONITOR DE URU\n\nAjusta el contraste de tu monitor al 100% (lo más alto posible).\n\nAjusta el control del brillo hasta que apenas puedas ver el logo "+'"URU"'+" que hay arriba."
+xCalMessageText = "CALIBRADO DEL MONITOR DE URU\n\nAjusta el contraste de tu monitor al 100% (lo mÃ¡s alto posible).\n\nAjusta el control del brillo hasta que apenas puedas ver el logo "+'"URU"'+" que hay arriba."
 
 

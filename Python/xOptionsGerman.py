@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -35,21 +36,21 @@ This module contains all the strings that need to localized for the Options Menu
 #xSUHForMore = 'Weitere Informationen und Optionen finden Sie, wenn Sie auf das "?" in der unteren rechten Ecke klicken.'
 #xSUHOkBtnText = "Ok"
 xSUHHelpTitle = "Willkommen zu Uru"
-xSUHWalkText = "Vorwärts"
+xSUHWalkText = "VorwÃ¤rts"
 xSUHRunText = "Rennen"
 xSUHTurnLeftText = "Links"
-xSUHBackwardsText = "Rückwärts"
+xSUHBackwardsText = "RÃ¼ckwÃ¤rts"
 xSUHTurnRightText = "Rechts"
-xSUHToggleViewText = "Sicht ändern"
+xSUHToggleViewText = "Sicht Ã¤ndern"
 xSUHJumpText = "Springen"
 xSUHMouseWalkText = "Gehen"
 xSUHMouseRunText = "Rennen"
 xSUHSelectText = "Aktivieren"
 xSUHMousePanCam = "Umschauen"
-xSUHMouseBackwards = "Rückwärts gehen"
+xSUHMouseBackwards = "RÃ¼ckwÃ¤rts gehen"
 xSUHMousePresetsTitle = "Maussteuerung"
 xSUHMouseNormalText = "Standard"
-xSUHMouseNoviceText = "Anfänger"
+xSUHMouseNoviceText = "AnfÃ¤nger"
 xSUHOkButton = "Ok"
 
 
@@ -64,24 +65,24 @@ xOptionsQuitText = "URU beenden"
 xOptionsCalibrationText = "Kalibrierung"
 xOptionsResumeText = "Fortsetzen"
 xOptionsDefaultsText = "Normal"
-xOptionsGoBackText = "Zurück"
+xOptionsGoBackText = "ZurÃ¼ck"
 xOptionsDemoTrailerText = "URU Vorschau"
 
 #--------
 # In Game Help Dialog
 xIGHHeaderText = "Kurzhilfe"
-xIGMHelpMessage = " Bewegung - Pfeiltasten (oder linke Maustaste)\nSpringen - Leertaste\nRennen - Umschalttaste\n\nAktivieren/Auswählen - Linke Maustaste (bei ausgefülltem Zeiger)\nZurück - Pfeil runter, ESC oder Backspace\n\nSicht umschalten - F1\nUmsehen - Maus bei gedrückter rechter Maustaste\n\n\n(Weitere Informationen finden Sie im Handbuch.)"
+xIGMHelpMessage = " Bewegung - Pfeiltasten (oder linke Maustaste)\nSpringen - Leertaste\nRennen - Umschalttaste\n\nAktivieren/AuswÃ¤hlen - Linke Maustaste (bei ausgefÃ¼lltem Zeiger)\nZurÃ¼ck - Pfeil runter, ESC oder Backspace\n\nSicht umschalten - F1\nUmsehen - Maus bei gedrÃ¼ckter rechter Maustaste\n\n\n(Weitere Informationen finden Sie im Handbuch.)"
 xIGMCCRBtnText = "Kunden-Support >>"
 
 #-----------
 # Key Map 1 Dialog
-xKMMoveForward = "Vorwärts"
-xKMMoveBack = "Zurück"
+xKMMoveForward = "VorwÃ¤rts"
+xKMMoveBack = "ZurÃ¼ck"
 xKMRotLeft = "Drehen/links"
 xKMRotRight = "Drehen/rechts"
 xKMJump = "Springen"
-xKMStrafeLeft = "Seitwärts/ links"
-xKMStrafeRight = "Seitwärts/ rechts"
+xKMStrafeLeft = "SeitwÃ¤rts/ links"
+xKMStrafeRight = "SeitwÃ¤rts/ rechts"
 xKMExitMode = "Modus beenden"
 xKMFirstPerson = "Perspektive"
 xKMNextText = "Weiter"
@@ -89,7 +90,7 @@ xKMNextText = "Weiter"
 #-----------
 # Key Map 2 Dialog
 xKMReltoBook = "Relto-Buch"
-xKMOptionMenu = "Optionsmenü"
+xKMOptionMenu = "OptionsmenÃ¼"
 xKMToggleKI = "KI an/aus"
 xKMTakePicture = "Bild machen"
 xKMCreateJournal = "Neues Journal"
@@ -97,11 +98,11 @@ xKMPushToTalk = "Sprechtaste"
 xKMStartChat = "Chat beginnen"
 xKMNCreateMarkerGame = "Neues Marker-Spiel"
 xKMPlaceMarker = "Marker setzen"
-xKMPrevText = "Zurück"
+xKMPrevText = "ZurÃ¼ck"
 
 #--------------
 # Game Settings Dialog
-xGSVolumeHeader = "Lautstärke"
+xGSVolumeHeader = "LautstÃ¤rke"
 xGSVolSoundFXText = "Soundeffekte"
 xGSVolMuteText = "Sound aus"
 xGSVolMusicText = "Musik"
@@ -117,11 +118,11 @@ xGSAdvancedBtnText = "Erweitert >>"
 #------------------
 # Advance Game settings dialog
 xAGSAdvanceHeader = "Erweiterte Einstellungen"
-xAGSShadowQualityText = "Schattenqualität"
-xAGSQuickerCameraText = "Flüssigere Kamera"
+xAGSShadowQualityText = "SchattenqualitÃ¤t"
+xAGSQuickerCameraText = "FlÃ¼ssigere Kamera"
 xAGSMouseTurn = "Mausempfindlichkeit"
-xAGSSoundPriority = "Soundkanäle"
-xAGSPreviousBtnText = "<< Zurück"
+xAGSSoundPriority = "SoundkanÃ¤le"
+xAGSPreviousBtnText = "<< ZurÃ¼ck"
 xAGSMouseInvertText = "Maus umkehren"
 xAGSWalkAndPan = "Gehen und Schwenken"
 xAGSStayInFirstPerson = "In Ego-Persp. bleiben"
@@ -129,5 +130,5 @@ xAGSClickToTurn = "Drehen mit Klicken"
 
 #------------------------
 # Calibration dialog
-xCalMessageText = "URU - MONITORKALIBRIERUNG\n\nStellen Sie den Kontrast Ihres Monitors auf Maximum.\n\nPassen Sie die Helligkeit so an, dass Sie das "+'"URU"'+" Logo gerade noch erkennen können."
+xCalMessageText = "URU - MONITORKALIBRIERUNG\n\nStellen Sie den Kontrast Ihres Monitors auf Maximum.\n\nPassen Sie die Helligkeit so an, dass Sie das "+'"URU"'+" Logo gerade noch erkennen kÃ¶nnen."
 

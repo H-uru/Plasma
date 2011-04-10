@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 This module contains all the strings that need to localized for the Nexus
 """
 
-xCategoryLabel01 = U"Luoghi della Citt‡"
+xCategoryLabel01 = U"Luoghi della Citt√†"
 xCategoryLabel02 = U"Collegamenti privati"
 xCategoryLabel03 = U"Collegamenti pubblici"
 xCategoryLabel04 = U"Collegamenti personali"

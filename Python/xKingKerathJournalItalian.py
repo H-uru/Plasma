@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,25 +28,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingKerathJournalCover_eng*1#0.hsm"><font size=12 face=courier color=000000><margin left=62 right=62 top=48><p align=center>Re Kerath
 
-<p align=left>Salì al trono nel 6731 DE all'età di 54 anni. Kerath è molto probabilmente il più conosciuto di tutti i re, non tanto perché fosse il migliore ma perché fu l'ultimo. Il suo nome rappresenta tutti i re dell'ultimo periodo, incluso ciò che rimase dell'Arco dei Re e l'Arco di Kerath.
+<p align=left>SalÃ¬ al trono nel 6731 DE all'etÃ  di 54 anni. Kerath Ã¨ molto probabilmente il piÃ¹ conosciuto di tutti i re, non tanto perchÃ© fosse il migliore ma perchÃ© fu l'ultimo. Il suo nome rappresenta tutti i re dell'ultimo periodo, incluso ciÃ² che rimase dell'Arco dei Re e l'Arco di Kerath.
 
-La madre di Kerath lo crebbe con gli insegnamenti di Gish e nel giorno in cui salì al trono era ritenuto un credente sincero dei Seguaci. Proprio per questo, Kerath decise sin dalla giovinezza, soprattutto osservando il padre interagire con i propri consiglieri, che la monarchia non era più la forma di governo adatta ai D'ni. Almeno, disse, fino al giorno in cui arriverà il Grande Re.
+La madre di Kerath lo crebbe con gli insegnamenti di Gish e nel giorno in cui salÃ¬ al trono era ritenuto un credente sincero dei Seguaci. Proprio per questo, Kerath decise sin dalla giovinezza, soprattutto osservando il padre interagire con i propri consiglieri, che la monarchia non era piÃ¹ la forma di governo adatta ai D'ni. Almeno, disse, fino al giorno in cui arriverÃ  il Grande Re.
 
-Il fatto che Kerath, durante il suo regno, fu capace di convincere il proprio popolo che il modo in cui erano stati governati per anni era sbagliato e che doveva essere cambiato, è da considerarsi niente di meno che un miracolo. Kerath illustrò la propria teoria soprattutto come un beneficio incomparabile per le gilde. Dopo tutto, disse, "i D'ni sono le Gilde... lasciate che siano loro a proteggerci con le loro fortezze e la loro saggezza."  
+Il fatto che Kerath, durante il suo regno, fu capace di convincere il proprio popolo che il modo in cui erano stati governati per anni era sbagliato e che doveva essere cambiato, Ã¨ da considerarsi niente di meno che un miracolo. Kerath illustrÃ² la propria teoria soprattutto come un beneficio incomparabile per le gilde. Dopo tutto, disse, "i D'ni sono le Gilde... lasciate che siano loro a proteggerci con le loro fortezze e la loro saggezza."  
 
-Le Gilde non potevano che approvare la sua  proposta di rimuovere la figura del Re dal gradino più alto per sostituirla con 5 Governatori; governatori che dovevano essere scelti tra i Gran Maestri delle Gilde. Tutto questo garantiva pieni poteri alle gilde e solo pochi Gran Maestri erano in disaccordo. Questi erano noti per essere seguaci del Grande Re, e di Ri'neref, che sostenne sempre l'importanza della figura regale regnante.
+Le Gilde non potevano che approvare la sua  proposta di rimuovere la figura del Re dal gradino piÃ¹ alto per sostituirla con 5 Governatori; governatori che dovevano essere scelti tra i Gran Maestri delle Gilde. Tutto questo garantiva pieni poteri alle gilde e solo pochi Gran Maestri erano in disaccordo. Questi erano noti per essere seguaci del Grande Re, e di Ri'neref, che sostenne sempre l'importanza della figura regale regnante.
 
-Fortunatamente per Kerath, sebbene coesistessero molte filosofie, solo coloro che seguivano fedelmente Ri'neref e il Grande Re furono disturbati al pensiero di non avere un re. D'altra parte, la maggior parte dei D'ni non seguiva più queste teorie, per dedicarsi invece al culto di Nemica, Gish, L'Osservatore e molti altri. L'impatto sulla società che il popolo dovette superare era ora di natura culturale e non religiosa*. 
+Fortunatamente per Kerath, sebbene coesistessero molte filosofie, solo coloro che seguivano fedelmente Ri'neref e il Grande Re furono disturbati al pensiero di non avere un re. D'altra parte, la maggior parte dei D'ni non seguiva piÃ¹ queste teorie, per dedicarsi invece al culto di Nemica, Gish, L'Osservatore e molti altri. L'impatto sulla societÃ  che il popolo dovette superare era ora di natura culturale e non religiosa*. 
 
-Kerath, tentando di assecondare ulteriormente le Gilde, raccomandò innovazioni e migliorie alla Camera del Consiglio e la costruzione di un nuovo palazzo delle Gilde, intesa a celebrare che il potere che avrebbe dovuto esserci ora c'era. Un simbolo del nuovo potere delle Gilde e dei Governatori e un insulto al Grande Re, che seppelliva il suo ricordo ancora più in profondità sotto i nuovi edifici governativi. 
+Kerath, tentando di assecondare ulteriormente le Gilde, raccomandÃ² innovazioni e migliorie alla Camera del Consiglio e la costruzione di un nuovo palazzo delle Gilde, intesa a celebrare che il potere che avrebbe dovuto esserci ora c'era. Un simbolo del nuovo potere delle Gilde e dei Governatori e un insulto al Grande Re, che seppelliva il suo ricordo ancora piÃ¹ in profonditÃ  sotto i nuovi edifici governativi. 
 
-La costruzione del nuovo Palazzo delle Gilde iniziò nel 6970 DE. Non c'era simbolo più rappresentativo dell'attitudine D'ni in quell'anno. La Tomba del Grande Re fu ulteriormente sepolta sotto gli edifici dedicati al Governo e alla Gilde. 
+La costruzione del nuovo Palazzo delle Gilde iniziÃ² nel 6970 DE. Non c'era simbolo piÃ¹ rappresentativo dell'attitudine D'ni in quell'anno. La Tomba del Grande Re fu ulteriormente sepolta sotto gli edifici dedicati al Governo e alla Gilde. 
 
 Alla fine del suo regno, Kerath aveva convinto la maggior parte dei D'ni a seguire le sue idee. Molti si dissero seguaci di Gish e dei suoi scritti e videro gli esterni come una minaccia. "Se non ora, presto" diceva spesso Kerath*. 
 
-Dopo la sua morte, le parole di Kerath sarebbero state confermate dell'inizio della Guerra dei Mee-Dis. Le fazioni esterne invasero nel tentativo di distruggere le Gilde dei Produttori d'Inchiostro e dei Costruttori di Libri. Alla fine delle guerra, solo in pochi non seguivano Gish e così credettero al coinvolgimento degli esterni nella guerra. La scoperta che furono le frange conservatrici a dare inizio al conflitto fu fatta molto tempo dopo, quando ormai era tardi per cambiare la mentalità conservatrice. 
+Dopo la sua morte, le parole di Kerath sarebbero state confermate dell'inizio della Guerra dei Mee-Dis. Le fazioni esterne invasero nel tentativo di distruggere le Gilde dei Produttori d'Inchiostro e dei Costruttori di Libri. Alla fine delle guerra, solo in pochi non seguivano Gish e cosÃ¬ credettero al coinvolgimento degli esterni nella guerra. La scoperta che furono le frange conservatrici a dare inizio al conflitto fu fatta molto tempo dopo, quando ormai era tardi per cambiare la mentalitÃ  conservatrice. 
 
-Ciò nonostante, nel 6977 DE Kerath abdicò e concesse il potere dei Re ai primi Cinque Governatori della storia D'ni. C'erano Lord Taeri della Gilda dei Messaggeri, Lord Hemelah della Gilda dei Guaritori, Lord Moleth della Gilda dei Fornitori, Lord Kedri della Gilda degli Scrittori, Lord Korenen della Gilda degli Analisti. Kerath morì otto anni più tardi.
+CiÃ² nonostante, nel 6977 DE Kerath abdicÃ² e concesse il potere dei Re ai primi Cinque Governatori della storia D'ni. C'erano Lord Taeri della Gilda dei Messaggeri, Lord Hemelah della Gilda dei Guaritori, Lord Moleth della Gilda dei Fornitori, Lord Kedri della Gilda degli Scrittori, Lord Korenen della Gilda degli Analisti. Kerath morÃ¬ otto anni piÃ¹ tardi.
 
 Il Tempo dei Re era finito.
 

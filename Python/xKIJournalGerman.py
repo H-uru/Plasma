@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,39 +28,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKIJournalCover*1#0.hsm"><font size=10 face=courier color=000000><margin left=62 right=62 top=62 bottom=48><p align=center>Die KI
 
-<p align=left>Basisfunktionen - D'ni #3 auf der Rückseite aller Geräte ... 3 Funktionen? Es gibt mit Sicherheit mehr. Hauptfunktionen? Wie dem auch sei, es ist ein praktischer.
+<p align=left>Basisfunktionen - D'ni #3 auf der RÃ¼ckseite aller GerÃ¤te ... 3 Funktionen? Es gibt mit Sicherheit mehr. Hauptfunktionen? Wie dem auch sei, es ist ein praktischer.
 
-1. Nexus-Oberfläche - das Nexus scheint nur ein Übersetzer der KI-Daten zu sein. KI ermöglichen es den Benutzern, Zugriff anderer KIs auf ein Buch zu gewähren oder abzulehnen. Ich denke, wir können das auch auf Stadtteile ausweiten können.he Namen von Welten, die in der KI festgelegt werden, erscheinen im Nexus.Oder sollten zumindest...
+1. Nexus-OberflÃ¤che - das Nexus scheint nur ein Ãœbersetzer der KI-Daten zu sein. KI ermÃ¶glichen es den Benutzern, Zugriff anderer KIs auf ein Buch zu gewÃ¤hren oder abzulehnen. Ich denke, wir kÃ¶nnen das auch auf Stadtteile ausweiten kÃ¶nnen.he Namen von Welten, die in der KI festgelegt werden, erscheinen im Nexus.Oder sollten zumindest...
 
-2. Persönliche Kommunikation - Wohl die wichtigste Funktion: Sprach- oder Textnachrichten an andere KI-Benutzer. Inter- oder Intrawelt - ist wohl egal.
+2. PersÃ¶nliche Kommunikation - Wohl die wichtigste Funktion: Sprach- oder Textnachrichten an andere KI-Benutzer. Inter- oder Intrawelt - ist wohl egal.
 
-3. Bilderfassung, -Speicherung und Transfer - Durch einen einzigen Druck einer Taste wird ein Bild erfasst und im entsprechenden Welt-Verzeichnis gespeichert. Bilder können sowohl an andere Kis versendet werden, als auch auf Bildgeräte geladen werden (je nach Version). Es sieht so aus, als würden Hauptserver diese Funktionalität koordinieren - könnte schwer werden, das wieder in Gang zu setzen.
+3. Bilderfassung, -Speicherung und Transfer - Durch einen einzigen Druck einer Taste wird ein Bild erfasst und im entsprechenden Welt-Verzeichnis gespeichert. Bilder kÃ¶nnen sowohl an andere Kis versendet werden, als auch auf BildgerÃ¤te geladen werden (je nach Version). Es sieht so aus, als wÃ¼rden Hauptserver diese FunktionalitÃ¤t koordinieren - kÃ¶nnte schwer werden, das wieder in Gang zu setzen.
 
-4. Journaleinträge, -Speicherung und -Transfer - recht einfach. Notizen aufschreiben und speichern. Auch hier kümmert sich der Server um den Transfer. KI-zu-KI oder KI-zu-Bildgerät.
+4. JournaleintrÃ¤ge, -Speicherung und -Transfer - recht einfach. Notizen aufschreiben und speichern. Auch hier kÃ¼mmert sich der Server um den Transfer. KI-zu-KI oder KI-zu-BildgerÃ¤t.
 
-5. Markierungen - die Möglichkeit, in einer der Welten Markierungen des derzeitigen Standorts vorzunehmen oder Informationen darüber zu sammeln. Es gibt dabei verschiedene Funktionalitätsebenen - bedarf weiterer Forschung. Vielleicht wäre diese Funktion eine Hilfe beim GNP-Problem ... interessant.
+5. Markierungen - die MÃ¶glichkeit, in einer der Welten Markierungen des derzeitigen Standorts vorzunehmen oder Informationen darÃ¼ber zu sammeln. Es gibt dabei verschiedene FunktionalitÃ¤tsebenen - bedarf weiterer Forschung. Vielleicht wÃ¤re diese Funktion eine Hilfe beim GNP-Problem ... interessant.
 
-6. Türen - In dieser Welt, öffnete die KI (selbst in ihrer Grundausstattung) Türen der Stufe 1. Türen der Stufen 2 und 3 benötigen höhere Versionen.
+6. TÃ¼ren - In dieser Welt, Ã¶ffnete die KI (selbst in ihrer Grundausstattung) TÃ¼ren der Stufe 1. TÃ¼ren der Stufen 2 und 3 benÃ¶tigen hÃ¶here Versionen.
 
 
-Es gibt viel mehr Varianten dieser Geräte, als wir zuerst angenommen hatten. Der "Verteiler" ist in der Lage, mindestens fünf verschiedene Versionen auszugeben, wenn nicht noch mehr. Die Funktionen ariieren zum Teil erheblich. Es muss irgendwo ein System geben, um diese Geräte zu kontrollieren und aufzuspüren - aber wo?
+Es gibt viel mehr Varianten dieser GerÃ¤te, als wir zuerst angenommen hatten. Der "Verteiler" ist in der Lage, mindestens fÃ¼nf verschiedene Versionen auszugeben, wenn nicht noch mehr. Die Funktionen ariieren zum Teil erheblich. Es muss irgendwo ein System geben, um diese GerÃ¤te zu kontrollieren und aufzuspÃ¼ren - aber wo?
 
-Das in diese Einheit integrierte Bildgerät ist überraschend kompakt und effizient. Verwendet dasselbe "Gitter"-Kompressionssystem, wenn wir es denn momentan so nennen möchten. Ich muss es knacken ... Sehr gute Projektion für etwas, das nicht größer ist, als ein Handteller.
+Das in diese Einheit integrierte BildgerÃ¤t ist Ã¼berraschend kompakt und effizient. Verwendet dasselbe "Gitter"-Kompressionssystem, wenn wir es denn momentan so nennen mÃ¶chten. Ich muss es knacken ... Sehr gute Projektion fÃ¼r etwas, das nicht grÃ¶ÃŸer ist, als ein Handteller.
 
 
 Markierungen
 
-Zweck: Vielleicht ein Ausbildungsgerät für Erhalter. Markierungen konnten gesetzt werden und Rekruten und/oder niedere Ränge durchlaufen den "Parcours".
+Zweck: Vielleicht ein AusbildungsgerÃ¤t fÃ¼r Erhalter. Markierungen konnten gesetzt werden und Rekruten und/oder niedere RÃ¤nge durchlaufen den "Parcours".
 
-Oberfläche: Kis interagieren mit Markierungen auf drei verschiedene Arten und Weisen.
+OberflÃ¤che: Kis interagieren mit Markierungen auf drei verschiedene Arten und Weisen.
 
-"Team-Erobern" - nachdem alle Markierungen platziert wurden, werden zwei Mannschaften aufgestellt, die diese Markierungen einsammeln. Die KI ordnet die Markierung dann der entsprechenden Mannschaft zu. Markierungen können sich entweder nach einer festgesetzten Zeit oder nachdem alle Markierungen registriert wurden, auflösen. Markierungen müssen sich in derselben Welt befinden.Test: Können Markierungen zurückgesetzt werden?
+"Team-Erobern" - nachdem alle Markierungen platziert wurden, werden zwei Mannschaften aufgestellt, die diese Markierungen einsammeln. Die KI ordnet die Markierung dann der entsprechenden Mannschaft zu. Markierungen kÃ¶nnen sich entweder nach einer festgesetzten Zeit oder nachdem alle Markierungen registriert wurden, auflÃ¶sen. Markierungen mÃ¼ssen sich in derselben Welt befinden.Test: KÃ¶nnen Markierungen zurÃ¼ckgesetzt werden?
 
-"Halten" - auch hier zwei Mannschaften. Markierungen lösen sich nur nach einer vorher festgesetzen Zeit auf. Markierungen lösen sich nach Aktivierung nicht auf, obwohl der Server nachhält, welche Mannschaft die Markierung "hält". Wenn die Zeit abgelaufen ist, fasst Server zusammen, welche Mannschaft die meisten Markierungen hält. Markierungen müssen sich in derselben Welt befinden.
+"Halten" - auch hier zwei Mannschaften. Markierungen lÃ¶sen sich nur nach einer vorher festgesetzen Zeit auf. Markierungen lÃ¶sen sich nach Aktivierung nicht auf, obwohl der Server nachhÃ¤lt, welche Mannschaft die Markierung "hÃ¤lt". Wenn die Zeit abgelaufen ist, fasst Server zusammen, welche Mannschaft die meisten Markierungen hÃ¤lt. Markierungen mÃ¼ssen sich in derselben Welt befinden.
 
-"Einzel" - nur eine einzige KI kann Markierungen registrieren. Markierungen enthalten auch Text. Ein KI kann einem anderen KI im gesamten Syste ganze Markierungssets senden. Markierungen können in jeder Welt gesetzt werden. 
+"Einzel" - nur eine einzige KI kann Markierungen registrieren. Markierungen enthalten auch Text. Ein KI kann einem anderen KI im gesamten Syste ganze Markierungssets senden. Markierungen kÃ¶nnen in jeder Welt gesetzt werden. 
 
-Die Markierungen an sich scheinen identishc mit denen zu sein, die der Größe Nullpunkt produziert. Ich bin mir sogar relativ sicher, dass dabei dieselbe Technologie zugrunde liegt, wenn nicht gar der Große Nullpunkt selbst. Es ist möglich, dass die Kis mit der Null selber kommunizieren und diese Markierungen überall dort vornehmen, wo sie registriert sind. Probleme dieser Theorie: Erhalter-Markierungen etc. ...
+Die Markierungen an sich scheinen identishc mit denen zu sein, die der GrÃ¶ÃŸe Nullpunkt produziert. Ich bin mir sogar relativ sicher, dass dabei dieselbe Technologie zugrunde liegt, wenn nicht gar der GroÃŸe Nullpunkt selbst. Es ist mÃ¶glich, dass die Kis mit der Null selber kommunizieren und diese Markierungen Ã¼berall dort vornehmen, wo sie registriert sind. Probleme dieser Theorie: Erhalter-Markierungen etc. ...
 
 
 KI-Registrierung
@@ -68,7 +69,7 @@ KI zeichnet andere KI auf drei Stufen auf:
 
 Intra-Welt: Jede andere KI innerhalb dieser Welt wird aufgezeichnet und angezeigt.
 
-KI-zu-KI: Jeder einzelne KI kann zur spezifischen Verfolgung aufgezeichnet werden. Dadurch können - egal wo sich die KI befindet - Journale, Photos etc. gesendet werden und eine Kommunikation ist möglich. Vielleicht wurde dies für temporäre oder semi-permanente Team-Missionen verwendet. Für unsere Zwecke - eine "Freundesliste"?
+KI-zu-KI: Jeder einzelne KI kann zur spezifischen Verfolgung aufgezeichnet werden. Dadurch kÃ¶nnen - egal wo sich die KI befindet - Journale, Photos etc. gesendet werden und eine Kommunikation ist mÃ¶glich. Vielleicht wurde dies fÃ¼r temporÃ¤re oder semi-permanente Team-Missionen verwendet. FÃ¼r unsere Zwecke - eine "Freundesliste"?
 
-Gruppen: Die KI erkennt auch Gruppen, die in irgendeiner Weise mit dem Nexus verbunden sind. Es scheint möglich, dass mit dieser Funktion die Stadtteil-Liste unterstüzt werden kann, sofern man es entsprechend konfigurieren kann.
+Gruppen: Die KI erkennt auch Gruppen, die in irgendeiner Weise mit dem Nexus verbunden sind. Es scheint mÃ¶glich, dass mit dieser Funktion die Stadtteil-Liste unterstÃ¼zt werden kann, sofern man es entsprechend konfigurieren kann.
 """

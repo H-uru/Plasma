@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,23 +28,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingShomatJournalCover*1#0.hsm"><font size=16 face=Nick color=000000><margin right=62 left=62 top=46>El Rey Shomat
 
-<p align=left>Shomat llegÛ al trono en el aÒo 300 ED (Era D'ni) a la edad de 44 aÒos. Fue miembro del Gremio de Escritores hasta el momento de su coronaciÛn. ContinuÛ sus estudios de Arte con mentores privados durante algunos aÒos despuÈs de su coronaciÛn. Los distorsionados criterios que Shomat tomÛ tiempo despuÈs fueron atribuidos por la mayorÌa de historiadores a su desconocimiento de los Gremios. 
+<p align=left>Shomat lleg√≥ al trono en el a√±o 300 ED (Era D'ni) a la edad de 44 a√±os. Fue miembro del Gremio de Escritores hasta el momento de su coronaci√≥n. Continu√≥ sus estudios de Arte con mentores privados durante algunos a√±os despu√©s de su coronaci√≥n. Los distorsionados criterios que Shomat tom√≥ tiempo despu√©s fueron atribuidos por la mayor√≠a de historiadores a su desconocimiento de los Gremios. 
 
-Fue un reinado lleno de altibajos, en parte debido a las tremendas tensiones que parecÌan existir entre sus hermanos mayores y Èl mismo. Sus dos hermanos, aunque le profesaban poco respeto, hicieron todo cuanto pudieron para convertir el reinado de Shomat en uno tumultuoso. 
+Fue un reinado lleno de altibajos, en parte debido a las tremendas tensiones que parec√≠an existir entre sus hermanos mayores y √©l mismo. Sus dos hermanos, aunque le profesaban poco respeto, hicieron todo cuanto pudieron para convertir el reinado de Shomat en uno tumultuoso. 
 
-Una de las primeras acciones que Shomat ordenÛ fue la construcciÛn de un palacio. Cuando fue terminado en el aÒo 347 ED, Shomat se trasladÛ a Èl con su familia, sus hermanos se negaron y permanecieron en sus propias residencias. Tal acto fue considerado como un gran desagravio hacia la familia y sÛlo sirviÛ para agrandar la brecha existente entre Shomat y sus hermanos.                
+Una de las primeras acciones que Shomat orden√≥ fue la construcci√≥n de un palacio. Cuando fue terminado en el a√±o 347 ED, Shomat se traslad√≥ a √©l con su familia, sus hermanos se negaron y permanecieron en sus propias residencias. Tal acto fue considerado como un gran desagravio hacia la familia y s√≥lo sirvi√≥ para agrandar la brecha existente entre Shomat y sus hermanos.                
 
-Promovieron tensiones no sÛlo dentro de la familia de Shomat si no dentro de la cultura y tambiÈn por la extravagancia del palacio. Los elaborados jardines estaban presentes dentro de los terrenos fÌsicos y las Eras "jardÌn" fueron tambiÈn escritas con conexiones desde dentro del palacio. Abundaban rumores de que los habitantes eran erradicados de algunas de estas Eras "jardÌn" para proporcionar mayor descanso a Shomat. Cierto o no, Shomat solÌa hablar a menudo en p˙blico de la necesidad de las Eras como servicio a D'ni. Esta fue la primera y m·s directa contradicciÛn de las enseÒanzas de los Gremios: el D'ni estaba para "servir" a las Eras.  
+Promovieron tensiones no s√≥lo dentro de la familia de Shomat si no dentro de la cultura y tambi√©n por la extravagancia del palacio. Los elaborados jardines estaban presentes dentro de los terrenos f√≠sicos y las Eras "jard√≠n" fueron tambi√©n escritas con conexiones desde dentro del palacio. Abundaban rumores de que los habitantes eran erradicados de algunas de estas Eras "jard√≠n" para proporcionar mayor descanso a Shomat. Cierto o no, Shomat sol√≠a hablar a menudo en p√∫blico de la necesidad de las Eras como servicio a D'ni. Esta fue la primera y m√°s directa contradicci√≥n de las ense√±anzas de los Gremios: el D'ni estaba para "servir" a las Eras.  
 
-Parece que al final la tensiÛn creciÛ demasiado. Algunos dicen que volviÛ loco a Shomat. En el aÒo 387 ED sus hermanos desaparecieron y nunca m·s fueron vistos. Se dijo que Shomat habÌa escrito un Libro de Muerte al que ambos hermanos estaban conectados, aunque nunca se pudo probar. 
+Parece que al final la tensi√≥n creci√≥ demasiado. Algunos dicen que volvi√≥ loco a Shomat. En el a√±o 387 ED sus hermanos desaparecieron y nunca m√°s fueron vistos. Se dijo que Shomat hab√≠a escrito un Libro de Muerte al que ambos hermanos estaban conectados, aunque nunca se pudo probar. 
 
-No obstante fue uno de los mayores desafÌos para los habitantes de D'ni y Èstos reaccionaron con prontitud. En el aÒo 400 ED una profetisa* fue enviada a Shomat  para intentar guiarle por los caminos de Yahvo*. Durante los 155 aÒos restantes de su reinado la mayorÌa del pueblo creyÛ que Shomat llegarÌa a ser un mejor Rey. La profetisa se convirtiÛ en su mejor mentor y finalmente le convenciÛ para que escogiera al hijo de uno de sus amigos m·s cercanos como heredero al trono. Sus propios hijos habÌan sido reconocidos como "descontrolados". Y sucediÛ que fue la lÌnea sanguÌnea de ese hijo lo que llevÛ aÒos despuÈs al nacimiento del Gran Rey. 
+No obstante fue uno de los mayores desaf√≠os para los habitantes de D'ni y √©stos reaccionaron con prontitud. En el a√±o 400 ED una profetisa* fue enviada a Shomat  para intentar guiarle por los caminos de Yahvo*. Durante los 155 a√±os restantes de su reinado la mayor√≠a del pueblo crey√≥ que Shomat llegar√≠a a ser un mejor Rey. La profetisa se convirti√≥ en su mejor mentor y finalmente le convenci√≥ para que escogiera al hijo de uno de sus amigos m√°s cercanos como heredero al trono. Sus propios hijos hab√≠an sido reconocidos como "descontrolados". Y sucedi√≥ que fue la l√≠nea sangu√≠nea de ese hijo lo que llev√≥ a√±os despu√©s al nacimiento del Gran Rey. 
 
-Shomat falleciÛ de muerte natural a la edad de 299 aÒos. 
+Shomat falleci√≥ de muerte natural a la edad de 299 a√±os. 
 
 
-* Las mujeres siempre fueron consideradas mejores comunicadoras con Yahvo que los hombres. Por ello, la mayorÌa de los profetas fueron mujeres. 
+* Las mujeres siempre fueron consideradas mejores comunicadoras con Yahvo que los hombres. Por ello, la mayor√≠a de los profetas fueron mujeres. 
 
-* La elecciÛn de profetisas como guÌas para los Reyes, empezÛ con Shomat y se convirtiÛ en una tradiciÛn para los reyes venideros de D'ni. Generalmente dependÌa del Rey el profeta o profetisa en el que buscarÌa la sabidurÌa. 
+* La elecci√≥n de profetisas como gu√≠as para los Reyes, empez√≥ con Shomat y se convirti√≥ en una tradici√≥n para los reyes venideros de D'ni. Generalmente depend√≠a del Rey el profeta o profetisa en el que buscar√≠a la sabidur√≠a. 
  
 """

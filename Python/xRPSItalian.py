@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -31,4 +32,4 @@ xWelcomeMsgPlural = "Benvenuto a %s, giocatore di grado %s con %s punti!"
 xWelcomeMsg = "Benvenuto a %s, giocatore di grado %s con %s punti!"
 xRankMsgPlural = "Ora sei un giocatore di grado %s con %s punti!"
 xRankMsg = "Ora sei un giocatore di grado %s con %s punti!"
-xNoKIMsg = "Ti serve un KI per poter giocare ad Ayoheek. Visita l'Et‡ Guarnigione e prendine uno."
+xNoKIMsg = "Ti serve un KI per poter giocare ad Ayoheek. Visita l'Et√† Guarnigione e prendine uno."

@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xGarrisonWallJournalCover_ger*1#0.hsm"><font size=10 face=courier color=000000><margin left=62 right=62 top=48><p align=center>
 
-<p align=left>Die Gahreesen-Übungswand
+<p align=left>Die Gahreesen-Ãœbungswand
 
 Autor: Simpson (Aufzeichnung vom Sprachrekorder)
 
@@ -37,35 +38,35 @@ Datum: 22/4/2003-26/11/03 (mehrere Besuche)
 
 Dieses Dokument soll beschreiben, wie "Die Wand" funktioniert. Dann fangen wir mal an. 
 
-ÜBERSICHT: 
+ÃœBERSICHT: 
 
-Vermutlich sollten wir mit dem Zweck des Dings anfangen, da wir darüber am meisten wissen. Die ist einfach: Jedes Team erstellt ein Labyrinth. Das erste Team, das die Spitze erreicht, hat den Wettbewerb oder das Training (wie auch immer sie es genannt haben mögen) gewonnen. 
+Vermutlich sollten wir mit dem Zweck des Dings anfangen, da wir darÃ¼ber am meisten wissen. Die ist einfach: Jedes Team erstellt ein Labyrinth. Das erste Team, das die Spitze erreicht, hat den Wettbewerb oder das Training (wie auch immer sie es genannt haben mÃ¶gen) gewonnen. 
 
-Wir sind ziemlich sicher, dass die Erhalter es verwendet haben, um sich geistig und körperlich in Form zu halten. Die Hauptaufgabe war das Erklettern der Wand, aber man konnte diese Aufgabe durch Hinzufügen von Nebel, Regen, giftigen Dämpfen, Feuer, extremer Hitze oder Kälte oder was noch zur Verfügung stand, extrem schwierig gestalten. Ich glaube, dass die Kammer da drin ziemlich luftdicht ist. Aber ich glaube nicht, dass wir die „Höllenoptionen“ in nächster Zeit einschalten werden. Zumindest nicht, so lange ich da bin. 
+Wir sind ziemlich sicher, dass die Erhalter es verwendet haben, um sich geistig und kÃ¶rperlich in Form zu halten. Die Hauptaufgabe war das Erklettern der Wand, aber man konnte diese Aufgabe durch HinzufÃ¼gen von Nebel, Regen, giftigen DÃ¤mpfen, Feuer, extremer Hitze oder KÃ¤lte oder was noch zur VerfÃ¼gung stand, extrem schwierig gestalten. Ich glaube, dass die Kammer da drin ziemlich luftdicht ist. Aber ich glaube nicht, dass wir die â€HÃ¶llenoptionenâ€œ in nÃ¤chster Zeit einschalten werden. Zumindest nicht, so lange ich da bin. 
 
-Es spielen definitiv zwei Seiten. Es ist nicht ganz klar, wie viele auf jeder Seite teilnahmen, aber es scheint auch keinen Unterschied zu machen. Jedes Team erstellte in seinem Kontrollraum ein Labyrinth für die andere Seite.  
+Es spielen definitiv zwei Seiten. Es ist nicht ganz klar, wie viele auf jeder Seite teilnahmen, aber es scheint auch keinen Unterschied zu machen. Jedes Team erstellte in seinem Kontrollraum ein Labyrinth fÃ¼r die andere Seite.  
  
 ERSTELLUNG DES LABYRINTHS 
 
-Der rote Knopf oben auf der Tafel aktiviert die Kontrollen. Nach der Aktivierung beginnen die roten Lichter zu blinken und jedes Team muss festlegen, wie viele Blöcke zur Verfügung stehen sollen. 
+Der rote Knopf oben auf der Tafel aktiviert die Kontrollen. Nach der Aktivierung beginnen die roten Lichter zu blinken und jedes Team muss festlegen, wie viele BlÃ¶cke zur VerfÃ¼gung stehen sollen. 
 
-Die drei Tasten auf der linken Seite setzten eine bestimmte Anzahl von Blöcken fest: der untere ist für fünf, der mittlere für zehn und der obere für 15. Die violetten Lichter (eigentlich sind sie ja rosa)  am oberen Rand geben an, wie viele Blöcke für das violette Team ausgewählt wurden und die gelben Lichter tun dasselbe für das gelbe Team. Die Zahl der Blöcke konnte mit den Tasten auf der rechten Seite einzeln erhöht oder gesenkt werden. Wenn also ein Team 17 Blöcke verwenden wollte, musste es den oberen linken einmal und dann den oberen rechten Knopf zweimal drücken. Ja, ich habe auch schon intuitivere Steuerungen gesehen. 
+Die drei Tasten auf der linken Seite setzten eine bestimmte Anzahl von BlÃ¶cken fest: der untere ist fÃ¼r fÃ¼nf, der mittlere fÃ¼r zehn und der obere fÃ¼r 15. Die violetten Lichter (eigentlich sind sie ja rosa)  am oberen Rand geben an, wie viele BlÃ¶cke fÃ¼r das violette Team ausgewÃ¤hlt wurden und die gelben Lichter tun dasselbe fÃ¼r das gelbe Team. Die Zahl der BlÃ¶cke konnte mit den Tasten auf der rechten Seite einzeln erhÃ¶ht oder gesenkt werden. Wenn also ein Team 17 BlÃ¶cke verwenden wollte, musste es den oberen linken einmal und dann den oberen rechten Knopf zweimal drÃ¼cken. Ja, ich habe auch schon intuitivere Steuerungen gesehen. 
 
-Wie dem auch sei, wenn eine der beiden Seiten den mittleren Knopf auf der rechten Seite drückte, wurde die Zahl für beide Seiten festgelegt. Es gab dann hinsichtlich dieser Zahl kein Zurück mehr. Die kleinen Lichter hörten auf zu blinken und die violetten/gelben Lichter zeigten nichts mehr an.
+Wie dem auch sei, wenn eine der beiden Seiten den mittleren Knopf auf der rechten Seite drÃ¼ckte, wurde die Zahl fÃ¼r beide Seiten festgelegt. Es gab dann hinsichtlich dieser Zahl kein ZurÃ¼ck mehr. Die kleinen Lichter hÃ¶rten auf zu blinken und die violetten/gelben Lichter zeigten nichts mehr an.
 
-Das Einrichten der Blöcke war recht einfach: Man musste nur auf den Teil des Rasters drücken, an der Block erscheinen sollte ... und er erschien. Magie! Oben erschien ein Licht für gesetzten Block. War man fertig, drückte man den roten Knopf und das Labyrinth wurde festgelegt und auf die Wand übertragen. Nachdem beide Seiten ihr Labyrinth eingerichtet hatten, hat bestimmt irgendwer "Los!" gesagt. Es muss einfach so gewesen sein.
+Das Einrichten der BlÃ¶cke war recht einfach: Man musste nur auf den Teil des Rasters drÃ¼cken, an der Block erscheinen sollte ... und er erschien. Magie! Oben erschien ein Licht fÃ¼r gesetzten Block. War man fertig, drÃ¼ckte man den roten Knopf und das Labyrinth wurde festgelegt und auf die Wand Ã¼bertragen. Nachdem beide Seiten ihr Labyrinth eingerichtet hatten, hat bestimmt irgendwer "Los!" gesagt. Es muss einfach so gewesen sein.
 
-DIE ANZÜGE
+DIE ANZÃœGE
 
-Die „Anzug-Maschine“, wie ich sie nenne (ja, ein sehr kreativer Name) erscheint, sobald beide Labyrinthe festgelegt waren. Die Teilnehmer traten in die Maschine, sie senkt sich über die Person und -Peng!- fällt durch ein Loch nach unten. Danach findet man sich in einem Stück D’ni-Hightech am Fuß der Wand wieder. Ziemlich coole Sache, wenn ich mal so sagen darf. Aber schon etwas komisch.
+Die â€Anzug-Maschineâ€œ, wie ich sie nenne (ja, ein sehr kreativer Name) erscheint, sobald beide Labyrinthe festgelegt waren. Die Teilnehmer traten in die Maschine, sie senkt sich Ã¼ber die Person und -Peng!- fÃ¤llt durch ein Loch nach unten. Danach findet man sich in einem StÃ¼ck Dâ€™ni-Hightech am FuÃŸ der Wand wieder. Ziemlich coole Sache, wenn ich mal so sagen darf. Aber schon etwas komisch.
 
 KLETTERN
 
-Beide Seiten klettern nach oben und versuche dabei den Blöcken auszuweichen, die der Gegner für sie gesetzt hat. Man kann diese Blöcke nicht sehen, aber sie stoßen einen von der Wand, wenn man einen erwischt. Es geht also darum, vor dem Gegner zu bleiben und nicht runtergestoßen zu werden. Aber wenn man runtergestoßen wird, dann sollte man sich merken wo, und die Stelle beim nächsten Mal meiden. Und nicht vergessen: das alles, wenn man von Feuer umgeben ist und man in seinem Anzug schwitzt. Und so schnell es geht! Ja, ich glaube schon, dass sie gut trainiert waren.   
+Beide Seiten klettern nach oben und versuche dabei den BlÃ¶cken auszuweichen, die der Gegner fÃ¼r sie gesetzt hat. Man kann diese BlÃ¶cke nicht sehen, aber sie stoÃŸen einen von der Wand, wenn man einen erwischt. Es geht also darum, vor dem Gegner zu bleiben und nicht runtergestoÃŸen zu werden. Aber wenn man runtergestoÃŸen wird, dann sollte man sich merken wo, und die Stelle beim nÃ¤chsten Mal meiden. Und nicht vergessen: das alles, wenn man von Feuer umgeben ist und man in seinem Anzug schwitzt. Und so schnell es geht! Ja, ich glaube schon, dass sie gut trainiert waren.   
 
 SIEGER
 
-Sobald man oben angekommen war, wurde mittels Anzug und einem Panel in der Wand eine Verbindung aktiviert - glauben wir zumindest. Danach fanden sich die Erhalter im Erhalter-Nexus wieder. Hey, gewonnen! Danach warf der Erhalter die Arme in die Luft, jubelte und begab sich dann über eine Verbindung wieder zurück in den Kontrollraum (zumindest stelle ich mir das vor). Man darf nicht vergessen, anzumerken, dass der Nexus auch den Anzug von den Erhaltern entfernte. Wir wissen nicht wirklich wie, aber wir wissen, dass es so ist. Und wenn wir schon mal bei den Geständnissen sind: Die Sache mit der Verbindung über den Anzug und das Panel in der Wand ist uns auch ein Rätsel. 
+Sobald man oben angekommen war, wurde mittels Anzug und einem Panel in der Wand eine Verbindung aktiviert - glauben wir zumindest. Danach fanden sich die Erhalter im Erhalter-Nexus wieder. Hey, gewonnen! Danach warf der Erhalter die Arme in die Luft, jubelte und begab sich dann Ã¼ber eine Verbindung wieder zurÃ¼ck in den Kontrollraum (zumindest stelle ich mir das vor). Man darf nicht vergessen, anzumerken, dass der Nexus auch den Anzug von den Erhaltern entfernte. Wir wissen nicht wirklich wie, aber wir wissen, dass es so ist. Und wenn wir schon mal bei den GestÃ¤ndnissen sind: Die Sache mit der Verbindung Ã¼ber den Anzug und das Panel in der Wand ist uns auch ein RÃ¤tsel. 
 
-Sobald eine Seite oben angekommen war, wurde das Labyrinth für den armen Kerl angezeigt, der noch nach oben musste. Es sieht auch so aus, als wären die Blöcke auch in den Beobachtungsräumen und im Erhalter-Nexus angezeigt worden. Der Verlierer musste nach oben, dann die gleiche Verbindung wie der Sieger benutzen, den Anzug loswerden und zu Runde zwei antreten. Vielleicht wurde er vorher noch von seinem Vorgesetzten zusammengestaucht. Wer weiß? 
+Sobald eine Seite oben angekommen war, wurde das Labyrinth fÃ¼r den armen Kerl angezeigt, der noch nach oben musste. Es sieht auch so aus, als wÃ¤ren die BlÃ¶cke auch in den BeobachtungsrÃ¤umen und im Erhalter-Nexus angezeigt worden. Der Verlierer musste nach oben, dann die gleiche Verbindung wie der Sieger benutzen, den Anzug loswerden und zu Runde zwei antreten. Vielleicht wurde er vorher noch von seinem Vorgesetzten zusammengestaucht. Wer weiÃŸ? 
 """

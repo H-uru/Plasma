@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -30,8 +31,8 @@ from PlasmaTypes import *
 # line spacing is in pixels and can be positive or negative
 # justification is optional, but can be any of the following: PtJustify.kCenter, PtJustify.kLeftJustify, PtJustify.kRightJustify
 xTextObjects = {\
-    "Bidon":        ( "Arial", 12, (1,1,1,1), (0,0,0,0), 0, """Ceci est un objet texte bidon, ne devrait pas apparaître dans le jeu !""", PtJustify.kCenter ),
-    "nb01WelcomeToDni":        ( "Sharper", 28, (0,0,0,1), (0,0,0,0), 5, """BIENVENUE À
+    "Bidon":        ( "Arial", 12, (1,1,1,1), (0,0,0,0), 0, """Ceci est un objet texte bidon, ne devrait pas apparaÃ®tre dans le jeuÂ !""", PtJustify.kCenter ),
+    "nb01WelcomeToDni":        ( "Sharper", 28, (0,0,0,1), (0,0,0,0), 5, """BIENVENUE Ã€
 D'NI""", PtJustify.kCenter ),
 
 
@@ -40,8 +41,8 @@ D'NI""", PtJustify.kCenter ),
 
 
     "nb01GoToGrsn":        ( "Sharper", 22, (0,0,0,1), (0,0,0,0), 5, """RENDEZ-VOUS DANS
-L'ÂGE GAHREESEN
-POUR RÉCUPÉRER
+L'Ã‚GE GAHREESEN
+POUR RÃ‰CUPÃ‰RER
 VOTRE KI""", PtJustify.kCenter ),
 
 
@@ -49,7 +50,7 @@ VOTRE KI""", PtJustify.kCenter ),
 
 
     "nb01GrsnBook":        ( "Sharper", 22, (0,0,0,1), (0,0,0,0), 5, """LE LIVRE DE LIAISON DE
-L'ÂGE GAHREESEN
+L'Ã‚GE GAHREESEN
 SE TROUVE DANS LA
 SALLE DE LIAISON""", PtJustify.kCenter ),
 
@@ -58,7 +59,7 @@ SALLE DE LIAISON""", PtJustify.kCenter ),
 
 
     "grsnRetrieveKI":        ( "Sharper", 24, (0,0,0,1), (0,0,0,0), 10, """VEUILLEZ
-RÉCUPÉRER VOTRE
+RÃ‰CUPÃ‰RER VOTRE
 KI""", PtJustify.kCenter ),
 
 
@@ -66,7 +67,7 @@ KI""", PtJustify.kCenter ),
 
 
     "nb01EaselWelcome":        ( "Sharper", 28, (0,0,0,1), (0,0,0,0), 5, """
-Bienvenue à
+Bienvenue Ã 
 BEVIN
 Pour plus d'infos,
 rendez-vous dans la
@@ -82,13 +83,13 @@ salle de classe""", PtJustify.kCenter ),
 Dr. Watson -
 
 Gros soucis. La maison de Noloben n'est PAS vide.
-J'y ai rencontré quelqu'un aujourd'hui. Je ne parle pas
-très bien le D'ni, mais j'ai réussi à communiquer avec
+J'y ai rencontrÃ© quelqu'un aujourd'hui. Je ne parle pas
+trÃ¨s bien le D'ni, mais j'ai rÃ©ussi Ã  communiquer avec
 lui un petit moment. Oui, c'est un D'ni et comme nous
 nous en doutions, il sait beaucoup de choses sur les
-créatures. BEAUCOUP de choses.
+crÃ©atures. BEAUCOUP de choses.
 
-Nous devons organiser une réunion dès que possible.
+Nous devons organiser une rÃ©union dÃ¨s que possible.
 
 - Marie""", PtJustify.kLeftJustify ),
 
@@ -99,21 +100,21 @@ Nous devons organiser une réunion dès que possible.
 
 Matthew,
 
-Les derniers documents que vous m'avez envoyés étaient très intéressants. Puisque vous avez fait un excellent travail, j'ai une petite liste de tâches à répartir pour l'équipe. Organisez ça comme bon vous semble. 
+Les derniers documents que vous m'avez envoyÃ©s Ã©taient trÃ¨s intÃ©ressants. Puisque vous avez fait un excellent travail, j'ai une petite liste de tÃ¢ches Ã  rÃ©partir pour l'Ã©quipe. Organisez Ã§a comme bon vous semble. 
 
-1. J'aimerais plus d'infos sur les coutumes de la vie en famille : les cérémonies, etc... Tout ce qui se rapporte à la naissance, au mariage et aux événements culturels. Je sais que nous disposons de nombreux documents à étudier, donc récupérez tout ce que vous pouvez. Je pense que nous avons trop axé nos recherches sur les sciences et la technologie et pas assez sur la vie quotidienne de ce peuple.
+1. J'aimerais plus d'infos sur les coutumes de la vie en familleÂ : les cÃ©rÃ©monies, etc... Tout ce qui se rapporte Ã  la naissance, au mariage et aux Ã©vÃ©nements culturels. Je sais que nous disposons de nombreux documents Ã  Ã©tudier, donc rÃ©cupÃ©rez tout ce que vous pouvez. Je pense que nous avons trop axÃ© nos recherches sur les sciences et la technologie et pas assez sur la vie quotidienne de ce peuple.
 
-2. Nous avons beaucoup d'infos sur les Guildes, mais il serait bon d'organiser un peu tout ça.
+2. Nous avons beaucoup d'infos sur les Guildes, mais il serait bon d'organiser un peu tout Ã§a.
 
-3. Nous avons de nombreuses lacunes sur la Chute. Je ne suis pas sûr de pouvoir vous aider à ce propos, mais étant données nos dernières infos, je crois qu'il va falloir creuser ce sujet. Je vous recommande de mettre une personne à plein temps sur la Chute.
+3. Nous avons de nombreuses lacunes sur la Chute. Je ne suis pas sÃ»r de pouvoir vous aider Ã  ce propos, mais Ã©tant donnÃ©es nos derniÃ¨res infos, je crois qu'il va falloir creuser ce sujet. Je vous recommande de mettre une personne Ã  plein temps sur la Chute.
 
-4. Continuez aussi à travailler sur les Rois. Un résumé de tous les rois serait vraiment le bienvenu.
+4. Continuez aussi Ã  travailler sur les Rois. Un rÃ©sumÃ© de tous les rois serait vraiment le bienvenu.
 
-5. Nous avons encore des documents religieux à faire traduire. Ça risque d'être difficile, mais je crois que ça peut nous apporter de précieuses informations.
+5. Nous avons encore des documents religieux Ã  faire traduire. Ã‡a risque d'Ãªtre difficile, mais je crois que Ã§a peut nous apporter de prÃ©cieuses informations.
 
-6. Nous avons encore un stock de journaux récupérés dans diverses résidences D'ni, etc... sans même parler des Âges.  
+6. Nous avons encore un stock de journaux rÃ©cupÃ©rÃ©s dans diverses rÃ©sidences D'ni, etc... sans mÃªme parler des Ã‚ges.  
 
-Je crois que ça suffira pour l'instant. Merci encore à votre équipe. Dites-leur qu'ils font un excellent boulot. 
+Je crois que Ã§a suffira pour l'instant. Merci encore Ã  votre Ã©quipe. Dites-leur qu'ils font un excellent boulot. 
  
 - Dr. Watson
 """, PtJustify.kLeftJustify ),
@@ -123,9 +124,9 @@ Je crois que ça suffira pour l'instant. Merci encore à votre équipe. Dites-leur 
 
 "JCNote":        ( "Nick", 16, (0,0,0,1), (0,0,0,0), 5, """
 
-Écoutez ça. Je sais que le CRD ne veut pas qu'on y touche, mais je suis sûr que Watson serait ravi de voir le rapport avec les portes. C'est totalement illogique. 
+Ã‰coutez Ã§a. Je sais que le CRD ne veut pas qu'on y touche, mais je suis sÃ»r que Watson serait ravi de voir le rapport avec les portes. C'est totalement illogique. 
 
-Mais il ne faut pas le perdre. J'ai eu beaucoup de mal à l'enlever du mur, ce qui n'est pas rassurant. Mais le plus étrange, c'est que quand je suis revenu plus tard, l'étoffe était réapparue, intacte.
+Mais il ne faut pas le perdre. J'ai eu beaucoup de mal Ã  l'enlever du mur, ce qui n'est pas rassurant. Mais le plus Ã©trange, c'est que quand je suis revenu plus tard, l'Ã©toffe Ã©tait rÃ©apparue, intacte.
 
 - Nick
 """, PtJustify.kLeftJustify ),
@@ -137,22 +138,22 @@ Mais il ne faut pas le perdre. J'ai eu beaucoup de mal à l'enlever du mur, ce qu
 
 "clftAtrusNote":        ( "Atrus", 18, (0,0,0,1), (0,0,0,0), -5, """
 
-Yeesha chérie,
+Yeesha chÃ©rie,
 
-La nuit dernière, ta mère a fait un rêve...
+La nuit derniÃ¨re, ta mÃ¨re a fait un rÃªve...
 
-Le rêve annonce que D 'ni renaîtra un jour. Les
+Le rÃªve annonce que D 'ni renaÃ®tra un jour. Les
 nouveaux explorateurs de D 'ni afflueront dans
-le désert, comme irrésistiblement attirés par
+le dÃ©sert, comme irrÃ©sistiblement attirÃ©s par
 quelque chose qu'ils ne comprennent pas.
 
-Le rêve parle aussi d'un oiseau du désert, au
+Le rÃªve parle aussi d'un oiseau du dÃ©sert, au
 pouvoir capable d'inventer l'avenir de D 'ni.
 Nous craignons ce genre de pouvoir - il peut
 changer les gens.
 
-Yeesha, notre oiseau du désert, ta quête semble
-t'éloigner toujours plus. J'espère que ce que tu
+Yeesha, notre oiseau du dÃ©sert, ta quÃªte semble
+t'Ã©loigner toujours plus. J'espÃ¨re que ce que tu
 trouveras te rapprochera de nous.
 
 -Atrus
@@ -166,7 +167,7 @@ trouveras te rapprochera de nous.
 
 "islmNickNote":        ( "Nick", 16, (0,0,.3,1), (0,0,0,0), 1, """
 
-Où est passé mon Livre ? Pourquoi quelqu'un l'a-t-il pris !
+OÃ¹ est passÃ© mon LivreÂ ? Pourquoi quelqu'un l'a-t-il prisÂ !
 
 - Nick 
 

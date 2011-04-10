@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,40 +28,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingDemathJournalCover*1#0.hsm"><font size=16 face=Nick color=000000><margin left=62 right=62 top=46><p align=center>Le Roi Demath
 
-<p align=left>Il monta sur le trône en 4692 ED à l'âge de 154 ans. Bien que le public fut globalement mécontent du règne de Ji, il semble que sa décision de choisir Demath comme successeur fut plutôt bien accueillie*.
+<p align=left>Il monta sur le trÃ´ne en 4692 ED Ã  l'Ã¢ge de 154 ans. Bien que le public fut globalement mÃ©content du rÃ¨gne de Ji, il semble que sa dÃ©cision de choisir Demath comme successeur fut plutÃ´t bien accueillie*.
 
-Demath intégra la Guilde des Conservateurs à l'âge de cinq ans (comme la plupart des gens). Il avait atteint le rang de Maître de guilde lorsqu'il fut choisi pour la couronne. Ce choix fut une surprise générale pour le public, Demath compris. Ce n'était pas un poste qu'il souhaitait particulièrement. 
+Demath intÃ©gra la Guilde des Conservateurs Ã  l'Ã¢ge de cinq ans (comme la plupart des gens). Il avait atteint le rang de MaÃ®tre de guilde lorsqu'il fut choisi pour la couronne. Ce choix fut une surprise gÃ©nÃ©rale pour le public, Demath compris. Ce n'Ã©tait pas un poste qu'il souhaitait particuliÃ¨rement. 
 
-Presque immédiatement, Demath exigea l'interdiction de tous les Liens superflus (l'interdiction sera appliquée par les Conservateurs) pendant que le Conseil organisait des réunions d'urgence pour décider de la position à tenir à propos des étrangers. 
+Presque immÃ©diatement, Demath exigea l'interdiction de tous les Liens superflus (l'interdiction sera appliquÃ©e par les Conservateurs) pendant que le Conseil organisait des rÃ©unions d'urgence pour dÃ©cider de la position Ã  tenir Ã  propos des Ã©trangers. 
 
-Suite à ces réunions, le Conseil décida que les relations avec les étrangers seraient maintenues, mais selon des régulations et des limitations plus strictes. Demath signa un nombre impressionnant de lois, parmi lesquelles l'interdiction pour tous les étrangers d'utiliser une machine D'ni ou un Livre de liaison. 
+Suite Ã  ces rÃ©unions, le Conseil dÃ©cida que les relations avec les Ã©trangers seraient maintenues, mais selon des rÃ©gulations et des limitations plus strictes. Demath signa un nombre impressionnant de lois, parmi lesquelles l'interdiction pour tous les Ã©trangers d'utiliser une machine D'ni ou un Livre de liaison. 
 
-Décision d'une grande importance, le Conseil et le Roi adressèrent un message clair à toutes les factions opposées à l'influence étrangère à D'ni. Leurs idées ne seraient pas tolérées si elles menaient à l'infraction des règles établies par le Loshemanesh. Il fallait appliquer ces lois à tout prix. Et bien que ce ne fut pas annoncé publiquement, on ordonna apparemment au Relyimah (ce qui signifie « l'Invisible ») de doubler sa cotisation et de trouver quiconque serait susceptible d'être mêlé à des activités illégales avec des étrangers. 
+DÃ©cision d'une grande importance, le Conseil et le Roi adressÃ¨rent un message clair Ã  toutes les factions opposÃ©es Ã  l'influence Ã©trangÃ¨re Ã  D'ni. Leurs idÃ©es ne seraient pas tolÃ©rÃ©es si elles menaient Ã  l'infraction des rÃ¨gles Ã©tablies par le Loshemanesh. Il fallait appliquer ces lois Ã  tout prix. Et bien que ce ne fut pas annoncÃ© publiquement, on ordonna apparemment au Relyimah (ce qui signifie Â«Â l'InvisibleÂ Â») de doubler sa cotisation et de trouver quiconque serait susceptible d'Ãªtre mÃªlÃ© Ã  des activitÃ©s illÃ©gales avec des Ã©trangers. 
 
-De plus, Demath réfuta les paroles de l'Observateur, déclarant que ses commentaires montraient bien le côté pathétique de « cet homme désespérément seul cherchant à faire parler de lui »*.
+De plus, Demath rÃ©futa les paroles de l'Observateur, dÃ©clarant que ses commentaires montraient bien le cÃ´tÃ© pathÃ©tique de Â«Â cet homme dÃ©sespÃ©rÃ©ment seul cherchant Ã  faire parler de luiÂ Â»*.
 
-En 4721 ED, Demath fit passer un amendement forçant les Guildes majeures à accepter un quota d'étudiants ayant réussi tous les examens d'entrée, mais trop démunis pour s'acquitter des énormes cotisations*. C'était la première action de la sorte de l'histoire de D'ni. De nombreuses personnes, les guildes en tête, mirent en doute la légitimité de l'amendement. Cependant, Demath réussit à les convaincre qu'il s'agissait là d'une nécessité pour la société et à laquelle ils avaient « prudemment souscrit »*.
+En 4721 ED, Demath fit passer un amendement forÃ§ant les Guildes majeures Ã  accepter un quota d'Ã©tudiants ayant rÃ©ussi tous les examens d'entrÃ©e, mais trop dÃ©munis pour s'acquitter des Ã©normes cotisations*. C'Ã©tait la premiÃ¨re action de la sorte de l'histoire de D'ni. De nombreuses personnes, les guildes en tÃªte, mirent en doute la lÃ©gitimitÃ© de l'amendement. Cependant, Demath rÃ©ussit Ã  les convaincre qu'il s'agissait lÃ  d'une nÃ©cessitÃ© pour la sociÃ©tÃ© et Ã  laquelle ils avaient Â«Â prudemment souscritÂ Â»*.
 
-En 4724 ED, les archives indiquent que plus de dix groupes différents furent déclarés coupables d'infraction aux Lois du Loshemanesh (comme on les appelait à l'époque). La plupart de ces groupes déclarèrent que le Relyimah avait joué un rôle essentiel dans la condamnation, bien qu'il n'existe aucune preuve officielle. Quoi qu'il en soit, chaque coupable fut condamné à l'internement dans les Âges prisons. Ces arrestations ont dû avoir un sérieux impact sur la société, d'autant que le public ne savait presque rien du Relyimah, et du coup, n'avait aucune idée du nombre de ces arrestations. Un écrivain disait, « Les histoires parlaient d'ombres ténébreuses et de créatures mystérieuses… persécutant ceux qui avaient de telles activités… on racontait que l'oeil de Demath pouvait tout voir, pendant que sa main pouvait attraper qui elle voulait. »* Le taux de criminalité, surtout celle relative aux lois du Loshemanesh, baissa rapidement jusqu'en 4752, alors qu'il n'y avait eu que trois arrestations officielles. 
+En 4724 ED, les archives indiquent que plus de dix groupes diffÃ©rents furent dÃ©clarÃ©s coupables d'infraction aux Lois du Loshemanesh (comme on les appelait Ã  l'Ã©poque). La plupart de ces groupes dÃ©clarÃ¨rent que le Relyimah avait jouÃ© un rÃ´le essentiel dans la condamnation, bien qu'il n'existe aucune preuve officielle. Quoi qu'il en soit, chaque coupable fut condamnÃ© Ã  l'internement dans les Ã‚ges prisons. Ces arrestations ont dÃ» avoir un sÃ©rieux impact sur la sociÃ©tÃ©, d'autant que le public ne savait presque rien du Relyimah, et du coup, n'avait aucune idÃ©e du nombre de ces arrestations. Un Ã©crivain disait, Â«Â Les histoires parlaient d'ombres tÃ©nÃ©breuses et de crÃ©atures mystÃ©rieusesâ€¦ persÃ©cutant ceux qui avaient de telles activitÃ©sâ€¦ on racontait que l'oeil de Demath pouvait tout voir, pendant que sa main pouvait attraper qui elle voulait.Â Â»* Le taux de criminalitÃ©, surtout celle relative aux lois du Loshemanesh, baissa rapidement jusqu'en 4752, alors qu'il n'y avait eu que trois arrestations officielles. 
 
-En 4784 ED, Demath subit une tentative d'assassinat, donnant la mort à deux membres du Relyimah, qui sauvèrent du coup la vie au roi. Les auteurs de l'attaque furent retrouvés et Demath ordonna leur exécution deux ans plus tard. C'était la première exécution de ce genre, mais ni le public, ni le Conseil ne firent d'objection. Les deux hommes furent apparemment envoyés par une liaison dans un Âge de mort, où ils mouraient en permanence. Bien que la plupart aient été en faveur de l'exécution, ceux qui étaient opposés à l'influence étrangère depuis le début se sentaient renforcés dans leurs idéologies. Ils allaient même jusqu'à déclarer « D'ni se meurt, pour le bien des étrangers. »* 
+En 4784 ED, Demath subit une tentative d'assassinat, donnant la mort Ã  deux membres du Relyimah, qui sauvÃ¨rent du coup la vie au roi. Les auteurs de l'attaque furent retrouvÃ©s et Demath ordonna leur exÃ©cution deux ans plus tard. C'Ã©tait la premiÃ¨re exÃ©cution de ce genre, mais ni le public, ni le Conseil ne firent d'objection. Les deux hommes furent apparemment envoyÃ©s par une liaison dans un Ã‚ge de mort, oÃ¹ ils mouraient en permanence. Bien que la plupart aient Ã©tÃ© en faveur de l'exÃ©cution, ceux qui Ã©taient opposÃ©s Ã  l'influence Ã©trangÃ¨re depuis le dÃ©but se sentaient renforcÃ©s dans leurs idÃ©ologies. Ils allaient mÃªme jusqu'Ã  dÃ©clarer Â«Â D'ni se meurt, pour le bien des Ã©trangers.Â Â»* 
 
-En 4826, Demath fut récompensé pour ses efforts de négociation idéologique avec les Guildes majeures. Le premier membre « non-payant » de la Guilde des Tailleurs de pierre entreprit l'effort de concevoir une nouvelle technologie basée sur la fusion, construisant un nouveau matériau de construction qui servira finalement au développement de la Nara. Demath se répandit en louanges sur la Guilde et sur ces merveilleuses opportunités dont pouvaient désormais bénéficier les citoyens de D'ni*. 
+En 4826, Demath fut rÃ©compensÃ© pour ses efforts de nÃ©gociation idÃ©ologique avec les Guildes majeures. Le premier membre Â«Â non-payantÂ Â» de la Guilde des Tailleurs de pierre entreprit l'effort de concevoir une nouvelle technologie basÃ©e sur la fusion, construisant un nouveau matÃ©riau de construction qui servira finalement au dÃ©veloppement de la Nara. Demath se rÃ©pandit en louanges sur la Guilde et sur ces merveilleuses opportunitÃ©s dont pouvaient dÃ©sormais bÃ©nÃ©ficier les citoyens de D'ni*. 
 
-En 4843, à l'âge de 305 ans, Demath mourut, passant le trône à son fils aîné.
+En 4843, Ã  l'Ã¢ge de 305 ans, Demath mourut, passant le trÃ´ne Ã  son fils aÃ®nÃ©.
 
 
-* Certains prétendent que ce n'est pas Ji qui a choisi Demath, mais Imas, le Grand maître de la Guilde des Conservateurs. L'affaire ne fut jamais résolue, mais la plupart créditent Ji pour ce choix. 
+* Certains prÃ©tendent que ce n'est pas Ji qui a choisi Demath, mais Imas, le Grand maÃ®tre de la Guilde des Conservateurs. L'affaire ne fut jamais rÃ©solue, mais la plupart crÃ©ditent Ji pour ce choix. 
 
-* Tiré d'un discours de Demath, expliquant au public les découvertes du Conseil
+* TirÃ© d'un discours de Demath, expliquant au public les dÃ©couvertes du Conseil
 
-* À l'époque, les Guildes majeures étaient devenues extrêmement chères et une vaste majorité de la population, bien que qualifiée pour intégrer les Guildes, ne pouvaient s'offrir ce luxe
+* Ã€ l'Ã©poque, les Guildes majeures Ã©taient devenues extrÃªmement chÃ¨res et une vaste majoritÃ© de la population, bien que qualifiÃ©e pour intÃ©grer les Guildes, ne pouvaient s'offrir ce luxe
 
-* Extrait du journal personnel de Reshan, le Maître de guilde de la Guilde des Archivistes
+* Extrait du journal personnel de Reshan, le MaÃ®tre de guilde de la Guilde des Archivistes
 
-* Extrait de « L'invisible dévoilé », écrit par Besharen en 5999
+* Extrait de Â«Â L'invisible dÃ©voilÃ©Â Â», Ã©crit par Besharen en 5999
 
-* Goshen, le leader du culte du Sang de Yahvo, fit cette déclaration au cours d'un discours public
+* Goshen, le leader du culte du Sang de Yahvo, fit cette dÃ©claration au cours d'un discours public
 
 * Demath fit ces commentaires pendant l'annonce publique de cette technologie fusionnelle
 """

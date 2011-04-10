@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -30,7 +31,7 @@ from PlasmaTypes import *
 # line spacing is in pixels and can be positive or negative
 # justification is optional, but can be any of the following: PtJustify.kCenter, PtJustify.kLeftJustify, PtJustify.kRightJustify
 xTextObjects = {\
-    "Dummy":        ( "Arial", 12, (1,1,1,1), (0,0,0,0), 0, """Este objeto es un texto tonto, °no me ver·s nunca en el juego!""", PtJustify.kCenter ),
+    "Dummy":        ( "Arial", 12, (1,1,1,1), (0,0,0,0), 0, """Este objeto es un texto tonto, ¬°no me ver√°s nunca en el juego!""", PtJustify.kCenter ),
     "nb01WelcomeToDni":        ( "Sharper", 28, (0,0,0,1), (0,0,0,0), 5, """BIENVENIDO A 
 D'NI""", PtJustify.kCenter ),
 
@@ -49,9 +50,9 @@ CONSEGUIR TU KI""", PtJustify.kCenter ),
 
 
     "nb01GrsnBook":        ( "Sharper", 22, (0,0,0,1), (0,0,0,0), 5, """EL LIBRO DE LA ERA
-GAHREESEN EST¡
+GAHREESEN EST√Å
 EL LA SALA DE
-CONECCI”N""", PtJustify.kCenter ),
+CONECCI√ìN""", PtJustify.kCenter ),
 
 
 
@@ -68,7 +69,7 @@ KI""", PtJustify.kCenter ),
     "nb01EaselWelcome":        ( "Sharper", 28, (0,0,0,1), (0,0,0,0), 5, """
 Bienvenido a
 BEVIN
-Par m·s informaciÛn
+Par m√°s informaci√≥n
 Ve al 
 Aula""", PtJustify.kCenter ),
 
@@ -81,13 +82,13 @@ Aula""", PtJustify.kCenter ),
 
 Dr. Watson -
 
-Tenemos problemas. La casa de Noloben NO est· vacÌa.
-Hoy me encontrÈ con alguien allÌ. Aunque mi D'ni no es
-muy bueno hablÈ un rato con Èl. SÌ, es un D'ni y, tal
+Tenemos problemas. La casa de Noloben NO est√° vac√≠a.
+Hoy me encontr√© con alguien all√≠. Aunque mi D'ni no es
+muy bueno habl√© un rato con √©l. S√≠, es un D'ni y, tal
 y como nos imaginamos, sabe mucho sobre las criaturas.
-MUCHÕSIMO.
+MUCH√çSIMO.
 
-Obviamente necesitamos convocar una reuniÛn
+Obviamente necesitamos convocar una reuni√≥n
 CUANTO ANTES.
 
 - Marie""", PtJustify.kLeftJustify ),
@@ -99,21 +100,21 @@ CUANTO ANTES.
 
 Matthew,
 
-El ˙ltimo lote de papeles que enviaste fue muy interesantes. Como has hecho un excelente trabajo, tengo otra lista que me gustarÌa que dividieras con el equipo. Depender· de ti el cÛmo lo hagas. 
+El √∫ltimo lote de papeles que enviaste fue muy interesantes. Como has hecho un excelente trabajo, tengo otra lista que me gustar√≠a que dividieras con el equipo. Depender√° de ti el c√≥mo lo hagas. 
 
-1. Me gustarÌa tener m·s informaciÛn sobe la vida en familia, ceremonias, etc... y cualquier cosa relacionada con los nacimientos, las bodas, los eventos culturales. SÈ que disponemos de bastante material de referencia al respecto, asÌ que cualquier informaciÛn adicional que consigas ser· muy ˙til. Creo que hemos recopilado abundante material sobre ciencia y tecnologÌa, y en cambio bastante poco sobre la vida personal de esta gente. 
+1. Me gustar√≠a tener m√°s informaci√≥n sobe la vida en familia, ceremonias, etc... y cualquier cosa relacionada con los nacimientos, las bodas, los eventos culturales. S√© que disponemos de bastante material de referencia al respecto, as√≠ que cualquier informaci√≥n adicional que consigas ser√° muy √∫til. Creo que hemos recopilado abundante material sobre ciencia y tecnolog√≠a, y en cambio bastante poco sobre la vida personal de esta gente. 
 
-2. Disponemos de bastante informaciÛn sobre los Gremios y estarÌa bien hacer una recopilaciÛn ordenada de todo ello. 
+2. Disponemos de bastante informaci√≥n sobre los Gremios y estar√≠a bien hacer una recopilaci√≥n ordenada de todo ello. 
 
-3. La CaÌda es claramente un tema en el que flaqueamos. No estoy seguro de poder ayudarte con material de investigaciÛn, aunque dada la informaciÛn que hemos obtenido recientemente, en alg˙n momento lo trataremos m·s a fondo. Recomiendo que este trabajo se le asigne a alguien en exclusiva.
+3. La Ca√≠da es claramente un tema en el que flaqueamos. No estoy seguro de poder ayudarte con material de investigaci√≥n, aunque dada la informaci√≥n que hemos obtenido recientemente, en alg√∫n momento lo trataremos m√°s a fondo. Recomiendo que este trabajo se le asigne a alguien en exclusiva.
 
-4. Contin˙a con los Reyes. Una breve sinopsis de todos los reyes serÌa de gran ayuda, siguiendo el procedimiento que empezaste con el ˙ltimo lote. 
+4. Contin√∫a con los Reyes. Una breve sinopsis de todos los reyes ser√≠a de gran ayuda, siguiendo el procedimiento que empezaste con el √∫ltimo lote. 
 
-5. TodavÌa quedan muchos escritos religiosos por traducir. Van a ser los m·s difÌciles aunque creo que nos podr·n aportar mucha informaciÛn y muy valiosa. 
+5. Todav√≠a quedan muchos escritos religiosos por traducir. Van a ser los m√°s dif√≠ciles aunque creo que nos podr√°n aportar mucha informaci√≥n y muy valiosa. 
 
-6. Tenemos un montÛn de diarios de distintas residencias D'ni, y sitios asÌ... sin contar con las Eras.  
+6. Tenemos un mont√≥n de diarios de distintas residencias D'ni, y sitios as√≠... sin contar con las Eras.  
 
-Creo que con esto tendr·s m·s que suficiente. Nuevamente, da las gracias a tu equipo y diles que est·n haciendo un trabajo excelente. 
+Creo que con esto tendr√°s m√°s que suficiente. Nuevamente, da las gracias a tu equipo y diles que est√°n haciendo un trabajo excelente. 
 - Dr. Watson
 """, PtJustify.kLeftJustify ),
 
@@ -122,9 +123,9 @@ Creo que con esto tendr·s m·s que suficiente. Nuevamente, da las gracias a tu eq
 
 "JCNote":        ( "Nick", 16, (0,0,0,1), (0,0,0,0), 5, """
 
-Examina esto. SÈ que el DRC no quiere que lo toquemos, aunque apuesto que a Watson tambiÈn le gustarÌa saber cÛmo se regulan las puertas. No tiene sentido. 
+Examina esto. S√© que el DRC no quiere que lo toquemos, aunque apuesto que a Watson tambi√©n le gustar√≠a saber c√≥mo se regulan las puertas. No tiene sentido. 
 
-Y no lo pierdas. Me costÛ mucho retirarlo de la pared y cuando lo hice, me dio bastante miedo, quiz·s lo m·s extraÒo fue que cuando regresÈ despuÈs, la tela de la que tomÈ esta pieza estaba intacta. 
+Y no lo pierdas. Me cost√≥ mucho retirarlo de la pared y cuando lo hice, me dio bastante miedo, quiz√°s lo m√°s extra√±o fue que cuando regres√© despu√©s, la tela de la que tom√© esta pieza estaba intacta. 
 
 - Nick
 """, PtJustify.kLeftJustify ),
@@ -137,23 +138,23 @@ Y no lo pierdas. Me costÛ mucho retirarlo de la pared y cuando lo hice, me dio b
 "clftAtrusNote":        ( "Atrus", 16, (0,0,0,1), (0,0,0,0), -5, """
 
 
-QueridÌsima Yeesha,
+Querid√≠sima Yeesha,
 
-Anoche tu madre tuvo un sueÒo...
+Anoche tu madre tuvo un sue√±o...
 
 Sabemos que algunos futuros no fueron designados
-por el autor o por el Hacedor, aunque el sueÒo
-cuenta que D' ni volver· a desarrollarse alg˙n
-dÌa. Nuevos exploradores de D' ni llegar·n del
-desierto, sintiendo la llamada de algo que a˙n
+por el autor o por el Hacedor, aunque el sue√±o
+cuenta que D' ni volver√° a desarrollarse alg√∫n
+d√≠a. Nuevos exploradores de D' ni llegar√°n del
+desierto, sintiendo la llamada de algo que a√∫n
 no comprenden. 
 
-El sueÒo tambiÈn habla de un p·jaro del desierto
+El sue√±o tambi√©n habla de un p√°jaro del desierto
 con poderes para tejer ese nuevo destino de
 D' ni. Tememos que tal poder cambie a la gente.
 
-Yeesha, nuestro p·jaro del desierto, tu b˙squeda
-parece alejarte m·s y m·s de nosotros. Espero
+Yeesha, nuestro p√°jaro del desierto, tu b√∫squeda
+parece alejarte m√°s y m√°s de nosotros. Espero
 que lo que encuentres te vuelva a acercar a
 nosotros. 
 
@@ -168,7 +169,7 @@ nosotros.
 
 "islmNickNote":        ( "Nick", 16, (0,0,.3,1), (0,0,0,0), 1, """
 
-øDÛnde demonios est· mi libro? °øY por quÈ se lo tuvo que llevar alguien?!
+¬øD√≥nde demonios est√° mi libro? ¬°¬øY por qu√© se lo tuvo que llevar alguien?!
 
 - Nick 
 

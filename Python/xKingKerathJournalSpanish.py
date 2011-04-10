@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,30 +28,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingKerathJournalCover_eng*1#0.hsm"><font size=12 face=courier color=000000><margin left=62 right=62 top=48><p align=center>El Rey Kerath
 
-<p align=left>LlegÛ al trono en 6731 ED a la edad de 54 aÒos. Kerath fue posiblemente el m·s conocido de todos los Reyes, no porque fuese considerado el mejor, si no porque fue el ˙ltimo. Su nombre llegÛ a representarlo todo sobre los Reyes en aÒos posteriores, incluido el cambio de nombre del Arco de los Reyes a Arco de Kerath. 
+<p align=left>Lleg√≥ al trono en 6731 ED a la edad de 54 a√±os. Kerath fue posiblemente el m√°s conocido de todos los Reyes, no porque fuese considerado el mejor, si no porque fue el √∫ltimo. Su nombre lleg√≥ a representarlo todo sobre los Reyes en a√±os posteriores, incluido el cambio de nombre del Arco de los Reyes a Arco de Kerath. 
 
-Fue educado por su madre para que siguiera las enseÒanzas de Gish y cuando ascendiÛ al trono se pensÛ que era un creyente incondicional de los Seguidores. A causa de esto y de su experiencia observando a su padre con sus consejeros, Kerath decidiÛ a edad temprana que un Rey no era lo indicado para dirigir a los  D'ni. Al menos, -argumentÛ-, no hasta el advenimiento del verdadero Gran Rey. 
+Fue educado por su madre para que siguiera las ense√±anzas de Gish y cuando ascendi√≥ al trono se pens√≥ que era un creyente incondicional de los Seguidores. A causa de esto y de su experiencia observando a su padre con sus consejeros, Kerath decidi√≥ a edad temprana que un Rey no era lo indicado para dirigir a los  D'ni. Al menos, -argument√≥-, no hasta el advenimiento del verdadero Gran Rey. 
 
-El hecho de que Kerath, en un ˙nico reinado, fuera capaz de convencer a su pueblo de que la manera que habÌan sido gobernados durante miles de aÒos era la equivocada y deberÌa modificarse, fue considerado poco menos que milagroso. Kerath esgrimiÛ cuidadosamente sus argumentos sobre todo en beneficio de los Gremios. DespuÈs de todo, -insistiÛ-, "los D'ni son los Gremios... dejemos que sus fortalezas nos protejan y seamos dirigidos por su sabidurÌa."  
+El hecho de que Kerath, en un √∫nico reinado, fuera capaz de convencer a su pueblo de que la manera que hab√≠an sido gobernados durante miles de a√±os era la equivocada y deber√≠a modificarse, fue considerado poco menos que milagroso. Kerath esgrimi√≥ cuidadosamente sus argumentos sobre todo en beneficio de los Gremios. Despu√©s de todo, -insisti√≥-, "los D'ni son los Gremios... dejemos que sus fortalezas nos protejan y seamos dirigidos por su sabidur√≠a."  
 
-Fue difÌcil para los Gremios no apoyar una propuesta que eliminaba al Rey como la m·s alta autoridad y ser reemplazado por Cinco SeÒores; SeÒores que serÌan autom·ticamente elegidos por los Grandes Maestros de los Gremios. TransfiriÛ todo el poder de los D'ni a los Gremios y sÛlo hubo unos pocos Grandes Maestros que discreparon. Esos pocos fueron conocidos como los leales seguidores del Gran Rey, y Ri'neref, que siempre habÌan apoyado el papel de los Reyes. 
+Fue dif√≠cil para los Gremios no apoyar una propuesta que eliminaba al Rey como la m√°s alta autoridad y ser reemplazado por Cinco Se√±ores; Se√±ores que ser√≠an autom√°ticamente elegidos por los Grandes Maestros de los Gremios. Transfiri√≥ todo el poder de los D'ni a los Gremios y s√≥lo hubo unos pocos Grandes Maestros que discreparon. Esos pocos fueron conocidos como los leales seguidores del Gran Rey, y Ri'neref, que siempre hab√≠an apoyado el papel de los Reyes. 
 
-Aunque su pueblo creÌa en una variedad de ideologÌas filosÛficas, por suerte para Kerath, sÛlo aquÈllos que fueron fieles a las enseÒanzas originales de Ri'neref y del Gran Rey se sentÌan perturbados por la falta de un Rey. Siendo estos de mayorÌa D'ni (quienes ya no seguÌan esas creencias) en lugar de los Nemiya, Gish el Vigilante y algunos otros. Esto dio como resultado un impacto de origen cultural y no religioso* que el pueblo tendrÌa que superar. 
+Aunque su pueblo cre√≠a en una variedad de ideolog√≠as filos√≥ficas, por suerte para Kerath, s√≥lo aqu√©llos que fueron fieles a las ense√±anzas originales de Ri'neref y del Gran Rey se sent√≠an perturbados por la falta de un Rey. Siendo estos de mayor√≠a D'ni (quienes ya no segu√≠an esas creencias) en lugar de los Nemiya, Gish el Vigilante y algunos otros. Esto dio como resultado un impacto de origen cultural y no religioso* que el pueblo tendr√≠a que superar. 
 
-Kerath intentaba agradar a˙n m·s a los Gremios; la recomendaciÛn de nuevas restauraciones, incorporaciones a la C·mara del Consejo y la construcciÛn de un nuevo Colegio de Gremios, permitÌa celebrar la nueva autoridad de la que iban a disponer. Era un sÌmbolo de la nueva autoridad de los Gremios y los SeÒores, adem·s de un nuevo insulto al Gran Rey, que quedÛ enterrado en la memoria tras la nueva estructura del gobierno. 
+Kerath intentaba agradar a√∫n m√°s a los Gremios; la recomendaci√≥n de nuevas restauraciones, incorporaciones a la C√°mara del Consejo y la construcci√≥n de un nuevo Colegio de Gremios, permit√≠a celebrar la nueva autoridad de la que iban a disponer. Era un s√≠mbolo de la nueva autoridad de los Gremios y los Se√±ores, adem√°s de un nuevo insulto al Gran Rey, que qued√≥ enterrado en la memoria tras la nueva estructura del gobierno. 
 
-La construcciÛn del nuevo Colegio de Gremios comenzÛ en 6970 ED. No hubo mejor sÌmbolo de la postura de los D'ni en el aÒo 6970 ED. La Tumba del Gran Rey quedÛ enterrada bajo los gigantescos edificios dedicados al gobierno y a los Gremios. 
+La construcci√≥n del nuevo Colegio de Gremios comenz√≥ en 6970 ED. No hubo mejor s√≠mbolo de la postura de los D'ni en el a√±o 6970 ED. La Tumba del Gran Rey qued√≥ enterrada bajo los gigantescos edificios dedicados al gobierno y a los Gremios. 
 
-Hacia el final de su reinado, Kerath habÌa convencido de su propias creencias a una mayorÌa de los D'ni. La mayorÌa de ellos se proclamaban seguidores de Gish y su doctrina, y muchos consideraban que los extraÒos eran una amenaza. "Si no es ahora, ser· pronto" solÌa decir Kerath a menudo*. 
+Hacia el final de su reinado, Kerath hab√≠a convencido de su propias creencias a una mayor√≠a de los D'ni. La mayor√≠a de ellos se proclamaban seguidores de Gish y su doctrina, y muchos consideraban que los extra√±os eran una amenaza. "Si no es ahora, ser√° pronto" sol√≠a decir Kerath a menudo*. 
 
-DespuÈs de su muerte, las palabras de Kerath demostrarÌan estar en lo cierto tras el inicio de la guerra de los Mee-Dis. En el exterior, las facciones invadirÌan intentando destruir tanto al Gremio de Hacedores de Tinta como al Gremio de Impresores y llegarÌan casi a conseguirlo. Cuando la guerra hubiese llegado a su fin los pocos que hubieran quedado en pie no seguirÌan a Gish, asÌ creerÌan en el final de la participaciÛn de casi todos los extraÒos. El conocimiento de que facciones conservadoras habÌan desencadenado el inicio de la guerra de los Mee-Dis se supo despuÈs, cuando ya era demasiado tarde para cambiar las corrientes conservadoras.  
+Despu√©s de su muerte, las palabras de Kerath demostrar√≠an estar en lo cierto tras el inicio de la guerra de los Mee-Dis. En el exterior, las facciones invadir√≠an intentando destruir tanto al Gremio de Hacedores de Tinta como al Gremio de Impresores y llegar√≠an casi a conseguirlo. Cuando la guerra hubiese llegado a su fin los pocos que hubieran quedado en pie no seguir√≠an a Gish, as√≠ creer√≠an en el final de la participaci√≥n de casi todos los extra√±os. El conocimiento de que facciones conservadoras hab√≠an desencadenado el inicio de la guerra de los Mee-Dis se supo despu√©s, cuando ya era demasiado tarde para cambiar las corrientes conservadoras.  
 
-No obstante, en 6977 ED Kerath abdicÛ y traspasÛ el poder de los Reyes a los Cinco SeÒores de la Historia D'ni. Estos fueron el SeÒor Taeri del Gremio de Mensajeros, el SeÒor Hemelah del Gremio de Sanadores, el SeÒor Moleth del Gremio de Proveedores, el SeÒor Kedri del Gremio de Escritores y el SeÒor Korenen del Gremio de Analistas. Kerath muriÛ ocho aÒos despuÈs.
+No obstante, en 6977 ED Kerath abdic√≥ y traspas√≥ el poder de los Reyes a los Cinco Se√±ores de la Historia D'ni. Estos fueron el Se√±or Taeri del Gremio de Mensajeros, el Se√±or Hemelah del Gremio de Sanadores, el Se√±or Moleth del Gremio de Proveedores, el Se√±or Kedri del Gremio de Escritores y el Se√±or Korenen del Gremio de Analistas. Kerath muri√≥ ocho a√±os despu√©s.
 
-La era de los Reyes habÌa llegado a su fin. 
+La era de los Reyes hab√≠a llegado a su fin. 
 
 
-* ExtraÌdo del discurso p˙blico de Kerath en el cu·l propuso la idea por primera vez 
+* Extra√≠do del discurso p√∫blico de Kerath en el cu√°l propuso la idea por primera vez 
 
 * De "Los Primeros Cinco" escrito por Tarvis en 7000
 """

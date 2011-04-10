@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 This module contains all the strings that need to localized for the RPS game
 """
 
-xWelcomeMsgPlural = "Bitte heiﬂen Sie %s willkommen, ein Spieler mit Rang %s und %s Punkten!"
-xWelcomeMsg = "Bitte heiﬂen Sie %s willkommen, ein Spieler mit Rang %s und %s Punkt!"
+xWelcomeMsgPlural = "Bitte hei√üen Sie %s willkommen, ein Spieler mit Rang %s und %s Punkten!"
+xWelcomeMsg = "Bitte hei√üen Sie %s willkommen, ein Spieler mit Rang %s und %s Punkt!"
 xRankMsgPlural = "Sie haben den Rang %s mit %s Punkten erreicht!"
 xRankMsg = "Sie haben den Rang %s mit %s Punkt erreicht!"
-xNoKIMsg = "Sie benˆtigen eine KI, um Ayoheek spielen zu kˆnnen. Gehen Sie in die Garnisonswelt und holen Sie sich eine KI."
+xNoKIMsg = "Sie ben√∂tigen eine KI, um Ayoheek spielen zu k√∂nnen. Gehen Sie in die Garnisonswelt und holen Sie sich eine KI."

@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,15 +28,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingAileshJournalCover_eng*1#0.hsm"><font size=16 face=Sam color=000000><margin left=62 right=62 top=48><p align=center>El Rey Ailesh
 
-<p align=left>Ailesh llegó al trono en la ceremonia de coronación en el año 120 ED a la edad de 170 años. Aunque parece que Ailesh nunca fue miembro del Gremio de Escritores en Garternay, pasó los primeros cincuenta años de su vida con Ri'neref (después de su destitución) trabajando en el Libro de D'ni. Cuando el Gremio de Escritores de los D'ni se formó en el año 8 ED, Ri'neref se aseguró que Ailesh fuera puesto al mando como primer Gran Maestro del Gremio. 
+<p align=left>Ailesh llegÃ³ al trono en la ceremonia de coronaciÃ³n en el aÃ±o 120 ED a la edad de 170 aÃ±os. Aunque parece que Ailesh nunca fue miembro del Gremio de Escritores en Garternay, pasÃ³ los primeros cincuenta aÃ±os de su vida con Ri'neref (despuÃ©s de su destituciÃ³n) trabajando en el Libro de D'ni. Cuando el Gremio de Escritores de los D'ni se formÃ³ en el aÃ±o 8 ED, Ri'neref se asegurÃ³ que Ailesh fuera puesto al mando como primer Gran Maestro del Gremio. 
 
-Como Gran Maestro, había trabajado estrechamente con Ri'neref en la redacción del Juramento del nuevo Gremio de Escritores. El Juramento, que era lo que todo miembro prometía cumplir, siguió vigente (con algún pequeño cambio) hasta el año 9400 ED. 
+Como Gran Maestro, habÃ­a trabajado estrechamente con Ri'neref en la redacciÃ³n del Juramento del nuevo Gremio de Escritores. El Juramento, que era lo que todo miembro prometÃ­a cumplir, siguiÃ³ vigente (con algÃºn pequeÃ±o cambio) hasta el aÃ±o 9400 ED. 
 
-Los archivos indican que el modelo de vida de Ailesh fue muy parecido al de Ri'neref. Se negó a construirse un palacio hasta que hubiera una Biblioteca Común abierta pues apoyaba firmemente el hecho que todos los ciudadanos contaran con un lugar donde tener acceso a los Libros. Aunque hubo pequeñas discrepancias en temas menores, el edificio finalmente se terminó en el 233 ED. A pesar de esto, y como su mentor, siguió rehusando la construcción de su palacio.   
+Los archivos indican que el modelo de vida de Ailesh fue muy parecido al de Ri'neref. Se negÃ³ a construirse un palacio hasta que hubiera una Biblioteca ComÃºn abierta pues apoyaba firmemente el hecho que todos los ciudadanos contaran con un lugar donde tener acceso a los Libros. Aunque hubo pequeÃ±as discrepancias en temas menores, el edificio finalmente se terminÃ³ en el 233 ED. A pesar de esto, y como su mentor, siguiÃ³ rehusando la construcciÃ³n de su palacio.   
 
-El reinado de Ailesh fue muy similar al de Ri'neref. Aún había entusiasmo por los nuevos ideales y por las leyes de los D'ni, además del gran respaldo por parte de Ailesh, lo que hizo hizo de su reinado uno de los más tranquilos.  
+El reinado de Ailesh fue muy similar al de Ri'neref. AÃºn habÃ­a entusiasmo por los nuevos ideales y por las leyes de los D'ni, ademÃ¡s del gran respaldo por parte de Ailesh, lo que hizo hizo de su reinado uno de los mÃ¡s tranquilos.  
 
-Antes del nacimiento de su tercer hijo en el año 256 ED, los documentos indican que hubo recelos entre la ciudadanía sobre quién iba a ser el siguiente Rey. Los dos hijos mayores de Ailesh eran bastante rebeldes y ninguno parecía el candidato ideal al trono, al menos en lo que se refiere a la opinión pública. No obstante cuando el tercer hijo de Ailesh creció, se hizo evidente para el público (aunque los archivos nunca recogieron motivos específicos) que el muchacho seguía muy de cerca los ideales de su padre. Ailesh debió de compartir la opinión de las gentes ya que fue su tercer hijo al que escogió como su sucesor. 
+Antes del nacimiento de su tercer hijo en el aÃ±o 256 ED, los documentos indican que hubo recelos entre la ciudadanÃ­a sobre quiÃ©n iba a ser el siguiente Rey. Los dos hijos mayores de Ailesh eran bastante rebeldes y ninguno parecÃ­a el candidato ideal al trono, al menos en lo que se refiere a la opiniÃ³n pÃºblica. No obstante cuando el tercer hijo de Ailesh creciÃ³, se hizo evidente para el pÃºblico (aunque los archivos nunca recogieron motivos especÃ­ficos) que el muchacho seguÃ­a muy de cerca los ideales de su padre. Ailesh debiÃ³ de compartir la opiniÃ³n de las gentes ya que fue su tercer hijo al que escogiÃ³ como su sucesor. 
 
-Ailesh falleció de muerte natural a la edad de 350.
+Ailesh falleciÃ³ de muerte natural a la edad de 350.
 """

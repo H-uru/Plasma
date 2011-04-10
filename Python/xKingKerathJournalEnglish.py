@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -31,7 +32,7 @@ xJournalContents = """<cover src="xKingKerathJournalCover_eng*1#0.hsm"><font siz
 
 His mother had raised him to follow the teachings of Gish and by the time he took the throne he was believed to be a whole-hearted believer in the Followers. Because of that, and the experience of watching his father interact with his advisors, Kerath had decided from an early age that a King was no longer the correct way that D'ni should be led. At least, he argued, not until the true Great King would come. 
 
-The fact that Kerath, in a single reign, was able to convince his people that the way they had been ruled for thousands of years was wrong and should be changed, should be considered nothing short of miraculous. Kerath carefully crafted his arguments as a benefit for the Guilds more than anything else. After all, he argued, "D'ni is the Guilds…let us be protected by their fortress and be ruled by their wisdom."  
+The fact that Kerath, in a single reign, was able to convince his people that the way they had been ruled for thousands of years was wrong and should be changed, should be considered nothing short of miraculous. Kerath carefully crafted his arguments as a benefit for the Guilds more than anything else. After all, he argued, "D'ni is the Guildsâ€¦let us be protected by their fortress and be ruled by their wisdom."  
 
 It was hard for the Guilds not to support a proposal that removed the King from the highest authority and replaced him with Five Lords, Lords that would be automatically chosen from the Grand Masters of the Guilds. It gave all of the power of D'ni to the Guilds and there were only a few Grand Masters who seemed to disagree. Those few were known as faithful followers of the Great King, and Ri'neref, who had always supported the role of Kings. 
 

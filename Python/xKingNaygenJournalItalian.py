@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,26 +28,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingNaygenJournalCover_eng*1#0.hsm"><font size=16 face=Sam><margin left=62 right=62 top=48><p align=center>Re Naygen
 
-<p align=left>Salì al trono nel 2356 DE all'età di 86 anni. Naygen fece molto per incoraggiare la crescita della Gilda Maggiore delle Belle Arti, oltre a ricercare altre "verità". L'anno 2500 DE (100 anni dopo la morte del grande Re) è il picco di quella che poi sarebbe stata chiamata "la confusione religiosa"*. C'erano oltre 2000 sette conosciute e i culti originali di Ri'neref erano noti a pochi. Naygen non era chiaramente uno di questi.
+<p align=left>SalÃ¬ al trono nel 2356 DE all'etÃ  di 86 anni. Naygen fece molto per incoraggiare la crescita della Gilda Maggiore delle Belle Arti, oltre a ricercare altre "veritÃ ". L'anno 2500 DE (100 anni dopo la morte del grande Re) Ã¨ il picco di quella che poi sarebbe stata chiamata "la confusione religiosa"*. C'erano oltre 2000 sette conosciute e i culti originali di Ri'neref erano noti a pochi. Naygen non era chiaramente uno di questi.
 
-Il 2397 DE segna l'inizio del Rinascimento D'ni. In quell'anno la compagnia teatrale Eamis mandò in scena il primo spettacolo scritto dal commediografo Sirreh. La commedia era sulla guerra dei Pento e il Grande Re, e fu molto apprezzata da Naygen. La commedia fece il tutto esaurito per tre settimane di fila e non solo segnò l'inizio del teatro come intrattenimento popolare, ma costituì il primo di una lunga serie di spettacoli sulla guerra dei Pento, che divenne uno degli episodi storici più usati nell'Arte teatrale. 
+Il 2397 DE segna l'inizio del Rinascimento D'ni. In quell'anno la compagnia teatrale Eamis mandÃ² in scena il primo spettacolo scritto dal commediografo Sirreh. La commedia era sulla guerra dei Pento e il Grande Re, e fu molto apprezzata da Naygen. La commedia fece il tutto esaurito per tre settimane di fila e non solo segnÃ² l'inizio del teatro come intrattenimento popolare, ma costituÃ¬ il primo di una lunga serie di spettacoli sulla guerra dei Pento, che divenne uno degli episodi storici piÃ¹ usati nell'Arte teatrale. 
 
-Nel 2408 DE, il trentatreenne musicista Airem riempì numerose platee, dando inizio alla fulgida carriera di uno dei più grandi artisti D'ni di sempre. Anche la sua musica riguardava il Grande Re, spesso ridicolizzandolo. Naygen lodò il suo popolo per essere in grado di esprimere "i loro veri sentimenti attraverso meravigliose forme d'arte".
+Nel 2408 DE, il trentatreenne musicista Airem riempÃ¬ numerose platee, dando inizio alla fulgida carriera di uno dei piÃ¹ grandi artisti D'ni di sempre. Anche la sua musica riguardava il Grande Re, spesso ridicolizzandolo. Naygen lodÃ² il suo popolo per essere in grado di esprimere "i loro veri sentimenti attraverso meravigliose forme d'arte".
 
-Nel 2488 DE, i primi tentativi di estrazione andati a buon fine a opera della Gilda dei Minatori furono calorosamente accolti dal popolo. Naygen sfruttò l'occasione per "giovare a chiunque". Egli stabilì che la Gilda dei Minatori dovesse diventare una Gilda Maggiore, rimpiazzando la gilda delle Belle Arti, che fu divisa nelle gilde Minori di Scultori, Pittori, Attori e Musici. La divisione aveva l'obiettivo di incoraggiare la crescita delle tecnologie d'estrazione oltre a favorire l'arte, due degli aspetti principali del governo di Naygen. La sua proposta fu fermamente supportata da Sirreh e Airem, come da tutti gli altri artisti, che vedevano tutto questo come una grande opportunità di sviluppare la crescita dei rispettivi campi. 
+Nel 2488 DE, i primi tentativi di estrazione andati a buon fine a opera della Gilda dei Minatori furono calorosamente accolti dal popolo. Naygen sfruttÃ² l'occasione per "giovare a chiunque". Egli stabilÃ¬ che la Gilda dei Minatori dovesse diventare una Gilda Maggiore, rimpiazzando la gilda delle Belle Arti, che fu divisa nelle gilde Minori di Scultori, Pittori, Attori e Musici. La divisione aveva l'obiettivo di incoraggiare la crescita delle tecnologie d'estrazione oltre a favorire l'arte, due degli aspetti principali del governo di Naygen. La sua proposta fu fermamente supportata da Sirreh e Airem, come da tutti gli altri artisti, che vedevano tutto questo come una grande opportunitÃ  di sviluppare la crescita dei rispettivi campi. 
 
-Nel 2500 DE, Naygen propose la costruzione di una nuova Camera per il Concilio delle Gilde. Ciò che sorprese tutti fu che Naygen propose di costruire questo palazzo sopra la tomba del Grande Re. La proposta trovò solo una timida opposizione*, e la costruzione iniziò due anni più tardi. Nel 2504 DE, la Tomba del Grande Re era quasi totalmente nascosta, simbolo vergognoso di ciò che i D'ni erano diventati.
+Nel 2500 DE, Naygen propose la costruzione di una nuova Camera per il Concilio delle Gilde. CiÃ² che sorprese tutti fu che Naygen propose di costruire questo palazzo sopra la tomba del Grande Re. La proposta trovÃ² solo una timida opposizione*, e la costruzione iniziÃ² due anni piÃ¹ tardi. Nel 2504 DE, la Tomba del Grande Re era quasi totalmente nascosta, simbolo vergognoso di ciÃ² che i D'ni erano diventati.
 
-Più tardi si scoprì che nella camera del consiglio c'era un'imponente sala del tesoro, protetta da iscrizioni enigmatiche. La tomba era famosa per i suoi fregi, alcuni dei quali venivano ritenuti profetici. Naygen si appassionò a queste iscrizioni decorando ogni angolo dell'intera camera con fregi simili. Sebbene il popolo non sapesse molto di questa sala all'epoca della costruzione, anni dopo, si scoprì essere piena di ricchezze. Naturalmente, ben pochi furono in grado di mettere da parte una cifra paragonabile a quella di Naygen, ma l'idea di risparmiare denaro per le future generazioni era fermamente incoraggiata da Naygen stesso.
+PiÃ¹ tardi si scoprÃ¬ che nella camera del consiglio c'era un'imponente sala del tesoro, protetta da iscrizioni enigmatiche. La tomba era famosa per i suoi fregi, alcuni dei quali venivano ritenuti profetici. Naygen si appassionÃ² a queste iscrizioni decorando ogni angolo dell'intera camera con fregi simili. Sebbene il popolo non sapesse molto di questa sala all'epoca della costruzione, anni dopo, si scoprÃ¬ essere piena di ricchezze. Naturalmente, ben pochi furono in grado di mettere da parte una cifra paragonabile a quella di Naygen, ma l'idea di risparmiare denaro per le future generazioni era fermamente incoraggiata da Naygen stesso.
 
-Naygen morì nel 2533 DE all'età di 263 anni lasciando il trono al suo terzo figlio. In memoria di Naygen, Sirreh scrisse una delle sue opere più famose, chiamata "Il Nostro Grande Re". Questa fu la prima opera messa in scena dalla Gilda Minore degli Attori nel 2535 DE.
+Naygen morÃ¬ nel 2533 DE all'etÃ  di 263 anni lasciando il trono al suo terzo figlio. In memoria di Naygen, Sirreh scrisse una delle sue opere piÃ¹ famose, chiamata "Il Nostro Grande Re". Questa fu la prima opera messa in scena dalla Gilda Minore degli Attori nel 2535 DE.
 
 
 * Tratto dal diario di Tevahr del 3075
 
 * Da un discorso di Naygen, inaugurando la Gilda Minore dei Musici
 
-* Sebbene la Chiesa inoltrò ufficialmente una protesta, sembrò tutto sommato essere poco convincente. Infatti, pare che persino una profetessa di Naygen diede supporto alla proposta
+* Sebbene la Chiesa inoltrÃ² ufficialmente una protesta, sembrÃ² tutto sommato essere poco convincente. Infatti, pare che persino una profetessa di Naygen diede supporto alla proposta
 
 
 """

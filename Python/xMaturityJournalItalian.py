@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -25,22 +26,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 # xMaturityJournalEnglish
 # change the contents of the variable below to the desired contents of the journal
-xJournalContents = """<cover src="xMaturityJournalCover_eng*1#0.hsm"><font size=16 face=Michelle color=982A2A><margin left=62 right=62 top=48><p align=center>Maturit‡
+xJournalContents = """<cover src="xMaturityJournalCover_eng*1#0.hsm"><font size=16 face=Michelle color=982A2A><margin left=62 right=62 top=48><p align=center>Maturit√†
 
-<p align=left>Come in molte altre culture, anche i D'ni celebravano l'entrata del bambino nell'et‡ della ragione e della maturit‡. I D'ni credevano che la maturit‡, o Et‡ della Ragione come la chiamavano, si raggiungesse a 25 anni. Prima di allora, i D'ni credevano che il cuore e la mente del bambino non fossero ancora adeguatamente formati. Fino a quel momento ritenevano impossibile per un bambino compiere una decisione saggia in quanto spinto da altre motivazioni. CiÚ non significa che ritenessero i bambini incapaci di decidere; il motivo era semplicemente che Yahvo non li considerava ancora individui su cui far conto. Proprio per questo era responsabilit‡ delle famiglie proteggere il bambino, ed era costume avere un solo bambino sotto i 25 anni per volta.
+<p align=left>Come in molte altre culture, anche i D'ni celebravano l'entrata del bambino nell'et√† della ragione e della maturit√†. I D'ni credevano che la maturit√†, o Et√† della Ragione come la chiamavano, si raggiungesse a 25 anni. Prima di allora, i D'ni credevano che il cuore e la mente del bambino non fossero ancora adeguatamente formati. Fino a quel momento ritenevano impossibile per un bambino compiere una decisione saggia in quanto spinto da altre motivazioni. Ci√≤ non significa che ritenessero i bambini incapaci di decidere; il motivo era semplicemente che Yahvo non li considerava ancora individui su cui far conto. Proprio per questo era responsabilit√† delle famiglie proteggere il bambino, ed era costume avere un solo bambino sotto i 25 anni per volta.
 
-Nella "Cerimonia della preparazione", i D'ni celebravano l'entrata del bambino nell'Et‡ della Ragione. 
+Nella "Cerimonia della preparazione", i D'ni celebravano l'entrata del bambino nell'Et√† della Ragione. 
 
-Alla cerimonia, il bambino era presentato con un braccialetto della conoscenza (tradotto "maturit‡"). Devo ammettere che la traduzione Ë inadeguata e fa sembrare il braccialetto oggetto di superstizione o magia, cosa che Ë assolutamente falsa. Infatti, questo braccialetto era un oggetto di indubbio valore.
+Alla cerimonia, il bambino era presentato con un braccialetto della conoscenza (tradotto "maturit√†"). Devo ammettere che la traduzione √® inadeguata e fa sembrare il braccialetto oggetto di superstizione o magia, cosa che √® assolutamente falsa. Infatti, questo braccialetto era un oggetto di indubbio valore.
 
-I D'ni vedevano il braccialetto come un segno di affidabilit‡. L'individuo, una volta ricevuto il braccialetto, era considerato responsabile delle proprie azioni, cosciente della differenza tra bene e male e sufficientemente saggio da poter scegliere tra i due. Col braccialetto si ottenevano determinati diritti, oltre al fatto che ci si aspettava un comportamento pi˘ corretto rispetto al passato di bambino.
+I D'ni vedevano il braccialetto come un segno di affidabilit√†. L'individuo, una volta ricevuto il braccialetto, era considerato responsabile delle proprie azioni, cosciente della differenza tra bene e male e sufficientemente saggio da poter scegliere tra i due. Col braccialetto si ottenevano determinati diritti, oltre al fatto che ci si aspettava un comportamento pi√π corretto rispetto al passato di bambino.
 
-Da un punto di vista religioso, la "Cerimonia della preparazione" significava che Yahvo conferiva fiducia al bambino come a ogni altro cittadino. I genitori non erano pi˘ giudicati per i comportamenti del bambino sul piano religioso, e l'ignoranza non costituiva pi˘ scusa agli occhi di Yahvo. Il Creatore, dicevano, si aspettava ora molto di pi˘. 
+Da un punto di vista religioso, la "Cerimonia della preparazione" significava che Yahvo conferiva fiducia al bambino come a ogni altro cittadino. I genitori non erano pi√π giudicati per i comportamenti del bambino sul piano religioso, e l'ignoranza non costituiva pi√π scusa agli occhi di Yahvo. Il Creatore, dicevano, si aspettava ora molto di pi√π. 
 
-Sebbene l'et‡ della ragione fosse 25 anni, i D'ni pensavano che la vera saggezza giungesse solo molto dopo. All'et‡ di 125 anni si celebrava poi l'Et‡ della Saggezza, ma la cerimonia non era festeggiata in maniera cosÏ pomposa come per l'Et‡ della Ragione. L'aspetto pi˘ importante della seconda cerimonia era il fatto che ai D'ni veniva concesso di poter raggiungere i pi˘ alti livelli come insegnanti o politici (Gran Maestro o Governatore).
+Sebbene l'et√† della ragione fosse 25 anni, i D'ni pensavano che la vera saggezza giungesse solo molto dopo. All'et√† di 125 anni si celebrava poi l'Et√† della Saggezza, ma la cerimonia non era festeggiata in maniera cos√¨ pomposa come per l'Et√† della Ragione. L'aspetto pi√π importante della seconda cerimonia era il fatto che ai D'ni veniva concesso di poter raggiungere i pi√π alti livelli come insegnanti o politici (Gran Maestro o Governatore).
 
 
 Le stesse regole venivano applicate anche alle donne, e a nessuna donna sotto i 125 anni veniva permesso fare da consigliera, specialmente al Re. Sembra inoltre che le donne fossero fertili proprio fino a 125 anni circa.
 
-Durante l'Et‡ dei Re, si usava porre consiglieri a fianco dei sovrani, soprattutto a quei re che non avevano ancora raggiunto l'et‡ della Saggezza. Il Grande Re Ahlsendar fu l'unico che non ebbe nessun consigliere ufficiale anche se governÚ per molti anni senza aver ancora raggiunto l'et‡ della Saggezza.
+Durante l'Et√† dei Re, si usava porre consiglieri a fianco dei sovrani, soprattutto a quei re che non avevano ancora raggiunto l'et√† della Saggezza. Il Grande Re Ahlsendar fu l'unico che non ebbe nessun consigliere ufficiale anche se govern√≤ per molti anni senza aver ancora raggiunto l'et√† della Saggezza.
 """

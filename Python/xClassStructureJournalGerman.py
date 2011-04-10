@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -29,19 +30,19 @@ xJournalContents = """<cover src="xClassStructureJournalCover_eng*1#0.hsm"><font
 
 <p align=left>Es sieht so aus, als sei meine erste Neigung zur Klassenstruktur inkorrekt gewesen. Obwohl es anfangs nur wenig Vorlieben einer Klassengesellschaft gab, so verblasste dieses ehrenvolle Ideal sehr schnell. Im Jahre 9400 DE gab es sieben verschiedene Klassen. 
 
-Elite - Die Fürsten und Großmeister der wichtigsten Gilden. Es war möglich, dass Privatbürger akzeptiert wurden, aber dann wurden weitere Ressourcen benötigt. Nur die Elite besaß private Büchereien und Inseln. 
+Elite - Die FÃ¼rsten und GroÃŸmeister der wichtigsten Gilden. Es war mÃ¶glich, dass PrivatbÃ¼rger akzeptiert wurden, aber dann wurden weitere Ressourcen benÃ¶tigt. Nur die Elite besaÃŸ private BÃ¼chereien und Inseln. 
  
-Es wurden einige Versuche unternommen, die Klassen zu vereinen. Ich bin mir allerdings nicht sicher, ob diese Versuche fruchtbar waren. Öffentliche Büchereien, Stipendien für die wichtigsten Gilden, Renovierung der ärmeren Viertel - all dies hatte eher politische Beweggründe als dass es auf die Verbesserung des Lebensstandards abzielen sollte. Aber ich denke, das ist nicht überraschend.
+Es wurden einige Versuche unternommen, die Klassen zu vereinen. Ich bin mir allerdings nicht sicher, ob diese Versuche fruchtbar waren. Ã–ffentliche BÃ¼chereien, Stipendien fÃ¼r die wichtigsten Gilden, Renovierung der Ã¤rmeren Viertel - all dies hatte eher politische BeweggrÃ¼nde als dass es auf die Verbesserung des Lebensstandards abzielen sollte. Aber ich denke, das ist nicht Ã¼berraschend.
 
-Gildenangehörige - Ja, Mitgliedern der niederen Klassen war es möglich beizutreten, aber es scheint, dass die Schulen zu teuer und berühmt waren, als dass ihnen viele Mitglieder der niederen Klassen beigetreten wären. Daher bildeten die Absolventen eine eigene Klasse. Und dazu noch eine der höheren. 
+GildenangehÃ¶rige - Ja, Mitgliedern der niederen Klassen war es mÃ¶glich beizutreten, aber es scheint, dass die Schulen zu teuer und berÃ¼hmt waren, als dass ihnen viele Mitglieder der niederen Klassen beigetreten wÃ¤ren. Daher bildeten die Absolventen eine eigene Klasse. Und dazu noch eine der hÃ¶heren. 
 
-Oberschicht - Die niedrigste der drei hohen Klassen. Die Angehörigen dieser Klasse waren erfolgreiche Unternehmer, die meist die Elite der Banken, Gaststätten usw. versorgte. Meistens genossen die Mitglieder dieser Klasse keine Ausbildung in einer der wichtigsten Gilden, verfügten aber über ausreichend finanzielle Mittel, um sich ihren Platz in einer der höheren Klassen zu kaufen. 
+Oberschicht - Die niedrigste der drei hohen Klassen. Die AngehÃ¶rigen dieser Klasse waren erfolgreiche Unternehmer, die meist die Elite der Banken, GaststÃ¤tten usw. versorgte. Meistens genossen die Mitglieder dieser Klasse keine Ausbildung in einer der wichtigsten Gilden, verfÃ¼gten aber Ã¼ber ausreichend finanzielle Mittel, um sich ihren Platz in einer der hÃ¶heren Klassen zu kaufen. 
 
-Mittelschicht - Meist Geschäftsleute. Sie waren in der Lage, sich einiges an Luxus zu leisten, waren aber dem Ansehen nach weit von der Elite entfernt. Es war zwar selten, aber doch möglich, dass sie eigene Bücher besaßen sowie eigene Welten. Sie schienen den Großteil der niederen Klassen auszumachen. 
+Mittelschicht - Meist GeschÃ¤ftsleute. Sie waren in der Lage, sich einiges an Luxus zu leisten, waren aber dem Ansehen nach weit von der Elite entfernt. Es war zwar selten, aber doch mÃ¶glich, dass sie eigene BÃ¼cher besaÃŸen sowie eigene Welten. Sie schienen den GroÃŸteil der niederen Klassen auszumachen. 
 
-Bessere Arme - Die höhere Klasse der Armen schien sich größtenteils aus Industriearbeitern zusammenzusetzen, viele von ihnen verbrachten ihr Leben in fremden Welten (bevor diese verboten wurden). Es macht den Anschein, dass diese Klasse, sowie die zwei niedrigsten, keine eigenen Bücher besaß. 
+Bessere Arme - Die hÃ¶here Klasse der Armen schien sich grÃ¶ÃŸtenteils aus Industriearbeitern zusammenzusetzen, viele von ihnen verbrachten ihr Leben in fremden Welten (bevor diese verboten wurden). Es macht den Anschein, dass diese Klasse, sowie die zwei niedrigsten, keine eigenen BÃ¼cher besaÃŸ. 
 
-Niedere Arme - Mir fällt kein besserer Name ein. Allerdings ist es recht eindeutig, dass es zwei Klassen der Armen gab. Diese niederen Armen blieben immer in ihren eigenen Distrikten und wurden nur selten mit Mitgliedern der Mittelklasse und nie mit Mitgliedern der oberen Klassen gesehen. Möglicherweise wurden sie als Dienstboten beschäftigt, obwohl man das normalerweise nicht gern sah. 
+Niedere Arme - Mir fÃ¤llt kein besserer Name ein. Allerdings ist es recht eindeutig, dass es zwei Klassen der Armen gab. Diese niederen Armen blieben immer in ihren eigenen Distrikten und wurden nur selten mit Mitgliedern der Mittelklasse und nie mit Mitgliedern der oberen Klassen gesehen. MÃ¶glicherweise wurden sie als Dienstboten beschÃ¤ftigt, obwohl man das normalerweise nicht gern sah. 
 
-Unterste Arme - Referenz zu den 'Untersten' (eine nicht näher definierte Unterklasse?) gefunden, allerdings nur sehr vereinzelt. Nicht genügend Daten vorhanden, um Licht in die Sache zu bringen.
+Unterste Arme - Referenz zu den 'Untersten' (eine nicht nÃ¤her definierte Unterklasse?) gefunden, allerdings nur sehr vereinzelt. Nicht genÃ¼gend Daten vorhanden, um Licht in die Sache zu bringen.
 """

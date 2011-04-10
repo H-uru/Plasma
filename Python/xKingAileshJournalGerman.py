@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -25,16 +26,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 # xKingAileshJournalEnglish
 # change the contents of the variable below to the desired contents of the journal
-xJournalContents = """<cover src="xKingAileshJournalCover_eng*1#0.hsm"><font size=16 face=Sam color=000000><margin left=62 right=62 top=48><p align=center>König Ailesh
+xJournalContents = """<cover src="xKingAileshJournalCover_eng*1#0.hsm"><font size=16 face=Sam color=000000><margin left=62 right=62 top=48><p align=center>KÃ¶nig Ailesh
 
-<p align=left>Ailesh bestieg im Jahre 120DE, im Alter von 170, den Thron im Rahmen der Krönungsfeierlichkeiten. Obwohl es den Anschein hat, dass Ailesh nie Mitglied der Schreibergilde auf Garternay war, so verbrachte er seine ersten fünfzig Jahre damit, (nach seiner eigenen Abberufung) an der Seite von Ri'neref an dem Buch der D'ni zu arbeiten. Als im Jahre 3 DE die Schreibergilde gegründet wurde, stellte Ri'neref sicher, dass Ailesh als erster Großmeister die Verantwortung für die Gilde übernahm. 
+<p align=left>Ailesh bestieg im Jahre 120DE, im Alter von 170, den Thron im Rahmen der KrÃ¶nungsfeierlichkeiten. Obwohl es den Anschein hat, dass Ailesh nie Mitglied der Schreibergilde auf Garternay war, so verbrachte er seine ersten fÃ¼nfzig Jahre damit, (nach seiner eigenen Abberufung) an der Seite von Ri'neref an dem Buch der D'ni zu arbeiten. Als im Jahre 3 DE die Schreibergilde gegrÃ¼ndet wurde, stellte Ri'neref sicher, dass Ailesh als erster GroÃŸmeister die Verantwortung fÃ¼r die Gilde Ã¼bernahm. 
 
-Als Großmeister arbeitete er eng mit Ri'neref an der Ausarbeitung des neuen Schwurs der Schreibergilde. Der Schwur, den jedes Mitglied leistete und schwor, sein Leben danach auszurichten, hatte - mit einigen kleineren Änderungen - bis zum Jahre 9400 DE Bestand. 
+Als GroÃŸmeister arbeitete er eng mit Ri'neref an der Ausarbeitung des neuen Schwurs der Schreibergilde. Der Schwur, den jedes Mitglied leistete und schwor, sein Leben danach auszurichten, hatte - mit einigen kleineren Ã„nderungen - bis zum Jahre 9400 DE Bestand. 
 
-Aufzeichnungen zufolge richtete Ailesh sein Leben sehr stark an dem von Ri'neref aus. Er weigerte sich, für sich einen Palast bauen zu lassen, bis eine Bücherei eröffnet wurde, da er sich sehr stark für einen Ort aussprach, an dem jeder Bürger Zugriff auf Bücher haben würde. Obwohl es während des Baus der Bibliothek zu einigen kleineren Unstimmigkeiten kam, wurden die Bauarbeiten im Jahre 233 DE abgeschlossen. Trotzdem weigerte sich Ailesh - wie sein Mentor - für sich selbst einen Palast errichten zu lassen.
+Aufzeichnungen zufolge richtete Ailesh sein Leben sehr stark an dem von Ri'neref aus. Er weigerte sich, fÃ¼r sich einen Palast bauen zu lassen, bis eine BÃ¼cherei erÃ¶ffnet wurde, da er sich sehr stark fÃ¼r einen Ort aussprach, an dem jeder BÃ¼rger Zugriff auf BÃ¼cher haben wÃ¼rde. Obwohl es wÃ¤hrend des Baus der Bibliothek zu einigen kleineren Unstimmigkeiten kam, wurden die Bauarbeiten im Jahre 233 DE abgeschlossen. Trotzdem weigerte sich Ailesh - wie sein Mentor - fÃ¼r sich selbst einen Palast errichten zu lassen.
 
-Die Regentschaft des Ailesh glich sehr stark der des Ri'neref. Die neuen Ideale und Gesetze der D'ni wurden noch immer mit großer Begeisterung angenommen, von daher erfreute sich Ailesh breiter Unterstützung und seine Regentschaft verlief reibungslos. 
+Die Regentschaft des Ailesh glich sehr stark der des Ri'neref. Die neuen Ideale und Gesetze der D'ni wurden noch immer mit groÃŸer Begeisterung angenommen, von daher erfreute sich Ailesh breiter UnterstÃ¼tzung und seine Regentschaft verlief reibungslos. 
 
-Vor der Geburt seines dritten Sohnes im Jahre 256 DE schien es den Aufzeichnungen nach Befürchtungen darüber zu geben, wer die Nachfolge des Königs antreten sollte. Die zwei ältesten Söhne des Ailesh waren recht rebellisch und keiner von ihnen schien der geeignete Anwärter auf den Thron zu sein - zumindest nicht der Meinung der Öffentlichkeit zufolge. Als jedoch Aileshs dritter Sohn heranwuchs, wurde es der Öffentlichkeit klar, dass der Junge den Fußstapfen seines Vaters folgte (obwohl es keine Aufzeichnungen darüber gibt, welche Anzeichen es dafür gab). Ailesh war wohl derselben Meinung wie die Öffentlichkeit, da er seinen dritten Sohn als seinen Nachfolger auserkor. 
-Ailesh starb im Jahre 350 eines natürlichen Todes.
+Vor der Geburt seines dritten Sohnes im Jahre 256 DE schien es den Aufzeichnungen nach BefÃ¼rchtungen darÃ¼ber zu geben, wer die Nachfolge des KÃ¶nigs antreten sollte. Die zwei Ã¤ltesten SÃ¶hne des Ailesh waren recht rebellisch und keiner von ihnen schien der geeignete AnwÃ¤rter auf den Thron zu sein - zumindest nicht der Meinung der Ã–ffentlichkeit zufolge. Als jedoch Aileshs dritter Sohn heranwuchs, wurde es der Ã–ffentlichkeit klar, dass der Junge den FuÃŸstapfen seines Vaters folgte (obwohl es keine Aufzeichnungen darÃ¼ber gibt, welche Anzeichen es dafÃ¼r gab). Ailesh war wohl derselben Meinung wie die Ã–ffentlichkeit, da er seinen dritten Sohn als seinen Nachfolger auserkor. 
+Ailesh starb im Jahre 350 eines natÃ¼rlichen Todes.
 """

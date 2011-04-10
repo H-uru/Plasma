@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -30,16 +31,16 @@ This module contains all the strings that need to localized for the Options Menu
 
 #---------
 # Startup Help text
-#xSUHWelcome = "Bienvenue à Uru"
-#xSUHSomeHelp = "Déplacement - Touches fléchées\nSélection - Clic gauche\n\nCourir - Touche Maj\nSauter - Barre d'espacement"
-#xSUHForMore = """Pour plus d'informations et d'options, veuillez cliquer sur le "?" en bas à droite de l'écran."""
+#xSUHWelcome = "Bienvenue Ã  Uru"
+#xSUHSomeHelp = "DÃ©placement - Touches flÃ©chÃ©es\nSÃ©lection - Clic gauche\n\nCourir - Touche Maj\nSauter - Barre d'espacement"
+#xSUHForMore = """Pour plus d'informations et d'options, veuillez cliquer sur le "?" en bas Ã  droite de l'Ã©cran."""
 #xSUHOkBtnText = "Ok"
-xSUHHelpTitle = "Bienvenue à Uru"
+xSUHHelpTitle = "Bienvenue Ã  Uru"
 xSUHWalkText = "Marcher"
 xSUHRunText = "Courir"
-xSUHTurnLeftText = "Tourner à gauche"
+xSUHTurnLeftText = "Tourner Ã  gauche"
 xSUHBackwardsText = "Reculer"
-xSUHTurnRightText = "Tourner à droite"
+xSUHTurnRightText = "Tourner Ã  droite"
 xSUHToggleViewText = "Changer de vue"
 xSUHJumpText = "Sauter"
 xSUHMouseWalkText = "Marcher"
@@ -47,41 +48,41 @@ xSUHMouseRunText = "Courir"
 xSUHSelectText = "Activer"
 xSUHMousePanCam = "Regarder"
 xSUHMouseBackwards = "Reculer"
-xSUHMousePresetsTitle = "Contrôles souris"
+xSUHMousePresetsTitle = "ContrÃ´les souris"
 xSUHMouseNormalText = "Normal"
-xSUHMouseNoviceText = "Débutant"
+xSUHMouseNoviceText = "DÃ©butant"
 xSUHOkButton = "Ok"
 
 
 #---------
 # Options Dialog
 xOptionsKeyMapText = "Config Touches"
-xOptionsSettingText = "Paramètres du jeu"
-xOptionsTrailerText = "Aperçu URU Live"
+xOptionsSettingText = "ParamÃ¨tres du jeu"
+xOptionsTrailerText = "AperÃ§u URU Live"
 xOptionsHelpText = "Aide"
-xOptionsCreditsText = "Crédits URU"
+xOptionsCreditsText = "CrÃ©dits URU"
 xOptionsQuitText = "Quitter URU"
 xOptionsCalibrationText = "Calibrage"
 xOptionsResumeText = "Reprendre URU"
-xOptionsDefaultsText = "Défaut"
+xOptionsDefaultsText = "DÃ©faut"
 xOptionsGoBackText = "Retour"
-xOptionsDemoTrailerText = "Aperçu URU"
+xOptionsDemoTrailerText = "AperÃ§u URU"
 
 #--------
 # In Game Help Dialog
 xIGHHeaderText = "Aide rapide"
-xIGMHelpMessage = "Déplacement - Touches fléchées (ou Souris gauche)\nSauter - Barre d'espacement\nCourir - Maj\n\nActiver/Sélectionner - Clic gauche de souris (curseur plein)\nSe reculer - Touche Bas, Échap ou Retour arrière\n\nChanger de vue - F1\nRegarder autour de soi - Clic droit maintenu enfoncé\n\n\n(Consultez le manuel pour plus d'informations.)"
+xIGMHelpMessage = "DÃ©placement - Touches flÃ©chÃ©es (ou Souris gauche)\nSauter - Barre d'espacement\nCourir - Maj\n\nActiver/SÃ©lectionner - Clic gauche de souris (curseur plein)\nSe reculer - Touche Bas, Ã‰chap ou Retour arriÃ¨re\n\nChanger de vue - F1\nRegarder autour de soi - Clic droit maintenu enfoncÃ©\n\n\n(Consultez le manuel pour plus d'informations.)"
 xIGMCCRBtnText = "Contacter le Service client >>"
 
 #-----------
 # Key Map 1 Dialog
 xKMMoveForward = "Avancer"
 xKMMoveBack = "Reculer"
-xKMRotLeft = "Pivoter à gauche"
-xKMRotRight = "Pivoter à droite"
+xKMRotLeft = "Pivoter Ã  gauche"
+xKMRotRight = "Pivoter Ã  droite"
 xKMJump = "Sauter"
-xKMStrafeLeft = "Pas latéral gauche"
-xKMStrafeRight = "Pas latéral droite"
+xKMStrafeLeft = "Pas latÃ©ral gauche"
+xKMStrafeRight = "Pas latÃ©ral droite"
 xKMExitMode = "Quitter un mode"
 xKMFirstPerson = "Vue subjective"
 xKMNextText = "Suivant"
@@ -91,13 +92,13 @@ xKMNextText = "Suivant"
 xKMReltoBook = "Livre Relto"
 xKMOptionMenu = "Menu d'options"
 xKMToggleKI = "Activer le KI"
-xKMTakePicture = "Prendre un cliché"
-xKMCreateJournal = "Créer un journal"
+xKMTakePicture = "Prendre un clichÃ©"
+xKMCreateJournal = "CrÃ©er un journal"
 xKMPushToTalk = "Appuyer pour parler"
 xKMStartChat = "Commencer une discussion"
 xKMNCreateMarkerGame = "Nouveau jeu de marqueurs"
 xKMPlaceMarker = "Placer un marqueur"
-xKMPrevText = "Précédent"
+xKMPrevText = "PrÃ©cÃ©dent"
 
 #--------------
 # Game Settings Dialog
@@ -112,22 +113,22 @@ xGSVoiceSPHeader = "Voix"
 xGSDisplayHeader = "Commandes d'affichage"
 xGSDispGamaText = "Gamma"
 xGSDispShadowsText = "Afficher les ombres"
-xGSAdvancedBtnText = "Avancé"
+xGSAdvancedBtnText = "AvancÃ©"
 
 #------------------
 # Advance Game settings dialog
-xAGSAdvanceHeader = "Paramètres avancés"
-xAGSShadowQualityText = "Qualité des ombres"
-xAGSQuickerCameraText = "Caméra fluide"
-xAGSMouseTurn = "Sensibilité de la souris"
+xAGSAdvanceHeader = "ParamÃ¨tres avancÃ©s"
+xAGSShadowQualityText = "QualitÃ© des ombres"
+xAGSQuickerCameraText = "CamÃ©ra fluide"
+xAGSMouseTurn = "SensibilitÃ© de la souris"
 xAGSSoundPriority = "Nombre de sons"
-xAGSPreviousBtnText = "Précédent"
-xAGSMouseInvertText = "Inversion de la vue à la souris"
+xAGSPreviousBtnText = "PrÃ©cÃ©dent"
+xAGSMouseInvertText = "Inversion de la vue Ã  la souris"
 xAGSWalkAndPan = "Marcher et regarder"
 xAGSStayInFirstPerson = "Rester en vue subjective"
 xAGSClickToTurn = "Cliquer pour tourner"
 
 #------------------------
 # Calibration dialog
-xCalMessageText = "CALIBRAGE DE MONITEUR URU\n\nAjustez le contraste de votre moniteur sur 100% (au maximum).\n\nAjustez la luminosité de manière à pouvoir à peine distinguer le logo "+'"URU"'+" ci-dessus."
+xCalMessageText = "CALIBRAGE DE MONITEUR URU\n\nAjustez le contraste de votre moniteur sur 100% (au maximum).\n\nAjustez la luminositÃ© de maniÃ¨re Ã  pouvoir Ã  peine distinguer le logo "+'"URU"'+" ci-dessus."
 

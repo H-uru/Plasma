@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -25,34 +26,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 # xKingAsemlefJournalEnglish
 # change the contents of the variable below to the desired contents of the journal
-xJournalContents = """<cover src="xKingAsemlefJournalCover_eng*1#0.hsm"><font size=16 face=Sam><margin right=62 left=62 top=48><p align=center>König Asemlef
+xJournalContents = """<cover src="xKingAsemlefJournalCover_eng*1#0.hsm"><font size=16 face=Sam><margin right=62 left=62 top=48><p align=center>KÃ¶nig Asemlef
 
 <p align=left>Asemlef bestieg im Jahre 5999 DE, im Alter von 54, den Thron.
 
-Asemlef übernahm die Regentschaft über ein Volk, das philosophisch verwirrt (Der Wächter : Gish : Den Großen König/Tevahr), aber technologisch fortgeschritten war (viele große Konstruktionen, Bergbau und wissenschaftliche Erfindungen). Außerdem gab es eine sehr schnelle Expansion innerhalb der Höhlen und eine Bewegung dahin gehend, dass der Einfluss von Außenseitern auf ihre Kultur verringert wurde. Außerdem waren die Kämpfe, die ihre Vergangenheit befleckt hatten, auf ein Minimum reduziert worden. 
+Asemlef Ã¼bernahm die Regentschaft Ã¼ber ein Volk, das philosophisch verwirrt (Der WÃ¤chter : Gish : Den GroÃŸen KÃ¶nig/Tevahr), aber technologisch fortgeschritten war (viele groÃŸe Konstruktionen, Bergbau und wissenschaftliche Erfindungen). AuÃŸerdem gab es eine sehr schnelle Expansion innerhalb der HÃ¶hlen und eine Bewegung dahin gehend, dass der Einfluss von AuÃŸenseitern auf ihre Kultur verringert wurde. AuÃŸerdem waren die KÃ¤mpfe, die ihre Vergangenheit befleckt hatten, auf ein Minimum reduziert worden. 
 
-Asemlef fuhr in den friedlichen Bemühungen fort, indem er versuchte, keinen zu isolieren, aber stattdessen jeden Glauben willkommen zu heißen. 
+Asemlef fuhr in den friedlichen BemÃ¼hungen fort, indem er versuchte, keinen zu isolieren, aber stattdessen jeden Glauben willkommen zu heiÃŸen. 
 
-Es macht den Anschein, dass er keine der religiösen Ideologien bewertete und allen religiösen Fraktionen gleiche Rechte auf Eigentum, staatliche Hilfe usw. einräumte.
+Es macht den Anschein, dass er keine der religiÃ¶sen Ideologien bewertete und allen religiÃ¶sen Fraktionen gleiche Rechte auf Eigentum, staatliche Hilfe usw. einrÃ¤umte.
 
-Während er keinen Glauben missachtete, so war es ihm doch möglich, seinen eigenen Ansichten treu zu bleiben, von denen einige den D'ni bis dahin unbekannt waren. Obwohl niemals offiziell von Asemlef bestätigt, so deuten doch die allgemeine Meinung sowie historische Aufzeichnungen darauf hin, dass Asemlef zahlreiche Diener benutzt hat, von denen die meisten aus anderen Welten stammten. Außerdem gab es offenbar Herausforderungen, denen sich diese 'Diener' unterziehen mussten. Genaue Angaben darüber sind nur schwer zu finden, allerdings sieht es so aus, dass diese Herausforderungen von Jagden bis zu Gladiator-ähnlichen Kämpfen innerhalb der Dienerschaft reichten. An dieser Stelle soll darauf hingewiesen werden, dass - egal, was geschah - nur wenig öffentliches Begehren gegen diese Handlungen aufkam.
+WÃ¤hrend er keinen Glauben missachtete, so war es ihm doch mÃ¶glich, seinen eigenen Ansichten treu zu bleiben, von denen einige den D'ni bis dahin unbekannt waren. Obwohl niemals offiziell von Asemlef bestÃ¤tigt, so deuten doch die allgemeine Meinung sowie historische Aufzeichnungen darauf hin, dass Asemlef zahlreiche Diener benutzt hat, von denen die meisten aus anderen Welten stammten. AuÃŸerdem gab es offenbar Herausforderungen, denen sich diese 'Diener' unterziehen mussten. Genaue Angaben darÃ¼ber sind nur schwer zu finden, allerdings sieht es so aus, dass diese Herausforderungen von Jagden bis zu Gladiator-Ã¤hnlichen KÃ¤mpfen innerhalb der Dienerschaft reichten. An dieser Stelle soll darauf hingewiesen werden, dass - egal, was geschah - nur wenig Ã¶ffentliches Begehren gegen diese Handlungen aufkam.
 
-Statt auf philosophische oder religöse Fragen konzentrierte sich Asemlef auf den Ausbau des Bergbaus, auf das Erschaffen neuer Distrikte sowie auf die Bereitstellung gleicher Chancen und sozialer Zuwendungen für alle Klassen. In Hinsicht auf den Umgang mit anderen argumentierte Asemlef öffentlich, dass die Ordnung seines Vaters in Bezug auf die Gilden nicht realistisch sei und dass der Umgang mit anderen in einem gewissen Rahmen immer notwendig sein würde. Da er wusste, dass er ob dieser Aussage den Zorn einiger Fraktionen auf sich ziehen würde, war er der erste König, der Mitglieder einiger der extremsten Fraktionen (die keinerlei Umgang mit anderen wünschten) in seinen Palast einlud, um mit ihnen über diese Punkte zu reden.
+Statt auf philosophische oder religÃ¶se Fragen konzentrierte sich Asemlef auf den Ausbau des Bergbaus, auf das Erschaffen neuer Distrikte sowie auf die Bereitstellung gleicher Chancen und sozialer Zuwendungen fÃ¼r alle Klassen. In Hinsicht auf den Umgang mit anderen argumentierte Asemlef Ã¶ffentlich, dass die Ordnung seines Vaters in Bezug auf die Gilden nicht realistisch sei und dass der Umgang mit anderen in einem gewissen Rahmen immer notwendig sein wÃ¼rde. Da er wusste, dass er ob dieser Aussage den Zorn einiger Fraktionen auf sich ziehen wÃ¼rde, war er der erste KÃ¶nig, der Mitglieder einiger der extremsten Fraktionen (die keinerlei Umgang mit anderen wÃ¼nschten) in seinen Palast einlud, um mit ihnen Ã¼ber diese Punkte zu reden.
 
-Obwohl bei diesen Treffen keine Entscheidung getroffen wurde, so beruhigten diese anscheinend die Fraktionen und schufen so das Gefühl, dass die zwei Seiten in Zukunft zu einer gemeinsamen Entscheidung kommen könnten. 
+Obwohl bei diesen Treffen keine Entscheidung getroffen wurde, so beruhigten diese anscheinend die Fraktionen und schufen so das GefÃ¼hl, dass die zwei Seiten in Zukunft zu einer gemeinsamen Entscheidung kommen kÃ¶nnten. 
 
 
-Ungefähr zur selben Zeit verließen zwei der wichtigsten Schreiber die Schreibergilde und wechselten zu den Schreibern des Yahvo*. Bis zu diesem Zeitpunkt war die Gruppe, die glaubte, dass es ihre Pflicht sei, die Perfekte Welt* zu schreiben, noch recht klein.
+UngefÃ¤hr zur selben Zeit verlieÃŸen zwei der wichtigsten Schreiber die Schreibergilde und wechselten zu den Schreibern des Yahvo*. Bis zu diesem Zeitpunkt war die Gruppe, die glaubte, dass es ihre Pflicht sei, die Perfekte Welt* zu schreiben, noch recht klein.
 
-Wie die Schreiber des Yahvo konzentrierten sich die meisten der beliebten Fraktionen oder Kulte auf Yahvo. Die alten Kulte (wie 'Die Drei' und 'Heiliger Stein') verschwanden größtenteils und ließen Unstimmigkeiten bezüglich des Glaubens an Yahvo zurück.
+Wie die Schreiber des Yahvo konzentrierten sich die meisten der beliebten Fraktionen oder Kulte auf Yahvo. Die alten Kulte (wie 'Die Drei' und 'Heiliger Stein') verschwanden grÃ¶ÃŸtenteils und lieÃŸen Unstimmigkeiten bezÃ¼glich des Glaubens an Yahvo zurÃ¼ck.
 
-Asemlef starb im Jahre 6284 DE im Alter von 339 Jahren und hinterließ den Thron seinem dritten (und jüngsten) Sohn.
+Asemlef starb im Jahre 6284 DE im Alter von 339 Jahren und hinterlieÃŸ den Thron seinem dritten (und jÃ¼ngsten) Sohn.
 
 
 * Aus 'Die Linie des Kerath', geschrieben von Fhal im Jahre 6985.
 
-* Erwähnenswert, da die Schreiber des Yahvo später zu einer der drei größten Sekten in ganz D'ni wurden.
+* ErwÃ¤hnenswert, da die Schreiber des Yahvo spÃ¤ter zu einer der drei grÃ¶ÃŸten Sekten in ganz D'ni wurden.
 
-* Nach der Welt der Entscheidung glaubten die meisten D'ni, dass man entweder in der Perfekten Welt oder in Jakooths Welt enden würde. Es war naheliegend, dass die meisten in einer perfekten Welt leben wollten, aber natürlich gab es unterschiedliche Auffassungen darüber, wie diese Welt erschaffen werden sollte.
+* Nach der Welt der Entscheidung glaubten die meisten D'ni, dass man entweder in der Perfekten Welt oder in Jakooths Welt enden wÃ¼rde. Es war naheliegend, dass die meisten in einer perfekten Welt leben wollten, aber natÃ¼rlich gab es unterschiedliche Auffassungen darÃ¼ber, wie diese Welt erschaffen werden sollte.
 
 """

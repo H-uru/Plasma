@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -127,7 +128,7 @@ All the fantastic Beta Testers
 Some sounds and vocal recording provided by the Friends of Sironka Dance Troupe, non-exclusively licensed by Cyan, used by permission.
 
 <font size=24 spacing=-10><p align=center>AGEIA -- provider of the PhysX physics engine
-AGEIA and PhysX are trademarks of AGEIA Technologies, Inc. and are used under license.î
+AGEIA and PhysX are trademarks of AGEIA Technologies, Inc. and are used under license.‚Äù
 
 <font size=24 spacing=-10><p align=center>"Burn you up, Burn you down"
 Performed by Peter Gabriel

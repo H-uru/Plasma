@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -25,48 +26,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 # xKingMeemenJournalEnglish
 # change the contents of the variable below to the desired contents of the journal
-xJournalContents = """<cover src="xKingMeemenJournalCover_eng*1#0.hsm"><font size=12 face=courier color=000000><margin left=62 right=62 top=48><p align=center>König Me'emen
+xJournalContents = """<cover src="xKingMeemenJournalCover_eng*1#0.hsm"><font size=12 face=courier color=000000><margin left=62 right=62 top=48><p align=center>KÃ¶nig Me'emen
 
-<p align=left>König Me'emen bestieg 5240 DE im Alter von 83 Jahren den Thron. 
+<p align=left>KÃ¶nig Me'emen bestieg 5240 DE im Alter von 83 Jahren den Thron. 
 
-Einer der wichtigsten Erlasse unter Me'emens Herrschaft erfolgte ziemlich rasch und beruhte auf einem Vorschlag der Gilde der Bergleute und Steinmetze (die zusammengearbeitet hatten). Im Jahre 5307 präsentierten sie Nara*, das einige Wochen zuvor in einem Labor entwickelt worden war. Nara bot gewaltige Möglichkeiten für den Bergbau und die Errichtung von Bauwerken und hatte letztendlich tiefgreifende Auswirkungen auf die künftige Entwicklung von D'ni. Bereits zum Zeitpunkt seiner Einführung gab es viel Aufregung über sein Potenzial. 
+Einer der wichtigsten Erlasse unter Me'emens Herrschaft erfolgte ziemlich rasch und beruhte auf einem Vorschlag der Gilde der Bergleute und Steinmetze (die zusammengearbeitet hatten). Im Jahre 5307 prÃ¤sentierten sie Nara*, das einige Wochen zuvor in einem Labor entwickelt worden war. Nara bot gewaltige MÃ¶glichkeiten fÃ¼r den Bergbau und die Errichtung von Bauwerken und hatte letztendlich tiefgreifende Auswirkungen auf die kÃ¼nftige Entwicklung von D'ni. Bereits zum Zeitpunkt seiner EinfÃ¼hrung gab es viel Aufregung Ã¼ber sein Potenzial. 
 
-Im Jahre 5312 DE brach im Industriebezirk von D'ni eine Krankheit aus, deren Ursprung höchstwahrscheinlich in der Welt Yasefe* lag. Ihr Ausbruch verursachte weit verbreitete Panik, da viele eine neue Plage vorhersagten, die der im 22. Jahrhundert aufgetretenen Plage ähneln könnte. Zum Glück brachte die Krankheit nicht annähernd eine solche Sterberate mit sich wie die zuvor erwähnte Plage, und die Gilde der Heiler reagierte außerordentlich schnell und fand ein Heilverfahren. Trotzdem kam es wieder zu einer regelrechten Kampagne, wenigstens den Nehw'eril-Distrikt* weit vor die eigentliche Stadt zu verlegen. 
+Im Jahre 5312 DE brach im Industriebezirk von D'ni eine Krankheit aus, deren Ursprung hÃ¶chstwahrscheinlich in der Welt Yasefe* lag. Ihr Ausbruch verursachte weit verbreitete Panik, da viele eine neue Plage vorhersagten, die der im 22. Jahrhundert aufgetretenen Plage Ã¤hneln kÃ¶nnte. Zum GlÃ¼ck brachte die Krankheit nicht annÃ¤hernd eine solche Sterberate mit sich wie die zuvor erwÃ¤hnte Plage, und die Gilde der Heiler reagierte auÃŸerordentlich schnell und fand ein Heilverfahren. Trotzdem kam es wieder zu einer regelrechten Kampagne, wenigstens den Nehw'eril-Distrikt* weit vor die eigentliche Stadt zu verlegen. 
 
 Me'emen fand offenbar Gefallen an dieser Idee und wies die Landvermesser an, mit der Untersuchung einer solchen Expansion zu beginnen.
 
-Im Jahre 5359 DE gab es für die D'ni einen weiteren wichtigen Grund, die Expansion in großem Maßstab zu beginnen, und zwar in Form des Steinzahns. Er war die zweite der Großen Bergbaumaschinen, wesentlich kräftiger und technologisch fortschrittlicher als der ältere Steinbeißer. Me'emen befahl der Gilde der Bergarbeiter sofort, ein Gebiet zu "räumen" (mit Hilfe des Steinbeißers), um einen neuen Industriebezirk zu erschaffen, der Nehw'eril ersetzte. Es dauerte bis 5475 DE, bis die eigentlichen Baumaßnahmen auf dem neuen Industriebezirk Uran begonnen werden konnten.
+Im Jahre 5359 DE gab es fÃ¼r die D'ni einen weiteren wichtigen Grund, die Expansion in groÃŸem MaÃŸstab zu beginnen, und zwar in Form des Steinzahns. Er war die zweite der GroÃŸen Bergbaumaschinen, wesentlich krÃ¤ftiger und technologisch fortschrittlicher als der Ã¤ltere SteinbeiÃŸer. Me'emen befahl der Gilde der Bergarbeiter sofort, ein Gebiet zu "rÃ¤umen" (mit Hilfe des SteinbeiÃŸers), um einen neuen Industriebezirk zu erschaffen, der Nehw'eril ersetzte. Es dauerte bis 5475 DE, bis die eigentlichen BaumaÃŸnahmen auf dem neuen Industriebezirk Uran begonnen werden konnten.
 
-Weniger als einhundert Jahre nach dem Steinzahn gab die Gilde der Erhalter bekannt, dass das neu entdeckte Deretheni dazu benutzt werden könne, stark verbesserte und sicherere Erhalter-Anzüge herzustellen. Auch wenn eine solche Ankündigung nicht sonderlich wichtig erscheinen mag, hatten die neuen Anzüge einen starken Einfluss auf die D'ni-Kultur. Da die Erhalter nun in den Welten, die sie erforschten, größere Risiken eingehen konnten, durfte die Gilde der Schreiber ihre Schriften ein wenig liberaler handhaben, und eine neue Art von Welten war geboren*.
+Weniger als einhundert Jahre nach dem Steinzahn gab die Gilde der Erhalter bekannt, dass das neu entdeckte Deretheni dazu benutzt werden kÃ¶nne, stark verbesserte und sicherere Erhalter-AnzÃ¼ge herzustellen. Auch wenn eine solche AnkÃ¼ndigung nicht sonderlich wichtig erscheinen mag, hatten die neuen AnzÃ¼ge einen starken Einfluss auf die D'ni-Kultur. Da die Erhalter nun in den Welten, die sie erforschten, grÃ¶ÃŸere Risiken eingehen konnten, durfte die Gilde der Schreiber ihre Schriften ein wenig liberaler handhaben, und eine neue Art von Welten war geboren*.
 
-Unter Me'emens Herrschaft wurden "Worte" zu einem alltäglichen Diskussionsthema und den älteren Tempeln wurde wieder mehr Aufmerksamkeit gewidmet. Es gibt Beweise für zahlreiche Neugestaltungen und Umbauten vieler weltlicher Tempel, die Jahre zuvor nach den "neuen" Richtlinien des Großen Nullpunkts erbaut worden waren.
+Unter Me'emens Herrschaft wurden "Worte" zu einem alltÃ¤glichen Diskussionsthema und den Ã¤lteren Tempeln wurde wieder mehr Aufmerksamkeit gewidmet. Es gibt Beweise fÃ¼r zahlreiche Neugestaltungen und Umbauten vieler weltlicher Tempel, die Jahre zuvor nach den "neuen" Richtlinien des GroÃŸen Nullpunkts erbaut worden waren.
 
-Es scheint, als habe sich Me'emen nur wenig um die religiösen Impulse seines Volkes gekümmert und ein größeres Interesse an technologischem Fortschritt und der Expansion der Stadt gehabt.
+Es scheint, als habe sich Me'emen nur wenig um die religiÃ¶sen Impulse seines Volkes gekÃ¼mmert und ein grÃ¶ÃŸeres Interesse an technologischem Fortschritt und der Expansion der Stadt gehabt.
 
-Als Me'emen glaubte, Steinbeißer und Steinzahn nicht länger zu brauchen, empfahl er, sie zum Bau eines unterirdischen Tunnels einzusetzen, der das Eiland mit der eigentlichen Stadt verbinden und den Bootsverkehr minimieren sollte. Sein Vorschlag wurde nicht von allen Seiten begrüßt, insbesondere von den oberen Schichten, die auf dem Eiland lebten. Es gab zahlreiche Proteste, aus Furcht vor den Auswirkungen, die der Tunnel auf das Eiland haben könnte. Der Vorschlag wurde auch von den meisten Gilden zurückgewiesen, so dass Me'emen ihn nicht weiter verfolgte.
+Als Me'emen glaubte, SteinbeiÃŸer und Steinzahn nicht lÃ¤nger zu brauchen, empfahl er, sie zum Bau eines unterirdischen Tunnels einzusetzen, der das Eiland mit der eigentlichen Stadt verbinden und den Bootsverkehr minimieren sollte. Sein Vorschlag wurde nicht von allen Seiten begrÃ¼ÃŸt, insbesondere von den oberen Schichten, die auf dem Eiland lebten. Es gab zahlreiche Proteste, aus Furcht vor den Auswirkungen, die der Tunnel auf das Eiland haben kÃ¶nnte. Der Vorschlag wurde auch von den meisten Gilden zurÃ¼ckgewiesen, so dass Me'emen ihn nicht weiter verfolgte.
 
-Im Jahre 5500 DE erreichten die ersten Importe aus anderen Welten den neuen Distrikt Uran, der nun viel weiter von der Stadt entfernt war. Uran soll eine "bedeutende Verbesserung gegenüber dem älteren Nehw'eril ... viel fortschrittlicher ... viel sicherer" gewesen sein. Am Tag der "Eröffnung"* gab es ausgelassene Feiern. Die Sicherheitsmaßnahmen im neuen Bezirk waren streng, denn es stellte sich später heraus, dass die Relyimah mehrere Pläne aufgedeckt hatten, die die Ablehnung einiger Gruppierungen gegen den Bezirk demonstrieren sollten.
+Im Jahre 5500 DE erreichten die ersten Importe aus anderen Welten den neuen Distrikt Uran, der nun viel weiter von der Stadt entfernt war. Uran soll eine "bedeutende Verbesserung gegenÃ¼ber dem Ã¤lteren Nehw'eril ... viel fortschrittlicher ... viel sicherer" gewesen sein. Am Tag der "ErÃ¶ffnung"* gab es ausgelassene Feiern. Die SicherheitsmaÃŸnahmen im neuen Bezirk waren streng, denn es stellte sich spÃ¤ter heraus, dass die Relyimah mehrere PlÃ¤ne aufgedeckt hatten, die die Ablehnung einiger Gruppierungen gegen den Bezirk demonstrieren sollten.
 
-Im Jahre 5540 DE wurde Me'emens einziger Sohn Ashem schwer krank und verstarb sechs Monate später. Als Mitglied der Gilde der Heiler hatte Ashem oft zu den ersten gehört, die neue Welten erkundeten, um sich von ihrer Sicherheit in Bezug auf Krankheiten zu überzeugen. Als Konsequenz seines Todes wurde die Welt nicht freigegeben, bis eine Heilung gefunden werden konnte. Me'emen hielt die Taten seines Sohnes für heldenhaft und änderte ein Jahr nach seinem Tod den Namen des Bezirks Uran auf Ashem.
+Im Jahre 5540 DE wurde Me'emens einziger Sohn Ashem schwer krank und verstarb sechs Monate spÃ¤ter. Als Mitglied der Gilde der Heiler hatte Ashem oft zu den ersten gehÃ¶rt, die neue Welten erkundeten, um sich von ihrer Sicherheit in Bezug auf Krankheiten zu Ã¼berzeugen. Als Konsequenz seines Todes wurde die Welt nicht freigegeben, bis eine Heilung gefunden werden konnte. Me'emen hielt die Taten seines Sohnes fÃ¼r heldenhaft und Ã¤nderte ein Jahr nach seinem Tod den Namen des Bezirks Uran auf Ashem.
 
-Man sagt, dass sein Tod Me'emen "tief traurig ... ohne die Emotionen, die er während seiner Regentschaft zeigte"* zurückließ. Viele sagen, dies hätte ihn zur Prophetin Trisari* getrieben. Me'emen verbrachte in seinen letzten Tagen offenbar viel Zeit mit Trisari und konnte "durch sie"* als zufriedener Mann sterben.
+Man sagt, dass sein Tod Me'emen "tief traurig ... ohne die Emotionen, die er wÃ¤hrend seiner Regentschaft zeigte"* zurÃ¼cklieÃŸ. Viele sagen, dies hÃ¤tte ihn zur Prophetin Trisari* getrieben. Me'emen verbrachte in seinen letzten Tagen offenbar viel Zeit mit Trisari und konnte "durch sie"* als zufriedener Mann sterben.
 
-Me'emen starb im Jahre 5549 DE im sehr hohen Alter von 392 und wählte seinen Neffen als seinen Nachfolger, wahrscheinlich auf Empfehlung von Trisari.
+Me'emen starb im Jahre 5549 DE im sehr hohen Alter von 392 und wÃ¤hlte seinen Neffen als seinen Nachfolger, wahrscheinlich auf Empfehlung von Trisari.
 
 
-* Ein metallisches, graues Gestein, dass die dreißigfache Dichte von Stahl besitzt und das härteste aller D'ni-Gesteine ist.
+* Ein metallisches, graues Gestein, dass die dreiÃŸigfache Dichte von Stahl besitzt und das hÃ¤rteste aller D'ni-Gesteine ist.
 
-* Yasefe bestand hauptsächlich aus Wald und lieferte einen Großteil der Holzvorräte D'nis, darunter auch das teure und seltene Yema.
+* Yasefe bestand hauptsÃ¤chlich aus Wald und lieferte einen GroÃŸteil der HolzvorrÃ¤te D'nis, darunter auch das teure und seltene Yema.
 
-* Der Industriebezirk wurde während der Herrschaft Needrahs gegründet und diente als Importzentrum für die meisten von außen eingeführten Güter.
+* Der Industriebezirk wurde wÃ¤hrend der Herrschaft Needrahs gegrÃ¼ndet und diente als Importzentrum fÃ¼r die meisten von auÃŸen eingefÃ¼hrten GÃ¼ter.
 
-* Die neueren Welten ermöglichten umfangreicheres Experimentieren mit Atmosphären, der Tierwelt und Energiequellen.
+* Die neueren Welten ermÃ¶glichten umfangreicheres Experimentieren mit AtmosphÃ¤ren, der Tierwelt und Energiequellen.
 
-* Aus dem Tagebuch des Großmeisters Veshar von der Gilde der Steingräber
+* Aus dem Tagebuch des GroÃŸmeisters Veshar von der Gilde der SteingrÃ¤ber
 
-* Aus den Tagebüchern der Prophetin Trisari, die König Me'emen zugeteilt war.
+* Aus den TagebÃ¼chern der Prophetin Trisari, die KÃ¶nig Me'emen zugeteilt war.
 
-* Es sollte angemerkt werden, dass allen Königen Prophetinnen zugeteilt wurden, die jedoch größtenteils nichts weiter als Repräsentationsfiguren waren und selten konsultiert wurden
+* Es sollte angemerkt werden, dass allen KÃ¶nigen Prophetinnen zugeteilt wurden, die jedoch grÃ¶ÃŸtenteils nichts weiter als ReprÃ¤sentationsfiguren waren und selten konsultiert wurden
 
 * Aus "Ashem", verfasst von Ramena im Jahre 5589
 """

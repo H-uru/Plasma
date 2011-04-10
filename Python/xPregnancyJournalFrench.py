@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,16 +28,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xPregnancyJournalCover_eng*1#0.hsm"><font size=18 face=Tricia color=982A2A style=b><margin left=62 right=62 top=48><p align=center>Grossesse
 
-<p align=left>Voilà qui est étonnant ! Il m'est difficile de l'affirmer, mais il semble clair que les femmes D'ni n'étaient fécondes que pendant un « jour » D'ni tous les deux « mois » D'ni. À la surface, ça représente à peu près trente heures tous les soixante-douze jours. 
+<p align=left>VoilÃ  qui est Ã©tonnantÂ ! Il m'est difficile de l'affirmer, mais il semble clair que les femmes D'ni n'Ã©taient fÃ©condes que pendant un Â«Â jourÂ Â» D'ni tous les deux Â«Â moisÂ Â» D'ni. Ã€ la surface, Ã§a reprÃ©sente Ã  peu prÃ¨s trente heures tous les soixante-douze jours. 
 
-Si c'est effectivement le cas, cela explique quelques petites choses. Premièrement, ça explique pourquoi il y avait si peu d'enfants dans un peuple dont l'espérance de vie était de trois cents ans. Deuxièmement, ça explique pourquoi on organisait de telles fêtes pour les grossesses. 
+Si c'est effectivement le cas, cela explique quelques petites choses. PremiÃ¨rement, Ã§a explique pourquoi il y avait si peu d'enfants dans un peuple dont l'espÃ©rance de vie Ã©tait de trois cents ans. DeuxiÃ¨mement, Ã§a explique pourquoi on organisait de telles fÃªtes pour les grossesses. 
 
-D'après ce que j'ai pu déduire, ces cérémonies pourtant fastueuses étaient généralement limitées aux membres de la famille. Pendant ces fêtes, on priait Yahvo et on recevait la bénédiction des familles. Pendant ces « bénédictions », on faisait le serment de s'occuper de la femme enceinte et du bébé pendant les mois à venir. 
+D'aprÃ¨s ce que j'ai pu dÃ©duire, ces cÃ©rÃ©monies pourtant fastueuses Ã©taient gÃ©nÃ©ralement limitÃ©es aux membres de la famille. Pendant ces fÃªtes, on priait Yahvo et on recevait la bÃ©nÃ©diction des familles. Pendant ces Â«Â bÃ©nÃ©dictionsÂ Â», on faisait le serment de s'occuper de la femme enceinte et du bÃ©bÃ© pendant les mois Ã  venir. 
 
-Comme je l'ai déjà mentionné, les femmes enceintes étaient considérées comme plus intuitives. Du coup, l'expérience de la grossesse permettait d'utiliser cette intuition pour accéder à la révélation de Yahvo. Je ne détaillerai pas ici les phases de méditation religieuse effectuées pendant cette période. Mais on peut dire simplement que ces phases étaient prises très au sérieux, car cette méditation devait permettre de guider la femme vers le futur de son enfant. 
+Comme je l'ai dÃ©jÃ  mentionnÃ©, les femmes enceintes Ã©taient considÃ©rÃ©es comme plus intuitives. Du coup, l'expÃ©rience de la grossesse permettait d'utiliser cette intuition pour accÃ©der Ã  la rÃ©vÃ©lation de Yahvo. Je ne dÃ©taillerai pas ici les phases de mÃ©ditation religieuse effectuÃ©es pendant cette pÃ©riode. Mais on peut dire simplement que ces phases Ã©taient prises trÃ¨s au sÃ©rieux, car cette mÃ©ditation devait permettre de guider la femme vers le futur de son enfant. 
 
-Si on fêtait la grossesse dans le mariage, on ne peut pas en dire autant de la grossesse en dehors des liens du mariage. Pour ce que j'en sais, une femme qui tombe enceinte devait immédiatement se marier et tout enfant né hors des liens du mariage ne pourrait jamais intégrer une Guilde. Évidemment, on n'espérait aucune révélation d'une mère dans une telle situation. Le désastre était tout aussi important pour une femme de classe sociale inférieure, car son enfant ne pourrait jamais intégrer une Guilde de classe sociale supérieure. 
+Si on fÃªtait la grossesse dans le mariage, on ne peut pas en dire autant de la grossesse en dehors des liens du mariage. Pour ce que j'en sais, une femme qui tombe enceinte devait immÃ©diatement se marier et tout enfant nÃ© hors des liens du mariage ne pourrait jamais intÃ©grer une Guilde. Ã‰videmment, on n'espÃ©rait aucune rÃ©vÃ©lation d'une mÃ¨re dans une telle situation. Le dÃ©sastre Ã©tait tout aussi important pour une femme de classe sociale infÃ©rieure, car son enfant ne pourrait jamais intÃ©grer une Guilde de classe sociale supÃ©rieure. 
 
-Apparemment, la gestation durait une année entière. Dix mois D'ni - 290 jours D'ni - l'équivalent d'une année sur Terre.  Je n'ai trouvé aucune trace de documents attestant de naissance multiple.
+Apparemment, la gestation durait une annÃ©e entiÃ¨re. Dix mois D'ni - 290 jours D'ni - l'Ã©quivalent d'une annÃ©e sur Terre.  Je n'ai trouvÃ© aucune trace de documents attestant de naissance multiple.
 
 """

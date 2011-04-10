@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,30 +28,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingKerathJournalCover_eng*1#0.hsm"><font size=12 face=courier color=000000><margin left=62 right=62 top=48><p align=center>Le Roi Kerath
 
-<p align=left>Il monta sur le trône en 6731 ED à l'âge de 54 ans. Kerath est probablement le roi le plus connu. Ce n'est pas tant parce que c'était un bon roi, mais surtout parce que c'était le dernier roi. Son nom a fini par représenter la royauté toute entière. Par exemple, on renomma l'Arche des Rois l'Arche de Kerath.
+<p align=left>Il monta sur le trÃ´ne en 6731 ED Ã  l'Ã¢ge de 54 ans. Kerath est probablement le roi le plus connu. Ce n'est pas tant parce que c'Ã©tait un bon roi, mais surtout parce que c'Ã©tait le dernier roi. Son nom a fini par reprÃ©senter la royautÃ© toute entiÃ¨re. Par exemple, on renomma l'Arche des Rois l'Arche de Kerath.
 
-Sa mère lui appris les enseignements de Gish, si bien qu'au moment où il monta sur le trône, on le prenait pour un adorateur des Partisans. Suite à ça et fort de l'expérience procurée par les interactions entre son père et ses conseillers, Kerath décida très jeune que la monarchie n'était plus le meilleur système de gouvernement pour D'ni. Et il décida qu'il en serait ainsi, au moins jusqu'à l'arrivée du Grand Roi. 
+Sa mÃ¨re lui appris les enseignements de Gish, si bien qu'au moment oÃ¹ il monta sur le trÃ´ne, on le prenait pour un adorateur des Partisans. Suite Ã  Ã§a et fort de l'expÃ©rience procurÃ©e par les interactions entre son pÃ¨re et ses conseillers, Kerath dÃ©cida trÃ¨s jeune que la monarchie n'Ã©tait plus le meilleur systÃ¨me de gouvernement pour D'ni. Et il dÃ©cida qu'il en serait ainsi, au moins jusqu'Ã  l'arrivÃ©e du Grand Roi. 
 
-Et le fait que Kerath, au cours de son seul règne, parvint à convaincre son peuple que la façon dont il a été gouverné pendant des milliers d'années était mauvaise et qu'il fallait tout changer, tient vraiment du miracle. Kerath choisissait prudemment ses arguments, mettant l'accent sur les négociations avec les Guildes. Après tout, disait-il, « D'ni repose sur les Guildes... acceptons la protection de leurs forteresses et les conseils de leur sagesse. »  
+Et le fait que Kerath, au cours de son seul rÃ¨gne, parvint Ã  convaincre son peuple que la faÃ§on dont il a Ã©tÃ© gouvernÃ© pendant des milliers d'annÃ©es Ã©tait mauvaise et qu'il fallait tout changer, tient vraiment du miracle. Kerath choisissait prudemment ses arguments, mettant l'accent sur les nÃ©gociations avec les Guildes. AprÃ¨s tout, disait-il, Â«Â D'ni repose sur les Guildes... acceptons la protection de leurs forteresses et les conseils de leur sagesse.Â Â»  
 
-Il était dur pour les Guildes de ne pas accepter une proposition qui suggérait le remplacement du roi, suprême autorité, par Cinq seigneurs. Ces seigneurs seraient choisis par les Grands maîtres des Guildes. Il donnait tout le pouvoir de D'ni aux Guildes. Peu de Grands maîtres semblaient contre l'idée. Pourtant, quelques loyaux partisans du Grand Roi, et Ri'neref, qui avait toujours soutenu le rôle des rois, se plaignirent. 
+Il Ã©tait dur pour les Guildes de ne pas accepter une proposition qui suggÃ©rait le remplacement du roi, suprÃªme autoritÃ©, par Cinq seigneurs. Ces seigneurs seraient choisis par les Grands maÃ®tres des Guildes. Il donnait tout le pouvoir de D'ni aux Guildes. Peu de Grands maÃ®tres semblaient contre l'idÃ©e. Pourtant, quelques loyaux partisans du Grand Roi, et Ri'neref, qui avait toujours soutenu le rÃ´le des rois, se plaignirent. 
 
-Heureusement pour Kerath, bien que son peuple partage de nombreuses confessions philosophiques différentes, seuls ceux qui suivaient aveuglément les enseignements de Ri'neref et du Grand Roi étaient perturbés par l'absence de roi. La vaste majorité des D'ni oublia ces croyances et se mit à suivre celles de Nemiya, de Gish, de l'Observateur et d'autres encore. L'impact culturel qui en résulta fut plus important pour le peuple que l'impact religieux*. 
+Heureusement pour Kerath, bien que son peuple partage de nombreuses confessions philosophiques diffÃ©rentes, seuls ceux qui suivaient aveuglÃ©ment les enseignements de Ri'neref et du Grand Roi Ã©taient perturbÃ©s par l'absence de roi. La vaste majoritÃ© des D'ni oublia ces croyances et se mit Ã  suivre celles de Nemiya, de Gish, de l'Observateur et d'autres encore. L'impact culturel qui en rÃ©sulta fut plus important pour le peuple que l'impact religieux*. 
 
-Kerath, soucieux de plaire encore plus aux Guildes, recommanda de nouvelles rénovations, des expansions pour la Chambre du Conseil et la construction d'un Hôtel des Guildes, afin de célébrer le nouveau pouvoir. Ce chantier était le symbole du pouvoir des Guildes et des Seigneurs, mais une insulte pour le Grand Roi, enterrant sa mémoire sous les constructions gouvernementales. 
+Kerath, soucieux de plaire encore plus aux Guildes, recommanda de nouvelles rÃ©novations, des expansions pour la Chambre du Conseil et la construction d'un HÃ´tel des Guildes, afin de cÃ©lÃ©brer le nouveau pouvoir. Ce chantier Ã©tait le symbole du pouvoir des Guildes et des Seigneurs, mais une insulte pour le Grand Roi, enterrant sa mÃ©moire sous les constructions gouvernementales. 
 
-La construction de l'Hôtel des Guildes commença en 6970 ED. Elle exprime bien l'attitude des D'ni en 6970 ED. La Tombe du Grand Roi fut écrasée par des bâtiments massifs à la gloire du gouvernement et des Guildes. 
+La construction de l'HÃ´tel des Guildes commenÃ§a en 6970 ED. Elle exprime bien l'attitude des D'ni en 6970 ED. La Tombe du Grand Roi fut Ã©crasÃ©e par des bÃ¢timents massifs Ã  la gloire du gouvernement et des Guildes. 
 
-À la fin de son règne, Kerath avait converti la plupart des D'ni à ses propres croyances. Beaucoup de gens se prétendaient partisans de Gish et de ses écritures et la plupart considéraient les étrangers comme une menace. « Ça finira par arriver. Si ce n'est pas pour ce soir, ce sera pour demain », disait souvent Kerath*. 
+Ã€ la fin de son rÃ¨gne, Kerath avait converti la plupart des D'ni Ã  ses propres croyances. Beaucoup de gens se prÃ©tendaient partisans de Gish et de ses Ã©critures et la plupart considÃ©raient les Ã©trangers comme une menace. Â«Â Ã‡a finira par arriver. Si ce n'est pas pour ce soir, ce sera pour demainÂ Â», disait souvent Kerath*. 
 
-Après sa mort, les mots de Kerath se révélèrent exacts, avec le début de la Guerre de Mee-Dis. Des factions étrangères attaquèrent, essayant de détruire la Guilde des Encreurs et la Guilde des Relieurs. Ils furent sur le point de réussir. À la fin de la guerre, pratiquement tout le monde était partisan de Gish et, par conséquent, était déterminé à refuser toute influence étrangère. On ne découvrit que bien plus tard que la guerre avait en fait été lancée par une faction conservatrice. Il était trop tard pour changer les mentalités conservatrices. 
+AprÃ¨s sa mort, les mots de Kerath se rÃ©vÃ©lÃ¨rent exacts, avec le dÃ©but de la Guerre de Mee-Dis. Des factions Ã©trangÃ¨res attaquÃ¨rent, essayant de dÃ©truire la Guilde des Encreurs et la Guilde des Relieurs. Ils furent sur le point de rÃ©ussir. Ã€ la fin de la guerre, pratiquement tout le monde Ã©tait partisan de Gish et, par consÃ©quent, Ã©tait dÃ©terminÃ© Ã  refuser toute influence Ã©trangÃ¨re. On ne dÃ©couvrit que bien plus tard que la guerre avait en fait Ã©tÃ© lancÃ©e par une faction conservatrice. Il Ã©tait trop tard pour changer les mentalitÃ©s conservatrices. 
 
-En 6977 ED, Kerath abdiqua et passa le pouvoir des Rois aux Cinq seigneurs de l'Histoire D'ni. Parmi eux, on trouvait le Seigneur Taeri de la Guilde des Messagers, le Seigneur Hemelah de la Guilde des Soigneurs, le Seigneur Moleth de la Guilde des Traiteurs, le Seigneur Kedri de la Guilde des Écrivains et le Seigneur Korenen de la Guilde des Analystes. Kerath mourut huit ans plus tard.
+En 6977 ED, Kerath abdiqua et passa le pouvoir des Rois aux Cinq seigneurs de l'Histoire D'ni. Parmi eux, on trouvait le Seigneur Taeri de la Guilde des Messagers, le Seigneur Hemelah de la Guilde des Soigneurs, le Seigneur Moleth de la Guilde des Traiteurs, le Seigneur Kedri de la Guilde des Ã‰crivains et le Seigneur Korenen de la Guilde des Analystes. Kerath mourut huit ans plus tard.
 
-Le temps des Rois était révolu.
+Le temps des Rois Ã©tait rÃ©volu.
 
 
-* Extrait d'un discours public de Kerath au cours duquel il proposa l'idée pour la première fois
+* Extrait d'un discours public de Kerath au cours duquel il proposa l'idÃ©e pour la premiÃ¨re fois
 
-* Tiré de « Les Cinq premiers »; écrit par Tarvis en 7000
+* TirÃ© de Â«Â Les Cinq premiersÂ Â»; Ã©crit par Tarvis en 7000
 """

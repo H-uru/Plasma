@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,15 +28,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xPregnancyJournalCover_eng*1#0.hsm"><font size=18 face=Tricia color=982A2A style=b><margin left=62 right=62 top=48><p align=center>Gravidanza
 
-<p align=left>Questo è sorprendente. Non posso dirlo con certezza, ma sembra che le donne D'ni fossero fertili per un solo "giorno" D'ni ogni due dei loro "mesi". In termini di "superficie" significa che sono fertili per circa trenta ore ogni settantadue giorni.
+<p align=left>Questo Ã¨ sorprendente. Non posso dirlo con certezza, ma sembra che le donne D'ni fossero fertili per un solo "giorno" D'ni ogni due dei loro "mesi". In termini di "superficie" significa che sono fertili per circa trenta ore ogni settantadue giorni.
 
-Nel caso questo fosse vero spiegherebbe molte cose. Prima di tutto il motivo per il quale ci fossero così pochi bambini in un popolo che vive trecento anni, e perché ci fossero tante celebrazioni per una gravidanza. 
+Nel caso questo fosse vero spiegherebbe molte cose. Prima di tutto il motivo per il quale ci fossero cosÃ¬ pochi bambini in un popolo che vive trecento anni, e perchÃ© ci fossero tante celebrazioni per una gravidanza. 
 
 Da quanto ho capito finora, normalmente queste celebrazioni erano limitate solo ai membri della famiglia, sebbene a volte fossero di dimensioni ragguardevoli. Si recitavano molte preghiere a Yahvo oltre a molte benedizioni da parte dei membri della famiglia. Queste "benedizioni" comprendevano generalmente anche voti e giuramenti per preservare la salute sia della madre che del bambino. 
 
-Come ho già detto in altre occasioni, le donne incinte erano credute più sensibili, e quindi durante la gravidanza (non durante le cerimonie) usavano questa loro sensibilità per dialogare e ricevere rivelazioni da Yahvo. Sebbene ci fosse molta attenzione sulla parte meditativa della gravidanza, non affronterò l'argomento perché abbastanza vasto. Comunque la meditazione della futura madre era mirata a capire il futuro del nascituro ed era tenuta in grande considerazione. 
+Come ho giÃ  detto in altre occasioni, le donne incinte erano credute piÃ¹ sensibili, e quindi durante la gravidanza (non durante le cerimonie) usavano questa loro sensibilitÃ  per dialogare e ricevere rivelazioni da Yahvo. Sebbene ci fosse molta attenzione sulla parte meditativa della gravidanza, non affronterÃ² l'argomento perchÃ© abbastanza vasto. Comunque la meditazione della futura madre era mirata a capire il futuro del nascituro ed era tenuta in grande considerazione. 
 
-Mentre la gravidanza in un matrimonio era degna di grandi celebrazioni, lo stesso non si può dire delle gravidanze extramatrimoniali. Per quel che ne so, ogni donna incinta doveva sposarsi al più presto perché a nessun bambino concepito fuori dal matrimonio era permesso unirsi a una gilda per tutta la sua vita. Inoltre, non ci si aspettava che la madre potesse ricevere rivelazioni. Tutto questo equivaleva a condannare il bambino a una vita nelle classi più basse, proprio perché impossibilitato dall'unirsi a una gilda.
+Mentre la gravidanza in un matrimonio era degna di grandi celebrazioni, lo stesso non si puÃ² dire delle gravidanze extramatrimoniali. Per quel che ne so, ogni donna incinta doveva sposarsi al piÃ¹ presto perchÃ© a nessun bambino concepito fuori dal matrimonio era permesso unirsi a una gilda per tutta la sua vita. Inoltre, non ci si aspettava che la madre potesse ricevere rivelazioni. Tutto questo equivaleva a condannare il bambino a una vita nelle classi piÃ¹ basse, proprio perchÃ© impossibilitato dall'unirsi a una gilda.
 
 Per quanto ho potuto constatare la gestazione durava un anno. Dieci mesi D'ni - 290 giorni D'ni - equivalenti a un anno terrestre. Non ho trovato cronache di parti gemellari.
 

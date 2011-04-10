@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,21 +28,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xClassStructureJournalCover_eng*1#0.hsm"><font size=18 face=Tricia color=982A2A style=b><margin left=62 right=62 top=48><p align=center>Estructuras de clases
 
-<p align=left>Parece como si mi temprana predilecciÛn por las estructuras de clases fuera un equÌvoco. Aunque al principio existÌan pocas clases sociales, tales ideales se disiparon r·pidamente. En 9400 ED habÌa siete clases bien definidas. 
+<p align=left>Parece como si mi temprana predilecci√≥n por las estructuras de clases fuera un equ√≠voco. Aunque al principio exist√≠an pocas clases sociales, tales ideales se disiparon r√°pidamente. En 9400 ED hab√≠a siete clases bien definidas. 
 
-La Elite ñ Los SeÒores de los Grandes Maestros de los Gremios Mayores. HabÌa alguna pequeÒa posibilidad para que la gente normal fuera aceptada, aunque si esto sucedÌa, se necesitaba disponer de recursos en abundancia. Solo la elite era dueÒa de las bibliotecas privadas, de los Libros y de las islas privadas. 
+La Elite ‚Äì Los Se√±ores de los Grandes Maestros de los Gremios Mayores. Hab√≠a alguna peque√±a posibilidad para que la gente normal fuera aceptada, aunque si esto suced√≠a, se necesitaba disponer de recursos en abundancia. Solo la elite era due√±a de las bibliotecas privadas, de los Libros y de las islas privadas. 
 
-Hubo unos cuantos intentos claros para alcanzar la unificaciÛn de las clases aunque no tengo la certeza de que sirviese de nada. Las Bibliotecas Ordinarias, las becas para los Gremios Mayores, la restauraciÛn de los distritos m·s pobres, todo parecÌa m·s un tema polÌtico que una mejora de las condiciones de vida. Supongo que no es una sorpresa.
+Hubo unos cuantos intentos claros para alcanzar la unificaci√≥n de las clases aunque no tengo la certeza de que sirviese de nada. Las Bibliotecas Ordinarias, las becas para los Gremios Mayores, la restauraci√≥n de los distritos m√°s pobres, todo parec√≠a m√°s un tema pol√≠tico que una mejora de las condiciones de vida. Supongo que no es una sorpresa.
 
-Los Miembros del Gremio ñ Era posible para las clases m·s bajas participar en esta clase, aunque parece que al final del aÒo escolar los gremios eran demasiado costosos y prestigiosos como para poder permitÌrselo. Como resultado, los graduados se convirtieron a su modo en una de clase bastante alta. 
+Los Miembros del Gremio ‚Äì Era posible para las clases m√°s bajas participar en esta clase, aunque parece que al final del a√±o escolar los gremios eran demasiado costosos y prestigiosos como para poder permit√≠rselo. Como resultado, los graduados se convirtieron a su modo en una de clase bastante alta. 
 
-La Clase Alta ñ La m·s baja de las tres clases altas. Los ciudadanos de esta clase habÌan tenido Èxito en la empresa privada y lo m·s probable es que fueran los proveedores de la elite gracias a los bancos, bares, etc. No se necesitaba una educaciÛn en un Gremio Mayor, pues con el suficiente dinero, la mayorÌa compraba el acceso a las clases altas.  
+La Clase Alta ‚Äì La m√°s baja de las tres clases altas. Los ciudadanos de esta clase hab√≠an tenido √©xito en la empresa privada y lo m√°s probable es que fueran los proveedores de la elite gracias a los bancos, bares, etc. No se necesitaba una educaci√≥n en un Gremio Mayor, pues con el suficiente dinero, la mayor√≠a compraba el acceso a las clases altas.  
 
-La Clase Media ñ Eran principalmente los propietarios de las tiendas y dem·s. PodÌan pagarse algunos lujos de D'ni aunque estaban lejos de pertenecer a la Elite. Era raro, aunque posible, que poseyeran Libros y Eras Privadas. Parece que eran los que m·s se inscribÌan en los Gremios Menores. 
+La Clase Media ‚Äì Eran principalmente los propietarios de las tiendas y dem√°s. Pod√≠an pagarse algunos lujos de D'ni aunque estaban lejos de pertenecer a la Elite. Era raro, aunque posible, que poseyeran Libros y Eras Privadas. Parece que eran los que m√°s se inscrib√≠an en los Gremios Menores. 
 
-Pobre Alto ñ La clase alta de los pobres parecÌa estar formada principalmente por trabajadores industriales, muchos de los cuales pasaban el tiempo en Eras extranjeras (antes de ser ilegalizadas). Parece que esta clase junto con las otras dos m·s bajas no poseÌan Libros. 
+Pobre Alto ‚Äì La clase alta de los pobres parec√≠a estar formada principalmente por trabajadores industriales, muchos de los cuales pasaban el tiempo en Eras extranjeras (antes de ser ilegalizadas). Parece que esta clase junto con las otras dos m√°s bajas no pose√≠an Libros. 
 
-Pobre Bajo ñ No consigo encontrar un mejor nombre para ellos. No obstante parece claro que habÌa dos clases de pobres. Estos pobres bajos eran abandonados en sus distritos, pocas veces se les veÌa junto a los de clase media y nunca con los de clases altas. Puede que se les utilizase como sirvientes a pesar de que ese trabajo se considerara humillante.  
+Pobre Bajo ‚Äì No consigo encontrar un mejor nombre para ellos. No obstante parece claro que hab√≠a dos clases de pobres. Estos pobres bajos eran abandonados en sus distritos, pocas veces se les ve√≠a junto a los de clase media y nunca con los de clases altas. Puede que se les utilizase como sirvientes a pesar de que ese trabajo se considerara humillante.  
 
-øÕnfimos? - La referencia de "los m·s bajos" (øuna sub-clase no definida?) se ha encontrado en raras ocasiones. No hay suficiente informaciÛn para dar m·s detalles.
+¬ø√çnfimos? - La referencia de "los m√°s bajos" (¬øuna sub-clase no definida?) se ha encontrado en raras ocasiones. No hay suficiente informaci√≥n para dar m√°s detalles.
 """

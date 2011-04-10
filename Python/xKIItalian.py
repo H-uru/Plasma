@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -32,9 +33,9 @@ from PlasmaConstants import *
 
 #--- invitation notices (KI)
 xInviteVisitTitle = "Invito a visitare %s"
-xInviteVisitBody = "Vieni a visitare l'Et‡ %s recandoti alla stazione Nexus MT e fai qualcosa...\n\nFirmato,\n%s (Proprietario)\n"
+xInviteVisitBody = "Vieni a visitare l'Et√† %s recandoti alla stazione Nexus MT e fai qualcosa...\n\nFirmato,\n%s (Proprietario)\n"
 xRevokeVisitorTitle = "Visita a %s annullata"
-xRevokeVisitorBody = "I tuoi privilegi di visitatore non sono pi˘ validi per l'Et‡ %s.\n\n<Spiacente.>\n\nFirmato,\n%s (Proprietario)"
+xRevokeVisitorBody = "I tuoi privilegi di visitatore non sono pi√π validi per l'Et√† %s.\n\n<Spiacente.>\n\nFirmato,\n%s (Proprietario)"
 #--- KI configuration strings
 xKIConfiguration = "Impostazioni KI"
 xVolumeConfiguration = "Impostazioni Volume"
@@ -49,7 +50,7 @@ xLeaveGameMessageNormal = "Sei sicuro di voler abbandonare Uru?"
 xLeaveGameMessageNano = xLeaveGameMessageNormal
 xLeaveGameMessageMicro = xLeaveGameMessageNormal
 #xLeaveGameMessageNormal = "Non te ne andare! Sei proprio sicuro di volerlo fare?"
-#xLeaveGameMessageNano = "Non hai fatto granchË. Sei sicuro di volertene andare?"
+#xLeaveGameMessageNano = "Non hai fatto granch√®. Sei sicuro di volertene andare?"
 #xLeaveGameMessageMicro = "Ci sono tante cose che non hai ancora fatto! Sei sicuro di volertene andare?"
 #--- send to something error messages
 xSendToErrorMessage1 = "Non posso spedirlo"
@@ -64,19 +65,19 @@ xDeletePictureAsk = 'Sei sicuro di voler cancellare "%s"?'
 xDeleteJournalAsk = 'Sei sicuro di voler cancellare "%s"?'
 xDeletePlayerAsk = 'Sei sicuro di voler rimuovere "%s" dalla tua cartella "%s"?'
 #--- KI is full error messages
-xKIFullImagesError = "Il tuo KI Ë pieno, non puÚ memorizzare altre immagini nel diario."
-xKIFullNotesError = "Il tuo KI Ë pieno, non puÚ memorizzare altre note nel diario."
-xKIFullMarkersError = "Il tuo KI Ë pieno, non puÚ memorizzare altri marker nel diario."
+xKIFullImagesError = "Il tuo KI √® pieno, non pu√≤ memorizzare altre immagini nel diario."
+xKIFullNotesError = "Il tuo KI √® pieno, non pu√≤ memorizzare altre note nel diario."
+xKIFullMarkersError = "Il tuo KI √® pieno, non pu√≤ memorizzare altri marker nel diario."
 #--- CCR conversation
 xCCRConversationStarted = '(inizio conversazione)'
 xCCRConversationEnded = '(fine conversazione)'
 xCCRNoCCRInContact = '(Nessun Assistente in contatto, messaggio non inviato)'
 xCCRPetitionSent = '(%s inviato) %s'
 #--- KI - Chat strings
-xChatNoOneToReply = "(Non c'Ë nessuno con cui parlare.)"
-xChatLeftTheAge = "(%s ha abbandonato l'Et‡)"
+xChatNoOneToReply = "(Non c'√® nessuno con cui parlare.)"
+xChatLeftTheAge = "(%s ha abbandonato l'Et√†)"
 xChatLeftTheGame = '(%s ha abbandonato il gioco)'
-xChatWentOffline = '(%s Ë offline e non puÚ essere raggiunto in chat.)'
+xChatWentOffline = '(%s √® offline e non pu√≤ essere raggiunto in chat.)'
 xChatCannotFindBuddy = "(Impossibile trovare '%s' in alcun elenco giocatori.)"
 xChatBroadcastMsgRecvd = ""
 xChatPrivateMsgRecvd = "Da "
@@ -91,8 +92,8 @@ xChatClearAll = "/clearchat"
 xChatPrivateCommand = "/p"
 xChatNeighborsCommand = "/neighbors"
 xChatBuddiesCommand = "/buddies"
-xChatNoOneListening = "(Sei troppo lontano, forse Ë meglio gridare.)"
-xChatInterAgeNotAvailable = "(Comunicatore Inter-Et‡ non disponibile)"
+xChatNoOneListening = "(Sei troppo lontano, forse √® meglio gridare.)"
+xChatInterAgeNotAvailable = "(Comunicatore Inter-Et√† non disponibile)"
 xChatReplyCommand = "/reply"
 xChatStartLogCommand = "/startlog"
 xChatStopLogCommand = "/stoplog"
@@ -124,10 +125,10 @@ xCCRHelpPopupMenu = [   ("Rilevamento bug",PtCCRPetitionType.kBug),
                     ]
 xCCRHelpPopupDefault = 6
 #--- Offer link to
-xOfferLinkToMessage = 'Ti Ë stato offerto un collegamento a "%s" <evviva!>. Desideri andarci?'
+xOfferLinkToMessage = 'Ti √® stato offerto un collegamento a "%s" <evviva!>. Desideri andarci?'
 #--- KI - neighborhood strings
 xAgeOwnedStatusLine = "%d proprietari%s con %d visitatori%s."
-xPorPAgeOwnedStatusLine = "%d proprietari%s con %d visitatori%s. Ed Ë %s."
+xPorPAgeOwnedStatusLine = "%d proprietari%s con %d visitatori%s. Ed √® %s."
 xNeighborhoodBottomLine = "%s di %s"
 xNeighborhoodNone = "Nessuna affiliazione a quartieri"
 xNeighborhoodNoName = "<nessun nome>"
@@ -136,9 +137,9 @@ xNeighborhoodMakePorP = "Rendi %s"
 #xPlayerEnterID = "Inserisci ID giocatore:"
 #xPlayerNumberOnly = "Inserisci solo un numero."
 #xPlayerNotYourself = "A buddy can't be yourself."       # NEW #
-xPlayerInCleft = "E' online ed Ë perduto nella Gola."
+xPlayerInCleft = "E' online ed √® perduto nella Gola."
 xPlayerInCloset = "E' online e si sta cambiando d'abito."
-xPlayerInAge = "E' online e sta esplorando l'Et‡ %s."
+xPlayerInAge = "E' online e sta esplorando l'Et√† %s."
 xPlayerOffline = "E' offline."
 #---- KI Journal strings
 xJournalInitialMessage = "<inserisci messaggio>"
@@ -146,8 +147,8 @@ xJournalInitialTitle = "<inserisci titolo>"
 # --- KI IMage strings
 xImageInitialTitle = "<inserisci didascalia>"
 
-xFolderVisLists = "Elenco visitatori Et‡:"
-xFolderOwnLists = "Elenco proprietari Et‡:"
+xFolderVisLists = "Elenco visitatori Et√†:"
+xFolderOwnLists = "Elenco proprietari Et√†:"
 
 # --- Marker Game strings
 xMarkerFolderPopupMenu = [   ("1 min",60),
@@ -193,7 +194,7 @@ xMarkerGameEndGameButton = "Fine partita"
 xMarkerGameStopPlayingButton = "Interrompi partita"
 xMarkerGameResetGameButton = "Riavvia partita"
 xMarkerGameStatusNoMarkers = "Non ci sono marker"
-xMarkerGameStatusOneMarker = "C'Ë un marker"
+xMarkerGameStatusOneMarker = "C'√® un marker"
 xMarkerGameStatusNMarkers = "Ci sono %d marker"
 xMarkerGameStatusIn = " in %s"
 xMarkerGameStatusAllFound = "Tutti i marker della ricerca sono stati trovati."
@@ -208,19 +209,19 @@ xMarkerGameRedTeamScore = "Squadra Rossa(%d)"
 xMarkerGameNameCapture = "cattura"
 xMarkerGameInstructCapNoMarker = "Ma, siccome non ci sono marker in questa partita... tutti vincono o perdono!"
 xMarkerGameInstructCapOneMarker = "La squadra che cattura l'unico marker entro %d minuto/i %s... vince!"
-xMarkerGameInstructCapNMarkers = "La squadra che cattura pi˘ marker dei %d totali entro %d minuto/i %s... vince!"
+xMarkerGameInstructCapNMarkers = "La squadra che cattura pi√π marker dei %d totali entro %d minuto/i %s... vince!"
 xMarkerGameNameHold = "difesa"
 xMarkerGameInstructHoldNoMarker = "Ma, siccome non ci sono marker in questa partita... tutti vincono o perdono!"
-xMarkerGameInstructHoldNMarkers = "La squadra che cattura e difende pi˘ marker dei %d totali entro %d minuto/i %s... vince!"
+xMarkerGameInstructHoldNMarkers = "La squadra che cattura e difende pi√π marker dei %d totali entro %d minuto/i %s... vince!"
 xMarkerGameNameQuest = "ricerca"
-xMarkerGameInstructQuest = "Non puoi invitare nessuno a giocare... Ë un gioco in solitaria."
+xMarkerGameInstructQuest = "Non puoi invitare nessuno a giocare... √® un gioco in solitaria."
 xMarkerGameNameUnknown = "stile sconosciuto"
 xMarkerGameQTitle = "Unisciti alla partita di %s"
 xMarkerGameQMessage = "    %s vuole invitarti a giocare una partita di %s.\n    %s\n\nVuoi giocare?"
 xMarkerGameInviteRecvd = "Marker game invite received. Check Incoming."     # NEW #
 
 # --- Yes/No Dialog
-xYesNoYESbutton = "SÏ"
+xYesNoYESbutton = "S√¨"
 xYesNoOKbutton = "Ok"
 xYesNoAcceptButton = "Accetta"
 xYesNoDeclineButton = "Rifiuta"
@@ -316,7 +317,7 @@ xROTFLCmd = "rotfl"
 xROTFLString = "%s ride a crepapelle"
 xDanceCmd = "balla"
 xDanceString = "%s balla"
-xYesCmd = "sÏ"
+xYesCmd = "s√¨"
 xYesString = "%s annuisce"
 xNoCmd = "no"
 xNoString = "%s scuote la testa"
@@ -329,15 +330,15 @@ xThanksString = "%s ti ringrazia!"
 xThxCmd = "grz"
 xThxString = "%s ti ringrazia"
 xCryCmd = "piangi"
-xCryString = "<sniff> %s Ë triste"
+xCryString = "<sniff> %s √® triste"
 xCriesCmd = "grida"
 xCriesString = "%s grida"
 xDontKnowCmd = "nonso"
 xDontKnowString = "%s si gratta la testa"
 xShrugCmd = "incerto"
-xShrugString = "%s Ë incerto"
+xShrugString = "%s √® incerto"
 xDunnoCmd = "mah"
-xDunnoString = "%s Ë indeciso"
+xDunnoString = "%s √® indeciso"
 xPointCmd = "indica"
 xPointString = "%s indica"
 

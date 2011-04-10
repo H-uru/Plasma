@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -29,20 +30,20 @@ This module contains all the strings that need to localized for the Nexus
 
 xCategoryLabel01 = U"Stadt"
 xCategoryLabel02 = U"Priv. Verbindungen"
-xCategoryLabel03 = U"Öff. Verbindungen"
+xCategoryLabel03 = U"Ã–ff. Verbindungen"
 xCategoryLabel04 = U"Pers. Verbindungen"
-xCategoryLabel05 = U"Höhlen"
+xCategoryLabel05 = U"HÃ¶hlen"
 
-xLinkDeleteConfirm = U"Verbindung nach %s wirklich löschen?"
-xHoodCreateConfirm = U"Wirklich neue Gemeinde gründen? Mit 'Ja' wird Ihre Mitgliedschaft übertragen."
+xLinkDeleteConfirm = U"Verbindung nach %s wirklich lÃ¶schen?"
+xHoodCreateConfirm = U"Wirklich neue Gemeinde grÃ¼nden? Mit 'Ja' wird Ihre Mitgliedschaft Ã¼bertragen."
 
-xCityNames = [ U"Höhle 1", U"Höhle 2", U"Höhle 3", U"Höhle 4", U"Höhle 5" ]
+xCityNames = [ U"HÃ¶hle 1", U"HÃ¶hle 2", U"HÃ¶hle 3", U"HÃ¶hle 4", U"HÃ¶hle 5" ]
 xUsingCityInstance = U"Benutze Verbindung nach %s"
 
 xNameHeader = U"Name"
-xPopulationHeader = U"Bevölkerung"
-xCityPopulation = U"Aktuelle Größe: %d Maximale Größe: %d"
-xCityFull = U"Ae'gura ist derzeit voll. Bitte versuchen Sie es später erneut."
+xPopulationHeader = U"BevÃ¶lkerung"
+xCityPopulation = U"Aktuelle GrÃ¶ÃŸe: %d Maximale GrÃ¶ÃŸe: %d"
+xCityFull = U"Ae'gura ist derzeit voll. Bitte versuchen Sie es spÃ¤ter erneut."
 
 xHoodPrivate = U"Als privat markieren"
-xHoodPublic = U"Als öffentlich markieren"
+xHoodPublic = U"Als Ã¶ffentlich markieren"

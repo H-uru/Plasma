@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -30,43 +31,43 @@ xJournalContents = """<cover src="xKIJournalCover*1#0.hsm"><font size=10 face=co
 <p align=left>Extrait de l'introduction sur le Negilahn de D'ni
 Traduit par by Tricia Lawson 20.11.03
 
-Bienvenue au Negilahn, repaire des infâmes "tarpin shal" et des "bezol pumi"!
+Bienvenue au Negilahn, repaire des infÃ¢mes "tarpin shal" et des "bezol pumi"!
 
-Le Negilahn a été l'un des premiers éléments ajoutés à notre musée en 8797 à la demande de Lord Jerahl. À cette époque, les Conservateurs et le personnel du musée ont constaté que les recherches avaient été suffisantes pour approuver l'Âge et créer une bulle au musée qui permettrait aux visiteurs de voir cet Âge par eux-mêmes.
+Le Negilahn a Ã©tÃ© l'un des premiers Ã©lÃ©ments ajoutÃ©s Ã  notre musÃ©e en 8797 Ã  la demande de Lord Jerahl. Ã€ cette Ã©poque, les Conservateurs et le personnel du musÃ©e ont constatÃ© que les recherches avaient Ã©tÃ© suffisantes pour approuver l'Ã‚ge et crÃ©er une bulle au musÃ©e qui permettrait aux visiteurs de voir cet Ã‚ge par eux-mÃªmes.
 
-Vous remarquerez que toutes nos bulles, même celle du Negilahn ont quelques fonctions spéciales. Grâce à l'énergie solaire qui alimente nos bulles, elles peuvent fonctionner sans source d'énergie extérieure. Cependant, pour ne pas abuser de ces bulles, il faut utiliser leur énergie avec parcimonie sinon, les unités énergétiques s'épuisent rapidement. Attention à ne pas utiliser toute l'énergie d'une bulle avant la nuit car vous pourriez rater quelque chose.
+Vous remarquerez que toutes nos bulles, mÃªme celle du Negilahn ont quelques fonctions spÃ©ciales. GrÃ¢ce Ã  l'Ã©nergie solaire qui alimente nos bulles, elles peuvent fonctionner sans source d'Ã©nergie extÃ©rieure. Cependant, pour ne pas abuser de ces bulles, il faut utiliser leur Ã©nergie avec parcimonie sinon, les unitÃ©s Ã©nergÃ©tiques s'Ã©puisent rapidement. Attention Ã  ne pas utiliser toute l'Ã©nergie d'une bulle avant la nuit car vous pourriez rater quelque chose.
 
-Avant que vous ne visitiez le Negilahn, nous aimerions que vous preniez une minute pour vous familiariser avec les créatures qui y vivent. N'oubliez pas que même si nous avons placé notre bulle de manière optimale, vous visitez un endroit sauvage et nous ne contrôlons pas les rencontres que vous pouvez faire au Negilahn… nous ne savons pas non plus si vous allez seulement faire des rencontres. Nos bulles sont dotées de sons et d'émetteurs d'odeurs qui attirent les animaux du Negilahn, mais ils sont vraiment sauvages et nous ne pouvons vous fournir aucune garantie.
+Avant que vous ne visitiez le Negilahn, nous aimerions que vous preniez une minute pour vous familiariser avec les crÃ©atures qui y vivent. N'oubliez pas que mÃªme si nous avons placÃ© notre bulle de maniÃ¨re optimale, vous visitez un endroit sauvage et nous ne contrÃ´lons pas les rencontres que vous pouvez faire au Negilahnâ€¦ nous ne savons pas non plus si vous allez seulement faire des rencontres. Nos bulles sont dotÃ©es de sons et d'Ã©metteurs d'odeurs qui attirent les animaux du Negilahn, mais ils sont vraiment sauvages et nous ne pouvons vous fournir aucune garantie.
 
-Souvenez-vous que toutes les conséquences de vos actes dans le Negilahn ne sont pas toujours immédiatement visibles.
+Souvenez-vous que toutes les consÃ©quences de vos actes dans le Negilahn ne sont pas toujours immÃ©diatement visibles.
 
 Bonne chance. 
 
-Remarques sur les créatures du Negilahn : 
+Remarques sur les crÃ©atures du Negilahn : 
 
-Au lieu de tout vous dévoiler à l'avance, nous préférons que vous découvriez les créatures par vous-mêmes. Les remarques suivantes ne sont qu'une brève introduction sur la faune et la flore du Negilahn.
+Au lieu de tout vous dÃ©voiler Ã  l'avance, nous prÃ©fÃ©rons que vous dÃ©couvriez les crÃ©atures par vous-mÃªmes. Les remarques suivantes ne sont qu'une brÃ¨ve introduction sur la faune et la flore du Negilahn.
 
-Si vous ne trouvez pas de "kiris", c'est que tout va mal. Elles se déplacent généralement en nuées qui emplissent le ciel, surtout dans les grands espaces. Les "kiris" font partie des rares sources d'alimentation des "urwins". Si vous voyez un groupe de "kiris", faites attention, un "urwin" peut se trouver dans les parages.
+Si vous ne trouvez pas de "kiris", c'est que tout va mal. Elles se dÃ©placent gÃ©nÃ©ralement en nuÃ©es qui emplissent le ciel, surtout dans les grands espaces. Les "kiris" font partie des rares sources d'alimentation des "urwins". Si vous voyez un groupe de "kiris", faites attention, un "urwin" peut se trouver dans les parages.
 
-Les "gipelis" font aussi partie des petites créatures du Negilahn, mais elles sont bien plus colorées que les "kiris". Les "gipelis" volent dans les airs et sont le mets favori des "reepahs".
+Les "gipelis" font aussi partie des petites crÃ©atures du Negilahn, mais elles sont bien plus colorÃ©es que les "kiris". Les "gipelis" volent dans les airs et sont le mets favori des "reepahs".
 
-Les "nerims" sont de belles créatures du Negilahn qui se déplacent lentement. Pendant la saison des amours, surtout la nuit, vous aurez l'occasion de voir les belles couleurs des "nerims" femelles.  Pour plus d'informations sur la saison des amours des "nerims", demandez à un Guide du musée.
+Les "nerims" sont de belles crÃ©atures du Negilahn qui se dÃ©placent lentement. Pendant la saison des amours, surtout la nuit, vous aurez l'occasion de voir les belles couleurs des "nerims" femelles.  Pour plus d'informations sur la saison des amours des "nerims", demandez Ã  un Guide du musÃ©e.
 
-Les "oocha paras", se baladent souvent sous les arbres. Ce sont en fait de jeunes "tarpin shals". Voyons si vous arrivez à suivre le cycle de croissance d'un "tarpin shals". Un petit indice : il faudra faire très attentions aux "gahtsai".
+Les "oocha paras", se baladent souvent sous les arbres. Ce sont en fait de jeunes "tarpin shals". Voyons si vous arrivez Ã  suivre le cycle de croissance d'un "tarpin shals". Un petit indiceÂ : il faudra faire trÃ¨s attentions aux "gahtsai".
 
-Les "pumis" chassent en meute et mangent souvent les petits des autres animaux du Negilahn. Les "pumis" ont un goût prononcé pour les individus malades, petits ou faibles qui sont beaucoup plus gros qu'eux. Les "pumis" aiment sauter d'arbre en arbre alors il faudra être rapide pour les voir.
+Les "pumis" chassent en meute et mangent souvent les petits des autres animaux du Negilahn. Les "pumis" ont un goÃ»t prononcÃ© pour les individus malades, petits ou faibles qui sont beaucoup plus gros qu'eux. Les "pumis" aiment sauter d'arbre en arbre alors il faudra Ãªtre rapide pour les voir.
 
-Saurez-vous trouver les prédateurs des "pumis"? Petit indice, ils mangent très lentement et vivent en haut des arbres.
+Saurez-vous trouver les prÃ©dateurs des "pumis"? Petit indice, ils mangent trÃ¨s lentement et vivent en haut des arbres.
 
-Il existe aussi au Negilahn des créatures qui aiment s'amuser et manger des "nerims", des "gipelis" et d'autres plantes et animaux. Mais ces créatures sont quand même timides et on les trouve souvent assez loin de la bulle. Si vous arrivez à voir un "reepah", on pourra dire que vous avez de la chance.
+Il existe aussi au Negilahn des crÃ©atures qui aiment s'amuser et manger des "nerims", des "gipelis" et d'autres plantes et animaux. Mais ces crÃ©atures sont quand mÃªme timides et on les trouve souvent assez loin de la bulle. Si vous arrivez Ã  voir un "reepah", on pourra dire que vous avez de la chance.
 
-Les "gahtsai" sont souvent faciles à repérer, surtout lorsqu'ils se reposent. Alors, on va voir si vous réussissez à les trouver sans aucun indice. Si vous en voyez un, vous remarquerez ses rayures, il n'y en a pas deux qui se ressemblent.
+Les "gahtsai" sont souvent faciles Ã  repÃ©rer, surtout lorsqu'ils se reposent. Alors, on va voir si vous rÃ©ussissez Ã  les trouver sans aucun indice. Si vous en voyez un, vous remarquerez ses rayures, il n'y en a pas deux qui se ressemblent.
 
-Même si les "urwins" sont techniquement des oiseaux, ils ne peuvent pas voler ! Cependant, avec toutes les "kiris" qui les entourent, ils n'en ont pas besoin. Les "urwins" sont les seuls animaux du Negilahn qui gardent le même partenaire toute la vie et se déplacent souvent en couple.
+MÃªme si les "urwins" sont techniquement des oiseaux, ils ne peuvent pas volerÂ ! Cependant, avec toutes les "kiris" qui les entourent, ils n'en ont pas besoin. Les "urwins" sont les seuls animaux du Negilahn qui gardent le mÃªme partenaire toute la vie et se dÃ©placent souvent en couple.
 
 Si vous avez la chance de voir un "panuhdoy", vous comprendrez vite pourquoi il porte son nom. C'est tout ce que je peux vous dire.
 
-Le "tarpin shal" est la créature la plus célèbre du Negilahn et si vous avez la chance d'en voir un tomber sur un animal par surprise, vous comprendrez son nom. Regardez attentivement les branches hautes, ils sont parfois difficiles à voir mais ils en valent la peine.
+Le "tarpin shal" est la crÃ©ature la plus cÃ©lÃ¨bre du Negilahn et si vous avez la chance d'en voir un tomber sur un animal par surprise, vous comprendrez son nom. Regardez attentivement les branches hautes, ils sont parfois difficiles Ã  voir mais ils en valent la peine.
 
-Si vous souhaitez avoir d'autres informations, vous devrez les trouver par vous-mêmes. Bonne chance. Nous espérons que le Negilahn vous plaira. N'hésitez pas à demander à un Guide du musée si vous avez des questions ou des problèmes.
+Si vous souhaitez avoir d'autres informations, vous devrez les trouver par vous-mÃªmes. Bonne chance. Nous espÃ©rons que le Negilahn vous plaira. N'hÃ©sitez pas Ã  demander Ã  un Guide du musÃ©e si vous avez des questions ou des problÃ¨mes.
 """

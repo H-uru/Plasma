@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -29,20 +30,20 @@ This module contains all the strings that need to localized for the Nexus
 
 xCategoryLabel01 = U"Lugares de la ciudad"
 xCategoryLabel02 = U"Conexiones privadas"
-xCategoryLabel03 = U"Conexiones públicas"
+xCategoryLabel03 = U"Conexiones pÃºblicas"
 xCategoryLabel04 = U"Conexiones personales"
 xCategoryLabel05 = U"Cavernas"
 
-xLinkDeleteConfirm = U"¿Seguro que quieres eliminar tu conexión a %s?"
+xLinkDeleteConfirm = U"Â¿Seguro que quieres eliminar tu conexiÃ³n a %s?"
 xHoodCreateConfirm = U"Are you sure you want to make a new Neighborhood? Clicking Yes will transfer your existing membership."   # NEW #
 
 xCityNames = [ U"Caverna 1", U"Caverna 2", U"Caverna 3", U"Caverna 4", U"Caverna 5" ]
-xUsingCityInstance = U"Usando conexión a %s"
+xUsingCityInstance = U"Usando conexiÃ³n a %s"
 
 xNameHeader = U"S:Name"            # NEW #
-xPopulationHeader = U"Población"
+xPopulationHeader = U"PoblaciÃ³n"
 xCityPopulation = U"S:Current Population: %d Maximum Population: %d"     # NEW #
 xCityFull = U"S:Ae'gura is currently full. Please try again later."      # NEW #
 
 xHoodPrivate = U"Mantener en privado"
-xHoodPublic = U"Hacerlo público"
+xHoodPublic = U"Hacerlo pÃºblico"

@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -29,134 +30,134 @@ xJournalContents = """<cover src="xGahreesenInfoJournalCover_eng*1#0.hsm"><font 
 
 <p align=left>Autore: Simpson (trascritto dal registratore vocale)
 
-Et‡: Gahreesen
+Et√†: Gahreesen
 
 Data: 11/12/2001-6/4/02 Molteplici viaggi
 
-Okay, una cosa che sembra immediatamente ovvia Ë che questo posto fu costruito per ragioni di sicurezza. Nessuno poteva scrivere un collegamento a questo luogo, o a quello successivo. Era ovviamente una struttura di qualche tipo appartenuta a un Conservatore e non sembra che fosse destinata a tutti i membri della Gilda. Con questo intendo dire che molto probabilmente líaccesso era consentito soltanto ai membri di rango pi˘ alto. 
+Okay, una cosa che sembra immediatamente ovvia √® che questo posto fu costruito per ragioni di sicurezza. Nessuno poteva scrivere un collegamento a questo luogo, o a quello successivo. Era ovviamente una struttura di qualche tipo appartenuta a un Conservatore e non sembra che fosse destinata a tutti i membri della Gilda. Con questo intendo dire che molto probabilmente l‚Äôaccesso era consentito soltanto ai membri di rango pi√π alto. 
 
-Non ho idea di come ottennero il primo collegamento scritto qui. Probabilmente mentre era ancora in costruzione. Sembra palese che non succeder‡ pi˘, a meno non accada qualcosa di eccezionale a questo posto. 
+Non ho idea di come ottennero il primo collegamento scritto qui. Probabilmente mentre era ancora in costruzione. Sembra palese che non succeder√† pi√π, a meno non accada qualcosa di eccezionale a questo posto. 
 
-Devo dire che Kodama ha alcune teorie riguardo allíeccezionale durata di questíEt‡. PuÚ essere stata una specie di ìforza specialeî dei Conservatori. IniziÚ tardi, circa nella met‡ dellí8000. Probabilmente fu destinata alla sezione di ricerca e sviluppo della Gilda dei Conservatori. Non lo so, comunque vale la pena menzionarla. Ci sono poche altre citazioni di gruppi del genere nei documenti che Kodama ha trovato, o almeno visionato. 
+Devo dire che Kodama ha alcune teorie riguardo all‚Äôeccezionale durata di quest‚ÄôEt√†. Pu√≤ essere stata una specie di ‚Äúforza speciale‚Äù dei Conservatori. Inizi√≤ tardi, circa nella met√† dell‚Äô8000. Probabilmente fu destinata alla sezione di ricerca e sviluppo della Gilda dei Conservatori. Non lo so, comunque vale la pena menzionarla. Ci sono poche altre citazioni di gruppi del genere nei documenti che Kodama ha trovato, o almeno visionato. 
 
 Entrata
 
-Per cominciare, scommetterei che nessuno eccetto le pi˘ alte cariche del governo Ë mai entrato qui. » una mia ipotesi ma sembra verosimile. Non penso che nessun compagno di scuola o fidanzata passÚ mai di qui per far visita a un loro amico conservatore. Il libro dei collegamenti venne trovato molto allíinterno della Gilda. Sono sicuro che era molto ben custodito a suo tempo. 
+Per cominciare, scommetterei che nessuno eccetto le pi√π alte cariche del governo √® mai entrato qui. √à una mia ipotesi ma sembra verosimile. Non penso che nessun compagno di scuola o fidanzata pass√≤ mai di qui per far visita a un loro amico conservatore. Il libro dei collegamenti venne trovato molto all‚Äôinterno della Gilda. Sono sicuro che era molto ben custodito a suo tempo. 
 
-Si vede dal chiavistello allíentrata che il posto era estremamente sicuro. Muri spessi, una sola porta, una finestra alta (una feritoia, probabilmente). Se a qualcuno fosse venuto in mente di entrare con una bomba, non avrebbe causato danni considerevoli.
+Si vede dal chiavistello all‚Äôentrata che il posto era estremamente sicuro. Muri spessi, una sola porta, una finestra alta (una feritoia, probabilmente). Se a qualcuno fosse venuto in mente di entrare con una bomba, non avrebbe causato danni considerevoli.
 
-Mi piace molto il simbolo dei Conservatori che Ë ovunque. Come se fosse possibile scordarmi dove sono. 
+Mi piace molto il simbolo dei Conservatori che √® ovunque. Come se fosse possibile scordarmi dove sono. 
 
-Sala díaspetto
+Sala d‚Äôaspetto
 
-Quindi, i visitatori erano condotti in questa piccola sala díaspetto. CíË una finestra  su un lato, ma sembra quasi una biglietteria. Probabilmente era una deposito per oggetti non consentiti come le armi. Forse libri. Sono sicuro che non volessero libri qui dentro. 
+Quindi, i visitatori erano condotti in questa piccola sala d‚Äôaspetto. C‚Äô√® una finestra  su un lato, ma sembra quasi una biglietteria. Probabilmente era una deposito per oggetti non consentiti come le armi. Forse libri. Sono sicuro che non volessero libri qui dentro. 
 
-Si,  sembra proprio per i libri. CíË uníaltra ìbiglietteriaî sullíaltro lato, anche se questa Ë leggermente differente. Sono certo che sulla parete ci sono gabbie per scarafaggi. Scarafaggi che cercavano inchiostro. Qualcuno mi aveva gi‡ detto che questi insetti sono menzionati in molti documenti. Non si riusciva a oltrepassare questa stanza con un libro. 
+Si,  sembra proprio per i libri. C‚Äô√® un‚Äôaltra ‚Äúbiglietteria‚Äù sull‚Äôaltro lato, anche se questa √® leggermente differente. Sono certo che sulla parete ci sono gabbie per scarafaggi. Scarafaggi che cercavano inchiostro. Qualcuno mi aveva gi√† detto che questi insetti sono menzionati in molti documenti. Non si riusciva a oltrepassare questa stanza con un libro. 
 
-Inoltre, le porte non erano mai tutte aperte allo stesso tempo. CosÏ, se anche a qualcuno fosse riuscito di passare la stanza díentrata, certamente non sarebbe riuscito a oltrepassare queste enormi porte nella sala díaspetto. 
+Inoltre, le porte non erano mai tutte aperte allo stesso tempo. Cos√¨, se anche a qualcuno fosse riuscito di passare la stanza d‚Äôentrata, certamente non sarebbe riuscito a oltrepassare queste enormi porte nella sala d‚Äôaspetto. 
 
 Atrio
 
-Sembra che líatrio corresse lungo tutta la circonferenza dellíedificio. Ci sono molte stanze; cercherÚ di controllarle una a una. La prima Ë la tromba di un ascensore. Oltretutto sembra condurre solo in basso. MI chiedo se sia sempre stato cosÏ, probabilmente una ragione di sicurezza. Una volta entrato nellíatrio non cíË pi˘ nessun altro posto dove andare, sempre che loro non volessero altrimenti. 
+Sembra che l‚Äôatrio corresse lungo tutta la circonferenza dell‚Äôedificio. Ci sono molte stanze; cercher√≤ di controllarle una a una. La prima √® la tromba di un ascensore. Oltretutto sembra condurre solo in basso. MI chiedo se sia sempre stato cos√¨, probabilmente una ragione di sicurezza. Una volta entrato nell‚Äôatrio non c‚Äô√® pi√π nessun altro posto dove andare, sempre che loro non volessero altrimenti. 
 
 Armadi
 
-Sono portato a pensare che ogni libro che veniva portato in questíEt‡ era custodito negli armadi. Sono portato a pensare che alcuni lavoratori, o i visitatori pi˘ frequenti, custodivano anche degli equipaggiamenti, ma potrei sbagliarmi. Sembra inoltre che custodissero alcune tute di mantenimento; elmetti, rilevatori eccÖ Sembrano un poí fuori luogo, sinceramente. 
+Sono portato a pensare che ogni libro che veniva portato in quest‚ÄôEt√† era custodito negli armadi. Sono portato a pensare che alcuni lavoratori, o i visitatori pi√π frequenti, custodivano anche degli equipaggiamenti, ma potrei sbagliarmi. Sembra inoltre che custodissero alcune tute di mantenimento; elmetti, rilevatori ecc‚Ä¶ Sembrano un po‚Äô fuori luogo, sinceramente. 
 
 KI
 
-Ok, adesso le cose diventano pi˘ chiare. Ho avuto una lunga chiacchierata con Laxman e ho cercato tra i documenti che aveva Nick sulla citt‡. Sembra che queste non fossero le condizioni originali del luogo. 
+Ok, adesso le cose diventano pi√π chiare. Ho avuto una lunga chiacchierata con Laxman e ho cercato tra i documenti che aveva Nick sulla citt√†. Sembra che queste non fossero le condizioni originali del luogo. 
 
-Il KI fu una grande scoperta non solo per le gilda, ma apparentemente per tutti i cittadini. Pare proprio che stessero cominciando a diffondere pubblicamente líuso del KI giusto prima della caduta. Che tempismo. 
+Il KI fu una grande scoperta non solo per le gilda, ma apparentemente per tutti i cittadini. Pare proprio che stessero cominciando a diffondere pubblicamente l‚Äôuso del KI giusto prima della caduta. Che tempismo. 
 
 Sembra che abbiano operato alcune innovazioni per semplificare le cose alle masse di visitatori che sarebbero arrivate per recuperare i KI. Pare che la mia piccola analogia sulle ragazze fosse decisamente sbagliata. Le ragazze stanno arrivando numerose,  almeno nelle sezioni aperte, mi ha detto Kodama. Abbiamo trovato moti libri nelle vicinanze, oltre al libro custodito dei Conservatori di cui parlavo prima. Ops. 
 
-CosÏ, i visitatori entrano, gli scarafaggi cercano libri, e quindi si procede fino alla stanza dei KI. Prendi un KI, e ti colleghi. Le guardie stavano probabilmente allíascensore che sta proprio dietro questa stanza. Se accadeva che qualcuno portasse qualche arma illegale, poteva recuperarla dallíaltro lato della stanza dei armadi e quindi tornare a casa con il proprio nuovo KI splendente. 
+Cos√¨, i visitatori entrano, gli scarafaggi cercano libri, e quindi si procede fino alla stanza dei KI. Prendi un KI, e ti colleghi. Le guardie stavano probabilmente all‚Äôascensore che sta proprio dietro questa stanza. Se accadeva che qualcuno portasse qualche arma illegale, poteva recuperarla dall‚Äôaltro lato della stanza dei armadi e quindi tornare a casa con il proprio nuovo KI splendente. 
 
-Ha pi˘ senso ora il fatto che anche i Conservatori conservassero il loro equipaggiamento nella stanza dei armadi. Probabilmente era una specie di vetrina per i visitatori. Per impressionarli. 
+Ha pi√π senso ora il fatto che anche i Conservatori conservassero il loro equipaggiamento nella stanza dei armadi. Probabilmente era una specie di vetrina per i visitatori. Per impressionarli. 
 
 Magazzino
 
-CíË una certa quantit‡ di beni qui che sono sicuro non sia mai stata vista dai visitatori. » scavato piuttosto male dal piano superiore, anche se Engberg dice che strutturalmente il luogo Ë a posto. Far‡ presto delle ispezioni pi˘ dettagliate. 
+C‚Äô√® una certa quantit√† di beni qui che sono sicuro non sia mai stata vista dai visitatori. √à scavato piuttosto male dal piano superiore, anche se Engberg dice che strutturalmente il luogo √® a posto. Far√† presto delle ispezioni pi√π dettagliate. 
 
-Molte di queste casse sono riempite con equipaggiamento di manutenzione KI oltre a una quantit‡ di pezzi di ricambio eccÖNon so. Laxman dovr‡ ispezionare bene questo posto. Sono sicuro che gli piacer‡ molto guardare qui in giro. Non so perchÈ ma ne sono sicuro. 
+Molte di queste casse sono riempite con equipaggiamento di manutenzione KI oltre a una quantit√† di pezzi di ricambio ecc‚Ä¶Non so. Laxman dovr√† ispezionare bene questo posto. Sono sicuro che gli piacer√† molto guardare qui in giro. Non so perch√© ma ne sono sicuro. 
 
 Gabbie degli scarafaggi
 
-Deterrente efficace. Non sono sicuro di come si potesse entrare nelle gabbie senza. Non ne ho proprio idea. Un collegamento, forse. Comunque, le gabbie erano molto probabilmente per gli scarafaggi. Vi sono dei simboli davanti e un poí di resti nelle gabbie pi˘ sporche. Dobbiamo pulirle. MI chiedo come siano morti.
+Deterrente efficace. Non sono sicuro di come si potesse entrare nelle gabbie senza. Non ne ho proprio idea. Un collegamento, forse. Comunque, le gabbie erano molto probabilmente per gli scarafaggi. Vi sono dei simboli davanti e un po‚Äô di resti nelle gabbie pi√π sporche. Dobbiamo pulirle. MI chiedo come siano morti.
 
-Parlando dellíaccesso, ho uníaltra domanda. Come arrivavano al secondo piano? Líascensore salta il piano di mezzo. Ragioni di sicurezza, credo.
+Parlando dell‚Äôaccesso, ho un‚Äôaltra domanda. Come arrivavano al secondo piano? L‚Äôascensore salta il piano di mezzo. Ragioni di sicurezza, credo.
 
 Secondo Piano
 
-La distruzione fu anche pi˘ sostanziale di quel che pensavo. Sembra che abbia rovinato anche una parte del muro esterno. Penso che me ne andrÚ di qui finche non torna Engberg.
+La distruzione fu anche pi√π sostanziale di quel che pensavo. Sembra che abbia rovinato anche una parte del muro esterno. Penso che me ne andr√≤ di qui finche non torna Engberg.
 
-» passato qualche giorno e sono tornato. Non sono cosÏ esperto, quindi mi devo affidare a Engberg. MaÖ lui dice che líintero edificio Ë tra i pi˘ solidi, alcune tra le pi˘ massicce  strutture che egli abbia mai visto. » sicuro, dice. Se muoio qui, e qualcuno recupera la sua registrazione, per favore processatelo per me. 
+√à passato qualche giorno e sono tornato. Non sono cos√¨ esperto, quindi mi devo affidare a Engberg. Ma‚Ä¶ lui dice che l‚Äôintero edificio √® tra i pi√π solidi, alcune tra le pi√π massicce  strutture che egli abbia mai visto. √à sicuro, dice. Se muoio qui, e qualcuno recupera la sua registrazione, per favore processatelo per me. 
 
-Il secondo piano assomiglia al primo. CíË un atrio e numerose stanze. Devo ricordare che poche persone sono passate di qui. Non cíË accesso con ascensori, scale o  quantíaltro. Devo supporre che ci si arrivasse per mezzo di un libro di collegamento che Ë probabilmente da qualche parte nella citt‡. Suppongo che ci dovesse essere un metodo per fermare líascensore al secondo piano, ma ne dubito. Comunque questo piano Ë estremamente sicuro; penso che ci si arrivasse solo con un libro. 
+Il secondo piano assomiglia al primo. C‚Äô√® un atrio e numerose stanze. Devo ricordare che poche persone sono passate di qui. Non c‚Äô√® accesso con ascensori, scale o  quant‚Äôaltro. Devo supporre che ci si arrivasse per mezzo di un libro di collegamento che √® probabilmente da qualche parte nella citt√†. Suppongo che ci dovesse essere un metodo per fermare l‚Äôascensore al secondo piano, ma ne dubito. Comunque questo piano √® estremamente sicuro; penso che ci si arrivasse solo con un libro. 
 
 Quartieri delle Guardie
 
-A fianco della stanza díosservazione ñ almeno suppongo servisse quello ñ cíË quello che sembra un quartiere delle guardie. Sembra che passassero qui molto del loro tempo. Ci sono letti qui, oltre che brande. Credo che questi ragazzi dovessero stare al posto di guardia quando entravano i visitatori. 
+A fianco della stanza d‚Äôosservazione ‚Äì almeno suppongo servisse quello ‚Äì c‚Äô√® quello che sembra un quartiere delle guardie. Sembra che passassero qui molto del loro tempo. Ci sono letti qui, oltre che brande. Credo che questi ragazzi dovessero stare al posto di guardia quando entravano i visitatori. 
 
 Armadi delle Guardie.
 
-Altri armadi, simili a quelli al piano inferiore, anche se questi contenevano equipaggiamento pesante. Sono sicuro che Watson vorr‡ vedere questo materiale e custodirlo bene. Infatti, non mi addentrerÚ nei dettagli. Laxman potr‡ scrivere tutto ciÚ che vuole su questo equipaggiamento in una relazione successiva. Certamente non ero a conoscenza che I D'ni avessero questo tipo di tecnologia. 
+Altri armadi, simili a quelli al piano inferiore, anche se questi contenevano equipaggiamento pesante. Sono sicuro che Watson vorr√† vedere questo materiale e custodirlo bene. Infatti, non mi addentrer√≤ nei dettagli. Laxman potr√† scrivere tutto ci√≤ che vuole su questo equipaggiamento in una relazione successiva. Certamente non ero a conoscenza che I D'ni avessero questo tipo di tecnologia. 
 
 Sala Macchine
 
-Adesso capisco perchÈ  questo piano Ë cosÏ sicuro. Sembra che tutta líenergia della struttura derivi da qui. Costruzione stupefacente. Líintero edificio sembra essere alimentato da una qualche risorsa idrica che mette in moto le macchine. Hanno anche installato un ingranaggio che opera aggrappandosi con i denti al terreno esterno e garantisce inoltre una sorgente díenergia. Direi proprio che hanno preso due piccioni con una fava. Straordinario direi. 
+Adesso capisco perch√©  questo piano √® cos√¨ sicuro. Sembra che tutta l‚Äôenergia della struttura derivi da qui. Costruzione stupefacente. L‚Äôintero edificio sembra essere alimentato da una qualche risorsa idrica che mette in moto le macchine. Hanno anche installato un ingranaggio che opera aggrappandosi con i denti al terreno esterno e garantisce inoltre una sorgente d‚Äôenergia. Direi proprio che hanno preso due piccioni con una fava. Straordinario direi. 
 
-Líalimentazione di questo luogo sembra piuttosto complicata. Sembra che ci fossero comunque occasioni in cui líafflusso di energia si interrompeva  per poi ripartire. Sto salendo in cima.
+L‚Äôalimentazione di questo luogo sembra piuttosto complicata. Sembra che ci fossero comunque occasioni in cui l‚Äôafflusso di energia si interrompeva  per poi ripartire. Sto salendo in cima.
 
 Cima
 
-Wow. Lo sapevo che questo edificio era molto grande. La costruzione principale Ë assolutamente enorme. E rotante per giunta. Sono spaventato dal lavoro che bisogna fare per far sÏ che questo posto sia sicuro. Dappertutto. Fa quasi ridere pensare a dignitari governativi che passavano sullo stesso sentiero che sto calcando in questo momento. Stupefacente.
+Wow. Lo sapevo che questo edificio era molto grande. La costruzione principale √® assolutamente enorme. E rotante per giunta. Sono spaventato dal lavoro che bisogna fare per far s√¨ che questo posto sia sicuro. Dappertutto. Fa quasi ridere pensare a dignitari governativi che passavano sullo stesso sentiero che sto calcando in questo momento. Stupefacente.
 
-Per arrivare dallíaltra parte, sembra che sia necessario attraversare il ponte verso i picchi di roccia. Il primo posto da quando sono arrivato al quale Ë possibile stabilire un collegamento. E non Ë grande. CíË una struttura massiccia proprio qui di fronte. » abbastanza divertente immaginare un esercito che invade. Tutti ammucchiati qua sopra aspettando che il ponte ruoti. Ma che?...mio Dio Ö
+Per arrivare dall‚Äôaltra parte, sembra che sia necessario attraversare il ponte verso i picchi di roccia. Il primo posto da quando sono arrivato al quale √® possibile stabilire un collegamento. E non √® grande. C‚Äô√® una struttura massiccia proprio qui di fronte. √à abbastanza divertente immaginare un esercito che invade. Tutti ammucchiati qua sopra aspettando che il ponte ruoti. Ma che?...mio Dio ‚Ä¶
 
-Le creature. Questi cosi sembrano usciti da un film dellíorrore. Sono stati qui sopra per qualche tempo... non mi Ë capitato di vederli spesso, ma quando li vedo mi spaventano a morte. Sto cominciando a comprendere un poí meglio la funzione di queste barriere e delle strutture circostanti. Molto probabilmente, queste strutture erano state concepite pi˘ per tenere fuori queste creature che non per contenere i visitatori. Non avventurarti nei boschi se non hai un grosso fucile. 
+Le creature. Questi cosi sembrano usciti da un film dell‚Äôorrore. Sono stati qui sopra per qualche tempo... non mi √® capitato di vederli spesso, ma quando li vedo mi spaventano a morte. Sto cominciando a comprendere un po‚Äô meglio la funzione di queste barriere e delle strutture circostanti. Molto probabilmente, queste strutture erano state concepite pi√π per tenere fuori queste creature che non per contenere i visitatori. Non avventurarti nei boschi se non hai un grosso fucile. 
 
-Un altro ponte, per raggiungere líedificio principale. Ancora strutture di sicurezza. La piattaforma tra le due strutture sembra essere stata erosa. Un tempo, attraversare i ponti era probabilmente una misura per garantire a gruppi consistenti di raggiungere la costruzione principale tutti insieme ñ ma scommetto che era molto pi˘ facile di quanto lo sia ora. Líerosione tra le piattaforme ha reso il tutto un poí difficoltoso. E credo che i Conservatori líavrebbero apprezzata ancora di pi˘ nelle condizioni attuali. 
+Un altro ponte, per raggiungere l‚Äôedificio principale. Ancora strutture di sicurezza. La piattaforma tra le due strutture sembra essere stata erosa. Un tempo, attraversare i ponti era probabilmente una misura per garantire a gruppi consistenti di raggiungere la costruzione principale tutti insieme ‚Äì ma scommetto che era molto pi√π facile di quanto lo sia ora. L‚Äôerosione tra le piattaforme ha reso il tutto un po‚Äô difficoltoso. E credo che i Conservatori l‚Äôavrebbero apprezzata ancora di pi√π nelle condizioni attuali. 
 
 Stanze del Fango
 
-Non sono sicuro di come poter chiamare queste stanze, quindi le chiamerÚ cosÏ. Non cíË molto qui. Sembra che ogni ponte abbia una di queste stanze accanto, con un altro gruppo di porte, e via dicendoÖNon sembra esserci stata decompressione o decontaminazione qui. Sembra veramente essere niente di pi˘ che un altro pretesto per piazzare delle porte. Uníaltra misura di sicurezza, immagino. 
+Non sono sicuro di come poter chiamare queste stanze, quindi le chiamer√≤ cos√¨. Non c‚Äô√® molto qui. Sembra che ogni ponte abbia una di queste stanze accanto, con un altro gruppo di porte, e via dicendo‚Ä¶Non sembra esserci stata decompressione o decontaminazione qui. Sembra veramente essere niente di pi√π che un altro pretesto per piazzare delle porte. Un‚Äôaltra misura di sicurezza, immagino. 
 
 Centro di Allenamento
 
-Stavo per compilare una analisi dettagliata di ogni stanza, di questo luogo, ma dopo una rapida occhiata credo che inizierÚ con una visione generale. 
+Stavo per compilare una analisi dettagliata di ogni stanza, di questo luogo, ma dopo una rapida occhiata credo che inizier√≤ con una visione generale. 
 
-Ci sono tre tipi di stanze nellíedificio, due per ogni tipo. CíË una stanza di controllo, una viola e una gialla, una vetrina, una viola e una gialla e una sala conferenze. Sebbene queste non siano colorate, credo ce ne sia una per ogni ìsquadraî. 
+Ci sono tre tipi di stanze nell‚Äôedificio, due per ogni tipo. C‚Äô√® una stanza di controllo, una viola e una gialla, una vetrina, una viola e una gialla e una sala conferenze. Sebbene queste non siano colorate, credo ce ne sia una per ogni ‚Äúsquadra‚Äù. 
 
-Líintero edificio sembrava essere centrato sul massiccio muro centrale.  Le stanze di controllo gestivano il muro, le vetrine mostravano le uniformi che erano indossate sul muro (credo) e le sale per le conferenze permettevano agli ospiti del regno e agli alti ufficiali di discutere degli allenamenti sul muro. Vediamo.
+L‚Äôintero edificio sembrava essere centrato sul massiccio muro centrale.  Le stanze di controllo gestivano il muro, le vetrine mostravano le uniformi che erano indossate sul muro (credo) e le sale per le conferenze permettevano agli ospiti del regno e agli alti ufficiali di discutere degli allenamenti sul muro. Vediamo.
 
 Le stanze di controllo prima.
 
 Stanze di Controllo
 
-Non mi addentrerÚ nellíanalisi dei controlli per il muro in questo documento. LascerÚ questo lavoro a Laxman. A ogni modo il pannello qui davanti sicuramente controllava il muro. Il muro era usato per allenarsi e per testare le diverse tute. Credo che la stanza centrale potesse diventare calda, fredda, riempirsi di fumo e cose simili abbastanza velocemente. Era una gara a chi arrivava in cima pi˘ in fretta. Le squadre piazzavano gli ostacoli e i membri gareggiavano.
+Non mi addentrer√≤ nell‚Äôanalisi dei controlli per il muro in questo documento. Lascer√≤ questo lavoro a Laxman. A ogni modo il pannello qui davanti sicuramente controllava il muro. Il muro era usato per allenarsi e per testare le diverse tute. Credo che la stanza centrale potesse diventare calda, fredda, riempirsi di fumo e cose simili abbastanza velocemente. Era una gara a chi arrivava in cima pi√π in fretta. Le squadre piazzavano gli ostacoli e i membri gareggiavano.
 
-CíË un tunnel laterale che garantisce accesso alle vetrine dalla stanza dei controlli. 
+C‚Äô√® un tunnel laterale che garantisce accesso alle vetrine dalla stanza dei controlli. 
 
 Vetrine
 
-Non sono sicuro  che fossero originariamente delle vetrine ñ ma forse si. Comunque ci sono poche tute di mantenimento qui. CíË anche líultimo modello di tuta (o pelle) qua dentro. Suppongo che il macchinario per indossare questo tipo di tuta sia qui. 
+Non sono sicuro  che fossero originariamente delle vetrine ‚Äì ma forse si. Comunque ci sono poche tute di mantenimento qui. C‚Äô√® anche l‚Äôultimo modello di tuta (o pelle) qua dentro. Suppongo che il macchinario per indossare questo tipo di tuta sia qui. 
 
-Adesso che abbiamo avuto un poí di tempo per guardarla bene, non credo ai miei occhi, Stiamo parlando di una tuta che era a tutti gli effetti una pelle che aveva abilit‡ di collegamento eccÖ.installate al suo interno. Estremamente tecnologico direi. Un Conservatore doveva scivolare nel tunnel e mentre ìviaggiavaî verso la stanza centrale/il muro, gli veniva collocata addosso la tuta. Sto pregando la DRC per poter provare questa cosa, ma insistono che nessuno deve farlo. Laxman ha gi‡ qualcuno che si occupa della cosa, tentando di capire di pi˘. Quando lo far‡, io sarÚ il primo a saperlo.
+Adesso che abbiamo avuto un po‚Äô di tempo per guardarla bene, non credo ai miei occhi, Stiamo parlando di una tuta che era a tutti gli effetti una pelle che aveva abilit√† di collegamento ecc‚Ä¶.installate al suo interno. Estremamente tecnologico direi. Un Conservatore doveva scivolare nel tunnel e mentre ‚Äúviaggiava‚Äù verso la stanza centrale/il muro, gli veniva collocata addosso la tuta. Sto pregando la DRC per poter provare questa cosa, ma insistono che nessuno deve farlo. Laxman ha gi√† qualcuno che si occupa della cosa, tentando di capire di pi√π. Quando lo far√†, io sar√≤ il primo a saperlo.
 
-Penso che queste stanze possano essere generalmente descritte come le stanze dellíequipaggiamento delle squadre.
+Penso che queste stanze possano essere generalmente descritte come le stanze dell‚Äôequipaggiamento delle squadre.
 
 Sale per le Conferenze
 
-Credo che queste stanze fossero il luogo dove i pezzi grossi discutevano dei Conservatori. Naturalmente i posti erano predisposti per osservare il muro e i percorsi che venivano costruiti e affrontati sul muro. Non lo sapremo mai, ma credo che i Maestri di Gilda sedessero qui ad osservare I membri competere, in preparazione di spedizioni verso Et‡ contenenti sfere di fuoco radioattive per controllare la resistenza delle tute contro gli elementi. 
+Credo che queste stanze fossero il luogo dove i pezzi grossi discutevano dei Conservatori. Naturalmente i posti erano predisposti per osservare il muro e i percorsi che venivano costruiti e affrontati sul muro. Non lo sapremo mai, ma credo che i Maestri di Gilda sedessero qui ad osservare I membri competere, in preparazione di spedizioni verso Et√† contenenti sfere di fuoco radioattive per controllare la resistenza delle tute contro gli elementi. 
 
 Stanze Superiori
 
-Non andrÚ a controllare, ma sappiamo che le stanze superiori erano usate come celle. Una tipica tecnologia D'ni ñ avevano un singolo Libro di Collegamento che conduceva alle celle. Siccome líedificio ruotava, un complicatissimo sistema di sincronizzazione era associato al Libro. Il momento in cui veniva effettuato il Collegamento determinava la cella di destinazione. Sembra che tale sistema funzionasse molto bene. 
+Non andr√≤ a controllare, ma sappiamo che le stanze superiori erano usate come celle. Una tipica tecnologia D'ni ‚Äì avevano un singolo Libro di Collegamento che conduceva alle celle. Siccome l‚Äôedificio ruotava, un complicatissimo sistema di sincronizzazione era associato al Libro. Il momento in cui veniva effettuato il Collegamento determinava la cella di destinazione. Sembra che tale sistema funzionasse molto bene. 
 
-A proposito di collegamenti. Líintero edificio ruota. Anche  se molti visitatori percorrevano la strada fino alla costruzione,  cíerano libri che conducevano direttamente al suo interno. Dovevano esserci. Sembra che molti usassero anche libri diretti verso stanze specifiche. Sembra una nuova caratteristica progettata e costruita da questa gente. Una delle tante, ne sono sicuro. 
+A proposito di collegamenti. L‚Äôintero edificio ruota. Anche  se molti visitatori percorrevano la strada fino alla costruzione,  c‚Äôerano libri che conducevano direttamente al suo interno. Dovevano esserci. Sembra che molti usassero anche libri diretti verso stanze specifiche. Sembra una nuova caratteristica progettata e costruita da questa gente. Una delle tante, ne sono sicuro. 
 
-Mi chiedo ... alloraÖ dove si trovavano i laboratori principali? E ancora, dove dormivano e mangiavano tutti? 
+Mi chiedo ... allora‚Ä¶ dove si trovavano i laboratori principali? E ancora, dove dormivano e mangiavano tutti? 
 
 """

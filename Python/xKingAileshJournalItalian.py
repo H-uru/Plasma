@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,16 +28,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingAileshJournalCover_eng*1#0.hsm"><font size=16 face=Sam color=000000><margin left=62 right=62 top=48><p align=center>Re Ailesh
 
-<p align=left>Ailesh salÏ al trono ed ebbe la sua cerimonia di incoronazione nell'anno 120 DE, all'et‡ di 170 anni. Sebbene sembra che Ailesh non fosse mai stato un membro della Gilda degli Scrittori a Gaternay, pare che abbia comunque passato i primi cinquanta anni della sua vita con Ri'neref (dopo il suo ritiro) lavorando sul Libro dei D'ni. Quando la Gilda degli Scrittori dei D'ni fu fondata nell'anno 8 DE, Ri'neref si assicurÚ che Ailesh fosse eletto Gran Maestro della Gilda. 
+<p align=left>Ailesh sal√¨ al trono ed ebbe la sua cerimonia di incoronazione nell'anno 120 DE, all'et√† di 170 anni. Sebbene sembra che Ailesh non fosse mai stato un membro della Gilda degli Scrittori a Gaternay, pare che abbia comunque passato i primi cinquanta anni della sua vita con Ri'neref (dopo il suo ritiro) lavorando sul Libro dei D'ni. Quando la Gilda degli Scrittori dei D'ni fu fondata nell'anno 8 DE, Ri'neref si assicur√≤ che Ailesh fosse eletto Gran Maestro della Gilda. 
 
-In qualit‡ di Gran Maestro, egli lavorÚ a stretto contatto con Ri'neref nella stesura del nuovo Giuramento della Gilda degli Scrittori. Il Giuramento, sul quale si fondava lo stile di vita di ogni membro, finÏ con il rimanere in voga 
+In qualit√† di Gran Maestro, egli lavor√≤ a stretto contatto con Ri'neref nella stesura del nuovo Giuramento della Gilda degli Scrittori. Il Giuramento, sul quale si fondava lo stile di vita di ogni membro, fin√¨ con il rimanere in voga 
 (tranne piccoli cambiamenti) fino al 9400 DE. 
 
-Le cronache indicano che Ailesh strutturÚ la sua vita in sinergia con quella di Ri'neref. RifiutÚ di costruirsi un palazzo personale finchÈ non venne aperta una Biblioteca Comune; egli supportÚ a lungo la teoria secondo cui c'era bisogno di un luogo dove tutti i cittadini potessero avere accesso ai Libri. Sebbene ci fossero delle discordanze su alcuni aspetti minori, il palazzo fu completato nell'anno 233 DE. Pure allora, come fece il suo maestro, Ailesh rifiutÚ di costruirsi un palazzo.   
+Le cronache indicano che Ailesh struttur√≤ la sua vita in sinergia con quella di Ri'neref. Rifiut√≤ di costruirsi un palazzo personale finch√© non venne aperta una Biblioteca Comune; egli support√≤ a lungo la teoria secondo cui c'era bisogno di un luogo dove tutti i cittadini potessero avere accesso ai Libri. Sebbene ci fossero delle discordanze su alcuni aspetti minori, il palazzo fu completato nell'anno 233 DE. Pure allora, come fece il suo maestro, Ailesh rifiut√≤ di costruirsi un palazzo.   
 
-Il regno di Ailesh era estremamente simile a quello di Ri'neref. Ci fu grande fervore per le nuove idee e leggi dei D'ni, e il grande consenso popolare che ne derivÚ rese il regno di Ailesh particolarmente sereno.
+Il regno di Ailesh era estremamente simile a quello di Ri'neref. Ci fu grande fervore per le nuove idee e leggi dei D'ni, e il grande consenso popolare che ne deriv√≤ rese il regno di Ailesh particolarmente sereno.
 
-Prima della nascita del suo terzo figlio nel 256 DE, le cronache indicano che ci fu grande preoccupazione riguardo al successore del Re. I due figli pi˘ grandi di Ailesh erano piuttosto ribelli e non furono mai visti come buoni candidati al trono, questo almeno secondo l'opinione pubblica. Comunque, non appena il terzo figlio di Ailesh ebbe raggiunto la maggiore et‡, divenne chiaro alla gente (sebbene le cronache non ne riportino i motivi specifici) che il ragazzo avrebbe seguito abbastanza fedelmente le idee del padre. Ailesh deve essere stato d'accordo con l'opinione pubblica dato che fu proprio il terzo figlio ad essere scelto come successore.
+Prima della nascita del suo terzo figlio nel 256 DE, le cronache indicano che ci fu grande preoccupazione riguardo al successore del Re. I due figli pi√π grandi di Ailesh erano piuttosto ribelli e non furono mai visti come buoni candidati al trono, questo almeno secondo l'opinione pubblica. Comunque, non appena il terzo figlio di Ailesh ebbe raggiunto la maggiore et√†, divenne chiaro alla gente (sebbene le cronache non ne riportino i motivi specifici) che il ragazzo avrebbe seguito abbastanza fedelmente le idee del padre. Ailesh deve essere stato d'accordo con l'opinione pubblica dato che fu proprio il terzo figlio ad essere scelto come successore.
 
-Ailesh morÏ di cause naturali a 350 anni.
+Ailesh mor√¨ di cause naturali a 350 anni.
 """

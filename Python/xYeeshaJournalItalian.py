@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -33,7 +34,7 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=28>Teledahn
 
-<font size=24>La verit‡ dell'uomo si trova nell'oscurit‡, al di sotto della superficie. Un po' di luce potrebbe rivelare solo ciÚ che alcuni vogliono che sia visto.
+<font size=24>La verit√† dell'uomo si trova nell'oscurit√†, al di sotto della superficie. Un po' di luce potrebbe rivelare solo ci√≤ che alcuni vogliono che sia visto.
 
 <font size=20>Regeltavok Oorpah - Libro 9, Capitolo 221, Versetto 29
 <img src="xDniTWO*1#0.hsm" align=center blend=alpha resize=no>
@@ -46,7 +47,7 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=28>Gahreesen
 
-<font size=24>Le leggi adottate dall'orgoglioso sono sia la sua sicurezza che la sua rovina. Tali leggi rendono la disobbedienza una virt˘, e l'obbedienza un peccato.
+<font size=24>Le leggi adottate dall'orgoglioso sono sia la sua sicurezza che la sua rovina. Tali leggi rendono la disobbedienza una virt√π, e l'obbedienza un peccato.
 
 <font size=20>Regeltavok Oorpah - Libro 12, Capitolo 32, Versetto 134
 
@@ -61,7 +62,7 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=28>Kadish Tolesa
 
-<font size=24>Soltanto quando l'uomo si nasconde rivela se stesso. Una debole scintilla puÚ svelare tutto. Guarda nel profondo, pondera e riconosci tutto ciÚ che Ë nascosto.
+<font size=24>Soltanto quando l'uomo si nasconde rivela se stesso. Una debole scintilla pu√≤ svelare tutto. Guarda nel profondo, pondera e riconosci tutto ci√≤ che √® nascosto.
 
 <font size=20>Regeltavok Oorpah - Libro 9, Capitolo 221, Versetto 77
 <img src="xDniSIX*1#0.hsm" align=center blend=alpha resize=no>
@@ -74,7 +75,7 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=28>Eder Kemo e Eder Gira
 
-<font size=24>Quando si Ë preso tutto da una persona, l'unica speranza Ë ciÚ che l'altro puÚ dare. Attraverso questo dono, entrambi sono redenti.
+<font size=24>Quando si √® preso tutto da una persona, l'unica speranza √® ci√≤ che l'altro pu√≤ dare. Attraverso questo dono, entrambi sono redenti.
 
 <font size=20>Regeltavok Oorpah - Libro 2, Capitolo 1071, Versetto 54
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -25,21 +26,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 # xMaturityJournalEnglish
 # change the contents of the variable below to the desired contents of the journal
-xJournalContents = """<cover src="xMaturityJournalCover_eng*1#0.hsm"><font size=16 face=Michelle color=982A2A><margin left=62 right=62 top=48><p align=center>Maturité
+xJournalContents = """<cover src="xMaturityJournalCover_eng*1#0.hsm"><font size=16 face=Michelle color=982A2A><margin left=62 right=62 top=48><p align=center>MaturitÃ©
 
-<p align=left>Comme une certain nombre d'autres cultures, la culture D'ni célébrait l'entrée de ses enfants dans l'âge de la raison et de la maturité. Les D'ni croyaient que la véritable maturité, qu'ils appelaient l'Âge de raison, était atteinte à l'âge de vingt-cinq ans. Avant cet âge, les D'ni croyaient que le coeur et l'esprit des enfants n'étaient pas encore bien formés. Ils allaient même jusqu'à penser que tant qu'il n'avait pas atteint cet âge, un enfant était incapable de prendre une bonne décision, car il était trop facilement manipulé par d'autres motifs. Ce qui ne veut pas dire qu'il agissait mal, mais simplement que Yahvo ne les avait pas rendus responsables de leurs décisions. Jusqu'alors, c'était le rôle des parents de juger et protéger les enfants. La société encourageait d'ailleurs les couples à ne pas avoir plusieurs enfants de moins de vingt-cinq ans en même temps.
+<p align=left>Comme une certain nombre d'autres cultures, la culture D'ni cÃ©lÃ©brait l'entrÃ©e de ses enfants dans l'Ã¢ge de la raison et de la maturitÃ©. Les D'ni croyaient que la vÃ©ritable maturitÃ©, qu'ils appelaient l'Ã‚ge de raison, Ã©tait atteinte Ã  l'Ã¢ge de vingt-cinq ans. Avant cet Ã¢ge, les D'ni croyaient que le coeur et l'esprit des enfants n'Ã©taient pas encore bien formÃ©s. Ils allaient mÃªme jusqu'Ã  penser que tant qu'il n'avait pas atteint cet Ã¢ge, un enfant Ã©tait incapable de prendre une bonne dÃ©cision, car il Ã©tait trop facilement manipulÃ© par d'autres motifs. Ce qui ne veut pas dire qu'il agissait mal, mais simplement que Yahvo ne les avait pas rendus responsables de leurs dÃ©cisions. Jusqu'alors, c'Ã©tait le rÃ´le des parents de juger et protÃ©ger les enfants. La sociÃ©tÃ© encourageait d'ailleurs les couples Ã  ne pas avoir plusieurs enfants de moins de vingt-cinq ans en mÃªme temps.
 
-Les D'ni célébraient l'entrée d'un enfant dans l'âge de la raison et de la maturité lors de la « Cérémonie de l'accomplissement ». 
+Les D'ni cÃ©lÃ©braient l'entrÃ©e d'un enfant dans l'Ã¢ge de la raison et de la maturitÃ© lors de la Â«Â CÃ©rÃ©monie de l'accomplissementÂ Â». 
 
-Pendant cette cérémonie, l'enfant recevait un bracelet de connaissance (également traduit « maturité »). Je dois avouer que le terme est un peu sous-traduit et qu'il laisse à penser qu'on parle ici d'un objet magique ou de superstition - ça n'avait pas cette connotation chez eux. En fait, il s'agissait à leurs yeux d'un objet d'une certaine gravité. 
+Pendant cette cÃ©rÃ©monie, l'enfant recevait un bracelet de connaissance (Ã©galement traduit Â«Â maturitÃ©Â Â»). Je dois avouer que le terme est un peu sous-traduit et qu'il laisse Ã  penser qu'on parle ici d'un objet magique ou de superstition - Ã§a n'avait pas cette connotation chez eux. En fait, il s'agissait Ã  leurs yeux d'un objet d'une certaine gravitÃ©. 
 
-Les D'ni considéraient le bracelet comme un signe de responsabilité.  Une fois qu'un individu recevait ce bracelet, il était considéré comme responsable de ses actions, car il disposait de la connaissance du bien et du mal et de la sagesse suffisante pour choisir entre les deux. Le bracelet lui accordait certains droits, mais lui donnait aussi l'obligation de se comporter correctement. 
+Les D'ni considÃ©raient le bracelet comme un signe de responsabilitÃ©.  Une fois qu'un individu recevait ce bracelet, il Ã©tait considÃ©rÃ© comme responsable de ses actions, car il disposait de la connaissance du bien et du mal et de la sagesse suffisante pour choisir entre les deux. Le bracelet lui accordait certains droits, mais lui donnait aussi l'obligation de se comporter correctement. 
 
-D'un point de vue religieux, la « Cérémonie de l'accomplissement » marquait l'arrivée de la responsabilité envers Yahvo et envers les autres citoyens. Les parents n'étaient plus jugés pour les actions de leurs enfants et l'ignorance n'était plus une excuse pour Yahvo. Le Créateur, croyaient-ils, avait maintenant des attentes. 
+D'un point de vue religieux, la Â«Â CÃ©rÃ©monie de l'accomplissementÂ Â» marquait l'arrivÃ©e de la responsabilitÃ© envers Yahvo et envers les autres citoyens. Les parents n'Ã©taient plus jugÃ©s pour les actions de leurs enfants et l'ignorance n'Ã©tait plus une excuse pour Yahvo. Le CrÃ©ateur, croyaient-ils, avait maintenant des attentes. 
 
-L'Âge de raison était de vingt-cinq ans, mais les D'ni pensaient que la véritable sagesse n'arrivait que bien plus tard. Une autre cérémonie, bien moins festive que l'Âge de raison, était célébrée à 125 ans, considéré comme l'Âge de la sagesse. L'avantage principal de ce statut était qu'il permettait l'autorisation d'accéder aux plus hauts rangs d'enseignants ou de dirigeants (Grands maîtres ou Seigneurs). 
+L'Ã‚ge de raison Ã©tait de vingt-cinq ans, mais les D'ni pensaient que la vÃ©ritable sagesse n'arrivait que bien plus tard. Une autre cÃ©rÃ©monie, bien moins festive que l'Ã‚ge de raison, Ã©tait cÃ©lÃ©brÃ©e Ã  125 ans, considÃ©rÃ© comme l'Ã‚ge de la sagesse. L'avantage principal de ce statut Ã©tait qu'il permettait l'autorisation d'accÃ©der aux plus hauts rangs d'enseignants ou de dirigeants (Grands maÃ®tres ou Seigneurs). 
 
-Les mêmes règles s'appliquaient aux femmes et aucune femme de moins de 125 ans n'avait techniquement le droit de conseiller, surtout de conseiller les Rois. De plus, la ménopause des femmes arrivait à l'âge de 125 ans.
+Les mÃªmes rÃ¨gles s'appliquaient aux femmes et aucune femme de moins de 125 ans n'avait techniquement le droit de conseiller, surtout de conseiller les Rois. De plus, la mÃ©nopause des femmes arrivait Ã  l'Ã¢ge de 125 ans.
 
-À l'époque des Rois, on assignait des conseillers aux Rois qui n'avaient pas encore atteint l'Âge de la sagesse. Seul le Grand Roi Ahlsendar n'eut pas de conseiller officiel, bien qu'il effectua la majorité de son règne sous l'Âge de la sagesse.
+Ã€ l'Ã©poque des Rois, on assignait des conseillers aux Rois qui n'avaient pas encore atteint l'Ã‚ge de la sagesse. Seul le Grand Roi Ahlsendar n'eut pas de conseiller officiel, bien qu'il effectua la majoritÃ© de son rÃ¨gne sous l'Ã‚ge de la sagesse.
 """

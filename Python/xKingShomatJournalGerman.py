@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -25,25 +26,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 # xKingShomatJournalEnglish
 # change the contents of the variable below to the desired contents of the journal
-xJournalContents = """<cover src="xKingShomatJournalCover*1#0.hsm"><font size=16 face=Nick color=000000><margin right=62 left=62 top=46>König Shomat
+xJournalContents = """<cover src="xKingShomatJournalCover*1#0.hsm"><font size=16 face=Nick color=000000><margin right=62 left=62 top=46>KÃ¶nig Shomat
 
-<p align=left>Shomat bestieg im Jahre 300 DE (D'ni-Ära) im Alter von 44 Jahren den Thron. Bis zum Zeitpunkt seiner Krönung war er Mitglied der Gilde der Schreiber. Er studierte auch noch einige Jahre nach seiner Krönung diese Kunst mit Hilfe von Privatlehrern. Dieser Ausbildung, die nicht durch die Gilde durchgeführt wurde, schreiben die Historker den Umstand zu, dass Shomat in späteren Jahren deren verzerrte Ansichten annahm. 
+<p align=left>Shomat bestieg im Jahre 300 DE (D'ni-Ã„ra) im Alter von 44 Jahren den Thron. Bis zum Zeitpunkt seiner KrÃ¶nung war er Mitglied der Gilde der Schreiber. Er studierte auch noch einige Jahre nach seiner KrÃ¶nung diese Kunst mit Hilfe von Privatlehrern. Dieser Ausbildung, die nicht durch die Gilde durchgefÃ¼hrt wurde, schreiben die Historker den Umstand zu, dass Shomat in spÃ¤teren Jahren deren verzerrte Ansichten annahm. 
 
-Die Regentschaft hatte ihre Höhen und Tiefen, was teilweise einer extremen Spannung zwischen ihm und seinen älteren Brüdern begründet lag. Seine beiden Brüder taten alles, was in ihrer Macht stand, um Shomats Regentschaft so turbulent wie möglich zu gestalten.
+Die Regentschaft hatte ihre HÃ¶hen und Tiefen, was teilweise einer extremen Spannung zwischen ihm und seinen Ã¤lteren BrÃ¼dern begrÃ¼ndet lag. Seine beiden BrÃ¼der taten alles, was in ihrer Macht stand, um Shomats Regentschaft so turbulent wie mÃ¶glich zu gestalten.
 
-Eine der ersten Handlungen, die Shomat in Auftrag gab, war der Bau eines Palastes. Als der Palast im Jahre 347 DE fertig gestellt war, zog Shomat mit seiner Familie dort ein. Doch seine Brüder lehnten es ab und blieben in ihren eigenen Häusern wohnen. Eine solche Handlung wurde als große Respektlosigkeit der Familie gegenüber angesehen und war Grund dafür, dass sich der Abgrund zwischen Shomat und seinen Brüdern noch vergrößerte. 
+Eine der ersten Handlungen, die Shomat in Auftrag gab, war der Bau eines Palastes. Als der Palast im Jahre 347 DE fertig gestellt war, zog Shomat mit seiner Familie dort ein. Doch seine BrÃ¼der lehnten es ab und blieben in ihren eigenen HÃ¤usern wohnen. Eine solche Handlung wurde als groÃŸe Respektlosigkeit der Familie gegenÃ¼ber angesehen und war Grund dafÃ¼r, dass sich der Abgrund zwischen Shomat und seinen BrÃ¼dern noch vergrÃ¶ÃŸerte. 
 
-Dadurch und durch den Luxus des Palastes wurden auch die Spannungen innerhalb der Kulturen verschärft. Innerhalb des Palastes gab es überschwängliche Gärten. Außerdem wurden 'Garten'-Welten geschrieben, die man durch den Palast betreten konnte. Es kamen Gerüchte auf, denen zufolge die Bewohner dieser 'Garten'-Welten vertrieben wurden, damit Shomat sich dort entspannen konnte. Ob wahr oder nicht, Shomat sprach oft öffentlich von der Notwendigkeit, dass die Welten den D'ni dienen sollten. Das war neu und konträr zu den Lehren der Gilden: Die D'ni müssen den Welten 'dienen'.
+Dadurch und durch den Luxus des Palastes wurden auch die Spannungen innerhalb der Kulturen verschÃ¤rft. Innerhalb des Palastes gab es Ã¼berschwÃ¤ngliche GÃ¤rten. AuÃŸerdem wurden 'Garten'-Welten geschrieben, die man durch den Palast betreten konnte. Es kamen GerÃ¼chte auf, denen zufolge die Bewohner dieser 'Garten'-Welten vertrieben wurden, damit Shomat sich dort entspannen konnte. Ob wahr oder nicht, Shomat sprach oft Ã¶ffentlich von der Notwendigkeit, dass die Welten den D'ni dienen sollten. Das war neu und kontrÃ¤r zu den Lehren der Gilden: Die D'ni mÃ¼ssen den Welten 'dienen'.
 
-Es scheint, als seien letztendlich die Spannungen zu groß gewesen. Einige sagen, sie hätten Shomat um den Verstand gebracht. Im Jahre 387 DE verschwanden seine beiden Brüder und wurden nie wieder gesehen. Es wurde allgemein davon ausgegangen, dass Shomat ein Todesbuch schrieb und seine Brüder dorthin verbannte, obwohl das nie erwiesen werden konnte. 
+Es scheint, als seien letztendlich die Spannungen zu groÃŸ gewesen. Einige sagen, sie hÃ¤tten Shomat um den Verstand gebracht. Im Jahre 387 DE verschwanden seine beiden BrÃ¼der und wurden nie wieder gesehen. Es wurde allgemein davon ausgegangen, dass Shomat ein Todesbuch schrieb und seine BrÃ¼der dorthin verbannte, obwohl das nie erwiesen werden konnte. 
 
-Wie dem auch sei, dies war eine der ersten großen Herausforderungen für das Volk der D'ni und es reagierte schnell. Im Jahre 400 DE wurde Shomat eine Prophetin* zur Seite gestellt, die ihm die Wege des Yahvo* näherbringen sollte. Es scheint, als sei das Volk davon ausgegangen, dass Shomat für die verbleibenden 155 Jahre seiner Regentschaft ein besserer König war. Die Prophetin wurde zu einem ausgezeichneten Mentor für Shomat und überzeugte ihn letztendlich davon, dass der Sohn eines seiner besten Freunde am besten als Thronanwärter geeignet sei. Seine eigenen Kinder waren zugegebenermaßen 'außer Rand und Band'. Wie es sich später zeigte, waren es die Nachkommen dieses Kindes, die Jahre später den Großen König hervorbrachten.
+Wie dem auch sei, dies war eine der ersten groÃŸen Herausforderungen fÃ¼r das Volk der D'ni und es reagierte schnell. Im Jahre 400 DE wurde Shomat eine Prophetin* zur Seite gestellt, die ihm die Wege des Yahvo* nÃ¤herbringen sollte. Es scheint, als sei das Volk davon ausgegangen, dass Shomat fÃ¼r die verbleibenden 155 Jahre seiner Regentschaft ein besserer KÃ¶nig war. Die Prophetin wurde zu einem ausgezeichneten Mentor fÃ¼r Shomat und Ã¼berzeugte ihn letztendlich davon, dass der Sohn eines seiner besten Freunde am besten als ThronanwÃ¤rter geeignet sei. Seine eigenen Kinder waren zugegebenermaÃŸen 'auÃŸer Rand und Band'. Wie es sich spÃ¤ter zeigte, waren es die Nachkommen dieses Kindes, die Jahre spÃ¤ter den GroÃŸen KÃ¶nig hervorbrachten.
 
-Shomat starb im Alter von 299 eines natürlichen Todes.
+Shomat starb im Alter von 299 eines natÃ¼rlichen Todes.
 
 
-* Frauen wurden im Allgemeinen als viel bessere Verbindungsglieder zu Yahvo angesehen als Männner. Daher waren die meisten Propheten Frauen.
+* Frauen wurden im Allgemeinen als viel bessere Verbindungsglieder zu Yahvo angesehen als MÃ¤nnner. Daher waren die meisten Propheten Frauen.
 
-* Die Wahl einer Prophetin als Ratgeber für Könige fand ihren Anfang bei Shomat und wurde bei allen zukünftigen Königen zur Tradition. Normalerweise entschied der König darüber, welchen Propheten oder welche Prophetin er als seinen Ratgeber auserkor.
+* Die Wahl einer Prophetin als Ratgeber fÃ¼r KÃ¶nige fand ihren Anfang bei Shomat und wurde bei allen zukÃ¼nftigen KÃ¶nigen zur Tradition. Normalerweise entschied der KÃ¶nig darÃ¼ber, welchen Propheten oder welche Prophetin er als seinen Ratgeber auserkor.
  
 """

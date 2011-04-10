@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -33,7 +34,7 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=26>Teledahn
 
-<font size=22>Die Essenz eines Menschen ist in der Dunkelheit zu finden, unterhalb der Oberfläche. Licht würde vermutlich nur das enthüllen, was enthüllt werden soll.
+<font size=22>Die Essenz eines Menschen ist in der Dunkelheit zu finden, unterhalb der OberflÃ¤che. Licht wÃ¼rde vermutlich nur das enthÃ¼llen, was enthÃ¼llt werden soll.
 
 <font size=18>Regeltavok Oorpah - Buch 9, Eintrag 221, 
 Punkt 29
@@ -49,7 +50,7 @@ Punkt 29
 <pb>
 <font size=26>Gahreesen
 
-<font size=22>Die Gesetze, die von den Stolzen entworfen werden, sind ihre Sicherheit und ihr Untergang. Durch solche Gesetze wird Ungehorsam zur Tugend und Gehorsam zur Sünde.
+<font size=22>Die Gesetze, die von den Stolzen entworfen werden, sind ihre Sicherheit und ihr Untergang. Durch solche Gesetze wird Ungehorsam zur Tugend und Gehorsam zur SÃ¼nde.
 
 <font size=18>Regeltavok Oorpah - Buch 12, Eintrag 32, 
 Punkt 134
@@ -65,7 +66,7 @@ Punkt 134
 <pb>
 <font size=26>Kadish Tolesa
 
-<font size=22>Ein Mensch ist nur dann er selbst, wenn er versteckt ist. Ein flüchtiger Blick kann täuschen. Schau näher hin, überlege und erkenne all das, was versteckt ist.
+<font size=22>Ein Mensch ist nur dann er selbst, wenn er versteckt ist. Ein flÃ¼chtiger Blick kann tÃ¤uschen. Schau nÃ¤her hin, Ã¼berlege und erkenne all das, was versteckt ist.
 
 <font size=18>Regeltavok Oorpah - Buch 9, Eintrag 221, 
 Punkt 77
@@ -82,7 +83,7 @@ Punkt 77
 <pb>
 <font size=26>Eder Kemo und Eder Gira
 
-<font size=22>Wenn alles genommen wurde, ist die einzig verbleibende Hoffnung das, was von anderen gegeben wird. Durch dieses Geben werden beide erlöst.
+<font size=22>Wenn alles genommen wurde, ist die einzig verbleibende Hoffnung das, was von anderen gegeben wird. Durch dieses Geben werden beide erlÃ¶st.
 
 <font size=18>Regeltavok Oorpah - Buch 2, Eintrag 1.071, 
 Punkt 54

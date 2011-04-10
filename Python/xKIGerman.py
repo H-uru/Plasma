@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -32,18 +33,18 @@ from PlasmaConstants import *
 
 #--- invitation notices (KI)
 xInviteVisitTitle = "Einladung %s zu besuchen"
-xInviteVisitBody = "Sie sind herzlich eingeladen, die Welt %s zu besuchen, indem sie sich zur MT Nexus-Station begeben ...\n\nGruß,\n%s (Eigentümer)\n"
-xRevokeVisitorTitle = "Einladung an %s zurückgezogen"
-xRevokeVisitorBody = "Ihre Besucherrechte für die Welt %s gelten nicht mehr.\n\n<Tut mir leid.>\n\nGruß,\n%s (Eigentümer)"
+xInviteVisitBody = "Sie sind herzlich eingeladen, die Welt %s zu besuchen, indem sie sich zur MT Nexus-Station begeben ...\n\nGruÃŸ,\n%s (EigentÃ¼mer)\n"
+xRevokeVisitorTitle = "Einladung an %s zurÃ¼ckgezogen"
+xRevokeVisitorBody = "Ihre Besucherrechte fÃ¼r die Welt %s gelten nicht mehr.\n\n<Tut mir leid.>\n\nGruÃŸ,\n%s (EigentÃ¼mer)"
 #--- KI configuration strings
 xKIConfiguration = "KI-Einstellungen"
-xVolumeConfiguration = "Lautstärke-Einstellungen"
+xVolumeConfiguration = "LautstÃ¤rke-Einstellungen"
 xOwnerConfiguration = "%s Einstellungen"
 xOwnerVistors = "%s Besucher"
-xOwnerCoOwners = "%s Eigentümer"
-xDevicesFolderName = "Geräte"
+xOwnerCoOwners = "%s EigentÃ¼mer"
+xDevicesFolderName = "GerÃ¤te"
 #--- KI add/create entry
-#xCreateBuddyTitle = "<Freund über ID hinzufügen>"
+#xCreateBuddyTitle = "<Freund Ã¼ber ID hinzufÃ¼gen>"
 #--- KI leave messages
 xLeaveGameMessageNormal = "Uru wirklich verlassen?"
 xLeaveGameMessageNano = xLeaveGameMessageNormal
@@ -52,17 +53,17 @@ xLeaveGameMessageMicro = xLeaveGameMessageNormal
 #xLeaveGameMessageNano = "Sie haben noch nicht viel erreicht. Wollen Sie Uru wirklich verlassen?"
 #xLeaveGameMessageMicro = "Es gibt noch so viel zu entdecken! Wollen Sie Uru wirklich verlassen?"
 #--- send to something error messages
-xSendToErrorMessage1 = "Senden nicht möglich"
+xSendToErrorMessage1 = "Senden nicht mÃ¶glich"
 xSendToErrorMessage2 = "Spieler nicht gefunden"
 xSendToErrorMessage3 = "Unbekannte Spielerart"
-xSendToErrorMessage4 = "Ungültiges Journalelement"
+xSendToErrorMessage4 = "UngÃ¼ltiges Journalelement"
 xSendToErrorMessage5 = "Darf nur Text enthalten"
-xCommandErrorMessage1 = "'%s' nicht möglich - unbekannter Befehl"
-xKITimeBroke = "<Verbindung gestört>"
+xCommandErrorMessage1 = "'%s' nicht mÃ¶glich - unbekannter Befehl"
+xKITimeBroke = "<Verbindung gestÃ¶rt>"
 #--- delete messages
-xDeletePictureAsk = '"%s" wirklich löschen?'
-xDeleteJournalAsk = '"%s" wirklich löschen?'
-xDeletePlayerAsk = '"%s" wirklich aus Ordner "%s" löschen?'
+xDeletePictureAsk = '"%s" wirklich lÃ¶schen?'
+xDeleteJournalAsk = '"%s" wirklich lÃ¶schen?'
+xDeletePlayerAsk = '"%s" wirklich aus Ordner "%s" lÃ¶schen?'
 #--- KI is full error messages
 xKIFullImagesError = "Ihre KI kann keine weiteren Bilder im Journal speichern. Sie ist augelastet."
 xKIFullNotesError = "Ihre KI kann keine weiteren Textnotizen im Journal speichern. Sie ist ausgelastet."
@@ -73,10 +74,10 @@ xCCRConversationEnded = '(Konversation beendet)'
 xCCRNoCCRInContact = '(Kein Kontakt mit Kundenbetreuung, Nachricht nicht gesendet)'
 xCCRPetitionSent = '(%s gesendet) %s'
 #--- KI - Chat strings
-xChatNoOneToReply = '(Es gibt niemand, dem man antworten könnte.)'
+xChatNoOneToReply = '(Es gibt niemand, dem man antworten kÃ¶nnte.)'
 xChatLeftTheAge = '(%s hat die Welt verlassen)'
 xChatLeftTheGame = '(%s hat das Spiel verlassen)'
-xChatWentOffline = '(%s ist offline und nicht für einen Chat verfügbar.)'
+xChatWentOffline = '(%s ist offline und nicht fÃ¼r einen Chat verfÃ¼gbar.)'
 xChatCannotFindBuddy = "('%s' in keiner Spielerliste gefunden.)"
 xChatBroadcastMsgRecvd = ""
 xChatPrivateMsgRecvd = "Von "
@@ -87,12 +88,12 @@ xChatPrivateSendTo = "An "
 xChatInterAgeSendTo = "An "
 xChatTOPrompt = "AN:"
 xChatAllAgeCommand = "/schreien"
-xChatClearAll = "/chatlöschen"
+xChatClearAll = "/chatlÃ¶schen"
 xChatPrivateCommand = "/p"
 xChatNeighborsCommand = "/nachbarn"
 xChatBuddiesCommand = "/freunde"
 xChatNoOneListening = "(Sie sind zu weit weg. Vielleicht sollten Sie schreien.)"
-xChatInterAgeNotAvailable = "(Welten-Umschalter nicht verfügbar)"
+xChatInterAgeNotAvailable = "(Welten-Umschalter nicht verfÃ¼gbar)"
 xChatReplyCommand = "/antworten"
 xChatStartLogCommand = "/protokollan"
 xChatStopLogCommand = "/protokollaus"
@@ -103,7 +104,7 @@ xChatPetitionCommands = {   "/petition" : PtCCRPetitionType.kGeneralHelp,
                             "/bug" : PtCCRPetitionType.kBug,
                             "/feedback" : PtCCRPetitionType.kFeedback,
                             "/exploit" : PtCCRPetitionType.kExploit,
-                            "/belästigung" : PtCCRPetitionType.kHarass,
+                            "/belÃ¤stigung" : PtCCRPetitionType.kHarass,
                             "/spielproblem" : PtCCRPetitionType.kStuck,
                             "/technisch" : PtCCRPetitionType.kTechnical
                         }
@@ -113,12 +114,12 @@ xChatCCRMsgRecvd = 'Von Kundenbetreuung:'
 xChatCCRSendTo = 'An Kundenbetreuung:'
 xChatErrorMsgRecvd = 'Fehler:'
 xChatCCRFromPlayer = 'Von %d an Kundenbetreuung:'
-xChatWeeBeeAFK = " (Ich bin an der Oberfläche, komme gleich zurück)"
+xChatWeeBeeAFK = " (Ich bin an der OberflÃ¤che, komme gleich zurÃ¼ck)"
 xCCRHelpPopupMenu = [   ("Bug-Report",PtCCRPetitionType.kBug),
-                        ("Feedback und Vorschläge",PtCCRPetitionType.kFeedback),
+                        ("Feedback und VorschlÃ¤ge",PtCCRPetitionType.kFeedback),
                         ("Ausnutzen von Programmfehlern und Schummeln",PtCCRPetitionType.kExploit),
-                        ("Belästigung und andere Benehmensfragen",PtCCRPetitionType.kHarass),
-                        ("Probleme mit der Spiellösung",PtCCRPetitionType.kStuck),
+                        ("BelÃ¤stigung und andere Benehmensfragen",PtCCRPetitionType.kHarass),
+                        ("Probleme mit der SpiellÃ¶sung",PtCCRPetitionType.kStuck),
                         ("Technische Probleme",PtCCRPetitionType.kTechnical),
                         ("Allgemeine Hilfe",PtCCRPetitionType.kGeneralHelp)
                     ]
@@ -126,8 +127,8 @@ xCCRHelpPopupDefault = 6
 #--- Offer link to
 xOfferLinkToMessage = 'Euch wurde eine Verbindung nach "%s" angeboten. Wollt Ihr sie benutzen?'
 #--- KI - neighborhood strings
-xAgeOwnedStatusLine = "%d Eigentümer%s mit %d Besucher%s."
-xPorPAgeOwnedStatusLine = "%d Eigentümer%s mit %d Besucher%s. Und ist %s."
+xAgeOwnedStatusLine = "%d EigentÃ¼mer%s mit %d Besucher%s."
+xPorPAgeOwnedStatusLine = "%d EigentÃ¼mer%s mit %d Besucher%s. Und ist %s."
 xNeighborhoodBottomLine = "%s von %s"
 xNeighborhoodNone = "Keine Mitgliedschaft in einer Nachbarschaft"
 xNeighborhoodNoName = "<kein Name>"
@@ -135,7 +136,7 @@ xNeighborhoodMakePorP = "Als %s markieren"
 # --- Player expanded strings
 #xPlayerEnterID = "Spieler-ID eingeben:"
 #xPlayerNumberOnly = "Bitte geben Sie nur eine Nummer ein."
-#xPlayerNotYourself = "Sie können sich nicht selbst auswählen."
+#xPlayerNotYourself = "Sie kÃ¶nnen sich nicht selbst auswÃ¤hlen."
 xPlayerInCleft = "Ist online und hat sich in der Spalte verirrt."
 xPlayerInCloset = "Ist online und wechselt die Kleidung."
 xPlayerInAge = "Ist online und erforscht die Welt %s."
@@ -147,7 +148,7 @@ xJournalInitialTitle = "<Titel eingeben>"
 xImageInitialTitle = "<Kommentar eingeben>"
 
 xFolderVisLists = "Welt-Besucherliste:"
-xFolderOwnLists = "Welt-Eigentümerliste:"
+xFolderOwnLists = "Welt-EigentÃ¼merliste:"
 
 # --- Marker Game strings
 xMarkerFolderPopupMenu = [   ("1 Min.",60),
@@ -156,17 +157,17 @@ xMarkerFolderPopupMenu = [   ("1 Min.",60),
                         ("10 Min.",600),
                     ]
 xChatMarkerTOAllTeams = "An: Alle Teams >"
-xChatMarkerTOGreenTeam = "AN: Grünes Team >"
+xChatMarkerTOGreenTeam = "AN: GrÃ¼nes Team >"
 xChatMarkerTORedTeam = "AN: Rotes Team >"
 xChatMarkerAllTeams = "Alle Teams"
-xChatMarkerGreenTeam = "Grünes Team"
+xChatMarkerGreenTeam = "GrÃ¼nes Team"
 xChatMarkerRedTeam = "Rotes Team"
 xMarkerGamePrematureEnding = "Der Spielleiter hat das Spiel beendet!"
 xMarkerGameCaptureGame = "Erobern-Spiel"
 xMarkerGameHoldGame = "Halten-Spiel"
 xMarkerGameQuestGame = "Aufgaben-Spiel"
 xMarkerGameBegins = "Das Spiel beginnt!"
-xMarkerGameGreenTeamWins = "Das grüne Team gewinnt! %d zu %d"
+xMarkerGameGreenTeamWins = "Das grÃ¼ne Team gewinnt! %d zu %d"
 xMarkerGameTieGame = "Unentschieden: %d zu %d"
 xMarkerGameRedTeamWins = "Das rote Team gewinnt! %d zu %d"
 xMarkerGameEnded = "Spielende... %s"
@@ -183,15 +184,15 @@ xMarkerGameCaptures = "%s erobert '%s'. %s"
 xMarkerGameEditButton = "Spiel bearbeiten"
 xMarkerGamePlayButton = "Spiel beginnen"
 xMarkerGameDoneEditButton = "Bearbeiten beenden"
-xMarkerGameAddMarkerButton = "Marker hinzufügen"
+xMarkerGameAddMarkerButton = "Marker hinzufÃ¼gen"
 xMarkerGameMarkerListButton = "Markerliste"
 xMarkerGameRemoveMarkerButton = "Marker entfernen"
-xMarkerGameGoBackButton = "Zurück"
+xMarkerGameGoBackButton = "ZurÃ¼ck"
 xMarkerGameInviteButton = "Spieler einladen"
 xMarkerGameStartGameButton = "Spiel starten"
 xMarkerGameEndGameButton = "Spiel beenden"
 xMarkerGameStopPlayingButton = "Spiel abbrechen"
-xMarkerGameResetGameButton = "Spiel zurücksetzen"
+xMarkerGameResetGameButton = "Spiel zurÃ¼cksetzen"
 xMarkerGameStatusNoMarkers = "Es gibt keine Marker"
 xMarkerGameStatusOneMarker = "Es gibt einen Marker"
 xMarkerGameStatusNMarkers = "Es gibt %s Marker"
@@ -203,7 +204,7 @@ xWaitingForStartText = "Warte auf Start"
 xTimeRemainingText = "Verbleibende Zeit: %01d:%02d"
 xMarkerGameMarkersRemaining = "Verbleibende Marker: %d"
 xMarkerGameMarkersUnclaimed = "Freie Marker: %d"
-xMarkerGameGreenTeamScore = "Grünes Team(%d)"
+xMarkerGameGreenTeamScore = "GrÃ¼nes Team(%d)"
 xMarkerGameRedTeamScore = "Rotes Team(%d)"
 xMarkerGameNameCapture = "Erobern"
 xMarkerGameInstructCapNoMarker = "Da es in diesen Spiel keine Marker gibt, haben alle gewonnen oder verloren!"
@@ -211,11 +212,11 @@ xMarkerGameInstructCapOneMarker = "Das Team, das den einzelnen Marker erobert eh
 xMarkerGameInstructCapNMarkers = "Das Team, das in %d Minute%s die meisten Marker erobert, gewinnt!"
 xMarkerGameNameHold = "Halten"
 xMarkerGameInstructHoldNoMarker = "Da es in diesen Spiel keine Marker gibt, haben alle gewonnen oder verloren!"
-xMarkerGameInstructHoldNMarkers = "Das Team, das nach %d Minute%s die meisten Marker erobert hat und hält, gewinnt!"
+xMarkerGameInstructHoldNMarkers = "Das Team, das nach %d Minute%s die meisten Marker erobert hat und hÃ¤lt, gewinnt!"
 xMarkerGameNameQuest = "Aufgabe"
-xMarkerGameInstructQuest = "Einladung nicht möglich - dies ist ein Einzelspieler-Spiel"
+xMarkerGameInstructQuest = "Einladung nicht mÃ¶glich - dies ist ein Einzelspieler-Spiel"
 xMarkerGameNameUnknown = "Unbekannte Art"
-xMarkerGameQTitle = "Marker-Spiel von %s anschließen"
+xMarkerGameQTitle = "Marker-Spiel von %s anschlieÃŸen"
 xMarkerGameQMessage = "    %s hat Sie zu einer Runde '%s' eingeladen.\n    %s\n\nWollen Sie mitspielen?"
 xMarkerGameInviteRecvd = "Einladung zu einem Spiel erhalten. Sehen Sie Ihre Nachrichten durch."
 
@@ -237,13 +238,13 @@ xOptMenuQuit = "URU verlassen"
 xOptMenuOk = "Spiel fortsetzen"
 xOptMenuCancel = "Abbrechen"
 
-xMoveForward = "Vorwärts"
-xMoveBackward = "Rückwärts"
+xMoveForward = "VorwÃ¤rts"
+xMoveBackward = "RÃ¼ckwÃ¤rts"
 xRotateLeft = "Nach links drehen"
 xRotateRight = "Nach rechts drehen"
 xJump = "Springen"
 xExitMode = "Modus verlassen"
-xPushToTalk = "Drücken zum Sprechen"
+xPushToTalk = "DrÃ¼cken zum Sprechen"
 
 
 # --- OK Dialog
@@ -252,17 +253,17 @@ xOKDialogDict = { # "code": "translation"
         "": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#01",
         "TERMINATED: Server LogOff. Reason: Logged In Elsewhere": "Ihre Verbindung wurde getrennt, da Ihr Konto bereits benutzt wird.\n#02",
         "TERMINATED: Server LogOff. Reason: Timed Out": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#03",
-        "TERMINATED: Server LogOff. Reason: Not Authenticated": "Bei der Verbindungsherstellung ist ein Problem aufgetreten. Bitte überprüfen Sie Kontonamen und Passwort und versuchen Sie es erneut.\n#04",
+        "TERMINATED: Server LogOff. Reason: Not Authenticated": "Bei der Verbindungsherstellung ist ein Problem aufgetreten. Bitte Ã¼berprÃ¼fen Sie Kontonamen und Passwort und versuchen Sie es erneut.\n#04",
         "TERMINATED: Server LogOff. Reason: Kicked Off": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#05",
         "TERMINATED: Server LogOff. Reason: Unknown Reason": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#06",
-        "TERMINATED: Server LogOff. Reason: CCRs must use a protected lobby": "Ihre Verbindung wurde getrennt, da Kundenbetreuer eine geschützte Lobby verwenden müssen.\n#07",
-        "TERMINATED: Server LogOff. Reason: CCRs must have internal client code": " Ihre Verbindung wurde getrennt, da Kundenbetreuer einen internen Kundencode verwenden müssen.\n#08",
+        "TERMINATED: Server LogOff. Reason: CCRs must use a protected lobby": "Ihre Verbindung wurde getrennt, da Kundenbetreuer eine geschÃ¼tzte Lobby verwenden mÃ¼ssen.\n#07",
+        "TERMINATED: Server LogOff. Reason: CCRs must have internal client code": " Ihre Verbindung wurde getrennt, da Kundenbetreuer einen internen Kundencode verwenden mÃ¼ssen.\n#08",
         "TERMINATED: Server LogOff. Reason: UNKNOWN REASON CODE": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut..\n#09",
         "SERVER SILENCE": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#10",
         "BAD VERSION": "Dies ist eine alte Uru-Version. Bitte aktualisieren Sie Ihre Version.\n#11",
-	    "Player Disabled": "Der von Ihnen gewählte charakter ist ungültig. Bitte wenden Sie sich an den Kundendienst.\n#12",
+	    "Player Disabled": "Der von Ihnen gewÃ¤hlte charakter ist ungÃ¼ltig. Bitte wenden Sie sich an den Kundendienst.\n#12",
 	    "CAN'T FIND AGE": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#13",
-	    "AUTH RESPONSE FAILED": "Bei der Verbindungsherstellung ist ein Problem aufgetreten. Bitte überprüfen Sie Kontonamen und Passwort und versuchen Sie es erneut.\n#14",
+	    "AUTH RESPONSE FAILED": "Bei der Verbindungsherstellung ist ein Problem aufgetreten. Bitte Ã¼berprÃ¼fen Sie Kontonamen und Passwort und versuchen Sie es erneut.\n#14",
         "AUTH TIMEOUT": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#15",
         "SDL Desc Problem": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#16",
         "Unspecified error": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#17",
@@ -271,7 +272,7 @@ xOKDialogDict = { # "code": "translation"
 		"Peer timed out": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#20",
 		"Server silence": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#21",
 		"Protocol version mismatch": "Dies ist eine alte Uru-Version. Bitte aktualisieren Sie Ihre Version.\n#22",
-		"Auth failed": "Bei der Verbindungsherstellung ist ein Problem aufgetreten. Bitte überprüfen Sie Kontonamen und Passwort und versuchen Sie es erneut.\n#23",
+		"Auth failed": "Bei der Verbindungsherstellung ist ein Problem aufgetreten. Bitte Ã¼berprÃ¼fen Sie Kontonamen und Passwort und versuchen Sie es erneut.\n#23",
 		"Failed to create player": "Bei der Erstellung Ihres Spielers ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.\n#24",
 		"Invalid error code": "Es scheint ein Problem mit der Verbindung vorzuliegen. Bitte versuchen Sie es erneut.\n#25",
 		"linking banned": "Ihre Buch-Verbindungen wurden deaktiviert\n#26",
@@ -282,24 +283,24 @@ xOKDialogDict = { # "code": "translation"
 
 
 # --- xInvite strings
-xInviteKeyAdded = "Einladnugsschlüssel hinzugefügt: %s"
+xInviteKeyAdded = "EinladnugsschlÃ¼ssel hinzugefÃ¼gt: %s"
 xMaxInvites = "Maximale Zahl von Einladungen erreicht"
 xMissingInviteFolder = "Einladungsordner nicht vorhanden"
-xInviteUsage = "Syntax: /einladung <Einladungsschlüssel>"
-xInviteAccepted = "Einladung von Freund: %s mit Schlüssel: %s akzeptieren?"
-xAcceptUsage = "Syntax: /annehmen <Name des Freundes> <Schlüssel>"
+xInviteUsage = "Syntax: /einladung <EinladungsschlÃ¼ssel>"
+xInviteAccepted = "Einladung von Freund: %s mit SchlÃ¼ssel: %s akzeptieren?"
+xAcceptUsage = "Syntax: /annehmen <Name des Freundes> <SchlÃ¼ssel>"
 xCouldNotCast = "Listenelement konnte nicht verarbeitet werden"
-xKeys = "Schlüssel: "
+xKeys = "SchlÃ¼ssel: "
 xRemoveNodeFailed = "Entfernen von Node gescheitert"
 xInviteNotFound = "Einladung nicht gefunden"
-xUninviteUsage = "Syntax: /einladunglöschen <Einladungsschlüssel>"
-xDeletedInvitation = "Gelöschte Einladung: "
+xUninviteUsage = "Syntax: /einladunglÃ¶schen <EinladungsschlÃ¼ssel>"
+xDeletedInvitation = "GelÃ¶schte Einladung: "
 
 # --- xKIExtChatCommands strings
 xSitCmd = "sit"
 xAfkCmd = "afk"
 xInviteCmd = "einladung"
-xUninviteCmd = "einladunglöschen"
+xUninviteCmd = "einladunglÃ¶schen"
 xAcceptCmd = "annehmen"
 xShowInvitesCmd = "einladungsliste"
 xWaveCmd = "winken"
@@ -319,9 +320,9 @@ xDanceString = "%s tanzt"
 xYesCmd = "ja"
 xYesString = "%s nickt"
 xNoCmd = "nein"
-xNoString = "%s schüttelt den Kopf"
-xYawnCmd = "gähnen"
-xYawnString = "%s gähnt"
+xNoString = "%s schÃ¼ttelt den Kopf"
+xYawnCmd = "gÃ¤hnen"
+xYawnString = "%s gÃ¤hnt"
 xCheerCmd = "jubeln"
 xCheerString = "%s jubelt"
 xThanksCmd = "vielendank"
@@ -329,25 +330,25 @@ xThanksString = "%s dankt Ihnen herzlich!"
 xThxCmd = "danke"
 xThxString = "%s dankt Ihnen"
 xCryCmd = "traurig"
-xCryString = "<schnüff> %s ist traurig"
+xCryString = "<schnÃ¼ff> %s ist traurig"
 xCriesCmd = "weinen"
 xCriesString = "%s weint"
 xDontKnowCmd = "ratlos"
 xDontKnowString = "%s zuckt mit den Schultern"
 xShrugCmd = "schulternzucken"
 xShrugString = "%s zuckt mit den Schultern"
-xDunnoCmd = "weißnicht"
+xDunnoCmd = "weiÃŸnicht"
 xDunnoString = "%s zuckt mit den Schultern"
 xPointCmd = "punkte"
 xPointString = "%s points"
 
-xKISettingsFontSizeText = "Fontgröße:"
+xKISettingsFontSizeText = "FontgrÃ¶ÃŸe:"
 xKISettingChatFadeTimeText = "Chatblende:"
 xKISettingsOnlyBuddiesText = "Nur private und KI-Nachrichten von Freunden annehmen"
 xKIDescriptionText = "Beschreibung:"
 xMarkerGameOwnerTitle = "BESITZER:"
 xMarkerGameTimeText = "Spielzeit:"
-xCCRAwayText = "KB derzeit nicht verfügbar"
+xCCRAwayText = "KB derzeit nicht verfÃ¼gbar"
 xCCRPetitionTypeText = "Petitionsart:"
 xCCRSubjectText = "Betreff:"
 xCCRCommentText = "Kommentar:"
@@ -355,7 +356,7 @@ xCCRSubmitBtnText = "Senden"
 xCCRCancelBtnText = "Abbruch"
 
 #latest strings to be translated (build 36)
-xKIStatusNexusLinkAdded = "Ein link wurde zu ihrer KI zugeführt."
+xKIStatusNexusLinkAdded = "Ein link wurde zu ihrer KI zugefÃ¼hrt."
 
 # updated strings in build .37
 xPlayerEnterID = "G:Enter player ID or name:"

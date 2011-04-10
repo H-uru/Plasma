@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -26,67 +27,67 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # xShomatStoryJournalEnglish
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xShomatStoryJournalCover_eng*1#0.hsm"><font size=16 face=Nick color=000000><margin right=62 left=62 top=46>
-<p align=left>L'histoire de Shomat - Selon un livre 43C. (Nous ne lui avons pas encore donné de nom.)
+<p align=left>L'histoire de Shomat - Selon un livre 43C. (Nous ne lui avons pas encore donnÃ© de nom.)
 
 Traduction - Nick
 
 PREMIER JET
 
-À l'Âge de 121 ans, Shomat résidait déjà depuis vingt ans dans son Palais des Rois. Bien que la construction du palais dura quarante-cinq ans et que de nouvelles sections (?) étaient ajoutées chaque année, Shomat n'était pas satisfait par ce qui l'entourait. Son palais était le plus grand bâtiment de la ville et ses jardins contenaient les plus belles des plantes vivaces connues à ce jour. Mais Shomat exigeait bien plus de ceux qui avaient construit son palais et arrangé ses jardins.
+Ã€ l'Ã‚ge de 121 ans, Shomat rÃ©sidait dÃ©jÃ  depuis vingt ans dans son Palais des Rois. Bien que la construction du palais dura quarante-cinq ans et que de nouvelles sections (?) Ã©taient ajoutÃ©es chaque annÃ©e, Shomat n'Ã©tait pas satisfait par ce qui l'entourait. Son palais Ã©tait le plus grand bÃ¢timent de la ville et ses jardins contenaient les plus belles des plantes vivaces connues Ã  ce jour. Mais Shomat exigeait bien plus de ceux qui avaient construit son palais et arrangÃ© ses jardins.
 
-Shomat envoya des messagers pour demander à Lemash, aussi appelé le chef (ce mot semblait désigner une sorte de leader des serviteurs - bien qu'ils ne soient jamais appelés serviteurs. Il faut que je demande au Dr. Watson), de se rendre sur le champ dans ses jardins. Et Lemash obéit.
+Shomat envoya des messagers pour demander Ã  Lemash, aussi appelÃ© le chef (ce mot semblait dÃ©signer une sorte de leader des serviteurs - bien qu'ils ne soient jamais appelÃ©s serviteurs. Il faut que je demande au Dr. Watson), de se rendre sur le champ dans ses jardins. Et Lemash obÃ©it.
 
-"Oui, mon Roi, pourquoi m'avez-vous fait mander ?" 
+"Oui, mon Roi, pourquoi m'avez-vous fait manderÂ ?" 
 
-"Vois-tu ces bulbes orange et ces feuilles marron autour de moi ?"
+"Vois-tu ces bulbes orange et ces feuilles marron autour de moiÂ ?"
 
-"Bien sûr, mon Roi. Ils ne ressemblent en rien à ceux qu'on trouve dans cette caverne."
+"Bien sÃ»r, mon Roi. Ils ne ressemblent en rien Ã  ceux qu'on trouve dans cette caverne."
 
-"Vois-tu l'étrange pierre autour de moi ?", demanda Shomat. 
+"Vois-tu l'Ã©trange pierre autour de moiÂ ?", demanda Shomat. 
 
-"Bien sûr. On n'en trouve pas non plus de la sorte dans la caverne."
+"Bien sÃ»r. On n'en trouve pas non plus de la sorte dans la caverne."
 
-Shomat s'énerva soudainement, insultant ses serviteurs (qui n'étaient pas vraiment des serviteurs, mais on fera avec) et hurlant sur quiconque se trouvait à proximité. 
+Shomat s'Ã©nerva soudainement, insultant ses serviteurs (qui n'Ã©taient pas vraiment des serviteurs, mais on fera avec) et hurlant sur quiconque se trouvait Ã  proximitÃ©. 
 
-"Mais pour qui me prenez-vous ? Vous croyez que je n'utilise jamais les Livres, que je ne vois pas les splendeurs qui gisent hors de cette caverne ? J'ai écrit ces livres moi-même, alors même que vous m'avez vu m'entraîner aux côtés du Grand Maître ! Et pourtant, vous vous comportez comme si je devais me contenter de la beauté qui m'entoure en ce moment. Une beauté qui ne provient que de cette caverne, cette caverne sans lumière, sans chaleur, sans couleur ? Pensez-vous que je ne souhaite que pierre et obscurité ? Pour qui me prenez-vous ?"
+"Mais pour qui me prenez-vousÂ ? Vous croyez que je n'utilise jamais les Livres, que je ne vois pas les splendeurs qui gisent hors de cette caverneÂ ? J'ai Ã©crit ces livres moi-mÃªme, alors mÃªme que vous m'avez vu m'entraÃ®ner aux cÃ´tÃ©s du Grand MaÃ®treÂ ! Et pourtant, vous vous comportez comme si je devais me contenter de la beautÃ© qui m'entoure en ce moment. Une beautÃ© qui ne provient que de cette caverne, cette caverne sans lumiÃ¨re, sans chaleur, sans couleurÂ ? Pensez-vous que je ne souhaite que pierre et obscuritÃ©Â ? Pour qui me prenez-vousÂ ?"
 
-"Mon Roi, quelles sont vos exigences ?"
+"Mon Roi, quelles sont vos exigencesÂ ?"
 
-"Apporte-moi le Grand Maître Kenri. Tu travailleras (ici, le mot travail a une connotation d'écriture ?) avec lui et ensemble, vous créerez une beauté authentique. Des eaux hurlantes. Des couleurs qui dépassent l'imagination. Des créations vivantes, et non de pierre ! Voilà les jardins que j'exige ! Maintenant, pars et crée-les pour moi."
+"Apporte-moi le Grand MaÃ®tre Kenri. Tu travailleras (ici, le mot travail a une connotation d'Ã©critureÂ ?) avec lui et ensemble, vous crÃ©erez une beautÃ© authentique. Des eaux hurlantes. Des couleurs qui dÃ©passent l'imagination. Des crÃ©ations vivantes, et non de pierreÂ ! VoilÃ  les jardins que j'exigeÂ ! Maintenant, pars et crÃ©e-les pour moi."
 
-Lemash partit donc voir Kenri, le Grand Maître de la Guilde des Écrivains, et ensemble, ils créèrent une Âge d'une beauté dépassant tout ce que l'on avait vu auparavant. Et ensemble, ils apportèrent l'Âge à leur Roi, huit mois (il s'agit de mois D'ni) après sa requête. 
+Lemash partit donc voir Kenri, le Grand MaÃ®tre de la Guilde des Ã‰crivains, et ensemble, ils crÃ©Ã¨rent une Ã‚ge d'une beautÃ© dÃ©passant tout ce que l'on avait vu auparavant. Et ensemble, ils apportÃ¨rent l'Ã‚ge Ã  leur Roi, huit mois (il s'agit de mois D'ni) aprÃ¨s sa requÃªte. 
 
-Shomat fut satisfait lorsqu'il vit le travail. Il y avait de larges feuilles vertes et jaunes, des fleurs de toutes les couleurs, et des eaux rugissantes bleues et turquoise, comme les plus belles pierres de D'ni. Il promut alors Lemash (comme il était déjà chef, je ne suis pas sûr du type de promotion, mais le mot semble clair) et fit de Kenri le Grand Maître le plus récompensé de D'ni. Shomat passait toutes ses journées dans son nouvel Âge. Il demanda ensuite la création d'Âges supplémentaires et ordonna à ses architectes d'intégrer des structures dans ces Âges. 
+Shomat fut satisfait lorsqu'il vit le travail. Il y avait de larges feuilles vertes et jaunes, des fleurs de toutes les couleurs, et des eaux rugissantes bleues et turquoise, comme les plus belles pierres de D'ni. Il promut alors Lemash (comme il Ã©tait dÃ©jÃ  chef, je ne suis pas sÃ»r du type de promotion, mais le mot semble clair) et fit de Kenri le Grand MaÃ®tre le plus rÃ©compensÃ© de D'ni. Shomat passait toutes ses journÃ©es dans son nouvel Ã‚ge. Il demanda ensuite la crÃ©ation d'Ã‚ges supplÃ©mentaires et ordonna Ã  ses architectes d'intÃ©grer des structures dans ces Ã‚ges. 
 
-Pendant ce temps, les frères de Shomat devenaient de plus en plus jaloux, jusqu'à ce que leur colère devienne de la rage. On ne leur avait jamais proposé de venir vivre au palais et maintenant, alors que les foules de citoyens étaient invitées dans les jardins de Shomat, on leur en refusait catégoriquement l'entrée. Ainsi, leurs coeurs bouillonnaient à la seule pensée de leur Roi et frère. 
+Pendant ce temps, les frÃ¨res de Shomat devenaient de plus en plus jaloux, jusqu'Ã  ce que leur colÃ¨re devienne de la rage. On ne leur avait jamais proposÃ© de venir vivre au palais et maintenant, alors que les foules de citoyens Ã©taient invitÃ©es dans les jardins de Shomat, on leur en refusait catÃ©goriquement l'entrÃ©e. Ainsi, leurs coeurs bouillonnaient Ã  la seule pensÃ©e de leur Roi et frÃ¨re. 
 
-Shomat était assis seul dans son Âge Jardin lorsque deux créatures s'approchèrent de lui. Bien qu'on eut cru des hommes, elles marchaient à quatre pattes et se déplaçaient lestement. Shomat fut effrayé à la vue des créatures et appela immédiatement sa garde. Les créatures s'enfuirent avant l'arrivée des gardes et Shomat leur ordonna de les poursuivre. Les gardes obéirent. Ce n'est que le jour d'après qu'ils revinrent. Ils déclaraient avoir vu une ville peuplée de centaines de ces créatures, conversant entre elles et mettant sur pied des armées. Ces armées vivaient dans l'Âge Jardin de Shomat. Shomat fut très effrayé. 
+Shomat Ã©tait assis seul dans son Ã‚ge Jardin lorsque deux crÃ©atures s'approchÃ¨rent de lui. Bien qu'on eut cru des hommes, elles marchaient Ã  quatre pattes et se dÃ©plaÃ§aient lestement. Shomat fut effrayÃ© Ã  la vue des crÃ©atures et appela immÃ©diatement sa garde. Les crÃ©atures s'enfuirent avant l'arrivÃ©e des gardes et Shomat leur ordonna de les poursuivre. Les gardes obÃ©irent. Ce n'est que le jour d'aprÃ¨s qu'ils revinrent. Ils dÃ©claraient avoir vu une ville peuplÃ©e de centaines de ces crÃ©atures, conversant entre elles et mettant sur pied des armÃ©es. Ces armÃ©es vivaient dans l'Ã‚ge Jardin de Shomat. Shomat fut trÃ¨s effrayÃ©. 
 
-Shomat fit mettre les hommes en prison (je ne sais pas s'il s'agit d'une prison physique ou d'un Livre). Ils en avaient trop vu. Il convoqua ensuite son plus fidèle conseiller (?), Lemash, dans sa résidence en ville. Lorsqu'il entendit parler des créatures et de leur organisation, il fut lui aussi très effrayé. 
+Shomat fit mettre les hommes en prison (je ne sais pas s'il s'agit d'une prison physique ou d'un Livre). Ils en avaient trop vu. Il convoqua ensuite son plus fidÃ¨le conseiller (?), Lemash, dans sa rÃ©sidence en ville. Lorsqu'il entendit parler des crÃ©atures et de leur organisation, il fut lui aussi trÃ¨s effrayÃ©. 
 
-"Nous n'avons pas le choix, il faut brûler le Livre", conseilla Lemash. "Vous savez que cet Âge ne nous appartient pas, puisqu'il est déjà habité. Vous connaissez les règles de notre Écriture, de nos Livres et de notre peuple."
+"Nous n'avons pas le choix, il faut brÃ»ler le Livre", conseilla Lemash. "Vous savez que cet Ã‚ge ne nous appartient pas, puisqu'il est dÃ©jÃ  habitÃ©. Vous connaissez les rÃ¨gles de notre Ã‰criture, de nos Livres et de notre peuple."
 
-Mais Shomat ne fut pas ému par les mots de Lemash. Au contraire, il s'énerva et devint encore plus furieux. "Ce monde fut créé par moi, pour moi. Si d'autres êtres y existent, il faudra les tuer. Il appartient désormais à D'ni." 
+Mais Shomat ne fut pas Ã©mu par les mots de Lemash. Au contraire, il s'Ã©nerva et devint encore plus furieux. "Ce monde fut crÃ©Ã© par moi, pour moi. Si d'autres Ãªtres y existent, il faudra les tuer. Il appartient dÃ©sormais Ã  D'ni." 
 
-Shomat convoqua donc ses frères dans son palais et leur expliqua son dilemne. Shomat demanda à ses frères s'ils seraient d'accord pour tuer les habitants de ses Âges Jardins. Il tenta de les convaincre en leur promettant pouvoir et autorité. Et malgré la haine qu'ils entretenaient pour leur frère, ils acceptèrent. 
+Shomat convoqua donc ses frÃ¨res dans son palais et leur expliqua son dilemne. Shomat demanda Ã  ses frÃ¨res s'ils seraient d'accord pour tuer les habitants de ses Ã‚ges Jardins. Il tenta de les convaincre en leur promettant pouvoir et autoritÃ©. Et malgrÃ© la haine qu'ils entretenaient pour leur frÃ¨re, ils acceptÃ¨rent. 
 
-Les frères de Shomat voyagèrent donc jusqu'à l'Âge, avec l'intention de détruire les créatures. Mais après avoir leur parlé, ils décidèrent que les créatures ne devaient pas être détruites, mais au contraire utilisées pour tuer leur frère. Ils intriguèrent donc un plan pour tuer leur frère, le Roi.
+Les frÃ¨res de Shomat voyagÃ¨rent donc jusqu'Ã  l'Ã‚ge, avec l'intention de dÃ©truire les crÃ©atures. Mais aprÃ¨s avoir leur parlÃ©, ils dÃ©cidÃ¨rent que les crÃ©atures ne devaient pas Ãªtre dÃ©truites, mais au contraire utilisÃ©es pour tuer leur frÃ¨re. Ils intriguÃ¨rent donc un plan pour tuer leur frÃ¨re, le Roi.
 
-Alors que Shomat attendait dans son palais en ville, ses frères vinrent jusqu'à lui. 
+Alors que Shomat attendait dans son palais en ville, ses frÃ¨res vinrent jusqu'Ã  lui. 
 
-"Nous avons terminé", annoncèrent-ils. "Les créatures ont succombé." 
+"Nous avons terminÃ©", annoncÃ¨rent-ils. "Les crÃ©atures ont succombÃ©." 
 
-Shomat fut content d'entendre ces mots dans la bouche de ses frères. Il leur témoigna son amour, en apparence, tout au moins. "Mes frères, je vous ai causé bien du tort. En de trop nombreuses occasions, je ne vous ai pas assez bien traités, à peine mieux que ceux qui travaillent dans mon palais. Et j'en suis désolé. Mais aujourd'hui, vous m'avez prouvé que la colère ne vous habite plus comme elle m'a habité. Vous valez mieux que moi. Vous m'avez accordé une faveur et je vous prie donc d'accepter ce que j'ai à vous offrir. Veuillez accepter ce présent."
+Shomat fut content d'entendre ces mots dans la bouche de ses frÃ¨res. Il leur tÃ©moigna son amour, en apparence, tout au moins. "Mes frÃ¨res, je vous ai causÃ© bien du tort. En de trop nombreuses occasions, je ne vous ai pas assez bien traitÃ©s, Ã  peine mieux que ceux qui travaillent dans mon palais. Et j'en suis dÃ©solÃ©. Mais aujourd'hui, vous m'avez prouvÃ© que la colÃ¨re ne vous habite plus comme elle m'a habitÃ©. Vous valez mieux que moi. Vous m'avez accordÃ© une faveur et je vous prie donc d'accepter ce que j'ai Ã  vous offrir. Veuillez accepter ce prÃ©sent."
 
-Et Shomat tendit un Livre de Liaison à ses frères. Ses pages regorgeaient de descriptions sur la beauté et la vie, tout comme dans l'Âge Jardin de Shomat. 
+Et Shomat tendit un Livre de Liaison Ã  ses frÃ¨res. Ses pages regorgeaient de descriptions sur la beautÃ© et la vie, tout comme dans l'Ã‚ge Jardin de Shomat. 
 
-"Et il sera gardé dans ce palais, dans lequel vous pouvez maintenant venir vous installer."
+"Et il sera gardÃ© dans ce palais, dans lequel vous pouvez maintenant venir vous installer."
 
-Emplis de bonheur, oubliant leur haine pour Shomat, ses frères n'attendirent pas longtemps avant de visiter l'Âge. C'est alors qu'ils moururent en pensant avoir roulé leur frère. Shomat brûla le livre lui-même, effaçant ainsi ses frères et leurs tromperies. 
+Emplis de bonheur, oubliant leur haine pour Shomat, ses frÃ¨res n'attendirent pas longtemps avant de visiter l'Ã‚ge. C'est alors qu'ils moururent en pensant avoir roulÃ© leur frÃ¨re. Shomat brÃ»la le livre lui-mÃªme, effaÃ§ant ainsi ses frÃ¨res et leurs tromperies. 
 
-Puis il ordonna au Grand Maîrtre de modifier son Âge Jardin, de façon à ce que ceux qui y restent en meurent. Kenri obéit au Roi, en sachant qu'il faisait le mal. Sa vie fut tourmentée par les remords jusqu'à son dernier jour. 
+Puis il ordonna au Grand MaÃ®rtre de modifier son Ã‚ge Jardin, de faÃ§on Ã  ce que ceux qui y restent en meurent. Kenri obÃ©it au Roi, en sachant qu'il faisait le mal. Sa vie fut tourmentÃ©e par les remords jusqu'Ã  son dernier jour. 
 
-En revanche, Shomat, malgré l'atrocité de ses actions, continua à courir après ses moindres désirs. 
+En revanche, Shomat, malgrÃ© l'atrocitÃ© de ses actions, continua Ã  courir aprÃ¨s ses moindres dÃ©sirs. 
 
-L'histoire continue, mais il semble que le moment soit propice à une pause. J'aimerais faire quelques relectures avec de meilleurs traducteurs - peut-être même que le Dr. Watson accepterait de m'aider. J'ai finalisé le document au mieux pour l'instant.
+L'histoire continue, mais il semble que le moment soit propice Ã  une pause. J'aimerais faire quelques relectures avec de meilleurs traducteurs - peut-Ãªtre mÃªme que le Dr. Watson accepterait de m'aider. J'ai finalisÃ© le document au mieux pour l'instant.
 """

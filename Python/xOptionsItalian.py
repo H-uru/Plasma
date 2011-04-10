@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -70,7 +71,7 @@ xOptionsDemoTrailerText = "Anteprima di URU"
 #--------
 # In Game Help Dialog
 xIGHHeaderText = "Aiuto rapido"
-xIGMHelpMessage = "Movimento - Tasti cursore (o mouse sinistro)\nSalto - Spazio\nCorsa - Shift\n\nAttivazione/Scelta - Click sinistro (con cursore pieno)\nIndietro - Freccia gi˘, ESC o Backspace\n\nCambio visuale - F1\nGuardarsi intorno - Mouse destro + Trascinare\n\n\n(Consulta il manuale per ulteriori informazioni.)"
+xIGMHelpMessage = "Movimento - Tasti cursore (o mouse sinistro)\nSalto - Spazio\nCorsa - Shift\n\nAttivazione/Scelta - Click sinistro (con cursore pieno)\nIndietro - Freccia gi√π, ESC o Backspace\n\nCambio visuale - F1\nGuardarsi intorno - Mouse destro + Trascinare\n\n\n(Consulta il manuale per ulteriori informazioni.)"
 xIGMCCRBtnText = "Contatto Servizio Clienti >>"
 
 #-----------
@@ -117,9 +118,9 @@ xGSAdvancedBtnText = "Avanzate >>"
 #------------------
 # Advance Game settings dialog
 xAGSAdvanceHeader = "Impostazioni avanzate"
-xAGSShadowQualityText = "Qualit‡ ombre"
+xAGSShadowQualityText = "Qualit√† ombre"
 xAGSQuickerCameraText = "Telecamera rapida"
-xAGSMouseTurn = "Sensibilit‡ mouse"
+xAGSMouseTurn = "Sensibilit√† mouse"
 xAGSSoundPriority = "Numero di suoni"
 xAGSPreviousBtnText = "<< Indietro"
 xAGSMouseInvertText = "Inversione vista mouse"
@@ -129,5 +130,5 @@ xAGSClickToTurn = "Clicca per ruotare"
 
 #------------------------
 # Calibration dialog
-xCalMessageText = "URU - CALIBRAZIONE MONITOR\n\nImposta il contrasto del monitor al 100% (il massimo possibile).\n\nRegola la luminosit‡ in modo che il logo "+'"URU"'+" qui sopra sia appena visibile."
+xCalMessageText = "URU - CALIBRAZIONE MONITOR\n\nImposta il contrasto del monitor al 100% (il massimo possibile).\n\nRegola la luminosit√† in modo che il logo "+'"URU"'+" qui sopra sia appena visibile."
 

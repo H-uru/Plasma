@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -35,17 +36,17 @@ xFolderIDToFolderName = {    PtVaultStandardNodes.kUserDefinedNode:"Definito dal
                             PtVaultStandardNodes.kPeopleIKnowAboutFolder:"Recenti",\
                             PtVaultStandardNodes.kChronicleFolder:"Cronaca",\
                             PtVaultStandardNodes.kAvatarOutfitFolder:"Armadio",\
-                            PtVaultStandardNodes.kAgeTypeJournalFolder:"Diari delle Et‡",\
-                            PtVaultStandardNodes.kSubAgesFolder:"Sotto-Et‡",\
+                            PtVaultStandardNodes.kAgeTypeJournalFolder:"Diari delle Et√†",\
+                            PtVaultStandardNodes.kSubAgesFolder:"Sotto-Et√†",\
                             PtVaultStandardNodes.kHoodMembersFolder:"Vicini",\
                             PtVaultStandardNodes.kAllPlayersFolder:"Tutti i giocatori",\
-                            PtVaultStandardNodes.kAgeMembersFolder:"Giocatori dell'Et‡",\
-                            PtVaultStandardNodes.kAgeJournalsFolder:"Cartella dei Diari delle Et‡",\
+                            PtVaultStandardNodes.kAgeMembersFolder:"Giocatori dell'Et√†",\
+                            PtVaultStandardNodes.kAgeJournalsFolder:"Cartella dei Diari delle Et√†",\
                             PtVaultStandardNodes.kCanVisitFolder:"Visitatori autorizzati",\
                             PtVaultStandardNodes.kAgeOwnersFolder:"Proprietari",\
                             PtVaultStandardNodes.kPublicAgesFolder:"Quartieri pubblici",\
-                            PtVaultStandardNodes.kAgesIOwnFolder:"Et‡ che possiedo",\
-                            PtVaultStandardNodes.kAgesICanVisitFolder:"Et‡ che posso visitare",\
+                            PtVaultStandardNodes.kAgesIOwnFolder:"Et√† che possiedo",\
+                            PtVaultStandardNodes.kAgesICanVisitFolder:"Et√† che posso visitare",\
                             PtVaultStandardNodes.kAvatarClosetFolder:"Armadio dell'avatar",\
                         }
 
@@ -70,7 +71,7 @@ xHoodWelcome = "Benvenuto a %s. Per maggiori informazioni vai in aula"
 
 # --- Bookshelf deletion messages
 xDeleteNeighborhoodBook = "Sei sicuro di voler cancellare questo Libro, perdendo l'associazione a questo Quartiere?"
-xDeleteBook = "Sei sicuro di voler cancellare questo Libro, perdendo tutti gli avanzamenti in questa Et‡?"
+xDeleteBook = "Sei sicuro di voler cancellare questo Libro, perdendo tutti gli avanzamenti in questa Et√†?"
 
 # Spanish and Italian are defaulting to engish versions in MP, since this is MP only, we will default to the english translation
 def LocalizeAgeName(displayName):

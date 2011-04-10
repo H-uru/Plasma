@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,29 +28,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingYableshanMTKJrnlCover_eng*1#0.hsm"><font size=10 face=courier color=000000><margin left=62 right=62 top=48><p align=center>Le Roi Yableshan
 
-<p align=left>Yableshan - Il prit le pouvoir en 4843 à l'âge de 109 ans. 
+<p align=left>Yableshan - Il prit le pouvoir en 4843 Ã  l'Ã¢ge de 109 ans. 
 
-Selon certains, il avait les mêmes convictions que son père, mais il semblait qu'il n'était pas aussi fort que lui et par conséquent, il ne parvint pas à imposer le respect que son père avait instauré. Les factions les plus violentes se faisaient un plaisir de s'attaquer à ce défaut.
+Selon certains, il avait les mÃªmes convictions que son pÃ¨re, mais il semblait qu'il n'Ã©tait pas aussi fort que lui et par consÃ©quent, il ne parvint pas Ã  imposer le respect que son pÃ¨re avait instaurÃ©. Les factions les plus violentes se faisaient un plaisir de s'attaquer Ã  ce dÃ©faut.
 
-Demath avait réussi à calmer D'ni en grande partie. Cependant, quelques factions voulaient se faire entendre et ont réussi à faire du règne de Yableshan une période néfaste.
+Demath avait rÃ©ussi Ã  calmer D'ni en grande partie. Cependant, quelques factions voulaient se faire entendre et ont rÃ©ussi Ã  faire du rÃ¨gne de Yableshan une pÃ©riode nÃ©faste.
 
-En 4865, le Sang de Yahvo a kidnappé le fils de Yableshan, membre de la Guilde des Chimistes. Dans une lettre, la faction a déclaré qu'elle tuerait le fils du Roi si l'un de ses leaders n'était pas relâché.  Yableshan a ordonné au Relyimah de retrouver son fils, mais ils en ont été incapables (plus tard, on découvrit que l'un des membres du Relyimah avait intégré le Sang de Yahvo et les avait aidés).
+En 4865, le Sang de Yahvo a kidnappÃ© le fils de Yableshan, membre de la Guilde des Chimistes. Dans une lettre, la faction a dÃ©clarÃ© qu'elle tuerait le fils du Roi si l'un de ses leaders n'Ã©tait pas relÃ¢chÃ©.  Yableshan a ordonnÃ© au Relyimah de retrouver son fils, mais ils en ont Ã©tÃ© incapables (plus tard, on dÃ©couvrit que l'un des membres du Relyimah avait intÃ©grÃ© le Sang de Yahvo et les avait aidÃ©s).
 
-Impuissant, Yableshan a accédé à cette demande et a relâché le prisonnier qu'ils voulaient. Le corps sans vie de son fils est apparu sur les marches du palais quelques jours plus tard.
+Impuissant, Yableshan a accÃ©dÃ© Ã  cette demande et a relÃ¢chÃ© le prisonnier qu'ils voulaient. Le corps sans vie de son fils est apparu sur les marches du palais quelques jours plus tard.
 
-La mort du fils de Yableshan, ainsi que les nouvelles preuves faisant état d'une taupe dans le Relyimah ont divisé D'ni en deux clans. Ceux qui souhaitaient mettre un terme à toute intervention extérieure devenaient de plus en plus puissants, plaidant leur cause publiquement, presque tous les jours. Ceux qui suivaient la majorité étaient en colère et ne toléraient plus ceux qui ne pensaient pas comme eux. Ainsi, il ne fait aucun doute que très peu de D'ni restaient neutres. Et encore moins de gens, même pas Yableshan, ne parvenaient à modérer les deux clans. 
+La mort du fils de Yableshan, ainsi que les nouvelles preuves faisant Ã©tat d'une taupe dans le Relyimah ont divisÃ© D'ni en deux clans. Ceux qui souhaitaient mettre un terme Ã  toute intervention extÃ©rieure devenaient de plus en plus puissants, plaidant leur cause publiquement, presque tous les jours. Ceux qui suivaient la majoritÃ© Ã©taient en colÃ¨re et ne tolÃ©raient plus ceux qui ne pensaient pas comme eux. Ainsi, il ne fait aucun doute que trÃ¨s peu de D'ni restaient neutres. Et encore moins de gens, mÃªme pas Yableshan, ne parvenaient Ã  modÃ©rer les deux clans. 
 
-Yableshan, dans une tentative pour détourner l'attention du peuple des guerres, a décidé en 4889 d'annoncer la réorganisation des 18 Guildes majeures. C'était la première initiative de ce genre depuis la fondation de D'ni et elle fut chaleureusement accueillie par les Guildes. À la suite de cette annonce, Yableshan a modifié certaines des restrictions provenant de Ri'neref, octroyant ainsi plus de liberté aux Guildes quant aux structures qu'elles pouvaient construire.
+Yableshan, dans une tentative pour dÃ©tourner l'attention du peuple des guerres, a dÃ©cidÃ© en 4889 d'annoncer la rÃ©organisation des 18 Guildes majeures. C'Ã©tait la premiÃ¨re initiative de ce genre depuis la fondation de D'ni et elle fut chaleureusement accueillie par les Guildes. Ã€ la suite de cette annonce, Yableshan a modifiÃ© certaines des restrictions provenant de Ri'neref, octroyant ainsi plus de libertÃ© aux Guildes quant aux structures qu'elles pouvaient construire.
 
-En 4901, Yableshan a annoncé la construction d'une nouvelle Bibliothèque publique dans le quartier de Vamen à D'ni (quartier des classes moyennes). En 4910, il a annoncé la construction d'un nouveau parc sur l'Île de Neref. En 4914, trois nouveaux Âges « récréatifs » ont été placés dans ce parc en guise de cadeaux de la part de la Guilde des Écrivains afin de fêter leur nouvelle Guilde.
+En 4901, Yableshan a annoncÃ© la construction d'une nouvelle BibliothÃ¨que publique dans le quartier de Vamen Ã  D'ni (quartier des classes moyennes). En 4910, il a annoncÃ© la construction d'un nouveau parc sur l'Ãle de Neref. En 4914, trois nouveaux Ã‚ges Â« rÃ©crÃ©atifs Â» ont Ã©tÃ© placÃ©s dans ce parc en guise de cadeaux de la part de la Guilde des Ã‰crivains afin de fÃªter leur nouvelle Guilde.
 
-Ces diversions semblent avoir fonctionné jusqu'en 4954, lorsqu'une explosion est survenue dans l'Âge de Meanas, tuant 400 étrangers et 78 D'ni. Il semble que ce soit dû à une mauvaise combinaison de gaz : un gaz que les D'ni avaient apporté et un autre, qui existait déjà dans Meanas. En réaction les gens ont voulu se protéger de toute influence extérieure.
+Ces diversions semblent avoir fonctionnÃ© jusqu'en 4954, lorsqu'une explosion est survenue dans l'Ã‚ge de Meanas, tuant 400 Ã©trangers et 78 D'ni. Il semble que ce soit dÃ» Ã  une mauvaise combinaison de gaz : un gaz que les D'ni avaient apportÃ© et un autre, qui existait dÃ©jÃ  dans Meanas. En rÃ©action les gens ont voulu se protÃ©ger de toute influence extÃ©rieure.
 
-Le Relyimah (qui était en général lié à ce genre de situation) ne disposait d'aucune information concernant cette explosion. Ils étaient apparemment déjà très préoccupés par leur propre chaos, à la recherche de leur taupe. Certains pensaient que cette explosion était le fruit d'un complot, mais cela n'a pas été prouvé. 
+Le Relyimah (qui Ã©tait en gÃ©nÃ©ral liÃ© Ã  ce genre de situation) ne disposait d'aucune information concernant cette explosion. Ils Ã©taient apparemment dÃ©jÃ  trÃ¨s prÃ©occupÃ©s par leur propre chaos, Ã  la recherche de leur taupe. Certains pensaient que cette explosion Ã©tait le fruit d'un complot, mais cela n'a pas Ã©tÃ© prouvÃ©. 
 
-En 5043, Yableshan a donné à un homme du nom de Faresh, la responsabilité de la Guilde des Illusionnistes. Sa première mission, ordonnée par Yableshan lui-même, consistait à trouver qui était en train de détruire la recherche d'informations du Relyimah.
+En 5043, Yableshan a donnÃ© Ã  un homme du nom de Faresh, la responsabilitÃ© de la Guilde des Illusionnistes. Sa premiÃ¨re mission, ordonnÃ©e par Yableshan lui-mÃªme, consistait Ã  trouver qui Ã©tait en train de dÃ©truire la recherche d'informations du Relyimah.
 
-Même si nombreux sont ceux qui croient que Faresh était plus intéressé par les illusions mêmes que par l'Invisible, il est aussi célèbre pour son intelligence et il a mis en oeuvre un plan d'action pour nettoyer le Relyimah. Il a aussi lancé la construction d'une « maison » sur l'une des Îles privées de la caverne, ce qui montrait à l'évidence son goût pour les illusions.
+MÃªme si nombreux sont ceux qui croient que Faresh Ã©tait plus intÃ©ressÃ© par les illusions mÃªmes que par l'Invisible, il est aussi cÃ©lÃ¨bre pour son intelligence et il a mis en oeuvre un plan d'action pour nettoyer le Relyimah. Il a aussi lancÃ© la construction d'une Â« maison Â» sur l'une des Ãles privÃ©es de la caverne, ce qui montrait Ã  l'Ã©vidence son goÃ»t pour les illusions.
 
-Yableshan mourut en 5081 à l'âge de 347 ans. Il n'eut aucun autre enfant après la mort de son fils et céda son trône à son plus jeune beau-frère (le mari de sa petite sœur).
+Yableshan mourut en 5081 Ã  l'Ã¢ge de 347 ans. Il n'eut aucun autre enfant aprÃ¨s la mort de son fils et cÃ©da son trÃ´ne Ã  son plus jeune beau-frÃ¨re (le mari de sa petite sÅ“ur).
 """

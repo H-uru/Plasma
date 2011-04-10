@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -27,46 +28,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # change the contents of the variable below to the desired contents of the journal
 xJournalContents = """<cover src="xKingMeemenJournalCover_eng*1#0.hsm"><font size=12 face=courier color=000000><margin left=62 right=62 top=48><p align=center>Le Roi Me'emen
 
-<p align=left>Il monta sur le trône en 5240 ED à l'âge de 83 ans. 
+<p align=left>Il monta sur le trÃ´ne en 5240 ED Ã  l'Ã¢ge de 83 ans. 
 
-L'une des plus grandes découvertes du règne de Me'emen arriva peu de temps après son couronnement et fut annoncée par les Guildes des Mineurs et des Tailleurs de pierre (qui travaillaient ensemble à ce moment-là). En 5307, ils révélèrent l'existence de la Nara*, comme si elle avait été créée en laboratoire quelques semaines auparavant. La Nara ouvrit bien des horizons en matière forage minier et de construction. Finalement, elle eut un impact capital pour l'avenir des D'ni. Même à l'époque de sa découverte, son potentiel avait déclenché beaucoup d'enthousiasme. 
+L'une des plus grandes dÃ©couvertes du rÃ¨gne de Me'emen arriva peu de temps aprÃ¨s son couronnement et fut annoncÃ©e par les Guildes des Mineurs et des Tailleurs de pierre (qui travaillaient ensemble Ã  ce moment-lÃ ). En 5307, ils rÃ©vÃ©lÃ¨rent l'existence de la Nara*, comme si elle avait Ã©tÃ© crÃ©Ã©e en laboratoire quelques semaines auparavant. La Nara ouvrit bien des horizons en matiÃ¨re forage minier et de construction. Finalement, elle eut un impact capital pour l'avenir des D'ni. MÃªme Ã  l'Ã©poque de sa dÃ©couverte, son potentiel avait dÃ©clenchÃ© beaucoup d'enthousiasme. 
 
-En 5312 ED, une épidémie se déclara dans le quartier industriel de D'ni, provenant probablement de l'Âge de Yasefe*. La maladie causa une panique généralisée. Nombreux étaient ceux qui prédisaient une peste comme celle qui avait éclaté dans les années 2100. Heureusement, cette maladie n'était pas aussi mortelle et la Guilde des Soigneurs trouva un remède en un rien de temps. Malgré tout, il y eut une nouvelle pression pour séparer au moins le quartier de Nehw'eril* un peu plus loin de la ville proprement dite. 
+En 5312 ED, une Ã©pidÃ©mie se dÃ©clara dans le quartier industriel de D'ni, provenant probablement de l'Ã‚ge de Yasefe*. La maladie causa une panique gÃ©nÃ©ralisÃ©e. Nombreux Ã©taient ceux qui prÃ©disaient une peste comme celle qui avait Ã©clatÃ© dans les annÃ©es 2100. Heureusement, cette maladie n'Ã©tait pas aussi mortelle et la Guilde des Soigneurs trouva un remÃ¨de en un rien de temps. MalgrÃ© tout, il y eut une nouvelle pression pour sÃ©parer au moins le quartier de Nehw'eril* un peu plus loin de la ville proprement dite. 
 
-Apparemment, l'idée plut à Me'emen. Il encouragea les Topographes à étudier la question de l'expansion. 
+Apparemment, l'idÃ©e plut Ã  Me'emen. Il encouragea les Topographes Ã  Ã©tudier la question de l'expansion. 
 
-En 5359 ED, les D'ni virent une autre raison de commencer sérieusement à s'étendre. Cette raison prit la forme de la Dent de pierre. C'était la deuxième des Grands foreurs. Elle surpassait en puissance et en technologie le déjà vieux Mangeur de pierre. Me'emen ordonna immédiatement à la Guilde des Mineurs de commencer à « nettoyer » la zone (avec le Mangeur de pierre) pour construire un nouveau quartier industriel chargé de remplacer Nehw'eril. Ce n'est qu'en 5475 ED qu'on commença vraiment à construire le nouveau quartier industriel de Uran.
+En 5359 ED, les D'ni virent une autre raison de commencer sÃ©rieusement Ã  s'Ã©tendre. Cette raison prit la forme de la Dent de pierre. C'Ã©tait la deuxiÃ¨me des Grands foreurs. Elle surpassait en puissance et en technologie le dÃ©jÃ  vieux Mangeur de pierre. Me'emen ordonna immÃ©diatement Ã  la Guilde des Mineurs de commencer Ã  Â«Â nettoyerÂ Â» la zone (avec le Mangeur de pierre) pour construire un nouveau quartier industriel chargÃ© de remplacer Nehw'eril. Ce n'est qu'en 5475 ED qu'on commenÃ§a vraiment Ã  construire le nouveau quartier industriel de Uran.
 
-Moins de cent ans après la Dent de pierre, en 5573 ED, la Guilde des Conservateurs annonça que l'on pouvait créer des costumes de conservation améliorés et plus sûrs grâce au Deretheni découvert. Même si ce genre de déclaration peut sembler futile, les nouveaux costumes eurent un impact très important sur la culture D'ni. Car puisque les Conservateurs pouvaient désormais prendre plus de risques pour explorer des Âges, la Guilde des Écrivains fut autorisée à faire des écritures plus libérales. Du coup, ce fut le début d'une ère faite de nouveaux types d'Âge*.
+Moins de cent ans aprÃ¨s la Dent de pierre, en 5573 ED, la Guilde des Conservateurs annonÃ§a que l'on pouvait crÃ©er des costumes de conservation amÃ©liorÃ©s et plus sÃ»rs grÃ¢ce au Deretheni dÃ©couvert. MÃªme si ce genre de dÃ©claration peut sembler futile, les nouveaux costumes eurent un impact trÃ¨s important sur la culture D'ni. Car puisque les Conservateurs pouvaient dÃ©sormais prendre plus de risques pour explorer des Ã‚ges, la Guilde des Ã‰crivains fut autorisÃ©e Ã  faire des Ã©critures plus libÃ©rales. Du coup, ce fut le dÃ©but d'une Ã¨re faite de nouveaux types d'Ã‚ge*.
 
-Pendant le règne de Me'emen, les « Mots » étaient au centre des discussions et on recommença à s'intéresser aux anciens temples. Nous avons des preuves de nombreux changements et de la rénovation de plusieurs des temples séculiers qui furent construits des années auparavant sur la « nouvelle » ligne du Grand Zéro.
+Pendant le rÃ¨gne de Me'emen, les Â«Â MotsÂ Â» Ã©taient au centre des discussions et on recommenÃ§a Ã  s'intÃ©resser aux anciens temples. Nous avons des preuves de nombreux changements et de la rÃ©novation de plusieurs des temples sÃ©culiers qui furent construits des annÃ©es auparavant sur la Â«Â nouvelleÂ Â» ligne du Grand ZÃ©ro.
 
-Apparemment, Me'emen ne prêtait que peu d'attention aux revendications religieuses de son peuple, leur préférant les avancées technologiques et l'expansion de la ville. 
+Apparemment, Me'emen ne prÃªtait que peu d'attention aux revendications religieuses de son peuple, leur prÃ©fÃ©rant les avancÃ©es technologiques et l'expansion de la ville. 
 
-Lorsque Me'emen estima qu'il n'avait plus besoin du Mangeur de pierre et de la Dent de pierre, il suggéra qu'on les utilise pour creuser un tunnel souterrain reliant l'Île et la ville, réduisant ainsi les besoins de navigation. Sa proposition reçut un accueil défavorable, en particulier des classes sociales supérieures qui vivaient sur l'Île. Il y eut un certain nombre de manifestations, exprimant les inquiétudes à propos de l'impact que le tunnel pourrait avoir sur l'Île. La proposition fut également rejetée par les Guildes, si bien que Me'emen dût abandonner le projet. 
+Lorsque Me'emen estima qu'il n'avait plus besoin du Mangeur de pierre et de la Dent de pierre, il suggÃ©ra qu'on les utilise pour creuser un tunnel souterrain reliant l'Ãle et la ville, rÃ©duisant ainsi les besoins de navigation. Sa proposition reÃ§ut un accueil dÃ©favorable, en particulier des classes sociales supÃ©rieures qui vivaient sur l'Ãle. Il y eut un certain nombre de manifestations, exprimant les inquiÃ©tudes Ã  propos de l'impact que le tunnel pourrait avoir sur l'Ãle. La proposition fut Ã©galement rejetÃ©e par les Guildes, si bien que Me'emen dÃ»t abandonner le projet. 
 
-En 5500 ED, les premières importations des autres Âges furent envoyées par liaison dans le nouveau quartier d'Uran, plus éloigné de la ville. On disait d'Uran qu'il s'agissait « d'une avancée spectaculaire comparée à l'ancienne Nehw'eril… un bond en avant… bien plus sûre » et on organisa une incroyable fête le jour de son « inauguration »*. La sécurité fut renforcée dans le nouveau quartier, car on découvrit plus tard que le Relyimah avait mis à jour un certain nombre de complots destinés à montrer le désaccord des factions avec le quartier. 
+En 5500 ED, les premiÃ¨res importations des autres Ã‚ges furent envoyÃ©es par liaison dans le nouveau quartier d'Uran, plus Ã©loignÃ© de la ville. On disait d'Uran qu'il s'agissait Â«Â d'une avancÃ©e spectaculaire comparÃ©e Ã  l'ancienne Nehw'erilâ€¦ un bond en avantâ€¦ bien plus sÃ»reÂ Â» et on organisa une incroyable fÃªte le jour de son Â«Â inaugurationÂ Â»*. La sÃ©curitÃ© fut renforcÃ©e dans le nouveau quartier, car on dÃ©couvrit plus tard que le Relyimah avait mis Ã  jour un certain nombre de complots destinÃ©s Ã  montrer le dÃ©saccord des factions avec le quartier. 
 
-En 5540 ED, l'unique fils de Me'emen tomba très gravement malade et finit par mourir six mois plus tard. Membre de la Guilde des Soigneurs, Ashem était parmi les premiers à enquêter sur les nouveaux Âges afin de s'assurer de leur sécurité en matière de maladie. Après sa mort, on décida de ne pas approuver l'Âge avant de trouver un remède. Eu égard à l'action héroïque de son fils, Me'emen décida de renommer le quartier d'Uran en Ashem'en, un an après sa mort. 
+En 5540 ED, l'unique fils de Me'emen tomba trÃ¨s gravement malade et finit par mourir six mois plus tard. Membre de la Guilde des Soigneurs, Ashem Ã©tait parmi les premiers Ã  enquÃªter sur les nouveaux Ã‚ges afin de s'assurer de leur sÃ©curitÃ© en matiÃ¨re de maladie. AprÃ¨s sa mort, on dÃ©cida de ne pas approuver l'Ã‚ge avant de trouver un remÃ¨de. Eu Ã©gard Ã  l'action hÃ©roÃ¯que de son fils, Me'emen dÃ©cida de renommer le quartier d'Uran en Ashem'en, un an aprÃ¨s sa mort. 
 
-On racontait que ce deuil avait rendu Me'emen « profondément attristé… démuni de l'enthousiasme qu'il avait montré pendant son règne »*. Nombreux étaient ceux qui prétendaient que c'est ce qui l'avait conduit chez Trisari la Prophétesse*. À la fin de sa vie, Me'emen semblait passer beaucoup de temps avec Trisari. On raconte qu'il put mourir heureux « grâce à elle »*.
+On racontait que ce deuil avait rendu Me'emen Â«Â profondÃ©ment attristÃ©â€¦ dÃ©muni de l'enthousiasme qu'il avait montrÃ© pendant son rÃ¨gneÂ Â»*. Nombreux Ã©taient ceux qui prÃ©tendaient que c'est ce qui l'avait conduit chez Trisari la ProphÃ©tesse*. Ã€ la fin de sa vie, Me'emen semblait passer beaucoup de temps avec Trisari. On raconte qu'il put mourir heureux Â«Â grÃ¢ce Ã  elleÂ Â»*.
 
-Me'emen mourut en 5549 ED à l'âge très avancé de 392 ans et choisit son neveu pour lui succéder, probablement d'après un conseil de Trisari.
+Me'emen mourut en 5549 ED Ã  l'Ã¢ge trÃ¨s avancÃ© de 392 ans et choisit son neveu pour lui succÃ©der, probablement d'aprÃ¨s un conseil de Trisari.
 
 
-* Une pierre grise métallique d'une densité trente fois supérieure à celle de l'acier et des pierres les plus dures de D'ni
+* Une pierre grise mÃ©tallique d'une densitÃ© trente fois supÃ©rieure Ã  celle de l'acier et des pierres les plus dures de D'ni
 
-* Yasefe était principalement constitué de forêts et fournissait D'ni avec une bonne partie de sa consommation de bois, dont le rare et cher Yema. 
+* Yasefe Ã©tait principalement constituÃ© de forÃªts et fournissait D'ni avec une bonne partie de sa consommation de bois, dont le rare et cher Yema. 
 
-* Le quartier industriel fut fondé pendant le règne de Needrah et servit comme centre d'importation pour la plupart des biens étrangers. 
+* Le quartier industriel fut fondÃ© pendant le rÃ¨gne de Needrah et servit comme centre d'importation pour la plupart des biens Ã©trangers. 
 
-* Les nouveaux Âges permettaient d'expérimenter avec l'atmosphère, la vie animale et les sources d'énergie.
+* Les nouveaux Ã‚ges permettaient d'expÃ©rimenter avec l'atmosphÃ¨re, la vie animale et les sources d'Ã©nergie.
 
-* D'après le journal du Grand maître Veshar de la Guilde des Mineurs
+* D'aprÃ¨s le journal du Grand maÃ®tre Veshar de la Guilde des Mineurs
 
-* D'après les journaux de la prophétesse Trisari, assignée au Roi Me'emen
+* D'aprÃ¨s les journaux de la prophÃ©tesse Trisari, assignÃ©e au Roi Me'emen
 
-* Il est important de rappeler que les prophétesses étaient assignées aux rois, mais n'avaient généralement qu'un rôle de représentation et n'étaient que rarement consultées
+* Il est important de rappeler que les prophÃ©tesses Ã©taient assignÃ©es aux rois, mais n'avaient gÃ©nÃ©ralement qu'un rÃ´le de reprÃ©sentation et n'Ã©taient que rarement consultÃ©es
 
-* Tiré de « Ashem », écrit par Ramena en 5589
+* TirÃ© de Â«Â AshemÂ Â», Ã©crit par Ramena en 5589
 """

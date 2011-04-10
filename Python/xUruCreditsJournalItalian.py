@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -68,7 +69,7 @@ xJournalContents = """<cover src="xUruCreditsJournalCover*1#0.hsm"><font face=Ur
 <font size=24 spacing=-10><p align=left>Rand Miller<p align=right>Direttore
 <p align=left>Brice Tebbs<p align=right>Produttore, Dirigente settore tecnico
 <font spacing=-18>
-<font size=26><p align=center>Controllo qualit‡<font spacing=-5>
+<font size=26><p align=center>Controllo qualit√†<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Eric G. Votava<p align=right>Ingegnere capo CQ
 <p align=left>Lloyd Bell<p align=right>Responsabile CQ
 <p align=left>Ryan B. Persch<p align=right>Responsabile testing
@@ -164,7 +165,7 @@ Mark VanDyke
 <p align=left>Yves Guillemot<p align=right>Ubisoft
 <p align=left>Gilles Langourieux<p align=right>Ubisoft
 <p align=left>Joe Ybarra<p align=right>Ubisoft
-<p align=left>SÈbastien Puel<p align=right>Ubisoft
+<p align=left>S√©bastien Puel<p align=right>Ubisoft
 <p align=left>Masami Maeda<p align=right>Sunsoft
 <p align=left>Mogli e familiari
 <p align=left>Eloise, Dana, Debbie<p align=right>La Gilda delle Approvvigionatrici
@@ -183,7 +184,7 @@ General Manager Ubi.com (Mondiale)
 <font spacing=-18>
 <font size=24 spacing=-10><p align=center>Joe Ybarra
 VP della produzione<font spacing=-5>
-<font size=24 spacing=-10><p align=left>SÈbastien Puel<p align=right>Produttore
+<font size=24 spacing=-10><p align=left>S√©bastien Puel<p align=right>Produttore
 <p align=left>Erik Zwerling<p align=right>Produttore
 <p align=left>Jean-Christophe Pelletier<p align=right>Produttore associato
 <p align=left>Patricia A. Pizer<p align=right>Analista di gioco Senior
@@ -205,22 +206,22 @@ VP della produzione<font spacing=-5>
 <p align=left>Michel Gauthier<p align=right>Integrazione Web
 <p align=left>Karine Martel<p align=right>Web Design
 <font spacing=-18> 
-<font size=26><p align=center>Controllo qualit‡<font spacing=-5>
+<font size=26><p align=center>Controllo qualit√†<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Sylvie Tremblay<p align=right>Responsabile CQ
 <p align=left>Gabriel Dubuc<p align=right>Tester
-<p align=left>Jean-FranÁois GiguËre<p align=right>Tester
+<p align=left>Jean-Fran√ßois Gigu√®re<p align=right>Tester
 <p align=left>Martin Michaud<p align=right>Tester
-<p align=left>VÈronique Fortin<p align=right>Tester
+<p align=left>V√©ronique Fortin<p align=right>Tester
 <p align=left>Lyne Archambault<p align=right>Tester
-<p align=left>Jean-SÈbastien Primeau<p align=right>Tester
-<p align=left>Jean-SÈbastien Charbonneau<p align=right>Tester
+<p align=left>Jean-S√©bastien Primeau<p align=right>Tester
+<p align=left>Jean-S√©bastien Charbonneau<p align=right>Tester
 <p align=left>Martin Hamel<p align=right>Tester
 <p align=left>Pierre-Yves Savard<p align=right>Tester
 <p align=left>Patrick Melanson<p align=right>Tester
 <p align=left>Marc Thonon<p align=right>Tester
 <p align=left>Martin Amos<p align=right>Tester
 <p align=left>Yannick Gervais<p align=right>Tester
-<p align=left>FranÁois Arguin<p align=right>Tester
+<p align=left>Fran√ßois Arguin<p align=right>Tester
 <font spacing=-20>
 <font size=26><p align=center>Network e Sistemi informativi<font spacing=-8>
 <font size=24 spacing=-10><p align=left>Andrej Todosic<p align=right>Responsabile di gruppo
@@ -230,13 +231,13 @@ VP della produzione<font spacing=-5>
 <p align=left>Wei-Tang Huang<p align=right>Architettura sistemi
 <p align=left>Shane Akhgar<p align=right>Arch. sistemi/Resp. team
 <p align=left>Eric Garrigues<p align=right>Amministratore di rete (Europa)
-<p align=left>JosÈ Covatta<p align=right>Programmatore
+<p align=left>Jos√© Covatta<p align=right>Programmatore
 <font spacing=-20>
 <font size=26><p align=center>Sistemi di pagamento<font spacing=-8>
-<font size=24 spacing=-10><p align=left>Serge MÈnard<p align=right>Responsabile sviluppo
+<font size=24 spacing=-10><p align=left>Serge M√©nard<p align=right>Responsabile sviluppo
 <p align=left>Perry Stathopoulos<p align=right>Sviluppo
-<p align=left>SÈbastien Hinse<p align=right>Responsabile DBA
-<p align=left>StÈphanie Cassie<p align=right>Responsabile testing 
+<p align=left>S√©bastien Hinse<p align=right>Responsabile DBA
+<p align=left>St√©phanie Cassie<p align=right>Responsabile testing 
 <p align=left>Frank Zhang<p align=right>Sviluppatore amm.vo fatturazione
 <p align=left>Olivier Paris<p align=right>Responsabile sviluppo
 <font spacing=-18>
@@ -271,15 +272,15 @@ VP della produzione<font spacing=-5>
 
 <font size=26><p align=center>Localizzazione<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Coralie Martin<p align=right>Responsabile localizzazione
-<p align=left>LoÔc Jacolin<p align=right>Responsabile progetto localizzazione
+<p align=left>Lo√Øc Jacolin<p align=right>Responsabile progetto localizzazione
 
 <font size=26 spacing=-10><p align=center>Registrazioni<font spacing=-10>
-<font size=24 spacing=-10><p align=center>Hifi-gÈnie Productions
+<font size=24 spacing=-10><p align=center>Hifi-g√©nie Productions
 <pb><font size=26 spacing=-18><p align=center>Voci<font spacing=-5>
 <font size=24 spacing=-10><p align=center>Xavier Kemmlein (Francia)<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Bernard Bollet<p align=right>Atrus
 <p align=left>Nathalie Homs<p align=right>Yeesha
-<p align=left>Antoine TomÈ<p align=right>Zandi
+<p align=left>Antoine Tom√©<p align=right>Zandi
 <font spacing=-18>
 <font size=24><p align=center>Partnertrans. (Germania)<font spacing=-5>
 <font size=24 spacing=-10><p align=left>Stephan Schlehberger<p align=right>Atrus
@@ -287,7 +288,7 @@ VP della produzione<font spacing=-5>
 <p align=left>Karl-Heinz Tafel<p align=right>Zandi
 <font spacing=-18>
 <font size=24><p align=center>Betafix Services, S.L. (Spagna)<font spacing=-5>
-<font size=24 spacing=-10><p align=left>Juanjo LÛpez<p align=right>Atrus
+<font size=24 spacing=-10><p align=left>Juanjo L√≥pez<p align=right>Atrus
 <p align=left>Pilar Santigosa<p align=right>Yeesha
 <p align=left>Manuel Bellido<p align=right>Zandi
 <font spacing=-18>

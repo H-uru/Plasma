@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -53,7 +54,7 @@ Three buttons on the left side of the panel were quick jumps to preset numbers o
 
 Regardless, once either side pressed the middle button on the right side, the number was locked on both machines. There was no turning back, at least in regards to how many blockers were going to be used for the game. Those little lights stop flashing and the purple/yellow lights go blank.
 
-Setting up blockers was fairly easy: press the section of the grid where a blocker should appear and…it appears. Magic. A light at the top also appears for each blocker. Once the maze has been set, the red button is pressed and the maze is locked in and transferred to the wall. After both sides had set up their mazes, I'm sure someone would say "let the game begin". They just had to.
+Setting up blockers was fairly easy: press the section of the grid where a blocker should appear andâ€¦it appears. Magic. A light at the top also appears for each blocker. Once the maze has been set, the red button is pressed and the maze is locked in and transferred to the wall. After both sides had set up their mazes, I'm sure someone would say "let the game begin". They just had to.
 
 THE SUITS
 
@@ -65,7 +66,7 @@ Both sides are racing to the top, trying to avoid the blockers that have been se
 
 WINNER
 
-Once somebody got to the top, the suit, and some kind of panel in the wall (we assume) initiated a link. Bam, the Maintainer found themselves in the Maintainer Nexus. Yahoo, winner. Once there, Maintainer raised his arms in the air and cheered to himself and linked back to the Control Room for game number two. (That's how I picture it.) It's worth noting that the Nexus removed the suit from the Maintainers as well. We don't know how really, but we know it does. Since we're admitting what we don’t know: that link through the wall and suit thing is somewhat of a mystery. 
+Once somebody got to the top, the suit, and some kind of panel in the wall (we assume) initiated a link. Bam, the Maintainer found themselves in the Maintainer Nexus. Yahoo, winner. Once there, Maintainer raised his arms in the air and cheered to himself and linked back to the Control Room for game number two. (That's how I picture it.) It's worth noting that the Nexus removed the suit from the Maintainers as well. We don't know how really, but we know it does. Since we're admitting what we donâ€™t know: that link through the wall and suit thing is somewhat of a mystery. 
 
 Once one side reached the top, the mazes were displayed on the wall for the poor guy still trying to find his way to the top. At the same time, it looks like those patterns were displayed in observation rooms and the Maintainer Nexus displays as well. Loser needed to work his way to the top, use the same link as the winner, get rid of the suit, and start on game two. Maybe get chewed out by his superiors first. Who knows? 
 """

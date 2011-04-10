@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -33,9 +34,9 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=26>Teledahn
 
-<font size=22>La verdad del hombre se halla en la oscuridad, debajo de la superficie. Sólo un atisbo de luz puede revelar aquello que el hombre desea ver.
+<font size=22>La verdad del hombre se halla en la oscuridad, debajo de la superficie. SÃ³lo un atisbo de luz puede revelar aquello que el hombre desea ver.
 
-<font size=18>Regeltavok Oorpah - Libro 9, Inscripción 221, Volumen 29
+<font size=18>Regeltavok Oorpah - Libro 9, InscripciÃ³n 221, Volumen 29
 
 
 <img src="xDniTWO*1#0.hsm" align=center blend=alpha resize=no>
@@ -48,9 +49,9 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=26>Gahreesen
 
-<font size=22>Las leyes concebidas por los arrogantes representan su seguridad y su perdición. Tales leyes convierten a la desobediencia en una virtud, y a la obediencia en pecado.
+<font size=22>Las leyes concebidas por los arrogantes representan su seguridad y su perdiciÃ³n. Tales leyes convierten a la desobediencia en una virtud, y a la obediencia en pecado.
 
-<font size=18>Regeltavok Oorpah - Libro 12, Inscripción 32, Volumen 134
+<font size=18>Regeltavok Oorpah - Libro 12, InscripciÃ³n 32, Volumen 134
 
 
 
@@ -64,9 +65,9 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=26>Kadish Tolesa
 
-<font size=22>Sólo por la forma en la  que un hombre se encubre, se muestra tal y cómo es. Una mirada superficial puede ser engañosa. Mira con profundidad, medita y reconoce todo lo que está oculto.
+<font size=22>SÃ³lo por la forma en la  que un hombre se encubre, se muestra tal y cÃ³mo es. Una mirada superficial puede ser engaÃ±osa. Mira con profundidad, medita y reconoce todo lo que estÃ¡ oculto.
 
-<font size=18>Regeltavok Oorpah - Libro 9, Inscripción 221, Volumen 77
+<font size=18>Regeltavok Oorpah - Libro 9, InscripciÃ³n 221, Volumen 77
 
 
 <img src="xDniSIX*1#0.hsm" align=center blend=alpha resize=no>
@@ -79,9 +80,9 @@ xJournalContents = """<cover src="xYeeshaJournalCover*1#0.hsm"><font face=Yeesha
 <pb>
 <font size=26>Eder Kemo y Eder Gira
 
-<font size=22>Cuando todo le es arrebatado a uno, la única esperanza yace en lo que es donado por otro. Por medio de esta donación, ambos serán redimidos.
+<font size=22>Cuando todo le es arrebatado a uno, la Ãºnica esperanza yace en lo que es donado por otro. Por medio de esta donaciÃ³n, ambos serÃ¡n redimidos.
 
-<font size=18>Regeltavok Oorpah - Libro 2, Inscripción 1.071, Volumen 54
+<font size=18>Regeltavok Oorpah - Libro 2, InscripciÃ³n 1.071, Volumen 54
 
 
 

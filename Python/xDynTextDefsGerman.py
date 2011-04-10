@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -48,7 +49,7 @@ GAHREESEN""", PtJustify.kCenter ),
 
 
 
-    "nb01GrsnBook":        ( "Sharper", 22, (0,0,0,1), (0,0,0,0), 0, """DAS BUCH FÜR
+    "nb01GrsnBook":        ( "Sharper", 22, (0,0,0,1), (0,0,0,0), 0, """DAS BUCH FÃœR
 GAHREESEN
 BEFINDET SICH
 IM RAUM DER
@@ -86,8 +87,8 @@ Es gibt Probleme. Das Haus in Noloben ist NICHT leer.
 Ich habe heute dort jemanden angetroffen. Mein D'ni
 ist nicht besonders, aber ich habe mich eine Weile
 mit ihm unterhalten. Er sagt er sei ein D'ni und wie
-wir bereits angenommen haben, weiß er eine Menge
-über diese Kreaturen.
+wir bereits angenommen haben, weiÃŸ er eine Menge
+Ã¼ber diese Kreaturen.
 WIRKLICH EINE GANZE Menge.
 
 Wir sollten umgehend ein Meeting einberufen.
@@ -101,21 +102,21 @@ Wir sollten umgehend ein Meeting einberufen.
 
 Matthew,
 
-Der letzte Satz Unterlagen, den du geschickt hast, war sehr interessant. Ich habe noch eine weitere Liste, von der ich möchte, dass du sie an das Team weiter gibst. Wie du sie genau aufteilst, ist deine Sache. 
+Der letzte Satz Unterlagen, den du geschickt hast, war sehr interessant. Ich habe noch eine weitere Liste, von der ich mÃ¶chte, dass du sie an das Team weiter gibst. Wie du sie genau aufteilst, ist deine Sache. 
 
-1. Ich möchte mehr Informationen über das Familienleben: Zeremonien, etc... Einfach alles, was mit Geburt, Heirat, kulturellen Ereignissen zusammenhängt. Ich weiß, dass wir einige Quellen haben, daher wäre deine Hilfe sehr wertvoll für mich. Über Wissenschaft und Technologie haben wir ja schon einiges zusammengetragen, aber ich finde, dass wir noch nicht genug über das Leben dieses Volkes wissen.
+1. Ich mÃ¶chte mehr Informationen Ã¼ber das Familienleben: Zeremonien, etc... Einfach alles, was mit Geburt, Heirat, kulturellen Ereignissen zusammenhÃ¤ngt. Ich weiÃŸ, dass wir einige Quellen haben, daher wÃ¤re deine Hilfe sehr wertvoll fÃ¼r mich. Ãœber Wissenschaft und Technologie haben wir ja schon einiges zusammengetragen, aber ich finde, dass wir noch nicht genug Ã¼ber das Leben dieses Volkes wissen.
 
-2. Wir haben einiges an Informationen über die Gilden gesammelt. Eine ordentliche Aufstellung an einem Ort wäre sehr praktisch.
+2. Wir haben einiges an Informationen Ã¼ber die Gilden gesammelt. Eine ordentliche Aufstellung an einem Ort wÃ¤re sehr praktisch.
 
-3. Der Fall ist etwas, über das wir nur sehr wenig wissen. Ich weiß nicht, ob du mir da weiterhelfen kannst, aber nach den Nachrichten der letzten Zeit, sollten wir uns das mal näher ansehen. Ich würde empfehlen, jemanden ausschließlich auf den Fall anzusetzen.
+3. Der Fall ist etwas, Ã¼ber das wir nur sehr wenig wissen. Ich weiÃŸ nicht, ob du mir da weiterhelfen kannst, aber nach den Nachrichten der letzten Zeit, sollten wir uns das mal nÃ¤her ansehen. Ich wÃ¼rde empfehlen, jemanden ausschlieÃŸlich auf den Fall anzusetzen.
 
-4. Macht mit den Königen weiter. Ein kurzer Abriss zu allen Königen entsprechend denen im letzten Satz wäre hilfreich.
+4. Macht mit den KÃ¶nigen weiter. Ein kurzer Abriss zu allen KÃ¶nigen entsprechend denen im letzten Satz wÃ¤re hilfreich.
 
-5. Wir haben immer noch religiöse Schriften, die übersetzt werden müssen. Das wird nicht einfach werden, aber ich bin sicher, dass wir darin sehr wertvolle Informationen finden werden.
+5. Wir haben immer noch religiÃ¶se Schriften, die Ã¼bersetzt werden mÃ¼ssen. Das wird nicht einfach werden, aber ich bin sicher, dass wir darin sehr wertvolle Informationen finden werden.
 
-6. Wir haben einen ganzen Stapel Tagebücher aus den verschiedenen D'ni-Unterkünften, etc. - von Welten gar nicht zu reden ...  
+6. Wir haben einen ganzen Stapel TagebÃ¼cher aus den verschiedenen D'ni-UnterkÃ¼nften, etc. - von Welten gar nicht zu reden ...  
 
-Ich glaube, das ist mehr als genug. Noch mal vielen Dank - auch an dein Team, das großartige Arbeit macht. 
+Ich glaube, das ist mehr als genug. Noch mal vielen Dank - auch an dein Team, das groÃŸartige Arbeit macht. 
 - Dr. Watson
 """, PtJustify.kLeftJustify ),
 
@@ -124,9 +125,9 @@ Ich glaube, das ist mehr als genug. Noch mal vielen Dank - auch an dein Team, da
 
 "JCNote":        ( "Nick", 16, (0,0,0,1), (0,0,0,0), 0, """
 
-Sieh dir das mal an. Ich weiß, dass der DRC nicht, will, dass wir die Dinger anfassen, aber ich wette, Watson will auch wissen, wie die mit den Türen in Verbindung stehen. Es macht einfach keinen Sinn. 
+Sieh dir das mal an. Ich weiÃŸ, dass der DRC nicht, will, dass wir die Dinger anfassen, aber ich wette, Watson will auch wissen, wie die mit den TÃ¼ren in Verbindung stehen. Es macht einfach keinen Sinn. 
 
-Und verlier es nicht. Ich habe es kaum von der Wand bekommen und als ich es endlich geschafft hatte, war es ganz schön unheimlich. Aber etwas ist noch seltsamer: Als ich später zurückkam, war das Tuch, von dem ich dieses Stück habe, wieder intakt.
+Und verlier es nicht. Ich habe es kaum von der Wand bekommen und als ich es endlich geschafft hatte, war es ganz schÃ¶n unheimlich. Aber etwas ist noch seltsamer: Als ich spÃ¤ter zurÃ¼ckkam, war das Tuch, von dem ich dieses StÃ¼ck habe, wieder intakt.
 
 - Nick
 """, PtJustify.kLeftJustify ),
@@ -143,21 +144,21 @@ Yeesha,
 
 in der letzten Nacht hatte deine Mutter einen Traum.
 
-Der Traum kündete davon, dass D'ni eines Tages
+Der Traum kÃ¼ndete davon, dass D'ni eines Tages
 wieder auferstehen wird. Sucher der D'ni werden von
-der Wüste her kommen werden - gerufen von etwas, was
+der WÃ¼ste her kommen werden - gerufen von etwas, was
 sie nicht verstehen.
 
-Der Traum handelte auch von einem Wüstenvogel mit
+Der Traum handelte auch von einem WÃ¼stenvogel mit
 der Macht, diese neue Zukunfts D'nis zu weben.
 
-Wir fürchten eine solche Macht - sie verändert die 
+Wir fÃ¼rchten eine solche Macht - sie verÃ¤ndert die 
 Menschen.
 
-Yeesha, du bist unser Wüstenvogel. Auf deiner Suche
+Yeesha, du bist unser WÃ¼stenvogel. Auf deiner Suche
 scheinst du dich mehr und mehr von uns zu entfernen.
 Ich hoffe, dass das, was du finden wirst, dich uns 
-wieder näher bringt.
+wieder nÃ¤her bringt.
 
 -Atrus
 """, PtJustify.kLeftJustify ),
@@ -169,7 +170,7 @@ wieder näher bringt.
 
 "islmNickNote":        ( "Nick", 16, (0,0,.3,1), (0,0,0,0), 1, """
 
-Wo zur Hölle ist mein Buch? Wer hat überhaupt etwas da dran zu suchen?!
+Wo zur HÃ¶lle ist mein Buch? Wer hat Ã¼berhaupt etwas da dran zu suchen?!
 
 - Nick 
 

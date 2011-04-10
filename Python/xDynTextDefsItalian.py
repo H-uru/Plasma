@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -81,9 +82,9 @@ in aula""", PtJustify.kCenter ),
 
 Dr. Watson -
 
-Grossi problemi. La casa su Noloben NON è vuota.
-Oggi ho incontrato qualcuno. Il mio D'Ni non è granchè,
-ma ho parlato con lui per un po'. Sì, è un D'Ni e,
+Grossi problemi. La casa su Noloben NON Ã¨ vuota.
+Oggi ho incontrato qualcuno. Il mio D'Ni non Ã¨ granchÃ¨,
+ma ho parlato con lui per un po'. SÃ¬, Ã¨ un D'Ni e,
 come pensavamo, sa molte cose sulle creature.
 MOLTISSIME cose.
 
@@ -98,22 +99,22 @@ Ovviamente dobbiamo vederci subito.
 
 Matthew,
 
-L'ultima serie di documenti che hai mandato era molto interessante. Siccome hai fatto un ottimo lavoro, ho un'altra lista di lavori che vorrei che tu condividessi con la squadra. Come organizzarti è affar tuo.
+L'ultima serie di documenti che hai mandato era molto interessante. Siccome hai fatto un ottimo lavoro, ho un'altra lista di lavori che vorrei che tu condividessi con la squadra. Come organizzarti Ã¨ affar tuo.
 
 
-1. Vorrei più informazioni sulla vita familiare: cerimonie, ecc... Qualsiasi cosa riguardi nascite, matrimoni, eventi culturali. So che abbiamo parecchio materiale originale su questo, quindi qualsiasi cosa trovi è la benvenuta. Finora abbiamo raccolto molto sulla scienza e la tecnologia, ma non abbastanza sulla vita privata di questa gente.
+1. Vorrei piÃ¹ informazioni sulla vita familiare: cerimonie, ecc... Qualsiasi cosa riguardi nascite, matrimoni, eventi culturali. So che abbiamo parecchio materiale originale su questo, quindi qualsiasi cosa trovi Ã¨ la benvenuta. Finora abbiamo raccolto molto sulla scienza e la tecnologia, ma non abbastanza sulla vita privata di questa gente.
 
 2. Abbiamo molte informazioni sulle Gilde, ma raccoglierle tutte in un'area dedicata sarebbe bello.
 
-3. L'Autunno è ovviamente un'area su cui dobbiamo lavorare parecchio. Non sono certo di poterti aiutare con materiale di ricerca, ma viste le informazioni più recenti che stiamo raccogliendo, prima o poi dovremo occuparcene a fondo. Ti consiglio di assegnare qualcuno all'Autunno a tempo pieno.
+3. L'Autunno Ã¨ ovviamente un'area su cui dobbiamo lavorare parecchio. Non sono certo di poterti aiutare con materiale di ricerca, ma viste le informazioni piÃ¹ recenti che stiamo raccogliendo, prima o poi dovremo occuparcene a fondo. Ti consiglio di assegnare qualcuno all'Autunno a tempo pieno.
 
 4. Vai avanti con i Re. Un breve riassunto su tutti i Re sarebbe utile, seguendo la traccia che hai avviato con l'ultima serie.
 
-5. Ci sono ancora degli scritti religiosi da tradurre. Sono i più difficili, ma credo che ci potranno fornire molte informazioni utili.
+5. Ci sono ancora degli scritti religiosi da tradurre. Sono i piÃ¹ difficili, ma credo che ci potranno fornire molte informazioni utili.
 
-6. Abbiamo una montagna di diari provenienti da residenze D'Ni, ecc. Per non parlare delle Età.
+6. Abbiamo una montagna di diari provenienti da residenze D'Ni, ecc. Per non parlare delle EtÃ .
 
-Credo che per ora sia più che abbastanza. Di nuovo, grazie a te e alla tua squadra, fai loro i complimenti per l'ottimo lavoro.
+Credo che per ora sia piÃ¹ che abbastanza. Di nuovo, grazie a te e alla tua squadra, fai loro i complimenti per l'ottimo lavoro.
  
 - Dr. Watson
 """, PtJustify.kLeftJustify ),
@@ -123,9 +124,9 @@ Credo che per ora sia più che abbastanza. Di nuovo, grazie a te e alla tua squad
 
 "JCNote":        ( "Nick", 16, (0,0,0,1), (0,0,0,0), 0, """
 
-Dai un'occhiata a questo. So che il DRC non vuole che li tocchiamo, ma scommetto che anche Watson vorrà sapere come fanno questi cosi a registrarsi con le porte. Non ha senso.
+Dai un'occhiata a questo. So che il DRC non vuole che li tocchiamo, ma scommetto che anche Watson vorrÃ  sapere come fanno questi cosi a registrarsi con le porte. Non ha senso.
 
-E non perderlo. Sono a malapena riuscito a staccarlo dal muro e, quando l'ho fatto, sono morto di paura. Forse la cosa più strana è che quando sono tornato, più tardi, il tessuto che avevo strappato era di nuovo intatto.
+E non perderlo. Sono a malapena riuscito a staccarlo dal muro e, quando l'ho fatto, sono morto di paura. Forse la cosa piÃ¹ strana Ã¨ che quando sono tornato, piÃ¹ tardi, il tessuto che avevo strappato era di nuovo intatto.
 
 - Nick
 """, PtJustify.kLeftJustify ),
@@ -142,7 +143,7 @@ Yeesha,
 
 La scorsa notte tua madre ha avuto un sogno...
 
-Il sogno racconta che D 'ni crescerà nuovamente
+Il sogno racconta che D 'ni crescerÃ  nuovamente
 un giorno. Nuovi seguaci di D 'ni
 ritorneranno dal deserto, chiamati verso
 qualcosa che non comprendono.
@@ -151,12 +152,12 @@ Ma il sogno racconta anche di un uccello del
 deserto con il potere di tessere questo
 nuovo futuro D 'ni... 
 
-Noi temiamo tale potere, poiché cambia le persone.
+Noi temiamo tale potere, poichÃ© cambia le persone.
 
 Yeesha, oh uccello del deserto, la tua
-ricerca sembra condurti sempre più lontano
-da noi. Spero che ciò che troverai ti
-avvicinerà nuovamente.
+ricerca sembra condurti sempre piÃ¹ lontano
+da noi. Spero che ciÃ² che troverai ti
+avvicinerÃ  nuovamente.
 
 -Atrus
 """, PtJustify.kLeftJustify ),
@@ -168,7 +169,7 @@ avvicinerà nuovamente.
 
 "islmNickNote":        ( "Nick", 16, (0,0,.3,1), (0,0,0,0), 1, """
 
-Dove diavolo è il mio libro? Ma soprattutto, perchè qualcuno l'ha preso?
+Dove diavolo Ã¨ il mio libro? Ma soprattutto, perchÃ¨ qualcuno l'ha preso?
 
 - Nick 
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -45,11 +46,11 @@ It seems that Me'emen himself paid little attention to the religious pulse of hi
 
 Once Me'emen felt that Stone Eater and Stone Tooth were no longer needed, he recommended using them to build an underground tunnel connecting The Island to the city proper, and minimizing the need for boat travel. His proposition was not embraced by any means, especially by the upper classes who were living on The Island. Apparently there were a number of protests, for fear of the affect the tunnel could have on The Island. The proposal was also rejected by most of the Guilds, causing Me'emen to not force it. 
 
-In 5500 DE, the first imports from other Ages were linked to the new Uran District, much further from the city. Uran was said to be "a tremendous improvement over the older Nehw'eril…much more advanced…much safer," and there was tremendous celebration on the day of its "opening"*. Security was tight in the new district, as it was revealed later that the Relyimah had uncovered a variety of plots intended to display some of the faction's disagreement with the district. 
+In 5500 DE, the first imports from other Ages were linked to the new Uran District, much further from the city. Uran was said to be "a tremendous improvement over the older Nehw'erilâ€¦much more advancedâ€¦much safer," and there was tremendous celebration on the day of its "opening"*. Security was tight in the new district, as it was revealed later that the Relyimah had uncovered a variety of plots intended to display some of the faction's disagreement with the district. 
 
 In 5540 DE, Me'emen's only son became extremely ill and ended up passing away six months later. As a member of the Guild of Healers, Ashem was often among the first to investigate new Ages to make sure of their safety in relation to disease. As a result of his death, the Age was not approved until a cure could be found. Me'emen considered the actions of his son heroic and changed the name of the Uran district to Ashem'en a year after his death. 
 
-It was said, that the death left Me'emen "deeply saddened…devoid of the excitement he had shown throughout his reign"*. Many said it forced him to the Prophetess Trisari*. Me'emen apparently spent much time with Trisari in his last days and was able to die a content man "because of her"*.
+It was said, that the death left Me'emen "deeply saddenedâ€¦devoid of the excitement he had shown throughout his reign"*. Many said it forced him to the Prophetess Trisari*. Me'emen apparently spent much time with Trisari in his last days and was able to die a content man "because of her"*.
 
 Me'emen died in 5549 DE at the very ripe age of 392 and choose his nephew, probably on recommendation of Trisari, to succeed him.
 

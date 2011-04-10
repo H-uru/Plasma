@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -117,7 +118,7 @@ To get to the other side, looks like one had to walk across the bridge to the ro
 
 The creatures. These things are something out of a horror movie. I've been up here a little while and I don't see them often but when I do, they are scaring me to death. I'm beginning to understand the fences and structures a little better. Perhaps some of them were designed to keep creatures out more than keep visitors in. Don't hang out in these woods, unless you have a big gun. 
 
-Another bridge, to reach the main portion of this place. More security. I will say that the platform between the bridges seems to have eroded. At one time, crossing the bridges was probably a security feature to ensure manageable groups would approach the larger building, one at a time – but I would wager it was still a lot easier than it is now. The erosion to the platform between the bridges has made it a little rougher. I suppose the Maintainers would like it even more in its current condition. 
+Another bridge, to reach the main portion of this place. More security. I will say that the platform between the bridges seems to have eroded. At one time, crossing the bridges was probably a security feature to ensure manageable groups would approach the larger building, one at a time â€“ but I would wager it was still a lot easier than it is now. The erosion to the platform between the bridges has made it a little rougher. I suppose the Maintainers would like it even more in its current condition. 
 
 Mud Rooms
 
