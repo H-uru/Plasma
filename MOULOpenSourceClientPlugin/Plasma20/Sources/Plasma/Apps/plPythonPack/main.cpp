@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsStream.h"
-#include "../plFile/hsFiles.h"
+#include "plFile/hsFiles.h"
 
 #include "PythonInterface.h"
 
