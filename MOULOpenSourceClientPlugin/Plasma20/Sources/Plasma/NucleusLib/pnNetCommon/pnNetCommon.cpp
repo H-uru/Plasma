@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "pnNetCommon.h"
-#include "../pnAddrInfo/pnAddrInfo.h"
+#include "pnAddrInfo/pnAddrInfo.h"
 #ifdef HS_BUILD_FOR_WIN32
 # include "hsWindows.h"
 #elif HS_BUILD_FOR_UNIX

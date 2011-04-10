@@ -31,11 +31,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "plNetGroup.h"
 
-#include "../pnKeyedObject/hsKeyedObject.h"		
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/hsKeyedObject.h"		
+#include "pnKeyedObject/plUoid.h"
 
 
-#include "../../PubUtilLib/plStatusLog/plLoggable.h"
+#include "plStatusLog/plLoggable.h"
 
 #include <stdarg.h>
 

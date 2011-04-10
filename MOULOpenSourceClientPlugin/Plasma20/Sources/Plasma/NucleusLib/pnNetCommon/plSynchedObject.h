@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLSYNCHOBJ_inc
 
 #include "hsTypes.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/plKey.h"
 #include "hsStlUtils.h"
 #include "plNetGroup.h"
 

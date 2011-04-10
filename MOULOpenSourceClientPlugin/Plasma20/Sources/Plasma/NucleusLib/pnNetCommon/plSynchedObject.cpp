@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetApp.h"
 #include "plNetGroup.h"
 #include "hsResMgr.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnMessage/plSDLModifierMsg.h"
-#include "../pnMessage/plSetNetGroupIDMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plSDLModifierMsg.h"
+#include "pnMessage/plSetNetGroupIDMsg.h"
 
 #include <algorithm>
 

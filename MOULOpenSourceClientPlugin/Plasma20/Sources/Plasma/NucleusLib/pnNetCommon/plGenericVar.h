@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsUtils.h"
 #include "hsStlUtils.h"
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 
 class hsStream;
 

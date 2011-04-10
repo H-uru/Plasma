@@ -26,12 +26,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSynchedValue.h"
 
 #ifdef USE_SYNCHED_VALUES
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "hsBitVector.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 #define ISaveOrLoadSimpleType() \
 { \
