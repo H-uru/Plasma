@@ -11,7 +11,6 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 
 if(WIN32)
 	add_definitions(-DWIN32)
-	add_definitions(-DMS_NO_COREDLL)
 endif(WIN32)
 
 set(pfPython_SOURCES
