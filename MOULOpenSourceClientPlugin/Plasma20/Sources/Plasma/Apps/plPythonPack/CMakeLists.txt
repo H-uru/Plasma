@@ -13,7 +13,9 @@ set(plPythonPack_HEADERS
 )
 
 add_executable(plPythonPack ${plPythonPack_SOURCES} ${plPythonPack_HEADERS})
-target_link_libraries(plPythonPack ${PYTHON_LIBRARY} CoreLib CoreLibExe plFile)
+target_link_libraries(plPythonPack CoreLib CoreLibExe plFile)
+target_link_libraries(plPythonPack debug ${PYTHON_DEBUG_LIBRARY})
+target_link_libraries(plPythonPack optimized ${PYTHON_LIBRARY})
 
 source_group("Source Files" FILES ${plPythonPack_SOURCES})
 source_group("Header Files" FILES ${plPythonPack_HEADERS})
