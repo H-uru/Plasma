@@ -487,7 +487,7 @@ static void ProcessManifestEntry (void * param, ENetError error) {
 	}
 
 	// if we have a file that was cached the MD5 check will be really fast throwing off our approx time remaining.
-	dword t = TimeGetTime() / kTimeIntervalsPerMs - start;
+	dword t = (dword)(TimeGetTime() / kTimeIntervalsPerMs - start);
 	if(t < 25)
 	{
 		// cached file
@@ -561,7 +561,7 @@ static void ProcessManifest (void * param) {
 		}
 	}
 	
-	ProcessManifestEntryParam::startTime = TimeGetTime() / kTimeIntervalsPerMs;
+	ProcessManifestEntryParam::startTime = (double)(TimeGetTime() / kTimeIntervalsPerMs);
 	
 	for (unsigned i = 0; i < entryCount && s_running; ++i){
 		ProcessManifestEntry(&params[i], kNetSuccess);
