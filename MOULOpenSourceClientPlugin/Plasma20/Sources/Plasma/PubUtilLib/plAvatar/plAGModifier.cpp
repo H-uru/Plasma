@@ -227,12 +227,12 @@ plAGChannel * plAGModifier::MergeChannel(plAGApplicator *app,
 // DETACHCHANNEL
 hsBool plAGModifier::DetachChannel(plAGChannel * channel)
 {
-	plAppTable::iterator i = fApps.begin();
+	size_t i = 0;
 	hsBool done = false;
 
-	for( ; i != fApps.end(); i++)
+	for( ; i != fApps.size(); i++)
 	{
-		plAGApplicator *app = *i;
+		plAGApplicator *app = fApps[i];
 		plAGChannel *existingChannel = app->GetChannel();
 		if(existingChannel)
 		{
@@ -243,9 +243,8 @@ hsBool plAGModifier::DetachChannel(plAGChannel * channel)
 				app->SetChannel(replacementChannel);
 				if( ! replacementChannel && app->AutoDelete())
 				{
-					plAppTable::iterator old = i;
+					fApps.erase(fApps.begin()+i);
 					i--;
-					fApps.erase(old);
 					delete app;
 				}
 				done = true;
