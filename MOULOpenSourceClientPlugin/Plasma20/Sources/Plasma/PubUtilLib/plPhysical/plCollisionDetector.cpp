@@ -624,7 +624,7 @@ void plObjectInVolumeDetector::IHandleEval(plEvalMsg* pEval)
 {
 		plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
 		fWaitingForEval = false;
-		for(bookKeepingList::iterator it= (--fCollisionList.end());it!=(--fCollisionList.begin()); it--)
+		for(bookKeepingList::iterator it= fCollisionList.begin();it!=fCollisionList.end(); it++)
 		{
 			bool alreadyInside;
 			ResidentSet::iterator HitIt;
