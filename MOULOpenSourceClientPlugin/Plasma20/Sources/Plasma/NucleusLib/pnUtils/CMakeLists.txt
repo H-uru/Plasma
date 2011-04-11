@@ -74,9 +74,9 @@ if(WIN32)
 	)
 else()
 	set(pnUtils_UNIX
-		Private/Unix/pnUteUxStr.cpp
-		Private/Unix/pnUteUxSync.cpp
-		Private/Unix/pnUteUxUuid.cpp
+		Private/Unix/pnUtUxStr.cpp
+		Private/Unix/pnUtUxSync.cpp
+		Private/Unix/pnUtUxUuid.cpp
 	)
 endif()
 
