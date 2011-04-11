@@ -49,7 +49,6 @@ import string
 import xCensor
 import xLinkingBookDefs
 import xBookGUIs
-import whrandom
 import re   #used for CoD Fix
 import os   #used for saving pictures locally
 import glob #used for saving pictures locally
@@ -909,11 +908,11 @@ class xKI(ptModifier):
         self.CheckKILight()
 
         AgeName = PtGetAgeName()
-        print "xKI.OnServerInitComplete(): age = ",AgeName
+        PtDebugPrint("xKI.OnServerInitComplete(): age = ", AgeName, level=kDebugDumpLevel)
 
         #set up Jalak GUI
         if AgeName == "Jalak":
-            print "loading Jalak GUI dialog"
+            PtDebugPrint("loading Jalak GUI dialog", level=kWarningLevel)
             PtLoadDialog("jalakControlPanel",self.key)
             KIJalakMiniIconOn.run(self.key,state="on",netPropagate=0)
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).show()
@@ -927,14 +926,14 @@ class xKI(ptModifier):
     def CheckKILight(self):
         timeRemaining = self.GetKILightChron()
         if not timeRemaining:
-            print "had KI light, but it's currently off"
+            PtDebugPrint("had KI light, but it's currently off", level=kDebugDumpLevel)
             self.DoKILight(0,1)
         elif timeRemaining > 0:
-            print "have KI light, time remaining = ",timeRemaining
+            PtDebugPrint("have KI light, time remaining = ",timeRemaining, level=kDebugDumpLevel)
             self.DoKILight(1,1,timeRemaining)
             self.SetKILightChron(0)
         else:
-            print "no KI light"
+            PtDebugPrint("no KI light", level=kDebugDumpLevel)
 
 
     def GetKILightChron(self):
@@ -945,7 +944,7 @@ class xKI(ptModifier):
             remaining = string.atoi(entryValue)
             return remaining
         else:
-            print "no KI light"
+            PtDebugPrint("no KI light", level=kDebugDumpLevel)
             return -1
 
 
@@ -957,7 +956,7 @@ class xKI(ptModifier):
             oldVal = string.atoi(entryValue)
             if remaining == oldVal:
                 return
-            print "set KI light chron to: ",remaining
+            PtDebugPrint("set KI light chron to: ", remaining, level=kDebugDumpLevel)
             entry.chronicleSetValue("%d" % (remaining))
             entry.save()
 
@@ -972,22 +971,22 @@ class xKI(ptModifier):
         avatarObj = avatarKey.getSceneObject()
         respList = avatarObj.getResponders()
         if len(respList) > 0:
-            PtDebugPrint("xKI.DoKILight(): ...responder list:")
+            PtDebugPrint("xKI.DoKILight(): ...responder list:", level=kDebugDumpLevel)
             for resp in respList:
                 PtDebugPrint("       %s" % (resp.getName()))
                 if resp.getName() == thisResp:
-                    PtDebugPrint("found KI light resp: %s" % (thisResp))
+                    PtDebugPrint("found KI light resp: %s" % (thisResp), level=kDebugDumpLevel)
                     atResp = ptAttribResponder(42)
                     atResp.__setvalue__(resp)
                     atResp.run(self.key,avatar=LocalAvatar,fastforward=ff)
                     if state:
                         PtAtTimeCallback(self.key,remaining,kLightStopID)
-                        print "xKI.DoKILight(): light was on in previous age, turning on for remaining ",remaining," seconds"
+                        PtDebugPrint("xKI.DoKILight(): light was on in previous age, turning on for remaining ",remaining," seconds", level=kWarningLevel)
                         curTime = PtGetDniTime()
                         lightStop = (remaining + curTime)
                         lightOn = 1
                     else:
-                        print "xKI.DoKILight(): light is shut off, updating chron"
+                        PtDebugPrint("xKI.DoKILight(): light is shut off, updating chron", level=kWarningLevel)
                         self.SetKILightChron(remaining)
                         lightOn = 0
                         PtSetLightAnimStart(avatarKey, KILightObjectName, false)
@@ -1012,10 +1011,10 @@ class xKI(ptModifier):
         try:
             local = PtGetLocalAvatar()
         except:
-            print"xKI.BeginAgeUnLoad()-->\tfailed to get local avatar"
+            PtDebugPrint("xKI.BeginAgeUnLoad()-->\tfailed to get local avatar")
             return
         if (local == avObj): 
-            print "xKI.BeginAgeUnLoad()-->\tavatar page out"
+            PtDebugPrint("xKI.BeginAgeUnLoad()-->\tavatar page out", level=kDebugDumpLevel)
             curTime = PtGetDniTime()
             timeRemaining = (lightStop - curTime)
             if timeRemaining > 0:
@@ -1071,7 +1070,7 @@ class xKI(ptModifier):
         PtUnloadDialog("KIMiniMarkers")
 
         if AgeName == "Jalak":
-            print "unloading Jalak GUI dialog"
+            PtDebugPrint("unloading Jalak GUI dialog", level=kWarningLevel)
             KIJalakMiniIconOn.run(self.key,state="off",netPropagate=0,fastforward=1)
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).disable()
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).hide()
@@ -1108,12 +1107,12 @@ class xKI(ptModifier):
         global kSelectedMGType
         
         if kSelectedMGType != tagID and tagID and kSelectedMGType != 0:
-            print "KI: Old Marker Game Type ID:", kSelectedMGType
+            PtDebugPrint("KI: Old Marker Game Type ID:", kSelectedMGType, level=kDebugDumpLevel)
             ptGUIControlButton(dlgObj.dialog.getControlFromTag(kSelectedMGType)).enable()
             self.ChangeMarkerTypeColor(dlgObj, kSelectedMGType)
 
         kSelectedMGType = tagID
-        print "KI: Selecting New Game Type:", kSelectedMGType
+        PtDebugPrint("KI: Selecting New Game Type:", kSelectedMGType, level=kDebugDumpLevel)
         ptGUIControlButton(dlgObj.dialog.getControlFromTag(kSelectedMGType)).disable()
         self.ChangeMarkerTypeColor(dlgObj, tagID)
 
@@ -1190,13 +1189,13 @@ class xKI(ptModifier):
         for script in pythonScripts:
             if script.getName() == kJalakPythonComponent:
                 JalakScript = script
-                print "xKI.JalakGUIInit(): found Jalak's python component: ",kJalakPythonComponent
+                PtDebufPrint("xKI.JalakGUIInit(): found Jalak's python component: ",kJalakPythonComponent, level=kDebugDumpLevel)
                 return
-        print "xKI.JalakGUIInit():  ERROR! did NOT find Jalak's python component: ",kJalakPythonComponent
+        PtDebugPrint("xKI.JalakGUIInit():  ERROR! did NOT find Jalak's python component: ",kJalakPythonComponent)
 
 
     def JalakGUIToggle(self,ff=0):
-        print "xKI.JalakGUIToggle()"
+        PtDebugPrint("xKI.JalakGUIToggle()", level=kDebugDumpLevel)
         global JalakGUIState
         ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).disable()
         if AgeName != "Jalak":
@@ -1587,7 +1586,7 @@ class xKI(ptModifier):
                 if type(jnode) != type(None):
                     # is it named the right one?
                     if jnode.getGameName() == gameName:
-                        print "Found %s marker game in folder %s" % (folder.folderGetName(),jnode.folderGetName())
+                        PtDebugPrint("Found %s marker game in folder %s" % (folder.folderGetName(),jnode.folderGetName()), level=kDebugDumpLevel)
                         return jnode
         return None
 #Tye: The previous two functions may not be necessary! (please check)
@@ -2912,12 +2911,12 @@ class xKI(ptModifier):
             if event == kDialogLoaded:
                 kMarkerGameDefaultColor = ptGUIControlTextBox(KICreateMarkerGameGUI.dialog.getControlFromTag(kMarkerGameLabel1)).getForeColor()
                 kMarkerGameSelectedColor = ptGUIControlTextBox(KICreateMarkerGameGUI.dialog.getControlFromTag(kMarkerGameLabel1)).getSelectColor()
-                print "xKI: Marker Default Color: ", kMarkerGameDefaultColor
-                print "xKI: Marker Selected Color: ", kMarkerGameSelectedColor
-                print "xKI: Marker Game Dialog Loaded"
+                PtDebugPrint("xKI: Marker Default Color: ", kMarkerGameDefaultColor, level=kDebugDumpLevel)
+                PtDebugPrint("xKI: Marker Selected Color: ", kMarkerGameSelectedColor, level=kDebugDumpLevel)
+                PtDebugPrint("xKI: Marker Game Dialog Loaded", level=kDebugDumpLevel)
             elif event == kShowHide:
                 self.initMarkerGameGUI(KICreateMarkerGameGUI)
-                print "xKI: Marker Game Dialog is showing or hiding."
+                PtDebugPrint("xKI: Marker Game Dialog is showing or hiding.", level=kDebugDumpLevel)
             elif event == kAction or event == kValueChanged:
                 if tagID == kMarkerGameType1 or tagID == kMarkerGameType2 or tagID == kMarkerGameType3:
                     self.SelectMarkerType(KICreateMarkerGameGUI, tagID)
@@ -2930,7 +2929,7 @@ class xKI(ptModifier):
                         markerGameType = kMarkerGameStates[kSelectedMGType]
                     except:
                         markerGameType = 0
-                        print "xKI: Couldn't find marker game type, so setting it to Quest Mode."
+                        PtDebugPrint("xKI: Couldn't find marker game type, so setting it to Quest Mode.", level=kWarningLevel)
                     #Create the marker game display...
                     #We will await a return KI message and then, once finished, will call IFinishCreateMarkerFolder()
                     self.markerGameDisplay = xMarkerGameKIDisplay(self, "", markerGameType, markerGameName)
@@ -3314,7 +3313,7 @@ class xKI(ptModifier):
                 self.JalakGUIInit()
             elif event == kShowHide:
                 if control.isEnabled():
-                    print "show/hide"
+                    PtDebugPrint("show/hide", level=kDebugDumpLevel)
                     #control.show()
             elif event == kAction or event == kValueChanged:
                 if type(control) != type(None):
@@ -3500,11 +3499,11 @@ class xKI(ptModifier):
             KIYesNo.dialog.show()
         elif command == kAddPlayerDevice:
             PtDebugPrint("KI: add device %s to player list" % (value),level=kDebugDumpLevel)
-            print "Value:", value
+            PtDebugPrint("Value:", value, level=kDebugDumpLevel)
             if value.find("<p>") != -1:
                 kPelletImager = value.rstrip("<p>")
                 ptGUIControlButton(KIMini.dialog.getControlFromTag(kPelletScoreButton)).show()
-                print "kPelletImager", kPelletImager
+                PtDebugPrint("kPelletImager", kPelletImager, level=kDebugDumpLevel)
                 return
         # KI shortcut commands
             try:
@@ -4235,16 +4234,6 @@ class xKI(ptModifier):
             # update the time of day if the BigKI is up
             if BigKI.dialog.isEnabled():
                 self.IBigKISetChanging()
-####===> for testing only
-#            # play with the lights just for a test
-#            # pick random indicator
-#            indicator = whrandom.randrange(kminiMarkerIndicator01,kminiMarkerIndicatorLast+1)
-#            # pick random light
-#            lcolor = whrandom.choice(gMarkerColors.values())
-#            # light it
-#            mcb = ptGUIControlProgress(KIMini.dialog.getControlFromTag(indicator))
-#            mcb.setValue(lcolor)
-####===> for testing only
         elif id == kMarkerGameTimer:
             if type(CurrentPlayingMarkerGame) != type(None):
                 CurrentPlayingMarkerGame.updateGameTime()
@@ -4252,7 +4241,7 @@ class xKI(ptModifier):
         elif id == kAlertHideTimer:
             self.IAlertStop()
         elif id == kTakeSnapShot:
-            print "*-*-*- Start screen capture -*-*-*-*"
+            PtDebugPrint("*-*-*- Start screen capture -*-*-*-*")
             PtStartScreenCapture(self.key)
         elif id == kDumpLogsTimer:
             if (PtDumpLogs(self.logDumpDest)):
@@ -4282,7 +4271,7 @@ class xKI(ptModifier):
 
 
         "The screen capture image is ready to stow"
-        print "#-#-#- capture screen received -#-#-#-#"
+        PtDebugPrint("#-#-#- capture screen received -#-#-#-#")
         # create a journal image using a screen shot
         self.IBigKICreateJournalImage(image)
         # only show the KI if there isn't a dialog in the way
@@ -4323,7 +4312,7 @@ class xKI(ptModifier):
         basePath = PtGetUserPath() + U"\\" + kImageDirectory + U"\\"
         gImageFileSearch = ((basePath + kImageFileNameTemplate) + U'*.jpg')
         if not PtCreateDir(basePath):
-            print U"xKI::OnScreenCaptureDone(): Unable to create \"" + basePath + "\" directory. Image not saved to disk."
+            PtDebugPrint(U"xKI::OnScreenCaptureDone(): Unable to create \"" + basePath + "\" directory. Image not saved to disk.")
             return
         
         found = 0
@@ -4338,7 +4327,7 @@ class xKI(ptModifier):
             else:
                 found = 1
         
-        print U"xKI::OnScreenCaptureDone(): Saving image to \"" + tryName + "\""
+        PtDebugPrint(U"xKI::OnScreenCaptureDone(): Saving image to \"" + tryName + "\"", level=kWarningLevel)
         image.saveAsJPEG(tryName, 90)
 
     def OnMemberUpdate(self):
@@ -4757,7 +4746,7 @@ class xKI(ptModifier):
                 error = 0
                 if type(entry) != type(None):
                     gameString = entry.chronicleGetValue()
-                    print "xKI:GZ - game string is: %s" % (gameString)
+                    PtDebufPrint("xKI:GZ - game string is: %s" % (gameString), level=kWarningLevel)
                     args = gameString.split()
                     if len(args) == 3:
                         try:
@@ -4767,13 +4756,13 @@ class xKI(ptModifier):
 
                             #Check for corrupted entry
                             if len(colors) != 2 or len(outof) !=2:
-                                print "xKI.GZ DetermineGZ: Invalid color field or marker field: %s" %(gameString)
+                                PtDebugPrint("xKI.GZ DetermineGZ: Invalid color field or marker field: %s" %(gameString))
                                 raise ValueError                     
 
 
                             #Check for invalid entry                
                             if (colors[0] == 'red' or colors[0] == 'green') and string.atoi(outof[1]) > 15:
-                                print "xKI.GZ DetermineGZ: Invalid marker number entry (i.e. 1515 bug): %s" %(gameString)
+                                PtDebugPrint("xKI.GZ DetermineGZ: Invalid marker number entry (i.e. 1515 bug): %s" %(gameString))
                                 raise ValueError
 
                             gMarkerGottenColor = colors[0]
@@ -4783,10 +4772,10 @@ class xKI(ptModifier):
 
                             return
                         except:
-                            print "xKI:GZ - error trying to read GZGames Chronicle"
+                            PtDebugPrint("xKI:GZ - error trying to read GZGames Chronicle")
                             error = 1
                     else:
-                        print "xKI:GZ - error GZGames string formation error"
+                        PtDebugPrint("xKI:GZ - error GZGames string formation error")
                         error = 1
                 # if bad update for any reason, reset to null game
                 gGZPlaying = 0
@@ -4835,7 +4824,7 @@ class xKI(ptModifier):
 
                 #Check for corrupted entry
                 if len(colors) != 2 or len(outof) !=2:
-                    print "xKI.GZ Flash: Invalid color field or marker field: %s" %(gameString)
+                    PtDebugPrint("xKI.GZ Flash: Invalid color field or marker field: %s" %(gameString))
                     raise ValueError
 
                 MarkerGottenColor = colors[0]
@@ -4845,7 +4834,7 @@ class xKI(ptModifier):
 
                 #Check for invalid entry                
                 if (colors[0] == 'red' or colors[0] == 'green') and MarkerToGetNumber > 15:
-                    print "xKI.GZ Flash: Invalid marker number entry (i.e. 1515 bug): %s" %(gameString)
+                    PtDebugPrint("xKI.GZ Flash: Invalid marker number entry (i.e. 1515 bug): %s" %(gameString))
                     raise ValueError
 
                 
@@ -4859,21 +4848,21 @@ class xKI(ptModifier):
                 gMarkerToGetNumber = MarkerToGetNumber
                 return
             except:
-                print "xKI:GZ FLASH - Error trying to read GZGames input string....  Checking Chronicle for corruption"
+                PtDebugPrint("xKI:GZ FLASH - Error trying to read GZGames input string....  Checking Chronicle for corruption")
         else:
-            print "xKI:GZ FLASH - Error GZGames string formation error.... Checking Chronicle for corruption"
+            PtDebugPrint("xKI:GZ FLASH - Error GZGames string formation error.... Checking Chronicle for corruption")
 
         vault = ptVault()
         entry = vault.findChronicleEntry(kChronicleGZGames)
         if type(entry) != type(None):
             if gameString == entry.chronicleGetValue():
-                print "xKI:GZ Flash - ****Error: Vault Corrupted: trying to gracefully reset to a default state****"
+                PtDebugPrint("xKI:GZ Flash - ****Error: Vault Corrupted: trying to gracefully reset to a default state****")
                 import grtzKIMarkerMachine
                 grtzKIMarkerMachine.ResetMarkerGame()
                 return
 
 
-        print "xKI:GZ Flash - Error: Chronicle not corrupted, proceeding (this implies an error in code somewhere)!"
+        PtDebugPrint("xKI:GZ Flash - Error: Chronicle not corrupted, proceeding (this implies an error in code somewhere)!")
 
 
     def IUpdateGZGamesChonicles(self):
@@ -6357,7 +6346,7 @@ class xKI(ptModifier):
                 return None
             # we are using a timer here so that we can print out some last status messages to the log before
             # the log is dumped to it's new home
-            print "-- Logs dumped to: \"" + destination + "\" at " + time.strftime("%d %b %Y %H:%M:%S (GMT)", time.gmtime())
+            PtDebugPrint("-- Logs dumped to: \"" + destination + "\" at " + time.strftime("%d %b %Y %H:%M:%S (GMT)", time.gmtime()))
             self.logDumpDest = destination # so the timer can get at it
             PtAtTimeCallback(self.key,0.25,kDumpLogsTimer)
             return None
@@ -6370,7 +6359,7 @@ class xKI(ptModifier):
                 return None
             # we are using a timer here so that we can print out some last status messages to the log before
             # the log is dumped to it's new home
-            print "-- Logs dumped to: \"" + destination + "\" at " + time.strftime("%d %b %Y %H:%M:%S (GMT)", time.gmtime())
+            PtDebugPrint("-- Logs dumped to: \"" + destination + "\" at " + time.strftime("%d %b %Y %H:%M:%S (GMT)", time.gmtime()))
             self.logDumpDest = destination # so the timer can get at it
             PtAtTimeCallback(self.key,0.25,kDumpLogsTimer)
             return None
@@ -6767,7 +6756,7 @@ class xKI(ptModifier):
             if message.find("Uru has been updated.") > -1:
                 return
         
-        print "xKI:IAddRTChat: message=%s"%(message),player,cflags
+        PtDebugPrint("xKI:IAddRTChat: message=%s"%(message),player,cflags, level=kDebugDumpLevel)
         
         # Begin Fix for CoD --> Character of Doom
         (message, RogueCount) = re.subn('[\x00-\x08\x0a-\x1f]', '', message)
@@ -7413,7 +7402,7 @@ class xKI(ptModifier):
     def IRefreshMiniKIMarkerDisplay(self):
         global PhasedKICreateMarkerGame
         "refresh the display on the miniKI indicator bars"
-        print "xKI:GZ: Refreshing MarkerDisplay  %d:%d" % (gMarkerGottenNumber,gMarkerToGetNumber)
+        PtDebugPrint("xKI:GZ: Refreshing MarkerDisplay  %d:%d" % (gMarkerGottenNumber,gMarkerToGetNumber), level=kDebugDumpLevel)
         if theKILevel > kMicroKI and not PtIsSinglePlayerMode():
             if ((gMarkerGottenNumber == gMarkerToGetNumber) and ((gMarkerToGetNumber % 25) == 0)):
                 xMyMaxMarkers = gMarkerToGetNumber
@@ -7435,7 +7424,7 @@ class xKI(ptModifier):
                     else:
                         mcb.setValue(gMarkerColors[gMarkerGottenColor])
                 except LookupError:
-                    print "xKI:GZ - couldn't find color - defaulting to off"
+                    PtDebugPrint("xKI:GZ - couldn't find color - defaulting to off", level=kWarningLevel)
                     mcb.setValue(gMarkerColors['off'])
             btnmtDrip = ptGUIControlButton(KIMini.dialog.getControlFromTag(kminiGZDrip))
             btnmtActive = ptGUIControlButton(KIMini.dialog.getControlFromTag(kminiGZActive))
@@ -8756,7 +8745,10 @@ class xKI(ptModifier):
                 ref = BKContentList[idx]
                 if type(ref) != type(None):
                     if type(ref.getSaver()) == type(None) or ref.getSaverID() == 0:
-                        print "Tye: They still haven't fixed getSaver() and getSaverID()!"
+                        # Removed the following print because spitting out this message 2,000
+                        # times causes lag out the wazoo. Praise Rand that it's fixed!
+                        # If you have any objections, stuff it, fool.
+                        #print "Tye: They still haven't fixed getSaver() and getSaverID()!"
                         continue
 
                     if (OnlyGetPMsFromBuddies and not buddies.playerlistHasPlayer(ref.getSaverID())) or ignores.playerlistHasPlayer(ref.getSaverID()):
@@ -10264,10 +10256,10 @@ class xKI(ptModifier):
         scoreList = ptScoreMgr().getPlayerScores("PelletDrop")
         if scoreList:
             score = scoreList[0].getValue()
-            print "xKI.GetPelletKIScore(): pellet score = ",score
+            PtDebugPrint("xKI.GetPelletKIScore(): pellet score = ",score, level=kDebugDumpLevel)
             return score
         else:
-            print "xKI.GetPelletKIScore(): no pellets dropped yet, will show default score of '000'"
+            PtDebugPrint("xKI.GetPelletKIScore(): no pellets dropped yet, will show default score of '000'", level=kWarningLevel)
             return -1
 
 
@@ -10290,7 +10282,7 @@ class xKI(ptModifier):
             self.ITransferPelletScore(pelletscore)
 
             hoodinfoupdate = PtFindActivator("PythHoodInfoImagerUpdater")
-            print "hoodinfoupdate: ", hoodinfoupdate
+            PtDebugPrint("hoodinfoupdate: ", hoodinfoupdate, level=kDebugDumpLevel)
             if hoodinfoupdate:
                 notify = ptNotify(self.key)
                 notify.clearReceivers()
@@ -10301,7 +10293,7 @@ class xKI(ptModifier):
                 sname = "Score=%s" % (PtGetLocalPlayer().getPlayerName())
                 notify.addVarNumber(sname, pelletscore)
                 notify.send()
-                print "sending score notify: ", sname, " ", pelletscore
+                PtDebugPrint("sending score notify: ", sname, " ", pelletscore, level=kDebugDumpLevel)
 
             
     def ITransferPelletScore(self, pelletscore):
@@ -10309,34 +10301,34 @@ class xKI(ptModifier):
         hoodScoreList = ptScoreMgr().getCurrentAgeScores("PelletDrop")
         if hoodScoreList:
             hoodScoreID = hoodScoreList[0].getScoreID()
-            print "Got the Hood Score ID from existing score"
+            PtDebugPrint("Got the Hood Score ID from existing score", level=kDebugDumpLevel)
         else:
             newHoodScore = ptScoreMgr().createCurrentAgeScore("PelletDrop", PtGameScoreTypes.kAccumulative, 0)
             hoodScoreID = newHoodScore.getScoreID()
-            print "Got the Hood Score ID from new score"
+            PtDebugPrint("Got the Hood Score ID from new score", level=kDebugDumpLevel)
 
         ##Check for total score
         totalScoreList = ptScoreMgr().getPlayerScores("PelletTotal")
         if totalScoreList:
             oldTotal = totalScoreList[0].getValue()
-            print "Old Total Pellet Score:", oldTotal
+            PtDebugPrint("Old Total Pellet Score:", oldTotal, level=kDebugDumpLevel)
             newpoints = totalScoreList[0].addPoints(pelletscore)
             currentTotal = totalScoreList[0].getValue()
-            print "Current Total Pellet Score:", currentTotal
+            PtDebugPrint("Current Total Pellet Score:", currentTotal, level=kDebugDumpLevel)
             
         else:
             pelletTotalScoreNew = ptScoreMgr().createPlayerScore("PelletTotal", PtGameScoreTypes.kAccumulative, pelletscore)
             if pelletTotalScoreNew == None:
-                print "hmm, initial total score says it's none, we've got a problem"            
+                PtDebugPrint("hmm, initial total score says it's none, we've got a problem")            
                 
         ##Reset Current Pellet Score
         scoreList = ptScoreMgr().getPlayerScores("PelletDrop")
         if scoreList:
             resetPelletScore = scoreList[0].transferPoints(hoodScoreID,scoreList[0].getValue())
             if resetPelletScore:
-                print "Score Successfully reset."
+                PtDebugPrint("Score Successfully reset.", level=kDebugDumpLevel)
             else:
-                print "Score had a problem resetting."
+                PtDebugPrint("Score had a problem resetting.")
     
 
 ################################################################
