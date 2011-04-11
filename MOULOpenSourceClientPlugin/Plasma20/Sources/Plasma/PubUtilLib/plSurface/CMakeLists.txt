@@ -3,7 +3,9 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-include_directories(${Bink_INCLUDE_DIR})
+if(Bink_SDK_AVAILABLE)
+	include_directories(${Bink_INCLUDE_DIR})
+endif()
 
 set(plSurface_SOURCES
 	hsGMaterial.cpp
