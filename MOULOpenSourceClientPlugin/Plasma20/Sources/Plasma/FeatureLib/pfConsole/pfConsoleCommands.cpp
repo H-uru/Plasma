@@ -118,7 +118,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plPageTreeMgr.h"
 #include "plScene/plPostEffectMod.h"
 #include "pnMessage/plNodeRefMsg.h"
-//#include "../pnMessage/plWarpMsg.h"
+//#include "pnMessage/plWarpMsg.h"
 #include "hsResMgr.h"
 
 #include "plParticleSystem/plParticleSystem.h"

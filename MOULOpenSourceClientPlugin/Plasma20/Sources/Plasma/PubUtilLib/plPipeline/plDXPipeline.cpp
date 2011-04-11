@@ -41,7 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <d3d9.h>
 #include <ddraw.h>
 #include <d3dx9mesh.h>
-#include <dxerr9.h>
+
+#ifdef DX_OLD_SDK
+    #include <dxerr9.h>
+    #define DXGetErrorString9 DXGetErrorString
+#else
+    #include <dxerr.h>
+#endif
 
 #include "hsWinRef.h"
 
@@ -11806,7 +11812,7 @@ void	plDXPipeline::ISetErrorMessage( char *errStr )
 // Convert the last D3D error code to a string (probably "Conflicting Render State").
 void	plDXPipeline::IGetD3DError()
 {
-	sprintf( fSettings.fErrorStr, "D3DError : %s", (char *)DXGetErrorString9( fSettings.fDXError ) );
+	sprintf( fSettings.fErrorStr, "D3DError : %s", (char *)DXGetErrorString( fSettings.fDXError ) );
 }
 
 // IShowErrorMessage /////////////////////////////////////////////////////////////

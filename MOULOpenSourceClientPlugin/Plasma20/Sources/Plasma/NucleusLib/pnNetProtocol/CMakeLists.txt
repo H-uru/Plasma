@@ -18,28 +18,28 @@ set(pnNetProtocol_PRIVATE
 )
 
 set(pnNetProtocol_PROTO_CLI2AUTH
-	Private/Protocols/CLi2Auth/pnNpCli2Auth.h
-	Private/Protocols/CLi2Auth/pnNpCli2Auth.cpp
+	Private/Protocols/Cli2Auth/pnNpCli2Auth.h
+	Private/Protocols/Cli2Auth/pnNpCli2Auth.cpp
 )
 
 set(pnNetProtocol_PROTO_CLI2CSR
-	Private/Protocols/CLi2Csr/pnNpCli2Csr.h
-	Private/Protocols/CLi2Csr/pnNpCli2Csr.cpp
+	Private/Protocols/Cli2Csr/pnNpCli2Csr.h
+	Private/Protocols/Cli2Csr/pnNpCli2Csr.cpp
 )
 
 set(pnNetProtocol_PROTO_CLI2FILE
-	Private/Protocols/CLi2File/pnNpCli2File.h
-	Private/Protocols/CLi2File/pnNpCli2File.cpp
+	Private/Protocols/Cli2File/pnNpCli2File.h
+	Private/Protocols/Cli2File/pnNpCli2File.cpp
 )
 
 set(pnNetProtocol_PROTO_CLI2GAME
-	Private/Protocols/CLi2Game/pnNpCli2Game.h
-	Private/Protocols/CLi2Game/pnNpCli2Game.cpp
+	Private/Protocols/Cli2Game/pnNpCli2Game.h
+	Private/Protocols/Cli2Game/pnNpCli2Game.cpp
 )
 
 set(pnNetProtocol_PROTO_CLI2GK
-	Private/Protocols/CLi2GateKeeper/pnNpCli2GateKeeper.h
-	Private/Protocols/CLi2GateKeeper/pnNpCli2GateKeeper.cpp
+	Private/Protocols/Cli2GateKeeper/pnNpCli2GateKeeper.h
+	Private/Protocols/Cli2GateKeeper/pnNpCli2GateKeeper.cpp
 )
 
 set(pnNetProtocol_PROTO_SRV2DB
