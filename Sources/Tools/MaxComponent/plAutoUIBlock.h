@@ -30,21 +30,21 @@ class plComponentClassDesc;
 class plAutoUIBlock : public plAutoUIBase
 {
 protected:
-	int fVersion;
-	bool fIsMultiModifier;
+    int fVersion;
+    bool fIsMultiModifier;
 
 public:
-	plAutoUIBlock(plComponentClassDesc *cd, int blockID, const char *name, int version);
+    plAutoUIBlock(plComponentClassDesc *cd, int blockID, const char *name, int version);
 
-	void SetMultiModifierFlag(bool flag) { fIsMultiModifier=flag; }
-	int NumParams();
-	plAutoUIParam *GetParam(int idx);
+    void SetMultiModifierFlag(bool flag) { fIsMultiModifier=flag; }
+    int NumParams();
+    plAutoUIParam *GetParam(int idx);
 
-	IParamBlock2 *CreatePB();
-	
-	int GetBlockID();
+    IParamBlock2 *CreatePB();
+    
+    int GetBlockID();
 
-	int GetVersion() { return fVersion;	}
+    int GetVersion() { return fVersion; }
 
-	bool IsMultiModifier() { return fIsMultiModifier; }
+    bool IsMultiModifier() { return fIsMultiModifier; }
 };

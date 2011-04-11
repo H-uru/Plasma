@@ -30,73 +30,73 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plTrackBar : public plControl
 {
 public:
-	DECLARE_WINDOWSUBCLASS(plTrackBar,plControl)
+    DECLARE_WINDOWSUBCLASS(plTrackBar,plControl)
 
-	plDelegate fThumbTrackDelegate;
-	plDelegate fThumbPositionDelegate;
+    plDelegate fThumbTrackDelegate;
+    plDelegate fThumbPositionDelegate;
 
-	plTrackBar()
-	{}
-	plTrackBar( plWindow * inOwner, int inId=0, WNDPROC inSuperProc=nil )
-	: plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
-	{}
+    plTrackBar()
+    {}
+    plTrackBar( plWindow * inOwner, int inId=0, WNDPROC inSuperProc=nil )
+    : plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
+    {}
 
-	void OpenWindow( bool Visible )
-	{
-		PerformCreateWindowEx
-		(
-			WS_EX_CLIENTEDGE,
+    void OpenWindow( bool Visible )
+    {
+        PerformCreateWindowEx
+        (
+            WS_EX_CLIENTEDGE,
             nil,
             WS_CHILD | TBS_HORZ | TBS_AUTOTICKS | TBS_BOTTOM | (Visible?WS_VISIBLE:0),
             0, 0,
-			0, 0,
+            0, 0,
             *fOwnerWindow,
             (HMENU)fControlID,
             plWndCtrls::Instance()
-		);
-	}
+        );
+    }
 
-	bool InterceptControlCommand( unsigned int Message, unsigned int wParam, LONG lParam )
-	{
-		if     ( Message==WM_HSCROLL && LOWORD(wParam)==TB_THUMBTRACK ) {fThumbTrackDelegate();    return 1;}
-		else if( Message==WM_HSCROLL                                  ) {fThumbPositionDelegate(); return 1;}
-		else return 0;
-	}
+    bool InterceptControlCommand( unsigned int Message, unsigned int wParam, LONG lParam )
+    {
+        if     ( Message==WM_HSCROLL && LOWORD(wParam)==TB_THUMBTRACK ) {fThumbTrackDelegate();    return 1;}
+        else if( Message==WM_HSCROLL                                  ) {fThumbPositionDelegate(); return 1;}
+        else return 0;
+    }
 
-	void SetTicFreq( int TicFreq )
-	{
-		SendMessage( *this, TBM_SETTICFREQ, TicFreq, 0 );
-	}
-	void SetRange( int Min, int Max )
-	{
-		SendMessage( *this, TBM_SETRANGE, 1, MAKELONG(Min,Max) );
-	}
-	void SetPos( int Pos )
-	{
-		SendMessage( *this, TBM_SETPOS, 1, Pos );
-	}
-	int GetRangeMin()
-	{
-		return SendMessage(*this, TBM_GETRANGEMIN, 0, 0);
-	}
-	int GetRangeMax()
-	{
-		return SendMessage(*this, TBM_GETRANGEMAX, 0, 0);
-	}
-	int GetPos() const
-	{
-		return SendMessage( *this, TBM_GETPOS, 0, 0 );
-	}
-	std::string IGetValue() const
-	{
-		char tmp[20];
-		sprintf(tmp,"%d",GetPos());
-		return tmp;
-	}
-	void ISetValue(const char * value)
-	{
-		SetPos(atoi(value));
-	}
+    void SetTicFreq( int TicFreq )
+    {
+        SendMessage( *this, TBM_SETTICFREQ, TicFreq, 0 );
+    }
+    void SetRange( int Min, int Max )
+    {
+        SendMessage( *this, TBM_SETRANGE, 1, MAKELONG(Min,Max) );
+    }
+    void SetPos( int Pos )
+    {
+        SendMessage( *this, TBM_SETPOS, 1, Pos );
+    }
+    int GetRangeMin()
+    {
+        return SendMessage(*this, TBM_GETRANGEMIN, 0, 0);
+    }
+    int GetRangeMax()
+    {
+        return SendMessage(*this, TBM_GETRANGEMAX, 0, 0);
+    }
+    int GetPos() const
+    {
+        return SendMessage( *this, TBM_GETPOS, 0, 0 );
+    }
+    std::string IGetValue() const
+    {
+        char tmp[20];
+        sprintf(tmp,"%d",GetPos());
+        return tmp;
+    }
+    void ISetValue(const char * value)
+    {
+        SetPos(atoi(value));
+    }
 };
 
 #endif // plTrackBar_h_inc

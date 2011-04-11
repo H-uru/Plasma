@@ -35,62 +35,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsHackWinFindThread : public hsThread
 {
 protected:
-	enum
-	{
-		kOK = 1,
+    enum
+    {
+        kOK = 1,
 
-		kMtlLibrary = 0x9c6a,
-		kMtlEditor,
-		kActiveSlot,
-		kSelected,
-		kScene,
-		kNew,
-	};
+        kMtlLibrary = 0x9c6a,
+        kMtlEditor,
+        kActiveSlot,
+        kSelected,
+        kScene,
+        kNew,
+    };
 
 public:
-	hsError Run()
-	{
-		while (1)
-		{
-			HWND hMtlDlg = FindWindow(NULL, "Material/Map Browser");
-			if (hMtlDlg && IsWindowVisible(GetDlgItem(hMtlDlg, kOK)))
-			{
-				SendMessage(GetDlgItem(hMtlDlg, kScene), BM_CLICK, 0, 0);
-				EnableWindow(GetDlgItem(hMtlDlg, kMtlLibrary), FALSE);
-				EnableWindow(GetDlgItem(hMtlDlg, kMtlEditor), FALSE);
-				EnableWindow(GetDlgItem(hMtlDlg, kActiveSlot), FALSE);
-				EnableWindow(GetDlgItem(hMtlDlg, kNew), FALSE);
-				return 1;
-			}
-		}
-	}
+    hsError Run()
+    {
+        while (1)
+        {
+            HWND hMtlDlg = FindWindow(NULL, "Material/Map Browser");
+            if (hMtlDlg && IsWindowVisible(GetDlgItem(hMtlDlg, kOK)))
+            {
+                SendMessage(GetDlgItem(hMtlDlg, kScene), BM_CLICK, 0, 0);
+                EnableWindow(GetDlgItem(hMtlDlg, kMtlLibrary), FALSE);
+                EnableWindow(GetDlgItem(hMtlDlg, kMtlEditor), FALSE);
+                EnableWindow(GetDlgItem(hMtlDlg, kActiveSlot), FALSE);
+                EnableWindow(GetDlgItem(hMtlDlg, kNew), FALSE);
+                return 1;
+            }
+        }
+    }
 };
 
 static bool IPickMaterial(IParamBlock2 *pb, int id, int flags)
 {
-	BOOL newMat, cancel;
+    BOOL newMat, cancel;
 
-	hsHackWinFindThread winFind;
-	winFind.Start();
+    hsHackWinFindThread winFind;
+    winFind.Start();
 
-	// Get a material
-	MtlBase *mtl = GetCOREInterface()->DoMaterialBrowseDlg(
-		GetCOREInterface()->GetMAXHWnd(),
-		flags | BROWSE_INSTANCEONLY,
-		newMat,
-		cancel);
+    // Get a material
+    MtlBase *mtl = GetCOREInterface()->DoMaterialBrowseDlg(
+        GetCOREInterface()->GetMAXHWnd(),
+        flags | BROWSE_INSTANCEONLY,
+        newMat,
+        cancel);
 
-	winFind.Stop();
+    winFind.Stop();
 
-	if (!cancel)
-		pb->SetValue(id, 0, (ReferenceTarget*)mtl);
+    if (!cancel)
+        pb->SetValue(id, 0, (ReferenceTarget*)mtl);
 
-	return !cancel;
+    return !cancel;
 }
 
 bool plPickMaterialMap::PickTexmap(IParamBlock2 *pb, int id)
 {
-	return IPickMaterial(pb, id, BROWSE_MAPSONLY);
+    return IPickMaterial(pb, id, BROWSE_MAPSONLY);
 }
 
 #include "../MaxMain/plMtlCollector.h"
@@ -98,82 +98,82 @@ bool plPickMaterialMap::PickTexmap(IParamBlock2 *pb, int id)
 
 static bool GetPickedMtl(HWND hDlg, Mtl** mtl)
 {
-	HWND hList = GetDlgItem(hDlg, IDC_MTL_LIST);
-	int sel = ListBox_GetCurSel(hList);
-	if (sel != LB_ERR)
-	{
-		*mtl = (Mtl*)ListBox_GetItemData(hList, sel);
-		return true;
-	}
+    HWND hList = GetDlgItem(hDlg, IDC_MTL_LIST);
+    int sel = ListBox_GetCurSel(hList);
+    if (sel != LB_ERR)
+    {
+        *mtl = (Mtl*)ListBox_GetItemData(hList, sel);
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 static BOOL CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	static plPickMaterialInfo* info;
+    static plPickMaterialInfo* info;
 
-	if (msg == WM_INITDIALOG)
-	{
-		info = (plPickMaterialInfo*)lParam;
+    if (msg == WM_INITDIALOG)
+    {
+        info = (plPickMaterialInfo*)lParam;
 
-		MtlSet mtls;
-		plMtlCollector::GetMtls(&mtls, nil, info->fFlags);
-		
-		HWND hList = GetDlgItem(hDlg, IDC_MTL_LIST);
+        MtlSet mtls;
+        plMtlCollector::GetMtls(&mtls, nil, info->fFlags);
+        
+        HWND hList = GetDlgItem(hDlg, IDC_MTL_LIST);
 
-		MtlSet::iterator it = mtls.begin();
-		for (; it != mtls.end(); it++)
-		{
-			int idx = ListBox_AddString(hList, (*it)->GetName());
-			ListBox_SetItemData(hList, idx, (*it));
-		}
+        MtlSet::iterator it = mtls.begin();
+        for (; it != mtls.end(); it++)
+        {
+            int idx = ListBox_AddString(hList, (*it)->GetName());
+            ListBox_SetItemData(hList, idx, (*it));
+        }
 
-		return TRUE;
-	}
-	else if (msg == WM_COMMAND)
-	{
-		if (HIWORD(wParam) == BN_CLICKED && (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL))
-		{
-			if (LOWORD(wParam) == IDOK)
-			{
-				if (GetPickedMtl(hDlg, &info->fMtl))
-				{
-					EndDialog(hDlg, 1);
-					return TRUE;
-				}
-			}
+        return TRUE;
+    }
+    else if (msg == WM_COMMAND)
+    {
+        if (HIWORD(wParam) == BN_CLICKED && (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL))
+        {
+            if (LOWORD(wParam) == IDOK)
+            {
+                if (GetPickedMtl(hDlg, &info->fMtl))
+                {
+                    EndDialog(hDlg, 1);
+                    return TRUE;
+                }
+            }
 
-			EndDialog(hDlg, 0);
-			return TRUE;
-		}
-		else if (HIWORD(wParam) == LBN_DBLCLK && LOWORD(wParam) == IDC_MTL_LIST)
-		{
-			if (GetPickedMtl(hDlg, &info->fMtl))
-				EndDialog(hDlg, 1);
-			return TRUE;
-		}
-	}
+            EndDialog(hDlg, 0);
+            return TRUE;
+        }
+        else if (HIWORD(wParam) == LBN_DBLCLK && LOWORD(wParam) == IDC_MTL_LIST)
+        {
+            if (GetPickedMtl(hDlg, &info->fMtl))
+                EndDialog(hDlg, 1);
+            return TRUE;
+        }
+    }
 
-	return FALSE;
+    return FALSE;
 }
 
 Mtl *plPickMaterialMap::PickMaterial(unsigned int flags)
 {
-	plPickMaterialInfo info;
-	info.fMtl = NULL;
-	info.fFlags = flags;
+    plPickMaterialInfo info;
+    info.fMtl = NULL;
+    info.fFlags = flags;
 
-	//Mtl *mtl = NULL;
-	int ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PICK_MTL), GetCOREInterface()->GetMAXHWnd(), PickMtlProc, (LPARAM)&info);
+    //Mtl *mtl = NULL;
+    int ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PICK_MTL), GetCOREInterface()->GetMAXHWnd(), PickMtlProc, (LPARAM)&info);
 
-	if (ret == 1)
-	{
-		//pb->SetValue(id, 0, (ReferenceTarget*)mtl);
-		//return true;
-		return info.fMtl;
-	}
+    if (ret == 1)
+    {
+        //pb->SetValue(id, 0, (ReferenceTarget*)mtl);
+        //return true;
+        return info.fMtl;
+    }
 
-	return nil;
+    return nil;
 }
 

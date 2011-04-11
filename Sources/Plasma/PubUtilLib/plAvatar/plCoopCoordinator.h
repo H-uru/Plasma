@@ -51,68 +51,68 @@ class plMessage;
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /** \class plCoopCoordinator
-	Manages cooperation betweeen several generic brains; primarily serves as a place
-	to send synchronization messages. Originally this was going to be the role of the
-	'host' brain, but that didn't provide a good interface point for Python.
-	This object can either be a "helper" for Python, or its functionality can be
-	recoded in Python.
-	*/
+    Manages cooperation betweeen several generic brains; primarily serves as a place
+    to send synchronization messages. Originally this was going to be the role of the
+    'host' brain, but that didn't provide a good interface point for Python.
+    This object can either be a "helper" for Python, or its functionality can be
+    recoded in Python.
+    */
 class plCoopCoordinator : public hsKeyedObject
 {
 public:
-	plCoopCoordinator();
-	plCoopCoordinator(plKey host, plKey guest,
-					  plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
-					  const char *synchBone, UInt32 hostOfferStage, UInt32 guestAcceptStage,
-					  plMessage *guestAcceptMsg,
-					  bool autoStartGuest);
-	~plCoopCoordinator();
+    plCoopCoordinator();
+    plCoopCoordinator(plKey host, plKey guest,
+                      plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
+                      const char *synchBone, UInt32 hostOfferStage, UInt32 guestAcceptStage,
+                      plMessage *guestAcceptMsg,
+                      bool autoStartGuest);
+    ~plCoopCoordinator();
 
-	virtual hsBool MsgReceive(plMessage *msg);
+    virtual hsBool MsgReceive(plMessage *msg);
 
-	void Run();
+    void Run();
 
-	UInt32 GetInitiatorID();
-	UInt16 GetInitiatorSerial();
+    UInt32 GetInitiatorID();
+    UInt16 GetInitiatorSerial();
 
-	bool IsActiveForReal();
+    bool IsActiveForReal();
 
-	// rtti
-	CLASSNAME_REGISTER( plCoopCoordinator );
-	GETINTERFACE_ANY( plCoopCoordinator, hsKeyedObject);
+    // rtti
+    CLASSNAME_REGISTER( plCoopCoordinator );
+    GETINTERFACE_ANY( plCoopCoordinator, hsKeyedObject);
 
-	// i/o
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    // i/o
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 
 protected:
-	void IStartHost();
-	void IStartGuest();
-	void IContinueGuest();
-	void IAdvanceParticipant(bool host);
+    void IStartHost();
+    void IStartGuest();
+    void IContinueGuest();
+    void IAdvanceParticipant(bool host);
 
-	void IStartTimeout();
-	void ITimeout();
+    void IStartTimeout();
+    void ITimeout();
 
-	plKey fHostKey;
-	plKey fGuestKey;
+    plKey fHostKey;
+    plKey fGuestKey;
 
-	plAvBrainCoop *fHostBrain;
-	plAvBrainCoop *fGuestBrain;
+    plAvBrainCoop *fHostBrain;
+    plAvBrainCoop *fGuestBrain;
 
-	UInt32 fInitiatorID;
-	UInt32 fInitiatorSerial;
-	
-	UInt32	fHostOfferStage;			// when we enter this stage, the offer is ready
-	UInt32	fGuestAcceptStage;			// when we enter this stage, the offer is accepted
+    UInt32 fInitiatorID;
+    UInt32 fInitiatorSerial;
+    
+    UInt32  fHostOfferStage;            // when we enter this stage, the offer is ready
+    UInt32  fGuestAcceptStage;          // when we enter this stage, the offer is accepted
 
-	plMessage *fGuestAcceptMsg;			// send this when the guest accepts
+    plMessage *fGuestAcceptMsg;         // send this when the guest accepts
 
-	char *fSynchBone;
-	bool fAutoStartGuest;
-	bool fGuestAccepted;
+    char *fSynchBone;
+    bool fAutoStartGuest;
+    bool fGuestAccepted;
 
-	bool fGuestLinked; // guest linked, so ignore the timeout timer
+    bool fGuestLinked; // guest linked, so ignore the timeout timer
 };
 
 #endif // plCoopCoordinator_h

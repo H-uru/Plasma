@@ -36,15 +36,15 @@ class hsResMgr;
 class plCollisionMsg : public plMessage
 {
 public:
-	plCollisionMsg() : plMessage() {}
-	plCollisionMsg(const plKey* s, const plKey* r);
+    plCollisionMsg() : plMessage() {}
+    plCollisionMsg(const plKey* s, const plKey* r);
 
-	CLASSNAME_REGISTER( plCollisionMsg );
-	GETINTERFACE_ANY( plCollisionMsg, plMessage );
+    CLASSNAME_REGISTER( plCollisionMsg );
+    GETINTERFACE_ANY( plCollisionMsg, plMessage );
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgRead(stream, mgr);	}
-	void Write(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgWrite(stream, mgr);	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)  {   plMessage::IMsgRead(stream, mgr);   }
+    void Write(hsStream* stream, hsResMgr* mgr) {   plMessage::IMsgWrite(stream, mgr);  }
 };
 
 #endif // plCollisionMsg_inc

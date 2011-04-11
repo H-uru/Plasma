@@ -2,17 +2,17 @@ include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 
 set(pnIni_HEADERS
-	Intern.h
-	Pch.h
-	pnIni.h
+    Intern.h
+    Pch.h
+    pnIni.h
 )
 
 set(pnIni_PRIVATE
-	Private/pnIniAllIncludes.h
-	Private/pnIniChange.h
-	Private/pnIniCore.h
-	Private/pnIniCore.cpp
-	Private/pnIniSrv.h
+    Private/pnIniAllIncludes.h
+    Private/pnIniChange.h
+    Private/pnIniCore.h
+    Private/pnIniCore.cpp
+    Private/pnIniSrv.h
 )
 
 add_library(pnIni STATIC ${pnIni_HEADERS} ${pnIni_PRIVATE})

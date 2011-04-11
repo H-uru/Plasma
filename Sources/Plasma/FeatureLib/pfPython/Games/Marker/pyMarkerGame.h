@@ -43,33 +43,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyMarkerGame : public pyGameCli
 {
 protected:
-	pyMarkerGame();
-	pyMarkerGame(pfGameCli* client);
+    pyMarkerGame();
+    pyMarkerGame(pfGameCli* client);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptMarkerGame);
-	static PyObject* New(pfGameCli* client);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a ptMarkerGame object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyMarkerGame); // converts a PyObject to a pyMarkerGame (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptMarkerGame);
+    static PyObject* New(pfGameCli* client);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a ptMarkerGame object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyMarkerGame); // converts a PyObject to a pyMarkerGame (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
-	static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-	static bool IsMarkerGame(std::wstring guid);
-	static void CreateMarkerGame(pyKey& callbackKey, unsigned gameType, std::wstring gameName, unsigned long timeLimit, std::wstring templateId);
+    static bool IsMarkerGame(std::wstring guid);
+    static void CreateMarkerGame(pyKey& callbackKey, unsigned gameType, std::wstring gameName, unsigned long timeLimit, std::wstring templateId);
 
-	void StartGame();
-	void PauseGame();
-	void ResetGame();
-	void ChangeGameName(std::wstring newName);
-	void ChangeTimeLimit(unsigned long timeLimit);
-	void DeleteGame();
-	void AddMarker(double x, double y, double z, std::wstring name, std::wstring age);
-	void DeleteMarker(unsigned long markerId);
-	void ChangeMarkerName(unsigned long markerId, std::wstring newName);
-	void CaptureMarker(unsigned long markerId);
+    void StartGame();
+    void PauseGame();
+    void ResetGame();
+    void ChangeGameName(std::wstring newName);
+    void ChangeTimeLimit(unsigned long timeLimit);
+    void DeleteGame();
+    void AddMarker(double x, double y, double z, std::wstring name, std::wstring age);
+    void DeleteMarker(unsigned long markerId);
+    void ChangeMarkerName(unsigned long markerId, std::wstring newName);
+    void CaptureMarker(unsigned long markerId);
 };
 
 #endif // pyMarkerGame_h

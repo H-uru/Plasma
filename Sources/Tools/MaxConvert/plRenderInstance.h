@@ -32,56 +32,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plRenderInstance : public RenderInstance
 {
 protected:
-	plRenderInstance*			fNext;
-	Interval					fValid;
+    plRenderInstance*           fNext;
+    Interval                    fValid;
 
-	INode*						fNode;
-	Object*						fObject;
+    INode*                      fNode;
+    Object*                     fObject;
 
-	BOOL						fDeleteMesh;
+    BOOL                        fDeleteMesh;
 
-	hsTArray<LightDesc*>		fLights;
+    hsTArray<LightDesc*>        fLights;
 public:
-	plRenderInstance();
-	virtual ~plRenderInstance();
+    plRenderInstance();
+    virtual ~plRenderInstance();
 
-	BOOL GetFromNode(INode* node, TimeValue& t, int idx);
-	BOOL Update(TimeValue& t);
-	void SetNext(plRenderInstance* n) { fNext = n; }
-	void Cleanup();
+    BOOL GetFromNode(INode* node, TimeValue& t, int idx);
+    BOOL Update(TimeValue& t);
+    void SetNext(plRenderInstance* n) { fNext = n; }
+    void Cleanup();
 
-	virtual RenderInstance *Next() { return fNext; }	// next in list
+    virtual RenderInstance *Next() { return fNext; }    // next in list
 
-	virtual Interval MeshValidity() { return fValid; }
+    virtual Interval MeshValidity() { return fValid; }
 
-	virtual int NumLights() { return fLights.GetCount(); }
-	virtual LightDesc *Light(int n) { return fLights[n]; }
-	virtual void AddLight(LightDesc* l) { fLights.Append(l); }
-	virtual void ClearLights() { fLights.SetCount(0); }
+    virtual int NumLights() { return fLights.GetCount(); }
+    virtual LightDesc *Light(int n) { return fLights[n]; }
+    virtual void AddLight(LightDesc* l) { fLights.Append(l); }
+    virtual void ClearLights() { fLights.SetCount(0); }
 
-	virtual BOOL CastsShadowsFrom(const ObjLightDesc& lt); // is lt shadowed by this instance?
+    virtual BOOL CastsShadowsFrom(const ObjLightDesc& lt); // is lt shadowed by this instance?
 
-	virtual INode *GetINode() { return fNode; }  						 // get INode for instance
-	virtual Object *GetEvalObject() { return fObject; } 					 // evaluated object for instance
+    virtual INode *GetINode() { return fNode; }                          // get INode for instance
+    virtual Object *GetEvalObject() { return fObject; }                      // evaluated object for instance
 
-	virtual Point3 GetFaceNormal(int faceNum);         // geometric normal in camera coords
-	virtual Point3 GetFaceVertNormal(int faceNum, int vertNum);  // camera coords
-	virtual void GetFaceVertNormals(int faceNum, Point3 n[3])   // camera coords
-	{
-		n[0] = GetFaceVertNormal(faceNum, 0);
-		n[1] = GetFaceVertNormal(faceNum, 1);
-		n[2] = GetFaceVertNormal(faceNum, 2);
-	}	
-	virtual Point3 GetCamVert(int vertnum); 			 // coord for vertex in camera coords		
-	virtual void GetObjVerts(int fnum, Point3 obp[3]); // vertices of face in object coords
-	virtual void GetCamVerts(int fnum, Point3 cp[3]); // vertices of face in camera(view) coords
+    virtual Point3 GetFaceNormal(int faceNum);         // geometric normal in camera coords
+    virtual Point3 GetFaceVertNormal(int faceNum, int vertNum);  // camera coords
+    virtual void GetFaceVertNormals(int faceNum, Point3 n[3])   // camera coords
+    {
+        n[0] = GetFaceVertNormal(faceNum, 0);
+        n[1] = GetFaceVertNormal(faceNum, 1);
+        n[2] = GetFaceVertNormal(faceNum, 2);
+    }   
+    virtual Point3 GetCamVert(int vertnum);              // coord for vertex in camera coords       
+    virtual void GetObjVerts(int fnum, Point3 obp[3]); // vertices of face in object coords
+    virtual void GetCamVerts(int fnum, Point3 cp[3]); // vertices of face in camera(view) coords
 
-	// Material-by-face access
-	// Objects can provide a material as a function of face number via the IChkMtlAPI interface (chkmtlapi.h).
-	// This method will return RenderInstance::mtl if flag INST_MTL_BYFACE is not set. If INST_MTL_BYFACE is
-	// set it will return the proper by-face mtl. // DS 4/3/00
-	virtual Mtl *GetMtl(int faceNum);  
-	virtual ULONG MtlRequirements(int mtlNum, int faceNum);  	 // node's mtl requirements. DS 3/31/00: added faceNum to support mtl-per-face objects
+    // Material-by-face access
+    // Objects can provide a material as a function of face number via the IChkMtlAPI interface (chkmtlapi.h).
+    // This method will return RenderInstance::mtl if flag INST_MTL_BYFACE is not set. If INST_MTL_BYFACE is
+    // set it will return the proper by-face mtl. // DS 4/3/00
+    virtual Mtl *GetMtl(int faceNum);  
+    virtual ULONG MtlRequirements(int mtlNum, int faceNum);      // node's mtl requirements. DS 3/31/00: added faceNum to support mtl-per-face objects
 };
 
 #endif // plRenderInstance_inc

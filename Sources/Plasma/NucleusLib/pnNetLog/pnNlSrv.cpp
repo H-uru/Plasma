@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct EventHash {
-	unsigned	eventType;
-	ESrvType	srvType;
+    unsigned    eventType;
+    ESrvType    srvType;
 
     inline EventHash (
-		unsigned	eventType,
-		ESrvType	srvType
+        unsigned    eventType,
+        ESrvType    srvType
     );
 
     inline dword GetHash () const;
@@ -53,40 +53,40 @@ struct EventHash {
 };
 
 struct NetLogEventHash : EventHash {
-	const NetLogEvent *	event;
+    const NetLogEvent * event;
 
-	NetLogEventHash(
-		unsigned	eventType,
-		ESrvType	srvType,
-		const NetLogEvent *event
-	);
-	HASHLINK(NetLogEventHash)	link;	
+    NetLogEventHash(
+        unsigned    eventType,
+        ESrvType    srvType,
+        const NetLogEvent *event
+    );
+    HASHLINK(NetLogEventHash)   link;   
 };
 
 struct LogConn : SrvConn {
     LINK(LogConn)       link;
-	ESrvType			srvType;
-	unsigned			buildId;
-	NetAddressNode		addr;
-	unsigned			buildType;
-	unsigned			productId;
+    ESrvType            srvType;
+    unsigned            buildId;
+    NetAddressNode      addr;
+    unsigned            buildType;
+    unsigned            productId;
 
     // Ctor
     LogConn (
         AsyncSocket     sock,
         void **         userState,
-		NetAddressNode  nodeNumber,
+        NetAddressNode  nodeNumber,
         unsigned        buildId,
         ESrvType        srvType,
-		unsigned		buildType,
-		unsigned		productId
+        unsigned        buildType,
+        unsigned        productId
     );
     ~LogConn ();
 
     bool OnSrvMsg (SrvMsgHeader * msg);
     void OnDisconnect ();
 
-	bool Recv_Srv2Log_LogMsg( const Srv2Log_LogMsg & msg );
+    bool Recv_Srv2Log_LogMsg( const Srv2Log_LogMsg & msg );
 };
 
 
@@ -96,11 +96,11 @@ struct LogConn : SrvConn {
 *
 ***/
 
-static IniChangeReg *			s_change;
-static long						s_perf[kNlSrvNumPerf];
-static CCritSect				s_critsect;
-static bool						s_running;
-static LISTDECL(LogConn, link)	s_conns;
+static IniChangeReg *           s_change;
+static long                     s_perf[kNlSrvNumPerf];
+static CCritSect                s_critsect;
+static bool                     s_running;
+static LISTDECL(LogConn, link)  s_conns;
 void (*NetLogSrvCallback)(const NetLogEvent *event, const ARRAY(wchar) &, unsigned, NetAddressNode &, qword, unsigned, unsigned ) ;
 
 
@@ -112,22 +112,22 @@ void (*NetLogSrvCallback)(const NetLogEvent *event, const ARRAY(wchar) &, unsign
 
 //============================================================================
 static void ParseIni (Ini * ini) {
-	unsigned iter;
-	const IniValue *value;
+    unsigned iter;
+    const IniValue *value;
 
-	value = IniGetFirstValue(
-		ini,
-		L"",
-		L"",
-		&iter
-	);
+    value = IniGetFirstValue(
+        ini,
+        L"",
+        L"",
+        &iter
+    );
 }
 
 //============================================================================
 static void IniChangeCallback (const wchar fullPath[]) {
-	Ini * ini = IniOpen(fullPath);
-	ParseIni(ini);
-	IniClose(ini);
+    Ini * ini = IniOpen(fullPath);
+    ParseIni(ini);
+    IniClose(ini);
 }
 
 //===========================================================================
@@ -169,11 +169,11 @@ static bool SocketNotifyProc (
     LogConn * conn = SRV_CONN_ALLOC(LogConn)(
         sock,
         userState,
-		nodeNumber,
+        nodeNumber,
         connect.buildId,
         (ESrvType) connect.srvType,
-		connect.buildType,
-		connect.productId
+        connect.buildType,
+        connect.productId
     );
 
     // Add this connection
@@ -199,21 +199,21 @@ static bool SocketNotifyProc (
 LogConn::LogConn (
     AsyncSocket     sock,
     void **         userState,
-	NetAddressNode  nodeNumber,
+    NetAddressNode  nodeNumber,
     unsigned        buildId,
     ESrvType        srvType,
-	unsigned		buildType,
-	unsigned		productId
+    unsigned        buildType,
+    unsigned        productId
 ) : srvType(srvType),
-	buildId(buildId),
-	buildType(buildType),
-	productId(productId)
+    buildId(buildId),
+    buildType(buildType),
+    productId(productId)
 {
-	ref(nodeNumber);
+    ref(nodeNumber);
     AtomicAdd(&s_perf[kNlSrvPerfConnCount], 1);
     SetAutoTimeout();
     NotifyListen(sock, userState);
-	addr = nodeNumber;
+    addr = nodeNumber;
 }
 
 //============================================================================
@@ -234,282 +234,282 @@ bool LogConn::OnSrvMsg (SrvMsgHeader * msg) {
     if (msg->protocolId != kNetProtocolSrv2Log)
         return SrvConn::OnSrvMsg(msg);
 
-	bool status = false;
-	#define DISPATCH(a) case k##a: status = Recv_##a(*(const a*)msg); break
-	switch (msg->messageId) {
-		DISPATCH(Srv2Log_LogMsg);
+    bool status = false;
+    #define DISPATCH(a) case k##a: status = Recv_##a(*(const a*)msg); break
+    switch (msg->messageId) {
+        DISPATCH(Srv2Log_LogMsg);
 
-		default:
-			status = false;
-		break;
-	}
-	#undef DISPATCH
+        default:
+            status = false;
+        break;
+    }
+    #undef DISPATCH
 
     return status;
 }
 
 //============================================================================
 bool LogConn::Recv_Srv2Log_LogMsg(const Srv2Log_LogMsg & msg ) {
-	CSrvUnpackBuffer unpack(&msg, msg.messageBytes);
-	(void)unpack.GetData(sizeof(msg));
-	unsigned length = 0;
-	ARRAY(wchar) databuf;
-	wchar data[256];
-	const void *pData = 0;
+    CSrvUnpackBuffer unpack(&msg, msg.messageBytes);
+    (void)unpack.GetData(sizeof(msg));
+    unsigned length = 0;
+    ARRAY(wchar) databuf;
+    wchar data[256];
+    const void *pData = 0;
 
-	SendReply(msg.transId, kNetSuccess);	
-	if(!s_running)
-		return true;
+    SendReply(msg.transId, kNetSuccess);    
+    if(!s_running)
+        return true;
 
-	// WARNING: each parameter type needs to be able to handle the case where GetData returns a nil pointer for backward compatability
-		
-	const NetLogEvent *event = NetLogFindEvent(msg.eventType, srvType);
-	if(event) {
-		for(unsigned i = 0; i < event->numFields; ++i) {
-			if(!event->fields[i].name)
-			{
-				LogMsg(kLogError, "Failed logging event because of nil param name: %s", event->eventName);
-				return true;
-			}
-			
-			switch(event->fields[i].type) {
-				case kLogParamInt: {
-					int i = 0;
-					pData = unpack.GetData(sizeof(int));
-					if(!pData)
-						continue;
+    // WARNING: each parameter type needs to be able to handle the case where GetData returns a nil pointer for backward compatability
+        
+    const NetLogEvent *event = NetLogFindEvent(msg.eventType, srvType);
+    if(event) {
+        for(unsigned i = 0; i < event->numFields; ++i) {
+            if(!event->fields[i].name)
+            {
+                LogMsg(kLogError, "Failed logging event because of nil param name: %s", event->eventName);
+                return true;
+            }
+            
+            switch(event->fields[i].type) {
+                case kLogParamInt: {
+                    int i = 0;
+                    pData = unpack.GetData(sizeof(int));
+                    if(!pData)
+                        continue;
 
-					i = *(int *)pData;
-					StrPrintf(data, arrsize(data), L"%d", i);
-					length += StrLen(data) + 1;
-				}
-				break;
+                    i = *(int *)pData;
+                    StrPrintf(data, arrsize(data), L"%d", i);
+                    length += StrLen(data) + 1;
+                }
+                break;
 
-				case kLogParamUnsigned: {
-					unsigned u = 0;
-					pData = unpack.GetData(sizeof(unsigned));
-					if(!pData)
-						continue;
+                case kLogParamUnsigned: {
+                    unsigned u = 0;
+                    pData = unpack.GetData(sizeof(unsigned));
+                    if(!pData)
+                        continue;
 
-					u = *(unsigned *)pData;
-					StrPrintf(data, arrsize(data), L"%d", u);
-					length += StrLen(data) + 1;
-				}
-				break;
+                    u = *(unsigned *)pData;
+                    StrPrintf(data, arrsize(data), L"%d", u);
+                    length += StrLen(data) + 1;
+                }
+                break;
 
-				case kLogParamFloat: {
-					float f = 0;
-					pData = unpack.GetData(sizeof(float));
-					if(!pData)
-						continue;
+                case kLogParamFloat: {
+                    float f = 0;
+                    pData = unpack.GetData(sizeof(float));
+                    if(!pData)
+                        continue;
 
-					f = *(float *)pData;
-					StrPrintf(data, arrsize(data), L"%f", f);
-					length += StrLen(data) + 1;
-				}
-				break;
+                    f = *(float *)pData;
+                    StrPrintf(data, arrsize(data), L"%f", f);
+                    length += StrLen(data) + 1;
+                }
+                break;
 
-				case kLogParamLong: {
-					long l = 0;
-					pData = unpack.GetData(sizeof(long));
-					if(!pData)
-						continue;
-					
-					l = *(long *)pData;
-					StrPrintf(data, arrsize(data), L"%ld", l);
-					length += StrLen(data) + 1;
-				}
-				break;
+                case kLogParamLong: {
+                    long l = 0;
+                    pData = unpack.GetData(sizeof(long));
+                    if(!pData)
+                        continue;
+                    
+                    l = *(long *)pData;
+                    StrPrintf(data, arrsize(data), L"%ld", l);
+                    length += StrLen(data) + 1;
+                }
+                break;
 
-				case kLogParamLongLong: {
-					long long ll = 0;
-					pData = unpack.GetData(sizeof(long));
-					if(!pData)
-						continue;
-					ll = *(long *)pData;
-					StrPrintf(data, arrsize(data), L"%lld", ll);
-					length += StrLen(data) + 1;
-				}
-				break;
+                case kLogParamLongLong: {
+                    long long ll = 0;
+                    pData = unpack.GetData(sizeof(long));
+                    if(!pData)
+                        continue;
+                    ll = *(long *)pData;
+                    StrPrintf(data, arrsize(data), L"%lld", ll);
+                    length += StrLen(data) + 1;
+                }
+                break;
 
-				case kLogParamUuid: {
-					Uuid uuid = 0;
-					pData = unpack.GetData(sizeof(Uuid));
-					if(!pData)
-						continue;
-					uuid = *(Uuid *)pData;
-					StrPrintf(data, arrsize(data), L"%s", uuid.data);
-					length += StrLen(data) + 1;
-				}
-				break;
-				
-				case kLogParamStringW: {
-					const wchar *str = unpack.GetString();
-					if(!str) {
-						continue;
-					}
-					length += StrLen(str) + 1;
-				}
-				break;
-			}
-			length += StrLen(event->fields[i].name) + 1;	// this must happen after the parameter check so we can opt out of saving a non existant parameter
-		}
-		
-		databuf.Reserve(length + 1);
+                case kLogParamUuid: {
+                    Uuid uuid = 0;
+                    pData = unpack.GetData(sizeof(Uuid));
+                    if(!pData)
+                        continue;
+                    uuid = *(Uuid *)pData;
+                    StrPrintf(data, arrsize(data), L"%s", uuid.data);
+                    length += StrLen(data) + 1;
+                }
+                break;
+                
+                case kLogParamStringW: {
+                    const wchar *str = unpack.GetString();
+                    if(!str) {
+                        continue;
+                    }
+                    length += StrLen(str) + 1;
+                }
+                break;
+            }
+            length += StrLen(event->fields[i].name) + 1;    // this must happen after the parameter check so we can opt out of saving a non existant parameter
+        }
+        
+        databuf.Reserve(length + 1);
 
-		{
-			CSrvUnpackBuffer unpack(&msg, msg.messageBytes);
-			(void)unpack.GetData(sizeof(msg));
-			for(unsigned i = 0; i < event->numFields; ++i){
-				
-				// the parameter name needs to be written before the data. Also, we need to be able to opt out of writing a parameter.
-				switch(event->fields[i].type) {
-					case kLogParamInt: {
-						pData = unpack.GetData(sizeof(int));
-						if(!pData)
-							continue;
+        {
+            CSrvUnpackBuffer unpack(&msg, msg.messageBytes);
+            (void)unpack.GetData(sizeof(msg));
+            for(unsigned i = 0; i < event->numFields; ++i){
+                
+                // the parameter name needs to be written before the data. Also, we need to be able to opt out of writing a parameter.
+                switch(event->fields[i].type) {
+                    case kLogParamInt: {
+                        pData = unpack.GetData(sizeof(int));
+                        if(!pData)
+                            continue;
 
-						int val = *(int *)pData;
+                        int val = *(int *)pData;
 
-						// log event name
-						databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
-						databuf.Add(0);
+                        // log event name
+                        databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
+                        databuf.Add(0);
 
-						// log event data
-						StrPrintf(data, arrsize(data), L"%d", val);
-						databuf.Add(data, StrLen(data));
-						databuf.Add(0);
-					}
-					break;
+                        // log event data
+                        StrPrintf(data, arrsize(data), L"%d", val);
+                        databuf.Add(data, StrLen(data));
+                        databuf.Add(0);
+                    }
+                    break;
 
-					case kLogParamUnsigned: {
-						pData = unpack.GetData(sizeof(unsigned));
-						if(!pData)
-							continue;
-						
-						unsigned u = *(unsigned *)pData;
+                    case kLogParamUnsigned: {
+                        pData = unpack.GetData(sizeof(unsigned));
+                        if(!pData)
+                            continue;
+                        
+                        unsigned u = *(unsigned *)pData;
 
-						// log event name
-						databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
-						databuf.Add(0);
+                        // log event name
+                        databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
+                        databuf.Add(0);
 
-						// log event data
-						StrPrintf(data, arrsize(data), L"%d", u);
-						databuf.Add(data, StrLen(data));
-						databuf.Add(0);
-					}
-					break;
+                        // log event data
+                        StrPrintf(data, arrsize(data), L"%d", u);
+                        databuf.Add(data, StrLen(data));
+                        databuf.Add(0);
+                    }
+                    break;
 
-					case kLogParamFloat: {
-						pData = unpack.GetData(sizeof(float));
-						if(!pData)
-							continue;
+                    case kLogParamFloat: {
+                        pData = unpack.GetData(sizeof(float));
+                        if(!pData)
+                            continue;
 
-						float f = *(float *)pData;
-							
-						// log event name
-						databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
-						databuf.Add(0);
+                        float f = *(float *)pData;
+                            
+                        // log event name
+                        databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
+                        databuf.Add(0);
 
-						// log event data
-						StrPrintf(data, arrsize(data), L"%f", f);
-						databuf.Add(data, StrLen(data));
-						databuf.Add(0);
-					}
-					break;
+                        // log event data
+                        StrPrintf(data, arrsize(data), L"%f", f);
+                        databuf.Add(data, StrLen(data));
+                        databuf.Add(0);
+                    }
+                    break;
 
-					case kLogParamLong: {
-						pData = unpack.GetData(sizeof(long));
-						if(!pData)
-							continue;
+                    case kLogParamLong: {
+                        pData = unpack.GetData(sizeof(long));
+                        if(!pData)
+                            continue;
 
-						long l = *(long *)pData;
-							
-						// log event name
-						databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
-						databuf.Add(0);
+                        long l = *(long *)pData;
+                            
+                        // log event name
+                        databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
+                        databuf.Add(0);
 
-						// log event data
-						StrPrintf(data, arrsize(data), L"%ld", l);
-						databuf.Add(data, StrLen(data));
-						databuf.Add(0);
-					}
-					break;
+                        // log event data
+                        StrPrintf(data, arrsize(data), L"%ld", l);
+                        databuf.Add(data, StrLen(data));
+                        databuf.Add(0);
+                    }
+                    break;
 
-					case kLogParamLongLong: {
-						pData = unpack.GetData(sizeof(long long));
-						if(!pData)
-							continue;
+                    case kLogParamLongLong: {
+                        pData = unpack.GetData(sizeof(long long));
+                        if(!pData)
+                            continue;
 
-						long long ll = *(long long *)pData;
+                        long long ll = *(long long *)pData;
 
-						// log event name
-						databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
-						databuf.Add(0);
+                        // log event name
+                        databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
+                        databuf.Add(0);
 
-						// log event data
-						StrPrintf(data, arrsize(data), L"%lld", ll);
-						databuf.Add(data, StrLen(data));
-						databuf.Add(0);
-					}
-					break;
+                        // log event data
+                        StrPrintf(data, arrsize(data), L"%lld", ll);
+                        databuf.Add(data, StrLen(data));
+                        databuf.Add(0);
+                    }
+                    break;
 
-					case kLogParamUuid: {
-						pData = unpack.GetData(sizeof(Uuid));
-						if(!pData)
-							continue;
-						
-						Uuid uuid = *(Uuid *)pData;
+                    case kLogParamUuid: {
+                        pData = unpack.GetData(sizeof(Uuid));
+                        if(!pData)
+                            continue;
+                        
+                        Uuid uuid = *(Uuid *)pData;
 
-						// log event name
-						databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
-						databuf.Add(0);
+                        // log event name
+                        databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
+                        databuf.Add(0);
 
-						// log event data
-						GuidToString(uuid, data, arrsize(data));
-						databuf.Add(data, StrLen(data));
-						databuf.Add(0);
-					}
-					break;
-					
-					case kLogParamStringW: {
-						const wchar *str = unpack.GetString();
-						if(!str) {
-							continue;
-						}
+                        // log event data
+                        GuidToString(uuid, data, arrsize(data));
+                        databuf.Add(data, StrLen(data));
+                        databuf.Add(0);
+                    }
+                    break;
+                    
+                    case kLogParamStringW: {
+                        const wchar *str = unpack.GetString();
+                        if(!str) {
+                            continue;
+                        }
 
-						// log event name
-						databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
-						databuf.Add(0);
+                        // log event name
+                        databuf.Add(event->fields[i].name, StrLen(event->fields[i].name));
+                        databuf.Add(0);
 
-						// log event data
-						databuf.Add(str, StrLen(str));
-						databuf.Add(0);
-					}
-					break;
-				}
-			}
-		}
-		databuf.Add(0);
+                        // log event data
+                        databuf.Add(str, StrLen(str));
+                        databuf.Add(0);
+                    }
+                    break;
+                }
+            }
+        }
+        databuf.Add(0);
 
-		if(NetLogSrvCallback) {
-			NetLogSrvCallback(
-				event,
-				databuf,
-				buildId,
-				addr, 
-				msg.timestamp,
-				productId,
-				buildType
-			);
-		}
-	}
-	else
-	{
-		LogMsg(kLogError, "Unable to log event - event not found. type: %d from server: %d. If it is a new event the log server needs to be updated.", msg.eventType, srvType);
-	}
-	
-	return true;
+        if(NetLogSrvCallback) {
+            NetLogSrvCallback(
+                event,
+                databuf,
+                buildId,
+                addr, 
+                msg.timestamp,
+                productId,
+                buildType
+            );
+        }
+    }
+    else
+    {
+        LogMsg(kLogError, "Unable to log event - event not found. type: %d from server: %d. If it is a new event the log server needs to be updated.", msg.eventType, srvType);
+    }
+    
+    return true;
 }
 
 
@@ -521,32 +521,32 @@ bool LogConn::Recv_Srv2Log_LogMsg(const Srv2Log_LogMsg & msg ) {
 
 //============================================================================
 void NetLogSrvInitialize () {
-	s_running = true;
+    s_running = true;
     AsyncSocketRegisterNotifyProc(
         kConnTypeSrvToLog,
         SocketNotifyProc,
         0,  // Accept all buildIds
         0,  // Accept all buildTypes
-        0,	// Accept all branchIds
+        0,  // Accept all branchIds
         0   // Accept all product Ids
     );
-	IniChangeAdd(L"Log", IniChangeCallback, &s_change);
+    IniChangeAdd(L"Log", IniChangeCallback, &s_change);
 }
 
 //============================================================================
 void NetLogSrvShutdown () {
-	if(s_change) {
-		IniChangeRemove(s_change, true);
-		s_change = false;
-	}
+    if(s_change) {
+        IniChangeRemove(s_change, true);
+        s_change = false;
+    }
 
-	s_running = false;
+    s_running = false;
     AsyncSocketUnregisterNotifyProc(
         kConnTypeSrvToLog,
         SocketNotifyProc,
         0,  // Accept all buildIds
         0,
-        0,	// Accept all branchIds
+        0,  // Accept all branchIds
         0
     );
 }
@@ -554,13 +554,13 @@ void NetLogSrvShutdown () {
 //============================================================================
 void NetLogSrvDestroy () {
  
-	while(s_perf[kNlSrvPerfConnCount])
-		AsyncSleep(10);
+    while(s_perf[kNlSrvPerfConnCount])
+        AsyncSleep(10);
 }
 
 //============================================================================
 void NetLogSrvRegisterCallback( void (*NlSrvCallback)(const NetLogEvent *, const ARRAY(wchar) &, unsigned, NetAddressNode &, qword, unsigned, unsigned )) {
-	NetLogSrvCallback = NlSrvCallback;
+    NetLogSrvCallback = NlSrvCallback;
 }
 
 //============================================================================

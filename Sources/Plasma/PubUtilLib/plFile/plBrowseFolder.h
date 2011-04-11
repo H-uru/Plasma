@@ -34,11 +34,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Gets a directory using the "Browse for Folder" dialog.
 //
-// path:		Buffer to recieve the path.  Should be MAX_PATH characters.
-// startPath:	Initial path.
-// title:		Not really the title of the dialog, but it's displayed above the
-//				folder list.  Could be used to give instructions.
-// hwndOwner:	Owner window for dialog box.
+// path:        Buffer to recieve the path.  Should be MAX_PATH characters.
+// startPath:   Initial path.
+// title:       Not really the title of the dialog, but it's displayed above the
+//              folder list.  Could be used to give instructions.
+// hwndOwner:   Owner window for dialog box.
 //
 // Returns true if path contains a valid path, false otherwise (error or user
 // clicked cancel.
@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plBrowseFolder
 {
 public:
-	static bool GetFolder(char *path, const char *startPath = NULL, const char *title = NULL, HWND hwndOwner = NULL);
+    static bool GetFolder(char *path, const char *startPath = NULL, const char *title = NULL, HWND hwndOwner = NULL);
 
 protected:
-	static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
+    static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 };
 
 #endif // HS_BUILD_FOR_WIN32

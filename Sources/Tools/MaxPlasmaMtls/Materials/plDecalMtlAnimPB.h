@@ -28,20 +28,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum
 {
-	kDecalAnimName,
-	kDecalAnimAutoStart,
-	kDecalAnimLoop,
-	kDecalAnimLoopName,
-	kDecalEaseInType,		// Not used, but reserved
-	kDecalEaseOutType,		//
-	kDecalEaseInLength,		//
-	kDecalEaseOutLength,	//
-	kDecalEaseInMin,		//
-	kDecalEaseInMax,		//
-	kDecalEaseOutMin,		//
-	kDecalEaseOutMax,		//
-	kDecalAnimUseGlobal,	//
-	kDecalAnimGlobalName,	//
+    kDecalAnimName,
+    kDecalAnimAutoStart,
+    kDecalAnimLoop,
+    kDecalAnimLoopName,
+    kDecalEaseInType,       // Not used, but reserved
+    kDecalEaseOutType,      //
+    kDecalEaseInLength,     //
+    kDecalEaseOutLength,    //
+    kDecalEaseInMin,        //
+    kDecalEaseInMax,        //
+    kDecalEaseOutMin,       //
+    kDecalEaseOutMax,       //
+    kDecalAnimUseGlobal,    //
+    kDecalAnimGlobalName,   //
 };
 
 #endif

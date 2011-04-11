@@ -24,16 +24,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfConsoleDirSrc Header													//
-//																			//
+//                                                                          //
+//  pfConsoleDirSrc Header                                                  //
+//                                                                          //
 //// Description /////////////////////////////////////////////////////////////
-//																			//
-//	Simple wrapper for parsing an entire directory of files and executing	//
-//	each one through the pfConsoleEngine object given.						//
-//	I.E. the source for the console commmands is a directory of files,		//
-//	hence it's a Console Directory Source, or ConsoleDirSrc. :)				//
-//																			//
+//                                                                          //
+//  Simple wrapper for parsing an entire directory of files and executing   //
+//  each one through the pfConsoleEngine object given.                      //
+//  I.E. the source for the console commmands is a directory of files,      //
+//  hence it's a Console Directory Source, or ConsoleDirSrc. :)             //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfConsoleDirSrc_h
@@ -47,42 +47,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pfConsoleDirSrc
 {
-	protected:
-		pfConsoleEngine		*fEngine;
-		struct FileName
-		{
-			std::wstring fPath;
-			std::wstring fFile;
-			FileName() : fPath(L""), fFile(L"") {}
-			FileName(const std::wstring& p, const std::wstring& f) : fPath(p), fFile(f) {}
-		};
-		std::vector<FileName*> fProcessedFiles;		// list of init files we've already executed
-		hsBool fCheckProcessedFiles;		// set to check and skip files init files we've already executed
-	public:
-		pfConsoleDirSrc(pfConsoleEngine *engine) : fCheckProcessedFiles(false) { fEngine = engine; }
-		pfConsoleDirSrc(pfConsoleEngine *engine, const std::string& path, const std::string& mask = "*.ini") :
-			fCheckProcessedFiles(false)
-		{
-			fEngine = engine;
-			ParseDirectory(path, mask);
-		}
-		pfConsoleDirSrc(pfConsoleEngine *engine, const std::wstring& path, const std::wstring& mask = L"*.ini") :
-			fCheckProcessedFiles(false)
-		{
-			fEngine = engine;
-			ParseDirectory(path, mask);
-		}
+    protected:
+        pfConsoleEngine     *fEngine;
+        struct FileName
+        {
+            std::wstring fPath;
+            std::wstring fFile;
+            FileName() : fPath(L""), fFile(L"") {}
+            FileName(const std::wstring& p, const std::wstring& f) : fPath(p), fFile(f) {}
+        };
+        std::vector<FileName*> fProcessedFiles;     // list of init files we've already executed
+        hsBool fCheckProcessedFiles;        // set to check and skip files init files we've already executed
+    public:
+        pfConsoleDirSrc(pfConsoleEngine *engine) : fCheckProcessedFiles(false) { fEngine = engine; }
+        pfConsoleDirSrc(pfConsoleEngine *engine, const std::string& path, const std::string& mask = "*.ini") :
+            fCheckProcessedFiles(false)
+        {
+            fEngine = engine;
+            ParseDirectory(path, mask);
+        }
+        pfConsoleDirSrc(pfConsoleEngine *engine, const std::wstring& path, const std::wstring& mask = L"*.ini") :
+            fCheckProcessedFiles(false)
+        {
+            fEngine = engine;
+            ParseDirectory(path, mask);
+        }
 
-		~pfConsoleDirSrc() { ResetProcessedFiles(); }
+        ~pfConsoleDirSrc() { ResetProcessedFiles(); }
 
-		// Steps through the given directory and executes all files with the console engine
-		hsBool	ParseDirectory(const std::string& path, const std::string& mask = "*.*");
-		hsBool	ParseDirectory(const std::wstring& path, const std::wstring& mask = L"*.*");
+        // Steps through the given directory and executes all files with the console engine
+        hsBool  ParseDirectory(const std::string& path, const std::string& mask = "*.*");
+        hsBool  ParseDirectory(const std::wstring& path, const std::wstring& mask = L"*.*");
 
-		void ResetProcessedFiles();
-		hsBool AlreadyProcessedFile(const std::wstring& path, const std::wstring& file);
-		void AddProcessedFile(const std::wstring& path, const std::wstring& file);
-		void SetCheckProcessedFiles(hsBool c) { fCheckProcessedFiles=c; }		
+        void ResetProcessedFiles();
+        hsBool AlreadyProcessedFile(const std::wstring& path, const std::wstring& file);
+        void AddProcessedFile(const std::wstring& path, const std::wstring& file);
+        void SetCheckProcessedFiles(hsBool c) { fCheckProcessedFiles=c; }       
 };
 
 

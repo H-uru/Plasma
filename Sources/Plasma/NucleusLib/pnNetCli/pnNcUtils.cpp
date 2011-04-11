@@ -47,7 +47,7 @@ CInputAccumulator::CInputAccumulator () {
 
 //============================================================================
 void CInputAccumulator::Add (unsigned count, const byte * data) {
-//	LogMsg(kLogPerf, L"Adding %u bytes to accumulator %p", count, this);
+//  LogMsg(kLogPerf, L"Adding %u bytes to accumulator %p", count, this);
     unsigned offset =  curr - buffer.Ptr();
     buffer.Add(data, count);
     curr = buffer.Ptr() + offset;
@@ -57,7 +57,7 @@ void CInputAccumulator::Add (unsigned count, const byte * data) {
 bool CInputAccumulator::Get (unsigned count, void * dest) {
     if (curr + count > buffer.Term())
         return false;
-//	LogMsg(kLogPerf, L"Removing %u bytes from accumulator %p", count, this);
+//  LogMsg(kLogPerf, L"Removing %u bytes from accumulator %p", count, this);
     MemCopy(dest, curr, count);
     curr += count;
     return true;

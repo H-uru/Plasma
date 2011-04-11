@@ -52,8 +52,8 @@ void CsrCliShutdown ();
 typedef void (*FCsrCliOnConnect) (ENetError result);
 
 void CsrCliStartConnecting (
-	const wchar addr[],
-	FCsrCliOnConnect onConnect
+    const wchar addr[],
+    FCsrCliOnConnect onConnect
 );
 void CsrCliDisconnect ();
 

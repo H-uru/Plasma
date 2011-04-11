@@ -24,11 +24,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plAgeManifest - Collection of version-specific info about an age, such 	//
-//					as the actual files constructing it, timestamps, and	//
-//					release versions.                 						//
-//																			//
+//                                                                          //
+//  plAgeManifest - Collection of version-specific info about an age, such  //
+//                  as the actual files constructing it, timestamps, and    //
+//                  release versions.                                       //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plAgeManifest_h
@@ -47,42 +47,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plManifestFile
 {
 protected:
-	std::string		fName;
-	std::string		fServerPath;
-	plMD5Checksum	fChecksum;
-	UInt32			fSize;
-	UInt32			fZippedSize;
-	UInt32			fFlags;
+    std::string     fName;
+    std::string     fServerPath;
+    plMD5Checksum   fChecksum;
+    UInt32          fSize;
+    UInt32          fZippedSize;
+    UInt32          fFlags;
 
-	bool			fMd5Checked;
-	bool			fIsLocalUpToDate;
-	bool			fLocalExists;
+    bool            fMd5Checked;
+    bool            fIsLocalUpToDate;
+    bool            fLocalExists;
 
 public:
-	// fUser flags
-	enum
-	{
-		// Sound files only
-		kSndFlagCacheSplit			= 1<<0,
-		kSndFlagStreamCompressed	= 1<<1,
-		kSndFlagCacheStereo			= 1<<2,
-		// Any file
-		kFlagZipped					= 1<<3,
-	};
+    // fUser flags
+    enum
+    {
+        // Sound files only
+        kSndFlagCacheSplit          = 1<<0,
+        kSndFlagStreamCompressed    = 1<<1,
+        kSndFlagCacheStereo         = 1<<2,
+        // Any file
+        kFlagZipped                 = 1<<3,
+    };
 
-	plManifestFile(const char* name, const char* serverPath, const plMD5Checksum& check, UInt32 size, UInt32 zippedSize, UInt32 flags, bool md5Now = true);
-	virtual ~plManifestFile();
+    plManifestFile(const char* name, const char* serverPath, const plMD5Checksum& check, UInt32 size, UInt32 zippedSize, UInt32 flags, bool md5Now = true);
+    virtual ~plManifestFile();
 
-	const char* GetName() const { return fName.c_str(); }
-	const char* GetServerPath() const { return fServerPath.c_str(); }
-	const plMD5Checksum& GetChecksum() const { return fChecksum; }
-	UInt32 GetDiskSize() const { return fSize; }
-	UInt32 GetDownloadSize() const { return hsCheckBits(fFlags, kFlagZipped) ? fZippedSize : fSize; }
-	UInt32 GetFlags() const { return fFlags; }
+    const char* GetName() const { return fName.c_str(); }
+    const char* GetServerPath() const { return fServerPath.c_str(); }
+    const plMD5Checksum& GetChecksum() const { return fChecksum; }
+    UInt32 GetDiskSize() const { return fSize; }
+    UInt32 GetDownloadSize() const { return hsCheckBits(fFlags, kFlagZipped) ? fZippedSize : fSize; }
+    UInt32 GetFlags() const { return fFlags; }
 
-	void	DoMd5Check();
-	bool	IsLocalUpToDate();
-	bool	LocalExists();
+    void    DoMd5Check();
+    bool    IsLocalUpToDate();
+    bool    LocalExists();
 };
 
 //// Actual Manifest Class ///////////////////////////////////////////////////
@@ -90,29 +90,29 @@ public:
 class plManifest
 {
 protected:
-	UInt32 fFormatVersion;
-	char* fAgeName;		// Mostly just for debugging
+    UInt32 fFormatVersion;
+    char* fAgeName;     // Mostly just for debugging
 
-	hsTArray<plManifestFile*> fFiles;
-	
-	void IReset();
+    hsTArray<plManifestFile*> fFiles;
+    
+    void IReset();
 
 public:
-	static char* fTimeFormat;		// Standard string for the printed version of our timestamps
+    static char* fTimeFormat;       // Standard string for the printed version of our timestamps
 
-	void SetFormatVersion(UInt32 v) { fFormatVersion = v; }
-	void AddFile(plManifestFile* file);
+    void SetFormatVersion(UInt32 v) { fFormatVersion = v; }
+    void AddFile(plManifestFile* file);
 
-	plManifest();
-	virtual ~plManifest();
+    plManifest();
+    virtual ~plManifest();
 
-	bool Read(const char* filename);
-	bool Read(hsStream* stream);
+    bool Read(const char* filename);
+    bool Read(hsStream* stream);
 
-	UInt32 GetFormatVersion() const { return fFormatVersion; }
+    UInt32 GetFormatVersion() const { return fFormatVersion; }
 
-	UInt32 GetNumFiles() const { return fFiles.GetCount(); }
-	const plManifestFile& GetFile(UInt32 i) const { return *fFiles[i]; }
+    UInt32 GetNumFiles() const { return fFiles.GetCount(); }
+    const plManifestFile& GetFile(UInt32 i) const { return *fFiles[i]; }
 };
 
 #endif //_plAgeManifest_h

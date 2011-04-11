@@ -31,50 +31,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ////////////////////////////////////////////////////
 // Socket base class
 //
-//		plSocket
-//			plTcpSocket
-//			plTcpListenSocket
-//			plIncomingUdpSocket		- TODO (simple to impl, no immediate need)
-//			plOutgoingUdpSocket		- TODO ""
-//			plConnectedOutgoingUdpSocket	- TODO ""
-//		plFdSet
+//      plSocket
+//          plTcpSocket
+//          plTcpListenSocket
+//          plIncomingUdpSocket     - TODO (simple to impl, no immediate need)
+//          plOutgoingUdpSocket     - TODO ""
+//          plConnectedOutgoingUdpSocket    - TODO ""
+//      plFdSet
 //
 
 class plSocket
 {
 public:
-	plSocket();
-	plSocket(SOCKET sck);
-	virtual ~plSocket();
-	bool operator==(const plSocket & rhs);
-	static int GetLastError();
-	void Close();
-	void SetBlocking(bool value);
-	bool IsBlocking();
-	void SetReuseAddress();
-	bool Active();
-	int SetRecvBufferSize(int size);
-	void SetSocket(SOCKET sck);
-	SOCKET GetSocket() const { return fSocket; }
-	void CloseOnDestroy(bool value) { fCloseOnDestroy=value; }
-	void CloseBeforeSet(bool value) { fCloseBeforeSet=value; }
-	int SetSendTimeOut(unsigned int milliSecs=0);
-	int SetRecvTimeOut(unsigned int milliSecs=0);
+    plSocket();
+    plSocket(SOCKET sck);
+    virtual ~plSocket();
+    bool operator==(const plSocket & rhs);
+    static int GetLastError();
+    void Close();
+    void SetBlocking(bool value);
+    bool IsBlocking();
+    void SetReuseAddress();
+    bool Active();
+    int SetRecvBufferSize(int size);
+    void SetSocket(SOCKET sck);
+    SOCKET GetSocket() const { return fSocket; }
+    void CloseOnDestroy(bool value) { fCloseOnDestroy=value; }
+    void CloseBeforeSet(bool value) { fCloseBeforeSet=value; }
+    int SetSendTimeOut(unsigned int milliSecs=0);
+    int SetRecvTimeOut(unsigned int milliSecs=0);
 
 protected:
-	enum TimeoutsSet
-	{
-		kRecvTimeoutSet = 1<<0,
-		kSendTimeoutSet = 1<<1,
-	};
-	bool ErrorClose();
-	SOCKET	fSocket;
-	bool	fCloseOnDestroy;
-	bool	fCloseBeforeSet;
-	unsigned int fTimeoutsSet;
-	unsigned int fRecvTimeOut;
-	unsigned int fSendTimeOut;
-	int IGetTimeOutsFromSocket();
+    enum TimeoutsSet
+    {
+        kRecvTimeoutSet = 1<<0,
+        kSendTimeoutSet = 1<<1,
+    };
+    bool ErrorClose();
+    SOCKET  fSocket;
+    bool    fCloseOnDestroy;
+    bool    fCloseBeforeSet;
+    unsigned int fTimeoutsSet;
+    unsigned int fRecvTimeOut;
+    unsigned int fSendTimeOut;
+    int IGetTimeOutsFromSocket();
 };
 
 

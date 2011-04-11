@@ -137,18 +137,18 @@ r10      tempFloat
 //    Find the x/y distances and stuff them into r9(x) and r8(y) respectively
    // toCenter_X.x = dir0.x * pos.x;
    // toCenter_Y.x = dir0.y * pos.y;
-   mul		r0, c8, r6.xxxx;
-   mad		r0, c9, r6.yyyy, r0;
+   mul      r0, c8, r6.xxxx;
+   mad      r0, c9, r6.yyyy, r0;
 
 //
 //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
    mul         r0, r0, c5;
-   add			r0, r0, c6;
+   add          r0, r0, c6;
 //
 //    // Now we need dist mod'd into range [-Pi..Pi]
 //    dist *= rcp(kTwoPi);
    rcp         r4, c15.wwww;
-   add			r0, r0, c15.zzzz;
+   add          r0, r0, c15.zzzz;
    mul         r0, r0, r4;
 //    dist = frac(dist);
    expp     r1.y, r0.xxxx
@@ -227,35 +227,35 @@ r10      tempFloat
 // // Scrunch in based on computed (normalized) normal
 // temp = mul( accumNorm, kNegScrunchScale ); // kNegScrunchScale = (-scrunchScale, -scrunchScale, 0, 0);
 // accumPos += temp;
-   dp3			r10.x, r11, c18.zxw; // winddir.x, winddir.y, 0, 0
+   dp3          r10.x, r11, c18.zxw; // winddir.x, winddir.y, 0, 0
    // r10.x tells us whether our normal is opposed to the wind.
    // If opposed, r10.x = 0, else r10.x = 1.f;
    // We'll use this to kill the Scrunch on the back sides of waves.
    // We use it for position right here, and then again for the
    // normal just down a bit further.
-   slt			r10.x, r10.x, c16.x;
-   mul			r9, r10.xxxx, r11;
+   slt          r10.x, r10.x, c16.x;
+   mul          r9, r10.xxxx, r11;
 
    mad         r6, r9, c12.yyzz, r6;
 
-//   mul			r6.z, r6.z, r10.xxxx; DEBUG
+//   mul            r6.z, r6.z, r10.xxxx; DEBUG
 
 //   mad         r6, r11, c12.yyzz, r6;
 
 // accumNorm = mul (accumNorm, kScrunchScale ); // kScrunchScale = (scrunchScale, scrunchScale, 1, 1);
    // accumCos *= (scrunchScale, scrunchScale, 0, 0);
 
-   mul			r2.x, r6.z, c12.x;
-   mul			r2.x, r2.x, r10.x; // ???
-   add			r2.x, r2.x, c16.z;
+   mul          r2.x, r6.z, c12.x;
+   mul          r2.x, r2.x, r10.x; // ???
+   add          r2.x, r2.x, c16.z;
 
 //   mul         r7, r7, c12.xxzz;
-   mul			r7.xy, r7.xy, r2.xx;
+   mul          r7.xy, r7.xy, r2.xx;
 
 // This is actually wrong, but useful right now for visualizing the generated coords.
 // See below for correct version.
 
-   sub			r3, c16.xxzx, r7.xyzz;
+   sub          r3, c16.xxzx, r7.xyzz;
 
    // Normalize?
 
@@ -280,47 +280,47 @@ r10      tempFloat
    //
    // Binormal = Y % Normal
    // Cross product3 is:
-   //	mul		res.xyz, a.yzx, b.zxy
-   //	mad		res.xyz, -a.zxy, b.yzx, res.xyz
-//   mul			r1.xyz, c16.zxx, r3.zxy;
-//   mad			r1.xyz, -c16.xxz, r3.yzx, r1.xyz;
+   //   mul     res.xyz, a.yzx, b.zxy
+   //   mad     res.xyz, -a.zxy, b.yzx, res.xyz
+//   mul            r1.xyz, c16.zxx, r3.zxy;
+//   mad            r1.xyz, -c16.xxz, r3.yzx, r1.xyz;
 
    // Tangent = Normal % X
-//   mul			r2.xyz, r3.yzx, c16.xzx;
-//   mad			r2.xyz, -r3.zxy, c16.xxz, r2;
+//   mul            r2.xyz, r3.yzx, c16.xzx;
+//   mad            r2.xyz, -r3.zxy, c16.xxz, r2;
 
-   add			r1, c16.zxxx, r7.zzxz;
-   add			r2, c16.xzxx, r7.zzyz;
+   add          r1, c16.zxxx, r7.zzxz;
+   add          r2, c16.xzxx, r7.zzyz;
 
    // Note that we're swapping z and y to match our environment map tools in max.
    // We do this through our normal map transform (oT1, oT2, oT3), making it
    // a concatenation of:
    //
-   //	rotate about Z (blue) to turn our map into the wind
-   //	windRot =	|	dirY	-dirX	0 |
-   //				|	dirX	dirY	0 |
-   //				|	0		0		1 |
+   //   rotate about Z (blue) to turn our map into the wind
+   //   windRot =   |   dirY    -dirX   0 |
+   //               |   dirX    dirY    0 |
+   //               |   0       0       1 |
    //
-   //	swap our Y and Z axes to match our environment map
-   //	swapYZ	=	|	1		0		0 |
-   //				|	0		0		1 |
-   //				|	0		1		0 |
+   //   swap our Y and Z axes to match our environment map
+   //   swapYZ  =   |   1       0       0 |
+   //               |   0       0       1 |
+   //               |   0       1       0 |
    //
-   //	rotate the normal into the surface's tangent space basis
-   //	basis	=	|	Bx		Tx		Nx |
-   //				|	By		Ty		Ny |
-   //				|	Bz		Tz		Nz |
+   //   rotate the normal into the surface's tangent space basis
+   //   basis   =   |   Bx      Tx      Nx |
+   //               |   By      Ty      Ny |
+   //               |   Bz      Tz      Nz |
    //
-   //	Note that we've constucted the basis by taking advantage of the
-   //	matrix being a pure rotation, as noted below, so r1, r2 and r3
-   //	are actually constructed as:
-   //	basis	=	|	Bx		-By		-Bz |
-   //				|	-Tx		Ty		-Tz |
-   //				|	-Nx		-Ny		-Nz |
+   //   Note that we've constucted the basis by taking advantage of the
+   //   matrix being a pure rotation, as noted below, so r1, r2 and r3
+   //   are actually constructed as:
+   //   basis   =   |   Bx      -By     -Bz |
+   //               |   -Tx     Ty      -Tz |
+   //               |   -Nx     -Ny     -Nz |
    //
-   //	Then the final normal map transform is:
+   //   Then the final normal map transform is:
    //
-   //		basis * swapYZ * windRot [ * normal ]
+   //       basis * swapYZ * windRot [ * normal ]
 
 
 //   sub         r1.w, c17.x, r6.x;
@@ -334,22 +334,22 @@ r10      tempFloat
    // which is needed for the angular attenuation, so we burn another constant
    // with our pseudo-camera position. To restrain the pseudo-camera from
    // leaving the sphere, we make:
-   //	pseudoPos = envCenter + (realPos - envCenter) * dist * R / (dist + R)
+   //   pseudoPos = envCenter + (realPos - envCenter) * dist * R / (dist + R)
    // where dist = |realPos - envCenter|
 
    // So, our "finitized" eyeray is:
-   //	camPos + D * t - envCenter = D * t - (envCenter - camPos)
+   //   camPos + D * t - envCenter = D * t - (envCenter - camPos)
    // with
-   //	D = (pos - camPos) / |pos - camPos| // normalized usual eyeray
+   //   D = (pos - camPos) / |pos - camPos| // normalized usual eyeray
    // and
-   //	t = D dot F + sqrt( (D dot F)^2 - G )
+   //   t = D dot F + sqrt( (D dot F)^2 - G )
    // with
-   //	F = (envCenter - camPos)	=> c19.xyz
-   //	G = F^2 - R^2				=> c19.w
-   //	R = environment radius.		=> unused
+   //   F = (envCenter - camPos)    => c19.xyz
+   //   G = F^2 - R^2               => c19.w
+   //   R = environment radius.     => unused
    //
    // This all derives from the positive root of equation
-   //	(camPos + (pos - camPos) * t - envCenter)^2 = R^2,
+   //   (camPos + (pos - camPos) * t - envCenter)^2 = R^2,
    // In other words, where on a sphere of radius R centered about envCenter
    // does the ray from the real camera position through this point hit.
    //
@@ -362,58 +362,58 @@ r10      tempFloat
    // then t = r10.z = r10.x + r10.y * r9.x;
    // and
    // r0 = D * t - (envCenter - camPos)
-   //		= r0 * r10.zzzz - F;
+   //       = r0 * r10.zzzz - F;
    //
-   sub			r0, r6, c17;
-   dp3			r10.x, r0, r0;
-   rsq			r10.x, r10.x;
-   mul			r0, r0, r10.xxxx;
+   sub          r0, r6, c17;
+   dp3          r10.x, r0, r0;
+   rsq          r10.x, r10.x;
+   mul          r0, r0, r10.xxxx;
 
-   dp3			r10.x, r0, c19;
-   mad			r10.y, r10.x, r10.x, -c19.w;
+   dp3          r10.x, r0, c19;
+   mad          r10.y, r10.x, r10.x, -c19.w;
 
-   rsq			r9.x, r10.y;
+   rsq          r9.x, r10.y;
 
-   mad			r10.z, r10.y, r9.x, r10.x;
+   mad          r10.z, r10.y, r9.x, r10.x;
 
-   mad			r0.xyz, r0, r10.zzz, -c19.xyz;
+   mad          r0.xyz, r0, r10.zzz, -c19.xyz;
 
-   mov			r1.w, -r0.x;
-   mov			r2.w, -r0.y;
-   mov			r3.w, -r0.z;
+   mov          r1.w, -r0.x;
+   mov          r2.w, -r0.y;
+   mov          r3.w, -r0.z;
 
    // Now rotate our basis vectors into the wind
-	dp3		r0.x, r1, c18.xyww;
-	dp3		r0.y, r1, c18.zxww;
-	mov		r1.xy, r0;
+    dp3     r0.x, r1, c18.xyww;
+    dp3     r0.y, r1, c18.zxww;
+    mov     r1.xy, r0;
 
-	dp3		r0.x, r2, c18.xyww;
-	dp3		r0.y, r2, c18.zxww;
-	mov		r2.xy, r0;
+    dp3     r0.x, r2, c18.xyww;
+    dp3     r0.y, r2, c18.zxww;
+    mov     r2.xy, r0;
 
-	dp3		r0.x, r3, c18.xyww;
-	dp3		r0.y, r3, c18.zxww;
-	mov		r3.xy, r0;
+    dp3     r0.x, r3, c18.xyww;
+    dp3     r0.y, r3, c18.zxww;
+    mov     r3.xy, r0;
 
-   mov			r0.w, c16.zzzz;
+   mov          r0.w, c16.zzzz;
 
    dp3         r0.x, r1, r1;
    rsq         r0.x, r0.x;
    mul         oT1, r1.xyzw, r0.xxxw;
-//   mul			r8, r1.xyzw, r0.xxxw; // VISUAL
+//   mul            r8, r1.xyzw, r0.xxxw; // VISUAL
 
    dp3         r0.x, r2, r2;
    rsq         r0.x, r0.x;
    mul         oT3, r2.xyzw, r0.xxxw;
-//   mul			r9, r2.xyzw, r0.xxxw; // VISUAL
+//   mul            r9, r2.xyzw, r0.xxxw; // VISUAL
 
    dp3         r0.x, r3, r3;
    rsq         r0.x, r0.x;
    mul         oT2, r3.xyzw, r0.xxxw;
-//   mul			r9, r3.xyzw, r0.xxxw; // VISUAL
+//   mul            r9, r3.xyzw, r0.xxxw; // VISUAL
 
-//	mul		   r3, r3.xzyw, r0.xxxw;
-//	mul			r3.xy, r3, -c16.zzzz;
+//  mul        r3, r3.xzyw, r0.xxxw;
+//  mul         r3.xy, r3, -c16.zzzz;
 
 /*
    // Want:
@@ -445,27 +445,27 @@ r10      tempFloat
    mov         oD0, c4;
 
 // This should be in local space after xforming v0
-   dp4			r0.x, v0, c10;
-   dp4			r0.y, v0, c11;
-   mov			r0.zw, c16.xxxz;
-   mov			oT0, r0
-//   mov			oT0, v7;
+   dp4          r0.x, v0, c10;
+   dp4          r0.y, v0, c11;
+   mov          r0.zw, c16.xxxz;
+   mov          oT0, r0
+//   mov            oT0, v7;
 
 // Questionble attenuation follows
-	// Find vector from this point to camera and normalize
-	sub			r0, c17, r6;
-	dp3			r1.x, r0, r0;
-    rsq			r1.x, r1.x;
-	mul			r0, r0, r1.xxxx;
-	// Dot that with the computed normal
-	dp3			r1.x, r0, r11;
-//	dp3			r1.x, r0, r3; // if you want the adjusted normal, you'll need to normalize/swizzle r3
-	// Map dot=1 => 0, dot=0 => 1
-	sub			r1.xyzw, c16.zzzz, r1.xxxx;
-	add			r1.w, r1.wwww, c16.zzzz;
-	mul			r1.w, r1.wwww, c16.yyyy;
-	// No need to clamp, since the destination register (in the pixel shader)
-	// will saturate [0..1] anyway.
-	mul			oD1, r1, c20;
-//	mov			oD1, r9;
-//	mov			oD1, r8.xzyw;
+    // Find vector from this point to camera and normalize
+    sub         r0, c17, r6;
+    dp3         r1.x, r0, r0;
+    rsq         r1.x, r1.x;
+    mul         r0, r0, r1.xxxx;
+    // Dot that with the computed normal
+    dp3         r1.x, r0, r11;
+//  dp3         r1.x, r0, r3; // if you want the adjusted normal, you'll need to normalize/swizzle r3
+    // Map dot=1 => 0, dot=0 => 1
+    sub         r1.xyzw, c16.zzzz, r1.xxxx;
+    add         r1.w, r1.wwww, c16.zzzz;
+    mul         r1.w, r1.wwww, c16.yyyy;
+    // No need to clamp, since the destination register (in the pixel shader)
+    // will saturate [0..1] anyway.
+    mul         oD1, r1, c20;
+//  mov         oD1, r9;
+//  mov         oD1, r8.xzyw;

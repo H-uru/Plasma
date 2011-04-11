@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plEnvEffectMsg.h"
 
-/*	Die, die, everybody die!
+/*  Die, die, everybody die!
 
 
 // real-time effects (non environmental);
@@ -52,7 +52,7 @@ rightFeedbackDelay(0),
 swapLeftRightDelay(0),
 modulationRate(0)
 {
-	SetBCastFlag(plMessage::kPropagateToModifiers);
+    SetBCastFlag(plMessage::kPropagateToModifiers);
 }
 
 plAudioEffectMsg::plAudioEffectMsg(const plKey &s,const plKey &r,const double* t) :
@@ -80,62 +80,62 @@ swapLeftRightDelay(0),
 modulationRate(0)
 
 {
-	SetBCastFlag(plMessage::kPropagateToModifiers);
+    SetBCastFlag(plMessage::kPropagateToModifiers);
 }
 
 // IO 
 void plAudioEffectMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plEnvEffectMsg::Read(stream, mgr);
-	stream->ReadSwap(&fEffect);
-	stream->ReadSwap(&wetDryPct);
-	stream->ReadSwap(&delayModPct);
-	stream->ReadSwap(&feedbackPct);
-	stream->ReadSwap(&lfOscillator);
-	stream->ReadSwap(&feedbackDelay);
-	stream->ReadSwap(&waveform);
-	stream->ReadSwap(&phaseDifferential);
-	stream->ReadSwap(&gainDB);
-	stream->ReadSwap(&attack);
-	stream->ReadSwap(&release);
-	stream->ReadSwap(&compThreshhold);
-	stream->ReadSwap(&compRatio);
-	stream->ReadSwap(&attackPreDelay);
-	stream->ReadSwap(&intensity);
-	stream->ReadSwap(&effectCenter);
-	stream->ReadSwap(&effectWidth);
-	stream->ReadSwap(&lfCutoff);
-	stream->ReadSwap(&leftFeedbackDelay);
-	stream->ReadSwap(&rightFeedbackDelay);
-	stream->ReadSwap(&swapLeftRightDelay);
-	stream->ReadSwap(&modulationRate);
+    plEnvEffectMsg::Read(stream, mgr);
+    stream->ReadSwap(&fEffect);
+    stream->ReadSwap(&wetDryPct);
+    stream->ReadSwap(&delayModPct);
+    stream->ReadSwap(&feedbackPct);
+    stream->ReadSwap(&lfOscillator);
+    stream->ReadSwap(&feedbackDelay);
+    stream->ReadSwap(&waveform);
+    stream->ReadSwap(&phaseDifferential);
+    stream->ReadSwap(&gainDB);
+    stream->ReadSwap(&attack);
+    stream->ReadSwap(&release);
+    stream->ReadSwap(&compThreshhold);
+    stream->ReadSwap(&compRatio);
+    stream->ReadSwap(&attackPreDelay);
+    stream->ReadSwap(&intensity);
+    stream->ReadSwap(&effectCenter);
+    stream->ReadSwap(&effectWidth);
+    stream->ReadSwap(&lfCutoff);
+    stream->ReadSwap(&leftFeedbackDelay);
+    stream->ReadSwap(&rightFeedbackDelay);
+    stream->ReadSwap(&swapLeftRightDelay);
+    stream->ReadSwap(&modulationRate);
 }
 
 void plAudioEffectMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plEnvEffectMsg::Write(stream, mgr);
-	stream->WriteSwap(fEffect);
-	stream->WriteSwap(wetDryPct);
-	stream->WriteSwap(delayModPct);
-	stream->WriteSwap(feedbackPct);
-	stream->WriteSwap(lfOscillator);
-	stream->WriteSwap(feedbackDelay);
-	stream->WriteSwap(waveform);
-	stream->WriteSwap(phaseDifferential);
-	stream->WriteSwap(gainDB);
-	stream->WriteSwap(attack);
-	stream->WriteSwap(release);
-	stream->WriteSwap(compThreshhold);
-	stream->WriteSwap(compRatio);
-	stream->WriteSwap(attackPreDelay);
-	stream->WriteSwap(intensity);
-	stream->WriteSwap(effectCenter);
-	stream->WriteSwap(effectWidth);
-	stream->WriteSwap(lfCutoff);
-	stream->WriteSwap(leftFeedbackDelay);
-	stream->WriteSwap(rightFeedbackDelay);
-	stream->WriteSwap(swapLeftRightDelay);
-	stream->WriteSwap(modulationRate);
+    plEnvEffectMsg::Write(stream, mgr);
+    stream->WriteSwap(fEffect);
+    stream->WriteSwap(wetDryPct);
+    stream->WriteSwap(delayModPct);
+    stream->WriteSwap(feedbackPct);
+    stream->WriteSwap(lfOscillator);
+    stream->WriteSwap(feedbackDelay);
+    stream->WriteSwap(waveform);
+    stream->WriteSwap(phaseDifferential);
+    stream->WriteSwap(gainDB);
+    stream->WriteSwap(attack);
+    stream->WriteSwap(release);
+    stream->WriteSwap(compThreshhold);
+    stream->WriteSwap(compRatio);
+    stream->WriteSwap(attackPreDelay);
+    stream->WriteSwap(intensity);
+    stream->WriteSwap(effectCenter);
+    stream->WriteSwap(effectWidth);
+    stream->WriteSwap(lfCutoff);
+    stream->WriteSwap(leftFeedbackDelay);
+    stream->WriteSwap(rightFeedbackDelay);
+    stream->WriteSwap(swapLeftRightDelay);
+    stream->WriteSwap(modulationRate);
 
 }
 */

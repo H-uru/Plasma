@@ -39,91 +39,91 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 
 struct hsFolderIterator_Data {
-	glob_t fGlobBuf;
-	bool fInited;
-	int fCnt;
-	hsFolderIterator_Data() : fInited(false), fCnt(0) {}
-	// ~hsFolderIterator_Data() { fInited=false; globfree(&fData->fGlobBuf); }
+    glob_t fGlobBuf;
+    bool fInited;
+    int fCnt;
+    hsFolderIterator_Data() : fInited(false), fCnt(0) {}
+    // ~hsFolderIterator_Data() { fInited=false; globfree(&fData->fGlobBuf); }
 };
 
 hsFolderIterator::hsFolderIterator(const char path[], bool)
 {
-	fData = TRACKED_NEW hsFolderIterator_Data;
+    fData = TRACKED_NEW hsFolderIterator_Data;
 
-	this->SetPath(path);
+    this->SetPath(path);
 }
 
 hsFolderIterator::~hsFolderIterator()
 {
-	this->Reset();
-	delete fData;
+    this->Reset();
+    delete fData;
 }
 
 void hsFolderIterator::SetPath(const char path[])
 {
-	fPath[0] = 0;
-	if (path)
-	{
-		::strcpy(fPath, path);
-	}
-	this->Reset();
+    fPath[0] = 0;
+    if (path)
+    {
+        ::strcpy(fPath, path);
+    }
+    this->Reset();
 }
 
 void hsFolderIterator::Reset()
 {
-	if (fData->fInited)
-	{
-		globfree(&fData->fGlobBuf);
-		fData->fCnt = 0;
-		fData->fInited=false;
-	}
+    if (fData->fInited)
+    {
+        globfree(&fData->fGlobBuf);
+        fData->fCnt = 0;
+        fData->fInited=false;
+    }
 }
 hsBool hsFolderIterator::NextFile()
 {
-	if (fData->fInited == false)
-	{	
-		std::string path=fPath;
-		if(!(strchr(fPath,'*')  || strchr(fPath,'?')  || strchr(fPath,'[')))
-		{
-			if (fPath[strlen(fPath)-1] != PATH_SEPARATOR)
-				path = path + PATH_SEPARATOR_STR + "*";
-			else
-				path = path + "*";
-		}
+    if (fData->fInited == false)
+    {   
+        std::string path=fPath;
+        if(!(strchr(fPath,'*')  || strchr(fPath,'?')  || strchr(fPath,'[')))
+        {
+            if (fPath[strlen(fPath)-1] != PATH_SEPARATOR)
+                path = path + PATH_SEPARATOR_STR + "*";
+            else
+                path = path + "*";
+        }
 
-		if(glob(path.c_str(), 0, NULL, &fData->fGlobBuf) != 0 ) {
-			return false;
-		}
-		fData->fInited=true;
-		fData->fCnt = 0;
-	}
+        if(glob(path.c_str(), 0, NULL, &fData->fGlobBuf) != 0 ) {
+            return false;
+        }
+        fData->fInited=true;
+        fData->fCnt = 0;
+    }
 
-	return fData->fCnt++ < fData->fGlobBuf.gl_pathc;
+    return fData->fCnt++ < fData->fGlobBuf.gl_pathc;
 }
 
 const char* hsFolderIterator::GetFileName() const
 {
-	if (!fData->fInited || fData->fCnt > fData->fGlobBuf.gl_pathc)
-		throw "end of folder";
+    if (!fData->fInited || fData->fCnt > fData->fGlobBuf.gl_pathc)
+        throw "end of folder";
 
-	const char* fn=fData->fGlobBuf.gl_pathv[fData->fCnt-1];
-	return plFileUtils::GetFileName(fn);
+    const char* fn=fData->fGlobBuf.gl_pathv[fData->fCnt-1];
+    return plFileUtils::GetFileName(fn);
 }
 
-hsBool	hsFolderIterator::IsDirectory( void ) const
+hsBool  hsFolderIterator::IsDirectory( void ) const
 {
-	// rob, please forgive me, this is my best attempt...
-	if(fData->fCnt > fData->fGlobBuf.gl_pathc )
-		return false;
+    // rob, please forgive me, this is my best attempt...
+    if(fData->fCnt > fData->fGlobBuf.gl_pathc )
+        return false;
 
-	struct stat info;
-	const char* fn=fData->fGlobBuf.gl_pathv[fData->fCnt-1];
-	if( stat( fn, &info ) )
-	{
-		printf("Error calling stat(): %s errno=%d\n", strerror(errno), errno);
-		return false;
-	}
-	return ( info.st_mode & S_IFDIR ) ? true : false;
+    struct stat info;
+    const char* fn=fData->fGlobBuf.gl_pathv[fData->fCnt-1];
+    if( stat( fn, &info ) )
+    {
+        printf("Error calling stat(): %s errno=%d\n", strerror(errno), errno);
+        return false;
+    }
+    return ( info.st_mode & S_IFDIR ) ? true : false;
 }
 
 #endif

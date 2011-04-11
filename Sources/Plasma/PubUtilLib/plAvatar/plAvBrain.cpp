@@ -45,140 +45,140 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////////////////////////////////////////////
 
 plArmatureBrain::plArmatureBrain() :
-	fCurTask(nil),
-	fArmature(nil),
-	fAvMod(nil)
+    fCurTask(nil),
+    fArmature(nil),
+    fAvMod(nil)
 {
 }
 
 plArmatureBrain::~plArmatureBrain()
 {
-	while (fTaskQueue.size() > 0)
-	{
-		plAvTask *task = fTaskQueue.front();
-		delete task;
-		fTaskQueue.pop_front();
-	}
-	if (fCurTask)
-		delete fCurTask;	
+    while (fTaskQueue.size() > 0)
+    {
+        plAvTask *task = fTaskQueue.front();
+        delete task;
+        fTaskQueue.pop_front();
+    }
+    if (fCurTask)
+        delete fCurTask;    
 }
 
 hsBool plArmatureBrain::Apply(double timeNow, hsScalar elapsed)
 {
-	IProcessTasks(timeNow, elapsed);
-	fArmature->ApplyAnimations(timeNow, elapsed);
-	
-	return true;
+    IProcessTasks(timeNow, elapsed);
+    fArmature->ApplyAnimations(timeNow, elapsed);
+    
+    return true;
 }
 
 void plArmatureBrain::Activate(plArmatureModBase *armature)
 { 
-	fArmature = armature;
-	fAvMod = plArmatureMod::ConvertNoRef(armature);
+    fArmature = armature;
+    fAvMod = plArmatureMod::ConvertNoRef(armature);
 }
 
 void plArmatureBrain::QueueTask(plAvTask *task)
 {
-	if (task)
-		fTaskQueue.push_back(task);
+    if (task)
+        fTaskQueue.push_back(task);
 }
 
 hsBool plArmatureBrain::LeaveAge()
 {
-	if (fCurTask)
-		fCurTask->LeaveAge(plArmatureMod::ConvertNoRef(fArmature));
-	
-	plAvTaskQueue::iterator i = fTaskQueue.begin();
-	for (; i != fTaskQueue.end(); i++)
-	{
-		plAvTask *task = *i;
-		task->LeaveAge(plArmatureMod::ConvertNoRef(fArmature)); // Give it a chance to do something before we nuke it.
-		delete task;
-	}
-	fTaskQueue.clear();
-	return true;
+    if (fCurTask)
+        fCurTask->LeaveAge(plArmatureMod::ConvertNoRef(fArmature));
+    
+    plAvTaskQueue::iterator i = fTaskQueue.begin();
+    for (; i != fTaskQueue.end(); i++)
+    {
+        plAvTask *task = *i;
+        task->LeaveAge(plArmatureMod::ConvertNoRef(fArmature)); // Give it a chance to do something before we nuke it.
+        delete task;
+    }
+    fTaskQueue.clear();
+    return true;
 }
-	
+    
 hsBool plArmatureBrain::IsRunningTask() const
 {
-	if (fCurTask)
-		return true;
-	if(fTaskQueue.size() > 0)
-		return true;
+    if (fCurTask)
+        return true;
+    if(fTaskQueue.size() > 0)
+        return true;
 
-	return false;
+    return false;
 }
 
 // Nothing for this class to read/write. These methods exist
 // for backwards compatability with plAvBrain and plAvBrainUser
 void plArmatureBrain::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plCreatable::Write(stream, mgr);
-	
-	// plAvBrain
-	stream->WriteSwap32(0);
-	stream->WriteBool(false);
+    plCreatable::Write(stream, mgr);
+    
+    // plAvBrain
+    stream->WriteSwap32(0);
+    stream->WriteBool(false);
 
-	// plAvBrainUser
-	stream->WriteSwap32(0);
-	stream->WriteSwapScalar(0.f);
-	stream->WriteSwapDouble(0.f);	
+    // plAvBrainUser
+    stream->WriteSwap32(0);
+    stream->WriteSwapScalar(0.f);
+    stream->WriteSwapDouble(0.f);   
 }
 
 void plArmatureBrain::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plCreatable::Read(stream, mgr);
+    plCreatable::Read(stream, mgr);
 
-	// plAvBrain
-	stream->ReadSwap32();
-	if (stream->ReadBool()) 
-		mgr->ReadKey(stream);
+    // plAvBrain
+    stream->ReadSwap32();
+    if (stream->ReadBool()) 
+        mgr->ReadKey(stream);
 
-	// plAvBrainUser
-	stream->ReadSwap32();
-	stream->ReadSwapScalar();
-	stream->ReadSwapDouble();
+    // plAvBrainUser
+    stream->ReadSwap32();
+    stream->ReadSwapScalar();
+    stream->ReadSwapDouble();
 }
 
 // MSGRECEIVE
 hsBool plArmatureBrain::MsgReceive(plMessage * msg)
 {
-	plAvTaskMsg *taskMsg = plAvTaskMsg::ConvertNoRef(msg);
-	if (taskMsg)
-	{
-		return IHandleTaskMsg(taskMsg);
-	}
-	return false;
+    plAvTaskMsg *taskMsg = plAvTaskMsg::ConvertNoRef(msg);
+    if (taskMsg)
+    {
+        return IHandleTaskMsg(taskMsg);
+    }
+    return false;
 }
 
 void plArmatureBrain::IProcessTasks(double time, hsScalar elapsed)
 {
-	if (!fCurTask || !fCurTask->Process(plArmatureMod::ConvertNoRef(fArmature), this, time, elapsed))
-	{
-		if (fCurTask)
-		{
-			fCurTask->Finish(plArmatureMod::ConvertNoRef(fArmature), this, time, elapsed);
-			delete fCurTask;
-			fCurTask = nil;
-		}
-		
-		// need a new task
-		if (fTaskQueue.size() > 0)
-		{
-			plAvTask *newTask = fTaskQueue.front();
-			if (newTask && newTask->Start(plArmatureMod::ConvertNoRef(fArmature), this, time, elapsed))
-			{
-				fCurTask = newTask;
-				fTaskQueue.pop_front();
-			}
-			// if we couldn't start the task, we'll keep trying until we can.
-		}
-	}
+    if (!fCurTask || !fCurTask->Process(plArmatureMod::ConvertNoRef(fArmature), this, time, elapsed))
+    {
+        if (fCurTask)
+        {
+            fCurTask->Finish(plArmatureMod::ConvertNoRef(fArmature), this, time, elapsed);
+            delete fCurTask;
+            fCurTask = nil;
+        }
+        
+        // need a new task
+        if (fTaskQueue.size() > 0)
+        {
+            plAvTask *newTask = fTaskQueue.front();
+            if (newTask && newTask->Start(plArmatureMod::ConvertNoRef(fArmature), this, time, elapsed))
+            {
+                fCurTask = newTask;
+                fTaskQueue.pop_front();
+            }
+            // if we couldn't start the task, we'll keep trying until we can.
+        }
+    }
 }
 
 hsBool plArmatureBrain::IHandleTaskMsg(plAvTaskMsg *msg)
 {
-	plAvTask *task = msg->GetTask();
-	QueueTask(task);
-	return true;
+    plAvTask *task = msg->GetTask();
+    QueueTask(task);
+    return true;
 }

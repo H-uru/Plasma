@@ -46,21 +46,21 @@ static const NetMsgField kPingRequestFields[] = {
 };
 
 static const NetMsgField kJoinAgeRequestFields[] = {
-    kNetMsgFieldTransId,						// transId
-    NET_MSG_FIELD_DWORD(),						// ageMcpId
-    kNetMsgFieldUuid,							// accountUuid
-    NET_MSG_FIELD_DWORD(),						// playerInt
+    kNetMsgFieldTransId,                        // transId
+    NET_MSG_FIELD_DWORD(),                      // ageMcpId
+    kNetMsgFieldUuid,                           // accountUuid
+    NET_MSG_FIELD_DWORD(),                      // playerInt
 };
 
 static const NetMsgField kPropagateBufferFields[] = {
-    NET_MSG_FIELD_DWORD(),						// type
-    NET_MSG_FIELD_VAR_COUNT(1, 1024 * 1024),	// bytes
-    NET_MSG_FIELD_VAR_PTR(),					// buffer
+    NET_MSG_FIELD_DWORD(),                      // type
+    NET_MSG_FIELD_VAR_COUNT(1, 1024 * 1024),    // bytes
+    NET_MSG_FIELD_VAR_PTR(),                    // buffer
 };
 
 static const NetMsgField kGameMgrMsgFields[] = {
-    NET_MSG_FIELD_VAR_COUNT(1, 1024 * 1024),	// bytes
-    NET_MSG_FIELD_VAR_PTR(),					// buffer
+    NET_MSG_FIELD_VAR_COUNT(1, 1024 * 1024),    // bytes
+    NET_MSG_FIELD_VAR_PTR(),                    // buffer
 };
 
 
@@ -92,10 +92,10 @@ static const NetMsgField kJoinAgeReplyFields[] = {
 const NetMsg kNetMsg_Cli2Game_PingRequest           = NET_MSG(kCli2Game_PingRequest,            kPingRequestFields);
 const NetMsg kNetMsg_Cli2Game_JoinAgeRequest        = NET_MSG(kCli2Game_JoinAgeRequest,         kJoinAgeRequestFields);
 const NetMsg kNetMsg_Cli2Game_PropagateBuffer       = NET_MSG(kCli2Game_PropagateBuffer,        kPropagateBufferFields);
-const NetMsg kNetMsg_Cli2Game_GameMgrMsg			= NET_MSG(kCli2Game_GameMgrMsg,				kGameMgrMsgFields);
+const NetMsg kNetMsg_Cli2Game_GameMgrMsg            = NET_MSG(kCli2Game_GameMgrMsg,             kGameMgrMsgFields);
 
 // Game2Cli
 const NetMsg kNetMsg_Game2Cli_PingReply             = NET_MSG(kGame2Cli_PingReply,              kPingReplyFields);
 const NetMsg kNetMsg_Game2Cli_JoinAgeReply          = NET_MSG(kGame2Cli_JoinAgeReply,           kJoinAgeReplyFields);
 const NetMsg kNetMsg_Game2Cli_PropagateBuffer       = NET_MSG(kGame2Cli_PropagateBuffer,        kPropagateBufferFields);
-const NetMsg kNetMsg_Game2Cli_GameMgrMsg			= NET_MSG(kGame2Cli_GameMgrMsg,				kGameMgrMsgFields);
+const NetMsg kNetMsg_Game2Cli_GameMgrMsg            = NET_MSG(kGame2Cli_GameMgrMsg,             kGameMgrMsgFields);

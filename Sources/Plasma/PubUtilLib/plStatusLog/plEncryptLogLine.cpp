@@ -24,56 +24,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plEncryptLogLine Header													//
-//																			//
+//                                                                          //
+//  plEncryptLogLine Header                                                 //
+//                                                                          //
 //// Description /////////////////////////////////////////////////////////////
-//																			//
-//	Broken into a separate file for easy include in utility apps			//
-//																			//
+//                                                                          //
+//  Broken into a separate file for easy include in utility apps            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "plEncryptLogLine.h"
 
 #include <string.h>
 
-void	plStatusEncrypt::Encrypt( UInt8 *line, UInt8 hint )
+void    plStatusEncrypt::Encrypt( UInt8 *line, UInt8 hint )
 {
-	// Current encryption scheme: rotate all characters right by 2 bits,
-	// then rotate the whole damn line by 3 bits to the right
-	UInt32 i, len = strlen( (char *)line );
-	UInt8 newHi, hiBits = ( ( line[ len - 1 ] ) << ( 5 - 2 ) ) & 0xe0;
+    // Current encryption scheme: rotate all characters right by 2 bits,
+    // then rotate the whole damn line by 3 bits to the right
+    UInt32 i, len = strlen( (char *)line );
+    UInt8 newHi, hiBits = ( ( line[ len - 1 ] ) << ( 5 - 2 ) ) & 0xe0;
 
-	for( i = 0; i < len; i++ )
-	{
-		// So each character will be the src char rotated right 2 bits, then shifted
-		// right 3 bits, or'ed with the last high bits, and the 3 discarded bits
-		// become the new high bits
-		// Too bad C doesn't have a bit-rotate op
+    for( i = 0; i < len; i++ )
+    {
+        // So each character will be the src char rotated right 2 bits, then shifted
+        // right 3 bits, or'ed with the last high bits, and the 3 discarded bits
+        // become the new high bits
+        // Too bad C doesn't have a bit-rotate op
 
-		line[ i ] = ( line[ i ] << 6 ) | ( line[ i ] >> 2 );
-		newHi = line[ i ] << 5;
-		line[ i ] = ( line[ i ] >> 3 ) | hiBits;
-		line[ i ] ^= hint;	// Should wrap around
+        line[ i ] = ( line[ i ] << 6 ) | ( line[ i ] >> 2 );
+        newHi = line[ i ] << 5;
+        line[ i ] = ( line[ i ] >> 3 ) | hiBits;
+        line[ i ] ^= hint;  // Should wrap around
 
-		hiBits = newHi;
-	}
+        hiBits = newHi;
+    }
 }
 
-void	plStatusEncrypt::Decrypt( UInt8 *line, Int32 len, UInt8 hint )
+void    plStatusEncrypt::Decrypt( UInt8 *line, Int32 len, UInt8 hint )
 {
-	// Da reverse, of course!
-	Int32 i;
-	UInt8 lastChar = 0, newLo, loBits = ( line[ 0 ] ^ hint ) >> 5;
+    // Da reverse, of course!
+    Int32 i;
+    UInt8 lastChar = 0, newLo, loBits = ( line[ 0 ] ^ hint ) >> 5;
 
-	for( i = len - 1; i >= 0; i-- )
-	{
-		lastChar = line[ i ];
-		line[ i ] ^= hint;
-		newLo = line[ i ] >> 5;
-		line[ i ] = ( line[ i ] << 3 ) | loBits;
-		line[ i ] = ( line[ i ] >> 6 ) | ( line[ i ] << 2 );
+    for( i = len - 1; i >= 0; i-- )
+    {
+        lastChar = line[ i ];
+        line[ i ] ^= hint;
+        newLo = line[ i ] >> 5;
+        line[ i ] = ( line[ i ] << 3 ) | loBits;
+        line[ i ] = ( line[ i ] >> 6 ) | ( line[ i ] << 2 );
 
-		loBits = newLo;
-	}
+        loBits = newLo;
+    }
 }

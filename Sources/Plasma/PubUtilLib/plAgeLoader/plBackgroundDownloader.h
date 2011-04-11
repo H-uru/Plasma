@@ -36,47 +36,47 @@ struct NetCliFileManifestEntry;
 class plBackgroundDownloader
 {
 protected:
-	static plBackgroundDownloader* fInstance;
-	static void Init();
-	static void Shutdown();
-	static void ThreadMain(void * param);
+    static plBackgroundDownloader* fInstance;
+    static void Init();
+    static void Shutdown();
+    static void ThreadMain(void * param);
 
-	plBackgroundDownloader();
-	~plBackgroundDownloader();
+    plBackgroundDownloader();
+    ~plBackgroundDownloader();
 
-	HANDLE fBGDownloaderRun;
-	HANDLE fBGDownloaderIsPaused;
+    HANDLE fBGDownloaderRun;
+    HANDLE fBGDownloaderIsPaused;
 
-	enum FileType {kFail, kPrp, kOther};
+    enum FileType {kFail, kPrp, kOther};
 
-	typedef std::vector<plManifestFile*> MfsFileVec;
-	MfsFileVec	fMfsVec;
-
-public:
-
-	bool		fDoneWithFile;
-	bool		fSuccess;
-
-	bool IGetDataManifest();
-	FileType IGetFile(const plManifestFile* mfsFile);
-	UInt32 IGetDownloadSize();
-	bool IDecompressSound(plManifestFile* mfsFile, bool noOverwrite = false);
+    typedef std::vector<plManifestFile*> MfsFileVec;
+    MfsFileVec  fMfsVec;
 
 public:
-	static plBackgroundDownloader* GetInstance();
-	static void StartThread();
 
-	bool Run();
-	void CleanUp();
+    bool        fDoneWithFile;
+    bool        fSuccess;
 
-	void Pause();
-	void UnPause();
+    bool IGetDataManifest();
+    FileType IGetFile(const plManifestFile* mfsFile);
+    UInt32 IGetDownloadSize();
+    bool IDecompressSound(plManifestFile* mfsFile, bool noOverwrite = false);
 
-	static bool CheckFreeSpace(UInt32 bytesNeeded);
+public:
+    static plBackgroundDownloader* GetInstance();
+    static void StartThread();
 
-	// called by download callbacks to tell it we are done with the current file
-	void DoneWithFile(bool success);
-	void DoneWithManifest(bool success, const NetCliFileManifestEntry manifestEntires[], unsigned entryCount);
+    bool Run();
+    void CleanUp();
+
+    void Pause();
+    void UnPause();
+
+    static bool CheckFreeSpace(UInt32 bytesNeeded);
+
+    // called by download callbacks to tell it we are done with the current file
+    void DoneWithFile(bool success);
+    void DoneWithManifest(bool success, const NetCliFileManifestEntry manifestEntires[], unsigned entryCount);
 };
 
 #endif //plBackgroundDownloader_h_inc

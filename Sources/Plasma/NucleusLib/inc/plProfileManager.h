@@ -33,64 +33,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plProfileManager 
 {
 protected:
-	friend class plProfileManagerFull;
+    friend class plProfileManagerFull;
 
-	typedef std::vector<plProfileVar*> VarVec;
-	VarVec fVars;
+    typedef std::vector<plProfileVar*> VarVec;
+    VarVec fVars;
 
-	double fLastAvgTime;
+    double fLastAvgTime;
 
-	UInt32 fProcessorSpeed;
+    UInt32 fProcessorSpeed;
 
-	plProfileManager();
+    plProfileManager();
 
 public:
-	~plProfileManager();
+    ~plProfileManager();
 
-	static plProfileManager& Instance();
+    static plProfileManager& Instance();
 
-	void AddTimer(plProfileVar* var);	// Called by plProfileVar
+    void AddTimer(plProfileVar* var);   // Called by plProfileVar
 
-	void BeginFrame();	// Call begin frame on all timers
-	void EndFrame();	// Call end frame on all timers
+    void BeginFrame();  // Call begin frame on all timers
+    void EndFrame();    // Call end frame on all timers
 
-	void SetAvgTime(UInt32 avgMS);
+    void SetAvgTime(UInt32 avgMS);
 
-	UInt32 GetProcessorSpeed() { return fProcessorSpeed; }
+    UInt32 GetProcessorSpeed() { return fProcessorSpeed; }
 
-	// Backdoor for hack timers in calculated profiles
-	static UInt32 GetTime();
+    // Backdoor for hack timers in calculated profiles
+    static UInt32 GetTime();
 };
 
 class plProfileLaps
 {
 protected:
-	class LapInfo : public plProfileBase
-	{
-	protected:
+    class LapInfo : public plProfileBase
+    {
+    protected:
 
-	public:
-		bool fUsedThisFrame;
-		LapInfo(const char* name) { fName = name; fDisplayFlags = kDisplayTime; }
-		bool operator<(const LapInfo& rhs) const { return fLastAvg < rhs.fLastAvg; }
+    public:
+        bool fUsedThisFrame;
+        LapInfo(const char* name) { fName = name; fDisplayFlags = kDisplayTime; }
+        bool operator<(const LapInfo& rhs) const { return fLastAvg < rhs.fLastAvg; }
 
-		void BeginTiming(UInt32 value) { fValue -= value; }
-		void EndTiming(UInt32 value) { fValue += value; fTimerSamples++; }
-	};
-	std::vector<LapInfo> fLapTimes;
+        void BeginTiming(UInt32 value) { fValue -= value; }
+        void EndTiming(UInt32 value) { fValue += value; fTimerSamples++; }
+    };
+    std::vector<LapInfo> fLapTimes;
 
-	LapInfo* IFindLap(const char* lapName);
+    LapInfo* IFindLap(const char* lapName);
 
 public:
-	void BeginLap(UInt32 curValue, const char* name);
-	void EndLap(UInt32 curValue, const char* name);
+    void BeginLap(UInt32 curValue, const char* name);
+    void EndLap(UInt32 curValue, const char* name);
 
-	void BeginFrame();
-	void EndFrame();
-	void UpdateAvgs();
+    void BeginFrame();
+    void EndFrame();
+    void UpdateAvgs();
 
-	int GetNumLaps();
-	plProfileBase* GetLap(int i);
+    int GetNumLaps();
+    plProfileBase* GetLap(int i);
 };
 
 #endif // plProfileManager_h_inc

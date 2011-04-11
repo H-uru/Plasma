@@ -40,43 +40,43 @@ class hsResMgr;
 class plProxyDrawMsg : public plMessage
 {
 protected:
-	UInt16		fProxyFlags;
+    UInt16      fProxyFlags;
 
 public:
-	plProxyDrawMsg();
-	plProxyDrawMsg(UInt16 flags); // for broadcast
-	plProxyDrawMsg(plKey &rcv, UInt16 flags); // send yourself an ack
-	~plProxyDrawMsg();
+    plProxyDrawMsg();
+    plProxyDrawMsg(UInt16 flags); // for broadcast
+    plProxyDrawMsg(plKey &rcv, UInt16 flags); // send yourself an ack
+    ~plProxyDrawMsg();
 
-	CLASSNAME_REGISTER( plProxyDrawMsg );
-	GETINTERFACE_ANY( plProxyDrawMsg, plMessage );
+    CLASSNAME_REGISTER( plProxyDrawMsg );
+    GETINTERFACE_ANY( plProxyDrawMsg, plMessage );
 
-	enum {
-		kCreate			= 0x1,
-		kDestroy		= 0x2,
-		kDetached		= 0x4,
-		kToggle			= 0x8,
+    enum {
+        kCreate         = 0x1,
+        kDestroy        = 0x2,
+        kDetached       = 0x4,
+        kToggle         = 0x8,
 
-		kLight			= 0x10,
-		kPhysical		= 0x20,
-		kOccluder		= 0x40,
-		kAudible		= 0x80,
-		kCoordinate		= 0x100,
-		kCamera			= 0x200,
+        kLight          = 0x10,
+        kPhysical       = 0x20,
+        kOccluder       = 0x40,
+        kAudible        = 0x80,
+        kCoordinate     = 0x100,
+        kCamera         = 0x200,
 
-		kAllTypes		= kLight 
-						| kPhysical 
-						| kOccluder
-						| kAudible
-						| kCoordinate
-						| kCamera
-	};
+        kAllTypes       = kLight 
+                        | kPhysical 
+                        | kOccluder
+                        | kAudible
+                        | kCoordinate
+                        | kCamera
+    };
 
-	UInt16	GetProxyFlags() const { return fProxyFlags; }
-	void	SetProxyFlags(UInt16 f) { fProxyFlags = f; }
+    UInt16  GetProxyFlags() const { return fProxyFlags; }
+    void    SetProxyFlags(UInt16 f) { fProxyFlags = f; }
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plProxyDrawMsg_inc

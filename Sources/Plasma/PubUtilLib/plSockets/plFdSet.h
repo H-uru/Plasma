@@ -37,23 +37,23 @@ class plSocket;
 class plFdSet
 {
 public:
-	enum { kInfinite = 0xffffffff };
+    enum { kInfinite = 0xffffffff };
 
 public:
-	plFdSet();
-	void SetForSocket(plSocket & in);
-	void ClearForSocket(plSocket & in);
-	bool IsSetFor(plSocket & in);
-	bool IsErrFor(plSocket & in);
-	int WaitForRead(bool shouldZeroFds, unsigned long timeoutMillis=kInfinite);
-	int WaitForWrite(bool shouldZeroFds, unsigned long timeoutMillis=kInfinite);
-	int WaitForError(bool shouldZeroFds, unsigned long timeoutMillis=0);
-	void ZeroFds();
+    plFdSet();
+    void SetForSocket(plSocket & in);
+    void ClearForSocket(plSocket & in);
+    bool IsSetFor(plSocket & in);
+    bool IsErrFor(plSocket & in);
+    int WaitForRead(bool shouldZeroFds, unsigned long timeoutMillis=kInfinite);
+    int WaitForWrite(bool shouldZeroFds, unsigned long timeoutMillis=kInfinite);
+    int WaitForError(bool shouldZeroFds, unsigned long timeoutMillis=0);
+    void ZeroFds();
 
 private:
-	unsigned	fMaxFd;
-	fd_set		fFds;
-	fd_set		fErrFds;
+    unsigned    fMaxFd;
+    fd_set      fFds;
+    fd_set      fErrFds;
 };
 
 

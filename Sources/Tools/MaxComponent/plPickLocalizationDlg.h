@@ -32,23 +32,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plPickLocalizationDlg
 {
-	static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	bool IInitDlg(HWND hDlg);
-	void IUpdateValue(HWND hDlg);
-	void IUpdateOkBtn(HWND hDlg);
-	bool IValidatePath(); // returns true if the current path is a valid subtitle path
-	HTREEITEM IAddVar(std::string name, std::string match, HTREEITEM hParent);
-	void IAddLocalizations(std::string ageName, std::string setName, std::string itemName);
+    bool IInitDlg(HWND hDlg);
+    void IUpdateValue(HWND hDlg);
+    void IUpdateOkBtn(HWND hDlg);
+    bool IValidatePath(); // returns true if the current path is a valid subtitle path
+    HTREEITEM IAddVar(std::string name, std::string match, HTREEITEM hParent);
+    void IAddLocalizations(std::string ageName, std::string setName, std::string itemName);
 
-	std::string fPath;
-	HWND fTree;
+    std::string fPath;
+    HWND fTree;
 
 public:
-	plPickLocalizationDlg(const char *path): fPath(path?path:""), fTree(nil) {}
+    plPickLocalizationDlg(const char *path): fPath(path?path:""), fTree(nil) {}
 
-	bool DoPick(); // returns true if [Ok] clicked, false otherwise.
-	const char *GetValue() const {return fPath.c_str();}
+    bool DoPick(); // returns true if [Ok] clicked, false otherwise.
+    const char *GetValue() const {return fPath.c_str();}
 };
 
 #endif // plPickLocalizationDlg_h

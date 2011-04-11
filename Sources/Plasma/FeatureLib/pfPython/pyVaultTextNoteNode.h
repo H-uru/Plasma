@@ -46,42 +46,42 @@ class pyVaultAgeLinkNode;
 class pyVaultTextNoteNode : public pyVaultNode
 {
 protected:
-	// should only be created from C++ side
-	pyVaultTextNoteNode(RelVaultNode* nfsNode);
+    // should only be created from C++ side
+    pyVaultTextNoteNode(RelVaultNode* nfsNode);
 
-	//create from the Python side
-	pyVaultTextNoteNode();
+    //create from the Python side
+    pyVaultTextNoteNode();
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVaultTextNoteNode);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(RelVaultNode* nfsNode);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultTextNoteNode object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultTextNoteNode); // converts a PyObject to a pyVaultTextNoteNode (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVaultTextNoteNode);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(RelVaultNode* nfsNode);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultTextNoteNode object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultTextNoteNode); // converts a PyObject to a pyVaultTextNoteNode (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
 
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-	void Note_SetTitle( const char * text );
-	void Note_SetTitleW( const wchar_t * text );
-	std::string Note_GetTitle( void );
-	std::wstring Note_GetTitleW( void );
-	void Note_SetText( const char * text );
-	void Note_SetTextW( const wchar_t * text );
-	std::string Note_GetText( void );
-	std::wstring Note_GetTextW( void );
-	void Note_SetType( Int32 type );
-	Int32 Note_GetType( void );
+    void Note_SetTitle( const char * text );
+    void Note_SetTitleW( const wchar_t * text );
+    std::string Note_GetTitle( void );
+    std::wstring Note_GetTitleW( void );
+    void Note_SetText( const char * text );
+    void Note_SetTextW( const wchar_t * text );
+    std::string Note_GetText( void );
+    std::wstring Note_GetTextW( void );
+    void Note_SetType( Int32 type );
+    Int32 Note_GetType( void );
 
-	void Note_SetSubType( Int32 type );
-	Int32 Note_GetSubType( void );
+    void Note_SetSubType( Int32 type );
+    Int32 Note_GetSubType( void );
 
-	PyObject * GetDeviceInbox() const; // returns pyVaultFolderNode
-	void SetDeviceInbox( const char * devName, PyObject * cb=nil, UInt32 cbContext=0 );
+    PyObject * GetDeviceInbox() const; // returns pyVaultFolderNode
+    void SetDeviceInbox( const char * devName, PyObject * cb=nil, UInt32 cbContext=0 );
 };
 
 #endif // _pyVaultTextNoteNode_h_

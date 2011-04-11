@@ -35,42 +35,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool plLightSpace::MsgReceive(plMessage* msg)
 {
-	plCollideMsg* collMsg = plCollideMsg::ConvertNoRef(msg);
-	if( collMsg )
-	{
-		// HACK - CollideMsg doesn't have sufficient info yet. Need at least object
-		// which is entering and leaving, and whether it is entering or leaving.
-		plKey otherKey = nil;
-		hsBool enter = true; 
-		UInt8 ctx = enter ? plRefMsg::kOnRequest : plRefMsg::kOnRemove;
-		plLightRefMsg* liMsg = TRACKED_NEW plLightRefMsg(GetKey(), otherKey, IGetLightInfo(), ctx);
-		plgDispatch::MsgSend(liMsg);
-		return true;
-	}
-	plLightRefMsg* liMsg = plLightRefMsg::ConvertNoRef(msg);
-	if( liMsg )
-	{
-		if( liMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
-			fLightInfo = liMsg->GetRef();
-		else if( liMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-			fLightInfo = nil;
+    plCollideMsg* collMsg = plCollideMsg::ConvertNoRef(msg);
+    if( collMsg )
+    {
+        // HACK - CollideMsg doesn't have sufficient info yet. Need at least object
+        // which is entering and leaving, and whether it is entering or leaving.
+        plKey otherKey = nil;
+        hsBool enter = true; 
+        UInt8 ctx = enter ? plRefMsg::kOnRequest : plRefMsg::kOnRemove;
+        plLightRefMsg* liMsg = TRACKED_NEW plLightRefMsg(GetKey(), otherKey, IGetLightInfo(), ctx);
+        plgDispatch::MsgSend(liMsg);
+        return true;
+    }
+    plLightRefMsg* liMsg = plLightRefMsg::ConvertNoRef(msg);
+    if( liMsg )
+    {
+        if( liMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
+            fLightInfo = liMsg->GetRef();
+        else if( liMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
+            fLightInfo = nil;
 
-		return true;
-	}
-	return false;
+        return true;
+    }
+    return false;
 }
 
 void plLightSpace::Read(hsStream* s, hsResMgr* mgr)
 {
-	plMultiModifier::Read(s, mgr);
+    plMultiModifier::Read(s, mgr);
 
-	mgr->ReadKeyNotifyMe(s, TRACKED_NEW plLightRefMsg(nil, GetKey(), nil, plRefMsg::kOnCreate), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plLightRefMsg(nil, GetKey(), nil, plRefMsg::kOnCreate), plRefFlags::kPassiveRef);
 }
 
 void plLightSpace::Write(hsStream* s, hsResMgr* mgr)
 {
-	plMultiModifier::Write(s, mgr);
+    plMultiModifier::Write(s, mgr);
 
-	mgr->WriteKey(s, fLightInfo);
+    mgr->WriteKey(s, fLightInfo);
 }
 

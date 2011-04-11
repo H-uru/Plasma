@@ -60,70 +60,70 @@ struct NetDiag;
 NetDiag * NetDiagCreate ();
 void NetDiagDelete (NetDiag * diag);
 void NetDiagSetHost (
-	NetDiag *		diag,
-	ENetProtocol	protocol,
-	const wchar		name[]
+    NetDiag *       diag,
+    ENetProtocol    protocol,
+    const wchar     name[]
 );
 
 typedef void ( __cdecl * FNetDiagDumpProc)(
-	const wchar fmt[],
-	...
+    const wchar fmt[],
+    ...
 );
 typedef void (*FNetDiagTestCallback)(
-	NetDiag *		diag,
-	ENetProtocol	protocol,
-	ENetError		result,
-	void *			param
+    NetDiag *       diag,
+    ENetProtocol    protocol,
+    ENetError       result,
+    void *          param
 );
 
 
 //============================================================================
 // Test: SYS
-//	Gather system information
+//  Gather system information
 //============================================================================
 void NetDiagSys (
-	NetDiag *				diag,
-	FNetDiagDumpProc		dump,
-	FNetDiagTestCallback	callback,
-	void *					param
+    NetDiag *               diag,
+    FNetDiagDumpProc        dump,
+    FNetDiagTestCallback    callback,
+    void *                  param
 );
 
 //============================================================================
 // Test: DNS
-//	Lookup server address
+//  Lookup server address
 //============================================================================
 void NetDiagDns (
-	NetDiag *				diag,
-	ENetProtocol			protocol,
-	FNetDiagDumpProc		dump,
-	FNetDiagTestCallback	callback,
-	void *					param
+    NetDiag *               diag,
+    ENetProtocol            protocol,
+    FNetDiagDumpProc        dump,
+    FNetDiagTestCallback    callback,
+    void *                  param
 );
 
 //============================================================================
 // Test: ICMP
-//	Send out 5 sequential ICMP ping packets to the server
+//  Send out 5 sequential ICMP ping packets to the server
 //============================================================================
 void NetDiagIcmp (
-	NetDiag *				diag,
-	ENetProtocol			protocol,
-	FNetDiagDumpProc		dump,
-	FNetDiagTestCallback	callback,
-	void *					param
+    NetDiag *               diag,
+    ENetProtocol            protocol,
+    FNetDiagDumpProc        dump,
+    FNetDiagTestCallback    callback,
+    void *                  param
 );
 
 //============================================================================
 // Test: TCP
-//	Connect to server and measure bandwidth
+//  Connect to server and measure bandwidth
 //============================================================================
 void NetDiagTcp (
-	NetDiag *				diag,
-	ENetProtocol			protocol,
-	unsigned				port,	// 0 --> use default client port
-	FNetDiagDumpProc		dump,
-	FNetDiagTestCallback	callback,
-	void *					param
+    NetDiag *               diag,
+    ENetProtocol            protocol,
+    unsigned                port,   // 0 --> use default client port
+    FNetDiagDumpProc        dump,
+    FNetDiagTestCallback    callback,
+    void *                  param
 );
-		
+        
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETDIAG_PNNETDIAG_H

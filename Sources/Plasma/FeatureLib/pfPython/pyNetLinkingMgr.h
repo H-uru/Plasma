@@ -46,43 +46,43 @@ class pyNetLinkingMgr
 {
 #ifndef BUILDING_PYPLASMA
 protected:
-	pyNetLinkingMgr() {}
+    pyNetLinkingMgr() {}
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptNetLinkingMgr);
-	PYTHON_CLASS_NEW_DEFINITION;
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyNetLinkingMgr object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyNetLinkingMgr); // converts a PyObject to a pyNetLinkingMgr (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptNetLinkingMgr);
+    PYTHON_CLASS_NEW_DEFINITION;
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyNetLinkingMgr object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyNetLinkingMgr); // converts a PyObject to a pyNetLinkingMgr (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 #else
 public:
 #endif // BUILDING_PYPLASMA
-	static void AddPlasmaConstantsClasses(PyObject *m);
+    static void AddPlasmaConstantsClasses(PyObject *m);
 
 #ifndef BUILDING_PYPLASMA
-	// enable/disable linking
-	hsBool IsEnabled( void ) const;
-	void SetEnabled( hsBool b );
+    // enable/disable linking
+    hsBool IsEnabled( void ) const;
+    void SetEnabled( hsBool b );
 
-	// Link to a public instance. PLS will load balance.
-	void LinkToAge( pyAgeLinkStruct & link, const char* linkAnim );
-	// Link to my Personal Age
-	void LinkToMyPersonalAge();
-	// link to my personal age with the YeehsaBook
-	void LinkToMyPersonalAgeWithYeeshaBook();
-	// Link to my Neighborhood Age
-	void LinkToMyNeighborhoodAge();
-	// Link player to my current age
-	void LinkPlayerHere( UInt32 playerID );
-	// Link player to specified age
-	void LinkPlayerToAge( pyAgeLinkStruct & link, UInt32 playerID );
-	// Link to player's current age
-	void LinkToPlayersAge( UInt32 playerID );
+    // Link to a public instance. PLS will load balance.
+    void LinkToAge( pyAgeLinkStruct & link, const char* linkAnim );
+    // Link to my Personal Age
+    void LinkToMyPersonalAge();
+    // link to my personal age with the YeehsaBook
+    void LinkToMyPersonalAgeWithYeeshaBook();
+    // Link to my Neighborhood Age
+    void LinkToMyNeighborhoodAge();
+    // Link player to my current age
+    void LinkPlayerHere( UInt32 playerID );
+    // Link player to specified age
+    void LinkPlayerToAge( pyAgeLinkStruct & link, UInt32 playerID );
+    // Link to player's current age
+    void LinkToPlayersAge( UInt32 playerID );
 
-	PyObject* GetCurrAgeLink(); // returns pyAgeLinkStructRef
-	PyObject* GetPrevAgeLink(); // returns pyAgeLinkStructRef
+    PyObject* GetCurrAgeLink(); // returns pyAgeLinkStructRef
+    PyObject* GetPrevAgeLink(); // returns pyAgeLinkStructRef
 #endif // BUILDING_PYPLASMA
 };
 

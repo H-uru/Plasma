@@ -27,71 +27,71 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pyPlayer::pyPlayer() // only used by python glue, do NOT call
 {
-	fAvatarKey = nil;
-	fPlayerName = "";
-	fPlayerID = 0;
-	fDistSq = -1;
-	fIsCCR = false;
-	fIsServer = false;
+    fAvatarKey = nil;
+    fPlayerName = "";
+    fPlayerID = 0;
+    fDistSq = -1;
+    fIsCCR = false;
+    fIsServer = false;
 }
 
 pyPlayer::pyPlayer(pyKey& avKey, const char* pname, UInt32 pid, hsScalar distsq)
 {
-	fAvatarKey = avKey.getKey();
-	fPlayerName = pname;
-	fPlayerID = pid;
-	fDistSq = distsq;
-	fIsCCR = false;
-	fIsServer = false;
+    fAvatarKey = avKey.getKey();
+    fPlayerName = pname;
+    fPlayerID = pid;
+    fDistSq = distsq;
+    fIsCCR = false;
+    fIsServer = false;
 }
 
 pyPlayer::pyPlayer(plKey avKey, const char* pname, UInt32 pid, hsScalar distsq)
 {
-	fAvatarKey = avKey;
-	fPlayerName = pname;
-	fPlayerID = pid;
-	fDistSq = distsq;
-	fIsCCR = false;
-	fIsServer = false;
+    fAvatarKey = avKey;
+    fPlayerName = pname;
+    fPlayerID = pid;
+    fDistSq = distsq;
+    fIsCCR = false;
+    fIsServer = false;
 }
 
 // another way to create a player with just a name and number
 pyPlayer::pyPlayer(const char* pname, UInt32 pid)
 {
-	fAvatarKey = nil;
-	fPlayerName = pname;
-	fPlayerID = pid;
-	fDistSq = -1;
-	fIsCCR = false;
-	fIsServer = false;
+    fAvatarKey = nil;
+    fPlayerName = pname;
+    fPlayerID = pid;
+    fDistSq = -1;
+    fIsCCR = false;
+    fIsServer = false;
 }
 
 void pyPlayer::Init(plKey avKey, const char* pname, UInt32 pid, hsScalar distsq) // used by python glue, do NOT call
 {
-	fAvatarKey = avKey;
-	fPlayerName = pname;
-	fPlayerID = pid;
-	fDistSq = distsq;
-	fIsCCR = false;
-	fIsServer = false;
+    fAvatarKey = avKey;
+    fPlayerName = pname;
+    fPlayerID = pid;
+    fDistSq = distsq;
+    fIsCCR = false;
+    fIsServer = false;
 }
 
 void pyPlayer::SetCCRFlag(hsBool state)
 {
-	fIsCCR = state;
+    fIsCCR = state;
 }
 
 hsBool pyPlayer::IsCCR()
 {
-	return fIsCCR;
+    return fIsCCR;
 }
 
 void pyPlayer::SetServerFlag(hsBool state)
 {
-	fIsServer = state;
+    fIsServer = state;
 }
 
 hsBool pyPlayer::IsServer()
 {
-	return fIsServer;
+    return fIsServer;
 }

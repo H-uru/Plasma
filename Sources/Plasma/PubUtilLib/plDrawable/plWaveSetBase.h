@@ -35,27 +35,27 @@ class plRipVSConsts;
 
 class plWaveSetBase : public plMultiModifier
 {
-	virtual int IShoreRef() const = 0;
-	virtual int IDecalRef() const = 0;
+    virtual int IShoreRef() const = 0;
+    virtual int IDecalRef() const = 0;
 
 public:
-	plWaveSetBase();
-	virtual ~plWaveSetBase();
+    plWaveSetBase();
+    virtual ~plWaveSetBase();
 
-	CLASSNAME_REGISTER( plWaveSetBase );
-	GETINTERFACE_ANY( plWaveSetBase, plMultiModifier );
+    CLASSNAME_REGISTER( plWaveSetBase );
+    GETINTERFACE_ANY( plWaveSetBase, plMultiModifier );
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
 
-	Int32		GetNumProperties() const { return 0; }
+    Int32       GetNumProperties() const { return 0; }
 
-	virtual hsBool		SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts) = 0;
-	virtual hsScalar	GetHeight() const = 0;
-	virtual hsVector3	GetWindDir() const = 0;
+    virtual hsBool      SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts) = 0;
+    virtual hsScalar    GetHeight() const = 0;
+    virtual hsVector3   GetWindDir() const = 0;
 
 
-	void			AddShore(plKey soKey);
-	void			AddDecal(plKey key);
+    void            AddShore(plKey soKey);
+    void            AddDecal(plKey key);
 
 };
 

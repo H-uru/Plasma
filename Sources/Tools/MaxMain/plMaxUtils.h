@@ -30,20 +30,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMaxUtils : public UtilityObj
 {
 protected:
-	HWND fhPanel;
-	HWND fhResDlg;
+    HWND fhPanel;
+    HWND fhResDlg;
 
-	plMaxUtils();
+    plMaxUtils();
 
 public:
-	static plMaxUtils& Instance();
-	void DeleteThis() {};
+    static plMaxUtils& Instance();
+    void DeleteThis() {};
 
-	void BeginEditParams(Interface *ip, IUtil *iu);
-	void EndEditParams(Interface *ip, IUtil *iu);
+    void BeginEditParams(Interface *ip, IUtil *iu);
+    void EndEditParams(Interface *ip, IUtil *iu);
 
-	static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	static BOOL CALLBACK ResDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static BOOL CALLBACK ResDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 };

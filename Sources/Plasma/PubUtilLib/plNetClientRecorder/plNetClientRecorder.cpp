@@ -53,108 +53,108 @@ plNetClientRecorder::~plNetClientRecorder()
 
 double plNetClientRecorder::GetTime()
 {
-	if (fTimeWrapper)
-		return fTimeWrapper->GetWrappedTime();
-	else
-		return hsTimer::GetSysSeconds();
+    if (fTimeWrapper)
+        return fTimeWrapper->GetWrappedTime();
+    else
+        return hsTimer::GetSysSeconds();
 }
 
 void plNetClientRecorder::IMakeFilename(const char* recName, char* path)
 {
-	strcpy(path, "Recordings" PATH_SEPARATOR_STR);
+    strcpy(path, "Recordings" PATH_SEPARATOR_STR);
 #if HS_BUILD_FOR_WIN32
-	CreateDirectory(path, NULL);
+    CreateDirectory(path, NULL);
 #endif
 
-	const char* lastDot = strrchr(recName, '.');
-	if (lastDot)
-		strncat(path, recName, lastDot-recName);
-	else
-		strcat(path, recName);
+    const char* lastDot = strrchr(recName, '.');
+    if (lastDot)
+        strncat(path, recName, lastDot-recName);
+    else
+        strcat(path, recName);
 
-	strcat(path, ".rec");
+    strcat(path, ".rec");
 }
 
 bool plNetClientRecorder::IsRecordableMsg(plNetMessage* msg) const
 {
-	UInt16 idx = msg->ClassIndex();
+    UInt16 idx = msg->ClassIndex();
 
-	return (
-		idx == CLASS_INDEX_SCOPED(plNetMsgLoadClone) ||
-		idx == CLASS_INDEX_SCOPED(plNetMsgSDLStateBCast) ||
-		idx == CLASS_INDEX_SCOPED(plNetMsgSDLState) ||
-		idx == CLASS_INDEX_SCOPED(plNetMsgGameMessage)
-		);
+    return (
+        idx == CLASS_INDEX_SCOPED(plNetMsgLoadClone) ||
+        idx == CLASS_INDEX_SCOPED(plNetMsgSDLStateBCast) ||
+        idx == CLASS_INDEX_SCOPED(plNetMsgSDLState) ||
+        idx == CLASS_INDEX_SCOPED(plNetMsgGameMessage)
+        );
 }
 
 plNetClientLoggingRecorder::plNetClientLoggingRecorder(TimeWrapper* timeWrapper) :
-	plNetClientRecorder(timeWrapper),
-	fPlaybackTimeOffset(0),
-	fNextPlaybackTime(0),
-	fLog(nil),
-	fBetweenAges(true)
+    plNetClientRecorder(timeWrapper),
+    fPlaybackTimeOffset(0),
+    fNextPlaybackTime(0),
+    fLog(nil),
+    fBetweenAges(true)
 {
 }
 
 plNetClientLoggingRecorder::~plNetClientLoggingRecorder()
 {
-	delete fLog;
-	fLog = nil;
+    delete fLog;
+    fLog = nil;
 }
 
 bool plNetClientLoggingRecorder::IProcessRecordMsg(plNetMessage* msg, double secs)
 {
-	if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plNetMsgGameMessage))
-	{
-		plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
-		UInt16 gameMsgIdx = gameMsg->StreamInfo()->GetStreamType();
+    if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plNetMsgGameMessage))
+    {
+        plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
+        UInt16 gameMsgIdx = gameMsg->StreamInfo()->GetStreamType();
 
-		if (gameMsgIdx == CLASS_INDEX_SCOPED(plServerReplyMsg))
-			return false;
+        if (gameMsgIdx == CLASS_INDEX_SCOPED(plServerReplyMsg))
+            return false;
 
-		// Throw out any notify messages that don't involve picking (running into
-		// detectors and that sort of thing should be recreated automatically
-		// during playback)
-		if (gameMsgIdx == CLASS_INDEX_SCOPED(plNotifyMsg))
-		{
-			bool hasPick = false;
+        // Throw out any notify messages that don't involve picking (running into
+        // detectors and that sort of thing should be recreated automatically
+        // during playback)
+        if (gameMsgIdx == CLASS_INDEX_SCOPED(plNotifyMsg))
+        {
+            bool hasPick = false;
 
-			plNotifyMsg* notifyMsg = plNotifyMsg::ConvertNoRef(gameMsg->GetContainedMsg());
-			int numEvents = notifyMsg->GetEventCount();
-			for (int i = 0; i < numEvents; i++)
-			{
-				proEventData* event = notifyMsg->GetEventRecord(i);
-				if (event->fEventType == proEventData::kPicked)
-					hasPick = true;
-			}
+            plNotifyMsg* notifyMsg = plNotifyMsg::ConvertNoRef(gameMsg->GetContainedMsg());
+            int numEvents = notifyMsg->GetEventCount();
+            for (int i = 0; i < numEvents; i++)
+            {
+                proEventData* event = notifyMsg->GetEventRecord(i);
+                if (event->fEventType == proEventData::kPicked)
+                    hasPick = true;
+            }
 
-			hsRefCnt_SafeUnRef(notifyMsg);
+            hsRefCnt_SafeUnRef(notifyMsg);
 
-			if (!hasPick)
-				return false;
-		}
-	}
-	
-	if (fPlaybackTimeOffset == 0)
-		fPlaybackTimeOffset = secs;
+            if (!hasPick)
+                return false;
+        }
+    }
+    
+    if (fPlaybackTimeOffset == 0)
+        fPlaybackTimeOffset = secs;
 
-	return true;
+    return true;
 }
 
 void plNetClientLoggingRecorder::RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs)
 {
-	if (!linkMsg->HasBCastFlag(plMessage::kNetSent))
-	{
-		plNetMsgGameMessage netMsgWrap;
+    if (!linkMsg->HasBCastFlag(plMessage::kNetSent))
+    {
+        plNetMsgGameMessage netMsgWrap;
 
-		// write message (and label) to ram stream
-		hsRAMStream stream;
-		hsgResMgr::ResMgr()->WriteCreatable(&stream, linkMsg);
+        // write message (and label) to ram stream
+        hsRAMStream stream;
+        hsgResMgr::ResMgr()->WriteCreatable(&stream, linkMsg);
 
-		// put stream in net msg wrapper
-		netMsgWrap.StreamInfo()->CopyStream(&stream);
-		// netMsgWrap.StreamInfo()->SetStreamType(linkMsg->ClassIndex());		// type of game msg
+        // put stream in net msg wrapper
+        netMsgWrap.StreamInfo()->CopyStream(&stream);
+        // netMsgWrap.StreamInfo()->SetStreamType(linkMsg->ClassIndex());       // type of game msg
 
-		RecordMsg(&netMsgWrap, secs);
-	}
+        RecordMsg(&netMsgWrap, secs);
+    }
 }

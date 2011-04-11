@@ -45,25 +45,25 @@ class pyDynamicText;
 class pyGUIControlDynamicText : public pyGUIControl
 {
 protected:
-	pyGUIControlDynamicText(): pyGUIControl() {} // for python glue only, do NOT call
-	pyGUIControlDynamicText(pyKey& gckey);
-	pyGUIControlDynamicText(plKey objkey);
+    pyGUIControlDynamicText(): pyGUIControl() {} // for python glue only, do NOT call
+    pyGUIControlDynamicText(pyKey& gckey);
+    pyGUIControlDynamicText(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlDynamicText);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlDynamicText object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlDynamicText); // converts a PyObject to a pyGUIControlDynamicText (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlDynamicText);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlDynamicText object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlDynamicText); // converts a PyObject to a pyGUIControlDynamicText (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlDynamicText(pyKey& gckey);
+    static hsBool IsGUIControlDynamicText(pyKey& gckey);
 
-	//specific interface functions
-	virtual UInt32	GetNumMaps();
-	virtual PyObject* GetMap(UInt32 i); // returns pyDynamicText
+    //specific interface functions
+    virtual UInt32  GetNumMaps();
+    virtual PyObject* GetMap(UInt32 i); // returns pyDynamicText
 };
 
 #endif // _pyGUIControlButton_h_

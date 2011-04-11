@@ -48,8 +48,8 @@ static long s_perf[kNumAsyncPerfCounters];
 *
 ***/
 
-AsyncApi	g_api;
-bool		s_transgaming;
+AsyncApi    g_api;
+bool        s_transgaming;
 
 
 /*****************************************************************************
@@ -63,11 +63,11 @@ static void DoTransgamingCheck () {
 #ifdef HS_BUILD_FOR_WIN32
 #ifdef CLIENT
 
-	HMODULE hMod = GetModuleHandle("ntdll");
-	if (!hMod)
-		return;
+    HMODULE hMod = GetModuleHandle("ntdll");
+    if (!hMod)
+        return;
 
-	s_transgaming = GetProcAddress(hMod, "IsTransgaming") != nil;
+    s_transgaming = GetProcAddress(hMod, "IsTransgaming") != nil;
 
 #endif
 #endif
@@ -76,56 +76,56 @@ static void DoTransgamingCheck () {
 //===========================================================================
 static void IAsyncInitUseW9x () {
 #ifdef HS_BUILD_FOR_WIN32
-	W9xGetApi(&g_api);
+    W9xGetApi(&g_api);
 #else
-	ErrorFatal("W9x I/O Not supported on this platform");
+    ErrorFatal("W9x I/O Not supported on this platform");
 #endif
 }
 
 //===========================================================================
 static void IAsyncInitUseNt () {
 #ifdef HS_BUILD_FOR_WIN32
-	NtGetApi(&g_api);
+    NtGetApi(&g_api);
 #else
-	ErrorFatal("Nt I/O Not supported on this platform");
+    ErrorFatal("Nt I/O Not supported on this platform");
 #endif
 }
 
 //===========================================================================
 static void IAsyncInitUseUnix () {
 #ifdef HS_BUILD_FOR_UNIX
-	#error Unix I/O not implemented yet
-	UxGetApi(&g_api);
+    #error Unix I/O not implemented yet
+    UxGetApi(&g_api);
 #else
-	ErrorFatal(__LINE__, __FILE__, "Unix I/O Not supported on this platform");
+    ErrorFatal(__LINE__, __FILE__, "Unix I/O Not supported on this platform");
 #endif
 }
 
 //===========================================================================
 static void IAsyncInitForClient () {
 #ifdef HS_BUILD_FOR_WIN32
-	DoTransgamingCheck();
-	if (s_transgaming) {
-		IAsyncInitUseW9x();
-	}
-	else {
-		IAsyncInitUseNt();
-	}
+    DoTransgamingCheck();
+    if (s_transgaming) {
+        IAsyncInitUseW9x();
+    }
+    else {
+        IAsyncInitUseNt();
+    }
 #elif HS_BUILD_FOR_UNIX
-	IAsyncInitUseUnix();
+    IAsyncInitUseUnix();
 #else
-	ErrorFatal("AsyncCore: No default implementation for this platform");
+    ErrorFatal("AsyncCore: No default implementation for this platform");
 #endif    
 }
 
 //===========================================================================
 static void IAsyncInitForServer () {
 #ifdef HS_BUILD_FOR_WIN32
-	IAsyncInitUseNt();
+    IAsyncInitUseNt();
 #elif HS_BUILD_FOR_UNIX
-	IAsyncInitUseUnix();
+    IAsyncInitUseUnix();
 #else
-	ErrorFatal("AsyncCore: No default implementation for this platform");
+    ErrorFatal("AsyncCore: No default implementation for this platform");
 #endif    
 }
 
@@ -195,8 +195,8 @@ void AsyncCoreDestroy (unsigned waitMs) {
     DnsDestroy(waitMs);
     TimerDestroy(waitMs);
     ThreadDestroy(waitMs);
-	
-	ZERO(g_api);
+    
+    ZERO(g_api);
 }
 
 //============================================================================

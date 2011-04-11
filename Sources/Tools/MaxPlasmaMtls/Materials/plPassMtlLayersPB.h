@@ -28,14 +28,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum
 {
-	// Layers
-	kPassLayBase,
-	kPassLayTopOn,
-	kPassLayTop,
+    // Layers
+    kPassLayBase,
+    kPassLayTopOn,
+    kPassLayTop,
 
-	kPassLayBlend,
-	kPassLayOutputBlend,
-	kPassLayOutputAlpha,
+    kPassLayBlend,
+    kPassLayOutputBlend,
+    kPassLayOutputAlpha,
 };
 
 #endif //PL_PASSMTLLAYERSPB_H

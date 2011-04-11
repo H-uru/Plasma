@@ -37,119 +37,119 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // This is meant to be a specific physicsAction for the swim behavior
 plAntiGravAction::plAntiGravAction(plHKPhysical *physical, plAGApplicator *rootApp) : 
-	plAnimatedCallbackAction(physical, rootApp),
-	fOnGround(false),
-	fBuoyancy(1.f),
-	fSurfaceHeight(0.f),
-	fCurrentRegion(nil),
-	fHadContacts(false)
+    plAnimatedCallbackAction(physical, rootApp),
+    fOnGround(false),
+    fBuoyancy(1.f),
+    fSurfaceHeight(0.f),
+    fCurrentRegion(nil),
+    fHadContacts(false)
 {
 }
 
 plSimDefs::ActionType plAntiGravAction::GetType()
 {
-	return plSimDefs::kAntiGravAction;
+    return plSimDefs::kAntiGravAction;
 }
 
 void plAntiGravAction::apply(Havok::Subspace &space, Havok::hkTime time)
 {
-	double elapsed = time.asDouble() - getRefresh().asDouble();
-	setRefresh(time);
-	
-	IAdjustBuoyancy();		
-	Havok::RigidBody *body = fPhysical->GetBody();
-	float mass = body->getMass();
-	Havok::Vector3 gravity = space.getGravity();
-	Havok::Vector3 force = -gravity * (mass * fBuoyancy);
-	body->applyForce(force);
-	
-	hsVector3 vel;
-	fPhysical->GetLinearVelocitySim(vel);
-	fAnimPosVel.fZ = vel.fZ;
-	
-	hsVector3 linCurrent(0.f, 0.f, 0.f);
-	hsScalar angCurrent = 0.f;
-	if (fCurrentRegion != nil)
-		fCurrentRegion->GetCurrent(fPhysical, linCurrent, angCurrent, (hsScalar)elapsed);
-	
-	int numContacts = fPhysical->GetNumContacts();
-	fHadContacts = (numContacts > 0);
+    double elapsed = time.asDouble() - getRefresh().asDouble();
+    setRefresh(time);
+    
+    IAdjustBuoyancy();      
+    Havok::RigidBody *body = fPhysical->GetBody();
+    float mass = body->getMass();
+    Havok::Vector3 gravity = space.getGravity();
+    Havok::Vector3 force = -gravity * (mass * fBuoyancy);
+    body->applyForce(force);
+    
+    hsVector3 vel;
+    fPhysical->GetLinearVelocitySim(vel);
+    fAnimPosVel.fZ = vel.fZ;
+    
+    hsVector3 linCurrent(0.f, 0.f, 0.f);
+    hsScalar angCurrent = 0.f;
+    if (fCurrentRegion != nil)
+        fCurrentRegion->GetCurrent(fPhysical, linCurrent, angCurrent, (hsScalar)elapsed);
+    
+    int numContacts = fPhysical->GetNumContacts();
+    fHadContacts = (numContacts > 0);
 
-	const Havok::Vector3 straightUp(0.0f, 0.0f, 1.0f);	
-	fOnGround = false;
-	int i;
-	for (i = 0; i < numContacts; i++)
-	{
-		const Havok::ContactPoint *contact = fPhysical->GetContactPoint(i);	
-		hsScalar dotUp = straightUp.dot(contact->m_normal);
-		if (dotUp > .5)
-		{
-			fOnGround = true;
-			break;
-		}
-	}	
+    const Havok::Vector3 straightUp(0.0f, 0.0f, 1.0f);  
+    fOnGround = false;
+    int i;
+    for (i = 0; i < numContacts; i++)
+    {
+        const Havok::ContactPoint *contact = fPhysical->GetContactPoint(i); 
+        hsScalar dotUp = straightUp.dot(contact->m_normal);
+        if (dotUp > .5)
+        {
+            fOnGround = true;
+            break;
+        }
+    }   
 
-	fPhysical->SetLinearVelocitySim(fAnimPosVel + linCurrent);
-	fPhysical->SetAngularVelocitySim(hsVector3(0.f, 0.f, fAnimAngVel + fTurnStr + angCurrent));	
+    fPhysical->SetLinearVelocitySim(fAnimPosVel + linCurrent);
+    fPhysical->SetAngularVelocitySim(hsVector3(0.f, 0.f, fAnimAngVel + fTurnStr + angCurrent)); 
 }
 
 void plAntiGravAction::SetSurface(plSwimRegionInterface *region, hsScalar surfaceHeight)
 {
-	fCurrentRegion = region;
-	if (region != nil)
-		fSurfaceHeight = surfaceHeight;
+    fCurrentRegion = region;
+    if (region != nil)
+        fSurfaceHeight = surfaceHeight;
 }
 
 void plAntiGravAction::IAdjustBuoyancy()
 {
-	// "surface depth" refers to the depth our handle object should be below
-	// the surface for the avatar to be "at the surface"
-	static const float surfaceDepth = 4.0f;
-	// 1.0 = neutral buoyancy
-	// 0 = no buoyancy (normal gravity)
-	// 2.0 = opposite of gravity, floating upwards
-	static const float buoyancyAtSurface = 1.0f;
+    // "surface depth" refers to the depth our handle object should be below
+    // the surface for the avatar to be "at the surface"
+    static const float surfaceDepth = 4.0f;
+    // 1.0 = neutral buoyancy
+    // 0 = no buoyancy (normal gravity)
+    // 2.0 = opposite of gravity, floating upwards
+    static const float buoyancyAtSurface = 1.0f;
 
-	if (fCurrentRegion == nil)
-	{
-		fBuoyancy = 0.f;
-		return;
-	}
+    if (fCurrentRegion == nil)
+    {
+        fBuoyancy = 0.f;
+        return;
+    }
 
-	hsMatrix44 l2w, w2l;
-	fPhysical->GetTransform(l2w, w2l);
-	float depth = fSurfaceHeight - surfaceDepth - l2w.GetTranslate().fZ;	
-	if (depth < -1)
-		fBuoyancy = 0.f; // Same as being above ground. Plain old gravity.
-	else if (depth < 0)
-		fBuoyancy = 1 + depth;
-	else 
-	{
-		hsVector3 vel;
-		fPhysical->GetLinearVelocitySim(vel);
-		if (vel.fZ > 0)
-		{
-			if (vel.fZ > fCurrentRegion->fMaxUpwardVel)
-			{
-				vel.fZ = fCurrentRegion->fMaxUpwardVel;
-				fPhysical->SetLinearVelocitySim(vel);
-			}
-			else
-			{
-				if (depth > 1)
-					fBuoyancy = fCurrentRegion->fUpBuoyancy;
-				else
-					fBuoyancy = (fCurrentRegion->fUpBuoyancy - 1) * depth + 1;
-			}
-		}
-		else
-		{
-			if (depth > 1)
-				fBuoyancy = fCurrentRegion->fDownBuoyancy;
-			else
-				fBuoyancy = (fCurrentRegion->fDownBuoyancy - 1) * depth + 1;
-		}
-	}	
+    hsMatrix44 l2w, w2l;
+    fPhysical->GetTransform(l2w, w2l);
+    float depth = fSurfaceHeight - surfaceDepth - l2w.GetTranslate().fZ;    
+    if (depth < -1)
+        fBuoyancy = 0.f; // Same as being above ground. Plain old gravity.
+    else if (depth < 0)
+        fBuoyancy = 1 + depth;
+    else 
+    {
+        hsVector3 vel;
+        fPhysical->GetLinearVelocitySim(vel);
+        if (vel.fZ > 0)
+        {
+            if (vel.fZ > fCurrentRegion->fMaxUpwardVel)
+            {
+                vel.fZ = fCurrentRegion->fMaxUpwardVel;
+                fPhysical->SetLinearVelocitySim(vel);
+            }
+            else
+            {
+                if (depth > 1)
+                    fBuoyancy = fCurrentRegion->fUpBuoyancy;
+                else
+                    fBuoyancy = (fCurrentRegion->fUpBuoyancy - 1) * depth + 1;
+            }
+        }
+        else
+        {
+            if (depth > 1)
+                fBuoyancy = fCurrentRegion->fDownBuoyancy;
+            else
+                fBuoyancy = (fCurrentRegion->fDownBuoyancy - 1) * depth + 1;
+        }
+    }   
 }
 
 #endif

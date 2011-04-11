@@ -36,120 +36,120 @@ class plAnimCmdMsg;
 class plResponderSDLModifier;
 class plResponderModifier : public plSingleModifier
 {
-	friend class plResponderSDLModifier;
+    friend class plResponderSDLModifier;
 protected:
-	typedef std::map<Int8,Int8> WaitToCmd;
+    typedef std::map<Int8,Int8> WaitToCmd;
 
-	class plResponderCmd
-	{
-	public:
-		plResponderCmd() : fMsg(nil), fWaitOn(-1) {}
-		plResponderCmd(plMessage *msg, Int8 waitOn) : fMsg(msg), fWaitOn(waitOn) {}
+    class plResponderCmd
+    {
+    public:
+        plResponderCmd() : fMsg(nil), fWaitOn(-1) {}
+        plResponderCmd(plMessage *msg, Int8 waitOn) : fMsg(msg), fWaitOn(waitOn) {}
 
-		plMessage *fMsg;
-		Int8 fWaitOn;		// Index into fCompletedEvents of who we're waiting on
-	};
-	class plResponderState
-	{
-	public:
-		hsTArray<plResponderCmd> fCmds;
-		Int8 fNumCallbacks;			// So we know how far to search into the bitvector to find out when we're done
-		Int8 fSwitchToState;		// State to switch to when all commands complete
-		WaitToCmd fWaitToCmd;
-	};
+        plMessage *fMsg;
+        Int8 fWaitOn;       // Index into fCompletedEvents of who we're waiting on
+    };
+    class plResponderState
+    {
+    public:
+        hsTArray<plResponderCmd> fCmds;
+        Int8 fNumCallbacks;         // So we know how far to search into the bitvector to find out when we're done
+        Int8 fSwitchToState;        // State to switch to when all commands complete
+        WaitToCmd fWaitToCmd;
+    };
 
-	hsTArray<plResponderState> fStates;
+    hsTArray<plResponderState> fStates;
 
-	Int8 fCurState;					// The current state (first index for fCommandList)
-	Int8 fCurCommand;				// The command we are currently waiting to send (or -1 if we're not sending)
-	bool fNetRequest;				// Was the last trigger a net request
-	hsBitVector fCompletedEvents;	// Which events that commands are waiting on have completed
-	bool fEnabled;
-	plKey fPlayerKey;				// The player who triggered this last
-	plKey fTriggerer;				// Whoever triggered us (for sending notify callbacks)
-	hsBool fEnter;					// Is our current trigger a volume enter?
-	bool fGotFirstLoad;				// Have we gotten our first SDL load?
+    Int8 fCurState;                 // The current state (first index for fCommandList)
+    Int8 fCurCommand;               // The command we are currently waiting to send (or -1 if we're not sending)
+    bool fNetRequest;               // Was the last trigger a net request
+    hsBitVector fCompletedEvents;   // Which events that commands are waiting on have completed
+    bool fEnabled;
+    plKey fPlayerKey;               // The player who triggered this last
+    plKey fTriggerer;               // Whoever triggered us (for sending notify callbacks)
+    hsBool fEnter;                  // Is our current trigger a volume enter?
+    bool fGotFirstLoad;             // Have we gotten our first SDL load?
 
-	plResponderSDLModifier* fResponderSDLMod;		// handles saving and restoring state
+    plResponderSDLModifier* fResponderSDLMod;       // handles saving and restoring state
 
-	enum
-	{
-		kDetectTrigger		= 0x1,
-		kDetectUnTrigger	= 0x2,
-		kSkipFFSound		= 0x4
-	};
-	UInt8 fFlags;
-	UInt32 fNotifyMsgFlags;	// store the msg flags of the notify which triggered us
+    enum
+    {
+        kDetectTrigger      = 0x1,
+        kDetectUnTrigger    = 0x2,
+        kSkipFFSound        = 0x4
+    };
+    UInt8 fFlags;
+    UInt32 fNotifyMsgFlags; // store the msg flags of the notify which triggered us
 
-	void Trigger(plNotifyMsg *msg);
-	bool IIsLocalOnlyCmd(plMessage* cmd);
-	bool IContinueSending();
+    void Trigger(plNotifyMsg *msg);
+    bool IIsLocalOnlyCmd(plMessage* cmd);
+    bool IContinueSending();
 
-	Int8 ICmdFromWait(Int8 waitIdx);
+    Int8 ICmdFromWait(Int8 waitIdx);
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
 
-	static bool fDebugAnimBox;	// Draws a box on screen when an animation is started
-	static void IDebugAnimBox(bool start);
-	void IDebugPlayMsg(plAnimCmdMsg* msg);
+    static bool fDebugAnimBox;  // Draws a box on screen when an animation is started
+    static void IDebugAnimBox(bool start);
+    void IDebugPlayMsg(plAnimCmdMsg* msg);
 
-	// Trigger the responder (regardless of what it's doing) and "fast forward" it to the final state
-	// If python is true, only run animations
-	void IFastForward(bool python);
-	// If the message is FF-able, returns it (or a FF-able version)
-	plMessage* IGetFastForwardMsg(plMessage* msg, bool python);
+    // Trigger the responder (regardless of what it's doing) and "fast forward" it to the final state
+    // If python is true, only run animations
+    void IFastForward(bool python);
+    // If the message is FF-able, returns it (or a FF-able version)
+    plMessage* IGetFastForwardMsg(plMessage* msg, bool python);
 
-	void ISetResponderStateFromNotify(plNotifyMsg* msg);
-	void ISetResponderState(Int8 state);
+    void ISetResponderStateFromNotify(plNotifyMsg* msg);
+    void ISetResponderState(Int8 state);
 
-	void ILog(UInt32 color, const char* format, ...);
+    void ILog(UInt32 color, const char* format, ...);
 
-	friend class plResponderComponent;
-	friend class plResponderWait;
+    friend class plResponderComponent;
+    friend class plResponderWait;
 
 public:
-	plResponderModifier();
-	~plResponderModifier();
+    plResponderModifier();
+    ~plResponderModifier();
 
-	CLASSNAME_REGISTER( plResponderModifier );
-	GETINTERFACE_ANY( plResponderModifier, plSingleModifier );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    CLASSNAME_REGISTER( plResponderModifier );
+    GETINTERFACE_ANY( plResponderModifier, plSingleModifier );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	const plResponderSDLModifier* GetSDLModifier() const { return fResponderSDLMod; }
+    const plResponderSDLModifier* GetSDLModifier() const { return fResponderSDLMod; }
 
-	static bool ToggleDebugAnimBox() { return fDebugAnimBox = !fDebugAnimBox; }
-	static void NoLogString(const char* str);
+    static bool ToggleDebugAnimBox() { return fDebugAnimBox = !fDebugAnimBox; }
+    static void NoLogString(const char* str);
 
-	// Restore callback state after load
-	void Restore();
-	
-	const Int8 GetState() const { return fCurState; }
-	//
-	// Export time only
-	//
-	void AddCommand(plMessage* pMsg, int state=0);
-	void AddCallback(Int8 state, Int8 cmd, Int8 callback);
+    // Restore callback state after load
+    void Restore();
+    
+    const Int8 GetState() const { return fCurState; }
+    //
+    // Export time only
+    //
+    void AddCommand(plMessage* pMsg, int state=0);
+    void AddCallback(Int8 state, Int8 cmd, Int8 callback);
 };
 
 // Message for changing the enable state in a responder modifier
 class plResponderEnableMsg : public plMessage
 {
 public:
-	bool fEnable;
+    bool fEnable;
 
-	plResponderEnableMsg() : fEnable(true) {}
-	plResponderEnableMsg(bool enable) : fEnable(enable) {}
+    plResponderEnableMsg() : fEnable(true) {}
+    plResponderEnableMsg(bool enable) : fEnable(enable) {}
 
-	CLASSNAME_REGISTER(plResponderEnableMsg);
-	GETINTERFACE_ANY(plResponderEnableMsg, plMessage);
+    CLASSNAME_REGISTER(plResponderEnableMsg);
+    GETINTERFACE_ANY(plResponderEnableMsg, plMessage);
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plResponderModifier_inc

@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plDebugInputInterface													//
-//																			//
+//                                                                          //
+//  plDebugInputInterface                                                   //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plDebugInputInterface_h
@@ -37,41 +37,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 //// Class Definition ////////////////////////////////////////////////////////
-		
+        
 class plMouseEventMsg;
 
 class plDebugInputInterface : public plInputInterface
 {
-	protected:
+    protected:
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
-		hsBool CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box);
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
+        hsBool CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box);
 
-		plMouseMap	fMouseMap;
-		UInt32		fButtonState;
-		hsBitVector fControlFlags;
+        plMouseMap  fMouseMap;
+        UInt32      fButtonState;
+        hsBitVector fControlFlags;
 
-		static plDebugInputInterface	*fInstance;
+        static plDebugInputInterface    *fInstance;
 
-	public:
+    public:
 
-		plDebugInputInterface();
-		virtual ~plDebugInputInterface();
+        plDebugInputInterface();
+        virtual ~plDebugInputInterface();
 
-		// Always return false, 
-		virtual hsBool	HasInterestingCursorID( void ) const { return false; }
-		virtual UInt32	GetPriorityLevel( void ) const { return kDebugCmdPrioity; }
-		virtual void	RestoreDefaultKeyMappings( void );
-		virtual UInt32	GetCurrentCursorID( void ) const { return 0; }
+        // Always return false, 
+        virtual hsBool  HasInterestingCursorID( void ) const { return false; }
+        virtual UInt32  GetPriorityLevel( void ) const { return kDebugCmdPrioity; }
+        virtual void    RestoreDefaultKeyMappings( void );
+        virtual UInt32  GetCurrentCursorID( void ) const { return 0; }
 
-		virtual hsBool	InterpretInputEvent( plInputEventMsg *pMsg );
+        virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg );
 
-		virtual hsBool	MsgReceive( plMessage *msg );
+        virtual hsBool  MsgReceive( plMessage *msg );
 
-		virtual void	Init( plInputInterfaceMgr *manager );
-		virtual void	Shutdown( void );
+        virtual void    Init( plInputInterfaceMgr *manager );
+        virtual void    Shutdown( void );
 
-		static plDebugInputInterface	*GetInstance( void ) { return fInstance; }
+        static plDebugInputInterface    *GetInstance( void ) { return fInstance; }
 };
 
 

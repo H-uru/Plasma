@@ -545,36 +545,36 @@ static void IMail (
     bool shutdown;
     s_critsect.Enter();
     {
-		shutdown = s_shutdown;
+        shutdown = s_shutdown;
         s_mail.Link(transaction);
     }
     s_critsect.Leave();
 
-	if (shutdown) {
-		DestroyTransaction(transaction);
-	}
-	else {
-		NetAddress addr;
-		if (NetAddressFromString(&addr, smtpName, kSmtpPort)) {
-			AsyncCancelId cancelId;
-			AsyncSocketConnect(
-				&cancelId,
-				addr,
-				MailNotifyProc,
-				transaction
-			);
-		}
-		else {
-			AsyncCancelId cancelId;
-			AsyncAddressLookupName(
-				&cancelId,
-				MailLookupProc,
-				smtpName,
-				kSmtpPort,
-				transaction
-			);
-		}
-	}
+    if (shutdown) {
+        DestroyTransaction(transaction);
+    }
+    else {
+        NetAddress addr;
+        if (NetAddressFromString(&addr, smtpName, kSmtpPort)) {
+            AsyncCancelId cancelId;
+            AsyncSocketConnect(
+                &cancelId,
+                addr,
+                MailNotifyProc,
+                transaction
+            );
+        }
+        else {
+            AsyncCancelId cancelId;
+            AsyncAddressLookupName(
+                &cancelId,
+                MailLookupProc,
+                smtpName,
+                kSmtpPort,
+                transaction
+            );
+        }
+    }
 }
 
 /****************************************************************************
@@ -629,7 +629,7 @@ void Mail (
     FMailResult     callback,
     void *          param
 ) {
-	s_shutdown = false;
+    s_shutdown = false;
 
     // Get email authorization
     const char * auth;
@@ -702,13 +702,13 @@ bool MailQueued () {
 //============================================================================
 const wchar * MailErrorToString (EMailError error) {
 
-	switch (error) {
-		case kMailSuccess:				return L"kMailSuccess";
-		case kMailErrDnsFailed:			return L"kMailErrDnsFailed";
-		case kMailErrConnectFailed:		return L"kMailErrConnectFailed";
-		case kMailErrDisconnected:		return L"kMailErrDisconnected";
-		case kMailErrClientCanceled:	return L"kMailErrClientCanceled";
-		case kMailErrServerError:		return L"kMailErrServerError";
-		DEFAULT_FATAL(error);
-	}
+    switch (error) {
+        case kMailSuccess:              return L"kMailSuccess";
+        case kMailErrDnsFailed:         return L"kMailErrDnsFailed";
+        case kMailErrConnectFailed:     return L"kMailErrConnectFailed";
+        case kMailErrDisconnected:      return L"kMailErrDisconnected";
+        case kMailErrClientCanceled:    return L"kMailErrClientCanceled";
+        case kMailErrServerError:       return L"kMailErrServerError";
+        DEFAULT_FATAL(error);
+    }
 }

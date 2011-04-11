@@ -46,48 +46,48 @@ plOneShotMod::plOneShotMod()
   fAnimName(nil),
   fNoSeek(false)
 {
-	// this constructor is called from the loader. 
+    // this constructor is called from the loader. 
 }
 
 // CTOR(char *)
 plOneShotMod::plOneShotMod(const char *animName,
-						   hsBool drivable,
-						   hsBool reversable,
-						   float seekDuration,
-						   hsBool smartSeek,
-						   hsBool noSeek)
+                           hsBool drivable,
+                           hsBool reversable,
+                           float seekDuration,
+                           hsBool smartSeek,
+                           hsBool noSeek)
 : fDrivable(drivable),
   fReversable(reversable),
   fSeekDuration(seekDuration),
   fSmartSeek((float)smartSeek),
   fNoSeek(noSeek)
 {
-	fAnimName = hsStrcpy(animName);
+    fAnimName = hsStrcpy(animName);
 }
 
 // INIT
 void plOneShotMod::Init(const char *animName,
-						hsBool drivable,
-						hsBool reversable,
-						float seekDuration,
-						hsBool smartSeek,
-						hsBool noSeek)
+                        hsBool drivable,
+                        hsBool reversable,
+                        float seekDuration,
+                        hsBool smartSeek,
+                        hsBool noSeek)
 {
-	fAnimName = hsStrcpy(animName);
-	fDrivable = drivable;
-	fReversable = reversable;
-	fSeekDuration = seekDuration;
-	fSmartSeek = (float)smartSeek;
-	fNoSeek = noSeek;
+    fAnimName = hsStrcpy(animName);
+    fDrivable = drivable;
+    fReversable = reversable;
+    fSeekDuration = seekDuration;
+    fSmartSeek = (float)smartSeek;
+    fNoSeek = noSeek;
 }
 
 // DTOR()
 plOneShotMod::~plOneShotMod()
 {
-	if(fAnimName) {
-		delete[] fAnimName;
-		fAnimName = nil;
-	}
+    if(fAnimName) {
+        delete[] fAnimName;
+        fAnimName = nil;
+    }
 }
 
 
@@ -97,75 +97,75 @@ plOneShotMod::~plOneShotMod()
 // MSGRECEIVE
 hsBool plOneShotMod::MsgReceive(plMessage* msg)
 {
-	plOneShotMsg *oneShotMsg = plOneShotMsg::ConvertNoRef(msg);
-	if (oneShotMsg)
-	{
-		// Send a one shot task request to the given target, which darn well better have an avatar modifier on it.
-		plKey myKey = GetKey();
-		plKey objKey = GetTarget(0)->GetKey();
-		plKey avKey = oneShotMsg->fPlayerKey;
-		hsAssert(avKey,"The avatar key is missing in the one shot!");
+    plOneShotMsg *oneShotMsg = plOneShotMsg::ConvertNoRef(msg);
+    if (oneShotMsg)
+    {
+        // Send a one shot task request to the given target, which darn well better have an avatar modifier on it.
+        plKey myKey = GetKey();
+        plKey objKey = GetTarget(0)->GetKey();
+        plKey avKey = oneShotMsg->fPlayerKey;
+        hsAssert(avKey,"The avatar key is missing in the one shot!");
 
-		if ( avKey )
-		{
-			plSceneObject *avObj = (plSceneObject *)avKey->ObjectIsLoaded();
-			if(avObj)
-			{
-				const plArmatureMod *avMod = (plArmatureMod*)avObj->GetModifierByType(plArmatureMod::Index());
+        if ( avKey )
+        {
+            plSceneObject *avObj = (plSceneObject *)avKey->ObjectIsLoaded();
+            if(avObj)
+            {
+                const plArmatureMod *avMod = (plArmatureMod*)avObj->GetModifierByType(plArmatureMod::Index());
 
-				if(avMod)
-				{
-					char *animName = avMod->MakeAnimationName(fAnimName);
+                if(avMod)
+                {
+                    char *animName = avMod->MakeAnimationName(fAnimName);
 
-					plAvOneShotMsg *avOSmsg = TRACKED_NEW plAvOneShotMsg(myKey, oneShotMsg->fPlayerKey, objKey,
-																 fSeekDuration, (hsBool)fSmartSeek, animName, fDrivable,
-																 fReversable);
+                    plAvOneShotMsg *avOSmsg = TRACKED_NEW plAvOneShotMsg(myKey, oneShotMsg->fPlayerKey, objKey,
+                                                                 fSeekDuration, (hsBool)fSmartSeek, animName, fDrivable,
+                                                                 fReversable);
 
-					delete [] animName; // AvOneShotMsg constructor copies.
-					avOSmsg->fNoSeek = fNoSeek;
-					avOSmsg->SetBCastFlag(plMessage::kPropagateToModifiers);
-					hsRefCnt_SafeRef(oneShotMsg->fCallbacks);
-					avOSmsg->fCallbacks = oneShotMsg->fCallbacks;
-					plgDispatch::MsgSend(avOSmsg);
-				}
-			}
+                    delete [] animName; // AvOneShotMsg constructor copies.
+                    avOSmsg->fNoSeek = fNoSeek;
+                    avOSmsg->SetBCastFlag(plMessage::kPropagateToModifiers);
+                    hsRefCnt_SafeRef(oneShotMsg->fCallbacks);
+                    avOSmsg->fCallbacks = oneShotMsg->fCallbacks;
+                    plgDispatch::MsgSend(avOSmsg);
+                }
+            }
 
-		}
-		return true;
-	}
-	return plMultiModifier::MsgReceive(msg);
+        }
+        return true;
+    }
+    return plMultiModifier::MsgReceive(msg);
 }
 
 // ADDTARGET
 // Here I am. Announce presence to the avatar registry.
 void plOneShotMod::AddTarget(plSceneObject* so)
 {
-	plMultiModifier::AddTarget(so);
-	
-	plAvatarMgr::GetInstance()->AddOneShot(this);
+    plMultiModifier::AddTarget(so);
+    
+    plAvatarMgr::GetInstance()->AddOneShot(this);
 }
 
 void plOneShotMod::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plMultiModifier::Read(stream, mgr);
+    plMultiModifier::Read(stream, mgr);
 
-	// read in the name of the animation itself
-	fAnimName = stream->ReadSafeString();
-	fSeekDuration = stream->ReadSwapScalar();
-	fDrivable = stream->ReadBool();
-	fReversable = stream->ReadBool();
-	fSmartSeek = (float)stream->ReadBool();
-	fNoSeek = stream->ReadBool();
+    // read in the name of the animation itself
+    fAnimName = stream->ReadSafeString();
+    fSeekDuration = stream->ReadSwapScalar();
+    fDrivable = stream->ReadBool();
+    fReversable = stream->ReadBool();
+    fSmartSeek = (float)stream->ReadBool();
+    fNoSeek = stream->ReadBool();
 }
 
 void plOneShotMod::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plMultiModifier::Write(stream, mgr);
+    plMultiModifier::Write(stream, mgr);
 
-	stream->WriteSafeString(fAnimName);
-	stream->WriteSwapScalar(fSeekDuration);
-	stream->WriteBool(fDrivable);
-	stream->WriteBool(fReversable);
-	stream->WriteBool((hsBool)fSmartSeek);
-	stream->WriteBool(fNoSeek);
+    stream->WriteSafeString(fAnimName);
+    stream->WriteSwapScalar(fSeekDuration);
+    stream->WriteBool(fDrivable);
+    stream->WriteBool(fReversable);
+    stream->WriteBool((hsBool)fSmartSeek);
+    stream->WriteBool(fNoSeek);
 }

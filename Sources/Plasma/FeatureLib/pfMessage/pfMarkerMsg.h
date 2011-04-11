@@ -32,26 +32,26 @@ struct hsPoint3;
 class pfMarkerMsg : public plMessage
 {
 public:
-	enum Type
-	{
-		// Sent by yourself when you hit a marker
-		// - fMarkerID is the id number of the marker we hit
-		kMarkerCaptured,
-	};
-	Type fType;
+    enum Type
+    {
+        // Sent by yourself when you hit a marker
+        // - fMarkerID is the id number of the marker we hit
+        kMarkerCaptured,
+    };
+    Type fType;
 
-	UInt32 fMarkerID;
-	
-	pfMarkerMsg();
-	virtual ~pfMarkerMsg();
+    UInt32 fMarkerID;
+    
+    pfMarkerMsg();
+    virtual ~pfMarkerMsg();
 
-	void PrintDebug(char* buf);
+    void PrintDebug(char* buf);
 
-	CLASSNAME_REGISTER(pfMarkerMsg);
-	GETINTERFACE_ANY(pfMarkerMsg, plMessage);
+    CLASSNAME_REGISTER(pfMarkerMsg);
+    GETINTERFACE_ANY(pfMarkerMsg, plMessage);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // pfMarkerMsg_h_inc

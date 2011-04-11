@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUITextBoxMod Header													//
-//																			//
+//                                                                          //
+//  pfGUITextBoxMod Header                                                  //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUITextBoxMod_h
@@ -40,54 +40,54 @@ class plTextGenerator;
 
 class pfGUITextBoxMod : public pfGUIControlMod
 {
-	protected:
+    protected:
 
-		wchar_t			*fText;
-		std::wstring	fLocalizationPath;
-		bool			fUseLocalizationPath;
+        wchar_t         *fText;
+        std::wstring    fLocalizationPath;
+        bool            fUseLocalizationPath;
 
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
-		virtual void	IUpdate( void );
-		virtual void	IPostSetUpDynTextMap( void );
+        virtual void    IUpdate( void );
+        virtual void    IPostSetUpDynTextMap( void );
 
-	public:
+    public:
 
-		pfGUITextBoxMod();
-		virtual ~pfGUITextBoxMod();
+        pfGUITextBoxMod();
+        virtual ~pfGUITextBoxMod();
 
-		CLASSNAME_REGISTER( pfGUITextBoxMod );
-		GETINTERFACE_ANY( pfGUITextBoxMod, pfGUIControlMod );
+        CLASSNAME_REGISTER( pfGUITextBoxMod );
+        GETINTERFACE_ANY( pfGUITextBoxMod, pfGUIControlMod );
 
-		enum OurFlags
-		{
-			kCenterJustify = kDerivedFlagsStart,
-			kRightJustify
-		};
+        enum OurFlags
+        {
+            kCenterJustify = kDerivedFlagsStart,
+            kRightJustify
+        };
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		virtual void	HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
 
-		virtual void	PurgeDynaTextMapImage();
+        virtual void    PurgeDynaTextMapImage();
 
-		virtual const wchar_t*	GetText() { return fText; }
+        virtual const wchar_t*  GetText() { return fText; }
 
-		// Export only
-		void	SetText( const char *text );
-		void	SetText( const wchar_t *text );
+        // Export only
+        void    SetText( const char *text );
+        void    SetText( const wchar_t *text );
 
-		void	SetLocalizationPath(const wchar_t* path);
-		void	SetLocalizationPath(const char* path);
-		void	SetUseLocalizationPath(bool use);
+        void    SetLocalizationPath(const wchar_t* path);
+        void    SetLocalizationPath(const char* path);
+        void    SetUseLocalizationPath(bool use);
 
-		virtual void	UpdateColorScheme() { IPostSetUpDynTextMap(); IUpdate(); }
+        virtual void    UpdateColorScheme() { IPostSetUpDynTextMap(); IUpdate(); }
 };
 
 #endif // _pfGUITextBoxMod_h

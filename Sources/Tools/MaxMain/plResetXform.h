@@ -37,19 +37,19 @@ class INodeTab;
 class plResetXform
 {
 public:
-	void ResetSelected() const;
+    void ResetSelected() const;
 protected:
-	void		ResetSelectedRecur(INode* node) const;
-	void		IResetNode(INode* node) const;
-	TriObject*	IGetTriObject(INode* node, BOOL& deleteIt) const;
+    void        ResetSelectedRecur(INode* node) const;
+    void        IResetNode(INode* node) const;
+    TriObject*  IGetTriObject(INode* node, BOOL& deleteIt) const;
 };
 
 class plSelectNonRenderables
 {
 public:
-	void SelectNonRenderables() const;
+    void SelectNonRenderables() const;
 protected:
-	void ICollectNonDrawablesRecur(plMaxNode* node, INodeTab& nodeTab) const;
+    void ICollectNonDrawablesRecur(plMaxNode* node, INodeTab& nodeTab) const;
 };
 
 #endif // plResetXform_inc

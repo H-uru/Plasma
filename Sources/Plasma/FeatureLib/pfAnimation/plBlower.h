@@ -39,63 +39,63 @@ class hsResMgr;
 class plBlower : public plSingleModifier
 {
 protected:
-	class Oscillator
-	{
-	public:
-		hsScalar	fFrequency;
-		hsScalar	fPhase;
-		hsScalar	fPower;
-	};
-	static plRandom	fRandom;
+    class Oscillator
+    {
+    public:
+        hsScalar    fFrequency;
+        hsScalar    fPhase;
+        hsScalar    fPower;
+    };
+    static plRandom fRandom;
 
-	// Parameters
-	hsScalar		fMasterPower;
-	hsScalar		fMasterFrequency;
-	hsScalar		fDirectRate;
-	hsScalar		fImpulseRate;
-	hsScalar		fSpringKonst;
-	hsScalar		fBias;
+    // Parameters
+    hsScalar        fMasterPower;
+    hsScalar        fMasterFrequency;
+    hsScalar        fDirectRate;
+    hsScalar        fImpulseRate;
+    hsScalar        fSpringKonst;
+    hsScalar        fBias;
 
-	hsScalar					fAccumTime;
-	hsTArray<Oscillator>		fOscillators;
+    hsScalar                    fAccumTime;
+    hsTArray<Oscillator>        fOscillators;
 
-	// CurrentState
-	hsVector3		fDirection;
-	hsPoint3		fRestPos;
-	hsPoint3		fLocalRestPos;
-	hsVector3		fCurrDel;
-	hsScalar		fMaxOffsetDist;
+    // CurrentState
+    hsVector3       fDirection;
+    hsPoint3        fRestPos;
+    hsPoint3        fLocalRestPos;
+    hsVector3       fCurrDel;
+    hsScalar        fMaxOffsetDist;
 
-	void	IInitOscillators();
-	void	ISetTargetTransform();
-	void	IBlow(double secs, hsScalar delSecs);
-	
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    void    IInitOscillators();
+    void    ISetTargetTransform();
+    void    IBlow(double secs, hsScalar delSecs);
+    
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
 public:
-	~plBlower();
-	plBlower();
+    ~plBlower();
+    plBlower();
 
-	CLASSNAME_REGISTER( plBlower );
-	GETINTERFACE_ANY( plBlower, plSingleModifier );
-	
-	virtual void SetTarget(plSceneObject* so);
+    CLASSNAME_REGISTER( plBlower );
+    GETINTERFACE_ANY( plBlower, plSingleModifier );
+    
+    virtual void SetTarget(plSceneObject* so);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	void SetMasterPower(hsScalar f) { fMasterPower = f; }
-	void SetMasterFrequency(hsScalar f) { fMasterFrequency = f; }
-	void SetDirectRate(hsScalar f) { fDirectRate = f; }
-	void SetImpulseRate(hsScalar f) { fImpulseRate = f; }
-	void SetSpringKonst(hsScalar f) { fSpringKonst = f; }
-	void SetConstancy(hsScalar f);
+    void SetMasterPower(hsScalar f) { fMasterPower = f; }
+    void SetMasterFrequency(hsScalar f) { fMasterFrequency = f; }
+    void SetDirectRate(hsScalar f) { fDirectRate = f; }
+    void SetImpulseRate(hsScalar f) { fImpulseRate = f; }
+    void SetSpringKonst(hsScalar f) { fSpringKonst = f; }
+    void SetConstancy(hsScalar f);
 
-	hsScalar GetMasterPower() const { return fMasterPower; }
-	hsScalar GetMasterFrequency() const { return fMasterFrequency; }
-	hsScalar GetDirectRate() const { return fDirectRate; }
-	hsScalar GetImpulseRate() const { return fImpulseRate; }
-	hsScalar GetSpringKonst() const { return fSpringKonst; }
-	hsScalar GetConstancy() const;
+    hsScalar GetMasterPower() const { return fMasterPower; }
+    hsScalar GetMasterFrequency() const { return fMasterFrequency; }
+    hsScalar GetDirectRate() const { return fDirectRate; }
+    hsScalar GetImpulseRate() const { return fImpulseRate; }
+    hsScalar GetSpringKonst() const { return fSpringKonst; }
+    hsScalar GetConstancy() const;
 };
 
 #endif // plBlower_inc

@@ -35,25 +35,25 @@ class plBoundsIsect;
 class plPointShadowMaster : public plShadowMaster
 {
 protected:
-	mutable hsVector3					fLastUp;
+    mutable hsVector3                   fLastUp;
 
-	mutable hsTArray<plBoundsIsect*>	fIsectPool;
+    mutable hsTArray<plBoundsIsect*>    fIsectPool;
 
-	virtual void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-	virtual void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const;
-	virtual void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-	virtual void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
+    virtual void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
+    virtual void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const;
+    virtual void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
+    virtual void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
 
-	virtual plShadowSlave* INewSlave(const plShadowCaster* caster);
+    virtual plShadowSlave* INewSlave(const plShadowCaster* caster);
 
-	virtual void IBeginRender();
+    virtual void IBeginRender();
 
 public:
-	plPointShadowMaster();
-	virtual ~plPointShadowMaster();
+    plPointShadowMaster();
+    virtual ~plPointShadowMaster();
 
-	CLASSNAME_REGISTER( plPointShadowMaster );
-	GETINTERFACE_ANY( plPointShadowMaster, plShadowMaster );
+    CLASSNAME_REGISTER( plPointShadowMaster );
+    GETINTERFACE_ANY( plPointShadowMaster, plShadowMaster );
 
 };
 

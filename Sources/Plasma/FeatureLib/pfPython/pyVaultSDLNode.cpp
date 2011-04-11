@@ -46,7 +46,7 @@ pyVaultSDLNode::pyVaultSDLNode(RelVaultNode* nfsNode)
 pyVaultSDLNode::pyVaultSDLNode()
 : pyVaultNode(NEWZERO(RelVaultNode))
 {
-	fNode->SetNodeType(plVault::kNodeType_SDL);
+    fNode->SetNodeType(plVault::kNodeType_SDL);
 }
 
 
@@ -55,54 +55,54 @@ pyVaultSDLNode::pyVaultSDLNode()
 //
 void pyVaultSDLNode::SetIdent( int v )
 {
-	if (!fNode)
-		return;
-	
-	VaultSDLNode sdl(fNode);
-	sdl.SetSdlIdent(v);
+    if (!fNode)
+        return;
+    
+    VaultSDLNode sdl(fNode);
+    sdl.SetSdlIdent(v);
 }
 
 int pyVaultSDLNode::GetIdent() const
 {
-	if (!fNode)
-		return 0;
-	
-	VaultSDLNode sdl(fNode);
-	return sdl.sdlIdent;
+    if (!fNode)
+        return 0;
+    
+    VaultSDLNode sdl(fNode);
+    return sdl.sdlIdent;
 }
 
 PyObject * pyVaultSDLNode::GetStateDataRecord() const
 {
-	if (!fNode)
-		PYTHON_RETURN_NONE;
-		
-	VaultSDLNode sdl(fNode);
-	plStateDataRecord * rec = NEWZERO(plStateDataRecord);
-	if (sdl.GetStateDataRecord(rec))
-		return pySDLStateDataRecord::New(rec);
-	else
-		DEL(rec);
+    if (!fNode)
+        PYTHON_RETURN_NONE;
+        
+    VaultSDLNode sdl(fNode);
+    plStateDataRecord * rec = NEWZERO(plStateDataRecord);
+    if (sdl.GetStateDataRecord(rec))
+        return pySDLStateDataRecord::New(rec);
+    else
+        DEL(rec);
 
-	PYTHON_RETURN_NONE;
+    PYTHON_RETURN_NONE;
 }
 
 void pyVaultSDLNode::InitStateDataRecord( const char* agename, int flags)
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	wchar wStr[MAX_PATH];
-	StrToUnicode(wStr, agename, arrsize(wStr));	
-	VaultSDLNode sdl(fNode);
-	sdl.InitStateDataRecord(wStr, flags);
+    wchar wStr[MAX_PATH];
+    StrToUnicode(wStr, agename, arrsize(wStr)); 
+    VaultSDLNode sdl(fNode);
+    sdl.InitStateDataRecord(wStr, flags);
 }
 
 void pyVaultSDLNode::SetStateDataRecord( const pySDLStateDataRecord & rec, int writeOptions/*=0 */)
 {
-	if (!fNode)
-		return;
-	
-	VaultSDLNode sdl(fNode);
-	sdl.SetStateDataRecord(rec.GetRec(), writeOptions);
+    if (!fNode)
+        return;
+    
+    VaultSDLNode sdl(fNode);
+    sdl.SetStateDataRecord(rec.GetRec(), writeOptions);
 }
 

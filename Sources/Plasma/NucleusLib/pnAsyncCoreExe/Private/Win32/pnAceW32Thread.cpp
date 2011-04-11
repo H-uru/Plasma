@@ -49,7 +49,7 @@ struct ThreadTask {
     AsyncThreadTaskList *   taskList;
     FAsyncThreadTask        callback;
     void *                  param;
-	wchar					debugStr[256];
+    wchar                   debugStr[256];
 };
 
 static HANDLE   s_taskPort;
@@ -121,15 +121,15 @@ static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
         PerfAddCounter(kAsyncPerfThreadTaskThreadsActive, 1);
 
         if (task) {
-			#ifdef SERVER
-			void * check = CrashAddDeadlockCheck(thread->handle, task->debugStr);
-			#endif
+            #ifdef SERVER
+            void * check = CrashAddDeadlockCheck(thread->handle, task->debugStr);
+            #endif
             
             task->callback(task->param, task->taskList->error);
 
-			#ifdef SERVER
-			CrashRemoveDeadlockCheck(check);
-			#endif
+            #ifdef SERVER
+            CrashRemoveDeadlockCheck(check);
+            #endif
 
             task->taskList->DecRef("task");
             DEL(task);
@@ -241,7 +241,7 @@ void AsyncThreadTaskAdd (
     AsyncThreadTaskList *   taskList,
     FAsyncThreadTask        callback,
     void *                  param,
-	const wchar				debugStr[],
+    const wchar             debugStr[],
     EThreadTaskPriority     priority /* = kThreadTaskPriorityNormal */
 ) {
     ASSERT(s_taskPort);
@@ -254,7 +254,7 @@ void AsyncThreadTaskAdd (
     task->taskList      = taskList;
     task->callback      = callback;
     task->param         = param;
-	StrCopy(task->debugStr, debugStr, arrsize(task->debugStr));		// this will be sent with the deadlock checker email if this thread exceeds time set in plServer.ini
+    StrCopy(task->debugStr, debugStr, arrsize(task->debugStr));     // this will be sent with the deadlock checker email if this thread exceeds time set in plServer.ini
     taskList->IncRef("Task");
 
     PostQueuedCompletionStatus(s_taskPort, 0, (DWORD) task, NULL);

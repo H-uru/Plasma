@@ -33,29 +33,29 @@ class plLogicModifier : public plLogicModBase
 {
 protected:
 
-	hsTArray<plConditionalObject*>	fConditionList;
+    hsTArray<plConditionalObject*>  fConditionList;
 
-	virtual void PreTrigger(hsBool netRequest);
+    virtual void PreTrigger(hsBool netRequest);
 public:
-	plLogicModifier();
-	~plLogicModifier();
+    plLogicModifier();
+    ~plLogicModifier();
 
-	CLASSNAME_REGISTER( plLogicModifier );
-	GETINTERFACE_ANY( plLogicModifier, plLogicModBase );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    CLASSNAME_REGISTER( plLogicModifier );
+    GETINTERFACE_ANY( plLogicModifier, plLogicModBase );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
-	
-	virtual void RequestTrigger(hsBool netRequest=false);
-	virtual hsBool VerifyConditions(plMessage* msg);
-	void AddCondition(plConditionalObject* c);
-	virtual void Reset(bool bCounterReset);
+    virtual hsBool MsgReceive(plMessage* msg);
+    
+    virtual void RequestTrigger(hsBool netRequest=false);
+    virtual hsBool VerifyConditions(plMessage* msg);
+    void AddCondition(plConditionalObject* c);
+    virtual void Reset(bool bCounterReset);
 
-	void VolumeIgnoreExtraEnters(bool ignore = true); // hack for garrison
+    void VolumeIgnoreExtraEnters(bool ignore = true); // hack for garrison
 
-	int fMyCursor;
+    int fMyCursor;
 };
 
 #endif // plLogicModifier_inc

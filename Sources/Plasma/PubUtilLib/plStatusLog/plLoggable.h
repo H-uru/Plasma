@@ -37,33 +37,33 @@ class plStatusLog;
 class plLoggable
 {
 protected:
-	mutable plStatusLog* fStatusLog;
-	mutable bool	fWeCreatedLog;
-	mutable bool	fComplainAboutMissingLog;
+    mutable plStatusLog* fStatusLog;
+    mutable bool    fWeCreatedLog;
+    mutable bool    fComplainAboutMissingLog;
 
-	virtual void ICreateStatusLog() const { };	// call plStatusLogMgr::CreateStatusLog with the options you want
-	void	IDeleteLog();
+    virtual void ICreateStatusLog() const { };  // call plStatusLogMgr::CreateStatusLog with the options you want
+    void    IDeleteLog();
 
 public:
-	plLoggable() : fStatusLog(nil), fWeCreatedLog(false),fComplainAboutMissingLog(true) { 	}
-	virtual ~plLoggable();
+    plLoggable() : fStatusLog(nil), fWeCreatedLog(false),fComplainAboutMissingLog(true) {   }
+    virtual ~plLoggable();
 
-	plStatusLog* GetLog() const;
-	void SetLog( plStatusLog * log, bool deleteOnDestruct=false );
-	
-	// logging
+    plStatusLog* GetLog() const;
+    void SetLog( plStatusLog * log, bool deleteOnDestruct=false );
+    
+    // logging
 
-	virtual bool Log( const char * str ) const;
-	virtual bool LogF( const char * fmt, ... ) const;
-	virtual bool LogV( const char * fmt, va_list args ) const;
-	virtual bool ErrorMsgV(const char* fmt, va_list args) const ;
-	virtual bool DebugMsgV(const char* fmt, va_list args) const ;
-	virtual bool WarningMsgV(const char* fmt, va_list args) const ;
-	virtual bool AppMsgV(const char* fmt, va_list args) const ;
-	virtual bool ErrorMsg(const char* fmt, ...) const ;
-	virtual bool DebugMsg(const char* fmt, ...) const ;
-	virtual bool WarningMsg(const char* fmt, ...) const ;
-	virtual bool AppMsg(const char* fmt, ...) const ;
+    virtual bool Log( const char * str ) const;
+    virtual bool LogF( const char * fmt, ... ) const;
+    virtual bool LogV( const char * fmt, va_list args ) const;
+    virtual bool ErrorMsgV(const char* fmt, va_list args) const ;
+    virtual bool DebugMsgV(const char* fmt, va_list args) const ;
+    virtual bool WarningMsgV(const char* fmt, va_list args) const ;
+    virtual bool AppMsgV(const char* fmt, va_list args) const ;
+    virtual bool ErrorMsg(const char* fmt, ...) const ;
+    virtual bool DebugMsg(const char* fmt, ...) const ;
+    virtual bool WarningMsg(const char* fmt, ...) const ;
+    virtual bool AppMsg(const char* fmt, ...) const ;
 };
 
-#endif	// plLoggable_inc
+#endif  // plLoggable_inc

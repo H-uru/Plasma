@@ -39,9 +39,9 @@ using namespace oracle;
 struct OraEnv;
 
 enum {
-	kOcciPerfOpenConns,
-	kOcciPerfBusyConns,
-	kOcciNumPerf
+    kOcciPerfOpenConns,
+    kOcciPerfBusyConns,
+    kOcciNumPerf
 };
 
 long OraLibGetOcciPerf (unsigned index);
@@ -49,9 +49,9 @@ long OraLibGetOcciPerf (unsigned index);
 
 struct OraConn {
 // treat all fields as read-only
-	OraEnv *			oraEnv;
-	occi::Connection *	occiConn;
-	wchar				tag[128];
+    OraEnv *            oraEnv;
+    occi::Connection *  occiConn;
+    wchar               tag[128];
 };
 
 
@@ -64,45 +64,45 @@ struct OraConn {
 void OraLogError (const wchar sql[], const exception & e);
 
 void OraGetShaDigest (
-	occi::Statement *	oraStmt,
-	unsigned			index,
-	ShaDigest *			digest
+    occi::Statement *   oraStmt,
+    unsigned            index,
+    ShaDigest *         digest
 );
 
 void OraSetShaDigest (
-	occi::Statement *		oraStmt,
-	unsigned				index,
-	const ShaDigest &		digest
+    occi::Statement *       oraStmt,
+    unsigned                index,
+    const ShaDigest &       digest
 );
 
 void OraBindString (
-	occi::Statement *	oraStmt,
-	unsigned			index,
-	wchar *				buffer,
-	unsigned			chars,
-	ub2 *				length,
-	sb2 *				indicator
+    occi::Statement *   oraStmt,
+    unsigned            index,
+    wchar *             buffer,
+    unsigned            chars,
+    ub2 *               length,
+    sb2 *               indicator
 );
 
 void OraBindString (
-	occi::ResultSet *	rs,
-	unsigned			index,
-	wchar *				buffer,
-	unsigned			chars,
-	ub2 *				length,
-	sb2 *				indicator
+    occi::ResultSet *   rs,
+    unsigned            index,
+    wchar *             buffer,
+    unsigned            chars,
+    ub2 *               length,
+    sb2 *               indicator
 );
 
 void OraGetUuid (
-	occi::Statement *	oraStmt,
-	unsigned			index,
-	Uuid *				uuid
+    occi::Statement *   oraStmt,
+    unsigned            index,
+    Uuid *              uuid
 );
 
 void OraSetUuid (
-	occi::Statement *	oraStmt,
-	unsigned			index,
-	const Uuid &		uuid
+    occi::Statement *   oraStmt,
+    unsigned            index,
+    const Uuid &        uuid
 );
 
 OraConn * OraGetConn (const wchar tag[] = nil);
@@ -110,17 +110,17 @@ OraConn * OraGetConn (const wchar tag[] = nil);
 void OraFreeConn (OraConn *& oraConn);
 
 occi::Statement * OraGetStmt (
-	OraConn *		oraConn,
-	const wchar		sql[]
+    OraConn *       oraConn,
+    const wchar     sql[]
 );
 
 void OraFreeStmt (occi::Statement *& oraStmt);
 
 void OraInitialize (
-	const wchar username[], 
-	const wchar password[], 
-	const wchar connectString[],
-	unsigned stmtCacheSize
+    const wchar username[], 
+    const wchar password[], 
+    const wchar connectString[],
+    unsigned stmtCacheSize
 );
 void OraShutdown ();
 void OraDestroy ();

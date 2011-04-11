@@ -34,38 +34,38 @@ pyClimbingWallMsg::pyClimbingWallMsg(): pyGameCliMsg() {}
 
 pyClimbingWallMsg::pyClimbingWallMsg(pfGameCliMsg* msg): pyGameCliMsg(msg)
 {
-	if (message && (message->gameCli->GetGameTypeId() != kGameTypeId_ClimbingWall))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->gameCli->GetGameTypeId() != kGameTypeId_ClimbingWall))
+        message = nil; // wrong type, just clear it out
 }
 
 int pyClimbingWallMsg::GetClimbingWallMsgType() const
 {
-	if (message)
-		return message->netMsg->messageId;
-	return -1;
+    if (message)
+        return message->netMsg->messageId;
+    return -1;
 }
 
 PyObject* pyClimbingWallMsg::UpcastToFinalClimbingWallMsg() const
 {
-	if (!message)
-		PYTHON_RETURN_NONE;
-	switch (message->netMsg->messageId)
-	{
-	case kSrv2Cli_ClimbingWall_NumBlockersChanged:
-		return pyClimbingWallNumBlockersChangedMsg::New(message);
-	case kSrv2Cli_ClimbingWall_Ready:
-		return pyClimbingWallReadyMsg::New(message);
-	case kSrv2Cli_ClimbingWall_BlockersChanged:
-		return pyClimbingWallBlockersChangedMsg::New(message);
-	case kSrv2Cli_ClimbingWall_PlayerEntered:
-		return pyClimbingWallPlayerEnteredMsg::New(message);
-	case kSrv2Cli_ClimbingWall_SuitMachineLocked:
-		return pyClimbingWallSuitMachineLockedMsg::New(message);
-	case kSrv2Cli_ClimbingWall_GameOver:
-		return pyClimbingWallGameOverMsg::New(message);
-	default:
-		PYTHON_RETURN_NONE;
-	}
+    if (!message)
+        PYTHON_RETURN_NONE;
+    switch (message->netMsg->messageId)
+    {
+    case kSrv2Cli_ClimbingWall_NumBlockersChanged:
+        return pyClimbingWallNumBlockersChangedMsg::New(message);
+    case kSrv2Cli_ClimbingWall_Ready:
+        return pyClimbingWallReadyMsg::New(message);
+    case kSrv2Cli_ClimbingWall_BlockersChanged:
+        return pyClimbingWallBlockersChangedMsg::New(message);
+    case kSrv2Cli_ClimbingWall_PlayerEntered:
+        return pyClimbingWallPlayerEnteredMsg::New(message);
+    case kSrv2Cli_ClimbingWall_SuitMachineLocked:
+        return pyClimbingWallSuitMachineLockedMsg::New(message);
+    case kSrv2Cli_ClimbingWall_GameOver:
+        return pyClimbingWallGameOverMsg::New(message);
+    default:
+        PYTHON_RETURN_NONE;
+    }
 }
 
 
@@ -78,28 +78,28 @@ pyClimbingWallNumBlockersChangedMsg::pyClimbingWallNumBlockersChangedMsg(): pyCl
 
 pyClimbingWallNumBlockersChangedMsg::pyClimbingWallNumBlockersChangedMsg(pfGameCliMsg* msg): pyClimbingWallMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_NumBlockersChanged))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_NumBlockersChanged))
+        message = nil; // wrong type, just clear it out
 }
 
 int pyClimbingWallNumBlockersChangedMsg::NewBlockerCount() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_NumBlockersChanged* gmMsg = (const Srv2Cli_ClimbingWall_NumBlockersChanged*)message->netMsg;
-		return gmMsg->newBlockerCount;
-	}
-	return 0;
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_NumBlockersChanged* gmMsg = (const Srv2Cli_ClimbingWall_NumBlockersChanged*)message->netMsg;
+        return gmMsg->newBlockerCount;
+    }
+    return 0;
 }
 
 bool pyClimbingWallNumBlockersChangedMsg::LocalOnly() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
-		return gmMsg->localOnly;
-	}
-	return true; // safe-guard so we don't screw up other's state if the python does something stupid
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
+        return gmMsg->localOnly;
+    }
+    return true; // safe-guard so we don't screw up other's state if the python does something stupid
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,48 +108,48 @@ pyClimbingWallReadyMsg::pyClimbingWallReadyMsg(): pyClimbingWallMsg() {}
 
 pyClimbingWallReadyMsg::pyClimbingWallReadyMsg(pfGameCliMsg* msg): pyClimbingWallMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_Ready))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_Ready))
+        message = nil; // wrong type, just clear it out
 }
 
 int pyClimbingWallReadyMsg::ReadyType() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
-		return gmMsg->readyType;
-	}
-	return 0;
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
+        return gmMsg->readyType;
+    }
+    return 0;
 }
 
 bool pyClimbingWallReadyMsg::Team1Ready() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
-		return gmMsg->team1Ready;
-	}
-	return false;
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
+        return gmMsg->team1Ready;
+    }
+    return false;
 }
 
 bool pyClimbingWallReadyMsg::Team2Ready() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
-		return gmMsg->team2Ready;
-	}
-	return false;
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
+        return gmMsg->team2Ready;
+    }
+    return false;
 }
 
 bool pyClimbingWallReadyMsg::LocalOnly() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
-		return gmMsg->localOnly;
-	}
-	return true; // safe-guard so we don't screw up other's state if the python does something stupid
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_Ready* gmMsg = (const Srv2Cli_ClimbingWall_Ready*)message->netMsg;
+        return gmMsg->localOnly;
+    }
+    return true; // safe-guard so we don't screw up other's state if the python does something stupid
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -158,43 +158,43 @@ pyClimbingWallBlockersChangedMsg::pyClimbingWallBlockersChangedMsg(): pyClimbing
 
 pyClimbingWallBlockersChangedMsg::pyClimbingWallBlockersChangedMsg(pfGameCliMsg* msg): pyClimbingWallMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_BlockersChanged))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_BlockersChanged))
+        message = nil; // wrong type, just clear it out
 }
 
 int pyClimbingWallBlockersChangedMsg::TeamNumber() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_BlockersChanged* gmMsg = (const Srv2Cli_ClimbingWall_BlockersChanged*)message->netMsg;
-		return gmMsg->teamNumber;
-	}
-	return 0;
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_BlockersChanged* gmMsg = (const Srv2Cli_ClimbingWall_BlockersChanged*)message->netMsg;
+        return gmMsg->teamNumber;
+    }
+    return 0;
 }
 
 std::vector<int> pyClimbingWallBlockersChangedMsg::BlockersSet() const
 {
-	std::vector<int> retVal;
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_BlockersChanged* gmMsg = (const Srv2Cli_ClimbingWall_BlockersChanged*)message->netMsg;
-		for (unsigned i = 0; i < kClimbingWallMaxBlockers; ++i)
-		{
-			if (gmMsg->blockersSet[i] != kClimbingWallNoBlocker)
-				retVal.push_back(gmMsg->blockersSet[i]);
-		}
-	}
-	return retVal;
+    std::vector<int> retVal;
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_BlockersChanged* gmMsg = (const Srv2Cli_ClimbingWall_BlockersChanged*)message->netMsg;
+        for (unsigned i = 0; i < kClimbingWallMaxBlockers; ++i)
+        {
+            if (gmMsg->blockersSet[i] != kClimbingWallNoBlocker)
+                retVal.push_back(gmMsg->blockersSet[i]);
+        }
+    }
+    return retVal;
 }
 
 bool pyClimbingWallBlockersChangedMsg::LocalOnly() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_BlockersChanged* gmMsg = (const Srv2Cli_ClimbingWall_BlockersChanged*)message->netMsg;
-		return gmMsg->localOnly;
-	}
-	return true; // safe-guard so we don't screw up other's state if the python does something stupid
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_BlockersChanged* gmMsg = (const Srv2Cli_ClimbingWall_BlockersChanged*)message->netMsg;
+        return gmMsg->localOnly;
+    }
+    return true; // safe-guard so we don't screw up other's state if the python does something stupid
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -203,8 +203,8 @@ pyClimbingWallPlayerEnteredMsg::pyClimbingWallPlayerEnteredMsg(): pyClimbingWall
 
 pyClimbingWallPlayerEnteredMsg::pyClimbingWallPlayerEnteredMsg(pfGameCliMsg* msg): pyClimbingWallMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_PlayerEntered))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_PlayerEntered))
+        message = nil; // wrong type, just clear it out
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -213,38 +213,38 @@ pyClimbingWallSuitMachineLockedMsg::pyClimbingWallSuitMachineLockedMsg(): pyClim
 
 pyClimbingWallSuitMachineLockedMsg::pyClimbingWallSuitMachineLockedMsg(pfGameCliMsg* msg): pyClimbingWallMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_SuitMachineLocked))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_SuitMachineLocked))
+        message = nil; // wrong type, just clear it out
 }
 
 bool pyClimbingWallSuitMachineLockedMsg::Team1MachineLocked() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_SuitMachineLocked* gmMsg = (const Srv2Cli_ClimbingWall_SuitMachineLocked*)message->netMsg;
-		return gmMsg->team1MachineLocked;
-	}
-	return true; // err on the side of caution
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_SuitMachineLocked* gmMsg = (const Srv2Cli_ClimbingWall_SuitMachineLocked*)message->netMsg;
+        return gmMsg->team1MachineLocked;
+    }
+    return true; // err on the side of caution
 }
 
 bool pyClimbingWallSuitMachineLockedMsg::Team2MachineLocked() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_SuitMachineLocked* gmMsg = (const Srv2Cli_ClimbingWall_SuitMachineLocked*)message->netMsg;
-		return gmMsg->team2MachineLocked;
-	}
-	return true; // err on the side of caution
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_SuitMachineLocked* gmMsg = (const Srv2Cli_ClimbingWall_SuitMachineLocked*)message->netMsg;
+        return gmMsg->team2MachineLocked;
+    }
+    return true; // err on the side of caution
 }
 
 bool pyClimbingWallSuitMachineLockedMsg::LocalOnly() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_SuitMachineLocked* gmMsg = (const Srv2Cli_ClimbingWall_SuitMachineLocked*)message->netMsg;
-		return gmMsg->localOnly;
-	}
-	return true; // safe-guard so we don't screw up other's state if the python does something stupid
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_SuitMachineLocked* gmMsg = (const Srv2Cli_ClimbingWall_SuitMachineLocked*)message->netMsg;
+        return gmMsg->localOnly;
+    }
+    return true; // safe-guard so we don't screw up other's state if the python does something stupid
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -253,56 +253,56 @@ pyClimbingWallGameOverMsg::pyClimbingWallGameOverMsg(): pyClimbingWallMsg() {}
 
 pyClimbingWallGameOverMsg::pyClimbingWallGameOverMsg(pfGameCliMsg* msg): pyClimbingWallMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_GameOver))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_ClimbingWall_GameOver))
+        message = nil; // wrong type, just clear it out
 }
 
 int pyClimbingWallGameOverMsg::TeamWon() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_GameOver* gmMsg = (const Srv2Cli_ClimbingWall_GameOver*)message->netMsg;
-		return gmMsg->teamWon;
-	}
-	return 0;
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_GameOver* gmMsg = (const Srv2Cli_ClimbingWall_GameOver*)message->netMsg;
+        return gmMsg->teamWon;
+    }
+    return 0;
 }
 
 std::vector<int> pyClimbingWallGameOverMsg::Team1Blockers() const
 {
-	std::vector<int> retVal;
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_GameOver* gmMsg = (const Srv2Cli_ClimbingWall_GameOver*)message->netMsg;
-		for (unsigned i = 0; i < kClimbingWallMaxBlockers; ++i)
-		{
-			if (gmMsg->team1Blockers[i] != kClimbingWallNoBlocker)
-				retVal.push_back(gmMsg->team1Blockers[i]);
-		}
-	}
-	return retVal;
+    std::vector<int> retVal;
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_GameOver* gmMsg = (const Srv2Cli_ClimbingWall_GameOver*)message->netMsg;
+        for (unsigned i = 0; i < kClimbingWallMaxBlockers; ++i)
+        {
+            if (gmMsg->team1Blockers[i] != kClimbingWallNoBlocker)
+                retVal.push_back(gmMsg->team1Blockers[i]);
+        }
+    }
+    return retVal;
 }
 
 std::vector<int> pyClimbingWallGameOverMsg::Team2Blockers() const
 {
-	std::vector<int> retVal;
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_GameOver* gmMsg = (const Srv2Cli_ClimbingWall_GameOver*)message->netMsg;
-		for (unsigned i = 0; i < kClimbingWallMaxBlockers; ++i)
-		{
-			if (gmMsg->team2Blockers[i] != kClimbingWallNoBlocker)
-				retVal.push_back(gmMsg->team2Blockers[i]);
-		}
-	}
-	return retVal;
+    std::vector<int> retVal;
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_GameOver* gmMsg = (const Srv2Cli_ClimbingWall_GameOver*)message->netMsg;
+        for (unsigned i = 0; i < kClimbingWallMaxBlockers; ++i)
+        {
+            if (gmMsg->team2Blockers[i] != kClimbingWallNoBlocker)
+                retVal.push_back(gmMsg->team2Blockers[i]);
+        }
+    }
+    return retVal;
 }
 
 bool pyClimbingWallGameOverMsg::LocalOnly() const
 {
-	if (message)
-	{
-		const Srv2Cli_ClimbingWall_GameOver* gmMsg = (const Srv2Cli_ClimbingWall_GameOver*)message->netMsg;
-		return gmMsg->localOnly;
-	}
-	return true; // safe-guard so we don't screw up other's state if the python does something stupid
+    if (message)
+    {
+        const Srv2Cli_ClimbingWall_GameOver* gmMsg = (const Srv2Cli_ClimbingWall_GameOver*)message->netMsg;
+        return gmMsg->localOnly;
+    }
+    return true; // safe-guard so we don't screw up other's state if the python does something stupid
 }

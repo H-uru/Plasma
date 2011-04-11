@@ -36,67 +36,67 @@ class hsResMgr;
 class plEnvEffectMsg : public plMessage
 {
 
-	hsBool fEnable;
+    hsBool fEnable;
 
 public:
-	plEnvEffectMsg(){ SetBCastFlag(plMessage::kPropagateToModifiers); }
-	
-	plEnvEffectMsg(const plKey* s, 
-					const plKey* r, 
-					const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
+    plEnvEffectMsg(){ SetBCastFlag(plMessage::kPropagateToModifiers); }
+    
+    plEnvEffectMsg(const plKey* s, 
+                    const plKey* r, 
+                    const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
 
-	~plEnvEffectMsg(){;}
+    ~plEnvEffectMsg(){;}
 
-	CLASSNAME_REGISTER( plEnvEffectMsg );
-	GETINTERFACE_ANY( plEnvEffectMsg, plMessage );
-	
-	hsBool Enabled() { return fEnable; }
-	void Enable(hsBool b) { fEnable = b; }
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		stream->ReadSwap(&fEnable);
-	}
+    CLASSNAME_REGISTER( plEnvEffectMsg );
+    GETINTERFACE_ANY( plEnvEffectMsg, plMessage );
+    
+    hsBool Enabled() { return fEnable; }
+    void Enable(hsBool b) { fEnable = b; }
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        stream->ReadSwap(&fEnable);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		stream->WriteSwap(fEnable);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        stream->WriteSwap(fEnable);
+    }
 };
 
 
 class plEnvAudioEffectMsg : public plEnvEffectMsg
 {
-	UInt32 fPreset;
+    UInt32 fPreset;
 
 public:
-	plEnvAudioEffectMsg(){SetBCastFlag(plMessage::kPropagateToModifiers);}
-	plEnvAudioEffectMsg(const plKey* s, 
-					const plKey* r, 
-					const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
-	
-	~plEnvAudioEffectMsg(){;}
+    plEnvAudioEffectMsg(){SetBCastFlag(plMessage::kPropagateToModifiers);}
+    plEnvAudioEffectMsg(const plKey* s, 
+                    const plKey* r, 
+                    const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
+    
+    ~plEnvAudioEffectMsg(){;}
 
-	CLASSNAME_REGISTER( plEnvAudioEffectMsg );
-	GETINTERFACE_ANY( plEnvAudioEffectMsg, plEnvEffectMsg );
-	
-	UInt32 GetEffect() { return fPreset; }
-	void SetEffect(UInt32 i) { fPreset = i; }
+    CLASSNAME_REGISTER( plEnvAudioEffectMsg );
+    GETINTERFACE_ANY( plEnvAudioEffectMsg, plEnvEffectMsg );
+    
+    UInt32 GetEffect() { return fPreset; }
+    void SetEffect(UInt32 i) { fPreset = i; }
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plEnvEffectMsg::Read(stream, mgr);
-		stream->ReadSwap(&fPreset);
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plEnvEffectMsg::Read(stream, mgr);
+        stream->ReadSwap(&fPreset);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plEnvEffectMsg::Write(stream, mgr);
-		stream->WriteSwap(fPreset);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plEnvEffectMsg::Write(stream, mgr);
+        stream->WriteSwap(fPreset);
+    }
 };
 
 #endif // plEnvEffectMsg_inc

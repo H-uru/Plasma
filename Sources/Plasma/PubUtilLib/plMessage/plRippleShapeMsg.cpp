@@ -32,13 +32,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plRippleShapeMsg::plRippleShapeMsg()
-:	fShape(nil)
+:   fShape(nil)
 {
 }
 
 plRippleShapeMsg::plRippleShapeMsg(const plKey& r, const plPrintShape* shape)
-:	plMessage(nil, r, nil),
-	fShape(shape)
+:   plMessage(nil, r, nil),
+    fShape(shape)
 {
 }
 
@@ -48,11 +48,11 @@ plRippleShapeMsg::~plRippleShapeMsg()
 
 void plRippleShapeMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	hsAssert(false, "RippleShapeMsg not meant to be read/written/networked");
+    hsAssert(false, "RippleShapeMsg not meant to be read/written/networked");
 }
 
 void plRippleShapeMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	hsAssert(false, "RippleShapeMsg not meant to be read/written/networked");
+    hsAssert(false, "RippleShapeMsg not meant to be read/written/networked");
 }
 

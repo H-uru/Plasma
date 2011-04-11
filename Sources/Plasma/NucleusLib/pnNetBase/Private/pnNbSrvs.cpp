@@ -49,15 +49,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static const wchar * s_authAddrs[] = {
 
 #if BUILD_TYPE == BUILD_TYPE_DEV
-	L"shard"
+    L"shard"
 #elif BUILD_TYPE == BUILD_TYPE_QA
-	L"marrim"
+    L"marrim"
 #elif BUILD_TYPE == BUILD_TYPE_TEST
-	L"test-auth.urulive.com"
+    L"test-auth.urulive.com"
 #elif BUILD_TYPE == BUILD_TYPE_BETA
-	L"beta-auth.urulive.com"
+    L"beta-auth.urulive.com"
 #elif BUILD_TYPE == BUILD_TYPE_LIVE
-	L"184.73.198.22"  //L"auth.urulive.com"
+    L"184.73.198.22"  //L"auth.urulive.com"
 #else
 # error "Unknown build type"
 #endif
@@ -65,7 +65,7 @@ static const wchar * s_authAddrs[] = {
 };
 static wchar s_authAddrCmdLine[64];
 static const wchar * s_authAddrsOverride[] = {
-	s_authAddrCmdLine
+    s_authAddrCmdLine
 };
 
 
@@ -75,15 +75,15 @@ static const wchar * s_authAddrsOverride[] = {
 static const wchar * s_fileAddrs[] = {
 
 #if BUILD_TYPE == BUILD_TYPE_DEV
-	L"shard"
+    L"shard"
 #elif BUILD_TYPE == BUILD_TYPE_QA
-	L"marrim"
+    L"marrim"
 #elif BUILD_TYPE == BUILD_TYPE_TEST
-	L"test-file.urulive.com"
+    L"test-file.urulive.com"
 #elif BUILD_TYPE == BUILD_TYPE_BETA
-	L"beta-file.urulive.com"
+    L"beta-file.urulive.com"
 #elif BUILD_TYPE == BUILD_TYPE_LIVE
-	L"67.202.54.141" //unused
+    L"67.202.54.141" //unused
 #else
 # error "Unknown build type"
 #endif
@@ -91,7 +91,7 @@ static const wchar * s_fileAddrs[] = {
 };
 static wchar s_fileAddrCmdLine[64];
 static const wchar * s_fileAddrsOverride[] = {
-	s_fileAddrCmdLine
+    s_fileAddrCmdLine
 };
 
 
@@ -101,15 +101,15 @@ static const wchar * s_fileAddrsOverride[] = {
 static const wchar * s_csrAddrs[] = {
 
 #if BUILD_TYPE == BUILD_TYPE_DEV
-	L"localhost"
+    L"localhost"
 #elif BUILD_TYPE == BUILD_TYPE_QA
-	L"localhost"
+    L"localhost"
 #elif BUILD_TYPE == BUILD_TYPE_TEST
-	L"localhost"
+    L"localhost"
 #elif BUILD_TYPE == BUILD_TYPE_BETA
-	L"beta-csr.urulive.com"
+    L"beta-csr.urulive.com"
 #elif BUILD_TYPE == BUILD_TYPE_LIVE
-	L"localhost"
+    L"localhost"
 #else
 # error "Unknown build type"
 #endif
@@ -117,7 +117,7 @@ static const wchar * s_csrAddrs[] = {
 };
 static wchar s_csrAddrCmdLine[64];
 static const wchar * s_csrAddrsOverride[] = {
-	s_csrAddrCmdLine
+    s_csrAddrCmdLine
 };
 
 
@@ -127,15 +127,15 @@ static const wchar * s_csrAddrsOverride[] = {
 static const wchar * s_gateKeeperAddrs[] = {
 
 #if BUILD_TYPE == BUILD_TYPE_DEV
-	L"localhost"
+    L"localhost"
 #elif BUILD_TYPE == BUILD_TYPE_QA
-	L"localhost"
+    L"localhost"
 #elif BUILD_TYPE == BUILD_TYPE_TEST
-	L"localhost"
+    L"localhost"
 #elif BUILD_TYPE == BUILD_TYPE_BETA
-	L"beta-csr.urulive.com"
+    L"beta-csr.urulive.com"
 #elif BUILD_TYPE == BUILD_TYPE_LIVE
-	L"184.73.198.22"
+    L"184.73.198.22"
 #else
 # error "Unknown build type"
 #endif
@@ -143,7 +143,7 @@ static const wchar * s_gateKeeperAddrs[] = {
 };
 static wchar s_gateKeeperAddrCmdLine[64];
 static const wchar * s_gateKeeperAddrsOverride[] = {
-	s_gateKeeperAddrCmdLine
+    s_gateKeeperAddrCmdLine
 };
 
 
@@ -158,26 +158,26 @@ static const wchar * s_gateKeeperAddrsOverride[] = {
 //============================================================================
 unsigned GetAuthSrvHostnames (const wchar *** addrs) {
 
-	if (s_authAddrCmdLine[0]) {
-		*addrs = s_authAddrsOverride;
-		return arrsize(s_authAddrsOverride);
-	}
-	else {
-		*addrs = s_authAddrs; 
-		return arrsize(s_authAddrs);
-	}
+    if (s_authAddrCmdLine[0]) {
+        *addrs = s_authAddrsOverride;
+        return arrsize(s_authAddrsOverride);
+    }
+    else {
+        *addrs = s_authAddrs; 
+        return arrsize(s_authAddrs);
+    }
 }
 
 //============================================================================
 void SetAuthSrvHostname (const wchar addr[]) {
 
-	StrCopy(s_authAddrCmdLine, addr, arrsize(s_authAddrCmdLine));
+    StrCopy(s_authAddrCmdLine, addr, arrsize(s_authAddrCmdLine));
 }
 
 //============================================================================
 bool AuthSrvHostnameOverride () {
 
-	return s_authAddrCmdLine[0];
+    return s_authAddrCmdLine[0];
 }
 
 //============================================================================
@@ -185,26 +185,26 @@ bool AuthSrvHostnameOverride () {
 //============================================================================
 unsigned GetFileSrvHostnames (const wchar *** addrs) {
 
-	if (s_fileAddrCmdLine[0]) {
-		*addrs = s_fileAddrsOverride;
-		return arrsize(s_fileAddrsOverride);
-	}
-	else {
-		*addrs = s_fileAddrs; 
-		return arrsize(s_fileAddrs);
-	}
+    if (s_fileAddrCmdLine[0]) {
+        *addrs = s_fileAddrsOverride;
+        return arrsize(s_fileAddrsOverride);
+    }
+    else {
+        *addrs = s_fileAddrs; 
+        return arrsize(s_fileAddrs);
+    }
 }
 
 //============================================================================
 void SetFileSrvHostname (const wchar addr[]) {
 
-	StrCopy(s_fileAddrCmdLine, addr, arrsize(s_fileAddrCmdLine));
+    StrCopy(s_fileAddrCmdLine, addr, arrsize(s_fileAddrCmdLine));
 }
 
 //============================================================================
 bool FileSrvHostnameOverride () {
 
-	return s_fileAddrCmdLine[0];
+    return s_fileAddrCmdLine[0];
 }
 
 //============================================================================
@@ -212,26 +212,26 @@ bool FileSrvHostnameOverride () {
 //============================================================================
 unsigned GetCsrSrvHostnames (const wchar *** addrs) {
 
-	if (s_csrAddrCmdLine[0]) {
-		*addrs = s_csrAddrsOverride;
-		return arrsize(s_csrAddrsOverride);
-	}
-	else {
-		*addrs = s_csrAddrs; 
-		return arrsize(s_csrAddrs);
-	}
+    if (s_csrAddrCmdLine[0]) {
+        *addrs = s_csrAddrsOverride;
+        return arrsize(s_csrAddrsOverride);
+    }
+    else {
+        *addrs = s_csrAddrs; 
+        return arrsize(s_csrAddrs);
+    }
 }
 
 //============================================================================
 void SetCsrSrvHostname (const wchar addr[]) {
 
-	StrCopy(s_csrAddrCmdLine, addr, arrsize(s_csrAddrCmdLine));
+    StrCopy(s_csrAddrCmdLine, addr, arrsize(s_csrAddrCmdLine));
 }
 
 //============================================================================
 bool CsrSrvHostnameOverride () {
 
-	return s_csrAddrCmdLine[0];
+    return s_csrAddrCmdLine[0];
 }
 
 
@@ -240,23 +240,23 @@ bool CsrSrvHostnameOverride () {
 //============================================================================
 unsigned GetGateKeeperSrvHostnames (const wchar *** addrs) {
 
-	if (s_gateKeeperAddrCmdLine[0]) {
-		*addrs = s_gateKeeperAddrsOverride;
-		return arrsize(s_gateKeeperAddrsOverride);
-	}
-	else {
-		*addrs = s_gateKeeperAddrs; 
-		return arrsize(s_gateKeeperAddrs);
-	}
+    if (s_gateKeeperAddrCmdLine[0]) {
+        *addrs = s_gateKeeperAddrsOverride;
+        return arrsize(s_gateKeeperAddrsOverride);
+    }
+    else {
+        *addrs = s_gateKeeperAddrs; 
+        return arrsize(s_gateKeeperAddrs);
+    }
 }
 
 //============================================================================
 void SetGateKeeperSrvHostname (const wchar addr[]) {
-	StrCopy(s_gateKeeperAddrCmdLine, addr, arrsize(s_gateKeeperAddrCmdLine));
+    StrCopy(s_gateKeeperAddrCmdLine, addr, arrsize(s_gateKeeperAddrCmdLine));
 }
 
 //============================================================================
 bool GateKeeperSrvHostnameOverride () {
-	return s_gateKeeperAddrCmdLine[0];
+    return s_gateKeeperAddrCmdLine[0];
 }
 

@@ -36,117 +36,117 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plTimerShare
 {
 protected:
-	mutable hsBool		fFirstTime;
-	mutable hsWide		fRawTimeZero;
-	mutable hsBool		fResetSmooth;
+    mutable hsBool      fFirstTime;
+    mutable hsWide      fRawTimeZero;
+    mutable hsBool      fResetSmooth;
 
-	enum {
-		kSmoothBuffLen = 10
-	};
-	double				fSmoothBuff[kSmoothBuffLen];
-	int					fCurrSlot;
+    enum {
+        kSmoothBuffLen = 10
+    };
+    double              fSmoothBuff[kSmoothBuffLen];
+    int                 fCurrSlot;
 
-	hsScalar			fSysTimeScale;
-	double				fRealSeconds;
-	double				fSysSeconds;
-	hsScalar			fDelSysSeconds;
-	hsScalar			fFrameTimeInc;
-	hsBool				fRunningFrameTime;
-	hsScalar			fTimeClampSecs;
-	hsScalar			fSmoothingClampSecs;
-	hsBool				fClamping;
+    hsScalar            fSysTimeScale;
+    double              fRealSeconds;
+    double              fSysSeconds;
+    hsScalar            fDelSysSeconds;
+    hsScalar            fFrameTimeInc;
+    hsBool              fRunningFrameTime;
+    hsScalar            fTimeClampSecs;
+    hsScalar            fSmoothingClampSecs;
+    hsBool              fClamping;
 
-	hsWide*				FactorInTimeZero(hsWide* ticks) const;
+    hsWide*             FactorInTimeZero(hsWide* ticks) const;
 
-	double				GetSeconds() const;
-	double				GetMilliSeconds() const;
+    double              GetSeconds() const;
+    double              GetMilliSeconds() const;
 
-	hsWide*				GetRawTicks(hsWide* ticks) const;
+    hsWide*             GetRawTicks(hsWide* ticks) const;
 
-	double				RawTicksToDSeconds(const hsWide& ticks);
-	hsWide				DSecondsToRawTicks(double secs);
+    double              RawTicksToDSeconds(const hsWide& ticks);
+    hsWide              DSecondsToRawTicks(double secs);
 
-	hsScalar			GetDelSysSeconds() const { return fDelSysSeconds; }
-	double				GetSysSeconds() const { return fSysSeconds; }
-	double				IncSysSeconds();
+    hsScalar            GetDelSysSeconds() const { return fDelSysSeconds; }
+    double              GetSysSeconds() const { return fSysSeconds; }
+    double              IncSysSeconds();
 
-	void				SetRealTime(hsBool realTime);
-	hsBool				IsRealTime() const { return !fRunningFrameTime; }
+    void                SetRealTime(hsBool realTime);
+    hsBool              IsRealTime() const { return !fRunningFrameTime; }
 
-	void				SetFrameTimeInc(hsScalar inc) { fFrameTimeInc = inc; }
+    void                SetFrameTimeInc(hsScalar inc) { fFrameTimeInc = inc; }
 
-	void				SetTimeScale(hsScalar s) { fSysTimeScale = s; }
-	hsScalar			GetTimeScale() const { return fSysTimeScale; }
+    void                SetTimeScale(hsScalar s) { fSysTimeScale = s; }
+    hsScalar            GetTimeScale() const { return fSysTimeScale; }
 
-	void				SetTimeClamp(hsScalar secs) { fTimeClampSecs = secs; }
-	void				SetSmoothingCap(hsScalar secs) { fSmoothingClampSecs = secs; }
-	hsScalar			GetTimeClamp() const { return fTimeClampSecs; }
-	hsBool				IsClamping() const { return fClamping; }
+    void                SetTimeClamp(hsScalar secs) { fTimeClampSecs = secs; }
+    void                SetSmoothingCap(hsScalar secs) { fSmoothingClampSecs = secs; }
+    hsScalar            GetTimeClamp() const { return fTimeClampSecs; }
+    hsBool              IsClamping() const { return fClamping; }
 
-	friend class hsTimer;
+    friend class hsTimer;
 public:
-	plTimerShare();
-	~plTimerShare();
+    plTimerShare();
+    ~plTimerShare();
 };
 
 class hsTimer 
 {
 protected:
-	static const double				fPrecTicksPerSec;
-	static const hsWide				fRawBase;
+    static const double             fPrecTicksPerSec;
+    static const hsWide             fRawBase;
 
-	static	hsWide					IInitRawBase();
-	
-	static plTimerShare*			fTimer;
+    static  hsWide                  IInitRawBase();
+    
+    static plTimerShare*            fTimer;
 public:
 
-	static hsBool	VerifyRawBase() { return fRawBase == IInitRawBase(); }
-	static	const hsWide&		GetRawBase() { return fRawBase; }
+    static hsBool   VerifyRawBase() { return fRawBase == IInitRawBase(); }
+    static  const hsWide&       GetRawBase() { return fRawBase; }
 
-	static	hsWide*				GetRawTicks(hsWide* ticks) { return fTimer->GetRawTicks(ticks); }
+    static  hsWide*             GetRawTicks(hsWide* ticks) { return fTimer->GetRawTicks(ticks); }
 
-	static	double		GetSeconds() { return fTimer->GetSeconds(); }
-	static	double		GetMilliSeconds() { return fTimer->GetMilliSeconds(); }
+    static  double      GetSeconds() { return fTimer->GetSeconds(); }
+    static  double      GetMilliSeconds() { return fTimer->GetMilliSeconds(); }
 
-	static double		RawTicksToDSeconds(const hsWide& ticks) { return fTimer->RawTicksToDSeconds(ticks); }
-	static hsWide		DSecondsToRawTicks(double secs) { return fTimer->DSecondsToRawTicks(secs); }
+    static double       RawTicksToDSeconds(const hsWide& ticks) { return fTimer->RawTicksToDSeconds(ticks); }
+    static hsWide       DSecondsToRawTicks(double secs) { return fTimer->DSecondsToRawTicks(secs); }
 
-	static hsScalar		GetDelSysSeconds() { return fTimer->GetDelSysSeconds(); }
-	static double		GetSysSeconds() { return fTimer->GetSysSeconds(); }
+    static hsScalar     GetDelSysSeconds() { return fTimer->GetDelSysSeconds(); }
+    static double       GetSysSeconds() { return fTimer->GetSysSeconds(); }
 
-	static double		IncSysSeconds() { return fTimer->IncSysSeconds(); }
+    static double       IncSysSeconds() { return fTimer->IncSysSeconds(); }
 
-	static void			SetRealTime(hsBool realTime) { fTimer->SetRealTime(realTime); }
-	static hsBool		IsRealTime() { return fTimer->IsRealTime(); }
+    static void         SetRealTime(hsBool realTime) { fTimer->SetRealTime(realTime); }
+    static hsBool       IsRealTime() { return fTimer->IsRealTime(); }
 
-	static void			SetFrameTimeInc(hsScalar inc) { fTimer->SetFrameTimeInc(inc); }
+    static void         SetFrameTimeInc(hsScalar inc) { fTimer->SetFrameTimeInc(inc); }
 
-	static void			SetTimeScale(hsScalar s) { fTimer->SetTimeScale(s); }
-	static hsScalar		GetTimeScale() { return fTimer->GetTimeScale(); }
+    static void         SetTimeScale(hsScalar s) { fTimer->SetTimeScale(s); }
+    static hsScalar     GetTimeScale() { return fTimer->GetTimeScale(); }
 
-	static void			SetTimeClamp(hsScalar secs) { fTimer->SetTimeClamp(secs); }
-	static void			SetTimeSmoothingClamp(hsScalar secs) { fTimer->SetSmoothingCap(secs); }
-	static hsScalar		GetTimeClamp() { return fTimer->GetTimeClamp(); }
-	static hsBool		IsClamping() { return fTimer->IsClamping(); }
+    static void         SetTimeClamp(hsScalar secs) { fTimer->SetTimeClamp(secs); }
+    static void         SetTimeSmoothingClamp(hsScalar secs) { fTimer->SetSmoothingCap(secs); }
+    static hsScalar     GetTimeClamp() { return fTimer->GetTimeClamp(); }
+    static hsBool       IsClamping() { return fTimer->IsClamping(); }
 
-	///////////////////////////
-	// Precision timer routines - these are stateless and implemented as statics.
-	///////////////////////////
-	static UInt32	GetPrecTickCount();
-	static double	GetPrecTicksPerSec();
-	static UInt32	PrecSecsToTicks(hsScalar secs);
-	static double	PrecTicksToSecs(UInt32 ticks);
-	static double	PrecTicksToHz(UInt32 ticks);
+    ///////////////////////////
+    // Precision timer routines - these are stateless and implemented as statics.
+    ///////////////////////////
+    static UInt32   GetPrecTickCount();
+    static double   GetPrecTicksPerSec();
+    static UInt32   PrecSecsToTicks(hsScalar secs);
+    static double   PrecTicksToSecs(UInt32 ticks);
+    static double   PrecTicksToHz(UInt32 ticks);
 
-	// If you need to time something longer than 20 seconds, use this instead of
-	// the precision timer.  It works the same, it just gives you full resolution.
-	static UInt64	GetFullTickCount();
-	static float	FullTicksToMs(UInt64 ticks);
+    // If you need to time something longer than 20 seconds, use this instead of
+    // the precision timer.  It works the same, it just gives you full resolution.
+    static UInt64   GetFullTickCount();
+    static float    FullTicksToMs(UInt64 ticks);
 
-	//
-	// Pass GetTheTimer() into other process space, and then call SetTheTimer() on it.
-	static void				SetTheTimer(plTimerShare* timer);
-	static plTimerShare*	GetTheTimer() { return fTimer; }
+    //
+    // Pass GetTheTimer() into other process space, and then call SetTheTimer() on it.
+    static void             SetTheTimer(plTimerShare* timer);
+    static plTimerShare*    GetTheTimer() { return fTimer; }
 };
 
 

@@ -37,18 +37,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /*** Order type constants, constructors, extractors ***/
     /* There are 24 possible conventions, designated by:    */
-    /*	  o EulAxI = axis used initially		    */
-    /*	  o EulPar = parity of axis permutation		    */
-    /*	  o EulRep = repetition of initial axis as last	    */
-    /*	  o EulFrm = frame from which axes are taken	    */
-    /* Axes I,J,K will be a permutation of X,Y,Z.	    */
+    /*    o EulAxI = axis used initially            */
+    /*    o EulPar = parity of axis permutation         */
+    /*    o EulRep = repetition of initial axis as last     */
+    /*    o EulFrm = frame from which axes are taken        */
+    /* Axes I,J,K will be a permutation of X,Y,Z.       */
     /* Axis H will be either I or K, depending on EulRep.   */
-    /* Frame S takes axes from initial static frame.	    */
-    /* If ord = (AxI=X, Par=Even, Rep=No, Frm=S), then	    */
-    /* {a,b,c,ord} means Rz(c)Ry(b)Rx(a), where Rz(c)v	    */
-    /* rotates v around Z by c radians.			    */
-#define EulFrmS	     0
-#define EulFrmR	     1
+    /* Frame S takes axes from initial static frame.        */
+    /* If ord = (AxI=X, Par=Even, Rep=No, Frm=S), then      */
+    /* {a,b,c,ord} means Rz(c)Ry(b)Rx(a), where Rz(c)v      */
+    /* rotates v around Z by c radians.             */
+#define EulFrmS      0
+#define EulFrmR      1
 #define EulFrm(ord)  ((unsigned)(ord)&1)
 #define EulRepNo     0
 #define EulRepYes    1
@@ -56,8 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define EulParEven   0
 #define EulParOdd    1
 #define EulPar(ord)  (((unsigned)(ord)>>2)&1)
-#define EulSafe	     "\000\001\002\000"
-#define EulNext	     "\001\002\000\001"
+#define EulSafe      "\000\001\002\000"
+#define EulNext      "\001\002\000\001"
 #define EulAxI(ord)  ((int)(EulSafe[(((unsigned)(ord)>>3)&3)]))
 #define EulAxJ(ord)  ((int)(EulNext[EulAxI(ord)+(EulPar(ord)==EulParOdd)]))
 #define EulAxK(ord)  ((int)(EulNext[EulAxI(ord)+(EulPar(ord)!=EulParOdd)]))
@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define EulGetOrd(ord,i,j,k,h,n,s,f) {unsigned o=ord;f=o&1;o>>=1;s=o&1;o>>=1;\
     n=o&1;o>>=1;i=EulSafe[o&3];j=EulNext[i+n];k=EulNext[i+1-n];h=s?k:i;}
     /* EulOrd creates an order value between 0 and 23 from 4-tuple choices. */
-#define EulOrd(i,p,r,f)	   (((((((i)<<1)+(p))<<1)+(r))<<1)+(f))
+#define EulOrd(i,p,r,f)    (((((((i)<<1)+(p))<<1)+(r))<<1)+(f))
     /* Static axes */
 #define EulOrdXYZs    EulOrd(X,EulParEven,EulRepNo,EulFrmS)
 #define EulOrdXYXs    EulOrd(X,EulParEven,EulRepYes,EulFrmS)
@@ -99,18 +99,18 @@ class hsQuat;
 class hsEuler 
 {
 public:
-	hsScalar fX,fY,fZ;
-	UInt32 fOrder;
+    hsScalar fX,fY,fZ;
+    UInt32 fOrder;
 
-	hsEuler(hsScalar ai, hsScalar aj, hsScalar ah, UInt32 order) : fX(ai),fY(aj),fZ(ah),fOrder(order) {}
-	
-	// getters, converters
-	void GetQuat(hsQuat* res );
-	void GetMatrix44(hsMatrix44* M);
+    hsEuler(hsScalar ai, hsScalar aj, hsScalar ah, UInt32 order) : fX(ai),fY(aj),fZ(ah),fOrder(order) {}
+    
+    // getters, converters
+    void GetQuat(hsQuat* res );
+    void GetMatrix44(hsMatrix44* M);
 
-	// setters, converters
-	void SetFromMatrix44(const hsMatrix44* M, UInt32 order);
-	void SetFromQuat(const hsQuat* q, UInt32 order);
+    // setters, converters
+    void SetFromMatrix44(const hsMatrix44* M, UInt32 order);
+    void SetFromQuat(const hsQuat* q, UInt32 order);
 };
 
-#endif	// HS_EULER_inc
+#endif  // HS_EULER_inc

@@ -27,51 +27,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLFIXEDKEY_H
 
 
-	// Using Fixed Key feature:
-	// Add a new fixedkey to the enum list below.
-	// Then add, to the Seed list (in plFixedKey.cpp) in the Corresponding 
-	// position, (don't screw up, it will be validated...)
-	// The "Full Address" data for you Fixed key (see rules in plFixedKey.cpp)
+    // Using Fixed Key feature:
+    // Add a new fixedkey to the enum list below.
+    // Then add, to the Seed list (in plFixedKey.cpp) in the Corresponding 
+    // position, (don't screw up, it will be validated...)
+    // The "Full Address" data for you Fixed key (see rules in plFixedKey.cpp)
 
 enum plFixedKeyId
 {
-	kFirst_Fixed_KEY,
+    kFirst_Fixed_KEY,
 
-	kLOSObject_KEY,
-	kTimerCallbackManager_KEY,
-	kConsoleObject_KEY,	
-	kAudioSystem_KEY,
-	kInput_KEY,
-	kClient_KEY,
-	kNetClientMgr_KEY,
-	kListenerMod_KEY,
-	kTransitionMgr_KEY,
-	kLinkEffectsMgr_KEY,
-	kGameGUIMgr_KEY,
-	kGameGUIDynamicDlg_KEY,
-	kVirtualCamera1_KEY,
-	kDefaultCameraMod1_KEY,
-	kKIGUIGlue_KEY,
-	kClothingMgr_KEY,
-	kInputInterfaceMgr_KEY,
-	kAVIWriter_KEY,
-	kResManagerHelper_KEY,
-	kAvatarMgr_KEY,
-	kSimulationMgr_KEY,
-	kTransitionCamera_KEY,
-	kCCRMgr_KEY,
-	kNetClientCloneRoom_KEY,
-	kMarkerMgr_KEY,
-	kAutoProfile_KEY,
-	kGlobalVisMgr_KEY,
-	kFontCache_KEY,
-	kRelevanceMgr_KEY,
-	kJournalBookMgr_KEY,
-	kAgeLoader_KEY,
-	kBuiltIn3rdPersonCamera_KEY,
-	kSecurePreloader_KEY,
+    kLOSObject_KEY,
+    kTimerCallbackManager_KEY,
+    kConsoleObject_KEY, 
+    kAudioSystem_KEY,
+    kInput_KEY,
+    kClient_KEY,
+    kNetClientMgr_KEY,
+    kListenerMod_KEY,
+    kTransitionMgr_KEY,
+    kLinkEffectsMgr_KEY,
+    kGameGUIMgr_KEY,
+    kGameGUIDynamicDlg_KEY,
+    kVirtualCamera1_KEY,
+    kDefaultCameraMod1_KEY,
+    kKIGUIGlue_KEY,
+    kClothingMgr_KEY,
+    kInputInterfaceMgr_KEY,
+    kAVIWriter_KEY,
+    kResManagerHelper_KEY,
+    kAvatarMgr_KEY,
+    kSimulationMgr_KEY,
+    kTransitionCamera_KEY,
+    kCCRMgr_KEY,
+    kNetClientCloneRoom_KEY,
+    kMarkerMgr_KEY,
+    kAutoProfile_KEY,
+    kGlobalVisMgr_KEY,
+    kFontCache_KEY,
+    kRelevanceMgr_KEY,
+    kJournalBookMgr_KEY,
+    kAgeLoader_KEY,
+    kBuiltIn3rdPersonCamera_KEY,
+    kSecurePreloader_KEY,
 
-	kLast_Fixed_KEY
+    kLast_Fixed_KEY
 };
 
 

@@ -29,59 +29,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Param ID's
 enum
 {
-	kBmpUseBitmap,
-	kBmpBitmap,
+    kBmpUseBitmap,
+    kBmpBitmap,
 
-	// Cropping/Placement
-	kBmpApply,
-	kBmpCropPlace,
-	kBmpClipU,
-	kBmpClipV,
-	kBmpClipW,
-	kBmpClipH,
+    // Cropping/Placement
+    kBmpApply,
+    kBmpCropPlace,
+    kBmpClipU,
+    kBmpClipV,
+    kBmpClipW,
+    kBmpClipH,
 
-	// Misc
-	kBmpDiscardColor,
-	kBmpInvertColor,
-	kBmpDiscardAlpha,
-	kBmpInvertAlpha,
+    // Misc
+    kBmpDiscardColor,
+    kBmpInvertColor,
+    kBmpDiscardAlpha,
+    kBmpInvertAlpha,
 
-	// Texture quality
-	kBmpNonCompressed,
-	kBmpScaling,
+    // Texture quality
+    kBmpNonCompressed,
+    kBmpScaling,
 
-	// Mipmap
-	kBmpNoFilter,
-	kBmpMipBlur,
-	kBmpMipBias,
-	kBmpMipBiasAmt,
+    // Mipmap
+    kBmpNoFilter,
+    kBmpMipBlur,
+    kBmpMipBias,
+    kBmpMipBiasAmt,
 
-	// Max only
-	kBmpMonoOutput,
-	kBmpRGBOutput,
+    // Max only
+    kBmpMonoOutput,
+    kBmpRGBOutput,
 
-	// Detail
-	kBmpUseDetail,
-	kBmpDetailStartSize,
-	kBmpDetailStopSize,
-	kBmpDetailStartOpac,
-	kBmpDetailStopOpac,
+    // Detail
+    kBmpUseDetail,
+    kBmpDetailStartSize,
+    kBmpDetailStopSize,
+    kBmpDetailStartOpac,
+    kBmpDetailStopOpac,
 
-	// New export size controls
-	kBmpExportWidth,
-	kBmpExportHeight,
-	kBmpExportLastWidth,		// Annoying fields, these two, but they're necessary
-	kBmpExportLastHeight,		// for clamping the spinners to powers of 2
+    // New export size controls
+    kBmpExportWidth,
+    kBmpExportHeight,
+    kBmpExportLastWidth,        // Annoying fields, these two, but they're necessary
+    kBmpExportLastHeight,       // for clamping the spinners to powers of 2
 
-	// Keep a sysmem copy of the texture
-	kBmpNoDiscard
+    // Keep a sysmem copy of the texture
+    kBmpNoDiscard
 };
 
 enum
 {
-	kScalingAny,
-	kScalingHalf,
-	kScalingNone
+    kScalingAny,
+    kScalingHalf,
+    kScalingNone
 };
 
 #endif //PL_LAYERTEXBITMAPPB_H

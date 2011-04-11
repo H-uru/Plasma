@@ -27,13 +27,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plPhysicalSndGroup_h
 
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plPhysicalSndGroup Class 												//
-//	Simplistic container class to store the matchup info for a given		//
-//	physical sound group. Assigning one of these objects to a physical		//
-//	specifies the sound group it's in as well as the sounds it should make	//
-//	when colliding against objects of other sound groups.					//
-//																			//
+//                                                                          //
+//  plPhysicalSndGroup Class                                                //
+//  Simplistic container class to store the matchup info for a given        //
+//  physical sound group. Assigning one of these objects to a physical      //
+//  specifies the sound group it's in as well as the sounds it should make  //
+//  when colliding against objects of other sound groups.                   //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -47,56 +47,56 @@ class plPhysicalSndGroup : public hsKeyedObject
 {
 public:
 
-	// The group enums
-	enum SoundGroup
-	{
-		kNone = 0,
-		kMetal,
-		kGrass,
-		kWood
-	};
-	
-	plPhysicalSndGroup();
-	plPhysicalSndGroup( UInt32 grp );
-	virtual ~plPhysicalSndGroup();
+    // The group enums
+    enum SoundGroup
+    {
+        kNone = 0,
+        kMetal,
+        kGrass,
+        kWood
+    };
+    
+    plPhysicalSndGroup();
+    plPhysicalSndGroup( UInt32 grp );
+    virtual ~plPhysicalSndGroup();
 
-	CLASSNAME_REGISTER( plPhysicalSndGroup );
-	GETINTERFACE_ANY( plPhysicalSndGroup, hsKeyedObject );
+    CLASSNAME_REGISTER( plPhysicalSndGroup );
+    GETINTERFACE_ANY( plPhysicalSndGroup, hsKeyedObject );
 
-	// Our required virtual
-	virtual hsBool	MsgReceive( plMessage *pMsg );
+    // Our required virtual
+    virtual hsBool  MsgReceive( plMessage *pMsg );
 
-	virtual void Read( hsStream *s, hsResMgr *mgr );
-	virtual void Write( hsStream *s, hsResMgr *mgr );
+    virtual void Read( hsStream *s, hsResMgr *mgr );
+    virtual void Write( hsStream *s, hsResMgr *mgr );
 
-	void PlaySlideSound(UInt32 against);
-	void StopSlideSound(UInt32 against);
-	void PlayImpactSound(UInt32 against);
-	void SetSlideSoundVolume(UInt32 against, hsScalar volume);
-	bool HasSlideSound(UInt32 against);
-	bool HasImpactSound(UInt32 against);
+    void PlaySlideSound(UInt32 against);
+    void StopSlideSound(UInt32 against);
+    void PlayImpactSound(UInt32 against);
+    void SetSlideSoundVolume(UInt32 against, hsScalar volume);
+    bool HasSlideSound(UInt32 against);
+    bool HasImpactSound(UInt32 against);
 
-	UInt32 GetGroup( void ) const { return fGroup; }
+    UInt32 GetGroup( void ) const { return fGroup; }
 
-	// Export only
-	void	AddImpactSound( UInt32 against, plKey receiver );
-	void	AddSlideSound( UInt32 against, plKey receiver );
-	bool	IsSliding() { return fPlayingSlideSound; }
+    // Export only
+    void    AddImpactSound( UInt32 against, plKey receiver );
+    void    AddSlideSound( UInt32 against, plKey receiver );
+    bool    IsSliding() { return fPlayingSlideSound; }
 
 protected:
 
-	enum Refs
-	{
-		kRefImpactSound,
-		kRefSlideSound
-	};
+    enum Refs
+    {
+        kRefImpactSound,
+        kRefSlideSound
+    };
 
-	UInt32	fGroup;
-	bool fPlayingSlideSound;
+    UInt32  fGroup;
+    bool fPlayingSlideSound;
 
-	// Sound key arrays for, well, our sounds!
-	hsTArray<plKey>	fImpactSounds;
-	hsTArray<plKey>	fSlideSounds;
+    // Sound key arrays for, well, our sounds!
+    hsTArray<plKey> fImpactSounds;
+    hsTArray<plKey> fSlideSounds;
 };
 
 

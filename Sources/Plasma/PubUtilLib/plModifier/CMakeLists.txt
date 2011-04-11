@@ -9,48 +9,48 @@ include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plModifier_SOURCES
-	plAnimEventModifier.cpp
-	plAnimTimeConvertSDLModifier.cpp
-	plAxisAnimModifier.cpp
-	plCloneSpawnModifier.cpp
-	plDecalEnableMod.cpp
-	plDetectorLog.cpp
-	plExcludeRegionModifier.cpp
-	plGameMarkerModifier.cpp
-	plImageLibMod.cpp
-	plInterfaceInfoModifier.cpp
-	plLayerSDLModifier.cpp
-	plLogicModifier.cpp
-	plMaintainersMarkerModifier.cpp
-	plResponderModifier.cpp
-	plResponderSDLModifier.cpp
-	plSDLModifier.cpp
-	plSimpleModifier.cpp
-	plSoundSDLModifier.cpp
-	plSpawnModifier.cpp
+    plAnimEventModifier.cpp
+    plAnimTimeConvertSDLModifier.cpp
+    plAxisAnimModifier.cpp
+    plCloneSpawnModifier.cpp
+    plDecalEnableMod.cpp
+    plDetectorLog.cpp
+    plExcludeRegionModifier.cpp
+    plGameMarkerModifier.cpp
+    plImageLibMod.cpp
+    plInterfaceInfoModifier.cpp
+    plLayerSDLModifier.cpp
+    plLogicModifier.cpp
+    plMaintainersMarkerModifier.cpp
+    plResponderModifier.cpp
+    plResponderSDLModifier.cpp
+    plSDLModifier.cpp
+    plSimpleModifier.cpp
+    plSoundSDLModifier.cpp
+    plSpawnModifier.cpp
 )
 
 set(plModifier_HEADERS
-	plAnimEventModifier.h
-	plAnimTimeConvertSDLModifier.h
-	plAxisAnimModifier.h
-	plCloneSpawnModifier.h
-	plDecalEnableMod.h
-	plDetectorLog.h
-	plExcludeRegionModifier.h
-	plGameMarkerModifier.h
-	plImageLibMod.h
-	plInterfaceInfoModifier.h
-	plLayerSDLModifier.h
-	plLogicModifier.h
-	plMaintainersMarkerModifier.h
-	plModifierCreatable.h
-	plResponderModifier.h
-	plResponderSDLModifier.h
-	plSDLModifier.h
-	plSimpleModifier.h
-	plSoundSDLModifier.h
-	plSpawnModifier.h
+    plAnimEventModifier.h
+    plAnimTimeConvertSDLModifier.h
+    plAxisAnimModifier.h
+    plCloneSpawnModifier.h
+    plDecalEnableMod.h
+    plDetectorLog.h
+    plExcludeRegionModifier.h
+    plGameMarkerModifier.h
+    plImageLibMod.h
+    plInterfaceInfoModifier.h
+    plLayerSDLModifier.h
+    plLogicModifier.h
+    plMaintainersMarkerModifier.h
+    plModifierCreatable.h
+    plResponderModifier.h
+    plResponderSDLModifier.h
+    plSDLModifier.h
+    plSimpleModifier.h
+    plSoundSDLModifier.h
+    plSpawnModifier.h
 )
 
 add_library(plModifier STATIC ${plModifier_SOURCES} ${plModifier_HEADERS})

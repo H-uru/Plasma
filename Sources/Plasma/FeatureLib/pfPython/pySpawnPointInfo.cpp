@@ -35,13 +35,13 @@ pySpawnPointInfo::pySpawnPointInfo()
 
 pySpawnPointInfo::pySpawnPointInfo( const char * title, const char * spawnPt )
 {
-	fInfo.fTitle = title;
-	fInfo.fSpawnPt = spawnPt;
+    fInfo.fTitle = title;
+    fInfo.fSpawnPt = spawnPt;
 }
 
 PyObject *pySpawnPointInfo::GetDefaultSpawnPoint()
 {
-	return pySpawnPointInfo::New(kDefaultSpawnPoint);	// returns a copy
+    return pySpawnPointInfo::New(kDefaultSpawnPoint);   // returns a copy
 }
 
 plSpawnPointInfo pySpawnPointInfoRef::fDefaultSPInfo; // created so a default constructor could be made for python, do NOT use

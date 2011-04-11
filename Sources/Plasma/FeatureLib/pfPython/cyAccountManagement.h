@@ -40,19 +40,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class cyAccountManagement
 {
 public:
-	static void			AddPlasmaMethods(std::vector<PyMethodDef> &methods);
-	static void			AddPlasmaConstantsClasses(PyObject *m);
+    static void         AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void         AddPlasmaConstantsClasses(PyObject *m);
 
-	static bool			IsSubscriptionActive();
-	static PyObject*	GetPlayerList();
-	static std::wstring	GetAccountName();
-	static void			CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode);
-	static void			CreatePlayerW(const wchar_t* playerName, const wchar_t* avatar, const wchar_t* invitationCode);
-	static void			DeletePlayer(unsigned playerId);
-	static void			SetActivePlayer(unsigned playerId);
-	static bool			IsActivePlayerSet();
-	static void			UpgradeVisitorToExplorer(unsigned playerId);
-	static void			ChangePassword(const char* password);
+    static bool         IsSubscriptionActive();
+    static PyObject*    GetPlayerList();
+    static std::wstring GetAccountName();
+    static void         CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode);
+    static void         CreatePlayerW(const wchar_t* playerName, const wchar_t* avatar, const wchar_t* invitationCode);
+    static void         DeletePlayer(unsigned playerId);
+    static void         SetActivePlayer(unsigned playerId);
+    static bool         IsActivePlayerSet();
+    static void         UpgradeVisitorToExplorer(unsigned playerId);
+    static void         ChangePassword(const char* password);
 };
 
 

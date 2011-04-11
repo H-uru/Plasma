@@ -38,58 +38,58 @@ COMPILER_ASSERT(sizeof(Uuid) >= sizeof(GUID));
 
 void Uuid::Clear()
 {
-	UuidCreateNil( (GUID *)this );
+    UuidCreateNil( (GUID *)this );
 }
 
 int Uuid::CompareTo( const Uuid * v ) const
 {
-	RPC_STATUS s;
-	return UuidCompare( (GUID *)this, (GUID *)v, &s );
+    RPC_STATUS s;
+    return UuidCompare( (GUID *)this, (GUID *)v, &s );
 }
 
 bool Uuid::IsEqualTo( const Uuid * v ) const
 {
-	return ( CompareTo( v )==0 );
+    return ( CompareTo( v )==0 );
 }
 
 void Uuid::CopyFrom( const Uuid * v )
 {
-	memcpy( (void*)fData, (const void*)v->fData, sizeof(fData) );
+    memcpy( (void*)fData, (const void*)v->fData, sizeof(fData) );
 }
 
 bool Uuid::IsNull() const
 {
-	RPC_STATUS s;
-	return 1 == UuidIsNil( (GUID *)this, &s );
+    RPC_STATUS s;
+    return 1 == UuidIsNil( (GUID *)this, &s );
 }
 
 bool Uuid::FromString( const char * str )
 {
-	Clear();
-	if ( !str )
-		return false;
-	return RPC_S_OK == UuidFromString( (unsigned char *)str, (GUID *)this );
+    Clear();
+    if ( !str )
+        return false;
+    return RPC_S_OK == UuidFromString( (unsigned char *)str, (GUID *)this );
 }
 
 bool Uuid::ToString( std::string & out ) const
 {
-	out = "";
-	unsigned char * ubuf;
-	RPC_STATUS s;
-	s = UuidToString( (GUID *) this, &ubuf );
-	bool success = ( s==RPC_S_OK );
-	if ( success )
-		out = (char*)ubuf;
-	RpcStringFree( &ubuf );
-	return success;
+    out = "";
+    unsigned char * ubuf;
+    RPC_STATUS s;
+    s = UuidToString( (GUID *) this, &ubuf );
+    bool success = ( s==RPC_S_OK );
+    if ( success )
+        out = (char*)ubuf;
+    RpcStringFree( &ubuf );
+    return success;
 }
 
 // static
 Uuid Uuid::Generate()
 {
-	Uuid result;
-	UuidCreate( (GUID *)&result );
-	return result;
+    Uuid result;
+    UuidCreate( (GUID *)&result );
+    return result;
 }
 
 #endif
@@ -107,14 +107,14 @@ COMPILER_ASSERT(sizeof(Uuid) >= sizeof(GUID));
 
 //============================================================================
 Uuid GuidGenerate () {
-	Uuid result;
-	UuidCreate( (GUID *)&result );
-	return result;
+    Uuid result;
+    UuidCreate( (GUID *)&result );
+    return result;
 }
 
 //============================================================================
 void GuidClear (Uuid * uuid) {
-	UuidCreateNil((GUID *)uuid);
+    UuidCreateNil((GUID *)uuid);
 }
 
 //============================================================================
@@ -132,39 +132,39 @@ bool GuidFromString (const char str[], Uuid * uuid) {
 
 //============================================================================
 int GuidCompare (const Uuid & a, const Uuid & b) {
-	RPC_STATUS s;
-	return UuidCompare((GUID *)&a, (GUID *)&b, &s);
+    RPC_STATUS s;
+    return UuidCompare((GUID *)&a, (GUID *)&b, &s);
 }
 
 //============================================================================
 bool GuidIsNil (const Uuid & uuid) {
-	RPC_STATUS s;
-	return 1 == UuidIsNil((GUID *)&uuid, &s );
+    RPC_STATUS s;
+    return 1 == UuidIsNil((GUID *)&uuid, &s );
 }
 
 //============================================================================
 const wchar * GuidToString (const Uuid & uuid, wchar * dst, unsigned chars) {
-	wchar * src;
-	RPC_STATUS s;
-	s = UuidToStringW( (GUID *) &uuid, (RPC_WSTR*)&src );
-	if (RPC_S_OK == s)
+    wchar * src;
+    RPC_STATUS s;
+    s = UuidToStringW( (GUID *) &uuid, (RPC_WSTR*)&src );
+    if (RPC_S_OK == s)
         StrCopy(dst, src, chars);
     else
         StrCopy(dst, L"", chars);
-	RpcStringFreeW( (RPC_WSTR *)&src );
+    RpcStringFreeW( (RPC_WSTR *)&src );
     return dst;
 }
 
 //============================================================================
 const char * GuidToString (const Uuid & uuid, char * dst, unsigned chars) {
-	byte * src;
-	RPC_STATUS s;
-	s = UuidToStringA( (GUID *) &uuid, &src );
-	if (RPC_S_OK == s)
+    byte * src;
+    RPC_STATUS s;
+    s = UuidToStringA( (GUID *) &uuid, &src );
+    if (RPC_S_OK == s)
         StrCopy(dst, (char *)src, chars);
     else
         StrCopy(dst, "", chars);
-	RpcStringFreeA(&src);
+    RpcStringFreeA(&src);
     return dst;
 }
 

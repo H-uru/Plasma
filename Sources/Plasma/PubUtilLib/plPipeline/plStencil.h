@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plStencil.h - Header for various stencil settings and enums              //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plStencil.h - Header for various stencil settings and enums              //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	5.17.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  5.17.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plStencil_h
@@ -44,44 +44,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plStencilCaps
 {
-	public:
+    public:
 
-		enum Depths
-		{
-			kDepth1Bit	= 0x01,
-			kDepth4Bits	= 0x02,
-			kDepth8Bits	= 0x04
-		};
+        enum Depths
+        {
+            kDepth1Bit  = 0x01,
+            kDepth4Bits = 0x02,
+            kDepth8Bits = 0x04
+        };
 
-		enum CompareFuncs
-		{
-			kCmpNever = 0,
-			kCmpLessThan,			
-			kCmpEqual,
-			kCmpLessThanOrEqual,
-			kCmpGreaterThan,
-			kCmpNotEqual,
-			kCmpGreaterThanOrEqual,
-			kCmpAlways
+        enum CompareFuncs
+        {
+            kCmpNever = 0,
+            kCmpLessThan,           
+            kCmpEqual,
+            kCmpLessThanOrEqual,
+            kCmpGreaterThan,
+            kCmpNotEqual,
+            kCmpGreaterThanOrEqual,
+            kCmpAlways
 
-		};
+        };
 
-		enum Ops
-		{
-			kOpKeep			= 0x01,
-			kOpSetToZero	= 0x02,
-			kOpReplace		= 0x04,
-			kOpIncClamp		= 0x08,
-			kOpDecClamp		= 0x10,
-			kOpInvert		= 0x20,
-			kOpIncWrap		= 0x40,
-			kOpDecWrap		= 0x80
+        enum Ops
+        {
+            kOpKeep         = 0x01,
+            kOpSetToZero    = 0x02,
+            kOpReplace      = 0x04,
+            kOpIncClamp     = 0x08,
+            kOpDecClamp     = 0x10,
+            kOpInvert       = 0x20,
+            kOpIncWrap      = 0x40,
+            kOpDecWrap      = 0x80
 
-		};
+        };
 
-		hsBool		fIsSupported;
-		UInt8		fSupportedDepths;
-		UInt8		fSupportedOps;
+        hsBool      fIsSupported;
+        UInt8       fSupportedDepths;
+        UInt8       fSupportedOps;
 };
 
 #endif // _plStencil_h

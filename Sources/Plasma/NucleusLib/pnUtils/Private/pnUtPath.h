@@ -104,7 +104,7 @@ bool PathDoesFileExist (
     const wchar fileName[]
 );
 bool PathDoesDirectoryExist (
-	const wchar directory[]
+    const wchar directory[]
 );
 
 bool PathDeleteFile (
@@ -275,16 +275,16 @@ void PathGetTempDirectory (
 
 // Product and user-specific common directory locations
 void PathGetUserDirectory (
-	wchar *		dst,
-	unsigned	dstChars
+    wchar *     dst,
+    unsigned    dstChars
 );
 void PathGetLogDirectory (
-	wchar *		dst,
-	unsigned	dstChars
+    wchar *     dst,
+    unsigned    dstChars
 );
 void PathGetInitDirectory (
-	wchar *		dst,
-	unsigned	dstChars
+    wchar *     dst,
+    unsigned    dstChars
 );
 
 
@@ -296,14 +296,14 @@ void PathGetInitDirectory (
 
 // you may send nil for any fields you don't care about
 void PathSplitEmail (
-	const wchar	emailAddr[],
-	wchar *		user,
-	unsigned	userChars,
-	wchar *		domain,
-	unsigned	domainChars,
-	wchar *		tld,
-	unsigned	tldChars,
-	wchar *		subDomains,		// (wchar *)&subs	--> wchar subs[16][256];
-	unsigned	subDomainChars,	// arrsize(subs[0])	--> 256
-	unsigned	subDomainCount	// arrsize(subs)	--> 16
+    const wchar emailAddr[],
+    wchar *     user,
+    unsigned    userChars,
+    wchar *     domain,
+    unsigned    domainChars,
+    wchar *     tld,
+    unsigned    tldChars,
+    wchar *     subDomains,     // (wchar *)&subs   --> wchar subs[16][256];
+    unsigned    subDomainChars, // arrsize(subs[0]) --> 256
+    unsigned    subDomainCount  // arrsize(subs)    --> 16
 );

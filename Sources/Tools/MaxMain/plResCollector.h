@@ -25,5 +25,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 namespace plResCollector
 {
-	void Collect();
+    void Collect();
 };

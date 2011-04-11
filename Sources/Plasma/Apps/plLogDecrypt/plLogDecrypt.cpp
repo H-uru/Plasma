@@ -35,76 +35,76 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void IProcessFile(const char *path)
 {
-	char out_path[512];
-	strcpy(out_path, path);
-	strcat(out_path, ".decrypt");
+    char out_path[512];
+    strcpy(out_path, path);
+    strcat(out_path, ".decrypt");
 
-	FILE * fpIn = fopen(path, "rb");
-	FILE * fpOut = fopen(out_path, "w");
+    FILE * fpIn = fopen(path, "rb");
+    FILE * fpOut = fopen(out_path, "w");
 
-	if( fpIn != nil && fpOut != nil)
-	{
-		UInt8 line[ 2048 ];
-		while( !feof( fpIn ) )
-		{
-			// Read next string
-			long pos = ftell(fpIn);
-			if( pos == -1L )
-				break;
-			UInt8 hint = (UInt8)pos;
-			UInt16 sizeHint = (UInt16)pos;
-			UInt16 size;
+    if( fpIn != nil && fpOut != nil)
+    {
+        UInt8 line[ 2048 ];
+        while( !feof( fpIn ) )
+        {
+            // Read next string
+            long pos = ftell(fpIn);
+            if( pos == -1L )
+                break;
+            UInt8 hint = (UInt8)pos;
+            UInt16 sizeHint = (UInt16)pos;
+            UInt16 size;
 
-			if( stricmp( path + strlen( path ) - 4, ".log" ) == 0 )
-			{
-				int i;
-				for( i = 0; i < 511; i++ )
-				{
-					int c = fgetc( fpIn );
-					if( c == EOF || c == hint )
-						break;
-					line[ i ] = (UInt8)c;
-				}
-				line[ i ] = 0;
-				size = i;
-			}
-			else
-			{
-				// UInt16 line length is encoded first
-				int c = fgetc( fpIn );
-				if( c == EOF )
-					break;
-				size = ( c & 0xff ) | ( fgetc( fpIn ) << 8 );
+            if( stricmp( path + strlen( path ) - 4, ".log" ) == 0 )
+            {
+                int i;
+                for( i = 0; i < 511; i++ )
+                {
+                    int c = fgetc( fpIn );
+                    if( c == EOF || c == hint )
+                        break;
+                    line[ i ] = (UInt8)c;
+                }
+                line[ i ] = 0;
+                size = i;
+            }
+            else
+            {
+                // UInt16 line length is encoded first
+                int c = fgetc( fpIn );
+                if( c == EOF )
+                    break;
+                size = ( c & 0xff ) | ( fgetc( fpIn ) << 8 );
 
-				size = size ^ sizeHint;
-				
-				if( size > sizeof( line ) )
-				{
- 					hsAssert( size <= sizeof( line ) - 1, "Invalid line size" );
-					break;
-				}
+                size = size ^ sizeHint;
+                
+                if( size > sizeof( line ) )
+                {
+                    hsAssert( size <= sizeof( line ) - 1, "Invalid line size" );
+                    break;
+                }
 
-				fread( line, 1, size, fpIn );
-				line[ size ] = 0;
-			}
+                fread( line, 1, size, fpIn );
+                line[ size ] = 0;
+            }
 
-			plStatusEncrypt::Decrypt( line, size, hint );
-			fprintf(fpOut, "%s\n", (const char *)line);
-		}
-	}
+            plStatusEncrypt::Decrypt( line, size, hint );
+            fprintf(fpOut, "%s\n", (const char *)line);
+        }
+    }
 
-	if (fpIn)
-		fclose(fpIn);
-	if (fpOut)
-		fclose(fpOut);
+    if (fpIn)
+        fclose(fpIn);
+    if (fpOut)
+        fclose(fpOut);
 }
 
 int main(int argc, const char * argv[])
 {
-	if (argc == 2)
-	{
-		IProcessFile(argv[1]);
-	}
+    if (argc == 2)
+    {
+        IProcessFile(argv[1]);
+    }
 
-	return 0;
+    return 0;
 }

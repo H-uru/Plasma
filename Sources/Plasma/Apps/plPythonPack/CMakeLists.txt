@@ -4,12 +4,12 @@ include_directories(../../PubUtilLib)
 include_directories(${PYTHON_INCLUDE_DIR})
 
 set(plPythonPack_SOURCES
-	main.cpp
-	PythonInterface.cpp
+    main.cpp
+    PythonInterface.cpp
 )
 
 set(plPythonPack_HEADERS
-	PythonInterface.h
+    PythonInterface.h
 )
 
 add_executable(plPythonPack ${plPythonPack_SOURCES} ${plPythonPack_HEADERS})

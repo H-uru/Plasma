@@ -43,35 +43,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct RelVaultNode;
 class pyVaultPlayerInfoNode;
 
-	
+    
 class pyVaultPlayerInfoListNode : public pyVaultFolderNode
 {
 protected:
-	// should only be created from C++ side
-	pyVaultPlayerInfoListNode(RelVaultNode* nfsNode);
+    // should only be created from C++ side
+    pyVaultPlayerInfoListNode(RelVaultNode* nfsNode);
 
-	//create from the Python side
-	pyVaultPlayerInfoListNode(int n=0);
+    //create from the Python side
+    pyVaultPlayerInfoListNode(int n=0);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVaultPlayerInfoListNode);
-	static PyObject *New(RelVaultNode* nfsNode);
-	static PyObject *New(int n=0);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultPlayerInfoListNode object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultPlayerInfoListNode); // converts a PyObject to a pyVaultPlayerInfoListNode (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVaultPlayerInfoListNode);
+    static PyObject *New(RelVaultNode* nfsNode);
+    static PyObject *New(int n=0);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultPlayerInfoListNode object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultPlayerInfoListNode); // converts a PyObject to a pyVaultPlayerInfoListNode (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
 //==================================================================
 // class RelVaultNode : public plVaultFolderNode
 //
-	virtual hsBool	HasPlayer( UInt32 playerID );
-	hsBool	AddPlayer( UInt32 playerID );
-	void	RemovePlayer( UInt32 playerID );
-	PyObject * GetPlayer( UInt32 playerID ); // returns pyVaultPlayerInfoNode
+    virtual hsBool  HasPlayer( UInt32 playerID );
+    hsBool  AddPlayer( UInt32 playerID );
+    void    RemovePlayer( UInt32 playerID );
+    PyObject * GetPlayer( UInt32 playerID ); // returns pyVaultPlayerInfoNode
 
-	void	Sort();
+    void    Sort();
 
 };
 

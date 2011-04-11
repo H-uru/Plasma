@@ -35,30 +35,30 @@ class plGeometrySpan;
 class plGeoSpanDice
 {
 protected:
-	UInt32		fMinFaces;
-	UInt32		fMaxFaces;
-	hsPoint3	fMaxSize;
+    UInt32      fMinFaces;
+    UInt32      fMaxFaces;
+    hsPoint3    fMaxSize;
 
-	hsBool				INeedSplitting(plGeometrySpan* src) const;
-	plGeometrySpan*		IAllocSpace(plGeometrySpan* src, int numVerts, int numTris) const;
-	plGeometrySpan*		IExtractTris(plGeometrySpan* src, hsTArray<UInt32>& tris) const;
-	int					ISelectAxis(int exclAxis, plGeometrySpan* src) const;
-	hsBool				IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, int exclAxis=0) const;
+    hsBool              INeedSplitting(plGeometrySpan* src) const;
+    plGeometrySpan*     IAllocSpace(plGeometrySpan* src, int numVerts, int numTris) const;
+    plGeometrySpan*     IExtractTris(plGeometrySpan* src, hsTArray<UInt32>& tris) const;
+    int                 ISelectAxis(int exclAxis, plGeometrySpan* src) const;
+    hsBool              IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, int exclAxis=0) const;
 
 public:
-	plGeoSpanDice();
-	virtual ~plGeoSpanDice();
+    plGeoSpanDice();
+    virtual ~plGeoSpanDice();
 
-	hsBool				Dice(hsTArray<plGeometrySpan*>& spans) const;
+    hsBool              Dice(hsTArray<plGeometrySpan*>& spans) const;
 
-	void SetMaxSize(const hsPoint3& size) { fMaxSize = size; }
-	hsPoint3 GetMaxSize() const { return fMaxSize; }
+    void SetMaxSize(const hsPoint3& size) { fMaxSize = size; }
+    hsPoint3 GetMaxSize() const { return fMaxSize; }
 
-	void SetMinFaces(int n) { fMinFaces = n; }
-	int GetMinFaces() const { return fMinFaces; }
+    void SetMinFaces(int n) { fMinFaces = n; }
+    int GetMinFaces() const { return fMinFaces; }
 
-	void SetMaxFaces(int n) { fMaxFaces = n; }
-	int GetMaxFaces() const { return fMaxFaces; }
+    void SetMaxFaces(int n) { fMaxFaces = n; }
+    int GetMaxFaces() const { return fMaxFaces; }
 };
 
 #endif // plGeoSpanDice_inc

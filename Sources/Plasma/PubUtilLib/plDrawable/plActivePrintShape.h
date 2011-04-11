@@ -34,28 +34,28 @@ class plRippleShapeMsg;
 class plActivePrintShape : public plPrintShape
 {
 protected:
-	hsTArray<plKey>			fDecalMgrs;
+    hsTArray<plKey>         fDecalMgrs;
 
-	plRippleShapeMsg*		fShapeMsg;
+    plRippleShapeMsg*       fShapeMsg;
 
-	plRippleShapeMsg*			ISetupShapeMsg();
-	hsBool						INotify();
+    plRippleShapeMsg*           ISetupShapeMsg();
+    hsBool                      INotify();
 
 public:
-	plActivePrintShape();
-	virtual ~plActivePrintShape();
+    plActivePrintShape();
+    virtual ~plActivePrintShape();
 
-	CLASSNAME_REGISTER( plActivePrintShape );
-	GETINTERFACE_ANY( plActivePrintShape, plPrintShape );
+    CLASSNAME_REGISTER( plActivePrintShape );
+    GETINTERFACE_ANY( plActivePrintShape, plPrintShape );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	// Export construction
-	void		AddDecalKey(const plKey& k);
-	
+    // Export construction
+    void        AddDecalKey(const plKey& k);
+    
 };
 
 #endif // plActivePrintShape_inc

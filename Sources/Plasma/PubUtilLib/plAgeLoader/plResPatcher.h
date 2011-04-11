@@ -41,46 +41,46 @@ struct NetCliFileManifestEntry;
 class plResPatcher
 {
 protected:
-	enum FileType {kFail, kPrp, kOther};
-	std::string		fAgeToPatch;
+    enum FileType {kFail, kPrp, kOther};
+    std::string     fAgeToPatch;
 
-	typedef std::vector<plManifestFile*> MfsFileVec;
-	MfsFileVec	fMfsVec;
+    typedef std::vector<plManifestFile*> MfsFileVec;
+    MfsFileVec  fMfsVec;
 
-	bool		fDoneWithFile;
-	bool		fSuccess;
-	bool		fAlwaysShowAgeName;
+    bool        fDoneWithFile;
+    bool        fSuccess;
+    bool        fAlwaysShowAgeName;
 
-	void IInit();
-	static void ILog(UInt32 type, const char* format, ...);
+    void IInit();
+    static void ILog(UInt32 type, const char* format, ...);
 
-	FileType IGetFile(const plManifestFile* mfsFile, plOperationProgress* progressBar);
-	bool IGetAgeManifest();
+    FileType IGetFile(const plManifestFile* mfsFile, plOperationProgress* progressBar);
+    bool IGetAgeManifest();
 
-	UInt32 IGetDownloadSize();
+    UInt32 IGetDownloadSize();
 
-	bool IDecompressSound(plManifestFile* mfsFile, bool noOverwrite = false);
+    bool IDecompressSound(plManifestFile* mfsFile, bool noOverwrite = false);
 
 public:
-	plResPatcher(const char* ageToPatch, bool showAgeName = false);
-	~plResPatcher();
+    plResPatcher(const char* ageToPatch, bool showAgeName = false);
+    ~plResPatcher();
 
-	bool Update();
+    bool Update();
 
-	static bool CheckFreeSpace(UInt32 bytesNeeded);
+    static bool CheckFreeSpace(UInt32 bytesNeeded);
 
-	// called by download callbacks to tell it we are done with the current file
-	void DoneWithFile(bool success) {fDoneWithFile = true; fSuccess = success;}
-	void DoneWithManifest(bool success, const NetCliFileManifestEntry manifestEntires[], unsigned entryCount);
+    // called by download callbacks to tell it we are done with the current file
+    void DoneWithFile(bool success) {fDoneWithFile = true; fSuccess = success;}
+    void DoneWithManifest(bool success, const NetCliFileManifestEntry manifestEntires[], unsigned entryCount);
 };
 
 enum PatcherLogType
 {
-	kHeader,
-	kInfo,
-	kMajorStatus,
-	kStatus,
-	kError,
+    kHeader,
+    kInfo,
+    kMajorStatus,
+    kStatus,
+    kError,
 };
 void PatcherLog(PatcherLogType type, const char* format, ...);
 

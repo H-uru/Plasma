@@ -518,53 +518,53 @@ void PathGetTempDirectory (
 
 //============================================================================
 void PathGetUserDirectory (
-	wchar *		dst,
-	unsigned	dstChars
+    wchar *     dst,
+    unsigned    dstChars
 ) {
-	ASSERT(dst);
-	ASSERT(dstChars);
+    ASSERT(dst);
+    ASSERT(dstChars);
 
-	wchar temp[MAX_PATH]; // GetSpecialFolder path requires a buffer of MAX_PATH size or larger
-	if (SHGetSpecialFolderPathW(NULL, temp, CSIDL_PERSONAL, TRUE) == FALSE)
-		StrCopy(temp, L"C:\\", arrsize(temp));
+    wchar temp[MAX_PATH]; // GetSpecialFolder path requires a buffer of MAX_PATH size or larger
+    if (SHGetSpecialFolderPathW(NULL, temp, CSIDL_PERSONAL, TRUE) == FALSE)
+        StrCopy(temp, L"C:\\", arrsize(temp));
 
-	// append the product name
-	PathAddFilename(dst, temp, ProductLongName(), dstChars);
+    // append the product name
+    PathAddFilename(dst, temp, ProductLongName(), dstChars);
 
 #if BUILD_TYPE != BUILD_TYPE_LIVE
-	// non-live builds live in a subdir
-	PathAddFilename(dst, dst, BuildTypeString(), dstChars);
+    // non-live builds live in a subdir
+    PathAddFilename(dst, dst, BuildTypeString(), dstChars);
 #endif
 
-	// ensure it exists
-	if (!PathDoesDirectoryExist(dst))
-		PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
+    // ensure it exists
+    if (!PathDoesDirectoryExist(dst))
+        PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
 }
 
 //============================================================================
 void PathGetLogDirectory (
-	wchar *		dst,
-	unsigned	dstChars
+    wchar *     dst,
+    unsigned    dstChars
 ) {
-	ASSERT(dst);
-	ASSERT(dstChars);
-	PathGetUserDirectory(dst, dstChars);
-	PathAddFilename(dst, dst, L"Log", dstChars);
-	if (!PathDoesDirectoryExist(dst))
-		PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
+    ASSERT(dst);
+    ASSERT(dstChars);
+    PathGetUserDirectory(dst, dstChars);
+    PathAddFilename(dst, dst, L"Log", dstChars);
+    if (!PathDoesDirectoryExist(dst))
+        PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
 }
 
 //============================================================================
 void PathGetInitDirectory (
-	wchar *		dst,
-	unsigned	dstChars
+    wchar *     dst,
+    unsigned    dstChars
 ) {
-	ASSERT(dst);
-	ASSERT(dstChars);
-	PathGetUserDirectory(dst, dstChars);
-	PathAddFilename(dst, dst, L"Init", dstChars);
-	if (!PathDoesDirectoryExist(dst))
-		PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
+    ASSERT(dst);
+    ASSERT(dstChars);
+    PathGetUserDirectory(dst, dstChars);
+    PathAddFilename(dst, dst, L"Init", dstChars);
+    if (!PathDoesDirectoryExist(dst))
+        PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
 }
 
 //===========================================================================
@@ -813,12 +813,12 @@ bool PathDoesFileExist (const wchar fileName[]) {
 
 //============================================================================
 bool PathDoesDirectoryExist (const wchar directory[]) {
-	dword attributes = GetFileAttributesW(directory);
-	if (attributes == (dword) -1)
-		return false;
-	if (attributes & FILE_ATTRIBUTE_DIRECTORY)
-		return true;
-	return false;
+    dword attributes = GetFileAttributesW(directory);
+    if (attributes == (dword) -1)
+        return false;
+    if (attributes & FILE_ATTRIBUTE_DIRECTORY)
+        return true;
+    return false;
 }
 
 //===========================================================================

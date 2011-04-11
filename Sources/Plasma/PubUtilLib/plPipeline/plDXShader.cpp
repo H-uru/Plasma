@@ -38,49 +38,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXPipeline.h"
 
 plDXShader::plDXShader(plShader* owner)
-:	fOwner(owner),
-	fErrorString(nil),
-	fPipe(nil)
+:   fOwner(owner),
+    fErrorString(nil),
+    fPipe(nil)
 {
-	owner->SetDeviceRef(this);
+    owner->SetDeviceRef(this);
 }
 
 plDXShader::~plDXShader()
 {
-	fPipe = nil;
+    fPipe = nil;
 
-	ISetError(nil);
+    ISetError(nil);
 }
 
 void plDXShader::SetOwner(plShader* owner)
 {
-	if( owner != fOwner )
-	{
-		Release();
-		fOwner = owner;
-		owner->SetDeviceRef(this);
-	}
+    if( owner != fOwner )
+    {
+        Release();
+        fOwner = owner;
+        owner->SetDeviceRef(this);
+    }
 }
 
 const char* plDXShader::ISetError(const char* errStr)
 {
-	delete [] fErrorString;
-	if( errStr )
-		fErrorString = hsStrcpy(errStr);
-	else
-		fErrorString = nil;
+    delete [] fErrorString;
+    if( errStr )
+        fErrorString = hsStrcpy(errStr);
+    else
+        fErrorString = nil;
 
-	return fErrorString;
+    return fErrorString;
 }
 
 HRESULT plDXShader::IOnError(HRESULT hr, const char* errStr)
 {
-	ISetError(errStr);
+    ISetError(errStr);
 
-	fOwner->Invalidate();
+    fOwner->Invalidate();
 
-	hsStatusMessage(errStr);
+    hsStatusMessage(errStr);
 
-	return hr;
+    return hr;
 }
 

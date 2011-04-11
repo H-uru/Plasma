@@ -37,20 +37,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // share this code.
 namespace plCCRError
 {
-	enum Errors
-	{
-		kError			= hsFail,
-		kNotAuthorized	= -2,
-		kNilLocalAvatar	= -3,
-		kCCRAlreadyAllocated = -4,
-		kNetworkingIsDisabled = -5,
-		kCantFindPlayer	= -6,
-		kInvalidLevel	= -7,
-		kPlayerNotInAge = -8,
-		kVaultTimedOut	= -9,
-		kVaultFetchFailed = -10,
-		kAuthTimedOut	= -11		
-	};
+    enum Errors
+    {
+        kError          = hsFail,
+        kNotAuthorized  = -2,
+        kNilLocalAvatar = -3,
+        kCCRAlreadyAllocated = -4,
+        kNetworkingIsDisabled = -5,
+        kCantFindPlayer = -6,
+        kInvalidLevel   = -7,
+        kPlayerNotInAge = -8,
+        kVaultTimedOut  = -9,
+        kVaultFetchFailed = -10,
+        kAuthTimedOut   = -11       
+    };
 }
 
-#endif	// plCCRMgr_h
+#endif  // plCCRMgr_h

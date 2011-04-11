@@ -56,53 +56,53 @@ static bool s_running;
 
 //============================================================================
 static bool Recv_ExecConsoleCmd (
-	SimpleNetConn * ,
-	CsrNet_ExecConsoleCmd * msg
+    SimpleNetConn * ,
+    CsrNet_ExecConsoleCmd * msg
 ) {
-	LogMsg(kLogPerf, L"pfCsrSrv: ExecConsoleCmd: %S", msg->cmd);
+    LogMsg(kLogPerf, L"pfCsrSrv: ExecConsoleCmd: %S", msg->cmd);
 
-	pfConsole::RunCommandAsync(msg->cmd);
-	
-	return true;
+    pfConsole::RunCommandAsync(msg->cmd);
+    
+    return true;
 }
 
 //============================================================================
 static bool OnMsg (
-	SimpleNetConn * conn,
-	SimpleNet_MsgHeader * msg
+    SimpleNetConn * conn,
+    SimpleNet_MsgHeader * msg
 ) {
-	bool result;
-	
-	#define DISPATCH(a) case kCsrNet_##a: result = Recv_##a(conn, (CsrNet_##a *) msg); break
-	switch (msg->messageId) {
-		DISPATCH(ExecConsoleCmd);
-		default:
-			result = false;
-	}
-	#undef DISPATCH
-	
-	return result;
+    bool result;
+    
+    #define DISPATCH(a) case kCsrNet_##a: result = Recv_##a(conn, (CsrNet_##a *) msg); break
+    switch (msg->messageId) {
+        DISPATCH(ExecConsoleCmd);
+        default:
+            result = false;
+    }
+    #undef DISPATCH
+    
+    return result;
 }
 
 //============================================================================
 static void OnError (
-	SimpleNetConn *	,
-	ENetError		error
+    SimpleNetConn * ,
+    ENetError       error
 ) {
-	LogMsg(kLogPerf, L"pfCsrSrv NetError: %s", NetErrorToString(error));
+    LogMsg(kLogPerf, L"pfCsrSrv NetError: %s", NetErrorToString(error));
 }
 
 //============================================================================
 static bool QueryAccept (
-	void *				,
-	unsigned			channel,
-	SimpleNetConn *		,
-	const NetAddress &	addr
+    void *              ,
+    unsigned            channel,
+    SimpleNetConn *     ,
+    const NetAddress &  addr
 ) {
-	wchar str[64];
-	NetAddressToString(addr, str, arrsize(str), kNetAddressFormatAll);
-	LogMsg(kLogPerf, L"pfCsrSrv: Accepted connection from %s", str);
-	return channel == kSimpleNetChannelCsr;
+    wchar str[64];
+    NetAddressToString(addr, str, arrsize(str), kNetAddressFormatAll);
+    LogMsg(kLogPerf, L"pfCsrSrv: Accepted connection from %s", str);
+    return channel == kSimpleNetChannelCsr;
 }
 
 
@@ -117,13 +117,13 @@ void CsrSrvInitialize () {
 
 #ifdef PLASMA_ENABLE_CSR_EXTERNAL
 
-	LogMsg(kLogPerf, L"pfCsrSrv: Initializing");
-	
-	s_running = true;
+    LogMsg(kLogPerf, L"pfCsrSrv: Initializing");
+    
+    s_running = true;
 
-	SimpleNetInitialize();
-	SimpleNetCreateChannel(kSimpleNetChannelCsr, OnMsg, OnError);	
-	SimpleNetStartListening(QueryAccept, nil);
+    SimpleNetInitialize();
+    SimpleNetCreateChannel(kSimpleNetChannelCsr, OnMsg, OnError);   
+    SimpleNetStartListening(QueryAccept, nil);
 
 #endif
 }
@@ -133,13 +133,13 @@ void CsrSrvShutdown () {
 
 #ifdef PLASMA_ENABLE_CSR_EXTERNAL
 
-	LogMsg(kLogPerf, L"pfCsrSrv: Shutting down");
+    LogMsg(kLogPerf, L"pfCsrSrv: Shutting down");
 
-	s_running = false;
+    s_running = false;
 
-	SimpleNetStopListening();
-	SimpleNetDestroyChannel(kSimpleNetChannelCsr);
-	SimpleNetShutdown();
+    SimpleNetStopListening();
+    SimpleNetDestroyChannel(kSimpleNetChannelCsr);
+    SimpleNetShutdown();
 
 #endif
 }

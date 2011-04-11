@@ -33,18 +33,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plResponderMsg : public plMessage
 {
 public:
-	// Don't bother reading and writing this, it is set right before sending
-	plKey fPlayerKey;
+    // Don't bother reading and writing this, it is set right before sending
+    plKey fPlayerKey;
 
-	plResponderMsg() : fPlayerKey(nil) {}
-	~plResponderMsg() {}
+    plResponderMsg() : fPlayerKey(nil) {}
+    ~plResponderMsg() {}
 
-	CLASSNAME_REGISTER(plResponderMsg);
-	GETINTERFACE_ANY(plResponderMsg, plMessage);
+    CLASSNAME_REGISTER(plResponderMsg);
+    GETINTERFACE_ANY(plResponderMsg, plMessage);
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr); }
-	void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); }
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr); }
+    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); }
 };
 
 #endif // plResponderMsg_inc

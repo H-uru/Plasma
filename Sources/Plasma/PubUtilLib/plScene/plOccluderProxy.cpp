@@ -32,8 +32,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plProxyDrawMsg.h"
 
 plOccluderProxy::plOccluderProxy()
-:	plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.5f),
-	fOwner(nil)
+:   plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.5f),
+    fOwner(nil)
 {
 }
 
@@ -43,24 +43,24 @@ plOccluderProxy::~plOccluderProxy()
 
 hsBool plOccluderProxy::Init(plOccluder* occluder)
 {
-	plProxyGen::Init(occluder);
+    plProxyGen::Init(occluder);
 
-	fOwner = occluder;
-	fProxyMsgType = plProxyDrawMsg::kOccluder;
+    fOwner = occluder;
+    fProxyMsgType = plProxyDrawMsg::kOccluder;
 
-	return fOwner != nil;
+    return fOwner != nil;
 }
 
 plKey plOccluderProxy::IGetNode() const 
 { 
-	return fOwner ? fOwner->GetSceneNode() : nil; 
+    return fOwner ? fOwner->GetSceneNode() : nil; 
 }
 
 plDrawableSpans* plOccluderProxy::ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
 {
-	if( fOwner )
-	{
-		return fOwner->CreateProxy(mat, idx, addTo);
-	}
-	return nil;
+    if( fOwner )
+    {
+        return fOwner->CreateProxy(mat, idx, addTo);
+    }
+    return nil;
 }

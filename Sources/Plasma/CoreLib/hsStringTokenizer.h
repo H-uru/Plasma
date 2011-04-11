@@ -32,63 +32,63 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsStringTokenizer 
 {
 private:
-	char *fSeps;
-	char *fTok;
-	char *fLastTerminator;
-	char fLastRep;
+    char *fSeps;
+    char *fTok;
+    char *fLastTerminator;
+    char fLastRep;
 
-	Int32 fNumSeps;
-	hsBool fQAsTok;
-	hsBool fInQuote;
-	hsBool fCheckAlphaNum;
+    Int32 fNumSeps;
+    hsBool fQAsTok;
+    hsBool fInQuote;
+    hsBool fCheckAlphaNum;
 public:
-	hsStringTokenizer(const char *string=nil, const char *seps=nil);
-	~hsStringTokenizer();
-	char *next();
-	hsBool	Next( char *token, UInt32 maxTokLen );
-	hsBool HasMoreTokens();
-	void Reset(const char *string, const char *seps);
-	void ParseQuotes(hsBool qAsTok);
+    hsStringTokenizer(const char *string=nil, const char *seps=nil);
+    ~hsStringTokenizer();
+    char *next();
+    hsBool  Next( char *token, UInt32 maxTokLen );
+    hsBool HasMoreTokens();
+    void Reset(const char *string, const char *seps);
+    void ParseQuotes(hsBool qAsTok);
 
-	char	*GetRestOfString( void ) const { return fTok; }
+    char    *GetRestOfString( void ) const { return fTok; }
 
-	char *fString;
+    char *fString;
 
-	void	RestoreLastTerminator( void );
+    void    RestoreLastTerminator( void );
 
 private:
-	hsBool IsSep(char c);
+    hsBool IsSep(char c);
 };
 
 class hsWStringTokenizer 
 {
 private:
-	wchar *fSeps;
-	wchar *fTok;
-	wchar *fLastTerminator;
-	wchar fLastRep;
+    wchar *fSeps;
+    wchar *fTok;
+    wchar *fLastTerminator;
+    wchar fLastRep;
 
-	Int32 fNumSeps;
-	hsBool fQAsTok;
-	hsBool fInQuote;
-	hsBool fCheckAlphaNum;
+    Int32 fNumSeps;
+    hsBool fQAsTok;
+    hsBool fInQuote;
+    hsBool fCheckAlphaNum;
 public:
-	hsWStringTokenizer(const wchar *string=nil, const wchar *seps=nil);
-	~hsWStringTokenizer();
-	wchar *next();
-	hsBool	Next( wchar *token, UInt32 maxTokLen );
-	hsBool HasMoreTokens();
-	void Reset(const wchar *string, const wchar *seps);
-	void ParseQuotes(hsBool qAsTok);
+    hsWStringTokenizer(const wchar *string=nil, const wchar *seps=nil);
+    ~hsWStringTokenizer();
+    wchar *next();
+    hsBool  Next( wchar *token, UInt32 maxTokLen );
+    hsBool HasMoreTokens();
+    void Reset(const wchar *string, const wchar *seps);
+    void ParseQuotes(hsBool qAsTok);
 
-	wchar	*GetRestOfString( void ) const { return fTok; }
+    wchar   *GetRestOfString( void ) const { return fTok; }
 
-	wchar *fString;
+    wchar *fString;
 
-	void	RestoreLastTerminator( void );
+    void    RestoreLastTerminator( void );
 
 private:
-	hsBool IsSep(wchar c);
+    hsBool IsSep(wchar c);
 };
 
 #endif // _hsStringTokenizer_Included_

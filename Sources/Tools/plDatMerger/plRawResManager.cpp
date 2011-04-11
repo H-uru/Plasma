@@ -25,8 +25,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plRawResManager - Small public resManager thingy for reading/writing
-//					  objects raw.
+//  plRawResManager - Small public resManager thingy for reading/writing
+//                    objects raw.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,75 +42,75 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../pnKeyedObject/plKeyImp.h"
 
 
-plRegistryPageNode	*plRawResManager::FindPage( const char *age, const char *chapter, const char *page )
+plRegistryPageNode  *plRawResManager::FindPage( const char *age, const char *chapter, const char *page )
 {
-	return fRegistry->FindPage( age, chapter, page );
+    return fRegistry->FindPage( age, chapter, page );
 }
 
-plRegistryPageNode	*plRawResManager::CreatePage( const plPageInfo &info )
+plRegistryPageNode  *plRawResManager::CreatePage( const plPageInfo &info )
 {
-	plRegistryPageNode *page = fRegistry->CreatePage( info.GetLocation(), info.GetAge(), info.GetChapter(), info.GetPage() );
+    plRegistryPageNode *page = fRegistry->CreatePage( info.GetLocation(), info.GetAge(), info.GetChapter(), info.GetPage() );
 
-	if( page != nil )
-	{
-		page->SetLoaded( true );	// We're "loaded", i.e. constructing this at runtime
-		fIOSources[ 0 ]->AddLocToSource( page );
-	}
+    if( page != nil )
+    {
+        page->SetLoaded( true );    // We're "loaded", i.e. constructing this at runtime
+        fIOSources[ 0 ]->AddLocToSource( page );
+    }
 
-	return page;
+    return page;
 }
 
-UInt8	*plRawResManager::ReadObjectBuffer( plKeyImp *pKey, UInt32 &retBuffLength )
+UInt8   *plRawResManager::ReadObjectBuffer( plKeyImp *pKey, UInt32 &retBuffLength )
 {
-	UInt8	*buffer = nil;
+    UInt8   *buffer = nil;
 
 
-	hsAssert( pKey, "Null Key" );
-	hsAssert( pKey->GetStartPos() != (UInt32)-1, "Missing StartPos" );
-	hsAssert( pKey->GetDataLen() != (UInt32)-1, "Missing Data Length" );
+    hsAssert( pKey, "Null Key" );
+    hsAssert( pKey->GetStartPos() != (UInt32)-1, "Missing StartPos" );
+    hsAssert( pKey->GetDataLen() != (UInt32)-1, "Missing Data Length" );
 
-	if( pKey->GetStartPos() == (UInt32)-1 || pKey->GetDataLen() == (UInt32)-1 )
-	{
-		// Try to recover from this by just not reading an object
-		retBuffLength = 0;
-		return nil;
-	}
+    if( pKey->GetStartPos() == (UInt32)-1 || pKey->GetDataLen() == (UInt32)-1 )
+    {
+        // Try to recover from this by just not reading an object
+        retBuffLength = 0;
+        return nil;
+    }
 
-	plRegistryDataStream *dataStream = fRegistry->OpenPageDataStream( pKey->GetUoid().GetLocation(), false );
+    plRegistryDataStream *dataStream = fRegistry->OpenPageDataStream( pKey->GetUoid().GetLocation(), false );
 
-	if( dataStream != nil && dataStream->GetStream() != nil )
-	{
-		hsStream *stream = dataStream->GetStream();
+    if( dataStream != nil && dataStream->GetStream() != nil )
+    {
+        hsStream *stream = dataStream->GetStream();
 
-		UInt32 oldPos = stream->GetPosition();
-		stream->SetPosition( pKey->GetStartPos() );
+        UInt32 oldPos = stream->GetPosition();
+        stream->SetPosition( pKey->GetStartPos() );
 
-		buffer = new UInt8[ pKey->GetDataLen() ];
-		if( buffer != nil )
-		{
-			*( (UInt32 *)buffer ) = pKey->GetDataLen();
-			stream->Read( pKey->GetDataLen(), (UInt8 *)buffer );
-			retBuffLength = pKey->GetDataLen();
-		}
-		else
-			retBuffLength = 0;
+        buffer = new UInt8[ pKey->GetDataLen() ];
+        if( buffer != nil )
+        {
+            *( (UInt32 *)buffer ) = pKey->GetDataLen();
+            stream->Read( pKey->GetDataLen(), (UInt8 *)buffer );
+            retBuffLength = pKey->GetDataLen();
+        }
+        else
+            retBuffLength = 0;
 
-		// Restore old position now
-		stream->SetPosition( oldPos );
-	}
-	delete dataStream;
+        // Restore old position now
+        stream->SetPosition( oldPos );
+    }
+    delete dataStream;
 
-	return buffer;
+    return buffer;
 }
 
-plKey	plRawResManager::NewBlankKey( const plUoid &newUoid )
+plKey   plRawResManager::NewBlankKey( const plUoid &newUoid )
 {
-	plKeyImp	*newKey = new plKeyImp;
+    plKeyImp    *newKey = new plKeyImp;
 
 
-	newKey->SetUoid( newUoid );
-	fRegistry->AddKey( newKey );
+    newKey->SetUoid( newUoid );
+    fRegistry->AddKey( newKey );
 
-	plKey	keyPtr = plKey::Make( newKey );
-	return keyPtr;
+    plKey   keyPtr = plKey::Make( newKey );
+    return keyPtr;
 }

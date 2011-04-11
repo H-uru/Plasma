@@ -35,32 +35,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAvBrainHuman;
 
 /** \class plAvMotorHuman
-	Applies avatar at simulation frequency rather than frame frequency.
+    Applies avatar at simulation frequency rather than frame frequency.
 */
 class plAvMotorHuman : public Havok::Action
 {
 public:
-	plAvMotorHuman();
+    plAvMotorHuman();
 
-	/** Called from havok during integration; converts time to plasma format
-		and asks the brain to move. Brain will sample animation at current time
-		and apply velocity or forces to the body.
-		*/
-	virtual void apply(Havok::Subspace &subspace, Havok::hkTime time);
+    /** Called from havok during integration; converts time to plasma format
+        and asks the brain to move. Brain will sample animation at current time
+        and apply velocity or forces to the body.
+        */
+    virtual void apply(Havok::Subspace &subspace, Havok::hkTime time);
 
-	/** Sets the motor to control a different human brain.
-		Returns the previously controlled brain, or nil.
-		*/
-	plAvBrainHuman * SetBrain(plAvBrainHuman *brain);
+    /** Sets the motor to control a different human brain.
+        Returns the previously controlled brain, or nil.
+        */
+    plAvBrainHuman * SetBrain(plAvBrainHuman *brain);
 
-	/** Which brain is this motor currently controlling?
-		*/
-	plAvBrainHuman * GetBrain();
+    /** Which brain is this motor currently controlling?
+        */
+    plAvBrainHuman * GetBrain();
 
 private:
-	/** The brain we get our movement data from */
-	plAvBrainHuman *fBrain;
-	double fLastTime;
+    /** The brain we get our movement data from */
+    plAvBrainHuman *fBrain;
+    double fLastTime;
 };
 
 
@@ -83,33 +83,33 @@ plAvMotorHuman::plAvMotorHuman()
 
 void plAvMotorHuman::apply(Havok::Subspace &subspace, Havok::hkTime time)
 {
-	double timeNow = time.asDouble();
-	double elapsedD = timeNow - fLastTime;
-	float elapsed = elapsedD;
+    double timeNow = time.asDouble();
+    double elapsedD = timeNow - fLastTime;
+    float elapsed = elapsedD;
 
-	if(elapsed > 1.0f)
-	{
-		elapsed = 0.1f;
-		hsStatusMessageF("Clamping plAvMotorHuman::apply interval to <%f>", elapsed);
+    if(elapsed > 1.0f)
+    {
+        elapsed = 0.1f;
+        hsStatusMessageF("Clamping plAvMotorHuman::apply interval to <%f>", elapsed);
 
-		fLastTime = timeNow - elapsed;
-	}
+        fLastTime = timeNow - elapsed;
+    }
 
-//	fBrain->MoveViaAnimation(timeNow, elapsed);
+//  fBrain->MoveViaAnimation(timeNow, elapsed);
 }
 
 plAvBrainHuman * plAvMotorHuman::SetBrain(plAvBrainHuman *brain)
 {
-	plAvBrainHuman * oldBrain = fBrain;
+    plAvBrainHuman * oldBrain = fBrain;
 
-	fBrain = brain;
+    fBrain = brain;
 
-	return oldBrain;
+    return oldBrain;
 }
 
 plAvBrainHuman * plAvMotorHuman::GetBrain()
 {
-	return fBrain;
+    return fBrain;
 }
 
 #endif

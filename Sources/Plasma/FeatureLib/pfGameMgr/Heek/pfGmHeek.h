@@ -42,37 +42,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 class pfGmHeek : public pfGameCli {
 
-	// Encapsulate all implementation details such as member fields
-	// in an opaque friend class, in this case that's IHeek.
-	friend struct IHeek;
-	struct IHeek * internal;
+    // Encapsulate all implementation details such as member fields
+    // in an opaque friend class, in this case that's IHeek.
+    friend struct IHeek;
+    struct IHeek * internal;
 
-	//========================================================================
-	// Required subclass methods
-	//--------------------------
-	void Recv			(GameMsgHeader * msg, void * param);
-	void OnPlayerJoined	(const Srv2Cli_Game_PlayerJoined & msg);
-	void OnPlayerLeft	(const Srv2Cli_Game_PlayerLeft & msg);
-	void OnInviteFailed	(const Srv2Cli_Game_InviteFailed & msg);
-	void OnOwnerChange	(const Srv2Cli_Game_OwnerChange & msg);
-	//========================================================================
+    //========================================================================
+    // Required subclass methods
+    //--------------------------
+    void Recv           (GameMsgHeader * msg, void * param);
+    void OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg);
+    void OnPlayerLeft   (const Srv2Cli_Game_PlayerLeft & msg);
+    void OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg);
+    void OnOwnerChange  (const Srv2Cli_Game_OwnerChange & msg);
+    //========================================================================
 
 public:
 #pragma warning(push, 0)
-	// These macros produce warnings on W4
-	CLASSNAME_REGISTER(pfGmHeek);
-	GETINTERFACE_ANY(pfGmHeek, pfGameCli);
+    // These macros produce warnings on W4
+    CLASSNAME_REGISTER(pfGmHeek);
+    GETINTERFACE_ANY(pfGmHeek, pfGameCli);
 #pragma warning(pop)
 
-	pfGmHeek	(unsigned gameId, plKey receiver);
-	~pfGmHeek	();
+    pfGmHeek    (unsigned gameId, plKey receiver);
+    ~pfGmHeek   ();
 
-	//========================================================================
-	// Game methods
-	//-------------
-	void PlayGame			(unsigned position, dword points, const wchar name[]);
-	void LeaveGame			();
-	void Choose				(EHeekChoice choice);
-	void SequenceFinished	(EHeekSeqFinished seq);
-	//========================================================================
+    //========================================================================
+    // Game methods
+    //-------------
+    void PlayGame           (unsigned position, dword points, const wchar name[]);
+    void LeaveGame          ();
+    void Choose             (EHeekChoice choice);
+    void SequenceFinished   (EHeekSeqFinished seq);
+    //========================================================================
 };

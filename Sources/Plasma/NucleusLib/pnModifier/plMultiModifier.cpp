@@ -39,25 +39,25 @@ plMultiModifier::~plMultiModifier()
 
 void plMultiModifier::Read(hsStream* s, hsResMgr* mgr)
 {
-	plModifier::Read(s, mgr);
-	fFlags.Read(s);
+    plModifier::Read(s, mgr);
+    fFlags.Read(s);
 }
 
 void plMultiModifier::Write(hsStream* s, hsResMgr* mgr)
 {
-	plModifier::Write(s, mgr);
-	fFlags.Write(s);
+    plModifier::Write(s, mgr);
+    fFlags.Write(s);
 }
 
 void plMultiModifier::RemoveTarget(plSceneObject* so)
 {
-	for (int i=0; i< fTargets.Count(); i++)
-	{
-		if (fTargets[i] == so)
-		{
-			fTargets.Remove(i);
-			return;
-		}
-	}
+    for (int i=0; i< fTargets.Count(); i++)
+    {
+        if (fTargets[i] == so)
+        {
+            fTargets.Remove(i);
+            return;
+        }
+    }
 }
 

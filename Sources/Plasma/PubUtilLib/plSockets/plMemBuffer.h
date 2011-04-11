@@ -30,24 +30,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMemBuffer
 {
 public:
-	plMemBuffer();
-	plMemBuffer(int len);
-	plMemBuffer(char * data, int len);
-	virtual ~plMemBuffer();
-	void SetBuffer(char * data, int len);
-	void CopyBuffer(char * data, int len);
-	void GrowBuffer(int len);
-	int GetBufferSize();
-	char * GetBuffer();
-	bool InBufferRange(char *);
+    plMemBuffer();
+    plMemBuffer(int len);
+    plMemBuffer(char * data, int len);
+    virtual ~plMemBuffer();
+    void SetBuffer(char * data, int len);
+    void CopyBuffer(char * data, int len);
+    void GrowBuffer(int len);
+    int GetBufferSize();
+    char * GetBuffer();
+    bool InBufferRange(char *);
 
 protected:
-	bool fBufferLocal;
-	int fBufferLen;
-	char * fBuffer;
-	
-	void ClearBuffer();
-	void AllocBuffer(int len);
+    bool fBufferLocal;
+    int fBufferLen;
+    char * fBuffer;
+    
+    void ClearBuffer();
+    void AllocBuffer(int len);
 };
 
 

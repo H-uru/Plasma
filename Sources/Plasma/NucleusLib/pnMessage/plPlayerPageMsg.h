@@ -38,40 +38,40 @@ class plPlayerPageMsg : public plMessage
 protected:
 
 public:
-	plPlayerPageMsg() : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1){;}
-	plPlayerPageMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t) : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1){;}
-	
-	CLASSNAME_REGISTER( plPlayerPageMsg );
-	GETINTERFACE_ANY( plPlayerPageMsg, plMessage );
+    plPlayerPageMsg() : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1){;}
+    plPlayerPageMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t) : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1){;}
+    
+    CLASSNAME_REGISTER( plPlayerPageMsg );
+    GETINTERFACE_ANY( plPlayerPageMsg, plMessage );
 
 
-	plKey			fPlayer;
-	hsBool			fLocallyOriginated;
-	hsBool			fUnload;
-	int				fClientID;
-	hsBool			fLastOut;
+    plKey           fPlayer;
+    hsBool          fLocallyOriginated;
+    hsBool          fUnload;
+    int             fClientID;
+    hsBool          fLastOut;
 
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fPlayer = mgr->ReadKey(stream);
-		fLocallyOriginated = stream->ReadBool();
-		fLastOut = stream->ReadBool();
-		fUnload = stream->ReadBool();
-		fClientID = stream->ReadSwap32();
-	}
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		mgr->WriteKey(stream, fPlayer);
-		stream->WriteBool(fLocallyOriginated);
-		stream->WriteBool(fLastOut);
-		stream->WriteBool(fUnload);
-		stream->WriteSwap32(fClientID);
-	}
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fPlayer = mgr->ReadKey(stream);
+        fLocallyOriginated = stream->ReadBool();
+        fLastOut = stream->ReadBool();
+        fUnload = stream->ReadBool();
+        fClientID = stream->ReadSwap32();
+    }
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        mgr->WriteKey(stream, fPlayer);
+        stream->WriteBool(fLocallyOriginated);
+        stream->WriteBool(fLastOut);
+        stream->WriteBool(fUnload);
+        stream->WriteSwap32(fClientID);
+    }
 };
 
 #endif // plPlayerPageMsg_inc

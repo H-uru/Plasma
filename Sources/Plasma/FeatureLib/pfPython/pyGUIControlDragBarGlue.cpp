@@ -35,22 +35,22 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlDragBar)
 
 PYTHON_INIT_DEFINITION(ptGUIControlDragBar, args, keywords)
 {
-	PyObject *keyObject = NULL;
-	if (!PyArg_ParseTuple(args, "O", &keyObject))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	if (!pyKey::Check(keyObject))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
+    PyObject *keyObject = NULL;
+    if (!PyArg_ParseTuple(args, "O", &keyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    if (!pyKey::Check(keyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
 
-	pyKey *key = pyKey::ConvertFrom(keyObject);
-	self->fThis->setKey(key->getKey());
+    pyKey *key = pyKey::ConvertFrom(keyObject);
+    self->fThis->setKey(key->getKey());
 
-	PYTHON_RETURN_INIT_OK;
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlDragBar, anchor, Anchor)
@@ -58,13 +58,13 @@ PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlDragBar, unanchor, Unanchor)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlDragBar, isAnchored)
 {
-	PYTHON_RETURN_BOOL(self->fThis->IsAnchored());
+    PYTHON_RETURN_BOOL(self->fThis->IsAnchored());
 }
 
 PYTHON_START_METHODS_TABLE(ptGUIControlDragBar)
-	PYTHON_BASIC_METHOD(ptGUIControlDragBar, anchor, "Don't allow this dragbar object to be moved by the user.\nDrop anchor!"),
-	PYTHON_BASIC_METHOD(ptGUIControlDragBar, unanchor, "Allow the user to drag this control around the screen.\nRaise anchor."),
-	PYTHON_METHOD_NOARGS(ptGUIControlDragBar, isAnchored, "Is this dragbar control anchored? Returns 1 if true otherwise returns 0"),
+    PYTHON_BASIC_METHOD(ptGUIControlDragBar, anchor, "Don't allow this dragbar object to be moved by the user.\nDrop anchor!"),
+    PYTHON_BASIC_METHOD(ptGUIControlDragBar, unanchor, "Allow the user to drag this control around the screen.\nRaise anchor."),
+    PYTHON_METHOD_NOARGS(ptGUIControlDragBar, isAnchored, "Is this dragbar control anchored? Returns 1 if true otherwise returns 0"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -73,16 +73,16 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlDragBar, pyGUIControl, "Params: ctrlKey\nP
 // required functions for PyObject interoperability
 PyObject *pyGUIControlDragBar::New(pyKey& gckey)
 {
-	ptGUIControlDragBar *newObj = (ptGUIControlDragBar*)ptGUIControlDragBar_type.tp_new(&ptGUIControlDragBar_type, NULL, NULL);
-	newObj->fThis->fGCkey = gckey.getKey();
-	return (PyObject*)newObj;
+    ptGUIControlDragBar *newObj = (ptGUIControlDragBar*)ptGUIControlDragBar_type.tp_new(&ptGUIControlDragBar_type, NULL, NULL);
+    newObj->fThis->fGCkey = gckey.getKey();
+    return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlDragBar::New(plKey objkey)
 {
-	ptGUIControlDragBar *newObj = (ptGUIControlDragBar*)ptGUIControlDragBar_type.tp_new(&ptGUIControlDragBar_type, NULL, NULL);
-	newObj->fThis->fGCkey = objkey;
-	return (PyObject*)newObj;
+    ptGUIControlDragBar *newObj = (ptGUIControlDragBar*)ptGUIControlDragBar_type.tp_new(&ptGUIControlDragBar_type, NULL, NULL);
+    newObj->fThis->fGCkey = objkey;
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptGUIControlDragBar, pyGUIControlDragBar)
@@ -94,7 +94,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptGUIControlDragBar, pyGUIControlDragBar)
 //
 void pyGUIControlDragBar::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptGUIControlDragBar);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptGUIControlDragBar);
+    PYTHON_CLASS_IMPORT_END(m);
 }

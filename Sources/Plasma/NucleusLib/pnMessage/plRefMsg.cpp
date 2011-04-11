@@ -40,60 +40,60 @@ plRefMsg::plRefMsg()
 plRefMsg::plRefMsg(const plKey &r, UInt8 c)
 : plMessage(nil, r, nil), fRef(nil), fOldRef(nil), fContext(c)
 {
-	if( !fContext )
-		fContext = kOnCreate;
+    if( !fContext )
+        fContext = kOnCreate;
 }
 
 plRefMsg::~plRefMsg()
 {
-	// Un ref fref and foldref.
+    // Un ref fref and foldref.
 }
 
 plRefMsg& plRefMsg::SetRef(hsKeyedObject* ref)
 {
-	fRef = ref;  // ref count here! paulg
-	return *this;
+    fRef = ref;  // ref count here! paulg
+    return *this;
 }
 
 plRefMsg& plRefMsg::SetOldRef(hsKeyedObject* oldRef)
 {
-	fOldRef = oldRef;
-	// Ref here! 
-	return *this;
+    fOldRef = oldRef;
+    // Ref here! 
+    return *this;
 }
 
 void plRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
-	stream->ReadSwap(&fContext);
+    plMessage::IMsgRead(stream, mgr);
+    stream->ReadSwap(&fContext);
 
-	plKey key;
-	key = mgr->ReadKey(stream);
-	fRef = (key ? key->GetObjectPtr() : nil);
-	key = mgr->ReadKey(stream);
-	fOldRef = (key ? key->GetObjectPtr() : nil);
+    plKey key;
+    key = mgr->ReadKey(stream);
+    fRef = (key ? key->GetObjectPtr() : nil);
+    key = mgr->ReadKey(stream);
+    fOldRef = (key ? key->GetObjectPtr() : nil);
 }
 
 void plRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
-	stream->WriteSwap(fContext);
+    plMessage::IMsgWrite(stream, mgr);
+    stream->WriteSwap(fContext);
 
-	mgr->WriteKey(stream, (fRef ? fRef->GetKey() : nil));
-	mgr->WriteKey(stream, (fOldRef ? fOldRef->GetKey() : nil));
+    mgr->WriteKey(stream, (fRef ? fRef->GetKey() : nil));
+    mgr->WriteKey(stream, (fOldRef ? fOldRef->GetKey() : nil));
 }
 
 
 void plGenRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plRefMsg::Read(stream, mgr);
-	stream->ReadSwap(&fType);
-	fWhich = stream->ReadSwap32();
+    plRefMsg::Read(stream, mgr);
+    stream->ReadSwap(&fType);
+    fWhich = stream->ReadSwap32();
 }
 
 void plGenRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plRefMsg::Write(stream, mgr);
-	stream->WriteSwap(fType);
-	stream->WriteSwap32(fWhich);
+    plRefMsg::Write(stream, mgr);
+    stream->WriteSwap(fType);
+    stream->WriteSwap32(fWhich);
 }

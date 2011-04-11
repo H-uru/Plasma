@@ -28,13 +28,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum
 {
-	// Layers
-	kDecalLayBase,
-	kDecalLayOutputBlend,
-	kDecalLayTopOn,
-	kDecalLayTop,
-	kDecalLayBlend,
-	kDecalLayOutputAlpha,
+    // Layers
+    kDecalLayBase,
+    kDecalLayOutputBlend,
+    kDecalLayTopOn,
+    kDecalLayTop,
+    kDecalLayBlend,
+    kDecalLayOutputAlpha,
 };
 
 #endif //PL_DECALMTLLAYERSPB_H

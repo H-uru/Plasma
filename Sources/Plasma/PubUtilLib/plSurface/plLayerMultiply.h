@@ -34,31 +34,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plLayerMultiply : public plLayerInterface
 {
 public:
-	plLayerMultiply();
-	virtual ~plLayerMultiply();
+    plLayerMultiply();
+    virtual ~plLayerMultiply();
 
-	CLASSNAME_REGISTER( plLayerMultiply );
-	GETINTERFACE_ANY( plLayerMultiply, plLayerInterface );
+    CLASSNAME_REGISTER( plLayerMultiply );
+    GETINTERFACE_ANY( plLayerMultiply, plLayerInterface );
 
-	virtual plLayerInterface*	Attach(plLayerInterface* prev);
-	virtual UInt32				Eval(double secs, UInt32 frame, UInt32 ignore);
-	virtual hsBool				MsgReceive(plMessage* msg);
-	virtual void				Read(hsStream* s, hsResMgr* mgr);
-	virtual void				Write(hsStream* s, hsResMgr* mgr);
+    virtual plLayerInterface*   Attach(plLayerInterface* prev);
+    virtual UInt32              Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual hsBool              MsgReceive(plMessage* msg);
+    virtual void                Read(hsStream* s, hsResMgr* mgr);
+    virtual void                Write(hsStream* s, hsResMgr* mgr);
 
-	void SetPreshadeColor(const hsColorRGBA& col);
-	void SetRuntimeColor(const hsColorRGBA& col);
-	void SetAmbientColor(const hsColorRGBA& col);
-	void SetOpacity(hsScalar a);
-	void SetTransform(const hsMatrix44& xfm);
+    void SetPreshadeColor(const hsColorRGBA& col);
+    void SetRuntimeColor(const hsColorRGBA& col);
+    void SetAmbientColor(const hsColorRGBA& col);
+    void SetOpacity(hsScalar a);
+    void SetTransform(const hsMatrix44& xfm);
 
 protected:
-	UInt32			fDirtyChannels;
-	hsColorRGBA		fSrcPreshadeColor;
-	hsColorRGBA		fSrcRuntimeColor;
-	hsColorRGBA		fSrcAmbientColor;
-	hsScalar		fSrcOpacity;
-	hsMatrix44		fSrcTransform;
+    UInt32          fDirtyChannels;
+    hsColorRGBA     fSrcPreshadeColor;
+    hsColorRGBA     fSrcRuntimeColor;
+    hsColorRGBA     fSrcAmbientColor;
+    hsScalar        fSrcOpacity;
+    hsMatrix44      fSrcTransform;
 };
 
 #endif // PL_LAYER_ANIMATION_INC

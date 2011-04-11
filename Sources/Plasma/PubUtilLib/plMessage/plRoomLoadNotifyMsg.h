@@ -40,55 +40,55 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plRoomLoadNotifyMsg : public plMessage
 {
 protected:
-	plKey	fRoomKey;
-	UInt8	fWhat;
+    plKey   fRoomKey;
+    UInt8   fWhat;
 
 private:
-	void IInit()
-	{
-		fRoomKey = nil;
-		fWhat=kDontKnow;
-		// we will only send this message to those who have registered for it
-		SetBCastFlag(plMessage::kBCastByExactType);
-	}
+    void IInit()
+    {
+        fRoomKey = nil;
+        fWhat=kDontKnow;
+        // we will only send this message to those who have registered for it
+        SetBCastFlag(plMessage::kBCastByExactType);
+    }
 public:
-	plRoomLoadNotifyMsg()
-		: plMessage(nil, nil, nil) { IInit(); }
-	plRoomLoadNotifyMsg(const plKey &s, 
-				const plKey &r, 
-				const double* t)
-		: plMessage(s, r, t) { IInit(); }
-	virtual ~plRoomLoadNotifyMsg() {;}
+    plRoomLoadNotifyMsg()
+        : plMessage(nil, nil, nil) { IInit(); }
+    plRoomLoadNotifyMsg(const plKey &s, 
+                const plKey &r, 
+                const double* t)
+        : plMessage(s, r, t) { IInit(); }
+    virtual ~plRoomLoadNotifyMsg() {;}
 
-	CLASSNAME_REGISTER( plRoomLoadNotifyMsg );
-	GETINTERFACE_ANY( plRoomLoadNotifyMsg, plMessage );
+    CLASSNAME_REGISTER( plRoomLoadNotifyMsg );
+    GETINTERFACE_ANY( plRoomLoadNotifyMsg, plMessage );
 
-	enum NotifyType
-	{
-		kDontKnow=0,
-		kLoaded,
-		kUnloaded,
-	};
+    enum NotifyType
+    {
+        kDontKnow=0,
+        kLoaded,
+        kUnloaded,
+    };
 
-	virtual void SetRoom(plKey &rkey) { fRoomKey = rkey; }
-	virtual plKey GetRoom() { return fRoomKey; }
-	virtual void SetWhatHappen(UInt8 what) { fWhat = what; }
-	virtual UInt8 GetWhatHappen() { return fWhat; }
+    virtual void SetRoom(plKey &rkey) { fRoomKey = rkey; }
+    virtual plKey GetRoom() { return fRoomKey; }
+    virtual void SetWhatHappen(UInt8 what) { fWhat = what; }
+    virtual UInt8 GetWhatHappen() { return fWhat; }
 
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fRoomKey = mgr->ReadKey(stream);
-		fWhat = stream->ReadByte();
-	}
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fRoomKey = mgr->ReadKey(stream);
+        fWhat = stream->ReadByte();
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		mgr->WriteKey(stream, fRoomKey);
-		stream->WriteByte(fWhat);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        mgr->WriteKey(stream, fRoomKey);
+        stream->WriteByte(fWhat);
+    }
 };
 
 

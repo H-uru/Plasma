@@ -37,20 +37,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plNetClientMgrMsg : public plMessage {
 public:
-	enum {
-		kNotifyRcvdAllSDLStates,
-		kCmdDisableNet,
-	};
-	
-	unsigned type;
-	char str[256];
-	bool yes;
+    enum {
+        kNotifyRcvdAllSDLStates,
+        kCmdDisableNet,
+    };
+    
+    unsigned type;
+    char str[256];
+    bool yes;
 
     CLASSNAME_REGISTER(plNetClientMgrMsg);
     GETINTERFACE_ANY(plNetClientMgrMsg, plMessage);
-	
-	void Read (hsStream *, hsResMgr *) { FATAL("plNetClientMgrMsg::Read"); }
-	void Write (hsStream *, hsResMgr *) { FATAL("plNetClientMgrMsg::Write"); }
+    
+    void Read (hsStream *, hsResMgr *) { FATAL("plNetClientMgrMsg::Read"); }
+    void Write (hsStream *, hsResMgr *) { FATAL("plNetClientMgrMsg::Write"); }
 };
 
 

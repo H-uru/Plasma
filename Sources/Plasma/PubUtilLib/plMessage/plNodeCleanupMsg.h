@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plNodeCleanupMsg Header													//
-//	Tiny message to let sceneNodes know that they need to clean up.			//
-//																			//
+//                                                                          //
+//  plNodeCleanupMsg Header                                                 //
+//  Tiny message to let sceneNodes know that they need to clean up.         //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plNodeCleanupMsg_h
@@ -38,15 +38,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plNodeCleanupMsg : public plMessage
 {
 public:
-	plNodeCleanupMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); }
-	~plNodeCleanupMsg() {}
+    plNodeCleanupMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); }
+    ~plNodeCleanupMsg() {}
 
-	CLASSNAME_REGISTER( plNodeCleanupMsg );
-	GETINTERFACE_ANY( plNodeCleanupMsg, plMessage );
+    CLASSNAME_REGISTER( plNodeCleanupMsg );
+    GETINTERFACE_ANY( plNodeCleanupMsg, plMessage );
 
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgRead( stream, mgr ); }
-	void Write(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgWrite( stream, mgr ); }
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead( stream, mgr ); }
+    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite( stream, mgr ); }
 };
 
 #endif // _plNodeCleanupMsg_h

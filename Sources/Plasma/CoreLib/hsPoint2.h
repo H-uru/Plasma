@@ -29,93 +29,93 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsScalar.h"
 
 #if __MWERKS__
-	//	This guy disables MetroWerks' desire to only include a file once, which obviously gets
-	//	in the way of our little HS_POINT2.inc trick
-	#pragma once off
+    //  This guy disables MetroWerks' desire to only include a file once, which obviously gets
+    //  in the way of our little HS_POINT2.inc trick
+    #pragma once off
 #endif
 
-#define HS_POINT2_NAME	hsIntPoint2
-#define HS_POINT2_TYPE		Int32
+#define HS_POINT2_NAME  hsIntPoint2
+#define HS_POINT2_TYPE      Int32
 #include "HS_POINT2.inc"
 };
 
-#define HS_POINT2_NAME	hsFixedPoint2
-#define HS_POINT2_TYPE		hsFixed
+#define HS_POINT2_NAME  hsFixedPoint2
+#define HS_POINT2_TYPE      hsFixed
 #include "HS_POINT2.inc"
 
-	hsFixedPoint2&	operator=(const hsIntPoint2& src)
-				{
-					this->fX	= hsIntToFixed(src.fX);
-					this->fY	= hsIntToFixed(src.fY);
-					return *this;
-				}
+    hsFixedPoint2&  operator=(const hsIntPoint2& src)
+                {
+                    this->fX    = hsIntToFixed(src.fX);
+                    this->fY    = hsIntToFixed(src.fY);
+                    return *this;
+                }
 
-	hsFixed Magnitude() const { return hsMagnitude32(fX, fY); }
+    hsFixed Magnitude() const { return hsMagnitude32(fX, fY); }
 
-	static hsFixed	Magnitude(hsFixed x, hsFixed y)
-				{
-					return hsMagnitude32(x, y);
-				}
-	static hsFixed	Distance(const hsFixedPoint2& p1, const hsFixedPoint2& p2)
-				{
-					return hsMagnitude32(p2.fX - p1.fX, p2.fY - p1.fY);
-				}
+    static hsFixed  Magnitude(hsFixed x, hsFixed y)
+                {
+                    return hsMagnitude32(x, y);
+                }
+    static hsFixed  Distance(const hsFixedPoint2& p1, const hsFixedPoint2& p2)
+                {
+                    return hsMagnitude32(p2.fX - p1.fX, p2.fY - p1.fY);
+                }
 };
 
 #if HS_CAN_USE_FLOAT
-	struct hsPolar {
-		float		fRadius;
-		float		fAngle;
-	};
+    struct hsPolar {
+        float       fRadius;
+        float       fAngle;
+    };
 
-	#define HS_POINT2_NAME	hsFloatPoint2
-	#define HS_POINT2_TYPE		float
-	#include "HS_POINT2.inc"
+    #define HS_POINT2_NAME  hsFloatPoint2
+    #define HS_POINT2_TYPE      float
+    #include "HS_POINT2.inc"
 
-		hsFloatPoint2&	operator=(const hsIntPoint2& src)
-			{
-				this->fX	= float(src.fX);
-				this->fY	= float(src.fY);
-				return *this;
-			}
+        hsFloatPoint2&  operator=(const hsIntPoint2& src)
+            {
+                this->fX    = float(src.fX);
+                this->fY    = float(src.fY);
+                return *this;
+            }
 
-		friend hsFloatPoint2 operator*(const hsFloatPoint2& s, float t)
-			{
-				hsFloatPoint2	result;
-				result.Set(s.fX * t, s.fY * t);
-				return result;
-			}
-		friend hsFloatPoint2 operator*(float t, const hsFloatPoint2& s)
-			{
-				hsFloatPoint2	result;
-				result.Set(s.fX * t, s.fY * t);
-				return result;
-			}
+        friend hsFloatPoint2 operator*(const hsFloatPoint2& s, float t)
+            {
+                hsFloatPoint2   result;
+                result.Set(s.fX * t, s.fY * t);
+                return result;
+            }
+        friend hsFloatPoint2 operator*(float t, const hsFloatPoint2& s)
+            {
+                hsFloatPoint2   result;
+                result.Set(s.fX * t, s.fY * t);
+                return result;
+            }
 
-		hsFloatPoint2*	Grid(float period);
-		hsBool	CloseEnough(const hsFloatPoint2* p, float tolerance) const;
+        hsFloatPoint2*  Grid(float period);
+        hsBool  CloseEnough(const hsFloatPoint2* p, float tolerance) const;
 
-		float		Magnitude() const { return hsFloatPoint2::Magnitude(fX, fY); }
-		float		MagnitudeSquared() const { return fX * fX + fY * fY; }
-		hsPolar*	ToPolar(hsPolar* polar) const;
+        float       Magnitude() const { return hsFloatPoint2::Magnitude(fX, fY); }
+        float       MagnitudeSquared() const { return fX * fX + fY * fY; }
+        hsPolar*    ToPolar(hsPolar* polar) const;
 
-		static float	Magnitude(float x, float y) { return hsSquareRoot(x * x + y * y); }
-		static hsScalar	Distance(const hsFloatPoint2& p1, const hsFloatPoint2& p2);
-		static hsFloatPoint2	Average(const hsFloatPoint2& a, const hsFloatPoint2& b)
-						{
-							hsFloatPoint2	result;
-							result.Set((a.fX + b.fX) * float(0.5), (a.fY + b.fY) * float(0.5));
-							return result;
-						}
-		static hsScalar	ComputeAngle(const hsFloatPoint2& a, const hsFloatPoint2& b, const hsFloatPoint2& c);
-	};
+        static float    Magnitude(float x, float y) { return hsSquareRoot(x * x + y * y); }
+        static hsScalar Distance(const hsFloatPoint2& p1, const hsFloatPoint2& p2);
+        static hsFloatPoint2    Average(const hsFloatPoint2& a, const hsFloatPoint2& b)
+                        {
+                            hsFloatPoint2   result;
+                            result.Set((a.fX + b.fX) * float(0.5), (a.fY + b.fY) * float(0.5));
+                            return result;
+                        }
+        static hsScalar ComputeAngle(const hsFloatPoint2& a, const hsFloatPoint2& b, const hsFloatPoint2& c);
+    };
 #endif
 
 #if HS_SCALAR_IS_FIXED
-	typedef hsFixedPoint2	hsPoint2;
+    typedef hsFixedPoint2   hsPoint2;
 #else
-	typedef hsFloatPoint2	hsPoint2;
+    typedef hsFloatPoint2   hsPoint2;
 #endif
 
-#endif	// hsPoint2_Defined
+#endif  // hsPoint2_Defined
 

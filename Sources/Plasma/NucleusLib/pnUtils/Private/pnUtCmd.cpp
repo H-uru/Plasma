@@ -584,15 +584,15 @@ void CCmdParser::Initialize (const CmdArgDef def[], unsigned defCount) {
 //===========================================================================
 bool CCmdParser::IsSpecified (unsigned id) const {
     if (const CmdArgData * data = fParser->FindArgById(id))
-		return data->isSpecified;
-	return false;
+        return data->isSpecified;
+    return false;
 }
 
 //===========================================================================
 bool CCmdParser::IsSpecified (const wchar name[]) const {
     if (const CmdArgData * data = fParser->FindArgByName(name))
-		return data->isSpecified;
-	return false;
+        return data->isSpecified;
+    return false;
 }
 
 //===========================================================================

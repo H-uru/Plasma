@@ -39,9 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAutoComponent : public plComponent
 {
 public:
-	plAutoComponent();
+    plAutoComponent();
 
-	hsBool Convert(plMaxNode *node, plErrorMsg *msg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *msg);
 };
 
 AUTO_CLASS_DESC(plAutoComponent, gAutoDesc, "Auto", "Auto", "Test", Class_ID(0x21807fcf, 0x156e2218))
@@ -50,34 +50,34 @@ plAutoUIComp *gAutoUI;
 
 void DummyCode()
 {
-	gAutoUI = TRACKED_NEW plAutoUIComp(&gAutoDesc);
+    gAutoUI = TRACKED_NEW plAutoUIComp(&gAutoDesc);
 
-	gAutoUI->AddCheckBox(0, "test", "Test", true);
-	gAutoUI->AddFloatSpinner(1, "t2", "T2", 0.5, 0.f, 100.f);
-	gAutoUI->AddEditBox(2, "blah", "Blah", "Test String", 5);
-	gAutoUI->AddPickNode(3, "pick", "Pick");
+    gAutoUI->AddCheckBox(0, "test", "Test", true);
+    gAutoUI->AddFloatSpinner(1, "t2", "T2", 0.5, 0.f, 100.f);
+    gAutoUI->AddEditBox(2, "blah", "Blah", "Test String", 5);
+    gAutoUI->AddPickNode(3, "pick", "Pick");
 
-	std::vector<Class_ID> cids;
-	cids.push_back(ACTIVATOR_CID);
-	cids.push_back(RESPONDER_CID);
-	gAutoUI->AddPickNode(4, "pick2", "Pick2", &cids);
+    std::vector<Class_ID> cids;
+    cids.push_back(ACTIVATOR_CID);
+    cids.push_back(RESPONDER_CID);
+    gAutoUI->AddPickNode(4, "pick2", "Pick2", &cids);
 }
 
 plAutoComponent::plAutoComponent()
 {
-	fClassDesc = &gAutoDesc;
-	fClassDesc->MakeAutoParamBlocks(this);
+    fClassDesc = &gAutoDesc;
+    fClassDesc->MakeAutoParamBlocks(this);
 }
 
 hsBool plAutoComponent::Convert(plMaxNode *node, plErrorMsg *msg)
 {
-	hsBool c1 = gAutoUI->GetCheckBox(0, this);
-	TSTR str = gAutoUI->GetEditBox(2, this);
+    hsBool c1 = gAutoUI->GetCheckBox(0, this);
+    TSTR str = gAutoUI->GetEditBox(2, this);
 
-	for (int i = 0; i < gAutoUI->Count(3, this); i++)
-		INode *node = gAutoUI->GetPickNode(3, this, i);
-	
-	return true;
+    for (int i = 0; i < gAutoUI->Count(3, this); i++)
+        INode *node = gAutoUI->GetPickNode(3, this, i);
+    
+    return true;
 }
 
 #endif

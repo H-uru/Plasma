@@ -30,21 +30,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 
 #if HS_BUILD_FOR_MAC
-	#define kDirChar		':'
+    #define kDirChar        ':'
 #elif HS_BUILD_FOR_WIN32
-	#define kDirChar		'\\'
+    #define kDirChar        '\\'
 #else
-	#define kDirChar		'/'
+    #define kDirChar        '/'
 #endif
 
 
 static const char* FindNameInPath(const char path[])
 {
-	const char*	name = ::strrchr(path, kDirChar);
-	
-	if (name == nil)
-		name = path;
-	return name;
+    const char* name = ::strrchr(path, kDirChar);
+    
+    if (name == nil)
+        name = path;
+    return name;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -56,74 +56,74 @@ hsFile::hsFile() : fPathAndName(nil), fFILE(nil)
 
 hsFile::hsFile(const char pathAndName[]) : fPathAndName(nil), fFILE(nil)
 {
-	if (pathAndName)
-		fPathAndName = hsStrcpy(pathAndName);
+    if (pathAndName)
+        fPathAndName = hsStrcpy(pathAndName);
 }
 
 hsFile::~hsFile()
 {
-	this->SetPathAndName(nil);
+    this->SetPathAndName(nil);
 }
 
 const char* hsFile::GetPathAndName()
 {
-	return fPathAndName;
+    return fPathAndName;
 }
 
 void hsFile::SetPathAndName(const char pathAndName[])
 {
-	this->Close();
+    this->Close();
 
-	if (fPathAndName)
-	{	delete[] fPathAndName;
-		fPathAndName = nil;
-	}
-	if (pathAndName)
-		fPathAndName = hsStrcpy(pathAndName);
+    if (fPathAndName)
+    {   delete[] fPathAndName;
+        fPathAndName = nil;
+    }
+    if (pathAndName)
+        fPathAndName = hsStrcpy(pathAndName);
 }
 
 const char* hsFile::GetName()
 {
-	return FindNameInPath(this->GetPathAndName());
+    return FindNameInPath(this->GetPathAndName());
 }
 
 FILE* hsFile::OpenFILE(const char mode[], hsBool throwIfFailure)
 {
-	this->Close();
+    this->Close();
 
-	//	We call the virtual method here rather than using
-	//	fPathAndName directly, allowing a subclass to construct
-	//	the name if necessary
-	//
-	const char* name = this->GetPathAndName();
-	if (name)
-		fFILE = ::fopen(name, mode);
+    //  We call the virtual method here rather than using
+    //  fPathAndName directly, allowing a subclass to construct
+    //  the name if necessary
+    //
+    const char* name = this->GetPathAndName();
+    if (name)
+        fFILE = ::fopen(name, mode);
 
-	hsThrowIfTrue(throwIfFailure && fFILE == nil);
-	return fFILE;
+    hsThrowIfTrue(throwIfFailure && fFILE == nil);
+    return fFILE;
 }
 
 hsStream* hsFile::OpenStream(const char mode[], hsBool throwIfFailure)
 {
-	FILE* file = this->OpenFILE(mode, throwIfFailure);
+    FILE* file = this->OpenFILE(mode, throwIfFailure);
 
-	if (file)
-	{	hsUNIXStream*	stream = TRACKED_NEW hsUNIXStream;
-		stream->SetFILE(file);
-		return stream;
-	}
-	return nil;
+    if (file)
+    {   hsUNIXStream*   stream = TRACKED_NEW hsUNIXStream;
+        stream->SetFILE(file);
+        return stream;
+    }
+    return nil;
 }
 
 void hsFile::Close()
 {
-	if (fFILE)
-	{	int	err = ::fflush(fFILE);
-		hsIfDebugMessage(err != 0, "fflush failed", err);
-		err = ::fclose(fFILE);
-		hsIfDebugMessage(err != 0, "fclose failed", err);
-		fFILE = nil;
-	}
+    if (fFILE)
+    {   int err = ::fflush(fFILE);
+        hsIfDebugMessage(err != 0, "fflush failed", err);
+        err = ::fclose(fFILE);
+        hsIfDebugMessage(err != 0, "fclose failed", err);
+        fFILE = nil;
+    }
 }
 #endif
 
@@ -131,38 +131,38 @@ void hsFile::Close()
 
 hsBool hsFolderIterator::NextFileSuffix(const char suffix[])
 {
-	while (this->NextFile())
-	{	const char* fileSuffix = ::strrchr(this->GetFileName(), '.');
-		if (fileSuffix != nil && ::_stricmp(fileSuffix, suffix) == 0)
-			return true;
-	}
-	return false;
+    while (this->NextFile())
+    {   const char* fileSuffix = ::strrchr(this->GetFileName(), '.');
+        if (fileSuffix != nil && ::_stricmp(fileSuffix, suffix) == 0)
+            return true;
+    }
+    return false;
 }
 
 int hsFolderIterator::GetPathAndName(char pathandname[])
 {
-	const char*	name = this->GetFileName();
-	int			pathLen = hsStrlen(fPath);
+    const char* name = this->GetFileName();
+    int         pathLen = hsStrlen(fPath);
 
-	// add 1 for null terminator
-	int	totalLen = pathLen + sizeof(kDirChar) + hsStrlen(name) + 1;
-	hsAssert(totalLen <= kFolderIterator_MaxPath, "Overrun kFolderIterator_MaxPath");
+    // add 1 for null terminator
+    int totalLen = pathLen + sizeof(kDirChar) + hsStrlen(name) + 1;
+    hsAssert(totalLen <= kFolderIterator_MaxPath, "Overrun kFolderIterator_MaxPath");
 
-	if (pathandname)
-	{	hsStrcpy(pathandname, fPath);
-		if (pathLen > 0 && pathandname[pathLen - 1] != kDirChar)
-			pathandname[pathLen++] = kDirChar;
-		hsStrcpy(pathandname + pathLen, name);
-	}
-	return totalLen;
+    if (pathandname)
+    {   hsStrcpy(pathandname, fPath);
+        if (pathLen > 0 && pathandname[pathLen - 1] != kDirChar)
+            pathandname[pathLen++] = kDirChar;
+        hsStrcpy(pathandname + pathLen, name);
+    }
+    return totalLen;
 }
 
 FILE* hsFolderIterator::OpenFILE(const char mode[])
 {
-	char fileName[kFolderIterator_MaxPath];
+    char fileName[kFolderIterator_MaxPath];
 
-	(void)this->GetPathAndName(fileName);
+    (void)this->GetPathAndName(fileName);
 
-	return ::fopen(fileName, mode);
+    return ::fopen(fileName, mode);
 }
 

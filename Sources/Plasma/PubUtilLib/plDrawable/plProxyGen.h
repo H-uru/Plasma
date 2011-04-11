@@ -40,7 +40,7 @@ struct hsMatrix44;
 //
 // Derive YourObjectProxy() from ProxyGen.
 // YourObjectProxy() should set fProxyMsgType and the colors fAmbient,fColor, either
-//		in the constructor or in Init().
+//      in the constructor or in Init().
 // Implement IGetNode() (see below).
 // Implement ICreateProxy() (see below).
 // Implement a CreateProxy() member to YourObject (see below).
@@ -70,45 +70,45 @@ class plProxyGen : public hsKeyedObject
 {
 protected:
 
-	hsColorRGBA					fAmbient; // opacity in ambient.a
-	hsColorRGBA					fColor;
+    hsColorRGBA                 fAmbient; // opacity in ambient.a
+    hsColorRGBA                 fColor;
 
-	plDrawableSpans*			fProxyDraw;
-	hsGMaterial*				fProxyMat;
+    plDrawableSpans*            fProxyDraw;
+    hsGMaterial*                fProxyMat;
 
-	UInt32						fProxyMsgType;
+    UInt32                      fProxyMsgType;
 
-	hsTArray<UInt32>			fProxyIndex;
+    hsTArray<UInt32>            fProxyIndex;
 
-	// These must be implemented by the specific type, so we know what to draw.
-	virtual plDrawableSpans*	ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil) = 0; // called by IGenerate
-	virtual plKey				IGetNode() const = 0;
+    // These must be implemented by the specific type, so we know what to draw.
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil) = 0; // called by IGenerate
+    virtual plKey               IGetNode() const = 0;
 
-	// Derived type should set fProxyMsgType as one of plProxyDrawMsg::types
-	UInt32						IGetProxyMsgType() const { return fProxyMsgType; }
+    // Derived type should set fProxyMsgType as one of plProxyDrawMsg::types
+    UInt32                      IGetProxyMsgType() const { return fProxyMsgType; }
 
-	// These are all fine by default.
-	UInt32						IGetProxyIndex() const;
-	UInt32						IGetDrawableType() const;
+    // These are all fine by default.
+    UInt32                      IGetProxyIndex() const;
+    UInt32                      IGetDrawableType() const;
 
-	virtual hsGMaterial*		IMakeProxyMaterial() const;
-	virtual hsGMaterial*		IGetProxyMaterial() const; // will make material if needed.
-	hsGMaterial* IFindProxyMaterial() const;
+    virtual hsGMaterial*        IMakeProxyMaterial() const;
+    virtual hsGMaterial*        IGetProxyMaterial() const; // will make material if needed.
+    hsGMaterial* IFindProxyMaterial() const;
 
-	virtual void				IGenerateProxy();
-	virtual void				IApplyProxy(UInt32 drawIdx) const; // called by IGenerate 
-	virtual void				IRemoveProxy(UInt32 drawIdx) const; 
-	virtual void				IDestroyProxy();
+    virtual void                IGenerateProxy();
+    virtual void                IApplyProxy(UInt32 drawIdx) const; // called by IGenerate 
+    virtual void                IRemoveProxy(UInt32 drawIdx) const; 
+    virtual void                IDestroyProxy();
 public:
-	plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac);
-	virtual ~plProxyGen();
+    plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac);
+    virtual ~plProxyGen();
 
-	virtual void				SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
-	virtual void				SetDisable(hsBool on);
+    virtual void                SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    virtual void                SetDisable(hsBool on);
 
-	virtual void				Init(const hsKeyedObject* owner);
+    virtual void                Init(const hsKeyedObject* owner);
 
-	virtual hsBool				MsgReceive(plMessage* msg);
+    virtual hsBool              MsgReceive(plMessage* msg);
 
 };
 

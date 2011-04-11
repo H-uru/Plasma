@@ -42,32 +42,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct RelVaultNode;
 
-	
+    
 class pyVaultAgeInfoListNode : public pyVaultFolderNode
 {
 protected:
-	// should only be created from C++ side
-	pyVaultAgeInfoListNode(RelVaultNode* nfsNode);
+    // should only be created from C++ side
+    pyVaultAgeInfoListNode(RelVaultNode* nfsNode);
 
-	// python-side ctor
-	pyVaultAgeInfoListNode(int n=0);
+    // python-side ctor
+    pyVaultAgeInfoListNode(int n=0);
 public:
-	
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVaultAgeInfoListNode);
-	static PyObject *New(RelVaultNode* nfsNode);
-	static PyObject *New(int n=0);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultAgeInfoListNode object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultAgeInfoListNode); // converts a PyObject to a pyVaultAgeInfoListNode (throws error if not correct type)
+    
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVaultAgeInfoListNode);
+    static PyObject *New(RelVaultNode* nfsNode);
+    static PyObject *New(int n=0);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultAgeInfoListNode object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultAgeInfoListNode); // converts a PyObject to a pyVaultAgeInfoListNode (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
 //==================================================================
 // class RelVaultNode : public plVaultFolderNode
 //
-	hsBool	HasAge( UInt32 ageID );
-	hsBool	AddAge( UInt32 ageID );
-	void	RemoveAge( UInt32 ageID );
+    hsBool  HasAge( UInt32 ageID );
+    hsBool  AddAge( UInt32 ageID );
+    void    RemoveAge( UInt32 ageID );
 };
 
 #endif // _pyVaultAgeInfoListNode_h_

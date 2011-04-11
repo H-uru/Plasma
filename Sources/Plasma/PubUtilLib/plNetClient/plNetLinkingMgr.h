@@ -39,109 +39,109 @@ struct plNCAgeLeaver;
 
 class plNetLinkingMgr
 {
-	static void NCAgeJoinerCallback (
-		plNCAgeJoiner *			joiner,
-		unsigned				type,
-		void *					notify,
-		void *					userState
-	);
-	
-	static void NCAgeLeaverCallback (
-		plNCAgeLeaver *			leaver,
-		unsigned				type,
-		void *					notify,
-		void *					userState
-	);
+    static void NCAgeJoinerCallback (
+        plNCAgeJoiner *         joiner,
+        unsigned                type,
+        void *                  notify,
+        void *                  userState
+    );
+    
+    static void NCAgeLeaverCallback (
+        plNCAgeLeaver *         leaver,
+        unsigned                type,
+        void *                  notify,
+        void *                  userState
+    );
 
-	friend struct NCAgeJoinerCallback;
-	friend struct NCAgeLeaverCallback;
-	
-	static void ExecNextOp ();
+    friend struct NCAgeJoinerCallback;
+    friend struct NCAgeLeaverCallback;
+    
+    static void ExecNextOp ();
 
 
-	plNetLinkingMgr();
-	plNetLinkingMgr(const plNetLinkingMgr &);
+    plNetLinkingMgr();
+    plNetLinkingMgr(const plNetLinkingMgr &);
 
-	enum Cmds
-	{
-		kNilCmd,
-		// Sent to a player to have them call us back with info for linking to their age.
-		kLinkPlayerHere,
-		// Offer link to player.
-		kOfferLinkToPlayer,
-		// Offer link to another player from a public linking book (to my instance of the age w/out going through personal age)
-		kOfferLinkFromPublicBook,
-		// Sent to a player to have them link to their last age 
-		kLinkPlayerToPrevAge
-	};
+    enum Cmds
+    {
+        kNilCmd,
+        // Sent to a player to have them call us back with info for linking to their age.
+        kLinkPlayerHere,
+        // Offer link to player.
+        kOfferLinkToPlayer,
+        // Offer link to another player from a public linking book (to my instance of the age w/out going through personal age)
+        kOfferLinkFromPublicBook,
+        // Sent to a player to have them link to their last age 
+        kLinkPlayerToPrevAge
+    };
 
-	bool IPreProcessLink( void );
-	void IPostProcessLink( void );
-	bool IProcessLinkingMgrMsg( plLinkingMgrMsg * msg );
-	bool IProcessLinkToAgeMsg( plLinkToAgeMsg * msg );
+    bool IPreProcessLink( void );
+    void IPostProcessLink( void );
+    bool IProcessLinkingMgrMsg( plLinkingMgrMsg * msg );
+    bool IProcessLinkToAgeMsg( plLinkToAgeMsg * msg );
 
-	bool IDispatchMsg( plMessage * msg, UInt32 playerID );
+    bool IDispatchMsg( plMessage * msg, UInt32 playerID );
 
 
 public:
-	static plNetLinkingMgr * GetInstance();
-	hsBool MsgReceive( plMessage *msg );	// TODO: Make this a hsKeyedObject so we can really handle messages.
-	void Update();
+    static plNetLinkingMgr * GetInstance();
+    hsBool MsgReceive( plMessage *msg );    // TODO: Make this a hsKeyedObject so we can really handle messages.
+    void Update();
 
-	bool IsEnabled( void ) const { return fLinkingEnabled;}
-	void SetEnabled( bool b );
-	
-	bool LinkedIn () const { return  fLinkedIn &&  fLinkingEnabled; }
-	bool Linking () const  { return !fLinkedIn && !fLinkingEnabled; }
+    bool IsEnabled( void ) const { return fLinkingEnabled;}
+    void SetEnabled( bool b );
+    
+    bool LinkedIn () const { return  fLinkedIn &&  fLinkingEnabled; }
+    bool Linking () const  { return !fLinkedIn && !fLinkingEnabled; }
 
-	// Link to an age.
-	void LinkToAge( plAgeLinkStruct * link, UInt32 playerID=kInvalidPlayerID );
-	void LinkToAge( plAgeLinkStruct * link, const char* linkAnim, UInt32 playerID=kInvalidPlayerID );
-	// Link to my last age.
-	void LinkToPrevAge( UInt32 playerID=kInvalidPlayerID );	
-	// Link to my Personal Age
-	void LinkToMyPersonalAge( UInt32 playerID=kInvalidPlayerID );
-	// Link to my Neighborhood Age
-	void LinkToMyNeighborhoodAge( UInt32 playerID=kInvalidPlayerID );
-	// Link a player here.
-	void LinkPlayerHere( UInt32 playerID );
-	// Link player to specified age
-	void LinkPlayerToAge( plAgeLinkStruct * link, UInt32 playerID );
-	// Link player back to his last age
-	void LinkPlayerToPrevAge( UInt32 playerID );
-	// Link us to a players age.
-	void LinkToPlayersAge( UInt32 playerID );
-	// Offer a link to player.
-	void OfferLinkToPlayer( const plAgeLinkStruct * info, UInt32 playerID, plKey replyKey );
-	void OfferLinkToPlayer( const plAgeInfoStruct * info, UInt32 playerID );
-	void OfferLinkToPlayer( const plAgeLinkStruct * info, UInt32 playerID );
-	// Leave the current age
-	void LeaveAge (bool quitting);
+    // Link to an age.
+    void LinkToAge( plAgeLinkStruct * link, UInt32 playerID=kInvalidPlayerID );
+    void LinkToAge( plAgeLinkStruct * link, const char* linkAnim, UInt32 playerID=kInvalidPlayerID );
+    // Link to my last age.
+    void LinkToPrevAge( UInt32 playerID=kInvalidPlayerID ); 
+    // Link to my Personal Age
+    void LinkToMyPersonalAge( UInt32 playerID=kInvalidPlayerID );
+    // Link to my Neighborhood Age
+    void LinkToMyNeighborhoodAge( UInt32 playerID=kInvalidPlayerID );
+    // Link a player here.
+    void LinkPlayerHere( UInt32 playerID );
+    // Link player to specified age
+    void LinkPlayerToAge( plAgeLinkStruct * link, UInt32 playerID );
+    // Link player back to his last age
+    void LinkPlayerToPrevAge( UInt32 playerID );
+    // Link us to a players age.
+    void LinkToPlayersAge( UInt32 playerID );
+    // Offer a link to player.
+    void OfferLinkToPlayer( const plAgeLinkStruct * info, UInt32 playerID, plKey replyKey );
+    void OfferLinkToPlayer( const plAgeInfoStruct * info, UInt32 playerID );
+    void OfferLinkToPlayer( const plAgeLinkStruct * info, UInt32 playerID );
+    // Leave the current age
+    void LeaveAge (bool quitting);
 
-	// link info
-	plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
-	plAgeLinkStruct * GetPrevAgeLink() { return &fPrevAgeLink; }
+    // link info
+    plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
+    plAgeLinkStruct * GetPrevAgeLink() { return &fPrevAgeLink; }
 
-	// lobby info
-	void SetLobbyAddr( const char * ipaddr ) { fLobbyInfo.SetServerAddr( ipaddr );}
-	void SetLobbyPort( int port ) { fLobbyInfo.SetServerPort( port );}
-	const plNetServerSessionInfo * GetLobbyServerInfo( void ) const { return &fLobbyInfo;}
+    // lobby info
+    void SetLobbyAddr( const char * ipaddr ) { fLobbyInfo.SetServerAddr( ipaddr );}
+    void SetLobbyPort( int port ) { fLobbyInfo.SetServerPort( port );}
+    const plNetServerSessionInfo * GetLobbyServerInfo( void ) const { return &fLobbyInfo;}
 
-	// helpers
-	static std::string GetProperAgeName( const char * ageName );	// attempt to fix wrong case age name.
+    // helpers
+    static std::string GetProperAgeName( const char * ageName );    // attempt to fix wrong case age name.
 
 private:
-	bool				fLinkingEnabled;
-	bool				fLinkedIn;
+    bool                fLinkingEnabled;
+    bool                fLinkedIn;
 
-	// The age we are either joining or are joined with.
-	plAgeLinkStruct		fAgeLink;
+    // The age we are either joining or are joined with.
+    plAgeLinkStruct     fAgeLink;
 
-	// The age we just left.
-	plAgeLinkStruct		fPrevAgeLink;
+    // The age we just left.
+    plAgeLinkStruct     fPrevAgeLink;
 
-	// The lobby we want to talk to.
-	plNetServerSessionInfo	fLobbyInfo;
+    // The lobby we want to talk to.
+    plNetServerSessionInfo  fLobbyInfo;
 };
 
 

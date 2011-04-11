@@ -45,7 +45,7 @@ pyVaultMarkerGameNode::pyVaultMarkerGameNode(RelVaultNode* nfsNode)
 pyVaultMarkerGameNode::pyVaultMarkerGameNode(int n)
 : pyVaultNode(NEWZERO(RelVaultNode))
 {
-	fNode->SetNodeType(plVault::kNodeType_MarkerGame);
+    fNode->SetNodeType(plVault::kNodeType_MarkerGame);
 }
 
 //==================================================================
@@ -54,42 +54,42 @@ pyVaultMarkerGameNode::pyVaultMarkerGameNode(int n)
 
 const char * pyVaultMarkerGameNode::GetGameName () const
 {
-	fGameName[0] = 0;
-	
-	if (fNode) {
-		VaultMarkerGameNode access(fNode);
-		StrToAnsi(fGameName, access.gameName, arrsize(fGameName));
-	}
-	return fGameName;
+    fGameName[0] = 0;
+    
+    if (fNode) {
+        VaultMarkerGameNode access(fNode);
+        StrToAnsi(fGameName, access.gameName, arrsize(fGameName));
+    }
+    return fGameName;
 }
 
 void pyVaultMarkerGameNode::SetGameName (const char v[])
 {
-	if (fNode) {
-		VaultMarkerGameNode access(fNode);
-		wchar unicode[kMaxVaultNodeStringLength];
-		StrToUnicode(unicode, v, arrsize(unicode));
-		access.SetGameName(unicode);
-	}
+    if (fNode) {
+        VaultMarkerGameNode access(fNode);
+        wchar unicode[kMaxVaultNodeStringLength];
+        StrToUnicode(unicode, v, arrsize(unicode));
+        access.SetGameName(unicode);
+    }
 }
 
 const char * pyVaultMarkerGameNode::GetGameGuid () const
 {
-	fGameGuid[0] = 0;
-	
-	if (fNode) {
-		VaultMarkerGameNode access(fNode);
-		GuidToString(access.gameGuid, fGameGuid, arrsize(fGameGuid));
-	}
-	return fGameGuid;
+    fGameGuid[0] = 0;
+    
+    if (fNode) {
+        VaultMarkerGameNode access(fNode);
+        GuidToString(access.gameGuid, fGameGuid, arrsize(fGameGuid));
+    }
+    return fGameGuid;
 }
 
 void pyVaultMarkerGameNode::SetGameGuid (const char v[])
 {
-	if (fNode) {
-		VaultMarkerGameNode access(fNode);
-		Uuid uuid;
-		GuidFromString(v, &uuid);
-		access.SetGameGuid(uuid);
-	}
+    if (fNode) {
+        VaultMarkerGameNode access(fNode);
+        Uuid uuid;
+        GuidFromString(v, &uuid);
+        access.SetGameGuid(uuid);
+    }
 }

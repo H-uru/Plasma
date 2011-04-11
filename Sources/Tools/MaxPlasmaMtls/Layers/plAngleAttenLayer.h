@@ -45,121 +45,121 @@ extern HINSTANCE hInstance;
 class plAngleAttenLayer : public plPlasmaMAXLayer
 {
 protected:
-	// Parameter block
-	IParamBlock2*	fParmsPB;
+    // Parameter block
+    IParamBlock2*   fParmsPB;
 
-	Interval		fIValid;
+    Interval        fIValid;
 
-	BOOL			fCosinesCached;
-	float			fCosTransp0;
-	float			fCosOpaque0;
-	float			fCosTransp1;
-	float			fCosOpaque1;
-
-public:
-	// Ref nums
-	enum
-	{
-		kRefAngles
-	};
-
-	// Block ID's
-	enum
-	{
-		kBlkAngles
-	};
-
-	plAngleAttenLayer();
-	~plAngleAttenLayer();
-	void DeleteThis() { delete this; }		
-
-	//From MtlBase
-	ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
-	BOOL SetDlgThing(ParamDlg* dlg);
-	void Update(TimeValue t, Interval& valid);
-	void Reset();
-	Interval Validity(TimeValue t);
-	ULONG LocalRequirements(int subMtlNum);
-
-	//From Texmap
-	RGBA EvalColor(ShadeContext& sc);
-	float EvalMono(ShadeContext& sc);
-	Point3 EvalNormalPerturb(ShadeContext& sc);
-
-	// For displaying textures in the viewport
-	BOOL SupportTexDisplay() { return FALSE; }
-	void ActivateTexDisplay(BOOL onoff);
-	BITMAPINFO *GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono=FALSE, int forceW=0, int forceH=0);
-	DWORD GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker);
-protected:
-	void	ICacheCosines();
-	void	IChanged();
-	void	IDiscardTexHandle();
+    BOOL            fCosinesCached;
+    float           fCosTransp0;
+    float           fCosOpaque0;
+    float           fCosTransp1;
+    float           fCosOpaque1;
 
 public:
-	
-	//TODO: Return anim index to reference index
-	int SubNumToRefNum(int subNum) { return subNum; }
-	
-	virtual BOOL	DiscardColor() { return true; }
-	
-	// Loading/Saving
-	IOResult Load(ILoad *iload);
-	IOResult Save(ISave *isave);
+    // Ref nums
+    enum
+    {
+        kRefAngles
+    };
 
-	//From Animatable
-	Class_ID ClassID() { return ANGLE_ATTEN_LAYER_CLASS_ID; }		
-	SClass_ID SuperClassID() { return TEXMAP_CLASS_ID; }
-	void GetClassName(TSTR& s) { s = GetString(IDS_ANGLE_ATTEN_LAYER); }
+    // Block ID's
+    enum
+    {
+        kBlkAngles
+    };
 
-	RefTargetHandle Clone( RemapDir &remap );
-	RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-		PartID& partID,  RefMessage message);
+    plAngleAttenLayer();
+    ~plAngleAttenLayer();
+    void DeleteThis() { delete this; }      
 
-	int NumSubs();
-	Animatable* SubAnim(int i); 
-	TSTR SubAnimName(int i);
+    //From MtlBase
+    ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
+    BOOL SetDlgThing(ParamDlg* dlg);
+    void Update(TimeValue t, Interval& valid);
+    void Reset();
+    Interval Validity(TimeValue t);
+    ULONG LocalRequirements(int subMtlNum);
 
-	// TODO: Maintain the number or references here 
-	int NumRefs();
-	RefTargetHandle GetReference(int i);
-	void SetReference(int i, RefTargetHandle rtarg);
+    //From Texmap
+    RGBA EvalColor(ShadeContext& sc);
+    float EvalMono(ShadeContext& sc);
+    Point3 EvalNormalPerturb(ShadeContext& sc);
 
-	int	NumParamBlocks();	// return number of ParamBlocks in this instance
-	IParamBlock2* GetParamBlock(int i); // return i'th ParamBlock
-	IParamBlock2* GetParamBlockByID(BlockID id); // return id'd ParamBlock
+    // For displaying textures in the viewport
+    BOOL SupportTexDisplay() { return FALSE; }
+    void ActivateTexDisplay(BOOL onoff);
+    BITMAPINFO *GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono=FALSE, int forceW=0, int forceH=0);
+    DWORD GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker);
+protected:
+    void    ICacheCosines();
+    void    IChanged();
+    void    IDiscardTexHandle();
 
-	const char *GetTextureName( int which );
+public:
+    
+    //TODO: Return anim index to reference index
+    int SubNumToRefNum(int subNum) { return subNum; }
+    
+    virtual BOOL    DiscardColor() { return true; }
+    
+    // Loading/Saving
+    IOResult Load(ILoad *iload);
+    IOResult Save(ISave *isave);
+
+    //From Animatable
+    Class_ID ClassID() { return ANGLE_ATTEN_LAYER_CLASS_ID; }       
+    SClass_ID SuperClassID() { return TEXMAP_CLASS_ID; }
+    void GetClassName(TSTR& s) { s = GetString(IDS_ANGLE_ATTEN_LAYER); }
+
+    RefTargetHandle Clone( RemapDir &remap );
+    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
+        PartID& partID,  RefMessage message);
+
+    int NumSubs();
+    Animatable* SubAnim(int i); 
+    TSTR SubAnimName(int i);
+
+    // TODO: Maintain the number or references here 
+    int NumRefs();
+    RefTargetHandle GetReference(int i);
+    void SetReference(int i, RefTargetHandle rtarg);
+
+    int NumParamBlocks();   // return number of ParamBlocks in this instance
+    IParamBlock2* GetParamBlock(int i); // return i'th ParamBlock
+    IParamBlock2* GetParamBlockByID(BlockID id); // return id'd ParamBlock
+
+    const char *GetTextureName( int which );
 
 
-	/// ParamBlock accessors
-	enum
-	{
-		kTranspAngle0,
-		kOpaqueAngle0,
-		kOpaqueAngle1,
-		kTranspAngle1,
-		kDoubleFade,
-		kReflect,
-		kLoClamp,
-		kHiClamp
-	};
+    /// ParamBlock accessors
+    enum
+    {
+        kTranspAngle0,
+        kOpaqueAngle0,
+        kOpaqueAngle1,
+        kTranspAngle1,
+        kDoubleFade,
+        kReflect,
+        kLoClamp,
+        kHiClamp
+    };
 
 
-	// Pure virtual accessors for the various bitmap related elements
-	virtual Bitmap *GetMaxBitmap(int index = 0) { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
-	virtual PBBitmap *GetPBBitmap( int index = 0 ) { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
-	virtual int		GetNumBitmaps( void ) { return 0; }
+    // Pure virtual accessors for the various bitmap related elements
+    virtual Bitmap *GetMaxBitmap(int index = 0) { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
+    virtual PBBitmap *GetPBBitmap( int index = 0 ) { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
+    virtual int     GetNumBitmaps( void ) { return 0; }
 
-	// Some specific to processing this layer type into runtime materials.
-	virtual Box3 GetFade();
-	virtual BOOL Reflect();
-	virtual int GetLoClamp();
-	virtual int GetHiClamp();
+    // Some specific to processing this layer type into runtime materials.
+    virtual Box3 GetFade();
+    virtual BOOL Reflect();
+    virtual int GetLoClamp();
+    virtual int GetHiClamp();
 
 protected:
-	virtual void ISetMaxBitmap(Bitmap *bitmap, int index = 0) { hsAssert( false, "Function call not valid on this type of layer." ); }
-	virtual void ISetPBBitmap( PBBitmap *pbbm, int index = 0 ){ hsAssert( false, "Function call not valid on this type of layer." ); }
+    virtual void ISetMaxBitmap(Bitmap *bitmap, int index = 0) { hsAssert( false, "Function call not valid on this type of layer." ); }
+    virtual void ISetPBBitmap( PBBitmap *pbbm, int index = 0 ){ hsAssert( false, "Function call not valid on this type of layer." ); }
 };
 
 #endif // plAngleAttenLayer_inc

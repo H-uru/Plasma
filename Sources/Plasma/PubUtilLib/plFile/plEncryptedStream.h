@@ -36,65 +36,65 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plEncryptedStream : public hsStream
 {
 protected:
-	FILE* fRef;
-	UInt32 fKey[4];
+    FILE* fRef;
+    UInt32 fKey[4];
 
-	UInt32 fActualFileSize;
+    UInt32 fActualFileSize;
 
-	bool fBufferedStream;
+    bool fBufferedStream;
 
-	hsStream* fRAMStream;
+    hsStream* fRAMStream;
 
-	wchar* fWriteFileName;
+    wchar* fWriteFileName;
 
-	enum OpenMode { kOpenRead, kOpenWrite, kOpenFail };
-	OpenMode fOpenMode;
+    enum OpenMode { kOpenRead, kOpenWrite, kOpenFail };
+    OpenMode fOpenMode;
 
-	void IBufferFile();
+    void IBufferFile();
 
-	UInt32 IRead(UInt32 bytes, void* buffer);
+    UInt32 IRead(UInt32 bytes, void* buffer);
 
-	void IEncipher(UInt32* const v);
-	void IDecipher(UInt32* const v);
+    void IEncipher(UInt32* const v);
+    void IDecipher(UInt32* const v);
 
-	bool IWriteEncypted(hsStream* sourceStream, const wchar* outputFile);
+    bool IWriteEncypted(hsStream* sourceStream, const wchar* outputFile);
 
-	static bool ICheckMagicString(FILE* fp);
+    static bool ICheckMagicString(FILE* fp);
 
 public:
-	// If you don't pass in a key (4 UInt32's), the default one will be used
-	plEncryptedStream(UInt32* key=nil);
-	~plEncryptedStream();
+    // If you don't pass in a key (4 UInt32's), the default one will be used
+    plEncryptedStream(UInt32* key=nil);
+    ~plEncryptedStream();
 
-	virtual hsBool	Open(const char* name, const char* mode = "rb");
-	virtual hsBool	Open(const wchar* name, const wchar* mode = L"rb");
-	virtual hsBool	Close();
+    virtual hsBool  Open(const char* name, const char* mode = "rb");
+    virtual hsBool  Open(const wchar* name, const wchar* mode = L"rb");
+    virtual hsBool  Close();
 
-	virtual UInt32	Read(UInt32 byteCount, void* buffer);
-	virtual UInt32	Write(UInt32 byteCount, const void* buffer);
-	virtual hsBool	AtEnd();
-	virtual void	Skip(UInt32 deltaByteCount);
-	virtual void	Rewind();
-	virtual void	FastFwd();
-	virtual UInt32	GetEOF();
+    virtual UInt32  Read(UInt32 byteCount, void* buffer);
+    virtual UInt32  Write(UInt32 byteCount, const void* buffer);
+    virtual hsBool  AtEnd();
+    virtual void    Skip(UInt32 deltaByteCount);
+    virtual void    Rewind();
+    virtual void    FastFwd();
+    virtual UInt32  GetEOF();
 
-	UInt32 GetActualFileSize() const { return fActualFileSize;}
+    UInt32 GetActualFileSize() const { return fActualFileSize;}
 
-	static bool FileEncrypt(const char* fileName);
-	static bool FileEncrypt(const wchar* fileName);
-	static bool FileDecrypt(const char* fileName);
-	static bool FileDecrypt(const wchar* fileName);
+    static bool FileEncrypt(const char* fileName);
+    static bool FileEncrypt(const wchar* fileName);
+    static bool FileDecrypt(const char* fileName);
+    static bool FileDecrypt(const wchar* fileName);
 
-	static bool IsEncryptedFile(const char* fileName);
-	static bool IsEncryptedFile(const wchar* fileName);
+    static bool IsEncryptedFile(const char* fileName);
+    static bool IsEncryptedFile(const wchar* fileName);
 
-	// Attempts to create a read-binary stream for the requested file.  If it's
-	// encrypted, you'll get a plEncryptedStream, otherwise just a standard
-	// hsUNIXStream.  Remember to delete the stream when you're done with it.
-	static hsStream* OpenEncryptedFile(const char* fileName, bool requireEncrypted = true, UInt32* cryptKey = nil);
-	static hsStream* OpenEncryptedFile(const wchar* fileName, bool requireEncrypted = true, UInt32* cryptKey = nil);
-	static hsStream* OpenEncryptedFileWrite(const char* fileName, UInt32* cryptKey = nil);
-	static hsStream* OpenEncryptedFileWrite(const wchar* fileName, UInt32* cryptKey = nil);
+    // Attempts to create a read-binary stream for the requested file.  If it's
+    // encrypted, you'll get a plEncryptedStream, otherwise just a standard
+    // hsUNIXStream.  Remember to delete the stream when you're done with it.
+    static hsStream* OpenEncryptedFile(const char* fileName, bool requireEncrypted = true, UInt32* cryptKey = nil);
+    static hsStream* OpenEncryptedFile(const wchar* fileName, bool requireEncrypted = true, UInt32* cryptKey = nil);
+    static hsStream* OpenEncryptedFileWrite(const char* fileName, UInt32* cryptKey = nil);
+    static hsStream* OpenEncryptedFileWrite(const wchar* fileName, UInt32* cryptKey = nil);
 };
 
 #endif // plEncryptedStream_h_inc

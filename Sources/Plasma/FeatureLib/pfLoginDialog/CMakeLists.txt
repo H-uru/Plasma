@@ -4,16 +4,16 @@ include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
 set(pfLoginDialog_SOURCES
-	plLoginDialog.cpp
+    plLoginDialog.cpp
 )
 
 set(pfLoginDialog_HEADERS
-	plLoginDialog.h
-	resource.h
+    plLoginDialog.h
+    resource.h
 )
 
 set(pfLoginDialog_RESOURCES
-	pfLoginDialog.rc
+    pfLoginDialog.rc
 )
 
 add_library(pfLoginDialog STATIC ${pfLoginDialog_SOURCES} ${pfLoginDialog_HEADERS} ${pfLoginDialog_RESOURCES})

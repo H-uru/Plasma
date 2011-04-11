@@ -38,45 +38,45 @@ class hsExceptionStackDestroyer;
 
 class hsExceptionStack
 {
-	friend class hsExceptionStackDestroyer;
+    friend class hsExceptionStackDestroyer;
 private:
-	hsExceptionStack()						{ }
+    hsExceptionStack()                      { }
 public:
-	~hsExceptionStack()						{ }
+    ~hsExceptionStack()                     { }
 
-	static hsExceptionStack& Instance();
+    static hsExceptionStack& Instance();
 
-	Int32 GetNumEntries() const				{ return fEntries.Count(); }
-	const char* GetEntry(Int32 i) const		{ return fEntries[i]; }
+    Int32 GetNumEntries() const             { return fEntries.Count(); }
+    const char* GetEntry(Int32 i) const     { return fEntries[i]; }
 
-	void Push(const char* str);
+    void Push(const char* str);
 
-	// After an exception is caught and stack has been displayed,
-	// call continue to flush stack
-	void Continue()							{ fEntries.Reset(); }
+    // After an exception is caught and stack has been displayed,
+    // call continue to flush stack
+    void Continue()                         { fEntries.Reset(); }
 
 private:
-	static void FreeInstance();
+    static void FreeInstance();
 
-	hsTArray<const char*>					fEntries;
+    hsTArray<const char*>                   fEntries;
 
-	static hsExceptionStack*				fExceptionStack;
-	static hsExceptionStackDestroyer		fExceptionStackDestroyer;
+    static hsExceptionStack*                fExceptionStack;
+    static hsExceptionStackDestroyer        fExceptionStackDestroyer;
 };
 
 inline hsExceptionStack& hsExceptionStack::Instance()
 {
-	if (!fExceptionStack)
-	{
-		fExceptionStack = TRACKED_NEW hsExceptionStack;
-	}
+    if (!fExceptionStack)
+    {
+        fExceptionStack = TRACKED_NEW hsExceptionStack;
+    }
 
-	return *fExceptionStack;
+    return *fExceptionStack;
 }
 
 inline void hsExceptionStack::Push(const char* str)
 {
-	fEntries.Append(str);
+    fEntries.Append(str);
 }
 
 //
@@ -85,10 +85,10 @@ inline void hsExceptionStack::Push(const char* str)
 class hsExceptionStackDestroyer 
 {
 public:
-	~hsExceptionStackDestroyer()
-	{
-		hsExceptionStack::FreeInstance();
-	}
+    ~hsExceptionStackDestroyer()
+    {
+        hsExceptionStack::FreeInstance();
+    }
 };
 
 #ifdef HS_DEBUGGING
@@ -102,8 +102,8 @@ public:
 
 #else // HS_NO_TRY
 
-#define hsGuardBegin(X)		{ const char* guardToken = X; try {
-#define hsGuardEnd			} catch(...) { hsExceptionStack::Instance().Push(guardToken); throw; } }
+#define hsGuardBegin(X)     { const char* guardToken = X; try {
+#define hsGuardEnd          } catch(...) { hsExceptionStack::Instance().Push(guardToken); throw; } }
 
 #endif // HS_NO_TRY
 

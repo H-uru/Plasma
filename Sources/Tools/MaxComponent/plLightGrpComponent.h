@@ -38,27 +38,27 @@ class plDrawableSpans;
 class plLightGrpComponent : public plComponent
 {
 private:
-	hsBool			fValid;
+    hsBool          fValid;
 
-	hsTArray<plMaxNode*>		fLightNodes;
-	hsTArray<plLightInfo*>		fLightInfos;
+    hsTArray<plMaxNode*>        fLightNodes;
+    hsTArray<plLightInfo*>      fLightInfos;
 
-	hsBool		IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg);
-	hsBool		ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, UInt32 diIndex);
-	hsBool		IGetLightInfos();
+    hsBool      IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    hsBool      ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, UInt32 diIndex);
+    hsBool      IGetLightInfos();
 
 public:
-	plLightGrpComponent();
+    plLightGrpComponent();
 
-	hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-	hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	const hsTArray<plLightInfo*>& GetLightInfos();
+    const hsTArray<plLightInfo*>& GetLightInfos();
 
-	IOResult Load(ILoad* iload);
+    IOResult Load(ILoad* iload);
 
-	static plLightGrpComponent* GetComp(plMaxNode* node);
+    static plLightGrpComponent* GetComp(plMaxNode* node);
 };
 
 

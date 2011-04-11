@@ -37,39 +37,39 @@ class plResMgrHelperMsg : public plMessage
 {
 protected:
 
-	friend class plResManagerHelper;
+    friend class plResManagerHelper;
 
-	plResPageKeyRefList	*fKeyList;
+    plResPageKeyRefList *fKeyList;
 
-	UInt8		fCommand;
+    UInt8       fCommand;
 
 public:
 
-	enum Commands
-	{
-		kKeyRefList,
-		kUpdateDebugScreen,
-		kEnableDebugScreen,
-		kDisableDebugScreen
-	};
+    enum Commands
+    {
+        kKeyRefList,
+        kUpdateDebugScreen,
+        kEnableDebugScreen,
+        kDisableDebugScreen
+    };
 
-	plResMgrHelperMsg( UInt8 command = 0 ) : plMessage(nil, nil, nil), fKeyList( nil ) { fCommand = command; }
-	~plResMgrHelperMsg() { delete fKeyList; }
+    plResMgrHelperMsg( UInt8 command = 0 ) : plMessage(nil, nil, nil), fKeyList( nil ) { fCommand = command; }
+    ~plResMgrHelperMsg() { delete fKeyList; }
 
-	CLASSNAME_REGISTER( plResMgrHelperMsg );
-	GETINTERFACE_ANY( plResMgrHelperMsg, plMessage );
+    CLASSNAME_REGISTER( plResMgrHelperMsg );
+    GETINTERFACE_ANY( plResMgrHelperMsg, plMessage );
 
-	virtual void Read(hsStream* s, hsResMgr* mgr) 
-	{ 
-		hsAssert( false, "This should never get read" );
-	}
-	
-	virtual void Write(hsStream* s, hsResMgr* mgr) 
-	{ 
-		hsAssert( false, "This should never get written" );
-	}
+    virtual void Read(hsStream* s, hsResMgr* mgr) 
+    { 
+        hsAssert( false, "This should never get read" );
+    }
+    
+    virtual void Write(hsStream* s, hsResMgr* mgr) 
+    { 
+        hsAssert( false, "This should never get written" );
+    }
 
-	UInt8	GetCommand( void ) const { return fCommand; }
+    UInt8   GetCommand( void ) const { return fCommand; }
 };
 
 #endif // _plResMgrHelperMsg_h

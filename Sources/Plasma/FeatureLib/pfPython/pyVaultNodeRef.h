@@ -41,38 +41,38 @@ struct RelVaultNode;
 
 class pyVaultNodeRef
 {
-	RelVaultNode *	fParent;
-	RelVaultNode *	fChild;
+    RelVaultNode *  fParent;
+    RelVaultNode *  fChild;
 
 protected:
-	// should only be created from C++ side
-	pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child);
-	pyVaultNodeRef(int =0 );
+    // should only be created from C++ side
+    pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child);
+    pyVaultNodeRef(int =0 );
 
 public:
-	~pyVaultNodeRef();
-	
-	RelVaultNode *	GetParentNode () const { return fParent; }
-	RelVaultNode *	GetChildNode () const { return fChild; }
+    ~pyVaultNodeRef();
+    
+    RelVaultNode *  GetParentNode () const { return fParent; }
+    RelVaultNode *  GetChildNode () const { return fChild; }
 
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE; // so we can subclass
-	PYTHON_CLASS_NEW_FRIEND(ptVaultNodeRef);
-	static PyObject *New(RelVaultNode * parent, RelVaultNode * child);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultNodeRef object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultNodeRef); // converts a PyObject to a pyVaultNodeRef (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE; // so we can subclass
+    PYTHON_CLASS_NEW_FRIEND(ptVaultNodeRef);
+    static PyObject *New(RelVaultNode * parent, RelVaultNode * child);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultNodeRef object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultNodeRef); // converts a PyObject to a pyVaultNodeRef (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	PyObject * GetParent ();
-	PyObject * GetChild ();
-	PyObject * GetSaver ();	// returns pyVaultPlayerInfoNode
-	bool BeenSeen ();
-	void SetSeen (bool v);
-	
-	unsigned GetParentID ();
-	unsigned GetChildID ();
-	unsigned GetSaverID ();
+    PyObject * GetParent ();
+    PyObject * GetChild ();
+    PyObject * GetSaver (); // returns pyVaultPlayerInfoNode
+    bool BeenSeen ();
+    void SetSeen (bool v);
+    
+    unsigned GetParentID ();
+    unsigned GetChildID ();
+    unsigned GetSaverID ();
 };
 
 #endif // _pyVaultNodeRef_h_

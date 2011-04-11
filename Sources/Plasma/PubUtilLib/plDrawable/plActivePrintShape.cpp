@@ -36,79 +36,79 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plTimeMsg.h"
 
 plActivePrintShape::plActivePrintShape()
-:	fShapeMsg(nil)
+:   fShapeMsg(nil)
 {
 }
 
 plActivePrintShape::~plActivePrintShape()
 {
-	delete fShapeMsg;
+    delete fShapeMsg;
 }
 
 void plActivePrintShape::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plPrintShape::Read(stream, mgr);
+    plPrintShape::Read(stream, mgr);
 
-	UInt32 n = stream->ReadSwap32();
-	fDecalMgrs.SetCount(n);
-	int i;
-	for( i = 0; i < n; i++ )
-		fDecalMgrs[i] = mgr->ReadKey(stream);
+    UInt32 n = stream->ReadSwap32();
+    fDecalMgrs.SetCount(n);
+    int i;
+    for( i = 0; i < n; i++ )
+        fDecalMgrs[i] = mgr->ReadKey(stream);
 
-	plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
+    plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
 void plActivePrintShape::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plPrintShape::Write(stream, mgr);
+    plPrintShape::Write(stream, mgr);
 
-	stream->WriteSwap32(fDecalMgrs.GetCount());
-	int i;
-	for( i = 0; i < fDecalMgrs.GetCount(); i++ )
-		mgr->WriteKey(stream, fDecalMgrs[i]);
+    stream->WriteSwap32(fDecalMgrs.GetCount());
+    int i;
+    for( i = 0; i < fDecalMgrs.GetCount(); i++ )
+        mgr->WriteKey(stream, fDecalMgrs[i]);
 }
 
-	// Export construction
+    // Export construction
 void plActivePrintShape::AddDecalKey(const plKey& k)
 {
-	fDecalMgrs.Append(k);
+    fDecalMgrs.Append(k);
 }
 
 hsBool plActivePrintShape::MsgReceive(plMessage* msg)
 {
-	plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
-	if( eval )
-	{
-		return INotify();
-	}
+    plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
+    if( eval )
+    {
+        return INotify();
+    }
 
-	return plPrintShape::MsgReceive(msg);
+    return plPrintShape::MsgReceive(msg);
 }
 
 hsBool plActivePrintShape::INotify()
 {
-	if( !fShapeMsg )
-		ISetupShapeMsg();
+    if( !fShapeMsg )
+        ISetupShapeMsg();
 
-	if( fDecalMgrs.GetCount() )
-	{
-		fShapeMsg->SetBCastFlag(plMessage::kBCastByExactType, false);
-		int i;
-		for( i = 0; i < fDecalMgrs.GetCount(); i++ )
-		{
-			fShapeMsg->ClearReceivers().SendAndKeep(fDecalMgrs[i]);
-		}
-	}
-	else
-	{
-		fShapeMsg->SetBCastFlag(plMessage::kBCastByExactType, true);
-		fShapeMsg->SendAndKeep();
-	}
-	return true;
+    if( fDecalMgrs.GetCount() )
+    {
+        fShapeMsg->SetBCastFlag(plMessage::kBCastByExactType, false);
+        int i;
+        for( i = 0; i < fDecalMgrs.GetCount(); i++ )
+        {
+            fShapeMsg->ClearReceivers().SendAndKeep(fDecalMgrs[i]);
+        }
+    }
+    else
+    {
+        fShapeMsg->SetBCastFlag(plMessage::kBCastByExactType, true);
+        fShapeMsg->SendAndKeep();
+    }
+    return true;
 }
 
 plRippleShapeMsg* plActivePrintShape::ISetupShapeMsg()
 {
-	fShapeMsg = TRACKED_NEW plRippleShapeMsg(nil, this);
-	return fShapeMsg;
+    fShapeMsg = TRACKED_NEW plRippleShapeMsg(nil, this);
+    return fShapeMsg;
 }

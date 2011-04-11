@@ -32,16 +32,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 
 struct hsFolderIterator_Data {
-	HANDLE			fSearchHandle;
-	WIN32_FIND_DATA	fFindData;
-	Boolean			fValid;
+    HANDLE          fSearchHandle;
+    WIN32_FIND_DATA fFindData;
+    Boolean         fValid;
 };
 
 hsFolderIterator::hsFolderIterator(const char path[], bool useCustomFilter)
 {
    fCustomFilter = useCustomFilter;
 
-	fData = TRACKED_NEW hsFolderIterator_Data;
+    fData = TRACKED_NEW hsFolderIterator_Data;
    fData->fSearchHandle = nil;
    fData->fValid = true;
    
@@ -83,7 +83,7 @@ void hsFolderIterator::SetWinSystemDir(const char subdir[])
    hsAssert(ret != 0, "Error getting windows directory in UseWindowsFontsPath");
    
    if (subdir)
-   {	::strcat(fPath, "\\");
+   {    ::strcat(fPath, "\\");
    ::strcat(fPath, subdir);
    ::strcat(fPath, "\\");
    }
@@ -106,20 +106,20 @@ void hsFolderIterator::SetFileFilterStr(const char filterStr[])
 
 void hsFolderIterator::Reset()
 {
-	if (fData->fSearchHandle)
-	{	FindClose(fData->fSearchHandle);
-		fData->fSearchHandle = nil;
-	}
-	fData->fValid = true;
+    if (fData->fSearchHandle)
+    {   FindClose(fData->fSearchHandle);
+        fData->fSearchHandle = nil;
+    }
+    fData->fValid = true;
 }
 
 hsBool hsFolderIterator::NextFile()
 {
-	if (fData->fValid == false)
-		return false;
+    if (fData->fValid == false)
+        return false;
 
-	if (fData->fSearchHandle == nil)
-	{	int	len = ::strlen(fPath);
+    if (fData->fSearchHandle == nil)
+    {   int len = ::strlen(fPath);
 
       if(fCustomFilter == false)
       {
@@ -127,178 +127,178 @@ hsBool hsFolderIterator::NextFile()
          fPath[len+1] = 0;
       }
       
-		fData->fSearchHandle = FindFirstFile(fPath, &fData->fFindData);
-		fPath[len] = 0;
+        fData->fSearchHandle = FindFirstFile(fPath, &fData->fFindData);
+        fPath[len] = 0;
 
-		if (fData->fSearchHandle == INVALID_HANDLE_VALUE)
-		{	fData->fSearchHandle = nil;
-			fData->fValid = false;
-			return false;
-		}
-	}
-	else
-	{	if (FindNextFile(fData->fSearchHandle, &fData->fFindData) == false)
-		{	FindClose(fData->fSearchHandle);
-			fData->fSearchHandle = nil;
-			fData->fValid = false;
-			return false;
-		}
-	}
+        if (fData->fSearchHandle == INVALID_HANDLE_VALUE)
+        {   fData->fSearchHandle = nil;
+            fData->fValid = false;
+            return false;
+        }
+    }
+    else
+    {   if (FindNextFile(fData->fSearchHandle, &fData->fFindData) == false)
+        {   FindClose(fData->fSearchHandle);
+            fData->fSearchHandle = nil;
+            fData->fValid = false;
+            return false;
+        }
+    }
 
-	return true;
+    return true;
 }
 
-hsBool	hsFolderIterator::IsDirectory( void ) const
+hsBool  hsFolderIterator::IsDirectory( void ) const
 {
-	if( fData->fValid && ( fData->fFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
-		return true;
+    if( fData->fValid && ( fData->fFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
+        return true;
 
-	return false;
+    return false;
 }
 
 const char* hsFolderIterator::GetFileName() const
 {
-	if (fData->fValid == false)
-		hsThrow( "end of folder");
+    if (fData->fValid == false)
+        hsThrow( "end of folder");
 
-	return fData->fFindData.cFileName;
+    return fData->fFindData.cFileName;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 struct hsWFolderIterator_Data {
-	HANDLE				fSearchHandle;
-	WIN32_FIND_DATAW	fFindData;
-	Boolean				fValid;
+    HANDLE              fSearchHandle;
+    WIN32_FIND_DATAW    fFindData;
+    Boolean             fValid;
 };
 
 hsWFolderIterator::hsWFolderIterator(const wchar path[], bool useCustomFilter)
 {
-	fCustomFilter = useCustomFilter;
+    fCustomFilter = useCustomFilter;
 
-	fData = TRACKED_NEW hsWFolderIterator_Data;
-	fData->fSearchHandle = nil;
-	fData->fValid = true;
+    fData = TRACKED_NEW hsWFolderIterator_Data;
+    fData->fSearchHandle = nil;
+    fData->fValid = true;
 
-	if(useCustomFilter)
-		SetFileFilterStr(path);
-	else
-		SetPath(path);
+    if(useCustomFilter)
+        SetFileFilterStr(path);
+    else
+        SetPath(path);
 }
 
 hsWFolderIterator::~hsWFolderIterator()
 {
-	delete fData;
+    delete fData;
 }
 
 void hsWFolderIterator::SetPath(const wchar path[])
 {
-	fCustomFilter = false;
-	fPath[0] = 0;
-	if (path)
-	{
-		wcscpy(fPath, path);
+    fCustomFilter = false;
+    fPath[0] = 0;
+    if (path)
+    {
+        wcscpy(fPath, path);
 
-		// Make sure the dir ends with a slash
-		wchar lastchar = fPath[wcslen(fPath)-1];
-		if (lastchar != L'\\' && lastchar != L'/')
-			wcscat(fPath, L"\\");
-	}
+        // Make sure the dir ends with a slash
+        wchar lastchar = fPath[wcslen(fPath)-1];
+        if (lastchar != L'\\' && lastchar != L'/')
+            wcscat(fPath, L"\\");
+    }
 
-	Reset();
+    Reset();
 }
 
 void hsWFolderIterator::SetWinSystemDir(const wchar subdir[])
 {
-	int ret = GetWindowsDirectoryW(fPath, _MAX_PATH);
-	hsAssert(ret != 0, "Error getting windows directory in UseWindowsFontsPath");
+    int ret = GetWindowsDirectoryW(fPath, _MAX_PATH);
+    hsAssert(ret != 0, "Error getting windows directory in UseWindowsFontsPath");
 
-	if (subdir)
-	{
-		wcscat(fPath, L"\\");
-		wcscat(fPath, subdir);
-		wcscat(fPath, L"\\");
-	}
-	Reset();
+    if (subdir)
+    {
+        wcscat(fPath, L"\\");
+        wcscat(fPath, subdir);
+        wcscat(fPath, L"\\");
+    }
+    Reset();
 }
 
 void hsWFolderIterator::SetFileFilterStr(const wchar filterStr[])
 {
-	fPath[0] = 0;
-	if (filterStr)
-	{
-		fCustomFilter = true;
-		wcscpy(fPath, filterStr);
-	}
+    fPath[0] = 0;
+    if (filterStr)
+    {
+        fCustomFilter = true;
+        wcscpy(fPath, filterStr);
+    }
 
-	Reset();
+    Reset();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 void hsWFolderIterator::Reset()
 {
-	if (fData->fSearchHandle)
-	{
-		FindClose(fData->fSearchHandle);
-		fData->fSearchHandle = nil;
-	}
-	fData->fValid = true;
+    if (fData->fSearchHandle)
+    {
+        FindClose(fData->fSearchHandle);
+        fData->fSearchHandle = nil;
+    }
+    fData->fValid = true;
 }
 
 hsBool hsWFolderIterator::NextFile()
 {
-	if (fData->fValid == false)
-		return false;
+    if (fData->fValid == false)
+        return false;
 
-	if (fData->fSearchHandle == nil)
-	{
-		int	len = wcslen(fPath);
+    if (fData->fSearchHandle == nil)
+    {
+        int len = wcslen(fPath);
 
-		if(fCustomFilter == false)
-		{
-			fPath[len] = L'*';
-			fPath[len+1] = L'\0';
-		}
+        if(fCustomFilter == false)
+        {
+            fPath[len] = L'*';
+            fPath[len+1] = L'\0';
+        }
 
-		fData->fSearchHandle = FindFirstFileW(fPath, &fData->fFindData);
-		fPath[len] = 0;
+        fData->fSearchHandle = FindFirstFileW(fPath, &fData->fFindData);
+        fPath[len] = 0;
 
-		if (fData->fSearchHandle == INVALID_HANDLE_VALUE)
-		{
-			fData->fSearchHandle = nil;
-			fData->fValid = false;
-			return false;
-		}
-	}
-	else
-	{
-		if (FindNextFileW(fData->fSearchHandle, &fData->fFindData) == false)
-		{
-			FindClose(fData->fSearchHandle);
-			fData->fSearchHandle = nil;
-			fData->fValid = false;
-			return false;
-		}
-	}
+        if (fData->fSearchHandle == INVALID_HANDLE_VALUE)
+        {
+            fData->fSearchHandle = nil;
+            fData->fValid = false;
+            return false;
+        }
+    }
+    else
+    {
+        if (FindNextFileW(fData->fSearchHandle, &fData->fFindData) == false)
+        {
+            FindClose(fData->fSearchHandle);
+            fData->fSearchHandle = nil;
+            fData->fValid = false;
+            return false;
+        }
+    }
 
-	return true;
+    return true;
 }
 
-hsBool	hsWFolderIterator::IsDirectory( void ) const
+hsBool  hsWFolderIterator::IsDirectory( void ) const
 {
-	if( fData->fValid && ( fData->fFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
-		return true;
+    if( fData->fValid && ( fData->fFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
+        return true;
 
-	return false;
+    return false;
 }
 
 const wchar* hsWFolderIterator::GetFileName() const
 {
-	if (fData->fValid == false)
-		hsThrow( "end of folder");
+    if (fData->fValid == false)
+        hsThrow( "end of folder");
 
-	return fData->fFindData.cFileName;
+    return fData->fFindData.cFileName;
 }
 
-#endif	// HS_BUILD_FOR_WIN32
+#endif  // HS_BUILD_FOR_WIN32

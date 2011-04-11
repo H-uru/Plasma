@@ -34,81 +34,81 @@ pyClimbingWallGame::pyClimbingWallGame(): pyGameCli() {}
 
 pyClimbingWallGame::pyClimbingWallGame(pfGameCli* client): pyGameCli(client)
 {
-	if (client && (client->GetGameTypeId() != kGameTypeId_ClimbingWall))
-		gameClient = nil; // wrong type, just clear it out
+    if (client && (client->GetGameTypeId() != kGameTypeId_ClimbingWall))
+        gameClient = nil; // wrong type, just clear it out
 }
 
 bool pyClimbingWallGame::IsClimbingWallGame(std::wstring guid)
 {
-	Uuid gameUuid(guid.c_str());
-	return gameUuid == kGameTypeId_ClimbingWall;
+    Uuid gameUuid(guid.c_str());
+    return gameUuid == kGameTypeId_ClimbingWall;
 }
 
 void pyClimbingWallGame::JoinCommonClimbingWallGame(pyKey& callbackKey, unsigned gameID)
 {
-	ClimbingWall_CreateParam init;
-	pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_ClimbingWall, gameID, sizeof(init), &init);
+    ClimbingWall_CreateParam init;
+    pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_ClimbingWall, gameID, sizeof(init), &init);
 }
 
 void pyClimbingWallGame::ChangeNumBlockers(int amountToAdjust)
 {
-	if (gameClient)
-	{
-		pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
-		climbingWall->ChangeNumBlockers(amountToAdjust);
-	}
+    if (gameClient)
+    {
+        pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
+        climbingWall->ChangeNumBlockers(amountToAdjust);
+    }
 }
 
 void pyClimbingWallGame::Ready(unsigned readyType, unsigned teamNumber)
 {
-	if (gameClient)
-	{
-		pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
-		climbingWall->Ready(readyType, teamNumber);
-	}
+    if (gameClient)
+    {
+        pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
+        climbingWall->Ready(readyType, teamNumber);
+    }
 }
 
 void pyClimbingWallGame::ChangeBlocker(unsigned teamNumber, unsigned blockerNumber, bool added)
 {
-	if (gameClient)
-	{
-		pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
-		climbingWall->ChangeBlocker(teamNumber, blockerNumber, added);
-	}
+    if (gameClient)
+    {
+        pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
+        climbingWall->ChangeBlocker(teamNumber, blockerNumber, added);
+    }
 }
 
 void pyClimbingWallGame::Reset()
 {
-	if (gameClient)
-	{
-		pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
-		climbingWall->Reset();
-	}
+    if (gameClient)
+    {
+        pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
+        climbingWall->Reset();
+    }
 }
 
 void pyClimbingWallGame::PlayerEntered(unsigned teamNumber)
 {
-	if (gameClient)
-	{
-		pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
-		climbingWall->PlayerEntered(teamNumber);
-	}
+    if (gameClient)
+    {
+        pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
+        climbingWall->PlayerEntered(teamNumber);
+    }
 }
 
 void pyClimbingWallGame::FinishedGame()
 {
-	if (gameClient)
-	{
-		pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
-		climbingWall->FinishedGame();
-	}
+    if (gameClient)
+    {
+        pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
+        climbingWall->FinishedGame();
+    }
 }
 
 void pyClimbingWallGame::Panic()
 {
-	if (gameClient)
-	{
-		pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
-		climbingWall->Panic();
-	}
+    if (gameClient)
+    {
+        pfGmClimbingWall* climbingWall = pfGmClimbingWall::ConvertNoRef(gameClient);
+        climbingWall->Panic();
+    }
 }

@@ -31,340 +31,340 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 {
-	hsScalar age = hsScalar(t - fBirth);
-	if( age >= life )
-		return true;
+    hsScalar age = hsScalar(t - fBirth);
+    if( age >= life )
+        return true;
 
-	int n = fNumVerts;
-	if( !n )
-		return true;
+    int n = fNumVerts;
+    if( !n )
+        return true;
 
-	hsScalar atten = fInitAtten;
-	if( age < ramp )
-	{
-		atten *= age / ramp;
-		fFlags |= kFresh;
-	}
-	else if( age > decay )
-	{
-		atten *= (life - age) / (life - decay);
-		fFlags |= kFresh;
-	}
-	else if( fFlags & kFresh )
-	{
-		fFlags &= ~kFresh;
-	}
-	else 
-	{
-		return false;
-	}
+    hsScalar atten = fInitAtten;
+    if( age < ramp )
+    {
+        atten *= age / ramp;
+        fFlags |= kFresh;
+    }
+    else if( age > decay )
+    {
+        atten *= (life - age) / (life - decay);
+        fFlags |= kFresh;
+    }
+    else if( fFlags & kFresh )
+    {
+        fFlags &= ~kFresh;
+    }
+    else 
+    {
+        return false;
+    }
 
-	hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
+    hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
 
-	if( fFlags & kAttenColor )
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+    if( fFlags & kAttenColor )
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
-			vtx->fDiffuse = 0xff000000 
-				| (diff << 16)
-				| (diff << 8)
-				| diff;
+        while( n-- )
+        {
+            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            vtx->fDiffuse = 0xff000000 
+                | (diff << 16)
+                | (diff << 8)
+                | diff;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	else
-	if( fAuxSpan->fFlags & plAuxSpan::kRTLit )
-	{
-		const int stride = sizeof(plDecalVtxFormat);
+            vtx++;
+            origUVW++;
+        }
+    }
+    else
+    if( fAuxSpan->fFlags & plAuxSpan::kRTLit )
+    {
+        const int stride = sizeof(plDecalVtxFormat);
 
-		hsScalar* sPtr = &origUVW->fZ;
+        hsScalar* sPtr = &origUVW->fZ;
 
-		unsigned char* alpha = (unsigned char*)&fVtxBase->fDiffuse;
-		alpha += 3;
-		while( n-- )
-		{
-			hsScalar initOpac = *sPtr;
-			*alpha = unsigned char(initOpac * atten * 255.99f);
+        unsigned char* alpha = (unsigned char*)&fVtxBase->fDiffuse;
+        alpha += 3;
+        while( n-- )
+        {
+            hsScalar initOpac = *sPtr;
+            *alpha = unsigned char(initOpac * atten * 255.99f);
 
-			alpha += stride;
-			sPtr += 3;
-		}
-	}
-	else
-	{
-		hsScalar* sPtr = &origUVW->fZ;
+            alpha += stride;
+            sPtr += 3;
+        }
+    }
+    else
+    {
+        hsScalar* sPtr = &origUVW->fZ;
 
-		char* oPtr = (char*)&fVtxBase->fUVW[1].fX;
+        char* oPtr = (char*)&fVtxBase->fUVW[1].fX;
 
-		const int stride = sizeof(plDecalVtxFormat);
+        const int stride = sizeof(plDecalVtxFormat);
 
-		while( n-- )
-		{
-			(*(hsScalar*)oPtr) = *sPtr * atten;
+        while( n-- )
+        {
+            (*(hsScalar*)oPtr) = *sPtr * atten;
 
-			oPtr += stride;
-			sPtr += 3;
-		}
-	}
-	return false;
+            oPtr += stride;
+            sPtr += 3;
+        }
+    }
+    return false;
 }
 
 hsBool plDynaRipple::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 {
-	hsScalar age = hsScalar(t - fBirth);
-	if( age >= life )
-		return true;
+    hsScalar age = hsScalar(t - fBirth);
+    if( age >= life )
+        return true;
 
-	int n = fNumVerts;
-	if( !n )
-		return true;
+    int n = fNumVerts;
+    if( !n )
+        return true;
 
-	hsScalar atten = fInitAtten;
-	if( age < ramp )
-	{
-		atten *= age / ramp;
-	}
-	else if( age > decay )
-	{
-		atten *= (life - age) / (life - decay);
-	}
+    hsScalar atten = fInitAtten;
+    if( age < ramp )
+    {
+        atten *= age / ramp;
+    }
+    else if( age > decay )
+    {
+        atten *= (life - age) / (life - decay);
+    }
 
-	hsScalar scaleU = fC1U / (age*fC2U + 1.f);
-	hsScalar scaleV = fC1V / (age*fC2V + 1.f);
+    hsScalar scaleU = fC1U / (age*fC2U + 1.f);
+    hsScalar scaleV = fC1V / (age*fC2V + 1.f);
 
-	hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
+    hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
 
-	if( fFlags & kAttenColor )
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+    if( fFlags & kAttenColor )
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
-			vtx->fDiffuse = 0xff000000 
-				| (diff << 16)
-				| (diff << 8)
-				| diff;
+        while( n-- )
+        {
+            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            vtx->fDiffuse = 0xff000000 
+                | (diff << 16)
+                | (diff << 8)
+                | diff;
 
-			vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
-			vtx->fUVW[0].fY = (origUVW->fY - 0.5f) * scaleV + 0.5f;
+            vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
+            vtx->fUVW[0].fY = (origUVW->fY - 0.5f) * scaleV + 0.5f;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	else
-	if( fAuxSpan->fFlags & plAuxSpan::kRTLit )
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+            vtx++;
+            origUVW++;
+        }
+    }
+    else
+    if( fAuxSpan->fFlags & plAuxSpan::kRTLit )
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			unsigned char* alpha = ((unsigned char*)&vtx->fDiffuse) + 3;
-			*alpha = unsigned char(origUVW->fZ * atten * 255.99f);
+        while( n-- )
+        {
+            unsigned char* alpha = ((unsigned char*)&vtx->fDiffuse) + 3;
+            *alpha = unsigned char(origUVW->fZ * atten * 255.99f);
 
-			vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
-			vtx->fUVW[0].fY = (origUVW->fY - 0.5f) * scaleV + 0.5f;
+            vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
+            vtx->fUVW[0].fY = (origUVW->fY - 0.5f) * scaleV + 0.5f;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	else
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+            vtx++;
+            origUVW++;
+        }
+    }
+    else
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
-			vtx->fUVW[0].fY = (origUVW->fY - 0.5f) * scaleV + 0.5f;
+        while( n-- )
+        {
+            vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
+            vtx->fUVW[0].fY = (origUVW->fY - 0.5f) * scaleV + 0.5f;
 
-			vtx->fUVW[1].fX = origUVW->fZ * atten;
+            vtx->fUVW[1].fX = origUVW->fZ * atten;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	fFlags &= ~kFresh;
-	return false;
+            vtx++;
+            origUVW++;
+        }
+    }
+    fFlags &= ~kFresh;
+    return false;
 }
 
 hsBool plDynaWake::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 {
-	hsScalar age = hsScalar(t - fBirth);
-	if( age >= life )
-		return true;
+    hsScalar age = hsScalar(t - fBirth);
+    if( age >= life )
+        return true;
 
-	int n = fNumVerts;
-	if( !n )
-		return true;
+    int n = fNumVerts;
+    if( !n )
+        return true;
 
-	hsScalar atten = fInitAtten;
-	if( age < ramp )
-	{
-		atten *= age / ramp;
-	}
-	else if( age > decay )
-	{
-		atten *= (life - age) / (life - decay);
-	}
+    hsScalar atten = fInitAtten;
+    if( age < ramp )
+    {
+        atten *= age / ramp;
+    }
+    else if( age > decay )
+    {
+        atten *= (life - age) / (life - decay);
+    }
 
-	hsScalar scaleU = fC1U / (age*fC2U + 1.f);
-	hsScalar scaleV = fC1V / (age*fC2V + 1.f);
+    hsScalar scaleU = fC1U / (age*fC2U + 1.f);
+    hsScalar scaleV = fC1V / (age*fC2V + 1.f);
 
-	hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
+    hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
 
-	if( fFlags & kAttenColor )
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+    if( fFlags & kAttenColor )
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
-			vtx->fDiffuse = 0xff000000 
-				| (diff << 16)
-				| (diff << 8)
-				| diff;
+        while( n-- )
+        {
+            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            vtx->fDiffuse = 0xff000000 
+                | (diff << 16)
+                | (diff << 8)
+                | diff;
 
-			vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
-			vtx->fUVW[0].fY = origUVW->fY * scaleV;
+            vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
+            vtx->fUVW[0].fY = origUVW->fY * scaleV;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	else
-	if( fAuxSpan->fFlags & plAuxSpan::kRTLit )
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+            vtx++;
+            origUVW++;
+        }
+    }
+    else
+    if( fAuxSpan->fFlags & plAuxSpan::kRTLit )
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			unsigned char* alpha = ((unsigned char*)&vtx->fDiffuse) + 3;
-			*alpha = unsigned char(origUVW->fZ * atten * 255.99f);
+        while( n-- )
+        {
+            unsigned char* alpha = ((unsigned char*)&vtx->fDiffuse) + 3;
+            *alpha = unsigned char(origUVW->fZ * atten * 255.99f);
 
-			vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
-			vtx->fUVW[0].fY = origUVW->fY * scaleV;
+            vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
+            vtx->fUVW[0].fY = origUVW->fY * scaleV;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	else
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+            vtx++;
+            origUVW++;
+        }
+    }
+    else
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
-			vtx->fUVW[0].fY = origUVW->fY * scaleV;
+        while( n-- )
+        {
+            vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
+            vtx->fUVW[0].fY = origUVW->fY * scaleV;
 
-			vtx->fUVW[1].fX = origUVW->fZ * atten;
+            vtx->fUVW[1].fX = origUVW->fZ * atten;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	fFlags &= ~kFresh;
-	return false;
+            vtx++;
+            origUVW++;
+        }
+    }
+    fFlags &= ~kFresh;
+    return false;
 }
 
 hsBool plDynaWave::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 {
-	hsScalar age = hsScalar(t - fBirth);
-	if( age >= life )
-		return true;
+    hsScalar age = hsScalar(t - fBirth);
+    if( age >= life )
+        return true;
 
-	int n = fNumVerts;
-	if( !n )
-		return true;
+    int n = fNumVerts;
+    if( !n )
+        return true;
 
-	hsScalar atten = fInitAtten;
-	if( age < ramp )
-	{
-		atten *= age / ramp;
-	}
-	else if( age > decay )
-	{
-		atten *= (life - age) / (life - decay);
-	}
+    hsScalar atten = fInitAtten;
+    if( age < ramp )
+    {
+        atten *= age / ramp;
+    }
+    else if( age > decay )
+    {
+        atten *= (life - age) / (life - decay);
+    }
 
-	hsScalar scale = 1.f + life * fScrollRate;
-	hsScalar scroll = -fScrollRate * age;
+    hsScalar scale = 1.f + life * fScrollRate;
+    hsScalar scroll = -fScrollRate * age;
 
-	hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
+    hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
 
-	if( fFlags & kAttenColor )
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+    if( fFlags & kAttenColor )
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
-			vtx->fDiffuse = 0xff000000 
-				| (diff << 16)
-				| (diff << 8)
-				| diff;
+        while( n-- )
+        {
+            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            vtx->fDiffuse = 0xff000000 
+                | (diff << 16)
+                | (diff << 8)
+                | diff;
 
-			vtx->fUVW[0].fX = origUVW->fX;
-			vtx->fUVW[0].fY = origUVW->fY * scale + scroll;
+            vtx->fUVW[0].fX = origUVW->fX;
+            vtx->fUVW[0].fY = origUVW->fY * scale + scroll;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	else
-	if( fAuxSpan->fFlags & plAuxSpan::kRTLit )
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+            vtx++;
+            origUVW++;
+        }
+    }
+    else
+    if( fAuxSpan->fFlags & plAuxSpan::kRTLit )
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			unsigned char* alpha = ((unsigned char*)&vtx->fDiffuse) + 3;
-			*alpha = unsigned char(origUVW->fZ * atten * 255.99f);
+        while( n-- )
+        {
+            unsigned char* alpha = ((unsigned char*)&vtx->fDiffuse) + 3;
+            *alpha = unsigned char(origUVW->fZ * atten * 255.99f);
 
-			vtx->fUVW[0].fX = origUVW->fX;
-			vtx->fUVW[0].fY = origUVW->fY * scale + scroll;
+            vtx->fUVW[0].fX = origUVW->fX;
+            vtx->fUVW[0].fY = origUVW->fY * scale + scroll;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	else
-	{
-		plDecalVtxFormat* vtx = fVtxBase;
+            vtx++;
+            origUVW++;
+        }
+    }
+    else
+    {
+        plDecalVtxFormat* vtx = fVtxBase;
 
-		while( n-- )
-		{
-			vtx->fUVW[0].fX = origUVW->fX;
-			vtx->fUVW[0].fY = origUVW->fY * scale + scroll;
+        while( n-- )
+        {
+            vtx->fUVW[0].fX = origUVW->fX;
+            vtx->fUVW[0].fY = origUVW->fY * scale + scroll;
 
-			vtx->fUVW[1].fX = origUVW->fZ * atten;
+            vtx->fUVW[1].fX = origUVW->fZ * atten;
 
-			vtx++;
-			origUVW++;
-		}
-	}
-	fFlags &= ~kFresh;
-	return false;
+            vtx++;
+            origUVW++;
+        }
+    }
+    fFlags &= ~kFresh;
+    return false;
 }
 
 hsBool plDynaRippleVS::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 {
-	hsScalar age = hsScalar(t - fBirth);
-	if( age >= life )
-		return true;
+    hsScalar age = hsScalar(t - fBirth);
+    if( age >= life )
+        return true;
 
-	int n = fNumVerts;
-	if( !n )
-		return true;
+    int n = fNumVerts;
+    if( !n )
+        return true;
 
-	fFlags &= ~kFresh;
-	return false;
+    fFlags &= ~kFresh;
+    return false;
 }
 

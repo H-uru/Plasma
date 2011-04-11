@@ -42,37 +42,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 typedef void (*FNetCliCsrConnectedCallback) (
-	void *		param,
-	unsigned	latestBuildId
+    void *      param,
+    unsigned    latestBuildId
 );
 void NetCliCsrStartConnect (
-	const wchar *				addrList[],
-	unsigned					addrCount,
-	FNetCliCsrConnectedCallback	callback = nil,
-	void *						param = nil
+    const wchar *               addrList[],
+    unsigned                    addrCount,
+    FNetCliCsrConnectedCallback callback = nil,
+    void *                      param = nil
 );
 void NetCliCsrDisconnect ();
 
 typedef void (*FNetCliCsrLoginCallback)(
-	ENetError		result,
-	void *			param,
-	const Uuid &	csrId,
-	unsigned		csrFlags
+    ENetError       result,
+    void *          param,
+    const Uuid &    csrId,
+    unsigned        csrFlags
 );
 void NetCliCsrLoginRequest (
-	const wchar				csrName[],
-	const ShaDigest &		namePassHash,
-	FNetCliCsrLoginCallback	callback,
-	void *					param
+    const wchar             csrName[],
+    const ShaDigest &       namePassHash,
+    FNetCliCsrLoginCallback callback,
+    void *                  param
 );
 
 typedef void (*FNetCliCsrSetTicketFilterCallback)(
-	ENetError		result,
-	void *			param
+    ENetError       result,
+    void *          param
 );
 void NetCliCsrSetTicketFilter (
-	const wchar							filterSpec[],
-	FNetCliCsrSetTicketFilterCallback	callback,
-	void *								param
+    const wchar                         filterSpec[],
+    FNetCliCsrSetTicketFilterCallback   callback,
+    void *                              param
 );
 

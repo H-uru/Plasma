@@ -39,32 +39,32 @@ class plStateDataRecord;
 class plAGMasterSDLModifier : public plAnimTimeConvertSDLModifier
 {
 protected:
-	// var labels 
-	struct AGMasterVarNames
-	{
-		static char	kStrAtcs[];		// animTimeConverts
-		static char	kStrBlends[];
-	};
+    // var labels 
+    struct AGMasterVarNames
+    {
+        static char kStrAtcs[];     // animTimeConverts
+        static char kStrBlends[];
+    };
 
-	plAGMasterMod* IGetObjectsAGMasterMod(plSceneObject* obj);
-	
-	void IPutBlends(plStateDataRecord* state, plAGMasterMod* objAGMaster);
-	void ISetCurrentBlends(const plStateDataRecord* state, plAGMasterMod* objAGMaster);
+    plAGMasterMod* IGetObjectsAGMasterMod(plSceneObject* obj);
+    
+    void IPutBlends(plStateDataRecord* state, plAGMasterMod* objAGMaster);
+    void ISetCurrentBlends(const plStateDataRecord* state, plAGMasterMod* objAGMaster);
 
-	void IPutCurrentStateIn(plStateDataRecord* dstState);
-	void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
 
-	UInt32 IApplyModFlags(UInt32 sendFlags);
+    UInt32 IApplyModFlags(UInt32 sendFlags);
 
 public:
-	CLASSNAME_REGISTER( plAGMasterSDLModifier);
-	GETINTERFACE_ANY( plAGMasterSDLModifier, plAnimTimeConvertSDLModifier);
+    CLASSNAME_REGISTER( plAGMasterSDLModifier);
+    GETINTERFACE_ANY( plAGMasterSDLModifier, plAnimTimeConvertSDLModifier);
 
-	plAGMasterSDLModifier() {}
-	~plAGMasterSDLModifier() {}
-		
-	const char* GetSDLName() const { return kSDLAGMaster; }
+    plAGMasterSDLModifier() {}
+    ~plAGMasterSDLModifier() {}
+        
+    const char* GetSDLName() const { return kSDLAGMaster; }
 };
 
-#endif	// plAGMasterSDLModifier_inc
+#endif  // plAGMasterSDLModifier_inc
 

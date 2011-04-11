@@ -661,9 +661,9 @@ bool IniGetUnsigned (
     ASSERT(result);
 
     for (;;) {
-		if (!value)
-			break;
-			
+        if (!value)
+            break;
+            
         wchar str[32];
         if (!IniGetString(value, str, arrsize(str), index, nil))
             break;
@@ -725,10 +725,10 @@ unsigned IniGetBoundedValue (
     unsigned            maxVal,
     unsigned            defVal
 ) {
-	if (!value)
-		return defVal;
+    if (!value)
+        return defVal;
 
-	unsigned result;
+    unsigned result;
     IniGetUnsigned(value, &result, index, defVal);
     if ((result < minVal) || (result > maxVal)) {
         result = defVal;

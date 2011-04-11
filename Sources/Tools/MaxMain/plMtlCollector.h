@@ -44,22 +44,22 @@ typedef std::set<const char*, stringISorter> TexNameSet;
 class plMtlCollector
 {
 public:
-	enum
-	{
-		kUsedOnly = 0x1,
-		kPlasmaOnly = 0x2,
-		kNoMultiMtl = 0x4,
-		kClothingMtlOnly = 0x8,
-		kNoSubMtls = 0x10,
-	};
+    enum
+    {
+        kUsedOnly = 0x1,
+        kPlasmaOnly = 0x2,
+        kNoMultiMtl = 0x4,
+        kClothingMtlOnly = 0x8,
+        kNoSubMtls = 0x10,
+    };
 
-	static void GetMtls(MtlSet* mtls, TexSet* texmaps, UInt32 flags=0);
+    static void GetMtls(MtlSet* mtls, TexSet* texmaps, UInt32 flags=0);
 
-	static void GetMtlLayers(Mtl *mtl, LayerSet& layers);
+    static void GetMtlLayers(Mtl *mtl, LayerSet& layers);
 
-	// Warning: These pointers are only valid until you return control to Max
-	// (where a bitmap could be modified).  Don't hang on to them!
-	static void GetAllTextures(TexNameSet& texNames);
+    // Warning: These pointers are only valid until you return control to Max
+    // (where a bitmap could be modified).  Don't hang on to them!
+    static void GetAllTextures(TexNameSet& texNames);
 };
 
 #endif // plMtlCollector_h_inc

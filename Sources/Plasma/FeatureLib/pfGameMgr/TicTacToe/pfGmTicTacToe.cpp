@@ -41,24 +41,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct ITicTacToe {
-	pfGmTicTacToe *	gameCli;
-	char			board[3][3];
-	char			myself;
-	char			other;
-	
-	ITicTacToe (pfGmTicTacToe *	gameCli);
+    pfGmTicTacToe * gameCli;
+    char            board[3][3];
+    char            myself;
+    char            other;
+    
+    ITicTacToe (pfGmTicTacToe * gameCli);
 
-	// pfGameCli event notification handlers
-	void Recv			(GameMsgHeader * msg, void * param);
-	void OnPlayerJoined	(const Srv2Cli_Game_PlayerJoined & msg);
-	void OnPlayerLeft	(const Srv2Cli_Game_PlayerLeft & msg);
-	void OnInviteFailed	(const Srv2Cli_Game_InviteFailed & msg);
-	void OnOwnerChange	(const Srv2Cli_Game_OwnerChange & msg);
+    // pfGameCli event notification handlers
+    void Recv           (GameMsgHeader * msg, void * param);
+    void OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg);
+    void OnPlayerLeft   (const Srv2Cli_Game_PlayerLeft & msg);
+    void OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg);
+    void OnOwnerChange  (const Srv2Cli_Game_OwnerChange & msg);
 
-	// TicTacToe network message handlers	
-	void RecvGameStarted	(const Srv2Cli_TTT_GameStarted & msg, void * param);
-	void RecvGameOver		(const Srv2Cli_TTT_GameOver & msg, void * param);
-	void RecvMoveMade		(const Srv2Cli_TTT_MoveMade & msg, void * param);
+    // TicTacToe network message handlers   
+    void RecvGameStarted    (const Srv2Cli_TTT_GameStarted & msg, void * param);
+    void RecvGameOver       (const Srv2Cli_TTT_GameOver & msg, void * param);
+    void RecvMoveMade       (const Srv2Cli_TTT_MoveMade & msg, void * param);
 };
 
 
@@ -70,22 +70,22 @@ struct ITicTacToe {
 
 //============================================================================
 static pfGameCli * TicTacToeFactory (
-	unsigned	gameId,
-	plKey		receiver
+    unsigned    gameId,
+    plKey       receiver
 ) {
-	return NEWZERO(pfGmTicTacToe)(gameId, receiver);
+    return NEWZERO(pfGmTicTacToe)(gameId, receiver);
 }
 
 //============================================================================
 AUTO_INIT_FUNC(RegisterTicTacToeFactory) {
 
-	static GameTypeReg reg = {
-		TicTacToeFactory,
-		kGameTypeId_TicTacToe,
-		L"Tic-Tac-Toe"
-	};
+    static GameTypeReg reg = {
+        TicTacToeFactory,
+        kGameTypeId_TicTacToe,
+        L"Tic-Tac-Toe"
+    };
 
-	GameMgrRegisterGameType(reg);
+    GameMgrRegisterGameType(reg);
 }
 
 
@@ -97,83 +97,83 @@ AUTO_INIT_FUNC(RegisterTicTacToeFactory) {
 
 //============================================================================
 ITicTacToe::ITicTacToe (pfGmTicTacToe * gameCli)
-:	gameCli(gameCli)
+:   gameCli(gameCli)
 {
-	// Fill the board with space chars
-	MemSet(board, ' ', sizeof(board));
+    // Fill the board with space chars
+    MemSet(board, ' ', sizeof(board));
 }
 
 //============================================================================
 void ITicTacToe::OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) {
 
-	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
-	gameCliMsg->Set(gameCli, msg);
-	gameCliMsg->Send(gameCli->GetReceiver());
+    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    gameCliMsg->Set(gameCli, msg);
+    gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void ITicTacToe::OnPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg) {
 
-	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
-	gameCliMsg->Set(gameCli, msg);
-	gameCliMsg->Send(gameCli->GetReceiver());
+    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    gameCliMsg->Set(gameCli, msg);
+    gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void ITicTacToe::OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) {
-	
-	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
-	gameCliMsg->Set(gameCli, msg);
-	gameCliMsg->Send(gameCli->GetReceiver());
+    
+    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    gameCliMsg->Set(gameCli, msg);
+    gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void ITicTacToe::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 
-	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
-	gameCliMsg->Set(gameCli, msg);
-	gameCliMsg->Send(gameCli->GetReceiver());
+    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    gameCliMsg->Set(gameCli, msg);
+    gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void ITicTacToe::RecvGameStarted (const Srv2Cli_TTT_GameStarted & msg, void * param) {
-	// player that goes first is shown as X's.
-	if (msg.yourTurn) {
-		myself	= 'X';
-		other	= 'O';
-	}
-	else {
-		myself	= 'O';
-		other	= 'X';
-	}
+    // player that goes first is shown as X's.
+    if (msg.yourTurn) {
+        myself  = 'X';
+        other   = 'O';
+    }
+    else {
+        myself  = 'O';
+        other   = 'X';
+    }
 
-	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
-	gameCliMsg->Set(gameCli, msg);
-	gameCliMsg->Send(gameCli->GetReceiver());
+    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    gameCliMsg->Set(gameCli, msg);
+    gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void ITicTacToe::RecvGameOver (const Srv2Cli_TTT_GameOver & msg, void * param) {
-	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
-	gameCliMsg->Set(gameCli, msg);
-	gameCliMsg->Send(gameCli->GetReceiver());
+    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    gameCliMsg->Set(gameCli, msg);
+    gameCliMsg->Send(gameCli->GetReceiver());
 
-	DEL(gameCli);	// we're done
+    DEL(gameCli);   // we're done
 }
 
 //============================================================================
 void ITicTacToe::RecvMoveMade (const Srv2Cli_TTT_MoveMade & msg, void * param) {
-	// Update the board with the appropriate piece	
-	if (msg.playerId == NetCommGetPlayer()->playerInt)
-		board[msg.row][msg.col] = myself;
-	else
-		board[msg.row][msg.col] = other;
+    // Update the board with the appropriate piece  
+    if (msg.playerId == NetCommGetPlayer()->playerInt)
+        board[msg.row][msg.col] = myself;
+    else
+        board[msg.row][msg.col] = other;
 
-	pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
-	gameCliMsg->Set(gameCli, msg);
-	gameCliMsg->Send(gameCli->GetReceiver());
+    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    gameCliMsg->Set(gameCli, msg);
+    gameCliMsg->Send(gameCli->GetReceiver());
 }
-															    
+                                                                
 
 /*****************************************************************************
 *
@@ -183,89 +183,89 @@ void ITicTacToe::RecvMoveMade (const Srv2Cli_TTT_MoveMade & msg, void * param) {
 
 //============================================================================
 pfGmTicTacToe::pfGmTicTacToe (
-	unsigned	gameId,
-	plKey		receiver
+    unsigned    gameId,
+    plKey       receiver
 )
-:	pfGameCli(gameId, receiver)
+:   pfGameCli(gameId, receiver)
 {
-	internal = NEWZERO(ITicTacToe)(this);
+    internal = NEWZERO(ITicTacToe)(this);
 }
 
 //============================================================================
 pfGmTicTacToe::~pfGmTicTacToe () {
 
-	DEL(internal);
+    DEL(internal);
 }
 
 //============================================================================
 void pfGmTicTacToe::Recv (GameMsgHeader * msg, void * param) {
 
-	#define DISPATCH(a) case kSrv2Cli_TTT_##a: {					\
-		const Srv2Cli_TTT_##a & m = *(const Srv2Cli_TTT_##a *)msg;	\
-		internal->Recv##a(m, param);								\
-	}																\
-	break;															//
-	switch (msg->messageId) {
-		DISPATCH(GameStarted);
-		DISPATCH(GameOver);
-		DISPATCH(MoveMade);
-		DEFAULT_FATAL(msg->messageId);
-	}
-	#undef DISPATCH
+    #define DISPATCH(a) case kSrv2Cli_TTT_##a: {                    \
+        const Srv2Cli_TTT_##a & m = *(const Srv2Cli_TTT_##a *)msg;  \
+        internal->Recv##a(m, param);                                \
+    }                                                               \
+    break;                                                          //
+    switch (msg->messageId) {
+        DISPATCH(GameStarted);
+        DISPATCH(GameOver);
+        DISPATCH(MoveMade);
+        DEFAULT_FATAL(msg->messageId);
+    }
+    #undef DISPATCH
 }
 
 //============================================================================
 void pfGmTicTacToe::OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) {
 
-	internal->OnPlayerJoined(msg);
+    internal->OnPlayerJoined(msg);
 }
 
 //============================================================================
 void pfGmTicTacToe::OnPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg) {
 
-	internal->OnPlayerLeft(msg);
+    internal->OnPlayerLeft(msg);
 }
 
 //============================================================================
 void pfGmTicTacToe::OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) {
 
-	internal->OnInviteFailed(msg);
+    internal->OnInviteFailed(msg);
 }
 
 //============================================================================
 void pfGmTicTacToe::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 
-	internal->OnOwnerChange(msg);
+    internal->OnOwnerChange(msg);
 }
 
 //============================================================================
 void pfGmTicTacToe::MakeMove (unsigned row, unsigned col) {
 
-	Cli2Srv_TTT_MakeMove msg;
-	msg.messageId		= kCli2Srv_TTT_MakeMove;
-	msg.messageBytes	= sizeof(msg);
-	msg.recvGameId		= GetGameId();	// send to GameSrv on server
-	msg.transId			= 0;
-	msg.row				= (byte)row;
-	msg.col				= (byte)col;
-	
-	GameMgrSend(&msg);
+    Cli2Srv_TTT_MakeMove msg;
+    msg.messageId       = kCli2Srv_TTT_MakeMove;
+    msg.messageBytes    = sizeof(msg);
+    msg.recvGameId      = GetGameId();  // send to GameSrv on server
+    msg.transId         = 0;
+    msg.row             = (byte)row;
+    msg.col             = (byte)col;
+    
+    GameMgrSend(&msg);
 }
 
 //============================================================================
 void pfGmTicTacToe::ShowBoard () {
 
-	// Technically, we should stuff the board into a plMessage and
-	// have our receiver handle how the board is shown, but heck,
-	// this is just a little demo and not quite worth the effort.
+    // Technically, we should stuff the board into a plMessage and
+    // have our receiver handle how the board is shown, but heck,
+    // this is just a little demo and not quite worth the effort.
 
 #if 0 // Max doesn't have the console, and can't link with it anyway, so I'm removing this code since "this is just a little demo and not quite worth the effort"
-	pfConsole::AddLine ("\n");
-	pfConsole::AddLineF("\\i %c | %c | %c", internal->board[0][0], internal->board[0][1], internal->board[0][2]);
-	pfConsole::AddLine ("\\i---+---+---");
-	pfConsole::AddLineF("\\i %c | %c | %c", internal->board[1][0], internal->board[1][1], internal->board[1][2]);
-	pfConsole::AddLine ("\\i---+---+---");
-	pfConsole::AddLineF("\\i %c | %c | %c", internal->board[2][0], internal->board[2][1], internal->board[2][2]);
-	pfConsole::AddLine ("\n");
+    pfConsole::AddLine ("\n");
+    pfConsole::AddLineF("\\i %c | %c | %c", internal->board[0][0], internal->board[0][1], internal->board[0][2]);
+    pfConsole::AddLine ("\\i---+---+---");
+    pfConsole::AddLineF("\\i %c | %c | %c", internal->board[1][0], internal->board[1][1], internal->board[1][2]);
+    pfConsole::AddLine ("\\i---+---+---");
+    pfConsole::AddLineF("\\i %c | %c | %c", internal->board[2][0], internal->board[2][1], internal->board[2][2]);
+    pfConsole::AddLine ("\n");
 #endif // 0
 }

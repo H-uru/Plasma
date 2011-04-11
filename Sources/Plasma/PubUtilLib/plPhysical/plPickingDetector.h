@@ -34,30 +34,30 @@ class plMessage;
 class plPickingDetector : public plDetectorModifier
 {
 protected:
-	
+    
 public:
-	plPickingDetector(){;}
-	virtual ~plPickingDetector(){;}
-	
-	virtual hsBool MsgReceive(plMessage* msg);
+    plPickingDetector(){;}
+    virtual ~plPickingDetector(){;}
+    
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	CLASSNAME_REGISTER( plPickingDetector );
-	GETINTERFACE_ANY( plPickingDetector, plDetectorModifier );
+    CLASSNAME_REGISTER( plPickingDetector );
+    GETINTERFACE_ANY( plPickingDetector, plDetectorModifier );
 
 };
 /*
 class plClickDragDetector : public plDetectorModifier
 {
 protected:
-	
+    
 public:
-	plPickingDetector(){;}
-	virtual ~plPickingDetector(){;}
-	
-	virtual hsBool MsgReceive(plMessage* msg);
+    plPickingDetector(){;}
+    virtual ~plPickingDetector(){;}
+    
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	CLASSNAME_REGISTER( plPickingDetector );
-	GETINTERFACE_ANY( plPickingDetector, plDetectorModifier );
+    CLASSNAME_REGISTER( plPickingDetector );
+    GETINTERFACE_ANY( plPickingDetector, plDetectorModifier );
 
 };
 */

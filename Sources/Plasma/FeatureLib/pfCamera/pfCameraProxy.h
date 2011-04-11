@@ -35,17 +35,17 @@ class plSceneNode;
 class plCameraProxy : public plProxyGen
 {
 protected:
-	plVirtualCam1*			fOwner;
+    plVirtualCam1*          fOwner;
 
 
-	virtual plDrawableSpans*	ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
-	virtual plKey				IGetNode() const;
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
+    virtual plKey               IGetNode() const;
 public:
-	plCameraProxy();
-	virtual ~plCameraProxy();
+    plCameraProxy();
+    virtual ~plCameraProxy();
 
-	hsBool  Init(plVirtualCam1* aud);
-	plSceneNode* node;
+    hsBool  Init(plVirtualCam1* aud);
+    plSceneNode* node;
 };
 
 #endif // plCameraProxy_inc

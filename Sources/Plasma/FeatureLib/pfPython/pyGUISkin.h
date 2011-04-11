@@ -41,35 +41,35 @@ class pyColor;
 class pyGUISkin
 {
 private:
-	plKey					fGCkey;
-	
+    plKey                   fGCkey;
+    
 protected:
-	pyGUISkin(pyKey& gckey);
-	pyGUISkin(plKey objkey);
-	pyGUISkin();
+    pyGUISkin(pyKey& gckey);
+    pyGUISkin(plKey objkey);
+    pyGUISkin();
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUISkin);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUISkin object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUISkin); // converts a PyObject to a pyGUISkin (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUISkin);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUISkin object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUISkin); // converts a PyObject to a pyGUISkin (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUISkin(pyKey& gckey);
+    static hsBool IsGUISkin(pyKey& gckey);
 
-	void setKey(plKey key) {fGCkey = key;} // used by python glue, do NOT call
+    void setKey(plKey key) {fGCkey = key;} // used by python glue, do NOT call
 
-	// override the equals to operator
-	hsBool operator==(const pyGUISkin &gdobj) const;
-	hsBool operator!=(const pyGUISkin &gdobj) const { return !(gdobj == *this);	}
+    // override the equals to operator
+    hsBool operator==(const pyGUISkin &gdobj) const;
+    hsBool operator!=(const pyGUISkin &gdobj) const { return !(gdobj == *this); }
 
-	// getter and setters
-	virtual plKey getObjKey();
-	virtual PyObject* getObjPyKey(); // returns pyKey
+    // getter and setters
+    virtual plKey getObjKey();
+    virtual PyObject* getObjPyKey(); // returns pyKey
 
 };
 

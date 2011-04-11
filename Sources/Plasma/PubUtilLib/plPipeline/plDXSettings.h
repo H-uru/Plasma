@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plDXSettings - Header for the various settings groups for plDXPipeline //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plDXSettings - Header for the various settings groups for plDXPipeline //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	4.25.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  4.25.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plDXSettings_h
@@ -61,165 +61,165 @@ class plDXIndexBufferRef;
 class plDXViewSettings
 {
 public:
-	UInt32					fRenderState;
+    UInt32                  fRenderState;
 
-	plRenderRequest*		fRenderRequest;
+    plRenderRequest*        fRenderRequest;
 
-	UInt32					fDrawableTypeMask;
-	UInt32					fSubDrawableTypeMask;
+    UInt32                  fDrawableTypeMask;
+    UInt32                  fSubDrawableTypeMask;
 
-	DWORD					fClearColor;
-	float					fClearDepth;
+    DWORD                   fClearColor;
+    float                   fClearDepth;
 
-	plFogEnvironment		fDefaultFog;
+    plFogEnvironment        fDefaultFog;
 
-	plCullTree				fCullTree;
-	hsBool					fCullTreeDirty;
-	UInt16					fCullMaxNodes;
+    plCullTree              fCullTree;
+    hsBool                  fCullTreeDirty;
+    UInt16                  fCullMaxNodes;
 
-	enum XformResets
-	{
-		kResetProjection	= 0x01,
-		kResetCamera		= 0x02,
-		kResetL2W			= 0x04,
+    enum XformResets
+    {
+        kResetProjection    = 0x01,
+        kResetCamera        = 0x02,
+        kResetL2W           = 0x04,
 
-		kResetAll			= 0x07
-	};
+        kResetAll           = 0x07
+    };
 
-	UInt8					fXformResetFlags;
-	hsBool					fLocalToWorldLeftHanded;
-	hsBool					fWorldToCamLeftHanded;
+    UInt8                   fXformResetFlags;
+    hsBool                  fLocalToWorldLeftHanded;
+    hsBool                  fWorldToCamLeftHanded;
 
-	mutable hsVector3		fDirection;
-	mutable hsVector3		fUp;
-	mutable hsVector3		fAcross;
-	hsPoint3				fWorldPos;
+    mutable hsVector3       fDirection;
+    mutable hsVector3       fUp;
+    mutable hsVector3       fAcross;
+    hsPoint3                fWorldPos;
 
-	mutable hsBool			fViewVectorsDirty;
+    mutable hsBool          fViewVectorsDirty;
 
-	hsMatrix44 				fLocalToWorld;
-	hsMatrix44 				fWorldToLocal;
+    hsMatrix44              fLocalToWorld;
+    hsMatrix44              fWorldToLocal;
 
-	const hsMatrix44&		GetLocalToWorld() const { return fLocalToWorld; }
-	const hsMatrix44&		GetWorldToLocal() const { return fWorldToLocal; }
+    const hsMatrix44&       GetLocalToWorld() const { return fLocalToWorld; }
+    const hsMatrix44&       GetWorldToLocal() const { return fWorldToLocal; }
 
-	plViewTransform			fTransform;
+    plViewTransform         fTransform;
 
-	const hsMatrix44&		GetWorldToCamera() const { return fTransform.GetWorldToCamera(); }
-	const hsMatrix44&		GetCameraToWorld() const { return fTransform.GetCameraToWorld(); }
-	hsBool					IsPerspective() const { return fTransform.GetPerspective(); }
+    const hsMatrix44&       GetWorldToCamera() const { return fTransform.GetWorldToCamera(); }
+    const hsMatrix44&       GetCameraToWorld() const { return fTransform.GetCameraToWorld(); }
+    hsBool                  IsPerspective() const { return fTransform.GetPerspective(); }
 
-	void			Reset();
+    void            Reset();
 };
 
 class plDXGeneralSettings
 {
-	public:
+    public:
 
-		hsBool					fFullscreen;
-		hsWinRef				fHWnd;
-		UInt32					fColorDepth;
-		UInt8					fNumAASamples;
-		UInt32					fD3DCaps, fBoardKluge, fStageEnd;
-		UInt32					fMaxNumLights;
-		UInt32					fMaxNumProjectors;
-		UInt32					fMaxLayersAtOnce;
-		UInt32					fMaxPiggyBacks;
-		Int32					fBoundsDrawLevel;
-		UInt32					fProperties;
-		DWORD					fClearColor;
-		UInt8					fMaxAnisotropicSamples;
-		D3DPRESENT_PARAMETERS	fPresentParams;
-		hsBool					fVeryAnnoyingTextureInvalidFlag;
-		hsBool					fNoGammaCorrect;
-		int						fMaxUVWSrc;
-		hsBool					fCantProj;
-		hsBool					fLimitedProj;
-		hsBool					fBadManaged;
-		hsBool					fShareDepth;
-		hsBool					fCurrAnisotropy;
-		hsBool					fIsIntel;
+        hsBool                  fFullscreen;
+        hsWinRef                fHWnd;
+        UInt32                  fColorDepth;
+        UInt8                   fNumAASamples;
+        UInt32                  fD3DCaps, fBoardKluge, fStageEnd;
+        UInt32                  fMaxNumLights;
+        UInt32                  fMaxNumProjectors;
+        UInt32                  fMaxLayersAtOnce;
+        UInt32                  fMaxPiggyBacks;
+        Int32                   fBoundsDrawLevel;
+        UInt32                  fProperties;
+        DWORD                   fClearColor;
+        UInt8                   fMaxAnisotropicSamples;
+        D3DPRESENT_PARAMETERS   fPresentParams;
+        hsBool                  fVeryAnnoyingTextureInvalidFlag;
+        hsBool                  fNoGammaCorrect;
+        int                     fMaxUVWSrc;
+        hsBool                  fCantProj;
+        hsBool                  fLimitedProj;
+        hsBool                  fBadManaged;
+        hsBool                  fShareDepth;
+        hsBool                  fCurrAnisotropy;
+        hsBool                  fIsIntel;
 
-		IDirect3DSurface9		*fCurrD3DMainSurface;
-		IDirect3DSurface9		*fCurrD3DDepthSurface;
+        IDirect3DSurface9       *fCurrD3DMainSurface;
+        IDirect3DSurface9       *fCurrD3DDepthSurface;
 
-		hsTArray<plDXViewSettings>		fViewStack; // One for the main view, then one for each rendertarget
-		hsTArray<plRenderTarget *>		fRenderTargets;
-		plRenderTarget					*fCurrRenderTarget;
-		plRenderTarget					*fCurrBaseRenderTarget;
-		plDXDeviceRef					*fCurrRenderTargetRef;
-		plDXVertexBufferRef			*fCurrVertexBuffRef;
-		plDXIndexBufferRef				*fCurrIndexBuffRef;
-		UInt32							fOrigWidth, fOrigHeight;
+        hsTArray<plDXViewSettings>      fViewStack; // One for the main view, then one for each rendertarget
+        hsTArray<plRenderTarget *>      fRenderTargets;
+        plRenderTarget                  *fCurrRenderTarget;
+        plRenderTarget                  *fCurrBaseRenderTarget;
+        plDXDeviceRef                   *fCurrRenderTargetRef;
+        plDXVertexBufferRef         *fCurrVertexBuffRef;
+        plDXIndexBufferRef              *fCurrIndexBuffRef;
+        UInt32                          fOrigWidth, fOrigHeight;
 
-		IDirect3DVertexShader9			*fCurrVertexShader;
-		IDirect3DPixelShader9			*fCurrPixelShader;
-		DWORD							fCurrFVFFormat;
+        IDirect3DVertexShader9          *fCurrVertexShader;
+        IDirect3DPixelShader9           *fCurrPixelShader;
+        DWORD                           fCurrFVFFormat;
 
-		HRESULT					fDXError;
-		char					fErrorStr[ 256 ];
+        HRESULT                 fDXError;
+        char                    fErrorStr[ 256 ];
 
-		void	Reset( void );
+        void    Reset( void );
 };
 
 //// Tweak Settings ///////////////////////////////////////////////////////////
 
 class plDXTweakSettings
 {
-	public:
-		float	fDefaultPerspLayerScale;
-		float	fPerspLayerScale;
-		float	fPerspLayerTrans;
-		float	fDefaultLODBias;
-		float	fFogExpApproxStart;
-		float	fFogExp2ApproxStart;
-		float	fFogEndBias;
+    public:
+        float   fDefaultPerspLayerScale;
+        float   fPerspLayerScale;
+        float   fPerspLayerTrans;
+        float   fDefaultLODBias;
+        float   fFogExpApproxStart;
+        float   fFogExp2ApproxStart;
+        float   fFogEndBias;
 
-		float	fExp2FogKnee;
-		float	fExp2FogKneeVal;
-		float	fExpFogKnee;
-		float	fExpFogKneeVal;
-		
-		void	Reset( void )
-		{
-			fDefaultPerspLayerScale = 0.00001f;
-			fPerspLayerScale = 0.00001f;
-			fPerspLayerTrans = 0.00002f;
-			fDefaultLODBias = -0.25f;
-			fFogExpApproxStart = 0.0f;
-			fFogExp2ApproxStart = 0.0f;
-			fFogEndBias = 0.0f;
+        float   fExp2FogKnee;
+        float   fExp2FogKneeVal;
+        float   fExpFogKnee;
+        float   fExpFogKneeVal;
+        
+        void    Reset( void )
+        {
+            fDefaultPerspLayerScale = 0.00001f;
+            fPerspLayerScale = 0.00001f;
+            fPerspLayerTrans = 0.00002f;
+            fDefaultLODBias = -0.25f;
+            fFogExpApproxStart = 0.0f;
+            fFogExp2ApproxStart = 0.0f;
+            fFogEndBias = 0.0f;
 
-			fExpFogKnee = fExp2FogKnee = 0.5f;
-			fExpFogKneeVal = fExp2FogKneeVal = 0.15f;
-		}
+            fExpFogKnee = fExp2FogKnee = 0.5f;
+            fExpFogKneeVal = fExp2FogKneeVal = 0.15f;
+        }
 };
 
 //// Fog Settings /////////////////////////////////////////////////////////////
 
 class plDXFogSettings
 {
-	public:
-		plFogEnvironment*	fEnvPtr;		// nil means no fog
-		D3DFOGMODE			fMode;
-		UInt8				fIsVertex;
-		UInt8				fIsShader;
-		UInt32				fHexColor;
-		float				fStart;
-		float				fEnd;
-		float				fDensity;
-		hsColorRGBA			fColor;
+    public:
+        plFogEnvironment*   fEnvPtr;        // nil means no fog
+        D3DFOGMODE          fMode;
+        UInt8               fIsVertex;
+        UInt8               fIsShader;
+        UInt32              fHexColor;
+        float               fStart;
+        float               fEnd;
+        float               fDensity;
+        hsColorRGBA         fColor;
 
-		void	Reset( void )
-		{
-			fEnvPtr = nil;
-			fMode = D3DFOG_NONE;
-			fIsVertex = 0;
-			fIsShader = 0;
-			fHexColor = 0;
-			fStart = fEnd = fDensity = 0.0f;
-			fColor.Set( 0, 0, 0, 0 );
-		}
+        void    Reset( void )
+        {
+            fEnvPtr = nil;
+            fMode = D3DFOG_NONE;
+            fIsVertex = 0;
+            fIsShader = 0;
+            fHexColor = 0;
+            fStart = fEnd = fDensity = 0.0f;
+            fColor.Set( 0, 0, 0, 0 );
+        }
 };
 
 //// Light Settings ///////////////////////////////////////////////////////////
@@ -228,58 +228,58 @@ class plDXLightRef;
 class plDXPipeline;
 class plDXLightSettings
 {
-	public:
-		hsBitVector				fUsedFlags;
-		hsBitVector				fEnabledFlags;
-		hsBitVector				fHoldFlags;
-		UInt32					fNextIndex, fLastIndex;
-		UInt16					fTime;
-		plLightInfo*			fActiveList;
-		plDXLightRef*			fRefList;
-		plDXPipeline*			fPipeline;
-		hsTArray<plLightInfo*>	fProjEach;
-		hsTArray<plLightInfo*>	fProjAll;
+    public:
+        hsBitVector             fUsedFlags;
+        hsBitVector             fEnabledFlags;
+        hsBitVector             fHoldFlags;
+        UInt32                  fNextIndex, fLastIndex;
+        UInt16                  fTime;
+        plLightInfo*            fActiveList;
+        plDXLightRef*           fRefList;
+        plDXPipeline*           fPipeline;
+        hsTArray<plLightInfo*>  fProjEach;
+        hsTArray<plLightInfo*>  fProjAll;
 
-		hsTArray<plLightInfo*>	fCharLights;
-		hsTArray<plLightInfo*>	fVisLights;
+        hsTArray<plLightInfo*>  fCharLights;
+        hsTArray<plLightInfo*>  fVisLights;
 
-		UInt32							fNextShadowLight;
-		hsTArray<plDXLightRef*>		fShadowLights;
+        UInt32                          fNextShadowLight;
+        hsTArray<plDXLightRef*>     fShadowLights;
 
-		plDXLightSettings();
+        plDXLightSettings();
 
-		// Sets member variables to initial states. Does NOT release anything.
-		void	Reset( plDXPipeline *pipe );
-		// Releases/deletes anything associated with these settings
-		void	Release( void );
-		// Reserve a D3D light index
-		UInt32	ReserveD3DIndex( void );
-		// Release a reserved D3D light index
-		void	ReleaseD3DIndex( UInt32 idx );
+        // Sets member variables to initial states. Does NOT release anything.
+        void    Reset( plDXPipeline *pipe );
+        // Releases/deletes anything associated with these settings
+        void    Release( void );
+        // Reserve a D3D light index
+        UInt32  ReserveD3DIndex( void );
+        // Release a reserved D3D light index
+        void    ReleaseD3DIndex( UInt32 idx );
 };
 
 //// Stencil Settings /////////////////////////////////////////////////////////
 
 class plDXStencilSettings
 {
-	public:
-		UInt8	fDepth;
-		hsBool	fEnabled;
-		UInt8	fCmpFunc;
-		UInt8	fFailOp, fPassOp, fPassButZFailOp;
-		UInt32	fRefValue;
-		UInt32	fMask;
-		UInt32	fWriteMask;
+    public:
+        UInt8   fDepth;
+        hsBool  fEnabled;
+        UInt8   fCmpFunc;
+        UInt8   fFailOp, fPassOp, fPassButZFailOp;
+        UInt32  fRefValue;
+        UInt32  fMask;
+        UInt32  fWriteMask;
 
-		void	Reset( void )
-		{
-			fEnabled = false;
-			fCmpFunc = 0;
-			fFailOp = fPassOp = fPassButZFailOp = 0;
-			fRefValue = 0;
-			fMask = 0xffffffff;
-			fWriteMask = 0xffffffff;
-		}
+        void    Reset( void )
+        {
+            fEnabled = false;
+            fCmpFunc = 0;
+            fFailOp = fPassOp = fPassButZFailOp = 0;
+            fRefValue = 0;
+            fMask = 0xffffffff;
+            fWriteMask = 0xffffffff;
+        }
 };
 
 #endif // _plDXSettings_h

@@ -8,13 +8,13 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plClientPatcher_HEADERS
-	Intern.h
-	Pch.h
-	UruPlayer.h
+    Intern.h
+    Pch.h
+    UruPlayer.h
 )
 
 set(plClientPatcher_SOURCES
-	UruPlayer.cpp
+    UruPlayer.cpp
 )
 
 add_library(plClientPatcher STATIC ${plClientPatcher_HEADERS} ${plClientPatcher_SOURCES})

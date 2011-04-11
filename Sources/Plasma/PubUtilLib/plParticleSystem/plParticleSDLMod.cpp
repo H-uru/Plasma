@@ -35,42 +35,42 @@ char plParticleSDLMod::kStrNumParticles[]="numParticles";
 
 void plParticleSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
 {
-	plSceneObject* sobj=GetTarget();
-	if (!sobj)
-		return;
+    plSceneObject* sobj=GetTarget();
+    if (!sobj)
+        return;
 
-	UInt32 flags = sobj->GetKey()->GetUoid().GetLocation().GetFlags();
+    UInt32 flags = sobj->GetKey()->GetUoid().GetLocation().GetFlags();
 
-	const plParticleSystem *sys = plParticleSystem::ConvertNoRef(sobj->GetModifierByType(plParticleSystem::Index()));
-	if (!sys)
-		return;
-	
-	int num = sys->GetNumValidParticles(true);
-	dstState->FindVar(kStrNumParticles)->Set(num);
+    const plParticleSystem *sys = plParticleSystem::ConvertNoRef(sobj->GetModifierByType(plParticleSystem::Index()));
+    if (!sys)
+        return;
+    
+    int num = sys->GetNumValidParticles(true);
+    dstState->FindVar(kStrNumParticles)->Set(num);
 }
 
 void plParticleSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcState)
 {
-	plSceneObject* sobj=GetTarget();
-	if (!sobj)
-		return;
+    plSceneObject* sobj=GetTarget();
+    if (!sobj)
+        return;
 
-	plParticleSystem *sys = const_cast<plParticleSystem*>(plParticleSystem::ConvertNoRef(sobj->GetModifierByType(plParticleSystem::Index())));
-	if (!sys)
-		return;
+    plParticleSystem *sys = const_cast<plParticleSystem*>(plParticleSystem::ConvertNoRef(sobj->GetModifierByType(plParticleSystem::Index())));
+    if (!sys)
+        return;
 
-	int num;
-	srcState->FindVar(kStrNumParticles)->Get(&num);
-	if (num > sys->GetMaxTotalParticles())
-		num = sys->GetMaxTotalParticles();
-	
-	sys->WipeExistingParticles();
-	sys->GenerateParticles(num);
+    int num;
+    srcState->FindVar(kStrNumParticles)->Get(&num);
+    if (num > sys->GetMaxTotalParticles())
+        num = sys->GetMaxTotalParticles();
+    
+    sys->WipeExistingParticles();
+    sys->GenerateParticles(num);
 }
 
 UInt32 plParticleSDLMod::IApplyModFlags(UInt32 sendFlags)
 {
-	if (fAttachedToAvatar)
-		return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
-	return sendFlags;
+    if (fAttachedToAvatar)
+        return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
+    return sendFlags;
 }

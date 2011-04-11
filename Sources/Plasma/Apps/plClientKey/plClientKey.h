@@ -37,7 +37,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 namespace plClientKey
 {
-	const UInt32* GetKey();
+    const UInt32* GetKey();
 }
 
 #endif // plClientKey_h_inc

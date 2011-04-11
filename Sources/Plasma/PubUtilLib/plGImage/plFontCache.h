@@ -24,17 +24,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plFontCache Class Header												 //
-//	Generic cache lib for our plFonts. Basically just a simple plFont		 //
-//	manager.																 //
-//																			 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plFontCache Class Header                                                 //
+//  Generic cache lib for our plFonts. Basically just a simple plFont        //
+//  manager.                                                                 //
+//                                                                           //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	3.12.2003 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  3.12.2003 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plFontCache_h
@@ -50,40 +50,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plFont;
 class plFontCache : public hsKeyedObject
 {
-	protected:	
+    protected:  
 
-		hsTArray<plFont *>		fCache;
-		char					*fCustFontDir;
+        hsTArray<plFont *>      fCache;
+        char                    *fCustFontDir;
 
-		static plFontCache		*fInstance;
+        static plFontCache      *fInstance;
 
-		void	ILoadCustomFonts( void );
+        void    ILoadCustomFonts( void );
 
-	public:
+    public:
 
-		CLASSNAME_REGISTER( plFontCache );
-		GETINTERFACE_ANY( plFontCache, hsKeyedObject );
+        CLASSNAME_REGISTER( plFontCache );
+        GETINTERFACE_ANY( plFontCache, hsKeyedObject );
 
-		plFontCache();
-		virtual ~plFontCache();
+        plFontCache();
+        virtual ~plFontCache();
 
-		virtual void	Read( hsStream *s, hsResMgr *mgr ) {}
-		virtual void	Write( hsStream *s, hsResMgr *mgr ) {}
+        virtual void    Read( hsStream *s, hsResMgr *mgr ) {}
+        virtual void    Write( hsStream *s, hsResMgr *mgr ) {}
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		static plFontCache	&GetInstance( void );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        static plFontCache  &GetInstance( void );
 
-		plFont	*GetFont( const char *face, UInt8 size, UInt32 fontFlags );
+        plFont  *GetFont( const char *face, UInt8 size, UInt32 fontFlags );
 
-//		HFONT	GetMeAFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
-//		void	FreeFont( HFONT font );
-		void	Clear( void );
+//      HFONT   GetMeAFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
+//      void    FreeFont( HFONT font );
+        void    Clear( void );
 
-		void	LoadCustomFonts( const char *dir );
+        void    LoadCustomFonts( const char *dir );
 
-		// Our custom font extension
-		static char	*kCustFontExtension;
+        // Our custom font extension
+        static char *kCustFontExtension;
 };
 
 

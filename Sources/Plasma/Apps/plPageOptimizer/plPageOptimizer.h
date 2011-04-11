@@ -37,34 +37,34 @@ class plResManager;
 class plPageOptimizer
 {
 protected:
-	typedef std::vector<plKey> KeyVec;
-	typedef std::set<plKey> KeySet;
+    typedef std::vector<plKey> KeyVec;
+    typedef std::set<plKey> KeySet;
 
-	KeyVec fKeyLoadOrder;	// The order objects were loaded in
-	KeySet fLoadedKeys;		// Keys we've loaded objects for, for quick lookup
-	KeyVec fAllKeys;		// All the keys in the page
-	std::vector<UInt8> fBuf;
+    KeyVec fKeyLoadOrder;   // The order objects were loaded in
+    KeySet fLoadedKeys;     // Keys we've loaded objects for, for quick lookup
+    KeyVec fAllKeys;        // All the keys in the page
+    std::vector<UInt8> fBuf;
 
-	bool fOptimized;		// True after optimization if the page was already optimized
+    bool fOptimized;        // True after optimization if the page was already optimized
 
-	const char* fPagePath;			// Path to our page
-	char fTempPagePath[512];		// Path to the temp output page
-	plLocation fLoc;				// Location of our page
-	plRegistryPageNode* fPageNode;	// PageNode for our page
+    const char* fPagePath;          // Path to our page
+    char fTempPagePath[512];        // Path to the temp output page
+    plLocation fLoc;                // Location of our page
+    plRegistryPageNode* fPageNode;  // PageNode for our page
 
-	plResManager* fResMgr;
+    plResManager* fResMgr;
 
-	static plPageOptimizer* fInstance;
-	static void KeyedObjectProc(plKey key);
+    static plPageOptimizer* fInstance;
+    static void KeyedObjectProc(plKey key);
 
-	void IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey key);
-	void IFindLoc();
-	void IRewritePage();
+    void IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey key);
+    void IFindLoc();
+    void IRewritePage();
 
 public:
-	plPageOptimizer(const char* pagePath);
+    plPageOptimizer(const char* pagePath);
 
-	void Optimize();
+    void Optimize();
 };
 
 #endif // plPageOptimizer_h_inc

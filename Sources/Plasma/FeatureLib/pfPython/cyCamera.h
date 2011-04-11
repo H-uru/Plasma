@@ -43,64 +43,64 @@ class pyKey;
 class cyCamera
 {
 protected:
-	plKey		fSender;
-	plKey		fTheCam;
+    plKey       fSender;
+    plKey       fTheCam;
 
-	cyCamera();
+    cyCamera();
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptCamera);
-	PYTHON_CLASS_NEW_DEFINITION;
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyCamera object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyCamera); // converts a PyObject to a cyCamera (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptCamera);
+    PYTHON_CLASS_NEW_DEFINITION;
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyCamera object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyCamera); // converts a PyObject to a cyCamera (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	// setters
-	void SetSender(plKey &sender);
+    // setters
+    void SetSender(plKey &sender);
 
-	// Save the current state of the virtual camera
-	// NOTE: doesn't work by itself at the moment
-	virtual void Push(pyKey& newCamKey);
+    // Save the current state of the virtual camera
+    // NOTE: doesn't work by itself at the moment
+    virtual void Push(pyKey& newCamKey);
 
-	// Restore the state of the virtual camera with a previously saved setting
-	virtual void Pop(pyKey& oldCamKey);
+    // Restore the state of the virtual camera with a previously saved setting
+    virtual void Pop(pyKey& oldCamKey);
 
-	// Send controlKey commands to the virtual camera (should be like a pass thru)
-	virtual void ControlKey(Int32 controlKey, hsBool activated);
+    // Send controlKey commands to the virtual camera (should be like a pass thru)
+    virtual void ControlKey(Int32 controlKey, hsBool activated);
 
 
-	/////////////////////////////////////////////////////////////////////////////
-	//
-	//  Function   : TransitionTo
-	//  PARAMETERS : newCamKey  - what to switch the camera to
-	//             : time       - how long it takes to transition to new camera
-	//
-	//  PURPOSE    : Transition to a new camera (position and settings)
-	//
-	virtual void TransitionTo(pyKey& newCamKey, double time, hsBool save);
-	
-	virtual void SetEnableFirstPersonOverride(hsBool state);
-	virtual void EnableFirstPersonOverride() { SetEnableFirstPersonOverride(true); }
-	virtual void DisableFirstPersonOverride() { SetEnableFirstPersonOverride(false); }
-	
-	virtual void UndoFirstPerson();
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    //  Function   : TransitionTo
+    //  PARAMETERS : newCamKey  - what to switch the camera to
+    //             : time       - how long it takes to transition to new camera
+    //
+    //  PURPOSE    : Transition to a new camera (position and settings)
+    //
+    virtual void TransitionTo(pyKey& newCamKey, double time, hsBool save);
+    
+    virtual void SetEnableFirstPersonOverride(hsBool state);
+    virtual void EnableFirstPersonOverride() { SetEnableFirstPersonOverride(true); }
+    virtual void DisableFirstPersonOverride() { SetEnableFirstPersonOverride(false); }
+    
+    virtual void UndoFirstPerson();
 
-	virtual hsScalar GetFOV();
-	virtual void SetFOV(hsScalar fov, double t);
+    virtual hsScalar GetFOV();
+    virtual void SetFOV(hsScalar fov, double t);
 
-	virtual void SetSmootherCam(hsBool state);
-	virtual hsBool IsSmootherCam();
+    virtual void SetSmootherCam(hsBool state);
+    virtual hsBool IsSmootherCam();
 
-	virtual void SetWalkAndVerticalPan(hsBool state);
-	virtual hsBool IsWalkAndVerticalPan();
+    virtual void SetWalkAndVerticalPan(hsBool state);
+    virtual hsBool IsWalkAndVerticalPan();
 
-	virtual void SetStayInFirstPerson(hsBool state);
-	virtual hsBool IsStayInFirstPerson();
+    virtual void SetStayInFirstPerson(hsBool state);
+    virtual hsBool IsStayInFirstPerson();
 
-	virtual void SetAspectRatio(float aspectratio);
-	virtual float GetAspectRatio();
-	virtual void RefreshFOV();
+    virtual void SetAspectRatio(float aspectratio);
+    virtual float GetAspectRatio();
+    virtual void RefreshFOV();
 };
 
 

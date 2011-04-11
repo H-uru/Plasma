@@ -29,51 +29,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plLayerOr::plLayerOr()
 {
-	fState = TRACKED_NEW hsGMatState;
-	fState->Reset();
+    fState = TRACKED_NEW hsGMatState;
+    fState->Reset();
 
-	fOwnedChannels = kState;
+    fOwnedChannels = kState;
 }
 
 plLayerOr::~plLayerOr()
 {
 }
 
-void	plLayerOr::SetState( const hsGMatState& state )
+void    plLayerOr::SetState( const hsGMatState& state )
 {
-	SetBlendFlags( state.fBlendFlags );
-	SetClampFlags( state.fClampFlags );
-	SetShadeFlags( state.fShadeFlags );
-	SetZFlags( state.fZFlags );
-	SetMiscFlags( state.fMiscFlags );
+    SetBlendFlags( state.fBlendFlags );
+    SetClampFlags( state.fClampFlags );
+    SetShadeFlags( state.fShadeFlags );
+    SetZFlags( state.fZFlags );
+    SetMiscFlags( state.fMiscFlags );
 }
 
-plLayerInterface	*plLayerOr::Attach( plLayerInterface* prev )
+plLayerInterface    *plLayerOr::Attach( plLayerInterface* prev )
 {
-	fDirty = true;
+    fDirty = true;
 
-	return plLayerInterface::Attach( prev );
+    return plLayerInterface::Attach( prev );
 }
 
 UInt32 plLayerOr::Eval(double secs, UInt32 frame, UInt32 ignore)
 {
-	UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
-	if( fUnderLay )
-	{
-		if( fDirty || (ret & kState) )
-		{
-			*fState = fUnderLay->GetState();
-			if( fOringState.fBlendFlags & hsGMatState::kBlendMask )
-				fState->fBlendFlags &= ~hsGMatState::kBlendMask;
-			fState->fBlendFlags |= fOringState.fBlendFlags;
+    UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
+    if( fUnderLay )
+    {
+        if( fDirty || (ret & kState) )
+        {
+            *fState = fUnderLay->GetState();
+            if( fOringState.fBlendFlags & hsGMatState::kBlendMask )
+                fState->fBlendFlags &= ~hsGMatState::kBlendMask;
+            fState->fBlendFlags |= fOringState.fBlendFlags;
 
-			fState->fClampFlags = fUnderLay->GetClampFlags() | fOringState.fClampFlags;
-			fState->fShadeFlags = fUnderLay->GetShadeFlags() | fOringState.fShadeFlags;
-			fState->fZFlags = fUnderLay->GetZFlags() | fOringState.fZFlags;
-			fState->fMiscFlags = fUnderLay->GetMiscFlags() | fOringState.fMiscFlags;
+            fState->fClampFlags = fUnderLay->GetClampFlags() | fOringState.fClampFlags;
+            fState->fShadeFlags = fUnderLay->GetShadeFlags() | fOringState.fShadeFlags;
+            fState->fZFlags = fUnderLay->GetZFlags() | fOringState.fZFlags;
+            fState->fMiscFlags = fUnderLay->GetMiscFlags() | fOringState.fMiscFlags;
 
-			fDirty = false;
-		}
-	}
-	return ret;
+            fDirty = false;
+        }
+    }
+    return ret;
 }

@@ -37,41 +37,41 @@ void DetectorLogRed(const char* format, ...) {}
 
 static plStatusLog* gLog =
 plStatusLogMgr::GetInstance().CreateStatusLog(
-											  20,
-											  "Detector",
-											  plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe |
-											  plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
+                                              20,
+                                              "Detector",
+                                              plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe |
+                                              plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
 
 
 void DetectorDoLogfile()
 {
-	delete gLog;
-	gLog = plStatusLogMgr::GetInstance().CreateStatusLog(20,"Detector.log",plStatusLog::kFilledBackground|plStatusLog::kDeleteForMe|plStatusLog::kAlignToTop);
+    delete gLog;
+    gLog = plStatusLogMgr::GetInstance().CreateStatusLog(20,"Detector.log",plStatusLog::kFilledBackground|plStatusLog::kDeleteForMe|plStatusLog::kAlignToTop);
 
 }
 
 void DetectorLog(const char* format, ...)
 {
-	va_list args;
-	va_start(args, format);
-	gLog->AddLineV(format, args);
-	va_end(args);
+    va_list args;
+    va_start(args, format);
+    gLog->AddLineV(format, args);
+    va_end(args);
 }
 
 void DetectorLogSpecial(const char* format, ...)
 {
-	va_list args;
-	va_start(args, format);
-	gLog->AddLineV(plStatusLog::kGreen, format, args);
-	va_end(args);
+    va_list args;
+    va_start(args, format);
+    gLog->AddLineV(plStatusLog::kGreen, format, args);
+    va_end(args);
 }
 
 void DetectorLogRed(const char* format, ...)
 {
-	va_list args;
-	va_start(args, format);
-	gLog->AddLineV(plStatusLog::kRed, format, args);
-	va_end(args);
+    va_list args;
+    va_start(args, format);
+    gLog->AddLineV(plStatusLog::kRed, format, args);
+    va_end(args);
 }
 
 

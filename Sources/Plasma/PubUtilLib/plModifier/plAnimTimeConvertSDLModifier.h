@@ -38,26 +38,26 @@ class plAnimTimeConvert;
 class plAnimTimeConvertSDLModifier : public plSDLModifier
 {
 protected:
-	// var labels 
-	struct AnimTimeConvertVarNames
-	{
-		static char	kStrFlags[];
-		static char	kStrLastStateAnimTime[];		
-		static char kStrLoopBegin[];
-		static char kStrLoopEnd[];
-		static char kStrSpeed[];
-		static char	kStrCurrentEaseCurve[];
-		static char	kStrCurrentEaseBeginWorldTime[];
-		static char	kStrLastStateChange[];
-	}; 
-	
-	void IPutATC(plStateDataRecord* state, plAnimTimeConvert* curAnimTimeConvert);
-	void ISetCurrentATC(const plStateDataRecord* state, plAnimTimeConvert* curAnimTimeConvert);
+    // var labels 
+    struct AnimTimeConvertVarNames
+    {
+        static char kStrFlags[];
+        static char kStrLastStateAnimTime[];        
+        static char kStrLoopBegin[];
+        static char kStrLoopEnd[];
+        static char kStrSpeed[];
+        static char kStrCurrentEaseCurve[];
+        static char kStrCurrentEaseBeginWorldTime[];
+        static char kStrLastStateChange[];
+    }; 
+    
+    void IPutATC(plStateDataRecord* state, plAnimTimeConvert* curAnimTimeConvert);
+    void ISetCurrentATC(const plStateDataRecord* state, plAnimTimeConvert* curAnimTimeConvert);
 
 public:
-	CLASSNAME_REGISTER( plAnimTimeConvertSDLModifier);
-	GETINTERFACE_ANY( plAnimTimeConvertSDLModifier, plSDLModifier);
+    CLASSNAME_REGISTER( plAnimTimeConvertSDLModifier);
+    GETINTERFACE_ANY( plAnimTimeConvertSDLModifier, plSDLModifier);
 };
 
-#endif	// plAnimTimeConvertSDLModifier_inc
+#endif  // plAnimTimeConvertSDLModifier_inc
 

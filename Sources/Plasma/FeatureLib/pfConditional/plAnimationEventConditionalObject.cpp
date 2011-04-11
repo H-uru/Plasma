@@ -40,43 +40,43 @@ fAction(kEventEnd)
 
 hsBool plAnimationEventConditionalObject::MsgReceive(plMessage* msg)
 {
-	plEventCallbackMsg* pMsg = plEventCallbackMsg::ConvertNoRef(msg);
-	if (pMsg)
-	{
-		SetSatisfied(true);
-//		fLogicMod->RequestTrigger();
-		return true;
-	}
-	return plConditionalObject::MsgReceive(msg);
+    plEventCallbackMsg* pMsg = plEventCallbackMsg::ConvertNoRef(msg);
+    if (pMsg)
+    {
+        SetSatisfied(true);
+//      fLogicMod->RequestTrigger();
+        return true;
+    }
+    return plConditionalObject::MsgReceive(msg);
 }
-	
+    
 
 void plAnimationEventConditionalObject::SetEvent(const CallbackEvent b, hsScalar time)
 {
-	plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
-	pMsg->AddReceiver(fTarget);
-	pMsg->SetSender( GetKey() );
+    plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+    pMsg->AddReceiver(fTarget);
+    pMsg->SetSender( GetKey() );
 
-	plEventCallbackMsg* cb = TRACKED_NEW plEventCallbackMsg(GetKey(), b, 0, time);
+    plEventCallbackMsg* cb = TRACKED_NEW plEventCallbackMsg(GetKey(), b, 0, time);
 
-	pMsg->AddCallback( cb );
-	hsRefCnt_SafeUnRef(cb);
-	pMsg->SetCmd( plAnimCmdMsg::kAddCallbacks );
-	
-	plgDispatch::MsgSend( pMsg );
+    pMsg->AddCallback( cb );
+    hsRefCnt_SafeUnRef(cb);
+    pMsg->SetCmd( plAnimCmdMsg::kAddCallbacks );
+    
+    plgDispatch::MsgSend( pMsg );
 }
 
 void plAnimationEventConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Read(stream, mgr);
-	fTarget = mgr->ReadKey(stream);
-	fAction = (CallbackEvent)stream->ReadSwap32();
+    plConditionalObject::Read(stream, mgr);
+    fTarget = mgr->ReadKey(stream);
+    fAction = (CallbackEvent)stream->ReadSwap32();
 }
 
 void plAnimationEventConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Write(stream, mgr);
-	mgr->WriteKey(stream, fTarget);
-	stream->WriteSwap32(fAction); 
+    plConditionalObject::Write(stream, mgr);
+    mgr->WriteKey(stream, fTarget);
+    stream->WriteSwap32(fAction); 
 }
-	
+    

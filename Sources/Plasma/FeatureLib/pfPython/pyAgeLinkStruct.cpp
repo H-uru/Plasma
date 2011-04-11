@@ -37,7 +37,7 @@ pyAgeLinkStruct::pyAgeLinkStruct()
 
 pyAgeLinkStruct::pyAgeLinkStruct( plAgeLinkStruct * link )
 {
-	fAgeLink.CopyFrom( link );
+    fAgeLink.CopyFrom( link );
 }
 
 pyAgeLinkStruct::~pyAgeLinkStruct()
@@ -46,64 +46,64 @@ pyAgeLinkStruct::~pyAgeLinkStruct()
 
 bool pyAgeLinkStruct::operator==(const pyAgeLinkStruct &other) const
 {
-	return fAgeLink.IsEqualTo( other.GetAgeLink() );
+    return fAgeLink.IsEqualTo( other.GetAgeLink() );
 }
 
 /////////////////////////////////////////////////////////////////////
 
 PyObject * pyAgeLinkStruct::GetAgeInfo()
 {
-	return pyAgeInfoStructRef::New( *fAgeLink.GetAgeInfo() );
+    return pyAgeInfoStructRef::New( *fAgeLink.GetAgeInfo() );
 }
 
 void pyAgeLinkStruct::SetAgeInfo( pyAgeInfoStruct & info )
 {
-	fAgeLink.GetAgeInfo()->CopyFrom( info.GetAgeInfo() );
+    fAgeLink.GetAgeInfo()->CopyFrom( info.GetAgeInfo() );
 }
 
 const char* pyAgeLinkStruct::GetParentAgeFilename()
 {
-	return fAgeLink.GetParentAgeFilename();
+    return fAgeLink.GetParentAgeFilename();
 }
 
 void pyAgeLinkStruct::SetParentAgeFilename( const char* parentname )
 {
-	fAgeLink.SetParentAgeFilename(parentname);
+    fAgeLink.SetParentAgeFilename(parentname);
 }
 
 void pyAgeLinkStruct::CopyFrom( const pyAgeLinkStruct & other )
 {
-	fAgeLink.CopyFrom( other.GetAgeLink() );
+    fAgeLink.CopyFrom( other.GetAgeLink() );
 }
 
 void pyAgeLinkStruct::CopyFromRef( const pyAgeLinkStructRef & other )
 {
-	fAgeLink.CopyFrom( other.GetAgeLink() );
+    fAgeLink.CopyFrom( other.GetAgeLink() );
 }
 
 void pyAgeLinkStruct::SetLinkingRules( int v )
 {
-	fAgeLink.SetLinkingRules( v );
+    fAgeLink.SetLinkingRules( v );
 }
 
 int pyAgeLinkStruct::GetLinkingRules() const
 {
-	return fAgeLink.GetLinkingRules();
+    return fAgeLink.GetLinkingRules();
 }
 
 void pyAgeLinkStruct::SetSpawnPoint( pySpawnPointInfo & v )
 {
-	fAgeLink.SpawnPoint() = v.SpawnPoint();
+    fAgeLink.SpawnPoint() = v.SpawnPoint();
 }
 
 void pyAgeLinkStruct::SetSpawnPointRef( pySpawnPointInfoRef & v )
 {
-	fAgeLink.SpawnPoint() = v.SpawnPoint();
+    fAgeLink.SpawnPoint() = v.SpawnPoint();
 }
 
 PyObject * pyAgeLinkStruct::GetSpawnPoint()
 {
-	return pySpawnPointInfoRef::New( fAgeLink.SpawnPoint() );
+    return pySpawnPointInfoRef::New( fAgeLink.SpawnPoint() );
 }
 
 
@@ -113,47 +113,47 @@ plAgeLinkStruct pyAgeLinkStructRef::fDefaultLinkStruct; // created so a default 
 
 PyObject * pyAgeLinkStructRef::GetAgeInfo()
 {
-	return pyAgeInfoStructRef::New( *fAgeLink.GetAgeInfo() );
+    return pyAgeInfoStructRef::New( *fAgeLink.GetAgeInfo() );
 }
 
 void pyAgeLinkStructRef::SetAgeInfo( pyAgeInfoStruct & info )
 {
-	fAgeLink.GetAgeInfo()->CopyFrom( info.GetAgeInfo() );
+    fAgeLink.GetAgeInfo()->CopyFrom( info.GetAgeInfo() );
 }
 
 void pyAgeLinkStructRef::CopyFrom( const pyAgeLinkStruct & other )
 {
-	fAgeLink.CopyFrom( other.GetAgeLink() );
+    fAgeLink.CopyFrom( other.GetAgeLink() );
 }
 
 void pyAgeLinkStructRef::CopyFromRef( const pyAgeLinkStructRef & other )
 {
-	fAgeLink.CopyFrom( other.GetAgeLink() );
+    fAgeLink.CopyFrom( other.GetAgeLink() );
 }
 
 void pyAgeLinkStructRef::SetLinkingRules( int v )
 {
-	fAgeLink.SetLinkingRules( v );
+    fAgeLink.SetLinkingRules( v );
 }
 
 int pyAgeLinkStructRef::GetLinkingRules() const
 {
-	return fAgeLink.GetLinkingRules();
+    return fAgeLink.GetLinkingRules();
 }
 
 void pyAgeLinkStructRef::SetSpawnPoint( pySpawnPointInfo & v )
 {
-	fAgeLink.SpawnPoint() = v.SpawnPoint();
+    fAgeLink.SpawnPoint() = v.SpawnPoint();
 }
 
 void pyAgeLinkStructRef::SetSpawnPointRef( pySpawnPointInfoRef & v )
 {
-	fAgeLink.SpawnPoint() = v.SpawnPoint();
+    fAgeLink.SpawnPoint() = v.SpawnPoint();
 }
 
 PyObject * pyAgeLinkStructRef::GetSpawnPoint()
 {
-	return pySpawnPointInfoRef::New( fAgeLink.SpawnPoint() );
+    return pySpawnPointInfoRef::New( fAgeLink.SpawnPoint() );
 }
 
 

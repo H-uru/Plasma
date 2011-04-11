@@ -56,8 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # endif
 #endif
 
-#define Bool2Int(value)	((value)?1:0)
-#define Int2Bool(value)	((value)?true:false)
+#define Bool2Int(value) ((value)?1:0)
+#define Int2Bool(value) ((value)?true:false)
 
 
 ///////////////////////////////////////////////////////////////////
@@ -66,9 +66,9 @@ namespace pnNetCommon
 {
 #ifndef SERVER
 
-	UInt32 GetBinAddr(const char * textAddr);
-	const char * GetTextAddr(UInt32 binAddr);
-	
+    UInt32 GetBinAddr(const char * textAddr);
+    const char * GetTextAddr(UInt32 binAddr);
+    
 #endif // SERVER
 }
 
@@ -76,13 +76,13 @@ namespace pnNetCommon
 
 class plCreatableStream : public plCreatable
 {
-	hsRAMStream fStream;
+    hsRAMStream fStream;
 public:
-	CLASSNAME_REGISTER( plCreatableStream );
-	GETINTERFACE_ANY( plCreatableStream, plCreatable );
-	void Read( hsStream* stream, hsResMgr* mgr=nil );
-	void Write( hsStream* stream, hsResMgr* mgr=nil );
-	hsStream * GetStream( void ) { return &fStream;}
+    CLASSNAME_REGISTER( plCreatableStream );
+    GETINTERFACE_ANY( plCreatableStream, plCreatable );
+    void Read( hsStream* stream, hsResMgr* mgr=nil );
+    void Write( hsStream* stream, hsResMgr* mgr=nil );
+    hsStream * GetStream( void ) { return &fStream;}
 };
 
 
@@ -95,31 +95,31 @@ public:
 template <class T>
 class plSafePtr
 {
-	T * fPtr;
+    T * fPtr;
 public:
-	plSafePtr(T * ptr = nil): fPtr(ptr) {hsRefCnt_SafeRef(fPtr);}
-	~plSafePtr() { hsRefCnt_SafeUnRef(fPtr); }
-	operator T*() const { return fPtr; }
-	operator T*&() { return fPtr; }
-	operator const T&() const { return *fPtr; }
-	operator bool() const { return fPtr!=nil;}
-	T * operator->() const { return fPtr; }
-	T * operator *() const { return fPtr; }
-	T * operator=(T * ptr)
-	{
-		hsRefCnt_SafeRef(ptr);
-		hsRefCnt_SafeUnRef(fPtr);
-		fPtr = ptr;
-		return fPtr;
-	}
-	void Attach(T * ptr)
-	{
-		if (fPtr==ptr)
-			return;
-		hsRefCnt_SafeUnRef(fPtr);
-		fPtr = ptr;
-	}
-	void Detach() { fPtr=nil;}
+    plSafePtr(T * ptr = nil): fPtr(ptr) {hsRefCnt_SafeRef(fPtr);}
+    ~plSafePtr() { hsRefCnt_SafeUnRef(fPtr); }
+    operator T*() const { return fPtr; }
+    operator T*&() { return fPtr; }
+    operator const T&() const { return *fPtr; }
+    operator bool() const { return fPtr!=nil;}
+    T * operator->() const { return fPtr; }
+    T * operator *() const { return fPtr; }
+    T * operator=(T * ptr)
+    {
+        hsRefCnt_SafeRef(ptr);
+        hsRefCnt_SafeUnRef(fPtr);
+        fPtr = ptr;
+        return fPtr;
+    }
+    void Attach(T * ptr)
+    {
+        if (fPtr==ptr)
+            return;
+        hsRefCnt_SafeUnRef(fPtr);
+        fPtr = ptr;
+    }
+    void Detach() { fPtr=nil;}
 };
 
 #endif // SERVER

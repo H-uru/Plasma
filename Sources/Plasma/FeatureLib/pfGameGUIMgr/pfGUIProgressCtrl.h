@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIProgressCtrl Header												//
-//																			//
+//                                                                          //
+//  pfGUIProgressCtrl Header                                                //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIProgressCtrl_h
@@ -39,55 +39,55 @@ class plAGMasterMod;
 
 class pfGUIProgressCtrl : public pfGUIValueCtrl
 {
-	protected:
+    protected:
 
-		hsTArray<plKey>	fAnimationKeys;
-		char			*fAnimName;
+        hsTArray<plKey> fAnimationKeys;
+        char            *fAnimName;
 
-						// Computed once, once an anim is loaded that we can compute this with
-		hsScalar		fAnimBegin, fAnimEnd;
-		hsBool			fAnimTimesCalced;
-		hsBool			fPlaySound;
+                        // Computed once, once an anim is loaded that we can compute this with
+        hsScalar        fAnimBegin, fAnimEnd;
+        hsBool          fAnimTimesCalced;
+        hsBool          fPlaySound;
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
-		hsBool			ICalcAnimTimes( void );
+        hsBool          ICalcAnimTimes( void );
 
-		const UInt32	fStopSoundTimer;
+        const UInt32    fStopSoundTimer;
 
-	public:
+    public:
 
-		pfGUIProgressCtrl();
-		virtual ~pfGUIProgressCtrl();
+        pfGUIProgressCtrl();
+        virtual ~pfGUIProgressCtrl();
 
-		CLASSNAME_REGISTER( pfGUIProgressCtrl );
-		GETINTERFACE_ANY( pfGUIProgressCtrl, pfGUIValueCtrl );
+        CLASSNAME_REGISTER( pfGUIProgressCtrl );
+        GETINTERFACE_ANY( pfGUIProgressCtrl, pfGUIValueCtrl );
 
 
-		enum OurFlags
-		{
-			kReverseValues = kDerivedFlagsStart
-		};
+        enum OurFlags
+        {
+            kReverseValues = kDerivedFlagsStart
+        };
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		virtual void	UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
+        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
 
-		virtual void	SetCurrValue( hsScalar v );
-		virtual void	AnimateToPercentage( hsScalar percent );
+        virtual void    SetCurrValue( hsScalar v );
+        virtual void    AnimateToPercentage( hsScalar percent );
 
-		enum SoundEvents
-		{
-			kAnimateSound
-		};
-		
-		void DontPlaySounds() { fPlaySound = false; }
+        enum SoundEvents
+        {
+            kAnimateSound
+        };
+        
+        void DontPlaySounds() { fPlaySound = false; }
 
-		// Export only
-		void	SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
+        // Export only
+        void    SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
 };
 
 #endif // _pfGUIProgressCtrl_h

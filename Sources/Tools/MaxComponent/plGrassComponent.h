@@ -31,35 +31,35 @@ class plGrassShaderMod;
 class plGrassComponent : public plComponent
 {
 protected:
-	plGrassShaderMod *fShader;
+    plGrassShaderMod *fShader;
 public:
 
-	plGrassComponent();
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual void DeleteThis() { delete this; }
+    plGrassComponent();
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual void DeleteThis() { delete this; }
 
-	// These only work after PreConvert pass
-	static plGrassShaderMod* GetShader(INode* node); // Node is the component node
-	static plGrassShaderMod* GetShaderNode(plMaxNode* node); // node is the component's target
+    // These only work after PreConvert pass
+    static plGrassShaderMod* GetShader(INode* node); // Node is the component node
+    static plGrassShaderMod* GetShaderNode(plMaxNode* node); // node is the component's target
 
-	enum
-	{
-		kWave,
-		kDistX,
-		kDistY,
-		kDistZ,
-		kDirX,
-		kDirY,
-		kSpeed,
-		kDistXTab,
-		kDistYTab,
-		kDistZTab,
-		kDirXTab,
-		kDirYTab,
-		kSpeedTab,
-	};
+    enum
+    {
+        kWave,
+        kDistX,
+        kDistY,
+        kDistZ,
+        kDirX,
+        kDirY,
+        kSpeed,
+        kDistXTab,
+        kDistYTab,
+        kDistZTab,
+        kDirXTab,
+        kDirYTab,
+        kSpeedTab,
+    };
 };
 
 #define GRASS_COMPONENT_CLASS_ID Class_ID(0x1a422bfe, 0xe0e3f07)

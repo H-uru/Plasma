@@ -46,27 +46,27 @@ const unsigned kNetProtocolServerBit = 0x80;
 // These codes may not be changed unless ALL servers and clients are
 // simultaneously replaced; so basically forget it =)
 enum ENetProtocol {
-	kNetProtocolNil                 = 0,
+    kNetProtocolNil                 = 0,
 
-	// For test applications
-	kNetProtocolDebug               = 1,
-	
-	// Client connections
-	kNetProtocolCli2GateKeeper		= 2,
-	kNetProtocolCli2Csr				= 3,
-	kNetProtocolCli2Auth            = 4,
-	kNetProtocolCli2Game            = 5,
-	kNetProtocolCli2File			= 6,
-	kNetProtocolCli2Unused_01		= 7,
+    // For test applications
+    kNetProtocolDebug               = 1,
+    
+    // Client connections
+    kNetProtocolCli2GateKeeper      = 2,
+    kNetProtocolCli2Csr             = 3,
+    kNetProtocolCli2Auth            = 4,
+    kNetProtocolCli2Game            = 5,
+    kNetProtocolCli2File            = 6,
+    kNetProtocolCli2Unused_01       = 7,
 
-	// Server connections
-	kNetProtocolSrvConn				= 0 | kNetProtocolServerBit,
-	kNetProtocolSrv2Mcp             = 1 | kNetProtocolServerBit,
-	kNetProtocolSrv2Vault           = 2 | kNetProtocolServerBit,
-	kNetProtocolSrv2Db              = 3 | kNetProtocolServerBit,
-	kNetProtocolSrv2State			= 4 | kNetProtocolServerBit,
-	kNetProtocolSrv2Log				= 5 | kNetProtocolServerBit,
-	kNetProtocolSrv2Score			= 6 | kNetProtocolServerBit,
+    // Server connections
+    kNetProtocolSrvConn             = 0 | kNetProtocolServerBit,
+    kNetProtocolSrv2Mcp             = 1 | kNetProtocolServerBit,
+    kNetProtocolSrv2Vault           = 2 | kNetProtocolServerBit,
+    kNetProtocolSrv2Db              = 3 | kNetProtocolServerBit,
+    kNetProtocolSrv2State           = 4 | kNetProtocolServerBit,
+    kNetProtocolSrv2Log             = 5 | kNetProtocolServerBit,
+    kNetProtocolSrv2Score           = 6 | kNetProtocolServerBit,
 };
 
 // NOTE: When adding a new net protocol, be sure to update

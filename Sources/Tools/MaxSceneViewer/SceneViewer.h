@@ -33,29 +33,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class SceneViewer
 {
 protected:
-	bool fUpdate;
-	int fUpdateFreq;	// Update rate (ms), -1 for no update
-	bool fLoadOld;		// Load old data if possible
-	bool fReleaseExe;	// True for release exe, false for debug
-	bool fRunning;		// Do we think the client is currently running (not sure since the
-						// client can terminate without us knowing).
-	HWND fhDlg;			// Handle to the setup dialog
+    bool fUpdate;
+    int fUpdateFreq;    // Update rate (ms), -1 for no update
+    bool fLoadOld;      // Load old data if possible
+    bool fReleaseExe;   // True for release exe, false for debug
+    bool fRunning;      // Do we think the client is currently running (not sure since the
+                        // client can terminate without us knowing).
+    HWND fhDlg;         // Handle to the setup dialog
 
-	SceneViewer();
+    SceneViewer();
 
-	static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	void IEnableSetupControls(bool enable);
+    void IEnableSetupControls(bool enable);
 
-	bool IToggleRunning();
-	bool ISetRunning(bool running);
+    bool IToggleRunning();
+    bool ISetRunning(bool running);
 
 public:
-	~SceneViewer();
-	static SceneViewer &Instance();
+    ~SceneViewer();
+    static SceneViewer &Instance();
 
-	void Show();
+    void Show();
 };
 
 #endif // SceneViewer_h_inc

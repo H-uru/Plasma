@@ -33,100 +33,100 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plSocket::plSocket()
 {
-	fCloseOnDestroy	= false;
-	fCloseBeforeSet	= false;
-	fTimeoutsSet = 0;
-	fSocket = kBadSocket;
+    fCloseOnDestroy = false;
+    fCloseBeforeSet = false;
+    fTimeoutsSet = 0;
+    fSocket = kBadSocket;
 }
 
 
 plSocket::plSocket(SOCKET sck)
 {
-	fCloseOnDestroy	= false;
-	fCloseBeforeSet	= false;
-	fTimeoutsSet = 0;
-	SetSocket(sck);
+    fCloseOnDestroy = false;
+    fCloseBeforeSet = false;
+    fTimeoutsSet = 0;
+    SetSocket(sck);
 }
 
 plSocket::~plSocket()
 {
-	if (fCloseOnDestroy)
-		Close();
+    if (fCloseOnDestroy)
+        Close();
 }
 
 bool plSocket::operator==(const plSocket & rhs)
 {
-	return fSocket == rhs.fSocket;
+    return fSocket == rhs.fSocket;
 }
 
 bool plSocket::ErrorClose()
 {
-	if(Active())
-		plNet::Close(fSocket);
-	fSocket = kBadSocket;
-	return false;
+    if(Active())
+        plNet::Close(fSocket);
+    fSocket = kBadSocket;
+    return false;
 }
 
 
 bool plSocket::Active() 
 { 
-	return (fSocket != kBadSocket); 
+    return (fSocket != kBadSocket); 
 }
 
 
 void plSocket::Close()
 {
-	if(Active())
-		plNet::Close(fSocket);
-	fSocket = kBadSocket;
+    if(Active())
+        plNet::Close(fSocket);
+    fSocket = kBadSocket;
 }
 
 
 int plSocket::GetLastError()
 {
-	return plNet::GetError();
+    return plNet::GetError();
 }
 
 
 void plSocket::SetSocket(SOCKET sck)
 {
-	if (fSocket!=sck)
-	{
-		if (fCloseBeforeSet)
-			Close();
-		fSocket = sck;
-		if (fTimeoutsSet & kRecvTimeoutSet)
-			setsockopt(fSocket, SOL_SOCKET, (int)SO_RCVTIMEO,(const char*)&fRecvTimeOut,sizeof(fRecvTimeOut));
+    if (fSocket!=sck)
+    {
+        if (fCloseBeforeSet)
+            Close();
+        fSocket = sck;
+        if (fTimeoutsSet & kRecvTimeoutSet)
+            setsockopt(fSocket, SOL_SOCKET, (int)SO_RCVTIMEO,(const char*)&fRecvTimeOut,sizeof(fRecvTimeOut));
 
-		if (fTimeoutsSet & kSendTimeoutSet)
-			setsockopt(fSocket, SOL_SOCKET, (int)SO_SNDTIMEO,(const char*)&fSendTimeOut,sizeof(fSendTimeOut));
+        if (fTimeoutsSet & kSendTimeoutSet)
+            setsockopt(fSocket, SOL_SOCKET, (int)SO_SNDTIMEO,(const char*)&fSendTimeOut,sizeof(fSendTimeOut));
 
-		IGetTimeOutsFromSocket();
-	}
+        IGetTimeOutsFromSocket();
+    }
 }
 
 
 int plSocket::SetRecvBufferSize(int insize)
 {
-	if (setsockopt(fSocket, (int)SOL_SOCKET, (int)SO_RCVBUF, (char *)&insize, sizeof(int)))
-		return 0;
-	
-	return -1;
+    if (setsockopt(fSocket, (int)SOL_SOCKET, (int)SO_RCVBUF, (char *)&insize, sizeof(int)))
+        return 0;
+    
+    return -1;
 }
 
 
 void plSocket::SetBlocking(bool value)
 {
-	unsigned long val = value?0:1;
+    unsigned long val = value?0:1;
 #ifdef BSDBLOCK
 // NOTE: Bsd does this a little differently, using fcntl()
 #error "BSDBLOCK: This code needs to be verified right now. Don't assume it will work at all."
-	int flags = fcntl(fSocket,F_GETFL,val);
-	flags = flags |O_NONBLOCK;
-	fcntl(fSocket,F_SETFL,flags);        
+    int flags = fcntl(fSocket,F_GETFL,val);
+    flags = flags |O_NONBLOCK;
+    fcntl(fSocket,F_SETFL,flags);        
 #else
-	plNet::Ioctl(fSocket,FIONBIO,&val);
-#endif	
+    plNet::Ioctl(fSocket,FIONBIO,&val);
+#endif  
 }
 
 
@@ -135,61 +135,61 @@ bool plSocket::IsBlocking()
 #ifdef BSDBLOCK
 #error "BSDBLOCK: TODO: IsBlocking() for bsd."
 #else
-	int ans = plNet::Ioctl(fSocket,FIONBIO,NULL);
-	return (ans!=0);
+    int ans = plNet::Ioctl(fSocket,FIONBIO,NULL);
+    return (ans!=0);
 #endif
 }
 
 
 void plSocket::SetReuseAddress()
 {
-	int opt = 1; 
-	setsockopt(fSocket, SOL_SOCKET, SO_REUSEADDR,  (const char *)&opt, sizeof(opt));
+    int opt = 1; 
+    setsockopt(fSocket, SOL_SOCKET, SO_REUSEADDR,  (const char *)&opt, sizeof(opt));
 }
 
 int plSocket::SetSendTimeOut(unsigned int milliSecs/* =0 */)
 {
-	fTimeoutsSet |= kSendTimeoutSet;
-	fSendTimeOut = milliSecs;
+    fTimeoutsSet |= kSendTimeoutSet;
+    fSendTimeOut = milliSecs;
 
-	if (fSocket != kBadSocket)
-	{
-		if (setsockopt(fSocket, SOL_SOCKET, (int)SO_SNDTIMEO,(const char*)&fSendTimeOut,sizeof(fSendTimeOut)) != 0)
-			return -1;
-	}
+    if (fSocket != kBadSocket)
+    {
+        if (setsockopt(fSocket, SOL_SOCKET, (int)SO_SNDTIMEO,(const char*)&fSendTimeOut,sizeof(fSendTimeOut)) != 0)
+            return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int plSocket::SetRecvTimeOut(unsigned int milliSecs/* =0 */)
 {
-	fTimeoutsSet |= kRecvTimeoutSet;
-	fRecvTimeOut = milliSecs;
+    fTimeoutsSet |= kRecvTimeoutSet;
+    fRecvTimeOut = milliSecs;
 
-	if (fSocket != kBadSocket)
-	{
-		if (setsockopt(fSocket, SOL_SOCKET, (int)SO_RCVTIMEO,(const char*)&fRecvTimeOut,sizeof(fRecvTimeOut)) != 0)
-			return -1;
-	}
+    if (fSocket != kBadSocket)
+    {
+        if (setsockopt(fSocket, SOL_SOCKET, (int)SO_RCVTIMEO,(const char*)&fRecvTimeOut,sizeof(fRecvTimeOut)) != 0)
+            return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int plSocket::IGetTimeOutsFromSocket()
 {
-	unsigned int rtimeoutval, stimeoutval;
+    unsigned int rtimeoutval, stimeoutval;
 
-	if (fSocket != kBadSocket)
-	{
-		socklen_t sizeval;
-		sizeval = sizeof(rtimeoutval);
-		if (getsockopt(fSocket, SOL_SOCKET, (int)SO_RCVTIMEO,(char*)&rtimeoutval,&sizeval) != 0)
-			return -1;
-		sizeval = sizeof(stimeoutval);
-		if (getsockopt(fSocket, SOL_SOCKET, (int)SO_SNDTIMEO,(char*)&stimeoutval,&sizeval) != 0)
-			return -1;
-		fRecvTimeOut = rtimeoutval;
-		fSendTimeOut = stimeoutval;
-	}
-	return 0;
+    if (fSocket != kBadSocket)
+    {
+        socklen_t sizeval;
+        sizeval = sizeof(rtimeoutval);
+        if (getsockopt(fSocket, SOL_SOCKET, (int)SO_RCVTIMEO,(char*)&rtimeoutval,&sizeval) != 0)
+            return -1;
+        sizeval = sizeof(stimeoutval);
+        if (getsockopt(fSocket, SOL_SOCKET, (int)SO_SNDTIMEO,(char*)&stimeoutval,&sizeval) != 0)
+            return -1;
+        fRecvTimeOut = rtimeoutval;
+        fSendTimeOut = stimeoutval;
+    }
+    return 0;
 }

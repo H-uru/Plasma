@@ -24,13 +24,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plDTProgressMgr Functions												//
-//																			//
+//                                                                          //
+//  plDTProgressMgr Functions                                               //
+//                                                                          //
 //// History /////////////////////////////////////////////////////////////////
-//																			//
-//	2.28.2001 mcn	- Created												//
-//																			//
+//                                                                          //
+//  2.28.2001 mcn   - Created                                               //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 plDTProgressMgr::plDTProgressMgr() :
-	fCurrentImage(0),
-	fLastDraw(0.0f),
-	fStaticTextPlate(nil),
-	fActivePlate(nil)
+    fCurrentImage(0),
+    fLastDraw(0.0f),
+    fStaticTextPlate(nil),
+    fActivePlate(nil)
 {
 }
 
@@ -59,180 +59,180 @@ plDTProgressMgr::~plDTProgressMgr()
 {
 }
 
-void	plDTProgressMgr::DeclareThyself( void )
+void    plDTProgressMgr::DeclareThyself( void )
 {
-	static plDTProgressMgr	thyself;
+    static plDTProgressMgr  thyself;
 }
 
-void	plDTProgressMgr::Activate()
+void    plDTProgressMgr::Activate()
 {
-	if (fStaticTextPlate == nil && fCurrentStaticText != plProgressMgr::kNone)
-	{
-		plPlateManager::Instance().CreatePlate(&fStaticTextPlate);
+    if (fStaticTextPlate == nil && fCurrentStaticText != plProgressMgr::kNone)
+    {
+        plPlateManager::Instance().CreatePlate(&fStaticTextPlate);
 
-		fStaticTextPlate->CreateFromJPEGResource(MAKEINTRESOURCE(plProgressMgr::GetStaticTextID(fCurrentStaticText)), 0);
-		fStaticTextPlate->SetVisible(true);
-		fStaticTextPlate->SetOpacity(1.0f);
-		fStaticTextPlate->SetSize(2 * 0.192f, 2 * 0.041f, true);
-		fStaticTextPlate->SetPosition(0, 0.5f, 0);
-	}
+        fStaticTextPlate->CreateFromJPEGResource(MAKEINTRESOURCE(plProgressMgr::GetStaticTextID(fCurrentStaticText)), 0);
+        fStaticTextPlate->SetVisible(true);
+        fStaticTextPlate->SetOpacity(1.0f);
+        fStaticTextPlate->SetSize(2 * 0.192f, 2 * 0.041f, true);
+        fStaticTextPlate->SetPosition(0, 0.5f, 0);
+    }
 
-	if (fActivePlate == nil)
-	{
-		plPlateManager::Instance().CreatePlate( &fActivePlate );
+    if (fActivePlate == nil)
+    {
+        plPlateManager::Instance().CreatePlate( &fActivePlate );
 
-		fActivePlate->CreateFromJPEGResource( MAKEINTRESOURCE( plProgressMgr::GetLoadingFrameID(fCurrentImage) ), 0 );
-		fActivePlate->SetVisible(true);
-		fActivePlate->SetOpacity(1.0f);
-		fActivePlate->SetSize(0.6, 0.6, true);
-		fActivePlate->SetPosition(0, 0, 0);
-	}
+        fActivePlate->CreateFromJPEGResource( MAKEINTRESOURCE( plProgressMgr::GetLoadingFrameID(fCurrentImage) ), 0 );
+        fActivePlate->SetVisible(true);
+        fActivePlate->SetOpacity(1.0f);
+        fActivePlate->SetSize(0.6, 0.6, true);
+        fActivePlate->SetPosition(0, 0, 0);
+    }
 }
 
-void	plDTProgressMgr::Deactivate()
+void    plDTProgressMgr::Deactivate()
 {
-	if (fStaticTextPlate)
-	{
-		fStaticTextPlate->SetVisible(false);
-		plPlateManager::Instance().DestroyPlate( fStaticTextPlate );
-		fStaticTextPlate = nil;
-	}
+    if (fStaticTextPlate)
+    {
+        fStaticTextPlate->SetVisible(false);
+        plPlateManager::Instance().DestroyPlate( fStaticTextPlate );
+        fStaticTextPlate = nil;
+    }
 
-	if (fActivePlate)
-	{
-		fActivePlate->SetVisible(false);
-		plPlateManager::Instance().DestroyPlate( fActivePlate );
-		fActivePlate = nil;
-	}
+    if (fActivePlate)
+    {
+        fActivePlate->SetVisible(false);
+        plPlateManager::Instance().DestroyPlate( fActivePlate );
+        fActivePlate = nil;
+    }
 }
 
 //// Draw ////////////////////////////////////////////////////////////////////
 
-void	plDTProgressMgr::Draw( plPipeline *p )
+void    plDTProgressMgr::Draw( plPipeline *p )
 {
-	UInt16		scrnWidth, scrnHeight, width, height, x, y;
-	plDebugText	&text = plDebugText::Instance();
+    UInt16      scrnWidth, scrnHeight, width, height, x, y;
+    plDebugText &text = plDebugText::Instance();
 
-	plOperationProgress	*prog;
-
-
-	if( fOperations == nil )
-		return;
-
-	scrnWidth = (UInt16)p->Width();
-	scrnHeight = (UInt16)p->Height();
-
-	width = scrnWidth - 64;
-	height = 16;
-	x = ( scrnWidth - width ) >> 1;
-	y = scrnHeight - 32 - height;
-	if( fOperations->GetNext() == nil )
-		y -= text.GetFontSize() + 8 + height + 4;
+    plOperationProgress *prog;
 
 
-	text.SetDrawOnTopMode( true );
+    if( fOperations == nil )
+        return;
 
-	if (fActivePlate)
-	{
-		float currentMs = hsTimer::FullTicksToMs(hsTimer::GetFullTickCount());
-		if ((currentMs - fLastDraw) > 30)
-		{
-			fCurrentImage++;
-			if (fCurrentImage >= 18)
-				fCurrentImage = 0;
+    scrnWidth = (UInt16)p->Width();
+    scrnHeight = (UInt16)p->Height();
 
-			fLastDraw = currentMs;
+    width = scrnWidth - 64;
+    height = 16;
+    x = ( scrnWidth - width ) >> 1;
+    y = scrnHeight - 32 - height;
+    if( fOperations->GetNext() == nil )
+        y -= text.GetFontSize() + 8 + height + 4;
 
-			fActivePlate->ReloadFromJPEGResource(MAKEINTRESOURCE(plProgressMgr::GetInstance()->GetLoadingFrameID(fCurrentImage)), 0);
-			fActivePlate->SetVisible(true);
-			fActivePlate->SetOpacity(1.0f);
-			fActivePlate->SetSize(0.6, 0.6, true);
-			fActivePlate->SetPosition(0, 0, 0);
-		}
-	}
 
-	for( prog = fOperations; prog != nil; prog = prog->GetNext() )
-	{
-		IDrawTheStupidThing( p, prog, x, y, width, height );
-		y -= text.GetFontSize() + 8 + height + 4;
-	}
+    text.SetDrawOnTopMode( true );
 
-	text.SetDrawOnTopMode( false );
+    if (fActivePlate)
+    {
+        float currentMs = hsTimer::FullTicksToMs(hsTimer::GetFullTickCount());
+        if ((currentMs - fLastDraw) > 30)
+        {
+            fCurrentImage++;
+            if (fCurrentImage >= 18)
+                fCurrentImage = 0;
+
+            fLastDraw = currentMs;
+
+            fActivePlate->ReloadFromJPEGResource(MAKEINTRESOURCE(plProgressMgr::GetInstance()->GetLoadingFrameID(fCurrentImage)), 0);
+            fActivePlate->SetVisible(true);
+            fActivePlate->SetOpacity(1.0f);
+            fActivePlate->SetSize(0.6, 0.6, true);
+            fActivePlate->SetPosition(0, 0, 0);
+        }
+    }
+
+    for( prog = fOperations; prog != nil; prog = prog->GetNext() )
+    {
+        IDrawTheStupidThing( p, prog, x, y, width, height );
+        y -= text.GetFontSize() + 8 + height + 4;
+    }
+
+    text.SetDrawOnTopMode( false );
 }
 
 //// IDrawTheStupidThing /////////////////////////////////////////////////////
 
-void	plDTProgressMgr::IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
-											UInt16 x, UInt16 y, UInt16 width, UInt16 height )
+void    plDTProgressMgr::IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
+                                            UInt16 x, UInt16 y, UInt16 width, UInt16 height )
 {
-	plDebugText	&text = plDebugText::Instance();
+    plDebugText &text = plDebugText::Instance();
 
-	// Lets just set the color to blue
-	UInt32 color = 0xff302b3a;
+    // Lets just set the color to blue
+    UInt32 color = 0xff302b3a;
 
-	if( prog->GetMax() > 0.f )
-	{
-		text.Draw3DBorder(x, y, x + width - 1, y + height - 1, color, color);
+    if( prog->GetMax() > 0.f )
+    {
+        text.Draw3DBorder(x, y, x + width - 1, y + height - 1, color, color);
 
-		x += 2;
-		y += 2;
-		width -= 4;
-		height -= 4;
+        x += 2;
+        y += 2;
+        width -= 4;
+        height -= 4;
 
-		UInt16 drawWidth	= width;
-		Int16 drawX			= x;
-		UInt16 rightX		= drawX + drawWidth;
+        UInt16 drawWidth    = width;
+        Int16 drawX         = x;
+        UInt16 rightX       = drawX + drawWidth;
 
-		if (prog->GetProgress() <= prog->GetMax())
-			drawWidth = (UInt16)( (hsScalar)width * prog->GetProgress() / prog->GetMax() );
+        if (prog->GetProgress() <= prog->GetMax())
+            drawWidth = (UInt16)( (hsScalar)width * prog->GetProgress() / prog->GetMax() );
 
-		rightX = drawX + drawWidth;
+        rightX = drawX + drawWidth;
 
-		if( drawWidth > 0 )
-			text.DrawRect( drawX, y, rightX, y + height, color );
+        if( drawWidth > 0 )
+            text.DrawRect( drawX, y, rightX, y + height, color );
 
-		int timeRemain = prog->fRemainingSecs;
-		char remainStr[1024];
-		strcpy(remainStr, "APPROXIMATELY ");
-		if (timeRemain > 3600)
-		{
-			const char* term = ((timeRemain / 3600) > 1) ? "HOURS" : "HOUR";
-			sprintf(remainStr, "%s%d %s ", remainStr, (timeRemain / 3600), term);
-			timeRemain %= 3600;
-		}
-		if (timeRemain > 60)
-		{
-			const char* term = ((timeRemain / 60) > 1) ? "MINUTES" : "MINUTE";
-			sprintf(remainStr, "%s%d %s ", remainStr, (timeRemain / 60), term);
-			timeRemain %= 60;
-		}
-		const char* unitTerm = (timeRemain == 1) ? "SECOND" : "SECONDS";
-		sprintf(remainStr, "%s%d %s REMAINING", remainStr, timeRemain, unitTerm);
+        int timeRemain = prog->fRemainingSecs;
+        char remainStr[1024];
+        strcpy(remainStr, "APPROXIMATELY ");
+        if (timeRemain > 3600)
+        {
+            const char* term = ((timeRemain / 3600) > 1) ? "HOURS" : "HOUR";
+            sprintf(remainStr, "%s%d %s ", remainStr, (timeRemain / 3600), term);
+            timeRemain %= 3600;
+        }
+        if (timeRemain > 60)
+        {
+            const char* term = ((timeRemain / 60) > 1) ? "MINUTES" : "MINUTE";
+            sprintf(remainStr, "%s%d %s ", remainStr, (timeRemain / 60), term);
+            timeRemain %= 60;
+        }
+        const char* unitTerm = (timeRemain == 1) ? "SECOND" : "SECONDS";
+        sprintf(remainStr, "%s%d %s REMAINING", remainStr, timeRemain, unitTerm);
 
-		text.DrawString(x, y + height + 2, remainStr, (UInt32)0xff635e6d );
+        text.DrawString(x, y + height + 2, remainStr, (UInt32)0xff635e6d );
 
-		x -= 2;
-		y -= 2;
-	}
+        x -= 2;
+        y -= 2;
+    }
 
-	y -= ( text.GetFontSize() << 1 ) + 4;
+    y -= ( text.GetFontSize() << 1 ) + 4;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-	bool drawText = true;
+    bool drawText = true;
 #else
-	bool drawText = false;
+    bool drawText = false;
 #endif
 
-	if (drawText)
-	{
-		if( prog->GetTitle()[ 0 ] != 0 )
-		{
-			text.DrawString( x, y, prog->GetTitle(), (UInt32)0xccb0b0b0 );
-			x += (UInt16)text.CalcStringWidth( prog->GetTitle() );
-		}
+    if (drawText)
+    {
+        if( prog->GetTitle()[ 0 ] != 0 )
+        {
+            text.DrawString( x, y, prog->GetTitle(), (UInt32)0xccb0b0b0 );
+            x += (UInt16)text.CalcStringWidth( prog->GetTitle() );
+        }
 
-		if( prog->GetStatusText()[ 0 ] != 0 )
-			text.DrawString( x, y, prog->GetStatusText(), (UInt32)0xccb0b0b0 );
-	}
+        if( prog->GetStatusText()[ 0 ] != 0 )
+            text.DrawString( x, y, prog->GetStatusText(), (UInt32)0xccb0b0b0 );
+    }
 }
 

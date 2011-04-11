@@ -37,62 +37,62 @@ class plSceneNode;
 class plPluginResManager : public plResManager
 {
 public:
-	static plPluginResManager* ResMgr() { return (plPluginResManager*)hsgResMgr::ResMgr(); }
+    static plPluginResManager* ResMgr() { return (plPluginResManager*)hsgResMgr::ResMgr(); }
 
-	//------------------------
-	// Location management 
-	//------------------------
+    //------------------------
+    // Location management 
+    //------------------------
 
-	// Given a page string combo, returns the key of the sceneNode for that page. If the page does not exist, it creates one.
-	plKey NameToLoc(const char* age, const char* page, Int32 sequenceNumber, hsBool itinerant = false);
+    // Given a page string combo, returns the key of the sceneNode for that page. If the page does not exist, it creates one.
+    plKey NameToLoc(const char* age, const char* page, Int32 sequenceNumber, hsBool itinerant = false);
 
-	// Verifies that the given sequence number belongs to the given string combo and ONLY that combo. Returns a new, unique sequenceNumber if not
-	Int32 VerifySeqNumber(Int32 sequenceNumber, const char* age, const char* page);
+    // Verifies that the given sequence number belongs to the given string combo and ONLY that combo. Returns a new, unique sequenceNumber if not
+    Int32 VerifySeqNumber(Int32 sequenceNumber, const char* age, const char* page);
 
-	enum VerifyErrors
-	{
-		kNoVerifyError,
-		kErrRightPageWrongSeq,
-		kErrSeqAlreadyTaken,
-		kErrCantFindValid
-	};
-	VerifyErrors		GetLastVerifyError() const { return fLastVerifyError; }
-	const plPageInfo*	GetLastVerifyPage() const { return fLastVerifyPage; }
+    enum VerifyErrors
+    {
+        kNoVerifyError,
+        kErrRightPageWrongSeq,
+        kErrSeqAlreadyTaken,
+        kErrCantFindValid
+    };
+    VerifyErrors        GetLastVerifyError() const { return fLastVerifyError; }
+    const plPageInfo*   GetLastVerifyPage() const { return fLastVerifyPage; }
 
-	// Write all pages. Duh.
-	void WriteAllPages();
+    // Write all pages. Duh.
+    void WriteAllPages();
 
-	// Given a location, returns the plLocation corresponding to the common page from the same age
-	const plLocation& GetCommonPage(const plLocation& sisterPage, int whichPage);
+    // Given a location, returns the plLocation corresponding to the common page from the same age
+    const plLocation& GetCommonPage(const plLocation& sisterPage, int whichPage);
 
-	// If we have the key of an object that needs to get written out, but we're too lazy to set up
-	// a proper reference too (e.g. adding it to a scenenode), we can add it here. On add, it will be RefObject()'d,
-	// and then after we've written out everything, it will be UnRefObject()'d (at the same time we UnRef all
-	// our scenenodes in EndExport.
-	void AddLooseEnd(plKey key);
+    // If we have the key of an object that needs to get written out, but we're too lazy to set up
+    // a proper reference too (e.g. adding it to a scenenode), we can add it here. On add, it will be RefObject()'d,
+    // and then after we've written out everything, it will be UnRefObject()'d (at the same time we UnRef all
+    // our scenenodes in EndExport.
+    void AddLooseEnd(plKey key);
 
-	// Given a key, will ref and unref the associated object so it goes away, then nukes the key and sets it to nil.
-	// The key's UOID should be safe to reuse at that point, unless someone else still has a ref, in which case
-	// this function returns false (returns true if successful).
-	bool NukeKeyAndObject(plKey& objectKey);
+    // Given a key, will ref and unref the associated object so it goes away, then nukes the key and sets it to nil.
+    // The key's UOID should be safe to reuse at that point, unless someone else still has a ref, in which case
+    // this function returns false (returns true if successful).
+    bool NukeKeyAndObject(plKey& objectKey);
 
-	// Flushes all the created scene nodes out
-	void EndExport();
+    // Flushes all the created scene nodes out
+    void EndExport();
 
 protected:
-	plLocation ICreateLocation(const char* age, const char* page, hsBool itinerant);
-	plLocation ICreateLocation(const char* age, const char* page, Int32 seqNum, hsBool itinerant);
+    plLocation ICreateLocation(const char* age, const char* page, hsBool itinerant);
+    plLocation ICreateLocation(const char* age, const char* page, Int32 seqNum, hsBool itinerant);
 
-	plRegistryPageNode* INameToPage(const char* age, const char* page, Int32 sequenceNumber, hsBool itinerant = false);
+    plRegistryPageNode* INameToPage(const char* age, const char* page, Int32 sequenceNumber, hsBool itinerant = false);
 
-	void IPreLoadTextures(plRegistryPageNode* pageNode, Int32 origSeqNumber);
+    void IPreLoadTextures(plRegistryPageNode* pageNode, Int32 origSeqNumber);
 
-	void IShutdown();
+    void IShutdown();
 
-	VerifyErrors			fLastVerifyError;
-	const plPageInfo*		fLastVerifyPage;
-	hsTArray<plSceneNode*>	fExportedNodes;
-	hsTArray<plKey>			fLooseEnds;
+    VerifyErrors            fLastVerifyError;
+    const plPageInfo*       fLastVerifyPage;
+    hsTArray<plSceneNode*>  fExportedNodes;
+    hsTArray<plKey>         fLooseEnds;
 };
 
 #endif // plPluginResManager_h_inc

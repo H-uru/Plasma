@@ -28,182 +28,182 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pySwimCurrentInterface::pySwimCurrentInterface(plKey key)
 {
-	fSwimCurrentKey = key;
+    fSwimCurrentKey = key;
 }
 
 pySwimCurrentInterface::pySwimCurrentInterface(pyKey& key)
 {
-	fSwimCurrentKey = key.getKey();
+    fSwimCurrentKey = key.getKey();
 }
 
 hsScalar pySwimCurrentInterface::getNearDist()
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		return circ->fPullNearDistSq;
-	}
-	else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
-	{
-		return straight->fNearDist;
-	}
-	else
-	{
-		return 0;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        return circ->fPullNearDistSq;
+    }
+    else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
+    {
+        return straight->fNearDist;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void pySwimCurrentInterface::setNearDist(hsScalar val)
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		circ->fPullNearDistSq = val;
-	}
-	else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
-	{
-		straight->fNearDist = val;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        circ->fPullNearDistSq = val;
+    }
+    else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
+    {
+        straight->fNearDist = val;
+    }
 }
 
 hsScalar pySwimCurrentInterface::getFarDist()
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		return circ->fPullFarDistSq;
-	}
-	else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
-	{
-		return straight->fFarDist;
-	}
-	else
-	{
-		return 0;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        return circ->fPullFarDistSq;
+    }
+    else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
+    {
+        return straight->fFarDist;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void pySwimCurrentInterface::setFarDist(hsScalar val)
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		circ->fPullFarDistSq = val;
-	}
-	else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
-	{
-		straight->fFarDist = val;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        circ->fPullFarDistSq = val;
+    }
+    else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
+    {
+        straight->fFarDist = val;
+    }
 }
 
 hsScalar pySwimCurrentInterface::getNearVel()
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		return circ->fPullNearVel;
-	}
-	else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
-	{
-		return straight->fNearVel;
-	}
-	else
-	{
-		return 0;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        return circ->fPullNearVel;
+    }
+    else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
+    {
+        return straight->fNearVel;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void pySwimCurrentInterface::setNearVel(hsScalar val)
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		circ->fPullNearVel = val;
-	}
-	else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
-	{
-		straight->fNearVel = val;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        circ->fPullNearVel = val;
+    }
+    else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
+    {
+        straight->fNearVel = val;
+    }
 }
 
 hsScalar pySwimCurrentInterface::getFarVel()
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		return circ->fPullFarVel;
-	}
-	else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
-	{
-		return straight->fFarVel;
-	}
-	else
-	{
-		return 0;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        return circ->fPullFarVel;
+    }
+    else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
+    {
+        return straight->fFarVel;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void pySwimCurrentInterface::setFarVel(hsScalar val)
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		circ->fPullFarVel = val;
-	}
-	else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
-	{
-		straight->fFarVel = val;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        circ->fPullFarVel = val;
+    }
+    else if (plSwimStraightCurrentRegion* straight = plSwimStraightCurrentRegion::ConvertNoRef(obj))
+    {
+        straight->fFarVel = val;
+    }
 }
 
 hsScalar pySwimCurrentInterface::getRotation()
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		return circ->fRotation;
-	}
-	else
-	{
-		return 0;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        return circ->fRotation;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void pySwimCurrentInterface::setRotation(hsScalar val)
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
-	{
-		circ->fRotation = val;
-	}
+    if (plSwimCircularCurrentRegion* circ = plSwimCircularCurrentRegion::ConvertNoRef(obj))
+    {
+        circ->fRotation = val;
+    }
 }
 
 void pySwimCurrentInterface::enable()
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimRegionInterface* regInt = plSwimRegionInterface::ConvertNoRef(obj))
-	{
-		regInt->SetProperty(plSwimRegionInterface::kDisable, 0);
-	}
+    if (plSwimRegionInterface* regInt = plSwimRegionInterface::ConvertNoRef(obj))
+    {
+        regInt->SetProperty(plSwimRegionInterface::kDisable, 0);
+    }
 }
 
 void pySwimCurrentInterface::disable()
 {
-	hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
+    hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
-	if (plSwimRegionInterface* regInt = plSwimRegionInterface::ConvertNoRef(obj))
-	{
-		regInt->SetProperty(plSwimRegionInterface::kDisable, 1);
-	}
+    if (plSwimRegionInterface* regInt = plSwimRegionInterface::ConvertNoRef(obj))
+    {
+        regInt->SetProperty(plSwimRegionInterface::kDisable, 1);
+    }
 }

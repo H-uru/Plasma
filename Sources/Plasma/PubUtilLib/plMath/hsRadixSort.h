@@ -30,45 +30,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsRadixSortElem 
 {
 public:
-	union {
-		float			fFloat;
-		long			fLong;
-		unsigned long	fULong;
-	}							fKey;
+    union {
+        float           fFloat;
+        long            fLong;
+        unsigned long   fULong;
+    }                           fKey;
 
-	void*						fBody;
+    void*                       fBody;
 
-	hsRadixSortElem*			fNext;
+    hsRadixSortElem*            fNext;
 };
 
 class hsRadixSort {
 public:
-	enum {
-		kFloat		= 0x0,
-		kSignedInt	= 0x1,
-		kUnsigned	= 0x2,
-		kReverse	= 0x4
-	};
-	typedef hsRadixSortElem Elem;
+    enum {
+        kFloat      = 0x0,
+        kSignedInt  = 0x1,
+        kUnsigned   = 0x2,
+        kReverse    = 0x4
+    };
+    typedef hsRadixSortElem Elem;
 
 protected:
-	Elem*			fList;
-	Elem*			fHeads[256];
-	Elem*			fTails[256];
+    Elem*           fList;
+    Elem*           fHeads[256];
+    Elem*           fTails[256];
 
-	inline void ILink(Elem*& head, Elem*& tail, int i); // inline?
-	inline void ISlot(Elem* in, int i); // inline?
+    inline void ILink(Elem*& head, Elem*& tail, int i); // inline?
+    inline void ISlot(Elem* in, int i); // inline?
 
-	void ICollapse();
-	void IUnPackSignedInt();
-	void IUnPackFloat();
-	void IReverse();
+    void ICollapse();
+    void IUnPackSignedInt();
+    void IUnPackFloat();
+    void IReverse();
 
 public:
 
-	hsRadixSort();
+    hsRadixSort();
 
-	Elem*	Sort(Elem* inList, UInt32 flags = 0);
+    Elem*   Sort(Elem* inList, UInt32 flags = 0);
 
 };
 

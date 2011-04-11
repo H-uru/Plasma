@@ -7,20 +7,20 @@ include_directories(../../PubUtilLib)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(pfCamera_SOURCES
-	pfCameraProxy.cpp
-	plCameraBrain.cpp
-	plCameraModifier.cpp
-	plInterestingModifier.cpp
-	plVirtualCamNeu.cpp
+    pfCameraProxy.cpp
+    plCameraBrain.cpp
+    plCameraModifier.cpp
+    plInterestingModifier.cpp
+    plVirtualCamNeu.cpp
 )
 
 set(pfCamera_HEADERS
-	pfCameraCreatable.h
-	pfCameraProxy.h
-	plCameraBrain.h
-	plCameraModifier.h
-	plInterestingModifier.h
-	plVirtualCamNeu.h
+    pfCameraCreatable.h
+    pfCameraProxy.h
+    plCameraBrain.h
+    plCameraModifier.h
+    plInterestingModifier.h
+    plVirtualCamNeu.h
 )
 
 add_library(pfCamera STATIC ${pfCamera_SOURCES} ${pfCamera_HEADERS})

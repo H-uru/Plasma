@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 hsSfxIntenseAlpha::hsSfxIntenseAlpha()
 : fMinAlpha(0)
 {
-	fFlags |= kInclusive;
+    fFlags |= kInclusive;
 }
 
 hsSfxIntenseAlpha::~hsSfxIntenseAlpha()
@@ -43,23 +43,23 @@ hsSfxIntenseAlpha::~hsSfxIntenseAlpha()
 
 void hsSfxIntenseAlpha::ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList)
 {
-	hsScalar oScale = 1.f - fMinAlpha;
-	for( vList.First(); vList.More(); vList.Plus() )
-	{
-		hsGShadeVertex* s = vList.Current();
-		hsScalar o = hsMaximum(hsMaximum(s->fShade.r, s->fShade.g), s->fShade.b);
-		o *= oScale;
-		o += fMinAlpha;
-		s->fShade.a *= o;
-	}
+    hsScalar oScale = 1.f - fMinAlpha;
+    for( vList.First(); vList.More(); vList.Plus() )
+    {
+        hsGShadeVertex* s = vList.Current();
+        hsScalar o = hsMaximum(hsMaximum(s->fShade.r, s->fShade.g), s->fShade.b);
+        o *= oScale;
+        o += fMinAlpha;
+        s->fShade.a *= o;
+    }
 }
 
 void hsSfxIntenseAlpha::Read(hsStream* s)
 {
-	fMinAlpha = s->ReadSwapScalar();
+    fMinAlpha = s->ReadSwapScalar();
 }
 
 void hsSfxIntenseAlpha::Write(hsStream* s)
 {
-	s->WriteSwapScalar(fMinAlpha);
+    s->WriteSwapScalar(fMinAlpha);
 }

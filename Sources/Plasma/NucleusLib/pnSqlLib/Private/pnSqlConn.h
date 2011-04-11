@@ -82,10 +82,10 @@ void SqlConnFreeStmt (
     SqlStmt *       stmt
 );
 void SqlStmtSetAttr (
-	SqlStmt *		stmt,
-	int				attr,
-	void *			valPtr,
-	int				strLen
+    SqlStmt *       stmt,
+    int             attr,
+    void *          valPtr,
+    int             strLen
 );
 
 
@@ -210,7 +210,7 @@ void SqlConnBindParameterStringA (
     SqlStmt *       stmt,
     SQLINTEGER      inputOutputType,
     SQLUINTEGER     columnSize,         // bytes, NOT chars
-    SQLCHAR *		parameterValuePtr,
+    SQLCHAR *       parameterValuePtr,
     SQLINTEGER *    indPtr
 );
 

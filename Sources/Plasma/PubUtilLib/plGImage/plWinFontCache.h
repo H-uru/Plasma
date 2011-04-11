@@ -24,22 +24,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plWinFontCache Class Header												 //
-//	I've stopped keeping track, there are far too many reasons already to	 //
-//	hate Microsoft. Anyway, this class keeps track of various Win32 fonts we //
-//	allocate because Win98/ME seems to have problems re-allocating the exact //
-//	same freaking goddamn font over and over again. I mean, you'd think		 //
-//  there'd be a rule somewhere about deterministic behavior when calling	 //
-//	the exact same function with the exact same parameters over and over...	 //
-//	Oh, wait...																 //
-//																			 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plWinFontCache Class Header                                              //
+//  I've stopped keeping track, there are far too many reasons already to    //
+//  hate Microsoft. Anyway, this class keeps track of various Win32 fonts we //
+//  allocate because Win98/ME seems to have problems re-allocating the exact //
+//  same freaking goddamn font over and over again. I mean, you'd think      //
+//  there'd be a rule somewhere about deterministic behavior when calling    //
+//  the exact same function with the exact same parameters over and over...  //
+//  Oh, wait...                                                              //
+//                                                                           //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	11.25.2002 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  11.25.2002 mcn - Created.                                                //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plWinFontCache_h
@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "hsColorRGBA.h"
-#include "hsWindows.h"				// EVIL
+#include "hsWindows.h"              // EVIL
 #include "hsTemplates.h"
 
 #if HS_BUILD_FOR_WIN32
@@ -57,57 +57,57 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plWinFontCache
 {
-	protected:	
+    protected:  
 
-		class plFontRecord
-		{
-			public:
-				HFONT	fFont;
+        class plFontRecord
+        {
+            public:
+                HFONT   fFont;
 
-				char	*fFace;		// Pointer is owned by fFontNameCache
-				int		fHeight;
-				int		fWeight;
-				hsBool	fItalic;
-				UInt32	fQuality;
-		};
+                char    *fFace;     // Pointer is owned by fFontNameCache
+                int     fHeight;
+                int     fWeight;
+                hsBool  fItalic;
+                UInt32  fQuality;
+        };
 
-		class plCustFont
-		{
-			public:
-				char	*fFilename;
+        class plCustFont
+        {
+            public:
+                char    *fFilename;
 
-				plCustFont( const char *c ) { fFilename = hsStrcpy( c ); }
-				~plCustFont() { delete [] fFilename; }
-		};
+                plCustFont( const char *c ) { fFilename = hsStrcpy( c ); }
+                ~plCustFont() { delete [] fFilename; }
+        };
 
-		hsBool	fInShutdown;
+        hsBool  fInShutdown;
 
-		hsTArray<plFontRecord>	fFontCache;
-		hsTArray<char *>		fFontNameCache;
+        hsTArray<plFontRecord>  fFontCache;
+        hsTArray<char *>        fFontNameCache;
 
-		char					*fCustFontDir;
-		hsTArray<plCustFont *>	fCustFonts;
+        char                    *fCustFontDir;
+        hsTArray<plCustFont *>  fCustFonts;
 
-		plWinFontCache();
+        plWinFontCache();
 
-		HFONT	IFindFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
-		HFONT	IMakeFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
+        HFONT   IFindFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
+        HFONT   IMakeFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
 
-		void	ILoadCustomFonts( void );
+        void    ILoadCustomFonts( void );
 
-	public:
+    public:
 
-		virtual ~plWinFontCache();
-		static plWinFontCache	&GetInstance( void );
+        virtual ~plWinFontCache();
+        static plWinFontCache   &GetInstance( void );
 
-		HFONT	GetMeAFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
-		void	FreeFont( HFONT font );
-		void	Clear( void );
+        HFONT   GetMeAFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
+        void    FreeFont( HFONT font );
+        void    Clear( void );
 
-		void	LoadCustomFonts( const char *dir );
+        void    LoadCustomFonts( const char *dir );
 
-		// Our custom font extension
-		static char	*kCustFontExtension;
+        // Our custom font extension
+        static char *kCustFontExtension;
 };
 
 

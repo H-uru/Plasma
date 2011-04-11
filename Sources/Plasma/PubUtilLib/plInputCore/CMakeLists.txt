@@ -8,28 +8,28 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
 
 set(plInputCore_SOURCES
-	plAvatarInputInterface.cpp
-	plDebugInputInterface.cpp
-	plDInputDevice.cpp
-	plInputDevice.cpp
-	plInputInterface.cpp
-	plInputInterfaceMgr.cpp
-	plInputManager.cpp
-	plSceneInputInterface.cpp
-	plTelescopeInputInterface.cpp
+    plAvatarInputInterface.cpp
+    plDebugInputInterface.cpp
+    plDInputDevice.cpp
+    plInputDevice.cpp
+    plInputInterface.cpp
+    plInputInterfaceMgr.cpp
+    plInputManager.cpp
+    plSceneInputInterface.cpp
+    plTelescopeInputInterface.cpp
 )
 
 set(plInputCore_HEADERS
-	plAvatarInputInterface.h
-	plDebugInputInterface.h
-	plDInputDevice.h
-	plInputCoreCreatable.h
-	plInputDevice.h
-	plInputInterface.h
-	plInputInterfaceMgr.h
-	plInputManager.h
-	plSceneInputInterface.h
-	plTelescopeInputInterface.h
+    plAvatarInputInterface.h
+    plDebugInputInterface.h
+    plDInputDevice.h
+    plInputCoreCreatable.h
+    plInputDevice.h
+    plInputInterface.h
+    plInputInterfaceMgr.h
+    plInputManager.h
+    plSceneInputInterface.h
+    plTelescopeInputInterface.h
 )
 
 add_library(plInputCore STATIC ${plInputCore_SOURCES} ${plInputCore_HEADERS})

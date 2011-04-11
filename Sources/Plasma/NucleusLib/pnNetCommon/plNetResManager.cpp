@@ -25,22 +25,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plNetResManager
+//  plNetResManager
 //
 //// Philosophy //////////////////////////////////////////////////////////////
 //
-//	"Cannot say. Saying, I would know. Do not know, so cannot say."
-//												-- Zathras, "Babylon 5"
+//  "Cannot say. Saying, I would know. Do not know, so cannot say."
+//                                              -- Zathras, "Babylon 5"
 //
-//	Normally, plResManager would be plenty for the servers and then some.
-//	However, the normal resManager tries to do things smart, such as read in
-//	keys from disk if they don't already exist and so forth. However, all the
-//	servers care about is reading in enough of a key to be able to turn around
-//	and write it back out to a stream. So, we overload ReadKeyAndReg() to just
-//	read in a new key and return it. Our new key reffing system will guarantee
-//	that the key eventually gets freed once we're done with it, and we don't
-//	care about sharing keys because all we're interested in is the uoid anyway,
-//	so no need to store the keys in the registry or anything.
+//  Normally, plResManager would be plenty for the servers and then some.
+//  However, the normal resManager tries to do things smart, such as read in
+//  keys from disk if they don't already exist and so forth. However, all the
+//  servers care about is reading in enough of a key to be able to turn around
+//  and write it back out to a stream. So, we overload ReadKeyAndReg() to just
+//  read in a new key and return it. Our new key reffing system will guarantee
+//  that the key eventually gets freed once we're done with it, and we don't
+//  care about sharing keys because all we're interested in is the uoid anyway,
+//  so no need to store the keys in the registry or anything.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -62,18 +62,18 @@ plNetResManager::~plNetResManager()
 
 plCreatable* plNetResManager::IReadCreatable(hsStream* s) const
 {
-	UInt16 hClass = s->ReadSwap16();
-	if (plFactory::CanCreate(hClass))
-	{
-		plCreatable *pCre = plFactory::Create(hClass);
-		if (!pCre)
-			hsAssert( hClass == 0x8000, "Invalid creatable index" );
+    UInt16 hClass = s->ReadSwap16();
+    if (plFactory::CanCreate(hClass))
+    {
+        plCreatable *pCre = plFactory::Create(hClass);
+        if (!pCre)
+            hsAssert( hClass == 0x8000, "Invalid creatable index" );
 
-		return pCre;
-	}
+        return pCre;
+    }
 
-	plNetApp::StaticWarningMsg("NetResMgr::Can't create class %s", plFactory::GetNameOfClass(hClass));
-	return nil;
+    plNetApp::StaticWarningMsg("NetResMgr::Can't create class %s", plFactory::GetNameOfClass(hClass));
+    return nil;
 }
 
 void plNetResManager::IKeyReffed(plKeyImp* key) 
@@ -82,5 +82,5 @@ void plNetResManager::IKeyReffed(plKeyImp* key)
 
 void plNetResManager::IKeyUnreffed(plKeyImp* key) 
 { 
-	delete key; 
+    delete key; 
 }

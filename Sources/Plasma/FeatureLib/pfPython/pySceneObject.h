@@ -48,142 +48,142 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pySceneObject
 {
 private:
-	hsTArray<plKey>		fSceneObjects;
-	plKey				fSenderKey;		// the holder of the who (the modifier) we are
-	plKey				fPyMod;			// pyKey that points to modifier
-	
-	hsBool			fNetForce;
+    hsTArray<plKey>     fSceneObjects;
+    plKey               fSenderKey;     // the holder of the who (the modifier) we are
+    plKey               fPyMod;         // pyKey that points to modifier
+    
+    hsBool          fNetForce;
 
-	virtual void IAddObjKeyToAll(plKey key);
-	virtual void ISetAllSenderKeys();
+    virtual void IAddObjKeyToAll(plKey key);
+    virtual void ISetAllSenderKeys();
 
 protected:
-	pySceneObject();
-	pySceneObject(pyKey& objkey, pyKey& selfkey);
-	pySceneObject(plKey objkey,pyKey& selfkey);
-	pySceneObject(plKey objkey);
+    pySceneObject();
+    pySceneObject(pyKey& objkey, pyKey& selfkey);
+    pySceneObject(plKey objkey,pyKey& selfkey);
+    pySceneObject(plKey objkey);
 
 public:
-	~pySceneObject() {Py_XDECREF(fDraw); Py_XDECREF(fPhysics); Py_XDECREF(fAvatar); Py_XDECREF(fParticle);}
+    ~pySceneObject() {Py_XDECREF(fDraw); Py_XDECREF(fPhysics); Py_XDECREF(fAvatar); Py_XDECREF(fParticle);}
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptSceneobject);
-	static PyObject *New(plKey objKey, PyObject *selfKeyObj);
-	static PyObject *New(plKey objKey, pyKey &selfKey);
-	static PyObject *New(plKey objKey, plKey selfkey);
-	static PyObject *New(plKey objKey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySceneObject object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySceneObject); // converts a PyObject to a pySceneObject (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptSceneobject);
+    static PyObject *New(plKey objKey, PyObject *selfKeyObj);
+    static PyObject *New(plKey objKey, pyKey &selfKey);
+    static PyObject *New(plKey objKey, plKey selfkey);
+    static PyObject *New(plKey objKey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySceneObject object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySceneObject); // converts a PyObject to a pySceneObject (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	// override the equals to operator
-	hsBool operator==(const pySceneObject &sobj) const;
-	hsBool operator!=(const pySceneObject &sobj) const { return !(sobj == *this);	}
+    // override the equals to operator
+    hsBool operator==(const pySceneObject &sobj) const;
+    hsBool operator!=(const pySceneObject &sobj) const { return !(sobj == *this);   }
 
-	PyObject*				fDraw; // cyDraw
-	PyObject*				fPhysics; // cyPhysics
-	PyObject*				fAvatar; // cyAvatar
-	PyObject*				fParticle; // cyParticleSys
+    PyObject*               fDraw; // cyDraw
+    PyObject*               fPhysics; // cyPhysics
+    PyObject*               fAvatar; // cyAvatar
+    PyObject*               fParticle; // cyParticleSys
 
-	// getter and setters
-	virtual void addObjKey(plKey key);
-	virtual void addObjPyKey(pyKey& objkey);
-	virtual plKey getObjKey();
-	virtual PyObject* getObjPyKey(); // pyKey
+    // getter and setters
+    virtual void addObjKey(plKey key);
+    virtual void addObjPyKey(pyKey& objkey);
+    virtual plKey getObjKey();
+    virtual PyObject* getObjPyKey(); // pyKey
 
-	virtual void setSenderKey(plKey key);
-	virtual void setPyMod(pyKey& pymod);
-	virtual void setPyMod(plKey& key);
+    virtual void setSenderKey(plKey key);
+    virtual void setPyMod(pyKey& pymod);
+    virtual void setPyMod(plKey& key);
 
-	virtual void SetNetForce(hsBool state);
+    virtual void SetNetForce(hsBool state);
 
-	virtual PyObject* findObj(const char* name); // pySceneObject
+    virtual PyObject* findObj(const char* name); // pySceneObject
 
-	virtual const char* GetName();
-	virtual std::vector<PyObject*> GetResponders(); // pyKey list
-	virtual std::vector<PyObject*> GetPythonMods(); // pyKey list
-	//
-	// deteremine if this object (or the first object in the list)
-	// ...is locally owned
-	virtual hsBool IsLocallyOwned();
-	
-	//
-	// get the local to world matrix
-	virtual PyObject* GetLocalToWorld();
+    virtual const char* GetName();
+    virtual std::vector<PyObject*> GetResponders(); // pyKey list
+    virtual std::vector<PyObject*> GetPythonMods(); // pyKey list
+    //
+    // deteremine if this object (or the first object in the list)
+    // ...is locally owned
+    virtual hsBool IsLocallyOwned();
+    
+    //
+    // get the local to world matrix
+    virtual PyObject* GetLocalToWorld();
 
-	//
-	// get the local to world matrix
-	virtual PyObject* GetWorldToLocal();
+    //
+    // get the local to world matrix
+    virtual PyObject* GetWorldToLocal();
 
-	//
-	// get the local to world matrix
-	virtual PyObject* GetLocalToParent();
+    //
+    // get the local to world matrix
+    virtual PyObject* GetLocalToParent();
 
-	//
-	// get the local to world matrix
-	virtual PyObject* GetParentToLocal();
+    //
+    // get the local to world matrix
+    virtual PyObject* GetParentToLocal();
 
-	//
-	// set the local to world matrix
-	virtual void SetTransform(pyMatrix44& l2w, pyMatrix44& w2l);
+    //
+    // set the local to world matrix
+    virtual void SetTransform(pyMatrix44& l2w, pyMatrix44& w2l);
 
-	//
-	// find the position of this object (if there are more than one, just the first one)
-	virtual PyObject* GetWorldPosition(); // pyPoint3
+    //
+    // find the position of this object (if there are more than one, just the first one)
+    virtual PyObject* GetWorldPosition(); // pyPoint3
 
-	//
-	// find the view vector for this object (if there are more than one, just the first one)
-	virtual PyObject* GetViewVector(); // pyVector3
+    //
+    // find the view vector for this object (if there are more than one, just the first one)
+    virtual PyObject* GetViewVector(); // pyVector3
 
-	//
-	// find the up vector for this object (if there are more than one, just the first one)
-	virtual PyObject* GetUpVector(); // pyVector3
+    //
+    // find the up vector for this object (if there are more than one, just the first one)
+    virtual PyObject* GetUpVector(); // pyVector3
 
-	//
-	// find the up vector for this object (if there are more than one, just the first one)
-	virtual PyObject* GetRightVector(); // pyVector3
+    //
+    // find the up vector for this object (if there are more than one, just the first one)
+    virtual PyObject* GetRightVector(); // pyVector3
 
-	//
-	// deteremine if this object (or any of the object attached)
-	// ...is an avatar, of any type
-	virtual hsBool IsAvatar();
+    //
+    // deteremine if this object (or any of the object attached)
+    // ...is an avatar, of any type
+    virtual hsBool IsAvatar();
 
-	virtual PyObject* GetAvatarVelocity(); // pyVector3
+    virtual PyObject* GetAvatarVelocity(); // pyVector3
 
-	//
-	// deteremine if this object (or the first object in the list)
-	// ...is a human avatar
-	virtual hsBool IsHumanAvatar();
+    //
+    // deteremine if this object (or the first object in the list)
+    // ...is a human avatar
+    virtual hsBool IsHumanAvatar();
 
-	//
-	// switch to / from this camera (if it is a camera)
-	//
-	void PushCamera(pyKey& avKey);
-	void PushCameraCut(pyKey& avKey);
-	void PopCamera(pyKey& avKey);
-	void PushCutsceneCamera(hsBool cut,pyKey& avKey);
-	void PopCutsceneCamera(pyKey& avKey);
+    //
+    // switch to / from this camera (if it is a camera)
+    //
+    void PushCamera(pyKey& avKey);
+    void PushCameraCut(pyKey& avKey);
+    void PopCamera(pyKey& avKey);
+    void PushCutsceneCamera(hsBool cut,pyKey& avKey);
+    void PopCutsceneCamera(pyKey& avKey);
 
-	void Animate();
-	
-	// return responder state (if responder modifier found)
-	Int8 GetResponderState();
-	
-	// some animation commands for s.o.'s w/ multiple animations attached
+    void Animate();
+    
+    // return responder state (if responder modifier found)
+    Int8 GetResponderState();
+    
+    // some animation commands for s.o.'s w/ multiple animations attached
 
-	void RewindAnim(const char* animName);
-	void PlayAnim(const char* animName);
-	void StopAnim(const char* animName);
+    void RewindAnim(const char* animName);
+    void PlayAnim(const char* animName);
+    void StopAnim(const char* animName);
 
-	void RunResponder(int state);
-	void FFResponder(int state);
-	
-	void SetSoundFilename(int index, const char* filename, bool isCompressed);
-	int GetSoundObjectIndex(const char* sndObj);
+    void RunResponder(int state);
+    void FFResponder(int state);
+    
+    void SetSoundFilename(int index, const char* filename, bool isCompressed);
+    int GetSoundObjectIndex(const char* sndObj);
 
-	// hack for garrison
-	void VolumeSensorIgnoreExtraEnters(bool ignore);
+    // hack for garrison
+    void VolumeSensorIgnoreExtraEnters(bool ignore);
 };
 
 #endif // _pySceneObject_h_

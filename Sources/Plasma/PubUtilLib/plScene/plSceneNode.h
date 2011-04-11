@@ -51,89 +51,89 @@ class plVisMgr;
 class plSceneNode : public hsKeyedObject
 {
 public:
-	enum {
-		kMaxSceneDepth					= 4
-	};
+    enum {
+        kMaxSceneDepth                  = 4
+    };
 
 protected:
-	hsBool								fFilterGenerics; // Export only
+    hsBool                              fFilterGenerics; // Export only
 
-	Int16								fDepth;
+    Int16                               fDepth;
 
-	hsTArray<plSceneObject*>			fSceneObjects;
-	
-	hsTArray<plDrawable*>				fDrawPool;
-	hsTArray<plPhysical*>				fSimulationPool;
-	hsTArray<plAudible*>				fAudioPool;
+    hsTArray<plSceneObject*>            fSceneObjects;
+    
+    hsTArray<plDrawable*>               fDrawPool;
+    hsTArray<plPhysical*>               fSimulationPool;
+    hsTArray<plAudible*>                fAudioPool;
 
-	hsTArray<plOccluder*>				fOccluders;
+    hsTArray<plOccluder*>               fOccluders;
 
-	hsTArray<plLightInfo*>				fLightPool;
+    hsTArray<plLightInfo*>              fLightPool;
 
-	hsTArray<hsKeyedObject*>			fGenericPool;
+    hsTArray<hsKeyedObject*>            fGenericPool;
 
-	plSpaceTree*						fSpaceTree;
+    plSpaceTree*                        fSpaceTree;
 
-	void			IDirtySpaceTree();
-	plSpaceTree*	ITrashSpaceTree();
-	plSpaceTree*	IBuildSpaceTree();
+    void            IDirtySpaceTree();
+    plSpaceTree*    ITrashSpaceTree();
+    plSpaceTree*    IBuildSpaceTree();
 
-	void IRemoveDrawable(plDrawable* d);
-	void IRemoveAudible(plAudible* a);
-	void IRemovePhysical(plPhysical* p);
-	void IRemoveObject(plSceneObject* o);
-	void IRemoveLight(plLightInfo* l);
-	void IRemoveOccluder(plOccluder* o);
-	void IRemoveGeneric(hsKeyedObject* k);
+    void IRemoveDrawable(plDrawable* d);
+    void IRemoveAudible(plAudible* a);
+    void IRemovePhysical(plPhysical* p);
+    void IRemoveObject(plSceneObject* o);
+    void IRemoveLight(plLightInfo* l);
+    void IRemoveOccluder(plOccluder* o);
+    void IRemoveGeneric(hsKeyedObject* k);
 
-	void ISetObject(plSceneObject* o);
-	void ISetPhysical(plPhysical* p);
-	void ISetAudible(plAudible* a);
-	void ISetDrawable(plDrawable* d);
-	void ISetLight(plLightInfo* l);
-	void ISetOccluder(plOccluder* o);
-	void ISetGeneric(hsKeyedObject* k);
+    void ISetObject(plSceneObject* o);
+    void ISetPhysical(plPhysical* p);
+    void ISetAudible(plAudible* a);
+    void ISetDrawable(plDrawable* d);
+    void ISetLight(plLightInfo* l);
+    void ISetOccluder(plOccluder* o);
+    void ISetGeneric(hsKeyedObject* k);
 
-	hsBool IOnRemove(plNodeRefMsg* refMsg);
-	hsBool IOnAdd(plNodeRefMsg* refMsg);
+    hsBool IOnRemove(plNodeRefMsg* refMsg);
+    hsBool IOnAdd(plNodeRefMsg* refMsg);
 
-	// Export only: Clean up empty drawables
-	void	ICleanUp( void );
+    // Export only: Clean up empty drawables
+    void    ICleanUp( void );
 
 public:
-	plSceneNode();
-	virtual ~plSceneNode();
+    plSceneNode();
+    virtual ~plSceneNode();
 
-	CLASSNAME_REGISTER( plSceneNode );
-	GETINTERFACE_ANY( plSceneNode, hsKeyedObject );
+    CLASSNAME_REGISTER( plSceneNode );
+    GETINTERFACE_ANY( plSceneNode, hsKeyedObject );
 
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr);
 
-	virtual void Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList);
-	virtual void CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& levList, plVisMgr* visMgr);
+    virtual void Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList);
+    virtual void CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& levList, plVisMgr* visMgr);
 
-	virtual void SubmitOccluders(plPageTreeMgr* pageMgr) const;
+    virtual void SubmitOccluders(plPageTreeMgr* pageMgr) const;
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	Int16 GetDepth() { return fDepth; }
-	Int16 IncDepth() { return ++fDepth; }
-	Int16 DecDepth() { return --fDepth; }
+    Int16 GetDepth() { return fDepth; }
+    Int16 IncDepth() { return ++fDepth; }
+    Int16 DecDepth() { return --fDepth; }
 
-	void	Init( void );
+    void    Init( void );
 
-	plSpaceTree*	GetSpaceTree();
+    plSpaceTree*    GetSpaceTree();
 
-	// Export only: Query for a given drawable
-	virtual plDrawable	*GetMatchingDrawable( const plDrawableCriteria& crit );
+    // Export only: Query for a given drawable
+    virtual plDrawable  *GetMatchingDrawable( const plDrawableCriteria& crit );
 
-	// Export only: Optimize all my stinkin' drawables
-	virtual void	OptimizeDrawables( void );
+    // Export only: Optimize all my stinkin' drawables
+    virtual void    OptimizeDrawables( void );
 
-	void SetFilterGenericsOnly(hsBool b) { fFilterGenerics = b; }
+    void SetFilterGenericsOnly(hsBool b) { fFilterGenerics = b; }
 
-	const hsTArray<plDrawable*>& GetDrawPool() const { return fDrawPool; }
+    const hsTArray<plDrawable*>& GetDrawPool() const { return fDrawPool; }
 };
 
 #endif // plSceneNode_inc

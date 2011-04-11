@@ -42,124 +42,124 @@ set from 0 to max forever index.
 
 template <class T> class hsVersionNode {
 protected:
-	T										fData;
-	Int32									fIndex;
-	hsVersionNode<T>*		fNext;
+    T                                       fData;
+    Int32                                   fIndex;
+    hsVersionNode<T>*       fNext;
 public:
-	hsVersionNode(const UInt32 idx, const T &data) : fIndex(idx), fNext(nil) { fData = data; }
-	~hsVersionNode() { delete fNext; }
+    hsVersionNode(const UInt32 idx, const T &data) : fIndex(idx), fNext(nil) { fData = data; }
+    ~hsVersionNode() { delete fNext; }
 
-	hsVersionNode<T>*	Next() const { return fNext; }
+    hsVersionNode<T>*   Next() const { return fNext; }
 
-	Int32				Index() const { return fIndex; }
+    Int32               Index() const { return fIndex; }
 
-	inline void Append(hsVersionNode<T>* next);
-	inline int operator==(const T& o) const;
-	
-	int operator!=(const T& o) const { return !(this->operator==(o)); }
+    inline void Append(hsVersionNode<T>* next);
+    inline int operator==(const T& o) const;
+    
+    int operator!=(const T& o) const { return !(this->operator==(o)); }
 
-	T&			GetData() { return fData; }
+    T&          GetData() { return fData; }
 };
 
 template <class T> int hsVersionNode<T>::operator==(const T& data) const
 {
-	return fData == data;
+    return fData == data;
 }
 
 template <class T> void hsVersionNode<T>::Append(hsVersionNode<T>* next)
 {
-	if( fNext )
-		fNext->Append(next);
-	else
-		fNext = next;
+    if( fNext )
+        fNext->Append(next);
+    else
+        fNext = next;
 }
 
 template <class T> class hsSearchVersion {
 protected:
-	UInt32				fLength;
-	hsVersionNode<T>**	fArray;
-	UInt32				fNextIndex;
-	UInt32				fNumIndex;
-	UInt32				fIncIndex;
-	T**					fBackArray;
+    UInt32              fLength;
+    hsVersionNode<T>**  fArray;
+    UInt32              fNextIndex;
+    UInt32              fNumIndex;
+    UInt32              fIncIndex;
+    T**                 fBackArray;
 
-	void				ICheckBackArray();
+    void                ICheckBackArray();
 public:
-	hsSearchVersion(UInt32 len, UInt32 inc = 0);
-	~hsSearchVersion();
+    hsSearchVersion(UInt32 len, UInt32 inc = 0);
+    ~hsSearchVersion();
 
-	T&			operator[]( Int32 index );
+    T&          operator[]( Int32 index );
 
-	Int32				Find(int where, const T& what, hsBool forceUnique=false);
+    Int32               Find(int where, const T& what, hsBool forceUnique=false);
 
-	UInt32				GetCount() const { return fNextIndex; }
+    UInt32              GetCount() const { return fNextIndex; }
 };
 
 template <class T> T& hsSearchVersion<T>::operator[]( Int32 index )
 {
-	hsDebugCode(hsThrowIfBadParam((UInt32)index >= (UInt32)fNextIndex);)
+    hsDebugCode(hsThrowIfBadParam((UInt32)index >= (UInt32)fNextIndex);)
 
-	return *fBackArray[index];
+    return *fBackArray[index];
 }
 
 template <class T> hsSearchVersion<T>::hsSearchVersion(UInt32 len, UInt32 inc)
-	: fNextIndex(0)
+    : fNextIndex(0)
 { 
-	fIncIndex = inc ? inc : len;
-	fLength = len; 
-	fArray = TRACKED_NEW hsVersionNode<T>*[fLength]; 
-	HSMemory::Clear(fArray, fLength*sizeof(*fArray)); 
-	fBackArray = TRACKED_NEW T*[fNumIndex = fLength];
+    fIncIndex = inc ? inc : len;
+    fLength = len; 
+    fArray = TRACKED_NEW hsVersionNode<T>*[fLength]; 
+    HSMemory::Clear(fArray, fLength*sizeof(*fArray)); 
+    fBackArray = TRACKED_NEW T*[fNumIndex = fLength];
 }
 
 template <class T> hsSearchVersion<T>::~hsSearchVersion()
 {
-	int i;
-	for( i = 0; i < fLength; i++ )
-		delete fArray[i];
-	delete [] fArray;
-	delete [] fBackArray;
+    int i;
+    for( i = 0; i < fLength; i++ )
+        delete fArray[i];
+    delete [] fArray;
+    delete [] fBackArray;
 }
 
 template <class T> void hsSearchVersion<T>::ICheckBackArray()
 {
-	if( fNextIndex >= fNumIndex )
-	{
-		T**	newBackArray = TRACKED_NEW T*[fNumIndex + fIncIndex];
-		HSMemory::BlockMove(fBackArray, newBackArray, fNextIndex*sizeof(T*));
-		delete [] fBackArray;
-		fBackArray = newBackArray;
-		fNumIndex += fIncIndex;
-	}
+    if( fNextIndex >= fNumIndex )
+    {
+        T** newBackArray = TRACKED_NEW T*[fNumIndex + fIncIndex];
+        HSMemory::BlockMove(fBackArray, newBackArray, fNextIndex*sizeof(T*));
+        delete [] fBackArray;
+        fBackArray = newBackArray;
+        fNumIndex += fIncIndex;
+    }
 }
 
 template <class T> Int32 hsSearchVersion<T>::Find(int where, const T&what, hsBool forceUnique)
 {
-	hsVersionNode<T>* curr = fArray[where];
+    hsVersionNode<T>* curr = fArray[where];
 
-	ICheckBackArray();
+    ICheckBackArray();
 
-	if( !curr )
-	{
-		hsVersionNode<T>* next = TRACKED_NEW hsVersionNode<T>(fNextIndex, what);
-		fArray[where] = next;
-		fBackArray[fNextIndex] = &next->GetData();
-		return fNextIndex++;
-	}
-	if( *curr == what )
-		return curr->Index();
+    if( !curr )
+    {
+        hsVersionNode<T>* next = TRACKED_NEW hsVersionNode<T>(fNextIndex, what);
+        fArray[where] = next;
+        fBackArray[fNextIndex] = &next->GetData();
+        return fNextIndex++;
+    }
+    if( *curr == what )
+        return curr->Index();
 
-	while( curr->Next() 
-		&& (forceUnique || (*curr->Next() != what)) )
-		curr = curr->Next();
+    while( curr->Next() 
+        && (forceUnique || (*curr->Next() != what)) )
+        curr = curr->Next();
 
-	if( curr->Next() )
-		return curr->Next()->Index();
+    if( curr->Next() )
+        return curr->Next()->Index();
 
-	hsVersionNode<T>* next = TRACKED_NEW hsVersionNode<T>(fNextIndex, what);
-	curr->Append(next);
-	fBackArray[fNextIndex] = &next->GetData();
-	return fNextIndex++;
+    hsVersionNode<T>* next = TRACKED_NEW hsVersionNode<T>(fNextIndex, what);
+    curr->Append(next);
+    fBackArray[fNextIndex] = &next->GetData();
+    return fNextIndex++;
 }
 
 #endif // hsSearchVersion_inc

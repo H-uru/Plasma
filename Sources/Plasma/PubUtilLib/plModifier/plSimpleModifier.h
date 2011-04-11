@@ -39,53 +39,53 @@ class plAnimCmdMsg;
 class plSimpleModifier : public plModifier
 {
 public:
-	enum {
-		kStopped		= 0,
-		kLoop,
-		kBackwards,
-		kWrapped,
+    enum {
+        kStopped        = 0,
+        kLoop,
+        kBackwards,
+        kWrapped,
 
-		kNumFlags
-	};
+        kNumFlags
+    };
 protected:
-	plSceneObject*	fTarget;
+    plSceneObject*  fTarget;
 
-	double					fLastTime; // in world time
+    double                  fLastTime; // in world time
 
-	plAnimTimeConvert		fTimeConvert;
+    plAnimTimeConvert       fTimeConvert;
 
-	// The following are in animation time.
-	hsScalar				fCurrentTime;
+    // The following are in animation time.
+    hsScalar                fCurrentTime;
 
-	hsBool					IHandleTime(double wSecs, hsScalar del);
+    hsBool                  IHandleTime(double wSecs, hsScalar del);
 
-	hsBool					IHandleRef(plRefMsg* refMsg);
-	virtual hsBool			IHandleCmd(plAnimCmdMsg* modMsg);
+    hsBool                  IHandleRef(plRefMsg* refMsg);
+    virtual hsBool          IHandleCmd(plAnimCmdMsg* modMsg);
 
-	virtual void			IApplyDynamic() = 0;
+    virtual void            IApplyDynamic() = 0;
 
-	virtual void			IBegin();
-	virtual void			IEnd();
+    virtual void            IBegin();
+    virtual void            IEnd();
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
 
 public:
-	plSimpleModifier();
-	virtual ~plSimpleModifier();
+    plSimpleModifier();
+    virtual ~plSimpleModifier();
 
-	CLASSNAME_REGISTER( plSimpleModifier );
-	GETINTERFACE_ANY( plSimpleModifier, plModifier);
+    CLASSNAME_REGISTER( plSimpleModifier );
+    GETINTERFACE_ANY( plSimpleModifier, plModifier);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual int GetNumTargets() const { return fTarget ? 1 : 0; }
-	virtual plSceneObject* GetTarget(int w) const { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
-	virtual void AddTarget(plSceneObject* so);
-	virtual void RemoveTarget(plSceneObject* so);
-	virtual plAnimTimeConvert& GetTimeConvert() { return fTimeConvert;	}
+    virtual int GetNumTargets() const { return fTarget ? 1 : 0; }
+    virtual plSceneObject* GetTarget(int w) const { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
+    virtual void AddTarget(plSceneObject* so);
+    virtual void RemoveTarget(plSceneObject* so);
+    virtual plAnimTimeConvert& GetTimeConvert() { return fTimeConvert;  }
 
 
 };

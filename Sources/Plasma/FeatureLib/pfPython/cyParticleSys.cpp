@@ -33,27 +33,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 cyParticleSys::cyParticleSys(plKey sender, plKey recvr)
 {
-	SetSender(sender);
-	AddRecvr(recvr);
-	fNetForce = false;
+    SetSender(sender);
+    AddRecvr(recvr);
+    fNetForce = false;
 }
 
 // setters
 void cyParticleSys::SetSender(plKey &sender)
 {
-	fSender = sender;
+    fSender = sender;
 }
 
 void cyParticleSys::AddRecvr(plKey &recvr)
 {
-	if ( recvr != nil )
-		fRecvr.Append(recvr);
+    if ( recvr != nil )
+        fRecvr.Append(recvr);
 }
 
 void cyParticleSys::SetNetForce(hsBool state)
 {
-	// set our flag
-	fNetForce = state;
+    // set our flag
+    fNetForce = state;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -65,22 +65,22 @@ void cyParticleSys::SetNetForce(hsBool state)
 //
 void cyParticleSys::ISendParticleSysMsg(UInt32 param, hsScalar value)
 {
-	plParticleUpdateMsg* pMsg = TRACKED_NEW plParticleUpdateMsg(fSender, nil, nil, param, value);
-	// check if this needs to be network forced to all clients
-	if (fNetForce )
-	{
-		// set the network propagate flag to make sure it gets to the other clients
-		pMsg->SetBCastFlag(plMessage::kNetPropagate);
-		pMsg->SetBCastFlag(plMessage::kNetForce);
-	}
-	pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
-	// add all our receivers to the message receiver list
-	int i;
-	for ( i=0; i<fRecvr.Count(); i++ )
-	{
-		pMsg->AddReceiver(fRecvr[i]);
-	}
-	plgDispatch::MsgSend(pMsg);
+    plParticleUpdateMsg* pMsg = TRACKED_NEW plParticleUpdateMsg(fSender, nil, nil, param, value);
+    // check if this needs to be network forced to all clients
+    if (fNetForce )
+    {
+        // set the network propagate flag to make sure it gets to the other clients
+        pMsg->SetBCastFlag(plMessage::kNetPropagate);
+        pMsg->SetBCastFlag(plMessage::kNetForce);
+    }
+    pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
+    // add all our receivers to the message receiver list
+    int i;
+    for ( i=0; i<fRecvr.Count(); i++ )
+    {
+        pMsg->AddReceiver(fRecvr[i]);
+    }
+    plgDispatch::MsgSend(pMsg);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -89,60 +89,60 @@ void cyParticleSys::ISendParticleSysMsg(UInt32 param, hsScalar value)
 //
 void cyParticleSys::SetParticlesPerSecond(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamParticlesPerSecond,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamParticlesPerSecond,value);
 }
 
 void cyParticleSys::SetInitPitchRange(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamInitPitchRange,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamInitPitchRange,value);
 }
 
 void cyParticleSys::SetInitYawRange(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamInitYawRange,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamInitYawRange,value);
 }
 
 void cyParticleSys::SetVelMin(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamVelMin,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamVelMin,value);
 }
 
 void cyParticleSys::SetVelMax(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamVelMax,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamVelMax,value);
 }
 
 void cyParticleSys::SetXSize(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamXSize,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamXSize,value);
 }
 
 void cyParticleSys::SetYSize(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamYSize,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamYSize,value);
 }
 
 void cyParticleSys::SetScaleMin(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamScaleMin,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamScaleMin,value);
 }
 
 void cyParticleSys::SetScaleMax(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamScaleMax,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamScaleMax,value);
 }
 
 void cyParticleSys::SetGenLife(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamGenLife,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamGenLife,value);
 }
 
 void cyParticleSys::SetPartLifeMin(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamPartLifeMin,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamPartLifeMin,value);
 }
 
 void cyParticleSys::SetPartLifeMax(hsScalar value)
 {
-	ISendParticleSysMsg(plParticleUpdateMsg::kParamPartLifeMax,value);
+    ISendParticleSysMsg(plParticleUpdateMsg::kParamPartLifeMax,value);
 }

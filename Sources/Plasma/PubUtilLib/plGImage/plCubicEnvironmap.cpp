@@ -24,16 +24,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plCubicEnvironmap Class Functions										 //
-//	Derived bitmap class representing a collection of mipmaps to be used for //
-//	cubic environment mapping.												 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plCubicEnvironmap Class Functions                                        //
+//  Derived bitmap class representing a collection of mipmaps to be used for //
+//  cubic environment mapping.                                               //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	6.7.2001 mcn - Created.													 //
-//																			 //
+//                                                                           //
+//  6.7.2001 mcn - Created.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -45,135 +45,135 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plCubicEnvironmap::plCubicEnvironmap()
 {
-	int		i;
+    int     i;
 
-	for( i = 0; i < 6; i++ )
-		fFaces[ i ] = TRACKED_NEW plMipmap;
+    for( i = 0; i < 6; i++ )
+        fFaces[ i ] = TRACKED_NEW plMipmap;
 
-	fInitialized = false;
+    fInitialized = false;
 }
 
 plCubicEnvironmap::~plCubicEnvironmap()
 {
-	int		i;
+    int     i;
 
-	for( i = 0; i < 6; i++ )
-		delete fFaces[ i ];
+    for( i = 0; i < 6; i++ )
+        delete fFaces[ i ];
 }
 
 //// GetTotalSize /////////////////////////////////////////////////////////////
-//	Get the total size in bytes
+//  Get the total size in bytes
 
-UInt32	plCubicEnvironmap::GetTotalSize( void ) const
+UInt32  plCubicEnvironmap::GetTotalSize( void ) const
 {
-	UInt32	size, i;
+    UInt32  size, i;
 
 
-	for( size = 0, i = 0; i < 6; i++ )
-	{
-		hsAssert( fFaces[ i ] != nil, "Nil face in GetTotalSize()" );
-		size += fFaces[ i ]->GetTotalSize();
-	}
+    for( size = 0, i = 0; i < 6; i++ )
+    {
+        hsAssert( fFaces[ i ] != nil, "Nil face in GetTotalSize()" );
+        size += fFaces[ i ]->GetTotalSize();
+    }
 
-	return size;
+    return size;
 }
 
 //// Read /////////////////////////////////////////////////////////////////////
 
-UInt32	plCubicEnvironmap::Read( hsStream *s )
+UInt32  plCubicEnvironmap::Read( hsStream *s )
 {
-	UInt32	i, tr = plBitmap::Read( s );
+    UInt32  i, tr = plBitmap::Read( s );
 
 
-	for( i = 0; i < 6; i++ )
-		tr += fFaces[ i ]->Read( s );
+    for( i = 0; i < 6; i++ )
+        tr += fFaces[ i ]->Read( s );
 
-	fInitialized = true;
+    fInitialized = true;
 
-	return tr;
+    return tr;
 }
 
 //// Write ////////////////////////////////////////////////////////////////////
 
-UInt32	plCubicEnvironmap::Write( hsStream *s )
+UInt32  plCubicEnvironmap::Write( hsStream *s )
 {
-	UInt32	i, tw = plBitmap::Write( s );
+    UInt32  i, tw = plBitmap::Write( s );
 
 
-	for( i = 0; i < 6; i++ )
-		tw += fFaces[ i ]->Write( s );
+    for( i = 0; i < 6; i++ )
+        tw += fFaces[ i ]->Write( s );
 
-	return tw;
+    return tw;
 }
 
 //// CopyToFace ///////////////////////////////////////////////////////////////
-//	Export-only: Copy the mipmap given into a face
+//  Export-only: Copy the mipmap given into a face
 
-void	plCubicEnvironmap::CopyToFace( plMipmap *mip, UInt8 face )
+void    plCubicEnvironmap::CopyToFace( plMipmap *mip, UInt8 face )
 {
-	hsAssert( face < 6, "Invalid face index in CopyToFace()" );
-	hsAssert( fFaces[ face ] != nil, "nil face in CopyToFace()" );
-	hsAssert( mip != nil, "nil source in CopyToFace()" );
+    hsAssert( face < 6, "Invalid face index in CopyToFace()" );
+    hsAssert( fFaces[ face ] != nil, "nil face in CopyToFace()" );
+    hsAssert( mip != nil, "nil source in CopyToFace()" );
 
 
-	if( !fInitialized )
-	{
-		// Make sure our stuff matches
-		fCompressionType = mip->fCompressionType;
-		if( fCompressionType != kDirectXCompression )
-			fUncompressedInfo.fType = mip->fUncompressedInfo.fType;
-		else
-		{
-			fDirectXInfo.fBlockSize = mip->fDirectXInfo.fBlockSize;
-			fDirectXInfo.fCompressionType = mip->fDirectXInfo.fCompressionType;
-		}
+    if( !fInitialized )
+    {
+        // Make sure our stuff matches
+        fCompressionType = mip->fCompressionType;
+        if( fCompressionType != kDirectXCompression )
+            fUncompressedInfo.fType = mip->fUncompressedInfo.fType;
+        else
+        {
+            fDirectXInfo.fBlockSize = mip->fDirectXInfo.fBlockSize;
+            fDirectXInfo.fCompressionType = mip->fDirectXInfo.fCompressionType;
+        }
 
-		fPixelSize = mip->GetPixelSize();
-		fSpace = kDirectSpace;
-		fFlags = mip->GetFlags();
+        fPixelSize = mip->GetPixelSize();
+        fSpace = kDirectSpace;
+        fFlags = mip->GetFlags();
 
-		fInitialized = true;
-	}
-	else
-	{
-		// Check to make sure their stuff matches
-		if( IsCompressed() != mip->IsCompressed() )
-		{
-			hsAssert( false, "Compression types do not match in CopyToFace()" );
-			return;
-		}
+        fInitialized = true;
+    }
+    else
+    {
+        // Check to make sure their stuff matches
+        if( IsCompressed() != mip->IsCompressed() )
+        {
+            hsAssert( false, "Compression types do not match in CopyToFace()" );
+            return;
+        }
 
-		if( !IsCompressed() )
-		{
-			if( fUncompressedInfo.fType != mip->fUncompressedInfo.fType )
-			{
-				hsAssert( false, "Compression formats do not match in CopyToFace()" );
-				return;
-			}
-		}
-		else
-		{
-			if( fDirectXInfo.fBlockSize != mip->fDirectXInfo.fBlockSize ||
-				fDirectXInfo.fCompressionType != mip->fDirectXInfo.fCompressionType )
-			{
-				hsAssert( false, "Compression formats do not match in CopyToFace()" );
-				return;
-			}
-		}
+        if( !IsCompressed() )
+        {
+            if( fUncompressedInfo.fType != mip->fUncompressedInfo.fType )
+            {
+                hsAssert( false, "Compression formats do not match in CopyToFace()" );
+                return;
+            }
+        }
+        else
+        {
+            if( fDirectXInfo.fBlockSize != mip->fDirectXInfo.fBlockSize ||
+                fDirectXInfo.fCompressionType != mip->fDirectXInfo.fCompressionType )
+            {
+                hsAssert( false, "Compression formats do not match in CopyToFace()" );
+                return;
+            }
+        }
 
-		if( fPixelSize != mip->GetPixelSize() )
-		{
-			hsAssert( false, "Bitdepths do not match in CopyToFace()" );
-			return;
-		}
+        if( fPixelSize != mip->GetPixelSize() )
+        {
+            hsAssert( false, "Bitdepths do not match in CopyToFace()" );
+            return;
+        }
 
-		if( fFlags != mip->GetFlags() )
-		{
-			hsAssert( false, "Flags do not match in CopyToFace()" );
-		}
-	}
+        if( fFlags != mip->GetFlags() )
+        {
+            hsAssert( false, "Flags do not match in CopyToFace()" );
+        }
+    }
 
-	// Copy the mipmap data
-	fFaces[ face ]->CopyFrom( mip );
+    // Copy the mipmap data
+    fFaces[ face ]->CopyFrom( mip );
 }
 

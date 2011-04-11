@@ -56,32 +56,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct plNCAgeLeaver {
 
-	enum NextOp {
-		kNoOp,
-		kDisableClickables,
-		kLinkOutFX,
-		kUnloadAge,
-		kNotifyAgeUnloaded,
-	};
-	
-	NextOp					nextOp;
-	bool					quitting;
-	bool					complete;
-	FNCAgeLeaverCallback	callback;
-	void *					userState;
-	
-	plNCAgeLeaver (
-		bool					quitting,
-		FNCAgeLeaverCallback	callback,
-		void *					userState
-	);
-	~plNCAgeLeaver ();
+    enum NextOp {
+        kNoOp,
+        kDisableClickables,
+        kLinkOutFX,
+        kUnloadAge,
+        kNotifyAgeUnloaded,
+    };
+    
+    NextOp                  nextOp;
+    bool                    quitting;
+    bool                    complete;
+    FNCAgeLeaverCallback    callback;
+    void *                  userState;
+    
+    plNCAgeLeaver (
+        bool                    quitting,
+        FNCAgeLeaverCallback    callback,
+        void *                  userState
+    );
+    ~plNCAgeLeaver ();
 
-	void Start ();
-	void Complete (bool success, const char msg[]);
-	bool MsgReceive (plMessage * msg);
-	void Update ();
-	void ExecNextOp ();
+    void Start ();
+    void Complete (bool success, const char msg[]);
+    bool MsgReceive (plMessage * msg);
+    void Update ();
+    void ExecNextOp ();
 };
 
 
@@ -93,14 +93,14 @@ struct plNCAgeLeaver {
 
 //============================================================================
 plNCAgeLeaver::plNCAgeLeaver (
-	bool					quitting,
-	FNCAgeLeaverCallback	callback,
-	void *					userState
-) :	nextOp(kNoOp)
-,	quitting(quitting)
-,	complete(false)
-,	callback(callback)
-,	userState(userState)
+    bool                    quitting,
+    FNCAgeLeaverCallback    callback,
+    void *                  userState
+) : nextOp(kNoOp)
+,   quitting(quitting)
+,   complete(false)
+,   callback(callback)
+,   userState(userState)
 {
 }
 
@@ -110,134 +110,134 @@ plNCAgeLeaver::~plNCAgeLeaver () {
 
 //============================================================================
 void plNCAgeLeaver::Start () {
-	if (plBackgroundDownloader::GetInstance())
-		plBackgroundDownloader::GetInstance()->Pause();
+    if (plBackgroundDownloader::GetInstance())
+        plBackgroundDownloader::GetInstance()->Pause();
 
-	nextOp = kLinkOutFX;
+    nextOp = kLinkOutFX;
 }
 
 //============================================================================
 void plNCAgeLeaver::Complete (bool success, const char msg[]) {
 
-	if (!complete) {
-		complete = true;
-		
-		NCAgeLeaveCompleteNotify	notify;
-		notify.success	= success;
-		notify.msg		= msg;
-		
-		callback(this, kAgeLeaveComplete, &notify, userState);
-		DEL(this);
-	}
+    if (!complete) {
+        complete = true;
+        
+        NCAgeLeaveCompleteNotify    notify;
+        notify.success  = success;
+        notify.msg      = msg;
+        
+        callback(this, kAgeLeaveComplete, &notify, userState);
+        DEL(this);
+    }
 }
 
 //============================================================================
 bool plNCAgeLeaver::MsgReceive (plMessage * msg) {
-	plNetClientMgr *	nc = plNetClientMgr::GetInstance();
-	plAvatarMgr *		am = plAvatarMgr::GetInstance();
-	plAgeLoader *		al = plAgeLoader::GetInstance();
+    plNetClientMgr *    nc = plNetClientMgr::GetInstance();
+    plAvatarMgr *       am = plAvatarMgr::GetInstance();
+    plAgeLoader *       al = plAgeLoader::GetInstance();
 
-	//========================================================================
-	// Done with link out effects
-	//========================================================================
-	if (plLinkOutUnloadMsg * linkOutUnloadMsg = plLinkOutUnloadMsg::ConvertNoRef(msg))
-	{
-		if (!linkOutUnloadMsg->HasBCastFlag(plMessage::kNetNonLocal)
-			&& linkOutUnloadMsg->GetPlayerID() == NetCommGetPlayer()->playerInt
-		) {
-			nextOp = kUnloadAge;
-		}
-		return true;
-	}
-	
-	//========================================================================
-	// Age data unloaded
-	//========================================================================
-	if (plAgeLoadedMsg * ageLoadedMsg = plAgeLoadedMsg::ConvertNoRef(msg)) {
-		if (!ageLoadedMsg->fLoaded) {
-			nextOp = kNotifyAgeUnloaded;
-			return true;
-		}
-		return false;
-	}
-	
+    //========================================================================
+    // Done with link out effects
+    //========================================================================
+    if (plLinkOutUnloadMsg * linkOutUnloadMsg = plLinkOutUnloadMsg::ConvertNoRef(msg))
+    {
+        if (!linkOutUnloadMsg->HasBCastFlag(plMessage::kNetNonLocal)
+            && linkOutUnloadMsg->GetPlayerID() == NetCommGetPlayer()->playerInt
+        ) {
+            nextOp = kUnloadAge;
+        }
+        return true;
+    }
+    
+    //========================================================================
+    // Age data unloaded
+    //========================================================================
+    if (plAgeLoadedMsg * ageLoadedMsg = plAgeLoadedMsg::ConvertNoRef(msg)) {
+        if (!ageLoadedMsg->fLoaded) {
+            nextOp = kNotifyAgeUnloaded;
+            return true;
+        }
+        return false;
+    }
+    
 
-	return false;
+    return false;
 }
 
 //============================================================================
 void plNCAgeLeaver::ExecNextOp () {
-	plNetClientMgr *	nc = plNetClientMgr::GetInstance();
-	plAvatarMgr *		am = plAvatarMgr::GetInstance();
-	plAgeLoader *		al = plAgeLoader::GetInstance();
+    plNetClientMgr *    nc = plNetClientMgr::GetInstance();
+    plAvatarMgr *       am = plAvatarMgr::GetInstance();
+    plAgeLoader *       al = plAgeLoader::GetInstance();
 
-	NextOp next = nextOp;
-	nextOp		= kNoOp;
-	switch (next) {
-		//====================================================================
-		case kNoOp: {
-		}
-		break;
+    NextOp next = nextOp;
+    nextOp      = kNoOp;
+    switch (next) {
+        //====================================================================
+        case kNoOp: {
+        }
+        break;
 
-		//====================================================================
-		case kDisableClickables: {
-			(TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables))->Send();
-			nextOp = kLinkOutFX;
-		}
-		break;
+        //====================================================================
+        case kDisableClickables: {
+            (TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables))->Send();
+            nextOp = kLinkOutFX;
+        }
+        break;
 
-		//====================================================================
-		case kLinkOutFX: {
-			nc->StartLinkOutFX();
-		}
-		break;
+        //====================================================================
+        case kLinkOutFX: {
+            nc->StartLinkOutFX();
+        }
+        break;
 
-		//====================================================================
-		case kUnloadAge: {
-			NetCliGameDisconnect();
+        //====================================================================
+        case kUnloadAge: {
+            NetCliGameDisconnect();
 
-			// Cull nodes that were part of this age vault (but not shared by the player's vault)
-			VaultCull(NetCommGetAge()->ageVaultId);
+            // Cull nodes that were part of this age vault (but not shared by the player's vault)
+            VaultCull(NetCommGetAge()->ageVaultId);
 
-			// remove the age device inbox mappings
-			VaultClearDeviceInboxMap();
-			
-			// Tell our local player that he's unspawning (if that is indeed the case)
-			nc->IPlayerChangeAge(true /* exiting */, 0/* respawn */);
-			// disconnect age vault
-			
-			// @@@ TODO: Unload age vault here
+            // remove the age device inbox mappings
+            VaultClearDeviceInboxMap();
+            
+            // Tell our local player that he's unspawning (if that is indeed the case)
+            nc->IPlayerChangeAge(true /* exiting */, 0/* respawn */);
+            // disconnect age vault
+            
+            // @@@ TODO: Unload age vault here
 
-			plAgeLoader::GetInstance()->UnloadAge();			// unload age
-			nc->ISendCameraReset(false/*leaving age*/);			// reset camera
-			nc->IUnloadRemotePlayers();							// unload other players
+            plAgeLoader::GetInstance()->UnloadAge();            // unload age
+            nc->ISendCameraReset(false/*leaving age*/);         // reset camera
+            nc->IUnloadRemotePlayers();                         // unload other players
 
-			if (NetCommNeedToLoadAvatar())
-				am->UnLoadLocalPlayer();
-		}
-		break;
+            if (NetCommNeedToLoadAvatar())
+                am->UnLoadLocalPlayer();
+        }
+        break;
 
-		//====================================================================
-		case kNotifyAgeUnloaded: {
-			// Set "Playing Game" bit to false
-			nc->SetFlagsBit(plNetClientMgr::kPlayingGame, false);
-			
-			// Release AgeSDL object, if any
-			if (nc->fAgeSDLObjectKey)
-				nc->GetKey()->Release(nc->fAgeSDLObjectKey);
-				
-			// All done leaving age
-			Complete(true, "Age unloaded");
-		}
-		break;
+        //====================================================================
+        case kNotifyAgeUnloaded: {
+            // Set "Playing Game" bit to false
+            nc->SetFlagsBit(plNetClientMgr::kPlayingGame, false);
+            
+            // Release AgeSDL object, if any
+            if (nc->fAgeSDLObjectKey)
+                nc->GetKey()->Release(nc->fAgeSDLObjectKey);
+                
+            // All done leaving age
+            Complete(true, "Age unloaded");
+        }
+        break;
 
-		DEFAULT_FATAL(nextOp);
-	}
+        DEFAULT_FATAL(nextOp);
+    }
 }
 
 //============================================================================
 void plNCAgeLeaver::Update () {
-	ExecNextOp();
+    ExecNextOp();
 }
 
 
@@ -249,36 +249,36 @@ void plNCAgeLeaver::Update () {
 
 //============================================================================
 void NCAgeLeaverCreate (
-	plNCAgeLeaver **		pleaver,
-	bool					quitting,
-	FNCAgeLeaverCallback	callback,
-	void *					userState
+    plNCAgeLeaver **        pleaver,
+    bool                    quitting,
+    FNCAgeLeaverCallback    callback,
+    void *                  userState
 ) {
-	ASSERT(pleaver);
-	ASSERT(callback);
-	
-	plNCAgeLeaver * leaver;
-	*pleaver = leaver = NEWZERO(plNCAgeLeaver)(
-		quitting,
-		callback,
-		userState
-	);
-	leaver->Start();
+    ASSERT(pleaver);
+    ASSERT(callback);
+    
+    plNCAgeLeaver * leaver;
+    *pleaver = leaver = NEWZERO(plNCAgeLeaver)(
+        quitting,
+        callback,
+        userState
+    );
+    leaver->Start();
 }
 
 //============================================================================
 bool NCAgeLeaverMsgReceive (
-	plNCAgeLeaver *			leaver,
-	plMessage *				msg
+    plNCAgeLeaver *         leaver,
+    plMessage *             msg
 ) {
-	ASSERT(leaver);
-	return leaver->MsgReceive(msg);
+    ASSERT(leaver);
+    return leaver->MsgReceive(msg);
 }
 
 //============================================================================
 void NCAgeLeaverUpdate (
-	plNCAgeLeaver * leaver
+    plNCAgeLeaver * leaver
 ) {
-	ASSERT(leaver);
-	leaver->Update();
+    ASSERT(leaver);
+    leaver->Update();
 }

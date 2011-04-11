@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfPlayerBookMod Header													//
-//																			//
+//                                                                          //
+//  pfPlayerBookMod Header                                                  //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfPlayerBookMod_h
@@ -41,42 +41,42 @@ class pfPlayerBookProc;
 
 class pfPlayerBookMod : public plSingleModifier
 {
-	protected:
+    protected:
 
-		// We have six preview panes, each with a GUI check box control.
-		// We have to have pointers to all six checkboxes so we can attach
-		// procs to them, as well as all six dynamic layers that are the
-		// preview panes.
+        // We have six preview panes, each with a GUI check box control.
+        // We have to have pointers to all six checkboxes so we can attach
+        // procs to them, as well as all six dynamic layers that are the
+        // preview panes.
 
-		pfGUICheckBoxCtrl	*fCheckBoxes[ 6 ];
-		plKey				fDynLayerKeys[ 6 ];
+        pfGUICheckBoxCtrl   *fCheckBoxes[ 6 ];
+        plKey               fDynLayerKeys[ 6 ];
 
-		// Also got a load and save button somewhere
-		pfGUIButtonMod		*fLoadButton, *fSaveButton;
+        // Also got a load and save button somewhere
+        pfGUIButtonMod      *fLoadButton, *fSaveButton;
 
-		pfPlayerBookProc	*fPBProc;
-		
-		enum
-		{
-			kRefCheckBox,
-			kRefLoadButton,
-			kRefSaveButton
-		};
+        pfPlayerBookProc    *fPBProc;
+        
+        enum
+        {
+            kRefCheckBox,
+            kRefLoadButton,
+            kRefSaveButton
+        };
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
-	public:
+    public:
 
-		pfPlayerBookMod();
-		virtual ~pfPlayerBookMod();
+        pfPlayerBookMod();
+        virtual ~pfPlayerBookMod();
 
-		CLASSNAME_REGISTER( pfPlayerBookMod );
-		GETINTERFACE_ANY( pfPlayerBookMod, plSingleModifier );
+        CLASSNAME_REGISTER( pfPlayerBookMod );
+        GETINTERFACE_ANY( pfPlayerBookMod, plSingleModifier );
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
 };
 

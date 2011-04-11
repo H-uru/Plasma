@@ -35,64 +35,64 @@ static HINSTANCE maxAllocDll = NULL;
 
 void LoadAllocDll()
 {
-	if (!maxAllocDll)
-	{
-		// Search through all the Max plugin paths for MaxAlloc.dll
-		Interface *ip = GetCOREInterface();
-		for (int i = 0; i < ip->GetPlugInEntryCount(); i++)
-		{
-			const char *dir = ip->GetPlugInDir(i);
+    if (!maxAllocDll)
+    {
+        // Search through all the Max plugin paths for MaxAlloc.dll
+        Interface *ip = GetCOREInterface();
+        for (int i = 0; i < ip->GetPlugInEntryCount(); i++)
+        {
+            const char *dir = ip->GetPlugInDir(i);
 
-			char path[MAX_PATH];
-			sprintf(path, "%sMaxAlloc.dll", dir);
+            char path[MAX_PATH];
+            sprintf(path, "%sMaxAlloc.dll", dir);
 
-			maxAllocDll = LoadLibrary(path);
+            maxAllocDll = LoadLibrary(path);
 
-			if (maxAllocDll)
-				return;
-		}
+            if (maxAllocDll)
+                return;
+        }
 
-		maxAllocDll = LoadLibrary("MaxAlloc.dll");
+        maxAllocDll = LoadLibrary("MaxAlloc.dll");
 
-		if (!maxAllocDll)
-		{
+        if (!maxAllocDll)
+        {
          ::MessageBox(NULL, "Couldn't load MaxAlloc.dll", "Error", MB_OK);
-			exit(0);
-		}
-	}
+            exit(0);
+        }
+    }
 }
 
 void *plMaxMalloc(size_t size)
 {
-	if (!maxMalloc)
-	{
-		LoadAllocDll();
-		maxMalloc = (MAXMALLOC)GetProcAddress(maxAllocDll, "MaxMalloc");
+    if (!maxMalloc)
+    {
+        LoadAllocDll();
+        maxMalloc = (MAXMALLOC)GetProcAddress(maxAllocDll, "MaxMalloc");
 
-		if (!maxMalloc)
-		{
-			::MessageBox(NULL, "Couldn't find MaxMalloc in MaxAlloc.dll", "Error", MB_OK);
-			exit(0);
-		}
-	}
+        if (!maxMalloc)
+        {
+            ::MessageBox(NULL, "Couldn't find MaxMalloc in MaxAlloc.dll", "Error", MB_OK);
+            exit(0);
+        }
+    }
 
-	return maxMalloc(size);
+    return maxMalloc(size);
 }
 
 void plMaxFree(void *memblock)
 {
-	if (!maxFree)
-	{
-		LoadAllocDll();
-		maxFree = (MAXFREE)GetProcAddress(maxAllocDll, "MaxFree");
+    if (!maxFree)
+    {
+        LoadAllocDll();
+        maxFree = (MAXFREE)GetProcAddress(maxAllocDll, "MaxFree");
 
-		if (!maxFree)
-		{
+        if (!maxFree)
+        {
          ::MessageBox(NULL, "Couldn't find MaxFree in MaxAlloc.dll", "Error", MB_OK);
-			exit(0);
-		}
+            exit(0);
+        }
 
-	}
+    }
 
-	maxFree(memblock);
+    maxFree(memblock);
 }

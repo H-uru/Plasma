@@ -7,21 +7,21 @@ include_directories(${PHYSX_INCLUDE_DIRS})
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plPhysX_SOURCES
-	plLOSDispatch.cpp
-	plPXConvert.cpp
-	plPXPhysical.cpp
-	plPXPhysicalControllerCore.cpp
-	plSimulationMgr.cpp
+    plLOSDispatch.cpp
+    plPXConvert.cpp
+    plPXPhysical.cpp
+    plPXPhysicalControllerCore.cpp
+    plSimulationMgr.cpp
 )
 
 set(plPhysX_HEADERS
-	plLOSDispatch.h
-	plPhysXCreatable.h
-	plPXConvert.h
-	plPXPhysical.h
-	plPXPhysicalControllerCore.h
-	plPXStream.h
-	plSimulationMgr.h
+    plLOSDispatch.h
+    plPhysXCreatable.h
+    plPXConvert.h
+    plPXPhysical.h
+    plPXPhysicalControllerCore.h
+    plPXStream.h
+    plSimulationMgr.h
 )
 
 add_library(plPhysX STATIC ${plPhysX_SOURCES} ${plPhysX_HEADERS})

@@ -60,8 +60,8 @@ struct ReportNetErrorTrans : NetNotifyTrans {
 *
 ***/
 
-static FNetClientErrorProc	s_errorProc;
-static long					s_initCount;
+static FNetClientErrorProc  s_errorProc;
+static long                 s_initCount;
 
 
 /*****************************************************************************
@@ -92,7 +92,7 @@ ReportNetErrorTrans::ReportNetErrorTrans (
     ENetProtocol    errProtocol,
     ENetError       errError
 ) : NetNotifyTrans(kReportNetErrorTrans)
-,	m_errProtocol(errProtocol)
+,   m_errProtocol(errProtocol)
 ,   m_errError(errError)
 { }
 
@@ -128,41 +128,41 @@ void ReportNetError (ENetProtocol protocol, ENetError error) {
 void NetClientInitialize () {
     
     if (0 == AtomicAdd(&s_initCount, 1)) {
-		NetTransInitialize();
-		AuthInitialize();
-		GameInitialize();
-		FileInitialize();
-		CsrInitialize();
-		GateKeeperInitialize();
-	}
+        NetTransInitialize();
+        AuthInitialize();
+        GameInitialize();
+        FileInitialize();
+        CsrInitialize();
+        GateKeeperInitialize();
+    }
 }
 
 //============================================================================
 void NetClientCancelAllTrans () {
-	NetTransCancelAll(kNetErrTimeout);
+    NetTransCancelAll(kNetErrTimeout);
 }
 
 //============================================================================
 void NetClientDestroy (bool wait) {
 
     if (1 == AtomicAdd(&s_initCount, -1)) {
-		s_errorProc = nil;
+        s_errorProc = nil;
 
-		GateKeeperDestroy(false);
-		CsrDestroy(false);
-		FileDestroy(false);
-		GameDestroy(false);
-		AuthDestroy(false);
-		NetTransDestroy(false);
-		if (wait) {
-			GateKeeperDestroy(true);
-			CsrDestroy(true);
-			FileDestroy(true);
-			GameDestroy(true);
-			AuthDestroy(true);
-			NetTransDestroy(true);
-		}
-	}
+        GateKeeperDestroy(false);
+        CsrDestroy(false);
+        FileDestroy(false);
+        GameDestroy(false);
+        AuthDestroy(false);
+        NetTransDestroy(false);
+        if (wait) {
+            GateKeeperDestroy(true);
+            CsrDestroy(true);
+            FileDestroy(true);
+            GameDestroy(true);
+            AuthDestroy(true);
+            NetTransDestroy(true);
+        }
+    }
 }
 
 //============================================================================
@@ -172,16 +172,16 @@ void NetClientUpdate () {
 
 //============================================================================
 void NetClientSetTransTimeoutMs (unsigned ms) {
-	NetTransSetTimeoutMs(ms);
+    NetTransSetTimeoutMs(ms);
 }
 
 //============================================================================
 void NetClientPingEnable (bool enable) {
-	AuthPingEnable(enable);
-	GamePingEnable(enable);
+    AuthPingEnable(enable);
+    GamePingEnable(enable);
 }
 
 //============================================================================
 void NetClientSetErrorHandler (FNetClientErrorProc errorProc) {
-	s_errorProc = errorProc;
+    s_errorProc = errorProc;
 }

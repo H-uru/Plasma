@@ -7,24 +7,24 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENAL_INCLUDE_DIR})
 
 set(plPhysical_SOURCES
-	plCollisionDetector.cpp
-	plPhysicalProxy.cpp
-	plPhysicalSDLModifier.cpp
-	plPhysicalSndGroup.cpp
-	plPhysicsSoundMgr.cpp
-	plPickingDetector.cpp
+    plCollisionDetector.cpp
+    plPhysicalProxy.cpp
+    plPhysicalSDLModifier.cpp
+    plPhysicalSndGroup.cpp
+    plPhysicsSoundMgr.cpp
+    plPickingDetector.cpp
 )
 
 set(plPhysical_HEADERS
-	plCollisionDetector.h
-	plDetectorModifier.h
-	plPhysicalCreatable.h
-	plPhysicalProxy.h
-	plPhysicalSDLModifier.h
-	plPhysicalSndGroup.h
-	plPhysicsSoundMgr.h
-	plPickingDetector.h
-	plSimDefs.h
+    plCollisionDetector.h
+    plDetectorModifier.h
+    plPhysicalCreatable.h
+    plPhysicalProxy.h
+    plPhysicalSDLModifier.h
+    plPhysicalSndGroup.h
+    plPhysicsSoundMgr.h
+    plPickingDetector.h
+    plSimDefs.h
 )
 
 add_library(plPhysical STATIC ${plPhysical_SOURCES} ${plPhysical_HEADERS})

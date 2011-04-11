@@ -42,60 +42,60 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 enum EMarkerInitResult {
-	kMarkerInitSuccess,
-	kMarkerInitError,
-	kNumMarkerInitResults
+    kMarkerInitSuccess,
+    kMarkerInitError,
+    kNumMarkerInitResults
 };
 enum EMarkerGameType {
-	kMarkerGameQuest,
-	kMarkerGameCGZ, // this is a quest game, but differentiating between the two on the client side makes some things easier
-	kMarkerGameCapture,
-	kMarkerGameCaptureAndHold,
-	kNumMarkerGameTypes
+    kMarkerGameQuest,
+    kMarkerGameCGZ, // this is a quest game, but differentiating between the two on the client side makes some things easier
+    kMarkerGameCapture,
+    kMarkerGameCaptureAndHold,
+    kNumMarkerGameTypes
 };
 
 
 //============================================================================
-//	Game type id
+//  Game type id
 //============================================================================
 
 const Uuid kGameTypeId_Marker = Uuid(L"000b2c39-0319-4be1-b06c-7a105b160fcf");
 
 
 //============================================================================
-//	Network message ids
+//  Network message ids
 //============================================================================
 
 // Cli2Srv message ids
 enum {
-	kCli2Srv_Marker_StartGame = kCli2Srv_NumGameMsgIds,
-	kCli2Srv_Marker_PauseGame,
-	kCli2Srv_Marker_ResetGame,
-	kCli2Srv_Marker_ChangeGameName,
-	kCli2Srv_Marker_ChangeTimeLimit,
-	kCli2Srv_Marker_DeleteGame,
-	kCli2Srv_Marker_AddMarker,
-	kCli2Srv_Marker_DeleteMarker,
-	kCli2Srv_Marker_ChangeMarkerName,
-	kCli2Srv_Marker_CaptureMarker,
+    kCli2Srv_Marker_StartGame = kCli2Srv_NumGameMsgIds,
+    kCli2Srv_Marker_PauseGame,
+    kCli2Srv_Marker_ResetGame,
+    kCli2Srv_Marker_ChangeGameName,
+    kCli2Srv_Marker_ChangeTimeLimit,
+    kCli2Srv_Marker_DeleteGame,
+    kCli2Srv_Marker_AddMarker,
+    kCli2Srv_Marker_DeleteMarker,
+    kCli2Srv_Marker_ChangeMarkerName,
+    kCli2Srv_Marker_CaptureMarker,
 };
 
 // Srv2Cli message ids
 enum {
-	kSrv2Cli_Marker_TemplateCreated = kSrv2Cli_NumGameMsgIds,
-	kSrv2Cli_Marker_TeamAssigned,
-	kSrv2Cli_Marker_GameType,
-	kSrv2Cli_Marker_GameStarted,
-	kSrv2Cli_Marker_GamePaused,
-	kSrv2Cli_Marker_GameReset,
-	kSrv2Cli_Marker_GameOver,
-	kSrv2Cli_Marker_GameNameChanged,
-	kSrv2Cli_Marker_TimeLimitChanged,
-	kSrv2Cli_Marker_GameDeleted,
-	kSrv2Cli_Marker_MarkerAdded,
-	kSrv2Cli_Marker_MarkerDeleted,
-	kSrv2Cli_Marker_MarkerNameChanged,
-	kSrv2Cli_Marker_MarkerCaptured,
+    kSrv2Cli_Marker_TemplateCreated = kSrv2Cli_NumGameMsgIds,
+    kSrv2Cli_Marker_TeamAssigned,
+    kSrv2Cli_Marker_GameType,
+    kSrv2Cli_Marker_GameStarted,
+    kSrv2Cli_Marker_GamePaused,
+    kSrv2Cli_Marker_GameReset,
+    kSrv2Cli_Marker_GameOver,
+    kSrv2Cli_Marker_GameNameChanged,
+    kSrv2Cli_Marker_TimeLimitChanged,
+    kSrv2Cli_Marker_GameDeleted,
+    kSrv2Cli_Marker_MarkerAdded,
+    kSrv2Cli_Marker_MarkerDeleted,
+    kSrv2Cli_Marker_MarkerNameChanged,
+    kSrv2Cli_Marker_MarkerCaptured,
 };
 
 
@@ -104,107 +104,107 @@ enum {
 #include <PshPack1.h>
 //============================================================================
 
-	//========================================================================
-	// Message parameters
-	//========================================================================
-	struct Marker_CreateParam {
-		byte		gameType;		// member of EMarkerGameType
-		wchar		gameName[256];
-		dword		timeLimit;
-		wchar		templateID[80];	// empty if creating a new game, guid if a quest game and we need to grab the data from the state server
-	};
+    //========================================================================
+    // Message parameters
+    //========================================================================
+    struct Marker_CreateParam {
+        byte        gameType;       // member of EMarkerGameType
+        wchar       gameName[256];
+        dword       timeLimit;
+        wchar       templateID[80]; // empty if creating a new game, guid if a quest game and we need to grab the data from the state server
+    };
 
-	//========================================================================
-	// Tic-Tac-Toe message structures
-	//========================================================================
+    //========================================================================
+    // Tic-Tac-Toe message structures
+    //========================================================================
 
-	// Cli2Srv
-	struct Cli2Srv_Marker_StartGame : GameMsgHeader {
-		// nothing
-	};
-	struct Cli2Srv_Marker_PauseGame : GameMsgHeader {
-		// nothing
-	};
-	struct Cli2Srv_Marker_ResetGame : GameMsgHeader {
-		// nothing
-	};
-	struct Cli2Srv_Marker_ChangeGameName : GameMsgHeader {
-		wchar		gameName[256];
-	};
-	struct Cli2Srv_Marker_ChangeTimeLimit : GameMsgHeader {
-		dword		timeLimit;
-	};
-	struct Cli2Srv_Marker_DeleteGame : GameMsgHeader {
-		// nothing
-	};
-	struct Cli2Srv_Marker_AddMarker : GameMsgHeader {
-		double		x;
-		double		y;
-		double		z;
-		wchar		name[256];
-		wchar		age[80];
-	};
-	struct Cli2Srv_Marker_DeleteMarker : GameMsgHeader {
-		dword		markerID;
-	};
-	struct Cli2Srv_Marker_ChangeMarkerName : GameMsgHeader {
-		dword		markerID;
-		wchar		markerName[256];
-	};
-	struct Cli2Srv_Marker_CaptureMarker : GameMsgHeader {
-		dword		markerID;
-	};
+    // Cli2Srv
+    struct Cli2Srv_Marker_StartGame : GameMsgHeader {
+        // nothing
+    };
+    struct Cli2Srv_Marker_PauseGame : GameMsgHeader {
+        // nothing
+    };
+    struct Cli2Srv_Marker_ResetGame : GameMsgHeader {
+        // nothing
+    };
+    struct Cli2Srv_Marker_ChangeGameName : GameMsgHeader {
+        wchar       gameName[256];
+    };
+    struct Cli2Srv_Marker_ChangeTimeLimit : GameMsgHeader {
+        dword       timeLimit;
+    };
+    struct Cli2Srv_Marker_DeleteGame : GameMsgHeader {
+        // nothing
+    };
+    struct Cli2Srv_Marker_AddMarker : GameMsgHeader {
+        double      x;
+        double      y;
+        double      z;
+        wchar       name[256];
+        wchar       age[80];
+    };
+    struct Cli2Srv_Marker_DeleteMarker : GameMsgHeader {
+        dword       markerID;
+    };
+    struct Cli2Srv_Marker_ChangeMarkerName : GameMsgHeader {
+        dword       markerID;
+        wchar       markerName[256];
+    };
+    struct Cli2Srv_Marker_CaptureMarker : GameMsgHeader {
+        dword       markerID;
+    };
 
-	// Srv2Cli
-	struct Srv2Cli_Marker_TemplateCreated : GameMsgHeader {
-		wchar		templateID[80];
-	};
-	struct Srv2Cli_Marker_TeamAssigned : GameMsgHeader {
-		byte		teamNumber;	// 1 or 2
-	};
-	struct Srv2Cli_Marker_GameType : GameMsgHeader {
-		byte		gameType; // member of EMarkerGameType
-	};
-	struct Srv2Cli_Marker_GameStarted : GameMsgHeader {
-		// nothing
-	};
-	struct Srv2Cli_Marker_GamePaused : GameMsgHeader {
-		dword		timeLeft;	// 0 if quest game, since they don't have a timer
-	};
-	struct Srv2Cli_Marker_GameReset : GameMsgHeader {
-		// nothing
-	};
-	struct Srv2Cli_Marker_GameOver : GameMsgHeader {
-		// nothing
-	};
-	struct Srv2Cli_Marker_GameNameChanged : GameMsgHeader {
-		wchar		newName[256];
-	};
-	struct Srv2Cli_Marker_TimeLimitChanged : GameMsgHeader {
-		dword		newTimeLimit;
-	};
-	struct Srv2Cli_Marker_GameDeleted : GameMsgHeader {
-		bool		failed; // did the delete fail?
-	};
-	struct Srv2Cli_Marker_MarkerAdded : GameMsgHeader {
-		double		x;
-		double		y;
-		double		z;
-		dword		markerID;
-		wchar		name[256];
-		wchar		age[80];
-	};
-	struct Srv2Cli_Marker_MarkerDeleted : GameMsgHeader {
-		dword		markerID;
-	};
-	struct Srv2Cli_Marker_MarkerNameChanged : GameMsgHeader {
-		dword		markerID;
-		wchar		newName[256];
-	};
-	struct Srv2Cli_Marker_MarkerCaptured : GameMsgHeader {
-		dword		markerID;
-		byte		team;		// 0 for no team, or for quest games
-	};
+    // Srv2Cli
+    struct Srv2Cli_Marker_TemplateCreated : GameMsgHeader {
+        wchar       templateID[80];
+    };
+    struct Srv2Cli_Marker_TeamAssigned : GameMsgHeader {
+        byte        teamNumber; // 1 or 2
+    };
+    struct Srv2Cli_Marker_GameType : GameMsgHeader {
+        byte        gameType; // member of EMarkerGameType
+    };
+    struct Srv2Cli_Marker_GameStarted : GameMsgHeader {
+        // nothing
+    };
+    struct Srv2Cli_Marker_GamePaused : GameMsgHeader {
+        dword       timeLeft;   // 0 if quest game, since they don't have a timer
+    };
+    struct Srv2Cli_Marker_GameReset : GameMsgHeader {
+        // nothing
+    };
+    struct Srv2Cli_Marker_GameOver : GameMsgHeader {
+        // nothing
+    };
+    struct Srv2Cli_Marker_GameNameChanged : GameMsgHeader {
+        wchar       newName[256];
+    };
+    struct Srv2Cli_Marker_TimeLimitChanged : GameMsgHeader {
+        dword       newTimeLimit;
+    };
+    struct Srv2Cli_Marker_GameDeleted : GameMsgHeader {
+        bool        failed; // did the delete fail?
+    };
+    struct Srv2Cli_Marker_MarkerAdded : GameMsgHeader {
+        double      x;
+        double      y;
+        double      z;
+        dword       markerID;
+        wchar       name[256];
+        wchar       age[80];
+    };
+    struct Srv2Cli_Marker_MarkerDeleted : GameMsgHeader {
+        dword       markerID;
+    };
+    struct Srv2Cli_Marker_MarkerNameChanged : GameMsgHeader {
+        dword       markerID;
+        wchar       newName[256];
+    };
+    struct Srv2Cli_Marker_MarkerCaptured : GameMsgHeader {
+        dword       markerID;
+        byte        team;       // 0 for no team, or for quest games
+    };
 
 
 //============================================================================

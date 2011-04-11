@@ -75,9 +75,9 @@ static unsigned CALLBACK CreateThreadProc (LPVOID param) {
 //============================================================================
 void ThreadDestroy (unsigned exitThreadWaitMs) {
 
-	unsigned bailAt = TimeGetMs() + exitThreadWaitMs;
-	while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && signed(bailAt - TimeGetMs()) > 0)
-		AsyncSleep(10);
+    unsigned bailAt = TimeGetMs() + exitThreadWaitMs;
+    while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && signed(bailAt - TimeGetMs()) > 0)
+        AsyncSleep(10);
 }
 
 

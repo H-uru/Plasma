@@ -25,12 +25,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plResManagerHelper - The wonderful helper class that can receive messages
-//						 for the resManager.
+//  plResManagerHelper - The wonderful helper class that can receive messages
+//                       for the resManager.
 //
 //// History /////////////////////////////////////////////////////////////////
 //
-//	6.7.2002 mcn	- Created
+//  6.7.2002 mcn    - Created
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -58,73 +58,73 @@ class plResManager;
 class plRegistryPageNode;
 class plResManagerHelper : public hsKeyedObject
 {
-	protected:
+    protected:
 
-		plResManager				*fResManager;
-		static plResManagerHelper	*fInstance;
+        plResManager                *fResManager;
+        static plResManagerHelper   *fInstance;
 
-		hsBool						fInShutdown;
+        hsBool                      fInShutdown;
 
 #ifdef MCN_RESMGR_DEBUGGING
-		friend class plDebugPrintIterator;
-		friend class plResMgrDebugInterface;
+        friend class plDebugPrintIterator;
+        friend class plResMgrDebugInterface;
 
-		plStatusLog		*fDebugScreen;
-		hsBool			fRefreshing, fCurrAgeExpanded;
-		int				fCurrAge;
-		int				fDebugDisplayType;
+        plStatusLog     *fDebugScreen;
+        hsBool          fRefreshing, fCurrAgeExpanded;
+        int             fCurrAge;
+        int             fDebugDisplayType;
 
-		enum DebugDisplayTypes
-		{
-			kSizes = 0,
-			kPercents,
-			kBars,
-			kMaxDisplayType
-		};
-		plResMgrDebugInterface	*fDebugInput;
+        enum DebugDisplayTypes
+        {
+            kSizes = 0,
+            kPercents,
+            kBars,
+            kMaxDisplayType
+        };
+        plResMgrDebugInterface  *fDebugInput;
 #endif
 
-		void	IUpdateDebugScreen( hsBool force = false );
+        void    IUpdateDebugScreen( hsBool force = false );
 
-	public:
+    public:
 
-		plResManagerHelper( plResManager *resMgr );
-		virtual ~plResManagerHelper();
+        plResManagerHelper( plResManager *resMgr );
+        virtual ~plResManagerHelper();
 
-		CLASSNAME_REGISTER( plResManagerHelper );
-		GETINTERFACE_ANY( plResManagerHelper, hsKeyedObject );
+        CLASSNAME_REGISTER( plResManagerHelper );
+        GETINTERFACE_ANY( plResManagerHelper, hsKeyedObject );
 
-		virtual hsBool	MsgReceive( plMessage *msg );
-	
-		virtual void	Read( hsStream *s, hsResMgr *mgr );
-		virtual void	Write( hsStream *s, hsResMgr *mgr );
+        virtual hsBool  MsgReceive( plMessage *msg );
+    
+        virtual void    Read( hsStream *s, hsResMgr *mgr );
+        virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-		void	Init( void );
-		void	Shutdown( void );
+        void    Init( void );
+        void    Shutdown( void );
 
-		void	LoadAndHoldPageKeys( plRegistryPageNode *page );
+        void    LoadAndHoldPageKeys( plRegistryPageNode *page );
 
-		void	EnableDebugScreen( hsBool enable );
+        void    EnableDebugScreen( hsBool enable );
 
-		// Please let the res manager handle telling this.
-		void	SetInShutdown(hsBool b) { fInShutdown = b; }
-		hsBool	GetInShutdown() const { return fInShutdown; }
+        // Please let the res manager handle telling this.
+        void    SetInShutdown(hsBool b) { fInShutdown = b; }
+        hsBool  GetInShutdown() const { return fInShutdown; }
 
-		static plResManagerHelper	*GetInstance( void ) { return fInstance; }
+        static plResManagerHelper   *GetInstance( void ) { return fInstance; }
 };
 
 //// Reffer Class ////////////////////////////////////////////////////////////
 
 class plResPageKeyRefList : public plKeyCollector 
 {
-	protected:
+    protected:
 
-		hsTArray<plKey>		fKeyList;
+        hsTArray<plKey>     fKeyList;
 
-	public:
+    public:
 
-		plResPageKeyRefList() : plKeyCollector( fKeyList ) {}
-		virtual ~plResPageKeyRefList() { fKeyList.Reset(); }
+        plResPageKeyRefList() : plKeyCollector( fKeyList ) {}
+        virtual ~plResPageKeyRefList() { fKeyList.Reset(); }
 };
 
 #endif // _plResManagerHelper_h

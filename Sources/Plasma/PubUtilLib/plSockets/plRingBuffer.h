@@ -32,25 +32,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plRingBuffer : protected plMemBuffer
 {
 public:
-	plRingBuffer(int size=4096);
-	void FullCompress();
-	void Compress();
-	bool Put(const char * data, int len);
-	bool Get(char * data, int len);
-	int AmountBuffered();
-	int BufferAvailable();
-	void Reset();
+    plRingBuffer(int size=4096);
+    void FullCompress();
+    void Compress();
+    bool Put(const char * data, int len);
+    bool Get(char * data, int len);
+    int AmountBuffered();
+    int BufferAvailable();
+    void Reset();
 
 protected:
-	int fStartPos;
-	int fEndPos;
-	char * GetBufferStart();
-	char * GetBufferOpen();
-	void ForceWindowSlide();
+    int fStartPos;
+    int fEndPos;
+    char * GetBufferStart();
+    char * GetBufferOpen();
+    void ForceWindowSlide();
 #define FastGetBufferStart() (fBuffer+fStartPos)
 #define FastAmountBuffered() (fEndPos-fStartPos)
-	bool PutFast(const char * data, int len);
-	
+    bool PutFast(const char * data, int len);
+    
 };
 
 

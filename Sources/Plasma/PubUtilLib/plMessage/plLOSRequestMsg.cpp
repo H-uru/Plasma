@@ -28,27 +28,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plUoid.h"
 
 plLOSRequestMsg::plLOSRequestMsg()
-	: fRequestID(0),
-	fRequestType(plSimDefs::kLOSDBNone),
-	fTestType(kTestAny),
-	fReportType(kReportHit),
-	fCullDB(plSimDefs::kLOSDBNone),
-	fWorldKey(nil)
+    : fRequestID(0),
+    fRequestType(plSimDefs::kLOSDBNone),
+    fTestType(kTestAny),
+    fReportType(kReportHit),
+    fCullDB(plSimDefs::kLOSDBNone),
+    fWorldKey(nil)
 {
-	AddReceiver(hsgResMgr::ResMgr()->FindKey(kLOSObject_KEY));
-	SetBCastFlag(plMessage::kPropagateToModifiers);
+    AddReceiver(hsgResMgr::ResMgr()->FindKey(kLOSObject_KEY));
+    SetBCastFlag(plMessage::kPropagateToModifiers);
 }
 
 plLOSRequestMsg::plLOSRequestMsg(const plKey& sender, hsPoint3& fromPoint, hsPoint3& toPoint, plSimDefs::plLOSDB db, TestType test, ReportType report)
-	: plMessage(sender, hsgResMgr::ResMgr()->FindKey(kLOSObject_KEY), nil),
-	fFrom(fromPoint),
-	fTo(toPoint),
-	fRequestID(0),
-	fRequestType(db),
-	fTestType(test),
-	fReportType(report),
-	fCullDB(plSimDefs::kLOSDBNone),
-	fWorldKey(nil)
+    : plMessage(sender, hsgResMgr::ResMgr()->FindKey(kLOSObject_KEY), nil),
+    fFrom(fromPoint),
+    fTo(toPoint),
+    fRequestID(0),
+    fRequestType(db),
+    fTestType(test),
+    fReportType(report),
+    fCullDB(plSimDefs::kLOSDBNone),
+    fWorldKey(nil)
 {
-	SetBCastFlag(plMessage::kPropagateToModifiers);
+    SetBCastFlag(plMessage::kPropagateToModifiers);
 }

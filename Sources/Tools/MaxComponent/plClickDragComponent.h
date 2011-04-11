@@ -33,23 +33,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plClickDragComponent : public plClickableComponent
 {
 protected:
-	LogicKeys fAxisKeys;
+    LogicKeys fAxisKeys;
 
 public:
-	plClickDragComponent();
+    plClickDragComponent();
 
-	// Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    // Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-	hsBool DeInit(plMaxNode *node, plErrorMsg* pErrMsg);
+    hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool DeInit(plMaxNode *node, plErrorMsg* pErrMsg);
 
-	virtual plKey GetAxisKey(plMaxNode* node);
-	const LogicKeys& GetAxisKeys();
+    virtual plKey GetAxisKey(plMaxNode* node);
+    const LogicKeys& GetAxisKeys();
 
-	virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    virtual void CollectNonDrawables(INodeTab& nonDrawables);
 
 };
 

@@ -43,14 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 typedef pfGameCli * (*FGameCliFactory)(
-	unsigned	gameSrvId,
-	plKey		receiver
+    unsigned    gameSrvId,
+    plKey       receiver
 );
 
 struct GameTypeReg {
-	FGameCliFactory	create;
-	Uuid			typeId;
-	const wchar *	name;
+    FGameCliFactory create;
+    Uuid            typeId;
+    const wchar *   name;
 };
 
 void GameMgrRegisterGameType (const GameTypeReg & reg);

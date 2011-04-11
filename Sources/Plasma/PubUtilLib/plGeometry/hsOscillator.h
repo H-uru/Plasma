@@ -39,125 +39,125 @@ class plPipeline;
 class hsWave
 {
 protected:
-	hsPoint3			fWorldCenter;
-	hsPoint3			fLocalCenter;
+    hsPoint3            fWorldCenter;
+    hsPoint3            fLocalCenter;
 
-	hsScalar			fWorldFrequency; // 1.0 / Period
-	hsScalar			fLocalFrequency;
+    hsScalar            fWorldFrequency; // 1.0 / Period
+    hsScalar            fLocalFrequency;
 
-	hsScalar			fWorldAmplitude;
-	hsScalar			fLocalAmplitude;
+    hsScalar            fWorldAmplitude;
+    hsScalar            fLocalAmplitude;
 
-	hsScalar			fPhase;
-	hsScalar			fRate; // how long a crest takes to reach next crest
+    hsScalar            fPhase;
+    hsScalar            fRate; // how long a crest takes to reach next crest
 
-	hsScalar			fStartSecs;
-	hsScalar			fSecsToLive;
+    hsScalar            fStartSecs;
+    hsScalar            fSecsToLive;
 
-	hsScalar			fInnerRadius;
-	hsScalar			fOuterRadius;
-	hsScalar			fAttenuateOutScale;
+    hsScalar            fInnerRadius;
+    hsScalar            fOuterRadius;
+    hsScalar            fAttenuateOutScale;
 
-	hsScalar			AgeScale(hsScalar secs) const;
+    hsScalar            AgeScale(hsScalar secs) const;
 
 public:
-	void				Accumulate(const hsPoint3& pos, const hsVector3& localZ, hsVector3& accum, hsVector3& accumNorm) const;
-	hsScalar			ScaledAmplitude(hsScalar secs) const;
+    void                Accumulate(const hsPoint3& pos, const hsVector3& localZ, hsVector3& accum, hsVector3& accumNorm) const;
+    hsScalar            ScaledAmplitude(hsScalar secs) const;
 
-	void				Init(hsScalar secs, hsPoint3& center, hsScalar per, hsScalar amp, hsScalar rate, hsScalar life, hsBool32 attenOut=false);
-	
-	void				Update(hsScalar secs, const hsMatrix44& l2w, const hsMatrix44& w2l);
-	hsBool32			IsSpent(hsScalar secs) const;
-	void				Kill() { fStartSecs = fSecsToLive = 0; }
-	void				AttenuateOut(hsBool32 on) { fAttenuateOutScale = (on ? 1.f : 0); }
-	hsBool32			GetAttenuateOut() { return fAttenuateOutScale > 0; }
+    void                Init(hsScalar secs, hsPoint3& center, hsScalar per, hsScalar amp, hsScalar rate, hsScalar life, hsBool32 attenOut=false);
+    
+    void                Update(hsScalar secs, const hsMatrix44& l2w, const hsMatrix44& w2l);
+    hsBool32            IsSpent(hsScalar secs) const;
+    void                Kill() { fStartSecs = fSecsToLive = 0; }
+    void                AttenuateOut(hsBool32 on) { fAttenuateOutScale = (on ? 1.f : 0); }
+    hsBool32            GetAttenuateOut() { return fAttenuateOutScale > 0; }
 
-	void				Save(hsStream* s, hsScalar secs);
-	void				Load(hsStream* s, hsScalar secs);
+    void                Save(hsStream* s, hsScalar secs);
+    void                Load(hsStream* s, hsScalar secs);
 };
 
 class hsOscillator : public hsPerterber
 {
 protected:
-	hsTArray<hsWave>	fWaves;
-	hsTArray<hsWave>	fTempWaves;
+    hsTArray<hsWave>    fWaves;
+    hsTArray<hsWave>    fTempWaves;
 
-	hsMatrix44		fLocalToWorld;
-	hsMatrix44		fWorldToLocal;
+    hsMatrix44      fLocalToWorld;
+    hsMatrix44      fWorldToLocal;
 
-	hsPoint3		fWorldCenter;
-	hsPoint3		fLocalCenter;
+    hsPoint3        fWorldCenter;
+    hsPoint3        fLocalCenter;
 
-	hsVector3		fWorldAttenScale;
-	hsVector3		fLocalAttenScale;
-	
-	hsBounds3Ext	fWorldCenterBounds;
+    hsVector3       fWorldAttenScale;
+    hsVector3       fLocalAttenScale;
+    
+    hsBounds3Ext    fWorldCenterBounds;
 
-	hsScalar		fMinPeriod;
-	hsScalar		fMaxPeriod;
+    hsScalar        fMinPeriod;
+    hsScalar        fMaxPeriod;
 
-	hsScalar		fMinAmplitude;
-	hsScalar		fMaxAmplitude;
+    hsScalar        fMinAmplitude;
+    hsScalar        fMaxAmplitude;
 
-	hsScalar		fMinRate;
-	hsScalar		fMaxRate;
+    hsScalar        fMinRate;
+    hsScalar        fMaxRate;
 
-	hsScalar		fMinLife;
-	hsScalar		fMaxLife;
+    hsScalar        fMinLife;
+    hsScalar        fMaxLife;
 
-	hsVector3		fLocalX;
-	hsVector3		fLocalY;
-	hsVector3		fLocalZ;
+    hsVector3       fLocalX;
+    hsVector3       fLocalY;
+    hsVector3       fLocalZ;
 
-	hsScalar			IAttenuate(const hsPoint3& in) const;
-	void			ISpawnWave(hsScalar secs, int i);
+    hsScalar            IAttenuate(const hsPoint3& in) const;
+    void            ISpawnWave(hsScalar secs, int i);
 
-	virtual void IUpdate(hsScalar secs, plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l);
+    virtual void IUpdate(hsScalar secs, plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-	virtual void IPerterb(const hsPoint3& in, hsGVertex3& out) const;
+    virtual void IPerterb(const hsPoint3& in, hsGVertex3& out) const;
 public:
-	hsOscillator();
-	virtual ~hsOscillator();
+    hsOscillator();
+    virtual ~hsOscillator();
 
-	virtual void AdjustWorldBounds(const hsMatrix44& l2w, const hsMatrix44& w2l, hsBounds3Ext& bnd) const;
+    virtual void AdjustWorldBounds(const hsMatrix44& l2w, const hsMatrix44& w2l, hsBounds3Ext& bnd) const;
 
-	virtual UInt32 GetType() const { return kTypeOscillator; }
+    virtual UInt32 GetType() const { return kTypeOscillator; }
 
-	// Don't call these, use base class LabelAndWrite() and CreateAndRead()
-	virtual void Read(hsStream* s);
-	virtual void Write(hsStream* s);
+    // Don't call these, use base class LabelAndWrite() and CreateAndRead()
+    virtual void Read(hsStream* s);
+    virtual void Write(hsStream* s);
 
-	virtual void Load(hsStream* s, hsScalar secs);
-	virtual void Save(hsStream* s, hsScalar secs);
+    virtual void Load(hsStream* s, hsScalar secs);
+    virtual void Save(hsStream* s, hsScalar secs);
 
-	void SetPeriodRange(hsScalar lo, hsScalar hi) { fMinPeriod = lo; fMaxPeriod = hi; }
-	void SetAmplitudeRange(hsScalar lo, hsScalar hi) { fMinAmplitude = lo; fMaxAmplitude = hi; }
-	void SetRateRange(hsScalar lo, hsScalar hi) { fMinRate = lo; fMaxRate = hi; }
-	void SetLifeRange(hsScalar lo, hsScalar hi) { fMinLife = lo; fMaxLife = hi; }
+    void SetPeriodRange(hsScalar lo, hsScalar hi) { fMinPeriod = lo; fMaxPeriod = hi; }
+    void SetAmplitudeRange(hsScalar lo, hsScalar hi) { fMinAmplitude = lo; fMaxAmplitude = hi; }
+    void SetRateRange(hsScalar lo, hsScalar hi) { fMinRate = lo; fMaxRate = hi; }
+    void SetLifeRange(hsScalar lo, hsScalar hi) { fMinLife = lo; fMaxLife = hi; }
 
-	hsScalar GetMinPeriod() const { return fMinPeriod; }
-	hsScalar GetMaxPeriod() const { return fMaxPeriod; }
-	hsScalar GetMinAmplitude() const { return fMinAmplitude; }
-	hsScalar GetMaxAmplitude() const { return fMaxAmplitude; }
-	hsScalar GetMinRate() const { return fMinRate; }
-	hsScalar GetMaxRate() const { return fMaxRate; }
-	hsScalar GetMinLife() const { return fMinLife; }
-	hsScalar GetMaxLife() const { return fMaxLife; }
+    hsScalar GetMinPeriod() const { return fMinPeriod; }
+    hsScalar GetMaxPeriod() const { return fMaxPeriod; }
+    hsScalar GetMinAmplitude() const { return fMinAmplitude; }
+    hsScalar GetMaxAmplitude() const { return fMaxAmplitude; }
+    hsScalar GetMinRate() const { return fMinRate; }
+    hsScalar GetMaxRate() const { return fMaxRate; }
+    hsScalar GetMinLife() const { return fMinLife; }
+    hsScalar GetMaxLife() const { return fMaxLife; }
 
-	void SetWorldAttenScale(const hsVector3& s) { fWorldAttenScale = s; }
-	void SetWorldCenterBounds(const hsBounds3Ext& bnd) { fWorldCenterBounds = bnd; }
+    void SetWorldAttenScale(const hsVector3& s) { fWorldAttenScale = s; }
+    void SetWorldCenterBounds(const hsBounds3Ext& bnd) { fWorldCenterBounds = bnd; }
 
-	const hsVector3& GetWorldAttenScale() const { return fWorldAttenScale; }
-	const hsBounds3Ext& GetWorldCenterBounds() const { return fWorldCenterBounds; }
+    const hsVector3& GetWorldAttenScale() const { return fWorldAttenScale; }
+    const hsBounds3Ext& GetWorldCenterBounds() const { return fWorldCenterBounds; }
 
-	void	SetNumWaves(int n);
-	UInt32	GetNumWaves() const { return fWaves.GetCount(); }
-	hsWave& GetWeakestWave(hsScalar secs);
-	hsWave& GetTempWave(hsScalar secs);
+    void    SetNumWaves(int n);
+    UInt32  GetNumWaves() const { return fWaves.GetCount(); }
+    hsWave& GetWeakestWave(hsScalar secs);
+    hsWave& GetTempWave(hsScalar secs);
 
-	virtual void Init(Int32 nParams, hsScalar* params);
+    virtual void Init(Int32 nParams, hsScalar* params);
 
-	static hsGTriMesh* MakeWaveMesh(int nSpokes, const hsPoint3& center, hsScalar minRad, hsScalar maxRad, hsScalar uRange, hsScalar vRange, hsScalar attenStartFrac, hsBool32 stitch);
+    static hsGTriMesh* MakeWaveMesh(int nSpokes, const hsPoint3& center, hsScalar minRad, hsScalar maxRad, hsScalar uRange, hsScalar vRange, hsScalar attenStartFrac, hsBool32 stitch);
 
 };
 

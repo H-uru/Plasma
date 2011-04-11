@@ -40,52 +40,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// pfLocalizationMgr Functions /////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-pfLocalizationMgr	*pfLocalizationMgr::fInstance = nil;
+pfLocalizationMgr   *pfLocalizationMgr::fInstance = nil;
 
 //// Constructor/Destructor //////////////////////////////////////////
 
 pfLocalizationMgr::pfLocalizationMgr()
 {
-	hsAssert(!fInstance, "Tried to create the localization manager more than once!");
-	fInstance = this;
+    hsAssert(!fInstance, "Tried to create the localization manager more than once!");
+    fInstance = this;
 }
 
 pfLocalizationMgr::~pfLocalizationMgr()
 {
-	fInstance = nil;
+    fInstance = nil;
 }
 
 //// Initialize //////////////////////////////////////////////////////
 
 void pfLocalizationMgr::Initialize(const std::string & dataPath)
 {
-	if (fInstance)
-		return;
+    if (fInstance)
+        return;
 
-	fInstance = TRACKED_NEW pfLocalizationMgr();
-	pfLocalizationDataMgr::Initialize(dataPath); // set up the data manager
+    fInstance = TRACKED_NEW pfLocalizationMgr();
+    pfLocalizationDataMgr::Initialize(dataPath); // set up the data manager
 }
 
 //// Shutdown ////////////////////////////////////////////////////////
 
 void pfLocalizationMgr::Shutdown()
 {
-	if (fInstance)
-	{
-		pfLocalizationDataMgr::Shutdown(); // make sure the subtitle data manager is shut down
-		delete fInstance;
-	}
+    if (fInstance)
+    {
+        pfLocalizationDataMgr::Shutdown(); // make sure the subtitle data manager is shut down
+        delete fInstance;
+    }
 }
 
 //// GetString ///////////////////////////////////////////////////////
 
 std::wstring pfLocalizationMgr::GetString(const std::wstring & path, const std::vector<std::wstring> & args)
 {
-	return pfLocalizationDataMgr::Instance().GetElement(path) % args;
+    return pfLocalizationDataMgr::Instance().GetElement(path) % args;
 }
 
 std::wstring pfLocalizationMgr::GetString(const std::wstring & path)
 {
-	std::vector<std::wstring> args; // blank args so that % signs are still handled correctly
-	return pfLocalizationDataMgr::Instance().GetElement(path) % args;
+    std::vector<std::wstring> args; // blank args so that % signs are still handled correctly
+    return pfLocalizationDataMgr::Instance().GetElement(path) % args;
 }

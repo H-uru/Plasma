@@ -43,27 +43,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyHeekGame : public pyGameCli
 {
 protected:
-	pyHeekGame();
-	pyHeekGame(pfGameCli* client);
+    pyHeekGame();
+    pyHeekGame(pfGameCli* client);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekGame);
-	static PyObject* New(pfGameCli* client);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekGame object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekGame); // converts a PyObject to a pyHeekGame (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekGame);
+    static PyObject* New(pfGameCli* client);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekGame object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekGame); // converts a PyObject to a pyHeekGame (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
-	static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-	static bool IsHeekGame(std::wstring guid);
-	static void JoinCommonHeekGame(pyKey& callbackKey, unsigned gameID);
+    static bool IsHeekGame(std::wstring guid);
+    static void JoinCommonHeekGame(pyKey& callbackKey, unsigned gameID);
 
-	void PlayGame(int position, UInt32 points, std::wstring name);
-	void LeaveGame();
-	void Choose(int choice);
-	void SequenceFinished(int seq);
+    void PlayGame(int position, UInt32 points, std::wstring name);
+    void LeaveGame();
+    void Choose(int choice);
+    void SequenceFinished(int seq);
 };
 
 #endif // pyHeekGame_h

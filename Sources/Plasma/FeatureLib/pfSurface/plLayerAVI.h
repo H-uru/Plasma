@@ -35,21 +35,21 @@ class plLayerAVI : public plLayerMovie
 {
 protected:
 
-	plAVIFileInfo*				fAVIInfo;
+    plAVIFileInfo*              fAVIInfo;
 
-	hsBool						ICloseMovie();
+    hsBool                      ICloseMovie();
 
-	virtual Int32				ISecsToFrame(hsScalar secs);
-	virtual hsBool				IInit();
-	virtual hsBool				IGetCurrentFrame();
-	virtual hsBool				IRelease();
+    virtual Int32               ISecsToFrame(hsScalar secs);
+    virtual hsBool              IInit();
+    virtual hsBool              IGetCurrentFrame();
+    virtual hsBool              IRelease();
 
 public:
-	plLayerAVI();
-	virtual ~plLayerAVI();
+    plLayerAVI();
+    virtual ~plLayerAVI();
 
-	CLASSNAME_REGISTER( plLayerAVI );
-	GETINTERFACE_ANY( plLayerAVI, plLayerMovie );
+    CLASSNAME_REGISTER( plLayerAVI );
+    GETINTERFACE_ANY( plLayerAVI, plLayerMovie );
 
 };
 

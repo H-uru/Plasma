@@ -472,8 +472,8 @@ static void SocketInitListen (
             notify.asyncId          = 0;
             notify.connType         = 0;
             notify.buildId          = 0;
-            notify.buildType		= 0;
-            notify.branchId			= 0;
+            notify.buildType        = 0;
+            notify.branchId         = 0;
             notify.productId        = 0;
             notify.addr             = listenAddr;
             notify.buffer           = sock->opRead.read.buffer;

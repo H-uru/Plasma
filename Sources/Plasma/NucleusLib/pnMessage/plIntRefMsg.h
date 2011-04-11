@@ -36,44 +36,44 @@ class hsResMgr;
 class plIntRefMsg : public plRefMsg
 {
 public:
-	enum {
-		kOwner			= 1,
-		kTarget			= 2,
-		kChild			= 3,
-		kDrawable		= 4,
-		kPhysical		= 5,
-		kAudible		= 6,
-		kChildObject	= 7,
+    enum {
+        kOwner          = 1,
+        kTarget         = 2,
+        kChild          = 3,
+        kDrawable       = 4,
+        kPhysical       = 5,
+        kAudible        = 6,
+        kChildObject    = 7,
 
-		kNumRefTypes
-	};
+        kNumRefTypes
+    };
 
-	plIntRefMsg() : fType(-1), fWhich(-1), fIdx(-1) {}
-	plIntRefMsg(const plKey &r, UInt8 flags, Int32 which, Int8 type, Int8 idx=-1) : plRefMsg(r, flags), fWhich((Int16)which), fType(type), fIdx(idx) {}
+    plIntRefMsg() : fType(-1), fWhich(-1), fIdx(-1) {}
+    plIntRefMsg(const plKey &r, UInt8 flags, Int32 which, Int8 type, Int8 idx=-1) : plRefMsg(r, flags), fWhich((Int16)which), fType(type), fIdx(idx) {}
 
-	CLASSNAME_REGISTER( plIntRefMsg );
-	GETINTERFACE_ANY( plIntRefMsg, plRefMsg );
+    CLASSNAME_REGISTER( plIntRefMsg );
+    GETINTERFACE_ANY( plIntRefMsg, plRefMsg );
 
-	Int8		fType;
-	Int8		fIdx;
-	Int16		fWhich;
+    Int8        fType;
+    Int8        fIdx;
+    Int16       fWhich;
 
-	// IO - not really applicable to ref msgs, but anyway
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Read(stream, mgr);
-		stream->ReadSwap(&fType);
-		stream->ReadSwap(&fWhich);
-		stream->ReadSwap(&fIdx);
-	}
+    // IO - not really applicable to ref msgs, but anyway
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Read(stream, mgr);
+        stream->ReadSwap(&fType);
+        stream->ReadSwap(&fWhich);
+        stream->ReadSwap(&fIdx);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Write(stream, mgr);
-		stream->WriteSwap(fType);
-		stream->WriteSwap(fWhich);
-		stream->WriteSwap(fIdx);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Write(stream, mgr);
+        stream->WriteSwap(fType);
+        stream->WriteSwap(fWhich);
+        stream->WriteSwap(fIdx);
+    }
 };
 
 #endif // plIntRefMsg_inc

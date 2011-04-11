@@ -2,12 +2,12 @@ include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 
 set(pnMail_HEADERS
-	Pch.h
-	pnMail.h
+    Pch.h
+    pnMail.h
 )
 
 set(pnMail_SOURCES
-	pnMail.cpp
+    pnMail.cpp
 )
 
 add_library(pnMail STATIC ${pnMail_HEADERS} ${pnMail_SOURCES})

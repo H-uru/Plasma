@@ -34,59 +34,59 @@ class plPipeline;
 class plPipeResMakeMsg : public plMessage
 {
 protected:
-	plPipeline*				fPipe;
+    plPipeline*             fPipe;
 public:
 
-	plPipeResMakeMsg() : plMessage(nil, nil, nil), fPipe(nil) { SetBCastFlag(kBCastByExactType); }
-	plPipeResMakeMsg(plPipeline* pipe) : plMessage(nil, nil, nil), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
+    plPipeResMakeMsg() : plMessage(nil, nil, nil), fPipe(nil) { SetBCastFlag(kBCastByExactType); }
+    plPipeResMakeMsg(plPipeline* pipe) : plMessage(nil, nil, nil), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
 
-	~plPipeResMakeMsg() {}
-	
-	CLASSNAME_REGISTER( plPipeResMakeMsg );
-	GETINTERFACE_ANY( plPipeResMakeMsg, plMessage );
+    ~plPipeResMakeMsg() {}
+    
+    CLASSNAME_REGISTER( plPipeResMakeMsg );
+    GETINTERFACE_ANY( plPipeResMakeMsg, plMessage );
 
-	plPipeline* Pipeline() const { return fPipe; }
+    plPipeline* Pipeline() const { return fPipe; }
 
-	virtual void Read(hsStream* s, hsResMgr* mgr) { plMessage::IMsgRead(s, mgr); }
-	virtual void Write(hsStream* s, hsResMgr* mgr) { plMessage::IMsgWrite(s, mgr); }
+    virtual void Read(hsStream* s, hsResMgr* mgr) { plMessage::IMsgRead(s, mgr); }
+    virtual void Write(hsStream* s, hsResMgr* mgr) { plMessage::IMsgWrite(s, mgr); }
 };
 
 class plPipeRTMakeMsg : public plPipeResMakeMsg
 {
 public:
-	plPipeRTMakeMsg() : plPipeResMakeMsg() { }
-	plPipeRTMakeMsg(plPipeline* pipe) : plPipeResMakeMsg(pipe) { }
+    plPipeRTMakeMsg() : plPipeResMakeMsg() { }
+    plPipeRTMakeMsg(plPipeline* pipe) : plPipeResMakeMsg(pipe) { }
 
-	~plPipeRTMakeMsg() {}
-	
-	CLASSNAME_REGISTER( plPipeRTMakeMsg );
-	GETINTERFACE_ANY( plPipeRTMakeMsg, plPipeResMakeMsg );
+    ~plPipeRTMakeMsg() {}
+    
+    CLASSNAME_REGISTER( plPipeRTMakeMsg );
+    GETINTERFACE_ANY( plPipeRTMakeMsg, plPipeResMakeMsg );
 };
 
 class plPipeGeoMakeMsg : public plPipeResMakeMsg
 {
 public:
-	plPipeGeoMakeMsg() : plPipeResMakeMsg(), fDefault(false) { }
-	plPipeGeoMakeMsg(plPipeline* pipe, hsBool def) : plPipeResMakeMsg(pipe), fDefault(def) { }
+    plPipeGeoMakeMsg() : plPipeResMakeMsg(), fDefault(false) { }
+    plPipeGeoMakeMsg(plPipeline* pipe, hsBool def) : plPipeResMakeMsg(pipe), fDefault(def) { }
 
-	~plPipeGeoMakeMsg() {}
-	
-	CLASSNAME_REGISTER( plPipeGeoMakeMsg );
-	GETINTERFACE_ANY( plPipeGeoMakeMsg, plPipeResMakeMsg );
+    ~plPipeGeoMakeMsg() {}
+    
+    CLASSNAME_REGISTER( plPipeGeoMakeMsg );
+    GETINTERFACE_ANY( plPipeGeoMakeMsg, plPipeResMakeMsg );
 
-	hsBool			fDefault;
+    hsBool          fDefault;
 };
 
 class plPipeTexMakeMsg : public plPipeResMakeMsg
 {
 public:
-	plPipeTexMakeMsg() : plPipeResMakeMsg() { }
-	plPipeTexMakeMsg(plPipeline* pipe) : plPipeResMakeMsg(pipe) { }
+    plPipeTexMakeMsg() : plPipeResMakeMsg() { }
+    plPipeTexMakeMsg(plPipeline* pipe) : plPipeResMakeMsg(pipe) { }
 
-	~plPipeTexMakeMsg() {}
-	
-	CLASSNAME_REGISTER( plPipeTexMakeMsg );
-	GETINTERFACE_ANY( plPipeTexMakeMsg, plPipeResMakeMsg );
+    ~plPipeTexMakeMsg() {}
+    
+    CLASSNAME_REGISTER( plPipeTexMakeMsg );
+    GETINTERFACE_ANY( plPipeTexMakeMsg, plPipeResMakeMsg );
 };
 
 

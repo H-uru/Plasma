@@ -33,23 +33,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 void plNetClientGroups::ISetGroupDesc(plNetGroupId& grpId)
 {
-	if (grpId.Room() == plNetGroup::kNetGroupUnknown.Room())
-		grpId.SetDesc("Unknown");
-	else
-	if (grpId.Room()== plNetGroup::kNetGroupLocalPlayer.Room())
-		grpId.SetDesc("LocalPlayer");
-	else
-	if (grpId.Room()== plNetGroup::kNetGroupRemotePlayer.Room())
-		grpId.SetDesc("RemotePlayer");
-	else
-	if (grpId.Room()== plNetGroup::kNetGroupLocalPhysicals.Room())
-		grpId.SetDesc("LocalPhysicals");
-	else
-	if (grpId.Room()== plNetGroup::kNetGroupRemotePhysicals.Room())
-		grpId.SetDesc("RemotePhysicals");
-	else
-	{
-		const plPageInfo* pageInfo=plKeyFinder::Instance().GetLocationInfo(grpId.Room());
-		grpId.SetDesc(pageInfo->GetPage());	
-	}
+    if (grpId.Room() == plNetGroup::kNetGroupUnknown.Room())
+        grpId.SetDesc("Unknown");
+    else
+    if (grpId.Room()== plNetGroup::kNetGroupLocalPlayer.Room())
+        grpId.SetDesc("LocalPlayer");
+    else
+    if (grpId.Room()== plNetGroup::kNetGroupRemotePlayer.Room())
+        grpId.SetDesc("RemotePlayer");
+    else
+    if (grpId.Room()== plNetGroup::kNetGroupLocalPhysicals.Room())
+        grpId.SetDesc("LocalPhysicals");
+    else
+    if (grpId.Room()== plNetGroup::kNetGroupRemotePhysicals.Room())
+        grpId.SetDesc("RemotePhysicals");
+    else
+    {
+        const plPageInfo* pageInfo=plKeyFinder::Instance().GetLocationInfo(grpId.Room());
+        grpId.SetDesc(pageInfo->GetPage()); 
+    }
 }

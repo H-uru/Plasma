@@ -32,62 +32,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plRenderRequestMsg::plRenderRequestMsg(plKey sender, plRenderRequestBase* req)
-:	plMessage(sender, nil, nil),
-	fReq(req)
+:   plMessage(sender, nil, nil),
+    fReq(req)
 {
-	plUoid oid( kClient_KEY );		// from plFixedKey.h
-	plKey key = hsgResMgr::ResMgr()->FindKey(oid);
-	AddReceiver(key);
+    plUoid oid( kClient_KEY );      // from plFixedKey.h
+    plKey key = hsgResMgr::ResMgr()->FindKey(oid);
+    AddReceiver(key);
 
-	hsRefCnt_SafeRef(fReq);
+    hsRefCnt_SafeRef(fReq);
 }
 
 plRenderRequestMsg::~plRenderRequestMsg()
 {
-	hsRefCnt_SafeUnRef(fReq);
+    hsRefCnt_SafeUnRef(fReq);
 }
 
 
 plRenderRequestMsg::plRenderRequestMsg()
 {
-	hsAssert(false, "Improper usage, use argumented constructor");
+    hsAssert(false, "Improper usage, use argumented constructor");
 }
 
 void plRenderRequestMsg::Read(hsStream* s, hsResMgr* mgr)
 {
-	hsAssert(false, "Transmission/read/write of render requests not currently supported");
-	plMessage::IMsgRead(s, mgr);
+    hsAssert(false, "Transmission/read/write of render requests not currently supported");
+    plMessage::IMsgRead(s, mgr);
 
-	fReq = nil;
+    fReq = nil;
 }
 
 void plRenderRequestMsg::Write(hsStream* s, hsResMgr* mgr)
 {
-	hsAssert(false, "Transmission/read/write of render requests not currently supported");
-	plMessage::IMsgWrite(s, mgr);
+    hsAssert(false, "Transmission/read/write of render requests not currently supported");
+    plMessage::IMsgWrite(s, mgr);
 }
 
 plRenderRequestAck::plRenderRequestAck()
 {
-	hsAssert(false, "Improper usage, use argumented constructor");
+    hsAssert(false, "Improper usage, use argumented constructor");
 }
 
 plRenderRequestAck::plRenderRequestAck(plKey r, UInt32 userData)
-:	plMessage(nil, r, nil),
-	fUserData(userData)
+:   plMessage(nil, r, nil),
+    fUserData(userData)
 {
 }
 
 void plRenderRequestAck::Read(hsStream* s, hsResMgr* mgr)
 {
-	hsAssert(false, "Transmission/read/write of render requests not currently supported");
-	plMessage::IMsgRead(s, mgr);
+    hsAssert(false, "Transmission/read/write of render requests not currently supported");
+    plMessage::IMsgRead(s, mgr);
 
 }
 
 void plRenderRequestAck::Write(hsStream* s, hsResMgr* mgr)
 {
-	hsAssert(false, "Transmission/read/write of render requests not currently supported");
-	plMessage::IMsgWrite(s, mgr);
+    hsAssert(false, "Transmission/read/write of render requests not currently supported");
+    plMessage::IMsgWrite(s, mgr);
 }
 

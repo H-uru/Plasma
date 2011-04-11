@@ -27,110 +27,110 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRingBuffer.h"
 
 plRingBuffer::plRingBuffer(int size)
-:	plMemBuffer(size)
+:   plMemBuffer(size)
 {            
-	fEndPos = 0;
-	fStartPos = 0;
+    fEndPos = 0;
+    fStartPos = 0;
 }
 
 void plRingBuffer::FullCompress()
 {
-	if (fStartPos == fEndPos)
-	{
-		fStartPos = 0;
-		fEndPos = 0;
-	}
-	else 
-	{
-		ForceWindowSlide();
-	}    
+    if (fStartPos == fEndPos)
+    {
+        fStartPos = 0;
+        fEndPos = 0;
+    }
+    else 
+    {
+        ForceWindowSlide();
+    }    
 }
 
 void plRingBuffer::Compress()
 {
-	if (fStartPos == fEndPos)
-	{
-		fStartPos = 0;
-		fEndPos = 0;
-	}
-	else if(fStartPos >= GetBufferSize() / 2) 
-	{
-		ForceWindowSlide();
-	}    
+    if (fStartPos == fEndPos)
+    {
+        fStartPos = 0;
+        fEndPos = 0;
+    }
+    else if(fStartPos >= GetBufferSize() / 2) 
+    {
+        ForceWindowSlide();
+    }    
 }
 
 bool plRingBuffer::Put(const char * data, int len)
 {
-	bool ans = false;
-	
-	if (len > BufferAvailable())
-		Compress();
-	
-	if (len <= BufferAvailable())
-	{
-		memcpy(GetBufferOpen(), data, len);
-		fEndPos += len;
-		ans = true;
-	}
-	return ans;
+    bool ans = false;
+    
+    if (len > BufferAvailable())
+        Compress();
+    
+    if (len <= BufferAvailable())
+    {
+        memcpy(GetBufferOpen(), data, len);
+        fEndPos += len;
+        ans = true;
+    }
+    return ans;
 }
 
 bool plRingBuffer::Get(char * data, int len)
 {
-	bool ans = false;
-	
-	if (len < AmountBuffered())
-	{
-		memcpy(data, GetBufferStart(), len);
-		fStartPos += len;
-		Compress();
-		ans = true;
-	}
-	return ans;
+    bool ans = false;
+    
+    if (len < AmountBuffered())
+    {
+        memcpy(data, GetBufferStart(), len);
+        fStartPos += len;
+        Compress();
+        ans = true;
+    }
+    return ans;
 }
 
 int plRingBuffer::AmountBuffered() 
 { 
-	return fEndPos - fStartPos; 
+    return fEndPos - fStartPos; 
 }
 
 int plRingBuffer::BufferAvailable() 
 { 
-	return GetBufferSize() - fEndPos; 
+    return GetBufferSize() - fEndPos; 
 }
 
 void plRingBuffer::Reset() 
 { 
-	fStartPos = 0; 
-	fEndPos = 0; 
+    fStartPos = 0; 
+    fEndPos = 0; 
 }
 
 char * plRingBuffer::GetBufferStart() 
 { 
-	return fBuffer+fStartPos;
+    return fBuffer+fStartPos;
 }
 
 char * plRingBuffer::GetBufferOpen() 
 {
-	return fBuffer+fEndPos; 
+    return fBuffer+fEndPos; 
 }
 
 void plRingBuffer::ForceWindowSlide()
 {
-	int len = AmountBuffered();
-	if(len > 0 && fStartPos != 0)
-	{
-		memmove(fBuffer, GetBufferStart(), len);
-		fStartPos = 0;
-		fEndPos = len;        
-	}
+    int len = AmountBuffered();
+    if(len > 0 && fStartPos != 0)
+    {
+        memmove(fBuffer, GetBufferStart(), len);
+        fStartPos = 0;
+        fEndPos = len;        
+    }
 }
 
 bool plRingBuffer::PutFast(const char * data, int len)
 {
-	// no checking be careful
-	memcpy(GetBufferOpen(), data, len); // or memmove?
-	fEndPos += len;
-	return true;
+    // no checking be careful
+    memcpy(GetBufferOpen(), data, len); // or memmove?
+    fEndPos += len;
+    return true;
 }
 

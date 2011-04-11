@@ -24,22 +24,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plWAVClipBuffer - Helper class for writing out WAV data in a buffered	//
-//					  manner, with support for clipping off the specified	//
-//					  amount at the end, but without knowing beforehand		//
-//					  exactly how much data we'll have.						//
-//																			//
-//	The algorithm goes something like this: we keep two buffers, both the	//
-//	size of the amount we want to clip. We then start filling in the first	//
-//	buffer, overflowing into the second buffer and wrapping back to the		//
-//	first again in a circular fashion. When we fill up one buffer and are	//
-//	about to advance to the next, we write that next buffer out. Why?		//
-//	Because we know that, even if we got no more data in, we have enough	//
-//	data in the first buffer to clip out the amount we want, so the other	//
-//	half (which will have older data, being a circular buffer) can be		//
-//	written out safely.														//
-//																			//
+//                                                                          //
+//  plWAVClipBuffer - Helper class for writing out WAV data in a buffered   //
+//                    manner, with support for clipping off the specified   //
+//                    amount at the end, but without knowing beforehand     //
+//                    exactly how much data we'll have.                     //
+//                                                                          //
+//  The algorithm goes something like this: we keep two buffers, both the   //
+//  size of the amount we want to clip. We then start filling in the first  //
+//  buffer, overflowing into the second buffer and wrapping back to the     //
+//  first again in a circular fashion. When we fill up one buffer and are   //
+//  about to advance to the next, we write that next buffer out. Why?       //
+//  Because we know that, even if we got no more data in, we have enough    //
+//  data in the first buffer to clip out the amount we want, so the other   //
+//  half (which will have older data, being a circular buffer) can be       //
+//  written out safely.                                                     //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -54,100 +54,100 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plWAVClipBuffer::plWAVClipBuffer( UInt32 clipSize, CWaveFile *outFile )
 {
-	fBuffers[ 0 ] = fBuffers[ 1 ] = nil;
-	fFlushCalled = true;
-	Init( clipSize, outFile );
+    fBuffers[ 0 ] = fBuffers[ 1 ] = nil;
+    fFlushCalled = true;
+    Init( clipSize, outFile );
 }
 
 plWAVClipBuffer::~plWAVClipBuffer()
 {
-	IShutdown();
+    IShutdown();
 }
 
 //// Init & IShutdown ////////////////////////////////////////////////////////
 
-void	plWAVClipBuffer::Init( UInt32 clipSize, CWaveFile *outFile )
+void    plWAVClipBuffer::Init( UInt32 clipSize, CWaveFile *outFile )
 {
-	IShutdown();
-	if( clipSize > 0 )
-	{
-		fBuffers[ 0 ] = TRACKED_NEW UInt8[ clipSize ];
-		fBuffers[ 1 ] = TRACKED_NEW UInt8[ clipSize ];
-		memset( fBuffers[ 0 ], 0, clipSize );
-		memset( fBuffers[ 1 ], 0, clipSize );
-	}
-	fWhichBuffer = 0;
-	fBufferSize = clipSize;
-	fCursor = 0;
-	fFirstFlip = true;
-	fOutFile = outFile;
-	fFlushCalled = false;
+    IShutdown();
+    if( clipSize > 0 )
+    {
+        fBuffers[ 0 ] = TRACKED_NEW UInt8[ clipSize ];
+        fBuffers[ 1 ] = TRACKED_NEW UInt8[ clipSize ];
+        memset( fBuffers[ 0 ], 0, clipSize );
+        memset( fBuffers[ 1 ], 0, clipSize );
+    }
+    fWhichBuffer = 0;
+    fBufferSize = clipSize;
+    fCursor = 0;
+    fFirstFlip = true;
+    fOutFile = outFile;
+    fFlushCalled = false;
 }
 
-void	plWAVClipBuffer::IShutdown( void )
+void    plWAVClipBuffer::IShutdown( void )
 {
-	hsAssert( fFlushCalled, "WAVClipBuffer shut down without flushing it!!!" );
+    hsAssert( fFlushCalled, "WAVClipBuffer shut down without flushing it!!!" );
 
-	delete [] fBuffers[ 0 ];
-	delete [] fBuffers[ 1 ];
+    delete [] fBuffers[ 0 ];
+    delete [] fBuffers[ 1 ];
 }
 
 //// WriteData ///////////////////////////////////////////////////////////////
-//	The main workhorse; call this to add data to the buffer.
+//  The main workhorse; call this to add data to the buffer.
 
-hsBool	plWAVClipBuffer::WriteData( UInt32 size, UInt8 *data )
+hsBool  plWAVClipBuffer::WriteData( UInt32 size, UInt8 *data )
 {
-	while( size > 0 )
-	{
-		UInt32	toWrite = fBufferSize - fCursor;
-		if( size < toWrite )
-		{
-			// Just write, haven't filled a buffer yet
-			memcpy( fBuffers[ fWhichBuffer ] + fCursor, data, size );
-			data += size;
-			fCursor += size;
-			return true;	// All done!
-		}
+    while( size > 0 )
+    {
+        UInt32  toWrite = fBufferSize - fCursor;
+        if( size < toWrite )
+        {
+            // Just write, haven't filled a buffer yet
+            memcpy( fBuffers[ fWhichBuffer ] + fCursor, data, size );
+            data += size;
+            fCursor += size;
+            return true;    // All done!
+        }
 
-		// Fill up to the end of a buffer, then flip
-		memcpy( fBuffers[ fWhichBuffer ] + fCursor, data, toWrite );
-		data += toWrite;
-		fCursor += toWrite;
-		size -= toWrite;
+        // Fill up to the end of a buffer, then flip
+        memcpy( fBuffers[ fWhichBuffer ] + fCursor, data, toWrite );
+        data += toWrite;
+        fCursor += toWrite;
+        size -= toWrite;
 
-		// Flip now...
-		fWhichBuffer = 1 - fWhichBuffer;
-		fCursor = 0;
+        // Flip now...
+        fWhichBuffer = 1 - fWhichBuffer;
+        fCursor = 0;
 
-		// Now we can write out this buffer, since it'll be old data and
-		// we have enough in the other buffer to clip with. The *only* 
-		// time we don't want to do this is the first time we flip, since
-		// at that point, the buffer we just flipped to hasn't been filled yet.
-		// (Every time afterwards, we'll always be flipping to a buffer with old
-		// data).
-		if( fFirstFlip )
-			fFirstFlip = false;
-		else
-		{
-			// Write it out before we overwrite it!
-			UINT written;
-			HRESULT hr = fOutFile->Write( fBufferSize, fBuffers[ fWhichBuffer ], &written );
+        // Now we can write out this buffer, since it'll be old data and
+        // we have enough in the other buffer to clip with. The *only* 
+        // time we don't want to do this is the first time we flip, since
+        // at that point, the buffer we just flipped to hasn't been filled yet.
+        // (Every time afterwards, we'll always be flipping to a buffer with old
+        // data).
+        if( fFirstFlip )
+            fFirstFlip = false;
+        else
+        {
+            // Write it out before we overwrite it!
+            UINT written;
+            HRESULT hr = fOutFile->Write( fBufferSize, fBuffers[ fWhichBuffer ], &written );
 
-			if( FAILED( hr ) )
-			{
-				hsAssert( false, "ERROR writing WMA stream to WAV file" );
-				return false;
-			}
-			else if( written != fBufferSize )
-			{
-				hsAssert( false, "Unable to write all of WMA stream to WAV file" );
-				return false;
-			}
-		}
-	}
+            if( FAILED( hr ) )
+            {
+                hsAssert( false, "ERROR writing WMA stream to WAV file" );
+                return false;
+            }
+            else if( written != fBufferSize )
+            {
+                hsAssert( false, "Unable to write all of WMA stream to WAV file" );
+                return false;
+            }
+        }
+    }
 
-	// Cleanly got here, so just return success
-	return true;
+    // Cleanly got here, so just return success
+    return true;
 }
 
 //// Flush ///////////////////////////////////////////////////////////////////
@@ -168,43 +168,43 @@ hsBool	plWAVClipBuffer::WriteData( UInt32 size, UInt8 *data )
 // the second half of what we clip), we simply figure out how much of the other one we
 // clip and write out the rest.
 
-hsBool	plWAVClipBuffer::Flush( void )
+hsBool  plWAVClipBuffer::Flush( void )
 {
-	fFlushCalled = true;
+    fFlushCalled = true;
 
-	if( fFirstFlip )
-		return false;	// We failed--not enough data to clip with
+    if( fFirstFlip )
+        return false;   // We failed--not enough data to clip with
 
-	if( fCursor == 0 )
-	{
-		// Our current buffer is empty, so the other buffer is precisely what we clip.
-		// So just discard and return successfully
-		return true;
-	}
+    if( fCursor == 0 )
+    {
+        // Our current buffer is empty, so the other buffer is precisely what we clip.
+        // So just discard and return successfully
+        return true;
+    }
 
-	// The hard case--we always discard the partial buffer we're on, so figure out
-	// how much we want to save of the other buffer. The math is:
-	//		Partial buffer amount we're clipping = fCursor
-	//		Amount of other buffer we're clipping = fBufferSize - fCursor
-	//		Amount of other buffer we're writing = fBufferSize - ( fBufferSize - fCursor ) = fCursor
-	//	Go figure :)
+    // The hard case--we always discard the partial buffer we're on, so figure out
+    // how much we want to save of the other buffer. The math is:
+    //      Partial buffer amount we're clipping = fCursor
+    //      Amount of other buffer we're clipping = fBufferSize - fCursor
+    //      Amount of other buffer we're writing = fBufferSize - ( fBufferSize - fCursor ) = fCursor
+    //  Go figure :)
 
-	UInt32 toWrite = fCursor;
+    UInt32 toWrite = fCursor;
 
-	UINT written;
-	HRESULT hr = fOutFile->Write( toWrite, fBuffers[ 1 - fWhichBuffer ], &written );
+    UINT written;
+    HRESULT hr = fOutFile->Write( toWrite, fBuffers[ 1 - fWhichBuffer ], &written );
 
-	if( FAILED( hr ) )
-	{
-		hsAssert( false, "ERROR writing WMA stream to WAV file" );
-		return false;
-	}
-	else if( written != toWrite )
-	{
-		hsAssert( false, "Unable to write all of WMA stream to WAV file" );
-		return false;
-	}
-	
-	// All done!
-	return true;
+    if( FAILED( hr ) )
+    {
+        hsAssert( false, "ERROR writing WMA stream to WAV file" );
+        return false;
+    }
+    else if( written != toWrite )
+    {
+        hsAssert( false, "Unable to write all of WMA stream to WAV file" );
+        return false;
+    }
+    
+    // All done!
+    return true;
 }

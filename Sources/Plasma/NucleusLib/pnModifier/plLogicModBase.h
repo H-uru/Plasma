@@ -38,73 +38,73 @@ class plVolumeSensorConditionalObjectNoArbitration;
 class plLogicModBase : public plSingleModifier
 {
 public:
-	enum Flags
-	{
-		kLocalElement	= 0,
-		kReset,
-		kTriggered,
-		kOneShot,
-		kRequestingTrigger,
-		kTypeActivator,			// this LogicMod is part of an Activator Component (not a Responder)
-		kMultiTrigger,
-	};
+    enum Flags
+    {
+        kLocalElement   = 0,
+        kReset,
+        kTriggered,
+        kOneShot,
+        kRequestingTrigger,
+        kTypeActivator,         // this LogicMod is part of an Activator Component (not a Responder)
+        kMultiTrigger,
+    };
 
 protected:
-	hsTArray<plMessage*>			fCommandList;
-	hsTArray<plKey>					fReceiverList;
-	UInt32							fCounterLimit;
-	hsScalar						fTimer;
-	hsBitVector						fFlags;
-	UInt32							fCounter;
-	plNotifyMsg*					fNotify;
-	bool							fDisabled;
+    hsTArray<plMessage*>            fCommandList;
+    hsTArray<plKey>                 fReceiverList;
+    UInt32                          fCounterLimit;
+    hsScalar                        fTimer;
+    hsBitVector                     fFlags;
+    UInt32                          fCounter;
+    plNotifyMsg*                    fNotify;
+    bool                            fDisabled;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return false;}
-	void IUpdateSharedState(bool triggered) const;
-	hsBool IEvalCounter();
-	virtual void PreTrigger(hsBool netRequest);
-	virtual void Trigger(hsBool netRequest);
-	virtual void UnTrigger();
-	
-	void CreateNotifyMsg();
-	
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return false;}
+    void IUpdateSharedState(bool triggered) const;
+    hsBool IEvalCounter();
+    virtual void PreTrigger(hsBool netRequest);
+    virtual void Trigger(hsBool netRequest);
+    virtual void UnTrigger();
+    
+    void CreateNotifyMsg();
+    
 public:
-	friend plVolumeSensorConditionalObjectNoArbitration;
-	plLogicModBase();
-	~plLogicModBase();
-	CLASSNAME_REGISTER( plLogicModBase );
-	GETINTERFACE_ANY( plLogicModBase, plSingleModifier );
+    friend plVolumeSensorConditionalObjectNoArbitration;
+    plLogicModBase();
+    ~plLogicModBase();
+    CLASSNAME_REGISTER( plLogicModBase );
+    GETINTERFACE_ANY( plLogicModBase, plSingleModifier );
 
-	void AddTarget(plSceneObject* so);
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void AddTarget(plSceneObject* so);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
-	virtual hsBool VerifyConditions(plMessage* msg) { return true;}
+    virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool VerifyConditions(plMessage* msg) { return true;}
 
-	virtual void Reset(bool bCounterReset);
+    virtual void Reset(bool bCounterReset);
 
-	void SetDisabled(bool disabled) { fDisabled = disabled; }
-	bool Disabled() { return fDisabled; }
+    void SetDisabled(bool disabled) { fDisabled = disabled; }
+    bool Disabled() { return fDisabled; }
 
-	plNotifyMsg* GetNotify() { return fNotify; }
+    plNotifyMsg* GetNotify() { return fNotify; }
 
-	void AddCommand(plMessage* msg) { fCommandList.Append(msg); }
-	void SetOneShot(hsBool b) { if (b) SetFlag(kOneShot); else ClearFlag(kOneShot); }
-	void RegisterForMessageType(UInt16 hClass);
+    void AddCommand(plMessage* msg) { fCommandList.Append(msg); }
+    void SetOneShot(hsBool b) { if (b) SetFlag(kOneShot); else ClearFlag(kOneShot); }
+    void RegisterForMessageType(UInt16 hClass);
 
-	virtual void RequestTrigger(hsBool netRequest=false);
-	virtual void RequestUnTrigger() { UnTrigger(); }
+    virtual void RequestTrigger(hsBool netRequest=false);
+    virtual void RequestUnTrigger() { UnTrigger(); }
 
-	hsBool	HasFlag(int f) const { return fFlags.IsBitSet(f); }
-	void	SetFlag(int f) { fFlags.SetBit(f); }
-	void	ClearFlag(int which) { fFlags.ClearBit(which); }
+    hsBool  HasFlag(int f) const { return fFlags.IsBitSet(f); }
+    void    SetFlag(int f) { fFlags.SetBit(f); }
+    void    ClearFlag(int which) { fFlags.ClearBit(which); }
 
-	void AddNotifyReceiver(plKey receiver);
+    void AddNotifyReceiver(plKey receiver);
 
-	// for debug purposes only!
-	void ConsoleTrigger(plKey playerKey);
-	void ConsoleRequestTrigger();
+    // for debug purposes only!
+    void ConsoleTrigger(plKey playerKey);
+    void ConsoleRequestTrigger();
 };
 
 

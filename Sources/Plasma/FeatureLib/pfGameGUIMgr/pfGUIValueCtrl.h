@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIValueCtrl Header													//
-//																			//
+//                                                                          //
+//  pfGUIValueCtrl Header                                                   //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIValueCtrl_h
@@ -37,31 +37,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pfGUIValueCtrl : public pfGUIControlMod
 {
-	protected:
+    protected:
 
-		hsScalar		fValue, fMin, fMax, fStep;
+        hsScalar        fValue, fMin, fMax, fStep;
 
 
-	public:
+    public:
 
-		pfGUIValueCtrl();
-		virtual ~pfGUIValueCtrl();
+        pfGUIValueCtrl();
+        virtual ~pfGUIValueCtrl();
 
-		CLASSNAME_REGISTER( pfGUIValueCtrl );
-		GETINTERFACE_ANY( pfGUIValueCtrl, pfGUIControlMod );
+        CLASSNAME_REGISTER( pfGUIValueCtrl );
+        GETINTERFACE_ANY( pfGUIValueCtrl, pfGUIControlMod );
 
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		virtual hsScalar	GetCurrValue( void ) { return fValue; }
-		virtual void		SetCurrValue( hsScalar v );
+        virtual hsScalar    GetCurrValue( void ) { return fValue; }
+        virtual void        SetCurrValue( hsScalar v );
 
-		virtual hsScalar	GetMin( void ) { return fMin; }
-		virtual hsScalar	GetMax( void ) { return fMax; }
-		virtual hsScalar	GetStep( void ) { return fStep; }
+        virtual hsScalar    GetMin( void ) { return fMin; }
+        virtual hsScalar    GetMax( void ) { return fMax; }
+        virtual hsScalar    GetStep( void ) { return fStep; }
 
-		virtual void	SetRange( hsScalar min, hsScalar max );
-		virtual void	SetStep( hsScalar step ) { fStep = step; }
+        virtual void    SetRange( hsScalar min, hsScalar max );
+        virtual void    SetStep( hsScalar step ) { fStep = step; }
 
 };
 

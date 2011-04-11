@@ -39,19 +39,19 @@ class Animatable;
 class SegmentSpec
 {
 public:
-	enum SegType { kAnim, kLoop, kMarker, kStopPoint, kSuppress };
+    enum SegType { kAnim, kLoop, kMarker, kStopPoint, kSuppress };
 
-	float	fStart;		// beginning of the segment in game time
-	float	fEnd;		// end of the segment in game time
-	float	fInitial;	// initial position of the animation (-1 for the start)
-	char * fName;		// name of the segment: controls lifespan of the name
-	SegType fType;
-	
-	SegmentSpec();
-	SegmentSpec(float start, float end, char * name, SegType);
-	~SegmentSpec();
+    float   fStart;     // beginning of the segment in game time
+    float   fEnd;       // end of the segment in game time
+    float   fInitial;   // initial position of the animation (-1 for the start)
+    char * fName;       // name of the segment: controls lifespan of the name
+    SegType fType;
+    
+    SegmentSpec();
+    SegmentSpec(float start, float end, char * name, SegType);
+    ~SegmentSpec();
 
-	bool Contains(SegmentSpec *spec);
+    bool Contains(SegmentSpec *spec);
 };
 
 

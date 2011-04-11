@@ -30,70 +30,70 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plNetSharedState::plNetSharedState(char* name) : fServerMayDelete(false)
 { 
-	SetName(name);
+    SetName(name);
 }
 
 plNetSharedState::~plNetSharedState() 
 { 
-	Reset();
+    Reset();
 }
 
 void plNetSharedState::Reset()
 {
-	int i;
-	for(i=0;i<fVars.size();i++)
-		delete fVars[i];
-	fVars.clear();
+    int i;
+    for(i=0;i<fVars.size();i++)
+        delete fVars[i];
+    fVars.clear();
 }
 
 void plNetSharedState::Copy(plNetSharedState *ss)
 {
-	Reset();
+    Reset();
 
-	// copy name
-	SetName(ss->GetName());
+    // copy name
+    SetName(ss->GetName());
 
-	SetServerMayDelete(ss->GetServerMayDelete());
+    SetServerMayDelete(ss->GetServerMayDelete());
 
-	// copy vars
-	int i;
-	for(i=0;i<ss->GetNumVars();i++)
-	{
-		plGenericVar* sv = TRACKED_NEW plGenericVar;
-		*sv = *(ss->GetVar(i));
-		AddVar(sv);
-	}
+    // copy vars
+    int i;
+    for(i=0;i<ss->GetNumVars();i++)
+    {
+        plGenericVar* sv = TRACKED_NEW plGenericVar;
+        *sv = *(ss->GetVar(i));
+        AddVar(sv);
+    }
 }
 
 void plNetSharedState::Read(hsStream* stream)
-{	
-	Reset();
+{   
+    Reset();
 
-	plMsgStdStringHelper::Peek(fName, stream);
-	Int32 num=stream->ReadSwap32();
-	fServerMayDelete = stream->Readbool();
-	
-	fVars.reserve(num);
-	int i;
-	for(i=0;i<num;i++)
-	{
-		plGenericVar* v = TRACKED_NEW plGenericVar;
-		v->Read(stream);
-		AddVar(v);
-	}
+    plMsgStdStringHelper::Peek(fName, stream);
+    Int32 num=stream->ReadSwap32();
+    fServerMayDelete = stream->Readbool();
+    
+    fVars.reserve(num);
+    int i;
+    for(i=0;i<num;i++)
+    {
+        plGenericVar* v = TRACKED_NEW plGenericVar;
+        v->Read(stream);
+        AddVar(v);
+    }
 }
 
 void plNetSharedState::Write(hsStream* stream)
-{	
-	plMsgStdStringHelper::Poke(fName, stream);
-	Int32 num=GetNumVars();
-	stream->WriteSwap32(num);
-	
-	stream->Writebool(fServerMayDelete);
-	int i;
-	for(i=0;i<num;i++)
-	{
-		fVars[i]->Write(stream);
-	}
+{   
+    plMsgStdStringHelper::Poke(fName, stream);
+    Int32 num=GetNumVars();
+    stream->WriteSwap32(num);
+    
+    stream->Writebool(fServerMayDelete);
+    int i;
+    for(i=0;i<num;i++)
+    {
+        fVars[i]->Write(stream);
+    }
 }
 

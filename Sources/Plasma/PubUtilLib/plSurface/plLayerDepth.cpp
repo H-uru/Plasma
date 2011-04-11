@@ -29,16 +29,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plLayerDepth::plLayerDepth()
 {
-	SetZFlags(hsGMatState::kZNoZRead | hsGMatState::kZNoZWrite);
-	SetBlendFlags(hsGMatState::kBlendAdd);
-	SetMiscFlags(hsGMatState::kMiscRestartPassHere | hsGMatState::kMiscTroubledLoner);
+    SetZFlags(hsGMatState::kZNoZRead | hsGMatState::kZNoZWrite);
+    SetBlendFlags(hsGMatState::kBlendAdd);
+    SetMiscFlags(hsGMatState::kMiscRestartPassHere | hsGMatState::kMiscTroubledLoner);
 
-	SetPreshadeColor(hsColorRGBA().Set(0,0,0,1.f));
-	SetRuntimeColor(hsColorRGBA().Set(0,0,0,1.f));
-	SetAmbientColor(hsColorRGBA().Set(0.1f, 0.1f, 0.1f, 1.f));
-	SetOpacity(1.f);
+    SetPreshadeColor(hsColorRGBA().Set(0,0,0,1.f));
+    SetRuntimeColor(hsColorRGBA().Set(0,0,0,1.f));
+    SetAmbientColor(hsColorRGBA().Set(0.1f, 0.1f, 0.1f, 1.f));
+    SetOpacity(1.f);
 
-	*fTexture = nil;
+    *fTexture = nil;
 
 }
 

@@ -1,5 +1,5 @@
 if(Speex_INCLUDE_DIR AND Speex_LIBRARY)
-	set(Speex_FIND_QUIETLY TRUE)
+    set(Speex_FIND_QUIETLY TRUE)
 endif()
 
 
@@ -16,15 +16,15 @@ set(Speex_LIBRARIES ${Speex_LIBRARY})
 
 
 if(Speex_INCLUDE_DIR AND Speex_LIBRARY)
-	set(Speex_FOUND TRUE)
+    set(Speex_FOUND TRUE)
 endif()
 
 if (Speex_FOUND)
-	if(NOT Speex_FIND_QUIETLY)
-		message(STATUS "Found speex: ${Speex_INCLUDE_DIR}")
-	endif()
+    if(NOT Speex_FIND_QUIETLY)
+        message(STATUS "Found speex: ${Speex_INCLUDE_DIR}")
+    endif()
 else()
-	if(Speex_FIND_REQUIRED)
-		message(FATAL_ERROR "Could not find speex")
-	endif()
+    if(Speex_FIND_REQUIRED)
+        message(FATAL_ERROR "Could not find speex")
+    endif()
 endif()

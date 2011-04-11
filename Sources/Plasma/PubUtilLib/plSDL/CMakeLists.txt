@@ -4,32 +4,32 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plSDL_SOURCES
-	plSDLMgr.cpp
-	plSDLParser.cpp
-	plStateChangeNotifier.cpp
-	plStateDataRecord.cpp
-	plStateDescriptor.cpp
-	plStateVariable.cpp
-	plVarDescriptor.cpp
+    plSDLMgr.cpp
+    plSDLParser.cpp
+    plStateChangeNotifier.cpp
+    plStateDataRecord.cpp
+    plStateDescriptor.cpp
+    plStateVariable.cpp
+    plVarDescriptor.cpp
 )
 
 set(plSDL_HEADERS
-	plSDL.h
-	plSDLCreatable.h
-	plSDLDescriptor.h
+    plSDL.h
+    plSDLCreatable.h
+    plSDLDescriptor.h
 )
 
 set(plSDL_SDLFILES
-	SDL/animation.sdl
-	SDL/avatar.sdl
-	SDL/cloneMessage.sdl
-	SDL/clothing.sdl
-	SDL/morph.sdl
-	SDL/particle.sdl
-	SDL/physical.sdl
-	SDL/responder.sdl
-	SDL/sound.sdl
-	SDL/xregion.sdl
+    SDL/animation.sdl
+    SDL/avatar.sdl
+    SDL/cloneMessage.sdl
+    SDL/clothing.sdl
+    SDL/morph.sdl
+    SDL/particle.sdl
+    SDL/physical.sdl
+    SDL/responder.sdl
+    SDL/sound.sdl
+    SDL/xregion.sdl
 )
 
 add_library(plSDL STATIC ${plSDL_SOURCES} ${plSDL_HEADERS} ${plSDL_SDLFILES})

@@ -29,61 +29,61 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plProgressBar : public plControl
 {
 public:
-	DECLARE_WINDOWSUBCLASS(plProgressBar,plControl)
+    DECLARE_WINDOWSUBCLASS(plProgressBar,plControl)
 
-	int fPercent;
-	int fMax;
+    int fPercent;
+    int fMax;
 
-	plProgressBar()
-	{}
-	plProgressBar( plWindow * inOwner, int inId=0, WNDPROC inSuperProc=nil )
-	: plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
-	, fPercent( 0 )
-	, fMax( 100 )
-	{}
+    plProgressBar()
+    {}
+    plProgressBar( plWindow * inOwner, int inId=0, WNDPROC inSuperProc=nil )
+    : plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
+    , fPercent( 0 )
+    , fMax( 100 )
+    {}
 
-	void OpenWindow( bool Visible )
-	{
-		PerformCreateWindowEx
-		(
-			WS_EX_CLIENTEDGE,
+    void OpenWindow( bool Visible )
+    {
+        PerformCreateWindowEx
+        (
+            WS_EX_CLIENTEDGE,
             nil,
             WS_CHILD | (Visible?WS_VISIBLE:0),
             0, 0,
-			0, 0,
+            0, 0,
             *fOwnerWindow,
             (HMENU)fControlID,
             plWndCtrls::Instance()
-		);
-		SendMessage( *this, PBM_SETRANGE, 0, 100 );
-	}
+        );
+        SendMessage( *this, PBM_SETRANGE, 0, 100 );
+    }
 
-	void SetMax(int inMax)
-	{
-		fMax = inMax;
-	}
-	void SetProgress( int inCurrent )
-	{
-		int inPercent = (int)((float(inCurrent)/float(Max(fMax,1)))*100.f);
-		if( inPercent!=fPercent )
-			SendMessage( *this, PBM_SETPOS, inPercent, 0 );
-		fPercent = inPercent;
-	}
-	int GetProgress() const
-	{
-		int value = SendMessage( *this, PBM_GETPOS, 0, 0 );
-		return value;
-	}
-	std::string IGetValue() const
-	{
-		char tmp[20];
-		sprintf(tmp,"%d",GetProgress());
-		return tmp;
-	}
-	void ISetValue(const char * value)
-	{
-		SetProgress(atoi(value));
-	}
+    void SetMax(int inMax)
+    {
+        fMax = inMax;
+    }
+    void SetProgress( int inCurrent )
+    {
+        int inPercent = (int)((float(inCurrent)/float(Max(fMax,1)))*100.f);
+        if( inPercent!=fPercent )
+            SendMessage( *this, PBM_SETPOS, inPercent, 0 );
+        fPercent = inPercent;
+    }
+    int GetProgress() const
+    {
+        int value = SendMessage( *this, PBM_GETPOS, 0, 0 );
+        return value;
+    }
+    std::string IGetValue() const
+    {
+        char tmp[20];
+        sprintf(tmp,"%d",GetProgress());
+        return tmp;
+    }
+    void ISetValue(const char * value)
+    {
+        SetProgress(atoi(value));
+    }
 };
 
 

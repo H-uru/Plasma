@@ -45,31 +45,31 @@ namespace pnNetCommon
 // NOTE: On Win32, WSAStartup() must be called before GetTextAddr() will work.
 const char * GetTextAddr(UInt32 binAddr)
 {
-	in_addr in;
-	memcpy(&in,&binAddr,sizeof(binAddr));
-	return inet_ntoa(in);
+    in_addr in;
+    memcpy(&in,&binAddr,sizeof(binAddr));
+    return inet_ntoa(in);
 }
 
 // NOTE: On Win32, WSAStartup() must be called before GetBinAddr() will work.
 UInt32 GetBinAddr(const char * textAddr)
 {
-	UInt32 addr = 0;
-	
-	if (!textAddr)
-		return addr;
-	
+    UInt32 addr = 0;
+    
+    if (!textAddr)
+        return addr;
+    
     struct addrinfo * ai = NULL;
     
-	addr = inet_addr(textAddr);
-	if(addr == INADDR_NONE)
-	{
-		ai = pnAddrInfo::GetAddrByNameSimple(textAddr);
-		if(ai!= NULL)
-			memcpy(&addr,(void*)(&(((sockaddr_in*)(ai->ai_addr))->sin_addr)),sizeof(addr));
-		pnAddrInfo::Free(ai);
-	}
-	
-	return addr;
+    addr = inet_addr(textAddr);
+    if(addr == INADDR_NONE)
+    {
+        ai = pnAddrInfo::GetAddrByNameSimple(textAddr);
+        if(ai!= NULL)
+            memcpy(&addr,(void*)(&(((sockaddr_in*)(ai->ai_addr))->sin_addr)),sizeof(addr));
+        pnAddrInfo::Free(ai);
+    }
+    
+    return addr;
 }
 
 #endif
@@ -82,26 +82,26 @@ UInt32 GetBinAddr(const char * textAddr)
 
 void plCreatableStream::Write( hsStream* stream, hsResMgr* mgr )
 {
-	fStream.Rewind();
-	std::string buf;
-	UInt32 len = fStream.GetEOF();
-	stream->WriteSwap( len );
-	buf.resize( len );
-	fStream.Read( len, (void*)buf.data() );
-	stream->Write( len, (const void*)buf.data() );
-	fStream.Rewind();
+    fStream.Rewind();
+    std::string buf;
+    UInt32 len = fStream.GetEOF();
+    stream->WriteSwap( len );
+    buf.resize( len );
+    fStream.Read( len, (void*)buf.data() );
+    stream->Write( len, (const void*)buf.data() );
+    fStream.Rewind();
 }
 
 void plCreatableStream::Read( hsStream* stream, hsResMgr* mgr )
 {
-	fStream.Rewind();
-	std::string buf;
-	UInt32 len;
-	stream->LogReadSwap( &len,"CreatableStream Len");
-	buf.resize( len );
-	stream->LogRead( len, (void*)buf.data(),"CreatableStream Data");
-	fStream.Write( len, (const void*)buf.data() );
-	fStream.Rewind();
+    fStream.Rewind();
+    std::string buf;
+    UInt32 len;
+    stream->LogReadSwap( &len,"CreatableStream Len");
+    buf.resize( len );
+    stream->LogRead( len, (void*)buf.data(),"CreatableStream Data");
+    fStream.Write( len, (const void*)buf.data() );
+    fStream.Rewind();
 }
 
 ////////////////////////////////////////////////////////////////////

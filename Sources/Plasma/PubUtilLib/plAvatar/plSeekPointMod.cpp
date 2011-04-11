@@ -32,64 +32,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plSeekPointMod::plSeekPointMod()
 : fName(nil), plMultiModifier()
 {
-	// this constructor is called from the loader. 
+    // this constructor is called from the loader. 
 }
 
 // CTOR(char *)
 plSeekPointMod::plSeekPointMod(char * name)
 : fName(name),  plMultiModifier()
 {
-	// this constructor is called from the converter. it adds the seek point to the
-	// registry immediately because it has the name already
+    // this constructor is called from the converter. it adds the seek point to the
+    // registry immediately because it has the name already
 }
 
 // DTOR()
 plSeekPointMod::~plSeekPointMod()
 {
-	if(fName) {
-		delete[] fName;
-		fName = nil;
-	}
+    if(fName) {
+        delete[] fName;
+        fName = nil;
+    }
 }
 
 // MSGRECEIVE
 hsBool plSeekPointMod::MsgReceive(plMessage* msg)
 {
-	return plMultiModifier::MsgReceive(msg);
+    return plMultiModifier::MsgReceive(msg);
 }
 
 // ADDTARGET
 // Here I am. Announce presence to the avatar registry.
 void plSeekPointMod::AddTarget(plSceneObject* so)
 {
-	plMultiModifier::AddTarget(so);
-//	plAvatarMgr::GetInstance()->AddSeekPoint(this);
+    plMultiModifier::AddTarget(so);
+//  plAvatarMgr::GetInstance()->AddSeekPoint(this);
 }
 
 void plSeekPointMod::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plMultiModifier::Read(stream, mgr);
+    plMultiModifier::Read(stream, mgr);
 
-	// read in the name of the animation itself
-	int length = stream->ReadSwap32();
-	if(length > 0)
-	{
-		fName = TRACKED_NEW char[length + 1];
-		stream->Read(length, fName);
-		fName[length] = 0;
-	}
+    // read in the name of the animation itself
+    int length = stream->ReadSwap32();
+    if(length > 0)
+    {
+        fName = TRACKED_NEW char[length + 1];
+        stream->Read(length, fName);
+        fName[length] = 0;
+    }
 
 }
 
 void plSeekPointMod::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plMultiModifier::Write(stream, mgr);
+    plMultiModifier::Write(stream, mgr);
 
-	int length = strlen(fName);
-	stream->WriteSwap32(length);
-	if (length > 0)
-	{
-		stream->Write(length, fName);
-	}
+    int length = strlen(fName);
+    stream->WriteSwap32(length);
+    if (length > 0)
+    {
+        stream->Write(length, fName);
+    }
 
 }

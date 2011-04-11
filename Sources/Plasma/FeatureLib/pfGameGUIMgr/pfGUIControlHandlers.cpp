@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIControl Handler Definitions										//
-//																			//
+//                                                                          //
+//  pfGUIControl Handler Definitions                                        //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -41,47 +41,47 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Writeable Stuff /////////////////////////////////////////////////////////
 
-void	pfGUICtrlProcWriteableObject::Write( pfGUICtrlProcWriteableObject *obj, hsStream *s )
+void    pfGUICtrlProcWriteableObject::Write( pfGUICtrlProcWriteableObject *obj, hsStream *s )
 {
-	if( obj != nil )
-	{
-		s->WriteSwap32( obj->fType );
-		obj->IWrite( s );
-	}
-	else
-		s->WriteSwap32( kNull );
+    if( obj != nil )
+    {
+        s->WriteSwap32( obj->fType );
+        obj->IWrite( s );
+    }
+    else
+        s->WriteSwap32( kNull );
 }
 
 pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
 {
-	pfGUICtrlProcWriteableObject	*obj;
+    pfGUICtrlProcWriteableObject    *obj;
 
-	UInt32 type = s->ReadSwap32();
+    UInt32 type = s->ReadSwap32();
 
-	switch( type )
-	{
-		case kConsoleCmd:
-			obj = TRACKED_NEW pfGUIConsoleCmdProc;
-			break;
+    switch( type )
+    {
+        case kConsoleCmd:
+            obj = TRACKED_NEW pfGUIConsoleCmdProc;
+            break;
 
-		case kPythonScript:
-			obj = TRACKED_NEW pfGUIPythonScriptProc;
-			break;
+        case kPythonScript:
+            obj = TRACKED_NEW pfGUIPythonScriptProc;
+            break;
 
-		case kCloseDlg:
-			obj = TRACKED_NEW pfGUICloseDlgProc;
-			break;
+        case kCloseDlg:
+            obj = TRACKED_NEW pfGUICloseDlgProc;
+            break;
 
-		case kNull:
-			return nil;
+        case kNull:
+            return nil;
 
-		default:
-			hsAssert( false, "Invalid proc type in Read()" );
-			return nil;
-	}
+        default:
+            hsAssert( false, "Invalid proc type in Read()" );
+            return nil;
+    }
 
-	obj->IRead( s );
-	return obj;
+    obj->IRead( s );
+    return obj;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -92,66 +92,66 @@ pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
 
 pfGUIConsoleCmdProc::pfGUIConsoleCmdProc() : pfGUICtrlProcWriteableObject( kConsoleCmd ) 
 { 
-	fCommand = nil; 
+    fCommand = nil; 
 }
 
 pfGUIConsoleCmdProc::pfGUIConsoleCmdProc( const char *cmd )
-				: pfGUICtrlProcWriteableObject( kConsoleCmd ) 
+                : pfGUICtrlProcWriteableObject( kConsoleCmd ) 
 {
-	fCommand = nil;
-	SetCommand( cmd );
+    fCommand = nil;
+    SetCommand( cmd );
 }
 
 pfGUIConsoleCmdProc::~pfGUIConsoleCmdProc()
 {
-	delete [] fCommand;
+    delete [] fCommand;
 }
 
-void	pfGUIConsoleCmdProc::IRead( hsStream *s )
+void    pfGUIConsoleCmdProc::IRead( hsStream *s )
 {
-	int	i = s->ReadSwap32();
-	if( i > 0 )
-	{
-		fCommand = TRACKED_NEW char[ i + 1 ];
-		memset( fCommand, 0, i + 1 );
-		s->Read( i, fCommand );
-	}
-	else
-		fCommand = nil;
+    int i = s->ReadSwap32();
+    if( i > 0 )
+    {
+        fCommand = TRACKED_NEW char[ i + 1 ];
+        memset( fCommand, 0, i + 1 );
+        s->Read( i, fCommand );
+    }
+    else
+        fCommand = nil;
 }
 
-void	pfGUIConsoleCmdProc::IWrite( hsStream *s )
+void    pfGUIConsoleCmdProc::IWrite( hsStream *s )
 {
-	if( fCommand != nil )
-	{
-		s->WriteSwap32( strlen( fCommand ) );
-		s->Write( strlen( fCommand ), fCommand );
-	}
-	else
-		s->WriteSwap32( 0 );
+    if( fCommand != nil )
+    {
+        s->WriteSwap32( strlen( fCommand ) );
+        s->Write( strlen( fCommand ), fCommand );
+    }
+    else
+        s->WriteSwap32( 0 );
 }
 
-void	pfGUIConsoleCmdProc::DoSomething( pfGUIControlMod *ctrl )
+void    pfGUIConsoleCmdProc::DoSomething( pfGUIControlMod *ctrl )
 {
-	if( fCommand != nil )
-	{
-		plConsoleMsg *cMsg = TRACKED_NEW plConsoleMsg( plConsoleMsg::kExecuteLine, fCommand );
-		plgDispatch::MsgSend( cMsg );
-	}
+    if( fCommand != nil )
+    {
+        plConsoleMsg *cMsg = TRACKED_NEW plConsoleMsg( plConsoleMsg::kExecuteLine, fCommand );
+        plgDispatch::MsgSend( cMsg );
+    }
 }
 
-void	pfGUIConsoleCmdProc::SetCommand( const char *cmd )
+void    pfGUIConsoleCmdProc::SetCommand( const char *cmd )
 {
-	delete [] fCommand;
+    delete [] fCommand;
 
-	if( cmd == nil )
-		fCommand = nil;
-	else
-	{
-		fCommand = TRACKED_NEW char[ strlen( cmd ) + 1 ];
-		memset( fCommand, 0, strlen( cmd ) + 1 );
-		strcpy( fCommand, cmd );
-	}
+    if( cmd == nil )
+        fCommand = nil;
+    else
+    {
+        fCommand = TRACKED_NEW char[ strlen( cmd ) + 1 ];
+        memset( fCommand, 0, strlen( cmd ) + 1 );
+        strcpy( fCommand, cmd );
+    }
 }
 
 //// pfGUIPythonScriptProc ///////////////////////////////////////////////////
@@ -164,15 +164,15 @@ pfGUIPythonScriptProc::~pfGUIPythonScriptProc()
 {
 }
 
-void	pfGUIPythonScriptProc::IRead( hsStream *s )
+void    pfGUIPythonScriptProc::IRead( hsStream *s )
 {
 }
 
-void	pfGUIPythonScriptProc::IWrite( hsStream *s )
+void    pfGUIPythonScriptProc::IWrite( hsStream *s )
 {
 }
 
-void	pfGUIPythonScriptProc::DoSomething( pfGUIControlMod *ctrl )
+void    pfGUIPythonScriptProc::DoSomething( pfGUIControlMod *ctrl )
 {
 }
 
@@ -180,7 +180,7 @@ void	pfGUIPythonScriptProc::DoSomething( pfGUIControlMod *ctrl )
 //// Simple Runtime Ones /////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void	pfGUICloseDlgProc::DoSomething( pfGUIControlMod *ctrl )
+void    pfGUICloseDlgProc::DoSomething( pfGUIControlMod *ctrl )
 {
-	ctrl->GetOwnerDlg()->Hide();
+    ctrl->GetOwnerDlg()->Hide();
 }

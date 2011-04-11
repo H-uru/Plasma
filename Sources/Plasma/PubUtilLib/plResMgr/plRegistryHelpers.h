@@ -25,11 +25,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plRegistryHelpers - Little helper classes for the registry and resManager
+//  plRegistryHelpers - Little helper classes for the registry and resManager
 //
 //// History /////////////////////////////////////////////////////////////////
 //
-//	3.25.2002 mcn	- Created
+//  3.25.2002 mcn   - Created
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -48,39 +48,39 @@ class plRegistryPageNode;
 class plRegistryKeyIterator 
 {
 public:
-	virtual ~plRegistryKeyIterator() {}
-	virtual hsBool EatKey(const plKey& key) = 0;
+    virtual ~plRegistryKeyIterator() {}
+    virtual hsBool EatKey(const plKey& key) = 0;
 };
 
 class plRegistryPageIterator 
 {
 public:
-	virtual ~plRegistryPageIterator() {}
-	virtual hsBool EatPage(plRegistryPageNode* keyNode) = 0;
+    virtual ~plRegistryPageIterator() {}
+    virtual hsBool EatPage(plRegistryPageNode* keyNode) = 0;
 };
 
 
 //// plKeyCollector //////////////////////////////////////////////////////////
-//	Helper key iterator that collects the given keys into the given hsTArray
+//  Helper key iterator that collects the given keys into the given hsTArray
 class plKeyCollector : public plRegistryKeyIterator
 {
 protected:
-	hsTArray<plKey> &fKeys;
+    hsTArray<plKey> &fKeys;
 
 public:
-	plKeyCollector(hsTArray<plKey>& keys);
-	virtual hsBool EatKey(const plKey& key);
+    plKeyCollector(hsTArray<plKey>& keys);
+    virtual hsBool EatKey(const plKey& key);
 };
 
 // If you loaded keys with another iterator, this will ensure that they're unloaded
 class plIndirectUnloadIterator : public plRegistryPageIterator, public plRegistryKeyIterator
 {
 public:
-	plIndirectUnloadIterator() {}
+    plIndirectUnloadIterator() {}
 
-	hsBool EatKey(const plKey& key) { return true; }
+    hsBool EatKey(const plKey& key) { return true; }
 
-	hsBool EatPage(plRegistryPageNode* page);
+    hsBool EatPage(plRegistryPageNode* page);
 };
 
 #endif // _plRegistryHelpers_h

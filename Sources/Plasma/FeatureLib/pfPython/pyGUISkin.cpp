@@ -38,50 +38,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pyGUISkin::pyGUISkin(pyKey& gckey)
 {
-	fGCkey = gckey.getKey();
+    fGCkey = gckey.getKey();
 }
 
 pyGUISkin::pyGUISkin(plKey objkey)
 {
-	fGCkey = objkey;
+    fGCkey = objkey;
 }
 
 pyGUISkin::pyGUISkin()
 {
-	fGCkey = nil;
+    fGCkey = nil;
 }
 
 hsBool pyGUISkin::IsGUISkin(pyKey& gckey)
 {
-	if ( gckey.getKey() && pfGUISkin::ConvertNoRef(gckey.getKey()->GetObjectPtr()) )
-		return true;
-	return false;
+    if ( gckey.getKey() && pfGUISkin::ConvertNoRef(gckey.getKey()->GetObjectPtr()) )
+        return true;
+    return false;
 }
 
 // override the equals to operator
 hsBool pyGUISkin::operator==(const pyGUISkin &gcobj) const
 {
-	plKey theirs = ((pyGUISkin&)gcobj).getObjKey();
-	if ( fGCkey == nil && theirs == nil )
-		return true;
-	else if ( fGCkey != nil && theirs != nil )
-		return (fGCkey->GetUoid()==theirs->GetUoid());
-	else
-		return false;
+    plKey theirs = ((pyGUISkin&)gcobj).getObjKey();
+    if ( fGCkey == nil && theirs == nil )
+        return true;
+    else if ( fGCkey != nil && theirs != nil )
+        return (fGCkey->GetUoid()==theirs->GetUoid());
+    else
+        return false;
 }
 
 
 // getter and setters
 plKey pyGUISkin::getObjKey()
 {
-	return fGCkey;
+    return fGCkey;
 }
 
 
 PyObject* pyGUISkin::getObjPyKey()
 {
-	// create a pyKey object that Python will manage
-	return pyKey::New(fGCkey);
+    // create a pyKey object that Python will manage
+    return pyKey::New(fGCkey);
 }
 
 

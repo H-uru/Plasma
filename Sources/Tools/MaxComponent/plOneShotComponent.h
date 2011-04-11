@@ -29,9 +29,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plComponentBase;
 class plMaxNodeBase;
 
-#define ONESHOTCLASS_ID	Class_ID(0x1efd285a, 0x11ba00a2)
+#define ONESHOTCLASS_ID Class_ID(0x1efd285a, 0x11ba00a2)
 
 namespace OneShotComp
 {
-	plKey GetOneShotKey(plComponentBase *oneShotComp, plMaxNodeBase *target);
+    plKey GetOneShotKey(plComponentBase *oneShotComp, plMaxNodeBase *target);
 }

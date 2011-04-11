@@ -31,8 +31,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////
 
-#define kDefaultSpawnPtTitle		"Default"
-#define kDefaultSpawnPtName			"LinkInPointDefault"
+#define kDefaultSpawnPtTitle        "Default"
+#define kDefaultSpawnPtName         "LinkInPointDefault"
 
 ///////////////////////////////////////////////////////////////////
 
@@ -40,26 +40,26 @@ class hsStream;
 
 struct plSpawnPointInfo
 {
-	std::string	fTitle;			// friendly title for GUIs
-	std::string	fSpawnPt;		// name of spawn point in dataset
-	std::string fCameraStack;
-	plSpawnPointInfo(){}
-	plSpawnPointInfo( const plSpawnPointInfo & other ) { (*this)=other; }
-	plSpawnPointInfo( const char * title, const char * spawnPt )
-		: fTitle( title ), fSpawnPt( spawnPt ) {}
-	const char * GetTitle() const { return fTitle.c_str(); }
-	void	SetTitle( const char * v ) { fTitle=v; }
-	const char * GetName() const { return fSpawnPt.c_str(); }
-	void	SetName( const char * v ) { fSpawnPt = v; }
-	const char * GetCameraStack() const { return fCameraStack.c_str(); }
-	void	SetCameraStack( const char * v ) { fCameraStack=v; }
-	void	Reset();
-	void	Read( hsStream * s );
-	void	ReadOld( hsStream * s );
-	void	Write( hsStream * s ) const;
-	std::string AsStdString() const;
+    std::string fTitle;         // friendly title for GUIs
+    std::string fSpawnPt;       // name of spawn point in dataset
+    std::string fCameraStack;
+    plSpawnPointInfo(){}
+    plSpawnPointInfo( const plSpawnPointInfo & other ) { (*this)=other; }
+    plSpawnPointInfo( const char * title, const char * spawnPt )
+        : fTitle( title ), fSpawnPt( spawnPt ) {}
+    const char * GetTitle() const { return fTitle.c_str(); }
+    void    SetTitle( const char * v ) { fTitle=v; }
+    const char * GetName() const { return fSpawnPt.c_str(); }
+    void    SetName( const char * v ) { fSpawnPt = v; }
+    const char * GetCameraStack() const { return fCameraStack.c_str(); }
+    void    SetCameraStack( const char * v ) { fCameraStack=v; }
+    void    Reset();
+    void    Read( hsStream * s );
+    void    ReadOld( hsStream * s );
+    void    Write( hsStream * s ) const;
+    std::string AsStdString() const;
 };
-typedef std::vector<plSpawnPointInfo>	plSpawnPointVec;
+typedef std::vector<plSpawnPointInfo>   plSpawnPointVec;
 
 extern const plSpawnPointInfo kDefaultSpawnPoint;
 

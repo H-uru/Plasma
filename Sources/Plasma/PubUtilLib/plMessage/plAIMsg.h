@@ -38,28 +38,28 @@ class plAvBrainCritter;
 class plAIMsg : public plMessage
 {
 public:
-	plAIMsg();
-	plAIMsg(const plKey& sender, const plKey& receiver);
+    plAIMsg();
+    plAIMsg(const plKey& sender, const plKey& receiver);
 
-	CLASSNAME_REGISTER(plAIMsg);
-	GETINTERFACE_ANY(plAIMsg, plMessage);
+    CLASSNAME_REGISTER(plAIMsg);
+    GETINTERFACE_ANY(plAIMsg, plMessage);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	void BrainUserString(const std::string& userStr) {fBrainUserStr = userStr;}
-	std::string BrainUserString() const {return fBrainUserStr;}
+    void BrainUserString(const std::string& userStr) {fBrainUserStr = userStr;}
+    std::string BrainUserString() const {return fBrainUserStr;}
 
-	// enum for all messages to make things easier for people that use us
-	enum
-	{
-		kAIMsg_Unknown,
-		kAIMsg_BrainCreated,
-		kAIMsg_ArrivedAtGoal,
-	};
+    // enum for all messages to make things easier for people that use us
+    enum
+    {
+        kAIMsg_Unknown,
+        kAIMsg_BrainCreated,
+        kAIMsg_ArrivedAtGoal,
+    };
 
 private:
-	std::string fBrainUserStr;
+    std::string fBrainUserStr;
 };
 
 // message spammed to anyone listening so they can grab the brain's key and talk to it
@@ -67,14 +67,14 @@ private:
 class plAIBrainCreatedMsg : public plAIMsg
 {
 public:
-	plAIBrainCreatedMsg(): plAIMsg() {SetBCastFlag(plMessage::kBCastByExactType);}
-	plAIBrainCreatedMsg(const plKey& sender): plAIMsg(sender, nil) {SetBCastFlag(plMessage::kBCastByExactType);}
+    plAIBrainCreatedMsg(): plAIMsg() {SetBCastFlag(plMessage::kBCastByExactType);}
+    plAIBrainCreatedMsg(const plKey& sender): plAIMsg(sender, nil) {SetBCastFlag(plMessage::kBCastByExactType);}
 
-	CLASSNAME_REGISTER(plAIBrainCreatedMsg);
-	GETINTERFACE_ANY(plAIBrainCreatedMsg, plAIMsg);
+    CLASSNAME_REGISTER(plAIBrainCreatedMsg);
+    GETINTERFACE_ANY(plAIBrainCreatedMsg, plAIMsg);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr) {plAIMsg::Read(stream, mgr);}
-	virtual void Write(hsStream* stream, hsResMgr* mgr) {plAIMsg::Write(stream, mgr);}
+    virtual void Read(hsStream* stream, hsResMgr* mgr) {plAIMsg::Read(stream, mgr);}
+    virtual void Write(hsStream* stream, hsResMgr* mgr) {plAIMsg::Write(stream, mgr);}
 };
 
 // message sent when the brain arrives at it's specified goal
@@ -82,20 +82,20 @@ public:
 class plAIArrivedAtGoalMsg : public plAIMsg
 {
 public:
-	plAIArrivedAtGoalMsg(): plAIMsg(), fGoal(0, 0, 0) {}
-	plAIArrivedAtGoalMsg(const plKey& sender, const plKey& receiver): plAIMsg(sender, receiver), fGoal(0, 0, 0) {}
+    plAIArrivedAtGoalMsg(): plAIMsg(), fGoal(0, 0, 0) {}
+    plAIArrivedAtGoalMsg(const plKey& sender, const plKey& receiver): plAIMsg(sender, receiver), fGoal(0, 0, 0) {}
 
-	CLASSNAME_REGISTER(plAIArrivedAtGoalMsg);
-	GETINTERFACE_ANY(plAIArrivedAtGoalMsg, plAIMsg);
+    CLASSNAME_REGISTER(plAIArrivedAtGoalMsg);
+    GETINTERFACE_ANY(plAIArrivedAtGoalMsg, plAIMsg);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	void Goal(hsPoint3 goal) {fGoal = goal;}
-	hsPoint3 Goal() const {return fGoal;}
+    void Goal(hsPoint3 goal) {fGoal = goal;}
+    hsPoint3 Goal() const {return fGoal;}
 
 private:
-	hsPoint3 fGoal;
+    hsPoint3 fGoal;
 };
 
 #endif // NO_AV_MSGS

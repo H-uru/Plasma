@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIDynDisplayCtrl Definition											//
-//																			//
+//                                                                          //
+//  pfGUIDynDisplayCtrl Definition                                          //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pfGUIDynDisplayCtrl::pfGUIDynDisplayCtrl()
 {
-	SetFlag( kIntangible );
+    SetFlag( kIntangible );
 }
 
 pfGUIDynDisplayCtrl::~pfGUIDynDisplayCtrl()
@@ -56,114 +56,114 @@ pfGUIDynDisplayCtrl::~pfGUIDynDisplayCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool	pfGUIDynDisplayCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIDynDisplayCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
 {
-	return pfGUIControlMod::IEval( secs, del, dirty );
+    return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool	pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
+hsBool  pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
 {
-	plGenRefMsg	*refMsg = plGenRefMsg::ConvertNoRef( msg );
-	if( refMsg != nil )
-	{
-		if( refMsg->fType == kRefTextMap )
-		{
-			if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
-				fTextMaps[ refMsg->fWhich ] = plDynamicTextMap::ConvertNoRef( refMsg->GetRef() );
-			else
-				fTextMaps[ refMsg->fWhich ] = nil;
-			return true;
-		}
-		else if( refMsg->fType == kRefLayer )
-		{
-			if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
-				fLayers[ refMsg->fWhich ] = plLayerInterface::ConvertNoRef( refMsg->GetRef() );
-			else
-				fLayers[ refMsg->fWhich ] = nil;
-			return true;
-		}
-		else if( refMsg->fType == kRefMaterial )
-		{
-			if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
-				fMaterials[ refMsg->fWhich ] = hsGMaterial::ConvertNoRef( refMsg->GetRef() );
-			else
-				fMaterials[ refMsg->fWhich ] = nil;
-		}
-	}
+    plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
+    if( refMsg != nil )
+    {
+        if( refMsg->fType == kRefTextMap )
+        {
+            if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
+                fTextMaps[ refMsg->fWhich ] = plDynamicTextMap::ConvertNoRef( refMsg->GetRef() );
+            else
+                fTextMaps[ refMsg->fWhich ] = nil;
+            return true;
+        }
+        else if( refMsg->fType == kRefLayer )
+        {
+            if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
+                fLayers[ refMsg->fWhich ] = plLayerInterface::ConvertNoRef( refMsg->GetRef() );
+            else
+                fLayers[ refMsg->fWhich ] = nil;
+            return true;
+        }
+        else if( refMsg->fType == kRefMaterial )
+        {
+            if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
+                fMaterials[ refMsg->fWhich ] = hsGMaterial::ConvertNoRef( refMsg->GetRef() );
+            else
+                fMaterials[ refMsg->fWhich ] = nil;
+        }
+    }
 
-	return pfGUIControlMod::MsgReceive( msg );
+    return pfGUIControlMod::MsgReceive( msg );
 }
 
 //// Read/Write //////////////////////////////////////////////////////////////
 
-void	pfGUIDynDisplayCtrl::Read( hsStream *s, hsResMgr *mgr )
+void    pfGUIDynDisplayCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
-	UInt32	count, i;
+    UInt32  count, i;
 
 
-	pfGUIControlMod::Read(s, mgr);
+    pfGUIControlMod::Read(s, mgr);
 
-	count = s->ReadSwap32();
-	fTextMaps.SetCountAndZero( count );
-	for( i = 0; i < count; i++ )
-		mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefTextMap ), plRefFlags::kActiveRef );
+    count = s->ReadSwap32();
+    fTextMaps.SetCountAndZero( count );
+    for( i = 0; i < count; i++ )
+        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefTextMap ), plRefFlags::kActiveRef );
 
-	count = s->ReadSwap32();
-	fLayers.SetCountAndZero( count );
-	for( i = 0; i < count; i++ )
-		mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefLayer ), plRefFlags::kActiveRef );
+    count = s->ReadSwap32();
+    fLayers.SetCountAndZero( count );
+    for( i = 0; i < count; i++ )
+        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefLayer ), plRefFlags::kActiveRef );
 
-	count = s->ReadSwap32();
-	fMaterials.SetCountAndZero( count );
-	for( i = 0; i < count; i++ )
-		mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefMaterial ), plRefFlags::kActiveRef );
+    count = s->ReadSwap32();
+    fMaterials.SetCountAndZero( count );
+    for( i = 0; i < count; i++ )
+        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefMaterial ), plRefFlags::kActiveRef );
 }
 
-void	pfGUIDynDisplayCtrl::Write( hsStream *s, hsResMgr *mgr )
+void    pfGUIDynDisplayCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
-	UInt32	i;
+    UInt32  i;
 
 
-	pfGUIControlMod::Write( s, mgr );
+    pfGUIControlMod::Write( s, mgr );
 
-	s->WriteSwap32( fTextMaps.GetCount() );
-	for( i = 0; i < fTextMaps.GetCount(); i++ )
-		mgr->WriteKey( s, fTextMaps[ i ]->GetKey() );
+    s->WriteSwap32( fTextMaps.GetCount() );
+    for( i = 0; i < fTextMaps.GetCount(); i++ )
+        mgr->WriteKey( s, fTextMaps[ i ]->GetKey() );
 
-	s->WriteSwap32( fLayers.GetCount() );
-	for( i = 0; i < fLayers.GetCount(); i++ )
-		mgr->WriteKey( s, fLayers[ i ]->GetKey() );
+    s->WriteSwap32( fLayers.GetCount() );
+    for( i = 0; i < fLayers.GetCount(); i++ )
+        mgr->WriteKey( s, fLayers[ i ]->GetKey() );
 
-	s->WriteSwap32( fMaterials.GetCount() );
-	for( i = 0; i < fMaterials.GetCount(); i++ )
-		mgr->WriteKey( s, fMaterials[ i ]->GetKey() );
+    s->WriteSwap32( fMaterials.GetCount() );
+    for( i = 0; i < fMaterials.GetCount(); i++ )
+        mgr->WriteKey( s, fMaterials[ i ]->GetKey() );
 }
 
 //// AddMap //////////////////////////////////////////////////////////////////
-//	Export only
+//  Export only
 
-void	pfGUIDynDisplayCtrl::AddMap( plDynamicTextMap *map )
+void    pfGUIDynDisplayCtrl::AddMap( plDynamicTextMap *map )
 {
-	fTextMaps.Append( map );
-	hsgResMgr::ResMgr()->AddViaNotify( map->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fTextMaps.GetCount() - 1, kRefTextMap ), plRefFlags::kActiveRef );
+    fTextMaps.Append( map );
+    hsgResMgr::ResMgr()->AddViaNotify( map->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fTextMaps.GetCount() - 1, kRefTextMap ), plRefFlags::kActiveRef );
 }
 
 //// AddLayer ////////////////////////////////////////////////////////////////
-//	Export only
+//  Export only
 
-void	pfGUIDynDisplayCtrl::AddLayer( plLayerInterface *layer )
+void    pfGUIDynDisplayCtrl::AddLayer( plLayerInterface *layer )
 {
-	fLayers.Append( layer );
-	hsgResMgr::ResMgr()->AddViaNotify( layer->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fLayers.GetCount() - 1, kRefLayer ), plRefFlags::kActiveRef );
+    fLayers.Append( layer );
+    hsgResMgr::ResMgr()->AddViaNotify( layer->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fLayers.GetCount() - 1, kRefLayer ), plRefFlags::kActiveRef );
 }
 
 //// AddMaterial /////////////////////////////////////////////////////////////
 //  Export only
 
-void	pfGUIDynDisplayCtrl::AddMaterial( hsGMaterial *material )
+void    pfGUIDynDisplayCtrl::AddMaterial( hsGMaterial *material )
 {
-	fMaterials.Append( material );
-	hsgResMgr::ResMgr()->AddViaNotify( material->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fMaterials.GetCount() - 1, kRefMaterial ), plRefFlags::kActiveRef );
+    fMaterials.Append( material );
+    hsgResMgr::ResMgr()->AddViaNotify( material->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fMaterials.GetCount() - 1, kRefMaterial ), plRefFlags::kActiveRef );
 }

@@ -44,32 +44,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plAGChannel::plAGChannel()
 {
 #ifdef TRACK_AG_ALLOCS
-	fName = gGlobalAnimName;
-	RegisterAGAlloc(this, gGlobalChannelName, gGlobalAnimName, this->ClassIndex());
+    fName = gGlobalAnimName;
+    RegisterAGAlloc(this, gGlobalChannelName, gGlobalAnimName, this->ClassIndex());
 #else // TRACK_AG_ALLOCS
-	fName = nil;
+    fName = nil;
 #endif // TRACK_AG_ALLOCS
 }
 
 // DTOR
 plAGChannel::~plAGChannel()
 {
-	// we do not own the "fName" string, so don't delete it!
+    // we do not own the "fName" string, so don't delete it!
 #ifdef TRACK_AG_ALLOCS
-	UnRegisterAGAlloc(this);
+    UnRegisterAGAlloc(this);
 #endif // TRACK_AG_ALLOCS
 }
 
 // MAKECOMBINE
 plAGChannel * plAGChannel::MakeCombine(plAGChannel *channelA)
 {
-	return nil;
+    return nil;
 }
 
 // MAKEBLEND
 plAGChannel * plAGChannel::MakeBlend(plAGChannel *channelA, plScalarChannel *blend, int blendPriority)
 {
-	return nil;
+    return nil;
 }
 
 // DETACH
@@ -77,35 +77,35 @@ plAGChannel * plAGChannel::MakeBlend(plAGChannel *channelA, plScalarChannel *ble
 // by return NIL.
 plAGChannel * plAGChannel::Detach(plAGChannel *channel)
 {
-	if (this == channel)
-	{
-		return nil;
-	} else {
-		return this;
-	}
+    if (this == channel)
+    {
+        return nil;
+    } else {
+        return this;
+    }
 }
 
 // OPTIMIZE
 plAGChannel * plAGChannel::Optimize(double time)
 {
-	// the basic channel can't optimize...
-	return this;
+    // the basic channel can't optimize...
+    return this;
 }
 
 // WRITE
 void plAGChannel::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plCreatable::Write(stream, mgr);
+    plCreatable::Write(stream, mgr);
 
-	stream->WriteSafeString(fName);
+    stream->WriteSafeString(fName);
 }
 
 // READ
 void plAGChannel::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plCreatable::Read(stream, mgr);
+    plCreatable::Read(stream, mgr);
 
-	fName = stream->ReadSafeString();
+    fName = stream->ReadSafeString();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

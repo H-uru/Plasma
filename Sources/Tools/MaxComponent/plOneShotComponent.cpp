@@ -71,61 +71,61 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void DummyCodeIncludeFuncSingleSht() {}
 
 //
-//	Enum field for OneShot
-//		Never delete a field in this enum.  Order is necessary for backward compatability.
-//		Append only.
+//  Enum field for OneShot
+//      Never delete a field in this enum.  Order is necessary for backward compatability.
+//      Append only.
 //
 enum
 {
-	kAnimName,			// Insert in v1
-	kStartPtBool_DEAD,	// Insert in v1		// obsolete
-	kStartPt_DEAD,		// Insert in v1		// obsolete
-	kTriggerVolBool,	// Insert in v1
-	kTriggerVolume,		// Insert in v1
-	kPlayBackwardsBool,	// Insert in v1
-	kControlSpeedBool,	// Insert in v1
-	kSeekTimeFloat,		// Insert in v2
-	kSmartSeekBool,		// Insert in v3
-	kNoSeekBool
+    kAnimName,          // Insert in v1
+    kStartPtBool_DEAD,  // Insert in v1     // obsolete
+    kStartPt_DEAD,      // Insert in v1     // obsolete
+    kTriggerVolBool,    // Insert in v1
+    kTriggerVolume,     // Insert in v1
+    kPlayBackwardsBool, // Insert in v1
+    kControlSpeedBool,  // Insert in v1
+    kSeekTimeFloat,     // Insert in v2
+    kSmartSeekBool,     // Insert in v3
+    kNoSeekBool
 
 };
 
 
 //
-//	OneShot class
-//		Functions of PreConvert and Convert are currently empty and ready to be filled
-//		when functionality is in.
+//  OneShot class
+//      Functions of PreConvert and Convert are currently empty and ready to be filled
+//      when functionality is in.
 //
 
 class plOneShotComponent : public plComponent
 {
 public:
-	plOneShotComponent();
+    plOneShotComponent();
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	hsBool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
 
-	plKey GetOneShotKey(plMaxNode *node);
+    plKey GetOneShotKey(plMaxNode *node);
 
 protected:
-	std::map<plMaxNode*, plOneShotMod*> fMods;
-	bool IsValid();
+    std::map<plMaxNode*, plOneShotMod*> fMods;
+    bool IsValid();
 };
 
 plKey OneShotComp::GetOneShotKey(plComponentBase *oneShotComp, plMaxNodeBase *target)
 {
-	if (oneShotComp->ClassID() == ONESHOTCLASS_ID)
-	{
-		plOneShotComponent *comp = (plOneShotComponent*)oneShotComp;
-		return comp->GetOneShotKey((plMaxNode*)target);
-	}
+    if (oneShotComp->ClassID() == ONESHOTCLASS_ID)
+    {
+        plOneShotComponent *comp = (plOneShotComponent*)oneShotComp;
+        return comp->GetOneShotKey((plMaxNode*)target);
+    }
 
-	return nil;
+    return nil;
 }
-	
+    
 
 //
 //  Macro for creation of Components.
@@ -134,87 +134,87 @@ CLASS_DESC(plOneShotComponent, gOneShotDesc, "(ex)One Shot", "OneShot", COMP_TYP
 
 //
 // OneShot Paramblock2
-//		If functionality is no longer necessary, remove it here.  Don't touch the 
-//		order of the Enum field mentioned above.
+//      If functionality is no longer necessary, remove it here.  Don't touch the 
+//      order of the Enum field mentioned above.
 //
 ParamBlockDesc2 gOneShotBlock
 (
-	plComponent::kBlkComp, _T("(ex)One Shot Comp"), 0, &gOneShotDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
+    plComponent::kBlkComp, _T("(ex)One Shot Comp"), 0, &gOneShotDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-	//Rollout data
-	IDD_COMP_ONESHOT, IDS_COMP_ONESHOTS, 0, 0, NULL,
+    //Rollout data
+    IDD_COMP_ONESHOT, IDS_COMP_ONESHOTS, 0, 0, NULL,
 
-	//params
-	kAnimName,	_T("AnimationName"),	TYPE_STRING,	0, 0,
-		p_ui,	TYPE_EDITBOX, IDC_COMP_ONESHOT_ANIM_TEXTBOX,
-		end,
+    //params
+    kAnimName,  _T("AnimationName"),    TYPE_STRING,    0, 0,
+        p_ui,   TYPE_EDITBOX, IDC_COMP_ONESHOT_ANIM_TEXTBOX,
+        end,
 
-	kPlayBackwardsBool, _T("PlayBackwardsBool"), TYPE_BOOL, 0,	0,
-		p_default, FALSE,
-		p_ui,	TYPE_SINGLECHEKBOX, IDC_COMP_ONESHOT_PLAY_BACK_BOOL,
-		end,
+    kPlayBackwardsBool, _T("PlayBackwardsBool"), TYPE_BOOL, 0,  0,
+        p_default, FALSE,
+        p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_ONESHOT_PLAY_BACK_BOOL,
+        end,
 
-	kControlSpeedBool, _T("ControlSpeedBool"), TYPE_BOOL, 0,	0,
-		p_default, FALSE,
-		p_ui,	TYPE_SINGLECHEKBOX, IDC_COMP_ONESHOT_CONT_SPEED_BOOL,
-		end,
+    kControlSpeedBool, _T("ControlSpeedBool"), TYPE_BOOL, 0,    0,
+        p_default, FALSE,
+        p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_ONESHOT_CONT_SPEED_BOOL,
+        end,
 
-	kSeekTimeFloat, _T("SeekTimeFloat"), TYPE_FLOAT, 0,	0,
-		p_default, 1.0f,
-		p_ui,	TYPE_SPINNER, EDITTYPE_POS_FLOAT,
-		IDC_COMP_ONESHOT_SEEK_FIELD_EDIT, IDC_COMP_ONESHOT_SEEK_FIELD_SPIN, .1f, 
-		end,
+    kSeekTimeFloat, _T("SeekTimeFloat"), TYPE_FLOAT, 0, 0,
+        p_default, 1.0f,
+        p_ui,   TYPE_SPINNER, EDITTYPE_POS_FLOAT,
+        IDC_COMP_ONESHOT_SEEK_FIELD_EDIT, IDC_COMP_ONESHOT_SEEK_FIELD_SPIN, .1f, 
+        end,
 
-	kSmartSeekBool, _T("SmartSeekBool"), TYPE_BOOL, 0,	0,
-		p_default, FALSE,
-		p_ui,	TYPE_SINGLECHEKBOX, IDC_SMART_SEEK,
-		end,
+    kSmartSeekBool, _T("SmartSeekBool"), TYPE_BOOL, 0,  0,
+        p_default, FALSE,
+        p_ui,   TYPE_SINGLECHEKBOX, IDC_SMART_SEEK,
+        end,
 
-	kNoSeekBool, _T("NoSeekBool"), TYPE_BOOL, 0,	0,
-		p_default, FALSE,
-		p_ui,	TYPE_SINGLECHEKBOX, IDC_NO_SEEK,
-		end,
-	end
+    kNoSeekBool, _T("NoSeekBool"), TYPE_BOOL, 0,    0,
+        p_default, FALSE,
+        p_ui,   TYPE_SINGLECHEKBOX, IDC_NO_SEEK,
+        end,
+    end
 );
 
 
 plOneShotComponent::plOneShotComponent()
 {
-	fClassDesc = &gOneShotDesc;
-	fClassDesc->MakeAutoParamBlocks(this);
+    fClassDesc = &gOneShotDesc;
+    fClassDesc->MakeAutoParamBlocks(this);
 }
 
 plKey plOneShotComponent::GetOneShotKey(plMaxNode *node)
 {
-	if (fMods.find(node) != fMods.end())
-		return fMods[node]->GetKey();
+    if (fMods.find(node) != fMods.end())
+        return fMods[node]->GetKey();
 
-	return nil;
+    return nil;
 }
 
 bool plOneShotComponent::IsValid()
 {
-	const char *animName = fCompPB->GetStr(kAnimName);
-	return (animName && *animName != '\0');
+    const char *animName = fCompPB->GetStr(kAnimName);
+    return (animName && *animName != '\0');
 }
 
 hsBool plOneShotComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	fMods.clear();
+    fMods.clear();
 
-	if (IsValid())
-	{
-		node->SetForceLocal(true);
-		return true;
-	}
-	else
-	{
-		if (pErrMsg->Set(true, "One-Shot", "One-shot component on '%s' has no animation name, and will not be included. Abort this export?", node->GetName()).Ask())
-			pErrMsg->Set(true, "", "");
-		else
-			pErrMsg->Set(false); // Don't want to abort
-		return false;
-	}
+    if (IsValid())
+    {
+        node->SetForceLocal(true);
+        return true;
+    }
+    else
+    {
+        if (pErrMsg->Set(true, "One-Shot", "One-shot component on '%s' has no animation name, and will not be included. Abort this export?", node->GetName()).Ask())
+            pErrMsg->Set(true, "", "");
+        else
+            pErrMsg->Set(false); // Don't want to abort
+        return false;
+    }
 }
 
 //
@@ -222,14 +222,14 @@ hsBool plOneShotComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 //
 hsBool plOneShotComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	if (IsValid())
-	{
-		plOneShotMod *mod = TRACKED_NEW plOneShotMod;
-		hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), mod, node->GetLocation());
-		fMods[node] = mod;
-	}
+    if (IsValid())
+    {
+        plOneShotMod *mod = TRACKED_NEW plOneShotMod;
+        hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), mod, node->GetLocation());
+        fMods[node] = mod;
+    }
 
-	return true;
+    return true;
 }
 
 //
@@ -237,21 +237,21 @@ hsBool plOneShotComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 //
 hsBool plOneShotComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
-	if (fMods.find(node) != fMods.end())
-	{
-		const char *animName = fCompPB->GetStr(kAnimName);
-		hsBool drivable = fCompPB->GetInt(kControlSpeedBool);
-		hsBool reversable = fCompPB->GetInt(kPlayBackwardsBool);
-		float seekDuration = fCompPB->GetFloat(kSeekTimeFloat);
-		hsBool smartSeek = fCompPB->GetInt(kSmartSeekBool);
-		hsBool noSeek = fCompPB->GetInt(kNoSeekBool);
+    if (fMods.find(node) != fMods.end())
+    {
+        const char *animName = fCompPB->GetStr(kAnimName);
+        hsBool drivable = fCompPB->GetInt(kControlSpeedBool);
+        hsBool reversable = fCompPB->GetInt(kPlayBackwardsBool);
+        float seekDuration = fCompPB->GetFloat(kSeekTimeFloat);
+        hsBool smartSeek = fCompPB->GetInt(kSmartSeekBool);
+        hsBool noSeek = fCompPB->GetInt(kNoSeekBool);
 
-		plOneShotMod *mod = fMods[node];
-		mod->Init(animName, drivable, reversable, seekDuration, smartSeek, noSeek);
-		node->AddModifier(mod, IGetUniqueName(node));
+        plOneShotMod *mod = fMods[node];
+        mod->Init(animName, drivable, reversable, seekDuration, smartSeek, noSeek);
+        node->AddModifier(mod, IGetUniqueName(node));
 
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 }

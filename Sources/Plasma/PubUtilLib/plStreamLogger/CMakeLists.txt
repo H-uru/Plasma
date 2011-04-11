@@ -3,11 +3,11 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plStreamLogger_SOURCES
-	plStreamLogger.cpp
+    plStreamLogger.cpp
 )
 
 set(plStreamLogger_HEADERS
-	plStreamLogger.h
+    plStreamLogger.h
 )
 
 add_library(plStreamLogger STATIC ${plStreamLogger_SOURCES} ${plStreamLogger_HEADERS})

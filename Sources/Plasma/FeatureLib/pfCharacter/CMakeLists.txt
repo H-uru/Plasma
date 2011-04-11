@@ -7,16 +7,16 @@ include_directories(../../PubUtilLib)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(pfCharacter_SOURCES
-	pfMarkerInfo.cpp
-	pfMarkerMgr.cpp
-	plPlayerModifier.cpp
+    pfMarkerInfo.cpp
+    pfMarkerMgr.cpp
+    plPlayerModifier.cpp
 )
 
 set(pfCharacter_HEADERS
-	pfCharacterCreatable.h
-	pfMarkerInfo.h
-	pfMarkerMgr.h
-	plPlayerModifier.h
+    pfCharacterCreatable.h
+    pfMarkerInfo.h
+    pfMarkerMgr.h
+    plPlayerModifier.h
 )
 
 add_library(pfCharacter STATIC ${pfCharacter_SOURCES} ${pfCharacter_HEADERS})

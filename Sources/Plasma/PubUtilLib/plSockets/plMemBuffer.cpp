@@ -30,106 +30,106 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plMemBuffer::plMemBuffer()
 {
-	fBuffer = nil;
-	fBufferLocal = false;
-	fBufferLen = 0;
+    fBuffer = nil;
+    fBufferLocal = false;
+    fBufferLen = 0;
 }
 
 
 plMemBuffer::plMemBuffer(int len)
 {
-	AllocBuffer(len);
+    AllocBuffer(len);
 }
 
 
 plMemBuffer::plMemBuffer(char * data, int len)
 {
-	fBufferLocal = false;
-	fBufferLen = len;
-	fBuffer = data;
+    fBufferLocal = false;
+    fBufferLen = len;
+    fBuffer = data;
 }
 
 
 plMemBuffer::~plMemBuffer()
 {
-	ClearBuffer();
+    ClearBuffer();
 }
 
 
 void plMemBuffer::SetBuffer(char * data, int len)
 {
-	ClearBuffer();
-	fBufferLocal = false;
-	fBufferLen = len;
-	fBuffer = data;        
+    ClearBuffer();
+    fBufferLocal = false;
+    fBufferLen = len;
+    fBuffer = data;        
 }
 
 
 void plMemBuffer::CopyBuffer(char * data, int len)
 {
-	char * tmp =  TRACKED_NEW char[len];
-	memcpy(tmp,data,len);
-	ClearBuffer();
-	AllocBuffer(len);
-	memcpy(fBuffer,tmp,len);
-	delete [] tmp;
+    char * tmp =  TRACKED_NEW char[len];
+    memcpy(tmp,data,len);
+    ClearBuffer();
+    AllocBuffer(len);
+    memcpy(fBuffer,tmp,len);
+    delete [] tmp;
 }
 
 
 void plMemBuffer::GrowBuffer(int newLen)
 {
-	const int kThrashSize	= 25;
-	if(newLen >= fBufferLen)
-	{
-		int len = newLen + kThrashSize;
-		len = len+len;
-		
-		char * tmp =  TRACKED_NEW char[len];
-		
-		if(fBuffer != nil)
-			memcpy(tmp,fBuffer,fBufferLen);
-		
-		ClearBuffer();
-		
-		fBuffer = tmp;
-		fBufferLocal = true;
-		fBufferLen = len;
-	}
+    const int kThrashSize   = 25;
+    if(newLen >= fBufferLen)
+    {
+        int len = newLen + kThrashSize;
+        len = len+len;
+        
+        char * tmp =  TRACKED_NEW char[len];
+        
+        if(fBuffer != nil)
+            memcpy(tmp,fBuffer,fBufferLen);
+        
+        ClearBuffer();
+        
+        fBuffer = tmp;
+        fBufferLocal = true;
+        fBufferLen = len;
+    }
 }
 
 
 int plMemBuffer::GetBufferSize()  
 {
-	return  fBufferLen; 
+    return  fBufferLen; 
 };
 
 
 char * plMemBuffer::GetBuffer() 
 {
-	return  fBuffer; 
+    return  fBuffer; 
 };
 
 
 bool plMemBuffer::InBufferRange(char * inpos)
 {
-	return (inpos >= fBuffer && inpos <= (fBuffer + fBufferLen));
+    return (inpos >= fBuffer && inpos <= (fBuffer + fBufferLen));
 }
 
 void plMemBuffer::ClearBuffer()
 {
-	if(fBufferLocal == true)
-	{
-		if(fBuffer != nil)
-			delete [] fBuffer;
-		fBuffer = nil;
-	}        
+    if(fBufferLocal == true)
+    {
+        if(fBuffer != nil)
+            delete [] fBuffer;
+        fBuffer = nil;
+    }        
 }
 
 void plMemBuffer::AllocBuffer(int len)
 {        
-	fBuffer = TRACKED_NEW char[len];
-	fBufferLocal = true;
-	fBufferLen = len;
+    fBuffer = TRACKED_NEW char[len];
+    fBufferLocal = true;
+    fBufferLen = len;
 }
 
 

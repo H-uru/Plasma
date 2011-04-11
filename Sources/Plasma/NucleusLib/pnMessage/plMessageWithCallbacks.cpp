@@ -32,107 +32,107 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plMessageWithCallbacks::~plMessageWithCallbacks()
 {
-	Clear();
+    Clear();
 }
 
 void plMessageWithCallbacks::AddCallback(plMessage* e) 
 { 
-	hsRefCnt_SafeRef(e); 
+    hsRefCnt_SafeRef(e); 
 
-	// make sure callback msgs have the same net propagate properties as the container msg
-	e->SetBCastFlag(plMessage::kNetPropagate, HasBCastFlag(plMessage::kNetPropagate));
+    // make sure callback msgs have the same net propagate properties as the container msg
+    e->SetBCastFlag(plMessage::kNetPropagate, HasBCastFlag(plMessage::kNetPropagate));
 
-	fCallbacks.Append(e); 
+    fCallbacks.Append(e); 
 }
 
 void plMessageWithCallbacks::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
-	
-	Clear();
+    plMessage::IMsgRead(stream, mgr);
+    
+    Clear();
 
-	// read count
-	int n = stream->ReadSwap32();
-	fCallbacks.SetCount(n);
+    // read count
+    int n = stream->ReadSwap32();
+    fCallbacks.SetCount(n);
 
-	// read callbacks
-	int i;
-	for( i = 0; i < n; i++ )
-	{
-		fCallbacks[i] = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
-	}
+    // read callbacks
+    int i;
+    for( i = 0; i < n; i++ )
+    {
+        fCallbacks[i] = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
+    }
 }
 
 void plMessageWithCallbacks::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	// write count
-	int n=fCallbacks.GetCount();
-	stream->WriteSwap32(n);
+    // write count
+    int n=fCallbacks.GetCount();
+    stream->WriteSwap32(n);
 
-	// write callbacks
-	int i;
-	for( i = 0; i < fCallbacks.GetCount(); i++ )
-		mgr->WriteCreatable( stream, fCallbacks[i] );
+    // write callbacks
+    int i;
+    for( i = 0; i < fCallbacks.GetCount(); i++ )
+        mgr->WriteCreatable( stream, fCallbacks[i] );
 }
 
 enum MsgWithCallbacksFlags
 {
-	kMsgWithCBsCallbacks,
+    kMsgWithCBsCallbacks,
 };
 
 void plMessageWithCallbacks::ReadVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgReadVersion(s, mgr);
+    plMessage::IMsgReadVersion(s, mgr);
 
-	Clear();
+    Clear();
 
-	hsBitVector contentFlags;
-	contentFlags.Read(s);
+    hsBitVector contentFlags;
+    contentFlags.Read(s);
 
-	if (contentFlags.IsBitSet(kMsgWithCBsCallbacks))
-	{
-		// read count
-		int n = s->ReadSwap32();
-		fCallbacks.SetCount(n);
+    if (contentFlags.IsBitSet(kMsgWithCBsCallbacks))
+    {
+        // read count
+        int n = s->ReadSwap32();
+        fCallbacks.SetCount(n);
 
-		for (int i = 0; i < n; i++)
-			fCallbacks[i] = plMessage::ConvertNoRef(mgr->ReadCreatableVersion(s));
-	}
+        for (int i = 0; i < n; i++)
+            fCallbacks[i] = plMessage::ConvertNoRef(mgr->ReadCreatableVersion(s));
+    }
 }
 
 void plMessageWithCallbacks::WriteVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgWriteVersion(s, mgr);
+    plMessage::IMsgWriteVersion(s, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.SetBit(kMsgWithCBsCallbacks);
-	contentFlags.Write(s);
+    hsBitVector contentFlags;
+    contentFlags.SetBit(kMsgWithCBsCallbacks);
+    contentFlags.Write(s);
 
-	// write count
-	int n = fCallbacks.GetCount();
-	s->WriteSwap32(n);
+    // write count
+    int n = fCallbacks.GetCount();
+    s->WriteSwap32(n);
 
-	// write callbacks
-	for (int i = 0; i < n; i++)
-		mgr->WriteCreatableVersion(s, fCallbacks[i]);
+    // write callbacks
+    for (int i = 0; i < n; i++)
+        mgr->WriteCreatableVersion(s, fCallbacks[i]);
 }
 
 void plMessageWithCallbacks::Clear() 
 { 
-	int i;
-	for( i = 0; i < fCallbacks.GetCount(); i++ )
-		hsRefCnt_SafeUnRef(fCallbacks[i]);
-	fCallbacks.SetCount(0);
+    int i;
+    for( i = 0; i < fCallbacks.GetCount(); i++ )
+        hsRefCnt_SafeUnRef(fCallbacks[i]);
+    fCallbacks.SetCount(0);
 }
 
 void plMessageWithCallbacks::SendCallbacks()
 {
-	int i;
-	for (i = fCallbacks.GetCount() - 1; i >= 0; i--)
-	{
-		plgDispatch::MsgSend(fCallbacks[i]);
-		fCallbacks.Remove(i);
-	}
+    int i;
+    for (i = fCallbacks.GetCount() - 1; i >= 0; i--)
+    {
+        plgDispatch::MsgSend(fCallbacks[i]);
+        fCallbacks.Remove(i);
+    }
 }

@@ -42,35 +42,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct RelVaultNode;
 
-	
+    
 class pyVaultFolderNode : public pyVaultNode
 {
 protected:
-	// should only be created from C++ side
-	pyVaultFolderNode(RelVaultNode* nfsNode);
+    // should only be created from C++ side
+    pyVaultFolderNode(RelVaultNode* nfsNode);
 
-	//create from the Python side
-	pyVaultFolderNode(int n=0);
+    //create from the Python side
+    pyVaultFolderNode(int n=0);
 
 public:
-	~pyVaultFolderNode();
+    ~pyVaultFolderNode();
 
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE; // so we can subclass
-	PYTHON_CLASS_NEW_FRIEND(ptVaultFolderNode);
-	static PyObject *New(RelVaultNode* nfsNode);
-	static PyObject *New(int n=0);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultFolderNode object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultFolderNode); // converts a PyObject to a pyVaultFolderNode (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE; // so we can subclass
+    PYTHON_CLASS_NEW_FRIEND(ptVaultFolderNode);
+    static PyObject *New(RelVaultNode* nfsNode);
+    static PyObject *New(int n=0);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultFolderNode object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultFolderNode); // converts a PyObject to a pyVaultFolderNode (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	virtual void	Folder_SetType( int type );
-	virtual int		Folder_GetType( void );
-	void	Folder_SetName( std::string name );
-	void	Folder_SetNameW( std::wstring name );
-	std::string Folder_GetName( void );
-	std::wstring Folder_GetNameW( void );
+    virtual void    Folder_SetType( int type );
+    virtual int     Folder_GetType( void );
+    void    Folder_SetName( std::string name );
+    void    Folder_SetNameW( std::wstring name );
+    std::string Folder_GetName( void );
+    std::wstring Folder_GetNameW( void );
 
 
 

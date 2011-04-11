@@ -42,85 +42,85 @@ class plViewTransform;
 class plPostEffectMod : public plSingleModifier
 {
 public:
-	enum plPostEffectModStates {
-		kEnabled = 0
-	};
+    enum plPostEffectModStates {
+        kEnabled = 0
+    };
 
-	enum {
-		kNodeRef = 0x0
-	};
+    enum {
+        kNodeRef = 0x0
+    };
 protected:
 
-	hsBitVector				fState;
+    hsBitVector             fState;
 
-	hsScalar				fHither;
-	hsScalar				fYon;
+    hsScalar                fHither;
+    hsScalar                fYon;
 
-	hsScalar				fFovX;
-	hsScalar				fFovY;
+    hsScalar                fFovX;
+    hsScalar                fFovY;
 
-	plKey					fNodeKey;
-	plPageTreeMgr*			fPageMgr;
+    plKey                   fNodeKey;
+    plPageTreeMgr*          fPageMgr;
 
-	plRenderTarget*			fRenderTarget;
-	plRenderRequest*		fRenderRequest;
+    plRenderTarget*         fRenderTarget;
+    plRenderRequest*        fRenderRequest;
 
-	hsMatrix44				fDefaultW2C, fDefaultC2W;
+    hsMatrix44              fDefaultW2C, fDefaultC2W;
 
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty); // called only by owner object's Eval()
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty); // called only by owner object's Eval()
 
-	void			ISetupRenderRequest();
-	void			IDestroyRenderRequest();
-	void			IUpdateRenderRequest();
+    void            ISetupRenderRequest();
+    void            IDestroyRenderRequest();
+    void            IUpdateRenderRequest();
 
-	void			IRegisterForRenderMsg(hsBool on);
-	void			ISubmitRequest();
+    void            IRegisterForRenderMsg(hsBool on);
+    void            ISubmitRequest();
 
-	void			IAddToPageMgr(plSceneNode* node);
-	void			IRemoveFromPageMgr(plSceneNode* node);
+    void            IAddToPageMgr(plSceneNode* node);
+    void            IRemoveFromPageMgr(plSceneNode* node);
 
-	void			ISetEnable(hsBool on);
-	hsBool			IIsEnabled() const;
+    void            ISetEnable(hsBool on);
+    hsBool          IIsEnabled() const;
 
 public:
-	plPostEffectMod();
-	virtual ~plPostEffectMod();
+    plPostEffectMod();
+    virtual ~plPostEffectMod();
 
-	CLASSNAME_REGISTER( plPostEffectMod );
-	GETINTERFACE_ANY( plPostEffectMod, plSingleModifier );
+    CLASSNAME_REGISTER( plPostEffectMod );
+    GETINTERFACE_ANY( plPostEffectMod, plSingleModifier );
 
 
-	virtual hsBool	MsgReceive(plMessage* pMsg);
-	
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);
+    virtual hsBool  MsgReceive(plMessage* pMsg);
+    
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr);
 
-	void		GetDefaultWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c2w );
+    void        GetDefaultWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c2w );
 
-	// Export only
-	void		SetNodeKey(plKey key) { fNodeKey = key; }
-	plKey		GetNodeKey() const { return fNodeKey; }
+    // Export only
+    void        SetNodeKey(plKey key) { fNodeKey = key; }
+    plKey       GetNodeKey() const { return fNodeKey; }
 
-	void		SetHither(hsScalar h) { fHither = h; }
-	void		SetYon(hsScalar y) { fYon = y; }
-	void		SetFovX(hsScalar f) { fFovX = f; }
-	void		SetFovY(hsScalar f) { fFovY = f; }
+    void        SetHither(hsScalar h) { fHither = h; }
+    void        SetYon(hsScalar y) { fYon = y; }
+    void        SetFovX(hsScalar f) { fFovX = f; }
+    void        SetFovY(hsScalar f) { fFovY = f; }
 
-	hsScalar	GetHither() const { return fHither; }
-	hsScalar	GetYon() const { return fYon; }
-	hsScalar	GetFovX() const { return fFovX; }
-	hsScalar	GetFovY() const { return fFovY; }
+    hsScalar    GetHither() const { return fHither; }
+    hsScalar    GetYon() const { return fYon; }
+    hsScalar    GetFovX() const { return fFovX; }
+    hsScalar    GetFovY() const { return fFovY; }
 
-	plPageTreeMgr* GetPageMgr() const { return fPageMgr; }
+    plPageTreeMgr* GetPageMgr() const { return fPageMgr; }
 
-	const plViewTransform& GetViewTransform();
+    const plViewTransform& GetViewTransform();
 
-	// If translating from a scene object, send WorldToLocal() and LocalToWorld(), in that order
-	void		SetWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c2w );
+    // If translating from a scene object, send WorldToLocal() and LocalToWorld(), in that order
+    void        SetWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c2w );
 
-	// Very bad
-	void		EnableLightsOnRenderRequest( void );
+    // Very bad
+    void        EnableLightsOnRenderRequest( void );
 };
 
 #endif // plPostEffectMod_inc

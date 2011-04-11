@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	hsCodecManager Class Header												 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  hsCodecManager Class Header                                              //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	6.7.2001 mcn - Updated for new bitmap classes.							 //
-//																			 //
+//                                                                           //
+//  6.7.2001 mcn - Updated for new bitmap classes.                           //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef hsCodecManager_inc
@@ -46,52 +46,52 @@ class plMipmap;
 class hsCodecManager
 {
 private:
-	hsCodecManager();
+    hsCodecManager();
 public:
-	~hsCodecManager()		{ }
-	static hsCodecManager& Instance();
+    ~hsCodecManager()       { }
+    static hsCodecManager& Instance();
 
-	plMipmap	*CreateCompressedMipmap( UInt32 compressionFormat, plMipmap *uncompressed );
-	plMipmap	*CreateUncompressedMipmap( plMipmap *compressed, UInt8 bitDepth = 0 );
-	hsBool		ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask );
+    plMipmap    *CreateCompressedMipmap( UInt32 compressionFormat, plMipmap *uncompressed );
+    plMipmap    *CreateUncompressedMipmap( plMipmap *compressed, UInt8 bitDepth = 0 );
+    hsBool      ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask );
 
-	hsBool		Register(hsCodec *codec, UInt32 compressionFormat, hsScalar priority);
+    hsBool      Register(hsCodec *codec, UInt32 compressionFormat, hsScalar priority);
 
-	/// Decompression flags
-	enum {
-		kBitDepthMask = 0x0003,
-		kCompOrderMask = 0x0004
-	};
-	enum {	/// Bit depths
-		kDontCareDepth = 0x0000,
-		k16BitDepth = 0x0001,
-		k32BitDepth = 0x0002
-	};
-	enum {	/// Byte orders
-		kNormalCompOrder = 0x0000,		// DirectX, Glide
-		kWeirdCompOrder = 0x0004		// OpenGL
-	};
+    /// Decompression flags
+    enum {
+        kBitDepthMask = 0x0003,
+        kCompOrderMask = 0x0004
+    };
+    enum {  /// Bit depths
+        kDontCareDepth = 0x0000,
+        k16BitDepth = 0x0001,
+        k32BitDepth = 0x0002
+    };
+    enum {  /// Byte orders
+        kNormalCompOrder = 0x0000,      // DirectX, Glide
+        kWeirdCompOrder = 0x0004        // OpenGL
+    };
 
 private:
-	struct hsCodecEntry
-	{
-		hsCodecEntry() : fPriority(0), fCodec(nil) { }
-		hsCodecEntry(hsScalar p, hsCodec *c) : fPriority(p), fCodec(c) { }
+    struct hsCodecEntry
+    {
+        hsCodecEntry() : fPriority(0), fCodec(nil) { }
+        hsCodecEntry(hsScalar p, hsCodec *c) : fPriority(p), fCodec(c) { }
 
-		hsScalar				fPriority;
-		hsCodec					*fCodec;
-	};
+        hsScalar                fPriority;
+        hsCodec                 *fCodec;
+    };
 
-	struct hsCodecList
-	{
-		hsCodecList() : fCompressionFormat(0) { }
-		hsCodecList(UInt32 f) : fCompressionFormat(f) { }
+    struct hsCodecList
+    {
+        hsCodecList() : fCompressionFormat(0) { }
+        hsCodecList(UInt32 f) : fCompressionFormat(f) { }
 
-		UInt32					fCompressionFormat;
-		hsTArray<hsCodecEntry>	fCodecList;
-	};
+        UInt32                  fCompressionFormat;
+        hsTArray<hsCodecEntry>  fCodecList;
+    };
 
-	hsTArray<hsCodecList>		fCodecTable;
+    hsTArray<hsCodecList>       fCodecTable;
 };
 
 #endif // hsCodecManager_inc

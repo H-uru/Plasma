@@ -43,26 +43,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyTTTGame : public pyGameCli
 {
 protected:
-	pyTTTGame();
-	pyTTTGame(pfGameCli* client);
+    pyTTTGame();
+    pyTTTGame(pfGameCli* client);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptTTTGame);
-	static PyObject* New(pfGameCli* client);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTGame object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTGame); // converts a PyObject to a pyTTTGame (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptTTTGame);
+    static PyObject* New(pfGameCli* client);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTGame object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTGame); // converts a PyObject to a pyTTTGame (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
-	static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-	static bool IsTTTGame(std::wstring guid);
-	static void CreateTTTGame(pyKey& callbackKey, unsigned numPlayers);
-	static void JoinCommonTTTGame(pyKey& callbackKey, unsigned gameID, unsigned numPlayers);
+    static bool IsTTTGame(std::wstring guid);
+    static void CreateTTTGame(pyKey& callbackKey, unsigned numPlayers);
+    static void JoinCommonTTTGame(pyKey& callbackKey, unsigned gameID, unsigned numPlayers);
 
-	void MakeMove(unsigned row, unsigned col);
-	void ShowBoard();
+    void MakeMove(unsigned row, unsigned col);
+    void ShowBoard();
 };
 
 #endif // pyTTTGame_h

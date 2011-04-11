@@ -45,117 +45,117 @@ class plAccessSpan;
 class plCutoutHit
 {
 public:
-	hsPoint3	fPos;
-	hsVector3	fNorm;
+    hsPoint3    fPos;
+    hsVector3   fNorm;
 };
 
 class plCutoutVtx
 {
 public:
-	plCutoutVtx& Init(const hsPoint3& p, const hsVector3& n, const hsColorRGBA& c) { fPos = p; fNorm = n; fColor = c; return *this; }
+    plCutoutVtx& Init(const hsPoint3& p, const hsVector3& n, const hsColorRGBA& c) { fPos = p; fNorm = n; fColor = c; return *this; }
 
-	hsPoint3	fPos;
-	hsVector3	fNorm;
-	hsColorRGBA	fColor;
-	hsPoint3	fUVW;
+    hsPoint3    fPos;
+    hsVector3   fNorm;
+    hsColorRGBA fColor;
+    hsPoint3    fUVW;
 };
 
 class plCutoutPoly
 {
 public:
-	hsTArray<plCutoutVtx>		fVerts;
+    hsTArray<plCutoutVtx>       fVerts;
 
-	hsBool						fBaseHasAlpha;
+    hsBool                      fBaseHasAlpha;
 };
 
 class plCutoutMiniVtx
 {
 public:
-	hsPoint3	fPos;
-	hsPoint3	fUVW;
+    hsPoint3    fPos;
+    hsPoint3    fUVW;
 };
 
 class plFlatGridMesh
 {
 public:
-	hsTArray<plCutoutMiniVtx>	fVerts;
-	hsTArray<UInt16>			fIdx;
+    hsTArray<plCutoutMiniVtx>   fVerts;
+    hsTArray<UInt16>            fIdx;
 
-	void Reset() { fVerts.SetCount(0); fIdx.SetCount(0); }
+    void Reset() { fVerts.SetCount(0); fIdx.SetCount(0); }
 };
 
 class plCutter : public plCreatable
 {
 protected:
 
-	// Permanent attributes
-	hsScalar fLengthU;
-	hsScalar fLengthV;
-	hsScalar fLengthW;
+    // Permanent attributes
+    hsScalar fLengthU;
+    hsScalar fLengthV;
+    hsScalar fLengthW;
 
-	// Internal cached stuff
-	hsScalar		fDistU;
-	hsScalar		fDistV;
-	hsScalar		fDistW;
-	hsVector3		fDirU;
-	hsVector3		fDirV;
-	hsVector3		fDirW;
-	hsVector3		fBackDir;
+    // Internal cached stuff
+    hsScalar        fDistU;
+    hsScalar        fDistV;
+    hsScalar        fDistW;
+    hsVector3       fDirU;
+    hsVector3       fDirV;
+    hsVector3       fDirW;
+    hsVector3       fBackDir;
 
-	hsBounds3Ext	fWorldBounds;
-	plBoundsIsect	fIsect;
+    hsBounds3Ext    fWorldBounds;
+    plBoundsIsect   fIsect;
 
-	void			IConstruct(hsTArray<plCutoutPoly>& dst, hsTArray<plCutoutVtx>& poly, hsBool baseHasAlpha) const;
-	hsBool			IPolyClip(hsTArray<plCutoutVtx>& poly, const hsPoint3 vPos[]) const;
-	
-	inline void		ICutoutVtxHiU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
-	inline void		ICutoutVtxHiV(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
-	inline void		ICutoutVtxHiW(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
-	inline void		ICutoutVtxLoU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
-	inline void		ICutoutVtxLoV(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
-	inline void		ICutoutVtxLoW(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
-	inline void		ICutoutVtxMidV(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
-	inline void		ICutoutVtxMidU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
-	inline void		ICutoutVtxMidW(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    void            IConstruct(hsTArray<plCutoutPoly>& dst, hsTArray<plCutoutVtx>& poly, hsBool baseHasAlpha) const;
+    hsBool          IPolyClip(hsTArray<plCutoutVtx>& poly, const hsPoint3 vPos[]) const;
+    
+    inline void     ICutoutVtxHiU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ICutoutVtxHiV(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ICutoutVtxHiW(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ICutoutVtxLoU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ICutoutVtxLoV(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ICutoutVtxLoW(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ICutoutVtxMidV(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ICutoutVtxMidU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ICutoutVtxMidW(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
 
-	hsBool			IFindHitPoint(const hsTArray<plCutoutVtx>& inPoly, plCutoutHit& hit) const;
+    hsBool          IFindHitPoint(const hsTArray<plCutoutVtx>& inPoly, plCutoutHit& hit) const;
 
-	inline void		ISetPosNorm(hsScalar parm, const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ISetPosNorm(hsScalar parm, const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
 
-	void			ICutoutTransformed(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
-	void			ICutoutConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
-	void			ICutoutTransformedConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    void            ICutoutTransformed(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    void            ICutoutConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    void            ICutoutTransformedConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
 
 
 public:
-	plCutter() {}
-	virtual ~plCutter() {}
+    plCutter() {}
+    virtual ~plCutter() {}
 
-	CLASSNAME_REGISTER( plCutter );
-	GETINTERFACE_ANY( plCutter, plCreatable );
+    CLASSNAME_REGISTER( plCutter );
+    GETINTERFACE_ANY( plCutter, plCreatable );
 
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	hsBool		FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits) const;
-	hsBool		FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, hsScalar height) const;
+    hsBool      FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits) const;
+    hsBool      FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, hsScalar height) const;
 
-	void		Set(const hsPoint3& pos, const hsVector3& dir, const hsVector3& out, hsBool flip=false);
+    void        Set(const hsPoint3& pos, const hsVector3& dir, const hsVector3& out, hsBool flip=false);
 
-	void		Cutout(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
-	hsBool		CutoutGrid(int nWid, int nLen, plFlatGridMesh& dst) const;
+    void        Cutout(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    hsBool      CutoutGrid(int nWid, int nLen, plFlatGridMesh& dst) const;
 
-	void		SetLength(const hsVector3& s) { fLengthU = s.fX; fLengthV = s.fY; fLengthW = s.fZ; }
-	hsScalar	GetLengthU() const { return fLengthU; }
-	hsScalar	GetLengthV() const { return fLengthV; }
-	hsScalar	GetLengthW() const { return fLengthW; }
+    void        SetLength(const hsVector3& s) { fLengthU = s.fX; fLengthV = s.fY; fLengthW = s.fZ; }
+    hsScalar    GetLengthU() const { return fLengthU; }
+    hsScalar    GetLengthV() const { return fLengthV; }
+    hsScalar    GetLengthW() const { return fLengthW; }
 
-	const hsBounds3Ext& GetWorldBounds() const { return fWorldBounds; }
-	plBoundsIsect& GetIsect() { return fIsect; }
-	hsVector3 GetBackDir() const { return fBackDir; }
+    const hsBounds3Ext& GetWorldBounds() const { return fWorldBounds; }
+    plBoundsIsect& GetIsect() { return fIsect; }
+    hsVector3 GetBackDir() const { return fBackDir; }
 
-	static hsBool MakeGrid(int nWid, int nLen, const hsPoint3& center, const hsVector3& halfU, const hsVector3& halfV, plFlatGridMesh& grid);
+    static hsBool MakeGrid(int nWid, int nLen, const hsPoint3& center, const hsVector3& halfU, const hsVector3& halfV, plFlatGridMesh& grid);
 
 };
 

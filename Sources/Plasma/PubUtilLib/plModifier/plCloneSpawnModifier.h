@@ -31,31 +31,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCloneSpawnModifier : public plSingleModifier
 {
 protected:
-	char* fTemplateName;
-	bool fExportTime;
+    char* fTemplateName;
+    bool fExportTime;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
 
 public:
-	plCloneSpawnModifier();
-	~plCloneSpawnModifier();
+    plCloneSpawnModifier();
+    ~plCloneSpawnModifier();
 
-	CLASSNAME_REGISTER(plCloneSpawnModifier);
-	GETINTERFACE_ANY(plCloneSpawnModifier, plSingleModifier);
+    CLASSNAME_REGISTER(plCloneSpawnModifier);
+    GETINTERFACE_ANY(plCloneSpawnModifier, plSingleModifier);
 
-	virtual void Read(hsStream *s, hsResMgr *mgr);
-	virtual void Write(hsStream *s, hsResMgr *mgr);
+    virtual void Read(hsStream *s, hsResMgr *mgr);
+    virtual void Write(hsStream *s, hsResMgr *mgr);
 
-	virtual void SetTarget(plSceneObject* so);
+    virtual void SetTarget(plSceneObject* so);
 
-	void SetTemplateName(const char *templateName);
+    void SetTemplateName(const char *templateName);
 
-	// Set this to true at export time so the clone mod won't try to make a
-	// clone when it's attached
-	void SetExportTime() { fExportTime = true; }
+    // Set this to true at export time so the clone mod won't try to make a
+    // clone when it's attached
+    void SetExportTime() { fExportTime = true; }
 
-	// Console backdoor
-	static plKey SpawnClone(const char* cloneName, const char* cloneAge, const hsMatrix44& pos, plKey requestor);
+    // Console backdoor
+    static plKey SpawnClone(const char* cloneName, const char* cloneAge, const hsMatrix44& pos, plKey requestor);
 };
 
 #endif // plCloneSpawnModifier_inc

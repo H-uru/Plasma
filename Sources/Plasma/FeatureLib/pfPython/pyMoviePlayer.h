@@ -41,38 +41,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyMoviePlayer
 {
 protected:
-	char*	fMovieName;
-	plKey	fSelfKey;
+    char*   fMovieName;
+    plKey   fSelfKey;
 
-	pyMoviePlayer(): fMovieName(nil), fSelfKey(nil) {} // only used by python glue, do NOT call
-	pyMoviePlayer(const char* movieName,pyKey& selfKey);
+    pyMoviePlayer(): fMovieName(nil), fSelfKey(nil) {} // only used by python glue, do NOT call
+    pyMoviePlayer(const char* movieName,pyKey& selfKey);
 public:
-	~pyMoviePlayer();
+    ~pyMoviePlayer();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptMoviePlayer);
-	static PyObject *New(const char* movieName, pyKey& selfKey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyMoviePlayer object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyMoviePlayer); // converts a PyObject to a pyMoviePlayer (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptMoviePlayer);
+    static PyObject *New(const char* movieName, pyKey& selfKey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyMoviePlayer object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyMoviePlayer); // converts a PyObject to a pyMoviePlayer (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
-	static void AddPlasmaConstantsClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaConstantsClasses(PyObject *m);
 
-	void MakeMovie(const char* movieName, pyKey& selfKey); // only used by python glue, do NOT call
+    void MakeMovie(const char* movieName, pyKey& selfKey); // only used by python glue, do NOT call
 
-	// getters and setters
-	virtual void SetCenter(hsScalar x, hsScalar y);
-	virtual void SetScale(hsScalar width, hsScalar height);
-	virtual void SetColor(pyColor color);
-	virtual void SetVolume(hsScalar volume);
-	virtual void SetOpacity(hsScalar opacity);
+    // getters and setters
+    virtual void SetCenter(hsScalar x, hsScalar y);
+    virtual void SetScale(hsScalar width, hsScalar height);
+    virtual void SetColor(pyColor color);
+    virtual void SetVolume(hsScalar volume);
+    virtual void SetOpacity(hsScalar opacity);
 
-	// actions
-	virtual void Play();		// kStart
-	virtual void PlayPaused();	// kStart and kPause
-	virtual void Pause();		// kPause
-	virtual void Resume();		// kResume
-	virtual void Stop();		// kStop
+    // actions
+    virtual void Play();        // kStart
+    virtual void PlayPaused();  // kStart and kPause
+    virtual void Pause();       // kPause
+    virtual void Resume();      // kResume
+    virtual void Stop();        // kStop
 
 };
 

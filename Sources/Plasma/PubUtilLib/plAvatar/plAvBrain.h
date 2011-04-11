@@ -48,39 +48,39 @@ class plDebugText;
 class plArmatureBrain : public plCreatable
 {
 public:
-	plArmatureBrain();
-	virtual ~plArmatureBrain();
-	
-	CLASSNAME_REGISTER( plArmatureBrain );
-	GETINTERFACE_ANY( plArmatureBrain, plCreatable );	
-	
-	virtual hsBool Apply(double timeNow, hsScalar elapsed);
-	virtual void Activate(plArmatureModBase *armature);
-	virtual void Deactivate() {}
-	virtual void Suspend() {}
-	virtual void Resume() {}
-	virtual void Spawn(double timeNow) {}
-	virtual void OnBehaviorStop(UInt8 index) {}
-	virtual hsBool LeaveAge();
-	virtual hsBool IsRunningTask() const;
-	virtual void QueueTask(plAvTask *task);
-	virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt) {}
-	
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual hsBool MsgReceive(plMessage *msg);
-	
+    plArmatureBrain();
+    virtual ~plArmatureBrain();
+    
+    CLASSNAME_REGISTER( plArmatureBrain );
+    GETINTERFACE_ANY( plArmatureBrain, plCreatable );   
+    
+    virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    virtual void Activate(plArmatureModBase *armature);
+    virtual void Deactivate() {}
+    virtual void Suspend() {}
+    virtual void Resume() {}
+    virtual void Spawn(double timeNow) {}
+    virtual void OnBehaviorStop(UInt8 index) {}
+    virtual hsBool LeaveAge();
+    virtual hsBool IsRunningTask() const;
+    virtual void QueueTask(plAvTask *task);
+    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt) {}
+    
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual hsBool MsgReceive(plMessage *msg);
+    
 protected:
-	virtual void IProcessTasks(double time, hsScalar elapsed);
-	virtual hsBool IHandleTaskMsg(plAvTaskMsg *msg);
-		
-	typedef std::deque<plAvTask *> plAvTaskQueue;
-	plAvTaskQueue			fTaskQueue;						// FIFO queue of tasks we're working on
-	plAvTask				*fCurTask;						// the task we're working on right now
-	
-	plArmatureModBase *fArmature;
-	plArmatureMod *fAvMod;
-	hsTArray<plArmatureBehavior*> fBehaviors;
+    virtual void IProcessTasks(double time, hsScalar elapsed);
+    virtual hsBool IHandleTaskMsg(plAvTaskMsg *msg);
+        
+    typedef std::deque<plAvTask *> plAvTaskQueue;
+    plAvTaskQueue           fTaskQueue;                     // FIFO queue of tasks we're working on
+    plAvTask                *fCurTask;                      // the task we're working on right now
+    
+    plArmatureModBase *fArmature;
+    plArmatureMod *fAvMod;
+    hsTArray<plArmatureBehavior*> fBehaviors;
 };
 
 

@@ -40,68 +40,68 @@ class plParticleEmitter;
 class plDrawInterface : public plObjInterface
 {
 public:
-	// Props inc by 1 (bit shift in bitvector).
-	enum plDrawProperties {
-		kDisable				= 0,
+    // Props inc by 1 (bit shift in bitvector).
+    enum plDrawProperties {
+        kDisable                = 0,
 
-		kNumProps				// last in the list
-	};
-	enum {
-		kRefVisRegion
-	};
+        kNumProps               // last in the list
+    };
+    enum {
+        kRefVisRegion
+    };
 
 protected:
-	hsTArray<plDrawable*>		fDrawables;
-	hsTArray<UInt32>			fDrawableIndices;
+    hsTArray<plDrawable*>       fDrawables;
+    hsTArray<UInt32>            fDrawableIndices;
 
-	hsTArray<hsKeyedObject*>	fRegions;
+    hsTArray<hsKeyedObject*>    fRegions;
 
-	void ISetVisRegions(int iDraw);
-	void ISetVisRegion(hsKeyedObject* ref, hsBool on);
-	void ISetDrawable(UInt8 which, plDrawable* dr);
-	void IRemoveDrawable(plDrawable* dr);
-	void ISetSceneNode(plKey newNode);
-	virtual void ICheckDrawableIndex(UInt8 which);
+    void ISetVisRegions(int iDraw);
+    void ISetVisRegion(hsKeyedObject* ref, hsBool on);
+    void ISetDrawable(UInt8 which, plDrawable* dr);
+    void IRemoveDrawable(plDrawable* dr);
+    void ISetSceneNode(plKey newNode);
+    virtual void ICheckDrawableIndex(UInt8 which);
 
-	friend class plSceneObject;
+    friend class plSceneObject;
 
 public:
-	plDrawInterface();
-	virtual ~plDrawInterface();
+    plDrawInterface();
+    virtual ~plDrawInterface();
 
-	CLASSNAME_REGISTER( plDrawInterface );
-	GETINTERFACE_ANY( plDrawInterface, plObjInterface );
+    CLASSNAME_REGISTER( plDrawInterface );
+    GETINTERFACE_ANY( plDrawInterface, plObjInterface );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	void		SetProperty(int prop, hsBool on);
-	Int32		GetNumProperties() const { return kNumProps; }
+    void        SetProperty(int prop, hsBool on);
+    Int32       GetNumProperties() const { return kNumProps; }
 
-	// Transform settable only, if you want it get it from the coordinate interface.
-	void		SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    // Transform settable only, if you want it get it from the coordinate interface.
+    void        SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-	// Bounds are gettable only, they are computed on the drawable.
-	const hsBounds3Ext GetLocalBounds() const;
-	const hsBounds3Ext GetWorldBounds() const;
-	const hsBounds3Ext GetMaxWorldBounds() const;
+    // Bounds are gettable only, they are computed on the drawable.
+    const hsBounds3Ext GetLocalBounds() const;
+    const hsBounds3Ext GetWorldBounds() const;
+    const hsBounds3Ext GetMaxWorldBounds() const;
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual void	ReleaseData( void );
+    virtual void    ReleaseData( void );
 
-	/// Funky particle system functions
-	void	SetUpForParticleSystem( UInt32 maxNumEmitters, UInt32 maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights );
-	void	ResetParticleSystem( void );
-	void	AssignEmitterToParticleSystem( plParticleEmitter *emitter );
+    /// Funky particle system functions
+    void    SetUpForParticleSystem( UInt32 maxNumEmitters, UInt32 maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights );
+    void    ResetParticleSystem( void );
+    void    AssignEmitterToParticleSystem( plParticleEmitter *emitter );
 
-	/// EXPORT-ONLY
-	void	SetDrawable(UInt8 which, plDrawable* dr);
-	plDrawable* GetDrawable( UInt8 which ) const { return which < fDrawables.GetCount() ? fDrawables[which] : nil; }
-	UInt32	GetNumDrawables() const { return fDrawables.GetCount(); }
-	// Sets the triMesh index to be used when referring to our spans in the drawable
-	void	SetDrawableMeshIndex( UInt8 which, UInt32 index );
-	UInt32	GetDrawableMeshIndex( UInt8 which ) const { return which < fDrawableIndices.GetCount() ? fDrawableIndices[which] : UInt32(-1); }
+    /// EXPORT-ONLY
+    void    SetDrawable(UInt8 which, plDrawable* dr);
+    plDrawable* GetDrawable( UInt8 which ) const { return which < fDrawables.GetCount() ? fDrawables[which] : nil; }
+    UInt32  GetNumDrawables() const { return fDrawables.GetCount(); }
+    // Sets the triMesh index to be used when referring to our spans in the drawable
+    void    SetDrawableMeshIndex( UInt8 which, UInt32 index );
+    UInt32  GetDrawableMeshIndex( UInt8 which ) const { return which < fDrawableIndices.GetCount() ? fDrawableIndices[which] : UInt32(-1); }
 };
 
 

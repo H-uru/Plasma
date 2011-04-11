@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define  SORTARRAYTYPE(type)                      TSortArray< type, TArrayCopyBits< type >, type, 0>
 #define  SORTARRAYTYPEOBJ(type)                   TSortArray< type, TArrayCopyObject< type >, type, 0>
 
-#define  ARR_MEMORY_FLAGS		0 /*| kMemIgnoreBlock*/
+#define  ARR_MEMORY_FLAGS       0 /*| kMemIgnoreBlock*/
 
 
 /****************************************************************************

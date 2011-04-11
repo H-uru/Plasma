@@ -33,22 +33,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plANDConditionalObject : public plConditionalObject
 {
 protected:
-	hsTArray<plConditionalObject*>	fChildren;
+    hsTArray<plConditionalObject*>  fChildren;
 
 public:
-	
-	plANDConditionalObject();
-	~plANDConditionalObject();
-	
-	CLASSNAME_REGISTER( plANDConditionalObject );
-	GETINTERFACE_ANY( plANDConditionalObject, plConditionalObject );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    plANDConditionalObject();
+    ~plANDConditionalObject();
+    
+    CLASSNAME_REGISTER( plANDConditionalObject );
+    GETINTERFACE_ANY( plANDConditionalObject, plConditionalObject );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	hsBool MsgReceive(plMessage* msg);
-	void Evaluate();
-	void Reset();
+    hsBool MsgReceive(plMessage* msg);
+    void Evaluate();
+    void Reset();
 
 };
 

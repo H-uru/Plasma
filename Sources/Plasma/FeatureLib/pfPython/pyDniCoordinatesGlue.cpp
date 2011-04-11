@@ -37,50 +37,50 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptDniCoordinates)
 
 PYTHON_INIT_DEFINITION(ptDniCoordinates, args, keywords)
 {
-	PYTHON_RETURN_INIT_OK;
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniCoordinates, getHSpans)
 {
-	return PyInt_FromLong(self->fThis->GetHSpans());
+    return PyInt_FromLong(self->fThis->GetHSpans());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniCoordinates, getVSpans)
 {
-	return PyInt_FromLong(self->fThis->GetVSpans());
+    return PyInt_FromLong(self->fThis->GetVSpans());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniCoordinates, getTorans)
 {
-	return PyInt_FromLong(self->fThis->GetTorans());
+    return PyInt_FromLong(self->fThis->GetTorans());
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptDniCoordinates, update, UpdateCoordinates)
 
 PYTHON_METHOD_DEFINITION(ptDniCoordinates, fromPoint, args)
 {
-	PyObject* pointObj = NULL;
-	if (!PyArg_ParseTuple(args, "O", &pointObj))
-	{
-		PyErr_SetString(PyExc_TypeError, "fromPoint expects a ptPoint3");
-		PYTHON_RETURN_ERROR;
-	}
-	if (pyPoint3::Check(pointObj))
-	{
-		pyPoint3* pos = pyPoint3::ConvertFrom(pointObj);
-		self->fThis->FromPoint(pos->fPoint);
-		PYTHON_RETURN_NONE;
-	}
-	PyErr_SetString(PyExc_TypeError, "fromPoint expects a ptPoint3");
-	PYTHON_RETURN_ERROR;
+    PyObject* pointObj = NULL;
+    if (!PyArg_ParseTuple(args, "O", &pointObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "fromPoint expects a ptPoint3");
+        PYTHON_RETURN_ERROR;
+    }
+    if (pyPoint3::Check(pointObj))
+    {
+        pyPoint3* pos = pyPoint3::ConvertFrom(pointObj);
+        self->fThis->FromPoint(pos->fPoint);
+        PYTHON_RETURN_NONE;
+    }
+    PyErr_SetString(PyExc_TypeError, "fromPoint expects a ptPoint3");
+    PYTHON_RETURN_ERROR;
 }
 
 PYTHON_START_METHODS_TABLE(ptDniCoordinates)
-	PYTHON_METHOD_NOARGS(ptDniCoordinates, getHSpans, "Returns the HSpans component of the coordinate"),
-	PYTHON_METHOD_NOARGS(ptDniCoordinates, getVSpans, "Returns the VSpans component of the coordinate"),
-	PYTHON_METHOD_NOARGS(ptDniCoordinates, getTorans, "Returns the Torans component of the coordinate"),
-	PYTHON_BASIC_METHOD(ptDniCoordinates, update, "Update these coordinates with the players current position"),
-	PYTHON_METHOD(ptDniCoordinates, fromPoint, "Params: pt\nUpdate these coordinates with the specified ptPoint3"),
+    PYTHON_METHOD_NOARGS(ptDniCoordinates, getHSpans, "Returns the HSpans component of the coordinate"),
+    PYTHON_METHOD_NOARGS(ptDniCoordinates, getVSpans, "Returns the VSpans component of the coordinate"),
+    PYTHON_METHOD_NOARGS(ptDniCoordinates, getTorans, "Returns the Torans component of the coordinate"),
+    PYTHON_BASIC_METHOD(ptDniCoordinates, update, "Update these coordinates with the players current position"),
+    PYTHON_METHOD(ptDniCoordinates, fromPoint, "Params: pt\nUpdate these coordinates with the specified ptPoint3"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -91,13 +91,13 @@ PYTHON_CLASS_NEW_IMPL(ptDniCoordinates, pyDniCoordinates)
 
 PyObject *pyDniCoordinates::New(plDniCoordinateInfo* coord)
 {
-	ptDniCoordinates *newObj = (ptDniCoordinates*)ptDniCoordinates_type.tp_new(&ptDniCoordinates_type, NULL, NULL);
-	if (coord) {
-		newObj->fThis->fCoords->SetTorans(coord->GetTorans());
-		newObj->fThis->fCoords->SetHSpans(coord->GetHSpans());
-		newObj->fThis->fCoords->SetVSpans(coord->GetVSpans());
-	}
-	return (PyObject*)newObj;
+    ptDniCoordinates *newObj = (ptDniCoordinates*)ptDniCoordinates_type.tp_new(&ptDniCoordinates_type, NULL, NULL);
+    if (coord) {
+        newObj->fThis->fCoords->SetTorans(coord->GetTorans());
+        newObj->fThis->fCoords->SetHSpans(coord->GetHSpans());
+        newObj->fThis->fCoords->SetVSpans(coord->GetVSpans());
+    }
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptDniCoordinates, pyDniCoordinates)
@@ -109,7 +109,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptDniCoordinates, pyDniCoordinates)
 //
 void pyDniCoordinates::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptDniCoordinates);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptDniCoordinates);
+    PYTHON_CLASS_IMPORT_END(m);
 }

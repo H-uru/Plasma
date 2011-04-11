@@ -53,79 +53,79 @@ class plBox3Tab : public Tab<Box3>
 class plClusterComponent : public plComponent
 {
 public:
-	enum {
-		kClusters		= 0,
-		kOptimization,
-		kFadeIns,
-		kFadeOuts,
-		kWindBone, // Obsolete, moved to DistribComponent
-		kWindBones,
-		kAutoGen,
-		kAutoInstance
-	};
+    enum {
+        kClusters       = 0,
+        kOptimization,
+        kFadeIns,
+        kFadeOuts,
+        kWindBone, // Obsolete, moved to DistribComponent
+        kWindBones,
+        kAutoGen,
+        kAutoInstance
+    };
 protected:
-	float				fClusterSize;
+    float               fClusterSize;
 
-	// These are temp, only used during processing.
-	plDistribInstTab**	fClusterBins;
-	int					fSizes[3];
-	plDistribCompTab	fDistribTab;
-	plComponentBase*	fLocationComp;
+    // These are temp, only used during processing.
+    plDistribInstTab**  fClusterBins;
+    int                 fSizes[3];
+    plDistribCompTab    fDistribTab;
+    plComponentBase*    fLocationComp;
 
-	vector<plClusterGroup*> fClusterGroups;
+    vector<plClusterGroup*> fClusterGroups;
 
-	// And more temps used only during Convert
-	BOOL			fSetupDone;
-	BOOL			fAutoGen;
-	BOOL			fExported;
+    // And more temps used only during Convert
+    BOOL            fSetupDone;
+    BOOL            fAutoGen;
+    BOOL            fExported;
 
-	void			ICheckWindBone();
+    void            ICheckWindBone();
 
-	BOOL			IGetLocation();
-	void			ISetLocation(plMaxNode* node);
+    BOOL            IGetLocation();
+    void            ISetLocation(plMaxNode* node);
 
-	void			ISetupRenderDependencies();
-	void			IAssignRenderDependencies(hsRadixSortElem*& prevStart, hsRadixSortElem*& prevEnd,
-												   hsRadixSortElem*& currStart, hsRadixSortElem*& currEnd);
+    void            ISetupRenderDependencies();
+    void            IAssignRenderDependencies(hsRadixSortElem*& prevStart, hsRadixSortElem*& prevEnd,
+                                                   hsRadixSortElem*& currStart, hsRadixSortElem*& currEnd);
 
-	BOOL			IBuildNodeTab(plDistribInstTab& nodes, plErrorMsg* pErrMsg, plExportProgressBar& bar);
-	void			IClearNodeTab();
-	void			IBuildDistribTab();
-	void			IClearDistribTab();
+    BOOL            IBuildNodeTab(plDistribInstTab& nodes, plErrorMsg* pErrMsg, plExportProgressBar& bar);
+    void            IClearNodeTab();
+    void            IBuildDistribTab();
+    void            IClearDistribTab();
 
-	BOOL			IsFlexible() const;
-	void			IRandomizeSkinWeights(Mesh* mesh, const Point3& flex) const;
-	void			IFinishDoneNodes(INodeTab& doneNodes, plBox3Tab& fade, INodeTab& bone, hsBitVector& boneIsParent);
-	BOOL			ICanCluster(plDistribInstance& node);
-	BOOL			ICanCluster(plDistribInstance& node0, plDistribInstance& node1);
-	BOOL			IClusterGroup(plDistribInstTab& nodes, INodeTab& clusters, plExportProgressBar& bar);
-	INode*			IMakeOne(plDistribInstTab& nodes);
-	Box3			IPartition(plDistribInstTab& nodes);
+    BOOL            IsFlexible() const;
+    void            IRandomizeSkinWeights(Mesh* mesh, const Point3& flex) const;
+    void            IFinishDoneNodes(INodeTab& doneNodes, plBox3Tab& fade, INodeTab& bone, hsBitVector& boneIsParent);
+    BOOL            ICanCluster(plDistribInstance& node);
+    BOOL            ICanCluster(plDistribInstance& node0, plDistribInstance& node1);
+    BOOL            IClusterGroup(plDistribInstTab& nodes, INodeTab& clusters, plExportProgressBar& bar);
+    INode*          IMakeOne(plDistribInstTab& nodes);
+    Box3            IPartition(plDistribInstTab& nodes);
 
-	void					IClusterBins(plDistribInstTab& nodes, Box3& box);
-	int						IGetBinCount();
-	void					IDeleteClusterBins();
-	plDistribInstTab*		IGetClusterBin(const Box3& box, const Point3& loc);
+    void                    IClusterBins(plDistribInstTab& nodes, Box3& box);
+    int                     IGetBinCount();
+    void                    IDeleteClusterBins();
+    plDistribInstTab*       IGetClusterBin(const Box3& box, const Point3& loc);
 
 public:
-	plClusterComponent();
-	void DeleteThis() { delete this; }
+    plClusterComponent();
+    void DeleteThis() { delete this; }
 
-	void	Clear();
-	BOOL	Cluster(plErrorMsg* pErrMsg);
-	void	Select();
+    void    Clear();
+    BOOL    Cluster(plErrorMsg* pErrMsg);
+    void    Select();
 
-	BOOL	AutoGen(plErrorMsg* pErrMsg);
-	void	AutoClear(plErrorMsg* pErrMsg);
+    BOOL    AutoGen(plErrorMsg* pErrMsg);
+    void    AutoClear(plErrorMsg* pErrMsg);
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	int				GetNumGroups() { if (fSetupDone) return fClusterGroups.size(); return 0; }
-	plClusterGroup *GetGroup(int index) { if (fSetupDone) return fClusterGroups[index]; return nil; }
+    int             GetNumGroups() { if (fSetupDone) return fClusterGroups.size(); return 0; }
+    plClusterGroup *GetGroup(int index) { if (fSetupDone) return fClusterGroups[index]; return nil; }
 
 };
 

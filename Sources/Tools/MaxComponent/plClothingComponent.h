@@ -31,22 +31,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plClothingComponent : public plComponent
 {
 public:
-	plClothingComponent();
+    plClothingComponent();
 
-	virtual void DeleteThis() { delete this; }
-	virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    virtual void DeleteThis() { delete this; }
+    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
 
-	enum // ParamBlock indices
-	{
-		kMaterials,
-		kGroup,
-		kType,
-		kLODState,
-		kMeshNodeTab,
-		kMeshNodeAddBtn,
-	};
+    enum // ParamBlock indices
+    {
+        kMaterials,
+        kGroup,
+        kType,
+        kLODState,
+        kMeshNodeTab,
+        kMeshNodeAddBtn,
+    };
 };
 
 #define CLOTHING_COMPONENT_CLASS_ID Class_ID(0x2df85c56, 0x27bc2a7a)
@@ -54,11 +54,11 @@ public:
 class plClothingComponentProc : public ParamMap2UserDlgProc
 {
 public:
-	plClothingComponentProc() {}
+    plClothingComponentProc() {}
 
-	BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	void DeleteThis() {}
+    void DeleteThis() {}
 };
 
 #endif

@@ -35,76 +35,76 @@ class plPhysicalControllerCore;
 class plSwimRegionInterface : public plObjInterface
 {
 public:
-	plSwimRegionInterface() : fDownBuoyancy(1.f), fUpBuoyancy(1.f), fMaxUpwardVel(1.f) {}
-	virtual ~plSwimRegionInterface() {}
-	
-	CLASSNAME_REGISTER( plSwimRegionInterface );
-	GETINTERFACE_ANY( plSwimRegionInterface, plObjInterface );
-	
-	enum {
-		kDisable		= 0x0,
-		kNumProps // last
-	};
-	
-	virtual Int32 GetNumProperties() const { return kNumProps; }	
-	virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    plSwimRegionInterface() : fDownBuoyancy(1.f), fUpBuoyancy(1.f), fMaxUpwardVel(1.f) {}
+    virtual ~plSwimRegionInterface() {}
+    
+    CLASSNAME_REGISTER( plSwimRegionInterface );
+    GETINTERFACE_ANY( plSwimRegionInterface, plObjInterface );
+    
+    enum {
+        kDisable        = 0x0,
+        kNumProps // last
+    };
+    
+    virtual Int32 GetNumProperties() const { return kNumProps; }    
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, hsScalar &angularResult, hsScalar elapsed);
+    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, hsScalar &angularResult, hsScalar elapsed);
 
-	hsScalar fDownBuoyancy;
-	hsScalar fUpBuoyancy;
-	hsScalar fMaxUpwardVel;
+    hsScalar fDownBuoyancy;
+    hsScalar fUpBuoyancy;
+    hsScalar fMaxUpwardVel;
 };
 
 class plSwimCircularCurrentRegion : public plSwimRegionInterface
 {
 public:
-	plSwimCircularCurrentRegion();
-	virtual ~plSwimCircularCurrentRegion() {}
+    plSwimCircularCurrentRegion();
+    virtual ~plSwimCircularCurrentRegion() {}
 
-	CLASSNAME_REGISTER( plSwimCircularCurrentRegion );
-	GETINTERFACE_ANY( plSwimCircularCurrentRegion, plSwimRegionInterface );
+    CLASSNAME_REGISTER( plSwimCircularCurrentRegion );
+    GETINTERFACE_ANY( plSwimCircularCurrentRegion, plSwimRegionInterface );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, hsScalar &angularResult, hsScalar elapsed);	
-	virtual hsBool MsgReceive(plMessage* msg);
-	
-	hsScalar fRotation;
-	hsScalar fPullNearDistSq;
-	hsScalar fPullNearVel;
-	hsScalar fPullFarDistSq;
-	hsScalar fPullFarVel;
+    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, hsScalar &angularResult, hsScalar elapsed);    
+    virtual hsBool MsgReceive(plMessage* msg);
+    
+    hsScalar fRotation;
+    hsScalar fPullNearDistSq;
+    hsScalar fPullNearVel;
+    hsScalar fPullFarDistSq;
+    hsScalar fPullFarVel;
 
 protected:
-	plSceneObject *fCurrentSO;
+    plSceneObject *fCurrentSO;
 };
 
 class plSwimStraightCurrentRegion : public plSwimRegionInterface
 {
 public:
-	plSwimStraightCurrentRegion();
-	virtual ~plSwimStraightCurrentRegion() {}
-	
-	CLASSNAME_REGISTER( plSwimStraightCurrentRegion );
-	GETINTERFACE_ANY( plSwimStraightCurrentRegion, plSwimRegionInterface );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
-	
-	virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, hsScalar &angularResult, hsScalar elapsed);	
-	virtual hsBool MsgReceive(plMessage* msg);
-	
-	hsScalar fNearDist;
-	hsScalar fNearVel;
-	hsScalar fFarDist;
-	hsScalar fFarVel;
-	
+    plSwimStraightCurrentRegion();
+    virtual ~plSwimStraightCurrentRegion() {}
+    
+    CLASSNAME_REGISTER( plSwimStraightCurrentRegion );
+    GETINTERFACE_ANY( plSwimStraightCurrentRegion, plSwimRegionInterface );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, hsScalar &angularResult, hsScalar elapsed);    
+    virtual hsBool MsgReceive(plMessage* msg);
+    
+    hsScalar fNearDist;
+    hsScalar fNearVel;
+    hsScalar fFarDist;
+    hsScalar fFarVel;
+    
 protected:
-	plSceneObject *fCurrentSO;
+    plSceneObject *fCurrentSO;
 };
 
 #endif // plSwimRegion_inc

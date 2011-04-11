@@ -43,42 +43,42 @@ using namespace dev;
  */
 void printStackTrace( char* buffer, int bufferSize, unsigned long stackPtr, unsigned long opPtr )
 {
-	// find out map file name
-	char modname[500];
-	MapFile::getModuleMapFilename( modname, sizeof(modname) );
+    // find out map file name
+    char modname[500];
+    MapFile::getModuleMapFilename( modname, sizeof(modname) );
 
-	// parse map file
-	static char buf[5000];
-	MapFile map( modname );
-	switch ( map.error() )
-	{
-	case MapFile::ERROR_OPEN:	sprintf( buf, "Failed to open map file %s\n", modname ); break;
-	case MapFile::ERROR_READ:	sprintf( buf, "Error while reading map file %s(%i)\n", modname, map.line() ); break;
-	case MapFile::ERROR_PARSE:	sprintf( buf, "Parse error in map file %s(%i)\n", modname, map.line() ); break;
-	default:					break;
-	}
+    // parse map file
+    static char buf[5000];
+    MapFile map( modname );
+    switch ( map.error() )
+    {
+    case MapFile::ERROR_OPEN:   sprintf( buf, "Failed to open map file %s\n", modname ); break;
+    case MapFile::ERROR_READ:   sprintf( buf, "Error while reading map file %s(%i)\n", modname, map.line() ); break;
+    case MapFile::ERROR_PARSE:  sprintf( buf, "Parse error in map file %s(%i)\n", modname, map.line() ); break;
+    default:                    break;
+    }
 
-	// print stack trace to buffer
-	if ( !map.error() )
-	{
-		MapFile* maps[] = {&map};
-		StackTrace::printStackTrace( maps, 1, 1, 16, buf, sizeof(buf), stackPtr, opPtr );
-	}
-	else
-	{
-		// 9.5.2002 mcn - Even if we can't open the map file, still print out the stack trace for later reference
-		StackTrace::printStackTrace( 0, 0, 1, 16, buf, sizeof(buf), stackPtr, opPtr );
-	}
+    // print stack trace to buffer
+    if ( !map.error() )
+    {
+        MapFile* maps[] = {&map};
+        StackTrace::printStackTrace( maps, 1, 1, 16, buf, sizeof(buf), stackPtr, opPtr );
+    }
+    else
+    {
+        // 9.5.2002 mcn - Even if we can't open the map file, still print out the stack trace for later reference
+        StackTrace::printStackTrace( 0, 0, 1, 16, buf, sizeof(buf), stackPtr, opPtr );
+    }
 
-	// copy to user buffer
-	if ( bufferSize > 0 )
-	{
-		if( buffer[ 0 ] == 0 )
-			strncpy( buffer, buf, bufferSize );
-		else
-			strncat( buffer, buf, bufferSize );
-		buffer[bufferSize-1] = 0;
-	}
+    // copy to user buffer
+    if ( bufferSize > 0 )
+    {
+        if( buffer[ 0 ] == 0 )
+            strncpy( buffer, buf, bufferSize );
+        else
+            strncat( buffer, buf, bufferSize );
+        buffer[bufferSize-1] = 0;
+    }
 }
 
 /*

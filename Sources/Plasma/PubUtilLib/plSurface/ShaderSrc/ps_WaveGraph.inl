@@ -10,21 +10,21 @@ ps.1.1
 //
 // Let's get the first cut running first.
 
-tex		t0;
-tex		t1;
-tex		t2;
+tex     t0;
+tex     t1;
+tex     t2;
 
-//mul		r0, v0, t0;
-//mul		r0, r0, t1;
-//add		r0.a, r0, t2;
+//mul       r0, v0, t0;
+//mul       r0, r0, t1;
+//add       r0.a, r0, t2;
 
-// 1.0 mov		r0, t0;
-// 1.0 mul		r0, r0, t1;
-mul		r0, t0, t1;
-// TEST add		r0.a, r0, t2; // TEST
-add		r0, r0, t2; // TEST
-mul		r0, r0, v0;
+// 1.0 mov      r0, t0;
+// 1.0 mul      r0, r0, t1;
+mul     r0, t0, t1;
+// TEST add     r0.a, r0, t2; // TEST
+add     r0, r0, t2; // TEST
+mul     r0, r0, v0;
 
-//mul		r0.rgb, r0, r0.a; // TEST
+//mul       r0.rgb, r0, r0.a; // TEST
 
 //mov r0, t1;

@@ -42,20 +42,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // kNetProtocolSrv2Score messages
 enum {
-	kSrv2Score_ScoreCreate						= 0,
-	kSrv2Score_ScoreGetScores					= 1,
-	kSrv2Score_ScoreAddPoints					= 2,
-	kSrv2Score_ScoreTransferPoints				= 3,
-	kSrv2Score_ScoreSetPoints					= 4,
-	kSrv2Score_ScoreDelete						= 5,
-	kSrv2Score_ScoreGetRanks					= 6,
+    kSrv2Score_ScoreCreate                      = 0,
+    kSrv2Score_ScoreGetScores                   = 1,
+    kSrv2Score_ScoreAddPoints                   = 2,
+    kSrv2Score_ScoreTransferPoints              = 3,
+    kSrv2Score_ScoreSetPoints                   = 4,
+    kSrv2Score_ScoreDelete                      = 5,
+    kSrv2Score_ScoreGetRanks                    = 6,
 };
 
 enum {
-	kScore2Srv_ScoreCreateReply					= 0,
-	kScore2Srv_ScoreGetScoresReply				= 1,
-	kScore2Srv_ScoreDeleteReply					= 2,
-	kScore2Srv_ScoreGetRanksReply				= 3,
+    kScore2Srv_ScoreCreateReply                 = 0,
+    kScore2Srv_ScoreGetScoresReply              = 1,
+    kScore2Srv_ScoreDeleteReply                 = 2,
+    kScore2Srv_ScoreGetRanksReply               = 3,
 };
 
 
@@ -83,46 +83,46 @@ struct Srv2Score_Connect {
 ***/
 
 struct Srv2Score_ScoreCreate : SrvMsgHeader {
-	dword	ownerId;
-	wchar	gameName[kMaxGameScoreNameLength];
-	dword	gameType;
-	dword	value;
+    dword   ownerId;
+    wchar   gameName[kMaxGameScoreNameLength];
+    dword   gameType;
+    dword   value;
 };
 
 struct Srv2Score_ScoreDelete : SrvMsgHeader {
-	dword	scoreId;
+    dword   scoreId;
 };
 
 struct Srv2Score_ScoreGetScores : SrvMsgHeader {
-	dword	ownerId;
-	wchar	gameName[kMaxGameScoreNameLength];
+    dword   ownerId;
+    wchar   gameName[kMaxGameScoreNameLength];
 };
 
 struct Srv2Score_ScoreAddPoints : SrvMsgHeader {
-	dword	scoreId;
-	dword	numPoints;
+    dword   scoreId;
+    dword   numPoints;
 };
 
 struct Srv2Score_ScoreTransferPoints : SrvMsgHeader {
-	dword	srcScoreId;
-	dword	destScoreId;
-	dword	numPoints;
+    dword   srcScoreId;
+    dword   destScoreId;
+    dword   numPoints;
 };
 
 struct Srv2Score_ScoreSetPoints : SrvMsgHeader {
-	dword	scoreId;
-	dword	numPoints;
+    dword   scoreId;
+    dword   numPoints;
 };
 
 struct Srv2Score_ScoreGetRanks : SrvMsgHeader {
-	dword ownerId;
-	dword scoreGroup;
-	dword parentFolderId;
-	wchar gameName[kMaxGameScoreNameLength];
-	dword timePeriod;
-	dword numResults;
-	dword pageNumber;
-	dword sortDesc;
+    dword ownerId;
+    dword scoreGroup;
+    dword parentFolderId;
+    wchar gameName[kMaxGameScoreNameLength];
+    dword timePeriod;
+    dword numResults;
+    dword pageNumber;
+    dword sortDesc;
 };
 
 
@@ -133,20 +133,20 @@ struct Srv2Score_ScoreGetRanks : SrvMsgHeader {
 ***/
 
 struct Score2Srv_ScoreCreateReply : SrvMsgHeader { 
-	dword	scoreId;
-	dword	createdTime;
+    dword   scoreId;
+    dword   createdTime;
 };
 
 struct Score2Srv_ScoreGetScoresReply : SrvMsgHeader {
-	dword	scoreCount;
-	dword	byteCount;
-	byte	buffer[1];
+    dword   scoreCount;
+    dword   byteCount;
+    byte    buffer[1];
 };
 
 struct Score2Srv_ScoreGetRanksReply : SrvMsgHeader {
-	dword	rankCount;
-	dword	byteCount;
-	byte	buffer[1];
+    dword   rankCount;
+    dword   byteCount;
+    byte    buffer[1];
 };
 
 

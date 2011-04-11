@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // plComponentBase and external stuff might want to use plNoteTrackDlg.)
 class plComponentNoteTrackDlg : public plNoteTrackDlg
 {
-	void ICacheNoteTrack();
+    void ICacheNoteTrack();
 };
 
 

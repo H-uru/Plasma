@@ -44,26 +44,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyGUIControlButton : public pyGUIControl
 {
 protected:
-	pyGUIControlButton(): pyGUIControl() {} // used by python glue, do NOT call
-	pyGUIControlButton(pyKey& gckey);
-	pyGUIControlButton(plKey objkey);
+    pyGUIControlButton(): pyGUIControl() {} // used by python glue, do NOT call
+    pyGUIControlButton(pyKey& gckey);
+    pyGUIControlButton(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlButton);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlButton object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlButton); // converts a PyObject to a pyGUIControlButton (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlButton);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlButton object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlButton); // converts a PyObject to a pyGUIControlButton (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
-	static void AddPlasmaConstantsClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaConstantsClasses(PyObject *m);
 
-	static hsBool IsGUIControlButton(pyKey& gckey);
-	
-	virtual void	SetNotifyType(Int32 kind);
-	virtual Int32	GetNotifyType();
-	virtual hsBool	IsButtonDown();
+    static hsBool IsGUIControlButton(pyKey& gckey);
+    
+    virtual void    SetNotifyType(Int32 kind);
+    virtual Int32   GetNotifyType();
+    virtual hsBool  IsButtonDown();
 };
 
 #endif // _pyGUIControlButton_h_

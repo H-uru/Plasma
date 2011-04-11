@@ -24,11 +24,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIMenuItem Header													//
-//																			//
-//	The type of button that knows how to party.								//
-//																			//
+//                                                                          //
+//  pfGUIMenuItem Header                                                    //
+//                                                                          //
+//  The type of button that knows how to party.                             //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIMenuItem_h
@@ -41,72 +41,72 @@ class plMessage;
 class pfGUISkin;
 class pfGUIMenuItem : public pfGUIButtonMod
 {
-	public:
-		enum HowToSkin
-		{
-			kTop,
-			kMiddle,
-			kBottom
-		};
+    public:
+        enum HowToSkin
+        {
+            kTop,
+            kMiddle,
+            kBottom
+        };
 
-	protected:
+    protected:
 
-		wchar_t			*fName;
-		hsBool			fReportingHover;
+        wchar_t         *fName;
+        hsBool          fReportingHover;
 
-		HowToSkin		fHowToSkin;
-		hsBool			fSkinBuffersUpdated;
+        HowToSkin       fHowToSkin;
+        hsBool          fSkinBuffersUpdated;
 
-		virtual void	IGrowDTMDimsToDesiredSize( UInt16 &width, UInt16 &height );
-		virtual void	IPostSetUpDynTextMap( void );
-		virtual void	IUpdate( void );
+        virtual void    IGrowDTMDimsToDesiredSize( UInt16 &width, UInt16 &height );
+        virtual void    IPostSetUpDynTextMap( void );
+        virtual void    IUpdate( void );
 
-		void			IUpdateSkinBuffers( void );
-		void			IUpdateSingleSkinBuffer( UInt16 y, hsBool sel );
+        void            IUpdateSkinBuffers( void );
+        void            IUpdateSingleSkinBuffer( UInt16 y, hsBool sel );
 
-	public:
+    public:
 
-		pfGUIMenuItem();
-		virtual ~pfGUIMenuItem();
+        pfGUIMenuItem();
+        virtual ~pfGUIMenuItem();
 
-		CLASSNAME_REGISTER( pfGUIMenuItem );
-		GETINTERFACE_ANY( pfGUIMenuItem, pfGUIButtonMod );
+        CLASSNAME_REGISTER( pfGUIMenuItem );
+        GETINTERFACE_ANY( pfGUIMenuItem, pfGUIButtonMod );
 
-		enum ItemFlags
-		{
-			kDrawSubMenuArrow = kDerivedFlagsStart,
-			kReportHovers
-		};
+        enum ItemFlags
+        {
+            kDrawSubMenuArrow = kDerivedFlagsStart,
+            kReportHovers
+        };
 
-		// Extended event types
-		enum ExtendedEvents
-		{
-			kMouseHover,
-			kMouseExit
-		};
+        // Extended event types
+        enum ExtendedEvents
+        {
+            kMouseHover,
+            kMouseExit
+        };
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		virtual void	SetInteresting( hsBool i );
+        virtual void    SetInteresting( hsBool i );
 
-		virtual void	HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers );
 
-		virtual void	PurgeDynaTextMapImage();
+        virtual void    PurgeDynaTextMapImage();
 
 
-		void		SetName( const char *name );
-		void		SetName( const wchar_t *name );
-		const wchar_t	*GetName( void ) const { return fName; }
-	
-		void	GetTextExtents( UInt16 &width, UInt16 &height );
+        void        SetName( const char *name );
+        void        SetName( const wchar_t *name );
+        const wchar_t   *GetName( void ) const { return fName; }
+    
+        void    GetTextExtents( UInt16 &width, UInt16 &height );
 
-		void	SetSkin( pfGUISkin *skin, HowToSkin s );
+        void    SetSkin( pfGUISkin *skin, HowToSkin s );
 };
 
 #endif // _pfGUIMenuItem_h

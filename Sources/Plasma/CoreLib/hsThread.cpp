@@ -37,61 +37,61 @@ hsReaderWriterLock::hsReaderWriterLock( const char * name, Callback * cb )
 , fCallback( cb )
 , fName( nil )
 {
-	fName = hsStrcpy( name );
+    fName = hsStrcpy( name );
 }
 
 hsReaderWriterLock::~hsReaderWriterLock()
 {
-	delete [] fName;
+    delete [] fName;
 }
 
 void hsReaderWriterLock::LockForReading()
 {
-	if ( fCallback )
-		fCallback->OnLockingForRead( this );
-	fReaderCountLock.Lock();
-	fReaderLock.Lock();
-	fReaderCount++;
-	if ( fReaderCount==1 )
-		fWriterSema.Wait();
-	fReaderLock.Unlock();
-	fReaderCountLock.Unlock();
-	if ( fCallback )
-		fCallback->OnLockedForRead( this );
+    if ( fCallback )
+        fCallback->OnLockingForRead( this );
+    fReaderCountLock.Lock();
+    fReaderLock.Lock();
+    fReaderCount++;
+    if ( fReaderCount==1 )
+        fWriterSema.Wait();
+    fReaderLock.Unlock();
+    fReaderCountLock.Unlock();
+    if ( fCallback )
+        fCallback->OnLockedForRead( this );
 }
 
 void hsReaderWriterLock::UnlockForReading()
 {
-	if ( fCallback )
-		fCallback->OnUnlockingForRead( this );
-	fReaderLock.Lock();
-	fReaderCount--;
-	if ( fReaderCount==0 )
-		fWriterSema.Signal();
-	fReaderLock.Unlock();
-	if ( fCallback )
-		fCallback->OnUnlockedForRead( this );
+    if ( fCallback )
+        fCallback->OnUnlockingForRead( this );
+    fReaderLock.Lock();
+    fReaderCount--;
+    if ( fReaderCount==0 )
+        fWriterSema.Signal();
+    fReaderLock.Unlock();
+    if ( fCallback )
+        fCallback->OnUnlockedForRead( this );
 }
 
 void hsReaderWriterLock::LockForWriting()
 {
-	if ( fCallback )
-		fCallback->OnLockingForWrite( this );
-	fReaderCountLock.Lock();
-	fWriterSema.Wait();
-	hsAssert( fReaderCount==0, "Locked for writing, but fReaderCount>0" );
-	if ( fCallback )
-		fCallback->OnLockedForWrite( this );
+    if ( fCallback )
+        fCallback->OnLockingForWrite( this );
+    fReaderCountLock.Lock();
+    fWriterSema.Wait();
+    hsAssert( fReaderCount==0, "Locked for writing, but fReaderCount>0" );
+    if ( fCallback )
+        fCallback->OnLockedForWrite( this );
 }
 
 void hsReaderWriterLock::UnlockForWriting()
 {
-	if ( fCallback )
-		fCallback->OnUnlockingForWrite( this );
-	fWriterSema.Signal();
-	fReaderCountLock.Unlock();
-	if ( fCallback )
-		fCallback->OnUnlockedForWrite( this );
+    if ( fCallback )
+        fCallback->OnUnlockingForWrite( this );
+    fWriterSema.Signal();
+    fReaderCountLock.Unlock();
+    if ( fCallback )
+        fCallback->OnUnlockedForWrite( this );
 }
 
 

@@ -35,38 +35,38 @@ class plAnimPath;
 class plDynaWakeMgr : public plDynaRippleMgr
 {
 protected:
-	hsVector3			fDefaultDir;
-	plAnimPath*			fAnimPath;
+    hsVector3           fDefaultDir;
+    plAnimPath*         fAnimPath;
 
-	hsScalar			fAnimWgt;
-	hsScalar			fVelWgt;
+    hsScalar            fAnimWgt;
+    hsScalar            fVelWgt;
 
-	virtual hsVector3	IGetDirection(const plDynaDecalInfo& info, const hsPoint3& pos) const;
+    virtual hsVector3   IGetDirection(const plDynaDecalInfo& info, const hsPoint3& pos) const;
 
-	virtual hsBool		IRippleFromShape(const plPrintShape* shape, hsBool force=false);
+    virtual hsBool      IRippleFromShape(const plPrintShape* shape, hsBool force=false);
 
-	virtual int			INewDecal();
+    virtual int         INewDecal();
 public:
-	plDynaWakeMgr();
-	virtual ~plDynaWakeMgr();
+    plDynaWakeMgr();
+    virtual ~plDynaWakeMgr();
 
-	CLASSNAME_REGISTER( plDynaWakeMgr );
-	GETINTERFACE_ANY( plDynaWakeMgr, plDynaRippleMgr );
+    CLASSNAME_REGISTER( plDynaWakeMgr );
+    GETINTERFACE_ANY( plDynaWakeMgr, plDynaRippleMgr );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	void			SetAnimPath(plAnimPath* a);
-	plAnimPath*		GetAnimPath() const { return fAnimPath; }
+    void            SetAnimPath(plAnimPath* a);
+    plAnimPath*     GetAnimPath() const { return fAnimPath; }
 
-	void				SetDefaultDir(const hsVector3& v);
-	const hsVector3&	GetDefaultDir() const { return fDefaultDir; }
+    void                SetDefaultDir(const hsVector3& v);
+    const hsVector3&    GetDefaultDir() const { return fDefaultDir; }
 
-	void				SetAnimWeight(hsScalar f) { fAnimWgt = f; }
-	hsScalar			GetAnimWeight() const { return fAnimWgt; }
+    void                SetAnimWeight(hsScalar f) { fAnimWgt = f; }
+    hsScalar            GetAnimWeight() const { return fAnimWgt; }
 
-	void				SetVelocityWeight(hsScalar f) { fVelWgt = f; }
-	hsScalar			GetVelocityWeight() const { return fVelWgt; }
+    void                SetVelocityWeight(hsScalar f) { fVelWgt = f; }
+    hsScalar            GetVelocityWeight() const { return fVelWgt; }
 };
 
 

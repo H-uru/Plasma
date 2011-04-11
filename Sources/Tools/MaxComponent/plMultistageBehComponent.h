@@ -35,5 +35,5 @@ class plMaxNodeBase;
 
 namespace MultiStageBeh
 {
-	plKey GetMultiStageBehKey(plComponentBase *multiStageBehComp, plMaxNodeBase *target);
+    plKey GetMultiStageBehKey(plComponentBase *multiStageBehComp, plMaxNodeBase *target);
 }

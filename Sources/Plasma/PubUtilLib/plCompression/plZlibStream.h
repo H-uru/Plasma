@@ -36,39 +36,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plZlibStream : public hsStream
 {
 protected:
-	hsStream* fOutput;
-	void* fZStream;
-	bool fDecompressedOk;
+    hsStream* fOutput;
+    void* fZStream;
+    bool fDecompressedOk;
 
-	enum Validate { kNeedMoreData, kInvalidHeader, kValidHeader };
-	Validate fHeader;
-	std::vector<UInt8> fHeaderCache;
+    enum Validate { kNeedMoreData, kInvalidHeader, kValidHeader };
+    Validate fHeader;
+    std::vector<UInt8> fHeaderCache;
 
-	std::wstring fFilename, fMode; // needed for rewind function
+    std::wstring fFilename, fMode; // needed for rewind function
 
-	int IValidateGzHeader(UInt32 byteCount, const void* buffer);
+    int IValidateGzHeader(UInt32 byteCount, const void* buffer);
 
 public:
-	plZlibStream();
-	virtual ~plZlibStream();
+    plZlibStream();
+    virtual ~plZlibStream();
 
-	virtual hsBool	Open(const char* filename, const char* mode);
-	virtual hsBool	Open(const wchar* filename, const wchar* mode);
-	virtual hsBool	Close();
-	virtual UInt32	Write(UInt32 byteCount, const void* buffer);
+    virtual hsBool  Open(const char* filename, const char* mode);
+    virtual hsBool  Open(const wchar* filename, const wchar* mode);
+    virtual hsBool  Close();
+    virtual UInt32  Write(UInt32 byteCount, const void* buffer);
 
-	// Since most functions don't check the return value from Write, you can
-	// call this after you've passed in all your data to determine if it
-	// decompressed ok
-	bool DecompressedOk() { return fDecompressedOk; }
+    // Since most functions don't check the return value from Write, you can
+    // call this after you've passed in all your data to determine if it
+    // decompressed ok
+    bool DecompressedOk() { return fDecompressedOk; }
 
-	// You can't use these
-	virtual hsBool	AtEnd();
-	virtual UInt32	Read(UInt32 byteCount, void* buffer);
-	virtual void	Skip(UInt32 deltaByteCount);
-	virtual void	Rewind();
-	virtual void	FastFwd();
-	virtual UInt32	GetEOF();
+    // You can't use these
+    virtual hsBool  AtEnd();
+    virtual UInt32  Read(UInt32 byteCount, void* buffer);
+    virtual void    Skip(UInt32 deltaByteCount);
+    virtual void    Rewind();
+    virtual void    FastFwd();
+    virtual UInt32  GetEOF();
 };
 
 #endif // plZlibStream_h_inc

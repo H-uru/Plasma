@@ -25,15 +25,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /**********************************************************************
  *<
-	FILE: plMaterialUpdate.h
+    FILE: plMaterialUpdate.h
 
-	DESCRIPTION:	Includes for Plugins
+    DESCRIPTION:    Includes for Plugins
 
-	CREATED BY:
+    CREATED BY:
 
-	HISTORY:
+    HISTORY:
 
- *>	Copyright (c) 2000, All Rights Reserved.
+ *> Copyright (c) 2000, All Rights Reserved.
  **********************************************************************/
 
 #ifndef __PLMATERIALUPDATE__H

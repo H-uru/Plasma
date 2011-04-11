@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLNOTETRACKDLG_INC
 
 #include "hsTypes.h"
-#include "hsWindows.h"	// For HWND
+#include "hsWindows.h"  // For HWND
 #include "plMaxAnimUtils.h"
 
 class IParamBlock2;
@@ -36,43 +36,43 @@ class Animatable;
 class plNoteTrackDlg
 {
 protected:
-	// Derived class needs to set these
-	HWND fhAnim;
-	HWND fhLoop;
-	IParamBlock2 *fPB;
-	int fAnimID;
-	int fLoopID;
-	Animatable *fOwner;
+    // Derived class needs to set these
+    HWND fhAnim;
+    HWND fhLoop;
+    IParamBlock2 *fPB;
+    int fAnimID;
+    int fLoopID;
+    Animatable *fOwner;
 
-	SegmentMap *fSegMap;
+    SegmentMap *fSegMap;
 
-	enum
-	{
-		kDefault,
-		kName,
-	};
+    enum
+    {
+        kDefault,
+        kName,
+    };
 
 public:
-	plNoteTrackDlg();
-	virtual ~plNoteTrackDlg();
+    plNoteTrackDlg();
+    virtual ~plNoteTrackDlg();
 
-	void Init(HWND hAnim, HWND hLoop, int animID, int loopID, IParamBlock2 *pb, Animatable *owner);
-	void Load();
+    void Init(HWND hAnim, HWND hLoop, int animID, int loopID, IParamBlock2 *pb, Animatable *owner);
+    void Load();
 
-	void AnimChanged();
-	void LoopChanged();
+    void AnimChanged();
+    void LoopChanged();
 
-	// This is done automatically in most cases, but if the dialog is being destroyed
-	// but you're not deleting the plNoteTrackDlg, call this to free cached memory.
-	void DeleteCache();
+    // This is done automatically in most cases, but if the dialog is being destroyed
+    // but you're not deleting the plNoteTrackDlg, call this to free cached memory.
+    void DeleteCache();
 
 protected:
-	virtual void ICacheNoteTrack();
+    virtual void ICacheNoteTrack();
 
-	void ILoadAnims();
-	void ILoadLoops();
+    void ILoadAnims();
+    void ILoadLoops();
 
-	const char *IGetSel(HWND hCombo);
+    const char *IGetSel(HWND hCombo);
 };
 
 

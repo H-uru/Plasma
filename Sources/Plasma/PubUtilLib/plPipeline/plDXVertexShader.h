@@ -37,21 +37,21 @@ class plDXPipeline;
 class plDXVertexShader : public plDXShader
 {
 protected:
-	IDirect3DVertexShader9* fHandle;
-	hsTArray<DWORD>&	IMakeDecl(hsTArray<DWORD>& decl) const;
-	virtual HRESULT		ICreate(plDXPipeline* pipe);  // On error, sets error string.
+    IDirect3DVertexShader9* fHandle;
+    hsTArray<DWORD>&    IMakeDecl(hsTArray<DWORD>& decl) const;
+    virtual HRESULT     ICreate(plDXPipeline* pipe);  // On error, sets error string.
 
-	virtual HRESULT		ISetConstants(plDXPipeline* pipe); // On error, sets error string.
+    virtual HRESULT     ISetConstants(plDXPipeline* pipe); // On error, sets error string.
 
 public:
-	plDXVertexShader(plShader* owner);
-	virtual ~plDXVertexShader();
+    plDXVertexShader(plShader* owner);
+    virtual ~plDXVertexShader();
 
-	virtual void	Release();
-	void			Link(plDXVertexShader** back) { plDXDeviceRef::Link((plDXDeviceRef**)back); }
+    virtual void    Release();
+    void            Link(plDXVertexShader** back) { plDXDeviceRef::Link((plDXDeviceRef**)back); }
 
-	hsBool			VerifyFormat(UInt8 format) const;
-	IDirect3DVertexShader9* GetShader(plDXPipeline* pipe);
+    hsBool          VerifyFormat(UInt8 format) const;
+    IDirect3DVertexShader9* GetShader(plDXPipeline* pipe);
 };
 
 #endif // plDXVertexSahder_inc

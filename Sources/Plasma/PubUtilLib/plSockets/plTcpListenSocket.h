@@ -34,9 +34,9 @@ class plNetAddress;
 class plTcpListenSocket : public plSocket
 {
 public:
-	bool OpenForListen(plNetAddress & inAddress, int backlogSize=1024);
-	bool OpenForListenNonBlocking(plNetAddress & inAddress, int backlogSize=1024);
-	bool GetIncomingConnection(SOCKET & outNewSession, plNetAddress & outRemoteAddress);
+    bool OpenForListen(plNetAddress & inAddress, int backlogSize=1024);
+    bool OpenForListenNonBlocking(plNetAddress & inAddress, int backlogSize=1024);
+    bool GetIncomingConnection(SOCKET & outNewSession, plNetAddress & outRemoteAddress);
 };
 
 

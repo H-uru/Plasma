@@ -40,58 +40,58 @@ class pfMarkerInfo;
 class pfMarkerMgr : public hsKeyedObject
 {
 protected:
-	friend class pfMarkerInfo;
-	friend class pfMarkerInfoOwned;
+    friend class pfMarkerInfo;
+    friend class pfMarkerInfoOwned;
 
-	// Because for some reason if I ask for my key, the refs hit zero when I release it (0 initial refs?)
-	plKey fMyKey;
+    // Because for some reason if I ask for my key, the refs hit zero when I release it (0 initial refs?)
+    plKey fMyKey;
 
-	plStatusLog* fLog;
+    plStatusLog* fLog;
 
-	static pfMarkerMgr* fInstance;
+    static pfMarkerMgr* fInstance;
 
-	bool fShowingLocalMarkers;
-	bool fMarkersRespawn;
-	UInt32 fSelectedMarker;
-	static const UInt32 kNoMarkerSelected;
-	std::map<UInt32, pfMarkerInfo*> fMarkers; // key is marker id number
+    bool fShowingLocalMarkers;
+    bool fMarkersRespawn;
+    UInt32 fSelectedMarker;
+    static const UInt32 kNoMarkerSelected;
+    std::map<UInt32, pfMarkerInfo*> fMarkers; // key is marker id number
 
-	void IInit();
-	void IShutdown();
+    void IInit();
+    void IShutdown();
 
-	pfMarkerInfo* IFindMarker(plKey markerKey, UInt32& id);
-	void IUpdate();
-	void IMarkerHit(plKey markerKey, plKey playerKey);
+    pfMarkerInfo* IFindMarker(plKey markerKey, UInt32& id);
+    void IUpdate();
+    void IMarkerHit(plKey markerKey, plKey playerKey);
 
-	pfMarkerMgr();
-	~pfMarkerMgr();
+    pfMarkerMgr();
+    ~pfMarkerMgr();
 
 public:
-	CLASSNAME_REGISTER(pfMarkerMgr);
-	GETINTERFACE_ANY(pfMarkerMgr, hsKeyedObject);
+    CLASSNAME_REGISTER(pfMarkerMgr);
+    GETINTERFACE_ANY(pfMarkerMgr, hsKeyedObject);
 
-	static pfMarkerMgr* Instance();
-	static void Shutdown();
+    static pfMarkerMgr* Instance();
+    static void Shutdown();
 
-	hsBool MsgReceive(plMessage* msg);
+    hsBool MsgReceive(plMessage* msg);
 
-	void AddMarker(double x, double y, double z, UInt32 id, bool justCreated);
-	void RemoveMarker(UInt32 id);
-	void RemoveAllMarkers();
+    void AddMarker(double x, double y, double z, UInt32 id, bool justCreated);
+    void RemoveMarker(UInt32 id);
+    void RemoveAllMarkers();
 
-	void ClearSelectedMarker();
-	void SetSelectedMarker(UInt32 id);
-	UInt32 GetSelectedMarker();
+    void ClearSelectedMarker();
+    void SetSelectedMarker(UInt32 id);
+    UInt32 GetSelectedMarker();
 
-	void SetMarkersRespawn(bool respawn) {fMarkersRespawn = respawn;}
-	bool GetMarkersRespawn() {return fMarkersRespawn;}
+    void SetMarkersRespawn(bool respawn) {fMarkersRespawn = respawn;}
+    bool GetMarkersRespawn() {return fMarkersRespawn;}
 
-	void CaptureMarker(UInt32 id, bool captured); // for QUEST games (no teams)
-	void CaptureMarker(UInt32 id, int team); // for TEAM games (0 = not captured)
+    void CaptureMarker(UInt32 id, bool captured); // for QUEST games (no teams)
+    void CaptureMarker(UInt32 id, int team); // for TEAM games (0 = not captured)
 
-	// Shows your markers locally, so you can see where they are
-	void LocalShowMarkers(bool show = true);
-	bool AreLocalMarkersShowing();
+    // Shows your markers locally, so you can see where they are
+    void LocalShowMarkers(bool show = true);
+    bool AreLocalMarkersShowing();
 };
 
 #endif // pfMarkerMgr_h_inc

@@ -74,4 +74,4 @@ REGISTER_CREATABLE(plNetMsgInitialAgeStateSent);
 REGISTER_CREATABLE(plNetMsgRelevanceRegions);
 
 
-#endif	// plNetMsgCreatable_h
+#endif  // plNetMsgCreatable_h

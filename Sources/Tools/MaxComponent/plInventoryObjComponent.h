@@ -40,21 +40,21 @@ class plMaxNode;
 //!  Inventory Object Component Class
 
 /*!
-	This Class is the rudimentary 'Inventoriable' component.  It is derived from the Clickable
-	component in order to access the mouse controllers to allow mouse state changes when the cursor
-	is over an object that can be taken.
+    This Class is the rudimentary 'Inventoriable' component.  It is derived from the Clickable
+    component in order to access the mouse controllers to allow mouse state changes when the cursor
+    is over an object that can be taken.
 
-		member functions:
-			
-			hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+        member functions:
+            
+            hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
 
-			hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-			hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+            hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+            hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-			virtual void AddReceiverKey(plKey pKey);
-			virtual plKey GetLogicKey(plMaxNode* node);
-			const LogicKeys& GetLogicKeys();
-		\sa SetupProperties(), PreConvert(), AddReceiverKey(), GetLogicKey() and GetLogicKeys()
+            virtual void AddReceiverKey(plKey pKey);
+            virtual plKey GetLogicKey(plMaxNode* node);
+            const LogicKeys& GetLogicKeys();
+        \sa SetupProperties(), PreConvert(), AddReceiverKey(), GetLogicKey() and GetLogicKeys()
 */
 
 
@@ -65,45 +65,45 @@ class plMaxNode;
 class plInventoryObjComponent : public plClickableComponent
 {
 public:
-	typedef std::map<plMaxNode*, plKey> LogicKeys;
+    typedef std::map<plMaxNode*, plKey> LogicKeys;
 protected:
-	
-	hsTArray<plKey> fReceivers;
-	LogicKeys fLogicModKeys;
+    
+    hsTArray<plKey> fReceivers;
+    LogicKeys fLogicModKeys;
 
 public:
 
-	//! Constructor function for class
-	/*!
-		Herein the ClassDesc2 object that is used extensively by the ParamBlock2
-		has gained accessibiltiy.  Auto-Creation of the UI is done here as well.
-	
-	*/
-	plInventoryObjComponent();
+    //! Constructor function for class
+    /*!
+        Herein the ClassDesc2 object that is used extensively by the ParamBlock2
+        has gained accessibiltiy.  Auto-Creation of the UI is done here as well.
+    
+    */
+    plInventoryObjComponent();
 
-	// Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
+    // Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
 
-	//! plInventoryObjComponent PreConvert, takes in two variables and return a hsBool.
-	/*! 
-		Calls the function MaybeMakeLocal() and Sets Drawable to false.
+    //! plInventoryObjComponent PreConvert, takes in two variables and return a hsBool.
+    /*! 
+        Calls the function MaybeMakeLocal() and Sets Drawable to false.
 
-		Takes in two variables, being:
-		\param node a plMaxNode ptr.
-		\param pErrMsg a pErrMsg ptr.
+        Takes in two variables, being:
+        \param node a plMaxNode ptr.
+        \param pErrMsg a pErrMsg ptr.
 
-		\return A hsBool expressing the success of the operation.
-		\sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
-	*/
+        \return A hsBool expressing the success of the operation.
+        \sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
+    */
 
-	hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	virtual void AddReceiverKey(plKey key, plMaxNode* node=nil);
-	virtual plKey GetLogicKey(plMaxNode* node);
-	const LogicKeys& GetLogicKeys();
+    virtual void AddReceiverKey(plKey key, plMaxNode* node=nil);
+    virtual plKey GetLogicKey(plMaxNode* node);
+    const LogicKeys& GetLogicKeys();
 
 };
 

@@ -15,10 +15,10 @@
 #
 STATEDESC clothingItem
 {
-	VERSION 3		# version is an int	
-	VAR PLKEY	item[1]
-	VAR RGB8	tint[1]	DEFAULT=(1,1,1)
-	VAR RGB8	tint2[1] DEFAULT=(1,1,1)
+    VERSION 3       # version is an int 
+    VAR PLKEY   item[1]
+    VAR RGB8    tint[1] DEFAULT=(1,1,1)
+    VAR RGB8    tint2[1] DEFAULT=(1,1,1)
 }
 
 #
@@ -27,9 +27,9 @@ STATEDESC clothingItem
 #
 STATEDESC appearanceOptions 
 {
-	VERSION 2
-	VAR RGB8 skinTint[1] DEFAULT=(1,1,1)
-	VAR BYTE faceBlends[] DEFAULT=0;
+    VERSION 2
+    VAR RGB8 skinTint[1] DEFAULT=(1,1,1)
+    VAR BYTE faceBlends[] DEFAULT=0;
 }
 
 # 
@@ -38,9 +38,9 @@ STATEDESC appearanceOptions
 #
 STATEDESC clothing   
 {
-	VERSION 4
-	VAR $clothingItem wardrobe[]
-	VAR $appearanceOptions appearance[1]
-	VAR	PLKEY linkInAnim[1]	DEFAULT=nil
+    VERSION 4
+    VAR $clothingItem wardrobe[]
+    VAR $appearanceOptions appearance[1]
+    VAR PLKEY linkInAnim[1] DEFAULT=nil
 }
 

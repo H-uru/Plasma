@@ -36,16 +36,16 @@ class hsGMaterial;
 class plOccluderProxy : public plProxyGen
 {
 protected:
-	plOccluder*			fOwner;
+    plOccluder*         fOwner;
 
 
-	virtual plDrawableSpans*	ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
-	virtual plKey				IGetNode() const;
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
+    virtual plKey               IGetNode() const;
 public:
-	plOccluderProxy();
-	virtual ~plOccluderProxy();
+    plOccluderProxy();
+    virtual ~plOccluderProxy();
 
-	hsBool  Init(plOccluder* occluder);
+    hsBool  Init(plOccluder* occluder);
 };
 
 #endif // plOccluderProxy_inc

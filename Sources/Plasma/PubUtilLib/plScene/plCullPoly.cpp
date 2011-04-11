@@ -32,118 +32,118 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plCullPoly& plCullPoly::InitFromVerts(UInt32 f)
 {
-	fFlags = f;
+    fFlags = f;
 
-	hsAssert(fVerts.GetCount() > 2, "Initializing from degenerate poly");
+    hsAssert(fVerts.GetCount() > 2, "Initializing from degenerate poly");
 
-	hsVector3 a;
-	hsVector3 b;
-	a.Set(&fVerts[1], &fVerts[0]);
-	b.Set(&fVerts[2], &fVerts[0]);
-	fNorm = a % b;
-	hsFastMath::Normalize(fNorm);
-	fDist = -(fNorm.InnerProduct(fVerts[0]));
+    hsVector3 a;
+    hsVector3 b;
+    a.Set(&fVerts[1], &fVerts[0]);
+    b.Set(&fVerts[2], &fVerts[0]);
+    fNorm = a % b;
+    hsFastMath::Normalize(fNorm);
+    fDist = -(fNorm.InnerProduct(fVerts[0]));
 
-	fCenter.Set(0,0,0);
-	int i;
-	for( i = 0; i < fVerts.GetCount(); i++ )
-	{
-		fCenter += fVerts[i];
-	}
-	fCenter *= 1.f / hsScalar(fVerts.GetCount());
+    fCenter.Set(0,0,0);
+    int i;
+    for( i = 0; i < fVerts.GetCount(); i++ )
+    {
+        fCenter += fVerts[i];
+    }
+    fCenter *= 1.f / hsScalar(fVerts.GetCount());
 
-	fRadius = ICalcRadius();
+    fRadius = ICalcRadius();
 
-	return *this;
+    return *this;
 }
 
 hsScalar plCullPoly::ICalcRadius() const
 {
-	hsScalar radSq = 0;
-	int i;
-	for( i = 0; i < fVerts.GetCount(); i++ )
-	{
-		hsScalar tmpSq = hsVector3(&fVerts[i], &fCenter).MagnitudeSquared();
-		if( tmpSq > radSq )
-			radSq = tmpSq;
-	}
-	return radSq * hsFastMath::InvSqrt(radSq);
+    hsScalar radSq = 0;
+    int i;
+    for( i = 0; i < fVerts.GetCount(); i++ )
+    {
+        hsScalar tmpSq = hsVector3(&fVerts[i], &fCenter).MagnitudeSquared();
+        if( tmpSq > radSq )
+            radSq = tmpSq;
+    }
+    return radSq * hsFastMath::InvSqrt(radSq);
 }
 
 plCullPoly& plCullPoly::Flip(const plCullPoly& p)
 {
-	fFlags = p.fFlags;
+    fFlags = p.fFlags;
 
-	fNorm = -p.fNorm;
-	fDist = -p.fDist;
-	fCenter = p.fCenter;
-	fRadius = p.fRadius;
+    fNorm = -p.fNorm;
+    fDist = -p.fDist;
+    fCenter = p.fCenter;
+    fRadius = p.fRadius;
 
-	int n = p.fVerts.GetCount();
-	fVerts.SetCount(n);
-	int i;
-	for( i = 0; i < n; i++ )
-		fVerts[n-i-1] = p.fVerts[i];
+    int n = p.fVerts.GetCount();
+    fVerts.SetCount(n);
+    int i;
+    for( i = 0; i < n; i++ )
+        fVerts[n-i-1] = p.fVerts[i];
 
-	return *this;
+    return *this;
 }
 
 plCullPoly& plCullPoly::Transform(const hsMatrix44& l2w, const hsMatrix44& w2l, plCullPoly& dst) const
 {
-	hsMatrix44 tpose;
-	w2l.GetTranspose(&tpose);
+    hsMatrix44 tpose;
+    w2l.GetTranspose(&tpose);
 
-	dst.fFlags = fFlags;
+    dst.fFlags = fFlags;
 
-	dst.fVerts.SetCount(fVerts.GetCount());
+    dst.fVerts.SetCount(fVerts.GetCount());
 
-	int i;
-	for( i = 0; i < fVerts.GetCount(); i++ )
-	{
-		dst.fVerts[i] = l2w * fVerts[i];
-	}
-	dst.fCenter = l2w * fCenter;
+    int i;
+    for( i = 0; i < fVerts.GetCount(); i++ )
+    {
+        dst.fVerts[i] = l2w * fVerts[i];
+    }
+    dst.fCenter = l2w * fCenter;
 
-	dst.fNorm = tpose * fNorm;
-	
-	dst.fDist = -(dst.fNorm .InnerProduct(dst.fVerts[0]));
+    dst.fNorm = tpose * fNorm;
+    
+    dst.fDist = -(dst.fNorm .InnerProduct(dst.fVerts[0]));
 
-	ICalcRadius();
+    ICalcRadius();
 
-	return dst;
+    return dst;
 }
 
 void plCullPoly::Read(hsStream* s, hsResMgr* mgr)
 {
-	fFlags = s->ReadSwap32();
+    fFlags = s->ReadSwap32();
 
-	fNorm.Read(s);
-	fDist = s->ReadSwapScalar();
-	fCenter.Read(s);
+    fNorm.Read(s);
+    fDist = s->ReadSwapScalar();
+    fCenter.Read(s);
 
-	fRadius = s->ReadSwapScalar();
+    fRadius = s->ReadSwapScalar();
 
-	int n = s->ReadSwap32();
-	fVerts.SetCount(n);
-	int i;
-	for( i = 0; i < n; i++ )
-		fVerts[i].Read(s);
+    int n = s->ReadSwap32();
+    fVerts.SetCount(n);
+    int i;
+    for( i = 0; i < n; i++ )
+        fVerts[i].Read(s);
 }
 
 void plCullPoly::Write(hsStream* s, hsResMgr* mgr)
 {
-	s->WriteSwap32(fFlags);
+    s->WriteSwap32(fFlags);
 
-	fNorm.Write(s);
-	s->WriteSwapScalar(fDist);
-	fCenter.Write(s);
+    fNorm.Write(s);
+    s->WriteSwapScalar(fDist);
+    fCenter.Write(s);
 
-	s->WriteSwapScalar(fRadius);
+    s->WriteSwapScalar(fRadius);
 
-	s->WriteSwap32(fVerts.GetCount());
-	int i;
-	for( i = 0; i < fVerts.GetCount(); i++ )
-		fVerts[i].Write(s);
+    s->WriteSwap32(fVerts.GetCount());
+    int i;
+    for( i = 0; i < fVerts.GetCount(); i++ )
+        fVerts[i].Write(s);
 }
 
 #ifdef HS_DEBUGGING
@@ -153,34 +153,34 @@ void plCullPoly::Write(hsStream* s, hsResMgr* mgr)
 #ifdef MF_VALIDATE_POLYS
 hsBool plCullPoly::Validate() const
 {
-	const hsScalar kMinMag = 1.e-8f;
-	hsScalar magSq = fNorm.MagnitudeSquared();
-	if( magSq < kMinMag )
-		return false;
-	if( fVerts.GetCount() < 3 )
-		return false;
-	hsVector3 norm = hsVector3(&fVerts[1], &fVerts[0]) % hsVector3(&fVerts[2], &fVerts[0]);
-	magSq = norm.MagnitudeSquared();
-	if( magSq < kMinMag )
-		return false;
-	norm *= hsFastMath::InvSqrtAppr(magSq);
-	int i;
-	for( i = 3; i < fVerts.GetCount(); i++ )
-	{
-		hsVector3 nextNorm = hsVector3(&fVerts[i-1], &fVerts[0]) % hsVector3(&fVerts[i], &fVerts[0]);
-		magSq = nextNorm.MagnitudeSquared();
-		if( magSq < kMinMag )
-			return false;
-		nextNorm *= hsFastMath::InvSqrtAppr(magSq);
-		if( nextNorm.InnerProduct(norm) < kMinMag )
-			return false;
-	}
-	return true;
+    const hsScalar kMinMag = 1.e-8f;
+    hsScalar magSq = fNorm.MagnitudeSquared();
+    if( magSq < kMinMag )
+        return false;
+    if( fVerts.GetCount() < 3 )
+        return false;
+    hsVector3 norm = hsVector3(&fVerts[1], &fVerts[0]) % hsVector3(&fVerts[2], &fVerts[0]);
+    magSq = norm.MagnitudeSquared();
+    if( magSq < kMinMag )
+        return false;
+    norm *= hsFastMath::InvSqrtAppr(magSq);
+    int i;
+    for( i = 3; i < fVerts.GetCount(); i++ )
+    {
+        hsVector3 nextNorm = hsVector3(&fVerts[i-1], &fVerts[0]) % hsVector3(&fVerts[i], &fVerts[0]);
+        magSq = nextNorm.MagnitudeSquared();
+        if( magSq < kMinMag )
+            return false;
+        nextNorm *= hsFastMath::InvSqrtAppr(magSq);
+        if( nextNorm.InnerProduct(norm) < kMinMag )
+            return false;
+    }
+    return true;
 }
 #else // MF_VALIDATE_POLYS
 hsBool plCullPoly::Validate() const
 {
-	return true;
+    return true;
 }
 #endif // MF_VALIDATE_POLYS
 

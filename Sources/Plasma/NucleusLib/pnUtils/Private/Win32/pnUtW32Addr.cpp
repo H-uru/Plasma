@@ -218,7 +218,7 @@ bool NetAddressFromString (NetAddress * addr, const wchar str[], unsigned defaul
     for (;;) {
         NetAddressNode node = NodeFromString(&str);
         if (node == (unsigned)-1)
-			break;
+            break;
 
         if (*str == L':')
             defaultPort = StrToUnsigned(str + 1, nil, 10);

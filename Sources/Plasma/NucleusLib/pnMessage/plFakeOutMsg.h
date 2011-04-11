@@ -41,38 +41,38 @@ class plFakeOutMsg : public plMessage
 protected:
 
 public:
-	plFakeOutMsg(){SetBCastFlag(plMessage::kPropagateToModifiers);}
-	plFakeOutMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
-	
-	CLASSNAME_REGISTER( plFakeOutMsg );
-	GETINTERFACE_ANY( plFakeOutMsg, plMessage );
+    plFakeOutMsg(){SetBCastFlag(plMessage::kPropagateToModifiers);}
+    plFakeOutMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
+    
+    CLASSNAME_REGISTER( plFakeOutMsg );
+    GETINTERFACE_ANY( plFakeOutMsg, plMessage );
 
-	enum 
-	{
-		kNumCmds = 0,
-	};
+    enum 
+    {
+        kNumCmds = 0,
+    };
 
-	hsBitVector		fCmd;
+    hsBitVector     fCmd;
 
-	hsBool Cmd(int n) { return fCmd.IsBitSet(n); }
-	void SetCmd(int n) { fCmd.SetBit(n); }
-	void ClearCmd() { fCmd.Clear(); }
-	void ClearCmd(int n) { fCmd.ClearBit(n); }
-	
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fCmd.Read(stream);
-	}
+    hsBool Cmd(int n) { return fCmd.IsBitSet(n); }
+    void SetCmd(int n) { fCmd.SetBit(n); }
+    void ClearCmd() { fCmd.Clear(); }
+    void ClearCmd(int n) { fCmd.ClearBit(n); }
+    
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fCmd.Read(stream);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		fCmd.Write(stream);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        fCmd.Write(stream);
+    }
 
 };
 

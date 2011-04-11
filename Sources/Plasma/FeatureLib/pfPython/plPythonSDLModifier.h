@@ -48,94 +48,94 @@ class pyKey;
 class plPythonSDLModifier : public plSDLModifier
 {
 protected:
-	class SDLObj
-	{
-	public:
-		PyObject* obj;
-		int size;		// 0 for resizable
-		bool sendToClients;
-		bool skipLocalCheck;
-		bool sendImmediate;
-		std::string hintString;
-		SDLObj() : obj(nil), size(-1), sendToClients(false) {}
-		SDLObj(PyObject* obj, int size, bool sendToClients) : obj(obj), size(size), sendToClients(sendToClients) {}
-	};
-	typedef std::map<std::string, SDLObj> SDLMap;
-	SDLMap fMap;
-	plPythonFileMod* fOwner;
+    class SDLObj
+    {
+    public:
+        PyObject* obj;
+        int size;       // 0 for resizable
+        bool sendToClients;
+        bool skipLocalCheck;
+        bool sendImmediate;
+        std::string hintString;
+        SDLObj() : obj(nil), size(-1), sendToClients(false) {}
+        SDLObj(PyObject* obj, int size, bool sendToClients) : obj(obj), size(size), sendToClients(sendToClients) {}
+    };
+    typedef std::map<std::string, SDLObj> SDLMap;
+    SDLMap fMap;
+    plPythonFileMod* fOwner;
 
-	plPythonSDLModifier() {}
+    plPythonSDLModifier() {}
 
-	PyObject* ISDLVarToPython(plSimpleStateVariable* var);
-	PyObject* ISDLVarIdxToPython(plSimpleStateVariable* var, int type, int idx);
+    PyObject* ISDLVarToPython(plSimpleStateVariable* var);
+    PyObject* ISDLVarIdxToPython(plSimpleStateVariable* var, int type, int idx);
 
-	void IPythonVarToSDL(plStateDataRecord* state, const char* name);
-	bool IPythonVarIdxToSDL(plSimpleStateVariable* var, int varIdx, int type, PyObject* pyVar, const char* hintstring);
+    void IPythonVarToSDL(plStateDataRecord* state, const char* name);
+    bool IPythonVarIdxToSDL(plSimpleStateVariable* var, int varIdx, int type, PyObject* pyVar, const char* hintstring);
 
-	void ISetItem(const char* key, PyObject* value);
-	void IDirtySynchState(const char* name, hsBool sendImmediate = false);
+    void ISetItem(const char* key, PyObject* value);
+    void IDirtySynchState(const char* name, hsBool sendImmediate = false);
 
-	void IPutCurrentStateIn(plStateDataRecord* dstState);
-	void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
 public:
-	plPythonSDLModifier(plPythonFileMod* owner);
-	~plPythonSDLModifier();
+    plPythonSDLModifier(plPythonFileMod* owner);
+    ~plPythonSDLModifier();
 
-	CLASSNAME_REGISTER(plPythonSDLModifier);
-	GETINTERFACE_ANY(plPythonSDLModifier, plSDLModifier);
+    CLASSNAME_REGISTER(plPythonSDLModifier);
+    GETINTERFACE_ANY(plPythonSDLModifier, plSDLModifier);
 
-	virtual const char* GetSDLName() const;
-	virtual void SetItemFromSDLVar(plSimpleStateVariable* var);
+    virtual const char* GetSDLName() const;
+    virtual void SetItemFromSDLVar(plSimpleStateVariable* var);
 
-	static bool HasSDL(const char* pythonFile);
-	// find the Age global SDL guy... if there is one
-	static const plPythonSDLModifier* FindAgeSDL();
-	static plKey FindAgeSDLTarget();
+    static bool HasSDL(const char* pythonFile);
+    // find the Age global SDL guy... if there is one
+    static const plPythonSDLModifier* FindAgeSDL();
+    static plKey FindAgeSDLTarget();
 
-	void SetDefault(const char* key, PyObject* value);
-	void SendToClients(const char* key);
-	void SetNotify(pyKey& selfkey, const char* key, float tolerance);
+    void SetDefault(const char* key, PyObject* value);
+    void SendToClients(const char* key);
+    void SetNotify(pyKey& selfkey, const char* key, float tolerance);
 
-	PyObject* GetItem(const char* key);
-	void SetItem(const char* key, PyObject* value);
-	void SetItemIdx(const char* key, int idx, PyObject* value, hsBool sendImmediate = false);
-	void SetFlags(const char* name, bool sendImmediate, bool skipOwnershipCheck);
-	void SetTagString(const char* name, const char* tag);
+    PyObject* GetItem(const char* key);
+    void SetItem(const char* key, PyObject* value);
+    void SetItemIdx(const char* key, int idx, PyObject* value, hsBool sendImmediate = false);
+    void SetFlags(const char* name, bool sendImmediate, bool skipOwnershipCheck);
+    void SetTagString(const char* name, const char* tag);
 };
 
 // A wrapper for plPythonSDLModifier that Python uses
 class pySDLModifier
 {
 protected:
-	plPythonSDLModifier* fRecord;
+    plPythonSDLModifier* fRecord;
 
-	pySDLModifier(plPythonSDLModifier* sdlMod);
-	pySDLModifier() {}
+    pySDLModifier(plPythonSDLModifier* sdlMod);
+    pySDLModifier() {}
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptSDL);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(plPythonSDLModifier *sdlMod);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySDLModifier object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySDLModifier); // converts a PyObject to a pySDLModifier (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptSDL);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(plPythonSDLModifier *sdlMod);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySDLModifier object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySDLModifier); // converts a PyObject to a pySDLModifier (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
-	static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
 
-	// global function to get the GrandMaster Age SDL object
-	static PyObject* GetAgeSDL();
+    // global function to get the GrandMaster Age SDL object
+    static PyObject* GetAgeSDL();
 
-	static void SetDefault(pySDLModifier& self, std::string key, PyObject* value);
-	static void SendToClients(pySDLModifier& self, std::string key);
-	static void SetNotify(pySDLModifier& self, pyKey& selfkey, std::string key, float tolerance);
-	
-	static PyObject* GetItem(pySDLModifier& self, std::string key);
-	static void SetItem(pySDLModifier& self, std::string key, PyObject* value);
-	static void SetItemIdx(pySDLModifier& self, std::string key, int idx, PyObject* value);
-	static void SetItemIdxImmediate(pySDLModifier& self, std::string key, int idx, PyObject* value);
-	static void SetFlags(pySDLModifier& self, const char* name, bool sendImmediate, bool skipOwnershipCheck);
-	static void SetTagString(pySDLModifier& self, const char* name, const char* tag);
-	
+    static void SetDefault(pySDLModifier& self, std::string key, PyObject* value);
+    static void SendToClients(pySDLModifier& self, std::string key);
+    static void SetNotify(pySDLModifier& self, pyKey& selfkey, std::string key, float tolerance);
+    
+    static PyObject* GetItem(pySDLModifier& self, std::string key);
+    static void SetItem(pySDLModifier& self, std::string key, PyObject* value);
+    static void SetItemIdx(pySDLModifier& self, std::string key, int idx, PyObject* value);
+    static void SetItemIdxImmediate(pySDLModifier& self, std::string key, int idx, PyObject* value);
+    static void SetFlags(pySDLModifier& self, const char* name, bool sendImmediate, bool skipOwnershipCheck);
+    static void SetTagString(pySDLModifier& self, const char* name, const char* tag);
+    
 };
 
 #endif // plPythonSDLModifier_h_inc

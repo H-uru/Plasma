@@ -28,38 +28,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum
 {
-	kCompPasses,
-	kCompOn,
-	kCompBlend,
-	kCompUVChannels,
-	kCompLayerCounts
+    kCompPasses,
+    kCompOn,
+    kCompBlend,
+    kCompUVChannels,
+    kCompLayerCounts
 };
 
 // Make sure to pair up each blend mode with an inverse after it
 // (This way we check for an inverse blend by doing an odd/even check.)
 enum BlendMethod // These should match up in order with the blend strings
 {
-	kCompBlendVertexAlpha,
-	kCompBlendInverseVtxAlpha,
-	kCompBlendVertexIllumRed,
-	kCompBlendInverseVtxIllumRed,
-	kCompBlendVertexIllumGreen,
-	kCompBlendInverseVtxIllumGreen,
-	kCompBlendVertexIllumBlue,
-	kCompBlendInverseVtxIllumBlue,
-	kCompNumBlendMethods
-};	
+    kCompBlendVertexAlpha,
+    kCompBlendInverseVtxAlpha,
+    kCompBlendVertexIllumRed,
+    kCompBlendInverseVtxIllumRed,
+    kCompBlendVertexIllumGreen,
+    kCompBlendInverseVtxIllumGreen,
+    kCompBlendVertexIllumBlue,
+    kCompBlendInverseVtxIllumBlue,
+    kCompNumBlendMethods
+};  
 
 static char *BlendStrings[] = // Make sure these match up in order with the Blend enum
 {
-	"Vertex Alpha",
-	"Inverse Vtx Alpha",
-	"Vertex Illum Red",
-	"Inv. Vtx Illum Red",
-	"Vertex Illum Green",
-	"Inv. Vtx Illum Green",
-	"Vertex Illum Blue",
-	"Inv. Vtx Illum Blue"
+    "Vertex Alpha",
+    "Inverse Vtx Alpha",
+    "Vertex Illum Red",
+    "Inv. Vtx Illum Red",
+    "Vertex Illum Green",
+    "Inv. Vtx Illum Green",
+    "Vertex Illum Blue",
+    "Inv. Vtx Illum Blue"
 };
 
 #endif //PL_COMPOSITE_MTL_PB_H

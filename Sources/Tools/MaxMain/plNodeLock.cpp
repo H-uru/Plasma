@@ -31,28 +31,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plNodeLock::Lock(BOOL on)
 {
-	Interface *ip = GetCOREInterface();
-	ISetLockRecur(ip->GetRootNode(), on);
+    Interface *ip = GetCOREInterface();
+    ISetLockRecur(ip->GetRootNode(), on);
 }
 
 void plNodeLock::ISetLockRecur(INode* node, BOOL on)
 {
-	BOOL isSel = node->Selected();
-	if( isSel )
-	{
-		node->SetTransformLock(INODE_LOCKPOS, INODE_LOCK_X, on);
-		node->SetTransformLock(INODE_LOCKPOS, INODE_LOCK_Y, on);
-		node->SetTransformLock(INODE_LOCKPOS, INODE_LOCK_Z, on);
+    BOOL isSel = node->Selected();
+    if( isSel )
+    {
+        node->SetTransformLock(INODE_LOCKPOS, INODE_LOCK_X, on);
+        node->SetTransformLock(INODE_LOCKPOS, INODE_LOCK_Y, on);
+        node->SetTransformLock(INODE_LOCKPOS, INODE_LOCK_Z, on);
 
-		node->SetTransformLock(INODE_LOCKROT, INODE_LOCK_X, on);
-		node->SetTransformLock(INODE_LOCKROT, INODE_LOCK_Y, on);
-		node->SetTransformLock(INODE_LOCKROT, INODE_LOCK_Z, on);
+        node->SetTransformLock(INODE_LOCKROT, INODE_LOCK_X, on);
+        node->SetTransformLock(INODE_LOCKROT, INODE_LOCK_Y, on);
+        node->SetTransformLock(INODE_LOCKROT, INODE_LOCK_Z, on);
 
-		node->SetTransformLock(INODE_LOCKSCL, INODE_LOCK_X, on);
-		node->SetTransformLock(INODE_LOCKSCL, INODE_LOCK_Y, on);
-		node->SetTransformLock(INODE_LOCKSCL, INODE_LOCK_Z, on);
-	}
-	int i;
-	for( i = 0; i < node->NumberOfChildren(); i++ )
-		ISetLockRecur(node->GetChildNode(i), on);
+        node->SetTransformLock(INODE_LOCKSCL, INODE_LOCK_X, on);
+        node->SetTransformLock(INODE_LOCKSCL, INODE_LOCK_Y, on);
+        node->SetTransformLock(INODE_LOCKSCL, INODE_LOCK_Z, on);
+    }
+    int i;
+    for( i = 0; i < node->NumberOfChildren(); i++ )
+        ISetLockRecur(node->GetChildNode(i), on);
 }

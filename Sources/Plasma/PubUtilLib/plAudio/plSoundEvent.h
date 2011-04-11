@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plSoundEvent - Event node for handling callback thread stuff			//
-//																			//
+//                                                                          //
+//  plSoundEvent - Event node for handling callback thread stuff            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plSoundEvent_h
@@ -38,45 +38,45 @@ class plEventCallbackMsg;
 class plSound;
 
 //// plSoundEvent ////////////////////////////////////////////////////////////
-//	Storage class for an event node.
+//  Storage class for an event node.
 
 class plSoundEvent
 {
 public:
 
-	enum Types
-	{
-		kStart,
-		kStop,
-		kTime,
-		kLoop
-	};
+    enum Types
+    {
+        kStart,
+        kStop,
+        kTime,
+        kLoop
+    };
 
-	plSoundEvent( Types type, plSound *owner );
-	plSoundEvent( Types type, UInt32 bytePos, plSound *owner );
-	plSoundEvent();
-	~plSoundEvent();
+    plSoundEvent( Types type, plSound *owner );
+    plSoundEvent( Types type, UInt32 bytePos, plSound *owner );
+    plSoundEvent();
+    ~plSoundEvent();
 
-	void	AddCallback( plEventCallbackMsg *msg );
-	hsBool	RemoveCallback( plEventCallbackMsg *msg );
+    void    AddCallback( plEventCallbackMsg *msg );
+    hsBool  RemoveCallback( plEventCallbackMsg *msg );
 
-	UInt32	GetNumCallbacks( void ) const;
-	int		GetType( void ) const;
-	void	SetType( Types type );
-	UInt32	GetTime( void ) const;
+    UInt32  GetNumCallbacks( void ) const;
+    int     GetType( void ) const;
+    void    SetType( Types type );
+    UInt32  GetTime( void ) const;
 
-	void	SendCallbacks( void );
+    void    SendCallbacks( void );
 
-	static Types	GetTypeFromCallbackMsg( plEventCallbackMsg *msg );
+    static Types    GetTypeFromCallbackMsg( plEventCallbackMsg *msg );
 
 protected:
 
-	Types		fType;
-	UInt32		fBytePosTime;
-	plSound		*fOwner;
+    Types       fType;
+    UInt32      fBytePosTime;
+    plSound     *fOwner;
 
-	hsTArray<plEventCallbackMsg	*>	fCallbacks;
-	hsTArray<UInt8>					fCallbackEndingFlags;
+    hsTArray<plEventCallbackMsg *>  fCallbacks;
+    hsTArray<UInt8>                 fCallbackEndingFlags;
 };
 
 

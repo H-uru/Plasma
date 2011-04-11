@@ -32,19 +32,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plUnzip
 {
 protected:
-	unzFile fFile;
+    unzFile fFile;
 
-	void IGetFullPath(const char* destDir, const char* filename, char* outFilename);
-	void IExtractCurrent(const char* destDir, char* fileName=nil);
+    void IGetFullPath(const char* destDir, const char* filename, char* outFilename);
+    void IExtractCurrent(const char* destDir, char* fileName=nil);
 
 public:
-	plUnzip();
+    plUnzip();
 
-	bool Open(const char* filename);
-	bool Close();
+    bool Open(const char* filename);
+    bool Close();
 
-	void ExtractAll(const char* destDir);
-	bool ExtractNext(const char* destDir, char* fileName);
+    void ExtractAll(const char* destDir);
+    bool ExtractNext(const char* destDir, char* fileName);
 };
 
 #endif // plUnzip_h_inc

@@ -34,23 +34,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plInterfaceInfoModifier : public plSingleModifier
 {
 protected:
-	
-	hsTArray<plKey>	fKeyList;
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty){ return true; }
+    
+    hsTArray<plKey> fKeyList;
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty){ return true; }
 public:
 
-	plInterfaceInfoModifier(); 
-	~plInterfaceInfoModifier();
+    plInterfaceInfoModifier(); 
+    ~plInterfaceInfoModifier();
 
-	CLASSNAME_REGISTER( plInterfaceInfoModifier );
-	GETINTERFACE_ANY( plInterfaceInfoModifier, plSingleModifier );
+    CLASSNAME_REGISTER( plInterfaceInfoModifier );
+    GETINTERFACE_ANY( plInterfaceInfoModifier, plSingleModifier );
 
-	void AddRefdKey(plKey &k) { fKeyList.Append(k);	}
+    void AddRefdKey(plKey &k) { fKeyList.Append(k); }
 
-	int GetNumReferencedKeys() const { return fKeyList.Count(); }
-	plKey GetReferencedKey(int i) const { return fKeyList[i]; }
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    int GetNumReferencedKeys() const { return fKeyList.Count(); }
+    plKey GetReferencedKey(int i) const { return fKeyList[i]; }
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plInterfaceInfoMod_inc

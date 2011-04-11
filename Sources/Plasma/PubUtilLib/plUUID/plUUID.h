@@ -37,51 +37,51 @@ class plUUID
 {
     // must be first field in class
 public:
-	UInt8	fData[16];
-	struct Match
-	{
-		const plUUID * fGuid;
-		Match( const plUUID * guid ):fGuid( guid ){}
-		bool operator()( const plUUID * guid ) const { return guid->IsEqualTo( fGuid );}
-	};
+    UInt8   fData[16];
+    struct Match
+    {
+        const plUUID * fGuid;
+        Match( const plUUID * guid ):fGuid( guid ){}
+        bool operator()( const plUUID * guid ) const { return guid->IsEqualTo( fGuid );}
+    };
 
-	plUUID();
-	plUUID( const char * s );
-	plUUID( const plUUID & other );
+    plUUID();
+    plUUID( const char * s );
+    plUUID( const plUUID & other );
     plUUID( const Uuid & uuid );
-	void	Clear();
-	bool	IsNull() const;
+    void    Clear();
+    bool    IsNull() const;
     bool    IsSet() const { return !IsNull(); }
-	void	CopyFrom( const plUUID * v );
-	void	CopyFrom( const plUUID & v );
-	int		CompareTo( const plUUID * v ) const;
-	bool	IsEqualTo( const plUUID * v ) const;
-	bool	FromString( const char * str );
-	bool	ToStdString( std::string & out ) const;
+    void    CopyFrom( const plUUID * v );
+    void    CopyFrom( const plUUID & v );
+    int     CompareTo( const plUUID * v ) const;
+    bool    IsEqualTo( const plUUID * v ) const;
+    bool    FromString( const char * str );
+    bool    ToStdString( std::string & out ) const;
     inline std::string AsStdString() const { return AsString(); }
     const char * AsString() const; // returns static buffer
-	void	Read( hsStream * s );
-	void	Write( hsStream * s );
-	operator std::string ( void ) const { return AsStdString();}
-	bool	operator==( const plUUID & other ) const { return IsEqualTo( &other ); }
-	bool	operator!=( const plUUID & other ) const { return !IsEqualTo( &other ); }
-	int		operator <( const plUUID & other ) const { return CompareTo( &other ); }
+    void    Read( hsStream * s );
+    void    Write( hsStream * s );
+    operator std::string ( void ) const { return AsStdString();}
+    bool    operator==( const plUUID & other ) const { return IsEqualTo( &other ); }
+    bool    operator!=( const plUUID & other ) const { return !IsEqualTo( &other ); }
+    int     operator <( const plUUID & other ) const { return CompareTo( &other ); }
     operator Uuid () const;
 
-	static plUUID Generate();
+    static plUUID Generate();
 };
 
 class plCreatableUuid : public plUUID, public plCreatable {
 public:
-	CLASSNAME_REGISTER( plCreatableUuid );
-	GETINTERFACE_ANY( plCreatableUuid, plCreatable );
+    CLASSNAME_REGISTER( plCreatableUuid );
+    GETINTERFACE_ANY( plCreatableUuid, plCreatable );
 
-	plCreatableUuid ();
-	plCreatableUuid (const plCreatableUuid & other);
-	plCreatableUuid (const plUUID & other);
+    plCreatableUuid ();
+    plCreatableUuid (const plCreatableUuid & other);
+    plCreatableUuid (const plUUID & other);
 
-	void	Read( hsStream * s, hsResMgr* ) { plUUID::Read(s); }
-	void	Write( hsStream * s, hsResMgr* ) { plUUID::Write(s); }
+    void    Read( hsStream * s, hsResMgr* ) { plUUID::Read(s); }
+    void    Write( hsStream * s, hsResMgr* ) { plUUID::Write(s); }
 };
 
 

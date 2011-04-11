@@ -38,24 +38,24 @@ class plMorphSequenceSDLMod;
 class plMorphArrayWeights
 {
 public:
-	hsTArray<hsScalar> fDeltaWeights;
+    hsTArray<hsScalar> fDeltaWeights;
 };
 
 class plSharedMeshInfo
 {
 public:
-	enum
-	{
-		kInfoDirtyMesh = 0x1
-	};
+    enum
+    {
+        kInfoDirtyMesh = 0x1
+    };
 
-	plSharedMesh*		fMesh;
-	hsTArray<Int32>		fCurrIdx;
-	plDrawable*			fCurrDraw;
-	hsTArray<plMorphArrayWeights> fArrayWeights;
-	UInt8				fFlags;
+    plSharedMesh*       fMesh;
+    hsTArray<Int32>     fCurrIdx;
+    plDrawable*         fCurrDraw;
+    hsTArray<plMorphArrayWeights> fArrayWeights;
+    UInt8               fFlags;
 
-	plSharedMeshInfo() : fMesh(nil), fCurrDraw(nil), fFlags(0) {}
+    plSharedMeshInfo() : fMesh(nil), fCurrDraw(nil), fFlags(0) {}
 };
 
 // Keyed storage class for morph arrays/deltas
@@ -63,13 +63,13 @@ public:
 class plMorphDataSet : public hsKeyedObject
 {
 public:
-	hsTArray<plMorphArray>	fMorphs;
+    hsTArray<plMorphArray>  fMorphs;
 
-	CLASSNAME_REGISTER( plMorphDataSet );
-	GETINTERFACE_ANY( plMorphDataSet, hsKeyedObject );
-	
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);		
+    CLASSNAME_REGISTER( plMorphDataSet );
+    GETINTERFACE_ANY( plMorphDataSet, hsKeyedObject );
+    
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr);     
 };
 
 // A place to hold incoming state while we're still waiting for the
@@ -77,98 +77,98 @@ public:
 class plMorphState
 {
 public:
-	plKey fSharedMeshKey;
-	hsTArray<plMorphArrayWeights> fArrayWeights;
+    plKey fSharedMeshKey;
+    hsTArray<plMorphArrayWeights> fArrayWeights;
 };
 
 class plMorphSequence : public plSingleModifier
 {
-	friend class plMorphSequenceSDLMod;
-	
+    friend class plMorphSequenceSDLMod;
+    
 protected:
-	enum
-	{
-		kDirty				= 0x1,
-		kHaveSnap			= 0x2,
-		kHaveShared			= 0x4,
-		kDirtyIndices		= 0x8
-	};
-	UInt32						fMorphFlags;
+    enum
+    {
+        kDirty              = 0x1,
+        kHaveSnap           = 0x2,
+        kHaveShared         = 0x4,
+        kDirtyIndices       = 0x8
+    };
+    UInt32                      fMorphFlags;
 
-	hsTArray<plMorphArray>		fMorphs;
+    hsTArray<plMorphArray>      fMorphs;
 
-	//Int32						fActiveMesh; // Doesn't appear to be used.
-	hsTArray<plSharedMeshInfo>	fSharedMeshes;
-	hsTArray<plMorphState>		fPendingStates;
-	plMorphSequenceSDLMod*		fMorphSDLMod;
-	Int8						fGlobalLayerRef;
+    //Int32                     fActiveMesh; // Doesn't appear to be used.
+    hsTArray<plSharedMeshInfo>  fSharedMeshes;
+    hsTArray<plMorphState>      fPendingStates;
+    plMorphSequenceSDLMod*      fMorphSDLMod;
+    Int8                        fGlobalLayerRef;
 
-	const plDrawInterface*		IGetDrawInterface() const;
+    const plDrawInterface*      IGetDrawInterface() const;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
 
-	void ISetHaveSnap(hsBool on) { if(on)fMorphFlags |= kHaveSnap; else fMorphFlags &= ~kHaveSnap; }
-	void ISetDirty(hsBool on);
+    void ISetHaveSnap(hsBool on) { if(on)fMorphFlags |= kHaveSnap; else fMorphFlags &= ~kHaveSnap; }
+    void ISetDirty(hsBool on);
 
-	hsBool		IResetShared(int iShare);
-	void		IApplyShared(int iShare);
-	hsBool		IFindIndices(int iShare);
-	void		IReleaseIndices(int iShare);
+    hsBool      IResetShared(int iShare);
+    void        IApplyShared(int iShare);
+    hsBool      IFindIndices(int iShare);
+    void        IReleaseIndices(int iShare);
 
-	void		IRenormalize(hsTArray<plAccessSpan>& dst) const;
+    void        IRenormalize(hsTArray<plAccessSpan>& dst) const;
 
-	void		IResetShared();
-	void		IReleaseIndices(); // Puts everyone inactive
-	void		IFindIndices(); // Refresh Indicies
-	void		IApplyShared(); // Apply whatever morphs are active
+    void        IResetShared();
+    void        IReleaseIndices(); // Puts everyone inactive
+    void        IFindIndices(); // Refresh Indicies
+    void        IApplyShared(); // Apply whatever morphs are active
 
-	Int32		IFindPendingStateIndex(plKey meshKey) const; // Do we have pending state for this mesh?
-	Int32		IFindSharedMeshIndex(plKey meshKey) const; // What's this mesh's index in our array?
-	hsBool		IIsUsingDrawable(plDrawable *draw); // Are we actively looking at spans in this drawable?
+    Int32       IFindPendingStateIndex(plKey meshKey) const; // Do we have pending state for this mesh?
+    Int32       IFindSharedMeshIndex(plKey meshKey) const; // What's this mesh's index in our array?
+    hsBool      IIsUsingDrawable(plDrawable *draw); // Are we actively looking at spans in this drawable?
 
-	// Internal functions for maintaining that all meshes share the same global weight(s) (fGlobalLayerRef)
-	void		ISetAllSharedToGlobal();
-	void		ISetSingleSharedToGlobal(int idx);
-		
+    // Internal functions for maintaining that all meshes share the same global weight(s) (fGlobalLayerRef)
+    void        ISetAllSharedToGlobal();
+    void        ISetSingleSharedToGlobal(int idx);
+        
 
 public:
-	plMorphSequence();
-	virtual ~plMorphSequence();
+    plMorphSequence();
+    virtual ~plMorphSequence();
 
-	CLASSNAME_REGISTER( plMorphSequence );
-	GETINTERFACE_ANY( plMorphSequence, plSingleModifier );
+    CLASSNAME_REGISTER( plMorphSequence );
+    GETINTERFACE_ANY( plMorphSequence, plSingleModifier );
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual void AddTarget(plSceneObject* so);
-	virtual void RemoveTarget(plSceneObject* so);
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);	
+    virtual void AddTarget(plSceneObject* so);
+    virtual void RemoveTarget(plSceneObject* so);
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr); 
 
-	void Init();
-	void Activate();
-	void DeInit();
-	void DeActivate();
+    void Init();
+    void Activate();
+    void DeInit();
+    void DeActivate();
 
-	void Apply() const;
-	void Reset(const plDrawInterface* di=nil) const;
+    void Apply() const;
+    void Reset(const plDrawInterface* di=nil) const;
 
-	int GetNumLayers(plKey meshKey = nil) const; 
-	void AddLayer(const plMorphArray& ma) { fMorphs.Append(ma); }
+    int GetNumLayers(plKey meshKey = nil) const; 
+    void AddLayer(const plMorphArray& ma) { fMorphs.Append(ma); }
 
-	int GetNumDeltas(int iLay, plKey meshKey = nil) const;
-	hsScalar GetWeight(int iLay, int iDel, plKey meshKey = nil) const;
-	void SetWeight(int iLay, int iDel, hsScalar w, plKey meshKey = nil);
+    int GetNumDeltas(int iLay, plKey meshKey = nil) const;
+    hsScalar GetWeight(int iLay, int iDel, plKey meshKey = nil) const;
+    void SetWeight(int iLay, int iDel, hsScalar w, plKey meshKey = nil);
 
-	hsBool GetHaveSnap() const { return 0 != (fMorphFlags & kHaveSnap); }
-	hsBool GetDirty() const { return 0 != (fMorphFlags & kDirty); }
-	hsBool GetUseSharedMesh() const { return 0 != (fMorphFlags & kHaveShared); }
+    hsBool GetHaveSnap() const { return 0 != (fMorphFlags & kHaveSnap); }
+    hsBool GetDirty() const { return 0 != (fMorphFlags & kDirty); }
+    hsBool GetUseSharedMesh() const { return 0 != (fMorphFlags & kHaveShared); }
 
-	void SetUseSharedMesh(hsBool on) { if(on)fMorphFlags |= kHaveShared; else fMorphFlags &= ~kHaveShared; }
-	void AddSharedMesh(plSharedMesh* mesh);
-	void RemoveSharedMesh(plSharedMesh* mesh);
-	static void FindMorphMods(const plSceneObject *so, hsTArray<const plMorphSequence*> &mods);
-	plMorphSequenceSDLMod *GetSDLMod() const { return fMorphSDLMod; }
+    void SetUseSharedMesh(hsBool on) { if(on)fMorphFlags |= kHaveShared; else fMorphFlags &= ~kHaveShared; }
+    void AddSharedMesh(plSharedMesh* mesh);
+    void RemoveSharedMesh(plSharedMesh* mesh);
+    static void FindMorphMods(const plSceneObject *so, hsTArray<const plMorphSequence*> &mods);
+    plMorphSequenceSDLMod *GetSDLMod() const { return fMorphSDLMod; }
 };
 
 #endif // plMorphSequence_inc

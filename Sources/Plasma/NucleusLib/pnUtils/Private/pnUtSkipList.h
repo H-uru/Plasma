@@ -41,10 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-#define SKIPLIST(type, keyType, keyField, cmp)		TSkipList< type, keyType, offsetof(type, keyField), cmp >
-#define SKIPLIST_NUMERIC(type, keyType, keyField)	SKIPLIST(type, keyType, keyField, TSkipListNumericCmp<keyType>)
-#define SKIPLIST_STRING(type, keyType, keyField)	SKIPLIST(type, keyType, keyField, TSkipListStringCmp<keyType>)
-#define SKIPLIST_STRINGI(type, keyType, keyField)	SKIPLIST(type, keyType, keyField, TSkipListStringCmpI<keyType>)
+#define SKIPLIST(type, keyType, keyField, cmp)      TSkipList< type, keyType, offsetof(type, keyField), cmp >
+#define SKIPLIST_NUMERIC(type, keyType, keyField)   SKIPLIST(type, keyType, keyField, TSkipListNumericCmp<keyType>)
+#define SKIPLIST_STRING(type, keyType, keyField)    SKIPLIST(type, keyType, keyField, TSkipListStringCmp<keyType>)
+#define SKIPLIST_STRINGI(type, keyType, keyField)   SKIPLIST(type, keyType, keyField, TSkipListStringCmpI<keyType>)
 
 
 
@@ -67,22 +67,22 @@ typedef void * SkipListTag;
 template<class K>
 class TSkipListNumericCmp {
 public:
-	static bool Eq (const K & a, const K & b) { return a == b; }
-	static bool Lt (const K & a, const K & b) { return a < b;  }
+    static bool Eq (const K & a, const K & b) { return a == b; }
+    static bool Lt (const K & a, const K & b) { return a < b;  }
 };
 
 template<class K>
 class TSkipListStringCmp {
 public:
-	static bool Eq (const K & a, const K & b) { return StrCmp(a, b, (unsigned)-1) == 0; }
-	static bool Lt (const K & a, const K & b) { return StrCmp(a, b, (unsigned)-1) < 0;  }
+    static bool Eq (const K & a, const K & b) { return StrCmp(a, b, (unsigned)-1) == 0; }
+    static bool Lt (const K & a, const K & b) { return StrCmp(a, b, (unsigned)-1) < 0;  }
 };
 
 template<class K>
 class TSkipListStringCmpI {
 public:
-	static bool Eq (const K & a, const K & b) { return StrCmpI(a, b, (unsigned)-1) == 0; }
-	static bool Lt (const K & a, const K & b) { return StrCmpI(a, b, (unsigned)-1) < 0;  }
+    static bool Eq (const K & a, const K & b) { return StrCmpI(a, b, (unsigned)-1) == 0; }
+    static bool Lt (const K & a, const K & b) { return StrCmpI(a, b, (unsigned)-1) < 0;  }
 };
 
 
@@ -95,27 +95,27 @@ public:
 template<class T, class K, unsigned keyOffset, class Cmp>
 class TSkipList {
 private:
-	enum { kMaxLevels = 32 };
+    enum { kMaxLevels = 32 };
 
-	template<class T, class K>
-	struct TNode {
-		const K *     key;
-		T *           object;
-		unsigned      level;
-		TNode<T, K> * prev;
-		TNode<T, K> * next[1];      // variable size array
-	};
-	typedef TNode<T,K> Node;
+    template<class T, class K>
+    struct TNode {
+        const K *     key;
+        T *           object;
+        unsigned      level;
+        TNode<T, K> * prev;
+        TNode<T, K> * next[1];      // variable size array
+    };
+    typedef TNode<T,K> Node;
 
-	unsigned	m_level;
-	Node *		m_head;
-	Node *		m_stop;
-	unsigned	m_randomBits;
-	unsigned	m_randomsLeft;
+    unsigned    m_level;
+    Node *      m_head;
+    Node *      m_stop;
+    unsigned    m_randomBits;
+    unsigned    m_randomsLeft;
 
-	Node *		AllocNode (unsigned levels);
-	void		FreeNode (Node * node);
-	unsigned	RandomLevel ();
+    Node *      AllocNode (unsigned levels);
+    void        FreeNode (Node * node);
+    unsigned    RandomLevel ();
 
 public:
     inline TSkipList ();
@@ -149,39 +149,39 @@ public:
 template<class T, class K, unsigned keyOffset, class Cmp>
 typename TSkipList<T,K,keyOffset,Cmp>::TNode<T,K> * TSkipList<T,K,keyOffset,Cmp>::AllocNode (unsigned level) {
 
-	unsigned size = offsetof(Node, next) + (level + 1) * sizeof(Node);
-	Node * node = (Node *)ALLOC(size);
-	node->level = level;
-	return node;
+    unsigned size = offsetof(Node, next) + (level + 1) * sizeof(Node);
+    Node * node = (Node *)ALLOC(size);
+    node->level = level;
+    return node;
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::FreeNode (TNode<T,K> * node) {
 
-	FREE(node);
+    FREE(node);
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 unsigned TSkipList<T,K,keyOffset,Cmp>::RandomLevel () {
 
-	unsigned level = 0;
-	unsigned bits  = 0;
+    unsigned level = 0;
+    unsigned bits  = 0;
 
-	while (!bits) {
-		bits = m_randomBits % 4;
-		if (!bits)
-			++level;
-		m_randomBits >>= 2;
-		m_randomsLeft -= 2;
-		if (!m_randomsLeft) {
-			m_randomBits  = RandUnsigned();
-			m_randomsLeft = 30;
-		}
-	}
+    while (!bits) {
+        bits = m_randomBits % 4;
+        if (!bits)
+            ++level;
+        m_randomBits >>= 2;
+        m_randomsLeft -= 2;
+        if (!m_randomsLeft) {
+            m_randomBits  = RandUnsigned();
+            m_randomsLeft = 30;
+        }
+    }
 
-	return level;
+    return level;
 }
 
 
@@ -195,267 +195,267 @@ unsigned TSkipList<T,K,keyOffset,Cmp>::RandomLevel () {
 template<class T, class K, unsigned keyOffset, class Cmp>
 TSkipList<T,K,keyOffset,Cmp>::TSkipList () {
 
-	m_level       = 0; 
-	m_head        = AllocNode(kMaxLevels);
-	m_stop        = AllocNode(0);
-	m_randomBits  = RandUnsigned();
-	m_randomsLeft = 30;
+    m_level       = 0; 
+    m_head        = AllocNode(kMaxLevels);
+    m_stop        = AllocNode(0);
+    m_randomBits  = RandUnsigned();
+    m_randomsLeft = 30;
 
-	// Initialize header and stop skip node pointers
-	m_stop->prev    = m_head;
-	m_stop->object  = nil;
-	m_stop->next[0] = nil;
-	m_head->object  = nil;
-	for (unsigned index = 0; index < kMaxLevels; ++index)
-		m_head->next[index] = m_stop;
+    // Initialize header and stop skip node pointers
+    m_stop->prev    = m_head;
+    m_stop->object  = nil;
+    m_stop->next[0] = nil;
+    m_head->object  = nil;
+    for (unsigned index = 0; index < kMaxLevels; ++index)
+        m_head->next[index] = m_stop;
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 TSkipList<T,K,keyOffset,Cmp>::~TSkipList () {
 
-	UnlinkAll();
-	ASSERT(m_stop->prev == m_head);
-	FreeNode(m_head);
-	FreeNode(m_stop);
+    UnlinkAll();
+    ASSERT(m_stop->prev == m_head);
+    FreeNode(m_head);
+    FreeNode(m_stop);
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Clear () {
 
-	Node * ptr = m_head->next[0];
-	while (ptr != m_stop) {
-		Node * next = ptr->next[0];
-		DEL(ptr->object);
-		FreeNode(ptr);
-		ptr = next;
-	}
+    Node * ptr = m_head->next[0];
+    while (ptr != m_stop) {
+        Node * next = ptr->next[0];
+        DEL(ptr->object);
+        FreeNode(ptr);
+        ptr = next;
+    }
 
-	m_stop->prev = m_head;
-	for (unsigned index = 0; index < kMaxLevels; ++index)
-		m_head->next[index] = m_stop;
-	m_level = 0;
+    m_stop->prev = m_head;
+    for (unsigned index = 0; index < kMaxLevels; ++index)
+        m_head->next[index] = m_stop;
+    m_level = 0;
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Delete (T * object) {
 
-	Unlink(object);
-	DEL(object);
+    Unlink(object);
+    DEL(object);
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 T * TSkipList<T,K,keyOffset,Cmp>::Find (const K & key, SkipListTag * tag) const {
 
-	Node * node = m_head;
+    Node * node = m_head;
 
-	m_stop->key = &key;
-	for (int level = (int)m_level; level >= 0; --level)
-		while (Cmp::Lt(*node->next[level]->key, key))
-			node = node->next[level];
+    m_stop->key = &key;
+    for (int level = (int)m_level; level >= 0; --level)
+        while (Cmp::Lt(*node->next[level]->key, key))
+            node = node->next[level];
 
-	node = node->next[0];
-	if (node != m_stop && Cmp::Eq(*node->key, *m_stop->key)) {
-		if (tag)
-			*tag = node;
-		return node->object;
-	}
-	else {
-		if (tag)
-			*tag = nil;
-		return nil;
-	}
+    node = node->next[0];
+    if (node != m_stop && Cmp::Eq(*node->key, *m_stop->key)) {
+        if (tag)
+            *tag = node;
+        return node->object;
+    }
+    else {
+        if (tag)
+            *tag = nil;
+        return nil;
+    }
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 T * TSkipList<T,K,keyOffset,Cmp>::FindNext (SkipListTag * tag) const {
 
-	Node * node = (Node *)*tag;
+    Node * node = (Node *)*tag;
 
-	m_stop->key = node->key;
-	for (int level = (int)node->level; level >= 0; --level)
-		while (Cmp::Lt(*node->next[level]->key, *m_stop->key))
-			node = node->next[level];
+    m_stop->key = node->key;
+    for (int level = (int)node->level; level >= 0; --level)
+        while (Cmp::Lt(*node->next[level]->key, *m_stop->key))
+            node = node->next[level];
 
-	node = node->next[0];
-	if (node != m_stop && Cmp::Eq(*node->key, *m_stop->key)) {
-		*tag = node;
-		return node->object;
-	}
-	else {
-		*tag = nil;
-		return nil;
-	}
+    node = node->next[0];
+    if (node != m_stop && Cmp::Eq(*node->key, *m_stop->key)) {
+        *tag = node;
+        return node->object;
+    }
+    else {
+        *tag = nil;
+        return nil;
+    }
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 T * TSkipList<T,K,keyOffset,Cmp>::Head (SkipListTag * tag) const {
 
-	ASSERT(tag);
-	Node * first = m_head->next[0];
-	if (first == m_stop) {
-		*tag = nil;
-		return nil;
-	}
+    ASSERT(tag);
+    Node * first = m_head->next[0];
+    if (first == m_stop) {
+        *tag = nil;
+        return nil;
+    }
 
-	*tag = first;
-	return first->object;
+    *tag = first;
+    return first->object;
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 T * TSkipList<T,K,keyOffset,Cmp>::Next (SkipListTag * tag) const {
 
-	ASSERT(tag);
-	Node * node = (Node *)*tag;
-	ASSERT(node);
-	if (node->next[0] == m_stop) {
-		*tag = nil;
-		return nil;
-	}
+    ASSERT(tag);
+    Node * node = (Node *)*tag;
+    ASSERT(node);
+    if (node->next[0] == m_stop) {
+        *tag = nil;
+        return nil;
+    }
 
-	*tag = node->next[0];
-	return node->next[0]->object;
+    *tag = node->next[0];
+    return node->next[0]->object;
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 T * TSkipList<T,K,keyOffset,Cmp>::Prev (SkipListTag * tag) const {
 
-	ASSERT(tag);
-	Node * node = (Node *)*tag;
-	ASSERT(node);
-	if (node->prev == m_head) {
-		*tag = nil;
-		return nil;
-	}
+    ASSERT(tag);
+    Node * node = (Node *)*tag;
+    ASSERT(node);
+    if (node->prev == m_head) {
+        *tag = nil;
+        return nil;
+    }
 
-	*tag = node->prev;
-	return node->prev->object;
+    *tag = node->prev;
+    return node->prev->object;
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 T * TSkipList<T,K,keyOffset,Cmp>::Tail (SkipListTag * tag) const {
 
-	ASSERT(tag);
-	Node * last = m_stop->prev;
-	if (last == m_head) {
-		*tag = nil;
-		return nil;
-	}
+    ASSERT(tag);
+    Node * last = m_stop->prev;
+    if (last == m_head) {
+        *tag = nil;
+        return nil;
+    }
 
-	*tag = last;
-	return last->object;
+    *tag = last;
+    return last->object;
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Link (T * object) {
 
-	const K * key = (const K *)((const byte *)object + keyOffset);
+    const K * key = (const K *)((const byte *)object + keyOffset);
 
-	// Find the node's insertion point
-	m_stop->key = key;
-	Node * update[kMaxLevels];
-	Node * node = m_head;
-	for (int level = (int)m_level; level >= 0; --level) {
-		while (Cmp::Lt(*node->next[level]->key, *key))
-			node = node->next[level];
-		update[level] = node;
-	}
-	node = node->next[0];
+    // Find the node's insertion point
+    m_stop->key = key;
+    Node * update[kMaxLevels];
+    Node * node = m_head;
+    for (int level = (int)m_level; level >= 0; --level) {
+        while (Cmp::Lt(*node->next[level]->key, *key))
+            node = node->next[level];
+        update[level] = node;
+    }
+    node = node->next[0];
 
-	{
-		// Select a level for the skip node
-		unsigned newLevel = RandomLevel();
-		if (newLevel > m_level) {
-			if (m_level < kMaxLevels - 1) {
-				newLevel         = ++m_level;
-				update[newLevel] = m_head;
-			}
-			else
-				newLevel = m_level;
-		}
+    {
+        // Select a level for the skip node
+        unsigned newLevel = RandomLevel();
+        if (newLevel > m_level) {
+            if (m_level < kMaxLevels - 1) {
+                newLevel         = ++m_level;
+                update[newLevel] = m_head;
+            }
+            else
+                newLevel = m_level;
+        }
 
-		// Create the node and insert it into the skip list
-		Node * node  = AllocNode(newLevel);
-		node->key    = key;
-		node->object = object;
-		for (unsigned level = newLevel; level >= 1; --level) {
-			node->next[level] = update[level]->next[level];
-			update[level]->next[level] = node;
-		}
-		node->prev               = update[0];
-		node->next[0]            = update[0]->next[0];
-		update[0]->next[0]->prev = node;
-		update[0]->next[0]       = node;
-	}
+        // Create the node and insert it into the skip list
+        Node * node  = AllocNode(newLevel);
+        node->key    = key;
+        node->object = object;
+        for (unsigned level = newLevel; level >= 1; --level) {
+            node->next[level] = update[level]->next[level];
+            update[level]->next[level] = node;
+        }
+        node->prev               = update[0];
+        node->next[0]            = update[0]->next[0];
+        update[0]->next[0]->prev = node;
+        update[0]->next[0]       = node;
+    }
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Unlink (T * object) {
 
-	const K * key = (const K *)((const byte *)object + keyOffset);
+    const K * key = (const K *)((const byte *)object + keyOffset);
 
-	Node * node = m_head;
-	Node * update[kMaxLevels];
-	int    level = m_level;
+    Node * node = m_head;
+    Node * update[kMaxLevels];
+    int    level = m_level;
 
-	for (;;) {	
-		// Find the node being unlinked
-		m_stop->key = key;
-		for (; level >= 0; --level) {
-			while (Cmp::Lt(*node->next[level]->key, *key))
-				node = node->next[level];
-			update[level] = node;
-		}
-		node = node->next[0];
+    for (;;) {  
+        // Find the node being unlinked
+        m_stop->key = key;
+        for (; level >= 0; --level) {
+            while (Cmp::Lt(*node->next[level]->key, *key))
+                node = node->next[level];
+            update[level] = node;
+        }
+        node = node->next[0];
 
-		// Node wasn't found so do nothing
-		if (*node->key != *key || node == m_stop)
-			return;
-			
-		if (node->object == object)
-			break;
-	}
-	
-	// Update all links
-	for (level = m_level; level >= 1; --level) {
-		if (update[level]->next[level] != node)
-			continue;
-		update[level]->next[level] = node->next[level];
-	}
-	ASSERT(update[0]->next[0] == node);
-	node->next[0]->prev = update[0];
-	update[0]->next[0]  = node->next[0];
+        // Node wasn't found so do nothing
+        if (*node->key != *key || node == m_stop)
+            return;
+            
+        if (node->object == object)
+            break;
+    }
+    
+    // Update all links
+    for (level = m_level; level >= 1; --level) {
+        if (update[level]->next[level] != node)
+            continue;
+        update[level]->next[level] = node->next[level];
+    }
+    ASSERT(update[0]->next[0] == node);
+    node->next[0]->prev = update[0];
+    update[0]->next[0]  = node->next[0];
 
-	// Update header
-	while (m_level && m_head->next[m_level] == m_stop)
-		--m_level;
+    // Update header
+    while (m_level && m_head->next[m_level] == m_stop)
+        --m_level;
 
-	FreeNode(node);
+    FreeNode(node);
 }
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::UnlinkAll () {
 
-	Node * ptr = m_head->next[0];
-	while (ptr != m_stop) {
-		Node * next = ptr->next[0];
-		FreeNode(ptr);
-		ptr = next;
-	}
+    Node * ptr = m_head->next[0];
+    while (ptr != m_stop) {
+        Node * next = ptr->next[0];
+        FreeNode(ptr);
+        ptr = next;
+    }
 
-	m_stop->prev = m_head;
-	for (unsigned index = 0; index < kMaxLevels; ++index)
-		m_head->next[index] = m_stop;
-	m_level = 0;
+    m_stop->prev = m_head;
+    for (unsigned index = 0; index < kMaxLevels; ++index)
+        m_head->next[index] = m_stop;
+    m_level = 0;
 }

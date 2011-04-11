@@ -34,72 +34,72 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 int main(int argc, char* argv[])
 {
-	if (argc != 2)
-	{
-		printf("plPageOptimizer: wrong number of arguments");
-		return 1;
-	}
+    if (argc != 2)
+    {
+        printf("plPageOptimizer: wrong number of arguments");
+        return 1;
+    }
 
-	printf("Optimizing %s...", plFileUtils::GetFileName(argv[1]));
+    printf("Optimizing %s...", plFileUtils::GetFileName(argv[1]));
 
-	plFontCache* fontCache;
+    plFontCache* fontCache;
 #ifndef _DEBUG
-	try
-	{
+    try
+    {
 #endif
-		plResManager* resMgr = TRACKED_NEW plResManager;
-		hsgResMgr::Init(resMgr);
+        plResManager* resMgr = TRACKED_NEW plResManager;
+        hsgResMgr::Init(resMgr);
 
-		// Setup all the crap that needs to be around to load
-		plSimulationMgr::Init();
-		fontCache = TRACKED_NEW plFontCache;
-		plPythonFileMod::SetAtConvertTime();
+        // Setup all the crap that needs to be around to load
+        plSimulationMgr::Init();
+        fontCache = TRACKED_NEW plFontCache;
+        plPythonFileMod::SetAtConvertTime();
 #ifndef _DEBUG
-	} catch (...)
-	{
-		printf(" ***crashed on init");
-		return 2;
-	}
-#endif
-
-#ifndef _DEBUG
-	try
-#endif
-	{
-		plPageOptimizer optimizer(argv[1]);
-		optimizer.Optimize();
-	}
-#ifndef _DEBUG
-	catch (...)
-	{
-		printf(" ***crashed on optimizing");
-		return 2;
-	}
+    } catch (...)
+    {
+        printf(" ***crashed on init");
+        return 2;
+    }
 #endif
 
 #ifndef _DEBUG
-	try
-	{
+    try
 #endif
-		// Deinit the crap
-		fontCache->UnRegisterAs(kFontCache_KEY);
-		fontCache = nil;
-		plSimulationMgr::Shutdown();
-
-		// Reading in objects may have generated dirty state which we're obviously
-		// not sending out. Clear it so that we don't have leaked keys before the
-		// ResMgr goes away.
-		std::vector<plSynchedObject::StateDefn> carryOvers;
-		plSynchedObject::ClearDirtyState(carryOvers);
-
-		hsgResMgr::Shutdown();
+    {
+        plPageOptimizer optimizer(argv[1]);
+        optimizer.Optimize();
+    }
 #ifndef _DEBUG
-	} catch (...)
-	{
-		printf(" ***crashed on shutdown");
-		return 2;
-	}
+    catch (...)
+    {
+        printf(" ***crashed on optimizing");
+        return 2;
+    }
 #endif
 
-	return 0;
+#ifndef _DEBUG
+    try
+    {
+#endif
+        // Deinit the crap
+        fontCache->UnRegisterAs(kFontCache_KEY);
+        fontCache = nil;
+        plSimulationMgr::Shutdown();
+
+        // Reading in objects may have generated dirty state which we're obviously
+        // not sending out. Clear it so that we don't have leaked keys before the
+        // ResMgr goes away.
+        std::vector<plSynchedObject::StateDefn> carryOvers;
+        plSynchedObject::ClearDirtyState(carryOvers);
+
+        hsgResMgr::Shutdown();
+#ifndef _DEBUG
+    } catch (...)
+    {
+        printf(" ***crashed on shutdown");
+        return 2;
+    }
+#endif
+
+    return 0;
 }

@@ -37,26 +37,26 @@ class plBoundsIsect;
 class plDirectShadowMaster : public plShadowMaster
 {
 protected:
-	mutable hsTArray<plBoundsIsect*>	fIsectPool;
-	hsTArray<plShadowSlave*>			fPerspSlavePool;
+    mutable hsTArray<plBoundsIsect*>    fIsectPool;
+    hsTArray<plShadowSlave*>            fPerspSlavePool;
 
-	virtual void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-	virtual void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const;
-	virtual void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-	virtual void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
+    virtual void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
+    virtual void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const;
+    virtual void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
+    virtual void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
 
-	virtual plShadowSlave* INewSlave(const plShadowCaster* caster);
-	virtual plShadowSlave* INextSlave(const plShadowCaster* caster);
-	virtual plShadowSlave* IRecycleSlave(plShadowSlave* slave);
+    virtual plShadowSlave* INewSlave(const plShadowCaster* caster);
+    virtual plShadowSlave* INextSlave(const plShadowCaster* caster);
+    virtual plShadowSlave* IRecycleSlave(plShadowSlave* slave);
 
-	virtual void IBeginRender();
+    virtual void IBeginRender();
 
 public:
-	plDirectShadowMaster();
-	virtual ~plDirectShadowMaster();
+    plDirectShadowMaster();
+    virtual ~plDirectShadowMaster();
 
-	CLASSNAME_REGISTER( plDirectShadowMaster );
-	GETINTERFACE_ANY( plDirectShadowMaster, plShadowMaster );
+    CLASSNAME_REGISTER( plDirectShadowMaster );
+    GETINTERFACE_ANY( plDirectShadowMaster, plShadowMaster );
 
 };
 

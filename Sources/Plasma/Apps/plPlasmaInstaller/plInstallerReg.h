@@ -26,9 +26,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace plInstallerReg
 {
-	void SetClientDir(const char* dir);
-	void SetMaxDir(const char* dir);
+    void SetClientDir(const char* dir);
+    void SetMaxDir(const char* dir);
 
-	const char* GetClientDir();
-	const char* GetMaxDir();
+    const char* GetClientDir();
+    const char* GetMaxDir();
 }

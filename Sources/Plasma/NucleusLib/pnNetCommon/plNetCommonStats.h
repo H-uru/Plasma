@@ -33,12 +33,12 @@ class hsStream;
 class plNetCommonStats
 {
 public:
-	plNetCommonStats() {}
-	virtual ~plNetCommonStats() {}
+    plNetCommonStats() {}
+    virtual ~plNetCommonStats() {}
 
-	virtual void Read(hsStream* s) = 0;
-	virtual void Write(hsStream* s) = 0;
-	virtual plNetCommonStats* Copy() const = 0;
+    virtual void Read(hsStream* s) = 0;
+    virtual void Write(hsStream* s) = 0;
+    virtual plNetCommonStats* Copy() const = 0;
 };
 */
-#endif	// plNetCommonStats_inc
+#endif  // plNetCommonStats_inc

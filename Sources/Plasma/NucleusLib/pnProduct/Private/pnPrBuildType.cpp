@@ -48,15 +48,15 @@ unsigned BuildType () {
 const wchar * BuildTypeString () {
 
 #if BUILD_TYPE == BUILD_TYPE_DEV
-	return L"Dev";
+    return L"Dev";
 #elif BUILD_TYPE == BUILD_TYPE_QA
-	return L"QA";
+    return L"QA";
 #elif BUILD_TYPE == BUILD_TYPE_TEST
-	return L"Test";
+    return L"Test";
 #elif BUILD_TYPE == BUILD_TYPE_BETA
-	return L"Beta";
+    return L"Beta";
 #elif BUILD_TYPE == BUILD_TYPE_LIVE
-	return L"Live";
+    return L"Live";
 #else
 # error "Unknown build type"
 #endif
@@ -65,19 +65,19 @@ const wchar * BuildTypeString () {
 
 //============================================================================
 const wchar *BuildTypeServerStatusPath () {
-		
-	#if BUILD_TYPE == BUILD_TYPE_DEV
-		return nil;
-	#elif BUILD_TYPE == BUILD_TYPE_QA
-		return nil;
-	#elif BUILD_TYPE == BUILD_TYPE_TEST
-		return nil;
-	#elif BUILD_TYPE == BUILD_TYPE_BETA
-		return L"/serverstatus/moulbeta.php";
-	#elif BUILD_TYPE == BUILD_TYPE_LIVE
-		return L"/serverstatus/moullive.php";
-	#else
-	# error "Unknown build type"
-	#endif
+        
+    #if BUILD_TYPE == BUILD_TYPE_DEV
+        return nil;
+    #elif BUILD_TYPE == BUILD_TYPE_QA
+        return nil;
+    #elif BUILD_TYPE == BUILD_TYPE_TEST
+        return nil;
+    #elif BUILD_TYPE == BUILD_TYPE_BETA
+        return L"/serverstatus/moulbeta.php";
+    #elif BUILD_TYPE == BUILD_TYPE_LIVE
+        return L"/serverstatus/moullive.php";
+    #else
+    # error "Unknown build type"
+    #endif
 
 }

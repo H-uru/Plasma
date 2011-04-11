@@ -38,7 +38,7 @@ hsNoiseFunc::~hsNoiseFunc()
 
 void hsNoiseFunc::Seed(UInt32 s)
 {
-	srand(s);
+    srand(s);
 }
 
 hsTableNoise::hsTableNoise()
@@ -48,93 +48,93 @@ hsTableNoise::hsTableNoise()
 
 hsTableNoise::~hsTableNoise()
 {
-	delete [] fTable;
+    delete [] fTable;
 }
 
 void hsTableNoise::SetTable(int len, hsScalar* arr)
 {
-	fTableLen = len;
+    fTableLen = len;
 
-	delete [] fTable;
-	if( !len )
-	{
-		fTable = nil;
-		return;
-	}
+    delete [] fTable;
+    if( !len )
+    {
+        fTable = nil;
+        return;
+    }
 
-	fTable = TRACKED_NEW hsScalar[len+2];
+    fTable = TRACKED_NEW hsScalar[len+2];
 
-	int i;
-	for( i = 0; i < len; i++ )
-		fTable[i] = arr[i];
-	fTable[i++] = fTable[i-1];
-	fTable[i++] = fTable[i-1];
+    int i;
+    for( i = 0; i < len; i++ )
+        fTable[i] = arr[i];
+    fTable[i++] = fTable[i-1];
+    fTable[i++] = fTable[i-1];
 
 }
 
 hsScalar hsTableNoise::Noise(hsScalar lo, hsScalar hi, hsScalar t)
 {
-	hsAssert(fTableLen, "Badly initialized table noise function");
+    hsAssert(fTableLen, "Badly initialized table noise function");
 
-	hsScalar r = hsScalar(rand()) / hsScalar(RAND_MAX);
-	r = lo + (hi - lo) * r;
+    hsScalar r = hsScalar(rand()) / hsScalar(RAND_MAX);
+    r = lo + (hi - lo) * r;
 
-	if( t < 0 )
-		t = 0;
-	else if( t > hsScalar1 )
-		t = hsScalar1;
+    if( t < 0 )
+        t = 0;
+    else if( t > hsScalar1 )
+        t = hsScalar1;
 
-	hsScalar tIdx = t * fTableLen;
-	UInt32 idx = UInt32(tIdx);
-	hsScalar frac = tIdx - hsScalar(idx);
-	hsAssert((idx >= 0)&&(idx <= fTableLen), "Noise parm t out of range [0..1]");
+    hsScalar tIdx = t * fTableLen;
+    UInt32 idx = UInt32(tIdx);
+    hsScalar frac = tIdx - hsScalar(idx);
+    hsAssert((idx >= 0)&&(idx <= fTableLen), "Noise parm t out of range [0..1]");
 
-	hsScalar scale = fTable[idx] + (fTable[idx+1] - fTable[idx]) * frac;
-	
-	r *= scale;
+    hsScalar scale = fTable[idx] + (fTable[idx+1] - fTable[idx]) * frac;
+    
+    r *= scale;
 
-	return r;
+    return r;
 }
 
 hsScalar hsTableNoise::NoisePoint(const hsPoint3& p, hsScalar lo, hsScalar hi, hsScalar t)
 {
-	hsAssert(fTableLen, "Badly initialized table noise function");
+    hsAssert(fTableLen, "Badly initialized table noise function");
 
-	UInt32 sX = *((UInt32*)&p.fX);
-	UInt32 sY = *((UInt32*)&p.fY);
-	UInt32 sZ = *((UInt32*)&p.fZ);
+    UInt32 sX = *((UInt32*)&p.fX);
+    UInt32 sY = *((UInt32*)&p.fY);
+    UInt32 sZ = *((UInt32*)&p.fZ);
 
-	UInt32 sAll = ((((sX & 0x07800000) >> 16) | ((sX & 0x007fffff) >> 17)) << 20)
-				| ((((sY & 0x07800000) >> 16) | ((sY & 0x007fffff) >> 17)) << 10)
-				| ((((sZ & 0x07800000) >> 16) | ((sZ & 0x007fffff) >> 17))      );
+    UInt32 sAll = ((((sX & 0x07800000) >> 16) | ((sX & 0x007fffff) >> 17)) << 20)
+                | ((((sY & 0x07800000) >> 16) | ((sY & 0x007fffff) >> 17)) << 10)
+                | ((((sZ & 0x07800000) >> 16) | ((sZ & 0x007fffff) >> 17))      );
 
-	const UInt32 kExp = 0x3f800000;
-	const UInt32 kMsk = 0x007fffff;
+    const UInt32 kExp = 0x3f800000;
+    const UInt32 kMsk = 0x007fffff;
 
-	const UInt32 kA = 1665636L;
-	const UInt32 kC = 1013904223L;
+    const UInt32 kA = 1665636L;
+    const UInt32 kC = 1013904223L;
 
-	UInt32 iR = kA * sAll + kC;
-	iR &= kMsk;
-	iR |= kExp;
+    UInt32 iR = kA * sAll + kC;
+    iR &= kMsk;
+    iR |= kExp;
 
-	hsScalar r = (*(float*)&iR) - 1.f;
+    hsScalar r = (*(float*)&iR) - 1.f;
 
-	r = lo + (hi - lo) * r;
+    r = lo + (hi - lo) * r;
 
-	if( t < 0 )
-		t = 0;
-	else if( t > hsScalar1 )
-		t = hsScalar1;
+    if( t < 0 )
+        t = 0;
+    else if( t > hsScalar1 )
+        t = hsScalar1;
 
-	hsScalar tIdx = t * fTableLen;
-	UInt32 idx = UInt32(tIdx);
-	hsScalar frac = tIdx - hsScalar(idx);
-	hsAssert((idx >= 0)&&(idx <= fTableLen), "Noise parm t out of range [0..1]");
+    hsScalar tIdx = t * fTableLen;
+    UInt32 idx = UInt32(tIdx);
+    hsScalar frac = tIdx - hsScalar(idx);
+    hsAssert((idx >= 0)&&(idx <= fTableLen), "Noise parm t out of range [0..1]");
 
-	hsScalar scale = fTable[idx] + (fTable[idx+1] - fTable[idx]) * frac;
-	
-	r *= scale;
+    hsScalar scale = fTable[idx] + (fTable[idx+1] - fTable[idx]) * frac;
+    
+    r *= scale;
 
-	return r;
+    return r;
 }

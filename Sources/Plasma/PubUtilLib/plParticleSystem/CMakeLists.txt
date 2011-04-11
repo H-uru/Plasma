@@ -4,28 +4,28 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plParticleSystem_SOURCES
-	plBoundInterface.cpp
-	plConvexVolume.cpp
-	plParticleApplicator.cpp
-	plParticleEffect.cpp
-	plParticleEmitter.cpp
-	plParticleGenerator.cpp
-	plParticleSDLMod.cpp
-	plParticleSystem.cpp
+    plBoundInterface.cpp
+    plConvexVolume.cpp
+    plParticleApplicator.cpp
+    plParticleEffect.cpp
+    plParticleEmitter.cpp
+    plParticleGenerator.cpp
+    plParticleSDLMod.cpp
+    plParticleSystem.cpp
 )
 
 set(plParticleSystem_HEADERS
-	plBoundInterface.h
-	plConvexVolume.h
-	plEffectTargetInfo.h
-	plParticle.h
-	plParticleApplicator.h
-	plParticleCreatable.h
-	plParticleEffect.h
-	plParticleEmitter.h
-	plParticleGenerator.h
-	plParticleSDLMod.h
-	plParticleSystem.h
+    plBoundInterface.h
+    plConvexVolume.h
+    plEffectTargetInfo.h
+    plParticle.h
+    plParticleApplicator.h
+    plParticleCreatable.h
+    plParticleEffect.h
+    plParticleEmitter.h
+    plParticleGenerator.h
+    plParticleSDLMod.h
+    plParticleSystem.h
 )
 
 add_library(plParticleSystem STATIC ${plParticleSystem_SOURCES} ${plParticleSystem_HEADERS})

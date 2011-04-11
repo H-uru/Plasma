@@ -74,221 +74,221 @@ class plClient : public hsKeyedObject
 {
 protected:
 
-	class plRoomRec
-	{
-		public:
-			plSceneNode	*fNode;
-			UInt32		fFlags;
+    class plRoomRec
+    {
+        public:
+            plSceneNode *fNode;
+            UInt32      fFlags;
 
-			plRoomRec() { fNode = nil; fFlags = 0; }
-			plRoomRec( plSceneNode *n, UInt32 f ) : fNode( n ), fFlags( f ) {}
+            plRoomRec() { fNode = nil; fFlags = 0; }
+            plRoomRec( plSceneNode *n, UInt32 f ) : fNode( n ), fFlags( f ) {}
 
-			enum Flags
-			{
-				kHeld = 0x00000001
-			};
-	};
+            enum Flags
+            {
+                kHeld = 0x00000001
+            };
+    };
 
-	hsBitVector				fFlags;
+    hsBitVector             fFlags;
 
-	plInputManager*			fInputManager;
+    plInputManager*         fInputManager;
 
-	plPageTreeMgr*			fPageMgr;
-	hsTArray<plRoomRec>		fRooms;
-	plSceneNode*			fCurrentNode;
+    plPageTreeMgr*          fPageMgr;
+    hsTArray<plRoomRec>     fRooms;
+    plSceneNode*            fCurrentNode;
 
-	plPipeline*				fPipeline;
-	hsColorRGBA				fClearColor;
-	plTransitionMgr			*fTransitionMgr;
-	plLinkEffectsMgr		*fLinkEffectsMgr;
-	plFontCache				*fFontCache;
+    plPipeline*             fPipeline;
+    hsColorRGBA             fClearColor;
+    plTransitionMgr         *fTransitionMgr;
+    plLinkEffectsMgr        *fLinkEffectsMgr;
+    plFontCache             *fFontCache;
 
-	pfConsoleEngine*		fConsoleEngine;
-	pfConsole*				fConsole;
+    pfConsoleEngine*        fConsoleEngine;
+    pfConsole*              fConsole;
 
-	pfKI					*fKIGUIGlue;
+    pfKI                    *fKIGUIGlue;
 
-	hsBool					fDone;
-	hsBool					fWindowActive;
+    hsBool                  fDone;
+    hsBool                  fWindowActive;
 
-	hsWindowHndl			fWindowHndl;
+    hsWindowHndl            fWindowHndl;
 
-	double					fLastProgressUpdate;
-	plOperationProgress		*fProgressBar;
+    double                  fLastProgressUpdate;
+    plOperationProgress     *fProgressBar;
 
-	pfGameGUIMgr			*fGameGUIMgr;
+    pfGameGUIMgr            *fGameGUIMgr;
 
-	virtual hsG3DDeviceModeRecord ILoadDevMode(const char* devModeFile);
+    virtual hsG3DDeviceModeRecord ILoadDevMode(const char* devModeFile);
 
-	hsBool					IUpdate();
-	hsBool					IDraw();
-	hsBool					IDrawProgress();
-	
-	plVirtualCam1*			fNewCamera;
+    hsBool                  IUpdate();
+    hsBool                  IDraw();
+    hsBool                  IDrawProgress();
+    
+    plVirtualCam1*          fNewCamera;
 
-	static plClient*		fInstance;
-	char *					fpAuxInitDir;
-	static hsBool			fDelayMS;
+    static plClient*        fInstance;
+    char *                  fpAuxInitDir;
+    static hsBool           fDelayMS;
 
-	int						fClampCap;
-	int						fQuality;
+    int                     fClampCap;
+    int                     fQuality;
 
-	hsBool					fQuitIntro;
-	hsTArray<plBinkPlayer*>	fMovies;
+    hsBool                  fQuitIntro;
+    hsTArray<plBinkPlayer*> fMovies;
 
-	hsBool					fPatchGlobalAges;
+    hsBool                  fPatchGlobalAges;
 
-	plMessagePumpProc		fMessagePumpProc;
-	
+    plMessagePumpProc       fMessagePumpProc;
+    
 #ifndef PLASMA_EXTERNAL_RELEASE
-	bool					bPythonDebugConnected;
+    bool                    bPythonDebugConnected;
 #endif
 
-	hsTArray<plRenderRequest*>		fPreRenderRequests;
-	hsTArray<plRenderRequest*>		fPostRenderRequests;
+    hsTArray<plRenderRequest*>      fPreRenderRequests;
+    hsTArray<plRenderRequest*>      fPostRenderRequests;
 
-	bool fHoldLoadRequests;
-	class LoadRequest
-	{
-	public:
-		LoadRequest(const plLocation& loc, bool hold) { this->loc = loc; this->hold = hold; }
-		plLocation loc;
-		bool hold;
-	};
-	typedef std::list<LoadRequest*> LoadList;
-	LoadList fLoadRooms;
-	int fNumLoadingRooms;	// Number of rooms we're waiting for load callbacks on
-	std::vector<plLocation> fRoomsLoading; // the locations we are currently in the middle of loading
+    bool fHoldLoadRequests;
+    class LoadRequest
+    {
+    public:
+        LoadRequest(const plLocation& loc, bool hold) { this->loc = loc; this->hold = hold; }
+        plLocation loc;
+        bool hold;
+    };
+    typedef std::list<LoadRequest*> LoadList;
+    LoadList fLoadRooms;
+    int fNumLoadingRooms;   // Number of rooms we're waiting for load callbacks on
+    std::vector<plLocation> fRoomsLoading; // the locations we are currently in the middle of loading
 
-	int fNumPostLoadMsgs;
-	float fPostLoadMsgInc;
-	
-	void					ICompleteInit ();
-	void					IOnAsyncInitComplete ();
-	void					IHandlePreloaderMsg (plPreloaderMsg * msg);
-	void					IHandleNetCommAuthMsg (plNetCommAuthMsg * msg);
-	bool					IHandleAgeLoaded2Msg (plAgeLoaded2Msg * msg);
+    int fNumPostLoadMsgs;
+    float fPostLoadMsgInc;
+    
+    void                    ICompleteInit ();
+    void                    IOnAsyncInitComplete ();
+    void                    IHandlePreloaderMsg (plPreloaderMsg * msg);
+    void                    IHandleNetCommAuthMsg (plNetCommAuthMsg * msg);
+    bool                    IHandleAgeLoaded2Msg (plAgeLoaded2Msg * msg);
 
-	hsBool					IFlushRenderRequests();
-	void					IProcessPreRenderRequests();
-	void					IProcessPostRenderRequests();
-	void					IProcessRenderRequests(hsTArray<plRenderRequest*>& reqs);
-	void					IAddRenderRequest(plRenderRequest* req);
+    hsBool                  IFlushRenderRequests();
+    void                    IProcessPreRenderRequests();
+    void                    IProcessPostRenderRequests();
+    void                    IProcessRenderRequests(hsTArray<plRenderRequest*>& reqs);
+    void                    IAddRenderRequest(plRenderRequest* req);
 
-	hsBool					IPlayIntroBink(const char* movieName, hsScalar endDelay, hsScalar posX, hsScalar posY, hsScalar scaleX, hsScalar scaleY, hsScalar volume = 1.0);
-	hsBool					IHandleMovieMsg(plMovieMsg* mov);
-	void					IKillMovies();
-	void					IServiceMovies();
+    hsBool                  IPlayIntroBink(const char* movieName, hsScalar endDelay, hsScalar posX, hsScalar posY, hsScalar scaleX, hsScalar scaleY, hsScalar volume = 1.0);
+    hsBool                  IHandleMovieMsg(plMovieMsg* mov);
+    void                    IKillMovies();
+    void                    IServiceMovies();
 
-	void	IStartProgress( const char *title, hsScalar len );
-	void	IIncProgress( hsScalar byHowMuch, const char *text );
-	void	IStopProgress( void );
+    void    IStartProgress( const char *title, hsScalar len );
+    void    IIncProgress( hsScalar byHowMuch, const char *text );
+    void    IStopProgress( void );
 
-	static void IDispatchMsgReceiveCallback();
-	static void	IReadKeyedObjCallback(plKey key);
-	static void	IProgressMgrCallbackProc( plOperationProgress *progress );
+    static void IDispatchMsgReceiveCallback();
+    static void IReadKeyedObjCallback(plKey key);
+    static void IProgressMgrCallbackProc( plOperationProgress *progress );
 
-	void	IPatchGlobalAgeFiles( void );
+    void    IPatchGlobalAgeFiles( void );
 
-	int IFindRoomByLoc(const plLocation& loc);
-	bool IIsRoomLoading(const plLocation& loc);
-	void IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold);
-	void ILoadNextRoom();
-	void IUnloadRooms(const std::vector<plLocation>& locs);
-	void IRoomLoaded(plSceneNode* node, bool hold);
-	void IRoomUnloaded(plSceneNode* node);
-	void ISetGraphicsDefaults();
-	
+    int IFindRoomByLoc(const plLocation& loc);
+    bool IIsRoomLoading(const plLocation& loc);
+    void IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold);
+    void ILoadNextRoom();
+    void IUnloadRooms(const std::vector<plLocation>& locs);
+    void IRoomLoaded(plSceneNode* node, bool hold);
+    void IRoomUnloaded(plSceneNode* node);
+    void ISetGraphicsDefaults();
+    
 public:
 
-	plClient();
-	virtual ~plClient();
+    plClient();
+    virtual ~plClient();
 
-	CLASSNAME_REGISTER( plClient );
-	GETINTERFACE_ANY( plClient, hsKeyedObject );
+    CLASSNAME_REGISTER( plClient );
+    GETINTERFACE_ANY( plClient, hsKeyedObject );
 
-	static plClient*	GetInstance() { return fInstance; }
-	static void			SetInstance(plClient* v) { fInstance=v; }
-	
-	virtual hsBool MsgReceive(plMessage* msg);
-	
-	hsBool		InitPipeline();
+    static plClient*    GetInstance() { return fInstance; }
+    static void         SetInstance(plClient* v) { fInstance=v; }
+    
+    virtual hsBool MsgReceive(plMessage* msg);
+    
+    hsBool      InitPipeline();
 
-	void		InitInputs();
+    void        InitInputs();
 
-	void		InitDLLs();
-	void		ShutdownDLLs();
+    void        InitDLLs();
+    void        ShutdownDLLs();
 
-	void		InitAuxInits();
+    void        InitAuxInits();
 
-	virtual hsBool StartInit();
-	virtual hsBool Shutdown();
-	virtual hsBool MainLoop();
+    virtual hsBool StartInit();
+    virtual hsBool Shutdown();
+    virtual hsBool MainLoop();
 
-	plClient&	SetDone(hsBool done) { fDone = done; return *this; }
-	hsBool		GetDone() { return fDone; }
+    plClient&   SetDone(hsBool done) { fDone = done; return *this; }
+    hsBool      GetDone() { return fDone; }
 
-	// Set this to true to queue any room load requests that come in.  Set it to false to process them.
-	void SetHoldLoadRequests(bool hold);
+    // Set this to true to queue any room load requests that come in.  Set it to false to process them.
+    void SetHoldLoadRequests(bool hold);
 
-	enum
-	{
-		kFlagIniting,
-		kFlagDBGDisableRender,
-		kFlagDBGDisableRRequests,
-		kFlagAsyncInitComplete,
-		kFlagGlobalDataLoaded,
-	};
+    enum
+    {
+        kFlagIniting,
+        kFlagDBGDisableRender,
+        kFlagDBGDisableRRequests,
+        kFlagAsyncInitComplete,
+        kFlagGlobalDataLoaded,
+    };
 
-	hsBool HasFlag(int f) const { return fFlags.IsBitSet(f); }
-	void SetFlag(int f, hsBool on=true) { fFlags.SetBit(f, on); }
+    hsBool HasFlag(int f) const { return fFlags.IsBitSet(f); }
+    void SetFlag(int f, hsBool on=true) { fFlags.SetBit(f, on); }
 
-	virtual plClient& SetWindowHandle(hsWindowHndl hndl) { fWindowHndl=hndl; return *this; }
-	hsWindowHndl	GetWindowHandle() { return fWindowHndl; }
+    virtual plClient& SetWindowHandle(hsWindowHndl hndl) { fWindowHndl=hndl; return *this; }
+    hsWindowHndl    GetWindowHandle() { return fWindowHndl; }
 
-	plInputManager*		GetInputManager() { return fInputManager; }
+    plInputManager*     GetInputManager() { return fInputManager; }
 
-	plPipeline*		GetPipeline() { return fPipeline; }
+    plPipeline*     GetPipeline() { return fPipeline; }
 
-	plSceneNode*	GetCurrentScene() { return fCurrentNode; }
+    plSceneNode*    GetCurrentScene() { return fCurrentNode; }
 
-	pfConsoleEngine	*GetConsoleEngine() { return fConsoleEngine; }
+    pfConsoleEngine *GetConsoleEngine() { return fConsoleEngine; }
 
-	void SetAuxInitDir(const char *p) { delete [] fpAuxInitDir; fpAuxInitDir = hsStrcpy(p); }
+    void SetAuxInitDir(const char *p) { delete [] fpAuxInitDir; fpAuxInitDir = hsStrcpy(p); }
 
-	static void EnableClientDelay() { plClient::fDelayMS = true; }
+    static void EnableClientDelay() { plClient::fDelayMS = true; }
 
-	// These are a hack to let the console fake a lesser capabile board and test out quality settings.
-	// They should go away once we have this built into ClientSetup et.al.
-	void SetClampCap(int c) { fClampCap = c; }
-	int GetClampCap() const { return fClampCap; }
-	void SetQuality(int q) { fQuality = q; }
-	int GetQuality() const { return fQuality; }
+    // These are a hack to let the console fake a lesser capabile board and test out quality settings.
+    // They should go away once we have this built into ClientSetup et.al.
+    void SetClampCap(int c) { fClampCap = c; }
+    int GetClampCap() const { return fClampCap; }
+    void SetQuality(int q) { fQuality = q; }
+    int GetQuality() const { return fQuality; }
 
-	hsBool GetQuitIntro() const { return fQuitIntro; }
-	void SetQuitIntro(hsBool on) { fQuitIntro = on; }
+    hsBool GetQuitIntro() const { return fQuitIntro; }
+    void SetQuitIntro(hsBool on) { fQuitIntro = on; }
 
-	void			SetClearColor( hsColorRGBA &color );
-	hsColorRGBA		GetClearColor() const { return fClearColor; }
+    void            SetClearColor( hsColorRGBA &color );
+    hsColorRGBA     GetClearColor() const { return fClearColor; }
 
-	// The client window has focus (true) or lost it (false)
-	virtual void WindowActivate(bool active);
-	virtual hsBool WindowActive() const { return fWindowActive; }
+    // The client window has focus (true) or lost it (false)
+    virtual void WindowActivate(bool active);
+    virtual hsBool WindowActive() const { return fWindowActive; }
 
-	void	SetMessagePumpProc( plMessagePumpProc proc ) { fMessagePumpProc = proc; }
-	void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false, hsBool windowOnly = false);
-	void IDetectAudioVideoSettings();
-	void IWriteDefaultGraphicsSettings(const wchar* destFile);
+    void    SetMessagePumpProc( plMessagePumpProc proc ) { fMessagePumpProc = proc; }
+    void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false, hsBool windowOnly = false);
+    void IDetectAudioVideoSettings();
+    void IWriteDefaultGraphicsSettings(const wchar* destFile);
 
-	plAnimDebugList *fAnimDebugList;
+    plAnimDebugList *fAnimDebugList;
 
 #if 0
-	std::string fUsername;
-	std::string fPasswordDigest;
-	std::string fServer;
-	int			fPlayerID;
-	bool		fRecreatePlayer;
-	bool		fAuthPassed;
+    std::string fUsername;
+    std::string fPasswordDigest;
+    std::string fServer;
+    int         fPlayerID;
+    bool        fRecreatePlayer;
+    bool        fAuthPassed;
 #endif
 };
 

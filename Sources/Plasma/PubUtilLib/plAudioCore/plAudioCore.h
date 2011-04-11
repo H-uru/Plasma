@@ -24,43 +24,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plAudioCore - Core, common stuff that all of the audio system needs		//
-//																			//
+//                                                                          //
+//  plAudioCore - Core, common stuff that all of the audio system needs     //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plAudioCore_h
 #define _plAudioCore_h
 
 //// plWAVHeader Class ///////////////////////////////////////////////////////
-//	Just a small info class about WAV sound
+//  Just a small info class about WAV sound
 
 class plWAVHeader
 {
-	public:
-		UInt16	fFormatTag;
-		UInt16	fNumChannels;
-		UInt32	fNumSamplesPerSec;
-		UInt32	fAvgBytesPerSec;
-		UInt16	fBlockAlign;
-		UInt16	fBitsPerSample;
+    public:
+        UInt16  fFormatTag;
+        UInt16  fNumChannels;
+        UInt32  fNumSamplesPerSec;
+        UInt32  fAvgBytesPerSec;
+        UInt16  fBlockAlign;
+        UInt16  fBitsPerSample;
 
-		enum
-		{
-			kPCMFormatTag = 1
-		};
+        enum
+        {
+            kPCMFormatTag = 1
+        };
 };
 
 //// plAudioCore Konstants ///////////////////////////////////////////////////
 
 namespace plAudioCore
 {
-	enum ChannelSelect
-	{
-		kAll = 0,
-		kLeft,
-		kRight
-	};
+    enum ChannelSelect
+    {
+        kAll = 0,
+        kLeft,
+        kRight
+    };
 
 };
 

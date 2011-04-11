@@ -7,38 +7,38 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plNetClient_SOURCES
-	plLinkEffectsMgr.cpp
-	plNetCliAgeJoiner.cpp
-	plNetCliAgeLeaver.cpp
-	plNetClientCommInterface.cpp
-	plNetClientGroup.cpp
-	plNetClientMgr.cpp
-	plNetClientMgrLoad.cpp
-	plNetClientMgrRecord.cpp
-	plNetClientMgrSend.cpp
-	plNetClientMgrShow.cpp
-	plNetClientMgrVoice.cpp
-	plNetClientMsgHandler.cpp
-	plNetClientMsgScreener.cpp
-	plNetClientStats.cpp
-	plNetLinkingMgr.cpp
-	plNetObjectDebugger.cpp
-	plNetVoiceList.cpp
+    plLinkEffectsMgr.cpp
+    plNetCliAgeJoiner.cpp
+    plNetCliAgeLeaver.cpp
+    plNetClientCommInterface.cpp
+    plNetClientGroup.cpp
+    plNetClientMgr.cpp
+    plNetClientMgrLoad.cpp
+    plNetClientMgrRecord.cpp
+    plNetClientMgrSend.cpp
+    plNetClientMgrShow.cpp
+    plNetClientMgrVoice.cpp
+    plNetClientMsgHandler.cpp
+    plNetClientMsgScreener.cpp
+    plNetClientStats.cpp
+    plNetLinkingMgr.cpp
+    plNetObjectDebugger.cpp
+    plNetVoiceList.cpp
 )
 
 set(plNetClient_HEADERS
-	plLinkEffectsMgr.h
-	plNetCliAgeJoiner.h
-	plNetCliAgeLeaver.h
-	plNetClientCreatable.h
-	plNetClientGroup.h
-	plNetClientMgr.h
-	plNetClientMsgHandler.h
-	plNetClientMsgScreener.h
-	plNetClientStats.h
-	plNetLinkingMgr.h
-	plNetObjectDebugger.h
-	plNetVoiceList.h
+    plLinkEffectsMgr.h
+    plNetCliAgeJoiner.h
+    plNetCliAgeLeaver.h
+    plNetClientCreatable.h
+    plNetClientGroup.h
+    plNetClientMgr.h
+    plNetClientMsgHandler.h
+    plNetClientMsgScreener.h
+    plNetClientStats.h
+    plNetLinkingMgr.h
+    plNetObjectDebugger.h
+    plNetVoiceList.h
 )
 
 add_library(plNetClient STATIC ${plNetClient_SOURCES} ${plNetClient_HEADERS})

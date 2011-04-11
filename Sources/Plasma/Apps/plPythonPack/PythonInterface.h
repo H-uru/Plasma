@@ -29,15 +29,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace PythonInterface
 {
-	void initPython(std::string rootDir);
-	void finiPython();
-	// So the Python packer can add extra paths
-	void addPythonPath(std::string dir);
+    void initPython(std::string rootDir);
+    void finiPython();
+    // So the Python packer can add extra paths
+    void addPythonPath(std::string dir);
 
-	PyObject* CompileString(char *command, char* filename);
-	hsBool DumpObject(PyObject* pyobj, char** pickle, Int32* size);
-	int getOutputAndReset(char** line=nil);
-	PyObject* CreateModule(char* module);
-	hsBool RunPYC(PyObject* code, PyObject* module);
-	PyObject* GetModuleItem(char* item, PyObject* module);
+    PyObject* CompileString(char *command, char* filename);
+    hsBool DumpObject(PyObject* pyobj, char** pickle, Int32* size);
+    int getOutputAndReset(char** line=nil);
+    PyObject* CreateModule(char* module);
+    hsBool RunPYC(PyObject* code, PyObject* module);
+    PyObject* GetModuleItem(char* item, PyObject* module);
 }

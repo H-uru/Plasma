@@ -29,13 +29,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plNetClientStats::plNetClientStats() :
-		fNumVaultMsgsSent(0),
-		fNumVaultMsgsRcvd(0),
-		fVaultMsgSentBytes(0),
-		fVaultMsgRcvdBytes(0),
-		fAgeStatsULBits(0),
-		fAgeStatsDLBits(0),
-		fAgeStatsLinkInTime(0)
+        fNumVaultMsgsSent(0),
+        fNumVaultMsgsRcvd(0),
+        fVaultMsgSentBytes(0),
+        fVaultMsgRcvdBytes(0),
+        fAgeStatsULBits(0),
+        fAgeStatsDLBits(0),
+        fAgeStatsLinkInTime(0)
 {
 
 }
@@ -44,8 +44,8 @@ plNetClientStats::plNetClientStats() :
 //
 float plNetClientStats::GetAgeStatsULBitsPerSec() const
 {
-	double elapsedAgeTime = hsTimer::GetSeconds() - fAgeStatsLinkInTime;
-	return (float)(fAgeStatsULBits/elapsedAgeTime);
+    double elapsedAgeTime = hsTimer::GetSeconds() - fAgeStatsLinkInTime;
+    return (float)(fAgeStatsULBits/elapsedAgeTime);
 }
 
 //
@@ -53,7 +53,7 @@ float plNetClientStats::GetAgeStatsULBitsPerSec() const
 //
 UInt32 plNetClientStats::GetRecvdMultipleAcks() const
 {
-	return fRecvdMultipleAcks;
+    return fRecvdMultipleAcks;
 }
 
 //
@@ -61,8 +61,8 @@ UInt32 plNetClientStats::GetRecvdMultipleAcks() const
 //
 float plNetClientStats::GetAgeStatsDLBitsPerSec() const
 {
-	double elapsedAgeTime = hsTimer::GetSeconds() - fAgeStatsLinkInTime;
-	return (float)(fAgeStatsDLBits/elapsedAgeTime);
+    double elapsedAgeTime = hsTimer::GetSeconds() - fAgeStatsLinkInTime;
+    return (float)(fAgeStatsDLBits/elapsedAgeTime);
 }
 
 //
@@ -70,12 +70,12 @@ float plNetClientStats::GetAgeStatsDLBitsPerSec() const
 //
 void plNetClientStats::UpdateAgeStats()
 {
-	plNetClientMgr* nc=plNetClientMgr::GetInstance();
+    plNetClientMgr* nc=plNetClientMgr::GetInstance();
 
 #if 0
-	fAgeStatsDLBits += nc->GetNetCore()->GetStats()->GetDLBits();
-	fAgeStatsULBits += nc->GetNetCore()->GetStats()->GetULBits();
-	fRecvdMultipleAcks += nc->GetNetCore()->GetStats()->GetRecvdMultipleAcks();
+    fAgeStatsDLBits += nc->GetNetCore()->GetStats()->GetDLBits();
+    fAgeStatsULBits += nc->GetNetCore()->GetStats()->GetULBits();
+    fRecvdMultipleAcks += nc->GetNetCore()->GetStats()->GetRecvdMultipleAcks();
 #endif
 }
 
@@ -85,7 +85,7 @@ void plNetClientStats::UpdateAgeStats()
 //
 void plNetClientStats::ResetAgeStats()
 {
-	fAgeStatsDLBits = fAgeStatsULBits = 0;
-	fRecvdMultipleAcks = 0;
-	fAgeStatsLinkInTime = hsTimer::GetSeconds();
+    fAgeStatsDLBits = fAgeStatsULBits = 0;
+    fRecvdMultipleAcks = 0;
+    fAgeStatsLinkInTime = hsTimer::GetSeconds();
 }

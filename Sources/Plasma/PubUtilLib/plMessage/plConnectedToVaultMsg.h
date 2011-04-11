@@ -42,8 +42,8 @@ public:
    plConnectedToVaultMsg() { SetBCastFlag(kBCastByType);   }
 
    // IO 
-   void Read(hsStream* stream, hsResMgr* mgr) {	plMessage::IMsgRead(stream, mgr); }
-   void Write(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgWrite(stream, mgr); }
+   void Read(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgRead(stream, mgr); }
+   void Write(hsStream* stream, hsResMgr* mgr)  {   plMessage::IMsgWrite(stream, mgr); }
 };
 
-#endif		// plConnectedToVaultMsg
+#endif      // plConnectedToVaultMsg

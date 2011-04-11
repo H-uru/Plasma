@@ -34,18 +34,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCompress
 {
 public:
-	plCompress() {}
-	virtual ~plCompress() {}
+    plCompress() {}
+    virtual ~plCompress() {}
 
-	// return true if successful
-	virtual hsBool Uncompress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn) = 0;
-	virtual hsBool Compress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn) = 0;
+    // return true if successful
+    virtual hsBool Uncompress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn) = 0;
+    virtual hsBool Compress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn) = 0;
 
-	// in place versions
-	virtual hsBool Uncompress(UInt8** bufIn, UInt32* bufLenIn, UInt32 maxBufLenOut, int offset=0) = 0;
-	virtual hsBool Compress(UInt8** bufIn, UInt32* bufLenIn, int offset=0) = 0;
+    // in place versions
+    virtual hsBool Uncompress(UInt8** bufIn, UInt32* bufLenIn, UInt32 maxBufLenOut, int offset=0) = 0;
+    virtual hsBool Compress(UInt8** bufIn, UInt32* bufLenIn, int offset=0) = 0;
 };
 
 
-#endif	// plCompress_h
+#endif  // plCompress_h
 

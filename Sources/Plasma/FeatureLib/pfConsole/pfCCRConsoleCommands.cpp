@@ -25,11 +25,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	CCR Console Commands and Groups											//
-//  These console commands are meant for use by customer care reps.			//
+//                                                                          //
+//  CCR Console Commands and Groups                                         //
+//  These console commands are meant for use by customer care reps.         //
 //  Eventually the functionality defined here will be accessed through a GUI//
-//																			//
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 //
@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// This is here so Microsoft VC won't decide to "optimize" this file out
 // YOU ALSO NEED TO CALL THIS FXN
-void	pfConsoleCmdGroup::DummyCCR( void )
+void    pfConsoleCmdGroup::DummyCCR( void )
 {
 }
 

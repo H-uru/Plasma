@@ -27,10 +27,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plLayerMultiply::plLayerMultiply() : fDirtyChannels(0), fSrcOpacity(1.f)
 {
-	fSrcPreshadeColor.Set(1.f, 1.f, 1.f, 1.f);
-	fSrcRuntimeColor.Set(1.f, 1.f, 1.f, 1.f);
-	fSrcAmbientColor.Set(1.f, 1.f, 1.f, 1.f);
-	fSrcTransform.Reset();
+    fSrcPreshadeColor.Set(1.f, 1.f, 1.f, 1.f);
+    fSrcRuntimeColor.Set(1.f, 1.f, 1.f, 1.f);
+    fSrcAmbientColor.Set(1.f, 1.f, 1.f, 1.f);
+    fSrcTransform.Reset();
 }
 
 plLayerMultiply::~plLayerMultiply()
@@ -39,130 +39,130 @@ plLayerMultiply::~plLayerMultiply()
 
 void plLayerMultiply::Read(hsStream* s, hsResMgr* mgr)
 {
-	plLayerInterface::Read(s, mgr);
+    plLayerInterface::Read(s, mgr);
 
-	fOwnedChannels = s->ReadSwap32();
-	if (fOwnedChannels & kOpacity)
-	{
-		fOpacity = TRACKED_NEW hsScalar;
-		*fOpacity = fSrcOpacity = s->ReadSwapScalar();
-		fDirtyChannels |= kOpacity;
-	}
-	
-	if (fOwnedChannels & kPreshadeColor)
-	{
-		fPreshadeColor = TRACKED_NEW hsColorRGBA;
-		fSrcPreshadeColor.Read(s);
-		*fPreshadeColor = fSrcPreshadeColor;
-		fDirtyChannels |= kPreshadeColor;
-	}
+    fOwnedChannels = s->ReadSwap32();
+    if (fOwnedChannels & kOpacity)
+    {
+        fOpacity = TRACKED_NEW hsScalar;
+        *fOpacity = fSrcOpacity = s->ReadSwapScalar();
+        fDirtyChannels |= kOpacity;
+    }
+    
+    if (fOwnedChannels & kPreshadeColor)
+    {
+        fPreshadeColor = TRACKED_NEW hsColorRGBA;
+        fSrcPreshadeColor.Read(s);
+        *fPreshadeColor = fSrcPreshadeColor;
+        fDirtyChannels |= kPreshadeColor;
+    }
 
-	if (fOwnedChannels & kRuntimeColor)
-	{
-		fRuntimeColor = TRACKED_NEW hsColorRGBA;
-		fSrcRuntimeColor.Read(s);
-		*fRuntimeColor = fSrcRuntimeColor;
-		fDirtyChannels |= kRuntimeColor;
-	}
+    if (fOwnedChannels & kRuntimeColor)
+    {
+        fRuntimeColor = TRACKED_NEW hsColorRGBA;
+        fSrcRuntimeColor.Read(s);
+        *fRuntimeColor = fSrcRuntimeColor;
+        fDirtyChannels |= kRuntimeColor;
+    }
 
-	if (fOwnedChannels & kAmbientColor)
-	{
-		fAmbientColor = TRACKED_NEW hsColorRGBA;
-		fSrcAmbientColor.Read(s);
-		*fAmbientColor = fSrcAmbientColor;
-		fDirtyChannels |= kAmbientColor;
-	}
+    if (fOwnedChannels & kAmbientColor)
+    {
+        fAmbientColor = TRACKED_NEW hsColorRGBA;
+        fSrcAmbientColor.Read(s);
+        *fAmbientColor = fSrcAmbientColor;
+        fDirtyChannels |= kAmbientColor;
+    }
 
-	if (fOwnedChannels & kTransform)
-	{
-		fTransform = TRACKED_NEW hsMatrix44;
-		fSrcTransform.Read(s);
-		*fTransform = fSrcTransform;
-		fDirtyChannels |= kTransform;
-	}
+    if (fOwnedChannels & kTransform)
+    {
+        fTransform = TRACKED_NEW hsMatrix44;
+        fSrcTransform.Read(s);
+        *fTransform = fSrcTransform;
+        fDirtyChannels |= kTransform;
+    }
 }
 
 void plLayerMultiply::Write(hsStream* s, hsResMgr* mgr)
 {
-	plLayerInterface::Write(s, mgr);
+    plLayerInterface::Write(s, mgr);
 
-	s->WriteSwap32(fOwnedChannels);
-	if (fOwnedChannels & kOpacity)
-		s->WriteSwapScalar(fSrcOpacity);
+    s->WriteSwap32(fOwnedChannels);
+    if (fOwnedChannels & kOpacity)
+        s->WriteSwapScalar(fSrcOpacity);
 
-	if (fOwnedChannels & kPreshadeColor)
-		fSrcPreshadeColor.Write(s);
+    if (fOwnedChannels & kPreshadeColor)
+        fSrcPreshadeColor.Write(s);
 
-	if (fOwnedChannels & kRuntimeColor)
-		fSrcRuntimeColor.Write(s);
+    if (fOwnedChannels & kRuntimeColor)
+        fSrcRuntimeColor.Write(s);
 
-	if (fOwnedChannels & kAmbientColor)
-		fSrcAmbientColor.Write(s);
+    if (fOwnedChannels & kAmbientColor)
+        fSrcAmbientColor.Write(s);
 
-	if (fOwnedChannels & kTransform)
-		fSrcTransform.Write(s);
+    if (fOwnedChannels & kTransform)
+        fSrcTransform.Write(s);
 }
 
 plLayerInterface* plLayerMultiply::Attach(plLayerInterface* prev)
 {
-	return plLayerInterface::Attach(prev);
+    return plLayerInterface::Attach(prev);
 }
 
 UInt32 plLayerMultiply::Eval(double wSecs, UInt32 frame, UInt32 ignore)
 {
-	UInt32 dirtyChannels = fDirtyChannels | plLayerInterface::Eval(wSecs, frame, ignore);
-	UInt32 evalChannels = dirtyChannels & fOwnedChannels;
+    UInt32 dirtyChannels = fDirtyChannels | plLayerInterface::Eval(wSecs, frame, ignore);
+    UInt32 evalChannels = dirtyChannels & fOwnedChannels;
 
-	if (evalChannels & kPreshadeColor)
-		*fPreshadeColor = fSrcPreshadeColor * fUnderLay->GetPreshadeColor();
+    if (evalChannels & kPreshadeColor)
+        *fPreshadeColor = fSrcPreshadeColor * fUnderLay->GetPreshadeColor();
 
-	if (evalChannels & kRuntimeColor)
-		*fRuntimeColor = fSrcRuntimeColor * fUnderLay->GetRuntimeColor();
+    if (evalChannels & kRuntimeColor)
+        *fRuntimeColor = fSrcRuntimeColor * fUnderLay->GetRuntimeColor();
 
-	if (evalChannels & kAmbientColor)
-		*fAmbientColor = fSrcAmbientColor * fUnderLay->GetAmbientColor();
+    if (evalChannels & kAmbientColor)
+        *fAmbientColor = fSrcAmbientColor * fUnderLay->GetAmbientColor();
 
-	if (evalChannels & kOpacity)
-		*fOpacity = fSrcOpacity * fUnderLay->GetOpacity();
+    if (evalChannels & kOpacity)
+        *fOpacity = fSrcOpacity * fUnderLay->GetOpacity();
 
-	if (evalChannels & kTransform)
-		*fTransform = fSrcTransform * fUnderLay->GetTransform();
+    if (evalChannels & kTransform)
+        *fTransform = fSrcTransform * fUnderLay->GetTransform();
 
-	fDirtyChannels = 0;
-	return dirtyChannels;
+    fDirtyChannels = 0;
+    return dirtyChannels;
 }
 
 hsBool plLayerMultiply::MsgReceive(plMessage* msg)
 {
-	return plLayerInterface::MsgReceive(msg);
+    return plLayerInterface::MsgReceive(msg);
 }
 
 void plLayerMultiply::SetPreshadeColor(const hsColorRGBA& col)
 {
-	fSrcPreshadeColor = col;
-	fDirtyChannels |= kPreshadeColor;
+    fSrcPreshadeColor = col;
+    fDirtyChannels |= kPreshadeColor;
 }
 
 void plLayerMultiply::SetRuntimeColor(const hsColorRGBA& col)
 {
-	fSrcRuntimeColor = col;
-	fDirtyChannels |= kRuntimeColor;
+    fSrcRuntimeColor = col;
+    fDirtyChannels |= kRuntimeColor;
 }
 
 void plLayerMultiply::SetAmbientColor(const hsColorRGBA& col)
 {
-	fSrcAmbientColor = col;
-	fDirtyChannels |= kAmbientColor;
+    fSrcAmbientColor = col;
+    fDirtyChannels |= kAmbientColor;
 }
 
 void plLayerMultiply::SetOpacity(hsScalar a)
 {
-	fSrcOpacity = a;
-	fDirtyChannels |= kOpacity;
+    fSrcOpacity = a;
+    fDirtyChannels |= kOpacity;
 }
 
 void plLayerMultiply::SetTransform(const hsMatrix44& xfm)
 {
-	fSrcTransform = xfm;
-	fDirtyChannels |= kTransform;
+    fSrcTransform = xfm;
+    fDirtyChannels |= kTransform;
 }

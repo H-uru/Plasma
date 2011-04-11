@@ -37,50 +37,50 @@ struct hsGSplat3;
 class plDrawPrim : public hsRefCnt
 {
 public:
-	enum plDPPrimType
-	{
-		kTypeNone				= 0x0,
-		kTypeTriList			= 0x1,
-		kTypeSplatList			= 0x2
-	};
+    enum plDPPrimType
+    {
+        kTypeNone               = 0x0,
+        kTypeTriList            = 0x1,
+        kTypeSplatList          = 0x2
+    };
 protected:
-	UInt32			fPrimType;
+    UInt32          fPrimType;
 
-	UInt32			fDrawProps;
+    UInt32          fDrawProps;
 
-	hsGMaterial*	fMaterial;
+    hsGMaterial*    fMaterial;
 
 public:
-	plDrawPrim() : fMaterial(nil), fDrawProps(0), fPrimType(kTypeNone) {}
-	virtual ~plDrawPrim();
+    plDrawPrim() : fMaterial(nil), fDrawProps(0), fPrimType(kTypeNone) {}
+    virtual ~plDrawPrim();
 
-	virtual const hsBounds3Ext&	GetLocalBounds() const = 0;
+    virtual const hsBounds3Ext& GetLocalBounds() const = 0;
 
-	hsGMaterial*	GetMaterial() { return fMaterial; }
-	UInt32			GetPrimType() { return fPrimType; }
-	UInt32			GetDrawProps() { return fDrawProps; }
+    hsGMaterial*    GetMaterial() { return fMaterial; }
+    UInt32          GetPrimType() { return fPrimType; }
+    UInt32          GetDrawProps() { return fDrawProps; }
 };
 
 class plTriListPrim : public plDrawPrim
 {
 public:
-	plTriListPrim() { fPrimType |= kTypeTriList; }
-	virtual ~plTriListPrim();
+    plTriListPrim() { fPrimType |= kTypeTriList; }
+    virtual ~plTriListPrim();
 
-	virtual const hsBounds3Ext&	GetLocalBounds() const = 0;
+    virtual const hsBounds3Ext& GetLocalBounds() const = 0;
 
-	virtual hsTriangle3*		GetTriList(int& num) = 0;
+    virtual hsTriangle3*        GetTriList(int& num) = 0;
 
 };
 
 class plSplatListPrim : public plDrawPrim
 {
 public:
-	plSplatListPrim() { fPrimType |= kTypeSplatList; }
+    plSplatListPrim() { fPrimType |= kTypeSplatList; }
 
-	virtual const hsBounds3Ext&	GetLocalBounds() const = 0;
+    virtual const hsBounds3Ext& GetLocalBounds() const = 0;
 
-	virtual hsGSplat3*			GetSplatList(int& num) = 0;
+    virtual hsGSplat3*          GetSplatList(int& num) = 0;
 };
 
 

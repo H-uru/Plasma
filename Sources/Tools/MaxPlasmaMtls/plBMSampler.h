@@ -33,44 +33,44 @@ class plPlasmaMAXLayer;
 
 class plBMSamplerData
 {
-	public:
-		bool	fEnableCrop;
-		int		fCropPlacement;
-		float	fClipU, fClipV;
-		float	fClipW, fClipH;
+    public:
+        bool    fEnableCrop;
+        int     fCropPlacement;
+        float   fClipU, fClipV;
+        float   fClipW, fClipH;
 
-		enum ASource
-		{
-			kFromTexture,
-			kFromRGB,
-			kDiscard
-		};
+        enum ASource
+        {
+            kFromTexture,
+            kFromRGB,
+            kDiscard
+        };
 
-		ASource	fAlphaSource;
+        ASource fAlphaSource;
 
-		plBMSamplerData()
-		{
-			fEnableCrop = false;
-			fCropPlacement = 0;
-			fClipU = fClipV = 0.f;
-			fClipW = fClipH = 1.f;
-			fAlphaSource = kFromTexture;
-		}
+        plBMSamplerData()
+        {
+            fEnableCrop = false;
+            fCropPlacement = 0;
+            fClipU = fClipV = 0.f;
+            fClipW = fClipH = 1.f;
+            fAlphaSource = kFromTexture;
+        }
 };
 
 class plBMSampler : public MapSampler
 {
 protected:
-    Bitmap	*fBM;
+    Bitmap  *fBM;
 
-	plBMSamplerData	fData;
+    plBMSamplerData fData;
 
     float u1,v1;
     int bmw,bmh,clipx, clipy, cliph;
     float fclipw,fcliph, fbmh, fbmw;
-	bool fInitialized;
+    bool fInitialized;
 
-	plBMSampler() {}
+    plBMSampler() {}
 
 public:
     plBMSampler(plPlasmaMAXLayer *layer, Bitmap *bm);

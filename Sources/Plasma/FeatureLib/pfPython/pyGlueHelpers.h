@@ -36,8 +36,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PYTHON_CLASS_DEFINITION(pythonClassName, glueClassName) \
 struct pythonClassName \
 { \
-	PyObject_HEAD \
-	glueClassName *fThis; \
+    PyObject_HEAD \
+    glueClassName *fThis; \
 }
 
 // This makes sure that our python new function can access our constructors
@@ -49,8 +49,8 @@ struct pythonClassName \
 #define PYTHON_CLASS_NEW_IMPL(pythonClassName, glueClassName) \
 PyObject *glueClassName::New() \
 { \
-	pythonClassName *newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, NULL, NULL); \
-	return (PyObject*)newObj; \
+    pythonClassName *newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, NULL, NULL); \
+    return (PyObject*)newObj; \
 }
 
 // This defines the basic check function for a class
@@ -59,7 +59,7 @@ PyObject *glueClassName::New() \
 #define PYTHON_CLASS_CHECK_IMPL(pythonClassName, glueClassName) \
 bool glueClassName::Check(PyObject *obj) \
 { \
-	return PyObject_TypeCheck(obj, &pythonClassName##_type); \
+    return PyObject_TypeCheck(obj, &pythonClassName##_type); \
 }
 
 // This defines the basic convert from function for a class
@@ -68,12 +68,12 @@ bool glueClassName::Check(PyObject *obj) \
 #define PYTHON_CLASS_CONVERT_FROM_IMPL(pythonClassName, glueClassName) \
 glueClassName *glueClassName::ConvertFrom(PyObject *obj) \
 { \
-	if (!Check(obj)) \
-	{ \
-		PyErr_SetString(PyExc_TypeError, "object is not a " #pythonClassName); \
-		return NULL; \
-	} \
-	return ((pythonClassName*)obj)->fThis; \
+    if (!Check(obj)) \
+    { \
+        PyErr_SetString(PyExc_TypeError, "object is not a " #pythonClassName); \
+        return NULL; \
+    } \
+    return ((pythonClassName*)obj)->fThis; \
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ glueClassName *glueClassName::ConvertFrom(PyObject *obj) \
 // This starts off the type definition (however most of the data still needs to be filled in by hand
 #define PYTHON_TYPE_START(pythonClassName) \
 static PyTypeObject pythonClassName##_type = { \
-	PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(NULL)
 
 // and easy terminator to make things look pretty
 #define PYTHON_TYPE_END }
@@ -92,19 +92,19 @@ static PyTypeObject pythonClassName##_type = { \
 #define PYTHON_DEFAULT_NEW_DEFINITION(pythonClassName, glueClassName) \
 PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *, PyObject *) \
 { \
-	pythonClassName *self; \
-	self = (pythonClassName*)type->tp_alloc(type, 0); \
-	if (self != NULL) \
-	{ \
-		self->fThis = TRACKED_NEW glueClassName(); \
-		if (self->fThis == NULL) \
-		{ \
-			Py_DECREF(self); \
-			return NULL; \
-		} \
-	} \
+    pythonClassName *self; \
+    self = (pythonClassName*)type->tp_alloc(type, 0); \
+    if (self != NULL) \
+    { \
+        self->fThis = TRACKED_NEW glueClassName(); \
+        if (self->fThis == NULL) \
+        { \
+            Py_DECREF(self); \
+            return NULL; \
+        } \
+    } \
 \
-	return (PyObject*)self; \
+    return (PyObject*)self; \
 }
 
 #define PYTHON_DEFAULT_NEW(pythonClassName) pythonClassName##_new
@@ -113,8 +113,8 @@ PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *, PyObject *) \
 #define PYTHON_DEFAULT_DEALLOC_DEFINITION(pythonClassName) \
 void pythonClassName##_dealloc(pythonClassName *self) \
 { \
-	delete self->fThis; \
-	self->ob_type->tp_free((PyObject*)self); \
+    delete self->fThis; \
+    self->ob_type->tp_free((PyObject*)self); \
 }
 
 #define PYTHON_DEFAULT_DEALLOC(pythonClassName) (destructor)pythonClassName##_dealloc
@@ -127,8 +127,8 @@ void pythonClassName##_dealloc(pythonClassName *self) \
 #define PYTHON_NO_INIT_DEFINITION(pythonClassName) \
 int pythonClassName##___init__(pythonClassName *, PyObject *, PyObject *) \
 { \
-	PyErr_SetString(PyExc_RuntimeError, "Cannot create " #pythonClassName " objects from Python"); \
-	PYTHON_RETURN_INIT_ERROR; \
+    PyErr_SetString(PyExc_RuntimeError, "Cannot create " #pythonClassName " objects from Python"); \
+    PYTHON_RETURN_INIT_ERROR; \
 }
 
 #define PYTHON_INIT_DEFINITION(pythonClassName, argsVar, keywordsVar) \
@@ -142,44 +142,44 @@ int pythonClassName##___init__(pythonClassName *self, PyObject *args, PyObject *
 // most glue classes can get away with this default structure
 #define PLASMA_DEFAULT_TYPE(pythonClassName, docString) \
 PYTHON_TYPE_START(pythonClassName) \
-	0,									/* ob_size */ \
-	"Plasma." #pythonClassName,			/* tp_name */ \
-	sizeof(pythonClassName),			/* tp_basicsize */ \
-	0,									/* tp_itemsize */ \
-	PYTHON_DEFAULT_DEALLOC(pythonClassName),	/* tp_dealloc */ \
-	0,									/* tp_print */ \
-	0,									/* tp_getattr */ \
-	0,									/* tp_setattr */ \
-	0,									/* tp_compare */ \
-	0,									/* tp_repr */ \
-	0,									/* tp_as_number */ \
-	0,									/* tp_as_sequence */ \
-	0,									/* tp_as_mapping */ \
-	0,									/* tp_hash */ \
-	0,									/* tp_call */ \
-	0,									/* tp_str */ \
-	0,									/* tp_getattro */ \
-	0,									/* tp_setattro */ \
-	0,									/* tp_as_buffer */ \
-	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */ \
-	docString,							/* tp_doc */ \
-	0,									/* tp_traverse */ \
-	0,									/* tp_clear */ \
-	0,									/* tp_richcompare */ \
-	0,									/* tp_weaklistoffset */ \
-	0,									/* tp_iter */ \
-	0,									/* tp_iternext */ \
-	PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),	/* tp_methods */ \
-	0,									/* tp_members */ \
-	0,									/* tp_getset */ \
-	0,									/* tp_base */ \
-	0,									/* tp_dict */ \
-	0,									/* tp_descr_get */ \
-	0,									/* tp_descr_set */ \
-	0,									/* tp_dictoffset */ \
-	PYTHON_DEFAULT_INIT(pythonClassName),	/* tp_init */ \
-	0,									/* tp_alloc */ \
-	PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
+    0,                                  /* ob_size */ \
+    "Plasma." #pythonClassName,         /* tp_name */ \
+    sizeof(pythonClassName),            /* tp_basicsize */ \
+    0,                                  /* tp_itemsize */ \
+    PYTHON_DEFAULT_DEALLOC(pythonClassName),    /* tp_dealloc */ \
+    0,                                  /* tp_print */ \
+    0,                                  /* tp_getattr */ \
+    0,                                  /* tp_setattr */ \
+    0,                                  /* tp_compare */ \
+    0,                                  /* tp_repr */ \
+    0,                                  /* tp_as_number */ \
+    0,                                  /* tp_as_sequence */ \
+    0,                                  /* tp_as_mapping */ \
+    0,                                  /* tp_hash */ \
+    0,                                  /* tp_call */ \
+    0,                                  /* tp_str */ \
+    0,                                  /* tp_getattro */ \
+    0,                                  /* tp_setattro */ \
+    0,                                  /* tp_as_buffer */ \
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */ \
+    docString,                          /* tp_doc */ \
+    0,                                  /* tp_traverse */ \
+    0,                                  /* tp_clear */ \
+    0,                                  /* tp_richcompare */ \
+    0,                                  /* tp_weaklistoffset */ \
+    0,                                  /* tp_iter */ \
+    0,                                  /* tp_iternext */ \
+    PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),  /* tp_methods */ \
+    0,                                  /* tp_members */ \
+    0,                                  /* tp_getset */ \
+    0,                                  /* tp_base */ \
+    0,                                  /* tp_dict */ \
+    0,                                  /* tp_descr_get */ \
+    0,                                  /* tp_descr_set */ \
+    0,                                  /* tp_dictoffset */ \
+    PYTHON_DEFAULT_INIT(pythonClassName),   /* tp_init */ \
+    0,                                  /* tp_alloc */ \
+    PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
 PYTHON_TYPE_END
 
 // default compare/rich compare function name
@@ -210,88 +210,88 @@ PYTHON_TYPE_END
 
 // for glue functions that need custom stuff, you need to define the macros yourself
 #define PLASMA_CUSTOM_TYPE(pythonClassName, docString) \
-	PYTHON_TYPE_START(pythonClassName) \
-	0,									/* ob_size */ \
-	"Plasma." #pythonClassName,			/* tp_name */ \
-	sizeof(pythonClassName),			/* tp_basicsize */ \
-	0,									/* tp_itemsize */ \
-	PYTHON_DEFAULT_DEALLOC(pythonClassName),	/* tp_dealloc */ \
-	0,									/* tp_print */ \
-	0,									/* tp_getattr */ \
-	0,									/* tp_setattr */ \
-	pythonClassName##_COMPARE,			/* tp_compare */ \
-	0,									/* tp_repr */ \
-	pythonClassName##_AS_NUMBER,		/* tp_as_number */ \
-	pythonClassName##_AS_SEQUENCE,		/* tp_as_sequence */ \
-	pythonClassName##_AS_MAPPING,		/* tp_as_mapping */ \
-	0,									/* tp_hash */ \
-	0,									/* tp_call */ \
-	pythonClassName##_STR,				/* tp_str */ \
-	0,									/* tp_getattro */ \
-	0,									/* tp_setattro */ \
-	0,									/* tp_as_buffer */ \
-	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */ \
-	docString,							/* tp_doc */ \
-	0,									/* tp_traverse */ \
-	0,									/* tp_clear */ \
-	pythonClassName##_RICH_COMPARE,		/* tp_richcompare */ \
-	0,									/* tp_weaklistoffset */ \
-	0,									/* tp_iter */ \
-	0,									/* tp_iternext */ \
-	PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),	/* tp_methods */ \
-	0,									/* tp_members */ \
-	pythonClassName##_GETSET,			/* tp_getset */ \
-	pythonClassName##_BASE,				/* tp_base */ \
-	0,									/* tp_dict */ \
-	0,									/* tp_descr_get */ \
-	0,									/* tp_descr_set */ \
-	0,									/* tp_dictoffset */ \
-	PYTHON_DEFAULT_INIT(pythonClassName),	/* tp_init */ \
-	0,									/* tp_alloc */ \
-	PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
+    PYTHON_TYPE_START(pythonClassName) \
+    0,                                  /* ob_size */ \
+    "Plasma." #pythonClassName,         /* tp_name */ \
+    sizeof(pythonClassName),            /* tp_basicsize */ \
+    0,                                  /* tp_itemsize */ \
+    PYTHON_DEFAULT_DEALLOC(pythonClassName),    /* tp_dealloc */ \
+    0,                                  /* tp_print */ \
+    0,                                  /* tp_getattr */ \
+    0,                                  /* tp_setattr */ \
+    pythonClassName##_COMPARE,          /* tp_compare */ \
+    0,                                  /* tp_repr */ \
+    pythonClassName##_AS_NUMBER,        /* tp_as_number */ \
+    pythonClassName##_AS_SEQUENCE,      /* tp_as_sequence */ \
+    pythonClassName##_AS_MAPPING,       /* tp_as_mapping */ \
+    0,                                  /* tp_hash */ \
+    0,                                  /* tp_call */ \
+    pythonClassName##_STR,              /* tp_str */ \
+    0,                                  /* tp_getattro */ \
+    0,                                  /* tp_setattro */ \
+    0,                                  /* tp_as_buffer */ \
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */ \
+    docString,                          /* tp_doc */ \
+    0,                                  /* tp_traverse */ \
+    0,                                  /* tp_clear */ \
+    pythonClassName##_RICH_COMPARE,     /* tp_richcompare */ \
+    0,                                  /* tp_weaklistoffset */ \
+    0,                                  /* tp_iter */ \
+    0,                                  /* tp_iternext */ \
+    PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),  /* tp_methods */ \
+    0,                                  /* tp_members */ \
+    pythonClassName##_GETSET,           /* tp_getset */ \
+    pythonClassName##_BASE,             /* tp_base */ \
+    0,                                  /* tp_dict */ \
+    0,                                  /* tp_descr_get */ \
+    0,                                  /* tp_descr_set */ \
+    0,                                  /* tp_dictoffset */ \
+    PYTHON_DEFAULT_INIT(pythonClassName),   /* tp_init */ \
+    0,                                  /* tp_alloc */ \
+    PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
 PYTHON_TYPE_END
 
 // for conviencence when we just need a base class
 #define PLASMA_DEFAULT_TYPE_WBASE(pythonClassName, glueBaseClass, docString) \
 PYTHON_TYPE_START(pythonClassName) \
-	0,									/* ob_size */ \
-	"Plasma." #pythonClassName,			/* tp_name */ \
-	sizeof(pythonClassName),			/* tp_basicsize */ \
-	0,									/* tp_itemsize */ \
-	PYTHON_DEFAULT_DEALLOC(pythonClassName),	/* tp_dealloc */ \
-	0,									/* tp_print */ \
-	0,									/* tp_getattr */ \
-	0,									/* tp_setattr */ \
-	0,									/* tp_compare */ \
-	0,									/* tp_repr */ \
-	0,									/* tp_as_number */ \
-	0,									/* tp_as_sequence */ \
-	0,									/* tp_as_mapping */ \
-	0,									/* tp_hash */ \
-	0,									/* tp_call */ \
-	0,									/* tp_str */ \
-	0,									/* tp_getattro */ \
-	0,									/* tp_setattro */ \
-	0,									/* tp_as_buffer */ \
-	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */ \
-	docString,							/* tp_doc */ \
-	0,									/* tp_traverse */ \
-	0,									/* tp_clear */ \
-	0,									/* tp_richcompare */ \
-	0,									/* tp_weaklistoffset */ \
-	0,									/* tp_iter */ \
-	0,									/* tp_iternext */ \
-	PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),	/* tp_methods */ \
-	0,									/* tp_members */ \
-	0,									/* tp_getset */ \
-	glueBaseClass::type_ptr,			/* tp_base */ \
-	0,									/* tp_dict */ \
-	0,									/* tp_descr_get */ \
-	0,									/* tp_descr_set */ \
-	0,									/* tp_dictoffset */ \
-	PYTHON_DEFAULT_INIT(pythonClassName),	/* tp_init */ \
-	0,									/* tp_alloc */ \
-	PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
+    0,                                  /* ob_size */ \
+    "Plasma." #pythonClassName,         /* tp_name */ \
+    sizeof(pythonClassName),            /* tp_basicsize */ \
+    0,                                  /* tp_itemsize */ \
+    PYTHON_DEFAULT_DEALLOC(pythonClassName),    /* tp_dealloc */ \
+    0,                                  /* tp_print */ \
+    0,                                  /* tp_getattr */ \
+    0,                                  /* tp_setattr */ \
+    0,                                  /* tp_compare */ \
+    0,                                  /* tp_repr */ \
+    0,                                  /* tp_as_number */ \
+    0,                                  /* tp_as_sequence */ \
+    0,                                  /* tp_as_mapping */ \
+    0,                                  /* tp_hash */ \
+    0,                                  /* tp_call */ \
+    0,                                  /* tp_str */ \
+    0,                                  /* tp_getattro */ \
+    0,                                  /* tp_setattro */ \
+    0,                                  /* tp_as_buffer */ \
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */ \
+    docString,                          /* tp_doc */ \
+    0,                                  /* tp_traverse */ \
+    0,                                  /* tp_clear */ \
+    0,                                  /* tp_richcompare */ \
+    0,                                  /* tp_weaklistoffset */ \
+    0,                                  /* tp_iter */ \
+    0,                                  /* tp_iternext */ \
+    PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),  /* tp_methods */ \
+    0,                                  /* tp_members */ \
+    0,                                  /* tp_getset */ \
+    glueBaseClass::type_ptr,            /* tp_base */ \
+    0,                                  /* tp_dict */ \
+    0,                                  /* tp_descr_get */ \
+    0,                                  /* tp_descr_set */ \
+    0,                                  /* tp_dictoffset */ \
+    PYTHON_DEFAULT_INIT(pythonClassName),   /* tp_init */ \
+    0,                                  /* tp_alloc */ \
+    PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
 PYTHON_TYPE_END
 
 // small macros so that the type object can be accessed outside the glue file (for subclassing)
@@ -305,7 +305,7 @@ PYTHON_TYPE_END
 // called at the beginning of the class definition function to grab the module
 #define PYTHON_CLASS_IMPORT_START(m) \
 if (m == NULL) \
-	return; \
+    return; \
 \
 Py_INCREF(m)
 
@@ -315,8 +315,8 @@ Py_INCREF(m)
 // called for each class you want to add to the module
 #define PYTHON_CLASS_IMPORT(m, pythonClassName) \
 if (PyType_Ready(&pythonClassName##_type) < 0) \
-	return; \
-	\
+    return; \
+    \
 Py_INCREF(&pythonClassName##_type); \
 PyModule_AddObject(m, #pythonClassName, (PyObject*)&pythonClassName##_type)
 
@@ -326,18 +326,18 @@ PyModule_AddObject(m, #pythonClassName, (PyObject*)&pythonClassName##_type)
 
 // Handles the three types of methods python uses
 #define PYTHON_METHOD_DEFINITION(pythonClassName, methodName, argsVar) \
-	static PyObject *pythonClassName##_##methodName(pythonClassName *self, PyObject *argsVar)
+    static PyObject *pythonClassName##_##methodName(pythonClassName *self, PyObject *argsVar)
 #define PYTHON_METHOD_DEFINITION_NOARGS(pythonClassName, methodName) \
-	static PyObject *pythonClassName##_##methodName(pythonClassName *self)
+    static PyObject *pythonClassName##_##methodName(pythonClassName *self)
 #define PYTHON_METHOD_DEFINITION_WKEY(pythonClassName, methodName, argsVar, keywordsVar) \
-	static PyObject *pythonClassName##_##methodName(pythonClassName *self, PyObject *argsVar, PyObject *keywordsVar)
+    static PyObject *pythonClassName##_##methodName(pythonClassName *self, PyObject *argsVar, PyObject *keywordsVar)
 
 // A very basic function, just calls the class method and returns None
 #define PYTHON_BASIC_METHOD_DEFINITION(pythonClassName, methodName, classMethodName) \
 static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 { \
-	self->fThis->classMethodName(); \
-	PYTHON_RETURN_NONE; \
+    self->fThis->classMethodName(); \
+    PYTHON_RETURN_NONE; \
 }
 
 // Different basic return types
@@ -345,10 +345,10 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 #define PYTHON_RETURN_NONE {Py_INCREF(Py_None); return Py_None;}
 #define PYTHON_RETURN_BOOL(testValue) \
 { \
-	if (testValue) \
-		return PyInt_FromLong((long)1); \
-	else \
-		return PyInt_FromLong((long)0); \
+    if (testValue) \
+        return PyInt_FromLong((long)1); \
+    else \
+        return PyInt_FromLong((long)0); \
 }
 #define PYTHON_RETURN_NOT_IMPLEMENTED {Py_INCREF(Py_NotImplemented); return Py_NotImplemented;}
 
@@ -360,19 +360,19 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 
 // basic method
 #define PYTHON_METHOD(pythonClassName, methodName, docString) \
-	{#methodName, (PyCFunction)pythonClassName##_##methodName, METH_VARARGS, docString}
+    {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_VARARGS, docString}
 
 // method with no arguments
 #define PYTHON_METHOD_NOARGS(pythonClassName, methodName, docString) \
-	{#methodName, (PyCFunction)pythonClassName##_##methodName, METH_NOARGS, docString}
+    {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_NOARGS, docString}
 
 // method with keywords
 #define PYTHON_METHOD_WKEY(pythonClassName, methodName, docString) \
-	{#methodName, (PyCFunction)pythonClassName##_##methodName, METH_VARARGS | METH_KEYWORDS, docString}
+    {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_VARARGS | METH_KEYWORDS, docString}
 
 // really basic method
 #define PYTHON_BASIC_METHOD(pythonClassName, methodName, docString) \
-	{#methodName, (PyCFunction)pythonClassName##_##methodName, METH_NOARGS, docString}
+    {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_NOARGS, docString}
 
 /////////////////////////////////////////////////////////////////////
 // Get/set macros
@@ -384,18 +384,18 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 
 // getter function definition
 #define PYTHON_GET_DEFINITION(pythonClassName, attribName) \
-	static PyObject *pythonClassName##_get##attribName(pythonClassName *self, void *closure)
+    static PyObject *pythonClassName##_get##attribName(pythonClassName *self, void *closure)
 
 // setter function definition
 #define PYTHON_SET_DEFINITION(pythonClassName, attribName, valueVarName) \
-	static int pythonClassName##_set##attribName(pythonClassName *self, PyObject *valueVarName, void *closure)
+    static int pythonClassName##_set##attribName(pythonClassName *self, PyObject *valueVarName, void *closure)
 
 // read-only setter function
 #define PYTHON_SET_DEFINITION_READONLY(pythonClassName, attribName) \
 int pythonClassName##_set##attribName(PyObject *self, PyObject *value, void *closure) \
 { \
-	PyErr_SetString(PyExc_RuntimeError, #attribName " is read-only"); \
-	PYTHON_RETURN_SET_ERROR; \
+    PyErr_SetString(PyExc_RuntimeError, #attribName " is read-only"); \
+    PYTHON_RETURN_SET_ERROR; \
 }
 
 // starts off the get/set table
@@ -406,8 +406,8 @@ int pythonClassName##_set##attribName(PyObject *self, PyObject *value, void *clo
 
 // the get/set definition
 #define PYTHON_GETSET(pythonClassName, attribName, docString) {#attribName, \
-	(getter)pythonClassName##_get##attribName, (setter)pythonClassName##_set##attribName, \
-	docString, NULL}
+    (getter)pythonClassName##_get##attribName, (setter)pythonClassName##_set##attribName, \
+    docString, NULL}
 
 /////////////////////////////////////////////////////////////////////
 // as_ table macros
@@ -476,8 +476,8 @@ static PyObject *methodName(PyObject*); /* forward declaration so struct can go 
 static PyMethodDef methodName##_method = {#methodName, (PyCFunction)methodName, METH_NOARGS, docString}; \
 static PyObject *methodName(PyObject *self) /* and now for the actual function */ \
 { \
-	classMethodName(); \
-	PYTHON_RETURN_NONE; \
+    classMethodName(); \
+    PYTHON_RETURN_NONE; \
 }
 
 // this goes in the definition function

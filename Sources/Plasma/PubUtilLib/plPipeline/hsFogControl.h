@@ -37,98 +37,98 @@ class hsPortal;
 
 class hsFogControl : public plCreatable {
 public:
-	enum {
-		kFogCtlPortal
-	};
+    enum {
+        kFogCtlPortal
+    };
 protected:
 
-    plKey					fNodeKey;
-	hsDynamicArray<plKey>	fFogNodes;
-//	hsGEnvironment::FogState			fAvgFog;
+    plKey                   fNodeKey;
+    hsDynamicArray<plKey>   fFogNodes;
+//  hsGEnvironment::FogState            fAvgFog;
 
-	virtual hsScalar	IGetStrength(hsSceneNode* node) = 0;
+    virtual hsScalar    IGetStrength(hsSceneNode* node) = 0;
 
-	void				IPopNodes();
-	void				IPushNodes();
+    void                IPopNodes();
+    void                IPushNodes();
 
-	void				IZeroAvgFog();
-	void				IAverageNodes();
-//	void				IAccumFog(hsGEnvironment* env, hsScalar wgt);
+    void                IZeroAvgFog();
+    void                IAverageNodes();
+//  void                IAccumFog(hsGEnvironment* env, hsScalar wgt);
 
 public:
-	hsFogControl() {}
-	~hsFogControl() {}
+    hsFogControl() {}
+    ~hsFogControl() {}
 
-	CLASSNAME_REGISTER( hsFogControl );
-	GETINTERFACE_ANY( hsFogControl, plCreatable );
+    CLASSNAME_REGISTER( hsFogControl );
+    GETINTERFACE_ANY( hsFogControl, plCreatable );
 
-	virtual UInt32		GetType() = 0;
+    virtual UInt32      GetType() = 0;
 
-//	virtual hsGEnvironment* GetHomeEnv() = 0;
-	virtual void Init(hsSceneNode* node);
+//  virtual hsGEnvironment* GetHomeEnv() = 0;
+    virtual void Init(hsSceneNode* node);
 
-	virtual void Blend() = 0;
+    virtual void Blend() = 0;
 
-	virtual void Restore() = 0; 
+    virtual void Restore() = 0; 
 
-	virtual void Read(hsStream *stream, hsResMgr* mgr) = 0;
-	virtual void Write(hsStream *stream, hsResMgr* mgr) = 0;
+    virtual void Read(hsStream *stream, hsResMgr* mgr) = 0;
+    virtual void Write(hsStream *stream, hsResMgr* mgr) = 0;
 
 };
 
 #if 0 // Move up to FeatureLevel
 class hsNodeFogControl : public hsFogControl {
 public:
-	hsNodeFogControl();
-	~hsNodeFogControl();
+    hsNodeFogControl();
+    ~hsNodeFogControl();
 
-	hsSceneNode* GetFogNode(int i);
+    hsSceneNode* GetFogNode(int i);
     hsSceneNode *GetHomeNode();
-	virtual void Init(hsSceneNode* node);
-	
-	virtual hsGEnvironment* GetHomeEnv();
+    virtual void Init(hsSceneNode* node);
+    
+    virtual hsGEnvironment* GetHomeEnv();
 
-	virtual void Blend();
+    virtual void Blend();
 
-	virtual void Restore(); 
+    virtual void Restore(); 
 
-	virtual void Read(hsStream *stream);
-	virtual void Write(hsStream *stream);
+    virtual void Read(hsStream *stream);
+    virtual void Write(hsStream *stream);
 };
 
 class hsPortalFogControl : public hsNodeFogControl {
 protected:
-	enum {
-		kStatusNone				= 0x0,
-		kStatusNodesSet			= 0x1
-	};
+    enum {
+        kStatusNone             = 0x0,
+        kStatusNodesSet         = 0x1
+    };
 
-	hsDynamicArray<plKey>		fPortals;
-	hsScalar								fDefRadius;
+    hsDynamicArray<plKey>       fPortals;
+    hsScalar                                fDefRadius;
 
-	UInt32									fStatus;
+    UInt32                                  fStatus;
 
-	void					IFindFogNodes();
-	virtual hsScalar		IGetStrength(hsSceneNode* node);
+    void                    IFindFogNodes();
+    virtual hsScalar        IGetStrength(hsSceneNode* node);
 public:
-	hsPortalFogControl();
+    hsPortalFogControl();
 
-	void SetDefaultRadius(hsScalar r) { fDefRadius = r; }
-	hsScalar GetDefaultRadius() { return fDefRadius; }
+    void SetDefaultRadius(hsScalar r) { fDefRadius = r; }
+    hsScalar GetDefaultRadius() { return fDefRadius; }
 
-	hsPortal* GetPortal(int i);
+    hsPortal* GetPortal(int i);
 
-	virtual UInt32		GetType() { return kFogCtlPortal; }
+    virtual UInt32      GetType() { return kFogCtlPortal; }
 
-	virtual void Init(hsSceneNode* node);
-	virtual void Blend();
+    virtual void Init(hsSceneNode* node);
+    virtual void Blend();
 
-	int GetNumPortalKeys() { return fPortals.GetCount(); }
-	void AddPortalKey(plKey key) { fPortals.Append(key); }
-	plKey GetPortalKey(int i) { return fPortals[i]; }
+    int GetNumPortalKeys() { return fPortals.GetCount(); }
+    void AddPortalKey(plKey key) { fPortals.Append(key); }
+    plKey GetPortalKey(int i) { return fPortals[i]; }
 
-	virtual void Read(hsStream *stream);
-	virtual void Write(hsStream *stream);
+    virtual void Read(hsStream *stream);
+    virtual void Write(hsStream *stream);
 };
 #endif // Move up to FeatureLevel
 

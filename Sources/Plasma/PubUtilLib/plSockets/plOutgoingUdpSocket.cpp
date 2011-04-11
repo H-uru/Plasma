@@ -39,57 +39,57 @@ plOutgoingUdpSocket::plOutgoingUdpSocket()
 }
 
 plOutgoingUdpSocket::plOutgoingUdpSocket(SOCKET sck)
-:	plSocket(sck)
+:   plSocket(sck)
 {
 
 }
 
 bool plOutgoingUdpSocket::operator==(const plOutgoingUdpSocket & rhs)
 {
-	return fSocket==rhs.fSocket;
+    return fSocket==rhs.fSocket;
 }
 
 int plOutgoingUdpSocket::SetSendBufferSize(int insize)
 {
-	if (setsockopt(fSocket, (int) SOL_SOCKET, (int) SO_SNDBUF, (char *) &insize, sizeof(int)))
-		return -1;    
-	return 0;
+    if (setsockopt(fSocket, (int) SOL_SOCKET, (int) SO_SNDBUF, (char *) &insize, sizeof(int)))
+        return -1;    
+    return 0;
 }
 
 bool plOutgoingUdpSocket::ActiveOpen(plNetAddress & addr)
 {
-	SetSocket(plNet::NewUDP());
-	if(fSocket == kBadSocket)
-		return false;
-	
-	if(plNet::Connect(fSocket, &addr.GetAddressInfo()) != 0)
-		return ErrorClose();
-	
-	return true;
+    SetSocket(plNet::NewUDP());
+    if(fSocket == kBadSocket)
+        return false;
+    
+    if(plNet::Connect(fSocket, &addr.GetAddressInfo()) != 0)
+        return ErrorClose();
+    
+    return true;
 }
 
 
 bool plOutgoingUdpSocket::ActiveOpenNonBlocking(plNetAddress & addr)
 {
-	SetSocket(plNet::NewUDP());
-	if(fSocket == kBadSocket)
-		return false;
+    SetSocket(plNet::NewUDP());
+    if(fSocket == kBadSocket)
+        return false;
 
-	SetBlocking(false);
+    SetBlocking(false);
 
-	if(plNet::Connect(fSocket, &addr.GetAddressInfo()) != 0)
-		return ErrorClose();
-	
-	return true;
+    if(plNet::Connect(fSocket, &addr.GetAddressInfo()) != 0)
+        return ErrorClose();
+    
+    return true;
 }
 
 
 // Returns:
-//	- if error
-//	0 if socket closed or size=0
-//	+ bytes written
+//  - if error
+//  0 if socket closed or size=0
+//  + bytes written
 int plOutgoingUdpSocket::SendData(const char * data, int size)
 {
-	return plNet::Write(fSocket,data,size);
+    return plNet::Write(fSocket,data,size);
 }
 

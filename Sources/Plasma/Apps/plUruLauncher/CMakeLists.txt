@@ -7,22 +7,22 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plUruLauncher_HEADERS
-	Intern.h
-	Pch.h
-	plLauncherInfo.h
+    Intern.h
+    Pch.h
+    plLauncherInfo.h
 )
 
 set(plUruLauncher_SOURCES
-	Main.cpp
-	SelfPatcher.cpp
+    Main.cpp
+    SelfPatcher.cpp
 )
 
 set(plUruLauncher_RESOURCES
-	plUruLauncher.rc
-	resource.h
+    plUruLauncher.rc
+    resource.h
 
-	banner.bmp
-	Dirt.ICO
+    banner.bmp
+    Dirt.ICO
 )
 
 add_executable(plUruLauncher WIN32 ${plUruLauncher_SOURCES} ${plUruLauncher_HEADERS}

@@ -38,24 +38,24 @@ class plCaptureRenderRequest : public plRenderRequest
 {
 public:
 
-	virtual void	Render(plPipeline* pipe, plPageTreeMgr* pageMgr);
+    virtual void    Render(plPipeline* pipe, plPageTreeMgr* pageMgr);
 };
 
 class plCaptureRender
 {
 protected:
-	static hsTArray<plCaptureRenderMsg*>		fProcessed;
+    static hsTArray<plCaptureRenderMsg*>        fProcessed;
 
-	static hsBool		IProcess(plPipeline* pipe, const plKey& ack, plRenderTarget* targ);
+    static hsBool       IProcess(plPipeline* pipe, const plKey& ack, plRenderTarget* targ);
 
-	friend class plCaptureRenderRequest;
+    friend class plCaptureRenderRequest;
 
-	// Only the client calls this (during the update phase).
-	static void			Update();
-	friend class plClient;
+    // Only the client calls this (during the update phase).
+    static void         Update();
+    friend class plClient;
 public:
 
-	static hsBool		Capture(const plKey& ack, UInt16 width=800, UInt16 height=600);
+    static hsBool       Capture(const plKey& ack, UInt16 width=800, UInt16 height=600);
 
 };
 
@@ -69,22 +69,22 @@ class plPipeline;
 class plCaptureRender
 {
 protected:
-	class CapInfo
-	{
-	public:
-		plKey		fAck;
-		UInt16		fWidth;
-		UInt16		fHeight;
-	};
+    class CapInfo
+    {
+    public:
+        plKey       fAck;
+        UInt16      fWidth;
+        UInt16      fHeight;
+    };
 
-	static hsTArray<CapInfo>		fCapReqs;
+    static hsTArray<CapInfo>        fCapReqs;
 
-	// Only the client calls this (during the update phase).
-	static void			Update(plPipeline* pipe);
-	friend class plClient;
+    // Only the client calls this (during the update phase).
+    static void         Update(plPipeline* pipe);
+    friend class plClient;
 public:
 
-	static hsBool		Capture(const plKey& ack, UInt16 width=800, UInt16 height=600);
+    static hsBool       Capture(const plKey& ack, UInt16 width=800, UInt16 height=600);
 
 };
 

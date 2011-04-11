@@ -37,28 +37,28 @@ class plEventCallbackMsg;
 class plWin32StaticSound : public plWin32Sound
 {
 public:
-	plWin32StaticSound();
-	~plWin32StaticSound();
+    plWin32StaticSound();
+    ~plWin32StaticSound();
 
-	CLASSNAME_REGISTER( plWin32StaticSound );
-	GETINTERFACE_ANY( plWin32StaticSound, plWin32Sound );
-	
-	virtual void	Activate( hsBool forcePlay = false );
-	virtual void	DeActivate();
-	virtual hsBool	LoadSound( hsBool is3D );
-	virtual void	Update();
-	virtual hsBool	MsgReceive(plMessage* pMsg);
-	virtual void	SetStartPos(unsigned bytes){}
+    CLASSNAME_REGISTER( plWin32StaticSound );
+    GETINTERFACE_ANY( plWin32StaticSound, plWin32Sound );
+    
+    virtual void    Activate( hsBool forcePlay = false );
+    virtual void    DeActivate();
+    virtual hsBool  LoadSound( hsBool is3D );
+    virtual void    Update();
+    virtual hsBool  MsgReceive(plMessage* pMsg);
+    virtual void    SetStartPos(unsigned bytes){}
 
 protected:
-	hsBool			fRegisteredOnThread;
+    hsBool          fRegisteredOnThread;
 
-	virtual void	IDerivedActuallyPlay( void );
-	virtual void	ISetActualTime( double t );
-	virtual float	GetActualTimeSec();
+    virtual void    IDerivedActuallyPlay( void );
+    virtual void    ISetActualTime( double t );
+    virtual float   GetActualTimeSec();
 
-	virtual void	IAddCallback( plEventCallbackMsg *pCBMsg );
-	virtual void	IRemoveCallback( plEventCallbackMsg *pCBMsg );
+    virtual void    IAddCallback( plEventCallbackMsg *pCBMsg );
+    virtual void    IRemoveCallback( plEventCallbackMsg *pCBMsg );
 
 };
 
@@ -66,15 +66,15 @@ protected:
 class plWin32LinkSound : public plWin32StaticSound
 {
 public:
-	plWin32LinkSound();
-	~plWin32LinkSound() { }
+    plWin32LinkSound();
+    ~plWin32LinkSound() { }
 
-	CLASSNAME_REGISTER( plWin32LinkSound );
-	GETINTERFACE_ANY( plWin32LinkSound, plWin32StaticSound );
+    CLASSNAME_REGISTER( plWin32LinkSound );
+    GETINTERFACE_ANY( plWin32LinkSound, plWin32StaticSound );
 
-	virtual void	Read(hsStream* s, hsResMgr* mgr);
-	virtual void	Write(hsStream* s, hsResMgr* mgr);
-	virtual hsBool	MsgReceive(plMessage* pMsg);
+    virtual void    Read(hsStream* s, hsResMgr* mgr);
+    virtual void    Write(hsStream* s, hsResMgr* mgr);
+    virtual hsBool  MsgReceive(plMessage* pMsg);
 };
 
 #endif //plWin32StaticSound_h

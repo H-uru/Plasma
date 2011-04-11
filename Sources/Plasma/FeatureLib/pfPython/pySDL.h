@@ -47,7 +47,7 @@ class plKey;
 class pySDL
 {
 public:
-	static void AddPlasmaConstantsClasses(PyObject *m);
+    static void AddPlasmaConstantsClasses(PyObject *m);
 };
 
 
@@ -55,31 +55,31 @@ public:
 class pySDLStateDataRecord
 {
 private:
-	plStateDataRecord * fRec;
+    plStateDataRecord * fRec;
 
 protected:
-	pySDLStateDataRecord();
-	pySDLStateDataRecord( plStateDataRecord * rec );
+    pySDLStateDataRecord();
+    pySDLStateDataRecord( plStateDataRecord * rec );
 
 public:
-	~pySDLStateDataRecord();
+    ~pySDLStateDataRecord();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptSDLStateDataRecord);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(plStateDataRecord* rec);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySDLStateDataRecord object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySDLStateDataRecord); // converts a PyObject to a pySDLStateDataRecord (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptSDLStateDataRecord);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(plStateDataRecord* rec);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySDLStateDataRecord object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySDLStateDataRecord); // converts a PyObject to a pySDLStateDataRecord (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	plStateDataRecord * GetRec() const;
+    plStateDataRecord * GetRec() const;
 
-	/////////////////////
-	PyObject * FindVar( const char * name ) const; // returns pySimpleStateVariable
-	const char *GetName() const;
-	std::vector<std::string> GetVarList();
-	void SetFromDefaults(bool timeStampNow);
+    /////////////////////
+    PyObject * FindVar( const char * name ) const; // returns pySimpleStateVariable
+    const char *GetName() const;
+    std::vector<std::string> GetVarList();
+    void SetFromDefaults(bool timeStampNow);
 };
 
 typedef unsigned char byte;
@@ -87,49 +87,49 @@ typedef unsigned char byte;
 class pySimpleStateVariable
 {
 private:
-	plSimpleStateVariable *	fVar;
-	mutable std::string	fString;	// for GetString()
+    plSimpleStateVariable * fVar;
+    mutable std::string fString;    // for GetString()
 
 protected:
-	pySimpleStateVariable();
-	pySimpleStateVariable( plSimpleStateVariable * var );
+    pySimpleStateVariable();
+    pySimpleStateVariable( plSimpleStateVariable * var );
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptSimpleStateVariable);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(plSimpleStateVariable* var);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySimpleStateVariable object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySimpleStateVariable); // converts a PyObject to a pySimpleStateVariable (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptSimpleStateVariable);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(plSimpleStateVariable* var);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySimpleStateVariable object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySimpleStateVariable); // converts a PyObject to a pySimpleStateVariable (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	plSimpleStateVariable *	GetVar() const;
+    plSimpleStateVariable * GetVar() const;
 
-	/////////////////////
-	bool	SetByte( byte v, int idx=0 );
-	bool	SetShort( short v, int idx=0 );
-	bool	SetFloat( float v, int idx=0 );
-	bool	SetDouble( double v, int idx=0 );
-	bool	SetInt( int v, int idx=0 );
-	bool	SetString( const char * v, int idx=0 );
-	bool	SetBool(bool v, int idx=0 );
-	byte	GetByte( int idx=0 ) const;
-	short	GetShort( int idx=0 ) const;
-	int		GetInt( int idx=0 ) const;
-	float	GetFloat( int idx=0 ) const;
-	double	GetDouble( int idx=0 ) const;			
-	bool	GetBool( int idx=0 ) const;
-	const char * GetString( int idx=0 ) const;
-	plKey	GetKey( int idx=0 ) const;
+    /////////////////////
+    bool    SetByte( byte v, int idx=0 );
+    bool    SetShort( short v, int idx=0 );
+    bool    SetFloat( float v, int idx=0 );
+    bool    SetDouble( double v, int idx=0 );
+    bool    SetInt( int v, int idx=0 );
+    bool    SetString( const char * v, int idx=0 );
+    bool    SetBool(bool v, int idx=0 );
+    byte    GetByte( int idx=0 ) const;
+    short   GetShort( int idx=0 ) const;
+    int     GetInt( int idx=0 ) const;
+    float   GetFloat( int idx=0 ) const;
+    double  GetDouble( int idx=0 ) const;           
+    bool    GetBool( int idx=0 ) const;
+    const char * GetString( int idx=0 ) const;
+    plKey   GetKey( int idx=0 ) const;
 
-	int		GetType() const;
-	const char *GetDisplayOptions() const;
-	const char *GetDefault() const;
-	bool	IsAlwaysNew() const;
-	bool	IsInternal() const;
+    int     GetType() const;
+    const char *GetDisplayOptions() const;
+    const char *GetDefault() const;
+    bool    IsAlwaysNew() const;
+    bool    IsInternal() const;
 
 };
 
 
-#endif //	_pySDL_h_
+#endif //   _pySDL_h_

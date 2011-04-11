@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plDXRenderTargetRef.h - RenderTarget DeviceRef Definitions				 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plDXRenderTargetRef.h - RenderTarget DeviceRef Definitions               //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	7.19.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  7.19.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plDXRenderTargetRef_h
@@ -47,42 +47,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plRenderTarget;
 class plDXRenderTargetRef: public plDXTextureRef
 {
-	public:
+    public:
 
-		IDirect3DSurface9	*fD3DColorSurface;
-		IDirect3DSurface9	*fD3DDepthSurface;
+        IDirect3DSurface9   *fD3DColorSurface;
+        IDirect3DSurface9   *fD3DDepthSurface;
 
-		hsBool				fReleaseDepth;
+        hsBool              fReleaseDepth;
 
-		void					Link( plDXRenderTargetRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
-		plDXRenderTargetRef	*GetNext( void ) { return (plDXRenderTargetRef *)fNext; }
+        void                    Link( plDXRenderTargetRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
+        plDXRenderTargetRef *GetNext( void ) { return (plDXRenderTargetRef *)fNext; }
 
 
-		plDXRenderTargetRef( D3DFORMAT tp, UInt32 ml, plRenderTarget *owner, hsBool releaseDepthOnDelete = true );
-		plDXRenderTargetRef& Set( D3DFORMAT tp, UInt32 ml, plRenderTarget *owner );
+        plDXRenderTargetRef( D3DFORMAT tp, UInt32 ml, plRenderTarget *owner, hsBool releaseDepthOnDelete = true );
+        plDXRenderTargetRef& Set( D3DFORMAT tp, UInt32 ml, plRenderTarget *owner );
 
-		virtual void	SetOwner( plRenderTarget *targ ) { fOwner = (plBitmap *)targ; }
+        virtual void    SetOwner( plRenderTarget *targ ) { fOwner = (plBitmap *)targ; }
 
-		void	SetTexture( IDirect3DSurface9 *surface, IDirect3DSurface9 *depth );
-		void	SetTexture( IDirect3DTexture9 *surface, IDirect3DSurface9 *depth );
-		void	SetTexture( IDirect3DCubeTexture9 *surface, IDirect3DSurface9 *depth );
+        void    SetTexture( IDirect3DSurface9 *surface, IDirect3DSurface9 *depth );
+        void    SetTexture( IDirect3DTexture9 *surface, IDirect3DSurface9 *depth );
+        void    SetTexture( IDirect3DCubeTexture9 *surface, IDirect3DSurface9 *depth );
 
-		IDirect3DSurface9	*GetColorSurface( void ) const
-		{
-			if( fD3DTexture != nil )
-			{
-				IDirect3DSurface9* psurf;
-				((IDirect3DTexture9*)fD3DTexture)->GetSurfaceLevel(0, &psurf);
-				if( psurf )
-					psurf->Release();
-				return psurf;
-			}
+        IDirect3DSurface9   *GetColorSurface( void ) const
+        {
+            if( fD3DTexture != nil )
+            {
+                IDirect3DSurface9* psurf;
+                ((IDirect3DTexture9*)fD3DTexture)->GetSurfaceLevel(0, &psurf);
+                if( psurf )
+                    psurf->Release();
+                return psurf;
+            }
 
-			return fD3DColorSurface;
-		}
+            return fD3DColorSurface;
+        }
 
-		virtual ~plDXRenderTargetRef();
-		void	Release( void );
+        virtual ~plDXRenderTargetRef();
+        void    Release( void );
 };
 
 

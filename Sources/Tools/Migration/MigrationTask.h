@@ -31,109 +31,109 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class MigrationTask
 {
 public:
-	enum Servers
-	{
-		kTest,
-		kLast,
-		kBranch
-	};
+    enum Servers
+    {
+        kTest,
+        kLast,
+        kBranch
+    };
 private:
-	bool fEnabled;
-	Servers fServer;
+    bool fEnabled;
+    Servers fServer;
 public:
-	MigrationTask() : fEnabled(false) {}
+    MigrationTask() : fEnabled(false) {}
 
-	virtual char* GetName() = 0;
-	virtual char* GetDescription() = 0;
-	bool GetEnabled() const { return fEnabled; }
-	void SetEnabled(bool val) { fEnabled = val; }
-	Servers GetServer() const { return fServer; }
-	void SetServer(Servers server) { fServer = server; }
-	virtual int Run(HINSTANCE hInst, HWND hDlg) = 0;
+    virtual char* GetName() = 0;
+    virtual char* GetDescription() = 0;
+    bool GetEnabled() const { return fEnabled; }
+    void SetEnabled(bool val) { fEnabled = val; }
+    Servers GetServer() const { return fServer; }
+    void SetServer(Servers server) { fServer = server; }
+    virtual int Run(HINSTANCE hInst, HWND hDlg) = 0;
 };
 
 
 class MigrationTask_Backup : public MigrationTask
 {
 public:
-	char* GetName() { return "Backup Task"; }
-	char* GetDescription() { return "Backing up Live Data and Live Servers."; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Backup Task"; }
+    char* GetDescription() { return "Backing up Live Data and Live Servers."; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 
 class MigrationTask_CleanUp : public MigrationTask
 {
 public:
-	char* GetName() { return "Test Data Clean-Up"; }
-	char* GetDescription() { return "Clean up the test data for copying to the live server."; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Test Data Clean-Up"; }
+    char* GetDescription() { return "Clean up the test data for copying to the live server."; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 
 class MigrationTask_PatchBuilder : public MigrationTask
 {
 public:
-	char* GetName() { return "Patch Building Task"; }
-	char* GetDescription() { return "Building the patch set to upgrade the client's data."; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Patch Building Task"; }
+    char* GetDescription() { return "Building the patch set to upgrade the client's data."; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 
 class MigrationTask_DataMigration : public MigrationTask
 {
 public:
-	char* GetName() { return "Data Migration Task"; }
-	char* GetDescription() { return "Copying the data from the Test Server to the Live Server"; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Data Migration Task"; }
+    char* GetDescription() { return "Copying the data from the Test Server to the Live Server"; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 class MigrationTask_InstallClient : public MigrationTask
 {
 public:
-	char* GetName() { return "Install the Client Files"; }
-	char* GetDescription() { return "Installs the Client files from a specified directory."; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Install the Client Files"; }
+    char* GetDescription() { return "Installs the Client files from a specified directory."; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 class MigrationTask_GenerateClientManifest : public MigrationTask
 {
 public:
-	char* GetName() { return "Generate The Client Manifest"; }
-	char* GetDescription() { return "Generates the Client Manifest from the Client Files on the Server."; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Generate The Client Manifest"; }
+    char* GetDescription() { return "Generates the Client Manifest from the Client Files on the Server."; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 class MigrationTask_DropStoredGames : public MigrationTask
 {
 public:
-	char* GetName() { return "Drop Live Stored Games"; }
-	char* GetDescription() { return "Drops the Stored Games that are on the live server."; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Drop Live Stored Games"; }
+    char* GetDescription() { return "Drops the Stored Games that are on the live server."; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 class MigrationTask_InstallAges : public MigrationTask
 {
 public:
-	char* GetName() { return "Install the Ages"; }
-	char* GetDescription() { return "Installs the Ages from the live data into the Lookup Server."; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Install the Ages"; }
+    char* GetDescription() { return "Installs the Ages from the live data into the Lookup Server."; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 class MigrationTask_CopyTestServers : public MigrationTask
 {
 public:
-	char* GetName() { return "Copy the Test Servers to Live"; }
-	char* GetDescription() { return "Copy the Test server executables to the Live server."; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Copy the Test Servers to Live"; }
+    char* GetDescription() { return "Copy the Test server executables to the Live server."; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 class MigrationTask_StartLiveServers : public MigrationTask
 {
 public:
-	char* GetName() { return "Start the Live Servers"; }
-	char* GetDescription() { return "Starts the Live Servers."; }
-	int Run(HINSTANCE hInst, HWND hDlg);
+    char* GetName() { return "Start the Live Servers"; }
+    char* GetDescription() { return "Starts the Live Servers."; }
+    int Run(HINSTANCE hInst, HWND hDlg);
 };
 
 #endif //MIGRATION_TASK_H

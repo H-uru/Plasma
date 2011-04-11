@@ -38,47 +38,47 @@ class plStateDataRecord;
 class plSDLModifierMsg : public plMessage
 {
 public:
-	enum Action
-	{
-		kActionNone	= 0,
-		kRecv,
-		kSendToServer,
-		kSendToServerAndClients
-	};
+    enum Action
+    {
+        kActionNone = 0,
+        kRecv,
+        kSendToServer,
+        kSendToServerAndClients
+    };
 
 protected:
-	char* fSDLName;			// the state descriptor name (ie. "physical")
-	Action fAction;
-	plStateDataRecord* fState;		// for recving state
-	bool fManageStateMem;			// delete fState?
-	UInt32 fPlayerID;
-	UInt32 fFlags;
+    char* fSDLName;         // the state descriptor name (ie. "physical")
+    Action fAction;
+    plStateDataRecord* fState;      // for recving state
+    bool fManageStateMem;           // delete fState?
+    UInt32 fPlayerID;
+    UInt32 fFlags;
 
 public:
-	plSDLModifierMsg(const char* sdlName=nil, Action a=kActionNone);
-	~plSDLModifierMsg();
+    plSDLModifierMsg(const char* sdlName=nil, Action a=kActionNone);
+    ~plSDLModifierMsg();
 
-	CLASSNAME_REGISTER( plSDLModifierMsg );
-	GETINTERFACE_ANY( plSDLModifierMsg, plMessage );
+    CLASSNAME_REGISTER( plSDLModifierMsg );
+    GETINTERFACE_ANY( plSDLModifierMsg, plMessage );
 
-	UInt32 GetFlags() const { return fFlags; }
-	void SetFlags(UInt32 f) { fFlags = f; }
+    UInt32 GetFlags() const { return fFlags; }
+    void SetFlags(UInt32 f) { fFlags = f; }
 
-	Action GetAction() const { return fAction; }
-	void SetAction(Action t) { fAction=t; }
+    Action GetAction() const { return fAction; }
+    void SetAction(Action t) { fAction=t; }
 
-	plStateDataRecord* GetState(bool unManageState=false) { if ( unManageState ) fManageStateMem=false; return fState; }
-	void SetState(plStateDataRecord* s, bool manageState) { fState=s; fManageStateMem=manageState; }
+    plStateDataRecord* GetState(bool unManageState=false) { if ( unManageState ) fManageStateMem=false; return fState; }
+    void SetState(plStateDataRecord* s, bool manageState) { fState=s; fManageStateMem=manageState; }
 
-	const char* GetSDLName() const { return fSDLName; }
-	void SetSDLName(const char* s) { delete [] fSDLName; fSDLName=hsStrcpy(s); }
-		
-	UInt32 GetPlayerID() const { return fPlayerID;	}
-	void SetPlayerID(UInt32 p) { fPlayerID=p;	}
-	
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "local only msg"); }
-	void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "local only msg"); }
+    const char* GetSDLName() const { return fSDLName; }
+    void SetSDLName(const char* s) { delete [] fSDLName; fSDLName=hsStrcpy(s); }
+        
+    UInt32 GetPlayerID() const { return fPlayerID;  }
+    void SetPlayerID(UInt32 p) { fPlayerID=p;   }
+    
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "local only msg"); }
+    void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "local only msg"); }
 };
 
-#endif	// plSDLModifierMsg_INC
+#endif  // plSDLModifierMsg_INC

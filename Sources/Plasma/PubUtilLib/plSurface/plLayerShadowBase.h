@@ -33,19 +33,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plLayerLightBase : public plLayerInterface
 {
 protected:
-	hsBool				fDirty;
+    hsBool              fDirty;
 public:
 
-	plLayerLightBase();
-	virtual ~plLayerLightBase();
+    plLayerLightBase();
+    virtual ~plLayerLightBase();
 
-	CLASSNAME_REGISTER( plLayerLightBase );
-	GETINTERFACE_ANY( plLayerLightBase, plLayerInterface );
+    CLASSNAME_REGISTER( plLayerLightBase );
+    GETINTERFACE_ANY( plLayerLightBase, plLayerInterface );
 
 
-	virtual plLayerInterface*	Attach(plLayerInterface* prev);
+    virtual plLayerInterface*   Attach(plLayerInterface* prev);
 
-	virtual UInt32			Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
 
 
 };
@@ -53,19 +53,19 @@ public:
 class plLayerShadowBase : public plLayerInterface
 {
 protected:
-	hsBool				fDirty;
+    hsBool              fDirty;
 public:
 
-	plLayerShadowBase();
-	virtual ~plLayerShadowBase();
+    plLayerShadowBase();
+    virtual ~plLayerShadowBase();
 
-	CLASSNAME_REGISTER( plLayerShadowBase );
-	GETINTERFACE_ANY( plLayerShadowBase, plLayerInterface );
+    CLASSNAME_REGISTER( plLayerShadowBase );
+    GETINTERFACE_ANY( plLayerShadowBase, plLayerInterface );
 
 
-	virtual plLayerInterface*	Attach(plLayerInterface* prev);
+    virtual plLayerInterface*   Attach(plLayerInterface* prev);
 
-	virtual UInt32			Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
 
 
 };

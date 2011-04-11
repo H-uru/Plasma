@@ -36,30 +36,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 bool plNetClientMgr::RecordMsgs(const char* recType, const char* recName)
 {
-	if (!fMsgRecorder)
-	{
-		if (stricmp(recType,"stream") == 0)
-			fMsgRecorder = TRACKED_NEW plNetClientStreamRecorder;
-		if (stricmp(recType,"stressstream") == 0)
-			fMsgRecorder = TRACKED_NEW plNetClientStressStreamRecorder;
-		if (stricmp(recType,"stats") == 0)
-			fMsgRecorder = TRACKED_NEW plNetClientStatsRecorder;
-		if (stricmp(recType,"streamandstats") == 0)
-			fMsgRecorder = TRACKED_NEW plNetClientStreamAndStatsRecorder(TRACKED_NEW plNetClientStreamRecorder(), TRACKED_NEW plNetClientStatsRecorder());
-		if (stricmp(recType,"stressstreamandstats") == 0)
-			fMsgRecorder = TRACKED_NEW plNetClientStreamAndStatsRecorder(TRACKED_NEW plNetClientStressStreamRecorder(), TRACKED_NEW plNetClientStatsRecorder());
+    if (!fMsgRecorder)
+    {
+        if (stricmp(recType,"stream") == 0)
+            fMsgRecorder = TRACKED_NEW plNetClientStreamRecorder;
+        if (stricmp(recType,"stressstream") == 0)
+            fMsgRecorder = TRACKED_NEW plNetClientStressStreamRecorder;
+        if (stricmp(recType,"stats") == 0)
+            fMsgRecorder = TRACKED_NEW plNetClientStatsRecorder;
+        if (stricmp(recType,"streamandstats") == 0)
+            fMsgRecorder = TRACKED_NEW plNetClientStreamAndStatsRecorder(TRACKED_NEW plNetClientStreamRecorder(), TRACKED_NEW plNetClientStatsRecorder());
+        if (stricmp(recType,"stressstreamandstats") == 0)
+            fMsgRecorder = TRACKED_NEW plNetClientStreamAndStatsRecorder(TRACKED_NEW plNetClientStressStreamRecorder(), TRACKED_NEW plNetClientStatsRecorder());
 
-		if (!fMsgRecorder || !fMsgRecorder->BeginRecording(recName))
-		{
-			delete fMsgRecorder;
-			fMsgRecorder = nil;
-			return false;
-		}
+        if (!fMsgRecorder || !fMsgRecorder->BeginRecording(recName))
+        {
+            delete fMsgRecorder;
+            fMsgRecorder = nil;
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 //
@@ -67,21 +67,21 @@ bool plNetClientMgr::RecordMsgs(const char* recType, const char* recName)
 //
 bool plNetClientMgr::PlaybackMsgs(const char* recName)
 {
-	hsLogEntry(DebugMsg("DEMO: Beginning Playback"));
+    hsLogEntry(DebugMsg("DEMO: Beginning Playback"));
 
-	plNetClientRecorder* player = TRACKED_NEW plNetClientStreamRecorder;
+    plNetClientRecorder* player = TRACKED_NEW plNetClientStreamRecorder;
 
-	if (player->BeginPlayback(recName))
-	{
-		fMsgPlayers.push_back(player);
-//		plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
-		return true;
-	}
-	else
-	{
-		delete player;
-		return false;
-	}
+    if (player->BeginPlayback(recName))
+    {
+        fMsgPlayers.push_back(player);
+//      plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
+        return true;
+    }
+    else
+    {
+        delete player;
+        return false;
+    }
 }
 
 //
@@ -89,29 +89,29 @@ bool plNetClientMgr::PlaybackMsgs(const char* recName)
 //
 void plNetClientMgr::IPlaybackMsgs()
 {
-	for (int i = 0; i < fMsgPlayers.size(); i++)
-	{
-		plNetClientRecorder* recorder = fMsgPlayers[i];
-		if (recorder->IsQueueEmpty())
-		{
-			delete recorder;
-			fMsgPlayers.erase(fMsgPlayers.begin()+i);
-			i--;
+    for (int i = 0; i < fMsgPlayers.size(); i++)
+    {
+        plNetClientRecorder* recorder = fMsgPlayers[i];
+        if (recorder->IsQueueEmpty())
+        {
+            delete recorder;
+            fMsgPlayers.erase(fMsgPlayers.begin()+i);
+            i--;
 
-			if (fMsgPlayers.empty())
-			{
-//				plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
-			}
-		}
-		else
-		{
-			while (plNetMessage* msg = recorder->GetNextMessage())
-			{
-				hsLogEntry(DebugMsg("<Recorded Msg>"));
-				fMsgHandler.ReceiveMsg(msg);
-			}
-		}
-	}
+            if (fMsgPlayers.empty())
+            {
+//              plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
+            }
+        }
+        else
+        {
+            while (plNetMessage* msg = recorder->GetNextMessage())
+            {
+                hsLogEntry(DebugMsg("<Recorded Msg>"));
+                fMsgHandler.ReceiveMsg(msg);
+            }
+        }
+    }
 }
 
 

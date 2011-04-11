@@ -42,36 +42,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 enum EBlueSpiralInitResult {
-	kBlueSpiralInitSuccess,
-	kBlueSpiralInitError,
-	kNumBlueSpiralInitResults
+    kBlueSpiralInitSuccess,
+    kBlueSpiralInitError,
+    kNumBlueSpiralInitResults
 };
 
 
 //============================================================================
-//	Game type id
+//  Game type id
 //============================================================================
 
 const Uuid kGameTypeId_BlueSpiral = Uuid(L"5ff98165-913e-4fd1-a2c2-9c7f31be2cc8");
 
 
 //============================================================================
-//	Network message ids
+//  Network message ids
 //============================================================================
 
 // Cli2Srv message ids
 enum {
-	kCli2Srv_BlueSpiral_StartGame = kCli2Srv_NumGameMsgIds,
-	kCli2Srv_BlueSpiral_HitCloth,
+    kCli2Srv_BlueSpiral_StartGame = kCli2Srv_NumGameMsgIds,
+    kCli2Srv_BlueSpiral_HitCloth,
 };
 
 // Srv2Cli message ids
 enum {
-	kSrv2Cli_BlueSpiral_ClothOrder = kSrv2Cli_NumGameMsgIds,
-	kSrv2Cli_BlueSpiral_SuccessfulHit,
-	kSrv2Cli_BlueSpiral_GameWon,
-	kSrv2Cli_BlueSpiral_GameOver, // sent on time out and incorrect entry
-	kSrv2Cli_BlueSpiral_GameStarted,
+    kSrv2Cli_BlueSpiral_ClothOrder = kSrv2Cli_NumGameMsgIds,
+    kSrv2Cli_BlueSpiral_SuccessfulHit,
+    kSrv2Cli_BlueSpiral_GameWon,
+    kSrv2Cli_BlueSpiral_GameOver, // sent on time out and incorrect entry
+    kSrv2Cli_BlueSpiral_GameStarted,
 };
 
 
@@ -80,41 +80,41 @@ enum {
 #include <PshPack1.h>
 //============================================================================
 
-	//========================================================================
-	// Message parameters
-	//========================================================================
-	struct BlueSpiral_CreateParam {
-		// empty
-	};
+    //========================================================================
+    // Message parameters
+    //========================================================================
+    struct BlueSpiral_CreateParam {
+        // empty
+    };
 
-	//========================================================================
-	// Tic-Tac-Toe message structures
-	//========================================================================
+    //========================================================================
+    // Tic-Tac-Toe message structures
+    //========================================================================
 
-	// Cli2Srv
-	struct Cli2Srv_BlueSpiral_StartGame : GameMsgHeader {
-		// empty
-	};
-	struct Cli2Srv_BlueSpiral_HitCloth : GameMsgHeader {
-		byte clothNum; // the cloth we hit, 0..6
-	};
+    // Cli2Srv
+    struct Cli2Srv_BlueSpiral_StartGame : GameMsgHeader {
+        // empty
+    };
+    struct Cli2Srv_BlueSpiral_HitCloth : GameMsgHeader {
+        byte clothNum; // the cloth we hit, 0..6
+    };
 
-	// Srv2Cli
-	struct Srv2Cli_BlueSpiral_ClothOrder : GameMsgHeader {
-		byte order[7]; // each value is the cloth to hit, 0..6, the order is the order in the array
-	};
-	struct Srv2Cli_BlueSpiral_SuccessfulHit : GameMsgHeader {
-		// empty
-	};
-	struct Srv2Cli_BlueSpiral_GameWon : GameMsgHeader {
-		// empty
-	};
-	struct Srv2Cli_BlueSpiral_GameOver : GameMsgHeader {
-		// empty
-	};
-	struct Srv2Cli_BlueSpiral_GameStarted : GameMsgHeader {
-		bool startSpin; // if true, start spinning the door thingy
-	};
+    // Srv2Cli
+    struct Srv2Cli_BlueSpiral_ClothOrder : GameMsgHeader {
+        byte order[7]; // each value is the cloth to hit, 0..6, the order is the order in the array
+    };
+    struct Srv2Cli_BlueSpiral_SuccessfulHit : GameMsgHeader {
+        // empty
+    };
+    struct Srv2Cli_BlueSpiral_GameWon : GameMsgHeader {
+        // empty
+    };
+    struct Srv2Cli_BlueSpiral_GameOver : GameMsgHeader {
+        // empty
+    };
+    struct Srv2Cli_BlueSpiral_GameStarted : GameMsgHeader {
+        bool startSpin; // if true, start spinning the door thingy
+    };
 
 //============================================================================
 // End networked data structures

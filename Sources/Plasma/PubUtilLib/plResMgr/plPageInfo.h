@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plPageInfo - Pack of info about an individual page
+//  plPageInfo - Pack of info about an individual page
 //
 
 #ifndef _plPageInfo_h
@@ -40,57 +40,57 @@ class plLocation;
 class plPageInfo
 {
 public:
-	struct ClassVersion { UInt16 Class; UInt16 Version; };
-	typedef std::vector<ClassVersion> ClassVerVec;
+    struct ClassVersion { UInt16 Class; UInt16 Version; };
+    typedef std::vector<ClassVersion> ClassVerVec;
 
 protected:
-	plLocation	fLocation;
-	char*		fAge;
-	char*		fPage;
-	UInt16		fMajorVersion;
-	ClassVerVec fClassVersions;
-	UInt32		fChecksum;					
-	UInt32		fDataStart, fIndexStart;
+    plLocation  fLocation;
+    char*       fAge;
+    char*       fPage;
+    UInt16      fMajorVersion;
+    ClassVerVec fClassVersions;
+    UInt32      fChecksum;                  
+    UInt32      fDataStart, fIndexStart;
 
-	void		IInit( void );
-	void		ISetFrom( const plPageInfo &src );
+    void        IInit( void );
+    void        ISetFrom( const plPageInfo &src );
 
 public:
 
-	plPageInfo();
-	plPageInfo( const plLocation &loc );
-	plPageInfo( const plPageInfo &src );
-	virtual ~plPageInfo();
+    plPageInfo();
+    plPageInfo( const plLocation &loc );
+    plPageInfo( const plPageInfo &src );
+    virtual ~plPageInfo();
 
-	const char* GetAge() const	{ return fAge; }
-	const char* GetPage() const	{ return fPage; }
+    const char* GetAge() const  { return fAge; }
+    const char* GetPage() const { return fPage; }
 
-	plPageInfo &operator=( const plPageInfo &src );
+    plPageInfo &operator=( const plPageInfo &src );
 
-	void				ClearClassVersions() { fClassVersions.clear(); }
-	void				AddClassVersion(UInt16 classIdx, UInt16 version);
-	const ClassVerVec&	GetClassVersions() const { return fClassVersions; }
+    void                ClearClassVersions() { fClassVersions.clear(); }
+    void                AddClassVersion(UInt16 classIdx, UInt16 version);
+    const ClassVerVec&  GetClassVersions() const { return fClassVersions; }
 
-	void	SetStrings( const char *age, const char *page );
+    void    SetStrings( const char *age, const char *page );
 
-	void				SetLocation(const plLocation& loc);
-	const plLocation&	GetLocation() const;
+    void                SetLocation(const plLocation& loc);
+    const plLocation&   GetLocation() const;
 
-	UInt16	GetMajorVersion() const { return fMajorVersion; }
-	void	SetMajorVersion(UInt16 major) { fMajorVersion = major; }
+    UInt16  GetMajorVersion() const { return fMajorVersion; }
+    void    SetMajorVersion(UInt16 major) { fMajorVersion = major; }
 
-	void	SetChecksum( UInt32 c ) { fChecksum = c; }
-	UInt32	GetChecksum( void ) const { return fChecksum; }
+    void    SetChecksum( UInt32 c ) { fChecksum = c; }
+    UInt32  GetChecksum( void ) const { return fChecksum; }
 
-	void	Read( hsStream *s );
-	void	Write( hsStream *s );
+    void    Read( hsStream *s );
+    void    Write( hsStream *s );
 
-	hsBool	IsValid( void ) const;
+    hsBool  IsValid( void ) const;
 
-	UInt32	GetDataStart( void ) const { return fDataStart; }
-	void	SetDataStart( UInt32 s ) { fDataStart = s; }
+    UInt32  GetDataStart( void ) const { return fDataStart; }
+    void    SetDataStart( UInt32 s ) { fDataStart = s; }
 
-	UInt32	GetIndexStart( void ) const { return fIndexStart; }
-	void	SetIndexStart( UInt32 s ) { fIndexStart = s; }
+    UInt32  GetIndexStart( void ) const { return fIndexStart; }
+    void    SetIndexStart( UInt32 s ) { fIndexStart = s; }
 };
 #endif // _plPageInfo_h

@@ -31,36 +31,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pfMovieEventMsg : public plMessage
 {
 public:
-	enum Reason
-	{
-		kMovieDone,
-	};
-	Reason fReason;
+    enum Reason
+    {
+        kMovieDone,
+    };
+    Reason fReason;
 
 
-	char* fMovieName;
+    char* fMovieName;
 
-	pfMovieEventMsg(const char* movieName, Reason reason=kMovieDone) : plMessage(nil, nil, nil)
-	{
-		fReason = reason;
-		if (movieName)
-			fMovieName = hsStrcpy(movieName);
-		else
-			fMovieName = nil;
-	}
+    pfMovieEventMsg(const char* movieName, Reason reason=kMovieDone) : plMessage(nil, nil, nil)
+    {
+        fReason = reason;
+        if (movieName)
+            fMovieName = hsStrcpy(movieName);
+        else
+            fMovieName = nil;
+    }
 
-	pfMovieEventMsg() : plMessage(nil, nil, nil), fMovieName(nil), fReason(kMovieDone)
-	{
-	}
+    pfMovieEventMsg() : plMessage(nil, nil, nil), fMovieName(nil), fReason(kMovieDone)
+    {
+    }
 
-	virtual ~pfMovieEventMsg();
+    virtual ~pfMovieEventMsg();
 
 
-	CLASSNAME_REGISTER(pfMovieEventMsg);
-	GETINTERFACE_ANY(pfMovieEventMsg, plMessage);
+    CLASSNAME_REGISTER(pfMovieEventMsg);
+    GETINTERFACE_ANY(pfMovieEventMsg, plMessage);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // pfMovieEventMsg_h_inc

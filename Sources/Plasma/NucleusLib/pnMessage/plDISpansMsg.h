@@ -34,27 +34,27 @@ class hsKeyedObject;
 class plDISpansMsg : public plMessage
 {
 public:
-	enum {
-		kAddingSpan,
-		kRemovingSpan
-	};
-	UInt8					fType;
+    enum {
+        kAddingSpan,
+        kRemovingSpan
+    };
+    UInt8                   fType;
 
-	enum {
-		kLeaveEmptyDrawable = 0x1
-	};
-	UInt8					fFlags;
+    enum {
+        kLeaveEmptyDrawable = 0x1
+    };
+    UInt8                   fFlags;
 
-	Int32					fIndex;
+    Int32                   fIndex;
 
-	plDISpansMsg() : plMessage(), fType(0), fFlags(0), fIndex(-1) {}
-	plDISpansMsg(const plKey &r, UInt8 type, int index, int flags) : plMessage(nil, r, nil), fType(type), fIndex(index), fFlags(flags) {}	
-	
-	CLASSNAME_REGISTER( plDISpansMsg );
-	GETINTERFACE_ANY( plDISpansMsg, plMessage );
-	
-	void Read(hsStream* stream, hsResMgr* mgr) {}
-	void Write(hsStream* stream, hsResMgr* mgr) {}
+    plDISpansMsg() : plMessage(), fType(0), fFlags(0), fIndex(-1) {}
+    plDISpansMsg(const plKey &r, UInt8 type, int index, int flags) : plMessage(nil, r, nil), fType(type), fIndex(index), fFlags(flags) {}   
+    
+    CLASSNAME_REGISTER( plDISpansMsg );
+    GETINTERFACE_ANY( plDISpansMsg, plMessage );
+    
+    void Read(hsStream* stream, hsResMgr* mgr) {}
+    void Write(hsStream* stream, hsResMgr* mgr) {}
 };
 
 #endif // plDISpansMsg_inc

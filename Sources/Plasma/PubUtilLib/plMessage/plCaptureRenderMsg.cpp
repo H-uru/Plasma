@@ -30,5 +30,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plCaptureRenderMsg::~plCaptureRenderMsg()
 {
-	hsRefCnt_SafeUnRef(fMipmap);
+    hsRefCnt_SafeUnRef(fMipmap);
 }

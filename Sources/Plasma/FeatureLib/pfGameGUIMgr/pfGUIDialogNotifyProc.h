@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIDialogNotifyProc Header											//
-//																			//
+//                                                                          //
+//  pfGUIDialogNotifyProc Header                                            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIDialogNotifyProc_h
@@ -38,29 +38,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plGUIControlMod;
 
 //// pfGUIDialogNotifyProc Definition ////////////////////////////////////////
-//	Helper dialog proc that takes all control events and turns them into
-//	notify messages that get sent out.
+//  Helper dialog proc that takes all control events and turns them into
+//  notify messages that get sent out.
 
 class pfGUIDialogNotifyProc : public pfGUIDialogProc
 {
-	protected:
-		
-		plKey	fReceiver;
+    protected:
+        
+        plKey   fReceiver;
 
-		void	ISendNotify( plKey ctrlKey, UInt32 event );
+        void    ISendNotify( plKey ctrlKey, UInt32 event );
 
-	public:
+    public:
 
-		pfGUIDialogNotifyProc( plKey &r );
+        pfGUIDialogNotifyProc( plKey &r );
 
-		virtual void	DoSomething( pfGUIControlMod *ctrl );
-		virtual void	OnInit( void );
-		virtual void	OnShow( void );
-		virtual void	OnHide( void );
-		virtual void	OnDestroy( void );
-		virtual void	OnCtrlFocusChange( pfGUIControlMod *oldCtrl, pfGUIControlMod *newCtrl );
-		virtual void	OnControlEvent( ControlEvt event );
-		virtual void	OnInterestingEvent( pfGUIControlMod *ctrl );
+        virtual void    DoSomething( pfGUIControlMod *ctrl );
+        virtual void    OnInit( void );
+        virtual void    OnShow( void );
+        virtual void    OnHide( void );
+        virtual void    OnDestroy( void );
+        virtual void    OnCtrlFocusChange( pfGUIControlMod *oldCtrl, pfGUIControlMod *newCtrl );
+        virtual void    OnControlEvent( ControlEvt event );
+        virtual void    OnInterestingEvent( pfGUIControlMod *ctrl );
 };
 
 #endif // _pfGUIDialogNotifyProc_h

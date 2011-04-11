@@ -34,27 +34,27 @@ class plArmatureUpdateMsg;
 class plDynaRippleMgr : public plDynaDecalMgr
 {
 protected:
-	hsVector3					fInitUVW;
-	hsVector3					fFinalUVW;
+    hsVector3                   fInitUVW;
+    hsVector3                   fFinalUVW;
 
-	virtual hsBool		IRippleFromShape(const plPrintShape* shape, hsBool force=false);
+    virtual hsBool      IRippleFromShape(const plPrintShape* shape, hsBool force=false);
 
-	virtual int			INewDecal();
+    virtual int         INewDecal();
 public:
-	plDynaRippleMgr();
-	virtual ~plDynaRippleMgr();
+    plDynaRippleMgr();
+    virtual ~plDynaRippleMgr();
 
-	CLASSNAME_REGISTER( plDynaRippleMgr );
-	GETINTERFACE_ANY( plDynaRippleMgr, plDynaDecalMgr );
+    CLASSNAME_REGISTER( plDynaRippleMgr );
+    GETINTERFACE_ANY( plDynaRippleMgr, plDynaDecalMgr );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	void SetUVWAnim(const hsVector3& init, const hsVector3& final) { fInitUVW = init; fFinalUVW = final; }
-	const hsVector3& GetInitUVW() const { return fInitUVW; }
-	const hsVector3& GetFinalUVW() const { return fFinalUVW; }
+    void SetUVWAnim(const hsVector3& init, const hsVector3& final) { fInitUVW = init; fFinalUVW = final; }
+    const hsVector3& GetInitUVW() const { return fInitUVW; }
+    const hsVector3& GetFinalUVW() const { return fFinalUVW; }
 };
 
 

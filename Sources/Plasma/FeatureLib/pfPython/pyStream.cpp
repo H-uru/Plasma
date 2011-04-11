@@ -40,103 +40,103 @@ pyStream::pyStream()
 
 pyStream::~pyStream()
 {
-	Close();
+    Close();
 }
 
 
 hsBool pyStream::Open(const wchar* fileName, const wchar* flags)
 {
-	// make sure its closed first
-	Close();
+    // make sure its closed first
+    Close();
 
-	if (fileName)
-	{
-		if (flags)
-		{
-			bool readflag = false;
-			bool writeflag = false;
-			bool encryptflag = false;
-			int i;
-			for (i=0 ; i < wcslen(flags) ; i++ )
-			{
-				if ( flags[i] == L'r' || flags[i] == L'R' )
-					readflag = true;
-				if ( flags[i] == L'w' || flags[i] == L'W' )
-					writeflag = true;
-				if ( flags[i] == L'e' || flags[i] == L'E' )
-					encryptflag = true;
-			}
-			// if there is a write flag, it takes priorty over read
-			if (writeflag)
-			{
-				// force encryption?
-				if (encryptflag)
-				{
-					fStream = TRACKED_NEW plEncryptedStream;
-					fStream->Open(fileName, L"wb");
-				}
-				else
-					fStream = plEncryptedStream::OpenEncryptedFileWrite(fileName);
-			}
-			else
-				fStream = plEncryptedStream::OpenEncryptedFile(fileName);
-			return true;
-		}
-	}
-	return false;
+    if (fileName)
+    {
+        if (flags)
+        {
+            bool readflag = false;
+            bool writeflag = false;
+            bool encryptflag = false;
+            int i;
+            for (i=0 ; i < wcslen(flags) ; i++ )
+            {
+                if ( flags[i] == L'r' || flags[i] == L'R' )
+                    readflag = true;
+                if ( flags[i] == L'w' || flags[i] == L'W' )
+                    writeflag = true;
+                if ( flags[i] == L'e' || flags[i] == L'E' )
+                    encryptflag = true;
+            }
+            // if there is a write flag, it takes priorty over read
+            if (writeflag)
+            {
+                // force encryption?
+                if (encryptflag)
+                {
+                    fStream = TRACKED_NEW plEncryptedStream;
+                    fStream->Open(fileName, L"wb");
+                }
+                else
+                    fStream = plEncryptedStream::OpenEncryptedFileWrite(fileName);
+            }
+            else
+                fStream = plEncryptedStream::OpenEncryptedFile(fileName);
+            return true;
+        }
+    }
+    return false;
 }
 
 std::vector<std::string> pyStream::ReadLines()
 {
-	
-	// read all the lines in the file and put in a python list object
-	// create the list
-	std::vector<std::string> pyPL;
+    
+    // read all the lines in the file and put in a python list object
+    // create the list
+    std::vector<std::string> pyPL;
 
-	if (fStream)
-	{
-		char buf[4096];
-		
-		while (!fStream->AtEnd())
-		{
-			if (fStream->ReadLn(buf, sizeof(buf), 0, 0))
-				pyPL.push_back(buf);
-		}
-	}
+    if (fStream)
+    {
+        char buf[4096];
+        
+        while (!fStream->AtEnd())
+        {
+            if (fStream->ReadLn(buf, sizeof(buf), 0, 0))
+                pyPL.push_back(buf);
+        }
+    }
 
-	return pyPL;
+    return pyPL;
 }
 
 hsBool pyStream::WriteLines(const std::vector<std::string> & lines)
 {
-	if (fStream)
-	{
-		int i;
-		for ( i=0 ; i<lines.size() ; i++ )
-		{
-			std::string element = lines[i];
-			fStream->Write(element.length(),element.c_str());
-		}
-		return true;
-	}
+    if (fStream)
+    {
+        int i;
+        for ( i=0 ; i<lines.size() ; i++ )
+        {
+            std::string element = lines[i];
+            fStream->Write(element.length(),element.c_str());
+        }
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 
 void pyStream::Close()
 {
-	if (fStream)
-	{
-		fStream->Close();
-		delete fStream;
-	}
-	fStream = nil;
+    if (fStream)
+    {
+        fStream->Close();
+        delete fStream;
+    }
+    fStream = nil;
 }
 
 hsBool pyStream::IsOpen()
 {
-	if (fStream)
-		return true;
-	return false;
+    if (fStream)
+        return true;
+    return false;
 }

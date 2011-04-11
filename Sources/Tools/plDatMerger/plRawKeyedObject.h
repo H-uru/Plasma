@@ -25,11 +25,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plRawKeyedObject - A fake keyed object type that really just stores itself
-//					   as a raw data buffer. See plRawPageAccessor for details.
+//  plRawKeyedObject - A fake keyed object type that really just stores itself
+//                     as a raw data buffer. See plRawPageAccessor for details.
 //
-//					   Derived from hsKeyedObject so we can try to put some
-//					   warning asserts in where needed.
+//                     Derived from hsKeyedObject so we can try to put some
+//                     warning asserts in where needed.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,34 +42,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plRawKeyedObject : public hsKeyedObject
 {
-	protected:
+    protected:
 
-		plKey		fSrcKey;
-		UInt32		fBufferSize;
-		UInt8		*fBuffer;
+        plKey       fSrcKey;
+        UInt32      fBufferSize;
+        UInt8       *fBuffer;
 
-	public:
+    public:
 
-		plRawKeyedObject();
-		plRawKeyedObject( const plKey &key, UInt32 size, UInt8 *buffer );
-		virtual ~plRawKeyedObject();
+        plRawKeyedObject();
+        plRawKeyedObject( const plKey &key, UInt32 size, UInt8 *buffer );
+        virtual ~plRawKeyedObject();
 
-		void	SetBuffer( UInt32 size, UInt8 *data );
-		UInt32	GetBufferSize( void ) const { return fBufferSize; }
-		UInt8	*GetBuffer( void ) const { return fBuffer; }
+        void    SetBuffer( UInt32 size, UInt8 *data );
+        UInt32  GetBufferSize( void ) const { return fBufferSize; }
+        UInt8   *GetBuffer( void ) const { return fBuffer; }
 
-		void	SetKey( plKey k );
-		void	Write( hsStream *stream );
+        void    SetKey( plKey k );
+        void    Write( hsStream *stream );
 
-		static void		MarkAsEmpty( plKey &key );
+        static void     MarkAsEmpty( plKey &key );
 
-		// None of the following should ever be called (hence our asserts)
-		virtual void	Validate();
-		virtual hsBool	IsFinal();
-		virtual void	Read(hsStream *s, hsResMgr *mgr );
-		virtual void	Write(hsStream *s, hsResMgr *mgr );
-		virtual hsBool	MsgReceive( plMessage *msg );
-		virtual hsKeyedObject *GetSharedObject();
+        // None of the following should ever be called (hence our asserts)
+        virtual void    Validate();
+        virtual hsBool  IsFinal();
+        virtual void    Read(hsStream *s, hsResMgr *mgr );
+        virtual void    Write(hsStream *s, hsResMgr *mgr );
+        virtual hsBool  MsgReceive( plMessage *msg );
+        virtual hsKeyedObject *GetSharedObject();
 };
 
 

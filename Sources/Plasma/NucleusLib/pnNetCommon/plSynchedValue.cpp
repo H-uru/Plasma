@@ -35,11 +35,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define ISaveOrLoadSimpleType() \
 { \
-	if (save) \
-		stream->WriteSwap(v); \
-	else \
-		stream->ReadSwap(&v); \
-	return v; \
+    if (save) \
+        stream->WriteSwap(v); \
+    else \
+        stream->ReadSwap(&v); \
+    return v; \
 }
 
 //
@@ -47,89 +47,89 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 hsBitVector plSynchedValueBase::ISaveOrLoad(hsBitVector& v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
 {
-	if (save)
-		v.Write(stream);
-	else
-		v.Read(stream);
-	return v;
+    if (save)
+        v.Write(stream);
+    else
+        v.Read(stream);
+    return v;
 }
 
 hsScalar plSynchedValueBase::ISaveOrLoad(hsScalar v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
-	ISaveOrLoadSimpleType();
+    ISaveOrLoadSimpleType();
 
 double plSynchedValueBase::ISaveOrLoad(double v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
-	ISaveOrLoadSimpleType();
+    ISaveOrLoadSimpleType();
 
 Int32 plSynchedValueBase::ISaveOrLoad(Int32 v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
-	ISaveOrLoadSimpleType();
+    ISaveOrLoadSimpleType();
 
 UInt32 plSynchedValueBase::ISaveOrLoad(UInt32 v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
-	ISaveOrLoadSimpleType();
+    ISaveOrLoadSimpleType();
 
 int plSynchedValueBase::ISaveOrLoad(int v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
-	ISaveOrLoadSimpleType();
+    ISaveOrLoadSimpleType();
 
 bool plSynchedValueBase::ISaveOrLoad(bool v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
-	ISaveOrLoadSimpleType();
+    ISaveOrLoadSimpleType();
 
 //
 // save or load a key.  return the key.
 //
 const plKey plSynchedValueBase::ISaveOrLoad(const plKey key, hsBool32 save, hsStream* stream, hsResMgr* mgr)
 {
-	if (save)
-	{	
-		if (key)
-		{
-			stream->WriteByte(1);
-			// I need to write a key to MY stream...
-#if 0		// DEBUG
-			Int32 len = hsStrlen(key->GetName());
-			stream->WriteSwap32(len);
-			stream->Write(len, key->GetName());
+    if (save)
+    {   
+        if (key)
+        {
+            stream->WriteByte(1);
+            // I need to write a key to MY stream...
+#if 0       // DEBUG
+            Int32 len = hsStrlen(key->GetName());
+            stream->WriteSwap32(len);
+            stream->Write(len, key->GetName());
 #endif
-			key->GetUoid().Write(stream);
-		}
-		else
-		{
-			stream->WriteByte(0);
-		}
-		return key;
-	}
-	else
-	{	
-		Int32 has=stream->ReadByte();
+            key->GetUoid().Write(stream);
+        }
+        else
+        {
+            stream->WriteByte(0);
+        }
+        return key;
+    }
+    else
+    {   
+        Int32 has=stream->ReadByte();
         if (has)
-		{
-			// read a key from MY stream
-#if 0		// DEBUG
-			Int32 len = stream->ReadSwap32();
-			char tmp[256];
-			hsAssert(len<256, "key name overflow");
-			stream->Read(len, tmp);
+        {
+            // read a key from MY stream
+#if 0       // DEBUG
+            Int32 len = stream->ReadSwap32();
+            char tmp[256];
+            hsAssert(len<256, "key name overflow");
+            stream->Read(len, tmp);
 #endif
-			plUoid uoid;
-			uoid.Read(stream);
+            plUoid uoid;
+            uoid.Read(stream);
             return mgr->FindKey(uoid);
-		}
+        }
         else
             return (nil);
     }
-	return nil;
+    return nil;
 }
 
 hsKeyedObject* plSynchedValueBase::ISaveOrLoad(hsKeyedObject* obj, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
 {
-	plKey key = obj ? obj->GetKey() : nil;
-	key = ISaveOrLoad(key, save, stream, mgr);
-	return key ? key->ObjectIsLoaded() : nil;
+    plKey key = obj ? obj->GetKey() : nil;
+    key = ISaveOrLoad(key, save, stream, mgr);
+    return key ? key->ObjectIsLoaded() : nil;
 }
 
 plSceneNode* plSynchedValueBase::ISaveOrLoad(plSceneNode* obj, hsBool32 save, hsStream* stream, hsResMgr* mgr)
 { 
-	// return plSceneNode::ConvertNoRef(ISaveOrLoad(hsKeyedObject::ConvertNoRef(obj), save, stream, mgr)); 
-	hsAssert(false, "SceneNode synchedValues currently not implemented");
-	return nil;
+    // return plSceneNode::ConvertNoRef(ISaveOrLoad(hsKeyedObject::ConvertNoRef(obj), save, stream, mgr)); 
+    hsAssert(false, "SceneNode synchedValues currently not implemented");
+    return nil;
 }
 
 plSceneObject* plSynchedValueBase::ISaveOrLoad(plSceneObject* obj, hsBool32 save, hsStream* stream, hsResMgr* mgr)
@@ -137,8 +137,8 @@ plSceneObject* plSynchedValueBase::ISaveOrLoad(plSceneObject* obj, hsBool32 save
 
 plCoordinateInterface* plSynchedValueBase::ISaveOrLoad(const plCoordinateInterface* cInt, hsBool32 save, hsStream* stream, hsResMgr* mgr)
 {
-	plSceneObject* obj = ISaveOrLoad(cInt ? cInt->fOwner : nil, save, stream, mgr);
-	return obj ? obj->fCoordinateInterface : nil;
+    plSceneObject* obj = ISaveOrLoad(cInt ? cInt->fOwner : nil, save, stream, mgr);
+    return obj ? obj->fCoordinateInterface : nil;
 }
 
 #else
@@ -149,5 +149,5 @@ void _preventLNK4221WarningStub()
 {
 }
 
-#endif	// USE_SYNCHED_VALUES
+#endif  // USE_SYNCHED_VALUES
 

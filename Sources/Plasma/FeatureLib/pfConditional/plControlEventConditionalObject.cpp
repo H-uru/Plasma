@@ -31,38 +31,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plControlEventConditionalObject::plControlEventConditionalObject()
 {
-	
+    
 }
 
 hsBool plControlEventConditionalObject::MsgReceive(plMessage* msg)
 {
-	plControlEventMsg* pControlMsg = plControlEventMsg::ConvertNoRef(msg);
-	if( pControlMsg )
-	{
-		if (pControlMsg->GetControlCode() == fControlEvent && pControlMsg->ControlActivated() && !Satisfied() )
-		{
-			SetSatisfied(true);
-	//		fLogicMod->RequestTrigger();
-		}
-		else
-		if (pControlMsg->GetControlCode() == fControlEvent && !pControlMsg->ControlActivated() && Satisfied() )
-		{
-			SetSatisfied(false);
-		}
-		return true;
-	}
-	return plConditionalObject::MsgReceive(msg);
+    plControlEventMsg* pControlMsg = plControlEventMsg::ConvertNoRef(msg);
+    if( pControlMsg )
+    {
+        if (pControlMsg->GetControlCode() == fControlEvent && pControlMsg->ControlActivated() && !Satisfied() )
+        {
+            SetSatisfied(true);
+    //      fLogicMod->RequestTrigger();
+        }
+        else
+        if (pControlMsg->GetControlCode() == fControlEvent && !pControlMsg->ControlActivated() && Satisfied() )
+        {
+            SetSatisfied(false);
+        }
+        return true;
+    }
+    return plConditionalObject::MsgReceive(msg);
 }
 
 void plControlEventConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Read(stream, mgr);
-	fControlEvent = (ControlEventCode)stream->ReadSwap32();
+    plConditionalObject::Read(stream, mgr);
+    fControlEvent = (ControlEventCode)stream->ReadSwap32();
 }
 void plControlEventConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Write(stream, mgr);
-	stream->WriteSwap32((UInt32)fControlEvent);
+    plConditionalObject::Write(stream, mgr);
+    stream->WriteSwap32((UInt32)fControlEvent);
 
 }
 

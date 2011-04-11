@@ -32,19 +32,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plPickedConditionalObject::plPickedConditionalObject()
 {
-	SetFlag(kLocalElement);		// since it relies on user input
+    SetFlag(kLocalElement);     // since it relies on user input
 }
 
 hsBool plPickedConditionalObject::MsgReceive(plMessage* msg)
 {
-	plActivatorMsg* pDetectorMsg = plActivatorMsg::ConvertNoRef(msg);
-	if (pDetectorMsg && pDetectorMsg->TriggerType() == plActivatorMsg::kPickedTrigger )
-	{
-		SetSatisfied(true);
-//		fLogicMod->RequestTrigger();
-		return true;
-	}
-	return plConditionalObject::MsgReceive(msg);
+    plActivatorMsg* pDetectorMsg = plActivatorMsg::ConvertNoRef(msg);
+    if (pDetectorMsg && pDetectorMsg->TriggerType() == plActivatorMsg::kPickedTrigger )
+    {
+        SetSatisfied(true);
+//      fLogicMod->RequestTrigger();
+        return true;
+    }
+    return plConditionalObject::MsgReceive(msg);
 }
 
 

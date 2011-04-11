@@ -36,28 +36,28 @@ class plImageLibMod : public plSingleModifier
 {
 protected:
 
-	hsTArray<plBitmap *>	fImages;
+    hsTArray<plBitmap *>    fImages;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
 
 public:
-	plImageLibMod();
-	virtual ~plImageLibMod();
+    plImageLibMod();
+    virtual ~plImageLibMod();
 
-	CLASSNAME_REGISTER( plImageLibMod );
-	GETINTERFACE_ANY( plImageLibMod, plSingleModifier );
+    CLASSNAME_REGISTER( plImageLibMod );
+    GETINTERFACE_ANY( plImageLibMod, plSingleModifier );
 
-	virtual hsBool MsgReceive(plMessage* msg);
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual hsBool MsgReceive(plMessage* msg);
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	enum Refs
-	{
-		kRefImage = 0
-	};
+    enum Refs
+    {
+        kRefImage = 0
+    };
 
-	UInt32	GetNumImages( void ) const { return fImages.GetCount(); }
+    UInt32  GetNumImages( void ) const { return fImages.GetCount(); }
 };
 
 #endif // plImageLibMod_inc

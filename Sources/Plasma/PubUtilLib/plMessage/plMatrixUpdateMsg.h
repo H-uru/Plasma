@@ -34,20 +34,20 @@ class plMatrixUpdateMsg : public plMessage
 {
 
 public:
-	plMatrixUpdateMsg(){SetBCastFlag(plMessage::kPropagateToModifiers);}
-	plMatrixUpdateMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
-	~plMatrixUpdateMsg(){;}
+    plMatrixUpdateMsg(){SetBCastFlag(plMessage::kPropagateToModifiers);}
+    plMatrixUpdateMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
+    ~plMatrixUpdateMsg(){;}
 
-	CLASSNAME_REGISTER( plMatrixUpdateMsg );
-	GETINTERFACE_ANY( plMatrixUpdateMsg, plMessage );
+    CLASSNAME_REGISTER( plMatrixUpdateMsg );
+    GETINTERFACE_ANY( plMatrixUpdateMsg, plMessage );
 
-	void Read( hsStream* s, hsResMgr* mgr );
-	void Write( hsStream* s, hsResMgr* mgr );
+    void Read( hsStream* s, hsResMgr* mgr );
+    void Write( hsStream* s, hsResMgr* mgr );
 
 
-	hsMatrix44	fMatrix;
+    hsMatrix44  fMatrix;
 
 };
 

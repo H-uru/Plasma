@@ -42,242 +42,242 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyHeekMsg : public pyGameCliMsg
 {
 protected:
-	pyHeekMsg();
-	pyHeekMsg(pfGameCliMsg* msg);
+    pyHeekMsg();
+    pyHeekMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE; // so we can subclass
-	PYTHON_CLASS_NEW_FRIEND(ptHeekMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekMsg); // converts a PyObject to a pyHeekMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE; // so we can subclass
+    PYTHON_CLASS_NEW_FRIEND(ptHeekMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekMsg); // converts a PyObject to a pyHeekMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
-	int GetHeekMsgType() const;
+    int GetHeekMsgType() const;
 
-	PyObject* UpcastToFinalHeekMsg() const; // returns the heek message this really is
+    PyObject* UpcastToFinalHeekMsg() const; // returns the heek message this really is
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekPlayGameMsg : public pyHeekMsg
 {
 protected:
-	pyHeekPlayGameMsg();
-	pyHeekPlayGameMsg(pfGameCliMsg* msg);
+    pyHeekPlayGameMsg();
+    pyHeekPlayGameMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekPlayGameMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekPlayGameMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekPlayGameMsg); // converts a PyObject to a pyHeekPlayGameMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekPlayGameMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekPlayGameMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekPlayGameMsg); // converts a PyObject to a pyHeekPlayGameMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	bool IsPlaying() const;
-	bool IsSinglePlayer() const;
-	bool EnableButtons() const;
+    bool IsPlaying() const;
+    bool IsSinglePlayer() const;
+    bool EnableButtons() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekGoodbyeMsg : public pyHeekMsg
 {
 protected:
-	pyHeekGoodbyeMsg();
-	pyHeekGoodbyeMsg(pfGameCliMsg* msg);
+    pyHeekGoodbyeMsg();
+    pyHeekGoodbyeMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekGoodbyeMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekGoodbyeMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekGoodbyeMsg); // converts a PyObject to a pyHeekGoodbyeMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekGoodbyeMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekGoodbyeMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekGoodbyeMsg); // converts a PyObject to a pyHeekGoodbyeMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekWelcomeMsg : public pyHeekMsg
 {
 protected:
-	pyHeekWelcomeMsg();
-	pyHeekWelcomeMsg(pfGameCliMsg* msg);
+    pyHeekWelcomeMsg();
+    pyHeekWelcomeMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekWelcomeMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekWelcomeMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekWelcomeMsg); // converts a PyObject to a pyHeekWelcomeMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekWelcomeMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekWelcomeMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekWelcomeMsg); // converts a PyObject to a pyHeekWelcomeMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	unsigned long Points() const;
-	unsigned long Rank() const;
-	std::wstring Name() const;
+    unsigned long Points() const;
+    unsigned long Rank() const;
+    std::wstring Name() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekDropMsg : public pyHeekMsg
 {
 protected:
-	pyHeekDropMsg();
-	pyHeekDropMsg(pfGameCliMsg* msg);
+    pyHeekDropMsg();
+    pyHeekDropMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekDropMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekDropMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekDropMsg); // converts a PyObject to a pyHeekDropMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekDropMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekDropMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekDropMsg); // converts a PyObject to a pyHeekDropMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	int Position() const;
+    int Position() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekSetupMsg : public pyHeekMsg
 {
 protected:
-	pyHeekSetupMsg();
-	pyHeekSetupMsg(pfGameCliMsg* msg);
+    pyHeekSetupMsg();
+    pyHeekSetupMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekSetupMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekSetupMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekSetupMsg); // converts a PyObject to a pyHeekSetupMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekSetupMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekSetupMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekSetupMsg); // converts a PyObject to a pyHeekSetupMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	int Position() const;
-	bool ButtonState() const;
-	std::vector<bool> LightOn() const;
+    int Position() const;
+    bool ButtonState() const;
+    std::vector<bool> LightOn() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekLightStateMsg : public pyHeekMsg
 {
 protected:
-	pyHeekLightStateMsg();
-	pyHeekLightStateMsg(pfGameCliMsg* msg);
+    pyHeekLightStateMsg();
+    pyHeekLightStateMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekLightStateMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekLightStateMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekLightStateMsg); // converts a PyObject to a pyHeekLightStateMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekLightStateMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekLightStateMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekLightStateMsg); // converts a PyObject to a pyHeekLightStateMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
-	int LightNum() const;
-	int State() const;
+    int LightNum() const;
+    int State() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekInterfaceStateMsg : public pyHeekMsg
 {
 protected:
-	pyHeekInterfaceStateMsg();
-	pyHeekInterfaceStateMsg(pfGameCliMsg* msg);
+    pyHeekInterfaceStateMsg();
+    pyHeekInterfaceStateMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekInterfaceStateMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekInterfaceStateMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekInterfaceStateMsg); // converts a PyObject to a pyHeekInterfaceStateMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekInterfaceStateMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekInterfaceStateMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekInterfaceStateMsg); // converts a PyObject to a pyHeekInterfaceStateMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	bool ButtonsEnabled() const;
+    bool ButtonsEnabled() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekCountdownStateMsg : public pyHeekMsg
 {
 protected:
-	pyHeekCountdownStateMsg();
-	pyHeekCountdownStateMsg(pfGameCliMsg* msg);
+    pyHeekCountdownStateMsg();
+    pyHeekCountdownStateMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekCountdownStateMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekCountdownStateMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekCountdownStateMsg); // converts a PyObject to a pyHeekCountdownStateMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekCountdownStateMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekCountdownStateMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekCountdownStateMsg); // converts a PyObject to a pyHeekCountdownStateMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
-	int State() const;
+    int State() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekWinLoseMsg : public pyHeekMsg
 {
 protected:
-	pyHeekWinLoseMsg();
-	pyHeekWinLoseMsg(pfGameCliMsg* msg);
+    pyHeekWinLoseMsg();
+    pyHeekWinLoseMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekWinLoseMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekWinLoseMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekWinLoseMsg); // converts a PyObject to a pyHeekWinLoseMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekWinLoseMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekWinLoseMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekWinLoseMsg); // converts a PyObject to a pyHeekWinLoseMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	bool Win() const;
-	int Choice() const;
+    bool Win() const;
+    int Choice() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekGameWinMsg : public pyHeekMsg
 {
 protected:
-	pyHeekGameWinMsg();
-	pyHeekGameWinMsg(pfGameCliMsg* msg);
+    pyHeekGameWinMsg();
+    pyHeekGameWinMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekGameWinMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekGameWinMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekGameWinMsg); // converts a PyObject to a pyHeekGameWinMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekGameWinMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekGameWinMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekGameWinMsg); // converts a PyObject to a pyHeekGameWinMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	int Choice() const;
+    int Choice() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyHeekPointUpdateMsg : public pyHeekMsg
 {
 protected:
-	pyHeekPointUpdateMsg();
-	pyHeekPointUpdateMsg(pfGameCliMsg* msg);
+    pyHeekPointUpdateMsg();
+    pyHeekPointUpdateMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptHeekPointUpdateMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekPointUpdateMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekPointUpdateMsg); // converts a PyObject to a pyHeekPointUpdateMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptHeekPointUpdateMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyHeekPointUpdateMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyHeekPointUpdateMsg); // converts a PyObject to a pyHeekPointUpdateMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	bool DisplayUpdate() const;
-	unsigned long Points() const;
-	unsigned long Rank() const;
+    bool DisplayUpdate() const;
+    unsigned long Points() const;
+    unsigned long Rank() const;
 };
 
 #endif // pyHeekMsg_h

@@ -54,12 +54,12 @@ class hsBaseRenderProc;
 class hsConverterUtils
 {
 private:
-	hsConverterUtils();
-public:	// MSDEV bug
-	~hsConverterUtils() {}
+    hsConverterUtils();
+public: // MSDEV bug
+    ~hsConverterUtils() {}
 public:
-	static hsConverterUtils& Instance();
-	static hsBool IsReservedKeyword(const char* nodeName);
+    static hsConverterUtils& Instance();
+    static hsBool IsReservedKeyword(const char* nodeName);
 
     void Init(hsBool save, plErrorMsg *msg);
     hsBool IsEnvironHolder(INode *node);
@@ -69,65 +69,65 @@ public:
     void StripOffTail(char* path);
     void StripOffPath(char* fileName);
 
-	INode* FindINodeFromKeyedObject(hsKeyedObject* obj);
-	INode* FindINodeFromMangledName(const char* mangName);
+    INode* FindINodeFromKeyedObject(hsKeyedObject* obj);
+    INode* FindINodeFromMangledName(const char* mangName);
 #if 0
-	void MangleRPRefs(hsBaseRenderProc* base, hsGRenderProcs* rp);
+    void MangleRPRefs(hsBaseRenderProc* base, hsGRenderProcs* rp);
 #endif
     char* MangleReference(char *mangName, const char *nodeName, const char* defRoom="global");
     char* MangleReference(char *mangName, INode *node, const char* defRoom="global");
-	char* MangleRefWithRoom(char *mangName, const char *nodeName, const char* roomName);
-	char* UnMangleReference(char *dest, const char *name);
-	hsBool IsMangled(const char *name);
-	Int32 FindNamedSelSetFromName(const char *name);
-	char* StripMangledReference(char* dest, const char* name);
+    char* MangleRefWithRoom(char *mangName, const char *nodeName, const char* roomName);
+    char* UnMangleReference(char *dest, const char *name);
+    hsBool IsMangled(const char *name);
+    Int32 FindNamedSelSetFromName(const char *name);
+    char* StripMangledReference(char* dest, const char* name);
 
-	hsBool IsInstanced(Object* maxObject);
+    hsBool IsInstanced(Object* maxObject);
 
-	void CreateNodeSearchCache();
-	void DestroyNodeSearchCache();
-	INode* GetINodeByName(const char* name, hsBool caseSensitive=false);
+    void CreateNodeSearchCache();
+    void DestroyNodeSearchCache();
+    INode* GetINodeByName(const char* name, hsBool caseSensitive=false);
     
     static const char fTagSeps[];
 
 private:
 
-	void IBuildNodeSearchCacheRecur(INode* node);
-	INode* IGetINodeByNameRecur(INode* node, const char* wantName);
+    void IBuildNodeSearchCacheRecur(INode* node);
+    INode* IGetINodeByNameRecur(INode* node, const char* wantName);
 
 private:
-	enum {
-		kWarnedNoMoreBitmapLoadErr	= 0x1
-	};
+    enum {
+        kWarnedNoMoreBitmapLoadErr  = 0x1
+    };
 
     Interface   *fInterface;
     plErrorMsg  *fErrorMsg;
 
-    hsBool		fSuppressMangling;
-	UInt32	    fWarned;
-    hsBool		fSave;
+    hsBool      fSuppressMangling;
+    UInt32      fWarned;
+    hsBool      fSave;
 
-	struct CacheNode
-	{
-	private:
-		INode* fNode;
-		const char* fName;
-		hsBool fCaseSensitive;
-	public:
-		CacheNode(INode* node=nil) : fNode(node), fName(nil), fCaseSensitive(false) { }
-		CacheNode(const char* name) : fName(name), fNode(nil), fCaseSensitive(false) { }
-		~CacheNode() { }
+    struct CacheNode
+    {
+    private:
+        INode* fNode;
+        const char* fName;
+        hsBool fCaseSensitive;
+    public:
+        CacheNode(INode* node=nil) : fNode(node), fName(nil), fCaseSensitive(false) { }
+        CacheNode(const char* name) : fName(name), fNode(nil), fCaseSensitive(false) { }
+        ~CacheNode() { }
 
-		INode* GetNode() { return fNode; }
-		const char* GetName() const { return fNode ? fNode->GetName() : fName; }
+        INode* GetNode() { return fNode; }
+        const char* GetName() const { return fNode ? fNode->GetName() : fName; }
 
-		void SetCaseSensitive(hsBool b) { fCaseSensitive = b; }
-		hsBool GetCaseSensitive() { return fCaseSensitive; }
+        void SetCaseSensitive(hsBool b) { fCaseSensitive = b; }
+        hsBool GetCaseSensitive() { return fCaseSensitive; }
 
-		UInt32 GetHash() const;
-		bool operator==(const CacheNode& other) const;
-	};
-	hsHashTable<CacheNode>* fNodeSearchCache;
+        UInt32 GetHash() const;
+        bool operator==(const CacheNode& other) const;
+    };
+    hsHashTable<CacheNode>* fNodeSearchCache;
 };
 
 

@@ -33,13 +33,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plClickableComponent : public plActivatorBaseComponent
 {
 public:
-	plClickableComponent();
+    plClickableComponent();
 
-	hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-	hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    virtual void CollectNonDrawables(INodeTab& nonDrawables);
 
 };
 

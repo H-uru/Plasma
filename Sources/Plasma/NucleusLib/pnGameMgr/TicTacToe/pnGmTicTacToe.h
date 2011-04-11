@@ -42,39 +42,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 enum ETTTInitResult {
-	kTTTInitSuccess,
-	kTTTInitError,
-	kNumTTTInitResults
+    kTTTInitSuccess,
+    kTTTInitError,
+    kNumTTTInitResults
 };
 enum ETTTGameResult {
-	kTTTGameResultWinner,	// there was a winning player
-	kTTTGameResultTied,		// players tied (a "cat's game")
-	kTTTGameResultGave,		// other player left the game
-	kTTTGameResultError,	// something bad happened on the server
-	kNumTTTGameResults
+    kTTTGameResultWinner,   // there was a winning player
+    kTTTGameResultTied,     // players tied (a "cat's game")
+    kTTTGameResultGave,     // other player left the game
+    kTTTGameResultError,    // something bad happened on the server
+    kNumTTTGameResults
 };
 
 //============================================================================
-//	Game type id
+//  Game type id
 //============================================================================
 
 const Uuid kGameTypeId_TicTacToe = Uuid(L"a7236529-11d8-4758-9368-59cb43445a83");
 
 
 //============================================================================
-//	Network message ids
+//  Network message ids
 //============================================================================
 
 // Cli2Srv message ids
 enum {
-	kCli2Srv_TTT_MakeMove = kCli2Srv_NumGameMsgIds,
+    kCli2Srv_TTT_MakeMove = kCli2Srv_NumGameMsgIds,
 };
 
 // Srv2Cli message ids
 enum {
-	kSrv2Cli_TTT_GameStarted = kSrv2Cli_NumGameMsgIds,
-	kSrv2Cli_TTT_GameOver,
-	kSrv2Cli_TTT_MoveMade,
+    kSrv2Cli_TTT_GameStarted = kSrv2Cli_NumGameMsgIds,
+    kSrv2Cli_TTT_GameOver,
+    kSrv2Cli_TTT_MoveMade,
 };
 
 
@@ -83,36 +83,36 @@ enum {
 #include <PshPack1.h>
 //============================================================================
 
-	//========================================================================
-	// Message parameters
-	//========================================================================
-	struct TTT_CreateParam {
-		byte		playerCount;	// 1 or 2
-	};
+    //========================================================================
+    // Message parameters
+    //========================================================================
+    struct TTT_CreateParam {
+        byte        playerCount;    // 1 or 2
+    };
 
-	//========================================================================
-	// Tic-Tac-Toe message structures
-	//========================================================================
+    //========================================================================
+    // Tic-Tac-Toe message structures
+    //========================================================================
 
-	// Cli2Srv
-	struct Cli2Srv_TTT_MakeMove : GameMsgHeader {
-		byte		row;			// 1..3
-		byte		col;			// 1..3
-	};
+    // Cli2Srv
+    struct Cli2Srv_TTT_MakeMove : GameMsgHeader {
+        byte        row;            // 1..3
+        byte        col;            // 1..3
+    };
 
-	// Srv2Cli
-	struct Srv2Cli_TTT_GameStarted : GameMsgHeader {
-		bool		yourTurn;		// randomly selected first player
-	};
-	struct Srv2Cli_TTT_GameOver : GameMsgHeader {
-		ETTTGameResult	result;
-		dword			winnerId;
-	};
-	struct Srv2Cli_TTT_MoveMade : GameMsgHeader {
-		dword			playerId;
-		byte			row;			// 1..3
-		byte			col;			// 1..3
-	};
+    // Srv2Cli
+    struct Srv2Cli_TTT_GameStarted : GameMsgHeader {
+        bool        yourTurn;       // randomly selected first player
+    };
+    struct Srv2Cli_TTT_GameOver : GameMsgHeader {
+        ETTTGameResult  result;
+        dword           winnerId;
+    };
+    struct Srv2Cli_TTT_MoveMade : GameMsgHeader {
+        dword           playerId;
+        byte            row;            // 1..3
+        byte            col;            // 1..3
+    };
 
 //============================================================================
 // End networked data structures

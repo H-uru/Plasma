@@ -24,12 +24,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plBufferedFileReader - Reads in a given file into a RAM buffer, then	//
-//						   "reads" from that buffer as requested. Useless	//
-//						   for normal sounds, but perfect for streaming		//
-//						   from RAM.										//
-//																			//
+//                                                                          //
+//  plBufferedFileReader - Reads in a given file into a RAM buffer, then    //
+//                         "reads" from that buffer as requested. Useless   //
+//                         for normal sounds, but perfect for streaming     //
+//                         from RAM.                                        //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plBufferedFileReader_h
@@ -43,24 +43,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plBufferedFileReader : public plAudioFileReader
 {
 public:
-	plBufferedFileReader( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
-	virtual ~plBufferedFileReader();
+    plBufferedFileReader( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
+    virtual ~plBufferedFileReader();
 
-	virtual plWAVHeader	&GetHeader( void );
-	virtual void	Close( void );
-	virtual UInt32	GetDataSize( void ) { return fBufferSize; }
-	virtual float	GetLengthInSecs( void );
-	virtual hsBool	SetPosition( UInt32 numBytes );
-	virtual hsBool	Read( UInt32 numBytes, void *buffer );
-	virtual UInt32	NumBytesLeft( void );
-	virtual hsBool	IsValid( void ) { return ( fBuffer != nil ) ? true : false; }
+    virtual plWAVHeader &GetHeader( void );
+    virtual void    Close( void );
+    virtual UInt32  GetDataSize( void ) { return fBufferSize; }
+    virtual float   GetLengthInSecs( void );
+    virtual hsBool  SetPosition( UInt32 numBytes );
+    virtual hsBool  Read( UInt32 numBytes, void *buffer );
+    virtual UInt32  NumBytesLeft( void );
+    virtual hsBool  IsValid( void ) { return ( fBuffer != nil ) ? true : false; }
 
 protected:
-	UInt32			fBufferSize;
-	UInt8			*fBuffer;
-	plWAVHeader		fHeader;
-	UInt32			fCursor;
-	void			IError( const char *msg );
+    UInt32          fBufferSize;
+    UInt8           *fBuffer;
+    plWAVHeader     fHeader;
+    UInt32          fCursor;
+    void            IError( const char *msg );
 };
 
 #endif //_plBufferedFileReader_h

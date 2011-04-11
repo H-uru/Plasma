@@ -23,8 +23,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#define	CLASSNAME	"plFontConverter"	// Used in WinInit()
-#define WINDOWNAME	"plFontConverter"
+#define CLASSNAME   "plFontConverter"   // Used in WinInit()
+#define WINDOWNAME  "plFontConverter"
 
 #include "HeadSpin.h"
 #include "hsTypes.h"
@@ -48,28 +48,28 @@ REGISTER_NONCREATABLE(plBitmap);
 REGISTER_CREATABLE(plMipmap);
 
 
-HINSTANCE	gInstance;
-char		*gCommandLine = nil;
-HWND		gMainWindow = nil;
+HINSTANCE   gInstance;
+char        *gCommandLine = nil;
+HWND        gMainWindow = nil;
 
 BOOL CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
 
 
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
 {
-	HACCEL	accelTable = LoadAccelerators( hInstance, MAKEINTRESOURCE( IDR_ACCELERATOR1 ) );
+    HACCEL  accelTable = LoadAccelerators( hInstance, MAKEINTRESOURCE( IDR_ACCELERATOR1 ) );
 
 
-	gCommandLine = (char *)lpCmdLine;
+    gCommandLine = (char *)lpCmdLine;
 
-	gInstance = hInstance;
+    gInstance = hInstance;
 
-	plResManager *rMgr = new plResManager;
-	hsgResMgr::Init( rMgr );
+    plResManager *rMgr = new plResManager;
+    hsgResMgr::Init( rMgr );
 
-	DialogBox( gInstance, MAKEINTRESOURCE( IDD_MAINDIALOG ), nil, WndProc );
+    DialogBox( gInstance, MAKEINTRESOURCE( IDD_MAINDIALOG ), nil, WndProc );
 
-	hsgResMgr::Shutdown();
+    hsgResMgr::Shutdown();
 
-	return 0;
+    return 0;
 }

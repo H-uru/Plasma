@@ -45,7 +45,7 @@ struct CryptKey;
 
 enum ECryptAlgorithm {
     kCryptSha,
-	kCryptSha1,
+    kCryptSha1,
     kCryptMd5,
     kCryptRc4,
     kCryptRsa,

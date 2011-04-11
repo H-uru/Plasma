@@ -29,15 +29,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsCodecManager& hsCodecManager::Instance()
 {
-	static hsCodecManager the_instance;
-	static hsBool initialized = false;
+    static hsCodecManager the_instance;
+    static hsBool initialized = false;
 
-	if (!initialized)
-	{
-		initialized = true;
-	}
+    if (!initialized)
+    {
+        initialized = true;
+    }
 
-	return the_instance;
+    return the_instance;
 }
 
 hsCodecManager::hsCodecManager()
@@ -46,22 +46,22 @@ hsCodecManager::hsCodecManager()
 
 plMipmap *hsCodecManager::CreateCompressedMipmap(UInt32 compressionFormat, plMipmap *uncompressed)
 {
-	return nil;
+    return nil;
 }
 
 plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, UInt8 bitDepth)
 {
-	return nil;
+    return nil;
 
 }
 
 hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask )
 {
-	return false;
+    return false;
 }
 
 hsBool hsCodecManager::Register(hsCodec *codec, UInt32 compressionFormat, hsScalar priority)
 {
-	return true;
+    return true;
 }
 

@@ -40,14 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //-----------------------------------------------------------------------------
 struct D3DEnum_ModeInfo
 {
-	D3DDISPLAYMODE		fDDmode;
-	CHAR				fStrDesc[40];
-	BOOL				fWindowed;
-	char				fBitDepth;
-	DWORD				fDDBehavior;
-	hsTArray<D3DFORMAT>	fDepthFormats;
-	hsTArray<D3DMULTISAMPLE_TYPE>	fFSAATypes;
-	BOOL				fCanRenderToCubic;
+    D3DDISPLAYMODE      fDDmode;
+    CHAR                fStrDesc[40];
+    BOOL                fWindowed;
+    char                fBitDepth;
+    DWORD               fDDBehavior;
+    hsTArray<D3DFORMAT> fDepthFormats;
+    hsTArray<D3DMULTISAMPLE_TYPE>   fFSAATypes;
+    BOOL                fCanRenderToCubic;
 };
 
 //-----------------------------------------------------------------------------
@@ -58,14 +58,14 @@ struct D3DEnum_ModeInfo
 //-----------------------------------------------------------------------------
 struct D3DEnum_DeviceInfo
 {
-	D3DDEVTYPE			fDDType;
-	CHAR                fStrName[40];
-	D3DCAPS9			fDDCaps;
-	BOOL				fCanWindow;
-	BOOL                fCompatibleWithDesktop;
-	BOOL                fIsHardware;
+    D3DDEVTYPE          fDDType;
+    CHAR                fStrName[40];
+    D3DCAPS9            fDDCaps;
+    BOOL                fCanWindow;
+    BOOL                fCompatibleWithDesktop;
+    BOOL                fIsHardware;
 
-	hsTArray<D3DEnum_ModeInfo>	fModes;
+    hsTArray<D3DEnum_ModeInfo>  fModes;
 };
 
 
@@ -81,21 +81,21 @@ struct D3DEnum_DeviceInfo
 //-----------------------------------------------------------------------------
 struct D3DEnum_DriverInfo
 {
-	GUID                 fGuid;
+    GUID                 fGuid;
 
-	CHAR                 fStrDesc[40];
-	CHAR                 fStrName[40];
+    CHAR                 fStrDesc[40];
+    CHAR                 fStrName[40];
 
-	unsigned int		 fMemory;
+    unsigned int         fMemory;
 
-	D3DADAPTER_IDENTIFIER9	fAdapterInfo;
-	D3DDISPLAYMODE			fDesktopMode;
+    D3DADAPTER_IDENTIFIER9  fAdapterInfo;
+    D3DDISPLAYMODE          fDesktopMode;
 
-	hsTArray<D3DEnum_ModeInfo>		fModes;
-	D3DEnum_ModeInfo*			fCurrentMode;
+    hsTArray<D3DEnum_ModeInfo>      fModes;
+    D3DEnum_ModeInfo*           fCurrentMode;
 
-	hsTArray<D3DEnum_DeviceInfo>	fDevices;
-	D3DEnum_DeviceInfo*				fCurrentDevice;
+    hsTArray<D3DEnum_DeviceInfo>    fDevices;
+    D3DEnum_DeviceInfo*             fCurrentDevice;
 };
 
 
@@ -105,51 +105,51 @@ class hsG3DDeviceMode;
 class hsGDirect3DTnLEnumerate
 {
 protected:
-	HMODULE		fDDrawDLL;
+    HMODULE     fDDrawDLL;
 
-	char	fEnumeErrorStr[128];			// ドライバ、デバイス列挙エラーメッセージ格納バッファ
+    char    fEnumeErrorStr[128];            // ドライバ、デバイス列挙エラーメッセージ格納バッファ
 
-	hsTArray<D3DEnum_DriverInfo>			fDrivers;
+    hsTArray<D3DEnum_DriverInfo>            fDrivers;
 
-	D3DEnum_DriverInfo*  fCurrentDriver;	// The selected DD driver
+    D3DEnum_DriverInfo*  fCurrentDriver;    // The selected DD driver
 
-	static short	IGetDXBitDepth( D3DFORMAT format );
+    static short    IGetDXBitDepth( D3DFORMAT format );
 
-	/// DirectX Helper Functions
-	void	IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAdapter, D3DEnum_DriverInfo *drivInfo );
-	hsBool	IFindDepthFormats( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
-	hsBool	IFindFSAATypes( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
-	hsBool	ICheckCubicRenderTargets( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
-	HRESULT	IConfirmDevice( D3DCAPS9* pCaps, DWORD dwBehavior, D3DFORMAT format );
+    /// DirectX Helper Functions
+    void    IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAdapter, D3DEnum_DriverInfo *drivInfo );
+    hsBool  IFindDepthFormats( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
+    hsBool  IFindFSAATypes( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
+    hsBool  ICheckCubicRenderTargets( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
+    HRESULT IConfirmDevice( D3DCAPS9* pCaps, DWORD dwBehavior, D3DFORMAT format );
 
-	static const UInt8 kNumDisplayFormats;
-	static const D3DFORMAT kDisplayFormats[];
+    static const UInt8 kNumDisplayFormats;
+    static const D3DFORMAT kDisplayFormats[];
 
 public:
-	hsGDirect3DTnLEnumerate();
-	virtual ~hsGDirect3DTnLEnumerate();
+    hsGDirect3DTnLEnumerate();
+    virtual ~hsGDirect3DTnLEnumerate();
 
-	VOID	D3DEnum_FreeResources();
+    VOID    D3DEnum_FreeResources();
 
-	char* GetErrorString() { return (fEnumeErrorStr[0] ? fEnumeErrorStr : nil); }
+    char* GetErrorString() { return (fEnumeErrorStr[0] ? fEnumeErrorStr : nil); }
 
-	HRESULT SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode);
-	HRESULT D3DEnum_SelectDefaultMode(int width, int height, int depth);
-	HRESULT D3DEnum_SelectDefaultDriver( DWORD dwFlags );
+    HRESULT SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode);
+    HRESULT D3DEnum_SelectDefaultMode(int width, int height, int depth);
+    HRESULT D3DEnum_SelectDefaultDriver( DWORD dwFlags );
 
-	UInt32 GetNumDrivers() { return fDrivers.GetCount(); }
-	D3DEnum_DriverInfo* GetDriver(int i) { return &fDrivers[i]; }
+    UInt32 GetNumDrivers() { return fDrivers.GetCount(); }
+    D3DEnum_DriverInfo* GetDriver(int i) { return &fDrivers[i]; }
 
-	D3DEnum_DriverInfo*	GetCurrentDriver() { return fCurrentDriver; }
-	D3DEnum_DeviceInfo* GetCurrentDevice() { return GetCurrentDriver() ? GetCurrentDriver()->fCurrentDevice : nil; }
-	D3DEnum_ModeInfo* GetCurrentMode() { return GetCurrentDevice() ? GetCurrentDriver()->fCurrentMode : nil; }
+    D3DEnum_DriverInfo* GetCurrentDriver() { return fCurrentDriver; }
+    D3DEnum_DeviceInfo* GetCurrentDevice() { return GetCurrentDriver() ? GetCurrentDriver()->fCurrentDevice : nil; }
+    D3DEnum_ModeInfo* GetCurrentMode() { return GetCurrentDevice() ? GetCurrentDriver()->fCurrentMode : nil; }
 
-	void SetCurrentDriver(D3DEnum_DriverInfo* d) { fCurrentDriver = d; }
-	void SetCurrentDevice(D3DEnum_DeviceInfo* d) { hsAssert(GetCurrentDriver(), "Set Driver first"); GetCurrentDriver()->fCurrentDevice = d; } 
-	void SetCurrentMode(D3DEnum_ModeInfo* m) { hsAssert(GetCurrentDriver(), "Set Driver first"); GetCurrentDriver()->fCurrentMode = m; } 
+    void SetCurrentDriver(D3DEnum_DriverInfo* d) { fCurrentDriver = d; }
+    void SetCurrentDevice(D3DEnum_DeviceInfo* d) { hsAssert(GetCurrentDriver(), "Set Driver first"); GetCurrentDriver()->fCurrentDevice = d; } 
+    void SetCurrentMode(D3DEnum_ModeInfo* m) { hsAssert(GetCurrentDriver(), "Set Driver first"); GetCurrentDriver()->fCurrentMode = m; } 
 
-	char* GetEnumeErrorStr() { return fEnumeErrorStr; }
-	void SetEnumeErrorStr(const char* s);
+    char* GetEnumeErrorStr() { return fEnumeErrorStr; }
+    void SetEnumeErrorStr(const char* s);
 };
 
 
@@ -158,15 +158,15 @@ public:
 // Name: D3DEnum_SelectDefaultDriver()
 // Desc: Picks a driver based on a set of passed in criteria.
 //-----------------------------------------------------------------------------
-#define D3DENUM_SOFTWAREONLY	0x00000001
-#define D3DENUM_FULLSCREENONLY	0x00000002
-#define D3DENUM_RGBEMULATION	0x00000004
-#define D3DENUM_REFERENCERAST	0x00000008
-#define D3DENUM_PRIMARYHAL		0x00000010
-#define D3DENUM_SECONDARYHAL	0x00000020
-#define D3DENUM_TNLHAL			0x00000040
-#define D3DENUM_CANWINDOW		0x00000080
-#define D3DENUM_MASK			0x000000ff
+#define D3DENUM_SOFTWAREONLY    0x00000001
+#define D3DENUM_FULLSCREENONLY  0x00000002
+#define D3DENUM_RGBEMULATION    0x00000004
+#define D3DENUM_REFERENCERAST   0x00000008
+#define D3DENUM_PRIMARYHAL      0x00000010
+#define D3DENUM_SECONDARYHAL    0x00000020
+#define D3DENUM_TNLHAL          0x00000040
+#define D3DENUM_CANWINDOW       0x00000080
+#define D3DENUM_MASK            0x000000ff
 
 
 

@@ -272,7 +272,7 @@ REGISTER_CREATABLE(plRippleShapeMsg);
 #include "plNetOwnershipMsg.h"
 REGISTER_CREATABLE(plNetOwnershipMsg);
 
-#include "plCCRMessageCreatable.h"	// kept separately for selective server include 
+#include "plCCRMessageCreatable.h"  // kept separately for selective server include 
 
 #include "plConnectedToVaultMsg.h"
 REGISTER_CREATABLE(plConnectedToVaultMsg);

@@ -35,15 +35,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_APPS_PLURULAUNCHER_PLLAUNCHERCALLBACK_H
 
 enum EStatus {
-	kStatusOk,
+    kStatusOk,
 };
 
 typedef void (*launcherCallback)(int status, void *param);
 struct plLauncherCallback {
-	launcherCallback prepCallback;
-	launcherCallback initCallback;
-	launcherCallback startCallback;
-	launcherCallback stopCallback;
-	launcherCallback terminateCallback;
+    launcherCallback prepCallback;
+    launcherCallback initCallback;
+    launcherCallback startCallback;
+    launcherCallback stopCallback;
+    launcherCallback terminateCallback;
 
 };

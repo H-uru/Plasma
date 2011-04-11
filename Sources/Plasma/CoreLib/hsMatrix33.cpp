@@ -30,68 +30,68 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsMatrix33* hsMatrix33::Reset()
 {
-	static const hsMatrix33 gIdentity = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+    static const hsMatrix33 gIdentity = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
 
-	*this = gIdentity;
-	return this;
+    *this = gIdentity;
+    return this;
 }
 
 
 hsMatrix33* hsMatrix33::SetConcat(const hsMatrix33* a, const hsMatrix33* b)
 {
-	hsMatrix33	tmpMatrix;
-	hsMatrix33*	c;
+    hsMatrix33  tmpMatrix;
+    hsMatrix33* c;
 
-	c = this;
-	if (this == a || this == b)
-		c = &tmpMatrix;
+    c = this;
+    if (this == a || this == b)
+        c = &tmpMatrix;
 
-	c->fMap[0][0] = a->fMap[0][0] * b->fMap[0][0] + a->fMap[0][1] * b->fMap[1][0] + a->fMap[0][2] * b->fMap[2][0];
-	c->fMap[0][1] = a->fMap[0][0] * b->fMap[0][1] + a->fMap[0][1] * b->fMap[1][1] + a->fMap[0][2] * b->fMap[2][1];
-	c->fMap[0][2] = a->fMap[0][0] * b->fMap[0][2] + a->fMap[0][1] * b->fMap[1][2] + a->fMap[0][2] * b->fMap[2][2];
+    c->fMap[0][0] = a->fMap[0][0] * b->fMap[0][0] + a->fMap[0][1] * b->fMap[1][0] + a->fMap[0][2] * b->fMap[2][0];
+    c->fMap[0][1] = a->fMap[0][0] * b->fMap[0][1] + a->fMap[0][1] * b->fMap[1][1] + a->fMap[0][2] * b->fMap[2][1];
+    c->fMap[0][2] = a->fMap[0][0] * b->fMap[0][2] + a->fMap[0][1] * b->fMap[1][2] + a->fMap[0][2] * b->fMap[2][2];
 
-	c->fMap[1][0] = a->fMap[1][0] * b->fMap[0][0] + a->fMap[1][1] * b->fMap[1][0] + a->fMap[1][2] * b->fMap[2][0];
-	c->fMap[1][1] = a->fMap[1][0] * b->fMap[0][1] + a->fMap[1][1] * b->fMap[1][1] + a->fMap[1][2] * b->fMap[2][1];
-	c->fMap[1][2] = a->fMap[1][0] * b->fMap[0][2] + a->fMap[1][1] * b->fMap[1][2] + a->fMap[1][2] * b->fMap[2][2];
+    c->fMap[1][0] = a->fMap[1][0] * b->fMap[0][0] + a->fMap[1][1] * b->fMap[1][0] + a->fMap[1][2] * b->fMap[2][0];
+    c->fMap[1][1] = a->fMap[1][0] * b->fMap[0][1] + a->fMap[1][1] * b->fMap[1][1] + a->fMap[1][2] * b->fMap[2][1];
+    c->fMap[1][2] = a->fMap[1][0] * b->fMap[0][2] + a->fMap[1][1] * b->fMap[1][2] + a->fMap[1][2] * b->fMap[2][2];
 
-	c->fMap[2][0] = a->fMap[2][0] * b->fMap[0][0] + a->fMap[2][1] * b->fMap[1][0] + a->fMap[2][2] * b->fMap[2][0];
-	c->fMap[2][1] = a->fMap[2][0] * b->fMap[0][1] + a->fMap[2][1] * b->fMap[1][1] + a->fMap[2][2] * b->fMap[2][1];
-	c->fMap[2][2] = a->fMap[2][0] * b->fMap[0][2] + a->fMap[2][1] * b->fMap[1][2] + a->fMap[2][2] * b->fMap[2][2];
+    c->fMap[2][0] = a->fMap[2][0] * b->fMap[0][0] + a->fMap[2][1] * b->fMap[1][0] + a->fMap[2][2] * b->fMap[2][0];
+    c->fMap[2][1] = a->fMap[2][0] * b->fMap[0][1] + a->fMap[2][1] * b->fMap[1][1] + a->fMap[2][2] * b->fMap[2][1];
+    c->fMap[2][2] = a->fMap[2][0] * b->fMap[0][2] + a->fMap[2][1] * b->fMap[1][2] + a->fMap[2][2] * b->fMap[2][2];
 
-	if (this != c)
-		*this = *c;
-	return this;
+    if (this != c)
+        *this = *c;
+    return this;
 }
 
 hsMatrix33 operator*(const hsMatrix33& a, const hsMatrix33& b)
 {
-	hsMatrix33	c;
+    hsMatrix33  c;
 
-	(void)c.SetConcat(&a, &b);
-	
-	return c;
+    (void)c.SetConcat(&a, &b);
+    
+    return c;
 }
 
 void hsMatrix33::Read(hsStream* s)
 {
-	int i, j;
-	for( i = 0; i < 3; i++ )
-	{
-		for( j = 0; j < 3; j++ )
-		{
-			fMap[i][j] = s->ReadSwapScalar();
-		}
-	}
+    int i, j;
+    for( i = 0; i < 3; i++ )
+    {
+        for( j = 0; j < 3; j++ )
+        {
+            fMap[i][j] = s->ReadSwapScalar();
+        }
+    }
 }
 
 void hsMatrix33::Write(hsStream* s)
 {
-	int i, j;
-	for( i = 0; i < 3; i++ )
-	{
-		for( j = 0; j < 3; j++ )
-		{
-			s->WriteSwapScalar(fMap[i][j]);
-		}
-	}
+    int i, j;
+    for( i = 0; i < 3; i++ )
+    {
+        for( j = 0; j < 3; j++ )
+        {
+            s->WriteSwapScalar(fMap[i][j]);
+        }
+    }
 }

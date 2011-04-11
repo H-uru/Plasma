@@ -44,75 +44,75 @@ class plOperationProgress;
 class pfSecurePreloader : public hsKeyedObject
 {
 private:
-	static pfSecurePreloader * fInstance;
+    static pfSecurePreloader * fInstance;
 
-	struct fileRequest
-	{
-		enum requestType {kSingleFile, kFileList};
-		requestType		fType;
-		std::wstring	fPath; // filename if kSingleFile, path if kFileList
-		std::wstring	fExt; // blank if kSingleFile, extension if kFileList
-	};
-	std::vector<fileRequest> fRequests;
+    struct fileRequest
+    {
+        enum requestType {kSingleFile, kFileList};
+        requestType     fType;
+        std::wstring    fPath; // filename if kSingleFile, path if kFileList
+        std::wstring    fExt; // blank if kSingleFile, extension if kFileList
+    };
+    std::vector<fileRequest> fRequests;
 
-	struct fileInfo
-	{
-		std::wstring	fOriginalNameAndPath; // the human-readable name
-		std::wstring	fGarbledNameAndPath; // the garbled temp name of the file on disk
-		UInt32			fSizeInBytes; // the total size of the file
-		bool			fDownloading; // is this file currently downloading?
-		bool			fDownloaded; // is this file completely downloaded?
-		bool			fLocal; // is the file a local copy?
-	};
-	std::map<std::wstring, fileInfo> fFileInfoMap; // key is human-readable name
-	std::map<std::wstring, hsStream*> fD2DStreams; // direct-to-disk streams, only used while downloading from the server
+    struct fileInfo
+    {
+        std::wstring    fOriginalNameAndPath; // the human-readable name
+        std::wstring    fGarbledNameAndPath; // the garbled temp name of the file on disk
+        UInt32          fSizeInBytes; // the total size of the file
+        bool            fDownloading; // is this file currently downloading?
+        bool            fDownloaded; // is this file completely downloaded?
+        bool            fLocal; // is the file a local copy?
+    };
+    std::map<std::wstring, fileInfo> fFileInfoMap; // key is human-readable name
+    std::map<std::wstring, hsStream*> fD2DStreams; // direct-to-disk streams, only used while downloading from the server
 
-	UInt32 fNumInfoRequestsRemaining; // the number of file info requests that are still pending
-	UInt32 fNumDownloadRequestsRemaining; // the number of file download requests that are still pending
-	UInt32 fTotalDataDownload; // the amount of data we need to download, for progress bar tracking
-	UInt32 fTotalDataReceived; // the amount of data we have already preloaded, for progress bar tracking
-	bool   fNetError;
-	bool   fInitialized;
+    UInt32 fNumInfoRequestsRemaining; // the number of file info requests that are still pending
+    UInt32 fNumDownloadRequestsRemaining; // the number of file download requests that are still pending
+    UInt32 fTotalDataDownload; // the amount of data we need to download, for progress bar tracking
+    UInt32 fTotalDataReceived; // the amount of data we have already preloaded, for progress bar tracking
+    bool   fNetError;
+    bool   fInitialized;
 
-	UInt32 fEncryptionKey[4]; // encryption key for all the secure files
+    UInt32 fEncryptionKey[4]; // encryption key for all the secure files
 
-	plOperationProgress* fProgressBar;
+    plOperationProgress* fProgressBar;
 
-	void IIssueDownloadRequests ();
-	void IPreloadComplete ();
+    void IIssueDownloadRequests ();
+    void IPreloadComplete ();
 
-	void ICleanupStreams(); // closes and deletes all streams
+    void ICleanupStreams(); // closes and deletes all streams
 
-	void INotifyAuthReconnected ();
-	
-	pfSecurePreloader ();
+    void INotifyAuthReconnected ();
+    
+    pfSecurePreloader ();
 
 public:
-	CLASSNAME_REGISTER(pfSecurePreloader);
-	GETINTERFACE_ANY(pfSecurePreloader, hsKeyedObject);
+    CLASSNAME_REGISTER(pfSecurePreloader);
+    GETINTERFACE_ANY(pfSecurePreloader, hsKeyedObject);
 
-	~pfSecurePreloader ();
-	
-	void Init ();
-	void Shutdown ();
+    ~pfSecurePreloader ();
+    
+    void Init ();
+    void Shutdown ();
 
-	// Client interface functions
-	void RequestSingleFile(std::wstring filename); // queues a single file to be preloaded (does nothing if already preloaded)
-	void RequestFileGroup(std::wstring dir, std::wstring ext); // queues a group of files to be preloaded (does nothing if already preloaded)
-	void Start(); // sends all queued requests (does nothing if already preloaded)
-	void Cleanup(); // closes all file pointers and cleans up after itself
+    // Client interface functions
+    void RequestSingleFile(std::wstring filename); // queues a single file to be preloaded (does nothing if already preloaded)
+    void RequestFileGroup(std::wstring dir, std::wstring ext); // queues a group of files to be preloaded (does nothing if already preloaded)
+    void Start(); // sends all queued requests (does nothing if already preloaded)
+    void Cleanup(); // closes all file pointers and cleans up after itself
 
-	// Functions for the network callbacks
-	void RequestFinished(const std::vector<std::wstring> & filenames, const std::vector<UInt32> & sizes, bool succeeded);
-	void UpdateProgressBar(UInt32 bytesReceived);
-	void FinishedDownload(std::wstring filename, bool succeeded);
+    // Functions for the network callbacks
+    void RequestFinished(const std::vector<std::wstring> & filenames, const std::vector<UInt32> & sizes, bool succeeded);
+    void UpdateProgressBar(UInt32 bytesReceived);
+    void FinishedDownload(std::wstring filename, bool succeeded);
 
-	// Instance handling
-	static pfSecurePreloader * GetInstance ();
-	static bool IsInstanced ();
+    // Instance handling
+    static pfSecurePreloader * GetInstance ();
+    static bool IsInstanced ();
 
-	// hsKeyedObject
-	hsBool MsgReceive (plMessage * msg);
+    // hsKeyedObject
+    hsBool MsgReceive (plMessage * msg);
 };
 
 #endif // __pfSecurePreloader_h__

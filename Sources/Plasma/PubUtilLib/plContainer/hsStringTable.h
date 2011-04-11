@@ -31,39 +31,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsStringTable 
 {
 public:
-	class Node {
-	protected:
-		Node(char c=0);
-		~Node();
-	public:
-		void* GetData();
-	 	void SetData(void* v);
-		friend class hsStringTable;
-	private:
-		Node* sib;
-		Node* kid;
-		char chr;
-		void* data;
-	};
+    class Node {
+    protected:
+        Node(char c=0);
+        ~Node();
+    public:
+        void* GetData();
+        void SetData(void* v);
+        friend class hsStringTable;
+    private:
+        Node* sib;
+        Node* kid;
+        char chr;
+        void* data;
+    };
 
-	hsStringTable() {}
-	~hsStringTable();
-	void Reset();
-	Node* Find(const char* str);
-	Node* FindPartial(char* str, Int32 len=0) const;
-	void Register(const char* str, void* data);
+    hsStringTable() {}
+    ~hsStringTable();
+    void Reset();
+    Node* Find(const char* str);
+    Node* FindPartial(char* str, Int32 len=0) const;
+    void Register(const char* str, void* data);
 
-	typedef hsBool (hsStringTableCallback)(Node*);
-	hsBool Iterate(hsStringTableCallback* callback, Node* fromNode=nil);
+    typedef hsBool (hsStringTableCallback)(Node*);
+    hsBool Iterate(hsStringTableCallback* callback, Node* fromNode=nil);
 private:
-	Node* FindRecur(Node* root, const char* str, hsBool createIfNeeded=false);
-	Node* FindPartialRecur(Node* root, char* str, Int32 len) const;
-	Node* AddRecur(Node* root, const char* str);
-	Node* FindLeafRecur(Node* root, char* str, Int32 len) const;
-	void RemoveNode(Node* root);
-	hsBool IterateRecur(Node* root, hsStringTableCallback* callback);
+    Node* FindRecur(Node* root, const char* str, hsBool createIfNeeded=false);
+    Node* FindPartialRecur(Node* root, char* str, Int32 len) const;
+    Node* AddRecur(Node* root, const char* str);
+    Node* FindLeafRecur(Node* root, char* str, Int32 len) const;
+    void RemoveNode(Node* root);
+    hsBool IterateRecur(Node* root, hsStringTableCallback* callback);
 
-	Node root;
+    Node root;
 };
 
 

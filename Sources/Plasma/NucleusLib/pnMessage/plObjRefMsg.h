@@ -37,37 +37,37 @@ class plObjRefMsg : public plRefMsg
 {
 
 public:
-	enum {
-		kModifier		= 0,
-		kInterface		= 4
-	};
+    enum {
+        kModifier       = 0,
+        kInterface      = 4
+    };
 
-	plObjRefMsg(): fType(-1), fWhich(-1) {};
+    plObjRefMsg(): fType(-1), fWhich(-1) {};
 
-	plObjRefMsg(const plKey &r, UInt8 refMsgFlags, Int8 which , Int8 type)
-		: plRefMsg(r, refMsgFlags), fType(type), fWhich(which) {}
+    plObjRefMsg(const plKey &r, UInt8 refMsgFlags, Int8 which , Int8 type)
+        : plRefMsg(r, refMsgFlags), fType(type), fWhich(which) {}
 
 
-	CLASSNAME_REGISTER( plObjRefMsg );
-	GETINTERFACE_ANY( plObjRefMsg, plRefMsg );
+    CLASSNAME_REGISTER( plObjRefMsg );
+    GETINTERFACE_ANY( plObjRefMsg, plRefMsg );
 
-	Int8					fType;
-	Int8					fWhich;
+    Int8                    fType;
+    Int8                    fWhich;
 
-	// IO - not really applicable to ref msgs, but anyway
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Read(stream, mgr);
-		stream->ReadSwap(&fType);
-		stream->ReadSwap(&fWhich);
-	}
+    // IO - not really applicable to ref msgs, but anyway
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Read(stream, mgr);
+        stream->ReadSwap(&fType);
+        stream->ReadSwap(&fWhich);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Write(stream, mgr);
-		stream->WriteSwap(fType);
-		stream->WriteSwap(fWhich);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Write(stream, mgr);
+        stream->WriteSwap(fType);
+        stream->WriteSwap(fWhich);
+    }
 };
 
 #endif // plObjRefMsg_inc

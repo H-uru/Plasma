@@ -45,45 +45,45 @@ class plKey;
 class plClothingSDLModifier : public plSDLModifier
 {
 protected:
-	plClothingOutfit* fClothingOutfit;
-		
-	void IPutCurrentStateIn(plStateDataRecord* dstState);
-	void ISetCurrentStateFrom(const plStateDataRecord* srcState);
-	
-	UInt32 IApplyModFlags(UInt32 sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
+    plClothingOutfit* fClothingOutfit;
+        
+    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    
+    UInt32 IApplyModFlags(UInt32 sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
 
 public:
-	// var labels 
-	static char kStrItem[];	
-	static char kStrTint[];	
-	static char kStrTint2[];	
-	static char kStrWardrobe[];	
-	static char kStrSkinTint[];
-	static char kStrFaceBlends[];
-	static char kStrAppearance[];
-	static char kStrClothingDescName[];
-	static char kStrAppearanceDescName[];
-	static char	kStrLinkInAnim[];
-	
-	CLASSNAME_REGISTER( plClothingSDLModifier );
-	GETINTERFACE_ANY( plClothingSDLModifier, plSDLModifier);
-	
-	plClothingSDLModifier();
-	
-	plClothingOutfit* GetClothingOutfit();
-	void SetClothingOutfit(plClothingOutfit* c) { fClothingOutfit=c; }
-	
-	void PutCurrentStateIn(plStateDataRecord* dstState);
-	const char* GetSDLName() const { return kSDLClothing; }
-	static const char* GetClothingItemSDRName() { return kStrClothingDescName; }
+    // var labels 
+    static char kStrItem[]; 
+    static char kStrTint[]; 
+    static char kStrTint2[];    
+    static char kStrWardrobe[]; 
+    static char kStrSkinTint[];
+    static char kStrFaceBlends[];
+    static char kStrAppearance[];
+    static char kStrClothingDescName[];
+    static char kStrAppearanceDescName[];
+    static char kStrLinkInAnim[];
+    
+    CLASSNAME_REGISTER( plClothingSDLModifier );
+    GETINTERFACE_ANY( plClothingSDLModifier, plSDLModifier);
+    
+    plClothingSDLModifier();
+    
+    plClothingOutfit* GetClothingOutfit();
+    void SetClothingOutfit(plClothingOutfit* c) { fClothingOutfit=c; }
+    
+    void PutCurrentStateIn(plStateDataRecord* dstState);
+    const char* GetSDLName() const { return kSDLClothing; }
+    static const char* GetClothingItemSDRName() { return kStrClothingDescName; }
 
-	// Pass in a clothing outfit if you want to apply the clothing item. Pass in a closet item if you're just
-	// looking to parse the SDL info.
-	// Aw heck. Go crazy if you want and pass them BOTH in! Muahahaha!
-	static void HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing = nil, plClosetItem *closetItem = nil);
-	static void PutSingleItemIntoSDR(plClosetItem *item, plStateDataRecord *sdr);
-		
-	static const plClothingSDLModifier *plClothingSDLModifier::FindClothingSDLModifier(const plSceneObject *obj);
+    // Pass in a clothing outfit if you want to apply the clothing item. Pass in a closet item if you're just
+    // looking to parse the SDL info.
+    // Aw heck. Go crazy if you want and pass them BOTH in! Muahahaha!
+    static void HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing = nil, plClosetItem *closetItem = nil);
+    static void PutSingleItemIntoSDR(plClosetItem *item, plStateDataRecord *sdr);
+        
+    static const plClothingSDLModifier *plClothingSDLModifier::FindClothingSDLModifier(const plSceneObject *obj);
 };
 
-#endif	// plClothingSDLModifier_inc
+#endif  // plClothingSDLModifier_inc

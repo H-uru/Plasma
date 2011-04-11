@@ -4,16 +4,16 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plNetMessage_SOURCES
-	plNetMessage.cpp
-	plNetMsgHelpers.cpp
+    plNetMessage.cpp
+    plNetMsgHelpers.cpp
 )
 
 set(plNetMessage_HEADERS
-	plNetCommonMessage.h
-	plNetMessage.h
-	plNetMessageCreatable.h
-	plNetMsgHelpers.h
-	plNetMsgVersion.h
+    plNetCommonMessage.h
+    plNetMessage.h
+    plNetMessageCreatable.h
+    plNetMsgHelpers.h
+    plNetMsgVersion.h
 )
 
 add_library(plNetMessage STATIC ${plNetMessage_SOURCES} ${plNetMessage_HEADERS})

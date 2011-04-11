@@ -8,25 +8,25 @@ include_directories(${Ogg_INCLUDE_DIR})
 include_directories(${Vorbis_INCLUDE_DIR})
 
 set(plAudioCore_SOURCES
-	plAudioFileReader.cpp
-	plBufferedFileReader.cpp
-	plFastWavReader.cpp
-	plOGGCodec.cpp
-	plSoundBuffer.cpp
-	plSoundDeswizzler.cpp
-	plWavFile.cpp
+    plAudioFileReader.cpp
+    plBufferedFileReader.cpp
+    plFastWavReader.cpp
+    plOGGCodec.cpp
+    plSoundBuffer.cpp
+    plSoundDeswizzler.cpp
+    plWavFile.cpp
 )
 
 set(plAudioCore_HEADERS
-	plAudioCore.h
-	plAudioCoreCreatable.h
-	plAudioFileReader.h
-	plBufferedFileReader.h
-	plFastWavReader.h
-	plOGGCodec.h
-	plSoundBuffer.h
-	plSoundDeswizzler.h
-	plWavFile.h
+    plAudioCore.h
+    plAudioCoreCreatable.h
+    plAudioFileReader.h
+    plBufferedFileReader.h
+    plFastWavReader.h
+    plOGGCodec.h
+    plSoundBuffer.h
+    plSoundDeswizzler.h
+    plWavFile.h
 )
 
 add_library(plAudioCore STATIC ${plAudioCore_SOURCES} ${plAudioCore_HEADERS})

@@ -30,12 +30,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSillyLightKonstants
 {
 public:
-	static const float	GetFarPowerKonst( void )
-	{
-		// arbitrary const, make light drop to 1/kFarPower at attenEnd. 15 just looked good to me. mf
-		// Done as a function so we don't have to worry about a separate .cpp file
-		return 15.f; 
-	}
+    static const float  GetFarPowerKonst( void )
+    {
+        // arbitrary const, make light drop to 1/kFarPower at attenEnd. 15 just looked good to me. mf
+        // Done as a function so we don't have to worry about a separate .cpp file
+        return 15.f; 
+    }
 };
 
 #endif // plLightKonstants_inc

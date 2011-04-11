@@ -29,31 +29,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Param ID's
 enum
 {
-	// Specular
-	kPassAdvUseSpec,	// Not used anymore, feel free to replace with new fields as necessary
-	kPassAdvSpecType,	// ditto
-	kPassAdvShine,		// ...
-	kPassAdvShineStr,	// ...
+    // Specular
+    kPassAdvUseSpec,    // Not used anymore, feel free to replace with new fields as necessary
+    kPassAdvSpecType,   // ditto
+    kPassAdvShine,      // ...
+    kPassAdvShineStr,   // ...
 
-	// Misc
-	kPassAdvWire,
-	kPassAdvMeshOutlines,
-	kPassAdvTwoSided,
+    // Misc
+    kPassAdvWire,
+    kPassAdvMeshOutlines,
+    kPassAdvTwoSided,
 
-	// Shading
-	kPassAdvSoftShadow,
-	kPassAdvNoProj,
-	kPassAdvVertexShade,
-	kPassAdvNoShade,
-	kPassAdvNoFog,
-	kPassAdvWhite,
+    // Shading
+    kPassAdvSoftShadow,
+    kPassAdvNoProj,
+    kPassAdvVertexShade,
+    kPassAdvNoShade,
+    kPassAdvNoFog,
+    kPassAdvWhite,
 
-	// Z
-	kPassAdvZOnly,
-	kPassAdvZClear,
-	kPassAdvZNoRead,
-	kPassAdvZNoWrite,
-	kPassAdvZInc,
+    // Z
+    kPassAdvZOnly,
+    kPassAdvZClear,
+    kPassAdvZNoRead,
+    kPassAdvZNoWrite,
+    kPassAdvZInc,
 };
 
 #endif //PL_PASSMTLADVPB_H

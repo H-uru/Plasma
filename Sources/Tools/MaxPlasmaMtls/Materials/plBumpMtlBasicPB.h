@@ -29,9 +29,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Param ID's
 enum
 {
-	kBumpBasSpecular,
-	kBumpBasRunColor,
-	kBumpBasLayer
+    kBumpBasSpecular,
+    kBumpBasRunColor,
+    kBumpBasLayer
 
 };
 

@@ -34,19 +34,19 @@ plBoundInterface::plBoundInterface() : fBounds(nil)
 
 plBoundInterface::~plBoundInterface()
 {
-	ReleaseData();
+    ReleaseData();
 }
 
 void plBoundInterface::ReleaseData()
 {
-	delete fBounds;
-	fBounds = nil;
+    delete fBounds;
+    fBounds = nil;
 }
 
 void plBoundInterface::Init(plConvexVolume *bounds)
 {
-	ReleaseData();
-	fBounds = bounds;
+    ReleaseData();
+    fBounds = bounds;
 }
 
 // Right now, this is ignoring the enabled property of ObjInterface, since I'm not aware that
@@ -55,22 +55,22 @@ void plBoundInterface::Init(plConvexVolume *bounds)
 // matrix, but not send an update to fBounds.
 void plBoundInterface::SetTransform(const hsMatrix44 &l2w, const hsMatrix44&w2l)
 {
-	if (fBounds != nil)
-		fBounds->Update(l2w);
+    if (fBounds != nil)
+        fBounds->Update(l2w);
 }
 
 void plBoundInterface::Read(hsStream* s, hsResMgr* mgr)
 {
-	plObjInterface::Read(s, mgr);
-	fBounds = plConvexVolume::ConvertNoRef(mgr->ReadCreatable(s));
-	//mgr->ReadKeyNotifyMe(s, new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kOwner), plRefFlags::kPassiveRef);
+    plObjInterface::Read(s, mgr);
+    fBounds = plConvexVolume::ConvertNoRef(mgr->ReadCreatable(s));
+    //mgr->ReadKeyNotifyMe(s, new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kOwner), plRefFlags::kPassiveRef);
 }
 
 void plBoundInterface::Write(hsStream* s, hsResMgr* mgr)
 {
-	plObjInterface::Write(s, mgr);
-	mgr->WriteCreatable(s, fBounds);
-	//mgr->WriteKey(s, fBounds);
+    plObjInterface::Write(s, mgr);
+    mgr->WriteCreatable(s, fBounds);
+    //mgr->WriteKey(s, fBounds);
 }
 
 // No need to save/load. The coordinate interface on our sceneObject will update us.

@@ -32,20 +32,20 @@ class plMipmap;
 class plBumpMapGen
 {
 public:
-	enum {
-		// output signed values with 0=>-1 and 255=>1, 127=>0, default is 2's complement, 0=>0, 255=>-1, 127=>1
-		kBias				= 0x1,
-		kMaximize			= 0x2,
-		kNormalize			= 0x4,
-		kScaleHgtByAlpha	= 0x8,
-		kBubbleTest			= 0x10
-	};
-	static		plMipmap* QikBumpMap(plMipmap* dst, const plMipmap* src, UInt32 mask, UInt32 flags);
+    enum {
+        // output signed values with 0=>-1 and 255=>1, 127=>0, default is 2's complement, 0=>0, 255=>-1, 127=>1
+        kBias               = 0x1,
+        kMaximize           = 0x2,
+        kNormalize          = 0x4,
+        kScaleHgtByAlpha    = 0x8,
+        kBubbleTest         = 0x10
+    };
+    static      plMipmap* QikBumpMap(plMipmap* dst, const plMipmap* src, UInt32 mask, UInt32 flags);
 
-	static		plMipmap* QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 mask, UInt32 flags, hsScalar smooth=1.f); // higher smooth means less bumpy, valid range [0..inf].
+    static      plMipmap* QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 mask, UInt32 flags, hsScalar smooth=1.f); // higher smooth means less bumpy, valid range [0..inf].
 
-	static		plMipmap* TwosCompToBias(plMipmap* dst);
-	static		plMipmap* MakeCompatibleBlank(const plMipmap* src);
+    static      plMipmap* TwosCompToBias(plMipmap* dst);
+    static      plMipmap* MakeCompatibleBlank(const plMipmap* src);
 };
 
 #endif // plBumpMapGen_inc

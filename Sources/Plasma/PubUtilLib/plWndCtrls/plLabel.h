@@ -30,29 +30,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plLabel : public plControl
 {
 public:
-	DECLARE_WINDOWSUBCLASS(plLabel,plControl)
+    DECLARE_WINDOWSUBCLASS(plLabel,plControl)
 
-	plLabel()
-	{}
-	plLabel( plWindow * inOwner, int inId=0, WNDPROC inSuperProc=nil )
-	: plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
-	{}
+    plLabel()
+    {}
+    plLabel( plWindow * inOwner, int inId=0, WNDPROC inSuperProc=nil )
+    : plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
+    {}
 
-	void OpenWindow( bool visible )
-	{
-		PerformCreateWindowEx
-		(
-			WS_EX_CLIENTEDGE,
+    void OpenWindow( bool visible )
+    {
+        PerformCreateWindowEx
+        (
+            WS_EX_CLIENTEDGE,
             nil,
             WS_CHILD | (visible?WS_VISIBLE:0),
             0, 0,
-			0, 0,
+            0, 0,
             *fOwnerWindow,
             (HMENU)fControlID,
             plWndCtrls::Instance()
-		);
-		SendMessage( *this, WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(0,0) );
-	}
+        );
+        SendMessage( *this, WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(0,0) );
+    }
 };
 
 

@@ -37,89 +37,89 @@ namespace plVault {
 
 const char * NodeTypeStr( int type, bool pretty )
 {
-	if (!pretty)
-	{
-		switch ( type )
-		{
-		case kNodeType_VNodeMgrPlayer:	return "PLR";
-		case kNodeType_VNodeMgrAge:		return "AGE";
-		case kNodeType_Folder:			return "FLDR";
-		case kNodeType_PlayerInfo:		return "PLRINFO";
-		case kNodeType_System:			return "SYSTEM";
-		case kNodeType_Image:			return "IMG";
-		case kNodeType_TextNote:		return "TXT";
-		case kNodeType_SDL:				return "SDL";
-		case kNodeType_AgeLink:			return "LINK";
-		case kNodeType_Chronicle:		return "CRN";
-		case kNodeType_PlayerInfoList:	return "PLRINFOLIST";
-		case kNodeType_AgeInfo:			return "AGEINFO";
-		case kNodeType_AgeInfoList:		return "AGEINFOLIST";
-		case kNodeType_MarkerGame:		return "MRKRGAME";
-		default:						return "???";
-		}
-	}
-	else
-	{
-		switch ( type )
-		{
-		case kNodeType_VNodeMgrPlayer:	return "Player";
-		case kNodeType_VNodeMgrAge:		return "Age";
-		case kNodeType_Folder:			return "Folder";
-		case kNodeType_PlayerInfo:		return "Player Info";
-		case kNodeType_System:			return "System";
-		case kNodeType_Image:			return "Image";
-		case kNodeType_TextNote:		return "Text Note";
-		case kNodeType_SDL:				return "SDL";
-		case kNodeType_AgeLink:			return "Age Link";
-		case kNodeType_Chronicle:		return "Chronicle";
-		case kNodeType_PlayerInfoList:	return "Player Info List";
-		case kNodeType_AgeInfo:			return "Age Info";
-		case kNodeType_AgeInfoList:		return "Age Info List";
-		case kNodeType_MarkerGame:		return "Marker Game";
-		default:						return "UNKNOWN";
-		}
-	}
+    if (!pretty)
+    {
+        switch ( type )
+        {
+        case kNodeType_VNodeMgrPlayer:  return "PLR";
+        case kNodeType_VNodeMgrAge:     return "AGE";
+        case kNodeType_Folder:          return "FLDR";
+        case kNodeType_PlayerInfo:      return "PLRINFO";
+        case kNodeType_System:          return "SYSTEM";
+        case kNodeType_Image:           return "IMG";
+        case kNodeType_TextNote:        return "TXT";
+        case kNodeType_SDL:             return "SDL";
+        case kNodeType_AgeLink:         return "LINK";
+        case kNodeType_Chronicle:       return "CRN";
+        case kNodeType_PlayerInfoList:  return "PLRINFOLIST";
+        case kNodeType_AgeInfo:         return "AGEINFO";
+        case kNodeType_AgeInfoList:     return "AGEINFOLIST";
+        case kNodeType_MarkerGame:      return "MRKRGAME";
+        default:                        return "???";
+        }
+    }
+    else
+    {
+        switch ( type )
+        {
+        case kNodeType_VNodeMgrPlayer:  return "Player";
+        case kNodeType_VNodeMgrAge:     return "Age";
+        case kNodeType_Folder:          return "Folder";
+        case kNodeType_PlayerInfo:      return "Player Info";
+        case kNodeType_System:          return "System";
+        case kNodeType_Image:           return "Image";
+        case kNodeType_TextNote:        return "Text Note";
+        case kNodeType_SDL:             return "SDL";
+        case kNodeType_AgeLink:         return "Age Link";
+        case kNodeType_Chronicle:       return "Chronicle";
+        case kNodeType_PlayerInfoList:  return "Player Info List";
+        case kNodeType_AgeInfo:         return "Age Info";
+        case kNodeType_AgeInfoList:     return "Age Info List";
+        case kNodeType_MarkerGame:      return "Marker Game";
+        default:                        return "UNKNOWN";
+        }
+    }
 }
 
 const char * StandardNodeStr( int type )
 {
-	switch ( type )
-	{
-	case kUserDefinedNode:		return "Generic";
-	case kInboxFolder:			return "InboxFolder";
-	case kBuddyListFolder:		return "BuddyListFolder";
-	case kPeopleIKnowAboutFolder:	return"PeopleIKnowAboutFolder";
-	case kIgnoreListFolder:		return "IgnoreListFolder";
-	case kVaultMgrGlobalDataFolder:	return "VaultMgrGlobalDataFolder";
-	case kChronicleFolder:		return "ChronicleFolder";
-	case kAvatarOutfitFolder:	return "AvatarOutfitFolder";
-	case kAgeTypeJournalFolder:	return "AgeTypeJournalFolder";
-	case kSubAgesFolder:		return "SubAgesFolder";
-	case kDeviceInboxFolder:	return "DeviceInboxFolder";
-	case kAgeInstanceSDLNode:	return "AgeInstanceSDLNode";
-	case kAgeGlobalSDLNode:		return "AgeGlobalSDLNode";
-	case kHoodMembersFolder:	return "HoodMembersFolder";
-	case kAllPlayersFolder:		return "AllPlayers";
-	case kAgeMembersFolder:		return "AgeMembersFolder";
-	case kAgeJournalsFolder:	return "AgeJournalsFolder";
-	case kAgeDevicesFolder:		return "AgeDevicesFolder";
-	case kAllAgeGlobalSDLNodesFolder:	return "AllAgeGlobalSDLNodesFolder";
-	case kPlayerInfoNode:		return "PlayerInfoNode";
-	case kPublicAgesFolder:		return "PublicAgesFolder";
-	case kAgesIOwnFolder:		return "AgesIOwnFolder";
-	case kAgesICanVisitFolder:	return "AgesICanVisitFolder";
-	case kAvatarClosetFolder:	return "AvatarClosetFolder";
-	case kCanVisitFolder:		return "CanVisitFolder";
-	case kAgeOwnersFolder:		return "AgeOwnersFolder";
-	case kAgeInfoNode:			return "AgeInfoNode";
-	case kSystemNode:			return "SystemNode";
-	case kPlayerInviteFolder:	return "PlayerInviteFolder";
-	case kCCRPlayersFolder:		return "CCRPlayersFolder";
-	case kGlobalInboxFolder:	return "GlobalInboxFolder";
-	case kChildAgesFolder:		return "ChildAgesFolder";
-	case kGameScoresFolder:		return "GameScoresFolder";
-	default:					return "UNKNOWN";
-	}
+    switch ( type )
+    {
+    case kUserDefinedNode:      return "Generic";
+    case kInboxFolder:          return "InboxFolder";
+    case kBuddyListFolder:      return "BuddyListFolder";
+    case kPeopleIKnowAboutFolder:   return"PeopleIKnowAboutFolder";
+    case kIgnoreListFolder:     return "IgnoreListFolder";
+    case kVaultMgrGlobalDataFolder: return "VaultMgrGlobalDataFolder";
+    case kChronicleFolder:      return "ChronicleFolder";
+    case kAvatarOutfitFolder:   return "AvatarOutfitFolder";
+    case kAgeTypeJournalFolder: return "AgeTypeJournalFolder";
+    case kSubAgesFolder:        return "SubAgesFolder";
+    case kDeviceInboxFolder:    return "DeviceInboxFolder";
+    case kAgeInstanceSDLNode:   return "AgeInstanceSDLNode";
+    case kAgeGlobalSDLNode:     return "AgeGlobalSDLNode";
+    case kHoodMembersFolder:    return "HoodMembersFolder";
+    case kAllPlayersFolder:     return "AllPlayers";
+    case kAgeMembersFolder:     return "AgeMembersFolder";
+    case kAgeJournalsFolder:    return "AgeJournalsFolder";
+    case kAgeDevicesFolder:     return "AgeDevicesFolder";
+    case kAllAgeGlobalSDLNodesFolder:   return "AllAgeGlobalSDLNodesFolder";
+    case kPlayerInfoNode:       return "PlayerInfoNode";
+    case kPublicAgesFolder:     return "PublicAgesFolder";
+    case kAgesIOwnFolder:       return "AgesIOwnFolder";
+    case kAgesICanVisitFolder:  return "AgesICanVisitFolder";
+    case kAvatarClosetFolder:   return "AvatarClosetFolder";
+    case kCanVisitFolder:       return "CanVisitFolder";
+    case kAgeOwnersFolder:      return "AgeOwnersFolder";
+    case kAgeInfoNode:          return "AgeInfoNode";
+    case kSystemNode:           return "SystemNode";
+    case kPlayerInviteFolder:   return "PlayerInviteFolder";
+    case kCCRPlayersFolder:     return "CCRPlayersFolder";
+    case kGlobalInboxFolder:    return "GlobalInboxFolder";
+    case kChildAgesFolder:      return "ChildAgesFolder";
+    case kGameScoresFolder:     return "GameScoresFolder";
+    default:                    return "UNKNOWN";
+    }
 }
 
 #endif // def CLIENT

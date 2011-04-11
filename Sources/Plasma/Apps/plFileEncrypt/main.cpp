@@ -32,78 +32,78 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void EncryptFiles(const char* dir, const char* ext, bool encrypt);
 
 void print_version(){
-	wchar productString[256];
-	ProductString(productString, arrsize(productString));
-	printf("%S\n\n", productString);
+    wchar productString[256];
+    ProductString(productString, arrsize(productString));
+    printf("%S\n\n", productString);
 }
 
 void print_help() {
-	printf("plFileEncrypt - Encrypts and Decrypts Uru Files.\n\n");
-	print_version();
-	printf("Usage: plFileEncrypt \t[(encrypt|-e)|(decrypt|-d|)|(--help|-h|-?|/h)|(-v)]\n");
-	printf("\tencrypt|-e\t - Encrypts All .age, .fni, .ini, .csv, and .sdl files in the current folder.\n");
-	printf("\tdecrypt|-d\t - Decrypts All .age, .fni, .ini, .csv, and .sdl files in the current folder.\n");
-	printf("\t--help|-h|-?|/h\t - Prints Help. This Screen.\n");
-	printf("\t-v|--version\t - Prints build version information\n");
+    printf("plFileEncrypt - Encrypts and Decrypts Uru Files.\n\n");
+    print_version();
+    printf("Usage: plFileEncrypt \t[(encrypt|-e)|(decrypt|-d|)|(--help|-h|-?|/h)|(-v)]\n");
+    printf("\tencrypt|-e\t - Encrypts All .age, .fni, .ini, .csv, and .sdl files in the current folder.\n");
+    printf("\tdecrypt|-d\t - Decrypts All .age, .fni, .ini, .csv, and .sdl files in the current folder.\n");
+    printf("\t--help|-h|-?|/h\t - Prints Help. This Screen.\n");
+    printf("\t-v|--version\t - Prints build version information\n");
 }
 
 
 int main(int argc, char *argv[])
 {
-	bool encrypt = true;
-	const char* dir = ".";
+    bool encrypt = true;
+    const char* dir = ".";
 
-	if (argc > 1)
-	{
-		if (hsStrEQ(argv[1], "encrypt") || hsStrEQ(argv[1], "-e") )
-		{
-			if (argc > 2)
-				dir = argv[2];
-			encrypt = true;
-		}
-		else if (hsStrEQ(argv[1], "decrypt") || hsStrEQ(argv[1], "-d"))
-		{
-			if (argc > 2)
-				dir = argv[2];
-			encrypt = false;
-		}
-		else if(hsStrEQ(argv[1], "--help") || hsStrEQ(argv[1], "-h") || hsStrEQ(argv[1], "-?")  || hsStrEQ(argv[1], "/?"))
-		{
-			print_help();
-			return 0;
-		} 
-		else if (hsStrEQ(argv[1], "-v") || hsStrEQ(argv[1], "--version"))
-		{
-			print_version();			
-			return 0;
-		}
-	}
+    if (argc > 1)
+    {
+        if (hsStrEQ(argv[1], "encrypt") || hsStrEQ(argv[1], "-e") )
+        {
+            if (argc > 2)
+                dir = argv[2];
+            encrypt = true;
+        }
+        else if (hsStrEQ(argv[1], "decrypt") || hsStrEQ(argv[1], "-d"))
+        {
+            if (argc > 2)
+                dir = argv[2];
+            encrypt = false;
+        }
+        else if(hsStrEQ(argv[1], "--help") || hsStrEQ(argv[1], "-h") || hsStrEQ(argv[1], "-?")  || hsStrEQ(argv[1], "/?"))
+        {
+            print_help();
+            return 0;
+        } 
+        else if (hsStrEQ(argv[1], "-v") || hsStrEQ(argv[1], "--version"))
+        {
+            print_version();            
+            return 0;
+        }
+    }
 
-	EncryptFiles(dir, ".age", encrypt);
-	EncryptFiles(dir, ".fni", encrypt);
-	EncryptFiles(dir, ".ini", encrypt);
-	EncryptFiles(dir, ".sdl", encrypt);
-	EncryptFiles(dir, ".csv", encrypt);
-	return 0;
+    EncryptFiles(dir, ".age", encrypt);
+    EncryptFiles(dir, ".fni", encrypt);
+    EncryptFiles(dir, ".ini", encrypt);
+    EncryptFiles(dir, ".sdl", encrypt);
+    EncryptFiles(dir, ".csv", encrypt);
+    return 0;
 }
 
 void EncryptFiles(const char* dir, const char* ext, bool encrypt)
 {
-	char filePath[256];
+    char filePath[256];
 
-	hsFolderIterator folder(dir);
-	while (folder.NextFileSuffix(ext))
-	{
-		folder.GetPathAndName(filePath);
-		if (encrypt)
-		{
-			printf("encrypting: %s\n", folder.GetFileName());
-			plEncryptedStream::FileEncrypt(filePath);
-		}
-		else
-		{ 
-			printf("decrypting: %s\n", folder.GetFileName());
-			plEncryptedStream::FileDecrypt(filePath);
-		}
-	}
+    hsFolderIterator folder(dir);
+    while (folder.NextFileSuffix(ext))
+    {
+        folder.GetPathAndName(filePath);
+        if (encrypt)
+        {
+            printf("encrypting: %s\n", folder.GetFileName());
+            plEncryptedStream::FileEncrypt(filePath);
+        }
+        else
+        { 
+            printf("decrypting: %s\n", folder.GetFileName());
+            plEncryptedStream::FileDecrypt(filePath);
+        }
+    }
 }

@@ -36,18 +36,18 @@ class plDynaTorpedoMgr : public plDynaRippleMgr
 {
 protected:
 
-	virtual hsBool IHandleShot(plBulletMsg* bull);
+    virtual hsBool IHandleShot(plBulletMsg* bull);
 
 public:
-	plDynaTorpedoMgr();
-	virtual ~plDynaTorpedoMgr();
+    plDynaTorpedoMgr();
+    virtual ~plDynaTorpedoMgr();
 
-	CLASSNAME_REGISTER( plDynaTorpedoMgr );
-	GETINTERFACE_ANY( plDynaTorpedoMgr, plDynaRippleMgr );
+    CLASSNAME_REGISTER( plDynaTorpedoMgr );
+    GETINTERFACE_ANY( plDynaTorpedoMgr, plDynaRippleMgr );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
 };
 

@@ -53,31 +53,31 @@ typedef sockaddr_in  AddressType;
 class plNetAddress
 {
     // fAddr must be first field
-	AddressType     fAddr;
+    AddressType     fAddr;
 
 public:
-	plNetAddress();
-	plNetAddress(UInt32 addr, int port);
-	plNetAddress(const char * addr, int port);
-	virtual ~plNetAddress(){}
+    plNetAddress();
+    plNetAddress(UInt32 addr, int port);
+    plNetAddress(const char * addr, int port);
+    virtual ~plNetAddress(){}
 
-	void Clear();
-	bool SetAnyAddr();
-	bool SetAnyPort();
-	bool SetPort(int port);
-	bool SetHost(const char * hostname);
-	bool SetHost(UInt32 ip4addr);
-	int GetPort() const;
-	std::string GetHostString() const;
-	UInt32 GetHost() const;
-	std::string GetHostWithPort() const; 
-	const AddressType & GetAddressInfo() const { return fAddr; }
-	AddressType & GetAddressInfo() { return fAddr; }
+    void Clear();
+    bool SetAnyAddr();
+    bool SetAnyPort();
+    bool SetPort(int port);
+    bool SetHost(const char * hostname);
+    bool SetHost(UInt32 ip4addr);
+    int GetPort() const;
+    std::string GetHostString() const;
+    UInt32 GetHost() const;
+    std::string GetHostWithPort() const; 
+    const AddressType & GetAddressInfo() const { return fAddr; }
+    AddressType & GetAddressInfo() { return fAddr; }
 
-	std::string AsString() const;
+    std::string AsString() const;
 
-	void Read(hsStream * stream);
-	void Write(hsStream * stream);
+    void Read(hsStream * stream);
+    void Write(hsStream * stream);
 };
 
 

@@ -34,36 +34,36 @@ pyBlueSpiralGame::pyBlueSpiralGame(): pyGameCli() {}
 
 pyBlueSpiralGame::pyBlueSpiralGame(pfGameCli* client): pyGameCli(client)
 {
-	if (client && (client->GetGameTypeId() != kGameTypeId_BlueSpiral))
-		gameClient = nil; // wrong type, just clear it out
+    if (client && (client->GetGameTypeId() != kGameTypeId_BlueSpiral))
+        gameClient = nil; // wrong type, just clear it out
 }
 
 bool pyBlueSpiralGame::IsBlueSpiralGame(std::wstring guid)
 {
-	Uuid gameUuid(guid.c_str());
-	return gameUuid == kGameTypeId_BlueSpiral;
+    Uuid gameUuid(guid.c_str());
+    return gameUuid == kGameTypeId_BlueSpiral;
 }
 
 void pyBlueSpiralGame::JoinCommonBlueSpiralGame(pyKey& callbackKey, unsigned gameID)
 {
-	BlueSpiral_CreateParam init;
-	pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_BlueSpiral, gameID, sizeof(init), &init);
+    BlueSpiral_CreateParam init;
+    pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_BlueSpiral, gameID, sizeof(init), &init);
 }
 
 void pyBlueSpiralGame::StartGame()
 {
-	if (gameClient)
-	{
-		pfGmBlueSpiral* blueSpiral = pfGmBlueSpiral::ConvertNoRef(gameClient);
-		blueSpiral->StartGame();
-	}
+    if (gameClient)
+    {
+        pfGmBlueSpiral* blueSpiral = pfGmBlueSpiral::ConvertNoRef(gameClient);
+        blueSpiral->StartGame();
+    }
 }
 
 void pyBlueSpiralGame::HitCloth(int clothNum)
 {
-	if (gameClient)
-	{
-		pfGmBlueSpiral* blueSpiral = pfGmBlueSpiral::ConvertNoRef(gameClient);
-		blueSpiral->HitCloth(clothNum);
-	}
+    if (gameClient)
+    {
+        pfGmBlueSpiral* blueSpiral = pfGmBlueSpiral::ConvertNoRef(gameClient);
+        blueSpiral->HitCloth(clothNum);
+    }
 }

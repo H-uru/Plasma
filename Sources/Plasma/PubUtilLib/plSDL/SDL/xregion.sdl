@@ -10,6 +10,6 @@
 
 STATEDESC XRegion
 {
-	VERSION 1
-	VAR BOOL		cleared[1]			DEFAULT=false	# is it cleared
+    VERSION 1
+    VAR BOOL        cleared[1]          DEFAULT=false   # is it cleared
 }

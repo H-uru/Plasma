@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfKIMsg Header 															//
-//																			//
+//                                                                          //
+//  pfKIMsg Header                                                          //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "pfKIMsg.h"
@@ -36,15 +36,15 @@ const char* pfKIMsg::kChronicleKILevel = "PlayerKILevel";
 
 void pfKIMsg::SetString( const char *str )
 {
-	wchar_t *temp = hsStringToWString( str );
-	fString = temp;
-	delete [] temp;
+    wchar_t *temp = hsStringToWString( str );
+    fString = temp;
+    delete [] temp;
 }
 
 std::string pfKIMsg::GetString( void )
 {
-	char *temp = hsWStringToString( fString.c_str() );
-	std::string retVal = temp;
-	delete [] temp;
-	return retVal;
+    char *temp = hsWStringToString( fString.c_str() );
+    std::string retVal = temp;
+    delete [] temp;
+    return retVal;
 }

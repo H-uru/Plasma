@@ -42,100 +42,100 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMaxFileDataControl : public StdControl
 {
 public:
-	SYSTEMTIME fCodeBuildTime;
-	char fBranch[128];
+    SYSTEMTIME fCodeBuildTime;
+    char fBranch[128];
 
-	plMaxFileDataControl()
-	{
-		memset(&fCodeBuildTime, 0, sizeof(SYSTEMTIME));
-		memset(&fBranch, 0, sizeof(fBranch));
-	}
+    plMaxFileDataControl()
+    {
+        memset(&fCodeBuildTime, 0, sizeof(SYSTEMTIME));
+        memset(&fBranch, 0, sizeof(fBranch));
+    }
 
-	// Animatable
-	virtual void EditTrackParams(TimeValue t, ParamDimensionBase *dim,TCHAR *pname,HWND hParent, IObjParam *ip, DWORD flags){};
-	int TrackParamsType() { return TRACKPARAMS_WHOLE; }
-	virtual void DeleteThis() { delete this; }
+    // Animatable
+    virtual void EditTrackParams(TimeValue t, ParamDimensionBase *dim,TCHAR *pname,HWND hParent, IObjParam *ip, DWORD flags){};
+    int TrackParamsType() { return TRACKPARAMS_WHOLE; }
+    virtual void DeleteThis() { delete this; }
 
-	// ReferenceMaker
-	virtual RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID,RefMessage message)
-	{return REF_DONTCARE;}
+    // ReferenceMaker
+    virtual RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID,RefMessage message)
+    {return REF_DONTCARE;}
 
-	Class_ID ClassID() { return PLASMA_FILE_DATA_CID; }
-	SClass_ID SuperClassID() { return CTRL_FLOAT_CLASS_ID; }
-	void GetClassName(TSTR& s) {s = "blah";}
+    Class_ID ClassID() { return PLASMA_FILE_DATA_CID; }
+    SClass_ID SuperClassID() { return CTRL_FLOAT_CLASS_ID; }
+    void GetClassName(TSTR& s) {s = "blah";}
 
-	// Control methods
-	RefTargetHandle Clone(RemapDir& remap) { return TRACKED_NEW plMaxFileDataControl(); }
-	void Copy(Control *from) {}
-	virtual BOOL IsReplaceable() { return FALSE; }
+    // Control methods
+    RefTargetHandle Clone(RemapDir& remap) { return TRACKED_NEW plMaxFileDataControl(); }
+    void Copy(Control *from) {}
+    virtual BOOL IsReplaceable() { return FALSE; }
 
-	// StdControl methods
-	void GetValueLocalTime(TimeValue t, void *val, Interval &valid, GetSetMethod method=CTRL_ABSOLUTE){}
-	void SetValueLocalTime(TimeValue t, void *val, int commit, GetSetMethod method) {}
-	void Extrapolate(Interval range,TimeValue t,void *val,Interval &valid,int type){}
-	void *CreateTempValue() {return NULL;}
-	void DeleteTempValue(void *val) {}
-	void ApplyValue(void *val, void *delta) {}
-	void MultiplyValue(void *val, float m) {}
+    // StdControl methods
+    void GetValueLocalTime(TimeValue t, void *val, Interval &valid, GetSetMethod method=CTRL_ABSOLUTE){}
+    void SetValueLocalTime(TimeValue t, void *val, int commit, GetSetMethod method) {}
+    void Extrapolate(Interval range,TimeValue t,void *val,Interval &valid,int type){}
+    void *CreateTempValue() {return NULL;}
+    void DeleteTempValue(void *val) {}
+    void ApplyValue(void *val, void *delta) {}
+    void MultiplyValue(void *val, float m) {}
 
-	// MyControl methods
-	IOResult Load(ILoad *iload);
-	IOResult Save(ISave *isave);
+    // MyControl methods
+    IOResult Load(ILoad *iload);
+    IOResult Save(ISave *isave);
 };
 
-#define MAXFILE_DATA_CHUNK	1001
+#define MAXFILE_DATA_CHUNK  1001
 static const UInt8 kVersion = 1;
 
 IOResult plMaxFileDataControl::Load(ILoad *iload)
 {
-	ULONG nb;
-	IOResult res;
-	while (IO_OK==(res=iload->OpenChunk()))
-	{
-		if (iload->CurChunkID() == MAXFILE_DATA_CHUNK)
-		{
-			UInt8 version = 0;
-			res = iload->Read(&version, sizeof(UInt8), &nb);
-			res = iload->Read(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
+    ULONG nb;
+    IOResult res;
+    while (IO_OK==(res=iload->OpenChunk()))
+    {
+        if (iload->CurChunkID() == MAXFILE_DATA_CHUNK)
+        {
+            UInt8 version = 0;
+            res = iload->Read(&version, sizeof(UInt8), &nb);
+            res = iload->Read(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
 
-			int branchLen = 0;
-			iload->Read(&branchLen, sizeof(int), &nb);
-			iload->Read(&fBranch, branchLen, &nb);
-		}
+            int branchLen = 0;
+            iload->Read(&branchLen, sizeof(int), &nb);
+            iload->Read(&fBranch, branchLen, &nb);
+        }
 
-		iload->CloseChunk();
-		if (res != IO_OK)
-			return res;
-	}
+        iload->CloseChunk();
+        if (res != IO_OK)
+            return res;
+    }
 
-	return IO_OK;
+    return IO_OK;
 }
 
 IOResult plMaxFileDataControl::Save(ISave *isave)
 {
-	ULONG nb;
-	isave->BeginChunk(MAXFILE_DATA_CHUNK);
+    ULONG nb;
+    isave->BeginChunk(MAXFILE_DATA_CHUNK);
 
-	isave->Write(&kVersion, sizeof(kVersion), &nb);
-	isave->Write(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
+    isave->Write(&kVersion, sizeof(kVersion), &nb);
+    isave->Write(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
 
-	int branchLen = strlen(fBranch)+1;
-	isave->Write(&branchLen, sizeof(int), &nb);
-	isave->Write(&fBranch, branchLen, &nb);
+    int branchLen = strlen(fBranch)+1;
+    isave->Write(&branchLen, sizeof(int), &nb);
+    isave->Write(&fBranch, branchLen, &nb);
 
-	isave->EndChunk();
-	return IO_OK;
+    isave->EndChunk();
+    return IO_OK;
 }
 
 class MaxFileDataClassDesc : public ClassDesc
 {
 public:
-	int 			IsPublic()				{ return FALSE; }
-	void*			Create(BOOL loading)	{ return TRACKED_NEW plMaxFileDataControl; }
-	const TCHAR*	ClassName()				{ return _T("MaxFileData"); }
-	SClass_ID		SuperClassID()			{ return CTRL_FLOAT_CLASS_ID; }
-	Class_ID 		ClassID()				{ return PLASMA_FILE_DATA_CID; }
-	const TCHAR* 	Category()				{ return _T(""); }
+    int             IsPublic()              { return FALSE; }
+    void*           Create(BOOL loading)    { return TRACKED_NEW plMaxFileDataControl; }
+    const TCHAR*    ClassName()             { return _T("MaxFileData"); }
+    SClass_ID       SuperClassID()          { return CTRL_FLOAT_CLASS_ID; }
+    Class_ID        ClassID()               { return PLASMA_FILE_DATA_CID; }
+    const TCHAR*    Category()              { return _T(""); }
 };
 MaxFileDataClassDesc gMaxFileDataClassDesc;
 ClassDesc *GetMaxFileDataDesc() { return &gMaxFileDataClassDesc; }
@@ -143,38 +143,38 @@ ClassDesc *GetMaxFileDataDesc() { return &gMaxFileDataClassDesc; }
 // This functions searches for Trackviewnode and the Controller and creates one, if none is present.
 plMaxFileDataControl *GetMaxFileData(bool& created)
 {
-	plMaxFileDataControl *pCtrl = NULL;
-	ITrackViewNode *tvNode = NULL;
-	ITrackViewNode *tvRoot = GetCOREInterface()->GetTrackViewRootNode();
+    plMaxFileDataControl *pCtrl = NULL;
+    ITrackViewNode *tvNode = NULL;
+    ITrackViewNode *tvRoot = GetCOREInterface()->GetTrackViewRootNode();
 
-	int i = tvRoot->FindItem(PLASMA_FILE_DATA_CID);
-	if (i < 0)
-	{
-		created = true;
+    int i = tvRoot->FindItem(PLASMA_FILE_DATA_CID);
+    if (i < 0)
+    {
+        created = true;
 
-		tvNode = CreateITrackViewNode();
+        tvNode = CreateITrackViewNode();
 
-		// This method adds the Node with the specific Title (e.g. "My Settings")
-		tvRoot->AddNode(tvNode, "Plasma Globals", PLASMA_FILE_DATA_CID);
-		pCtrl = (plMaxFileDataControl*)CreateInstance(CTRL_FLOAT_CLASS_ID, PLASMA_FILE_DATA_CID);
+        // This method adds the Node with the specific Title (e.g. "My Settings")
+        tvRoot->AddNode(tvNode, "Plasma Globals", PLASMA_FILE_DATA_CID);
+        pCtrl = (plMaxFileDataControl*)CreateInstance(CTRL_FLOAT_CLASS_ID, PLASMA_FILE_DATA_CID);
 
-		TSTR s;
-		pCtrl->GetClassName(s);
+        TSTR s;
+        pCtrl->GetClassName(s);
 
 
-		// This adds the controller
-		tvNode->AddController(pCtrl, s, PLASMA_FILE_DATA_CID);
-		tvNode->HideChildren(TRUE);
-	}
-	else
-	{
-		created = false;
+        // This adds the controller
+        tvNode->AddController(pCtrl, s, PLASMA_FILE_DATA_CID);
+        tvNode->HideChildren(TRUE);
+    }
+    else
+    {
+        created = false;
 
-		tvNode = tvRoot->GetNode(i);
-		pCtrl = (plMaxFileDataControl*)tvNode->GetController(PLASMA_FILE_DATA_CID);
-	}
+        tvNode = tvRoot->GetNode(i);
+        pCtrl = (plMaxFileDataControl*)tvNode->GetController(PLASMA_FILE_DATA_CID);
+    }
 
-	return pCtrl;
+    return pCtrl;
 }
 
 static SYSTEMTIME gThisCodeBuildTime;
@@ -182,96 +182,96 @@ static char gThisBranch[128];
 
 static void PrintTime(SYSTEMTIME& time, char* buf)
 {
-	sprintf(buf, "%d/%d/%d %d:%02d %s", time.wMonth, time.wDay, time.wYear,
-			(time.wHour <= 12) ? time.wHour : time.wHour-12,
-			time.wMinute,
-			(time.wHour < 12 || time.wHour == 24) ? "AM" : "PM");
+    sprintf(buf, "%d/%d/%d %d:%02d %s", time.wMonth, time.wDay, time.wYear,
+            (time.wHour <= 12) ? time.wHour : time.wHour-12,
+            time.wMinute,
+            (time.wHour < 12 || time.wHour == 24) ? "AM" : "PM");
 }
 
 static void NotifyProc(void *param, NotifyInfo *info)
 {
-	if (info->intcode == NOTIFY_FILE_POST_OPEN)
-	{
-		bool created;
-		plMaxFileDataControl* data = GetMaxFileData(created);
+    if (info->intcode == NOTIFY_FILE_POST_OPEN)
+    {
+        bool created;
+        plMaxFileDataControl* data = GetMaxFileData(created);
 
-		if (!created)
-		{
-			FILETIME fileTime, pluginTime;
-			SystemTimeToFileTime(&gThisCodeBuildTime, &pluginTime);
-			SystemTimeToFileTime(&data->fCodeBuildTime, &fileTime);
+        if (!created)
+        {
+            FILETIME fileTime, pluginTime;
+            SystemTimeToFileTime(&gThisCodeBuildTime, &pluginTime);
+            SystemTimeToFileTime(&data->fCodeBuildTime, &fileTime);
 
-			if (CompareFileTime(&fileTime, &pluginTime) > 0)
-			{
-				if (hsMessageBox_SuppressPrompts)
-					return;
+            if (CompareFileTime(&fileTime, &pluginTime) > 0)
+            {
+                if (hsMessageBox_SuppressPrompts)
+                    return;
 
-				char buf[1024];
+                char buf[1024];
 
-				strcpy(buf, "This file was last saved with plugins stamped:\n\n");
+                strcpy(buf, "This file was last saved with plugins stamped:\n\n");
 
-				char timeBuf[128];
-				PrintTime(data->fCodeBuildTime, timeBuf);
-				strcat(buf, timeBuf);
-				strcat(buf, "\n");
-				strcat(buf, data->fBranch);
+                char timeBuf[128];
+                PrintTime(data->fCodeBuildTime, timeBuf);
+                strcat(buf, timeBuf);
+                strcat(buf, "\n");
+                strcat(buf, data->fBranch);
 
-				strcat(buf, "\n\nThese plugins are stamped:\n\n");
+                strcat(buf, "\n\nThese plugins are stamped:\n\n");
 
-				PrintTime(gThisCodeBuildTime, timeBuf);
-				strcat(buf, timeBuf);
-				strcat(buf, "\n");
-				strcat(buf, gThisBranch);
+                PrintTime(gThisCodeBuildTime, timeBuf);
+                strcat(buf, timeBuf);
+                strcat(buf, "\n");
+                strcat(buf, gThisBranch);
 
-				strcat(buf,
-					"\n\nNew features may have been added to the newer plugins,\n"
-					"so saving this file could cause data to be lost.");
+                strcat(buf,
+                    "\n\nNew features may have been added to the newer plugins,\n"
+                    "so saving this file could cause data to be lost.");
 
-				MessageBox(GetCOREInterface()->GetMAXHWnd(), buf, "Plugin Warning", MB_OK | MB_ICONEXCLAMATION);
-			}
-		}
+                MessageBox(GetCOREInterface()->GetMAXHWnd(), buf, "Plugin Warning", MB_OK | MB_ICONEXCLAMATION);
+            }
+        }
 
-		strcpy(data->fBranch, gThisBranch);
-		memcpy(&data->fCodeBuildTime, &gThisCodeBuildTime, sizeof(SYSTEMTIME));
-	}
+        strcpy(data->fBranch, gThisBranch);
+        memcpy(&data->fCodeBuildTime, &gThisCodeBuildTime, sizeof(SYSTEMTIME));
+    }
 }
 
 static void IGetString(int resID, char *destBuffer, int size)
 {
-	HRSRC rsrc = ::FindResource(hInstance, MAKEINTRESOURCE(resID), RT_RCDATA);
+    HRSRC rsrc = ::FindResource(hInstance, MAKEINTRESOURCE(resID), RT_RCDATA);
 
-	if (rsrc != NULL)
-	{
-		HGLOBAL handle = ::LoadResource(hInstance, rsrc);
+    if (rsrc != NULL)
+    {
+        HGLOBAL handle = ::LoadResource(hInstance, rsrc);
 
-		if (handle != NULL)
-		{
-			char* str = (char*)::LockResource(handle);
-			strncpy(destBuffer, str, size);
-			UnlockResource(handle);
-		}
-	}
+        if (handle != NULL)
+        {
+            char* str = (char*)::LockResource(handle);
+            strncpy(destBuffer, str, size);
+            UnlockResource(handle);
+        }
+    }
 }
 
 void InitMaxFileData()
 {
-	memset(&gThisCodeBuildTime, 0, sizeof(SYSTEMTIME));
+    memset(&gThisCodeBuildTime, 0, sizeof(SYSTEMTIME));
 
-	// Date
-	char buf[128];
-	IGetString(1000, buf, sizeof(buf) - 1);
-	sscanf(buf, "%hu/%hu/%hu", &gThisCodeBuildTime.wMonth, &gThisCodeBuildTime.wDay, &gThisCodeBuildTime.wYear);
+    // Date
+    char buf[128];
+    IGetString(1000, buf, sizeof(buf) - 1);
+    sscanf(buf, "%hu/%hu/%hu", &gThisCodeBuildTime.wMonth, &gThisCodeBuildTime.wDay, &gThisCodeBuildTime.wYear);
 
-	// Time
-	IGetString(1001, buf, sizeof(buf) - 1);
-	sscanf(buf, "%hu:%hu", &gThisCodeBuildTime.wHour, &gThisCodeBuildTime.wMinute);
+    // Time
+    IGetString(1001, buf, sizeof(buf) - 1);
+    sscanf(buf, "%hu:%hu", &gThisCodeBuildTime.wHour, &gThisCodeBuildTime.wMinute);
 
-	if (strstr(buf, "PM") != nil)
-	{
-		gThisCodeBuildTime.wHour += 12;
-	}
+    if (strstr(buf, "PM") != nil)
+    {
+        gThisCodeBuildTime.wHour += 12;
+    }
 
-	IGetString(1002, gThisBranch, sizeof(gThisBranch) - 1);
+    IGetString(1002, gThisBranch, sizeof(gThisBranch) - 1);
 
-	RegisterNotification(NotifyProc, 0, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(NotifyProc, 0, NOTIFY_FILE_POST_OPEN);
 }

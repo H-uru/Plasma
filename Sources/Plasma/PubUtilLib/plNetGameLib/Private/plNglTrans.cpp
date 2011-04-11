@@ -41,17 +41,17 @@ namespace Ngl {
 ***/
 
 enum {
-	kPerfCurrTransactions,
-	kNumPerf
+    kPerfCurrTransactions,
+    kNumPerf
 };
 
-static const unsigned kDefaultTimeoutMs	= 5 * 60 * 1000;
+static const unsigned kDefaultTimeoutMs = 5 * 60 * 1000;
 
-static bool							s_running;
+static bool                         s_running;
 static CCritSect                    s_critsect;
 static LISTDECL(NetTrans, m_link)   s_transactions;
-static long							s_perf[kNumPerf];
-static unsigned						s_timeoutMs = kDefaultTimeoutMs;
+static long                         s_perf[kNumPerf];
+static unsigned                     s_timeoutMs = kDefaultTimeoutMs;
 
 
 /*****************************************************************************
@@ -85,7 +85,7 @@ static NetTrans * FindTransIncRef (unsigned transId, const char tag[]) {
 
 //============================================================================
 static void CancelTrans_CS (NetTrans * trans, ENetError error) {
-	ASSERT(IS_NET_ERROR(error));
+    ASSERT(IS_NET_ERROR(error));
     if (trans->m_state != kTransStateComplete) {
         trans->m_result = error;
         trans->m_state  = kTransStateComplete;
@@ -106,20 +106,20 @@ NetTrans::NetTrans (ENetProtocol protocol, ETransType transType)
 ,   m_transId(0)
 ,   m_connId(0)
 ,   m_protocol(protocol)
-,	m_hasSubTrans(false)
-,	m_transType(transType)
+,   m_hasSubTrans(false)
+,   m_transType(transType)
 {
-	AtomicAdd(&s_perf[kPerfCurrTransactions], 1);
-	AtomicAdd(&s_perfTransCount[m_transType], 1);
-//	DebugMsg("%s@%p created", s_transTypes[m_transType], this);
+    AtomicAdd(&s_perf[kPerfCurrTransactions], 1);
+    AtomicAdd(&s_perfTransCount[m_transType], 1);
+//  DebugMsg("%s@%p created", s_transTypes[m_transType], this);
 }
 
 //============================================================================
 NetTrans::~NetTrans () {
     ASSERT(!m_link.IsLinked());
-	AtomicAdd(&s_perfTransCount[m_transType], -1);
-	AtomicAdd(&s_perf[kPerfCurrTransactions], -1);
-//	DebugMsg("%s@%p destroyed", s_transTypes[m_transType], this);
+    AtomicAdd(&s_perfTransCount[m_transType], -1);
+    AtomicAdd(&s_perf[kPerfCurrTransactions], -1);
+//  DebugMsg("%s@%p destroyed", s_transTypes[m_transType], this);
 }
 
 //============================================================================
@@ -127,9 +127,9 @@ bool NetTrans::CanStart () const {
     switch (m_protocol) {
         case kNetProtocolCli2Auth: return AuthQueryConnected();
         case kNetProtocolCli2Game: return GameQueryConnected();
-		case kNetProtocolCli2File: return FileQueryConnected();
-		case kNetProtocolCli2Csr:  return CsrQueryConnected();
-		case kNetProtocolCli2GateKeeper: return GateKeeperQueryConnected();
+        case kNetProtocolCli2File: return FileQueryConnected();
+        case kNetProtocolCli2Csr:  return CsrQueryConnected();
+        case kNetProtocolCli2GateKeeper: return GateKeeperQueryConnected();
         DEFAULT_FATAL(m_protocol);
     }
 }
@@ -145,7 +145,7 @@ bool NetTrans::CanStart () const {
 void NetTransInitialize () {
     s_critsect.Enter();
     {
-		s_running = true;
+        s_running = true;
     }
     s_critsect.Leave();
 }
@@ -154,29 +154,29 @@ void NetTransInitialize () {
 void NetTransDestroy (bool wait) {
     s_critsect.Enter();
     {
-		s_running = false;
+        s_running = false;
     }
     s_critsect.Leave();
 
-	NetTransCancelAll(kNetErrRemoteShutdown);
-	
-	if (!wait)
-		return;
-		
-	while (s_perf[kPerfCurrTransactions]) {
-		NetTransUpdate();
-		AsyncSleep(10);
-	}
+    NetTransCancelAll(kNetErrRemoteShutdown);
+    
+    if (!wait)
+        return;
+        
+    while (s_perf[kPerfCurrTransactions]) {
+        NetTransUpdate();
+        AsyncSleep(10);
+    }
 }
 
 //============================================================================
 void NetTransSetTimeoutMs (unsigned ms) {
-	s_timeoutMs = ms ? ms : kDefaultTimeoutMs;
+    s_timeoutMs = ms ? ms : kDefaultTimeoutMs;
 }
 
 //============================================================================
 unsigned NetTransGetTimeoutMs () {
-	return s_timeoutMs;
+    return s_timeoutMs;
 }
 
 //============================================================================
@@ -189,7 +189,7 @@ void NetTransSend (NetTrans * trans) {
             trans->m_transId = ++s_transId;
         s_transactions.Link(trans, kListTail);
         if (!s_running)
-			CancelTrans_CS(trans, kNetErrRemoteShutdown);
+            CancelTrans_CS(trans, kNetErrRemoteShutdown);
     }
     s_critsect.Leave();
 }
@@ -201,8 +201,8 @@ bool NetTransRecv (unsigned transId, const byte msg[], unsigned bytes) {
     if (!trans)
         return true;    // transaction was canceled.
 
-	// Update the timeout time
-	trans->m_timeoutAtMs = TimeGetMs() + s_timeoutMs;
+    // Update the timeout time
+    trans->m_timeoutAtMs = TimeGetMs() + s_timeoutMs;
 
     bool result = trans->Recv(msg, bytes);
 
@@ -267,76 +267,76 @@ void NetTransCancelAll (ENetError error) {
 
 //============================================================================
 void NetTransUpdate () {
-	LISTDECL(NetTrans, m_link) completed;
-	LISTDECL(NetTrans, m_link) parentCompleted;
+    LISTDECL(NetTrans, m_link) completed;
+    LISTDECL(NetTrans, m_link) parentCompleted;
 
     s_critsect.Enter();
     NetTrans * next, * trans = s_transactions.Head();
     for (; trans; trans = next) {
         next = s_transactions.Next(trans);
 
-		bool done = false;
-		while (!done) {
-			switch (trans->m_state) {
-				case kTransStateComplete:
-					if (trans->m_hasSubTrans)
-						parentCompleted.Link(trans);
-					else
-						completed.Link(trans);
-					done = true;
-				break;
+        bool done = false;
+        while (!done) {
+            switch (trans->m_state) {
+                case kTransStateComplete:
+                    if (trans->m_hasSubTrans)
+                        parentCompleted.Link(trans);
+                    else
+                        completed.Link(trans);
+                    done = true;
+                break;
 
-				case kTransStateWaitServerConnect:
-					if (!trans->CanStart()) {
-						done = true;
-						break;
-					}
-					if (trans->m_protocol && 0 == (trans->m_connId = ConnGetId(trans->m_protocol))) {
-						done = true;
-						break;
-					}
-					// This is the default "next state", trans->Send() can override this
-					trans->m_state = kTransStateWaitServerResponse;
-					// Set timeout time before calling Send(), allowing Send() to change it if it wants to.
-					trans->m_timeoutAtMs = TimeGetMs() + s_timeoutMs;
-					if (!trans->Send()) {
-						// Revert back to current state so that we'll attempt to send again
-						trans->m_state = kTransStateWaitServerConnect;
-						done = true;
-						break;
-					}
-				break;
-				
-				case kTransStateWaitServerResponse:
-					// Check for timeout
-					if ((int)(TimeGetMs() - trans->m_timeoutAtMs) > 0) {
-						// Check to see if the transaction wants to "abort" the timeout
-						if (trans->TimedOut())
-							CancelTrans_CS(trans, kNetErrTimeout);
-						else
-							trans->m_timeoutAtMs = TimeGetMs() + s_timeoutMs; // Reset the timeout counter
-					}
-					done = true;
-				break;
+                case kTransStateWaitServerConnect:
+                    if (!trans->CanStart()) {
+                        done = true;
+                        break;
+                    }
+                    if (trans->m_protocol && 0 == (trans->m_connId = ConnGetId(trans->m_protocol))) {
+                        done = true;
+                        break;
+                    }
+                    // This is the default "next state", trans->Send() can override this
+                    trans->m_state = kTransStateWaitServerResponse;
+                    // Set timeout time before calling Send(), allowing Send() to change it if it wants to.
+                    trans->m_timeoutAtMs = TimeGetMs() + s_timeoutMs;
+                    if (!trans->Send()) {
+                        // Revert back to current state so that we'll attempt to send again
+                        trans->m_state = kTransStateWaitServerConnect;
+                        done = true;
+                        break;
+                    }
+                break;
+                
+                case kTransStateWaitServerResponse:
+                    // Check for timeout
+                    if ((int)(TimeGetMs() - trans->m_timeoutAtMs) > 0) {
+                        // Check to see if the transaction wants to "abort" the timeout
+                        if (trans->TimedOut())
+                            CancelTrans_CS(trans, kNetErrTimeout);
+                        else
+                            trans->m_timeoutAtMs = TimeGetMs() + s_timeoutMs; // Reset the timeout counter
+                    }
+                    done = true;
+                break;
 
-				DEFAULT_FATAL(trans->m_state);
-			}
-		}
+                DEFAULT_FATAL(trans->m_state);
+            }
+        }
     }
     s_critsect.Leave();
 
-	// Post completed transactions    
+    // Post completed transactions    
     while (NetTrans * trans = completed.Head()) {
-		completed.Unlink(trans);
-		trans->Post();
-		trans->DecRef("Lifetime");
-	}
-	// Post completed parent transactions
+        completed.Unlink(trans);
+        trans->Post();
+        trans->DecRef("Lifetime");
+    }
+    // Post completed parent transactions
     while (NetTrans * trans = parentCompleted.Head()) {
-		parentCompleted.Unlink(trans);
-		trans->Post();
-		trans->DecRef("Lifetime");
-	}
+        parentCompleted.Unlink(trans);
+        trans->Post();
+        trans->DecRef("Lifetime");
+    }
 }
 
 

@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plEAXEffects - Various classes and wrappers to support EAX				//
-//					acceleration.											//
-//																			//
+//                                                                          //
+//  plEAXEffects - Various classes and wrappers to support EAX              //
+//                  acceleration.                                           //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plEAXEffects_h
@@ -50,59 +50,59 @@ typedef struct _EAXREVERBPROPERTIES EAXREVERBPROPERTIES;
 #endif
 
 class plEAXListener 
-{	
+{   
 public:
-	~plEAXListener();
-	static plEAXListener	&GetInstance( void );
+    ~plEAXListener();
+    static plEAXListener    &GetInstance( void );
 
-	hsBool	Init( void );
-	void	Shutdown( void );
+    hsBool  Init( void );
+    void    Shutdown( void );
 
-	bool SetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
-	bool GetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
-	
-	void	ProcessMods( hsTArray<plEAXListenerMod *> &modArray );
-	void	ClearProcessCache( void );
+    bool SetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
+    bool GetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
+    
+    void    ProcessMods( hsTArray<plEAXListenerMod *> &modArray );
+    void    ClearProcessCache( void );
 
 protected:
-	plEAXListener();
-	void	IFail( hsBool major );
-	void	IFail( const char *msg, hsBool major );
-	void	IRelease( void );
+    plEAXListener();
+    void    IFail( hsBool major );
+    void    IFail( const char *msg, hsBool major );
+    void    IRelease( void );
 
-	void	IMuteProperties( EAXREVERBPROPERTIES *props, hsScalar percent );
+    void    IMuteProperties( EAXREVERBPROPERTIES *props, hsScalar percent );
 
-	hsBool				fInited;
-	
-	// Cache info
-	Int32				fLastModCount;
-	hsBool				fLastWasEmpty;
-	hsScalar			fLastSingleStrength;
-	plEAXListenerMod	*fLastBigRegion;
+    hsBool              fInited;
+    
+    // Cache info
+    Int32               fLastModCount;
+    hsBool              fLastWasEmpty;
+    hsScalar            fLastSingleStrength;
+    plEAXListenerMod    *fLastBigRegion;
 
 };
 
 //// Soft Buffer Settings Class Definition ////////////////////////////////////
-//	Used to hold buffer settings that will be attenuated by a soft volume,
-//	to make the main settings class a bit cleaner
+//  Used to hold buffer settings that will be attenuated by a soft volume,
+//  to make the main settings class a bit cleaner
 
 class hsStream;
 class plEAXSourceSoftSettings
 {
 public:
-		Int16		fOcclusion;
-		hsScalar	fOcclusionLFRatio, fOcclusionRoomRatio, fOcclusionDirectRatio;
+        Int16       fOcclusion;
+        hsScalar    fOcclusionLFRatio, fOcclusionRoomRatio, fOcclusionDirectRatio;
 
-		void		Read( hsStream *s );
-		void		Write( hsStream *s );
+        void        Read( hsStream *s );
+        void        Write( hsStream *s );
 
-		void		SetOcclusion( Int16 occ, hsScalar lfRatio, hsScalar roomRatio, hsScalar directRatio );
-		Int16		GetOcclusion( void ) const { return fOcclusion; }
-		hsScalar	GetOcclusionLFRatio( void ) const { return fOcclusionLFRatio; }
-		hsScalar	GetOcclusionRoomRatio( void ) const { return fOcclusionRoomRatio; }
-		hsScalar	GetOcclusionDirectRatio( void ) const { return fOcclusionDirectRatio; }
+        void        SetOcclusion( Int16 occ, hsScalar lfRatio, hsScalar roomRatio, hsScalar directRatio );
+        Int16       GetOcclusion( void ) const { return fOcclusion; }
+        hsScalar    GetOcclusionLFRatio( void ) const { return fOcclusionLFRatio; }
+        hsScalar    GetOcclusionRoomRatio( void ) const { return fOcclusionRoomRatio; }
+        hsScalar    GetOcclusionDirectRatio( void ) const { return fOcclusionDirectRatio; }
 
-		void		Reset( void );
+        void        Reset( void );
 };
 
 //// Buffer Settings Class Definition /////////////////////////////////////////
@@ -111,64 +111,64 @@ class plEAXSource;
 
 class plEAXSourceSettings
 {
-	public:
-		plEAXSourceSettings();
-		virtual ~plEAXSourceSettings();
+    public:
+        plEAXSourceSettings();
+        virtual ~plEAXSourceSettings();
 
-		void	Read( hsStream *s );
-		void	Write( hsStream *s );
+        void    Read( hsStream *s );
+        void    Write( hsStream *s );
 
-		void	Enable( hsBool e );
-		hsBool	IsEnabled( void ) const { return fEnabled; }
+        void    Enable( hsBool e );
+        hsBool  IsEnabled( void ) const { return fEnabled; }
 
-		void	SetRoomParams( Int16 room, Int16 roomHF, hsBool roomAuto, hsBool roomHFAuto );
-		Int16	GetRoom( void ) const   { return fRoom; }
-		Int16	GetRoomHF( void )  const  { return fRoomHF; }
-		hsBool	GetRoomAuto( void ) const   { return fRoomAuto; }
-		hsBool	GetRoomHFAuto( void ) const  { return fRoomHFAuto; }
+        void    SetRoomParams( Int16 room, Int16 roomHF, hsBool roomAuto, hsBool roomHFAuto );
+        Int16   GetRoom( void ) const   { return fRoom; }
+        Int16   GetRoomHF( void )  const  { return fRoomHF; }
+        hsBool  GetRoomAuto( void ) const   { return fRoomAuto; }
+        hsBool  GetRoomHFAuto( void ) const  { return fRoomHFAuto; }
 
-		void	SetOutsideVolHF( Int16 vol );
-		Int16	GetOutsideVolHF( void ) const { return fOutsideVolHF; }
+        void    SetOutsideVolHF( Int16 vol );
+        Int16   GetOutsideVolHF( void ) const { return fOutsideVolHF; }
 
-		void		SetFactors( hsScalar airAbsorption, hsScalar roomRolloff, hsScalar doppler, hsScalar rolloff );
-		hsScalar	GetAirAbsorptionFactor( void ) const { return fAirAbsorptionFactor; }
-		hsScalar	GetRoomRolloffFactor( void ) const { return fRoomRolloffFactor; }
-		hsScalar	GetDopplerFactor( void ) const { return fDopplerFactor; }
-		hsScalar	GetRolloffFactor( void ) const { return fRolloffFactor; }
+        void        SetFactors( hsScalar airAbsorption, hsScalar roomRolloff, hsScalar doppler, hsScalar rolloff );
+        hsScalar    GetAirAbsorptionFactor( void ) const { return fAirAbsorptionFactor; }
+        hsScalar    GetRoomRolloffFactor( void ) const { return fRoomRolloffFactor; }
+        hsScalar    GetDopplerFactor( void ) const { return fDopplerFactor; }
+        hsScalar    GetRolloffFactor( void ) const { return fRolloffFactor; }
 
-		plEAXSourceSoftSettings	&GetSoftStarts( void ) { return fSoftStarts; }
-		plEAXSourceSoftSettings	&GetSoftEnds( void ) { return fSoftEnds; }
-		
-		plEAXSourceSoftSettings	&GetCurrSofts( void )  { return fCurrSoftValues; }
+        plEAXSourceSoftSettings &GetSoftStarts( void ) { return fSoftStarts; }
+        plEAXSourceSoftSettings &GetSoftEnds( void ) { return fSoftEnds; }
+        
+        plEAXSourceSoftSettings &GetCurrSofts( void )  { return fCurrSoftValues; }
 
-		void		SetOcclusionSoftValue( hsScalar value );
-		hsScalar	GetOcclusionSoftValue( void ) const { return fOcclusionSoftValue; }
+        void        SetOcclusionSoftValue( hsScalar value );
+        hsScalar    GetOcclusionSoftValue( void ) const { return fOcclusionSoftValue; }
 
-		void		ClearDirtyParams( void ) const { fDirtyParams = 0; }
+        void        ClearDirtyParams( void ) const { fDirtyParams = 0; }
 
-	protected:
-		friend class plEAXSource;
-		friend  plEAXSourceSoftSettings;
+    protected:
+        friend class plEAXSource;
+        friend  plEAXSourceSoftSettings;
 
-		hsBool		fEnabled;
-		Int16		fRoom, fRoomHF;
-		hsBool		fRoomAuto, fRoomHFAuto;
-		Int16		fOutsideVolHF;
-		hsScalar	fAirAbsorptionFactor, fRoomRolloffFactor, fDopplerFactor, fRolloffFactor;
-		plEAXSourceSoftSettings	fSoftStarts, fSoftEnds, fCurrSoftValues;
-		hsScalar	fOcclusionSoftValue;
-		mutable UInt32		fDirtyParams;
+        hsBool      fEnabled;
+        Int16       fRoom, fRoomHF;
+        hsBool      fRoomAuto, fRoomHFAuto;
+        Int16       fOutsideVolHF;
+        hsScalar    fAirAbsorptionFactor, fRoomRolloffFactor, fDopplerFactor, fRolloffFactor;
+        plEAXSourceSoftSettings fSoftStarts, fSoftEnds, fCurrSoftValues;
+        hsScalar    fOcclusionSoftValue;
+        mutable UInt32      fDirtyParams;
 
-		enum ParamSets
-		{
-			kOcclusion		= 0x01,
-			kRoom			= 0x02,
-			kOutsideVolHF	= 0x04,
-			kFactors		= 0x08,
-			kAll			= 0xff
-		};
+        enum ParamSets
+        {
+            kOcclusion      = 0x01,
+            kRoom           = 0x02,
+            kOutsideVolHF   = 0x04,
+            kFactors        = 0x08,
+            kAll            = 0xff
+        };
 
-		void	IRecalcSofts( UInt8 whichOnes );
+        void    IRecalcSofts( UInt8 whichOnes );
 };
 
 //// Source Class Definition //////////////////////////////////////////////////
@@ -176,21 +176,21 @@ class plEAXSourceSettings
 class plEAXSource
 {
 public:
-	friend plEAXSourceSettings;
-	friend  plEAXSourceSoftSettings;
+    friend plEAXSourceSettings;
+    friend  plEAXSourceSoftSettings;
 
-	plEAXSource();
-	virtual ~plEAXSource();
+    plEAXSource();
+    virtual ~plEAXSource();
 
-	void	Init( plDSoundBuffer *parent );
-	void	Release( void );
-	hsBool	IsValid( void ) const;
-	bool SetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
-	bool GetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
-	void	SetFrom(  plEAXSourceSettings *settings, unsigned source, hsBool force = false );
+    void    Init( plDSoundBuffer *parent );
+    void    Release( void );
+    hsBool  IsValid( void ) const;
+    bool SetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
+    bool GetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
+    void    SetFrom(  plEAXSourceSettings *settings, unsigned source, hsBool force = false );
 
 private:
-	hsBool	fInit;
+    hsBool  fInit;
 };
 
 #endif //_plEAXEffects_h

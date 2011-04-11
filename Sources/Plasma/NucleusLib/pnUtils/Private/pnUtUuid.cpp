@@ -50,8 +50,8 @@ Uuid::Uuid (const wchar str[]) {
 
 //============================================================================
 Uuid::Uuid (const byte buf[], unsigned length) {
-	
-	GuidFromHex(buf, length, this);
+    
+    GuidFromHex(buf, length, this);
 }
 
 //============================================================================
@@ -64,24 +64,24 @@ unsigned GuidHash (const Uuid & uuid) {
 //============================================================================
 static const wchar s_hexChars[] = L"0123456789ABCDEF";
 const wchar * GuidToHex (const Uuid & uuid, wchar * dst, unsigned chars) {
-	
-	wchar * str = ALLOCA(wchar, sizeof(uuid.data) * 2 + 1);
-	wchar * cur = str;
-	
-	for (unsigned i = 0; i < sizeof(uuid.data); ++i) {
-		*cur++ = s_hexChars[(uuid.data[i] >> 4) & 0x0f];
-		*cur++ = s_hexChars[uuid.data[i] & 0x0f];
-	}
-	*cur = 0;
-	
-	StrCopy(dst, str, chars);
-	return dst;
+    
+    wchar * str = ALLOCA(wchar, sizeof(uuid.data) * 2 + 1);
+    wchar * cur = str;
+    
+    for (unsigned i = 0; i < sizeof(uuid.data); ++i) {
+        *cur++ = s_hexChars[(uuid.data[i] >> 4) & 0x0f];
+        *cur++ = s_hexChars[uuid.data[i] & 0x0f];
+    }
+    *cur = 0;
+    
+    StrCopy(dst, str, chars);
+    return dst;
 }
 
 //============================================================================
 bool GuidFromHex (const byte buf[], unsigned length, Uuid * uuid) {
 
-	ASSERT(length == msizeof(Uuid, data));
-	MemCopy(uuid->data, buf, msizeof(Uuid, data));
-	return true;
+    ASSERT(length == msizeof(Uuid, data));
+    MemCopy(uuid->data, buf, msizeof(Uuid, data));
+    return true;
 }

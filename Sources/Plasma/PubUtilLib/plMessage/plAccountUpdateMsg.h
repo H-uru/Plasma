@@ -34,39 +34,39 @@ class hsResMgr;
 class plAccountUpdateMsg : public plMessage
 {
 public:
-	// If you update this enum, please update the python enum
-	// located at the bottom of cyAccountManagementGlue.cpp
-	enum
-	{
-		kCreatePlayer = 1,
-		kDeletePlayer,
-		kUpgradePlayer,
-		kActivePlayer,
-		kChangePassword,
-	};
+    // If you update this enum, please update the python enum
+    // located at the bottom of cyAccountManagementGlue.cpp
+    enum
+    {
+        kCreatePlayer = 1,
+        kDeletePlayer,
+        kUpgradePlayer,
+        kActivePlayer,
+        kChangePassword,
+    };
 
-	plAccountUpdateMsg();
-	plAccountUpdateMsg(unsigned updateType);
+    plAccountUpdateMsg();
+    plAccountUpdateMsg(unsigned updateType);
 
-	CLASSNAME_REGISTER( plAccountUpdateMsg );
-	GETINTERFACE_ANY( plAccountUpdateMsg, plMessage );
-	
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    CLASSNAME_REGISTER( plAccountUpdateMsg );
+    GETINTERFACE_ANY( plAccountUpdateMsg, plMessage );
+    
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
-	unsigned	GetUpdateType();
-	void		SetUpdateType(unsigned type);
+    unsigned    GetUpdateType();
+    void        SetUpdateType(unsigned type);
 
-	unsigned	GetResult();
-	void		SetResult(unsigned result);
+    unsigned    GetResult();
+    void        SetResult(unsigned result);
 
-	unsigned	GetPlayerInt();
-	void		SetPlayerInt(unsigned playerInt);
+    unsigned    GetPlayerInt();
+    void        SetPlayerInt(unsigned playerInt);
 
 private:
-	unsigned fUpdateType;
-	unsigned fResult;
-	unsigned fPlayerInt;
+    unsigned fUpdateType;
+    unsigned fResult;
+    unsigned fPlayerInt;
 };
 
 #endif // plAccountUpdateMsg_inc

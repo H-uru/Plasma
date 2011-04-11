@@ -28,20 +28,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pyCluster::pyCluster(plKey key)
 {
-	fClusterKey = key;
+    fClusterKey = key;
 }
 
 pyCluster::pyCluster(pyKey& key)
 {
-	fClusterKey = key.getKey();
+    fClusterKey = key.getKey();
 }
 
 void pyCluster::SetVisible(bool visible)
 {
-	if (fClusterKey)
-	{
-		plClusterGroup* clusterGroup = plClusterGroup::ConvertNoRef(fClusterKey->ObjectIsLoaded());
-		if (clusterGroup)
-			clusterGroup->SetVisible(visible);
-	}
+    if (fClusterKey)
+    {
+        plClusterGroup* clusterGroup = plClusterGroup::ConvertNoRef(fClusterKey->ObjectIsLoaded());
+        if (clusterGroup)
+            clusterGroup->SetVisible(visible);
+    }
 }

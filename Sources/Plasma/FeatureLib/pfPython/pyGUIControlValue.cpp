@@ -47,91 +47,91 @@ pyGUIControlValue::pyGUIControlValue(plKey objkey) : pyGUIControl(objkey)
 
 hsBool pyGUIControlValue::IsGUIControlValue(pyKey& gckey)
 {
-	if ( gckey.getKey() && pfGUIValueCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
-		return true;
-	return false;
+    if ( gckey.getKey() && pfGUIValueCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+        return true;
+    return false;
 }
 
 
 hsScalar pyGUIControlValue::GetValue()
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pvcmod )
-			return pvcmod->GetCurrValue();
-	}
-	return 0.0;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pvcmod )
+            return pvcmod->GetCurrValue();
+    }
+    return 0.0;
 }
 
 void pyGUIControlValue::SetValue( hsScalar v )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pvcmod )
-			pvcmod->SetCurrValue(v);
-	}
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pvcmod )
+            pvcmod->SetCurrValue(v);
+    }
 }
 
 hsScalar pyGUIControlValue::GetMin( void )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pvcmod )
-			return pvcmod->GetMin();
-	}
-	return 0.0;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pvcmod )
+            return pvcmod->GetMin();
+    }
+    return 0.0;
 }
 
 hsScalar pyGUIControlValue::GetMax( void )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pvcmod )
-			return pvcmod->GetMax();
-	}
-	return 0.0;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pvcmod )
+            return pvcmod->GetMax();
+    }
+    return 0.0;
 }
 
 hsScalar pyGUIControlValue::GetStep( void )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pvcmod )
-			return pvcmod->GetStep();
-	}
-	return 0.0;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pvcmod )
+            return pvcmod->GetStep();
+    }
+    return 0.0;
 }
 
 void pyGUIControlValue::SetRange( hsScalar min, hsScalar max )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pvcmod )
-			pvcmod->SetRange(min,max);
-	}
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pvcmod )
+            pvcmod->SetRange(min,max);
+    }
 }
 
 void pyGUIControlValue::SetStep( hsScalar step )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pvcmod )
-			pvcmod->SetStep(step);
-	}
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIValueCtrl* pvcmod = pfGUIValueCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pvcmod )
+            pvcmod->SetStep(step);
+    }
 }
 
 
@@ -150,9 +150,9 @@ pyGUIControlKnob::pyGUIControlKnob(plKey objkey) : pyGUIControlValue(objkey)
 
 hsBool pyGUIControlKnob::IsGUIControlKnob(pyKey& gckey)
 {
-	if ( gckey.getKey() && pfGUIKnobCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
-		return true;
-	return false;
+    if ( gckey.getKey() && pfGUIKnobCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+        return true;
+    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -170,9 +170,9 @@ pyGUIControlUpDownPair::pyGUIControlUpDownPair(plKey objkey) : pyGUIControlValue
 
 hsBool pyGUIControlUpDownPair::IsGUIControlUpDownPair(pyKey& gckey)
 {
-	if ( gckey.getKey() && pfGUIUpDownPairMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
-		return true;
-	return false;
+    if ( gckey.getKey() && pfGUIUpDownPairMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+        return true;
+    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -190,20 +190,20 @@ pyGUIControlProgress::pyGUIControlProgress(plKey objkey) : pyGUIControlValue(obj
 
 hsBool pyGUIControlProgress::IsGUIControlProgress(pyKey& gckey)
 {
-	if ( gckey.getKey() && pfGUIProgressCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
-		return true;
-	return false;
+    if ( gckey.getKey() && pfGUIProgressCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+        return true;
+    return false;
 }
 
 void pyGUIControlProgress::AnimateToPercentage(float percent)
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIProgressCtrl* ppcmod = pfGUIProgressCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( ppcmod )
-		{
-			ppcmod->AnimateToPercentage(percent);
-		}
-	}
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIProgressCtrl* ppcmod = pfGUIProgressCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( ppcmod )
+        {
+            ppcmod->AnimateToPercentage(percent);
+        }
+    }
 }

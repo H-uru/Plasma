@@ -41,68 +41,68 @@ class plKey;
 class plNetTransportMember : public plNetMember
 {
 public:
-	enum TransportFlags
-	{
-		kSendingVoice	= 1<<0,
-		kSendingActions	= 1<<1,
-	};
+    enum TransportFlags
+    {
+        kSendingVoice   = 1<<0,
+        kSendingActions = 1<<1,
+    };
 protected:
-	plKey 			fAvatarKey;
-	std::string		fPlayerName;
-	UInt32			fPlayerID;
-	std::vector<int> fSubscriptions;	// list of channelGrp subscriptions
-	UInt32			fTransportFlags;
-	float			fDistSq;			// from local player, temp
-	UInt8			fCCRLevel;
+    plKey           fAvatarKey;
+    std::string     fPlayerName;
+    UInt32          fPlayerID;
+    std::vector<int> fSubscriptions;    // list of channelGrp subscriptions
+    UInt32          fTransportFlags;
+    float           fDistSq;            // from local player, temp
+    UInt8           fCCRLevel;
 public:
-	CLASSNAME_REGISTER( plNetTransportMember);
-	GETINTERFACE_ANY( plNetTransportMember, plNetMember);
+    CLASSNAME_REGISTER( plNetTransportMember);
+    GETINTERFACE_ANY( plNetTransportMember, plNetMember);
 
-	plNetTransportMember() : fAvatarKey(nil),
-		fTransportFlags(0),fPlayerID(0),fDistSq(-1),fCCRLevel(0) {}
-	plNetTransportMember(plNetApp* na) : plNetMember(na),
-		fAvatarKey(nil),fTransportFlags(0),fPlayerID(0),fDistSq(-1),fCCRLevel(0) {}
-	~plNetTransportMember() {}
+    plNetTransportMember() : fAvatarKey(nil),
+        fTransportFlags(0),fPlayerID(0),fDistSq(-1),fCCRLevel(0) {}
+    plNetTransportMember(plNetApp* na) : plNetMember(na),
+        fAvatarKey(nil),fTransportFlags(0),fPlayerID(0),fDistSq(-1),fCCRLevel(0) {}
+    ~plNetTransportMember() {}
 
-	void SetDistSq(float s) { fDistSq=s; }
-	float GetDistSq() const { return fDistSq; }
+    void SetDistSq(float s) { fDistSq=s; }
+    float GetDistSq() const { return fDistSq; }
 
-	plKey GetAvatarKey() { return fAvatarKey; }
-	void SetAvatarKey(plKey k)
-		{
-			fAvatarKey=k;
-		}
-	void SetPlayerName(const char * value) { fPlayerName=value;}
-	const char * GetPlayerName() const { return fPlayerName.c_str();}
-	void SetPlayerID(UInt32 value) { fPlayerID=value;}
-	UInt32 GetPlayerID() const { return fPlayerID;}
-	void SetIsServer(bool value) { (value)?SetFlags(GetFlags()|kIsServer):SetFlags(GetFlags()&!kIsServer);}
-	bool IsServer() const { return (GetFlags()&kIsServer)?true:false;}
+    plKey GetAvatarKey() { return fAvatarKey; }
+    void SetAvatarKey(plKey k)
+        {
+            fAvatarKey=k;
+        }
+    void SetPlayerName(const char * value) { fPlayerName=value;}
+    const char * GetPlayerName() const { return fPlayerName.c_str();}
+    void SetPlayerID(UInt32 value) { fPlayerID=value;}
+    UInt32 GetPlayerID() const { return fPlayerID;}
+    void SetIsServer(bool value) { (value)?SetFlags(GetFlags()|kIsServer):SetFlags(GetFlags()&!kIsServer);}
+    bool IsServer() const { return (GetFlags()&kIsServer)?true:false;}
 
-	hsBool AddSubscription(int chan);
-	hsBool RemoveSubscription(int chan);	// return true on success
-	int FindSubscription(int chan);			// return index into subscription array or -1
+    hsBool AddSubscription(int chan);
+    hsBool RemoveSubscription(int chan);    // return true on success
+    int FindSubscription(int chan);         // return index into subscription array or -1
 
-	int GetNumSubscriptions() { return fSubscriptions.size(); }
-	int GetSubscription(int i) { return fSubscriptions[i]; }
+    int GetNumSubscriptions() { return fSubscriptions.size(); }
+    int GetSubscription(int i) { return fSubscriptions[i]; }
 
-	void CopySubscriptions(std::vector<int>* channels) { *channels = fSubscriptions; }
+    void CopySubscriptions(std::vector<int>* channels) { *channels = fSubscriptions; }
 
-	void SetTransportFlags(UInt32 f) { fTransportFlags=f; }
-	UInt32 GetTransportFlags() const { return fTransportFlags; }
+    void SetTransportFlags(UInt32 f) { fTransportFlags=f; }
+    UInt32 GetTransportFlags() const { return fTransportFlags; }
 
-	bool IsPeerToPeer() const { return hsCheckBits(fFlags, kRequestP2P); }
-	std::string AsStdString() const;
-	bool IsEqualTo(const plNetMember * other) const
-	{
-		const plNetTransportMember * o = plNetTransportMember::ConvertNoRef(other);
-		if (!o) return false;
-		return o->fPlayerID==fPlayerID;
-	}
+    bool IsPeerToPeer() const { return hsCheckBits(fFlags, kRequestP2P); }
+    std::string AsStdString() const;
+    bool IsEqualTo(const plNetMember * other) const
+    {
+        const plNetTransportMember * o = plNetTransportMember::ConvertNoRef(other);
+        if (!o) return false;
+        return o->fPlayerID==fPlayerID;
+    }
 
-	bool IsCCR() const { return (fCCRLevel>0);	}
-	UInt8 GetCCRLevel() const { return fCCRLevel;	}
-	void SetCCRLevel(UInt8 cl) { fCCRLevel=cl;	}
+    bool IsCCR() const { return (fCCRLevel>0);  }
+    UInt8 GetCCRLevel() const { return fCCRLevel;   }
+    void SetCCRLevel(UInt8 cl) { fCCRLevel=cl;  }
 };
 
-#endif	// plNetTransportMember_h
+#endif  // plNetTransportMember_h

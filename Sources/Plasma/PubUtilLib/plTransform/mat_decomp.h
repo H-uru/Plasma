@@ -38,11 +38,11 @@ typedef gemQuat HVect; /* Homogeneous 3D vector */
 typedef float HMatrix[4][4]; /* Right-handed, for column vectors */
 
 typedef struct {
-    HVect t;	/* Translation components */
-    gemQuat  q;	/* Essential rotation	  */
-    gemQuat  u;	/* Stretch rotation	  */
-    HVect k;	/* Stretch factors	  */
-    float f;	/* Sign of determinant	  */
+    HVect t;    /* Translation components */
+    gemQuat  q; /* Essential rotation     */
+    gemQuat  u; /* Stretch rotation   */
+    HVect k;    /* Stretch factors    */
+    float f;    /* Sign of determinant    */
 } gemAffineParts;
 
 //

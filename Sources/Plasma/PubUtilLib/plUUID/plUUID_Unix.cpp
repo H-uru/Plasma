@@ -31,90 +31,90 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct plUUIDHelper
 {
-	static inline void CopyToPlasma( plUUID * dst, const uuid_t & src )
-	{
-		hsAssert( sizeof(uuid_t)==sizeof(dst->fData), "sizeof(uuid_t)!=sizeof(plUUID)" );
-		memcpy( (void*)dst->fData, (const void *)src, sizeof( plUUID ) );
-	}
+    static inline void CopyToPlasma( plUUID * dst, const uuid_t & src )
+    {
+        hsAssert( sizeof(uuid_t)==sizeof(dst->fData), "sizeof(uuid_t)!=sizeof(plUUID)" );
+        memcpy( (void*)dst->fData, (const void *)src, sizeof( plUUID ) );
+    }
 
-	static inline void CopyToNative( uuid_t & dst, const plUUID * src )
-	{
-		hsAssert( sizeof(uuid_t)==sizeof(src->fData), "sizeof(uuid_t)!=sizeof(plUUID)" );
-		memcpy( (void*)dst, (const void *)src->fData, sizeof( plUUID ) );
-	}
+    static inline void CopyToNative( uuid_t & dst, const plUUID * src )
+    {
+        hsAssert( sizeof(uuid_t)==sizeof(src->fData), "sizeof(uuid_t)!=sizeof(plUUID)" );
+        memcpy( (void*)dst, (const void *)src->fData, sizeof( plUUID ) );
+    }
 };
 
 
 void plUUID::Clear()
 {
-	uuid_t g;
-	plUUIDHelper::CopyToNative( g, this );
-	uuid_clear( g );
-	plUUIDHelper::CopyToPlasma( this, g );
+    uuid_t g;
+    plUUIDHelper::CopyToNative( g, this );
+    uuid_clear( g );
+    plUUIDHelper::CopyToPlasma( this, g );
 }
 
 bool plUUID::IsNull() const
 {
-	uuid_t g;
-	plUUIDHelper::CopyToNative( g, this );
-	return ( uuid_is_null( g )!=0 );
+    uuid_t g;
+    plUUIDHelper::CopyToNative( g, this );
+    return ( uuid_is_null( g )!=0 );
 }
 
 void plUUID::CopyFrom( const plUUID * v )
 {
-	memcpy( (void*)fData, (const void*)v->fData, sizeof(fData) );
+    memcpy( (void*)fData, (const void*)v->fData, sizeof(fData) );
 }
 
 int plUUID::CompareTo( const plUUID * v ) const
 {
-	uuid_t ga, gb;
-	plUUIDHelper::CopyToNative( ga, this );
-	plUUIDHelper::CopyToNative( gb, v );
-	int ans = uuid_compare( ga, gb );
-	return ans;
+    uuid_t ga, gb;
+    plUUIDHelper::CopyToNative( ga, this );
+    plUUIDHelper::CopyToNative( gb, v );
+    int ans = uuid_compare( ga, gb );
+    return ans;
 }
 
 bool plUUID::IsEqualTo( const plUUID * v ) const
 {
-	return ( CompareTo( v )==0 );
+    return ( CompareTo( v )==0 );
 }
 
 bool plUUID::FromString( const char * str )
 {
-	Clear();
-	if ( !str )
-		return false;
-	uuid_t g;
-	uuid_parse( str, g );
-	plUUIDHelper::CopyToPlasma( this, g );
-	return true;
+    Clear();
+    if ( !str )
+        return false;
+    uuid_t g;
+    uuid_parse( str, g );
+    plUUIDHelper::CopyToPlasma( this, g );
+    return true;
 }
 
 bool plUUID::ToString( std::string & out ) const
 {
-	uuid_t g;
-	plUUIDHelper::CopyToNative( g, this );
-	char buf[40];
-	uuid_unparse( g, buf );
-	out = buf;
-	return true;
+    uuid_t g;
+    plUUIDHelper::CopyToNative( g, this );
+    char buf[40];
+    uuid_unparse( g, buf );
+    out = buf;
+    return true;
 }
 
 std::string plUUID::ToString() const
 {
-	std::string str;
-	plUUID::ToString( str );
-	return str;
+    std::string str;
+    plUUID::ToString( str );
+    return str;
 }
 
 // static
 plUUID plUUID::Generate()
 {
-	uuid_t g;
-	uuid_generate( g );
-	plUUID result;
-	plUUIDHelper::CopyToPlasma( &result, g );
-	return result;
+    uuid_t g;
+    uuid_generate( g );
+    plUUID result;
+    plUUIDHelper::CopyToPlasma( &result, g );
+    return result;
 }
 
 #else

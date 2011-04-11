@@ -35,17 +35,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plInputMap
 {
 public:
-	static CommandConvert	fCmdConvert[];
-	static ControlEventCode ConvertCharToControlCode(const char* c);
-	static const char		*ConvertControlCodeToString( ControlEventCode code );
+    static CommandConvert   fCmdConvert[];
+    static ControlEventCode ConvertCharToControlCode(const char* c);
+    static const char       *ConvertControlCodeToString( ControlEventCode code );
 };
 
 class plMouseMap : public plInputMap
 {
 public:
-	~plMouseMap();
-	hsTArray<plMouseInfo*> fMap;
-	int AddMapping(plMouseInfo* pNfo);
+    ~plMouseMap();
+    hsTArray<plMouseInfo*> fMap;
+    int AddMapping(plMouseInfo* pNfo);
 };
 
 #endif // PL_INPUT_DEVICE_H

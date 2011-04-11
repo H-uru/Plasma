@@ -31,8 +31,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace PythonPack
 {
-	PyObject* OpenPythonPacked(const char* fileName);
-	hsBool IsItPythonPacked(const char* fileName);
+    PyObject* OpenPythonPacked(const char* fileName);
+    hsBool IsItPythonPacked(const char* fileName);
 }
 
 #endif // plPythonPack_h_inc

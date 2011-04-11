@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _JV_VALDEZINTERFACE_H_
 #define _JV_VALDEZINTERFACE_H_
 
-#define MAXASS_CLASS_ID	Class_ID(0x5c61b5a6, 0x3b298521)
+#define MAXASS_CLASS_ID Class_ID(0x5c61b5a6, 0x3b298521)
 #define kMaxAssGetValdezInterface 33
 
 #include <commdlg.h>
@@ -61,26 +61,26 @@ using std::string;
 class jvValdezInterface
 {
 public:
-	// MAX File Replacement Operations
-	virtual int ChooseAssetAndOpen() = 0;
-	virtual int Save() = 0;
-	virtual int SaveAs() = 0;
-	virtual int Add() = 0;
-	virtual int OpenBitmapDlg(VARIANT* assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
-	virtual int OpenSoundDlg(VARIANT* assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
-	virtual int NewAgeDlg(VARIANT* assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
-	virtual int NewTextureDlg(VARIANT* assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
+    // MAX File Replacement Operations
+    virtual int ChooseAssetAndOpen() = 0;
+    virtual int Save() = 0;
+    virtual int SaveAs() = 0;
+    virtual int Add() = 0;
+    virtual int OpenBitmapDlg(VARIANT* assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
+    virtual int OpenSoundDlg(VARIANT* assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
+    virtual int NewAgeDlg(VARIANT* assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
+    virtual int NewTextureDlg(VARIANT* assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
 
-	// Asset Database Operations
-	virtual int GetLatestVersionFile(VARIANT& assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
-	virtual int GetAssetsByType(int assetTypeId, vector<_variant_t>& assetIds, vector<string>& assetNames) = 0;
-	virtual int CheckOutAsset(VARIANT& assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
-	virtual int CheckInAsset(VARIANT& assetId, TCHAR* localFilename, int statusId, TCHAR* comments) = 0;
+    // Asset Database Operations
+    virtual int GetLatestVersionFile(VARIANT& assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
+    virtual int GetAssetsByType(int assetTypeId, vector<_variant_t>& assetIds, vector<string>& assetNames) = 0;
+    virtual int CheckOutAsset(VARIANT& assetId, TCHAR* localFilenameRet, int localFilenameBufSize) = 0;
+    virtual int CheckInAsset(VARIANT& assetId, TCHAR* localFilename, int statusId, TCHAR* comments) = 0;
 
-	virtual int FindAndCompareAssetByFilename(const TCHAR* localFilename, VARIANT* assetId, bool* filesMatch) = 0;
-	virtual int FindAssetsByFilename(const TCHAR* filename, vector<_variant_t>& assets) = 0;
+    virtual int FindAndCompareAssetByFilename(const TCHAR* localFilename, VARIANT* assetId, bool* filesMatch) = 0;
+    virtual int FindAssetsByFilename(const TCHAR* filename, vector<_variant_t>& assets) = 0;
 
-	virtual int IsAssetCheckedOutLocally(VARIANT& assetId, bool& checkedOut) = 0;
+    virtual int IsAssetCheckedOutLocally(VARIANT& assetId, bool& checkedOut) = 0;
 };
 
 

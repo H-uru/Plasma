@@ -27,4 +27,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plCCRVault_h
 
 
-#endif	// plCCRVault_h
+#endif  // plCCRVault_h

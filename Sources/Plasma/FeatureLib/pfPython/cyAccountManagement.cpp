@@ -36,90 +36,90 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 bool cyAccountManagement::IsSubscriptionActive()
 {
-	const NetCommAccount* account = NetCommGetAccount();	
-	return (account->billingType & kBillingTypePaidSubscriber);
+    const NetCommAccount* account = NetCommGetAccount();    
+    return (account->billingType & kBillingTypePaidSubscriber);
 }
 
 PyObject* cyAccountManagement::GetPlayerList()
 {
-	const ARRAY(NetCommPlayer)& playerList = NetCommGetPlayerList();
-	int numPlayers = NetCommGetPlayerCount();
-	PyObject* pList = PyList_New(0);
+    const ARRAY(NetCommPlayer)& playerList = NetCommGetPlayerList();
+    int numPlayers = NetCommGetPlayerCount();
+    PyObject* pList = PyList_New(0);
 
-	PyObject* visitor = nil;
+    PyObject* visitor = nil;
 
-	for (int i = 0; i < numPlayers; ++i)
-	{
-		PyObject* playerTuple	= PyTuple_New(3);
-		PyObject* playerName	= PyUnicode_FromUnicode((const Py_UNICODE*)playerList[i].playerName, wcslen(playerList[i].playerName));
-		PyObject* playerId		= PyInt_FromLong(playerList[i].playerInt);
-		PyObject* avatarShape	= PyString_FromString(playerList[i].avatarDatasetName);
+    for (int i = 0; i < numPlayers; ++i)
+    {
+        PyObject* playerTuple   = PyTuple_New(3);
+        PyObject* playerName    = PyUnicode_FromUnicode((const Py_UNICODE*)playerList[i].playerName, wcslen(playerList[i].playerName));
+        PyObject* playerId      = PyInt_FromLong(playerList[i].playerInt);
+        PyObject* avatarShape   = PyString_FromString(playerList[i].avatarDatasetName);
 
-		PyTuple_SetItem(playerTuple, 0, playerName);
-		PyTuple_SetItem(playerTuple, 1, playerId);
-		PyTuple_SetItem(playerTuple, 2, avatarShape);
+        PyTuple_SetItem(playerTuple, 0, playerName);
+        PyTuple_SetItem(playerTuple, 1, playerId);
+        PyTuple_SetItem(playerTuple, 2, avatarShape);
 
-		if (visitor || playerList[i].explorer)
-			PyList_Append(pList, playerTuple);
-		else
-			visitor = playerTuple;
-	}
+        if (visitor || playerList[i].explorer)
+            PyList_Append(pList, playerTuple);
+        else
+            visitor = playerTuple;
+    }
 
-	if (visitor)
-	{
-		PyList_Insert(pList, 0, visitor);
-	}
-	else
-	{
-		Py_INCREF(Py_None);
-		PyList_Insert(pList, 0, Py_None);
-	}
+    if (visitor)
+    {
+        PyList_Insert(pList, 0, visitor);
+    }
+    else
+    {
+        Py_INCREF(Py_None);
+        PyList_Insert(pList, 0, Py_None);
+    }
 
-	return pList;
+    return pList;
 }
 
 std::wstring cyAccountManagement::GetAccountName()
 {
-	const NetCommAccount* acct = NetCommGetAccount();
-	if (acct)
-		return acct->accountName;
-	else
-		return L"";
+    const NetCommAccount* acct = NetCommGetAccount();
+    if (acct)
+        return acct->accountName;
+    else
+        return L"";
 }
 
 void cyAccountManagement::CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode)
 {
-	NetCommCreatePlayer(playerName, avatar, invitationCode, 0, nil);
+    NetCommCreatePlayer(playerName, avatar, invitationCode, 0, nil);
 }
 
 void cyAccountManagement::CreatePlayerW(const wchar_t* playerName, const wchar_t* avatar, const wchar_t* invitationCode)
 {
-	NetCommCreatePlayer(playerName, avatar, invitationCode, 0, nil);
+    NetCommCreatePlayer(playerName, avatar, invitationCode, 0, nil);
 }
 
 void cyAccountManagement::DeletePlayer(unsigned playerId)
 {
-	NetCommDeletePlayer(playerId, nil);
+    NetCommDeletePlayer(playerId, nil);
 }
 
 void cyAccountManagement::SetActivePlayer(unsigned playerId)
 {
-	NetCommSetActivePlayer(playerId, nil);
+    NetCommSetActivePlayer(playerId, nil);
 }
 
 bool cyAccountManagement::IsActivePlayerSet()
 {
-	return NetCommGetPlayer()->playerInt != 0;
+    return NetCommGetPlayer()->playerInt != 0;
 }
 
 void cyAccountManagement::UpgradeVisitorToExplorer(unsigned playerId)
 {
-	NetCommUpgradeVisitorToExplorer(playerId, nil);
+    NetCommUpgradeVisitorToExplorer(playerId, nil);
 }
 
 void cyAccountManagement::ChangePassword(const char* password)
 {
-	wchar* wpassword = StrDupToUnicode(password);
-	NetCommChangeMyPassword(wpassword);
-	FREE(wpassword);
+    wchar* wpassword = StrDupToUnicode(password);
+    NetCommChangeMyPassword(wpassword);
+    FREE(wpassword);
 }

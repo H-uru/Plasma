@@ -33,11 +33,11 @@ class plPluginClient;
 class plPluginApp : public plApp
 {
 protected:
-	plPluginClient *fClient;
+    plPluginClient *fClient;
 
 public:
-	plPluginApp() : fClient(NULL) {}
+    plPluginApp() : fClient(NULL) {}
 
-	virtual plClient *Startup(char *CmdLine);
-	virtual void Shutdown();
+    virtual plClient *Startup(char *CmdLine);
+    virtual void Shutdown();
 };

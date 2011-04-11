@@ -35,16 +35,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plNetCommonMessageData : public hsSafeRefCnt
 {
 private:
-	char *fData;			// sent
+    char *fData;            // sent
 public:
-	plNetCommonMessageData(char* d) : fData(d) {}
-	~plNetCommonMessageData() 
-	{ 
-		hsAssert(RefCnt()==1, "illegal refcnt");
-		delete [] fData; 
-	}
+    plNetCommonMessageData(char* d) : fData(d) {}
+    ~plNetCommonMessageData() 
+    { 
+        hsAssert(RefCnt()==1, "illegal refcnt");
+        delete [] fData; 
+    }
 
-	char* GetData() const { return fData; }
+    char* GetData() const { return fData; }
 };
 
 //
@@ -52,32 +52,32 @@ public:
 //
 class plNetCommonMessage
 {
-	plNetCommonMessage(const plNetCommonMessage & other);
+    plNetCommonMessage(const plNetCommonMessage & other);
 private:
-	plNetCommonMessageData* fMsgData;
+    plNetCommonMessageData* fMsgData;
 protected:
-	UInt32 fLen;			// sent
+    UInt32 fLen;            // sent
 public:
-	plNetCommonMessage() : fLen(0),fMsgData(nil) {}
-	virtual ~plNetCommonMessage() { hsRefCnt_SafeUnRef(fMsgData); }
+    plNetCommonMessage() : fLen(0),fMsgData(nil) {}
+    virtual ~plNetCommonMessage() { hsRefCnt_SafeUnRef(fMsgData); }
 
-	// setters
-	void SetData(char *d)		
-	{	
-		plNetCommonMessageData* n = d ? TRACKED_NEW plNetCommonMessageData(d) : nil;
-		hsRefCnt_SafeAssign(fMsgData, n);		
-		hsRefCnt_SafeUnRef(n);
-	}
-	void SetMsgData(plNetCommonMessageData* d)		
-	{	
-		hsRefCnt_SafeAssign(fMsgData, d);		
-	}
-	void SetLen(UInt32 l)		{ fLen=l; }
+    // setters
+    void SetData(char *d)       
+    {   
+        plNetCommonMessageData* n = d ? TRACKED_NEW plNetCommonMessageData(d) : nil;
+        hsRefCnt_SafeAssign(fMsgData, n);       
+        hsRefCnt_SafeUnRef(n);
+    }
+    void SetMsgData(plNetCommonMessageData* d)      
+    {   
+        hsRefCnt_SafeAssign(fMsgData, d);       
+    }
+    void SetLen(UInt32 l)       { fLen=l; }
 
-	// getters
-	char* GetData()	const { return fMsgData ? fMsgData->GetData() : nil; } 
-	virtual UInt32 GetDataLen() { return fLen; }
-	UInt32 GetLen()			const { return fLen;  }
-	plNetCommonMessageData* GetMsgData() const { return fMsgData; }
+    // getters
+    char* GetData() const { return fMsgData ? fMsgData->GetData() : nil; } 
+    virtual UInt32 GetDataLen() { return fLen; }
+    UInt32 GetLen()         const { return fLen;  }
+    plNetCommonMessageData* GetMsgData() const { return fMsgData; }
 };
 #endif // plNetCommonMessage_inc

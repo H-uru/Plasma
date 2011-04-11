@@ -3,19 +3,19 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plMath_SOURCES
-	hsNoiseFunc.cpp
-	hsRadixSort.cpp
-	plAvg.cpp
-	plTriUtils.cpp
+    hsNoiseFunc.cpp
+    hsRadixSort.cpp
+    plAvg.cpp
+    plTriUtils.cpp
 )
 
 set(plMath_HEADERS
-	hsNoiseFunc.h
-	hsRadixSort.h
-	hsSearchVersion.h
-	plAvg.h
-	plRandom.h
-	plTriUtils.h
+    hsNoiseFunc.h
+    hsRadixSort.h
+    hsSearchVersion.h
+    plAvg.h
+    plRandom.h
+    plTriUtils.h
 )
 
 add_library(plMath STATIC ${plMath_SOURCES} ${plMath_HEADERS})

@@ -25,24 +25,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plRawPageAccessor - Dangerous little class that lets you take a
-//					    plRegistryPageNode and load the objects in raw (i.e.
-//						as block memory buffers).
-//						This should NOT be used in any normal app, only 
-//						utility apps that don't want to load objects in
-//						normally (which basically means if you're not mcn,
-//						don't use this!)
+//  plRawPageAccessor - Dangerous little class that lets you take a
+//                      plRegistryPageNode and load the objects in raw (i.e.
+//                      as block memory buffers).
+//                      This should NOT be used in any normal app, only 
+//                      utility apps that don't want to load objects in
+//                      normally (which basically means if you're not mcn,
+//                      don't use this!)
 //
 //// Why We're Bad ///////////////////////////////////////////////////////////
 //
-//	To store all the raw buffers, we stuff them as pointers into the keys
-//	themselves. This is Way Bad(tm) because those pointers are expecting
-//	hsKeyedObjects, and what we're giving them certainly ain't those.
-//	This is why it's only safe to use this class in a very small, controlled
-//	environment, one where we know the keys won't be accessed in a normal
-//	fashion so we know nobody will try to use our pointers in a bad way.
+//  To store all the raw buffers, we stuff them as pointers into the keys
+//  themselves. This is Way Bad(tm) because those pointers are expecting
+//  hsKeyedObjects, and what we're giving them certainly ain't those.
+//  This is why it's only safe to use this class in a very small, controlled
+//  environment, one where we know the keys won't be accessed in a normal
+//  fashion so we know nobody will try to use our pointers in a bad way.
 //
-//	Also assumes the current global resManager is a plRawResManager!
+//  Also assumes the current global resManager is a plRawResManager!
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -63,162 +63,162 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plRawPageAccessor::plRawPageAccessor( plRegistryPageNode *source, hsBool read )
 {
-	fSource = source;
-	if( read )
-		ReadFromSource();
+    fSource = source;
+    if( read )
+        ReadFromSource();
 }
 
 plRawPageAccessor::~plRawPageAccessor()
 {
-	Release();
+    Release();
 }
 
 //// Iterators ///////////////////////////////////////////////////////////////
 
 class plRawReaderIter : public plRegistryKeyIterator
 {
-	public:
+    public:
 
-		virtual hsBool	EatKey( plKey key )
-		{
-			plRawResManager *mgr = (plRawResManager *)hsgResMgr::ResMgr();
+        virtual hsBool  EatKey( plKey key )
+        {
+            plRawResManager *mgr = (plRawResManager *)hsgResMgr::ResMgr();
 
-			UInt32 len;
-			plKeyImp *imp = (plKeyImp *)key;
-			UInt8 *buffer = mgr->ReadObjectBuffer( imp, len );
+            UInt32 len;
+            plKeyImp *imp = (plKeyImp *)key;
+            UInt8 *buffer = mgr->ReadObjectBuffer( imp, len );
 
-			// This will also set the object ptr in the key
-			plRawKeyedObject *obj = new plRawKeyedObject( key, len, buffer );
-			delete [] buffer;		// rawKeyedObject keeps a copy
+            // This will also set the object ptr in the key
+            plRawKeyedObject *obj = new plRawKeyedObject( key, len, buffer );
+            delete [] buffer;       // rawKeyedObject keeps a copy
 
-			return true;
-		}
+            return true;
+        }
 };
 
 class plRawWriterIter : public plRegistryKeyIterator
 {
-	hsStream	*fStream;
+    hsStream    *fStream;
 
-	public:
+    public:
 
-		plRawWriterIter( hsStream *stream ) : fStream( stream ) {}
+        plRawWriterIter( hsStream *stream ) : fStream( stream ) {}
 
-		virtual hsBool	EatKey( plKey key )
-		{
-			plRawResManager *mgr = (plRawResManager *)hsgResMgr::ResMgr();
+        virtual hsBool  EatKey( plKey key )
+        {
+            plRawResManager *mgr = (plRawResManager *)hsgResMgr::ResMgr();
 
-			plRawKeyedObject *obj = (plRawKeyedObject *)key->ObjectIsLoaded();
-			if( obj == nil )
-			{
-				// Mark the key as not written
-				plRawKeyedObject::MarkAsEmpty( key );
-				return true;
-			}
+            plRawKeyedObject *obj = (plRawKeyedObject *)key->ObjectIsLoaded();
+            if( obj == nil )
+            {
+                // Mark the key as not written
+                plRawKeyedObject::MarkAsEmpty( key );
+                return true;
+            }
 
-			obj->Write( fStream );
-			return true;
-		}
+            obj->Write( fStream );
+            return true;
+        }
 };
 
 class plRawReleaseIter : public plRegistryKeyIterator
 {
-	public:
+    public:
 
-		virtual hsBool	EatKey( plKey key )
-		{
-			plRawKeyedObject *obj = (plRawKeyedObject *)key->ObjectIsLoaded();
-			delete obj;
+        virtual hsBool  EatKey( plKey key )
+        {
+            plRawKeyedObject *obj = (plRawKeyedObject *)key->ObjectIsLoaded();
+            delete obj;
 
-			return true;
-		}
+            return true;
+        }
 };
 
 
 //// Various Functions ///////////////////////////////////////////////////////
 
-void	plRawPageAccessor::ReadFromSource( void )
+void    plRawPageAccessor::ReadFromSource( void )
 {
-	if( !fSource->IsLoaded() )
-		fSource->LoadKeysFromSource();
+    if( !fSource->IsLoaded() )
+        fSource->LoadKeysFromSource();
 
-	plRawReaderIter	iter;
-	fSource->IterateKeys( &iter );
+    plRawReaderIter iter;
+    fSource->IterateKeys( &iter );
 }
 
-void	plRawPageAccessor::WriteToSource( void )
+void    plRawPageAccessor::WriteToSource( void )
 {
-	if( fSource->GetSource() == nil )
-	{
-		hsAssert( false, "Unable to write accessor to disk; no source defined!" );
-		return;
-	}
+    if( fSource->GetSource() == nil )
+    {
+        hsAssert( false, "Unable to write accessor to disk; no source defined!" );
+        return;
+    }
 
-	// Write out objects first
-	hsStream *stream = fSource->GetSource()->OpenDataStream( fSource, true );
-	if( stream == nil )
-		return;
+    // Write out objects first
+    hsStream *stream = fSource->GetSource()->OpenDataStream( fSource, true );
+    if( stream == nil )
+        return;
 
-	plRawWriterIter	writer( stream );
-	fSource->IterateKeys( &writer );
+    plRawWriterIter writer( stream );
+    fSource->IterateKeys( &writer );
 
-	fSource->GetSource()->CloseDataStream( fSource );
-	
-	// Now write out the keys
-	fSource->WriteKeysToSource();
+    fSource->GetSource()->CloseDataStream( fSource );
+    
+    // Now write out the keys
+    fSource->WriteKeysToSource();
 }
 
-void	plRawPageAccessor::Release( void )
+void    plRawPageAccessor::Release( void )
 {
-	plRawReleaseIter	iter;
-	fSource->IterateKeys( &iter );
+    plRawReleaseIter    iter;
+    fSource->IterateKeys( &iter );
 
-	fSource->ClearKeyLists();
+    fSource->ClearKeyLists();
 }
 
-void	plRawPageAccessor::AddCopy( const plKey &origKey )
+void    plRawPageAccessor::AddCopy( const plKey &origKey )
 {
-	plRawResManager *mgr = (plRawResManager *)hsgResMgr::ResMgr();
-	plKey			newKey;
+    plRawResManager *mgr = (plRawResManager *)hsgResMgr::ResMgr();
+    plKey           newKey;
 
 
-	// Get the source object
-	plRawKeyedObject *srcObj = (plRawKeyedObject *)origKey->ObjectIsLoaded();
+    // Get the source object
+    plRawKeyedObject *srcObj = (plRawKeyedObject *)origKey->ObjectIsLoaded();
 
-	// Construct a new uoid
-	plUoid			newUoid( fSource->GetPageInfo().GetLocation(), 
-							 origKey->GetUoid().GetClassType(), 
-							 origKey->GetUoid().GetObjectName() );
+    // Construct a new uoid
+    plUoid          newUoid( fSource->GetPageInfo().GetLocation(), 
+                             origKey->GetUoid().GetClassType(), 
+                             origKey->GetUoid().GetObjectName() );
 
-	// Does it already exist?
-	newKey = mgr->FindKey( newUoid );
-	if( newKey != nil )
-	{
-		// Yup, gotta get rid of old object (if there is one)
-		plRawKeyedObject *obj = (plRawKeyedObject *)newKey->ObjectIsLoaded();
-		delete obj;
-	}
-	else
-	{
-		// Nope, gotta create key first
-		newKey = mgr->NewBlankKey( newUoid );
-	}
+    // Does it already exist?
+    newKey = mgr->FindKey( newUoid );
+    if( newKey != nil )
+    {
+        // Yup, gotta get rid of old object (if there is one)
+        plRawKeyedObject *obj = (plRawKeyedObject *)newKey->ObjectIsLoaded();
+        delete obj;
+    }
+    else
+    {
+        // Nope, gotta create key first
+        newKey = mgr->NewBlankKey( newUoid );
+    }
 
-	// Force the key's uoid to the right uoid, now that it's in the right page
-	( (plKeyImp *)newKey )->SetUoid( origKey->GetUoid() );
+    // Force the key's uoid to the right uoid, now that it's in the right page
+    ( (plKeyImp *)newKey )->SetUoid( origKey->GetUoid() );
 
-	// Assign a new buffer to the key
-	if( srcObj != nil )
-	{
-		// Will set obj pointer in key
-		plRawKeyedObject *obj = new plRawKeyedObject( newKey, srcObj->GetBufferSize(), srcObj->GetBuffer() );
-	}
+    // Assign a new buffer to the key
+    if( srcObj != nil )
+    {
+        // Will set obj pointer in key
+        plRawKeyedObject *obj = new plRawKeyedObject( newKey, srcObj->GetBufferSize(), srcObj->GetBuffer() );
+    }
 }
 
-void	plRawPageAccessor::UpdateDataVersion( plRegistryPageNode *from )
+void    plRawPageAccessor::UpdateDataVersion( plRegistryPageNode *from )
 {
-	plPageInfo &orig = from->GetPageInfo();
+    plPageInfo &orig = from->GetPageInfo();
 
-	fSource->GetPageInfo().SetVersion( orig.GetMajorVersion(), orig.GetMinorVersion() );
-	fSource->GetPageInfo().SetReleaseVersion( orig.GetReleaseVersion() );
+    fSource->GetPageInfo().SetVersion( orig.GetMajorVersion(), orig.GetMinorVersion() );
+    fSource->GetPageInfo().SetReleaseVersion( orig.GetReleaseVersion() );
 }
 

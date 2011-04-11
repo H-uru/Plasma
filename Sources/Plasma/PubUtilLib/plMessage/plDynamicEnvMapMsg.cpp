@@ -30,28 +30,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plDynamicEnvMapMsg::Read(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(s, mgr);
+    plMessage::IMsgRead(s, mgr);
 
-	fCmd = s->ReadSwap32();
-	
-	fPos.Read(s);
-	fHither = s->ReadSwapScalar();
-	fYon = s->ReadSwapScalar();
-	fFogStart = s->ReadSwapScalar();
-	fColor.Read(s);
-	fRefresh = s->ReadSwapScalar();
+    fCmd = s->ReadSwap32();
+    
+    fPos.Read(s);
+    fHither = s->ReadSwapScalar();
+    fYon = s->ReadSwapScalar();
+    fFogStart = s->ReadSwapScalar();
+    fColor.Read(s);
+    fRefresh = s->ReadSwapScalar();
 }
 
 void plDynamicEnvMapMsg::Write(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(s, mgr);
+    plMessage::IMsgWrite(s, mgr);
 
-	s->WriteSwap32(fCmd);
+    s->WriteSwap32(fCmd);
 
-	fPos.Write(s);
-	s->WriteSwapScalar(fHither);
-	s->WriteSwapScalar(fYon);
-	s->WriteSwapScalar(fFogStart);
-	fColor.Write(s);
-	s->WriteSwapScalar(fRefresh);
+    fPos.Write(s);
+    s->WriteSwapScalar(fHither);
+    s->WriteSwapScalar(fYon);
+    s->WriteSwapScalar(fFogStart);
+    fColor.Write(s);
+    s->WriteSwapScalar(fRefresh);
 }

@@ -37,23 +37,23 @@ class plComponentBase;
 class plExcludeRegionComponent : public plPhysicCoreComponent
 {
 protected:
-	bool fIsValid;
+    bool fIsValid;
 
-	typedef std::map<plMaxNode*,plKey> XRegionKeys;
-	XRegionKeys fXRegionKeys;
+    typedef std::map<plMaxNode*,plKey> XRegionKeys;
+    XRegionKeys fXRegionKeys;
 
 public:
-	plExcludeRegionComponent();
+    plExcludeRegionComponent();
 
-	// Can't call until after PreConvert
-	plKey GetKey(plMaxNode *node);
+    // Can't call until after PreConvert
+    plKey GetKey(plMaxNode *node);
 
-	hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-	hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-	hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
+    virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
 
 #endif // plExcludeRegionComponent_h_inc

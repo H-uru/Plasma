@@ -46,197 +46,197 @@ class plWaveSet7;
 class plWaterComponent : public plComponent
 {
 public:
-	enum {
-		kRefObject,
+    enum {
+        kRefObject,
 
-		kWindSpeed,
-		kWaterTint,		// Color
-		kWaterOpac,	// Scalar
-		kSpecularTint,	// Color
-		kRippleScale, // determines ripple scale
-		
-		kDepthOpac,	// Depth at which overall opacity reaches 100% in feet
-		kDepthRefl,	// Depth at which reflection strength reaches 100% in feet
-		kDepthWave,	// Depth at which geometric wave height reaches 100% in feet
-		kZeroOpac, // Offset, positive pulls full-on in
-		kZeroRefl, // Offset, positive pulls full-on in
-		kZeroWave, // Offset, positive pulls full-on in
+        kWindSpeed,
+        kWaterTint,     // Color
+        kWaterOpac, // Scalar
+        kSpecularTint,  // Color
+        kRippleScale, // determines ripple scale
+        
+        kDepthOpac, // Depth at which overall opacity reaches 100% in feet
+        kDepthRefl, // Depth at which reflection strength reaches 100% in feet
+        kDepthWave, // Depth at which geometric wave height reaches 100% in feet
+        kZeroOpac, // Offset, positive pulls full-on in
+        kZeroRefl, // Offset, positive pulls full-on in
+        kZeroWave, // Offset, positive pulls full-on in
 
-		kShoreTint,		// Color => MinColor.rgb
-		kShoreOpac,
-		kWispiness,
+        kShoreTint,     // Color => MinColor.rgb
+        kShoreOpac,
+        kWispiness,
 
-		kPeriod, // ???
-		kFinger,	// Finger length [0..100]%
+        kPeriod, // ???
+        kFinger,    // Finger length [0..100]%
 
-		kDispersion,		// How rough (non-viscous) the surface ripples look.
+        kDispersion,        // How rough (non-viscous) the surface ripples look.
 
-		kEnvObject,
-		kEnvSize,
-		kEnvRadius,
+        kEnvObject,
+        kEnvSize,
+        kEnvRadius,
 
-		kEdgeOpac,
-		kEdgeRadius,
-		
-		kEnvRefresh,
+        kEdgeOpac,
+        kEdgeRadius,
+        
+        kEnvRefresh,
 
-		kGeoAngleDev,
-		kTexAngleDev,
-		
-		kGeoMinLen,
-		kGeoMaxLen,
-		kGeoAmpOverLen,
+        kGeoAngleDev,
+        kTexAngleDev,
+        
+        kGeoMinLen,
+        kGeoMaxLen,
+        kGeoAmpOverLen,
 
-		kTexMinLen,
-		kTexMaxLen,
-		kTexAmpOverLen,
+        kTexMinLen,
+        kTexMaxLen,
+        kTexAmpOverLen,
 
-		kNoise,
+        kNoise,
 
-		kSpecStart,
-		kSpecEnd,
+        kSpecStart,
+        kSpecEnd,
 
-		kGeoChop,
-		kTexChop,
+        kGeoChop,
+        kTexChop,
 
-		kSpecularMute,
+        kSpecularMute,
 
-		kNumParams
-	};
-	enum {
-		kRef,
-//		kBasicWater,
-		kAdvWater,
-		kBasicShore,
-		kAdvShore,
-		kEnvMap,
-		kVtxHelp,
-		kGeoWater,
-		kTexWater,
-		kNumRollups
-	};
+        kNumParams
+    };
+    enum {
+        kRef,
+//      kBasicWater,
+        kAdvWater,
+        kBasicShore,
+        kAdvShore,
+        kEnvMap,
+        kVtxHelp,
+        kGeoWater,
+        kTexWater,
+        kNumRollups
+    };
 protected:
-	plWaveSet7*		fWaveSet;
+    plWaveSet7*     fWaveSet;
 
-	hsBool			IGetRefObject(plMaxNode* node);
-	hsBool			IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, plFixedWaterState7& ws);
-	hsBool			IReadRefObject(plMaxNodeBase* node, plFixedWaterState7& ws);
-	hsBool			IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg);
+    hsBool          IGetRefObject(plMaxNode* node);
+    hsBool          IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, plFixedWaterState7& ws);
+    hsBool          IReadRefObject(plMaxNodeBase* node, plFixedWaterState7& ws);
+    hsBool          IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg);
 
-	plWaveSetBase*	IGetWaveSet() const { return (plWaveSetBase*)fWaveSet; } // fWaveSet set in SetupProperties pass.
+    plWaveSetBase*  IGetWaveSet() const { return (plWaveSetBase*)fWaveSet; } // fWaveSet set in SetupProperties pass.
 
-	hsScalar		IGetWaterHeight();
+    hsScalar        IGetWaterHeight();
 
 public:
-	plWaterComponent();
-	void DeleteThis() { delete this; }
+    plWaterComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
 
-	virtual int GetMinCap() { return plQuality::kPS_1_1; }
+    virtual int GetMinCap() { return plQuality::kPS_1_1; }
 
-	// This works anytime.
-	static hsScalar GetWaterHeight(INode* node); // node is component node.
+    // This works anytime.
+    static hsScalar GetWaterHeight(INode* node); // node is component node.
 
-	// These only work after PreConvert pass
-	static plWaveSetBase* GetWaveSet(INode* node); // Node is the component node
-	static plWaveSetBase* GetWaveSetFromNode(plMaxNode* node); // node is the component's target
+    // These only work after PreConvert pass
+    static plWaveSetBase* GetWaveSet(INode* node); // Node is the component node
+    static plWaveSetBase* GetWaveSetFromNode(plMaxNode* node); // node is the component's target
 
-	// These just deal with old data with obsolete parameters.
-	void		CheckForObsoleteParams();
-	IOResult	Load(ILoad* iLoad);
+    // These just deal with old data with obsolete parameters.
+    void        CheckForObsoleteParams();
+    IOResult    Load(ILoad* iLoad);
 };
 
 class plShoreComponent : public plComponent
 {
 public:
-	enum {
-		kWaveSet
-	};
+    enum {
+        kWaveSet
+    };
 protected:
 public:
-	plShoreComponent();
-	void DeleteThis() { delete this; }
+    plShoreComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
-	virtual int GetMinCap() { return plQuality::kPS_1_1; }
+    virtual int GetMinCap() { return plQuality::kPS_1_1; }
 };
 
 class plWDecalComponent : public plComponent
 {
 public:
-	enum {
-		kWaveSet,
-		kEnv
-	};
+    enum {
+        kWaveSet,
+        kEnv
+    };
 protected:
 public:
-	plWDecalComponent();
-	void DeleteThis() { delete this; }
+    plWDecalComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
-	virtual int GetMinCap() { return plQuality::kPS_1_1; }
+    virtual int GetMinCap() { return plQuality::kPS_1_1; }
 };
 
 class plEnvMapComponent : public plComponent
 {
 public:
-	enum {
-		kVisSets,
-		kHither,
-		kYon,
-		kFogEnable,
-		kFogStart,
-		kFogColor,
-		kRefreshRate,
-		kEnvSize,
-		kIncChars,
-		kMapType,
-		kVisSetNames,
-	};
+    enum {
+        kVisSets,
+        kHither,
+        kYon,
+        kFogEnable,
+        kFogStart,
+        kFogColor,
+        kRefreshRate,
+        kEnvSize,
+        kIncChars,
+        kMapType,
+        kVisSetNames,
+    };
 
-	// Map types
-	enum
-	{
-		kMapCubic,
-		kMapSingle,
-	};
+    // Map types
+    enum
+    {
+        kMapCubic,
+        kMapSingle,
+    };
 
 protected:
-	plRenderTarget* fMap; // Will be a plDynamicEnvMap or plDynamicCamMap
+    plRenderTarget* fMap; // Will be a plDynamicEnvMap or plDynamicCamMap
 
-	plRenderTarget* IGetMap();
+    plRenderTarget* IGetMap();
 
 public:
-	plEnvMapComponent();
-	void DeleteThis() { delete this; }
+    plEnvMapComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
-	plDynamicEnvMap* GetEnvMap();
-	plDynamicCamMap* GetCamMap();
-	static plDynamicEnvMap* GetEnvMap(plMaxNode* node);
-	static plDynamicCamMap* GetCamMap(plMaxNode* node);
-	static plEnvMapComponent* GetEnvMapComponent(plMaxNode* node);
+    plDynamicEnvMap* GetEnvMap();
+    plDynamicCamMap* GetCamMap();
+    static plDynamicEnvMap* GetEnvMap(plMaxNode* node);
+    static plDynamicCamMap* GetCamMap(plMaxNode* node);
+    static plEnvMapComponent* GetEnvMapComponent(plMaxNode* node);
 };
 
 #endif // plBlowComponent_inc

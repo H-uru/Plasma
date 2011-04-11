@@ -53,19 +53,19 @@ class hsStream;
 
 class plNetMsgStreamableHelper : public plCreatable
 {
-	hsStreamable *	fObject;
+    hsStreamable *  fObject;
 public:
-	plNetMsgStreamableHelper():fObject(nil){}
-	plNetMsgStreamableHelper(hsStreamable * object):fObject(object){}
-	plNetMsgStreamableHelper & operator =(hsStreamable * value);
-	operator hsStreamable *() const { return fObject;}
-	operator const hsStreamable *() const { return fObject;}
-	CLASSNAME_REGISTER( plNetMsgStreamableHelper );
-	GETINTERFACE_ANY(plNetMsgStreamableHelper, plCreatable);
-	void SetObject(hsStreamable * object) { fObject=object;}
-	hsStreamable * GetObject() const { return fObject;}
-	int Poke(hsStream* stream, UInt32 peekOptions=0);
-	int Peek(hsStream* stream, UInt32 peekOptions=0);
+    plNetMsgStreamableHelper():fObject(nil){}
+    plNetMsgStreamableHelper(hsStreamable * object):fObject(object){}
+    plNetMsgStreamableHelper & operator =(hsStreamable * value);
+    operator hsStreamable *() const { return fObject;}
+    operator const hsStreamable *() const { return fObject;}
+    CLASSNAME_REGISTER( plNetMsgStreamableHelper );
+    GETINTERFACE_ANY(plNetMsgStreamableHelper, plCreatable);
+    void SetObject(hsStreamable * object) { fObject=object;}
+    hsStreamable * GetObject() const { return fObject;}
+    int Poke(hsStream* stream, UInt32 peekOptions=0);
+    int Peek(hsStream* stream, UInt32 peekOptions=0);
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -78,20 +78,20 @@ public:
 
 class plNetMsgCreatableHelper : public plCreatable
 {
-	plCreatable *	fCreatable;
-	bool			fWeCreatedIt;
+    plCreatable *   fCreatable;
+    bool            fWeCreatedIt;
 public:
-	plNetMsgCreatableHelper(plCreatable * object = nil);
-	~plNetMsgCreatableHelper();
-	plNetMsgCreatableHelper & operator =(plCreatable * value);
-	operator plCreatable*();
-	operator const plCreatable*();
-	CLASSNAME_REGISTER( plNetMsgCreatableHelper );
-	GETINTERFACE_ANY(plNetMsgCreatableHelper, plCreatable);
-	void SetObject(plCreatable * object);
-	plCreatable * GetObject();
-	int Poke(hsStream* stream, UInt32 peekOptions=0);
-	int Peek(hsStream* stream, UInt32 peekOptions=0);
+    plNetMsgCreatableHelper(plCreatable * object = nil);
+    ~plNetMsgCreatableHelper();
+    plNetMsgCreatableHelper & operator =(plCreatable * value);
+    operator plCreatable*();
+    operator const plCreatable*();
+    CLASSNAME_REGISTER( plNetMsgCreatableHelper );
+    GETINTERFACE_ANY(plNetMsgCreatableHelper, plCreatable);
+    void SetObject(plCreatable * object);
+    plCreatable * GetObject();
+    int Poke(hsStream* stream, UInt32 peekOptions=0);
+    int Peek(hsStream* stream, UInt32 peekOptions=0);
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -101,68 +101,68 @@ public:
 class plNetMsgStreamHelper : public plCreatable
 {
 private:
-	enum ContentsFlags
-	{
-		kUncompressedSize,
-		kStreamBuf,
-		kStreamLen,
-		kCompressionType,
-	};
+    enum ContentsFlags
+    {
+        kUncompressedSize,
+        kStreamBuf,
+        kStreamLen,
+        kCompressionType,
+    };
 protected:
-	UInt32	fUncompressedSize;
-	Int16	fStreamType;	// set to creatable type, not read/written, gleaned from creatable stream
-	UInt8*	fStreamBuf;
-	UInt32	fStreamLen;
-	UInt8	fCompressionType;	// see plNetMessage::CompressionType
-	UInt32	fCompressionThreshold;  // NOT WRITTEN
+    UInt32  fUncompressedSize;
+    Int16   fStreamType;    // set to creatable type, not read/written, gleaned from creatable stream
+    UInt8*  fStreamBuf;
+    UInt32  fStreamLen;
+    UInt8   fCompressionType;   // see plNetMessage::CompressionType
+    UInt32  fCompressionThreshold;  // NOT WRITTEN
 
-	void IAllocStream(UInt32 len);
+    void IAllocStream(UInt32 len);
 
 public:
-	enum { kDefaultCompressionThreshold	= 255 }; // bytes
+    enum { kDefaultCompressionThreshold = 255 }; // bytes
 
-	plNetMsgStreamHelper();
-	virtual ~plNetMsgStreamHelper() { delete [] fStreamBuf; }
+    plNetMsgStreamHelper();
+    virtual ~plNetMsgStreamHelper() { delete [] fStreamBuf; }
 
-	CLASSNAME_REGISTER( plNetMsgStreamHelper );
-	GETINTERFACE_ANY(plNetMsgStreamHelper, plCreatable);
+    CLASSNAME_REGISTER( plNetMsgStreamHelper );
+    GETINTERFACE_ANY(plNetMsgStreamHelper, plCreatable);
 
-	virtual int Poke(hsStream* stream, UInt32 peekOptions=0);	
-	virtual int Peek(hsStream* stream, UInt32 peekOptions=0);	
+    virtual int Poke(hsStream* stream, UInt32 peekOptions=0);   
+    virtual int Peek(hsStream* stream, UInt32 peekOptions=0);   
 
-	// creatable ops
-	virtual void Read(hsStream* s, hsResMgr* mgr) { Peek(s); }
-	virtual void Write(hsStream* s, hsResMgr* mgr) { Poke(s); }
-	
-	void ReadVersion(hsStream* s, hsResMgr* mgr);
-	void WriteVersion(hsStream* s, hsResMgr* mgr);
-	
-	void Clear();
+    // creatable ops
+    virtual void Read(hsStream* s, hsResMgr* mgr) { Peek(s); }
+    virtual void Write(hsStream* s, hsResMgr* mgr) { Poke(s); }
+    
+    void ReadVersion(hsStream* s, hsResMgr* mgr);
+    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    
+    void Clear();
 
-	// copiers
-	void CopyFrom(const plNetMsgStreamHelper* other);
-	void CopyStream(hsStream* ssStream);			// copies to fStream
-	void CopyStream(Int32 len, const void* buf);	// copies to fStream
+    // copiers
+    void CopyFrom(const plNetMsgStreamHelper* other);
+    void CopyStream(hsStream* ssStream);            // copies to fStream
+    void CopyStream(Int32 len, const void* buf);    // copies to fStream
 
-	// setters
-	void SetCompressionType(UInt8 t) { fCompressionType=t; }
-	void SetStreamLen(UInt32 l) { fStreamLen=l; }
-	void SetStreamBuf(UInt8* b) { fStreamBuf=b; }
-	void SetUncompressedSize(UInt32 s) { fUncompressedSize=s; }
+    // setters
+    void SetCompressionType(UInt8 t) { fCompressionType=t; }
+    void SetStreamLen(UInt32 l) { fStreamLen=l; }
+    void SetStreamBuf(UInt8* b) { fStreamBuf=b; }
+    void SetUncompressedSize(UInt32 s) { fUncompressedSize=s; }
 
-	// Getters
-	UInt8 GetCompressionType() const { return fCompressionType; }
-	Int16 GetStreamType() const { return fStreamType; }
-	UInt32 GetStreamLen() const { return fStreamLen; }
-	UInt8* GetStreamBuf() const { return fStreamBuf; }
-	UInt32 GetUncompressedSize() const { return fUncompressedSize; }
+    // Getters
+    UInt8 GetCompressionType() const { return fCompressionType; }
+    Int16 GetStreamType() const { return fStreamType; }
+    UInt32 GetStreamLen() const { return fStreamLen; }
+    UInt8* GetStreamBuf() const { return fStreamBuf; }
+    UInt32 GetUncompressedSize() const { return fUncompressedSize; }
 
-	bool	Compress(int offset=2 /* skip 2 bytes as creatable index */ );
-	bool	Uncompress(int offset=2 /* skip 2 bytes as creatable index */ );
-	bool	IsCompressed() const;
-	bool	IsCompressable() const;
-	UInt32	GetCompressionThreshold() const { return fCompressionThreshold; }
-	void	SetCompressionThreshold( UInt32 v ) { fCompressionThreshold=v; }
+    bool    Compress(int offset=2 /* skip 2 bytes as creatable index */ );
+    bool    Uncompress(int offset=2 /* skip 2 bytes as creatable index */ );
+    bool    IsCompressed() const;
+    bool    IsCompressable() const;
+    UInt32  GetCompressionThreshold() const { return fCompressionThreshold; }
+    void    SetCompressionThreshold( UInt32 v ) { fCompressionThreshold=v; }
 };
 
 //
@@ -171,38 +171,38 @@ public:
 class plNetMsgObjectHelper : public plCreatable
 {
 private:
-	enum ContentFlags
-	{
-		kObjHelperUoid,
-	};
+    enum ContentFlags
+    {
+        kObjHelperUoid,
+    };
 protected:
-	// string names for debug purposes only
-	plUoid	fUoid;
-	// update operator()= fxn when adding new members
+    // string names for debug purposes only
+    plUoid  fUoid;
+    // update operator()= fxn when adding new members
 public:
 
-	plNetMsgObjectHelper() {}
-	plNetMsgObjectHelper(const plKey key) { SetFromKey(key); }
-	virtual ~plNetMsgObjectHelper() { }
-	CLASSNAME_REGISTER( plNetMsgObjectHelper );
-	GETINTERFACE_ANY(plNetMsgObjectHelper, plCreatable);
+    plNetMsgObjectHelper() {}
+    plNetMsgObjectHelper(const plKey key) { SetFromKey(key); }
+    virtual ~plNetMsgObjectHelper() { }
+    CLASSNAME_REGISTER( plNetMsgObjectHelper );
+    GETINTERFACE_ANY(plNetMsgObjectHelper, plCreatable);
 
-	virtual int Poke(hsStream* stream, UInt32 peekOptions=0);	
-	virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
+    virtual int Poke(hsStream* stream, UInt32 peekOptions=0);   
+    virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
 
-	plNetMsgObjectHelper & operator =(const plNetMsgObjectHelper & other);
-	
-	// setters
-	hsBool SetFromKey(const plKey &key);
-	void SetUoid(const plUoid &u) { fUoid=u; }
-	
-	// getters
-	const char* GetObjectName() const { return fUoid.GetObjectName(); }
-	UInt32		GetPageID() const { return fUoid.GetLocation().GetSequenceNumber(); }
-	const plUoid& GetUoid() const { return fUoid; }
-	
-	void ReadVersion(hsStream* s, hsResMgr* mgr);
-	void WriteVersion(hsStream* s, hsResMgr* mgr);
+    plNetMsgObjectHelper & operator =(const plNetMsgObjectHelper & other);
+    
+    // setters
+    hsBool SetFromKey(const plKey &key);
+    void SetUoid(const plUoid &u) { fUoid=u; }
+    
+    // getters
+    const char* GetObjectName() const { return fUoid.GetObjectName(); }
+    UInt32      GetPageID() const { return fUoid.GetLocation().GetSequenceNumber(); }
+    const plUoid& GetUoid() const { return fUoid; }
+    
+    void ReadVersion(hsStream* s, hsResMgr* mgr);
+    void WriteVersion(hsStream* s, hsResMgr* mgr);
 };
 
 //
@@ -211,21 +211,21 @@ public:
 class plNetMsgObjectListHelper : public plCreatable
 {
 protected:
-	std::vector<plNetMsgObjectHelper*> fObjects;
+    std::vector<plNetMsgObjectHelper*> fObjects;
 public:
-	plNetMsgObjectListHelper() {}
-	virtual ~plNetMsgObjectListHelper();
+    plNetMsgObjectListHelper() {}
+    virtual ~plNetMsgObjectListHelper();
 
-	CLASSNAME_REGISTER( plNetMsgObjectListHelper );
-	GETINTERFACE_ANY(plNetMsgObjectListHelper, plCreatable);
+    CLASSNAME_REGISTER( plNetMsgObjectListHelper );
+    GETINTERFACE_ANY(plNetMsgObjectListHelper, plCreatable);
 
-	virtual int Poke(hsStream* stream, UInt32 peekOptions=0);	
-	virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
+    virtual int Poke(hsStream* stream, UInt32 peekOptions=0);   
+    virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
 
-	void Reset();
-	int GetNumObjects() const { return fObjects.size(); }
-	plNetMsgObjectHelper* GetObject(int i) { return fObjects[i]; }
-	void AddObject(plKey key) { fObjects.push_back(TRACKED_NEW plNetMsgObjectHelper(key)); }
+    void Reset();
+    int GetNumObjects() const { return fObjects.size(); }
+    plNetMsgObjectHelper* GetObject(int i) { return fObjects[i]; }
+    void AddObject(plKey key) { fObjects.push_back(TRACKED_NEW plNetMsgObjectHelper(key)); }
 };
 
 //
@@ -234,26 +234,26 @@ public:
 class plNetMsgMemberInfoHelper : public plCreatable
 {
 protected:
-	UInt32 fFlags;
-	plUoid fAvatarUoid;
-	plClientGuid	fClientGuid;
-public:	
-	plNetMsgMemberInfoHelper();
+    UInt32 fFlags;
+    plUoid fAvatarUoid;
+    plClientGuid    fClientGuid;
+public: 
+    plNetMsgMemberInfoHelper();
 
-	CLASSNAME_REGISTER( plNetMsgMemberInfoHelper );
-	GETINTERFACE_ANY( plNetMsgMemberInfoHelper, plCreatable);
+    CLASSNAME_REGISTER( plNetMsgMemberInfoHelper );
+    GETINTERFACE_ANY( plNetMsgMemberInfoHelper, plCreatable);
 
-	virtual int Poke(hsStream* stream, UInt32 peekOptions=0);
-	virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
+    virtual int Poke(hsStream* stream, UInt32 peekOptions=0);
+    virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
 
-	const plClientGuid * GetClientGuid() const { return &fClientGuid; }
-	plClientGuid * GetClientGuid() { return &fClientGuid; }
+    const plClientGuid * GetClientGuid() const { return &fClientGuid; }
+    plClientGuid * GetClientGuid() { return &fClientGuid; }
 
-	UInt32 GetFlags() const { return fFlags; }
-	plUoid GetAvatarUoid() const { return fAvatarUoid; }
+    UInt32 GetFlags() const { return fFlags; }
+    plUoid GetAvatarUoid() const { return fAvatarUoid; }
 
-	void SetFlags(UInt32 v) { fFlags=v; }	
-	void SetAvatarUoid(plUoid u) { fAvatarUoid=u; }
+    void SetFlags(UInt32 v) { fFlags=v; }   
+    void SetAvatarUoid(plUoid u) { fAvatarUoid=u; }
 };
 
 //
@@ -263,34 +263,34 @@ public:
 class plNetMsgMemberListHelper : public plCreatable
 {
 public:
-	typedef std::vector<plNetMsgMemberInfoHelper*> MemberInfoHelperVec;
-	struct MatchesPlayerID
-	{
-		UInt32 fID;
-		MatchesPlayerID( UInt32 id ): fID( id ){}
-		bool operator()( const plNetMsgMemberInfoHelper * mbr ) const
-		{
-			return ( mbr && mbr->GetClientGuid()->GetPlayerID()==fID );
-		}
-	};
+    typedef std::vector<plNetMsgMemberInfoHelper*> MemberInfoHelperVec;
+    struct MatchesPlayerID
+    {
+        UInt32 fID;
+        MatchesPlayerID( UInt32 id ): fID( id ){}
+        bool operator()( const plNetMsgMemberInfoHelper * mbr ) const
+        {
+            return ( mbr && mbr->GetClientGuid()->GetPlayerID()==fID );
+        }
+    };
 
 protected:
-	MemberInfoHelperVec fMembers;
+    MemberInfoHelperVec fMembers;
 
 public:
-	plNetMsgMemberListHelper() {}
-	virtual ~plNetMsgMemberListHelper();
+    plNetMsgMemberListHelper() {}
+    virtual ~plNetMsgMemberListHelper();
 
-	CLASSNAME_REGISTER( plNetMsgMemberListHelper );
-	GETINTERFACE_ANY( plNetMsgMemberListHelper, plCreatable);
+    CLASSNAME_REGISTER( plNetMsgMemberListHelper );
+    GETINTERFACE_ANY( plNetMsgMemberListHelper, plCreatable);
 
-	virtual int Poke(hsStream* stream, UInt32 peekOptions=0);
-	virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
+    virtual int Poke(hsStream* stream, UInt32 peekOptions=0);
+    virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
 
-	int GetNumMembers() const { return fMembers.size(); }
-	const plNetMsgMemberInfoHelper* GetMember(int i) const { return fMembers[i]; }
-	void AddMember(plNetMsgMemberInfoHelper* a) { fMembers.push_back(a); }
-	const MemberInfoHelperVec * GetMembers() const { return &fMembers;}
+    int GetNumMembers() const { return fMembers.size(); }
+    const plNetMsgMemberInfoHelper* GetMember(int i) const { return fMembers[i]; }
+    void AddMember(plNetMsgMemberInfoHelper* a) { fMembers.push_back(a); }
+    const MemberInfoHelperVec * GetMembers() const { return &fMembers;}
 };
 
 
@@ -304,24 +304,24 @@ public:
 class plNetMsgReceiversListHelper : public plCreatable
 {
 protected:
-	std::vector<UInt32> fPlayerIDList;
+    std::vector<UInt32> fPlayerIDList;
 public:
-	plNetMsgReceiversListHelper() {}
-	virtual ~plNetMsgReceiversListHelper() {}
+    plNetMsgReceiversListHelper() {}
+    virtual ~plNetMsgReceiversListHelper() {}
 
-	CLASSNAME_REGISTER( plNetMsgReceiversListHelper );
-	GETINTERFACE_ANY( plNetMsgReceiversListHelper, plCreatable);
+    CLASSNAME_REGISTER( plNetMsgReceiversListHelper );
+    GETINTERFACE_ANY( plNetMsgReceiversListHelper, plCreatable);
 
-	virtual int Poke(hsStream* stream, UInt32 peekOptions=0);
-	virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
+    virtual int Poke(hsStream* stream, UInt32 peekOptions=0);
+    virtual int Peek(hsStream* stream, UInt32 peekOptions=0);
 
-	void Clear() { fPlayerIDList.clear();	}
-	int GetNumReceivers() const { return fPlayerIDList.size(); }
-	UInt32 GetReceiverPlayerID(int i) const { return fPlayerIDList[i]; }
-	void AddReceiverPlayerID(UInt32 a) { fPlayerIDList.push_back(a); }
-	bool RemoveReceiverPlayerID(UInt32 n);	// returns true if found and removed
+    void Clear() { fPlayerIDList.clear();   }
+    int GetNumReceivers() const { return fPlayerIDList.size(); }
+    UInt32 GetReceiverPlayerID(int i) const { return fPlayerIDList[i]; }
+    void AddReceiverPlayerID(UInt32 a) { fPlayerIDList.push_back(a); }
+    bool RemoveReceiverPlayerID(UInt32 n);  // returns true if found and removed
 };
 
 
-#endif	// PL_NET_MSG__HELPERS_inc
+#endif  // PL_NET_MSG__HELPERS_inc
 

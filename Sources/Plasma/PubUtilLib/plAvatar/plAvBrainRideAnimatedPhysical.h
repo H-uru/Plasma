@@ -30,20 +30,20 @@ class plRidingAnimatedPhysicalController;
 class plAvBrainRideAnimatedPhysical : public plAvBrainHuman
 {
 public:
-	enum mode {
-		kWalking,
-		kAbort
-	};
-	CLASSNAME_REGISTER( plAvBrainRideAnimatedPhysical );
-	GETINTERFACE_ANY( plAvBrainRideAnimatedPhysical, plArmatureBrain );
-	plAvBrainRideAnimatedPhysical() : plAvBrainHuman(false),fMode(kWalking){};
-	~plAvBrainRideAnimatedPhysical();
-	virtual void Activate(plArmatureModBase *avMod);
-	virtual void Deactivate();
-	virtual hsBool MsgReceive(plMessage *msg);
-	virtual hsBool LeaveAge();
-	virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    enum mode {
+        kWalking,
+        kAbort
+    };
+    CLASSNAME_REGISTER( plAvBrainRideAnimatedPhysical );
+    GETINTERFACE_ANY( plAvBrainRideAnimatedPhysical, plArmatureBrain );
+    plAvBrainRideAnimatedPhysical() : plAvBrainHuman(false),fMode(kWalking){};
+    ~plAvBrainRideAnimatedPhysical();
+    virtual void Activate(plArmatureModBase *avMod);
+    virtual void Deactivate();
+    virtual hsBool MsgReceive(plMessage *msg);
+    virtual hsBool LeaveAge();
+    virtual hsBool Apply(double timeNow, hsScalar elapsed);
 protected:
-	hsBool IInitAnimations();
-	mode fMode;
+    hsBool IInitAnimations();
+    mode fMode;
 };

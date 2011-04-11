@@ -29,23 +29,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plClient *plPluginApp::Startup(char *pCmdLine)
 {
-	// Create the client
-	fClient = new plPluginClient;
+    // Create the client
+    fClient = new plPluginClient;
 
-	// disable networking always
-	plNetClientApp::GetInstance()->SetFlagsBit(plNetClientApp::kDisabled);
-	// and set local triggers
-	plNetClientApp::GetInstance()->SetFlagsBit(plNetClientApp::kLocalTriggers);	
+    // disable networking always
+    plNetClientApp::GetInstance()->SetFlagsBit(plNetClientApp::kDisabled);
+    // and set local triggers
+    plNetClientApp::GetInstance()->SetFlagsBit(plNetClientApp::kLocalTriggers); 
 
-	return fClient; 
+    return fClient; 
 }
 
 void plPluginApp::Shutdown()
 {
-	// Destroy the client
-	if (fClient)
-	{
-		fClient->Shutdown();
-		fClient = nil;
-	}
+    // Destroy the client
+    if (fClient)
+    {
+        fClient->Shutdown();
+        fClient = nil;
+    }
 }

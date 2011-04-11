@@ -49,19 +49,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pnAddrInfo
 {
 public:
-	typedef std::list<std::string> List;
+    typedef std::list<std::string> List;
 
-	pnAddrInfo();
-	~pnAddrInfo();
+    pnAddrInfo();
+    ~pnAddrInfo();
 
-	static const pnAddrInfo* GetInterface();
+    static const pnAddrInfo* GetInterface();
 
-	static struct addrinfo* GetAddrByNameSimple(const char* name, const int family = PF_INET);
-	static int Get(const char* node, const char* service, const struct addrinfo* hints, struct addrinfo** res);
-	static const char* GetErrorString(int errcode);
-	static void Free(struct addrinfo* res);
+    static struct addrinfo* GetAddrByNameSimple(const char* name, const int family = PF_INET);
+    static int Get(const char* node, const char* service, const struct addrinfo* hints, struct addrinfo** res);
+    static const char* GetErrorString(int errcode);
+    static void Free(struct addrinfo* res);
 
-	static void GetLocalAddrs(List& addrslist, bool incLoopBack = false);
+    static void GetLocalAddrs(List& addrslist, bool incLoopBack = false);
 };
 
 #endif // SERVER

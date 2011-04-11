@@ -32,65 +32,65 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAutoUIComp : public plAutoUIBase
 {
 public:
-	plAutoUIComp(plAutoUIClassDesc *cd);
+    plAutoUIComp(plAutoUIClassDesc *cd);
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	// Get the value of a control.  Pass in the id and your 'this' pointer.
-	//
-	hsBool   GetCheckBox(Int16 id, plComponentBase *comp);
-	hsScalar GetFloatSpinner(Int16 id, plComponentBase *comp);
-	int      GetIntSpinner(Int16 id, plComponentBase *comp);
-	TSTR     GetEditBox(Int16 id, plComponentBase *comp);
-	INode*   GetPickNode(Int16 id, plComponentBase *comp, int idx);
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Get the value of a control.  Pass in the id and your 'this' pointer.
+    //
+    hsBool   GetCheckBox(Int16 id, plComponentBase *comp);
+    hsScalar GetFloatSpinner(Int16 id, plComponentBase *comp);
+    int      GetIntSpinner(Int16 id, plComponentBase *comp);
+    TSTR     GetEditBox(Int16 id, plComponentBase *comp);
+    INode*   GetPickNode(Int16 id, plComponentBase *comp, int idx);
 
-	// Get the count for a parameter that takes an index
-	int Count(Int16 id, plComponentBase *comp);
+    // Get the count for a parameter that takes an index
+    int Count(Int16 id, plComponentBase *comp);
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	// Max/internal functions
-	//
-	// Called by the ClassDesc.
-	void BeginEditParams(IObjParam *ip, ReferenceMaker *obj, ULONG flags, Animatable *prev);
-	void EndEditParams(IObjParam *ip, ReferenceMaker *obj, ULONG flags, Animatable *prev);
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Max/internal functions
+    //
+    // Called by the ClassDesc.
+    void BeginEditParams(IObjParam *ip, ReferenceMaker *obj, ULONG flags, Animatable *prev);
+    void EndEditParams(IObjParam *ip, ReferenceMaker *obj, ULONG flags, Animatable *prev);
 };
 
 class plAutoUIClassDesc : public plComponentClassDesc
 {
 public:
-	virtual bool IsAutoUI() { return true; }
-	virtual bool IsObsolete()	{ return true; }
+    virtual bool IsAutoUI() { return true; }
+    virtual bool IsObsolete()   { return true; }
 
-	plAutoUIComp *autoComp;
-	void BeginEditParams(IObjParam *ip, ReferenceMaker* obj, ULONG flags, Animatable *prev)
-	{
-		ClassDesc2::BeginEditParams(ip, obj, flags, prev);
-		if (autoComp) autoComp->BeginEditParams(ip, obj, flags, prev);
-	}
-	void EndEditParams(IObjParam *ip, ReferenceMaker* obj, ULONG flags, Animatable *prev)
-	{
-		if (autoComp) autoComp->EndEditParams(ip, obj, flags, prev);
-		ClassDesc2::EndEditParams(ip, obj, flags, prev);
-	}
-	void CreateAutoRollup(IParamBlock2 *pb)
-	{
-		if (autoComp)
-			autoComp->CreateAutoRollup(pb);
-	}
-	void DestroyAutoRollup()
-	{
-		if (autoComp)
-			autoComp->DestroyAutoRollup();
-	}
+    plAutoUIComp *autoComp;
+    void BeginEditParams(IObjParam *ip, ReferenceMaker* obj, ULONG flags, Animatable *prev)
+    {
+        ClassDesc2::BeginEditParams(ip, obj, flags, prev);
+        if (autoComp) autoComp->BeginEditParams(ip, obj, flags, prev);
+    }
+    void EndEditParams(IObjParam *ip, ReferenceMaker* obj, ULONG flags, Animatable *prev)
+    {
+        if (autoComp) autoComp->EndEditParams(ip, obj, flags, prev);
+        ClassDesc2::EndEditParams(ip, obj, flags, prev);
+    }
+    void CreateAutoRollup(IParamBlock2 *pb)
+    {
+        if (autoComp)
+            autoComp->CreateAutoRollup(pb);
+    }
+    void DestroyAutoRollup()
+    {
+        if (autoComp)
+            autoComp->DestroyAutoRollup();
+    }
 };
 
 void plExternalComponentReg(ClassDesc *desc);
 
-#define AUTO_CLASS_DESC(classname, varname, longname, shortname, category, id)	\
-class classname##ClassDesc : public plAutoUIClassDesc							\
-{																				\
-	FUNC_CLASS_DESC(classname, longname, shortname, category, id)				\
-	classname##ClassDesc() { plExternalComponentReg(this); }					\
-};																				\
+#define AUTO_CLASS_DESC(classname, varname, longname, shortname, category, id)  \
+class classname##ClassDesc : public plAutoUIClassDesc                           \
+{                                                                               \
+    FUNC_CLASS_DESC(classname, longname, shortname, category, id)               \
+    classname##ClassDesc() { plExternalComponentReg(this); }                    \
+};                                                                              \
 DECLARE_CLASS_DESC(classname, varname)
 
 // 

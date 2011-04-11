@@ -35,77 +35,77 @@ class hsResMgr;
 class plClothingMsg : public plMessage
 {
 protected:
-	UInt32 fCommands;
+    UInt32 fCommands;
 
 public:
-	plKey fItemKey;
-	hsColorRGBA fColor;
-	UInt8 fLayer;
-	UInt8 fDelta;
-	hsScalar fWeight;
+    plKey fItemKey;
+    hsColorRGBA fColor;
+    UInt8 fLayer;
+    UInt8 fDelta;
+    hsScalar fWeight;
 
-	plClothingMsg() : fCommands(0), fItemKey(nil), fLayer(0), fDelta(0), fWeight(0) { fColor.Set(1.f, 1.f, 1.f, 1.f); }
-	~plClothingMsg() {}
+    plClothingMsg() : fCommands(0), fItemKey(nil), fLayer(0), fDelta(0), fWeight(0) { fColor.Set(1.f, 1.f, 1.f, 1.f); }
+    ~plClothingMsg() {}
 
-	CLASSNAME_REGISTER( plClothingMsg );
-	GETINTERFACE_ANY( plClothingMsg, plMessage );
+    CLASSNAME_REGISTER( plClothingMsg );
+    GETINTERFACE_ANY( plClothingMsg, plMessage );
 
-	enum commands
-	{
-		kAddItem =				0x0001,
-		kRemoveItem =			0x0002,
-		kUpdateTexture =		0x0004,
-		kTintItem =				0x0008,
-		kRetry =				0x0010,
-		kTintSkin =				0x0020,
-		kBlendSkin =			0x0040,
-		kMorphItem =			0x0080,
-		kSaveCustomizations	=	0x0100,
-	};
+    enum commands
+    {
+        kAddItem =              0x0001,
+        kRemoveItem =           0x0002,
+        kUpdateTexture =        0x0004,
+        kTintItem =             0x0008,
+        kRetry =                0x0010,
+        kTintSkin =             0x0020,
+        kBlendSkin =            0x0040,
+        kMorphItem =            0x0080,
+        kSaveCustomizations =   0x0100,
+    };
 
-	hsBool GetCommand(UInt32 command) { return fCommands & command; }
-	void AddCommand(UInt32 command) { fCommands |= command; }
-	hsBool ResendUpdate() { return fCommands != kUpdateTexture; }
+    hsBool GetCommand(UInt32 command) { return fCommands & command; }
+    void AddCommand(UInt32 command) { fCommands |= command; }
+    hsBool ResendUpdate() { return fCommands != kUpdateTexture; }
 
-	// IO 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
-	
-	// WriteVersion writes the current version of this creatable and ReadVersion will read in
-	// any previous version.
-	virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
-	virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
+    // IO 
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    // WriteVersion writes the current version of this creatable and ReadVersion will read in
+    // any previous version.
+    virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
+    virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
 };
 
 class plElementRefMsg : public plGenRefMsg
 {
 public:
-	char		*fElementName;
-	UInt32		fLayer;
+    char        *fElementName;
+    UInt32      fLayer;
 
-	plElementRefMsg() : plGenRefMsg(), fElementName(nil), fLayer(1) {}
-	plElementRefMsg(const plKey &r, UInt8 c, int which, int type, char *name, UInt8 layer) : plGenRefMsg(r, c, which, type)
-	{
-		fLayer = layer;
-		fElementName = hsStrcpy(name);
-	}
-	~plElementRefMsg() { delete [] fElementName; }
+    plElementRefMsg() : plGenRefMsg(), fElementName(nil), fLayer(1) {}
+    plElementRefMsg(const plKey &r, UInt8 c, int which, int type, char *name, UInt8 layer) : plGenRefMsg(r, c, which, type)
+    {
+        fLayer = layer;
+        fElementName = hsStrcpy(name);
+    }
+    ~plElementRefMsg() { delete [] fElementName; }
 
-	CLASSNAME_REGISTER( plElementRefMsg );
-	GETINTERFACE_ANY( plElementRefMsg, plGenRefMsg );
+    CLASSNAME_REGISTER( plElementRefMsg );
+    GETINTERFACE_ANY( plElementRefMsg, plGenRefMsg );
 };
 
 class plClothingUpdateBCMsg : public plMessage
 {
 public:
-	plClothingUpdateBCMsg();
-	~plClothingUpdateBCMsg() {}
+    plClothingUpdateBCMsg();
+    ~plClothingUpdateBCMsg() {}
 
-	CLASSNAME_REGISTER( plClothingUpdateBCMsg );
-	GETINTERFACE_ANY( plClothingUpdateBCMsg, plMessage );	
+    CLASSNAME_REGISTER( plClothingUpdateBCMsg );
+    GETINTERFACE_ANY( plClothingUpdateBCMsg, plMessage );   
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plClothingMsg_inc

@@ -28,20 +28,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plTextureSearch
 {
 protected:
-	HWND fDlg;
-	char fFileName[MAX_PATH];
+    HWND fDlg;
+    char fFileName[MAX_PATH];
 
-	plTextureSearch();
+    plTextureSearch();
 
 public:
-	static plTextureSearch& Instance();
-	void Toggle();
+    static plTextureSearch& Instance();
+    void Toggle();
 
 protected:
-	enum Update { kUpdateLoadList, kUpdateReplace, kUpdateSetSize };		
-	void IUpdateTextures(Update update);
-	void IPickReplaceTexture();
+    enum Update { kUpdateLoadList, kUpdateReplace, kUpdateSetSize };        
+    void IUpdateTextures(Update update);
+    void IPickReplaceTexture();
 
-	static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 };
