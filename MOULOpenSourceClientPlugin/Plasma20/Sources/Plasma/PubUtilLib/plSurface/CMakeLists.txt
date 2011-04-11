@@ -3,6 +3,8 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
+include_directories(${Bink_INCLUDE_DIR})
+
 set(plSurface_SOURCES
 	hsGMaterial.cpp
 	plGrassShaderMod.cpp
