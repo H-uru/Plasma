@@ -34,12 +34,12 @@ class plMessage;
 class plReceiver : public plCreatable
 {
 public:
-	plReceiver() {}
+    plReceiver() {}
 
-	CLASSNAME_REGISTER( plReceiver );
-	GETINTERFACE_ANY( plReceiver, plCreatable );
+    CLASSNAME_REGISTER( plReceiver );
+    GETINTERFACE_ANY( plReceiver, plCreatable );
 
-	virtual hsBool MsgReceive(plMessage* msg) { return false; }
+    virtual hsBool MsgReceive(plMessage* msg) { return false; }
 };
 
 #endif // plReceiver_inc

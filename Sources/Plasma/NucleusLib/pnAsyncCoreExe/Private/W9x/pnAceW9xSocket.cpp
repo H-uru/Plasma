@@ -697,8 +697,8 @@ bool CSocket::Send (  // returns false if disconnected
             (const byte *)data + result,
             bytes - result
         );
-	}
-	
+    }
+    
     // Leave the critical section
     m_critSect.Leave();
 

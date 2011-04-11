@@ -47,8 +47,8 @@ pyVaultNodeRef::pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child)
 : fParent(parent)
 , fChild(child)
 {
-	fParent->IncRef();
-	fChild->IncRef();
+    fParent->IncRef();
+    fChild->IncRef();
 }
 
 pyVaultNodeRef::pyVaultNodeRef(int)
@@ -59,10 +59,10 @@ pyVaultNodeRef::pyVaultNodeRef(int)
 
 pyVaultNodeRef::~pyVaultNodeRef()
 {
-	if (fParent)
-		fParent->DecRef();
-	if (fChild)
-		fChild->DecRef();
+    if (fParent)
+        fParent->DecRef();
+    if (fChild)
+        fChild->DecRef();
 }
 
 
@@ -70,81 +70,81 @@ pyVaultNodeRef::~pyVaultNodeRef()
 
 PyObject* pyVaultNodeRef::GetParent ( void )
 {
-	return pyVaultNode::New(fParent);
+    return pyVaultNode::New(fParent);
 }
 
 PyObject* pyVaultNodeRef::GetChild( void )
 {
-	return pyVaultNode::New(fChild);
+    return pyVaultNode::New(fChild);
 }
 
 unsigned pyVaultNodeRef::GetParentID () {
-	if (!fParent)
-		return 0;
-	return fParent->nodeId;
+    if (!fParent)
+        return 0;
+    return fParent->nodeId;
 }
 
 unsigned pyVaultNodeRef::GetChildID () {
-	if (!fChild)
-		return 0;
-	return fChild->nodeId;
+    if (!fChild)
+        return 0;
+    return fChild->nodeId;
 }
 
 unsigned pyVaultNodeRef::GetSaverID () {
-	if (!fParent || !fChild)
-		return 0;
+    if (!fParent || !fChild)
+        return 0;
 
-	unsigned saverId = 0;		
-	if (RelVaultNode * child = VaultGetNodeIncRef(fChild->nodeId)) {
-		saverId = child->GetRefOwnerId(fParent->nodeId);
-		child->DecRef();
-	}
-	return saverId;
+    unsigned saverId = 0;       
+    if (RelVaultNode * child = VaultGetNodeIncRef(fChild->nodeId)) {
+        saverId = child->GetRefOwnerId(fParent->nodeId);
+        child->DecRef();
+    }
+    return saverId;
 }
 
 PyObject * pyVaultNodeRef::GetSaver () {
-	if (!fParent || !fChild)
-		return 0;
+    if (!fParent || !fChild)
+        return 0;
 
-	RelVaultNode * saver = nil;		
-	if (RelVaultNode * child = VaultGetNodeIncRef(fChild->nodeId)) {
-		if (unsigned saverId = child->GetRefOwnerId(fParent->nodeId)) {
-			// Find the player info node representing the saver
-			NetVaultNode * templateNode = NEWZERO(NetVaultNode);
-			templateNode->IncRef();
-			templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-			VaultPlayerInfoNode access(templateNode);
-			access.SetPlayerId(saverId);
-			saver = VaultGetNodeIncRef(templateNode);
+    RelVaultNode * saver = nil;     
+    if (RelVaultNode * child = VaultGetNodeIncRef(fChild->nodeId)) {
+        if (unsigned saverId = child->GetRefOwnerId(fParent->nodeId)) {
+            // Find the player info node representing the saver
+            NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+            templateNode->IncRef();
+            templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
+            VaultPlayerInfoNode access(templateNode);
+            access.SetPlayerId(saverId);
+            saver = VaultGetNodeIncRef(templateNode);
 
-			if (!saver) {
-				ARRAY(unsigned) nodeIds;
-				VaultFindNodesAndWait(templateNode, &nodeIds);
-				if (nodeIds.Count() > 0) {
-					VaultFetchNodesAndWait(nodeIds.Ptr(), nodeIds.Count());
-					saver = VaultGetNodeIncRef(nodeIds[0]);
-				}
-			}
+            if (!saver) {
+                ARRAY(unsigned) nodeIds;
+                VaultFindNodesAndWait(templateNode, &nodeIds);
+                if (nodeIds.Count() > 0) {
+                    VaultFetchNodesAndWait(nodeIds.Ptr(), nodeIds.Count());
+                    saver = VaultGetNodeIncRef(nodeIds[0]);
+                }
+            }
 
-			templateNode->DecRef();
-		}
-		child->DecRef();
-	}
-	if (!saver)
-		PYTHON_RETURN_NONE;
-		
-	PyObject * result = pyVaultPlayerInfoNode::New(saver);
-	saver->DecRef();
-	return result;
+            templateNode->DecRef();
+        }
+        child->DecRef();
+    }
+    if (!saver)
+        PYTHON_RETURN_NONE;
+        
+    PyObject * result = pyVaultPlayerInfoNode::New(saver);
+    saver->DecRef();
+    return result;
 }
 
 bool pyVaultNodeRef::BeenSeen () {
-	return false;
+    return false;
 }
 
 void pyVaultNodeRef::SetSeen (bool v) {
-	if (!fParent || !fChild)
-		return;
-		
-	fParent->SetSeen(fChild->nodeId, v);
+    if (!fParent || !fChild)
+        return;
+        
+    fParent->SetSeen(fChild->nodeId, v);
 }

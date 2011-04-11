@@ -42,44 +42,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 class pfGmMarker : public pfGameCli {
 
-	// Encapsulate all implementation details such as member fields
-	// in an opaque friend class, in this case that's IMarker.
-	friend struct IMarker;
-	struct IMarker * internal;
+    // Encapsulate all implementation details such as member fields
+    // in an opaque friend class, in this case that's IMarker.
+    friend struct IMarker;
+    struct IMarker * internal;
 
-	//========================================================================
-	// Required subclass methods
-	//--------------------------
-	void Recv			(GameMsgHeader * msg, void * param);
-	void OnPlayerJoined	(const Srv2Cli_Game_PlayerJoined & msg);
-	void OnPlayerLeft	(const Srv2Cli_Game_PlayerLeft & msg);
-	void OnInviteFailed	(const Srv2Cli_Game_InviteFailed & msg);
-	void OnOwnerChange	(const Srv2Cli_Game_OwnerChange & msg);
-	//========================================================================
+    //========================================================================
+    // Required subclass methods
+    //--------------------------
+    void Recv           (GameMsgHeader * msg, void * param);
+    void OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg);
+    void OnPlayerLeft   (const Srv2Cli_Game_PlayerLeft & msg);
+    void OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg);
+    void OnOwnerChange  (const Srv2Cli_Game_OwnerChange & msg);
+    //========================================================================
 
 public:
-	#pragma warning(push, 0)
-	// These macros produce warnings on W4
-	CLASSNAME_REGISTER(pfGmMarker);
-	GETINTERFACE_ANY(pfGmMarker, pfGameCli);
-	#pragma warning(pop)
-	
-	pfGmMarker (unsigned gameId, plKey receiver);
-	~pfGmMarker ();
-	
-	//========================================================================
-	// Game methods
-	//-------------
-	void StartGame ();
-	void PauseGame ();
-	void ResetGame ();
-	void ChangeGameName	(const wchar name[]);
-	void ChangeTimeLimit (unsigned long timeLimit);
-	void DeleteGame ();
-	void AddMarker (double x, double y, double z, const wchar name[], const wchar age[]);
-	void DeleteMarker (unsigned long markerID);
-	void ChangeMarkerName (unsigned long markerID, const wchar name[]);
-	void CaptureMarker (unsigned long markerID);
-	//========================================================================
+    #pragma warning(push, 0)
+    // These macros produce warnings on W4
+    CLASSNAME_REGISTER(pfGmMarker);
+    GETINTERFACE_ANY(pfGmMarker, pfGameCli);
+    #pragma warning(pop)
+    
+    pfGmMarker (unsigned gameId, plKey receiver);
+    ~pfGmMarker ();
+    
+    //========================================================================
+    // Game methods
+    //-------------
+    void StartGame ();
+    void PauseGame ();
+    void ResetGame ();
+    void ChangeGameName (const wchar name[]);
+    void ChangeTimeLimit (unsigned long timeLimit);
+    void DeleteGame ();
+    void AddMarker (double x, double y, double z, const wchar name[], const wchar age[]);
+    void DeleteMarker (unsigned long markerID);
+    void ChangeMarkerName (unsigned long markerID, const wchar name[]);
+    void CaptureMarker (unsigned long markerID);
+    //========================================================================
 };
 

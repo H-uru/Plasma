@@ -45,50 +45,50 @@ class hsBounds3Ext;
 class plCluster
 {
 public:
-	enum
-	{
-		kNoIdx = UInt8(-1)
-	};
+    enum
+    {
+        kNoIdx = UInt8(-1)
+    };
 protected:
-	plClusterGroup*				fGroup;
+    plClusterGroup*             fGroup;
 
-	hsTArray<plSpanInstance*>	fInsts;
+    hsTArray<plSpanInstance*>   fInsts;
 
-	plSpanEncoding				fEncoding;
+    plSpanEncoding              fEncoding;
 
-	friend class plClusterUtil;
-	plSpanInstance*				IGetInst(int i) const { return fInsts[i]; }
-	void						IAddInst(plSpanInstance* inst) { fInsts.Append(inst); }
+    friend class plClusterUtil;
+    plSpanInstance*             IGetInst(int i) const { return fInsts[i]; }
+    void                        IAddInst(plSpanInstance* inst) { fInsts.Append(inst); }
 public:
 
-	plCluster();
-	~plCluster();
+    plCluster();
+    ~plCluster();
 
-	void Read(hsStream* s, plClusterGroup* grp);
-	void Write(hsStream* s) const;
+    void Read(hsStream* s, plClusterGroup* grp);
+    void Write(hsStream* s) const;
 
-	UInt32 NumInsts() const { return fInsts.GetCount(); }
-	const plSpanInstance& GetInst(int i) const { return *fInsts[i]; }
+    UInt32 NumInsts() const { return fInsts.GetCount(); }
+    const plSpanInstance& GetInst(int i) const { return *fInsts[i]; }
 
-	void UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& wBnd) const;
+    void UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& wBnd) const;
 
-	// Getters and setters, mostly for export construction.
-	const plSpanTemplate* GetTemplate() const { return fGroup->GetTemplate(); }
+    // Getters and setters, mostly for export construction.
+    const plSpanTemplate* GetTemplate() const { return fGroup->GetTemplate(); }
 
-	void SetEncoding(const plSpanEncoding& c) { fEncoding = c; }
-	plSpanEncoding GetEncoding() const { return fEncoding; }
+    void SetEncoding(const plSpanEncoding& c) { fEncoding = c; }
+    plSpanEncoding GetEncoding() const { return fEncoding; }
 
-	plClusterGroup*	GetGroup() const { return fGroup; }
-	void SetGroup(plClusterGroup* g) { fGroup = g; }
+    plClusterGroup* GetGroup() const { return fGroup; }
+    void SetGroup(plClusterGroup* g) { fGroup = g; }
 
-	hsGMaterial* GetMaterial() const { return fGroup->GetMaterial(); }
+    hsGMaterial* GetMaterial() const { return fGroup->GetMaterial(); }
 
-	const hsBitVector& GetVisSet() const { return fGroup->GetVisSet(); }
-	const hsBitVector& GetVisNot() const { return fGroup->GetVisNot(); }
+    const hsBitVector& GetVisSet() const { return fGroup->GetVisSet(); }
+    const hsBitVector& GetVisNot() const { return fGroup->GetVisNot(); }
 
-	const hsTArray<plLightInfo*>& GetLights() const { fGroup->GetLights(); }
+    const hsTArray<plLightInfo*>& GetLights() const { fGroup->GetLights(); }
 
-	const plLODDist& GetLOD() const { return fGroup->GetLOD(); }
+    const plLODDist& GetLOD() const { return fGroup->GetLOD(); }
 };
 
 #endif // plCluster_inc

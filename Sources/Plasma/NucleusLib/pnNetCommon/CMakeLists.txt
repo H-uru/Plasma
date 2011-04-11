@@ -4,30 +4,30 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../PubUtilLib")
 
 set(pnNetCommon_HEADERS
-	plGenericVar.h
-	plNetAddress.h
-	plNetApp.h
-	plNetGroup.h
-	plNetResManager.h
-	plNetServers.h
-	plNetSharedState.h
-	plSDLTypes.h
-	plSynchedObject.h
-	plSynchedValue.h
+    plGenericVar.h
+    plNetAddress.h
+    plNetApp.h
+    plNetGroup.h
+    plNetResManager.h
+    plNetServers.h
+    plNetSharedState.h
+    plSDLTypes.h
+    plSynchedObject.h
+    plSynchedValue.h
 )
 
 set(pnNetCommon_SOURCES
-	plGenericVar.cpp
-	plNetAddress.cpp
-	plNetApp.cpp
-	plNetGroup.cpp
-	plNetResManager.cpp
-	plNetServers.cpp
-	plNetSharedState.cpp
-	plSDLTypes.cpp
-	plSynchedObject.cpp
-	plSynchedValue.cpp
-	pnNetCommon.cpp
+    plGenericVar.cpp
+    plNetAddress.cpp
+    plNetApp.cpp
+    plNetGroup.cpp
+    plNetResManager.cpp
+    plNetServers.cpp
+    plNetSharedState.cpp
+    plSDLTypes.cpp
+    plSynchedObject.cpp
+    plSynchedValue.cpp
+    pnNetCommon.cpp
 )
 
 add_library(pnNetCommon STATIC ${pnNetCommon_HEADERS} ${pnNetCommon_SOURCES})

@@ -31,20 +31,20 @@ ClassDesc2* GetMultiMtlDesc();
 
 static ParamBlockDesc2 gMultipassMtlPB
 (
-	plMultipassMtl::kBlkPasses, _T("multipass"), 0, GetMultiMtlDesc(), 
-	P_AUTO_CONSTRUCT, plMultipassMtl::kRefPasses, 
+    plMultipassMtl::kBlkPasses, _T("multipass"), 0, GetMultiMtlDesc(), 
+    P_AUTO_CONSTRUCT, plMultipassMtl::kRefPasses, 
 
-	kMultCount,			_T("numPasses"),	TYPE_INT,				0, 0,
-		p_default,		0,
-		end,
+    kMultCount,         _T("numPasses"),    TYPE_INT,               0, 0,
+        p_default,      0,
+        end,
 
-	kMultPasses,		_T("passes"),		TYPE_MTL_TAB, 0,		0, 0,
-		end,
-	kMultOn,			_T("passOn"),		TYPE_BOOL_TAB, 0,		0, 0,
-		p_default,		TRUE,
-		end,
-	kMultLayerCounts,	_T("LayerCounts"),	TYPE_INT_TAB, 0,		0, 0,
-		p_default,		0,
-		end,
-	end
+    kMultPasses,        _T("passes"),       TYPE_MTL_TAB, 0,        0, 0,
+        end,
+    kMultOn,            _T("passOn"),       TYPE_BOOL_TAB, 0,       0, 0,
+        p_default,      TRUE,
+        end,
+    kMultLayerCounts,   _T("LayerCounts"),  TYPE_INT_TAB, 0,        0, 0,
+        p_default,      0,
+        end,
+    end
 );

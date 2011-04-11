@@ -32,48 +32,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimInfo
 {
 protected:
-	SegmentMap *fSegMap;
-	SegmentSpec *fAnimSpec;
-	SegmentMap::iterator fLoopIt;
-	SegmentMap::iterator fMarkerIt;
-	SegmentMap::iterator fStopPointIt;
+    SegmentMap *fSegMap;
+    SegmentSpec *fAnimSpec;
+    SegmentMap::iterator fLoopIt;
+    SegmentMap::iterator fMarkerIt;
+    SegmentMap::iterator fStopPointIt;
 
 public:
-	plAnimInfo() : fSegMap(NULL), fAnimSpec(NULL) {}
-	plAnimInfo(SegmentMap *segMap, const char *animName);
+    plAnimInfo() : fSegMap(NULL), fAnimSpec(NULL) {}
+    plAnimInfo(SegmentMap *segMap, const char *animName);
 
-	const char *GetAnimName();
-	float GetAnimStart();
-	float GetAnimEnd();
-	float GetAnimInitial();
+    const char *GetAnimName();
+    float GetAnimStart();
+    float GetAnimEnd();
+    float GetAnimInitial();
 
-	const char *GetNextLoopName();
-	float GetLoopStart(const char *loopName);
-	float GetLoopEnd(const char *loopName);
+    const char *GetNextLoopName();
+    float GetLoopStart(const char *loopName);
+    float GetLoopEnd(const char *loopName);
 
-	const char *GetNextMarkerName();
-	float GetMarkerTime(const char *markerName);
+    const char *GetNextMarkerName();
+    float GetMarkerTime(const char *markerName);
 
-	float GetNextStopPoint();	// Returns -1 on last stop point
-	bool IsSuppressed(const char *animName);
+    float GetNextStopPoint();   // Returns -1 on last stop point
+    bool IsSuppressed(const char *animName);
 };
 
 class plNotetrackAnim
 {
 protected:
-	SegmentMap *fSegMap;
-	SegmentMap::iterator fAnimIt;
+    SegmentMap *fSegMap;
+    SegmentMap::iterator fAnimIt;
 
-	plNotetrackAnim();
+    plNotetrackAnim();
 
 public:
-	plNotetrackAnim(Animatable *anim, plErrorMsg *pErrMsg);
-	~plNotetrackAnim();
+    plNotetrackAnim(Animatable *anim, plErrorMsg *pErrMsg);
+    ~plNotetrackAnim();
 
-	bool HasNotetracks() { return (fSegMap != NULL); }
+    bool HasNotetracks() { return (fSegMap != NULL); }
 
-	const char *GetNextAnimName();
-	plAnimInfo GetAnimInfo(const char *animName);
+    const char *GetNextAnimName();
+    plAnimInfo GetAnimInfo(const char *animName);
 };
 
 #endif //PL_NOTETRACK_ANIM

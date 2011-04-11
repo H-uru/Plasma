@@ -36,43 +36,43 @@ class jvDialogResizer;
 class plPlasmaUpdate : public jvBaseDlg
 {
 protected:
-	static BOOL CALLBACK ILoginWinProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	static std::string fUserName;
-	static std::string fPassword;
+    static BOOL CALLBACK ILoginWinProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static std::string fUserName;
+    static std::string fPassword;
 
-	std::vector<plManifest*> fManifests;
-	char fIniPath[MAX_PATH];
-	bool fCanExit;
-	enum ProgressType { kValidating, kDownloading };
-	ProgressType fProgressType;
-	jvDialogResizer* fResizer;
-	plPlasmaServers fServers;
-	bool fAutoDownload;
-	plFileGrabber* fFileGrabber;
+    std::vector<plManifest*> fManifests;
+    char fIniPath[MAX_PATH];
+    bool fCanExit;
+    enum ProgressType { kValidating, kDownloading };
+    ProgressType fProgressType;
+    jvDialogResizer* fResizer;
+    plPlasmaServers fServers;
+    bool fAutoDownload;
+    plFileGrabber* fFileGrabber;
 
-	void IInit();
-	void IShutdown();
+    void IInit();
+    void IShutdown();
 
-	bool IReadServerInfo();
+    bool IReadServerInfo();
 
-	void IEnableCtrls(bool enable);
+    void IEnableCtrls(bool enable);
 
-	BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	static void ProgressFunc(const char* name, int delta);
-	static void ILog(const char* format, ...);
+    static void ProgressFunc(const char* name, int delta);
+    static void ILog(const char* format, ...);
 
-	void IUpdateServer();
+    void IUpdateServer();
 
-	void IDeleteManifests();
-	bool IGetManifests(const char* serverRoot, bool external);
-	void IDownloadUpdates();
+    void IDeleteManifests();
+    bool IGetManifests(const char* serverRoot, bool external);
+    void IDownloadUpdates();
 
 public:
-	plPlasmaUpdate();
-	virtual ~plPlasmaUpdate();
+    plPlasmaUpdate();
+    virtual ~plPlasmaUpdate();
 
-	bool Create();
+    bool Create();
 
-	void SetAutoDownload() { fAutoDownload = true; }
+    void SetAutoDownload() { fAutoDownload = true; }
 };

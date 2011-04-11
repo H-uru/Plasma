@@ -25,183 +25,183 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*	$/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/Win32/pnUtW32Misc.cpp
-*	
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/Win32/pnUtW32Misc.cpp
+*   
 ***/
 
 #include "../../Pch.h"
-#pragma	hdrstop
+#pragma hdrstop
 
 /*****************************************************************************
 *
-*	Private
+*   Private
 *
 ***/
 static MEMORYSTATUSEX s_memstatus;
 
 /*****************************************************************************
 *
-*	Exports
+*   Exports
 *
 ***/
 
 //============================================================================
-const wchar	* AppGetCommandLine	() {
-	return GetCommandLineW();
+const wchar * AppGetCommandLine () {
+    return GetCommandLineW();
 }
 
 //============================================================================
-void MachineGetName	(wchar *computerName, unsigned int length) {
-	DWORD len =	length;
-	GetComputerNameW(computerName, &len);
+void MachineGetName (wchar *computerName, unsigned int length) {
+    DWORD len = length;
+    GetComputerNameW(computerName, &len);
 }
 
 /*****************************************************************************
 *
-*	System status
+*   System status
 *
 ***/
 
 //============================================================================
 void MemoryGetStatus (MemoryStatus * status) {
-	MEMORYSTATUSEX mem;
-	mem.dwLength = sizeof(mem);
-	GlobalMemoryStatusEx(&mem);
+    MEMORYSTATUSEX mem;
+    mem.dwLength = sizeof(mem);
+    GlobalMemoryStatusEx(&mem);
 
-	const qword	BYTES_PER_MB = 1024	* 1024;
-	status->totalPhysMB			= unsigned(mem.ullTotalPhys		/ BYTES_PER_MB);
-	status->availPhysMB			= unsigned(mem.ullAvailPhys		/ BYTES_PER_MB);
-	status->totalPageFileMB		= unsigned(mem.ullTotalPageFile	/ BYTES_PER_MB);
-	status->availPageFileMB		= unsigned(mem.ullAvailPageFile	/ BYTES_PER_MB);
-	status->totalVirtualMB		= unsigned(mem.ullTotalVirtual	/ BYTES_PER_MB);   
-	status->availVirtualMB		= unsigned(mem.ullAvailVirtual	/ BYTES_PER_MB);
-	status->memoryLoad			= mem.dwMemoryLoad;
+    const qword BYTES_PER_MB = 1024 * 1024;
+    status->totalPhysMB         = unsigned(mem.ullTotalPhys     / BYTES_PER_MB);
+    status->availPhysMB         = unsigned(mem.ullAvailPhys     / BYTES_PER_MB);
+    status->totalPageFileMB     = unsigned(mem.ullTotalPageFile / BYTES_PER_MB);
+    status->availPageFileMB     = unsigned(mem.ullAvailPageFile / BYTES_PER_MB);
+    status->totalVirtualMB      = unsigned(mem.ullTotalVirtual  / BYTES_PER_MB);   
+    status->availVirtualMB      = unsigned(mem.ullAvailVirtual  / BYTES_PER_MB);
+    status->memoryLoad          = mem.dwMemoryLoad;
 }
 
 //============================================================================
-void DiskGetStatus (ARRAY(DiskStatus) *	disks) {
-	for	(;;) {
-		DWORD length = GetLogicalDriveStrings(0, NULL);
-		if (!length	|| length >	2048)
-			break;
+void DiskGetStatus (ARRAY(DiskStatus) * disks) {
+    for (;;) {
+        DWORD length = GetLogicalDriveStrings(0, NULL);
+        if (!length || length > 2048)
+            break;
 
-		wchar *	buffer = ALLOCA(wchar, length +	1);
-		if (!GetLogicalDriveStringsW(length, buffer))
-			break;
+        wchar * buffer = ALLOCA(wchar, length + 1);
+        if (!GetLogicalDriveStringsW(length, buffer))
+            break;
 
-		for	(; *buffer;	buffer += StrLen(buffer) + 1) {
-			UINT driveType = GetDriveTypeW(buffer);
-			if (driveType != DRIVE_FIXED)
-				continue;
+        for (; *buffer; buffer += StrLen(buffer) + 1) {
+            UINT driveType = GetDriveTypeW(buffer);
+            if (driveType != DRIVE_FIXED)
+                continue;
 
-			ULARGE_INTEGER freeBytes;
-			ULARGE_INTEGER totalBytes;
-			if (!GetDiskFreeSpaceExW(buffer, &freeBytes, &totalBytes, NULL))
-				continue;
+            ULARGE_INTEGER freeBytes;
+            ULARGE_INTEGER totalBytes;
+            if (!GetDiskFreeSpaceExW(buffer, &freeBytes, &totalBytes, NULL))
+                continue;
 
-			DiskStatus status;
-			StrCopy(status.name, buffer, arrsize(status.name));
+            DiskStatus status;
+            StrCopy(status.name, buffer, arrsize(status.name));
 
-			const qword	BYTES_PER_MB = 1024	* 1024;
-			status.totalSpaceMB	= unsigned(totalBytes.QuadPart / BYTES_PER_MB);
-			status.freeSpaceMB	= unsigned(freeBytes.QuadPart  / BYTES_PER_MB);
+            const qword BYTES_PER_MB = 1024 * 1024;
+            status.totalSpaceMB = unsigned(totalBytes.QuadPart / BYTES_PER_MB);
+            status.freeSpaceMB  = unsigned(freeBytes.QuadPart  / BYTES_PER_MB);
 
-			disks->Add(status);
-		}
-		break;
-	}
+            disks->Add(status);
+        }
+        break;
+    }
 }
 
 //============================================================================
 // Loosely taken from MS's cpuid code sample
 void CpuGetInfo (
-	word *	cpuCaps,
-	dword *	cpuVendor,
-	word *	cpuSignature
+    word *  cpuCaps,
+    dword * cpuVendor,
+    word *  cpuSignature
 ) {
-	dword signature	= 0;
-	dword extended	= 0;
-	dword flags[2]	= {	0, 0 };
-	cpuVendor[0]	= 0;
+    dword signature = 0;
+    dword extended  = 0;
+    dword flags[2]  = { 0, 0 };
+    cpuVendor[0]    = 0;
 
-	_asm {
-		// Detect if cpuid instruction is supported	by attempting
-		// to change the ID	bit	of EFLAGS
-		pushfd
-		pop	eax				// get EFLAGS
-		mov	ecx, eax		// store copy of original EFLAGS
-		xor	eax, 0x200000	// flip	ID bit 
-		push eax
-		popfd				// replace EFLAGS
-		pushfd				// get EFLAGS
-		pop	eax
-		xor	eax, ecx
-		je DONE
+    _asm {
+        // Detect if cpuid instruction is supported by attempting
+        // to change the ID bit of EFLAGS
+        pushfd
+        pop eax             // get EFLAGS
+        mov ecx, eax        // store copy of original EFLAGS
+        xor eax, 0x200000   // flip ID bit 
+        push eax
+        popfd               // replace EFLAGS
+        pushfd              // get EFLAGS
+        pop eax
+        xor eax, ecx
+        je DONE
 
-		// Get processor id	(GenuineIntel, AuthenticAMD, etc)
-		xor	eax, eax
-		cpuid
-		mov	edi, cpuVendor
-		mov	[edi + 0], ebx
-		mov	[edi + 4], edx
-		mov	[edi + 8], ecx
+        // Get processor id (GenuineIntel, AuthenticAMD, etc)
+        xor eax, eax
+        cpuid
+        mov edi, cpuVendor
+        mov [edi + 0], ebx
+        mov [edi + 4], edx
+        mov [edi + 8], ecx
 
-		// Check if	capability flags are supported
-		cmp	eax, 1
-		jl DONE
+        // Check if capability flags are supported
+        cmp eax, 1
+        jl DONE
 
-		// Get processor capability flags and signature
-		mov	eax, 1
-		cpuid
-		mov	signature, eax
-		mov	[flags + 0], edx
-		mov	[flags + 4], ecx
+        // Get processor capability flags and signature
+        mov eax, 1
+        cpuid
+        mov signature, eax
+        mov [flags + 0], edx
+        mov [flags + 4], ecx
 
-		// Check for extended capabilities
-		mov	eax, 0x80000000
-		cpuid
-		cmp	eax, 0x80000001
-		jl DONE
+        // Check for extended capabilities
+        mov eax, 0x80000000
+        cpuid
+        cmp eax, 0x80000001
+        jl DONE
 
-		// Get extended	capabilities
-		mov	eax, 0x80000001
-		cpuid
-		mov	extended, edx
+        // Get extended capabilities
+        mov eax, 0x80000001
+        cpuid
+        mov extended, edx
 
 DONE:
-	}
+    }
 
-	// Decode capability flags
-	const static struct	CpuCap {
-		word	cpuFlag;
-		byte	field;
-		byte	bit;
-	} s_caps[] = {
-		// feature		field	bit
-		// -------		-----	---
-		{ kCpuCapCmov,	0,		15	},
-		{ kCpuCapEst,	1,		7	},
-		{ kCpuCapHtt,	0,		28	},
-		{ kCpuCapMmx,	0,		23	},
-		{ kCpuCapPsn,	0,		18	},
-		{ kCpuCapSse,	0,		25	},
-		{ kCpuCapSse2,	0,		26	},
-		{ kCpuCapSse3,	1,		0	},
-		{ kCpuCapTsc,	0,		4	},
-	};
-	for	(unsigned i	= 0; i < arrsize(s_caps); ++i) {
-		const CpuCap & cap = s_caps[i];
-		if (flags[cap.field] & (1 << cap.bit))
-			*cpuCaps |=	cap.cpuFlag;
-	}
+    // Decode capability flags
+    const static struct CpuCap {
+        word    cpuFlag;
+        byte    field;
+        byte    bit;
+    } s_caps[] = {
+        // feature      field   bit
+        // -------      -----   ---
+        { kCpuCapCmov,  0,      15  },
+        { kCpuCapEst,   1,      7   },
+        { kCpuCapHtt,   0,      28  },
+        { kCpuCapMmx,   0,      23  },
+        { kCpuCapPsn,   0,      18  },
+        { kCpuCapSse,   0,      25  },
+        { kCpuCapSse2,  0,      26  },
+        { kCpuCapSse3,  1,      0   },
+        { kCpuCapTsc,   0,      4   },
+    };
+    for (unsigned i = 0; i < arrsize(s_caps); ++i) {
+        const CpuCap & cap = s_caps[i];
+        if (flags[cap.field] & (1 << cap.bit))
+            *cpuCaps |= cap.cpuFlag;
+    }
 
-	// Copy	signature
-	*cpuSignature =	word(signature & 0xfff);
+    // Copy signature
+    *cpuSignature = word(signature & 0xfff);
 
-	// If this is an AMD CPU, check	for	3DNow support
-	const char * vendorAmd = "AuthenticAMD";
-	if (!MemCmp(vendorAmd, cpuVendor, 12)) {
-		if (extended & (1 << 31))
-			*cpuCaps |=	kCpuCap3dNow;
-	}
+    // If this is an AMD CPU, check for 3DNow support
+    const char * vendorAmd = "AuthenticAMD";
+    if (!MemCmp(vendorAmd, cpuVendor, 12)) {
+        if (extended & (1 << 31))
+            *cpuCaps |= kCpuCap3dNow;
+    }
 }

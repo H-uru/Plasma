@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plFactory_inc
 
 #ifdef PLFACTORY_PRIVATE
-	#include "hsTemplates.h"
+    #include "hsTemplates.h"
 #endif
 #include "hsRefCnt.h"
 #include "hsTypes.h"
@@ -42,52 +42,52 @@ class plFactory : public hsRefCnt
 {
 #ifdef PLFACTORY_PRIVATE
 private:
-	hsTArray<plCreator*>		fCreators;
+    hsTArray<plCreator*>        fCreators;
 
-	void				IForceShutdown();
-	void				IUnRegister(UInt16 hClass);
-	UInt16				IRegister(UInt16 hClass, plCreator* worker);
-	hsBool				IIsEmpty();
-	UInt16				IGetNumClasses();
-	plCreatable*		ICreate(UInt16 hClass);
-	hsBool				IDerivesFrom(UInt16 hBase, UInt16 hDer);
-	hsBool				IIsValidClassIndex(UInt16 hClass);
+    void                IForceShutdown();
+    void                IUnRegister(UInt16 hClass);
+    UInt16              IRegister(UInt16 hClass, plCreator* worker);
+    hsBool              IIsEmpty();
+    UInt16              IGetNumClasses();
+    plCreatable*        ICreate(UInt16 hClass);
+    hsBool              IDerivesFrom(UInt16 hBase, UInt16 hDer);
+    hsBool              IIsValidClassIndex(UInt16 hClass);
 
-	static hsBool		ICreateTheFactory();
-	static void			IShutdown();
+    static hsBool       ICreateTheFactory();
+    static void         IShutdown();
 
-	plFactory();
-	~plFactory();
+    plFactory();
+    ~plFactory();
 #endif
 
 public:
-	// Don't use this unless you're initializing a DLL
-	friend class plClient;
-	static plFactory*	GetTheFactory();
+    // Don't use this unless you're initializing a DLL
+    friend class plClient;
+    static plFactory*   GetTheFactory();
 
 
-	static UInt16		Register(UInt16 hClass, plCreator* worker); // returns hClass
-	static void			UnRegister(UInt16 hClass, plCreator* worker);
+    static UInt16       Register(UInt16 hClass, plCreator* worker); // returns hClass
+    static void         UnRegister(UInt16 hClass, plCreator* worker);
 
-	static bool 		CanCreate(UInt16 hClass);	// return true if creator exists. doesn't assert
-	static plCreatable*	Create(UInt16 hClass);
+    static bool         CanCreate(UInt16 hClass);   // return true if creator exists. doesn't assert
+    static plCreatable* Create(UInt16 hClass);
 
-	static hsBool		DerivesFrom(UInt16 hBase, UInt16 hDer);
+    static hsBool       DerivesFrom(UInt16 hBase, UInt16 hDer);
 
-	static UInt16		GetNumClasses();
+    static UInt16       GetNumClasses();
 
-	static UInt16		FindClassIndex(const char* className);		// slow lookup for things like console
+    static UInt16       FindClassIndex(const char* className);      // slow lookup for things like console
 
-	static hsBool		IsValidClassIndex(UInt16 hClass);
+    static hsBool       IsValidClassIndex(UInt16 hClass);
 
-	// Don't call this unless you're a DLL being initialized.
-	static void			SetTheFactory(plFactory* fac);
+    // Don't call this unless you're a DLL being initialized.
+    static void         SetTheFactory(plFactory* fac);
 
-	static const char	*GetNameOfClass(UInt16 type);
+    static const char   *GetNameOfClass(UInt16 type);
 
 #ifdef HS_DEBUGGING
-    void				IValidate(UInt16 keyIndex);
-	static	void		Validate(UInt16 keyIndex);
+    void                IValidate(UInt16 keyIndex);
+    static  void        Validate(UInt16 keyIndex);
 #endif
 };
 

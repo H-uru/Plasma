@@ -33,8 +33,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #if defined(PLASMA_EXTERNAL_RELEASE) && (BUILD_TYPE == BUILD_TYPE_LIVE)
-	// If this is an external live build then don't write log files
-	#define ACELOG_NO_LOG_FILES
+    // If this is an external live build then don't write log files
+    #define ACELOG_NO_LOG_FILES
 #endif
 
 
@@ -70,7 +70,7 @@ static unsigned     s_logWriteMs[kNumLogTypes];
 static AsyncFile    s_logFile[kNumLogTypes];
 static long         s_opsPending;
 static bool         s_running;
-static AsyncTimer *	s_timer;
+static AsyncTimer * s_timer;
 
 static unsigned s_logSize[kNumLogTypes] = {
 #ifdef SERVER
@@ -172,7 +172,7 @@ static void GetLogFilename (
         chars,
         s_logNameFmt[index],
 #ifndef SERVER
-		ProductShortName(),
+        ProductShortName(),
 #endif
         timeDesc.year % 100,
         timeDesc.month,
@@ -307,8 +307,8 @@ static void FlushLogFile_CS (
 
 //============================================================================
 static unsigned FlushLogsTimerCallback (void *) {
-	AsyncLogFlush();
-	return kAsyncTimeInfinite;
+    AsyncLogFlush();
+    return kAsyncTimeInfinite;
 }
 
 
@@ -335,9 +335,9 @@ void AsyncLogInitialize (
 #ifdef SERVER
     PathGetProgramDirectory(s_directory, arrsize(s_directory));
 #else
-	PathGetUserDirectory(s_directory, arrsize(s_directory));
+    PathGetUserDirectory(s_directory, arrsize(s_directory));
 #endif
-	PathAddFilename(s_directory, s_directory, logDirName, arrsize(s_directory));
+    PathAddFilename(s_directory, s_directory, logDirName, arrsize(s_directory));
 
 #ifndef ACELOG_NO_LOG_FILES
     // Create log directory
@@ -441,7 +441,7 @@ void AsyncLogWriteMsg (
         MemCopy(s_logBuf[index] + s_logPos[index], buffer, chars);
         s_logPos[index] += chars;
 
-		// Write, flush and close file immediately if this is a fatal error        
+        // Write, flush and close file immediately if this is a fatal error        
         if (severity == kLogFatal)
             WriteLogFile_CS(index, true);
 
@@ -451,13 +451,13 @@ void AsyncLogWriteMsg (
     }
     s_logCrit[index].Leave();
 
-	// Queue flush    
+    // Queue flush    
     AsyncTimerUpdate(s_timer, kLogFlushMs, kAsyncTimerUpdateSetPriorityHigher);
 #endif // ndef ACELOG_NO_LOG_FILES
 }
 
 //============================================================================
 void AsyncLogGetDirectory (wchar * dest, unsigned destChars) {
-	ASSERT(dest);
-	StrCopy(dest, s_directory, destChars);
+    ASSERT(dest);
+    StrCopy(dest, s_directory, destChars);
 }

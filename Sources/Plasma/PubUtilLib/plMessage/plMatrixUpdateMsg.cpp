@@ -31,14 +31,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plMatrixUpdateMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
-	fMatrix.Read(stream);
+    plMessage::IMsgRead(stream, mgr);
+    fMatrix.Read(stream);
 }
 
 void plMatrixUpdateMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
-	fMatrix.Write(stream);
+    plMessage::IMsgWrite(stream, mgr);
+    fMatrix.Write(stream);
 }
 
 

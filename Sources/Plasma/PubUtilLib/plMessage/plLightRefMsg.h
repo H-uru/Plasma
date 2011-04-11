@@ -34,14 +34,14 @@ class hsKeyedObject;
 class plLightRefMsg : public plRefMsg
 {
 public:
-	plLightRefMsg() {}
-	plLightRefMsg(const plKey& s, const plKey &r, hsKeyedObject* l, UInt8 c) : plRefMsg(r, c) { SetRef(l); SetSender(s); }
+    plLightRefMsg() {}
+    plLightRefMsg(const plKey& s, const plKey &r, hsKeyedObject* l, UInt8 c) : plRefMsg(r, c) { SetRef(l); SetSender(s); }
 
-	CLASSNAME_REGISTER( plLightRefMsg );
-	GETINTERFACE_ANY( plLightRefMsg, plRefMsg );
+    CLASSNAME_REGISTER( plLightRefMsg );
+    GETINTERFACE_ANY( plLightRefMsg, plRefMsg );
 
-	virtual void Read(hsStream* s, hsResMgr* mgr) { plRefMsg::Read(s, mgr); }
-	virtual void Write(hsStream* s, hsResMgr* mgr) { plRefMsg::Write(s, mgr); }
+    virtual void Read(hsStream* s, hsResMgr* mgr) { plRefMsg::Read(s, mgr); }
+    virtual void Write(hsStream* s, hsResMgr* mgr) { plRefMsg::Write(s, mgr); }
 };
 
 #endif // plLightRefMsg_inc

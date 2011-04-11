@@ -5,84 +5,84 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 if(Bink_SDK_AVAILABLE)
-	include_directories(${Bink_INCLUDE_DIR})
+    include_directories(${Bink_INCLUDE_DIR})
 endif()
 include_directories(${DirectX_INCLUDE_DIR})
 
 set(plPipeline_SOURCES
-	hsG3DDeviceSelector.cpp
-	hsGColorizer.cpp
-	hsGDDrawDllLoad.cpp
-	plBinkPlayer.cpp
-	plCaptureRender.cpp
-	plCubicRenderTargetModifier.cpp
-	plCullTree.cpp
-	plDebugText.cpp
-	plDTProgressMgr.cpp
-	plDXEnumerate.cpp
-	plDXPipeline.cpp
-	plDXPixelShader.cpp
-	plDXShader.cpp
-	plDXTextFont.cpp
-	plDXVertexShader.cpp
-	plDynamicEnvMap.cpp
-	plFogEnvironment.cpp
-	plGBufferGroup.cpp
-	plPlates.cpp
-	plRenderTarget.cpp
-	plStatusLogDrawer.cpp
-	plTextFont.cpp
-	plTextGenerator.cpp
-	plTransitionMgr.cpp
-	plVertCoder.cpp
+    hsG3DDeviceSelector.cpp
+    hsGColorizer.cpp
+    hsGDDrawDllLoad.cpp
+    plBinkPlayer.cpp
+    plCaptureRender.cpp
+    plCubicRenderTargetModifier.cpp
+    plCullTree.cpp
+    plDebugText.cpp
+    plDTProgressMgr.cpp
+    plDXEnumerate.cpp
+    plDXPipeline.cpp
+    plDXPixelShader.cpp
+    plDXShader.cpp
+    plDXTextFont.cpp
+    plDXVertexShader.cpp
+    plDynamicEnvMap.cpp
+    plFogEnvironment.cpp
+    plGBufferGroup.cpp
+    plPlates.cpp
+    plRenderTarget.cpp
+    plStatusLogDrawer.cpp
+    plTextFont.cpp
+    plTextGenerator.cpp
+    plTransitionMgr.cpp
+    plVertCoder.cpp
 )
 
 set(plPipeline_HEADERS
-	hsFogControl.h
-	hsG3DDeviceSelector.h
-	hsGColorizer.h
-	hsGDDrawDllLoad.h
-	hsWinRef.h
-	plBinkPlayer.h
-	plCaptureRender.h
-	plCubicRenderTarget.h
-	plCubicRenderTargetModifier.h
-	plCuller.h
-	plCullTree.h
-	plDebugText.h
-	plDrawPrim.h
-	plDTProgressMgr.h
-	plDXEnumerate.h
-	plDXPipeline.h
-	plDXPixelShader.h
-	plDXSettings.h
-	plDXShader.h
-	plDXTextFont.h
-	plDXVertexShader.h
-	plDynamicEnvMap.h
-	plFogEnvironment.h
-	plGBufferGroup.h
-	plPipeDebugFlags.h
-	plPipelineCreatable.h
-	plPipelineCreate.h
-	plPlates.h
-	plRenderTarget.h
-	plStatusLogDrawer.h
-	plStencil.h
-	plTextFont.h
-	plTextGenerator.h
-	plTransitionMgr.h
-	plVertCoder.h
+    hsFogControl.h
+    hsG3DDeviceSelector.h
+    hsGColorizer.h
+    hsGDDrawDllLoad.h
+    hsWinRef.h
+    plBinkPlayer.h
+    plCaptureRender.h
+    plCubicRenderTarget.h
+    plCubicRenderTargetModifier.h
+    plCuller.h
+    plCullTree.h
+    plDebugText.h
+    plDrawPrim.h
+    plDTProgressMgr.h
+    plDXEnumerate.h
+    plDXPipeline.h
+    plDXPixelShader.h
+    plDXSettings.h
+    plDXShader.h
+    plDXTextFont.h
+    plDXVertexShader.h
+    plDynamicEnvMap.h
+    plFogEnvironment.h
+    plGBufferGroup.h
+    plPipeDebugFlags.h
+    plPipelineCreatable.h
+    plPipelineCreate.h
+    plPlates.h
+    plRenderTarget.h
+    plStatusLogDrawer.h
+    plStencil.h
+    plTextFont.h
+    plTextGenerator.h
+    plTransitionMgr.h
+    plVertCoder.h
 )
 
 set(plPipeline_DEVICEREFS
-	hsGDeviceRef.h
-	plDXBufferRefs.h
-	plDXDeviceRef.h
-	plDXDeviceRefs.cpp
-	plDXLightRef.h
-	plDXRenderTargetRef.h
-	plDXTextureRef.h
+    hsGDeviceRef.h
+    plDXBufferRefs.h
+    plDXDeviceRef.h
+    plDXDeviceRefs.cpp
+    plDXLightRef.h
+    plDXRenderTargetRef.h
+    plDXTextureRef.h
 )
 
 add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plPipeline_HEADERS} ${plPipeline_DEVICEREFS})

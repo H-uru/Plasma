@@ -34,23 +34,23 @@ class plKey;
 class plLocalPlayerInBoxConditionalObject : public plConditionalObject
 {
 protected:
-	plKey	fPlayer;
-	plKey	fBox;
+    plKey   fPlayer;
+    plKey   fBox;
 
 public:
-	
-	plLocalPlayerInBoxConditionalObject();
-	~plLocalPlayerInBoxConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plLocalPlayerInBoxConditionalObject );
-	GETINTERFACE_ANY( plLocalPlayerInBoxConditionalObject, plConditionalObject );
-	
-	hsBool MsgReceive(plMessage* msg);
+    
+    plLocalPlayerInBoxConditionalObject();
+    ~plLocalPlayerInBoxConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plLocalPlayerInBoxConditionalObject );
+    GETINTERFACE_ANY( plLocalPlayerInBoxConditionalObject, plConditionalObject );
+    
+    hsBool MsgReceive(plMessage* msg);
 
-	void SetBox(plKey pKey) { fBox = pKey; }
-	
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(false); }
+    void SetBox(plKey pKey) { fBox = pKey; }
+    
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(false); }
 
 };
 

@@ -42,24 +42,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyGUIControlRadioGroup :public pyGUIControl
 {
 protected:
-	pyGUIControlRadioGroup(): pyGUIControl() {} // for python glue only, do NOT call
-	pyGUIControlRadioGroup(pyKey& gckey);
-	pyGUIControlRadioGroup(plKey objkey);
+    pyGUIControlRadioGroup(): pyGUIControl() {} // for python glue only, do NOT call
+    pyGUIControlRadioGroup(pyKey& gckey);
+    pyGUIControlRadioGroup(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlRadioGroup);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlRadioGroup object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlRadioGroup); // converts a PyObject to a pyGUIControlRadioGroup (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlRadioGroup);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlRadioGroup object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlRadioGroup); // converts a PyObject to a pyGUIControlRadioGroup (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlRadioGroup(pyKey& gckey);
+    static hsBool IsGUIControlRadioGroup(pyKey& gckey);
 
-	virtual Int32	GetValue( void );
-	virtual void	SetValue( Int32 value );
+    virtual Int32   GetValue( void );
+    virtual void    SetValue( Int32 value );
 
 };
 

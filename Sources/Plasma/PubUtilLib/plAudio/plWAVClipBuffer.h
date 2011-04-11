@@ -24,22 +24,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plWAVClipBuffer - Helper class for writing out WAV data in a buffered	//
-//					  manner, with support for clipping off the specified	//
-//					  amount at the end, but without knowing beforehand		//
-//					  exactly how much data we'll have.						//
-//																			//
-//	The algorithm goes something like this: we keep two buffers, both the	//
-//	size of the amount we want to clip. We then start filling in the first	//
-//	buffer, overflowing into the second buffer and wrapping back to the		//
-//	first again in a circular fashion. When we fill up one buffer and are	//
-//	about to advance to the next, we write that next buffer out. Why?		//
-//	Because we know that, even if we got no more data in, we have enough	//
-//	data in the first buffer to clip out the amount we want, so the other	//
-//	half (which will have older data, being a circular buffer) can be		//
-//	written out safely.														//
-//																			//
+//                                                                          //
+//  plWAVClipBuffer - Helper class for writing out WAV data in a buffered   //
+//                    manner, with support for clipping off the specified   //
+//                    amount at the end, but without knowing beforehand     //
+//                    exactly how much data we'll have.                     //
+//                                                                          //
+//  The algorithm goes something like this: we keep two buffers, both the   //
+//  size of the amount we want to clip. We then start filling in the first  //
+//  buffer, overflowing into the second buffer and wrapping back to the     //
+//  first again in a circular fashion. When we fill up one buffer and are   //
+//  about to advance to the next, we write that next buffer out. Why?       //
+//  Because we know that, even if we got no more data in, we have enough    //
+//  data in the first buffer to clip out the amount we want, so the other   //
+//  half (which will have older data, being a circular buffer) can be       //
+//  written out safely.                                                     //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plWAVClipBuffer_h
@@ -52,27 +52,27 @@ class plWAVClipBuffer
 {
 public:
 
-	plWAVClipBuffer( UInt32 clipSize, CWaveFile *outFile );
-	~plWAVClipBuffer();
+    plWAVClipBuffer( UInt32 clipSize, CWaveFile *outFile );
+    ~plWAVClipBuffer();
 
-	// Inits the buffer. Can re-init if you wish
-	void	Init( UInt32 clipSize, CWaveFile *outFile );
+    // Inits the buffer. Can re-init if you wish
+    void    Init( UInt32 clipSize, CWaveFile *outFile );
 
-	// Writes/adds data to the buffer
-	hsBool	WriteData( UInt32 size, UInt8 *data );
+    // Writes/adds data to the buffer
+    hsBool  WriteData( UInt32 size, UInt8 *data );
 
-	// Call at the end, flushes the buffer and performs the clipping
-	hsBool	Flush( void );
+    // Call at the end, flushes the buffer and performs the clipping
+    hsBool  Flush( void );
 
 protected:
-	UInt8	*fBuffers[ 2 ];
-	UInt8	fWhichBuffer;	// 0 or 1
-	UInt32	fCursor, fBufferSize;
-	hsBool	fFirstFlip, fFlushCalled;
+    UInt8   *fBuffers[ 2 ];
+    UInt8   fWhichBuffer;   // 0 or 1
+    UInt32  fCursor, fBufferSize;
+    hsBool  fFirstFlip, fFlushCalled;
 
-	CWaveFile	*fOutFile;
+    CWaveFile   *fOutFile;
 
-	void	IShutdown( void );
+    void    IShutdown( void );
 };
 
 #endif //_plWAVClipBuffer_h

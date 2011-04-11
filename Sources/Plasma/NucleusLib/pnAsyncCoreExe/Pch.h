@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnAsyncCore/pnAsyncCore.h"
 
 #ifdef SERVER
-#include "pnCrash/pnCrash.h"	// deadlock API
+#include "pnCrash/pnCrash.h"    // deadlock API
 #endif
 
 #include "Private/pnAceInt.h"

@@ -37,31 +37,31 @@ class hsStream;
 class plAgeLoadedMsg : public plMessage
 {
 public:
-	CLASSNAME_REGISTER( plAgeLoadedMsg );
-	GETINTERFACE_ANY( plAgeLoadedMsg, plMessage );
+    CLASSNAME_REGISTER( plAgeLoadedMsg );
+    GETINTERFACE_ANY( plAgeLoadedMsg, plMessage );
 
-	plAgeLoadedMsg() : fLoaded(true) { SetBCastFlag(kBCastByType); }
+    plAgeLoadedMsg() : fLoaded(true) { SetBCastFlag(kBCastByType); }
 
-	// True if the pages finished loading, false if they finished unloading
-	bool fLoaded;
+    // True if the pages finished loading, false if they finished unloading
+    bool fLoaded;
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgRead(stream, mgr);	 fLoaded = stream->Readbool(); }
-	void Write(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgWrite(stream, mgr); stream->Writebool(fLoaded); }
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr);  fLoaded = stream->Readbool(); }
+    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); stream->Writebool(fLoaded); }
 };
 
 // A msg sent locally when panding pages are done loaded and it's now ok to join the game
 class plAgeLoaded2Msg : public plMessage
 {
 public:
-	CLASSNAME_REGISTER( plAgeLoaded2Msg );
-	GETINTERFACE_ANY( plAgeLoaded2Msg, plMessage );
+    CLASSNAME_REGISTER( plAgeLoaded2Msg );
+    GETINTERFACE_ANY( plAgeLoaded2Msg, plMessage );
 
-	plAgeLoaded2Msg() { SetBCastFlag(kBCastByType); }
-	
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgRead(stream, mgr);	 }
-	void Write(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgWrite(stream, mgr); }
+    plAgeLoaded2Msg() { SetBCastFlag(kBCastByType); }
+    
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr);  }
+    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); }
 };
 
 //
@@ -70,17 +70,17 @@ public:
 class plAgeBeginLoadingMsg : public plMessage
 {
 public:
-	CLASSNAME_REGISTER(plAgeBeginLoadingMsg);
-	GETINTERFACE_ANY(plAgeBeginLoadingMsg, plMessage);
+    CLASSNAME_REGISTER(plAgeBeginLoadingMsg);
+    GETINTERFACE_ANY(plAgeBeginLoadingMsg, plMessage);
 
-	plAgeBeginLoadingMsg() : fLoading(true) { SetBCastFlag(kBCastByType); }
+    plAgeBeginLoadingMsg() : fLoading(true) { SetBCastFlag(kBCastByType); }
 
-	// True if the pages are starting to load, false if they are starting to unload
-	bool fLoading;
+    // True if the pages are starting to load, false if they are starting to unload
+    bool fLoading;
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgRead(stream, mgr);	 fLoading = stream->Readbool(); }
-	void Write(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgWrite(stream, mgr); stream->Writebool(fLoading); }
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr);  fLoading = stream->Readbool(); }
+    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); stream->Writebool(fLoading); }
 };
 
 //
@@ -95,8 +95,8 @@ public:
    plInitialAgeStateLoadedMsg() { SetBCastFlag(kBCastByType);   }
 
    // IO 
-   void Read(hsStream* stream, hsResMgr* mgr) {	plMessage::IMsgRead(stream, mgr); }
-   void Write(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgWrite(stream, mgr); }
+   void Read(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgRead(stream, mgr); }
+   void Write(hsStream* stream, hsResMgr* mgr)  {   plMessage::IMsgWrite(stream, mgr); }
 };
 
-#endif		// plAgeLoadedMsg
+#endif      // plAgeLoadedMsg

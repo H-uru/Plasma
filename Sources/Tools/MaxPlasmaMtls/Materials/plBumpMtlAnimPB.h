@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum
 {
-	kBumpAnimName,
-	kBumpAnimAutoStart,
-	kBumpAnimLoop,
-	kBumpAnimLoopName,
+    kBumpAnimName,
+    kBumpAnimAutoStart,
+    kBumpAnimLoop,
+    kBumpAnimLoopName,
 };
 
 #endif

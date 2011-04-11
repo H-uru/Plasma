@@ -34,44 +34,44 @@ pyTTTGame::pyTTTGame(): pyGameCli() {}
 
 pyTTTGame::pyTTTGame(pfGameCli* client): pyGameCli(client)
 {
-	if (client && (client->GetGameTypeId() != kGameTypeId_TicTacToe))
-		gameClient = nil; // wrong type, just clear it out
+    if (client && (client->GetGameTypeId() != kGameTypeId_TicTacToe))
+        gameClient = nil; // wrong type, just clear it out
 }
 
 bool pyTTTGame::IsTTTGame(std::wstring guid)
 {
-	Uuid gameUuid(guid.c_str());
-	return gameUuid == kGameTypeId_TicTacToe;
+    Uuid gameUuid(guid.c_str());
+    return gameUuid == kGameTypeId_TicTacToe;
 }
 
 void pyTTTGame::CreateTTTGame(pyKey& callbackKey, unsigned numPlayers)
 {
-	TTT_CreateParam init;
-	init.playerCount = numPlayers;
-	pfGameMgr::GetInstance()->CreateGame(callbackKey.getKey(), kGameTypeId_TicTacToe, 0, sizeof(init), &init);
+    TTT_CreateParam init;
+    init.playerCount = numPlayers;
+    pfGameMgr::GetInstance()->CreateGame(callbackKey.getKey(), kGameTypeId_TicTacToe, 0, sizeof(init), &init);
 }
 
 void pyTTTGame::JoinCommonTTTGame(pyKey& callbackKey, unsigned gameID, unsigned numPlayers)
 {
-	TTT_CreateParam init;
-	init.playerCount = numPlayers;
-	pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_TicTacToe, gameID, sizeof(init), &init);
+    TTT_CreateParam init;
+    init.playerCount = numPlayers;
+    pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_TicTacToe, gameID, sizeof(init), &init);
 }
 
 void pyTTTGame::MakeMove(unsigned row, unsigned col)
 {
-	if (gameClient)
-	{
-		pfGmTicTacToe* ttt = pfGmTicTacToe::ConvertNoRef(gameClient);
-		ttt->MakeMove(row, col);
-	}
+    if (gameClient)
+    {
+        pfGmTicTacToe* ttt = pfGmTicTacToe::ConvertNoRef(gameClient);
+        ttt->MakeMove(row, col);
+    }
 }
 
 void pyTTTGame::ShowBoard()
 {
-	if (gameClient)
-	{
-		pfGmTicTacToe* ttt = pfGmTicTacToe::ConvertNoRef(gameClient);
-		ttt->ShowBoard();
-	}
+    if (gameClient)
+    {
+        pfGmTicTacToe* ttt = pfGmTicTacToe::ConvertNoRef(gameClient);
+        ttt->ShowBoard();
+    }
 }

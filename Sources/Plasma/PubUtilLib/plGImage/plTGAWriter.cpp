@@ -24,15 +24,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plTGAWriter Class Functions												 //
-//	Simple utility class for writing a plMipmap out as a TGA file			 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plTGAWriter Class Functions                                              //
+//  Simple utility class for writing a plMipmap out as a TGA file            //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	8.15.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  8.15.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -43,53 +43,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Class Statics ////////////////////////////////////////////////////////////
 
-plTGAWriter	plTGAWriter::fInstance;
+plTGAWriter plTGAWriter::fInstance;
 
 
 //// WriteMipmap //////////////////////////////////////////////////////////////
 
-void	plTGAWriter::WriteMipmap( const char *fileName, plMipmap *mipmap )
+void    plTGAWriter::WriteMipmap( const char *fileName, plMipmap *mipmap )
 {
-	hsUNIXStream	stream;
-	int				x, y;
-	hsRGBAColor32	pixel;
+    hsUNIXStream    stream;
+    int             x, y;
+    hsRGBAColor32   pixel;
 
 
-	stream.Open( fileName, "wb" );
+    stream.Open( fileName, "wb" );
 
-	/// Write header
-	stream.WriteByte( 0 );	// Size of ID field
-	stream.WriteByte( 0 );	// Map type
-	stream.WriteByte( 2 );	// Type 2 image - Unmapped RGB
+    /// Write header
+    stream.WriteByte( 0 );  // Size of ID field
+    stream.WriteByte( 0 );  // Map type
+    stream.WriteByte( 2 );  // Type 2 image - Unmapped RGB
 
-	stream.WriteByte( 0 );	// Color map spec
-	stream.WriteByte( 0 );	// Color map spec
-	stream.WriteByte( 0 );	// Color map spec
-	stream.WriteByte( 0 );	// Color map spec
-	stream.WriteByte( 0 );	// Color map spec
+    stream.WriteByte( 0 );  // Color map spec
+    stream.WriteByte( 0 );  // Color map spec
+    stream.WriteByte( 0 );  // Color map spec
+    stream.WriteByte( 0 );  // Color map spec
+    stream.WriteByte( 0 );  // Color map spec
 
-	stream.WriteSwap16( 0 );	// xOrigin
-	stream.WriteSwap16( 0 );	// yOrigin
+    stream.WriteSwap16( 0 );    // xOrigin
+    stream.WriteSwap16( 0 );    // yOrigin
 
-	stream.WriteSwap16( (UInt16)mipmap->GetWidth() );
-	stream.WriteSwap16( (UInt16)mipmap->GetHeight() );
+    stream.WriteSwap16( (UInt16)mipmap->GetWidth() );
+    stream.WriteSwap16( (UInt16)mipmap->GetHeight() );
 
-	stream.WriteByte( 24 );
-	stream.WriteByte( 0 );
+    stream.WriteByte( 24 );
+    stream.WriteByte( 0 );
 
-	/// Write image data (gotta do inversed, stupid TGAs...)
-	for( y = mipmap->GetHeight() - 1; y >= 0; y-- )
-	{
-		for( x = 0; x < mipmap->GetWidth(); x++ )
-		{
-			pixel = *( (hsRGBAColor32 *)mipmap->GetAddr32( x, y ) );
-			stream.WriteByte( pixel.b );
-			stream.WriteByte( pixel.g );
-			stream.WriteByte( pixel.r );
-		}
-	}
+    /// Write image data (gotta do inversed, stupid TGAs...)
+    for( y = mipmap->GetHeight() - 1; y >= 0; y-- )
+    {
+        for( x = 0; x < mipmap->GetWidth(); x++ )
+        {
+            pixel = *( (hsRGBAColor32 *)mipmap->GetAddr32( x, y ) );
+            stream.WriteByte( pixel.b );
+            stream.WriteByte( pixel.g );
+            stream.WriteByte( pixel.r );
+        }
+    }
 
-	/// All done!
-	stream.Close();
+    /// All done!
+    stream.Close();
 }
 

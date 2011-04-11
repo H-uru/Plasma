@@ -24,13 +24,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plProgressMgr Functions													//
-//																			//
+//                                                                          //
+//  plProgressMgr Functions                                                 //
+//                                                                          //
 //// History /////////////////////////////////////////////////////////////////
-//																			//
-//	10.26.2001 mcn	- Created												//
-//																			//
+//                                                                          //
+//  10.26.2001 mcn  - Created                                               //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
@@ -48,198 +48,198 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// plProgressMgr Functions /////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-plProgressMgr	*plProgressMgr::fManager = nil;
+plProgressMgr   *plProgressMgr::fManager = nil;
 
 int plProgressMgr::fImageRotation[] = {
-	IDR_LOADING_01,
-	IDR_LOADING_18,
-	IDR_LOADING_17,
-	IDR_LOADING_16,
-	IDR_LOADING_15,
-	IDR_LOADING_14,
-	IDR_LOADING_13,
-	IDR_LOADING_12,
-	IDR_LOADING_11,
-	IDR_LOADING_10,
-	IDR_LOADING_09,
-	IDR_LOADING_08,
-	IDR_LOADING_07,
-	IDR_LOADING_06,
-	IDR_LOADING_05,
-	IDR_LOADING_04,
-	IDR_LOADING_03,
-	IDR_LOADING_02
+    IDR_LOADING_01,
+    IDR_LOADING_18,
+    IDR_LOADING_17,
+    IDR_LOADING_16,
+    IDR_LOADING_15,
+    IDR_LOADING_14,
+    IDR_LOADING_13,
+    IDR_LOADING_12,
+    IDR_LOADING_11,
+    IDR_LOADING_10,
+    IDR_LOADING_09,
+    IDR_LOADING_08,
+    IDR_LOADING_07,
+    IDR_LOADING_06,
+    IDR_LOADING_05,
+    IDR_LOADING_04,
+    IDR_LOADING_03,
+    IDR_LOADING_02
 };
 
 int plProgressMgr::fStaticTextIDs[] = {
-	0,
-	IDR_LOADING_UPDATETEXT,
+    0,
+    IDR_LOADING_UPDATETEXT,
 };
 
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 plProgressMgr::plProgressMgr()
 {
-	fOperations = nil;
-	fManager = this;
-	fCallbackProc = nil;
-	fCurrentStaticText = kNone;
+    fOperations = nil;
+    fManager = this;
+    fCallbackProc = nil;
+    fCurrentStaticText = kNone;
 }
 
 plProgressMgr::~plProgressMgr()
 {
-	while( fOperations != nil )
-		delete fOperations;
-	fManager = nil;
+    while( fOperations != nil )
+        delete fOperations;
+    fManager = nil;
 }
 
 //// RegisterOperation ///////////////////////////////////////////////////////
 
 plOperationProgress* plProgressMgr::RegisterOperation(hsScalar length, const char *title, StaticText staticTextType, bool isRetry, bool alwaysDrawText)
 {
-	return IRegisterOperation(length, title, staticTextType, isRetry, false, alwaysDrawText);
+    return IRegisterOperation(length, title, staticTextType, isRetry, false, alwaysDrawText);
 }
 
 plOperationProgress* plProgressMgr::RegisterOverallOperation(hsScalar length, const char *title, StaticText staticTextType, bool alwaysDrawText)
 {
-	return IRegisterOperation(length, title, staticTextType, false, true, alwaysDrawText);
+    return IRegisterOperation(length, title, staticTextType, false, true, alwaysDrawText);
 }
 
 plOperationProgress* plProgressMgr::IRegisterOperation(hsScalar length, const char *title, StaticText staticTextType, bool isRetry, bool isOverall, bool alwaysDrawText)
 {
-	if (fOperations == nil)
-	{
-		fCurrentStaticText = staticTextType;
-		Activate();
-	}
+    if (fOperations == nil)
+    {
+        fCurrentStaticText = staticTextType;
+        Activate();
+    }
 
-	plOperationProgress	*op = TRACKED_NEW plOperationProgress( length );
+    plOperationProgress *op = TRACKED_NEW plOperationProgress( length );
 
-	op->SetTitle( title );
+    op->SetTitle( title );
 
-	if (fOperations)
-	{
-		fOperations->fBack = op;
-		op->fNext = fOperations;
-	}
-	fOperations = op;
+    if (fOperations)
+    {
+        fOperations->fBack = op;
+        op->fNext = fOperations;
+    }
+    fOperations = op;
 
-	if (isRetry)
-		hsSetBits(op->fFlags, plOperationProgress::kRetry);
-	if (isOverall)
-		hsSetBits(op->fFlags, plOperationProgress::kOverall);
-	if (alwaysDrawText)
-		hsSetBits(op->fFlags, plOperationProgress::kAlwaysDrawText);
+    if (isRetry)
+        hsSetBits(op->fFlags, plOperationProgress::kRetry);
+    if (isOverall)
+        hsSetBits(op->fFlags, plOperationProgress::kOverall);
+    if (alwaysDrawText)
+        hsSetBits(op->fFlags, plOperationProgress::kAlwaysDrawText);
 
-	IUpdateCallbackProc( op );
+    IUpdateCallbackProc( op );
 
-	return op;
+    return op;
 }
 
 void plProgressMgr::IUnregisterOperation(plOperationProgress* op)
 {
-	plOperationProgress* last = nil;
-	plOperationProgress* cur = fOperations;
+    plOperationProgress* last = nil;
+    plOperationProgress* cur = fOperations;
 
-	while (cur)
-	{
-		if (cur == op)
-		{
-			if (cur->fNext)
-				cur->fNext->fBack = last;
+    while (cur)
+    {
+        if (cur == op)
+        {
+            if (cur->fNext)
+                cur->fNext->fBack = last;
 
-			if (last)
-				last->fNext = cur->fNext;
-			else
-				fOperations = cur->fNext;
+            if (last)
+                last->fNext = cur->fNext;
+            else
+                fOperations = cur->fNext;
 
-			break;
-		}
+            break;
+        }
 
-		last = cur;
-		cur = cur->fNext;
-	}
+        last = cur;
+        cur = cur->fNext;
+    }
 
-	if (fOperations == nil)
-	{
-		fCurrentStaticText = kNone;
-		Deactivate();
-	}
+    if (fOperations == nil)
+    {
+        fCurrentStaticText = kNone;
+        Deactivate();
+    }
 }
 
 //// IUpdateCallbackProc /////////////////////////////////////////////////////
 
 void plProgressMgr::IUpdateFlags(plOperationProgress* progress)
 {
-	// Init update is done, clear it and set first update
-	if (hsCheckBits(progress->fFlags, plOperationProgress::kInitUpdate))
-	{
-		hsClearBits(progress->fFlags, plOperationProgress::kInitUpdate);
-		hsSetBits(progress->fFlags, plOperationProgress::kFirstUpdate);
-	}
-	// First update is done, clear it
-	else if (hsCheckBits(progress->fFlags, plOperationProgress::kFirstUpdate))
-		hsClearBits(progress->fFlags, plOperationProgress::kFirstUpdate);
+    // Init update is done, clear it and set first update
+    if (hsCheckBits(progress->fFlags, plOperationProgress::kInitUpdate))
+    {
+        hsClearBits(progress->fFlags, plOperationProgress::kInitUpdate);
+        hsSetBits(progress->fFlags, plOperationProgress::kFirstUpdate);
+    }
+    // First update is done, clear it
+    else if (hsCheckBits(progress->fFlags, plOperationProgress::kFirstUpdate))
+        hsClearBits(progress->fFlags, plOperationProgress::kFirstUpdate);
 }
 
 void plProgressMgr::IUpdateCallbackProc(plOperationProgress* progress)
 {
-	// Update the parent, if necessary
-	plOperationProgress* parentProgress = progress->GetNext();
-	while (parentProgress && parentProgress->IsOverallProgress())
-	{
-		parentProgress->IChildUpdateBegin(progress);
-		parentProgress = parentProgress->GetNext();
-	}
+    // Update the parent, if necessary
+    plOperationProgress* parentProgress = progress->GetNext();
+    while (parentProgress && parentProgress->IsOverallProgress())
+    {
+        parentProgress->IChildUpdateBegin(progress);
+        parentProgress = parentProgress->GetNext();
+    }
 
-	// Update everyone who wants to know about progress
-	IDerivedCallbackProc(progress);
-	if (fCallbackProc != nil)
-		fCallbackProc(progress);
+    // Update everyone who wants to know about progress
+    IDerivedCallbackProc(progress);
+    if (fCallbackProc != nil)
+        fCallbackProc(progress);
 
-	IUpdateFlags(progress);
+    IUpdateFlags(progress);
 
-	parentProgress = progress->GetNext();
-	while (parentProgress && parentProgress->IsOverallProgress())
-	{
-		parentProgress->IChildUpdateEnd(progress);
-		parentProgress = parentProgress->GetNext();
-	}
+    parentProgress = progress->GetNext();
+    while (parentProgress && parentProgress->IsOverallProgress())
+    {
+        parentProgress->IChildUpdateEnd(progress);
+        parentProgress = parentProgress->GetNext();
+    }
 }
 
 //// SetCallbackProc /////////////////////////////////////////////////////////
 
 plProgressMgrCallbackProc plProgressMgr::SetCallbackProc( plProgressMgrCallbackProc proc )
 {
-	plProgressMgrCallbackProc old = fCallbackProc;
-	fCallbackProc = proc;
-	return old;
+    plProgressMgrCallbackProc old = fCallbackProc;
+    fCallbackProc = proc;
+    return old;
 }
 
 //// CancelAllOps ////////////////////////////////////////////////////////////
 
-void	plProgressMgr::CancelAllOps( void )
+void    plProgressMgr::CancelAllOps( void )
 {
-	plOperationProgress *op;
+    plOperationProgress *op;
 
 
-	for( op = fOperations; op != nil; op = op->GetNext() )
-		op->SetCancelFlag( true );
+    for( op = fOperations; op != nil; op = op->GetNext() )
+        op->SetCancelFlag( true );
 
-	fCurrentStaticText = kNone;
+    fCurrentStaticText = kNone;
 }
 
-int		plProgressMgr::GetLoadingFrameID(int index)
+int     plProgressMgr::GetLoadingFrameID(int index)
 {
-	if (index < (sizeof(fImageRotation) / sizeof(int)))
-		return fImageRotation[index];
-	else
-		return fImageRotation[0];
+    if (index < (sizeof(fImageRotation) / sizeof(int)))
+        return fImageRotation[index];
+    else
+        return fImageRotation[0];
 }
 
-int		plProgressMgr::GetStaticTextID(StaticText staticTextType)
+int     plProgressMgr::GetStaticTextID(StaticText staticTextType)
 {
-	return fStaticTextIDs[staticTextType];
+    return fStaticTextIDs[staticTextType];
 }
 
 
@@ -248,140 +248,140 @@ int		plProgressMgr::GetStaticTextID(StaticText staticTextType)
 //////////////////////////////////////////////////////////////////////////////
 
 plOperationProgress::plOperationProgress( hsScalar length ) :
-	fMax(length),
-	fValue(0),
-	fNext(nil),
-	fBack(nil),
-	fContext(0),
-	fFlags(kInitUpdate),
-	fStartTime(hsTimer::GetSeconds()),
-	fElapsedSecs(0),
-	fRemainingSecs(0),
-	fAmtPerSec(0.f)
+    fMax(length),
+    fValue(0),
+    fNext(nil),
+    fBack(nil),
+    fContext(0),
+    fFlags(kInitUpdate),
+    fStartTime(hsTimer::GetSeconds()),
+    fElapsedSecs(0),
+    fRemainingSecs(0),
+    fAmtPerSec(0.f)
 {
-	memset( fStatusText, 0, sizeof( fStatusText ) );
-	memset( fTitle, 0, sizeof( fTitle ) );
+    memset( fStatusText, 0, sizeof( fStatusText ) );
+    memset( fTitle, 0, sizeof( fTitle ) );
 }
 
 plOperationProgress::~plOperationProgress()
 {
-	hsSetBits(fFlags, kLastUpdate);
-	if (!IsOverallProgress())
-		plProgressMgr::GetInstance()->IUpdateCallbackProc(this);
-	plProgressMgr::GetInstance()->IUnregisterOperation(this);
+    hsSetBits(fFlags, kLastUpdate);
+    if (!IsOverallProgress())
+        plProgressMgr::GetInstance()->IUpdateCallbackProc(this);
+    plProgressMgr::GetInstance()->IUnregisterOperation(this);
 }
 
 void plOperationProgress::IUpdateStats()
 {
-	double curTime = hsTimer::GetSeconds();
-	double elapsed = 0;
-	if (curTime > fStartTime)
-		elapsed = curTime - fStartTime;
-	else
-		elapsed = fStartTime - curTime;
+    double curTime = hsTimer::GetSeconds();
+    double elapsed = 0;
+    if (curTime > fStartTime)
+        elapsed = curTime - fStartTime;
+    else
+        elapsed = fStartTime - curTime;
 
-	hsScalar progress = GetProgress();
+    hsScalar progress = GetProgress();
 
-	if (elapsed > 0)
-		fAmtPerSec = progress / hsScalar(elapsed);
-	else
-		fAmtPerSec = 0;
-	fElapsedSecs = (UInt32)elapsed;
-	if (progress < fMax)
-		fRemainingSecs = (UInt32)((fMax - progress) / fAmtPerSec);
-	else
-		fRemainingSecs = 0;
+    if (elapsed > 0)
+        fAmtPerSec = progress / hsScalar(elapsed);
+    else
+        fAmtPerSec = 0;
+    fElapsedSecs = (UInt32)elapsed;
+    if (progress < fMax)
+        fRemainingSecs = (UInt32)((fMax - progress) / fAmtPerSec);
+    else
+        fRemainingSecs = 0;
 }
 
 void plOperationProgress::IChildUpdateBegin(plOperationProgress* child)
 {
-	if (child->IsFirstUpdate() && child->IsRetry())
-	{
-		// We're retrying this file, so update the overall stats to reflect the additional download
-		fMax += child->GetMax();
-	}
-	fValue += child->GetProgress();
+    if (child->IsFirstUpdate() && child->IsRetry())
+    {
+        // We're retrying this file, so update the overall stats to reflect the additional download
+        fMax += child->GetMax();
+    }
+    fValue += child->GetProgress();
 
-	IUpdateStats();
+    IUpdateStats();
 }
 
 void plOperationProgress::IChildUpdateEnd(plOperationProgress* child)
 {
-	// If we're aborting, modify the total bytes to reflect any data we didn't download
-	if (hsCheckBits(child->fFlags, plOperationProgress::kAborting))
-		fMax += child->GetProgress() - child->GetMax();
-	else if (!child->IsLastUpdate())
-		fValue -= child->GetProgress();
+    // If we're aborting, modify the total bytes to reflect any data we didn't download
+    if (hsCheckBits(child->fFlags, plOperationProgress::kAborting))
+        fMax += child->GetProgress() - child->GetMax();
+    else if (!child->IsLastUpdate())
+        fValue -= child->GetProgress();
 }
 
 //// Increment ///////////////////////////////////////////////////////////////
 
-void	plOperationProgress::Increment( hsScalar byHowMuch )
+void    plOperationProgress::Increment( hsScalar byHowMuch )
 {
-	fValue += byHowMuch;
-	if( fValue > fMax )
-		fValue = fMax;
-	IUpdateStats();
+    fValue += byHowMuch;
+    if( fValue > fMax )
+        fValue = fMax;
+    IUpdateStats();
 
-	plProgressMgr::GetInstance()->IUpdateCallbackProc( this );
+    plProgressMgr::GetInstance()->IUpdateCallbackProc( this );
 }
 
 //// SetHowMuch //////////////////////////////////////////////////////////////
 
-void	plOperationProgress::SetHowMuch( hsScalar howMuch )
+void    plOperationProgress::SetHowMuch( hsScalar howMuch )
 {
-	fValue = howMuch;
-	if( fValue > fMax )
-		fValue = fMax;
-	IUpdateStats();
+    fValue = howMuch;
+    if( fValue > fMax )
+        fValue = fMax;
+    IUpdateStats();
 
-	plProgressMgr::GetInstance()->IUpdateCallbackProc( this );
+    plProgressMgr::GetInstance()->IUpdateCallbackProc( this );
 }
 
 //// SetStatusText ///////////////////////////////////////////////////////////
 
-void	plOperationProgress::SetStatusText( const char *text )
+void    plOperationProgress::SetStatusText( const char *text )
 {
-	if( text != nil )
-		strncpy( fStatusText, text, sizeof( fStatusText ) );
-	else
-		fStatusText[ 0 ] = 0;
+    if( text != nil )
+        strncpy( fStatusText, text, sizeof( fStatusText ) );
+    else
+        fStatusText[ 0 ] = 0;
 }
 
 //// SetTitle ////////////////////////////////////////////////////////////////
 
-void	plOperationProgress::SetTitle( const char *text )
+void    plOperationProgress::SetTitle( const char *text )
 {
-	if (text != nil)
-	{
-		strncpy(fTitle, text, sizeof(fTitle));
-	}
-	else
-		fTitle[0] = 0;
+    if (text != nil)
+    {
+        strncpy(fTitle, text, sizeof(fTitle));
+    }
+    else
+        fTitle[0] = 0;
 }
 
 //// SetLength ///////////////////////////////////////////////////////////////
 
-void	plOperationProgress::SetLength( hsScalar length )
+void    plOperationProgress::SetLength( hsScalar length )
 {
-	fMax = length;
-	if( fValue > fMax )
-		fValue = fMax;
-	IUpdateStats();
+    fMax = length;
+    if( fValue > fMax )
+        fValue = fMax;
+    IUpdateStats();
 
-	plProgressMgr::GetInstance()->IUpdateCallbackProc( this );
+    plProgressMgr::GetInstance()->IUpdateCallbackProc( this );
 }
 
 void plOperationProgress::SetAborting()
 {
-	hsSetBits(fFlags, kAborting);
-	plProgressMgr::GetInstance()->IUpdateCallbackProc(this);
-	fMax = fValue = 0.f;
-	hsClearBits(fFlags, kAborting);
+    hsSetBits(fFlags, kAborting);
+    plProgressMgr::GetInstance()->IUpdateCallbackProc(this);
+    fMax = fValue = 0.f;
+    hsClearBits(fFlags, kAborting);
 }
 
 void plOperationProgress::SetRetry()
 {
-	hsSetBits(fFlags, kRetry);
-	hsSetBits(fFlags, kFirstUpdate);
+    hsSetBits(fFlags, kRetry);
+    hsSetBits(fFlags, kFirstUpdate);
 }

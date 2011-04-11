@@ -37,24 +37,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plClientUnifiedTime : public plUnifiedTime
 {
 private:
-	static plUnifiedTime	fFrameStartTime;
-	static double			fSysTimeOffset;
+    static plUnifiedTime    fFrameStartTime;
+    static double           fSysTimeOffset;
 public:
-	plClientUnifiedTime(plUnifiedTime ut) { *this=ut;	}
-	plClientUnifiedTime() {}
+    plClientUnifiedTime(plUnifiedTime ut) { *this=ut;   }
+    plClientUnifiedTime() {}
 
-	static void SetSysTime();
-	static plUnifiedTime& GetFrameStartTime() { return fFrameStartTime;	}
+    static void SetSysTime();
+    static plUnifiedTime& GetFrameStartTime() { return fFrameStartTime; }
 
-	plUnifiedTime& GetAsUnifiedTime() { return *(plUnifiedTime*)this; 	}
+    plUnifiedTime& GetAsUnifiedTime() { return *(plUnifiedTime*)this;   }
 
-	// game secs conversions
-	void SetFromGameTime(double gameTime, double curGameSecs);
-	void ConvertToGameTime(double* gameTimeOut, double curGameSecs);
+    // game secs conversions
+    void SetFromGameTime(double gameTime, double curGameSecs);
+    void ConvertToGameTime(double* gameTimeOut, double curGameSecs);
 
-	const plClientUnifiedTime & operator=(const plUnifiedTime & src);
-	const plClientUnifiedTime & operator=(const plClientUnifiedTime & src);
+    const plClientUnifiedTime & operator=(const plUnifiedTime & src);
+    const plClientUnifiedTime & operator=(const plClientUnifiedTime & src);
 };
 
-#endif	// plClientUnifiedTime_inc'
+#endif  // plClientUnifiedTime_inc'
 

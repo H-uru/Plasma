@@ -35,36 +35,36 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptCluster)
 
 PYTHON_INIT_DEFINITION(ptCluster, args, keywords)
 {
-	PyObject* keyObj = NULL;
-	if (!PyArg_ParseTuple(args, "O", &keyObj))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	if (!pyKey::Check(keyObj))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	pyKey* key = pyKey::ConvertFrom(keyObj);
-	self->fThis->SetKey(*key);
-	PYTHON_RETURN_INIT_OK;
+    PyObject* keyObj = NULL;
+    if (!PyArg_ParseTuple(args, "O", &keyObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    if (!pyKey::Check(keyObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    pyKey* key = pyKey::ConvertFrom(keyObj);
+    self->fThis->SetKey(*key);
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_METHOD_DEFINITION(ptCluster, setVisible, args)
 {
-	char visibleFlag;
-	if (!PyArg_ParseTuple(args, "b", &visibleFlag))
-	{
-		PyErr_SetString(PyExc_TypeError, "setVisible expects a boolean");
-		PYTHON_RETURN_ERROR;
-	}
-	self->fThis->SetVisible(visibleFlag != 0);
-	PYTHON_RETURN_NONE;
+    char visibleFlag;
+    if (!PyArg_ParseTuple(args, "b", &visibleFlag))
+    {
+        PyErr_SetString(PyExc_TypeError, "setVisible expects a boolean");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetVisible(visibleFlag != 0);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_START_METHODS_TABLE(ptCluster)
-	PYTHON_METHOD(ptCluster, setVisible, "Params:visible\nShows or hides the cluster object"),
+    PYTHON_METHOD(ptCluster, setVisible, "Params:visible\nShows or hides the cluster object"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -73,16 +73,16 @@ PLASMA_DEFAULT_TYPE(ptCluster, "Params:key\nCreates a new ptCluster");
 // required functions for PyObject interoperability
 PyObject *pyCluster::New(plKey key)
 {
-	ptCluster *newObj = (ptCluster*)ptCluster_type.tp_new(&ptCluster_type, NULL, NULL);
-	newObj->fThis->fClusterKey = key;
-	return (PyObject*)newObj;
+    ptCluster *newObj = (ptCluster*)ptCluster_type.tp_new(&ptCluster_type, NULL, NULL);
+    newObj->fThis->fClusterKey = key;
+    return (PyObject*)newObj;
 }
 
 PyObject *pyCluster::New(pyKey& key)
 {
-	ptCluster *newObj = (ptCluster*)ptCluster_type.tp_new(&ptCluster_type, NULL, NULL);
-	newObj->fThis->fClusterKey = key.getKey();
-	return (PyObject*)newObj;
+    ptCluster *newObj = (ptCluster*)ptCluster_type.tp_new(&ptCluster_type, NULL, NULL);
+    newObj->fThis->fClusterKey = key.getKey();
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptCluster, pyCluster)
@@ -94,7 +94,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptCluster, pyCluster)
 //
 void pyCluster::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptCluster);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptCluster);
+    PYTHON_CLASS_IMPORT_END(m);
 }

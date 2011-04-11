@@ -35,50 +35,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plDetectorModifier : public plSingleModifier
 {
 protected:
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty){ return true; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty){ return true; }
 
-	hsTArray<plKey>		fReceivers;
-	plModifier*			fRemoteMod;
-	plKey				fProxyKey;
+    hsTArray<plKey>     fReceivers;
+    plModifier*         fRemoteMod;
+    plKey               fProxyKey;
 
 public:
-	plDetectorModifier() : fRemoteMod(nil),fProxyKey(nil){;}
-	virtual ~plDetectorModifier(){;}
-	
-//	virtual hsBool MsgReceive(plMessage* msg) = 0;
+    plDetectorModifier() : fRemoteMod(nil),fProxyKey(nil){;}
+    virtual ~plDetectorModifier(){;}
+    
+//  virtual hsBool MsgReceive(plMessage* msg) = 0;
 
-	CLASSNAME_REGISTER( plDetectorModifier );
-	GETINTERFACE_ANY( plDetectorModifier, plSingleModifier );
-	void AddLogicObj(plKey pKey) { fReceivers.Append(pKey); }
-	void SetRemote(plModifier* p) { fRemoteMod = p; }
-	plModifier* RemoteMod() { return fRemoteMod; }
-	virtual void SetType(Int8 i) {;}
-	int GetNumReceivers() const { return fReceivers.Count(); }
-	plKey GetReceiver(int i) const { return fReceivers[i]; }
-	void SetProxyKey(const plKey &k) { fProxyKey = k; }
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plSingleModifier::Read(stream, mgr);
-		int n = stream->ReadSwap32();
-		fReceivers.Reset();
-		for(int i = 0; i < n; i++ )
-		{	
-			fReceivers.Append(mgr->ReadKey(stream));
-		}
-		mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
-		fProxyKey = mgr->ReadKey(stream);
-	}
+    CLASSNAME_REGISTER( plDetectorModifier );
+    GETINTERFACE_ANY( plDetectorModifier, plSingleModifier );
+    void AddLogicObj(plKey pKey) { fReceivers.Append(pKey); }
+    void SetRemote(plModifier* p) { fRemoteMod = p; }
+    plModifier* RemoteMod() { return fRemoteMod; }
+    virtual void SetType(Int8 i) {;}
+    int GetNumReceivers() const { return fReceivers.Count(); }
+    plKey GetReceiver(int i) const { return fReceivers[i]; }
+    void SetProxyKey(const plKey &k) { fProxyKey = k; }
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plSingleModifier::Read(stream, mgr);
+        int n = stream->ReadSwap32();
+        fReceivers.Reset();
+        for(int i = 0; i < n; i++ )
+        {   
+            fReceivers.Append(mgr->ReadKey(stream));
+        }
+        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+        fProxyKey = mgr->ReadKey(stream);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plSingleModifier::Write(stream, mgr);
-		stream->WriteSwap32(fReceivers.GetCount());
-		for( int i = 0; i < fReceivers.GetCount(); i++ )
-			mgr->WriteKey(stream, fReceivers[i]);
-		
-		mgr->WriteKey(stream, fRemoteMod);
-		mgr->WriteKey(stream, fProxyKey);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plSingleModifier::Write(stream, mgr);
+        stream->WriteSwap32(fReceivers.GetCount());
+        for( int i = 0; i < fReceivers.GetCount(); i++ )
+            mgr->WriteKey(stream, fReceivers[i]);
+        
+        mgr->WriteKey(stream, fRemoteMod);
+        mgr->WriteKey(stream, fProxyKey);
+    }
 };
 
 

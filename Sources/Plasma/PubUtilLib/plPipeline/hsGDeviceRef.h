@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	hsGDeviceRef.h - Header for the generic deviceRef class      			 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  hsGDeviceRef.h - Header for the generic deviceRef class                  //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef hsGDeviceRef_inc
@@ -39,23 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsGDeviceRef : public hsRefCnt
 {
 protected:
-	UInt32		fFlags;
+    UInt32      fFlags;
 
 public:
-	// Note, derived classes define more flags. Take care if adding flags here.
-	// Currently have flags 0x0 - 0x8 reserved.
-	enum {
-		kNone			= 0x0,
-		kDirty			= 0x1
-	};
+    // Note, derived classes define more flags. Take care if adding flags here.
+    // Currently have flags 0x0 - 0x8 reserved.
+    enum {
+        kNone           = 0x0,
+        kDirty          = 0x1
+    };
 
-	UInt32					fUseTime;		// time stamp when last used - stat gather only
+    UInt32                  fUseTime;       // time stamp when last used - stat gather only
 
-	hsBool IsDirty() const { return (fFlags & kDirty); }
-	void SetDirty(hsBool on) { if(on)fFlags |= kDirty; else fFlags &= ~kDirty; }
+    hsBool IsDirty() const { return (fFlags & kDirty); }
+    void SetDirty(hsBool on) { if(on)fFlags |= kDirty; else fFlags &= ~kDirty; }
 
-	hsGDeviceRef() : fFlags(0), fUseTime(0) {}
-	virtual ~hsGDeviceRef() {}
+    hsGDeviceRef() : fFlags(0), fUseTime(0) {}
+    virtual ~hsGDeviceRef() {}
 };
 
 #endif // hsGDeviceRef_inc

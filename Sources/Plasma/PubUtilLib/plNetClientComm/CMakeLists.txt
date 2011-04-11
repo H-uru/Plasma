@@ -7,12 +7,12 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plNetClientComm_SOURCES
-	plNetClientComm.cpp
+    plNetClientComm.cpp
 )
 
 set(plNetClientComm_HEADERS
-	plNetClientComm.h
-	plNetClientCommCreatable.h
+    plNetClientComm.h
+    plNetClientCommCreatable.h
 )
 
 add_library(plNetClientComm STATIC ${plNetClientComm_SOURCES} ${plNetClientComm_HEADERS})

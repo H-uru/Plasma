@@ -40,33 +40,33 @@ class plPipeline;
 class plDXTextFont : public plTextFont
 {
 protected:
-	IDirect3DTexture9			*fD3DTexture;
-	IDirect3DDevice9			*fDevice; 
+    IDirect3DTexture9           *fD3DTexture;
+    IDirect3DDevice9            *fDevice; 
 
-	static IDirect3DVertexBuffer9		*fBuffer;
-	static UInt32						fBufferCursor;
+    static IDirect3DVertexBuffer9       *fBuffer;
+    static UInt32                       fBufferCursor;
 
-	IDirect3DStateBlock9 *fOldStateBlock;
-	IDirect3DStateBlock9 *fTextStateBlock;
+    IDirect3DStateBlock9 *fOldStateBlock;
+    IDirect3DStateBlock9 *fTextStateBlock;
 
-	virtual void	ICreateTexture( UInt16 *data );
-	virtual void	IInitStateBlocks( void );
-	virtual void	IDrawPrimitive( UInt32 count, plFontVertex *array );
-	virtual void	IDrawLines( UInt32 count, plFontVertex *array );
+    virtual void    ICreateTexture( UInt16 *data );
+    virtual void    IInitStateBlocks( void );
+    virtual void    IDrawPrimitive( UInt32 count, plFontVertex *array );
+    virtual void    IDrawLines( UInt32 count, plFontVertex *array );
 
 public:
-	plDXTextFont( plPipeline *pipe, IDirect3DDevice9 *device );
-	~plDXTextFont();
+    plDXTextFont( plPipeline *pipe, IDirect3DDevice9 *device );
+    ~plDXTextFont();
 
-	static	void CreateShared(IDirect3DDevice9* device);
-	static	void ReleaseShared(IDirect3DDevice9* device);
+    static  void CreateShared(IDirect3DDevice9* device);
+    static  void ReleaseShared(IDirect3DDevice9* device);
 
-	virtual void	FlushDraws( void );
-	virtual void	SaveStates( void );
-	virtual void	RestoreStates( void );
-	virtual void	DestroyObjects( void );
+    virtual void    FlushDraws( void );
+    virtual void    SaveStates( void );
+    virtual void    RestoreStates( void );
+    virtual void    DestroyObjects( void );
 
-	static const DWORD kFVF;
+    static const DWORD kFVF;
 };
 
 

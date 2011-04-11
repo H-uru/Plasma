@@ -1,5 +1,5 @@
 LIBRARY
 EXPORTS
-	GetKey @1
+    GetKey @1
 SECTIONS
-	.data READ WRITE
+    .data READ WRITE

@@ -32,13 +32,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 // A Time based Value Averaging class
-//	implemented in a ring buffer
+//  implemented in a ring buffer
 // Values are averaged over the RingLen
-//	independant of frame time
+//  independant of frame time
 // The ring buffer will grow to accomadate
-//	as many samples as added during the Len
+//  as many samples as added during the Len
 // Only Accurate to kPercision (0.001) of whatever units
-//	of time are used
+//  of time are used
 
 template <class T> class TimeBasedAvgRing
 {
@@ -49,43 +49,43 @@ template <class T> class TimeBasedAvgRing
   at window boundries
 */
 private:
-	static const float kPercision;
+    static const float kPercision;
 
-	template <class S> class Item
-	{
-	private:
-		T fValue;
-		double fTime;
-	public:
-		Item() { Reset(); }
-		Item(const T val, const double time) : fValue(val), fTime(time) { }
-		void Reset() { fValue = 0; fTime = 0; }
-		void SetValue(const T val) { fValue = val; }
-		void SetTime(const double time) { fTime = time; }
-		T GetValue() const { return fValue; }
-		double GetTime() const { return fTime; }
-	};
-	typedef std::list< Item<T> > TimeList;
-	typedef typename TimeList::iterator TimeListIterator; // .NET added typename to be C++ ISO compliant - JL
+    template <class S> class Item
+    {
+    private:
+        T fValue;
+        double fTime;
+    public:
+        Item() { Reset(); }
+        Item(const T val, const double time) : fValue(val), fTime(time) { }
+        void Reset() { fValue = 0; fTime = 0; }
+        void SetValue(const T val) { fValue = val; }
+        void SetTime(const double time) { fTime = time; }
+        T GetValue() const { return fValue; }
+        double GetTime() const { return fTime; }
+    };
+    typedef std::list< Item<T> > TimeList;
+    typedef typename TimeList::iterator TimeListIterator; // .NET added typename to be C++ ISO compliant - JL
 
-	TimeList fList;
-	float fLen;  // in time
-	float fAvg;
-	float fMaxAvg;
-	double fTotal;
-	TimeListIterator fRingStart, fRingEnd;
-	hsMutex	fLock;
+    TimeList fList;
+    float fLen;  // in time
+    float fAvg;
+    float fMaxAvg;
+    double fTotal;
+    TimeListIterator fRingStart, fRingEnd;
+    hsMutex fLock;
 public:
-	TimeBasedAvgRing():fLen(0.f),fAvg(0.f),fMaxAvg(0.f),fTotal(0.0) {}
+    TimeBasedAvgRing():fLen(0.f),fAvg(0.f),fMaxAvg(0.f),fTotal(0.0) {}
 
-	void SetRingLen(const float len) { fLen = len; }
-	float GetRingLen() const { return fLen; }
-	void AddItem(T value, double time);
-	float GetAvg() const { return fAvg; }
-	double GetTotal() const { return fTotal; }
-	float GetMaxAvg() const { return fMaxAvg; }
-	void ResetMaxAvg() { fMaxAvg=fAvg; }
-	void Reset() { fRingStart=fRingEnd; ResetMaxAvg(); }
+    void SetRingLen(const float len) { fLen = len; }
+    float GetRingLen() const { return fLen; }
+    void AddItem(T value, double time);
+    float GetAvg() const { return fAvg; }
+    double GetTotal() const { return fTotal; }
+    float GetMaxAvg() const { return fMaxAvg; }
+    void ResetMaxAvg() { fMaxAvg=fAvg; }
+    void Reset() { fRingStart=fRingEnd; ResetMaxAvg(); }
 };
 
 

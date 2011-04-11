@@ -32,49 +32,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsSfxDistShade : public hsGRenderProcs {
 public:
-	enum {
-		kShadeConstant		= 0x10000
-	};
+    enum {
+        kShadeConstant      = 0x10000
+    };
 
-	struct hsSfxDfTableEntry {
-		hsScalar			fDistDel;
-		hsScalar			fDistNorm;
-		hsScalar			fShade;
-	};
+    struct hsSfxDfTableEntry {
+        hsScalar            fDistDel;
+        hsScalar            fDistNorm;
+        hsScalar            fShade;
+    };
 protected:
 
-	hsScalar							fMinDist;
-	hsScalar							fMaxDist;
+    hsScalar                            fMinDist;
+    hsScalar                            fMaxDist;
 
-	hsScalar							fConstShade;
+    hsScalar                            fConstShade;
 
-	hsScalar							fMinIdle;
-	hsScalar							fMaxIdle;
+    hsScalar                            fMinIdle;
+    hsScalar                            fMaxIdle;
 
-	hsExpander<hsSfxDfTableEntry>		fTable;
+    hsExpander<hsSfxDfTableEntry>       fTable;
 
-	void		IConstShadeVerts(hsExpander<hsGShadeVertex*>& vList);
-	void		ICalcShadeVerts(hsExpander<hsGShadeVertex*>& vList);
-	hsScalar	IShadeFromDist(hsScalar dist);
+    void        IConstShadeVerts(hsExpander<hsGShadeVertex*>& vList);
+    void        ICalcShadeVerts(hsExpander<hsGShadeVertex*>& vList);
+    hsScalar    IShadeFromDist(hsScalar dist);
 public:
-	hsSfxDistShade();
-	virtual ~hsSfxDistShade();
+    hsSfxDistShade();
+    virtual ~hsSfxDistShade();
 
-	virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
+    virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
 
-	virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
+    virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
 
-	void MakeTable(float* distList, float* shadeList, int num); // lists sorted from lowest cosine to highest
+    void MakeTable(float* distList, float* shadeList, int num); // lists sorted from lowest cosine to highest
 
-	virtual void Read(hsStream* s);
-	virtual void Write(hsStream* s);
+    virtual void Read(hsStream* s);
+    virtual void Write(hsStream* s);
 
-	virtual const char* GetLabel() const { return "hsSfxDistShade"; }
+    virtual const char* GetLabel() const { return "hsSfxDistShade"; }
 
-	virtual ProcType GetType() const { return kTypeDistShade; }
+    virtual ProcType GetType() const { return kTypeDistShade; }
 
-	CLASSNAME_REGISTER( hsSfxDistShade );
-	GETINTERFACE_ANY( hsSfxDistShade, hsGRenderProcs );
+    CLASSNAME_REGISTER( hsSfxDistShade );
+    GETINTERFACE_ANY( hsSfxDistShade, hsGRenderProcs );
 
 };
 

@@ -52,119 +52,119 @@ enum plUnifiedTime_CtorNow { kNow };
 class plUnifiedTime //
 {
 public:
-	enum Mode
-	{
-		kGmt,
-		kLocal
-	};
+    enum Mode
+    {
+        kGmt,
+        kLocal
+    };
 
 protected:
-	UInt32	fSecs;
-	UInt32	fMicros;
-	Mode	fMode;
+    UInt32  fSecs;
+    UInt32  fMicros;
+    Mode    fMode;
 
-	static Int32	fLocalTimeZoneOffset;
+    static Int32    fLocalTimeZoneOffset;
 
-	struct tm * IGetTime(const time_t * timer) const;
+    struct tm * IGetTime(const time_t * timer) const;
 
-	static Int32	IGetLocalTimeZoneOffset( void );
+    static Int32    IGetLocalTimeZoneOffset( void );
 
 public:
-	plUnifiedTime() : fSecs(0),fMicros(0), fMode(kGmt) { }		// set ToEpoch() at start
-	plUnifiedTime(double secsDouble) { SetSecsDouble(secsDouble); }
-	plUnifiedTime(plUnifiedTime_CtorNow,int mode=kLocal);
-	plUnifiedTime(const timeval & tv);
-	plUnifiedTime(int mode, const struct tm & src);
-	plUnifiedTime(time_t t);
-	plUnifiedTime(unsigned long t);
-	plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec=0, int dst=-1);
-	plUnifiedTime(int mode, const char * buf, const char * fmt);
-	plUnifiedTime(const plUnifiedTime & src);
-	plUnifiedTime(const plUnifiedTime * src);
-	static plUnifiedTime GetCurrentTime(Mode mode=kGmt);
+    plUnifiedTime() : fSecs(0),fMicros(0), fMode(kGmt) { }      // set ToEpoch() at start
+    plUnifiedTime(double secsDouble) { SetSecsDouble(secsDouble); }
+    plUnifiedTime(plUnifiedTime_CtorNow,int mode=kLocal);
+    plUnifiedTime(const timeval & tv);
+    plUnifiedTime(int mode, const struct tm & src);
+    plUnifiedTime(time_t t);
+    plUnifiedTime(unsigned long t);
+    plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec=0, int dst=-1);
+    plUnifiedTime(int mode, const char * buf, const char * fmt);
+    plUnifiedTime(const plUnifiedTime & src);
+    plUnifiedTime(const plUnifiedTime * src);
+    static plUnifiedTime GetCurrentTime(Mode mode=kGmt);
 
-	// assignment
-	const plUnifiedTime & operator=(const plUnifiedTime & src);
-	const plUnifiedTime & operator=(const plUnifiedTime * src);
-	const plUnifiedTime & operator=(const struct timeval & src);
-	const plUnifiedTime & operator=(time_t src);
-	const plUnifiedTime & operator=(unsigned long t);
-	const plUnifiedTime & operator=(const struct tm & src);
+    // assignment
+    const plUnifiedTime & operator=(const plUnifiedTime & src);
+    const plUnifiedTime & operator=(const plUnifiedTime * src);
+    const plUnifiedTime & operator=(const struct timeval & src);
+    const plUnifiedTime & operator=(time_t src);
+    const plUnifiedTime & operator=(unsigned long t);
+    const plUnifiedTime & operator=(const struct tm & src);
 
-	// getters
-	UInt32 GetSecs() const { return fSecs; }
-	UInt32 GetMicros() const { return fMicros; }
-	double GetSecsDouble() const;  // get the secs and micros as a double floating point value
-	hsBool GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const;
-	struct tm * GetTm(struct tm * ptm=nil) const;
-	int GetYear() const;
-	int GetMonth() const;
-	int GetDay() const;
-	int GetHour() const;
-	int GetMinute() const;
-	int GetSecond() const;
-	int GetMillis() const;
-	int GetDayOfWeek() const;
-	int GetMode() const {return fMode;}	// local or gmt.
-	UInt32 AsMillis();
+    // getters
+    UInt32 GetSecs() const { return fSecs; }
+    UInt32 GetMicros() const { return fMicros; }
+    double GetSecsDouble() const;  // get the secs and micros as a double floating point value
+    hsBool GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const;
+    struct tm * GetTm(struct tm * ptm=nil) const;
+    int GetYear() const;
+    int GetMonth() const;
+    int GetDay() const;
+    int GetHour() const;
+    int GetMinute() const;
+    int GetSecond() const;
+    int GetMillis() const;
+    int GetDayOfWeek() const;
+    int GetMode() const {return fMode;} // local or gmt.
+    UInt32 AsMillis();
 
-	// setters
-	void SetSecs(const UInt32 secs) { fSecs = secs; }
-	void SetSecsDouble(double secs);
-	void SetMicros(const UInt32 micros) { fMicros = micros; }
-	hsBool SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
-	hsBool SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
-	hsBool SetToUTC();
-	void ToCurrentTime();
-	void ToEpoch() { fSecs = 0; fMicros = 0;}
-	void SetMode(Mode mode) { fMode=mode;}
-	void FromMillis(UInt32 millis);
+    // setters
+    void SetSecs(const UInt32 secs) { fSecs = secs; }
+    void SetSecsDouble(double secs);
+    void SetMicros(const UInt32 micros) { fMicros = micros; }
+    hsBool SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
+    hsBool SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
+    hsBool SetToUTC();
+    void ToCurrentTime();
+    void ToEpoch() { fSecs = 0; fMicros = 0;}
+    void SetMode(Mode mode) { fMode=mode;}
+    void FromMillis(UInt32 millis);
 #if HS_BUILD_FOR_WIN32
-	hsBool SetFromWinFileTime(const FILETIME ft);
+    hsBool SetFromWinFileTime(const FILETIME ft);
 #endif
-	
-	// query
-	bool AtEpoch() const { return fSecs == 0 && fMicros == 0;}
+    
+    // query
+    bool AtEpoch() const { return fSecs == 0 && fMicros == 0;}
 
-	void Read(hsStream* s);
-	void Write(hsStream* s) const;
+    void Read(hsStream* s);
+    void Write(hsStream* s) const;
 
-	// time math
-	const plUnifiedTime & operator+=(const plUnifiedTime & rhs);
-	const plUnifiedTime & operator-=(const plUnifiedTime & rhs);
-	friend plUnifiedTime operator -(const plUnifiedTime & left, const plUnifiedTime & right);
-	friend plUnifiedTime operator +(const plUnifiedTime & left, const plUnifiedTime & right);
-	static double GetTimeDifference(const plUnifiedTime& timeA, const plUnifiedTime& timeB);		// handles negative
+    // time math
+    const plUnifiedTime & operator+=(const plUnifiedTime & rhs);
+    const plUnifiedTime & operator-=(const plUnifiedTime & rhs);
+    friend plUnifiedTime operator -(const plUnifiedTime & left, const plUnifiedTime & right);
+    friend plUnifiedTime operator +(const plUnifiedTime & left, const plUnifiedTime & right);
+    static double GetTimeDifference(const plUnifiedTime& timeA, const plUnifiedTime& timeB);        // handles negative
 
-	// time compare
-	bool operator==(const plUnifiedTime & rhs) const;
-	bool operator!=(const plUnifiedTime & rhs) const;
-	bool operator <(const plUnifiedTime & rhs) const;
-	bool operator >(const plUnifiedTime & rhs) const;
-	bool operator<=(const plUnifiedTime & rhs) const;
-	bool operator>=(const plUnifiedTime & rhs) const;
+    // time compare
+    bool operator==(const plUnifiedTime & rhs) const;
+    bool operator!=(const plUnifiedTime & rhs) const;
+    bool operator <(const plUnifiedTime & rhs) const;
+    bool operator >(const plUnifiedTime & rhs) const;
+    bool operator<=(const plUnifiedTime & rhs) const;
+    bool operator>=(const plUnifiedTime & rhs) const;
 
-	friend bool operator <(const plUnifiedTime & time, int secs);
+    friend bool operator <(const plUnifiedTime & time, int secs);
 
 
-	// casting
-	operator time_t() const { return fSecs;}
-	operator timeval() const;
-	operator struct tm() const;
+    // casting
+    operator time_t() const { return fSecs;}
+    operator timeval() const;
+    operator struct tm() const;
 
-	// formatting (ala strftime)
-	std::string Format(const char * fmt) const;
+    // formatting (ala strftime)
+    std::string Format(const char * fmt) const;
 
-	// parsing
-	bool FromString(const char * buf, const char * fmt);
-	
-	const char* Print() const;	// print as simple string
-	const char* PrintWMillis() const;	// print as simple string w/ millis
+    // parsing
+    bool FromString(const char * buf, const char * fmt);
+    
+    const char* Print() const;  // print as simple string
+    const char* PrintWMillis() const;   // print as simple string w/ millis
 /*
 FromString: (from glibc's strptime() man page)
      Converts the character string pointed to by buf to values which are
-	 stored in the ``tm'' structure pointed to by tm, using the format
-	 specified by format.
+     stored in the ``tm'' structure pointed to by tm, using the format
+     specified by format.
 
      The following conversion specifications are supported:
 

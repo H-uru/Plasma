@@ -4,23 +4,23 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../PubUtilLib")
 
 set(pnKeyedObject_HEADERS
-	hsKeyedObject.h
-	plFixedKey.h
-	plKey.h
-	plKeyImp.h
-	plMsgForwarder.h
-	plReceiver.h
-	plUoid.h
-	pnKeyedObjectCreatable.h
+    hsKeyedObject.h
+    plFixedKey.h
+    plKey.h
+    plKeyImp.h
+    plMsgForwarder.h
+    plReceiver.h
+    plUoid.h
+    pnKeyedObjectCreatable.h
 )
 
 set(pnKeyedObject_SOURCES
-	hsKeyedObject.cpp
-	plFixedKey.cpp
-	plKey.cpp
-	plKeyImp.cpp
-	plMsgForwarder.cpp
-	plUoid.cpp
+    hsKeyedObject.cpp
+    plFixedKey.cpp
+    plKey.cpp
+    plKeyImp.cpp
+    plMsgForwarder.cpp
+    plUoid.cpp
 )
 
 add_library(pnKeyedObject STATIC ${pnKeyedObject_HEADERS} ${pnKeyedObject_SOURCES})

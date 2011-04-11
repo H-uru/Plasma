@@ -35,44 +35,44 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlCheckBox)
 
 PYTHON_INIT_DEFINITION(ptGUIControlCheckBox, args, keywords)
 {
-	PyObject *keyObject = NULL;
-	if (!PyArg_ParseTuple(args, "O", &keyObject))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	if (!pyKey::Check(keyObject))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
+    PyObject *keyObject = NULL;
+    if (!PyArg_ParseTuple(args, "O", &keyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    if (!pyKey::Check(keyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
 
-	pyKey *key = pyKey::ConvertFrom(keyObject);
-	self->fThis->setKey(key->getKey());
+    pyKey *key = pyKey::ConvertFrom(keyObject);
+    self->fThis->setKey(key->getKey());
 
-	PYTHON_RETURN_INIT_OK;
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlCheckBox, setChecked, args)
 {
-	char checkedState;
-	if (!PyArg_ParseTuple(args, "b", &checkedState))
-	{
-		PyErr_SetString(PyExc_TypeError, "setChecked expects a boolean");
-		PYTHON_RETURN_ERROR;
-	}
-	self->fThis->SetChecked(checkedState != 0);
-	PYTHON_RETURN_NONE;
+    char checkedState;
+    if (!PyArg_ParseTuple(args, "b", &checkedState))
+    {
+        PyErr_SetString(PyExc_TypeError, "setChecked expects a boolean");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetChecked(checkedState != 0);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlCheckBox, isChecked)
 {
-	PYTHON_RETURN_BOOL(self->fThis->IsChecked());
+    PYTHON_RETURN_BOOL(self->fThis->IsChecked());
 }
 
 PYTHON_START_METHODS_TABLE(ptGUIControlCheckBox)
-	PYTHON_METHOD(ptGUIControlCheckBox, setChecked, "Params: checkedState\nSets this checkbox to the 'checkedState'"),
-	PYTHON_METHOD_NOARGS(ptGUIControlCheckBox, isChecked, "Is this checkbox checked? Returns 1 for true otherwise returns 0"),
+    PYTHON_METHOD(ptGUIControlCheckBox, setChecked, "Params: checkedState\nSets this checkbox to the 'checkedState'"),
+    PYTHON_METHOD_NOARGS(ptGUIControlCheckBox, isChecked, "Is this checkbox checked? Returns 1 for true otherwise returns 0"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -81,16 +81,16 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlCheckBox, pyGUIControl, "Params: ctrlKey\n
 // required functions for PyObject interoperability
 PyObject *pyGUIControlCheckBox::New(pyKey& gckey)
 {
-	ptGUIControlCheckBox *newObj = (ptGUIControlCheckBox*)ptGUIControlCheckBox_type.tp_new(&ptGUIControlCheckBox_type, NULL, NULL);
-	newObj->fThis->fGCkey = gckey.getKey();
-	return (PyObject*)newObj;
+    ptGUIControlCheckBox *newObj = (ptGUIControlCheckBox*)ptGUIControlCheckBox_type.tp_new(&ptGUIControlCheckBox_type, NULL, NULL);
+    newObj->fThis->fGCkey = gckey.getKey();
+    return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlCheckBox::New(plKey objkey)
 {
-	ptGUIControlCheckBox *newObj = (ptGUIControlCheckBox*)ptGUIControlCheckBox_type.tp_new(&ptGUIControlCheckBox_type, NULL, NULL);
-	newObj->fThis->fGCkey = objkey;
-	return (PyObject*)newObj;
+    ptGUIControlCheckBox *newObj = (ptGUIControlCheckBox*)ptGUIControlCheckBox_type.tp_new(&ptGUIControlCheckBox_type, NULL, NULL);
+    newObj->fThis->fGCkey = objkey;
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptGUIControlCheckBox, pyGUIControlCheckBox)
@@ -102,7 +102,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptGUIControlCheckBox, pyGUIControlCheckBox)
 //
 void pyGUIControlCheckBox::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptGUIControlCheckBox);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptGUIControlCheckBox);
+    PYTHON_CLASS_IMPORT_END(m);
 }

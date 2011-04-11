@@ -34,30 +34,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plApplyStoredAvatarSettingsMsg : public plMessage
 {
 public:
-	CLASSNAME_REGISTER( plApplyStoredAvatarSettingsMsg );
-	GETINTERFACE_ANY( plApplyStoredAvatarSettingsMsg, plMessage );
+    CLASSNAME_REGISTER( plApplyStoredAvatarSettingsMsg );
+    GETINTERFACE_ANY( plApplyStoredAvatarSettingsMsg, plMessage );
 
-	void SetSettings(const plStoredAvatarSettings & settings) { fSettings=settings;}
-	const plStoredAvatarSettings & GetSettings() const { return fSettings;}
-	const plKey * GetAvatarKey() const { return fAvatarKey;}
-	void SetAvatarKey(plKey * key) { fAvatarKey=key;}
+    void SetSettings(const plStoredAvatarSettings & settings) { fSettings=settings;}
+    const plStoredAvatarSettings & GetSettings() const { return fSettings;}
+    const plKey * GetAvatarKey() const { return fAvatarKey;}
+    void SetAvatarKey(plKey * key) { fAvatarKey=key;}
 
-	void Read(hsStream * stream, hsResMgr * mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fSettings.Read(stream);
-		fAvatarKey = mgr->ReadKey(stream);
-	}
+    void Read(hsStream * stream, hsResMgr * mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fSettings.Read(stream);
+        fAvatarKey = mgr->ReadKey(stream);
+    }
 
-	void Write(hsStream * stream, hsResMgr * mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		fSettings.Write(stream);
-		mgr->WriteKey(stream,fAvatarKey);
-	}
+    void Write(hsStream * stream, hsResMgr * mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        fSettings.Write(stream);
+        mgr->WriteKey(stream,fAvatarKey);
+    }
 private:
-	plStoredAvatarSettings	fSettings;
-	plKey *					fAvatarKey;
+    plStoredAvatarSettings  fSettings;
+    plKey *                 fAvatarKey;
 };
 
 

@@ -41,74 +41,74 @@ class plProfileVar;
 class plProfileManagerFull
 {
 public:
-	typedef std::set<const char*, stringISorter> GroupSet;
+    typedef std::set<const char*, stringISorter> GroupSet;
 
 protected:
-	plProfileManager::VarVec& fVars;
+    plProfileManager::VarVec& fVars;
 
-	bool fLogStats;	// If true, log the stats at the end of the frame
-	std::wstring fLogAgeName;
-	std::string fLogSpawnName;
+    bool fLogStats; // If true, log the stats at the end of the frame
+    std::wstring fLogAgeName;
+    std::string fLogSpawnName;
 
-	std::vector<plGraphPlate*> fGraphs;
-	plGraphPlate* fDetailGraph;
+    std::vector<plGraphPlate*> fGraphs;
+    plGraphPlate* fDetailGraph;
 
-	struct detailVar
-	{
-		plProfileVar* var;
-		Int32 min;
-		Int32 max;
-	};
+    struct detailVar
+    {
+        plProfileVar* var;
+        Int32 min;
+        Int32 max;
+    };
 
-	std::vector<detailVar> fDetailVars; // the vars we want to show on the detail graph
+    std::vector<detailVar> fDetailVars; // the vars we want to show on the detail graph
 
-	GroupSet fShowGroups;
-	plProfileVar* fShowLaps;
-	UInt32 fMinLap; // For Display
+    GroupSet fShowGroups;
+    plProfileVar* fShowLaps;
+    UInt32 fMinLap; // For Display
 
-	void IPrintGroup(hsStream* s, const char* groupName, bool printTitle=false);
-	void ILogStats();
+    void IPrintGroup(hsStream* s, const char* groupName, bool printTitle=false);
+    void ILogStats();
 
-	plProfileVar* IFindTimer(const char* name);
+    plProfileVar* IFindTimer(const char* name);
 
-	void ISetActive(const char* groupName, bool active);
+    void ISetActive(const char* groupName, bool active);
 
-	plProfileManagerFull();
+    plProfileManagerFull();
 
 public:
-	static plProfileManagerFull& Instance();
+    static plProfileManagerFull& Instance();
 
-	void EndFrame();	// Call end frame on our special timers
-	void Update();
+    void EndFrame();    // Call end frame on our special timers
+    void Update();
 
-	void GetGroups(GroupSet& groups);
-	void ShowGroup(const char* groupName);
-	void ShowNextGroup();
+    void GetGroups(GroupSet& groups);
+    void ShowGroup(const char* groupName);
+    void ShowNextGroup();
 
-	struct LapPair { const char* group; const char* varName; };
-	typedef std::vector<LapPair> LapNames;
-	void GetLaps(LapNames& lapNames);
-	void ShowLaps(const char* groupName, const char* varName);
-	void SetMinLap(int m) { fMinLap = m; };
-	void PageDownLaps() { fMinLap += 40; }
-	void PageUpLaps() { fMinLap = (fMinLap < 40) ? 0 : fMinLap - 40;}
+    struct LapPair { const char* group; const char* varName; };
+    typedef std::vector<LapPair> LapNames;
+    void GetLaps(LapNames& lapNames);
+    void ShowLaps(const char* groupName, const char* varName);
+    void SetMinLap(int m) { fMinLap = m; };
+    void PageDownLaps() { fMinLap += 40; }
+    void PageUpLaps() { fMinLap = (fMinLap < 40) ? 0 : fMinLap - 40;}
 
-	void CreateGraph(const char* varName, UInt32 min, UInt32 max);
+    void CreateGraph(const char* varName, UInt32 min, UInt32 max);
 
-	void ResetDefaultDetailVars();
-	void ShowDetailGraph();
-	void HideDetailGraph();
-	void AddDetailVar(const char* varName, UInt32 min, UInt32 max);
-	void RemoveDetailVar(const char* varName);
-	void UpdateDetailLabels();
+    void ResetDefaultDetailVars();
+    void ShowDetailGraph();
+    void HideDetailGraph();
+    void AddDetailVar(const char* varName, UInt32 min, UInt32 max);
+    void RemoveDetailVar(const char* varName);
+    void UpdateDetailLabels();
 
-	void ResetMax();
-	
-	void LogStats(const char* ageName, const char* spawnName);
-	const wchar* GetProfilePath();
+    void ResetMax();
+    
+    void LogStats(const char* ageName, const char* spawnName);
+    const wchar* GetProfilePath();
 
-	// If you're going to call LogStats, make sure to call this first so all stats will be evaluated before logging
-	void ActivateAllStats();
+    // If you're going to call LogStats, make sure to call this first so all stats will be evaluated before logging
+    void ActivateAllStats();
 
 };
 

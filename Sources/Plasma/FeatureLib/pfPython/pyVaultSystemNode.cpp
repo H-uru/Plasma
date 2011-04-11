@@ -46,6 +46,6 @@ pyVaultSystemNode::pyVaultSystemNode(RelVaultNode* nfsNode)
 
 //create from the Python side
 pyVaultSystemNode::pyVaultSystemNode()
-: pyVaultNode(nil)	// may not create this node type from python
+: pyVaultNode(nil)  // may not create this node type from python
 {
 }

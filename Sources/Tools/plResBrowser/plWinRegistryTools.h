@@ -25,10 +25,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plWinRegistryTools
-//	Utility class for doing various usefull things in Win32
-//	Written by Mathew Burrack
-//	4.23.2002
+//  plWinRegistryTools
+//  Utility class for doing various usefull things in Win32
+//  Written by Mathew Burrack
+//  4.23.2002
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -37,16 +37,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plWinRegistryTools
 {
-	public:
+    public:
 
-		// Associates a given file type in the Win32 registry with the given application. Also assigns a default icon if iconIndex != -1
-		static hsBool	AssociateFileType( const char *fileTypeID, const char *fileTypeName, const char *appPath, int iconIndex = -1 );
+        // Associates a given file type in the Win32 registry with the given application. Also assigns a default icon if iconIndex != -1
+        static hsBool   AssociateFileType( const char *fileTypeID, const char *fileTypeName, const char *appPath, int iconIndex = -1 );
 
-		// Assigns a given file extension to a previously registered Win32 file type (using the above function)
-		static hsBool	AssociateFileExtension( const char *fileExtension, const char *fileTypeID );
+        // Assigns a given file extension to a previously registered Win32 file type (using the above function)
+        static hsBool   AssociateFileExtension( const char *fileExtension, const char *fileTypeID );
 
-		// Obtains the current fileTypeID associated with the given file extension, or a null string if it isn't yet associated
-		static hsBool	GetCurrentFileExtensionAssociation( const char *extension, char *buffer, int bufferLen );
+        // Obtains the current fileTypeID associated with the given file extension, or a null string if it isn't yet associated
+        static hsBool   GetCurrentFileExtensionAssociation( const char *extension, char *buffer, int bufferLen );
 };
 
 #endif //_plWinRegistryTools_h

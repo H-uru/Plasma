@@ -44,28 +44,28 @@ class hsStream;
 class pyStream
 {
 private:
-	hsStream*	fStream;
+    hsStream*   fStream;
 
 protected:
-	pyStream();
+    pyStream();
 
 public:
-	~pyStream();
+    ~pyStream();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptStream);
-	PYTHON_CLASS_NEW_DEFINITION;
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyStream object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyStream); // converts a PyObject to a pyStream (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptStream);
+    PYTHON_CLASS_NEW_DEFINITION;
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyStream object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyStream); // converts a PyObject to a pyStream (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	virtual hsBool Open(const wchar* fileName, const wchar* flags);
-	virtual std::vector<std::string> ReadLines();
-	virtual hsBool WriteLines(const std::vector<std::string> & lines);
-	virtual void Close();
+    virtual hsBool Open(const wchar* fileName, const wchar* flags);
+    virtual std::vector<std::string> ReadLines();
+    virtual hsBool WriteLines(const std::vector<std::string> & lines);
+    virtual void Close();
 
-	virtual hsBool IsOpen();
+    virtual hsBool IsOpen();
 };
 
 

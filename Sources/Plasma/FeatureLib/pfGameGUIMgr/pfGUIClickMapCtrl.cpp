@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIClickMapCtrl Definition											//
-//																			//
+//                                                                          //
+//  pfGUIClickMapCtrl Definition                                            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -46,8 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pfGUIClickMapCtrl::pfGUIClickMapCtrl()
 {
-	fTracking = false;
-	fCustomCursor = -1;
+    fTracking = false;
+    fCustomCursor = -1;
 }
 
 pfGUIClickMapCtrl::~pfGUIClickMapCtrl()
@@ -56,75 +56,75 @@ pfGUIClickMapCtrl::~pfGUIClickMapCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool	pfGUIClickMapCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIClickMapCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
 {
-	return pfGUIControlMod::IEval( secs, del, dirty );
+    return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool	pfGUIClickMapCtrl::MsgReceive( plMessage *msg )
+hsBool  pfGUIClickMapCtrl::MsgReceive( plMessage *msg )
 {
-	return pfGUIControlMod::MsgReceive( msg );
+    return pfGUIControlMod::MsgReceive( msg );
 }
 
 //// Read/Write //////////////////////////////////////////////////////////////
 
-void	pfGUIClickMapCtrl::Read( hsStream *s, hsResMgr *mgr )
+void    pfGUIClickMapCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
-	pfGUIControlMod::Read(s, mgr);
+    pfGUIControlMod::Read(s, mgr);
 }
 
-void	pfGUIClickMapCtrl::Write( hsStream *s, hsResMgr *mgr )
+void    pfGUIClickMapCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
-	pfGUIControlMod::Write( s, mgr );
+    pfGUIControlMod::Write( s, mgr );
 }
 
-void	pfGUIClickMapCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIClickMapCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
 {
-	IScreenToLocalPt( mousePt );
-	fLastMousePt = fLastMouseDragPt = mousePt;
-	fTracking = true;
+    IScreenToLocalPt( mousePt );
+    fLastMousePt = fLastMouseDragPt = mousePt;
+    fTracking = true;
 }
 
-void	pfGUIClickMapCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIClickMapCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
 {
-	if( fTracking )
-	{
-		IScreenToLocalPt( mousePt );
-		fLastMousePt = fLastMouseUpPt = fLastMouseDragPt = mousePt;
-		DoSomething();
-		fTracking = false;
-	}
+    if( fTracking )
+    {
+        IScreenToLocalPt( mousePt );
+        fLastMousePt = fLastMouseUpPt = fLastMouseDragPt = mousePt;
+        DoSomething();
+        fTracking = false;
+    }
 }
 
-void	pfGUIClickMapCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIClickMapCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
 {
-	if( fTracking )
-	{
-		IScreenToLocalPt( mousePt );
-		fLastMousePt = fLastMouseDragPt = mousePt;
-		if( HasFlag( kReportDragging ) )
-			HandleExtendedEvent( kMouseDragged );
-	}
+    if( fTracking )
+    {
+        IScreenToLocalPt( mousePt );
+        fLastMousePt = fLastMouseDragPt = mousePt;
+        if( HasFlag( kReportDragging ) )
+            HandleExtendedEvent( kMouseDragged );
+    }
 }
 
-void	pfGUIClickMapCtrl::HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIClickMapCtrl::HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers )
 {
-	IScreenToLocalPt( mousePt );
-	fLastMousePt = mousePt;
+    IScreenToLocalPt( mousePt );
+    fLastMousePt = mousePt;
 
-	if( HasFlag( kReportHovering ) )
-		HandleExtendedEvent( kMouseHovered );
+    if( HasFlag( kReportHovering ) )
+        HandleExtendedEvent( kMouseHovered );
 }
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32		pfGUIClickMapCtrl::IGetDesiredCursor( void ) const
+UInt32      pfGUIClickMapCtrl::IGetDesiredCursor( void ) const
 {
-	if( fCustomCursor != -1 )
-		return (UInt32)fCustomCursor;
+    if( fCustomCursor != -1 )
+        return (UInt32)fCustomCursor;
 
-	return plInputInterface::kCursorPoised;
+    return plInputInterface::kCursorPoised;
 }
 

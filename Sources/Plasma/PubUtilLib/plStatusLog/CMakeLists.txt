@@ -4,15 +4,15 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plStatusLog_SOURCES
-	plEncryptLogLine.cpp
-	plLoggable.cpp
-	plStatusLog.cpp
+    plEncryptLogLine.cpp
+    plLoggable.cpp
+    plStatusLog.cpp
 )
 
 set(plStatusLog_HEADERS
-	plEncryptLogLine.h
-	plLoggable.h
-	plStatusLog.h
+    plEncryptLogLine.h
+    plLoggable.h
+    plStatusLog.h
 )
 
 add_library(plStatusLog STATIC ${plStatusLog_SOURCES} ${plStatusLog_HEADERS})

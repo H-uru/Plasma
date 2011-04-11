@@ -40,26 +40,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyCluster
 {
 private:
-	plKey fClusterKey;
+    plKey fClusterKey;
 
 protected:
-	pyCluster(): fClusterKey(nil) {} // for python glue only, do NOT call
-	pyCluster(plKey key);
-	pyCluster(pyKey& key);
+    pyCluster(): fClusterKey(nil) {} // for python glue only, do NOT call
+    pyCluster(plKey key);
+    pyCluster(pyKey& key);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptCluster);
-	static PyObject *New(plKey key);
-	static PyObject *New(pyKey& key);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyCluster object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyCluster); // converts a PyObject to a pyCluster (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptCluster);
+    static PyObject *New(plKey key);
+    static PyObject *New(pyKey& key);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyCluster object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyCluster); // converts a PyObject to a pyCluster (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	void SetKey(pyKey& key) {fClusterKey = key.getKey();} // for python glue only, do NOT call
+    void SetKey(pyKey& key) {fClusterKey = key.getKey();} // for python glue only, do NOT call
 
-	void SetVisible(bool visible);
+    void SetVisible(bool visible);
 };
 
 

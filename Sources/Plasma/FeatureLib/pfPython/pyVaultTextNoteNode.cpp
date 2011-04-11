@@ -48,7 +48,7 @@ pyVaultTextNoteNode::pyVaultTextNoteNode(RelVaultNode* nfsNode)
 pyVaultTextNoteNode::pyVaultTextNoteNode()
 : pyVaultNode(NEWZERO(RelVaultNode))
 {
-	fNode->SetNodeType(plVault::kNodeType_TextNote);
+    fNode->SetNodeType(plVault::kNodeType_TextNote);
 }
 
 
@@ -57,163 +57,163 @@ pyVaultTextNoteNode::pyVaultTextNoteNode()
 //
 void pyVaultTextNoteNode::Note_SetTitle( const char * text )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	wchar wStr[MAX_PATH] = L"";
-	if (text)
-		StrToUnicode(wStr, text, arrsize(wStr));
-	VaultTextNoteNode textNote(fNode);
-	textNote.SetNoteTitle(wStr);
+    wchar wStr[MAX_PATH] = L"";
+    if (text)
+        StrToUnicode(wStr, text, arrsize(wStr));
+    VaultTextNoteNode textNote(fNode);
+    textNote.SetNoteTitle(wStr);
 }
 
 void pyVaultTextNoteNode::Note_SetTitleW( const wchar_t * text )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultTextNoteNode textNote(fNode);
-	textNote.SetNoteTitle(text);
+    VaultTextNoteNode textNote(fNode);
+    textNote.SetNoteTitle(text);
 }
 
 std::string pyVaultTextNoteNode::Note_GetTitle( void )
 {
-	if (!fNode)
-		return "";
+    if (!fNode)
+        return "";
 
-	char * aStr = nil;
-	VaultTextNoteNode textNote(fNode);
-	if (textNote.noteTitle) {
-		std::string result;
-		aStr = StrDupToAnsi(textNote.noteTitle);
-		result = aStr;
-		FREE(aStr);
-		return result;
-	}
-	return "";
+    char * aStr = nil;
+    VaultTextNoteNode textNote(fNode);
+    if (textNote.noteTitle) {
+        std::string result;
+        aStr = StrDupToAnsi(textNote.noteTitle);
+        result = aStr;
+        FREE(aStr);
+        return result;
+    }
+    return "";
 }
 
 std::wstring pyVaultTextNoteNode::Note_GetTitleW( void )
 {
-	if (!fNode)
-		return L"";
+    if (!fNode)
+        return L"";
 
-	VaultTextNoteNode textNote(fNode);
-	if (textNote.noteTitle)
-		return textNote.noteTitle;
-	return L"";
+    VaultTextNoteNode textNote(fNode);
+    if (textNote.noteTitle)
+        return textNote.noteTitle;
+    return L"";
 }
 
 void pyVaultTextNoteNode::Note_SetText( const char * text )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	wchar * wStr = nil;
-	if (text)
-		wStr = StrDupToUnicode(text);
-	VaultTextNoteNode textNote(fNode);
-	textNote.SetNoteText(wStr);
-	FREE(wStr);
+    wchar * wStr = nil;
+    if (text)
+        wStr = StrDupToUnicode(text);
+    VaultTextNoteNode textNote(fNode);
+    textNote.SetNoteText(wStr);
+    FREE(wStr);
 }
 
 void pyVaultTextNoteNode::Note_SetTextW( const wchar_t * text )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultTextNoteNode textNote(fNode);
-	textNote.SetNoteText(text);
+    VaultTextNoteNode textNote(fNode);
+    textNote.SetNoteText(text);
 }
 
 std::string pyVaultTextNoteNode::Note_GetText( void )
 {
-	if (!fNode)
-		return "";
+    if (!fNode)
+        return "";
 
-	char * aStr = nil;
-	VaultTextNoteNode textNote(fNode);
-	if (textNote.noteText) {
-		std::string result;
-		aStr = StrDupToAnsi(textNote.noteText);
-		result = aStr;
-		FREE(aStr);
-		return result;
-	}
-	return "";
+    char * aStr = nil;
+    VaultTextNoteNode textNote(fNode);
+    if (textNote.noteText) {
+        std::string result;
+        aStr = StrDupToAnsi(textNote.noteText);
+        result = aStr;
+        FREE(aStr);
+        return result;
+    }
+    return "";
 }
 
 std::wstring pyVaultTextNoteNode::Note_GetTextW( void )
 {
-	if (!fNode)
-		return L"";
+    if (!fNode)
+        return L"";
 
-	VaultTextNoteNode textNote(fNode);
-	if (textNote.noteText)
-		return textNote.noteText;
-	return L"";
+    VaultTextNoteNode textNote(fNode);
+    if (textNote.noteText)
+        return textNote.noteText;
+    return L"";
 }
 
 void pyVaultTextNoteNode::Note_SetType( Int32 type )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultTextNoteNode textNote(fNode);
-	textNote.SetNoteType(type);
+    VaultTextNoteNode textNote(fNode);
+    textNote.SetNoteType(type);
 }
 
 Int32 pyVaultTextNoteNode::Note_GetType( void )
 {
-	if (!fNode)
-		return 0;
-		
-	VaultTextNoteNode textNote(fNode);
-	return textNote.noteType;
+    if (!fNode)
+        return 0;
+        
+    VaultTextNoteNode textNote(fNode);
+    return textNote.noteType;
 }
 
 void pyVaultTextNoteNode::Note_SetSubType( Int32 type )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultTextNoteNode textNote(fNode);
-	textNote.SetNoteSubType(type);
+    VaultTextNoteNode textNote(fNode);
+    textNote.SetNoteSubType(type);
 }
 
 Int32 pyVaultTextNoteNode::Note_GetSubType( void )
 {
-	if (!fNode)
-		return 0;
-		
-	VaultTextNoteNode textNote(fNode);
-	return textNote.noteSubType;
+    if (!fNode)
+        return 0;
+        
+    VaultTextNoteNode textNote(fNode);
+    return textNote.noteSubType;
 }
 
 PyObject * pyVaultTextNoteNode::GetDeviceInbox() const
 {
-	if (!fNode)
-		PYTHON_RETURN_NONE;
+    if (!fNode)
+        PYTHON_RETURN_NONE;
 
-	hsAssert(false, "eric, port me");
-		PYTHON_RETURN_NONE;
+    hsAssert(false, "eric, port me");
+        PYTHON_RETURN_NONE;
 }
 
 void pyVaultTextNoteNode::SetDeviceInbox( const char * devName, PyObject * cbObject, UInt32 cbContext )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	pyVaultNode::pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNode::pyVaultNodeOperationCallback)( cbObject );
-	cb->VaultOperationStarted( cbContext );
+    pyVaultNode::pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNode::pyVaultNodeOperationCallback)( cbObject );
+    cb->VaultOperationStarted( cbContext );
 
-	wchar wDev[MAX_PATH];
-	StrToUnicode(wDev, devName, arrsize(wDev));
-	
-	if (RelVaultNode * rvn = VaultAgeSetDeviceInboxAndWaitIncRef(wDev, DEFAULT_DEVICE_INBOX)) {
-		cb->SetNode(rvn);
-		rvn->DecRef();
-	}
+    wchar wDev[MAX_PATH];
+    StrToUnicode(wDev, devName, arrsize(wDev));
+    
+    if (RelVaultNode * rvn = VaultAgeSetDeviceInboxAndWaitIncRef(wDev, DEFAULT_DEVICE_INBOX)) {
+        cb->SetNode(rvn);
+        rvn->DecRef();
+    }
 
-	cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail );	// cbHolder deletes itself here.
+    cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail ); // cbHolder deletes itself here.
 }

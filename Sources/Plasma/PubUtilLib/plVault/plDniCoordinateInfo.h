@@ -38,33 +38,33 @@ class hsResMgr;
 
 class plDniCoordinateInfo : public plCreatable
 {
-	static const UInt8 StreamVersion;
+    static const UInt8 StreamVersion;
 
 protected:
-	// spherical coords (rho,theta,phi)
-	int			fHSpans;		// horizontal distance in d'ni spans to point P from origin O
-	int			fVSpans;		// vertical distance in d'ni spans to point P from origin O
-	int			fTorans;		// angle in d'ni torans from the zero vector to line OP.
+    // spherical coords (rho,theta,phi)
+    int         fHSpans;        // horizontal distance in d'ni spans to point P from origin O
+    int         fVSpans;        // vertical distance in d'ni spans to point P from origin O
+    int         fTorans;        // angle in d'ni torans from the zero vector to line OP.
 
 public:
-	plDniCoordinateInfo();
+    plDniCoordinateInfo();
 
-	CLASSNAME_REGISTER( plDniCoordinateInfo );
-	GETINTERFACE_ANY( plDniCoordinateInfo, plCreatable );
+    CLASSNAME_REGISTER( plDniCoordinateInfo );
+    GETINTERFACE_ANY( plDniCoordinateInfo, plCreatable );
 
-	int	GetHSpans( void ) const { return fHSpans;}
-	void	SetHSpans( int v ) { fHSpans = v; }
-	int	GetVSpans( void ) const { return fVSpans;}
-	void	SetVSpans( int v ) { fVSpans = v;}
-	int	GetTorans( void ) const { return fTorans; }
-	void	SetTorans( int v ) { fTorans = v; }
+    int GetHSpans( void ) const { return fHSpans;}
+    void    SetHSpans( int v ) { fHSpans = v; }
+    int GetVSpans( void ) const { return fVSpans;}
+    void    SetVSpans( int v ) { fVSpans = v;}
+    int GetTorans( void ) const { return fTorans; }
+    void    SetTorans( int v ) { fTorans = v; }
 
-	void	CopyFrom( const plDniCoordinateInfo * other );
-	void	Read( hsStream* s, hsResMgr* mgr );
-	void	Write( hsStream* s, hsResMgr* mgr );
+    void    CopyFrom( const plDniCoordinateInfo * other );
+    void    Read( hsStream* s, hsResMgr* mgr );
+    void    Write( hsStream* s, hsResMgr* mgr );
 
-	// debug
-	std::string	AsStdString( int level=0 ) const;
+    // debug
+    std::string AsStdString( int level=0 ) const;
 };
 
 

@@ -33,43 +33,43 @@ class hsStream;
 class plExcludeRegionMsg : public plMessage
 {
 public:
-	enum CmdType
-	{
-		kClear,		// Moves all avatars from the affected region. Once they are gone, It sends a
-					// callback message and turns the region into a solid object that avatars
-					// cannot penetrate.
-		kRelease	// Makes the xRegion not solid anymore
-	};
+    enum CmdType
+    {
+        kClear,     // Moves all avatars from the affected region. Once they are gone, It sends a
+                    // callback message and turns the region into a solid object that avatars
+                    // cannot penetrate.
+        kRelease    // Makes the xRegion not solid anymore
+    };
 
 protected:
-	UInt8 fCmd;
+    UInt8 fCmd;
 
 public:
-	plExcludeRegionMsg() : fCmd(kClear), fSynchFlags(0) {}
-	plExcludeRegionMsg(const plKey &s, const plKey &r, const double* t) : fCmd(kClear), fSynchFlags(0) {}
-	~plExcludeRegionMsg() {}
+    plExcludeRegionMsg() : fCmd(kClear), fSynchFlags(0) {}
+    plExcludeRegionMsg(const plKey &s, const plKey &r, const double* t) : fCmd(kClear), fSynchFlags(0) {}
+    ~plExcludeRegionMsg() {}
 
-	CLASSNAME_REGISTER(plExcludeRegionMsg);
-	GETINTERFACE_ANY(plExcludeRegionMsg, plMessage);
-	
-	void SetCmd(CmdType cmd) { fCmd = cmd; }
-	UInt8 GetCmd() { return fCmd; }
+    CLASSNAME_REGISTER(plExcludeRegionMsg);
+    GETINTERFACE_ANY(plExcludeRegionMsg, plMessage);
+    
+    void SetCmd(CmdType cmd) { fCmd = cmd; }
+    UInt8 GetCmd() { return fCmd; }
 
-	UInt32 fSynchFlags;
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fCmd = stream->ReadByte();
-		fSynchFlags = stream->ReadSwap32();
-	}
+    UInt32 fSynchFlags;
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fCmd = stream->ReadByte();
+        fSynchFlags = stream->ReadSwap32();
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		stream->WriteByte(fCmd);
-		stream->WriteSwap32(fSynchFlags);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        stream->WriteByte(fCmd);
+        stream->WriteSwap32(fSynchFlags);
+    }
 };
 
 #endif // plExcludeRegionMsg_inc

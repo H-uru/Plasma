@@ -54,10 +54,10 @@ static bool         s_options[kNumErrorOptions];
 
 //===========================================================================
 AUTO_INIT_FUNC(hsExeErrorInit) {
-	// The critical section has to be initialized
-	// before program startup and never freed
-	static byte rawMemory[sizeof CCritSect];
-	s_critsect = new(rawMemory) CCritSect;
+    // The critical section has to be initialized
+    // before program startup and never freed
+    static byte rawMemory[sizeof CCritSect];
+    s_critsect = new(rawMemory) CCritSect;
 }
 
 //============================================================================
@@ -65,18 +65,18 @@ static void DoAssert (int line, const char file[], const char msg[]) {
 
     ErrorMinimizeAppWindow();
 
-	#ifdef HS_BUILD_FOR_WIN32
+    #ifdef HS_BUILD_FOR_WIN32
 
     if (!s_options[kErrOptNonGuiAsserts]) {
         #ifdef HS_DEBUGGING
-			bool wasLeakChecking = ErrorSetOption(kErrOptDisableMemLeakChecking, true);
-			if (s_critsect)
-				s_critsect->Enter();
+            bool wasLeakChecking = ErrorSetOption(kErrOptDisableMemLeakChecking, true);
+            if (s_critsect)
+                s_critsect->Enter();
             if (_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
                 DebugBreak();
-			if (s_critsect)
-				s_critsect->Leave();
-		(void) ErrorSetOption(kErrOptDisableMemLeakChecking, wasLeakChecking);
+            if (s_critsect)
+                s_critsect->Leave();
+        (void) ErrorSetOption(kErrOptDisableMemLeakChecking, wasLeakChecking);
         #else
             DebugBreakIfDebuggerPresent();
         #endif
@@ -86,12 +86,12 @@ static void DoAssert (int line, const char file[], const char msg[]) {
         DebugBreakIfDebuggerPresent();
     }
         
-	#else // !HS_BUILD_FOR_WIN32
-	
+    #else // !HS_BUILD_FOR_WIN32
+    
         DebugMsg(msg);
         DebugBreakIfDebuggerPresent();
-	    
-	#endif
+        
+    #endif
 }
 
 /*****************************************************************************
@@ -113,7 +113,7 @@ void __cdecl ErrorFatal (int line, const char file[], const char fmt[], ...) {
     DoAssert(line, file, buffer);
 
     // Ensure thread crashes immediately by writing to invalid memory
-	* (int *) 0 = 0;
+    * (int *) 0 = 0;
 }
 #pragma auto_inline()
 
@@ -152,7 +152,7 @@ void ErrorMinimizeAppWindow () {
 bool ErrorSetOption (EErrorOption option, bool on) {
     SWAP(s_options[option], on);
     if (option == kErrOptDisableMemLeakChecking)
-		MemSetLeakChecking(on); // reverse logic, so use prev value
+        MemSetLeakChecking(on); // reverse logic, so use prev value
     return on;
 }
 

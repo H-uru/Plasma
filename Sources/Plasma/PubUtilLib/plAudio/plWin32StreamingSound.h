@@ -39,52 +39,52 @@ class plSoundDeswizzler;
 class plWin32StreamingSound : public plWin32Sound
 {
 public:
-	plWin32StreamingSound();
-	~plWin32StreamingSound();
+    plWin32StreamingSound();
+    ~plWin32StreamingSound();
 
-	CLASSNAME_REGISTER( plWin32StreamingSound );
-	GETINTERFACE_ANY( plWin32StreamingSound, plWin32Sound );
+    CLASSNAME_REGISTER( plWin32StreamingSound );
+    GETINTERFACE_ANY( plWin32StreamingSound, plWin32Sound );
 
-	virtual void		DeActivate();
-	virtual hsBool		LoadSound( hsBool is3D );
-	virtual float		GetActualTimeSec();
-	virtual unsigned	GetByteOffset();
-	virtual StreamType	GetStreamType() const { return fStreamType; }
-	virtual void		SetFilename(const char *filename, bool isCompressed);
-	virtual void		Update();	// temp
-	void				StreamUpdate();
-	virtual hsBool		MsgReceive( plMessage *pMsg );
-	
+    virtual void        DeActivate();
+    virtual hsBool      LoadSound( hsBool is3D );
+    virtual float       GetActualTimeSec();
+    virtual unsigned    GetByteOffset();
+    virtual StreamType  GetStreamType() const { return fStreamType; }
+    virtual void        SetFilename(const char *filename, bool isCompressed);
+    virtual void        Update();   // temp
+    void                StreamUpdate();
+    virtual hsBool      MsgReceive( plMessage *pMsg );
+    
 protected:
-	hsScalar			fTimeAtBufferStart;
-	plAudioFileReader	*fDataStream;
-	hsScalar			fBufferLengthInSecs;
-	UInt8				fBlankBufferFillCounter;
-	plSoundDeswizzler	*fDeswizzler;
-	char				fSrcFilename[ 256 ];
-	StreamType			fStreamType;
-	bool				fIsCompressed;		// this applies only to the new sound file specified in fNewFilename, so we can play both ogg's and wav's
-	std::string			fNewFilename;		// allow the filename to be changed so we can play from a different source.
-											// ultimately this filename will be given to fDataBuffer, but since it's not always around we'll store it here
-	hsBool				fStopping;	
+    hsScalar            fTimeAtBufferStart;
+    plAudioFileReader   *fDataStream;
+    hsScalar            fBufferLengthInSecs;
+    UInt8               fBlankBufferFillCounter;
+    plSoundDeswizzler   *fDeswizzler;
+    char                fSrcFilename[ 256 ];
+    StreamType          fStreamType;
+    bool                fIsCompressed;      // this applies only to the new sound file specified in fNewFilename, so we can play both ogg's and wav's
+    std::string         fNewFilename;       // allow the filename to be changed so we can play from a different source.
+                                            // ultimately this filename will be given to fDataBuffer, but since it's not always around we'll store it here
+    hsBool              fStopping;  
 
-	double				fLastStreamingUpdate;
-	bool				fPlayWhenStopped;
-	unsigned			fStartPos;
+    double              fLastStreamingUpdate;
+    bool                fPlayWhenStopped;
+    unsigned            fStartPos;
 
-	hsScalar			IGetTimeAtBufferStart( void ) { return fTimeAtBufferStart; }
-	virtual void		SetStartPos(unsigned bytes);
+    hsScalar            IGetTimeAtBufferStart( void ) { return fTimeAtBufferStart; }
+    virtual void        SetStartPos(unsigned bytes);
 
-	virtual void		IDerivedActuallyPlay( void );
-	void				IActuallyStop();
-	virtual void		ISetActualTime( double t );
-	
-	virtual void		IAddCallback( plEventCallbackMsg *pMsg );
-	virtual void		IRemoveCallback( plEventCallbackMsg *pMsg );
+    virtual void        IDerivedActuallyPlay( void );
+    void                IActuallyStop();
+    virtual void        ISetActualTime( double t );
+    
+    virtual void        IAddCallback( plEventCallbackMsg *pMsg );
+    virtual void        IRemoveCallback( plEventCallbackMsg *pMsg );
 
-	virtual void		IFreeBuffers( void );
-	void				IStreamUpdate();
-	virtual plSoundBuffer::ELoadReturnVal IPreLoadBuffer( hsBool playWhenLoaded, hsBool isIncidental = false  );
+    virtual void        IFreeBuffers( void );
+    void                IStreamUpdate();
+    virtual plSoundBuffer::ELoadReturnVal IPreLoadBuffer( hsBool playWhenLoaded, hsBool isIncidental = false  );
 };
 
 #endif //plWin32StreamingSound_h

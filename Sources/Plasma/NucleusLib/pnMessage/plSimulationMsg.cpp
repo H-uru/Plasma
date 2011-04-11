@@ -27,11 +27,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plSimulationMsg::Read(hsStream* stream, hsResMgr *mgr)
 {
-	IMsgRead(stream, mgr);
+    IMsgRead(stream, mgr);
 }
 
 void plSimulationMsg::Write(hsStream* stream, hsResMgr *mgr)
 {
-	IMsgWrite(stream, mgr);
+    IMsgWrite(stream, mgr);
 }
 

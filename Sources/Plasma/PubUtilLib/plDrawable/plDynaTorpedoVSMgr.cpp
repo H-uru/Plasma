@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plRefMsg.h"
 
 plDynaTorpedoVSMgr::plDynaTorpedoVSMgr()
-:	fWaveSetBase(nil)
+:   fWaveSetBase(nil)
 {
 }
 
@@ -50,94 +50,94 @@ plDynaTorpedoVSMgr::~plDynaTorpedoVSMgr()
 
 int plDynaTorpedoVSMgr::INewDecal()
 {
-	int idx = fDecals.GetCount();
+    int idx = fDecals.GetCount();
 
-	plDynaRippleVS* rip = TRACKED_NEW plDynaRippleVS();
-	rip->fC1U = fInitUVW.fX;
-	rip->fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
+    plDynaRippleVS* rip = TRACKED_NEW plDynaRippleVS();
+    rip->fC1U = fInitUVW.fX;
+    rip->fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
 
-	rip->fC1V = fInitUVW.fY;
-	rip->fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
+    rip->fC1V = fInitUVW.fY;
+    rip->fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
 
-	fDecals.Append(rip);
+    fDecals.Append(rip);
 
-	return idx;
+    return idx;
 }
 
 hsBool plDynaTorpedoVSMgr::IHandleShot(plBulletMsg* bull)
 {
-	if( !ICheckRTMat() )
-		return false;
+    if( !ICheckRTMat() )
+        return false;
 
-	return plDynaTorpedoMgr::IHandleShot(bull);
+    return plDynaTorpedoMgr::IHandleShot(bull);
 }
 
 hsBool plDynaTorpedoVSMgr::ICheckRTMat()
 {
-	if( !fMatRTShade )
-		return false;
+    if( !fMatRTShade )
+        return false;
 
-	if( !fWaveSetBase )
-		return false;
+    if( !fWaveSetBase )
+        return false;
 
-	if( fMatRTShade->GetLayer(0)->GetVertexShader() )
-		return true;
+    if( fMatRTShade->GetLayer(0)->GetVertexShader() )
+        return true;
 
-	plRipVSConsts ripConsts = IGetRippleConsts();
+    plRipVSConsts ripConsts = IGetRippleConsts();
 
-	return fWaveSetBase->SetupRippleMat(fMatRTShade, ripConsts);
+    return fWaveSetBase->SetupRippleMat(fMatRTShade, ripConsts);
 }
 
 plRipVSConsts plDynaTorpedoVSMgr::IGetRippleConsts() const
 {
-	plRipVSConsts ripConsts;
+    plRipVSConsts ripConsts;
 
-	ripConsts.fC1U = fInitUVW.fX;
-	ripConsts.fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
+    ripConsts.fC1U = fInitUVW.fX;
+    ripConsts.fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
 
-	ripConsts.fC1V = fInitUVW.fY;
-	ripConsts.fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
+    ripConsts.fC1V = fInitUVW.fY;
+    ripConsts.fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
 
-	ripConsts.fInitAtten = fInitAtten;
-	ripConsts.fLife = fLifeSpan;
-	ripConsts.fDecay = fDecayStart;
-	ripConsts.fRamp = fRampEnd;
+    ripConsts.fInitAtten = fInitAtten;
+    ripConsts.fLife = fLifeSpan;
+    ripConsts.fDecay = fDecayStart;
+    ripConsts.fRamp = fRampEnd;
 
-	return ripConsts;
+    return ripConsts;
 }
 
 hsBool plDynaTorpedoVSMgr::MsgReceive(plMessage* msg)
 {
-	hsBool retVal = plDynaTorpedoMgr::MsgReceive(msg);
-	if( retVal )
-		return true;
+    hsBool retVal = plDynaTorpedoMgr::MsgReceive(msg);
+    if( retVal )
+        return true;
 
-	plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
-	if( refMsg )
-	{
-		switch( refMsg->fType )
-		{
-		case kRefWaveSetBase:
-			if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
-				fWaveSetBase = plWaveSetBase::ConvertNoRef(refMsg->GetRef());
-			else
-				fWaveSetBase = nil;
-			return true;
-		}
-	}
-	return false;
+    plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
+    if( refMsg )
+    {
+        switch( refMsg->fType )
+        {
+        case kRefWaveSetBase:
+            if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
+                fWaveSetBase = plWaveSetBase::ConvertNoRef(refMsg->GetRef());
+            else
+                fWaveSetBase = nil;
+            return true;
+        }
+    }
+    return false;
 }
 
 void plDynaTorpedoVSMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plDynaTorpedoMgr::Read(stream, mgr);
+    plDynaTorpedoMgr::Read(stream, mgr);
 
-	mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefWaveSetBase), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefWaveSetBase), plRefFlags::kPassiveRef);
 }
 
 void plDynaTorpedoVSMgr::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plDynaTorpedoMgr::Write(stream, mgr);
+    plDynaTorpedoMgr::Write(stream, mgr);
 
-	mgr->WriteKey(stream, fWaveSetBase);
+    mgr->WriteKey(stream, fWaveSetBase);
 }

@@ -39,28 +39,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plOneShotMod : public plMultiModifier
 {
 protected:
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
-	char * fAnimName;		// the name of the animation associated with this one-shot
-	hsBool fDrivable;		// whether the user can control the position of the animation
-	hsBool fReversable;		// whether the user can back up the animation (fDrivable must be true as well)
-	float fSeekDuration;	// how long to take to get to the seek point (??? should this be speed instead?)
-	float fSmartSeek;		// use smart seek to walk to the seek point?
-	hsBool fNoSeek;
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
+    char * fAnimName;       // the name of the animation associated with this one-shot
+    hsBool fDrivable;       // whether the user can control the position of the animation
+    hsBool fReversable;     // whether the user can back up the animation (fDrivable must be true as well)
+    float fSeekDuration;    // how long to take to get to the seek point (??? should this be speed instead?)
+    float fSmartSeek;       // use smart seek to walk to the seek point?
+    hsBool fNoSeek;
 public:
-	plOneShotMod();
-	plOneShotMod(const char *animName, hsBool drivable, hsBool reversable, float seekDuration, hsBool smartSeek,hsBool noSeek = false);
-	virtual ~plOneShotMod();
-	
-	void Init(const char *animName, hsBool drivable, hsBool reversable, float seekDuration, hsBool smartSeek, hsBool noSeek = false);
+    plOneShotMod();
+    plOneShotMod(const char *animName, hsBool drivable, hsBool reversable, float seekDuration, hsBool smartSeek,hsBool noSeek = false);
+    virtual ~plOneShotMod();
+    
+    void Init(const char *animName, hsBool drivable, hsBool reversable, float seekDuration, hsBool smartSeek, hsBool noSeek = false);
 
-	CLASSNAME_REGISTER( plOneShotMod );
-	GETINTERFACE_ANY( plOneShotMod, plMultiModifier );
-	
-	virtual void AddTarget(plSceneObject* so);
-	hsBool MsgReceive(plMessage* msg);
+    CLASSNAME_REGISTER( plOneShotMod );
+    GETINTERFACE_ANY( plOneShotMod, plMultiModifier );
+    
+    virtual void AddTarget(plSceneObject* so);
+    hsBool MsgReceive(plMessage* msg);
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 };
 
 #endif

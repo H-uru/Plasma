@@ -39,87 +39,87 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptMoviePlayer)
 
 PYTHON_INIT_DEFINITION(ptMoviePlayer, args, keywords)
 {
-	char* movieName;
-	PyObject* selfKeyObj = NULL;
-	if (!PyArg_ParseTuple(args, "sO", &movieName, &selfKeyObj))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a string and ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	if (!pyKey::Check(selfKeyObj))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a string and ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	pyKey* selfKey = pyKey::ConvertFrom(selfKeyObj);
-	self->fThis->MakeMovie(movieName, *selfKey);
-	PYTHON_RETURN_INIT_OK;
+    char* movieName;
+    PyObject* selfKeyObj = NULL;
+    if (!PyArg_ParseTuple(args, "sO", &movieName, &selfKeyObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a string and ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    if (!pyKey::Check(selfKeyObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a string and ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    pyKey* selfKey = pyKey::ConvertFrom(selfKeyObj);
+    self->fThis->MakeMovie(movieName, *selfKey);
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_METHOD_DEFINITION(ptMoviePlayer, setCenter, args)
 {
-	float x, y;
-	if (!PyArg_ParseTuple(args, "ff", &x, &y))
-	{
-		PyErr_SetString(PyExc_TypeError, "setCenter expects two floats");
-		PYTHON_RETURN_ERROR;
-	}
-	self->fThis->SetCenter(x, y);
-	PYTHON_RETURN_NONE;
+    float x, y;
+    if (!PyArg_ParseTuple(args, "ff", &x, &y))
+    {
+        PyErr_SetString(PyExc_TypeError, "setCenter expects two floats");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetCenter(x, y);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptMoviePlayer, setScale, args)
 {
-	float width, height;
-	if (!PyArg_ParseTuple(args, "ff", &width, &height))
-	{
-		PyErr_SetString(PyExc_TypeError, "setScale expects two floats");
-		PYTHON_RETURN_ERROR;
-	}
-	self->fThis->SetScale(width, height);
-	PYTHON_RETURN_NONE;
+    float width, height;
+    if (!PyArg_ParseTuple(args, "ff", &width, &height))
+    {
+        PyErr_SetString(PyExc_TypeError, "setScale expects two floats");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetScale(width, height);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptMoviePlayer, setColor, args)
 {
-	PyObject* colorObj = NULL;
-	if (!PyArg_ParseTuple(args, "O", &colorObj))
-	{
-		PyErr_SetString(PyExc_TypeError, "setColor expects a ptColor");
-		PYTHON_RETURN_ERROR;
-	}
-	if (!pyColor::Check(colorObj))
-	{
-		PyErr_SetString(PyExc_TypeError, "setColor expects a ptColor");
-		PYTHON_RETURN_ERROR;
-	}
-	pyColor* color = pyColor::ConvertFrom(colorObj);
-	self->fThis->SetColor(*color);
-	PYTHON_RETURN_NONE;
+    PyObject* colorObj = NULL;
+    if (!PyArg_ParseTuple(args, "O", &colorObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "setColor expects a ptColor");
+        PYTHON_RETURN_ERROR;
+    }
+    if (!pyColor::Check(colorObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "setColor expects a ptColor");
+        PYTHON_RETURN_ERROR;
+    }
+    pyColor* color = pyColor::ConvertFrom(colorObj);
+    self->fThis->SetColor(*color);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptMoviePlayer, setVolume, args)
 {
-	float volume;
-	if (!PyArg_ParseTuple(args, "f", &volume))
-	{
-		PyErr_SetString(PyExc_TypeError, "setVolume expects a float");
-		PYTHON_RETURN_ERROR;
-	}
-	self->fThis->SetVolume(volume);
-	PYTHON_RETURN_NONE;
+    float volume;
+    if (!PyArg_ParseTuple(args, "f", &volume))
+    {
+        PyErr_SetString(PyExc_TypeError, "setVolume expects a float");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetVolume(volume);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptMoviePlayer, setOpacity, args)
 {
-	float opacity;
-	if (!PyArg_ParseTuple(args, "f", &opacity))
-	{
-		PyErr_SetString(PyExc_TypeError, "setOpacity expects a float");
-		PYTHON_RETURN_ERROR;
-	}
-	self->fThis->SetOpacity(opacity);
-	PYTHON_RETURN_NONE;
+    float opacity;
+    if (!PyArg_ParseTuple(args, "f", &opacity))
+    {
+        PyErr_SetString(PyExc_TypeError, "setOpacity expects a float");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetOpacity(opacity);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptMoviePlayer, play, Play)
@@ -129,16 +129,16 @@ PYTHON_BASIC_METHOD_DEFINITION(ptMoviePlayer, resume, Resume)
 PYTHON_BASIC_METHOD_DEFINITION(ptMoviePlayer, stop, Stop)
 
 PYTHON_START_METHODS_TABLE(ptMoviePlayer)
-	PYTHON_METHOD(ptMoviePlayer, setCenter, "Params: x,y\nSets the center of the movie"),
-	PYTHON_METHOD(ptMoviePlayer, setScale, "Params: width,height\nSets the width and height scale of the movie"),
-	PYTHON_METHOD(ptMoviePlayer, setColor, "Params: color\nSets the color of the movie"),
-	PYTHON_METHOD(ptMoviePlayer, setVolume, "Params: volume\nSet the volume of the movie"),
-	PYTHON_METHOD(ptMoviePlayer, setOpacity, "Params: opacity\nSets the opacity of the movie"),
-	PYTHON_BASIC_METHOD(ptMoviePlayer, play, "Plays the movie"),
-	PYTHON_BASIC_METHOD(ptMoviePlayer, playPaused, "Plays movie, but pauses at first frame"),
-	PYTHON_BASIC_METHOD(ptMoviePlayer, pause, "Pauses the movie"),
-	PYTHON_BASIC_METHOD(ptMoviePlayer, resume, "Resumes movie after pausing"),
-	PYTHON_BASIC_METHOD(ptMoviePlayer, stop, "Stops the movie"),
+    PYTHON_METHOD(ptMoviePlayer, setCenter, "Params: x,y\nSets the center of the movie"),
+    PYTHON_METHOD(ptMoviePlayer, setScale, "Params: width,height\nSets the width and height scale of the movie"),
+    PYTHON_METHOD(ptMoviePlayer, setColor, "Params: color\nSets the color of the movie"),
+    PYTHON_METHOD(ptMoviePlayer, setVolume, "Params: volume\nSet the volume of the movie"),
+    PYTHON_METHOD(ptMoviePlayer, setOpacity, "Params: opacity\nSets the opacity of the movie"),
+    PYTHON_BASIC_METHOD(ptMoviePlayer, play, "Plays the movie"),
+    PYTHON_BASIC_METHOD(ptMoviePlayer, playPaused, "Plays movie, but pauses at first frame"),
+    PYTHON_BASIC_METHOD(ptMoviePlayer, pause, "Pauses the movie"),
+    PYTHON_BASIC_METHOD(ptMoviePlayer, resume, "Resumes movie after pausing"),
+    PYTHON_BASIC_METHOD(ptMoviePlayer, stop, "Stops the movie"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -147,9 +147,9 @@ PLASMA_DEFAULT_TYPE(ptMoviePlayer, "Params: movieName,selfKey\nAccessor class to
 // required functions for PyObject interoperability
 PyObject *pyMoviePlayer::New(const char* movieName, pyKey& selfKey)
 {
-	ptMoviePlayer *newObj = (ptMoviePlayer*)ptMoviePlayer_type.tp_new(&ptMoviePlayer_type, NULL, NULL);
-	newObj->fThis->MakeMovie(movieName, selfKey);
-	return (PyObject*)newObj;
+    ptMoviePlayer *newObj = (ptMoviePlayer*)ptMoviePlayer_type.tp_new(&ptMoviePlayer_type, NULL, NULL);
+    newObj->fThis->MakeMovie(movieName, selfKey);
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptMoviePlayer, pyMoviePlayer)
@@ -161,14 +161,14 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptMoviePlayer, pyMoviePlayer)
 //
 void pyMoviePlayer::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptMoviePlayer);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptMoviePlayer);
+    PYTHON_CLASS_IMPORT_END(m);
 }
 
 void pyMoviePlayer::AddPlasmaConstantsClasses(PyObject *m)
 {
-	PYTHON_ENUM_START(PtMovieEventReason);
-	PYTHON_ENUM_ELEMENT(PtMovieEventReason, kMovieDone, pfMovieEventMsg::kMovieDone);
-	PYTHON_ENUM_END(m, PtMovieEventReason);
+    PYTHON_ENUM_START(PtMovieEventReason);
+    PYTHON_ENUM_ELEMENT(PtMovieEventReason, kMovieDone, pfMovieEventMsg::kMovieDone);
+    PYTHON_ENUM_END(m, PtMovieEventReason);
 }

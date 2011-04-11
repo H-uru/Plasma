@@ -30,63 +30,63 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plButton : public plControl
 {
 public:
-	DECLARE_WINDOWSUBCLASS(plButton,plControl)
+    DECLARE_WINDOWSUBCLASS(plButton,plControl)
 
-	plDelegate fClickDelegate;
-	plDelegate fDoubleClickDelegate;
-	plDelegate fPushDelegate;
-	plDelegate fUnPushDelegate;
-	plDelegate fSetFocusDelegate;
-	plDelegate fKillFocusDelegate;
+    plDelegate fClickDelegate;
+    plDelegate fDoubleClickDelegate;
+    plDelegate fPushDelegate;
+    plDelegate fUnPushDelegate;
+    plDelegate fSetFocusDelegate;
+    plDelegate fKillFocusDelegate;
 
-	plButton()
-	{}
-	plButton( plWindow * inOwner, int inId=0, plDelegate inClicked=plDelegate(), WNDPROC inSuperProc=nil )
-	: plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
-	, fClickDelegate( inClicked )
-	{}
+    plButton()
+    {}
+    plButton( plWindow * inOwner, int inId=0, plDelegate inClicked=plDelegate(), WNDPROC inSuperProc=nil )
+    : plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
+    , fClickDelegate( inClicked )
+    {}
 
-	void OpenWindow( bool visible, int X, int Y, int XL, int YL, const wchar_t * text )
-	{
-		PerformCreateWindowEx
-		(
-			0,
+    void OpenWindow( bool visible, int X, int Y, int XL, int YL, const wchar_t * text )
+    {
+        PerformCreateWindowEx
+        (
+            0,
             nil,
             WS_CHILD,
             X, Y,
-			XL, YL,
+            XL, YL,
             *fOwnerWindow,
             (HMENU)fControlID,
             plWndCtrls::Instance()
-		);
-		SendMessage( *this, WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(0,0) );
-		SetText( text );
-		if( visible )
-			ShowWindow( *this, SW_SHOWNOACTIVATE );
-	}
-	void SetVisibleText( const wchar_t * text )
-	{
-		CHECK(Handle());
-		if( text )
-			SetText( text );
-		Show( text!=nil );
-	}
+        );
+        SendMessage( *this, WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(0,0) );
+        SetText( text );
+        if( visible )
+            ShowWindow( *this, SW_SHOWNOACTIVATE );
+    }
+    void SetVisibleText( const wchar_t * text )
+    {
+        CHECK(Handle());
+        if( text )
+            SetText( text );
+        Show( text!=nil );
+    }
 
-	void Click()
-	{
-		SendMessage( *this, BM_CLICK, 0, 0 );
-	}
+    void Click()
+    {
+        SendMessage( *this, BM_CLICK, 0, 0 );
+    }
 
-	bool InterceptControlCommand( unsigned int message, unsigned int wParam, LONG lParam )
-	{
-		if     ( HIWORD(wParam)==BN_CLICKED   ) {fClickDelegate();       return 1;}
-		else if( HIWORD(wParam)==BN_DBLCLK    ) {fDoubleClickDelegate(); return 1;}
-		else if( HIWORD(wParam)==BN_PUSHED    ) {fPushDelegate();        return 1;}
-		else if( HIWORD(wParam)==BN_UNPUSHED  ) {fUnPushDelegate();      return 1;}
-		else if( HIWORD(wParam)==BN_SETFOCUS  ) {fSetFocusDelegate();    return 1;}
-		else if( HIWORD(wParam)==BN_KILLFOCUS ) {fUnPushDelegate();      return 1;}
-		else return 0;
-	}
+    bool InterceptControlCommand( unsigned int message, unsigned int wParam, LONG lParam )
+    {
+        if     ( HIWORD(wParam)==BN_CLICKED   ) {fClickDelegate();       return 1;}
+        else if( HIWORD(wParam)==BN_DBLCLK    ) {fDoubleClickDelegate(); return 1;}
+        else if( HIWORD(wParam)==BN_PUSHED    ) {fPushDelegate();        return 1;}
+        else if( HIWORD(wParam)==BN_UNPUSHED  ) {fUnPushDelegate();      return 1;}
+        else if( HIWORD(wParam)==BN_SETFOCUS  ) {fSetFocusDelegate();    return 1;}
+        else if( HIWORD(wParam)==BN_KILLFOCUS ) {fUnPushDelegate();      return 1;}
+        else return 0;
+    }
 };
 
 

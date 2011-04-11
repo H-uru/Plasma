@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plSingleModifier::plSingleModifier()
 : 
-	fTarget(nil)
+    fTarget(nil)
 {
 }
 
@@ -41,15 +41,15 @@ plSingleModifier::~plSingleModifier()
 
 void plSingleModifier::Read(hsStream* s, hsResMgr* mgr)
 {
-	plModifier::Read(s, mgr);
-	fFlags.Read(s);
+    plModifier::Read(s, mgr);
+    fFlags.Read(s);
 }
 
 void plSingleModifier::Write(hsStream* s, hsResMgr* mgr)
 {
-	plModifier::Write(s, mgr);
+    plModifier::Write(s, mgr);
 
-	fFlags.Write(s);
+    fFlags.Write(s);
 
 }
 

@@ -36,27 +36,27 @@ pyGameMgrMsg::pyGameMgrMsg(pfGameMgrMsg* msg): message(msg) {}
 
 int pyGameMgrMsg::GetType() const
 {
-	if (message)
-		return message->netMsg->messageId;
-	return -1;
+    if (message)
+        return message->netMsg->messageId;
+    return -1;
 }
 
 PyObject* pyGameMgrMsg::UpcastToInviteReceivedMsg() const
 {
-	if (!message)
-		PYTHON_RETURN_NONE;
-	if (message->netMsg->messageId != kSrv2Cli_GameMgr_InviteReceived)
-		PYTHON_RETURN_NONE;
-	return pyGameMgrInviteReceivedMsg::New(message);
+    if (!message)
+        PYTHON_RETURN_NONE;
+    if (message->netMsg->messageId != kSrv2Cli_GameMgr_InviteReceived)
+        PYTHON_RETURN_NONE;
+    return pyGameMgrInviteReceivedMsg::New(message);
 }
 
 PyObject* pyGameMgrMsg::UpcastToInviteRevokedMsg() const
 {
-	if (!message)
-		PYTHON_RETURN_NONE;
-	if (message->netMsg->messageId != kSrv2Cli_GameMgr_InviteRevoked)
-		PYTHON_RETURN_NONE;
-	return pyGameMgrInviteRevokedMsg::New(message);
+    if (!message)
+        PYTHON_RETURN_NONE;
+    if (message->netMsg->messageId != kSrv2Cli_GameMgr_InviteRevoked)
+        PYTHON_RETURN_NONE;
+    return pyGameMgrInviteRevokedMsg::New(message);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,40 +68,40 @@ pyGameMgrInviteReceivedMsg::pyGameMgrInviteReceivedMsg(): pyGameMgrMsg() {}
 
 pyGameMgrInviteReceivedMsg::pyGameMgrInviteReceivedMsg(pfGameMgrMsg* msg): pyGameMgrMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_GameMgr_InviteReceived))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_GameMgr_InviteReceived))
+        message = nil; // wrong type, just clear it out
 }
 
 unsigned long pyGameMgrInviteReceivedMsg::InviterID() const
 {
-	if (message)
-	{
-		const Srv2Cli_GameMgr_InviteReceived* gmMsg = (const Srv2Cli_GameMgr_InviteReceived*)message->netMsg;
-		return gmMsg->inviterId;
-	}
-	return 0;
+    if (message)
+    {
+        const Srv2Cli_GameMgr_InviteReceived* gmMsg = (const Srv2Cli_GameMgr_InviteReceived*)message->netMsg;
+        return gmMsg->inviterId;
+    }
+    return 0;
 }
 
 std::wstring pyGameMgrInviteReceivedMsg::GameTypeID() const
 {
-	if (message)
-	{
-		const Srv2Cli_GameMgr_InviteReceived* gmMsg = (const Srv2Cli_GameMgr_InviteReceived*)message->netMsg;
-		wchar_t buffer[256];
-		GuidToString(gmMsg->gameTypeId, buffer, arrsize(buffer));
-		return buffer;
-	}
-	return L"";
+    if (message)
+    {
+        const Srv2Cli_GameMgr_InviteReceived* gmMsg = (const Srv2Cli_GameMgr_InviteReceived*)message->netMsg;
+        wchar_t buffer[256];
+        GuidToString(gmMsg->gameTypeId, buffer, arrsize(buffer));
+        return buffer;
+    }
+    return L"";
 }
 
 unsigned long pyGameMgrInviteReceivedMsg::NewGameID() const
 {
-	if (message)
-	{
-		const Srv2Cli_GameMgr_InviteReceived* gmMsg = (const Srv2Cli_GameMgr_InviteReceived*)message->netMsg;
-		return gmMsg->newGameId;
-	}
-	return 0;
+    if (message)
+    {
+        const Srv2Cli_GameMgr_InviteReceived* gmMsg = (const Srv2Cli_GameMgr_InviteReceived*)message->netMsg;
+        return gmMsg->newGameId;
+    }
+    return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,38 +109,38 @@ pyGameMgrInviteRevokedMsg::pyGameMgrInviteRevokedMsg(): pyGameMgrMsg() {}
 
 pyGameMgrInviteRevokedMsg::pyGameMgrInviteRevokedMsg(pfGameMgrMsg* msg): pyGameMgrMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_GameMgr_InviteRevoked))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_GameMgr_InviteRevoked))
+        message = nil; // wrong type, just clear it out
 }
 
 unsigned long pyGameMgrInviteRevokedMsg::InviterID() const
 {
-	if (message)
-	{
-		const Srv2Cli_GameMgr_InviteRevoked* gmMsg = (const Srv2Cli_GameMgr_InviteRevoked*)message->netMsg;
-		return gmMsg->inviterId;
-	}
-	return 0;
+    if (message)
+    {
+        const Srv2Cli_GameMgr_InviteRevoked* gmMsg = (const Srv2Cli_GameMgr_InviteRevoked*)message->netMsg;
+        return gmMsg->inviterId;
+    }
+    return 0;
 }
 
 std::wstring pyGameMgrInviteRevokedMsg::GameTypeID() const
 {
-	if (message)
-	{
-		const Srv2Cli_GameMgr_InviteRevoked* gmMsg = (const Srv2Cli_GameMgr_InviteRevoked*)message->netMsg;
-		wchar_t buffer[256];
-		GuidToString(gmMsg->gameTypeId, buffer, arrsize(buffer));
-		return buffer;
-	}
-	return L"";
+    if (message)
+    {
+        const Srv2Cli_GameMgr_InviteRevoked* gmMsg = (const Srv2Cli_GameMgr_InviteRevoked*)message->netMsg;
+        wchar_t buffer[256];
+        GuidToString(gmMsg->gameTypeId, buffer, arrsize(buffer));
+        return buffer;
+    }
+    return L"";
 }
 
 unsigned long pyGameMgrInviteRevokedMsg::NewGameID() const
 {
-	if (message)
-	{
-		const Srv2Cli_GameMgr_InviteRevoked* gmMsg = (const Srv2Cli_GameMgr_InviteRevoked*)message->netMsg;
-		return gmMsg->newGameId;
-	}
-	return 0;
+    if (message)
+    {
+        const Srv2Cli_GameMgr_InviteRevoked* gmMsg = (const Srv2Cli_GameMgr_InviteRevoked*)message->netMsg;
+        return gmMsg->newGameId;
+    }
+    return 0;
 }

@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plTelescopeInputInterface													//
-//																			//
+//                                                                          //
+//  plTelescopeInputInterface                                                   //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsConfig.h"
@@ -48,27 +48,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plTelescopeInputInterface::plTelescopeInputInterface()
 {
-	SetEnabled( true );			// Always enabled
+    SetEnabled( true );         // Always enabled
 
 
-	// Add our control codes to our control map. Do NOT add the key bindings yet.
-	// Note: HERE is where you specify the actions for each command, i.e. net propagate and so forth.
-	// This part basically declares us master of the bindings for these commands.
-	
-	// IF YOU ARE LOOKING TO CHANGE THE DEFAULT KEY BINDINGS, DO NOT LOOK HERE. GO TO
-	// RestoreDefaultKeyMappings()!!!!
+    // Add our control codes to our control map. Do NOT add the key bindings yet.
+    // Note: HERE is where you specify the actions for each command, i.e. net propagate and so forth.
+    // This part basically declares us master of the bindings for these commands.
+    
+    // IF YOU ARE LOOKING TO CHANGE THE DEFAULT KEY BINDINGS, DO NOT LOOK HERE. GO TO
+    // RestoreDefaultKeyMappings()!!!!
 
-	fControlMap->AddCode( B_CONTROL_EXIT_MODE,	kControlFlagNormal | kControlFlagNoRepeat );
-	fControlMap->AddCode( B_CAMERA_PAN_LEFT,	kControlFlagNormal );
-	fControlMap->AddCode( B_CAMERA_PAN_RIGHT,	kControlFlagNormal );
-	fControlMap->AddCode( B_CAMERA_PAN_UP,		kControlFlagNormal );
-	fControlMap->AddCode( B_CAMERA_PAN_DOWN,	kControlFlagNormal );
-	fControlMap->AddCode( B_CAMERA_RECENTER,	kControlFlagNormal | kControlFlagNoRepeat );
-	fControlMap->AddCode( B_CAMERA_ZOOM_IN,		kControlFlagNormal );
-	fControlMap->AddCode( B_CAMERA_ZOOM_OUT,	kControlFlagNormal );
+    fControlMap->AddCode( B_CONTROL_EXIT_MODE,  kControlFlagNormal | kControlFlagNoRepeat );
+    fControlMap->AddCode( B_CAMERA_PAN_LEFT,    kControlFlagNormal );
+    fControlMap->AddCode( B_CAMERA_PAN_RIGHT,   kControlFlagNormal );
+    fControlMap->AddCode( B_CAMERA_PAN_UP,      kControlFlagNormal );
+    fControlMap->AddCode( B_CAMERA_PAN_DOWN,    kControlFlagNormal );
+    fControlMap->AddCode( B_CAMERA_RECENTER,    kControlFlagNormal | kControlFlagNoRepeat );
+    fControlMap->AddCode( B_CAMERA_ZOOM_IN,     kControlFlagNormal );
+    fControlMap->AddCode( B_CAMERA_ZOOM_OUT,    kControlFlagNormal );
 
-	// IF YOU ARE LOOKING TO CHANGE THE DEFAULT KEY BINDINGS, DO NOT LOOK HERE. GO TO
-	// RestoreDefaultKeyMappings()!!!!
+    // IF YOU ARE LOOKING TO CHANGE THE DEFAULT KEY BINDINGS, DO NOT LOOK HERE. GO TO
+    // RestoreDefaultKeyMappings()!!!!
 }
 
 plTelescopeInputInterface::~plTelescopeInputInterface()
@@ -77,49 +77,49 @@ plTelescopeInputInterface::~plTelescopeInputInterface()
 
 //// Init/Shutdown ///////////////////////////////////////////////////////////
 
-void	plTelescopeInputInterface::Init( plInputInterfaceMgr *manager )
+void    plTelescopeInputInterface::Init( plInputInterfaceMgr *manager )
 {
-	plInputInterface::Init( manager );
+    plInputInterface::Init( manager );
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
 hsBool plTelescopeInputInterface::IEval( double secs, hsScalar del, UInt32 dirty )
 {
-	return true;
+    return true;
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool	plTelescopeInputInterface::MsgReceive( plMessage *msg )
+hsBool  plTelescopeInputInterface::MsgReceive( plMessage *msg )
 {
-	return false;
+    return false;
 }
 
 //// InterpretInputEvent /////////////////////////////////////////////////////
 
 hsBool plTelescopeInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 {
-	return false;
+    return false;
 }
 
 //// RestoreDefaultKeyMappings ///////////////////////////////////////////////
 
-void	plTelescopeInputInterface::RestoreDefaultKeyMappings( void )
+void    plTelescopeInputInterface::RestoreDefaultKeyMappings( void )
 {
-	if( fControlMap == nil )
-		return;
+    if( fControlMap == nil )
+        return;
 
-	fControlMap->UnmapAllBindings();
+    fControlMap->UnmapAllBindings();
 
-	fControlMap->BindKey( KEY_BACKSPACE,		B_CONTROL_EXIT_MODE );
-	fControlMap->BindKey( KEY_NUMPAD5,			B_CAMERA_RECENTER );
-	fControlMap->BindKey( KEY_C,				B_CAMERA_RECENTER );
-	fControlMap->BindKey( KEY_NUMPAD_ADD,		B_CAMERA_ZOOM_IN );
-	fControlMap->BindKey( KEY_NUMPAD_SUBTRACT,	B_CAMERA_ZOOM_OUT );
-	fControlMap->BindKey( KEY_NUMPAD4,			B_CAMERA_PAN_LEFT );
-	fControlMap->BindKey( KEY_NUMPAD6,			B_CAMERA_PAN_RIGHT );
-	fControlMap->BindKey( KEY_NUMPAD8,			B_CAMERA_PAN_UP );
-	fControlMap->BindKey( KEY_NUMPAD2,			B_CAMERA_PAN_DOWN );
+    fControlMap->BindKey( KEY_BACKSPACE,        B_CONTROL_EXIT_MODE );
+    fControlMap->BindKey( KEY_NUMPAD5,          B_CAMERA_RECENTER );
+    fControlMap->BindKey( KEY_C,                B_CAMERA_RECENTER );
+    fControlMap->BindKey( KEY_NUMPAD_ADD,       B_CAMERA_ZOOM_IN );
+    fControlMap->BindKey( KEY_NUMPAD_SUBTRACT,  B_CAMERA_ZOOM_OUT );
+    fControlMap->BindKey( KEY_NUMPAD4,          B_CAMERA_PAN_LEFT );
+    fControlMap->BindKey( KEY_NUMPAD6,          B_CAMERA_PAN_RIGHT );
+    fControlMap->BindKey( KEY_NUMPAD8,          B_CAMERA_PAN_UP );
+    fControlMap->BindKey( KEY_NUMPAD2,          B_CAMERA_PAN_DOWN );
 }
 

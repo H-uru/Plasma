@@ -35,58 +35,58 @@ class plMessage;
 class plTimerCallback 
 {
 public:
-	
-	plTimerCallback(double time, plMessage* pMsg);
-	~plTimerCallback();
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    plTimerCallback(double time, plMessage* pMsg);
+    ~plTimerCallback();
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	double		fTime;
-	plMessage*	fMsg;
+    double      fTime;
+    plMessage*  fMsg;
 };
 
 class plTimerCallbackManager : public hsKeyedObject
 {
 public:
-	
-	plTimerCallbackManager();
-	~plTimerCallbackManager();
+    
+    plTimerCallbackManager();
+    ~plTimerCallbackManager();
 
-	CLASSNAME_REGISTER( plTimerCallbackManager );
-	GETINTERFACE_ANY( plTimerCallbackManager, hsKeyedObject );
+    CLASSNAME_REGISTER( plTimerCallbackManager );
+    GETINTERFACE_ANY( plTimerCallbackManager, hsKeyedObject );
 
-	virtual plTimerCallback* NewTimer(hsScalar time, plMessage* pMsg);
-	hsBool CancelCallback(plTimerCallback* pTimer);
-	hsBool CancelCallbacksToKey(const plKey& key);
+    virtual plTimerCallback* NewTimer(hsScalar time, plMessage* pMsg);
+    hsBool CancelCallback(plTimerCallback* pTimer);
+    hsBool CancelCallbacksToKey(const plKey& key);
 
 
-	virtual hsBool MsgReceive(plMessage* msg);
-		
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual hsBool MsgReceive(plMessage* msg);
+        
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 private:
-	
-	hsTArray<plTimerCallback*>  fCallbacks;
+    
+    hsTArray<plTimerCallback*>  fCallbacks;
 };
 
 class plgTimerCallbackMgr
 {
 private:
-	static plTimerCallbackManager*		fMgr;
+    static plTimerCallbackManager*      fMgr;
 public:
 
-	static void Init();
-	static void Shutdown();
-	static plTimerCallbackManager* Mgr() { return fMgr; }
+    static void Init();
+    static void Shutdown();
+    static plTimerCallbackManager* Mgr() { return fMgr; }
 
-	// External modifier use only
-	static void SetTheTimerCallbackMgr(plTimerCallbackManager *mgr) { fMgr = mgr; }
+    // External modifier use only
+    static void SetTheTimerCallbackMgr(plTimerCallbackManager *mgr) { fMgr = mgr; }
 
-	static plTimerCallback* NewTimer(hsScalar time, plMessage* pMsg) { return (fMgr->NewTimer(time, pMsg)); }
-	static hsBool CancelCallback(plTimerCallback* pTimer);
-	static hsBool CancelCallbacksToKey(const plKey& key);
+    static plTimerCallback* NewTimer(hsScalar time, plMessage* pMsg) { return (fMgr->NewTimer(time, pMsg)); }
+    static hsBool CancelCallback(plTimerCallback* pTimer);
+    static hsBool CancelCallbacksToKey(const plKey& key);
 };
 
 

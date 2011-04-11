@@ -42,30 +42,30 @@ class hsResMgr;
 
 class plLinkToAgeMsg : public plMessage
 {
-	plAgeLinkStruct		fAgeLink;
-	char* fLinkInAnimName;
+    plAgeLinkStruct     fAgeLink;
+    char* fLinkInAnimName;
 
 public:
-	plLinkToAgeMsg();
-	plLinkToAgeMsg( const plAgeLinkStruct * link );
-	~plLinkToAgeMsg();
+    plLinkToAgeMsg();
+    plLinkToAgeMsg( const plAgeLinkStruct * link );
+    ~plLinkToAgeMsg();
 
-	CLASSNAME_REGISTER( plLinkToAgeMsg );
-	GETINTERFACE_ANY( plLinkToAgeMsg, plMessage );
+    CLASSNAME_REGISTER( plLinkToAgeMsg );
+    GETINTERFACE_ANY( plLinkToAgeMsg, plMessage );
 
-	plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
-	const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
+    plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
+    const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
 
-	const char * GetLinkInAnimName() { return fLinkInAnimName; }
-	void SetLinkInAnimName(const char* name) { delete [] fLinkInAnimName; fLinkInAnimName = hsStrcpy(name); }
+    const char * GetLinkInAnimName() { return fLinkInAnimName; }
+    void SetLinkInAnimName(const char* name) { delete [] fLinkInAnimName; fLinkInAnimName = hsStrcpy(name); }
 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
-	
-	// WriteVersion writes the current version of this creatable and ReadVersion will read in
-	// any previous version.
-	virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
-	virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
+    
+    // WriteVersion writes the current version of this creatable and ReadVersion will read in
+    // any previous version.
+    virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
+    virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -74,25 +74,25 @@ public:
 
 class plLinkingMgrMsg : public plMessage
 {
-	UInt8					fLinkingMgrCmd;
-	plCreatableListHelper	fArgs;
+    UInt8                   fLinkingMgrCmd;
+    plCreatableListHelper   fArgs;
 
 public:
-	plLinkingMgrMsg();
-	~plLinkingMgrMsg();
+    plLinkingMgrMsg();
+    ~plLinkingMgrMsg();
 
-	CLASSNAME_REGISTER( plLinkingMgrMsg );
-	GETINTERFACE_ANY( plLinkingMgrMsg, plMessage );
+    CLASSNAME_REGISTER( plLinkingMgrMsg );
+    GETINTERFACE_ANY( plLinkingMgrMsg, plMessage );
 
-	UInt8	GetCmd() const { return fLinkingMgrCmd; }
-	void	SetCmd( UInt8 v ) { fLinkingMgrCmd=v; }
-	plCreatableListHelper * GetArgs() { return &fArgs; }
+    UInt8   GetCmd() const { return fLinkingMgrCmd; }
+    void    SetCmd( UInt8 v ) { fLinkingMgrCmd=v; }
+    plCreatableListHelper * GetArgs() { return &fArgs; }
 
-	void	Read( hsStream* stream, hsResMgr* mgr );
-	void	Write( hsStream* stream, hsResMgr* mgr );
+    void    Read( hsStream* stream, hsResMgr* mgr );
+    void    Write( hsStream* stream, hsResMgr* mgr );
 
-	void	ReadVersion( hsStream* s, hsResMgr* mgr );
-	void	WriteVersion( hsStream* s, hsResMgr* mgr );
+    void    ReadVersion( hsStream* s, hsResMgr* mgr );
+    void    WriteVersion( hsStream* s, hsResMgr* mgr );
 };
 
 
@@ -101,36 +101,36 @@ public:
 class plLinkEffectsTriggerMsg : public plMessage
 {
 protected:
-	hsBool fLeavingAge;
-	plKey fLinkKey;
-	plKey fLinkInAnimKey;
-	int fInvisLevel;
+    hsBool fLeavingAge;
+    plKey fLinkKey;
+    plKey fLinkInAnimKey;
+    int fInvisLevel;
 public:
-	plLinkEffectsTriggerMsg() : fLeavingAge(true), fLinkKey(nil), fLinkInAnimKey(nil), fEffects(0), fInvisLevel(0) {  }
-	~plLinkEffectsTriggerMsg();
+    plLinkEffectsTriggerMsg() : fLeavingAge(true), fLinkKey(nil), fLinkInAnimKey(nil), fEffects(0), fInvisLevel(0) {  }
+    ~plLinkEffectsTriggerMsg();
 
-	CLASSNAME_REGISTER( plLinkEffectsTriggerMsg );
-	GETINTERFACE_ANY( plLinkEffectsTriggerMsg, plMessage );	
+    CLASSNAME_REGISTER( plLinkEffectsTriggerMsg );
+    GETINTERFACE_ANY( plLinkEffectsTriggerMsg, plMessage ); 
 
-	void	SetInvisLevel(int invisLevel) { fInvisLevel=invisLevel; }
-	int		GetInvisLevel() { return fInvisLevel; }
+    void    SetInvisLevel(int invisLevel) { fInvisLevel=invisLevel; }
+    int     GetInvisLevel() { return fInvisLevel; }
 
-	void	SetLeavingAge(hsBool leaving) { fLeavingAge = leaving; }
-	hsBool	IsLeavingAge() { return fLeavingAge; }
+    void    SetLeavingAge(hsBool leaving) { fLeavingAge = leaving; }
+    hsBool  IsLeavingAge() { return fLeavingAge; }
 
-	void	SetLinkKey(plKey &key);
-	const plKey	GetLinkKey() const { return fLinkKey; }
+    void    SetLinkKey(plKey &key);
+    const plKey GetLinkKey() const { return fLinkKey; }
 
-	void	SetLinkInAnimKey(plKey &key);
-	plKey	GetLinkInAnimKey() { return fLinkInAnimKey; }
-	
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void    SetLinkInAnimKey(plKey &key);
+    plKey   GetLinkInAnimKey() { return fLinkInAnimKey; }
+    
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
-	void ReadVersion(hsStream* s, hsResMgr* mgr);
-	void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr);
+    void WriteVersion(hsStream* s, hsResMgr* mgr);
 
-	Int32 fEffects;
+    Int32 fEffects;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -138,24 +138,24 @@ public:
 class plLinkEffectsTriggerPrepMsg : public plMessage
 {
 protected:
-	plLinkEffectsTriggerMsg *fTrigger;
+    plLinkEffectsTriggerMsg *fTrigger;
 
 public:
-	hsBool fLeavingAge;
-	plKey fLinkKey;	
+    hsBool fLeavingAge;
+    plKey fLinkKey; 
 
-	plLinkEffectsTriggerPrepMsg() : fLeavingAge(false), fLinkKey(nil), fTrigger(nil) {  }
-	~plLinkEffectsTriggerPrepMsg();
-	
-	CLASSNAME_REGISTER( plLinkEffectsTriggerPrepMsg );
-	GETINTERFACE_ANY( plLinkEffectsTriggerPrepMsg, plMessage );	
-		
-	void	SetTrigger(plLinkEffectsTriggerMsg *msg);
-	plLinkEffectsTriggerMsg *GetTrigger() { return fTrigger; }
-	
-	// runtime-local only, no I/O
-	void Read(hsStream* stream, hsResMgr* mgr) {}
-	void Write(hsStream* stream, hsResMgr* mgr) {}
+    plLinkEffectsTriggerPrepMsg() : fLeavingAge(false), fLinkKey(nil), fTrigger(nil) {  }
+    ~plLinkEffectsTriggerPrepMsg();
+    
+    CLASSNAME_REGISTER( plLinkEffectsTriggerPrepMsg );
+    GETINTERFACE_ANY( plLinkEffectsTriggerPrepMsg, plMessage ); 
+        
+    void    SetTrigger(plLinkEffectsTriggerMsg *msg);
+    plLinkEffectsTriggerMsg *GetTrigger() { return fTrigger; }
+    
+    // runtime-local only, no I/O
+    void Read(hsStream* stream, hsResMgr* mgr) {}
+    void Write(hsStream* stream, hsResMgr* mgr) {}
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -164,32 +164,32 @@ public:
 class plLinkEffectBCMsg : public plMessage
 {
 protected:
-	UInt32 fLinkFlags;
+    UInt32 fLinkFlags;
 
 public:
-	enum // link flags
-	{
-		kLeavingAge		= 0x1,
-		kSendCallback	= 0x2,
-		kMute			= 0x4		// don't play any sound
-	};
+    enum // link flags
+    {
+        kLeavingAge     = 0x1,
+        kSendCallback   = 0x2,
+        kMute           = 0x4       // don't play any sound
+    };
 
-	plLinkEffectBCMsg();
-	~plLinkEffectBCMsg() { }
+    plLinkEffectBCMsg();
+    ~plLinkEffectBCMsg() { }
 
-	CLASSNAME_REGISTER( plLinkEffectBCMsg );
-	GETINTERFACE_ANY( plLinkEffectBCMsg, plMessage );	
+    CLASSNAME_REGISTER( plLinkEffectBCMsg );
+    GETINTERFACE_ANY( plLinkEffectBCMsg, plMessage );   
 
-	// These messages should never be sent over the net, so I'm
-	// suspicious that R/W actually does something... but if
-	// it isn't broken, I'm not going to touch it.
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // These messages should never be sent over the net, so I'm
+    // suspicious that R/W actually does something... but if
+    // it isn't broken, I'm not going to touch it.
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
-	void SetLinkFlag(UInt32 flag, hsBool on = true);
-	hsBool HasLinkFlag(UInt32 flag);
+    void SetLinkFlag(UInt32 flag, hsBool on = true);
+    hsBool HasLinkFlag(UInt32 flag);
 
-	plKey fLinkKey;
+    plKey fLinkKey;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -197,18 +197,18 @@ public:
 class plLinkEffectPrepBCMsg : public plMessage
 {
 public:
-	hsBool fLeavingAge;
-	plKey fLinkKey;
-	
-	plLinkEffectPrepBCMsg();
-	~plLinkEffectPrepBCMsg() { }
-	
-	CLASSNAME_REGISTER( plLinkEffectPrepBCMsg );
-	GETINTERFACE_ANY( plLinkEffectPrepBCMsg, plMessage );	
-	
-	// runtime-local only, no I/O
-	void Read(hsStream* stream, hsResMgr* mgr) {}
-	void Write(hsStream* stream, hsResMgr* mgr) {}
+    hsBool fLeavingAge;
+    plKey fLinkKey;
+    
+    plLinkEffectPrepBCMsg();
+    ~plLinkEffectPrepBCMsg() { }
+    
+    CLASSNAME_REGISTER( plLinkEffectPrepBCMsg );
+    GETINTERFACE_ANY( plLinkEffectPrepBCMsg, plMessage );   
+    
+    // runtime-local only, no I/O
+    void Read(hsStream* stream, hsResMgr* mgr) {}
+    void Write(hsStream* stream, hsResMgr* mgr) {}
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -216,16 +216,16 @@ public:
 class plLinkCallbackMsg : public plEventCallbackMsg
 {
 public:
-	plLinkCallbackMsg() { }
-	~plLinkCallbackMsg() { } 
+    plLinkCallbackMsg() { }
+    ~plLinkCallbackMsg() { } 
 
-	CLASSNAME_REGISTER( plLinkCallbackMsg );
-	GETINTERFACE_ANY( plLinkCallbackMsg, plEventCallbackMsg );
+    CLASSNAME_REGISTER( plLinkCallbackMsg );
+    GETINTERFACE_ANY( plLinkCallbackMsg, plEventCallbackMsg );
 
-	void Read(hsStream* stream, hsResMgr* mgr); 
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr); 
+    void Write(hsStream* stream, hsResMgr* mgr);
 
-	plKey fLinkKey;
+    plKey fLinkKey;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -233,17 +233,17 @@ public:
 class plPseudoLinkEffectMsg : public plMessage
 {
 public:
-	plKey fLinkObjKey;
-	plKey fAvatarKey;
+    plKey fLinkObjKey;
+    plKey fAvatarKey;
 
-	plPseudoLinkEffectMsg();
-	~plPseudoLinkEffectMsg() {}
+    plPseudoLinkEffectMsg();
+    ~plPseudoLinkEffectMsg() {}
 
-	CLASSNAME_REGISTER(plPseudoLinkEffectMsg);
-	GETINTERFACE_ANY(plPseudoLinkEffectMsg, plMessage);
+    CLASSNAME_REGISTER(plPseudoLinkEffectMsg);
+    GETINTERFACE_ANY(plPseudoLinkEffectMsg, plMessage);
 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
 };
 
@@ -251,18 +251,18 @@ class plPseudoLinkAnimTriggerMsg : public plMessage
 {
 public:
 
-	plPseudoLinkAnimTriggerMsg();
-	plPseudoLinkAnimTriggerMsg(hsBool forward, 	plKey avatarKey);
-	~plPseudoLinkAnimTriggerMsg() {}
+    plPseudoLinkAnimTriggerMsg();
+    plPseudoLinkAnimTriggerMsg(hsBool forward,  plKey avatarKey);
+    ~plPseudoLinkAnimTriggerMsg() {}
 
-	CLASSNAME_REGISTER(plPseudoLinkAnimTriggerMsg);
-	GETINTERFACE_ANY(plPseudoLinkAnimTriggerMsg, plMessage);
+    CLASSNAME_REGISTER(plPseudoLinkAnimTriggerMsg);
+    GETINTERFACE_ANY(plPseudoLinkAnimTriggerMsg, plMessage);
 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
-	plKey fAvatarKey;
-	hsBool fForward;
+    plKey fAvatarKey;
+    hsBool fForward;
 
 };
 
@@ -270,15 +270,15 @@ class plPseudoLinkAnimCallbackMsg : public plMessage
 {
 public:
 
-	plPseudoLinkAnimCallbackMsg() {;}
-	~plPseudoLinkAnimCallbackMsg() {;}
+    plPseudoLinkAnimCallbackMsg() {;}
+    ~plPseudoLinkAnimCallbackMsg() {;}
 
-	CLASSNAME_REGISTER(plPseudoLinkAnimCallbackMsg);
-	GETINTERFACE_ANY(plPseudoLinkAnimCallbackMsg, plMessage);
+    CLASSNAME_REGISTER(plPseudoLinkAnimCallbackMsg);
+    GETINTERFACE_ANY(plPseudoLinkAnimCallbackMsg, plMessage);
 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
-	plKey fAvatarKey;
+    plKey fAvatarKey;
 };
 #endif // plLinkToAgeMsg_INC

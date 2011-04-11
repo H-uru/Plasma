@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIDraggableMod Header													//
-//																			//
+//                                                                          //
+//  pfGUIDraggableMod Header                                                    //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIDraggableMod_h
@@ -38,53 +38,53 @@ class plMessage;
 
 class pfGUIDraggableMod : public pfGUIControlMod
 {
-	protected:
+    protected:
 
-		hsPoint3	fDragOffset, fLastMousePt;
-		hsPoint3	fOrigCenter;
-		hsBool		fDragging;
+        hsPoint3    fDragOffset, fLastMousePt;
+        hsPoint3    fOrigCenter;
+        hsBool      fDragging;
 
-		
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
-		virtual UInt32		IGetDesiredCursor( void ) const;	// As specified in plInputInterface.h
+        virtual UInt32      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
-	public:
+    public:
 
-		pfGUIDraggableMod();
-		virtual ~pfGUIDraggableMod();
+        pfGUIDraggableMod();
+        virtual ~pfGUIDraggableMod();
 
-		CLASSNAME_REGISTER( pfGUIDraggableMod );
-		GETINTERFACE_ANY( pfGUIDraggableMod, pfGUIControlMod );
+        CLASSNAME_REGISTER( pfGUIDraggableMod );
+        GETINTERFACE_ANY( pfGUIDraggableMod, pfGUIControlMod );
 
-		enum OurFlags
-		{
-			kReportDragging = kDerivedFlagsStart,
-			kHideCursorWhileDragging,
-			kAlwaysSnapBackToStart
-		};
+        enum OurFlags
+        {
+            kReportDragging = kDerivedFlagsStart,
+            kHideCursorWhileDragging,
+            kAlwaysSnapBackToStart
+        };
 
-		// Extended event types (endDrag is the default event)
-		enum ExtendedEvents
-		{
-			kDragging,
-			kCancelled,
-			kStartingDrag
-		};
+        // Extended event types (endDrag is the default event)
+        enum ExtendedEvents
+        {
+            kDragging,
+            kCancelled,
+            kStartingDrag
+        };
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		virtual void	HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
 
-		virtual void	UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
+        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
 
-		void			StopDragging( hsBool cancel );
-		const hsPoint3	&GetLastMousePt( void ) const { return fLastMousePt; }
+        void            StopDragging( hsBool cancel );
+        const hsPoint3  &GetLastMousePt( void ) const { return fLastMousePt; }
 };
 
 #endif // _pfGUIDraggableMod_h

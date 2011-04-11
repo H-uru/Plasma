@@ -36,72 +36,72 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plIntersect/plVolumeIsect.h"
 
 plModulator::plModulator()
-:	fVolume(nil),
-	fSoftDist(0)
+:   fVolume(nil),
+    fSoftDist(0)
 {
 }
 
 plModulator::~plModulator()
 {
-	delete fVolume;
+    delete fVolume;
 }
 
 void plModulator::SetVolume(plVolumeIsect* vol)
 {
-	delete fVolume;
-	fVolume = vol;
+    delete fVolume;
+    fVolume = vol;
 }
 
 void plModulator::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
-	hsAssert(fVolume, "Modulator with no Volume is pretty useless");
+    hsAssert(fVolume, "Modulator with no Volume is pretty useless");
 
-	fVolume->SetTransform(l2w, w2l);
+    fVolume->SetTransform(l2w, w2l);
 }
 
 // Volume - Want to base this on the closest point on the bounds, instead of just the center.
 hsScalar plModulator::Modulation(const hsBounds3Ext& bnd) const
 {
-	return Modulation(bnd.GetCenter());
+    return Modulation(bnd.GetCenter());
 }
 
 hsScalar plModulator::Modulation(const hsPoint3& pos) const
 {
-	hsAssert(fVolume, "Modulator with no Volume is pretty useless");
+    hsAssert(fVolume, "Modulator with no Volume is pretty useless");
 
-	hsScalar dist = fVolume->Test(pos);
+    hsScalar dist = fVolume->Test(pos);
 
-	hsScalar retVal;
-	if( dist > 0 )
-	{
-		if( dist < fSoftDist )
-		{
-			dist /= fSoftDist;
-			retVal = 1.f - dist;
-		}
-		else
-		{
-			retVal = 0;
-		}
-	}
-	else
-	{
-		retVal = 1.f;
-	}
+    hsScalar retVal;
+    if( dist > 0 )
+    {
+        if( dist < fSoftDist )
+        {
+            dist /= fSoftDist;
+            retVal = 1.f - dist;
+        }
+        else
+        {
+            retVal = 0;
+        }
+    }
+    else
+    {
+        retVal = 1.f;
+    }
 
-	return retVal;
+    return retVal;
 }
 
 void plModulator::Read(hsStream* s, hsResMgr* mgr)
 {
-	fVolume = plVolumeIsect::ConvertNoRef(mgr->ReadCreatable(s));
-	fSoftDist = s->ReadSwapScalar();
+    fVolume = plVolumeIsect::ConvertNoRef(mgr->ReadCreatable(s));
+    fSoftDist = s->ReadSwapScalar();
 }
 
 void plModulator::Write(hsStream* s, hsResMgr* mgr)
 {
-	mgr->WriteCreatable(s, fVolume);
-	s->WriteSwapScalar(fSoftDist);
+    mgr->WriteCreatable(s, fVolume);
+    s->WriteSwapScalar(fSoftDist);
 }
 
 

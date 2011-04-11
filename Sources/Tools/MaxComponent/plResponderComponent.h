@@ -31,10 +31,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plResponderComponentExt : public plComponentExt
 {
 public:
-	// All classes derived from plResponderComponent can be picked from the activator component,
-	// because they can convert to the responder type.
-	int CanConvertToType(Class_ID obtype)
-	{ return (obtype == RESPONDER_CID) ? 1 : plComponentExt::CanConvertToType(obtype); }
+    // All classes derived from plResponderComponent can be picked from the activator component,
+    // because they can convert to the responder type.
+    int CanConvertToType(Class_ID obtype)
+    { return (obtype == RESPONDER_CID) ? 1 : plComponentExt::CanConvertToType(obtype); }
 };
 
 int ResponderGetActivatorCount(plComponentBase *comp);
@@ -42,7 +42,7 @@ plComponentBase *ResponderGetActivator(plComponentBase *comp, int idx);
 
 namespace Responder
 {
-	// Pass in a responder component and a node it is attached to, and you will
-	// get the key to the responder modifier
-	plKey GetKey(plComponentBase *comp, plMaxNodeBase *node);
+    // Pass in a responder component and a node it is attached to, and you will
+    // get the key to the responder modifier
+    plKey GetKey(plComponentBase *comp, plMaxNodeBase *node);
 }

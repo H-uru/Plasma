@@ -3,18 +3,18 @@ include_directories("../../NucleusLib")
 include_directories("../../NucleusLib/inc")
 
 set(pnTimer_HEADERS
-	plTimedValue.h
-	plTimerCallbackManager.h
-	pnBuildDates.h
-	pnTimerCreatable.h
+    plTimedValue.h
+    plTimerCallbackManager.h
+    pnBuildDates.h
+    pnTimerCreatable.h
 )
 
 set(pnTimer_SOURCES
-	hsTimer.cpp
-	plTimedValue.cpp
-	plTimerCallbackManager.cpp
-	pnBranchDate.cpp
-	pnBuildDates.cpp
+    hsTimer.cpp
+    plTimedValue.cpp
+    plTimerCallbackManager.cpp
+    pnBranchDate.cpp
+    pnBuildDates.cpp
 )
 
 add_library(pnTimer STATIC ${pnTimer_HEADERS} ${pnTimer_SOURCES})

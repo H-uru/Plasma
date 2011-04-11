@@ -176,7 +176,7 @@ void BlinnShader::Illum(ShadeContext &sc, SIllumParams &ip) {
             // specular (Phong) 
             if (is_shiny&&l->affectSpecular) {
                 Point3 H = FNormalize(L-ip.V);
-                float c = DotProd(ip.N,H);	 
+                float c = DotProd(ip.N,H);   
                 if (c>0.0f) {
                     if (ip.softThresh!=0.0&&diffCoef<ip.softThresh) {
                         c *= Soften(diffCoef/ip.softThresh);
@@ -245,11 +245,11 @@ void MetalShader::Illum(ShadeContext &sc, SIllumParams &ip) {
             float G = (NV<NL)? (2.0f*NV*NH/VH): (2.0f*NL*NH/VH);
             if (G>0.0f) {
                 // Compute (approximate) indices of refraction
-                //	this can be factored out for non-texture-mapped mtls
+                //  this can be factored out for non-texture-mapped mtls
                 if (!gotKav) {
                     fav0 = Intens(ip.diff);
                     if (fav0>=1.0f) fav0 = .9999f;
-                    kav = CompK(fav0);	
+                    kav = CompK(fav0);  
                     gotKav = TRUE;
                 }
                 
@@ -259,9 +259,9 @@ void MetalShader::Illum(ShadeContext &sc, SIllumParams &ip) {
                 
                 // Beckman distribution  (from Cook-Torrance paper)
                 sec2 = 1.0f/(NH*NH);  // 1/sqr(cos) 
-                float D = (.5f/PI)*sec2*sec2*m2inv*(float)exp((1.0f-sec2)*m2inv);  					
+                float D = (.5f/PI)*sec2*sec2*m2inv*(float)exp((1.0f-sec2)*m2inv);                   
                 if (G>1.0f) G = 1.0f;
-                float Rs = ip.sh_str*D*G/(NV+.05f);	
+                float Rs = ip.sh_str*D*G/(NV+.05f); 
                 ip.specIllum += fcol*Rs*lightCol;
             }
         } 
@@ -279,7 +279,7 @@ void MetalShader::SetShininess(float shininess, float shineStr) {
 
 float MetalShader::EvalHilite(float x) {
     float c = (float)cos(x*PI);
-    float sec2 = 1.0f/(c*c);	  /* 1/sqr(cos) */
-    return fshin_str*(.5f/PI)*sec2*sec2*fm2inv*(float)exp((1.0f-sec2)*fm2inv);  					
+    float sec2 = 1.0f/(c*c);      /* 1/sqr(cos) */
+    return fshin_str*(.5f/PI)*sec2*sec2*fm2inv*(float)exp((1.0f-sec2)*fm2inv);                      
 }
 

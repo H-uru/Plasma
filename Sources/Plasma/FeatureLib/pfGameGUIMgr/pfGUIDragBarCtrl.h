@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIDragBarCtrl Header													//
-//																			//
+//                                                                          //
+//  pfGUIDragBarCtrl Header                                                 //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIDragBarCtrl_h
@@ -38,40 +38,40 @@ class plMessage;
 
 class pfGUIDragBarCtrl : public pfGUIControlMod
 {
-	protected:
+    protected:
 
-		hsPoint3	fDragOffset;
-		hsBool		fDragging;
-		hsBool		fAnchored;
+        hsPoint3    fDragOffset;
+        hsBool      fDragging;
+        hsBool      fAnchored;
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
-		virtual UInt32		IGetDesiredCursor( void ) const;	// As specified in plInputInterface.h
+        virtual UInt32      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
-	public:
+    public:
 
-		pfGUIDragBarCtrl();
-		virtual ~pfGUIDragBarCtrl();
+        pfGUIDragBarCtrl();
+        virtual ~pfGUIDragBarCtrl();
 
-		CLASSNAME_REGISTER( pfGUIDragBarCtrl );
-		GETINTERFACE_ANY( pfGUIDragBarCtrl, pfGUIControlMod );
+        CLASSNAME_REGISTER( pfGUIDragBarCtrl );
+        GETINTERFACE_ANY( pfGUIDragBarCtrl, pfGUIControlMod );
 
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		virtual void	HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
 
-		virtual void	SetAnchored( hsBool anchored ) { fAnchored = anchored; }
-		virtual hsBool	IsAnchored(void) { return fAnchored; }
+        virtual void    SetAnchored( hsBool anchored ) { fAnchored = anchored; }
+        virtual hsBool  IsAnchored(void) { return fAnchored; }
 
-		virtual void	UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
+        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
 
-		// Export only
+        // Export only
 };
 
 #endif // _pfGUIDragBarCtrl_h

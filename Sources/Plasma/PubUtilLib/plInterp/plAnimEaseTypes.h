@@ -31,11 +31,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace plAnimEaseTypes
 {
-	enum {
-		kNoEase,
-		kConstAccel,
-		kSpline,
-	};	
+    enum {
+        kNoEase,
+        kConstAccel,
+        kSpline,
+    };  
 };
 
 #define ENTIRE_ANIMATION_NAME   "(Entire Animation)"

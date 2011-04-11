@@ -63,5 +63,5 @@ COMPILER_ASSERT(BRANCH_ID != 0);
 
 //============================================================================
 unsigned BranchId () {
-	return BRANCH_ID;
+    return BRANCH_ID;
 }

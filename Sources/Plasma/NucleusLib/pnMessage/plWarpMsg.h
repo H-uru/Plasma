@@ -34,51 +34,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plWarpMsg : public plMessage
 {
 private:
-	UInt32	fWarpFlags;
-	hsMatrix44 fTransform;
+    UInt32  fWarpFlags;
+    hsMatrix44 fTransform;
 public:
-	enum WarpFlags
-	{
-		kFlushTransform = 0x1,
-		kZeroVelocity	= 0x2
-	};
+    enum WarpFlags
+    {
+        kFlushTransform = 0x1,
+        kZeroVelocity   = 0x2
+    };
 
-	plWarpMsg() { Clear(); }
-	plWarpMsg(const hsMatrix44& mat ){ Clear(); fTransform = mat; }
-	plWarpMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t) { Clear(); }
-	plWarpMsg(const plKey &s, const plKey &r, UInt32 flags, const hsMatrix44 &mat)
-		: fWarpFlags(flags), fTransform(mat), plMessage(s, r, nil)
-	{  };
-	
-	~plWarpMsg(){}
+    plWarpMsg() { Clear(); }
+    plWarpMsg(const hsMatrix44& mat ){ Clear(); fTransform = mat; }
+    plWarpMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t) { Clear(); }
+    plWarpMsg(const plKey &s, const plKey &r, UInt32 flags, const hsMatrix44 &mat)
+        : fWarpFlags(flags), fTransform(mat), plMessage(s, r, nil)
+    {  };
+    
+    ~plWarpMsg(){}
 
-	CLASSNAME_REGISTER( plWarpMsg );
-	GETINTERFACE_ANY( plWarpMsg, plMessage );
+    CLASSNAME_REGISTER( plWarpMsg );
+    GETINTERFACE_ANY( plWarpMsg, plMessage );
 
-	void Clear() { fWarpFlags=0; }
+    void Clear() { fWarpFlags=0; }
 
-	UInt32 GetWarpFlags() { return fWarpFlags; }
-	void SetWarpFlags(UInt32 f) { fWarpFlags=f; }
+    UInt32 GetWarpFlags() { return fWarpFlags; }
+    void SetWarpFlags(UInt32 f) { fWarpFlags=f; }
 
-	void SetTransform(const hsMatrix44& mat) { fTransform=mat;	}
-	hsMatrix44& GetTransform() { return fTransform;	}
+    void SetTransform(const hsMatrix44& mat) { fTransform=mat;  }
+    hsMatrix44& GetTransform() { return fTransform; }
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fTransform.Read(stream);
-		stream->ReadSwap(&fWarpFlags);
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fTransform.Read(stream);
+        stream->ReadSwap(&fWarpFlags);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		fTransform.Write(stream);
-		stream->WriteSwap(fWarpFlags);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        fTransform.Write(stream);
+        stream->WriteSwap(fWarpFlags);
+    }
 };
 
 #endif // plWarpMsg_inc

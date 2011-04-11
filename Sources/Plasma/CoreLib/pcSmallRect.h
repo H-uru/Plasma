@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	pcSmallRect - A tiny Int16-based 2D rectangle class						 //
-//																			 //
+//                                                                           //
+//  pcSmallRect - A tiny Int16-based 2D rectangle class                      //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 // Note: I'm introducing the concept here that new-style coreLib files/classes
@@ -42,22 +42,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsStream;
 class pcSmallRect
 {
-	public:
-		Int16	fX, fY, fWidth, fHeight;
+    public:
+        Int16   fX, fY, fWidth, fHeight;
 
-		pcSmallRect() { Empty(); }
-		pcSmallRect( Int16 x, Int16 y, Int16 w, Int16 h ) { Set( x, y, w, h ); }
-		
-		void	Set( Int16 x, Int16 y, Int16 w, Int16 h ) { fX = x; fY = y; fWidth = w; fHeight = h; }
-		void	Empty( void ) { fX = fY = fWidth = fHeight = 0; }
+        pcSmallRect() { Empty(); }
+        pcSmallRect( Int16 x, Int16 y, Int16 w, Int16 h ) { Set( x, y, w, h ); }
+        
+        void    Set( Int16 x, Int16 y, Int16 w, Int16 h ) { fX = x; fY = y; fWidth = w; fHeight = h; }
+        void    Empty( void ) { fX = fY = fWidth = fHeight = 0; }
 
-		Int16	GetRight( void ) const { return fX + fWidth; }
-		Int16	GetBottom( void ) const { return fY + fHeight; }
+        Int16   GetRight( void ) const { return fX + fWidth; }
+        Int16   GetBottom( void ) const { return fY + fHeight; }
 
-		void	Read( hsStream *s );
-		void	Write( hsStream *s );
+        void    Read( hsStream *s );
+        void    Write( hsStream *s );
 
-		hsBool	Contains( Int16 x, Int16 y ) { if( x >= fX && x <= fX + fWidth && y >= fY && y <= fY + fHeight ) return true; return false; }
+        hsBool  Contains( Int16 x, Int16 y ) { if( x >= fX && x <= fX + fWidth && y >= fY && y <= fY + fHeight ) return true; return false; }
 };
 
 

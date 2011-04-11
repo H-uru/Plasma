@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plNetTransport::~plNetTransport()
 {
-	ClearMembers();
+    ClearMembers();
 }
 
 //
@@ -42,52 +42,52 @@ plNetTransport::~plNetTransport()
 //
 int plNetTransport::AddMember(plNetTransportMember* mbr)
 {
-	if (FindMember(mbr)==-1)
-	{
-		fMembers.push_back(mbr);
-		hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Adding member %s", mbr->AsStdString().c_str()) );
-		plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
-		plNetClientMgr::GetInstance()->GetTalkList()->AddMember(mbr);
-		DumpState();
-		return fMembers.size()-1;
-	}
-	return -1;
+    if (FindMember(mbr)==-1)
+    {
+        fMembers.push_back(mbr);
+        hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Adding member %s", mbr->AsStdString().c_str()) );
+        plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
+        plNetClientMgr::GetInstance()->GetTalkList()->AddMember(mbr);
+        DumpState();
+        return fMembers.size()-1;
+    }
+    return -1;
 }
 
 void plNetTransport::IUnSubscribeToAllChannelGrps(plNetTransportMember* mbr)
 {
-	int i;
-	for( i=mbr->GetNumSubscriptions()-1; i>=0 ; i-- )
-	{
-		int chan=mbr->GetSubscription(i);
-		hsBool ok=UnSubscribeToChannelGrp(mbr, chan);
-		hsAssert(ok, "can't find supposed subscription to remove");
-	} // for	         
+    int i;
+    for( i=mbr->GetNumSubscriptions()-1; i>=0 ; i-- )
+    {
+        int chan=mbr->GetSubscription(i);
+        hsBool ok=UnSubscribeToChannelGrp(mbr, chan);
+        hsAssert(ok, "can't find supposed subscription to remove");
+    } // for             
 }
 
 void plNetTransport::IRemoveMember(plNetTransportMember* mbr)
 {
-	if (!mbr)
-		return;
+    if (!mbr)
+        return;
 
-	hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Removing member %s", mbr->AsStdString().c_str()) );
+    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Removing member %s", mbr->AsStdString().c_str()) );
 
-//	plNetClientMgr::GetInstance()->GetNetCore()->RemovePeer(mbr->GetPeerID());
-	plNetClientMgr::GetInstance()->GetTalkList()->RemoveMember(mbr);
-	plNetClientMgr::GetInstance()->GetListenList()->RemoveMember(mbr);
+//  plNetClientMgr::GetInstance()->GetNetCore()->RemovePeer(mbr->GetPeerID());
+    plNetClientMgr::GetInstance()->GetTalkList()->RemoveMember(mbr);
+    plNetClientMgr::GetInstance()->GetListenList()->RemoveMember(mbr);
 
-	// remove member from subscription lists
-	IUnSubscribeToAllChannelGrps(mbr);
+    // remove member from subscription lists
+    IUnSubscribeToAllChannelGrps(mbr);
 
-	plMembersList::iterator it=std::find(fMembers.begin(),fMembers.end(),mbr);
+    plMembersList::iterator it=std::find(fMembers.begin(),fMembers.end(),mbr);
 
-	// remove member from master list
-	fMembers.erase(it);
+    // remove member from master list
+    fMembers.erase(it);
 
-	hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Done Removing member %s", mbr->AsStdString().c_str()) );
-	DumpState();
-	
-	delete mbr;
+    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Done Removing member %s", mbr->AsStdString().c_str()) );
+    DumpState();
+    
+    delete mbr;
 }
 
 //
@@ -96,13 +96,13 @@ void plNetTransport::IRemoveMember(plNetTransportMember* mbr)
 //
 hsBool plNetTransport::RemoveMember(int idx)
 {
-	if (idx>=0)
-	{
-		plNetTransportMember* mbr=GetMember(idx);
-		IRemoveMember(mbr);
-		return true;
-	}
-	return false;
+    if (idx>=0)
+    {
+        plNetTransportMember* mbr=GetMember(idx);
+        IRemoveMember(mbr);
+        return true;
+    }
+    return false;
 }
 
 //
@@ -111,8 +111,8 @@ hsBool plNetTransport::RemoveMember(int idx)
 //
 hsBool plNetTransport::RemoveMember(plNetTransportMember* mbr)
 {
-	IRemoveMember(mbr);
-	return true;
+    IRemoveMember(mbr);
+    return true;
 }
 
 //
@@ -120,8 +120,8 @@ hsBool plNetTransport::RemoveMember(plNetTransportMember* mbr)
 //
 int plNetTransport::FindMember(const plNetTransportMember* mbr) 
 {
-	plMembersList::iterator it = std::find(fMembers.begin(), fMembers.end(), mbr);
-	return (it==fMembers.end()) ? -1 : (it-fMembers.begin());
+    plMembersList::iterator it = std::find(fMembers.begin(), fMembers.end(), mbr);
+    return (it==fMembers.end()) ? -1 : (it-fMembers.begin());
 }
 
 
@@ -130,12 +130,12 @@ int plNetTransport::FindMember(const plNetTransportMember* mbr)
 //
 void plNetTransport::SubscribeToChannelGrp(plNetTransportMember* mbr, int channel)
 {
-//	hsAssert(FindMember(mbr) != -1, "must add member before subscribing to channel");
-	if (mbr->AddSubscription(channel))
-	{
-		hsAssert(channel<fChannelGroups.size(), "invalid channel index");
-		fChannelGroups[channel].push_back(mbr);
-	}
+//  hsAssert(FindMember(mbr) != -1, "must add member before subscribing to channel");
+    if (mbr->AddSubscription(channel))
+    {
+        hsAssert(channel<fChannelGroups.size(), "invalid channel index");
+        fChannelGroups[channel].push_back(mbr);
+    }
 }
 
 //
@@ -143,17 +143,17 @@ void plNetTransport::SubscribeToChannelGrp(plNetTransportMember* mbr, int channe
 //
 hsBool plNetTransport::UnSubscribeToChannelGrp(plNetTransportMember* mbr, int chan)
 {
-	hsAssert(chan>=0 && chan<fChannelGroups.size(), "invalid channel idx");
-	plMembersList* mList = &fChannelGroups[chan];
-	plMembersList::iterator it=std::find(mList->begin(), mList->end(), mbr);
-	if (it != mList->end())
-	{
-		mList->erase(it);
-		hsBool ret=mbr->RemoveSubscription(chan);
-		hsAssert(ret, "error removing subscription");
-		return true;
-	}
-	return false;
+    hsAssert(chan>=0 && chan<fChannelGroups.size(), "invalid channel idx");
+    plMembersList* mList = &fChannelGroups[chan];
+    plMembersList::iterator it=std::find(mList->begin(), mList->end(), mbr);
+    if (it != mList->end())
+    {
+        mList->erase(it);
+        hsBool ret=mbr->RemoveSubscription(chan);
+        hsAssert(ret, "error removing subscription");
+        return true;
+    }
+    return false;
 }
 
 //
@@ -161,7 +161,7 @@ hsBool plNetTransport::UnSubscribeToChannelGrp(plNetTransportMember* mbr, int ch
 //
 void plNetTransport::GetSubscriptions(plNetTransportMember* mbr, std::vector<int>* channels) const
 {
-	mbr->CopySubscriptions(channels);
+    mbr->CopySubscriptions(channels);
 }
 
 
@@ -172,71 +172,71 @@ void plNetTransport::GetSubscriptions(plNetTransportMember* mbr, std::vector<int
 //
 int plNetTransport::SendMsg(int chan, plNetMessage* netMsg) const
 {
-	NetCommSendMsg(netMsg);
-	return hsOK;
-	
-	plNetClientMgr* nc=plNetClientMgr::GetInstance();
-	int ret=1; // didn't send
+    NetCommSendMsg(netMsg);
+    return hsOK;
+    
+    plNetClientMgr* nc=plNetClientMgr::GetInstance();
+    int ret=1; // didn't send
 
-	if (chan < fChannelGroups.size())
-	{
-		const plMembersList* mList = &fChannelGroups[chan];
-				
-		// does this msg have a list of receivers
-		plNetMsgReceiversListHelper* rl = plNetMsgReceiversListHelper::ConvertNoRef(netMsg);
+    if (chan < fChannelGroups.size())
+    {
+        const plMembersList* mList = &fChannelGroups[chan];
+                
+        // does this msg have a list of receivers
+        plNetMsgReceiversListHelper* rl = plNetMsgReceiversListHelper::ConvertNoRef(netMsg);
 
-#if 0				
-		// send msg to all subscribers to this channel
-		int size=mList->size();
-		for( int i=0 ; i<size; i++  )
-		{
+#if 0               
+        // send msg to all subscribers to this channel
+        int size=mList->size();
+        for( int i=0 ; i<size; i++  )
+        {
             hsAssert(false, "eric, port me");
 
-			plNetTransportMember* tm=(*mList)[i];
-			hsAssert(tm, "nil mbr in sendMsg");
-//			int peerID=tm->GetPeerID();
-//			hsAssert(peerID>=0, "queing message to invalid peer");
+            plNetTransportMember* tm=(*mList)[i];
+            hsAssert(tm, "nil mbr in sendMsg");
+//          int peerID=tm->GetPeerID();
+//          hsAssert(peerID>=0, "queing message to invalid peer");
 
-//			if ((ncRet=nc->GetNetClientComm().SendMsg(netMsg, peerID, sendFlags, msgSize)) != plNetCore::kNetOK)
+//          if ((ncRet=nc->GetNetClientComm().SendMsg(netMsg, peerID, sendFlags, msgSize)) != plNetCore::kNetOK)
 
             NetCommSendMsg(netMsg);
-			if (rl)
-			{
-				hsBool ok=rl->RemoveReceiverPlayerID(tm->GetPlayerID());
-				hsAssert(ok, "couldn't find rcvr to remove?");
-			}
-			ret=0; // sent ok	
-		} // for      
+            if (rl)
+            {
+                hsBool ok=rl->RemoveReceiverPlayerID(tm->GetPlayerID());
+                hsAssert(ok, "couldn't find rcvr to remove?");
+            }
+            ret=0; // sent ok   
+        } // for      
 #endif
 
-		// if there are rcvrs left that we couldn't send to, send via server
-		if (rl && rl->GetNumReceivers())
-		{			
-//			if ((ncRet=nc->GetNetClientComm().SendMsg(netMsg, nc->GetServerPeerID(), sendFlags, msgSize)) != plNetCore::kNetOK)
+        // if there are rcvrs left that we couldn't send to, send via server
+        if (rl && rl->GetNumReceivers())
+        {           
+//          if ((ncRet=nc->GetNetClientComm().SendMsg(netMsg, nc->GetServerPeerID(), sendFlags, msgSize)) != plNetCore::kNetOK)
             NetCommSendMsg(netMsg);
-            ret=0;	// sent
-		}
-	}
-	else
-	{
-		hsStatusMessage("EMPTY TRANSPORT GROUP\n");
-	}
-	return ret;
+            ret=0;  // sent
+        }
+    }
+    else
+    {
+        hsStatusMessage("EMPTY TRANSPORT GROUP\n");
+    }
+    return ret;
 }
 
 
 void plNetTransport::ClearMembers()
 {
-	int i;
-	for( i=0 ;i<GetNumMembers() ;i++  )
-	{
-		plNetTransportMember* mbr = GetMember(i);
-		hsAssert(mbr, "nil member?");
-		IUnSubscribeToAllChannelGrps(mbr);
-		delete mbr;
-	} // for	     
-	
-	fMembers.clear();
+    int i;
+    for( i=0 ;i<GetNumMembers() ;i++  )
+    {
+        plNetTransportMember* mbr = GetMember(i);
+        hsAssert(mbr, "nil member?");
+        IUnSubscribeToAllChannelGrps(mbr);
+        delete mbr;
+    } // for         
+    
+    fMembers.clear();
 }
 
 
@@ -245,14 +245,14 @@ void plNetTransport::ClearMembers()
 //
 int plNetTransport::FindMember(UInt32 playerID) const
 {
-	int i;
-	for( i=0 ;i<GetNumMembers() ;i++  )
-	{
-		plNetTransportMember* mbr = GetMember(i);
-		if (mbr->GetPlayerID()==playerID)
-			return i;
-	}
-	return -1;
+    int i;
+    for( i=0 ;i<GetNumMembers() ;i++  )
+    {
+        plNetTransportMember* mbr = GetMember(i);
+        if (mbr->GetPlayerID()==playerID)
+            return i;
+    }
+    return -1;
 }
 
 //
@@ -260,14 +260,14 @@ int plNetTransport::FindMember(UInt32 playerID) const
 //
 int plNetTransport::FindMember(const plKey avKey) const
 {
-	int i;
-	for( i=0 ;i<GetNumMembers() ;i++  )
-	{
-		plNetTransportMember* mbr = GetMember(i);
-		if (mbr->GetAvatarKey()==avKey)
-			return i;
-	}
-	return -1;
+    int i;
+    for( i=0 ;i<GetNumMembers() ;i++  )
+    {
+        plNetTransportMember* mbr = GetMember(i);
+        if (mbr->GetAvatarKey()==avKey)
+            return i;
+    }
+    return -1;
 }
 
 //
@@ -275,67 +275,67 @@ int plNetTransport::FindMember(const plKey avKey) const
 //
 void plNetTransport::ClearChannelGrp(int channel)
 {
-	const plMembersList* mList = &fChannelGroups[channel];
-	int i, size=mList->size();
-	for( i=0 ; i<size; i++  )
-	{
-		plNetTransportMember* tm=(*mList)[i];
-		hsBool ok=tm->RemoveSubscription(channel);
-		hsAssert(ok, "error removing subscription");
-	}
+    const plMembersList* mList = &fChannelGroups[channel];
+    int i, size=mList->size();
+    for( i=0 ; i<size; i++  )
+    {
+        plNetTransportMember* tm=(*mList)[i];
+        hsBool ok=tm->RemoveSubscription(channel);
+        hsAssert(ok, "error removing subscription");
+    }
 
-	fChannelGroups[channel].clear();
+    fChannelGroups[channel].clear();
 }
 
 void plNetTransport::DumpState()
 {
-	plNetClientMgr* nc=plNetClientMgr::GetInstance();
-	
-	hsLogEntry( nc->DebugMsg("-------------------\n") );
-	hsLogEntry( nc->DebugMsg("Num Channels=%d\n", fChannelGroups.size()) );
+    plNetClientMgr* nc=plNetClientMgr::GetInstance();
+    
+    hsLogEntry( nc->DebugMsg("-------------------\n") );
+    hsLogEntry( nc->DebugMsg("Num Channels=%d\n", fChannelGroups.size()) );
 
-	int i;
-	for(i=0;i<fChannelGroups.size();i++)
-	{
-		plMembersList* mList = &fChannelGroups[i];
-		hsLogEntry( nc->DebugMsg("\tChannel %d, num mbrs=%d\n", i, mList->size()) );
-		int j;
-		for(j=0; j<mList->size();j++)
-		{
-			plNetTransportMember * mbr = (*mList)[j];
-			hsLogEntry( nc->DebugMsg("\t\tMbr %s\n",(*mList)[j]->AsStdString().c_str()) );
-		}
-	}
+    int i;
+    for(i=0;i<fChannelGroups.size();i++)
+    {
+        plMembersList* mList = &fChannelGroups[i];
+        hsLogEntry( nc->DebugMsg("\tChannel %d, num mbrs=%d\n", i, mList->size()) );
+        int j;
+        for(j=0; j<mList->size();j++)
+        {
+            plNetTransportMember * mbr = (*mList)[j];
+            hsLogEntry( nc->DebugMsg("\t\tMbr %s\n",(*mList)[j]->AsStdString().c_str()) );
+        }
+    }
 
-	nc->DebugMsg("Num Mbrs=%d\n", GetNumMembers());
-	for(i=0;i<GetNumMembers();i++)
-	{
-		plNetTransportMember * mbr = GetMember(i);
-		hsLogEntry (nc->DebugMsg("\tMbr %d, name=%s, plyrID=%lu, subs=%d", 
-			i,mbr->AsStdString().c_str(),mbr->GetPlayerID(),mbr->GetNumSubscriptions()) );
-		int j;
-		for(j=0;j<mbr->GetNumSubscriptions();j++)
-		{
-			hsLogEntry( nc->DebugMsg("\t\tSub %d, chan=%d\n", j, mbr->GetSubscription(j)) );
-		}
-	}
-	hsLogEntry( nc->DebugMsg("\n") );
+    nc->DebugMsg("Num Mbrs=%d\n", GetNumMembers());
+    for(i=0;i<GetNumMembers();i++)
+    {
+        plNetTransportMember * mbr = GetMember(i);
+        hsLogEntry (nc->DebugMsg("\tMbr %d, name=%s, plyrID=%lu, subs=%d", 
+            i,mbr->AsStdString().c_str(),mbr->GetPlayerID(),mbr->GetNumSubscriptions()) );
+        int j;
+        for(j=0;j<mbr->GetNumSubscriptions();j++)
+        {
+            hsLogEntry( nc->DebugMsg("\t\tSub %d, chan=%d\n", j, mbr->GetSubscription(j)) );
+        }
+    }
+    hsLogEntry( nc->DebugMsg("\n") );
 }
 
 void plNetTransport::SetNumChannels(int n)
 {
-	if (n>fChannelGroups.size())
-		fChannelGroups.resize(n);
+    if (n>fChannelGroups.size())
+        fChannelGroups.resize(n);
 }
 
 
 int compare( const void* arg1, const void *arg2 )
 {
-	plNetTransportMember** m1 = (plNetTransportMember**)arg1;
-	plNetTransportMember** m2 = (plNetTransportMember**)arg2;
-	float d1=m1 ? (*m1)->GetDistSq() : hsScalarMax;
-	float d2=m2 ? (*m2)->GetDistSq() : hsScalarMax;
-	return (int)(d1-d2);
+    plNetTransportMember** m1 = (plNetTransportMember**)arg1;
+    plNetTransportMember** m2 = (plNetTransportMember**)arg2;
+    float d1=m1 ? (*m1)->GetDistSq() : hsScalarMax;
+    float d2=m2 ? (*m2)->GetDistSq() : hsScalarMax;
+    return (int)(d1-d2);
 }
 
 //
@@ -344,12 +344,12 @@ int compare( const void* arg1, const void *arg2 )
 //
 void plNetTransport::GetMemberListDistSorted(plNetTransportMember**& listIn) const
 {
-	// copy members list
-	listIn = TRACKED_NEW plNetTransportMember* [fMembers.size()];
-	int i;
-	for (i=0; i<fMembers.size(); i++)
-			listIn[i]=fMembers[i];
+    // copy members list
+    listIn = TRACKED_NEW plNetTransportMember* [fMembers.size()];
+    int i;
+    for (i=0; i<fMembers.size(); i++)
+            listIn[i]=fMembers[i];
 
-	// sort members list
-	qsort(listIn, fMembers.size(), sizeof(plNetTransportMember*), compare);
+    // sort members list
+    qsort(listIn, fMembers.size(), sizeof(plNetTransportMember*), compare);
 }

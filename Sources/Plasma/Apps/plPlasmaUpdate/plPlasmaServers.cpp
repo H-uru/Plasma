@@ -29,51 +29,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 bool plPlasmaServers::GetServerInfo()
 {
-	bool ret = true;
+    bool ret = true;
 
-	hsUNIXStream si;
-	if (si.Open("\\\\dirtcake\\ServerInfo\\ServerInfo.txt", "rb"))
-	{
-		char line[256];
+    hsUNIXStream si;
+    if (si.Open("\\\\dirtcake\\ServerInfo\\ServerInfo.txt", "rb"))
+    {
+        char line[256];
 
-		// Make sure we've got the latest version
-		if (si.ReadLn(line, sizeof(line)))
-		{
-			int version = atoi(line);
-			si.ReadLn(line, sizeof(line));
-			if (version != 4)
-			{
-				char errorMsg[512];
-				sprintf(errorMsg, "This installer is out of date.\nPlease get the latest version from:\n\n%s", line);
-				hsMessageBox(errorMsg, "Error", hsMessageBoxNormal, hsMessageBoxIconError);
-				ret = false;
-			}
-		}
-		else
-			ret = false;
+        // Make sure we've got the latest version
+        if (si.ReadLn(line, sizeof(line)))
+        {
+            int version = atoi(line);
+            si.ReadLn(line, sizeof(line));
+            if (version != 4)
+            {
+                char errorMsg[512];
+                sprintf(errorMsg, "This installer is out of date.\nPlease get the latest version from:\n\n%s", line);
+                hsMessageBox(errorMsg, "Error", hsMessageBoxNormal, hsMessageBoxIconError);
+                ret = false;
+            }
+        }
+        else
+            ret = false;
 
-		// Read in the servers, one per line
-		while (ret && si.ReadLn(line, sizeof(line)))
-		{
-			ServerInfo info;
+        // Read in the servers, one per line
+        while (ret && si.ReadLn(line, sizeof(line)))
+        {
+            ServerInfo info;
 
-			info.fServerAddress = strtok(line, ",");
-			info.fServerName = strtok(nil, ",");
-			info.fURLBase = strtok(nil, ",");
-			info.fOutputDir = strtok(nil, ",");
-			info.fCurrentDir = strtok(nil, ",");
-			info.fCodeDir = strtok(nil, ",");
+            info.fServerAddress = strtok(line, ",");
+            info.fServerName = strtok(nil, ",");
+            info.fURLBase = strtok(nil, ",");
+            info.fOutputDir = strtok(nil, ",");
+            info.fCurrentDir = strtok(nil, ",");
+            info.fCodeDir = strtok(nil, ",");
 
-			fServers.push_back(info);
-		}
+            fServers.push_back(info);
+        }
 
-		si.Close();
-	}
-	else
-	{
-		hsMessageBox("Couldn't find server info", "Error", hsMessageBoxNormal, hsMessageBoxIconError);
-		ret = false;
-	}
+        si.Close();
+    }
+    else
+    {
+        hsMessageBox("Couldn't find server info", "Error", hsMessageBoxNormal, hsMessageBoxIconError);
+        ret = false;
+    }
 
-	return ret;
+    return ret;
 }

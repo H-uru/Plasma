@@ -40,29 +40,29 @@ class hsResMgr;
 class plOneShotCallbacks : public hsRefCnt
 {
 public:
-	class plOneShotCallback
-	{
-	public:
-		plOneShotCallback(char *marker, plKey &receiver, Int16 user) :
-		  fMarker(marker), fReceiver(receiver) , fUser(user) {}
+    class plOneShotCallback
+    {
+    public:
+        plOneShotCallback(char *marker, plKey &receiver, Int16 user) :
+          fMarker(marker), fReceiver(receiver) , fUser(user) {}
 
-		char *fMarker;
-		plKey fReceiver;
-		Int16 fUser;
-	};
+        char *fMarker;
+        plKey fReceiver;
+        Int16 fUser;
+    };
 
 protected:
-	std::vector<plOneShotCallback> fCallbacks;
+    std::vector<plOneShotCallback> fCallbacks;
 
 public:
-	plOneShotCallbacks();
-	~plOneShotCallbacks();
+    plOneShotCallbacks();
+    ~plOneShotCallbacks();
 
-	void AddCallback(const char *marker, plKey &receiver, Int16 user=0);
-	int GetNumCallbacks();
-	plOneShotCallback& GetCallback(int i);
+    void AddCallback(const char *marker, plKey &receiver, Int16 user=0);
+    int GetNumCallbacks();
+    plOneShotCallback& GetCallback(int i);
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };

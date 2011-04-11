@@ -36,50 +36,50 @@ class plStatusLog;
 class plNetObjectDebugger : public plNetObjectDebuggerBase
 {
 public:
-	enum Flags
-	{
-		kExactStringMatch	= 0x1,
-		kEndStringMatch		= 0x2,
-		kStartStringMatch	= 0x4,
-		kSubStringMatch		= 0x8,
-		kPageMatch			= 0x10		// has page info specified
-	};
+    enum Flags
+    {
+        kExactStringMatch   = 0x1,
+        kEndStringMatch     = 0x2,
+        kStartStringMatch   = 0x4,
+        kSubStringMatch     = 0x8,
+        kPageMatch          = 0x10      // has page info specified
+    };
 private:
-	struct DebugObject
-	{
-		std::string fObjName;
-		plLocation fLoc;
-		UInt32 fFlags;
-		bool StringMatches(const char* str) const;	// return true if string matches objName according to flags
-		bool ObjectMatches(const hsKeyedObject* obj);
-		bool ObjectMatches(const char* objName, const char* pageName);
-		DebugObject(const char* objName, plLocation& loc, UInt32 flags);
-	};
-	typedef std::vector<DebugObject*> DebugObjectList;
-	DebugObjectList fDebugObjects;
-	mutable plStatusLog* fStatusLog;
-	bool	fDebugging;
+    struct DebugObject
+    {
+        std::string fObjName;
+        plLocation fLoc;
+        UInt32 fFlags;
+        bool StringMatches(const char* str) const;  // return true if string matches objName according to flags
+        bool ObjectMatches(const hsKeyedObject* obj);
+        bool ObjectMatches(const char* objName, const char* pageName);
+        DebugObject(const char* objName, plLocation& loc, UInt32 flags);
+    };
+    typedef std::vector<DebugObject*> DebugObjectList;
+    DebugObjectList fDebugObjects;
+    mutable plStatusLog* fStatusLog;
+    bool    fDebugging;
 
-	void ICreateStatusLog() const;
+    void ICreateStatusLog() const;
 public:
-	plNetObjectDebugger();
-	~plNetObjectDebugger();
+    plNetObjectDebugger();
+    ~plNetObjectDebugger();
 
-	static plNetObjectDebugger* GetInstance();
+    static plNetObjectDebugger* GetInstance();
 
-	bool GetDebugging() const { return fDebugging;	}
-	void SetDebugging(bool b) { fDebugging=b;	}
+    bool GetDebugging() const { return fDebugging;  }
+    void SetDebugging(bool b) { fDebugging=b;   }
 
-	// object fxns
-	bool AddDebugObject(const char* objName, const char* pageName=nil);
-	bool RemoveDebugObject(const char* objName, const char* pageName=nil);
-	void ClearAllDebugObjects();
-	int GetNumDebugObjects() const { return fDebugObjects.size(); }
-	bool IsDebugObject(const hsKeyedObject* obj) const;
+    // object fxns
+    bool AddDebugObject(const char* objName, const char* pageName=nil);
+    bool RemoveDebugObject(const char* objName, const char* pageName=nil);
+    void ClearAllDebugObjects();
+    int GetNumDebugObjects() const { return fDebugObjects.size(); }
+    bool IsDebugObject(const hsKeyedObject* obj) const;
 
-	void LogMsgIfMatch(const char* msg) const;		// write to status log if there's a string match
-	void LogMsg(const char* msg) const;
+    void LogMsgIfMatch(const char* msg) const;      // write to status log if there's a string match
+    void LogMsg(const char* msg) const;
 };
 
-#endif		// plNetObjectDebugger_inc
+#endif      // plNetObjectDebugger_inc
 

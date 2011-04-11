@@ -36,7 +36,7 @@ plClimbMsg::plClimbMsg()
   fStatus(false),
   fTarget(nil)
 {
-	// nothing
+    // nothing
 }
 
 plClimbMsg::plClimbMsg(const plKey &sender, const plKey &receiver, Command command, Direction direction, hsBool status, plKey target)
@@ -45,24 +45,24 @@ plClimbMsg::plClimbMsg(const plKey &sender, const plKey &receiver, Command comma
   fStatus(status),
   fTarget(target)
 {
-	// not here
+    // not here
 }
 
 void plClimbMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 
-	fCommand = static_cast<Command>(stream->ReadSwap32());
-	fDirection = static_cast<Direction>(stream->ReadSwap32());
-	fStatus = stream->ReadBool();
-	fTarget = mgr->ReadKey(stream);
+    fCommand = static_cast<Command>(stream->ReadSwap32());
+    fDirection = static_cast<Direction>(stream->ReadSwap32());
+    fStatus = stream->ReadBool();
+    fTarget = mgr->ReadKey(stream);
 }
 
 void plClimbMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
-	stream->WriteSwap32(static_cast<UInt32>(fCommand));
-	stream->WriteSwap32(static_cast<UInt32>(fDirection));
-	stream->WriteBool(fStatus);
-	mgr->WriteKey(stream, fTarget);
+    plMessage::IMsgWrite(stream, mgr);
+    stream->WriteSwap32(static_cast<UInt32>(fCommand));
+    stream->WriteSwap32(static_cast<UInt32>(fDirection));
+    stream->WriteBool(fStatus);
+    mgr->WriteKey(stream, fTarget);
 }

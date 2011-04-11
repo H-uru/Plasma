@@ -36,20 +36,20 @@ class plLayerWrapper : public plLayerInterface
 protected:
 public:
 
-	plLayerWrapper();
+    plLayerWrapper();
 
-	CLASSNAME_REGISTER( plLayerWrapper );
-	GETINTERFACE_ANY( plLayerWrapper, plLayerInterface );
-	
-	virtual void			Init(const plLayerInterface* prev) {} // Init(layer) currently handles all this
-	void					Init(hsGLayer* lay);
+    CLASSNAME_REGISTER( plLayerWrapper );
+    GETINTERFACE_ANY( plLayerWrapper, plLayerInterface );
+    
+    virtual void            Init(const plLayerInterface* prev) {} // Init(layer) currently handles all this
+    void                    Init(hsGLayer* lay);
 
-	virtual UInt32			Eval(double secs, UInt32 frame, UInt32 dirty, plLayerInterface* prev)
-	{
-		return dirty;
-	}
+    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 dirty, plLayerInterface* prev)
+    {
+        return dirty;
+    }
 
-	virtual hsBool			MsgReceive(plMessage* msg) { return plLayerInterface::MsgReceive(msg); }
+    virtual hsBool          MsgReceive(plMessage* msg) { return plLayerInterface::MsgReceive(msg); }
 };
 
 #endif // plLayerWrapper_inc

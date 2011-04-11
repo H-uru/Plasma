@@ -30,6 +30,6 @@ hsExceptionStackDestroyer hsExceptionStack::fExceptionStackDestroyer;
 
 void hsExceptionStack::FreeInstance()
 {
-	delete fExceptionStack;
-	fExceptionStack = nil;
+    delete fExceptionStack;
+    fExceptionStack = nil;
 }

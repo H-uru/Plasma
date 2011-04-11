@@ -63,30 +63,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef PL_PROFILE_ENABLED
 
-#define plProfile_CreateTimerNoReset(name, group, varName)	plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayTime | plProfileVar::kDisplayNoReset)
-#define plProfile_CreateTimer(name, group, varName)	plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayTime)
-#define plProfile_CreateAsynchTimer(name, group, varName)	plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayTime | plProfileVar::kDisplayResetEveryBegin | plProfileVar::kDisplayNoReset)
-#define plProfile_BeginTiming(varName)				gProfileVar##varName.BeginTiming()
-#define plProfile_EndTiming(varName)				gProfileVar##varName.EndTiming()
-#define plProfile_BeginLap(varName, lapName)		gProfileVar##varName.BeginLap(lapName)
-#define plProfile_EndLap(varName, lapName)			gProfileVar##varName.EndLap(lapName)
+#define plProfile_CreateTimerNoReset(name, group, varName)  plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayTime | plProfileVar::kDisplayNoReset)
+#define plProfile_CreateTimer(name, group, varName) plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayTime)
+#define plProfile_CreateAsynchTimer(name, group, varName)   plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayTime | plProfileVar::kDisplayResetEveryBegin | plProfileVar::kDisplayNoReset)
+#define plProfile_BeginTiming(varName)              gProfileVar##varName.BeginTiming()
+#define plProfile_EndTiming(varName)                gProfileVar##varName.EndTiming()
+#define plProfile_BeginLap(varName, lapName)        gProfileVar##varName.BeginLap(lapName)
+#define plProfile_EndLap(varName, lapName)          gProfileVar##varName.EndLap(lapName)
 
-#define plProfile_CreateCounter(name, group, varName)	plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayCount)
-#define plProfile_CreateCounterNoReset(name, group, varName)	plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayCount | plProfileVar::kDisplayNoReset)
-#define plProfile_Inc(varName)							gProfileVar##varName.Inc()
-#define plProfile_IncCount(varName, count)				gProfileVar##varName.Inc(count)
-#define plProfile_Dec(varName)							gProfileVar##varName.Dec()
-#define plProfile_Set(varName, value)					gProfileVar##varName.Set(value)
+#define plProfile_CreateCounter(name, group, varName)   plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayCount)
+#define plProfile_CreateCounterNoReset(name, group, varName)    plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayCount | plProfileVar::kDisplayNoReset)
+#define plProfile_Inc(varName)                          gProfileVar##varName.Inc()
+#define plProfile_IncCount(varName, count)              gProfileVar##varName.Inc(count)
+#define plProfile_Dec(varName)                          gProfileVar##varName.Dec()
+#define plProfile_Set(varName, value)                   gProfileVar##varName.Set(value)
 
-#define plProfile_CreateMemCounter(name, group, varName)	plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayMem | plProfileVar::kDisplayNoReset)
-#define plProfile_CreateMemCounterReset(name, group, varName)	plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayMem)
-#define plProfile_NewMem(varName, memAmount)				gProfileVar##varName.NewMem(memAmount)
-#define plProfile_DelMem(varName, memAmount)				gProfileVar##varName.DelMem(memAmount)
+#define plProfile_CreateMemCounter(name, group, varName)    plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayMem | plProfileVar::kDisplayNoReset)
+#define plProfile_CreateMemCounterReset(name, group, varName)   plProfileVar gProfileVar##varName(name, group, plProfileVar::kDisplayMem)
+#define plProfile_NewMem(varName, memAmount)                gProfileVar##varName.NewMem(memAmount)
+#define plProfile_DelMem(varName, memAmount)                gProfileVar##varName.DelMem(memAmount)
 
 #define plProfile_StopVar(varName) gProfileVar##varName.Stop()
 #define plProfile_StartVar(varName) gProfileVar##varName.Start()
 
-#define plProfile_Extern(varName)					extern plProfileVar gProfileVar##varName
+#define plProfile_Extern(varName)                   extern plProfileVar gProfileVar##varName
 
 #else
 
@@ -122,115 +122,115 @@ class plProfileLaps;
 class plProfileBase
 {
 public:
-	enum
-	{
-		kDisplayCount			= 0x1,
-		kDisplayTime			= 0x2,
-		kDisplayMem				= 0x4,
-		kDisplayNoReset			= 0x8,
-		kDisplayFPS				= 0x10,
-		kDisplayLaps			= 0x20,
-		kDisplaySelected		= 0x40,
-		kDisplayResetEveryBegin	= 0x80
-	};
+    enum
+    {
+        kDisplayCount           = 0x1,
+        kDisplayTime            = 0x2,
+        kDisplayMem             = 0x4,
+        kDisplayNoReset         = 0x8,
+        kDisplayFPS             = 0x10,
+        kDisplayLaps            = 0x20,
+        kDisplaySelected        = 0x40,
+        kDisplayResetEveryBegin = 0x80
+    };
 
 protected:
-	const char* fName;		// Name of timer
+    const char* fName;      // Name of timer
 
-	UInt32 fValue;
+    UInt32 fValue;
 
-	UInt32 fAvgCount;
-	UInt64 fAvgTotal;
-	UInt32 fLastAvg;
-	UInt32 fMax;
-	hsBool fActive;
-	hsBool fRunning;
-	UInt8 fDisplayFlags;
+    UInt32 fAvgCount;
+    UInt64 fAvgTotal;
+    UInt32 fLastAvg;
+    UInt32 fMax;
+    hsBool fActive;
+    hsBool fRunning;
+    UInt8 fDisplayFlags;
 
-	// Number of times EndTiming was called. Can be used to combine timing and counting in one timer
-	UInt32 fTimerSamples;
+    // Number of times EndTiming was called. Can be used to combine timing and counting in one timer
+    UInt32 fTimerSamples;
 
-	void IAddAvg();
+    void IAddAvg();
 
-	void IPrintValue(UInt32 value, char* buf, hsBool printType);
+    void IPrintValue(UInt32 value, char* buf, hsBool printType);
 
 public:
-	plProfileBase();
-	virtual ~plProfileBase();
+    plProfileBase();
+    virtual ~plProfileBase();
 
-	virtual void BeginFrame();
-	virtual void EndFrame();
+    virtual void BeginFrame();
+    virtual void EndFrame();
 
-	void UpdateAvg();
+    void UpdateAvg();
 
-	UInt32 GetValue();
+    UInt32 GetValue();
 
-	void PrintValue(char* buf, hsBool printType=true);
-	void PrintAvg(char* buf, hsBool printType=true);
-	void PrintMax(char* buf, hsBool printType=true);
+    void PrintValue(char* buf, hsBool printType=true);
+    void PrintAvg(char* buf, hsBool printType=true);
+    void PrintMax(char* buf, hsBool printType=true);
 
-	UInt32 GetTimerSamples() const { return fTimerSamples; }
+    UInt32 GetTimerSamples() const { return fTimerSamples; }
 
-	const char* GetName() { return fName; }
+    const char* GetName() { return fName; }
 
-	void SetActive(hsBool s) { fActive = s; }
+    void SetActive(hsBool s) { fActive = s; }
 
-	void Stop() { fRunning = false; }
-	void Start() { fRunning = true; }
+    void Stop() { fRunning = false; }
+    void Start() { fRunning = true; }
 
-	UInt8 GetDisplayFlags() const { return fDisplayFlags; }
+    UInt8 GetDisplayFlags() const { return fDisplayFlags; }
 
-	void ResetMax() { fMax = 0; }
+    void ResetMax() { fMax = 0; }
 };
 
 class plProfileVar : public plProfileBase
 {
 protected:
-	const char* fGroup;
-	plProfileLaps* fLaps;
-	hsBool fLapsActive;
+    const char* fGroup;
+    plProfileLaps* fLaps;
+    hsBool fLapsActive;
 
-	plProfileVar() {}
+    plProfileVar() {}
 
-	void IBeginTiming();
-	void IEndTiming();
-	
-	void IBeginLap(const char* lapName); 
-	void IEndLap(const char* lapName);
+    void IBeginTiming();
+    void IEndTiming();
+    
+    void IBeginLap(const char* lapName); 
+    void IEndLap(const char* lapName);
 
 public:
-	// Name is the timer name. Each timer group gets its own plStatusLog
-	plProfileVar(const char *name, const char* group, UInt8 flags);
-	~plProfileVar();
+    // Name is the timer name. Each timer group gets its own plStatusLog
+    plProfileVar(const char *name, const char* group, UInt8 flags);
+    ~plProfileVar();
 
-	// For timing
-	void BeginTiming() { if (fActive && fRunning) IBeginTiming(); }
-	void EndTiming() { if (fActive && fRunning) IEndTiming(); }
+    // For timing
+    void BeginTiming() { if (fActive && fRunning) IBeginTiming(); }
+    void EndTiming() { if (fActive && fRunning) IEndTiming(); }
 
-	void NewMem(UInt32 memAmount) { fValue += memAmount; }
-	void DelMem(UInt32 memAmount) { fValue -= memAmount; }
+    void NewMem(UInt32 memAmount) { fValue += memAmount; }
+    void DelMem(UInt32 memAmount) { fValue -= memAmount; }
 
-	// For Counting
-	void Inc(int i = 1) { fValue += i;}
-	void Dec(int i = 1) { fValue -= i;}
+    // For Counting
+    void Inc(int i = 1) { fValue += i;}
+    void Dec(int i = 1) { fValue -= i;}
 
-	void Set(UInt32 value) { fValue = value; }
+    void Set(UInt32 value) { fValue = value; }
 
-	// 
-	// For multiple timings per frame of the same thing ie. Each particle system
-	//
-	// Will output to log like
-	// Timername : lapCnt: (lapName) : 3.22 msec
-	//
-	void BeginLap(const char* lapName) { if(fActive && fRunning) IBeginLap(lapName); }
-	void EndLap(const char* lapName) { if(fActive && fRunning) IEndLap(lapName); }
-	
-	const char* GetGroup() { return fGroup; }
+    // 
+    // For multiple timings per frame of the same thing ie. Each particle system
+    //
+    // Will output to log like
+    // Timername : lapCnt: (lapName) : 3.22 msec
+    //
+    void BeginLap(const char* lapName) { if(fActive && fRunning) IBeginLap(lapName); }
+    void EndLap(const char* lapName) { if(fActive && fRunning) IEndLap(lapName); }
+    
+    const char* GetGroup() { return fGroup; }
 
-	plProfileLaps* GetLaps() { return fLaps; }
+    plProfileLaps* GetLaps() { return fLaps; }
 
-	// Enable Lap Sampling
-	void SetLapsActive(hsBool s) { fLapsActive = s; }
+    // Enable Lap Sampling
+    void SetLapsActive(hsBool s) { fLapsActive = s; }
 };
 
 #endif // plProfile_h_inc

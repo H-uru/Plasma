@@ -33,15 +33,15 @@ class plWinAudible;
 class plWinAudibleProxy : public plProxyGen
 {
 public:
-	plWinAudibleProxy();
-	virtual ~plWinAudibleProxy();
+    plWinAudibleProxy();
+    virtual ~plWinAudibleProxy();
 
-	hsBool  Init(plWinAudible* aud);
-	
+    hsBool  Init(plWinAudible* aud);
+    
 protected:
-	plWinAudible*			fOwner;
-	virtual plDrawableSpans*	ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
-	virtual plKey				IGetNode() const;
+    plWinAudible*           fOwner;
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
+    virtual plKey               IGetNode() const;
 };
 
 #endif // plWinAudibleProxy_inc

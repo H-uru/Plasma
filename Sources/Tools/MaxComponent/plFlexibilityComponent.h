@@ -32,23 +32,23 @@ const Class_ID FLEXIBILITY_COMP_CID(0x6fec783f, 0x705536d3);
 class plFlexibilityComponent : public plComponent
 {
 public:
-	enum {
-		kFlexibility,
-		kInterRand,
-		kIntraRand
-	};
+    enum {
+        kFlexibility,
+        kInterRand,
+        kIntraRand
+    };
 
 public:
-	plFlexibilityComponent();
-	void DeleteThis() { delete this; }
+    plFlexibilityComponent();
+    void DeleteThis() { delete this; }
 
-	Point3 GetFlexibility() const;
+    Point3 GetFlexibility() const;
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)		{ return true; }
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 #endif // plFlexibilityComponent_inc

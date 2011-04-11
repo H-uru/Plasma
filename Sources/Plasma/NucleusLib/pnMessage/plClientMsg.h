@@ -40,113 +40,113 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 class plClientMsg : public plMessage
 {
-	int fMsgFlag;
-	char* fAgeName;
-	std::vector<plLocation> fRoomLocs;
+    int fMsgFlag;
+    char* fAgeName;
+    std::vector<plLocation> fRoomLocs;
 
-	void IReset();
+    void IReset();
 
-	class GraphicsSettings
-	{
-	public:
-		GraphicsSettings() : fWidth (800), fHeight(600), fColorDepth(32), fWindowed(false), fNumAASamples(0),
-							 fMaxAnisoSamples(0), fVSync(false) {}
-		int fWidth;
-		int fHeight;
-		int fColorDepth;
-		hsBool fWindowed;
-		int fNumAASamples;
-		int fMaxAnisoSamples;
-		hsBool fVSync;
-	};
+    class GraphicsSettings
+    {
+    public:
+        GraphicsSettings() : fWidth (800), fHeight(600), fColorDepth(32), fWindowed(false), fNumAASamples(0),
+                             fMaxAnisoSamples(0), fVSync(false) {}
+        int fWidth;
+        int fHeight;
+        int fColorDepth;
+        hsBool fWindowed;
+        int fNumAASamples;
+        int fMaxAnisoSamples;
+        hsBool fVSync;
+    };
 
 
 public:
-	enum
-	{
-		kLoadRoom,
-		kLoadRoomHold,
-		kUnloadRoom,
-		kLoadNextRoom,	// For internal client use only
+    enum
+    {
+        kLoadRoom,
+        kLoadRoomHold,
+        kUnloadRoom,
+        kLoadNextRoom,  // For internal client use only
 
-		kLoadAgeKeys,
-		kReleaseAgeKeys,
+        kLoadAgeKeys,
+        kReleaseAgeKeys,
 
-		kQuit,				// exit the app
-		kInitComplete,
-		kDisableRenderScene,
-		kEnableRenderScene,
-		kResetGraphicsDevice,
-		kSetGraphicsDefaults,
-	};
+        kQuit,              // exit the app
+        kInitComplete,
+        kDisableRenderScene,
+        kEnableRenderScene,
+        kResetGraphicsDevice,
+        kSetGraphicsDefaults,
+    };
 
-	// graphics settings fields
-	GraphicsSettings fGraphicsSettings;
+    // graphics settings fields
+    GraphicsSettings fGraphicsSettings;
 
 
-	plClientMsg() { IReset();}
-	plClientMsg(const plKey &s) { IReset();}  
-	plClientMsg(int i) { IReset(); fMsgFlag = i; }  
-	plClientMsg(const plKey &s, const plKey &r, const double* t) { IReset(); }
-	~plClientMsg() { delete [] fAgeName; }
+    plClientMsg() { IReset();}
+    plClientMsg(const plKey &s) { IReset();}  
+    plClientMsg(int i) { IReset(); fMsgFlag = i; }  
+    plClientMsg(const plKey &s, const plKey &r, const double* t) { IReset(); }
+    ~plClientMsg() { delete [] fAgeName; }
 
-	CLASSNAME_REGISTER(plClientMsg);
-	GETINTERFACE_ANY(plClientMsg, plMessage);
+    CLASSNAME_REGISTER(plClientMsg);
+    GETINTERFACE_ANY(plClientMsg, plMessage);
 
-	int GetClientMsgFlag() const { return fMsgFlag; }
+    int GetClientMsgFlag() const { return fMsgFlag; }
 
-	void AddRoomLoc(plLocation loc);
+    void AddRoomLoc(plLocation loc);
 
-	// Used for kLoadAgeKeys, kLetGoOfAgeKeys only
-	const char*	GetAgeName() const { return fAgeName; }
-	void		SetAgeName(const char* age) { delete [] fAgeName; fAgeName = hsStrcpy(age); }
+    // Used for kLoadAgeKeys, kLetGoOfAgeKeys only
+    const char* GetAgeName() const { return fAgeName; }
+    void        SetAgeName(const char* age) { delete [] fAgeName; fAgeName = hsStrcpy(age); }
 
-	int GetNumRoomLocs() { return fRoomLocs.size(); }
-	const plLocation& GetRoomLoc(int i) const { return fRoomLocs[i]; }
-	const std::vector<plLocation>& GetRoomLocs() { return fRoomLocs; }
+    int GetNumRoomLocs() { return fRoomLocs.size(); }
+    const plLocation& GetRoomLoc(int i) const { return fRoomLocs[i]; }
+    const std::vector<plLocation>& GetRoomLocs() { return fRoomLocs; }
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 class plClientRefMsg : public plRefMsg
 {
 
 public:
-	enum 
-	{
-		kLoadRoom	= 0,
-		kLoadRoomHold,
-		kManualRoom,
-	};
+    enum 
+    {
+        kLoadRoom   = 0,
+        kLoadRoomHold,
+        kManualRoom,
+    };
 
-	plClientRefMsg(): fType(-1), fWhich(-1) {};
+    plClientRefMsg(): fType(-1), fWhich(-1) {};
 
-	plClientRefMsg(const plKey &r, UInt8 refMsgFlags, Int8 which , Int8 type)
-		: plRefMsg(r, refMsgFlags), fType(type), fWhich(which) {}
+    plClientRefMsg(const plKey &r, UInt8 refMsgFlags, Int8 which , Int8 type)
+        : plRefMsg(r, refMsgFlags), fType(type), fWhich(which) {}
 
 
-	CLASSNAME_REGISTER( plClientRefMsg );
-	GETINTERFACE_ANY( plClientRefMsg, plRefMsg );
+    CLASSNAME_REGISTER( plClientRefMsg );
+    GETINTERFACE_ANY( plClientRefMsg, plRefMsg );
 
-	Int8					fType;
-	Int8					fWhich;
+    Int8                    fType;
+    Int8                    fWhich;
 
-	// IO - not really applicable to ref msgs, but anyway
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Read(stream, mgr);
-		stream->ReadSwap(&fType);
-		stream->ReadSwap(&fWhich);
-	}
+    // IO - not really applicable to ref msgs, but anyway
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Read(stream, mgr);
+        stream->ReadSwap(&fType);
+        stream->ReadSwap(&fWhich);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Write(stream, mgr);
-		stream->WriteSwap(fType);
-		stream->WriteSwap(fWhich);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Write(stream, mgr);
+        stream->WriteSwap(fType);
+        stream->WriteSwap(fWhich);
+    }
 };
 
 

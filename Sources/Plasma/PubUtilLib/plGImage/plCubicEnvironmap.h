@@ -24,16 +24,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plCubicEnvironmap Class Header											 //
-//	Derived bitmap class representing a collection of mipmaps to be used for //
-//	cubic environment mapping.												 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plCubicEnvironmap Class Header                                           //
+//  Derived bitmap class representing a collection of mipmaps to be used for //
+//  cubic environment mapping.                                               //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	6.7.2001 mcn - Created.													 //
-//																			 //
+//                                                                           //
+//  6.7.2001 mcn - Created.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plCubicEnvironmap_h
@@ -48,49 +48,49 @@ class plMipmap;
 
 class plCubicEnvironmap : public plBitmap
 {
-	public:
+    public:
 
-		//// Public Data ////
+        //// Public Data ////
 
-		enum Faces
-		{
-			kLeftFace = 0,
-			kRightFace,
-			kFrontFace,
-			kBackFace,
-			kTopFace,
-			kBottomFace
-		};
+        enum Faces
+        {
+            kLeftFace = 0,
+            kRightFace,
+            kFrontFace,
+            kBackFace,
+            kTopFace,
+            kBottomFace
+        };
 
-		//// Public Members ////
+        //// Public Members ////
 
-		plCubicEnvironmap();
-		virtual ~plCubicEnvironmap();
+        plCubicEnvironmap();
+        virtual ~plCubicEnvironmap();
 
-		CLASSNAME_REGISTER( plCubicEnvironmap );
-		GETINTERFACE_ANY( plCubicEnvironmap, plBitmap );
+        CLASSNAME_REGISTER( plCubicEnvironmap );
+        GETINTERFACE_ANY( plCubicEnvironmap, plBitmap );
 
 
-		// Get the total size in bytes
-		virtual UInt32	GetTotalSize( void ) const;
+        // Get the total size in bytes
+        virtual UInt32  GetTotalSize( void ) const;
 
-		virtual void	Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
-		virtual void	Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
+        virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
+        virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
 
-		plMipmap	*GetFace( UInt8 face ) const { return fFaces[ face ]; }
+        plMipmap    *GetFace( UInt8 face ) const { return fFaces[ face ]; }
 
-		// Export-only: Copy the mipmap given into a face
-		void		CopyToFace( plMipmap *mip, UInt8 face );
+        // Export-only: Copy the mipmap given into a face
+        void        CopyToFace( plMipmap *mip, UInt8 face );
 
-	protected:
+    protected:
 
-		//// Protected Members ////
+        //// Protected Members ////
 
-		plMipmap		*fFaces[ 6 ];
-		hsBool			fInitialized;
+        plMipmap        *fFaces[ 6 ];
+        hsBool          fInitialized;
 
-		virtual UInt32	Read( hsStream *s );
-		virtual UInt32	Write( hsStream *s );
+        virtual UInt32  Read( hsStream *s );
+        virtual UInt32  Write( hsStream *s );
 
 };
 

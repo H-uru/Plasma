@@ -45,45 +45,45 @@ void DummyCodeIncludeFuncObjectFlocker()
 class ObjectFlockerDlgProc : public ParamMap2UserDlgProc
 {
 public:
-	ObjectFlockerDlgProc() {}
-	~ObjectFlockerDlgProc() {}
+    ObjectFlockerDlgProc() {}
+    ~ObjectFlockerDlgProc() {}
 
-	void IUpdateNode(TimeValue t, IParamBlock2* pb, HWND hWnd, ParamID buttonID, int button)
-	{
-		INode* node = pb->GetINode(buttonID, t);
-		HWND hButton = GetDlgItem(hWnd, button);
+    void IUpdateNode(TimeValue t, IParamBlock2* pb, HWND hWnd, ParamID buttonID, int button)
+    {
+        INode* node = pb->GetINode(buttonID, t);
+        HWND hButton = GetDlgItem(hWnd, button);
 
-		if (node)
-			SetWindowText(hButton, node->GetName());
-		else
-			SetWindowText(hButton, "<none>");
-	}
+        if (node)
+            SetWindowText(hButton, node->GetName());
+        else
+            SetWindowText(hButton, "<none>");
+    }
 
-	BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
-		int id = LOWORD(wParam);
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        int id = LOWORD(wParam);
 
-		IParamBlock2 *pb = map->GetParamBlock();
+        IParamBlock2 *pb = map->GetParamBlock();
 
-		switch (msg)
-		{
-		case WM_INITDIALOG:
-			IUpdateNode(t, pb, hWnd, plObjectFlockerComponent::kBoidObject, IDC_OBJ_FLOCKER_BOID_BUTTON);
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            IUpdateNode(t, pb, hWnd, plObjectFlockerComponent::kBoidObject, IDC_OBJ_FLOCKER_BOID_BUTTON);
 
-			// Disable stuff that the artists shouldn't have to touch
-			EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS), false);
-			EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS_SPIN), false);
-			SetDlgItemText(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS, "5.0");
+            // Disable stuff that the artists shouldn't have to touch
+            EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS), false);
+            EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS_SPIN), false);
+            SetDlgItemText(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS, "5.0");
 
-			EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS), false);
-			EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS_SPIN), false);
-			SetDlgItemText(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS, "9.0");
+            EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS), false);
+            EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS_SPIN), false);
+            SetDlgItemText(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS, "9.0");
 
-			return TRUE;
-		}
-		return FALSE;
-	}
-	void DeleteThis() {}
+            return TRUE;
+        }
+        return FALSE;
+    }
+    void DeleteThis() {}
 };
 static ObjectFlockerDlgProc gObjectFlockerDlgProc;
 
@@ -91,181 +91,181 @@ CLASS_DESC(plObjectFlockerComponent, gObjectFlockerDesc, "Object Flocker",  "Obj
 
 ParamBlockDesc2 gObjectFlockerBk
 (
- 	plComponent::kBlkComp, _T("ObjectFlocker"), 0, &gObjectFlockerDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
+    plComponent::kBlkComp, _T("ObjectFlocker"), 0, &gObjectFlockerDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-	//Roll out
-	IDD_COMP_OBJ_FLOCKER, IDS_COMP_OBJ_FLOCKER, 0, 0, &gObjectFlockerDlgProc,
+    //Roll out
+    IDD_COMP_OBJ_FLOCKER, IDS_COMP_OBJ_FLOCKER, 0, 0, &gObjectFlockerDlgProc,
 
-	plObjectFlockerComponent::kBoidObject, _T("BoidObject"), TYPE_INODE, 0, 0,
-		p_ui,	TYPE_PICKNODEBUTTON, IDC_OBJ_FLOCKER_BOID_BUTTON,
-		//p_sclassID,	GEOMOBJECT_CLASS_ID,
-		end,
+    plObjectFlockerComponent::kBoidObject, _T("BoidObject"), TYPE_INODE, 0, 0,
+        p_ui,   TYPE_PICKNODEBUTTON, IDC_OBJ_FLOCKER_BOID_BUTTON,
+        //p_sclassID,   GEOMOBJECT_CLASS_ID,
+        end,
 
-	plObjectFlockerComponent::kNumBoids,	_T("NumBoids"),	TYPE_INT, 0, 0,
-		p_default, 5,
-		p_range, 2, 30,
-		p_ui,	TYPE_SPINNER,	EDITTYPE_POS_INT,
-		IDC_OBJ_FLOCKER_NUM_BOIDS, IDC_OBJ_FLOCKER_NUM_BOIDS_SPIN, 1.0,
-		end,
+    plObjectFlockerComponent::kNumBoids,    _T("NumBoids"), TYPE_INT, 0, 0,
+        p_default, 5,
+        p_range, 2, 30,
+        p_ui,   TYPE_SPINNER,   EDITTYPE_POS_INT,
+        IDC_OBJ_FLOCKER_NUM_BOIDS, IDC_OBJ_FLOCKER_NUM_BOIDS_SPIN, 1.0,
+        end,
 
-	plObjectFlockerComponent::kGoalStrength,	_T("GoalStrength"),	TYPE_FLOAT, 0, 0,
-		p_default, 8.0,
-		p_range, 00.0, 50.0,
-		p_ui,	TYPE_SPINNER,	EDITTYPE_POS_FLOAT,
-		IDC_OBJ_FLOCKER_GOAL_STRENGTH, IDC_OBJ_FLOCKER_GOAL_STRENGTH_SPIN, 1.0,
-		end,
+    plObjectFlockerComponent::kGoalStrength,    _T("GoalStrength"), TYPE_FLOAT, 0, 0,
+        p_default, 8.0,
+        p_range, 00.0, 50.0,
+        p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
+        IDC_OBJ_FLOCKER_GOAL_STRENGTH, IDC_OBJ_FLOCKER_GOAL_STRENGTH_SPIN, 1.0,
+        end,
 
-	plObjectFlockerComponent::kWanderStrength,	_T("WanderStrength"),	TYPE_FLOAT, 0, 0,
-		p_default, 12.0,
-		p_range, 00.0, 50.0,
-		p_ui,	TYPE_SPINNER,	EDITTYPE_POS_FLOAT,
-		IDC_OBJ_FLOCKER_WANDER_STRENGTH, IDC_OBJ_FLOCKER_WANDER_STRENGTH_SPIN, 1.0,
-		end,
+    plObjectFlockerComponent::kWanderStrength,  _T("WanderStrength"),   TYPE_FLOAT, 0, 0,
+        p_default, 12.0,
+        p_range, 00.0, 50.0,
+        p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
+        IDC_OBJ_FLOCKER_WANDER_STRENGTH, IDC_OBJ_FLOCKER_WANDER_STRENGTH_SPIN, 1.0,
+        end,
 
-	plObjectFlockerComponent::kSepStrength,	_T("SeparationStrength"),	TYPE_FLOAT, 0, 0,
-		p_default, 12.0,
-		p_range, 00.0, 50.0,
-		p_ui,	TYPE_SPINNER,	EDITTYPE_POS_FLOAT,
-		IDC_OBJ_FLOCKER_SEP_STRENGTH, IDC_OBJ_FLOCKER_SEP_STRENGTH_SPIN, 1.0,
-		end,
+    plObjectFlockerComponent::kSepStrength, _T("SeparationStrength"),   TYPE_FLOAT, 0, 0,
+        p_default, 12.0,
+        p_range, 00.0, 50.0,
+        p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
+        IDC_OBJ_FLOCKER_SEP_STRENGTH, IDC_OBJ_FLOCKER_SEP_STRENGTH_SPIN, 1.0,
+        end,
 
-	plObjectFlockerComponent::kSepRadius,	_T("SeparationRadius"),	TYPE_FLOAT, 0, 0,
-		p_default, 05.0,
-		p_range, 00.0, 50.0,
-		/*p_ui,	TYPE_SPINNER,	EDITTYPE_POS_FLOAT,
-		IDC_OBJ_FLOCKER_SEP_RADIUS, IDC_OBJ_FLOCKER_SEP_RADIUS_SPIN, 1.0,*/ // Commented out so Max doesn't auto-enable these
-		end,
+    plObjectFlockerComponent::kSepRadius,   _T("SeparationRadius"), TYPE_FLOAT, 0, 0,
+        p_default, 05.0,
+        p_range, 00.0, 50.0,
+        /*p_ui, TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
+        IDC_OBJ_FLOCKER_SEP_RADIUS, IDC_OBJ_FLOCKER_SEP_RADIUS_SPIN, 1.0,*/ // Commented out so Max doesn't auto-enable these
+        end,
 
-	plObjectFlockerComponent::kCohStrength, _T("CohesionStrength"),	TYPE_FLOAT, 0, 0,
-		p_default, 08.0,
-		p_range, 00.0, 50.0,
-		p_ui,	TYPE_SPINNER,	EDITTYPE_POS_FLOAT,
-		IDC_OBJ_FLOCKER_COH_STRENGTH, IDC_OBJ_FLOCKER_COH_STRENGTH_SPIN, 1.0,
-		end,
+    plObjectFlockerComponent::kCohStrength, _T("CohesionStrength"), TYPE_FLOAT, 0, 0,
+        p_default, 08.0,
+        p_range, 00.0, 50.0,
+        p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
+        IDC_OBJ_FLOCKER_COH_STRENGTH, IDC_OBJ_FLOCKER_COH_STRENGTH_SPIN, 1.0,
+        end,
 
-	plObjectFlockerComponent::kCohRadius,	_T("CohesionRadius"),	TYPE_FLOAT, 0, 0,
-		p_default, 09.0,
-		p_range, 00.0, 50.0,
-		/*p_ui,	TYPE_SPINNER,	EDITTYPE_POS_FLOAT,
-		IDC_OBJ_FLOCKER_COH_RADIUS, IDC_OBJ_FLOCKER_COH_RADIUS_SPIN, 1.0,*/ // Commented out so Max doesn't auto-enable these
-		end,
+    plObjectFlockerComponent::kCohRadius,   _T("CohesionRadius"),   TYPE_FLOAT, 0, 0,
+        p_default, 09.0,
+        p_range, 00.0, 50.0,
+        /*p_ui, TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
+        IDC_OBJ_FLOCKER_COH_RADIUS, IDC_OBJ_FLOCKER_COH_RADIUS_SPIN, 1.0,*/ // Commented out so Max doesn't auto-enable these
+        end,
 
-	plObjectFlockerComponent::kMaxForce, _T("MaxForce"),	TYPE_FLOAT, 0, 0,
-		p_default, 10.0,
-		p_range, 00.0, 100.0,
-		p_ui,	TYPE_SPINNER,	EDITTYPE_POS_FLOAT,
-		IDC_OBJ_FLOCKER_MAX_FORCE, IDC_OBJ_FLOCKER_MAX_FORCE_SPIN, 1.0,
-		end,
+    plObjectFlockerComponent::kMaxForce, _T("MaxForce"),    TYPE_FLOAT, 0, 0,
+        p_default, 10.0,
+        p_range, 00.0, 100.0,
+        p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
+        IDC_OBJ_FLOCKER_MAX_FORCE, IDC_OBJ_FLOCKER_MAX_FORCE_SPIN, 1.0,
+        end,
 
-	plObjectFlockerComponent::kMaxSpeed,	_T("MaxSpeed"),	TYPE_FLOAT, 0, 0,
-		p_default, 05.0,
-		p_range, 00.0, 100.0,
-		p_ui,	TYPE_SPINNER,	EDITTYPE_POS_FLOAT,
-		IDC_OBJ_FLOCKER_SLIMIT_MAX, IDC_OBJ_FLOCKER_SLIMIT_MAX_SPIN, 1.0,
-		end,
+    plObjectFlockerComponent::kMaxSpeed,    _T("MaxSpeed"), TYPE_FLOAT, 0, 0,
+        p_default, 05.0,
+        p_range, 00.0, 100.0,
+        p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
+        IDC_OBJ_FLOCKER_SLIMIT_MAX, IDC_OBJ_FLOCKER_SLIMIT_MAX_SPIN, 1.0,
+        end,
 
-	plObjectFlockerComponent::kMinSpeed,	_T("MinSpeed"),	TYPE_FLOAT, 0, 0,
-		p_default, 04.0,
-		p_range, 00.0, 100.0,
-		p_ui,	TYPE_SPINNER,	EDITTYPE_POS_FLOAT,
-		IDC_OBJ_FLOCKER_SLIMIT_MIN, IDC_OBJ_FLOCKER_SLIMIT_MIN_SPIN, 1.0,
-		end,
+    plObjectFlockerComponent::kMinSpeed,    _T("MinSpeed"), TYPE_FLOAT, 0, 0,
+        p_default, 04.0,
+        p_range, 00.0, 100.0,
+        p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
+        IDC_OBJ_FLOCKER_SLIMIT_MIN, IDC_OBJ_FLOCKER_SLIMIT_MIN_SPIN, 1.0,
+        end,
 
-	plObjectFlockerComponent::kUseTargetRotation,	_T("UseTargetRotation"),	TYPE_BOOL, 0, 0,
-		p_default, FALSE,
-		p_ui,	TYPE_SINGLECHEKBOX, IDC_OBJ_FLOCKER_USE_TARGET_ROTATION,
-		end,
+    plObjectFlockerComponent::kUseTargetRotation,   _T("UseTargetRotation"),    TYPE_BOOL, 0, 0,
+        p_default, FALSE,
+        p_ui,   TYPE_SINGLECHEKBOX, IDC_OBJ_FLOCKER_USE_TARGET_ROTATION,
+        end,
 
-	plObjectFlockerComponent::kRandomAnimStart,	_T("RandomAnimStart"),	TYPE_BOOL, 0, 0,
-		p_default, TRUE,
-		p_ui,	TYPE_SINGLECHEKBOX, IDC_OBJ_FLOCKER_RANDOM_ANIM_START,
-		end,
+    plObjectFlockerComponent::kRandomAnimStart, _T("RandomAnimStart"),  TYPE_BOOL, 0, 0,
+        p_default, TRUE,
+        p_ui,   TYPE_SINGLECHEKBOX, IDC_OBJ_FLOCKER_RANDOM_ANIM_START,
+        end,
 
-	plObjectFlockerComponent::kHideTarget,	_T("HideTarget"),	TYPE_BOOL, 0, 0,
-		p_default, TRUE,
-		p_ui,	TYPE_SINGLECHEKBOX, IDC_OBJ_FLOCKER_HIDE_TARGET,
-		end,
+    plObjectFlockerComponent::kHideTarget,  _T("HideTarget"),   TYPE_BOOL, 0, 0,
+        p_default, TRUE,
+        p_ui,   TYPE_SINGLECHEKBOX, IDC_OBJ_FLOCKER_HIDE_TARGET,
+        end,
 
-	end
+    end
 );
 
 plObjectFlockerComponent::plObjectFlockerComponent()
 {
-	fFlocker = nil;
-	fClassDesc = &gObjectFlockerDesc;
-	fClassDesc->MakeAutoParamBlocks(this);
+    fFlocker = nil;
+    fClassDesc = &gObjectFlockerDesc;
+    fClassDesc->MakeAutoParamBlocks(this);
 }
 
 hsBool plObjectFlockerComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	node->SetDrawable(!fCompPB->GetInt(ParamID(kHideTarget)));
-	node->SetForceLocal(true);
+    node->SetDrawable(!fCompPB->GetInt(ParamID(kHideTarget)));
+    node->SetForceLocal(true);
 
-	plMaxNode* targNode = (plMaxNode*)fCompPB->GetINode(kBoidObject);
-	if (targNode)
-		targNode->SetForceLocal(true);
+    plMaxNode* targNode = (plMaxNode*)fCompPB->GetINode(kBoidObject);
+    if (targNode)
+        targNode->SetForceLocal(true);
 
-	return true;
+    return true;
 }
 
 hsBool plObjectFlockerComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	if (fFlocker)
-		delete fFlocker;
+    if (fFlocker)
+        delete fFlocker;
 
-	fFlocker = TRACKED_NEW pfObjectFlocker;
-	hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), fFlocker, node->GetLocation(), node->GetLoadMask());
+    fFlocker = TRACKED_NEW pfObjectFlocker;
+    hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), fFlocker, node->GetLocation(), node->GetLoadMask());
 
-	fFlocker->SetGoalWeight(fCompPB->GetFloat(ParamID(kGoalStrength)));
-	fFlocker->SetWanderWeight(fCompPB->GetFloat(ParamID(kWanderStrength)));
+    fFlocker->SetGoalWeight(fCompPB->GetFloat(ParamID(kGoalStrength)));
+    fFlocker->SetWanderWeight(fCompPB->GetFloat(ParamID(kWanderStrength)));
 
-	fFlocker->SetSeparationWeight(fCompPB->GetFloat(ParamID(kSepStrength)));
-	fFlocker->SetSeparationRadius(fCompPB->GetFloat(ParamID(kSepRadius)));
+    fFlocker->SetSeparationWeight(fCompPB->GetFloat(ParamID(kSepStrength)));
+    fFlocker->SetSeparationRadius(fCompPB->GetFloat(ParamID(kSepRadius)));
 
-	fFlocker->SetCohesionWeight(fCompPB->GetFloat(ParamID(kCohStrength)));
-	fFlocker->SetCohesionRadius(fCompPB->GetFloat(ParamID(kCohRadius)));
+    fFlocker->SetCohesionWeight(fCompPB->GetFloat(ParamID(kCohStrength)));
+    fFlocker->SetCohesionRadius(fCompPB->GetFloat(ParamID(kCohRadius)));
 
-	fFlocker->SetMaxForce(fCompPB->GetFloat(ParamID(kMaxForce)));
-	fFlocker->SetMaxSpeed(fCompPB->GetFloat(ParamID(kMaxSpeed)));
-	fFlocker->SetMinSpeed(fCompPB->GetFloat(ParamID(kMinSpeed)));
+    fFlocker->SetMaxForce(fCompPB->GetFloat(ParamID(kMaxForce)));
+    fFlocker->SetMaxSpeed(fCompPB->GetFloat(ParamID(kMaxSpeed)));
+    fFlocker->SetMinSpeed(fCompPB->GetFloat(ParamID(kMinSpeed)));
 
-	fFlocker->SetUseTargetRotation(fCompPB->GetInt(ParamID(kUseTargetRotation)) != 0);
-	fFlocker->SetRandomizeAnimStart(fCompPB->GetInt(ParamID(kRandomAnimStart)) != 0);
+    fFlocker->SetUseTargetRotation(fCompPB->GetInt(ParamID(kUseTargetRotation)) != 0);
+    fFlocker->SetRandomizeAnimStart(fCompPB->GetInt(ParamID(kRandomAnimStart)) != 0);
 
-	fFlocker->SetNumBoids(fCompPB->GetInt(ParamID(kNumBoids)));
+    fFlocker->SetNumBoids(fCompPB->GetInt(ParamID(kNumBoids)));
 
-	plKey boidKey = nil;
-	plMaxNode* targNode = (plMaxNode*)fCompPB->GetINode(kBoidObject);
+    plKey boidKey = nil;
+    plMaxNode* targNode = (plMaxNode*)fCompPB->GetINode(kBoidObject);
 
-	if( targNode->CanConvert() )
-	{
-		plSceneObject* targObj = targNode->GetSceneObject();
-		if( targObj )
-		{
-			boidKey = targObj->GetKey();
-		}
-	}
-	fFlocker->SetBoidKey(boidKey);
+    if( targNode->CanConvert() )
+    {
+        plSceneObject* targObj = targNode->GetSceneObject();
+        if( targObj )
+        {
+            boidKey = targObj->GetKey();
+        }
+    }
+    fFlocker->SetBoidKey(boidKey);
 
-	// Add a ref to the flocker.
-	fFlocker->GetKey()->RefObject();
+    // Add a ref to the flocker.
+    fFlocker->GetKey()->RefObject();
 
-	return true;
+    return true;
 }
 
 hsBool plObjectFlockerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	node->AddModifier(fFlocker, nil);
+    node->AddModifier(fFlocker, nil);
 
-	return true;
+    return true;
 }
 
 hsBool plObjectFlockerComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 {
-	if( fFlocker )
-		fFlocker->GetKey()->UnRefObject();
-	fFlocker = nil;
+    if( fFlocker )
+        fFlocker->GetKey()->UnRefObject();
+    fFlocker = nil;
 
-	return true;
+    return true;
 }
 

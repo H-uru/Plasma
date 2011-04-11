@@ -3,40 +3,40 @@ include_directories("../../NucleusLib")
 include_directories("../../NucleusLib/inc")
 
 set(pnGameMgr_BLUESPIRAL
-	BlueSpiral/pnGmBlueSpiral.h
-	BlueSpiral/pnGmBlueSpiral.cpp
+    BlueSpiral/pnGmBlueSpiral.h
+    BlueSpiral/pnGmBlueSpiral.cpp
 )
 
 set(pnGameMgr_CLIMBINGWALL
-	ClimbingWall/pnGmClimbingWall.h
-	ClimbingWall/pnGmClimbingWall.cpp
+    ClimbingWall/pnGmClimbingWall.h
+    ClimbingWall/pnGmClimbingWall.cpp
 )
 
 set(pnGameMgr_HEEK
-	Heek/pnGmHeek.h
-	Heek/pnGmHeek.cpp
+    Heek/pnGmHeek.h
+    Heek/pnGmHeek.cpp
 )
 
 set(pnGameMgr_MARKER
-	Marker/pnGmMarker.h
-	Marker/pnGmMarker.cpp
+    Marker/pnGmMarker.h
+    Marker/pnGmMarker.cpp
 )
 
 set(pnGameMgr_TICTACTOE
-	TicTacToe/pnGmTicTacToe.h
-	TicTacToe/pnGmTicTacToe.cpp
+    TicTacToe/pnGmTicTacToe.h
+    TicTacToe/pnGmTicTacToe.cpp
 )
 
 set(pnGameMgr_VARSYNC
-	VarSync/pnGmVarSync.h
-	VarSync/pnGmVarSync.cpp
+    VarSync/pnGmVarSync.h
+    VarSync/pnGmVarSync.cpp
 )
 
 set(pnGameMgr_SOURCES
-	Intern.h
-	Pch.h
-	pnGameMgr.h
-	pnGameMgr.cpp
+    Intern.h
+    Pch.h
+    pnGameMgr.h
+    pnGameMgr.cpp
 )
 
 add_library(pnGameMgr STATIC ${pnGameMgr_SOURCES} ${pnGameMgr_BLUESPIRAL}

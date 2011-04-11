@@ -18,6 +18,6 @@
 
 STATEDESC CloneMessage
 {
-	VERSION 1
-	VAR CREATABLE	message[1]		# The message as a creatable stream
+    VERSION 1
+    VAR CREATABLE   message[1]      # The message as a creatable stream
 }

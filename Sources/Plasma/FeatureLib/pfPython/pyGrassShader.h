@@ -37,39 +37,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 //
 // pyGrassShader   - a wrapper class to provide interface to the grass
-//					 shader
+//                   shader
 //
 //////////////////////////////////////////////////////////////////////
 
 class pyGrassShader
 {
 private:
-	plKey fShaderKey;
+    plKey fShaderKey;
 
 protected:
-	pyGrassShader();
-	pyGrassShader(plKey key);
-	pyGrassShader(pyKey& key);
+    pyGrassShader();
+    pyGrassShader(plKey key);
+    pyGrassShader(pyKey& key);
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGrassShader);
-	static PyObject *New(plKey key);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGrassShader object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGrassShader); // converts a PyObject to a pyGrassShader (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGrassShader);
+    static PyObject *New(plKey key);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGrassShader object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGrassShader); // converts a PyObject to a pyGrassShader (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	void SetKey(plKey key);
+    void SetKey(plKey key);
 
-	void SetWaveDistortion(int waveNum, const std::vector<hsScalar> & distortion);
-	void SetWaveDirection(int waveNum, const std::vector<hsScalar> & direction);
-	void SetWaveSpeed(int waveNum, hsScalar speed);
+    void SetWaveDistortion(int waveNum, const std::vector<hsScalar> & distortion);
+    void SetWaveDirection(int waveNum, const std::vector<hsScalar> & direction);
+    void SetWaveSpeed(int waveNum, hsScalar speed);
 
-	std::vector<hsScalar> GetWaveDistortion(int waveNum) const;
-	std::vector<hsScalar> GetWaveDirection(int waveNum) const;
-	hsScalar GetWaveSpeed(int waveNum) const;
+    std::vector<hsScalar> GetWaveDistortion(int waveNum) const;
+    std::vector<hsScalar> GetWaveDirection(int waveNum) const;
+    hsScalar GetWaveSpeed(int waveNum) const;
 
-	void ResetWaves();
+    void ResetWaves();
 };
 
 

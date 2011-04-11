@@ -34,27 +34,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimEventComponent : public plActivatorBaseComponent
 {
 protected:
-	bool fCanExport;
+    bool fCanExport;
 
 public:
-	plAnimEventComponent();
+    plAnimEventComponent();
 
-	hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-	hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-	hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 };
 
 class plMtlEventComponent : public plActivatorBaseComponent
 {
 protected:
-	bool fCanExport;
+    bool fCanExport;
 
 public:
-	plMtlEventComponent();
+    plMtlEventComponent();
 
-	hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-	hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-	hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 };
 
 #endif // plAnimEventComponent_inc

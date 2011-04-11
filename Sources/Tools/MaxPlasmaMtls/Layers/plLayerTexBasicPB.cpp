@@ -32,74 +32,74 @@ extern BasicDlgProc gBasicDlgProc;
 
 static ParamBlockDesc2 gBasicParamBlk
 (
-	plLayerTex::kBlkBasic, _T("basicLayer"),  0, GetLayerTexDesc(),//NULL,
-	P_AUTO_CONSTRUCT + P_AUTO_UI, plLayerTex::kRefBasic,
+    plLayerTex::kBlkBasic, _T("basicLayer"),  0, GetLayerTexDesc(),//NULL,
+    P_AUTO_CONSTRUCT + P_AUTO_UI, plLayerTex::kRefBasic,
 
-	// UI
-	IDD_LAYER_BASIC, IDS_LAYER_BASIC, 0, 0, &gBasicDlgProc,
+    // UI
+    IDD_LAYER_BASIC, IDS_LAYER_BASIC, 0, 0, &gBasicDlgProc,
 
-	// Usage
-	kBasicUsage,		_T("usage"),		TYPE_INT,		0, 0,
-		end,
+    // Usage
+    kBasicUsage,        _T("usage"),        TYPE_INT,       0, 0,
+        end,
 
-	end
+    end
 );
 ParamBlockDesc2 *GetBasicBlk() { return &gBasicParamBlk; }
 
 static const char *kUsageTypes[] =
 {
-	"None",
-	"Base Texture",
-	"Detail",
-	"Grime",
-	"Map Blend",
-	"Highlight/Specular",
-	"Alpha Mask",
-	"Shadow/Light Map",
-	"Helper Object",
-	"Best Guess"
+    "None",
+    "Base Texture",
+    "Detail",
+    "Grime",
+    "Map Blend",
+    "Highlight/Specular",
+    "Alpha Mask",
+    "Shadow/Light Map",
+    "Helper Object",
+    "Best Guess"
 };
 
 class BasicDlgProc : public ParamMap2UserDlgProc
 {
 public:
-	BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
-		IParamBlock2 *pb = map->GetParamBlock();
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        IParamBlock2 *pb = map->GetParamBlock();
 
-		switch (msg)
-		{
-		case WM_INITDIALOG:
-			{
-				HWND hUsage = GetDlgItem(hWnd, IDC_USAGE_TYPE);
-				for (int i = 0; i < kUsageNumTypes; i++)
-					SendMessage(hUsage, CB_ADDSTRING, 0, (LPARAM)kUsageTypes[i]);
-				SendMessage(hUsage, CB_SETCURSEL, pb->GetInt(kBasicUsage), 0);
-			}
-			break;
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            {
+                HWND hUsage = GetDlgItem(hWnd, IDC_USAGE_TYPE);
+                for (int i = 0; i < kUsageNumTypes; i++)
+                    SendMessage(hUsage, CB_ADDSTRING, 0, (LPARAM)kUsageTypes[i]);
+                SendMessage(hUsage, CB_SETCURSEL, pb->GetInt(kBasicUsage), 0);
+            }
+            break;
 
-		case WM_COMMAND:
-			switch (HIWORD(wParam))
-			{
-			case CBN_SELCHANGE:
-				switch (LOWORD(wParam))
-				{
-				case IDC_USAGE_TYPE:
-					{
-						int cur = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-						if (LOWORD(wParam) == IDC_USAGE_TYPE)
-							pb->SetValue(kBasicUsage, t, cur);
-						return true;
-					}
-					break;
-				}
-				break;
-			}
-			break;
-		}
+        case WM_COMMAND:
+            switch (HIWORD(wParam))
+            {
+            case CBN_SELCHANGE:
+                switch (LOWORD(wParam))
+                {
+                case IDC_USAGE_TYPE:
+                    {
+                        int cur = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+                        if (LOWORD(wParam) == IDC_USAGE_TYPE)
+                            pb->SetValue(kBasicUsage, t, cur);
+                        return true;
+                    }
+                    break;
+                }
+                break;
+            }
+            break;
+        }
 
-		return false;
-	}
-	void DeleteThis() {};
+        return false;
+    }
+    void DeleteThis() {};
 };
 static BasicDlgProc gBasicDlgProc;

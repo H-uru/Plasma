@@ -29,21 +29,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plExportDlg
 {
 public:
-	static plExportDlg& Instance();
+    static plExportDlg& Instance();
 
-	virtual void Show()=0;
+    virtual void Show()=0;
 
-	// Returns true if the export dialog is doing the export
-	virtual bool IsExporting()=0;
-	// Returns true if an autoexport is running (GetValidateUVs is valid)
-	virtual bool IsAutoExporting()=0;
+    // Returns true if the export dialog is doing the export
+    virtual bool IsExporting()=0;
+    // Returns true if an autoexport is running (GetValidateUVs is valid)
+    virtual bool IsAutoExporting()=0;
 
-	virtual bool		GetDoLightMap()=0;
-	virtual bool		GetDoPreshade()=0;
-	virtual bool		GetPhysicalsOnly()=0;
-	virtual const char*	GetExportPage()=0;
+    virtual bool        GetDoLightMap()=0;
+    virtual bool        GetDoPreshade()=0;
+    virtual bool        GetPhysicalsOnly()=0;
+    virtual const char* GetExportPage()=0;
 
-	virtual void StartAutoExport()=0;
+    virtual void StartAutoExport()=0;
 };
 
 #endif // plExportDlg_h_inc

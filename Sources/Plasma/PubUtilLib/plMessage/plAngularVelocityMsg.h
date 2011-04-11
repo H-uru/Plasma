@@ -28,15 +28,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAngularVelocityMsg :  public plSimulationMsg 
 {
 public:
-	// pass-through constructors
-	plAngularVelocityMsg() : plSimulationMsg() {};
-	plAngularVelocityMsg (const plKey &sender, const plKey &receiver, const double *time) 
-		: plSimulationMsg(sender,receiver, time), fAngularVelocity(0.0f,0.0f,0.0f){};
-	CLASSNAME_REGISTER( plAngularVelocityMsg );
-	GETINTERFACE_ANY( plAngularVelocityMsg , plSimulationMsg);
-	void AngularVelocity(hsVector3& vel){fAngularVelocity=vel;}
-	const hsVector3& AngularVelocity(){return fAngularVelocity;}
+    // pass-through constructors
+    plAngularVelocityMsg() : plSimulationMsg() {};
+    plAngularVelocityMsg (const plKey &sender, const plKey &receiver, const double *time) 
+        : plSimulationMsg(sender,receiver, time), fAngularVelocity(0.0f,0.0f,0.0f){};
+    CLASSNAME_REGISTER( plAngularVelocityMsg );
+    GETINTERFACE_ANY( plAngularVelocityMsg , plSimulationMsg);
+    void AngularVelocity(hsVector3& vel){fAngularVelocity=vel;}
+    const hsVector3& AngularVelocity(){return fAngularVelocity;}
 protected:
-	hsVector3 fAngularVelocity;
+    hsVector3 fAngularVelocity;
 
 };

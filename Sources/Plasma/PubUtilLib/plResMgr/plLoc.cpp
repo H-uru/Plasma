@@ -27,48 +27,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../pnKeyedObject/hsKeyedObject.h"
 
 
-plLocFileParser::plLocFileParser(): fThrowBack(nil), fThrowBackLevel(0) 	
-{	fpFile = fopen(LOCTXTFILE,"rt");			// NEED to figure out where to put this
+plLocFileParser::plLocFileParser(): fThrowBack(nil), fThrowBackLevel(0)     
+{   fpFile = fopen(LOCTXTFILE,"rt");            // NEED to figure out where to put this
 }
 
 int plLocFileParser::NextLine(char **pP)
 {
-	
-	int levelKnt=0;
-	*pP = 0;
-		// If someone previously threwback a line...use it...
-	if (ThrowBackAvailable())	
-	{	*pP = fThrowBack;
-		int rtnLevel = fThrowBackLevel;
-		ClearThrowBack();
-		return rtnLevel;
-	}
-		// Get a New Line from the file
-	char str[512];
-	while(fgets(str,512 - 1,fpFile))
-	{
-		if (*str == '#')				// indicates a missing file message, ignore
-			continue;
-		
-		int len = strlen(str);
-		str[len - 1] = 0;			// clobber new line
-		//----------------------------------------------
-		// If its the database file, remember the name, and skip it.
-		//----------------------------------------------
-		int i=0;
-		while (str[i] == '\t')
-		{	levelKnt++;
-			i++;
+    
+    int levelKnt=0;
+    *pP = 0;
+        // If someone previously threwback a line...use it...
+    if (ThrowBackAvailable())   
+    {   *pP = fThrowBack;
+        int rtnLevel = fThrowBackLevel;
+        ClearThrowBack();
+        return rtnLevel;
+    }
+        // Get a New Line from the file
+    char str[512];
+    while(fgets(str,512 - 1,fpFile))
+    {
+        if (*str == '#')                // indicates a missing file message, ignore
+            continue;
+        
+        int len = strlen(str);
+        str[len - 1] = 0;           // clobber new line
+        //----------------------------------------------
+        // If its the database file, remember the name, and skip it.
+        //----------------------------------------------
+        int i=0;
+        while (str[i] == '\t')
+        {   levelKnt++;
+            i++;
 
-		}
-		*pP = hsStrcpy(str + levelKnt);	// Allocate a string copy, advance past TABS
-		return levelKnt;
-	}
-	return LOC_EOF;
+        }
+        *pP = hsStrcpy(str + levelKnt); // Allocate a string copy, advance past TABS
+        return levelKnt;
+    }
+    return LOC_EOF;
 }
-	
+    
 
-	
+    
 
 
 

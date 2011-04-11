@@ -7,11 +7,11 @@ find_package(JPEG REQUIRED)
 include_directories(${JPEG_INCLUDE_DIR})
 
 set(plJPEG_SOURCES
-	plJPEG.cpp
+    plJPEG.cpp
 )
 
 set(plJPEG_HEADERS
-	plJPEG.h
+    plJPEG.h
 )
 
 add_library(plJPEG STATIC ${plJPEG_SOURCES} ${plJPEG_HEADERS})

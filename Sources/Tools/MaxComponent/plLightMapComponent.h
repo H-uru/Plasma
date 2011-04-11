@@ -38,25 +38,25 @@ const Class_ID LIGHTMAP_COMP_CID(0x1b1d0317, 0x3b3821db);
 class plLightMapComponent : public plComponent
 {
 protected:
-	plKey		fLightMapKey;
+    plKey       fLightMapKey;
 
 public:
-	plLightMapComponent();
+    plLightMapComponent();
 
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	void SetLightMapKey(const plKey& key) { fLightMapKey = key; }
-	plKey GetLightMapKey() const { return fLightMapKey; }
+    void SetLightMapKey(const plKey& key) { fLightMapKey = key; }
+    plKey GetLightMapKey() const { return fLightMapKey; }
 
-	float GetScale() const;
-	UInt32 GetUVWSrc() const;
+    float GetScale() const;
+    UInt32 GetUVWSrc() const;
 
-	hsBool GetCompress() const;
-	hsBool GetShared() const;
+    hsBool GetCompress() const;
+    hsBool GetShared() const;
 
-	hsColorRGBA GetInitColor() const;
+    hsColorRGBA GetInitColor() const;
 };
 
 #endif // plLightMapComponent_inc

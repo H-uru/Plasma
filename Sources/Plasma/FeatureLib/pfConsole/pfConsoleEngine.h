@@ -24,16 +24,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfConsoleEngine Header													//
-//																			//
+//                                                                          //
+//  pfConsoleEngine Header                                                  //
+//                                                                          //
 //// Description /////////////////////////////////////////////////////////////
-//																			//
-//	The engine is where parsing and execution of console commands takes		//
-//	place. It takes place independently of the interface, so that the		//
-//	execution can happen from an INI file, from a screen-based console or	//
-//	even a GUI interface.													//
-//																			//
+//                                                                          //
+//  The engine is where parsing and execution of console commands takes     //
+//  place. It takes place independently of the interface, so that the       //
+//  execution can happen from an INI file, from a screen-based console or   //
+//  even a GUI interface.                                                   //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfConsoleEngine_h
@@ -49,51 +49,51 @@ class pfConsoleCmdParam;
 class pfConsoleCmdGroup;
 class pfConsoleEngine
 {
-	private:
+    private:
 
-		static const Int32		fMaxNumParams;
-		static const char		fTokenSeparators[];
-		static const char		fTokenGrpSeps[];
+        static const Int32      fMaxNumParams;
+        static const char       fTokenSeparators[];
+        static const char       fTokenGrpSeps[];
 
-		hsBool	IConvertToParam( UInt8 type, char *string, pfConsoleCmdParam *param );
+        hsBool  IConvertToParam( UInt8 type, char *string, pfConsoleCmdParam *param );
 
-		char	fErrorMsg[ 128 ];
-		char	fLastErrorLine[ 512 ];
+        char    fErrorMsg[ 128 ];
+        char    fLastErrorLine[ 512 ];
 
-		void	ISetErrorMsg( char *msg ) { hsStrncpy( fErrorMsg, msg, sizeof( fErrorMsg ) ); }
+        void    ISetErrorMsg( char *msg ) { hsStrncpy( fErrorMsg, msg, sizeof( fErrorMsg ) ); }
 
-		// Recursive function to build a string of the groups a command is in
-		void		IBuildCmdNameRecurse( pfConsoleCmdGroup *group, char *string );
+        // Recursive function to build a string of the groups a command is in
+        void        IBuildCmdNameRecurse( pfConsoleCmdGroup *group, char *string );
 
-	public:
+    public:
 
-		pfConsoleEngine();
-		~pfConsoleEngine();
+        pfConsoleEngine();
+        ~pfConsoleEngine();
 
-		// Gets the signature for the command given (NO groups!)
-		const char	*GetCmdSignature( char *name );
+        // Gets the signature for the command given (NO groups!)
+        const char  *GetCmdSignature( char *name );
 
-		// Prints out the help for a given command (or group)
-		hsBool	PrintCmdHelp( char *name, void (*PrintFn)( const char * ) );
+        // Prints out the help for a given command (or group)
+        hsBool  PrintCmdHelp( char *name, void (*PrintFn)( const char * ) );
 
-		// Breaks the given line into a command and parameters and runs the command
-		hsBool	RunCommand( char *line, void (*PrintFn)( const char * ) );
+        // Breaks the given line into a command and parameters and runs the command
+        hsBool  RunCommand( char *line, void (*PrintFn)( const char * ) );
 
-		// Executes the given file as a sequence of console commands
-		hsBool	ExecuteFile( const char *fileName );
-		hsBool	ExecuteFile( const wchar *fileName );
+        // Executes the given file as a sequence of console commands
+        hsBool  ExecuteFile( const char *fileName );
+        hsBool  ExecuteFile( const wchar *fileName );
 
-		// Get the last reported error
-		const char	*GetErrorMsg( void ) { return fErrorMsg; }
+        // Get the last reported error
+        const char  *GetErrorMsg( void ) { return fErrorMsg; }
 
-		// Get the line for which the last reported error was for
-		const char	*GetLastErrorLine( void ) { return fLastErrorLine; }
+        // Get the line for which the last reported error was for
+        const char  *GetLastErrorLine( void ) { return fLastErrorLine; }
 
-		// Does command completion on a partially-complete console line
-		hsBool		FindPartialCmd( char *line, hsBool findAgain = false, hsBool perserveParams = false );
+        // Does command completion on a partially-complete console line
+        hsBool      FindPartialCmd( char *line, hsBool findAgain = false, hsBool perserveParams = false );
 
-		// Does command completion without restrictions to any group, skipping the number of matches given
-		hsBool		FindNestedPartialCmd( char *line, UInt32 numToSkip, hsBool perserveParams = false );
+        // Does command completion without restrictions to any group, skipping the number of matches given
+        hsBool      FindNestedPartialCmd( char *line, UInt32 numToSkip, hsBool perserveParams = false );
 };
 
 

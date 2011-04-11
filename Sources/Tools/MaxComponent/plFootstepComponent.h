@@ -31,19 +31,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plFootstepSoundComponent : public plComponent
 {
 public:
-	plFootstepSoundComponent();
+    plFootstepSoundComponent();
 
-	virtual void DeleteThis() { delete this; }
-	virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) { return true; }
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    virtual void DeleteThis() { delete this; }
+    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) { return true; }
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
 
-	enum // ParamBlock indices
-	{
-		kSurface,
-		kSurfaceList,
-		kNodePicker,
-	};
+    enum // ParamBlock indices
+    {
+        kSurface,
+        kSurfaceList,
+        kNodePicker,
+    };
 };
 
 #define FOOTSTEP_SOUND_COMPONENT_CLASS_ID Class_ID(0x15c93f12, 0x4c3f050f)
@@ -51,11 +51,11 @@ public:
 class plFootstepSoundComponentProc : public ParamMap2UserDlgProc
 {
 public:
-	plFootstepSoundComponentProc() {}
+    plFootstepSoundComponentProc() {}
 
-	BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	void DeleteThis() {}
+    void DeleteThis() {}
 };
 
 #endif

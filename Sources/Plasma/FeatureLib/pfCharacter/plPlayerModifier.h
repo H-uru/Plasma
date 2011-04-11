@@ -34,100 +34,100 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //class plControlEventMsg;
 //
 //namespace Havok {
-//	class Vector3;
+//  class Vector3;
 //}
 //
 //class plPlayerModifier : public plSingleModifier
 //{
 //protected:
-//	
-//	enum
-//	{
-//		kWantsToSpawn = 0,
-//		kTimerSet,
-//		kHasSpawned,
-//		kNeedsLocalSetup
-//	};
+//  
+//  enum
+//  {
+//      kWantsToSpawn = 0,
+//      kTimerSet,
+//      kHasSpawned,
+//      kNeedsLocalSetup
+//  };
 //
-//	struct spawnPt
-//	{
-//		hsPoint3 pt;
-//		hsScalar dist;
-//	};
+//  struct spawnPt
+//  {
+//      hsPoint3 pt;
+//      hsScalar dist;
+//  };
 //
-//	static hsScalar		fTurnRate;
+//  static hsScalar     fTurnRate;
 //
-//	static hsScalar		fAcceleration;
-//	static hsScalar		fDeceleration;
-//	static hsScalar		fMaxVelocity;
-//	hsScalar			fCurSpeed;
+//  static hsScalar     fAcceleration;
+//  static hsScalar     fDeceleration;
+//  static hsScalar     fMaxVelocity;
+//  hsScalar            fCurSpeed;
 //
 //
-//	double				fLastTime;
-//	hsMatrix44			fDesiredMatrix;
+//  double              fLastTime;
+//  hsMatrix44          fDesiredMatrix;
 //
-//	hsPoint3			fDesiredPosition;
-//	hsPoint3			fFacingTarget;
-//	bool				bUseDesiredFacing;
-//	bool				bUseDesiredMatrix;
-//	bool				bIgnoreDesiredMatrix;
+//  hsPoint3            fDesiredPosition;
+//  hsPoint3            fFacingTarget;
+//  bool                bUseDesiredFacing;
+//  bool                bUseDesiredMatrix;
+//  bool                bIgnoreDesiredMatrix;
 //
-//	hsScalar			fRotationScalar;
-//	hsTArray<spawnPt*>	fSpawnPoints;
-//	
-//	void IAdjustVelocity(hsScalar adjAccelRate, 
-//						 hsScalar adjDecelRate, 
-//						 hsVector3* dir, 
-//						 hsVector3* vel, 
-//						 hsScalar maxSpeed, 
-//						 hsScalar distToGoal,
-//						 double elapsedTime);
+//  hsScalar            fRotationScalar;
+//  hsTArray<spawnPt*>  fSpawnPoints;
+//  
+//  void IAdjustVelocity(hsScalar adjAccelRate, 
+//                       hsScalar adjDecelRate, 
+//                       hsVector3* dir, 
+//                       hsVector3* vel, 
+//                       hsScalar maxSpeed, 
+//                       hsScalar distToGoal,
+//                       double elapsedTime);
 //
-//	hsScalar IClampVelocity(hsVector3* vel, hsScalar maxSpeed, double elapsedTime);
-//	hsBool32 IShouldDecelerate(hsScalar decelSpeed, hsScalar curSpeed, hsScalar distToGoal);
+//  hsScalar IClampVelocity(hsVector3* vel, hsScalar maxSpeed, double elapsedTime);
+//  hsBool32 IShouldDecelerate(hsScalar decelSpeed, hsScalar curSpeed, hsScalar distToGoal);
 //
-//	hsBool	HasMovementFlag(int f) const { return fMoveFlags.IsBitSet(f); }
-//	void	SetMovementFlag(int f) { fMoveFlags.SetBit(f); }
-//	void	ClearMovementFlag(int which) { fMoveFlags.ClearBit( which ); }
+//  hsBool  HasMovementFlag(int f) const { return fMoveFlags.IsBitSet(f); }
+//  void    SetMovementFlag(int f) { fMoveFlags.SetBit(f); }
+//  void    ClearMovementFlag(int which) { fMoveFlags.ClearBit( which ); }
 //
-//	hsBitVector		fMoveFlags;
-//	hsBitVector		fFlags;
+//  hsBitVector     fMoveFlags;
+//  hsBitVector     fFlags;
 //
-//	void WarpToSpawnPoint() { SetFlag( kWantsToSpawn ); }
+//  void WarpToSpawnPoint() { SetFlag( kWantsToSpawn ); }
 //
-//	hsBool	bMoving;
+//  hsBool  bMoving;
 //
-//	void IApplyForce(plSimulationInterface::plSimpleForce type, const Havok::Vector3 &vec);
-//	void IDoLocalSetup(plSceneObject*);
-//	void	IMakeUsListener( plSceneObject *so );
+//  void IApplyForce(plSimulationInterface::plSimpleForce type, const Havok::Vector3 &vec);
+//  void IDoLocalSetup(plSceneObject*);
+//  void    IMakeUsListener( plSceneObject *so );
 //
 //public:
-//	plPlayerModifier();
-//	virtual ~plPlayerModifier();
+//  plPlayerModifier();
+//  virtual ~plPlayerModifier();
 //
-//	CLASSNAME_REGISTER( plPlayerModifier );
-//	GETINTERFACE_ANY( plPlayerModifier, plSingleModifier );
+//  CLASSNAME_REGISTER( plPlayerModifier );
+//  GETINTERFACE_ANY( plPlayerModifier, plSingleModifier );
 //
-//	virtual hsBool  MsgReceive(plMessage* msg);
-//	virtual void    AddTarget(plSceneObject* so);
-//	virtual void	RemoveTarget(plSceneObject* so);
+//  virtual hsBool  MsgReceive(plMessage* msg);
+//  virtual void    AddTarget(plSceneObject* so);
+//  virtual void    RemoveTarget(plSceneObject* so);
 //
-//	hsBool HandleControlInput(plControlEventMsg* pMsg);
-//	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+//  hsBool HandleControlInput(plControlEventMsg* pMsg);
+//  virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
 //
-//	void SetMoving(hsBool b);
-//	hsBool IsMoving() { return bMoving; }
+//  void SetMoving(hsBool b);
+//  hsBool IsMoving() { return bMoving; }
 //
-//	hsBool	HasFlag(int f) const { return fFlags.IsBitSet(f); }
-//	void	SetFlag(int f) { fFlags.SetBit(f); }
-//	void	ClearFlag(int which) { fFlags.ClearBit( which ); }
+//  hsBool  HasFlag(int f) const { return fFlags.IsBitSet(f); }
+//  void    SetFlag(int f) { fFlags.SetBit(f); }
+//  void    ClearFlag(int which) { fFlags.ClearBit( which ); }
 //
-//	static void	SetTurnRate(float f) {fTurnRate = f;}
-//	static void SetAcceleration(float f) {fAcceleration = f;}
-//	static void	SetDeceleration(float f) {fDeceleration = f;}
-//	static void	SetVelocity(float f) 	 {fMaxVelocity = f;}
+//  static void SetTurnRate(float f) {fTurnRate = f;}
+//  static void SetAcceleration(float f) {fAcceleration = f;}
+//  static void SetDeceleration(float f) {fDeceleration = f;}
+//  static void SetVelocity(float f)     {fMaxVelocity = f;}
 //
-//	
+//  
 //};
 //
 //#endif plPlayerModifier_inc

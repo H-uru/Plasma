@@ -44,12 +44,12 @@ namespace Ngl {
 *
 ***/
 
-const unsigned kMaxReconnectIntervalMs				= 5 * 1000;
-const unsigned kMaxImmediateDisconnects				= 5;
-const unsigned kMaxFailedConnects					= 5;
-const unsigned kPingIntervalMs						= 30 * 1000;
-const unsigned kPingTimeoutMs						= kPingIntervalMs * 10;
-const unsigned kDisconnectedTimeoutMs				= kPingIntervalMs;
+const unsigned kMaxReconnectIntervalMs              = 5 * 1000;
+const unsigned kMaxImmediateDisconnects             = 5;
+const unsigned kMaxFailedConnects                   = 5;
+const unsigned kPingIntervalMs                      = 30 * 1000;
+const unsigned kPingTimeoutMs                       = kPingIntervalMs * 10;
+const unsigned kDisconnectedTimeoutMs               = kPingIntervalMs;
 
 
 /*****************************************************************************
@@ -134,147 +134,147 @@ unsigned GateKeeperGetConnId();
 ***/
 
 enum ETransType {
-	//========================================================================
-	// NglAuth.cpp transactions
-	kPingRequestTrans,
-	kLoginRequestTrans,
-	kAgeRequestTrans,
-	kAccountCreateRequestTrans,
-	kAccountCreateFromKeyRequestTrans,
-	kPlayerCreateRequestTrans,
-	kPlayerDeleteRequestTrans,
-	kUpgradeVisitorRequestTrans,
-	kSetPlayerRequestTrans,
-	kAccountChangePasswordRequestTrans,
-	kGetPublicAgeListTrans,
-	kAccountSetRolesRequestTrans,
-	kAccountSetBillingTypeRequestTrans,
-	kAccountActivateRequestTrans,
-	kFileListRequestTrans,
-	kFileDownloadRequestTrans,
-	kRcvdFileDownloadChunkTrans,
-	kRcvdPropagatedBufferTrans,
-	kVaultNodeChangedTrans,
-	kVaultNodeAddedTrans,
-	kVaultNodeRemovedTrans,
-	kVaultNodeDeletedTrans,
-	kVaultFetchNodeRefsTrans,
-	kVaultInitAgeTrans,
-	kVaultFetchNodeTrans,
-	kVaultFindNodeTrans,
-	kVaultCreateNodeTrans,
-	kVaultSaveNodeTrans,
-	kVaultAddNodeTrans,
-	kVaultRemoveNodeTrans,
-	kNotifyNewBuildTrans,
-	kSetPlayerBanStatusRequestTrans,
-	kChangePlayerNameRequestTrans,
-	kAuthConnectedNotifyTrans,
-	kScoreCreateTrans,
-	kScoreDeleteTrans,
-	kScoreGetScoresTrans,
-	kScoreAddPointsTrans,
-	kScoreTransferPointsTrans,
-	kScoreSetPointsTrans,
-	kScoreGetRanksTrans,
-	kSendFriendInviteTrans,
-	
-	//========================================================================
-	// NglGame.cpp transactions
-	kJoinAgeRequestTrans,
-	kGmRcvdPropagatedBufferTrans,
-	kGmRcvdGameMgrMsgTrans,
-	
-	//========================================================================
-	// NglFile.cpp transactions
-	kBuildIdRequestTrans,
-	kManifestRequestTrans,
-	kDownloadRequestTrans,
-	kFileRcvdFileDownloadChunkTrans,
-	
-	//========================================================================
-	// NglCsr.cpp transactions
-	kCsrConnectedNotifyTrans,
-	kCsrLoginTrans,
-	
-	//========================================================================
-	// NglCore.cpp transactions
-	kReportNetErrorTrans,
+    //========================================================================
+    // NglAuth.cpp transactions
+    kPingRequestTrans,
+    kLoginRequestTrans,
+    kAgeRequestTrans,
+    kAccountCreateRequestTrans,
+    kAccountCreateFromKeyRequestTrans,
+    kPlayerCreateRequestTrans,
+    kPlayerDeleteRequestTrans,
+    kUpgradeVisitorRequestTrans,
+    kSetPlayerRequestTrans,
+    kAccountChangePasswordRequestTrans,
+    kGetPublicAgeListTrans,
+    kAccountSetRolesRequestTrans,
+    kAccountSetBillingTypeRequestTrans,
+    kAccountActivateRequestTrans,
+    kFileListRequestTrans,
+    kFileDownloadRequestTrans,
+    kRcvdFileDownloadChunkTrans,
+    kRcvdPropagatedBufferTrans,
+    kVaultNodeChangedTrans,
+    kVaultNodeAddedTrans,
+    kVaultNodeRemovedTrans,
+    kVaultNodeDeletedTrans,
+    kVaultFetchNodeRefsTrans,
+    kVaultInitAgeTrans,
+    kVaultFetchNodeTrans,
+    kVaultFindNodeTrans,
+    kVaultCreateNodeTrans,
+    kVaultSaveNodeTrans,
+    kVaultAddNodeTrans,
+    kVaultRemoveNodeTrans,
+    kNotifyNewBuildTrans,
+    kSetPlayerBanStatusRequestTrans,
+    kChangePlayerNameRequestTrans,
+    kAuthConnectedNotifyTrans,
+    kScoreCreateTrans,
+    kScoreDeleteTrans,
+    kScoreGetScoresTrans,
+    kScoreAddPointsTrans,
+    kScoreTransferPointsTrans,
+    kScoreSetPointsTrans,
+    kScoreGetRanksTrans,
+    kSendFriendInviteTrans,
+    
+    //========================================================================
+    // NglGame.cpp transactions
+    kJoinAgeRequestTrans,
+    kGmRcvdPropagatedBufferTrans,
+    kGmRcvdGameMgrMsgTrans,
+    
+    //========================================================================
+    // NglFile.cpp transactions
+    kBuildIdRequestTrans,
+    kManifestRequestTrans,
+    kDownloadRequestTrans,
+    kFileRcvdFileDownloadChunkTrans,
+    
+    //========================================================================
+    // NglCsr.cpp transactions
+    kCsrConnectedNotifyTrans,
+    kCsrLoginTrans,
+    
+    //========================================================================
+    // NglCore.cpp transactions
+    kReportNetErrorTrans,
 
-	//========================================================================
-	// NglGateKeeper.cpp transactions
-	kGkFileSrvIpAddressRequestTrans,
-	kGkAuthSrvIpAddressRequestTrans,
+    //========================================================================
+    // NglGateKeeper.cpp transactions
+    kGkFileSrvIpAddressRequestTrans,
+    kGkAuthSrvIpAddressRequestTrans,
 
-	kNumTransTypes
+    kNumTransTypes
 };
 
 static char * s_transTypes[] = {
-	// NglAuth.cpp
-	"PingRequestTrans",
-	"LoginRequestTrans",
-	"AgeRequestTrans",
-	"AccountCreateRequestTrans",
-	"AccountCreateFromKeyRequestTrans",
-	"PlayerCreateRequestTrans",
-	"PlayerDeleteRequestTrans",
-	"UpgradeVisitorRequestTrans",
-	"SetPlayerRequestTrans",
-	"AccountChangePasswordRequestTrans",
-	"GetPublicAgeListTrans",
-	"AccountSetRolesRequestTrans",
-	"AccountSetBillingTypeRequestTrans",
-	"AccountActivateRequestTrans",
-	"FileListRequestTrans",
-	"FileDownloadRequestTrans",
-	"RcvdFileDownloadChunkTrans",
-	"RcvdPropagatedBufferTrans",
-	"VaultNodeChangedTrans",
-	"VaultNodeAddedTrans",
-	"VaultNodeRemovedTrans",
-	"VaultNodeDeletedTrans",
-	"VaultFetchNodeRefsTrans",
-	"VaultInitAgeTrans",
-	"VaultFetchNodeTrans",
-	"VaultFindNodeTrans",
-	"VaultCreateNodeTrans",
-	"VaultSaveNodeTrans",
-	"VaultAddNodeTrans",
-	"VaultRemoveNodeTrans",
-	"NotifyNewBuildTrans",
-	"SetPlayerBanStatusfRequestTrans",
-	"ChangePlayerNameRequestTrans",
-	"AuthConnectedNotifyTrans",
-	"ScoreCreateTrans",
-	"ScoreDeleteTrans",
-	"ScoreGetScoresTrans",
-	"ScoreAddPointsTrans",
-	"ScoreTransferPointsTrans",
-	"ScoreSetPointsTrans",
-	"ScoreGetRanksTrans",
-	"SendFriendInviteTrans",
-	
-	// NglGame.cpp
-	"JoinAgeRequestTrans",
-	"GmRcvdPropagatedBufferTrans",
-	"GmRcvdGameMgrMsgTrans",
+    // NglAuth.cpp
+    "PingRequestTrans",
+    "LoginRequestTrans",
+    "AgeRequestTrans",
+    "AccountCreateRequestTrans",
+    "AccountCreateFromKeyRequestTrans",
+    "PlayerCreateRequestTrans",
+    "PlayerDeleteRequestTrans",
+    "UpgradeVisitorRequestTrans",
+    "SetPlayerRequestTrans",
+    "AccountChangePasswordRequestTrans",
+    "GetPublicAgeListTrans",
+    "AccountSetRolesRequestTrans",
+    "AccountSetBillingTypeRequestTrans",
+    "AccountActivateRequestTrans",
+    "FileListRequestTrans",
+    "FileDownloadRequestTrans",
+    "RcvdFileDownloadChunkTrans",
+    "RcvdPropagatedBufferTrans",
+    "VaultNodeChangedTrans",
+    "VaultNodeAddedTrans",
+    "VaultNodeRemovedTrans",
+    "VaultNodeDeletedTrans",
+    "VaultFetchNodeRefsTrans",
+    "VaultInitAgeTrans",
+    "VaultFetchNodeTrans",
+    "VaultFindNodeTrans",
+    "VaultCreateNodeTrans",
+    "VaultSaveNodeTrans",
+    "VaultAddNodeTrans",
+    "VaultRemoveNodeTrans",
+    "NotifyNewBuildTrans",
+    "SetPlayerBanStatusfRequestTrans",
+    "ChangePlayerNameRequestTrans",
+    "AuthConnectedNotifyTrans",
+    "ScoreCreateTrans",
+    "ScoreDeleteTrans",
+    "ScoreGetScoresTrans",
+    "ScoreAddPointsTrans",
+    "ScoreTransferPointsTrans",
+    "ScoreSetPointsTrans",
+    "ScoreGetRanksTrans",
+    "SendFriendInviteTrans",
+    
+    // NglGame.cpp
+    "JoinAgeRequestTrans",
+    "GmRcvdPropagatedBufferTrans",
+    "GmRcvdGameMgrMsgTrans",
 
-	// NglFile.cpp
-	"BuildIdRequestTrans",
-	"ManifestRequestTrans",
-	"DownloadRequestTrans",
-	"FileRcvdFileDownloadChunkTrans",
+    // NglFile.cpp
+    "BuildIdRequestTrans",
+    "ManifestRequestTrans",
+    "DownloadRequestTrans",
+    "FileRcvdFileDownloadChunkTrans",
 
-	// NglCsr.cpp
-	"CsrConnectedNotifyTrans",
-	"CsrLoginTrans",
-	
-	// NglCore.cpp
-	"ReportNetErrorTrans",
+    // NglCsr.cpp
+    "CsrConnectedNotifyTrans",
+    "CsrLoginTrans",
+    
+    // NglCore.cpp
+    "ReportNetErrorTrans",
 
-	// NglGateKeeper.cpp
-	"GkFileSrvIpAddress",
-	"GkAuthSrvIpAddress",
+    // NglGateKeeper.cpp
+    "GkFileSrvIpAddress",
+    "GkAuthSrvIpAddress",
 
 };
 COMPILER_ASSERT(arrsize(s_transTypes) == kNumTransTypes);
@@ -301,15 +301,15 @@ struct NetTrans : AtomicRef {
     unsigned        m_transId;
     unsigned        m_connId;
     ENetProtocol    m_protocol;
-	bool			m_hasSubTrans;	// set to specify this transaction should be completed after all others in the frame
-	unsigned		m_timeoutAtMs;	// curTime + s_timeoutMs (set upon send)
-	ETransType		m_transType;
+    bool            m_hasSubTrans;  // set to specify this transaction should be completed after all others in the frame
+    unsigned        m_timeoutAtMs;  // curTime + s_timeoutMs (set upon send)
+    ETransType      m_transType;
 
     NetTrans (ENetProtocol protocol, ETransType transType);
     virtual ~NetTrans ();
 
     virtual bool CanStart () const;
-	virtual bool TimedOut () { return true; } // return true if we really did time out, false to reset the timeout timer
+    virtual bool TimedOut () { return true; } // return true if we really did time out, false to reset the timeout timer
     virtual bool Send () = 0;
     virtual void Post () = 0;
     virtual bool Recv ( // return false to disconnect from server
@@ -339,13 +339,13 @@ struct NetGameTrans : NetTrans {
 };
 
 struct NetFileTrans : NetTrans {
-	File::CliFileConn * m_conn;
+    File::CliFileConn * m_conn;
 
-	NetFileTrans (ETransType transType);
-	~NetFileTrans ();
+    NetFileTrans (ETransType transType);
+    ~NetFileTrans ();
 
-	bool AcquireConn ();
-	void ReleaseConn ();
+    bool AcquireConn ();
+    void ReleaseConn ();
 };
 
 struct NetCsrTrans : NetTrans {
@@ -360,7 +360,7 @@ struct NetCsrTrans : NetTrans {
 
 
 struct NetGateKeeperTrans : NetTrans {
-	GateKeeper::CliGkConn * m_conn;
+    GateKeeper::CliGkConn * m_conn;
 
     NetGateKeeperTrans (ETransType transType);
     ~NetGateKeeperTrans ();

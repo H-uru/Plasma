@@ -37,37 +37,37 @@ class plReceiver;
 class plDispatchLogBase
 {
 public:
-	enum Flags
-	{
-		kInclude			= 0x1,
-		kLogLongReceives	= 0x2,
-	};
+    enum Flags
+    {
+        kInclude            = 0x1,
+        kLogLongReceives    = 0x2,
+    };
 
 protected:
-	static UInt32 fFlags;
-	static plDispatchLogBase* fInstance;
+    static UInt32 fFlags;
+    static plDispatchLogBase* fInstance;
 
 public:
-	static plDispatchLogBase* GetInstance() { return fInstance; }
+    static plDispatchLogBase* GetInstance() { return fInstance; }
 
-	virtual ~plDispatchLogBase() {}
+    virtual ~plDispatchLogBase() {}
 
-	static void SetFlags(UInt32 f) { fFlags=f; }
-	static UInt32 GetFlags() { return fFlags; }
+    static void SetFlags(UInt32 f) { fFlags=f; }
+    static UInt32 GetFlags() { return fFlags; }
 
-	static bool IsLogging() { return fInstance != nil; }
-	static bool IsLoggingLong() { return (fFlags & kLogLongReceives) != 0; }
+    static bool IsLogging() { return fInstance != nil; }
+    static bool IsLoggingLong() { return (fFlags & kLogLongReceives) != 0; }
 
-	virtual void AddFilterType(UInt16 type)=0;
-	virtual void AddFilterExactType(UInt16 type)=0;
+    virtual void AddFilterType(UInt16 type)=0;
+    virtual void AddFilterExactType(UInt16 type)=0;
 
-	virtual void RemoveFilterType(UInt16 type)=0;
-	virtual void RemoveFilterExactType(UInt16 type)=0;
+    virtual void RemoveFilterType(UInt16 type)=0;
+    virtual void RemoveFilterExactType(UInt16 type)=0;
 
-	virtual void LogStatusBarChange(const char* name, const char* action)=0;
-	virtual void LogLongReceive(const char* keyname, const char* className, UInt32 clonePlayerID, plMessage* msg, float ms)=0;
+    virtual void LogStatusBarChange(const char* name, const char* action)=0;
+    virtual void LogLongReceive(const char* keyname, const char* className, UInt32 clonePlayerID, plMessage* msg, float ms)=0;
 
-	virtual void DumpMsg(plMessage* msg, int numReceivers, int sendTime, Int32 indent)=0;
+    virtual void DumpMsg(plMessage* msg, int numReceivers, int sendTime, Int32 indent)=0;
 };
 
-#endif	// plDispatchLogBase_inc
+#endif  // plDispatchLogBase_inc

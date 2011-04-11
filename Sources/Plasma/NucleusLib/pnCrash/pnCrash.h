@@ -47,19 +47,19 @@ void CrashSetEmailParameters (
     const char      recipients[],   // separate multiple recipients with semicolons
     const char      username[],     // optional (see auth notes in pnMail.h)
     const char      password[],     // optional (see auth notes in pnMail.h)
-    const char      replyTo[]		// optional
+    const char      replyTo[]       // optional
 );
 
 void * CrashAddModule (
-	unsigned_ptr	address,
-	unsigned		buildId,
-	unsigned		branchId,
-	const wchar		name[],
-	const wchar		buildString[]
+    unsigned_ptr    address,
+    unsigned        buildId,
+    unsigned        branchId,
+    const wchar     name[],
+    const wchar     buildString[]
 );
 
 void CrashRemoveModule (
-	void *			module
+    void *          module
 );
 
 

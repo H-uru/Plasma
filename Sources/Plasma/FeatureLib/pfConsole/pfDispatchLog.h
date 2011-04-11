@@ -34,26 +34,26 @@ class plStatusLog;
 class plDispatchLog : public plDispatchLogBase
 {
 private:
-	hsBitVector fIncludeTypes;	// include/exclude list
-	UInt64 fStartTicks;
-	plStatusLog* fLog;
+    hsBitVector fIncludeTypes;  // include/exclude list
+    UInt64 fStartTicks;
+    plStatusLog* fLog;
 
 public:
-	plDispatchLog();
-	~plDispatchLog();
+    plDispatchLog();
+    ~plDispatchLog();
 
-	static void InitInstance();
+    static void InitInstance();
 
-	void AddFilterType(UInt16 type);
-	void AddFilterExactType(UInt16 type);
+    void AddFilterType(UInt16 type);
+    void AddFilterExactType(UInt16 type);
 
-	void RemoveFilterType(UInt16 type);
-	void RemoveFilterExactType(UInt16 type);
+    void RemoveFilterType(UInt16 type);
+    void RemoveFilterExactType(UInt16 type);
 
-	void LogStatusBarChange(const char* name, const char* action);
-	void LogLongReceive(const char* keyname, const char* className, UInt32 clonePlayerID, plMessage* msg, float ms);
+    void LogStatusBarChange(const char* name, const char* action);
+    void LogLongReceive(const char* keyname, const char* className, UInt32 clonePlayerID, plMessage* msg, float ms);
 
-	void DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, Int32 indent);
+    void DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, Int32 indent);
 };
 
-#endif	// pfDispatchLog_inc
+#endif  // pfDispatchLog_inc

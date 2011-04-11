@@ -51,12 +51,12 @@ void NetCliGateKeeperStartConnect (
 );
 
 bool NetCliGateKeeperQueryConnected ();
-void NetCliGateKeeperAutoReconnectEnable (bool enable);	// is enabled by default
+void NetCliGateKeeperAutoReconnectEnable (bool enable); // is enabled by default
 
 // Called after the gatekeeper/client connection is encrypted
 typedef void (*FNetCliGateKeeperConnectCallback)();
 void NetCliGateKeeperSetConnectCallback (
-	FNetCliGateKeeperConnectCallback callback
+    FNetCliGateKeeperConnectCallback callback
 );
 
 
@@ -74,16 +74,16 @@ typedef void (*FNetCliGateKeeperPingRequestCallback)(
     ENetError   result,
     void *      param,
     unsigned    pingAtMs,
-    unsigned	replyAtMs,
-    unsigned	payloadbytes,
-    const byte	payload[]
+    unsigned    replyAtMs,
+    unsigned    payloadbytes,
+    const byte  payload[]
 );
 void NetCliGateKeeperPingRequest (
-    unsigned								pingTimeMs,
-    unsigned								payloadBytes,	// max 64k (pnNetCli enforced upon send)
-    const void *							payload,
-    FNetCliGateKeeperPingRequestCallback	callback,
-    void *									param
+    unsigned                                pingTimeMs,
+    unsigned                                payloadBytes,   // max 64k (pnNetCli enforced upon send)
+    const void *                            payload,
+    FNetCliGateKeeperPingRequestCallback    callback,
+    void *                                  param
 );
 
 
@@ -93,13 +93,13 @@ void NetCliGateKeeperPingRequest (
 typedef void (*FNetCliGateKeeperFileSrvIpAddressRequestCallback)(
     ENetError   result,
     void *      param,
-	const wchar	addr[]
+    const wchar addr[]
 );
 
 void NetCliGateKeeperFileSrvIpAddressRequest (
-	FNetCliGateKeeperFileSrvIpAddressRequestCallback	callback,
-    void *												param,
-	bool												isPatcher
+    FNetCliGateKeeperFileSrvIpAddressRequestCallback    callback,
+    void *                                              param,
+    bool                                                isPatcher
 );
 
 
@@ -109,12 +109,12 @@ void NetCliGateKeeperFileSrvIpAddressRequest (
 typedef void (*FNetCliGateKeeperAuthSrvIpAddressRequestCallback)(
     ENetError   result,
     void *      param,
-	const wchar	addr[]
+    const wchar addr[]
 );
 
 void NetCliGateKeeperAuthSrvIpAddressRequest (
-    FNetCliGateKeeperAuthSrvIpAddressRequestCallback	callback,
-    void *												param
+    FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback,
+    void *                                              param
 );
 
 

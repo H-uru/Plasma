@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plTGAWriter Class Header												 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plTGAWriter Class Header                                                 //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	8.15.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  8.15.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plTGAWriter_h
@@ -46,17 +46,17 @@ class plMipmap;
 
 class plTGAWriter
 {
-	private:
+    private:
 
-		static plTGAWriter	fInstance;
+        static plTGAWriter  fInstance;
 
-		plTGAWriter() {}
-		
-	public:
+        plTGAWriter() {}
+        
+    public:
 
-		static plTGAWriter	&Instance( void ) { return fInstance; }
+        static plTGAWriter  &Instance( void ) { return fInstance; }
 
-		void	WriteMipmap( const char *fileName, plMipmap *mipmap );
+        void    WriteMipmap( const char *fileName, plMipmap *mipmap );
 
 };
 

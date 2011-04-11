@@ -31,8 +31,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace plPlasmaMtlImport
 {
-	int			GetNumMtlDescs( void );
-	ClassDesc2	*GetMtlDesc( int i );
+    int         GetNumMtlDescs( void );
+    ClassDesc2  *GetMtlDesc( int i );
 };
 
 #endif //_plMtlImport_h

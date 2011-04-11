@@ -4,11 +4,11 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plProgressMgr_SOURCES
-	plProgressMgr.cpp
+    plProgressMgr.cpp
 )
 
 set(plProgressMgr_HEADERS
-	plProgressMgr.h
+    plProgressMgr.h
 )
 
 add_library(plProgressMgr STATIC ${plProgressMgr_SOURCES} ${plProgressMgr_HEADERS})

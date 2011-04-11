@@ -27,13 +27,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #pragma warning(push)
 // disable warnings that appear in boost
-#	pragma warning(disable:4800) // disable int to bool performance warning
-#	pragma warning(disable:4275) // disable non dll-interface warning
-#	pragma warning(disable:4251) // similar to above warning
-#	include <boost/python.hpp>
+#   pragma warning(disable:4800) // disable int to bool performance warning
+#   pragma warning(disable:4275) // disable non dll-interface warning
+#   pragma warning(disable:4251) // similar to above warning
+#   include <boost/python.hpp>
 #pragma warning(pop)
 
 BOOST_PYTHON_MODULE(pyPloticus)
 {
-	pyPloticus::PythonModDef();
+    pyPloticus::PythonModDef();
 }

@@ -42,79 +42,79 @@ class plMultipassMtlDlg;
 class plMultipassMtl : public Mtl
 {
 protected:
-	IParamBlock2	*fPassesPB;
-	Interval		fIValid;
-	plMultipassMtlDlg *fMtlDlg;
+    IParamBlock2    *fPassesPB;
+    Interval        fIValid;
+    plMultipassMtlDlg *fMtlDlg;
 
 public:
-	enum { kRefPasses };
-	enum { kBlkPasses };
+    enum { kRefPasses };
+    enum { kBlkPasses };
 
-	ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
-	void Update(TimeValue t, Interval& valid);
-	Interval Validity(TimeValue t);
-	void Reset();
+    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
+    void Update(TimeValue t, Interval& valid);
+    Interval Validity(TimeValue t);
+    void Reset();
 
-	void NotifyChanged();
+    void NotifyChanged();
 
-	// From MtlBase and Mtl
-	void SetAmbient(Color c, TimeValue t);		
-	void SetDiffuse(Color c, TimeValue t);		
-	void SetSpecular(Color c, TimeValue t);
-	void SetShininess(float v, TimeValue t);
-	Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE);
-	Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE);
-	Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE);
-	float GetXParency(int mtlNum=0, BOOL backFace=FALSE);
-	float GetShininess(int mtlNum=0, BOOL backFace=FALSE);		
-	float GetShinStr(int mtlNum=0, BOOL backFace=FALSE);
-	float WireSize(int mtlNum=0, BOOL backFace=FALSE);
+    // From MtlBase and Mtl
+    void SetAmbient(Color c, TimeValue t);      
+    void SetDiffuse(Color c, TimeValue t);      
+    void SetSpecular(Color c, TimeValue t);
+    void SetShininess(float v, TimeValue t);
+    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE);
+    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE);
+    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE);
+    float GetXParency(int mtlNum=0, BOOL backFace=FALSE);
+    float GetShininess(int mtlNum=0, BOOL backFace=FALSE);      
+    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE);
+    float WireSize(int mtlNum=0, BOOL backFace=FALSE);
 
-	// Shade and displacement calculation
-	void Shade(ShadeContext& sc);
-	float EvalDisplacement(ShadeContext& sc); 
-	Interval DisplacementValidity(TimeValue t); 	
+    // Shade and displacement calculation
+    void Shade(ShadeContext& sc);
+    float EvalDisplacement(ShadeContext& sc); 
+    Interval DisplacementValidity(TimeValue t);     
 
-	// SubTexmap access methods
-	int NumSubMtls();
-	Mtl* GetSubMtl(int i);
-	void SetSubMtl(int i, Mtl *m);
-	TSTR GetSubMtlSlotName(int i);
-	TSTR GetSubMtlTVName(int i);
-	
-	BOOL SetDlgThing(ParamDlg* dlg);
-	plMultipassMtl(BOOL loading);
+    // SubTexmap access methods
+    int NumSubMtls();
+    Mtl* GetSubMtl(int i);
+    void SetSubMtl(int i, Mtl *m);
+    TSTR GetSubMtlSlotName(int i);
+    TSTR GetSubMtlTVName(int i);
+    
+    BOOL SetDlgThing(ParamDlg* dlg);
+    plMultipassMtl(BOOL loading);
 
-	// Loading/Saving
-	IOResult Load(ILoad *iload);
-	IOResult Save(ISave *isave);
+    // Loading/Saving
+    IOResult Load(ILoad *iload);
+    IOResult Save(ISave *isave);
 
-	//From Animatable
-	Class_ID ClassID() { return MULTIMTL_CLASS_ID; }		
-	SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-	void GetClassName(TSTR& s) { s = GetString(IDS_MULTI_MTL); }
+    //From Animatable
+    Class_ID ClassID() { return MULTIMTL_CLASS_ID; }        
+    SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
+    void GetClassName(TSTR& s) { s = GetString(IDS_MULTI_MTL); }
 
-	RefTargetHandle Clone(RemapDir &remap);
-	RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-		PartID& partID, RefMessage message);
+    RefTargetHandle Clone(RemapDir &remap);
+    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
+        PartID& partID, RefMessage message);
 
-	int NumSubs();
-	Animatable* SubAnim(int i); 
-	TSTR SubAnimName(int i);
+    int NumSubs();
+    Animatable* SubAnim(int i); 
+    TSTR SubAnimName(int i);
 
-	int NumRefs();
-	RefTargetHandle GetReference(int i);
-	void SetReference(int i, RefTargetHandle rtarg);
+    int NumRefs();
+    RefTargetHandle GetReference(int i);
+    void SetReference(int i, RefTargetHandle rtarg);
 
-	int	NumParamBlocks();
-	IParamBlock2* GetParamBlock(int i);
-	IParamBlock2* GetParamBlockByID(BlockID id);
+    int NumParamBlocks();
+    IParamBlock2* GetParamBlock(int i);
+    IParamBlock2* GetParamBlockByID(BlockID id);
 
-	void DeleteThis() { delete this; }
+    void DeleteThis() { delete this; }
 
-	void SetParamDlg(ParamDlg *dlg);
+    void SetParamDlg(ParamDlg *dlg);
 
-	void SetNumSubMtls(int num);
+    void SetNumSubMtls(int num);
 };
 
 #endif // __PLMAXMTL__H

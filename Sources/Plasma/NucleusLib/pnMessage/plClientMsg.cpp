@@ -28,24 +28,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plClientMsg::IReset() 
 { 
-	fMsgFlag = 0; 
-	fAgeName = nil;
+    fMsgFlag = 0; 
+    fAgeName = nil;
 }
 
 void plClientMsg::AddRoomLoc(plLocation loc)
 {
-	if (loc.IsValid())
-		fRoomLocs.push_back(loc);
-	else
-		hsStatusMessage("Trying to load an invalid room, ignoring");
+    if (loc.IsValid())
+        fRoomLocs.push_back(loc);
+    else
+        hsStatusMessage("Trying to load an invalid room, ignoring");
 }
 
 void plClientMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	hsAssert(0, "Shouldn't read a plClientMsg");
+    hsAssert(0, "Shouldn't read a plClientMsg");
 }
 
 void plClientMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	hsAssert(0, "Shouldn't write a plClientMsg");
+    hsAssert(0, "Shouldn't write a plClientMsg");
 }

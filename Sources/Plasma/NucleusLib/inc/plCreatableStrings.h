@@ -25,14 +25,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plCreatableStrings.h - Handy header file that declares a class with two
-//						   static public string arrays representing the names
-//						   of the classes before and after keyedObjDelineator
-//						   in plCreatableIndex.h. Note the cunning (and humble)
-//						   use of macros to avoid having to change this file 
-//						   whenever plCreatableIndex.h changes.
+//  plCreatableStrings.h - Handy header file that declares a class with two
+//                         static public string arrays representing the names
+//                         of the classes before and after keyedObjDelineator
+//                         in plCreatableIndex.h. Note the cunning (and humble)
+//                         use of macros to avoid having to change this file 
+//                         whenever plCreatableIndex.h changes.
 //
-//						   Should only be included once, probably in plFactory.cpp
+//                         Should only be included once, probably in plFactory.cpp
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 // Step 2: Define the CLASS_INDEX macros so we generate our class. The class name
-//		   is plCreatableStrings and the arrays are fKeyedStrings and fNonKeyedStrings
+//         is plCreatableStrings and the arrays are fKeyedStrings and fNonKeyedStrings
 
 #undef CLASS_INDEX_LIST_START
 #undef CLASS_INDEX
@@ -58,17 +58,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #undef CLASS_INDEX_LIST_END
 
 #define CLASS_INDEX_LIST_START class plCreatableStrings { public:\
-	static char	*fKeyedStrings[]; static char *fNonKeyedStrings[]; static char *fNonKeyedPostDBStrings[];\
-	}; \
-	char *plCreatableStrings::fKeyedStrings[] = {
+    static char *fKeyedStrings[]; static char *fNonKeyedStrings[]; static char *fNonKeyedPostDBStrings[];\
+    }; \
+    char *plCreatableStrings::fKeyedStrings[] = {
 #define CLASS_INDEX(ci) #ci
-#define CLASS_INDEX_NONKEYED_OBJ_START		}; char *plCreatableStrings::fNonKeyedStrings[] = { 
-#define CLASS_INDEX_LIST_END	};
+#define CLASS_INDEX_NONKEYED_OBJ_START      }; char *plCreatableStrings::fNonKeyedStrings[] = { 
+#define CLASS_INDEX_LIST_END    };
 
 #undef CLASS_INDEX_DATABASE_STRUCT_INDEXES_START
 #undef CLASS_INDEX_DATABASE_STRUCT_INDEXES_END
 #define CLASS_INDEX_DATABASE_STRUCT_INDEXES_START
-#define CLASS_INDEX_DATABASE_STRUCT_INDEXES_END		}; char *plCreatableStrings::fNonKeyedPostDBStrings[] = { 
+#define CLASS_INDEX_DATABASE_STRUCT_INDEXES_END     }; char *plCreatableStrings::fNonKeyedPostDBStrings[] = { 
 
 // Step 3: Include plCI.h
 

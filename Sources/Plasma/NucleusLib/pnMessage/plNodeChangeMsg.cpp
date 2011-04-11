@@ -32,14 +32,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plNodeChangeMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	IMsgRead(stream, mgr);
+    IMsgRead(stream, mgr);
 
-	fNodeKey = mgr->ReadKey(stream);
+    fNodeKey = mgr->ReadKey(stream);
 }
 
 void plNodeChangeMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	IMsgWrite(stream, mgr);
+    IMsgWrite(stream, mgr);
 
-	mgr->WriteKey(stream, fNodeKey);
+    mgr->WriteKey(stream, fNodeKey);
 }

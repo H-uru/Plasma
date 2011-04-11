@@ -34,29 +34,29 @@ class plSceneObject;
 class plFacingConditionalObject : public plConditionalObject
 {
 protected:
-	hsScalar			fTolerance;
-	hsBool				fDirectional;
+    hsScalar            fTolerance;
+    hsBool              fDirectional;
 
 public:
-	
-	plFacingConditionalObject();
-	~plFacingConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plFacingConditionalObject );
-	GETINTERFACE_ANY( plFacingConditionalObject, plConditionalObject );
-	
-	hsBool MsgReceive(plMessage* msg);
+    
+    plFacingConditionalObject();
+    ~plFacingConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plFacingConditionalObject );
+    GETINTERFACE_ANY( plFacingConditionalObject, plConditionalObject );
+    
+    hsBool MsgReceive(plMessage* msg);
 
-	void SetTolerance(hsScalar d) { fTolerance = d; }
-	void SetDirectional(hsBool d) { fDirectional = d; }
+    void SetTolerance(hsScalar d) { fTolerance = d; }
+    void SetDirectional(hsBool d) { fDirectional = d; }
 
-	virtual hsBool Verify(plMessage* msg);
+    virtual hsBool Verify(plMessage* msg);
 
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(true); }
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(true); }
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 };
 

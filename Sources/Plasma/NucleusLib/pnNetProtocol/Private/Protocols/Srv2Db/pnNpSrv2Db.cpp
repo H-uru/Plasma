@@ -60,9 +60,9 @@ bool Srv2DbValidateConnect (
     // Validate connect server type
     if (! (connect.srvType == kSrvTypeAuth
         || connect.srvType == kSrvTypeVault
-		|| connect.srvType == kSrvTypeState
-		|| connect.srvType == kSrvTypeScore
-		|| connect.srvType == kSrvTypeCsr)
+        || connect.srvType == kSrvTypeState
+        || connect.srvType == kSrvTypeScore
+        || connect.srvType == kSrvTypeCsr)
     ) {
         return false;
     }

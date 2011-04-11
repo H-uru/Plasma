@@ -32,59 +32,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsSfxDistFade : public hsGRenderProcs {
 public:
-	enum {
-		kCullsBefore		= 0x10000,
-		kCullsBeyond		= 0x20000,
+    enum {
+        kCullsBefore        = 0x10000,
+        kCullsBeyond        = 0x20000,
 
-		kDistFromView		= 0x40000,
-		kDistFromTarget		= 0x80000,
-		kDistAlongX			= 0x100000,
-		kDistAlongY			= 0x200000,
-		kDistAlongZ			= 0x400000,
-		kWorldDist			= 0x800000,
+        kDistFromView       = 0x40000,
+        kDistFromTarget     = 0x80000,
+        kDistAlongX         = 0x100000,
+        kDistAlongY         = 0x200000,
+        kDistAlongZ         = 0x400000,
+        kWorldDist          = 0x800000,
 
-		kPostInterp			= 0x1000000,
+        kPostInterp         = 0x1000000,
 
-		kIdleBefore			= 0x2000000,
-		kIdleBeyond			= 0x4000000
-	};
+        kIdleBefore         = 0x2000000,
+        kIdleBeyond         = 0x4000000
+    };
 
-	struct hsSfxDfTableEntry {
-		hsScalar			fDistDel;
-		hsScalar			fDistNorm;
-		hsScalar			fOpacity;
-	};
+    struct hsSfxDfTableEntry {
+        hsScalar            fDistDel;
+        hsScalar            fDistNorm;
+        hsScalar            fOpacity;
+    };
 protected:
 
-	hsScalar							fMinDist;
-	hsScalar							fMaxDist;
+    hsScalar                            fMinDist;
+    hsScalar                            fMaxDist;
 
-	hsScalar							fMinIdle;
-	hsScalar							fMaxIdle;
+    hsScalar                            fMinIdle;
+    hsScalar                            fMaxIdle;
 
-	hsExpander<hsSfxDfTableEntry>		fTable;
+    hsExpander<hsSfxDfTableEntry>       fTable;
 
-	hsScalar IOpacFromDist(hsScalar dist);
+    hsScalar IOpacFromDist(hsScalar dist);
 public:
-	hsSfxDistFade();
-	virtual ~hsSfxDistFade();
+    hsSfxDistFade();
+    virtual ~hsSfxDistFade();
 
-	virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
+    virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
 
-	virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
-	virtual void ProcessPostInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
+    virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
+    virtual void ProcessPostInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
 
-	void MakeTable(float* distList, float* opacList, int num); // lists sorted from lowest cosine to highest
+    void MakeTable(float* distList, float* opacList, int num); // lists sorted from lowest cosine to highest
 
-	virtual void Read(hsStream* s);
-	virtual void Write(hsStream* s);
+    virtual void Read(hsStream* s);
+    virtual void Write(hsStream* s);
 
-	virtual const char* GetLabel() const { return "hsSfxDistFade"; }
+    virtual const char* GetLabel() const { return "hsSfxDistFade"; }
 
-	virtual ProcType GetType() const { return kTypeDistFade; }
+    virtual ProcType GetType() const { return kTypeDistFade; }
 
-	CLASSNAME_REGISTER( hsSfxDistFade );
-	GETINTERFACE_ANY( hsSfxDistFade, hsGRenderProcs );
+    CLASSNAME_REGISTER( hsSfxDistFade );
+    GETINTERFACE_ANY( hsSfxDistFade, hsGRenderProcs );
 
 };
 

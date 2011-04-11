@@ -2,12 +2,12 @@ include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 
 set(pnSimpleNet_HEADERS
-	Pch.h
-	pnSimpleNet.h
+    Pch.h
+    pnSimpleNet.h
 )
 
 set(pnSimpleNet_SOURCES
-	pnSimpleNet.cpp
+    pnSimpleNet.cpp
 )
 
 add_library(pnSimpleNet STATIC ${pnSimpleNet_HEADERS} ${pnSimpleNet_SOURCES})

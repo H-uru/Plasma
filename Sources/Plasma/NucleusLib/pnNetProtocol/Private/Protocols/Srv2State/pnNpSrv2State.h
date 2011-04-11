@@ -39,13 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Because SrvState must remain compatible with older auth builds, these message ids
 // must not change unless all front-end servers are synchronously replaced.
 enum {
-	kSrv2State_SaveObject				= 0,
-	kSrv2State_DeleteObject				= 1,
-	kSrv2State_FetchObject				= 2,
+    kSrv2State_SaveObject               = 0,
+    kSrv2State_DeleteObject             = 1,
+    kSrv2State_FetchObject              = 2,
 };
 
 enum {
-	kState2Srv_ObjectFetched 			= 0,
+    kState2Srv_ObjectFetched            = 0,
 };
 
 
@@ -79,21 +79,21 @@ struct Srv2State_Connect {
 ***/
 
 struct Srv2State_FetchObject : SrvMsgHeader {
-	Uuid	ownerId;
-	wchar	objectName[kMaxStateObjectName];
+    Uuid    ownerId;
+    wchar   objectName[kMaxStateObjectName];
 };
 
 struct Srv2State_SaveObject : SrvMsgHeader {
-	Uuid		ownerId;		
-	wchar		objectName[kMaxStateObjectName];
-	dword		objectDataBytes;
-	byte		objectData[1]; // objectData[objectDataBytes], actually
-	// no more fields after var length alloc
+    Uuid        ownerId;        
+    wchar       objectName[kMaxStateObjectName];
+    dword       objectDataBytes;
+    byte        objectData[1]; // objectData[objectDataBytes], actually
+    // no more fields after var length alloc
 };
 
 struct Srv2State_DeleteObject : SrvMsgHeader {
-	Uuid	ownerId;		
-	wchar	objectName[kMaxStateObjectName];
+    Uuid    ownerId;        
+    wchar   objectName[kMaxStateObjectName];
 };
 
 
@@ -104,9 +104,9 @@ struct Srv2State_DeleteObject : SrvMsgHeader {
 ***/
 
 struct State2Srv_ObjectFetched : SrvMsgHeader { 
-	dword	objectDataBytes;
-	byte	objectData[1];
-	// no more fields after var length alloc
+    dword   objectDataBytes;
+    byte    objectData[1];
+    // no more fields after var length alloc
 };
 
 

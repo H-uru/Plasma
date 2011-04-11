@@ -25,13 +25,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plRawPageAccessor - Dangerous little class that lets you take a
-//					    plRegistryPageNode and load the objects in raw (i.e.
-//						as block memory buffers).
-//						This should NOT be used in any normal app, only 
-//						utility apps that don't want to load objects in
-//						normally (which basically means if you're not mcn,
-//						don't use this!)
+//  plRawPageAccessor - Dangerous little class that lets you take a
+//                      plRegistryPageNode and load the objects in raw (i.e.
+//                      as block memory buffers).
+//                      This should NOT be used in any normal app, only 
+//                      utility apps that don't want to load objects in
+//                      normally (which basically means if you're not mcn,
+//                      don't use this!)
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -46,22 +46,22 @@ class plKey;
 
 class plRawPageAccessor
 {
-	protected:
+    protected:
 
-		plRegistryPageNode	*fSource;
+        plRegistryPageNode  *fSource;
 
-	public:
+    public:
 
-		plRawPageAccessor( plRegistryPageNode *source, hsBool read = true );
-		virtual ~plRawPageAccessor();
+        plRawPageAccessor( plRegistryPageNode *source, hsBool read = true );
+        virtual ~plRawPageAccessor();
 
-		void	ReadFromSource( void );
-		void	WriteToSource( void );
-		void	Release( void );
+        void    ReadFromSource( void );
+        void    WriteToSource( void );
+        void    Release( void );
 
-		void	UpdateDataVersion( plRegistryPageNode *from );
+        void    UpdateDataVersion( plRegistryPageNode *from );
 
-		void	AddCopy( const plKey &origKey );
+        void    AddCopy( const plKey &origKey );
 
 };
 

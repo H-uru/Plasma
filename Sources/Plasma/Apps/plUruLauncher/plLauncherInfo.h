@@ -35,15 +35,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_APPS_PLURULAUNCHER_PLLAUNCHERCALLBACK_H
 
 enum EStatus {
-	kStatusOk,
-	kStatusError,
-	kStatusPending,
+    kStatusOk,
+    kStatusError,
+    kStatusPending,
 };
 
 struct PatchInfo {
-	unsigned progress;
-	unsigned stage;
-	unsigned progressStage;
+    unsigned progress;
+    unsigned stage;
+    unsigned progressStage;
 };
 
 typedef void (*launcherCallback)(int status, void *param);
@@ -53,24 +53,24 @@ typedef void (*setTimeRemainingCallback)(unsigned seconds);
 typedef void (*setBytesRemainingCallback)(unsigned bytes);
 
 struct plLauncherInfo {
-	wchar path[MAX_PATH];
-	wchar cmdLine[512];
-	unsigned buildId;				// buildId override
-	launcherCallback prepCallback;
-	launcherCallback initCallback;
-	launcherCallback startCallback;
-	launcherCallback stopCallback;
-	launcherCallback terminateCallback;
-	launcherCallback progressCallback;
-	launcherCallback exitCallback;
-	setTextCallback				SetText; 
-	setStatusTextCallback		SetStatusText;
-	setTimeRemainingCallback	SetTimeRemaining;
-	setBytesRemainingCallback	SetBytesRemaining;
-	
-	PatchInfo patchInfo;
-	bool IsTGCider;
-	DWORD returnCode;		// used so we can pass a new process id back to gametap. That way gametap wont think uru has exited when the patcher quits.
+    wchar path[MAX_PATH];
+    wchar cmdLine[512];
+    unsigned buildId;               // buildId override
+    launcherCallback prepCallback;
+    launcherCallback initCallback;
+    launcherCallback startCallback;
+    launcherCallback stopCallback;
+    launcherCallback terminateCallback;
+    launcherCallback progressCallback;
+    launcherCallback exitCallback;
+    setTextCallback             SetText; 
+    setStatusTextCallback       SetStatusText;
+    setTimeRemainingCallback    SetTimeRemaining;
+    setBytesRemainingCallback   SetBytesRemaining;
+    
+    PatchInfo patchInfo;
+    bool IsTGCider;
+    DWORD returnCode;       // used so we can pass a new process id back to gametap. That way gametap wont think uru has exited when the patcher quits.
 };
 
 

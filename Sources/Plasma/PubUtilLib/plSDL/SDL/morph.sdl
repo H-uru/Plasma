@@ -10,19 +10,19 @@
 
 STATEDESC MorphSet
 {
-	VERSION 2
-	VAR PLKEY		mesh[1] DEFAULT=nil
-	VAR BYTE		weights[] DEFAULT=0
+    VERSION 2
+    VAR PLKEY       mesh[1] DEFAULT=nil
+    VAR BYTE        weights[] DEFAULT=0
 }
 
 STATEDESC MorphSequence   
 {
-	VERSION 2
+    VERSION 2
 
-	# User data. The avatar sets this so that it can later differentiate between
-	# various records in the vault
-	VAR BYTE		targetID[1] DEFAULT=0
+    # User data. The avatar sets this so that it can later differentiate between
+    # various records in the vault
+    VAR BYTE        targetID[1] DEFAULT=0
 
-	VAR $MorphSet	morphs[]
+    VAR $MorphSet   morphs[]
 }
 

@@ -35,44 +35,44 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlDraggable)
 
 PYTHON_INIT_DEFINITION(ptGUIControlDraggable, args, keywords)
 {
-	PyObject *keyObject = NULL;
-	if (!PyArg_ParseTuple(args, "O", &keyObject))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	if (!pyKey::Check(keyObject))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
+    PyObject *keyObject = NULL;
+    if (!PyArg_ParseTuple(args, "O", &keyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    if (!pyKey::Check(keyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
 
-	pyKey *key = pyKey::ConvertFrom(keyObject);
-	self->fThis->setKey(key->getKey());
+    pyKey *key = pyKey::ConvertFrom(keyObject);
+    self->fThis->setKey(key->getKey());
 
-	PYTHON_RETURN_INIT_OK;
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlDraggable, stopDragging, args)
 {
-	char cancelFlag;
-	if (!PyArg_ParseTuple(args, "b", &cancelFlag))
-	{
-		PyErr_SetString(PyExc_TypeError, "stopDragging expects a boolean");
-		PYTHON_RETURN_ERROR;
-	}
-	self->fThis->StopDragging(cancelFlag != 0);
-	PYTHON_RETURN_NONE;
+    char cancelFlag;
+    if (!PyArg_ParseTuple(args, "b", &cancelFlag))
+    {
+        PyErr_SetString(PyExc_TypeError, "stopDragging expects a boolean");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->StopDragging(cancelFlag != 0);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlDraggable, getLastMousePoint)
 {
-	return self->fThis->GetLastMousePt();
+    return self->fThis->GetLastMousePt();
 }
 
 PYTHON_START_METHODS_TABLE(ptGUIControlDraggable)
-	PYTHON_METHOD(ptGUIControlDraggable, stopDragging, "Params: cancelFlag\nUNKNOWN"),
-	PYTHON_METHOD_NOARGS(ptGUIControlDraggable, getLastMousePoint, "Returns the last point we were dragged to"),
+    PYTHON_METHOD(ptGUIControlDraggable, stopDragging, "Params: cancelFlag\nUNKNOWN"),
+    PYTHON_METHOD_NOARGS(ptGUIControlDraggable, getLastMousePoint, "Returns the last point we were dragged to"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -81,16 +81,16 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlDraggable, pyGUIControl, "Params: ctrlKey\
 // required functions for PyObject interoperability
 PyObject *pyGUIControlDraggable::New(pyKey& gckey)
 {
-	ptGUIControlDraggable *newObj = (ptGUIControlDraggable*)ptGUIControlDraggable_type.tp_new(&ptGUIControlDraggable_type, NULL, NULL);
-	newObj->fThis->fGCkey = gckey.getKey();
-	return (PyObject*)newObj;
+    ptGUIControlDraggable *newObj = (ptGUIControlDraggable*)ptGUIControlDraggable_type.tp_new(&ptGUIControlDraggable_type, NULL, NULL);
+    newObj->fThis->fGCkey = gckey.getKey();
+    return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlDraggable::New(plKey objkey)
 {
-	ptGUIControlDraggable *newObj = (ptGUIControlDraggable*)ptGUIControlDraggable_type.tp_new(&ptGUIControlDraggable_type, NULL, NULL);
-	newObj->fThis->fGCkey = objkey;
-	return (PyObject*)newObj;
+    ptGUIControlDraggable *newObj = (ptGUIControlDraggable*)ptGUIControlDraggable_type.tp_new(&ptGUIControlDraggable_type, NULL, NULL);
+    newObj->fThis->fGCkey = objkey;
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptGUIControlDraggable, pyGUIControlDraggable)
@@ -102,7 +102,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptGUIControlDraggable, pyGUIControlDraggable)
 //
 void pyGUIControlDraggable::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptGUIControlDraggable);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptGUIControlDraggable);
+    PYTHON_CLASS_IMPORT_END(m);
 }

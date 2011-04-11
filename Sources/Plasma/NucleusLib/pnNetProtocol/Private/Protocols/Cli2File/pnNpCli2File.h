@@ -40,42 +40,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // kNetProtocolCli2File messages
 enum {
-	// Global
-	kCli2File_PingRequest				= 0,
+    // Global
+    kCli2File_PingRequest               = 0,
 
-	// File server-related
-	kCli2File_BuildIdRequest			= 10,
-	// 11 through 19 skipped
+    // File server-related
+    kCli2File_BuildIdRequest            = 10,
+    // 11 through 19 skipped
 
-	// Cache-related
-	kCli2File_ManifestRequest			= 20,
-	kCli2File_FileDownloadRequest		= 21,
-	kCli2File_ManifestEntryAck			= 22,
-	kCli2File_FileDownloadChunkAck		= 23,
-	// 24 through 29 skipped
+    // Cache-related
+    kCli2File_ManifestRequest           = 20,
+    kCli2File_FileDownloadRequest       = 21,
+    kCli2File_ManifestEntryAck          = 22,
+    kCli2File_FileDownloadChunkAck      = 23,
+    // 24 through 29 skipped
 
-	kCli2File_UNUSED_1					= 30,
+    kCli2File_UNUSED_1                  = 30,
 };
 
 enum {
-	// Global
-	kFile2Cli_PingReply					= 0,
+    // Global
+    kFile2Cli_PingReply                 = 0,
 
-	// File server-related
-	kFile2Cli_BuildIdReply				= 10,
-	kFile2Cli_BuildIdUpdate				= 11,
-	// 12 through 19 skipped
+    // File server-related
+    kFile2Cli_BuildIdReply              = 10,
+    kFile2Cli_BuildIdUpdate             = 11,
+    // 12 through 19 skipped
 
-	// Cache-related
-	kFile2Cli_ManifestReply				= 20,
-	kFile2Cli_FileDownloadReply			= 21,
-	// 22 through 29 skipped
+    // Cache-related
+    kFile2Cli_ManifestReply             = 20,
+    kFile2Cli_FileDownloadReply         = 21,
+    // 22 through 29 skipped
 
-	kFile2Cli_UNUSED_1					= 30,
+    kFile2Cli_UNUSED_1                  = 30,
 };
 
 // we have a constant build id so all clients can connect to us, no matter what version
-static const unsigned	kFileSrvBuildId = 0;
+static const unsigned   kFileSrvBuildId = 0;
 
 
 //============================================================================
@@ -91,18 +91,18 @@ static const unsigned	kFileSrvBuildId = 0;
 ***/
 
 struct Cli2File_ConnData {
-	dword		dataBytes;
-	dword		buildId;
-	unsigned	serverType;
+    dword       dataBytes;
+    dword       buildId;
+    unsigned    serverType;
 };
 struct Cli2File_Connect {
-	AsyncSocketConnectPacket    hdr;
-	Cli2File_ConnData           data;
+    AsyncSocketConnectPacket    hdr;
+    Cli2File_ConnData           data;
 };
 
 struct Cli2File_MsgHeader {
-	dword		messageBytes;
-	dword       messageId;
+    dword       messageBytes;
+    dword       messageId;
 };
 
 
@@ -114,34 +114,34 @@ struct Cli2File_MsgHeader {
 
 // PingRequest
 struct Cli2File_PingRequest : Cli2File_MsgHeader {
-	dword       pingTimeMs;
+    dword       pingTimeMs;
 };
 
 // BuildIdRequest
 struct Cli2File_BuildIdRequest : Cli2File_MsgHeader {
-	dword		transId;
+    dword       transId;
 };
 
 // ManifestRequest
 struct Cli2File_ManifestRequest : Cli2File_MsgHeader {
-	dword		transId;
-	wchar		group[MAX_PATH];
-	unsigned	buildId; // 0 = newest
+    dword       transId;
+    wchar       group[MAX_PATH];
+    unsigned    buildId; // 0 = newest
 };
 struct Cli2File_ManifestEntryAck : Cli2File_MsgHeader {
-	dword		transId;
-	dword		readerId;
+    dword       transId;
+    dword       readerId;
 };
 
 // FileDownloadRequest
 struct Cli2File_FileDownloadRequest : Cli2File_MsgHeader {
-	dword		transId;
-	wchar		filename[MAX_PATH];
-	unsigned	buildId; // 0 = newest
+    dword       transId;
+    wchar       filename[MAX_PATH];
+    unsigned    buildId; // 0 = newest
 };
 struct Cli2File_FileDownloadChunkAck : Cli2File_MsgHeader {
-	dword		transId;
-	dword		readerId;
+    dword       transId;
+    dword       readerId;
 };
 
 
@@ -153,39 +153,39 @@ struct Cli2File_FileDownloadChunkAck : Cli2File_MsgHeader {
 
 // PingReply
 struct File2Cli_PingReply : Cli2File_MsgHeader {
-	dword       pingTimeMs;
+    dword       pingTimeMs;
 };
 
 // BuildIdReply
 struct File2Cli_BuildIdReply : Cli2File_MsgHeader {
-	dword		transId;
-	ENetError	result;
-	unsigned	buildId;
+    dword       transId;
+    ENetError   result;
+    unsigned    buildId;
 };
 
 // BuildIdUpdate
 struct File2Cli_BuildIdUpdate : Cli2File_MsgHeader {
-	unsigned	buildId;
+    unsigned    buildId;
 };
 
 // ManifestReply
 struct File2Cli_ManifestReply : Cli2File_MsgHeader {
-	dword		transId;
-	ENetError	result;
-	dword		readerId;
-	dword		numFiles;			// total number of files
-	dword		wcharCount;			// size of the buffer
-	wchar		manifestData[1];	// manifestData[wcharCount], actually
+    dword       transId;
+    ENetError   result;
+    dword       readerId;
+    dword       numFiles;           // total number of files
+    dword       wcharCount;         // size of the buffer
+    wchar       manifestData[1];    // manifestData[wcharCount], actually
 };
 
 // FileDownloadReply
 struct File2Cli_FileDownloadReply : Cli2File_MsgHeader {
-	dword		transId;
-	ENetError	result;
-	dword		readerId;
-	dword		totalFileSize;
-	dword		byteCount;
-	byte		fileData[1];		// fileData[byteCount], actually
+    dword       transId;
+    ENetError   result;
+    dword       readerId;
+    dword       totalFileSize;
+    dword       byteCount;
+    byte        fileData[1];        // fileData[byteCount], actually
 };
 
 

@@ -42,113 +42,113 @@ class plCompositeMtlDlg;
 class plCompositeMtl : public Mtl
 {
 protected:
-	IParamBlock2	*fPassesPB;
-	Interval		fIValid;
-	plCompositeMtlDlg *fMtlDlg;
+    IParamBlock2    *fPassesPB;
+    Interval        fIValid;
+    plCompositeMtlDlg *fMtlDlg;
 
 public:
-	enum
-	{
-		kCompPasses,
-		kCompOn,
-		kCompBlend,
-		kCompUVChannels,
-		kCompLayerCounts
-	};
+    enum
+    {
+        kCompPasses,
+        kCompOn,
+        kCompBlend,
+        kCompUVChannels,
+        kCompLayerCounts
+    };
 
-	// Make sure to pair up each blend mode with an inverse after it
-	// (This way we check for an inverse blend by doing an odd/even check.)
-	enum BlendMethod // These should match up in order with the blend strings
-	{
-		kCompBlendVertexAlpha,
-		kCompBlendInverseVtxAlpha,
-		kCompBlendVertexIllumRed,
-		kCompBlendInverseVtxIllumRed,
-		kCompBlendVertexIllumGreen,
-		kCompBlendInverseVtxIllumGreen,
-		kCompBlendVertexIllumBlue,
-		kCompBlendInverseVtxIllumBlue,
+    // Make sure to pair up each blend mode with an inverse after it
+    // (This way we check for an inverse blend by doing an odd/even check.)
+    enum BlendMethod // These should match up in order with the blend strings
+    {
+        kCompBlendVertexAlpha,
+        kCompBlendInverseVtxAlpha,
+        kCompBlendVertexIllumRed,
+        kCompBlendInverseVtxIllumRed,
+        kCompBlendVertexIllumGreen,
+        kCompBlendInverseVtxIllumGreen,
+        kCompBlendVertexIllumBlue,
+        kCompBlendInverseVtxIllumBlue,
 
-		kCompNumBlendMethods
-	};	
+        kCompNumBlendMethods
+    };  
 
-	static const char *BlendStrings[];
+    static const char *BlendStrings[];
 
-	enum { kRefPasses };
-	enum { kBlkPasses };
+    enum { kRefPasses };
+    enum { kBlkPasses };
 
-	ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
-	void Update(TimeValue t, Interval& valid);
-	Interval Validity(TimeValue t);
-	void Reset();
+    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
+    void Update(TimeValue t, Interval& valid);
+    Interval Validity(TimeValue t);
+    void Reset();
 
-	void NotifyChanged();
+    void NotifyChanged();
 
-	// From MtlBase and Mtl
-	void SetAmbient(Color c, TimeValue t);		
-	void SetDiffuse(Color c, TimeValue t);		
-	void SetSpecular(Color c, TimeValue t);
-	void SetShininess(float v, TimeValue t);
-	Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE);
-	Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE);
-	Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE);
-	float GetXParency(int mtlNum=0, BOOL backFace=FALSE);
-	float GetShininess(int mtlNum=0, BOOL backFace=FALSE);		
-	float GetShinStr(int mtlNum=0, BOOL backFace=FALSE);
-	float WireSize(int mtlNum=0, BOOL backFace=FALSE);
+    // From MtlBase and Mtl
+    void SetAmbient(Color c, TimeValue t);      
+    void SetDiffuse(Color c, TimeValue t);      
+    void SetSpecular(Color c, TimeValue t);
+    void SetShininess(float v, TimeValue t);
+    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE);
+    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE);
+    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE);
+    float GetXParency(int mtlNum=0, BOOL backFace=FALSE);
+    float GetShininess(int mtlNum=0, BOOL backFace=FALSE);      
+    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE);
+    float WireSize(int mtlNum=0, BOOL backFace=FALSE);
 
-	// Shade and displacement calculation
-	void Shade(ShadeContext& sc);
-	float EvalDisplacement(ShadeContext& sc); 
-	Interval DisplacementValidity(TimeValue t); 	
+    // Shade and displacement calculation
+    void Shade(ShadeContext& sc);
+    float EvalDisplacement(ShadeContext& sc); 
+    Interval DisplacementValidity(TimeValue t);     
 
-	// SubTexmap access methods
-	int NumSubMtls();
-	Mtl* GetSubMtl(int i);
-	void SetSubMtl(int i, Mtl *m);
-	TSTR GetSubMtlSlotName(int i);
-	TSTR GetSubMtlTVName(int i);
-	
-	BOOL SetDlgThing(ParamDlg* dlg);
-	plCompositeMtl(BOOL loading);
+    // SubTexmap access methods
+    int NumSubMtls();
+    Mtl* GetSubMtl(int i);
+    void SetSubMtl(int i, Mtl *m);
+    TSTR GetSubMtlSlotName(int i);
+    TSTR GetSubMtlTVName(int i);
+    
+    BOOL SetDlgThing(ParamDlg* dlg);
+    plCompositeMtl(BOOL loading);
 
-	// Loading/Saving
-	IOResult Load(ILoad *iload);
-	IOResult Save(ISave *isave);
+    // Loading/Saving
+    IOResult Load(ILoad *iload);
+    IOResult Save(ISave *isave);
 
-	//From Animatable
-	Class_ID ClassID() { return COMP_MTL_CLASS_ID; }		
-	SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-	void GetClassName(TSTR& s) { s = GetString(IDS_COMP_MTL); }
+    //From Animatable
+    Class_ID ClassID() { return COMP_MTL_CLASS_ID; }        
+    SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
+    void GetClassName(TSTR& s) { s = GetString(IDS_COMP_MTL); }
 
-	RefTargetHandle Clone(RemapDir &remap);
-	RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-		PartID& partID, RefMessage message);
+    RefTargetHandle Clone(RemapDir &remap);
+    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
+        PartID& partID, RefMessage message);
 
-	int NumSubs();
-	Animatable* SubAnim(int i); 
-	TSTR SubAnimName(int i);
+    int NumSubs();
+    Animatable* SubAnim(int i); 
+    TSTR SubAnimName(int i);
 
-	int NumRefs();
-	RefTargetHandle GetReference(int i);
-	void SetReference(int i, RefTargetHandle rtarg);
+    int NumRefs();
+    RefTargetHandle GetReference(int i);
+    void SetReference(int i, RefTargetHandle rtarg);
 
-	int	NumParamBlocks();
-	IParamBlock2* GetParamBlock(int i);
-	IParamBlock2* GetParamBlockByID(BlockID id);
+    int NumParamBlocks();
+    IParamBlock2* GetParamBlock(int i);
+    IParamBlock2* GetParamBlockByID(BlockID id);
 
-	void DeleteThis() { delete this; }
+    void DeleteThis() { delete this; }
 
-	void SetParamDlg(ParamDlg *dlg);
+    void SetParamDlg(ParamDlg *dlg);
 
-	int ComputeMaterialIndex(float opac[][2], int vertCount);
-	int GetBlendStyle(int index);
-	int CanWriteAlpha();
-	bool IsInverseBlend(int blend) const { return blend & 1; }
-	int RemoveInverse(int blend) { return blend - (blend & 1); }
-	//void SetNumSubMtls(int num);
-	void SetOpacityVal(float *pt, UVVert *alphas, UVVert *illums, int method);
-	//DllExport int UVChannelsNeeded(bool makeAlphaLayer);
+    int ComputeMaterialIndex(float opac[][2], int vertCount);
+    int GetBlendStyle(int index);
+    int CanWriteAlpha();
+    bool IsInverseBlend(int blend) const { return blend & 1; }
+    int RemoveInverse(int blend) { return blend - (blend & 1); }
+    //void SetNumSubMtls(int num);
+    void SetOpacityVal(float *pt, UVVert *alphas, UVVert *illums, int method);
+    //DllExport int UVChannelsNeeded(bool makeAlphaLayer);
 };
 
 #endif // __PLCOMPMTL__H

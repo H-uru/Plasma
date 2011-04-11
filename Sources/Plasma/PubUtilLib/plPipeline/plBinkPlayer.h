@@ -48,135 +48,135 @@ struct IDirectSound8;
 
 class plBinkPlayer
 {
-	public:
+    public:
 
-		static hsBool Init( hsWindowHndl hWnd);
-		static hsBool DeInit();
+        static hsBool Init( hsWindowHndl hWnd);
+        static hsBool DeInit();
 
-		static void SetForeGroundTrack(UInt32 t);
-		static void SetBackGroundTrack(UInt32 t);
-		static UInt32 GetForeGroundTrack();
-		static UInt32 GetBackGroundTrack();
-	
-		plBinkPlayer();
-		~plBinkPlayer();
+        static void SetForeGroundTrack(UInt32 t);
+        static void SetBackGroundTrack(UInt32 t);
+        static UInt32 GetForeGroundTrack();
+        static UInt32 GetBackGroundTrack();
+    
+        plBinkPlayer();
+        ~plBinkPlayer();
 
-		void SetDefaults();
+        void SetDefaults();
 
-		hsBool Start(plPipeline* pipe,  hsWindowHndl hWnd);
+        hsBool Start(plPipeline* pipe,  hsWindowHndl hWnd);
 
-		hsBool NextFrame();
+        hsBool NextFrame();
 
-		hsBool Pause(hsBool on);
+        hsBool Pause(hsBool on);
 
-		hsBool Stop(); 
-		
-		void SetFileName(const char* filename); // will copy
-		void SetColor(const hsColorRGBA& c);
-		void SetPosition(hsScalar x, hsScalar y);
-		void SetScale(hsScalar x, hsScalar y);
-		void SetVolume(hsScalar v) { ISetVolume(v, false); ISetVolume(v, true); }
-		void SetForeVolume(hsScalar v) { ISetVolume(v, false); }
-		void SetBackVolume(hsScalar v) { ISetVolume(v, true); }
+        hsBool Stop(); 
+        
+        void SetFileName(const char* filename); // will copy
+        void SetColor(const hsColorRGBA& c);
+        void SetPosition(hsScalar x, hsScalar y);
+        void SetScale(hsScalar x, hsScalar y);
+        void SetVolume(hsScalar v) { ISetVolume(v, false); ISetVolume(v, true); }
+        void SetForeVolume(hsScalar v) { ISetVolume(v, false); }
+        void SetBackVolume(hsScalar v) { ISetVolume(v, true); }
 
-		void SetPosition(const hsPoint2& p) { SetPosition(p.fX, p.fY); }
-		void SetScale(const hsPoint2& s) { SetScale(s.fX, s.fY); }
+        void SetPosition(const hsPoint2& p) { SetPosition(p.fX, p.fY); }
+        void SetScale(const hsPoint2& s) { SetScale(s.fX, s.fY); }
 
-		const char* GetFileName() const { return fFileName; }
-		const hsColorRGBA& GetColor() const { return fColor; }
-		const hsPoint2& GetPosition() const { return fPos; }
-		const hsPoint2& GetScale() const { return fScale; }
-		hsScalar GetBackVolume() const { return IGetVolume(true); }
-		hsScalar GetForeVolume() const { return IGetVolume(false); }
+        const char* GetFileName() const { return fFileName; }
+        const hsColorRGBA& GetColor() const { return fColor; }
+        const hsPoint2& GetPosition() const { return fPos; }
+        const hsPoint2& GetScale() const { return fScale; }
+        hsScalar GetBackVolume() const { return IGetVolume(true); }
+        hsScalar GetForeVolume() const { return IGetVolume(false); }
 
-		void AddCallback(plMessage* msg);
-		UInt32 GetNumCallbacks() const { return fCallbacks.GetCount(); }
-		plMessage* GetCallback(int i) const { return fCallbacks[i]; }
+        void AddCallback(plMessage* msg);
+        UInt32 GetNumCallbacks() const { return fCallbacks.GetCount(); }
+        plMessage* GetCallback(int i) const { return fCallbacks[i]; }
 
-		void SetFadeFromTime(hsScalar secs) { fFadeFromTime = secs; }
-		void SetFadeFromColor(hsColorRGBA c) { fFadeFromColor = c; }
+        void SetFadeFromTime(hsScalar secs) { fFadeFromTime = secs; }
+        void SetFadeFromColor(hsColorRGBA c) { fFadeFromColor = c; }
 
-		void SetFadeToTime(hsScalar secs) { fFadeToTime = secs; }
-		void SetFadeToColor(hsColorRGBA c) { fFadeToColor = c; }
+        void SetFadeToTime(hsScalar secs) { fFadeToTime = secs; }
+        void SetFadeToColor(hsColorRGBA c) { fFadeToColor = c; }
 
-		hsScalar GetFadeFromTime() const { return fFadeFromTime; }
-		const hsColorRGBA& GetFadeFromColor() const { return fFadeFromColor; }
-		hsScalar GetFadeToTime() const { return fFadeToTime; }
-		const hsColorRGBA& GetFadeToColor() const { return fFadeToColor; }
+        hsScalar GetFadeFromTime() const { return fFadeFromTime; }
+        const hsColorRGBA& GetFadeFromColor() const { return fFadeFromColor; }
+        hsScalar GetFadeToTime() const { return fFadeToTime; }
+        const hsColorRGBA& GetFadeToColor() const { return fFadeToColor; }
 
-	private:
+    private:
 
-		enum
-		{
-			kNumVerts = 4
-		};
-		struct D3DVertex
-		{
-			float x, y, z;
-			float u, v;
-		};
+        enum
+        {
+            kNumVerts = 4
+        };
+        struct D3DVertex
+        {
+            float x, y, z;
+            float u, v;
+        };
 
-		static hsBool		fInit;
+        static hsBool       fInit;
 
-		hsBool				IGetFrame();
-		hsBool				IBlitFrame();
-		hsBool				ISetRenderState();
-		void				ISetVerts();
+        hsBool              IGetFrame();
+        hsBool              IBlitFrame();
+        hsBool              ISetRenderState();
+        void                ISetVerts();
 
-		hsScalar			IGetVolume(int background) const;
-		void				ISetVolume(hsScalar v, int background);
-		void				ISendCallbacks();
+        hsScalar            IGetVolume(int background) const;
+        void                ISetVolume(hsScalar v, int background);
+        void                ISendCallbacks();
 
-		hsBool				IFadeFromColor();
-		hsBool				IFadeToColor();
+        hsBool              IFadeFromColor();
+        hsBool              IFadeToColor();
 
-		hsBool				IAtEnd();
-		hsBool				INotFadingTo();
-		hsBool				ICheckFadingTo();
-		hsBool				INotFadingFrom();
-		hsBool				ICheckFadingFrom();
+        hsBool              IAtEnd();
+        hsBool              INotFadingTo();
+        hsBool              ICheckFadingTo();
+        hsBool              INotFadingFrom();
+        hsBool              ICheckFadingFrom();
 
-		hsPoint2			fPos;
-		hsPoint2			fScale;
-		UInt16				fVolume[2];
-		hsColorRGBA			fColor;
+        hsPoint2            fPos;
+        hsPoint2            fScale;
+        UInt16              fVolume[2];
+        hsColorRGBA         fColor;
 
-		static U32			fTracks[2];
+        static U32          fTracks[2];
 
-		char*				fFileName; // for id
+        char*               fFileName; // for id
 
 #ifdef BINK_SDK_AVAILABLE
-		BINK*				fBink;				// main bink object 
+        BINK*               fBink;              // main bink object 
 #else
-		void*				fBink;
+        void*               fBink;
 #endif
-		plDXPipeline*		fPipeline;
-		IDirect3DTexture9*	fTexture;
-		D3DVertex			fVerts[4];
-		UInt16				fNumPrimitives;
-		UInt32				fHandle;
-		UInt32				fTextureSize[2];
+        plDXPipeline*       fPipeline;
+        IDirect3DTexture9*  fTexture;
+        D3DVertex           fVerts[4];
+        UInt16              fNumPrimitives;
+        UInt32              fHandle;
+        UInt32              fTextureSize[2];
 
-		double				fFadeStart;
-		hsScalar			fFadeParm;
-		enum FadeState {
-			kFadeNone,
-			kFadeFrom,
-			kFadeTo,
-			kFadeFromPaused,
-			kFadeToPaused
-		};
-		FadeState			fFadeState;
+        double              fFadeStart;
+        hsScalar            fFadeParm;
+        enum FadeState {
+            kFadeNone,
+            kFadeFrom,
+            kFadeTo,
+            kFadeFromPaused,
+            kFadeToPaused
+        };
+        FadeState           fFadeState;
 
-		hsScalar			fFadeFromTime;
-		hsColorRGBA			fFadeFromColor;
+        hsScalar            fFadeFromTime;
+        hsColorRGBA         fFadeFromColor;
 
-		hsScalar			fFadeToTime;
-		hsColorRGBA			fFadeToColor;
+        hsScalar            fFadeToTime;
+        hsColorRGBA         fFadeToColor;
 
-		hsColorRGBA			fCurrColor;
+        hsColorRGBA         fCurrColor;
 
-		hsTArray<plMessage*>	fCallbacks;
+        hsTArray<plMessage*>    fCallbacks;
 };
 
 #endif // plBinkPlayer_inc

@@ -3,15 +3,15 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plUUID_SOURCES
-	plUUID.cpp
+    plUUID.cpp
 )
 
 if(WIN32)
-	set(plUUID_SOURCES ${plUUID_SOURCES} plUUID_Win32.cpp)
+    set(plUUID_SOURCES ${plUUID_SOURCES} plUUID_Win32.cpp)
 endif(WIN32)
 
 set(plUUID_HEADERS
-	plUUID.h
+    plUUID.h
 )
 
 add_library(plUUID STATIC ${plUUID_SOURCES} ${plUUID_HEADERS})

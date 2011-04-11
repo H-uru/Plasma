@@ -32,60 +32,60 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plLODMipmap : public plMipmap
 {
 protected:
-	const enum 
-	{
-		kRefBase	= 0
-	};
-	const enum
-	{
-		kNumLODs	= 5
-	};
+    const enum 
+    {
+        kRefBase    = 0
+    };
+    const enum
+    {
+        kNumLODs    = 5
+    };
 
-	plMipmap*		fBase;
-	int				fLOD;
+    plMipmap*       fBase;
+    int             fLOD;
 
-	hsGDeviceRef*	fDeviceRefs[kNumLODs];
+    hsGDeviceRef*   fDeviceRefs[kNumLODs];
 
-	void			ISetup();
-	void			ISetupCurrLevel();
-	void			IMarkDirty();
-	void			INilify();
+    void            ISetup();
+    void            ISetupCurrLevel();
+    void            IMarkDirty();
+    void            INilify();
 
 
 public:
-	plLODMipmap();
-	plLODMipmap(plMipmap* mip);
-	virtual ~plLODMipmap();
-	
-	CLASSNAME_REGISTER( plLODMipmap );
-	GETINTERFACE_ANY( plLODMipmap, plMipmap );
+    plLODMipmap();
+    plLODMipmap(plMipmap* mip);
+    virtual ~plLODMipmap();
+    
+    CLASSNAME_REGISTER( plLODMipmap );
+    GETINTERFACE_ANY( plLODMipmap, plMipmap );
 
-	virtual hsBool MsgReceive(plMessage *msg);
+    virtual hsBool MsgReceive(plMessage *msg);
 
-	void			SetLOD(int lod);
-	int				GetLOD() const { return fLOD; }
+    void            SetLOD(int lod);
+    int             GetLOD() const { return fLOD; }
 
-	virtual hsGDeviceRef*	GetDeviceRef() const;
-	virtual void			SetDeviceRef( hsGDeviceRef *const devRef );
+    virtual hsGDeviceRef*   GetDeviceRef() const;
+    virtual void            SetDeviceRef( hsGDeviceRef *const devRef );
 
-	virtual void	Reset();
+    virtual void    Reset();
 
-	virtual void	Read(hsStream *s, hsResMgr *mgr);
-	virtual void	Write(hsStream *s, hsResMgr *mgr);
+    virtual void    Read(hsStream *s, hsResMgr *mgr);
+    virtual void    Write(hsStream *s, hsResMgr *mgr);
 
-	virtual plMipmap*	Clone() const { return fBase->Clone(); }
-	virtual void		CopyFrom(const plMipmap *source);
+    virtual plMipmap*   Clone() const { return fBase->Clone(); }
+    virtual void        CopyFrom(const plMipmap *source);
 
-	virtual void	Composite(plMipmap *source, UInt16 x, UInt16 y, CompositeOptions *options = nil);
+    virtual void    Composite(plMipmap *source, UInt16 x, UInt16 y, CompositeOptions *options = nil);
 
-	virtual void	ScaleNicely(UInt32 *destPtr, UInt16 destWidth, UInt16 destHeight,
-							UInt16 destStride, plMipmap::ScaleFilter filter) const;
+    virtual void    ScaleNicely(UInt32 *destPtr, UInt16 destWidth, UInt16 destHeight,
+                            UInt16 destStride, plMipmap::ScaleFilter filter) const;
 
-	virtual hsBool	ResizeNicely(UInt16 newWidth, UInt16 newHeight, plMipmap::ScaleFilter filter);
+    virtual hsBool  ResizeNicely(UInt16 newWidth, UInt16 newHeight, plMipmap::ScaleFilter filter);
 
-	virtual void	SetCurrLevel(UInt8 level);
+    virtual void    SetCurrLevel(UInt8 level);
 
-	const plMipmap* GetBase() const { return fBase; }
+    const plMipmap* GetBase() const { return fBase; }
 };
 
 

@@ -45,15 +45,15 @@ namespace Crash {
 ***/
 
 void CrashSendEmail (
-	const char smtp[],
-	const char sender[],
-	const char recipients[],
-	const char replyTo[],
-	const char username[],
-	const char password[],
-	const char programName[],
-	const char errorType[],
-	const char logBuffer[]
+    const char smtp[],
+    const char sender[],
+    const char recipients[],
+    const char replyTo[],
+    const char username[],
+    const char password[],
+    const char programName[],
+    const char errorType[],
+    const char logBuffer[]
 );
 
 

@@ -24,13 +24,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plPhysicalSndGroup Class 												//
-//	Simplistic container class to store the matchup info for a given		//
-//	physical sound group. Assigning one of these objects to a physical		//
-//	specifies the sound group it's in as well as the sounds it should make	//
-//	when colliding against objects of other sound groups.					//
-//																			//
+//                                                                          //
+//  plPhysicalSndGroup Class                                                //
+//  Simplistic container class to store the matchup info for a given        //
+//  physical sound group. Assigning one of these objects to a physical      //
+//  specifies the sound group it's in as well as the sounds it should make  //
+//  when colliding against objects of other sound groups.                   //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsResMgr.h"
@@ -42,12 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plPhysicalSndGroup::plPhysicalSndGroup() : fPlayingSlideSound(false)
 {
-	fGroup = kNone;
+    fGroup = kNone;
 }
 
 plPhysicalSndGroup::plPhysicalSndGroup( UInt32 grp ) : fPlayingSlideSound(false)
 {
-	fGroup = grp;
+    fGroup = grp;
 }
 
 plPhysicalSndGroup::~plPhysicalSndGroup()
@@ -56,112 +56,112 @@ plPhysicalSndGroup::~plPhysicalSndGroup()
 
 bool plPhysicalSndGroup::HasSlideSound(UInt32 against)
 {
-	return against < fSlideSounds.GetCount();
+    return against < fSlideSounds.GetCount();
 }
 
 bool plPhysicalSndGroup::HasImpactSound(UInt32 against)
 {
-	return against < fImpactSounds.GetCount();
+    return against < fImpactSounds.GetCount();
 }
 
-hsBool	plPhysicalSndGroup::MsgReceive( plMessage *pMsg )
+hsBool  plPhysicalSndGroup::MsgReceive( plMessage *pMsg )
 {
-	return hsKeyedObject::MsgReceive( pMsg );
+    return hsKeyedObject::MsgReceive( pMsg );
 }
 
 void plPhysicalSndGroup::Read( hsStream *s, hsResMgr *mgr )
 {
-	hsKeyedObject::Read( s, mgr );
+    hsKeyedObject::Read( s, mgr );
 
-	s->ReadSwap( &fGroup );
+    s->ReadSwap( &fGroup );
 
-	UInt32 i, count = s->ReadSwap32();
-	fImpactSounds.Reset();
+    UInt32 i, count = s->ReadSwap32();
+    fImpactSounds.Reset();
 
-	for( i = 0; i < count; i++ )
-		fImpactSounds.Append( mgr->ReadKey( s ) );
+    for( i = 0; i < count; i++ )
+        fImpactSounds.Append( mgr->ReadKey( s ) );
 
-	count = s->ReadSwap32();
-	fSlideSounds.Reset();
-	for( i = 0; i < count; i++ )
-		fSlideSounds.Append( mgr->ReadKey( s ) );
+    count = s->ReadSwap32();
+    fSlideSounds.Reset();
+    for( i = 0; i < count; i++ )
+        fSlideSounds.Append( mgr->ReadKey( s ) );
 
 }
 
 void plPhysicalSndGroup::Write( hsStream *s, hsResMgr *mgr )
 {
-	hsKeyedObject::Write( s, mgr );
+    hsKeyedObject::Write( s, mgr );
 
-	s->WriteSwap( fGroup );
+    s->WriteSwap( fGroup );
 
-	UInt32 i;
-	s->WriteSwap32( fImpactSounds.GetCount() );
-	for( i = 0; i < fImpactSounds.GetCount(); i++ )
-		mgr->WriteKey( s, fImpactSounds[ i ] );
+    UInt32 i;
+    s->WriteSwap32( fImpactSounds.GetCount() );
+    for( i = 0; i < fImpactSounds.GetCount(); i++ )
+        mgr->WriteKey( s, fImpactSounds[ i ] );
 
-	s->WriteSwap32( fSlideSounds.GetCount() );
-	for( i = 0; i < fSlideSounds.GetCount(); i++ )
-		mgr->WriteKey( s, fSlideSounds[ i ] );
+    s->WriteSwap32( fSlideSounds.GetCount() );
+    for( i = 0; i < fSlideSounds.GetCount(); i++ )
+        mgr->WriteKey( s, fSlideSounds[ i ] );
 }
 
-void	plPhysicalSndGroup::AddImpactSound( UInt32 against, plKey receiver )
+void    plPhysicalSndGroup::AddImpactSound( UInt32 against, plKey receiver )
 {
-	if( fImpactSounds.GetCount() <= against )
-	{
-		fImpactSounds.Expand( against + 1 );
-		fImpactSounds.SetCount( against + 1 );
-	}
+    if( fImpactSounds.GetCount() <= against )
+    {
+        fImpactSounds.Expand( against + 1 );
+        fImpactSounds.SetCount( against + 1 );
+    }
 
-	fImpactSounds[ against ] = receiver;
+    fImpactSounds[ against ] = receiver;
 }
 
-void	plPhysicalSndGroup::AddSlideSound( UInt32 against, plKey receiver )
+void    plPhysicalSndGroup::AddSlideSound( UInt32 against, plKey receiver )
 {
-	if( fSlideSounds.GetCount() <= against )
-	{
-		fSlideSounds.Expand( against + 1 );
-		fSlideSounds.SetCount( against + 1 );
-	}
+    if( fSlideSounds.GetCount() <= against )
+    {
+        fSlideSounds.Expand( against + 1 );
+        fSlideSounds.SetCount( against + 1 );
+    }
 
-	fSlideSounds[ against ] = receiver;
+    fSlideSounds[ against ] = receiver;
 }
 
 void plPhysicalSndGroup::PlaySlideSound(UInt32 against)
 {
-	if(against >= fSlideSounds.Count())
-		return;
-	plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
-	animMsg->SetCmd(plAnimCmdMsg::kContinue);
-	animMsg->Send(fSlideSounds[against]);
-	fPlayingSlideSound = true;
+    if(against >= fSlideSounds.Count())
+        return;
+    plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
+    animMsg->SetCmd(plAnimCmdMsg::kContinue);
+    animMsg->Send(fSlideSounds[against]);
+    fPlayingSlideSound = true;
 }
 
 void plPhysicalSndGroup::StopSlideSound(UInt32 against)
 {
-	if(against >= fSlideSounds.Count())
-		return;
-	plAnimCmdMsg *animMsg = TRACKED_NEW plAnimCmdMsg;
-	animMsg->SetCmd(plAnimCmdMsg::kStop);
-	animMsg->Send(fSlideSounds[against]);
-	fPlayingSlideSound = false;
+    if(against >= fSlideSounds.Count())
+        return;
+    plAnimCmdMsg *animMsg = TRACKED_NEW plAnimCmdMsg;
+    animMsg->SetCmd(plAnimCmdMsg::kStop);
+    animMsg->Send(fSlideSounds[against]);
+    fPlayingSlideSound = false;
 }
 
 void plPhysicalSndGroup::PlayImpactSound(UInt32 against)
 {
-	if(against >= fImpactSounds.Count())
-		return;
-	plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
-	animMsg->SetCmd(plAnimCmdMsg::kContinue);
-	animMsg->Send(fImpactSounds[against]);
+    if(against >= fImpactSounds.Count())
+        return;
+    plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
+    animMsg->SetCmd(plAnimCmdMsg::kContinue);
+    animMsg->Send(fImpactSounds[against]);
 }
 
 void plPhysicalSndGroup::SetSlideSoundVolume(UInt32 against, hsScalar volume)
 {
-	if(against >= fSlideSounds.Count())
-		return;
-	plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
-	animMsg->SetCmd(plAnimCmdMsg::kSetSpeed);
-	animMsg->fSpeed = volume;
-	animMsg->Send(fSlideSounds[against]);
+    if(against >= fSlideSounds.Count())
+        return;
+    plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
+    animMsg->SetCmd(plAnimCmdMsg::kSetSpeed);
+    animMsg->fSpeed = volume;
+    animMsg->Send(fSlideSounds[against]);
 
 }

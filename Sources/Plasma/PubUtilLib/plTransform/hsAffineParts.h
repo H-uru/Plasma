@@ -35,27 +35,27 @@ class hsAffineParts
 {
 
 public:
-	// Constructors
-	hsAffineParts(gemAffineParts *);	// Convert from Gems struct for now
-	hsAffineParts();
+    // Constructors
+    hsAffineParts(gemAffineParts *);    // Convert from Gems struct for now
+    hsAffineParts();
 
-	void Reset();
+    void Reset();
 
-    hsVector3	fT;	/* Translation components */
-    hsQuat		fQ;	/* Essential rotation	  */
-    hsQuat		fU;	/* Stretch rotation	  */
-    hsVector3	fK;	/* Stretch factors	  */
-    float		fF;	/* Sign of determinant	  */
+    hsVector3   fT; /* Translation components */
+    hsQuat      fQ; /* Essential rotation     */
+    hsQuat      fU; /* Stretch rotation   */
+    hsVector3   fK; /* Stretch factors    */
+    float       fF; /* Sign of determinant    */
 
-	void ComposeMatrix(hsMatrix44 *out) const;
-	void ComposeInverseMatrix(hsMatrix44 *out) const;
-	void SetFromInterp(const hsAffineParts &ap1, const hsAffineParts &ap2, float t);
+    void ComposeMatrix(hsMatrix44 *out) const;
+    void ComposeInverseMatrix(hsMatrix44 *out) const;
+    void SetFromInterp(const hsAffineParts &ap1, const hsAffineParts &ap2, float t);
 
-	void Read(hsStream *);
-	void Write(hsStream *);
+    void Read(hsStream *);
+    void Write(hsStream *);
 
-	int operator==(const hsAffineParts& a) const
-		{ return (fT == a.fT && fQ == a.fQ && fU == a.fU && fK == a.fK && fF == a.fF); }
+    int operator==(const hsAffineParts& a) const
+        { return (fT == a.fT && fQ == a.fQ && fU == a.fU && fK == a.fK && fF == a.fF); }
 };
 
 //
@@ -63,11 +63,11 @@ public:
 //
 #define AP_SET(dst, src) \
 { \
-	dst.fT.Set(src.t.x, src.t.y, src.t.z); \
-	dst.fQ.Set(src.q.x, src.q.y, src.q.z, src.q.w); \
-	dst.fU.Set(src.u.x, src.u.y, src.u.z, src.u.w); \
-	dst.fK.Set(src.k.x, src.k.y, src.k.z); \
-	dst.fF = src.f; \
+    dst.fT.Set(src.t.x, src.t.y, src.t.z); \
+    dst.fQ.Set(src.q.x, src.q.y, src.q.z, src.q.w); \
+    dst.fU.Set(src.u.x, src.u.y, src.u.z, src.u.w); \
+    dst.fK.Set(src.k.x, src.k.y, src.k.z); \
+    dst.fF = src.f; \
 }
 
 #endif

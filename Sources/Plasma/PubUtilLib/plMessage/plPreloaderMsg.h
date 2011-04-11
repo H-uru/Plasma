@@ -36,15 +36,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plPreloaderMsg : public plMessage {
 public:
-	bool	fSuccess;
+    bool    fSuccess;
 
     plPreloaderMsg () { SetBCastFlag(kBCastByExactType); }
-	
-	CLASSNAME_REGISTER(plPreloaderMsg);
-	GETINTERFACE_ANY(plPreloaderMsg, plMessage);
+    
+    CLASSNAME_REGISTER(plPreloaderMsg);
+    GETINTERFACE_ANY(plPreloaderMsg, plMessage);
 
-	void Read (hsStream* stream, hsResMgr* ) { FATAL("plPreloaderMsg::Read"); }
-	void Write (hsStream* stream, hsResMgr* ) { FATAL("plPreloaderMsg::Write"); }
+    void Read (hsStream* stream, hsResMgr* ) { FATAL("plPreloaderMsg::Read"); }
+    void Write (hsStream* stream, hsResMgr* ) { FATAL("plPreloaderMsg::Write"); }
 };
 
 

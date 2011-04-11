@@ -39,13 +39,13 @@ void hsStringTable::Node::SetData(void* v) { data = v; }
 
 hsStringTable::~hsStringTable() 
 {
-	RemoveNode(root.kid);
+    RemoveNode(root.kid);
 }
 
 void hsStringTable::Reset() 
 {
-	RemoveNode(root.kid);
-	root.kid = nil;
+    RemoveNode(root.kid);
+    root.kid = nil;
 }
 
 
@@ -54,7 +54,7 @@ void hsStringTable::Reset()
 //
 hsStringTable::Node* hsStringTable::Find(const char* str)
 {
-	return (str && *str) ? FindRecur(root.kid, str) : nil;
+    return (str && *str) ? FindRecur(root.kid, str) : nil;
 }
 
 //
@@ -64,7 +64,7 @@ hsStringTable::Node* hsStringTable::Find(const char* str)
 //
 hsStringTable::Node* hsStringTable::FindPartial(char* str, Int32 len) const
 {
-	return (str && *str) ? FindPartialRecur(root.kid, str, len) : nil;
+    return (str && *str) ? FindPartialRecur(root.kid, str, len) : nil;
 }
 
 //
@@ -72,12 +72,12 @@ hsStringTable::Node* hsStringTable::FindPartial(char* str, Int32 len) const
 //
 void hsStringTable::Register(const char* str, void* data) 
 {
-	Node* node = FindRecur(root.kid, str, true);
-	if (!node) 
-	{
-		node = AddRecur(&root, str);
-	}
-	node->SetData(data);
+    Node* node = FindRecur(root.kid, str, true);
+    if (!node) 
+    {
+        node = AddRecur(&root, str);
+    }
+    node->SetData(data);
 }
 
 //
@@ -86,9 +86,9 @@ void hsStringTable::Register(const char* str, void* data)
 //
 hsBool hsStringTable::Iterate(hsStringTableCallback* callback, Node* fromNode)
 {
-	if (!fromNode)
-		fromNode = &root;
-	return IterateRecur(fromNode->kid,callback);
+    if (!fromNode)
+        fromNode = &root;
+    return IterateRecur(fromNode->kid,callback);
 }
 
 //
@@ -96,24 +96,24 @@ hsBool hsStringTable::Iterate(hsStringTableCallback* callback, Node* fromNode)
 //
 hsStringTable::Node* hsStringTable::FindRecur(Node* root, const char* str, hsBool createIfNeeded)
 {
-	if (!root || !str) return nil;
-	if (tolower(root->chr)==tolower(*str)) 
-	{
-		if (*(str+1)) 
-		{
-			Node* node = FindRecur(root->kid, str+1, createIfNeeded);
-			if (!node && createIfNeeded) node = AddRecur(root, str+1);
-			return node;
-		} 
-		else 
-		{
-			return root;
-		}
-	} 
-	else 
-	{
-		return FindRecur(root->sib,str,createIfNeeded);
-	}
+    if (!root || !str) return nil;
+    if (tolower(root->chr)==tolower(*str)) 
+    {
+        if (*(str+1)) 
+        {
+            Node* node = FindRecur(root->kid, str+1, createIfNeeded);
+            if (!node && createIfNeeded) node = AddRecur(root, str+1);
+            return node;
+        } 
+        else 
+        {
+            return root;
+        }
+    } 
+    else 
+    {
+        return FindRecur(root->sib,str,createIfNeeded);
+    }
 }
 
 //
@@ -121,33 +121,33 @@ hsStringTable::Node* hsStringTable::FindRecur(Node* root, const char* str, hsBoo
 //
 hsStringTable::Node* hsStringTable::FindPartialRecur(Node* root, char* str, Int32 len) const
 {
-	if (!root || !str) 
-	{
-		return nil;
-	}
+    if (!root || !str) 
+    {
+        return nil;
+    }
 
-	if (tolower(root->chr)==tolower(*str)) 
-	{
-		if (len) 
-		{
-			*str = root->chr;
-		}
-		
-		if (*(str+1)) 
-		{
-			Node* node = FindPartialRecur(root->kid,str+1,len-1);
-			//if (!node) node = AddRecur(root,str+1);
-			return node;
-		} 
-		else 
-		{
-			return FindLeafRecur(root, str, len);
-		}
-	} 
-	else 
-	{
-		return FindPartialRecur(root->sib, str, len);
-	}
+    if (tolower(root->chr)==tolower(*str)) 
+    {
+        if (len) 
+        {
+            *str = root->chr;
+        }
+        
+        if (*(str+1)) 
+        {
+            Node* node = FindPartialRecur(root->kid,str+1,len-1);
+            //if (!node) node = AddRecur(root,str+1);
+            return node;
+        } 
+        else 
+        {
+            return FindLeafRecur(root, str, len);
+        }
+    } 
+    else 
+    {
+        return FindPartialRecur(root->sib, str, len);
+    }
 }
 
 //
@@ -155,22 +155,22 @@ hsStringTable::Node* hsStringTable::FindPartialRecur(Node* root, char* str, Int3
 //
 hsStringTable::Node* hsStringTable::FindLeafRecur(Node* root, char* str, Int32 len) const
 {
-	if (root->data || !root->kid || root->kid->sib) 
-	{
-		if (len) 
-		{
-			*(str+1) = 0;
-		}
-		return root;
-	} 
-	else 
-	{
-		if (len) 
-		{
-			*(str+1) = len>1 ? root->kid->chr : 0;
-		}
-		return FindLeafRecur(root->kid,str+1,len-1);
-	}
+    if (root->data || !root->kid || root->kid->sib) 
+    {
+        if (len) 
+        {
+            *(str+1) = 0;
+        }
+        return root;
+    } 
+    else 
+    {
+        if (len) 
+        {
+            *(str+1) = len>1 ? root->kid->chr : 0;
+        }
+        return FindLeafRecur(root->kid,str+1,len-1);
+    }
 }
 
 
@@ -179,11 +179,11 @@ hsStringTable::Node* hsStringTable::FindLeafRecur(Node* root, char* str, Int32 l
 //
 hsStringTable::Node* hsStringTable::AddRecur(Node* root, const char* str) 
 {
-	Node* node = TRACKED_NEW Node(*str);
-	node->sib = root->kid;
-	root->kid = node;
-	if (*(str+1)) return AddRecur(node,str+1);
-	else return node;
+    Node* node = TRACKED_NEW Node(*str);
+    node->sib = root->kid;
+    root->kid = node;
+    if (*(str+1)) return AddRecur(node,str+1);
+    else return node;
 }
 
 //
@@ -191,10 +191,10 @@ hsStringTable::Node* hsStringTable::AddRecur(Node* root, const char* str)
 //
 void hsStringTable::RemoveNode(Node* root) 
 {
-	if (!root) return;
-	RemoveNode(root->kid);
-	RemoveNode(root->sib);
-	delete root;
+    if (!root) return;
+    RemoveNode(root->kid);
+    RemoveNode(root->sib);
+    delete root;
 }
 
 //
@@ -202,22 +202,22 @@ void hsStringTable::RemoveNode(Node* root)
 //
 hsBool hsStringTable::IterateRecur(Node* root, hsStringTableCallback* callback)
 {
-	if (!root)
-		return true;
-	if (root->data)
-	{
-		if (!callback(root))
-			return false;
-	}
-	if (root->kid)
-	{
-		if (!IterateRecur(root->kid,callback))
-			return false;
-	}
-	if (root->sib)
-	{
-		if (!IterateRecur(root->sib,callback))
-			return false;
-	}
-	return true;
+    if (!root)
+        return true;
+    if (root->data)
+    {
+        if (!callback(root))
+            return false;
+    }
+    if (root->kid)
+    {
+        if (!IterateRecur(root->kid,callback))
+            return false;
+    }
+    if (root->sib)
+    {
+        if (!IterateRecur(root->sib,callback))
+            return false;
+    }
+    return true;
 }

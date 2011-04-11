@@ -12,6 +12,6 @@
 
 STATEDESC ParticleSystem
 {
-	VERSION 1
-	VAR INT	numParticles[1] DEFAULT=0
+    VERSION 1
+    VAR INT numParticles[1] DEFAULT=0
 }

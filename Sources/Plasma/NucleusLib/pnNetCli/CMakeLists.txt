@@ -2,16 +2,16 @@ include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 
 set(pnNetCli_HEADERS
-	Intern.h
-	Pch.h
-	pnNetCli.h
+    Intern.h
+    Pch.h
+    pnNetCli.h
 )
 
 set(pnNetCli_SOURCES
-	pnNcChannel.cpp
-	pnNcCli.cpp
-	pnNcEncrypt.cpp
-	pnNcUtils.cpp
+    pnNcChannel.cpp
+    pnNcCli.cpp
+    pnNcEncrypt.cpp
+    pnNcUtils.cpp
 )
 
 add_library(pnNetCli STATIC ${pnNetCli_HEADERS} ${pnNetCli_SOURCES})

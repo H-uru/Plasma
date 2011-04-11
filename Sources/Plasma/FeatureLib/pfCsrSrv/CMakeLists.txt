@@ -5,12 +5,12 @@ include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
 set(pfCsrSrv_SOURCES
-	pfCsrSrv.cpp
+    pfCsrSrv.cpp
 )
 
 set(pfCsrSrv_HEADERS
-	Pch.h
-	pfCsrSrv.h
+    Pch.h
+    pfCsrSrv.h
 )
 
 add_library(pfCsrSrv STATIC ${pfCsrSrv_SOURCES} ${pfCsrSrv_HEADERS})

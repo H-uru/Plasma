@@ -28,11 +28,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 
 pfMarkerMsg::pfMarkerMsg() :
-	fType(kMarkerCaptured),
-	fMarkerID(0)
+    fType(kMarkerCaptured),
+    fMarkerID(0)
 {
-	SetBCastFlag(plMessage::kBCastByExactType);
-	SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce, false);
+    SetBCastFlag(plMessage::kBCastByExactType);
+    SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce, false);
 }
 
 pfMarkerMsg::~pfMarkerMsg()
@@ -41,30 +41,30 @@ pfMarkerMsg::~pfMarkerMsg()
 
 void pfMarkerMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 
-	fType = (Type)stream->ReadByte();
+    fType = (Type)stream->ReadByte();
 
-	if (fType == kMarkerCaptured)
-		fMarkerID = stream->ReadSwap32();
+    if (fType == kMarkerCaptured)
+        fMarkerID = stream->ReadSwap32();
 }
 
 void pfMarkerMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	stream->WriteByte(fType);
+    stream->WriteByte(fType);
 
-	if (fType == kMarkerCaptured)
-		stream->WriteSwap32(fMarkerID);
+    if (fType == kMarkerCaptured)
+        stream->WriteSwap32(fMarkerID);
 }
 
 void pfMarkerMsg::PrintDebug(char* buf)
 {
-	switch (fType)
-	{
-	case pfMarkerMsg::kMarkerCaptured:
-		sprintf(buf, "Marker Captured - ID %d", fMarkerID);
-		break;
-	}
+    switch (fType)
+    {
+    case pfMarkerMsg::kMarkerCaptured:
+        sprintf(buf, "Marker Captured - ID %d", fMarkerID);
+        break;
+    }
 }

@@ -37,23 +37,23 @@ class plComponentBase;
 class plAvLadderComponent : public plComponent
 {
 public:
-	typedef hsTArray<plKey> LadderModKeys;
+    typedef hsTArray<plKey> LadderModKeys;
 
 protected:
-	LadderModKeys fKeys;
+    LadderModKeys fKeys;
 
 public:
-	plAvLadderComponent();
+    plAvLadderComponent();
 
-	hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-	hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-	hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	// Call after PreConvert
-	const LadderModKeys& GetLadderModKeys() { return fKeys; }
+    // Call after PreConvert
+    const LadderModKeys& GetLadderModKeys() { return fKeys; }
 
-	virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    virtual void CollectNonDrawables(INodeTab& nonDrawables);
 };
 
 #endif // plAvLadderComponent_h_inc

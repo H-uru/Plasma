@@ -40,14 +40,14 @@ char plAGMasterSDLModifier::AGMasterVarNames::kStrBlends[]="blends";
 
 UInt32 plAGMasterSDLModifier::IApplyModFlags(UInt32 sendFlags)
 {
-	// ugly hack so bug light animation state isn't stored on the server
-	if (stricmp(GetTarget()->GetKeyName(), "RTOmni-BugLightTest") == 0)
-		return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
-	// ditto for the KI light
-	if (stricmp(GetTarget()->GetKeyName(), "RTOmniKILight") == 0)
-		return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
+    // ugly hack so bug light animation state isn't stored on the server
+    if (stricmp(GetTarget()->GetKeyName(), "RTOmni-BugLightTest") == 0)
+        return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
+    // ditto for the KI light
+    if (stricmp(GetTarget()->GetKeyName(), "RTOmniKILight") == 0)
+        return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
 
-	return sendFlags;
+    return sendFlags;
 }
 
 //
@@ -55,17 +55,17 @@ UInt32 plAGMasterSDLModifier::IApplyModFlags(UInt32 sendFlags)
 //
 void plAGMasterSDLModifier::IPutBlends(plStateDataRecord* state, plAGMasterMod* agMaster)
 {
-	int numBlends = agMaster->GetNumPrivateAnimations();	// each private anim has a blend value
-	plSimpleStateVariable* blendsVar = state->FindVar(AGMasterVarNames::kStrBlends);
-	if (blendsVar->GetCount() != numBlends)
-		blendsVar->Alloc(numBlends);
+    int numBlends = agMaster->GetNumPrivateAnimations();    // each private anim has a blend value
+    plSimpleStateVariable* blendsVar = state->FindVar(AGMasterVarNames::kStrBlends);
+    if (blendsVar->GetCount() != numBlends)
+        blendsVar->Alloc(numBlends);
 
-	// sdl copy
-	int i;
-	for(i=0;i<numBlends; i++)
-	{
-		blendsVar->Set((UInt8)(agMaster->GetAnimInstance(i)->GetBlend() * 255), i);
-	}
+    // sdl copy
+    int i;
+    for(i=0;i<numBlends; i++)
+    {
+        blendsVar->Set((UInt8)(agMaster->GetAnimInstance(i)->GetBlend() * 255), i);
+    }
 }
 
 
@@ -74,31 +74,31 @@ void plAGMasterSDLModifier::IPutBlends(plStateDataRecord* state, plAGMasterMod* 
 //
 void plAGMasterSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
 {
-	plSceneObject* sobj=GetTarget();
-	hsAssert(sobj, "plAGMasterSDLModifier, nil target");
-	
-	plAGMasterMod* agMaster=IGetObjectsAGMasterMod(sobj);
-	hsAssert(agMaster, "nil AGMasterMod");
+    plSceneObject* sobj=GetTarget();
+    hsAssert(sobj, "plAGMasterSDLModifier, nil target");
+    
+    plAGMasterMod* agMaster=IGetObjectsAGMasterMod(sobj);
+    hsAssert(agMaster, "nil AGMasterMod");
 
-	if (agMaster)
-	{
-		IPutBlends(dstState, agMaster);
+    if (agMaster)
+    {
+        IPutBlends(dstState, agMaster);
 
-		int numAnims = agMaster->GetNumATCAnimations();		
-		plSDStateVariable* atcsVar = dstState->FindSDVar(AGMasterVarNames::kStrAtcs);
-		if (atcsVar->GetCount() != numAnims)
-			atcsVar->Resize(numAnims);
+        int numAnims = agMaster->GetNumATCAnimations();     
+        plSDStateVariable* atcsVar = dstState->FindSDVar(AGMasterVarNames::kStrAtcs);
+        if (atcsVar->GetCount() != numAnims)
+            atcsVar->Resize(numAnims);
 
-		// copy atcs to sdl 
-		int i;
-		for(i=0;i<numAnims; i++)
-		{
-			plStateDataRecord* atcStateDataRec = atcsVar->GetStateDataRecord(i);
-			plAnimTimeConvert* animTimeConvert = agMaster->GetATCAnimInstance(i)->GetTimeConvert();
+        // copy atcs to sdl 
+        int i;
+        for(i=0;i<numAnims; i++)
+        {
+            plStateDataRecord* atcStateDataRec = atcsVar->GetStateDataRecord(i);
+            plAnimTimeConvert* animTimeConvert = agMaster->GetATCAnimInstance(i)->GetTimeConvert();
 
-			IPutATC(atcStateDataRec, animTimeConvert);
-		}
-	}
+            IPutATC(atcStateDataRec, animTimeConvert);
+        }
+    }
 }
 
 //
@@ -106,16 +106,16 @@ void plAGMasterSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
 //
 plAGMasterMod* plAGMasterSDLModifier::IGetObjectsAGMasterMod(plSceneObject* obj)
 {
-	int count = obj->GetNumModifiers();
+    int count = obj->GetNumModifiers();
 
-	for (int i = 0; i < count; i++)
-	{
-		plAGMasterMod * avMod = const_cast<plAGMasterMod*>(plAGMasterMod::ConvertNoRef(obj->GetModifier(i)));
-		if(avMod)
-			return avMod;
-	}
+    for (int i = 0; i < count; i++)
+    {
+        plAGMasterMod * avMod = const_cast<plAGMasterMod*>(plAGMasterMod::ConvertNoRef(obj->GetModifier(i)));
+        if(avMod)
+            return avMod;
+    }
 
-	return nil;
+    return nil;
 }
 
 //
@@ -123,21 +123,21 @@ plAGMasterMod* plAGMasterSDLModifier::IGetObjectsAGMasterMod(plSceneObject* obj)
 //
 void plAGMasterSDLModifier::ISetCurrentBlends(const plStateDataRecord* state, plAGMasterMod* objAGMaster)
 {
-	// Check Blends
-	plSimpleStateVariable* blendsVar = state->FindVar(AGMasterVarNames::kStrBlends);
-	if (blendsVar->IsUsed())
-	{		
-		int i;
-		if (blendsVar->GetCount() != objAGMaster->GetNumPrivateAnimations())
-			return; // bogus state
+    // Check Blends
+    plSimpleStateVariable* blendsVar = state->FindVar(AGMasterVarNames::kStrBlends);
+    if (blendsVar->IsUsed())
+    {       
+        int i;
+        if (blendsVar->GetCount() != objAGMaster->GetNumPrivateAnimations())
+            return; // bogus state
 
-		for (i=0;i<blendsVar->GetCount();i++)
-		{
-			UInt8 blend;
-			blendsVar->Get(&blend, i);
-			objAGMaster->GetAnimInstance(i)->SetBlend(blend / 255.f);
-		}
-	}
+        for (i=0;i<blendsVar->GetCount();i++)
+        {
+            UInt8 blend;
+            blendsVar->Get(&blend, i);
+            objAGMaster->GetAnimInstance(i)->SetBlend(blend / 255.f);
+        }
+    }
 }
 
 //
@@ -146,50 +146,50 @@ void plAGMasterSDLModifier::ISetCurrentBlends(const plStateDataRecord* state, pl
 //
 void plAGMasterSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcState)
 {
-	plSceneObject* sobj=GetTarget();
-	hsAssert(sobj, "plAGMasterSDLModifier, nil target");
-	
-	plAGMasterMod* objAGMaster=IGetObjectsAGMasterMod(sobj);
-	hsAssert(objAGMaster, "can't find object's AGMasterSDLState");
-	
-	ISetCurrentBlends(srcState, objAGMaster);
+    plSceneObject* sobj=GetTarget();
+    hsAssert(sobj, "plAGMasterSDLModifier, nil target");
+    
+    plAGMasterMod* objAGMaster=IGetObjectsAGMasterMod(sobj);
+    hsAssert(objAGMaster, "can't find object's AGMasterSDLState");
+    
+    ISetCurrentBlends(srcState, objAGMaster);
 
-	plSDStateVariable* atcsVar = srcState->FindSDVar(AGMasterVarNames::kStrAtcs);
-	if (atcsVar->IsUsed())
-	{
-		if (objAGMaster->GetNumATCAnimations() != atcsVar->GetCount())
-			return;
+    plSDStateVariable* atcsVar = srcState->FindSDVar(AGMasterVarNames::kStrAtcs);
+    if (atcsVar->IsUsed())
+    {
+        if (objAGMaster->GetNumATCAnimations() != atcsVar->GetCount())
+            return;
 
-		int i;
-		for(i=0;i<atcsVar->GetCount(); i++)
-		{
-			plStateDataRecord* atcStateDataRec = atcsVar->GetStateDataRecord(i);
-			plAnimTimeConvert* objAtc = objAGMaster->GetATCAnimInstance(i)->GetTimeConvert();	// dst					
-			ISetCurrentATC(atcStateDataRec, objAtc);
-			objAtc->EnableCallbacks(false);
-		}
-		objAGMaster->IRegForEval(objAGMaster->HasRunningAnims());
+        int i;
+        for(i=0;i<atcsVar->GetCount(); i++)
+        {
+            plStateDataRecord* atcStateDataRec = atcsVar->GetStateDataRecord(i);
+            plAnimTimeConvert* objAtc = objAGMaster->GetATCAnimInstance(i)->GetTimeConvert();   // dst                  
+            ISetCurrentATC(atcStateDataRec, objAtc);
+            objAtc->EnableCallbacks(false);
+        }
+        objAGMaster->IRegForEval(objAGMaster->HasRunningAnims());
 
-		// Force one eval, then re-enable all the callbacks
-		double time = (hsTimer::GetSysSeconds() - hsTimer::GetDelSysSeconds());
+        // Force one eval, then re-enable all the callbacks
+        double time = (hsTimer::GetSysSeconds() - hsTimer::GetDelSysSeconds());
 
-		if (objAGMaster->fIsGrouped && objAGMaster->fMsgForwarder)
-		{
-			hsScalar animTimeFromWorldTime = (objAGMaster->GetNumATCAnimations() > 0) ? objAGMaster->GetATCAnimInstance(0)->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) : 0.0f;
+        if (objAGMaster->fIsGrouped && objAGMaster->fMsgForwarder)
+        {
+            hsScalar animTimeFromWorldTime = (objAGMaster->GetNumATCAnimations() > 0) ? objAGMaster->GetATCAnimInstance(0)->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) : 0.0f;
 
-			plAGCmdMsg *msg = TRACKED_NEW plAGCmdMsg();
-			msg->SetCmd(plAGCmdMsg::kSetAnimTime);
-			msg->fAnimTime = animTimeFromWorldTime;
-			msg->AddReceiver(objAGMaster->fMsgForwarder->GetKey());
-			plgDispatch::MsgSend(msg);
-		}
-		else
-		{
-			objAGMaster->AdvanceAnimsToTime(time);
-		}
+            plAGCmdMsg *msg = TRACKED_NEW plAGCmdMsg();
+            msg->SetCmd(plAGCmdMsg::kSetAnimTime);
+            msg->fAnimTime = animTimeFromWorldTime;
+            msg->AddReceiver(objAGMaster->fMsgForwarder->GetKey());
+            plgDispatch::MsgSend(msg);
+        }
+        else
+        {
+            objAGMaster->AdvanceAnimsToTime(time);
+        }
 
-		for (i = 0; i < objAGMaster->GetNumATCAnimations(); i++)
-			objAGMaster->GetATCAnimInstance(i)->GetTimeConvert()->EnableCallbacks(true);
-	}
+        for (i = 0; i < objAGMaster->GetNumATCAnimations(); i++)
+            objAGMaster->GetATCAnimInstance(i)->GetTimeConvert()->EnableCallbacks(true);
+    }
 }
 

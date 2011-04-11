@@ -41,29 +41,29 @@ class plInputInterface;
 class cyInputInterface
 {
 protected:
-	plInputInterface* fTelescopeInterface;
+    plInputInterface* fTelescopeInterface;
 
-	cyInputInterface();
+    cyInputInterface();
 public:
-	~cyInputInterface();
+    ~cyInputInterface();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptInputInterface);
-	PYTHON_CLASS_NEW_DEFINITION;
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyInputInterface object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyInputInterface); // converts a PyObject to a cyInputInterface (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptInputInterface);
+    PYTHON_CLASS_NEW_DEFINITION;
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyInputInterface object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyInputInterface); // converts a PyObject to a cyInputInterface (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	// setters
+    // setters
 
-	// we should add a ::Push_X_Interface function for any special type
-	// of interface we might want to set... for now there's just the telescope...
-	void PushTelescopeInterface();
-	void PopTelescope();
+    // we should add a ::Push_X_Interface function for any special type
+    // of interface we might want to set... for now there's just the telescope...
+    void PushTelescopeInterface();
+    void PopTelescope();
 
 
-	/////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////
 };
 
 

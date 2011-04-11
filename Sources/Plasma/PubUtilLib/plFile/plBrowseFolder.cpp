@@ -31,42 +31,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 bool plBrowseFolder::GetFolder(char *path, const char *startPath, const char *title, HWND hwndOwner)
 {
-	BROWSEINFO bi;
-	memset(&bi, 0, sizeof(bi));
-	bi.hwndOwner	= hwndOwner;
-	bi.lpszTitle	= title;
-	bi.lpfn			= BrowseCallbackProc;
-	bi.lParam		= (LPARAM) startPath;
+    BROWSEINFO bi;
+    memset(&bi, 0, sizeof(bi));
+    bi.hwndOwner    = hwndOwner;
+    bi.lpszTitle    = title;
+    bi.lpfn         = BrowseCallbackProc;
+    bi.lParam       = (LPARAM) startPath;
 
-	ITEMIDLIST *iil = SHBrowseForFolder(&bi);
-	// Browse failed, or cancel was selected
-	if (!iil)
-		return false;
-	// Browse succeded.  Get the path.
-	else
-		SHGetPathFromIDList(iil, path);
+    ITEMIDLIST *iil = SHBrowseForFolder(&bi);
+    // Browse failed, or cancel was selected
+    if (!iil)
+        return false;
+    // Browse succeded.  Get the path.
+    else
+        SHGetPathFromIDList(iil, path);
 
-	// Free the memory allocated by SHBrowseForFolder
-	LPMALLOC pMalloc;
-	SHGetMalloc(&pMalloc);
-	pMalloc->Free(iil);
-	pMalloc->Release();
+    // Free the memory allocated by SHBrowseForFolder
+    LPMALLOC pMalloc;
+    SHGetMalloc(&pMalloc);
+    pMalloc->Free(iil);
+    pMalloc->Release();
 
-	return true;
+    return true;
 }
 
 int CALLBACK plBrowseFolder::BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
 {
-	switch (uMsg)
-	{
-	case BFFM_INITIALIZED:
-		// lpData should be the lParam passed to SHBrowseForFolder, which is the start path.
-		if (lpData)
-			SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
-		break;
-	}
+    switch (uMsg)
+    {
+    case BFFM_INITIALIZED:
+        // lpData should be the lParam passed to SHBrowseForFolder, which is the start path.
+        if (lpData)
+            SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
+        break;
+    }
 
-	return 0;
+    return 0;
 }
 
 #endif // HS_BUILD_FOR_WIN32

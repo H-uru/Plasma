@@ -1,12 +1,12 @@
 option(DirectX_OLD_SDK "Is this an old (November 2008) version of the SDK?" OFF)
 
 if (DirectX_OLD_SDK)
-	add_definitions(-DDX_OLD_SDK)
+    add_definitions(-DDX_OLD_SDK)
 endif(DirectX_OLD_SDK)
 
 
 if(DirectX_INCLUDE_DIR AND DirectX_LIBRARY)
-	set(DirectX_FIND_QUIETLY TRUE)
+    set(DirectX_FIND_QUIETLY TRUE)
 endif()
 
 
@@ -63,15 +63,15 @@ set(DirectX_LIBRARIES
 
 if(DirectX_INCLUDE_DIR AND DirectX_d3d9 AND DirectX_d3dx9 AND DirectX_dinput8
                        AND DirectX_dsound AND DirectX_dxguid AND DirectX_dxerr)
-	set(DirectX_FOUND TRUE)
+    set(DirectX_FOUND TRUE)
 endif()
 
 if (DirectX_FOUND)
-	if(NOT DirectX_FIND_QUIETLY)
-		message(STATUS "Found DirectX SDK: ${DirectX_INCLUDE_DIR}")
-	endif()
+    if(NOT DirectX_FIND_QUIETLY)
+        message(STATUS "Found DirectX SDK: ${DirectX_INCLUDE_DIR}")
+    endif()
 else()
-	if(DirectX_FIND_REQUIRED)
-		message(FATAL_ERROR "Could not find DirectX SDK")
-	endif()
+    if(DirectX_FIND_REQUIRED)
+        message(FATAL_ERROR "Could not find DirectX SDK")
+    endif()
 endif()

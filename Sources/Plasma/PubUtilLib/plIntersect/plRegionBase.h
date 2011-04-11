@@ -34,13 +34,13 @@ struct hsPoint3;
 class plRegionBase : public plObjInterface
 {
 public:
-	plRegionBase() {}
-	virtual ~plRegionBase() {}
+    plRegionBase() {}
+    virtual ~plRegionBase() {}
 
-	CLASSNAME_REGISTER( plRegionBase );
-	GETINTERFACE_ANY( plRegionBase, plObjInterface );
+    CLASSNAME_REGISTER( plRegionBase );
+    GETINTERFACE_ANY( plRegionBase, plObjInterface );
 
-	virtual hsBool IsInside(const hsPoint3& pos) const = 0;
+    virtual hsBool IsInside(const hsPoint3& pos) const = 0;
 };
 
 #endif // plRegionBase_inc

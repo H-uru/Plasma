@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDL.h"
 #include "pnNetCommon/plNetApp.h"
 
-const UInt8 plStateDescriptor::kVersion=1;		// for Read/Write format
+const UInt8 plStateDescriptor::kVersion=1;      // for Read/Write format
 
 /////////////////////////////////////////////////////////////////////////////////
 // STATE DESC
@@ -35,32 +35,32 @@ const UInt8 plStateDescriptor::kVersion=1;		// for Read/Write format
 
 plStateDescriptor::~plStateDescriptor() 
 { 
-	IDeInit();
+    IDeInit();
 }
 
 void plStateDescriptor::IDeInit()
 {
-	delete [] fName;  
-	int i;
-	for(i=0;i<fVarsList.size();i++)
-		delete fVarsList[i];
-	fVarsList.clear();
+    delete [] fName;  
+    int i;
+    for(i=0;i<fVarsList.size();i++)
+        delete fVarsList[i];
+    fVarsList.clear();
 }
 
 plVarDescriptor* plStateDescriptor::FindVar(const char* name, int* idx) const
 {
-	VarsList::const_iterator it;
-	for(it=fVarsList.begin(); it != fVarsList.end(); it++)
-	{
-		if (!stricmp((*it)->GetName(), name))
-		{
-			if (idx)
-				*idx = it-fVarsList.begin();
-			return *it;
-		}
-	}
+    VarsList::const_iterator it;
+    for(it=fVarsList.begin(); it != fVarsList.end(); it++)
+    {
+        if (!stricmp((*it)->GetName(), name))
+        {
+            if (idx)
+                *idx = it-fVarsList.begin();
+            return *it;
+        }
+    }
 
-	return nil;
+    return nil;
 }
 
 
@@ -69,40 +69,40 @@ plVarDescriptor* plStateDescriptor::FindVar(const char* name, int* idx) const
 // 
 bool plStateDescriptor::Read(hsStream* s)
 {
-	UInt8 rwVersion;
-	s->ReadSwap(&rwVersion);
-	if (rwVersion != kVersion)
-	{
-		plNetApp::StaticWarningMsg("StateDescriptor Read/Write version mismatch, mine %d, read %d", kVersion, rwVersion);
-		return false;
-	}
+    UInt8 rwVersion;
+    s->ReadSwap(&rwVersion);
+    if (rwVersion != kVersion)
+    {
+        plNetApp::StaticWarningMsg("StateDescriptor Read/Write version mismatch, mine %d, read %d", kVersion, rwVersion);
+        return false;
+    }
 
-	IDeInit();
-	
-	delete [] fName;
-	fName = s->ReadSafeString();
+    IDeInit();
+    
+    delete [] fName;
+    fName = s->ReadSafeString();
 
-	UInt16 version=s->ReadSwap16();
-	fVersion=version;
+    UInt16 version=s->ReadSwap16();
+    fVersion=version;
 
-	UInt16 numVars=s->ReadSwap16();
-	fVarsList.reserve(numVars);
+    UInt16 numVars=s->ReadSwap16();
+    fVarsList.reserve(numVars);
 
-	int i;
-	for(i=0;i<numVars; i++)
-	{
-		UInt8 SDVar=s->ReadByte();		
-		plVarDescriptor* var = nil;
-		if (SDVar)
-			var = TRACKED_NEW plSDVarDescriptor;
-		else
-			var = TRACKED_NEW plSimpleVarDescriptor;
-		if (var->Read(s))
-			fVarsList.push_back(var);
-		else
-			return false;
-	}
-	return true;
+    int i;
+    for(i=0;i<numVars; i++)
+    {
+        UInt8 SDVar=s->ReadByte();      
+        plVarDescriptor* var = nil;
+        if (SDVar)
+            var = TRACKED_NEW plSDVarDescriptor;
+        else
+            var = TRACKED_NEW plSimpleVarDescriptor;
+        if (var->Read(s))
+            fVarsList.push_back(var);
+        else
+            return false;
+    }
+    return true;
 }
 
 //
@@ -110,22 +110,22 @@ bool plStateDescriptor::Read(hsStream* s)
 // 
 void plStateDescriptor::Write(hsStream* s) const
 {
-	s->WriteSwap(kVersion);
-	
-	s->WriteSafeString(fName);
+    s->WriteSwap(kVersion);
+    
+    s->WriteSafeString(fName);
 
-	UInt16 version=fVersion;
-	s->WriteSwap(version);
+    UInt16 version=fVersion;
+    s->WriteSwap(version);
 
-	UInt16 numVars=fVarsList.size();
-	s->WriteSwap(numVars);
+    UInt16 numVars=fVarsList.size();
+    s->WriteSwap(numVars);
 
-	VarsList::const_iterator it;
-	for(it=fVarsList.begin(); it!=fVarsList.end(); it++)
-	{
-		UInt8 SDVar = ((*it)->GetAsSDVarDescriptor() != nil);
-		s->WriteByte(SDVar);
-		(*it)->Write(s);
-	}
+    VarsList::const_iterator it;
+    for(it=fVarsList.begin(); it!=fVarsList.end(); it++)
+    {
+        UInt8 SDVar = ((*it)->GetAsSDVarDescriptor() != nil);
+        s->WriteByte(SDVar);
+        (*it)->Write(s);
+    }
 }
 

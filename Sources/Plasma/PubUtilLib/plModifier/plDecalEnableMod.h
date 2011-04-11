@@ -34,31 +34,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plDecalEnableMod : public plSingleModifier
 {
 protected:
-	
-	hsTArray<plKey>		fDecalMgrs;
+    
+    hsTArray<plKey>     fDecalMgrs;
 
-	hsScalar			fWetLength;
+    hsScalar            fWetLength;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
 
 public:
-	plDecalEnableMod();
-	virtual ~plDecalEnableMod();
+    plDecalEnableMod();
+    virtual ~plDecalEnableMod();
 
-	CLASSNAME_REGISTER( plDecalEnableMod );
-	GETINTERFACE_ANY( plDecalEnableMod, plSingleModifier );
+    CLASSNAME_REGISTER( plDecalEnableMod );
+    GETINTERFACE_ANY( plDecalEnableMod, plSingleModifier );
 
-	virtual hsBool MsgReceive(plMessage* msg);
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual hsBool MsgReceive(plMessage* msg);
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	void SetWetLength(hsScalar t) { fWetLength = t; }
-	hsScalar GetWetLength() const { return fWetLength; }
+    void SetWetLength(hsScalar t) { fWetLength = t; }
+    hsScalar GetWetLength() const { return fWetLength; }
 
-	void AddDecalKey(const plKey& k) { fDecalMgrs.Append(k); }
-	UInt32 GetNumDecalKeys() const { return fDecalMgrs.GetCount(); }
-	const plKey& GetDecalKey(int i) const { return fDecalMgrs[i]; }
+    void AddDecalKey(const plKey& k) { fDecalMgrs.Append(k); }
+    UInt32 GetNumDecalKeys() const { return fDecalMgrs.GetCount(); }
+    const plKey& GetDecalKey(int i) const { return fDecalMgrs[i]; }
 };
 
 #endif // plDecalEnableMod_inc

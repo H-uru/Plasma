@@ -35,47 +35,47 @@ class plErrorMsg
 public:
     static plErrorMsg *GetNull();
 
-	plErrorMsg(const char* label, const char* msg);
-	plErrorMsg(hsBool bogus = false);
-	plErrorMsg(hsBool bogus, const char* label, const char* msg);
-	plErrorMsg(hsBool bogus, const char* label, const char* format, const char* str);
-	plErrorMsg(hsBool bogus, const char* label, const char* format, const char* str1, const char* str2);
-	plErrorMsg(hsBool bogus, const char* label, const char* format, int n);
-	plErrorMsg(hsBool bogus, const char* label, const char* format, int n, int m);
-	plErrorMsg(hsBool bogus, const char* label, const char* format, float f);
+    plErrorMsg(const char* label, const char* msg);
+    plErrorMsg(hsBool bogus = false);
+    plErrorMsg(hsBool bogus, const char* label, const char* msg);
+    plErrorMsg(hsBool bogus, const char* label, const char* format, const char* str);
+    plErrorMsg(hsBool bogus, const char* label, const char* format, const char* str1, const char* str2);
+    plErrorMsg(hsBool bogus, const char* label, const char* format, int n);
+    plErrorMsg(hsBool bogus, const char* label, const char* format, int n, int m);
+    plErrorMsg(hsBool bogus, const char* label, const char* format, float f);
     virtual ~plErrorMsg() { }
 
-	plErrorMsg &Set(const char* label, const char* msg);
-	plErrorMsg &Set(hsBool bogus = false);
-	plErrorMsg &Set(hsBool bogus, const char* label, const char* msg);
-	plErrorMsg &Set(hsBool bogus, const char* label, const char* format, const char* str);
-	plErrorMsg &Set(hsBool bogus, const char* label, const char* format, const char* str1, const char* str2);
-	plErrorMsg &Set(hsBool bogus, const char* label, const char* format, int n);
-	plErrorMsg &Set(hsBool bogus, const char* label, const char* format, int n, int m);
-	plErrorMsg &Set(hsBool bogus, const char* label, const char* format, float f);
+    plErrorMsg &Set(const char* label, const char* msg);
+    plErrorMsg &Set(hsBool bogus = false);
+    plErrorMsg &Set(hsBool bogus, const char* label, const char* msg);
+    plErrorMsg &Set(hsBool bogus, const char* label, const char* format, const char* str);
+    plErrorMsg &Set(hsBool bogus, const char* label, const char* format, const char* str1, const char* str2);
+    plErrorMsg &Set(hsBool bogus, const char* label, const char* format, int n);
+    plErrorMsg &Set(hsBool bogus, const char* label, const char* format, int n, int m);
+    plErrorMsg &Set(hsBool bogus, const char* label, const char* format, float f);
 
-	hsBool IsBogus() { return GetBogus(); }
+    hsBool IsBogus() { return GetBogus(); }
     // Ask - If condition is true and user says yes to displayed query, return true, else false
     virtual hsBool Ask() { return false; }
 
     // CheckAndAsk - If condition is true and user says YES, throw self.  Only asks if condition is true.
     // Returns true if condition is true but user says no, else false.
-	virtual hsBool CheckAndAsk() { return false; }
+    virtual hsBool CheckAndAsk() { return false; }
 
      // CheckAskOrCancel - If condition is true ( if YES, throw, else if NO return 0, else (CANCEL) return 1
     virtual hsBool CheckAskOrCancel() { return false; }
 
     // Show - If condition is true, displays message, returns true
-	virtual hsBool Show() { return false; } 
+    virtual hsBool Show() { return false; } 
 
-	// CheckAndShow - If condition is true, shows message box then throws self, else return false
-	virtual hsBool CheckAndShow() { return false; }
+    // CheckAndShow - If condition is true, shows message box then throws self, else return false
+    virtual hsBool CheckAndShow() { return false; }
 
     // Check - If condition was true, throws self, else return false
-	virtual hsBool Check() { return false; }
+    virtual hsBool Check() { return false; }
 
      // Quit - If condition, quietly just throw with no message
-	virtual void Quit() { }
+    virtual void Quit() { }
 
 protected:
     void SetBogus(hsBool b)   { fBogus = b; }
@@ -85,9 +85,9 @@ protected:
     char *GetMsg()              { if (!fBogus) *fMsg = 0; return fMsg; }
 
 private:
-	hsBool		fBogus;
-	char		fLabel[256];
-	char		fMsg[PL_ERR_MSG_MAX_MSG];
+    hsBool      fBogus;
+    char        fLabel[256];
+    char        fMsg[PL_ERR_MSG_MAX_MSG];
 
 private:
     // No assignment operator

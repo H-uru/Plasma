@@ -52,61 +52,61 @@ class plCoopCoordinator;
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /** plAvCoopMsg -------------------------------------------------------------------------
-	These are always sent to the avatar manager, which sends the appropriate things to
-	the other avatar.
-	A possible future optimization would be to send them only to the involved players.
+    These are always sent to the avatar manager, which sends the appropriate things to
+    the other avatar.
+    A possible future optimization would be to send them only to the involved players.
 */
 class plAvCoopMsg : public plMessage
 {
 public:
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-	// TYPES
-	//
-	/////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    //
+    // TYPES
+    //
+    /////////////////////////////////////////////////////////////////////////////////////
 
-	enum Command {
-		kNone,
-		kStartNew,
-		kGuestAccepted,
-		kGuestSeeked,
-		kGuestSeekAbort,
-		kCommandSize	= 0xffff
-	};
+    enum Command {
+        kNone,
+        kStartNew,
+        kGuestAccepted,
+        kGuestSeeked,
+        kGuestSeekAbort,
+        kCommandSize    = 0xffff
+    };
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-	// INTERFACE
-	//
-	/////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    //
+    // INTERFACE
+    //
+    /////////////////////////////////////////////////////////////////////////////////////
 
-	// constructors
-	plAvCoopMsg();
-	plAvCoopMsg(Command cmd, UInt32 id, UInt16 serial);
-	plAvCoopMsg(plKey sender, plCoopCoordinator *coordinateur);
-	~plAvCoopMsg();
+    // constructors
+    plAvCoopMsg();
+    plAvCoopMsg(Command cmd, UInt32 id, UInt16 serial);
+    plAvCoopMsg(plKey sender, plCoopCoordinator *coordinateur);
+    ~plAvCoopMsg();
 
-	// rtti
-	CLASSNAME_REGISTER( plAvCoopMsg );
-	GETINTERFACE_ANY( plAvCoopMsg, plMessage);
+    // rtti
+    CLASSNAME_REGISTER( plAvCoopMsg );
+    GETINTERFACE_ANY( plAvCoopMsg, plMessage);
 
-	// i/o
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    // i/o
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-	// PUBLIC DATA MEMBERS
-	//
-	/////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    //
+    // PUBLIC DATA MEMBERS
+    //
+    /////////////////////////////////////////////////////////////////////////////////////
 
-	UInt32 fInitiatorID;
-	UInt16 fInitiatorSerial;
+    UInt32 fInitiatorID;
+    UInt16 fInitiatorSerial;
 
-	Command	fCommand;
+    Command fCommand;
 
-	plCoopCoordinator *fCoordinator;		// optional
+    plCoopCoordinator *fCoordinator;        // optional
 };
 
 #endif

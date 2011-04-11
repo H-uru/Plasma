@@ -35,24 +35,24 @@ class plKeyPressConditionalObject : public plConditionalObject
 {
 protected:
 
-	plKeyDef fKeyEvent;
+    plKeyDef fKeyEvent;
 
 public:
-	
-	plKeyPressConditionalObject();
-	~plKeyPressConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plKeyPressConditionalObject );
-	GETINTERFACE_ANY( plKeyPressConditionalObject, plConditionalObject );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    plKeyPressConditionalObject();
+    ~plKeyPressConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plKeyPressConditionalObject );
+    GETINTERFACE_ANY( plKeyPressConditionalObject, plConditionalObject );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	hsBool MsgReceive(plMessage* msg);
-	
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(false); }
-	void SetKeyEvent(const plKeyDef k ) { fKeyEvent = k; }
+    hsBool MsgReceive(plMessage* msg);
+    
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(false); }
+    void SetKeyEvent(const plKeyDef k ) { fKeyEvent = k; }
 
 };
 

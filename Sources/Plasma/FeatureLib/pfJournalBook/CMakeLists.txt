@@ -7,12 +7,12 @@ include_directories(../../PubUtilLib)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(pfJournalBook_SOURCES
-	pfJournalBook.cpp
+    pfJournalBook.cpp
 )
 
 set(pfJournalBook_HEADERS
-	pfJournalBook.h
-	pfJournalBookCreatable.h
+    pfJournalBook.h
+    pfJournalBookCreatable.h
 )
 
 add_library(pfJournalBook STATIC ${pfJournalBook_SOURCES} ${pfJournalBook_HEADERS})

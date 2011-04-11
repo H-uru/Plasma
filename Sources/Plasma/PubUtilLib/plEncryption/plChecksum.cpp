@@ -29,169 +29,169 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
 {
-	unsigned int wndsz = GetWindowSize(),i = 0;
-	fSum = 0;
+    unsigned int wndsz = GetWindowSize(),i = 0;
+    fSum = 0;
 
-	const char* bufferAbsEnd = buffer + bufsize;
-	const char* bufferEnvenEnd = buffer + bufsize - (bufsize % wndsz);
+    const char* bufferAbsEnd = buffer + bufsize;
+    const char* bufferEnvenEnd = buffer + bufsize - (bufsize % wndsz);
 
-	while (buffer < bufferEnvenEnd)
-	{
-		fSum += hsSWAP32(*((SumStorage*)buffer));
-		buffer += wndsz;
-	}
+    while (buffer < bufferEnvenEnd)
+    {
+        fSum += hsSWAP32(*((SumStorage*)buffer));
+        buffer += wndsz;
+    }
 
-	SumStorage last = 0;
-	while (buffer < bufferAbsEnd)
-	{
-		((char*)&last)[i % wndsz] = *buffer;
-		buffer++;
-	}
-	fSum+= hsSWAP32(last);
+    SumStorage last = 0;
+    while (buffer < bufferAbsEnd)
+    {
+        ((char*)&last)[i % wndsz] = *buffer;
+        buffer++;
+    }
+    fSum+= hsSWAP32(last);
 }
 
 plMD5Checksum::plMD5Checksum( UInt32 size, UInt8 *buffer )
 {
-	fValid = false;
-	Start();
-	AddTo( size, buffer );
-	Finish();
+    fValid = false;
+    Start();
+    AddTo( size, buffer );
+    Finish();
 }
 
 plMD5Checksum::plMD5Checksum()
 {
-	Clear();
+    Clear();
 }
 
 plMD5Checksum::plMD5Checksum( const plMD5Checksum &rhs )
 {
-	memcpy( fChecksum, rhs.fChecksum, sizeof( fChecksum ) );
-	fValid = rhs.fValid;
+    memcpy( fChecksum, rhs.fChecksum, sizeof( fChecksum ) );
+    fValid = rhs.fValid;
 }
 
 plMD5Checksum::plMD5Checksum( const char *fileName )
 {
-	CalcFromFile( fileName );
+    CalcFromFile( fileName );
 }
 
 void plMD5Checksum::Clear()
 {
-	memset( fChecksum, 0, sizeof( fChecksum ) );
-	fValid = false;
+    memset( fChecksum, 0, sizeof( fChecksum ) );
+    fValid = false;
 }
 
-void	plMD5Checksum::CalcFromFile( const char *fileName)
+void    plMD5Checksum::CalcFromFile( const char *fileName)
 {
-	FILE *fp;
-	fValid = false;
-	
-	if( fp = fopen(fileName, "rb" ) )
-	{
-		unsigned loadLen = 1024 * 1024;
-		Start();
+    FILE *fp;
+    fValid = false;
+    
+    if( fp = fopen(fileName, "rb" ) )
+    {
+        unsigned loadLen = 1024 * 1024;
+        Start();
 
-		UInt8 *buf = TRACKED_NEW UInt8[loadLen];
-	
-		while(int read = fread(buf, sizeof(UInt8), loadLen, fp))
-			AddTo( read, buf );
-		delete[] buf;
+        UInt8 *buf = TRACKED_NEW UInt8[loadLen];
+    
+        while(int read = fread(buf, sizeof(UInt8), loadLen, fp))
+            AddTo( read, buf );
+        delete[] buf;
 
-		Finish();
-		fclose(fp);
-	}
+        Finish();
+        fclose(fp);
+    }
 }
 
-void	plMD5Checksum::Start( void )
+void    plMD5Checksum::Start( void )
 {
-	MD5_Init( &fContext );
-	fValid = false;
+    MD5_Init( &fContext );
+    fValid = false;
 }
 
-void	plMD5Checksum::AddTo( UInt32 size, const UInt8 *buffer )
+void    plMD5Checksum::AddTo( UInt32 size, const UInt8 *buffer )
 {
-	MD5_Update( &fContext, buffer, size );
+    MD5_Update( &fContext, buffer, size );
 }
 
-void	plMD5Checksum::Finish( void )
+void    plMD5Checksum::Finish( void )
 {
-	MD5_Final( fChecksum, &fContext );
-	fValid = true;
+    MD5_Final( fChecksum, &fContext );
+    fValid = true;
 }
 
-const char	*plMD5Checksum::GetAsHexString( void ) const
+const char  *plMD5Checksum::GetAsHexString( void ) const
 {
-	const int	kHexStringSize = ( 2 * MD5_DIGEST_LENGTH ) + 1;
-	static char	tempString[ kHexStringSize ];
+    const int   kHexStringSize = ( 2 * MD5_DIGEST_LENGTH ) + 1;
+    static char tempString[ kHexStringSize ];
 
-	int		i;
-	char	*ptr;
+    int     i;
+    char    *ptr;
 
 
-	hsAssert( fValid, "Trying to get string version of invalid checksum" );
+    hsAssert( fValid, "Trying to get string version of invalid checksum" );
 
-	for( i = 0, ptr = tempString; i < sizeof( fChecksum ); i++, ptr += 2 )
-		sprintf( ptr, "%02x", fChecksum[ i ] );
+    for( i = 0, ptr = tempString; i < sizeof( fChecksum ); i++, ptr += 2 )
+        sprintf( ptr, "%02x", fChecksum[ i ] );
 
-	*ptr = 0;
+    *ptr = 0;
 
-	return tempString;
+    return tempString;
 }
 
-UInt8	plMD5Checksum::IHexCharToInt( char c ) const
+UInt8   plMD5Checksum::IHexCharToInt( char c ) const
 {
-	switch( c )
-	{
-		// yes, it's ugly, but it'll be fast :)
-		case '0': return 0;
-		case '1': return 1;
-		case '2': return 2;
-		case '3': return 3;
-		case '4': return 4;
-		case '5': return 5;
-		case '6': return 6;
-		case '7': return 7;
-		case '8': return 8;
-		case '9': return 9;
+    switch( c )
+    {
+        // yes, it's ugly, but it'll be fast :)
+        case '0': return 0;
+        case '1': return 1;
+        case '2': return 2;
+        case '3': return 3;
+        case '4': return 4;
+        case '5': return 5;
+        case '6': return 6;
+        case '7': return 7;
+        case '8': return 8;
+        case '9': return 9;
 
-		case 'a': return 10;
-		case 'b': return 11;
-		case 'c': return 12;
-		case 'd': return 13;
-		case 'e': return 14;
-		case 'f': return 15;
+        case 'a': return 10;
+        case 'b': return 11;
+        case 'c': return 12;
+        case 'd': return 13;
+        case 'e': return 14;
+        case 'f': return 15;
 
-		case 'A': return 10;
-		case 'B': return 11;
-		case 'C': return 12;
-		case 'D': return 13;
-		case 'E': return 14;
-		case 'F': return 15;
-	}
+        case 'A': return 10;
+        case 'B': return 11;
+        case 'C': return 12;
+        case 'D': return 13;
+        case 'E': return 14;
+        case 'F': return 15;
+    }
 
-	return 0xff;
+    return 0xff;
 }
 
-void		plMD5Checksum::SetFromHexString( const char *string )
+void        plMD5Checksum::SetFromHexString( const char *string )
 {
-	const char	*ptr;
-	int			i;
+    const char  *ptr;
+    int         i;
 
 
-	hsAssert( strlen( string ) == 2 * MD5_DIGEST_LENGTH, "Invalid string in MD5Checksum Set()" );
+    hsAssert( strlen( string ) == 2 * MD5_DIGEST_LENGTH, "Invalid string in MD5Checksum Set()" );
 
-	for( i = 0, ptr = string; i < sizeof( fChecksum ); i++, ptr += 2 )
-		fChecksum[ i ] = ( IHexCharToInt( ptr[ 0 ] ) << 4 ) | IHexCharToInt( ptr[ 1 ] );
+    for( i = 0, ptr = string; i < sizeof( fChecksum ); i++, ptr += 2 )
+        fChecksum[ i ] = ( IHexCharToInt( ptr[ 0 ] ) << 4 ) | IHexCharToInt( ptr[ 1 ] );
 
-	fValid = true;
+    fValid = true;
 }
 
 void plMD5Checksum::SetValue(UInt8* checksum)
 {
-	fValid = true;
-	memcpy(fChecksum, checksum, sizeof(fChecksum));
+    fValid = true;
+    memcpy(fChecksum, checksum, sizeof(fChecksum));
 }
 
-bool	plMD5Checksum::operator==( const plMD5Checksum &rhs ) const
+bool    plMD5Checksum::operator==( const plMD5Checksum &rhs ) const
 {
-	return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
+    return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
 }

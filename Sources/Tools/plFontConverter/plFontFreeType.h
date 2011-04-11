@@ -24,29 +24,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plFontFreeType Functions												 //
-//	Basically our cheat to allow importing fonts via FreeType2 into our		 //
-//	plFont system without having to make plFont.cpp reliant on FreeType2.	 //
-//																			 //
+//                                                                           //
+//  plFontFreeType Functions                                                 //
+//  Basically our cheat to allow importing fonts via FreeType2 into our      //
+//  plFont system without having to make plFont.cpp reliant on FreeType2.    //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "plFont.h"
 
 class plFontFreeType : public plFont
 {
-	public:
+    public:
 
-		struct Options
-		{
-			UInt8	fSize;
-			hsBool	fUseKerning;
-			UInt8	fBitDepth;
-			UInt32	fScreenRes;
-			UInt32	fMaxCharLimit;
+        struct Options
+        {
+            UInt8   fSize;
+            hsBool  fUseKerning;
+            UInt8   fBitDepth;
+            UInt32  fScreenRes;
+            UInt32  fMaxCharLimit;
 
-			Options() { fSize = 12; fUseKerning = false; fBitDepth = 1; fScreenRes = 96; fMaxCharLimit = 255; }
-		};
+            Options() { fSize = 12; fUseKerning = false; fBitDepth = 1; fScreenRes = 96; fMaxCharLimit = 255; }
+        };
 
-		hsBool	ImportFreeType( const char *fontPath, Options *options, plBDFConvertCallback *callback );
+        hsBool  ImportFreeType( const char *fontPath, Options *options, plBDFConvertCallback *callback );
 };

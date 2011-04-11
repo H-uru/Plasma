@@ -40,72 +40,72 @@ class plShadowCaster;
 class plShadowCastComponent : public plComponent
 {
 public:
-enum	
+enum    
 {
-	kSelfShadow,
-	kBlur,
-	kBlurScale,
-	kAtten,
-	kAttenScale,
-	kBoost,
-	kQuality,
-	kLimitRes
+    kSelfShadow,
+    kBlur,
+    kBlurScale,
+    kAtten,
+    kAttenScale,
+    kBoost,
+    kQuality,
+    kLimitRes
 };
 protected:
-	plShadowCaster*		fCaster;
+    plShadowCaster*     fCaster;
 public:
-	plShadowCastComponent();
+    plShadowCastComponent();
 
-	hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-	hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	static hsBool AddShadowCastModifier(plMaxNode* pNode, plShadowCaster* caster);
-	static hsBool AddShadowCastModifier(plSceneObject* so, plShadowCaster* caster);
+    static hsBool AddShadowCastModifier(plMaxNode* pNode, plShadowCaster* caster);
+    static hsBool AddShadowCastModifier(plSceneObject* so, plShadowCaster* caster);
 };
 
 class plShadowRcvComponent : public plComponent
 {
 public:
-enum	
+enum    
 {
-	kForceRadio
+    kForceRadio
 };
 enum
 {
-	kForceOn,
-	kForceOff
+    kForceOn,
+    kForceOff
 };
 public:
-	plShadowRcvComponent();
+    plShadowRcvComponent();
 
-	hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-	hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plShadowLightComponent : public plComponent
 {
 public:
-	enum {
-		kFalloff,
-		kMaxDist,
-		kPower,
-		kShadowOnly,
-		kObeyGroups,
-		kSelfShadow,
-		kQuality
-	};
+    enum {
+        kFalloff,
+        kMaxDist,
+        kPower,
+        kShadowOnly,
+        kObeyGroups,
+        kSelfShadow,
+        kQuality
+    };
 protected:
-	hsBool IAddDirectMaster(plMaxNode* node, plSceneObject* so);
-	hsBool IAddPointMaster(plMaxNode* node, plSceneObject* so);
+    hsBool IAddDirectMaster(plMaxNode* node, plSceneObject* so);
+    hsBool IAddPointMaster(plMaxNode* node, plSceneObject* so);
 
 public:
-	plShadowLightComponent();
+    plShadowLightComponent();
 
-	hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-	hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 

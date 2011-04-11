@@ -31,21 +31,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plTagModifier : public plSingleModifier
 {
 protected:
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
 
 public:
-	plTagModifier();
-	virtual ~plTagModifier();
+    plTagModifier();
+    virtual ~plTagModifier();
 
-	CLASSNAME_REGISTER(plTagModifier);
-	GETINTERFACE_ANY(plTagModifier, plSingleModifier);
+    CLASSNAME_REGISTER(plTagModifier);
+    GETINTERFACE_ANY(plTagModifier, plSingleModifier);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual void SetTarget(plSceneObject* so);
+    virtual void SetTarget(plSceneObject* so);
 };
 
 #endif // plTagModifier_inc

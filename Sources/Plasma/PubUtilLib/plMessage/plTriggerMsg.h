@@ -35,19 +35,19 @@ class plTriggerMsg : public plMessage
 protected:
 
 public:
-	
-	plTriggerMsg(){SetBCastFlag(plMessage::kBCastByExactType | plMessage::kPropagateToModifiers);}
-	plTriggerMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t){SetBCastFlag(plMessage::kBCastByExactType | plMessage::kPropagateToModifiers);}
-	~plTriggerMsg(){;}
+    
+    plTriggerMsg(){SetBCastFlag(plMessage::kBCastByExactType | plMessage::kPropagateToModifiers);}
+    plTriggerMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t){SetBCastFlag(plMessage::kBCastByExactType | plMessage::kPropagateToModifiers);}
+    ~plTriggerMsg(){;}
 
-	CLASSNAME_REGISTER( plTriggerMsg );
-	GETINTERFACE_ANY( plTriggerMsg, plMessage );
+    CLASSNAME_REGISTER( plTriggerMsg );
+    GETINTERFACE_ANY( plTriggerMsg, plMessage );
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr) {	plMessage::IMsgRead(stream, mgr);	}
-	void Write(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgWrite(stream, mgr);	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr) {    plMessage::IMsgRead(stream, mgr);   }
+    void Write(hsStream* stream, hsResMgr* mgr) {   plMessage::IMsgWrite(stream, mgr);  }
 };
 
 

@@ -31,25 +31,25 @@ class plComponentBase;
 class plResponderCmdAnim : public plResponderCmd
 {
 public:
-	static plResponderCmdAnim& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdAnim& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes();
-	virtual const char *GetCategory(int idx);
-	virtual const char *GetName(int idx);
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes();
+    virtual const char *GetCategory(int idx);
+    virtual const char *GetName(int idx);
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual IParamBlock2 *CreatePB(int idx);
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb);
+    virtual IParamBlock2 *CreatePB(int idx);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb);
 
-	virtual bool IsWaitable(IParamBlock2 *pb);
-	virtual void GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints);
-	virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
-	
-	plComponentBase *GetComponent(IParamBlock2 *pb);
+    virtual bool IsWaitable(IParamBlock2 *pb);
+    virtual void GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints);
+    virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
+    
+    plComponentBase *GetComponent(IParamBlock2 *pb);
 
 protected:
-	plMessage *ICreateAnimMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
-	plMessage *ICreateSndMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *ICreateAnimMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *ICreateSndMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 

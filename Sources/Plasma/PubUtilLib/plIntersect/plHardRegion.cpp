@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 
 plHardRegion::plHardRegion() 
-:	fState(kDirty)
+:   fState(kDirty)
 {
 }
 
@@ -44,53 +44,53 @@ plHardRegion::~plHardRegion()
 
 void plHardRegion::SetKey(plKey k)
 {
-	plRegionBase::SetKey(k);
+    plRegionBase::SetKey(k);
 
 #if 0 // The caching of this probably isn't worth it.
-	// We'll try evaluation every time first, and try
-	// this later as an optimization.
-	if( k )
-	{
-		plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
-	}
+    // We'll try evaluation every time first, and try
+    // this later as an optimization.
+    if( k )
+    {
+        plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
+    }
 #endif // Caching
 }
 
 void plHardRegion::Read(hsStream* s, hsResMgr* mgr)
 {
-	plRegionBase::Read(s, mgr);
+    plRegionBase::Read(s, mgr);
 
-	fState = kDirty;
+    fState = kDirty;
 }
 
 void plHardRegion::Write(hsStream* s, hsResMgr* mgr)
 {
-	plRegionBase::Write(s, mgr);
+    plRegionBase::Write(s, mgr);
 }
 
 hsBool plHardRegion::CameraInside() const
 {
-	if( fState & kDirty )
-	{
-		if( ICameraInside() )
-			fState |= kCamInside;
-		else
-			fState &= ~kCamInside;
-		fState &= ~kDirty;
-	}
-	return 0 != (fState & kCamInside);
+    if( fState & kDirty )
+    {
+        if( ICameraInside() )
+            fState |= kCamInside;
+        else
+            fState &= ~kCamInside;
+        fState &= ~kDirty;
+    }
+    return 0 != (fState & kCamInside);
 }
 
 hsBool plHardRegion::MsgReceive(plMessage* msg)
 {
-	plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
-	if( rend )
-	{
-		fState |= kDirty;
-		fCamPos = rend->Pipeline()->GetViewPositionWorld();
-		return true;
-	}
+    plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
+    if( rend )
+    {
+        fState |= kDirty;
+        fCamPos = rend->Pipeline()->GetViewPositionWorld();
+        return true;
+    }
 
-	return plRegionBase::MsgReceive(msg);
+    return plRegionBase::MsgReceive(msg);
 }
 

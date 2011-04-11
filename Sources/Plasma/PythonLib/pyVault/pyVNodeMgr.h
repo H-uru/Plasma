@@ -48,103 +48,103 @@ class pyVaultFolderNode;
 class pyVNodeMgr : public plVNodeMgr
 {
 private:
-	typedef std::vector<pyVaultCallback*> PyCallbackVec;
-	PyCallbackVec	fPyCallbacks;
+    typedef std::vector<pyVaultCallback*> PyCallbackVec;
+    PyCallbackVec   fPyCallbacks;
 
-	class VaultMsgHandler : public plNetClientComm::MsgHandler
-	{
-	private:
-		pyVNodeMgr *	fMyVNodeMgr;
-		int HandleMessage( plNetMessage* msg );
-	public:
-		VaultMsgHandler(): fMyVNodeMgr(nil) {}
-		void setMgr(pyVNodeMgr * thaNodeMgr) {fMyVNodeMgr = thaNodeMgr;}
-	};
-	friend class VaultMsgHandler;
-	VaultMsgHandler	fMsgHandler;
+    class VaultMsgHandler : public plNetClientComm::MsgHandler
+    {
+    private:
+        pyVNodeMgr *    fMyVNodeMgr;
+        int HandleMessage( plNetMessage* msg );
+    public:
+        VaultMsgHandler(): fMyVNodeMgr(nil) {}
+        void setMgr(pyVNodeMgr * thaNodeMgr) {fMyVNodeMgr = thaNodeMgr;}
+    };
+    friend class VaultMsgHandler;
+    VaultMsgHandler fMsgHandler;
 
 protected:
-	PyObject*			fMyCommObj;
-	pyNetClientComm*	fMyComm; // pointer to object stored in fMyCommObj
+    PyObject*           fMyCommObj;
+    pyNetClientComm*    fMyComm; // pointer to object stored in fMyCommObj
 
-	bool IAmOnline() const;
-	bool IIsThisMe( plVaultPlayerInfoNode* node ) const;
-	bool IIsThisMe( plVaultPlayerNode * node ) const;
-	int ISendNetMsg( plNetMsgVault* msg, UInt32 sendFlags=0 );
-	UInt32 IGetPlayerID() const;
+    bool IAmOnline() const;
+    bool IIsThisMe( plVaultPlayerInfoNode* node ) const;
+    bool IIsThisMe( plVaultPlayerNode * node ) const;
+    int ISendNetMsg( plNetMsgVault* msg, UInt32 sendFlags=0 );
+    UInt32 IGetPlayerID() const;
 
-	pyVNodeMgr(): fMyComm(nil) {fMsgHandler.setMgr(this);} // for python glue only, do NOT call
-	pyVNodeMgr( PyObject* thaComm );
+    pyVNodeMgr(): fMyComm(nil) {fMsgHandler.setMgr(this);} // for python glue only, do NOT call
+    pyVNodeMgr( PyObject* thaComm );
 
 public:
-	~pyVNodeMgr();
+    ~pyVNodeMgr();
 
-	void setMyComm(PyObject* thaComm); // for python glue only, do NOT call
+    void setMyComm(PyObject* thaComm); // for python glue only, do NOT call
 
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE;
-	PYTHON_CLASS_NEW_FRIEND(ptVNodeMgr);
-	static PyObject* New(PyObject* thaComm);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVNodeMgr object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVNodeMgr); // converts a PyObject to a pyVNodeMgr (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE;
+    PYTHON_CLASS_NEW_FRIEND(ptVNodeMgr);
+    static PyObject* New(PyObject* thaComm);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVNodeMgr object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVNodeMgr); // converts a PyObject to a pyVNodeMgr (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	PyObject * GetNetClient() const { Py_INCREF(fMyCommObj); return fMyCommObj; } // returns pyNetClientComm
+    PyObject * GetNetClient() const { Py_INCREF(fMyCommObj); return fMyCommObj; } // returns pyNetClientComm
 
-	/////////////////////////////////////////////////
-	// Vault Client API
+    /////////////////////////////////////////////////
+    // Vault Client API
 
-	int Update( double secs );
+    int Update( double secs );
 
-	void Startup();
-	void Shutdown();
+    void Startup();
+    void Shutdown();
 
-	// connect/disconnect
-	bool IsConnected();
-	void Disconnect(
-		PyObject* cb=nil,
-		UInt32 cbContext=0 );
-	void Connect(
-		int childFetchLevel=plVault::kFetchAllChildren,
-		PyObject* cb=nil,
-		UInt32 cbContext=0 );
-	// TODO: Glue this.
-	// Fetch matching node from server and hold onto it.
-	// Note: You won't receive notifications about the fetched node or
-	// it's children until it has been added to your root node or any
-	// of it's children.
-//	bool FetchNode(
-//		pyVaultNode* templateNode,
-//		int childFetchLevel=plVault::kFetchAllChildren,
-//		bool allowCreate = false,
-//		PyObject* cb=nil,
-//		UInt32 cbContext=0 );
-	bool FetchNode( UInt32 nodeID,
-		int childFetchLevel=plVault::kFetchAllChildren,
-		PyObject* cb=nil,
-		UInt32 cbContext=0 );
+    // connect/disconnect
+    bool IsConnected();
+    void Disconnect(
+        PyObject* cb=nil,
+        UInt32 cbContext=0 );
+    void Connect(
+        int childFetchLevel=plVault::kFetchAllChildren,
+        PyObject* cb=nil,
+        UInt32 cbContext=0 );
+    // TODO: Glue this.
+    // Fetch matching node from server and hold onto it.
+    // Note: You won't receive notifications about the fetched node or
+    // it's children until it has been added to your root node or any
+    // of it's children.
+//  bool FetchNode(
+//      pyVaultNode* templateNode,
+//      int childFetchLevel=plVault::kFetchAllChildren,
+//      bool allowCreate = false,
+//      PyObject* cb=nil,
+//      UInt32 cbContext=0 );
+    bool FetchNode( UInt32 nodeID,
+        int childFetchLevel=plVault::kFetchAllChildren,
+        PyObject* cb=nil,
+        UInt32 cbContext=0 );
 
-	// get our root node
-	PyObject* GetRootNode() const; // returns pyVaultNode
-	// get the client node ID returned to us by the server ( if we didn't
-	//	fetch when we connected then we have to use this to identify ourselves ).
-	UInt32	GetClientID() const;
-	// search all nodes in client locally
-	PyObject* GetNode( UInt32 id ) const; // returns pyVaultNode
-	// TODO: Glue these.
-	PyObject* FindNode( pyVaultNode* templateNode ) const; // returns pyVaultNode
-//	bool	FindNodes( const pyVaultNode* templateNode, PyObject * out ) const;
-	// callback management
-	bool	EnableCallbacks( bool b );	// returns previous enabled setting.
-	void	AddCallback( PyObject* cb );
-	void	RemoveCallback( PyObject* cb );
+    // get our root node
+    PyObject* GetRootNode() const; // returns pyVaultNode
+    // get the client node ID returned to us by the server ( if we didn't
+    //  fetch when we connected then we have to use this to identify ourselves ).
+    UInt32  GetClientID() const;
+    // search all nodes in client locally
+    PyObject* GetNode( UInt32 id ) const; // returns pyVaultNode
+    // TODO: Glue these.
+    PyObject* FindNode( pyVaultNode* templateNode ) const; // returns pyVaultNode
+//  bool    FindNodes( const pyVaultNode* templateNode, PyObject * out ) const;
+    // callback management
+    bool    EnableCallbacks( bool b );  // returns previous enabled setting.
+    void    AddCallback( PyObject* cb );
+    void    RemoveCallback( PyObject* cb );
 
-	// create a node of the given type.
-	PyObject* CreateNode( int nodeType, bool persistent ); // returns pyVaultNode
+    // create a node of the given type.
+    PyObject* CreateNode( int nodeType, bool persistent ); // returns pyVaultNode
 
-	// dump contents to log
-	void	Dump() const;
+    // dump contents to log
+    void    Dump() const;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -152,48 +152,48 @@ public:
 class pyPlayerVNodeMgr : public pyVNodeMgr
 {
 protected:
-	bool IAmSuperUser( void ) const;
-	void IFillOutConnectFields( plNetMsgVault* msg ) const;
-	plVNodeInitTask * IGetNodeInitializationTask( plVaultNode * node );
+    bool IAmSuperUser( void ) const;
+    void IFillOutConnectFields( plNetMsgVault* msg ) const;
+    plVNodeInitTask * IGetNodeInitializationTask( plVaultNode * node );
 
-	pyPlayerVNodeMgr(): pyVNodeMgr() {} // for python glue only, do NOT call
-	pyPlayerVNodeMgr( PyObject* thaComm );
+    pyPlayerVNodeMgr(): pyVNodeMgr() {} // for python glue only, do NOT call
+    pyPlayerVNodeMgr( PyObject* thaComm );
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptPlayerVNodeMgr);
-	static PyObject* New(PyObject* thaComm);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyPlayerVNodeMgr object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyPlayerVNodeMgr); // converts a PyObject to a pyPlayerVNodeMgr (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptPlayerVNodeMgr);
+    static PyObject* New(PyObject* thaComm);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyPlayerVNodeMgr object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyPlayerVNodeMgr); // converts a PyObject to a pyPlayerVNodeMgr (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 };
 
 ////////////////////////////////////////////////////////////////////
 
 class pyAgeVNodeMgr : public pyVNodeMgr
 {
-	std::string		fAgeFilename;
-	plServerGuid	fAgeInstanceGuid;
+    std::string     fAgeFilename;
+    plServerGuid    fAgeInstanceGuid;
 
 protected:
-	bool IAmSuperUser( void ) const;
-	void IFillOutConnectFields( plNetMsgVault* msg ) const;
-	plVNodeInitTask * IGetNodeInitializationTask( plVaultNode * node );
+    bool IAmSuperUser( void ) const;
+    void IFillOutConnectFields( plNetMsgVault* msg ) const;
+    plVNodeInitTask * IGetNodeInitializationTask( plVaultNode * node );
 
-	pyAgeVNodeMgr(): pyVNodeMgr() {} // for python glue only, do NOT call
-	pyAgeVNodeMgr( PyObject* thaComm );
+    pyAgeVNodeMgr(): pyVNodeMgr() {} // for python glue only, do NOT call
+    pyAgeVNodeMgr( PyObject* thaComm );
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptAgeVNodeMgr);
-	static PyObject* New(PyObject* thaComm);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAgeVNodeMgr object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAgeVNodeMgr); // converts a PyObject to a pyAgeVNodeMgr (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptAgeVNodeMgr);
+    static PyObject* New(PyObject* thaComm);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAgeVNodeMgr object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAgeVNodeMgr); // converts a PyObject to a pyAgeVNodeMgr (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	void SetAgeInfo( const char * ageFilename, const char * ageInstanceGuid );
+    void SetAgeInfo( const char * ageFilename, const char * ageInstanceGuid );
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -201,30 +201,30 @@ public:
 class pyAdminVNodeMgr : public pyVNodeMgr
 {
 private:
-	bool	fWantGlobalSDL;
-	bool	fWantAllPlayers;
+    bool    fWantGlobalSDL;
+    bool    fWantAllPlayers;
 
 protected:
-	bool IAmSuperUser( void ) const;
-	void IFillOutConnectFields( plNetMsgVault* msg ) const;
-	plVNodeInitTask * IGetNodeInitializationTask( plVaultNode * node );
+    bool IAmSuperUser( void ) const;
+    void IFillOutConnectFields( plNetMsgVault* msg ) const;
+    plVNodeInitTask * IGetNodeInitializationTask( plVaultNode * node );
 
-	pyAdminVNodeMgr(): pyVNodeMgr(), fWantGlobalSDL(true), fWantAllPlayers(false) {} // for python glue only, do NOT call
-	pyAdminVNodeMgr( PyObject* thaComm );
+    pyAdminVNodeMgr(): pyVNodeMgr(), fWantGlobalSDL(true), fWantAllPlayers(false) {} // for python glue only, do NOT call
+    pyAdminVNodeMgr( PyObject* thaComm );
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptAdminVNodeMgr);
-	static PyObject* New(PyObject* thaComm);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAdminVNodeMgr object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAdminVNodeMgr); // converts a PyObject to a pyAdminVNodeMgr (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptAdminVNodeMgr);
+    static PyObject* New(PyObject* thaComm);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAdminVNodeMgr object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAdminVNodeMgr); // converts a PyObject to a pyAdminVNodeMgr (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	void SetWantGlobalSDL( bool v ) { fWantGlobalSDL=v; }
-	void SetWantAllPlayers( bool v ) { fWantAllPlayers=v; }
+    void SetWantGlobalSDL( bool v ) { fWantGlobalSDL=v; }
+    void SetWantAllPlayers( bool v ) { fWantAllPlayers=v; }
 
-	PyObject * GetGlobalInbox() const; // returns pyVaultFolderNode
+    PyObject * GetGlobalInbox() const; // returns pyVaultFolderNode
 };
 
 ////////////////////////////////////////////////////////////////////

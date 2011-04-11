@@ -34,26 +34,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plKeyRefSort
 {
 protected:
-	class KeyRefs
-	{
-	public:
-		plKey fKey;
-		int fNumRefs;
-		KeyRefs() : fKey(nil), fNumRefs(-1) {}
-		KeyRefs(plKey key, int numRefs) : fKey(key), fNumRefs(numRefs) {}
-		hsBool operator== (const plKey key)
-		{
-			return (fKey == key);
-		}
-	};
+    class KeyRefs
+    {
+    public:
+        plKey fKey;
+        int fNumRefs;
+        KeyRefs() : fKey(nil), fNumRefs(-1) {}
+        KeyRefs(plKey key, int numRefs) : fKey(key), fNumRefs(numRefs) {}
+        hsBool operator== (const plKey key)
+        {
+            return (fKey == key);
+        }
+    };
 
-	static std::vector<plKey>* fKeys;
-	static std::vector<KeyRefs> fNumRefs;
+    static std::vector<plKey>* fKeys;
+    static std::vector<KeyRefs> fNumRefs;
 
-	friend class RefComp;
+    friend class RefComp;
 
-	static int CountRefsRecur(plKey key, std::vector<plKey>& traversedKeys);
+    static int CountRefsRecur(plKey key, std::vector<plKey>& traversedKeys);
 
 public:
-	static void Sort(std::vector<plKey>* keys);
+    static void Sort(std::vector<plKey>* keys);
 };

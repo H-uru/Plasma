@@ -60,7 +60,7 @@ plAGAnim::plAnimMap plAGAnim::fAllAnims;
 plAGAnim::plAGAnim()
 : plSynchedObject()
 {
-	fName = nil;
+    fName = nil;
 }
 
 // ctor ------------------------------------------------------
@@ -69,271 +69,271 @@ plAGAnim::plAGAnim(const char *name, double start, double end)
 : fStart((hsScalar)start),
   fEnd((hsScalar)end)
 {
-	if (name == nil)
-		name = "";
+    if (name == nil)
+        name = "";
 
-	fName = TRACKED_NEW char[strlen(name) + 1];
-	strcpy(fName, name);
+    fName = TRACKED_NEW char[strlen(name) + 1];
+    strcpy(fName, name);
 }
 
 // dtor -------------
 // -----
 plAGAnim::~plAGAnim()
 {
-	if (fName)
-	{
-		RemoveAnim(fName);
-		delete[] fName;
-		fName = nil;
-	}
+    if (fName)
+    {
+        RemoveAnim(fName);
+        delete[] fName;
+        fName = nil;
+    }
 
-	//int numChannels = fChannels.size();
-	int numApps = fApps.size();
+    //int numChannels = fChannels.size();
+    int numApps = fApps.size();
 
-	for (int i = 0; i < numApps; i++)
-	{
-		plAGApplicator *app = fApps[i];
-		if (app)
-		{
-			plAGChannel *channel = app->GetChannel();
-			if(channel)
-				delete channel;
-			
-			delete app;
-		}
-	}
+    for (int i = 0; i < numApps; i++)
+    {
+        plAGApplicator *app = fApps[i];
+        if (app)
+        {
+            plAGChannel *channel = app->GetChannel();
+            if(channel)
+                delete channel;
+            
+            delete app;
+        }
+    }
 }
 
 // GetChannelCount ------------------
 // ----------------
 int plAGAnim::GetChannelCount() const
 {
-	return fApps.size();
+    return fApps.size();
 }
 
 // GetChannel -------------------------------------
 // -----------
 plAGChannel * plAGAnim::GetChannel(int index) const
 {
-	plAGApplicator *app = fApps[index];
-	return (app ? app->GetChannel() : nil);
+    plAGApplicator *app = fApps[index];
+    return (app ? app->GetChannel() : nil);
 }
 
 // GetChannel --------------------------------------------
 // -----------
 plAGChannel * plAGAnim::GetChannel(const char *name) const
 {
-	int appCount = fApps.size();
+    int appCount = fApps.size();
 
-	for(int i = 0; i < appCount; i++)
-	{
-		plAGApplicator *app = fApps[i];
-		plAGChannel *channel = app->GetChannel();
-		const char *channelName = app->GetChannelName();
+    for(int i = 0; i < appCount; i++)
+    {
+        plAGApplicator *app = fApps[i];
+        plAGChannel *channel = app->GetChannel();
+        const char *channelName = app->GetChannelName();
 
-		if(stricmp(name, channelName) == 0)
-		{
-			return channel;
-		}
-	}
-	return nil;
+        if(stricmp(name, channelName) == 0)
+        {
+            return channel;
+        }
+    }
+    return nil;
 }
 
 // GetApplicatorCount ------------------
 // -------------------
 int plAGAnim::GetApplicatorCount() const
 {
-	return fApps.size();
+    return fApps.size();
 }
 
 // GetApplicator -----------------------------------
 // --------------
 plAGApplicator *plAGAnim::GetApplicator(int i) const
 {
-	return fApps[i];
+    return fApps[i];
 }
 
 // AddApplicator -------------------------------
 // --------------
 int plAGAnim::AddApplicator(plAGApplicator *app)
 {
-	hsAssert(app->GetChannel(), "Adding an applicator with no channel");
-	fApps.push_back(app);
+    hsAssert(app->GetChannel(), "Adding an applicator with no channel");
+    fApps.push_back(app);
 
-	// return the index of the channel
-	return(fApps.size() - 1);
+    // return the index of the channel
+    return(fApps.size() - 1);
 }
 
 // RemoveApplicator ------------------------
 // -----------------
 hsBool plAGAnim::RemoveApplicator(int index)
 {
-	hsAssert(index < fApps.size(), "Out of range index for plAGAnim::RemoveApp()");
+    hsAssert(index < fApps.size(), "Out of range index for plAGAnim::RemoveApp()");
 
-	if(index < fApps.size())
-	{
-		fApps.erase(fApps.begin() + index);
-		return true;
-	} else {
-		return false;
-	}
+    if(index < fApps.size())
+    {
+        fApps.erase(fApps.begin() + index);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 // ExtendToLength ----------------------------
 // ---------------
 void plAGAnim::ExtendToLength(hsScalar length)
 {
-	if (length > GetEnd())
-		SetEnd(length);
+    if (length > GetEnd())
+        SetEnd(length);
 }
 
 // GetChannelName ------------------------------
 // ---------------
 const char * plAGAnim::GetChannelName(int index)
 {
-	hsAssert(index < fApps.size(), "Out of range index for plAGAnim::GetChannelName()");
+    hsAssert(index < fApps.size(), "Out of range index for plAGAnim::GetChannelName()");
 
-	if(index < fApps.size())
-	{
-		return fApps[index]->GetChannel()->GetName();
-	} else {
-		return nil;
-	}
+    if(index < fApps.size())
+    {
+        return fApps[index]->GetChannel()->GetName();
+    } else {
+        return nil;
+    }
 }
 
 // Read --------------------------------------------
 // -----
 void plAGAnim::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSynchedObject::Read(stream, mgr);
+    plSynchedObject::Read(stream, mgr);
 
-	// read in the name of the animation itself
-	fName = stream->ReadSafeString();
+    // read in the name of the animation itself
+    fName = stream->ReadSafeString();
 
-	fStart = stream->ReadSwapScalar();
-	fEnd = stream->ReadSwapScalar();
+    fStart = stream->ReadSwapScalar();
+    fEnd = stream->ReadSwapScalar();
 
-	int numApps = stream->ReadSwap32();
+    int numApps = stream->ReadSwap32();
 
-	fApps.reserve(numApps);				// pre-allocate for performance
-	int i;
-	for (i = 0; i < numApps; i++)
-	{
-		plAGApplicator * app = plAGApplicator::ConvertNoRef(mgr->ReadCreatable(stream));
-		app->SetChannel(plAGChannel::ConvertNoRef(mgr->ReadCreatable(stream)));
-		fApps.push_back(app);
-	}
-	plAGAnim::AddAnim(fName, this);
+    fApps.reserve(numApps);             // pre-allocate for performance
+    int i;
+    for (i = 0; i < numApps; i++)
+    {
+        plAGApplicator * app = plAGApplicator::ConvertNoRef(mgr->ReadCreatable(stream));
+        app->SetChannel(plAGChannel::ConvertNoRef(mgr->ReadCreatable(stream)));
+        fApps.push_back(app);
+    }
+    plAGAnim::AddAnim(fName, this);
 }
 
 // Write --------------------------------------------
 // ------
 void plAGAnim::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plSynchedObject::Write(stream, mgr);
+    plSynchedObject::Write(stream, mgr);
 
-	stream->WriteSafeString(fName);
+    stream->WriteSafeString(fName);
 
-	stream->WriteSwapScalar(fStart);
-	stream->WriteSwapScalar(fEnd);
+    stream->WriteSwapScalar(fStart);
+    stream->WriteSwapScalar(fEnd);
 
-	int numApps = fApps.size();
+    int numApps = fApps.size();
 
-	stream->WriteSwap32(numApps);
+    stream->WriteSwap32(numApps);
 
-	int i;
-	for (i = 0; i < numApps; i++)
-	{
-		plAGApplicator *app = fApps[i];
-		hsAssert(app, "Missing applicator during write.");
-		plAGChannel *channel = nil;
-		if (app)
-			channel = app->GetChannel();
-	
-		hsAssert(channel, "Missing channel during write.");
-		mgr->WriteCreatable(stream, app);
-		mgr->WriteCreatable(stream, channel);
-	}
+    int i;
+    for (i = 0; i < numApps; i++)
+    {
+        plAGApplicator *app = fApps[i];
+        hsAssert(app, "Missing applicator during write.");
+        plAGChannel *channel = nil;
+        if (app)
+            channel = app->GetChannel();
+    
+        hsAssert(channel, "Missing channel during write.");
+        mgr->WriteCreatable(stream, app);
+        mgr->WriteCreatable(stream, channel);
+    }
 }
 
 void plAGAnim::ClearAnimationRegistry()
 {
-	fAllAnims.clear();
+    fAllAnims.clear();
 }
 
 // AddAnim ----------------------------------------------
 // --------
 void plAGAnim::AddAnim(const char * name, plAGAnim *anim)
 {
-	// Only register the animation if it's got a "real" name. Unnamed animations
-	// all get the same standard name.
-	if(strcmp(name, ENTIRE_ANIMATION_NAME) != 0)
-	{
-		hsAssert(anim, "registering nil anim");
-		fAllAnims[name] = anim;
-	}
+    // Only register the animation if it's got a "real" name. Unnamed animations
+    // all get the same standard name.
+    if(strcmp(name, ENTIRE_ANIMATION_NAME) != 0)
+    {
+        hsAssert(anim, "registering nil anim");
+        fAllAnims[name] = anim;
+    }
 }
 
 // FindAnim -----------------------------------
 // ---------
 plAGAnim * plAGAnim::FindAnim(const char *name)
 {
-	plAnimMap::iterator i = fAllAnims.find(name);
+    plAnimMap::iterator i = fAllAnims.find(name);
 
-	if(i != fAllAnims.end())
-	{
-		return (*i).second;
-	} else {
-		return nil;
-	}
+    if(i != fAllAnims.end())
+    {
+        return (*i).second;
+    } else {
+        return nil;
+    }
 }
 
 // RemoveAnim -------------------------------
 // -----------
 hsBool plAGAnim::RemoveAnim(const char *name)
 {
-	plAnimMap::iterator i = fAllAnims.find(name);
+    plAnimMap::iterator i = fAllAnims.find(name);
 
-	if(i != fAllAnims.end())
-	{
-		fAllAnims.erase(i);
-		return true;
-	} else {
-		return false;
-	}
+    if(i != fAllAnims.end())
+    {
+        fAllAnims.erase(i);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 // DumpAnimationRegistry -------------
 // ----------------------
 void plAGAnim::DumpAnimationRegistry()
 {
-	plAnimMap::iterator i = fAllAnims.begin();
-	int j = 0;
+    plAnimMap::iterator i = fAllAnims.begin();
+    int j = 0;
 
-	do {
-		plAGAnim *anim = (*i).second;
-		const char *name = anim->GetName();
-		hsStatusMessageF("GLOBAL ANIMS [%d]: <%s>", j++, name);
-	} while(++i != fAllAnims.end());
+    do {
+        plAGAnim *anim = (*i).second;
+        const char *name = anim->GetName();
+        hsStatusMessageF("GLOBAL ANIMS [%d]: <%s>", j++, name);
+    } while(++i != fAllAnims.end());
 }
 
 // SharesPinsWith -----------------------------------------
 // ---------------
 hsBool plAGAnim::SharesPinsWith(const plAGAnim *anim) const
 {
-	int i, j;
-	for (i = 0; i < fApps.size(); i++)
-	{
-		for (j = 0; j < anim->fApps.size(); j++)
-		{
-			if (!strcmp(fApps[i]->GetChannelName(), anim->fApps[j]->GetChannelName()) &&
-				fApps[i]->CanBlend(anim->fApps[j]))
-			{
-				return true;
-			}
-		}
-	}
-	return false;
+    int i, j;
+    for (i = 0; i < fApps.size(); i++)
+    {
+        for (j = 0; j < anim->fApps.size(); j++)
+        {
+            if (!strcmp(fApps[i]->GetChannelName(), anim->fApps[j]->GetChannelName()) &&
+                fApps[i]->CanBlend(anim->fApps[j]))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -373,213 +373,213 @@ plATCAnim::plATCAnim(const char *name, double start, double end)
 // -----
 plATCAnim::~plATCAnim()
 {
-	for (MarkerMap::iterator it = fMarkers.begin(); it != fMarkers.end(); it++)
-		delete [] (char*)it->first;
-	fMarkers.clear();
-	for( LoopMap::iterator it2 = fLoops.begin(); it2 != fLoops.end(); it2++ )
-		delete [] (char *)it2->first;
-	fLoops.clear();
-	fStopPoints.clear();
+    for (MarkerMap::iterator it = fMarkers.begin(); it != fMarkers.end(); it++)
+        delete [] (char*)it->first;
+    fMarkers.clear();
+    for( LoopMap::iterator it2 = fLoops.begin(); it2 != fLoops.end(); it2++ )
+        delete [] (char *)it2->first;
+    fLoops.clear();
+    fStopPoints.clear();
 }
 
 // Read ---------------------------------------------
 // -----
 void plATCAnim::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAGAnim::Read(stream, mgr);
+    plAGAnim::Read(stream, mgr);
 
-	fInitial = stream->ReadSwapScalar();
-	fAutoStart = stream->Readbool();
-	fLoopStart = stream->ReadSwapScalar();
-	fLoopEnd = stream->ReadSwapScalar();
-	fLoop = stream->Readbool();
+    fInitial = stream->ReadSwapScalar();
+    fAutoStart = stream->Readbool();
+    fLoopStart = stream->ReadSwapScalar();
+    fLoopEnd = stream->ReadSwapScalar();
+    fLoop = stream->Readbool();
 
-	fEaseInType = stream->ReadByte();
-	fEaseInMin = stream->ReadSwapScalar();
-	fEaseInMax = stream->ReadSwapScalar();
-	fEaseInLength = stream->ReadSwapScalar();
-	fEaseOutType = stream->ReadByte();
-	fEaseOutMin = stream->ReadSwapScalar();
-	fEaseOutMax = stream->ReadSwapScalar();
-	fEaseOutLength = stream->ReadSwapScalar();
+    fEaseInType = stream->ReadByte();
+    fEaseInMin = stream->ReadSwapScalar();
+    fEaseInMax = stream->ReadSwapScalar();
+    fEaseInLength = stream->ReadSwapScalar();
+    fEaseOutType = stream->ReadByte();
+    fEaseOutMin = stream->ReadSwapScalar();
+    fEaseOutMax = stream->ReadSwapScalar();
+    fEaseOutLength = stream->ReadSwapScalar();
 
-	int i;
-	int numMarkers = stream->ReadSwap32();
-	for (i = 0; i < numMarkers; i++)
-	{
-		char *name = stream->ReadSafeString();
-		float time = stream->ReadSwapFloat();
-		fMarkers[name] = time;
-	}
+    int i;
+    int numMarkers = stream->ReadSwap32();
+    for (i = 0; i < numMarkers; i++)
+    {
+        char *name = stream->ReadSafeString();
+        float time = stream->ReadSwapFloat();
+        fMarkers[name] = time;
+    }
 
-	int numLoops = stream->ReadSwap32();
-	for (i = 0; i < numLoops; i++)
-	{
-		char *name = stream->ReadSafeString();
-		float begin = stream->ReadSwapScalar();
-		float end = stream->ReadSwapScalar();
-		fLoops[name] = std::pair<float,float>(begin,end);
-	}
+    int numLoops = stream->ReadSwap32();
+    for (i = 0; i < numLoops; i++)
+    {
+        char *name = stream->ReadSafeString();
+        float begin = stream->ReadSwapScalar();
+        float end = stream->ReadSwapScalar();
+        fLoops[name] = std::pair<float,float>(begin,end);
+    }
 
-	int numStops = stream->ReadSwap32();
-	for (i = 0; i < numStops; i++)
-		fStopPoints.push_back(stream->ReadSwapScalar());
+    int numStops = stream->ReadSwap32();
+    for (i = 0; i < numStops; i++)
+        fStopPoints.push_back(stream->ReadSwapScalar());
 }
 
 // Write ---------------------------------------------
 // ------
 void plATCAnim::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAGAnim::Write(stream, mgr);
+    plAGAnim::Write(stream, mgr);
 
-	stream->WriteSwapScalar(fInitial);
-	stream->Writebool(fAutoStart);
-	stream->WriteSwapScalar(fLoopStart);
-	stream->WriteSwapScalar(fLoopEnd);
-	stream->Writebool(fLoop);
+    stream->WriteSwapScalar(fInitial);
+    stream->Writebool(fAutoStart);
+    stream->WriteSwapScalar(fLoopStart);
+    stream->WriteSwapScalar(fLoopEnd);
+    stream->Writebool(fLoop);
 
-	stream->WriteByte(fEaseInType);
-	stream->WriteSwapScalar(fEaseInMin);
-	stream->WriteSwapScalar(fEaseInMax);
-	stream->WriteSwapScalar(fEaseInLength);
-	stream->WriteByte(fEaseOutType);
-	stream->WriteSwapScalar(fEaseOutMin);
-	stream->WriteSwapScalar(fEaseOutMax);
-	stream->WriteSwapScalar(fEaseOutLength);
+    stream->WriteByte(fEaseInType);
+    stream->WriteSwapScalar(fEaseInMin);
+    stream->WriteSwapScalar(fEaseInMax);
+    stream->WriteSwapScalar(fEaseInLength);
+    stream->WriteByte(fEaseOutType);
+    stream->WriteSwapScalar(fEaseOutMin);
+    stream->WriteSwapScalar(fEaseOutMax);
+    stream->WriteSwapScalar(fEaseOutLength);
 
-	stream->WriteSwap32(fMarkers.size());
-	for (MarkerMap::iterator it = fMarkers.begin(); it != fMarkers.end(); it++)
-	{
-		stream->WriteSafeString(it->first);
-		stream->WriteSwapFloat(it->second);
-	}
+    stream->WriteSwap32(fMarkers.size());
+    for (MarkerMap::iterator it = fMarkers.begin(); it != fMarkers.end(); it++)
+    {
+        stream->WriteSafeString(it->first);
+        stream->WriteSwapFloat(it->second);
+    }
 
-	stream->WriteSwap32(fLoops.size());
-	for (LoopMap::iterator loopIt = fLoops.begin(); loopIt != fLoops.end(); loopIt++)
-	{
-		stream->WriteSafeString(loopIt->first);
-		std::pair<float,float>& loop = loopIt->second;
-		stream->WriteSwapFloat(loop.first);
-		stream->WriteSwapFloat(loop.second);
-	}
+    stream->WriteSwap32(fLoops.size());
+    for (LoopMap::iterator loopIt = fLoops.begin(); loopIt != fLoops.end(); loopIt++)
+    {
+        stream->WriteSafeString(loopIt->first);
+        std::pair<float,float>& loop = loopIt->second;
+        stream->WriteSwapFloat(loop.first);
+        stream->WriteSwapFloat(loop.second);
+    }
 
-	int i;
-	stream->WriteSwap32(fStopPoints.size());
-	for (i = 0; i < fStopPoints.size(); i++)
-		stream->WriteSwapScalar(fStopPoints[i]);
+    int i;
+    stream->WriteSwap32(fStopPoints.size());
+    for (i = 0; i < fStopPoints.size(); i++)
+        stream->WriteSwapScalar(fStopPoints[i]);
 }
 
 // CheckLoop --------------
 // ----------
 void plATCAnim::CheckLoop()
 {
-	if (fLoopStart == fLoopEnd)
-	{
-		fLoopStart = fStart;
-		fLoopEnd = fEnd;
-	}
+    if (fLoopStart == fLoopEnd)
+    {
+        fLoopStart = fStart;
+        fLoopEnd = fEnd;
+    }
 }
 
 // AddLoop ------------------------------------------------------
 // --------
 void plATCAnim::AddLoop(const char *name, float start, float end)
 {
-	char *nameCpy = hsStrcpy(name);
-	fLoops[nameCpy] = std::pair<float,float>(start, end);
+    char *nameCpy = hsStrcpy(name);
+    fLoops[nameCpy] = std::pair<float,float>(start, end);
 }
 
 // GetLoop --------------------------------------------------------------
 // --------
 bool plATCAnim::GetLoop(const char *name, float &start, float &end) const
 {
-	LoopMap::const_iterator it = fLoops.find(name);
-	if (it != fLoops.end())
-	{
-		const std::pair<float,float>& loop = (*it).second;
-		start = loop.first;
-		end = loop.second;
-		return true;
-	}
+    LoopMap::const_iterator it = fLoops.find(name);
+    if (it != fLoops.end())
+    {
+        const std::pair<float,float>& loop = (*it).second;
+        start = loop.first;
+        end = loop.second;
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 // GetLoop --------------------------------------------------------
 // --------
 bool plATCAnim::GetLoop(UInt32 num, float &start, float &end) const
 {
-	if (num >= fLoops.size())
-		return false;
+    if (num >= fLoops.size())
+        return false;
 
-	LoopMap::const_iterator it = fLoops.begin();
+    LoopMap::const_iterator it = fLoops.begin();
 
-	while (num > 0)
-	{
-		it++;
-		num--;
-	}
-	const std::pair<float,float>& loop = (*it).second;
-	start = loop.first;
-	end = loop.second;
-	return true;
+    while (num > 0)
+    {
+        it++;
+        num--;
+    }
+    const std::pair<float,float>& loop = (*it).second;
+    start = loop.first;
+    end = loop.second;
+    return true;
 }
 
 // GetNumLoops ----------------------
 // ------------
 UInt32 plATCAnim::GetNumLoops() const
 {
-	return fLoops.size();
+    return fLoops.size();
 }
 
 // AddMarker ------------------------------------------
 // ----------
 void plATCAnim::AddMarker(const char *name, float time)
 {
-	char *nameCpy = hsStrcpy(name);
-	fMarkers[nameCpy] = time;
+    char *nameCpy = hsStrcpy(name);
+    fMarkers[nameCpy] = time;
 }
 
 // GetMarker -------------------------------------
 // ----------
 float plATCAnim::GetMarker(const char *name) const
 {
-	if (fMarkers.find(name) != fMarkers.end())
-		return (*fMarkers.find(name)).second;
-	return -1;
+    if (fMarkers.find(name) != fMarkers.end())
+        return (*fMarkers.find(name)).second;
+    return -1;
 }
 
 // CopyMarkerNames -------------------------------------
 // ----------------
 void plATCAnim::CopyMarkerNames(std::vector<char*> &out)
 {
-	MarkerMap::iterator it = fMarkers.begin();
+    MarkerMap::iterator it = fMarkers.begin();
 
-	for (; it != fMarkers.end(); it++)
-	{
-		out.push_back(hsStrcpy((*it).first));
-	}
+    for (; it != fMarkers.end(); it++)
+    {
+        out.push_back(hsStrcpy((*it).first));
+    }
 }
 
 // AddStopPoint ---------------------------
 // -------------
 void plATCAnim::AddStopPoint(hsScalar time)
 {
-	fStopPoints.push_back(time);
+    fStopPoints.push_back(time);
 }
 
 // NumStopPoints ----------------
 // --------------
 UInt32 plATCAnim::NumStopPoints()
 {
-	return fStopPoints.size();
+    return fStopPoints.size();
 }
 
 // GetStopPoint --------------------------
 // -------------
 hsScalar plATCAnim::GetStopPoint(UInt32 i)
 {
-	hsAssert(i < fStopPoints.size(), "Invalid index for GetStopPoint");
-	return fStopPoints[i];
+    hsAssert(i < fStopPoints.size(), "Invalid index for GetStopPoint");
+    return fStopPoints[i];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -598,7 +598,7 @@ plEmoteAnim::plEmoteAnim()
 // ctor ------------------------------------------------------------------------------
 // -----
 plEmoteAnim::plEmoteAnim(const char *animName, double begin, double end, float fadeIn,
-						 float fadeOut, BodyUsage bodyUsage)
+                         float fadeOut, BodyUsage bodyUsage)
 : plATCAnim(animName, begin, end),
   fFadeIn(fadeIn),
   fFadeOut(fadeOut),
@@ -610,12 +610,12 @@ plEmoteAnim::plEmoteAnim(const char *animName, double begin, double end, float f
 // -----
 void plEmoteAnim::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plATCAnim::Read(stream, mgr);
+    plATCAnim::Read(stream, mgr);
 
-	// plAGAnim::RegisterEmote(fName, this);
-	fFadeIn = stream->ReadSwapScalar();
-	fFadeOut = stream->ReadSwapScalar();
-	fBodyUsage = static_cast<BodyUsage>(stream->ReadByte());
+    // plAGAnim::RegisterEmote(fName, this);
+    fFadeIn = stream->ReadSwapScalar();
+    fFadeOut = stream->ReadSwapScalar();
+    fBodyUsage = static_cast<BodyUsage>(stream->ReadByte());
 
 }
 
@@ -623,31 +623,31 @@ void plEmoteAnim::Read(hsStream *stream, hsResMgr *mgr)
 // ------
 void plEmoteAnim::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plATCAnim::Write(stream, mgr);
-	stream->WriteSwapScalar(fFadeIn);
-	stream->WriteSwapScalar(fFadeOut);
-	stream->WriteByte(static_cast<UInt8>(fBodyUsage));
+    plATCAnim::Write(stream, mgr);
+    stream->WriteSwapScalar(fFadeIn);
+    stream->WriteSwapScalar(fFadeOut);
+    stream->WriteByte(static_cast<UInt8>(fBodyUsage));
 }
 
 // GetBodyUsage ----------------------------------------
 // -------------
 plEmoteAnim::BodyUsage plEmoteAnim::GetBodyUsage() const
 {
-	return fBodyUsage;
+    return fBodyUsage;
 }
 
 // GetFadeIn -----------------------
 // ----------
 float plEmoteAnim::GetFadeIn() const
 {
-	return fFadeIn;
+    return fFadeIn;
 }
 
 // GetFadeOut -----------------------
 // -----------
 float plEmoteAnim::GetFadeOut() const
 {
-	return fFadeOut;
+    return fFadeOut;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -661,7 +661,7 @@ float plEmoteAnim::GetFadeOut() const
 plAgeGlobalAnim::plAgeGlobalAnim()
 : plAGAnim()
 {
-	fGlobalVarName = nil;
+    fGlobalVarName = nil;
 }
 
 // ctor --------------------------------------------------------------------
@@ -676,13 +676,13 @@ plAgeGlobalAnim::plAgeGlobalAnim(const char *name, double start, double end)
 // -----
 plAgeGlobalAnim::~plAgeGlobalAnim()
 {
-	delete [] fGlobalVarName;
+    delete [] fGlobalVarName;
 }
 
 void plAgeGlobalAnim::SetGlobalVarName(char *name) 
 { 
-	delete [] fGlobalVarName; 
-	fGlobalVarName = hsStrcpy(name); 
+    delete [] fGlobalVarName; 
+    fGlobalVarName = hsStrcpy(name); 
 }
 
 
@@ -690,18 +690,18 @@ void plAgeGlobalAnim::SetGlobalVarName(char *name)
 // -----
 void plAgeGlobalAnim::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAGAnim::Read(stream, mgr);
+    plAGAnim::Read(stream, mgr);
 
-	fGlobalVarName = stream->ReadSafeString();
+    fGlobalVarName = stream->ReadSafeString();
 }
 
 // Write ---------------------------------------------------
 // ------
 void plAgeGlobalAnim::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAGAnim::Write(stream, mgr);
+    plAGAnim::Write(stream, mgr);
 
-	stream->WriteSafeString(fGlobalVarName);
+    stream->WriteSafeString(fGlobalVarName);
 }
 
 
@@ -713,54 +713,54 @@ void plAgeGlobalAnim::Write(hsStream *stream, hsResMgr *mgr)
 
 // GetStartToEndTransform -----------------------------------------------
 bool GetStartToEndTransform(const plAGAnim *anim, hsMatrix44 *startToEnd,
-							hsMatrix44 *endToStart, const char *channelName)
+                            hsMatrix44 *endToStart, const char *channelName)
 {
-	double start = 0.0f;	// assumed
-	double end = anim->GetEnd();
+    double start = 0.0f;    // assumed
+    double end = anim->GetEnd();
 
-	GetRelativeTransform(anim, start, end, startToEnd, endToStart, channelName);
-	return true;
+    GetRelativeTransform(anim, start, end, startToEnd, endToStart, channelName);
+    return true;
 }
 
 // GetRelativeTransform ---------------------------------------------------
 bool GetRelativeTransform(const plAGAnim *anim, double timeA, double timeB,
-						  hsMatrix44 *a2b, hsMatrix44 *b2a, const char *channelName)
+                          hsMatrix44 *a2b, hsMatrix44 *b2a, const char *channelName)
 {
-	bool result = false;
-	plAGChannel *maybeChannel = anim->GetChannel(channelName);
-	hsAssert(maybeChannel, "Couldn't find channel with given name.");
-	if(maybeChannel)
-	{
-		plMatrixChannel *channel = plMatrixChannel::ConvertNoRef(maybeChannel);
-		hsAssert(channel, "Found channel, but it's not a matrix channel.");
-		
-		if(channel)
-		{
-			hsMatrix44 matA;
-			hsMatrix44 matB;
+    bool result = false;
+    plAGChannel *maybeChannel = anim->GetChannel(channelName);
+    hsAssert(maybeChannel, "Couldn't find channel with given name.");
+    if(maybeChannel)
+    {
+        plMatrixChannel *channel = plMatrixChannel::ConvertNoRef(maybeChannel);
+        hsAssert(channel, "Found channel, but it's not a matrix channel.");
+        
+        if(channel)
+        {
+            hsMatrix44 matA;
+            hsMatrix44 matB;
 
-			channel->Value(matA, timeA);
-			channel->Value(matB, timeB);
+            channel->Value(matA, timeA);
+            channel->Value(matB, timeB);
 
-			if(a2b)					// requested a transform from point A to point B
-			{
-				hsMatrix44 invA;
-				matA.GetInverse(&invA);
-				*a2b = invA * matB;
-			}
-			if(b2a)					// requested a transform from point B to point A
-			{
-				hsMatrix44 invB;
-				matB.GetInverse(&invB);
-				*b2a = invB * matA;
-				
-				if(a2b)
-				{
-					hsMatrix44 invB2;
-					a2b->GetInverse(&invB2);
-				}
-			}
-		}
-	}
-	return result;
+            if(a2b)                 // requested a transform from point A to point B
+            {
+                hsMatrix44 invA;
+                matA.GetInverse(&invA);
+                *a2b = invA * matB;
+            }
+            if(b2a)                 // requested a transform from point B to point A
+            {
+                hsMatrix44 invB;
+                matB.GetInverse(&invB);
+                *b2a = invB * matA;
+                
+                if(a2b)
+                {
+                    hsMatrix44 invB2;
+                    a2b->GetInverse(&invB2);
+                }
+            }
+        }
+    }
+    return result;
 }

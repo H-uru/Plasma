@@ -35,181 +35,181 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plResponderGetComp& plResponderGetComp::Instance()
 {
-	static plResponderGetComp theInstance;
-	return theInstance;
+    static plResponderGetComp theInstance;
+    return theInstance;
 }
 
 bool plResponderGetComp::GetComp(IParamBlock2 *pb, int nodeID, int compID, ClassIDs *classIDs)
 {
-	fPB = pb;
-	fNodeID = nodeID;
-	fCompID = compID;
-	fClassIDs = classIDs;
+    fPB = pb;
+    fNodeID = nodeID;
+    fCompID = compID;
+    fClassIDs = classIDs;
 
-	plMaxAccelerators::Disable();
+    plMaxAccelerators::Disable();
 
-	int ret = DialogBox(hInstance,
-						MAKEINTRESOURCE(IDD_COMP_RESPOND_ANIMPICK),
-						GetCOREInterface()->GetMAXHWnd(),
-						ForwardDlgProc);
+    int ret = DialogBox(hInstance,
+                        MAKEINTRESOURCE(IDD_COMP_RESPOND_ANIMPICK),
+                        GetCOREInterface()->GetMAXHWnd(),
+                        ForwardDlgProc);
 
-	plMaxAccelerators::Enable();
+    plMaxAccelerators::Enable();
 
-	return (ret != 0);
+    return (ret != 0);
 }
 
 plComponentBase *plResponderGetComp::GetSavedComp(IParamBlock2 *pb, int nodeID, int compID, bool convertTime)
 {
-	plMaxNodeBase *node = (plMaxNodeBase*)pb->GetReferenceTarget(nodeID);
-	// This value could be whack, only use if node is valid
-	plMaxNodeBase *comp = (plMaxNodeBase*)pb->GetReferenceTarget(compID);
+    plMaxNodeBase *node = (plMaxNodeBase*)pb->GetReferenceTarget(nodeID);
+    // This value could be whack, only use if node is valid
+    plMaxNodeBase *comp = (plMaxNodeBase*)pb->GetReferenceTarget(compID);
 
-	if (!node || (convertTime && !node->CanConvert()) || !comp)
-		return nil;
+    if (!node || (convertTime && !node->CanConvert()) || !comp)
+        return nil;
 
-	int numComps = node->NumAttachedComponents();
-	for (int i = 0; i < numComps; i++)
-	{
-		plComponentBase *thisComp = node->GetAttachedComponent(i);
-		if (thisComp->GetINode() == comp)
-			return thisComp;
-	}
+    int numComps = node->NumAttachedComponents();
+    for (int i = 0; i < numComps; i++)
+    {
+        plComponentBase *thisComp = node->GetAttachedComponent(i);
+        if (thisComp->GetINode() == comp)
+            return thisComp;
+    }
 
-	return nil;
+    return nil;
 }
 void plResponderGetComp::IFindCompsRecur(plMaxNodeBase *node, NodeSet& nodes)
 {
-	plComponentBase *comp = node->ConvertToComponent();
-	if (comp)
-	{
-		// If we're not filtering, or we are and this component is in our accepted list, add it
-		if (!fClassIDs ||
-			std::find(fClassIDs->begin(), fClassIDs->end(), comp->ClassID()) != fClassIDs->end())
-		{
-			nodes.insert(node);
-		}
-	}
+    plComponentBase *comp = node->ConvertToComponent();
+    if (comp)
+    {
+        // If we're not filtering, or we are and this component is in our accepted list, add it
+        if (!fClassIDs ||
+            std::find(fClassIDs->begin(), fClassIDs->end(), comp->ClassID()) != fClassIDs->end())
+        {
+            nodes.insert(node);
+        }
+    }
 
-	for (int i = 0; i < node->NumberOfChildren(); i++)
-		IFindCompsRecur((plMaxNodeBase*)node->GetChildNode(i), nodes);
+    for (int i = 0; i < node->NumberOfChildren(); i++)
+        IFindCompsRecur((plMaxNodeBase*)node->GetChildNode(i), nodes);
 }
 
 void plResponderGetComp::ILoadNodes(plMaxNodeBase *compNode, HWND hDlg)
 {
-	HWND hNodes = GetDlgItem(hDlg, IDC_OBJ_LIST);
-	ListBox_ResetContent(hNodes);
+    HWND hNodes = GetDlgItem(hDlg, IDC_OBJ_LIST);
+    ListBox_ResetContent(hNodes);
 
-	plComponentBase *comp = compNode ? compNode->ConvertToComponent() : nil;
-	if (!comp)
-		return;
+    plComponentBase *comp = compNode ? compNode->ConvertToComponent() : nil;
+    if (!comp)
+        return;
 
-	plMaxNodeBase *savedNode = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
+    plMaxNodeBase *savedNode = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
 
-	for (int i = 0; i < comp->NumTargets(); i++)
-	{
-		plMaxNodeBase *node = comp->GetTarget(i);
-		if (node)
-		{
-			int idx = ListBox_AddString(hNodes, node->GetName());
-			ListBox_SetItemData(hNodes, idx, node);
+    for (int i = 0; i < comp->NumTargets(); i++)
+    {
+        plMaxNodeBase *node = comp->GetTarget(i);
+        if (node)
+        {
+            int idx = ListBox_AddString(hNodes, node->GetName());
+            ListBox_SetItemData(hNodes, idx, node);
 
-			if (savedNode == node)
-				ListBox_SetCurSel(hNodes, idx);
-		}
-	}
+            if (savedNode == node)
+                ListBox_SetCurSel(hNodes, idx);
+        }
+    }
 }
 
 BOOL CALLBACK plResponderGetComp::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	return Instance().DlgProc(hDlg, msg, wParam, lParam);
+    return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
 BOOL plResponderGetComp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch (msg)
-	{
-	case WM_INITDIALOG:
-		{
-			NodeSet nodes;
-			IFindCompsRecur((plMaxNodeBase*)GetCOREInterface()->GetRootNode(), nodes);
+    switch (msg)
+    {
+    case WM_INITDIALOG:
+        {
+            NodeSet nodes;
+            IFindCompsRecur((plMaxNodeBase*)GetCOREInterface()->GetRootNode(), nodes);
 
-			HWND hComps = GetDlgItem(hDlg, IDC_COMP_LIST);
+            HWND hComps = GetDlgItem(hDlg, IDC_COMP_LIST);
 
-			plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
+            plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
 
-			for (NodeSet::iterator it = nodes.begin(); it != nodes.end(); it++)
-			{
-				int idx = ListBox_AddString(hComps, (*it)->GetName());
-				ListBox_SetItemData(hComps, idx, *it);
+            for (NodeSet::iterator it = nodes.begin(); it != nodes.end(); it++)
+            {
+                int idx = ListBox_AddString(hComps, (*it)->GetName());
+                ListBox_SetItemData(hComps, idx, *it);
 
-				if (*it == node)
-					ListBox_SetCurSel(hComps, idx);
-			}
+                if (*it == node)
+                    ListBox_SetCurSel(hComps, idx);
+            }
 
-			ILoadNodes(node, hDlg);
-		}
-		return TRUE;
+            ILoadNodes(node, hDlg);
+        }
+        return TRUE;
 
-	case WM_COMMAND:
-		if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, 0);
-			return TRUE;
-		}
-		else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDOK)
-		{
-			// Get the selected node
-			HWND hNode = GetDlgItem(hDlg, IDC_OBJ_LIST);
-			int idx = ListBox_GetCurSel(hNode);
-			plMaxNodeBase *node = nil;
-			if (idx != LB_ERR)
-				node = (plMaxNodeBase*)ListBox_GetItemData(hNode, idx);
+    case WM_COMMAND:
+        if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, 0);
+            return TRUE;
+        }
+        else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDOK)
+        {
+            // Get the selected node
+            HWND hNode = GetDlgItem(hDlg, IDC_OBJ_LIST);
+            int idx = ListBox_GetCurSel(hNode);
+            plMaxNodeBase *node = nil;
+            if (idx != LB_ERR)
+                node = (plMaxNodeBase*)ListBox_GetItemData(hNode, idx);
 
-			// Get the selected component
-			HWND hComp = GetDlgItem(hDlg, IDC_COMP_LIST);
-			idx = ListBox_GetCurSel(hComp);
-			plMaxNodeBase *comp = nil;
-			if (idx != LB_ERR)
-				comp = (plMaxNodeBase*)ListBox_GetItemData(hComp, idx);
+            // Get the selected component
+            HWND hComp = GetDlgItem(hDlg, IDC_COMP_LIST);
+            idx = ListBox_GetCurSel(hComp);
+            plMaxNodeBase *comp = nil;
+            if (idx != LB_ERR)
+                comp = (plMaxNodeBase*)ListBox_GetItemData(hComp, idx);
 
-			// If both were selected, save them in the PB and as the last setting
-			if (node && comp)
-			{
+            // If both were selected, save them in the PB and as the last setting
+            if (node && comp)
+            {
 #if 0
-				if (fType == kFindAnim)
-				{
-					fLastAnimObj = obj->GetHandle();
-					fLastAnimComp = comp->GetHandle();
-				}
-				else if (fType == kFindSound)
-				{
-					fLastSoundObj = obj->GetHandle();
-					fLastSoundComp = comp->GetHandle();
-				}
+                if (fType == kFindAnim)
+                {
+                    fLastAnimObj = obj->GetHandle();
+                    fLastAnimComp = comp->GetHandle();
+                }
+                else if (fType == kFindSound)
+                {
+                    fLastSoundObj = obj->GetHandle();
+                    fLastSoundComp = comp->GetHandle();
+                }
 #endif
-				fPB->SetValue(fNodeID, 0, (ReferenceTarget*)node);
-				fPB->SetValue(fCompID, 0, (ReferenceTarget*)comp);
-				
-				EndDialog(hDlg, 1);
-			}
-			else
-				EndDialog(hDlg, 0);
+                fPB->SetValue(fNodeID, 0, (ReferenceTarget*)node);
+                fPB->SetValue(fCompID, 0, (ReferenceTarget*)comp);
+                
+                EndDialog(hDlg, 1);
+            }
+            else
+                EndDialog(hDlg, 0);
 
-			return TRUE;
-		}
-		else if (HIWORD(wParam) == LBN_SELCHANGE)
-		{
-			if (LOWORD(wParam) == IDC_COMP_LIST)
-			{
-				int idx = ListBox_GetCurSel((HWND)lParam);
-				plMaxNodeBase *node = (plMaxNodeBase*)ListBox_GetItemData((HWND)lParam, idx);
-				ILoadNodes(node, hDlg);
-			}
-		}
-		break;
-	}
+            return TRUE;
+        }
+        else if (HIWORD(wParam) == LBN_SELCHANGE)
+        {
+            if (LOWORD(wParam) == IDC_COMP_LIST)
+            {
+                int idx = ListBox_GetCurSel((HWND)lParam);
+                plMaxNodeBase *node = (plMaxNodeBase*)ListBox_GetItemData((HWND)lParam, idx);
+                ILoadNodes(node, hDlg);
+            }
+        }
+        break;
+    }
 
-	return FALSE;
+    return FALSE;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -218,124 +218,124 @@ BOOL plResponderGetComp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
 
 void plResponderCompNode::Init(IParamBlock2 *pb, int compID, int nodeID, int compResID, int nodeResID, ClassIDs *compCIDs)
 {
-	fPB = pb;
-	fCompID = compID;
-	fNodeID = nodeID;
-	fCompResID = compResID;
-	fNodeResID = nodeResID;
+    fPB = pb;
+    fCompID = compID;
+    fNodeID = nodeID;
+    fCompResID = compResID;
+    fNodeResID = nodeResID;
 
-	if (compCIDs)
-		fCompCIDs = *compCIDs;
+    if (compCIDs)
+        fCompCIDs = *compCIDs;
 }
 
 void plResponderCompNode::InitDlg(HWND hWnd)
 {
-	IValidate();
+    IValidate();
 
-	IUpdateNodeButton(hWnd);
-	IUpdateCompButton(hWnd);
+    IUpdateNodeButton(hWnd);
+    IUpdateCompButton(hWnd);
 }
 
 bool plResponderCompNode::IValidate()
 {
-	plMaxNodeBase *savedComp = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
-	plComponentBase *comp = savedComp ? savedComp->ConvertToComponent() : nil;
-	plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
-	if (comp && node)
-	{
-		// Make sure the selected comp has the correct CID
-		if (fCompCIDs.size() > 0)
-		{
-			Class_ID compCID = comp->ClassID();
-			bool foundCID = false;
-			for (int i = 0; i < fCompCIDs.size(); i++)
-			{
-				if (fCompCIDs[i] == compCID)
-					foundCID = true;
-			}
+    plMaxNodeBase *savedComp = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
+    plComponentBase *comp = savedComp ? savedComp->ConvertToComponent() : nil;
+    plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
+    if (comp && node)
+    {
+        // Make sure the selected comp has the correct CID
+        if (fCompCIDs.size() > 0)
+        {
+            Class_ID compCID = comp->ClassID();
+            bool foundCID = false;
+            for (int i = 0; i < fCompCIDs.size(); i++)
+            {
+                if (fCompCIDs[i] == compCID)
+                    foundCID = true;
+            }
 
-			if (!foundCID)
-			{
-				fPB->SetValue(fCompID, 0, (INode*)nil);
-				fPB->SetValue(fNodeID, 0, (INode*)nil);
-				return false;
-			}
-		}
+            if (!foundCID)
+            {
+                fPB->SetValue(fCompID, 0, (INode*)nil);
+                fPB->SetValue(fNodeID, 0, (INode*)nil);
+                return false;
+            }
+        }
 
-		// Make sure the comp is really attached to the node
-		if (comp->IsTarget(node))
-			return true;
-		else
-			fPB->SetValue(fNodeID, 0, (INode*)nil);
-	}
+        // Make sure the comp is really attached to the node
+        if (comp->IsTarget(node))
+            return true;
+        else
+            fPB->SetValue(fNodeID, 0, (INode*)nil);
+    }
 
-	return false;
+    return false;
 }
 
 void plResponderCompNode::CompButtonPress(HWND hWnd)
 {
-	plPick::Node(fPB, fCompID, &fCompCIDs, true, false);
+    plPick::Node(fPB, fCompID, &fCompCIDs, true, false);
 
-	IUpdateCompButton(hWnd);
-	IUpdateNodeButton(hWnd);
+    IUpdateCompButton(hWnd);
+    IUpdateNodeButton(hWnd);
 }
 
 void plResponderCompNode::NodeButtonPress(HWND hWnd)
 {
-	plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
-	plComponentBase *comp = node ? node->ConvertToComponent() : nil;
-	if (comp)
-		plPick::CompTargets(fPB, fNodeID, comp);
+    plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
+    plComponentBase *comp = node ? node->ConvertToComponent() : nil;
+    if (comp)
+        plPick::CompTargets(fPB, fNodeID, comp);
 
-	IUpdateNodeButton(hWnd);
+    IUpdateNodeButton(hWnd);
 }
 
 void plResponderCompNode::IUpdateCompButton(HWND hWnd)
 {
-	HWND hComp = GetDlgItem(hWnd, fCompResID);
+    HWND hComp = GetDlgItem(hWnd, fCompResID);
 
-	plMaxNodeBase *savedComp = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
+    plMaxNodeBase *savedComp = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
 
-	if (savedComp)
-		SetWindowText(hComp, savedComp->GetName());
-	else
-		SetWindowText(hComp, "(none)");
+    if (savedComp)
+        SetWindowText(hComp, savedComp->GetName());
+    else
+        SetWindowText(hComp, "(none)");
 }
 
 void plResponderCompNode::IUpdateNodeButton(HWND hWnd)
 {
-	HWND hNode = GetDlgItem(hWnd, fNodeResID);
+    HWND hNode = GetDlgItem(hWnd, fNodeResID);
 
-	// If there is no component, disable the node button
-	plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
-	plComponentBase *comp = node ? node->ConvertToComponent() : nil;
-	if (!comp)
-	{
-		EnableWindow(hNode, FALSE);
-		SetWindowText(hNode, "(none)");
-		return;
-	}
-	EnableWindow(hNode, TRUE);
+    // If there is no component, disable the node button
+    plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
+    plComponentBase *comp = node ? node->ConvertToComponent() : nil;
+    if (!comp)
+    {
+        EnableWindow(hNode, FALSE);
+        SetWindowText(hNode, "(none)");
+        return;
+    }
+    EnableWindow(hNode, TRUE);
 
-	plMaxNodeBase *objNode = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
-	if (objNode && comp->IsTarget(objNode))
-		SetWindowText(hNode, objNode->GetName());
-	else
-		SetWindowText(hNode, "(none)");
+    plMaxNodeBase *objNode = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
+    if (objNode && comp->IsTarget(objNode))
+        SetWindowText(hNode, objNode->GetName());
+    else
+        SetWindowText(hNode, "(none)");
 }
 
 bool plResponderCompNode::GetCompAndNode(plComponentBase*& comp, plMaxNodeBase*& node)
 {
-	if (!IValidate())
-	{
-		comp = nil;
-		node = nil;
-		return false;
-	}
+    if (!IValidate())
+    {
+        comp = nil;
+        node = nil;
+        return false;
+    }
 
-	plMaxNodeBase *savedComp = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
-	comp = savedComp ? savedComp->ConvertToComponent() : nil;
-	node = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
+    plMaxNodeBase *savedComp = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
+    comp = savedComp ? savedComp->ConvertToComponent() : nil;
+    node = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
 
-	return true;
+    return true;
 }

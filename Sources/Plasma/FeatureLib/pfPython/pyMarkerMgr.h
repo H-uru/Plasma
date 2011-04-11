@@ -40,36 +40,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyMarkerMgr
 {
 protected:
-	pyMarkerMgr() {}
+    pyMarkerMgr() {}
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptMarkerMgr);
-	PYTHON_CLASS_NEW_DEFINITION;
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyMarkerMgr object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyMarkerMgr); // converts a PyObject to a pyMarkerMgr (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptMarkerMgr);
+    PYTHON_CLASS_NEW_DEFINITION;
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyMarkerMgr object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyMarkerMgr); // converts a PyObject to a pyMarkerMgr (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
-	static void AddPlasmaConstantsClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaConstantsClasses(PyObject *m);
 
-	void AddMarker(double x, double y, double z, UInt32 id, bool justCreated);
-	void RemoveMarker(UInt32 id);
-	void RemoveAllMarkers();
+    void AddMarker(double x, double y, double z, UInt32 id, bool justCreated);
+    void RemoveMarker(UInt32 id);
+    void RemoveAllMarkers();
 
-	void SetSelectedMarker(UInt32 markerID);
-	UInt32 GetSelectedMarker();
-	void ClearSelectedMarker();
+    void SetSelectedMarker(UInt32 markerID);
+    UInt32 GetSelectedMarker();
+    void ClearSelectedMarker();
 
-	void SetMarkersRespawn(bool respawn);
-	bool GetMarkersRespawn();
+    void SetMarkersRespawn(bool respawn);
+    bool GetMarkersRespawn();
 
-	void CaptureQuestMarker(UInt32 id, bool captured); // for QUEST games (no teams)
-	void CaptureTeamMarker(UInt32 id, int team); // for TEAM games (0 = not captured)
-	
-	// Shows your markers locally, so you can see where they are
-	void ShowMarkersLocal();
-	void HideMarkersLocal();
-	bool AreLocalMarkersShowing();
+    void CaptureQuestMarker(UInt32 id, bool captured); // for QUEST games (no teams)
+    void CaptureTeamMarker(UInt32 id, int team); // for TEAM games (0 = not captured)
+    
+    // Shows your markers locally, so you can see where they are
+    void ShowMarkersLocal();
+    void HideMarkersLocal();
+    bool AreLocalMarkersShowing();
 };
 
 

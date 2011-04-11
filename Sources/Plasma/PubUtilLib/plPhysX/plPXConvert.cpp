@@ -27,40 +27,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 bool plPXConvert::Validate()
 {
-	NxVec3 nxVec;
-	hsVector3 plVec;
+    NxVec3 nxVec;
+    hsVector3 plVec;
 
-	int nxVecXOffset = ((char*)&nxVec.x) - ((char*)&nxVec);
-	int nxVecYOffset = ((char*)&nxVec.y) - ((char*)&nxVec);
-	int nxVecZOffset = ((char*)&nxVec.z) - ((char*)&nxVec);
+    int nxVecXOffset = ((char*)&nxVec.x) - ((char*)&nxVec);
+    int nxVecYOffset = ((char*)&nxVec.y) - ((char*)&nxVec);
+    int nxVecZOffset = ((char*)&nxVec.z) - ((char*)&nxVec);
 
-	int plVecXOffset = ((char*)&plVec.fX) - ((char*)&plVec);
-	int plVecYOffset = ((char*)&plVec.fY) - ((char*)&plVec);
-	int plVecZOffset = ((char*)&plVec.fZ) - ((char*)&plVec);
+    int plVecXOffset = ((char*)&plVec.fX) - ((char*)&plVec);
+    int plVecYOffset = ((char*)&plVec.fY) - ((char*)&plVec);
+    int plVecZOffset = ((char*)&plVec.fZ) - ((char*)&plVec);
 
-	NxQuat nxQuat;
-	hsQuat plQuat;
+    NxQuat nxQuat;
+    hsQuat plQuat;
 
-	int nxQuatXOffset = ((char*)&nxQuat.x) - ((char*)&nxQuat);
-	int nxQuatYOffset = ((char*)&nxQuat.y) - ((char*)&nxQuat);
-	int nxQuatZOffset = ((char*)&nxQuat.z) - ((char*)&nxQuat);
-	int nxQuatWOffset = ((char*)&nxQuat.w) - ((char*)&nxQuat);
+    int nxQuatXOffset = ((char*)&nxQuat.x) - ((char*)&nxQuat);
+    int nxQuatYOffset = ((char*)&nxQuat.y) - ((char*)&nxQuat);
+    int nxQuatZOffset = ((char*)&nxQuat.z) - ((char*)&nxQuat);
+    int nxQuatWOffset = ((char*)&nxQuat.w) - ((char*)&nxQuat);
 
-	int plQuatXOffset = ((char*)&plQuat.fX) - ((char*)&plQuat);
-	int plQuatYOffset = ((char*)&plQuat.fY) - ((char*)&plQuat);
-	int plQuatZOffset = ((char*)&plQuat.fZ) - ((char*)&plQuat);
-	int plQuatWOffset = ((char*)&plQuat.fW) - ((char*)&plQuat);
+    int plQuatXOffset = ((char*)&plQuat.fX) - ((char*)&plQuat);
+    int plQuatYOffset = ((char*)&plQuat.fY) - ((char*)&plQuat);
+    int plQuatZOffset = ((char*)&plQuat.fZ) - ((char*)&plQuat);
+    int plQuatWOffset = ((char*)&plQuat.fW) - ((char*)&plQuat);
 
-	bool offsetsOK =
-		nxVecXOffset == plVecXOffset &&
-		nxVecYOffset == plVecYOffset &&
-		nxVecZOffset == plVecZOffset &&
-		nxQuatXOffset == plQuatXOffset &&
-		nxQuatYOffset == plQuatYOffset &&
-		nxQuatZOffset == plQuatZOffset &&
-		nxQuatWOffset == plQuatWOffset;
+    bool offsetsOK =
+        nxVecXOffset == plVecXOffset &&
+        nxVecYOffset == plVecYOffset &&
+        nxVecZOffset == plVecZOffset &&
+        nxQuatXOffset == plQuatXOffset &&
+        nxQuatYOffset == plQuatYOffset &&
+        nxQuatZOffset == plQuatZOffset &&
+        nxQuatWOffset == plQuatWOffset;
 
-	hsAssert(offsetsOK, "PhysX or Plasma offsets have changed, need to rewrite conversion code");
+    hsAssert(offsetsOK, "PhysX or Plasma offsets have changed, need to rewrite conversion code");
 
-	return offsetsOK;
+    return offsetsOK;
 }

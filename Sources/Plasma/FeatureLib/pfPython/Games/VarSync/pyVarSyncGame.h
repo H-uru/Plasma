@@ -43,27 +43,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyVarSyncGame : public pyGameCli
 {
 protected:
-	pyVarSyncGame();
-	pyVarSyncGame(pfGameCli* client);
+    pyVarSyncGame();
+    pyVarSyncGame(pfGameCli* client);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVarSyncGame);
-	static PyObject* New(pfGameCli* client);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncGame object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncGame); // converts a PyObject to a pyVarSyncGame (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVarSyncGame);
+    static PyObject* New(pfGameCli* client);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncGame object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncGame); // converts a PyObject to a pyVarSyncGame (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-	static bool IsVarSyncGame(std::wstring guid);
-	static void JoinCommonVarSyncGame(pyKey& callbackKey);
+    static bool IsVarSyncGame(std::wstring guid);
+    static void JoinCommonVarSyncGame(pyKey& callbackKey);
 
-	void SetStringVar(unsigned long id, std::wstring val);
-	void SetNumericVar(unsigned long id, double val);
-	void RequestAllVars();
-	void CreateStringVar(std::wstring name, std::wstring val);
-	void CreateNumericVar(std::wstring name, double val);
+    void SetStringVar(unsigned long id, std::wstring val);
+    void SetNumericVar(unsigned long id, double val);
+    void RequestAllVars();
+    void CreateStringVar(std::wstring name, std::wstring val);
+    void CreateNumericVar(std::wstring name, double val);
 };
 
 #endif // pyVarSyncGame_h

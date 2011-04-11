@@ -35,92 +35,92 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void pyMarkerMgr::AddMarker(double x, double y, double z, UInt32 id, bool justCreated)
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->AddMarker(x, y, z, id, justCreated);
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->AddMarker(x, y, z, id, justCreated);
 }
 
 void pyMarkerMgr::RemoveMarker(UInt32 id)
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->RemoveMarker(id);
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->RemoveMarker(id);
 }
 
 void pyMarkerMgr::RemoveAllMarkers()
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->RemoveAllMarkers();
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->RemoveAllMarkers();
 }
 
 void pyMarkerMgr::SetSelectedMarker(UInt32 markerID)
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->SetSelectedMarker(markerID);
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->SetSelectedMarker(markerID);
 }
 
 UInt32 pyMarkerMgr::GetSelectedMarker()
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		return mmi->GetSelectedMarker();
-	return 0;
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        return mmi->GetSelectedMarker();
+    return 0;
 }
 
 void pyMarkerMgr::ClearSelectedMarker()
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->ClearSelectedMarker();
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->ClearSelectedMarker();
 }
 
 void pyMarkerMgr::SetMarkersRespawn(bool respawn)
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->SetMarkersRespawn(respawn);
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->SetMarkersRespawn(respawn);
 }
 
 bool pyMarkerMgr::GetMarkersRespawn()
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		return mmi->GetMarkersRespawn();
-	return false;
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        return mmi->GetMarkersRespawn();
+    return false;
 }
 
 void pyMarkerMgr::CaptureQuestMarker(UInt32 id, bool captured)
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->CaptureMarker(id, captured);
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->CaptureMarker(id, captured);
 }
 
 void pyMarkerMgr::CaptureTeamMarker(UInt32 id, int team)
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->CaptureMarker(id, team);
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->CaptureMarker(id, team);
 }
 
 // Shows your markers locally, so you can see where they are
 void pyMarkerMgr::ShowMarkersLocal()
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->LocalShowMarkers(true);
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->LocalShowMarkers(true);
 }
 
 void pyMarkerMgr::HideMarkersLocal()
 {
-	pfMarkerMgr* mmi = pfMarkerMgr::Instance();
-	if (mmi)
-		mmi->LocalShowMarkers(false);
+    pfMarkerMgr* mmi = pfMarkerMgr::Instance();
+    if (mmi)
+        mmi->LocalShowMarkers(false);
 }
 
 bool pyMarkerMgr::AreLocalMarkersShowing()
 {
-	return pfMarkerMgr::Instance()->AreLocalMarkersShowing();
+    return pfMarkerMgr::Instance()->AreLocalMarkersShowing();
 }

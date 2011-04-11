@@ -36,37 +36,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 
-hsScalar plInterestingModifier::fInterestRadius		= 100.0f;
-hsScalar plInterestingModifier::fInterestWeight		= 1.0f;
+hsScalar plInterestingModifier::fInterestRadius     = 100.0f;
+hsScalar plInterestingModifier::fInterestWeight     = 1.0f;
 
 
 hsBool plInterestingModifier::IEval(double secs, hsScalar del, UInt32 dirty)
 {
-	for (int i=0; i < GetNumTargets(); i++)
-	{
-		if( GetTarget(i) && GetTarget(i)->GetDrawInterface() )
-		{
-			const hsBounds3Ext& targBnd = GetTarget(i)->GetDrawInterface()->GetWorldBounds();
-			if( targBnd.GetType() == kBoundsNormal )
-			{
-				plInterestingModMsg* pMsg = TRACKED_NEW plInterestingModMsg;
-				pMsg->fPos= GetTarget(i)->GetDrawInterface()->GetWorldBounds().GetCenter();
-				pMsg->fSize = GetTarget(i)->GetDrawInterface()->GetWorldBounds().GetMaxDim();
-				pMsg->fRadius = fInterestRadius;
-				pMsg->fWeight = fInterestWeight;
-				pMsg->fObj = GetTarget(i)->GetKey();
-				pMsg->fType = GetType();
-				pMsg->SetBCastFlag( plMessage::kPropagateToModifiers );
-				plgDispatch::MsgSend( pMsg );
-			}
-		}
-	}
-	return true;
+    for (int i=0; i < GetNumTargets(); i++)
+    {
+        if( GetTarget(i) && GetTarget(i)->GetDrawInterface() )
+        {
+            const hsBounds3Ext& targBnd = GetTarget(i)->GetDrawInterface()->GetWorldBounds();
+            if( targBnd.GetType() == kBoundsNormal )
+            {
+                plInterestingModMsg* pMsg = TRACKED_NEW plInterestingModMsg;
+                pMsg->fPos= GetTarget(i)->GetDrawInterface()->GetWorldBounds().GetCenter();
+                pMsg->fSize = GetTarget(i)->GetDrawInterface()->GetWorldBounds().GetMaxDim();
+                pMsg->fRadius = fInterestRadius;
+                pMsg->fWeight = fInterestWeight;
+                pMsg->fObj = GetTarget(i)->GetKey();
+                pMsg->fType = GetType();
+                pMsg->SetBCastFlag( plMessage::kPropagateToModifiers );
+                plgDispatch::MsgSend( pMsg );
+            }
+        }
+    }
+    return true;
 }
 
 void plInterestingModifier::AddTarget(plSceneObject* so)
 {
-	fTarget = so;
-	plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
+    fTarget = so;
+    plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 

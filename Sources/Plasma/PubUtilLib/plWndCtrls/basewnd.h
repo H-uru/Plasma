@@ -36,23 +36,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct basewnd
 {
-	static wchar_t szClassName[];
-	static LRESULT CALLBACK WindowProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
-	static void Initialize(HINSTANCE hAppInstance,UINT style=0);
-	
-	HWND hwnd;
-	ULONG mcRef;
-	basewnd();
-	virtual ~basewnd();
-	
+    static wchar_t szClassName[];
+    static LRESULT CALLBACK WindowProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
+    static void Initialize(HINSTANCE hAppInstance,UINT style=0);
+    
+    HWND hwnd;
+    ULONG mcRef;
+    basewnd();
+    virtual ~basewnd();
+    
 public:
-	virtual ULONG AddRef();
-	virtual ULONG Release();
-	virtual BOOL HandleMessage(UINT,WPARAM,LPARAM,LRESULT*)=0;
-	
+    virtual ULONG AddRef();
+    virtual ULONG Release();
+    virtual BOOL HandleMessage(UINT,WPARAM,LPARAM,LRESULT*)=0;
+    
 public: // inline overrides
-	BOOL ShowWindow(int nCmdShow){return ::ShowWindow(hwnd,nCmdShow);}
-	BOOL UpdateWindow(void){return ::UpdateWindow(hwnd);}
+    BOOL ShowWindow(int nCmdShow){return ::ShowWindow(hwnd,nCmdShow);}
+    BOOL UpdateWindow(void){return ::UpdateWindow(hwnd);}
 };
 
 #endif

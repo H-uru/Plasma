@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Newer CSR game clients must remain compatible with older CSR tools,
 // therefore these values may not change.  Only append to this enum.
 enum {
-	kCsrNet_ExecConsoleCmd,
+    kCsrNet_ExecConsoleCmd,
 };
 
 //============================================================================
@@ -53,13 +53,13 @@ enum {
 //============================================================================
 #include <PshPack1.h>
 
-#define CSRNET_MSG(a)	\
-	CsrNet_##a () : SimpleNet_MsgHeader(kSimpleNetChannelCsr, kCsrNet_##a) { }
+#define CSRNET_MSG(a)   \
+    CsrNet_##a () : SimpleNet_MsgHeader(kSimpleNetChannelCsr, kCsrNet_##a) { }
 
 struct CsrNet_ExecConsoleCmd : SimpleNet_MsgHeader {
-	CSRNET_MSG	(ExecConsoleCmd);
+    CSRNET_MSG  (ExecConsoleCmd);
 
-	char	cmd[1];	// null-terminated string
+    char    cmd[1]; // null-terminated string
 };
 
 #undef CSRNET_MSG

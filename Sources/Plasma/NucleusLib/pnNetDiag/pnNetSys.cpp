@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 typedef DWORD (PASCAL FAR * FGetAdaptersInfo)(
-	PIP_ADAPTER_INFO	pAdapterInfo,
-	PULONG				pOutBufLen
+    PIP_ADAPTER_INFO    pAdapterInfo,
+    PULONG              pOutBufLen
 );
 
 
@@ -52,7 +52,7 @@ typedef DWORD (PASCAL FAR * FGetAdaptersInfo)(
 *
 ***/
 
-static FGetAdaptersInfo		GetAdaptersInfo;
+static FGetAdaptersInfo     GetAdaptersInfo;
 
 
 /*****************************************************************************
@@ -64,15 +64,15 @@ static FGetAdaptersInfo		GetAdaptersInfo;
 //============================================================================
 void SysStartup () {
 
-	if (g_lib) {
-		GetAdaptersInfo = (FGetAdaptersInfo)GetProcAddress(g_lib, "GetAdaptersInfo");
-	}
+    if (g_lib) {
+        GetAdaptersInfo = (FGetAdaptersInfo)GetProcAddress(g_lib, "GetAdaptersInfo");
+    }
 }
 
 //============================================================================
 void SysShutdown () {
 
-	GetAdaptersInfo = nil;
+    GetAdaptersInfo = nil;
 }
 
 
@@ -84,78 +84,78 @@ void SysShutdown () {
 
 //============================================================================
 void NetDiagSys (
-	NetDiag *				diag,
-	FNetDiagDumpProc		dump,
-	FNetDiagTestCallback	callback,
-	void *					param
+    NetDiag *               diag,
+    FNetDiagDumpProc        dump,
+    FNetDiagTestCallback    callback,
+    void *                  param
 ) {
-	ASSERT(diag);
-	ASSERT(dump);
-	ASSERT(callback);
+    ASSERT(diag);
+    ASSERT(dump);
+    ASSERT(callback);
 
-	{ // Timestamp
-		wchar str[256];
-		qword time = TimeGetTime();
-		TimePrettyPrint(time, arrsize(str), str);
-		dump(L"[SYS] Time: %s UTC", str);
-	}
-		
-	{ // Command line
-		dump(L"[SYS] Cmdline: %s", AppGetCommandLine());
-	}
-	
-	{ // Product
-		wchar product[128];
-		ProductString(product, arrsize(product));
-		dump(L"[SYS] Product: %s", product);
-	}
-	
-	{ // pnNetDiag version
-		dump(L"[SYS] Cognomen: '%s'", g_version);
-	}
-	
-	{ // OS
-		OSVERSIONINFOEX info;
-		info.dwOSVersionInfoSize = sizeof(info);
-		GetVersionEx((OSVERSIONINFO*)&info);
-		dump(L"[SYS] OS Version: %u.%u", info.dwMajorVersion, info.dwMinorVersion);
-		dump(L"[SYS] OS Patch: %u.%u (%S)", info.wServicePackMajor, info.wServicePackMinor, info.szCSDVersion);
-	}
-	
-	{ // System
-		word	cpuCaps;
-		dword	cpuVendor[3];
-		word	cpuSignature;
-		CpuGetInfo(&cpuCaps, cpuVendor,	&cpuSignature);
-		SYSTEM_INFO info;
-		GetSystemInfo(&info);
-		dump(L"[SYS] CPU Count: %u", info.dwNumberOfProcessors);
-		dump(L"[SYS] CPU Vendor: %.*S", sizeof(cpuVendor), cpuVendor);
-	}
-	
-	{ // Adapters
-		if (!GetAdaptersInfo) {
-			dump(L"[SYS] Failed to load IP helper API");
-			callback(diag, kNetProtocolNil, kNetErrNotSupported, param);
-			return;
-		}
+    { // Timestamp
+        wchar str[256];
+        qword time = TimeGetTime();
+        TimePrettyPrint(time, arrsize(str), str);
+        dump(L"[SYS] Time: %s UTC", str);
+    }
+        
+    { // Command line
+        dump(L"[SYS] Cmdline: %s", AppGetCommandLine());
+    }
+    
+    { // Product
+        wchar product[128];
+        ProductString(product, arrsize(product));
+        dump(L"[SYS] Product: %s", product);
+    }
+    
+    { // pnNetDiag version
+        dump(L"[SYS] Cognomen: '%s'", g_version);
+    }
+    
+    { // OS
+        OSVERSIONINFOEX info;
+        info.dwOSVersionInfoSize = sizeof(info);
+        GetVersionEx((OSVERSIONINFO*)&info);
+        dump(L"[SYS] OS Version: %u.%u", info.dwMajorVersion, info.dwMinorVersion);
+        dump(L"[SYS] OS Patch: %u.%u (%S)", info.wServicePackMajor, info.wServicePackMinor, info.szCSDVersion);
+    }
+    
+    { // System
+        word    cpuCaps;
+        dword   cpuVendor[3];
+        word    cpuSignature;
+        CpuGetInfo(&cpuCaps, cpuVendor, &cpuSignature);
+        SYSTEM_INFO info;
+        GetSystemInfo(&info);
+        dump(L"[SYS] CPU Count: %u", info.dwNumberOfProcessors);
+        dump(L"[SYS] CPU Vendor: %.*S", sizeof(cpuVendor), cpuVendor);
+    }
+    
+    { // Adapters
+        if (!GetAdaptersInfo) {
+            dump(L"[SYS] Failed to load IP helper API");
+            callback(diag, kNetProtocolNil, kNetErrNotSupported, param);
+            return;
+        }
 
-		ULONG ulOutBufLen = 0;
-		GetAdaptersInfo(nil, &ulOutBufLen);
-		PIP_ADAPTER_INFO pInfo = (PIP_ADAPTER_INFO)ALLOC(ulOutBufLen);
-		PIP_ADAPTER_INFO pAdapter;
-		if (GetAdaptersInfo(pInfo, &ulOutBufLen) == NO_ERROR) {
-			pAdapter = pInfo;
-			while (pAdapter) {
-				dump(L"[SYS] NIC: %S", pAdapter->Description);
-				pAdapter = pAdapter->Next;
-			}
-			callback(diag, kNetProtocolNil, kNetSuccess, param);
-		}
-		else {
-			dump(L"[SYS] Error getting adaper list");
-			callback(diag, kNetProtocolNil, kNetErrFileNotFound, param);
-		}
-		FREE(pInfo);
-	}
+        ULONG ulOutBufLen = 0;
+        GetAdaptersInfo(nil, &ulOutBufLen);
+        PIP_ADAPTER_INFO pInfo = (PIP_ADAPTER_INFO)ALLOC(ulOutBufLen);
+        PIP_ADAPTER_INFO pAdapter;
+        if (GetAdaptersInfo(pInfo, &ulOutBufLen) == NO_ERROR) {
+            pAdapter = pInfo;
+            while (pAdapter) {
+                dump(L"[SYS] NIC: %S", pAdapter->Description);
+                pAdapter = pAdapter->Next;
+            }
+            callback(diag, kNetProtocolNil, kNetSuccess, param);
+        }
+        else {
+            dump(L"[SYS] Error getting adaper list");
+            callback(diag, kNetProtocolNil, kNetErrFileNotFound, param);
+        }
+        FREE(pInfo);
+    }
 }

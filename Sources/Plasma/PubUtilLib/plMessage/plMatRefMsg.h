@@ -32,17 +32,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMatRefMsg : public plGenRefMsg
 {
 public:
-	enum {
-		kLayer			= 0x1,
-		kInsert			= 0x2,
-		kPiggyBack		= 0x4
-	};
+    enum {
+        kLayer          = 0x1,
+        kInsert         = 0x2,
+        kPiggyBack      = 0x4
+    };
 
-	plMatRefMsg() {}
-	plMatRefMsg(const plKey &r, UInt8 flags, Int8 which, Int8 type) : plGenRefMsg(r, flags, which, type) {}
+    plMatRefMsg() {}
+    plMatRefMsg(const plKey &r, UInt8 flags, Int8 which, Int8 type) : plGenRefMsg(r, flags, which, type) {}
 
-	CLASSNAME_REGISTER( plMatRefMsg );
-	GETINTERFACE_ANY( plMatRefMsg, plGenRefMsg );
+    CLASSNAME_REGISTER( plMatRefMsg );
+    GETINTERFACE_ANY( plMatRefMsg, plGenRefMsg );
 };
 
 #endif // plMatRefMsg_inc

@@ -56,11 +56,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Because newer clients must remain compatible with older servers,
 // these values may never change.
 enum ESimpleNetChannel {
-	kSimpleNetChannelNil	= 0,
-	kSimpleNetChannelCsr	= 1,
-	kSimpleNetChannelMax	= 2,
-	
-	kMaxSimpleNetChannels
+    kSimpleNetChannelNil    = 0,
+    kSimpleNetChannelCsr    = 1,
+    kSimpleNetChannelMax    = 2,
+    
+    kMaxSimpleNetChannels
 };
 COMPILER_ASSERT_HEADER(ESimpleNetChannel, kMaxSimpleNetChannels <= 0xff);
 
@@ -74,11 +74,11 @@ COMPILER_ASSERT_HEADER(ESimpleNetChannel, kMaxSimpleNetChannels <= 0xff);
 // Connect packet
 
 struct SimpleNet_ConnData {
-	unsigned	channelId;
+    unsigned    channelId;
 };
 struct SimpleNet_Connect {
-	AsyncSocketConnectPacket	hdr;
-	SimpleNet_ConnData			data;
+    AsyncSocketConnectPacket    hdr;
+    SimpleNet_ConnData          data;
 };
 
 //============================================================================
@@ -86,18 +86,18 @@ struct SimpleNet_Connect {
 
 struct SimpleNet_MsgHeader {
 private:
-	dword	channelId;
+    dword   channelId;
 public:
-	dword	messageId;
-	dword	messageBytes;
-	
-	SimpleNet_MsgHeader (dword channelId, dword messageId)
-	: channelId(channelId)
-	, messageId(messageId)
-	#ifdef HS_DEBUGGING
-	, messageBytes((dword)-1)
-	#endif
-	{ }
+    dword   messageId;
+    dword   messageBytes;
+    
+    SimpleNet_MsgHeader (dword channelId, dword messageId)
+    : channelId(channelId)
+    , messageId(messageId)
+    #ifdef HS_DEBUGGING
+    , messageBytes((dword)-1)
+    #endif
+    { }
 };
 
 
@@ -115,53 +115,53 @@ void SimpleNetShutdown ();
 void SimpleNetConnIncRef (SimpleNetConn * conn);
 void SimpleNetConnDecRef (SimpleNetConn * conn);
 
-typedef bool (*FSimpleNetOnMsg) (		// return false to disconnect socket
-	SimpleNetConn *			conn,
-	SimpleNet_MsgHeader *	msg
+typedef bool (*FSimpleNetOnMsg) (       // return false to disconnect socket
+    SimpleNetConn *         conn,
+    SimpleNet_MsgHeader *   msg
 );
 typedef void (*FSimpleNetOnError) (
-	SimpleNetConn *	conn,
-	ENetError		error
+    SimpleNetConn * conn,
+    ENetError       error
 );
 typedef void (*FSimpleNetOnConnect) (
-	void *			param,
-	SimpleNetConn *	conn,
-	ENetError		result
+    void *          param,
+    SimpleNetConn * conn,
+    ENetError       result
 );
-typedef bool (*FSimpleNetQueryAccept) (	// return true to accept incoming connection
-	void *				param,
-	unsigned			channel,
-	SimpleNetConn *		conn,
-	const NetAddress &	addr
+typedef bool (*FSimpleNetQueryAccept) ( // return true to accept incoming connection
+    void *              param,
+    unsigned            channel,
+    SimpleNetConn *     conn,
+    const NetAddress &  addr
 );
 
 void SimpleNetCreateChannel (
-	unsigned			channel,
-	FSimpleNetOnMsg		onMsg,
-	FSimpleNetOnError	onError
+    unsigned            channel,
+    FSimpleNetOnMsg     onMsg,
+    FSimpleNetOnError   onError
 );
 void SimpleNetDestroyChannel (
-	unsigned			channel
+    unsigned            channel
 );
 
 bool SimpleNetStartListening (
-	FSimpleNetQueryAccept	queryAccept,
-	void *					param
+    FSimpleNetQueryAccept   queryAccept,
+    void *                  param
 );
 void SimpleNetStopListening ();
 
 void SimpleNetStartConnecting (
-	unsigned			channel,
-	const wchar			addr[],
-	FSimpleNetOnConnect	onConnect,
-	void *				param
+    unsigned            channel,
+    const wchar         addr[],
+    FSimpleNetOnConnect onConnect,
+    void *              param
 );
 void SimpleNetDisconnect (
-	SimpleNetConn *		conn
+    SimpleNetConn *     conn
 );
 void SimpleNetSend (
-	SimpleNetConn *			conn,
-	SimpleNet_MsgHeader *	msg
+    SimpleNetConn *         conn,
+    SimpleNet_MsgHeader *   msg
 );
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNSIMPLENET_PNSIMPLENET_H

@@ -40,43 +40,43 @@ plAIMsg::plAIMsg(): plMessage(nil, nil, nil), fBrainUserStr("")
 
 plAIMsg::plAIMsg(const plKey& sender, const plKey& receiver): plMessage(sender, receiver, nil)
 {
-	// set up our user string from the sender, if it is the right type
-	plArmatureMod* armMod = plArmatureMod::ConvertNoRef(sender->ObjectIsLoaded());
-	if (armMod)
-		fBrainUserStr = armMod->GetUserStr();
-	else
-		fBrainUserStr = "";
+    // set up our user string from the sender, if it is the right type
+    plArmatureMod* armMod = plArmatureMod::ConvertNoRef(sender->ObjectIsLoaded());
+    if (armMod)
+        fBrainUserStr = armMod->GetUserStr();
+    else
+        fBrainUserStr = "";
 }
 
 void plAIMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 
-	char* temp = stream->ReadSafeString();
-	if (temp)
-		fBrainUserStr = temp;
-	delete [] temp;
+    char* temp = stream->ReadSafeString();
+    if (temp)
+        fBrainUserStr = temp;
+    delete [] temp;
 }
 
 void plAIMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	stream->WriteSafeString(fBrainUserStr.c_str());
+    stream->WriteSafeString(fBrainUserStr.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 void plAIArrivedAtGoalMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plAIMsg::Read(stream, mgr);
-	fGoal.Read(stream);
+    plAIMsg::Read(stream, mgr);
+    fGoal.Read(stream);
 }
 
 void plAIArrivedAtGoalMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plAIMsg::Write(stream, mgr);
-	fGoal.Write(stream);
+    plAIMsg::Write(stream, mgr);
+    fGoal.Write(stream);
 }
 
 #endif // NO_AV_MSGS

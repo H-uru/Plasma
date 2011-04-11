@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIClickMapCtrl Header												//
-//																			//
+//                                                                          //
+//  pfGUIClickMapCtrl Header                                                //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIClickMapCtrl_h
@@ -38,52 +38,52 @@ class plMessage;
 
 class pfGUIClickMapCtrl : public pfGUIControlMod
 {
-	protected:
+    protected:
 
-		hsPoint3		fLastMousePt, fLastMouseUpPt, fLastMouseDragPt;
-		hsBool			fTracking;
-		Int32			fCustomCursor;
+        hsPoint3        fLastMousePt, fLastMouseUpPt, fLastMouseDragPt;
+        hsBool          fTracking;
+        Int32           fCustomCursor;
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
-		virtual UInt32		IGetDesiredCursor( void ) const;	// As specified in plInputInterface.h
+        virtual UInt32      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
-	public:
+    public:
 
-		pfGUIClickMapCtrl();
-		virtual ~pfGUIClickMapCtrl();
+        pfGUIClickMapCtrl();
+        virtual ~pfGUIClickMapCtrl();
 
-		CLASSNAME_REGISTER( pfGUIClickMapCtrl );
-		GETINTERFACE_ANY( pfGUIClickMapCtrl, pfGUIControlMod );
+        CLASSNAME_REGISTER( pfGUIClickMapCtrl );
+        GETINTERFACE_ANY( pfGUIClickMapCtrl, pfGUIControlMod );
 
-		enum OurFlags
-		{
-			kReportDragging = kDerivedFlagsStart,
-			kReportHovering
-		};
+        enum OurFlags
+        {
+            kReportDragging = kDerivedFlagsStart,
+            kReportHovering
+        };
 
-		// Extended event types
-		enum ExtendedEvents
-		{
-			kMouseDragged,
-			kMouseHovered
-		};
+        // Extended event types
+        enum ExtendedEvents
+        {
+            kMouseDragged,
+            kMouseHovered
+        };
 
-		virtual void	HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers );
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		const hsPoint3	&GetLastMousePt( void ) const { return fLastMousePt; }
-		const hsPoint3	&GetLastMouseUpPt( void ) const { return fLastMouseUpPt; }
-		const hsPoint3	&GetLastMouseDragPt( void ) const { return fLastMouseDragPt; }
+        const hsPoint3  &GetLastMousePt( void ) const { return fLastMousePt; }
+        const hsPoint3  &GetLastMouseUpPt( void ) const { return fLastMouseUpPt; }
+        const hsPoint3  &GetLastMouseDragPt( void ) const { return fLastMouseDragPt; }
 
-		void	SetCustomCursor( Int32 cursor = -1 ) { fCustomCursor = cursor; }
+        void    SetCustomCursor( Int32 cursor = -1 ) { fCustomCursor = cursor; }
 };
 
 #endif // _pfGUIClickMapCtrl_h

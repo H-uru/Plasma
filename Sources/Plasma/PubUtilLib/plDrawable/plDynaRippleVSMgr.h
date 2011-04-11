@@ -34,30 +34,30 @@ class plWaveSetBase;
 class plDynaRippleVSMgr : public plDynaRippleMgr
 {
 public:
-	enum {
-		kRefWaveSetBase		= kRefNextAvailable
-	};
+    enum {
+        kRefWaveSetBase     = kRefNextAvailable
+    };
 protected:
 
-	plWaveSetBase*		fWaveSetBase;
+    plWaveSetBase*      fWaveSetBase;
 
-	virtual hsBool		IRippleFromShape(const plPrintShape* shape, hsBool force=false);
+    virtual hsBool      IRippleFromShape(const plPrintShape* shape, hsBool force=false);
 
-	virtual int			INewDecal();
+    virtual int         INewDecal();
 
-	virtual hsBool		ICheckRTMat();
+    virtual hsBool      ICheckRTMat();
 
 public:
-	plDynaRippleVSMgr();
-	virtual ~plDynaRippleVSMgr();
+    plDynaRippleVSMgr();
+    virtual ~plDynaRippleVSMgr();
 
-	CLASSNAME_REGISTER( plDynaRippleVSMgr );
-	GETINTERFACE_ANY( plDynaRippleVSMgr, plDynaRippleMgr );
+    CLASSNAME_REGISTER( plDynaRippleVSMgr );
+    GETINTERFACE_ANY( plDynaRippleVSMgr, plDynaRippleMgr );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 };
 
 #endif // plDynaRippleVSMgr_inc

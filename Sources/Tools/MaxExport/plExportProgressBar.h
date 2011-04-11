@@ -33,21 +33,21 @@ class INode;
 class plExportProgressBar
 {
 public:
-	plExportProgressBar();
-	~plExportProgressBar();
+    plExportProgressBar();
+    ~plExportProgressBar();
 
-	void Start(char *name, UInt32 steps=CountNodes());
-  	bool Update(char *name=nil, UInt32 inc=1);
-	
-	static UInt32 CountNodes();
+    void Start(char *name, UInt32 steps=CountNodes());
+    bool Update(char *name=nil, UInt32 inc=1);
+    
+    static UInt32 CountNodes();
 
 private:
-	static UInt32 INodeCount(INode *node);
-	
-	Interface*	fInterface;
-	
-	UInt32 fTotalSteps;
-	UInt32 fCurStep;
+    static UInt32 INodeCount(INode *node);
+    
+    Interface*  fInterface;
+    
+    UInt32 fTotalSteps;
+    UInt32 fCurStep;
 };
 
 #endif // plExportProgressBar_inc

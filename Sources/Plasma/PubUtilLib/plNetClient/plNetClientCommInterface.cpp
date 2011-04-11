@@ -40,22 +40,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 int plNetClientCommMsgHandler::HandleMessage( plNetMessage* msg ) 
 {
-	plNetClientMgr* nc=plNetClientMgr::GetInstance();
-	int ret = nc->fMsgHandler.ReceiveMsg(msg);
+    plNetClientMgr* nc=plNetClientMgr::GetInstance();
+    int ret = nc->fMsgHandler.ReceiveMsg(msg);
 
-	return ret;
+    return ret;
 }
 
 int plNetClientMgr::IInitNetClientComm()
 {
-	NetCommActivatePostInitErrorHandler();
+    NetCommActivatePostInitErrorHandler();
 
-	ASSERT(!GetFlagsBit(kNetClientCommInited));
-	fNetClientComm.SetDefaultHandler(&fNetClientCommMsgHandler);
+    ASSERT(!GetFlagsBit(kNetClientCommInited));
+    fNetClientComm.SetDefaultHandler(&fNetClientCommMsgHandler);
 
-	SetFlagsBit(kNetClientCommInited);
-	
-	return hsOK;
+    SetFlagsBit(kNetClientCommInited);
+    
+    return hsOK;
 }
 
 //
@@ -63,6 +63,6 @@ int plNetClientMgr::IInitNetClientComm()
 //
 int plNetClientMgr::IDeInitNetClientComm()
 {
-	SetFlagsBit(kNetClientCommInited, false);
-	return hsOK;
+    SetFlagsBit(kNetClientCommInited, false);
+    return hsOK;
 }

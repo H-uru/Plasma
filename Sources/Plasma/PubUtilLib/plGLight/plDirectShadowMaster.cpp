@@ -48,142 +48,142 @@ plDirectShadowMaster::plDirectShadowMaster()
 
 plDirectShadowMaster::~plDirectShadowMaster()
 {
-	fIsectPool.SetCount(fIsectPool.GetNumAlloc());
-	int i;
-	for( i = 0; i < fIsectPool.GetCount(); i++ )
-		delete fIsectPool[i];
+    fIsectPool.SetCount(fIsectPool.GetNumAlloc());
+    int i;
+    for( i = 0; i < fIsectPool.GetCount(); i++ )
+        delete fIsectPool[i];
 }
 
 plShadowSlave* plDirectShadowMaster::INewSlave(const plShadowCaster* caster)
 {
-	if( caster->GetPerspective() )
-		return TRACKED_NEW plPerspDirSlave;
-	
-	return TRACKED_NEW plDirectShadowSlave;
+    if( caster->GetPerspective() )
+        return TRACKED_NEW plPerspDirSlave;
+    
+    return TRACKED_NEW plDirectShadowSlave;
 }
 
 plShadowSlave* plDirectShadowMaster::INextSlave(const plShadowCaster* caster)
 {
-	if( !caster->GetPerspective() )
-		return plShadowMaster::INextSlave(caster);
+    if( !caster->GetPerspective() )
+        return plShadowMaster::INextSlave(caster);
 
-	int iSlave = fPerspSlavePool.GetCount();
-	fPerspSlavePool.ExpandAndZero(iSlave+1);
-	plShadowSlave* slave = fPerspSlavePool[iSlave];
-	if( !slave )
-	{
-		fPerspSlavePool[iSlave] = slave = INewSlave(caster);
-	}
-	return slave;
+    int iSlave = fPerspSlavePool.GetCount();
+    fPerspSlavePool.ExpandAndZero(iSlave+1);
+    plShadowSlave* slave = fPerspSlavePool[iSlave];
+    if( !slave )
+    {
+        fPerspSlavePool[iSlave] = slave = INewSlave(caster);
+    }
+    return slave;
 }
 
 plShadowSlave* plDirectShadowMaster::IRecycleSlave(plShadowSlave* slave)
 {
-	if( fSlavePool.GetCount() && (fSlavePool[fSlavePool.GetCount()-1] == slave) )
-		fSlavePool.SetCount(fSlavePool.GetCount()-1);
-	else
-	if( fPerspSlavePool.GetCount() && (fPerspSlavePool[fPerspSlavePool.GetCount()-1] == slave) )
-		fPerspSlavePool.SetCount(fPerspSlavePool.GetCount()-1);
+    if( fSlavePool.GetCount() && (fSlavePool[fSlavePool.GetCount()-1] == slave) )
+        fSlavePool.SetCount(fSlavePool.GetCount()-1);
+    else
+    if( fPerspSlavePool.GetCount() && (fPerspSlavePool[fPerspSlavePool.GetCount()-1] == slave) )
+        fPerspSlavePool.SetCount(fPerspSlavePool.GetCount()-1);
 
-	return nil;
+    return nil;
 }
 
 void plDirectShadowMaster::IBeginRender()
 {
-	plShadowMaster::IBeginRender();
+    plShadowMaster::IBeginRender();
 
-	fPerspSlavePool.SetCount(0);
-	fIsectPool.SetCount(0);
+    fPerspSlavePool.SetCount(0);
+    fIsectPool.SetCount(0);
 }
 
 void plDirectShadowMaster::IComputeWorldToLight(const hsBounds3Ext& wBnd, plShadowSlave* slave) const
 {
-	hsMatrix44 kFlipDir;
-	kFlipDir.Reset();
-	kFlipDir.NotIdentity();
-	kFlipDir.fMap[2][2] = -1.f;
+    hsMatrix44 kFlipDir;
+    kFlipDir.Reset();
+    kFlipDir.NotIdentity();
+    kFlipDir.fMap[2][2] = -1.f;
 
-	hsMatrix44 worldToLight = kFlipDir * fLightInfo->GetWorldToLight();
-	hsMatrix44 lightToWorld = fLightInfo->GetLightToWorld() * kFlipDir;
+    hsMatrix44 worldToLight = kFlipDir * fLightInfo->GetWorldToLight();
+    hsMatrix44 lightToWorld = fLightInfo->GetLightToWorld() * kFlipDir;
 
-	hsBounds3Ext bnd = wBnd;
-	bnd.Transform(&worldToLight);
+    hsBounds3Ext bnd = wBnd;
+    bnd.Transform(&worldToLight);
 
-	hsPoint3 pos = bnd.GetCenter();
+    hsPoint3 pos = bnd.GetCenter();
 
-	pos.fZ = bnd.GetMins().fZ;
+    pos.fZ = bnd.GetMins().fZ;
 
-	hsPoint3 wPos = lightToWorld * pos;
+    hsPoint3 wPos = lightToWorld * pos;
 
-	lightToWorld.NotIdentity();
-	lightToWorld.fMap[0][3] = wPos[0];
-	lightToWorld.fMap[1][3] = wPos[1];
-	lightToWorld.fMap[2][3] = wPos[2];
+    lightToWorld.NotIdentity();
+    lightToWorld.fMap[0][3] = wPos[0];
+    lightToWorld.fMap[1][3] = wPos[1];
+    lightToWorld.fMap[2][3] = wPos[2];
 
-	// Need worldToLight and hate doing an inverse.
-	// worldToLight = pureTrans * pureRot;
-	// lightToWorld = Inv(pureRot) * Inv(pureTran);
-	// So Inv(pureTran) = pureRot * Inv(pureRot) * Inv(pureTran) = pureRot * lightToWorld
-	// Make worldToLight pure rotation inverse of lightToWorld
-	worldToLight.fMap[0][3] = 0;
-	worldToLight.fMap[1][3] = 0;
-	worldToLight.fMap[2][3] = 0;
+    // Need worldToLight and hate doing an inverse.
+    // worldToLight = pureTrans * pureRot;
+    // lightToWorld = Inv(pureRot) * Inv(pureTran);
+    // So Inv(pureTran) = pureRot * Inv(pureRot) * Inv(pureTran) = pureRot * lightToWorld
+    // Make worldToLight pure rotation inverse of lightToWorld
+    worldToLight.fMap[0][3] = 0;
+    worldToLight.fMap[1][3] = 0;
+    worldToLight.fMap[2][3] = 0;
 
-	hsMatrix44 trans = worldToLight * lightToWorld;
-	worldToLight.fMap[0][3] = -trans.fMap[0][3];
-	worldToLight.fMap[1][3] = -trans.fMap[1][3];
-	worldToLight.fMap[2][3] = -trans.fMap[2][3];
+    hsMatrix44 trans = worldToLight * lightToWorld;
+    worldToLight.fMap[0][3] = -trans.fMap[0][3];
+    worldToLight.fMap[1][3] = -trans.fMap[1][3];
+    worldToLight.fMap[2][3] = -trans.fMap[2][3];
 
 //#define CHECK_INVERSE
 #ifdef CHECK_INVERSE
-	hsMatrix44 inv;
-	lightToWorld.GetInverse(&inv);
+    hsMatrix44 inv;
+    lightToWorld.GetInverse(&inv);
 #endif // CHECK_INVERSE
 
-	slave->fWorldToLight = worldToLight;
-	slave->fLightToWorld = lightToWorld;
+    slave->fWorldToLight = worldToLight;
+    slave->fLightToWorld = lightToWorld;
 }
 
 void plDirectShadowMaster::IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const
 {
 
-	slave->fView.SetPerspective(false);
+    slave->fView.SetPerspective(false);
 }
 
 void plDirectShadowMaster::IComputeISect(const hsBounds3Ext& casterBnd, plShadowSlave* slave) const
 {
-	int iIsect = fIsectPool.GetCount();
-	fIsectPool.ExpandAndZero(iIsect+1);
-	if( !fIsectPool[iIsect] )
-	{
-		fIsectPool[iIsect] = TRACKED_NEW plBoundsIsect;
-	}
-	plBoundsIsect* isect = fIsectPool[iIsect];
+    int iIsect = fIsectPool.GetCount();
+    fIsectPool.ExpandAndZero(iIsect+1);
+    if( !fIsectPool[iIsect] )
+    {
+        fIsectPool[iIsect] = TRACKED_NEW plBoundsIsect;
+    }
+    plBoundsIsect* isect = fIsectPool[iIsect];
 
-	const hsBounds3Ext& wBnd = slave->fWorldBounds;
+    const hsBounds3Ext& wBnd = slave->fWorldBounds;
 
-	isect->SetBounds(wBnd);
+    isect->SetBounds(wBnd);
 
-	slave->fIsect = isect;
+    slave->fIsect = isect;
 }
 
 void plDirectShadowMaster::IComputeBounds(const hsBounds3Ext& casterBnd, plShadowSlave* slave) const
 {
-	// Plan here is to look at the bounds in the slave's local space.
-	// Our slave's bounds will clearly contain the shadow caster's bounds. It will also
-	// contain the bnd's corners extended out in light space Z.
-	// They will extend fAttenDist farther than the center pointof the bound.
+    // Plan here is to look at the bounds in the slave's local space.
+    // Our slave's bounds will clearly contain the shadow caster's bounds. It will also
+    // contain the bnd's corners extended out in light space Z.
+    // They will extend fAttenDist farther than the center pointof the bound.
 
-	hsBounds3Ext bnd = casterBnd;
-	bnd.Transform(&slave->fWorldToLight);
-	
-	hsPoint3 farPt = bnd.GetCenter();
+    hsBounds3Ext bnd = casterBnd;
+    bnd.Transform(&slave->fWorldToLight);
+    
+    hsPoint3 farPt = bnd.GetCenter();
 
-	farPt.fZ += slave->fAttenDist;
-	
-	bnd.Union(&farPt);
+    farPt.fZ += slave->fAttenDist;
+    
+    bnd.Union(&farPt);
 
-	bnd.Transform(&slave->fLightToWorld);
+    bnd.Transform(&slave->fLightToWorld);
 
-	slave->fWorldBounds = bnd;
+    slave->fWorldBounds = bnd;
 }

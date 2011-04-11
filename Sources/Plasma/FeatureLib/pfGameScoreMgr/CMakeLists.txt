@@ -4,11 +4,11 @@ include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
 set(pfGameScoreMgr_SOURCES
-	pfGameScoreMgr.cpp
+    pfGameScoreMgr.cpp
 )
 
 set(pfGameScoreMgr_HEADERS
-	pfGameScoreMgr.h
+    pfGameScoreMgr.h
 )
 
 add_library(pfGameScoreMgr STATIC ${pfGameScoreMgr_SOURCES} ${pfGameScoreMgr_HEADERS})

@@ -34,12 +34,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static DWORD __stdcall gEntryPoint(void* param)
 {
-	return ((hsThread*)param)->WinRun();
+    return ((hsThread*)param)->WinRun();
 }
 
 static unsigned int __stdcall gEntryPointBT(void* param)
 {
-	return ((hsThread*)param)->WinRun();
+    return ((hsThread*)param)->WinRun();
 }
 
 hsThread::hsThread(UInt32 stackSize) : fStackSize(stackSize), fQuit(false), fThreadH(nil), fQuitSemaH(nil)
@@ -48,101 +48,101 @@ hsThread::hsThread(UInt32 stackSize) : fStackSize(stackSize), fQuit(false), fThr
 
 hsThread::~hsThread()
 {
-	this->Stop();
+    this->Stop();
 }
 
 void hsThread::Start()
 {
-	if (fThreadH == nil)
-	{
-		fQuitSemaH = ::CreateSemaphore(nil, 0, kPosInfinity32, nil);
-		if (fQuitSemaH == nil)
-			throw hsOSException(-1);
+    if (fThreadH == nil)
+    {
+        fQuitSemaH = ::CreateSemaphore(nil, 0, kPosInfinity32, nil);
+        if (fQuitSemaH == nil)
+            throw hsOSException(-1);
 
 #if 0
-		fThreadH = ::CreateThread(nil, fStackSize, gEntryPoint, this, 0, &fThreadId);
+        fThreadH = ::CreateThread(nil, fStackSize, gEntryPoint, this, 0, &fThreadId);
 #else
-		fThreadH = (HANDLE)_beginthreadex(nil, fStackSize, gEntryPointBT, this, 0, (unsigned int*)&fThreadId);
+        fThreadH = (HANDLE)_beginthreadex(nil, fStackSize, gEntryPointBT, this, 0, (unsigned int*)&fThreadId);
 #endif
-		if (fThreadH == nil)
-			throw hsOSException(-1);
-	}
+        if (fThreadH == nil)
+            throw hsOSException(-1);
+    }
 }
 
 void hsThread::Stop()
 {
-	if (fThreadH != nil)
-	{	this->fQuit = true;
+    if (fThreadH != nil)
+    {   this->fQuit = true;
 
-		if (fQuitSemaH != nil)
-			::WaitForSingleObject(fQuitSemaH, INFINITE);	// wait for the thread to quit
+        if (fQuitSemaH != nil)
+            ::WaitForSingleObject(fQuitSemaH, INFINITE);    // wait for the thread to quit
 
-		::CloseHandle(fThreadH);
-		fThreadH = nil;
-		::CloseHandle(fQuitSemaH);
-		fQuitSemaH = nil;
-	}
+        ::CloseHandle(fThreadH);
+        fThreadH = nil;
+        ::CloseHandle(fQuitSemaH);
+        fQuitSemaH = nil;
+    }
 }
 
 DWORD hsThread::WinRun()
 {
-	DWORD	result = this->Run();
+    DWORD   result = this->Run();
 
-	::ReleaseSemaphore(fQuitSemaH, 1, nil);	// signal that we've quit
+    ::ReleaseSemaphore(fQuitSemaH, 1, nil); // signal that we've quit
 
-	return result;
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void* hsThread::Alloc(size_t size)
 {
-	return HSMemory::New(size);
+    return HSMemory::New(size);
 }
 
 void hsThread::Free(void* p)
 {
-	HSMemory::Delete(p);
+    HSMemory::Delete(p);
 }
 
 void hsThread::ThreadYield()
 {
-	//	Don't know how to explicitly yield on WIN32
+    //  Don't know how to explicitly yield on WIN32
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 hsMutex::hsMutex()
 {
-	fMutexH = ::CreateMutex(nil, false, nil);
-	if (fMutexH == nil)
-		throw hsOSException(-1);
+    fMutexH = ::CreateMutex(nil, false, nil);
+    if (fMutexH == nil)
+        throw hsOSException(-1);
 }
 
 hsMutex::~hsMutex()
 {
-	::CloseHandle(fMutexH);
+    ::CloseHandle(fMutexH);
 }
 
 void hsMutex::Lock()
 {
-	DWORD state = ::WaitForSingleObject(fMutexH, INFINITE);
-	hsAssert(state != WAIT_FAILED,"hsMutex::Lock -> Wait Failed");
-	hsAssert(state != WAIT_ABANDONED,"hsMutex::Lock -> Abandoned Mutex");
-	hsAssert(state != WAIT_TIMEOUT,"hsMutex::Lock -> Infinite Timeout expired?");
+    DWORD state = ::WaitForSingleObject(fMutexH, INFINITE);
+    hsAssert(state != WAIT_FAILED,"hsMutex::Lock -> Wait Failed");
+    hsAssert(state != WAIT_ABANDONED,"hsMutex::Lock -> Abandoned Mutex");
+    hsAssert(state != WAIT_TIMEOUT,"hsMutex::Lock -> Infinite Timeout expired?");
 }
 
 hsBool hsMutex::TryLock()
 {
-	DWORD state = ::WaitForSingleObject(fMutexH, 0);
-	hsAssert(state != WAIT_ABANDONED,"hsMutex::TryLock -> Abandoned Mutex");
-	return state == WAIT_OBJECT_0?true:false;
+    DWORD state = ::WaitForSingleObject(fMutexH, 0);
+    hsAssert(state != WAIT_ABANDONED,"hsMutex::TryLock -> Abandoned Mutex");
+    return state == WAIT_OBJECT_0?true:false;
 }
 
 void hsMutex::Unlock()
 {
-	BOOL result = ::ReleaseMutex(fMutexH);
-	hsAssert(result != 0, "hsMutex::Unlock Failed!");
+    BOOL result = ::ReleaseMutex(fMutexH);
+    hsAssert(result != 0, "hsMutex::Unlock Failed!");
 
 }
 
@@ -150,69 +150,69 @@ void hsMutex::Unlock()
 
 hsSemaphore::hsSemaphore(int initialValue, const char *name)
 {
-	fSemaH = ::CreateSemaphore(nil, initialValue, kPosInfinity32, name);
-	if (fSemaH == nil)
-		throw hsOSException(-1);
+    fSemaH = ::CreateSemaphore(nil, initialValue, kPosInfinity32, name);
+    if (fSemaH == nil)
+        throw hsOSException(-1);
 }
 
 hsSemaphore::~hsSemaphore()
 {
-	::CloseHandle(fSemaH);
+    ::CloseHandle(fSemaH);
 }
 
 hsBool hsSemaphore::Wait(hsMilliseconds timeToWait)
 {
-	if (timeToWait == kPosInfinity32)
-		timeToWait = INFINITE;
-	
-	DWORD result =::WaitForSingleObject(fSemaH, timeToWait);
+    if (timeToWait == kPosInfinity32)
+        timeToWait = INFINITE;
+    
+    DWORD result =::WaitForSingleObject(fSemaH, timeToWait);
 
-	if (result == WAIT_OBJECT_0)
-		return true;
-	else
-	{	hsThrowIfFalse(result == WAIT_TIMEOUT);
-		return false;
-	}
+    if (result == WAIT_OBJECT_0)
+        return true;
+    else
+    {   hsThrowIfFalse(result == WAIT_TIMEOUT);
+        return false;
+    }
 }
 
 void hsSemaphore::Signal()
 {
-	::ReleaseSemaphore(fSemaH, 1, nil);
+    ::ReleaseSemaphore(fSemaH, 1, nil);
 }
 
 ///////////////////////////////////////////////////////////////
 
 hsEvent::hsEvent()
 {
-	fEvent = ::CreateEvent(nil,true,false,nil);
-	if (fEvent == nil)
-		throw hsOSException(-1);
+    fEvent = ::CreateEvent(nil,true,false,nil);
+    if (fEvent == nil)
+        throw hsOSException(-1);
 }
 
 hsEvent::~hsEvent()
 {
-	::CloseHandle(fEvent);
+    ::CloseHandle(fEvent);
 }
 
 hsBool hsEvent::Wait(hsMilliseconds timeToWait)
 {
-	if (timeToWait == kPosInfinity32)
-		timeToWait = INFINITE;
-	
-	DWORD result =::WaitForSingleObject(fEvent, timeToWait);
+    if (timeToWait == kPosInfinity32)
+        timeToWait = INFINITE;
+    
+    DWORD result =::WaitForSingleObject(fEvent, timeToWait);
 
-	if (result == WAIT_OBJECT_0)
-	{
-		::ResetEvent(fEvent);
-		return true;
-	}
-	else
-	{	hsThrowIfFalse(result == WAIT_TIMEOUT);
-		return false;
-	}
+    if (result == WAIT_OBJECT_0)
+    {
+        ::ResetEvent(fEvent);
+        return true;
+    }
+    else
+    {   hsThrowIfFalse(result == WAIT_TIMEOUT);
+        return false;
+    }
 }
 
 void hsEvent::Signal()
 {
-	::SetEvent(fEvent);
+    ::SetEvent(fEvent);
 }

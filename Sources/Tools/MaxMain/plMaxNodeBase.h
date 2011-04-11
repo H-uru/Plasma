@@ -63,237 +63,237 @@ class plMaxBoneMap;
 class plMaxNodeBase : public INode
 {
 public:
-	plMaxNodeData *GetMaxNodeData();	// perhaps with full getters and Setters, we can make this protected
-	void SetMaxNodeData(plMaxNodeData * pDat);
+    plMaxNodeData *GetMaxNodeData();    // perhaps with full getters and Setters, we can make this protected
+    void SetMaxNodeData(plMaxNodeData * pDat);
 
-	//------------------------------
-	// Get Data from MaxNodeData
-	//------------------------------
-	// If recalculate is true the cached value is ignored. (Useful in the SceneViewer)
-	hsBool			CanConvert(bool recalculate=false);
-	plLocation		GetLocation();
-	plKey			GetKey();
-	plSceneObject*	GetSceneObject();
-	hsBool			GetForceLocal();
-	hsBool			GetReverseSort();
-	hsBool			GetSortAsOpaque();
-	hsBool			GetRunTimeLight();
-	hsBool			GetForceMatShade();
-	hsBool			GetForceVisLOS();
-	hsBool			GetEnviron();
-	hsBool			GetEnvironOnly();
-	hsBool			GetWaterDecEnv();
-	hsBool			GetVS();
-	hsBool			GetHasWaterHeight();
-	hsScalar		GetWaterHeight();
-	hsBool			GetSmoothAll();
-	hsBool			GetForceSortable();
-	hsBool			GetConcave();
-	hsBool			GetCalcEdgeLens();
-	hsBool			GetNoPreShade();
-	hsBool			GetForcePreShade();
-	plKey			GetRoomKey();
-	hsBool			GetDrawable();
-	hsBool			GetPhysical();
-	hsBool			GetItinerant();
-	hsBool			GetUnBounded();
-	hsBool			GetDisableNormal();
-	UInt32			GetDecalLevel();
-	hsBool			GetMovable();
-	hsBool			GetNoShadow();
-	hsBool			GetForceShadow();
-	hsBool			GetAlphaTestHigh();
-	hsBool			GetFilterInherit();
-	hsBool			GetIsBarney();
-	hsBool			GetNoSpanSort();
-	hsBool			GetNoSpanReSort();
-	hsBool			GetNoFaceSort();
-	hsBool			GetNoDeferDraw();
-	hsBool			GetBlendToFB();
-	hsBool			GetForceMaterialCopy();
-	hsBool			GetInstanced();
-	hsBool			GetParticleRelated();
-	UInt32			GetSoundIdxCounter();
-	plSceneObject*	GetAvatarSO();
-	BOOL			HasFade();
-	Box3			GetFade();
-	hsBool			GetDup2Sided();
-	hsBool			GetRadiateNorms();
-	BOOL			HasNormalChan();
-	int				GetNormalChan();
-	BOOL			GetGeoDice(int& maxFaces, float& maxSize, int& minFaces);
-	hsBool			GetIsGUI();
-	plSharedMesh*	GetSwappableGeom();
-	UInt32			GetSwappableGeomTarget();
-	plMaxBoneMap*	GetBoneMap();
-	hsBool			GetOverrideHighLevelSDL();
-	UInt8			GetAnimCompress();
-	hsScalar		GetKeyReduceThreshold();
-	int				NumRenderDependencies();
-	plMaxNodeBase*	GetRenderDependency(int i);
+    //------------------------------
+    // Get Data from MaxNodeData
+    //------------------------------
+    // If recalculate is true the cached value is ignored. (Useful in the SceneViewer)
+    hsBool          CanConvert(bool recalculate=false);
+    plLocation      GetLocation();
+    plKey           GetKey();
+    plSceneObject*  GetSceneObject();
+    hsBool          GetForceLocal();
+    hsBool          GetReverseSort();
+    hsBool          GetSortAsOpaque();
+    hsBool          GetRunTimeLight();
+    hsBool          GetForceMatShade();
+    hsBool          GetForceVisLOS();
+    hsBool          GetEnviron();
+    hsBool          GetEnvironOnly();
+    hsBool          GetWaterDecEnv();
+    hsBool          GetVS();
+    hsBool          GetHasWaterHeight();
+    hsScalar        GetWaterHeight();
+    hsBool          GetSmoothAll();
+    hsBool          GetForceSortable();
+    hsBool          GetConcave();
+    hsBool          GetCalcEdgeLens();
+    hsBool          GetNoPreShade();
+    hsBool          GetForcePreShade();
+    plKey           GetRoomKey();
+    hsBool          GetDrawable();
+    hsBool          GetPhysical();
+    hsBool          GetItinerant();
+    hsBool          GetUnBounded();
+    hsBool          GetDisableNormal();
+    UInt32          GetDecalLevel();
+    hsBool          GetMovable();
+    hsBool          GetNoShadow();
+    hsBool          GetForceShadow();
+    hsBool          GetAlphaTestHigh();
+    hsBool          GetFilterInherit();
+    hsBool          GetIsBarney();
+    hsBool          GetNoSpanSort();
+    hsBool          GetNoSpanReSort();
+    hsBool          GetNoFaceSort();
+    hsBool          GetNoDeferDraw();
+    hsBool          GetBlendToFB();
+    hsBool          GetForceMaterialCopy();
+    hsBool          GetInstanced();
+    hsBool          GetParticleRelated();
+    UInt32          GetSoundIdxCounter();
+    plSceneObject*  GetAvatarSO();
+    BOOL            HasFade();
+    Box3            GetFade();
+    hsBool          GetDup2Sided();
+    hsBool          GetRadiateNorms();
+    BOOL            HasNormalChan();
+    int             GetNormalChan();
+    BOOL            GetGeoDice(int& maxFaces, float& maxSize, int& minFaces);
+    hsBool          GetIsGUI();
+    plSharedMesh*   GetSwappableGeom();
+    UInt32          GetSwappableGeomTarget();
+    plMaxBoneMap*   GetBoneMap();
+    hsBool          GetOverrideHighLevelSDL();
+    UInt8           GetAnimCompress();
+    hsScalar        GetKeyReduceThreshold();
+    int             NumRenderDependencies();
+    plMaxNodeBase*  GetRenderDependency(int i);
 
-	int				NumBones();
-	plMaxNodeBase*	GetBone(int i);
-	
-	//------------------------------
-	// Set Data from MaxNodeData
-	//------------------------------
-	void			SetCanConvert(hsBool b);
-	void			SetMesh(hsGMesh *p);
-	void			SetRoomKey(plKey p);
-	void			SetDrawable(hsBool b);
-	void			SetPhysical(hsBool b);
-	void			SetItinerant(hsBool b);
-	void			SetUnBounded(hsBool b);
-	void			SetDisableNormal(hsBool b);
-	void			SetDecalLevel(UInt32 i);
-	void			SetMovable(hsBool b);
-	void			SetNoPreShade(hsBool b);
-	void			SetForcePreShade(hsBool b);
-	void			SetReverseSort(hsBool b);
-	void			SetSortAsOpaque(hsBool b);
-	void			SetVS(hsBool b);
-	void			SetHasWaterHeight(hsBool b);
-	void			SetWaterHeight(hsScalar h);
-	void			SetSmoothAll(hsBool b);
-	void			SetForceSortable(hsBool b);
-	void			SetConcave(hsBool b);
-	void			SetCalcEdgeLens(hsBool b);
-	void			SetRunTimeLight(hsBool b);
-	void			SetForceMatShade(hsBool b);
-	void			SetForceVisLOS(hsBool b);
-	void			SetEnviron(hsBool b);
-	void			SetEnvironOnly(hsBool b);
-	void			SetWaterDecEnv(hsBool b);
-	void			SetForceLocal(hsBool b);
-	void			SetIsBarney(hsBool b);
-	void			SetForceShadow(hsBool b);
-	void			SetAlphaTestHigh(hsBool b);
-	void			SetFilterInherit(hsBool b);
-	void			SetNoShadow(hsBool b);
-	void			SetNoSpanSort(hsBool b);
-	void			SetNoSpanReSort(hsBool b);
-	void			SetNoFaceSort(hsBool b);
-	void			SetNoDeferDraw(hsBool b);
-	void			SetBlendToFB(hsBool b);
-	void			SetForceMaterialCopy(hsBool b);
-	void			SetInstanced(hsBool b);
-	void			SetParticleRelated(hsBool b);
-	void			SetSoundIdxCounter(UInt32 ctr);
-	void			SetAvatarSO(plSceneObject *so);
-	void			SetFade(const Box3& b);
-	void			SetDup2Sided(hsBool b);
-	void			SetRadiateNorms(hsBool b);
-	void			SetNormalChan(int n);
-	void			SetGeoDice(BOOL on, int maxFaces, float maxSize, int minFaces);
-	void			SetIsGUI(hsBool b);
-	void			SetSwappableGeom(plSharedMesh *sm);
-	void			SetSwappableGeomTarget(UInt32 id);
-	void			SetBoneMap(plMaxBoneMap *bones);
-	void			SetOverrideHighLevelSDL(hsBool b);
-	void			SetAnimCompress(UInt8 v);
-	void			SetKeyReduceThreshold(hsScalar v);
-	hsBool			AddRenderDependency(plMaxNodeBase* m);
-	hsBool			RenderDependsOn(plMaxNodeBase* m);
-	void			ClearRenderDependencies();
+    int             NumBones();
+    plMaxNodeBase*  GetBone(int i);
+    
+    //------------------------------
+    // Set Data from MaxNodeData
+    //------------------------------
+    void            SetCanConvert(hsBool b);
+    void            SetMesh(hsGMesh *p);
+    void            SetRoomKey(plKey p);
+    void            SetDrawable(hsBool b);
+    void            SetPhysical(hsBool b);
+    void            SetItinerant(hsBool b);
+    void            SetUnBounded(hsBool b);
+    void            SetDisableNormal(hsBool b);
+    void            SetDecalLevel(UInt32 i);
+    void            SetMovable(hsBool b);
+    void            SetNoPreShade(hsBool b);
+    void            SetForcePreShade(hsBool b);
+    void            SetReverseSort(hsBool b);
+    void            SetSortAsOpaque(hsBool b);
+    void            SetVS(hsBool b);
+    void            SetHasWaterHeight(hsBool b);
+    void            SetWaterHeight(hsScalar h);
+    void            SetSmoothAll(hsBool b);
+    void            SetForceSortable(hsBool b);
+    void            SetConcave(hsBool b);
+    void            SetCalcEdgeLens(hsBool b);
+    void            SetRunTimeLight(hsBool b);
+    void            SetForceMatShade(hsBool b);
+    void            SetForceVisLOS(hsBool b);
+    void            SetEnviron(hsBool b);
+    void            SetEnvironOnly(hsBool b);
+    void            SetWaterDecEnv(hsBool b);
+    void            SetForceLocal(hsBool b);
+    void            SetIsBarney(hsBool b);
+    void            SetForceShadow(hsBool b);
+    void            SetAlphaTestHigh(hsBool b);
+    void            SetFilterInherit(hsBool b);
+    void            SetNoShadow(hsBool b);
+    void            SetNoSpanSort(hsBool b);
+    void            SetNoSpanReSort(hsBool b);
+    void            SetNoFaceSort(hsBool b);
+    void            SetNoDeferDraw(hsBool b);
+    void            SetBlendToFB(hsBool b);
+    void            SetForceMaterialCopy(hsBool b);
+    void            SetInstanced(hsBool b);
+    void            SetParticleRelated(hsBool b);
+    void            SetSoundIdxCounter(UInt32 ctr);
+    void            SetAvatarSO(plSceneObject *so);
+    void            SetFade(const Box3& b);
+    void            SetDup2Sided(hsBool b);
+    void            SetRadiateNorms(hsBool b);
+    void            SetNormalChan(int n);
+    void            SetGeoDice(BOOL on, int maxFaces, float maxSize, int minFaces);
+    void            SetIsGUI(hsBool b);
+    void            SetSwappableGeom(plSharedMesh *sm);
+    void            SetSwappableGeomTarget(UInt32 id);
+    void            SetBoneMap(plMaxBoneMap *bones);
+    void            SetOverrideHighLevelSDL(hsBool b);
+    void            SetAnimCompress(UInt8 v);
+    void            SetKeyReduceThreshold(hsScalar v);
+    hsBool          AddRenderDependency(plMaxNodeBase* m);
+    hsBool          RenderDependsOn(plMaxNodeBase* m);
+    void            ClearRenderDependencies();
 
-	void			AddBone(plMaxNodeBase* m);
-	void			ClearBones();
+    void            AddBone(plMaxNodeBase* m);
+    void            ClearBones();
 
-	// Dirty flags for SceneWatcher use
-	enum { kGeomDirty = 0x1, kMatDirty = 0x2, kAllDirty = 0xFF };
-	hsBool	GetDirty(UInt8 i);
-	void	SetDirty(UInt8 i, hsBool b);
+    // Dirty flags for SceneWatcher use
+    enum { kGeomDirty = 0x1, kMatDirty = 0x2, kAllDirty = 0xFF };
+    hsBool  GetDirty(UInt8 i);
+    void    SetDirty(UInt8 i, hsBool b);
 
-	plKey GetParentKey() { plMaxNodeBase *pPar = (plMaxNodeBase*)GetParentNode(); hsAssert(pPar, "No Parent"); return pPar->GetKey(); }
+    plKey GetParentKey() { plMaxNodeBase *pPar = (plMaxNodeBase*)GetParentNode(); hsAssert(pPar, "No Parent"); return pPar->GetKey(); }
 
-	ISkin* FindSkinModifier(); // Returns the object's skin modifier if it has one, else nil
-	const plRenderLevel& GetRenderLevel(hsBool forBlend);
+    ISkin* FindSkinModifier(); // Returns the object's skin modifier if it has one, else nil
+    const plRenderLevel& GetRenderLevel(hsBool forBlend);
 
-	hsBool HasLoadMask();
-	plLoadMask GetLoadMask();
-	void AddLoadMask(const plLoadMask& m);
+    hsBool HasLoadMask();
+    plLoadMask GetLoadMask();
+    void AddLoadMask(const plLoadMask& m);
 
-	hsBool IsTMAnimated();
-	hsBool IsTMAnimatedRecur();
-	hsBool IsMovable();	// Checks to see whether this node will ever move in the scene
-	bool IsXRef();		// Returns true if object is an XRef or part of an XRef'd scene
+    hsBool IsTMAnimated();
+    hsBool IsTMAnimatedRecur();
+    hsBool IsMovable(); // Checks to see whether this node will ever move in the scene
+    bool IsXRef();      // Returns true if object is an XRef or part of an XRef'd scene
 
-	//----------
-	// Component
-	//----------
-	hsBool IsComponent(Object *obj=nil);		// Object pointer is only necessary for internal use,
-	hsBool IsExternComponent(Object *obj=nil);
-	plComponentBase *ConvertToComponent();		// Returns nil if node is not a component
+    //----------
+    // Component
+    //----------
+    hsBool IsComponent(Object *obj=nil);        // Object pointer is only necessary for internal use,
+    hsBool IsExternComponent(Object *obj=nil);
+    plComponentBase *ConvertToComponent();      // Returns nil if node is not a component
 
 
-	// Normally you will only want the components that are attached to you
-	// because you are in their targets list.  However, in some cases a
-	// component will want to know what other components are attached to it. In
-	// that case, set all to true, so that the attached components won't be
-	// verified to be in your target list.
-	UInt32 NumAttachedComponents(bool all=false);
-	plComponentBase *GetAttachedComponent(UInt32 i, bool all=false);
+    // Normally you will only want the components that are attached to you
+    // because you are in their targets list.  However, in some cases a
+    // component will want to know what other components are attached to it. In
+    // that case, set all to true, so that the attached components won't be
+    // verified to be in your target list.
+    UInt32 NumAttachedComponents(bool all=false);
+    plComponentBase *GetAttachedComponent(UInt32 i, bool all=false);
 
-	hsBool		Contains(const Point3& worldPt); // is the world space point inside my (CONVEX) geometry or dummy box?
-	hsBool		Contains(const Box3& bnd, const Matrix3& l2w); // is the box contained entirely inside my (CONVEX) geometry or dummy box?
-	hsScalar	BoxVolume(const Box3& bnd, const Matrix3& l2w);
-	hsScalar	RegionPriority();	// returns a dominance factor. If a point is in more than one environmental
-									// region, the region with highest priority wins.
+    hsBool      Contains(const Point3& worldPt); // is the world space point inside my (CONVEX) geometry or dummy box?
+    hsBool      Contains(const Box3& bnd, const Matrix3& l2w); // is the box contained entirely inside my (CONVEX) geometry or dummy box?
+    hsScalar    BoxVolume(const Box3& bnd, const Matrix3& l2w);
+    hsScalar    RegionPriority();   // returns a dominance factor. If a point is in more than one environmental
+                                    // region, the region with highest priority wins.
 
-	Interface *GetInterface() { return ::GetCOREInterface(); }
+    Interface *GetInterface() { return ::GetCOREInterface(); }
 
-	static hsMatrix44	Matrix3ToMatrix44(const Matrix3& m3);
-	static Matrix3		Matrix44ToMatrix3(const hsMatrix44& m44);
+    static hsMatrix44   Matrix3ToMatrix44(const Matrix3& m3);
+    static Matrix3      Matrix44ToMatrix3(const hsMatrix44& m44);
 
-	// Don't use these two functions, they probably don't return what
-	// you think they do. See code comments.
-	Matrix3 GetWorldToParent(TimeValue t);
-	Matrix3 GetParentToWorld(TimeValue t);
+    // Don't use these two functions, they probably don't return what
+    // you think they do. See code comments.
+    Matrix3 GetWorldToParent(TimeValue t);
+    Matrix3 GetParentToWorld(TimeValue t);
 
-	hsMatrix44 GetLocalToParent44(TimeValue t = TimeValue(0));
-	hsMatrix44 GetParentToLocal44(TimeValue t = TimeValue(0));
-	hsMatrix44 GetLocalToWorld44(TimeValue t = TimeValue(0));
-	hsMatrix44 GetWorldToLocal44(TimeValue t = TimeValue(0));
-	hsMatrix44 GetOTM44(TimeValue t = TimeValue(0));
-	hsMatrix44 GetVertToLocal44(TimeValue t = TimeValue(0));
-	hsMatrix44 GetLocalToVert44(TimeValue t = TimeValue(0));
-	hsMatrix44 GetOBBToLocal44(TimeValue t = TimeValue(0));
-	hsMatrix44 GetLocalToOBB44(TimeValue t = TimeValue(0));
+    hsMatrix44 GetLocalToParent44(TimeValue t = TimeValue(0));
+    hsMatrix44 GetParentToLocal44(TimeValue t = TimeValue(0));
+    hsMatrix44 GetLocalToWorld44(TimeValue t = TimeValue(0));
+    hsMatrix44 GetWorldToLocal44(TimeValue t = TimeValue(0));
+    hsMatrix44 GetOTM44(TimeValue t = TimeValue(0));
+    hsMatrix44 GetVertToLocal44(TimeValue t = TimeValue(0));
+    hsMatrix44 GetLocalToVert44(TimeValue t = TimeValue(0));
+    hsMatrix44 GetOBBToLocal44(TimeValue t = TimeValue(0));
+    hsMatrix44 GetLocalToOBB44(TimeValue t = TimeValue(0));
 
-	Matrix3 GetLocalToParent(TimeValue t = TimeValue(0));
-	Matrix3 GetParentToLocal(TimeValue t = TimeValue(0));
-	Matrix3 GetLocalToWorld(TimeValue t = TimeValue(0));
-	Matrix3 GetWorldToLocal(TimeValue t = TimeValue(0));
-	Matrix3 GetOTM(TimeValue t = TimeValue(0));
-	Matrix3 GetVertToLocal(TimeValue t = TimeValue(0));
-	Matrix3 GetLocalToVert(TimeValue t = TimeValue(0));
-	Matrix3 GetOBBToLocal(TimeValue t = TimeValue(0));
-	Matrix3 GetLocalToOBB(TimeValue t = TimeValue(0));
+    Matrix3 GetLocalToParent(TimeValue t = TimeValue(0));
+    Matrix3 GetParentToLocal(TimeValue t = TimeValue(0));
+    Matrix3 GetLocalToWorld(TimeValue t = TimeValue(0));
+    Matrix3 GetWorldToLocal(TimeValue t = TimeValue(0));
+    Matrix3 GetOTM(TimeValue t = TimeValue(0));
+    Matrix3 GetVertToLocal(TimeValue t = TimeValue(0));
+    Matrix3 GetLocalToVert(TimeValue t = TimeValue(0));
+    Matrix3 GetOBBToLocal(TimeValue t = TimeValue(0));
+    Matrix3 GetLocalToOBB(TimeValue t = TimeValue(0));
 
 protected:
-	// AppDataChunk sub-chunk id's
-	enum
-	{
-		kPlasmaAgeChunk,	// No longer in use, but cleared from old files
-		kPlasmaDistChunk,	// No longer in use, but cleared from old files
-		kPlasmaRoomChunk,	// No longer in use, but cleared from old files
-		kPlasmaMaxNodeDataChunk,
-		kPlasmaSceneViewerChunk,
-		kPlasmaLightChunk,	// No longer in use, but cleared from old files
-	};
+    // AppDataChunk sub-chunk id's
+    enum
+    {
+        kPlasmaAgeChunk,    // No longer in use, but cleared from old files
+        kPlasmaDistChunk,   // No longer in use, but cleared from old files
+        kPlasmaRoomChunk,   // No longer in use, but cleared from old files
+        kPlasmaMaxNodeDataChunk,
+        kPlasmaSceneViewerChunk,
+        kPlasmaLightChunk,  // No longer in use, but cleared from old files
+    };
 
-	UInt8 *IGetSceneViewerChunk();
-	// Attempts to convert a RefMaker pointer to a component.  Returns nil if it is not a component.
-	plComponentBase *IRefMakerToComponent(ReferenceMaker *maker, bool all);
+    UInt8 *IGetSceneViewerChunk();
+    // Attempts to convert a RefMaker pointer to a component.  Returns nil if it is not a component.
+    plComponentBase *IRefMakerToComponent(ReferenceMaker *maker, bool all);
 
-	UInt32			IGetMajorRenderLevel(hsBool forBlend);
-	UInt32			IGetMinorRenderLevel(hsBool forBlend);
+    UInt32          IGetMajorRenderLevel(hsBool forBlend);
+    UInt32          IGetMinorRenderLevel(hsBool forBlend);
 
-	hsBool			IRenderLevelSet(hsBool forBlend);
-	void			ISetRenderLevel(const plRenderLevel& l, hsBool forBlend);
-	const plRenderLevel& IGetRenderLevel(hsBool forBlend);
-	plRenderLevel	ICalcRenderLevel(hsBool forBlend);
+    hsBool          IRenderLevelSet(hsBool forBlend);
+    void            ISetRenderLevel(const plRenderLevel& l, hsBool forBlend);
+    const plRenderLevel& IGetRenderLevel(hsBool forBlend);
+    plRenderLevel   ICalcRenderLevel(hsBool forBlend);
 };
 
 #endif //plMaxNodeBase_inc

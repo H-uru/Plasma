@@ -43,27 +43,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyGUIControlDragBar : public pyGUIControl
 {
 protected:
-	pyGUIControlDragBar(): pyGUIControl() {} // for python glue only, do NOT call
-	pyGUIControlDragBar(pyKey& gckey);
-	pyGUIControlDragBar(plKey objkey);
+    pyGUIControlDragBar(): pyGUIControl() {} // for python glue only, do NOT call
+    pyGUIControlDragBar(pyKey& gckey);
+    pyGUIControlDragBar(plKey objkey);
 
 public:
-	~pyGUIControlDragBar();
+    ~pyGUIControlDragBar();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlDragBar);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlDragBar object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlDragBar); // converts a PyObject to a pyGUIControlDragBar (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlDragBar);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlDragBar object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlDragBar); // converts a PyObject to a pyGUIControlDragBar (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlDragBar(pyKey& gckey);
+    static hsBool IsGUIControlDragBar(pyKey& gckey);
 
-	virtual void	Anchor( void );
-	virtual void	Unanchor( void );
-	virtual hsBool	IsAnchored();
+    virtual void    Anchor( void );
+    virtual void    Unanchor( void );
+    virtual hsBool  IsAnchored();
 
 };
 

@@ -37,35 +37,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace ND {
 
-extern HMODULE			g_lib;
-extern const wchar		g_version[];
+extern HMODULE          g_lib;
+extern const wchar      g_version[];
 
 
 //============================================================================
 enum {
-	kDiagSrvAuth,
-	kDiagSrvFile,
-	kNumDiagSrvs
+    kDiagSrvAuth,
+    kDiagSrvFile,
+    kNumDiagSrvs
 };
 
 //============================================================================
 inline unsigned NetProtocolToSrv (ENetProtocol protocol) {
 
-	switch (protocol) {
-		case kNetProtocolCli2Auth:	return kDiagSrvAuth;
-		case kNetProtocolCli2File:	return kDiagSrvFile;
-		default:					return kNumDiagSrvs;
-	}
+    switch (protocol) {
+        case kNetProtocolCli2Auth:  return kDiagSrvAuth;
+        case kNetProtocolCli2File:  return kDiagSrvFile;
+        default:                    return kNumDiagSrvs;
+    }
 }
 
 //============================================================================
 inline const wchar * SrvToString (unsigned srv) {
-	
-	switch (srv) {
-		case kDiagSrvAuth:	return L"Auth";
-		case kDiagSrvFile:	return L"File";
-		DEFAULT_FATAL(srv);
-	}
+    
+    switch (srv) {
+        case kDiagSrvAuth:  return L"Auth";
+        case kDiagSrvFile:  return L"File";
+        DEFAULT_FATAL(srv);
+    }
 }
 
 } using namespace ND;
@@ -74,15 +74,15 @@ inline const wchar * SrvToString (unsigned srv) {
 //============================================================================
 struct NetDiag : AtomicRef {
 
-	bool			destroyed;
-	CCritSect		critsect;
-	wchar *			hosts[kNumDiagSrvs];
-	unsigned		nodes[kNumDiagSrvs];
-	
-	~NetDiag ();
+    bool            destroyed;
+    CCritSect       critsect;
+    wchar *         hosts[kNumDiagSrvs];
+    unsigned        nodes[kNumDiagSrvs];
+    
+    ~NetDiag ();
 
-	void Destroy ();
-	void SetHost (unsigned srv, const wchar host[]);	
+    void Destroy ();
+    void SetHost (unsigned srv, const wchar host[]);    
 };
 
 

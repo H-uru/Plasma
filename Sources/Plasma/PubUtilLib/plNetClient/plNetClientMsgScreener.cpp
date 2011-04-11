@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plNetClientMsgScreener::plNetClientMsgScreener()
 {
-	DebugMsg("created");
+    DebugMsg("created");
 }
 
 //
@@ -47,8 +47,8 @@ plNetClientMsgScreener::plNetClientMsgScreener()
 //
 void plNetClientMsgScreener::ICreateStatusLog() const
 {
-	fStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "NetScreener.log",
-			plStatusLog::kTimestamp | plStatusLog::kFilledBackground | plStatusLog::kAlignToTop);	
+    fStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "NetScreener.log",
+            plStatusLog::kTimestamp | plStatusLog::kFilledBackground | plStatusLog::kAlignToTop);   
 }
 
 //
@@ -56,8 +56,8 @@ void plNetClientMsgScreener::ICreateStatusLog() const
 //
 const char* plNetClientMsgScreener::IGetAgeName() const
 {
-	plNetLinkingMgr *lm = plNetLinkingMgr::GetInstance();
-	return lm && lm->GetAgeLink()->GetAgeInfo() ? lm->GetAgeLink()->GetAgeInfo()->GetAgeFilename() : "?";
+    plNetLinkingMgr *lm = plNetLinkingMgr::GetInstance();
+    return lm && lm->GetAgeLink()->GetAgeInfo() ? lm->GetAgeLink()->GetAgeInfo()->GetAgeFilename() : "?";
 }
 
 //
@@ -65,14 +65,14 @@ const char* plNetClientMsgScreener::IGetAgeName() const
 //
 bool plNetClientMsgScreener::IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const
 {
-	return (!key || key==plNetClientApp::GetInstance()->GetLocalPlayerKey());
+    return (!key || key==plNetClientApp::GetInstance()->GetLocalPlayerKey());
 }
 
 bool plNetClientMsgScreener::IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const 
 {
-	plKey playerKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
-	plArmatureMod* aMod = playerKey ? plAvatarMgr::GetInstance()->FindAvatar(playerKey) : nil; 
-	return (!key || key==(aMod ? aMod->GetKey() : nil));
+    plKey playerKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
+    plArmatureMod* aMod = playerKey ? plAvatarMgr::GetInstance()->FindAvatar(playerKey) : nil; 
+    return (!key || key==(aMod ? aMod->GetKey() : nil));
 }
 
 //
@@ -80,7 +80,7 @@ bool plNetClientMsgScreener::IIsLocalArmatureModKey(plKey key, const plNetGameMe
 //
 bool plNetClientMsgScreener::IIsSenderCCR(const plNetGameMember* gm) const
 {
-	return plNetClientApp::GetInstance()->AmCCR();
+    return plNetClientApp::GetInstance()->AmCCR();
 }
 
 //
@@ -88,22 +88,22 @@ bool plNetClientMsgScreener::IIsSenderCCR(const plNetGameMember* gm) const
 //
 bool plNetClientMsgScreener::AllowMessage(const plMessage* msg) const
 {
-	if (!msg)
-		return false;
+    if (!msg)
+        return false;
 
-	Answer ans=IAllowMessageType(msg->ClassIndex());
-	if (ans==kYes)
-		return true;
-	if (ans==kNo)
-	{
-		// WarningMsg("Quick-reject net propagated msg %s", msg->ClassName());
-		return false;
-	}
+    Answer ans=IAllowMessageType(msg->ClassIndex());
+    if (ans==kYes)
+        return true;
+    if (ans==kNo)
+    {
+        // WarningMsg("Quick-reject net propagated msg %s", msg->ClassName());
+        return false;
+    }
 
-	if (!IValidateMessage(msg))
-	{
-		// WarningMsg("Validation failed.  Blocking net propagated msg %s", msg->ClassName());
-		return false;
-	}
-	return true;
+    if (!IValidateMessage(msg))
+    {
+        // WarningMsg("Validation failed.  Blocking net propagated msg %s", msg->ClassName());
+        return false;
+    }
+    return true;
 }

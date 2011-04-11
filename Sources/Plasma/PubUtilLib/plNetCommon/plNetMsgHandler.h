@@ -27,13 +27,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetMsgHandler_inc
 
 #include "hsConfig.h"
-#include "hsTypes.h"	// for nil
+#include "hsTypes.h"    // for nil
 
 class plNetMessage;
 class plNetApp;
 
-#define kMsgSendInterval		0.25f	// time between message re-send
-#define kNetOperationTimeout	10.f	// amount of time we try a network operation before complaining
+#define kMsgSendInterval        0.25f   // time between message re-send
+#define kNetOperationTimeout    10.f    // amount of time we try a network operation before complaining
 
 //
 // Base msg handler class
@@ -41,16 +41,16 @@ class plNetApp;
 class plNetMsgHandler
 {
 protected:
-	plNetApp* fNetApp;
+    plNetApp* fNetApp;
 public:
-	plNetMsgHandler() : fNetApp(nil) {}
-	virtual ~plNetMsgHandler() {}
+    plNetMsgHandler() : fNetApp(nil) {}
+    virtual ~plNetMsgHandler() {}
 
-	void SetNetApp(plNetApp* na) { fNetApp=na; }
-	plNetApp* GetNetApp() { return fNetApp; }
+    void SetNetApp(plNetApp* na) { fNetApp=na; }
+    plNetApp* GetNetApp() { return fNetApp; }
 
-	// return -1 on error, 0 if ok.	
-	virtual int ReceiveMsg(plNetMessage*& netMsg) = 0;
+    // return -1 on error, 0 if ok. 
+    virtual int ReceiveMsg(plNetMessage*& netMsg) = 0;
 };
 
 #define MSG_HANDLER(msgClassName) msgClassName##HandleMsg
@@ -72,9 +72,9 @@ int handlerClassName::MSG_HANDLER(msgClassName)(plNetMessage*& netMsg)
 //
 #define MSG_HANDLER_CASE(msgClassName) \
 case CLASS_INDEX_SCOPED(msgClassName): \
-	{ \
-		return MSG_HANDLER(msgClassName)(netMsg); \
-	} 
+    { \
+        return MSG_HANDLER(msgClassName)(netMsg); \
+    } 
 
 
-#endif	//  plNetMsgHandler_inc
+#endif  //  plNetMsgHandler_inc

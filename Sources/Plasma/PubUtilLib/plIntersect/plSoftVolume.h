@@ -37,63 +37,63 @@ class plMessage;
 class plSoftVolume : public plRegionBase
 {
 public:
-	enum RefTypes {
-		kSubVolume
-	};
+    enum RefTypes {
+        kSubVolume
+    };
 
 protected:
-	enum {
-		kListenNone				= 0x0,
-		kListenCheck			= 0x1,
-		kListenPosSet			= 0x2,
-		kListenDirty			= 0x4,
-		kListenRegistered		= 0x8
-	};
+    enum {
+        kListenNone             = 0x0,
+        kListenCheck            = 0x1,
+        kListenPosSet           = 0x2,
+        kListenDirty            = 0x4,
+        kListenRegistered       = 0x8
+    };
 
-	hsPoint3				fListenPos;
-	mutable hsScalar		fListenStrength;
-	mutable UInt32			fListenState;
+    hsPoint3                fListenPos;
+    mutable hsScalar        fListenStrength;
+    mutable UInt32          fListenState;
 
-	hsScalar				fInsideStrength;
-	hsScalar				fOutsideStrength;
+    hsScalar                fInsideStrength;
+    hsScalar                fOutsideStrength;
 
-	virtual hsScalar		IUpdateListenerStrength() const;
+    virtual hsScalar        IUpdateListenerStrength() const;
 
-	hsScalar				IRemapStrength(hsScalar s) const { return fOutsideStrength + s * (fInsideStrength - fOutsideStrength); }
+    hsScalar                IRemapStrength(hsScalar s) const { return fOutsideStrength + s * (fInsideStrength - fOutsideStrength); }
 
 private:
-	// Don't call this, use public GetStrength().
-	virtual hsScalar		IGetStrength(const hsPoint3& pos) const = 0;
+    // Don't call this, use public GetStrength().
+    virtual hsScalar        IGetStrength(const hsPoint3& pos) const = 0;
 
 public:
-	plSoftVolume();
-	virtual ~plSoftVolume();
+    plSoftVolume();
+    virtual ~plSoftVolume();
 
-	CLASSNAME_REGISTER( plSoftVolume );
-	GETINTERFACE_ANY( plSoftVolume, plRegionBase );
+    CLASSNAME_REGISTER( plSoftVolume );
+    GETINTERFACE_ANY( plSoftVolume, plRegionBase );
 
-	virtual hsScalar GetStrength(const hsPoint3& pos) const;
-	virtual hsBool IsInside(const hsPoint3& pos) const { return GetStrength(pos) >= 1.f; }
+    virtual hsScalar GetStrength(const hsPoint3& pos) const;
+    virtual hsBool IsInside(const hsPoint3& pos) const { return GetStrength(pos) >= 1.f; }
 
-	virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 
-	virtual Int32   GetNumProperties() const { return 1; } // This is stupid.
+    virtual Int32   GetNumProperties() const { return 1; } // This is stupid.
 
-	virtual hsScalar	GetListenerStrength() const;
-	virtual void		UpdateListenerPosition(const hsPoint3& p);
-	virtual void		SetCheckListener(hsBool on=true);
-	virtual hsBool		GetCheckListener() const { return 0 != (fListenState & kListenCheck); }
+    virtual hsScalar    GetListenerStrength() const;
+    virtual void        UpdateListenerPosition(const hsPoint3& p);
+    virtual void        SetCheckListener(hsBool on=true);
+    virtual hsBool      GetCheckListener() const { return 0 != (fListenState & kListenCheck); }
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	void SetInsideStrength(hsScalar s);
-	void SetOutsideStrength(hsScalar s);
+    void SetInsideStrength(hsScalar s);
+    void SetOutsideStrength(hsScalar s);
 
-	hsScalar GetInsideStrength() const { return fInsideStrength; }
-	hsScalar GetOutsideStrength() const { return fOutsideStrength; }
+    hsScalar GetInsideStrength() const { return fInsideStrength; }
+    hsScalar GetOutsideStrength() const { return fOutsideStrength; }
 };
 
 #endif // plSoftVolume_inc

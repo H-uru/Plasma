@@ -43,30 +43,30 @@ class plNetTransportMember;
 class plNetClientMsgHandler : public plNetMsgHandler
 {
 //protected:
-	enum // SendOrTimeOut return values and meanings
-	{
-		kTimedOutNoRetry	= -1,
-		kDoNothing	=  0,
-		kSend		=  1,
-	};
-	plNetClientMgr * IGetNetClientMgr();
-	void IFillInTransportMember(const plNetMsgMemberInfoHelper* mbi, plNetTransportMember* mbr);
+    enum // SendOrTimeOut return values and meanings
+    {
+        kTimedOutNoRetry    = -1,
+        kDoNothing  =  0,
+        kSend       =  1,
+    };
+    plNetClientMgr * IGetNetClientMgr();
+    void IFillInTransportMember(const plNetMsgMemberInfoHelper* mbi, plNetTransportMember* mbr);
 public:
-	plNetClientMsgHandler(plNetClientMgr * mgr);
-	~plNetClientMsgHandler();
+    plNetClientMsgHandler(plNetClientMgr * mgr);
+    ~plNetClientMsgHandler();
 
-	int		ReceiveMsg(plNetMessage *& netMsg);	
-	int		PeekMsg(plNetMessage * netMsg);	// return msgsize on success. -1 on error.
+    int     ReceiveMsg(plNetMessage *& netMsg); 
+    int     PeekMsg(plNetMessage * netMsg); // return msgsize on success. -1 on error.
 
-	MSG_HANDLER_DECL(plNetMsgTerminated)
-	MSG_HANDLER_DECL(plNetMsgGroupOwner)
-	MSG_HANDLER_DECL(plNetMsgSDLState)
-	MSG_HANDLER_DECL(plNetMsgGameMessage)
-	MSG_HANDLER_DECL(plNetMsgVoice)
-	MSG_HANDLER_DECL(plNetMsgMembersList)
-	MSG_HANDLER_DECL(plNetMsgMemberUpdate)
-	MSG_HANDLER_DECL(plNetMsgListenListUpdate)
-	MSG_HANDLER_DECL(plNetMsgInitialAgeStateSent)
+    MSG_HANDLER_DECL(plNetMsgTerminated)
+    MSG_HANDLER_DECL(plNetMsgGroupOwner)
+    MSG_HANDLER_DECL(plNetMsgSDLState)
+    MSG_HANDLER_DECL(plNetMsgGameMessage)
+    MSG_HANDLER_DECL(plNetMsgVoice)
+    MSG_HANDLER_DECL(plNetMsgMembersList)
+    MSG_HANDLER_DECL(plNetMsgMemberUpdate)
+    MSG_HANDLER_DECL(plNetMsgListenListUpdate)
+    MSG_HANDLER_DECL(plNetMsgInitialAgeStateSent)
 };
 
-#endif	//  plNetClientMsgHandler_inc
+#endif  //  plNetClientMsgHandler_inc

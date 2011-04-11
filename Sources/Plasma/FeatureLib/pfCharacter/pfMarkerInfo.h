@@ -36,49 +36,49 @@ class plGameMarkerModifier;
 class pfMarkerInfo
 {
 public:
-	enum MarkerType { kMarkerOpen, kMarkerGreen, kMarkerRed, kMarkerLocal, kMarkerLocalSelected };
+    enum MarkerType { kMarkerOpen, kMarkerGreen, kMarkerRed, kMarkerLocal, kMarkerLocalSelected };
 
 protected:
-	// MarkerMgr will set this up
-	static plUoid fMarkerUoid;
+    // MarkerMgr will set this up
+    static plUoid fMarkerUoid;
 
-	plKey fKey;
-	plGameMarkerModifier* fMod;
-	hsPoint3 fPosition;
-	MarkerType fType;
-	double fLastChange;	// Last time this marker changed hands
-	bool fVisible;
-	bool fIsNew;
-	bool fSpawned;
+    plKey fKey;
+    plGameMarkerModifier* fMod;
+    hsPoint3 fPosition;
+    MarkerType fType;
+    double fLastChange; // Last time this marker changed hands
+    bool fVisible;
+    bool fIsNew;
+    bool fSpawned;
 
-	void IPlayBounce(bool play);
-	void IPlayColor(bool play);
-	void IPlaySound(bool place);
+    void IPlayBounce(bool play);
+    void IPlayColor(bool play);
+    void IPlaySound(bool place);
 
 public:
-	pfMarkerInfo(const hsPoint3& pos, bool isNew);
-	~pfMarkerInfo() {}
+    pfMarkerInfo(const hsPoint3& pos, bool isNew);
+    ~pfMarkerInfo() {}
 
-	static void Init();
+    static void Init();
 
-	plKey GetKey() { return fKey; }
+    plKey GetKey() { return fKey; }
 
-	void Spawn(MarkerType type);
-	void InitSpawned(plKey markerKey);
-	void Remove();
+    void Spawn(MarkerType type);
+    void InitSpawned(plKey markerKey);
+    void Remove();
 
-	void Update(double curTime);
+    void Update(double curTime);
 
-	void Show(bool show);
-	bool IsVisible() { return fVisible; }
+    void Show(bool show);
+    bool IsVisible() { return fVisible; }
 
-	void SetType(pfMarkerInfo::MarkerType type);
-	pfMarkerInfo::MarkerType GetType() { return fType; }
+    void SetType(pfMarkerInfo::MarkerType type);
+    pfMarkerInfo::MarkerType GetType() { return fType; }
 
-	void SetFrozen(double freezeStartTime);
-	bool IsFrozen() { return fLastChange != 0; }
+    void SetFrozen(double freezeStartTime);
+    bool IsFrozen() { return fLastChange != 0; }
 
-	void PlayHitSound() { IPlaySound(false); }
+    void PlayHitSound() { IPlaySound(false); }
 };
 
 #endif // pfMarkerInfo_h_inc

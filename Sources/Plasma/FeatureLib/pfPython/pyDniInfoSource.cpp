@@ -31,65 +31,65 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyDniCoordinates.h"
 
 pyDniInfoSource::pyDniInfoSource()
-:	fAgeName(nil)
+:   fAgeName(nil)
 {}
 
 pyDniInfoSource::~pyDniInfoSource() {
-	FREE(fAgeName);
+    FREE(fAgeName);
 }
 
 PyObject* pyDniInfoSource::GetAgeCoords( void )
 {
 #if 0 // this may get retooled for another purpose someday...
-	const plDniCoordinateInfo * coords = plNetPlayerVNodeMgr::GetInstance()->GetAgeInfo()->GetAgeCoords();
-	if (coords)
-		return pyDniCoordinates::New((plDniCoordinateInfo*)coords);
+    const plDniCoordinateInfo * coords = plNetPlayerVNodeMgr::GetInstance()->GetAgeInfo()->GetAgeCoords();
+    if (coords)
+        return pyDniCoordinates::New((plDniCoordinateInfo*)coords);
 #endif
-	// just return a None object
-	PYTHON_RETURN_NONE;
+    // just return a None object
+    PYTHON_RETURN_NONE;
 }
 
 UInt32 pyDniInfoSource::GetAgeTime( void ) const
 {
-	RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
-	if (!node)
-		return 0;
-	
-	unsigned result;
-	VaultAgeInfoNode ageInfo(node);
-	if (const plUnifiedTime * utime = ageInfo.GetAgeTime())
-		result = utime->GetSecs();
-	else
-		result = 0;
-	node->DecRef();
+    RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
+    if (!node)
+        return 0;
+    
+    unsigned result;
+    VaultAgeInfoNode ageInfo(node);
+    if (const plUnifiedTime * utime = ageInfo.GetAgeTime())
+        result = utime->GetSecs();
+    else
+        result = 0;
+    node->DecRef();
 
-	return result;
+    return result;
 }
 
 const char * pyDniInfoSource::GetAgeName( void ) const
 {
-	RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
-	if (!node)
-		return "";
+    RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
+    if (!node)
+        return "";
 
-	VaultAgeInfoNode ageInfo(node);
+    VaultAgeInfoNode ageInfo(node);
 
-	fAgeName = StrDupToAnsi(ageInfo.ageInstName);
-	node->DecRef();
+    fAgeName = StrDupToAnsi(ageInfo.ageInstName);
+    node->DecRef();
 
-	return fAgeName;
+    return fAgeName;
 }
 
 const char * pyDniInfoSource::GetAgeGuid( void ) const
 {
-	RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
-	if (!node)
-		return "";
+    RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
+    if (!node)
+        return "";
 
-	VaultAgeInfoNode ageInfo(node);
+    VaultAgeInfoNode ageInfo(node);
 
-	GuidToString(ageInfo.ageInstUuid, fAgeGuid, arrsize(fAgeGuid));
-	node->DecRef();
+    GuidToString(ageInfo.ageInstUuid, fAgeGuid, arrsize(fAgeGuid));
+    node->DecRef();
 
-	return fAgeGuid;
+    return fAgeGuid;
 }

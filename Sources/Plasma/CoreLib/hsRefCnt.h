@@ -28,24 +28,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsRefCnt {
 private:
-	int			fRefCnt;
+    int         fRefCnt;
 public:
-				hsRefCnt() : fRefCnt(1) {}
-	virtual		~hsRefCnt();
+                hsRefCnt() : fRefCnt(1) {}
+    virtual     ~hsRefCnt();
 
-	virtual int		RefCnt() const { return fRefCnt; }
-	virtual void	UnRef();
-	virtual void	Ref();
+    virtual int     RefCnt() const { return fRefCnt; }
+    virtual void    UnRef();
+    virtual void    Ref();
 };
 
-#define hsRefCnt_SafeRef(obj)		do { if (obj) (obj)->Ref(); } while (0)
-#define hsRefCnt_SafeUnRef(obj)	do { if (obj) (obj)->UnRef(); } while (0)
+#define hsRefCnt_SafeRef(obj)       do { if (obj) (obj)->Ref(); } while (0)
+#define hsRefCnt_SafeUnRef(obj) do { if (obj) (obj)->UnRef(); } while (0)
 
-#define hsRefCnt_SafeAssign(dst, src)		\
-		do {							\
-			hsRefCnt_SafeRef(src);		\
-			hsRefCnt_SafeUnRef(dst);		\
-			dst = src;					\
-		} while (0)
+#define hsRefCnt_SafeAssign(dst, src)       \
+        do {                            \
+            hsRefCnt_SafeRef(src);      \
+            hsRefCnt_SafeUnRef(dst);        \
+            dst = src;                  \
+        } while (0)
 
 #endif

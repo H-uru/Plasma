@@ -4,13 +4,13 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plNetClientRecorder_SOURCES
-	plNetClientRecorder.cpp
-	plNetClientStatsRecorder.cpp
-	plNetClientStreamRecorder.cpp
+    plNetClientRecorder.cpp
+    plNetClientStatsRecorder.cpp
+    plNetClientStreamRecorder.cpp
 )
 
 set(plNetClientRecorder_HEADERS
-	plNetClientRecorder.h
+    plNetClientRecorder.h
 )
 
 add_library(plNetClientRecorder STATIC ${plNetClientRecorder_SOURCES} ${plNetClientRecorder_HEADERS})

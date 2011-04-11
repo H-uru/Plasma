@@ -36,26 +36,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVisMgr.h"
 
 plRenderRequest::plRenderRequest()
-:	fRenderTarget(nil),
-	fPageMgr(nil),
-	fAck(nil),
-	fOverrideMat(nil),
-	fEraseMat(nil),
-	fDrawableMask(UInt32(-1)),
-	fSubDrawableMask(UInt32(-1)),
-	fRenderState(0),
-	fClearDepth(1.f),
-	fFogStart(-1.f),
-	fClearDrawable(nil),
-	fPriority(-1.e6f),
-	fUserData(0),
-	fIgnoreOccluders(false)
+:   fRenderTarget(nil),
+    fPageMgr(nil),
+    fAck(nil),
+    fOverrideMat(nil),
+    fEraseMat(nil),
+    fDrawableMask(UInt32(-1)),
+    fSubDrawableMask(UInt32(-1)),
+    fRenderState(0),
+    fClearDepth(1.f),
+    fFogStart(-1.f),
+    fClearDrawable(nil),
+    fPriority(-1.e6f),
+    fUserData(0),
+    fIgnoreOccluders(false)
 {
-	fClearColor.Set(0,0,0,1.f);
+    fClearColor.Set(0,0,0,1.f);
 
-	fLocalToWorld.Reset();
-	fWorldToLocal.Reset();
-	
+    fLocalToWorld.Reset();
+    fWorldToLocal.Reset();
+    
 }
 
 plRenderRequest::~plRenderRequest()
@@ -64,91 +64,91 @@ plRenderRequest::~plRenderRequest()
 
 void plRenderRequest::SetLocalTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
-	fLocalToWorld = l2w;
-	fWorldToLocal = w2l;
+    fLocalToWorld = l2w;
+    fWorldToLocal = w2l;
 }
 
 void plRenderRequest::Read(hsStream* s, hsResMgr* mgr)
 {
-	fClearDrawable = nil;
-	fRenderTarget = nil;
-	fPageMgr = nil;
+    fClearDrawable = nil;
+    fRenderTarget = nil;
+    fPageMgr = nil;
 
-	fDrawableMask = s->ReadSwap32();
-	fSubDrawableMask = s->ReadSwap32();
+    fDrawableMask = s->ReadSwap32();
+    fSubDrawableMask = s->ReadSwap32();
 
-	fRenderState = s->ReadSwap32();
+    fRenderState = s->ReadSwap32();
 
-	fLocalToWorld.Read(s);
-	fWorldToLocal.Read(s);
+    fLocalToWorld.Read(s);
+    fWorldToLocal.Read(s);
 
-	fPriority = s->ReadSwapScalar();
+    fPriority = s->ReadSwapScalar();
 }
 
 void plRenderRequest::Write(hsStream* s, hsResMgr* mgr)
 {
-	s->WriteSwap32(fDrawableMask);
-	s->WriteSwap32(fSubDrawableMask);
+    s->WriteSwap32(fDrawableMask);
+    s->WriteSwap32(fSubDrawableMask);
 
-	s->WriteSwap32(fRenderState);
+    s->WriteSwap32(fRenderState);
 
-	fLocalToWorld.Write(s);
-	fWorldToLocal.Write(s);
+    fLocalToWorld.Write(s);
+    fWorldToLocal.Write(s);
 
-	s->WriteSwapScalar(fPriority);
+    s->WriteSwapScalar(fPriority);
 }
 
 void plRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
 {
-	if( !fVisForce.Empty() )
-	{
-		plGlobalVisMgr::Instance()->DisableNormal();
-		plGlobalVisMgr::Instance()->ForceVisSets(fVisForce, false);
-	}
+    if( !fVisForce.Empty() )
+    {
+        plGlobalVisMgr::Instance()->DisableNormal();
+        plGlobalVisMgr::Instance()->ForceVisSets(fVisForce, false);
+    }
 
-	pipe->PushRenderRequest(this);
+    pipe->PushRenderRequest(this);
 
-	pipe->ClearRenderTarget(GetClearDrawable());
+    pipe->ClearRenderTarget(GetClearDrawable());
 
-	int numDrawn = 0;
-	if( GetPageTreeMgr() )
-		numDrawn = GetPageTreeMgr()->Render(pipe);
-	else
-		numDrawn = pageMgr->Render(pipe);
+    int numDrawn = 0;
+    if( GetPageTreeMgr() )
+        numDrawn = GetPageTreeMgr()->Render(pipe);
+    else
+        numDrawn = pageMgr->Render(pipe);
 
-	pipe->PopRenderRequest(this);
-	
-	if( GetAck() )
-	{
-		plRenderRequestAck* ack = TRACKED_NEW plRenderRequestAck( GetAck(), GetUserData() );
-		ack->SetNumDrawn(numDrawn);
-		plgDispatch::MsgSend( ack );
-	}
+    pipe->PopRenderRequest(this);
+    
+    if( GetAck() )
+    {
+        plRenderRequestAck* ack = TRACKED_NEW plRenderRequestAck( GetAck(), GetUserData() );
+        ack->SetNumDrawn(numDrawn);
+        plgDispatch::MsgSend( ack );
+    }
 }
 
 void plRenderRequest::SetRenderTarget(plRenderTarget* t) 
 { 
-	if( t != fRenderTarget )
-	{
-		fRenderTarget = t; 
+    if( t != fRenderTarget )
+    {
+        fRenderTarget = t; 
 
-		if( fRenderTarget )
-		{
-			fViewTransform.SetWidth(t->GetWidth());
-			fViewTransform.SetHeight(t->GetHeight());
-		}
-	}
+        if( fRenderTarget )
+        {
+            fViewTransform.SetWidth(t->GetWidth());
+            fViewTransform.SetHeight(t->GetHeight());
+        }
+    }
 }
 
 void plRenderRequest::SetVisForce(const hsBitVector& b)
 {
-	if( b.Empty() )
-		fVisForce.Reset();
-	else
-		fVisForce = b;
+    if( b.Empty() )
+        fVisForce.Reset();
+    else
+        fVisForce = b;
 }
 
 hsBool plRenderRequest::GetRenderCharacters() const 
 { 
-	return fVisForce.IsBitSet(plVisMgr::kCharacter); 
+    return fVisForce.IsBitSet(plVisMgr::kCharacter); 
 }

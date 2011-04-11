@@ -30,36 +30,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plQuality
 {
 public:
-	enum
-	{
-		kMinimum	= 0,
+    enum
+    {
+        kMinimum    = 0,
 
-		kPS_1_1		= 2,
-		kPS_1_4		= 3,
-		kPS_2_Plus	= 4
-	};
+        kPS_1_1     = 2,
+        kPS_1_4     = 3,
+        kPS_2_Plus  = 4
+    };
 protected:
-	// These two are instanciated in plLoadMask.cpp, as well as
-	// function implementations.
-	static		int			fQuality; 
-	static		int			fCapability;
+    // These two are instanciated in plLoadMask.cpp, as well as
+    // function implementations.
+    static      int         fQuality; 
+    static      int         fCapability;
 
-	friend class plClient;
-	friend class plQualitySlider;
-	friend class plDXPipeline;
+    friend class plClient;
+    friend class plQualitySlider;
+    friend class plDXPipeline;
 
-	// Set by the app according to user preference.
-	static		void SetQuality(int q);
+    // Set by the app according to user preference.
+    static      void SetQuality(int q);
 
-	// Set by the pipeline according to platform capabilities.
-	static		void SetCapability(int c);
+    // Set by the pipeline according to platform capabilities.
+    static      void SetCapability(int c);
 
 public:
-	// Set by the app according to user preference.
-	static		int GetQuality() { return fQuality; }
+    // Set by the app according to user preference.
+    static      int GetQuality() { return fQuality; }
 
-	// Set by the pipeline according to platform capabilities.
-	static		int GetCapability() { return fCapability; }
+    // Set by the pipeline according to platform capabilities.
+    static      int GetCapability() { return fCapability; }
 
 };
 

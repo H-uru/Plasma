@@ -50,4 +50,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma warning(pop)
 #endif
 
-#include <malloc.h>	// _alloca
+#include <malloc.h> // _alloca

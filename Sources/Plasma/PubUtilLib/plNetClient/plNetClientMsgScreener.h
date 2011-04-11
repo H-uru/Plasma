@@ -34,19 +34,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plNetClientMsgScreener : public plNetMsgScreener
 {
 protected:
-	void ICreateStatusLog() const;
-	const char* IGetSenderName(const plNetGameMember* gm) const { return "local";	}
-	const char* IGetAgeName() const;
-	bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const;
-	bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const;
-	bool IIsSenderCCR(const plNetGameMember* gm=nil) const;
-	bool IAmClient() const { return true; }
+    void ICreateStatusLog() const;
+    const char* IGetSenderName(const plNetGameMember* gm) const { return "local";   }
+    const char* IGetAgeName() const;
+    bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const;
+    bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const;
+    bool IIsSenderCCR(const plNetGameMember* gm=nil) const;
+    bool IAmClient() const { return true; }
 public:
 
-	plNetClientMsgScreener();
-	
-	bool AllowMessage(const plMessage* msg) const;
+    plNetClientMsgScreener();
+    
+    bool AllowMessage(const plMessage* msg) const;
 };
 
 
-#endif	// plNetClientMsgScreener_h
+#endif  // plNetClientMsgScreener_h

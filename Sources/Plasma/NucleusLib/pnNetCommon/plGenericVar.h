@@ -39,95 +39,95 @@ class hsStream;
 class plGenericType
 {
 public:
-	typedef char*	CharPtr;
+    typedef char*   CharPtr;
 
 protected:
-	union
-	{
-		Int32			fI;
-		UInt32			fU;
-		float			fF;
-		double			fD;
-		bool			fB;
-		CharPtr			fS;
-		char			fC;
-	};
-	
+    union
+    {
+        Int32           fI;
+        UInt32          fU;
+        float           fF;
+        double          fD;
+        bool            fB;
+        CharPtr         fS;
+        char            fC;
+    };
+    
 public:
-	
-	enum Types
-	{
-		kInt	= 0,
-		kFloat,
-		kBool,
-		kString,
-		kChar,
-		kAny,
-		kUInt,
-		kDouble,
-		kNone = 0xff
-	};
+    
+    enum Types
+    {
+        kInt    = 0,
+        kFloat,
+        kBool,
+        kString,
+        kChar,
+        kAny,
+        kUInt,
+        kDouble,
+        kNone = 0xff
+    };
 
 protected:
-	UInt8	fType;
-	
-	const Int32		&IToInt( void ) const;
-	const UInt32	&IToUInt( void ) const;
-	const float		&IToFloat( void ) const;
-	const double		&IToDouble( void ) const;
-	const bool		&IToBool( void ) const;
-	const CharPtr	&IToString( void ) const;
-	const char		&IToChar( void ) const;
+    UInt8   fType;
+    
+    const Int32     &IToInt( void ) const;
+    const UInt32    &IToUInt( void ) const;
+    const float     &IToFloat( void ) const;
+    const double        &IToDouble( void ) const;
+    const bool      &IToBool( void ) const;
+    const CharPtr   &IToString( void ) const;
+    const char      &IToChar( void ) const;
 
-	void IDeallocString() { if (fType==kString || fType==kAny) {delete [] fS; fS=nil;} }
+    void IDeallocString() { if (fType==kString || fType==kAny) {delete [] fS; fS=nil;} }
 public:
 
-	plGenericType() : fType(kNone) { Reset(); }
-	plGenericType(const plGenericType& c) { CopyFrom(c);	}
-	virtual ~plGenericType() { IDeallocString(); }
+    plGenericType() : fType(kNone) { Reset(); }
+    plGenericType(const plGenericType& c) { CopyFrom(c);    }
+    virtual ~plGenericType() { IDeallocString(); }
 
-	plGenericType& operator=(const plGenericType& c) { CopyFrom(c); return *this;	}
+    plGenericType& operator=(const plGenericType& c) { CopyFrom(c); return *this;   }
 
-	void CopyFrom(const plGenericType& c);
-	virtual void Reset();
-	operator Int32() const { return IToInt(); }
-	operator UInt32() const { return IToUInt(); }
-	operator double() const { return IToDouble(); }
-	operator float() const { return IToFloat(); }
-	operator bool() const { return IToBool(); }
-	operator const CharPtr() const { return IToString(); }
-	operator char() const { return IToChar(); }
-	operator unsigned int() const { return IToUInt(); }
-	operator int() const { return IToInt(); }
+    void CopyFrom(const plGenericType& c);
+    virtual void Reset();
+    operator Int32() const { return IToInt(); }
+    operator UInt32() const { return IToUInt(); }
+    operator double() const { return IToDouble(); }
+    operator float() const { return IToFloat(); }
+    operator bool() const { return IToBool(); }
+    operator const CharPtr() const { return IToString(); }
+    operator char() const { return IToChar(); }
+    operator unsigned int() const { return IToUInt(); }
+    operator int() const { return IToInt(); }
 
-	void	SetType(Types t)		{ fType=t; }
-	UInt8	GetType( void ) const	{ return fType; }
-	
-	std::string GetAsStdString() const;
+    void    SetType(Types t)        { fType=t; }
+    UInt8   GetType( void ) const   { return fType; }
+    
+    std::string GetAsStdString() const;
 
-	// implicit set
-	void	Set( Int32 i )		{ fI = i; fType = kInt; }
-	void	Set( UInt32 i )		{ fU = i; fType = kUInt; }
-	void	Set( float f )		{ fF = f; fType = kFloat; }
-	void	Set( double d )		{ fD = d; fType = kDouble; }
-	void	Set( bool b ) 		{ fB = b; fType = kBool; }
-	void	Set( CharPtr s )	{ IDeallocString(); fS = hsStrcpy(s); fType = kString; }
-	void	Set( char c )		{ fC = c; fType = kChar; }
+    // implicit set
+    void    Set( Int32 i )      { fI = i; fType = kInt; }
+    void    Set( UInt32 i )     { fU = i; fType = kUInt; }
+    void    Set( float f )      { fF = f; fType = kFloat; }
+    void    Set( double d )     { fD = d; fType = kDouble; }
+    void    Set( bool b )       { fB = b; fType = kBool; }
+    void    Set( CharPtr s )    { IDeallocString(); fS = hsStrcpy(s); fType = kString; }
+    void    Set( char c )       { fC = c; fType = kChar; }
 
-	// explicit set
-	void	SetInt( Int32 i )			{ fI = i; fType = kInt; }
-	void	SetUInt( UInt32 i )			{ fU = i; fType = kUInt; }
-	void	SetFloat( float f )		{ fF = f; fType = kFloat; }
-	void	SetDouble( double d )	{ fD = d; fType = kDouble; }
-	void	SetBool( bool b ) 		{ fB = b; fType = kBool; }
-	void	SetString( CharPtr s )	{ IDeallocString(); fS = hsStrcpy(s); fType = kString; }
-	void	SetChar( char c )		{ fC = c; fType = kChar; }
-	void	SetAny( CharPtr s )		{ IDeallocString(); fS = hsStrcpy(s); fType = kAny; }
-	void	SetNone( void )			{ fType = kNone; }
-	void	SetVar(Types t, unsigned int size, void* val);
+    // explicit set
+    void    SetInt( Int32 i )           { fI = i; fType = kInt; }
+    void    SetUInt( UInt32 i )         { fU = i; fType = kUInt; }
+    void    SetFloat( float f )     { fF = f; fType = kFloat; }
+    void    SetDouble( double d )   { fD = d; fType = kDouble; }
+    void    SetBool( bool b )       { fB = b; fType = kBool; }
+    void    SetString( CharPtr s )  { IDeallocString(); fS = hsStrcpy(s); fType = kString; }
+    void    SetChar( char c )       { fC = c; fType = kChar; }
+    void    SetAny( CharPtr s )     { IDeallocString(); fS = hsStrcpy(s); fType = kAny; }
+    void    SetNone( void )         { fType = kNone; }
+    void    SetVar(Types t, unsigned int size, void* val);
 
-	virtual void	Read(hsStream* s);
-	virtual void	Write(hsStream* s);
+    virtual void    Read(hsStream* s);
+    virtual void    Write(hsStream* s);
 };
 
 //
@@ -136,23 +136,23 @@ public:
 class plGenericVar 
 {
 protected:
-	plGenericType fValue;
-	char*	fName;
+    plGenericType fValue;
+    char*   fName;
 public:
-	plGenericVar(const plGenericVar &c) : fName(nil) { CopyFrom(c);	}
-	plGenericVar(const char* name=nil) : fName(nil) { SetName(name); }
-	virtual ~plGenericVar() { delete [] fName;  }
+    plGenericVar(const plGenericVar &c) : fName(nil) { CopyFrom(c); }
+    plGenericVar(const char* name=nil) : fName(nil) { SetName(name); }
+    virtual ~plGenericVar() { delete [] fName;  }
 
-	virtual void Reset() { Value().Reset();	}	// reset runtime state, not inherent state
-	plGenericVar& operator=(const plGenericVar &c) { CopyFrom(c); return *this; }
-	void CopyFrom(const plGenericVar &c) { delete [] fName; fName=hsStrcpy(c.GetName()); fValue=c.Value();	}
-	const char*	GetName()	const		{ return fName; }
-	void	SetName(const char* n)		{ delete [] fName; fName = hsStrcpy(n); }
-	plGenericType& Value() { return fValue; }
-	const plGenericType& Value() const { return fValue; }
+    virtual void Reset() { Value().Reset(); }   // reset runtime state, not inherent state
+    plGenericVar& operator=(const plGenericVar &c) { CopyFrom(c); return *this; }
+    void CopyFrom(const plGenericVar &c) { delete [] fName; fName=hsStrcpy(c.GetName()); fValue=c.Value();  }
+    const char* GetName()   const       { return fName; }
+    void    SetName(const char* n)      { delete [] fName; fName = hsStrcpy(n); }
+    plGenericType& Value() { return fValue; }
+    const plGenericType& Value() const { return fValue; }
 
-	virtual void	Read(hsStream* s);
-	virtual void	Write(hsStream* s);
+    virtual void    Read(hsStream* s);
+    virtual void    Write(hsStream* s);
 };
 
 
@@ -161,20 +161,20 @@ public:
 class plCreatableGenericValue : public plCreatable
 {
 public:
-	plGenericType	fValue;
-	CLASSNAME_REGISTER( plCreatableGenericValue );
-	GETINTERFACE_ANY( plCreatableGenericValue, plCreatable );
-	void	Read(hsStream* s, hsResMgr* mgr) { fValue.Read(s);}
-	void	Write(hsStream* s, hsResMgr* mgr) { fValue.Write(s);}
-	plGenericType& Value() { return fValue; }
-	const plGenericType& Value() const { return fValue; }
-	operator Int32() const { return (Int32)fValue; }
-	operator UInt32() const { return (UInt32)fValue; }
-	operator float() const { return (float)fValue; }
-	operator double() const { return (double)fValue; }
-	operator bool() const { return (bool)fValue; }
-	operator const char *() const { return (const char *)fValue; }
-	operator char() const { return (char)fValue; }
+    plGenericType   fValue;
+    CLASSNAME_REGISTER( plCreatableGenericValue );
+    GETINTERFACE_ANY( plCreatableGenericValue, plCreatable );
+    void    Read(hsStream* s, hsResMgr* mgr) { fValue.Read(s);}
+    void    Write(hsStream* s, hsResMgr* mgr) { fValue.Write(s);}
+    plGenericType& Value() { return fValue; }
+    const plGenericType& Value() const { return fValue; }
+    operator Int32() const { return (Int32)fValue; }
+    operator UInt32() const { return (UInt32)fValue; }
+    operator float() const { return (float)fValue; }
+    operator double() const { return (double)fValue; }
+    operator bool() const { return (bool)fValue; }
+    operator const char *() const { return (const char *)fValue; }
+    operator char() const { return (char)fValue; }
 };
 
 

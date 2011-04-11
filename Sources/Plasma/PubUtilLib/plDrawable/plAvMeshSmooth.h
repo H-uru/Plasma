@@ -38,55 +38,55 @@ class plGeometrySpan;
 class plAvMeshSmooth
 {
 public:
-	enum {
-		kNone				= 0x0,
-		kSmoothNorm			= 0x1,
-		kSmoothPos			= 0x2,
-		kSmoothDiffuse		= 0x4
-	};
+    enum {
+        kNone               = 0x0,
+        kSmoothNorm         = 0x1,
+        kSmoothPos          = 0x2,
+        kSmoothDiffuse      = 0x4
+    };
 
-	class XfmSpan
-	{
-	public:
-		plGeometrySpan*		fSpan;
-		hsMatrix44			fSpanToNeutral;
-		hsMatrix44			fNormSpanToNeutral; // == Transpose(Inverse(fSpanToNeutral)) == Transpose(fNeutralToSpan)
+    class XfmSpan
+    {
+    public:
+        plGeometrySpan*     fSpan;
+        hsMatrix44          fSpanToNeutral;
+        hsMatrix44          fNormSpanToNeutral; // == Transpose(Inverse(fSpanToNeutral)) == Transpose(fNeutralToSpan)
 
-		hsMatrix44			fNeutralToSpan;
-		hsMatrix44			fNormNeutralToSpan; // == Transpose(Inverse(fNeutralToSpan)) == Transpose(fSpanToNeutral)
+        hsMatrix44          fNeutralToSpan;
+        hsMatrix44          fNormNeutralToSpan; // == Transpose(Inverse(fNeutralToSpan)) == Transpose(fSpanToNeutral)
 
-		plAccessSpan		fAccSpan;
-	};
+        plAccessSpan        fAccSpan;
+    };
 
 protected:
-	UInt32			fFlags;
+    UInt32          fFlags;
 
-	hsScalar		fMinNormDot;
-	hsScalar		fDistTolSq;
+    hsScalar        fMinNormDot;
+    hsScalar        fDistTolSq;
 
-	plAccessGeometry			fAccGeom;
+    plAccessGeometry            fAccGeom;
 
-	hsPoint3		IPositionToNeutral(XfmSpan& span, int i) const;
-	hsVector3		INormalToNeutral(XfmSpan& span, int i) const;
-	hsPoint3		IPositionToSpan(XfmSpan& span, const hsPoint3& wPos) const;
-	hsVector3		INormalToSpan(XfmSpan& span, const hsVector3& wNorm) const;
+    hsPoint3        IPositionToNeutral(XfmSpan& span, int i) const;
+    hsVector3       INormalToNeutral(XfmSpan& span, int i) const;
+    hsPoint3        IPositionToSpan(XfmSpan& span, const hsPoint3& wPos) const;
+    hsVector3       INormalToSpan(XfmSpan& span, const hsVector3& wNorm) const;
 
-	void			FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxList, hsTArray<UInt16>& edgeVerts);
-	void			FindEdges(hsTArray<XfmSpan>& spans, hsTArray<UInt16>* edgeVerts);
+    void            FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxList, hsTArray<UInt16>& edgeVerts);
+    void            FindEdges(hsTArray<XfmSpan>& spans, hsTArray<UInt16>* edgeVerts);
 
 public:
-	plAvMeshSmooth() : fFlags(kSmoothNorm), fMinNormDot(0.25f), fDistTolSq(1.e-4f), fAccGeom() {}
+    plAvMeshSmooth() : fFlags(kSmoothNorm), fMinNormDot(0.25f), fDistTolSq(1.e-4f), fAccGeom() {}
 
-	void		SetAngle(hsScalar degs);
-	hsScalar	GetAngle() const; // returns degrees
+    void        SetAngle(hsScalar degs);
+    hsScalar    GetAngle() const; // returns degrees
 
-	void		SetDistTol(hsScalar dist);
-	hsScalar	GetDistTol() const;
+    void        SetDistTol(hsScalar dist);
+    hsScalar    GetDistTol() const;
 
-	void		Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstSpans);
+    void        Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstSpans);
 
-	void		SetFlags(UInt32 f) { fFlags = f; }
-	UInt32		GetFlags() const { return fFlags; }
+    void        SetFlags(UInt32 f) { fFlags = f; }
+    UInt32      GetFlags() const { return fFlags; }
 };
 
 #endif // plAvMeshSmooth_inc

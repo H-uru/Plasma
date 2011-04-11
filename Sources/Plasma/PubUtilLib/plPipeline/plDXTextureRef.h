@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plDXTextureRef.h - Hardware Texture DeviceRef Definition				 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plDXTextureRef.h - Hardware Texture DeviceRef Definition                 //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	4.25.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  4.25.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plDXTextureRef_h
@@ -49,59 +49,59 @@ class plBitmap;
 
 class plDXTextureRef : public plDXDeviceRef
 {
-	public:
-		enum Flags
-		{
-			kExternData			= 0x00000002,	// fData points to user data, don't delete
-			kRenderTarget		= 0x00000004,	// Created via a render target
-			kCubicMap			= 0x00000008,	// Texture is really a cubic map texture
-			kPerspProjection	= 0x00000010,	// Perspective projection
-			kOrthoProjection	= 0x00000020,	// Orthogonal projection
-			kProjection			= kPerspProjection | kOrthoProjection,
-			kOffscreenRT		= 0x00000040,	// Offscreen renderTarget. Never used as an actual texture,
-												// but handy to still have it as a textureRef
-			kUVWNormal			= 0x00000080	// Use the normal as the UVW src
-		};
+    public:
+        enum Flags
+        {
+            kExternData         = 0x00000002,   // fData points to user data, don't delete
+            kRenderTarget       = 0x00000004,   // Created via a render target
+            kCubicMap           = 0x00000008,   // Texture is really a cubic map texture
+            kPerspProjection    = 0x00000010,   // Perspective projection
+            kOrthoProjection    = 0x00000020,   // Orthogonal projection
+            kProjection         = kPerspProjection | kOrthoProjection,
+            kOffscreenRT        = 0x00000040,   // Offscreen renderTarget. Never used as an actual texture,
+                                                // but handy to still have it as a textureRef
+            kUVWNormal          = 0x00000080    // Use the normal as the UVW src
+        };
 
-		IDirect3DBaseTexture9	*fD3DTexture;
-		D3DFORMAT				fFormatType;	// Format of the D3D texture object
+        IDirect3DBaseTexture9   *fD3DTexture;
+        D3DFORMAT               fFormatType;    // Format of the D3D texture object
 
-		UInt32		fMMLvs;			// Number of mipmap levels
-		UInt32		fMaxWidth;		// Width of the highest mipmap level
-		UInt32		fMaxHeight;		// Height of the highest mipmap level (no pun intended)
-		UInt32		fNumPix;		// total num texels in all mip levels
-		UInt32		fDataSize;		// size of fData[0..n] in bytes
-		UInt32*		fLevelSizes;	// fLevelSize[i] == size in bytes of level i
-		//UInt32		fCurrLOD;		// Current LOD setting for this texture
+        UInt32      fMMLvs;         // Number of mipmap levels
+        UInt32      fMaxWidth;      // Width of the highest mipmap level
+        UInt32      fMaxHeight;     // Height of the highest mipmap level (no pun intended)
+        UInt32      fNumPix;        // total num texels in all mip levels
+        UInt32      fDataSize;      // size of fData[0..n] in bytes
+        UInt32*     fLevelSizes;    // fLevelSize[i] == size in bytes of level i
+        //UInt32        fCurrLOD;       // Current LOD setting for this texture
 
-		plBitmap	*fOwner;
+        plBitmap    *fOwner;
 
-		void*		fData;			// for reloading
+        void*       fData;          // for reloading
 
-		UInt32		GetFlags( void ) { return fFlags; }
-		void		SetFlags( UInt32 flag ) { fFlags = flag; }
+        UInt32      GetFlags( void ) { return fFlags; }
+        void        SetFlags( UInt32 flag ) { fFlags = flag; }
 
-		plDXTextureRef& Set( D3DFORMAT tp, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false );
+        plDXTextureRef& Set( D3DFORMAT tp, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false );
 
-		plDXTextureRef( D3DFORMAT tp, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false );
-		virtual ~plDXTextureRef();
+        plDXTextureRef( D3DFORMAT tp, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false );
+        virtual ~plDXTextureRef();
 
-		void			Link( plDXTextureRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
-		plDXTextureRef	*GetNext( void ) { return (plDXTextureRef *)fNext; }
+        void            Link( plDXTextureRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
+        plDXTextureRef  *GetNext( void ) { return (plDXTextureRef *)fNext; }
 
-		void	Release( void );
+        void    Release( void );
 };
 
 class plDXCubeTextureRef : public plDXTextureRef
 {
-	public:
-		void	*fFaceData[ 5 ];			// First face is in the inherited fData
+    public:
+        void    *fFaceData[ 5 ];            // First face is in the inherited fData
 
-		plDXCubeTextureRef( D3DFORMAT tp, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false ) :
-							plDXTextureRef( tp, ml, mw, mh, np, sz, manSize, lSz, pd, ed, renderTarget )
-		{
+        plDXCubeTextureRef( D3DFORMAT tp, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false ) :
+                            plDXTextureRef( tp, ml, mw, mh, np, sz, manSize, lSz, pd, ed, renderTarget )
+        {
 
-		}
+        }
 };
 
 #endif // _plDXTextureRef_h

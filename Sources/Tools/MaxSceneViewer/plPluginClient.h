@@ -35,31 +35,31 @@ class plStatusLog;
 class plUpdatableClient  : public plClient
 {
 protected:
-	hsSemaphore *fUpdateSignal;
-	const char *fPipeName;
-	const char *fDataPath;
+    hsSemaphore *fUpdateSignal;
+    const char *fPipeName;
+    const char *fDataPath;
 
-	bool fActive;
-	bool fDirty;
+    bool fActive;
+    bool fDirty;
 
-	plStatusLog *fLog;
+    plStatusLog *fLog;
 
-	void IEnableProxies(bool enable);
-	void IGetUpdate();
+    void IEnableProxies(bool enable);
+    void IGetUpdate();
 
 public:
-	plUpdatableClient();
-	virtual ~plUpdatableClient();
+    plUpdatableClient();
+    virtual ~plUpdatableClient();
 
-	virtual hsG3DDeviceModeRecord ILoadDevMode(const char* devModeFile);
+    virtual hsG3DDeviceModeRecord ILoadDevMode(const char* devModeFile);
 
-	virtual hsBool Init();
-	virtual hsBool MainLoop();
-	virtual hsBool Shutdown();
+    virtual hsBool Init();
+    virtual hsBool MainLoop();
+    virtual hsBool Shutdown();
 
-	void InitUpdate(const char *semaphoreName, const char *pipeName, const char *dir);
+    void InitUpdate(const char *semaphoreName, const char *pipeName, const char *dir);
 
-	virtual void WindowActivate(bool active);
+    virtual void WindowActivate(bool active);
 };
 
 #endif // plUpdatableClient_h_inc

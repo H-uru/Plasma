@@ -39,114 +39,114 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXPipeline.h"
 
 plDXVertexShader::plDXVertexShader(plShader* owner)
-:	plDXShader(owner), fHandle(nil)
+:   plDXShader(owner), fHandle(nil)
 {
 }
 
 plDXVertexShader::~plDXVertexShader()
 {
-	Release();
+    Release();
 }
 
 void plDXVertexShader::Release()
 {
-	ReleaseObject(fHandle);
-	fHandle = nil;
-	fPipe = nil;
+    ReleaseObject(fHandle);
+    fHandle = nil;
+    fPipe = nil;
 
-	ISetError(nil);
+    ISetError(nil);
 }
 
 hsBool plDXVertexShader::VerifyFormat(UInt8 format) const
 {
-	return (fOwner->GetInputFormat() & format) == fOwner->GetInputFormat();
+    return (fOwner->GetInputFormat() & format) == fOwner->GetInputFormat();
 }
 
 IDirect3DVertexShader9 *plDXVertexShader::GetShader(plDXPipeline* pipe)
 {
-	HRESULT hr = S_OK;
-	if ( !fHandle )
-	{
-		if( FAILED(hr = ICreate(pipe)) )
-			return nil;
-	}
+    HRESULT hr = S_OK;
+    if ( !fHandle )
+    {
+        if( FAILED(hr = ICreate(pipe)) )
+            return nil;
+    }
 
-	if( FAILED(hr = ISetConstants(pipe)) )
-		return nil;
+    if( FAILED(hr = ISetConstants(pipe)) )
+        return nil;
 
-	return fHandle;
+    return fHandle;
 }
 
 HRESULT plDXVertexShader::ICreate(plDXPipeline* pipe)
 {
-	fHandle = nil; // in case something goes wrong.
-	fPipe = nil;
-	ISetError(nil);
+    fHandle = nil; // in case something goes wrong.
+    fPipe = nil;
+    ISetError(nil);
 
 #ifdef HS_DEBUGGING
-	DWORD	flags = D3DXSHADER_DEBUG | D3DXSHADER_SKIPOPTIMIZATION;
+    DWORD   flags = D3DXSHADER_DEBUG | D3DXSHADER_SKIPOPTIMIZATION;
 #else // HS_DEBUGGING
-	DWORD	flags = 0;
+    DWORD   flags = 0;
 #endif // HS_DEBUGGING
 
-	// We could store the compiled buffer and skip the assembly step
-	// if we need to recreate the shader (e.g. on device lost).
-	// But whatever.
-	DWORD* shaderCodes = nil;
+    // We could store the compiled buffer and skip the assembly step
+    // if we need to recreate the shader (e.g. on device lost).
+    // But whatever.
+    DWORD* shaderCodes = nil;
 
-	HRESULT hr = S_OK;
-	if( plShaderTable::LoadFromFile() || !fOwner->GetDecl()->GetCodes() )
-	{
-		if( fOwner->GetDecl()->GetFileName() )
-		{
-			LPD3DXBUFFER compiledShader = nil;
-			LPD3DXBUFFER compilationErrors = nil;
+    HRESULT hr = S_OK;
+    if( plShaderTable::LoadFromFile() || !fOwner->GetDecl()->GetCodes() )
+    {
+        if( fOwner->GetDecl()->GetFileName() )
+        {
+            LPD3DXBUFFER compiledShader = nil;
+            LPD3DXBUFFER compilationErrors = nil;
 
-			hr = D3DXAssembleShaderFromFile(
-							fOwner->GetDecl()->GetFileName(),
-							NULL, NULL, flags,
-							&compiledShader,
-							&compilationErrors);
+            hr = D3DXAssembleShaderFromFile(
+                            fOwner->GetDecl()->GetFileName(),
+                            NULL, NULL, flags,
+                            &compiledShader,
+                            &compilationErrors);
 
-			if( FAILED(hr) )
-			{
-				return IOnError(hr, compilationErrors ? (char*)compilationErrors->GetBufferPointer() : "File not found");
-			}
+            if( FAILED(hr) )
+            {
+                return IOnError(hr, compilationErrors ? (char*)compilationErrors->GetBufferPointer() : "File not found");
+            }
 
-			shaderCodes = (DWORD*)(compiledShader->GetBufferPointer());
-		}
-	}
-	if( !shaderCodes )
-	{
-		shaderCodes = (DWORD*)(fOwner->GetDecl()->GetCodes());
-	}
-	if( !shaderCodes )
-		return IOnError(-1, "No file and no compiled codes");
+            shaderCodes = (DWORD*)(compiledShader->GetBufferPointer());
+        }
+    }
+    if( !shaderCodes )
+    {
+        shaderCodes = (DWORD*)(fOwner->GetDecl()->GetCodes());
+    }
+    if( !shaderCodes )
+        return IOnError(-1, "No file and no compiled codes");
 
-	hr = pipe->GetD3DDevice()->CreateVertexShader(shaderCodes, &fHandle);
+    hr = pipe->GetD3DDevice()->CreateVertexShader(shaderCodes, &fHandle);
 
-	if( FAILED(hr) )
-		return IOnError(hr, "Error on CreateVertexShader");
+    if( FAILED(hr) )
+        return IOnError(hr, "Error on CreateVertexShader");
 
-	hsAssert(fHandle, "No error, but no vertex shader handle. Grrrr.");
+    hsAssert(fHandle, "No error, but no vertex shader handle. Grrrr.");
 
-	fPipe = pipe;
+    fPipe = pipe;
 
-	return S_OK;
+    return S_OK;
 }
 
 HRESULT plDXVertexShader::ISetConstants(plDXPipeline* pipe)
 {
-	hsAssert(fHandle, "Vertex shader called to set constants without initialization");
-	if( fOwner->GetNumConsts() )
-	{
-		HRESULT hr = pipe->GetD3DDevice()->SetVertexShaderConstantF(0,
-										(float*)fOwner->GetConstBasePtr(),
-										fOwner->GetNumConsts());
-		if( FAILED(hr) )
-			return IOnError(hr, "Failure setting vertex shader constants");
-	}
+    hsAssert(fHandle, "Vertex shader called to set constants without initialization");
+    if( fOwner->GetNumConsts() )
+    {
+        HRESULT hr = pipe->GetD3DDevice()->SetVertexShaderConstantF(0,
+                                        (float*)fOwner->GetConstBasePtr(),
+                                        fOwner->GetNumConsts());
+        if( FAILED(hr) )
+            return IOnError(hr, "Failure setting vertex shader constants");
+    }
 
-	return S_OK;
+    return S_OK;
 }
 

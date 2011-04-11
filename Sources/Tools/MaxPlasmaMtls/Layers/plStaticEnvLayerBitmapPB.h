@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	ParamBlock Konstants for Static EnvironmentMap MAX Layers				 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  ParamBlock Konstants for Static EnvironmentMap MAX Layers                //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	8.17.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  8.17.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plStaticEnvLayerBitmapPB_h
@@ -40,33 +40,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Param ID's
 enum
 {
-	kBmpFrontBitmap,
-	kBmpBackBitmap,
-	kBmpLeftBitmap,
-	kBmpRightBitmap,
-	kBmpTopBitmap,
-	kBmpBottomBitmap,
+    kBmpFrontBitmap,
+    kBmpBackBitmap,
+    kBmpLeftBitmap,
+    kBmpRightBitmap,
+    kBmpTopBitmap,
+    kBmpBottomBitmap,
 
-	// Misc
-	kBmpDiscardColor,
-	kBmpInvertColor,
-	kBmpDiscardAlpha,
-	kBmpInvertAlpha,
+    // Misc
+    kBmpDiscardColor,
+    kBmpInvertColor,
+    kBmpDiscardAlpha,
+    kBmpInvertAlpha,
 
-	// Texture quality
-	kBmpNonCompressed,
-	kBmpScaling,
+    // Texture quality
+    kBmpNonCompressed,
+    kBmpScaling,
 
-	// Max only
-	kBmpMonoOutput,
-	kBmpRGBOutput,
+    // Max only
+    kBmpMonoOutput,
+    kBmpRGBOutput,
 
-	// Detail
-	kBmpUseDetail,
-	kBmpDetailStartSize,
-	kBmpDetailStopSize,
-	kBmpDetailStartOpac,
-	kBmpDetailStopOpac,
+    // Detail
+    kBmpUseDetail,
+    kBmpDetailStartSize,
+    kBmpDetailStopSize,
+    kBmpDetailStartOpac,
+    kBmpDetailStopOpac,
 };
 
 #endif //_plStaticEnvLayerBitmapPB_h

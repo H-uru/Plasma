@@ -41,45 +41,45 @@ private:
 public:
     virtual ~hsVertexShader();
 
-	static hsVertexShader& Instance();
+    static hsVertexShader& Instance();
 
-	void ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans);
+    void ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans);
 
-	void Open();
-	void Close();
+    void Open();
+    void Close();
 
 private:
 
-	/// Temporary vertex class
-	class plTmpVertex3
-	{
-		public:
-			hsPoint3	fLocalPos;
-			hsVector3	fNormal;
-	};
+    /// Temporary vertex class
+    class plTmpVertex3
+    {
+        public:
+            hsPoint3    fLocalPos;
+            hsVector3   fNormal;
+    };
 
-	hsBool ILightIncludesNode(LightObject* light, INode* node);
+    hsBool ILightIncludesNode(LightObject* light, INode* node);
 
-	void	INativeShadeVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, hsBool translucent);
-	void	INativeShadowVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, hsBool translucent);
+    void    INativeShadeVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, hsBool translucent);
+    void    INativeShadowVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, hsBool translucent);
 
-	hsBool IsTranslucent( hsGMaterial *material );
+    hsBool IsTranslucent( hsGMaterial *material );
 
     void IShadeSpan( plGeometrySpan *span, INode* node );
-	void IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVector, INode* node, hsBool translucent );
+    void IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVector, INode* node, hsBool translucent );
 
 private:
     Interface           *fInterface;
-	hsConverterUtils    &fConverterUtils;
+    hsConverterUtils    &fConverterUtils;
 
-	plLightMapGen*		fLightMapGen;
+    plLightMapGen*      fLightMapGen;
 
-    hsMatrix44          fLocalToWorld, fNormalToWorld;		// fN2W is inv-transpose of fL2W
+    hsMatrix44          fLocalToWorld, fNormalToWorld;      // fN2W is inv-transpose of fL2W
 
     int                 fShaded;    // just record-keeping
 
-	hsColorRGBA			*fShadeColorTable;
-	hsColorRGBA			*fIllumColorTable;
+    hsColorRGBA         *fShadeColorTable;
+    hsColorRGBA         *fIllumColorTable;
 };
 
 #endif

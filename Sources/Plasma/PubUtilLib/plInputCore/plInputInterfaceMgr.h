@@ -24,13 +24,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plInputInterfaceMgr.h - The manager of all input interface layers		//
-//																			//
+//                                                                          //
+//  plInputInterfaceMgr.h - The manager of all input interface layers       //
+//                                                                          //
 //// History /////////////////////////////////////////////////////////////////
-//																			//
-//	2.20.02 mcn	- Created.													//
-//																			//
+//                                                                          //
+//  2.20.02 mcn - Created.                                                  //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plInputInterfaceMgr_h
@@ -57,129 +57,129 @@ class plKeyBinding;
 
 class plInputInterfaceMgr : public plSingleModifier
 {
-	protected:
+    protected:
 
-		static plInputInterfaceMgr	*fInstance;
+        static plInputInterfaceMgr  *fInstance;
 
-		hsTArray<plInputInterface *>	fInterfaces;
-		hsTArray<plCtrlCmd *>			fMessageQueue;
-		hsTArray<plKey>					fReceivers;
+        hsTArray<plInputInterface *>    fInterfaces;
+        hsTArray<plCtrlCmd *>           fMessageQueue;
+        hsTArray<plKey>                 fReceivers;
 
 #ifdef MCN_DISABLE_OLD_WITH_NEW_HACK
-		hsTArray<ControlEventCode>		fDisabledCodes;
-		hsTArray<UInt32>				fDisabledKeys;
+        hsTArray<ControlEventCode>      fDisabledCodes;
+        hsTArray<UInt32>                fDisabledKeys;
 #endif
 
-		hsBool		fClickEnabled;
-		Int32		fCurrentCursor;
-		hsScalar	fCursorOpacity;
-		hsBool		fForceCursorHidden;
-		Int32		fForceCursorHiddenCount;
-		plInputInterface		*fCurrentFocus;
-		plDefaultKeyCatcher		*fDefaultCatcher;
+        hsBool      fClickEnabled;
+        Int32       fCurrentCursor;
+        hsScalar    fCursorOpacity;
+        hsBool      fForceCursorHidden;
+        Int32       fForceCursorHiddenCount;
+        plInputInterface        *fCurrentFocus;
+        plDefaultKeyCatcher     *fDefaultCatcher;
 
-		
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
+        
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
 
-		void	IAddInterface( plInputInterface *iface );
-		void	IRemoveInterface( plInputInterface *iface );
+        void    IAddInterface( plInputInterface *iface );
+        void    IRemoveInterface( plInputInterface *iface );
 
-		void	IUpdateCursor( Int32 newCursor );
-		hsBool	ICheckCursor(plInputInterface *iFace); // returns true if the iface changed cursor settings
-			
-		void	IWriteConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile );
-		void	IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile );
+        void    IUpdateCursor( Int32 newCursor );
+        hsBool  ICheckCursor(plInputInterface *iFace); // returns true if the iface changed cursor settings
+            
+        void    IWriteConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile );
+        void    IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile );
 
-		plKeyMap	*IGetRoutedKeyMap( ControlEventCode code );	// Null for console commands
-		void		IUnbind( const plKeyCombo &key );
+        plKeyMap    *IGetRoutedKeyMap( ControlEventCode code ); // Null for console commands
+        void        IUnbind( const plKeyCombo &key );
 
-		const char	*IKeyComboToString( const plKeyCombo &combo );
-		
-	public:
+        const char  *IKeyComboToString( const plKeyCombo &combo );
+        
+    public:
 
-		plInputInterfaceMgr();
-		virtual ~plInputInterfaceMgr();
+        plInputInterfaceMgr();
+        virtual ~plInputInterfaceMgr();
 
-		CLASSNAME_REGISTER( plInputInterfaceMgr );
-		GETINTERFACE_ANY( plInputInterfaceMgr, plSingleModifier );
+        CLASSNAME_REGISTER( plInputInterfaceMgr );
+        GETINTERFACE_ANY( plInputInterfaceMgr, plSingleModifier );
 
-		virtual hsBool	MsgReceive( plMessage *msg );
-		virtual void	Read( hsStream* s, hsResMgr* mgr );
-		virtual void	Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage *msg );
+        virtual void    Read( hsStream* s, hsResMgr* mgr );
+        virtual void    Write( hsStream* s, hsResMgr* mgr );
 
-		void	Init( void );
-		void	Shutdown( void );
+        void    Init( void );
+        void    Shutdown( void );
 
-		void		InitDefaultKeyMap( void );
-		void		WriteKeyMap( void );
-		void		RefreshInterfaceKeyMaps( void );
+        void        InitDefaultKeyMap( void );
+        void        WriteKeyMap( void );
+        void        RefreshInterfaceKeyMaps( void );
 
-		void	SetCurrentFocus(plInputInterface *focus);
-		void	ReleaseCurrentFocus(plInputInterface *focus);
-		void	SetDefaultKeyCatcher( plDefaultKeyCatcher *c ) { fDefaultCatcher = c; }
+        void    SetCurrentFocus(plInputInterface *focus);
+        void    ReleaseCurrentFocus(plInputInterface *focus);
+        void    SetDefaultKeyCatcher( plDefaultKeyCatcher *c ) { fDefaultCatcher = c; }
 
-		hsBool	IsClickEnabled() { return fClickEnabled; }
+        hsBool  IsClickEnabled() { return fClickEnabled; }
 
-		void	ForceCursorHidden( hsBool requestedState );
+        void    ForceCursorHidden( hsBool requestedState );
 
-		// Binding routers
-		void	BindAction( const plKeyCombo &key, ControlEventCode code );
-		void	BindAction( const plKeyCombo &key1, const plKeyCombo &key2, ControlEventCode code );
-		void	BindConsoleCmd( const plKeyCombo &key, const char *cmd, plKeyMap::BindPref pref = plKeyMap::kNoPreference );
+        // Binding routers
+        void    BindAction( const plKeyCombo &key, ControlEventCode code );
+        void    BindAction( const plKeyCombo &key1, const plKeyCombo &key2, ControlEventCode code );
+        void    BindConsoleCmd( const plKeyCombo &key, const char *cmd, plKeyMap::BindPref pref = plKeyMap::kNoPreference );
 
-		const plKeyBinding* FindBinding( ControlEventCode code );
-		const plKeyBinding* FindBindingByConsoleCmd( const char *cmd );
+        const plKeyBinding* FindBinding( ControlEventCode code );
+        const plKeyBinding* FindBindingByConsoleCmd( const char *cmd );
 
-		void	ClearAllKeyMaps();
-		void	ResetClickableState();
-		static plInputInterfaceMgr	*GetInstance( void ) { return fInstance; }
+        void    ClearAllKeyMaps();
+        void    ResetClickableState();
+        static plInputInterfaceMgr  *GetInstance( void ) { return fInstance; }
 };
 
 //// plCtrlCmd ///////////////////////////////////////////////////////////////
-//	Networkable helper class that represents a single control statement
+//  Networkable helper class that represents a single control statement
 
 class plCtrlCmd
 {
-	private:
-		char*				fCmd;
-		plInputInterface	*fSource;
+    private:
+        char*               fCmd;
+        plInputInterface    *fSource;
 
-	public:
-		plCtrlCmd( plInputInterface *source ) : fCmd(nil),fPct(1.0f), fSource(source) {;}
-		~plCtrlCmd() { delete [] fCmd; }
+    public:
+        plCtrlCmd( plInputInterface *source ) : fCmd(nil),fPct(1.0f), fSource(source) {;}
+        ~plCtrlCmd() { delete [] fCmd; }
 
-		const char* GetCmdString()			{ return fCmd; }
-		void SetCmdString(const char* cs)	{ delete [] fCmd; fCmd=hsStrcpy(cs); }
+        const char* GetCmdString()          { return fCmd; }
+        void SetCmdString(const char* cs)   { delete [] fCmd; fCmd=hsStrcpy(cs); }
 
-		ControlEventCode	fControlCode;
-		hsBool				fControlActivated;
-		hsPoint3			fPt;
-		hsScalar			fPct;
+        ControlEventCode    fControlCode;
+        hsBool              fControlActivated;
+        hsPoint3            fPt;
+        hsScalar            fPct;
 
-		hsBool				fNetPropagateToPlayers;
+        hsBool              fNetPropagateToPlayers;
 
-		void Read( hsStream* s, hsResMgr* mgr );
-		void Write( hsStream* s, hsResMgr* mgr );
+        void Read( hsStream* s, hsResMgr* mgr );
+        void Write( hsStream* s, hsResMgr* mgr );
 
-		plInputInterface	*GetSource( void ) const { return fSource; }
+        plInputInterface    *GetSource( void ) const { return fSource; }
 };
 
 //// Tiny Virtual Class For The Default Key Processor ////////////////////////
 //
-//	Basically, if you want to be the one to catch the leftover key events,
-//	derive from this class and pass yourself to inputIFaceMgr.
-//	(it'll auto-tell inputIFaceMgr when it goes away)
+//  Basically, if you want to be the one to catch the leftover key events,
+//  derive from this class and pass yourself to inputIFaceMgr.
+//  (it'll auto-tell inputIFaceMgr when it goes away)
 //
-//	Note: if you want to do more than just get the darned key event (like
-//	mouse events or key bindings or change the cursor or the like), don't do
-//	this; create your own plInputInterface instead.
+//  Note: if you want to do more than just get the darned key event (like
+//  mouse events or key bindings or change the cursor or the like), don't do
+//  this; create your own plInputInterface instead.
 
 class plKeyEventMsg;
 class plDefaultKeyCatcher
 {
-	public:
-		virtual ~plDefaultKeyCatcher();
-		virtual void	HandleKeyEvent( plKeyEventMsg *eventMsg ) = 0;
+    public:
+        virtual ~plDefaultKeyCatcher();
+        virtual void    HandleKeyEvent( plKeyEventMsg *eventMsg ) = 0;
 };
 
 

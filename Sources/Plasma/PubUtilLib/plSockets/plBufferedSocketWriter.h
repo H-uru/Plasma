@@ -34,27 +34,27 @@ class plTcpSocket;
 class plBufferedSocketWriter : protected plRingBuffer
 {
 protected:
-	bool	fBlockOnSend;
-	int		fFlushPoint;
-	int		fBytesPerFlush;
+    bool    fBlockOnSend;
+    int     fFlushPoint;
+    int     fBytesPerFlush;
 
 public:
-	enum WriteResult
-	{
-		kSuccessNoDataSent		= 0,
-		kSuccessDataSent		= 1,
-		kFailedWriteError		=-1,
-		kFailedSocketClosed		=-2,
-		kFailedNoBufferSpace	=-3,
-	};
+    enum WriteResult
+    {
+        kSuccessNoDataSent      = 0,
+        kSuccessDataSent        = 1,
+        kFailedWriteError       =-1,
+        kFailedSocketClosed     =-2,
+        kFailedNoBufferSpace    =-3,
+    };
 
 public:
-	plBufferedSocketWriter(int size=8192, int bytesPerFlush=4096, bool blockOnSend=true, int flushPoint=-1);
-	int WriteBlock(const char * data, int len, plTcpSocket & sck);
-	int WriteBlock(const char * data, int len);
-	int Flush(plTcpSocket & sck);
-	bool IsEmpty();
-	void Reset();
+    plBufferedSocketWriter(int size=8192, int bytesPerFlush=4096, bool blockOnSend=true, int flushPoint=-1);
+    int WriteBlock(const char * data, int len, plTcpSocket & sck);
+    int WriteBlock(const char * data, int len);
+    int Flush(plTcpSocket & sck);
+    bool IsEmpty();
+    void Reset();
 };
 
 

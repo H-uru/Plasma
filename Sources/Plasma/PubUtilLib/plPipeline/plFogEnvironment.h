@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plFogEnvironment.h - Header file for the fog environment class			//
-//																			//
+//                                                                          //
+//  plFogEnvironment.h - Header file for the fog environment class          //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plFogEnvironment_h
@@ -40,64 +40,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 //// plFogEnvironment Class Definition ////////////////////////////////////////////
-//	Defines a fog environment. Bite me.
+//  Defines a fog environment. Bite me.
 
 class plFogEnvironment : public hsKeyedObject
 {
-	protected:
+    protected:
 
-		UInt8		fType;
-		hsScalar	fStart;			// Used for linear fog only
-		hsScalar	fEnd, fDensity;	// Always used!
-		hsColorRGBA	fColor;
+        UInt8       fType;
+        hsScalar    fStart;         // Used for linear fog only
+        hsScalar    fEnd, fDensity; // Always used!
+        hsColorRGBA fColor;
 
-	public:
+    public:
 
-		CLASSNAME_REGISTER( plFogEnvironment );
-		GETINTERFACE_ANY( plFogEnvironment, hsKeyedObject );
+        CLASSNAME_REGISTER( plFogEnvironment );
+        GETINTERFACE_ANY( plFogEnvironment, hsKeyedObject );
 
-		enum FogType
-		{
-			kLinearFog		= 0,
-			kExpFog,
-			kExp2Fog,
-			kNoFog
-		};
+        enum FogType
+        {
+            kLinearFog      = 0,
+            kExpFog,
+            kExp2Fog,
+            kNoFog
+        };
 
-		plFogEnvironment();
-		plFogEnvironment( hsScalar start, hsScalar end, hsScalar density, hsColorRGBA &color );
-		plFogEnvironment( FogType type, hsScalar end, hsScalar density, hsColorRGBA &color );
-		~plFogEnvironment();
+        plFogEnvironment();
+        plFogEnvironment( hsScalar start, hsScalar end, hsScalar density, hsColorRGBA &color );
+        plFogEnvironment( FogType type, hsScalar end, hsScalar density, hsColorRGBA &color );
+        ~plFogEnvironment();
 
-		// Sets the parameters for linear fog
-		void	Set( hsScalar start, hsScalar end, hsScalar density, const hsColorRGBA *color = nil );
+        // Sets the parameters for linear fog
+        void    Set( hsScalar start, hsScalar end, hsScalar density, const hsColorRGBA *color = nil );
 
-		// Sets the parameters for exp or exp^2 fog
-		void	SetExp( FogType type, hsScalar end, hsScalar density, const hsColorRGBA *color = nil );
+        // Sets the parameters for exp or exp^2 fog
+        void    SetExp( FogType type, hsScalar end, hsScalar density, const hsColorRGBA *color = nil );
 
-		// Sets the color
-		void	SetColor( hsColorRGBA &color ) { fColor = color; }
+        // Sets the color
+        void    SetColor( hsColorRGBA &color ) { fColor = color; }
 
-		// Clear the environment to no fog
-		void	Clear( void ) { fType = kNoFog; }
+        // Clear the environment to no fog
+        void    Clear( void ) { fType = kNoFog; }
 
-		// Gets the type
-		UInt8	GetType( void ) { return fType; }
+        // Gets the type
+        UInt8   GetType( void ) { return fType; }
 
-		// Gets the color
-		hsColorRGBA	&GetColor( void ) { return fColor; }
+        // Gets the color
+        hsColorRGBA &GetColor( void ) { return fColor; }
 
-		// Gets the parameters. Sets start to 0 if the type is not linear (can be nil)
-		void	GetParameters( hsScalar *start, hsScalar *end, hsScalar *density, hsColorRGBA *color );
+        // Gets the parameters. Sets start to 0 if the type is not linear (can be nil)
+        void    GetParameters( hsScalar *start, hsScalar *end, hsScalar *density, hsColorRGBA *color );
 
-		// Gets linear pipeline (DX) specific parameters.
-		void	GetPipelineParams( hsScalar *start, hsScalar *end, hsColorRGBA *color );
+        // Gets linear pipeline (DX) specific parameters.
+        void    GetPipelineParams( hsScalar *start, hsScalar *end, hsColorRGBA *color );
 
-		// Gets exp or exp^2 pipeline (DX) specific parameters.
-		void	GetPipelineParams( hsScalar *density, hsColorRGBA *color );
+        // Gets exp or exp^2 pipeline (DX) specific parameters.
+        void    GetPipelineParams( hsScalar *density, hsColorRGBA *color );
 
-		virtual void Read(hsStream *s, hsResMgr *mgr);
-		virtual void Write(hsStream *s, hsResMgr *mgr);
+        virtual void Read(hsStream *s, hsResMgr *mgr);
+        virtual void Write(hsStream *s, hsResMgr *mgr);
 };
 
 #endif //_plFogEnvironment_h

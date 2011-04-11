@@ -30,17 +30,17 @@ COMPILER_ASSERT(msizeof(Uuid, data) == msizeof(plUUID, fData));
 
 plUUID::plUUID()
 {
-	Clear();
+    Clear();
 }
 
 plUUID::plUUID( const char * s )
 {
-	FromString( s );
+    FromString( s );
 }
 
 plUUID::plUUID( const plUUID & other )
 {
-	CopyFrom( &other );
+    CopyFrom( &other );
 }
 
 plUUID::plUUID( const Uuid & uuid )
@@ -50,13 +50,13 @@ plUUID::plUUID( const Uuid & uuid )
 
 void plUUID::Read( hsStream * s)
 {
-	s->LogSubStreamPushDesc("plUUID");
-	s->Read( sizeof( fData ), (void*)fData );
+    s->LogSubStreamPushDesc("plUUID");
+    s->Read( sizeof( fData ), (void*)fData );
 }
 
 void plUUID::Write( hsStream * s)
 {
-	s->Write( sizeof( fData ), (const void*)fData );
+    s->Write( sizeof( fData ), (const void*)fData );
 }
 
 plUUID::operator Uuid () const {
@@ -72,10 +72,10 @@ const char * plUUID::AsString() const {
 }
 
 void plUUID::CopyFrom( const plUUID * v ) {
-	if (!v)
-		Clear();
-	else
-		CopyFrom(*v);
+    if (!v)
+        Clear();
+    else
+        CopyFrom(*v);
 }
 
 void plUUID::CopyFrom( const plUUID & v ) {

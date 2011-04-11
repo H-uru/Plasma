@@ -36,80 +36,80 @@ class hsStream;
 class plFixedWaterState7
 {
 public:
-	class WaveState
-	{
-	public:
-		plTimedSimple<hsScalar>		fMaxLength;
-		plTimedSimple<hsScalar>		fMinLength;
-		plTimedSimple<hsScalar>		fAmpOverLen;
-		plTimedSimple<hsScalar>		fChop;
-		plTimedSimple<hsScalar>		fAngleDev;
+    class WaveState
+    {
+    public:
+        plTimedSimple<hsScalar>     fMaxLength;
+        plTimedSimple<hsScalar>     fMinLength;
+        plTimedSimple<hsScalar>     fAmpOverLen;
+        plTimedSimple<hsScalar>     fChop;
+        plTimedSimple<hsScalar>     fAngleDev;
 
-		void Set(const WaveState& w, hsScalar secs);
+        void Set(const WaveState& w, hsScalar secs);
 
-		void Read(hsStream* s);
-		void Write(hsStream* s) const;
-	};
-	// Main body of water state
+        void Read(hsStream* s);
+        void Write(hsStream* s) const;
+    };
+    // Main body of water state
 
-	// Geometric waves
-	WaveState					fGeoState;
+    // Geometric waves
+    WaveState                   fGeoState;
 
-	// Texture waves
-	WaveState					fTexState;
-	plTimedSimple<hsScalar>		fRippleScale;
+    // Texture waves
+    WaveState                   fTexState;
+    plTimedSimple<hsScalar>     fRippleScale;
 
-	// Geometric and Texture share wind direction
-	plTimedCompound<hsVector3>		fWindDir;
+    // Geometric and Texture share wind direction
+    plTimedCompound<hsVector3>      fWindDir;
 
-	// Level of noise added during summation of texture waves
-	enum {
-		kNoise	= 0,
-		kSpecStart = 1,
-		kSpecEnd = 2
-	};
-	plTimedCompound<hsVector3>		fSpecVec; // (Noise, SpecStart, SpecEnd);
+    // Level of noise added during summation of texture waves
+    enum {
+        kNoise  = 0,
+        kSpecStart = 1,
+        kSpecEnd = 2
+    };
+    plTimedCompound<hsVector3>      fSpecVec; // (Noise, SpecStart, SpecEnd);
 
-	// Depth parameters. Affect how the depth of
-	// the water vertex is interpreted into water
-	// surface properties.
-	plTimedSimple<hsScalar>			fWaterHeight;
-	plTimedCompound<hsVector3>		fWaterOffset;
-	plTimedCompound<hsVector3>		fMaxAtten;
-	plTimedCompound<hsVector3>		fMinAtten;
-	plTimedCompound<hsVector3>		fDepthFalloff;
+    // Depth parameters. Affect how the depth of
+    // the water vertex is interpreted into water
+    // surface properties.
+    plTimedSimple<hsScalar>         fWaterHeight;
+    plTimedCompound<hsVector3>      fWaterOffset;
+    plTimedCompound<hsVector3>      fMaxAtten;
+    plTimedCompound<hsVector3>      fMinAtten;
+    plTimedCompound<hsVector3>      fDepthFalloff;
 
-	// Shore parameters
+    // Shore parameters
 
-	// Appearance
-	plTimedSimple<hsScalar>		fWispiness;
-	plTimedCompound<hsColorRGBA>		fShoreTint;
-	// Next two only used in generation of bubble layer
-	plTimedCompound<hsColorRGBA>		fMaxColor;
-	plTimedCompound<hsColorRGBA>		fMinColor;
-	plTimedSimple<hsScalar>		fEdgeOpac;
-	plTimedSimple<hsScalar>		fEdgeRadius;
+    // Appearance
+    plTimedSimple<hsScalar>     fWispiness;
+    plTimedCompound<hsColorRGBA>        fShoreTint;
+    // Next two only used in generation of bubble layer
+    plTimedCompound<hsColorRGBA>        fMaxColor;
+    plTimedCompound<hsColorRGBA>        fMinColor;
+    plTimedSimple<hsScalar>     fEdgeOpac;
+    plTimedSimple<hsScalar>     fEdgeRadius;
 
-	// Simulation
-	plTimedSimple<hsScalar>		fPeriod;
-	plTimedSimple<hsScalar>		fFingerLength;
+    // Simulation
+    plTimedSimple<hsScalar>     fPeriod;
+    plTimedSimple<hsScalar>     fFingerLength;
 
-	// The rest aren't really part of the state, that is they are normally controlled
-	// by something exterior to the state. They are included here to allow a convenient
-	// override during development.
+    // The rest aren't really part of the state, that is they are normally controlled
+    // by something exterior to the state. They are included here to allow a convenient
+    // override during development.
 
-	// Water appearance.
-	plTimedCompound<hsColorRGBA>		fWaterTint;
-	plTimedCompound<hsColorRGBA>		fSpecularTint;
+    // Water appearance.
+    plTimedCompound<hsColorRGBA>        fWaterTint;
+    plTimedCompound<hsColorRGBA>        fSpecularTint;
 
-	plTimedCompound<hsPoint3>		fEnvCenter;
-	plTimedSimple<hsScalar>		fEnvRefresh;
-	plTimedSimple<hsScalar>		fEnvRadius;
+    plTimedCompound<hsPoint3>       fEnvCenter;
+    plTimedSimple<hsScalar>     fEnvRefresh;
+    plTimedSimple<hsScalar>     fEnvRadius;
 
-	void Set(const plFixedWaterState7& s, hsScalar secs);
+    void Set(const plFixedWaterState7& s, hsScalar secs);
 
-	void Read(hsStream* s);
-	void Write(hsStream* s) const;
+    void Read(hsStream* s);
+    void Write(hsStream* s) const;
 };
 
 

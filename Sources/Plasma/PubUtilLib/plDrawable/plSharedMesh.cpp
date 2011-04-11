@@ -37,83 +37,83 @@ plSharedMesh::plSharedMesh() : fMorphSet(nil), fFlags(0)
 
 plSharedMesh::~plSharedMesh()
 {
-	hsAssert(fActiveInstances.GetCount() == 0, "Tried to delete a shared mesh that has active instances.");
-	
-	while (fSpans.GetCount() > 0)
-		delete fSpans.Pop();
+    hsAssert(fActiveInstances.GetCount() == 0, "Tried to delete a shared mesh that has active instances.");
+    
+    while (fSpans.GetCount() > 0)
+        delete fSpans.Pop();
 }
 /*
 void plSharedMesh::CreateInstance(plSceneObject *so, UInt8 boneIndex)
-{	
+{   
 plDrawInterface *di = so->GetVolatileDrawInterface();
 
-  //	hsAssert((fActiveInstances.GetCount == 0) || 
-  //			 (di->GetDrawable() == fActiveInstances[0]->GetDrawInterface()->GetDrawable()),
-  //			 "Trying to share a mesh between two seperate drawables. No can do.");
+  //    hsAssert((fActiveInstances.GetCount == 0) || 
+  //             (di->GetDrawable() == fActiveInstances[0]->GetDrawInterface()->GetDrawable()),
+  //             "Trying to share a mesh between two seperate drawables. No can do.");
   
-	
-	  fActiveInstances.Append(so);
-	  }
-	  
-		void plSharedMesh::RemoveInstance(plSceneObject *so)
-		{
-		so->GetVolatileDrawInterface()->ReleaseData();
-		
-		  fActiveInstances.RemoveItem(so);
-		  }
+    
+      fActiveInstances.Append(so);
+      }
+      
+        void plSharedMesh::RemoveInstance(plSceneObject *so)
+        {
+        so->GetVolatileDrawInterface()->ReleaseData();
+        
+          fActiveInstances.RemoveItem(so);
+          }
 */
 
 hsBool plSharedMesh::MsgReceive(plMessage* msg)
 {
-	plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef(msg);
-	if (refMsg)
-	{
-		plMorphDataSet *set = plMorphDataSet::ConvertNoRef(refMsg->GetRef());
-		if (set)
-		{
-			if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
-			{
-				fMorphSet = plMorphDataSet::ConvertNoRef(refMsg->GetRef());
-			}
-			else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-			{
-				fMorphSet = nil;
-			}
-			return true;
-		}
-	}
-	
-	return hsKeyedObject::MsgReceive(msg);
+    plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef(msg);
+    if (refMsg)
+    {
+        plMorphDataSet *set = plMorphDataSet::ConvertNoRef(refMsg->GetRef());
+        if (set)
+        {
+            if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
+            {
+                fMorphSet = plMorphDataSet::ConvertNoRef(refMsg->GetRef());
+            }
+            else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
+            {
+                fMorphSet = nil;
+            }
+            return true;
+        }
+    }
+    
+    return hsKeyedObject::MsgReceive(msg);
 }
 
 // Currently, active instances are not meant to be created at export and written to disk.
 void plSharedMesh::Read(hsStream* s, hsResMgr* mgr)
 {
-	hsKeyedObject::Read(s, mgr);
-	
-	int i;
-	fSpans.SetCount(s->ReadSwap32());
-	for (i = 0; i < fSpans.GetCount(); i++)
-	{
-		fSpans[i] = TRACKED_NEW plGeometrySpan;
-		fSpans[i]->Read(s);
-	}
+    hsKeyedObject::Read(s, mgr);
+    
+    int i;
+    fSpans.SetCount(s->ReadSwap32());
+    for (i = 0; i < fSpans.GetCount(); i++)
+    {
+        fSpans[i] = TRACKED_NEW plGeometrySpan;
+        fSpans[i]->Read(s);
+    }
 
-	mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
-	fFlags = s->ReadByte();
+    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
+    fFlags = s->ReadByte();
 }
 
 void plSharedMesh::Write(hsStream* s, hsResMgr* mgr)
 {
-	hsKeyedObject::Write(s, mgr);
+    hsKeyedObject::Write(s, mgr);
 
-	int i;
-	s->WriteSwap32(fSpans.GetCount());
-	for (i = 0; i < fSpans.GetCount(); i++)
-		fSpans[i]->Write(s);
+    int i;
+    s->WriteSwap32(fSpans.GetCount());
+    for (i = 0; i < fSpans.GetCount(); i++)
+        fSpans[i]->Write(s);
 
-	mgr->WriteKey(s, (fMorphSet ? fMorphSet->GetKey() : nil));
-	s->WriteByte(fFlags);
+    mgr->WriteKey(s, (fMorphSet ? fMorphSet->GetKey() : nil));
+    s->WriteByte(fFlags);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

@@ -51,41 +51,41 @@ WNDPROC plStatusBar::_SuperProc = nil;
 
 ////////////////////////////////////////////////////////////////////
 
-HINSTANCE	plWndCtrls::hInstance = nil;
+HINSTANCE   plWndCtrls::hInstance = nil;
 DWORD plWndCtrls::fLanguage = 0;
 
 ////////////////////////////////////////////////////////////////////
 
 void plWndCtrls::Init(HINSTANCE hInst)
 {
-	hInstance = hInst;
+    hInstance = hInst;
 
-	CoInitialize(NULL);
+    CoInitialize(NULL);
 
-	INITCOMMONCONTROLSEX icex;
-	icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
-	icex.dwICC  = ICC_BAR_CLASSES;
-	InitCommonControlsEx(&icex);
+    INITCOMMONCONTROLSEX icex;
+    icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+    icex.dwICC  = ICC_BAR_CLASSES;
+    InitCommonControlsEx(&icex);
  
-	REGISTER_WINDOWSUBCLASS(plEdit,L"EDIT");
-	REGISTER_WINDOWSUBCLASS(plButton,L"BUTTON");
-	REGISTER_WINDOWSUBCLASS(plCheckBox,L"BUTTON");
-	REGISTER_WINDOWSUBCLASS(plRadioButton,L"BUTTON");
-	REGISTER_WINDOWSUBCLASS(plLabel,L"STATIC");
-	REGISTER_WINDOWSUBCLASS(plComboBox,L"COMBOBOX");
-	REGISTER_WINDOWSUBCLASS(plListBox,L"LISTBOX");
-	REGISTER_WINDOWSUBCLASS(plTrackBar,TRACKBAR_CLASS);
-	REGISTER_WINDOWSUBCLASS(plProgressBar,PROGRESS_CLASS);
-	REGISTER_WINDOWSUBCLASS(plStatusBar,STATUSCLASSNAME);
+    REGISTER_WINDOWSUBCLASS(plEdit,L"EDIT");
+    REGISTER_WINDOWSUBCLASS(plButton,L"BUTTON");
+    REGISTER_WINDOWSUBCLASS(plCheckBox,L"BUTTON");
+    REGISTER_WINDOWSUBCLASS(plRadioButton,L"BUTTON");
+    REGISTER_WINDOWSUBCLASS(plLabel,L"STATIC");
+    REGISTER_WINDOWSUBCLASS(plComboBox,L"COMBOBOX");
+    REGISTER_WINDOWSUBCLASS(plListBox,L"LISTBOX");
+    REGISTER_WINDOWSUBCLASS(plTrackBar,TRACKBAR_CLASS);
+    REGISTER_WINDOWSUBCLASS(plProgressBar,PROGRESS_CLASS);
+    REGISTER_WINDOWSUBCLASS(plStatusBar,STATUSCLASSNAME);
 
-	basewnd::Initialize( hInst );
+    basewnd::Initialize( hInst );
 }
 
 void plWndCtrls::Shutdown()
 {
-	CoUninitialize();
+    CoUninitialize();
 }
 
 
 ////////////////////////////////////////////////////////////////////
-#endif	// HS_BUILD_FOR_WIN32
+#endif  // HS_BUILD_FOR_WIN32

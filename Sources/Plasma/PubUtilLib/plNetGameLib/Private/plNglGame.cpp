@@ -45,23 +45,23 @@ namespace Ngl { namespace Game {
 struct CliGmConn : AtomicRef {
     LINK(CliGmConn) link;
 
-	CCritSect		critsect;
+    CCritSect       critsect;
     AsyncSocket     sock;
     AsyncCancelId   cancelId;
     NetCli *        cli;
     NetAddress      addr;
     unsigned        seq;
-    bool			abandoned;
+    bool            abandoned;
 
-	// ping
-	AsyncTimer *	pingTimer;
-	unsigned		pingSendTimeMs;
-	unsigned		lastHeardTimeMs;
+    // ping
+    AsyncTimer *    pingTimer;
+    unsigned        pingSendTimeMs;
+    unsigned        lastHeardTimeMs;
 
     CliGmConn ();
     ~CliGmConn ();
 
-	void Send (const unsigned_ptr fields[], unsigned count);
+    void Send (const unsigned_ptr fields[], unsigned count);
 };
 
 
@@ -72,12 +72,12 @@ struct JoinAgeRequestTrans : NetGameTrans {
     FNetCliGameJoinAgeRequestCallback   m_callback;
     void *                              m_param;
     // sent
-	unsigned							m_ageMcpId;
+    unsigned                            m_ageMcpId;
     Uuid                                m_accountUuid;
     unsigned                            m_playerInt;
 
     JoinAgeRequestTrans (
-		unsigned							ageMcpId,
+        unsigned                            ageMcpId,
         const Uuid &                        accountUuid,
         unsigned                            playerInt,
         FNetCliGameJoinAgeRequestCallback   callback,
@@ -97,12 +97,12 @@ struct JoinAgeRequestTrans : NetGameTrans {
 //============================================================================
 struct RcvdPropagatedBufferTrans : NetNotifyTrans {
 
-	unsigned		bufferType;
-	unsigned		bufferBytes;
-	byte *			bufferData;
+    unsigned        bufferType;
+    unsigned        bufferBytes;
+    byte *          bufferData;
 
-	RcvdPropagatedBufferTrans () : NetNotifyTrans(kGmRcvdPropagatedBufferTrans) {}
-	~RcvdPropagatedBufferTrans ();
+    RcvdPropagatedBufferTrans () : NetNotifyTrans(kGmRcvdPropagatedBufferTrans) {}
+    ~RcvdPropagatedBufferTrans ();
     void Post ();
 };
 
@@ -111,11 +111,11 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
 //============================================================================
 struct RcvdGameMgrMsgTrans : NetNotifyTrans {
 
-	unsigned		bufferBytes;
-	byte *			bufferData;
+    unsigned        bufferBytes;
+    byte *          bufferData;
 
-	RcvdGameMgrMsgTrans () : NetNotifyTrans(kGmRcvdGameMgrMsgTrans) {}
-	~RcvdGameMgrMsgTrans ();
+    RcvdGameMgrMsgTrans () : NetNotifyTrans(kGmRcvdGameMgrMsgTrans) {}
+    ~RcvdGameMgrMsgTrans ();
     void Post ();
 };
 
@@ -132,13 +132,13 @@ enum {
     kNumPerf
 };
 
-static bool								s_running;
-static CCritSect						s_critsect;
-static LISTDECL(CliGmConn, link)		s_conns;
-static CliGmConn *						s_active;
-static FNetCliGameRecvBufferHandler		s_bufHandler;
-static FNetCliGameRecvGameMgrMsgHandler	s_gameMgrMsgHandler;
-static long								s_perf[kNumPerf];
+static bool                             s_running;
+static CCritSect                        s_critsect;
+static LISTDECL(CliGmConn, link)        s_conns;
+static CliGmConn *                      s_active;
+static FNetCliGameRecvBufferHandler     s_bufHandler;
+static FNetCliGameRecvGameMgrMsgHandler s_gameMgrMsgHandler;
+static long                             s_perf[kNumPerf];
 
 
 /*****************************************************************************
@@ -149,18 +149,18 @@ static long								s_perf[kNumPerf];
 
 //===========================================================================
 static unsigned GetNonZeroTimeMs () {
-	if (unsigned ms = TimeGetMs())
-		return ms;
-	return 1;
+    if (unsigned ms = TimeGetMs())
+        return ms;
+    return 1;
 }
 
 //============================================================================
 static CliGmConn * GetConnIncRef_CS (const char tag[]) {
     if (CliGmConn * conn = s_active)
-		if (conn->cli) {
-			conn->IncRef(tag);
-			return conn;
-		}
+        if (conn->cli) {
+            conn->IncRef(tag);
+            return conn;
+        }
     return nil;
 }
 
@@ -177,18 +177,18 @@ static CliGmConn * GetConnIncRef (const char tag[]) {
 
 //============================================================================
 static void UnlinkAndAbandonConn_CS (CliGmConn * conn) {
-	s_conns.Unlink(conn);
-	conn->abandoned = true;
-	if (conn->cancelId) {
-		AsyncSocketConnectCancel(nil, conn->cancelId);
-		conn->cancelId  = 0;
-	}
-	else if (conn->sock) {
-		AsyncSocketDisconnect(conn->sock, true);
-	}
-	else {
-		conn->DecRef("Lifetime");
-	}
+    s_conns.Unlink(conn);
+    conn->abandoned = true;
+    if (conn->cancelId) {
+        AsyncSocketConnectCancel(nil, conn->cancelId);
+        conn->cancelId  = 0;
+    }
+    else if (conn->sock) {
+        AsyncSocketDisconnect(conn->sock, true);
+    }
+    else {
+        conn->DecRef("Lifetime");
+    }
 }
 
 //============================================================================
@@ -209,7 +209,7 @@ static bool ConnEncrypt (ENetError error, void * param) {
 //============================================================================
 static void NotifyConnSocketConnect (CliGmConn * conn) {
 
-	conn->TransferRef("Connecting", "Connected");
+    conn->TransferRef("Connecting", "Connected");
     conn->cli = NetCliConnectAccept(
         conn->sock,
         kNetProtocolCli2Game,
@@ -226,14 +226,14 @@ static void NotifyConnSocketConnectFailed (CliGmConn * conn) {
     bool notify;
     s_critsect.Enter();
     {
-		conn->cancelId = 0;
+        conn->cancelId = 0;
         s_conns.Unlink(conn);
         
         notify
-			=  s_running
-			&& !conn->abandoned
-			&& (!s_active || conn == s_active);
-			
+            =  s_running
+            && !conn->abandoned
+            && (!s_active || conn == s_active);
+            
         if (conn == s_active)
             s_active = nil;
     }
@@ -256,9 +256,9 @@ static void NotifyConnSocketDisconnect (CliGmConn * conn) {
         s_conns.Unlink(conn);
 
         notify
-			=  s_running
-			&& !conn->abandoned
-			&& (!s_active || conn == s_active);
+            =  s_running
+            && !conn->abandoned
+            && (!s_active || conn == s_active);
 
         if (conn == s_active)
             s_active = nil;
@@ -297,19 +297,19 @@ static bool SocketNotifyCallback (
         case kNotifySocketConnectSuccess:
             conn = (CliGmConn *) notify->param;
             *userState = conn;
-			conn->TransferRef("Connecting", "Connected");
+            conn->TransferRef("Connecting", "Connected");
             bool abandoned;
             s_critsect.Enter();
             {
-				conn->sock		= sock;
+                conn->sock      = sock;
                 conn->cancelId  = 0;
-				abandoned		= conn->abandoned;
+                abandoned       = conn->abandoned;
             }
             s_critsect.Leave();
             if (abandoned)
-				AsyncSocketDisconnect(sock, true);
-			else
-				NotifyConnSocketConnect(conn);
+                AsyncSocketDisconnect(sock, true);
+            else
+                NotifyConnSocketConnect(conn);
         break;
 
         case kNotifySocketConnectFailed:
@@ -336,17 +336,17 @@ static void Connect (
     const NetAddress &  addr
 ) {
     CliGmConn * conn = NEWZERO(CliGmConn);
-    conn->addr				= addr;
-    conn->seq				= ConnNextSequence();
-    conn->lastHeardTimeMs	= GetNonZeroTimeMs();
+    conn->addr              = addr;
+    conn->seq               = ConnNextSequence();
+    conn->lastHeardTimeMs   = GetNonZeroTimeMs();
 
     conn->IncRef("Lifetime");
-	conn->IncRef("Connecting");
+    conn->IncRef("Connecting");
 
     s_critsect.Enter();
     {
-		while (CliGmConn * conn = s_conns.Head())
-			UnlinkAndAbandonConn_CS(conn);
+        while (CliGmConn * conn = s_conns.Head())
+            UnlinkAndAbandonConn_CS(conn);
         s_conns.Link(conn);
     }
     s_critsect.Leave();
@@ -356,7 +356,7 @@ static void Connect (
     connect.hdr.hdrBytes    = sizeof(connect.hdr);
     connect.hdr.buildId     = BuildId();
     connect.hdr.buildType   = BuildType();
-    connect.hdr.branchId	= BranchId();
+    connect.hdr.branchId    = BranchId();
     connect.hdr.productId   = ProductId();
     connect.data.dataBytes  = sizeof(connect.data);
 
@@ -386,19 +386,19 @@ CliGmConn::CliGmConn () {
 
 //============================================================================
 CliGmConn::~CliGmConn () {
-	if (cli)
-		NetCliDelete(cli, true);
+    if (cli)
+        NetCliDelete(cli, true);
     AtomicAdd(&s_perf[kPerfConnCount], -1);
 }
 
 //============================================================================
 void CliGmConn::Send (const unsigned_ptr fields[], unsigned count) {
-	critsect.Enter();
-	{
-		NetCliSend(cli, fields, count);
-		NetCliFlush(cli);
-	}
-	critsect.Leave();
+    critsect.Enter();
+    {
+        NetCliSend(cli, fields, count);
+        NetCliFlush(cli);
+    }
+    critsect.Leave();
 }
 
 
@@ -440,12 +440,12 @@ static bool Recv_PropagateBuffer (
 ) {
     const Game2Cli_PropagateBuffer & reply = *(const Game2Cli_PropagateBuffer *)msg;
 
-	RcvdPropagatedBufferTrans * trans = NEW(RcvdPropagatedBufferTrans);
-	trans->bufferType	= reply.type;
-	trans->bufferBytes	= reply.bytes;
-	trans->bufferData	= (byte *)ALLOC(reply.bytes);
-	MemCopy(trans->bufferData, reply.buffer, reply.bytes);
-	NetTransSend(trans);
+    RcvdPropagatedBufferTrans * trans = NEW(RcvdPropagatedBufferTrans);
+    trans->bufferType   = reply.type;
+    trans->bufferBytes  = reply.bytes;
+    trans->bufferData   = (byte *)ALLOC(reply.bytes);
+    MemCopy(trans->bufferData, reply.buffer, reply.bytes);
+    NetTransSend(trans);
 
     return true;
 }
@@ -458,11 +458,11 @@ static bool Recv_GameMgrMsg (
 ) {
     const Game2Cli_GameMgrMsg & reply = *(const Game2Cli_GameMgrMsg *)msg;
 
-	RcvdGameMgrMsgTrans * trans = NEW(RcvdGameMgrMsgTrans);
-	trans->bufferBytes	= reply.bytes;
-	trans->bufferData	= (byte *)ALLOC(reply.bytes);
-	MemCopy(trans->bufferData, reply.buffer, reply.bytes);
-	NetTransSend(trans);
+    RcvdGameMgrMsgTrans * trans = NEW(RcvdGameMgrMsgTrans);
+    trans->bufferBytes  = reply.bytes;
+    trans->bufferData   = (byte *)ALLOC(reply.bytes);
+    MemCopy(trans->bufferData, reply.buffer, reply.bytes);
+    NetTransSend(trans);
 
     return true;
 }
@@ -476,7 +476,7 @@ static NetMsgInitSend s_send[] = {
     { MSG(PingRequest),         },
     { MSG(JoinAgeRequest),      },
     { MSG(PropagateBuffer),     },
-    { MSG(GameMgrMsg),			},
+    { MSG(GameMgrMsg),          },
 };
 #undef MSG
 
@@ -485,7 +485,7 @@ static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)            },
     { MSG(JoinAgeReply),        },
     { MSG(PropagateBuffer),     },
-    { MSG(GameMgrMsg),			},
+    { MSG(GameMgrMsg),          },
 };
 #undef MSG
 
@@ -498,13 +498,13 @@ static NetMsgInitRecv s_recv[] = {
 
 //============================================================================
 JoinAgeRequestTrans::JoinAgeRequestTrans (
-	unsigned							ageMcpId,
+    unsigned                            ageMcpId,
     const Uuid &                        accountUuid,
     unsigned                            playerInt,
     FNetCliGameJoinAgeRequestCallback   callback,
     void *                              param
 ) : NetGameTrans(kJoinAgeRequestTrans)
-,	m_ageMcpId(ageMcpId)
+,   m_ageMcpId(ageMcpId)
 ,   m_accountUuid(accountUuid)
 ,   m_playerInt(playerInt)
 ,   m_callback(callback)
@@ -519,13 +519,13 @@ bool JoinAgeRequestTrans::Send () {
 
     const unsigned_ptr msg[] = {
         kCli2Game_JoinAgeRequest,
-						m_transId,
-						m_ageMcpId,
+                        m_transId,
+                        m_ageMcpId,
         (unsigned_ptr) &m_accountUuid,
-						m_playerInt,
+                        m_playerInt,
     };
 
-	m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, arrsize(msg));
     
     return true;
 }
@@ -557,7 +557,7 @@ bool JoinAgeRequestTrans::Recv (
 
 //============================================================================
 RcvdPropagatedBufferTrans::~RcvdPropagatedBufferTrans () {
-	FREE(bufferData);
+    FREE(bufferData);
 }
 
 //============================================================================
@@ -574,7 +574,7 @@ void RcvdPropagatedBufferTrans::Post () {
 
 //============================================================================
 RcvdGameMgrMsgTrans::~RcvdGameMgrMsgTrans () {
-	FREE(bufferData);
+    FREE(bufferData);
 }
 
 //============================================================================
@@ -647,10 +647,10 @@ void GameDestroy (bool wait) {
     s_bufHandler = nil;
     s_gameMgrMsgHandler = nil;
 
-	NetTransCancelByProtocol(
-		kNetProtocolCli2Game,
-		kNetErrRemoteShutdown
-	);    
+    NetTransCancelByProtocol(
+        kNetProtocolCli2Game,
+        kNetErrRemoteShutdown
+    );    
     NetMsgProtocolDestroy(
         kNetProtocolCli2Game,
         false
@@ -658,19 +658,19 @@ void GameDestroy (bool wait) {
     
     s_critsect.Enter();
     {
-		while (CliGmConn * conn = s_conns.Head())
-			UnlinkAndAbandonConn_CS(conn);
-		s_active = nil;
-	}
+        while (CliGmConn * conn = s_conns.Head())
+            UnlinkAndAbandonConn_CS(conn);
+        s_active = nil;
+    }
     s_critsect.Leave();
     
     if (!wait)
-		return;
+        return;
 
-	while (s_perf[kPerfConnCount]) {
-		NetTransUpdate();
+    while (s_perf[kPerfConnCount]) {
+        NetTransUpdate();
         AsyncSleep(10);
-	}
+    }
 }
 
 //============================================================================
@@ -678,8 +678,8 @@ bool GameQueryConnected () {
     bool result;
     s_critsect.Enter();
     {
-		if (nil != (result = s_active))
-			result &= (nil != s_active->cli);
+        if (nil != (result = s_active))
+            result &= (nil != s_active->cli);
     }
     s_critsect.Leave();
     return result;
@@ -696,7 +696,7 @@ unsigned GameGetConnId () {
 
 //============================================================================
 void GamePingEnable (bool enable) {
-	s_perf[kPingDisabled] = !enable;
+    s_perf[kPingDisabled] = !enable;
 }
 
 } using namespace Ngl;
@@ -722,23 +722,23 @@ void NetCliGameDisconnect () {
     
     s_critsect.Enter();
     {
-		while (CliGmConn * conn = s_conns.Head())
-			UnlinkAndAbandonConn_CS(conn);
-		s_active = nil;
+        while (CliGmConn * conn = s_conns.Head())
+            UnlinkAndAbandonConn_CS(conn);
+        s_active = nil;
     }
     s_critsect.Leave();
 }
 
 //============================================================================
 void NetCliGameJoinAgeRequest (
-	unsigned							ageMcpId,
+    unsigned                            ageMcpId,
     const Uuid &                        accountUuid,
     unsigned                            playerInt,
     FNetCliGameJoinAgeRequestCallback   callback,
     void *                              param
 ) {
     JoinAgeRequestTrans * trans = NEWZERO(JoinAgeRequestTrans)(
-		ageMcpId,
+        ageMcpId,
         accountUuid,
         playerInt,
         callback,
@@ -771,14 +771,14 @@ void NetCliGamePropagateBuffer (
         (unsigned_ptr) buffer,
     };
 
-	conn->Send(msg, arrsize(msg));
+    conn->Send(msg, arrsize(msg));
 
     conn->DecRef("PropBuffer");
 }
 
 //============================================================================
 void NetCliGameSetRecvGameMgrMsgHandler (FNetCliGameRecvGameMgrMsgHandler handler) {
-	s_gameMgrMsgHandler = handler;
+    s_gameMgrMsgHandler = handler;
 }
 
 //============================================================================
@@ -787,13 +787,13 @@ void NetCliGameSendGameMgrMsg (GameMsgHeader * msgHdr) {
     if (!conn)
         return;
 
-	const unsigned_ptr msg[] = {
-		kCli2Game_GameMgrMsg,
-						msgHdr->messageBytes,
-		(unsigned_ptr)	msgHdr,
-	};
-	
-	conn->Send(msg, arrsize(msg));
-	
-	conn->DecRef("GameMgrMsg");
+    const unsigned_ptr msg[] = {
+        kCli2Game_GameMgrMsg,
+                        msgHdr->messageBytes,
+        (unsigned_ptr)  msgHdr,
+    };
+    
+    conn->Send(msg, arrsize(msg));
+    
+    conn->DecRef("GameMgrMsg");
 }

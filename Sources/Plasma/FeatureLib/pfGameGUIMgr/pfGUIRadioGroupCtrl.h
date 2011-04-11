@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIRadioGroupCtrl Header												//
-//																			//
+//                                                                          //
+//  pfGUIRadioGroupCtrl Header                                              //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIRadioGroupCtrl_h
@@ -42,53 +42,53 @@ class pfGroupProc;
 
 class pfGUIRadioGroupCtrl : public pfGUIControlMod
 {
-	friend class pfGroupProc;
+    friend class pfGroupProc;
 
-	protected:
+    protected:
 
-		enum
-		{
-			kRefControl = kRefDerivedStart
-		};
+        enum
+        {
+            kRefControl = kRefDerivedStart
+        };
 
-		hsTArray<pfGUICheckBoxCtrl *>	fControls;
-		pfGroupProc						*fButtonProc;
+        hsTArray<pfGUICheckBoxCtrl *>   fControls;
+        pfGroupProc                     *fButtonProc;
 
-		Int32							fValue, fDefaultValue;
+        Int32                           fValue, fDefaultValue;
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
-	public:
+    public:
 
-		pfGUIRadioGroupCtrl();
-		virtual ~pfGUIRadioGroupCtrl();
+        pfGUIRadioGroupCtrl();
+        virtual ~pfGUIRadioGroupCtrl();
 
-		CLASSNAME_REGISTER( pfGUIRadioGroupCtrl );
-		GETINTERFACE_ANY( pfGUIRadioGroupCtrl, pfGUIControlMod );
+        CLASSNAME_REGISTER( pfGUIRadioGroupCtrl );
+        GETINTERFACE_ANY( pfGUIRadioGroupCtrl, pfGUIControlMod );
 
-		enum OurFlags
-		{
-			kAllowNoSelection = kDerivedFlagsStart
-		};
+        enum OurFlags
+        {
+            kAllowNoSelection = kDerivedFlagsStart
+        };
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		Int32	GetValue( void ) { return fValue; }
-		void	SetValue( Int32 value );
+        Int32   GetValue( void ) { return fValue; }
+        void    SetValue( Int32 value );
 
-		virtual void	SetEnabled( hsBool e );
-		virtual void	SetInteresting( hsBool e );
-		virtual void	SetVisible( hsBool vis );
-		virtual void	SetControlsFlag( int flag );
-		virtual void	ClearControlsFlag( int flag );
+        virtual void    SetEnabled( hsBool e );
+        virtual void    SetInteresting( hsBool e );
+        virtual void    SetVisible( hsBool vis );
+        virtual void    SetControlsFlag( int flag );
+        virtual void    ClearControlsFlag( int flag );
 
-		/// Export ONLY
-		void	ClearControlList( void );
-		void	AddControl( pfGUICheckBoxCtrl *ctrl );
-		void	SetDefaultValue( Int32 value ) { fDefaultValue = value; }
+        /// Export ONLY
+        void    ClearControlList( void );
+        void    AddControl( pfGUICheckBoxCtrl *ctrl );
+        void    SetDefaultValue( Int32 value ) { fDefaultValue = value; }
 };
 
 #endif // _pfGUIRadioGroupCtrl_h

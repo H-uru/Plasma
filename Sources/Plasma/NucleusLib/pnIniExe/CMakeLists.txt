@@ -2,15 +2,15 @@ include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 
 set(pnIniExe_HEADERS
-	Pch.h
+    Pch.h
 )
 
 set(pnIniExe_PRIVATE
-	Private/pnIniSrv.cpp
+    Private/pnIniSrv.cpp
 )
 
 set(pnIniExe_PRIVATE_WIN32
-	Private/Win32/pnW32IniChange.cpp
+    Private/Win32/pnW32IniChange.cpp
 )
 
 add_library(pnIniExe STATIC ${pnIniExe_HEADERS} ${pnIniExe_PRIVATE} ${pnIniExe_PRIVATE_WIN32})

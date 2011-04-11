@@ -35,28 +35,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimationEventConditionalObject : public plConditionalObject
 {
 protected:
-	CallbackEvent	fAction;
-	plKey			fTarget;
+    CallbackEvent   fAction;
+    plKey           fTarget;
 public:
-	
-	
-	plAnimationEventConditionalObject(){;}
-	plAnimationEventConditionalObject(plKey pTargetModifier);
-	~plAnimationEventConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plAnimationEventConditionalObject );
-	GETINTERFACE_ANY( plAnimationEventConditionalObject, plConditionalObject );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    
+    plAnimationEventConditionalObject(){;}
+    plAnimationEventConditionalObject(plKey pTargetModifier);
+    ~plAnimationEventConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plAnimationEventConditionalObject );
+    GETINTERFACE_ANY( plAnimationEventConditionalObject, plConditionalObject );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	hsBool MsgReceive(plMessage* msg);
-	
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(false); }
+    hsBool MsgReceive(plMessage* msg);
+    
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(false); }
 
-	void SetEvent(const CallbackEvent b, hsScalar time = 0.0f);
-	
+    void SetEvent(const CallbackEvent b, hsScalar time = 0.0f);
+    
 };
 
 

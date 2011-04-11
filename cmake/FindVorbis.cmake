@@ -1,5 +1,5 @@
 if(Vorbis_INCLUDE_DIR AND Vorbis_LIBRARY)
-	set(Vorbis_FIND_QUIETLY TRUE)
+    set(Vorbis_FIND_QUIETLY TRUE)
 endif()
 
 
@@ -17,21 +17,21 @@ find_library(VorbisFile_LIBRARY NAMES vorbisfile
 )
 
 set(Vorbis_LIBRARIES
-	${Vorbis_LIBRARY}
-	${VorbisFile_LIBRARY}
+    ${Vorbis_LIBRARY}
+    ${VorbisFile_LIBRARY}
 )
 
 
 if(Vorbis_INCLUDE_DIR AND Vorbis_LIBRARY AND VorbisFile_LIBRARY)
-	set(Vorbis_FOUND TRUE)
+    set(Vorbis_FOUND TRUE)
 endif()
 
 if (Vorbis_FOUND)
-	if(NOT Vorbis_FIND_QUIETLY)
-		message(STATUS "Found libvorbis: ${Vorbis_INCLUDE_DIR}")
-	endif()
+    if(NOT Vorbis_FIND_QUIETLY)
+        message(STATUS "Found libvorbis: ${Vorbis_INCLUDE_DIR}")
+    endif()
 else()
-	if(Vorbis_FIND_REQUIRED)
-		message(FATAL_ERROR "Could not find libvorbis")
-	endif()
+    if(Vorbis_FIND_REQUIRED)
+        message(FATAL_ERROR "Could not find libvorbis")
+    endif()
 endif()

@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct EventHash {
-	unsigned	eventType;
-	ESrvType	srvType;
+    unsigned    eventType;
+    ESrvType    srvType;
 
     inline EventHash (
-		unsigned	eventType,
-		ESrvType	srvType
+        unsigned    eventType,
+        ESrvType    srvType
     );
 
     inline dword GetHash () const;
@@ -53,18 +53,18 @@ struct EventHash {
 };
 
 struct NetLogEventHash : EventHash {
-	const NetLogEvent *				event;
+    const NetLogEvent *             event;
 
-	NetLogEventHash(
-		unsigned	eventType,
-		ESrvType	srvType,
-		const NetLogEvent *event
-	);
-	HASHLINK(NetLogEventHash)	link;	
+    NetLogEventHash(
+        unsigned    eventType,
+        ESrvType    srvType,
+        const NetLogEvent *event
+    );
+    HASHLINK(NetLogEventHash)   link;   
 };
 
-static CCritSect		s_critsect;
-static ESrvType			s_srvType;
+static CCritSect        s_critsect;
+static ESrvType         s_srvType;
 static HASHTABLEDECL(NetLogEventHash, EventHash, link) s_registeredEvents; 
 
 
@@ -76,11 +76,11 @@ static HASHTABLEDECL(NetLogEventHash, EventHash, link) s_registeredEvents;
 
 //============================================================================
 NetLogEventHash::NetLogEventHash (
-	unsigned	eventType,
-	ESrvType	srvType,
-	const NetLogEvent *event
+    unsigned    eventType,
+    ESrvType    srvType,
+    const NetLogEvent *event
 ) : EventHash(eventType, srvType),
-	event(event)
+    event(event)
 {
 }
 
@@ -93,8 +93,8 @@ NetLogEventHash::NetLogEventHash (
 
 //============================================================================
 inline EventHash::EventHash (
-    unsigned	eventType,
-	ESrvType	srvType
+    unsigned    eventType,
+    ESrvType    srvType
 ) : eventType(eventType)
 ,   srvType(srvType)
 {
@@ -109,8 +109,8 @@ inline dword EventHash::GetHash () const {
 //============================================================================
 inline bool EventHash::operator== (const EventHash & rhs) const {
     return  
-		eventType == rhs.eventType &&
-		srvType    == rhs.srvType;
+        eventType == rhs.eventType &&
+        srvType    == rhs.srvType;
 }
 /*****************************************************************************
 *
@@ -120,18 +120,18 @@ inline bool EventHash::operator== (const EventHash & rhs) const {
 
 //============================================================================
 static void NetLogUnRegisterEvents () {
-	HASHTABLEDECL(NetLogEventHash, EventHash, link) tempHashTable;
-	s_critsect.Enter();
-	{
-		while(NetLogEventHash *hash = s_registeredEvents.Head()) {
-			tempHashTable.Add(hash);
-		}
-	}
-	s_critsect.Leave();
+    HASHTABLEDECL(NetLogEventHash, EventHash, link) tempHashTable;
+    s_critsect.Enter();
+    {
+        while(NetLogEventHash *hash = s_registeredEvents.Head()) {
+            tempHashTable.Add(hash);
+        }
+    }
+    s_critsect.Leave();
 
-	while(NetLogEventHash *hash = tempHashTable.Head()) {
-		delete hash;
-	}
+    while(NetLogEventHash *hash = tempHashTable.Head()) {
+        delete hash;
+    }
 }
 
 
@@ -143,73 +143,73 @@ static void NetLogUnRegisterEvents () {
 
 //============================================================================
 void NetLogInitialize (ESrvType srvType) {
-	s_srvType = srvType;
-	if(s_srvType == kSrvTypeLog)
-		NetLogSrvInitialize();
-	else 
-		NetLogCliInitialize(srvType);
+    s_srvType = srvType;
+    if(s_srvType == kSrvTypeLog)
+        NetLogSrvInitialize();
+    else 
+        NetLogCliInitialize(srvType);
 }
 
 //============================================================================
 void NetLogShutdown () {
-	if(s_srvType == kSrvTypeLog)
-		NetLogSrvShutdown();
-	else
-		NetLogCliShutdown();
-	NetLogUnRegisterEvents();	
+    if(s_srvType == kSrvTypeLog)
+        NetLogSrvShutdown();
+    else
+        NetLogCliShutdown();
+    NetLogUnRegisterEvents();   
 }
 
 //============================================================================
 void NetLogDestroy () {
-	if(s_srvType == kSrvTypeLog)
-		NetLogSrvDestroy();
-	else 
-		NetLogCliDestroy();
+    if(s_srvType == kSrvTypeLog)
+        NetLogSrvDestroy();
+    else 
+        NetLogCliDestroy();
 }
 
 //============================================================================
 void NetLogRegisterEvents (const NetLogEvent events[], unsigned count) {
-	NetLogEventHash *hash;
-	HASHTABLEDECL(NetLogEventHash, EventHash, link) tempHashTable;
+    NetLogEventHash *hash;
+    HASHTABLEDECL(NetLogEventHash, EventHash, link) tempHashTable;
 
-	for(unsigned i = 0; i < count; ++i) {
-		hash = NEW(NetLogEventHash)(events[i].logEventType, events[i].srvType, &events[i]);
-		tempHashTable.Add(hash);
-	}
-	s_critsect.Enter();
-	{
-		while(NetLogEventHash *hash = tempHashTable.Head()) {
-			s_registeredEvents.Add(hash);
-		}
-	}
-	s_critsect.Leave();
+    for(unsigned i = 0; i < count; ++i) {
+        hash = NEW(NetLogEventHash)(events[i].logEventType, events[i].srvType, &events[i]);
+        tempHashTable.Add(hash);
+    }
+    s_critsect.Enter();
+    {
+        while(NetLogEventHash *hash = tempHashTable.Head()) {
+            s_registeredEvents.Add(hash);
+        }
+    }
+    s_critsect.Leave();
 }
 
 //============================================================================
 const NetLogEvent *NetLogFindEvent (unsigned type, ESrvType srvType) {
-	NetLogEventHash *hash;
-	s_critsect.Enter();
-	{
-		hash = s_registeredEvents.Find(EventHash(type, srvType));
-	}
-	s_critsect.Leave();
-	return hash ? hash->event : nil;
+    NetLogEventHash *hash;
+    s_critsect.Enter();
+    {
+        hash = s_registeredEvents.Find(EventHash(type, srvType));
+    }
+    s_critsect.Leave();
+    return hash ? hash->event : nil;
 }
 
 //============================================================================
 void NetLogSendEvent (
-	unsigned type
-	...
+    unsigned type
+    ...
 ) {
-	const NetLogEvent *event = NetLogFindEvent(type, s_srvType);
+    const NetLogEvent *event = NetLogFindEvent(type, s_srvType);
 
-	if(event) {
-		va_list args;
-		va_start(args, type);
-		NetLogCliSendEvent(*event, args);
-		va_end(args);
-	}
-	else {
-		LogMsg( kLogError, "unable to log event, event not found SrvType: %d EventType: %d.", s_srvType, type);
-	}
+    if(event) {
+        va_list args;
+        va_start(args, type);
+        NetLogCliSendEvent(*event, args);
+        va_end(args);
+    }
+    else {
+        LogMsg( kLogError, "unable to log event, event not found SrvType: %d EventType: %d.", s_srvType, type);
+    }
 }

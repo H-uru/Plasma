@@ -28,140 +28,140 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plSDLBrowserDlg::OnInitDialog()
 {
-	plDialog::OnInitDialog();
-	const int kWinPos=250;
+    plDialog::OnInitDialog();
+    const int kWinPos=250;
 
-	plRect r=GetWindowRect();
-	r.Min.X+=kWinPos;
-	r.Min.Y+=kWinPos;
-	r.Max.X+=kWinPos;
-	r.Max.Y+=kWinPos;
-	MoveWindow(r, true);
+    plRect r=GetWindowRect();
+    r.Min.X+=kWinPos;
+    r.Min.Y+=kWinPos;
+    r.Max.X+=kWinPos;
+    r.Max.Y+=kWinPos;
+    MoveWindow(r, true);
 
-	fSDRecSlider.Hide();
-	
-	if (IGetCurrentStateDataRec())
-		IPopulateVarListBox(IGetCurrentStateDataRec());
+    fSDRecSlider.Hide();
+    
+    if (IGetCurrentStateDataRec())
+        IPopulateVarListBox(IGetCurrentStateDataRec());
 }
 
-void plSDLBrowserDlg::OnOKClicked()			
-{	
-	
-	EndDialogTrue();	
+void plSDLBrowserDlg::OnOKClicked()         
+{   
+    
+    EndDialogTrue();    
 }
 
 void plSDLBrowserDlg::OnCancelClicked()
 {
-	EndDialogFalse();
-	fCancelled=true;
-}	
+    EndDialogFalse();
+    fCancelled=true;
+}   
 
 void plSDLBrowserDlg::OnVarListSelChanged()
 {
-	int cur=fVarListBox.GetCurrent();
-	std::string curString=fVarListBox.GetString(cur);	
-	if (curString=="..")
-		return;
+    int cur=fVarListBox.GetCurrent();
+    std::string curString=fVarListBox.GetString(cur);   
+    if (curString=="..")
+        return;
 
-	plStateVariable* var=IGetListBoxVar(cur);
-	hsAssert(var, "nil var?");
-	if (var->GetAsSimpleStateVar())
-	{
-		plSimpleStateVariable* sVar=var->GetAsSimpleStateVar();
-		IPopulateValueComboBox(sVar);
-		fValueComboBox.SetCurrent(0);
-		fCurComboListBoxPos=0;
-	}
+    plStateVariable* var=IGetListBoxVar(cur);
+    hsAssert(var, "nil var?");
+    if (var->GetAsSimpleStateVar())
+    {
+        plSimpleStateVariable* sVar=var->GetAsSimpleStateVar();
+        IPopulateValueComboBox(sVar);
+        fValueComboBox.SetCurrent(0);
+        fCurComboListBoxPos=0;
+    }
 }
 
 void plSDLBrowserDlg::OnVarListDoubleClicked()
 {
-	fCurSDVar=nil;
-	fSDRecSlider.Hide();
+    fCurSDVar=nil;
+    fSDRecSlider.Hide();
 
-	int cur=fVarListBox.GetCurrent();
-	std::string curString=fVarListBox.GetString(cur);	
-	if (curString=="..")
-	{
-		IPopStateDataRec();
-		IPopulateVarListBox(IGetCurrentStateDataRec());
-		return;
-	}
+    int cur=fVarListBox.GetCurrent();
+    std::string curString=fVarListBox.GetString(cur);   
+    if (curString=="..")
+    {
+        IPopStateDataRec();
+        IPopulateVarListBox(IGetCurrentStateDataRec());
+        return;
+    }
 
-	plStateVariable* var=IGetListBoxVar(cur);
-	hsAssert(var, "nil var?");
-	if (var->GetAsSDStateVar())
-	{
-		// user doubleclicked an SDVar
-		plSDStateVariable* sdVar=var->GetAsSDStateVar();
-		if (sdVar->GetCount()==0)
-		{
-			sdVar->Resize(1);
-		}
-		else
-		if (sdVar->GetCount()>1)
-		{
-			fSDRecSlider.Show();
-			int max=var->GetCount();
-			fSDRecSlider.SetRange(0, max-1);
-		}
-		IPushStateDataRec(sdVar->GetStateDataRecord(0));
-		IPopulateVarListBox(IGetCurrentStateDataRec());
-		fCurSDVar=sdVar;
-		fValueComboBox.Empty();
-	}
+    plStateVariable* var=IGetListBoxVar(cur);
+    hsAssert(var, "nil var?");
+    if (var->GetAsSDStateVar())
+    {
+        // user doubleclicked an SDVar
+        plSDStateVariable* sdVar=var->GetAsSDStateVar();
+        if (sdVar->GetCount()==0)
+        {
+            sdVar->Resize(1);
+        }
+        else
+        if (sdVar->GetCount()>1)
+        {
+            fSDRecSlider.Show();
+            int max=var->GetCount();
+            fSDRecSlider.SetRange(0, max-1);
+        }
+        IPushStateDataRec(sdVar->GetStateDataRecord(0));
+        IPopulateVarListBox(IGetCurrentStateDataRec());
+        fCurSDVar=sdVar;
+        fValueComboBox.Empty();
+    }
 }
 
 void plSDLBrowserDlg::OnValueComboSelChanged()
 {
-	int cur=fValueComboBox.GetCurrent();
-	hsStatusMessageF("Changing cur combo box sel to %d\n", cur);
-	if (cur>=0)
-		fCurComboListBoxPos=cur;
+    int cur=fValueComboBox.GetCurrent();
+    hsStatusMessageF("Changing cur combo box sel to %d\n", cur);
+    if (cur>=0)
+        fCurComboListBoxPos=cur;
 }
 
 void plSDLBrowserDlg::OnValueComboEditChanged()
 {
-	if (fReadOnly)
-		return;
+    if (fReadOnly)
+        return;
 
-	// get var from list box
-	int listBoxPos=fVarListBox.GetCurrent();
-	plStateVariable* var=IGetListBoxVar(listBoxPos);
-	hsAssert(var, "nil var?");
-	hsAssert(var->GetAsSimpleStateVar(), "wrong type of var");
-	
-	// change value of var
-	int comboxBoxPos=fValueComboBox.GetCurrent();
-	if (comboxBoxPos<0)
-		comboxBoxPos=fCurComboListBoxPos;
-	if (comboxBoxPos>=0)
-	{
-		std::string editString=fValueComboBox.GetText();
-		if (var->GetAsSimpleStateVar()->SetFromString(editString.c_str(), comboxBoxPos))
-		{
-			hsStatusMessageF("changing item %d to %s", comboxBoxPos, editString.c_str());
-			fValueComboBox.InsertString(comboxBoxPos, editString.c_str());
-			fValueComboBox.DeleteString(comboxBoxPos+1);
-			var->GetAsSimpleStateVar()->SetDirty(true);
-			var->GetAsSimpleStateVar()->SetUsed(true);
-		}	
+    // get var from list box
+    int listBoxPos=fVarListBox.GetCurrent();
+    plStateVariable* var=IGetListBoxVar(listBoxPos);
+    hsAssert(var, "nil var?");
+    hsAssert(var->GetAsSimpleStateVar(), "wrong type of var");
+    
+    // change value of var
+    int comboxBoxPos=fValueComboBox.GetCurrent();
+    if (comboxBoxPos<0)
+        comboxBoxPos=fCurComboListBoxPos;
+    if (comboxBoxPos>=0)
+    {
+        std::string editString=fValueComboBox.GetText();
+        if (var->GetAsSimpleStateVar()->SetFromString(editString.c_str(), comboxBoxPos))
+        {
+            hsStatusMessageF("changing item %d to %s", comboxBoxPos, editString.c_str());
+            fValueComboBox.InsertString(comboxBoxPos, editString.c_str());
+            fValueComboBox.DeleteString(comboxBoxPos+1);
+            var->GetAsSimpleStateVar()->SetDirty(true);
+            var->GetAsSimpleStateVar()->SetUsed(true);
+        }   
 #if 0
-		editString.reverse();
-		fValueComboBox.SetText(editString.c_str());
+        editString.reverse();
+        fValueComboBox.SetText(editString.c_str());
 #endif
-	}
-	fModified=true;
+    }
+    fModified=true;
 }
 
 void plSDLBrowserDlg::OnSDRecSliderChanged()
 {
-	int pos=fSDRecSlider.GetPos();
-	IPopStateDataRec();
-	IPushStateDataRec(fCurSDVar->GetStateDataRecord(pos));
-	IPopulateVarListBox(IGetCurrentStateDataRec());
-	fValueComboBox.Empty();
+    int pos=fSDRecSlider.GetPos();
+    IPopStateDataRec();
+    IPushStateDataRec(fCurSDVar->GetStateDataRecord(pos));
+    IPopulateVarListBox(IGetCurrentStateDataRec());
+    fValueComboBox.Empty();
 
-	hsStatusMessageF("Slider pos=%d\n", pos);
+    hsStatusMessageF("Slider pos=%d\n", pos);
 }
 

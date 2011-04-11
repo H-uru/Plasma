@@ -34,39 +34,39 @@ class plAnimStageVec;
 class plMultistageBehMod : public plSingleModifier
 {
 protected:
-	plAnimStageVec* fStages;
-	bool fFreezePhys;
-	bool fSmartSeek;
-	bool fReverseFBControlsOnRelease;
+    plAnimStageVec* fStages;
+    bool fFreezePhys;
+    bool fSmartSeek;
+    bool fReverseFBControlsOnRelease;
 
-	bool fNetProp;
-	bool fNetForce;
+    bool fNetProp;
+    bool fNetForce;
 
-	std::vector<plKey> fReceivers;
+    std::vector<plKey> fReceivers;
 
-	void IDeleteStageVec();
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    void IDeleteStageVec();
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
 
 public:
-	plMultistageBehMod();
-	plMultistageBehMod(plAnimStageVec* stages, bool freezePhys, bool smartSeek, bool reverseFBControlsOnRelease, std::vector<plKey>* receivers);
-	virtual ~plMultistageBehMod();
-	
-	CLASSNAME_REGISTER( plMultistageBehMod );
-	GETINTERFACE_ANY( plMultistageBehMod, plSingleModifier );
+    plMultistageBehMod();
+    plMultistageBehMod(plAnimStageVec* stages, bool freezePhys, bool smartSeek, bool reverseFBControlsOnRelease, std::vector<plKey>* receivers);
+    virtual ~plMultistageBehMod();
+    
+    CLASSNAME_REGISTER( plMultistageBehMod );
+    GETINTERFACE_ANY( plMultistageBehMod, plSingleModifier );
 
-	hsBool NetProp() { return fNetProp; }
-	hsBool NetForce() { return fNetForce; }
+    hsBool NetProp() { return fNetProp; }
+    hsBool NetForce() { return fNetForce; }
 
-	void SetNetProp(hsBool netProp) { fNetProp = netProp; }
-	void SetNetForce(hsBool netForce) { fNetForce = netForce; }
-	
-	hsBool MsgReceive(plMessage* msg);
+    void SetNetProp(hsBool netProp) { fNetProp = netProp; }
+    void SetNetForce(hsBool netForce) { fNetForce = netForce; }
+    
+    hsBool MsgReceive(plMessage* msg);
 
-	virtual void Init(plAnimStageVec *stages, bool freezePhys, bool smartSeek, bool reverseFBControlsOnRelease, std::vector<plKey>* receivers);
+    virtual void Init(plAnimStageVec *stages, bool freezePhys, bool smartSeek, bool reverseFBControlsOnRelease, std::vector<plKey>* receivers);
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 };
 
 #endif // plMultistageBehMod_h_inc

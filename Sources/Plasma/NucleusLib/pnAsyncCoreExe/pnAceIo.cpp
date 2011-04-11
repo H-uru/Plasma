@@ -42,18 +42,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // socket notification procedures
 
 // connection data format:
-//		byte	connType;
-//		dword	buildId;	[optional]
-//		dword	branchId;	[optional]
-//		dword	buildType;	[optional]
-//		Uuid	productId;	[optional]
+//      byte    connType;
+//      dword   buildId;    [optional]
+//      dword   branchId;   [optional]
+//      dword   buildType;  [optional]
+//      Uuid    productId;  [optional]
 const unsigned kConnHashFlagsIgnore     = 0x01;
 const unsigned kConnHashFlagsExactMatch = 0x02;
 struct ISocketConnHash {
     unsigned    connType;
     unsigned    buildId;
     unsigned    buildType;
-    unsigned	branchId;
+    unsigned    branchId;
     Uuid        productId;
     unsigned    flags;
 
@@ -80,16 +80,16 @@ unsigned ISocketConnHash::GetHash () const {
     CHashValue hash;
     hash.Hash32(connType);
 /*
-	if (buildId)
-		hash.Hash32(buildId);
-	if (buildType)
-		hash.Hash32(buildType);
-	if (branchId)
-		hash.Hash32(branchId);
+    if (buildId)
+        hash.Hash32(buildId);
+    if (buildType)
+        hash.Hash32(buildType);
+    if (branchId)
+        hash.Hash32(branchId);
     if (productId != kNilGuid)
-		hash.Hash(&productId, sizeof(productId));
+        hash.Hash(&productId, sizeof(productId));
 */
-	return hash.GetHash();
+    return hash.GetHash();
 }
 
 //===========================================================================
@@ -97,11 +97,11 @@ bool ISocketConnHash::operator== (const ISocketConnHash & rhs) const {
     ASSERT(flags & kConnHashFlagsIgnore);
 
     for (;;) {
-		// Check connType
+        // Check connType
         if (connType != rhs.connType)
             break;
 
-		// Check buildId
+        // Check buildId
         if (buildId != rhs.buildId) {
             if (rhs.flags & kConnHashFlagsExactMatch)
                 break;
@@ -109,7 +109,7 @@ bool ISocketConnHash::operator== (const ISocketConnHash & rhs) const {
                 break;
         }
 
-		// Check buildType
+        // Check buildType
         if (buildType != rhs.buildType) {
             if (rhs.flags & kConnHashFlagsExactMatch)
                 break;
@@ -117,7 +117,7 @@ bool ISocketConnHash::operator== (const ISocketConnHash & rhs) const {
                 break;
         }
 
-		// Check branchId
+        // Check branchId
         if (branchId != rhs.branchId) {
             if (rhs.flags & kConnHashFlagsExactMatch)
                 break;
@@ -125,7 +125,7 @@ bool ISocketConnHash::operator== (const ISocketConnHash & rhs) const {
                 break;
         }
 
-		// Check productId
+        // Check productId
         if (productId != rhs.productId) {
             if (rhs.flags & kConnHashFlagsExactMatch)
                 break;
@@ -151,12 +151,12 @@ static unsigned GetConnHash (
         return 0;
 
     if (IS_TEXT_CONNTYPE(buffer[0])) {
-        hash->connType	= buffer[0];
-        hash->buildId	= 0;
-        hash->buildType	= 0;
-        hash->branchId	= 0;
-        hash->productId	= 0;
-        hash->flags		= 0;
+        hash->connType  = buffer[0];
+        hash->buildId   = 0;
+        hash->buildType = 0;
+        hash->branchId  = 0;
+        hash->productId = 0;
+        hash->flags     = 0;
 
         // one byte consumed
         return 1;
@@ -169,12 +169,12 @@ static unsigned GetConnHash (
         if (connect.hdrBytes < sizeof(connect))
             return 0;
         
-        hash->connType	= connect.connType;
-        hash->buildId	= connect.buildId;
-        hash->buildType	= connect.buildType;
-        hash->branchId	= connect.branchId;
-        hash->productId	= connect.productId;
-        hash->flags		= 0;
+        hash->connType  = connect.connType;
+        hash->buildId   = connect.buildId;
+        hash->buildType = connect.buildType;
+        hash->branchId  = connect.branchId;
+        hash->productId = connect.productId;
+        hash->flags     = 0;
 
         return connect.hdrBytes;
     }
@@ -223,18 +223,18 @@ EFileError AsyncGetLastFileError () {
 
 //============================================================================
 const wchar * FileErrorToString (EFileError error) {
-	
-	static wchar * s_fileErrorStrings[] = {
-		L"FileSuccess",
-		L"FileErrorInvalidParameter",
-		L"FileErrorFileNotFound",
-		L"FileErrorPathNotFound",
-		L"FileErrorAccessDenied",
-		L"FileErrorSharingViolation",
-	};
-	COMPILER_ASSERT(kNumFileErrors == arrsize(s_fileErrorStrings));
-	
-	return s_fileErrorStrings[error];
+    
+    static wchar * s_fileErrorStrings[] = {
+        L"FileSuccess",
+        L"FileErrorInvalidParameter",
+        L"FileErrorFileNotFound",
+        L"FileErrorPathNotFound",
+        L"FileErrorAccessDenied",
+        L"FileErrorSharingViolation",
+    };
+    COMPILER_ASSERT(kNumFileErrors == arrsize(s_fileErrorStrings));
+    
+    return s_fileErrorStrings[error];
 }
 
 //============================================================================
@@ -481,7 +481,7 @@ void AsyncSocketRegisterNotifyProc (
     FAsyncNotifySocketProc  notifyProc,
     unsigned                buildId,
     unsigned                buildType,
-    unsigned				branchId,
+    unsigned                branchId,
     const Uuid &            productId
 ) {
     ASSERT(connType != kConnTypeNil);
@@ -493,7 +493,7 @@ void AsyncSocketRegisterNotifyProc (
     ct->connType            = connType;
     ct->buildId             = buildId;
     ct->buildType           = buildType;
-    ct->branchId			= branchId;
+    ct->branchId            = branchId;
     ct->productId           = productId;
     ct->flags               = kConnHashFlagsIgnore;
 
@@ -510,14 +510,14 @@ void AsyncSocketUnregisterNotifyProc (
     FAsyncNotifySocketProc  notifyProc,
     unsigned                buildId,
     unsigned                buildType,
-    unsigned				branchId,
+    unsigned                branchId,
     const Uuid &            productId
 ) {
     ISocketConnHash hash;
     hash.connType   = connType;
     hash.buildId    = buildId;
     hash.buildType  = buildType;
-    hash.branchId	= branchId;
+    hash.branchId   = branchId;
     hash.productId  = productId;
     hash.flags      = kConnHashFlagsExactMatch;
 
@@ -548,7 +548,7 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
     unsigned *  connType,
     unsigned *  buildId,
     unsigned *  buildType,
-    unsigned *	branchId,
+    unsigned *  branchId,
     Uuid *      productId
 ) {
     for (;;) {
@@ -573,7 +573,7 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
         *connType   = hash.connType;
         *buildId    = hash.buildId;
         *buildType  = hash.buildType;
-        *branchId	= hash.branchId;
+        *branchId   = hash.branchId;
         *productId  = hash.productId;
         return proc;
     }
@@ -584,7 +584,7 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
     *connType       = 0;
     *buildId        = 0;
     *buildType      = 0;
-    *branchId		= 0;
+    *branchId       = 0;
     *productId      = 0;
     return nil;
 }

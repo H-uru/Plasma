@@ -46,12 +46,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static plRandom sRand;
 
 
-int	plDynaBulletMgr::INewDecal()
+int plDynaBulletMgr::INewDecal()
 {
-	int idx = fDecals.GetCount();
-	fDecals.Append(TRACKED_NEW plDynaSplot());
+    int idx = fDecals.GetCount();
+    fDecals.Append(TRACKED_NEW plDynaSplot());
 
-	return idx;
+    return idx;
 }
 
 plDynaBulletMgr::plDynaBulletMgr()
@@ -64,53 +64,53 @@ plDynaBulletMgr::~plDynaBulletMgr()
 
 void plDynaBulletMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plDynaDecalMgr::Read(stream, mgr);
+    plDynaDecalMgr::Read(stream, mgr);
 
-	plgDispatch::Dispatch()->RegisterForExactType(plBulletMsg::Index(), GetKey());
+    plgDispatch::Dispatch()->RegisterForExactType(plBulletMsg::Index(), GetKey());
 }
 
 void plDynaBulletMgr::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plDynaDecalMgr::Write(stream, mgr);
+    plDynaDecalMgr::Write(stream, mgr);
 }
 
 hsBool plDynaBulletMgr::IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg)
 {
-	return true;
+    return true;
 }
 
 hsBool plDynaBulletMgr::IHandleShot(plBulletMsg* bull)
 {
-	hsVector3 up = IRandomUp(bull->Dir());
+    hsVector3 up = IRandomUp(bull->Dir());
 
-	hsPoint3 pos = bull->From() + bull->Dir() * (bull->Range() * 0.5f);
-	fCutter->SetLength(hsVector3(bull->Radius() * fScale.fX, bull->Radius() * fScale.fY, bull->Range()));
-	fCutter->Set(pos, up, -bull->Dir());
+    hsPoint3 pos = bull->From() + bull->Dir() * (bull->Range() * 0.5f);
+    fCutter->SetLength(hsVector3(bull->Radius() * fScale.fX, bull->Radius() * fScale.fY, bull->Range()));
+    fCutter->Set(pos, up, -bull->Dir());
 
-	plDynaDecalInfo& info = IGetDecalInfo(UInt32(this), GetKey());
+    plDynaDecalInfo& info = IGetDecalInfo(UInt32(this), GetKey());
 
-	if( bull->PartyTime() > 0 )
-		fPartyTime = bull->PartyTime();
+    if( bull->PartyTime() > 0 )
+        fPartyTime = bull->PartyTime();
 
-	double secs = hsTimer::GetSysSeconds();
+    double secs = hsTimer::GetSysSeconds();
 
-	if( ICutoutTargets(secs) )
-		info.fLastTime = secs;
-	
-	return true;
+    if( ICutoutTargets(secs) )
+        info.fLastTime = secs;
+    
+    return true;
 }
 
 hsBool plDynaBulletMgr::MsgReceive(plMessage* msg)
 {
-	plBulletMsg* bullMsg = plBulletMsg::ConvertNoRef(msg);
-	if( bullMsg )
-	{
-		if( bullMsg->Shot() )
-		{
-			return IHandleShot(bullMsg);
-		}
-		return true;
-	}
-	return plDynaDecalMgr::MsgReceive(msg);
+    plBulletMsg* bullMsg = plBulletMsg::ConvertNoRef(msg);
+    if( bullMsg )
+    {
+        if( bullMsg->Shot() )
+        {
+            return IHandleShot(bullMsg);
+        }
+        return true;
+    }
+    return plDynaDecalMgr::MsgReceive(msg);
 }
 

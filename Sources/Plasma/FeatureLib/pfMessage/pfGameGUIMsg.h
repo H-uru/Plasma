@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGameGUIMsg Header 													//
-//																			//
+//                                                                          //
+//  pfGameGUIMsg Header                                                     //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGameGUIMsg_h
@@ -38,50 +38,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pfGameGUIMsg : public plMessage
 {
-	protected:
+    protected:
 
-		UInt8	fCommand;
-		char	fString[ 128 ];		
-		char	*fAge;
+        UInt8   fCommand;
+        char    fString[ 128 ];     
+        char    *fAge;
 
-	public:
-		enum 
-		{
-			kShowDialog,
-			kHideDialog,
-			kLoadDialog
-		};
+    public:
+        enum 
+        {
+            kShowDialog,
+            kHideDialog,
+            kLoadDialog
+        };
 
-		pfGameGUIMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fAge = nil; }
-		pfGameGUIMsg( plKey &receiver, UInt8 command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); fCommand = command; fAge = nil; }
-		~pfGameGUIMsg() { delete [] fAge; }
+        pfGameGUIMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fAge = nil; }
+        pfGameGUIMsg( plKey &receiver, UInt8 command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); fCommand = command; fAge = nil; }
+        ~pfGameGUIMsg() { delete [] fAge; }
 
-		CLASSNAME_REGISTER( pfGameGUIMsg );
-		GETINTERFACE_ANY( pfGameGUIMsg, plMessage );
+        CLASSNAME_REGISTER( pfGameGUIMsg );
+        GETINTERFACE_ANY( pfGameGUIMsg, plMessage );
 
-		virtual void Read(hsStream* s, hsResMgr* mgr) 
-		{ 
-			plMessage::IMsgRead( s, mgr ); 
-			s->ReadSwap( &fCommand );
-			s->Read( sizeof( fString ), fString );
-			fAge = s->ReadSafeString();
-		}
-		
-		virtual void Write(hsStream* s, hsResMgr* mgr) 
-		{ 
-			plMessage::IMsgWrite( s, mgr ); 
-			s->WriteSwap( fCommand );
-			s->Write( sizeof( fString ), fString );
-			s->WriteSafeString( fAge );
-		}
+        virtual void Read(hsStream* s, hsResMgr* mgr) 
+        { 
+            plMessage::IMsgRead( s, mgr ); 
+            s->ReadSwap( &fCommand );
+            s->Read( sizeof( fString ), fString );
+            fAge = s->ReadSafeString();
+        }
+        
+        virtual void Write(hsStream* s, hsResMgr* mgr) 
+        { 
+            plMessage::IMsgWrite( s, mgr ); 
+            s->WriteSwap( fCommand );
+            s->Write( sizeof( fString ), fString );
+            s->WriteSafeString( fAge );
+        }
 
-		UInt8		GetCommand( void ) { return fCommand; }
+        UInt8       GetCommand( void ) { return fCommand; }
 
-		void		SetString( const char *str ) { hsStrncpy( fString, str, sizeof( fString ) - 1 ); }
-		const char	*GetString( void ) { return fString; }
+        void        SetString( const char *str ) { hsStrncpy( fString, str, sizeof( fString ) - 1 ); }
+        const char  *GetString( void ) { return fString; }
 
-		void		SetAge( const char *str ) { delete [] fAge; if( str == nil ) fAge = nil; else fAge = hsStrcpy( str ); }
-		const char	*GetAge( void ) { return fAge; }
+        void        SetAge( const char *str ) { delete [] fAge; if( str == nil ) fAge = nil; else fAge = hsStrcpy( str ); }
+        const char  *GetAge( void ) { return fAge; }
 };
 
 #endif // _pfGameGUIMsg_h

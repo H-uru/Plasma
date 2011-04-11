@@ -32,16 +32,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimDebugList
 {
 public:
-	hsBool fEnabled;
-	hsTArray<plKey> fSOKeys;
-	hsTArray<plKey> fMaterialKeys;
+    hsBool fEnabled;
+    hsTArray<plKey> fSOKeys;
+    hsTArray<plKey> fMaterialKeys;
 
-	plAnimDebugList() : fEnabled(false) {}
-	~plAnimDebugList() {}
+    plAnimDebugList() : fEnabled(false) {}
+    ~plAnimDebugList() {}
 
-	void AddObjects(char *subString);
-	void RemoveObjects(char *subString);
-	void ShowReport();
+    void AddObjects(char *subString);
+    void RemoveObjects(char *subString);
+    void ShowReport();
 };
 
 #endif

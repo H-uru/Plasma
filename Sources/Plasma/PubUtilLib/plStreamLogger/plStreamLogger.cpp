@@ -34,24 +34,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plStreamLogger::LogEntry(plGenericType::Types type, unsigned int size, void* value, const char* desc)
 {
-	if (fList)
-	{
-		plGenericVar var(desc);
-		var.Value().SetVar(type,size,value);
-		Event e(Event::kValue,size,var);
-		fList->push_back(e);
-		fEntryWaiting = false;
-	}
+    if (fList)
+    {
+        plGenericVar var(desc);
+        var.Value().SetVar(type,size,value);
+        Event e(Event::kValue,size,var);
+        fList->push_back(e);
+        fEntryWaiting = false;
+    }
 }
 
 void plStreamLogger::ILogEntryWaiting()
 {
-	fEntryWaiting = true;
+    fEntryWaiting = true;
 }
 
 bool plStreamLogger::IsLogEntryWaiting()
 {
-	return fEntryWaiting;
+    return fEntryWaiting;
 }
 
 //
@@ -60,145 +60,145 @@ bool plStreamLogger::IsLogEntryWaiting()
 
 void hsReadOnlyLoggingStream::LogStringString(const char* s)
 {
-	if (fList)
-	{
-		plGenericVar var;
+    if (fList)
+    {
+        plGenericVar var;
 
-		var.SetName(s);
-		fList->push_back(Event(Event::kString,0,var));
-	}
+        var.SetName(s);
+        fList->push_back(Event(Event::kString,0,var));
+    }
 }
 
 void hsReadOnlyLoggingStream::LogSubStreamStart(const char* desc)
 {
-	if (fList)
-	{
-		plGenericVar var;
-		if (!fDescStack.empty())
-		{
-			var.SetName(fDescStack.front().c_str());
-			fDescStack.pop_front();
-		}
-		else
-			var.SetName(desc);
-		fList->push_back(Event(Event::kSubStart,0,var));
-	}
+    if (fList)
+    {
+        plGenericVar var;
+        if (!fDescStack.empty())
+        {
+            var.SetName(fDescStack.front().c_str());
+            fDescStack.pop_front();
+        }
+        else
+            var.SetName(desc);
+        fList->push_back(Event(Event::kSubStart,0,var));
+    }
 }
 
 void hsReadOnlyLoggingStream::LogSubStreamEnd()
 {
-	if (fList)
-	{
-		plGenericVar var;
-		fList->push_back(Event(Event::kSubEnd,0,var));
-	}
+    if (fList)
+    {
+        plGenericVar var;
+        fList->push_back(Event(Event::kSubEnd,0,var));
+    }
 }
 
 void hsReadOnlyLoggingStream::LogSubStreamPushDesc(const char* desc)
 {
-	fDescStack.push_back(std::string(desc));
+    fDescStack.push_back(std::string(desc));
 }
 
 void hsReadOnlyLoggingStream::Rewind()
 {
-	hsThrow( "can't rewind a logging stream");
+    hsThrow( "can't rewind a logging stream");
 }
 
 void hsReadOnlyLoggingStream::FastFwd()
 {
-	hsThrow( "can't fast forward a logging stream");
+    hsThrow( "can't fast forward a logging stream");
 }
 
 void hsReadOnlyLoggingStream::SetPosition(UInt32 position)
 {
-	hsThrow( "can't set position on a logging stream");
+    hsThrow( "can't set position on a logging stream");
 }
 
 void hsReadOnlyLoggingStream::Skip(UInt32 deltaByteCount)
 {
-	hsReadOnlyStream::Skip(deltaByteCount);
-	if (deltaByteCount > 0 && !IsLogEntryWaiting())
-	{
-		LogEntry(plGenericType::kNone,deltaByteCount,nil,"Unknown Skip");
-	}
+    hsReadOnlyStream::Skip(deltaByteCount);
+    if (deltaByteCount > 0 && !IsLogEntryWaiting())
+    {
+        LogEntry(plGenericType::kNone,deltaByteCount,nil,"Unknown Skip");
+    }
 }
 
 UInt32 hsReadOnlyLoggingStream::Read(UInt32 byteCount, void * buffer)
 {
-	UInt32 ret = hsReadOnlyStream::Read(byteCount,buffer);
-	if (ret > 0 && !IsLogEntryWaiting())
-	{
-		LogEntry(plGenericType::kNone,byteCount,nil,"Unknown Read");
-	}
+    UInt32 ret = hsReadOnlyStream::Read(byteCount,buffer);
+    if (ret > 0 && !IsLogEntryWaiting())
+    {
+        LogEntry(plGenericType::kNone,byteCount,nil,"Unknown Read");
+    }
 
-	return ret;
+    return ret;
 }
 
 
 void hsReadOnlyLoggingStream::LogSkip(UInt32 deltaByteCount, const char* desc)
 {
-	ILogEntryWaiting();
-	Skip(deltaByteCount);
-	if (deltaByteCount > 0)
-	{
-		LogEntry(plGenericType::kNone,deltaByteCount,nil,desc);
-	}
+    ILogEntryWaiting();
+    Skip(deltaByteCount);
+    if (deltaByteCount > 0)
+    {
+        LogEntry(plGenericType::kNone,deltaByteCount,nil,desc);
+    }
 }
 
 UInt32 hsReadOnlyLoggingStream::LogRead(UInt32 byteCount, void * buffer, const char* desc)
 {
-	ILogEntryWaiting();
-	UInt32 ret = Read(byteCount,buffer);
-	if (ret > 0)
-	{
-		LogEntry(plGenericType::kNone,byteCount,nil,desc);
-	}
+    ILogEntryWaiting();
+    UInt32 ret = Read(byteCount,buffer);
+    if (ret > 0)
+    {
+        LogEntry(plGenericType::kNone,byteCount,nil,desc);
+    }
 
-	return ret;
+    return ret;
 }
 char *hsReadOnlyLoggingStream::LogReadSafeString()
 {
-	LogSubStreamStart("push me");
-	UInt16 numChars; 
-	LogReadSwap(&numChars,"NumChars");
+    LogSubStreamStart("push me");
+    UInt16 numChars; 
+    LogReadSwap(&numChars,"NumChars");
 
-	numChars &= ~0xf000; // XXX: remove when hsStream no longer does this.
-	if (numChars > 0)
-	{		
-		char *name = TRACKED_NEW char[numChars+1];
-		ILogEntryWaiting();
-		UInt32 ret = Read(numChars, name);
-		name[numChars] = '\0';
-		if (ret > 0)
-		{
-			LogEntry(plGenericType::kString,ret,name,"Value");
-		}
-		LogSubStreamEnd();
-		return name;
-	}
-	LogSubStreamEnd();
-	return nil;
+    numChars &= ~0xf000; // XXX: remove when hsStream no longer does this.
+    if (numChars > 0)
+    {       
+        char *name = TRACKED_NEW char[numChars+1];
+        ILogEntryWaiting();
+        UInt32 ret = Read(numChars, name);
+        name[numChars] = '\0';
+        if (ret > 0)
+        {
+            LogEntry(plGenericType::kString,ret,name,"Value");
+        }
+        LogSubStreamEnd();
+        return name;
+    }
+    LogSubStreamEnd();
+    return nil;
 }
 
 char *hsReadOnlyLoggingStream::LogReadSafeStringLong()
 {
-	LogSubStreamStart("push me");
-	UInt32 numChars; 
-	LogReadSwap(&numChars,"NumChars");
-	if (numChars > 0)
-	{
-		char *name = TRACKED_NEW char[numChars+1];
-		ILogEntryWaiting();
-		UInt32 ret = Read(numChars, name);
-		name[numChars] = '\0';
-		if (ret > 0)
-		{
-			LogEntry(plGenericType::kString,ret,name,"Value");
-		}
-		LogSubStreamEnd();
-		return name;
-	}
-	LogSubStreamEnd();
-	return nil;
+    LogSubStreamStart("push me");
+    UInt32 numChars; 
+    LogReadSwap(&numChars,"NumChars");
+    if (numChars > 0)
+    {
+        char *name = TRACKED_NEW char[numChars+1];
+        ILogEntryWaiting();
+        UInt32 ret = Read(numChars, name);
+        name[numChars] = '\0';
+        if (ret > 0)
+        {
+            LogEntry(plGenericType::kString,ret,name,"Value");
+        }
+        LogSubStreamEnd();
+        return name;
+    }
+    LogSubStreamEnd();
+    return nil;
 }
 #endif

@@ -24,11 +24,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plAnimObjInterface - Pure virtual interface class for providing a		//
-//						common gateway for accessing and converting			//
-//						animated objects (such as components and materials).//
-//																			//
+//                                                                          //
+//  plAnimObjInterface - Pure virtual interface class for providing a       //
+//                      common gateway for accessing and converting         //
+//                      animated objects (such as components and materials).//
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plAnimObjInterface_h
@@ -38,40 +38,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plAnimObjInterface
 {
-	public:
+    public:
 
-		// If the following function returns true, then it makes sense to restrict
-		// the animation conversion to a specific node (i.e. PickTargetNode() makes
-		// sense)
-		virtual hsBool	IsNodeRestricted( void ) = 0;
+        // If the following function returns true, then it makes sense to restrict
+        // the animation conversion to a specific node (i.e. PickTargetNode() makes
+        // sense)
+        virtual hsBool  IsNodeRestricted( void ) = 0;
 
-		// Allows the user to pick an INode that this animation is applied to
-		// (ex. as a material or as a component) and stores it in the given ID
-		// of the given ParamBlock
-		virtual void	PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID ) = 0;
+        // Allows the user to pick an INode that this animation is applied to
+        // (ex. as a material or as a component) and stores it in the given ID
+        // of the given ParamBlock
+        virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID ) = 0;
 
-		// The following is the node type enum for paramBlocks that store the above node-restricted
-		// info (i.e. the values for the "typeID" param specified above)
-		enum NodeTypes
-		{
-			kUseParamBlockNode,	// Use the node stored in the ParamBlock
-			kUseOwnerNode		// Ignore the ParamBlock; use the node applied to (i.e. current node in convert process)
-		};
+        // The following is the node type enum for paramBlocks that store the above node-restricted
+        // info (i.e. the values for the "typeID" param specified above)
+        enum NodeTypes
+        {
+            kUseParamBlockNode, // Use the node stored in the ParamBlock
+            kUseOwnerNode       // Ignore the ParamBlock; use the node applied to (i.e. current node in convert process)
+        };
 
-		// Given the optional INode to restrict to, return the list of keys to send messages to for conversion
-		virtual hsBool	GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys ) = 0;
+        // Given the optional INode to restrict to, return the list of keys to send messages to for conversion
+        virtual hsBool  GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys ) = 0;
 
-		// Return the name of the segment/animation that this interface references. Pass "false" to get the 
-		// ENTIRE_ANIMATION_NAME string for entire animations, "true" for nil.
-		virtual const char	*GetIfaceSegmentName( hsBool allowNil ) = 0;
+        // Return the name of the segment/animation that this interface references. Pass "false" to get the 
+        // ENTIRE_ANIMATION_NAME string for entire animations, "true" for nil.
+        virtual const char  *GetIfaceSegmentName( hsBool allowNil ) = 0;
 
-		// This animation would require (depending on the node restriction) a separate material (i.e. material anim)
-		virtual hsBool		MightRequireSeparateMaterial( void ) { return false; }
+        // This animation would require (depending on the node restriction) a separate material (i.e. material anim)
+        virtual hsBool      MightRequireSeparateMaterial( void ) { return false; }
 };
 
 // Strings for above NodeTypes enums
-#define kUseParamBlockNodeString		"(All)"
-#define kUseOwnerNodeString				"(Applied Node)"
+#define kUseParamBlockNodeString        "(All)"
+#define kUseOwnerNodeString             "(Applied Node)"
 
 
 #endif // _plAnimObjInterface_h

@@ -29,19 +29,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	jvCoreUtil::SetHInstance(hInstance);
-	plPlasmaInstaller installer;
-	installer.Create();
+    jvCoreUtil::SetHInstance(hInstance);
+    plPlasmaInstaller installer;
+    installer.Create();
 
-	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		if (!IsDialogMessage(installer.GetHWnd(), &msg))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
+    MSG msg;
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        if (!IsDialogMessage(installer.GetHWnd(), &msg))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
 
-	return msg.wParam;
+    return msg.wParam;
 }

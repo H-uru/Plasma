@@ -48,25 +48,25 @@ namespace Echo {
 ***/
 
 
-const unsigned kEchoMsgFlagBroadcast	= 1<<0;
-const unsigned kEchoMsgFlagEchoBack		= 1<<1;
+const unsigned kEchoMsgFlagBroadcast    = 1<<0;
+const unsigned kEchoMsgFlagEchoBack     = 1<<1;
 
 
 enum EEchoNetBufferType {
-	kEchoNetBufferInvalidType,
-	kEchoNetBufferMsg,
-	kNumEchoNetBufferTypes
+    kEchoNetBufferInvalidType,
+    kEchoNetBufferMsg,
+    kNumEchoNetBufferTypes
 };
 
 enum EEchoMsgType {
-	kEchoInvalidMsgType,
-	kEchoJoinRequestMsg,
-	kEchoJoinReplyMsg,
-	kEchoPlayerJoinedMsg,
-	kEchoPlayerLeftMsg,
-	kEchoChatMsg,
-	kEchoGameDataBufferMsg,
-	kNumEchoMsgTypes
+    kEchoInvalidMsgType,
+    kEchoJoinRequestMsg,
+    kEchoJoinReplyMsg,
+    kEchoPlayerJoinedMsg,
+    kEchoPlayerLeftMsg,
+    kEchoChatMsg,
+    kEchoGameDataBufferMsg,
+    kNumEchoMsgTypes
 };
 COMPILER_ASSERT(kNumEchoMsgTypes < (byte)-1);
 
@@ -77,68 +77,68 @@ COMPILER_ASSERT(kNumEchoMsgTypes < (byte)-1);
 #include <pshpack1.h>
 
 struct EchoMsg {
-	EchoMsg (const EEchoMsgType & type, unsigned flags = 0)
-	:	type((byte)type)
-	,	flags(flags)
-	{ }
-	
-	byte					type;
-	dword					flags;
+    EchoMsg (const EEchoMsgType & type, unsigned flags = 0)
+    :   type((byte)type)
+    ,   flags(flags)
+    { }
+    
+    byte                    type;
+    dword                   flags;
 };
 
 struct EchoJoinRequestMsg : EchoMsg {
-	EchoJoinRequestMsg ()
-	:	EchoMsg(kEchoJoinRequestMsg)
-	{ }
+    EchoJoinRequestMsg ()
+    :   EchoMsg(kEchoJoinRequestMsg)
+    { }
 
-	wchar					playerName[64];
+    wchar                   playerName[64];
 };
 
 struct EchoJoinReplyMsg : EchoMsg {
-	EchoJoinReplyMsg ()
-	:	EchoMsg(kEchoJoinReplyMsg)
-	{ }
-	
-	dword					playerId;
+    EchoJoinReplyMsg ()
+    :   EchoMsg(kEchoJoinReplyMsg)
+    { }
+    
+    dword                   playerId;
 };
 
 struct EchoPlayerJoinedMsg : EchoMsg {
-	EchoPlayerJoinedMsg ()
-	:	EchoMsg(kEchoPlayerJoinedMsg, kEchoMsgFlagBroadcast)
-	{ }
-	
-	dword					playerId;
-	wchar					playerName[64];
+    EchoPlayerJoinedMsg ()
+    :   EchoMsg(kEchoPlayerJoinedMsg, kEchoMsgFlagBroadcast)
+    { }
+    
+    dword                   playerId;
+    wchar                   playerName[64];
 };
 
 struct EchoPlayerLeftMsg : EchoMsg {
-	EchoPlayerLeftMsg ()
-	:	EchoMsg(kEchoPlayerLeftMsg, kEchoMsgFlagBroadcast)
-	{ }
+    EchoPlayerLeftMsg ()
+    :   EchoMsg(kEchoPlayerLeftMsg, kEchoMsgFlagBroadcast)
+    { }
 
-	dword					playerId;
+    dword                   playerId;
 };
 
 struct EchoChatMsg : EchoMsg {
-	EchoChatMsg ()
-	:	EchoMsg(kEchoChatMsg, kEchoMsgFlagBroadcast|kEchoMsgFlagEchoBack)
-	{ }
-	
-	dword					fromPlayerId;
-	dword					msgChars;
-	wchar					msgBuffer[1];	// [msgChars], actually
-	// no more fields after variable length allocation
+    EchoChatMsg ()
+    :   EchoMsg(kEchoChatMsg, kEchoMsgFlagBroadcast|kEchoMsgFlagEchoBack)
+    { }
+    
+    dword                   fromPlayerId;
+    dword                   msgChars;
+    wchar                   msgBuffer[1];   // [msgChars], actually
+    // no more fields after variable length allocation
 };
 
 struct EchoGameDataBufferMsg : EchoMsg {
-	EchoGameDataBufferMsg ()
-	:	EchoMsg(kEchoGameDataBufferMsg, kEchoMsgFlagBroadcast|kEchoMsgFlagEchoBack)
-	{ }
+    EchoGameDataBufferMsg ()
+    :   EchoMsg(kEchoGameDataBufferMsg, kEchoMsgFlagBroadcast|kEchoMsgFlagEchoBack)
+    { }
 
-	dword					fromPlayerId;
-	dword					bufferBytes;
-	byte					bufferData[1];	// [bufferBytes], actually
-	// no more fields after variable length allocation
+    dword                   fromPlayerId;
+    dword                   bufferBytes;
+    byte                    bufferData[1];  // [bufferBytes], actually
+    // no more fields after variable length allocation
 };
 
 //============================================================================

@@ -1,5 +1,5 @@
 if(Ogg_INCLUDE_DIR AND Ogg_LIBRARY)
-	set(Ogg_FIND_QUIETLY TRUE)
+    set(Ogg_FIND_QUIETLY TRUE)
 endif()
 
 
@@ -16,15 +16,15 @@ set(Ogg_LIBRARIES ${Ogg_LIBRARY})
 
 
 if(Ogg_INCLUDE_DIR AND Ogg_LIBRARY)
-	set(Ogg_FOUND TRUE)
+    set(Ogg_FOUND TRUE)
 endif()
 
 if (Ogg_FOUND)
-	if(NOT Ogg_FIND_QUIETLY)
-		message(STATUS "Found libogg: ${Ogg_INCLUDE_DIR}")
-	endif()
+    if(NOT Ogg_FIND_QUIETLY)
+        message(STATUS "Found libogg: ${Ogg_INCLUDE_DIR}")
+    endif()
 else()
-	if(Ogg_FIND_REQUIRED)
-		message(FATAL_ERROR "Could not find libogg")
-	endif()
+    if(Ogg_FIND_REQUIRED)
+        message(FATAL_ERROR "Could not find libogg")
+    endif()
 endif()

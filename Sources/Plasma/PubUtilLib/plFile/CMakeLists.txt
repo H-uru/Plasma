@@ -5,33 +5,33 @@ include_directories("../../PubUtilLib")
 include_directories(${ZLIB_INCLUDE_DIR})
 
 set(plFile_SOURCES
-	hsFiles.cpp
-	plBrowseFolder.cpp
-	plEncryptedStream.cpp
-	plFileUtils.cpp
-	plInitFileReader.cpp
-	plSecureStream.cpp
-	plStreamSource.cpp
+    hsFiles.cpp
+    plBrowseFolder.cpp
+    plEncryptedStream.cpp
+    plFileUtils.cpp
+    plInitFileReader.cpp
+    plSecureStream.cpp
+    plStreamSource.cpp
 )
 
 if(WIN32)
-	set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Win.cpp)
+    set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Win.cpp)
 elseif(APPLE)
-	set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Mac.cpp)
+    set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Mac.cpp)
 #elseif(PS2)
-#	set(plFile_SOURCES ${plFile_SOURCES} hsFiles_PS2.cpp)
+#   set(plFile_SOURCES ${plFile_SOURCES} hsFiles_PS2.cpp)
 else(WIN32)
-	set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Unix.cpp)
+    set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Unix.cpp)
 endif(WIN32)
 
 set(plFile_HEADERS
-	hsFiles.h
-	plBrowseFolder.h
-	plEncryptedStream.h
-	plFileUtils.h
-	plInitFileReader.h
-	plSecureStream.h
-	plStreamSource.h
+    hsFiles.h
+    plBrowseFolder.h
+    plEncryptedStream.h
+    plFileUtils.h
+    plInitFileReader.h
+    plSecureStream.h
+    plStreamSource.h
 )
 
 add_library(plFile STATIC ${plFile_SOURCES} ${plFile_HEADERS})

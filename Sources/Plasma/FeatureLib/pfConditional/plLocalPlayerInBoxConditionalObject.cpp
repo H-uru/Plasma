@@ -30,23 +30,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plLocalPlayerInBoxConditionalObject::plLocalPlayerInBoxConditionalObject()
 {
-	// find the player's key here...
-	SetFlag(kLocalElement);		// since it relies on the local player	
+    // find the player's key here...
+    SetFlag(kLocalElement);     // since it relies on the local player  
 }
 
 hsBool plLocalPlayerInBoxConditionalObject::MsgReceive(plMessage* msg)
 {
-	/*
-	
-	 if our target is within the bounds of the object our logic modifier is attached to...
-	
-	{
-		SetSatisfied(true);
-		fLogicMod->RequestTrigger();
-		return true;
-	}
-	*/
-	return plConditionalObject::MsgReceive(msg);
+    /*
+    
+     if our target is within the bounds of the object our logic modifier is attached to...
+    
+    {
+        SetSatisfied(true);
+        fLogicMod->RequestTrigger();
+        return true;
+    }
+    */
+    return plConditionalObject::MsgReceive(msg);
 }
 
 

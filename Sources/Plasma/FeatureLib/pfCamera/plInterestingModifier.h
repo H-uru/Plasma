@@ -38,40 +38,40 @@ class plInputEventMsg;
 class plInterestingModifier : public plSingleModifier
 {
 protected:
-	
-	enum 
-	{
-		kTypeInteresting = 0,
-		kTypeLookAtMod,
-	};
+    
+    enum 
+    {
+        kTypeInteresting = 0,
+        kTypeLookAtMod,
+    };
 
-	UInt8		fType;
-	hsScalar	fView;
+    UInt8       fType;
+    hsScalar    fView;
 
-	static hsScalar	fInterestRadius;
-	static hsScalar	fInterestWeight;
+    static hsScalar fInterestRadius;
+    static hsScalar fInterestWeight;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
-	
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    
 public:
-	plInterestingModifier(){ fType = kTypeInteresting;}
-	virtual ~plInterestingModifier(){;}
-	
-	virtual hsBool MsgReceive(plMessage* msg) {return false;}
+    plInterestingModifier(){ fType = kTypeInteresting;}
+    virtual ~plInterestingModifier(){;}
+    
+    virtual hsBool MsgReceive(plMessage* msg) {return false;}
 
-	CLASSNAME_REGISTER( plInterestingModifier );
-	GETINTERFACE_ANY( plInterestingModifier, plSingleModifier );
+    CLASSNAME_REGISTER( plInterestingModifier );
+    GETINTERFACE_ANY( plInterestingModifier, plSingleModifier );
 
-	hsScalar GetInterestWeight() { return fInterestWeight; }
-	hsScalar GetInterestRadius() { return fInterestRadius; }
+    hsScalar GetInterestWeight() { return fInterestWeight; }
+    hsScalar GetInterestRadius() { return fInterestRadius; }
 
-	void SetInterestWeight(hsScalar	_InterestRadius) { fInterestWeight =_InterestRadius; }
-	void SetInterestRadius(hsScalar	_InterestWeight) { fInterestRadius =_InterestWeight; }
-	
-	virtual void AddTarget(plSceneObject* so);
-	
-	void	SetType(UInt8 type) { fType = type; }
-	UInt8	GetType() { return fType; }
+    void SetInterestWeight(hsScalar _InterestRadius) { fInterestWeight =_InterestRadius; }
+    void SetInterestRadius(hsScalar _InterestWeight) { fInterestRadius =_InterestWeight; }
+    
+    virtual void AddTarget(plSceneObject* so);
+    
+    void    SetType(UInt8 type) { fType = type; }
+    UInt8   GetType() { return fType; }
 };
 
 

@@ -31,7 +31,7 @@ plVaultNotifyMsg::plVaultNotifyMsg()
 : fType( kNothing )
 , fResultCode( hsOK )
 {
-	SetBCastFlag( kBCastByType );
+    SetBCastFlag( kBCastByType );
 }
 
 plVaultNotifyMsg::~plVaultNotifyMsg()
@@ -40,15 +40,15 @@ plVaultNotifyMsg::~plVaultNotifyMsg()
 
 void plVaultNotifyMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	stream->ReadSwap( &fType );
-	stream->ReadSwap( &fResultCode );
-	fArgs.Read( stream, mgr );
+    stream->ReadSwap( &fType );
+    stream->ReadSwap( &fResultCode );
+    fArgs.Read( stream, mgr );
 }
 
 void plVaultNotifyMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	stream->WriteSwap( fType );
-	stream->WriteSwap( fResultCode );
-	fArgs.Write( stream, mgr );
+    stream->WriteSwap( fType );
+    stream->WriteSwap( fResultCode );
+    fArgs.Write( stream, mgr );
 }
 

@@ -165,20 +165,20 @@ static void Rc4Codec (
 
 //===========================================================================
 void KeyRc4::Codec (bool encrypt, ARRAY(byte) * dest, unsigned sourceBytes, const void * sourceData) {
-	// RC4 uses the same algorithm to both encrypt and decrypt
-	dest->SetCount(sourceBytes);
+    // RC4 uses the same algorithm to both encrypt and decrypt
+    dest->SetCount(sourceBytes);
 
-	byte *       destDataPtr   = (byte *)dest->Ptr();
-	const byte * sourceDataPtr = (const byte *)sourceData;
+    byte *       destDataPtr   = (byte *)dest->Ptr();
+    const byte * sourceDataPtr = (const byte *)sourceData;
 
-	for (unsigned index = 0; index < sourceBytes; ++index) {
-		m_x = (m_x + 1) & 0xff;
-		m_y = (m_state[m_x] + m_y) & 0xff;
-		SWAP(m_state[m_x], m_state[m_y]);
+    for (unsigned index = 0; index < sourceBytes; ++index) {
+        m_x = (m_x + 1) & 0xff;
+        m_y = (m_state[m_x] + m_y) & 0xff;
+        SWAP(m_state[m_x], m_state[m_y]);
 
-		const unsigned offset = (m_state[m_x] + m_state[m_y]) & 0xff;
-		destDataPtr[index] = (byte)(sourceDataPtr[index] ^ m_state[offset]);
-	}
+        const unsigned offset = (m_state[m_x] + m_state[m_y]) & 0xff;
+        destDataPtr[index] = (byte)(sourceDataPtr[index] ^ m_state[offset]);
+    }
 }
 
 //===========================================================================
@@ -187,75 +187,75 @@ void KeyRc4::KeyGen (
     const void *  randomData,
     ARRAY(byte) * privateData
 ) {
-	// Allocate an output digest
-	struct Digest { dword data[5]; };
-	privateData->SetCount(sizeof(Digest));
-	Digest * digest = (Digest *)privateData->Ptr();
+    // Allocate an output digest
+    struct Digest { dword data[5]; };
+    privateData->SetCount(sizeof(Digest));
+    Digest * digest = (Digest *)privateData->Ptr();
 
-	// Perform the hash
-	{
-		// Initialize the hash values with the repeating pattern of random
-		// data
-		unsigned offset = 0;
-		for (; offset < sizeof(Digest); ++offset)
-			((byte *)digest)[offset] = ((const byte *)randomData)[offset % randomBytes];
-		for (; offset < randomBytes; ++offset)
-			((byte *)digest)[offset % sizeof(Digest)] ^= ((const byte *)randomData)[offset];
+    // Perform the hash
+    {
+        // Initialize the hash values with the repeating pattern of random
+        // data
+        unsigned offset = 0;
+        for (; offset < sizeof(Digest); ++offset)
+            ((byte *)digest)[offset] = ((const byte *)randomData)[offset % randomBytes];
+        for (; offset < randomBytes; ++offset)
+            ((byte *)digest)[offset % sizeof(Digest)] ^= ((const byte *)randomData)[offset];
 
-		// 32-bit rotate left
-		#ifdef  _MSC_VER
-		#define ROTL(n, X)  _rotl(X, n)
-		#else
-		#define ROTL(n, X)  (((X) << (n)) | ((X) >> (32 - (n))))
-		#endif
-		#define f1(x,y,z)   (z ^ (x & (y ^ z)))     // Rounds  0-19
-		#define K1          0x5A827999L             // Rounds  0-19
-		#define subRound(a, b, c, d, e, f, k, data) (e += ROTL(5, a) + f(b, c, d) + k + data, b = ROTL(30, b))
+        // 32-bit rotate left
+        #ifdef  _MSC_VER
+        #define ROTL(n, X)  _rotl(X, n)
+        #else
+        #define ROTL(n, X)  (((X) << (n)) | ((X) >> (32 - (n))))
+        #endif
+        #define f1(x,y,z)   (z ^ (x & (y ^ z)))     // Rounds  0-19
+        #define K1          0x5A827999L             // Rounds  0-19
+        #define subRound(a, b, c, d, e, f, k, data) (e += ROTL(5, a) + f(b, c, d) + k + data, b = ROTL(30, b))
 
-		// first five subrounds from SHA1
-		dword A = 0x67452301;
-		dword B = 0xEFCDAB89;
-		dword C = 0x98BADCFE;
-		dword D = 0x10325476;
-		dword E = 0xC3D2E1F0;
-		subRound(A, B, C, D, E, f1, K1, digest->data[ 0]);
-		subRound(E, A, B, C, D, f1, K1, digest->data[ 1]);
-		subRound(D, E, A, B, C, f1, K1, digest->data[ 2]);
-		subRound(C, D, E, A, B, f1, K1, digest->data[ 3]);
-		subRound(B, C, D, E, A, f1, K1, digest->data[ 4]);
-		digest->data[0] += A;
-		digest->data[1] += B;
-		digest->data[2] += C;
-		digest->data[3] += D;
-		digest->data[4] += E;
-	}
+        // first five subrounds from SHA1
+        dword A = 0x67452301;
+        dword B = 0xEFCDAB89;
+        dword C = 0x98BADCFE;
+        dword D = 0x10325476;
+        dword E = 0xC3D2E1F0;
+        subRound(A, B, C, D, E, f1, K1, digest->data[ 0]);
+        subRound(E, A, B, C, D, f1, K1, digest->data[ 1]);
+        subRound(D, E, A, B, C, f1, K1, digest->data[ 2]);
+        subRound(C, D, E, A, B, f1, K1, digest->data[ 3]);
+        subRound(B, C, D, E, A, f1, K1, digest->data[ 4]);
+        digest->data[0] += A;
+        digest->data[1] += B;
+        digest->data[2] += C;
+        digest->data[3] += D;
+        digest->data[4] += E;
+    }
 }
 
 //===========================================================================
 void KeyRc4::Initialize (unsigned bytes, const void * data) {
-	ASSERT(bytes);
-	ASSERT(data);
+    ASSERT(bytes);
+    ASSERT(data);
 
-	// Initialize key with default values
-	{
-		m_x = 0;
-		m_y = 0;
-		for (unsigned offset = 0; offset < arrsize(m_state); ++offset)
-			m_state[offset] = (byte) offset;
-	}
+    // Initialize key with default values
+    {
+        m_x = 0;
+        m_y = 0;
+        for (unsigned offset = 0; offset < arrsize(m_state); ++offset)
+            m_state[offset] = (byte) offset;
+    }
 
-	// Seed key from digest
-	{
-		unsigned index1 = 0;
-		unsigned index2 = 0;
-		for (unsigned offset = 0; offset < arrsize(m_state); ++offset) {
-			ASSERT(index1 < bytes);
-			index2 = (((const byte *)data)[index1] + m_state[offset] + index2) & 0xff;
-			SWAP(m_state[offset], m_state[index2]);
-			if (++index1 == bytes)
-				index1 = 0;
-		}
-	}
+    // Seed key from digest
+    {
+        unsigned index1 = 0;
+        unsigned index2 = 0;
+        for (unsigned offset = 0; offset < arrsize(m_state); ++offset) {
+            ASSERT(index1 < bytes);
+            index2 = (((const byte *)data)[index1] + m_state[offset] + index2) & 0xff;
+            SWAP(m_state[offset], m_state[index2]);
+            if (++index1 == bytes)
+                index1 = 0;
+        }
+    }
 }
 
 #endif // OPENSSL_RC4
@@ -302,7 +302,7 @@ void CryptDigest (
             ShaProcess(dest, sourceCount, sourceBytes, sourcePtrs);
         break;
 
-		case kCryptSha1:
+        case kCryptSha1:
             Sha1Process(dest, sourceCount, sourceBytes, sourcePtrs);
         break;
 
@@ -316,68 +316,68 @@ CryptKey * CryptKeyCreate (
     unsigned        bytes,
     const void *    data
 ) {
-	CryptKey * key = nil;
-	switch (algorithm) {
-		case kCryptRc4: {
-		#ifdef OPENSSL_RC4
-			RC4_KEY * rc4 = NEW(RC4_KEY);
-			RC4_set_key(rc4, bytes, (const unsigned char *)data);
-			key = NEW(CryptKey);
-			key->algorithm = kCryptRc4;
-			key->handle = rc4;
-		#else
-			KeyRc4 * rc4 = NEWZERO(KeyRc4)(bytes, data);
-			key = NEW(CryptKey);
-			key->algorithm = kCryptRc4;
-			key->handle = rc4;
-		#endif
-		}
-		break;
+    CryptKey * key = nil;
+    switch (algorithm) {
+        case kCryptRc4: {
+        #ifdef OPENSSL_RC4
+            RC4_KEY * rc4 = NEW(RC4_KEY);
+            RC4_set_key(rc4, bytes, (const unsigned char *)data);
+            key = NEW(CryptKey);
+            key->algorithm = kCryptRc4;
+            key->handle = rc4;
+        #else
+            KeyRc4 * rc4 = NEWZERO(KeyRc4)(bytes, data);
+            key = NEW(CryptKey);
+            key->algorithm = kCryptRc4;
+            key->handle = rc4;
+        #endif
+        }
+        break;
 
-		case kCryptRsa: // Not implemented; fall-thru to FATAL
-//		break;
+        case kCryptRsa: // Not implemented; fall-thru to FATAL
+//      break;
 
-		DEFAULT_FATAL(algorithm);
-	}
+        DEFAULT_FATAL(algorithm);
+    }
 
-	return key;
+    return key;
 }
 
 //===========================================================================
 // Not exposed in header because is not used at the moment and I don't want a big rebuild right now :)
 void CryptKeyGenerate (
-	ECryptAlgorithm	algorithm,
-	unsigned		keyBits,    // used for algorithms with variable key strength
-	unsigned		randomBytes,
-	const void *	randomData,
-	ARRAY(byte) *	privateData,
-	ARRAY(byte) *	publicData  // only for public key cryptography
+    ECryptAlgorithm algorithm,
+    unsigned        keyBits,    // used for algorithms with variable key strength
+    unsigned        randomBytes,
+    const void *    randomData,
+    ARRAY(byte) *   privateData,
+    ARRAY(byte) *   publicData  // only for public key cryptography
 ) {
-	// Allocate and fill in private and/or public key classes
-	switch (algorithm) {
+    // Allocate and fill in private and/or public key classes
+    switch (algorithm) {
 
-		case kCryptRc4:
-			KeyRc4::KeyGen(
-				randomBytes,
-				randomData,
-				privateData
-			);
-		break;
+        case kCryptRc4:
+            KeyRc4::KeyGen(
+                randomBytes,
+                randomData,
+                privateData
+            );
+        break;
 
-		case kCryptRsa:
-		#if 0
-			KeyRsa::KeyGen(
-				keyBits,
-				randomBytes,
-				randomData,
-				privateData,
-				publicData
-			);
-		break;
-		#endif // fall thru to fatal...
+        case kCryptRsa:
+        #if 0
+            KeyRsa::KeyGen(
+                keyBits,
+                randomBytes,
+                randomData,
+                privateData,
+                publicData
+            );
+        break;
+        #endif // fall thru to fatal...
 
-		DEFAULT_FATAL(algorithm);
-	}
+        DEFAULT_FATAL(algorithm);
+    }
 }
 
 //============================================================================
@@ -398,11 +398,11 @@ unsigned CryptKeyGetBlockSize (
     switch (key->algorithm) {
         case kCryptRc4: {
         #ifdef OPENSSL_RC4
-			return 1;
-		#else
-			KeyRc4 * rc4 = (KeyRc4 *)key->handle;
-			return rc4->GetBlockSize();
-		#endif
+            return 1;
+        #else
+            KeyRc4 * rc4 = (KeyRc4 *)key->handle;
+            return rc4->GetBlockSize();
+        #endif
         }
         break;
 
@@ -535,23 +535,23 @@ void CryptEncrypt (
     unsigned        sourceBytes,
     const void *    sourceData
 ) {
-	switch (key->algorithm) {
-		case kCryptRc4: {
-		#ifdef OPENSSL_RC4
-			Rc4Codec(key, true, dest, sourceBytes, sourceData);
-		#else
-			KeyRc4 * rc4 = (KeyRc4 *)key->handle;
-			rc4->Codec(true, dest, sourceBytes, sourceData);
-		#endif
-		}
-		break;
+    switch (key->algorithm) {
+        case kCryptRc4: {
+        #ifdef OPENSSL_RC4
+            Rc4Codec(key, true, dest, sourceBytes, sourceData);
+        #else
+            KeyRc4 * rc4 = (KeyRc4 *)key->handle;
+            rc4->Codec(true, dest, sourceBytes, sourceData);
+        #endif
+        }
+        break;
 
-		case kCryptRsa: // Not implemented; fall-thru to FATAL
-//			RsaCodec(key, true, dest, sourceBytes, sourceData);
-//		break;
+        case kCryptRsa: // Not implemented; fall-thru to FATAL
+//          RsaCodec(key, true, dest, sourceBytes, sourceData);
+//      break;
 
-		DEFAULT_FATAL(key->algorithm);
-	}
+        DEFAULT_FATAL(key->algorithm);
+    }
 }
 
 //============================================================================
@@ -560,27 +560,27 @@ void CryptEncrypt (
     unsigned        bytes,
     void *          data
 ) {
-	ASSERT(1 == CryptKeyGetBlockSize(key));
+    ASSERT(1 == CryptKeyGetBlockSize(key));
 
-	switch (key->algorithm) {
-		case kCryptRc4: {
-		#ifdef OPENSSL_RC4
-			Rc4Codec(key, true, bytes, data);
-		#else
-			ARRAY(byte) dest;
-			dest.Reserve(bytes);
-			CryptEncrypt(key, &dest, bytes, data);
-			MemCopy(data, dest.Ptr(), bytes);
-		#endif
-		}
-		break;
+    switch (key->algorithm) {
+        case kCryptRc4: {
+        #ifdef OPENSSL_RC4
+            Rc4Codec(key, true, bytes, data);
+        #else
+            ARRAY(byte) dest;
+            dest.Reserve(bytes);
+            CryptEncrypt(key, &dest, bytes, data);
+            MemCopy(data, dest.Ptr(), bytes);
+        #endif
+        }
+        break;
 
-		case kCryptRsa: // Not implemented; fall-thru to FATAL
-//			RsaCodec(key, true, dest, sourceBytes, sourceData);
-//		break;
+        case kCryptRsa: // Not implemented; fall-thru to FATAL
+//          RsaCodec(key, true, dest, sourceBytes, sourceData);
+//      break;
 
-		DEFAULT_FATAL(key->algorithm);
-	}
+        DEFAULT_FATAL(key->algorithm);
+    }
 }
 
 //============================================================================
@@ -590,23 +590,23 @@ void CryptDecrypt (
     unsigned        sourceBytes,
     const void *    sourceData
 ) {
-	switch (key->algorithm) {
-		case kCryptRc4: {
-		#ifdef OPENSSL_RC4
-			Rc4Codec(key, false, dest, sourceBytes, sourceData);
-		#else
-			KeyRc4 * rc4 = (KeyRc4 *)key->handle;
-			rc4->Codec(false, dest, sourceBytes, sourceData);
-		#endif
-		}
-		break;
+    switch (key->algorithm) {
+        case kCryptRc4: {
+        #ifdef OPENSSL_RC4
+            Rc4Codec(key, false, dest, sourceBytes, sourceData);
+        #else
+            KeyRc4 * rc4 = (KeyRc4 *)key->handle;
+            rc4->Codec(false, dest, sourceBytes, sourceData);
+        #endif
+        }
+        break;
 
-		case kCryptRsa: // Not implemented; fall-thru to FATAL
-//			RsaCodec(key, false, dest, sourceBytes, sourceData);
-//		break;
+        case kCryptRsa: // Not implemented; fall-thru to FATAL
+//          RsaCodec(key, false, dest, sourceBytes, sourceData);
+//      break;
 
-		DEFAULT_FATAL(key->algorithm);
-	}
+        DEFAULT_FATAL(key->algorithm);
+    }
 }
 
 //============================================================================
@@ -619,20 +619,20 @@ void CryptDecrypt (
 
     switch (key->algorithm) {
         case kCryptRc4: {
-		#ifdef OPENSSL_RC4
+        #ifdef OPENSSL_RC4
             Rc4Codec(key, false, bytes, data);
-		#else
-			ARRAY(byte) dest;
-			dest.Reserve(bytes);
-			CryptDecrypt(key, &dest, bytes, data);
-			MemCopy(data, dest.Ptr(), bytes);
-		#endif
-		}
+        #else
+            ARRAY(byte) dest;
+            dest.Reserve(bytes);
+            CryptDecrypt(key, &dest, bytes, data);
+            MemCopy(data, dest.Ptr(), bytes);
+        #endif
+        }
         break;
 
-		case kCryptRsa: // Not implemented; fall-thru to FATAL
-//			RsaCodec(key, false, dest, sourceBytes, sourceData);
-//		break;
+        case kCryptRsa: // Not implemented; fall-thru to FATAL
+//          RsaCodec(key, false, dest, sourceBytes, sourceData);
+//      break;
 
         DEFAULT_FATAL(key->algorithm);
     }

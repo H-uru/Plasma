@@ -37,30 +37,30 @@ class plTriObjectTab : public Tab<TriObject*>
 class plDicer
 {
 protected:
-	
-	int			fMaxFaces;
-	Point3		fMaxSize;
+    
+    int         fMaxFaces;
+    Point3      fMaxSize;
 
-	BOOL		IDetach(TriObject* triObj, BitArray& faces, plTriObjectTab& meshList);
-	BOOL		IHalf(TriObject* triObj, plTriObjectTab& triList);
+    BOOL        IDetach(TriObject* triObj, BitArray& faces, plTriObjectTab& meshList);
+    BOOL        IHalf(TriObject* triObj, plTriObjectTab& triList);
 
-	BOOL		IDice(TriObject* triObj, plTriObjectTab& triList);
+    BOOL        IDice(TriObject* triObj, plTriObjectTab& triList);
 
-	BOOL		IDiceIter(TriObject* triObj, plTriObjectTab& triList);
+    BOOL        IDiceIter(TriObject* triObj, plTriObjectTab& triList);
 
-	BOOL		IMakeIntoNodes(INode* node, plTriObjectTab& triList, INodeTab& out);
+    BOOL        IMakeIntoNodes(INode* node, plTriObjectTab& triList, INodeTab& out);
 
 public:
-	plDicer();
-	virtual ~plDicer();
+    plDicer();
+    virtual ~plDicer();
 
-	BOOL Dice(INode* node, INodeTab& out);
+    BOOL Dice(INode* node, INodeTab& out);
 
-	void SetMaxSize(const Point3& size);
-	Point3 GetMaxSize() const;
+    void SetMaxSize(const Point3& size);
+    Point3 GetMaxSize() const;
 
-	void SetMaxFaces(int n);
-	int GetMaxFaces() const;
+    void SetMaxFaces(int n);
+    int GetMaxFaces() const;
 };
 
 #endif // plDicer_inc

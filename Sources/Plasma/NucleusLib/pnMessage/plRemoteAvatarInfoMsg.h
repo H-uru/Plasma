@@ -40,31 +40,31 @@ class plRemoteAvatarInfoMsg : public plMessage
 {
 protected:
 
-	plKey fAvatar;
+    plKey fAvatar;
 public:
-	plRemoteAvatarInfoMsg() : fAvatar(nil){SetBCastFlag(plMessage::kBCastByExactType);}
-	plRemoteAvatarInfoMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t) : fAvatar(nil){SetBCastFlag(plMessage::kBCastByExactType);}
-	
-	CLASSNAME_REGISTER( plRemoteAvatarInfoMsg );
-	GETINTERFACE_ANY( plRemoteAvatarInfoMsg, plMessage );
-	
-	void SetAvatarKey(plKey p) { fAvatar = p; }
-	plKey GetAvatarKey() { return fAvatar; }
-		
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fAvatar = mgr->ReadKey(stream);
-	}
+    plRemoteAvatarInfoMsg() : fAvatar(nil){SetBCastFlag(plMessage::kBCastByExactType);}
+    plRemoteAvatarInfoMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t) : fAvatar(nil){SetBCastFlag(plMessage::kBCastByExactType);}
+    
+    CLASSNAME_REGISTER( plRemoteAvatarInfoMsg );
+    GETINTERFACE_ANY( plRemoteAvatarInfoMsg, plMessage );
+    
+    void SetAvatarKey(plKey p) { fAvatar = p; }
+    plKey GetAvatarKey() { return fAvatar; }
+        
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fAvatar = mgr->ReadKey(stream);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		mgr->WriteKey(stream, fAvatar);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        mgr->WriteKey(stream, fAvatar);
+    }
 };
 
 #endif // plRemoteAvatarInfoMsg_inc

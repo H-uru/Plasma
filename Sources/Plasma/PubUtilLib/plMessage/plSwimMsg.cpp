@@ -44,39 +44,39 @@ plSwimMsg::plSwimMsg(const plKey &sender, const plKey &receiver, bool entering, 
 : plMessage(sender, receiver, nil),
   fIsEntering(entering)
 {
-	fSwimRegionKey = regionKey;
+    fSwimRegionKey = regionKey;
 }
 
 // GetIsEntering --------------
 // --------------
 bool plSwimMsg::GetIsEntering()
 {
-	return fIsEntering;
+    return fIsEntering;
 }
 
 // GetIsLeaving --------------
 // -------------
 bool plSwimMsg::GetIsLeaving()
 {
-	return !fIsEntering;
+    return !fIsEntering;
 }
 
 // Read ---------------------------------------------
 // -----
 void plSwimMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 
-	fIsEntering = stream->Readbool();
-	fSwimRegionKey = mgr->ReadKey(stream);
+    fIsEntering = stream->Readbool();
+    fSwimRegionKey = mgr->ReadKey(stream);
 }
 
 // Write ---------------------------------------------
 // ------
 void plSwimMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	stream->Writebool(fIsEntering);
-	mgr->WriteKey(stream, fSwimRegionKey);
+    stream->Writebool(fIsEntering);
+    mgr->WriteKey(stream, fSwimRegionKey);
 }

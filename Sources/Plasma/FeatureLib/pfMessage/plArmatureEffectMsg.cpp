@@ -28,22 +28,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureEffects.h"
 
 plArmatureEffectStateMsg::plArmatureEffectStateMsg() : 
-	fSurface(plArmatureEffectsMgr::kFootNoSurface), fAddSurface(false) {}
+    fSurface(plArmatureEffectsMgr::kFootNoSurface), fAddSurface(false) {}
 
 plArmatureEffectStateMsg::~plArmatureEffectStateMsg() {}
 
 void plArmatureEffectStateMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
-	
-	fSurface = stream->ReadByte();
-	fAddSurface = stream->ReadBool();
+    plMessage::IMsgRead(stream, mgr);
+    
+    fSurface = stream->ReadByte();
+    fAddSurface = stream->ReadBool();
 }
 
 void plArmatureEffectStateMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	stream->WriteByte(fSurface);
-	stream->WriteBool(fAddSurface);
+    stream->WriteByte(fSurface);
+    stream->WriteBool(fAddSurface);
 }

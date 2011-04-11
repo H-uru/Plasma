@@ -37,56 +37,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plServerGuid : public plCreatable
 {
 public:
-	enum { kGuidBytes = 8 };
-	struct Match
-	{
-		const plServerGuid * fGuid;
-		Match( const plServerGuid * guid ):fGuid( guid ){}
-		bool operator()( const plServerGuid * guid ) const { return guid->IsEqualTo( fGuid );}
-	};
+    enum { kGuidBytes = 8 };
+    struct Match
+    {
+        const plServerGuid * fGuid;
+        Match( const plServerGuid * guid ):fGuid( guid ){}
+        bool operator()( const plServerGuid * guid ) const { return guid->IsEqualTo( fGuid );}
+    };
 
-	union
-	{
-		UInt8	N[kGuidBytes];
-		hsWide	fWide;
-	};
-	plServerGuid();
-	plServerGuid( const plServerGuid & other );
-	explicit plServerGuid( const char * s );
-	explicit plServerGuid( const hsWide & v );
+    union
+    {
+        UInt8   N[kGuidBytes];
+        hsWide  fWide;
+    };
+    plServerGuid();
+    plServerGuid( const plServerGuid & other );
+    explicit plServerGuid( const char * s );
+    explicit plServerGuid( const hsWide & v );
 
 
-	plServerGuid& operator=( const plServerGuid & rhs );
-	friend bool operator==( const plServerGuid & X, const plServerGuid & Y );
-	friend bool operator!=( const plServerGuid & X, const plServerGuid & Y );
-	friend bool operator<( const plServerGuid & X, const plServerGuid & Y) ;
+    plServerGuid& operator=( const plServerGuid & rhs );
+    friend bool operator==( const plServerGuid & X, const plServerGuid & Y );
+    friend bool operator!=( const plServerGuid & X, const plServerGuid & Y );
+    friend bool operator<( const plServerGuid & X, const plServerGuid & Y) ;
 
-	const char *	AsString( void ) const;	// returns static buffer.
-	std::string		AsStdString( void ) const;
-	bool			FromString( const char * s );
+    const char *    AsString( void ) const; // returns static buffer.
+    std::string     AsStdString( void ) const;
+    bool            FromString( const char * s );
 
-	hsWide			AsWide() const;
-	void			FromWide( const hsWide & v );
+    hsWide          AsWide() const;
+    void            FromWide( const hsWide & v );
 
-	bool			IsSet( void ) const;
-	bool			IsEqualTo( const plServerGuid * other ) const;
-	operator std::string ( void ) const { return AsString();}
+    bool            IsSet( void ) const;
+    bool            IsEqualTo( const plServerGuid * other ) const;
+    operator std::string ( void ) const { return AsString();}
 
-	void			Read( hsStream * s, hsResMgr* mgr=nil );
-	void			Write( hsStream * s, hsResMgr* mgr=nil );
-	void			CopyFrom( const plServerGuid & other );
-	void			CopyFrom( const plServerGuid * other );
-	void			Clear();
+    void            Read( hsStream * s, hsResMgr* mgr=nil );
+    void            Write( hsStream * s, hsResMgr* mgr=nil );
+    void            CopyFrom( const plServerGuid & other );
+    void            CopyFrom( const plServerGuid * other );
+    void            Clear();
 
-	static void SetGuidSeed( UInt32 seed );
-	static bool GuidSeedIsSet( void ) { return fGuidSeed!=0;}
-	static plServerGuid	GenerateGuid( void );
+    static void SetGuidSeed( UInt32 seed );
+    static bool GuidSeedIsSet( void ) { return fGuidSeed!=0;}
+    static plServerGuid GenerateGuid( void );
 
-	CLASSNAME_REGISTER( plServerGuid );
-	GETINTERFACE_ANY( plServerGuid, plCreatable );
+    CLASSNAME_REGISTER( plServerGuid );
+    GETINTERFACE_ANY( plServerGuid, plCreatable );
 
 private:
-	static UInt32	fGuidSeed;	// only low 24 bits are used
+    static UInt32   fGuidSeed;  // only low 24 bits are used
 };
 
 

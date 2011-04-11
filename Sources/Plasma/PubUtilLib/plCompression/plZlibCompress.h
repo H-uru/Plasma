@@ -33,22 +33,22 @@ class hsStream;
 class plZlibCompress : public plCompress
 {
 protected:
-	hsBool ICopyBuffers(UInt8** bufIn, UInt32* bufLenIn, char* bufOut, UInt32 bufLenOut, int offset, bool ok );
+    hsBool ICopyBuffers(UInt8** bufIn, UInt32* bufLenIn, char* bufOut, UInt32 bufLenOut, int offset, bool ok );
 public:
-	hsBool Uncompress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn);
-	hsBool Compress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn);
+    hsBool Uncompress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn);
+    hsBool Compress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn);
 
-	// in place versions
-	hsBool Uncompress(UInt8** bufIn, UInt32* bufLenIn, UInt32 maxBufLenOut, int offset=0);
-	hsBool Compress(UInt8** bufIn, UInt32* bufLenIn, int offset=0);
+    // in place versions
+    hsBool Uncompress(UInt8** bufIn, UInt32* bufLenIn, UInt32 maxBufLenOut, int offset=0);
+    hsBool Compress(UInt8** bufIn, UInt32* bufLenIn, int offset=0);
 
-	// .gz versions
-	static hsBool	UncompressFile( const char *compressedPath, const char *destPath );
-	static hsBool	CompressFile( const char *uncompressedPath, const char *destPath );
+    // .gz versions
+    static hsBool   UncompressFile( const char *compressedPath, const char *destPath );
+    static hsBool   CompressFile( const char *uncompressedPath, const char *destPath );
 
-	// file <-> stream
-	static hsBool	UncompressToStream( const char * filename, hsStream * s );
-	static hsBool	CompressToFile( hsStream * s, const char * filename );
+    // file <-> stream
+    static hsBool   UncompressToStream( const char * filename, hsStream * s );
+    static hsBool   CompressToFile( hsStream * s, const char * filename );
 };
 
-#endif	// plZlibCompress_h
+#endif  // plZlibCompress_h

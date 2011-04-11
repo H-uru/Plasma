@@ -44,7 +44,7 @@ pyVaultAgeInfoListNode::pyVaultAgeInfoListNode(RelVaultNode* nfsNode)
 pyVaultAgeInfoListNode::pyVaultAgeInfoListNode(int n)
 : pyVaultFolderNode(n)
 {
-	fNode->SetNodeType(plVault::kNodeType_AgeInfoList);
+    fNode->SetNodeType(plVault::kNodeType_AgeInfoList);
 }
 
 
@@ -53,27 +53,27 @@ pyVaultAgeInfoListNode::pyVaultAgeInfoListNode(int n)
 //
 hsBool pyVaultAgeInfoListNode::HasAge(UInt32 ageID)
 {
-	if (!fNode)
-		return false;
-		
-	hsAssert(false, "eric, implement me");
-	return false;
+    if (!fNode)
+        return false;
+        
+    hsAssert(false, "eric, implement me");
+    return false;
 }
 
 hsBool pyVaultAgeInfoListNode::AddAge( UInt32 ageID )
 {
-	if (!fNode)
-		return false;
-		
-	hsAssert(false, "eric, implement me");
-	return false;
+    if (!fNode)
+        return false;
+        
+    hsAssert(false, "eric, implement me");
+    return false;
 }
 
 void pyVaultAgeInfoListNode::RemoveAge( UInt32 ageID )
 {
-	if (!fNode)
-		return;
-		
-	hsAssert(false, "eric, implement me");
+    if (!fNode)
+        return;
+        
+    hsAssert(false, "eric, implement me");
 }
 

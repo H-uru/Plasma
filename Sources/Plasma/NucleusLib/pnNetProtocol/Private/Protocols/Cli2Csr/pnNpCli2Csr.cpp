@@ -42,21 +42,21 @@ namespace Cli2Csr {
 ***/
 
 static const NetMsgField kPingRequestFields[] = {
-	kNetMsgFieldTransId,					// transId
-	kNetMsgFieldTimeMs,						// pingTimeMs
-	NET_MSG_FIELD_VAR_COUNT(1, 64 * 1024),	// payloadBytes
-	NET_MSG_FIELD_VAR_PTR(),				// payload
+    kNetMsgFieldTransId,                    // transId
+    kNetMsgFieldTimeMs,                     // pingTimeMs
+    NET_MSG_FIELD_VAR_COUNT(1, 64 * 1024),  // payloadBytes
+    NET_MSG_FIELD_VAR_PTR(),                // payload
 };
 
 static const NetMsgField kRegisterRequestFields[] = {
-	kNetMsgFieldTransId,					// transId
+    kNetMsgFieldTransId,                    // transId
 };
 
 static const NetMsgField kLoginRequestFields[] = {
-	kNetMsgFieldTransId,					// transId
-	NET_MSG_FIELD_DWORD(),					// clientChallenge
-	kNetMsgFieldAccountName,				// csrName
-	kNetMsgFieldShaDigest,					// challenge
+    kNetMsgFieldTransId,                    // transId
+    NET_MSG_FIELD_DWORD(),                  // clientChallenge
+    kNetMsgFieldAccountName,                // csrName
+    kNetMsgFieldShaDigest,                  // challenge
 };
 
 
@@ -67,23 +67,23 @@ static const NetMsgField kLoginRequestFields[] = {
 ***/
 
 static const NetMsgField kPingReplyFields[] = {
-	kNetMsgFieldTransId,					// transId
-	kNetMsgFieldTimeMs,						// pingTimeMs
-	NET_MSG_FIELD_VAR_COUNT(1, 64 * 1024),	// payloadBytes
-	NET_MSG_FIELD_VAR_PTR(),				// payload
+    kNetMsgFieldTransId,                    // transId
+    kNetMsgFieldTimeMs,                     // pingTimeMs
+    NET_MSG_FIELD_VAR_COUNT(1, 64 * 1024),  // payloadBytes
+    NET_MSG_FIELD_VAR_PTR(),                // payload
 };
 
 static const NetMsgField kRegisterReplyFields[] = {
-	kNetMsgFieldTransId,					// transId
-	NET_MSG_FIELD_DWORD(),					// serverChallenge
-	NET_MSG_FIELD_DWORD(),					// latestBuildId
+    kNetMsgFieldTransId,                    // transId
+    NET_MSG_FIELD_DWORD(),                  // serverChallenge
+    NET_MSG_FIELD_DWORD(),                  // latestBuildId
 };
 
 static const NetMsgField kLoginReplyFields[] = {
-	kNetMsgFieldTransId,					// transId
-	kNetMsgFieldENetError,					// result
-	kNetMsgFieldUuid,						// csrId
-	NET_MSG_FIELD_DWORD(),					// csrFlags
+    kNetMsgFieldTransId,                    // transId
+    kNetMsgFieldENetError,                  // result
+    kNetMsgFieldUuid,                       // csrId
+    NET_MSG_FIELD_DWORD(),                  // csrFlags
 };
 
 
@@ -96,11 +96,11 @@ static const NetMsgField kLoginReplyFields[] = {
 *
 ***/
 
-const NetMsg kNetMsg_Cli2Csr_PingRequest			= NET_MSG(kCli2Csr_PingRequest,			kPingRequestFields);
-const NetMsg kNetMsg_Cli2Csr_RegisterRequest		= NET_MSG(kCli2Csr_RegisterRequest,		kRegisterRequestFields);
-const NetMsg kNetMsg_Cli2Csr_LoginRequest			= NET_MSG(kCli2Csr_LoginRequest,		kLoginRequestFields);
+const NetMsg kNetMsg_Cli2Csr_PingRequest            = NET_MSG(kCli2Csr_PingRequest,         kPingRequestFields);
+const NetMsg kNetMsg_Cli2Csr_RegisterRequest        = NET_MSG(kCli2Csr_RegisterRequest,     kRegisterRequestFields);
+const NetMsg kNetMsg_Cli2Csr_LoginRequest           = NET_MSG(kCli2Csr_LoginRequest,        kLoginRequestFields);
 
-const NetMsg kNetMsg_Csr2Cli_PingReply				= NET_MSG(kCsr2Cli_PingReply,			kPingReplyFields);
-const NetMsg kNetMsg_Csr2Cli_RegisterReply			= NET_MSG(kCsr2Cli_RegisterReply,		kRegisterReplyFields);
-const NetMsg kNetMsg_Csr2Cli_LoginReply				= NET_MSG(kCsr2Cli_LoginReply,			kLoginReplyFields);
+const NetMsg kNetMsg_Csr2Cli_PingReply              = NET_MSG(kCsr2Cli_PingReply,           kPingReplyFields);
+const NetMsg kNetMsg_Csr2Cli_RegisterReply          = NET_MSG(kCsr2Cli_RegisterReply,       kRegisterReplyFields);
+const NetMsg kNetMsg_Csr2Cli_LoginReply             = NET_MSG(kCsr2Cli_LoginReply,          kLoginReplyFields);
 

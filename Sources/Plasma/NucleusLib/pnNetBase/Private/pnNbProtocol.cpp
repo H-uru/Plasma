@@ -42,35 +42,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //============================================================================
 const wchar * NetProtocolToString (ENetProtocol protocol) {
 
-	#define PROTOCOL_STRING(p)	{ p, L#p }
-	static struct { ENetProtocol protocol; const wchar *name; } s_protocols[] = {
-		PROTOCOL_STRING(kNetProtocolNil),
+    #define PROTOCOL_STRING(p)  { p, L#p }
+    static struct { ENetProtocol protocol; const wchar *name; } s_protocols[] = {
+        PROTOCOL_STRING(kNetProtocolNil),
 
-		// For test applications
-		PROTOCOL_STRING(kNetProtocolDebug),
+        // For test applications
+        PROTOCOL_STRING(kNetProtocolDebug),
 
-		// Client connections
-		{ kNetProtocolCli2Csr,  L"GateKeeper Server" },
-		{ kNetProtocolCli2Csr,  L"Csr Server" },
-		{ kNetProtocolCli2Auth, L"Auth Server" },
-		{ kNetProtocolCli2Game, L"Game Server" },
-		{ kNetProtocolCli2File, L"File Server" },
-		PROTOCOL_STRING(kNetProtocolCli2Unused_01),
+        // Client connections
+        { kNetProtocolCli2Csr,  L"GateKeeper Server" },
+        { kNetProtocolCli2Csr,  L"Csr Server" },
+        { kNetProtocolCli2Auth, L"Auth Server" },
+        { kNetProtocolCli2Game, L"Game Server" },
+        { kNetProtocolCli2File, L"File Server" },
+        PROTOCOL_STRING(kNetProtocolCli2Unused_01),
 
-		// Server connections
-		PROTOCOL_STRING(kNetProtocolSrvConn),
-		PROTOCOL_STRING(kNetProtocolSrv2Mcp),
-		PROTOCOL_STRING(kNetProtocolSrv2Vault),
-		PROTOCOL_STRING(kNetProtocolSrv2Db),
-		PROTOCOL_STRING(kNetProtocolSrv2State),
-		PROTOCOL_STRING(kNetProtocolSrv2Log),
-		PROTOCOL_STRING(kNetProtocolSrv2Score),
-	};
-	#undef PROTOCOL_STRING
+        // Server connections
+        PROTOCOL_STRING(kNetProtocolSrvConn),
+        PROTOCOL_STRING(kNetProtocolSrv2Mcp),
+        PROTOCOL_STRING(kNetProtocolSrv2Vault),
+        PROTOCOL_STRING(kNetProtocolSrv2Db),
+        PROTOCOL_STRING(kNetProtocolSrv2State),
+        PROTOCOL_STRING(kNetProtocolSrv2Log),
+        PROTOCOL_STRING(kNetProtocolSrv2Score),
+    };
+    #undef PROTOCOL_STRING
 
-	for (unsigned i = 0; i < arrsize(s_protocols); ++i)
-		if (s_protocols[i].protocol == protocol)
-			return s_protocols[i].name;
+    for (unsigned i = 0; i < arrsize(s_protocols); ++i)
+        if (s_protocols[i].protocol == protocol)
+            return s_protocols[i].name;
 
-	return L"Unknown protocol id";	
+    return L"Unknown protocol id";  
 }

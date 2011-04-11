@@ -39,39 +39,39 @@ typedef void (*LogFunc)(const char* format, ...);
 class plManifest
 {
 protected:
-	std::string fBasePath;
-	char* fManifestName;
+    std::string fBasePath;
+    char* fManifestName;
 
-	typedef std::vector<plManifestFile*> FileVec;
-	FileVec fFiles;
+    typedef std::vector<plManifestFile*> FileVec;
+    FileVec fFiles;
 
-	UInt32 fDownloadFiles;
-	UInt32 fDownloadBytes;
+    UInt32 fDownloadFiles;
+    UInt32 fDownloadBytes;
 
-	bool fDirtySums;
+    bool fDirtySums;
 
-	LogFunc fLog;
+    LogFunc fLog;
 
-	bool IDecompressSound(plManifestFile* file);
+    bool IDecompressSound(plManifestFile* file);
 
-	plManifestFile* IFindFile(const char* name);
+    plManifestFile* IFindFile(const char* name);
 
-	const char* IGetCacheDir();
-	void IReadCache(ProgressFunc progress);
-	void IWriteCache();
+    const char* IGetCacheDir();
+    void IReadCache(ProgressFunc progress);
+    void IWriteCache();
 
 public:
-	plManifest(LogFunc log);
-	~plManifest();
+    plManifest(LogFunc log);
+    ~plManifest();
 
-	bool Read(hsStream* mfsStream, const char* basePath, const char* mfsName);
+    bool Read(hsStream* mfsStream, const char* basePath, const char* mfsName);
 
-	void	ValidateFiles(ProgressFunc progress);
-	void	DownloadUpdates(ProgressFunc progress, plFileGrabber* grabber);
+    void    ValidateFiles(ProgressFunc progress);
+    void    DownloadUpdates(ProgressFunc progress, plFileGrabber* grabber);
 
-	int		NumFiles() { return fFiles.size(); }
-	UInt32	NumDownloadFiles() { return fDownloadFiles; }
-	UInt32	DownloadSize() { return fDownloadBytes; }
+    int     NumFiles() { return fFiles.size(); }
+    UInt32  NumDownloadFiles() { return fDownloadFiles; }
+    UInt32  DownloadSize() { return fDownloadBytes; }
 };
 
 #endif // plManifest_h_inc

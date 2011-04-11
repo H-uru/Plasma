@@ -36,56 +36,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plVertDelta
 {
 public:
-	UInt16		fIdx;
-	UInt16		fPadding;
-	hsVector3	fPos;
-	hsVector3	fNorm;
+    UInt16      fIdx;
+    UInt16      fPadding;
+    hsVector3   fPos;
+    hsVector3   fNorm;
 };
 
 class plMorphSpan
 {
 public:
-	plMorphSpan();
-	virtual ~plMorphSpan();
+    plMorphSpan();
+    virtual ~plMorphSpan();
 
-	hsTArray<plVertDelta>	fDeltas;
+    hsTArray<plVertDelta>   fDeltas;
 
-	UInt16					fNumUVWChans;
-	hsPoint3*				fUVWs; // Length is fUVWChans*fDeltas.GetCount() (*sizeof(hsPoint3) in bytes).
+    UInt16                  fNumUVWChans;
+    hsPoint3*               fUVWs; // Length is fUVWChans*fDeltas.GetCount() (*sizeof(hsPoint3) in bytes).
 };
 
 class plMorphDelta : public plCreatable
 {
 protected:
-	hsTArray<plMorphSpan>	fSpans;
+    hsTArray<plMorphSpan>   fSpans;
 
-	hsScalar				fWeight;
+    hsScalar                fWeight;
 public:
-	plMorphDelta();
-	virtual ~plMorphDelta();
+    plMorphDelta();
+    virtual ~plMorphDelta();
 
-	plMorphDelta(const plMorphDelta& src);
-	plMorphDelta& operator=(const plMorphDelta& src);
+    plMorphDelta(const plMorphDelta& src);
+    plMorphDelta& operator=(const plMorphDelta& src);
 
-	CLASSNAME_REGISTER( plMorphDelta );
-	GETINTERFACE_ANY( plMorphDelta, plCreatable );
+    CLASSNAME_REGISTER( plMorphDelta );
+    GETINTERFACE_ANY( plMorphDelta, plCreatable );
 
-	void		SetWeight(hsScalar w) { fWeight = w; }
-	hsScalar	GetWeight() const { return fWeight; }
+    void        SetWeight(hsScalar w) { fWeight = w; }
+    hsScalar    GetWeight() const { return fWeight; }
 
-	void		Apply(hsTArray<plAccessSpan>& dst, hsScalar weight = -1.f) const;
+    void        Apply(hsTArray<plAccessSpan>& dst, hsScalar weight = -1.f) const;
 
-	void		ComputeDeltas(const hsTArray<plAccessSpan>& base, const hsTArray<plAccessSpan>& moved);
-	void		ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hsTArray<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv);
+    void        ComputeDeltas(const hsTArray<plAccessSpan>& base, const hsTArray<plAccessSpan>& moved);
+    void        ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hsTArray<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv);
 
-	UInt32		GetNumSpans() const { return fSpans.GetCount(); }
-	void		SetNumSpans(int n);
-	void		SetDeltas(int iSpan, const hsTArray<plVertDelta>& deltas, int numUVWChans, const hsPoint3* uvws); // len uvws is deltas.GetCount() * numUVWChans
+    UInt32      GetNumSpans() const { return fSpans.GetCount(); }
+    void        SetNumSpans(int n);
+    void        SetDeltas(int iSpan, const hsTArray<plVertDelta>& deltas, int numUVWChans, const hsPoint3* uvws); // len uvws is deltas.GetCount() * numUVWChans
 
-	void		AllocDeltas(int iSpan, int nDel, int nUVW);
+    void        AllocDeltas(int iSpan, int nDel, int nUVW);
 
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);	
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr); 
 
 };
 

@@ -35,35 +35,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // ones that are removed.
 namespace plPhysicsGroups_DEAD
 {
-	enum
-	{
-		kUserGroup1		= 1<<1,
-		kUserGroup2		= 1<<2,
-		kUserGroup3		= 1<<3,
-		kUserGroup4		= 1<<4,
-		kUserGroup5		= 1<<5,
-		kUserGroup6		= 1<<6,
-		kUserGroup7		= 1<<7,
-		kUserGroup8		= 1<<8,
-		kUserGroup9		= 1<<9,
-		kUserGroup10	= 1<<10,
-		kUserGroup11	= 1<<11,
-		kUserGroup12	= 1<<12,
-		kUserGroup13	= 1<<13,
-		kUserGroup14	= 1<<14,
-		kUserGroup15	= 1<<15,
-		kUserGroup16	= 1<<16,
+    enum
+    {
+        kUserGroup1     = 1<<1,
+        kUserGroup2     = 1<<2,
+        kUserGroup3     = 1<<3,
+        kUserGroup4     = 1<<4,
+        kUserGroup5     = 1<<5,
+        kUserGroup6     = 1<<6,
+        kUserGroup7     = 1<<7,
+        kUserGroup8     = 1<<8,
+        kUserGroup9     = 1<<9,
+        kUserGroup10    = 1<<10,
+        kUserGroup11    = 1<<11,
+        kUserGroup12    = 1<<12,
+        kUserGroup13    = 1<<13,
+        kUserGroup14    = 1<<14,
+        kUserGroup15    = 1<<15,
+        kUserGroup16    = 1<<16,
 
-		kAvatars			= 1<<17,
-		kCreatures			= 1<<18,
-		kAnimated			= 1<<23,
-		kDynamicSimulated	= 1<<24,
-		kStaticSimulated	= 1<<25,
-		kDetectors			= 1<<26,
-		// Local avatars are included in kAvatars, you only need to use this if
-		// you want to only do something with local avatars.
-		kLocalAvatars		= 1<<27,
-	};
+        kAvatars            = 1<<17,
+        kCreatures          = 1<<18,
+        kAnimated           = 1<<23,
+        kDynamicSimulated   = 1<<24,
+        kStaticSimulated    = 1<<25,
+        kDetectors          = 1<<26,
+        // Local avatars are included in kAvatars, you only need to use this if
+        // you want to only do something with local avatars.
+        kLocalAvatars       = 1<<27,
+    };
 };
 
 #endif // plPhysicsGroups_inc

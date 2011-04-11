@@ -63,13 +63,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientComm/plNetClientComm.h"
 
 #define KI_CONSTANTS_ONLY
-#include "pfMessage/pfKIMsg.h"	// for KI level constants =(
+#include "pfMessage/pfKIMsg.h"  // for KI level constants =(
 #undef KI_CONSTANTS_ONLY
 #pragma warning(pop)
 
 #include "plNetGameLib/plNetGameLib.h"
 
-#endif	// def CLIENT
+#endif  // def CLIENT
 
 #include "Intern.h"
 

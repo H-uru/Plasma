@@ -36,62 +36,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plActivatorBaseComponent::AddReceiverKey(plKey pKey, plMaxNode* node)
 {
-	fReceivers.insert(ReceiverKey(node, pKey));
+    fReceivers.insert(ReceiverKey(node, pKey));
 }
 
 plKey plActivatorBaseComponent::GetLogicKey(plMaxNode* node)
 {
-	LogicKeys::const_iterator it = fLogicModKeys.find(node);
-	if (it != fLogicModKeys.end())
-		return it->second;
+    LogicKeys::const_iterator it = fLogicModKeys.find(node);
+    if (it != fLogicModKeys.end())
+        return it->second;
 
-	return nil;
+    return nil;
 }
 
 void plActivatorBaseComponent::IGetReceivers(plMaxNode* node, hsTArray<plKey>& receivers)
 {
-	// Add the guys who want to be notified by all instances
-	ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nil);
-	ReceiverKeys::iterator highIt = fReceivers.upper_bound(nil);
-	for (; lowIt != highIt; lowIt++)
-		receivers.Append(lowIt->second);
+    // Add the guys who want to be notified by all instances
+    ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nil);
+    ReceiverKeys::iterator highIt = fReceivers.upper_bound(nil);
+    for (; lowIt != highIt; lowIt++)
+        receivers.Append(lowIt->second);
 
-	// Add the ones for just this instance
-	lowIt = fReceivers.lower_bound(node);
-	highIt = fReceivers.upper_bound(node);
-	for (; lowIt != highIt; lowIt++)
-		receivers.Append(lowIt->second);
+    // Add the ones for just this instance
+    lowIt = fReceivers.lower_bound(node);
+    highIt = fReceivers.upper_bound(node);
+    for (; lowIt != highIt; lowIt++)
+        receivers.Append(lowIt->second);
 }
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
 hsBool plActivatorBaseComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	fLogicModKeys.clear();
-	fReceivers.clear();
-	return true;
+    fLogicModKeys.clear();
+    fReceivers.clear();
+    return true;
 }
 
 hsBool plActivatorBaseComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	node->SetForceLocal(true);
+    node->SetForceLocal(true);
 
-	plLocation loc = node->GetLocation();
-	plSceneObject *obj = node->GetSceneObject();
+    plLocation loc = node->GetLocation();
+    plSceneObject *obj = node->GetSceneObject();
 
-	// Create and register the VolumeGadget's logic component
-	plLogicModifier *logic = TRACKED_NEW plLogicModifier;
-	plKey logicKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), logic, node->GetLocation());
-	hsgResMgr::ResMgr()->AddViaNotify(logicKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    // Create and register the VolumeGadget's logic component
+    plLogicModifier *logic = TRACKED_NEW plLogicModifier;
+    plKey logicKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), logic, node->GetLocation());
+    hsgResMgr::ResMgr()->AddViaNotify(logicKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
-	fLogicModKeys[node] = logicKey;
+    fLogicModKeys[node] = logicKey;
 
-	return true;
+    return true;
 }
 
 hsBool plActivatorBaseComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
 {
-	fReceivers.clear();
-	fLogicModKeys.clear();
-	return plPhysicCoreComponent::DeInit( node, pErrMsg ); 
+    fReceivers.clear();
+    fLogicModKeys.clear();
+    return plPhysicCoreComponent::DeInit( node, pErrMsg ); 
 }

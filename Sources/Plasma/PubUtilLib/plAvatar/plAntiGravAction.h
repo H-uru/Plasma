@@ -33,29 +33,29 @@ class plSwimRegionInterface;
 class plAntiGravAction : public plAnimatedCallbackAction
 {
 public:
-	plAntiGravAction(plHKPhysical *physical, plAGApplicator *rootApp);
+    plAntiGravAction(plHKPhysical *physical, plAGApplicator *rootApp);
 
-	/** Return the type of the action as defined in the enum plSimDefs::ActionType.
-		Used to retrieve actions by entity/type indexing, and to
-		reuse actions that can be shared between entities. */
-	virtual plSimDefs::ActionType GetType();
+    /** Return the type of the action as defined in the enum plSimDefs::ActionType.
+        Used to retrieve actions by entity/type indexing, and to
+        reuse actions that can be shared between entities. */
+    virtual plSimDefs::ActionType GetType();
 
-	/** Called by Havok at substep frequency. */
-	void apply(Havok::Subspace &s, Havok::hkTime time);
+    /** Called by Havok at substep frequency. */
+    void apply(Havok::Subspace &s, Havok::hkTime time);
 
-	void SetSurface(plSwimRegionInterface *region, hsScalar surfaceHeight);
-	hsScalar GetBuoyancy() { return fBuoyancy; }
-	hsBool IsOnGround() { return fOnGround; }
-	hsBool HadContacts() { return fHadContacts; }
-		
+    void SetSurface(plSwimRegionInterface *region, hsScalar surfaceHeight);
+    hsScalar GetBuoyancy() { return fBuoyancy; }
+    hsBool IsOnGround() { return fOnGround; }
+    hsBool HadContacts() { return fHadContacts; }
+        
 protected:
-	void IAdjustBuoyancy();
+    void IAdjustBuoyancy();
 
-	hsBool fOnGround;
-	hsBool fHadContacts;
-	hsScalar fBuoyancy;
-	hsScalar fSurfaceHeight;
-	plSwimRegionInterface *fCurrentRegion;
+    hsBool fOnGround;
+    hsBool fHadContacts;
+    hsScalar fBuoyancy;
+    hsScalar fSurfaceHeight;
+    plSwimRegionInterface *fCurrentRegion;
 };
 
 #endif

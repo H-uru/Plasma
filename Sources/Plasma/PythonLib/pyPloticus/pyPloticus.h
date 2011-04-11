@@ -34,14 +34,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyPloticus
 {
 public:
-	static void Init(char* device, char* outfilename);
-	static void Arg(char* name, char* value);
-	static void Begin();
-	static void End();
-	static void ExecLine(char* line);
-	static void ExecScript(char* scriptfile, int prefab);
-	static void GetVar(char* name, char* value);
-	static void SetVar(char* name, char* value);
+    static void Init(char* device, char* outfilename);
+    static void Arg(char* name, char* value);
+    static void Begin();
+    static void End();
+    static void ExecLine(char* line);
+    static void ExecScript(char* scriptfile, int prefab);
+    static void GetVar(char* name, char* value);
+    static void SetVar(char* name, char* value);
 };
 
 #endif // pyPloticus_h_inc

@@ -31,19 +31,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plClimbTriggerComponent : public plComponent
 {
 public:
-	plClimbTriggerComponent();
+    plClimbTriggerComponent();
 
-	virtual void DeleteThis() { delete this; }
-	virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    virtual void DeleteThis() { delete this; }
+    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
 
-	enum // ParamBlock indices
-	{
-		kCommand,
-		kDirection,
-		kWallPicker
-	};
+    enum // ParamBlock indices
+    {
+        kCommand,
+        kDirection,
+        kWallPicker
+    };
 
 private:
 
@@ -54,11 +54,11 @@ private:
 class plClimbTriggerComponentProc : public ParamMap2UserDlgProc
 {
 public:
-	plClimbTriggerComponentProc() {}
+    plClimbTriggerComponentProc() {}
 
-	BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	void DeleteThis() {}
+    void DeleteThis() {}
 };
 
 #endif

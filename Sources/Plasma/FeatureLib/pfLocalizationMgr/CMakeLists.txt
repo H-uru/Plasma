@@ -8,15 +8,15 @@ add_definitions(-DXML_STATIC)
 add_definitions(-DWIN32)
 
 set(pfLocalizationMgr_SOURCES
-	pfLocalizationDataMgr.cpp
-	pfLocalizationMgr.cpp
-	pfLocalizedString.cpp
+    pfLocalizationDataMgr.cpp
+    pfLocalizationMgr.cpp
+    pfLocalizedString.cpp
 )
 
 set(pfLocalizationMgr_HEADERS
-	pfLocalizationDataMgr.h
-	pfLocalizationMgr.h
-	pfLocalizedString.h
+    pfLocalizationDataMgr.h
+    pfLocalizationMgr.h
+    pfLocalizedString.h
 )
 
 add_library(pfLocalizationMgr STATIC ${pfLocalizationMgr_SOURCES} ${pfLocalizationMgr_HEADERS})

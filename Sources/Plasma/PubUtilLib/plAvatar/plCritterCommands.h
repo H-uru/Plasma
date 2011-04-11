@@ -35,41 +35,41 @@ typedef std::vector<std::string> VCharArray;
 class plCritterCommands
 {
 public:
-	// The order of these is significant; setting the blend on an animation in this list
-	// to maximum will prevent all animations above it from playing.
-	// I.E. if "turn left" is set to maximum, it will completely hide "idle"
-	enum stdAnim {
-		kIdle,
-		kTurnLeft,
-		kTurnRight,
-		kForwardMedium,
-		kForwardFast,
-		kReverse,
-		kBankLeft,
-		kBankRight,
-		kImpactDown,
-		kNumStdAnims
-	};
+    // The order of these is significant; setting the blend on an animation in this list
+    // to maximum will prevent all animations above it from playing.
+    // I.E. if "turn left" is set to maximum, it will completely hide "idle"
+    enum stdAnim {
+        kIdle,
+        kTurnLeft,
+        kTurnRight,
+        kForwardMedium,
+        kForwardFast,
+        kReverse,
+        kBankLeft,
+        kBankRight,
+        kImpactDown,
+        kNumStdAnims
+    };
 
-	VCharArray fAnimNameTypes;
+    VCharArray fAnimNameTypes;
 
-	//Vector is used because the []operator is handy for filling
-	//the dialog boxes for implementation Components. -RXA
-	// KEEP THIS SYNCHRONIZED with the enum above.
-	plCritterCommands() 
-	{
-		fAnimNameTypes.push_back("Idle");
-		fAnimNameTypes.push_back("TurnLeft");
-		fAnimNameTypes.push_back("TurnRight");
-		fAnimNameTypes.push_back("Forward Medium");
-		fAnimNameTypes.push_back("Forward Fast");
-		fAnimNameTypes.push_back("Reverse");
-		fAnimNameTypes.push_back("Bank Left");
-		fAnimNameTypes.push_back("Bank Right");
-		fAnimNameTypes.push_back("Impact Down");
-	}
+    //Vector is used because the []operator is handy for filling
+    //the dialog boxes for implementation Components. -RXA
+    // KEEP THIS SYNCHRONIZED with the enum above.
+    plCritterCommands() 
+    {
+        fAnimNameTypes.push_back("Idle");
+        fAnimNameTypes.push_back("TurnLeft");
+        fAnimNameTypes.push_back("TurnRight");
+        fAnimNameTypes.push_back("Forward Medium");
+        fAnimNameTypes.push_back("Forward Fast");
+        fAnimNameTypes.push_back("Reverse");
+        fAnimNameTypes.push_back("Bank Left");
+        fAnimNameTypes.push_back("Bank Right");
+        fAnimNameTypes.push_back("Impact Down");
+    }
 
-	int GetNumElements() { return fAnimNameTypes.size(); }
+    int GetNumElements() { return fAnimNameTypes.size(); }
 
 };
 
@@ -77,80 +77,80 @@ public:
 class plCritterCommands
 {
 public:
-	enum avStdAnim{
-		kTorsoStraightenOut = 0,
-		kTorsoSpasticRotate,
-		kTorsoShakeHead,
-		kTorsoOpenMouth,
-		kTorsoHover,
-		kTorsoForwardFlightSpeedB,
-		kTorsoForwardFlightSpeedA,
-		kTorsoBankRightFlapping,
-		kTorsoBankRightCoasting,
-		kTorsoBankLeftFlapping,
-		kTorsoBankLeftCoasting,
-		kTorsoBackwardFlight,
-		kRightWingSpasticRotate,
-		kRightWingHover,
-		kRightWingForwardFlightSpeedB,
-		kRightWingForwardFlightSpeedA,
-		kRightWingBankRightFlapping,
-		kRightWingBankRightCoasting,
-		kRightWingBankLeftFlapping,
-		kRightWingBankLeftCoasting,
-		kRightWingBackwardFlight,
-		kLeftWingSpasticRotate,
-		kLeftWingHover,
-		kLeftWingForwardFlightSpeedA,
-		kLeftWingForwardFlightSpeedB,
-		kLeftWingBankRightFlapping,
-		kLeftWingBankRightCoasting,
-		kLeftWingBankLeftFlapping,
-		kLeftWingBankLeftCoasting,
-		kLeftWingBackwardFlight,
-		kNumStdAnims
-	} ;
+    enum avStdAnim{
+        kTorsoStraightenOut = 0,
+        kTorsoSpasticRotate,
+        kTorsoShakeHead,
+        kTorsoOpenMouth,
+        kTorsoHover,
+        kTorsoForwardFlightSpeedB,
+        kTorsoForwardFlightSpeedA,
+        kTorsoBankRightFlapping,
+        kTorsoBankRightCoasting,
+        kTorsoBankLeftFlapping,
+        kTorsoBankLeftCoasting,
+        kTorsoBackwardFlight,
+        kRightWingSpasticRotate,
+        kRightWingHover,
+        kRightWingForwardFlightSpeedB,
+        kRightWingForwardFlightSpeedA,
+        kRightWingBankRightFlapping,
+        kRightWingBankRightCoasting,
+        kRightWingBankLeftFlapping,
+        kRightWingBankLeftCoasting,
+        kRightWingBackwardFlight,
+        kLeftWingSpasticRotate,
+        kLeftWingHover,
+        kLeftWingForwardFlightSpeedA,
+        kLeftWingForwardFlightSpeedB,
+        kLeftWingBankRightFlapping,
+        kLeftWingBankRightCoasting,
+        kLeftWingBankLeftFlapping,
+        kLeftWingBankLeftCoasting,
+        kLeftWingBackwardFlight,
+        kNumStdAnims
+    } ;
 
-	VCharArray fAnimNameTypes;
+    VCharArray fAnimNameTypes;
 
-	//Vector is used because the []operator is handy for filling
-	//the dialog boxes for implementation Components. -RXA
-	// KEEP THIS SYNCHRONIZED with the enum above.
-	plCritterCommands() 
-	{
-		fAnimNameTypes.push_back("Torso Straighten Out");
-		fAnimNameTypes.push_back("Torso Spastic Rotate");
-		fAnimNameTypes.push_back("Torso Shake Head");
-		fAnimNameTypes.push_back("Torso Open Mouth");
-		fAnimNameTypes.push_back("Torso Hover (Idle)");
-		fAnimNameTypes.push_back("Torso Forward SpeedB");
-		fAnimNameTypes.push_back("Torso Forward SpeedA");
-		fAnimNameTypes.push_back("Torso RBank Flapping");
-		fAnimNameTypes.push_back("Torso RBank Coasting");
-		fAnimNameTypes.push_back("Torso LBank Flapping");
-		fAnimNameTypes.push_back("Torso LBank Coasting");
-		fAnimNameTypes.push_back("Torso Backward Flight");
-		fAnimNameTypes.push_back("RWing Spastic Rotate");
-		fAnimNameTypes.push_back("RWing Hover (Idle)");
-		fAnimNameTypes.push_back("RWing Forward SpeedB");
-		fAnimNameTypes.push_back("RWing Forward SpeedA");
-		fAnimNameTypes.push_back("RWing RBank Flapping");
-		fAnimNameTypes.push_back("RWing RBank Coasting");
-		fAnimNameTypes.push_back("RWing LBank Flapping");
-		fAnimNameTypes.push_back("RWing LBank Coasting");
-		fAnimNameTypes.push_back("RWing Backward Flight");
-		fAnimNameTypes.push_back("LWing Spastic Rotate");
-		fAnimNameTypes.push_back("LWing Hover (Idle)");
-		fAnimNameTypes.push_back("LWing Forward SpeedA");
-		fAnimNameTypes.push_back("LWing Forward SpeedB");
-		fAnimNameTypes.push_back("LWing RBank Flapping");
-		fAnimNameTypes.push_back("LWing RBank Coasting");
-		fAnimNameTypes.push_back("LWing LBank Flapping");
-		fAnimNameTypes.push_back("LWing LBank Coasting");
-		fAnimNameTypes.push_back("LWing Backward Flight");
-	}
+    //Vector is used because the []operator is handy for filling
+    //the dialog boxes for implementation Components. -RXA
+    // KEEP THIS SYNCHRONIZED with the enum above.
+    plCritterCommands() 
+    {
+        fAnimNameTypes.push_back("Torso Straighten Out");
+        fAnimNameTypes.push_back("Torso Spastic Rotate");
+        fAnimNameTypes.push_back("Torso Shake Head");
+        fAnimNameTypes.push_back("Torso Open Mouth");
+        fAnimNameTypes.push_back("Torso Hover (Idle)");
+        fAnimNameTypes.push_back("Torso Forward SpeedB");
+        fAnimNameTypes.push_back("Torso Forward SpeedA");
+        fAnimNameTypes.push_back("Torso RBank Flapping");
+        fAnimNameTypes.push_back("Torso RBank Coasting");
+        fAnimNameTypes.push_back("Torso LBank Flapping");
+        fAnimNameTypes.push_back("Torso LBank Coasting");
+        fAnimNameTypes.push_back("Torso Backward Flight");
+        fAnimNameTypes.push_back("RWing Spastic Rotate");
+        fAnimNameTypes.push_back("RWing Hover (Idle)");
+        fAnimNameTypes.push_back("RWing Forward SpeedB");
+        fAnimNameTypes.push_back("RWing Forward SpeedA");
+        fAnimNameTypes.push_back("RWing RBank Flapping");
+        fAnimNameTypes.push_back("RWing RBank Coasting");
+        fAnimNameTypes.push_back("RWing LBank Flapping");
+        fAnimNameTypes.push_back("RWing LBank Coasting");
+        fAnimNameTypes.push_back("RWing Backward Flight");
+        fAnimNameTypes.push_back("LWing Spastic Rotate");
+        fAnimNameTypes.push_back("LWing Hover (Idle)");
+        fAnimNameTypes.push_back("LWing Forward SpeedA");
+        fAnimNameTypes.push_back("LWing Forward SpeedB");
+        fAnimNameTypes.push_back("LWing RBank Flapping");
+        fAnimNameTypes.push_back("LWing RBank Coasting");
+        fAnimNameTypes.push_back("LWing LBank Flapping");
+        fAnimNameTypes.push_back("LWing LBank Coasting");
+        fAnimNameTypes.push_back("LWing Backward Flight");
+    }
 
-	int GetNumElements() { return fAnimNameTypes.size(); }
+    int GetNumElements() { return fAnimNameTypes.size(); }
 
 };
 

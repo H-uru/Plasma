@@ -37,17 +37,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plNCAgeJoinerMsg : public plMessage {
 public:
-	enum {
-		kHACK_NotifyRcvdAllSDLStates,		// Just until the server is working again
-	};
-	
-	unsigned type;
+    enum {
+        kHACK_NotifyRcvdAllSDLStates,       // Just until the server is working again
+    };
+    
+    unsigned type;
 
     CLASSNAME_REGISTER(plNCAgeJoinerMsg);
     GETINTERFACE_ANY(plNCAgeJoinerMsg, plMessage);
-	
-	void Read (hsStream *, hsResMgr *) { FATAL("plNCAgeJoinerMsg::Read"); }
-	void Write (hsStream *, hsResMgr *) { FATAL("plNCAgeJoinerMsg::Write"); }
+    
+    void Read (hsStream *, hsResMgr *) { FATAL("plNCAgeJoinerMsg::Read"); }
+    void Write (hsStream *, hsResMgr *) { FATAL("plNCAgeJoinerMsg::Write"); }
 };
 
 

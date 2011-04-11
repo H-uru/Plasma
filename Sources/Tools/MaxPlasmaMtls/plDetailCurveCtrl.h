@@ -24,22 +24,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plDetailCurveCtrl Class Header											 //
-//	Custom Win32 Control class for drawing the detail map opacity curve so	 //
-//	the artists can figure out what the hell is going on.					 //
-//	Cyan, Inc.																 //
-//																			 //
-//	To use:																	 //
-//		1. Create a new plDetailCurveCtrl, giving it a parent window and a	 //
-//		   client rect.														 //
-//		2. Set the start and end percentages, along with the start and end	 //
-//		   opacities.														 //
-//																			 //
+//                                                                           //
+//  plDetailCurveCtrl Class Header                                           //
+//  Custom Win32 Control class for drawing the detail map opacity curve so   //
+//  the artists can figure out what the hell is going on.                    //
+//  Cyan, Inc.                                                               //
+//                                                                           //
+//  To use:                                                                  //
+//      1. Create a new plDetailCurveCtrl, giving it a parent window and a   //
+//         client rect.                                                      //
+//      2. Set the start and end percentages, along with the start and end   //
+//         opacities.                                                        //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	10.1.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  10.1.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plDetailCurveCtrl_h
@@ -52,9 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define GET_DETAIL_CURVE_CTRL( dlg, id ) (GetDlgItem( dlg, id ) ? (plDetailCurveCtrl *)GetWindowLong( GetDlgItem( dlg, id ), GWL_USERDATA ) : NULL )
 
 // Message to parent to let it know a point got dragged. lParam = pointer to control, wParam = 1 if start point, 0 if end point
-#define PL_DC_POINT_DRAGGED	WM_USER + 50
-#define PL_DC_START_POINT	1
-#define PL_DC_END_POINT		0
+#define PL_DC_POINT_DRAGGED WM_USER + 50
+#define PL_DC_START_POINT   1
+#define PL_DC_END_POINT     0
 
 /// The following #define was for back when I had two graphs, one was with mipmap level
 /// as the X axis, the other was as it is now (distance). Uncomment this define to
@@ -65,63 +65,63 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plDetailCurveCtrl
 {
-	protected:
+    protected:
 
-		HWND	fHWnd;
+        HWND    fHWnd;
 
-		HDC		fDblDC;
-		HBITMAP	fDblBitmap;
-		HBRUSH	fWhiteBrush, fBlueBrush;
-		HPEN	fBluePen, fLiteBluePen;
-		
-		RECT	fStartDragPt, fEndDragPt;
+        HDC     fDblDC;
+        HBITMAP fDblBitmap;
+        HBRUSH  fWhiteBrush, fBlueBrush;
+        HPEN    fBluePen, fLiteBluePen;
+        
+        RECT    fStartDragPt, fEndDragPt;
 
-		bool	fDraggingStart, fDraggingEnd;
-		bool	fCanDragStart, fCanDragEnd;
+        bool    fDraggingStart, fDraggingEnd;
+        bool    fCanDragStart, fCanDragEnd;
 
-		int		fNumLevels;
-		float	fStartPercent, fEndPercent;
-		float	fStartOpac, fEndOpac;
+        int     fNumLevels;
+        float   fStartPercent, fEndPercent;
+        float   fStartOpac, fEndOpac;
 
-		void	IInitDblBuffer( void );
-		void	IRefreshDblBuffer( void );
-		void	IDrawCurve( HDC hDC, bool clampToInts, int cornerX, int cornerY, SIZE *bgndSize );
+        void    IInitDblBuffer( void );
+        void    IRefreshDblBuffer( void );
+        void    IDrawCurve( HDC hDC, bool clampToInts, int cornerX, int cornerY, SIZE *bgndSize );
 
-		float	IXlateDistToValue( float dist, bool clampToInts );
-		float	IXlateDistToX( float dist, bool clampToInts );
-		float	IXlateXToDist( float howFar );
-		void	IXlateValuesToClientPt( float x, float y, POINT *pt, int cornerX, int cornerY, SIZE *bgndSize );
-		void	IMapMouseToValues( int x, int y, bool mapToStart );
+        float   IXlateDistToValue( float dist, bool clampToInts );
+        float   IXlateDistToX( float dist, bool clampToInts );
+        float   IXlateXToDist( float howFar );
+        void    IXlateValuesToClientPt( float x, float y, POINT *pt, int cornerX, int cornerY, SIZE *bgndSize );
+        void    IMapMouseToValues( int x, int y, bool mapToStart );
 
-		void	ISendDraggedMessage( bool itWasTheStartPoint );
+        void    ISendDraggedMessage( bool itWasTheStartPoint );
 
-		static HINSTANCE	fInstance;
-		static int			fClassRefCnt;
-		static HBITMAP		fBgndImage;
-		static HFONT		fFont;
+        static HINSTANCE    fInstance;
+        static int          fClassRefCnt;
+        static HBITMAP      fBgndImage;
+        static HFONT        fFont;
 
 #ifdef MCN_TWO_GRAPH_MODE
-		static HBITMAP		fBgndImage2;
-		static bool			fXAsMipmapLevel;
+        static HBITMAP      fBgndImage2;
+        static bool         fXAsMipmapLevel;
 #endif
 
-		static void	IRegisterCtrl( HINSTANCE instance );
-		static void	IUnregisterCtrl( void );
+        static void IRegisterCtrl( HINSTANCE instance );
+        static void IUnregisterCtrl( void );
 
-		static LRESULT CALLBACK	IWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+        static LRESULT CALLBACK IWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
 
-	public:
+    public:
 
-		plDetailCurveCtrl( HWND parentWnd, WPARAM id, RECT *clientRect, HINSTANCE instance = NULL );
-		~plDetailCurveCtrl();
+        plDetailCurveCtrl( HWND parentWnd, WPARAM id, RECT *clientRect, HINSTANCE instance = NULL );
+        ~plDetailCurveCtrl();
 
-		void	SetStartPoint( float percentLevel, float opacity );
-		void	SetEndPoint( float percentLevel, float opacity );
-		void	SetNumLevels( int numLevels );
+        void    SetStartPoint( float percentLevel, float opacity );
+        void    SetEndPoint( float percentLevel, float opacity );
+        void    SetNumLevels( int numLevels );
 
-		void	GetStartPoint( float &percent, float &opacity ) { percent = fStartPercent; opacity = fStartOpac; }
-		void	GetEndPoint( float &percent, float &opacity ) { percent = fEndPercent; opacity = fEndOpac; }
+        void    GetStartPoint( float &percent, float &opacity ) { percent = fStartPercent; opacity = fStartOpac; }
+        void    GetEndPoint( float &percent, float &opacity ) { percent = fEndPercent; opacity = fEndOpac; }
 
 };
 

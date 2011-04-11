@@ -5,11 +5,11 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plEncryption_SOURCES
-	plChecksum.cpp
+    plChecksum.cpp
 )
 
 set(plEncryption_HEADERS
-	plChecksum.h
+    plChecksum.h
 )
 
 add_library(plEncryption STATIC ${plEncryption_SOURCES} ${plEncryption_HEADERS})

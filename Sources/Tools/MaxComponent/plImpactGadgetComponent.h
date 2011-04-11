@@ -33,10 +33,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // class plImpactGadget : public plActivatorBaseComponent
 // {
 // public:
-// 	plImpactGadget();
+//  plImpactGadget();
 // 
-// 	hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-// 	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+//  hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+//  hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 // };
 
 #endif // plImpactGadgetComponent_inc

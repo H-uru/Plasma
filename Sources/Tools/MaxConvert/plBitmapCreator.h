@@ -38,76 +38,76 @@ class plErrorMsg;
 class plBitmapData
 {
 public:
-	enum
-	{
-		kClampU	= 0x01,
-		kClampV	= 0x02
-	};
+    enum
+    {
+        kClampU = 0x01,
+        kClampV = 0x02
+    };
 
-	const char *fileName;
-	UInt32 texFlags;
-	UInt32 createFlags;
-	hsScalar detailDropoffStart;
-	hsScalar detailDropoffStop;
-	hsScalar detailMax;
-	hsScalar detailMin;
-	float sig;
-	hsBool	isStaticCubicEnvMap;
-	hsBool	invertAlpha;
-	const char	*faceNames[ 6 ];
-	UInt32	maxDimension;
-	UInt8	clampFlags;
-	bool	useJPEG;
+    const char *fileName;
+    UInt32 texFlags;
+    UInt32 createFlags;
+    hsScalar detailDropoffStart;
+    hsScalar detailDropoffStop;
+    hsScalar detailMax;
+    hsScalar detailMin;
+    float sig;
+    hsBool  isStaticCubicEnvMap;
+    hsBool  invertAlpha;
+    const char  *faceNames[ 6 ];
+    UInt32  maxDimension;
+    UInt8   clampFlags;
+    bool    useJPEG;
 
-	plBitmapData()
-	{
-		fileName = nil;
-		texFlags = 0;
-		createFlags = 0;
-		detailDropoffStart = detailDropoffStop = 0.f;
-		detailMax = detailMin = 0.f;
-		sig = 0;
-		isStaticCubicEnvMap = false;
-		invertAlpha = false;
-		faceNames[ 0 ] = faceNames[ 1 ] = faceNames[ 2 ] = faceNames[ 3 ] = faceNames[ 4 ] = faceNames[ 5 ] = nil;
-		maxDimension = 0;
-		clampFlags = 0;
-		useJPEG = false;
-	}
+    plBitmapData()
+    {
+        fileName = nil;
+        texFlags = 0;
+        createFlags = 0;
+        detailDropoffStart = detailDropoffStop = 0.f;
+        detailMax = detailMin = 0.f;
+        sig = 0;
+        isStaticCubicEnvMap = false;
+        invertAlpha = false;
+        faceNames[ 0 ] = faceNames[ 1 ] = faceNames[ 2 ] = faceNames[ 3 ] = faceNames[ 4 ] = faceNames[ 5 ] = nil;
+        maxDimension = 0;
+        clampFlags = 0;
+        useJPEG = false;
+    }
 };
 
 class plRegistryKeyIterator;
 class plBitmapCreator
 {
-	public:
+    public:
 
-		static plBitmapCreator	&Instance();
+        static plBitmapCreator  &Instance();
 
-		plBitmap	*CreateTexture( plBitmapData *bd, const plLocation &loc, int clipID = -1 );
-		plMipmap	*CreateBlankMipmap( UInt32 width, UInt32 height, unsigned config, UInt8 numLevels, const char *keyName, const plLocation &keyLocation );
+        plBitmap    *CreateTexture( plBitmapData *bd, const plLocation &loc, int clipID = -1 );
+        plMipmap    *CreateBlankMipmap( UInt32 width, UInt32 height, unsigned config, UInt8 numLevels, const char *keyName, const plLocation &keyLocation );
 
-		void	Init( hsBool save, plErrorMsg *msg );
-		void	DeInit( void );
-		void	CleanUpMaps( void );
+        void    Init( hsBool save, plErrorMsg *msg );
+        void    DeInit( void );
+        void    CleanUpMaps( void );
 
-		~plBitmapCreator();
+        ~plBitmapCreator();
 
-		// This will also set the key you pass in to nil, so be careful
-		void	DeleteExportedBitmap( const plKey &key );
+        // This will also set the key you pass in to nil, so be careful
+        void    DeleteExportedBitmap( const plKey &key );
 
-	protected:
+    protected:
 
-		plErrorMsg				*fErrorMsg;
+        plErrorMsg              *fErrorMsg;
 
-		plBitmapCreator();
+        plBitmapCreator();
 
-		plBitmap	*ICreateTexture( plBitmapData *bd, const plLocation &loc, int clipID = -1 );
-		plMipmap	*ICreateBitmap( plBitmapData *bd );
+        plBitmap    *ICreateTexture( plBitmapData *bd, const plLocation &loc, int clipID = -1 );
+        plMipmap    *ICreateBitmap( plBitmapData *bd );
 
-		void	ICheckOutBitmap( BitmapInfo *bInfo, Bitmap *bm, const char *fileName );
-		int		IResampBitmap( Bitmap *bm, plMipmap &hBitmap );
-		int		ICopyBitmap( Bitmap *bm, plMipmap &hBitmap );
-		int		IInvertAlpha( plMipmap &hBitmap );
+        void    ICheckOutBitmap( BitmapInfo *bInfo, Bitmap *bm, const char *fileName );
+        int     IResampBitmap( Bitmap *bm, plMipmap &hBitmap );
+        int     ICopyBitmap( Bitmap *bm, plMipmap &hBitmap );
+        int     IInvertAlpha( plMipmap &hBitmap );
 
-		void	IAddBitmap( plBitmap *bitmap, hsBool dontRef = false );
+        void    IAddBitmap( plBitmap *bitmap, hsBool dontRef = false );
 };

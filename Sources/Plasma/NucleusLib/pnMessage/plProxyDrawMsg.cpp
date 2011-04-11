@@ -29,22 +29,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 plProxyDrawMsg::plProxyDrawMsg()
-:	plMessage(nil, nil, nil), 
-	fProxyFlags(0)
+:   plMessage(nil, nil, nil), 
+    fProxyFlags(0)
 {
-	SetBCastFlag(plMessage::kBCastByExactType);
+    SetBCastFlag(plMessage::kBCastByExactType);
 }
 
 plProxyDrawMsg::plProxyDrawMsg(UInt16 flags)
-:	plMessage(nil, nil, nil),
-	fProxyFlags(flags)
+:   plMessage(nil, nil, nil),
+    fProxyFlags(flags)
 {
-	SetBCastFlag(plMessage::kBCastByExactType);
+    SetBCastFlag(plMessage::kBCastByExactType);
 }
 
 plProxyDrawMsg::plProxyDrawMsg(plKey &rcv, UInt16 flags)
-:	plMessage(rcv, rcv, nil),
-	fProxyFlags(flags)
+:   plMessage(rcv, rcv, nil),
+    fProxyFlags(flags)
 {
 }
 
@@ -54,12 +54,12 @@ plProxyDrawMsg::~plProxyDrawMsg()
 
 void plProxyDrawMsg::Read(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(s, mgr);
-	fProxyFlags = s->ReadSwap16();
+    plMessage::IMsgRead(s, mgr);
+    fProxyFlags = s->ReadSwap16();
 }
 
 void plProxyDrawMsg::Write(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(s, mgr);
-	s->WriteSwap16(fProxyFlags);
+    plMessage::IMsgWrite(s, mgr);
+    s->WriteSwap16(fProxyFlags);
 }

@@ -26,9 +26,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMaxAccelerators
 {
 protected:
-	static int fNumDisables;
+    static int fNumDisables;
 
 public:
-	static void Enable();
-	static void Disable();
+    static void Enable();
+    static void Disable();
 };

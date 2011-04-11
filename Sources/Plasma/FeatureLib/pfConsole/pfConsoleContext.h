@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfConsoleContext Header													//
-//																			//
+//                                                                          //
+//  pfConsoleContext Header                                                 //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfConsoleContext_h
@@ -40,54 +40,54 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pfConsoleContext
 {
-	protected:
+    protected:
 
-		hsBool	fAddWhenNotFound;		// Controls whether we add variables on Set() calls if they're not found
+        hsBool  fAddWhenNotFound;       // Controls whether we add variables on Set() calls if they're not found
 
-		char	*fName;
+        char    *fName;
 
-		hsTArray<char *>			fVarNames;
-		hsTArray<pfConsoleCmdParam>	fVarValues;
+        hsTArray<char *>            fVarNames;
+        hsTArray<pfConsoleCmdParam> fVarValues;
 
-		void	IAddVar( const char *name, const pfConsoleCmdParam &value );
+        void    IAddVar( const char *name, const pfConsoleCmdParam &value );
 
-		static pfConsoleContext	fRootContext;
+        static pfConsoleContext fRootContext;
 
-	public:
+    public:
 
-		pfConsoleContext( const char *name );
-		virtual ~pfConsoleContext();
+        pfConsoleContext( const char *name );
+        virtual ~pfConsoleContext();
 
-		void	Clear( void );
+        void    Clear( void );
 
-		UInt32				GetNumVars( void ) const;
-		const char			*GetVarName( UInt32 idx ) const;
-		pfConsoleCmdParam	&GetVarValue( UInt32 idx ) const;
+        UInt32              GetNumVars( void ) const;
+        const char          *GetVarName( UInt32 idx ) const;
+        pfConsoleCmdParam   &GetVarValue( UInt32 idx ) const;
 
-		Int32	FindVar( const char *name ) const;
-		void	RemoveVar( UInt32 idx );
+        Int32   FindVar( const char *name ) const;
+        void    RemoveVar( UInt32 idx );
 
-		void	AddVar( const char *name, const pfConsoleCmdParam &value );
-		void	AddVar( const char *name, int value );
-		void	AddVar( const char *name, float value );
-		void	AddVar( const char *name, const char *value );
-		void	AddVar( const char *name, char value );
-		void	AddVar( const char *name, bool value );
+        void    AddVar( const char *name, const pfConsoleCmdParam &value );
+        void    AddVar( const char *name, int value );
+        void    AddVar( const char *name, float value );
+        void    AddVar( const char *name, const char *value );
+        void    AddVar( const char *name, char value );
+        void    AddVar( const char *name, bool value );
 
-		hsBool	SetVar( UInt32 idx, const pfConsoleCmdParam &value );
+        hsBool  SetVar( UInt32 idx, const pfConsoleCmdParam &value );
 
-		hsBool	SetVar( const char *name, const pfConsoleCmdParam &value );
-		hsBool	SetVar( const char *name, int value );
-		hsBool	SetVar( const char *name, float value );
-		hsBool	SetVar( const char *name, const char *value );
-		hsBool	SetVar( const char *name, char value );
-		hsBool	SetVar( const char *name, bool value );
+        hsBool  SetVar( const char *name, const pfConsoleCmdParam &value );
+        hsBool  SetVar( const char *name, int value );
+        hsBool  SetVar( const char *name, float value );
+        hsBool  SetVar( const char *name, const char *value );
+        hsBool  SetVar( const char *name, char value );
+        hsBool  SetVar( const char *name, bool value );
 
-		// Decide whether Sets() on nonexistant variables will fail or add a new variable
-		void	SetAddWhenNotFound( hsBool f ) { fAddWhenNotFound = f; }
-		hsBool	GetAddWhenNotFound( void ) const { return fAddWhenNotFound; }
+        // Decide whether Sets() on nonexistant variables will fail or add a new variable
+        void    SetAddWhenNotFound( hsBool f ) { fAddWhenNotFound = f; }
+        hsBool  GetAddWhenNotFound( void ) const { return fAddWhenNotFound; }
 
-		static pfConsoleContext	&GetRootContext( void );
+        static pfConsoleContext &GetRootContext( void );
 };
 
 

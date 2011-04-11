@@ -32,23 +32,23 @@ const Class_ID BLOW_COMP_CID(0x2908438f, 0x6c272509);
 class plBlowComponent : public plComponent
 {
 public:
-	enum {
-		kStrength,
-		kSpeed,
-		kFlutter,
-		kConstancy
-	};
+    enum {
+        kStrength,
+        kSpeed,
+        kFlutter,
+        kConstancy
+    };
 public:
-	plBlowComponent();
-	void DeleteThis() { delete this; }
+    plBlowComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
+    virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
 
 #endif // plBlowComponent_inc

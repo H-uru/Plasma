@@ -9,14 +9,14 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
 
 set(pfAudio_SOURCES
-	plListener.cpp
-	plRandomSoundMod.cpp
+    plListener.cpp
+    plRandomSoundMod.cpp
 )
 
 set(pfAudio_HEADERS
-	pfAudioCreatable.h
-	plListener.h
-	plRandomSoundMod.h
+    pfAudioCreatable.h
+    plListener.h
+    plRandomSoundMod.h
 )
 
 add_library(pfAudio STATIC ${pfAudio_SOURCES} ${pfAudio_HEADERS})

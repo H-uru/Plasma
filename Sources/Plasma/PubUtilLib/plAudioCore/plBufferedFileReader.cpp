@@ -24,16 +24,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plBufferedFileReader - Reads in a given file into a RAM buffer, then	//
-//						   "reads" from that buffer as requested. Useless	//
-//						   for normal sounds, but perfect for streaming		//
-//						   from RAM.										//
-//																			//
+//                                                                          //
+//  plBufferedFileReader - Reads in a given file into a RAM buffer, then    //
+//                         "reads" from that buffer as requested. Useless   //
+//                         for normal sounds, but perfect for streaming     //
+//                         from RAM.                                        //
+//                                                                          //
 //// Notes ///////////////////////////////////////////////////////////////////
-//																			//
-//	11.1.2002 - Created by mcn.												//
-//																			//
+//                                                                          //
+//  11.1.2002 - Created by mcn.                                             //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
@@ -50,117 +50,117 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plBufferedFileReader::plBufferedFileReader( const char *path, plAudioCore::ChannelSelect whichChan )
 {
-	// Init some stuff
-	fBufferSize = 0;
-	fBuffer = nil;
-	fCursor = 0;
+    // Init some stuff
+    fBufferSize = 0;
+    fBuffer = nil;
+    fCursor = 0;
 
-	hsAssert( path != nil, "Invalid path specified in plBufferedFileReader" );
+    hsAssert( path != nil, "Invalid path specified in plBufferedFileReader" );
 
-	// Ask plAudioFileReader for another reader to get this file
-	// Note: have this reader do the chanSelect for us
-	plAudioFileReader *reader = plAudioFileReader::CreateReader( path, whichChan );
-	if( reader == nil || !reader->IsValid() )
-	{
-		delete reader;
-		IError( "Unable to open file to read in to RAM buffer" );
-		return;
-	}
+    // Ask plAudioFileReader for another reader to get this file
+    // Note: have this reader do the chanSelect for us
+    plAudioFileReader *reader = plAudioFileReader::CreateReader( path, whichChan );
+    if( reader == nil || !reader->IsValid() )
+    {
+        delete reader;
+        IError( "Unable to open file to read in to RAM buffer" );
+        return;
+    }
 
-	fHeader = reader->GetHeader();
+    fHeader = reader->GetHeader();
 
-	fBufferSize = reader->GetDataSize();
-	fBuffer = TRACKED_NEW UInt8[ fBufferSize ];
-	//plProfile_NewMem( SndBufferedMem, fBufferSize );
-	if( fBuffer == nil )
-	{
-		delete reader;
-		IError( "Unable to allocate RAM buffer" );
-		return;
-	}
+    fBufferSize = reader->GetDataSize();
+    fBuffer = TRACKED_NEW UInt8[ fBufferSize ];
+    //plProfile_NewMem( SndBufferedMem, fBufferSize );
+    if( fBuffer == nil )
+    {
+        delete reader;
+        IError( "Unable to allocate RAM buffer" );
+        return;
+    }
 
-	if( !reader->Read( fBufferSize, fBuffer ) )
-	{
-		delete reader;
-		IError( "Unable to read file into RAM buffer" );
-		return;
-	}
+    if( !reader->Read( fBufferSize, fBuffer ) )
+    {
+        delete reader;
+        IError( "Unable to read file into RAM buffer" );
+        return;
+    }
 
-	// All done!
-	delete reader;
+    // All done!
+    delete reader;
 }
 
 plBufferedFileReader::~plBufferedFileReader()
 {
-	Close();
+    Close();
 }
 
-void	plBufferedFileReader::Close( void )
+void    plBufferedFileReader::Close( void )
 {
-	//plProfile_DelMem( SndBufferedMem, fBufferSize );
+    //plProfile_DelMem( SndBufferedMem, fBufferSize );
 
-	DEL(fBuffer);;
-	fBuffer = nil;
-	fBufferSize = 0;
-	fCursor = 0;
+    DEL(fBuffer);;
+    fBuffer = nil;
+    fBufferSize = 0;
+    fCursor = 0;
 }
 
-void	plBufferedFileReader::IError( const char *msg )
+void    plBufferedFileReader::IError( const char *msg )
 {
-	hsAssert( false, msg );
-	Close();
+    hsAssert( false, msg );
+    Close();
 }
 
-plWAVHeader	&plBufferedFileReader::GetHeader( void )
+plWAVHeader &plBufferedFileReader::GetHeader( void )
 {
-	hsAssert( IsValid(), "GetHeader() called on an invalid RAM buffer" );
+    hsAssert( IsValid(), "GetHeader() called on an invalid RAM buffer" );
 
-	return fHeader;
+    return fHeader;
 }
 
-float	plBufferedFileReader::GetLengthInSecs( void )
+float   plBufferedFileReader::GetLengthInSecs( void )
 {
-	hsAssert( IsValid(), "GetLengthInSecs() called on an invalid RAM buffer" );
+    hsAssert( IsValid(), "GetLengthInSecs() called on an invalid RAM buffer" );
 
-	return (float)fBufferSize / (float)fHeader.fAvgBytesPerSec;
+    return (float)fBufferSize / (float)fHeader.fAvgBytesPerSec;
 }
 
-hsBool	plBufferedFileReader::SetPosition( UInt32 numBytes )
+hsBool  plBufferedFileReader::SetPosition( UInt32 numBytes )
 {
-	hsAssert( IsValid(), "SetPosition() called on an invalid RAM buffer" );
+    hsAssert( IsValid(), "SetPosition() called on an invalid RAM buffer" );
 
-	if( numBytes > fBufferSize )
-	{
-		hsAssert( false, "Invalid position in SetPosition()" );
-		return false;
-	}
+    if( numBytes > fBufferSize )
+    {
+        hsAssert( false, "Invalid position in SetPosition()" );
+        return false;
+    }
 
-	fCursor = numBytes;
-	return true;
+    fCursor = numBytes;
+    return true;
 }
 
-hsBool	plBufferedFileReader::Read( UInt32 numBytes, void *buffer )
+hsBool  plBufferedFileReader::Read( UInt32 numBytes, void *buffer )
 {
-	hsAssert( IsValid(), "Read() called on an invalid RAM buffer" );
+    hsAssert( IsValid(), "Read() called on an invalid RAM buffer" );
 
 
-	hsBool valid = true;
+    hsBool valid = true;
 
-	if( fCursor + numBytes > fBufferSize )
-	{
-		numBytes = fBufferSize - fCursor;
-		valid = false;
-	}
+    if( fCursor + numBytes > fBufferSize )
+    {
+        numBytes = fBufferSize - fCursor;
+        valid = false;
+    }
 
-	memcpy( buffer, fBuffer + fCursor, numBytes );
-	fCursor += numBytes;
+    memcpy( buffer, fBuffer + fCursor, numBytes );
+    fCursor += numBytes;
 
-	return valid;
+    return valid;
 }
 
-UInt32	plBufferedFileReader::NumBytesLeft( void )
+UInt32  plBufferedFileReader::NumBytesLeft( void )
 {
-	hsAssert( IsValid(), "NumBytesLeft() called on an invalid RAM buffer" );
+    hsAssert( IsValid(), "NumBytesLeft() called on an invalid RAM buffer" );
 
-	return fBufferSize - fCursor;
+    return fBufferSize - fCursor;
 }

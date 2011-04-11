@@ -38,8 +38,8 @@ static plStatusLog* gLog = nil;
 
 plTagModifier::plTagModifier()
 {
-	if (!gLog)
-		gLog = plStatusLogMgr::GetInstance().CreateStatusLog(15, "Tag", plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
+    if (!gLog)
+        gLog = plStatusLogMgr::GetInstance().CreateStatusLog(15, "Tag", plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
 }
 
 plTagModifier::~plTagModifier()
@@ -48,56 +48,56 @@ plTagModifier::~plTagModifier()
 
 hsBool plTagModifier::MsgReceive(plMessage* msg)
 {
-	plCollideMsg* collideMsg = plCollideMsg::ConvertNoRef(msg);
-	if (collideMsg)
-	{
-		gLog->AddLineF("Kicked by %s", collideMsg->fOtherKey->GetName());
-		return true;
-	}
+    plCollideMsg* collideMsg = plCollideMsg::ConvertNoRef(msg);
+    if (collideMsg)
+    {
+        gLog->AddLineF("Kicked by %s", collideMsg->fOtherKey->GetName());
+        return true;
+    }
 
-	plRemoteAvatarInfoMsg* avInfoMsg = plRemoteAvatarInfoMsg::ConvertNoRef(msg);
-	if (avInfoMsg)
-	{
-		// TODO
-		// Check if the local av is frozen
-//		plKey localAvKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    plRemoteAvatarInfoMsg* avInfoMsg = plRemoteAvatarInfoMsg::ConvertNoRef(msg);
+    if (avInfoMsg)
+    {
+        // TODO
+        // Check if the local av is frozen
+//      plKey localAvKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
 
-		// Freeze clicked av
-		plKey clickedAvKey = avInfoMsg->GetAvatarKey();
-		if (clickedAvKey)
-		{
-			static hsBool tempHack = true;
-			tempHack = !tempHack;
+        // Freeze clicked av
+        plKey clickedAvKey = avInfoMsg->GetAvatarKey();
+        if (clickedAvKey)
+        {
+            static hsBool tempHack = true;
+            tempHack = !tempHack;
 
-			plAvEnableMsg* avEnableMsg = new plAvEnableMsg(GetKey(), clickedAvKey, tempHack);
-			avEnableMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kPropagateToModifiers);
-			avEnableMsg->Send();
+            plAvEnableMsg* avEnableMsg = new plAvEnableMsg(GetKey(), clickedAvKey, tempHack);
+            avEnableMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kPropagateToModifiers);
+            avEnableMsg->Send();
 
-			gLog->AddLineF("Tagged %s", clickedAvKey->GetName());
-		}
+            gLog->AddLineF("Tagged %s", clickedAvKey->GetName());
+        }
 
-		return true;
-	}
-	
-	return plSingleModifier::MsgReceive(msg);
+        return true;
+    }
+    
+    return plSingleModifier::MsgReceive(msg);
 }
 
 void plTagModifier::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plSingleModifier::Read(stream, mgr);
+    plSingleModifier::Read(stream, mgr);
 }
 
 void plTagModifier::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plSingleModifier::Write(stream, mgr);
+    plSingleModifier::Write(stream, mgr);
 }
 
 #include "plgDispatch.h"
 
 void plTagModifier::SetTarget(plSceneObject* so)
 {
-	if (so)
-		plgDispatch::Dispatch()->RegisterForExactType(plRemoteAvatarInfoMsg::Index(), GetKey());
-	else
-		plgDispatch::Dispatch()->UnRegisterForExactType(plRemoteAvatarInfoMsg::Index(), GetKey());
+    if (so)
+        plgDispatch::Dispatch()->RegisterForExactType(plRemoteAvatarInfoMsg::Index(), GetKey());
+    else
+        plgDispatch::Dispatch()->UnRegisterForExactType(plRemoteAvatarInfoMsg::Index(), GetKey());
 }

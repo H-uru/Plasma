@@ -42,122 +42,122 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyVarSyncMsg : public pyGameCliMsg
 {
 protected:
-	pyVarSyncMsg();
-	pyVarSyncMsg(pfGameCliMsg* msg);
+    pyVarSyncMsg();
+    pyVarSyncMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE; // so we can subclass
-	PYTHON_CLASS_NEW_FRIEND(ptVarSyncMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncMsg); // converts a PyObject to a pyVarSyncMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE; // so we can subclass
+    PYTHON_CLASS_NEW_FRIEND(ptVarSyncMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncMsg); // converts a PyObject to a pyVarSyncMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
-	int GetVarSyncMsgType() const;
+    int GetVarSyncMsgType() const;
 
-	PyObject* UpcastToFinalVarSyncMsg() const; // returns the VarSync message that this really is
+    PyObject* UpcastToFinalVarSyncMsg() const; // returns the VarSync message that this really is
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyVarSyncStringVarChangedMsg : public pyVarSyncMsg
 {
 protected:
-	pyVarSyncStringVarChangedMsg();
-	pyVarSyncStringVarChangedMsg(pfGameCliMsg* msg);
+    pyVarSyncStringVarChangedMsg();
+    pyVarSyncStringVarChangedMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVarSyncStringVarChangedMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncStringVarChangedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncStringVarChangedMsg); // converts a PyObject to a pyVarSyncStringVarChangedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVarSyncStringVarChangedMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncStringVarChangedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncStringVarChangedMsg); // converts a PyObject to a pyVarSyncStringVarChangedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	unsigned long ID() const;
-	std::wstring Value() const;
+    unsigned long ID() const;
+    std::wstring Value() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyVarSyncNumericVarChangedMsg : public pyVarSyncMsg
 {
 protected:
-	pyVarSyncNumericVarChangedMsg();
-	pyVarSyncNumericVarChangedMsg(pfGameCliMsg* msg);
+    pyVarSyncNumericVarChangedMsg();
+    pyVarSyncNumericVarChangedMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVarSyncNumericVarChangedMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncNumericVarChangedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncNumericVarChangedMsg); // converts a PyObject to a pyVarSyncNumericVarChangedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVarSyncNumericVarChangedMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncNumericVarChangedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncNumericVarChangedMsg); // converts a PyObject to a pyVarSyncNumericVarChangedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	unsigned long ID() const;
-	double Value() const;
+    unsigned long ID() const;
+    double Value() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyVarSyncAllVarsSentMsg : public pyVarSyncMsg
 {
 protected:
-	pyVarSyncAllVarsSentMsg();
-	pyVarSyncAllVarsSentMsg(pfGameCliMsg* msg);
+    pyVarSyncAllVarsSentMsg();
+    pyVarSyncAllVarsSentMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVarSyncAllVarsSentMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncAllVarsSentMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncAllVarsSentMsg); // converts a PyObject to a pyVarSyncAllVarsSentMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVarSyncAllVarsSentMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncAllVarsSentMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncAllVarsSentMsg); // converts a PyObject to a pyVarSyncAllVarsSentMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyVarSyncStringVarCreatedMsg : public pyVarSyncMsg
 {
 protected:
-	pyVarSyncStringVarCreatedMsg();
-	pyVarSyncStringVarCreatedMsg(pfGameCliMsg* msg);
+    pyVarSyncStringVarCreatedMsg();
+    pyVarSyncStringVarCreatedMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVarSyncStringVarCreatedMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncStringVarCreatedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncStringVarCreatedMsg); // converts a PyObject to a pyVarSyncStringVarCreatedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVarSyncStringVarCreatedMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncStringVarCreatedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncStringVarCreatedMsg); // converts a PyObject to a pyVarSyncStringVarCreatedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	std::wstring Name() const;
-	unsigned long ID() const;
-	std::wstring Value() const;
+    std::wstring Name() const;
+    unsigned long ID() const;
+    std::wstring Value() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyVarSyncNumericVarCreatedMsg : public pyVarSyncMsg
 {
 protected:
-	pyVarSyncNumericVarCreatedMsg();
-	pyVarSyncNumericVarCreatedMsg(pfGameCliMsg* msg);
+    pyVarSyncNumericVarCreatedMsg();
+    pyVarSyncNumericVarCreatedMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVarSyncNumericVarCreatedMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncNumericVarCreatedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncNumericVarCreatedMsg); // converts a PyObject to a pyVarSyncNumericVarCreatedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVarSyncNumericVarCreatedMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVarSyncNumericVarCreatedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVarSyncNumericVarCreatedMsg); // converts a PyObject to a pyVarSyncNumericVarCreatedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	std::wstring Name() const;
-	unsigned long ID() const;
-	double Value() const;
+    std::wstring Name() const;
+    unsigned long ID() const;
+    double Value() const;
 };
 
 #endif // pyVarSyncMsg_h

@@ -34,12 +34,12 @@ class plUUID;
 class plAgeInfoSource
 {
 public:
-	// current time in current age
-	virtual const plUnifiedTime *		GetAgeTime( void ) const = 0;
-	// name of current age
-	virtual const char *				GetAgeName( void ) const = 0;
-	// unique identifier for this age instance
-	virtual const plUUID *		GetAgeGuid( void ) const = 0;
+    // current time in current age
+    virtual const plUnifiedTime *       GetAgeTime( void ) const = 0;
+    // name of current age
+    virtual const char *                GetAgeName( void ) const = 0;
+    // unique identifier for this age instance
+    virtual const plUUID *      GetAgeGuid( void ) const = 0;
 };
 
 

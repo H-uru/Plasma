@@ -39,50 +39,50 @@ class hsResMgr;
 class plPlayerMsg : public plMessage
 {
 protected:
-	hsPoint3	targPoint;
+    hsPoint3    targPoint;
 
 public:
-	plPlayerMsg() { SetBCastFlag(plMessage::kBCastByExactType); }
-	plPlayerMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t){ SetBCastFlag(plMessage::kBCastByExactType);    }
-	~plPlayerMsg(){;}
+    plPlayerMsg() { SetBCastFlag(plMessage::kBCastByExactType); }
+    plPlayerMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t){ SetBCastFlag(plMessage::kBCastByExactType);    }
+    ~plPlayerMsg(){;}
 
-	CLASSNAME_REGISTER( plPlayerMsg );
-	GETINTERFACE_ANY( plPlayerMsg, plMessage ); 
+    CLASSNAME_REGISTER( plPlayerMsg );
+    GETINTERFACE_ANY( plPlayerMsg, plMessage ); 
 
-	enum ModCmds
-	{
-		kMovementStarted = 0,
-		kMovementStopped,
-		kSetDesiredFacing,
-		kWarpToSpawnPoint,
+    enum ModCmds
+    {
+        kMovementStarted = 0,
+        kMovementStopped,
+        kSetDesiredFacing,
+        kWarpToSpawnPoint,
 
-		kNumCmds
-	};
+        kNumCmds
+    };
 
-	hsBitVector		fCmd;
+    hsBitVector     fCmd;
 
-	hsBool Cmd(int n) { return fCmd.IsBitSet(n); }
-	void SetCmd(int n) { fCmd.SetBit(n); }
-	void ClearCmd() { fCmd.Clear(); }
-	const hsPoint3 GetTargPoint() { return targPoint; }
-	void SetTargPoint(hsPoint3 pt) { targPoint = pt; }
+    hsBool Cmd(int n) { return fCmd.IsBitSet(n); }
+    void SetCmd(int n) { fCmd.SetBit(n); }
+    void ClearCmd() { fCmd.Clear(); }
+    const hsPoint3 GetTargPoint() { return targPoint; }
+    void SetTargPoint(hsPoint3 pt) { targPoint = pt; }
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		targPoint.Read(stream);
-		fCmd.Read(stream);
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        targPoint.Read(stream);
+        fCmd.Read(stream);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		targPoint.Write(stream);
-		fCmd.Write(stream);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        targPoint.Write(stream);
+        fCmd.Write(stream);
+    }
 };
 
 #endif // plPlayerMsg_inc

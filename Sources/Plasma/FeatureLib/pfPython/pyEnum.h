@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // NAME: pyEnum
 //
 // PURPOSE: Base class stuff for enumeration support (you don't instance this
-//			class
+//          class
 //
 
 #include <python.h>
@@ -43,9 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyEnum
 {
 public:
-	static void AddPlasmaConstantsClasses(PyObject *m);
-	static void RemovePlasmaConstantsClasses(PyObject *m);
-	static void MakeEnum(PyObject *m, const char* name, std::map<std::string, int> values);
+    static void AddPlasmaConstantsClasses(PyObject *m);
+    static void RemovePlasmaConstantsClasses(PyObject *m);
+    static void MakeEnum(PyObject *m, const char* name, std::map<std::string, int> values);
 };
 
 #endif  // pyEnum_h

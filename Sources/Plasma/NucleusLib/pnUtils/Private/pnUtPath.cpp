@@ -178,97 +178,97 @@ void PathRemoveDirectory (
 
 //============================================================================
 void PathSplitEmail (
-	const wchar	emailAddr[],
-	wchar *		user,
-	unsigned	userChars,
-	wchar *		domain,
-	unsigned	domainChars,
-	wchar *		tld,
-	unsigned	tldChars,
-	wchar *		subDomains,
-	unsigned	subDomainChars,
-	unsigned	subDomainCount
+    const wchar emailAddr[],
+    wchar *     user,
+    unsigned    userChars,
+    wchar *     domain,
+    unsigned    domainChars,
+    wchar *     tld,
+    unsigned    tldChars,
+    wchar *     subDomains,
+    unsigned    subDomainChars,
+    unsigned    subDomainCount
 ) {
-	ASSERT(emailAddr);
-	
-	#define SUB_DOMAIN(i) subDomains[(i) * subDomainChars]
+    ASSERT(emailAddr);
+    
+    #define SUB_DOMAIN(i) subDomains[(i) * subDomainChars]
 
-	// null-terminate all output parameters
-	if (userChars) {
-		ASSERT(user);
-		user[0] = 0;
-	}
-	if (domainChars) {
-		ASSERT(domain);
-		domain[0] = 0;
-	}
-	if (tldChars) {
-		ASSERT(tld);
-		tld[0] = 0;
-	}
-	if (subDomainChars || subDomainCount) {
-		ASSERT(subDomains);
-		for (unsigned i = 0; i < subDomainCount; ++i)
-			SUB_DOMAIN(i) = 0;
-	}
+    // null-terminate all output parameters
+    if (userChars) {
+        ASSERT(user);
+        user[0] = 0;
+    }
+    if (domainChars) {
+        ASSERT(domain);
+        domain[0] = 0;
+    }
+    if (tldChars) {
+        ASSERT(tld);
+        tld[0] = 0;
+    }
+    if (subDomainChars || subDomainCount) {
+        ASSERT(subDomains);
+        for (unsigned i = 0; i < subDomainCount; ++i)
+            SUB_DOMAIN(i) = 0;
+    }
 
-	// bail now if email address is zero-length
-	unsigned len = StrLen(emailAddr);
-	if (!len)
-		return;
+    // bail now if email address is zero-length
+    unsigned len = StrLen(emailAddr);
+    if (!len)
+        return;
 
-	// copy email address so we can tokenize it
-	wchar * tmp = ALLOCA(wchar, len + 1);
-	StrCopy(tmp, emailAddr, len + 1);
-	const wchar * work = tmp;
+    // copy email address so we can tokenize it
+    wchar * tmp = ALLOCA(wchar, len + 1);
+    StrCopy(tmp, emailAddr, len + 1);
+    const wchar * work = tmp;
 
-	// parse user	
-	wchar token[MAX_PATH];
-	if (!StrTokenize(&work, token, arrsize(token), L"@"))
-		return;
+    // parse user   
+    wchar token[MAX_PATH];
+    if (!StrTokenize(&work, token, arrsize(token), L"@"))
+        return;
 
-	// copy user to output parameter
-	if (userChars)
-		StrCopy(user, token, userChars);
+    // copy user to output parameter
+    if (userChars)
+        StrCopy(user, token, userChars);
 
-	// skip past the '@' symbol
-	if (!*work++)
-		return;
-	
-	// parse all domains
-	ARRAY(wchar *) arr;
-	while (StrTokenize(&work, token, arrsize(token), L".")) {
-		unsigned toklen = StrLen(token);
-		wchar * str = ALLOCA(wchar, toklen + 1);
-		StrCopy(str, token, toklen + 1);
-		arr.Add(str);
-	}
+    // skip past the '@' symbol
+    if (!*work++)
+        return;
+    
+    // parse all domains
+    ARRAY(wchar *) arr;
+    while (StrTokenize(&work, token, arrsize(token), L".")) {
+        unsigned toklen = StrLen(token);
+        wchar * str = ALLOCA(wchar, toklen + 1);
+        StrCopy(str, token, toklen + 1);
+        arr.Add(str);
+    }
 
-	// copy domains to output parameters
-	unsigned index = 0;
-	if (arr.Count() > 2) {
-		// all domains except for the last two are sub-domains
-		for (index = 0; index < arr.Count() - 2; ++index) {
-			if (index < subDomainCount)
-				if (subDomains)
-					StrCopy(&SUB_DOMAIN(index), arr[index], subDomainChars);
-		}
-	}
-	if (arr.Count() > 1) {
-		// second to last domain is the primary domain
-		if (domain)
-			StrCopy(domain, arr[index], domainChars);
-		// last comes the top level domain
-		++index;
-		if (tld)
-			StrCopy(tld, arr[index], tldChars);
-	}
-	else if (arr.Count() == 1) {
-		// if only one domain, return it as a sub-domain
-		if (index < subDomainCount)
-			if (subDomains)
-				StrCopy(&SUB_DOMAIN(index), arr[index], subDomainChars);
-	}
-	
-	#undef SUB_DOMAIN
+    // copy domains to output parameters
+    unsigned index = 0;
+    if (arr.Count() > 2) {
+        // all domains except for the last two are sub-domains
+        for (index = 0; index < arr.Count() - 2; ++index) {
+            if (index < subDomainCount)
+                if (subDomains)
+                    StrCopy(&SUB_DOMAIN(index), arr[index], subDomainChars);
+        }
+    }
+    if (arr.Count() > 1) {
+        // second to last domain is the primary domain
+        if (domain)
+            StrCopy(domain, arr[index], domainChars);
+        // last comes the top level domain
+        ++index;
+        if (tld)
+            StrCopy(tld, arr[index], tldChars);
+    }
+    else if (arr.Count() == 1) {
+        // if only one domain, return it as a sub-domain
+        if (index < subDomainCount)
+            if (subDomains)
+                StrCopy(&SUB_DOMAIN(index), arr[index], subDomainChars);
+    }
+    
+    #undef SUB_DOMAIN
 }

@@ -48,74 +48,74 @@ class pyAgeLinkStructRef;
 class pyAgeLinkStruct
 {
 private:
-	plAgeLinkStruct fAgeLink;
+    plAgeLinkStruct fAgeLink;
 
 protected:
-	pyAgeLinkStruct();
-	pyAgeLinkStruct( plAgeLinkStruct * link );
+    pyAgeLinkStruct();
+    pyAgeLinkStruct( plAgeLinkStruct * link );
 
 public:
-	~pyAgeLinkStruct();
+    ~pyAgeLinkStruct();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptAgeLinkStruct);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(plAgeLinkStruct* link);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAgeLinkStruct object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAgeLinkStruct); // converts a PyObject to a pyAgeLinkStruct (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptAgeLinkStruct);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(plAgeLinkStruct* link);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAgeLinkStruct object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAgeLinkStruct); // converts a PyObject to a pyAgeLinkStruct (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	bool operator==(const pyAgeLinkStruct &other) const;
-	bool operator!=(const pyAgeLinkStruct &other) const { return !(other==*this); }
-	plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
-	const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
-	PyObject * GetAgeInfo(); // returns pyAgeInfoStructRef
-	void	SetAgeInfo( pyAgeInfoStruct & info );
-	const char* GetParentAgeFilename();
-	void	SetParentAgeFilename( const char* parentname );
-	void	CopyFrom( const pyAgeLinkStruct & other );
-	void	CopyFromRef( const pyAgeLinkStructRef & other );
-	void	SetLinkingRules( int v );
-	int		GetLinkingRules() const;
-	void	SetSpawnPoint( pySpawnPointInfo & v );
-	void	SetSpawnPointRef( pySpawnPointInfoRef & v );
-	PyObject * GetSpawnPoint(); // returns pySpawnPointInfoRef
+    bool operator==(const pyAgeLinkStruct &other) const;
+    bool operator!=(const pyAgeLinkStruct &other) const { return !(other==*this); }
+    plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
+    const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
+    PyObject * GetAgeInfo(); // returns pyAgeInfoStructRef
+    void    SetAgeInfo( pyAgeInfoStruct & info );
+    const char* GetParentAgeFilename();
+    void    SetParentAgeFilename( const char* parentname );
+    void    CopyFrom( const pyAgeLinkStruct & other );
+    void    CopyFromRef( const pyAgeLinkStructRef & other );
+    void    SetLinkingRules( int v );
+    int     GetLinkingRules() const;
+    void    SetSpawnPoint( pySpawnPointInfo & v );
+    void    SetSpawnPointRef( pySpawnPointInfoRef & v );
+    PyObject * GetSpawnPoint(); // returns pySpawnPointInfoRef
 };
 
 
 class pyAgeLinkStructRef
 {
 private:
-	static plAgeLinkStruct fDefaultLinkStruct; // created so a default constructor could be made for python, do NOT use
-	plAgeLinkStruct & fAgeLink;
+    static plAgeLinkStruct fDefaultLinkStruct; // created so a default constructor could be made for python, do NOT use
+    plAgeLinkStruct & fAgeLink;
 
 protected:
-	pyAgeLinkStructRef(): fAgeLink(fDefaultLinkStruct) {} // only used by python glue, do NOT call directly
-	pyAgeLinkStructRef( plAgeLinkStruct & link ):fAgeLink(link) {}
+    pyAgeLinkStructRef(): fAgeLink(fDefaultLinkStruct) {} // only used by python glue, do NOT call directly
+    pyAgeLinkStructRef( plAgeLinkStruct & link ):fAgeLink(link) {}
 
 public:
-	~pyAgeLinkStructRef(){}
+    ~pyAgeLinkStructRef(){}
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptAgeLinkStructRef);
-	static PyObject *New(plAgeLinkStruct& link);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAgeLinkStructRef object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAgeLinkStructRef); // converts a PyObject to a pyAgeLinkStructRef (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptAgeLinkStructRef);
+    static PyObject *New(plAgeLinkStruct& link);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAgeLinkStructRef object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAgeLinkStructRef); // converts a PyObject to a pyAgeLinkStructRef (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
-	const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
-	PyObject * GetAgeInfo(); // returns pyAgeInfoStructRef
-	void	SetAgeInfo( pyAgeInfoStruct & info );
-	void	CopyFrom( const pyAgeLinkStruct & other );
-	void	CopyFromRef( const pyAgeLinkStructRef & other );
-	void	SetLinkingRules( int v );
-	int		GetLinkingRules() const;
-	void	SetSpawnPoint( pySpawnPointInfo & v );
-	void	SetSpawnPointRef( pySpawnPointInfoRef & v );
-	PyObject * GetSpawnPoint(); // returns pySpawnPointInfoRef
+    plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
+    const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
+    PyObject * GetAgeInfo(); // returns pyAgeInfoStructRef
+    void    SetAgeInfo( pyAgeInfoStruct & info );
+    void    CopyFrom( const pyAgeLinkStruct & other );
+    void    CopyFromRef( const pyAgeLinkStructRef & other );
+    void    SetLinkingRules( int v );
+    int     GetLinkingRules() const;
+    void    SetSpawnPoint( pySpawnPointInfo & v );
+    void    SetSpawnPointRef( pySpawnPointInfoRef & v );
+    PyObject * GetSpawnPoint(); // returns pySpawnPointInfoRef
 };
 
 

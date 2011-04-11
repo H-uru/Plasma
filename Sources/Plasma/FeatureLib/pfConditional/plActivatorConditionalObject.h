@@ -36,54 +36,54 @@ class plActivatorConditionalObject : public plConditionalObject
 {
 protected:
 
-	hsTArray<plKey>	fActivators;
+    hsTArray<plKey> fActivators;
 
 public:
-	
-	plActivatorConditionalObject();
-	~plActivatorConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plActivatorConditionalObject );
-	GETINTERFACE_ANY( plActivatorConditionalObject, plConditionalObject );
-	
-	virtual hsBool MsgReceive(plMessage* msg);
-	
-	void Evaluate(){;}
-	void SetActivatorKey(plKey k);
-	void Reset() { SetSatisfied(false); }
+    
+    plActivatorConditionalObject();
+    ~plActivatorConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plActivatorConditionalObject );
+    GETINTERFACE_ANY( plActivatorConditionalObject, plConditionalObject );
+    
+    virtual hsBool MsgReceive(plMessage* msg);
+    
+    void Evaluate(){;}
+    void SetActivatorKey(plKey k);
+    void Reset() { SetSatisfied(false); }
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr); 
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr); 
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 };
 
 class plActivatorActivatorConditionalObject : public plActivatorConditionalObject
 {
 public:
-	
-	plActivatorActivatorConditionalObject(){;}
-	~plActivatorActivatorConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plActivatorActivatorConditionalObject );
-	GETINTERFACE_ANY( plActivatorActivatorConditionalObject, plActivatorConditionalObject );
-	
-	virtual hsBool MsgReceive(plMessage* msg);
-	
+    
+    plActivatorActivatorConditionalObject(){;}
+    ~plActivatorActivatorConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plActivatorActivatorConditionalObject );
+    GETINTERFACE_ANY( plActivatorActivatorConditionalObject, plActivatorConditionalObject );
+    
+    virtual hsBool MsgReceive(plMessage* msg);
+    
 
 };
 
 class plVolActivatorConditionalObject : public plActivatorConditionalObject
 {
 public:
-	
-	plVolActivatorConditionalObject(){;}
-	~plVolActivatorConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plVolActivatorConditionalObject );
-	GETINTERFACE_ANY( plVolActivatorConditionalObject, plActivatorConditionalObject );
-	
-	virtual hsBool MsgReceive(plMessage* msg);
-	
+    
+    plVolActivatorConditionalObject(){;}
+    ~plVolActivatorConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plVolActivatorConditionalObject );
+    GETINTERFACE_ANY( plVolActivatorConditionalObject, plActivatorConditionalObject );
+    
+    virtual hsBool MsgReceive(plMessage* msg);
+    
 
 };
 

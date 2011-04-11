@@ -30,19 +30,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)
 {
-	CWaveFile waveFile;
-	waveFile.Open(file, nil, WAVEFILE_READ);
-	int numMarkers = waveFile.GetNumMarkers();
-	if (numMarkers == 0)
-		return nil;
+    CWaveFile waveFile;
+    waveFile.Open(file, nil, WAVEFILE_READ);
+    int numMarkers = waveFile.GetNumMarkers();
+    if (numMarkers == 0)
+        return nil;
 
-	SegmentMap *segMap = TRACKED_NEW SegmentMap();
+    SegmentMap *segMap = TRACKED_NEW SegmentMap();
 
-	for (int i = 0; i < waveFile.GetNumMarkers(); i++)
-	{
-		plSoundMarker *marker = waveFile.GetSoundMarker(i);
-		GetSegment(marker->fName, (float)(marker->fOffset), segMap, pErrMsg);
-	}
+    for (int i = 0; i < waveFile.GetNumMarkers(); i++)
+    {
+        plSoundMarker *marker = waveFile.GetSoundMarker(i);
+        GetSegment(marker->fName, (float)(marker->fOffset), segMap, pErrMsg);
+    }
 
-	return segMap;
+    return segMap;
 }

@@ -46,24 +46,24 @@ class pyPoint3;
 class pyGUIControlDraggable : public pyGUIControl
 {
 protected:
-	pyGUIControlDraggable(): pyGUIControl() {} // for python glue only, do NOT call
-	pyGUIControlDraggable(pyKey& gckey);
-	pyGUIControlDraggable(plKey objkey);
+    pyGUIControlDraggable(): pyGUIControl() {} // for python glue only, do NOT call
+    pyGUIControlDraggable(pyKey& gckey);
+    pyGUIControlDraggable(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlDraggable);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlDraggable object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlDraggable); // converts a PyObject to a pyGUIControlDraggable (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlDraggable);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlDraggable object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlDraggable); // converts a PyObject to a pyGUIControlDraggable (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlDraggable(pyKey& gckey);
+    static hsBool IsGUIControlDraggable(pyKey& gckey);
 
-	void StopDragging( hsBool cancel );
-	PyObject* GetLastMousePt( void ); // returns pyPoint3
+    void StopDragging( hsBool cancel );
+    PyObject* GetLastMousePt( void ); // returns pyPoint3
 
 };
 

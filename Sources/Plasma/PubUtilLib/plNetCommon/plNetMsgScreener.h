@@ -40,26 +40,26 @@ class pfKIMsg;
 class plNetMsgScreener : public plLoggable
 {
 protected:
-	enum Answer
-	{
-		kMaybe = -1,
-		kNo,
-		kYes
-	};
-	virtual const char* IGetSenderName(const plNetGameMember* gm) const = 0;
-	virtual const char* IGetAgeName() const = 0;
-	virtual bool IIsSenderCCR(const plNetGameMember* gm=nil) const = 0;
-	virtual bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const = 0;
-	virtual bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const { return true; }
+    enum Answer
+    {
+        kMaybe = -1,
+        kNo,
+        kYes
+    };
+    virtual const char* IGetSenderName(const plNetGameMember* gm) const = 0;
+    virtual const char* IGetAgeName() const = 0;
+    virtual bool IIsSenderCCR(const plNetGameMember* gm=nil) const = 0;
+    virtual bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const = 0;
+    virtual bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const { return true; }
 
-	virtual void ILogChatMessage(const plMessage* msg_, const plNetGameMember* gm) const {}
-	virtual void ILogCCRMessage(Int16 classIndex, const plNetGameMember* gm) const {}
-	
-	Answer IAllowMessageType(Int16 classIndex, const plNetGameMember* gm=nil) const;
-	bool IValidateMessage(const plMessage* msg, const plNetGameMember* gm=nil) const;
-	void IRejectLogMsg(Int16 classIndex, const char* desc, const plNetGameMember* gm) const;
-	void IRejectLogMsg(const plMessage* msg, const char* desc, const plNetGameMember* gm) const;
-	virtual bool IAmClient() const = 0;
+    virtual void ILogChatMessage(const plMessage* msg_, const plNetGameMember* gm) const {}
+    virtual void ILogCCRMessage(Int16 classIndex, const plNetGameMember* gm) const {}
+    
+    Answer IAllowMessageType(Int16 classIndex, const plNetGameMember* gm=nil) const;
+    bool IValidateMessage(const plMessage* msg, const plNetGameMember* gm=nil) const;
+    void IRejectLogMsg(Int16 classIndex, const char* desc, const plNetGameMember* gm) const;
+    void IRejectLogMsg(const plMessage* msg, const char* desc, const plNetGameMember* gm) const;
+    virtual bool IAmClient() const = 0;
 };
 
-#endif	// plNetMsgScreener_h
+#endif  // plNetMsgScreener_h

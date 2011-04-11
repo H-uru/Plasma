@@ -34,29 +34,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMaintainersMarkerModifier : public plMultiModifier
 {
 public:
-	enum
-	{
-		kBroken	= 0,
-		kRepaired,
-		kCalibrated,
-	};
+    enum
+    {
+        kBroken = 0,
+        kRepaired,
+        kCalibrated,
+    };
 protected:
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
 
-	int	fCalibrated;
+    int fCalibrated;
 public:
-	plMaintainersMarkerModifier() : fCalibrated(0){;}
+    plMaintainersMarkerModifier() : fCalibrated(0){;}
 
-	CLASSNAME_REGISTER( plMaintainersMarkerModifier );
-	GETINTERFACE_ANY( plMaintainersMarkerModifier, plMultiModifier );
-	
-	virtual void AddTarget(plSceneObject* so);
-	virtual void RemoveTarget(plSceneObject* so);
-	void SetCalibrated(hsBool b) {fCalibrated = b;}
-	int GetCalibrated() { return fCalibrated; }
+    CLASSNAME_REGISTER( plMaintainersMarkerModifier );
+    GETINTERFACE_ANY( plMaintainersMarkerModifier, plMultiModifier );
+    
+    virtual void AddTarget(plSceneObject* so);
+    virtual void RemoveTarget(plSceneObject* so);
+    void SetCalibrated(hsBool b) {fCalibrated = b;}
+    int GetCalibrated() { return fCalibrated; }
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 };
 
 

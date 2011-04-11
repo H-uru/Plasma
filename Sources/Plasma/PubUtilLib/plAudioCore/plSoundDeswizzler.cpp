@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plSoundDeswizzler - Quick helper class to extract a single channel of	//
-//						data from stereo (or more)-channel data.			//
-//																			//
+//                                                                          //
+//  plSoundDeswizzler - Quick helper class to extract a single channel of   //
+//                      data from stereo (or more)-channel data.            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -37,45 +37,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plSoundDeswizzler::plSoundDeswizzler( void *srcPtr, UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize )
 {
-	fNumSamples = srcLength / sampleSize;
-	fSampleSize = sampleSize;
-	fStride = fSampleSize * numChannels;
-	fData = (UInt8 *)srcPtr;
-	fOwnsData = false;
+    fNumSamples = srcLength / sampleSize;
+    fSampleSize = sampleSize;
+    fStride = fSampleSize * numChannels;
+    fData = (UInt8 *)srcPtr;
+    fOwnsData = false;
 }
 
 plSoundDeswizzler::plSoundDeswizzler( UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize )
 {
-	fNumSamples = srcLength / sampleSize;
-	fSampleSize = sampleSize;
-	fStride = fSampleSize * numChannels;
-	fData = TRACKED_NEW UInt8[ srcLength ];
-	fOwnsData = true;
+    fNumSamples = srcLength / sampleSize;
+    fSampleSize = sampleSize;
+    fStride = fSampleSize * numChannels;
+    fData = TRACKED_NEW UInt8[ srcLength ];
+    fOwnsData = true;
 }
 
 plSoundDeswizzler::~plSoundDeswizzler()
 {
-	if( fOwnsData )
-		delete [] fData;
+    if( fOwnsData )
+        delete [] fData;
 }
 
-void	plSoundDeswizzler::Extract( UInt8 channelSelect, void *dest, UInt32 numBytesToProcess )
+void    plSoundDeswizzler::Extract( UInt8 channelSelect, void *dest, UInt32 numBytesToProcess )
 {
-	UInt8	*srcPtr = fData + channelSelect * fSampleSize;
-	UInt8	*destPtr = (UInt8 *)dest;
-	UInt32	i;
+    UInt8   *srcPtr = fData + channelSelect * fSampleSize;
+    UInt8   *destPtr = (UInt8 *)dest;
+    UInt32  i;
 
 
-	if( numBytesToProcess == 0 )
-		numBytesToProcess = fNumSamples;
-	else
-		numBytesToProcess /= fStride;
+    if( numBytesToProcess == 0 )
+        numBytesToProcess = fNumSamples;
+    else
+        numBytesToProcess /= fStride;
 
-	// Extract!
-	for( i = 0; i < numBytesToProcess; i++ )
-	{
-		memcpy( destPtr, srcPtr, fSampleSize );
-		destPtr += fSampleSize;
-		srcPtr += fStride;
-	}
+    // Extract!
+    for( i = 0; i < numBytesToProcess; i++ )
+    {
+        memcpy( destPtr, srcPtr, fSampleSize );
+        destPtr += fSampleSize;
+        srcPtr += fStride;
+    }
 }

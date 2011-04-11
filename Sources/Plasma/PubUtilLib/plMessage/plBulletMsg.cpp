@@ -33,49 +33,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plBulletMsg::Read(hsStream* stream, hsResMgr* mgr) 
 { 
-	IMsgRead(stream, mgr); 
+    IMsgRead(stream, mgr); 
 
-	fCmd = Cmd(stream->ReadByte());
+    fCmd = Cmd(stream->ReadByte());
 
-	fFrom.Read(stream);
-	fDir.Read(stream);
-	fRange = stream->ReadSwapScalar();
-	fRadius = stream->ReadSwapScalar();
-	fPartyTime = stream->ReadSwapScalar();
+    fFrom.Read(stream);
+    fDir.Read(stream);
+    fRange = stream->ReadSwapScalar();
+    fRadius = stream->ReadSwapScalar();
+    fPartyTime = stream->ReadSwapScalar();
 }
 
 void plBulletMsg::Write(hsStream* stream, hsResMgr* mgr) 
 { 
-	IMsgWrite(stream, mgr); 
+    IMsgWrite(stream, mgr); 
 
-	stream->WriteByte(UInt8(fCmd));
+    stream->WriteByte(UInt8(fCmd));
 
-	fFrom.Write(stream);
-	fDir.Write(stream);
-	stream->WriteSwapScalar(fRange);
-	stream->WriteSwapScalar(fRadius);
-	stream->WriteSwapScalar(fPartyTime);
+    fFrom.Write(stream);
+    fDir.Write(stream);
+    stream->WriteSwapScalar(fRange);
+    stream->WriteSwapScalar(fRadius);
+    stream->WriteSwapScalar(fPartyTime);
 }
 
 void plBulletMsg::FireShot(const hsPoint3& from, const hsVector3& dir, hsScalar radius, hsScalar range, hsScalar psecs)
 {
-	fFrom = from;
-	fDir = dir;
-	fRange = range;
-	fRadius = radius;
-	fPartyTime = psecs;
+    fFrom = from;
+    fDir = dir;
+    fRange = range;
+    fRadius = radius;
+    fPartyTime = psecs;
 
-	fCmd = kShot;
+    fCmd = kShot;
 }
 
 void plBulletMsg::FireShot(const hsPoint3& from, const hsPoint3& at, hsScalar radius, hsScalar psecs)
 {
-	hsVector3 dir(&at, &from);
-	hsScalar invLen = hsFastMath::InvSqrt(dir.MagnitudeSquared());
-	hsAssert(invLen > 0, "degenerate from and at to fire bullet");
-	dir *= invLen;
-	hsScalar range = 1.f / invLen;
+    hsVector3 dir(&at, &from);
+    hsScalar invLen = hsFastMath::InvSqrt(dir.MagnitudeSquared());
+    hsAssert(invLen > 0, "degenerate from and at to fire bullet");
+    dir *= invLen;
+    hsScalar range = 1.f / invLen;
 
-	FireShot(from, dir, radius, range, psecs);
+    FireShot(from, dir, radius, range, psecs);
 }
 

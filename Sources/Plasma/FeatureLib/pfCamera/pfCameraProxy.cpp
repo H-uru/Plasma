@@ -32,8 +32,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plSceneNode.h"
 
 plCameraProxy::plCameraProxy()
-:	plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.2f),
-	fOwner(nil), node(nil)
+:   plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.2f),
+    fOwner(nil), node(nil)
 {
 }
 
@@ -43,26 +43,26 @@ plCameraProxy::~plCameraProxy()
 
 hsBool plCameraProxy::Init(plVirtualCam1* aud)
 {
-	plProxyGen::Init(aud);
+    plProxyGen::Init(aud);
 
-	fOwner = aud;
-	fProxyMsgType = plProxyDrawMsg::kCamera;
+    fOwner = aud;
+    fProxyMsgType = plProxyDrawMsg::kCamera;
 
-	return fOwner != nil;
+    return fOwner != nil;
 }
 
 plKey plCameraProxy::IGetNode() const 
 {
-	if (node)
-		return node->GetKey();
-	return nil; 
+    if (node)
+        return node->GetKey();
+    return nil; 
 }
 
 plDrawableSpans* plCameraProxy::ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
 {
-	if( fOwner )
-	{
-//		return fOwner->CreateProxy(mat, idx, addTo);
-	}
-	return nil;
+    if( fOwner )
+    {
+//      return fOwner->CreateProxy(mat, idx, addTo);
+    }
+    return nil;
 }

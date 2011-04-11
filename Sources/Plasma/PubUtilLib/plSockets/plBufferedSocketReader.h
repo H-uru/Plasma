@@ -34,27 +34,27 @@ class plTcpSocket;
 class plBufferedSocketReader : protected plRingBuffer
 {
 public:
-	enum ReadResult
-	{
-		kSuccessNoData			= 0,
-		kSuccessWithData		= 1,
-		kFailedReadError		=-1,
-		kFailedSocketClosed		=-2,
-		kFailedNoBufferSpace	=-3,
-	};
+    enum ReadResult
+    {
+        kSuccessNoData          = 0,
+        kSuccessWithData        = 1,
+        kFailedReadError        =-1,
+        kFailedSocketClosed     =-2,
+        kFailedNoBufferSpace    =-3,
+    };
 
 public:
-	plBufferedSocketReader(int size=8192);
-	int ReadBlock(char * buf, int buflen, plTcpSocket & sck);
-	int ReadString(char * buf, int buflen, char * termChars, plTcpSocket & sck);
-	int ReadStringInPlace(char ** buf, char * termChars, plTcpSocket & sck);
-	void Reset(); 
+    plBufferedSocketReader(int size=8192);
+    int ReadBlock(char * buf, int buflen, plTcpSocket & sck);
+    int ReadString(char * buf, int buflen, char * termChars, plTcpSocket & sck);
+    int ReadStringInPlace(char ** buf, char * termChars, plTcpSocket & sck);
+    void Reset(); 
 
 protected:
-	int ReadFrom(plTcpSocket & sck);
-	bool GetBlock(char * buf, int buflen);
-	bool GetString(char * buf, int buflen, char * termChars);
-	bool GetStringInPlace(char ** buf, char * termChars);
+    int ReadFrom(plTcpSocket & sck);
+    bool GetBlock(char * buf, int buflen);
+    bool GetString(char * buf, int buflen, char * termChars);
+    bool GetStringInPlace(char ** buf, char * termChars);
 };
 
 

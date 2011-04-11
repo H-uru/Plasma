@@ -43,37 +43,37 @@ class plNetMessage;
 class plNetTransport
 {
 private:
-	plMembersList fMembers;						// master list of all members in the game, server is member[0]
-	std::vector<plMembersList> fChannelGroups;	// members grouped by channel
+    plMembersList fMembers;                     // master list of all members in the game, server is member[0]
+    std::vector<plMembersList> fChannelGroups;  // members grouped by channel
 
-	void IUnSubscribeToAllChannelGrps(plNetTransportMember* mbr);
-	void IRemoveMember(plNetTransportMember* mbr);
+    void IUnSubscribeToAllChannelGrps(plNetTransportMember* mbr);
+    void IRemoveMember(plNetTransportMember* mbr);
 public:
-	plNetTransport() {}
-	~plNetTransport();
+    plNetTransport() {}
+    ~plNetTransport();
 
-	void DumpState();
-	
-	// master list ops
-	void GetMemberListDistSorted(plNetTransportMember**& listPtr) const;	// allocates and sorts array
-	int FindMember(const plKey avKey) const;					// return array index or -1
-	int FindMember(UInt32 playerID) const;						// return array index or -1
-	int FindMember(const plNetTransportMember* mbr);			// return array index or -1
-	int AddMember(plNetTransportMember* mbr);					// to master list, if not there
-	hsBool RemoveMember(plNetTransportMember* mbr);				// from master list and all channels
-	hsBool RemoveMember(int idx);								// from master list and all channels
-	int GetNumMembers() const { return fMembers.size(); }
-	plNetTransportMember* GetMember(int i) const { return i>=0 && i<fMembers.size() ? fMembers[i] : nil; }
-	void ClearMembers();
+    void DumpState();
+    
+    // master list ops
+    void GetMemberListDistSorted(plNetTransportMember**& listPtr) const;    // allocates and sorts array
+    int FindMember(const plKey avKey) const;                    // return array index or -1
+    int FindMember(UInt32 playerID) const;                      // return array index or -1
+    int FindMember(const plNetTransportMember* mbr);            // return array index or -1
+    int AddMember(plNetTransportMember* mbr);                   // to master list, if not there
+    hsBool RemoveMember(plNetTransportMember* mbr);             // from master list and all channels
+    hsBool RemoveMember(int idx);                               // from master list and all channels
+    int GetNumMembers() const { return fMembers.size(); }
+    plNetTransportMember* GetMember(int i) const { return i>=0 && i<fMembers.size() ? fMembers[i] : nil; }
+    void ClearMembers();
 
-	// channel group ops
-	void SubscribeToChannelGrp(plNetTransportMember* mbr, int channel);
-	hsBool UnSubscribeToChannelGrp(plNetTransportMember* mbr, int channel);
-	void GetSubscriptions(plNetTransportMember* mbr, std::vector<int>* channels) const;
-	void ClearChannelGrp(int channel);
-	void SetNumChannels(int n);
+    // channel group ops
+    void SubscribeToChannelGrp(plNetTransportMember* mbr, int channel);
+    hsBool UnSubscribeToChannelGrp(plNetTransportMember* mbr, int channel);
+    void GetSubscriptions(plNetTransportMember* mbr, std::vector<int>* channels) const;
+    void ClearChannelGrp(int channel);
+    void SetNumChannels(int n);
 
-	int SendMsg(int channel, plNetMessage* msg) const;
+    int SendMsg(int channel, plNetMessage* msg) const;
 };
 
-#endif	// plNetTransport_h
+#endif  // plNetTransport_h

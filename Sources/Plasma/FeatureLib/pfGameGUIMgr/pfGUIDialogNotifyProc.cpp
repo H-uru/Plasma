@@ -25,11 +25,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIDialogNotifyProc													//
-//																			//
-//	Helper dialog proc that takes all control events and turns them into	//
-//	notify messages that get sent out.										//
+//                                                                          //
+//  pfGUIDialogNotifyProc                                                   //
+//                                                                          //
+//  Helper dialog proc that takes all control events and turns them into    //
+//  notify messages that get sent out.                                      //
 //////////////////////////////////////////////////////////////////////////////
 
 
@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUIControlMod.h"
 #include "pfGUIDialogHandlers.h"
 #include "pfGUIListElement.h"
-#include "pfGUIButtonMod.h"		// Next three are for notify stuff
+#include "pfGUIButtonMod.h"     // Next three are for notify stuff
 #include "pfGUIListBoxMod.h"
 #include "pfGUIEditBoxMod.h"
 
@@ -53,56 +53,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pfGUIDialogNotifyProc::pfGUIDialogNotifyProc( plKey &r )
 {
-	fReceiver = r;
+    fReceiver = r;
 }
 
 
 void pfGUIDialogNotifyProc::ISendNotify( plKey ctrlKey, UInt32 event )
 {
-	pfGUINotifyMsg	*notify = TRACKED_NEW pfGUINotifyMsg( fDialog->GetKey(), fReceiver, nil );
-	notify->SetEvent( ctrlKey, event );
-	plgDispatch::MsgSend( notify );
+    pfGUINotifyMsg  *notify = TRACKED_NEW pfGUINotifyMsg( fDialog->GetKey(), fReceiver, nil );
+    notify->SetEvent( ctrlKey, event );
+    plgDispatch::MsgSend( notify );
 }
 
 
 void pfGUIDialogNotifyProc::DoSomething( pfGUIControlMod *ctrl )
 {
-	if( pfGUIButtonMod::ConvertNoRef( ctrl ) != nil ||
-		pfGUIListBoxMod::ConvertNoRef( ctrl ) != nil ||
-		pfGUIEditBoxMod::ConvertNoRef( ctrl ) != nil )
-	{
-		// only fire the button if it is triggering
-		// ... all other types just fire
-		pfGUIButtonMod* btn = pfGUIButtonMod::ConvertNoRef( ctrl );
-		if ( !btn || btn->IsTriggering() )
-			ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kAction );
-	}
-	else
-		ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kValueChanged );
+    if( pfGUIButtonMod::ConvertNoRef( ctrl ) != nil ||
+        pfGUIListBoxMod::ConvertNoRef( ctrl ) != nil ||
+        pfGUIEditBoxMod::ConvertNoRef( ctrl ) != nil )
+    {
+        // only fire the button if it is triggering
+        // ... all other types just fire
+        pfGUIButtonMod* btn = pfGUIButtonMod::ConvertNoRef( ctrl );
+        if ( !btn || btn->IsTriggering() )
+            ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kAction );
+    }
+    else
+        ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kValueChanged );
 }
 
 void pfGUIDialogNotifyProc::OnInit( void )
 {
-	if ( fDialog )
-		ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kDialogLoaded );
-	else
-		ISendNotify( nil, pfGUINotifyMsg::kDialogLoaded );
+    if ( fDialog )
+        ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kDialogLoaded );
+    else
+        ISendNotify( nil, pfGUINotifyMsg::kDialogLoaded );
 }
 
 void pfGUIDialogNotifyProc::OnShow( void )
 {
-	if ( fDialog )
-		ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kShowHide );
-	else
-		ISendNotify( nil, pfGUINotifyMsg::kShowHide );
+    if ( fDialog )
+        ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kShowHide );
+    else
+        ISendNotify( nil, pfGUINotifyMsg::kShowHide );
 }
 
 void pfGUIDialogNotifyProc::OnHide( void )
 {
-	if ( fDialog )
-		ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kShowHide );
-	else
-		ISendNotify( nil, pfGUINotifyMsg::kShowHide );
+    if ( fDialog )
+        ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kShowHide );
+    else
+        ISendNotify( nil, pfGUINotifyMsg::kShowHide );
 }
 
 void pfGUIDialogNotifyProc::OnDestroy( void )
@@ -111,21 +111,21 @@ void pfGUIDialogNotifyProc::OnDestroy( void )
 
 void pfGUIDialogNotifyProc::OnControlEvent( ControlEvt event )
 {
-	if( event == kExitMode )
-		ISendNotify( ( fDialog != nil ) ? fDialog->GetKey() : nil, pfGUINotifyMsg::kExitMode );
+    if( event == kExitMode )
+        ISendNotify( ( fDialog != nil ) ? fDialog->GetKey() : nil, pfGUINotifyMsg::kExitMode );
 }
 
 // Called when the dialog's focused control changes
 void pfGUIDialogNotifyProc::OnCtrlFocusChange( pfGUIControlMod *oldCtrl, pfGUIControlMod *newCtrl )
 {
-	if ( newCtrl )
-		ISendNotify( newCtrl->GetKey(), pfGUINotifyMsg::kFocusChange);
-	else
-		ISendNotify( nil, pfGUINotifyMsg::kFocusChange);
+    if ( newCtrl )
+        ISendNotify( newCtrl->GetKey(), pfGUINotifyMsg::kFocusChange);
+    else
+        ISendNotify( nil, pfGUINotifyMsg::kFocusChange);
 
 }
 
 void pfGUIDialogNotifyProc::OnInterestingEvent( pfGUIControlMod *ctrl )
 {
-	ISendNotify( ( ctrl != nil ) ? ctrl->GetKey() : nil, pfGUINotifyMsg::kInterestingEvent );
+    ISendNotify( ( ctrl != nil ) ? ctrl->GetKey() : nil, pfGUINotifyMsg::kInterestingEvent );
 }

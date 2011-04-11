@@ -43,50 +43,50 @@ class plPipeline;
 class plInputManager :public hsKeyedObject
 {
 private:
-	static hsBool fUseDInput;
+    static hsBool fUseDInput;
 public:
-	plInputManager();
-	plInputManager( HWND hWnd );
-	~plInputManager();
-	
-	CLASSNAME_REGISTER( plInputManager );
-	GETINTERFACE_ANY( plInputManager, hsKeyedObject );
+    plInputManager();
+    plInputManager( HWND hWnd );
+    ~plInputManager();
+    
+    CLASSNAME_REGISTER( plInputManager );
+    GETINTERFACE_ANY( plInputManager, hsKeyedObject );
 
 
-	void AddInputDevice(plInputDevice* pDev);
-	void InitDInput(HINSTANCE hInst, HWND hWnd);
+    void AddInputDevice(plInputDevice* pDev);
+    void InitDInput(HINSTANCE hInst, HWND hWnd);
 
-	static void UseDInput(hsBool b) { fUseDInput = b; }
-	void Update();
-	static plInputManager*	GetInstance() { return fInstance; }
-	static plInputManager*	fInstance;
-	virtual hsBool MsgReceive(plMessage* msg);
-	static hsBool RecenterMouse() { return bRecenterMouse > 0; }
-	static void SetRecenterMouse(hsBool b); 
-	static void RecenterCursor();
-	void CreateInterfaceMod(plPipeline* p);
+    static void UseDInput(hsBool b) { fUseDInput = b; }
+    void Update();
+    static plInputManager*  GetInstance() { return fInstance; }
+    static plInputManager*  fInstance;
+    virtual hsBool MsgReceive(plMessage* msg);
+    static hsBool RecenterMouse() { return bRecenterMouse > 0; }
+    static void SetRecenterMouse(hsBool b); 
+    static void RecenterCursor();
+    void CreateInterfaceMod(plPipeline* p);
 
-	void	Activate( bool activating );
+    void    Activate( bool activating );
 
-	hsScalar	GetMouseScale( void ) const { return fMouseScale; }
-	void		SetMouseScale( hsScalar s );
-	
-	static plKeyDef UntranslateKey(plKeyDef key, hsBool extended);
-	
+    hsScalar    GetMouseScale( void ) const { return fMouseScale; }
+    void        SetMouseScale( hsScalar s );
+    
+    static plKeyDef UntranslateKey(plKeyDef key, hsBool extended);
+    
 protected:
-	
-	hsTArray<plInputDevice*>	fInputDevices;
-	plDInputMgr*				fDInputMgr;
-	plInputInterfaceMgr			*fInterfaceMgr;
-	bool						fActive, fFirstActivated;		
+    
+    hsTArray<plInputDevice*>    fInputDevices;
+    plDInputMgr*                fDInputMgr;
+    plInputInterfaceMgr         *fInterfaceMgr;
+    bool                        fActive, fFirstActivated;       
 
-	hsScalar					fMouseScale;
-	static UInt8				bRecenterMouse;
-	static HWND					fhWnd;
-	
+    hsScalar                    fMouseScale;
+    static UInt8                bRecenterMouse;
+    static HWND                 fhWnd;
+    
 public:
-	// event handlers
-	void HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM Lparam, HWND hWnd);
+    // event handlers
+    void HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM Lparam, HWND hWnd);
 };
 
 

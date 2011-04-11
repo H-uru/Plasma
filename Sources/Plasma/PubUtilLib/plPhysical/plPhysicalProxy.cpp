@@ -34,15 +34,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayer.h"
 
 plPhysicalProxy::plPhysicalProxy()
-:	plProxyGen(hsColorRGBA().Set(0,0,0,1.f), hsColorRGBA().Set(1.f,0.8f,0.2f,1.f), 0.5f),
-	fOwner(nil)
+:   plProxyGen(hsColorRGBA().Set(0,0,0,1.f), hsColorRGBA().Set(1.f,0.8f,0.2f,1.f), 0.5f),
+    fOwner(nil)
 {
 }
 
 plPhysicalProxy::plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac)
-:	plProxyGen(amb, dif, opac),
-	fOwner(nil),
-	fController(nil)
+:   plProxyGen(amb, dif, opac),
+    fOwner(nil),
+    fController(nil)
 {
 }
 
@@ -52,44 +52,44 @@ plPhysicalProxy::~plPhysicalProxy()
 
 bool plPhysicalProxy::Init(plPhysical* liInfo)
 {
-	plProxyGen::Init(liInfo);
+    plProxyGen::Init(liInfo);
 
-	fOwner = liInfo;
-	fProxyMsgType = plProxyDrawMsg::kPhysical;
+    fOwner = liInfo;
+    fProxyMsgType = plProxyDrawMsg::kPhysical;
 
-	return fOwner != nil;
+    return fOwner != nil;
 }
 
 bool plPhysicalProxy::Init(plPXPhysicalControllerCore* controller)
 {
-	if (controller)
-		if (controller->GetOwner())
-			plProxyGen::Init(controller->GetOwner()->GetObjectPtr());
+    if (controller)
+        if (controller->GetOwner())
+            plProxyGen::Init(controller->GetOwner()->GetObjectPtr());
 
-	fController = controller;
-	fProxyMsgType = plProxyDrawMsg::kPhysical;
+    fController = controller;
+    fProxyMsgType = plProxyDrawMsg::kPhysical;
 
-	return fController != nil;
+    return fController != nil;
 }
 
 plKey plPhysicalProxy::IGetNode() const 
 {
-	if (fOwner)
-		return fOwner->GetSceneNode();
-	if (fController)
-		return fController->GetOwner();
-	return nil;
+    if (fOwner)
+        return fOwner->GetSceneNode();
+    if (fController)
+        return fController->GetOwner();
+    return nil;
 }
 
 plDrawableSpans* plPhysicalProxy::ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
 {
-	if (fOwner)
-	{
-		return fOwner->CreateProxy(mat, idx, addTo);
-	}
-	if (fController)
-	{
-		return fController->CreateProxy(mat,idx,addTo);
-	}
-	return nil;
+    if (fOwner)
+    {
+        return fOwner->CreateProxy(mat, idx, addTo);
+    }
+    if (fController)
+    {
+        return fController->CreateProxy(mat,idx,addTo);
+    }
+    return nil;
 }

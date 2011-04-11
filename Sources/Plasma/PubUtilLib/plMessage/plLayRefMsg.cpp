@@ -30,14 +30,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plLayRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plRefMsg::Read(stream, mgr);
-	stream->ReadSwap(&fType);
-	stream->ReadSwap(&fWhich);
+    plRefMsg::Read(stream, mgr);
+    stream->ReadSwap(&fType);
+    stream->ReadSwap(&fWhich);
 }
 
 void plLayRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plRefMsg::Write(stream, mgr);
-	stream->WriteSwap(fType);
-	stream->WriteSwap(fWhich);
+    plRefMsg::Write(stream, mgr);
+    stream->WriteSwap(fType);
+    stream->WriteSwap(fWhich);
 }

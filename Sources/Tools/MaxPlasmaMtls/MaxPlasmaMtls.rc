@@ -870,7 +870,7 @@ BEGIN
     LTEXT           "Reference Node (Must have a Water->EnvironmentMap component). For reflections, this node determines the plane of reflection (Z axis of pivot point). For a specified camera, you probably want this to be the camera node.",
                     IDC_STATIC,9,47,200,32
     LTEXT           "Camera Node:",IDC_STATIC,18,14,66,8
-	CONTROL         "",IDC_CAM_LAYER_DISABLE_COLOR,"ColorSwatch",0x0,107,107,
+    CONTROL         "",IDC_CAM_LAYER_DISABLE_COLOR,"ColorSwatch",0x0,107,107,
                     27,12
     LTEXT           "If reflections are disabled, render this solid color instead:",
                     IDC_STATIC,9,105,100,16

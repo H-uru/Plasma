@@ -43,40 +43,40 @@ class pyKey;
 class cyParticleSys
 {
 protected:
-	plKey			fSender;
-	hsTArray<plKey>	fRecvr;
-	hsBool			fNetForce;
+    plKey           fSender;
+    hsTArray<plKey> fRecvr;
+    hsBool          fNetForce;
 
-	virtual void	ISendParticleSysMsg(UInt32 param, hsScalar value);
+    virtual void    ISendParticleSysMsg(UInt32 param, hsScalar value);
 
-	cyParticleSys(const plKey sender=nil,const plKey recvr=nil);
+    cyParticleSys(const plKey sender=nil,const plKey recvr=nil);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptParticle);
-	static PyObject *New(PyObject *sender = nil, PyObject *recvr = nil);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyParticleSys object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyParticleSys); // converts a PyObject to a cyParticleSys (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptParticle);
+    static PyObject *New(PyObject *sender = nil, PyObject *recvr = nil);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyParticleSys object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyParticleSys); // converts a PyObject to a cyParticleSys (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	// setters
-	virtual void	SetSender(plKey &sender);
-	virtual void	AddRecvr(plKey &recvr);
-	virtual void SetNetForce(hsBool state);
+    // setters
+    virtual void    SetSender(plKey &sender);
+    virtual void    AddRecvr(plKey &recvr);
+    virtual void SetNetForce(hsBool state);
 
-	virtual void	SetParticlesPerSecond(hsScalar value);
-	virtual void	SetInitPitchRange(hsScalar value);
-	virtual void	SetInitYawRange(hsScalar value);
-	virtual void	SetVelMin(hsScalar value);
-	virtual void	SetVelMax(hsScalar value);
-	virtual void	SetXSize(hsScalar value);
-	virtual void	SetYSize(hsScalar value);
-	virtual void	SetScaleMin(hsScalar value);
-	virtual void	SetScaleMax(hsScalar value);
-	virtual void	SetGenLife(hsScalar value);
-	virtual void	SetPartLifeMin(hsScalar value);
-	virtual void	SetPartLifeMax(hsScalar value);
+    virtual void    SetParticlesPerSecond(hsScalar value);
+    virtual void    SetInitPitchRange(hsScalar value);
+    virtual void    SetInitYawRange(hsScalar value);
+    virtual void    SetVelMin(hsScalar value);
+    virtual void    SetVelMax(hsScalar value);
+    virtual void    SetXSize(hsScalar value);
+    virtual void    SetYSize(hsScalar value);
+    virtual void    SetScaleMin(hsScalar value);
+    virtual void    SetScaleMax(hsScalar value);
+    virtual void    SetGenLife(hsScalar value);
+    virtual void    SetPartLifeMin(hsScalar value);
+    virtual void    SetPartLifeMax(hsScalar value);
 
 };
 

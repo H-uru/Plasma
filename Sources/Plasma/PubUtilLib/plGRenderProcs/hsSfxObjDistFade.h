@@ -33,67 +33,67 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsSfxObjDistFade : public hsGRenderProcs {
 public:
-	enum {
-		kCullsBefore		= 0x10000,
-		kCullsBeyond		= 0x20000,
+    enum {
+        kCullsBefore        = 0x10000,
+        kCullsBeyond        = 0x20000,
 
-		kDistFromView		= 0x40000,
-		kDistFromTarget		= 0x80000,
-		kDistAlongX			= 0x100000,
-		kZOff				= 0x200000,
-		kNoZTrans			= 0x400000,
-		kByBoundsCenter		= 0x800000,
+        kDistFromView       = 0x40000,
+        kDistFromTarget     = 0x80000,
+        kDistAlongX         = 0x100000,
+        kZOff               = 0x200000,
+        kNoZTrans           = 0x400000,
+        kByBoundsCenter     = 0x800000,
 
-		kPostInterp			= 0x1000000,
+        kPostInterp         = 0x1000000,
 
-		kIdleBefore			= 0x2000000,
-		kIdleBeyond			= 0x4000000,
+        kIdleBefore         = 0x2000000,
+        kIdleBeyond         = 0x4000000,
 
-		kZWasOff			= 0x8000000
-	};
+        kZWasOff            = 0x8000000
+    };
 
-	struct hsSfxDfTableEntry {
-		hsScalar			fDistDel;
-		hsScalar			fDistNorm;
-		hsScalar			fOpacity;
-	};
+    struct hsSfxDfTableEntry {
+        hsScalar            fDistDel;
+        hsScalar            fDistNorm;
+        hsScalar            fOpacity;
+    };
 protected:
 
-	hsScalar							fMinDist;
-	hsScalar							fMaxDist;
+    hsScalar                            fMinDist;
+    hsScalar                            fMaxDist;
 
-	hsScalar							fMinIdle;
-	hsScalar							fMaxIdle;
+    hsScalar                            fMinIdle;
+    hsScalar                            fMaxIdle;
 
-	Int32								fTreeCnt;
+    Int32                               fTreeCnt;
 
-	hsExpander<hsSfxDfTableEntry>		fTable;
+    hsExpander<hsSfxDfTableEntry>       fTable;
 
-	hsGMatState							fRestoreOver;
+    hsGMatState                         fRestoreOver;
 
-	hsBool32 ISetOpac(plDrawable* refObj);
-	hsScalar IOpacFromDist(hsScalar dist);
+    hsBool32 ISetOpac(plDrawable* refObj);
+    hsScalar IOpacFromDist(hsScalar dist);
 public:
-	hsSfxObjDistFade();
-	virtual ~hsSfxObjDistFade();
+    hsSfxObjDistFade();
+    virtual ~hsSfxObjDistFade();
 
-	virtual hsBool32 BeginTree(plPipeline* pipe, plDrawable* root);
-	virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
+    virtual hsBool32 BeginTree(plPipeline* pipe, plDrawable* root);
+    virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
 
-	virtual void EndObject();
-	virtual void EndTree();
+    virtual void EndObject();
+    virtual void EndTree();
 
-	void MakeTable(float* distList, float* opacList, int num); // lists sorted from lowest cosine to highest
+    void MakeTable(float* distList, float* opacList, int num); // lists sorted from lowest cosine to highest
 
-	virtual void Read(hsStream* s);
-	virtual void Write(hsStream* s);
+    virtual void Read(hsStream* s);
+    virtual void Write(hsStream* s);
 
-	virtual const char* GetLabel() const { return "hsSfxObjDistFade"; }
+    virtual const char* GetLabel() const { return "hsSfxObjDistFade"; }
 
-	virtual ProcType GetType() const { return kTypeObjDistFade; }
+    virtual ProcType GetType() const { return kTypeObjDistFade; }
 
-	CLASSNAME_REGISTER( hsSfxObjDistFade );
-	GETINTERFACE_ANY( hsSfxObjDistFade, hsGRenderProcs );
+    CLASSNAME_REGISTER( hsSfxObjDistFade );
+    GETINTERFACE_ANY( hsSfxObjDistFade, hsGRenderProcs );
 
 };
 

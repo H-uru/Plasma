@@ -28,19 +28,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plSynchEnableMsg::plSynchEnableMsg(bool push, bool enable) : fPush(push), fEnable(enable)
 {
-	AddReceiver(plNetApp::GetInstance()->GetKey());
+    AddReceiver(plNetApp::GetInstance()->GetKey());
 }
 
 void plSynchEnableMsg::Read(hsStream* stream, hsResMgr* mgr) 
 { 
-	plMessage::IMsgRead( stream, mgr ); 
-	stream->WriteSwap(fEnable);
-	stream->WriteSwap(fPush);
+    plMessage::IMsgRead( stream, mgr ); 
+    stream->WriteSwap(fEnable);
+    stream->WriteSwap(fPush);
 }
 
 void plSynchEnableMsg::Write(hsStream* stream, hsResMgr* mgr)
 { 
-	plMessage::IMsgWrite( stream, mgr ); 
-	stream->ReadSwap(&fEnable);
-	stream->ReadSwap(&fPush);
+    plMessage::IMsgWrite( stream, mgr ); 
+    stream->ReadSwap(&fEnable);
+    stream->ReadSwap(&fPush);
 }

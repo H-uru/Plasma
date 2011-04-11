@@ -31,16 +31,16 @@ int plMaxAccelerators::fNumDisables = 0;
 
 void plMaxAccelerators::Enable()
 {
-	fNumDisables--;
+    fNumDisables--;
 
-	if (fNumDisables <= 0)
-		EnableAccelerators();
+    if (fNumDisables <= 0)
+        EnableAccelerators();
 }
 
 void plMaxAccelerators::Disable()
 {
-	fNumDisables++;
+    fNumDisables++;
 
-	if (fNumDisables > 0)
-		DisableAccelerators();
+    if (fNumDisables > 0)
+        DisableAccelerators();
 }

@@ -36,41 +36,41 @@ class plComponentBase;
 class plPickNodeBase
 {
 protected:
-	IParamBlock2* fPB;
-	int fNodeParamID;
+    IParamBlock2* fPB;
+    int fNodeParamID;
 
-	static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	void IInitDlg(HWND hDlg);
+    void IInitDlg(HWND hDlg);
 
-	void IGetNodesRecur(plMaxNode* node, HWND hList, plMaxNode* curSelNode);
+    void IGetNodesRecur(plMaxNode* node, HWND hList, plMaxNode* curSelNode);
 
-	void ISetNodeValue(plMaxNode* node);
-	void IGetSelNode(HWND hList);
-	
-	virtual bool ICheckNode(plMaxNode* node)=0;
+    void ISetNodeValue(plMaxNode* node);
+    void IGetSelNode(HWND hList);
+    
+    virtual bool ICheckNode(plMaxNode* node)=0;
 
-	virtual void IAddUserType(HWND hList) {}
-	virtual void ISetUserType(plMaxNode* node, const char* userType) {}
+    virtual void IAddUserType(HWND hList) {}
+    virtual void ISetUserType(plMaxNode* node, const char* userType) {}
 
 public:
-	plPickNodeBase(IParamBlock2* pb, int nodeParamID);
-	virtual ~plPickNodeBase() {}
+    plPickNodeBase(IParamBlock2* pb, int nodeParamID);
+    virtual ~plPickNodeBase() {}
 
-	bool DoPick();
+    bool DoPick();
 };
 
 class plPickNode : public plPickNodeBase
 {
 protected:
-	std::vector<Class_ID> fCIDs;
-	bool fCanConvertToType;
+    std::vector<Class_ID> fCIDs;
+    bool fCanConvertToType;
 
-	bool ICanConvertToType(Object *obj);
-	virtual bool ICheckNode(plMaxNode* node);
+    bool ICanConvertToType(Object *obj);
+    virtual bool ICheckNode(plMaxNode* node);
 
 public:
-	plPickNode(IParamBlock2* pb, int nodeParamID);
+    plPickNode(IParamBlock2* pb, int nodeParamID);
 };
 
 //
@@ -79,12 +79,12 @@ public:
 class plPickMtlNode : public plPickNodeBase
 {
 protected:
-	Mtl* fMtl;
+    Mtl* fMtl;
 
-	bool ICheckNode(plMaxNode* node);
+    bool ICheckNode(plMaxNode* node);
 
 public:
-	plPickMtlNode(IParamBlock2* pb, int nodeParamID, Mtl* mtl);
+    plPickMtlNode(IParamBlock2* pb, int nodeParamID, Mtl* mtl);
 };
 
 //
@@ -93,12 +93,12 @@ public:
 class plPickCompNode : public plPickNodeBase
 {
 protected:
-	plComponentBase* fComp;
+    plComponentBase* fComp;
 
-	bool ICheckNode(plMaxNode* node);
+    bool ICheckNode(plMaxNode* node);
 
 public:
-	plPickCompNode(IParamBlock2* pb, int nodeParamID, plComponentBase* comp);
+    plPickCompNode(IParamBlock2* pb, int nodeParamID, plComponentBase* comp);
 };
 
 #endif // plPickNodeBase_h_inc

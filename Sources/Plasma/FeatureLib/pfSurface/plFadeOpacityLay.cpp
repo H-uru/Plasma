@@ -29,10 +29,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFadeOpacityLay.h"
 
 plFadeOpacityLay::plFadeOpacityLay()
-:	fOpScale(1.f)
+:   fOpScale(1.f)
 {
-	fOwnedChannels |= kOpacity;
-	fOpacity = TRACKED_NEW hsScalar;
+    fOwnedChannels |= kOpacity;
+    fOpacity = TRACKED_NEW hsScalar;
 }
 
 plFadeOpacityLay::~plFadeOpacityLay()
@@ -41,34 +41,34 @@ plFadeOpacityLay::~plFadeOpacityLay()
 
 UInt32 plFadeOpacityLay::Eval(double secs, UInt32 frame, UInt32 ignore)
 {
-	UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
+    UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
 
-	if( fUnderLay )
-	{
-		if( GetBlendFlags() & hsGMatState::kBlendAdd )
-		{
-			*fRuntimeColor = fUnderLay->GetRuntimeColor() * fOpScale;
-		}
-		else
-		{
-			*fOpacity = fUnderLay->GetOpacity() * fOpScale;
-		}
-	}
+    if( fUnderLay )
+    {
+        if( GetBlendFlags() & hsGMatState::kBlendAdd )
+        {
+            *fRuntimeColor = fUnderLay->GetRuntimeColor() * fOpScale;
+        }
+        else
+        {
+            *fOpacity = fUnderLay->GetOpacity() * fOpScale;
+        }
+    }
 
-	return ret;
+    return ret;
 }
 
 void plFadeOpacityLay::Read(hsStream* s, hsResMgr* mgr)
 {
-	plLayerInterface::Read(s, mgr);
+    plLayerInterface::Read(s, mgr);
 
-	fOpScale = s->ReadSwapScalar();
+    fOpScale = s->ReadSwapScalar();
 }
 
 void plFadeOpacityLay::Write(hsStream* s, hsResMgr* mgr)
 {
-	plLayerInterface::Write(s, mgr);
+    plLayerInterface::Write(s, mgr);
 
-	s->WriteSwapScalar(fOpScale);
+    s->WriteSwapScalar(fOpScale);
 }
 

@@ -28,72 +28,72 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /* Not needed currently - if we want it again we'll have to reimplement HTTP comm
 plHttpFileGrabber::plHttpFileGrabber()
 {
-	fRequestMgr.SetHostname("");
+    fRequestMgr.SetHostname("");
 }
 
 bool plHttpFileGrabber::FileToStream(const char* path, hsStream* stream)
 {
-	std::string pathStr(path);
-	bool retVal = fRequestMgr.GetFileToStream(path, stream);
-	stream->SetPosition(0);
+    std::string pathStr(path);
+    bool retVal = fRequestMgr.GetFileToStream(path, stream);
+    stream->SetPosition(0);
 
-	return retVal;
+    return retVal;
 }
 
 void plHttpFileGrabber::SetServer(const char* server)
 {
-	std::string serverPath(server);
+    std::string serverPath(server);
 
-	fRequestMgr.SetHostname(serverPath);
+    fRequestMgr.SetHostname(serverPath);
 }
 
 void plHttpFileGrabber::MakeProperPath(char* path)
 {
-	char* slash = NULL;
-	do {
-		slash = strchr(path, '\\');
-		if (slash)
-			*slash = '/';
-	} while(slash != NULL);
+    char* slash = NULL;
+    do {
+        slash = strchr(path, '\\');
+        if (slash)
+            *slash = '/';
+    } while(slash != NULL);
 }
 
 void plHttpFileGrabber::SetUsernamePassword(const std::string& username, const std::string& password)
 {
-	fRequestMgr.SetUsername(username);
-	fRequestMgr.SetPassword(password);
+    fRequestMgr.SetUsername(username);
+    fRequestMgr.SetPassword(password);
 }
 
 bool plHttpFileGrabber::IsServerAvailable(const char* serverName)
 {
-	bool retVal = false;
+    bool retVal = false;
 
-	HINTERNET hInternet = InternetOpen("Parable Patcher",INTERNET_OPEN_TYPE_PRECONFIG,NULL,NULL,0);
-	if (hInternet)
-	{
-		HINTERNET hHttp = InternetConnect(hInternet,serverName,8080,fUserName.c_str(),fPassword.c_str(),INTERNET_SERVICE_HTTP,0,0);
-		if (hHttp)
-		{
-			HINTERNET hRequest = HttpOpenRequest(hHttp, "GET", "/Current/Current.txt", NULL, NULL, NULL, INTERNET_FLAG_NO_CACHE_WRITE | INTERNET_FLAG_KEEP_CONNECTION, 0);
-			if (hRequest)
-			{
-				DWORD dwCode;
-				DWORD dwSize = sizeof(dwCode);
-				HttpSendRequest(hRequest, NULL, 0, NULL, 0);
-				HttpQueryInfo(hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &dwCode, &dwSize, NULL);
-				if (dwCode >= 200 && dwCode < 300)
-				{
-					retVal = true;
-				}
+    HINTERNET hInternet = InternetOpen("Parable Patcher",INTERNET_OPEN_TYPE_PRECONFIG,NULL,NULL,0);
+    if (hInternet)
+    {
+        HINTERNET hHttp = InternetConnect(hInternet,serverName,8080,fUserName.c_str(),fPassword.c_str(),INTERNET_SERVICE_HTTP,0,0);
+        if (hHttp)
+        {
+            HINTERNET hRequest = HttpOpenRequest(hHttp, "GET", "/Current/Current.txt", NULL, NULL, NULL, INTERNET_FLAG_NO_CACHE_WRITE | INTERNET_FLAG_KEEP_CONNECTION, 0);
+            if (hRequest)
+            {
+                DWORD dwCode;
+                DWORD dwSize = sizeof(dwCode);
+                HttpSendRequest(hRequest, NULL, 0, NULL, 0);
+                HttpQueryInfo(hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &dwCode, &dwSize, NULL);
+                if (dwCode >= 200 && dwCode < 300)
+                {
+                    retVal = true;
+                }
 
-				InternetCloseHandle(hRequest);
-			}
+                InternetCloseHandle(hRequest);
+            }
 
-			InternetCloseHandle(hHttp);
-		}
-		InternetCloseHandle(hInternet);
-	}
+            InternetCloseHandle(hHttp);
+        }
+        InternetCloseHandle(hInternet);
+    }
 
-	return retVal;
+    return retVal;
 }
 */
 
@@ -104,67 +104,67 @@ plNetShareFileGrabber::plNetShareFileGrabber()
 #define BUFFER_SIZE 1024*1024
 bool plNetShareFileGrabber::FileToStream(const char* path, hsStream* stream)
 {
-	hsUNIXStream fileStream;
-	std::string filePath = fServerName + path;
-	
-	if (fileStream.Open(filePath.c_str()))
-	{
-		char* buffer = new char[BUFFER_SIZE];
-		UInt32 streamSize = fileStream.GetSizeLeft();
-		while (streamSize > (BUFFER_SIZE))
-		{
-			fileStream.Read(BUFFER_SIZE, buffer);
-			stream->Write(BUFFER_SIZE, buffer);
+    hsUNIXStream fileStream;
+    std::string filePath = fServerName + path;
+    
+    if (fileStream.Open(filePath.c_str()))
+    {
+        char* buffer = new char[BUFFER_SIZE];
+        UInt32 streamSize = fileStream.GetSizeLeft();
+        while (streamSize > (BUFFER_SIZE))
+        {
+            fileStream.Read(BUFFER_SIZE, buffer);
+            stream->Write(BUFFER_SIZE, buffer);
 
-			streamSize = fileStream.GetSizeLeft();
-		}
+            streamSize = fileStream.GetSizeLeft();
+        }
 
-		if (streamSize > 0)
-		{
-			fileStream.Read(streamSize, buffer);
-			stream->Write(streamSize, buffer);
-		}
+        if (streamSize > 0)
+        {
+            fileStream.Read(streamSize, buffer);
+            stream->Write(streamSize, buffer);
+        }
 
-		stream->Rewind();
+        stream->Rewind();
 
-		fileStream.Close();
-		delete [] buffer;
+        fileStream.Close();
+        delete [] buffer;
 
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 void plNetShareFileGrabber::SetServer(const char* server)
 {
-	fServerName = "\\\\";
-	fServerName += server;
+    fServerName = "\\\\";
+    fServerName += server;
 }
 
 void plNetShareFileGrabber::MakeProperPath(char* path)
 {
-	char* slash = NULL;
-	do {
-		slash = strchr(path, '/');
-		if (slash)
-			*slash = '\\';
-	} while(slash != NULL);
+    char* slash = NULL;
+    do {
+        slash = strchr(path, '/');
+        if (slash)
+            *slash = '\\';
+    } while(slash != NULL);
 }
 
 bool plNetShareFileGrabber::IsServerAvailable(const char* serverName, const char* currentDir)
 {
-	bool retVal = false;
+    bool retVal = false;
 
-	char serverPath[MAX_PATH];
-	sprintf(serverPath, "\\\\%s\\%s\\Current.txt", serverName, currentDir);
+    char serverPath[MAX_PATH];
+    sprintf(serverPath, "\\\\%s\\%s\\Current.txt", serverName, currentDir);
 
-	hsUNIXStream si;
-	if (si.Open(serverPath, "rb"))
-	{
-		retVal = true;
-		si.Close();
-	}
+    hsUNIXStream si;
+    if (si.Open(serverPath, "rb"))
+    {
+        retVal = true;
+        si.Close();
+    }
 
-	return retVal;
+    return retVal;
 }

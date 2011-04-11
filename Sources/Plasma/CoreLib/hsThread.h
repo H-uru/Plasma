@@ -32,75 +32,75 @@ typedef UInt32 hsMilliseconds;
 
 
 #if HS_BUILD_FOR_MAC
-	#include <Multiprocessing.h>
+    #include <Multiprocessing.h>
 #elif HS_BUILD_FOR_WIN32
-	#include "hsWindows.h"
+    #include "hsWindows.h"
 #elif HS_BUILD_FOR_UNIX
-	#include <pthread.h>
-	#include <semaphore.h>
-	//  We can't wait with a timeout with semas
-	#define USE_SEMA
-	// Linux kernel 2.4 w/ NTPL threading patch and O(1) scheduler
-	// seems to have a problem in it's cond_t implementation that
-	// causes a hang under heavy load. This is a workaround that
-	// uses select() and pipes.
-//	#define PSEUDO_EVENT
+    #include <pthread.h>
+    #include <semaphore.h>
+    //  We can't wait with a timeout with semas
+    #define USE_SEMA
+    // Linux kernel 2.4 w/ NTPL threading patch and O(1) scheduler
+    // seems to have a problem in it's cond_t implementation that
+    // causes a hang under heavy load. This is a workaround that
+    // uses select() and pipes.
+//  #define PSEUDO_EVENT
 #endif
 
 class hsThread 
 {
 public:
 #if HS_BUILD_FOR_MAC
-	typedef MPTaskId ThreadId;
+    typedef MPTaskId ThreadId;
 #elif HS_BUILD_FOR_WIN32
-	typedef DWORD ThreadId;
+    typedef DWORD ThreadId;
 #elif HS_BUILD_FOR_UNIX
-	typedef pthread_t ThreadId;
+    typedef pthread_t ThreadId;
 #endif
 private:
-	hsBool		fQuit;
-	UInt32		fStackSize;
+    hsBool      fQuit;
+    UInt32      fStackSize;
 #if HS_BUILD_FOR_MAC
-	ThreadId	fTaskId;
-	MPQueueId	fNotifyQ;
+    ThreadId    fTaskId;
+    MPQueueId   fNotifyQ;
 #elif HS_BUILD_FOR_WIN32
-	ThreadId	fThreadId;
-	HANDLE		fThreadH;
-	HANDLE		fQuitSemaH;
+    ThreadId    fThreadId;
+    HANDLE      fThreadH;
+    HANDLE      fQuitSemaH;
 #elif HS_BUILD_FOR_UNIX
-	ThreadId	fPThread;
-	hsBool		fIsValid;
-	pthread_mutex_t	fMutex;
+    ThreadId    fPThread;
+    hsBool      fIsValid;
+    pthread_mutex_t fMutex;
 #endif
 protected:
-	hsBool		GetQuit() const { return hsBool(fQuit); }
-	void		SetQuit(hsBool value) { fQuit = value; }
+    hsBool      GetQuit() const { return hsBool(fQuit); }
+    void        SetQuit(hsBool value) { fQuit = value; }
 public:
-	hsThread(UInt32 stackSize = 0);
-	virtual 	~hsThread();	// calls Stop()
+    hsThread(UInt32 stackSize = 0);
+    virtual     ~hsThread();    // calls Stop()
 #if HS_BUILD_FOR_MAC
-	ThreadId		GetThreadId() { return fTaskId; }
+    ThreadId        GetThreadId() { return fTaskId; }
 #error "Mac is Depricated"
 #elif HS_BUILD_FOR_WIN32
-	ThreadId		GetThreadId() { return fThreadId; }
-	static ThreadId	GetMyThreadId() { return GetCurrentThreadId(); }
+    ThreadId        GetThreadId() { return fThreadId; }
+    static ThreadId GetMyThreadId() { return GetCurrentThreadId(); }
 #elif HS_BUILD_FOR_UNIX
-	ThreadId			GetThreadId() { return fPThread; }
-	static ThreadId		GetMyThreadId() { return pthread_self(); }
-	pthread_mutex_t* GetStartupMutex() { return &fMutex;  }
+    ThreadId            GetThreadId() { return fPThread; }
+    static ThreadId     GetMyThreadId() { return pthread_self(); }
+    pthread_mutex_t* GetStartupMutex() { return &fMutex;  }
 #endif
-				
-	virtual hsError Run() = 0;		// override this to do your work
-	virtual void	Start();		// initializes stuff and calls your Run() method
-	virtual void	Stop(); 	// sets fQuit = true and the waits for the thread to stop
-				
-	//	Static functions
-	static void*	Alloc(size_t size); // does not call operator::new(), may return nil
-	static void Free(void* p);		// does not call operator::delete()
-	static void ThreadYield();
-				
+                
+    virtual hsError Run() = 0;      // override this to do your work
+    virtual void    Start();        // initializes stuff and calls your Run() method
+    virtual void    Stop();     // sets fQuit = true and the waits for the thread to stop
+                
+    //  Static functions
+    static void*    Alloc(size_t size); // does not call operator::new(), may return nil
+    static void Free(void* p);      // does not call operator::delete()
+    static void ThreadYield();
+                
 #if HS_BUILD_FOR_WIN32
-	DWORD			WinRun();
+    DWORD           WinRun();
 #endif
 };
 
@@ -108,64 +108,64 @@ public:
 
 class hsMutex {
 #if HS_BUILD_FOR_MAC
-	MPCriticalRegionId	fCriticalRegion;
+    MPCriticalRegionId  fCriticalRegion;
 #elif HS_BUILD_FOR_WIN32
-	HANDLE	fMutexH;
+    HANDLE  fMutexH;
 #elif HS_BUILD_FOR_UNIX
-	pthread_mutex_t	fPMutex;
+    pthread_mutex_t fPMutex;
 #endif
 public:
-	hsMutex();
-	virtual ~hsMutex();
-	
-	void		Lock();
-	hsBool		TryLock();
-	void		Unlock();
+    hsMutex();
+    virtual ~hsMutex();
+    
+    void        Lock();
+    hsBool      TryLock();
+    void        Unlock();
 };
 
 class hsTempMutexLock {
-	hsMutex*	fMutex;
+    hsMutex*    fMutex;
 public:
-	hsTempMutexLock(hsMutex* mutex) : fMutex(mutex)
-	{
-		fMutex->Lock();
-	}
-	hsTempMutexLock(hsMutex& mutex) : fMutex(&mutex)
-	{
-		fMutex->Lock();
-	}
-	~hsTempMutexLock()
-	{
-		fMutex->Unlock();
-	}
+    hsTempMutexLock(hsMutex* mutex) : fMutex(mutex)
+    {
+        fMutex->Lock();
+    }
+    hsTempMutexLock(hsMutex& mutex) : fMutex(&mutex)
+    {
+        fMutex->Lock();
+    }
+    ~hsTempMutexLock()
+    {
+        fMutex->Unlock();
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 class hsSemaphore {
 #if HS_BUILD_FOR_MAC
-	MPSemaphoreId	fSemaId;
+    MPSemaphoreId   fSemaId;
 #elif HS_BUILD_FOR_WIN32
-	HANDLE	fSemaH;
+    HANDLE  fSemaH;
 #elif HS_BUILD_FOR_UNIX
 #ifdef USE_SEMA
-	sem_t	fPSema;
+    sem_t   fPSema;
 #else
-	pthread_mutex_t	fPMutex;
-	pthread_cond_t	fPCond;
-	Int32		fCounter;
+    pthread_mutex_t fPMutex;
+    pthread_cond_t  fPCond;
+    Int32       fCounter;
 #endif
 #endif
 public:
 #ifdef HS_BUILD_FOR_WIN32
-	hsSemaphore(int initialValue=0, const char *name=nil);
+    hsSemaphore(int initialValue=0, const char *name=nil);
 #else
-	hsSemaphore(int initialValue=0);
+    hsSemaphore(int initialValue=0);
 #endif
-	~hsSemaphore();
-	
-	hsBool		Wait(hsMilliseconds timeToWait = kPosInfinity32);
-	void		Signal();
+    ~hsSemaphore();
+    
+    hsBool      Wait(hsMilliseconds timeToWait = kPosInfinity32);
+    void        Signal();
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -174,24 +174,24 @@ class hsEvent
 {
 #if HS_BUILD_FOR_UNIX
 #ifndef PSEUDO_EVENT
-	pthread_mutex_t fMutex;
-	pthread_cond_t	fCond;
-	hsBool	fTriggered;
+    pthread_mutex_t fMutex;
+    pthread_cond_t  fCond;
+    hsBool  fTriggered;
 #else
-	enum { kRead, kWrite };
-	int		fFds[2];
-	hsMutex	fWaitLock;
-	hsMutex	fSignalLock;
+    enum { kRead, kWrite };
+    int     fFds[2];
+    hsMutex fWaitLock;
+    hsMutex fSignalLock;
 #endif // PSEUDO_EVENT
 #elif HS_BUILD_FOR_WIN32
-	HANDLE fEvent;
+    HANDLE fEvent;
 #endif
 public:
-	hsEvent();
-	~hsEvent();
+    hsEvent();
+    ~hsEvent();
 
-	hsBool	Wait(hsMilliseconds timeToWait = kPosInfinity32);
-	void		Signal();
+    hsBool  Wait(hsMilliseconds timeToWait = kPosInfinity32);
+    void        Signal();
 };
 #endif  // HS_BUILD_FOR_MAC
 
@@ -201,10 +201,10 @@ class hsSleep
 {
 public:
 #if HS_BUILD_FOR_UNIX
-	static void Sleep(UInt32 millis);
+    static void Sleep(UInt32 millis);
 
 #elif HS_BUILD_FOR_WIN32
-	static void Sleep(UInt32 millis) { ::Sleep(millis); }
+    static void Sleep(UInt32 millis) { ::Sleep(millis); }
 
 #endif
 };
@@ -217,68 +217,68 @@ public:
 class hsReaderWriterLock
 {
 public:
-	struct Callback
-	{
-		virtual void OnLockingForRead( hsReaderWriterLock * lock ) {}
-		virtual void OnLockedForRead( hsReaderWriterLock * lock ) {}
-		virtual void OnUnlockingForRead( hsReaderWriterLock * lock ) {}
-		virtual void OnUnlockedForRead( hsReaderWriterLock * lock ) {}
-		virtual void OnLockingForWrite( hsReaderWriterLock * lock ) {}
-		virtual void OnLockedForWrite( hsReaderWriterLock * lock ) {}
-		virtual void OnUnlockingForWrite( hsReaderWriterLock * lock ) {}
-		virtual void OnUnlockedForWrite( hsReaderWriterLock * lock ) {}
-	};
-	hsReaderWriterLock( const char * name="<unnamed>", Callback * cb=nil );
-	~hsReaderWriterLock();
-	void LockForReading();
-	void UnlockForReading();
-	void LockForWriting();
-	void UnlockForWriting();
-	const char * GetName() const { return fName; }
+    struct Callback
+    {
+        virtual void OnLockingForRead( hsReaderWriterLock * lock ) {}
+        virtual void OnLockedForRead( hsReaderWriterLock * lock ) {}
+        virtual void OnUnlockingForRead( hsReaderWriterLock * lock ) {}
+        virtual void OnUnlockedForRead( hsReaderWriterLock * lock ) {}
+        virtual void OnLockingForWrite( hsReaderWriterLock * lock ) {}
+        virtual void OnLockedForWrite( hsReaderWriterLock * lock ) {}
+        virtual void OnUnlockingForWrite( hsReaderWriterLock * lock ) {}
+        virtual void OnUnlockedForWrite( hsReaderWriterLock * lock ) {}
+    };
+    hsReaderWriterLock( const char * name="<unnamed>", Callback * cb=nil );
+    ~hsReaderWriterLock();
+    void LockForReading();
+    void UnlockForReading();
+    void LockForWriting();
+    void UnlockForWriting();
+    const char * GetName() const { return fName; }
 
 private:
-	int		fReaderCount;
-	hsMutex	fReaderCountLock;
-	hsMutex	fReaderLock;
-	hsSemaphore	fWriterSema;
-	Callback *	fCallback;
-	char *	fName;
+    int     fReaderCount;
+    hsMutex fReaderCountLock;
+    hsMutex fReaderLock;
+    hsSemaphore fWriterSema;
+    Callback *  fCallback;
+    char *  fName;
 };
 
 class hsLockForReading
 {
-	hsReaderWriterLock * fLock;
+    hsReaderWriterLock * fLock;
 public:
-	hsLockForReading( hsReaderWriterLock & lock ): fLock( &lock )
-	{
-		fLock->LockForReading();
-	}
-	hsLockForReading( hsReaderWriterLock * lock ): fLock( lock )
-	{
-		fLock->LockForReading();
-	}
-	~hsLockForReading()
-	{
-		fLock->UnlockForReading();
-	}
+    hsLockForReading( hsReaderWriterLock & lock ): fLock( &lock )
+    {
+        fLock->LockForReading();
+    }
+    hsLockForReading( hsReaderWriterLock * lock ): fLock( lock )
+    {
+        fLock->LockForReading();
+    }
+    ~hsLockForReading()
+    {
+        fLock->UnlockForReading();
+    }
 };
 
 class hsLockForWriting
 {
-	hsReaderWriterLock * fLock;
+    hsReaderWriterLock * fLock;
 public:
-	hsLockForWriting( hsReaderWriterLock & lock ): fLock( &lock )
-	{
-		fLock->LockForWriting();
-	}
-	hsLockForWriting( hsReaderWriterLock * lock ): fLock( lock )
-	{
-		fLock->LockForWriting();
-	}
-	~hsLockForWriting()
-	{
-		fLock->UnlockForWriting();
-	}
+    hsLockForWriting( hsReaderWriterLock & lock ): fLock( &lock )
+    {
+        fLock->LockForWriting();
+    }
+    hsLockForWriting( hsReaderWriterLock * lock ): fLock( lock )
+    {
+        fLock->LockForWriting();
+    }
+    ~hsLockForWriting()
+    {
+        fLock->UnlockForWriting();
+    }
 };
 
 #endif

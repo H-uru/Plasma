@@ -35,22 +35,22 @@ class plDXPipeline;
 class plDXShader : public plDXDeviceRef
 {
 protected:
-	plShader*			fOwner;
-	char*				fErrorString;
-	plDXPipeline*		fPipe;
+    plShader*           fOwner;
+    char*               fErrorString;
+    plDXPipeline*       fPipe;
 
-	HRESULT				IOnError(HRESULT hr, const char* errStr);
-	const char*			ISetError(const char* errStr);
+    HRESULT             IOnError(HRESULT hr, const char* errStr);
+    const char*         ISetError(const char* errStr);
 
-	virtual HRESULT		ICreate(plDXPipeline* pipe) = 0;
-	virtual HRESULT		ISetConstants(plDXPipeline* pipe) = 0; // On error, sets error string.
+    virtual HRESULT     ICreate(plDXPipeline* pipe) = 0;
+    virtual HRESULT     ISetConstants(plDXPipeline* pipe) = 0; // On error, sets error string.
 
 public:
-	plDXShader(plShader* owner);
-	virtual ~plDXShader();
+    plDXShader(plShader* owner);
+    virtual ~plDXShader();
 
-	const char*		GetErrorString() const { return fErrorString; }
-	void			SetOwner(plShader* owner);
+    const char*     GetErrorString() const { return fErrorString; }
+    void            SetOwner(plShader* owner);
 };
 
 #endif // plDXShader_inc

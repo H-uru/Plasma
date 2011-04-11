@@ -33,29 +33,29 @@ class plRegionBase;
 
 class plRelevanceRegion : public plObjInterface
 {
-	friend class plRelevanceMgr;
+    friend class plRelevanceMgr;
 
 protected:
-	plRegionBase *fRegion;
-	hsBitVector	fRegionsICareAbout;		
-	UInt32 fMgrIdx;
-	
+    plRegionBase *fRegion;
+    hsBitVector fRegionsICareAbout;     
+    UInt32 fMgrIdx;
+    
 public:
-	plRelevanceRegion() : fRegion(nil), fMgrIdx((UInt32)-1) {}
-	virtual ~plRelevanceRegion() {}
-	
-	CLASSNAME_REGISTER( plRelevanceRegion );
-	GETINTERFACE_ANY( plRelevanceRegion, plObjInterface );
-	
-	virtual hsBool MsgReceive(plMessage* msg);
-	
-	virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
-	virtual Int32 GetNumProperties() const { return 1; }	
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    plRelevanceRegion() : fRegion(nil), fMgrIdx((UInt32)-1) {}
+    virtual ~plRelevanceRegion() {}
+    
+    CLASSNAME_REGISTER( plRelevanceRegion );
+    GETINTERFACE_ANY( plRelevanceRegion, plObjInterface );
+    
+    virtual hsBool MsgReceive(plMessage* msg);
+    
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
+    virtual Int32 GetNumProperties() const { return 1; }    
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	void SetMgrIndex(UInt32 idx);
+    void SetMgrIndex(UInt32 idx);
 };
 
 #endif // plRelevanceRegion_inc

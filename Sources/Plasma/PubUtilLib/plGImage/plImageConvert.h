@@ -28,16 +28,16 @@ class plImageConvert : public hsRefCnt
 {
 public:
 
-	// Fill in dst according to src's image and dst's format/size
-	hsGBitmap*			Convert(hsGBitmap* src, hsGBitmap* dst);
+    // Fill in dst according to src's image and dst's format/size
+    hsGBitmap*          Convert(hsGBitmap* src, hsGBitmap* dst);
 
-	hsGBitmap*			Create(
+    hsGBitmap*          Create(
 
-	// Fill dst with normals from height map src. May take additional
-	// parameters, like scale and which channel of src to use as height
-	hsGBitmap*			CreateBumpMap(hsGBitmap* src, hsGBitmap* dst);
+    // Fill dst with normals from height map src. May take additional
+    // parameters, like scale and which channel of src to use as height
+    hsGBitmap*          CreateBumpMap(hsGBitmap* src, hsGBitmap* dst);
 
-	hsGBitmap*			Filter(hsGBitmap* src, hsGBitmap* dst, plFilterFunc	func); ?
+    hsGBitmap*          Filter(hsGBitmap* src, hsGBitmap* dst, plFilterFunc func); ?
 
-	
+    
 };

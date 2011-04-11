@@ -38,63 +38,63 @@ class hsResMgr;
 class plFollowMod : public plSingleModifier
 {
 public:
-	enum FollowRefs
-	{
-		kRefLeader
-	};
-	enum FollowLeaderType
-	{
-		kLocalPlayer,
-		kObject,
-		kCamera,
-		kListener
-	};
-	enum FollowModMode
-	{
-		kPositionX	= 0x1,
-		kPositionY	= 0x2,
-		kPositionZ	= 0x4,
-		kPosition	= (kPositionX | kPositionY | kPositionZ),
-		kRotate		= 0x8,
-		kFullTransform	= kPosition | kRotate
-	};
+    enum FollowRefs
+    {
+        kRefLeader
+    };
+    enum FollowLeaderType
+    {
+        kLocalPlayer,
+        kObject,
+        kCamera,
+        kListener
+    };
+    enum FollowModMode
+    {
+        kPositionX  = 0x1,
+        kPositionY  = 0x2,
+        kPositionZ  = 0x4,
+        kPosition   = (kPositionX | kPositionY | kPositionZ),
+        kRotate     = 0x8,
+        kFullTransform  = kPosition | kRotate
+    };
 protected:
-	FollowLeaderType	fLeaderType;
-	UInt8				fMode;
-	UInt8				fLeaderSet;
+    FollowLeaderType    fLeaderType;
+    UInt8               fMode;
+    UInt8               fLeaderSet;
 
-	plSceneObject*		fLeader; // may be nil if Leader isn't a sceneobject
+    plSceneObject*      fLeader; // may be nil if Leader isn't a sceneobject
 
-	hsMatrix44			fLeaderL2W;
-	hsMatrix44			fLeaderW2L;
+    hsMatrix44          fLeaderL2W;
+    hsMatrix44          fLeaderW2L;
 
-	hsBool ICheckLeader();
-	void IMoveTarget();
+    hsBool ICheckLeader();
+    void IMoveTarget();
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
 
 public:
-	plFollowMod();
-	~plFollowMod();
+    plFollowMod();
+    ~plFollowMod();
 
-	CLASSNAME_REGISTER( plFollowMod );
-	GETINTERFACE_ANY( plFollowMod, plSingleModifier );
+    CLASSNAME_REGISTER( plFollowMod );
+    GETINTERFACE_ANY( plFollowMod, plSingleModifier );
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual void SetTarget(plSceneObject* so);
+    virtual void SetTarget(plSceneObject* so);
 
-	void SetType(FollowLeaderType t) { fLeaderType = t; }
-	FollowLeaderType GetType() const { return fLeaderType; }
+    void SetType(FollowLeaderType t) { fLeaderType = t; }
+    FollowLeaderType GetType() const { return fLeaderType; }
 
-	void SetMode(UInt8 m) { fMode = m; }
-	UInt8 GetMode() const { return fMode; }
+    void SetMode(UInt8 m) { fMode = m; }
+    UInt8 GetMode() const { return fMode; }
 
-	void Activate();
-	void Deactivate();
+    void Activate();
+    void Deactivate();
 
 };
 

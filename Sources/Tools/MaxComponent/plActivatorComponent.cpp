@@ -34,21 +34,21 @@ void DummyCodeIncludeFuncActive() {}
 class plActiveComponent : public plComponent
 {
 public:
-	plActiveComponent();
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    plActiveComponent();
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 OBSOLETE_CLASS_DESC(plActiveComponent, gActiveDesc, "Activator", "Activator", COMP_TYPE_LOGIC, ACTIVATOR_CID)
 
 plActiveComponent::plActiveComponent()
 {
-	fClassDesc = &gActiveDesc;
-	fClassDesc->MakeAutoParamBlocks(this);
+    fClassDesc = &gActiveDesc;
+    fClassDesc->MakeAutoParamBlocks(this);
 }
 
 ParamBlockDesc2 gActiveBlock
 (
-	plComponent::kBlkComp, _T("activeComp"), 0, &gActiveDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
-		
-	end
+    plComponent::kBlkComp, _T("activeComp"), 0, &gActiveDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
+        
+    end
 );

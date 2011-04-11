@@ -46,7 +46,7 @@ struct IniChangeReg;
 typedef void (* FIniFileChangeCallback)(const wchar fullPath[]);
 
 void IniChangeInitialize (
-	const wchar				dir[] = L"Config"
+    const wchar             dir[] = L"Config"
 );
 void IniChangeDestroy ();
 

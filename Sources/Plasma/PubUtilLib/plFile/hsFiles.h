@@ -30,31 +30,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdio.h>
 
 #if HS_BUILD_FOR_UNIX
-	#include <limits.h>
-	#define kFolderIterator_MaxPath		PATH_MAX
-	#include <unistd.h>
-	#define SetCurrentDirectory chdir
+    #include <limits.h>
+    #define kFolderIterator_MaxPath     PATH_MAX
+    #include <unistd.h>
+    #define SetCurrentDirectory chdir
 #elif !HS_BUILD_FOR_PS2
-	#define kFolderIterator_MaxPath		_MAX_PATH
+    #define kFolderIterator_MaxPath     _MAX_PATH
 #else
-	#define kFolderIterator_MaxPath		255
+    #define kFolderIterator_MaxPath     255
 #endif
 
 #if HS_BUILD_FOR_MAC
-	#include <Files.h>
-	#include <Script.h>
+    #include <Files.h>
+    #include <Script.h>
 #endif
 
 
 #if HS_BUILD_FOR_WIN32
-# define PATH_SEPARATOR		'\\'
-# define WPATH_SEPARATOR	L'\\'
-# define PATH_SEPARATOR_STR	"\\"
+# define PATH_SEPARATOR     '\\'
+# define WPATH_SEPARATOR    L'\\'
+# define PATH_SEPARATOR_STR "\\"
 # define WPATH_SEPARATOR_STR L"\\"
 #elif HS_BUILD_FOR_UNIX
-# define PATH_SEPARATOR		'/'
-# define WPATH_SEPARATOR	L'/'
-# define PATH_SEPARATOR_STR	"/"
+# define PATH_SEPARATOR     '/'
+# define WPATH_SEPARATOR    L'/'
+# define PATH_SEPARATOR_STR "/"
 # define WPATH_SEPARATOR_STR L"/"
 #endif
 
@@ -63,125 +63,125 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if !HS_BUILD_FOR_PS2
 
 class hsFile {
-	hsFile&		operator=(const hsFile&);		// disallow assignment
+    hsFile&     operator=(const hsFile&);       // disallow assignment
 protected:
-	char*		fPathAndName;
-	FILE*		fFILE;
+    char*       fPathAndName;
+    FILE*       fFILE;
 public:
-				hsFile();
-				hsFile(const char pathAndName[]);
-	virtual		~hsFile();
+                hsFile();
+                hsFile(const char pathAndName[]);
+    virtual     ~hsFile();
 
-	const char*	GetName();
-	virtual const char*	GetPathAndName();
-	virtual void	SetPathAndName(const char pathAndName[]);
+    const char* GetName();
+    virtual const char* GetPathAndName();
+    virtual void    SetPathAndName(const char pathAndName[]);
 
-	virtual FILE*	OpenFILE(const char mode[], hsBool throwIfFailure = false);
-	virtual hsStream* OpenStream(const char mode[], hsBool throwIfFailure = false);
+    virtual FILE*   OpenFILE(const char mode[], hsBool throwIfFailure = false);
+    virtual hsStream* OpenStream(const char mode[], hsBool throwIfFailure = false);
 
-	virtual void	Close();	// called automatically in the destructor
+    virtual void    Close();    // called automatically in the destructor
 };
-typedef hsFile	hsUnixFile;	// for compatibility
+typedef hsFile  hsUnixFile; // for compatibility
 
 #if HS_BUILD_FOR_MAC
-	class hsMacFile : public hsFile {
-		enum {
-			kRefNum_Dirty,
-			kPathName_Dirty
-		};
-		FSSpec		fSpec;
-		Int16		fRefNum;
-		UInt16		fFlags;
+    class hsMacFile : public hsFile {
+        enum {
+            kRefNum_Dirty,
+            kPathName_Dirty
+        };
+        FSSpec      fSpec;
+        Int16       fRefNum;
+        UInt16      fFlags;
 
-		void 			SetSpecFromName();
-		void 			SetNameFromSpec();
-	public:
-					hsMacFile();
-					hsMacFile(const FSSpec* spec);
-					hsMacFile(const char pathAndName[]);
-		virtual		~hsMacFile();
+        void            SetSpecFromName();
+        void            SetNameFromSpec();
+    public:
+                    hsMacFile();
+                    hsMacFile(const FSSpec* spec);
+                    hsMacFile(const char pathAndName[]);
+        virtual     ~hsMacFile();
 
-		const FSSpec*	GetSpec() const { return &fSpec; }
-		void			SetSpec(const FSSpec* spec);
-		hsBool		Create(OSType creator, OSType fileType, ScriptCode scriptCode = smSystemScript);
-		hsBool		OpenDataFork(SInt8 permission, Int16* refnum);
+        const FSSpec*   GetSpec() const { return &fSpec; }
+        void            SetSpec(const FSSpec* spec);
+        hsBool      Create(OSType creator, OSType fileType, ScriptCode scriptCode = smSystemScript);
+        hsBool      OpenDataFork(SInt8 permission, Int16* refnum);
 
-		//	Overrides
-		virtual const char*	GetPathAndName();
-		virtual void	SetPathAndName(const char pathAndName[]);
-		virtual hsStream* OpenStream(const char mode[], hsBool throwIfFailure = false);
-		virtual void	Close();
-	};
-	typedef hsMacFile	hsOSFile;
+        //  Overrides
+        virtual const char* GetPathAndName();
+        virtual void    SetPathAndName(const char pathAndName[]);
+        virtual hsStream* OpenStream(const char mode[], hsBool throwIfFailure = false);
+        virtual void    Close();
+    };
+    typedef hsMacFile   hsOSFile;
 #else
-	typedef hsFile		hsOSFile;
+    typedef hsFile      hsOSFile;
 #endif
 #endif // HS_BUILD_FOR_PS2
 ///////////////////////////////////////////////////////////////////////
 
 class hsFolderIterator {
-	char		fPath[kFolderIterator_MaxPath];
-	struct hsFolderIterator_Data* fData;
+    char        fPath[kFolderIterator_MaxPath];
+    struct hsFolderIterator_Data* fData;
    bool fCustomFilter;
 public:
 #ifdef HS_BUILD_FOR_WIN32
    hsFolderIterator(const char path[] = nil, bool useCustomFilter=false);
 #else
    hsFolderIterator(const char path[] = nil, bool unused=true);
-   hsFolderIterator(const struct FSSpec* spec);	// Alt constructor
+   hsFolderIterator(const struct FSSpec* spec); // Alt constructor
 #endif
-	virtual		~hsFolderIterator();
+    virtual     ~hsFolderIterator();
 
-	const char*	GetPath() const { return fPath; }
-	void			SetPath(const char path[]);
+    const char* GetPath() const { return fPath; }
+    void            SetPath(const char path[]);
 
-	void			Reset();
-	hsBool		NextFile();
-	hsBool		NextFileSuffix(const char suffix[]);
-	const char*	GetFileName() const;
-	int			GetPathAndName(char pathandname[] = nil);
-	hsBool		IsDirectory( void ) const;
+    void            Reset();
+    hsBool      NextFile();
+    hsBool      NextFileSuffix(const char suffix[]);
+    const char* GetFileName() const;
+    int         GetPathAndName(char pathandname[] = nil);
+    hsBool      IsDirectory( void ) const;
 
-	FILE*		OpenFILE(const char mode[]);
+    FILE*       OpenFILE(const char mode[]);
 
 #if HS_BUILD_FOR_MAC
-	void			SetMacFolder(const char path[]);
-	void			SetMacFolder(OSType folderType);
-	void			SetMacFolder(Int16 vRefNum, Int32 dirID);
-	hsBool		NextMacFile(OSType targetFileType, OSType targetCreator);
-	const struct FSSpec* GetMacSpec() const;
-	OSType		GetMacFileType() const;
-	OSType		GetMacCreator() const;
+    void            SetMacFolder(const char path[]);
+    void            SetMacFolder(OSType folderType);
+    void            SetMacFolder(Int16 vRefNum, Int32 dirID);
+    hsBool      NextMacFile(OSType targetFileType, OSType targetCreator);
+    const struct FSSpec* GetMacSpec() const;
+    OSType      GetMacFileType() const;
+    OSType      GetMacCreator() const;
 #elif HS_BUILD_FOR_WIN32
-	void		SetWinSystemDir(const char subdir[]);	// e.g. "Fonts"
-	void		SetFileFilterStr(const char filterStr[]);	// e.g. "*.*"
+    void        SetWinSystemDir(const char subdir[]);   // e.g. "Fonts"
+    void        SetFileFilterStr(const char filterStr[]);   // e.g. "*.*"
 #endif
 };
 
 #ifdef HS_BUILD_FOR_WIN32
 // only implemented on Win32 for now
 class hsWFolderIterator {
-	wchar		fPath[kFolderIterator_MaxPath];
-	struct		hsWFolderIterator_Data* fData;
-	bool		fCustomFilter;
+    wchar       fPath[kFolderIterator_MaxPath];
+    struct      hsWFolderIterator_Data* fData;
+    bool        fCustomFilter;
 public:
-	hsWFolderIterator(const wchar path[] = nil, bool useCustomFilter=false);
-	virtual		~hsWFolderIterator();
+    hsWFolderIterator(const wchar path[] = nil, bool useCustomFilter=false);
+    virtual     ~hsWFolderIterator();
 
-	const wchar*	GetPath() const { return fPath; }
-	void			SetPath(const wchar path[]);
+    const wchar*    GetPath() const { return fPath; }
+    void            SetPath(const wchar path[]);
 
-	void			Reset();
-	hsBool			NextFile();
-	hsBool			NextFileSuffix(const wchar suffix[]);
-	const wchar*	GetFileName() const;
-	int				GetPathAndName(wchar pathandname[] = nil);
-	hsBool			IsDirectory( void ) const;
+    void            Reset();
+    hsBool          NextFile();
+    hsBool          NextFileSuffix(const wchar suffix[]);
+    const wchar*    GetFileName() const;
+    int             GetPathAndName(wchar pathandname[] = nil);
+    hsBool          IsDirectory( void ) const;
 
-	FILE*			OpenFILE(const wchar mode[]);
+    FILE*           OpenFILE(const wchar mode[]);
 
-	void		SetWinSystemDir(const wchar subdir[]);	// e.g. "Fonts"
-	void		SetFileFilterStr(const wchar filterStr[]);	// e.g. "*.*"
+    void        SetWinSystemDir(const wchar subdir[]);  // e.g. "Fonts"
+    void        SetFileFilterStr(const wchar filterStr[]);  // e.g. "*.*"
 };
 #endif
 

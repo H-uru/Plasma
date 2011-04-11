@@ -36,8 +36,8 @@ fTelescopeInterface(nil)
 
 cyInputInterface::~cyInputInterface() 
 {
-	if (fTelescopeInterface)
-		hsRefCnt_SafeUnRef( fTelescopeInterface );
+    if (fTelescopeInterface)
+        hsRefCnt_SafeUnRef( fTelescopeInterface );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -46,20 +46,20 @@ cyInputInterface::~cyInputInterface()
 //  PARAMETERS :
 //
 //  PURPOSE    : create and push a specialized input interface onto the control stack.
-//			   : for now we only have the telescope...
+//             : for now we only have the telescope...
 //
 //
 
 void cyInputInterface::PushTelescopeInterface()
 {
-	if (!fTelescopeInterface)
-	{
-		fTelescopeInterface = TRACKED_NEW plTelescopeInputInterface;
-		plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kAddInterface);
-		pMsg->SetIFace(fTelescopeInterface);
-		pMsg->Send();
-	}
-}	
+    if (!fTelescopeInterface)
+    {
+        fTelescopeInterface = TRACKED_NEW plTelescopeInputInterface;
+        plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kAddInterface);
+        pMsg->SetIFace(fTelescopeInterface);
+        pMsg->Send();
+    }
+}   
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -70,12 +70,12 @@ void cyInputInterface::PushTelescopeInterface()
 //
 void cyInputInterface::PopTelescope()
 {
-	if (fTelescopeInterface)
-	{
-		plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kRemoveInterface);
-		pMsg->SetIFace(fTelescopeInterface);
-		pMsg->Send();
-		hsRefCnt_SafeUnRef( fTelescopeInterface );
-		fTelescopeInterface = nil;
-	}
+    if (fTelescopeInterface)
+    {
+        plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kRemoveInterface);
+        pMsg->SetIFace(fTelescopeInterface);
+        pMsg->Send();
+        hsRefCnt_SafeUnRef( fTelescopeInterface );
+        fTelescopeInterface = nil;
+    }
 }

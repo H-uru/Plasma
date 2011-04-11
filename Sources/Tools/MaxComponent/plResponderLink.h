@@ -30,207 +30,207 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plResponderCmdLink : public plResponderCmd
 {
 public:
-	static plResponderCmdLink& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdLink& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return nil; }
-	virtual const char *GetName(int idx) { return "Link"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return nil; }
+    virtual const char *GetName(int idx) { return "Link"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual void SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb);
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual void SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdEnable : public plResponderCmd
 {
 public:
-	static plResponderCmdEnable& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdEnable& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return "Enable/Disable"; }
-	virtual const char *GetName(int idx) { return "Responder"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return "Enable/Disable"; }
+    virtual const char *GetName(int idx) { return "Responder"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdPhysEnable : public plResponderCmd
 {
 public:
-	static plResponderCmdPhysEnable& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdPhysEnable& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return "Enable/Disable"; }
-	virtual const char *GetName(int idx) { return "Physical"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return "Enable/Disable"; }
+    virtual const char *GetName(int idx) { return "Physical"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdOneShot : public plResponderCmd
 {
 public:
-	static plResponderCmdOneShot& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdOneShot& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return nil; }
-	virtual const char *GetName(int idx) { return "One Shot"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return nil; }
+    virtual const char *GetName(int idx) { return "One Shot"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 
-	virtual bool IsWaitable(IParamBlock2 *pb) { return true; }
-	virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
+    virtual bool IsWaitable(IParamBlock2 *pb) { return true; }
+    virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
 };
 
 class plResponderCmdNotify : public plResponderCmd
 {
 public:
-	static plResponderCmdNotify& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdNotify& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return nil; }
-	virtual const char *GetName(int idx) { return "Notify Triggerer"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb) { return GetName(0); }
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return nil; }
+    virtual const char *GetName(int idx) { return "Notify Triggerer"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb) { return GetName(0); }
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdDetectorEnable : public plResponderCmd
 {
 public:
-	static plResponderCmdDetectorEnable& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdDetectorEnable& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return "Enable/Disable"; }
-	virtual const char *GetName(int idx) { return "Detector"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return "Enable/Disable"; }
+    virtual const char *GetName(int idx) { return "Detector"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdXRegion : public plResponderCmd
 {
 public:
-	static plResponderCmdXRegion& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdXRegion& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes();
-	virtual const char *GetCategory(int idx);
-	virtual const char *GetName(int idx);
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes();
+    virtual const char *GetCategory(int idx);
+    virtual const char *GetName(int idx);
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual IParamBlock2 *CreatePB(int idx);
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual IParamBlock2 *CreatePB(int idx);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdCamTransition : public plResponderCmd
 {
 public:
-	static plResponderCmdCamTransition& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdCamTransition& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return nil; }
-	virtual const char *GetName(int idx) { return "Camera Transition"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return nil; }
+    virtual const char *GetName(int idx) { return "Camera Transition"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdCamForce : public plResponderCmd
 {
 public:
-	enum { kForce3rd, kResume1st };
+    enum { kForce3rd, kResume1st };
 
-	static plResponderCmdCamForce& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdCamForce& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return nil; }
-	virtual const char *GetName(int idx) { return "Camera Force 3rd"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return nil; }
+    virtual const char *GetName(int idx) { return "Camera Force 3rd"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdDelay : public plResponderCmd
 {
 public:
-	static plResponderCmdDelay& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdDelay& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return nil; }
-	virtual const char *GetName(int idx) { return "Delay"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return nil; }
+    virtual const char *GetName(int idx) { return "Delay"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 
-	virtual bool IsWaitable(IParamBlock2 *pb) { return true; }
-	virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
+    virtual bool IsWaitable(IParamBlock2 *pb) { return true; }
+    virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
 };
 
 class plResponderCmdVisibility : public plResponderCmd
 {
 public:
-	static plResponderCmdVisibility& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdVisibility& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes();
-	virtual const char *GetCategory(int idx);
-	virtual const char *GetName(int idx);
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes();
+    virtual const char *GetCategory(int idx);
+    virtual const char *GetName(int idx);
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual IParamBlock2 *CreatePB(int idx);
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual IParamBlock2 *CreatePB(int idx);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdSubWorld : public plResponderCmd
 {
 public:
-	static plResponderCmdSubWorld& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdSubWorld& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes();
-	virtual const char *GetCategory(int idx);
-	virtual const char *GetName(int idx);
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes();
+    virtual const char *GetCategory(int idx);
+    virtual const char *GetName(int idx);
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual IParamBlock2 *CreatePB(int idx);
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual IParamBlock2 *CreatePB(int idx);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdFootSurface : public plResponderCmd
 {
 public:
-	static plResponderCmdFootSurface& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdFootSurface& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return nil; }
-	virtual const char *GetName(int idx) { return "Footstep Surface"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return nil; }
+    virtual const char *GetName(int idx) { return "Footstep Surface"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
 class plResponderCmdMultistage : public plResponderCmd
 {
 public:
-	static plResponderCmdMultistage& Instance();
-	virtual ParamBlockDesc2 *GetDesc();
+    static plResponderCmdMultistage& Instance();
+    virtual ParamBlockDesc2 *GetDesc();
 
-	virtual int NumTypes() { return 1; }
-	virtual const char *GetCategory(int idx) { return nil; }
-	virtual const char *GetName(int idx) { return "Trigger Multistage"; }
-	virtual const char *GetInstanceName(IParamBlock2 *pb);
+    virtual int NumTypes() { return 1; }
+    virtual const char *GetCategory(int idx) { return nil; }
+    virtual const char *GetName(int idx) { return "Trigger Multistage"; }
+    virtual const char *GetInstanceName(IParamBlock2 *pb);
 
-	virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };

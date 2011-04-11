@@ -7,17 +7,17 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plAgeLoader_SOURCES
-	plAgeLoader.cpp
-	plAgeLoaderPaging.cpp
-	plBackgroundDownloader.cpp
-	plResPatcher.cpp
+    plAgeLoader.cpp
+    plAgeLoaderPaging.cpp
+    plBackgroundDownloader.cpp
+    plResPatcher.cpp
 )
 
 set(plAgeLoader_HEADERS
-	plAgeLoader.h
-	plAgeLoaderCreatable.h
-	plBackgroundDownloader.h
-	plResPatcher.h
+    plAgeLoader.h
+    plAgeLoaderCreatable.h
+    plBackgroundDownloader.h
+    plResPatcher.h
 )
 
 add_library(plAgeLoader STATIC ${plAgeLoader_SOURCES} ${plAgeLoader_HEADERS})

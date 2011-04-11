@@ -35,10 +35,10 @@ class plCuller
 {
 
 public:
-	plCuller() {}
-	~plCuller() {}
+    plCuller() {}
+    ~plCuller() {}
 
-	virtual void			Harvest(const plSpaceTree* space, hsTArray<Int16>& outList) const = 0;
+    virtual void            Harvest(const plSpaceTree* space, hsTArray<Int16>& outList) const = 0;
 };
 
 #endif // plCuller_inc

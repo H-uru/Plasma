@@ -2,17 +2,17 @@ include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 
 set(pnNetDiag_HEADERS
-	Intern.h
-	Pch.h
-	pnNetDiag.h
+    Intern.h
+    Pch.h
+    pnNetDiag.h
 )
 
 set(pnNetDiag_SOURCES
-	pnNdDns.cpp
-	pnNdIcmp.cpp
-	pnNdTcp.cpp
-	pnNetDiag.cpp
-	pnNetSys.cpp
+    pnNdDns.cpp
+    pnNdIcmp.cpp
+    pnNdTcp.cpp
+    pnNetDiag.cpp
+    pnNetSys.cpp
 )
 
 add_library(pnNetDiag STATIC ${pnNetDiag_HEADERS} ${pnNetDiag_SOURCES})

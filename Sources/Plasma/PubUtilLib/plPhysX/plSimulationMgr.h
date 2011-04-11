@@ -42,150 +42,150 @@ struct hsPoint3;
 class plSimulationMgr : public hsKeyedObject
 {
 public:
-	CLASSNAME_REGISTER(plSimulationMgr);
-	GETINTERFACE_ANY(plSimulationMgr, hsKeyedObject);
+    CLASSNAME_REGISTER(plSimulationMgr);
+    GETINTERFACE_ANY(plSimulationMgr, hsKeyedObject);
 
-	static plSimulationMgr* GetInstance();
-	static void Init();
-	static void Shutdown();
+    static plSimulationMgr* GetInstance();
+    static void Init();
+    static void Shutdown();
 
-	static bool	fExtraProfile;
-	static bool fSubworldOptimization;
-	static bool fDoClampingOnStep;
+    static bool fExtraProfile;
+    static bool fSubworldOptimization;
+    static bool fDoClampingOnStep;
 
-	// initialiation of the PhysX simulation
-	virtual bool InitSimulation();
+    // initialiation of the PhysX simulation
+    virtual bool InitSimulation();
 
-	// Advance the simulation by the given number of seconds
-	void Advance(float delSecs);
+    // Advance the simulation by the given number of seconds
+    void Advance(float delSecs);
 
-	hsBool MsgReceive(plMessage* msg);
+    hsBool MsgReceive(plMessage* msg);
 
-	// The simulation won't run at all if it is suspended
-	void Suspend() { fSuspended = true; }
-	void Resume() { fSuspended = false; }
-	bool IsSuspended() { return fSuspended; }
+    // The simulation won't run at all if it is suspended
+    void Suspend() { fSuspended = true; }
+    void Resume() { fSuspended = false; }
+    bool IsSuspended() { return fSuspended; }
 
-	// Output the given debug text to the simulation log.
-	static void Log(const char* formatStr, ...);
-	static void LogV(const char* formatStr, va_list args);
-	static void ClearLog();
+    // Output the given debug text to the simulation log.
+    static void Log(const char* formatStr, ...);
+    static void LogV(const char* formatStr, va_list args);
+    static void ClearLog();
 
-	// We've detected a collision, which may be grounds for synchronizing the involved
-	// physicals over the network.
-	void ConsiderSynch(plPXPhysical *physical, plPXPhysical *other);
+    // We've detected a collision, which may be grounds for synchronizing the involved
+    // physicals over the network.
+    void ConsiderSynch(plPXPhysical *physical, plPXPhysical *other);
 
-	NxPhysicsSDK* GetSDK() const { return fSDK; }
-	NxScene* GetScene(plKey world);
-	// Called when an actor is removed from a scene, checks if it's time to delete
-	// the scene
-	void ReleaseScene(plKey world);
+    NxPhysicsSDK* GetSDK() const { return fSDK; }
+    NxScene* GetScene(plKey world);
+    // Called when an actor is removed from a scene, checks if it's time to delete
+    // the scene
+    void ReleaseScene(plKey world);
 
-	int GetMaterialIdx(NxScene* scene, hsScalar friction, hsScalar restitution);
+    int GetMaterialIdx(NxScene* scene, hsScalar friction, hsScalar restitution);
 
-	// PHYSX FIXME - walk thru all the convex hull detector regions to see if we are in any... we're either coming or going
-	void UpdateDetectorsInScene(plKey world, plKey avatar, hsPoint3& pos, bool entering);
-	void UpdateAvatarInDetector(plKey world, plPXPhysical* detector);
-	//Fix to Move collision messages and their handling out of the simulation step
-	void AddCollisionMsg(plCollideMsg* msg);
+    // PHYSX FIXME - walk thru all the convex hull detector regions to see if we are in any... we're either coming or going
+    void UpdateDetectorsInScene(plKey world, plKey avatar, hsPoint3& pos, bool entering);
+    void UpdateAvatarInDetector(plKey world, plPXPhysical* detector);
+    //Fix to Move collision messages and their handling out of the simulation step
+    void AddCollisionMsg(plCollideMsg* msg);
 #ifndef PLASMA_EXTERNAL_RELEASE
-	static bool fDisplayAwakeActors;
+    static bool fDisplayAwakeActors;
 #endif //PLASMA_EXTERNAL_RELEASE
 protected:
-	friend class ContactReport;
+    friend class ContactReport;
 
-	void ISendUpdates();
+    void ISendUpdates();
 
-	plSimulationMgr();
-	virtual ~plSimulationMgr();
+    plSimulationMgr();
+    virtual ~plSimulationMgr();
 
-	// Set the maximum amount of time (in seconds) that the physics will advance
-	// between frames. If a frame-to-frame delta is bigger than this, we'll
-	// clamp it to this value.
-	// WARNING: animation doesn't do this, so if we clamp the time animated
-	// physicals and the avatar may move at a faster rate than usual.
-	void SetMaxDelta(float maxDelta);
-	float GetMaxDelta() const;
-	
-	// Set the number of steps per second that physics will advance.
-	// The more steps per second, the less fallthough and more accurate
-	// simulation response.
-	void SetStepsPerSecond(int stepsPerSecond);
-	int GetStepsPerSecond();
+    // Set the maximum amount of time (in seconds) that the physics will advance
+    // between frames. If a frame-to-frame delta is bigger than this, we'll
+    // clamp it to this value.
+    // WARNING: animation doesn't do this, so if we clamp the time animated
+    // physicals and the avatar may move at a faster rate than usual.
+    void SetMaxDelta(float maxDelta);
+    float GetMaxDelta() const;
+    
+    // Set the number of steps per second that physics will advance.
+    // The more steps per second, the less fallthough and more accurate
+    // simulation response.
+    void SetStepsPerSecond(int stepsPerSecond);
+    int GetStepsPerSecond();
 
-	// Walk through the synchronization requests and send them as appropriate.
-	void IProcessSynchs();
+    // Walk through the synchronization requests and send them as appropriate.
+    void IProcessSynchs();
 
-	// PHYSX FIXME send a collision message  - should only be used with UpdateDetectorsInScene
-	void ISendCollisionMsg(plKey receiver, plKey hitter, hsBool entering);
+    // PHYSX FIXME send a collision message  - should only be used with UpdateDetectorsInScene
+    void ISendCollisionMsg(plKey receiver, plKey hitter, hsBool entering);
 
-	NxPhysicsSDK* fSDK;
+    NxPhysicsSDK* fSDK;
 
-	plPhysicsSoundMgr* fSoundMgr;
+    plPhysicsSoundMgr* fSoundMgr;
 
-	//a list of collision messages generated by the simulation steps. Added to by AddCollisionMsg(plCollideMsg* msg)
-	//cleared by IDispatchCollisionMessages when done 
-	hsTArray<plCollideMsg*> fCollisionMessages;
+    //a list of collision messages generated by the simulation steps. Added to by AddCollisionMsg(plCollideMsg* msg)
+    //cleared by IDispatchCollisionMessages when done 
+    hsTArray<plCollideMsg*> fCollisionMessages;
 
-	void IDispatchCollisionMessages();
+    void IDispatchCollisionMessages();
 
-	// A mapping from a key to a PhysX scene.  The key is either the
-	// SimulationMgr key, for the main world, or a SceneObject key if it's a
-	// subworld.
-	typedef std::map<plKey, NxScene*> SceneMap;
-	SceneMap fScenes;
+    // A mapping from a key to a PhysX scene.  The key is either the
+    // SimulationMgr key, for the main world, or a SceneObject key if it's a
+    // subworld.
+    typedef std::map<plKey, NxScene*> SceneMap;
+    SceneMap fScenes;
 
-	plLOSDispatch* fLOSDispatch;
+    plLOSDispatch* fLOSDispatch;
 
-	// Is the entire physics world suspended? If so, the clock can still advance
-	// but nothing will move.
-	bool fSuspended;
+    // Is the entire physics world suspended? If so, the clock can still advance
+    // but nothing will move.
+    bool fSuspended;
 
-	float fMaxDelta;
-	float fStepSize;
+    float fMaxDelta;
+    float fStepSize;
 
-	// A utility class to keep track of a request for a physical synchronization.
-	// These requests must pass a certain criteria (see the code for the latest)
-	// before they are actually either sent over the network or rejected.
-	class SynchRequest
-	{
-	public:
-		double fTime;	// when to synch
-		plKey fKey;		// key of the object to be synched, so we can make sure it still lives
+    // A utility class to keep track of a request for a physical synchronization.
+    // These requests must pass a certain criteria (see the code for the latest)
+    // before they are actually either sent over the network or rejected.
+    class SynchRequest
+    {
+    public:
+        double fTime;   // when to synch
+        plKey fKey;     // key of the object to be synched, so we can make sure it still lives
 
-		static const double kDefaultTime;
-		SynchRequest() : fTime(kDefaultTime) {};
-	};
+        static const double kDefaultTime;
+        SynchRequest() : fTime(kDefaultTime) {};
+    };
 
-	// All currently pending synch requests. Keyed by the physical in question
-	// so we can quickly eliminate redundant requests, which are very common.
-	typedef std::map<plPXPhysical*, SynchRequest> PhysSynchMap;
-	PhysSynchMap fPendingSynchs;
+    // All currently pending synch requests. Keyed by the physical in question
+    // so we can quickly eliminate redundant requests, which are very common.
+    typedef std::map<plPXPhysical*, SynchRequest> PhysSynchMap;
+    PhysSynchMap fPendingSynchs;
 
-	plStatusLog *fLog;
+    plStatusLog *fLog;
 #ifndef PLASMA_EXTERNAL_RELEASE
-	void IDrawActiveActorList();
+    void IDrawActiveActorList();
 #endif //PLASMA_EXTERNAL_RELEASE
 };
 
 #define SIM_VERBOSE
 
 #ifdef SIM_VERBOSE
-#include <stdarg.h>		// only include when we need to call plSimulationMgr::Log
+#include <stdarg.h>     // only include when we need to call plSimulationMgr::Log
 
 inline void SimLog(const char *str, ...)
 {
-	va_list args;
-	va_start(args, str);
-	plSimulationMgr::LogV(str, args);
-	va_end(args);
+    va_list args;
+    va_start(args, str);
+    plSimulationMgr::LogV(str, args);
+    va_end(args);
 }
 
 #else
 
 inline void SimLog(const char *str, ...)
 {
-	// will get stripped out
+    // will get stripped out
 }
 
 #endif

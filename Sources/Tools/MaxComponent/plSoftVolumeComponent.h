@@ -52,95 +52,95 @@ class plVisRegion;
 class plSoftVolBaseComponent : public plComponent
 {
 protected:
-	hsBool				fValid;
-	plKey				fSoftKey;
+    hsBool              fValid;
+    plKey               fSoftKey;
 
-	void				IAddSubVolume(plKey masterKey, plKey subKey);
-	plKey				ISetVolumeKey(plSoftVolume* vol);
-	plKey				IInvertVolume(plKey subKey);
-	virtual plKey		ICreateSoftVolume() = 0;
+    void                IAddSubVolume(plKey masterKey, plKey subKey);
+    plKey               ISetVolumeKey(plSoftVolume* vol);
+    plKey               IInvertVolume(plKey subKey);
+    virtual plKey       ICreateSoftVolume() = 0;
 public:
 
-	hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
-	hsBool PreConvert(plMaxNode* pNode, plErrorMsg* errMsg) { return true; }
-	hsBool Convert(plMaxNode *node, plErrorMsg *errMsg) { return true; }
+    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* errMsg) { return true; }
+    hsBool Convert(plMaxNode *node, plErrorMsg *errMsg) { return true; }
 
-	plKey GetSoftVolume(); 
+    plKey GetSoftVolume(); 
 
-	virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	static plSoftVolBaseComponent* GetSoftComponent(INode* node);
-	static plSoftVolBaseComponent* GetSoftComponent(plComponentBase *comp);
+    static plSoftVolBaseComponent* GetSoftComponent(INode* node);
+    static plSoftVolBaseComponent* GetSoftComponent(plComponentBase *comp);
 };
 
 //// plSingleCompSelProc Declaration ////////////////////////////////////////////////////////////
-//	Utilitiy class for any dialog that consists of a single button that is used to select
-//	a soft volume. 
-//	Just declare like this:
-//		static plSingleCompSelProc gSoftVolNegateSingleSel( paramID, buttonCtrlID, promptString );
-//	and use it as the dialog proc for your dialog's ParamMap.
+//  Utilitiy class for any dialog that consists of a single button that is used to select
+//  a soft volume. 
+//  Just declare like this:
+//      static plSingleCompSelProc gSoftVolNegateSingleSel( paramID, buttonCtrlID, promptString );
+//  and use it as the dialog proc for your dialog's ParamMap.
 
 class plSingleCompSelProc : public ParamMap2UserDlgProc
 {
 protected:
-	ParamID			fNodeID;
-	int				fDlgItem;
-	TCHAR			fTitle[ 128 ];
+    ParamID         fNodeID;
+    int             fDlgItem;
+    TCHAR           fTitle[ 128 ];
 
 public:
-	plSingleCompSelProc(ParamID nodeID, int dlgItem, TCHAR *title);
-	BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	void DeleteThis() {}
+    plSingleCompSelProc(ParamID nodeID, int dlgItem, TCHAR *title);
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    void DeleteThis() {}
 };
 
 class plVisRegionComponent : public plComponent
 {
 public:
-	enum {
-		kSoftVolume,
-		kAffectDraw,
-		kAffectLight,
-		kAffectOcc,
-		kExcludes,
-		kDisableNormal
-	};
+    enum {
+        kSoftVolume,
+        kAffectDraw,
+        kAffectLight,
+        kAffectOcc,
+        kExcludes,
+        kDisableNormal
+    };
 protected:
-	plVisRegion*	fVisReg;
+    plVisRegion*    fVisReg;
 
-	void			ICheckVisRegion(const plLocation& loc);
+    void            ICheckVisRegion(const plLocation& loc);
 public:
-	plVisRegionComponent();
-	void DeleteThis() { delete this; }
+    plVisRegionComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
 
-	hsBool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *errMsg);
 
-	static void CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions);
+    static void CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions);
 };
 
 class plEffVisSetComponent : public plComponent
 {
 public:
-	enum {
-		kHideNormal
-	};
+    enum {
+        kHideNormal
+    };
 protected:
-	plVisRegion*		fVisReg;
+    plVisRegion*        fVisReg;
 public:
-	plEffVisSetComponent();
-	void DeleteThis() { delete this; }
-	
-	hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *errMsg);
-	
-	plVisRegion* GetVisRegion(plMaxNode* node);
-	
-	static plEffVisSetComponent* ConvertToEffVisSetComponent(plMaxNode* node);
-	static void CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions);
+    plEffVisSetComponent();
+    void DeleteThis() { delete this; }
+    
+    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    
+    plVisRegion* GetVisRegion(plMaxNode* node);
+    
+    static plEffVisSetComponent* ConvertToEffVisSetComponent(plMaxNode* node);
+    static void CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions);
 };
 
 #endif //_plSoftVolumeComponent_h

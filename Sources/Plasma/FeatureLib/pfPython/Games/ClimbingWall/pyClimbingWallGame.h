@@ -43,30 +43,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyClimbingWallGame : public pyGameCli
 {
 protected:
-	pyClimbingWallGame();
-	pyClimbingWallGame(pfGameCli* client);
+    pyClimbingWallGame();
+    pyClimbingWallGame(pfGameCli* client);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptClimbingWallGame);
-	static PyObject* New(pfGameCli* client);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallGame object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallGame); // converts a PyObject to a pyClimbingWallGame (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptClimbingWallGame);
+    static PyObject* New(pfGameCli* client);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallGame object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallGame); // converts a PyObject to a pyClimbingWallGame (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
-	static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
-	static bool IsClimbingWallGame(std::wstring guid);
-	static void JoinCommonClimbingWallGame(pyKey& callbackKey, unsigned gameID);
+    static bool IsClimbingWallGame(std::wstring guid);
+    static void JoinCommonClimbingWallGame(pyKey& callbackKey, unsigned gameID);
 
-	void ChangeNumBlockers(int amountToAdjust);
-	void Ready(unsigned readyType, unsigned teamNumber);
-	void ChangeBlocker(unsigned teamNumber, unsigned blockerNumber, bool added);
-	void Reset();
-	void PlayerEntered(unsigned teamNumber);
-	void FinishedGame();
-	void Panic();
+    void ChangeNumBlockers(int amountToAdjust);
+    void Ready(unsigned readyType, unsigned teamNumber);
+    void ChangeBlocker(unsigned teamNumber, unsigned blockerNumber, bool added);
+    void Reset();
+    void PlayerEntered(unsigned teamNumber);
+    void FinishedGame();
+    void Panic();
 };
 
 #endif // pyClimbingWallGame_h

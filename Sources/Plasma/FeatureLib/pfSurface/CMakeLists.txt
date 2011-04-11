@@ -4,33 +4,33 @@ include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
 if(Bink_SDK_AVAILABLE)
-	include_directories(${Bink_INCLUDE_DIR})
+    include_directories(${Bink_INCLUDE_DIR})
 endif()
 include_directories(${DirectX_INCLUDE_DIR})
 
 if(WIN32)
-	add_definitions(-DWIN32)
+    add_definitions(-DWIN32)
 endif(WIN32)
 
 set(pfSurface_SOURCES
-	plDistOpacityMod.cpp
-	plFadeOpacityLay.cpp
-	plFadeOpacityMod.cpp
-	plGrabCubeMap.cpp
-	plLayerAVI.cpp
-	plLayerBink.cpp
-	plLayerMovie.cpp
+    plDistOpacityMod.cpp
+    plFadeOpacityLay.cpp
+    plFadeOpacityMod.cpp
+    plGrabCubeMap.cpp
+    plLayerAVI.cpp
+    plLayerBink.cpp
+    plLayerMovie.cpp
 )
 
 set(pfSurface_HEADERS
-	pfSurfaceCreatable.h
-	plDistOpacityMod.h
-	plFadeOpacityLay.h
-	plFadeOpacityMod.h
-	plGrabCubeMap.h
-	plLayerAVI.h
-	plLayerBink.h
-	plLayerMovie.h
+    pfSurfaceCreatable.h
+    plDistOpacityMod.h
+    plFadeOpacityLay.h
+    plFadeOpacityMod.h
+    plGrabCubeMap.h
+    plLayerAVI.h
+    plLayerBink.h
+    plLayerMovie.h
 )
 
 add_library(pfSurface STATIC ${pfSurface_SOURCES} ${pfSources_HEADERS})

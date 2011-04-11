@@ -44,9 +44,9 @@ extern "C" {
 #endif
 
 // MemAlloc flags
-extern const unsigned kMemReallocInPlaceOnly;	// use _expand when realloc'ing
-extern const unsigned kMemZero;					// fill allocated memory with zeros
-extern const unsigned kMemIgnoreBlock;			// don't track this allocation
+extern const unsigned kMemReallocInPlaceOnly;   // use _expand when realloc'ing
+extern const unsigned kMemZero;                 // fill allocated memory with zeros
+extern const unsigned kMemIgnoreBlock;          // don't track this allocation
 
 
 void *   MemAlloc (unsigned bytes, unsigned flags, const char file[], int line);
@@ -123,27 +123,27 @@ inline void __cdecl operator delete (void *, void *) {}
 *
 ***/
 
-#define ALLOC(b)				MemAlloc(b, 0, __FILE__, __LINE__)
-#define ALLOCZERO(b)			MemAlloc(b, kMemZero, __FILE__, __LINE__)
-#define ALLOCFLAGS(b, f)		MemAlloc(b, (f), __FILE__, __LINE__)
-#define FREE(p)					MemFree(p, 0)
-#define FREEFLAGS(p, f)			MemFree(p, (f))
-#define REALLOC(p, b)			MemRealloc(p, b, 0, __FILE__, __LINE__)
-#define REALLOCFLAGS(p, b, f)	MemRealloc(p, b, (f), __FILE__, __LINE__)
-#define CALLOC(n, s)			MemAlloc((n)*(s), kMemZero, __FILE__, __LINE__)
-#define MEMDUP(s, b)			MemDup(s, b, 0, __FILE__, __LINE__)
-#define ZERO(s)					MemSet(&s, 0, sizeof(s))
-#define ZEROPTR(p)				MemSet(p, 0, sizeof(*p))
+#define ALLOC(b)                MemAlloc(b, 0, __FILE__, __LINE__)
+#define ALLOCZERO(b)            MemAlloc(b, kMemZero, __FILE__, __LINE__)
+#define ALLOCFLAGS(b, f)        MemAlloc(b, (f), __FILE__, __LINE__)
+#define FREE(p)                 MemFree(p, 0)
+#define FREEFLAGS(p, f)         MemFree(p, (f))
+#define REALLOC(p, b)           MemRealloc(p, b, 0, __FILE__, __LINE__)
+#define REALLOCFLAGS(p, b, f)   MemRealloc(p, b, (f), __FILE__, __LINE__)
+#define CALLOC(n, s)            MemAlloc((n)*(s), kMemZero, __FILE__, __LINE__)
+#define MEMDUP(s, b)            MemDup(s, b, 0, __FILE__, __LINE__)
+#define ZERO(s)                 MemSet(&s, 0, sizeof(s))
+#define ZEROPTR(p)              MemSet(p, 0, sizeof(*p))
 // Client must #include <malloc.h>
-#define  ALLOCA(t, n)			(t *)_alloca((n) * sizeof(t))
+#define  ALLOCA(t, n)           (t *)_alloca((n) * sizeof(t))
 
 
 #ifdef __cplusplus
 
-#define NEW(t)					new(MemAlloc(sizeof(t), 0, __FILE__, __LINE__)) t
-#define NEWFLAGS(t, f)			new(MemAlloc(sizeof(t), (f), __FILE__, __LINE__)) t
-#define NEWZERO(t)				new(MemAlloc(sizeof(t), kMemZero, __FILE__, __LINE__)) t
-#define DEL(t)					delete (t)
+#define NEW(t)                  new(MemAlloc(sizeof(t), 0, __FILE__, __LINE__)) t
+#define NEWFLAGS(t, f)          new(MemAlloc(sizeof(t), (f), __FILE__, __LINE__)) t
+#define NEWZERO(t)              new(MemAlloc(sizeof(t), kMemZero, __FILE__, __LINE__)) t
+#define DEL(t)                  delete (t)
 
 #endif // __cplusplus
 

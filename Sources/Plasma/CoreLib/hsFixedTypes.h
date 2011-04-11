@@ -29,90 +29,90 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 
 #if HS_BUILD_FOR_MAC
-	#include <ToolUtils.h>
-	#include <FixMath.h>
+    #include <ToolUtils.h>
+    #include <FixMath.h>
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define hsIntToFixed(x)		((hsFixed)(x) << 16)
-#define hsFixedToInt(x)		((x) >> 16)
-#define hsFixedRound(x)		(((x) + 0x8000) >> 16)
-#define hsFixed1			hsIntToFixed(1)
-#define hsFixedPI			(0x3243F)
-#define hsFixedPiOver2		(0x1921F)
+#define hsIntToFixed(x)     ((hsFixed)(x) << 16)
+#define hsFixedToInt(x)     ((x) >> 16)
+#define hsFixedRound(x)     (((x) + 0x8000) >> 16)
+#define hsFixed1            hsIntToFixed(1)
+#define hsFixedPI           (0x3243F)
+#define hsFixedPiOver2      (0x1921F)
 
-#define hsFixedToFract(x)	((hsFract)(x) << 14)
-#define hsFractToFixed(x)	((hsFixed)(x) >> 14)
-#define hsFract1			hsFixedToFract(hsFixed1)
-#define hsFractPiOver2		(0x6487ED34)	/* needs some work */
+#define hsFixedToFract(x)   ((hsFract)(x) << 14)
+#define hsFractToFixed(x)   ((hsFixed)(x) >> 14)
+#define hsFract1            hsFixedToFract(hsFixed1)
+#define hsFractPiOver2      (0x6487ED34)    /* needs some work */
 
-#define hsFixFloor(x)	\
-	(hsFixed)((x) < 0 ? -(hsFixed)((-(x) + 0xFFFF) & 0xFFFF0000) : (x) & 0xFFFF0000)
+#define hsFixFloor(x)   \
+    (hsFixed)((x) < 0 ? -(hsFixed)((-(x) + 0xFFFF) & 0xFFFF0000) : (x) & 0xFFFF0000)
 
-#define hsFixedToFloorInt(x)	\
-	(int)((x) < 0 ? -(int)((-(x) + 0xFFFF) >> 16) : ((x) >> 16))
+#define hsFixedToFloorInt(x)    \
+    (int)((x) < 0 ? -(int)((-(x) + 0xFFFF) >> 16) : ((x) >> 16))
 
-#define hsFixCeiling(x)	\
-	(hsFixed)((x) < 0 ? -(hsFixed)(-(x) & 0xFFFF0000) : ((x) + 0xFFFF) & 0xFFFF0000)
+#define hsFixCeiling(x) \
+    (hsFixed)((x) < 0 ? -(hsFixed)(-(x) & 0xFFFF0000) : ((x) + 0xFFFF) & 0xFFFF0000)
 
-#define hsFixedToCeilingInt(x)	\
-	(int)((x) < 0 ? -(int)(-(x) >> 16) : (((x) + 0xFFFF) >> 16))
+#define hsFixedToCeilingInt(x)  \
+    (int)((x) < 0 ? -(int)(-(x) >> 16) : (((x) + 0xFFFF) >> 16))
 
 
 #if HS_CAN_USE_FLOAT
-	#define hsFixedToFloat(x)		((x) / float(hsFixed1))
-	#define hsFloatToFixed(x)		hsFixed((x) * hsFixed1)
-	
-	#define hsFractToFloat(x)		((x) / float(hsFract1))
-	#define hsFloatToFract(x)		hsFract((x) * hsFract1)
+    #define hsFixedToFloat(x)       ((x) / float(hsFixed1))
+    #define hsFloatToFixed(x)       hsFixed((x) * hsFixed1)
+    
+    #define hsFractToFloat(x)       ((x) / float(hsFract1))
+    #define hsFloatToFract(x)       hsFract((x) * hsFract1)
 #endif
 
 #if HS_BUILD_FOR_MAC68K && !(HS_PIN_MATH_OVERFLOW)
-	#define hsFixMul(a, b)	FixMul(a, b)
+    #define hsFixMul(a, b)  FixMul(a, b)
 #else
-	hsFixed hsFixMul(hsFixed a, hsFixed b);
+    hsFixed hsFixMul(hsFixed a, hsFixed b);
 #endif
 
 #if HS_BUILD_FOR_MAC && !(HS_PIN_MATH_OVERFLOW) && !(HS_MP_SAFE)
-	#define hsFixDiv(a, b)	FixDiv(a, b)
-	#define hsFracMul(a, b)	FracMul(a, b)
-	#define hsFracDiv(a, b)	FracDiv(a, b)
+    #define hsFixDiv(a, b)  FixDiv(a, b)
+    #define hsFracMul(a, b) FracMul(a, b)
+    #define hsFracDiv(a, b) FracDiv(a, b)
 #else
-	hsFract hsFixDiv(hsFixed a, hsFixed b);
-	hsFract hsFracMul(hsFract a, hsFract b);
-	hsFract hsFracDiv(hsFract a, hsFract b);
+    hsFract hsFixDiv(hsFixed a, hsFixed b);
+    hsFract hsFracMul(hsFract a, hsFract b);
+    hsFract hsFracDiv(hsFract a, hsFract b);
 #endif
 
-hsFract	hsFracSqrt(hsFract value);
-#define	hsFixSqrt(value)	(hsFracSqrt(value) >> 7)
-hsFract	hsFracCubeRoot(hsFract value);
-hsFixed	hsFixedSin(hsFixed s);
-hsFixed	hsFixedCos(hsFixed s);
-hsFixed	hsFixedASin(hsFixed s);
-hsFixed	hsFixedACos(hsFixed s);
+hsFract hsFracSqrt(hsFract value);
+#define hsFixSqrt(value)    (hsFracSqrt(value) >> 7)
+hsFract hsFracCubeRoot(hsFract value);
+hsFixed hsFixedSin(hsFixed s);
+hsFixed hsFixedCos(hsFixed s);
+hsFixed hsFixedASin(hsFixed s);
+hsFixed hsFixedACos(hsFixed s);
 
-UInt16	hsSqrt32(UInt32 value);
-UInt16	hsCubeRoot32(UInt32 value);
-Int32	hsMulDiv32(Int32 numer1, Int32 numer2, Int32 denom);
-Int32	hsMagnitude32(Int32 x, Int32 y);
+UInt16  hsSqrt32(UInt32 value);
+UInt16  hsCubeRoot32(UInt32 value);
+Int32   hsMulDiv32(Int32 numer1, Int32 numer2, Int32 denom);
+Int32   hsMagnitude32(Int32 x, Int32 y);
 
 #ifdef __cplusplus
 }
 #endif
 
 #ifdef __cplusplus
-	struct hsFixedPlane {
-		hsFixed	fA, fB, fC;
+    struct hsFixedPlane {
+        hsFixed fA, fB, fC;
 
-		void		Set(hsFixed a, hsFixed b, hsFixed c) { fA = a; fB = b; fC = c; }
+        void        Set(hsFixed a, hsFixed b, hsFixed c) { fA = a; fB = b; fC = c; }
 
-		hsFixed	FixEval(hsFixed x, hsFixed y) const { return hsFixMul(fA, x) + hsFixMul(fB, y) + fC; }
-		Int32	IntEval(Int32 x, Int32 y) const { return fA * x + fB * y + fC; }
-		void 		ShiftDown(UInt32 i) { fA >>= i; fB >>= i; fC >>= i;}
-	};
+        hsFixed FixEval(hsFixed x, hsFixed y) const { return hsFixMul(fA, x) + hsFixMul(fB, y) + fC; }
+        Int32   IntEval(Int32 x, Int32 y) const { return fA * x + fB * y + fC; }
+        void        ShiftDown(UInt32 i) { fA >>= i; fB >>= i; fC >>= i;}
+    };
 #endif
 
 #endif

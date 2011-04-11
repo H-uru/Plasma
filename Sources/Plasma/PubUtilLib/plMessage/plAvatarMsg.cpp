@@ -56,13 +56,13 @@ plAvatarMsg::plAvatarMsg(const plKey &sender, const plKey &receiver)
 // READ
 void plAvatarMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 }
 
 // WRITE
 void plAvatarMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 }
 
 //////////////////////
@@ -73,49 +73,49 @@ void plAvatarMsg::Write(hsStream *stream, hsResMgr *mgr)
 plArmatureUpdateMsg::plArmatureUpdateMsg()
 : fIsInvis(false)
 {
-	SetBCastFlag(plMessage::kBCastByExactType);
+    SetBCastFlag(plMessage::kBCastByExactType);
 }
 
 // CTOR sender receiver islocal isplayercontrolled
 plArmatureUpdateMsg::plArmatureUpdateMsg(const plKey &sender,
-										 hsBool isLocal, hsBool isPlayerControlled,
-										 plArmatureMod *armature)
+                                         hsBool isLocal, hsBool isPlayerControlled,
+                                         plArmatureMod *armature)
 : plAvatarMsg(sender, nil),
   fIsLocal(isLocal),
   fIsPlayerControlled(isPlayerControlled),
   fArmature(armature),
   fIsInvis(false)
 {
-	SetBCastFlag(plMessage::kBCastByExactType);
+    SetBCastFlag(plMessage::kBCastByExactType);
 }
 
 // READ stream mgr
 void plArmatureUpdateMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
+    hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
 }
 
 // WRITE stream mgr
 void plArmatureUpdateMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
+    hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
 }
 
 // ISLOCAL
 hsBool plArmatureUpdateMsg::IsLocal() const
 {
-	return fIsLocal;
+    return fIsLocal;
 }
 
 // ISPLAYERCONTROLLED
 hsBool plArmatureUpdateMsg::IsPlayerControlled() const
 {
-	return fIsPlayerControlled;
+    return fIsPlayerControlled;
 }
 
 hsBool plArmatureUpdateMsg::IsInvis() const
 {
-	return fIsInvis;
+    return fIsInvis;
 }
 
 /////////////////////
@@ -137,25 +137,25 @@ plAvatarSetTypeMsg::plAvatarSetTypeMsg(const plKey &sender, const plKey &receive
 // READ
 void plAvatarSetTypeMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	fIsPlayer = stream->Readbool();
+    fIsPlayer = stream->Readbool();
 }
 
 // WRITE
 void plAvatarSetTypeMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	stream->Writebool(fIsPlayer);
+    stream->Writebool(fIsPlayer);
 }
 
 // SETISPLAYER
 void plAvatarSetTypeMsg::SetIsPlayer(bool is)
 {
-	fIsPlayer = is;
+    fIsPlayer = is;
 }
 
 // ISPLAYER
 bool plAvatarSetTypeMsg::IsPlayer()
 {
-	return fIsPlayer;
+    return fIsPlayer;
 }
 
 
@@ -182,29 +182,29 @@ plAvTaskMsg::plAvTaskMsg(const plKey &sender, const plKey &receiver, plAvTask *t
 
 plAvTask *plAvTaskMsg::GetTask()
 {
-	return fTask;
+    return fTask;
 }
 
 // READ
 void plAvTaskMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAvatarMsg::Read(stream, mgr);
-	if(stream->ReadBool())
-		fTask = (plAvTask *)mgr->ReadCreatable(stream);
+    plAvatarMsg::Read(stream, mgr);
+    if(stream->ReadBool())
+        fTask = (plAvTask *)mgr->ReadCreatable(stream);
 
 }
 
 // WRITE
 void plAvTaskMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAvatarMsg::Write(stream, mgr);
-	if(fTask)
-	{
-		stream->WriteBool(true);
-		mgr->WriteCreatable(stream, (plCreatable *)fTask);
-	} else {
-		stream->WriteBool(false);
-	}
+    plAvatarMsg::Write(stream, mgr);
+    if(fTask)
+    {
+        stream->WriteBool(true);
+        mgr->WriteCreatable(stream, (plCreatable *)fTask);
+    } else {
+        stream->WriteBool(false);
+    }
 }
 
 //////////////
@@ -230,9 +230,9 @@ plAvSeekMsg::plAvSeekMsg()
 
 // CTOR(sender, receiver, seekKey, time)
 plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
-						 const plKey &seekKey, float duration, hsBool smartSeek,
-						 plAvAlignment alignType, char *animName, hsBool noSeek, 
-						 UInt8 flags, plKey finishKey)
+                         const plKey &seekKey, float duration, hsBool smartSeek,
+                         plAvAlignment alignType, char *animName, hsBool noSeek, 
+                         UInt8 flags, plKey finishKey)
 : plAvTaskMsg(sender, receiver),
   fSeekPoint(seekKey),
   fTargetPos(0, 0, 0),
@@ -249,80 +249,80 @@ plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
 
 hsBool plAvSeekMsg::Force3rdPersonOnStart()
 {
-	return fFlags & kSeekFlagForce3rdPersonOnStart;
+    return fFlags & kSeekFlagForce3rdPersonOnStart;
 }
 
 hsBool plAvSeekMsg::UnForce3rdPersonOnFinish()
 {
-	return fFlags & kSeekFlagUnForce3rdPersonOnFinish;
+    return fFlags & kSeekFlagUnForce3rdPersonOnFinish;
 }
 
 hsBool plAvSeekMsg::NoWarpOnTimeout()
 {
-	return fFlags & kSeekFlagNoWarpOnTimeout;
+    return fFlags & kSeekFlagNoWarpOnTimeout;
 }
 
 hsBool plAvSeekMsg::RotationOnly()
 {
-	return fFlags & kSeekFlagRotationOnly;
+    return fFlags & kSeekFlagRotationOnly;
 }
 
 // READ
 void plAvSeekMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAvTaskMsg::Read(stream, mgr);
+    plAvTaskMsg::Read(stream, mgr);
 
-	fSeekPoint = mgr->ReadKey(stream);
-	if (!fSeekPoint)
-	{
-		fTargetPos.Read(stream);
-		fTargetLookAt.Read(stream);
-	}
+    fSeekPoint = mgr->ReadKey(stream);
+    if (!fSeekPoint)
+    {
+        fTargetPos.Read(stream);
+        fTargetLookAt.Read(stream);
+    }
 
-	fDuration = stream->ReadSwapScalar();
-	fSmartSeek = stream->ReadBool();
-	fAnimName = stream->ReadSafeString();
-	fAlignType = static_cast<plAvAlignment>(stream->ReadSwap16());
-	fNoSeek = stream->ReadBool();
-	fFlags = stream->ReadByte();
-	fFinishKey = mgr->ReadKey(stream);
+    fDuration = stream->ReadSwapScalar();
+    fSmartSeek = stream->ReadBool();
+    fAnimName = stream->ReadSafeString();
+    fAlignType = static_cast<plAvAlignment>(stream->ReadSwap16());
+    fNoSeek = stream->ReadBool();
+    fFlags = stream->ReadByte();
+    fFinishKey = mgr->ReadKey(stream);
 }
 
 // WRITE
 void plAvSeekMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAvTaskMsg::Write(stream, mgr);
+    plAvTaskMsg::Write(stream, mgr);
 
-	mgr->WriteKey(stream, fSeekPoint);
-	if (!fSeekPoint)
-	{
-		fTargetPos.Write(stream);
-		fTargetLookAt.Write(stream);
-	}
+    mgr->WriteKey(stream, fSeekPoint);
+    if (!fSeekPoint)
+    {
+        fTargetPos.Write(stream);
+        fTargetLookAt.Write(stream);
+    }
 
-	stream->WriteSwapScalar(fDuration);
-	stream->WriteBool(fSmartSeek);
-	stream->WriteSafeString(fAnimName);
-	stream->WriteSwap16(static_cast<UInt16>(fAlignType));
-	stream->WriteBool(fNoSeek);
-	stream->WriteByte(fFlags);
-	mgr->WriteKey(stream, fFinishKey);
+    stream->WriteSwapScalar(fDuration);
+    stream->WriteBool(fSmartSeek);
+    stream->WriteSafeString(fAnimName);
+    stream->WriteSwap16(static_cast<UInt16>(fAlignType));
+    stream->WriteBool(fNoSeek);
+    stream->WriteByte(fFlags);
+    mgr->WriteKey(stream, fFinishKey);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void plAvTaskSeekDoneMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAvatarMsg::Read(stream, mgr);
+    plAvatarMsg::Read(stream, mgr);
 
-	fAborted = stream->ReadBool();
+    fAborted = stream->ReadBool();
 }
 
 void plAvTaskSeekDoneMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAvatarMsg::Write(stream, mgr);
+    plAvatarMsg::Write(stream, mgr);
 
-	stream->WriteBool(fAborted);
+    stream->WriteBool(fAborted);
 }
 
 /////////////////
@@ -341,42 +341,42 @@ plAvOneShotMsg::plAvOneShotMsg()
 
 // CTOR(sender, receiver, seekKey, time)
 plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
-						 const plKey& seekKey, float duration, hsBool smartSeek,
-						 const char *animName, hsBool drivable, hsBool reversible)
+                         const plKey& seekKey, float duration, hsBool smartSeek,
+                         const char *animName, hsBool drivable, hsBool reversible)
 : plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek),
   fDrivable(drivable), fReversible(reversible), fCallbacks(nil)
 {
-	fAnimName = hsStrcpy(animName);
+    fAnimName = hsStrcpy(animName);
 }
 
 // DTOR
 plAvOneShotMsg::~plAvOneShotMsg()
 {
-	hsRefCnt_SafeUnRef(fCallbacks);
-	fCallbacks = nil;
+    hsRefCnt_SafeUnRef(fCallbacks);
+    fCallbacks = nil;
 
-	delete[] fAnimName;
+    delete[] fAnimName;
 }
 
 // READ
 void plAvOneShotMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAvSeekMsg::Read(stream, mgr);
+    plAvSeekMsg::Read(stream, mgr);
 
-	delete [] fAnimName;
-	fAnimName = stream->ReadSafeString();
-	fDrivable = stream->ReadBool();
-	fReversible = stream->ReadBool();
+    delete [] fAnimName;
+    fAnimName = stream->ReadSafeString();
+    fDrivable = stream->ReadBool();
+    fReversible = stream->ReadBool();
 }
 
 // WRITE
 void plAvOneShotMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAvSeekMsg::Write(stream, mgr);
+    plAvSeekMsg::Write(stream, mgr);
 
-	stream->WriteSafeString(fAnimName);
-	stream->WriteBool(fDrivable);
-	stream->WriteBool(fReversible);
+    stream->WriteSafeString(fAnimName);
+    stream->WriteBool(fDrivable);
+    stream->WriteBool(fReversible);
 }
 
 
@@ -388,19 +388,19 @@ void plAvOneShotMsg::Write(hsStream *stream, hsResMgr *mgr)
 
 // default CTOR
 plAvBrainGenericMsg::plAvBrainGenericMsg()
-: fType(kNextStage),		// default verb is goto next stage
-  fWhichStage(0),			// default stage is 0
-  fSetTime(false),			// don't set the time of the target stage
-  fNewTime(0.0f),			// if we do set, set it to zero
-  fSetDirection(false),		// don't set the direction of the brain
-  fNewDirection(true),		// if we do set the direction, set it to forward
+: fType(kNextStage),        // default verb is goto next stage
+  fWhichStage(0),           // default stage is 0
+  fSetTime(false),          // don't set the time of the target stage
+  fNewTime(0.0f),           // if we do set, set it to zero
+  fSetDirection(false),     // don't set the direction of the brain
+  fNewDirection(true),      // if we do set the direction, set it to forward
   fNewLoopCount(0)
 {
 }
 
 // canonical CTOR sender receiver type stage rewind transitionTime
 plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-					plAvBrainGenericMsg::Type type, int stage, hsBool rewind, hsScalar transitionTime)
+                    plAvBrainGenericMsg::Type type, int stage, hsBool rewind, hsScalar transitionTime)
 : plAvatarMsg(sender, receiver),
   fType(type),
   fWhichStage(stage),
@@ -410,12 +410,12 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &recei
   fNewDirection(true),
   fNewLoopCount(0)
 {
-	
+    
 }
 
 plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-										 Type type, int stage, hsBool setTime, hsScalar newTime,
-										 hsBool setDirection, bool isForward, hsScalar transitiontime)
+                                         Type type, int stage, hsBool setTime, hsScalar newTime,
+                                         hsBool setDirection, bool isForward, hsScalar transitiontime)
 : plAvatarMsg(sender, receiver),
   fType(type),
   fWhichStage(stage),
@@ -428,106 +428,106 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &recei
 }
 
 plAvBrainGenericMsg::plAvBrainGenericMsg(plKey sender, plKey receiver,
-										 Type type, int stage, int newLoopCount)
+                                         Type type, int stage, int newLoopCount)
 : plAvatarMsg(sender, receiver),
   fType(type),
   fWhichStage(stage),
-  fSetTime(false),					// unused
-  fNewTime(0),						// unused
-  fSetDirection(false),				// unused
-  fNewDirection(false),				// unused
+  fSetTime(false),                  // unused
+  fNewTime(0),                      // unused
+  fSetDirection(false),             // unused
+  fNewDirection(false),             // unused
   fNewLoopCount(newLoopCount)
 {
-	hsAssert(type == kSetLoopCount, "This constructor form is only for the kSetLoopCount command.");
+    hsAssert(type == kSetLoopCount, "This constructor form is only for the kSetLoopCount command.");
 }
 
 
 void plAvBrainGenericMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAvatarMsg::Write(stream, mgr);
-	stream->WriteSwap32(fType);
-	stream->WriteSwap32(fWhichStage);
-	stream->WriteBool(fSetTime);
-	stream->WriteSwapScalar(fNewTime);
-	stream->WriteBool(fSetDirection);
-	stream->WriteBool(fNewDirection);
-	stream->WriteSwapScalar(fTransitionTime);
+    plAvatarMsg::Write(stream, mgr);
+    stream->WriteSwap32(fType);
+    stream->WriteSwap32(fWhichStage);
+    stream->WriteBool(fSetTime);
+    stream->WriteSwapScalar(fNewTime);
+    stream->WriteBool(fSetDirection);
+    stream->WriteBool(fNewDirection);
+    stream->WriteSwapScalar(fTransitionTime);
 }
 
 void plAvBrainGenericMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAvatarMsg::Read(stream, mgr);
-	fType = static_cast<plAvBrainGenericMsg::Type>(stream->ReadSwap32());
-	fWhichStage = stream->ReadSwap32();
-	fSetTime = stream->ReadBool();
-	fNewTime = stream->ReadSwapScalar();
-	fSetDirection = stream->ReadBool();
-	fNewDirection = stream->ReadBool();
-	fTransitionTime = stream->ReadSwapScalar();
+    plAvatarMsg::Read(stream, mgr);
+    fType = static_cast<plAvBrainGenericMsg::Type>(stream->ReadSwap32());
+    fWhichStage = stream->ReadSwap32();
+    fSetTime = stream->ReadBool();
+    fNewTime = stream->ReadSwapScalar();
+    fSetDirection = stream->ReadBool();
+    fNewDirection = stream->ReadBool();
+    fTransitionTime = stream->ReadSwapScalar();
 }
 
 enum AvBrainGenericFlags
 {
-	kAvBrainGenericType,
-	kAvBrainGenericWhich,
-	kAvBrainGenericSetTime,
-	kAvBrainGenericNewTime,
-	kAvBrainGenericSetDir,
-	kAvBrainGenericNewDir,
-	kAvBrainGenericTransTime,
+    kAvBrainGenericType,
+    kAvBrainGenericWhich,
+    kAvBrainGenericSetTime,
+    kAvBrainGenericNewTime,
+    kAvBrainGenericSetDir,
+    kAvBrainGenericNewDir,
+    kAvBrainGenericTransTime,
 };
 
 void plAvBrainGenericMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgWriteVersion(s, mgr);
+    plMessage::IMsgWriteVersion(s, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.SetBit(kAvBrainGenericType);
-	contentFlags.SetBit(kAvBrainGenericWhich);
-	contentFlags.SetBit(kAvBrainGenericSetTime);
-	contentFlags.SetBit(kAvBrainGenericNewTime);
-	contentFlags.SetBit(kAvBrainGenericSetDir);
-	contentFlags.SetBit(kAvBrainGenericNewDir);
-	contentFlags.SetBit(kAvBrainGenericTransTime);
-	contentFlags.Write(s);
+    hsBitVector contentFlags;
+    contentFlags.SetBit(kAvBrainGenericType);
+    contentFlags.SetBit(kAvBrainGenericWhich);
+    contentFlags.SetBit(kAvBrainGenericSetTime);
+    contentFlags.SetBit(kAvBrainGenericNewTime);
+    contentFlags.SetBit(kAvBrainGenericSetDir);
+    contentFlags.SetBit(kAvBrainGenericNewDir);
+    contentFlags.SetBit(kAvBrainGenericTransTime);
+    contentFlags.Write(s);
 
-	// kAvBrainGenericType
-	s->WriteSwap32(fType);
-	// kAvBrainGenericWhich	
-	s->WriteSwap32(fWhichStage);
-	// kAvBrainGenericSetTime	
-	s->WriteBool(fSetTime);
-	// kAvBrainGenericNewTime	
-	s->WriteSwapScalar(fNewTime);
-	// kAvBrainGenericSetDir	
-	s->WriteBool(fSetDirection);
-	// kAvBrainGenericNewDir	
-	s->WriteBool(fNewDirection);
-	// kAvBrainGenericTransTime	
-	s->WriteSwapScalar(fTransitionTime);
+    // kAvBrainGenericType
+    s->WriteSwap32(fType);
+    // kAvBrainGenericWhich 
+    s->WriteSwap32(fWhichStage);
+    // kAvBrainGenericSetTime   
+    s->WriteBool(fSetTime);
+    // kAvBrainGenericNewTime   
+    s->WriteSwapScalar(fNewTime);
+    // kAvBrainGenericSetDir    
+    s->WriteBool(fSetDirection);
+    // kAvBrainGenericNewDir    
+    s->WriteBool(fNewDirection);
+    // kAvBrainGenericTransTime 
+    s->WriteSwapScalar(fTransitionTime);
 }
 
 void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgReadVersion(s, mgr);
+    plMessage::IMsgReadVersion(s, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.Read(s);
+    hsBitVector contentFlags;
+    contentFlags.Read(s);
 
-	if (contentFlags.IsBitSet(kAvBrainGenericType))
-		fType = static_cast<plAvBrainGenericMsg::Type>(s->ReadSwap32());
-	if (contentFlags.IsBitSet(kAvBrainGenericWhich))
-		fWhichStage = s->ReadSwap32();
-	if (contentFlags.IsBitSet(kAvBrainGenericSetTime))
-		fSetTime = s->ReadBool();
-	if (contentFlags.IsBitSet(kAvBrainGenericNewTime))
-		fNewTime = s->ReadSwapScalar();
-	if (contentFlags.IsBitSet(kAvBrainGenericSetDir))
-		fSetDirection = s->ReadBool();
-	if (contentFlags.IsBitSet(kAvBrainGenericNewDir))
-		fNewDirection = s->ReadBool();
-	if (contentFlags.IsBitSet(kAvBrainGenericTransTime))
-		fTransitionTime = s->ReadSwapScalar();
+    if (contentFlags.IsBitSet(kAvBrainGenericType))
+        fType = static_cast<plAvBrainGenericMsg::Type>(s->ReadSwap32());
+    if (contentFlags.IsBitSet(kAvBrainGenericWhich))
+        fWhichStage = s->ReadSwap32();
+    if (contentFlags.IsBitSet(kAvBrainGenericSetTime))
+        fSetTime = s->ReadBool();
+    if (contentFlags.IsBitSet(kAvBrainGenericNewTime))
+        fNewTime = s->ReadSwapScalar();
+    if (contentFlags.IsBitSet(kAvBrainGenericSetDir))
+        fSetDirection = s->ReadBool();
+    if (contentFlags.IsBitSet(kAvBrainGenericNewDir))
+        fNewDirection = s->ReadBool();
+    if (contentFlags.IsBitSet(kAvBrainGenericTransTime))
+        fTransitionTime = s->ReadSwapScalar();
 }
 
 ///////////////////
@@ -548,7 +548,7 @@ plAvPushBrainMsg::plAvPushBrainMsg()
 plAvPushBrainMsg::plAvPushBrainMsg(const plKey& sender, const plKey &receiver, plArmatureBrain *brain)
 : plAvTaskMsg(sender, receiver)
 {
-	fBrain = brain;
+    fBrain = brain;
 }
 
 // dtor
@@ -559,17 +559,17 @@ plAvPushBrainMsg::~plAvPushBrainMsg()
 // READ
 void plAvPushBrainMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAvTaskMsg::Read(stream, mgr);
+    plAvTaskMsg::Read(stream, mgr);
 
-	fBrain = plArmatureBrain::ConvertNoRef(mgr->ReadCreatable(stream));
-	hsAssert(fBrain, "PLAVPUSHBRAINMSG: Problem reading brain from stream.");
+    fBrain = plArmatureBrain::ConvertNoRef(mgr->ReadCreatable(stream));
+    hsAssert(fBrain, "PLAVPUSHBRAINMSG: Problem reading brain from stream.");
 }
 
 // WRITE
 void plAvPushBrainMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAvTaskMsg::Write(stream, mgr);
-	mgr->WriteCreatable(stream, fBrain);
+    plAvTaskMsg::Write(stream, mgr);
+    mgr->WriteCreatable(stream, fBrain);
 }
 
 
@@ -610,21 +610,21 @@ plAvPopBrainMsg::plAvPopBrainMsg(const plKey &sender, const plKey &receiver)
 //plAvEmoteMsg::plAvEmoteMsg(plKey sender, plKey receiver, char *name)
 //: plAvTaskMsg(sender, receiver)
 //{
-//	fAnimName = hsStrcpy(name);
+//  fAnimName = hsStrcpy(name);
 //}
 //
 //// READ
 //void plAvEmoteMsg::Read(hsStream *stream, hsResMgr *mgr)
 //{
-//	plAvTaskMsg::Read(stream, mgr);
-//	fAnimName = stream->ReadSafeString();
+//  plAvTaskMsg::Read(stream, mgr);
+//  fAnimName = stream->ReadSafeString();
 //}
 //
 //// WRITE
 //void plAvEmoteMsg::Write(hsStream *stream, hsResMgr *mgr)
 //{
-//	plAvTaskMsg::Write(stream, mgr);
-//	stream->WriteSafeString(fAnimName);
+//  plAvTaskMsg::Write(stream, mgr);
+//  stream->WriteSafeString(fAnimName);
 
 
 
@@ -637,7 +637,7 @@ plAvPopBrainMsg::plAvPopBrainMsg(const plKey &sender, const plKey &receiver)
 
 plAvatarStealthModeMsg::plAvatarStealthModeMsg() : plAvatarMsg(), fMode(kStealthVisible), fLevel(0) 
 { 
-	SetBCastFlag(plMessage::kBCastByExactType); 
+    SetBCastFlag(plMessage::kBCastByExactType); 
 }
 
 plAvatarStealthModeMsg::~plAvatarStealthModeMsg() {}
@@ -645,13 +645,13 @@ plAvatarStealthModeMsg::~plAvatarStealthModeMsg() {}
 // READ stream mgr
 void plAvatarStealthModeMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
+    hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
 }
 
 // WRITE stream mgr
 void plAvatarStealthModeMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
+    hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
 }
 
 

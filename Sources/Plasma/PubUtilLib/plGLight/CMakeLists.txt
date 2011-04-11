@@ -6,29 +6,29 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plGLight_SOURCES
-	plDirectShadowMaster.cpp
-	plLightInfo.cpp
-	plLightProxy.cpp
-	plLightSpace.cpp
-	plPerspDirSlave.cpp
-	plPointShadowMaster.cpp
-	plShadowCaster.cpp
-	plShadowMaster.cpp
-	plShadowSlave.cpp
+    plDirectShadowMaster.cpp
+    plLightInfo.cpp
+    plLightProxy.cpp
+    plLightSpace.cpp
+    plPerspDirSlave.cpp
+    plPointShadowMaster.cpp
+    plShadowCaster.cpp
+    plShadowMaster.cpp
+    plShadowSlave.cpp
 )
 
 set(plGLight_HEADERS
-	plDirectShadowMaster.h
-	plGLightCreatable.h
-	plLightInfo.h
-	plLightKonstants.h
-	plLightProxy.h
-	plLightSpace.h
-	plPerspDirSlave.h
-	plPointShadowMaster.h
-	plShadowCaster.h
-	plShadowMaster.h
-	plShadowSlave.h
+    plDirectShadowMaster.h
+    plGLightCreatable.h
+    plLightInfo.h
+    plLightKonstants.h
+    plLightProxy.h
+    plLightSpace.h
+    plPerspDirSlave.h
+    plPointShadowMaster.h
+    plShadowCaster.h
+    plShadowMaster.h
+    plShadowSlave.h
 )
 
 add_library(plGLight STATIC ${plGLight_SOURCES} ${plGLight_HEADERS})

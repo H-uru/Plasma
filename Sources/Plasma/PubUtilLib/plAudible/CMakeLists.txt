@@ -6,16 +6,16 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENAL_INCLUDE_DIR})
 
 set(plAudible_SOURCES
-	plAudibleNull.cpp
-	plWinAudible.cpp
-	plWinAudibleProxy.cpp
+    plAudibleNull.cpp
+    plWinAudible.cpp
+    plWinAudibleProxy.cpp
 )
 
 set(plAudible_HEADERS
-	plAudibleCreatable.h
-	plAudibleNull.h
-	plWinAudible.h
-	plWinAudibleProxy.h
+    plAudibleCreatable.h
+    plAudibleNull.h
+    plWinAudible.h
+    plWinAudibleProxy.h
 )
 
 add_library(plAudible STATIC ${plAudible_SOURCES} ${plAudible_HEADERS})

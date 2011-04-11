@@ -42,64 +42,64 @@ pyStatusLog::pyStatusLog( plStatusLog* log/*=nil */)
 
 pyStatusLog::~pyStatusLog()
 {
-	Close();
+    Close();
 }
 
 
 hsBool pyStatusLog::Open(const char* logName, UInt32 numLines, UInt32 flags)
 {
-	// make sure its closed first
-	Close();
+    // make sure its closed first
+    Close();
 
-	// create a status log guy for this
-	fICreatedLog = true;
-	fLog = plStatusLogMgr::GetInstance().CreateStatusLog( (UInt8)numLines, logName, flags );
-	if (fLog)
-	{
-		fLog->SetForceLog(true);
-		return true;
-	}
-	return false;
+    // create a status log guy for this
+    fICreatedLog = true;
+    fLog = plStatusLogMgr::GetInstance().CreateStatusLog( (UInt8)numLines, logName, flags );
+    if (fLog)
+    {
+        fLog->SetForceLog(true);
+        return true;
+    }
+    return false;
 }
 
 hsBool pyStatusLog::Write(const char* text)
 {
-	if (fLog)
-	{
-		fLog->AddLine(text);
-		return true;
-	}
+    if (fLog)
+    {
+        fLog->AddLine(text);
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 hsBool pyStatusLog::WriteColor(const char* text, pyColor& color)
 {
-	if (fLog)
-	{
-		UInt32 st_color = ((UInt32)(color.getAlpha()*255)<<24) +
-								((UInt32)(color.getRed()*255)<<16) +
-								((UInt32)(color.getGreen()*255)<<8) + 
-								((UInt32)(color.getBlue()*255));
-		fLog->AddLine( text, st_color );
-		return true;
-	}
+    if (fLog)
+    {
+        UInt32 st_color = ((UInt32)(color.getAlpha()*255)<<24) +
+                                ((UInt32)(color.getRed()*255)<<16) +
+                                ((UInt32)(color.getGreen()*255)<<8) + 
+                                ((UInt32)(color.getBlue()*255));
+        fLog->AddLine( text, st_color );
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 void pyStatusLog::Close()
 {
-	if (fLog && fICreatedLog)
-	{
-		delete fLog;
-	}
-	fLog = nil;
+    if (fLog && fICreatedLog)
+    {
+        delete fLog;
+    }
+    fLog = nil;
 }
 
 hsBool pyStatusLog::IsOpen()
 {
-	if (fLog)
-		return true;
-	return false;
+    if (fLog)
+        return true;
+    return false;
 }

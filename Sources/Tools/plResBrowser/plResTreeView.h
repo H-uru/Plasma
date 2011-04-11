@@ -28,32 +28,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plResTreeView
 {
-	protected:
+    protected:
 
-		static HWND	fInfoDlg;
-		static bool	fFilter;
+        static HWND fInfoDlg;
+        static bool fFilter;
 
-		static void	IFindNextObject( HWND tree );
+        static void IFindNextObject( HWND tree );
 
-	public:
+    public:
 
-		static void	FindObject( HWND tree );
-		static void	FindNextObject( HWND tree );
+        static void FindObject( HWND tree );
+        static void FindNextObject( HWND tree );
 
-		static void	FillTreeViewFromRegistry( HWND hWnd );
-		static void	ClearTreeView( HWND hWnd );
+        static void FillTreeViewFromRegistry( HWND hWnd );
+        static void ClearTreeView( HWND hWnd );
 
-		static BOOL CALLBACK	InfoDlgProc( HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam );
+        static BOOL CALLBACK    InfoDlgProc( HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam );
 
-		static void	UpdateInfoDlg( HWND treeCtrl );
+        static void UpdateInfoDlg( HWND treeCtrl );
 
-		static void	VerifyCurrentPage( HWND treeCtrl );
+        static void VerifyCurrentPage( HWND treeCtrl );
 
-		static void	SelectionDblClicked( HWND treeCtrl );
+        static void SelectionDblClicked( HWND treeCtrl );
 
-		static void	FilterLoadables( bool filter, HWND treeCtrl );
+        static void FilterLoadables( bool filter, HWND treeCtrl );
 
-		static void SaveSelectedObject(HWND treeCtrl);
+        static void SaveSelectedObject(HWND treeCtrl);
 };
 
 #endif //_plResTreeView_h

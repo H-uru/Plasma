@@ -25,4 +25,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pnBuildDates.h"
 
-char	pnBuildDates::fBranchDate[] = "Pre-release";
+char    pnBuildDates::fBranchDate[] = "Pre-release";

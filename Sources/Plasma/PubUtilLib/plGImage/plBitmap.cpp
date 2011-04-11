@@ -24,16 +24,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plBitmap Class Functions												 //
-//	Base bitmap class for all the types of bitmaps (mipmaps, cubic envmaps,  //
-//	etc.																	 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plBitmap Class Functions                                                 //
+//  Base bitmap class for all the types of bitmaps (mipmaps, cubic envmaps,  //
+//  etc.                                                                     //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	6.7.2001 mcn - Created.													 //
-//																			 //
+//                                                                           //
+//  6.7.2001 mcn - Created.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -47,118 +47,118 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Static Members ///////////////////////////////////////////////////////////
 
-UInt8	plBitmap::fGlobalNumLevelsToChop = 0;
+UInt8   plBitmap::fGlobalNumLevelsToChop = 0;
 
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
 plBitmap::plBitmap()
 {
-	fPixelSize = 0;
-	fSpace = kNoSpace;
-	fFlags = 0;
-	fCompressionType = kUncompressed;
-	fUncompressedInfo.fType = UncompressedInfo::kRGB8888;
-	fDeviceRef = nil;
-	fLowModifiedTime = fHighModifiedTime = 0;
+    fPixelSize = 0;
+    fSpace = kNoSpace;
+    fFlags = 0;
+    fCompressionType = kUncompressed;
+    fUncompressedInfo.fType = UncompressedInfo::kRGB8888;
+    fDeviceRef = nil;
+    fLowModifiedTime = fHighModifiedTime = 0;
 }
 
 plBitmap::~plBitmap()
 {
-	if( fDeviceRef != nil )
-		hsRefCnt_SafeUnRef( fDeviceRef );
+    if( fDeviceRef != nil )
+        hsRefCnt_SafeUnRef( fDeviceRef );
 }
 
 bool plBitmap::IsSameModifiedTime(UInt32 lowTime, UInt32 highTime)
 {
-	return (fLowModifiedTime == lowTime && fHighModifiedTime == highTime);
+    return (fLowModifiedTime == lowTime && fHighModifiedTime == highTime);
 }
 
 void plBitmap::SetModifiedTime(UInt32 lowTime, UInt32 highTime)
 {
-	fLowModifiedTime = lowTime;
-	fHighModifiedTime = highTime;
+    fLowModifiedTime = lowTime;
+    fHighModifiedTime = highTime;
 }
 
 //// Read /////////////////////////////////////////////////////////////////////
 
-static UInt8	sBitmapVersion = 2;
+static UInt8    sBitmapVersion = 2;
 
-UInt32 	plBitmap::Read( hsStream *s )
+UInt32  plBitmap::Read( hsStream *s )
 {
-	UInt8	version = s->ReadByte();
-	UInt32	read = 6;
+    UInt8   version = s->ReadByte();
+    UInt32  read = 6;
 
 
-	hsAssert( version == sBitmapVersion, "Invalid bitamp version on Read()" );
+    hsAssert( version == sBitmapVersion, "Invalid bitamp version on Read()" );
 
-	fPixelSize = s->ReadByte();
-	fSpace = s->ReadByte();
-	fFlags = s->ReadSwap16();
-	fCompressionType = s->ReadByte();
+    fPixelSize = s->ReadByte();
+    fSpace = s->ReadByte();
+    fFlags = s->ReadSwap16();
+    fCompressionType = s->ReadByte();
 
-	if(( fCompressionType == kUncompressed )||( fCompressionType == kJPEGCompression ))
-	{
-		fUncompressedInfo.fType = s->ReadByte();
-		read++;
-	}
-	else
-	{
-		fDirectXInfo.fBlockSize = s->ReadByte();
-		fDirectXInfo.fCompressionType = s->ReadByte();
-		read += 2;
-	}
+    if(( fCompressionType == kUncompressed )||( fCompressionType == kJPEGCompression ))
+    {
+        fUncompressedInfo.fType = s->ReadByte();
+        read++;
+    }
+    else
+    {
+        fDirectXInfo.fBlockSize = s->ReadByte();
+        fDirectXInfo.fCompressionType = s->ReadByte();
+        read += 2;
+    }
 
-	fLowModifiedTime = s->ReadSwap32();
-	fHighModifiedTime = s->ReadSwap32();
+    fLowModifiedTime = s->ReadSwap32();
+    fHighModifiedTime = s->ReadSwap32();
 
-	return read;
+    return read;
 }
 
 //// Write ////////////////////////////////////////////////////////////////////
 
-UInt32 	plBitmap::Write( hsStream *s )
+UInt32  plBitmap::Write( hsStream *s )
 {
-	UInt32	written = 6;
+    UInt32  written = 6;
 
 
-	s->WriteByte( sBitmapVersion );
+    s->WriteByte( sBitmapVersion );
 
-	s->WriteByte( fPixelSize );
-	s->WriteByte( fSpace );
-	s->WriteSwap16( fFlags );
-	s->WriteByte( fCompressionType );
+    s->WriteByte( fPixelSize );
+    s->WriteByte( fSpace );
+    s->WriteSwap16( fFlags );
+    s->WriteByte( fCompressionType );
 
-	if(( fCompressionType == kUncompressed )||(fCompressionType == kJPEGCompression ))
-	{
-		s->WriteByte( fUncompressedInfo.fType );
-		written++;
-	}
-	else
-	{
-		s->WriteByte( fDirectXInfo.fBlockSize );
-		s->WriteByte( fDirectXInfo.fCompressionType );
-		written += 2;
-	}
+    if(( fCompressionType == kUncompressed )||(fCompressionType == kJPEGCompression ))
+    {
+        s->WriteByte( fUncompressedInfo.fType );
+        written++;
+    }
+    else
+    {
+        s->WriteByte( fDirectXInfo.fBlockSize );
+        s->WriteByte( fDirectXInfo.fCompressionType );
+        written += 2;
+    }
 
-	s->WriteSwap32(fLowModifiedTime);
-	s->WriteSwap32(fHighModifiedTime);
+    s->WriteSwap32(fLowModifiedTime);
+    s->WriteSwap32(fHighModifiedTime);
 
-	return written;
+    return written;
 }
 
 //// SetDeviceRef /////////////////////////////////////////////////////////////
 
-void	plBitmap::SetDeviceRef( hsGDeviceRef *const devRef )
+void    plBitmap::SetDeviceRef( hsGDeviceRef *const devRef )
 {
-	if( fDeviceRef == devRef )
-		return;
+    if( fDeviceRef == devRef )
+        return;
 
-	hsRefCnt_SafeAssign( fDeviceRef, devRef );
+    hsRefCnt_SafeAssign( fDeviceRef, devRef );
 }
 
 void plBitmap::MakeDirty()
 {
-	if( fDeviceRef )
-		fDeviceRef->SetDirty(true);
+    if( fDeviceRef )
+        fDeviceRef->SetDirty(true);
 }

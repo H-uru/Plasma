@@ -34,28 +34,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plListenerMsg::Read(hsStream* s, hsResMgr* mgr) 
 { 
-	plMessage::IMsgRead(s, mgr); 
-	fPos.Read(s);
-	fDir.Read(s);
-	fUp.Read(s);
-	fVel.Read(s);
+    plMessage::IMsgRead(s, mgr); 
+    fPos.Read(s);
+    fDir.Read(s);
+    fUp.Read(s);
+    fVel.Read(s);
 }
 void plListenerMsg::Write(hsStream* s, hsResMgr* mgr) 
 { 
-	plMessage::IMsgWrite(s, mgr); 
-	fPos.Write(s);
-	fDir.Write(s);
-	fUp.Write(s);
-	fVel.Write(s);
+    plMessage::IMsgWrite(s, mgr); 
+    fPos.Write(s);
+    fDir.Write(s);
+    fUp.Write(s);
+    fVel.Write(s);
 }
 
 
 plSetListenerMsg::plSetListenerMsg( UInt8 type, const plKey &srcKey, hsBool binding ) : plMessage( nil, nil, nil ) 
 {
-	plUoid uoid( kListenerMod_KEY );
-	plKey pLKey = hsgResMgr::ResMgr()->FindKey( uoid );
-	AddReceiver( pLKey );
-	Set( srcKey, type, binding );
+    plUoid uoid( kListenerMod_KEY );
+    plKey pLKey = hsgResMgr::ResMgr()->FindKey( uoid );
+    AddReceiver( pLKey );
+    Set( srcKey, type, binding );
 }
 
 plSetListenerMsg::~plSetListenerMsg()
@@ -64,24 +64,24 @@ plSetListenerMsg::~plSetListenerMsg()
 
 void plSetListenerMsg::Read( hsStream *s, hsResMgr *mgr )
 {
-	plMessage::IMsgRead(s, mgr); 
-	fType = s->ReadByte();
-	fSrcKey = mgr->ReadKey( s );
-	fBinding = s->ReadBool();
+    plMessage::IMsgRead(s, mgr); 
+    fType = s->ReadByte();
+    fSrcKey = mgr->ReadKey( s );
+    fBinding = s->ReadBool();
 }
 
 void plSetListenerMsg::Write( hsStream *s, hsResMgr *mgr )
 {
-	plMessage::IMsgWrite(s, mgr); 
-	s->WriteByte( fType );
-	mgr->WriteKey( s, fSrcKey );
-	s->WriteBool( fBinding );
+    plMessage::IMsgWrite(s, mgr); 
+    s->WriteByte( fType );
+    mgr->WriteKey( s, fSrcKey );
+    s->WriteBool( fBinding );
 }
 
 void plSetListenerMsg::Set( const plKey &key, UInt8 type, hsBool binding )
 {
-	fSrcKey = key;
-	fType = (UInt8)type;
-	fBinding = binding;
+    fSrcKey = key;
+    fType = (UInt8)type;
+    fBinding = binding;
 }
 

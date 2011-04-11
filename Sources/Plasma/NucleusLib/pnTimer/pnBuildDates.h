@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pnBuildDates Header														//
-//																			//
-//	This is a tiny cpp/h wrapper for the build/branch dates. Basically,		//
-//	this header defines two string konstants that at runtime will be the	//
-//	build and branch date/timestamps. The pnBranchDate.cpp file is			//
-//	regenerated on branch to fill in the branch date.						//
-//																			//
+//                                                                          //
+//  pnBuildDates Header                                                     //
+//                                                                          //
+//  This is a tiny cpp/h wrapper for the build/branch dates. Basically,     //
+//  this header defines two string konstants that at runtime will be the    //
+//  build and branch date/timestamps. The pnBranchDate.cpp file is          //
+//  regenerated on branch to fill in the branch date.                       //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pnBuildDates_h
@@ -39,16 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pnBuildDates
 {
-	private:
+    private:
 
-		void	IGetString( int resID, char *destBuffer, int size );
+        void    IGetString( int resID, char *destBuffer, int size );
 
-	public:
-		static char	fBuildDate[];
-		static char	fBuildTime[];
-		static char	fBranchDate[];
+    public:
+        static char fBuildDate[];
+        static char fBuildTime[];
+        static char fBranchDate[];
 
-		pnBuildDates();
+        pnBuildDates();
 };
 
 #endif //_pnBuildDates_h

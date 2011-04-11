@@ -37,27 +37,27 @@ class plForwardCallback;
 class plMsgForwarder : public hsKeyedObject
 {
 protected:
-	hsTArray<plKey> fForwardKeys;
+    hsTArray<plKey> fForwardKeys;
 
-	typedef std::map<plMessage*, plForwardCallback*> CallbackMap;
-	CallbackMap fCallbacks;
+    typedef std::map<plMessage*, plForwardCallback*> CallbackMap;
+    CallbackMap fCallbacks;
 
-	void IForwardMsg(plMessage *msg);
-	hsBool IForwardCallbackMsg(plMessage *msg);
+    void IForwardMsg(plMessage *msg);
+    hsBool IForwardCallbackMsg(plMessage *msg);
 
 public:
     plMsgForwarder();
     ~plMsgForwarder();
 
-	CLASSNAME_REGISTER(plMsgForwarder);
-	GETINTERFACE_ANY(plMsgForwarder, hsKeyedObject);
+    CLASSNAME_REGISTER(plMsgForwarder);
+    GETINTERFACE_ANY(plMsgForwarder, hsKeyedObject);
 
-	void Read(hsStream* s, hsResMgr* mgr);
-	void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr);
+    void Write(hsStream* s, hsResMgr* mgr);
 
-	hsBool MsgReceive(plMessage* msg);
+    hsBool MsgReceive(plMessage* msg);
 
-	void AddForwardKey(plKey key);
+    void AddForwardKey(plKey key);
 };
 
 #endif // plMsgForwarder_h_inc

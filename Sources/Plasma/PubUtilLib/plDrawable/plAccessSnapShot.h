@@ -35,36 +35,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAccessSnapShot : public plAccessVtxSpan
 {
 public:
-	void			Destroy(); // Free up and reset to zero.
+    void            Destroy(); // Free up and reset to zero.
 
 protected:
 
-	UInt16		fRefCnt;
+    UInt16      fRefCnt;
 
-	UInt8*		fData;
+    UInt8*      fData;
 
-	UInt16		fChanSize[kNumValidChans];
+    UInt16      fChanSize[kNumValidChans];
 
-	void			ICopyOldData(UInt8* data, const UInt16* const oldSizes, UInt16 oldStride, UInt16 newStride);
-	UInt16			IComputeStride() const;
-	void			IRecordSizes(UInt16 sizes[]) const;
-	UInt32			ICheckAlloc(const plAccessVtxSpan& src, UInt32 chanMask, UInt32 chan, UInt16 chanSize);
+    void            ICopyOldData(UInt8* data, const UInt16* const oldSizes, UInt16 oldStride, UInt16 newStride);
+    UInt16          IComputeStride() const;
+    void            IRecordSizes(UInt16 sizes[]) const;
+    UInt32          ICheckAlloc(const plAccessVtxSpan& src, UInt32 chanMask, UInt32 chan, UInt16 chanSize);
 
-	void			ISetupPointers(UInt16 newStride);
+    void            ISetupPointers(UInt16 newStride);
 
-	void			SetupChannels(plAccessVtxSpan& dst) const;
+    void            SetupChannels(plAccessVtxSpan& dst) const;
 
-	UInt32			CopyTo(const plAccessVtxSpan& dst, UInt32 chanMask);
-	UInt32			CopyFrom(const plAccessVtxSpan& src, UInt32 chanMask);
-	void			Release(); // Decrements refcnt, calls Destroy on zero
-	void			Clear(); // Initialize to zeros
+    UInt32          CopyTo(const plAccessVtxSpan& dst, UInt32 chanMask);
+    UInt32          CopyFrom(const plAccessVtxSpan& src, UInt32 chanMask);
+    void            Release(); // Decrements refcnt, calls Destroy on zero
+    void            Clear(); // Initialize to zeros
 
-	void			IncRef() { fRefCnt++; }
-	void			DecRef() { Release(); }
+    void            IncRef() { fRefCnt++; }
+    void            DecRef() { Release(); }
 
-	plAccessSnapShot() : fRefCnt(0), fData(nil) { Clear(); }
+    plAccessSnapShot() : fRefCnt(0), fData(nil) { Clear(); }
 
-	friend class plAccessGeometry;
+    friend class plAccessGeometry;
 };
 
 

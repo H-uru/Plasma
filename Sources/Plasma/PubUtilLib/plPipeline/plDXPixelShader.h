@@ -36,20 +36,20 @@ struct IDirect3DPixelShader9;
 
 class plDXPixelShader : public plDXShader
 {
-	virtual HRESULT		ICreate(plDXPipeline* pipe); // On error, sets error string.
-	virtual HRESULT		ISetConstants(plDXPipeline* pipe);
+    virtual HRESULT     ICreate(plDXPipeline* pipe); // On error, sets error string.
+    virtual HRESULT     ISetConstants(plDXPipeline* pipe);
 
-	IDirect3DPixelShader9 *fHandle;
+    IDirect3DPixelShader9 *fHandle;
 
 public:
-	plDXPixelShader(plShader* owner);
-	virtual ~plDXPixelShader();
+    plDXPixelShader(plShader* owner);
+    virtual ~plDXPixelShader();
 
-	void			Release();
-	void			Link(plDXPixelShader** back) { plDXDeviceRef::Link((plDXDeviceRef**)back); }
+    void            Release();
+    void            Link(plDXPixelShader** back) { plDXDeviceRef::Link((plDXDeviceRef**)back); }
 
-	hsBool			VerifyFormat(UInt8 format) const;
-	IDirect3DPixelShader9 *GetShader(plDXPipeline* pipe);
+    hsBool          VerifyFormat(UInt8 format) const;
+    IDirect3DPixelShader9 *GetShader(plDXPipeline* pipe);
 };
 
 

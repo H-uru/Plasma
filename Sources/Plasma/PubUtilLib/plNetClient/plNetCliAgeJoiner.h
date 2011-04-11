@@ -48,38 +48,38 @@ class plMessage;
 struct plNCAgeJoiner;
 
 enum ENCAgeJoinerNotify {
-	kAgeJoinerComplete,		// notify --> NCAgeJoinerCompleteNotify *, after callback, joiner is destroyed
-	kNumAgeJoinerNotifications
+    kAgeJoinerComplete,     // notify --> NCAgeJoinerCompleteNotify *, after callback, joiner is destroyed
+    kNumAgeJoinerNotifications
 };
 
 struct NCAgeJoinerCompleteNotify {
-	bool			success;
-	const char *	msg;
+    bool            success;
+    const char *    msg;
 };
 
 
 typedef void (* FNCAgeJoinerCallback)(
-	plNCAgeJoiner *			joiner,
-	unsigned				type,		// ENCAgeJoinerNotify
-	void *					notify,
-	void *					userState
+    plNCAgeJoiner *         joiner,
+    unsigned                type,       // ENCAgeJoinerNotify
+    void *                  notify,
+    void *                  userState
 );
 
 
 void NCAgeJoinerCreate (
-	plNCAgeJoiner **		joiner,
-	const NetCommAge &		age,
-	FNCAgeJoinerCallback	callback,
-	void *					userState
+    plNCAgeJoiner **        joiner,
+    const NetCommAge &      age,
+    FNCAgeJoinerCallback    callback,
+    void *                  userState
 );
-bool NCAgeJoinerMsgReceive (	// returns true of message was processed
-	plNCAgeJoiner *			joiner,
-	plMessage *				msg
+bool NCAgeJoinerMsgReceive (    // returns true of message was processed
+    plNCAgeJoiner *         joiner,
+    plMessage *             msg
 );
 void NCAgeJoinerUpdate (
-	plNCAgeJoiner *			joiner
+    plNCAgeJoiner *         joiner
 );
-	
+    
 
 
 #endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETCLIENT_PLNETCLIAGEJOINER_H

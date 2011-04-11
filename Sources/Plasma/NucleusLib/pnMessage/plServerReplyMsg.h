@@ -40,31 +40,31 @@ class hsResMgr;
 //
 class plServerReplyMsg : public plMessage
 {
-	int fType;
+    int fType;
 public:
 
-	enum
-	{
-		kUnInit = -1,
-		kDeny,
-		kAffirm,
-	};
+    enum
+    {
+        kUnInit = -1,
+        kDeny,
+        kAffirm,
+    };
 
-	void SetType(int t) { fType = t; }
-	int GetType() { return fType; }
+    void SetType(int t) { fType = t; }
+    int GetType() { return fType; }
 
-	plServerReplyMsg() : fType(kUnInit) { }
-	plServerReplyMsg(const plKey &s, const plKey &r, const double* t) : plMessage(s,r,t), fType(kUnInit) { }
+    plServerReplyMsg() : fType(kUnInit) { }
+    plServerReplyMsg(const plKey &s, const plKey &r, const double* t) : plMessage(s,r,t), fType(kUnInit) { }
 
-	CLASSNAME_REGISTER( plServerReplyMsg );
-	GETINTERFACE_ANY( plServerReplyMsg, plMessage );
+    CLASSNAME_REGISTER( plServerReplyMsg );
+    GETINTERFACE_ANY( plServerReplyMsg, plMessage );
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
-	void ReadVersion(hsStream* s, hsResMgr* mgr);
-	void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr);
+    void WriteVersion(hsStream* s, hsResMgr* mgr);
 };
 
 #endif // plServerReplyMsg_inc

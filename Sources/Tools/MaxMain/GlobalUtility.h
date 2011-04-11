@@ -34,7 +34,7 @@ class Texmap;
 #include "hsTypes.h"
 #include <string>
 
-#define	PLASMA_MAX_CLASSID Class_ID(0x3d494269, 0x103c5c5f)
+#define PLASMA_MAX_CLASSID Class_ID(0x3d494269, 0x103c5c5f)
 
 extern ClassDesc* GetGUPDesc();
 
@@ -42,29 +42,29 @@ typedef void (*TextureSetFunc)(Texmap* texmap, int iBmp, UInt64 assetId);
 
 struct TexInfo
 {
-	Texmap* texmap;
-	int iBmp;
-	std::string texName;
+    Texmap* texmap;
+    int iBmp;
+    std::string texName;
 };
 
 class PlasmaMax : public GUP
 {
 public:
-	PlasmaMax();
-	~PlasmaMax() {}
+    PlasmaMax();
+    ~PlasmaMax() {}
 
-	// GUP Methods
-	DWORD Start();
-	void Stop();
+    // GUP Methods
+    DWORD Start();
+    void Stop();
 
-	enum ControlVals
-	{
-		// Pass this to Control and get back a jvArray<TexInfo>* of all the textures in the scene
-		kGetTextures,
-		// Pass this to Control and get back a pointer to the TextureSetFunc
-		kGetTextureSetFunc,
-	};
-	DWORD Control(DWORD parameter);
+    enum ControlVals
+    {
+        // Pass this to Control and get back a jvArray<TexInfo>* of all the textures in the scene
+        kGetTextures,
+        // Pass this to Control and get back a pointer to the TextureSetFunc
+        kGetTextureSetFunc,
+    };
+    DWORD Control(DWORD parameter);
 };
 
 #endif

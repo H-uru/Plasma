@@ -29,138 +29,138 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plSimInfluenceMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSimulationMsg::Read(stream, mgr);
+    plSimulationMsg::Read(stream, mgr);
 }
 
 void plSimInfluenceMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plSimulationMsg::Write(stream, mgr);
+    plSimulationMsg::Write(stream, mgr);
 }
 
 
 // PLFORCEMSG
 void plForceMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Read(stream, mgr);
+    plSimInfluenceMsg::Read(stream, mgr);
 
-	fForce.Read(stream);
+    fForce.Read(stream);
 }
 
 void plForceMsg::Write(hsStream * stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Write(stream, mgr);
+    plSimInfluenceMsg::Write(stream, mgr);
 
-	fForce.Write(stream);
+    fForce.Write(stream);
 }
 
 // PLOFFSETFORCEMSG
 void plOffsetForceMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plForceMsg::Read(stream, mgr);
+    plForceMsg::Read(stream, mgr);
 
-	fPoint.Read(stream);
+    fPoint.Read(stream);
 }
 
 void plOffsetForceMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plForceMsg::Write(stream, mgr);
+    plForceMsg::Write(stream, mgr);
 
-	fPoint.Write(stream);
+    fPoint.Write(stream);
 }
 
 
 // PLTORQUEMSG
 void plTorqueMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Read(stream, mgr);
+    plSimInfluenceMsg::Read(stream, mgr);
 
-	fTorque.Read(stream);
+    fTorque.Read(stream);
 }
 
 void plTorqueMsg::Write(hsStream * stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Write(stream, mgr);
+    plSimInfluenceMsg::Write(stream, mgr);
 
-	fTorque.Write(stream);
+    fTorque.Write(stream);
 }
 
 
 // PLIMPULSE
 void plImpulseMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Read(stream, mgr);
+    plSimInfluenceMsg::Read(stream, mgr);
 
-	fImpulse.Read(stream);
+    fImpulse.Read(stream);
 }
 
 void plImpulseMsg::Write(hsStream * stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Write(stream, mgr);
+    plSimInfluenceMsg::Write(stream, mgr);
 
-	fImpulse.Write(stream);
+    fImpulse.Write(stream);
 }
 
 
 // PLOFFSETIMPULSE
 void plOffsetImpulseMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Read(stream, mgr);
+    plSimInfluenceMsg::Read(stream, mgr);
 
-	fPoint.Read(stream);
+    fPoint.Read(stream);
 }
 
 void plOffsetImpulseMsg::Write(hsStream * stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Write(stream, mgr);
+    plSimInfluenceMsg::Write(stream, mgr);
 
-	fPoint.Write(stream);
+    fPoint.Write(stream);
 }
 
 
 // PLANGULARIMPULSE
 void plAngularImpulseMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Read(stream, mgr);
+    plSimInfluenceMsg::Read(stream, mgr);
 
-	fImpulse.Read(stream);
+    fImpulse.Read(stream);
 }
 
 void plAngularImpulseMsg::Write(hsStream * stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Write(stream, mgr);
+    plSimInfluenceMsg::Write(stream, mgr);
 
-	fImpulse.Write(stream);
+    fImpulse.Write(stream);
 }
 
 
 // PLDAMPMSG
 void plDampMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Read(stream, mgr);
+    plSimInfluenceMsg::Read(stream, mgr);
 
-	stream->WriteSwapScalar(fDamp);
+    stream->WriteSwapScalar(fDamp);
 }
 
 void plDampMsg::Write(hsStream * stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Write(stream, mgr);
+    plSimInfluenceMsg::Write(stream, mgr);
 
-	fDamp = stream->ReadSwapScalar();
+    fDamp = stream->ReadSwapScalar();
 }
 
 
 // PLSHIFTCENTERMSG
 void plShiftMassMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Read(stream, mgr);
+    plSimInfluenceMsg::Read(stream, mgr);
 
-	fOffset.Read(stream);
+    fOffset.Read(stream);
 }
 
 void plShiftMassMsg::Write(hsStream * stream, hsResMgr *mgr)
 {
-	plSimInfluenceMsg::Write(stream, mgr);
+    plSimInfluenceMsg::Write(stream, mgr);
 
-	fOffset.Write(stream);
+    fOffset.Write(stream);
 }
 */

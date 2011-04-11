@@ -45,50 +45,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pfGUINotifyMsg : public plMessage
 {
 protected:
-	plKey		fControlKey;		// who start this mess
-	UInt32		fEvent;				// what was the event that happened
+    plKey       fControlKey;        // who start this mess
+    UInt32      fEvent;             // what was the event that happened
 
 public:
-	pfGUINotifyMsg() : plMessage() {}
-	pfGUINotifyMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t) : plMessage(s, r, t) {}
-	~pfGUINotifyMsg() {}
+    pfGUINotifyMsg() : plMessage() {}
+    pfGUINotifyMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t) : plMessage(s, r, t) {}
+    ~pfGUINotifyMsg() {}
 
-	CLASSNAME_REGISTER( pfGUINotifyMsg );
-	GETINTERFACE_ANY( pfGUINotifyMsg, plMessage );
+    CLASSNAME_REGISTER( pfGUINotifyMsg );
+    GETINTERFACE_ANY( pfGUINotifyMsg, plMessage );
 
-	enum GUIEventType
-	{
-		kShowHide = 1,		// show or hide change
-		kAction,			// button clicked, ListBox click on item, EditBox hit enter
-		kValueChanged,		// value changed in control
-		kDialogLoaded,		// the dialog is now loaded and ready for action
-		kFocusChange,		// when one of its controls loses focus to another
-		kExitMode,			// GUI Exit Mode key was pressed
-		kInterestingEvent,	// GUI interesting-ness has changed
-		kEndEventList
-	};
+    enum GUIEventType
+    {
+        kShowHide = 1,      // show or hide change
+        kAction,            // button clicked, ListBox click on item, EditBox hit enter
+        kValueChanged,      // value changed in control
+        kDialogLoaded,      // the dialog is now loaded and ready for action
+        kFocusChange,       // when one of its controls loses focus to another
+        kExitMode,          // GUI Exit Mode key was pressed
+        kInterestingEvent,  // GUI interesting-ness has changed
+        kEndEventList
+    };
 
 /////////////////
 // Currently, the following is the only event types that get produced:
 //
 // kDialog
-//    kShowHide			- when the dialog is shown or hidden
+//    kShowHide         - when the dialog is shown or hidden
 // kButton
-//    kAction			- when the button clicked (should be on mouse button up)
+//    kAction           - when the button clicked (should be on mouse button up)
 // kListBox
-//    kAction			- single click on item(s)
+//    kAction           - single click on item(s)
 // kEditBox
-//    kAction			- enter key hit
+//    kAction           - enter key hit
 // kUpDownPair
-//    kValueChanged		- the value of the pair has been changed
+//    kValueChanged     - the value of the pair has been changed
 // kKnob
-//    kValueChanged		- the value of the knob has been changed
+//    kValueChanged     - the value of the knob has been changed
 // kCheckBox
-//    kValueChanged		- the checkbox state has been changed
+//    kValueChanged     - the checkbox state has been changed
 // kRadioGroup
-//    kValueChanged		- the radio group button has been changed
+//    kValueChanged     - the radio group button has been changed
 //
 // Control types that don't create events
 //
@@ -96,29 +96,29 @@ public:
 // kTextBox
 // kDragBar
 
-	void SetEvent( plKey &key, UInt32 event)
-	{
-		fControlKey = key;
-		fEvent = event;
-	}
+    void SetEvent( plKey &key, UInt32 event)
+    {
+        fControlKey = key;
+        fEvent = event;
+    }
 
-	plKey GetControlKey() { return fControlKey; }
-	UInt32 GetEvent() { return fEvent; }
+    plKey GetControlKey() { return fControlKey; }
+    UInt32 GetEvent() { return fEvent; }
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fControlKey = mgr->ReadKey(stream);
-		fEvent = stream->ReadSwap32();
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fControlKey = mgr->ReadKey(stream);
+        fEvent = stream->ReadSwap32();
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		mgr->WriteKey(stream, fControlKey);
-		stream->WriteSwap32(fEvent);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        mgr->WriteKey(stream, fControlKey);
+        stream->WriteSwap32(fEvent);
+    }
 };
 
 

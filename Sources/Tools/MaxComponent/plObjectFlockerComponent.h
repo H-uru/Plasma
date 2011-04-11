@@ -31,32 +31,32 @@ class pfObjectFlocker;
 class plObjectFlockerComponent : public plComponent
 {
 public:
-	enum
-	{
-		kBoidObject,
-		kNumBoids,
-		kGoalStrength,
-		kWanderStrength,
-		kSepStrength,
-		kSepRadius,
-		kCohStrength,
-		kCohRadius,
-		kMaxForce,
-		kMaxSpeed,
-		kMinSpeed,
-		kUseTargetRotation,
-		kRandomAnimStart,
-		kHideTarget,
-	};
+    enum
+    {
+        kBoidObject,
+        kNumBoids,
+        kGoalStrength,
+        kWanderStrength,
+        kSepStrength,
+        kSepRadius,
+        kCohStrength,
+        kCohRadius,
+        kMaxForce,
+        kMaxSpeed,
+        kMinSpeed,
+        kUseTargetRotation,
+        kRandomAnimStart,
+        kHideTarget,
+    };
 
-	plObjectFlockerComponent();
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
+    plObjectFlockerComponent();
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
 
 protected:
-	pfObjectFlocker* fFlocker;
+    pfObjectFlocker* fFlocker;
 
 };
 

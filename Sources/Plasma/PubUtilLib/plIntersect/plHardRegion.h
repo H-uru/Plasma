@@ -37,44 +37,44 @@ class plMessage;
 class plHardRegion : public plRegionBase
 {
 public:
-	enum RefTypes {
-		kSubRegion
-	};
+    enum RefTypes {
+        kSubRegion
+    };
 
 protected:
-	enum
-	{
-		kDirty,
-		kCamInside
-	};
+    enum
+    {
+        kDirty,
+        kCamInside
+    };
 
-	mutable UInt32			fState;
-	hsPoint3				fCamPos;
+    mutable UInt32          fState;
+    hsPoint3                fCamPos;
 
-	virtual void	SetKey(plKey k);
+    virtual void    SetKey(plKey k);
 
 public:
-	plHardRegion();
-	virtual ~plHardRegion();
+    plHardRegion();
+    virtual ~plHardRegion();
 
-	CLASSNAME_REGISTER( plHardRegion );
-	GETINTERFACE_ANY( plHardRegion, plRegionBase );
+    CLASSNAME_REGISTER( plHardRegion );
+    GETINTERFACE_ANY( plHardRegion, plRegionBase );
 
-	virtual hsBool IsInside(const hsPoint3& pos) const { return IIsInside(pos); }
-	virtual hsBool CameraInside() const;
+    virtual hsBool IsInside(const hsPoint3& pos) const { return IIsInside(pos); }
+    virtual hsBool CameraInside() const;
 
-	virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 
-	virtual Int32   GetNumProperties() const { return 1; } // This is stupid.
+    virtual Int32   GetNumProperties() const { return 1; } // This is stupid.
 
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool	IIsInside(const hsPoint3& pos) const = 0;
-	virtual hsBool	ICameraInside() const = 0;
+    virtual hsBool  IIsInside(const hsPoint3& pos) const = 0;
+    virtual hsBool  ICameraInside() const = 0;
 };
 
 #endif // plHardRegion_inc

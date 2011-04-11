@@ -42,29 +42,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class cyDraw
 {
 protected:
-	plKey			fSender;
-	hsTArray<plKey>	fRecvr;
-	hsBool			fNetForce;
+    plKey           fSender;
+    hsTArray<plKey> fRecvr;
+    hsBool          fNetForce;
 
-	cyDraw(plKey sender=nil,const plKey recvr=nil);
+    cyDraw(plKey sender=nil,const plKey recvr=nil);
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptDraw);
-	static PyObject *New(PyObject *sender = NULL, PyObject* recvr = NULL);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyDraw object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyDraw); // converts a PyObject to a cyDraw (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptDraw);
+    static PyObject *New(PyObject *sender = NULL, PyObject* recvr = NULL);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyDraw object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyDraw); // converts a PyObject to a cyDraw (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	// setters
-	void SetSender(plKey &sender);
-	void AddRecvr(plKey &recvr);
-	virtual void SetNetForce(hsBool state);
+    // setters
+    void SetSender(plKey &sender);
+    void AddRecvr(plKey &recvr);
+    virtual void SetNetForce(hsBool state);
 
-	// Enable draw
-	virtual void EnableT(hsBool state);
-	virtual void Enable();
-	virtual void Disable();
+    // Enable draw
+    virtual void EnableT(hsBool state);
+    virtual void Enable();
+    virtual void Disable();
 };
 
 #endif  // cyDraw_h

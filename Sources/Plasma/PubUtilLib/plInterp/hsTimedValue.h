@@ -32,187 +32,187 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 template <class T>
 class hsTimedValue {
 public:
-	enum {
-		kIdle			= 0x1,
-		kInstant		= 0x2
-	};
+    enum {
+        kIdle           = 0x1,
+        kInstant        = 0x2
+    };
 protected:
-	UInt32					fFlags;
-	hsScalar				fDuration;
-	hsScalar				fStartTime;
+    UInt32                  fFlags;
+    hsScalar                fDuration;
+    hsScalar                fStartTime;
 
-	T						fValue;
-	T						fGoal;
-	T						fFrom;
+    T                       fValue;
+    T                       fGoal;
+    T                       fFrom;
 
 public:
-	hsTimedValue() : fFlags(kIdle|kInstant), fDuration(0) {}
-	hsTimedValue(const T& v) : fFlags(kIdle|kInstant), fDuration(0) { SetValue(v); }
+    hsTimedValue() : fFlags(kIdle|kInstant), fDuration(0) {}
+    hsTimedValue(const T& v) : fFlags(kIdle|kInstant), fDuration(0) { SetValue(v); }
 
-	UInt32 GetFlags() { return fFlags; }
+    UInt32 GetFlags() { return fFlags; }
 
-	void SetDuration(hsScalar duration);
-	hsScalar GetDuration() const { return fDuration; }
+    void SetDuration(hsScalar duration);
+    hsScalar GetDuration() const { return fDuration; }
 
-	hsBool32 operator==(const hsTimedValue<T>& v);
-	hsTimedValue<T>& operator=(const T& v) { SetValue(v); return *this; }
-	hsTimedValue<T>& operator+=(const T& v) { SetValue(v + fValue); return *this; }
+    hsBool32 operator==(const hsTimedValue<T>& v);
+    hsTimedValue<T>& operator=(const T& v) { SetValue(v); return *this; }
+    hsTimedValue<T>& operator+=(const T& v) { SetValue(v + fValue); return *this; }
 
-	void SetTempValue(const T& v) { fValue = v; }
-	void SetValue(const T& v) { fFrom = fGoal = fValue = v; fFlags |= kIdle; }
-	const T& GetValue() const { return fValue; }
+    void SetTempValue(const T& v) { fValue = v; }
+    void SetValue(const T& v) { fFrom = fGoal = fValue = v; fFlags |= kIdle; }
+    const T& GetValue() const { return fValue; }
 
-	void SetGoal(const T& g) { fGoal = g; }
-	const T& GetGoal() const { return fGoal; }
+    void SetGoal(const T& g) { fGoal = g; }
+    const T& GetGoal() const { return fGoal; }
 
-	void Reset() { fFlags |= (kIdle | kInstant); }
+    void Reset() { fFlags |= (kIdle | kInstant); }
 
-	void StartClock(hsScalar s);
-	hsScalar GetStartTime() const { return fStartTime; }
+    void StartClock(hsScalar s);
+    hsScalar GetStartTime() const { return fStartTime; }
 
-	const T& GetFrom() const { return fFrom; }
+    const T& GetFrom() const { return fFrom; }
 
-	void Update(hsScalar s);
+    void Update(hsScalar s);
 
-	void WriteScalar(hsStream* s, hsScalar currSecs);
-	void Write(hsStream* s, hsScalar currSecs);
+    void WriteScalar(hsStream* s, hsScalar currSecs);
+    void Write(hsStream* s, hsScalar currSecs);
 
-	void ReadScalar(hsStream* s, hsScalar currSecs);
-	void Read(hsStream* s, hsScalar currSecs);
+    void ReadScalar(hsStream* s, hsScalar currSecs);
+    void Read(hsStream* s, hsScalar currSecs);
 };
 
 template <class T>
 void hsTimedValue<T>::WriteScalar(hsStream* s, hsScalar currSecs)
 {
-	s->WriteSwap32(fFlags);
+    s->WriteSwap32(fFlags);
 
-	s->WriteSwapScalar(fValue);
-	
-	if( !(fFlags & kIdle) )
-	{
-		s->WriteSwapScalar(fDuration);
-		s->WriteSwapScalar(currSecs - fStartTime);
+    s->WriteSwapScalar(fValue);
+    
+    if( !(fFlags & kIdle) )
+    {
+        s->WriteSwapScalar(fDuration);
+        s->WriteSwapScalar(currSecs - fStartTime);
 
-		s->WriteSwapScalar(fGoal);
-		s->WriteSwapScalar(fFrom);
-	}
+        s->WriteSwapScalar(fGoal);
+        s->WriteSwapScalar(fFrom);
+    }
 }
 
 template <class T>
 void hsTimedValue<T>::Write(hsStream* s, hsScalar currSecs)
 {
-	s->WriteSwap32(fFlags);
+    s->WriteSwap32(fFlags);
 
-	fValue.Write(s);
-	
-	if( !(fFlags & kIdle) )
-	{
-		s->WriteSwapScalar(fDuration);
-		s->WriteSwapScalar(currSecs - fStartTime);
+    fValue.Write(s);
+    
+    if( !(fFlags & kIdle) )
+    {
+        s->WriteSwapScalar(fDuration);
+        s->WriteSwapScalar(currSecs - fStartTime);
 
-		fGoal.Write(s);
-		fFrom.Write(s);
-	}
+        fGoal.Write(s);
+        fFrom.Write(s);
+    }
 }
 
 template <class T>
 void hsTimedValue<T>::ReadScalar(hsStream* s, hsScalar currSecs)
 {
-	fFlags = s->ReadSwap32();
+    fFlags = s->ReadSwap32();
 
-	fValue = s->ReadSwapScalar();
+    fValue = s->ReadSwapScalar();
 
-	if( !(fFlags & kIdle) )
-	{
-		fDuration = s->ReadSwapScalar();
-		fStartTime = currSecs - s->ReadSwapScalar();
+    if( !(fFlags & kIdle) )
+    {
+        fDuration = s->ReadSwapScalar();
+        fStartTime = currSecs - s->ReadSwapScalar();
 
-		fGoal = s->ReadSwapScalar();
-		fFrom = s->ReadSwapScalar();
-	}
+        fGoal = s->ReadSwapScalar();
+        fFrom = s->ReadSwapScalar();
+    }
 }
 
 template <class T>
 void hsTimedValue<T>::Read(hsStream* s, hsScalar currSecs)
 {
-	fFlags = s->ReadSwap32();
+    fFlags = s->ReadSwap32();
 
-	fValue.Read(s);
+    fValue.Read(s);
 
-	if( !(fFlags & kIdle) )
-	{
-		fDuration = s->ReadSwapScalar();
-		fStartTime = currSecs - s->ReadSwapScalar();
+    if( !(fFlags & kIdle) )
+    {
+        fDuration = s->ReadSwapScalar();
+        fStartTime = currSecs - s->ReadSwapScalar();
 
-		fGoal.Read(s);
-		fFrom.Read(s);
-	}
+        fGoal.Read(s);
+        fFrom.Read(s);
+    }
 }
 
 template <class T>
 void hsTimedValue<T>::SetDuration(hsScalar duration) 
 { 
-	fDuration = duration; 
-	if( fDuration > 0 )
-		fFlags &= ~kInstant;
-	else
-		fFlags |= kInstant;
+    fDuration = duration; 
+    if( fDuration > 0 )
+        fFlags &= ~kInstant;
+    else
+        fFlags |= kInstant;
 }
 
 template <class T>
 hsBool32 hsTimedValue<T>::operator==(const hsTimedValue<T>& v)
 {
-	if ((fFlags == v.fFlags) &&
-		(fDuration == v.fDuration) &&
-		(fStartTime == v.fStartTime) &&
-		(fValue == v.fValue) &&
-		(fGoal == v.fGoal) &&
-		(fFrom == v.fFrom))
-	{
-		return true;
-	}
+    if ((fFlags == v.fFlags) &&
+        (fDuration == v.fDuration) &&
+        (fStartTime == v.fStartTime) &&
+        (fValue == v.fValue) &&
+        (fGoal == v.fGoal) &&
+        (fFrom == v.fFrom))
+    {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 template <class T>
 void hsTimedValue<T>::StartClock(hsScalar s)
 {
-	fStartTime = s;
+    fStartTime = s;
 
-	if( fFlags & kInstant )
-	{
-		fFlags |= kIdle;
-		fValue = fGoal;
-		return;
-	}
+    if( fFlags & kInstant )
+    {
+        fFlags |= kIdle;
+        fValue = fGoal;
+        return;
+    }
 
-	fFlags &= ~kIdle;
+    fFlags &= ~kIdle;
 
-	if( fValue == fGoal )
-		fFlags |= kIdle;
+    if( fValue == fGoal )
+        fFlags |= kIdle;
 
-	fFrom = fValue;
+    fFrom = fValue;
 }
 
 template <class T>
 void hsTimedValue<T>::Update(hsScalar s)
 {
-	if( fFlags & kIdle )
-		return;
+    if( fFlags & kIdle )
+        return;
 
-	hsAssert(fDuration > 0, "Instant should always be idle");
+    hsAssert(fDuration > 0, "Instant should always be idle");
 
-	hsScalar interp = (s - fStartTime) / fDuration;
+    hsScalar interp = (s - fStartTime) / fDuration;
 
-	if( interp >= hsScalar1 )
-	{
-		fValue = fGoal;
-		interp = hsScalar1;
-		fFlags |= kIdle;
-	}
-	else
-		fValue = fFrom + (fGoal - fFrom) * interp;
+    if( interp >= hsScalar1 )
+    {
+        fValue = fGoal;
+        interp = hsScalar1;
+        fFlags |= kIdle;
+    }
+    else
+        fValue = fFrom + (fGoal - fFrom) * interp;
 }
 
 

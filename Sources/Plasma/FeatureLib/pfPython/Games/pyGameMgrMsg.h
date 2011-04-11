@@ -42,68 +42,68 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyGameMgrMsg
 {
 protected:
-	pfGameMgrMsg* message;
+    pfGameMgrMsg* message;
 
-	pyGameMgrMsg();
-	pyGameMgrMsg(pfGameMgrMsg* msg);
+    pyGameMgrMsg();
+    pyGameMgrMsg(pfGameMgrMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE; // so we can subclass
-	PYTHON_CLASS_NEW_FRIEND(ptGameMgrMsg);
-	static PyObject* New(pfGameMgrMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameMgrMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameMgrMsg); // converts a PyObject to a pyGameMgrMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE; // so we can subclass
+    PYTHON_CLASS_NEW_FRIEND(ptGameMgrMsg);
+    static PyObject* New(pfGameMgrMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameMgrMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameMgrMsg); // converts a PyObject to a pyGameMgrMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
-	int GetType() const;
+    int GetType() const;
 
-	PyObject* UpcastToInviteReceivedMsg() const; // returns ptGameMgrInviteReceivedMsg
-	PyObject* UpcastToInviteRevokedMsg() const; // returns ptGameMgrInviteRevokedMsg
+    PyObject* UpcastToInviteReceivedMsg() const; // returns ptGameMgrInviteReceivedMsg
+    PyObject* UpcastToInviteRevokedMsg() const; // returns ptGameMgrInviteRevokedMsg
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyGameMgrInviteReceivedMsg : public pyGameMgrMsg
 {
 protected:
-	pyGameMgrInviteReceivedMsg();
-	pyGameMgrInviteReceivedMsg(pfGameMgrMsg* msg);
+    pyGameMgrInviteReceivedMsg();
+    pyGameMgrInviteReceivedMsg(pfGameMgrMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGameMgrInviteReceivedMsg);
-	static PyObject* New(pfGameMgrMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameMgrInviteReceivedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameMgrInviteReceivedMsg); // converts a PyObject to a pyGameMgrInviteReceivedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGameMgrInviteReceivedMsg);
+    static PyObject* New(pfGameMgrMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameMgrInviteReceivedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameMgrInviteReceivedMsg); // converts a PyObject to a pyGameMgrInviteReceivedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	unsigned long InviterID() const;
-	std::wstring GameTypeID() const;
-	unsigned long NewGameID() const;
+    unsigned long InviterID() const;
+    std::wstring GameTypeID() const;
+    unsigned long NewGameID() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyGameMgrInviteRevokedMsg : public pyGameMgrMsg
 {
 protected:
-	pyGameMgrInviteRevokedMsg();
-	pyGameMgrInviteRevokedMsg(pfGameMgrMsg* msg);
+    pyGameMgrInviteRevokedMsg();
+    pyGameMgrInviteRevokedMsg(pfGameMgrMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGameMgrInviteRevokedMsg);
-	static PyObject* New(pfGameMgrMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameMgrInviteRevokedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameMgrInviteRevokedMsg); // converts a PyObject to a pyGameMgrInviteRevokedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGameMgrInviteRevokedMsg);
+    static PyObject* New(pfGameMgrMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameMgrInviteRevokedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameMgrInviteRevokedMsg); // converts a PyObject to a pyGameMgrInviteRevokedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	unsigned long InviterID() const;
-	std::wstring GameTypeID() const;
-	unsigned long NewGameID() const;
+    unsigned long InviterID() const;
+    std::wstring GameTypeID() const;
+    unsigned long NewGameID() const;
 };
 
 #endif  // pyGameMgrMsg_h

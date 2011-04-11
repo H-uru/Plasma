@@ -34,23 +34,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 class hsMMIOStream: public hsStream
-{	
-	HMMIO	fHmfr;
+{   
+    HMMIO   fHmfr;
 public:
 
-	virtual hsBool	Open(const char *, const char *)	{ hsAssert(0, "hsMMIOStream::Open  NotImplemented"); return false; }
-	virtual hsBool	Close()				{ hsAssert(0, "hsMMIOStream::Close  NotImplemented"); return false; }
+    virtual hsBool  Open(const char *, const char *)    { hsAssert(0, "hsMMIOStream::Open  NotImplemented"); return false; }
+    virtual hsBool  Close()             { hsAssert(0, "hsMMIOStream::Close  NotImplemented"); return false; }
 
-	virtual hsBool	AtEnd();
-	virtual UInt32	Read(UInt32 byteCount, void* buffer);
-	virtual UInt32	Write(UInt32 byteCount, const void* buffer);
-	virtual void	Skip(UInt32 deltaByteCount);
-	virtual void	Rewind();
-	virtual void	FastFwd();
+    virtual hsBool  AtEnd();
+    virtual UInt32  Read(UInt32 byteCount, void* buffer);
+    virtual UInt32  Write(UInt32 byteCount, const void* buffer);
+    virtual void    Skip(UInt32 deltaByteCount);
+    virtual void    Rewind();
+    virtual void    FastFwd();
     virtual void    Truncate();
 
-	HMMIO	GetHandle() { return fHmfr; }
-	void	SetHandle(HMMIO handle) { fHmfr = handle; }
+    HMMIO   GetHandle() { return fHmfr; }
+    void    SetHandle(HMMIO handle) { fHmfr = handle; }
 };
 
-#endif	// hsMMIOStream_inc
+#endif  // hsMMIOStream_inc

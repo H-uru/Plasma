@@ -39,70 +39,70 @@ class plSwimmingController;
 class plAvBrainSwim : public plArmatureBrain
 {
 public:
-	plAvBrainSwim();
-	virtual ~plAvBrainSwim();
+    plAvBrainSwim();
+    virtual ~plAvBrainSwim();
 
-	CLASSNAME_REGISTER( plAvBrainSwim );
-	GETINTERFACE_ANY( plAvBrainSwim, plArmatureBrain );
+    CLASSNAME_REGISTER( plAvBrainSwim );
+    GETINTERFACE_ANY( plAvBrainSwim, plArmatureBrain );
 
-	virtual void Activate(plArmatureModBase *avMod);
-	hsBool Apply(double time, hsScalar elapsed);
-	virtual void Deactivate();
-	virtual void Suspend();
-	virtual void Resume();
-	virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-	hsBool MsgReceive(plMessage *msg);
-	bool IsWalking();
-	bool IsWading();
-	bool IsSwimming();
-	hsScalar GetSurfaceDistance() { return fSurfaceDistance; }
+    virtual void Activate(plArmatureModBase *avMod);
+    hsBool Apply(double time, hsScalar elapsed);
+    virtual void Deactivate();
+    virtual void Suspend();
+    virtual void Resume();
+    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    hsBool MsgReceive(plMessage *msg);
+    bool IsWalking();
+    bool IsWading();
+    bool IsSwimming();
+    hsScalar GetSurfaceDistance() { return fSurfaceDistance; }
 
-	plSwimmingController *fCallbackAction;
-	static const hsScalar kMinSwimDepth;
-	
+    plSwimmingController *fCallbackAction;
+    static const hsScalar kMinSwimDepth;
+    
 protected:
-	void IStartWading();
-	void IStartSwimming(bool is2D);
-	hsBool IProcessSwimming2D(double time, float elapsed);
-	hsBool IProcessSwimming3D(double time, float elapsed);
-	hsBool IProcessWading(double time, float elapsed);
-	hsBool IProcessClimbingOut(double time, float elapsed);
-	hsBool IProcessBehaviors(double time, float elapsed);
+    void IStartWading();
+    void IStartSwimming(bool is2D);
+    hsBool IProcessSwimming2D(double time, float elapsed);
+    hsBool IProcessSwimming3D(double time, float elapsed);
+    hsBool IProcessWading(double time, float elapsed);
+    hsBool IProcessClimbingOut(double time, float elapsed);
+    hsBool IProcessBehaviors(double time, float elapsed);
 
-	virtual hsBool IInitAnimations();
-	bool IAttachAction();
-	bool IDetachAction();
-	void IProbeSurface();
-	hsBool IHandleControlMsg(plControlEventMsg* msg);
-	float IGetTargetZ();
+    virtual hsBool IInitAnimations();
+    bool IAttachAction();
+    bool IDetachAction();
+    void IProbeSurface();
+    hsBool IHandleControlMsg(plControlEventMsg* msg);
+    float IGetTargetZ();
 
-	float fSurfaceDistance;
-	plLOSRequestMsg *fSurfaceProbeMsg;
-	plSwimRegionInterface *fCurrentRegion;
-	
-	enum Mode {
-		kWading,
-		kSwimming2D,
-		kSwimming3D,
-		kClimbingOut,
-		kAbort,
-		kWalking,
-	} fMode;
+    float fSurfaceDistance;
+    plLOSRequestMsg *fSurfaceProbeMsg;
+    plSwimRegionInterface *fCurrentRegion;
+    
+    enum Mode {
+        kWading,
+        kSwimming2D,
+        kSwimming3D,
+        kClimbingOut,
+        kAbort,
+        kWalking,
+    } fMode;
 
-	enum
-	{
-		kTreadWater,
-		kSwimForward,
-		kSwimForwardFast,
-		kSwimBack,
-		kSwimLeft,
-		kSwimRight,
-		kSwimTurnLeft,
-		kSwimTurnRight,
-		kTreadTurnLeft,
-		kTreadTurnRight,
-		kSwimBehaviorMax,
-	};
+    enum
+    {
+        kTreadWater,
+        kSwimForward,
+        kSwimForwardFast,
+        kSwimBack,
+        kSwimLeft,
+        kSwimRight,
+        kSwimTurnLeft,
+        kSwimTurnRight,
+        kTreadTurnLeft,
+        kTreadTurnRight,
+        kSwimBehaviorMax,
+    };
 };
 
 #endif PL_AV_BRAIN_SWIM_H

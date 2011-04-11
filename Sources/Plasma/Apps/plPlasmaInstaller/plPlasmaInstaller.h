@@ -28,30 +28,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plPlasmaInstaller : public jvBaseDlg
 {
 protected:
-	char fDailyDir[MAX_PATH];
-	bool fDidGet;
+    char fDailyDir[MAX_PATH];
+    bool fDidGet;
 
-	HWND fStatusList;
+    HWND fStatusList;
 
-	enum { kBuildMain, kBuildBranch, kBuildActive };
-	enum { kNightly, kAfternoon, kEvening };
+    enum { kBuildMain, kBuildBranch, kBuildActive };
+    enum { kNightly, kAfternoon, kEvening };
 
-	virtual BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    virtual BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	bool IGetDailyDir();
-	void IGetFolder(bool client);
+    bool IGetDailyDir();
+    void IGetFolder(bool client);
 
-	void IGet();
+    void IGet();
 
-	void IInit();
-	void IExtractZip(const char* filename, const char* dest);
+    void IInit();
+    void IExtractZip(const char* filename, const char* dest);
 
-	void IAddStatusLine(const char* format, ...);
+    void IAddStatusLine(const char* format, ...);
 
 public:
-	plPlasmaInstaller();
+    plPlasmaInstaller();
 
-	void Create();
+    void Create();
 
-	HWND GetHWnd() { return fDlg; }
+    HWND GetHWnd() { return fDlg; }
 };

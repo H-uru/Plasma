@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plJPEG - JPEG Codec Wrapper for Plasma									 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plJPEG - JPEG Codec Wrapper for Plasma                                   //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	2.1.2002 mcn - Created.													 //
-//																			 //
+//                                                                           //
+//  2.1.2002 mcn - Created.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plJPEG_h
@@ -45,32 +45,32 @@ class hsStream;
 
 class plJPEG
 {
-	protected:
+    protected:
 
-		UInt8		fWriteQuality;
+        UInt8       fWriteQuality;
 
-		// Pick one...
-		plMipmap	*IRead( hsStream *inStream );
-		hsBool		IWrite( plMipmap *source, hsStream *outStream );
+        // Pick one...
+        plMipmap    *IRead( hsStream *inStream );
+        hsBool      IWrite( plMipmap *source, hsStream *outStream );
 
-		void		ISwapRGBAComponents( UInt32 *data, UInt32 count );
+        void        ISwapRGBAComponents( UInt32 *data, UInt32 count );
 
-	public:
+    public:
 
-		plMipmap	*ReadFromStream( hsStream *inStream ) { return IRead( inStream ); }
-		plMipmap	*ReadFromFile( const char *fileName );
-		plMipmap	*ReadFromFile( const wchar *fileName );
+        plMipmap    *ReadFromStream( hsStream *inStream ) { return IRead( inStream ); }
+        plMipmap    *ReadFromFile( const char *fileName );
+        plMipmap    *ReadFromFile( const wchar *fileName );
 
-		hsBool	WriteToStream( hsStream *outStream, plMipmap *sourceData ) { return IWrite( sourceData, outStream ); }
-		hsBool	WriteToFile( const char *fileName, plMipmap *sourceData );
-		hsBool	WriteToFile( const wchar *fileName, plMipmap *sourceData );
+        hsBool  WriteToStream( hsStream *outStream, plMipmap *sourceData ) { return IWrite( sourceData, outStream ); }
+        hsBool  WriteToFile( const char *fileName, plMipmap *sourceData );
+        hsBool  WriteToFile( const wchar *fileName, plMipmap *sourceData );
 
-		// Range is 0 (worst) to 100 (best)
-		void	SetWriteQuality( UInt8 q ) { fWriteQuality = q; }
+        // Range is 0 (worst) to 100 (best)
+        void    SetWriteQuality( UInt8 q ) { fWriteQuality = q; }
 
-		const char	*GetLastError( void );
+        const char  *GetLastError( void );
 
-		static plJPEG	&Instance( void );
+        static plJPEG   &Instance( void );
 };
 
 #endif // _plJPEG_h

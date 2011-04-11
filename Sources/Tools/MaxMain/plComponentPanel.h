@@ -33,44 +33,44 @@ class plComponentBase;
 class plComponentUtil : public UtilityObj
 {
 protected:
-	friend class plComponentDlg;
-	
-	Interface *fInterface;
-	HWND fhPanel;
-	plComponentBase* fCurComponent;
-	// Used to try and load the last displayed component on reload, just for pointer compares
-	plComponentBase* fLastComponent;
+    friend class plComponentDlg;
+    
+    Interface *fInterface;
+    HWND fhPanel;
+    plComponentBase* fCurComponent;
+    // Used to try and load the last displayed component on reload, just for pointer compares
+    plComponentBase* fLastComponent;
 
-	plComponentUtil();
+    plComponentUtil();
 
 public:
-	static plComponentUtil& Instance();
+    static plComponentUtil& Instance();
 
-	void BeginEditParams(Interface *ip, IUtil *iu);
-	void EndEditParams(Interface *ip, IUtil *iu);
-	void SelectionSetChanged(Interface *ip, IUtil *iu);
-	void DeleteThis() {};
+    void BeginEditParams(Interface *ip, IUtil *iu);
+    void EndEditParams(Interface *ip, IUtil *iu);
+    void SelectionSetChanged(Interface *ip, IUtil *iu);
+    void DeleteThis() {};
 
-	static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	bool IsOpen() { return (fhPanel != NULL); }
+    bool IsOpen() { return (fhPanel != NULL); }
 
 protected:
-	void IUpdateRollups();
-	void IAddRollups(plComponentBase* comp);
-	void IDestroyRollups();
+    void IUpdateRollups();
+    void IAddRollups(plComponentBase* comp);
+    void IDestroyRollups();
 
-	void INextTarget(bool forward);
+    void INextTarget(bool forward);
 
-	plComponentBase *IGetListSelection();
-	void IDeleteListSelection();
-	int IFindListItem(plComponentBase* comp);
+    plComponentBase *IGetListSelection();
+    void IDeleteListSelection();
+    int IFindListItem(plComponentBase* comp);
 
-	void IShowRefdBy();
+    void IShowRefdBy();
 
-	// plComponentDlg is about to delete this comp, get rid of it's interface
-	void IComponentPreDelete(plComponentBase* comp);
-	// To syncronize with plComponentDlg when a name is changed
-	void IUpdateNodeName(plMaxNode *node);
+    // plComponentDlg is about to delete this comp, get rid of it's interface
+    void IComponentPreDelete(plComponentBase* comp);
+    // To syncronize with plComponentDlg when a name is changed
+    void IUpdateNodeName(plMaxNode *node);
 };

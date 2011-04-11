@@ -63,14 +63,14 @@ void TimeGetElapsedDesc (
 
 //============================================================================
 dword TimeGetSecondsSince2001Utc () {
-	qword time    = TimeGetTime();
-	dword seconds = (dword)((time - kTime1601To2001) / kTimeIntervalsPerSecond);
-	return seconds;
+    qword time    = TimeGetTime();
+    dword seconds = (dword)((time - kTime1601To2001) / kTimeIntervalsPerSecond);
+    return seconds;
 }
 
 //============================================================================
 dword TimeGetSecondsSince1970Utc () {
-	qword time    = TimeGetTime();
-	dword seconds = (dword)((time  - kTime1601To1970) / kTimeIntervalsPerSecond);
-	return seconds;
+    qword time    = TimeGetTime();
+    dword seconds = (dword)((time  - kTime1601To1970) / kTimeIntervalsPerSecond);
+    return seconds;
 }

@@ -34,30 +34,30 @@ class hsResMgr;
 class plTimerCallbackMsg : public plMessage
 {
 public:
-	plTimerCallbackMsg(){;}
-	plTimerCallbackMsg(const plKey &s, const plKey &r, const double* t){;}
-	plTimerCallbackMsg(const plKey &r, UInt32 id = 0) { AddReceiver(r); fID = id;}
-	~plTimerCallbackMsg(){;}
+    plTimerCallbackMsg(){;}
+    plTimerCallbackMsg(const plKey &s, const plKey &r, const double* t){;}
+    plTimerCallbackMsg(const plKey &r, UInt32 id = 0) { AddReceiver(r); fID = id;}
+    ~plTimerCallbackMsg(){;}
 
-	CLASSNAME_REGISTER( plTimerCallbackMsg );
-	GETINTERFACE_ANY( plTimerCallbackMsg, plMessage );
-	
-	UInt32 fID;
-	hsScalar fTime;
+    CLASSNAME_REGISTER( plTimerCallbackMsg );
+    GETINTERFACE_ANY( plTimerCallbackMsg, plMessage );
+    
+    UInt32 fID;
+    hsScalar fTime;
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fID = stream->ReadSwap32();
-		fTime = stream->ReadSwapScalar();
-	}
+    virtual void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fID = stream->ReadSwap32();
+        fTime = stream->ReadSwapScalar();
+    }
 
-	virtual void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		stream->WriteSwap32(fID);
-		stream->WriteSwapScalar(fTime);
-	}
+    virtual void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        stream->WriteSwap32(fID);
+        stream->WriteSwapScalar(fTime);
+    }
 };
 
 #endif // plTimerCallbackMsg_inc

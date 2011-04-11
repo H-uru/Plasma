@@ -37,14 +37,14 @@ class hsStream;
 class plNetResManager : public plResManager
 {
 public:
-	plNetResManager();
-	~plNetResManager();
+    plNetResManager();
+    ~plNetResManager();
 
 protected:
-	plCreatable*	IReadCreatable(hsStream* s) const;
-	virtual void	IKeyReffed(plKeyImp* key);
-	virtual void	IKeyUnreffed(plKeyImp* key);
+    plCreatable*    IReadCreatable(hsStream* s) const;
+    virtual void    IKeyReffed(plKeyImp* key);
+    virtual void    IKeyUnreffed(plKeyImp* key);
 };
 
 
-#endif	// plNetResMgr_h
+#endif  // plNetResMgr_h

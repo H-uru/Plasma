@@ -37,54 +37,54 @@ class plSDStateVariable;
 class plSDLBrowserDlg : public plDialog
 {
 private:
-	bool			fCancelled;
-	bool			fModified;
-	bool			fReadOnly;
-	plListBox		fVarListBox;
-	plComboBox		fValueComboBox;
-	plButton		fOK, fCancel;
-	plTrackBar		fSDRecSlider;
-	plSDStateVariable* fCurSDVar;
-	int				fCurComboListBoxPos;
-	
-	typedef std::vector<plStateDataRecord*> SDRecStack;
-	SDRecStack		fStateDataRecStack;
+    bool            fCancelled;
+    bool            fModified;
+    bool            fReadOnly;
+    plListBox       fVarListBox;
+    plComboBox      fValueComboBox;
+    plButton        fOK, fCancel;
+    plTrackBar      fSDRecSlider;
+    plSDStateVariable* fCurSDVar;
+    int             fCurComboListBoxPos;
+    
+    typedef std::vector<plStateDataRecord*> SDRecStack;
+    SDRecStack      fStateDataRecStack;
 
-	plStateDataRecord*	IGetCurrentStateDataRec() const { return fStateDataRecStack.back(); }
-	plStateDataRecord*	IGetPreviousStateDataRec() const;
-	bool	IAtTopLevel() const { return fStateDataRecStack.size()==1;	}
-	void	IPushStateDataRec(plStateDataRecord* sd) { fStateDataRecStack.push_back(sd);	}
-	plStateDataRecord*	IPopStateDataRec();
-	void	IPopulateVarListBox(plStateDataRecord* sd) ;
-	void	IAddListBoxVar(plStateVariable* var, int cnt);
-	void	IPopulateValueComboBox(plSimpleStateVariable* var) ;
-	plStateVariable* IGetListBoxVar(int cur);
+    plStateDataRecord*  IGetCurrentStateDataRec() const { return fStateDataRecStack.back(); }
+    plStateDataRecord*  IGetPreviousStateDataRec() const;
+    bool    IAtTopLevel() const { return fStateDataRecStack.size()==1;  }
+    void    IPushStateDataRec(plStateDataRecord* sd) { fStateDataRecStack.push_back(sd);    }
+    plStateDataRecord*  IPopStateDataRec();
+    void    IPopulateVarListBox(plStateDataRecord* sd) ;
+    void    IAddListBoxVar(plStateVariable* var, int cnt);
+    void    IPopulateValueComboBox(plSimpleStateVariable* var) ;
+    plStateVariable* IGetListBoxVar(int cur);
 public:
 
-	DECLARE_WINDOWCLASS(plSDLBrowserDialog, plDialog);
-	plSDLBrowserDlg(int inDialogId=IDD_DIALOG_SDLBROWSER);
-	~plSDLBrowserDlg();
-	
-	int Run();
+    DECLARE_WINDOWCLASS(plSDLBrowserDialog, plDialog);
+    plSDLBrowserDlg(int inDialogId=IDD_DIALOG_SDLBROWSER);
+    ~plSDLBrowserDlg();
+    
+    int Run();
 
-	// callbacks
-	void OnInitDialog();
-	void OnVarListSelChanged();
-	void OnVarListDoubleClicked();
-	void OnValueComboSelChanged();
-	void OnValueComboEditChanged();
-	void OnOKClicked();
-	void OnCancelClicked();
-	void OnSDRecSliderChanged();
+    // callbacks
+    void OnInitDialog();
+    void OnVarListSelChanged();
+    void OnVarListDoubleClicked();
+    void OnValueComboSelChanged();
+    void OnValueComboEditChanged();
+    void OnOKClicked();
+    void OnCancelClicked();
+    void OnSDRecSliderChanged();
 
-	// setters
-	void SetReadOnly(bool r) { fReadOnly=r;	}
-	void SetStateDataRec(plStateDataRecord* sd) { fStateDataRecStack.clear(); fStateDataRecStack.push_back(sd);	}
-	void SetDefaults();
-	
-	// getters
-	bool GetCancelled() const { return fCancelled; }
-	bool GetModified() const { return fModified; }
+    // setters
+    void SetReadOnly(bool r) { fReadOnly=r; }
+    void SetStateDataRec(plStateDataRecord* sd) { fStateDataRecStack.clear(); fStateDataRecStack.push_back(sd); }
+    void SetDefaults();
+    
+    // getters
+    bool GetCancelled() const { return fCancelled; }
+    bool GetModified() const { return fModified; }
 };
 
-#endif	// plSDLBrowserDLG_inc
+#endif  // plSDLBrowserDLG_inc

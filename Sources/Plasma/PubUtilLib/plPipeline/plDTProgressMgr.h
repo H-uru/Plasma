@@ -24,13 +24,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plDTProgressMgr Header 													//
-//																			//
+//                                                                          //
+//  plDTProgressMgr Header                                                  //
+//                                                                          //
 //// Description /////////////////////////////////////////////////////////////
-//																			//
-//	Derived class of plProgressMgr to draw the progress bars via debug text.// 
-//																			//
+//                                                                          //
+//  Derived class of plProgressMgr to draw the progress bars via debug text.// 
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plDTProgressMgr_h
@@ -44,27 +44,27 @@ class plPipeline;
 
 class plDTProgressMgr : public plProgressMgr
 {
-	protected:
-		Int32		fCurrentImage;
-		float		fLastDraw;
-		plPlate*	fActivePlate;
-		plPlate*	fStaticTextPlate;
-		StaticText	fShowingStaticText;
+    protected:
+        Int32       fCurrentImage;
+        float       fLastDraw;
+        plPlate*    fActivePlate;
+        plPlate*    fStaticTextPlate;
+        StaticText  fShowingStaticText;
 
-		void	Activate();
-		void	Deactivate();
+        void    Activate();
+        void    Deactivate();
 
-		void	IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
-										UInt16 x, UInt16 y, UInt16 width, UInt16 height );
+        void    IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
+                                        UInt16 x, UInt16 y, UInt16 width, UInt16 height );
 
-	public:
+    public:
 
-		plDTProgressMgr();
-		~plDTProgressMgr();
+        plDTProgressMgr();
+        ~plDTProgressMgr();
 
-		virtual void	Draw( plPipeline *p );
+        virtual void    Draw( plPipeline *p );
 
-		static void		DeclareThyself( void );
+        static void     DeclareThyself( void );
 };
 
 
