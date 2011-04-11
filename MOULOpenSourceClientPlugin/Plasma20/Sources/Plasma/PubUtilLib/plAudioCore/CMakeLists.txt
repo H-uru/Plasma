@@ -3,6 +3,7 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
+include_directories(${DirectX_INCLUDE_DIR})
 include_directories(${Ogg_INCLUDE_DIR})
 include_directories(${Vorbis_INCLUDE_DIR})
 

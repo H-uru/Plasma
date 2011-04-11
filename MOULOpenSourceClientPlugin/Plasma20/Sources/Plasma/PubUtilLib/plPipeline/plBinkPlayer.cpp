@@ -38,7 +38,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plLocalization.h"
 
 #include "hsTimer.h"
-#include <dsound.h>
 
 static const D3DMATRIX ident = { 1.0f, 0.0f, 0.0f, 0.0f,
 									 0.0f, 1.0f, 0.0f, 0.0f,
@@ -50,7 +49,6 @@ const U32	kDefaultBack	= 0;
 const U32	kDefaultFore	= 1;
 const UInt32 kBackTrack = 0;
 const UInt32 kForeTrack = 1;
-IDirectSound8 *plBinkPlayer::fSoundDevice = nil;
 
 const int fSndTrack(0); // STUB
 
@@ -112,17 +110,10 @@ hsBool plBinkPlayer::Init( hsWindowHndl hWnd )
 	case plLocalization::kJapanese:	SetForeGroundTrack(2); break;
 	}
 
-	HRESULT hr;
-	/// Create the DirectSound object and set our cooperative level
-    hr = DirectSoundCreate8( NULL, &fSoundDevice, NULL );
-	if(SUCCEEDED(hr))
-	{
-		hr = fSoundDevice->SetCooperativeLevel( hWnd, DSSCL_PRIORITY );
-	}
 #ifdef BINK_SDK_AVAILABLE
-	if(SUCCEEDED(hr))
+	if(BinkSoundUseWaveOut())
 	{
-		return BinkSoundUseDirectSound( fSoundDevice );	// must be before open		
+		return true;	
 	}
 	BinkSetSoundTrack(0, nil);
 #endif
@@ -132,12 +123,6 @@ hsBool plBinkPlayer::Init( hsWindowHndl hWnd )
 
 hsBool plBinkPlayer::DeInit()
 {
-	if(fSoundDevice)
-	{
-		fSoundDevice->Release();
-		fSoundDevice = nil;
-	}
-
 	return true;
 }
 

@@ -6,6 +6,7 @@ include_directories("../../PubUtilLib")
 #TODO: This should probably be an external dependancy
 include_directories("../../../../SDKs/Win32/HawkVoice/src")
 
+include_directories(${DirectX_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${Speex_INCLUDE_DIR})
 

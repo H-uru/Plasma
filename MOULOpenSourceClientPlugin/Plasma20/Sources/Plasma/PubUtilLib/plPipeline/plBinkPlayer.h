@@ -177,7 +177,6 @@ class plBinkPlayer
 		hsColorRGBA			fCurrColor;
 
 		hsTArray<plMessage*>	fCallbacks;
-		static IDirectSound8 *			fSoundDevice;
 };
 
 #endif // plBinkPlayer_inc
