@@ -44,7 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioSystem.h"
 #include <al.h>
 
-#include <dxerr9.h>
+#ifdef DX_OLD_SDK
+    #include <dxerr9.h>
+#else
+    #include <dxerr.h>
+#endif
+
 #ifdef EAX_SDK_AVAILABLE
 #include <eax.h>
 #include <eax-util.h>
