@@ -8493,11 +8493,11 @@ class xKI(ptModifier):
                 myAge = myAgeLink.getAgeInfo()
                 if type(myAge) != type(None):
                     if self.ICanAgeInviteVistors(myAge,myAgeLink) and (myAge.getAgeFilename() not in kHideAgesHackList) and (myAge.getAgeFilename() != "Myst"):
-                        PtDebugPrint("xKI: refreshing visitor list for %s"%(self.IGetAgeDisplayName(myAge)))
+                        PtDebugPrint("xKI: refreshing visitor list for %s"%(self.IGetAgeDisplayName(myAge)), level=kDebugDumpLevel)
                         foldername = xCensor.xCensor(PtGetLocalizedString("KI.Config.OwnerVisitors", [self.IGetAgeDisplayName(myAge)]),theCensorLevel)
                         if not BKPlayerFolderDict.has_key(foldername):
                             # a new one... add
-                            PtDebugPrint("xKI: adding visitor list for %s"%(self.IGetAgeDisplayName(myAge)))
+                            PtDebugPrint("xKI: adding visitor list for %s"%(self.IGetAgeDisplayName(myAge)), level=kDebugDumpLevel)
                             BKPlayerListOrder.append(foldername)
                         BKPlayerFolderDict[foldername] = myAge
                 else:

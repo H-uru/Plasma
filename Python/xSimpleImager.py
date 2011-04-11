@@ -214,7 +214,7 @@ class xSimpleImager(ptModifier):
     def OnVaultEvent(self,event,tupdata):
         "An AgeKI event received"
         #~ PtDebugPrint("xSimpleImager[%s]:OnAgeKIEvent recvd. Event=%d and data= " % (ImagerName.value,event),tupdata)
-        print "xSimpleImager.OnVaultEvent[", ImagerName.value, "]: event = ", event, " tupdata = ", tupdata
+        PtDebugPrint("xSimpleImager.OnVaultEvent[", ImagerName.value, "]: event = ", event, " tupdata = ", tupdata, level=kDebugDumpLevel)
         # make sure that the bigKI dialog is loaded before trying to update it
         if event == PtVaultCallbackTypes.kVaultConnected:
             # tupdata is ()
@@ -229,7 +229,7 @@ class xSimpleImager(ptModifier):
             self.IRefreshImagerFolder()
             self.IRefreshImagerElement(tupdata[0])
         elif event == PtVaultCallbackTypes.kVaultNodeSaved:
-            PtDebugPrint("xSimpleImager: kVaultNodeSaved event (id=%d,type=%d)" % (tupdata[0].getID(),tupdata[0].getType()))
+            PtDebugPrint("xSimpleImager: kVaultNodeSaved event (id=%d,type=%d)" % (tupdata[0].getID(),tupdata[0].getType()), level=kDebugDumpLevel)
             # tupdata is ( ptVaultNode )
             self.IRefreshImagerFolder()
             self.IRefreshImagerElement(tupdata[0])
@@ -498,6 +498,6 @@ class xSimpleImager(ptModifier):
 
     def OnBackdoorMsg(self, target, param):
         if target == "imager" and param == "refresh" and ImagerName.value == "D'ni  Imager Right":
-            print "Manual refresh requested"
+            PtDebugPrint("Manual refresh requested", level=kWarningLevel)
             CurrentDisplayedElementID = 12459
             self.IShowCurrentContent()
