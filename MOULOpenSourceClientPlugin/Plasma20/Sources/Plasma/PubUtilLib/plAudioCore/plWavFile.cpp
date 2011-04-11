@@ -26,7 +26,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdio.h>
 #include "plWavFile.h"
 
-#include <dxerr9.h>
+#ifdef DX_OLD_SDK
+    #include <dxerr9.h>
+#else
+    #include <dxerr.h>
+#endif
+
 #include <dsound.h>
 
 #include <stdio.h>

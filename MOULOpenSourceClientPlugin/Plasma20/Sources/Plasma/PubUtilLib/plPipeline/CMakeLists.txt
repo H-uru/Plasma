@@ -4,6 +4,8 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
+include_directories(${DirectX_INCLUDE_DIR})
+
 set(plPipeline_SOURCES
 	hsG3DDeviceSelector.cpp
 	hsGColorizer.cpp

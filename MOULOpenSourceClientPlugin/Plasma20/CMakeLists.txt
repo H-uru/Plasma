@@ -13,8 +13,15 @@ find_package(PHYSX REQUIRED)  #TODO: Not required if we aren't building the clie
 find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the client
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
 find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
+find_package(DirectX REQUIRED)
 #find_package(BINK REQUIRED)  #TODO: Find Bink, but don't require it if plPipeline isn't built...
 #                                    Or better yet, just eliminate bink altogether
+
+option(DirectX_OLD_SDK "Is this an old (November 2008) version of the SDK?" OFF)
+
+if (DirectX_OLD_SDK)
+    add_definitions(-DDX_OLD_SDK)
+endif(DirectX_OLD_SDK)
 
 option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 
