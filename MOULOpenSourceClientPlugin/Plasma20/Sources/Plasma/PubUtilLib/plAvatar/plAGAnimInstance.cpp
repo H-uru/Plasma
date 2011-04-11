@@ -242,10 +242,10 @@ void plAGAnimInstance::DetachChannels()
 			do {
 				plAGChannel *channel = (*i).second;
 				channelMod->DetachChannel(channel);
-			} while (i != fManualDetachChannels.end() && (*++i).first == channelName);
+			} while (++i != fManualDetachChannels.end() && i->first == channelName);
 		} else {
 			do {
-			} while (i != fManualDetachChannels.end() && (*++i).first == channelName);
+			} while (++i != fManualDetachChannels.end() && i->first == channelName);
 		}
 	}
 
