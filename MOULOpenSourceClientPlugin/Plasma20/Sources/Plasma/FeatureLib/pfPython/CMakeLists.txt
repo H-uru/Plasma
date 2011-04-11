@@ -190,7 +190,7 @@ set(pfPython_GLUE
 	cyMiscGlue.cpp
 	cyMiscGlue2.cpp
 	cyMiscGlue3.cpp
-	cyMiscglue4.cpp
+	cyMiscGlue4.cpp
 	cyParticleSysGlue.cpp
 	cyPhysicsGlue.cpp
 	plPythonSDLModifierGlue.cpp

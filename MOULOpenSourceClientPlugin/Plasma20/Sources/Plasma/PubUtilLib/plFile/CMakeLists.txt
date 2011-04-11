@@ -17,11 +17,11 @@ set(plFile_SOURCES
 if(WIN32)
 	set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Win.cpp)
 elseif(APPLE)
-	set(plFile_SOURCES "${plFile_SOURCES} hsFiles_Mac.cpp")
+	set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Mac.cpp)
 #elseif(PS2)
-#	set(plFile_SOURCES "${plFile_SOURCES} hsFiles_PS2.cpp")
+#	set(plFile_SOURCES ${plFile_SOURCES} hsFiles_PS2.cpp)
 else(WIN32)
-	set(plFile_SOURCES "${plFile_SOURCES} hsFiles_Unix.cpp")
+	set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Unix.cpp)
 endif(WIN32)
 
 set(plFile_HEADERS
