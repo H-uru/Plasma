@@ -63,18 +63,14 @@ fCapsLockKeyDown(false),
 fAltKeyDown(false),
 fCtrlKeyDown(false),
 fCapsLockLock(false),
-fPrevNumLockOn(false),
 fControlMode(STANDARD_MODE)
 {
 	fInstance = this;
-	fStartedUpWithNumLockOn = ((GetKeyState(VK_NUMLOCK) & 1) != 0);
 	InitKeyboardState();
 }
 
 plKeyboardDevice::~plKeyboardDevice()
 {
-	if (fStartedUpWithNumLockOn)
-		ForceNumLock(true);
 }
 
 void plKeyboardDevice::InitKeyboardState()
@@ -155,43 +151,12 @@ void plKeyboardDevice::Shutdown()
 {
 }
 
-#if HS_BUILD_FOR_WIN32
-void plKeyboardDevice::ForceNumLock(hsBool on)
-{
-	if (on != ((GetKeyState(VK_NUMLOCK) & 1) != 0))
-	{
-		OSVERSIONINFO info;
-		info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx(&info);
-		if (info.dwPlatformId == VER_PLATFORM_WIN32_NT)
-		{
-			keybd_event( VK_NUMLOCK, 0, KEYEVENTF_EXTENDEDKEY | 0, 0 );
-			keybd_event( VK_NUMLOCK, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0 );
-		}
-		else
-		{
-			UInt8 keyState[256];
-			GetKeyboardState(keyState);
-			keyState[VK_NUMLOCK] = keyState[VK_NUMLOCK] ^ 1;
-			SetKeyboardState(keyState);
-		}
-	}
-}
-#endif //HS_BUILD_FOR_WIN32
-
 void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat)
 {
 	// update the internal keyboard state
 	unsigned int keyCode = (unsigned int)key;
 	if ((key >= 0) && (key < 256))
 		fKeyboardState[key] = bKeyDown;
-
-#if HS_BUILD_FOR_WIN32
-	if (key == VK_NUMLOCK && bKeyDown)
-	{
-		ForceNumLock(false);
-	}
-#endif // HS_BUILD_FOR_WIN32
 
 	if (key == KEY_SHIFT)
 	{
@@ -229,27 +194,10 @@ void plKeyboardDevice::HandleWindowActivate(bool bActive, HWND hWnd)
 	if (bActive)
 	{
 		fCtrlKeyDown = false;
-		
-		#if HS_BUILD_FOR_WIN32
-		{
-			fPrevNumLockOn = ((GetKeyState(VK_NUMLOCK) & 1) != 0);
-			ForceNumLock(false);
-			hsBool oldLock = fCapsLockLock;
-			fCapsLockLock = (GetKeyState(KEY_CAPSLOCK) & 1) != 0;
-			if (fCapsLockLock != oldLock)
-				plAvatarInputInterface::GetInstance()->ForceAlwaysRun(fCapsLockLock);
-		}
-		#endif
 	}
 	else
 	{
 		ReleaseAllKeys(); // send key-up events for everything since we're losing focus
-		#if HS_BUILD_FOR_WIN32
-		{
-			if (fPrevNumLockOn)
-				ForceNumLock(true);
-		}
-		#endif
 	}
 
 }

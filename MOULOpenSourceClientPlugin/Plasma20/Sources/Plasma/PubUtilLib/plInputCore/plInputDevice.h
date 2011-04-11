@@ -106,10 +106,6 @@ public:
 	virtual hsBool IsCapsLockKeyOn();
 	virtual void Shutdown();
 
-#if HS_BUILD_FOR_WIN32	
-	void ForceNumLock(hsBool on);
-#endif
-
 	static hsBool	IgnoreCapsLock() { return fIgnoreCapsLock; }
 	static void		IgnoreCapsLock(hsBool ignore) { fIgnoreCapsLock = ignore; }
 
@@ -118,10 +114,6 @@ public:
 	static plKeyboardDevice* GetInstance() { return fInstance; }
 
 	static char	KeyEventToChar( plKeyEventMsg *msg );
-
-protected:
-	hsBool fStartedUpWithNumLockOn; // maintaining a separate flag since apparently the other one can get confused
-	hsBool fPrevNumLockOn;
 };
 
 class plPlate;
