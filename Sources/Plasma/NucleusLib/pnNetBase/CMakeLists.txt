@@ -4,11 +4,7 @@ include_directories("../../NucleusLib")
 set(pnNetBase_HEADERS
     Intern.h
     Pch.h
-    pnNbAuthKey.hpp
-    pnNbCsrKey.hpp
     pnNbConst.h
-    pnNbGameKey.hpp
-    pnNbGateKeeperKey.hpp
     pnNetBase.h
 )
 
@@ -21,6 +17,8 @@ set(pnNetBase_PRIVATE
     Private/pnNbProtocol.cpp
     Private/pnNbSrvs.h
     Private/pnNbSrvs.cpp
+    Private/pnNbKeys.h
+    Private/pnNbKeys.cpp
 )
 
 add_library(pnNetBase STATIC ${pnNetBase_HEADERS} ${pnNetBase_PRIVATE})
