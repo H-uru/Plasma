@@ -23,7 +23,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <hvdi.h>
 #include <direct.h>
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
