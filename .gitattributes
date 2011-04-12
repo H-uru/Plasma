@@ -2,3 +2,4 @@
 *.bmp	-text
 *.ICO	-text
 *.ico	-text
+*.zip	-text
