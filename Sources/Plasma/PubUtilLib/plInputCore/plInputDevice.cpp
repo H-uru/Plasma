@@ -208,8 +208,8 @@ char    plKeyboardDevice::KeyEventToChar( plKeyEventMsg *msg )
 {
     short   code = msg->GetKeyCode();
     char    c = 0;
-    unsigned char *kbState = TRACKED_NEW unsigned char[256];
-    unsigned char *buffer = TRACKED_NEW unsigned char[256];
+    unsigned char kbState[256];
+    unsigned char buffer[256];
     UINT scanCode;
     int     retVal;
 
@@ -319,9 +319,6 @@ char    plKeyboardDevice::KeyEventToChar( plKeyEventMsg *msg )
             c = 0;
             break;
     }
-
-    delete [] kbState;
-    delete [] buffer;
 
     return c;
 }
