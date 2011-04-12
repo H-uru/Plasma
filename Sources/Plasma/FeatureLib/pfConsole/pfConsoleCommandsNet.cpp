@@ -1055,3 +1055,260 @@ PF_CONSOLE_CMD(
 #endif
 
 ///////////////////////////////////////
+
+/*****************************************************************************
+*
+*   Server
+*
+***/
+
+//============================================================================
+// Server group
+PF_CONSOLE_GROUP(Server)
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server,
+    Url,
+    "string url",
+    "Set the displayable server URL"
+) {
+    wchar_t *wurl = NULL;
+    hsStringToWString(wurl, (const char *)params[0]);
+    SetServerUrl(wurl);
+    delete [] wurl;
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server,
+    DispName,
+    "string name",
+    "Set the displayable server name"
+) {
+    wchar_t *wname = NULL;
+    hsStringToWString(wname, (const char *)params[0]);
+    SetServerDisplayName(wname);
+    delete [] wname;
+}
+
+
+//============================================================================
+// Server.File group
+PF_CONSOLE_SUBGROUP(Server, File)
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_File,
+    Host,
+    "string address",
+    "Set the File Server address"
+) {
+    wchar_t *wHost = NULL;
+    hsStringToWString(wHost, (const char *)params[0]);
+    SetFileSrvHostname(wHost);
+    delete [] wHost;
+}
+
+
+//============================================================================
+// Server.Auth group
+PF_CONSOLE_SUBGROUP(Server, Auth)
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Auth,
+    Host,
+    "string address",
+    "Set the Auth Server address"
+) {
+    wchar_t *wHost = NULL;
+    hsStringToWString(wHost, (const char *)params[0]);
+    SetAuthSrvHostname(wHost);
+    delete [] wHost;
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Auth,
+    N,
+    "string base64Key",
+    "Set the Auth Server N key"
+) {
+    int baseLength = hsStrlen((const char *)params[0]);
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
+                     kNetDiffieHellmanKeyBits / 8);
+        return;
+    }
+
+    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+                 kNetDiffieHellmanKeyBits / 8, kAuthDhNData);
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Auth,
+    X,
+    "string base64Key",
+    "Set the Auth Server X key"
+) {
+    int baseLength = hsStrlen((const char *)params[0]);
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
+                     kNetDiffieHellmanKeyBits / 8);
+        return;
+    }
+
+    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+                 kNetDiffieHellmanKeyBits / 8, kAuthDhXData);
+}
+
+
+//============================================================================
+// Server.Csr group
+PF_CONSOLE_SUBGROUP(Server, Csr)
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Csr,
+    Host,
+    "string address",
+    "Set the Csr Server address"
+) {
+    wchar_t *wHost = NULL;
+    hsStringToWString(wHost, (const char *)params[0]);
+    SetCsrSrvHostname(wHost);
+    delete [] wHost;
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Csr,
+    N,
+    "string base64Key",
+    "Set the Csr Server N key"
+) {
+    int baseLength = hsStrlen((const char *)params[0]);
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
+                     kNetDiffieHellmanKeyBits / 8);
+        return;
+    }
+
+    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+                 kNetDiffieHellmanKeyBits / 8, kCsrDhNData);
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Csr,
+    X,
+    "string base64Key",
+    "Set the Csr Server X key"
+) {
+    int baseLength = hsStrlen((const char *)params[0]);
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
+                     kNetDiffieHellmanKeyBits / 8);
+        return;
+    }
+
+    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+                 kNetDiffieHellmanKeyBits / 8, kCsrDhXData);
+}
+
+
+//============================================================================
+// Server.Game group
+PF_CONSOLE_SUBGROUP(Server, Game)
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Game,
+    N,
+    "string base64Key",
+    "Set the Game Server N key"
+) {
+    int baseLength = hsStrlen((const char *)params[0]);
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
+                     kNetDiffieHellmanKeyBits / 8);
+        return;
+    }
+
+    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+                 kNetDiffieHellmanKeyBits / 8, kGameDhNData);
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Game,
+    X,
+    "string base64Key",
+    "Set the Game Server X key"
+) {
+    int baseLength = hsStrlen((const char *)params[0]);
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
+                     kNetDiffieHellmanKeyBits / 8);
+        return;
+    }
+
+    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+                 kNetDiffieHellmanKeyBits / 8, kGameDhXData);
+}
+
+
+//============================================================================
+// Server.Gate group
+PF_CONSOLE_SUBGROUP(Server, Gate)
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Gate,
+    Host,
+    "string address",
+    "Set the GateKeeper Server address"
+) {
+    wchar_t *wHost = NULL;
+    hsStringToWString(wHost, (const char *)params[0]);
+    SetGateKeeperSrvHostname(wHost);
+    delete [] wHost;
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Gate,
+    N,
+    "string base64Key",
+    "Set the GateKeeper Server N key"
+) {
+    int baseLength = hsStrlen((const char *)params[0]);
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
+                     kNetDiffieHellmanKeyBits / 8);
+        return;
+    }
+
+    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+                 kNetDiffieHellmanKeyBits / 8, kGateKeeperDhNData);
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Gate,
+    X,
+    "string base64Key",
+    "Set the GateKeeper Server X key"
+) {
+    int baseLength = hsStrlen((const char *)params[0]);
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
+                     kNetDiffieHellmanKeyBits / 8);
+        return;
+    }
+
+    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+                 kNetDiffieHellmanKeyBits / 8, kGateKeeperDhXData);
+}

@@ -260,3 +260,28 @@ bool GateKeeperSrvHostnameOverride () {
     return s_gateKeeperAddrCmdLine[0];
 }
 
+
+//============================================================================
+// User-visible Server
+//============================================================================
+static wchar s_serverUrl[256];
+static wchar s_serverName[256];
+
+const wchar *GetServerUrl () {
+    return s_serverUrl;
+}
+
+//============================================================================
+void SetServerUrl (const wchar url[]) {
+    StrCopy(s_serverUrl, url, arrsize(s_serverUrl));
+}
+
+//============================================================================
+const wchar *GetServerDisplayName () {
+    return s_serverName;
+}
+
+//============================================================================
+void SetServerDisplayName (const wchar name[]) {
+    StrCopy(s_serverName, name, arrsize(s_serverName));
+}
