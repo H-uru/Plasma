@@ -1578,7 +1578,7 @@ CLASS_DESC(plPhysSubWorldComponent, gPhysSubWorldDesc, "Subworld", "Subworld", C
 
 ParamBlockDesc2 gPhysSubWorldBk
 (   
-    plComponent::kBlkComp, _T("Subworld "), 0, &gPhysSubWorldDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
+    plComponent::kBlkComp, _T("Subworld\t"), 0, &gPhysSubWorldDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
     IDD_COMP_PHYS_SUBWORLD, IDS_COMP_PHYS_SUBWORLD, 0, 0, NULL,

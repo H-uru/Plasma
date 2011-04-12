@@ -772,7 +772,7 @@ void    plInputInterfaceMgr::WriteKeyMap( void )
         fprintf(gKeyFile, "#\n");
         fprintf(gKeyFile, "# For example, to map Control-Shift-W to Walk Forward\n");
         fprintf(gKeyFile, "# your key mapping entry would look like this:\n");
-        fprintf(gKeyFile, "# Keyboard.BindAction    W_C_S   \"Walk Forward\"\n");
+        fprintf(gKeyFile, "# Keyboard.BindAction \tW_C_S \t\"Walk Forward\"\n");
         fprintf(gKeyFile, "# This also works for console command bindings\n");
 
         
