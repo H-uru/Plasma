@@ -287,6 +287,8 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
                                jbuffer + (pixel * cinfo.output_components),
                                cinfo.out_color_components );
             }
+
+            destp += out_stride;
         }
 
         (void) jpeg_finish_decompress(&cinfo);
@@ -452,6 +454,7 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
             }
 
             (void) jpeg_write_scanlines( &cinfo, &jbuffer, 1 );
+            srcp += in_stride;
         }
 
         jpeg_finish_compress( &cinfo );
