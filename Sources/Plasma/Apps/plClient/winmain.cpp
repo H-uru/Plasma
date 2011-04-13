@@ -89,9 +89,7 @@ enum
 {
     kArgToDni,
     kArgSkipLoginDialog,
-    kArgAuthSrv,
-    kArgFileSrv,
-    kArgGateKeeperSrv,
+    kArgServerIni,
     kArgLocalData,
     kArgBackgroundDownloader,
 };
@@ -99,9 +97,7 @@ enum
 static const CmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeBool,       L"ToDni",           kArgToDni   },
     { kCmdArgFlagged  | kCmdTypeBool,       L"SkipLoginDialog", kArgSkipLoginDialog },
-    { kCmdArgFlagged  | kCmdTypeString,     L"AuthSrv",         kArgAuthSrv },
-    { kCmdArgFlagged  | kCmdTypeString,     L"FileSrv",         kArgFileSrv },
-    { kCmdArgFlagged  | kCmdTypeString,     L"GateKeeperSrv",   kArgGateKeeperSrv },
+    { kCmdArgFlagged  | kCmdTypeString,     L"ServerIni",       kArgServerIni },
     { kCmdArgFlagged  | kCmdTypeBool,       L"LocalData",       kArgLocalData   },
     { kCmdArgFlagged  | kCmdTypeBool,       L"BGDownload",      kArgBackgroundDownloader    },
 };
@@ -1576,19 +1572,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     if(cmdParser.IsSpecified(kArgBackgroundDownloader))
         gUseBackgroundDownloader = true;
 #endif
-    if(cmdParser.IsSpecified(kArgAuthSrv))
-    {
-        SetAuthSrvHostname(cmdParser.GetString(kArgAuthSrv));
-    }
 
-    if(cmdParser.IsSpecified(kArgFileSrv))
+    const wchar *serverIni = L"server.ini";
+    if(cmdParser.IsSpecified(kArgServerIni))
     {
-        SetFileSrvHostname(cmdParser.GetString(kArgFileSrv));
-    }
-
-    if(cmdParser.IsSpecified(kArgGateKeeperSrv))
-    {
-        SetGateKeeperSrvHostname(cmdParser.GetString(kArgGateKeeperSrv));
+        serverIni = cmdParser.GetString(kArgServerIni);
     }
 
     // check to see if we were launched from the patcher
@@ -1679,9 +1667,18 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 
     /////////<<<<<<<<
-    pfConsoleEngine *tempConsole = TRACKED_NEW pfConsoleEngine();
-    tempConsole->ExecuteFile("server.ini");
-    delete tempConsole;
+    FILE *serverini = _wfopen(serverIni, L"rb");
+    if (serverini)
+    {
+        fclose(serverini);
+        pfConsoleEngine tempConsole;
+        tempConsole.ExecuteFile(serverIni);
+    }
+    else
+    {
+        hsMessageBox("No server.ini file found.  Please check your URU installation.", "Error", hsMessageBoxNormal);
+        return PARABLE_NORMAL_EXIT;
+    }
     /////////<<<<<<<<
 
     NetCliAuthAutoReconnectEnable(false);
