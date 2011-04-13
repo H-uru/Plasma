@@ -75,9 +75,7 @@ inline char *hsStrncpy(char *strDest, const char *strSource, size_t count)
 }
 
 wchar_t *hsStringToWString( const char *str );
-void    hsStringToWString( wchar_t *dst, const char *src );
 char    *hsWStringToString( const wchar_t *str );
-void    hsWStringToString( char *dst, const wchar_t *src);
 
 enum {              // Kind of MessageBox...passed to hsMessageBox
     hsMessageBoxAbortRetyIgnore,

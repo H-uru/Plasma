@@ -1073,8 +1073,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the displayable server URL"
 ) {
-    wchar_t *wurl = NULL;
-    hsStringToWString(wurl, (const char *)params[0]);
+    wchar_t *wurl = hsStringToWString((const char *)params[0]);
     SetServerUrl(wurl);
     delete [] wurl;
 }
@@ -1086,8 +1085,7 @@ PF_CONSOLE_CMD(
     "string name",
     "Set the displayable server name"
 ) {
-    wchar_t *wname = NULL;
-    hsStringToWString(wname, (const char *)params[0]);
+    wchar_t *wname = hsStringToWString((const char *)params[0]);
     SetServerDisplayName(wname);
     delete [] wname;
 }
@@ -1104,8 +1102,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the File Server address"
 ) {
-    wchar_t *wHost = NULL;
-    hsStringToWString(wHost, (const char *)params[0]);
+    wchar_t *wHost = hsStringToWString((const char *)params[0]);
     SetFileSrvHostname(wHost);
     delete [] wHost;
 }
@@ -1122,8 +1119,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the Auth Server address"
 ) {
-    wchar_t *wHost = NULL;
-    hsStringToWString(wHost, (const char *)params[0]);
+    wchar_t *wHost = hsStringToWString((const char *)params[0]);
     SetAuthSrvHostname(wHost);
     delete [] wHost;
 }
@@ -1176,8 +1172,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the Csr Server address"
 ) {
-    wchar_t *wHost = NULL;
-    hsStringToWString(wHost, (const char *)params[0]);
+    wchar_t *wHost = hsStringToWString((const char *)params[0]);
     SetCsrSrvHostname(wHost);
     delete [] wHost;
 }
@@ -1271,8 +1266,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the GateKeeper Server address"
 ) {
-    wchar_t *wHost = NULL;
-    hsStringToWString(wHost, (const char *)params[0]);
+    wchar_t *wHost = hsStringToWString((const char *)params[0]);
     SetGateKeeperSrvHostname(wHost);
     delete [] wHost;
 }

@@ -357,13 +357,6 @@ wchar_t *hsStringToWString( const char *str )
     return wideString;
 }
 
-void    hsStringToWString( wchar_t *dst, const char *src )
-{
-    if (dst)
-        delete [] dst;
-    dst = hsStringToWString(src);
-}
-
 //// IWStringToString /////////////////////////////////////////////////////////
 // Converts a wchar_t * string to a char * string
 
@@ -388,13 +381,6 @@ char    *hsWStringToString( const wchar_t *str )
     sStr[len] = '\0';
 
     return sStr;
-}
-
-void    hsWStringToString( char *dst, const wchar_t *src )
-{
-    if (dst)
-        delete [] dst;
-    dst = hsWStringToString(src);
 }
 
 void hsCPathToMacPath(char* dst, char* fname)
