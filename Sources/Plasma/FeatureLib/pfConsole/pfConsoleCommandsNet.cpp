@@ -1132,7 +1132,7 @@ PF_CONSOLE_CMD(
     "Set the Auth Server N key"
 ) {
     int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
@@ -1150,7 +1150,7 @@ PF_CONSOLE_CMD(
     "Set the Auth Server X key"
 ) {
     int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
@@ -1185,7 +1185,7 @@ PF_CONSOLE_CMD(
     "Set the Csr Server N key"
 ) {
     int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
@@ -1203,7 +1203,7 @@ PF_CONSOLE_CMD(
     "Set the Csr Server X key"
 ) {
     int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
@@ -1226,7 +1226,7 @@ PF_CONSOLE_CMD(
     "Set the Game Server N key"
 ) {
     int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
@@ -1244,7 +1244,7 @@ PF_CONSOLE_CMD(
     "Set the Game Server X key"
 ) {
     int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
@@ -1279,7 +1279,7 @@ PF_CONSOLE_CMD(
     "Set the GateKeeper Server N key"
 ) {
     int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
@@ -1297,7 +1297,7 @@ PF_CONSOLE_CMD(
     "Set the GateKeeper Server X key"
 ) {
     int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength)) {
+    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
