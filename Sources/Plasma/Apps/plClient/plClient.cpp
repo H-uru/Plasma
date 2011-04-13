@@ -237,8 +237,8 @@ plClient::~plClient()
     delete [] fpAuxInitDir;
 }
 
-#include "../plGImage/plAVIWriter.h"
-#include "../pfCharacter/pfMarkerMgr.h"
+#include "plGImage/plAVIWriter.h"
+#include "pfCharacter/pfMarkerMgr.h"
 
 hsBool plClient::Shutdown()
 {
