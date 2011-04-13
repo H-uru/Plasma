@@ -798,18 +798,14 @@ void SetBytesRemainingCallback (unsigned bytes) {
 
 
 enum {
-    kArgAuthSrv,
     kArgFileSrv,
-    kArgGateKeeperSrv,
     kArgNoSelfPatch,
     kArgBuildId,
     kArgCwd,
 };
 
 static const CmdArgDef s_cmdLineArgs[] = {
-    { kCmdArgFlagged | kCmdTypeString,      L"AuthSrv",         kArgAuthSrv         },
     { kCmdArgFlagged | kCmdTypeString,      L"FileSrv",         kArgFileSrv         },
-    { kCmdArgFlagged | kCmdTypeString,      L"GateKeeperSrv",   kArgGateKeeperSrv   },
     { kCmdArgFlagged | kCmdTypeBool,        L"NoSelfPatch",     kArgNoSelfPatch     },
     { kCmdArgFlagged | kCmdTypeInt,         L"BuildId",         kArgBuildId         },
     { kCmdArgFlagged | kCmdTypeBool,        L"Cwd",             kArgCwd             },
@@ -868,12 +864,8 @@ int __stdcall WinMain (
             0,
             nil 
         );
-        if (cmdParser.IsSpecified(kArgAuthSrv))
-            SetAuthSrvHostname(cmdParser.GetString(kArgAuthSrv));
         if (cmdParser.IsSpecified(kArgFileSrv))
             SetFileSrvHostname(cmdParser.GetString(kArgFileSrv));
-        if (cmdParser.IsSpecified(kArgGateKeeperSrv))
-            SetGateKeeperSrvHostname(cmdParser.GetString(kArgGateKeeperSrv));
         if(cmdParser.IsSpecified(kArgBuildId))
             s_launcherInfo.buildId = cmdParser.GetInt(kArgBuildId);
 

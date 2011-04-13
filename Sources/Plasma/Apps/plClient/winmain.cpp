@@ -1575,10 +1575,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 #endif
 
     const wchar *serverIni = L"server.ini";
-    if(cmdParser.IsSpecified(kArgServerIni))
-    {
+    if (cmdParser.IsSpecified(kArgServerIni))
         serverIni = cmdParser.GetString(kArgServerIni);
-    }
 
     // check to see if we were launched from the patcher
     bool eventExists = false;
