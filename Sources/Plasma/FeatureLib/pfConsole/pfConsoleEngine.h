@@ -52,8 +52,6 @@ class pfConsoleEngine
     private:
 
         static const Int32      fMaxNumParams;
-        static const char       fTokenSeparators[];
-        static const char       fTokenGrpSeps[];
 
         hsBool  IConvertToParam( UInt8 type, char *string, pfConsoleCmdParam *param );
 
