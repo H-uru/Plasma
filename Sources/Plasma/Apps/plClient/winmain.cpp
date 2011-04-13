@@ -1397,7 +1397,8 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             }
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_GAMETAPLINK)
             {
-                ShellExecute(NULL, "open", "http://www.mystonline.com/signup.html", NULL, NULL, SW_SHOWNORMAL);
+                const wchar *signupurl = GetServerSignupUrl();
+                ShellExecuteW(NULL, L"open", signupurl, NULL, NULL, SW_SHOWNORMAL);
 
                 return TRUE;
             }
