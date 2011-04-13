@@ -132,7 +132,7 @@ unsigned Base64Decode (
     byte *      dstData
 ) {
     ASSERT(srcData);
-    ASSERT(dstChars >= Base64DecodeSize(srcChars));
+    ASSERT(dstChars >= Base64DecodeSize(srcChars, srcData));
     ASSERT(dstData);
 
     const byte * dstBase = dstData;
