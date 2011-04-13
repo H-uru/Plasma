@@ -264,16 +264,28 @@ bool GateKeeperSrvHostnameOverride () {
 //============================================================================
 // User-visible Server
 //============================================================================
-static wchar s_serverUrl[256];
+static wchar s_serverStatusUrl[256];
+static wchar s_serverSignupUrl[256];
 static wchar s_serverName[256];
 
-const wchar *GetServerUrl () {
-    return s_serverUrl;
+//============================================================================
+const wchar *GetServerStatusUrl () {
+    return s_serverStatusUrl;
 }
 
 //============================================================================
-void SetServerUrl (const wchar url[]) {
-    StrCopy(s_serverUrl, url, arrsize(s_serverUrl));
+void SetServerStatusUrl (const wchar url[]) {
+    StrCopy(s_serverStatusUrl, url, arrsize(s_serverStatusUrl));
+}
+
+//============================================================================
+const wchar *GetServerSignupUrl () {
+    return s_serverSignupUrl;
+}
+
+//============================================================================
+void SetServerSignupUrl (const wchar url[]) {
+    StrCopy(s_serverSignupUrl, url, arrsize(s_serverSignupUrl));
 }
 
 //============================================================================

@@ -1077,12 +1077,24 @@ PF_CONSOLE_GROUP(Server)
 //============================================================================
 PF_CONSOLE_CMD(
     Server,
-    Url,
+    Status,
     "string url",
-    "Set the displayable server URL"
+    "Set the server's status URL"
 ) {
     wchar_t *wurl = hsStringToWString((const char *)params[0]);
-    SetServerUrl(wurl);
+    SetServerStatusUrl(wurl);
+    delete [] wurl;
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server,
+    Signup,
+    "string url",
+    "Set the server's new user sign-up URL"
+) {
+    wchar_t *wurl = hsStringToWString((const char *)params[0]);
+    SetServerSignupUrl(wurl);
     delete [] wurl;
 }
 

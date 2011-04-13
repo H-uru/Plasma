@@ -89,8 +89,11 @@ unsigned GetGateKeeperSrvHostnames (const wchar *** addrs); // returns addrCount
 void SetGateKeeperSrvHostname (const wchar addr[]);
 bool GateKeeperSrvHostnameOverride ();
 
-const wchar *GetServerUrl ();
-void SetServerUrl (const wchar url[]);
+const wchar *GetServerStatusUrl ();
+void SetServerStatusUrl (const wchar url[]);
+
+const wchar *GetServerSignupUrl ();
+void SetServerSignupUrl (const wchar url[]);
 
 const wchar *GetServerDisplayName ();
 void SetServerDisplayName (const wchar name[]);
