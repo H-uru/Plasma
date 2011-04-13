@@ -113,6 +113,7 @@ void ReportNetErrorTrans::Post () {
 void ReportNetError (ENetProtocol protocol, ENetError error) {
     ReportNetErrorTrans * trans = NEW(ReportNetErrorTrans)(protocol, error);
     NetTransSend(trans);
+    trans->DecRef();
 }
 
 } using namespace Ngl;

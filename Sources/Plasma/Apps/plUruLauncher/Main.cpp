@@ -152,24 +152,6 @@ static wchar                    s_workingDir[MAX_PATH];
 static CEvent                   s_statusEvent(kEventManualReset);
 
 
-// List of files we need to delete from the client directory
-#ifdef PLASMA_EXTERNAL_RELEASE
-
-static const wchar * s_deleteFiles[] = {
-    L"NetDiag.exe",
-    L"UruExplorer.pdb",
-    L"UruExplorer.map",
-};
-
-#else
-
-static const wchar * s_deleteFiles[] = {
-    L"NetDiag.exe",
-};
-
-#endif
-
-
 /*****************************************************************************
 *
 *   Local functions
@@ -984,13 +966,6 @@ int __stdcall WinMain (
         for (PathFind * path = paths.Ptr(); path != paths.Term(); ++path)
             PathDeleteFile(path->name);
 
-        // Delete specified files
-        for (unsigned i = 0; i < arrsize(s_deleteFiles); ++i) {
-            StrCopy(fileSpec, s_workingDir, arrsize(fileSpec));
-            PathAddFilename(fileSpec, fileSpec, s_deleteFiles[i], arrsize(fileSpec));
-            PathDeleteFile(fileSpec);
-        }
-        
 
         SetConsoleCtrlHandler(CtrlHandler, TRUE);
         InitAsyncCore();    // must do this before self patch, since it needs to connect to the file server
