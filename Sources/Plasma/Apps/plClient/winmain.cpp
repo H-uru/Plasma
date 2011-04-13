@@ -1558,6 +1558,7 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
+#include "pfConsole/pfConsoleEngine.h"
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {
     // Set global handle
@@ -1676,6 +1677,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         hsMessageBox("This client is over 30 days old.  You need to get a new one.", "Error", hsMessageBoxNormal);
         return PARABLE_NORMAL_EXIT;
     }
+
+    /////////<<<<<<<<
+    pfConsoleEngine *tempConsole = TRACKED_NEW pfConsoleEngine();
+    tempConsole->ExecuteFile("server.ini");
+    delete tempConsole;
+    /////////<<<<<<<<
 
     NetCliAuthAutoReconnectEnable(false);
 
