@@ -37,9 +37,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 const Int32     pfConsoleEngine::fMaxNumParams = 16;
-const char      pfConsoleEngine::fTokenSeparators[] = " =\r\n\t,";
-const char      pfConsoleEngine::fTokenGrpSeps[] = " =\r\n._\t,";
 
+static const char kTokenSeparators[] = " =\r\n\t,";
+static const char kTokenGrpSeps[] = " =\r\n._\t,";
+
+static char *console_strtok( char *&line, hsBool haveCommand )
+{
+    char *begin = line;
+
+    while (*begin && isspace(*begin))
+        ++begin;
+
+    for (line = begin; *line; ++line) {
+        if (!haveCommand) {
+            for (const char *sep = kTokenGrpSeps; *sep; ++sep) {
+                if (*line == *sep) {
+                    *line = 0;
+                    while (*++line && (*line == *sep))
+                        /* skip duplicate delimiters */;
+                    return begin;
+                }
+            }
+        } else {
+            if (*begin == '"' || *begin == '\'') {
+                // Handle strings as a single token
+                char *endptr = strchr(line + 1, *line);
+                if (endptr == nil) {
+                    // Bad string token sentry
+                    return "\xFF";
+                }
+                *endptr = 0;
+                line = endptr + 1;
+                return begin + 1;
+            }
+            for (const char *sep = kTokenSeparators; *sep; ++sep) {
+                if (*line == *sep) {
+                    *line = 0;
+                    while (*++line && (*line == *sep))
+                        /* skip duplicate delimiters */;
+                    return begin;
+                }
+            }
+        }
+    }
+
+    if (begin == line)
+        return nil;
+
+    line = line + strlen(line);
+    return begin;
+}
 
 
 //// Constructor & Destructor ////////////////////////////////////////////////
@@ -66,7 +113,7 @@ hsBool  pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
     
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = strtok( name, fTokenGrpSeps );
+    ptr = console_strtok( name, false );
     while( ptr != nil )
     {
         // Take this token and check to see if it's a group
@@ -75,7 +122,7 @@ hsBool  pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
         else
             break;
 
-        ptr = strtok( nil, fTokenGrpSeps );
+        ptr = console_strtok( name, false );
     }
 
     if( ptr == nil )
@@ -143,7 +190,7 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
     
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = strtok( name, fTokenGrpSeps );
+    ptr = console_strtok( name, false );
     while( ptr != nil )
     {
         // Take this token and check to see if it's a group
@@ -152,7 +199,7 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
         else
             break;
 
-        ptr = strtok( nil, fTokenGrpSeps );
+        ptr = console_strtok( name, false );
     }
 
     if( ptr == nil )
@@ -246,7 +293,7 @@ hsBool  pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = strtok( line, fTokenGrpSeps );
+    ptr = console_strtok( line, false );
     while( ptr != nil )
     {
         // Take this token and check to see if it's a group
@@ -255,7 +302,7 @@ hsBool  pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
         else
             break;
 
-        ptr = strtok( nil, fTokenGrpSeps );
+        ptr = console_strtok( line, false );
     }
 
     if( ptr == nil )
@@ -277,84 +324,39 @@ hsBool  pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
     /// params
 
     for( numParams = numQuotedParams = 0; numParams < fMaxNumParams 
-                        && ( ptr = strtok( nil, fTokenSeparators ) ) != nil
+                        && ( ptr = console_strtok( line, true ) ) != nil
                         && valid; numParams++ )
     {
-        if( ptr[ 0 ] == '\'' || ptr[ 0 ] == '"' )
+        if( ptr[ 0 ] == '\xFF' )
         {
-            // String parameter--keep getting tokens until we hit the other end
+            ISetErrorMsg( "Invalid syntax: unterminated quoted parameter" );
+            return false;
+        }
 
-            // Note: since params take pointers to strings, we have to have unique temp strings
-            // for each quoted param we parse. So we have a static array here to a) do so, b)
-            // avoid having to delete them afterwards, and thus c) reduce overhead.
-            static char         tempStrings[ fMaxNumParams ][ 512 ];
+        // Special case for context variables--if we're specifying one, we want to just grab
+        // the value of it and return that instead
+        valid = false;
+        if( ptr[ 0 ] == '$' )
+        {
+            pfConsoleContext    &context = pfConsoleContext::GetRootContext();
 
-            char    *tempStr = tempStrings[ numQuotedParams++ ], toSearch[ 2 ] = "'";
-            
-            toSearch[ 0 ] = ptr[ 0 ];
-
-            if( strlen( ptr ) >= sizeof( tempStrings[ 0 ] ) )   // They're all the same, after all...
+            // Potential variable, see if we can find it
+            Int32 idx = context.FindVar( ptr + 1 );
+            if( idx == -1 )
             {
-                ISetErrorMsg( "Invalid syntax: quoted parameter too long" );
-                return false;
-            }
-
-            if( strlen( ptr ) > 1 && ptr[ strlen( ptr ) - 1 ] == toSearch[ 0 ] )
-            {
-                // Single word string
-                strcpy( tempStr, ptr + 1 );
-                tempStr[ strlen( tempStr ) - 1 ] = 0;
+                ISetErrorMsg( "Invalid console variable name" );
             }
             else
             {
-                // Multiple word string
-                sprintf( tempStr, "%s ", ptr + 1 ); // Not perfect, but close
-                ptr = strtok( nil, toSearch );
-                if( ptr == nil )
-                {
-                    ISetErrorMsg( "Invalid syntax: unterminated quoted parameter" );
-                    return false;
-                }
-
-                if( strlen( ptr ) + strlen( tempStr ) >= sizeof( tempStrings[ 0 ] ) )   // They're all the same, after all...
-                {
-                    ISetErrorMsg( "Invalid syntax: quoted parameter too long" );
-                    return false;
-                }
-                strcat( tempStr, ptr );
+                // Just copy. Note that this will copy string pointers, but so long as the variable in
+                // question doesn't change, we'll be OK...
+                paramArray[ numParams ] = context.GetVarValue( idx );
+                valid = true;
             }
-
-            valid = IConvertToParam( cmd->GetSigEntry( (UInt8)numParams ), tempStr, &paramArray[ numParams ] );
         }
-        else
-        {
-            // Normal parameter
 
-            // Special case for context variables--if we're specifying one, we want to just grab
-            // the value of it and return that instead
-            valid = false;
-            if( ptr[ 0 ] == '$' )
-            {
-                pfConsoleContext    &context = pfConsoleContext::GetRootContext();
-
-                // Potential variable, see if we can find it
-                Int32 idx = context.FindVar( ptr + 1 );
-                if( idx == -1 )
-                {
-                    ISetErrorMsg( "Invalid console variable name" );
-                }
-                else
-                {
-                    // Just copy. Note that this will copy string pointers, but so long as the variable in
-                    // question doesn't change, we'll be OK...
-                    paramArray[ numParams ] = context.GetVarValue( idx );
-                    valid = true;
-                }
-            }
-
-            if( !valid )
-                valid = IConvertToParam( cmd->GetSigEntry( (UInt8)numParams ), ptr, &paramArray[ numParams ] );
-        }
+        if( !valid )
+            valid = IConvertToParam( cmd->GetSigEntry( (UInt8)numParams ), ptr, &paramArray[ numParams ] );
     }
     for( i = numParams; i < fMaxNumParams + 1; i++ )
         paramArray[ i ].SetNone();
@@ -477,7 +479,7 @@ hsBool  pfConsoleEngine::FindPartialCmd( char *line, hsBool findAgain, hsBool pr
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     lastParentGroup = group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = strtok( line, fTokenGrpSeps );
+    ptr = console_strtok( line, false );
     while( ptr != nil )
     {
         // Take this token and check to see if it's a group
@@ -492,7 +494,7 @@ hsBool  pfConsoleEngine::FindPartialCmd( char *line, hsBool findAgain, hsBool pr
         else
             break;
 
-        ptr = strtok( nil, fTokenGrpSeps );
+        ptr = console_strtok( line, false );
         strcat( newStr, "." );
         insertLoc++;
     }
