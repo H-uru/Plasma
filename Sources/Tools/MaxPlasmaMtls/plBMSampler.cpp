@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "bmmlib.h"
 #include "bitmap.h"
 
-#include "Layers\plPlasmaMAXLayer.h"
+#include "Layers/plPlasmaMAXLayer.h"
 #include "plBMSampler.h"
 
 plBMSampler::plBMSampler(plPlasmaMAXLayer *layer, Bitmap *bm) : fBM(bm), fInitialized(false)

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResponderWait.h"
 #include "plResponderComponentPriv.h"
 #include "resource.h"
-#include "../plModifier/plResponderModifier.h"
+#include "plModifier/plResponderModifier.h"
 
 #include "plResponderLink.h"
 

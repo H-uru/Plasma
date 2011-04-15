@@ -35,11 +35,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxCFGFile.h"
 #include "plResCollector.h"
 #include "plAgeDescInterface.h"
-#include "../MaxSceneViewer/SceneViewer.h"
+#include "MaxSceneViewer/SceneViewer.h"
 #include "plNodeLock.h"
 #include "plResetXform.h"
 #include "plTextureSearch.h"
-#include "../MaxExport/plExportDlg.h"
+#include "MaxExport/plExportDlg.h"
 
 //  ************************* action table
 //

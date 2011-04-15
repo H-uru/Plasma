@@ -14,8 +14,8 @@ find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the clie
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
 find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
 find_package(DirectX REQUIRED)
-find_package(Bink)            #TODO: Find Bink, but don't require it if plPipeline isn't built...
-#                                    Or better yet, just eliminate bink altogether
+find_package(MaxSDK)
+find_package(Bink)
 
 option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 
@@ -67,4 +67,4 @@ if(MSVC)
 endif(MSVC)
 
 add_subdirectory(Sources/Plasma)
-# add_subdirectory(Sources/Tools)
+add_subdirectory(Sources/Tools)

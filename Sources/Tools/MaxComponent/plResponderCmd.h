@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsConfig.h"
 #include <vector>
 #include <string>
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 class ParamBlockDesc2;
 class IParamBlock2;

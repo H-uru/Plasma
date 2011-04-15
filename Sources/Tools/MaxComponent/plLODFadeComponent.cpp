@@ -29,17 +29,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxExport/plExportProgressBar.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxExport/plExportProgressBar.h"
 
 #include "hsTypes.h"
 
 #include "plLODFadeComponent.h"
 
-#include "../pfSurface/plFadeOpacityMod.h"
-#include "../pfSurface/plDistOpacityMod.h"
+#include "pfSurface/plFadeOpacityMod.h"
+#include "pfSurface/plDistOpacityMod.h"
 
 void DummyCodeIncludeFuncLODFade()
 {

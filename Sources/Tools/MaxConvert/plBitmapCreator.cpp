@@ -28,30 +28,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <commdlg.h>
 #include "bmmlib.h"
 
-#include "../../Plasma/PubUtilLib/plGImage/plMipmap.h"
+#include "plGImage/plMipmap.h"
 #include "hsExceptionStack.h"
-#include "../../Plasma/PubUtilLib/plGImage/hsCodecManager.h"
+#include "plGImage/hsCodecManager.h"
 
 #include "plBitmapCreator.h"
 
-#include "../MaxMain/plPluginResManager.h"
-#include "../MaxExport/plErrorMsg.h"
-#include "../MaxPlasmaMtls/Layers/plStaticEnvLayer.h"
+#include "MaxMain/plPluginResManager.h"
+#include "MaxExport/plErrorMsg.h"
+#include "MaxPlasmaMtls/Layers/plStaticEnvLayer.h"
 
-#include "../plGImage/plMipmap.h"
-#include "../plGImage/plDynamicTextMap.h"
-#include "../plGImage/plCubicEnvironmap.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plLocalization.h"
-#include "../plAgeDescription/plAgeDescription.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plDynamicTextMap.h"
+#include "plGImage/plCubicEnvironmap.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plLocalization.h"
+#include "plAgeDescription/plAgeDescription.h"
 
 //// plCommonBitmapLib ///////////////////////////////////////////////////////
 //  Derived class for our textures, since they all go in a common page
 //  (namely, "Textures")
 
-#include "../MaxMain/plCommonObjLib.h"
+#include "MaxMain/plCommonObjLib.h"
 
 class plCommonBitmapLib : public plCommonObjLib
 {

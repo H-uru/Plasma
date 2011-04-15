@@ -32,14 +32,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plAnimStealthNode.h"
 #include "plPassMtlBase.h"
-#include "resource.h"
+#include "../resource.h"
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxComponent/plMaxAnimUtils.h"
-#include "../MaxConvert/plConvert.h"
-#include "../MaxConvert/hsMaterialConverter.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerAnimation.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxComponent/plMaxAnimUtils.h"
+#include "MaxConvert/plConvert.h"
+#include "MaxConvert/hsMaterialConverter.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerAnimation.h"
 
 #include "iparamm2.h"
 

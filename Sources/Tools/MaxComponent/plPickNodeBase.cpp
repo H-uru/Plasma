@@ -26,10 +26,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plPickNodeBase.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 #include "plComponentBase.h"
 #include "resource.h"
-#include "../MaxMain/plMaxAccelerators.h"
+#include "MaxMain/plMaxAccelerators.h"
 
 #include <algorithm>
 

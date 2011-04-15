@@ -46,7 +46,7 @@ class plEAXListenerMod;
 #ifdef EAX_SDK_AVAILABLE
 typedef struct _EAXREVERBPROPERTIES EAXREVERBPROPERTIES;
 #else
-#include <EFX-Util.h>
+#include "EFX-Util.h"
 #endif
 
 class plEAXListener 

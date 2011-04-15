@@ -25,9 +25,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPhysXCooking.h"
 #include "hsGeometry3.h"
-#include "../plPhysX/plSimulationMgr.h"
-#include "../plPhysX/plPXStream.h"
-#include "../plPhysX/plPXConvert.h"
+#include "plPhysX/plSimulationMgr.h"
+#include "plPhysX/plPXStream.h"
+#include "plPhysX/plPXConvert.h"
 #include "hsSTLStream.h"
 
 #include "Nx.h"

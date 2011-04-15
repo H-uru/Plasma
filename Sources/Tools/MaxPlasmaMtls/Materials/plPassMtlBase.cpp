@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNoteTrackWatcher.h"
 #include "plAnimStealthNode.h"
 
-#include "../MaxComponent/plMaxAnimUtils.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxComponent/plMaxAnimUtils.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
 // For converting from a MAX Mtl
 #include "plPassMtl.h"

@@ -27,29 +27,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "max.h"
 #include "resource.h"                           //  Resource Dependencies
 
-#include "../MaxMain/plPhysicalProps.h"
+#include "MaxMain/plPhysicalProps.h"
 
 #include "plComponent.h"                        //Component Dependencies
 #include "plComponentReg.h"                     //  Ibid
-#include "../MaxMain/plMaxNode.h"               //  Ibid
-#include "../pnKeyedObject/plKey.h"             //  Ibid
+#include "MaxMain/plMaxNode.h"               //  Ibid
+#include "pnKeyedObject/plKey.h"             //  Ibid
 #include "plComponentProcBase.h"
 
 #include "plNavigableComponents.h"
 #include "plActivatorBaseComponent.h"
 #include "plPhysicalComponents.h"
 
-#include "../MaxConvert/hsConverterUtils.h"     //Conversion Dependencies
-#include "../MaxConvert/hsControlConverter.h"   //  Ibid
+#include "MaxConvert/hsConverterUtils.h"     //Conversion Dependencies
+#include "MaxConvert/hsControlConverter.h"   //  Ibid
 
-#include "../plAvatar/plAvLadderModifier.h"     //Modifier Dependencies
-#include "../plPhysical/plSimDefs.h"
+#include "plAvatar/plAvLadderModifier.h"     //Modifier Dependencies
+#include "plPhysical/plSimDefs.h"
 
 #include "plgDispatch.h"                        //Message Dependencies
-#include "../pnMessage/plObjRefMsg.h"           //  Ibid
-#include "../pnMessage/plIntRefMsg.h"           //  Ibid    
-#include "../pnMessage/plNodeRefMsg.h"          //  Ibid
-#include "../MaxMain/plPlasmaRefMsgs.h"         //  Ibid
+#include "pnMessage/plObjRefMsg.h"           //  Ibid
+#include "pnMessage/plIntRefMsg.h"           //  Ibid    
+#include "pnMessage/plNodeRefMsg.h"          //  Ibid
+#include "MaxMain/plPlasmaRefMsgs.h"         //  Ibid
 
 void DummyCodeIncludeFuncNavigablesRegion() {}
 

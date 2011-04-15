@@ -29,33 +29,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnNetCommon/plSDLTypes.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnNetCommon/plSDLTypes.h"
 
-#include "../plModifier/plResponderModifier.h"
-#include "../plModifier/plLogicModifier.h"
-#include "../plModifier/plAxisAnimModifier.h"
-#include "../pfConditional/plActivatorConditionalObject.h"
-#include "../pfConditional/plORConditionalObject.h"
+#include "plModifier/plResponderModifier.h"
+#include "plModifier/plLogicModifier.h"
+#include "plModifier/plAxisAnimModifier.h"
+#include "pfConditional/plActivatorConditionalObject.h"
+#include "pfConditional/plORConditionalObject.h"
 
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 #include "hsResMgr.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "plPickNode.h"
 
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
 #include "plResponderLink.h"
 #include "plResponderAnim.h"
 #include "plResponderMtl.h"
 #include "plResponderWait.h"
 
-#include "../MaxMain/plMaxAccelerators.h"
+#include "MaxMain/plMaxAccelerators.h"
 
 IParamBlock2 *CreateWaitBlk();
 

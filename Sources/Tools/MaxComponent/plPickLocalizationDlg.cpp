@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plPickLocalizationDlg.h"
-#include "../pfLocalizationMgr/pfLocalizationDataMgr.h"
+#include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
-#include "../MaxMain/plMaxCFGFile.h"
-#include "../MaxMain/plMaxAccelerators.h"
+#include "MaxMain/plMaxCFGFile.h"
+#include "MaxMain/plMaxAccelerators.h"
 
 #include "hsUtils.h"
 #include "hsStringTokenizer.h"

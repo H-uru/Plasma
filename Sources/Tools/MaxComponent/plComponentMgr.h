@@ -31,7 +31,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "utilapi.h"
 
 #include <vector>
-using namespace std;
 
 class ClassDesc2;
 class Class_ID;
@@ -54,7 +53,7 @@ class plTimerShare;
 class plComponentMgr : public UtilityObj
 {
 private:
-    vector<ClassDesc*> fDescs;
+    std::vector<ClassDesc*> fDescs;
 
     plComponentMgr() {};
 

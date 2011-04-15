@@ -50,9 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
-#include "../MaxMain/plMaxNodeBase.h"
+#include "MaxMain/plMaxNodeBase.h"
 
-#include "../plTransform/hsAffineParts.h"
+#include "plTransform/hsAffineParts.h"
 #include "hsMatrix44.h"
 
 //////////////
@@ -208,7 +208,7 @@ void ProcessBipedNodeRecurse(INode *bipNode, INode *parent, Interface *theInterf
     {
         // reparent the siblings to the newly promoted replacement node
         numChildren = bipNode->NumberOfChildren();
-        for (i = 0; i < numChildren; i++)
+        for (int i = 0; i < numChildren; i++)
         {
             INode *child = bipNode->GetChildNode(i);
 

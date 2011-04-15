@@ -29,8 +29,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResetXform.h"
 
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxComponent/plComponent.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxComponent/plComponent.h"
 
 
 void plResetXform::ResetSelected() const

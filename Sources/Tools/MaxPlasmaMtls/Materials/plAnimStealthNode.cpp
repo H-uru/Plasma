@@ -35,10 +35,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plAnimStealthNode.h"
 #include "plPassMtlBase.h"
-#include "resource.h"
+#include "../resource.h"
 
-#include "../MaxComponent/plMaxAnimUtils.h"
-#include "../MaxComponent/plPickNodeBase.h"
+#include "MaxComponent/plMaxAnimUtils.h"
+#include "MaxComponent/plPickNodeBase.h"
 
 #include "iparamm2.h"
 

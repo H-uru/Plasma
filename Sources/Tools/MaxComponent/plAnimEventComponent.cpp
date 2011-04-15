@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimEventComponent.h"
 #include "plComponentReg.h"
 #include "resource.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "plAnimComponent.h"
 #include "plNotetrackAnim.h"
@@ -35,10 +35,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimCompProc.h"
 #include "plPickNode.h"
 
-#include "../plModifier/plAnimEventModifier.h"
-#include "../plMessage/plAnimCmdMsg.h"
+#include "plModifier/plAnimEventModifier.h"
+#include "plMessage/plAnimCmdMsg.h"
 #include "hsResMgr.h"
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 
 void DummyCodeIncludeFuncAnimDetector() {}
 

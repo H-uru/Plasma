@@ -26,13 +26,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plActivatorBaseComponent.h"
 
-#include "../pnKeyedObject/plKey.h"
-#include "../MaxMain/plMaxNode.h"
+#include "pnKeyedObject/plKey.h"
+#include "MaxMain/plMaxNode.h"
 
-#include "../plModifier/plLogicModifier.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "plModifier/plLogicModifier.h"
+#include "pnSceneObject/plSceneObject.h"
 #include "hsResMgr.h"
-#include "../pnMessage/plObjRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
 
 void plActivatorBaseComponent::AddReceiverKey(plKey pKey, plMaxNode* node)
 {

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plExcludeRegionComponent_h_inc
 
 #include "plPhysicalComponents.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include <map>
 
 class plComponentBase;

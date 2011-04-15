@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "max.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "plAnimComponent.h"
 #include "plAudioComponents.h"
@@ -38,17 +38,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 // Needed for anim msg creation
-#include "../pnKeyedObject/plKey.h"
-#include "../plMessage/plAnimCmdMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "plMessage/plAnimCmdMsg.h"
 #include "plNotetrackAnim.h"
 
 // Needed for sound msg creation
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plAudioInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plAudioInterface.h"
 #include "plAudible.h"
-#include "../pnMessage/plSoundMsg.h"
+#include "pnMessage/plSoundMsg.h"
 
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
 enum
 {

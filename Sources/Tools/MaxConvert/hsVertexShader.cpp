@@ -43,12 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "dummy.h"
 #include "notetrck.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 #include "hsBitVector.h"
 
 #include "hsMatrix44.h"
 #include "hsTemplates.h"
-#include "../plSurface/hsGMaterial.h"
+#include "plSurface/hsGMaterial.h"
 
 #include "UserPropMgr.h"
 #include "hsMaxLayerBase.h"
@@ -57,10 +57,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsConverterUtils.h"
 #include "hsControlConverter.h"
 #include "hsExceptionStack.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
-#include "../plDrawable/plGeometrySpan.h"
+#include "plDrawable/plGeometrySpan.h"
 
 #include "plMaxLightContext.h"
 #include "plRenderGlobalContext.h"

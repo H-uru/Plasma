@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <math.h>
 
 //#include "Max.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 #include "stdmat.h"
 #include "bmmlib.h"
 #include "istdplug.h"
@@ -40,20 +40,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include "hsMaxLayerBase.h"
-#include "../../../Sources/Plasma/PubUtilLib/plInterp/plController.h"
-#include "../../../Sources/Plasma/PubUtilLib/plInterp/hsInterp.h"
-#include "../MaxExport/plErrorMsg.h"
+#include "plInterp/plController.h"
+#include "plInterp/hsInterp.h"
+#include "MaxExport/plErrorMsg.h"
 #include "UserPropMgr.h"
 #include "hsConverterUtils.h"
 #include "hsControlConverter.h"
 #include "hsMaterialConverter.h"
 #include "hsExceptionStack.h"
-#include "../MaxExport/plErrorMsg.h"
-#include "../../Tools/MaxComponent/plNoteTrackAnim.h"
-#include "../MaxComponent/plCameraComponents.h"
-#include "../MaxComponent/plAnimComponent.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "MaxExport/plErrorMsg.h"
+#include "MaxComponent/plNoteTrackAnim.h"
+#include "MaxComponent/plCameraComponents.h"
+#include "MaxComponent/plAnimComponent.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 extern UserPropMgr gUserPropMgr;
 

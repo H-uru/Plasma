@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Our generic headers
 #include "hsTypes.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
 
 
 extern TCHAR *GetString(int id);

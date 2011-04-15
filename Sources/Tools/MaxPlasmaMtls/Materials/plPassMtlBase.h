@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "Max.h"
 #include "iparamb2.h"
-#include "../../PubUtilLib/plInterp/plAnimEaseTypes.h"
+#include "plInterp/plAnimEaseTypes.h"
 
 class plNoteTrackWatcher;
 class plMtlChangeCallback;

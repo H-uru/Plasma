@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxCFGFile.h"
 #include "max.h"
 #include "hsTypes.h"
-#include "../plFile/plBrowseFolder.h"
+#include "plFile/plBrowseFolder.h"
 
 const char *plMaxConfig::GetPluginIni()
 {

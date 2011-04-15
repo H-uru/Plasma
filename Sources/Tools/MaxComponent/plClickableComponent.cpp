@@ -28,31 +28,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponentReg.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "../plPhysical/plCollisionDetector.h"  // MM
-#include "../plModifier/plLogicModifier.h"
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"
-#include "../plPhysical/plPickingDetector.h"
-#include "../pfConditional/plActivatorConditionalObject.h"
-#include "../pfConditional/plFacingConditionalObject.h"
-#include "../pfConditional/plObjectInBoxConditionalObject.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnMessage/plCursorChangeMsg.h"
+#include "plPhysical/plCollisionDetector.h"  // MM
+#include "plModifier/plLogicModifier.h"
+#include "pnModifier/plConditionalObject.h"
+#include "plPhysical/plPickingDetector.h"
+#include "pfConditional/plActivatorConditionalObject.h"
+#include "pfConditional/plFacingConditionalObject.h"
+#include "pfConditional/plObjectInBoxConditionalObject.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plCursorChangeMsg.h"
 
 #include "hsResMgr.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxConvert/plConvert.h"
-#include "../MaxMain/plPhysicalProps.h"
-#include "../plPhysical/plSimDefs.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxConvert/plConvert.h"
+#include "MaxMain/plPhysicalProps.h"
+#include "plPhysical/plSimDefs.h"
 
 #include "plResponderComponent.h"
 
-#include "../MaxMain/plPhysicalProps.h"
+#include "MaxMain/plPhysicalProps.h"
 
 
 void DummyCodeIncludeFuncClickable() {}

@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUISkinComp.h"
 #include "plGUICompClassIDs.h"
 
-#include "../MaxMain/plMaxNodeBase.h"
+#include "MaxMain/plMaxNodeBase.h"
 
 
 pfGUISkinEditProc   *pfGUISkinEditProc::fInstance = nil;

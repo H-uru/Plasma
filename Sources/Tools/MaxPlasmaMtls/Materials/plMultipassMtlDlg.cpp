@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "max.h"
 #include "MaxIcon.h"
 
-#include "resource.h"
+#include "../resource.h"
 #include "plMultipassMtl.h"
 #include "plMultipassMtlPB.h"
 //#include "plMaxLayer.h"

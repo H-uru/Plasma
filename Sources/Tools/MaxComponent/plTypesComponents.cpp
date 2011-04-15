@@ -30,25 +30,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "../pfCamera/plInterestingModifier.h"
-#include "../plModifier/plSpawnModifier.h"
+#include "pfCamera/plInterestingModifier.h"
+#include "plModifier/plSpawnModifier.h"
 #include "plgDispatch.h"
 
 
 
 #include "hsResMgr.h"
 
-#include "../plScene/plSceneNode.h"
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/plConvert.h"
-#include "../MaxConvert/hsControlConverter.h"
-#include "../MaxMain/plMaxNode.h"
+#include "plScene/plSceneNode.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/plConvert.h"
+#include "MaxConvert/hsControlConverter.h"
+#include "MaxMain/plMaxNode.h"
 #include "hsGeometry3.h"
-#include "../plPhysical/plSimDefs.h"
+#include "plPhysical/plSimDefs.h"
 
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 //Necessary Empty function.  Otherwise Linker throws the Paramblock away as extraneous.
 void DummyCodeIncludeFuncTypes()

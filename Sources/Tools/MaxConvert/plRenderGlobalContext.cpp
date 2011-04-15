@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "Max.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 #include "plRenderGlobalContext.h"
 
 plRenderGlobalContext::plRenderGlobalContext(Interface* ip, TimeValue t)

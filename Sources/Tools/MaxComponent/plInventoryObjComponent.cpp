@@ -31,27 +31,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     
 #include "plComponent.h"                                        //Component Dependencies
 #include "plComponentReg.h"                                     // Ibid
-#include "../pnSceneObject/plSceneObject.h"                     // Ibid
-#include "../pnKeyedObject/hsKeyedObject.h"                     // Ibid
-#include "../MaxMain/plMaxNode.h"                               // Ibid
+#include "pnSceneObject/plSceneObject.h"                     // Ibid
+#include "pnKeyedObject/hsKeyedObject.h"                     // Ibid
+#include "MaxMain/plMaxNode.h"                               // Ibid
 #include "plResponderComponent.h"
 
 
-#include "../plPhysical/plCollisionDetector.h"                  //Modifiers Dependencies
-#include "../plModifier/plLogicModifier.h"                      // Ibid
-#include "../plModifier/plAxisAnimModifier.h"                   // Ibid
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"    // Ibid
-#include "../plPhysical/plPickingDetector.h"                    // Ibid
-#include "../pfConditional/plActivatorConditionalObject.h"      // Ibid
-#include "../pfConditional/plFacingConditionalObject.h"         // Ibid
-#include "../pfConditional/plObjectInBoxConditionalObject.h"    // Ibid
+#include "plPhysical/plCollisionDetector.h"                     //Modifiers Dependencies
+#include "plModifier/plLogicModifier.h"                         // Ibid
+#include "plModifier/plAxisAnimModifier.h"                      // Ibid
+#include "pnModifier/plConditionalObject.h"                     // Ibid
+#include "plPhysical/plPickingDetector.h"                       // Ibid
+#include "pfConditional/plActivatorConditionalObject.h"         // Ibid
+#include "pfConditional/plFacingConditionalObject.h"            // Ibid
+#include "pfConditional/plObjectInBoxConditionalObject.h"       // Ibid
 
-#include "../pnMessage/plObjRefMsg.h"                           //Message Dependencies
-#include "../pnMessage/plNotifyMsg.h"                           // Ibid
-#include "../pnMessage/plCursorChangeMsg.h"                     // Ibid
+#include "pnMessage/plObjRefMsg.h"                           //Message Dependencies
+#include "pnMessage/plNotifyMsg.h"                           // Ibid
+#include "pnMessage/plCursorChangeMsg.h"                     // Ibid
 
 
-#include "../MaxConvert/plConvert.h"
+#include "MaxConvert/plConvert.h"
 
 
 //

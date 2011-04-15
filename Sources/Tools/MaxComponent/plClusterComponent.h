@@ -40,7 +40,6 @@ class plDistribInstance;
 class plClusterGroup;
 
 #include <vector>
-using namespace std;
 
 class plDistribCompTab : public Tab<plDistribComponent*>
 {
@@ -72,7 +71,7 @@ protected:
     plDistribCompTab    fDistribTab;
     plComponentBase*    fLocationComp;
 
-    vector<plClusterGroup*> fClusterGroups;
+    std::vector<plClusterGroup*> fClusterGroups;
 
     // And more temps used only during Convert
     BOOL            fSetupDone;

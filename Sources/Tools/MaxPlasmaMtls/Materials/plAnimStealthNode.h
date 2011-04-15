@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamm2.h"
 
 #include "hsTypes.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../MaxComponent/plAnimObjInterface.h"
-#include "../MaxComponent/plMaxAnimUtils.h"
+#include "pnKeyedObject/plKey.h"
+#include "MaxComponent/plAnimObjInterface.h"
+#include "MaxComponent/plMaxAnimUtils.h"
 
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;

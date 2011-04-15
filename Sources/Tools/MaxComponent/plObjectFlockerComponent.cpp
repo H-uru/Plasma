@@ -28,15 +28,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 #include "plObjectFlockerComponent.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../MaxMain/plMaxNode.h"
+#include "pnKeyedObject/plUoid.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "plPickNode.h"
-#include "../pfAnimation/pfObjectFlocker.h"
-#include "../MaxMain/plPluginResManager.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "pfAnimation/pfObjectFlocker.h"
+#include "MaxMain/plPluginResManager.h"
+#include "pnSceneObject/plSceneObject.h"
 
 void DummyCodeIncludeFuncObjectFlocker()
 {

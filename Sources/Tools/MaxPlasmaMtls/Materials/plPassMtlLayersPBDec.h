@@ -25,11 +25,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPassMtl.h"
 #include "plPassMtlLayersPB.h"
-#include "resource.h"
+#include "../resource.h"
 
 #include "iparamm2.h"
 
-#include "Layers/plLayerTex.h"
+#include "../Layers/plLayerTex.h"
 
 class PassMtlLayersAccessor;
 extern PassMtlLayersAccessor gLayersAccessor;

@@ -25,11 +25,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plDecalMtl.h"
 #include "plDecalMtlLayersPB.h"
-#include "resource.h"
+#include "../resource.h"
 
 #include "iparamm2.h"
 
-#include "Layers/plLayerTex.h"
+#include "../Layers/plLayerTex.h"
 
 class DecalMtlLayersAccessor;
 extern DecalMtlLayersAccessor gLayersAccessor;

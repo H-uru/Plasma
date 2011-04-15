@@ -26,20 +26,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plMtlCollector.h"
 
-#include "../MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+#include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 
-#include "../MaxPlasmaMtls/Materials/plCompositeMtl.h"
-#include "../MaxPlasmaMtls/Materials/plDecalMtl.h"
-#include "../MaxPlasmaMtls/Materials/plMultipassMtl.h"
-#include "../MaxPlasmaMtls/Materials/plParticleMtl.h"
-#include "../MaxPlasmaMtls/Materials/plPassMtl.h"
-#include "../MaxPlasmaMtls/Materials/plClothingMtl.h"
+#include "MaxPlasmaMtls/Materials/plCompositeMtl.h"
+#include "MaxPlasmaMtls/Materials/plDecalMtl.h"
+#include "MaxPlasmaMtls/Materials/plMultipassMtl.h"
+#include "MaxPlasmaMtls/Materials/plParticleMtl.h"
+#include "MaxPlasmaMtls/Materials/plPassMtl.h"
+#include "MaxPlasmaMtls/Materials/plClothingMtl.h"
 
-#include "../MaxComponent/plGUIComponents.h"
-#include "../MaxComponent/pfGUISkinComp.h"
-#include "../MaxComponent/plMiscComponents.h"
+#include "MaxComponent/plGUIComponents.h"
+#include "MaxComponent/pfGUISkinComp.h"
+#include "MaxComponent/plMiscComponents.h"
 
-#include "../MaxMain/plMaxNodeBase.h"
+#include "MaxMain/plMaxNodeBase.h"
 
 static bool IsPlasmaMtl(Mtl *mtl)
 {
@@ -159,7 +159,7 @@ static void GetTexmapPBs(Texmap* tex, PBSet& pbs)
     }
 }
 
-#include "../MaxPlasmaLights/plRealTimeLightBase.h"
+#include "MaxPlasmaLights/plRealTimeLightBase.h"
 
 static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, UInt32 flags)
 {

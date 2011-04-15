@@ -25,10 +25,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plPassMtl.h"
-#include "resource.h"
+#include "../resource.h"
 //extern ClassDesc2* GetMaxLayerDesc();
-#include "Shaders.h"
-#include "../MaxComponent/plMaxAnimUtils.h"
+#include "../Shaders.h"
+#include "MaxComponent/plMaxAnimUtils.h"
 
 #include "plPassBaseParamIDs.h"
 #include "plPassMtlBasicPB.h"
@@ -36,8 +36,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "iparamm2.h"
 
-#include "Layers/plLayerTex.h"
-#include "Layers/plStaticEnvLayer.h"
+#include "../Layers/plLayerTex.h"
+#include "../Layers/plStaticEnvLayer.h"
 
 #include "hsBitVector.h"
 

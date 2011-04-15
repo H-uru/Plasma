@@ -26,13 +26,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plPythonMgr.h"
 
-#include "../MaxComponent/plAutoUIBlock.h"
+#include "MaxComponent/plAutoUIBlock.h"
 //#include "Python.h"
 #include "plMaxCFGFile.h"
-#include "../plFile/hsFiles.h"
+#include "plFile/hsFiles.h"
 
 #include "plgDispatch.h"
-#include "../pfPython/cyPythonInterface.h"
+#include "pfPython/cyPythonInterface.h"
 #include "hsUtils.h"
 
 plPythonMgr::plPythonMgr()

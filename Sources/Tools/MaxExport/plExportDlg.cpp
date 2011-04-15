@@ -26,10 +26,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsTypes.h"
 #include "plExportDlg.h"
-#include "../MaxMain/resource.h"
+#include "MaxMain/resource.h"
 #include "max.h"
 
-#include "../MaxMain/plMaxCFGFile.h"
+#include "MaxMain/plMaxCFGFile.h"
 
 #include <vector>
 #include <string>
@@ -130,9 +130,9 @@ const char* plExportDlgImp::GetExportPage()
         return fExportPage;
 }
 
-#include "../MaxComponent/plComponentBase.h"
-#include "../MaxComponent/plMiscComponents.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxComponent/plComponentBase.h"
+#include "MaxComponent/plMiscComponents.h"
+#include "MaxMain/plMaxNode.h"
 #include "hsStlSortUtils.h"
 #include <set>
 
@@ -218,7 +218,7 @@ void plExportDlgImp::IInitDlg(HWND hDlg)
     SetDlgItemText(hDlg, IDC_EXPORT_PATH, fExportSourceDir);
 }
 
-#include "../plFile/plBrowseFolder.h"
+#include "plFile/plBrowseFolder.h"
 
 BOOL plExportDlgImp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -309,7 +309,7 @@ void plExportDlgImp::IExportCurrentFile(const char* exportPath)
     GetCOREInterface()->ExportToFile(exportPath);
 }
 
-#include "../plFile/hsFiles.h"
+#include "plFile/hsFiles.h"
 
 void plExportDlgImp::IDoExport()
 {

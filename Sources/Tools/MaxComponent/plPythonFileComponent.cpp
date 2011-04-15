@@ -29,13 +29,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 #include "hsUtils.h"
 #include "plAutoUIBlock.h"
 #include "plAutoUIParams.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../MaxMain/plPluginResManager.h"
-#include "../pnMessage/plObjRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "MaxMain/plPluginResManager.h"
+#include "pnMessage/plObjRefMsg.h"
 #include "plVolumeGadgetComponent.h"
 #include "plGUIComponents.h"
 #include "pfGUISkinComp.h"
@@ -44,16 +44,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNotetrackAnim.h"
 #include "plOneShotComponent.h"
 #include "plMultistageBehComponent.h"
-#include "../plInterp/plAnimEaseTypes.h"
-#include "../plAgeDescription/plAgeDescription.h"
+#include "plInterp/plAnimEaseTypes.h"
+#include "plAgeDescription/plAgeDescription.h"
 #include "plWaterComponent.h"
-#include "../plDrawable/plWaveSetBase.h"
+#include "plDrawable/plWaveSetBase.h"
 #include "plClusterComponent.h"
-#include "../plDrawable/plClusterGroup.h"
+#include "plDrawable/plClusterGroup.h"
 #include "plPhysicalComponents.h"
-//#include "../plHavok1/plHKPhysical.h"
-#include "../plAvatar/plSwimRegion.h"
-#include "../../PubUtilLib/plSurface/plGrassShaderMod.h"
+//#include "plHavok1/plHKPhysical.h"
+#include "plAvatar/plSwimRegion.h"
+#include "plSurface/plGrassShaderMod.h"
 #include "plGrassComponent.h"
 
 #include "notify.h"
@@ -63,11 +63,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 #include <string>
 
-#include "../pfPython/plPythonFileMod.h"
-#include "../pfPython/plPythonParameter.h"
+#include "pfPython/plPythonFileMod.h"
+#include "pfPython/plPythonParameter.h"
 
 // for DynamicText hack to get the plKeys (could probably be removed later)
-#include "../plGImage/plDynamicTextMap.h"
+#include "plGImage/plDynamicTextMap.h"
 
 //// plCommonPythonLib ///////////////////////////////////////////////////////
 //  Derived class for our global python fileMods, since they go in to the 
@@ -75,8 +75,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  2.4.03 mcn - Added sceneObjects to the list, so that we can have an 
 //               associated sceneObject for our mod
 
-#include "../MaxMain/plCommonObjLib.h"
-#include "../plSDL/plSDL.h"
+#include "MaxMain/plCommonObjLib.h"
+#include "plSDL/plSDL.h"
 
 class plCommonPythonLib : public plCommonObjLib
 {

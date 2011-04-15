@@ -32,11 +32,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plActivatorBaseComponent.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
-#include "../plAvatar/plNPCSpawnMod.h"
+#include "plAvatar/plNPCSpawnMod.h"
 
-#include "../pnMessage/plNotifyMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 #include <map>
 

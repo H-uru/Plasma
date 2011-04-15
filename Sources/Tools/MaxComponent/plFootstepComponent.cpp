@@ -29,20 +29,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsConfig.h"
 #include <map>
 #include "hsResMgr.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "plFootstepComponent.h"
 #include "plAudioComponents.h"
 #include "plComponentReg.h"
 
-#include "../plAvatar/plAvatarClothing.h"
-#include "../plAvatar/plArmatureEffects.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../pfAudio/plRandomSoundMod.h"
+#include "plAvatar/plAvatarClothing.h"
+#include "plAvatar/plArmatureEffects.h"
+#include "plAvatar/plArmatureMod.h"
+#include "pfAudio/plRandomSoundMod.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plNodeRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plNodeRefMsg.h"
 #include "plPickNode.h"
 
 void DummyCodeIncludeFuncFootstepSound()

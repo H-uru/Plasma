@@ -30,10 +30,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamm2.h"
 #include "stdmat.h"
 
-#include "plBMSampler.h"
+#include "../plBMSampler.h"
 #include "../resource.h"
 #include "plLayerTexBitmapPB.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
 class plLayerTexClassDesc : public ClassDesc2
 {

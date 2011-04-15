@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Max.h"
 #include "plPlasmaMAXLayer.h"
+#include "../resource.h"
 
 class ClassDesc2;
 class IParamBlock2;

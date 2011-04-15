@@ -31,9 +31,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "plWaterComponent.h"
 #include "plSoftVolumeComponent.h"
@@ -41,18 +41,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plTweak.h"
 
-#include "../plDrawable/plWaveSetBase.h"
-#include "../plDrawable/plWaveSet7.h"
-#include "../plDrawable/plFixedWaterState7.h"
+#include "plDrawable/plWaveSetBase.h"
+#include "plDrawable/plWaveSet7.h"
+#include "plDrawable/plFixedWaterState7.h"
 
-#include "../plPipeline/plDynamicEnvMap.h"
+#include "plPipeline/plDynamicEnvMap.h"
 
-#include "../MaxMain/plPluginResManager.h"
+#include "MaxMain/plPluginResManager.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plObjRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plObjRefMsg.h"
 
-#include "../plScene/plVisRegion.h"
+#include "plScene/plVisRegion.h"
 
 static const float kPercentToFrac(1.e-2f);
 static const float kDegreeToRad(hsScalarPI/180.f);

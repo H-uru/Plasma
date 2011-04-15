@@ -25,12 +25,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "plPhysicalProps.h"
-#include "../plPhysical/plSimDefs.h"
+#include "plPhysical/plSimDefs.h"
 // For plBoundsType
-#include "../pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plSimulationInterface.h"
 
 #include "plMaxNode.h"
-#include "../MaxExport/plErrorMsg.h"
+#include "MaxExport/plErrorMsg.h"
 
 /** These enums are used to indicate which parameters are ignorable and can
     be overridden.

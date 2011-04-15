@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "plMaxWaveUtils.h"
-#include "../plAudio/plWavFile.h"
+#include "plAudioCore/plWavFile.h"
 #include "hsTypes.h"
 
 SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)

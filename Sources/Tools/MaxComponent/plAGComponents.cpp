@@ -33,28 +33,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //Messages related
 #include "plgDispatch.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plIntRefMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
 //Scene related
-#include "../plScene/plSceneNode.h"
-#include "../plInterp/plController.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxMain/plMaxNodeData.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "plScene/plSceneNode.h"
+#include "plInterp/plController.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNodeData.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 #include "hsResMgr.h"
 
 //Conversion related
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/hsControlConverter.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/hsControlConverter.h"
 
 //Avatar related
-#include "../plAvatar/plAGAnim.h"
-#include "../plAvatar/plMatrixChannel.h"
+#include "plAvatar/plAGAnim.h"
+#include "plAvatar/plMatrixChannel.h"
 #include "BipedKiller.h"
 
 //Anim related
@@ -422,7 +422,7 @@ plEmoteComponent::plEmoteComponent()
 
 // Convert ------------------------------------------------------------
 // --------
-plEmoteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+hsBool plEmoteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     Interface *theInterface = node->GetInterface();
     RemoveBiped(node, theInterface);

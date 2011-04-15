@@ -26,10 +26,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plAutoUIParams.h"
 
-#include "../MaxMain/plMaxAccelerators.h"
+#include "MaxMain/plMaxAccelerators.h"
 #include "hsUtils.h"
 #include <algorithm>
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 #include "plComponentBase.h"
 
 plAutoUIParam::plAutoUIParam(ParamID id, const char *name) :

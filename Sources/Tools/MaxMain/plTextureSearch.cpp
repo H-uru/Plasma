@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMtlCollector.h"
 #include "plMaxAccelerators.h"
-#include "../MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+#include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 
 // Not a class member so we don't have to make everyone who uses this know about AssetMan

@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plBumpMtl.h"
-#include "resource.h"
+#include "../resource.h"
 //extern ClassDesc2* GetMaxLayerDesc();
 #include "Shaders.h"
 
@@ -33,9 +33,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "iparamm2.h"
 
-#include "Layers/plLayerTex.h"
-#include "Layers/plStaticEnvLayer.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "../Layers/plLayerTex.h"
+#include "../Layers/plStaticEnvLayer.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
 extern HINSTANCE hInstance;
 

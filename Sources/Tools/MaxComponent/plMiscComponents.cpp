@@ -30,65 +30,65 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 
-#include "../MaxMain/plPlasmaRefMsgs.h"
-#include "../MaxMain/plMaxNodeData.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plMaxNodeData.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
 
-#include "../MaxMain/plPluginResManager.h"
+#include "MaxMain/plPluginResManager.h"
 
 
 #include "plgDispatch.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plIntRefMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
 
 
-#include "../plScene/plSceneNode.h"
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/hsControlConverter.h"
-#include "../plInterp/plController.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../plFile/plFileUtils.h"
+#include "plScene/plSceneNode.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/hsControlConverter.h"
+#include "plInterp/plController.h"
+#include "MaxMain/plMaxNode.h"
+#include "pnKeyedObject/plKey.h"
+#include "plFile/plFileUtils.h"
 
 // Follow mod
-#include "../plInterp/plAnimPath.h"
-#include "../pfAnimation/plFollowMod.h"
+#include "plInterp/plAnimPath.h"
+#include "pfAnimation/plFollowMod.h"
 
 //Player Attention Related
-#include "../pfCamera/plInterestingModifier.h"
+#include "pfCamera/plInterestingModifier.h"
 
 //Player Start Position
-#include "../plModifier/plSpawnModifier.h"
+#include "plModifier/plSpawnModifier.h"
 
 // RunTime related (Sprites, Billboards, LightMaps, etc., etc.)
-#include "../pfAnimation/plViewFaceModifier.h" // ViewFace Comp
+#include "pfAnimation/plViewFaceModifier.h" // ViewFace Comp
 
 // Anim Related
 #include "plMaxAnimUtils.h"
 
 // CavView component.
-#include "../plScene/plPostEffectMod.h"
+#include "plScene/plPostEffectMod.h"
 
 // Location Related
-#include "../plAgeDescription/plAgeDescription.h"
-#include "../MaxMain/plMaxCFGFile.h"
-#include "../MaxMain/plAgeDescInterface.h"
-#include "../plFile/hsFiles.h"
-#include "../plResMgr/plPageInfo.h"
+#include "plAgeDescription/plAgeDescription.h"
+#include "MaxMain/plMaxCFGFile.h"
+#include "MaxMain/plAgeDescInterface.h"
+#include "plFile/hsFiles.h"
+#include "plResMgr/plPageInfo.h"
 
-#include "../plDrawable/plGeometrySpan.h"
+#include "plDrawable/plGeometrySpan.h"
 
-#include "../MaxConvert/plConvert.h"
+#include "MaxConvert/plConvert.h"
 
 // ImageLib
-#include "../plModifier/plImageLibMod.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
-#include "../MaxConvert/plLayerConverter.h"
-#include "../plGImage/plBitmap.h"
+#include "plModifier/plImageLibMod.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "MaxConvert/plLayerConverter.h"
+#include "plGImage/plBitmap.h"
 
 void DummyCodeIncludeFuncMisc() 
 {

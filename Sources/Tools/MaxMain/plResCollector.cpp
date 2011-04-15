@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResCollector.h"
 #include "plMtlCollector.h"
 #include "max.h"
-#include "../MaxExport/plExportProgressBar.h"
+#include "MaxExport/plExportProgressBar.h"
 
 void plResCollector::Collect()
 {

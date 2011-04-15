@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define EAX_LISTENER_COMPONENT_ID   Class_ID(0x514f4b0a, 0x24672153)
 #define SOUND_PHYS_COMP_ID  Class_ID(0x29415900, 0x1ade37a5)
 
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
 #include "hsTemplates.h"
 

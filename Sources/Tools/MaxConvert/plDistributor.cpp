@@ -33,19 +33,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamb2.h"
 #include "meshdlib.h" 
 
-#include "../MaxExport/plExportProgressBar.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "MaxExport/plExportProgressBar.h"
+#include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
 
 #include "hsMaterialConverter.h"
 
 #include "hsTypes.h"
 #include "hsGeometry3.h"
 #include "hsUtils.h"
-#include "../plMath/plTriUtils.h"
+#include "plMath/plTriUtils.h"
 
 #include "plDistributor.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "plDistTree.h"
 

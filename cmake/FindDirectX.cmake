@@ -5,7 +5,7 @@ if (DirectX_OLD_SDK)
 endif(DirectX_OLD_SDK)
 
 
-if(DirectX_INCLUDE_DIR AND DirectX_LIBRARY)
+if(DirectX_INCLUDE_DIR)
     set(DirectX_FIND_QUIETLY TRUE)
 endif()
 

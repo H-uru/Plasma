@@ -29,16 +29,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxExport/plExportProgressBar.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxExport/plExportProgressBar.h"
 
 #include "plXImposter.h"
 
-#include "../pfAnimation/plFilterCoordInterface.h"
+#include "pfAnimation/plFilterCoordInterface.h"
 
-#include "../pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plSimulationInterface.h"
 #include "plPhysical.h"
 
 const Class_ID FILTERINHERIT_COMP_CID(0x263928d8, 0x548456da);

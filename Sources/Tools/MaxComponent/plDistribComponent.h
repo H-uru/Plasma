@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 const Class_ID DISTRIBUTOR_COMP_CID(0x78143984, 0x3e7c78ec);
 
-#include "../MaxConvert/plDistributor.h"
+#include "MaxConvert/plDistributor.h"
 
 class plMaxNode;
 class plDistributor;

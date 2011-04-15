@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Private header for the responder component.  Anyone else should include plResponderComponent.h
 #include "plResponderComponent.h"
 #include "plComponent.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 #include <map>
 

@@ -33,19 +33,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <math.h>
 
 #include "hsMaxLayerBase.h"
-#include "../plInterp/plController.h"
+#include "plInterp/plController.h"
 
-#include "../MaxExport/plErrorMsg.h"
+#include "MaxExport/plErrorMsg.h"
 #include "UserPropMgr.h"
 #include "hsStringTokenizer.h"
 //#include "hsDXTDirectXCodec.h"
 //#include "hsDXTSoftwareCodec.h"
-#include "../plGImage/hsCodecManager.h"
+#include "plGImage/hsCodecManager.h"
 ///#include "SwitchUtil.h"
 #include "hsExceptionStack.h"
 #include "hsHashTable.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 const char hsConverterUtils::fTagSeps[] = " ,\t\n=:;";
 
@@ -308,7 +308,7 @@ INode* hsConverterUtils::FindINodeFromMangledName(const char* mangName)
     const char* nodeName = mangName;
 
     char* p;
-    while( p = strstr(nodeName, "..") )
+    while( p = strstr((char*)nodeName, "..") )
     {
         nodeName = p + 2;
     }
@@ -355,7 +355,7 @@ char *hsConverterUtils::UnMangleReference(char *dest, const char *name)
 {
     hsGuardBegin("hsConverterUtils::IsMangled");
 
-    char *u = strstr(name,"..");
+    char *u = strstr((char*)name,"..");
     if (u) 
     {
         u+=2;
@@ -380,7 +380,7 @@ char* hsConverterUtils::StripMangledReference(char* dest, const char* name)
 {
     hsGuardBegin("hsConverterUtils::StripMangledReference");
 
-    char *u = strstr(name,"..");
+    char *u = strstr((char*)name,"..");
     if (u) 
     {
         u+=2;
@@ -527,7 +527,9 @@ UInt32 hsConverterUtils::CacheNode::GetHash() const
 {
     const char* k = GetName();
     int len = k ? strlen(k) : 0;
-    for (int h=len; len--;) 
+
+    int h;
+    for (h=len; len--;) 
     { 
         h = ((h<<5)^(h>>27))^tolower(*k++);
     }

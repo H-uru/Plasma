@@ -1,0 +1,198 @@
+include_directories("../")
+include_directories("../../Plasma/CoreLib")
+include_directories("../../Plasma/FeatureLib")
+include_directories("../../Plasma/FeatureLib/inc")
+include_directories("../../Plasma/NucleusLib")
+include_directories("../../Plasma/NucleusLib/inc")
+include_directories("../../Plasma/PubUtilLib")
+include_directories("../../Plasma/PubUtilLib/inc")
+include_directories(${3dsm_INCLUDE_DIR})
+include_directories(${OPENAL_INCLUDE_DIR})
+include_directories(${PYTHON_INCLUDE_DIR})
+
+set(MaxComponent_HEADERS
+    BipedKiller.h
+    ComponentDummies.h
+    pfGUISkinComp.h
+    plActivatorBaseComponent.h
+    plActivatorComponent.h
+    plAnimComponent.h
+    plAnimCompProc.h
+    plAnimEventComponent.h
+    plAnimObjInterface.h
+    plAudioComponents.h
+    plAutoUIBase.h
+    plAutoUIBlock.h
+    plAutoUIComp.h
+    plAutoUIParams.h
+    plAvatarComponent.h
+    plBehavioralComponents.h
+    plBlowComponent.h
+    plCameraComponent.h
+    plCameraComponents.h
+    plCAnimParamBlock.h
+    plClickableComponent.h
+    plClickDragComponent.h
+    plClimbComponent.h
+    plClothingComponent.h
+    plClusterComponent.h
+    plComponent.h
+    plComponentBase.h
+    plComponentExt.h
+    plComponentMgr.h
+    plComponentProcBase.h
+    plComponentReg.h
+    plComponentTools.h
+    plDicer.h
+    plDistribComponent.h
+    plDistribComponent_old.h
+    plExcludeRegionComponent.h
+    plFlexibilityComponent.h
+    plFootstepComponent.h
+    plGrassComponent.h
+    plGUICompClassIDs.h
+    plGUIComponents.h
+    plImpactGadgetComponent.h
+    plInventoryObjComponent.h
+    plLightGrpComponent.h
+    plLightMapComponent.h
+    plLODFadeComponent.h
+    plMaxAnimUtils.h
+    plMaxWaveUtils.h
+    plMiscComponents.h
+    plMultistageBehComponent.h
+    plMultistageStage.h
+    plNavigableComponents.h
+    plNotetrackAnim.h
+    plNotetrackDlg.h
+    plNoteTrackDlgComp.h
+    plNPCSpawnComp.h
+    plObjectFlockerComponent.h
+    plOneShotComponent.h
+    plParticleComponents.h
+    plPhysicalComponents.h
+    plPhysicsGroups.h
+    plPickLocalizationDlg.h
+    plPickMaterialMap.h
+    plPickNode.h
+    plPickNodeBase.h
+    plPythonFileComponent.h
+    plResponderAnim.h
+    plResponderCmd.h
+    plResponderComponent.h
+    plResponderComponentPriv.h
+    plResponderGetComp.h
+    plResponderLink.h
+    plResponderMtl.h
+    plResponderWait.h
+    plShadowComponents.h
+    plSoftVolumeComponent.h
+    plVolumeGadgetComponent.h
+    plWaterComponent.h
+    plXImposter.h
+    WavFileStructs.h
+)
+
+set(MaxComponent_RESOURCES
+    icon1.ico
+    plComponent.rc
+    resource.h
+    zoomin1.ico
+)
+
+set(MaxComponent_SOURCES
+    pfGUISkinComp.cpp
+    plActivatorBaseComponent.cpp
+    plActivatorComponent.cpp
+    plAGComponents.cpp
+    plAnimComponent.cpp
+    plAnimCompProc.cpp
+    plAnimEventComponent.cpp
+    plAudioComponents.cpp
+    plAutoComponent.cpp
+    plAutoUIBase.cpp
+    plAutoUIBlock.cpp
+    plAutoUIComp.cpp
+    plAutoUIParams.cpp
+    plAvatarComponent.cpp
+    plBehavioralComponents.cpp
+    plBipedKiller.cpp
+    plBlowComponent.cpp
+    plCameraComponent.cpp
+    plCameraComponents.cpp
+    plCAnimParamBlock.cpp
+    plClickableComponent.cpp
+    plClickDragComponent.cpp
+    plClimbComponent.cpp
+    plClothingComponent.cpp
+    plClusterComponent.cpp
+    plComponent.cpp
+    plComponentBase.cpp
+    plComponentMgr.cpp
+    plComponentTools.cpp
+    plDicer.cpp
+    plDistribComponent.cpp
+    plDistribComponent_old.cpp
+    plExcludeRegionComponent.cpp
+    plFootPrintComponent.cpp
+    plFootstepComponent.cpp
+    plGrassComponent.cpp
+    plGUIComponents.cpp
+    plIgnoreComponent.cpp
+    plImpactGadgetComponent.cpp
+    plInventoryObjComponent.cpp
+    plLightGrpComponent.cpp
+    plLightMapComponent.cpp
+    plLineFollowComp.cpp
+    plLODFadeComponent.cpp
+    plMaxAnimUtils.cpp
+    plMaxWaveUtils.cpp
+    plMiscComponents.cpp
+    plMorphSeqComp.cpp
+    plMultistageBehComponent.cpp
+    plMultistageStage.cpp
+    plNavigableComponents.cpp
+    plNotetrackAnim.cpp
+    plNotetrackDlg.cpp
+    plNoteTrackDlgComp.cpp
+    plNPCSpawnComp.cpp
+    plObjectFlockerComponent.cpp
+    plOneShotComponent.cpp
+    plParticleComponents.cpp
+    plPhysConstraintComponents.cpp
+    plPhysicalComponents.cpp
+    plPickLocalizationDlg.cpp
+    plPickMaterialMap.cpp
+    plPickNode.cpp
+    plPickNodeBase.cpp
+    plPickNodeComp.cpp
+    plPythonFileComponent.cpp
+    plRepComponent.cpp
+    plResponderAnim.cpp
+    plResponderComponent.cpp
+    plResponderGetComp.cpp
+    plResponderLink.cpp
+    plResponderMtl.cpp
+    plResponderWait.cpp
+    plSeekPoint.cpp
+    plShadowComponents.cpp
+    plSmoothComponent.cpp
+    plSoftVolumeComponent.cpp
+    plTemplateComponent.cpp
+    plTypesComponents.cpp
+    plVolumeGadgetComponent.cpp
+    plWaterComponent.cpp
+    plXImposter.cpp
+)
+
+add_library(MaxComponent
+            STATIC
+            ${MaxComponent_HEADERS}
+            ${MaxComponent_RESOURCES}
+            ${MaxComponent_SOURCES}
+)
+
+source_group("Header Files" FILES ${MaxComponents_HEADERS})
+source_group("Resource Files" FILES ${MaxComponents_RESOURCES})
+source_group("Source Files" FILES ${MaxComponents_SOURCES})
+

@@ -30,23 +30,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "hsTypes.h"
 
-#include "../plDrawable/plDrawableSpans.h"
+#include "plDrawable/plDrawableSpans.h"
 
 // The AccMeshSmooth now does everything the InterMeshSmooth and AvMeshSmooth
 // components did, only better and with fewer bugs.
 //#include "../plDrawable/plInterMeshSmooth.h"
-#include "../plDrawable/plAvMeshSmooth.h"
+#include "plDrawable/plAvMeshSmooth.h"
 
-#include "../plDrawable/plAccMeshSmooth.h"
-#include "../plDrawable/plGeometrySpan.h"
-#include "../plDrawable/plSharedMesh.h"
+#include "plDrawable/plAccMeshSmooth.h"
+#include "plDrawable/plGeometrySpan.h"
+#include "plDrawable/plSharedMesh.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
 
 
 const Class_ID CID_SMOOTHCOMP(0x7f926cbc, 0x58df5a44);
