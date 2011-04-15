@@ -36,69 +36,69 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsMaterialConverter.h"
 #include "plLayerConverter.h"
-#include "../MaxComponent/plMaxAnimUtils.h"
-#include "../plResMgr/plKeyFinder.h"
+#include "MaxComponent/plMaxAnimUtils.h"
+#include "plResMgr/plKeyFinder.h"
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 #include "hsUtils.h"
 #include "hsMaxLayerBase.h"
-#include "../MaxExport/plErrorMsg.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "MaxExport/plErrorMsg.h"
+#include "plSurface/hsGMaterial.h"
+#include "pnSceneObject/plSceneObject.h"
 #include "UserPropMgr.h"
-#include "../plFile/plFileUtils.h"
+#include "plFile/plFileUtils.h"
 
 #include "hsConverterUtils.h"
 #include "hsControlConverter.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
-#include "../plInterp/plController.h"
+#include "plInterp/plController.h"
 #include "hsExceptionStack.h"
 #include "hsStringTokenizer.h"
-#include "../plSurface/plLayerInterface.h"
-#include "../plSurface/plLayer.h"
-#include "../plSurface/plLayerAnimation.h"
-#include "../plGImage/plMipmap.h"
+#include "plSurface/plLayerInterface.h"
+#include "plSurface/plLayer.h"
+#include "plSurface/plLayerAnimation.h"
+#include "plGImage/plMipmap.h"
 
 #include "plgDispatch.h"
 
-#include "../pnMessage/plRefMsg.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plKeyImp.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
 
 #include "plBitmapCreator.h"
 
-#include "../plMessage/plMatRefMsg.h"
-#include "../plMessage/plLayRefMsg.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../pfMessage/plClothingMsg.h"
+#include "plMessage/plMatRefMsg.h"
+#include "plMessage/plLayRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pfMessage/plClothingMsg.h"
 
-#include "../MaxPlasmaMtls/Materials/plMultipassMtlPB.h"
-#include "../MaxPlasmaMtls/Materials/plCompositeMtlPB.h"
-#include "../MaxPlasmaMtls/Materials/plPassMtl.h"
-#include "../MaxPlasmaMtls/Materials/plMultipassMtl.h"
-#include "../MaxPlasmaMtls/Materials/plDecalMtl.h"
-#include "../MaxPlasmaMtls/Materials/plCompositeMtl.h"
-#include "../MaxPlasmaMtls/Materials/plParticleMtl.h"
-#include "../MaxPlasmaMtls/Materials/plBumpMtl.h"
-#include "../MaxPlasmaMtls/Materials/plPassMtlBase.h"
-#include "../MaxPlasmaMtls/Materials/plAnimStealthNode.h"
-#include "../MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
+#include "MaxPlasmaMtls/Materials/plMultipassMtlPB.h"
+#include "MaxPlasmaMtls/Materials/plCompositeMtlPB.h"
+#include "MaxPlasmaMtls/Materials/plPassMtl.h"
+#include "MaxPlasmaMtls/Materials/plMultipassMtl.h"
+#include "MaxPlasmaMtls/Materials/plDecalMtl.h"
+#include "MaxPlasmaMtls/Materials/plCompositeMtl.h"
+#include "MaxPlasmaMtls/Materials/plParticleMtl.h"
+#include "MaxPlasmaMtls/Materials/plBumpMtl.h"
+#include "MaxPlasmaMtls/Materials/plPassMtlBase.h"
+#include "MaxPlasmaMtls/Materials/plAnimStealthNode.h"
+#include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
 
-#include "../pfSurface/plLayerAVI.h"
-#include "../pfSurface/plLayerBink.h"
+#include "pfSurface/plLayerAVI.h"
+#include "pfSurface/plLayerBink.h"
 
-#include "../MaxComponent/plLightMapComponent.h"
-#include "../plDrawable/plGeometrySpan.h"
+#include "MaxComponent/plLightMapComponent.h"
+#include "plDrawable/plGeometrySpan.h"
 
-#include "../MaxPlasmaMtls/Materials/plClothingMtl.h"
-#include "../plAvatar/plAvatarClothing.h"
-#include "../plAvatar/plClothingLayout.h"
-#include "../plSDL/plSDL.h"
-#include "../plSDL/plSDLDescriptor.h"
+#include "MaxPlasmaMtls/Materials/plClothingMtl.h"
+#include "plAvatar/plAvatarClothing.h"
+#include "plAvatar/plClothingLayout.h"
+#include "plSDL/plSDL.h"
+#include "plSDL/plSDLDescriptor.h"
 
 extern UserPropMgr gUserPropMgr;
 
@@ -1678,10 +1678,10 @@ hsGMaterial *hsMaterialConverter::IProcessMultipassMtl(Mtl *mtl, plMaxNode *node
         layerCounts[i] = mat->GetNumLayers();
     }
 
-    for (i = mtl->NumSubMtls() - 1; i > 0; i--)
+    for (int i = mtl->NumSubMtls() - 1; i > 0; i--)
         layerCounts[i] -= layerCounts[i - 1];
 
-    for (i = 0; i < mtl->NumSubMtls(); i++)
+    for (int i = 0; i < mtl->NumSubMtls(); i++)
         pb->SetValue(kMultLayerCounts, 0, (int)layerCounts[i], i);
 
     delete [] layerCounts;
@@ -4520,7 +4520,7 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
     cloth->SetName(mtl->GetName());
     cloth->fSortOrder = (mtl->GetDefault() ? 0 : 1);
 
-    char *accName = mtl->GetForcedAccessoryName();
+    const char *accName = mtl->GetForcedAccessoryName();
     if (accName && strcmp(accName, ""))
         cloth->fAccessoryName = hsStrcpy(accName);
     

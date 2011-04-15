@@ -31,15 +31,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "hsTypes.h"
 
 #include "plBlowComponent.h"
 
-#include "../pfAnimation/plBlower.h"
+#include "pfAnimation/plBlower.h"
 #include "plFlexibilityComponent.h"
 
 // Blow component first, related Flexibility component at EOF.

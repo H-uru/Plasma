@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamm2.h"
 #include "stdmat.h"
 
-#include "plBMSampler.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "../plBMSampler.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////

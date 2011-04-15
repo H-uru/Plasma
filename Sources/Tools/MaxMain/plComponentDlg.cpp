@@ -28,9 +28,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamb2.h"
 
 #include "plComponentDlg.h"
-#include "../MaxComponent/plComponentBase.h"
-#include "../MaxComponent/plComponentMgr.h"
-#include "../MaxComponent/plComponentReg.h"
+#include "MaxComponent/plComponentBase.h"
+#include "MaxComponent/plComponentMgr.h"
+#include "MaxComponent/plComponentReg.h"
 #include "resource.h"
 #include "plMaxNode.h"
 #include "plComponentPanel.h"

@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "plComponent.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
-#include "../pfGameGUIMgr/pfGUIPopUpMenu.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "pfGameGUIMgr/pfGUIPopUpMenu.h"
 
 /// skin component class
 class plGUISkinComp : public plComponent

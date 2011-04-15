@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "max.h"
 #include "notify.h"
-#include "../MaxComponent/plComponent.h"
+#include "MaxComponent/plComponent.h"
 #include <vector>
 #include "plMaxNode.h"
 

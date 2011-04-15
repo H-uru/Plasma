@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClickableComponent.h"
 #include "hsTemplates.h"
 #include <map>
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 class plMaxNode;
 

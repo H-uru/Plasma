@@ -31,10 +31,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include "../MaxExport/SimpleExport.h"
+#include "MaxExport/SimpleExport.h"
 
-#include "../MaxComponent/plComponentMgr.h"
-#include "../MaxPlasmaMtls/plMtlImport.h"
+#include "MaxComponent/plComponentMgr.h"
+#include "MaxPlasmaMtls/plMtlImport.h"
 extern ClassDesc* GetGUPDesc();
 extern ClassDesc* GetComponentUtilDesc();
 extern ClassDesc* GetComponentMgrDesc();
@@ -116,10 +116,10 @@ __declspec(dllexport) ULONG LibVersion()
 
 #include "plPythonMgr.h"
 #include "plPluginResManager.h"
-#include "../plSDL/plSDL.h"
+#include "plSDL/plSDL.h"
 #include "plMaxCFGFile.h"
 #include <direct.h>
-#include "../plFile/hsFiles.h"
+#include "plFile/hsFiles.h"
 
 //
 // DLLMAIN
@@ -210,7 +210,7 @@ public:
     ReferenceTarget *Clone(RemapDir &remap = NoRemap());
     virtual bool CheckCopyAttribTo(ICustAttribContainer *to) { return true; }
     
-    TCHAR* GetName() { return (TCHAR*)fClassDesc->ClassName(); }
+    const char* GetName() { return (TCHAR*)fClassDesc->ClassName(); }
     void DeleteThis() { delete this; }
 };
 

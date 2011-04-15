@@ -30,13 +30,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../pnKeyedObject/plKey.h"
+#include "MaxMain/plMaxNode.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "../plModifier/plExcludeRegionModifier.h"
-#include "../plPhysical/plSimDefs.h"
+#include "plModifier/plExcludeRegionModifier.h"
+#include "plPhysical/plSimDefs.h"
 
-#include "../MaxMain/plPhysicalProps.h"
+#include "MaxMain/plPhysicalProps.h"
 
 void DummyCodeIncludeFuncExcludeRegion() {}
 

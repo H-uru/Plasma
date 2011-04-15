@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 
-#include "../MaxMain/plMaxNodeBase.h"
+#include "MaxMain/plMaxNodeBase.h"
 #include "resource.h"
 #include "plComponentBase.h"
-#include "../MaxMain/plMaxAccelerators.h"
+#include "MaxMain/plMaxAccelerators.h"
 
 plResponderGetComp& plResponderGetComp::Instance()
 {

@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "decomp.h"
 #include "hsv.h"
 #include "target.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
 
 
 static int GetTargetPoint(TimeValue t, INode *inode, Point3& p) 

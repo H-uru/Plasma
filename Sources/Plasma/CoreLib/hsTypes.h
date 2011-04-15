@@ -449,6 +449,8 @@ void SWAP (T & a, T & b) {
 *
 ***/
 
+#include <stddef.h>
+
 #ifndef  offsetof
 #define  offsetof(s,m)  (size_t)&(((s *)0)->m)
 #endif   // ifndef offsetof

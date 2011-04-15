@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDistributor_inc
 #define plDistributor_inc
 
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 #include "plDistTree.h"
 
 class INode;

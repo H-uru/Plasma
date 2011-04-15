@@ -29,17 +29,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../MaxMain/plPlasmaRefMsgs.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plMaxNode.h"
 #include "hsResMgr.h"
 
 
 // LightGroup component
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plGLight/plLightInfo.h"
-#include "../plDrawable/plDrawableSpans.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../MaxPlasmaLights/plRealTimeLightBase.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plGLight/plLightInfo.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "MaxPlasmaLights/plRealTimeLightBase.h"
 
 #include "plLightGrpComponent.h"
 

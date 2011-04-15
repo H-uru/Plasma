@@ -31,19 +31,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsResMgr.h"
 #include "plQuality.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../../PubUtilLib/plSurface/hsGMaterial.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxConvert/hsMaterialConverter.h"
+#include "pnMessage/plRefMsg.h"
+#include "plSurface/hsGMaterial.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxConvert/hsMaterialConverter.h"
 
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plGrassComponent.h"
-#include "../../PubUtilLib/plSurface/plGrassShaderMod.h"
+#include "plSurface/plGrassShaderMod.h"
 
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../MaxMain/plPluginResManager.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "MaxMain/plPluginResManager.h"
 
 void DummyCodeIncludeFuncGrassShader()
 {

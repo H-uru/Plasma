@@ -121,12 +121,12 @@ public:
     int GetTilesetIndex() { return fBasicPB->GetInt(ParamID(kTileset)); }
     DllExport Texmap *GetTexmap(int index, int layer);
     Texmap *GetThumbnail() { return fBasicPB->GetTexmap(ParamID(kThumbnail)); }
-    char *GetDescription() { return fBasicPB->GetStr(ParamID(kDescription)); }
-    char *GetCustomText() { return fBasicPB->GetStr(ParamID(kCustomTextSpecs)); }
+    const char *GetDescription() { return fBasicPB->GetStr(ParamID(kDescription)); }
+    const char *GetCustomText() { return fBasicPB->GetStr(ParamID(kCustomTextSpecs)); }
     hsBool GetDefault() { return fBasicPB->GetInt(ParamID(kDefault)) != 0; }
     Color GetDefaultTint1() { return fBasicPB->GetColor(plClothingMtl::kDefaultTint1); }
     Color GetDefaultTint2() { return fBasicPB->GetColor(plClothingMtl::kDefaultTint2); }
-    char *GetForcedAccessoryName() { return fBasicPB->GetStr(ParamID(kForcedAcc)); }
+    const char *GetForcedAccessoryName() { return fBasicPB->GetStr(ParamID(kForcedAcc)); }
 
     plClothingMtl(BOOL loading);
     void DeleteThis() { delete this; }

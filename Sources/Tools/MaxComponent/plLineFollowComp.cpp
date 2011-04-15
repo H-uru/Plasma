@@ -29,33 +29,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/hsControlConverter.h"
-#include "../plInterp/plController.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../pnKeyedObject/plKey.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/hsControlConverter.h"
+#include "plInterp/plController.h"
+#include "MaxMain/plMaxNode.h"
+#include "pnKeyedObject/plKey.h"
 
 #include "plgDispatch.h"
-#include "../MaxMain/plPluginResManager.h"
+#include "MaxMain/plPluginResManager.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 // Swivel related
-#include "../pfAnimation/plViewFaceModifier.h" // ViewFace Comp
+#include "pfAnimation/plViewFaceModifier.h" // ViewFace Comp
 
 // Line Follow related
-#include "../plInterp/plAnimPath.h"
-#include "../pfAnimation/plLineFollowMod.h"
-#include "../pfAnimation/plFollowMod.h"
+#include "plInterp/plAnimPath.h"
+#include "pfAnimation/plLineFollowMod.h"
+#include "pfAnimation/plFollowMod.h"
 
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 
 // Stereizer
-#include "../pfAnimation/plStereizer.h"
+#include "pfAnimation/plStereizer.h"
 
 const Class_ID STEREIZE_COMP_CID(0x15066ec7, 0x64ea7381);
 const Class_ID LINEFOLLOW_COMP_CID(0x64ec57f6, 0x292d47f6);

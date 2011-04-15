@@ -1,0 +1,147 @@
+include_directories("../")
+include_directories("../../Plasma/CoreLib")
+include_directories("../../Plasma/FeatureLib")
+include_directories("../../Plasma/FeatureLib/inc")
+include_directories("../../Plasma/NucleusLib")
+include_directories("../../Plasma/NucleusLib/inc")
+include_directories("../../Plasma/PubUtilLib")
+include_directories("../../Plasma/PubUtilLib/inc")
+include_directories(${3dsm_INCLUDE_DIR})
+
+if(Bink_SDK_AVAILABLE)
+    include_directories(${Bink_INCLUDE_DIR})
+endif()
+
+set(MaxPlasmaMtls_HEADERS
+    plBinkBitmap.h
+    plBMSampler.h
+    plDetailCurveCtrl.h
+    plMaterialRefMsg.h
+    plMtlImport.h
+    Shaders.h
+)
+
+set(MaxPlasmaMtls_HEADERS_Layers
+    Layers/plAngleAttenLayer.h
+    Layers/plDynamicEnvLayer.h
+    Layers/plDynamicTextLayer.h
+    Layers/plLayerTex.h
+    Layers/plLayerTexBasicPB.h
+    Layers/plLayerTexBitmapPB.h
+    Layers/plMAXCameraLayer.h
+    Layers/plPlasmaMAXLayer.h
+    Layers/plStaticEnvLayer.h
+    Layers/plStaticEnvLayerBitmapPB.h
+)
+
+set(MaxPlasmaMtls_HEADERS_Materials
+    Materials/plAnimStealthNode.h
+    Materials/plBumpMtl.h
+    Materials/plBumpMtlAnimPB.h
+    Materials/plBumpMtlAnimPBDec.h
+    Materials/plBumpMtlBasicPB.h
+    Materials/plBumpMtlBasicPBDec.h
+    Materials/plClothingMtl.h
+    Materials/plClothingMtlPBDec.h
+    Materials/plCompositeMtl.h
+    Materials/plCompositeMtlDlg.h
+    Materials/plCompositeMtlPB.h
+    Materials/plCompositeMtlPBDec.h
+    Materials/plDecalMtl.h
+    Materials/plDecalMtlAdvPB.h
+    Materials/plDecalMtlAdvPBDec.h
+    Materials/plDecalMtlAnimPB.h
+    Materials/plDecalMtlAnimPBDec.h
+    Materials/plDecalMtlBasicPB.h
+    Materials/plDecalMtlBasicPBDec.h
+    Materials/plDecalMtlLayersPB.h
+    Materials/plDecalMtlLayersPBDec.h
+    Materials/plMultipassMtl.h
+    Materials/plMultipassMtlDlg.h
+    Materials/plMultipassMtlPB.h
+    Materials/plNoteTrackWatcher.h
+    Materials/plParticleMtl.h
+    Materials/plParticleMtlPBDec.h
+    Materials/plPassAnimDlgProc.h
+    Materials/plPassBaseParamIDs.h
+    Materials/plPassMtl.h
+    Materials/plPassMtlAdvPB.h
+    Materials/plPassMtlAdvPBDec.h
+    Materials/plPassMtlAnimPB.h
+    Materials/plPassMtlAnimPBDec.h
+    Materials/plPassMtlBase.h
+    Materials/plPassMtlBasicPB.h
+    Materials/plPassMtlBasicPBDec.h
+    Materials/plPassMtlLayersPB.h
+    Materials/plPassMtlLayersPBDec.h
+)
+
+set(MaxPlasmaMtls_RESOURCES
+    MaxPlasmaMtls.rc
+    resource.h
+    
+    res/detailBgnd8bit.bmp
+    res/dmtlbut.bmp
+    res/dmtlmsk.bmp
+)
+
+set(MaxPlasmaMtls_SOURCES
+    plBinkBitmap.cpp
+    plBMSampler.cpp
+    plDetailCurveCtrl.cpp
+    plDrawCurve.cpp
+    plMtlImport.cpp
+    Shaders.cpp
+)
+
+set(MaxPlasmaMtls_SOURCES_Layers
+    Layers/plAngleAttenLayer.cpp
+    Layers/plDynamicEnvLayer.cpp
+    Layers/plDynamicEnvLayerBitmapPB.cpp
+    Layers/plDynamicTextLayer.cpp
+    Layers/plDynamicTextLayerBitmapPB.cpp
+    Layers/plLayerTex.cpp
+    Layers/plLayerTexBasicPB.cpp
+    Layers/plLayerTexBitmapPB.cpp
+    Layers/plMAXCameraLayer.cpp
+    Layers/plPlasmaMAXLayer.cpp
+    Layers/plStaticEnvLayer.cpp
+    Layers/plStaticEnvLayerBitmapPB.cpp
+)
+
+set(MaxPlasmaMtls_SOURCES_Materials
+    Materials/plAnimStealthConvert.cpp
+    Materials/plAnimStealthNode.cpp
+    Materials/plBumpMtl.cpp
+    Materials/plClothingMtl.cpp
+    Materials/plCompositeMtl.cpp
+    Materials/plCompositeMtlDlg.cpp
+    Materials/plDecalMtl.cpp
+    Materials/plMultipassMtl.cpp
+    Materials/plMultipassMtlDlg.cpp
+    Materials/plMultipassMtlPB.cpp
+    Materials/plNoteTrackWatcher.cpp
+    Materials/plParticleMtl.cpp
+    Materials/plPassAnimDlgProc.cpp
+    Materials/plPassMtl.cpp
+    Materials/plPassMtlBase.cpp
+)
+
+add_library(MaxPlasmaMtls
+            STATIC
+            ${MaxPlasmaMtls_HEADERS}
+            ${MaxPlasmaMtls_HEADERS_Layers}
+            ${MaxPlasmaMtls_HEADERS_Materials}
+            ${MaxPlasmaMtls_RESOURCES}
+            ${MaxPlasmaMtls_SOURCES}
+            ${MaxPlasmaMtls_SOURCES_Layers}
+            ${MaxPlasmaMtls_SOURCES_Materials}
+)
+
+source_group("Header Files" FILES ${MaxPlasmaMtls_HEADERS})
+source_group("Header Files\\Layers" FILES ${MaxPlasmaMtls_HEADERS_Layers})
+source_group("Header Files\\Materials" FILES ${MaxPlasmaMtls_HEADERS_Materials})
+source_group("Resource Files" FILES ${MaxPlasmaMtls_RESOURCES})
+source_group("Source Files" FILES ${MaxPlasmaMtls_SOURCES})
+source_group("Source Files\\Layers" FILES ${MaxPlasmaMtls_SOURCES_Layers})
+source_group("Source Files\\Materials" FILES ${MaxPlasmaMtls_SOURCES_Materials})

@@ -38,32 +38,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include <algorithm>
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxComponent/plComponent.h"
-#include "../MaxComponent/plLightGrpComponent.h"
-#include "../MaxComponent/plSoftVolumeComponent.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxComponent/plComponent.h"
+#include "MaxComponent/plLightGrpComponent.h"
+#include "MaxComponent/plSoftVolumeComponent.h"
 
 #include "plClusterUtil.h"
 
-#include "../plDrawable/plClusterGroup.h"
-#include "../plDrawable/plCluster.h"
-#include "../plDrawable/plSpanTemplate.h"
-#include "../plDrawable/plSpanInstance.h"
-#include "../plDrawable/plGeometrySpan.h"
+#include "plDrawable/plClusterGroup.h"
+#include "plDrawable/plCluster.h"
+#include "plDrawable/plSpanTemplate.h"
+#include "plDrawable/plSpanInstance.h"
+#include "plDrawable/plGeometrySpan.h"
 
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayer.h"
-#include "../plScene/plVisRegion.h"
-#include "../plGLight/plLightInfo.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayer.h"
+#include "plScene/plVisRegion.h"
+#include "plGLight/plLightInfo.h"
 
 #include "plMeshConverter.h"
 #include "hsVertexShader.h"
 #include "plLightMapGen.h"
 
 #include "hsResMgr.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 
-#include "../pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
 
 #include "plTweak.h"
 

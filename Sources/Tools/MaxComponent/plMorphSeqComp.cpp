@@ -29,18 +29,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 #include "plPickNode.h"
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxExport/plExportProgressBar.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxExport/plExportProgressBar.h"
 
 #include "hsTypes.h"
 #include "hsResMgr.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plDrawable/plMorphSequence.h"
-#include "../plDrawable/plSharedMesh.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plDrawable/plMorphSequence.h"
+#include "plDrawable/plSharedMesh.h"
 
 const Class_ID MORPHSEQ_COMP_CID(0x37100f0a, 0x2d1f6b87);
 const Class_ID MORPHLAY_COMP_CID(0x138b1d44, 0x6c0a7417);

@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MNMath.h"
 
 #include "plMaxNode.h"
-//#include "../MaxComponent/resource.h"
+//#include "MaxComponent/resource.h"
 #include "GlobalUtility.h"
 
 #include "plgDispatch.h"
@@ -39,91 +39,91 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxNodeData.h"
 #include "hsUtils.h"
 
-#include "../MaxConvert/plConvert.h"
+#include "MaxConvert/plConvert.h"
 #include "hsTemplates.h"
 #include "hsStringTokenizer.h"
 
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/hsControlConverter.h"
-#include "../MaxConvert/plMeshConverter.h"
-#include "../MaxConvert/hsMaterialConverter.h"
-#include "../MaxConvert/plLayerConverter.h"
-#include "../MaxConvert/UserPropMgr.h"
-#include "../MaxExport/plErrorMsg.h"
-#include "../MaxConvert/hsVertexShader.h"
-#include "../MaxConvert/plLightMapGen.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/hsControlConverter.h"
+#include "MaxConvert/plMeshConverter.h"
+#include "MaxConvert/hsMaterialConverter.h"
+#include "MaxConvert/plLayerConverter.h"
+#include "MaxConvert/UserPropMgr.h"
+#include "MaxExport/plErrorMsg.h"
+#include "MaxConvert/hsVertexShader.h"
+#include "MaxConvert/plLightMapGen.h"
 #include "plMaxMeshExtractor.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
 
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plScene/plSceneNode.h"
-#include "../plPhysX/plPXPhysical.h"
-#include "../plDrawable/plInstanceDrawInterface.h"
-#include "../plDrawable/plSharedMesh.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnSceneObject/plAudioInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pfAnimation/plFilterCoordInterface.h"
-#include "../plParticleSystem/plBoundInterface.h"
-#include "../plPhysical/plPickingDetector.h"
-#include "../plModifier/plLogicModifier.h"
-#include "../plModifier/plResponderModifier.h"
-#include "../plModifier/plInterfaceInfoModifier.h"
-#include "../pfAnimation/plLightModifier.h"
-#include "../pfCharacter/plPlayerModifier.h"
-#include "../plAvatar/plAGModifier.h"
-#include "../plAvatar/plAGAnim.h"
-#include "../plAvatar/plPointChannel.h"
-#include "../plAvatar/plScalarChannel.h"
-#include "../plAvatar/plAGMasterMod.h"
-#include "../plMessage/plReplaceGeometryMsg.h"
-#include "../plGImage/plMipmap.h"
-#include "../plModifier/plSpawnModifier.h"
-#include "../plInterp/plController.h"
-#include "../plInterp/hsInterp.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../pfAnimation/plViewFaceModifier.h" // mf horse temp hack testing to be thrown away
+#include "pnSceneObject/plSceneObject.h"
+#include "plScene/plSceneNode.h"
+#include "plPhysX/plPXPhysical.h"
+#include "plDrawable/plInstanceDrawInterface.h"
+#include "plDrawable/plSharedMesh.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pfAnimation/plFilterCoordInterface.h"
+#include "plParticleSystem/plBoundInterface.h"
+#include "plPhysical/plPickingDetector.h"
+#include "plModifier/plLogicModifier.h"
+#include "plModifier/plResponderModifier.h"
+#include "plModifier/plInterfaceInfoModifier.h"
+#include "pfAnimation/plLightModifier.h"
+#include "pfCharacter/plPlayerModifier.h"
+#include "plAvatar/plAGModifier.h"
+#include "plAvatar/plAGAnim.h"
+#include "plAvatar/plPointChannel.h"
+#include "plAvatar/plScalarChannel.h"
+#include "plAvatar/plAGMasterMod.h"
+#include "plMessage/plReplaceGeometryMsg.h"
+#include "plGImage/plMipmap.h"
+#include "plModifier/plSpawnModifier.h"
+#include "plInterp/plController.h"
+#include "plInterp/hsInterp.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pfAnimation/plViewFaceModifier.h" // mf horse temp hack testing to be thrown away
 
-#include "../plScene/plOccluder.h"
+#include "plScene/plOccluder.h"
 #include "hsFastMath.h"
 
 
-#include "../plDrawable/plDrawableSpans.h"
-#include "../plDrawable/plGeometrySpan.h"
-#include "../plPipeline/plFogEnvironment.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plGeometrySpan.h"
+#include "plPipeline/plFogEnvironment.h"
 
-#include "../plGLight/plLightInfo.h"
-#include "../plGLight/plLightKonstants.h"
-#include "../plSurface/plLayerInterface.h"
-#include "../plSurface/plLayer.h"
-#include "../plSurface/hsGMaterial.h"
+#include "plGLight/plLightInfo.h"
+#include "plGLight/plLightKonstants.h"
+#include "plSurface/plLayerInterface.h"
+#include "plSurface/plLayer.h"
+#include "plSurface/hsGMaterial.h"
 
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../pnMessage/plIntRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plIntRefMsg.h"
 
-#include "../MaxExport/plExportProgressBar.h"
+#include "MaxExport/plExportProgressBar.h"
 
-#include "../MaxPlasmaMtls/Materials/plDecalMtl.h"
+#include "MaxPlasmaMtls/Materials/plDecalMtl.h"
 
-#include "../MaxComponent/plComponentTools.h"
-#include "../MaxComponent/plComponent.h"
-#include "../MaxComponent/plComponentExt.h"
-#include "../MaxComponent/plFlexibilityComponent.h"
-#include "../MaxComponent/plLightMapComponent.h"
-#include "../MaxComponent/plXImposter.h"
-#include "../MaxComponent/plMiscComponents.h"
+#include "MaxComponent/plComponentTools.h"
+#include "MaxComponent/plComponent.h"
+#include "MaxComponent/plComponentExt.h"
+#include "MaxComponent/plFlexibilityComponent.h"
+#include "MaxComponent/plLightMapComponent.h"
+#include "MaxComponent/plXImposter.h"
+#include "MaxComponent/plMiscComponents.h"
 
-#include "../plParticleSystem/plParticleSystem.h"
-#include "../plParticleSystem/plParticleEmitter.h"
-#include "../plParticleSystem/plParticleEffect.h"
-#include "../plParticleSystem/plParticleGenerator.h"
-#include "../plParticleSystem/plConvexVolume.h"
+#include "plParticleSystem/plParticleSystem.h"
+#include "plParticleSystem/plParticleEmitter.h"
+#include "plParticleSystem/plParticleEffect.h"
+#include "plParticleSystem/plParticleGenerator.h"
+#include "plParticleSystem/plConvexVolume.h"
 
-#include "../MaxPlasmaLights/plRealTimeLightBase.h"
-#include "../MaxPlasmaLights/plRTProjDirLight.h"
+#include "MaxPlasmaLights/plRealTimeLightBase.h"
+#include "MaxPlasmaLights/plRTProjDirLight.h"
 
 
 extern UserPropMgr gUserPropMgr;
@@ -148,7 +148,7 @@ int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const char *segName, hsTArra
 // In plAudioComponents
 int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const char*& name);
 
-#include "../MaxComponent/plAnimComponent.h"
+#include "MaxComponent/plAnimComponent.h"
 
 static const char *GetAnimCompAnimName(plComponentBase *comp)
 {
@@ -411,11 +411,11 @@ hsBool plMaxNode::ClearMaxNodeData(plErrorMsg *pErrMsg, plConvertSettings *setti
 //
 // Helper for setting synchedObject options, until we have a GUI
 //
-#include "../plResMgr/plKeyFinder.h"
+#include "plResMgr/plKeyFinder.h"
 #include "plMaxCFGFile.h"
-#include "../plAgeDescription/plAgeDescription.h"
-#include "../plResMgr/plPageInfo.h"
-#include "../pnNetCommon/plSDLTypes.h"
+#include "plAgeDescription/plAgeDescription.h"
+#include "plResMgr/plPageInfo.h"
+#include "pnNetCommon/plSDLTypes.h"
 
 void plMaxNode::CheckSynchOptions(plSynchedObject* so)
 {
@@ -601,8 +601,8 @@ hsBool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
 #include "plMaxMeshExtractor.h"
 #include "plPhysXCooking.h"
-#include "../plPhysX/plPXStream.h"
-#include "../plPhysX/plSimulationMgr.h"
+#include "plPhysX/plPXStream.h"
+#include "plPhysX/plSimulationMgr.h"
 #include "hsSTLStream.h"
 
 hsBool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)

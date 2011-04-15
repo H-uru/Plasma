@@ -46,7 +46,9 @@ ClassDesc2* GetBinkClassDesc()
 
 plBinkBitmapIO::plBinkBitmapIO()
 {
+#ifdef BINK_SDK_AVAILABLE
     fHBink = NULL;
+#endif
     fName[0] = '\0';
 }
 
@@ -65,28 +67,36 @@ BOOL plBinkBitmapIO::OpenBink(BitmapInfo* fbi)
     CloseBink();
 
     strcpy(fName, fbi->Name());
+
+#ifdef BINK_SDK_AVAILABLE
     fHBink = BinkOpen(fbi->Name(), BINKNOSKIP | BINKALPHA);
     if (!fHBink)
     {
         fName[0] = '\0';
         return FALSE;
     }
+#else
+    fName[0] = '\0';
+#endif
 
     return TRUE;
 }
 
 void plBinkBitmapIO::CloseBink()
 {
+#ifdef BINK_SDK_AVAILABLE
     if (fHBink)
     {
         BinkClose(fHBink);
         fHBink = NULL;
         fName[0] = '\0';
     }
+#endif
 }
 
 BMMRES plBinkBitmapIO::GetImageInfo(BitmapInfo* fbi)
 {
+#ifdef BINK_SDK_AVAILABLE
     //-- Get File Info -------------------------
     if (!OpenBink(fbi))
         return (ProcessImageIOError(fbi));
@@ -101,6 +111,9 @@ BMMRES plBinkBitmapIO::GetImageInfo(BitmapInfo* fbi)
     fbi->SetFlags(MAP_HAS_ALPHA);
 
     return BMMRES_SUCCESS;
+#else
+    return nil;
+#endif
 }
 
 BitmapStorage* plBinkBitmapIO::Load(BitmapInfo* fbi, Bitmap* map, BMMRES* status)
@@ -120,11 +133,13 @@ BitmapStorage* plBinkBitmapIO::Load(BitmapInfo* fbi, Bitmap* map, BMMRES* status
         return NULL;
 
     //-- Open Bink File -----------------------------------
+#ifdef BINK_SDK_AVAILABLE
     if (!OpenBink(fbi))
     {
         *status = ProcessImageIOError(fbi);
         return NULL;
     }
+#endif
 
     // Get frame number //////////////////////////////////
     int frame;
@@ -162,6 +177,7 @@ BitmapStorage* plBinkBitmapIO::Load(BitmapInfo* fbi, Bitmap* map, BMMRES* status
     }
 
     // Decompress the specified frame
+#ifdef BINK_SDK_AVAILABLE
     BinkGoto(fHBink, frame, NULL);
     BinkDoFrame(fHBink);
     // Copy frame to buffer
@@ -197,6 +213,7 @@ BitmapStorage* plBinkBitmapIO::Load(BitmapInfo* fbi, Bitmap* map, BMMRES* status
 
     LocalFree(line);
     LocalFree(Buffer);
+#endif
     
     return s;
 }

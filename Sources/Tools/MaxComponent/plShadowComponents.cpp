@@ -30,20 +30,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxExport/plExportProgressBar.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxExport/plExportProgressBar.h"
 
 #include "hsTypes.h"
 
 #include "plShadowComponents.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plObjRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plObjRefMsg.h"
 
-#include "../plGLight/plLightInfo.h"
-#include "../plGLight/plShadowCaster.h"
-#include "../plGLight/plPointShadowMaster.h"
-#include "../plGLight/plDirectShadowMaster.h"
+#include "plGLight/plLightInfo.h"
+#include "plGLight/plShadowCaster.h"
+#include "plGLight/plPointShadowMaster.h"
+#include "plGLight/plDirectShadowMaster.h"
 
 #include "hsResMgr.h"
 

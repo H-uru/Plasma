@@ -26,12 +26,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plAnimCompProc.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 #include "plComponentBase.h"
 
 #include "plPickNode.h"
 #include "plAnimComponent.h"
-#include "../../PubUtilLib/plInterp/plAnimEaseTypes.h"
+#include "plInterp/plAnimEaseTypes.h"
 
 plAnimCompProc::plAnimCompProc() :
     fCompButtonID(0),

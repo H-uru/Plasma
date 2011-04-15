@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPickMaterialMap.h"
 #include "max.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
 // MAXR4 HACK
 // Coming in the backdoor...

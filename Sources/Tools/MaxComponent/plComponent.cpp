@@ -27,5 +27,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h" // Needed for the kTargs enum
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 

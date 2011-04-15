@@ -36,18 +36,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 // other
-#include "../plPhysical/plSimDefs.h"
+#include "plPhysical/plSimDefs.h"
 #include "plPhysicsGroups.h"
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxMain/plPhysicalProps.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/plPhysicalProps.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "../plPhysical/plCollisionDetector.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../plMessage/plSwimMsg.h"
-#include "../plAvatar/plSwimRegion.h"
-#include "../plMessage/plRideAnimatedPhysMsg.h"
+#include "plPhysical/plCollisionDetector.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "plMessage/plSwimMsg.h"
+#include "plAvatar/plSwimRegion.h"
+#include "plMessage/plRideAnimatedPhysMsg.h"
 
 /////////////////////////////////////////////////////////////////
 //

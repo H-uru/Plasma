@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "dummy.h"
 
 //To support the new Plasma Light Objs, the classes are included below
-#include "../MaxPlasmaLights/plRealTimeLightBase.h"
+#include "MaxPlasmaLights/plRealTimeLightBase.h"
 
 
 #include <vector>
@@ -42,14 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "GlobalUtility.h"  // Only needed for PLASMA_MAX_CLASSID, fix?
 
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "../pnModifier/plModifier.h"
+#include "pnModifier/plModifier.h"
 
-#include "../MaxPlasmaMtls/Materials/plDecalMtl.h"
+#include "MaxPlasmaMtls/Materials/plDecalMtl.h"
 
-#include "../MaxComponent/plComponentBase.h"
+#include "MaxComponent/plComponentBase.h"
 
 CoreExport void *__cdecl MAX_new(size_t size);
 CoreExport void __cdecl MAX_delete(void* mem);

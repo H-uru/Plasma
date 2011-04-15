@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "hsUtils.h"
 
-#include "../plAvatar/plAnimStage.h"
+#include "plAvatar/plAnimStage.h"
 
 // We don't want to be subject to any changes to ReadSafeString, so we just keep
 // our own version now.  Unfortunately, some files were saved with a modified

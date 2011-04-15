@@ -28,11 +28,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRealTimeLights.h"
 #include "plRTProjDirLightClassDesc.h"
 
-#include "../pnMessage/pnMessageCreatable.h"
-#include "../pnKeyedObject/pnKeyedObjectCreatable.h"
-#include "../pnNetCommon/pnNetCommonCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
 
-#include "../plSurface/plLayerInterface.h"
+#include "plSurface/plLayerInterface.h"
 REGISTER_NONCREATABLE( plLayerInterface );
 
 

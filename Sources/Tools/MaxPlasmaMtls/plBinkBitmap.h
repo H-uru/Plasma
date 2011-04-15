@@ -29,12 +29,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Max.h>
 #include <commdlg.h>
 #include <bmmlib.h>
+
+#ifdef BINK_SDK_AVAILABLE
 #include "Bink.h"
+#endif
 
 class plBinkBitmapIO : public BitmapIO
 {
 private:
+#ifdef BINK_SDK_AVAILABLE
     HBINK fHBink;           // Handle to currently opened Bink
+#endif
     TCHAR fName[MAX_PATH];  // Name of currently opened Bink
 
     BOOL OpenBink(BitmapInfo* fbi);

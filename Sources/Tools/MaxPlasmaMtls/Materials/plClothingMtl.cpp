@@ -25,17 +25,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsUtils.h"
 #include "plClothingMtl.h"
-#include "resource.h"
+#include "../resource.h"
 #include "Shaders.h"
 
 #include "iparamm2.h"
 
-#include "../MaxMain/plPlasmaRefMsgs.h"
-#include "plBMSampler.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
+#include "../plBMSampler.h"
 #include "stdmat.h"
-#include "Layers/plLayerTex.h"
-#include "Layers/plLayerTexBitmapPB.h"
-#include "../../Plasma/PubUtilLib/plAvatar/plClothingLayout.h"
+#include "../Layers/plLayerTex.h"
+#include "../Layers/plLayerTexBitmapPB.h"
+#include "plAvatar/plClothingLayout.h"
 
 extern HINSTANCE hInstance;
 

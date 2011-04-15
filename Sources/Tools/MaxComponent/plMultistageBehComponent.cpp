@@ -32,11 +32,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 #include "resource.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxMain/plMaxAccelerators.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxAccelerators.h"
 
-#include "../plAvatar/plAnimStage.h"
-#include "../plAvatar/plMultistageBehMod.h"
+#include "plAvatar/plAnimStage.h"
+#include "plAvatar/plMultistageBehMod.h"
 #include "hsResMgr.h"
 
 #include <map>

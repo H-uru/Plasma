@@ -32,22 +32,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMiscComponents.h"
 #include "plSoftVolumeComponent.h"
 
-#include "../MaxMain/plPlasmaRefMsgs.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plMaxNode.h"
 
-#include "../plIntersect/plSoftVolumeTypes.h"
-#include "../plIntersect/plVolumeIsect.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plObjRefMsg.h"
+#include "plIntersect/plSoftVolumeTypes.h"
+#include "plIntersect/plVolumeIsect.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plObjRefMsg.h"
 #include "hsResMgr.h"
 
-#include "../plGLight/plLightInfo.h"
-#include "../plScene/plOccluder.h"
+#include "plGLight/plLightInfo.h"
+#include "plScene/plOccluder.h"
 
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../plScene/plVisRegion.h"
-#include "../plScene/plRelevanceRegion.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "plScene/plVisRegion.h"
+#include "plScene/plRelevanceRegion.h"
 
 void DummyCodeIncludeFuncSoftVolume() {}
 

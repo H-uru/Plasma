@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "max.h"
-#include "../pnModifier/plModifier.h"
+#include "pnModifier/plModifier.h"
 
 #include "plComponentTools.h"
 

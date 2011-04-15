@@ -28,21 +28,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResponderComponentPriv.h"
 #include "resource.h"
 #include "max.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 #include "hsResMgr.h"
 #include "plMiscComponents.h"
 // Needed for the dialog
-#include "../MaxMain/plMaxCFGFile.h"
-#include "../plFile/hsFiles.h"
-#include "../plAgeDescription/plAgeDescription.h"
+#include "MaxMain/plMaxCFGFile.h"
+#include "plFile/hsFiles.h"
+#include "plAgeDescription/plAgeDescription.h"
 
 // Needed to create the message
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../pnNetCommon/pnNetCommon.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plNetCommon/plNetCommon.h"
-#include "../plNetCommon/plSpawnPointInfo.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "pnNetCommon/pnNetCommon.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plNetCommon/plSpawnPointInfo.h"
 
 enum
 {

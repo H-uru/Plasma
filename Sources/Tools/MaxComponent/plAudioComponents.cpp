@@ -33,51 +33,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioComponents.h"
 #include "plMiscComponents.h"
 #include "plAnimComponent.h"
-#include "../plInterp/plAnimEaseTypes.h"
-#include "../plAvatar/plAGAnim.h"
+#include "plInterp/plAnimEaseTypes.h"
+#include "plAvatar/plAGAnim.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
-#include "../MaxConvert/plConvert.h"
-#include "../MaxMain/plPluginResManager.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxConvert/plConvert.h"
+#include "MaxMain/plPluginResManager.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
 
 #include "plgDispatch.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plIntRefMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
 
 
-#include "../plScene/plSceneNode.h"
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/hsControlConverter.h"
-#include "../plInterp/plController.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../pnKeyedObject/plKey.h"
+#include "plScene/plSceneNode.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/hsControlConverter.h"
+#include "plInterp/plController.h"
+#include "MaxMain/plMaxNode.h"
+#include "pnKeyedObject/plKey.h"
 
 //Physics Related
 //#include "../plHavok1/plHKPhysical.h"         //Physics Comp
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../MaxMain/plPhysicalProps.h"
-#include "../plPhysX/plPXPhysical.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "MaxMain/plPhysicalProps.h"
+#include "plPhysX/plPXPhysical.h"
 
 // Sound Related
-#include "../plPhysical/plEnvEffectDetector.h"
-#include "../pnMessage/plEnvEffectMsg.h"
-#include "../PubUtilLib/plAudible/plWinAudible.h"
-#include "../pnSceneObject/plAudioInterface.h"
+#include "plPhysical/plEnvEffectDetector.h"
+#include "pnMessage/plEnvEffectMsg.h"
+#include "PubUtilLib/plAudible/plWinAudible.h"
+#include "pnSceneObject/plAudioInterface.h"
 
 // Anim Related
 #include "plMaxAnimUtils.h"
 #include "plMaxWaveUtils.h"
-#include "../pfAudio/plRandomSoundMod.h"
-#include "../plAudio/plWin32StaticSound.h"
-#include "../plAudio/plWin32StreamingSound.h"
-#include "../plAudio/plWin32GroupedSound.h"
-#include "../plAudioCore/plSoundBuffer.h"
-#include "../plFile/plFileUtils.h"
+#include "pfAudio/plRandomSoundMod.h"
+#include "plAudio/plWin32StaticSound.h"
+#include "plAudio/plWin32StreamingSound.h"
+#include "plAudio/plWin32GroupedSound.h"
+#include "plAudioCore/plSoundBuffer.h"
+#include "plFile/plFileUtils.h"
 
 // Valdez Asset Manager Related
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
@@ -88,16 +88,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../plIntersect/plSoftVolume.h"
 
 // Misc
-#include "../MaxMain/plMaxCFGFile.h"
+#include "MaxMain/plMaxCFGFile.h"
 #include "plPickNode.h"
 
 // EAX stuff
-#include "../plAudio/plEAXListenerMod.h"
+#include "plAudio/plEAXListenerMod.h"
 #include <eax-util.h>
 #include <eaxlegacy.h>
 
-#include "../plResMgr/plLocalization.h"
-#include "../plPhysical/plPhysicalSndGroup.h"
+#include "plResMgr/plLocalization.h"
+#include "plPhysical/plPhysicalSndGroup.h"
 
 // EAX3 values which eax4 no longer defines, but we still need.
 // Single window material preset

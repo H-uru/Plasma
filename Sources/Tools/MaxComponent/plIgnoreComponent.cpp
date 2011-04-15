@@ -31,17 +31,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMiscComponents.h"
 #include "plComponentReg.h"
 
-#include "../MaxMain/plPlasmaRefMsgs.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plMaxNode.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
 
-#include "../plMessage/plSimStateMsg.h"
-#include "../pnMessage/plEnableMsg.h"
+#include "plMessage/plSimStateMsg.h"
+#include "pnMessage/plEnableMsg.h"
 
-#include "../MaxMain/plPluginResManager.h"
+#include "MaxMain/plPluginResManager.h"
 
 void DummyCodeIncludeFuncIgnore() {}
 

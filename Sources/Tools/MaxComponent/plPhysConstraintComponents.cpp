@@ -48,13 +48,13 @@ OBSOLETE_CLASS(plStrongSpringConstraintComponent, gPhysStrongSpringConstDesc, "(
 #include <hkdynamics/entity/rigidcollection.h>
 #include <hkdynamics/util/units.h>
 
-//#include "../plHavok1/plHKConstraintSolver.h"     //Got Havok Messiness...  Must go before all plasma directories...
-//#include "../plHavok1/plHavokConstraintTools.h"
+//#include "plHavok1/plHKConstraintSolver.h"     //Got Havok Messiness...  Must go before all plasma directories...
+//#include "plHavok1/plHavokConstraintTools.h"
 
 #include "plPhysicalComponents.h"
 #include "plComponentProcBase.h"
-#include "../plPhysical/plPhysicsGroups.h"
-#include "../MaxMain/plPhysicalProps.h"
+#include "plPhysical/plPhysicsGroups.h"
+#include "MaxMain/plPhysicalProps.h"
 //#include "max.h"                              //Max Dependencies, reffed in plEventGroupDefs
 
 #include "resource.h"                           //Resource Dependencies
@@ -62,24 +62,24 @@ OBSOLETE_CLASS(plStrongSpringConstraintComponent, gPhysStrongSpringConstDesc, "(
 
 #include "plComponent.h"                        //Component Dependencies
 #include "plComponentReg.h"                     //  Ibid
-#include "../pnSceneObject/plSceneObject.h"     //  Ibid
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plScene/plSceneNode.h"             //  Ibid
-#include "../pnKeyedObject/plKey.h"             //  Ibid
-#include "../MaxMain/plMaxNode.h"               //  Ibid
+#include "pnSceneObject/plSceneObject.h"     //  Ibid
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plScene/plSceneNode.h"             //  Ibid
+#include "pnKeyedObject/plKey.h"             //  Ibid
+#include "MaxMain/plMaxNode.h"               //  Ibid
 
-#include "../MaxConvert/hsConverterUtils.h"     //Conversion Dependencies
-#include "../MaxConvert/hsControlConverter.h"   //  Ibid
+#include "MaxConvert/hsConverterUtils.h"     //Conversion Dependencies
+#include "MaxConvert/hsControlConverter.h"   //  Ibid
 
-#include "../plHavok1/plHKPhysical.h"           //Havok Dependencies
-#include "../MaxMain/plPhysicalProps.h"
+#include "plHavok1/plHKPhysical.h"           //Havok Dependencies
+#include "MaxMain/plPhysicalProps.h"
 
-#include "plgDispatch.h"                        //Message Dependencies
-#include "../pnMessage/plObjRefMsg.h"           //  Ibid
-#include "../pnMessage/plIntRefMsg.h"           //  Ibid    
-#include "../pnMessage/plNodeRefMsg.h"          //  Ibid
-#include "../MaxMain/plPlasmaRefMsgs.h"         //  Ibid
-#include "../plModifier/plAliasModifier.h"
+#include "plgDispatch.h"                     //Message Dependencies
+#include "pnMessage/plObjRefMsg.h"           //  Ibid
+#include "pnMessage/plIntRefMsg.h"           //  Ibid    
+#include "pnMessage/plNodeRefMsg.h"          //  Ibid
+#include "MaxMain/plPlasmaRefMsgs.h"         //  Ibid
+#include "plModifier/plAliasModifier.h"
 
 //
 //  DummyCodeIncludeFuncPhys Function.

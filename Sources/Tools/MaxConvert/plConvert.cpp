@@ -46,25 +46,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLayerConverter.h"
 #include "UserPropMgr.h"
 #include "hsStringTokenizer.h"
-#include "../MaxExport/plErrorMsg.h"
+#include "MaxExport/plErrorMsg.h"
 #include "hsVertexShader.h"
 #include "plLightMapGen.h"
 #include "plBitmapCreator.h"
 #include "plgDispatch.h"
 
-#include "../pnMessage/plTimeMsg.h"
-#include "../MaxComponent/plComponent.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../plMessage/plNodeCleanupMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../MaxComponent/plClusterComponent.h"
+#include "pnMessage/plTimeMsg.h"
+#include "MaxComponent/plComponent.h"
+#include "MaxMain/plMaxNode.h"
+#include "plMessage/plNodeCleanupMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "MaxComponent/plClusterComponent.h"
 
-#include "../plPhysX/plSimulationMgr.h"
-#include "../MaxMain/plPhysXCooking.h"
-#include "../MaxExport/plExportProgressBar.h"
+#include "plPhysX/plSimulationMgr.h"
+#include "MaxMain/plPhysXCooking.h"
+#include "MaxExport/plExportProgressBar.h"
 #include "hsUtils.h"
 
-#include "../MaxMain/plGetLocationDlg.h"
+#include "MaxMain/plGetLocationDlg.h"
 
 #ifdef HS_DEBUGGING
 #define HS_NO_TRY
@@ -113,87 +113,87 @@ hsBool plConvert::Convert()
     if(IOK())
     {
         bar.Start("Clear Old Data");
-        retVal = pNode->DoAllRecur( plMaxNode::ClearData,               fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoAllRecur( &plMaxNode::ClearData, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         bar.Start("Convert Validate");
-        retVal = pNode->DoRecur( plMaxNode::ConvertValidate,            fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::ConvertValidate, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         bar.Start("Components Initialize");
-        retVal = pNode->DoRecur( plMaxNode::SetupPropertiesPass,        fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::SetupPropertiesPass, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         bar.Start("Prepare for skinning");
-        retVal = pNode->DoRecur( plMaxNode::PrepareSkin,                fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::PrepareSkin, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         bar.Start("Make Scene Object");
-        retVal = pNode->DoRecur( plMaxNode::MakeSceneObject,            fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakeSceneObject, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         bar.Start("Make Physical");
         plPhysXCooking::Init();
-        retVal = pNode->DoRecur( plMaxNode::MakePhysical,               fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakePhysical, fpErrorMsg, fSettings, &bar );
         plPhysXCooking::Shutdown();
     }
     if(IOK())
     {
         bar.Start("Component Preconvert");
-        retVal = pNode->DoRecur( plMaxNode::FirstComponentPass,         fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::FirstComponentPass, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         bar.Start("Make Controller");
-        retVal = pNode->DoRecur( plMaxNode::MakeController,             fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakeController, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {   // must be before mesh
         bar.Start("Make Coord Interface");
-        retVal = pNode->DoRecur( plMaxNode::MakeCoordinateInterface,    fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakeCoordinateInterface, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {   // must be after coord interface but before pool data is created.
         bar.Start("Make Connections");
-        retVal = pNode->DoRecur( plMaxNode::MakeParentOrRoomConnection, fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakeParentOrRoomConnection, fpErrorMsg, fSettings, &bar );
     }
 
     if(IOK())
     {   // must be before simulation
         bar.Start("Make Mesh");
-        retVal = pNode->DoRecur( plMaxNode::MakeMesh,                   fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakeMesh, fpErrorMsg, fSettings, &bar );
     }
 
     if(IOK())
     {   // doesn't matter when
         bar.Start("Make Light");
-        retVal = pNode->DoRecur( plMaxNode::MakeLight,                  fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakeLight, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {   // doesn't matter when
         bar.Start("Make Occluder");
-        retVal = pNode->DoRecur( plMaxNode::MakeOccluder,               fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakeOccluder, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {   // must be after mesh
         bar.Start("Make Modifiers");
-        retVal = pNode->DoRecur( plMaxNode::MakeModifiers,              fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakeModifiers, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         bar.Start("Convert Components");
-        retVal = pNode->DoRecur( plMaxNode::ConvertComponents,          fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::ConvertComponents, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         // do this after convert
         bar.Start("Set Up Interface References");
-        retVal = pNode->DoRecur( plMaxNode::MakeIfaceReferences,        fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::MakeIfaceReferences, fpErrorMsg, fSettings, &bar );
     }
 
     if(IOK() && fSettings->fDoPreshade)
@@ -203,7 +203,7 @@ hsBool plConvert::Convert()
         hsVertexShader::Instance().Open();
 
         bar.Start("Preshade Geometry");
-        retVal = pNode->DoRecur( plMaxNode::ShadeMesh,                  fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::ShadeMesh, fpErrorMsg, fSettings, &bar );
 
         plLightMapGen::Instance().Close();
         hsVertexShader::Instance().Close();
@@ -213,13 +213,13 @@ hsBool plConvert::Convert()
     {
         // Do this next-to-last--allows all the components to free up any temp data they kept around
         bar.Start("Component DeInit");
-        retVal = pNode->DoRecur( plMaxNode::DeInitComponents,           fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoRecur( &plMaxNode::DeInitComponents, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         // Do this very last--it de-inits and frees all the maxNodeDatas lying around
         bar.Start("Clear MaxNodeDatas");
-        retVal = pNode->DoAllRecur( plMaxNode::ClearMaxNodeData,            fpErrorMsg, fSettings, &bar );
+        retVal = pNode->DoAllRecur( &plMaxNode::ClearMaxNodeData, fpErrorMsg, fSettings, &bar );
     }
 //  fpErrorMsg->Set();
 
@@ -275,42 +275,42 @@ hsBool plConvert::Convert(hsTArray<plMaxNode*>& nodes)
     hsBool retVal = true;
 
     if (IOK())
-        retVal = ConvertList(nodes, plMaxNode::ClearData, fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::ClearData, fpErrorMsg, fSettings);
 
     if(IOK())
-        retVal = ConvertList(nodes, plMaxNode::ConvertValidate,         fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::ConvertValidate,         fpErrorMsg, fSettings);
     if(IOK())
-        retVal = ConvertList(nodes, plMaxNode::SetupPropertiesPass,     fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::SetupPropertiesPass,     fpErrorMsg, fSettings);
     if(IOK())   
-        retVal = ConvertList(nodes, plMaxNode::PrepareSkin,             fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::PrepareSkin,             fpErrorMsg, fSettings);
     if(IOK())   
-        retVal = ConvertList(nodes, plMaxNode::MakeSceneObject,         fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::MakeSceneObject,         fpErrorMsg, fSettings);
     if(IOK())   
-        retVal = ConvertList(nodes, plMaxNode::FirstComponentPass,      fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::FirstComponentPass,      fpErrorMsg, fSettings);
     if(IOK())   
-        retVal = ConvertList(nodes, plMaxNode::MakeController,          fpErrorMsg,fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::MakeController,          fpErrorMsg,fSettings);
     if(IOK())   
-        retVal = ConvertList(nodes, plMaxNode::MakeCoordinateInterface, fpErrorMsg, fSettings);// must be before mesh
+        retVal = ConvertList(nodes, &plMaxNode::MakeCoordinateInterface, fpErrorMsg, fSettings);// must be before mesh
     if(IOK())
-        retVal = ConvertList(nodes, plMaxNode::MakeParentOrRoomConnection,  fpErrorMsg, fSettings); // after coord, before mesh (or any other pool data).
+        retVal = ConvertList(nodes, &plMaxNode::MakeParentOrRoomConnection,  fpErrorMsg, fSettings); // after coord, before mesh (or any other pool data).
 
     // These shouldn't be opened until the components have had a chance to flag the MaxNodes
     plLightMapGen::Instance().Open(fInterface, fInterface->GetTime(), fSettings->fDoLightMap);
     hsVertexShader::Instance().Open();
 
     if(IOK())   
-        retVal = ConvertList(nodes, plMaxNode::MakeMesh, fpErrorMsg, fSettings);    // must be before simulation
+        retVal = ConvertList(nodes, &plMaxNode::MakeMesh, fpErrorMsg, fSettings);    // must be before simulation
 
     if(IOK())                       // doesn't matter when
-        retVal = ConvertList(nodes, plMaxNode::MakeLight,                   fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::MakeLight,                   fpErrorMsg, fSettings);
     if(IOK())                       // doesn't matter when
-        retVal = ConvertList(nodes, plMaxNode::MakeOccluder,                fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::MakeOccluder,                fpErrorMsg, fSettings);
     if(IOK())                       // must be after mesh
-        retVal = ConvertList(nodes, plMaxNode::MakeModifiers,               fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::MakeModifiers,               fpErrorMsg, fSettings);
     if(IOK())   
-        retVal = ConvertList(nodes, plMaxNode::ConvertComponents,           fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::ConvertComponents,           fpErrorMsg, fSettings);
     if(IOK())
-        retVal = ConvertList(nodes, plMaxNode::ShadeMesh,                   fpErrorMsg, fSettings);
+        retVal = ConvertList(nodes, &plMaxNode::ShadeMesh,                   fpErrorMsg, fSettings);
 
     // These may be used by components, so don't close them till the end.
     plLightMapGen::Instance().Close();

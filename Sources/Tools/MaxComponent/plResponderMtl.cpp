@@ -29,31 +29,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "max.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
-#include "../MaxPlasmaMtls/Materials/plDecalMtl.h"
-#include "../MaxPlasmaMtls/Materials/plPassMtl.h"
+#include "MaxPlasmaMtls/Materials/plDecalMtl.h"
+#include "MaxPlasmaMtls/Materials/plPassMtl.h"
 
-#include "../MaxConvert/plConvert.h"
-#include "../MaxConvert/hsMaterialConverter.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerAnimation.h"
+#include "MaxConvert/plConvert.h"
+#include "MaxConvert/hsMaterialConverter.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerAnimation.h"
 
 #include "plMaxAnimUtils.h"
 #include "plNotetrackAnim.h"
 
 #include "plPickMaterialMap.h"
-#include "../MaxMain/plMtlCollector.h"
+#include "MaxMain/plMtlCollector.h"
 #include "plPickNode.h"
 
 // Needed for convert
-#include "../plMessage/plAnimCmdMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
 
 #include <set>
 #include <vector>
 #include <algorithm>
 
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
 enum
 {

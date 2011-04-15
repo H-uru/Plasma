@@ -28,18 +28,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsResMgr.h"
 #include "plMaxNode.h"
-#include "../MaxSceneViewer/SceneSync.h"
+#include "MaxSceneViewer/SceneSync.h"
 
-#include "../MaxComponent/ComponentDummies.h"
+#include "MaxComponent/ComponentDummies.h"
 #include "plActionTableMgr.h"
 #include "plMaxMenu.h"
-#include "../MaxComponent/plComponentBase.h"
-#include "../MaxSceneViewer/plMaxFileData.h"
-#include "../pfPython/cyPythonInterface.h"
-#include "../MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+#include "MaxComponent/plComponentBase.h"
+#include "MaxSceneViewer/plMaxFileData.h"
+#include "pfPython/cyPythonInterface.h"
+#include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 
 #include "plMaxCFGFile.h"
-#include "../pfLocalizationMgr/pfLocalizationMgr.h"
+#include "pfLocalizationMgr/pfLocalizationMgr.h"
 
 extern plActionTableMgr theActionTableMgr;
 extern HINSTANCE hInstance;

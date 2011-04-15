@@ -32,33 +32,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "../MaxExport/plExportProgressBar.h"
-#include "../MaxMain/plMaxNode.h"
+#include "MaxExport/plExportProgressBar.h"
+#include "MaxMain/plMaxNode.h"
 
 #include "hsTypes.h"
 
 #include "hsBitVector.h"
-#include "../plMath/hsRadixSort.h"
-#include "../plMath/plRandom.h"
-#include "../pfAnimation/plBlower.h"
+#include "plMath/hsRadixSort.h"
+#include "plMath/plRandom.h"
+#include "pfAnimation/plBlower.h"
 
 #include "plDicer.h"
 #include "plDistribComponent.h"
-#include "../MaxConvert/plDistributor.h"
-#include "../MaxConvert/plDistTree.h"
+#include "MaxConvert/plDistributor.h"
+#include "MaxConvert/plDistTree.h"
 #include "plMiscComponents.h"
 
 #include "plClusterComponent.h"
 
 
-#include "../MaxConvert/plClusterUtil.h"
-#include "../plDrawable/plClusterGroup.h"
-#include "../plDrawable/plSpanTemplate.h"
+#include "MaxConvert/plClusterUtil.h"
+#include "plDrawable/plClusterGroup.h"
+#include "plDrawable/plSpanTemplate.h"
 
 #include <vector>
-using namespace std;
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////

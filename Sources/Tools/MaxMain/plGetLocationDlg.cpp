@@ -26,10 +26,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plGetLocationDlg.h"
 #include "plMaxNode.h"
-#include "../MaxComponent/plMiscComponents.h"
+#include "MaxComponent/plMiscComponents.h"
 #include "resource.h"
-#include "../MaxExport/plErrorMsg.h"
-#include "../MaxComponent/plComponent.h"
+#include "MaxExport/plErrorMsg.h"
+#include "MaxComponent/plComponent.h"
 #include "hsUtils.h"
 
 plGetLocationDlg::plGetLocationDlg() : fNode(nil), fErrMsg(nil), fDefaultLocation(nil)

@@ -37,7 +37,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if 0//ndef _plRTLightBaseAnimDlgProc_h
 #define _plRTLightBaseAnimDlgProc_h
 
-#include "../MaxComponent/plNotetrackDlg.h"
+#include "plNotetrackDlg.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Dialog Proc for Animation Rollout ////////////////////////////////////////

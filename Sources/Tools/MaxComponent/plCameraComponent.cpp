@@ -28,21 +28,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "../plPhysical/plCollisionDetector.h"  // MM
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plCameraMsg.h"
+#include "plPhysical/plCollisionDetector.h"  // MM
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plCameraMsg.h"
 
 #include "hsResMgr.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxConvert/plConvert.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxConvert/plConvert.h"
 
-#include "../MaxMain/plPhysicalProps.h"
-#include "../plHavok1/plHKPhysicsGroups.h"
+#include "MaxMain/plPhysicalProps.h"
+#include "plHavok1/plHKPhysicsGroups.h"
 
 void DummyCodeIncludeFuncCamera() {}
 

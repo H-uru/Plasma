@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plNotetrackAnim.h"
 #include "plComponentBase.h"
-#include "../MaxMain/plMaxNodeBase.h"
+#include "MaxMain/plMaxNodeBase.h"
 
 plNotetrackAnim::plNotetrackAnim() : fSegMap(nil)
 {

@@ -31,39 +31,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentProcBase.h"
 #include "plPhysicalComponents.h"
 #include "plMiscComponents.h"
-#include "../MaxMain/plPhysicalProps.h"
+#include "MaxMain/plPhysicalProps.h"
 
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "../plInterp/plController.h"
+#include "plInterp/plController.h"
 #include "plNotetrackAnim.h"
 #include "hsResMgr.h"
-#include "../plAvatar/plAGModifier.h"
-#include "../plAvatar/plAGChannel.h"
-#include "../plAvatar/plAGAnim.h"
-#include "../plAvatar/plAGMasterMod.h"
-#include "../plAvatar/plMatrixChannel.h"
-#include "../plAvatar/plPointChannel.h"
-#include "../plAvatar/plScalarChannel.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxConvert/hsControlConverter.h"
-#include "../MaxPlasmaMtls/Materials/plPassMtlBase.h"
+#include "plAvatar/plAGModifier.h"
+#include "plAvatar/plAGChannel.h"
+#include "plAvatar/plAGAnim.h"
+#include "plAvatar/plAGMasterMod.h"
+#include "plAvatar/plMatrixChannel.h"
+#include "plAvatar/plPointChannel.h"
+#include "plAvatar/plScalarChannel.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxConvert/hsControlConverter.h"
+#include "MaxPlasmaMtls/Materials/plPassMtlBase.h"
 
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 #include "plMaxAnimUtils.h"
 
-#include "../MaxPlasmaLights/plRealTimeLightBase.h"
-#include "../pfAnimation/plLightModifier.h"
-#include "../pnKeyedObject/plMsgForwarder.h"
+#include "MaxPlasmaLights/plRealTimeLightBase.h"
+#include "pfAnimation/plLightModifier.h"
+#include "pnKeyedObject/plMsgForwarder.h"
 
-#include "../plSDL/plSDL.h"
-#include "../plSDL/plSDLDescriptor.h"
+#include "plSDL/plSDL.h"
+#include "plSDL/plSDLDescriptor.h"
 
 #include "plPickNodeBase.h"
 
 
 // For material animations
-#include "../MaxPlasmaMtls/Materials/plAnimStealthNode.h"
+#include "MaxPlasmaMtls/Materials/plAnimStealthNode.h"
 
 // So that the linker won't throw this code away, since it doesn't appear to be used
 void DummyCodeIncludeFunc() {}
@@ -419,7 +419,7 @@ static plEaseAccessor gAnimCompEaseAccessor(plComponentBase::kBlkComp,
 CLASS_DESC(plAnimComponent, gAnimDesc, "Animation",  "Animation", COMP_TYPE_MISC, ANIM_COMP_CID)
 CLASS_DESC(plAnimGroupedComponent, gAnimGroupedDesc, "Animation Grouped",  "AnimGrouped", COMP_TYPE_MISC, ANIM_GROUP_COMP_CID)
 
-plAnimComponentBase::IsAnimComponent(plComponentBase *comp)
+hsBool plAnimComponentBase::IsAnimComponent(plComponentBase *comp)
 {
     return (comp->ClassID() == ANIM_COMP_CID ||
             comp->ClassID() == ANIM_GROUP_COMP_CID);

@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "bmmlib.h"
 #include "istdplug.h"
 #include "texutil.h"
-#include "../../../Sources/Plasma/PubUtilLib/plInterp/hsKeys.h"
+#include "plInterp/hsKeys.h"
 #include "hsTemplates.h"
 
 class plMaxNode;

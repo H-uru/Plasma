@@ -27,19 +27,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPluginResManager.h"
 #include "hsTypes.h"
 #include "hsTemplates.h"
-#include "../plResMgr/plRegistryNode.h"
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plVersion.h"
-#include "../plResMgr/plResMgrSettings.h"
-#include "../plScene/plSceneNode.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plKeyImp.h"
-#include "../plAgeDescription/plAgeDescription.h"
+#include "plResMgr/plRegistryNode.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plVersion.h"
+#include "plResMgr/plResMgrSettings.h"
+#include "plScene/plSceneNode.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "plAgeDescription/plAgeDescription.h"
 #include "plgDispatch.h"
 
 // For our common object libs
 #include "plCommonObjLib.h"
-#include "../MaxComponent/plMiscComponents.h"
+#include "MaxComponent/plMiscComponents.h"
 
 plKey plPluginResManager::NameToLoc(const char* age, const char* page, Int32 sequenceNumber, hsBool itinerant)
 {

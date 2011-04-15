@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 
 #include "hsResMgr.h"
-#include "../plResMgr/plPageInfo.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnFactory/plFactory.h"
+#include "plResMgr/plPageInfo.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnFactory/plFactory.h"
 
 class MaxUtilsClassDesc : public ClassDesc
 {
@@ -97,7 +97,7 @@ BOOL plMaxUtils::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 #include "plMtlCollector.h"
-#include "../MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+#include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 #include "../../AssetMan/PublicInterface/AssManTypes.h"
 
 int ClearTextureIds()

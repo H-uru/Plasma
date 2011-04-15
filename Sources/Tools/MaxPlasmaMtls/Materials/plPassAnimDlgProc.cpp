@@ -33,15 +33,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPassAnimDlgProc.h"
 
 #include "plPassBaseParamIDs.h"
-#include "../MaxComponent/plNotetrackAnim.h"
-#include "resource.h"
+#include "MaxComponent/plNotetrackAnim.h"
+#include "../resource.h"
 #include "iparamm2.h"
 
 #include "plAnimStealthNode.h"
 
-#include "../MaxComponent/plMaxAnimUtils.h"
-#include "../MaxComponent/plAnimComponent.h"
-#include "../MaxExport/plErrorMsg.h"
+#include "MaxComponent/plMaxAnimUtils.h"
+#include "MaxComponent/plAnimComponent.h"
+#include "MaxExport/plErrorMsg.h"
 
 const char *kPassNameNone = ENTIRE_ANIMATION_NAME;
 

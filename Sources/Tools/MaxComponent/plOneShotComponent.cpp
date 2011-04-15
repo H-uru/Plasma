@@ -30,40 +30,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 #if 0
-#include "../MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/hsConverterUtils.h"
 
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "plgDispatch.h"
-#include "../plScene/plSceneNode.h"
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/hsControlConverter.h"
-#include "../pnKeyedObject/plKey.h"
+#include "plScene/plSceneNode.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/hsControlConverter.h"
+#include "pnKeyedObject/plKey.h"
 
 
-#include "../PubUtilLib/plResMgr/plLoc.h"
+#include "plResMgr/plLoc.h"
 
 
-#include "../MaxMain/plPlasmaRefMsgs.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plIntRefMsg.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plIntRefMsg.h"
 
 #include "plMaxAnimUtils.h"
 #include "tempAnim.h"
-#include "../plInterp/plController.h"
-#include "../plHavok1/plHKPhysical.h"
-#include "../plAvatar/plAvatarMod.h"
-#include "../plModifier/plAliasModifier.h"
-#include "../plAudible/plWinAudible.h"
-#include "../pnSceneObject/plAudioInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "plInterp/plController.h"
+#include "plHavok1/plHKPhysical.h"
+#include "plAvatar/plAvatarMod.h"
+#include "plModifier/plAliasModifier.h"
+#include "plAudible/plWinAudible.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 #endif
 
 #include "hsResMgr.h"
-#include "../plAvatar/plOneShotMod.h"
+#include "plAvatar/plOneShotMod.h"
 
 #include <map>
 

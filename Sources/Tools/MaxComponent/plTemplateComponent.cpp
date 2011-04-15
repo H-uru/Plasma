@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 
 #include "hsTemplates.h"
-#include "../MaxMain/plPluginResManager.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnKeyedObject/plKey.h"
+#include "MaxMain/plPluginResManager.h"
+#include "MaxMain/plMaxNode.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnKeyedObject/plKey.h"
 
 #include "plMiscComponents.h"
 

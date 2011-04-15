@@ -37,11 +37,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plRealTimeLights.h"
 #include "iparamm2.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
-#include "../MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
-#include "../MaxComponent/plMaxAnimUtils.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
+#include "MaxComponent/plMaxAnimUtils.h"
 #include "plRTLightBaseAnimDlgProc.h"
-#include "../plGLight/plLightKonstants.h"
+#include "plGLight/plLightKonstants.h"
 
 void DummyLightCodeIncludeFunc() {}
 

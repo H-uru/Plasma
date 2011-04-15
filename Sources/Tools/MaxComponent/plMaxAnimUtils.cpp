@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 
 #include "plMaxAnimUtils.h"
-#include "../MaxExport/plErrorMsg.h"
+#include "MaxExport/plErrorMsg.h"
 
 float TimeValueToGameTime(TimeValue t)
 {

@@ -34,12 +34,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 
 // other
-#include "../MaxMain/plMaxNode.h"
-#include "../plMessage/plClimbMsg.h"
-#include "../plPhysical/plCollisionDetector.h"
-#include "../MaxMain/plPhysicalProps.h"
-#include "../plPhysical/plSimDefs.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "MaxMain/plMaxNode.h"
+#include "plMessage/plClimbMsg.h"
+#include "plPhysical/plCollisionDetector.h"
+#include "MaxMain/plPhysicalProps.h"
+#include "plPhysical/plSimDefs.h"
+#include "pnSceneObject/plSceneObject.h"
 
 // stl
 #include <map>

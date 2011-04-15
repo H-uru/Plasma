@@ -35,17 +35,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxExport/plExportProgressBar.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxExport/plExportProgressBar.h"
 
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
 
 #include "hsTypes.h"
 
-#include "../MaxConvert/plDistributor.h"
-#include "../MaxConvert/plDistTree.h" // FISH HACK - just testing
+#include "MaxConvert/plDistributor.h"
+#include "MaxConvert/plDistTree.h" // FISH HACK - just testing
 
 #include "plDistribComponent_old.h"
 

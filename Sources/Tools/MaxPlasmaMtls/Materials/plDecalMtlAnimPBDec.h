@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plDecalMtl.h"
 #include "plPassBaseParamIDs.h"
-#include "resource.h"
+#include "../resource.h"
 #include "iparamm2.h"
 
 #include "plPassAnimDlgProc.h"

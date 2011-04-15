@@ -34,38 +34,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plExportErrorMsg.h"
 #include "plExportLogErrorMsg.h"
 
-#include "../MaxConvert/UserPropMgr.h"
+#include "MaxConvert/UserPropMgr.h"
 #include "hsExceptionStack.h"
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/plBitmapCreator.h"
-#include "../pfPython/plPythonFileMod.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/plBitmapCreator.h"
+#include "pfPython/plPythonFileMod.h"
 
-#include "../MaxMain/plPluginResManager.h"
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plRegistryNode.h"
+#include "MaxMain/plPluginResManager.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plRegistryNode.h"
 #include "hsStream.h"
-#include "../MaxConvert/plConvert.h"
-#include "../MaxConvert/hsMaterialConverter.h"
+#include "MaxConvert/plConvert.h"
+#include "MaxConvert/hsMaterialConverter.h"
 
-#include "../plPhysX/plSimulationMgr.h"
-#include "../plSDL/plSDL.h"
-#include "../MaxMain/plMaxCFGFile.h"
+#include "plPhysX/plSimulationMgr.h"
+#include "plSDL/plSDL.h"
+#include "MaxMain/plMaxCFGFile.h"
 
 // For texture export/cleanup
-#include "../MaxMain/plTextureExportLog.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../plGImage/plCubicEnvironmap.h"
-#include "../plGImage/plDynamicTextMap.h"
-#include "../plGImage/plMipmap.h"
-#include "../plScene/plSceneNode.h"
+#include "MaxMain/plTextureExportLog.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "plGImage/plCubicEnvironmap.h"
+#include "plGImage/plDynamicTextMap.h"
+#include "plGImage/plMipmap.h"
+#include "plScene/plSceneNode.h"
 
 #include "plExportDlg.h"
 
-#include "../plStatusLog/plStatusLog.h"
-#include "../plFile/plFileUtils.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plFile/plFileUtils.h"
 
-#include "../plAvatar/plAvatarMgr.h"
+#include "plAvatar/plAvatarMgr.h"
 
 extern UserPropMgr gUserPropMgr;
 

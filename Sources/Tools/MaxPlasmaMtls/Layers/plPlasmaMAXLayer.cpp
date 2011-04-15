@@ -44,13 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "istdplug.h"
 #include "iparamb2.h"
 #include "iparamm2.h"
-#include "resource.h"
+#include "../resource.h"
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 
 #include "hsUtils.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnMessage/plRefMsg.h"
-#include "../plSurface/plLayerInterface.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnMessage/plRefMsg.h"
+#include "plSurface/plLayerInterface.h"
 #include "hsResMgr.h"
 
 

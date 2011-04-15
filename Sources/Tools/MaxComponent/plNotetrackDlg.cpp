@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "max.h"
 #include "iparamb2.h"
-#include "../plInterp/plAnimEaseTypes.h"
+#include "plInterp/plAnimEaseTypes.h"
 
 plNoteTrackDlg::plNoteTrackDlg() : fhAnim(NULL), fhLoop(NULL), fPB(nil), fAnimID(-1), fLoopID(-1), fSegMap(nil), fOwner(nil)
 {

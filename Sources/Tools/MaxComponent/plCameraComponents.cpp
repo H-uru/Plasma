@@ -28,45 +28,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "max.h"                                //Max Dependencies
 
 #include "resource.h"                           //Resource Dependencies
-#include "hsResMgr.h"       //  Ibid
+#include "hsResMgr.h"                           //  Ibid
 
 #include "plComponent.h"                        //Component Dependencies
 #include "plComponentReg.h" 
 #include "plCameraComponents.h"                 //  Ibid
 #include "plAnimComponent.h"                    //  Ibid
-#include "../pnSceneObject/plSceneObject.h"     //  Ibid
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plScene/plSceneNode.h"             //  Ibid
-#include "../pnKeyedObject/plKey.h"             //  Ibid
-#include "../MaxMain/plMaxNode.h"               //  Ibid
-#include "../MaxMain/plMaxNodeData.h"               //  Ibid
+#include "pnSceneObject/plSceneObject.h"        //  Ibid
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plScene/plSceneNode.h"                //  Ibid
+#include "pnKeyedObject/plKey.h"                //  Ibid
+#include "MaxMain/plMaxNode.h"                  //  Ibid
+#include "MaxMain/plMaxNodeData.h"              //  Ibid
 
-#include "../MaxConvert/plConvert.h"
-#include "../MaxConvert/hsConverterUtils.h"     //Conversion Dependencies
-#include "../MaxConvert/hsControlConverter.h"   //  Ibid
+#include "MaxConvert/plConvert.h"
+#include "MaxConvert/hsConverterUtils.h"     //Conversion Dependencies
+#include "MaxConvert/hsControlConverter.h"   //  Ibid
 
-#include "../plPhysical/plSimDefs.h"
+#include "plPhysical/plSimDefs.h"
 
-#include "plgDispatch.h"                        //Message Dependencies
-#include "../pnMessage/plObjRefMsg.h"           //  Ibid
-#include "../pnMessage/plIntRefMsg.h"           //  Ibid    
-#include "../pnMessage/plNodeRefMsg.h"          //  Ibid
-#include "../pnMessage/plCameraMsg.h"           //  Ibid
-#include "../MaxMain/plPlasmaRefMsgs.h"         //  Ibid
-#include "../pfAnimation/plLineFollowMod.h"
-#include "../plPhysical/plCollisionDetector.h"  // MM
+#include "plgDispatch.h"                     //Message Dependencies
+#include "pnMessage/plObjRefMsg.h"           //  Ibid
+#include "pnMessage/plIntRefMsg.h"           //  Ibid    
+#include "pnMessage/plNodeRefMsg.h"          //  Ibid
+#include "pnMessage/plCameraMsg.h"           //  Ibid
+#include "MaxMain/plPlasmaRefMsgs.h"         //  Ibid
+#include "pfAnimation/plLineFollowMod.h"
+#include "plPhysical/plCollisionDetector.h"  // MM
 
-#include "../pfCamera/plCameraBrain.h"
-#include "../pfCamera/plCameraModifier.h"
+#include "pfCamera/plCameraBrain.h"
+#include "pfCamera/plCameraModifier.h"
 #include "plMiscComponents.h"
-#include "../MaxMain/plPhysicalProps.h"
+#include "MaxMain/plPhysicalProps.h"
 #include "plPhysicalComponents.h"
 
 // Line Follow related
-#include "../plInterp/plAnimPath.h"
-#include "../plInterp/plController.h"
-#include "../pfAnimation/plLineFollowMod.h"
-#include "../pfAnimation/plFollowMod.h"
+#include "plInterp/plAnimPath.h"
+#include "plInterp/plController.h"
+#include "pfAnimation/plLineFollowMod.h"
+#include "pfAnimation/plFollowMod.h"
 
 #include <vector>
 #include <string>
@@ -2397,12 +2397,13 @@ plCameraAnimCmdComponent::plCameraAnimCmdComponent()
     fIgnoreFOV = false;
 }
 
-plCameraAnimCmdComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+hsBool plCameraAnimCmdComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     fIgnoreFOV = fCompPB->GetInt(kIgnoreFOV);
     return true;
 }
-plCameraAnimCmdComponent::Convert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+
+hsBool plCameraAnimCmdComponent::Convert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     plSceneObject* pObj = pNode->GetSceneObject();
     const plCameraModifier1* pCamMod = nil;

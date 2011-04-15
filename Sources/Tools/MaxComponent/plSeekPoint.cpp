@@ -31,20 +31,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "hsResMgr.h"
 
-#include "../plScene/plSceneNode.h"
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/plConvert.h"
-#include "../MaxConvert/hsControlConverter.h"
-#include "../MaxMain/plMaxNode.h"
+#include "plScene/plSceneNode.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/plConvert.h"
+#include "MaxConvert/hsControlConverter.h"
+#include "MaxMain/plMaxNode.h"
 #include "hsGeometry3.h"
 
-#include "../plAvatar/plSeekPointMod.h"
+#include "plAvatar/plSeekPointMod.h"
 
 //Necessary Empty function.  Otherwise Linker throws the Paramblock away as extraneous.
 void DummyCodeIncludeFuncSeekPoint()

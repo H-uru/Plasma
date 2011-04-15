@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
 #include "plAnimObjInterface.h"
 #include "plNoteTrackDlgComp.h"
@@ -66,7 +66,7 @@ public:
 
     virtual plKey GetModKey(plMaxNode *node)=0;
     const char *GetAnimName();
-    static IsAnimComponent(plComponentBase *comp);
+    static hsBool IsAnimComponent(plComponentBase *comp);
 
     std::map<plMaxNode*, plAGAnim*> fAnims;
 
