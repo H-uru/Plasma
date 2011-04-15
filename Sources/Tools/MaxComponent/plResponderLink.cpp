@@ -135,7 +135,7 @@ const char *plResponderCmdLink::GetInstanceName(IParamBlock2 *pb)
 
 void plResponderCmdLink::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb)
 {
-    char * spawnPtName = pb->GetStr( kLinkAgeSpawnPointName );
+    const char * spawnPtName = pb->GetStr( kLinkAgeSpawnPointName );
     if ( !spawnPtName )
     {
         // set defaults
@@ -144,7 +144,7 @@ void plResponderCmdLink::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, I
     }
     else
     {
-        char * spawnPtTitle = pb->GetStr( kLinkAgeSpawnPointTitle );
+        const char * spawnPtTitle = pb->GetStr( kLinkAgeSpawnPointTitle );
         if ( !spawnPtTitle )
         {
             // set default title, or make same as name.

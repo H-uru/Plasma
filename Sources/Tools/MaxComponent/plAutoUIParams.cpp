@@ -1728,7 +1728,7 @@ void plDropDownListParam::IUpdateList(IParamBlock2 *pb)
     
     if (pb)
     {
-        char* bob = pb->GetStr(fID);
+        const char* bob = pb->GetStr(fID);
         if (bob)
             val = bob;
     }

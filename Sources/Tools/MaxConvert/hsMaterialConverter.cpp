@@ -3932,7 +3932,7 @@ hsBool hsMaterialConverter::IClearDoneMaterial(Mtl* mtl, plMaxNode* node)
 #define VIEW_BK 5
 
 
-static BMM_Color_64 green64 = {0,(1<<16)-1,0,(1<<16)-1};
+static BMM_Color_64 green64 = BMM_Color_64(0, (1<<16)-1, 0, (1<<16)-1);
 
 BMM_Color_64 hsMaterialConverter::ICubeSample(Bitmap *bitmap[6], double phi, double theta) 
 {
@@ -4466,18 +4466,22 @@ static void GetMtlNodes(Mtl *mtl, INodeTab& nodes)
     if (!mtl)
         return;
 
-    RefList& refs = mtl->GetRefList();
-    RefListItem *item = refs.FirstItem();
-    while (item)
+    DependentIterator di(mtl);
+    ReferenceMaker *rm = di.Next();
+    while (rm != nil)
     {
-        if (item->maker->SuperClassID() == BASENODE_CLASS_ID)
+        for (int i = 0; i < rm->NumRefs(); i++)
         {
-            INode *node = (INode*)item->maker;
-            if (node->GetMtl() == mtl)
-                nodes.Append(1, &node);
+            RefTargetHandle item = rm->GetReference(i);
+            if (item->SuperClassID() == BASENODE_CLASS_ID)
+            {
+                INode *node = (INode*)item;
+                if (node->GetMtl() == mtl)
+                    nodes.Append(1, &node);
+            }
         }
 
-        item = item->next;
+        rm = di.Next();
     }
 }
 

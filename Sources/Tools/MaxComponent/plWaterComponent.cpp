@@ -1323,7 +1323,7 @@ plRenderTarget* plEnvMapComponent::IGetMap()
         int numVisNames = fCompPB->Count(kVisSetNames);
         for( i = 0; i < numVisNames; i++)
         {
-            fMap->SetVisRegionName(fCompPB->GetStr(kVisSetNames, 0, i));
+            fMap->SetVisRegionName((char*)fCompPB->GetStr(kVisSetNames, 0, i));
         }
 
         if (visGot)

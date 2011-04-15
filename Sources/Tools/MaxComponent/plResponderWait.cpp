@@ -81,7 +81,7 @@ void ResponderWait::FixupWaitBlock(IParamBlock2 *waitPB)
 
     if (waitPB->Count(kWaitPointOld) > 0)
     {
-        TCHAR* point = waitPB->GetStr(kWaitPointOld, 0, 0);
+        const char* point = waitPB->GetStr(kWaitPointOld, 0, 0);
         waitPB->SetValue(kWaitPoint, 0, point);
         waitPB->Delete(kWaitPointOld, 0, 1);
     }

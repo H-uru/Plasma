@@ -419,7 +419,7 @@ hsBool hsConverterUtils::IsInstanced(Object* maxObject)
     }
 
     ObjectInstancedEnumProc instProc;
-    maxObject->EnumDependents(&instProc);
+    maxObject->DoEnumDependents(&instProc);
 
     return (instProc.GetInstanceCount() > 1);
     hsGuardEnd; 
