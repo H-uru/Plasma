@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxConvert/plConvert.h"
 
 #include "MaxMain/plPhysicalProps.h"
-#include "plHavok1/plHKPhysicsGroups.h"
+//#include "plHavok1/plHKPhysicsGroups.h"
 
 void DummyCodeIncludeFuncCamera() {}
 

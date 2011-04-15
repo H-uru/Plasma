@@ -1891,3 +1891,8 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
+
+// Hack -- don't ask.
+#if(WINVER < 0x0500)
+#define IDC_HAND IDC_CROSS
+#endif

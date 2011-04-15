@@ -192,7 +192,7 @@ add_library(MaxComponent
             ${MaxComponent_SOURCES}
 )
 
-source_group("Header Files" FILES ${MaxComponents_HEADERS})
-source_group("Resource Files" FILES ${MaxComponents_RESOURCES})
-source_group("Source Files" FILES ${MaxComponents_SOURCES})
+source_group("Header Files" FILES ${MaxComponent_HEADERS})
+source_group("Resource Files" FILES ${MaxComponent_RESOURCES})
+source_group("Source Files" FILES ${MaxComponent_SOURCES})
 

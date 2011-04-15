@@ -1042,7 +1042,7 @@ static BOOL CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
         ErrorSet::iterator it = badNodes->begin();
         for (; it != badNodes->end(); it++)
         {
-            plPythonError& err = *it;
+            const plPythonError err = *it;
 
             plMaxNode* node = err.node;
             plPythonFileComponent* comp = (plPythonFileComponent*)node->ConvertToComponent();
@@ -1093,7 +1093,7 @@ static void WriteBadPythonText(ErrorSet& badNodes)
     ErrorSet::iterator it = badNodes.begin();
     for (; it != badNodes.end(); it++)
     {
-        plPythonError& err = *it;
+        const plPythonError err = *it;
 
         const char* compName = err.node->GetName();
         const char* pythonFile = err.pythonName;
