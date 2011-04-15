@@ -33,9 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #include <dmdfm.h>      // Windows Load EXE into memory suff
 #endif
 
-#include <winsock2.h>
-#include <windows.h>
-#include <WinHttp.h>
+#include <curl/curl.h>
 
 #include "HeadSpin.h"
 #include "hsStream.h"
@@ -1198,73 +1196,48 @@ static void LoadUserPass (const wchar *accountName, char *username, ShaDigest *p
     }
 }
 
+size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *param)
+{
+    static char status[256];
+
+    HWND hwnd = (HWND)param;
+
+    strncpy(status, (const char *)buffer, std::min<size_t>(size * nmemb, 256));
+    status[255] = 0;
+    PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) status);
+    return size * nmemb;
+}
+
 void StatusCallback(void *param)
 {
     HWND hwnd = (HWND)param;
 
+    char *statusUrl = hsWStringToString(GetServerStatusUrl());
+    CURL *hCurl = curl_easy_init();
+
+    // For reporting errors
+    char curlError[CURL_ERROR_SIZE];
+    curl_easy_setopt(hCurl, CURLOPT_ERRORBUFFER, curlError);
+
     while(s_loginDlgRunning)
     {
-        // get status message from webpage and display in status area.
-        const wchar *path = BuildTypeServerStatusPath();  
-        if(path)
-        {
-            HINTERNET hSession = 0;
-            HINTERNET hConnect = 0;
-            HINTERNET hRequest = 0;
-            
-            hSession = WinHttpOpen(
-                L"UruClient/1.0",
-                WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                WINHTTP_NO_PROXY_NAME,
-                WINHTTP_NO_PROXY_BYPASS, 0
-            );
-            if(hSession)
-            {
-                HINTERNET hConnect = WinHttpConnect( hSession, STATUS_PATH, INTERNET_DEFAULT_HTTP_PORT, 0);
-                if(hConnect)
-                {
-                    HINTERNET hRequest = WinHttpOpenRequest( 
-                        hConnect, 
-                        L"GET",
-                        path,
-                        NULL, 
-                        WINHTTP_NO_REFERER, 
-                        WINHTTP_DEFAULT_ACCEPT_TYPES,
-                        0
-                    );
-                    if(hRequest)
-                    {
-                        static char data[256] = {0};
-                        DWORD bytesRead;
-                        WinHttpSendRequest( 
-                            hRequest, 
-                            WINHTTP_NO_ADDITIONAL_HEADERS,
-                            0,
-                            WINHTTP_NO_REQUEST_DATA,
-                            0,
-                            0,
-                            0
-                        );
-                        WinHttpReceiveResponse(hRequest, 0);
-                        WinHttpReadData(hRequest, data, 255, &bytesRead);
-                        data[bytesRead] = 0;
-                        if(bytesRead)
-                            PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) data);
-                    }
-                }
-            }
-            WinHttpCloseHandle(hRequest);
-            WinHttpCloseHandle(hConnect);
-            WinHttpCloseHandle(hSession);
-        }
-        else 
-            break;      // no status message
+        curl_easy_setopt(hCurl, CURLOPT_URL, statusUrl);
+        curl_easy_setopt(hCurl, CURLOPT_USERAGENT, "UruClient/1.0");
+        curl_easy_setopt(hCurl, CURLOPT_WRITEFUNCTION, &CurlCallback);
+        curl_easy_setopt(hCurl, CURLOPT_WRITEDATA, param);
+
+        if (curl_easy_perform(hCurl) != 0)
+            PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) curlError);
         
         for(unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && s_loginDlgRunning; ++i)
         {
             Sleep(1000);
         }
     }
+
+    delete [] statusUrl;
+    curl_easy_cleanup(hCurl);
+
     s_statusEvent.Signal();
 }
 
@@ -1665,7 +1638,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         return PARABLE_NORMAL_EXIT;
     }
 
-    /////////<<<<<<<<
     FILE *serverini = _wfopen(serverIni, L"rb");
     if (serverini)
     {
@@ -1678,12 +1650,13 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         hsMessageBox("No server.ini file found.  Please check your URU installation.", "Error", hsMessageBoxNormal);
         return PARABLE_NORMAL_EXIT;
     }
-    /////////<<<<<<<<
 
     NetCliAuthAutoReconnectEnable(false);
 
     NetCommSetReadIniAccountInfo(!doIntroDialogs);
     InitNetClientComm();
+
+    curl_global_init(CURL_GLOBAL_ALL);
 
     wchar       acctName[kMaxAccountNameLength];
 
@@ -1761,15 +1734,17 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
             needExit = !TGRunTOSDialog ();
         else
         {
-        HINSTANCE hRichEdDll = LoadLibrary("RICHED20.DLL");
-        INT_PTR val = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_EULA ), NULL, UruTOSDialogProc, (LPARAM)hInst);
-        FreeLibrary(hRichEdDll);
-        if (val <= 0) {
-            DWORD error = GetLastError();
-            needExit = true;
+            HINSTANCE hRichEdDll = LoadLibrary("RICHED20.DLL");
+            INT_PTR val = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_EULA ), NULL, UruTOSDialogProc, (LPARAM)hInst);
+            FreeLibrary(hRichEdDll);
+            if (val <= 0) {
+                DWORD error = GetLastError();
+                needExit = true;
+            }
         }
     }
-    }
+
+    curl_global_cleanup();
 
     if (needExit) {
         DeInitNetClientComm();

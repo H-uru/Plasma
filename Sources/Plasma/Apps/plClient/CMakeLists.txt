@@ -13,6 +13,7 @@ endif()
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIR})
+include_directories(${CURL_INCLUDE_DIR})
 
 set(plClient_HEADERS
     plClient.h
@@ -193,6 +194,7 @@ target_link_libraries(plClient ${PHYSX_LIBRARIES})
 target_link_libraries(plClient ${Ogg_LIBRARIES})
 target_link_libraries(plClient ${Vorbis_LIBRARIES})
 target_link_libraries(plClient ${DirectX_LIBRARIES})
+target_link_libraries(plClient ${CURL_LIBRARY})
 
 if(Bink_SDK_AVAILABLE)
     target_link_libraries(plClient ${Bink_LIBRARIES})
@@ -200,7 +202,6 @@ endif()
 
 if (WIN32)
     target_link_libraries(plClient Rpcrt4)
-    target_link_libraries(plClient Winhttp)
     target_link_libraries(plClient Version)
     target_link_libraries(plClient Vfw32)
     target_link_libraries(plClient Ws2_32)

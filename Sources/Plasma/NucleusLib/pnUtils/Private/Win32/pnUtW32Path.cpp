@@ -525,7 +525,7 @@ void PathGetUserDirectory (
     ASSERT(dstChars);
 
     wchar temp[MAX_PATH]; // GetSpecialFolder path requires a buffer of MAX_PATH size or larger
-    if (SHGetSpecialFolderPathW(NULL, temp, CSIDL_PERSONAL, TRUE) == FALSE)
+    if (SHGetSpecialFolderPathW(NULL, temp, CSIDL_LOCAL_APPDATA, TRUE) == FALSE)
         StrCopy(temp, L"C:\\", arrsize(temp));
 
     // append the product name
