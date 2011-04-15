@@ -144,10 +144,10 @@ public:
     virtual int     GetAlphaTestHigh();
 
     // Animation block
-    virtual char *  GetAnimName();
-    virtual int     GetAutoStart();
-    virtual int     GetLoop();
-    virtual char *  GetAnimLoopName();
+    virtual const char *  GetAnimName();
+    virtual int           GetAutoStart();
+    virtual int           GetLoop();
+    virtual const char *  GetAnimLoopName();
 
     // Basic block
     virtual int     GetColorLock();

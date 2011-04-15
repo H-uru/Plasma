@@ -26,6 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plLayerTex.h"
 #include "plLayerTexBasicPB.h"
+#include "../resource.h"
 
 class BasicDlgProc;
 extern BasicDlgProc gBasicDlgProc;

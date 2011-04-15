@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plBumpMtl.h"
 #include "../resource.h"
 //extern ClassDesc2* GetMaxLayerDesc();
-#include "Shaders.h"
+#include "../Shaders.h"
 
 #include "plBumpMtlBasicPB.h"
 
@@ -629,10 +629,10 @@ int     plBumpMtl::GetZInc() { return 0; }
 int     plBumpMtl::GetAlphaTestHigh() { return 0; }
 
 // Animation block
-char *  plBumpMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
-int     plBumpMtl::GetAutoStart() { return fAnimPB->GetInt(kPBAnimAutoStart); }
-int     plBumpMtl::GetLoop() { return fAnimPB->GetInt(kPBAnimLoop); }
-char *  plBumpMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
+const char*  plBumpMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
+int          plBumpMtl::GetAutoStart() { return fAnimPB->GetInt(kPBAnimAutoStart); }
+int          plBumpMtl::GetLoop() { return fAnimPB->GetInt(kPBAnimLoop); }
+const char*  plBumpMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
 
 // Basic block
 int     plBumpMtl::GetColorLock() { return 0; }

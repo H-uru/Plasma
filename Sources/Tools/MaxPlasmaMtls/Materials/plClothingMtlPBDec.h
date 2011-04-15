@@ -24,7 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //#include "plClothingMtl.h"
+#ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
+#endif
 #include "max.h"
 
 class plClothingEditBox
@@ -365,8 +367,10 @@ public:
                     pb->SetValue(ParamID(layerIdx), 0, layer, buttonIdx);
                 }
 
+#ifdef MAXASS_AVAILABLE
                 jvUniqueId oldId;
                 layer->GetBitmapAssetId(oldId);
+#endif
 
                 BitmapInfo bi;
                 bi.SetName(layer->GetPBBitmap() == nil ? "" : layer->GetPBBitmap()->bi.Name());
@@ -404,8 +408,10 @@ public:
                     }
                     if (!choiceOk)
                     {
+#ifdef MAXASS_AVAILABLE
                         layer->SetBitmapAssetId(oldId);
                         layer->SetBitmap(&bi);
+#endif
                     }
                     else
                     {

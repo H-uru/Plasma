@@ -45,7 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamb2.h"
 #include "iparamm2.h"
 #include "../resource.h"
+#ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+#endif
 
 #include "hsUtils.h"
 #include "pnKeyedObject/hsKeyedObject.h"
@@ -210,6 +212,7 @@ plLayerInterface    *plPlasmaMAXLayer::GetConversionTarget( int index )
 //// Asset Management, and textures ///////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+#ifdef MAXASS_AVAILABLE
 void plPlasmaMAXLayer::SetBitmapAssetId(jvUniqueId& assetId, int index /* = 0 */)
 {
     PBBitmap *pbbm = GetPBBitmap(index);
@@ -229,11 +232,14 @@ void plPlasmaMAXLayer::GetBitmapAssetId(jvUniqueId& assetId, int index /* = 0 */
     else
         assetId.SetEmpty();
 }
+#endif
 
 void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
 {
+#ifdef MAXASS_AVAILABLE
     jvUniqueId targetAssetId;
     GetBitmapAssetId(targetAssetId, index);
+#endif
 
     Bitmap *BM = GetMaxBitmap(index);
     if (BM)
@@ -244,6 +250,7 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
     
     if (bi)
     {
+#ifdef MAXASS_AVAILABLE
         if (!targetAssetId.IsEmpty())
         {
             // If this texture has an assetId, we will check the
@@ -267,6 +274,7 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
                 }
             }
         }
+#endif
 
         BMMRES result;
         BM = TheManager->Load(bi, &result);
@@ -361,6 +369,7 @@ void plPlasmaMAXLayer::RefreshBitmaps()
 
 hsBool  plPlasmaMAXLayer::GetBitmapFileName( char *destFilename, int maxLength, int index /* = 0 */ )
 {
+#ifdef MAXASS_AVAILABLE
     jvUniqueId targetAssetId;
     GetBitmapAssetId(targetAssetId, index);
 
@@ -371,6 +380,7 @@ hsBool  plPlasmaMAXLayer::GetBitmapFileName( char *destFilename, int maxLength, 
         if (maxAssInterface->GetLatestVersionFile(targetAssetId, destFilename, maxLength))
             return true;
     }
+#endif
 
     // Normal return
     if( GetPBBitmap( index ) == nil )
@@ -386,7 +396,9 @@ BOOL plPlasmaMAXLayer::HandleBitmapSelection(int index /* = 0 */)
 
     PBBitmap *pbbm = GetPBBitmap( index );
 
+#ifdef MAXASS_AVAILABLE
     MaxAssInterface* maxAssInterface = GetMaxAssInterface();
+#endif
     
     // If the control key is held, we want to get rid of this texture
     if ((GetKeyState(VK_CONTROL) & 0x8000) && pbbm != nil)
@@ -401,6 +413,7 @@ BOOL plPlasmaMAXLayer::HandleBitmapSelection(int index /* = 0 */)
         return FALSE;
     }
     // if we have the assetman plug-in, then try to use it, unless shift is held down
+#ifdef MAXASS_AVAILABLE
     else if(maxAssInterface && !(GetKeyState(VK_SHIFT) & 0x8000))
     {
         jvUniqueId assetId;
@@ -417,6 +430,7 @@ BOOL plPlasmaMAXLayer::HandleBitmapSelection(int index /* = 0 */)
             return TRUE;
         }
     }
+#endif
     else
     {
         BitmapInfo bi;
@@ -426,12 +440,13 @@ BOOL plPlasmaMAXLayer::HandleBitmapSelection(int index /* = 0 */)
         BOOL selectedNewBitmap = TheManager->SelectFileInput(&bi,
                                                             GetCOREInterface()->GetMAXHWnd(),
                                                             _T("Select Bitmap Image File"));
-
         if (selectedNewBitmap)
         {
+#ifdef MAXASS_AVAILABLE
             // Set the assetId to empty so our new, unmanaged texture will take
             jvUniqueId emptyId;
             SetBitmapAssetId(emptyId, index);
+#endif
 
             SetBitmap(&bi, index);
             return TRUE;

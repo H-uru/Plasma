@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plLayerTex.h"
 #include "plLayerTexBitmapPB.h"
-#include "plDetailCurveCtrl.h"
+#include "../plDetailCurveCtrl.h"
 
 #if 1
 class BMTexPBAccessor;

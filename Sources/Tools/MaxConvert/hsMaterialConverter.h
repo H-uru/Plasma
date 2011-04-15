@@ -59,6 +59,7 @@ class Animatable;
 class Bitmap;
 class plLocation;
 
+
 class plLayerTex;
 class plBitmapData;
 class plCubicRenderTarget;

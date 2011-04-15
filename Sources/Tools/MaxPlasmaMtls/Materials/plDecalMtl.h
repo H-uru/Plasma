@@ -149,10 +149,10 @@ public:
     virtual int     GetAlphaTestHigh();
 
     // Animation block
-    virtual char *  GetAnimName();
+    virtual const char*  GetAnimName();
     virtual int     GetAutoStart();
     virtual int     GetLoop();
-    virtual char *  GetAnimLoopName();
+    virtual const char*  GetAnimLoopName();
     virtual int     GetEaseInType();
     virtual float   GetEaseInMinLength();
     virtual float   GetEaseInMaxLength();
@@ -162,7 +162,7 @@ public:
     virtual float   GetEaseOutMaxLength();
     virtual float   GetEaseOutNormLength();
     virtual int     GetUseGlobal();
-    virtual char *  GetGlobalVarName();
+    virtual const char*  GetGlobalVarName();
 
     // Basic block
     virtual int     GetColorLock();

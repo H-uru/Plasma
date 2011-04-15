@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsUtils.h"
 #include "plClothingMtl.h"
 #include "../resource.h"
-#include "Shaders.h"
+#include "../Shaders.h"
 
 #include "iparamm2.h"
 
