@@ -52,12 +52,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum
 {
-    kAnimComp,
-    kAnimLoop,
-    kAnimType,
-    kAnimOwner,
-    kAnimObject,
-    kAnimObjectType,
+    kRespAnimComp,
+    kRespAnimLoop,
+    kRespAnimType,
+    kRespAnimOwner,
+    kRespAnimObject,
+    kRespAnimObjectType,
 };
 
 class plResponderAnimProc;
@@ -69,19 +69,19 @@ ParamBlockDesc2 gResponderAnimBlock
 
     IDD_COMP_RESPOND_ANIM, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderAnimProc,
 
-    kAnimComp,  _T("comp"),     TYPE_REFTARG,       0, 0,
+    kRespAnimComp,  _T("comp"),     TYPE_REFTARG,       0, 0,
         end,
 
-    kAnimObject, _T("object"),  TYPE_REFTARG,       0, 0,
+    kRespAnimObject, _T("object"),  TYPE_REFTARG,       0, 0,
         end,
 
-    kAnimLoop,  _T("loop"),     TYPE_STRING,        0, 0,
+    kRespAnimLoop,  _T("loop"),     TYPE_STRING,        0, 0,
         end,
 
-    kAnimType,  _T("type"),     TYPE_INT,           0, 0,
+    kRespAnimType,  _T("type"),     TYPE_INT,           0, 0,
         end,
 
-    kAnimObjectType,    _T("objType"),  TYPE_INT,   0, 0,
+    kRespAnimObjectType,    _T("objType"),  TYPE_INT,   0, 0,
         end,
 
     end
@@ -270,8 +270,8 @@ const char *plResponderCmdAnim::GetInstanceName(IParamBlock2 *pb)
 {
     static char name[256];
 
-    const char *shortName = GetShortName(pb->GetInt(kAnimType));
-    plMaxNode *node = (plMaxNode*)pb->GetReferenceTarget(kAnimComp);
+    const char *shortName = GetShortName(pb->GetInt(kRespAnimType));
+    plMaxNode *node = (plMaxNode*)pb->GetReferenceTarget(kRespAnimComp);
     sprintf(name, "%s (%s)", shortName, node ? node->GetName() : "none");
 
     return name;
@@ -297,14 +297,14 @@ IParamBlock2 *plResponderCmdAnim::CreatePB(int idx)
 
     // Create the paramblock and save it's type
     IParamBlock2 *pb = CreateParameterBlock2(&gResponderAnimBlock, nil);
-    pb->SetValue(kAnimType, 0, type);
+    pb->SetValue(kRespAnimType, 0, type);
 
     return pb;
 }
 
 plComponentBase *plResponderCmdAnim::GetComponent(IParamBlock2 *pb)
 {
-    plMaxNode *node = (plMaxNode*)pb->GetReferenceTarget(kAnimComp);
+    plMaxNode *node = (plMaxNode*)pb->GetReferenceTarget(kRespAnimComp);
     if (node)
         return node->ConvertToComponent();
     else
@@ -313,7 +313,7 @@ plComponentBase *plResponderCmdAnim::GetComponent(IParamBlock2 *pb)
 
 plMessage *plResponderCmdAnim::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
-    if (IsSoundMsg(pb->GetInt(kAnimType)))
+    if (IsSoundMsg(pb->GetInt(kRespAnimType)))
         return ICreateSndMsg(node, pErrMsg, pb);
     else
         return ICreateAnimMsg(node, pErrMsg, pb);
@@ -321,7 +321,7 @@ plMessage *plResponderCmdAnim::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, I
 
 bool GetCompAndNode(IParamBlock2* pb, plMaxNode* node, plComponentBase*& comp, plMaxNode*& targNode)
 {
-    plMaxNode *compNode = (plMaxNode*)pb->GetReferenceTarget(kAnimComp);
+    plMaxNode *compNode = (plMaxNode*)pb->GetReferenceTarget(kRespAnimComp);
     if (!compNode)
         return false;
 
@@ -331,10 +331,10 @@ bool GetCompAndNode(IParamBlock2* pb, plMaxNode* node, plComponentBase*& comp, p
     if (comp->ClassID() == ANIM_GROUP_COMP_CID)
         return true;
 
-    if (pb->GetInt(kAnimObjectType) == kNodeResponder)
+    if (pb->GetInt(kRespAnimObjectType) == kNodeResponder)
         targNode = node;
     else
-        targNode = (plMaxNode*)pb->GetReferenceTarget(kAnimObject);
+        targNode = (plMaxNode*)pb->GetReferenceTarget(kRespAnimObject);
 
     if (!targNode)
         return false;
@@ -364,7 +364,7 @@ plMessage *plResponderCmdAnim::ICreateAnimMsg(plMaxNode* node, plErrorMsg *pErrM
     msg->SetAnimName(tempAnimName);
 
     // Create and initialize a message for the command
-    switch (pb->GetInt(kAnimType))
+    switch (pb->GetInt(kRespAnimType))
     {
     case kRespondPlayAnim:
         msg->SetCmd(plAnimCmdMsg::kContinue);
@@ -417,7 +417,7 @@ plMessage* plResponderCmdAnim::ICreateSndMsg(plMaxNode* node, plErrorMsg *pErrMs
     if (!GetCompAndNode(pb, node, comp, targNode))
         throw "A valid sound component and node were not found";
 
-    int type = pb->GetInt(kAnimType);
+    int type = pb->GetInt(kRespAnimType);
     switch (type)
     {
         case kRespondPlaySound:
@@ -487,7 +487,7 @@ plMessage* plResponderCmdAnim::ICreateSndMsg(plMaxNode* node, plErrorMsg *pErrMs
 
 bool plResponderCmdAnim::IsWaitable(IParamBlock2 *pb)
 {
-    int type = pb->GetInt(kAnimType);
+    int type = pb->GetInt(kRespAnimType);
     if (type == kRespondPlayAnim ||
         type == kRespondToggleAnim ||
         type == kRespondStopAnim ||
@@ -501,7 +501,7 @@ bool plResponderCmdAnim::IsWaitable(IParamBlock2 *pb)
 
 void plResponderCmdAnim::GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints)
 {
-    int type = pb->GetInt(kAnimType);
+    int type = pb->GetInt(kRespAnimType);
     
     // Don't try and get points for the stop anim, it can only stop at a stop point
     if (type == kRespondStopAnim || IsSoundMsg(type))
@@ -579,9 +579,9 @@ static plResponderAnimProc gResponderAnimProc;
 plResponderAnimProc::plResponderAnimProc()
 {
     fCompButtonID   = IDC_ANIM_BUTTON;
-    fCompParamID    = kAnimComp;
+    fCompParamID    = kRespAnimComp;
     fNodeButtonID   = IDC_OBJ_BUTTON;
-    fNodeParamID    = kAnimObject;
+    fNodeParamID    = kRespAnimObject;
 }
 
 BOOL plResponderAnimProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -592,7 +592,7 @@ BOOL plResponderAnimProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT m
         {
             IParamBlock2 *pb = pm->GetParamBlock();
 
-            int type = pb->GetInt(kAnimType);
+            int type = pb->GetInt(kRespAnimType);
 
             // Only show the loop control if this is a loop command
             int show = (type == kRespondLoopAnimOn) ? SW_SHOW : SW_HIDE;
@@ -647,7 +647,7 @@ void plResponderAnimProc::IPickComponent(IParamBlock2* pb)
 {
     std::vector<Class_ID> cids;
 
-    int type = pb->GetInt(kAnimType);
+    int type = pb->GetInt(kRespAnimType);
     if (type == kRespondPlaySound ||
         type == kRespondStopSound ||
         type == kRespondToggleSound ||
@@ -670,7 +670,7 @@ void plResponderAnimProc::IPickComponent(IParamBlock2* pb)
         cids.push_back(ANIM_GROUP_COMP_CID);
     }
 
-    plPick::NodeRefKludge(pb, kAnimComp, &cids, true, false);
+    plPick::NodeRefKludge(pb, kRespAnimComp, &cids, true, false);
 }
 
 #include "plPickNodeBase.h"
@@ -711,7 +711,7 @@ public:
 
 void plResponderAnimProc::IPickNode(IParamBlock2* pb, plComponentBase* comp)
 {
-    plPickRespNode pick(pb, kAnimObject, kAnimObjectType, comp);
+    plPickRespNode pick(pb, kRespAnimObject, kRespAnimObjectType, comp);
     pick.DoPick();
 }
 
@@ -720,7 +720,7 @@ void plResponderAnimProc::IPickNode(IParamBlock2* pb, plComponentBase* comp)
 void plResponderAnimProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
 {
     // Premptive strike.  If this isn't a loop, don't bother!
-    int type = pb->GetInt(kAnimType);
+    int type = pb->GetInt(kRespAnimType);
     if (type != kRespondLoopAnimOn)
         return;
 
@@ -764,7 +764,7 @@ void plResponderAnimProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
 
 void plResponderAnimProc::IUpdateNodeButton(HWND hWnd, IParamBlock2* pb)
 {
-    if (pb->GetInt(kAnimObjectType) == kNodeResponder)
+    if (pb->GetInt(kRespAnimObjectType) == kNodeResponder)
     {
         HWND hButton = GetDlgItem(hWnd, IDC_OBJ_BUTTON);
         SetWindowText(hButton, kResponderNodeName);

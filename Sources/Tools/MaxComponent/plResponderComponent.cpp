@@ -949,13 +949,16 @@ public:
             return oldTarg;
     }
 
-    void PatchPointer(RefTargetHandle* patchThis, RefTargetHandle oldTarg) { hsAssert(0, "shit"); }
     RefTargetHandle FindMapping(RefTargetHandle from) { hsAssert(0, "shit"); return NULL; }
+    void PatchPointer(RefTargetHandle* patchThis, RefTargetHandle oldTarg) { hsAssert(0, "shit"); }
+    void AddPostPatchProc(PostPatchProc* proc, bool toDelete) { hsAssert(0, "shit"); }
     void AddEntry(RefTargetHandle hfrom, RefTargetHandle hto) { hsAssert(0, "shit"); }
     void Backpatch() { hsAssert(0, "shit"); }
+    bool BackpatchPending() { hsAssert(0, "shit"); return false; }
     void Clear() { hsAssert(0, "shit"); }
+    void ClearBackpatch() { hsAssert(0, "shit"); }
     void DeleteThis() { hsAssert(0, "shit"); }
-    void AddPostPatchProc(PostPatchProc* proc, bool toDelete) { hsAssert(0, "shit"); }
+    
 };
 // Even turdier - I had to define this to compile
 RefTargetHandle RemapDir::CloneRef(RefTargetHandle oldTarg) { return NULL; }

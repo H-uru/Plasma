@@ -300,14 +300,18 @@ plMaxNodeBase *plComponentBase::GetINode()
 {
     // Go through the reflist looking for RefMakers with a ref to this component.
     // There should only be one INode in this list.
-    RefList &refList = GetRefList();
-    RefListItem *item = refList.FirstItem();
-    while (item)
+    DependentIterator di(this);
+    ReferenceMaker* rm = di.Next();
+    while (rm != nil) 
     {
-        if (item->maker->SuperClassID() == BASENODE_CLASS_ID)
-            return (plMaxNodeBase*)item->maker;
+        for (int i = 0; i < rm->NumRefs(); i++)
+        {
+            RefTargetHandle h = rm->GetReference(i);
+            if (h->SuperClassID() == BASENODE_CLASS_ID)
+                return (plMaxNodeBase*)h;
+        }
 
-        item = item->next;
+        rm = di.Next();
     }
 
     return nil;

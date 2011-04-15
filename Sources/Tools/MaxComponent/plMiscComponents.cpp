@@ -28,7 +28,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 #include "plMiscComponents.h"
 #include "plComponentReg.h"
+#ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+#endif
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "MaxMain/plMaxNodeData.h"
@@ -368,8 +370,8 @@ hsBool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMs
     if (pNode->GetRoomKey())
         return false;
 
-    char *age = fCompPB->GetStr(kInfoAge);
-    char *room = fCompPB->GetStr(kInfoPage);
+    const char *age = fCompPB->GetStr(kInfoAge);
+    const char *room = fCompPB->GetStr(kInfoPage);
 
     if (!age || *age == '\0' || !room || *room == '\0')
     {
@@ -539,7 +541,7 @@ hsBool plPageInfoComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-char *plPageInfoComponent::GetAgeName()
+const char *plPageInfoComponent::GetAgeName()
 {
     return fCompPB->GetStr(ParamID(kInfoAge));
 }
@@ -550,6 +552,7 @@ char *plPageInfoComponent::GetAgeName()
 
 void    plPageInfoComponent::IVerifyLatestAgeAsset( const char *ageName, const char *localPath, plErrorMsg *errMsg )
 {
+#ifdef MAXASS_AVAILABLE
     char                ageFileName[ MAX_PATH ], assetPath[ MAX_PATH ];
 
 
@@ -579,6 +582,7 @@ void    plPageInfoComponent::IVerifyLatestAgeAsset( const char *ageName, const c
     {
         // Not found, so just assume it's a local one (no error)
     }
+#endif
 }
 
 //// IUpdateSeqNumbersFromAgeFile ////////////////////////////////////////////
@@ -812,7 +816,7 @@ const char* LocCompGetPage(plComponentBase* comp)
     return nil;
 }
 
-static char *CheckPageInfoCompsRecur(plMaxNode *node)
+static const char *CheckPageInfoCompsRecur(plMaxNode *node)
 {
     plComponentBase *comp = node->ConvertToComponent();
     if (comp && comp->ClassID() == PAGEINFO_CID)
@@ -823,7 +827,7 @@ static char *CheckPageInfoCompsRecur(plMaxNode *node)
     
     for (int i = 0; i < node->NumberOfChildren(); i++)
     {
-        char *result = CheckPageInfoCompsRecur((plMaxNode*)node->GetChildNode(i));
+        const char *result = CheckPageInfoCompsRecur((plMaxNode*)node->GetChildNode(i));
         if (result)
             return result;
     }
@@ -834,7 +838,7 @@ void plPageInfoComponent::NotifyProc(void *param, NotifyInfo *info)
 {
     if (info->intcode == NOTIFY_FILE_POST_OPEN)
     {
-        char *ageName = CheckPageInfoCompsRecur((plMaxNode*)GetCOREInterface()->GetRootNode());
+        const char *ageName = CheckPageInfoCompsRecur((plMaxNode*)GetCOREInterface()->GetRootNode());
         if (ageName != nil)
             strncpy( fCurrExportedAge, ageName, sizeof( fCurrExportedAge ) );
     }

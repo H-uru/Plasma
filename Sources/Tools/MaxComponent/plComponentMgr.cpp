@@ -88,16 +88,16 @@ int IDescCompare(ClassDesc *desc1, ClassDesc *desc2);
 void plComponentMgr::Register(ClassDesc *desc)
 {
     // Organize desc's by category and name
-    for (unsigned int i = 0; i < fDescs.size(); i++)
+
+    std::vector<ClassDesc*>::iterator it;
+    for (it = fDescs.begin(); it != fDescs.end(); it++) 
     {
-        if (IDescCompare(desc, fDescs[i]) < 0)
+        if (IDescCompare(desc, (*it)) < 0)
         {
-            fDescs.insert(&fDescs[i], desc);
+            fDescs.insert(it, desc);
             return;
         }
     }
-
-    fDescs.push_back(desc);
 }
 
 int IDescCompare(ClassDesc *desc1, ClassDesc *desc2)
