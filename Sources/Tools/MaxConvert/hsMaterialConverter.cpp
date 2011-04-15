@@ -2041,7 +2041,7 @@ plLayerInterface* IProcessLayerAnimation(plPassMtlBase* mtl, plLayerTex* layTex,
         TSTR animName = TSTR(name) + TSTR("_anim_") + TSTR(mtl->GetGlobalVarName());
         hsgResMgr::ResMgr()->NewKey(animName, SDLLayer, node->GetLocation());
 
-        SDLLayer->SetVarName(mtl->GetGlobalVarName());
+        SDLLayer->SetVarName((char*)mtl->GetGlobalVarName());
         SDLLayer->SetTransformCtl(xfmCtl);
         SDLLayer->AttachViaNotify(layerIFace);
         node->CheckSynchOptions(SDLLayer);
@@ -2141,7 +2141,7 @@ plLayerInterface* IProcessAnimation(plPassMtlBase *mtl, plMaxNode *node, const c
         TSTR animName = TSTR(name) + TSTR("_anim_") + TSTR(mtl->GetGlobalVarName());
         hsgResMgr::ResMgr()->NewKey(animName, SDLLayer, node->GetLocation());
 
-        SDLLayer->SetVarName(mtl->GetGlobalVarName());
+        SDLLayer->SetVarName((char*)mtl->GetGlobalVarName());
         node->CheckSynchOptions(SDLLayer);
 
         if (colCtl)

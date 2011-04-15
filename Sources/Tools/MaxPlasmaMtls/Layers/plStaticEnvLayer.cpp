@@ -525,11 +525,7 @@ void    plStaticEnvLayer::SetBaseFilename( const TCHAR *name, TimeValue t )
 
 const TCHAR *plStaticEnvLayer::GetBaseFilename( TimeValue t )
 {
-    Interval        valid;
-    TCHAR           *buffer;
-
-    fBitmapPB->GetValue( kBmpBaseFilename, t, buffer, valid );
-    return (const TCHAR *)buffer;
+    return (const TCHAR*)fBitmapPB->GetStr(kBmpBaseFilename, t);
 }
 
 //// IGetViewTM ///////////////////////////////////////////////////////////////

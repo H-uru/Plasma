@@ -419,44 +419,45 @@ hsBool      plAnimStealthNode::IsParentUsedInScene( void )
     //// What really actually finds something is the enum dependents loop below
     const char *mtlName = GetParentMtl()->GetName();
 
-    RefList     &refList = GetRefList();
-    RefListItem *item = refList.FirstItem();
+    DependentIterator di(this);
+    ReferenceMaker* item = di.Next();
     while( item != nil )
     {
         TSTR s;
-        item->maker->GetClassName( s );
+        item->GetClassName( s );
 
-        if( item->maker->SuperClassID() == BASENODE_CLASS_ID && !CanConvertToStealth( (INode *)( item->maker ) ) )
+        if( item->SuperClassID() == BASENODE_CLASS_ID && !CanConvertToStealth( (INode *)( item ) ) )
             return true;        // Horray, a node has a ref to us!
 
-        else if( item->maker->ClassID() == Class_ID(MULTI_CLASS_ID,0) )
+        else if( item->ClassID() == Class_ID(MULTI_CLASS_ID,0) )
         {
             // Multi-sub, run the refs on that guy (we only go one up)
-            Mtl *multisub = (Mtl *)item->maker;
-            RefList     &refList2 = multisub->GetRefList();
-            RefListItem *item2 = refList.FirstItem();
+            Mtl *multisub = (Mtl *)item;
+
+            DependentIterator sub(multisub);
+            ReferenceMaker* item2 = sub.Next();
             while( item2 != nil )
             {
-                if( item2->maker->SuperClassID() == BASENODE_CLASS_ID )
+                if( item2->SuperClassID() == BASENODE_CLASS_ID )
                     return true;        // Horray, a node has a ref to us!
-                item2 = item2->next;
+                item2 = sub.Next();
             }
 
             // No go, keep trying
         }
-        else if( item->maker->SuperClassID() == MATERIAL_CLASS_ID )
+        else if( item->SuperClassID() == MATERIAL_CLASS_ID )
         {
             int q = 0;
         }
 
-        item = item->next;
+        item = di.Next();
     }
 
     // Enum dependents
     int     i;
 
     plGetRefs callback;
-    GetParentMtl()->EnumDependents( &callback );
+    GetParentMtl()->DoEnumDependents( &callback );
     for( i = 0; i < callback.fList.GetCount(); i++ )
     {
         ReferenceMaker *maker = callback.fList[ i ];
@@ -474,14 +475,14 @@ INode *plAnimStealthNode::GetINode()
 {
     // Go through the reflist looking for RefMakers with a ref to this component.
     // There should only be one INode in this list.
-    RefList &refList = GetRefList();
-    RefListItem *item = refList.FirstItem();
+    DependentIterator di(this);
+    ReferenceMaker* item = di.Next();
     while( item )
     {
-        if( item->maker->SuperClassID() == BASENODE_CLASS_ID )
-            return (INode *)item->maker;
+        if( item->SuperClassID() == BASENODE_CLASS_ID )
+            return (INode *)item;
 
-        item = item->next;
+        item = di.Next();
     }
 
     return nil;

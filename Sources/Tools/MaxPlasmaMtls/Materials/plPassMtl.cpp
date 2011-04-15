@@ -805,10 +805,10 @@ int     plPassMtl::GetZInc() { return fAdvPB->GetInt(kPBAdvZInc); }
 int     plPassMtl::GetAlphaTestHigh() { return fAdvPB->GetInt(kPBAdvAlphaTestHigh); }
 
 // Animation block
-char *  plPassMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
+const char*  plPassMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
 int     plPassMtl::GetAutoStart() { return fAnimPB->GetInt(kPBAnimAutoStart); }
 int     plPassMtl::GetLoop() { return fAnimPB->GetInt(kPBAnimLoop); }
-char *  plPassMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
+const char*  plPassMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
 int     plPassMtl::GetEaseInType() { return fAnimPB->GetInt(kPBAnimEaseInType); }
 float   plPassMtl::GetEaseInNormLength() { return fAnimPB->GetFloat(kPBAnimEaseInLength); }
 float   plPassMtl::GetEaseInMinLength() { return fAnimPB->GetFloat(kPBAnimEaseInMin); }
@@ -818,7 +818,7 @@ float   plPassMtl::GetEaseOutNormLength() { return fAnimPB->GetFloat(kPBAnimEase
 float   plPassMtl::GetEaseOutMinLength() { return fAnimPB->GetFloat(kPBAnimEaseOutMin); }
 float   plPassMtl::GetEaseOutMaxLength() { return fAnimPB->GetFloat(kPBAnimEaseOutMax); }
 int     plPassMtl::GetUseGlobal() { return fAnimPB->GetInt(ParamID(kPBAnimUseGlobal)); }
-char *  plPassMtl::GetGlobalVarName() { return fAnimPB->GetStr(ParamID(kPBAnimGlobalName)); }   
+const char*  plPassMtl::GetGlobalVarName() { return fAnimPB->GetStr(ParamID(kPBAnimGlobalName)); }   
 
 // Basic block
 int     plPassMtl::GetColorLock() { return fBasicPB->GetInt(kPassBasColorLock); }

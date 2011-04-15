@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plPlasmaMAXLayer_h
 
 #include "Max.h"
+#include "iparamm2.h"
 #include "hsTypes.h"
 
 //// Derived Type Class IDs ///////////////////////////////////////////////////
