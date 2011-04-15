@@ -1015,15 +1015,15 @@ protected:
 
     void    IGetNewLocalFileName( plBaseSoundEmitterComponent *soundComponent, plBaseSoundEmitterComponent::WhichSound which )
     {
-        char* fileName[ MAX_PATH ], dirName[ MAX_PATH ];
+        char fileName[ MAX_PATH ], dirName[ MAX_PATH ];
         const char* name = soundComponent->GetSoundFileName( which );
 
         if( name != nil )
-            strcpy( (char*)fileName, name );
+            strcpy( fileName, name );
         else
-            strcpy( (char*)fileName, _T( "" ) );
+            strcpy( fileName, _T( "" ) );
 
-        strcpy( dirName, (const char*)fileName );
+        strcpy( dirName, fileName );
         ::PathRemoveFileSpec( dirName );
 
         OPENFILENAME ofn = {0};

@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plNoteTrackWatcher::plNoteTrackWatcher( plPassMtlBase *parentMtl ) : fParentMtl(nil)
 {
     fNoteTrackCount = parentMtl->NumNoteTracks();
-    MakeRefByID( FOREVER, kRefParentMtl, parentMtl );
+    ReplaceReference(kRefParentMtl, parentMtl);
 }
 
 plNoteTrackWatcher::~plNoteTrackWatcher()

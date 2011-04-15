@@ -4470,19 +4470,15 @@ static void GetMtlNodes(Mtl *mtl, INodeTab& nodes)
     ReferenceMaker *rm = di.Next();
     while (rm != nil)
     {
-        for (int i = 0; i < rm->NumRefs(); i++)
+        if (rm->SuperClassID() == BASENODE_CLASS_ID)
         {
-            RefTargetHandle item = rm->GetReference(i);
-            if (item->SuperClassID() == BASENODE_CLASS_ID)
-            {
-                INode *node = (INode*)item;
-                if (node->GetMtl() == mtl)
-                    nodes.Append(1, &node);
-            }
+            INode *node = (INode*)rm;
+            if (node->GetMtl() == mtl)
+                nodes.Append(1, &node);
         }
-
-        rm = di.Next();
     }
+
+    rm = di.Next();
 }
 
 int hsMaterialConverter::GetMaterialArray(Mtl *mtl, hsTArray<hsGMaterial*>& out, UInt32 multiIndex /* = 0 */)

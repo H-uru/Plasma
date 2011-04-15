@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDecalMtl.h"
 #include "../resource.h"
 //extern ClassDesc2* GetMaxLayerDesc();
-#include "Shaders.h"
+#include "../Shaders.h"
 #include "MaxComponent/plMaxAnimUtils.h"
 
 #include "plPassBaseParamIDs.h"
