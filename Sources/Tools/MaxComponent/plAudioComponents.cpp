@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Sound Related
 #include "plPhysical/plEnvEffectDetector.h"
 #include "pnMessage/plEnvEffectMsg.h"
-#include "PubUtilLib/plAudible/plWinAudible.h"
+#include "plAudible/plWinAudible.h"
 #include "pnSceneObject/plAudioInterface.h"
 
 // Anim Related
@@ -80,7 +80,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/plFileUtils.h"
 
 // Valdez Asset Manager Related
+#ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+#endif
 #include <shlwapi.h>
 
 // Fun soft volume stuff
@@ -93,8 +95,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // EAX stuff
 #include "plAudio/plEAXListenerMod.h"
+#ifdef EAX_SDK_AVAILABLE
 #include <eax-util.h>
 #include <eaxlegacy.h>
+#endif
 
 #include "plResMgr/plLocalization.h"
 #include "plPhysical/plPhysicalSndGroup.h"
@@ -242,8 +246,10 @@ RefTargetHandle plBaseSoundEmitterComponent::Clone( RemapDir &remap )
     // Do the base clone
     plBaseSoundEmitterComponent *obj = (plBaseSoundEmitterComponent *)plComponentBase::Clone( remap );
 
+#ifdef MAXASS_AVAILABLE
     obj->fSoundAssetId = fSoundAssetId;
     obj->fCoverSoundAssetID = fCoverSoundAssetID;
+#endif
 
     return obj;
 }
@@ -285,6 +291,7 @@ IOResult plBaseSoundEmitterComponent::Save(ISave *isave)
     if (res != IO_OK)
         return res;
 
+#ifdef MAXASS_AVAILABLE
     isave->BeginChunk(MAX_ASS_CHUNK);
     ULONG nwrite;
 
@@ -299,6 +306,7 @@ IOResult plBaseSoundEmitterComponent::Save(ISave *isave)
         return res;
 
     isave->EndChunk();
+#endif
 
     return IO_OK;
 }   
@@ -309,6 +317,7 @@ IOResult plBaseSoundEmitterComponent::Load(ILoad *iload)
     if (res != IO_OK)
         return res;
 
+#ifdef MAXASS_AVAILABLE
     while (IO_OK == (res = iload->OpenChunk()))
     {
         if (iload->CurChunkID() == OLD_MAX_ASS_CHUNK)
@@ -332,10 +341,12 @@ IOResult plBaseSoundEmitterComponent::Load(ILoad *iload)
         if (res != IO_OK) 
             return res;
     }
+#endif
 
     return IO_OK;
 }
 
+#ifdef MAXASS_AVAILABLE
 void plBaseSoundEmitterComponent::SetSoundAssetId( plBaseSoundEmitterComponent::WhichSound which, jvUniqueId assetId, const TCHAR *fileName )
 {
     if( which == kBaseSound )
@@ -362,9 +373,11 @@ jvUniqueId plBaseSoundEmitterComponent::GetSoundAssetID( plBaseSoundEmitterCompo
     hsAssert( false, "Getting a sound that isn't supported on this component" );
     return fSoundAssetId;
 }
+#endif
 
 void    plBaseSoundEmitterComponent::IUpdateAssets( void )
 {
+#ifdef MAXASS_AVAILABLE
     if( fAssetsUpdated )
         return;
 
@@ -386,9 +399,10 @@ void    plBaseSoundEmitterComponent::IUpdateAssets( void )
     }
     else
         fAssetsUpdated = true;
+#endif
 }
 
-TCHAR   *plBaseSoundEmitterComponent::GetSoundFileName( plBaseSoundEmitterComponent::WhichSound which )
+const char* plBaseSoundEmitterComponent::GetSoundFileName( plBaseSoundEmitterComponent::WhichSound which )
 {
     IUpdateAssets();
 
@@ -671,6 +685,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
 //  copied over to the AssetMan directory, returning the path to said asset.
 //  Returns true if found, false if not.
 
+#ifdef MAXASS_AVAILABLE
 hsBool  plBaseSoundEmitterComponent::LookupLatestAsset( const char *waveName, char *retPath, plErrorMsg *errMsg )
 {
     MaxAssInterface* assetMan = GetMaxAssInterface();
@@ -698,10 +713,11 @@ hsBool  plBaseSoundEmitterComponent::LookupLatestAsset( const char *waveName, ch
 
     return false;
 }
+#endif
 
 plSoundBuffer   *plBaseSoundEmitterComponent::IProcessSourceBuffer( plMaxNode *maxNode, plErrorMsg *errMsg )
 {
-    char    *fileName = GetSoundFileName( kBaseSound );
+    const char    *fileName = GetSoundFileName( kBaseSound );
     if( fileName == nil )
         return nil;
 
@@ -999,34 +1015,35 @@ protected:
 
     void    IGetNewLocalFileName( plBaseSoundEmitterComponent *soundComponent, plBaseSoundEmitterComponent::WhichSound which )
     {
-        TCHAR   fileName[ MAX_PATH ], dirName[ MAX_PATH ], *name;
+        char* fileName[ MAX_PATH ], dirName[ MAX_PATH ];
+        const char* name = soundComponent->GetSoundFileName( which );
 
-    
-        name = soundComponent->GetSoundFileName( which );
         if( name != nil )
-            strcpy( fileName, name );
+            strcpy( (char*)fileName, name );
         else
-            strcpy( fileName, _T( "" ) );
+            strcpy( (char*)fileName, _T( "" ) );
 
-        strcpy( dirName, fileName );
+        strcpy( dirName, (const char*)fileName );
         ::PathRemoveFileSpec( dirName );
 
         OPENFILENAME ofn = {0};
         ofn.lStructSize = sizeof( OPENFILENAME );
         ofn.hwndOwner = GetCOREInterface()->GetMAXHWnd();
         ofn.lpstrFilter = "WAV Files (*.wav)\0*.wav\0Windows Media Audio Files (*.wma)\0*.wma\0OGG Vorbis Files (*.ogg)\0*.ogg\0";
-        ofn.lpstrFile = fileName;
+        ofn.lpstrFile = (LPSTR)fileName;
         ofn.nMaxFile = sizeof( fileName );
         ofn.lpstrInitialDir = dirName;
         ofn.lpstrTitle = "Choose a sound file";
         ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST;
         ofn.lpstrDefExt = "wav";
 
+#ifdef MAXASS_AVAILABLE
         if( GetOpenFileName( &ofn ) )
         {
             jvUniqueId emptyId;
             soundComponent->SetSoundAssetId( which, emptyId, fileName );
         }
+#endif
     }
 
     void    IUpdateSoundButton( plBaseSoundEmitterComponent *soundComponent, HWND hDlg, int dlgBtnItemToSet, plBaseSoundEmitterComponent::WhichSound which )
@@ -1038,7 +1055,7 @@ protected:
         custButton = GetICustButton( GetDlgItem( hDlg, dlgBtnItemToSet ) );
         if( custButton != nil )
         {
-            TCHAR *origName = soundComponent->GetSoundFileName( which );
+            const char* origName = soundComponent->GetSoundFileName( which );
 
             if( origName != nil && strlen( origName ) > 0 )
             {
@@ -1057,6 +1074,7 @@ protected:
 
     void    ISelectSoundFile( plBaseSoundEmitterComponent *soundComponent, HWND hDlg, int dlgBtnItemToSet, plBaseSoundEmitterComponent::WhichSound which )
     {
+#ifdef MAXASS_AVAILABLE
         MaxAssInterface* maxAssInterface = GetMaxAssInterface();
 
         // if we have the assetman plug-in, then try to use it, unless shift is held down
@@ -1075,6 +1093,9 @@ protected:
         {
             IGetNewLocalFileName( soundComponent, which );
         }
+#else
+        IGetNewLocalFileName( soundComponent, which );
+#endif
 
         // Update the button now
         if( hDlg != nil )
@@ -2135,7 +2156,7 @@ hsBool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if( fCreateGrouped )
         return true;
 
-    char* fileName = GetSoundFileName( kBaseSound );
+    const char* fileName = GetSoundFileName( kBaseSound );
 
     int fIndex = -1;
     if (fIndices.find(node) != fIndices.end())
@@ -2219,7 +2240,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         }
 
         // Grab the buffer for this sound directly from the original source
-        char *fileName = groupArray[ i ]->GetSoundFileName( kBaseSound );
+        const char *fileName = groupArray[ i ]->GetSoundFileName( kBaseSound );
 
         plSoundBuffer   *buffer = TRACKED_NEW plSoundBuffer( fileName );
         if( !buffer->IsValid() || !buffer->EnsureInternal() )
@@ -2230,11 +2251,11 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
             bool worked = false;
             if( plasmaDir != nil )
             {
-                char newPath[ MAX_PATH ], *c;
+                char newPath[ MAX_PATH ];
                 strcpy( newPath, plasmaDir );
                 strcat( newPath, "sfx\\" );
                 
-                c = strrchr( fileName, '\\' );
+                const char* c = strrchr( fileName, '\\' );
                 if( c == nil )
                     c = strrchr( fileName, '/' );
                 if( c == nil )
@@ -2459,7 +2480,7 @@ hsBool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (!fValidNodes[node])
         return false;
 
-    char* fileName = GetSoundFileName( kBaseSound );
+    const char* fileName = GetSoundFileName( kBaseSound );
 
     int fIndex = -1;
     if (fIndices.find(node) != fIndices.end())
@@ -2614,7 +2635,7 @@ hsBool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (!fValidNodes[node])
         return false;
 
-    char* fileName = GetSoundFileName( kBaseSound );
+    const char* fileName = GetSoundFileName( kBaseSound );
 
     int fIndex = -1;
     if (fIndices.find(node) != fIndices.end())
@@ -2790,9 +2811,11 @@ public:
                     HWND comboBox = GetDlgItem( hWnd, IDC_EAX_PRESET_COMBO );
                     ComboBox_ResetContent( comboBox );
 
+#ifdef EAX_SDK_AVAILABLE
                     for( i = 0; i < /*sizeof( EAX30_ORIGINAL_PRESETS ) 
                         / sizeof( EAXLISTENERPROPERTIES )*/26 ; i++ )
                         ComboBox_AddString( comboBox, EAX30_ORIGINAL_PRESET_NAMES[ i ] );
+#endif
 
                     ComboBox_SetCurSel( comboBox, pb->GetInt( (ParamID)plEAXListenerComponent::kRefPreset ) );
 
@@ -2927,6 +2950,7 @@ hsBool plEAXListenerComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
     // Add the soft region
     hsgResMgr::ResMgr()->AddViaNotify( softKey, TRACKED_NEW plGenRefMsg( listener->GetKey(), plRefMsg::kOnCreate, 0, plEAXListenerMod::kRefSoftRegion ), plRefFlags::kActiveRef );
 
+#ifdef EAX_SDK_AVAILABLE
     // Set up the parameters of the listener mod
     EAXLISTENERPROPERTIES *listenerProps = listener->GetListenerProps();
     if( fCompPB->GetInt( (ParamID)kRefWhichSettings ) == 0 )
@@ -2961,6 +2985,7 @@ hsBool plEAXListenerComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
         listenerProps->flRoomRolloffFactor = fCompPB->GetFloat( (ParamID)kRefRoomRolloffFactor );
         listenerProps->ulFlags = fCompPB->GetInt( (ParamID)kRefFlags );
     }
+#endif
     
     return true;
 }
@@ -3132,7 +3157,7 @@ enum
     kRandomSoundGroup,
 };
 
-static const kMaxGroups = 10;
+static const int kMaxGroups = 10;
 
 class plRandomSoundComponentProc : public ParamMap2UserDlgProc
 {

@@ -71,7 +71,7 @@ public:
     virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
     virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
     virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
-    char *GetAgeName();
+    const char *GetAgeName();
     hsBool GetItinerant() {return fItinerant; }
     
     enum

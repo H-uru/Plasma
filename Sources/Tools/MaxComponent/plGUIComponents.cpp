@@ -1189,14 +1189,14 @@ hsBool plGUIDialogComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrM
 
     /// Either way, we mangle our own location component. None of this user-defined-location stuff.
 
-    char *dialogName = fCompPB->GetStr( kRefDialogName );
+    const char *dialogName = fCompPB->GetStr( kRefDialogName );
     if( dialogName == nil || *dialogName == 0 )
     {
         pErrMsg->Set(true, "GUI Dialog Component Error", "No dialog name specified on GUI Dialog component (object: %s)", node->GetName()).Show();
         return false;   
     }
 
-    char *ageName = fCompPB->GetStr(kRefAgeName);
+    const char *ageName = fCompPB->GetStr(kRefAgeName);
     Int32 seqNum = plPageInfoUtils::GetSeqNumFromAgeDesc( ageName, dialogName );
     Int32 newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, ageName, dialogName );
     if( newNum != seqNum )
@@ -1425,7 +1425,7 @@ void    plGUIDialogProc::ILoadPages( HWND hWnd, IParamBlock2 *pb )
         return;
 
     plAgePage   *page;
-    char    *selPageName = pb->GetStr( plGUIDialogComponent::kRefDialogName );
+    const char    *selPageName = pb->GetStr( plGUIDialogComponent::kRefDialogName );
     aged->SeekFirstPage();
     ComboBox_ResetContent( hWnd );
 

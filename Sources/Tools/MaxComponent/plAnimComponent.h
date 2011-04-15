@@ -33,10 +33,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "plAnimObjInterface.h"
 #include "plNoteTrackDlgComp.h"
+#include "MaxPlasmaMtls/Materials/plPassMtlBase.h"
 
 #define ANIM_COMP_CID Class_ID(0x32e77ab, 0x28a80383)
 #define ANIM_GROUP_COMP_CID Class_ID(0x341a57fc, 0x4cda6c64)
 #define ANIM_COMPRESS_COMP_CID Class_ID(0x116d3175, 0x4e465807)
+
+//This enum is necessary and can only be appended.
+//This is used in the ParamBlock2Desc.
+enum
+{
+        kAnimRadio_DEAD,
+        kAnimAutoStart,         // Start the Animation on load  (V2)
+        kAnimLoop,              // Start Looping at Begin Location
+        kAnimBegin_DEAD,
+        kAnimEnd_DEAD,
+        kAnimLoopSegCkBx_DEAD,
+        kAnimLoopSegBeg_DEAD,
+        kAnimLoopSegEnd_DEAD,
+        kAnimName,              // Name of the notetrack animation to play
+        kAnimLoopSegBegBox_DEAD,
+        kAnimLoopSegEndBox_DEAD,
+        kAnimUseGlobal,
+        kAnimGlobalName,
+        kAnimLoopName,          // Name of the notetrack specified loop
+        kAnimEaseInType,
+        kAnimEaseOutType,
+        kAnimEaseInLength,
+        kAnimEaseOutLength,
+        kAnimEaseInMin,
+        kAnimEaseInMax,
+        kAnimEaseOutMin,
+        kAnimEaseOutMax,
+        kAnimPhysAnim,
+};
+
+static plEaseAccessor gAnimCompEaseAccessor(plComponentBase::kBlkComp, 
+                                            kAnimEaseInMin, kAnimEaseInMax, kAnimEaseInLength,
+                                            kAnimEaseOutMin, kAnimEaseOutMax, kAnimEaseOutLength);
 
 class plComponentBase;
 class plMaxNode;
@@ -163,8 +197,8 @@ protected:
     void EnableGlobal(HWND hWnd, hsBool enable);
     
 public:
-    static void FillAgeGlobalComboBox(HWND box, char *varName);
-    static void SetBoxToAgeGlobal(HWND box, char *varName);
+    static void FillAgeGlobalComboBox(HWND box, const char *varName);
+    static void SetBoxToAgeGlobal(HWND box, const char *varName);
 
     virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     virtual void Update(TimeValue t, Interval &valid, IParamMap2 *map); 

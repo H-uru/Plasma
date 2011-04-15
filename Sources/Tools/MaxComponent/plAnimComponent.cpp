@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plScalarChannel.h"
 #include "MaxMain/plMaxNode.h"
 #include "MaxConvert/hsControlConverter.h"
-#include "MaxPlasmaMtls/Materials/plPassMtlBase.h"
 
 #include "pnKeyedObject/plUoid.h"
 #include "plMaxAnimUtils.h"
@@ -140,35 +139,6 @@ plAnimObjInterface  *plAnimComponentBase::GetAnimInterface( INode *inode )
     return nil;
 }
 
-//This enum is necessary and can only be appended.
-//This is used in the ParamBlock2Desc.
-enum
-{
-    kAnimRadio_DEAD,
-        kAnimAutoStart,         // Start the Animation on load  (V2)
-        kAnimLoop,              // Start Looping at Begin Location
-        kAnimBegin_DEAD,
-        kAnimEnd_DEAD,
-        kAnimLoopSegCkBx_DEAD,
-        kAnimLoopSegBeg_DEAD,
-        kAnimLoopSegEnd_DEAD,
-        kAnimName,              // Name of the notetrack animation to play
-        kAnimLoopSegBegBox_DEAD,
-        kAnimLoopSegEndBox_DEAD,
-        kAnimUseGlobal,
-        kAnimGlobalName,
-        kAnimLoopName,          // Name of the notetrack specified loop
-        kAnimEaseInType,
-        kAnimEaseOutType,
-        kAnimEaseInLength,
-        kAnimEaseOutLength,
-        kAnimEaseInMin,
-        kAnimEaseInMax,
-        kAnimEaseOutMin,
-        kAnimEaseOutMax,
-        kAnimPhysAnim,
-};
-
 void plAnimComponentProc::EnableGlobal(HWND hWnd, hsBool enable)
 {
     ComboBox_Enable(GetDlgItem(hWnd, IDC_ANIM_GLOBAL_LIST), enable);
@@ -178,7 +148,7 @@ void plAnimComponentProc::EnableGlobal(HWND hWnd, hsBool enable)
     Button_Enable(GetDlgItem(hWnd, IDC_COMP_ANIM_LOOP_CKBX), !enable);
 }   
 
-void plAnimComponentProc::FillAgeGlobalComboBox(HWND box, char *varName)
+void plAnimComponentProc::FillAgeGlobalComboBox(HWND box, const char *varName)
 {       
     plStateDescriptor *sd = plSDLMgr::GetInstance()->FindDescriptor(plPageInfoComponent::GetCurrExportAgeName(), plSDL::kLatestVersion);
     if (sd)
@@ -199,7 +169,7 @@ void plAnimComponentProc::FillAgeGlobalComboBox(HWND box, char *varName)
     ComboBox_AddString(box, "(none)");
 }
 
-void plAnimComponentProc::SetBoxToAgeGlobal(HWND box, char *varName)
+void plAnimComponentProc::SetBoxToAgeGlobal(HWND box, const char *varName)
 {
     char buff[512];
     if (!varName || !strcmp(varName, ""))
@@ -412,9 +382,6 @@ public:
     }
 };
 */
-static plEaseAccessor gAnimCompEaseAccessor(plComponentBase::kBlkComp, 
-                                            kAnimEaseInMin, kAnimEaseInMax, kAnimEaseInLength,
-                                            kAnimEaseOutMin, kAnimEaseOutMax, kAnimEaseOutLength);
 
 CLASS_DESC(plAnimComponent, gAnimDesc, "Animation",  "Animation", COMP_TYPE_MISC, ANIM_COMP_CID)
 CLASS_DESC(plAnimGroupedComponent, gAnimGroupedDesc, "Animation Grouped",  "AnimGrouped", COMP_TYPE_MISC, ANIM_GROUP_COMP_CID)
@@ -734,14 +701,14 @@ hsBool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     // we've added all keys during convert. Some cleanup might
     // be necessary in this case.
 
-    char *animName = fCompPB->GetStr(kAnimName);
+    const char *animName = fCompPB->GetStr(kAnimName);
     if (animName == nil || !strcmp(animName, ""))
         animName = ENTIRE_ANIMATION_NAME;
 
     if (fCompPB->GetInt(ParamID(kAnimUseGlobal)))
     {
         plAgeGlobalAnim *ageAnim = TRACKED_NEW plAgeGlobalAnim(animName, 0, 0);
-        ageAnim->SetGlobalVarName(fCompPB->GetStr(ParamID(kAnimGlobalName)));
+        ageAnim->SetGlobalVarName((char*)fCompPB->GetStr(ParamID(kAnimGlobalName)));
 
         fAnims[node] = ageAnim;
     }
@@ -765,7 +732,7 @@ hsBool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         if (fCompPB->GetInt(kAnimLoop))
         {
             ATCAnim->SetLoop(true);
-            char *loopName = fCompPB->GetStr(kAnimLoopName);
+            const char *loopName = fCompPB->GetStr(kAnimLoopName);
             hsScalar loopStart = info.GetLoopStart(loopName);
             hsScalar loopEnd = info.GetLoopEnd(loopName);
 
@@ -926,7 +893,7 @@ hsBool plAnimComponentBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     if (fCompPB->GetInt(ParamID(kAnimUseGlobal)))
     {
-        ((plAgeGlobalAnim *)fAnims[node])->SetGlobalVarName(fCompPB->GetStr(ParamID(kAnimGlobalName)));
+        ((plAgeGlobalAnim *)fAnims[node])->SetGlobalVarName((char*)fCompPB->GetStr(ParamID(kAnimGlobalName)));
     }
     else // It's an ATCAnim
     {
