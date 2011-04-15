@@ -333,7 +333,7 @@ void    plPassMtlBase::NoteTrackAdded( void )
 
         if( fNotetracks.Find( track ) == fNotetracks.kMissingIndex )
         {
-            MakeRefByID( FOREVER, kRefNotetracks + fNotetracks.GetCount(), track );
+            ReplaceReference(kRefNotetracks + fNotetracks.GetCount(), track);
             break;
         }
     }

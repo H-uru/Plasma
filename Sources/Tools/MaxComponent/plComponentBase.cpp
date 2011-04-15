@@ -304,12 +304,8 @@ plMaxNodeBase *plComponentBase::GetINode()
     ReferenceMaker* rm = di.Next();
     while (rm != nil) 
     {
-        for (int i = 0; i < rm->NumRefs(); i++)
-        {
-            RefTargetHandle h = rm->GetReference(i);
-            if (h->SuperClassID() == BASENODE_CLASS_ID)
-                return (plMaxNodeBase*)h;
-        }
+        if (rm->SuperClassID() == BASENODE_CLASS_ID)
+            return (plMaxNodeBase*)rm;
 
         rm = di.Next();
     }

@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPassMtl.h"
 #include "plPassMtlBasicPB.h"
-#include "resource.h"
+#include "../resource.h"
 #include "iparamm2.h"
 
 class PassBasicPBAccessor;
