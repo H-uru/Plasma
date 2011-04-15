@@ -1734,14 +1734,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
             needExit = !TGRunTOSDialog ();
         else
         {
-        HINSTANCE hRichEdDll = LoadLibrary("RICHED20.DLL");
-        INT_PTR val = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_EULA ), NULL, UruTOSDialogProc, (LPARAM)hInst);
-        FreeLibrary(hRichEdDll);
-        if (val <= 0) {
-            DWORD error = GetLastError();
-            needExit = true;
+            HINSTANCE hRichEdDll = LoadLibrary("RICHED20.DLL");
+            INT_PTR val = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_EULA ), NULL, UruTOSDialogProc, (LPARAM)hInst);
+            FreeLibrary(hRichEdDll);
+            if (val <= 0) {
+                DWORD error = GetLastError();
+                needExit = true;
+            }
         }
-    }
     }
 
     curl_global_cleanup();
