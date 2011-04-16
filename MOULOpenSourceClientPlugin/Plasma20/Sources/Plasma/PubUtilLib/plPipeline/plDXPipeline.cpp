@@ -11664,7 +11664,11 @@ void	plDXPlateManager::IDrawToDevice( plPipeline *pipe )
 	fD3DDevice->SetFVF(dxPipe->fSettings.fCurrFVFFormat = PLD3D_PLATEFVF);
 	fD3DDevice->SetStreamSource( 0, fVertBuffer, 0, sizeof( plPlateVertex ) );	
 	plProfile_Inc(VertexChange);
-	fD3DDevice->SetTransform( D3DTS_VIEW, &d3dIdentityMatrix );
+	// To get plates properly pixel-aligned, we need to compensate for D3D9's weird half-pixel
+	// offset (see http://drilian.com/2008/11/25/understanding-half-pixel-and-half-texel-offsets/
+	// or http://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx).
+	D3DXMatrixTranslation(&mat, -0.5f/scrnWidthDiv2, -0.5f/scrnHeightDiv2, 0.0f);
+	fD3DDevice->SetTransform( D3DTS_VIEW, &mat );
 	oldCullMode = dxPipe->fCurrCullMode;
 
 	for( plate = fPlates; plate != nil; plate = plate->GetNext() )
