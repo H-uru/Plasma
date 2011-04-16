@@ -222,7 +222,9 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         case IDCANCEL:
             if( IMakeSureCheckedIn() )
             {
+#ifdef MAXASS_AVAILABLE
                 IUpdateCurAge();
+#endif
                 DestroyWindow(fhDlg);
                 fhDlg = nil;
                 fDirty = false;
