@@ -13,6 +13,7 @@ set(MaxPlasmaLights_HEADERS
     plRTLightBaseAnimDlgProc.h
     plRTLightBaseAnimPBDec.h
     plRTObjLightDesc.h
+    plRTPlasmaLights.def
     plRTProjDirLight.h
     plRTProjDirLightClassDesc.h
     plRTProjDirLightPBDec.h

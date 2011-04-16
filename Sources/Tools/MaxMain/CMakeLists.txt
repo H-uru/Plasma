@@ -14,6 +14,7 @@ include_directories(${PYTHON_INCLUDE_DIR})
 
 set(MaxMain_HEADERS
     GlobalUtility.h
+    main.def
     MaxAllocDll.h
     plActionTableMgr.h
     plAgeDescInterface.h

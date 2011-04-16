@@ -99,8 +99,8 @@ void DoAllRecur(PMaxNodeFunc p, plMaxNode *node)
 //#include "../MaxComponent/plComponentBase.h"
 
 
-#include "../MaxExport/plExportErrorMsg.h"
-#include "../MaxExport/plExportDlg.h"
+#include "MaxExport/plExportErrorMsg.h"
+#include "MaxExport/plExportDlg.h"
 
 static void NotifyProc(void *param, NotifyInfo *info)
 {
@@ -199,9 +199,18 @@ DWORD PlasmaMax::Start()
 #endif
 
     // Setup the localization mgr
-    std::string clientPath = plMaxConfig::GetClientPath(false, true);
-    clientPath += "dat";
-    pfLocalizationMgr::Initialize(clientPath);
+    // Dirty hacks are because Cyan sucks...
+    const char* pathTemp = plMaxConfig::GetClientPath(false, true);
+    if (pathTemp == nil) 
+    {
+        hsMessageBox("PlasmaMAX2.ini is missing the Client Path", "Error", hsMessageBoxNormal);
+    } 
+    else 
+    {
+        std::string clientPath(pathTemp);
+        clientPath += "dat";
+        pfLocalizationMgr::Initialize(clientPath);
+    }
 
     return GUPRESULT_KEEP;
 }

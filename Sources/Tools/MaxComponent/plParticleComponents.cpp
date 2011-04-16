@@ -669,7 +669,7 @@ ParamBlockDesc2 gParticleBk
         IDC_COMP_PARTICLE_LIFEMAX, IDC_COMP_PARTICLE_LIFEMAX_SPIN, 1.0,
         end,
 
-    plParticleCoreComponent::kImmortal, _T("Immortal"),     TYPE_BOOL,  
+    plParticleCoreComponent::kImmortal, _T("Immortal"),     TYPE_BOOL,  0, 0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_PARTICLE_NODIE,
         end,
@@ -737,7 +737,7 @@ ParamBlockDesc2 gParticleBk
         IDC_COMP_PARTICLE_ROT_RANGE, IDC_COMP_PARTICLE_ROT_RANGE_SPIN, 1.0,
         end,
         
-    plParticleCoreComponent::kFollowSystem, _T("FollowSystem"),     TYPE_BOOL,  
+    plParticleCoreComponent::kFollowSystem, _T("FollowSystem"),     TYPE_BOOL, 0, 0, 
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_PARTICLE_FOLLOW_SYSTEM,
         end,        
@@ -1255,12 +1255,12 @@ ParamBlockDesc2 gParticleWindBk
         IDC_COMP_PARTICLE_WIND_SWIRL, IDC_COMP_PARTICLE_WIND_SWIRL_SPIN, 1.0,
         end,
 
-    plParticleWindComponent::kHorizontal, _T("Horizontal"),     TYPE_BOOL,  
+    plParticleWindComponent::kHorizontal, _T("Horizontal"),     TYPE_BOOL, 0, 0, 
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_PARTICLE_WIND_HORIZONTAL,
         end,
 
-    plParticleWindComponent::kLocalize, _T("Localize"),     TYPE_BOOL,  
+    plParticleWindComponent::kLocalize, _T("Localize"),     TYPE_BOOL, 0, 0, 
         p_default, TRUE,
         end,
 
@@ -1348,7 +1348,7 @@ ParamBlockDesc2 gParticleUniWindBk
         IDC_COMP_PARTICLE_WIND_SWIRL, IDC_COMP_PARTICLE_WIND_SWIRL_SPIN, 1.0,
         end,
 
-    plParticleUniWindComponent::kHorizontal, _T("Horizontal"),      TYPE_BOOL,  
+    plParticleUniWindComponent::kHorizontal, _T("Horizontal"),      TYPE_BOOL, 0, 0,  
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_PARTICLE_WIND_HORIZONTAL,
         end,
