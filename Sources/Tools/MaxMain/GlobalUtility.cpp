@@ -107,7 +107,7 @@ static void NotifyProc(void *param, NotifyInfo *info)
     if (info->intcode == NOTIFY_FILE_POST_OPEN)
     {
         plMaxNode *pNode = (plMaxNode*)GetCOREInterface()->GetRootNode();
-        DoAllRecur(plMaxNode::ClearData, pNode);
+        DoAllRecur(&plMaxNode::ClearData, pNode);
     }
     else if (info->intcode == NOTIFY_SYSTEM_STARTUP)
     {
@@ -182,7 +182,9 @@ DWORD PlasmaMax::Start()
     DummyCodeIncludeFuncGrassShader();
     
     // Register the SceneViewer with Max
+#ifdef MAXSCENEVIEWER_ENABLED
     SceneSync::Instance();
+#endif
 
     plComponentShow::Init();
 
@@ -192,7 +194,9 @@ DWORD PlasmaMax::Start()
 
     RegisterNotification(NotifyProc, 0, NOTIFY_SYSTEM_STARTUP);
 
+#ifdef MAXSCENEVIEWER_ENABLED
     InitMaxFileData();
+#endif
 
     // Setup the localization mgr
     std::string clientPath = plMaxConfig::GetClientPath(false, true);
@@ -214,7 +218,9 @@ void PlasmaMax::Stop()
 }
 
 #include "plMtlCollector.h"
+#ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
+#endif
 
 void TextureSet(Texmap* texmap, int iBmp, UInt64 assetId)
 {
@@ -222,8 +228,10 @@ void TextureSet(Texmap* texmap, int iBmp, UInt64 assetId)
     if (layer)
     {
         int numBitmaps = layer->GetNumBitmaps();
+#ifdef MAXASS_AVAILABLE
         if (iBmp < numBitmaps)
             layer->SetBitmapAssetId(jvUniqueId(assetId), iBmp);
+#endif
     }
 }
 
@@ -267,11 +275,14 @@ DWORD PlasmaMax::Control(DWORD parameter)
             }
         }
 
+#ifdef MAXASS_AVAILABLE
         jvArray<TexInfo>* textures = TRACKED_NEW jvArray<TexInfo>(texInfo.size());
         for (int i = 0; i < texInfo.size(); i++)
             (*textures)[i] = texInfo[i];
-
         return DWORD(textures);
+#else
+        return 0;
+#endif
     }
     else if (parameter == kGetTextureSetFunc)
     {

@@ -36,14 +36,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMtlCollector.h"
 #include "plMaxAccelerators.h"
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+#ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+#endif
 
 // Not a class member so we don't have to make everyone who uses this know about AssetMan
+#ifdef MAXASS_AVAILABLE
 static jvUniqueId gAssetID;
+#endif
 
 plTextureSearch::plTextureSearch() : fDlg(NULL)
 {
+#ifdef MAXASS_AVAILABLE
     gAssetID.SetEmpty();
+#endif
     memset(fFileName, 0, sizeof(fFileName));
 }
 
@@ -278,7 +284,9 @@ void plTextureSearch::IUpdateTextures(plTextureSearch::Update update)
                             }
                             else if (update == kUpdateReplace)
                             {
+#ifdef MAXASS_AVAILABLE
                                 layer->SetBitmapAssetId(gAssetID, i);
+#endif
 
                                 BitmapInfo info;
                                 info.SetName(fFileName);
@@ -344,6 +352,7 @@ void plTextureSearch::IPickReplaceTexture()
     fFileName[0] = '\0';
 
     // if we have the assetman plug-in, then try to use it, unless shift is held down
+#ifdef MAXASS_AVAILABLE
     MaxAssInterface* maxAssInterface = GetMaxAssInterface();
     if (maxAssInterface && !(GetKeyState(VK_SHIFT) & 0x8000))
     {
@@ -352,10 +361,13 @@ void plTextureSearch::IPickReplaceTexture()
     else
     {
         gAssetID.SetEmpty();
+#endif
         BitmapInfo bi;
         TheManager->SelectFileInput(&bi, GetCOREInterface()->GetMAXHWnd(), _T("Select Bitmap Image File"));
         strcpy(fFileName, bi.Filename());
+#ifdef MAXASS_AVAILABLE
     }
+#endif
 
     if (fFileName[0] == '\0')
     {

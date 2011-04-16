@@ -30,15 +30,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define MAXPLUGINCODE
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxMain/plPluginResManager.h"
-#include "../MaxConvert/plConvert.h"
-#include "../MaxConvert/hsMaterialConverter.h"
-#include "../MaxComponent/plComponent.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/plPluginResManager.h"
+#include "MaxConvert/plConvert.h"
+#include "MaxConvert/hsMaterialConverter.h"
+#include "MaxComponent/plComponent.h"
 #include "hsThread.h"
 #include "hsSTLStream.h"
-#include "../../../Plasma/Apps/plClient/plClientUpdateFormat.h"
+#include "plClient/plClientUpdateFormat.h"
 
 #include "plMaxFileData.h"
 

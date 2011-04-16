@@ -27,9 +27,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "SceneViewer.h"
 #include "SceneSync.h"
 
-#include "../MaxMain/plMaxCFGFile.h"
+#include "MaxMain/plMaxCFGFile.h"
 
-#include "../MaxMain/resource.h"
+#include "MaxMain/resource.h"
 
 // For ShellExecute
 #include <shellapi.h>

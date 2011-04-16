@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plUpdatableClient_h_inc
 
 #include "hsTypes.h"
-#include "../../Plasma/Apps/plClient/plClient.h"
+#include "plClient/plClient.h"
 
 class hsSemaphore;
 class plStatusLog;

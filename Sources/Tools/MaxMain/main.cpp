@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 extern ClassDesc* GetGUPDesc();
 extern ClassDesc* GetComponentUtilDesc();
 extern ClassDesc* GetComponentMgrDesc();
-extern ClassDesc *GetMaxFileDataDesc();
+extern ClassDesc* GetMaxFileDataDesc();
 extern ClassDesc* GetMaxUtilsDesc();
 
 static HSClassDesc2 HSDesc;
@@ -92,8 +92,10 @@ __declspec(dllexport) ClassDesc *LibClassDesc(int i)
             return GetComponentUtilDesc();
         case 4:
             return GetComponentMgrDesc();
+#ifdef MAXSCENEVIEWER_ENABLED
         case 5:
             return GetMaxFileDataDesc();
+#endif
         case 6:
             return GetMaxUtilsDesc();
         default: 
@@ -207,7 +209,7 @@ public:
     SClass_ID       SuperClassID() {return CUST_ATTRIB_CLASS_ID;}
     Class_ID        ClassID() {return fClassDesc->ClassID();}
 
-    ReferenceTarget *Clone(RemapDir &remap = NoRemap());
+    ReferenceTarget *Clone(RemapDir &remap = DefaultRemapDir());
     virtual bool CheckCopyAttribTo(ICustAttribContainer *to) { return true; }
     
     const char* GetName() { return (TCHAR*)fClassDesc->ClassName(); }
@@ -267,7 +269,7 @@ void plGeneralAttrib::EndEditParams(IObjParam *ip, ULONG flags, Animatable *next
 ReferenceTarget *plGeneralAttrib::Clone(RemapDir &remap)
 {
     plGeneralAttrib *pnew = (plGeneralAttrib*) fClassDesc->Create(false);
-    pnew->MakeRefByID(FOREVER,0,remap.CloneRef(fPBlock));
+    pnew->SetReference(0, remap.CloneRef(fPBlock));
     BaseClone(this, pnew, remap);
     return pnew;
 }

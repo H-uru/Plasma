@@ -98,10 +98,13 @@ BOOL plMaxUtils::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 
 #include "plMtlCollector.h"
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+#ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/AssManTypes.h"
+#endif
 
 int ClearTextureIds()
 {
+#ifdef MAXASS_AVAILABLE
     int numCleared = 0;
 
     TexSet texmaps;
@@ -131,6 +134,9 @@ int ClearTextureIds()
     }
 
     return numCleared;
+#else
+    return 0;
+#endif
 }
 /*
 void ClearAssetsRecur(plMaxNode* node)

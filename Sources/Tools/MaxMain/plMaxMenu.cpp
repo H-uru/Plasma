@@ -177,8 +177,13 @@ bool DoAction(int id)
         return true;
 
     case kActionSceneViewer:
+#ifdef MAXSCENEVIEWER_ENABLED
         SceneViewer::Instance().Show();
         return true;
+#else
+        hsMessageBox("The SceneViewer has been disabled in this build", "Disabled", 0);
+        return true;
+#endif
 
     case kActionLock:
         plNodeLock().Lock();
@@ -246,7 +251,7 @@ void AddPlasmaExportMenu()
 
         // KLUDGE - MaxAss didn't define the file submenu with an accelerator.
         // This fixes it.
-        if (title == "MAX File Operations")
+        if (title == (CStr)"MAX File Operations")
         {
             fileMenuItem->SetUseCustomTitle(true);
             bool custom = fileMenuItem->GetUseCustomTitle();
@@ -264,7 +269,7 @@ void AddPlasmaExportMenu()
             IMenuItem* fileMenuItem = fileMenu->GetItem(i);
             const TSTR& title = fileMenuItem->GetTitle();
             // We want to add it after the "Export Selected" menu item
-            if (title == "Export Selected...")
+            if (title == (CStr)"Export Selected...")
             {
                 ActionTable* pActionTable = GetCOREInterface()->GetActionManager()->FindTable(kActionId);
                 if (!pActionTable)
@@ -379,10 +384,12 @@ void plCreateMenu()
         pMenuItem->ActAsSeparator();
         pPlasmaMenu->AddItem(pMenuItem);
 
+#ifdef MAXSCENEVIEWER_ENABLED
         // Add the SceneViewer to the menu
         pMenuItem = GetIMenuItem();
         pMenuItem->SetActionItem(pActionTable->GetAction(kActionSceneViewer));
         pPlasmaMenu->AddItem(pMenuItem);
+#endif
 
         // Add a separator
         pMenuItem = GetIMenuItem();

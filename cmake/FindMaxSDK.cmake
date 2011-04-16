@@ -38,6 +38,12 @@ find_library(3dsm_MAXUTIL_LIBRARY maxutil
 find_library(3dsm_MESH_LIBRARY mesh
     PATHS "${3dsm_PATH}/maxsdk/lib")
 
+find_library(3dsm_MENUS_LIBRARY menus
+    PATHS "${3dsm_PATH}/maxsdk/lib")
+
+find_library(3dsm_MNMATH_LIBRARY mnmath
+    PATHS "${3dsm_PATH}/maxsdk/lib")
+
 find_library(3dsm_PARAMBLK2_LIBRARY paramblk2
     PATHS "${3dsm_PATH}/maxsdk/lib")
 
@@ -52,6 +58,8 @@ set(3dsm_LIBRARIES
     ${3dsm_MAXSCRPT_LIBRARY}
     ${3dsm_MAXUTIL_LIBRARY}
     ${3dsm_MESH_LIBRARY}
+    ${3dsm_MENUS_LIBRARY}
+    ${3dsm_MNMATH_LIBRARY}
     ${3dsm_PARAMBLK2_LIBRARY}
 )
 
@@ -66,6 +74,8 @@ mark_as_advanced(
     3dsm_MAXSCRPT_LIBRARY
     3dsm_MAXUTIL_LIBRARY
     3dsm_MESH_LIBRARY
+    3dsm_MENUS_LIBRARY
+    3dsm_MNMATH_LIBRARY
     3dsm_PARAMBLK2_LIBRARY
 )
 

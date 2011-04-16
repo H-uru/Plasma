@@ -32,7 +32,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxCFGFile.h"
 #include "hsStream.h"
 #include "hsUtils.h"
+#ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+#endif
 #include "plMaxAccelerators.h"
 
 #include <string>
@@ -52,8 +54,10 @@ protected:
         fAgeName = name;
     }
 
-public: 
+public:
+#ifdef MAXASS_VAILABLE
     jvUniqueId fAssetID;
+#endif
     string  fPath;
     string  fAgeName;
 
@@ -70,11 +74,14 @@ public:
         fPath = path;
         IGetAgeName(path);
     }
+
+#ifdef MAXASS_AVAILABLE
     plAgeFile(Types type, const char *path, jvUniqueId& id) : fType(type), fAssetID(id)
     {
         fPath = path;
         IGetAgeName(path);
     }
+#endif
 };
 
 //// Static Tree Helpers //////////////////////////////////////////////////////
@@ -162,8 +169,10 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
     case WM_INITDIALOG:
         fhDlg = hDlg;
 
+#ifdef MAXASS_AVAILABLE
         if( fAssetManIface == nil )
             fAssetManIface = TRACKED_NEW MaxAssBranchAccess();
+#endif
 
         // Make our bold font by getting the normal font and bolding
         if( fBoldFont == nil )
@@ -185,8 +194,10 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         return TRUE;
 
     case WM_DESTROY:
+#ifdef MAXASS_AVAILABLE
         delete fAssetManIface;
         fAssetManIface = nil;
+#endif
         return TRUE;
 
     // Day length spinner changed
@@ -335,7 +346,9 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                 {
                     int id = SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETITEMDATA, idx, 0 );
 
+#ifdef MAXASS_AVAILABLE
                     fAssetManIface->SetCurrBranch( id );
+#endif
                     IFillAgeTree();
                 }
             }
@@ -502,6 +515,7 @@ void plAgeDescInterface::ICheckedPageFlag(int ctrlID)
 
 void    plAgeDescInterface::ICheckOutCurrentAge( void )
 {
+#ifdef MAXASS_AVAILABLE
     hsAssert( !fCurrAgeCheckedOut, "Trying to re-check out an age!" );
 
     plAgeFile *currAge = IGetCurrentAge();
@@ -521,6 +535,7 @@ void    plAgeDescInterface::ICheckOutCurrentAge( void )
         hsMessageBox( "Unable to check out age file from AssetMan. Most likely somebody already has it checked out.", "Error", hsMessageBoxNormal );
         return;
     }
+#endif
     fCurrAgeCheckedOut = true;
 
     // Make sure we loaded the latest version
@@ -532,6 +547,7 @@ void    plAgeDescInterface::ICheckOutCurrentAge( void )
 
 void    plAgeDescInterface::ICheckInCurrentAge( void )
 {
+#ifdef MAXASS_AVAILABLE
     hsAssert( fCurrAgeCheckedOut, "Trying to check in an age when none is checked out!" );
 
     plAgeFile *currAge = IGetCurrentAge();
@@ -547,6 +563,7 @@ void    plAgeDescInterface::ICheckInCurrentAge( void )
     // Check the age file back in to AssetMan
     (*fAssetManIface)->CheckInAsset( currAge->fAssetID, fCheckedOutPath, "" );
     fCurrAgeCheckedOut = false;
+#endif
 
     IInvalidateCheckOutIndicator();
     IEnableControls( true );
@@ -554,6 +571,7 @@ void    plAgeDescInterface::ICheckInCurrentAge( void )
 
 void    plAgeDescInterface::IUndoCheckOutCurrentAge( void )
 {
+#ifdef MAXASS_AVAILABLE
     hsAssert( fCurrAgeCheckedOut, "Trying to undo check out an age when none is checked out!" );
 
     plAgeFile *currAge = IGetCurrentAge();
@@ -569,6 +587,7 @@ void    plAgeDescInterface::IUndoCheckOutCurrentAge( void )
 
     // Reload the non-saved version
     ILoadAge( fCheckedOutPath );
+#endif
 
     IInvalidateCheckOutIndicator();
     IEnableControls( true );
@@ -586,6 +605,7 @@ void    plAgeDescInterface::IInvalidateCheckOutIndicator( void )
 
 hsBool  plAgeDescInterface::IMakeSureCheckedIn( void )
 {
+#ifdef MAXASS_AVAILABLE
     int result;
     plAgeFile* currAge = IGetCurrentAge();
     if (!currAge)
@@ -631,6 +651,8 @@ hsBool  plAgeDescInterface::IMakeSureCheckedIn( void )
         }
         IEnableControls( true );
     }
+#endif
+
     return true;
 }
 
@@ -648,6 +670,7 @@ void    plAgeDescInterface::IUpdateCurAge( void )
 
     IEnableControls( true );
 
+#ifdef MAXASS_AVAILABLE
     if( currAge->fType == plAgeFile::kAssetFile )
     {
         // Gotta get the latest version from assetMan before loading
@@ -662,6 +685,7 @@ void    plAgeDescInterface::IUpdateCurAge( void )
         }
     }
     else
+#endif
         // Load the local age, also check its sequence #s
         ILoadAge( currAge->fPath.c_str(), true );
 }
@@ -670,6 +694,7 @@ static const int kDefaultCapacity = 10;
 
 void plAgeDescInterface::IInitControls()
 {
+#ifdef MAXASS_AVAILABLE
     // Fill the branch combo box
     SendDlgItemMessage( fhDlg, IDC_BRANCHCOMBO, CB_RESETCONTENT, 0, 0 );
     const jvTypeArray &branches = (*fAssetManIface)->GetBranches();
@@ -691,6 +716,7 @@ void plAgeDescInterface::IInitControls()
 
     SendDlgItemMessage( fhDlg, IDC_AGELIST_STATIC, WM_SETFONT, (WPARAM)fBoldFont, MAKELPARAM( TRUE, 0 ) );
     SendDlgItemMessage( fhDlg, IDC_AGEDESC, WM_SETFONT, (WPARAM)fBoldFont, MAKELPARAM( TRUE, 0 ) );
+#endif
 
     ISetControlDefaults();
     IEnableControls(false);
@@ -814,7 +840,9 @@ void plAgeDescInterface::IGetAgeFiles(vector<plAgeFile*>& ageFiles)
         }
     }
 
+#ifdef MAXASS_AVAILABLE
     // Add AssetMan ages, if available (since we're static, go thru the main MaxAss interface)
+    // Hoikas (many years later) does not believe the above comment...
     MaxAssInterface *assetMan = GetMaxAssInterface();
     if( assetMan!= nil )
     {
@@ -845,6 +873,7 @@ void plAgeDescInterface::IGetAgeFiles(vector<plAgeFile*>& ageFiles)
         }
         assets->DeleteSelf();
     }
+#endif
 }
 
 void plAgeDescInterface::IClearAgeFiles(vector<plAgeFile*>& ageFiles)
@@ -876,10 +905,13 @@ void plAgeDescInterface::IFillAgeTree( void )
     // Clear the tree first and add our two root headers
     TreeView_DeleteAllItems(ageTree);
 
+#ifdef MAXASS_AVAILABLE
     if( fAssetManIface != nil )
         fAssetManBranch = SAddTreeItem(ageTree, nil, "AssetMan Ages", -1);
     else
         fAssetManBranch = nil;
+#endif
+
     fLocalBranch = SAddTreeItem(ageTree, nil, "Local Ages", -1);
 
     IGetAgeFiles(fAgeFiles);
@@ -967,13 +999,17 @@ void plAgeDescInterface::INewAge()
     VARIANT assetId;
     VariantInit(&assetId);
 
+#ifdef MAXASS_AVAILABLE
     bool makeAsset = true;
     if( hsMessageBox( "Do you wish to store your new age in AssetMan?", "Make source-controlled?", hsMessageBoxYesNo ) == hsMBoxNo )
         makeAsset = false;
+#endif
 
     char    newAssetFilename[ MAX_PATH ];
+#ifdef MAXASS_AVAILABLE
     if (!fAssetManIface)
         makeAsset = false;
+#endif
 
     if( !IGetLocalAgePath( newAssetFilename ) )
         return;
@@ -993,6 +1029,7 @@ void plAgeDescInterface::INewAge()
     strcat(newAssetFilename, name);
     strcat(newAssetFilename, ".age");
 
+#ifdef MAXASS_AVAILABLE
     if( !makeAsset )
         fForceSeqNumLocal = true;
     ISetControlDefaults();
@@ -1001,6 +1038,7 @@ void plAgeDescInterface::INewAge()
 
     if( makeAsset )
         (*fAssetManIface)->AddNewAsset(newAssetFilename);
+#endif
 
     // Refresh the tree now
     IFillAgeTree();

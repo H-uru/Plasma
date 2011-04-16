@@ -138,7 +138,7 @@ public:
     const TCHAR*    Category()              { return _T(""); }
 };
 MaxFileDataClassDesc gMaxFileDataClassDesc;
-ClassDesc *GetMaxFileDataDesc() { return &gMaxFileDataClassDesc; }
+ClassDesc* GetMaxFileDataDesc() { return &gMaxFileDataClassDesc; }
 
 // This functions searches for Trackviewnode and the Controller and creates one, if none is present.
 plMaxFileDataControl *GetMaxFileData(bool& created)

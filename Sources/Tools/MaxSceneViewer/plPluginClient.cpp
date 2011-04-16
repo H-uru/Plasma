@@ -25,19 +25,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPluginClient.h"
 
-#include "../../../Plasma/PubUtilLib/plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
 
 #include "hsThread.h"
 #include "hsSTLStream.h"
 
-#include "../pnKeyedObject/plUoid.h"
-#include "../plResMgr/plUpdatableResManager.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "pnKeyedObject/plUoid.h"
+#include "plResMgr/plUpdatableResManager.h"
+#include "plStatusLog/plStatusLog.h"
 
 // Needed for IEnableProxies
 #include "plPipeline.h"
-#include "../plDrawable/plDrawableSpans.h"
-#include "../pnMessage/plProxyDrawMsg.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "pnMessage/plProxyDrawMsg.h"
 #include "plgDispatch.h"
 
 #define LOG_SCENEVIWER

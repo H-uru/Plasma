@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class ClassDesc2;
 class IParamBlock2;
 
+ClassDesc2* GetDynamicEnvLayerDesc();
+
 //// Class Definition /////////////////////////////////////////////////////////
 
 class plDynamicEnvLayer : public plPlasmaMAXLayer
