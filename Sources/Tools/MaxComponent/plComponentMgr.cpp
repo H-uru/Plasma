@@ -87,8 +87,14 @@ int IDescCompare(ClassDesc *desc1, ClassDesc *desc2);
 
 void plComponentMgr::Register(ClassDesc *desc)
 {
-    // Organize desc's by category and name
+    // No descs? Go ahead and push it to the back...
+    if (fDescs.size() == 0)
+    {
+        fDescs.push_back(desc);
+        return;
+    }
 
+    // Organize desc's by category and name
     std::vector<ClassDesc*>::iterator it;
     for (it = fDescs.begin(); it != fDescs.end(); it++) 
     {
