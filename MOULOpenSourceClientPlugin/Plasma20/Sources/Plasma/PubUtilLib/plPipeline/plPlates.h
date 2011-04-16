@@ -110,6 +110,7 @@ class plPlate
 		hsMatrix44		&GetTransform( void ) { return fXformMatrix; }
 		const char		*GetTitle( void ) { return fTitle; }
 		UInt32			GetFlags( void ) { return fFlags; }
+		const plMipmap	*GetMipmap( void ) { return fMipmap; }
 
 		void	SetVisible( hsBool vis ) { if( vis ) fFlags |= kFlagVisible; else fFlags &= ~kFlagVisible; }
 		hsBool	IsVisible( void );
