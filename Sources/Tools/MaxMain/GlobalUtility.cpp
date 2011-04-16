@@ -203,7 +203,7 @@ DWORD PlasmaMax::Start()
     const char* pathTemp = plMaxConfig::GetClientPath(false, true);
     if (pathTemp == nil) 
     {
-        hsMessageBox("PlasmaMAX2.ini is missing the Client Path", "Error", hsMessageBoxNormal);
+        hsMessageBox("PlasmaMAX2.ini is missing or invalid", "Plasma/2.0 Error", hsMessageBoxNormal);
     } 
     else 
     {
