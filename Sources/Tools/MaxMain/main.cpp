@@ -92,9 +92,11 @@ __declspec(dllexport) ClassDesc *LibClassDesc(int i)
             return GetComponentUtilDesc();
         case 4:
             return GetComponentMgrDesc();
-#ifdef MAXSCENEVIEWER_ENABLED
         case 5:
+#ifdef MAXSCENEVIEWER_ENABLED
             return GetMaxFileDataDesc();
+#else
+            return 0;
 #endif
         case 6:
             return GetMaxUtilsDesc();

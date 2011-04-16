@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPluginResManager_h_inc
 #define plPluginResManager_h_inc
 
-#include "../plResMgr/plResManager.h"
-#include "../pnKeyedObject/plKey.h"
+#include "plResMgr/plResManager.h"
+#include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
 
 class plPageInfo;
