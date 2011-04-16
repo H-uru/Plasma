@@ -392,7 +392,7 @@ void plPluginResManager::EndExport()
     }
     fExportedNodes.Reset();
 
-    for( i = 0; i < fLooseEnds.GetCount(); i++ )
+    for(int i = 0; i < fLooseEnds.GetCount(); i++ )
     {
         if( fLooseEnds[i] )
             fLooseEnds[i]->UnRefObject();

@@ -4038,7 +4038,7 @@ plKey   plMaxNode::FindPageKey( UInt16 classIdx, const char *name )
     return hsgResMgr::ResMgr()->FindKey( plUoid( GetLocation(), classIdx, name ) );
 }
 
-char *plMaxNode::GetAgeName()
+const char *plMaxNode::GetAgeName()
 {
     int i;
     for (i = 0; i < NumAttachedComponents(); i++)

@@ -164,7 +164,7 @@ public:
 
     // Little helper function. Calls FindKey() in the resManager using the location (page) of this node
     plKey   FindPageKey( UInt16 classIdx, const char *name );
-    char *GetAgeName();
+    const char *GetAgeName();
 
     void CheckSynchOptions(plSynchedObject* so);
 

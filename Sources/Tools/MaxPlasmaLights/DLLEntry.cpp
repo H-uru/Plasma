@@ -51,6 +51,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
     if (!controlsInit)
     {
         controlsInit = TRUE;
+        // Note: InitCustomControls is deprecated
+        //       New versions of 3dsm do this for us :)
         InitCustomControls(hInstance);  // Initialize MAX's custom controls
         InitCommonControls();           // Initialize Win95 controls
     }

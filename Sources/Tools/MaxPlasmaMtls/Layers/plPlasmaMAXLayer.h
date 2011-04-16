@@ -121,8 +121,10 @@ class plPlasmaMAXLayer : public Texmap
         
         virtual BOOL HandleBitmapSelection(int index = 0);
         virtual void SetBitmap(BitmapInfo *bi, int index = 0);
+#ifdef MAXASS_AVAILABLE
         virtual void SetBitmapAssetId(jvUniqueId& assetId, int index = 0);
         virtual void GetBitmapAssetId(jvUniqueId& assetId, int index = 0);
+#endif
 
         // Pure virtual accessors for the various bitmap related elements
         virtual Bitmap *GetMaxBitmap(int index = 0) = 0;

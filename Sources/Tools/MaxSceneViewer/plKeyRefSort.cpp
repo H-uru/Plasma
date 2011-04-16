@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plKeyRefSort.h"
-#include "../pnKeyedObject/plKeyImp.h"
+#include "pnKeyedObject/plKeyImp.h"
 
 #include <algorithm>
 

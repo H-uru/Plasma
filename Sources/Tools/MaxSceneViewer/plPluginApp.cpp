@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPluginClient.h"
 #include "plPluginApp.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetApp.h"
 
 plClient *plPluginApp::Startup(char *pCmdLine)
 {

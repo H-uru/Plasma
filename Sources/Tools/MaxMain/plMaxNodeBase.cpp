@@ -462,7 +462,7 @@ bool plMaxNodeBase::IsXRef()
 {
     // Is this an XRef'd object?
     Object *obj = GetObjectRef();
-    if (obj->SuperClassID() == SYSTEM_CLASS_ID && obj->ClassID() == Class_ID(XREFOBJ_CLASS_ID,0))
+    if (obj->SuperClassID() == SYSTEM_CLASS_ID && obj->ClassID() == XREFOBJ_CLASS_ID)
         return true;
 
     //
@@ -523,18 +523,18 @@ UInt32 plMaxNodeBase::NumAttachedComponents(bool all)
     std::vector<plComponentBase*> comps;
 
     // Go through this item's reflist, looking for components
-    RefList &refList = GetRefList();
-    RefListItem *item = refList.FirstItem();
+    DependentIterator di(this);
+    ReferenceMaker* item = di.Next();
     while (item)
     {
-        plComponentBase *comp = IRefMakerToComponent(item->maker, all);
+        plComponentBase *comp = IRefMakerToComponent(item, all);
         if (comp && std::find(comps.begin(), comps.end(), comp) == comps.end())
         {
             comps.push_back(comp);
             numComponents++;
         }
 
-        item = item->next;
+        item = di.Next();
     }
 
     return numComponents;
@@ -546,11 +546,11 @@ plComponentBase *plMaxNodeBase::GetAttachedComponent(UInt32 i, bool all)
     std::vector<plComponentBase*> comps;
 
     // Go through this item's reflist, looking for components
-    RefList &refList = GetRefList();
-    RefListItem *item = refList.FirstItem();
+    DependentIterator di(this);
+    ReferenceMaker* item = di.Next();
     while (item)
     {
-        plComponentBase *comp = IRefMakerToComponent(item->maker, all);
+        plComponentBase *comp = IRefMakerToComponent(item, all);
         if (comp && std::find(comps.begin(), comps.end(), comp) == comps.end())
         {
             if (numComponents == i)
@@ -560,7 +560,7 @@ plComponentBase *plMaxNodeBase::GetAttachedComponent(UInt32 i, bool all)
             numComponents++;
         }
 
-        item = item->next;
+        item = di.Next();;
     }
 
     return nil;

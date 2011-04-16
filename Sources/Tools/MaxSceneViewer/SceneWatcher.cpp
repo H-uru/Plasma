@@ -27,11 +27,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "SceneWatcher.h"
 
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxComponent/plComponent.h"
-#include "../MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxComponent/plComponent.h"
+#include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 SceneWatcher::SceneWatcher() : fDirty(false)
 {

@@ -33,6 +33,7 @@ set_target_properties(MaxPlasmaLights PROPERTIES SUFFIX ".dlo")
 
 
 target_link_libraries(MaxPlasmaLights MaxComponent)
+target_link_libraries(MaxPlasmaLights MaxPlasmaMtls)
 target_link_libraries(MaxPlasmaLights ${3dsm_LIBRARIES})
 
 # Carbon copy from plClient
@@ -126,6 +127,7 @@ target_link_libraries(MaxPlasmaLights pnUtils)
 target_link_libraries(MaxPlasmaLights pnUtilsExe)
 
 if (WIN32)
+    target_link_libraries(MaxPlasmaLights Comctl32)
     target_link_libraries(MaxPlasmaLights Rpcrt4)
     target_link_libraries(MaxPlasmaLights Ws2_32)
 endif(WIN32)

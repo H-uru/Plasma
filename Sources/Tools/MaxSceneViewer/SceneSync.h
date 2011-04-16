@@ -37,8 +37,8 @@ class hsSemaphore;
 class SceneWatcher;
 class plSceneNode;
 
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKey.h"
 
 class SceneSync
 {
