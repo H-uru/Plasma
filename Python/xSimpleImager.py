@@ -216,6 +216,11 @@ class xSimpleImager(ptModifier):
         #~ PtDebugPrint("xSimpleImager[%s]:OnAgeKIEvent recvd. Event=%d and data= " % (ImagerName.value,event),tupdata)
         PtDebugPrint("xSimpleImager.OnVaultEvent[", ImagerName.value, "]: event = ", event, " tupdata = ", tupdata, level=kDebugDumpLevel)
         
+        # Sometimes, we randomly get None... O.o
+        if tupdata[0] == None:
+            PtDebugPrint("xSimpleImager.OnVaultEvent: nil ptVaultNode", level=kErrorLevel)
+            return None
+        
         # Cyan's servers sometimes spam us with updates to the public city AgeInfo node
         # We don't want to waste time updating for crap like that.
         type = tupdata[0].getType()
@@ -239,6 +244,8 @@ class xSimpleImager(ptModifier):
         elif event == PtVaultCallbackTypes.kVaultNodeSaved:
             PtDebugPrint("xSimpleImager: kVaultNodeSaved event (id=%d,type=%d)" % (tupdata[0].getID(),tupdata[0].getType()), level=kDebugDumpLevel)
             # tupdata is ( ptVaultNode )
+            self.IRefreshImagerFolder()
+            self.IRefreshImagerElement(tupdata[0]) 
         elif event == PtVaultCallbackTypes.kVaultNodeRefAdded:
             PtDebugPrint("xSimpleImager: kVaultNodeRefAdded event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()),level=kDebugDumpLevel)
             # tupdata is ( ptVaultNodeRef )
