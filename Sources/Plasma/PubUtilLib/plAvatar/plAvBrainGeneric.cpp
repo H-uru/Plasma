@@ -413,11 +413,16 @@ hsBool plAvBrainGeneric::IProcessFadeIn(double time, float elapsed)
             IEnterMoveMode(time);   // if fadeIn's not zero, we have to wait until fade's done
                                             // before animating
         } else {
-            curStage->GetAnimInstance()->Fade(1.0f, fFadeIn);
+            plAGAnimInstance *curAnim = curStage->GetAnimInstance();
+            if(curAnim)
+                curAnim->Fade(1.0f, fFadeIn);
         }
         fMode = kFadingIn;
     } else {
-        float curBlend = curStage->GetAnimInstance()->GetBlend();
+        plAGAnimInstance *curAnim = curStage->GetAnimInstance();
+        float curBlend = 1.0f;
+        if(curAnim)
+            curBlend = curAnim->GetBlend();
         if(curBlend == 1.0f)
         {
             IEnterMoveMode(time);
@@ -440,7 +445,7 @@ hsBool plAvBrainGeneric::IProcessFadeOut(double time, float elapsed)
             plAGAnimInstance *curAnim = curStage->GetAnimInstance();
             if(curAnim)
             {
-                curStage->GetAnimInstance()->Fade(0.0f, fFadeOut);  
+                curAnim->Fade(0.0f, fFadeOut);
                 IExitMoveMode();
                 fMode = kFadingOut;
             } else {
@@ -454,7 +459,10 @@ hsBool plAvBrainGeneric::IProcessFadeOut(double time, float elapsed)
         }
     } else {
         // already fading; just keeping looking for the anim to zero out.
-        float curBlend = curStage->GetAnimInstance()->GetBlend();
+        plAGAnimInstance *curAnim = curStage->GetAnimInstance();
+        float curBlend = 0.0f;
+        if(curAnim)
+            curBlend = curAnim->GetBlend();
         if(curBlend == 0.0f)
         {
             curStage->Detach(fAvMod);
