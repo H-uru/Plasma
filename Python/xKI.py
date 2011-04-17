@@ -4976,7 +4976,7 @@ class xKI(ptModifier):
                 return "D'ni-Ae'gura"
             
             if ageInfo.getAgeFilename() == "spyroom":
-                return "Old Spy Room"
+                return "D'ni-Ae'gura"
 
             if ageInfo.getAgeFilename() == "philRelto":
                 return "Phil's Relto"
@@ -4993,7 +4993,7 @@ class xKI(ptModifier):
                 return "The Writers' Pub"
 
             if ageInfo.getAgeFilename() == "Kveer":
-                return "K'veer"
+                return "D'ni-K'veer"
 
             if ageInfo.getAgeFilename() in kHideAgesHackList:
                 return "???"
@@ -5037,7 +5037,7 @@ class xKI(ptModifier):
         elif ageName == "EderTsogal":
             ageName = "Eder Tsogal"
         elif ageName == "spyroom":
-            ageName = ageName.replace("spyroom", "Old Spy Room")
+            ageName = ageName.replace("spyroom", "D'ni-Ae'gura")
         elif ageName == "philRelto":
             ageName = ageName.replace("philRelto", "Phil's Relto")
         elif ageName == "GuildPub-Cartographers":
@@ -5051,7 +5051,14 @@ class xKI(ptModifier):
         elif ageName == "GuildPub-Writers":
             ageName = ageName.replace("GuildPub-Writers", "The Writers' Pub")
         elif ageName == "Kveer":
-            ageName = ageName.replace("Kveer", "K'veer")
+            ageName = ageName.replace("Kveer", "D'ni-K'veer")
+        elif ageName == "Kirel" or ageName == "Neighborhood02":
+            ageName = "D'ni-Kirel"
+        elif ageName == "Shaft" or ageName == "Descent":
+            ageName = "D'ni-Tiwah"
+
+        if ageName.find("(null)") != -1:
+            ageName = ageName.replace("(null)", "").strip()
         #print "AgeName output as %s" % (ageName)
         return ageName
 
@@ -5088,7 +5095,7 @@ class xKI(ptModifier):
                 return 0
             if ageInfo.getAgeFilename() == "GreatZero":
                 return 0
-            if ageInfo.getAgeFilename() == "Shaft":
+            if ageInfo.getAgeFilename() == "Shaft" or ageInfo.getAgeFilename() == "Descent":
                 return 0
         except AttributeError:
             pass
@@ -5153,10 +5160,10 @@ class xKI(ptModifier):
             return "D'ni-Ashem'en"
         if ageName == "GreatZero":
             return "D'ni-Rezeero"
-        if ageName == "Shaft":
+        if ageName == "Shaft" or ageName == "Descent":
             return "D'ni-Tiwah"
         if ageName == "spyroom":
-            return "Old Spy Room"
+            return "D'ni-Ae'gura"
         if ageName == "philRelto":
             return "Phil's Relto"
         if ageName == "GuildPub-Cartographers":
@@ -5172,7 +5179,7 @@ class xKI(ptModifier):
         if ageName == "AhnonayCathedral":
             return "Ahnonay Cathedral"
         if ageName == "Kveer":
-            return "K'veer"
+            return "D'ni-K'veer"
         return ageName
 
     def IIsAgeMyNeighborhood(self,ageInfo):
