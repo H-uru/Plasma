@@ -86,7 +86,7 @@ class plStatusLog
 
         bool    IAddLine( const char *line, Int32 count, UInt32 color );
         bool    IPrintLineToFile( const char *line, UInt32 count );
-        void    IParseFileName(wchar* file, wchar* fileNoExt, wchar** ext) const;
+        void    IParseFileName(wchar* file, size_t fnsize, wchar* fileNoExt, wchar** ext) const;
 
         void    IInit( void );
         void    IFini( void );
