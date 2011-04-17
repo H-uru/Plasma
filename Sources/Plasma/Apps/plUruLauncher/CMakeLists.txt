@@ -5,6 +5,7 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 include_directories(${OPENSSL_INCLUDE_DIR})
+include_directories(${CURL_INCLUDE_DIR})
 
 set(plUruLauncher_HEADERS
     Intern.h
@@ -56,8 +57,8 @@ target_link_libraries(plUruLauncher ${DirectX_LIBRARIES})
 target_link_libraries(plUruLauncher ${OPENSSL_LIBRARIES})
 target_link_libraries(plUruLauncher ${Ogg_LIBRARIES})
 target_link_libraries(plUruLauncher ${Vorbis_LIBRARIES})
+target_link_libraries(plUruLauncher ${CURL_LIBRARY})
 target_link_libraries(plUruLauncher ws2_32)
-target_link_libraries(plUruLauncher winhttp)
 target_link_libraries(plUruLauncher rpcrt4)
 target_link_libraries(plUruLauncher comctl32)
 
