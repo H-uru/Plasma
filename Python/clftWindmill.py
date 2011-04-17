@@ -127,7 +127,7 @@ class clftWindmill(ptResponder):
         elif windmillLocked == 1:
             respBrakeOnAtStart.run(self.key)
 
-# register for notification of running SDL var changes
+        # register for notification of running SDL var changes
         self.ageSDL.setNotify(self.key,stringSDLVarRunning.value,0.0)
 
         # get initial SDL state
@@ -167,22 +167,29 @@ class clftWindmill(ptResponder):
 
         self.ageSDL = PtGetAgeSDL()
         
+        #Avatar bugfix
+        if playerID == 0:
+            player = None
+        else:
+            key = PtGetAvatarKeyFromClientID(playerID)
+            player = key.getSceneObject()
+        
         if VARname == stringSDLVarLocked.value:
             windmillLocked = self.ageSDL[stringSDLVarLocked.value][0]
             PtDebugPrint("clftWindmill.OnSDLNotify():\t windmill locked ", windmillLocked)
             if windmillLocked ==1 and windmillRunning == 0:
-                respBrakeOn.run(self.key,avatar=PtGetLocalAvatar())
+                respBrakeOn.run(self.key,avatar=player)
             if windmillLocked == 1 and windmillRunning == 1:
                 PtDebugPrint("clftWindmill.OnSDLNotify: Both running and locked are 1, so stop windmill.")
                 stopGrinder = 1
-                respBrakeOn.run(self.key,avatar=PtGetLocalAvatar())
+                respBrakeOn.run(self.key,avatar=player)
                 #respStop.run(self.key,state='Stop',avatar=PtGetLocalAvatar())
                 #respLightsOnOff.run(self.key,state='Off',avatar=PtGetLocalAvatar())
                 #respImagerButtonLight.run(self.key,state='Off',avatar=PtGetLocalAvatar())
                 #windmillRunning = 0
                 #self.ageSDL[stringSDLVarRunning.value] = (windmillRunning,)
             elif windmillLocked == 0 and windmillUnstuck == 1:
-                respBrakeOff.run(self.key,avatar=PtGetLocalAvatar())
+                respBrakeOff.run(self.key,avatar=player)
                 PtDebugPrint("clftWindmill.OnSDLNotify: Locked is 0 and windmillUnstuck is 1, run StartAtLoad.")
                 #respStartAtLoad.run(self.key,avatar=PtGetLocalAvatar())
                 #respLightsOnOff.run(self.key,state='On',avatar=PtGetLocalAvatar())
@@ -191,7 +198,7 @@ class clftWindmill(ptResponder):
                 #if boolTomahnaActive == 0:
                     #respImagerButtonLight.run(self.key,state='On',avatar=PtGetLocalAvatar())
             elif windmillLocked == 0 and windmillUnstuck == 0:
-                respBrakeOff.run(self.key,avatar=PtGetLocalAvatar())
+                respBrakeOff.run(self.key,avatar=player)
 
 
     def OnNotify(self,state,id,events):
@@ -205,33 +212,33 @@ class clftWindmill(ptResponder):
 
         if (id == clickLockStart.id and state):
             if windmillLocked == 0:
-                respStart.run(self.key,state='Start',avatar=PtGetLocalAvatar())
-                respLightsOnOff.run(self.key,state='On',avatar=PtGetLocalAvatar())
+                respStart.run(self.key,state='Start',avatar=PtFindAvatar(events))
+                respLightsOnOff.run(self.key,state='On',avatar=PtFindAvatar(events))
                 respGrinderOn.run(self.key)
                 if boolTomahnaActive == 0:
-                    respImagerButtonLight.run(self.key,state='On',avatar=PtGetLocalAvatar())
+                    respImagerButtonLight.run(self.key,state='On',avatar=PtFindAvatar(events))
                 windmillRunning = 1
                 self.ageSDL[stringSDLVarRunning.value] = (windmillRunning,)
                 windmillUnstuck = 1
                 self.ageSDL[stringSDLVarUnstuck.value] = (windmillUnstuck,)
             elif windmillLocked == 1:
-                respLockedCCW.run(self.key,avatar=PtGetLocalAvatar())
+                respLockedCCW.run(self.key,avatar=PtFindAvatar(events))
 
         if (id == respBrakeOn.id):
             if stopGrinder:
                 respGrinderOff.run(self.key)
                 stopGrinder = 0
-                respStop.run(self.key,state='Stop',avatar=PtGetLocalAvatar())
-                respLightsOnOff.run(self.key,state='Off',avatar=PtGetLocalAvatar())
-                respImagerButtonLight.run(self.key,state='Off',avatar=PtGetLocalAvatar())
+                respStop.run(self.key,state='Stop',avatar=PtFindAvatar(events))
+                respLightsOnOff.run(self.key,state='Off',avatar=PtFindAvatar(events))
+                respImagerButtonLight.run(self.key,state='Off',avatar=PtFindAvatar(events))
                 windmillRunning = 0
                 self.ageSDL[stringSDLVarRunning.value] = (windmillRunning,)
 
         if (id == respBrakeOff.id):
             if windmillRunning == 1:
                 respGrinderOn.run(self.key)
-                respStartAtLoad.run(self.key,avatar=PtGetLocalAvatar())
-                respLightsOnOff.run(self.key,state='On',avatar=PtGetLocalAvatar())
+                respStartAtLoad.run(self.key,avatar=PtFindAvatar(events))
+                respLightsOnOff.run(self.key,state='On',avatar=PtFindAvatar(events))
                 self.ageSDL[stringSDLVarRunning.value] = (windmillRunning,)
                 if boolTomahnaActive == 0:
-                    respImagerButtonLight.run(self.key,state='On',avatar=PtGetLocalAvatar())
+                    respImagerButtonLight.run(self.key,state='On',avatar=PtFindAvatar(events))
