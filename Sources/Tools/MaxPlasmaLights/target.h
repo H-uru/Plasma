@@ -97,7 +97,7 @@ class TargetObject: public GeomObject {
                 WPARAM wParam,   LPARAM lParam ){return(0);}
 
         // From ref.h
-        RefTargetHandle Clone(RemapDir& remap = DefaultRemapDir());
+        RefTargetHandle Clone(RemapDir& remap = DEFAULTREMAP);
 
         // IO
         IOResult Save(ISave *isave);

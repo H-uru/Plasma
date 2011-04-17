@@ -27,6 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsConverterUtils.h"
 #include "hsResMgr.h"
+#include "MaxMain/MaxCompat.h"
 
 #if HS_BUILD_FOR_WIN32
 
@@ -419,7 +420,7 @@ hsBool hsConverterUtils::IsInstanced(Object* maxObject)
     }
 
     ObjectInstancedEnumProc instProc;
-    maxObject->DoEnumDependents(&instProc);
+    ENUMDEPENDENTS(maxObject, &instProc);
 
     return (instProc.GetInstanceCount() > 1);
     hsGuardEnd; 

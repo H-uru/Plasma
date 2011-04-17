@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsConverterUtils.h"
 #include "hsControlConverter.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxCompat.h"
 
 #include "plInterp/plController.h"
 #include "hsExceptionStack.h"
@@ -3932,7 +3933,7 @@ hsBool hsMaterialConverter::IClearDoneMaterial(Mtl* mtl, plMaxNode* node)
 #define VIEW_BK 5
 
 
-static BMM_Color_64 green64 = BMM_Color_64(0, (1<<16)-1, 0, (1<<16)-1);
+static BMM_Color_64 green64 = BMMCOLOR(0, (1<<16)-1, 0, (1<<16)-1)
 
 BMM_Color_64 hsMaterialConverter::ICubeSample(Bitmap *bitmap[6], double phi, double theta) 
 {

@@ -28,6 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResponderComponentPriv.h"
 #include "resource.h"
 #include "plModifier/plResponderModifier.h"
+#include "MaxMain/MaxCompat.h"
 
 #include "plResponderLink.h"
 
@@ -81,8 +82,8 @@ void ResponderWait::FixupWaitBlock(IParamBlock2 *waitPB)
 
     if (waitPB->Count(kWaitPointOld) > 0)
     {
-        const char* point = waitPB->GetStr(kWaitPointOld, 0, 0);
-        waitPB->SetValue(kWaitPoint, 0, point);
+        MCHAR* point = (MCHAR*)waitPB->GetStr(kWaitPointOld, 0, 0);
+        waitPB->SetValue(kWaitPoint, 0, _T(point));
         waitPB->Delete(kWaitPointOld, 0, 1);
     }
 }
