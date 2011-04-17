@@ -149,9 +149,9 @@ void plResponderCmdLink::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, I
         {
             // set default title, or make same as name.
             if ( strcmp( spawnPtName, kDefaultSpawnPtName )==0 )
-                pb->SetValue( kLinkAgeSpawnPointTitle, 0, kDefaultSpawnPtTitle );
+                pb->SetValue( kLinkAgeSpawnPointTitle, 0, _T(kDefaultSpawnPtTitle));
             else
-                pb->SetValue( kLinkAgeSpawnPointTitle, 0, spawnPtName );
+                pb->SetValue( kLinkAgeSpawnPointTitle, 0, (TCHAR*)_T(spawnPtName));
         }
     }
 }

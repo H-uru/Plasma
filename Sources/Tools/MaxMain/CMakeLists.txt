@@ -16,6 +16,7 @@ set(MaxMain_HEADERS
     GlobalUtility.h
     main.def
     MaxAllocDll.h
+    MaxCompat.h
     plActionTableMgr.h
     plAgeDescInterface.h
     plCommonObjLib.h

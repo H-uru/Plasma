@@ -32,6 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include "MaxExport/SimpleExport.h"
+#include "MaxMain/MaxCompat.h"
 
 #include "MaxComponent/plComponentMgr.h"
 #include "MaxPlasmaMtls/plMtlImport.h"
@@ -211,10 +212,10 @@ public:
     SClass_ID       SuperClassID() {return CUST_ATTRIB_CLASS_ID;}
     Class_ID        ClassID() {return fClassDesc->ClassID();}
 
-    ReferenceTarget *Clone(RemapDir &remap = DefaultRemapDir());
+    ReferenceTarget *Clone(RemapDir &remap = DEFAULTREMAP);
     virtual bool CheckCopyAttribTo(ICustAttribContainer *to) { return true; }
     
-    const char* GetName() { return (TCHAR*)fClassDesc->ClassName(); }
+    const TCHAR* GetName() { return (const TCHAR*)_T(fClassDesc->ClassName()); }
     void DeleteThis() { delete this; }
 };
 

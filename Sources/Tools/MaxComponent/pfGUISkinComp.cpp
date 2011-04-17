@@ -32,6 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGUICompClassIDs.h"
 
 #include "MaxMain/plMaxNodeBase.h"
+#include "MaxMain/MaxCompat.h"
 
 
 pfGUISkinEditProc   *pfGUISkinEditProc::fInstance = nil;
@@ -173,7 +174,7 @@ void    pfGUISkinEditProc::IRefreshImageBuffer( void )
         bi.SetHeight( fDblHeight );
         newBM = TheManager->Create( &bi );
 
-        BMM_Color_64 foo(0, 0, 0, 0 );
+        BMM_Color_64 foo = BMMCOLOR(0, 0, 0, 0);
         newBM->CopyImage( pbBMap->bm, COPY_IMAGE_RESIZE_LO_QUALITY, foo, nil );
 
         // Now copy from our newly created bitmap into our DC....way slow :(

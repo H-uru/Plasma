@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxComponent/plMaxAnimUtils.h"
 #include "MaxComponent/plPickNodeBase.h"
+#include "MaxMain/MaxCompat.h"
 
 #include "iparamm2.h"
 
@@ -454,11 +455,9 @@ hsBool      plAnimStealthNode::IsParentUsedInScene( void )
     }
 
     // Enum dependents
-    int     i;
-
     plGetRefs callback;
-    GetParentMtl()->DoEnumDependents( &callback );
-    for( i = 0; i < callback.fList.GetCount(); i++ )
+    ENUMDEPENDENTS(GetParentMtl(), &callback);
+    for(int i = 0; i < callback.fList.GetCount(); i++ )
     {
         ReferenceMaker *maker = callback.fList[ i ];
 
