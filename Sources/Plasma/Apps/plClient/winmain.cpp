@@ -1196,7 +1196,7 @@ static void LoadUserPass (const wchar *accountName, char *username, ShaDigest *p
     }
 }
 
-size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *param)
+static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *param)
 {
     static char status[256];
 

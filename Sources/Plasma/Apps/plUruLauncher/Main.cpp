@@ -150,6 +150,7 @@ static LISTDECL(WndEvent, link) s_eventQ;
 static CEvent                   s_shutdownEvent(kEventManualReset);
 static wchar                    s_workingDir[MAX_PATH];
 static CEvent                   s_statusEvent(kEventManualReset);
+static char                     s_curlError[CURL_ERROR_SIZE];
 
 
 /*****************************************************************************
@@ -591,122 +592,51 @@ static bool TGCheckForFrameworkUpdate ()
 }
 
 //============================================================================
-static void HttpRequestPost(HINTERNET hConnect)
+static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *)
 {
-    const wchar *path = BuildTypeServerStatusPath();  
-    HINTERNET hRequest = 0;
-    char data[256] = {0};
-    DWORD bytesRead;
+    static char status[256];
 
-    hRequest = WinHttpOpenRequest(
-        hConnect, 
-        L"POST",
-        path,
-        NULL, 
-        WINHTTP_NO_REFERER, 
-        WINHTTP_DEFAULT_ACCEPT_TYPES,
-        0
-    );
-    if(hRequest)
-    {   
-        BOOL b = WinHttpSendRequest(
-            hRequest, 
-            L"Content-Type: application/x-www-form-urlencoded\r\n",
-            0, 
-            (void *)s_postKey, 
-            sizeof(s_postKey),
-            sizeof(s_postKey), 
-            0
-        );
-        DWORD err = GetLastError();
-        WinHttpReceiveResponse(hRequest, 0);
-        WinHttpReadData(hRequest, data, arrsize(data)-1, &bytesRead);
-        data[bytesRead] = 0;
-    }
-    if(bytesRead)
-        SetStatusText(data);
-    WinHttpCloseHandle(hRequest);
-}
-
-//============================================================================
-static void HttpRequestGet(HINTERNET hConnect)
-{
-    const wchar *path = BuildTypeServerStatusPath(); 
-    HINTERNET hRequest = 0;
-    char data[256] = {0};
-    DWORD bytesRead;
-    
-    hRequest = WinHttpOpenRequest(
-        hConnect, 
-        L"GET",
-        path,
-        NULL, 
-        WINHTTP_NO_REFERER, 
-        WINHTTP_DEFAULT_ACCEPT_TYPES,
-        0
-    );
-    if(hRequest)
-    {
-        BOOL b = WinHttpSendRequest(
-            hRequest, 
-            WINHTTP_NO_ADDITIONAL_HEADERS,
-            0, 
-            WINHTTP_NO_REQUEST_DATA, 
-            0,
-            0, 
-            0
-        );
-        if(b)
-        {
-            DWORD err = GetLastError();
-            WinHttpReceiveResponse(hRequest, 0);
-            WinHttpReadData(hRequest, data, arrsize(data)-1, &bytesRead);
-            data[bytesRead] = 0;
-        }
-    }
-    if(bytesRead)
-        SetStatusText(data);
-    WinHttpCloseHandle(hRequest);
+    strncpy(status, (const char *)buffer, std::min<size_t>(size * nmemb, 256));
+    status[255] = 0;
+    SetStatusText(status);
+    return size * nmemb;
 }
 
 //============================================================================
 static void StatusCallback(void *)
 {
-    HINTERNET hSession = 0;
-    HINTERNET hConnect = 0;
+    CURL *hCurl;
+
+    char *serverStatus = hsWStringToString(BuildTypeServerStatusPath());
+    char  serverUrl[256];
+    snprintf(serverUrl, 256, "http://support.cyanworlds.com%s", serverStatus);
+    delete [] serverStatus;
+
+    hCurl = curl_easy_init();
+    curl_easy_setopt(hCurl, CURLOPT_ERRORBUFFER, s_curlError);
 
     // update while we are running
     while(!s_shutdown)
     {
         if(BuildTypeServerStatusPath())
         {
-            hSession = WinHttpOpen(
-                L"UruClient/1.0",
-                WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                WINHTTP_NO_PROXY_NAME,
-                WINHTTP_NO_PROXY_BYPASS, 
-                0
-            );
+            //TODO: Get a server status path from the server.ini, without
+            //      pulling in all the annoying pfConsole dependencies.
+            //      Alternatively, make a better launcher...
 
-            if(hSession)
+            curl_easy_setopt(hCurl, CURLOPT_USERAGENT, "UruClient/1.0");
+            curl_easy_setopt(hCurl, CURLOPT_URL, serverUrl);
+
+            if(StrLen(s_postKey))
             {
-                hConnect = WinHttpConnect( 
-                    hSession, 
-                    STATUS_PATH, 
-                    INTERNET_DEFAULT_HTTP_PORT,
-                    0
-                );
-                if(hConnect)
-                {
-                    if(StrLen(s_postKey))
-                        HttpRequestPost(hConnect);
-                    else
-                        HttpRequestGet(hConnect);
-                }
+                char *safeData = curl_easy_escape(hCurl, s_postKey, strlen(s_postKey));
+                curl_easy_setopt(hCurl, CURLOPT_POST, 1);
+                curl_easy_setopt(hCurl, CURLOPT_POSTFIELDS, safeData);
+                curl_free(safeData);
             }
-            
-            WinHttpCloseHandle(hConnect);
-            WinHttpCloseHandle(hSession);
+
+            if (curl_easy_perform(hCurl) != 0)
+                SetStatusText(s_curlError);
         }
 
         for(unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && !s_shutdown; ++i)
@@ -714,6 +644,8 @@ static void StatusCallback(void *)
             Sleep(1000);
         }
     }
+
+    curl_easy_cleanup(hCurl);
 
     s_statusEvent.Signal();
 }
@@ -855,6 +787,8 @@ int __stdcall WinMain (
     ZERO(s_launcherInfo);
     StrPrintf(s_launcherInfo.cmdLine, arrsize(s_launcherInfo.cmdLine), appCmdLine);
     s_launcherInfo.returnCode = 0;
+
+    curl_global_init(CURL_GLOBAL_ALL);
 
     if(!isTempPatcher)
     {
@@ -1031,6 +965,8 @@ int __stdcall WinMain (
         pTGUNIXAppClose (pTGApp);
         pTGApp = NULL;
     }
+
+    curl_global_cleanup();
 
     return s_launcherInfo.returnCode;
 }

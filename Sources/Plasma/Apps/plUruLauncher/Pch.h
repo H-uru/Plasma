@@ -37,9 +37,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <process.h>
 #include <time.h>
 
-#include <winsock2.h>
-#include <windows.h>
-#include <WinHttp.h>
+#include <curl/curl.h>
 
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
