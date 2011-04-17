@@ -448,7 +448,7 @@ bool plStatusLog::IReOpen( void )
         wchar file[ MAX_PATH ];
         wchar fileNoExt[MAX_PATH];
         wchar* ext=nil;
-        IParseFileName(file, fileNoExt, &ext);
+        IParseFileName(file, MAX_PATH, fileNoExt, &ext);
         fEncryptMe = false;
 #ifdef PLASMA_EXTERNAL_RELEASE
         fEncryptMe = ( wcsicmp( fFilename.c_str(), L"chat.log" ) != 0 ) ? true : false;
@@ -513,11 +513,11 @@ void    plStatusLog::IFini( void )
 }
 
 
-void plStatusLog::IParseFileName(wchar* file, wchar* fileNoExt, wchar** ext) const
+void plStatusLog::IParseFileName(wchar* file, size_t fnsize, wchar* fileNoExt, wchar** ext) const
 {
     const wchar *base = plStatusLogMgr::IGetBasePath();
     if( wcslen( base ) != nil )
-        swprintf( file, L"%s%s%s", base, WPATH_SEPARATOR_STR, fFilename.c_str() );
+        swprintf( file, fnsize, L"%s%s%s", base, WPATH_SEPARATOR_STR, fFilename.c_str() );
     else
         wcscpy( file, fFilename.c_str() );
 
