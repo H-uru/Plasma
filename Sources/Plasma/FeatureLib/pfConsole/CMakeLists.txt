@@ -12,23 +12,17 @@ set(pfConsole_SOURCES
     pfAvatarConsoleCommands.cpp
     pfCCRConsoleCommands.cpp
     pfConsole.cpp
-    pfConsoleCmd.cpp
     pfConsoleCommands.cpp
     pfConsoleCommandsNet.cpp
-    pfConsoleContext.cpp
     pfConsoleDirSrc.cpp
-    pfConsoleEngine.cpp
     pfDispatchLog.cpp
     pfGameConsoleCommands.cpp
 )
 
 set(pfConsole_HEADERS
     pfConsole.h
-    pfConsoleCmd.h
-    pfConsoleContext.h
     pfConsoleCreatable.h
     pfConsoleDirSrc.h
-    pfConsoleEngine.h
     pfDispatchLog.h
 )
 

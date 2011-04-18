@@ -36,16 +36,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Only calls to the CCRMgr interface are allowed here
 // See me if you need to include any other files...
 //
-#include "pfConsoleCmd.h"
+#include "pfConsoleCore/pfConsoleCmd.h"
 #include "pfConsole.h"
 #include "pfCCR/plCCRMgr.h"
 #include "plNetClient/plNetClientMgr.h"
 
+//// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
-// YOU ALSO NEED TO CALL THIS FXN
-void    pfConsoleCmdGroup::DummyCCR( void )
-{
-}
+PF_CONSOLE_FILE_DUMMY(CCR)
+//// DO NOT REMOVE!!!!
 
 void PrintStringF(void pfun(const char *),const char * fmt, ...);
 

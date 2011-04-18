@@ -94,12 +94,6 @@ class pfConsoleCmdGroup
 
         static pfConsoleCmdGroup    *FindSubGroupRecurse( const char *name );
         static void                 DecBaseCmdGroupRef( void );
-
-        static void     Dummy( void );
-        static void     DummyJunior( void );
-        static void     DummyNet( void );
-        static void     DummyAvatar( void );
-        static void     DummyCCR( void );
 };
 
 //// pfConsoleCmdParam Class Definition //////////////////////////////////////
@@ -267,6 +261,9 @@ public:
     pfConsoleCmdGroup   conGroup_##parent##_##name( #name, #parent );
 
 
+//// Force the console sources to generate a linkable output /////////////////
+
+#define PF_CONSOLE_FILE_DUMMY( name ) \
+    void _console_##name##_file_dummy() { }
 
 #endif //_pfConsoleCmd_h
-

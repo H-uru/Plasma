@@ -1528,9 +1528,13 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
-#include "pfConsole/pfConsoleEngine.h"
+#include "pfConsoleCore/pfConsoleEngine.h"
+PF_CONSOLE_LINK_ALL()
+
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {
+    PF_CONSOLE_INIT_ALL()
+
     // Set global handle
     gHInst = hInst;
 
