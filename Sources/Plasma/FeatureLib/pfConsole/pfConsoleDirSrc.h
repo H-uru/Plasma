@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
-#include "pfConsoleEngine.h"
+#include "pfConsoleCore/pfConsoleEngine.h"
 
 //// pfConsoleDirSrc Class Definition ////////////////////////////////////////
 

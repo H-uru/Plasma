@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define LIMIT_CONSOLE_COMMANDS 1
 #endif
 
-#include "pfConsoleCmd.h"
+#include "pfConsoleCore/pfConsoleCmd.h"
 #include "plgDispatch.h"
 #include "pfConsole.h"
 #include "hsResMgr.h"
@@ -76,10 +76,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 
+//// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
-void    pfConsoleCmdGroup::DummyAvatar( void )
-{
-}
+PF_CONSOLE_FILE_DUMMY(Avatar)
+//// DO NOT REMOVE!!!!
 
 /////////////////////////////////////////////////////////////////
 //

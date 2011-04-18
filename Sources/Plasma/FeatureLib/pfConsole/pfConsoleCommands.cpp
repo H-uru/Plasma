@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 
-#include "pfConsoleCmd.h"
+#include "pfConsoleCore/pfConsoleCmd.h"
 #include "plgDispatch.h"
 
 #include "plAgeLoader/plAgeLoader.h"
@@ -75,7 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault/plVault.h"
 #include "../../Apps/plClient/plClient.h"
 #include "pfConsole.h"
-#include "pfConsoleContext.h"
+#include "pfConsoleCore/pfConsoleContext.h"
 #include "plResMgr/plKeyFinder.h"
 #include "plModifier/plSimpleModifier.h"
 #include "plAvatar/plAvatarMgr.h"
@@ -160,10 +160,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
-//// DO NOT REMOVE!!!!
-void    pfConsoleCmdGroup::Dummy( void )
-{
-}
+PF_CONSOLE_FILE_DUMMY(Main)
 //// DO NOT REMOVE!!!!
 
 //// Defining Console Commands ///////////////////////////////////////////////
@@ -258,6 +255,7 @@ plKey FindSceneObjectByName(const char* name, const char* ageName, char* statusS
 plKey FindObjectByName(const char* name, int type, const char* ageName, char* statusStr, bool subString=false);
 plKey FindObjectByNameAndType(const char* name, const char* typeName, const char* ageName, 
                                char* statusStr, bool subString=false);
+void PrintStringF(void pfun(const char *),const char * fmt, ...);
 
 //
 // Find an object from name, type (int), and optionally age.
@@ -353,17 +351,6 @@ plKey FindObjectByNameAndType(const char* name, const char* typeName, const char
     }
     
     return FindObjectByName(name, plFactory::FindClassIndex(typeName), ageName, statusStr, subString);
-}
-
-void PrintStringF(void pfun(const char *),const char * fmt, ...)
-{
-    va_list args;
-
-    char buffy[512];
-    va_start(args, fmt);
-    vsprintf(buffy, fmt, args);
-    va_end(args);
-    pfun(buffy);
 }
 
 //// plDoesFileExist //////////////////////////////////////////////////////////

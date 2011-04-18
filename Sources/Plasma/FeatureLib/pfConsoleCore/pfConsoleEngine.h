@@ -95,4 +95,29 @@ class pfConsoleEngine
 };
 
 
+//// Use in your Main module to provide Console functionality ////////////////
+
+#define PF_CONSOLE_LINK_FILE( name ) \
+    void _console_##name##_file_dummy();
+
+#define PF_CONSOLE_INITIALIZE( name ) \
+    _console_##name##_file_dummy();
+
+#define PF_CONSOLE_LINK_ALL() \
+    PF_CONSOLE_LINK_FILE(Avatar) \
+    PF_CONSOLE_LINK_FILE(CCR) \
+    PF_CONSOLE_LINK_FILE(Core) \
+    PF_CONSOLE_LINK_FILE(Game) \
+    PF_CONSOLE_LINK_FILE(Main) \
+    PF_CONSOLE_LINK_FILE(Net)
+
+#define PF_CONSOLE_INIT_ALL() \
+    PF_CONSOLE_INITIALIZE(Avatar) \
+    PF_CONSOLE_INITIALIZE(CCR) \
+    PF_CONSOLE_INITIALIZE(Core) \
+    PF_CONSOLE_INITIALIZE(Game) \
+    PF_CONSOLE_INITIALIZE(Main) \
+    PF_CONSOLE_INITIALIZE(Net)
+
+
 #endif //_pfConsoleEngine_h
