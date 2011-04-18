@@ -730,18 +730,21 @@ void SetBytesRemainingCallback (unsigned bytes) {
 
 
 enum {
-    kArgFileSrv,
+    kArgServerIni,
     kArgNoSelfPatch,
     kArgBuildId,
     kArgCwd,
 };
 
 static const CmdArgDef s_cmdLineArgs[] = {
-    { kCmdArgFlagged | kCmdTypeString,      L"FileSrv",         kArgFileSrv         },
+    { kCmdArgFlagged | kCmdTypeString,      L"ServerIni",       kArgServerIni       },
     { kCmdArgFlagged | kCmdTypeBool,        L"NoSelfPatch",     kArgNoSelfPatch     },
     { kCmdArgFlagged | kCmdTypeInt,         L"BuildId",         kArgBuildId         },
     { kCmdArgFlagged | kCmdTypeBool,        L"Cwd",             kArgCwd             },
 };
+
+#include "pfConsoleCore/pfConsoleEngine.h"
+PF_CONSOLE_LINK_FILE(Core)
 
 //============================================================================
 int __stdcall WinMain (      
@@ -749,7 +752,9 @@ int __stdcall WinMain (
     HINSTANCE hPrevInstance,
     LPSTR lpCmdLine,
     int nCmdShow
-){ 
+){
+    PF_CONSOLE_INITIALIZE(Core)
+
     wchar token[256];
     const wchar *appCmdLine = AppGetCommandLine();
     StrTokenize(&appCmdLine, token, arrsize(token), WHITESPACE);
@@ -790,6 +795,24 @@ int __stdcall WinMain (
 
     curl_global_init(CURL_GLOBAL_ALL);
 
+    const wchar *serverIni = L"server.ini";
+    if(cmdParser.IsSpecified(kArgServerIni))
+        serverIni = cmdParser.GetString(kArgServerIni);
+
+    // Load the server.ini so we know what to connect to
+    FILE *serverini = _wfopen(serverIni, L"rb");
+    if (serverini)
+    {
+        fclose(serverini);
+        pfConsoleEngine tempConsole;
+        tempConsole.ExecuteFile(serverIni);
+    }
+    else
+    {
+        hsMessageBox("No server.ini file found.  Please check your URU installation.", "Error", hsMessageBoxNormal);
+        return 1;
+    }
+
     if(!isTempPatcher)
     {
         // create window thread
@@ -798,8 +821,6 @@ int __stdcall WinMain (
             0,
             nil 
         );
-        if (cmdParser.IsSpecified(kArgFileSrv))
-            SetFileSrvHostname(cmdParser.GetString(kArgFileSrv));
         if(cmdParser.IsSpecified(kArgBuildId))
             s_launcherInfo.buildId = cmdParser.GetInt(kArgBuildId);
 
@@ -891,7 +912,6 @@ int __stdcall WinMain (
         PathFindFiles(&paths, fileSpec, kPathFlagFile);
         for (PathFind * path = paths.Ptr(); path != paths.Term(); ++path)
             PathDeleteFile(path->name);
-
 
         SetConsoleCtrlHandler(CtrlHandler, TRUE);
         InitAsyncCore();    // must do this before self patch, since it needs to connect to the file server
