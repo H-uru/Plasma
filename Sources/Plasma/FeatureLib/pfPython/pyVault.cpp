@@ -60,6 +60,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plSDL/plSDL.h"
 
+#include <stdlib.h>
+#include <string.h>
+    
 
 //============================================================================
 static PyObject * GetFolder (unsigned folderType) {
@@ -349,7 +352,7 @@ void pyVault::AddChronicleEntry( const char * name, UInt32 type, const char * va
     wchar * wEntryName = StrDupToUnicode(name);
     wchar * wEntryValue = StrDupToUnicode(value);
     
-    VaultAddChronicleEntryAndWait(wEntryName, type, wEntryValue);
+    VaultAddChronicleEntry(wEntryName, type, wEntryValue);
     
     FREE(wEntryName);
     FREE(wEntryValue);
@@ -362,7 +365,9 @@ void pyVault::SendToDevice( pyVaultNode& node, const char * deviceName )
         return;
 
     wchar wDevName[256];
-    StrToUnicode(wDevName, deviceName, arrsize(wDevName));      
+    StrToUnicode(wDevName, deviceName, arrsize(wDevName));
+
+    // Note: This actually blocks (~Hoikas)
     VaultPublishNode(node.GetNode()->nodeId, wDevName);
 }
 
@@ -528,12 +533,14 @@ void pyVault::RegisterMTStation( const char * stationName, const char * backLink
     wchar wSpawnPt[256];
     StrToUnicode(wStationName, stationName, arrsize(wStationName));
     StrToUnicode(wSpawnPt, backLinkSpawnPtObjName, arrsize(wSpawnPt));
+
+    // Note: This doesn't actually block (~Hoikas)
     VaultRegisterMTStationAndWait( wStationName, wSpawnPt);
 }
 
 void pyVault::RegisterOwnedAge( const pyAgeLinkStruct & link )
 {
-    VaultRegisterOwnedAgeAndWait(link.GetAgeLink());
+    VaultRegisterOwnedAge(link.GetAgeLink());
 }
 
 void pyVault::UnRegisterOwnedAge( const char * ageFilename )
@@ -557,22 +564,27 @@ void pyVault::UnRegisterVisitAge( const char * guidstr )
     VaultUnregisterVisitAgeAndWait(&info);
 }
 
+//============================================================================
 void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, UInt32 playerID )
 {
-    ENetError error;
     NetVaultNode * templateNode = NEWZERO(NetVaultNode);
     templateNode->IncRef();
     templateNode->SetNodeType(plVault::kNodeType_TextNote);
     VaultTextNoteNode visitAcc(templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_Visit);
     visitAcc.SetVisitInfo(*link.GetAgeLink()->GetAgeInfo());
-    if (RelVaultNode * rvn = VaultCreateNodeAndWaitIncRef(templateNode, &error)) {
-        VaultSendNode(rvn, playerID);
-        rvn->DecRef();
-    }
+    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_InvitePlayerToAge, nil, TRACKED_NEW UInt32(playerID));
     templateNode->DecRef();
 }
 
+void _InvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
+{
+    if (result == kNetSuccess)
+        VaultSendNode(node, *((UInt32*)param));
+    delete param;
+}
+
+//============================================================================
 void pyVault::UnInvitePlayerToAge( const char * str, UInt32 playerID )
 {
     plAgeInfoStruct info;
@@ -588,30 +600,36 @@ void pyVault::UnInvitePlayerToAge( const char * str, UInt32 playerID )
         rvnLink->DecRef();
     }
 
-    ENetError error;
     NetVaultNode * templateNode = NEWZERO(NetVaultNode);
     templateNode->IncRef();
     templateNode->SetNodeType(plVault::kNodeType_TextNote);
     VaultTextNoteNode visitAcc(templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_UnVisit);
     visitAcc.SetVisitInfo(info);
-    if (RelVaultNode * rvn = VaultCreateNodeAndWaitIncRef(templateNode, &error)) {
-        VaultSendNode(rvn, playerID);
-        rvn->DecRef();
-    }
+    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_UninvitePlayerToAge, nil, TRACKED_NEW UInt32(playerID));
     templateNode->DecRef();
 }
 
+void _UninvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
+{
+    if (result == kNetSuccess)
+        VaultSendNode(node, *((UInt32*)param));
+    delete param;
+}
+
+//============================================================================
 void pyVault::OfferLinkToPlayer( const pyAgeLinkStruct & link, UInt32 playerID )
 {
     hsAssert(false, "eric, port me");
 }
 
+//============================================================================
 void pyVault::CreateNeighborhood()
 {
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
 
-    // Unregister old hood  
+    // Unregister old hood
+    // Note: This doesn't actually block (~Hoikas)
     plAgeInfoStruct info;
     info.SetAgeFilename(kNeighborhoodAgeFilename);
     VaultUnregisterOwnedAgeAndWait(&info);
@@ -640,11 +658,12 @@ void pyVault::CreateNeighborhood()
     link.GetAgeInfo()->SetAgeUserDefinedName( title.c_str() );
     link.GetAgeInfo()->SetAgeDescription( desc.c_str() );
 
-    VaultRegisterOwnedAgeAndWait(&link);
+    VaultRegisterOwnedAge(&link);
 }
 
 bool pyVault::SetAgePublic( const pyAgeInfoStruct * ageInfo, bool makePublic )
 {
+    // Note: This doesn't actually block (~Hoikas)
     return VaultSetOwnedAgePublicAndWait(ageInfo->GetAgeInfo(), makePublic);
 }
 

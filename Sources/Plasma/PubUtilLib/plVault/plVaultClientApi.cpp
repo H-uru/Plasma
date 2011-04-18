@@ -2787,6 +2787,122 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
 }
 
 //============================================================================
+namespace _VaultRegisterOwnedAge {
+    struct _Params {
+        plSpawnPointInfo* fSpawn;
+        UInt32*           fAgeInfoId;
+
+        ~_Params() {
+            delete fSpawn;
+            delete fAgeInfoId;
+        }
+    };
+
+    void _AddAgeInfoNode(ENetError result, void* param) {
+        if (result != kNetSuccess)
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to add info to link (async)");
+    }
+
+    void _AddAgeLinkNode(ENetError result, void* param) {
+        if (result != kNetSuccess)
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to add age to bookshelf (async)");
+    }
+
+    void _AddPlayerInfoNode(ENetError result, void* param) {
+        if (result != kNetSuccess)
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to add playerInfo to ageOwners (async)");
+    }
+
+    void _CreateAgeLinkNode(ENetError result, void* state, void* param, RelVaultNode* node) {
+        if (result != kNetSuccess) {
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to create AgeLink (async)");
+            return;
+        }
+
+        // Grab our params
+        _Params* p = (_Params*)param;
+
+        // Set swpoint
+        VaultAgeLinkNode aln(node);
+        aln.AddSpawnPoint(*(p->fSpawn));
+
+        // Make some refs
+        RelVaultNode* agesIOwn = VaultGetAgesIOwnFolderIncRef();
+        RelVaultNode* plyrInfo = VaultGetPlayerInfoNodeIncRef();
+        VaultAddChildNode(agesIOwn->nodeId, node->nodeId, 0, (FVaultAddChildNodeCallback)_AddAgeLinkNode, nil); 
+        VaultAddChildNode(node->nodeId, *(p->fAgeInfoId), 0, (FVaultAddChildNodeCallback)_AddAgeInfoNode, nil);
+
+        // Add our PlayerInfo to important places
+        if (RelVaultNode* rvnAgeInfo = VaultGetNodeIncRef(*(p->fAgeInfoId))) {
+            if (RelVaultNode* rvnAgeOwners = rvnAgeInfo->GetChildPlayerInfoListNodeIncRef(plVault::kAgeOwnersFolder, 1)) {
+                VaultAddChildNode(rvnAgeOwners->nodeId, plyrInfo->nodeId, 0, (FVaultAddChildNodeCallback)_AddPlayerInfoNode, nil);
+                rvnAgeOwners->DecRef();
+            }
+
+            rvnAgeInfo->DecRef();
+        }
+
+        // Fire off vault callbacks
+        plVaultNotifyMsg* msg = NEWZERO(plVaultNotifyMsg);
+        msg->SetType(plVaultNotifyMsg::kRegisteredOwnedAge);
+        msg->SetResultCode(result);
+        msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->nodeId);
+        msg->Send();
+
+        // Don't leak memory
+        agesIOwn->DecRef();
+        plyrInfo->DecRef();
+        delete p;
+    }
+
+    void _DownloadCallback(ENetError result, void* param) {
+        if (result == kNetSuccess) {
+            VaultCreateNode(plVault::kNodeType_AgeLink, (FVaultCreateNodeCallback)_CreateAgeLinkNode, nil, param);
+        } else
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to download age vault (async)");
+    }
+
+    void _InitAgeCallback(ENetError result, void* state, void* param, UInt32 ageVaultId, UInt32 ageInfoVaultId) {
+        if (result == kNetSuccess) {
+            _Params* p = TRACKED_NEW _Params();
+            p->fAgeInfoId = TRACKED_NEW UInt32(ageInfoVaultId);
+            p->fSpawn = (plSpawnPointInfo*)param;
+
+            VaultDownload(
+                L"RegisterOwnedAge",
+                ageInfoVaultId,
+                (FVaultDownloadCallback)_DownloadCallback,
+                p,
+                nil,
+                nil);
+        } else
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to init age (async)");
+    }
+}; // namespace _VaultRegisterOwnedAge
+
+void VaultRegisterOwnedAge(const plAgeLinkStruct* link) {
+    using namespace _VaultRegisterOwnedAge;
+
+    RelVaultNode* agesIOwn = VaultGetAgesIOwnFolderIncRef();
+    if (agesIOwn == nil) {
+        LogMsg(kLogError, "VaultRegisterOwnedAge: Couldn't find the stupid AgesIOwnfolder!");
+        return;
+    }
+
+    // Make sure we don't already have the age
+    plAgeLinkStruct existing;
+    if (VaultGetOwnedAgeLink(link->GetAgeInfo(), &existing))
+        return;
+
+    // Let's go async, my friend :)
+    VaultInitAge(link->GetAgeInfo(), 
+        kNilGuid, 
+        (FVaultInitAgeCallback)_InitAgeCallback, 
+        nil,
+        TRACKED_NEW plSpawnPointInfo(link->SpawnPoint()));
+}
+
+//============================================================================
 namespace _VaultRegisterVisitAgeAndWait {
 
 struct _InitAgeParam {
@@ -3197,6 +3313,38 @@ bool VaultHasChronicleEntry (const wchar entryName[], int entryType) {
         return true;
     }
     return false;
+}
+
+//============================================================================
+void VaultAddChronicleEntry (const wchar entryName[], int entryType, const wchar entryValue[]) {
+    // Sometimes we try to create chrons in StartUp.
+    // This is bad...
+    if (GetPlayerNode() == nil)
+        return;
+
+    if (RelVaultNode* rvnChrn = VaultFindChronicleEntryIncRef(entryName, entryType)) {
+        VaultChronicleNode chrnNode(rvnChrn);
+        chrnNode.SetEntryValue(entryValue);
+        rvnChrn->DecRef();
+    } else {
+        NetVaultNode* templateNode = NEWZERO(NetVaultNode);
+        templateNode->IncRef();
+        templateNode->SetNodeType(plVault::kNodeType_Chronicle);
+        VaultChronicleNode chrnNode(templateNode);
+        chrnNode.SetEntryName(entryName);
+        chrnNode.SetEntryType(entryType);
+        chrnNode.SetEntryValue(entryValue);
+        VaultCreateNode(templateNode, (FVaultCreateNodeCallback)(_VaultAddChronicleEntryCB), nil, nil);
+        templateNode->DecRef();
+    }
+}
+
+void _VaultAddChronicleEntryCB(ENetError result, void* state, void * param, RelVaultNode*  node) {
+    if (result == ENetError::kNetSuccess) {
+        RelVaultNode* rvnFldr = GetChildFolderNode(GetPlayerNode(), plVault::kChronicleFolder, 1);
+        if (rvnFldr != nil) 
+            VaultAddChildNode(rvnFldr->nodeId, node->nodeId, 0, nil, nil);
+    }
 }
 
 //============================================================================
