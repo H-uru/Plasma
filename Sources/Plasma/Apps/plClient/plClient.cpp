@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plNetCommMsgs.h"
 #include "plMessage/plAgeLoadedMsg.h"
 
-#include "pfConsole/pfConsoleEngine.h"
+#include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfConsole/pfConsole.h"
 #include "pfConsole/pfConsoleDirSrc.h"
 #include "plScene/plPageTreeMgr.h"

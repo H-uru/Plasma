@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 
-#include "pfConsoleCmd.h"
+#include "pfConsoleCore/pfConsoleCmd.h"
 #include "pfConsole.h"
 
 #include "plPipeline.h"
@@ -75,12 +75,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
+PF_CONSOLE_FILE_DUMMY(Game)
 //// DO NOT REMOVE!!!!
-void    pfConsoleCmdGroup::DummyJunior( void )
-{
-}
-//// DO NOT REMOVE!!!!
-
 
 //// plDoesFileExist //////////////////////////////////////////////////////////
 //  Utility function to determine whether the given file exists

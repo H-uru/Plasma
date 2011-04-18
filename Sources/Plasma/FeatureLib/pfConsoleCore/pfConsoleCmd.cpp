@@ -45,12 +45,6 @@ UInt32              pfConsoleCmdGroup::fBaseCmdGroupRef = 0;
 
 pfConsoleCmdGroup::pfConsoleCmdGroup( char *name, char *parent )
 {
-    Dummy();
-    DummyJunior();
-    DummyNet();
-    DummyAvatar();
-    DummyCCR();
-
     fNext = nil;
     fPrevPtr = nil;
     fCommands = nil;

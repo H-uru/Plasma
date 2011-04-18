@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "pfConsole.h"
-#include "pfConsoleEngine.h"
+#include "pfConsoleCore/pfConsoleEngine.h"
 #include "plPipeline/plDebugText.h"
 #include "plInputCore/plInputDevice.h"
 #include "plInputCore/plInputInterface.h"
