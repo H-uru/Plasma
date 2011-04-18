@@ -18,9 +18,14 @@ set(MaxPlasmaLights_HEADERS
     plRTProjDirLightClassDesc.h
     plRTProjDirLightPBDec.h
     prim.h
-    resource.h
     target.h
 )
+
+set(MaxPlasmaLights_RESOURCES
+    plRTLights.rc
+    resource.h
+)
+
 
 set(MaxPlasmaLights_SOURCES
     DLLEntry.cpp
@@ -29,7 +34,7 @@ set(MaxPlasmaLights_SOURCES
     plRTProjDirLight.cpp
 )
 
-add_library(MaxPlasmaLights SHARED ${MaxPlasmaLights_HEADERS} ${MaxPlasmaLights_SOURCES})
+add_library(MaxPlasmaLights SHARED ${MaxPlasmaLights_HEADERS} ${MaxPlasmaLights_RESOURCES} ${MaxPlasmaLights_SOURCES})
 set_target_properties(MaxPlasmaLights PROPERTIES SUFFIX ".dlo")
 
 
@@ -134,4 +139,5 @@ if (WIN32)
 endif(WIN32)
 
 source_group("Header Files" FILES ${MaxPlasmaLights_HEADERS})
+source_group("Resource Files" FILES ${MaxPlasmaLights_RESOURCES})
 source_group("Source Files" FILES ${MaxPlasmaLights_SOURCES})
