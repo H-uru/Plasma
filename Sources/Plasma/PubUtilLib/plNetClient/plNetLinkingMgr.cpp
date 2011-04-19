@@ -314,6 +314,13 @@ hsBool plNetLinkingMgr::MsgReceive( plMessage *msg )
         return true;
     }
 
+    // If a link was deferred in order to register an owned age, we will
+    // get a VaultNotify about the registration
+    if (plVaultNotifyMsg* vaultMsg = plVaultNotifyMsg::ConvertNoRef(msg)) {
+        IProcessVaultNotifyMsg(vaultMsg);
+        return true;
+    }
+
     return false;
 }
 
@@ -347,37 +354,19 @@ bool plNetLinkingMgr::IProcessLinkToAgeMsg( plLinkToAgeMsg * msg )
     GetPrevAgeLink()->CopyFrom( GetAgeLink() );
     GetAgeLink()->CopyFrom( msg->GetAgeLink() );
 
-    if ( IPreProcessLink() )
+    // Actually do stuff...
+    UInt8 pre = IPreProcessLink();
+    if (pre == kLinkImmediately)
     {
-        GetAgeLink()->SetSpawnPoint(msg->GetAgeLink()->SpawnPoint());
-
-        if (fLinkedIn) {
-            // Set the link out animation we should use
-            if (plSceneObject *localSO = plSceneObject::ConvertNoRef(nc->GetLocalPlayer())) {
-                plArmatureMod *avMod = const_cast<plArmatureMod*>(plArmatureMod::ConvertNoRef(localSO->GetModifierByType(plArmatureMod::Index())));
-                avMod->SetLinkInAnim(msg->GetLinkInAnimName());
-            }
-            // Queue leave op
-            NlmLeaveAgeOp * leaveAgeOp = NEWZERO(NlmLeaveAgeOp);
-            QueueOp(leaveAgeOp);
-        }
-        
-        // Queue join op        
-        NlmJoinAgeOp * joinAgeOp = NEWZERO(NlmJoinAgeOp);
-        joinAgeOp->age.ageInstId = (Uuid) *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
-        StrCopy(
-            joinAgeOp->age.ageDatasetName,
-            GetAgeLink()->GetAgeInfo()->GetAgeFilename(),
-            arrsize(joinAgeOp->age.ageDatasetName)
-        );
-        StrCopy(
-            joinAgeOp->age.spawnPtName,
-            GetAgeLink()->SpawnPoint().GetName(),
-            arrsize(joinAgeOp->age.spawnPtName)
-        );
-        QueueOp(joinAgeOp);
+        msg->Ref();
+        IDoLink(msg);
     }
-    else
+    else if (pre == kLinkDeferred)
+    {
+        msg->Ref();
+        fDeferredLink = msg;
+    }
+    else if (pre == kLinkFailed)
     {
         hsLogEntry( nc->ErrorMsg( "IPreProcessLink failed. Not linking." ) );
         // Restore previous age info state.
@@ -387,6 +376,43 @@ bool plNetLinkingMgr::IProcessLinkToAgeMsg( plLinkToAgeMsg * msg )
     }
     
     return result;
+}
+
+////////////////////////////////////////////////////////////////////
+
+void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
+{
+    plNetClientMgr* nc = plNetClientMgr::GetInstance();
+    GetAgeLink()->SetSpawnPoint(msg->GetAgeLink()->SpawnPoint());
+
+    if (fLinkedIn) {
+        // Set the link out animation we should use
+        if (plSceneObject *localSO = plSceneObject::ConvertNoRef(nc->GetLocalPlayer())) {
+            plArmatureMod *avMod = const_cast<plArmatureMod*>(plArmatureMod::ConvertNoRef(localSO->GetModifierByType(plArmatureMod::Index())));
+            avMod->SetLinkInAnim(msg->GetLinkInAnimName());
+        }
+        // Queue leave op
+        NlmLeaveAgeOp * leaveAgeOp = NEWZERO(NlmLeaveAgeOp);
+        QueueOp(leaveAgeOp);
+    }
+
+    // Queue join op        
+    NlmJoinAgeOp * joinAgeOp = NEWZERO(NlmJoinAgeOp);
+    joinAgeOp->age.ageInstId = (Uuid) *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
+    StrCopy(
+        joinAgeOp->age.ageDatasetName,
+        GetAgeLink()->GetAgeInfo()->GetAgeFilename(),
+        arrsize(joinAgeOp->age.ageDatasetName)
+        );
+    StrCopy(
+        joinAgeOp->age.spawnPtName,
+        GetAgeLink()->SpawnPoint().GetName(),
+        arrsize(joinAgeOp->age.spawnPtName)
+        );
+    QueueOp(joinAgeOp);
+
+    // UnRef
+    msg->UnRef();
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -442,6 +468,37 @@ bool plNetLinkingMgr::IProcessLinkingMgrMsg( plLinkingMgrMsg * msg )
     return result;
 }
 
+
+////////////////////////////////////////////////////////////////////
+
+bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg) 
+{
+    // No deferred link? Bye bye.
+    if (fDeferredLink == nil)
+        return false;
+
+    if (msg->GetType() != plVaultNotifyMsg::kRegisteredOwnedAge)
+        return false;
+
+    // Find the AgeLinks
+    plAgeLinkStruct* cur = GetAgeLink();
+    if (RelVaultNode* cVaultLink = VaultGetOwnedAgeLinkIncRef(cur->GetAgeInfo()))
+    {
+        // Test to see if this is what we want
+        if (cVaultLink->nodeId == msg->GetArgs()->GetInt(plNetCommon::VaultTaskArgs::kAgeLinkNode))
+        {
+            IDoLink(fDeferredLink);
+            return true;
+        }
+
+        cVaultLink->DecRef();
+    }
+
+    // Nuke the deferred link ptr, just 'cause
+    fDeferredLink = nil;
+
+    return false;
+}
 
 ////////////////////////////////////////////////////////////////////
 
@@ -748,19 +805,19 @@ void plNetLinkingMgr::IPostProcessLink( void )
 
 ////////////////////////////////////////////////////////////////////
 
-bool plNetLinkingMgr::IPreProcessLink( void )
+UInt8 plNetLinkingMgr::IPreProcessLink(void)
 {
     // Grab some stuff we're gonna use extensively
     plNetClientMgr* nc = plNetClientMgr::GetInstance();
     plAgeLinkStruct* link = GetAgeLink();
     plAgeInfoStruct* info = link->GetAgeInfo();
 
-    bool success = true;
+    PreProcessResult success = kLinkImmediately;
 
     if ( nc->GetFlagsBit( plNetClientMgr::kNullSend ) )
     {
         hsLogEntry( nc->DebugMsg( "NetClientMgr nullsend. Not linking." ) );
-        return false;
+        return kLinkFailed;
     }
 
 #if 0
@@ -788,9 +845,9 @@ bool plNetLinkingMgr::IPreProcessLink( void )
 
     //------------------------------------------------------------------------
     // Fixup empty fields
-    if ( GetAgeLink()->GetAgeInfo()->HasAgeFilename() )
+    if (info->HasAgeFilename())
     {
-        GetAgeLink()->GetAgeInfo()->SetAgeFilename(plNetLinkingMgr::GetProperAgeName(info->GetAgeFilename()).c_str());
+        info->SetAgeFilename(plNetLinkingMgr::GetProperAgeName(info->GetAgeFilename()).c_str());
 
         if (!info->HasAgeInstanceName())
         {
@@ -798,7 +855,7 @@ bool plNetLinkingMgr::IPreProcessLink( void )
         }
     }
 
-    hsLogEntry( nc->DebugMsg( "plNetLinkingMgr: Pre-Process: Linking with %s rules...",
+    hsLogEntry(nc->DebugMsg( "plNetLinkingMgr: Pre-Process: Linking with %s rules...",
         plNetCommon::LinkingRules::LinkingRuleStr(link->GetLinkingRules())));
 
     //------------------------------------------------------------------------
@@ -808,7 +865,7 @@ bool plNetLinkingMgr::IPreProcessLink( void )
 
     //------------------------------------------------------------------------
     // SPECIAL CASE: Nexus: force original link
-    if (stricmp(info->GetAgeFilename(), kNexusAgeFilename) == 0 )
+    if (stricmp(info->GetAgeFilename(), kNexusAgeFilename) == 0)
         GetAgeLink()->SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
 
     //------------------------------------------------------------------------
@@ -816,7 +873,7 @@ bool plNetLinkingMgr::IPreProcessLink( void )
     if (stricmp(info->GetAgeFilename(), kAvCustomizationFilename ) == 0)
         GetAgeLink()->SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
 
-    hsLogEntry( nc->DebugMsg( "plNetLinkingMgr: Process: Linking with %s rules...",
+    hsLogEntry(nc->DebugMsg("plNetLinkingMgr: Process: Linking with %s rules...",
         plNetCommon::LinkingRules::LinkingRuleStr(link->GetLinkingRules())));
 
     switch (link->GetLinkingRules())
@@ -868,7 +925,10 @@ bool plNetLinkingMgr::IPreProcessLink( void )
                     }
                     
                     // register this as an owned age now before we link to it.
-                    VaultRegisterOwnedAgeAndWait(link);
+                    // Note: We MUST break or the OwnedBook code will fail!
+                    VaultRegisterOwnedAge(link);
+                    success = kLinkDeferred;
+                    break;
                 }
                 else if (RelVaultNode* linkNode = VaultGetOwnedAgeLinkIncRef(&ageInfo)) {
                     // We have the age in our AgesIOwnFolder. If its volatile, dump it for the new one.
@@ -904,7 +964,11 @@ bool plNetLinkingMgr::IPreProcessLink( void )
                                 info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
                             }
 
-                            VaultRegisterOwnedAgeAndWait(link);
+                            VaultRegisterOwnedAge(link);
+
+                            // Note: We MUST break or the OwnedBook code will fail!
+                            success = kLinkDeferred;
+                            break;
                         }
                     }
                     else {
@@ -912,8 +976,7 @@ bool plNetLinkingMgr::IPreProcessLink( void )
                             // if we get here then it's because we're linking to a neighborhood that we don't belong to
                             // and our own neighborhood book is not volatile, so really we want to basic link
                             link->SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
-                            success = true;
-
+                            success = kLinkImmediately;
                             break;
                         }
                     }
@@ -930,13 +993,13 @@ bool plNetLinkingMgr::IPreProcessLink( void )
             {
                 plAgeLinkStruct ownedLink;
                 if (VaultGetOwnedAgeLink(info, &ownedLink)) {
-                    GetAgeLink()->GetAgeInfo()->CopyFrom(ownedLink.GetAgeInfo());
+                    info->CopyFrom(ownedLink.GetAgeInfo());
                     // Remember spawn point (treasure book support)                     
                     plSpawnPointInfo theSpawnPt = link->SpawnPoint();
                     VaultAddOwnedAgeSpawnPoint(*info->GetAgeInstanceGuid(), theSpawnPt);
                 }
                 else {
-                    success = false;
+                    success = kLinkFailed;
                 }
             }
             break;
@@ -949,7 +1012,7 @@ bool plNetLinkingMgr::IPreProcessLink( void )
                 if (VaultGetVisitAgeLink(info, &visitLink))
                     info->CopyFrom(visitLink.GetAgeInfo());
                 else
-                    success = false;
+                    success = kLinkFailed;
             }
             break;
 
@@ -962,7 +1025,7 @@ bool plNetLinkingMgr::IPreProcessLink( void )
                 if (VaultAgeFindOrCreateSubAgeLinkAndWait(info, &subAgeLink, NetCommGetAge()->ageInstId))
                     info->CopyFrom(subAgeLink.GetAgeInfo());
                 else
-                    success = false;
+                    success = kLinkFailed;
             }
             break;
 
@@ -975,13 +1038,15 @@ bool plNetLinkingMgr::IPreProcessLink( void )
                 wchar parentAgeName[MAX_PATH];
                 if (link->HasParentAgeFilename()) {
                     StrToUnicode(parentAgeName, link->GetParentAgeFilename(), arrsize(parentAgeName));
-                    success = VaultAgeFindOrCreateChildAgeLinkAndWait(parentAgeName, info, &childLink);
+                    if(!VaultAgeFindOrCreateChildAgeLinkAndWait(parentAgeName, info, &childLink))
+                        success = kLinkFailed;
                 }
                 else {
-                    success = VaultAgeFindOrCreateChildAgeLinkAndWait(nil, info, &childLink);
+                    if(!VaultAgeFindOrCreateChildAgeLinkAndWait(nil, info, &childLink))
+                        success = kLinkFailed;
                 }
                 
-                if (success)
+                if (success != kLinkFailed)
                     info->CopyFrom(childLink.GetAgeInfo());
             }
             break;
@@ -991,7 +1056,7 @@ bool plNetLinkingMgr::IPreProcessLink( void )
         DEFAULT_FATAL(link->GetLinkingRules());
     }
 
-    hsLogEntry( nc->DebugMsg( "plNetLinkingMgr: Post-Process: Linking with %s rules...",
+    hsLogEntry(nc->DebugMsg( "plNetLinkingMgr: Post-Process: Linking with %s rules...",
         plNetCommon::LinkingRules::LinkingRuleStr(link->GetLinkingRules())));
 
     hsAssert(info->HasAgeFilename(), "AgeLink has no AgeFilename. Link will fail.");
