@@ -107,7 +107,18 @@ const char * pyAgeInfoStruct::GetAgeInstanceGuid() const
 
 void pyAgeInfoStruct::SetAgeInstanceGuid( const char * guid )
 {
-	fAgeInfo.SetAgeInstanceGuid( &plUUID( guid ) );
+	if ( guid[0] == '@' )
+	{
+		// if it starts with an @ then do a meta kind of GUID
+		std::string curInst = fAgeInfo.GetAgeInstanceName();
+		std::string y = curInst + guid;
+		
+		plUUID instanceGuid;
+		CryptDigest(kCryptMd5,	instanceGuid.fData , y.length(), y.c_str());
+		fAgeInfo.SetAgeInstanceGuid(&instanceGuid);
+	}
+	else
+		fAgeInfo.SetAgeInstanceGuid( &plUUID( guid ) );
 }
 
 Int32 pyAgeInfoStruct::GetAgeSequenceNumber() const
