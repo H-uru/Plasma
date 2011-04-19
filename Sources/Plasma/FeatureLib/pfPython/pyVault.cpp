@@ -60,10 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plSDL/plSDL.h"
 
-#include <stdlib.h>
-#include <string.h>
-    
-
 //============================================================================
 static PyObject * GetFolder (unsigned folderType) {
     PyObject * result = nil;

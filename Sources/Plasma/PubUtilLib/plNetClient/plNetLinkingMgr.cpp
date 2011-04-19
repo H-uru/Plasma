@@ -512,7 +512,7 @@ void plNetLinkingMgr::LinkToMyPersonalAge( UInt32 playerID )
         hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg( "Not linking. Linking is disabled." ) );
         return;
     }
-    plNetClientMgr * nc = plNetClientMgr::GetInstance();
+    plNetClientMgr* nc = plNetClientMgr::GetInstance();
 
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename( kPersonalAgeFilename );
@@ -665,23 +665,27 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeInfoStruct * inInfo, UInt32 
 
 void plNetLinkingMgr::IPostProcessLink( void )
 {
-    bool city = (0 == stricmp( GetAgeLink()->GetAgeInfo()->GetAgeFilename(), kCityAgeFilename ));
-    bool hood = (0 == stricmp( GetAgeLink()->GetAgeInfo()->GetAgeFilename(), kNeighborhoodAgeFilename ));
-    bool psnl = (0 == stricmp( GetAgeLink()->GetAgeInfo()->GetAgeFilename(), kPersonalAgeFilename ));
+    // Grab some useful things...
+    plAgeLinkStruct* link = GetAgeLink();
+    plAgeInfoStruct* info = link->GetAgeInfo();
+
+    bool city = (stricmp(info->GetAgeFilename(), kCityAgeFilename) == 0);
+    bool hood = (stricmp(info->GetAgeFilename(), kNeighborhoodAgeFilename) == 0);
+    bool psnl = (stricmp(info->GetAgeFilename(), kPersonalAgeFilename) == 0);
 
     // Update our online status 
-    if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
+    if (RelVaultNode* rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         wchar ageInstName[MAX_PATH];
-        Uuid ageInstGuid = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
-        StrToUnicode(ageInstName, GetAgeLink()->GetAgeInfo()->GetAgeInstanceName(), arrsize(ageInstName));
+        Uuid ageInstGuid = *info->GetAgeInstanceGuid();
+        StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
         accInfo.SetOnline(true);
         rvnInfo->DecRef();
     }
     
-    switch (GetAgeLink()->GetLinkingRules()) {
+    switch (link->GetLinkingRules()) {
 
         case plNetCommon::LinkingRules::kOwnedBook: {
             // SPECIAL CASE: City: Every player ever created would be in the list; avoid that.
@@ -689,8 +693,8 @@ void plNetLinkingMgr::IPostProcessLink( void )
                 break;
                 
             {   // Ensure we're in the AgeOwners folder
-                RelVaultNode * fldr = VaultGetAgeAgeOwnersFolderIncRef();
-                RelVaultNode * info = VaultGetPlayerInfoNodeIncRef();
+                RelVaultNode* fldr = VaultGetAgeAgeOwnersFolderIncRef();
+                RelVaultNode* info = VaultGetPlayerInfoNodeIncRef();
                 
                 if (fldr && info)
                     if (!fldr->IsParentOf(info->nodeId, 1))
@@ -714,8 +718,8 @@ void plNetLinkingMgr::IPostProcessLink( void )
                 break;
                 
             {   // Ensure we're in the CanVisit folder
-                RelVaultNode * fldr = VaultGetAgeCanVisitFolderIncRef();
-                RelVaultNode * info = VaultGetPlayerInfoNodeIncRef();
+                RelVaultNode* fldr = VaultGetAgeCanVisitFolderIncRef();
+                RelVaultNode* info = VaultGetPlayerInfoNodeIncRef();
                 
                 if (fldr && info)
                     if (!fldr->IsParentOf(info->nodeId, 1))
@@ -746,7 +750,10 @@ void plNetLinkingMgr::IPostProcessLink( void )
 
 bool plNetLinkingMgr::IPreProcessLink( void )
 {
-    plNetClientMgr * nc = plNetClientMgr::GetInstance();
+    // Grab some stuff we're gonna use extensively
+    plNetClientMgr* nc = plNetClientMgr::GetInstance();
+    plAgeLinkStruct* link = GetAgeLink();
+    plAgeInfoStruct* info = link->GetAgeInfo();
 
     bool success = true;
 
@@ -771,7 +778,7 @@ bool plNetLinkingMgr::IPreProcessLink( void )
         VaultPlayerInfoNode accInfo(rvnInfo);
         wchar ageInstName[MAX_PATH];
         Uuid ageInstGuid = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
-        StrToUnicode(ageInstName, GetAgeLink()->GetAgeInfo()->GetAgeInstanceName(), arrsize(ageInstName));
+        StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
         accInfo.SetOnline(true);
@@ -783,48 +790,42 @@ bool plNetLinkingMgr::IPreProcessLink( void )
     // Fixup empty fields
     if ( GetAgeLink()->GetAgeInfo()->HasAgeFilename() )
     {
-        GetAgeLink()->GetAgeInfo()->SetAgeFilename( plNetLinkingMgr::GetProperAgeName( GetAgeLink()->GetAgeInfo()->GetAgeFilename() ).c_str() );
+        GetAgeLink()->GetAgeInfo()->SetAgeFilename(plNetLinkingMgr::GetProperAgeName(info->GetAgeFilename()).c_str());
 
-        if ( !GetAgeLink()->GetAgeInfo()->HasAgeInstanceName() )
+        if (!info->HasAgeInstanceName())
         {
-            GetAgeLink()->GetAgeInfo()->SetAgeInstanceName( GetAgeLink()->GetAgeInfo()->GetAgeFilename() );
+            info->SetAgeInstanceName(info->GetAgeFilename());
         }
     }
 
     hsLogEntry( nc->DebugMsg( "plNetLinkingMgr: Pre-Process: Linking with %s rules...",
-        plNetCommon::LinkingRules::LinkingRuleStr( GetAgeLink()->GetLinkingRules() ) ) );
+        plNetCommon::LinkingRules::LinkingRuleStr(link->GetLinkingRules())));
 
     //------------------------------------------------------------------------
     // SPECIAL CASE: StartUp: force basic link
-    if ( stricmp( GetAgeLink()->GetAgeInfo()->GetAgeFilename(), kStartUpAgeFilename )==0 )
-    {
-        GetAgeLink()->SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
-    }
+    if (stricmp(info->GetAgeFilename(), kStartUpAgeFilename) == 0)
+        link->SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
 
     //------------------------------------------------------------------------
     // SPECIAL CASE: Nexus: force original link
-    if ( stricmp( GetAgeLink()->GetAgeInfo()->GetAgeFilename(), kNexusAgeFilename )==0 )
-    {
+    if (stricmp(info->GetAgeFilename(), kNexusAgeFilename) == 0 )
         GetAgeLink()->SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
-    }
 
     //------------------------------------------------------------------------
     // SPECIAL CASE: ACA: force original link
-    if ( stricmp( GetAgeLink()->GetAgeInfo()->GetAgeFilename(), kAvCustomizationFilename )==0 )
-    {
+    if (stricmp(info->GetAgeFilename(), kAvCustomizationFilename ) == 0)
         GetAgeLink()->SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
-    }
 
     hsLogEntry( nc->DebugMsg( "plNetLinkingMgr: Process: Linking with %s rules...",
-        plNetCommon::LinkingRules::LinkingRuleStr( GetAgeLink()->GetLinkingRules() ) ) );
+        plNetCommon::LinkingRules::LinkingRuleStr(link->GetLinkingRules())));
 
-    switch ( GetAgeLink()->GetLinkingRules() )
+    switch (link->GetLinkingRules())
     {
         //--------------------------------------------------------------------
         // BASIC LINK. Link to a unique instance of the age, if no instance specified.
         case plNetCommon::LinkingRules::kBasicLink:
-            if (!GetAgeLink()->GetAgeInfo()->HasAgeInstanceGuid())
-                GetAgeLink()->GetAgeInfo()->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+            if (!info->HasAgeInstanceGuid())
+                info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
         break;
 
         //--------------------------------------------------------------------
@@ -835,80 +836,82 @@ bool plNetLinkingMgr::IPreProcessLink( void )
                 // we just want to find out if we own *any* link to the age, not the specific
                 // link that we're linking through
                 plAgeInfoStruct ageInfo;
-                ageInfo.SetAgeFilename(GetAgeLink()->GetAgeInfo()->GetAgeFilename());
+                ageInfo.SetAgeFilename(info->GetAgeFilename());
 
                 plAgeLinkStruct ownedLink;
                 if (!VaultGetOwnedAgeLink(&ageInfo, &ownedLink)) {
                     // Fill in fields for new age create.
-                    if ( !GetAgeLink()->GetAgeInfo()->HasAgeUserDefinedName() )
+                    if (!info->HasAgeUserDefinedName())
                     {
                         // set user-defined name
                         std::string title;
                         unsigned nameLen = StrLen(nc->GetPlayerName());
                         if (nc->GetPlayerName()[nameLen - 1] == 's' || nc->GetPlayerName()[nameLen - 1] == 'S')
-                            xtl::format( title, "%s'", nc->GetPlayerName() );
+                            xtl::format(title, "%s'", nc->GetPlayerName());
                         else
-                            xtl::format( title, "%s's", nc->GetPlayerName() );
-                        GetAgeLink()->GetAgeInfo()->SetAgeUserDefinedName( title.c_str() );
+                            xtl::format(title, "%s's", nc->GetPlayerName());
+                        info->SetAgeUserDefinedName(title.c_str());
                     }
-                    if ( !GetAgeLink()->GetAgeInfo()->HasAgeDescription() )
+                    if (!info->HasAgeDescription())
                     {
                         // set description
                         std::string desc;
                         unsigned nameLen = StrLen(nc->GetPlayerName());
                         if (nc->GetPlayerName()[nameLen - 1] == 's' || nc->GetPlayerName()[nameLen - 1] == 'S')
-                            xtl::format( desc, "%s' %s", nc->GetPlayerName(), GetAgeLink()->GetAgeInfo()->GetAgeInstanceName() );
+                            xtl::format(desc, "%s' %s", nc->GetPlayerName(), info->GetAgeInstanceName());
                         else
-                            xtl::format( desc, "%s's %s", nc->GetPlayerName(), GetAgeLink()->GetAgeInfo()->GetAgeInstanceName() );
-                        GetAgeLink()->GetAgeInfo()->SetAgeDescription( desc.c_str() );
+                            xtl::format(desc, "%s's %s", nc->GetPlayerName(), info->GetAgeInstanceName());
+                        info->SetAgeDescription(desc.c_str());
                     }
-                    if (!GetAgeLink()->GetAgeInfo()->HasAgeInstanceGuid()) {
-                        GetAgeLink()->GetAgeInfo()->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+                    if (!info->HasAgeInstanceGuid()) {
+                        info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
                     }
                     
                     // register this as an owned age now before we link to it.
-                    VaultRegisterOwnedAgeAndWait(GetAgeLink());
+                    VaultRegisterOwnedAgeAndWait(link);
                 }
-                else if (RelVaultNode * linkNode = VaultGetOwnedAgeLinkIncRef(&ageInfo)) {
+                else if (RelVaultNode* linkNode = VaultGetOwnedAgeLinkIncRef(&ageInfo)) {
                     // We have the age in our AgesIOwnFolder. If its volatile, dump it for the new one.
                     VaultAgeLinkNode linkAcc(linkNode);
                     if (linkAcc.volat) {
                         if (VaultUnregisterOwnedAgeAndWait(&ageInfo)) {
                             // Fill in fields for new age create.
-                            if ( !GetAgeLink()->GetAgeInfo()->HasAgeUserDefinedName() )
+                            if (!info->HasAgeUserDefinedName() )
                             {
                                 // set user-defined name
                                 std::string title;
                                 unsigned nameLen = StrLen(nc->GetPlayerName());
                                 if (nc->GetPlayerName()[nameLen - 1] == 's' || nc->GetPlayerName()[nameLen - 1] == 'S')
-                                    xtl::format( title, "%s'", nc->GetPlayerName() );
+                                    xtl::format(title, "%s'", nc->GetPlayerName());
                                 else
-                                    xtl::format( title, "%s's", nc->GetPlayerName() );
-                                GetAgeLink()->GetAgeInfo()->SetAgeUserDefinedName( title.c_str() );
+                                    xtl::format(title, "%s's", nc->GetPlayerName());
+                                info->SetAgeUserDefinedName(title.c_str());
                             }
-                            if ( !GetAgeLink()->GetAgeInfo()->HasAgeDescription() )
+
+                            if (!info->HasAgeDescription())
                             {
                                 // set description
                                 std::string desc;
                                 unsigned nameLen = StrLen(nc->GetPlayerName());
                                 if (nc->GetPlayerName()[nameLen - 1] == 's' || nc->GetPlayerName()[nameLen - 1] == 'S')
-                                    xtl::format( desc, "%s' %s", nc->GetPlayerName(), GetAgeLink()->GetAgeInfo()->GetAgeInstanceName() );
+                                    xtl::format(desc, "%s' %s", nc->GetPlayerName(), info->GetAgeInstanceName());
                                 else
-                                    xtl::format( desc, "%s's %s", nc->GetPlayerName(), GetAgeLink()->GetAgeInfo()->GetAgeInstanceName() );
-                                GetAgeLink()->GetAgeInfo()->SetAgeDescription( desc.c_str() );
-                            }
-                            if (!GetAgeLink()->GetAgeInfo()->HasAgeInstanceGuid()) {
-                                GetAgeLink()->GetAgeInfo()->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+                                    xtl::format(desc, "%s's %s", nc->GetPlayerName(), info->GetAgeInstanceName());
+                                info->SetAgeDescription( desc.c_str() );
                             }
 
-                            VaultRegisterOwnedAgeAndWait(GetAgeLink());
+                            if (!info->HasAgeInstanceGuid()) {
+                                info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+                            }
+
+                            VaultRegisterOwnedAgeAndWait(link);
                         }
                     }
                     else {
-                        if (stricmp(GetAgeLink()->GetAgeInfo()->GetAgeFilename(), kNeighborhoodAgeFilename) == 0) {
-                            // if we get here then its because we're linking to a neighborhood that we don't belong to
+                        if (stricmp(info->GetAgeFilename(), kNeighborhoodAgeFilename) == 0) {
+                            // if we get here then it's because we're linking to a neighborhood that we don't belong to
                             // and our own neighborhood book is not volatile, so really we want to basic link
-                            GetAgeLink()->SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
+                            link->SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
                             success = true;
 
                             break;
@@ -917,7 +920,8 @@ bool plNetLinkingMgr::IPreProcessLink( void )
                     linkNode->DecRef();
                 }
             }
-            GetAgeLink()->SetLinkingRules( plNetCommon::LinkingRules::kOwnedBook );
+
+            link->SetLinkingRules( plNetCommon::LinkingRules::kOwnedBook );
             // falls thru to OWNED BOOK case...
 
         //--------------------------------------------------------------------
@@ -925,11 +929,11 @@ bool plNetLinkingMgr::IPreProcessLink( void )
         case plNetCommon::LinkingRules::kOwnedBook:
             {
                 plAgeLinkStruct ownedLink;
-                if (VaultGetOwnedAgeLink(GetAgeLink()->GetAgeInfo(), &ownedLink)) {
+                if (VaultGetOwnedAgeLink(info, &ownedLink)) {
                     GetAgeLink()->GetAgeInfo()->CopyFrom(ownedLink.GetAgeInfo());
                     // Remember spawn point (treasure book support)                     
-                    plSpawnPointInfo theSpawnPt = GetAgeLink()->SpawnPoint();
-                    VaultAddOwnedAgeSpawnPoint(*GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid(), theSpawnPt);
+                    plSpawnPointInfo theSpawnPt = link->SpawnPoint();
+                    VaultAddOwnedAgeSpawnPoint(*info->GetAgeInstanceGuid(), theSpawnPt);
                 }
                 else {
                     success = false;
@@ -942,8 +946,8 @@ bool plNetLinkingMgr::IPreProcessLink( void )
         case plNetCommon::LinkingRules::kVisitBook:
             {
                 plAgeLinkStruct visitLink;
-                if (VaultGetVisitAgeLink(GetAgeLink()->GetAgeInfo(), &visitLink))
-                    GetAgeLink()->GetAgeInfo()->CopyFrom(visitLink.GetAgeInfo());
+                if (VaultGetVisitAgeLink(info, &visitLink))
+                    info->CopyFrom(visitLink.GetAgeInfo());
                 else
                     success = false;
             }
@@ -955,8 +959,8 @@ bool plNetLinkingMgr::IPreProcessLink( void )
         case plNetCommon::LinkingRules::kSubAgeBook:
             {
                 plAgeLinkStruct subAgeLink;
-                if (VaultAgeFindOrCreateSubAgeLinkAndWait(GetAgeLink()->GetAgeInfo(), &subAgeLink, NetCommGetAge()->ageInstId))
-                    GetAgeLink()->GetAgeInfo()->CopyFrom(subAgeLink.GetAgeInfo());
+                if (VaultAgeFindOrCreateSubAgeLinkAndWait(info, &subAgeLink, NetCommGetAge()->ageInstId))
+                    info->CopyFrom(subAgeLink.GetAgeInfo());
                 else
                     success = false;
             }
@@ -969,28 +973,28 @@ bool plNetLinkingMgr::IPreProcessLink( void )
             {
                 plAgeLinkStruct childLink;
                 wchar parentAgeName[MAX_PATH];
-                if (GetAgeLink()->HasParentAgeFilename()) {
-                    StrToUnicode(parentAgeName, GetAgeLink()->GetParentAgeFilename(), arrsize(parentAgeName));
-                    success = VaultAgeFindOrCreateChildAgeLinkAndWait(parentAgeName, GetAgeLink()->GetAgeInfo(), &childLink);
+                if (link->HasParentAgeFilename()) {
+                    StrToUnicode(parentAgeName, link->GetParentAgeFilename(), arrsize(parentAgeName));
+                    success = VaultAgeFindOrCreateChildAgeLinkAndWait(parentAgeName, info, &childLink);
                 }
                 else {
-                    success = VaultAgeFindOrCreateChildAgeLinkAndWait(nil, GetAgeLink()->GetAgeInfo(), &childLink);
+                    success = VaultAgeFindOrCreateChildAgeLinkAndWait(nil, info, &childLink);
                 }
                 
                 if (success)
-                    GetAgeLink()->GetAgeInfo()->CopyFrom(childLink.GetAgeInfo());
+                    info->CopyFrom(childLink.GetAgeInfo());
             }
             break;
 
         //--------------------------------------------------------------------
         // ???
-        DEFAULT_FATAL(GetAgeLink()->GetLinkingRules());
+        DEFAULT_FATAL(link->GetLinkingRules());
     }
 
     hsLogEntry( nc->DebugMsg( "plNetLinkingMgr: Post-Process: Linking with %s rules...",
-        plNetCommon::LinkingRules::LinkingRuleStr( GetAgeLink()->GetLinkingRules() ) ) );
+        plNetCommon::LinkingRules::LinkingRuleStr(link->GetLinkingRules())));
 
-    hsAssert( GetAgeLink()->GetAgeInfo()->HasAgeFilename(), "AgeLink has no AgeFilename. Link will fail." );
+    hsAssert(info->HasAgeFilename(), "AgeLink has no AgeFilename. Link will fail.");
 
     return success;
 }
