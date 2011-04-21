@@ -364,73 +364,70 @@ xcopy /Y ..\..\..\..\..\StaticSDKs\Win32\PhysX\Bin\win32\PhysXLoader.dll ..\..\.
 				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\banner.bmp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\bitmap1.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\bitmap2.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\bitmap3.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\bmp00001.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\bmp00002.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\bmp00003.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\bmp00004.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\bmp00005.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\book.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\book_cli.bmp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\book_hig.bmp">
-			</File>
-			<File
 				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cnsl1.bin">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_clicked.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_4wayclosed.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_disabled.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_4wayopen.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_down.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_arrow.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_grab.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_book.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_left.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_book_clicked.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_open.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_book_highlight.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_poised.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_clicked.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_right.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_disabled.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_u.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_down.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_up.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_grab.raw">
 			</File>
 			<File
-				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_upward.bmp">
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_hand.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_left.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_leftrightclosed.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_leftrightopen.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_open.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_poised.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_right.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_up.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_updownclosed.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_updownopen.raw">
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\cursor_upward.raw">
 			</File>
 			<File
 				RelativePath="..\..\..\..\Sources\Plasma\Apps\plClient\res\Dirt.ICO">

@@ -89,6 +89,7 @@ class plPlate
 		}
 
 		void ISetResourceAlphas(UInt32 colorKey);
+		void CreateOrReloadFromRawResource(const char *resName, bool create);
 
 	public:
 
@@ -131,6 +132,8 @@ class plPlate
 		void			ReloadFromResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
 		void			CreateFromJPEGResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
 		void			ReloadFromJPEGResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
+		void			CreateFromRawResource( const char *resName ) { CreateOrReloadFromRawResource(resName, true); }
+		void			ReloadFromRawResource( const char *resName ) { CreateOrReloadFromRawResource(resName, false); }
 };
 
 //// plGraphPlate Class Definition ///////////////////////////////////////////

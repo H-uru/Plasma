@@ -433,11 +433,11 @@ void	plMouseDevice::CreateCursor( int cursor )
 	if( fCursor == nil )
 	{
 		plPlateManager::Instance().CreatePlate( &fCursor );
-		fCursor->CreateFromResource( MAKEINTRESOURCE( cursor ) );
+		fCursor->CreateFromRawResource( MAKEINTRESOURCE( cursor ) );
 	}
 	else
 	{
-		fCursor->ReloadFromResource( MAKEINTRESOURCE( cursor ) );
+		fCursor->ReloadFromRawResource( MAKEINTRESOURCE( cursor ) );
 	}
 	fCursor->SetPosition( 0, 0, 0 );
 	IUpdateCursorSize();

@@ -2,33 +2,12 @@
 // Microsoft Visual C++ generated include file.
 // Used by plClient.rc
 //
-#define IDB_CURSOR_UP                   112
-#define IDB_CURSOR_DOWN                 113
-#define IDB_CURSOR_RIGHT                114
-#define IDB_CURSOR_LEFT                 115
-#define IDB_CURSOR_OPEN                 116
-#define IDB_CURSOR_GRAB                 117
-#define IDB_CURSOR_CLICKED              118
-#define IDB_CURSOR_POISED               119
 #define IDB_MICROPHONE                  121
 #define IDB_TALKING                     122
-#define IDB_CURSOR_ARROW                123
-#define IDB_CURSOR_4WAYOPEN             124
-#define IDB_CURSOR_UPDOWNCLOSED         125
-#define IDB_CURSOR_UPDOWNOPEN           126
-#define IDB_CURSOR_4WAYCLOSED           127
-#define IDB_CURSOR_LEFTRIGHTCLOSED      128
-#define IDB_CURSOR_LEFTRIGHTOPEN        129
 #define IDI_ICON_DIRT                   135
 #define IDD_LOADING                     136
 #define IDD_EXCEPTION                   138
 #define IDR_CNSL1                       139
-#define IDB_CURSOR_BOOK_HIGHLIGHT       141
-#define IDB_CURSOR_BOOK                 142
-#define IDB_CURSOR_BOOK_CLICKED         143
-#define IDB_CURSOR_DISABLED             144
-#define IDB_CURSOR_HAND                 145
-#define IDB_CURSOR_UPWARD               147
 #define IDD_URUTAP_LOGIN                148
 #define IDD_URU_LOGIN                   149
 #define IDB_BANNER                      151
@@ -57,6 +36,27 @@
 #define IDR_LOADING_18                  194
 #define IDR_LOADING_LINKTEXT            195
 #define IDR_LOADING_UPDATETEXT          196
+#define IDR_CURSOR_UP                   198
+#define IDR_CURSOR_DOWN                 199
+#define IDR_CURSOR_RIGHT                200
+#define IDR_CURSOR_LEFT                 201
+#define IDR_CURSOR_OPEN                 202
+#define IDR_CURSOR_GRAB                 203
+#define IDR_CURSOR_CLICKED              204
+#define IDR_CURSOR_POISED               205
+#define IDR_CURSOR_ARROW                206
+#define IDR_CURSOR_4WAYOPEN             207
+#define IDR_CURSOR_UPDOWNCLOSED         208
+#define IDR_CURSOR_UPDOWNOPEN           209
+#define IDR_CURSOR_4WAYCLOSED           210
+#define IDR_CURSOR_LEFTRIGHTCLOSED      211
+#define IDR_CURSOR_LEFTRIGHTOPEN        212
+#define IDR_CURSOR_BOOK_HIGHLIGHT       213
+#define IDR_CURSOR_BOOK                 214
+#define IDR_CURSOR_BOOK_CLICKED         215
+#define IDR_CURSOR_DISABLED             216
+#define IDR_CURSOR_HAND                 217
+#define IDR_CURSOR_UPWARD               218
 #define IDC_CRASHINFO                   1001
 #define IDC_COPY                        1002
 #define IDC_MSG                         1003
@@ -95,7 +95,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        197
+#define _APS_NEXT_RESOURCE_VALUE        219
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1036
 #define _APS_NEXT_SYMED_VALUE           103
