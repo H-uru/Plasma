@@ -866,12 +866,12 @@ UInt8 plNetLinkingMgr::IPreProcessLink(void)
     //------------------------------------------------------------------------
     // SPECIAL CASE: Nexus: force original link
     if (stricmp(info->GetAgeFilename(), kNexusAgeFilename) == 0)
-        GetAgeLink()->SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
+        link->SetLinkingRules(plNetCommon::LinkingRules::kOriginalBook);
 
     //------------------------------------------------------------------------
     // SPECIAL CASE: ACA: force original link
     if (stricmp(info->GetAgeFilename(), kAvCustomizationFilename ) == 0)
-        GetAgeLink()->SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
+        link->SetLinkingRules(plNetCommon::LinkingRules::kOriginalBook);
 
     hsLogEntry(nc->DebugMsg("plNetLinkingMgr: Process: Linking with %s rules...",
         plNetCommon::LinkingRules::LinkingRuleStr(link->GetLinkingRules())));
@@ -936,7 +936,7 @@ UInt8 plNetLinkingMgr::IPreProcessLink(void)
                     if (linkAcc.volat) {
                         if (VaultUnregisterOwnedAgeAndWait(&ageInfo)) {
                             // Fill in fields for new age create.
-                            if (!info->HasAgeUserDefinedName() )
+                            if (!info->HasAgeUserDefinedName())
                             {
                                 // set user-defined name
                                 std::string title;
@@ -984,7 +984,7 @@ UInt8 plNetLinkingMgr::IPreProcessLink(void)
                 }
             }
 
-            link->SetLinkingRules( plNetCommon::LinkingRules::kOwnedBook );
+            link->SetLinkingRules(plNetCommon::LinkingRules::kOwnedBook);
             // falls thru to OWNED BOOK case...
 
         //--------------------------------------------------------------------
