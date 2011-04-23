@@ -3,9 +3,12 @@ if(Speex_INCLUDE_DIR AND Speex_LIBRARY)
 endif()
 
 
+#It would be a good idea to eventually use pkgconfig here.
 find_path(Speex_INCLUDE_DIR speex.h
           /usr/local/include
           /usr/include
+          /usr/local/include/speex
+          /usr/include/speex
 )
 
 find_library(Speex_LIBRARY NAMES speex
@@ -25,6 +28,11 @@ if (Speex_FOUND)
     endif()
 else()
     if(Speex_FIND_REQUIRED)
-        message(FATAL_ERROR "Could not find speex")
+        if(NOT Speex_LIBRARIES)
+          message(FATAL_ERROR "Could not find speex libraries")
+	endif()
+        if(NOT Speex_INCLUDE_DIR)
+          message(FATAL_ERROR "Could not find speex includes")
+	endif()
     endif()
 endif()
