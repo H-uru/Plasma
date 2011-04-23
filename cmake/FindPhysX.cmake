@@ -6,11 +6,10 @@ endif()
 
 
 #This isn't quite right, but we'll assume they are all at the same place.
-find_path(PHYSX_SDK_PATH SDKs/Cooking/Include/NxCooking.h
+find_path(PHYSX_SDK_PATH Cooking/Include/NxCooking.h
           /usr/local/include
           /usr/include
-          PATH_SUFFIXES "PhysX/v2.6.4"
-          PATH_SUFFIXES "PhysX/v2.7.3"
+          PATH_SUFFIXES "PhysX/v2.7.3/SDKs"
 )
 
 if(PHYSX_SDK_PATH)
@@ -35,17 +34,14 @@ endif()
 
 #2.7.3 is the earliest version that can be downloaded from nVidia's archive.
 find_library(PHYSX_COOKING_LIBRARY NAMES NxCooking
-             PATH_SUFFIXES "PhysX/v2.6.4"
              PATH_SUFFIXES "PhysX/v2.7.3"
              PATHS "${PHYSX_SDK_PATH}/lib/win32"
 )
 find_library(PHYSX_CHARACTER_LIBRARY NAMES NxCharacter
-             PATH_SUFFIXES "PhysX/v2.6.4"
              PATH_SUFFIXES "PhysX/v2.7.3"
              PATHS "${PHYSX_SDK_PATH}/lib/win32"
 )
 find_library(PHYSX_EXTENSIONS_LIBRARY NAMES NxExtensions
-             PATH_SUFFIXES "PhysX/v2.6.4"
              PATH_SUFFIXES "PhysX/v2.7.3"
              PATHS "${PHYSX_SDK_PATH}/lib/win32"
 )
