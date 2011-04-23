@@ -436,11 +436,9 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, UInt32 c
                           (FVaultAddChildNodeCallback)_AddNodeCallback,
                           cb
         );
-        
-        PyObject * nodeRef = cb->fPyNodeRef = pyVaultNodeRef::New(fNode, pynode->fNode);
-        Py_INCREF(nodeRef); // incref it, because we MUST return a new PyObject, and the callback "steals" the ref from us
-        cb->SetNode(pynode->fNode);
-        return nodeRef;
+
+       // just return a None object
+       PYTHON_RETURN_NONE;
     }
     else
     {
