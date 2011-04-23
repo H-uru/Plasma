@@ -92,6 +92,7 @@ pyVaultNode::pyVaultNodeOperationCallback::~pyVaultNodeOperationCallback()
 
 void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( UInt32 context )
 {
+    fContext = context;
     if ( fCbObject )
     {
         // Call the callback.
@@ -391,6 +392,14 @@ void pyVaultNode::SetCreateAgeGuid( const char * v )
 // Vault Node API
 
 // Add child node
+void _AddNodeCallback(ENetError result, void* param) {
+    pyVaultNode::pyVaultNodeOperationCallback* cb = (pyVaultNode::pyVaultNodeOperationCallback*)param;
+    if (IS_NET_SUCCESS(result))
+        cb->VaultOperationComplete(hsOK);
+    else
+        cb->VaultOperationComplete(hsFail);
+}
+
 PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, UInt32 cbContext)
 {
     pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNodeOperationCallback)(cbObject);
@@ -420,22 +429,24 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, UInt32 c
                 hsResult = hsFail;
             }
         }
-
-        // Block here until we have the child node =(       
-        VaultAddChildNodeAndWait(fNode->nodeId, pynode->fNode->nodeId, NetCommGetPlayer()->playerInt);
+   
+        VaultAddChildNode(fNode->nodeId, 
+                          pynode->fNode->nodeId, 
+                          NetCommGetPlayer()->playerInt, 
+                          (FVaultAddChildNodeCallback)_AddNodeCallback,
+                          cb
+        );
         
         PyObject * nodeRef = cb->fPyNodeRef = pyVaultNodeRef::New(fNode, pynode->fNode);
         Py_INCREF(nodeRef); // incref it, because we MUST return a new PyObject, and the callback "steals" the ref from us
         cb->SetNode(pynode->fNode);
-        cb->VaultOperationComplete(cbContext, hsResult);
-        
         return nodeRef;
     }
     else
     {
         // manually make the callback
         cb->VaultOperationStarted( cbContext );
-        cb->VaultOperationComplete( cbContext, hsFail );
+        cb->VaultOperationComplete(hsFail);
     }
 
     // just return a None object
@@ -451,15 +462,19 @@ void pyVaultNode::LinkToNode(int nodeID, PyObject* cbObject, UInt32 cbContext)
     {
         // Hack the callbacks until vault notification is in place
         cb->VaultOperationStarted( cbContext );
-
-        VaultAddChildNodeAndWait(fNode->nodeId, nodeID, NetCommGetPlayer()->playerInt);
+        
         if (RelVaultNode * rvn = VaultGetNodeIncRef(nodeID)) {
             cb->SetNode(rvn);
             cb->fPyNodeRef = pyVaultNodeRef::New(fNode, rvn);
             rvn->DecRef();
         }
 
-        cb->VaultOperationComplete( cbContext, hsOK );
+        VaultAddChildNode(fNode->nodeId, 
+                          nodeID, 
+                          NetCommGetPlayer()->playerInt,
+                          (FVaultAddChildNodeCallback)_AddNodeCallback,
+                          cb
+        );
     }
     else
     {
