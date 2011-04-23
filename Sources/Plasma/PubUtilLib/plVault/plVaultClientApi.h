@@ -334,6 +334,7 @@ bool            VaultGetVisitAgeLink (const plAgeInfoStruct * info, class plAgeL
 bool            VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link);
 void            VaultRegisterOwnedAge(const plAgeLinkStruct* link);
 bool            VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link);
+void            VaultRegisterVisitAge (const plAgeLinkStruct* link);
 bool            VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info);
 bool            VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info);
 RelVaultNode *  VaultFindChronicleEntryIncRef (const wchar entryName[], int entryType = -1);

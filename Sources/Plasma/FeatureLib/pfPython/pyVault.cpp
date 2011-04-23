@@ -548,7 +548,7 @@ void pyVault::UnRegisterOwnedAge( const char * ageFilename )
 
 void pyVault::RegisterVisitAge( const pyAgeLinkStruct & link )
 {
-    VaultRegisterVisitAgeAndWait(link.GetAgeLink());
+    VaultRegisterVisitAge(link.GetAgeLink());
 }
 
 void pyVault::UnRegisterVisitAge( const char * guidstr )
