@@ -2793,28 +2793,28 @@ namespace _VaultRegisterOwnedAge {
         UInt32*           fAgeInfoId;
 
         ~_Params() {
-            delete fSpawn;
-            delete fAgeInfoId;
+            DEL(fSpawn);
+            DEL(fAgeInfoId);
         }
     };
 
     void _AddAgeInfoNode(ENetError result, void* param) {
-        if (result != kNetSuccess)
+        if (IS_NET_ERROR(result))
             LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to add info to link (async)");
     }
 
     void _AddAgeLinkNode(ENetError result, void* param) {
-        if (result != kNetSuccess)
+        if (IS_NET_ERROR(result))
             LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to add age to bookshelf (async)");
     }
 
     void _AddPlayerInfoNode(ENetError result, void* param) {
-        if (result != kNetSuccess)
+        if (IS_NET_ERROR(result))
             LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to add playerInfo to ageOwners (async)");
     }
 
     void _CreateAgeLinkNode(ENetError result, void* state, void* param, RelVaultNode* node) {
-        if (result != kNetSuccess) {
+        if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to create AgeLink (async)");
             return;
         }
@@ -2852,18 +2852,18 @@ namespace _VaultRegisterOwnedAge {
         // Don't leak memory
         agesIOwn->DecRef();
         plyrInfo->DecRef();
-        delete p;
+        DEL(p);
     }
 
     void _DownloadCallback(ENetError result, void* param) {
-        if (result == kNetSuccess) {
-            VaultCreateNode(plVault::kNodeType_AgeLink, (FVaultCreateNodeCallback)_CreateAgeLinkNode, nil, param);
-        } else
+        if (IS_NET_ERROR(result))
             LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to download age vault (async)");
+        else
+            VaultCreateNode(plVault::kNodeType_AgeLink, (FVaultCreateNodeCallback)_CreateAgeLinkNode, nil, param);
     }
 
     void _InitAgeCallback(ENetError result, void* state, void* param, UInt32 ageVaultId, UInt32 ageInfoVaultId) {
-        if (result == kNetSuccess) {
+        if (IS_NET_SUCCESS(result)) {
             _Params* p = TRACKED_NEW _Params();
             p->fAgeInfoId = TRACKED_NEW UInt32(ageInfoVaultId);
             p->fSpawn = (plSpawnPointInfo*)param;
