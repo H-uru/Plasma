@@ -45,7 +45,9 @@ public:
         kUnRegisteredOwnedAge = plNetCommon::VaultTasks::kUnRegisterOwnedAge,
         kUnRegisteredVisitAge = plNetCommon::VaultTasks::kUnRegisterVisitAge,
         kPublicAgeCreated, 
-        kPublicAgeRemoved
+        kPublicAgeRemoved,
+        kRegisteredSubAgeLink,
+        kRegisteredChildAgeLink,
     };
 
     plVaultNotifyMsg();

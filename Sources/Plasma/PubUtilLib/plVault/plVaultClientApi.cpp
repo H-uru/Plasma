@@ -4427,6 +4427,95 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
 }
 
 //============================================================================
+namespace _VaultCreateSubAge {
+    void _CreateNodeCallback(ENetError result, void* state, void* param, RelVaultNode* node) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "CreateSubAge: Failed to create AgeLink (async)");
+            DEL(param);
+            return;
+        }
+
+        UInt32 ageInfoId = *(UInt32*)param;
+
+        // Add the children to the right places
+        VaultAddChildNode(node->nodeId, ageInfoId, 0, nil, nil);
+        if (RelVaultNode* saFldr = VaultGetAgeSubAgesFolderIncRef()) {
+            VaultAddChildNode(saFldr->nodeId, node->nodeId, 0, nil, nil);
+            saFldr->DecRef();
+        } else
+            LogMsg(kLogError, "CreateSubAge: Couldn't find SubAges folder (async)");
+
+        // Send the VaultNotify that the plNetLinkingMgr wants...
+        plVaultNotifyMsg * msg = NEWZERO(plVaultNotifyMsg);
+        msg->SetType(plVaultNotifyMsg::kRegisteredSubAgeLink);
+        msg->SetResultCode(result);
+        msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->nodeId);
+        msg->Send();
+
+        DEL(param);
+    }
+
+    void _DownloadCallback(ENetError result, void* param) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "CreateSubAge: Failed to download age vault (async)");
+            DEL(param);
+            return;
+        }
+
+        // Create the AgeLink node
+        VaultCreateNode(plVault::kNodeType_AgeLink,
+                        (FVaultCreateNodeCallback)_CreateNodeCallback,
+                        nil,
+                        param
+        );
+    }
+
+    void _InitAgeCallback(ENetError result, void* state, void* param, UInt32 ageVaultId, UInt32 ageInfoId) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "CreateSubAge: Failed to init age (async)");
+            return;
+        }
+
+        // Download age vault
+        VaultDownload(L"CreateSubAge",
+                      ageInfoId,
+                      (FVaultDownloadCallback)_DownloadCallback,
+                      TRACKED_NEW UInt32(ageInfoId),
+                      nil,
+                      nil
+        );
+    }
+}; // namespace _VaultCreateSubAge
+
+bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const Uuid& parentUuid) {
+    using namespace _VaultCreateSubAge;
+
+    // First, try to find an already existing subage
+    if (RelVaultNode* rvnLink = VaultGetSubAgeLinkIncRef(info)) {
+        VaultAgeLinkNode accLink(rvnLink);
+        accLink.CopyTo(link);
+
+        if (RelVaultNode* rvnInfo = rvnLink->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1)) {
+            VaultAgeInfoNode accInfo(rvnInfo);
+            accInfo.CopyTo(link->GetAgeInfo());
+            rvnInfo->DecRef();
+        }
+
+        rvnLink->DecRef();
+        return true;
+    }
+    
+    VaultInitAge(info,
+                 parentUuid,
+                 (FVaultInitAgeCallback)_InitAgeCallback,
+                 nil,
+                 nil
+    );
+
+    return false;
+}
+
+//============================================================================
 namespace _VaultCreateChildAgeAndWait {
 
 struct _InitAgeParam {

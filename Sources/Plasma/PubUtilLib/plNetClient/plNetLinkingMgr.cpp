@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plFile/hsFiles.h"
 #include "plMessage/plNCAgeJoinerMsg.h"
-#include "plVault/plVault.h"
 
 
 /*****************************************************************************
@@ -477,25 +476,37 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
     if (fDeferredLink == nil)
         return false;
 
-    if (msg->GetType() != plVaultNotifyMsg::kRegisteredOwnedAge)
-        return false;
-
-    // Find the AgeLinks
     plAgeLinkStruct* cur = GetAgeLink();
-    if (RelVaultNode* cVaultLink = VaultGetOwnedAgeLinkIncRef(cur->GetAgeInfo()))
+    RelVaultNode* cVaultLink = nil;
+    switch (msg->GetType())
     {
-        // Test to see if this is what we want
-        if (cVaultLink->nodeId == msg->GetArgs()->GetInt(plNetCommon::VaultTaskArgs::kAgeLinkNode))
+        case plVaultNotifyMsg::kRegisteredOwnedAge:
+        case plVaultNotifyMsg::kRegisteredSubAgeLink:
+            cVaultLink = VaultGetNodeIncRef(msg->GetArgs()->GetInt(plNetCommon::VaultTaskArgs::kAgeLinkNode));
+            break;
+        default:
+            return false;
+    }
+
+    if (cVaultLink != nil)
+    {
+        // This is something that Cyan does... >.<
+        // It's very useful though...
+        VaultAgeLinkNode accLink(cVaultLink);
+        accLink.CopyTo(cur);
+        if (RelVaultNode* rvnInfo = cVaultLink->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1))
         {
-            IDoLink(fDeferredLink);
-            return true;
+            VaultAgeInfoNode accInfo(rvnInfo);
+            accInfo.CopyTo(cur->GetAgeInfo());
+            rvnInfo->DecRef();
         }
+
+        IDoLink(fDeferredLink);
+        fDeferredLink = nil;
+        return true;
 
         cVaultLink->DecRef();
     }
-
-    // Nuke the deferred link ptr, just 'cause
-    fDeferredLink = nil;
 
     return false;
 }
@@ -797,7 +808,7 @@ void plNetLinkingMgr::IPostProcessLink( void )
         case plNetCommon::LinkingRules::kSubAgeBook: {
             // Register the previous age as a sub age of the current one so that we can link back to that instance
             plAgeLinkStruct subAgeLink;
-            VaultAgeFindOrCreateSubAgeLinkAndWait(GetPrevAgeLink()->GetAgeInfo(), &subAgeLink, NetCommGetAge()->ageInstId);
+            VaultAgeFindOrCreateSubAgeLink(GetPrevAgeLink()->GetAgeInfo(), &subAgeLink, NetCommGetAge()->ageInstId);
         }
         break;
     }
@@ -1022,10 +1033,10 @@ UInt8 plNetLinkingMgr::IPreProcessLink(void)
         case plNetCommon::LinkingRules::kSubAgeBook:
             {
                 plAgeLinkStruct subAgeLink;
-                if (VaultAgeFindOrCreateSubAgeLinkAndWait(info, &subAgeLink, NetCommGetAge()->ageInstId))
+                if (VaultAgeFindOrCreateSubAgeLink(info, &subAgeLink, NetCommGetAge()->ageInstId))
                     info->CopyFrom(subAgeLink.GetAgeInfo());
                 else
-                    success = kLinkFailed;
+                    success = kLinkDeferred;
             }
             break;
 
