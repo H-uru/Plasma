@@ -50,6 +50,7 @@ char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible f
 #define strnicmp _strnicmp
 #define wcsicmp _wcsicmp
 #define wcsnicmp _wcsnicmp
+#define strlwr _strlwr
 #else
 #define stricmp strcasecmp
 #define strnicmp strncasecmp
