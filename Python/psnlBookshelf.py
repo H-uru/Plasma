@@ -1152,6 +1152,9 @@ class psnlBookshelf(ptModifier):
             for content in contents:
                 link = content.getChild()
                 link = link.upcastToAgeLinkNode()
+                if not link: # Don't break if it's not what you expect...
+                    continue
+                
                 info = link.getAgeInfo()
                 if info and info.getAgeFilename() == ageName:
                     if ageName == "Garrison":
@@ -1854,6 +1857,9 @@ class psnlBookshelf(ptModifier):
                 #GZLinkNode = None
                 for content in contents:
                     link = content.getChild().upcastToAgeLinkNode()
+                    if not link: # Don't break if corrupt/not agelink
+                        continue
+                    
                     info = link.getAgeInfo()
                     if not info:
                         continue
