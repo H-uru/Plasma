@@ -2816,6 +2816,7 @@ namespace _VaultRegisterOwnedAge {
     void _CreateAgeLinkNode(ENetError result, void* state, void* param, RelVaultNode* node) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to create AgeLink (async)");
+            DEL(param);
             return;
         }
 
@@ -2856,9 +2857,10 @@ namespace _VaultRegisterOwnedAge {
     }
 
     void _DownloadCallback(ENetError result, void* param) {
-        if (IS_NET_ERROR(result))
+        if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to download age vault (async)");
-        else
+            DEL(param);
+        } else
             VaultCreateNode(plVault::kNodeType_AgeLink, (FVaultCreateNodeCallback)_CreateAgeLinkNode, nil, param);
     }
 
@@ -3174,6 +3176,7 @@ namespace _VaultRegisterVisitAge {
     void _CreateAgeLinkNode(ENetError result, void* state, void* param, RelVaultNode* node) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "RegisterVisitAge: Failed to create AgeLink (async)");
+            DEL(param);
             return;
         }
 
@@ -3214,6 +3217,7 @@ namespace _VaultRegisterVisitAge {
     void _DownloadCallback(ENetError result, void* param) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "RegisterVisitAge: Failed to download age vault (async)");
+            DEL(param);
             return;
         }
 
@@ -3224,6 +3228,7 @@ namespace _VaultRegisterVisitAge {
     void _InitAgeCallback(ENetError result, void* state, void* param, UInt32 ageVaultId, UInt32 ageInfoId) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "RegisterVisitAge: Failed to init age vault (async)");
+            DEL(param);
             return;
         }
 
