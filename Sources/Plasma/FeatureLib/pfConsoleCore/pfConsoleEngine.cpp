@@ -41,6 +41,7 @@ const Int32     pfConsoleEngine::fMaxNumParams = 16;
 static const char kTokenSeparators[] = " =\r\n\t,";
 static const char kTokenGrpSeps[] = " =\r\n._\t,";
 
+//WARNING: Potentially increments the pointer passed to it.
 static char *console_strtok( char *&line, hsBool haveCommand )
 {
     char *begin = line;
@@ -461,6 +462,7 @@ hsBool  pfConsoleEngine::FindPartialCmd( char *line, hsBool findAgain, hsBool pr
     static pfConsoleCmd         *lastCmd = nil;
     static pfConsoleCmdGroup    *lastGroup = nil, *lastParentGroup = nil;
     static char                 newStr[ 256 ];
+    static char                 *originalLine = line;
 
 
     /// Repeat search
@@ -525,13 +527,12 @@ hsBool  pfConsoleEngine::FindPartialCmd( char *line, hsBool findAgain, hsBool pr
     if( preserveParams )
     {
         /// Preserve the rest of the string after the matched command
-        ptr = strtok( nil, "\0" );
-        if( ptr != nil )
-            strcat( newStr, ptr );
+        if( line != nil )
+            strcat( newStr, line );
     }
 
     // Copy back!
-    strcpy( line, newStr );
+    strcpy( originalLine, newStr );
 
     return true;
 }
