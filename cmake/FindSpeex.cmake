@@ -4,11 +4,9 @@ endif()
 
 
 #It would be a good idea to eventually use pkgconfig here.
-find_path(Speex_INCLUDE_DIR speex.h
+find_path(Speex_INCLUDE_DIR speex/speex.h
           /usr/local/include
           /usr/include
-          /usr/local/include/speex
-          /usr/include/speex
 )
 
 find_library(Speex_LIBRARY NAMES speex
