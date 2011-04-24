@@ -4819,7 +4819,7 @@ namespace _VaultCreateChildAge {
 
         // Add the children to the right places
         VaultAddChildNode(node->nodeId, *p->fAgeInfoId, 0, nil, nil);
-        VaultAddChildNode(*p->fChildAgesFldr, *p->fAgeInfoId, 0, nil, nil);
+        VaultAddChildNode(*p->fChildAgesFldr, node->nodeId, 0, nil, nil);
 
         // Send the VaultNotify that the plNetLinkingMgr wants...
         plVaultNotifyMsg * msg = NEWZERO(plVaultNotifyMsg);
