@@ -29,7 +29,7 @@ if(PHYSX_SDK_PATH)
         ${PHYSX_EXTENSIONS_INCLUDE_DIR}
         ${PHYSX_PHYSICS_INCLUDE_DIR}
         ${PHYSX_LOADER_INCLUDE_DIR}
-     )
+    )
 endif()
 
 #2.7.3 is the earliest version that can be downloaded from nVidia's archive.
