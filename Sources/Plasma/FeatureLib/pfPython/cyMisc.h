@@ -41,7 +41,7 @@ class pyColor;
 class pyAgeInfoStruct;
 class pyPoint3;
 
-#include <python.h>
+#include <Python.h>
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 #include "pnUtils/pnUtils.h"

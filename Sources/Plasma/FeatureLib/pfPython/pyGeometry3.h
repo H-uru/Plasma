@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class pyPoint3

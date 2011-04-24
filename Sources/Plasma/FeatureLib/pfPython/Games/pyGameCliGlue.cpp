@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGameCli.h"
 #include "../pyEnum.h"
 
-#include <python.h>
+#include <Python.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 //

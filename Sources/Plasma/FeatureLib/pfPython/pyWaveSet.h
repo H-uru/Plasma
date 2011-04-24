@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGeometry3.h"
 #include "pyColor.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 //////////////////////////////////////////////////////////////////////

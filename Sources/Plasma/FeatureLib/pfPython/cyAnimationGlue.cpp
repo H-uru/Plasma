@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyAnimation.h"
 #include "hsUtils.h"
 
-#include <python.h>
+#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptAnimation, cyAnimation);

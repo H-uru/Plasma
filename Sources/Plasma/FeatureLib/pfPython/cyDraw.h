@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class cyDraw
