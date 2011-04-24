@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "NucleusLib/inc/plPipeline.h"
 #include "pnNetBase/pnNetBase.h"
 
-#include <python.h>
+#include <Python.h>
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtRequestLOSScreen, args, "Params: selfKey,ID,xPos,yPos,distance,what,reportType\nRequest a LOS check from a point on the screen")
 {

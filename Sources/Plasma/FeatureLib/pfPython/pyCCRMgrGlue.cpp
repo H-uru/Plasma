@@ -26,4 +26,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyCCRMgr.h"
 #include "pyAgeLinkStruct.h"
 
-#include <python.h>
+#include <Python.h>

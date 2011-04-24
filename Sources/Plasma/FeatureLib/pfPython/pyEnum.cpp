@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyEnum.h"
 
-#include <python.h>
+#include <Python.h>
 #include "structmember.h"
 #include "pyGlueHelpers.h"
 

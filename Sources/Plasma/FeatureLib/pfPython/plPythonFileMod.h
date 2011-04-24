@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
 
-#include <python.h>
+#include <Python.h>
 
 #include "plPythonParameter.h"
 
