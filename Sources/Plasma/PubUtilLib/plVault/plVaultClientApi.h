@@ -408,6 +408,7 @@ void VaultAgeUpdateAgeSDL (const class plStateDataRecord * rec);
 
 unsigned VaultAgeGetAgeTime ();
 
+RelVaultNode * VaultGetSubAgeLinkIncRef (const plAgeInfoStruct * info);
 bool VaultAgeGetSubAgeLink (
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
@@ -417,6 +418,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
     plAgeLinkStruct *       link,
     const Uuid &            parentAgeInstId
 );
+bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const Uuid& parentUuid);
 bool VaultAgeFindOrCreateChildAgeLinkAndWait (
     const wchar             parentAgeName[],    // nil --> current age, non-nil --> owned age by given name
     const plAgeInfoStruct * info,
