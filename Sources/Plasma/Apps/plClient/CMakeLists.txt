@@ -188,10 +188,10 @@ target_link_libraries(plClient pnUtils)
 target_link_libraries(plClient pnUtilsExe)
 
 if(PYTHON_DEBUG_LIBRARY)
-  target_link_libraries(plClient debug ${PYTHON_DEBUG_LIBRARY})
-  target_link_libraries(plClient optimized ${PYTHON_LIBRARY})
+    target_link_libraries(plClient debug ${PYTHON_DEBUG_LIBRARY})
+    target_link_libraries(plClient optimized ${PYTHON_LIBRARY})
 else()
-  target_link_libraries(plClient ${PYTHON_LIBRARY})
+    target_link_libraries(plClient ${PYTHON_LIBRARY})
 endif()
 
 target_link_libraries(plClient ${OPENAL_LIBRARY})
