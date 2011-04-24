@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <al.h>
 #include <alc.h>
 #include "plDSoundBuffer.h"
-#include <speex.h>
-#include <speex_bits.h>
+#include <speex/speex.h>
+#include <speex/speex_bits.h>
 #include "hsGeometry3.h"
 #include "plVoiceChat.h"
 #include "plAudioSystem.h"
