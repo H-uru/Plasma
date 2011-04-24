@@ -1201,7 +1201,7 @@ class xKI(ptModifier):
         for script in pythonScripts:
             if script.getName() == kJalakPythonComponent:
                 JalakScript = script
-                PtDebufPrint("xKI.JalakGUIInit(): found Jalak's python component: ",kJalakPythonComponent, level=kDebugDumpLevel)
+                PtDebugPrint("xKI.JalakGUIInit(): found Jalak's python component: ",kJalakPythonComponent, level=kDebugDumpLevel)
                 return
         PtDebugPrint("xKI.JalakGUIInit():  ERROR! did NOT find Jalak's python component: ",kJalakPythonComponent)
 
@@ -4758,7 +4758,7 @@ class xKI(ptModifier):
                 error = 0
                 if type(entry) != type(None):
                     gameString = entry.chronicleGetValue()
-                    PtDebufPrint("xKI:GZ - game string is: %s" % (gameString), level=kWarningLevel)
+                    PtDebugPrint("xKI:GZ - game string is: %s" % (gameString), level=kWarningLevel)
                     args = gameString.split()
                     if len(args) == 3:
                         try:

@@ -223,7 +223,14 @@ class xSimpleImager(ptModifier):
         
         # Cyan's servers sometimes spam us with updates to the public city AgeInfo node
         # We don't want to waste time updating for crap like that.
-        type = tupdata[0].getType()
+        if isinstance(tupdata[0], ptVaultNode):
+            type = tupdata[0].getType()
+        elif isinstance(tupdata[0], ptVaultNodeRef):
+            type = tupdata[0].getChild().getType()
+        else:
+            PtDebugPrint("xSimpleImager.OnVaultEvent: tupdata[0] has unhandled object type", level=kWarningLevel)
+            return None
+        
         if type != PtVaultNodeTypes.kImageNode or type != PtVaultNodeTypes.kTextNoteNode:
             PtDebugPrint("xSimpleImager.OnVaultEvent: ... but we don't care!", level=kDebugDumpLevel)
             return None
