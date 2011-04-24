@@ -480,6 +480,7 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
     RelVaultNode* cVaultLink = nil;
     switch (msg->GetType())
     {
+        case plVaultNotifyMsg::kRegisteredChildAgeLink:
         case plVaultNotifyMsg::kRegisteredOwnedAge:
         case plVaultNotifyMsg::kRegisteredSubAgeLink:
             cVaultLink = VaultGetNodeIncRef(msg->GetArgs()->GetInt(plNetCommon::VaultTaskArgs::kAgeLinkNode));
@@ -1047,17 +1048,25 @@ UInt8 plNetLinkingMgr::IPreProcessLink(void)
             {
                 plAgeLinkStruct childLink;
                 wchar parentAgeName[MAX_PATH];
-                if (link->HasParentAgeFilename()) {
+                if (link->HasParentAgeFilename())
                     StrToUnicode(parentAgeName, link->GetParentAgeFilename(), arrsize(parentAgeName));
-                    if(!VaultAgeFindOrCreateChildAgeLinkAndWait(parentAgeName, info, &childLink))
+                
+                switch(VaultAgeFindOrCreateChildAgeLink(
+                      (link->HasParentAgeFilename() ? parentAgeName : nil),
+                      info,
+                      &childLink))
+                {
+                    case hsFail:
                         success = kLinkFailed;
-                }
-                else {
-                    if(!VaultAgeFindOrCreateChildAgeLinkAndWait(nil, info, &childLink))
-                        success = kLinkFailed;
+                        break;
+                    case FALSE:
+                        success = kLinkDeferred;
+                        break;
+                    case TRUE:
+                        success = kLinkImmediately;
                 }
                 
-                if (success != kLinkFailed)
+                if (success == kLinkImmediately)
                     info->CopyFrom(childLink.GetAgeInfo());
             }
             break;

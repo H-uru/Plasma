@@ -424,6 +424,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 );
+UInt8 VaultAgeFindOrCreateChildAgeLink(const wchar parentAgeName[], const plAgeInfoStruct* info, plAgeLinkStruct* link);
 
 
 
