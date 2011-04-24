@@ -4,6 +4,14 @@ elseif(PHYSX_SDK_PATH AND PHYSX_LOADER_LIBRARY)
     set(PHYSX_FIND_QUIETLY TRUE)
 endif()
 
+
+#This isn't quite right, but we'll assume they are all at the same place.
+find_path(PHYSX_SDK_PATH Cooking/Include/NxCooking.h
+          /usr/local/include
+          /usr/include
+          PATH_SUFFIXES "PhysX/v2.7.3/SDKs"
+)
+
 if(PHYSX_SDK_PATH)
     set(PHYSX_FOUNDATION_INCLUDE_DIR "${PHYSX_SDK_PATH}/Foundation/include")
     set(PHYSX_COOKING_INCLUDE_DIR "${PHYSX_SDK_PATH}/Cooking/include")
@@ -21,18 +29,25 @@ if(PHYSX_SDK_PATH)
         ${PHYSX_EXTENSIONS_INCLUDE_DIR}
         ${PHYSX_PHYSICS_INCLUDE_DIR}
         ${PHYSX_LOADER_INCLUDE_DIR}
-    )
+     )
 endif()
 
-#TODO: Make find paths work for Linux builds too
+#2.7.3 is the earliest version that can be downloaded from nVidia's archive.
 find_library(PHYSX_COOKING_LIBRARY NAMES NxCooking
-             PATHS "${PHYSX_SDK_PATH}/lib/win32")
+             PATH_SUFFIXES "PhysX/v2.7.3"
+             PATHS "${PHYSX_SDK_PATH}/lib/win32"
+)
 find_library(PHYSX_CHARACTER_LIBRARY NAMES NxCharacter
-             PATHS "${PHYSX_SDK_PATH}/lib/win32")
+             PATH_SUFFIXES "PhysX/v2.7.3"
+             PATHS "${PHYSX_SDK_PATH}/lib/win32"
+)
 find_library(PHYSX_EXTENSIONS_LIBRARY NAMES NxExtensions
-             PATHS "${PHYSX_SDK_PATH}/lib/win32")
+             PATH_SUFFIXES "PhysX/v2.7.3"
+             PATHS "${PHYSX_SDK_PATH}/lib/win32"
+)
 find_library(PHYSX_LOADER_LIBRARY NAMES PhysXLoader
-             PATHS "${PHYSX_SDK_PATH}/lib/win32")
+             PATHS "${PHYSX_SDK_PATH}/lib/win32"
+)
 
 set(PHYSX_LIBRARIES
     ${PHYSX_COOKING_LIBRARY}
