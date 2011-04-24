@@ -42,26 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /*****************************************************************************
 *
-*   Types and constants
-*
-***/
-
-#if defined(_M_IX86) || defined(i386) || defined(__i386__) || defined(__i386)
-# ifndef LITTLE_ENDIAN
-#  define LITTLE_ENDIAN  1
-# endif
-#else
-# ifndef BIG_ENDIAN
-#  define BIG_ENDIAN     1
-// That was a pretty weak check for endian-ness, if it
-// failed then we probably need to strengthen it a bit.
-# error "Are you sure this is a big-endian CPU?"
-# endif
-#endif
-
-
-/*****************************************************************************
-*
 *   Little endian functions
 *
 ***/
