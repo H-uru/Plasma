@@ -159,7 +159,7 @@ inline void __cdecl operator delete (void *, void *) {}
 #ifdef __cplusplus
 
 #if !defined(HS_NO_TYPEINFO)
-#include <typeinfo.h>
+#include <typeinfo>
 #endif
 
 #endif // ifdef __cplusplus
