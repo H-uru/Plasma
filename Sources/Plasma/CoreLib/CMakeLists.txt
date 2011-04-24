@@ -74,6 +74,7 @@ set(CoreLib_HEADERS
     hsScalar.h
     hsStlSortUtils.h
     hsSTLStream.h
+    hsStlUtils.h
     hsStream.h
     hsStringTokenizer.h
     hsTemplates.h
