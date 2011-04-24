@@ -767,10 +767,12 @@ void plNetLinkingMgr::IPostProcessLink( void )
                 
                 if (fldr && info)
                     if (!fldr->IsParentOf(info->nodeId, 1))
-                        VaultAddChildNodeAndWait(
+                        VaultAddChildNode(
                             fldr->nodeId,
                             info->nodeId,
-                            NetCommGetPlayer()->playerInt
+                            NetCommGetPlayer()->playerInt,
+                            nil,
+                            nil
                         );
                 
                 if (fldr)
@@ -792,10 +794,12 @@ void plNetLinkingMgr::IPostProcessLink( void )
                 
                 if (fldr && info)
                     if (!fldr->IsParentOf(info->nodeId, 1))
-                        VaultAddChildNodeAndWait(
+                        VaultAddChildNode(
                             fldr->nodeId,
                             info->nodeId,
-                            NetCommGetPlayer()->playerInt
+                            NetCommGetPlayer()->playerInt,
+                            nil,
+                            nil
                         );
                 
                 if (fldr)
