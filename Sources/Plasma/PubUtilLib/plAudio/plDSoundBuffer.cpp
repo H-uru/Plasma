@@ -46,8 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plStatusLog/plStatusLog.h"
 
-#include <dsound.h>
-
 UInt32 plDSoundBuffer::fNumBuffers = 0;
 plProfile_CreateCounterNoReset( "Playing", "Sound", SoundPlaying );
 plProfile_CreateCounterNoReset( "Allocated", "Sound", NumAllocated );
@@ -89,20 +87,10 @@ plDSoundBuffer::~plDSoundBuffer()
 void    plDSoundBuffer::IAllocate( UInt32 size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool tryStatic )
 {
     // Create a DSound buffer description
-    fBufferDesc = TRACKED_NEW DSBUFFERDESC;
-    fBufferDesc->dwSize = sizeof( DSBUFFERDESC );
-    
-    fBufferDesc->dwBufferBytes = size; 
-    fBufferDesc->dwReserved = 0;
+    fBufferDesc = TRACKED_NEW plWAVHeader;
+    *fBufferDesc = bufferDesc;
 
-    fBufferDesc->lpwfxFormat = TRACKED_NEW WAVEFORMATEX;
-    fBufferDesc->lpwfxFormat->cbSize  = 0; 
-    fBufferDesc->lpwfxFormat->nAvgBytesPerSec   = bufferDesc.fAvgBytesPerSec; 
-    fBufferDesc->lpwfxFormat->nBlockAlign       = bufferDesc.fBlockAlign; 
-    fBufferDesc->lpwfxFormat->nChannels         = bufferDesc.fNumChannels; 
-    fBufferDesc->lpwfxFormat->nSamplesPerSec    = bufferDesc.fNumSamplesPerSec; 
-    fBufferDesc->lpwfxFormat->wBitsPerSample    = bufferDesc.fBitsPerSample; 
-    fBufferDesc->lpwfxFormat->wFormatTag        = bufferDesc.fFormatTag; 
+    fBufferSize = size;
     
     // Do we want to try EAX?
     if( plgAudioSys::UsingEAX() )
@@ -133,14 +121,10 @@ void    plDSoundBuffer::IRelease( void )
     alGetError();
     
     memset(streamingBuffers, 0, STREAMING_BUFFERS * sizeof(unsigned));
-    if( fBufferDesc != nil )
-    {
-        delete fBufferDesc->lpwfxFormat;
-        fBufferDesc->lpwfxFormat = nil;     
-    }
 
     delete fBufferDesc;
     fBufferDesc = nil;
+    fBufferSize = 0;
 
     fValid = false;
     plProfile_Dec( NumAllocated );
@@ -181,7 +165,7 @@ bool plDSoundBuffer::FillBuffer(void *data, unsigned bytes, plWAVHeader *header)
     source = 0;
     buffer = 0;
 
-    ALenum format = IGetALFormat(fBufferDesc->lpwfxFormat->wBitsPerSample, fBufferDesc->lpwfxFormat->nChannels);
+    ALenum format = IGetALFormat(fBufferDesc->fBitsPerSample, fBufferDesc->fNumChannels);
     ALenum error = alGetError();
     alGenBuffers(1, &buffer);
     error = alGetError();
@@ -264,8 +248,8 @@ bool plDSoundBuffer::SetupStreamingSource(plAudioFileReader *stream)
             return false;
         }
 
-        ALenum format = IGetALFormat(fBufferDesc->lpwfxFormat->wBitsPerSample, fBufferDesc->lpwfxFormat->nChannels);
-        alBufferData( streamingBuffers[i], format, data, size, fBufferDesc->lpwfxFormat->nSamplesPerSec );
+        ALenum format = IGetALFormat(fBufferDesc->fBitsPerSample, fBufferDesc->fNumChannels);
+        alBufferData( streamingBuffers[i], format, data, size, fBufferDesc->fNumSamplesPerSec );
         if( (error = alGetError()) != AL_NO_ERROR )
             plStatusLog::AddLineS("audio.log", "alBufferData");
     }
@@ -330,8 +314,8 @@ bool plDSoundBuffer::SetupStreamingSource(void *data, unsigned bytes)
             return false;
         }
 
-        ALenum format = IGetALFormat(fBufferDesc->lpwfxFormat->wBitsPerSample, fBufferDesc->lpwfxFormat->nChannels);
-        alBufferData( streamingBuffers[i], format, bufferData, size, fBufferDesc->lpwfxFormat->nSamplesPerSec );
+        ALenum format = IGetALFormat(fBufferDesc->fBitsPerSample, fBufferDesc->fNumChannels);
+        alBufferData( streamingBuffers[i], format, bufferData, size, fBufferDesc->fNumSamplesPerSec );
         if( (error = alGetError()) != AL_NO_ERROR )
             plStatusLog::AddLineS("audio.log", "alBufferData");
     }
@@ -434,8 +418,8 @@ bool plDSoundBuffer::StreamingFillBuffer(plAudioFileReader *stream)
             {   unsigned int size = stream->NumBytesLeft() < STREAM_BUFFER_SIZE ? stream->NumBytesLeft() : STREAM_BUFFER_SIZE;
                 stream->Read(size, data);
 
-                ALenum format = IGetALFormat(fBufferDesc->lpwfxFormat->wBitsPerSample, fBufferDesc->lpwfxFormat->nChannels);
-                alBufferData( bufferId, format, data, size, fBufferDesc->lpwfxFormat->nSamplesPerSec );
+                ALenum format = IGetALFormat(fBufferDesc->fBitsPerSample, fBufferDesc->fNumChannels);
+                alBufferData( bufferId, format, data, size, fBufferDesc->fNumSamplesPerSec );
                 if( (error = alGetError()) != AL_NO_ERROR )
                 {
                     plStatusLog::AddLineS("audio.log", "Failed to copy data to sound buffer %d", error);
@@ -550,8 +534,8 @@ bool plDSoundBuffer::VoiceFillBuffer(void *data, unsigned bytes, unsigned buffer
     ALenum error;
     unsigned int size = bytes < STREAM_BUFFER_SIZE ? bytes : STREAM_BUFFER_SIZE;
 
-    ALenum format = IGetALFormat(fBufferDesc->lpwfxFormat->wBitsPerSample, fBufferDesc->lpwfxFormat->nChannels);
-    alBufferData( bufferId, format, data, size, fBufferDesc->lpwfxFormat->nSamplesPerSec );
+    ALenum format = IGetALFormat(fBufferDesc->fBitsPerSample, fBufferDesc->fNumChannels);
+    alBufferData( bufferId, format, data, size, fBufferDesc->fNumSamplesPerSec );
     if( (error = alGetError()) != AL_NO_ERROR )
     {
         plStatusLog::AddLineS("audio.log", "Failed to copy data to sound buffer %d", error);
@@ -703,17 +687,17 @@ hsBool  plDSoundBuffer::IsEAXAccelerated( void ) const
 
 UInt32  plDSoundBuffer::BytePosToMSecs( UInt32 bytePos ) const
 {
-    return (UInt32)(bytePos * 1000 / (hsScalar)fBufferDesc->lpwfxFormat->nAvgBytesPerSec);
+    return (UInt32)(bytePos * 1000 / (hsScalar)fBufferDesc->fAvgBytesPerSec);
 }
 
 //// GetBufferBytePos ////////////////////////////////////////////////////////
 
 UInt32  plDSoundBuffer::GetBufferBytePos( hsScalar timeInSecs ) const
 {
-    hsAssert( fBufferDesc != nil && fBufferDesc->lpwfxFormat != nil, "Nil buffer description when calling GetBufferBytePos()" );
+    hsAssert( fBufferDesc != nil, "Nil buffer description when calling GetBufferBytePos()" );
 
-    UInt32  byte = (UInt32)( timeInSecs * (hsScalar)fBufferDesc->lpwfxFormat->nSamplesPerSec );
-    byte *= fBufferDesc->lpwfxFormat->nBlockAlign;
+    UInt32  byte = (UInt32)( timeInSecs * (hsScalar)fBufferDesc->fNumSamplesPerSec );
+    byte *= fBufferDesc->fBlockAlign;
 
     return byte;
 }
@@ -722,7 +706,7 @@ UInt32  plDSoundBuffer::GetBufferBytePos( hsScalar timeInSecs ) const
 
 UInt32  plDSoundBuffer::GetLengthInBytes( void ) const
 {
-    return (UInt32)fBufferDesc->dwBufferBytes;
+    return fBufferSize;
 }
 
 //// SetEAXSettings //////////////////////////////////////////////////////////
@@ -736,7 +720,7 @@ void    plDSoundBuffer::SetEAXSettings(  plEAXSourceSettings *settings, hsBool f
 
 UInt8   plDSoundBuffer::GetBlockAlign( void ) const
 {
-    return ( fBufferDesc != nil && fBufferDesc->lpwfxFormat != nil ) ? fBufferDesc->lpwfxFormat->nBlockAlign : 0;
+    return ( fBufferDesc != nil ) ? fBufferDesc->fBlockAlign : 0;
 }
 
 //// SetScalarVolume /////////////////////////////////////////////////////////
