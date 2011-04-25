@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "max.h"
 #include "hsMatrix44.h"
 #include "hsColorRGBA.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "plLoadMask.h"
 
 class plLocation;

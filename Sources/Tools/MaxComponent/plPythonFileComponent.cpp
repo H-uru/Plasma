@@ -388,7 +388,7 @@ hsBool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 }
 
 #include "plActivatorBaseComponent.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "plResponderComponent.h"
 
 hsBool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)

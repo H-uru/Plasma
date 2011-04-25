@@ -865,9 +865,9 @@ plComponentBase *plPickActivatorListParam::GetComponent(IParamBlock2 *pb, int id
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 #include "plPickMaterialMap.h"
-#include "../MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
-#include "../plSurface/plLayerInterface.h"
-#include "../plGImage/plDynamicTextMap.h"
+#include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+#include "plSurface/plLayerInterface.h"
+#include "plGImage/plDynamicTextMap.h"
 
 plPickDynamicTextButtonParam::plPickDynamicTextButtonParam(ParamID id, const char *name) :
     plPickButtonParam(id, name, nil, false)

@@ -1,3 +1,4 @@
+include_directories("../../Plasma/CoreLib")
 add_definitions(-D_LIB)
 
 set(CoreLibExe_SOURCES

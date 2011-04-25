@@ -248,7 +248,7 @@ hsBool plConvert::Convert()
 #endif
 }
 
-//#include "../MaxMain/plMaxNodeData.h"
+//#include "MaxMain/plMaxNodeData.h"
 //#include <set>
 
 hsBool ConvertList(hsTArray<plMaxNode*>& nodes, PMaxNodeFunc p, plErrorMsg *errMsg, plConvertSettings *settings)
