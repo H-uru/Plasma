@@ -46,9 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plWAVHeader;
 class plAudioFileReader;
 
-typedef struct tWAVEFORMATEX WAVEFORMATEX;
-typedef struct _DSBUFFERDESC DSBUFFERDESC;
-
 
 // Ported to OpenAL from DirectSound May 2006. Idealy the openal sources would be seperate from this class.
 // OpenAl sound buffer, and source. 
@@ -127,7 +124,8 @@ protected:
     
     hsTArray<UInt32>    fPosNotifys;
     bool                fStreaming;
-    DSBUFFERDESC*       fBufferDesc;
+    plWAVHeader*        fBufferDesc;
+    UInt32              fBufferSize;
 
     unsigned            buffer;                                 // used if this is not a streaming buffer
     unsigned            streamingBuffers[STREAMING_BUFFERS];    // used if this is a streaming buffer
