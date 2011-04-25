@@ -305,7 +305,7 @@ int plComponentUtil::IFindListItem(plComponentBase* comp)
     return ListView_FindItem(GetDlgItem(fhPanel, IDC_COMPLIST), -1, &fi);
 }
 
-#include "../MaxComponent/plAutoUIComp.h"
+#include "MaxComponent/plAutoUIComp.h"
 
 void plComponentUtil::IAddRollups(plComponentBase* comp)
 {

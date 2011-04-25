@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // The AccMeshSmooth now does everything the InterMeshSmooth and AvMeshSmooth
 // components did, only better and with fewer bugs.
-//#include "../plDrawable/plInterMeshSmooth.h"
+//#include "plDrawable/plInterMeshSmooth.h"
 #include "plDrawable/plAvMeshSmooth.h"
 
 #include "plDrawable/plAccMeshSmooth.h"

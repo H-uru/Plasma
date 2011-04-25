@@ -2676,7 +2676,7 @@ hsBool plGUIKnobCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 }
 
 // For hackery below (see warning below)
-#include "../plAvatar/plAGMasterMod.h"
+#include "plAvatar/plAGMasterMod.h"
 
 hsBool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
@@ -4398,7 +4398,7 @@ hsBool plGUIProgressCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErr
 }
 
 // For hackery below (see warning below)
-#include "../plAvatar/plAGMasterMod.h"
+#include "plAvatar/plAGMasterMod.h"
 
 hsBool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {

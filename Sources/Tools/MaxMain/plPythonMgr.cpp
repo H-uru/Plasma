@@ -112,7 +112,7 @@ bool ICallStrFunc(PyObject *dict, char *funcName, char*& val)
 }
 
 
-#include "../MaxComponent/plPythonFileComponent.h"
+#include "MaxComponent/plPythonFileComponent.h"
 #include "hsUtils.h"
 
 enum ParamTypes
@@ -549,7 +549,7 @@ void plPythonMgr::IAddGUISkin(plAutoUIBlock *autoUI, PyObject *tuple, char *para
     autoUI->AddPickGUISkinButton(id, nil, paramName, vid, vstates);
 }
 
-#include "../MaxComponent/plResponderComponent.h"
+#include "MaxComponent/plResponderComponent.h"
 
 void plPythonMgr::IAddResponder(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {

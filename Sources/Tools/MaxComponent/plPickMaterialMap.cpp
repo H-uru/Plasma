@@ -93,7 +93,7 @@ bool plPickMaterialMap::PickTexmap(IParamBlock2 *pb, int id)
     return IPickMaterial(pb, id, BROWSE_MAPSONLY);
 }
 
-#include "../MaxMain/plMtlCollector.h"
+#include "MaxMain/plMtlCollector.h"
 #include "resource.h"
 
 static bool GetPickedMtl(HWND hDlg, Mtl** mtl)

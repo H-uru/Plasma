@@ -36,14 +36,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #pragma warning(push, 3)
 
-#include "../CoreLib/HeadSpin.h"
-#include "../CoreLib/hsConfig.h"
-#include "../CoreLib/hsTypes.h"
-#include "../CoreLib/hsWindows.h"
-#include "../CoreLib/hsMalloc.h"
-#include "../CoreLib/hsCritSect.h"
-#include "../CoreLib/hsUtils.h"
-#include "../CoreLib/hsWindows.h"
+#include "HeadSpin.h"
+#include "hsConfig.h"
+#include "hsTypes.h"
+#include "hsWindows.h"
+#include "hsMalloc.h"
+#include "hsCritSect.h"
+#include "hsUtils.h"
+#include "hsWindows.h"
 
 #pragma warning(pop)
 

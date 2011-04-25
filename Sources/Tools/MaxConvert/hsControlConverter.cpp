@@ -2027,12 +2027,12 @@ hsBool  hsControlConverter::IGetSubAnimByName( Animatable *anim, TSTR &name, Ani
 // bad craziness, isolated here.
 #include "plConvert.h"
 #include "plgDispatch.h"
-#include "../MaxComponent/plAnimComponent.h"
-#include "../MaxComponent/plCameraComponents.h"
-#include "../../../Sources/Plasma/NucleusLib/pnMessage/plCameraMsg.h"
-#include "../../../Sources/Plasma/PubUtilLib/plMessage/plAnimCmdMsg.h"
-#include "../../../Sources/Plasma/FeatureLib/pfCamera/plCameraModifier.h"
-#include "../../../Sources/Plasma/NucleusLib/pnSceneObject/plSceneObject.h"
+#include "MaxComponent/plAnimComponent.h"
+#include "MaxComponent/plCameraComponents.h"
+#include "pnMessage/plCameraMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pfCamera/plCameraModifier.h"
+#include "pnSceneObject/plSceneObject.h"
 
 void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG3DSMaxKeyFrame>* kfArray)
 {

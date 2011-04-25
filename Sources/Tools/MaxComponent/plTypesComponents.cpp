@@ -230,10 +230,10 @@ plVehicleComponent::plVehicleComponent() : fMod(nil)
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-#include "../MaxMain/plPhysicalProps.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-//#include "../plHavok1/plVehicleModifier.h"
-//#include "../plHavok1/plPhysicsGroups.h"
+#include "MaxMain/plPhysicalProps.h"
+#include "pnSceneObject/plSimulationInterface.h"
+//#include "plHavok1/plVehicleModifier.h"
+//#include "plHavok1/plPhysicsGroups.h"
 /*
 void SetupVehiclePhys(plMaxNode* physNode, plMaxNode* node, plErrorMsg* pErrMsg, bool chassis=false)
 {
@@ -396,7 +396,7 @@ hsBool plVehicleComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 //
 //
 
-#include "../plModifier/plMaintainersMarkerModifier.h"
+#include "plModifier/plMaintainersMarkerModifier.h"
 
 enum
 {
@@ -459,10 +459,10 @@ hsBool plMaintainersMarkerComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pE
 //   Game Marker Component
 //
 
-#include "../plModifier/plGameMarkerModifier.h"
+#include "plModifier/plGameMarkerModifier.h"
 #include "plNotetrackAnim.h"
 #include "plPickMaterialMap.h"
-#include "../MaxMain/plMtlCollector.h"
+#include "MaxMain/plMtlCollector.h"
 #include "plResponderMtl.h"
 #include "plResponderGetComp.h"
 #include "plAnimComponent.h"

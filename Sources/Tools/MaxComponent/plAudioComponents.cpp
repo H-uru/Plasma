@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 //Physics Related
-//#include "../plHavok1/plHKPhysical.h"         //Physics Comp
+//#include "plHavok1/plHKPhysical.h"         //Physics Comp
 #include "pnSceneObject/plSimulationInterface.h"
 #include "MaxMain/plPhysicalProps.h"
 #include "plPhysX/plPXPhysical.h"
@@ -87,7 +87,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Fun soft volume stuff
 #include "plSoftVolumeComponent.h"
-#include "../plIntersect/plSoftVolume.h"
+#include "plIntersect/plSoftVolume.h"
 
 // Misc
 #include "MaxMain/plMaxCFGFile.h"

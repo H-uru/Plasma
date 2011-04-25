@@ -368,7 +368,7 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
 #include "plComponentBase.h"
 
 // Needed for message creation
-#include "../plModifier/plResponderModifier.h"
+#include "plModifier/plResponderModifier.h"
 
 enum
 {
@@ -495,7 +495,7 @@ static plResponderEnableProc gResponderEnableProc;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 
 enum
 {
@@ -542,7 +542,7 @@ const char *plResponderCmdPhysEnable::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../plMessage/plSimStateMsg.h"
+#include "plMessage/plSimStateMsg.h"
 plMessage *plResponderCmdPhysEnable::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
     plMaxNode* physNode = (plMaxNode*)pb->GetINode(kEnablePhysNode);
@@ -607,7 +607,7 @@ const char *plResponderCmdOneShot::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../plMessage/plOneShotMsg.h"
+#include "plMessage/plOneShotMsg.h"
 #include "plOneShotComponent.h"
 
 plMessage *plResponderCmdOneShot::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
@@ -633,7 +633,7 @@ plMessage *plResponderCmdOneShot::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg
         throw "No one-shot component specified";
 }
 
-#include "../plMessage/plOneShotCallbacks.h"
+#include "plMessage/plOneShotCallbacks.h"
 
 void plResponderCmdOneShot::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo)
 {
@@ -706,7 +706,7 @@ ParamBlockDesc2 *plResponderCmdNotify::GetDesc()
     return &gResponderNotifyBlock;
 }
 
-#include "../pnMessage/plNotifyMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 plMessage *plResponderCmdNotify::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
@@ -765,7 +765,7 @@ const char *plResponderCmdDetectorEnable::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 #include "plActivatorBaseComponent.h"
 #include "plVolumeGadgetComponent.h"
 #include "plNavigableComponents.h"
@@ -963,7 +963,7 @@ const char *plResponderCmdXRegion::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../plMessage/plExcludeRegionMsg.h"
+#include "plMessage/plExcludeRegionMsg.h"
 #include "plExcludeRegionComponent.h"
 
 plMessage *plResponderCmdXRegion::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
@@ -1093,7 +1093,7 @@ const char *plResponderCmdCamTransition::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../pnMessage/plCameraMsg.h"
+#include "pnMessage/plCameraMsg.h"
 #include "plCameraComponents.h"
 
 plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
@@ -1243,7 +1243,7 @@ const char *plResponderCmdDelay::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../plMessage/plTimerCallbackMsg.h"
+#include "plMessage/plTimerCallbackMsg.h"
 
 plMessage *plResponderCmdDelay::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
@@ -1368,7 +1368,7 @@ const char *plResponderCmdVisibility::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 
 static void AddChildKeysRecur(plMaxNode* node, plMessage* msg)
 {
@@ -1570,8 +1570,8 @@ static plResponderSubWorldProc gResponderSubWorldProc;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "../pfMessage/plArmatureEffectMsg.h"
-#include "../plAvatar/plArmatureEffects.h"
+#include "pfMessage/plArmatureEffectMsg.h"
+#include "plAvatar/plArmatureEffects.h"
 
 class plResponderFootSurfaceProc;
 extern plResponderFootSurfaceProc gResponderFootSurfaceProc;

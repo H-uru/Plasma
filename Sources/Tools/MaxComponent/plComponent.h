@@ -222,7 +222,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *************************************************************************************************/
 
 #include "plComponentBase.h"
-#include "../MaxExport/plErrorMsg.h"
+#include "MaxExport/plErrorMsg.h"
 
 
 class plMaxNode;
