@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/plFileUtils.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plBufferedFileReader.h"
+#include "plCachedFileReader.h"
 #include "plFastWavReader.h"
 #include "plOGGCodec.h"
 #include "plWavFile.h"
@@ -73,7 +74,7 @@ plAudioFileReader* plAudioFileReader::CreateReader(const char* path, plAudioCore
         {
             char cachedPath[256];
             IGetCachedPath(path, cachedPath, whichChan);
-            plAudioFileReader *r =  TRACKED_NEW plFastWAV(cachedPath, plAudioCore::kAll);
+            plAudioFileReader *r =  TRACKED_NEW plCachedFileReader(cachedPath, plAudioCore::kAll);
             return r;
         }
         
@@ -92,7 +93,7 @@ plAudioFileReader* plAudioFileReader::CreateWriter(const char* path, plWAVHeader
 {
     const char* ext = plFileUtils::GetFileExt(path);
 
-    plAudioFileReader* writer = TRACKED_NEW CWaveFile(path, plAudioCore::kAll);
+    plAudioFileReader* writer = TRACKED_NEW plCachedFileReader(path, plAudioCore::kAll);
     writer->OpenForWriting(path, header);
     return writer;
 }
@@ -113,11 +114,11 @@ void plAudioFileReader::IGetCachedPath(const char* path, char* cachedPath, plAud
     strncat(cachedPath, fileName, fileExt-fileName-1);
 
     if (whichChan == plAudioCore::kLeft)
-        strcat(cachedPath, "-Left.wav");
+        strcat(cachedPath, "-Left.tmp");
     else if (whichChan == plAudioCore::kRight)
-        strcat(cachedPath, "-Right.wav");
+        strcat(cachedPath, "-Right.tmp");
     else if (whichChan == plAudioCore::kAll)
-        strcat(cachedPath, ".wav");
+        strcat(cachedPath, ".tmp");
 }
 
 void plAudioFileReader::ICacheFile(const char* path, bool noOverwrite, plAudioCore::ChannelSelect whichChan)
