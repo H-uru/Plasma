@@ -48,7 +48,7 @@ public:
                     plAudioCore::ChannelSelect whichChan = plAudioCore::kAll);
     virtual ~plCachedFileReader();
 
-    virtual plWAVHeader &GetHeader() const { return fHeader; }
+    virtual plWAVHeader &GetHeader();
 
     virtual void    Close();
 
@@ -65,6 +65,11 @@ public:
     virtual hsBool  IsValid() { return fFileHandle != nil; }
 
 protected:
+    enum
+    {
+        kPCMFormatTag = 1
+    };
+
     char            fFilename[512];
     FILE *          fFileHandle;
     plWAVHeader     fHeader;
