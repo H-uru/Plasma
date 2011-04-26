@@ -34,6 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "hsTypes.h"
 #include "plCachedFileReader.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////
@@ -82,6 +83,13 @@ void plCachedFileReader::IError(const char *msg)
 {
     hsAssert(false, msg);
     Close();
+}
+
+plWAVHeader &plCachedFileReader::GetHeader()
+{
+    hsAssert(IsValid(), "GetHeader() called on an invalid cache file");
+
+    return fHeader;
 }
 
 void plCachedFileReader::Close()
