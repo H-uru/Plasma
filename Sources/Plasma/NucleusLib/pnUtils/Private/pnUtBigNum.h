@@ -41,70 +41,169 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-class BigNum : private ARRAY(dword) {
-public:
-    typedef dword Val;   // must match base array
-    typedef qword DVal;  // must be twice as large as Val
+#include <openssl/bn.h>
 
+class BigNum {
 private:
-    bool m_isTemp;
+    BIGNUM m_number;
+    mutable BN_CTX * m_context;
 
-    void DivNormalized (const BigNum & a, const BigNum & b, BigNum * remainder);
-    void ModNormalized (const BigNum & a, const BigNum & b);
-
-    inline static DVal Mul (Val a, Val b);
-
-    inline void SetVal (unsigned index, Val value);
-    inline void SetVal (unsigned index, DVal value, Val * carry);
-    inline void Trim (unsigned count);
-    inline BigNum * UseTempAlloc (Val * ptr, unsigned count);
+    BN_CTX * GetContext () const
+    {
+        if (!m_context)
+            m_context = BN_CTX_new();
+        return m_context;
+    }
 
 public:
     BigNum ();
     BigNum (const BigNum & a);
     BigNum (unsigned a);
-    BigNum (unsigned bytes, const void * data);
-    BigNum (const wchar str[], Val radix);
+    BigNum (unsigned bytes, const void * data, bool le=false);
     ~BigNum ();
+
+    BigNum & operator= (const BigNum & a)
+    {
+        BN_copy(&m_number, &a.m_number);
+        return *this;
+    }
 
     // Constant parameters need not be distinct from the destination or from
     // each other
 
-    void Add (const BigNum & a, Val b);
-    void Add (const BigNum & a, const BigNum & b);
-    int  Compare (Val a) const;
-    int  Compare (const BigNum & a) const;
-    void Div (const BigNum & a, Val b, Val * remainder);
-    void Div (const BigNum & a, const BigNum & b, BigNum * remainder);
-    void FromData (unsigned bytes, const void * data);
-    void FromStr (const wchar str[], Val radix);
-    void Gcd (const BigNum & a, const BigNum & b);
-    const void * GetData (unsigned * bytes) const;
-    unsigned HighBitPos () const;
-    bool InverseMod (const BigNum & a, const BigNum & b);
-    bool IsMultiple (Val a) const;
-    bool IsOdd () const;
-    bool IsPrime () const;
-    unsigned LowBitPos () const;
-    void Mod (const BigNum & a, const BigNum & b);
-    void Mul (const BigNum & a, Val b);
-    void Mul (const BigNum & a, const BigNum & b);
-    void MulMod (const BigNum & a, const BigNum & b, const BigNum & c);
-    void PowMod (Val a, const BigNum & b, const BigNum & c);
-    void PowMod (const BigNum & a, const BigNum & b, const BigNum & c);
-    void Rand (const BigNum & a, BigNum * seed);
-    void Rand (unsigned bits, BigNum * seed);
-    void RandPrime (unsigned bits, BigNum * seed);
-    void Set (const BigNum & a);
-    void Set (unsigned a);
-    void SetBits (unsigned setBitsOffset, unsigned setBitsCount);
-    void SetOne ();
-    void SetZero ();
-    void Shl (const BigNum & a, unsigned b);
-    void Shr (const BigNum & a, unsigned b);
-    void Square (const BigNum & a);
-    void Sub (const BigNum & a, Val b);
-    void Sub (const BigNum & a, const BigNum & b);
-    void ToStr (BigNum * buffer, Val radix) const;
+    void Add (const BigNum & a, dword b)
+    {
+        // this = a + b
+        BN_copy(&m_number, &a.m_number);
+        BN_add_word(&m_number, b);
+    }
 
+    void Add (const BigNum & a, const BigNum & b)
+    {
+        // this = a + b
+        BN_add(&m_number, &a.m_number, &b.m_number);
+    }
+
+    int  Compare (dword a) const;
+    int  Compare (const BigNum & a) const
+    {
+        return BN_cmp(&m_number, &a.m_number);
+    }
+
+    void Div (const BigNum & a, dword b, dword * remainder)
+    {
+        // this = a / b, remainder = a % b
+        BN_copy(&m_number, &a.m_number);
+        *remainder = (dword)BN_div_word(&m_number, b);
+    }
+
+    void Div (const BigNum & a, const BigNum & b, BigNum * remainder)
+    {
+        // this = a / b, remainder = a % b
+        // either this or remainder may be nil
+        BN_div(this ? &m_number : nil, remainder ? &remainder->m_number : nil,
+               &a.m_number, &b.m_number, GetContext());
+    }
+
+    void FromData_BE (unsigned bytes, const void * data)
+    {
+        BN_bin2bn((const unsigned char *)data, bytes, &m_number);
+    }
+
+    void FromData_LE (unsigned bytes, const void * data);
+
+    unsigned char * GetData_BE (unsigned * bytes) const;
+    unsigned char * GetData_LE (unsigned * bytes) const;
+
+    bool IsPrime () const
+    {
+        // Cyan's code uses 3 checks, so we'll follow suit.
+        // This provides an accurate answer to p < 0.015625
+        return BN_is_prime_fasttest(&m_number, 3, nil, GetContext(), nil, 1) > 0;
+    }
+
+    void Mod (const BigNum & a, const BigNum & b)
+    {
+        // this = a % b
+        BN_div(nil, &m_number, &a.m_number, &b.m_number, GetContext());
+    }
+
+    void Mul (const BigNum & a, dword b)
+    {
+        // this = a * b
+        BN_copy(&m_number, &a.m_number);
+        BN_mul_word(&m_number, b);
+    }
+
+    void Mul (const BigNum & a, const BigNum & b)
+    {
+        // this = a * b
+        BN_mul(&m_number, &a.m_number, &b.m_number, GetContext());
+    }
+
+    void PowMod (dword a, const BigNum & b, const BigNum & c)
+    {
+        // this = a ^ b % c
+        PowMod(BigNum(a), b, c);
+    }
+
+    void PowMod (const BigNum & a, const BigNum & b, const BigNum & c)
+    {
+        // this = a ^ b % c
+        BN_mod_exp(&m_number, &a.m_number, &b.m_number, &c.m_number, GetContext());
+    }
+
+    void Rand (const BigNum & a, BigNum * seed)
+    {
+        // this = random number less than a
+        unsigned bits = BN_num_bits(&a.m_number);
+        do
+            Rand(bits, seed);
+        while (Compare(a) >= 0);
+    }
+
+    void Rand (unsigned bits, BigNum * seed);
+
+    void RandPrime (unsigned bits, BigNum * seed)
+    {
+        BN_generate_prime(&m_number, bits, 1, nil, nil, nil, nil);
+    }
+
+    void Set (const BigNum & a)
+    {
+        BN_copy(&m_number, &a.m_number);
+    }
+
+    void Set (unsigned a)
+    {
+        BN_set_word(&m_number, a);
+    }
+
+    void SetOne () { Set(1); }
+    void SetZero () { Set(0); }
+
+    void Shl (const BigNum & a, unsigned b)
+    {
+        // this = a << b
+        BN_lshift(&m_number, &a.m_number, b);
+    }
+
+    void Shr (const BigNum & a, unsigned b)
+    {
+        // this = a >> b
+        BN_rshift(&m_number, &a.m_number, b);
+    }
+
+    void Sub (const BigNum & a, dword b)
+    {
+        // this = a - b
+        BN_copy(&m_number, &a.m_number);
+        BN_sub_word(&m_number, b);
+    }
+
+    void Sub (const BigNum & a, const BigNum & b)
+    {
+        // this = a - b
+        BN_sub(&m_number, &a.m_number, &b.m_number);
+    }
 };
