@@ -82,5 +82,8 @@ if(MSVC)
     add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 endif(MSVC)
 
+#TODO: Make the OpenSSL includes less promiscuous so this isn't needed
+include_directories(${OPENSSL_INCLUDE_DIR})
+
 add_subdirectory(Sources/Plasma)
 add_subdirectory(Sources/Tools)
