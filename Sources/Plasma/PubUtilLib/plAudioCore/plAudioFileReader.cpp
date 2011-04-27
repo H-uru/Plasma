@@ -75,6 +75,12 @@ plAudioFileReader* plAudioFileReader::CreateReader(const char* path, plAudioCore
             char cachedPath[256];
             IGetCachedPath(path, cachedPath, whichChan);
             plAudioFileReader *r =  TRACKED_NEW plCachedFileReader(cachedPath, plAudioCore::kAll);
+            if (!r->IsValid()) {
+                // So we tried to play a cached file and it didn't exist
+                // Oops... we should cache it now
+                ICacheFile(path, true, whichChan);
+                r = TRACKED_NEW plCachedFileReader(cachedPath, plAudioCore::kAll);
+            }
             return r;
         }
         
