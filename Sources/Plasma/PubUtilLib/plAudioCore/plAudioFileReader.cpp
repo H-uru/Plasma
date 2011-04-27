@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plOGGCodec.h"
 #include "plWavFile.h"
 
-#define kCacheDirName   "streamingCache"
+#define kCacheDirName   "temp"
 
 static void hsStrUpper(char *s)
 {
