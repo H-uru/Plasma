@@ -4,7 +4,6 @@ include_directories(../../NucleusLib)
 include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
-include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIR})
 

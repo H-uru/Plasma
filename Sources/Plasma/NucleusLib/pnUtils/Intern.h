@@ -51,27 +51,4 @@ public:
     virtual unsigned GetBlockSize () const = 0;
 };
 
-//============================================================================
-class KeyRc4 : public KeyBase {
-private:
-    unsigned m_x;
-    unsigned m_y;
-    byte     m_state[256];
-
-    void Initialize (unsigned bytes, const void * data);
-
-public:
-    KeyRc4 (unsigned bytes, const void * data) { Initialize(bytes, data); }
-
-    void Codec (bool encrypt, ARRAY(byte) * dest, unsigned sourceBytes, const void * sourceData);
-    unsigned GetBlockSize () const { return 1; }
-
-    static void KeyGen (
-        unsigned        randomBytes, 
-        const void *    randomData,
-        ARRAY(byte) *   privateData
-    );
-};
-
-
 } // namespace Crypt
