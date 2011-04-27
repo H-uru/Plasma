@@ -184,8 +184,8 @@ public:
     //
     //  PURPOSE    : Attach an object to another object, knowing only their pyKeys
     //
-    static void AttachObject(pyKey& ckey, pyKey& pkey);
-    static void AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj);
+    static void AttachObject(pyKey& ckey, pyKey& pkey, bool netForce);
+    static void AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj, bool netForce);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -195,8 +195,8 @@ public:
     //
     //  PURPOSE    : Attach an object to another object, knowing only their pyKeys
     //
-    static void DetachObject(pyKey& ckey, pyKey& pkey);
-    static void DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj);
+    static void DetachObject(pyKey& ckey, pyKey& pkey,  bool netForce);
+    static void DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj,  bool netForce);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -593,8 +593,8 @@ public:
     //  
     //  PURPOSE    : page in, or out a paritcular node
     //
-    static void PageInNodes(const std::vector<std::string> & nodeNames, const char* age);
-    static void PageOutNode(const char* nodeName);
+    static void PageInNodes(const std::vector<std::string> & nodeNames, const char* age, bool netForce);
+    static void PageOutNode(const char* nodeName, bool netForce);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -954,6 +954,8 @@ public:
     static PyObject* GetAIAvatarsByModelName(const char* name);
     static void ForceVaultNodeUpdate(unsigned nodeId);
     static void VaultDownload(unsigned nodeId);
+    static PyObject* CloneKey(pyKey* object, bool netForce);
+    static PyObject* FindClones(pyKey* object);
 };
 
 #endif  // cyMisc_h

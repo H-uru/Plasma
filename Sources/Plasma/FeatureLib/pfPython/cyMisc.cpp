@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include "plgDispatch.h"
+#include "hsResMgr.h"
 #include "pyKey.h"
 #pragma hdrstop
 
@@ -49,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plResMgr/plKeyFinder.h"
 #include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plConsoleMsg.h"
@@ -302,7 +304,7 @@ void cyMisc::ClearTimerCallbacks(pyKey& selfkey)
 //
 //  PURPOSE    : Attach an object to another object, knowing only their pyKeys
 //
-void cyMisc::AttachObject(pyKey& ckey, pyKey& pkey)
+void cyMisc::AttachObject(pyKey& ckey, pyKey& pkey, bool netForce)
 {
     plKey childKey = ckey.getKey();
     plKey parentKey = pkey.getKey();
@@ -312,10 +314,16 @@ void cyMisc::AttachObject(pyKey& ckey, pyKey& pkey)
     {
         // create the attach message to attach the child
         plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRequest);
+        
+        if (netForce) {
+            pMsg->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg->SetBCastFlag(plMessage::kNetForce);
+        }
+        
         plgDispatch::MsgSend( pMsg );
     }
 }
-void cyMisc::AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
+void cyMisc::AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj, bool netForce)
 {
     plKey childKey = cobj.getObjKey();
     plKey parentKey = pobj.getObjKey();
@@ -325,6 +333,12 @@ void cyMisc::AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
     {
         // create the attach message to attach the child
         plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRequest);
+
+        if (netForce) {
+            pMsg->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg->SetBCastFlag(plMessage::kNetForce);
+        }
+
         plgDispatch::MsgSend( pMsg );
     }
 }
@@ -338,7 +352,7 @@ void cyMisc::AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
 //
 //  PURPOSE    : Attach an object to another object, knowing only their pyKeys
 //
-void cyMisc::DetachObject(pyKey& ckey, pyKey& pkey)
+void cyMisc::DetachObject(pyKey& ckey, pyKey& pkey, bool netForce)
 {
     plKey childKey = ckey.getKey();
     plKey parentKey = pkey.getKey();
@@ -348,10 +362,16 @@ void cyMisc::DetachObject(pyKey& ckey, pyKey& pkey)
     {
         // create the attach message to detach the child
         plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRemove);
+
+        if (netForce) {
+            pMsg->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg->SetBCastFlag(plMessage::kNetForce);
+        }
+
         plgDispatch::MsgSend( pMsg );
     }
 }
-void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
+void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj, bool netForce)
 {
     plKey childKey = cobj.getObjKey();
     plKey parentKey = pobj.getObjKey();
@@ -361,6 +381,12 @@ void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
     {
         // create the attach message to detach the child
         plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRemove);
+
+        if (netForce) {
+            pMsg->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg->SetBCastFlag(plMessage::kNetForce);
+        }
+
         plgDispatch::MsgSend( pMsg );
     }
 }
@@ -1415,7 +1441,7 @@ int cyMisc::GetNumRemotePlayers()
 //  PURPOSE    : page in, hold or out a particular node
 //
 
-void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char* age)
+void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char* age, bool netForce)
 {
     if (hsgResMgr::ResMgr())
     {
@@ -1423,6 +1449,11 @@ void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char*
         plClientMsg* msg = new plClientMsg(plClientMsg::kLoadRoom);
         plKey clientKey = hsgResMgr::ResMgr()->FindKey(kClient_KEY);
         msg->AddReceiver(clientKey);
+
+        if (netForce) {
+            msg->SetBCastFlag(plMessage::kNetPropagate);
+            msg->SetBCastFlag(plMessage::kNetForce);
+        }
 
         int numNames = nodeNames.size();
         for (int i = 0; i < numNames; i++)
@@ -1432,7 +1463,7 @@ void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char*
     }
 }
 
-void cyMisc::PageOutNode(const char* nodeName)
+void cyMisc::PageOutNode(const char* nodeName, bool netForce)
 {
     if ( hsgResMgr::ResMgr() )
     {
@@ -1441,6 +1472,11 @@ void cyMisc::PageOutNode(const char* nodeName)
         plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
         pMsg1->AddReceiver( clientKey );
         pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation("", nodeName));
+
+        if (netForce) {
+            pMsg1->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg1->SetBCastFlag(plMessage::kNetForce);
+        }
         plgDispatch::MsgSend(pMsg1);
     }
 }
@@ -2865,4 +2901,40 @@ void cyMisc::VaultDownload(unsigned nodeId)
         nil,
         nil
     );
+}
+
+PyObject* cyMisc::CloneKey(pyKey* object, bool netForce) {
+
+    plKey obj = object->getKey();
+    plUoid uoid = obj->GetUoid();
+    plLoadCloneMsg* cloneMsg;
+    if (uoid.IsClone())
+        cloneMsg = new plLoadCloneMsg(obj, plNetClientMgr::GetInstance()->GetKey(), 0, true);
+    else 
+        cloneMsg = new plLoadCloneMsg(uoid, plNetClientMgr::GetInstance()->GetKey(), 0);
+
+    if (netForce) {
+        cloneMsg->SetBCastFlag(plMessage::kNetPropagate);
+        cloneMsg->SetBCastFlag(plMessage::kNetForce);
+    }
+
+    cloneMsg->Send();
+
+    return pyKey::New(cloneMsg->GetCloneKey());
+}
+
+PyObject* cyMisc::FindClones(pyKey* object) {
+    plKey obj = object->getKey();
+    plUoid uoid = obj->GetUoid();
+
+    plKeyImp* imp = ((plKeyImp*)obj);
+    uint32_t cloneNum = imp->GetNumClones();
+    PyObject* keyList = PyList_New(cloneNum);
+
+    for (int i=0; i < cloneNum; i++) {
+        PyObject* key = pyKey::New(imp->GetCloneByIdx(i));
+        PyList_SET_ITEM(keyList, i, key);
+    }
+
+    return keyList;
 }
