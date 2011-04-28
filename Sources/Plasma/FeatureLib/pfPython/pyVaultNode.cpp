@@ -429,6 +429,10 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, UInt32 c
                 hsResult = hsFail;
             }
         }
+
+        PyObject* nodeRef = cb->fPyNodeRef = pyVaultNodeRef::New(fNode, pynode->fNode);
+        Py_INCREF(nodeRef); // The callback steals the ref, according to Eric...
+        cb->SetNode(pynode->fNode);
    
         VaultAddChildNode(fNode->nodeId, 
                           pynode->fNode->nodeId, 
@@ -437,8 +441,9 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, UInt32 c
                           cb
         );
 
-       // just return a None object
-       PYTHON_RETURN_NONE;
+        // Evil undocumented functionality that some fool
+        // decided to use in xKI.py. Really???
+        return nodeRef;
     }
     else
     {
