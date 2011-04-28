@@ -4,7 +4,6 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 include_directories(${PHYSX_INCLUDE_DIRS})
-include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plPhysX_SOURCES
     plLOSDispatch.cpp
