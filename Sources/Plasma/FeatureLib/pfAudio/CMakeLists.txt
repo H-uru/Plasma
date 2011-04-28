@@ -5,7 +5,6 @@ include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 #include_directories(../../PubUtilLib/inc)
 
-include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
 
 set(pfAudio_SOURCES

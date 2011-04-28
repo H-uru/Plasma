@@ -2,8 +2,6 @@ include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-include_directories(${OPENSSL_INCLUDE_DIR})
-
 set(plEncryption_SOURCES
     plChecksum.cpp
 )

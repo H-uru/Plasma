@@ -6,7 +6,6 @@ include_directories("../../PubUtilLib")
 
 include_directories(${PHYSX_INCLUDE_DIRS})
 include_directories(${OPENAL_INCLUDE_DIR})
-include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(plModifier_SOURCES
     plAnimEventModifier.cpp
