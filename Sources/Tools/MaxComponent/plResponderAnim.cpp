@@ -60,33 +60,6 @@ enum
     kRespAnimObjectType,
 };
 
-class plResponderAnimProc;
-extern plResponderAnimProc gResponderAnimProc;
-
-ParamBlockDesc2 gResponderAnimBlock
-(
-    kResponderAnimBlk, _T("animCmd"), 0, NULL, P_AUTO_UI,
-
-    IDD_COMP_RESPOND_ANIM, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderAnimProc,
-
-    kRespAnimComp,  _T("comp"),     TYPE_REFTARG,       0, 0,
-        end,
-
-    kRespAnimObject, _T("object"),  TYPE_REFTARG,       0, 0,
-        end,
-
-    kRespAnimLoop,  _T("loop"),     TYPE_STRING,        0, 0,
-        end,
-
-    kRespAnimType,  _T("type"),     TYPE_INT,           0, 0,
-        end,
-
-    kRespAnimObjectType,    _T("objType"),  TYPE_INT,   0, 0,
-        end,
-
-    end
-);
-
 enum AnimObjectType
 {
     kNodePB,        // Use the node in the PB
@@ -97,11 +70,6 @@ plResponderCmdAnim& plResponderCmdAnim::Instance()
 {
     static plResponderCmdAnim theInstance;
     return theInstance;
-}
-
-ParamBlockDesc2 *plResponderCmdAnim::GetDesc()
-{
-    return &gResponderAnimBlock;
 }
 
 // Use the old types, for backwards compatibility
@@ -289,17 +257,6 @@ static bool IsSoundMsg(int type)
         type == kRespondRewindSound)
         return true;
     return false;
-}
-
-IParamBlock2 *plResponderCmdAnim::CreatePB(int idx)
-{
-    int type = IndexToOldType(idx);
-
-    // Create the paramblock and save it's type
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderAnimBlock, nil);
-    pb->SetValue(kRespAnimType, 0, type);
-
-    return pb;
 }
 
 plComponentBase *plResponderCmdAnim::GetComponent(IParamBlock2 *pb)
@@ -563,7 +520,7 @@ class plResponderAnimProc : public plAnimCompProc
 {
 public:
     plResponderAnimProc();
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 protected:
     virtual void IPickComponent(IParamBlock2* pb);
@@ -671,6 +628,46 @@ void plResponderAnimProc::IPickComponent(IParamBlock2* pb)
     }
 
     plPick::NodeRefKludge(pb, kRespAnimComp, &cids, true, false);
+}
+
+ParamBlockDesc2 gResponderAnimBlock
+(
+    kResponderAnimBlk, _T("animCmd"), 0, NULL, P_AUTO_UI,
+
+    IDD_COMP_RESPOND_ANIM, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderAnimProc,
+
+    kRespAnimComp,  _T("comp"),     TYPE_REFTARG,       0, 0,
+        end,
+
+    kRespAnimObject, _T("object"),  TYPE_REFTARG,       0, 0,
+        end,
+
+    kRespAnimLoop,  _T("loop"),     TYPE_STRING,        0, 0,
+        end,
+
+    kRespAnimType,  _T("type"),     TYPE_INT,           0, 0,
+        end,
+
+    kRespAnimObjectType,    _T("objType"),  TYPE_INT,   0, 0,
+        end,
+
+    end
+);
+
+ParamBlockDesc2 *plResponderCmdAnim::GetDesc()
+{
+    return &gResponderAnimBlock;
+}
+
+IParamBlock2 *plResponderCmdAnim::CreatePB(int idx)
+{
+    int type = IndexToOldType(idx);
+
+    // Create the paramblock and save it's type
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderAnimBlock, nil);
+    pb->SetValue(kRespAnimType, 0, type);
+
+    return pb;
 }
 
 #include "plPickNodeBase.h"

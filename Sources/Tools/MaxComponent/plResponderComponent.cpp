@@ -59,6 +59,68 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 IParamBlock2 *CreateWaitBlk();
 
+class plResponderProc : public ParamMap2UserDlgProc
+{
+protected:
+    HWND fhDlg;
+    IParamBlock2 *fPB;
+    IParamBlock2 *fStatePB;
+    int fCurState;
+    
+    plResponderComponent *fComp;
+
+    IParamMap2 *fCmdMap;
+    IParamMap2 *fWaitMap;
+    
+    int fCmdIdx;
+
+    typedef std::map<int, const char*> NameID;
+    NameID fNames;
+
+    HMENU fhMenu;
+    typedef std::pair<plResponderCmd*, int> CmdID;
+    typedef std::map<int, CmdID> MenuCmd;
+    MenuCmd fMenuCmds;
+
+    HWND fhList;
+
+    bool fIgnoreNextDrop;
+
+public:
+    plResponderProc();
+
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    void DeleteThis() { IRemoveCmdRollups(); }
+
+protected:
+    void ICreateMenu();
+    void IAddMenuItem(HMENU hMenu, int id);
+
+    void ICmdRightClick(HWND hCmdList);
+
+    // Add and remove command rollups
+    void ICreateCmdRollups();
+    void IRemoveCmdRollups();
+    IParamMap2 *ICreateMap(IParamBlock2 *pb);   // Helper
+
+    const char* GetCommandName(int cmdIdx);
+    void LoadList();
+
+    BOOL DragListProc(HWND hWnd, DRAGLISTINFO *info);
+
+    void IDrawComboItem(DRAWITEMSTRUCT *dis);
+
+    void LoadState();
+    
+    void AddCommand();
+    void RemoveCurCommand();
+    void MoveCommand(int oldIdx, int newIdx);
+
+    // Takes a freshly created state PB and adds it as a new state, then returns its index
+    int AddState(IParamBlock2 *pb);
+};
+static plResponderProc gResponderComponentProc;
+
 int ResponderGetActivatorCount(plComponentBase *comp)
 {
     if (comp->ClassID() == RESPONDER_CID)
@@ -93,8 +155,6 @@ plKey Responder::GetKey(plComponentBase *comp, plMaxNodeBase *node)
 
 CLASS_DESC(plResponderComponent, gResponderDesc, "Responder", "Responder", COMP_TYPE_LOGIC, RESPONDER_CID)
 
-class plResponderProc;
-extern plResponderProc gResponderComponentProc;
 
 // When one of our parameters that is a ref changes, send out the component ref
 // changed message.  Normally, messages from component refs are ignored since
@@ -494,8 +554,6 @@ void plResponderComponent::IFixOldPB()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define CUSTOM_DRAW
-
 enum
 {
     kStateName,
@@ -504,70 +562,6 @@ enum
     kStateDefault,
     kStateCopy,
 };
-
-class plResponderProc : public ParamMap2UserDlgProc
-{
-protected:
-    HWND fhDlg;
-    IParamBlock2 *fPB;
-    IParamBlock2 *fStatePB;
-    int fCurState;
-    
-    plResponderComponent *fComp;
-
-    IParamMap2 *fCmdMap;
-    IParamMap2 *fWaitMap;
-    
-    int fCmdIdx;
-
-    typedef std::map<int, const char*> NameID;
-    NameID fNames;
-
-    HMENU fhMenu;
-    typedef std::pair<plResponderCmd*, int> CmdID;
-    typedef std::map<int, CmdID> MenuCmd;
-    MenuCmd fMenuCmds;
-
-    HWND fhList;
-
-    bool fIgnoreNextDrop;
-
-public:
-    plResponderProc();
-
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() { IRemoveCmdRollups(); }
-
-protected:
-    void ICreateMenu();
-    void IAddMenuItem(HMENU hMenu, int id);
-
-    void ICmdRightClick(HWND hCmdList);
-
-    // Add and remove command rollups
-    void ICreateCmdRollups();
-    void IRemoveCmdRollups();
-    IParamMap2 *ICreateMap(IParamBlock2 *pb);   // Helper
-
-    const char* GetCommandName(int cmdIdx);
-    void LoadList();
-
-    BOOL DragListProc(HWND hWnd, DRAGLISTINFO *info);
-
-#ifdef CUSTOM_DRAW
-    void IDrawComboItem(DRAWITEMSTRUCT *dis);
-#endif
-
-    void LoadState();
-    
-    void AddCommand();
-    void RemoveCurCommand();
-    void MoveCommand(int oldIdx, int newIdx);
-
-    // Takes a freshly created state PB and adds it as a new state, then returns its index
-    int AddState(IParamBlock2 *pb);
-};
-static plResponderProc gResponderComponentProc;
 
 void plResponderProc::IAddMenuItem(HMENU hMenu, int id)
 {
@@ -861,7 +855,6 @@ BOOL plResponderProc::DragListProc(HWND hWnd, DRAGLISTINFO *info)
     return FALSE;
 }
 
-#ifdef CUSTOM_DRAW
 void plResponderProc::IDrawComboItem(DRAWITEMSTRUCT *dis)
 {
     if (dis->itemID == -1)          // empty item
@@ -916,7 +909,6 @@ void plResponderProc::IDrawComboItem(DRAWITEMSTRUCT *dis)
     if (dis->itemState & ODS_FOCUS) 
         DrawFocusRect(dis->hDC, &dis->rcItem); 
 }
-#endif
 
 void plResponderProc::LoadState()
 {

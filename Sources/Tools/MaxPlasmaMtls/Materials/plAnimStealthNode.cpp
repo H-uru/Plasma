@@ -83,11 +83,11 @@ protected:
     HWND fhWnd;
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() { IDeleteSegMap(); }
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    virtual void DeleteThis() { IDeleteSegMap(); }
     void SetThing(ReferenceTarget *m);
 
-    void Update( TimeValue t, Interval &valid, IParamMap2 *pmap );
+    virtual void Update( TimeValue t, Interval &valid, IParamMap2 *pmap );
 
 protected:
     // Set all the controls to their stored value

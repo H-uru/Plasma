@@ -28,8 +28,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../resource.h"
 #include "iparamm2.h"
 
-class BumpBasicDlgProc;
-extern BumpBasicDlgProc gBumpBasicDlgProc;
+class BumpBasicDlgProc : public ParamMap2UserDlgProc
+{
+#if 1
+protected:
+
+public:
+    BumpBasicDlgProc() {}
+    ~BumpBasicDlgProc() { }
+#endif
+
+public:
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        IParamBlock2 *pb = map->GetParamBlock();
+
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            {
+            }
+            return TRUE;
+        }
+        return FALSE;
+    }
+    virtual void DeleteThis() {}
+};
+static BumpBasicDlgProc gBumpBasicDlgProc;
 
 static ParamBlockDesc2 gBumpBasicPB
 (
@@ -60,33 +85,3 @@ static ParamBlockDesc2 gBumpBasicPB
     end
 );
 ParamBlockDesc2 *GetBumpBasicPB() { return &gBumpBasicPB; }
-
-class BumpBasicDlgProc : public ParamMap2UserDlgProc
-{
-#if 1
-protected:
-
-public:
-    BumpBasicDlgProc() {}
-    ~BumpBasicDlgProc() { }
-#endif
-
-public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        IParamBlock2 *pb = map->GetParamBlock();
-
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            {
-            }
-            return TRUE;
-        }
-        return FALSE;
-    }
-    void DeleteThis() {}
-};
-static BumpBasicDlgProc gBumpBasicDlgProc;
-
-

@@ -89,8 +89,69 @@ enum
 };
 
 
-class plClickDragComponentProc;
-extern plClickDragComponentProc gClickDragComponentProc;
+#include "plNoteTrackDlgComp.h"
+
+class plClickDragComponentProc : public ParamMap2UserDlgProc
+{
+protected:
+    plComponentNoteTrackDlg fNoteTrackDlgX;
+    plComponentNoteTrackDlg fNoteTrackDlgY;
+    IParamBlock2 *fPB;
+
+public:
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            fPB = map->GetParamBlock();
+            
+            fNoteTrackDlgX.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX),
+                                nil,
+                                kClickDragAnimX,
+                                -1,
+                                fPB,
+                                fPB->GetOwner());
+
+            fNoteTrackDlgX.Load();
+
+            EnableWindow(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX), true);
+            
+            fNoteTrackDlgY.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIM_Y),
+                                nil,
+                                kClickDragAnimY,
+                                -1,
+                                fPB,
+                                fPB->GetOwner());
+
+            fNoteTrackDlgY.Load();
+
+            EnableWindow(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIM_Y), true);
+            return TRUE;
+
+        case WM_COMMAND:
+            if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_COMP_CLICK_DRAG_ANIMX)
+            {
+                fNoteTrackDlgX.AnimChanged();
+                return TRUE;
+            }
+            if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_COMP_CLICK_DRAG_ANIM_Y)
+            {
+                fNoteTrackDlgY.AnimChanged();
+                return TRUE;
+            }
+            break;
+        }
+        return false;   
+    }
+
+    void DeleteThis()
+    {
+        fNoteTrackDlgX.DeleteCache();
+        fNoteTrackDlgY.DeleteCache();
+    }
+};
+static plClickDragComponentProc gClickDragComponentProc;
 
 ParamBlockDesc2 gClickDragBlock
 (
@@ -539,67 +600,3 @@ hsBool plClickDragComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
     fAxisKeys.clear();
     return plActivatorBaseComponent::DeInit( node, pErrMsg ); 
 }
-
-#include "plNoteTrackDlgComp.h"
-
-class plClickDragComponentProc : public ParamMap2UserDlgProc
-{
-protected:
-    plComponentNoteTrackDlg fNoteTrackDlgX;
-    plComponentNoteTrackDlg fNoteTrackDlgY;
-    IParamBlock2 *fPB;
-
-public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            fPB = map->GetParamBlock();
-            
-            fNoteTrackDlgX.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX),
-                                nil,
-                                kClickDragAnimX,
-                                -1,
-                                fPB,
-                                fPB->GetOwner());
-
-            fNoteTrackDlgX.Load();
-
-            EnableWindow(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX), true);
-            
-            fNoteTrackDlgY.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIM_Y),
-                                nil,
-                                kClickDragAnimY,
-                                -1,
-                                fPB,
-                                fPB->GetOwner());
-
-            fNoteTrackDlgY.Load();
-
-            EnableWindow(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIM_Y), true);
-            return TRUE;
-
-        case WM_COMMAND:
-            if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_COMP_CLICK_DRAG_ANIMX)
-            {
-                fNoteTrackDlgX.AnimChanged();
-                return TRUE;
-            }
-            if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_COMP_CLICK_DRAG_ANIM_Y)
-            {
-                fNoteTrackDlgY.AnimChanged();
-                return TRUE;
-            }
-            break;
-        }
-        return false;   
-    }
-
-    void DeleteThis()
-    {
-        fNoteTrackDlgX.DeleteCache();
-        fNoteTrackDlgY.DeleteCache();
-    }
-};
-static plClickDragComponentProc gClickDragComponentProc;

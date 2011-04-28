@@ -32,8 +32,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plResponderLink.h"
 
-class plResponderWaitProc;
-extern plResponderWaitProc gResponderWaitProc;
+class plResponderWaitProc : public ParamMap2UserDlgProc
+{
+protected:
+    IParamBlock2 *fStatePB;
+    IParamBlock2 *fWaitPB;
+
+    int fCurCmd;
+    HWND fhDlg;
+    HWND fhList;
+
+public:
+    void Init(IParamBlock2 *curStatePB, int curCmd, HWND hList) { fStatePB = curStatePB; fCurCmd = curCmd; fhList = hList; }
+
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    virtual void DeleteThis() {}
+
+protected:
+    void LoadWho(bool setDefault=false);
+    void LoadPoint(bool force=false);
+
+    IParamBlock2 *GetCmdParams(int cmdIdx);
+};
+static plResponderWaitProc gResponderWaitProc;
 
 enum
 {
@@ -111,30 +132,7 @@ const char* ResponderWait::GetWaitPoint(IParamBlock2* waitPB)
     return point;
 }
 
-class plResponderWaitProc : public ParamMap2UserDlgProc
-{
-protected:
-    IParamBlock2 *fStatePB;
-    IParamBlock2 *fWaitPB;
-
-    int fCurCmd;
-    HWND fhDlg;
-    HWND fhList;
-
-public:
-    void Init(IParamBlock2 *curStatePB, int curCmd, HWND hList) { fStatePB = curStatePB; fCurCmd = curCmd; fhList = hList; }
-
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-
-    void DeleteThis() {}
-
-protected:
-    void LoadWho(bool setDefault=false);
-    void LoadPoint(bool force=false);
-
-    IParamBlock2 *GetCmdParams(int cmdIdx);
-};
-static plResponderWaitProc gResponderWaitProc;
+/////////////////////////////////////////////////////////////////////////////
 
 void ResponderWait::InitDlg(IParamBlock2 *curStatePB, int curCmd, HWND hList)
 {
