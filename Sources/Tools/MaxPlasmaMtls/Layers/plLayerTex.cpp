@@ -173,7 +173,7 @@ BOOL plLayerTex::SetDlgThing(ParamDlg* dlg)
 
 int plLayerTex::NumRefs()
 {
-    return 3;
+    return 2;
 }
 
 //From ReferenceMaker
@@ -211,7 +211,7 @@ void plLayerTex::SetReference(int i, RefTargetHandle rtarg)
 
 int plLayerTex::NumParamBlocks()
 {
-    return 2;
+    return 1;
 }
 
 IParamBlock2* plLayerTex::GetParamBlock(int i)
@@ -248,7 +248,7 @@ RefTargetHandle plLayerTex::Clone(RemapDir &remap)
 
 int plLayerTex::NumSubs()
 {
-    return 3;
+    return 2;
 }
 
 Animatable* plLayerTex::SubAnim(int i) 

@@ -56,9 +56,6 @@ void DummyCodeIncludeFuncNavigablesRegion() {}
 
 CLASS_DESC(plAvLadderComponent, gAvLadderComponentDesc, "(ex)Ladder Component", "(ex)LadderComp", COMP_TYPE_PHYS_TERRAINS, NAV_LADDER_CID)
 
-class plAvLadderComponentProc;
-extern plAvLadderComponentProc gAvLadderComponentProc;
-
 enum kAvLadderFields
 {
     kTypeCombo,
@@ -69,6 +66,63 @@ enum kAvLadderFields
     kEnabled,
     kLadderNode,
 };
+
+class plAvLadderComponentProc : public ParamMap2UserDlgProc
+{
+public:
+    enum kLadderTypesEnums
+    {
+        kReallyBig,
+        kFourFeet,
+        kTwoFeet,
+    };
+
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            {
+                HWND hLadder = GetDlgItem(hWnd,IDC_COMP_NAV_LADDER_COMBO);
+
+                ComboBox_AddString(hLadder, "Big");
+                ComboBox_AddString(hLadder, "4 feet");
+                ComboBox_AddString(hLadder, "2 feet");
+
+                int type = map->GetParamBlock()->GetInt(kTypeCombo);
+                ComboBox_SetCurSel(hLadder, type);
+            }
+            return TRUE;
+
+        case WM_COMMAND:
+            if (LOWORD(wParam) == IDC_COMP_NAV_LADDER_COMBO && HIWORD(wParam) == CBN_SELCHANGE)
+            {
+                //Util fcn found in plEventGroupRefs files in MaxMain
+                HWND hLadder = GetDlgItem(hWnd,IDC_COMP_NAV_LADDER_COMBO);
+                int idx = ComboBox_GetCurSel(hLadder);
+                map->GetParamBlock()->SetValue(kTypeCombo, 0, idx);
+/*
+                if (idx == kReallyBig)
+                {
+                    map->Enable(kLoopsInt, TRUE);
+//                  map->Invalidate(kLoopsInt);
+                }
+                else
+                {
+                    map->Enable(kLoopsInt, TRUE);
+//                  map->Invalidate(kLoopsInt);
+                }
+*/
+                return TRUE;
+            }
+            break;
+        }
+        return FALSE;
+    }
+
+    void DeleteThis() {}
+};
+static plAvLadderComponentProc gAvLadderComponentProc;
 
 ParamBlockDesc2 gAvLadderComponentBlock
 (
@@ -219,62 +273,3 @@ hsBool plAvLadderComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
     fKeys.Reset();
     return true;
 }
-
-class plAvLadderComponentProc : public ParamMap2UserDlgProc
-{
-public:
-    enum kLadderTypesEnums
-    {
-        kReallyBig,
-        kFourFeet,
-        kTwoFeet,
-    };
-
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            {
-                HWND hLadder = GetDlgItem(hWnd,IDC_COMP_NAV_LADDER_COMBO);
-
-                ComboBox_AddString(hLadder, "Big");
-                ComboBox_AddString(hLadder, "4 feet");
-                ComboBox_AddString(hLadder, "2 feet");
-
-                int type = map->GetParamBlock()->GetInt(kTypeCombo);
-                ComboBox_SetCurSel(hLadder, type);
-            }
-            return TRUE;
-
-        case WM_COMMAND:
-            if (LOWORD(wParam) == IDC_COMP_NAV_LADDER_COMBO && HIWORD(wParam) == CBN_SELCHANGE)
-            {
-                //Util fcn found in plEventGroupRefs files in MaxMain
-                HWND hLadder = GetDlgItem(hWnd,IDC_COMP_NAV_LADDER_COMBO);
-                int idx = ComboBox_GetCurSel(hLadder);
-                map->GetParamBlock()->SetValue(kTypeCombo, 0, idx);
-/*
-                if (idx == kReallyBig)
-                {
-                    map->Enable(kLoopsInt, TRUE);
-//                  map->Invalidate(kLoopsInt);
-                }
-                else
-                {
-                    map->Enable(kLoopsInt, TRUE);
-//                  map->Invalidate(kLoopsInt);
-                }
-*/
-                return TRUE;
-            }
-            break;
-        }
-        return FALSE;
-    }
-
-    void DeleteThis() {}
-};
-static plAvLadderComponentProc gAvLadderComponentProc;
-
-
