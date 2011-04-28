@@ -4,8 +4,6 @@ include_directories(../../NucleusLib)
 include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
-include_directories(${OPENSSL_INCLUDE_DIR})
-
 set(pfCharacter_SOURCES
     pfMarkerInfo.cpp
     pfMarkerMgr.cpp
