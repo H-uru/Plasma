@@ -1,5 +1,6 @@
-include_directories("../../Plasma/CoreLib")
 add_definitions(-D_LIB)
+
+include_directories("../../Plasma/CoreLib")
 
 set(CoreLibExe_SOURCES
     hsExeError.cpp

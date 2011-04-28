@@ -3,8 +3,6 @@ include_directories("../../FeatureLib")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-include_directories(${OPENSSL_INCLUDE_DIR})
-
 set(plAgeDescription_SOURCES
     plAgeDescription.cpp
     plAgeManifest.cpp
