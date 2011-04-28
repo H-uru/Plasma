@@ -7,7 +7,6 @@ include_directories(../../)
 
 include_directories(${PYTHON_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
-include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(pfPython_SOURCES
     cyAccountManagement.cpp
