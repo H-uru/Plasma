@@ -28,8 +28,87 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class PartMtlPBAccessor;
 extern PartMtlPBAccessor partMtl_accessor;
 
-class ParticleBasicDlgProc;
-extern ParticleBasicDlgProc gParticleBasicDlgProc;
+class ParticleBasicDlgProc : public ParamMap2UserDlgProc
+{
+public:
+    ParticleBasicDlgProc() {}
+    ~ParticleBasicDlgProc() {}
+    
+    void UpdateDisplay(IParamMap2 *pmap)
+    {
+        HWND hWnd = pmap->GetHWnd();
+        IParamBlock2 *pb = pmap->GetParamBlock();
+        HWND cbox = GetDlgItem(hWnd, IDC_PARTICLE_NORMAL);
+        plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plParticleMtl::kTexmap));
+        PBBitmap *pbbm;
+        ICustButton *bmSelectBtn;
+
+        SendMessage(cbox, CB_SETCURSEL, pb->GetInt(plParticleMtl::kNormal), 0);
+        pbbm = (layer == nil ? nil : layer->GetPBBitmap());
+
+        bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_PARTICLE_TEXTURE));
+        bmSelectBtn->SetText(pbbm ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+        ReleaseICustButton(bmSelectBtn);    
+    }       
+
+    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateDisplay(pmap); }    
+
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        int id = LOWORD(wParam);
+        int code = HIWORD(wParam);
+
+        IParamBlock2 *pb = map->GetParamBlock();
+        HWND cbox = NULL;
+        plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plParticleMtl::kTexmap));
+
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            int j;
+            for (j = 0; j < plParticleMtl::kNumNormalOptions; j++)
+            {
+                cbox = GetDlgItem(hWnd, IDC_PARTICLE_NORMAL);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plParticleMtl::NormalStrings[j]);
+            }
+            UpdateDisplay(map);
+            return TRUE;
+
+        case WM_COMMAND:  
+            if (id == IDC_PARTICLE_NORMAL)
+            {
+                pb->SetValue(plParticleMtl::kNormal, t, SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0));
+                return TRUE;
+            }
+            else if (id == IDC_PARTICLE_TEXTURE)
+            {
+                if (layer == nil)
+                    return FALSE;
+                layer->HandleBitmapSelection();
+                UpdateDisplay(map);
+                return TRUE;
+            }
+            else if (id == IDC_PARTICLE_NOFILTER)
+            {
+                if (!layer)
+                    return FALSE;
+                if( pb->GetInt(plParticleMtl::kNoFilter) )
+                {
+                    layer->GetParamBlockByID( plLayerTex::kBlkBitmap )->SetValue(kBmpNoFilter, t, 1);
+                }
+                else
+                {
+                    layer->GetParamBlockByID( plLayerTex::kBlkBitmap )->SetValue(kBmpNoFilter, t, 0);
+                }
+                return TRUE;
+            }
+            break;
+        }
+        return FALSE;
+    }
+    virtual void DeleteThis() {}
+};
+static ParticleBasicDlgProc gParticleBasicDlgProc;
 
 #define PL_PARTICLE_MTL_MIN_TILES 1
 #define PL_PARTICLE_MTL_MAX_TILES 16
@@ -149,86 +228,3 @@ public:
     }
 };
 static PartMtlPBAccessor partMtl_accessor;
-
-
-class ParticleBasicDlgProc : public ParamMap2UserDlgProc
-{
-public:
-    ParticleBasicDlgProc() {}
-    ~ParticleBasicDlgProc() {}
-    
-    void UpdateDisplay(IParamMap2 *pmap)
-    {
-        HWND hWnd = pmap->GetHWnd();
-        IParamBlock2 *pb = pmap->GetParamBlock();
-        HWND cbox = GetDlgItem(hWnd, IDC_PARTICLE_NORMAL);
-        plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plParticleMtl::kTexmap));
-        PBBitmap *pbbm;
-        ICustButton *bmSelectBtn;
-
-        SendMessage(cbox, CB_SETCURSEL, pb->GetInt(plParticleMtl::kNormal), 0);
-        pbbm = (layer == nil ? nil : layer->GetPBBitmap());
-
-        bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_PARTICLE_TEXTURE));
-        bmSelectBtn->SetText(pbbm ? (TCHAR*)pbbm->bi.Filename() : "(none)");
-        ReleaseICustButton(bmSelectBtn);    
-    }       
-
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateDisplay(pmap); }    
-
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        int id = LOWORD(wParam);
-        int code = HIWORD(wParam);
-
-        IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
-        plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plParticleMtl::kTexmap));
-
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            int j;
-            for (j = 0; j < plParticleMtl::kNumNormalOptions; j++)
-            {
-                cbox = GetDlgItem(hWnd, IDC_PARTICLE_NORMAL);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plParticleMtl::NormalStrings[j]);
-            }
-            UpdateDisplay(map);
-            return TRUE;
-
-        case WM_COMMAND:  
-            if (id == IDC_PARTICLE_NORMAL)
-            {
-                pb->SetValue(plParticleMtl::kNormal, t, SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0));
-                return TRUE;
-            }
-            else if (id == IDC_PARTICLE_TEXTURE)
-            {
-                if (layer == nil)
-                    return FALSE;
-                layer->HandleBitmapSelection();
-                UpdateDisplay(map);
-                return TRUE;
-            }
-            else if (id == IDC_PARTICLE_NOFILTER)
-            {
-                if (!layer)
-                    return FALSE;
-                if( pb->GetInt(plParticleMtl::kNoFilter) )
-                {
-                    layer->GetParamBlockByID( plLayerTex::kBlkBitmap )->SetValue(kBmpNoFilter, t, 1);
-                }
-                else
-                {
-                    layer->GetParamBlockByID( plLayerTex::kBlkBitmap )->SetValue(kBmpNoFilter, t, 0);
-                }
-                return TRUE;
-            }
-            break;
-        }
-        return FALSE;
-    }
-    void DeleteThis() {}
-};
-static ParticleBasicDlgProc gParticleBasicDlgProc;

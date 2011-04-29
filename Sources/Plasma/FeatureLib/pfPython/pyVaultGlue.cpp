@@ -32,7 +32,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plVault/plVault.h"
 #include "plMessage/plVaultNotifyMsg.h"
-#include <python.h>
+#include <Python.h>
 
 #ifndef BUILDING_PYPLASMA
 

@@ -54,6 +54,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_WIN32
 #include <direct.h>
 #include <io.h>
+#define mkdir _mkdir
+#define chdir _chdir
+#define chmod _chmod
+#define rmdir _rmdir
+#define unlink _unlink
 #endif
 
 #if HS_BUILD_FOR_UNIX

@@ -93,6 +93,9 @@ set(plClient_RESOURCES
 
 add_executable(plClient WIN32 ${plClient_SOURCES} ${plClient_HEADERS}
                               ${plClient_TEXT} ${plClient_RESOURCES})
+if(PLASMA_EXTERNAL_RELEASE)
+    set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
+endif(PLASMA_EXTERNAL_RELEASE)
 target_link_libraries(plClient CoreLib)
 target_link_libraries(plClient CoreLibExe)
 target_link_libraries(plClient pfAnimation)
@@ -184,8 +187,13 @@ target_link_libraries(plClient pnTimer)
 target_link_libraries(plClient pnUtils)
 target_link_libraries(plClient pnUtilsExe)
 
-target_link_libraries(plClient debug ${PYTHON_DEBUG_LIBRARY})
-target_link_libraries(plClient optimized ${PYTHON_LIBRARY})
+if(PYTHON_DEBUG_LIBRARY)
+    target_link_libraries(plClient debug ${PYTHON_DEBUG_LIBRARY})
+    target_link_libraries(plClient optimized ${PYTHON_LIBRARY})
+else()
+    target_link_libraries(plClient ${PYTHON_LIBRARY})
+endif()
+
 target_link_libraries(plClient ${OPENAL_LIBRARY})
 target_link_libraries(plClient ${OPENSSL_LIBRARIES})
 target_link_libraries(plClient ${EXPAT_LIBRARY})

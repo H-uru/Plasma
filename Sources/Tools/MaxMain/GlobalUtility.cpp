@@ -96,7 +96,7 @@ void DoAllRecur(PMaxNodeFunc p, plMaxNode *node)
     }
 }
 
-//#include "../MaxComponent/plComponentBase.h"
+//#include "MaxComponent/plComponentBase.h"
 
 
 #include "MaxExport/plExportErrorMsg.h"

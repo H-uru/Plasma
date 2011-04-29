@@ -1,8 +1,6 @@
 include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 
-include_directories(${OPENSSL_INCLUDE_DIR})
-
 set(pnUtils_HEADERS
     Intern.h
     Pch.h

@@ -315,7 +315,7 @@ void plMtlAnimProc::ILoadAnimCombo(HWND hWnd, IParamBlock2* pb)
 }
 
 #include "plPickMaterialMap.h"
-#include "../MaxMain/plMtlCollector.h"
+#include "MaxMain/plMtlCollector.h"
 
 void plMtlAnimProc::IMtlButtonPress(HWND hWnd, IParamBlock2* pb)
 {

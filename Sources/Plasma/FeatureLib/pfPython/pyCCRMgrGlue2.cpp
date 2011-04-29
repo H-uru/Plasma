@@ -25,4 +25,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pyCCRMgr.h"
 
-#include <python.h>
+#include <Python.h>

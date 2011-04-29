@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultSystemNode.h"
 
 #include "plVault/plVault.h"
-#include <python.h>
+#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptVaultSystemNode, pyVaultSystemNode);

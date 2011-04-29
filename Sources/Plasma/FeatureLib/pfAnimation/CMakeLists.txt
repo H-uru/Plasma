@@ -3,11 +3,6 @@ include_directories("../../NucleusLib")
 include_directories("../../NucleusLib/inc")
 include_directories("../../PubUtilLib")
 
-include_directories(${OPENSSL_INCLUDE_DIR})
-
-# this is in the vcproj, but it seems silly for animation...
-# find_package(OpenSSL REQUIRED)
-
 set(pfAnimation_SOURCES
     pfObjectFlocker.cpp
     plAnimDebugList.cpp

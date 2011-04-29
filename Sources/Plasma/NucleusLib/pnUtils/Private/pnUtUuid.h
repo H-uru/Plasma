@@ -80,7 +80,7 @@ bool            GuidFromHex (const byte buf[], unsigned length, Uuid * uuid);
 *
 ***/
 
-#include <PshPack1.h>
+#include <pshpack1.h>
 struct Uuid {
     union {
         dword   dwords[4];
@@ -98,6 +98,6 @@ struct Uuid {
     inline bool operator != (const Uuid & rhs) const { return !GuidsAreEqual(*this, rhs); }
     inline bool operator != (int rhs)          const { ASSERT(!rhs); return !GuidsAreEqual(*this, kNilGuid); }
 };
-#include <PopPack.h>
+#include <poppack.h>
 
 

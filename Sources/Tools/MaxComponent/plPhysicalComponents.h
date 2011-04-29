@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <map>
 #include "plPhysical.h"
-#include "../plAvatar/plSwimRegion.h"
+#include "plAvatar/plSwimRegion.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //

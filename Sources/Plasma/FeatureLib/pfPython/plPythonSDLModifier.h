@@ -33,7 +33,7 @@ class plSimpleStateVariable;
 #include "hsStlUtils.h"
 #include "plModifier/plSDLModifier.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 

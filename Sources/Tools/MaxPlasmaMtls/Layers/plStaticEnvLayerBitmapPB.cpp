@@ -195,7 +195,7 @@ public:
     }
 
     /// Main message proc
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
       static ICustButton* bmSelectBtn;
       long  buttons[ 6 ] = { IDC_FRONT_NAME, IDC_BACK_NAME, IDC_LEFT_NAME, IDC_RIGHT_NAME, IDC_TOP_NAME, IDC_BOTTOM_NAME };
@@ -264,7 +264,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {};
+    virtual void DeleteThis() {};
 
     BOOL    IDoSelectBaseFilename( IParamMap2 *map, TimeValue t, HWND hWnd )
     {

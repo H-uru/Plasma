@@ -4,8 +4,6 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-include_directories(${OPENSSL_INCLUDE_DIR})
-
 set(plNetClientComm_SOURCES
     plNetClientComm.cpp
 )

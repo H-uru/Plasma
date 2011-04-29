@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureEffects.h"
 #include "plAvatar/plAvTaskSeek.h"
 
-//#include "../plHavok1/plSimulationMgr.h"
+//#include "plHavok1/plSimulationMgr.h"
 #include "pnNetCommon/plNetApp.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plDrawable/plInstanceDrawInterface.h"

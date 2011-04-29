@@ -557,7 +557,7 @@ hsBool  plAnimGroupedComponent::GetKeyList( INode *restrictedNode, hsTArray<plKe
 }
 
 
-#include "../pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
 
 hsBool plAnimGroupedComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {

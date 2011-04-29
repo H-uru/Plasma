@@ -2,15 +2,9 @@
 //
 #include "resource.h"
 
-#define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
-#include "afxres.h"
-
-/////////////////////////////////////////////////////////////////////////////
-#undef APSTUDIO_READONLY_SYMBOLS
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#define IDC_STATIC              (-1)     // all static controls
 
 /////////////////////////////////////////////////////////////////////////////
 // English (U.S.) resources
@@ -77,7 +71,6 @@ END
 
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "#include ""afxres.h""\r\n"
     "\0"
 END
 

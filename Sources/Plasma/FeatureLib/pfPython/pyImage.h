@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plMipmap.h"
 #endif
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class plKey;
