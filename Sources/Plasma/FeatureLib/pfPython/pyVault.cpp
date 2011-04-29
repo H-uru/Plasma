@@ -561,6 +561,12 @@ void pyVault::UnRegisterVisitAge( const char * guidstr )
 }
 
 //============================================================================
+void _InvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
+{
+    if (result == kNetSuccess)
+        VaultSendNode(node, (UInt32)param);
+}
+
 void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, UInt32 playerID )
 {
     NetVaultNode * templateNode = NEWZERO(NetVaultNode);
@@ -569,18 +575,17 @@ void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, UInt32 playerID )
     VaultTextNoteNode visitAcc(templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_Visit);
     visitAcc.SetVisitInfo(*link.GetAgeLink()->GetAgeInfo());
-    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_InvitePlayerToAge, nil, TRACKED_NEW UInt32(playerID));
+    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_InvitePlayerToAge, nil, (void*)playerID);
     templateNode->DecRef();
 }
 
-void _InvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
+//============================================================================
+void _UninvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
 {
     if (result == kNetSuccess)
-        VaultSendNode(node, *((UInt32*)param));
-    delete param;
+        VaultSendNode(node, (UInt32)param);
 }
 
-//============================================================================
 void pyVault::UnInvitePlayerToAge( const char * str, UInt32 playerID )
 {
     plAgeInfoStruct info;
@@ -602,15 +607,8 @@ void pyVault::UnInvitePlayerToAge( const char * str, UInt32 playerID )
     VaultTextNoteNode visitAcc(templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_UnVisit);
     visitAcc.SetVisitInfo(info);
-    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_UninvitePlayerToAge, nil, TRACKED_NEW UInt32(playerID));
+    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_UninvitePlayerToAge, nil, (void*)playerID);
     templateNode->DecRef();
-}
-
-void _UninvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
-{
-    if (result == kNetSuccess)
-        VaultSendNode(node, *((UInt32*)param));
-    delete param;
 }
 
 //============================================================================

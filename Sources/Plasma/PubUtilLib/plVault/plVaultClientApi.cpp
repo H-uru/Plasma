@@ -2790,11 +2790,10 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
 namespace _VaultRegisterOwnedAge {
     struct _Params {
         plSpawnPointInfo* fSpawn;
-        UInt32*           fAgeInfoId;
+        void*           fAgeInfoId;
 
         ~_Params() {
             DEL(fSpawn);
-            DEL(fAgeInfoId);
         }
     };
 
@@ -2831,10 +2830,10 @@ namespace _VaultRegisterOwnedAge {
         RelVaultNode* agesIOwn = VaultGetAgesIOwnFolderIncRef();
         RelVaultNode* plyrInfo = VaultGetPlayerInfoNodeIncRef();
         VaultAddChildNode(agesIOwn->nodeId, node->nodeId, 0, (FVaultAddChildNodeCallback)_AddAgeLinkNode, nil); 
-        VaultAddChildNode(node->nodeId, *(p->fAgeInfoId), 0, (FVaultAddChildNodeCallback)_AddAgeInfoNode, nil);
+        VaultAddChildNode(node->nodeId, (UInt32)p->fAgeInfoId, 0, (FVaultAddChildNodeCallback)_AddAgeInfoNode, nil);
 
         // Add our PlayerInfo to important places
-        if (RelVaultNode* rvnAgeInfo = VaultGetNodeIncRef(*(p->fAgeInfoId))) {
+        if (RelVaultNode* rvnAgeInfo = VaultGetNodeIncRef((UInt32)p->fAgeInfoId)) {
             if (RelVaultNode* rvnAgeOwners = rvnAgeInfo->GetChildPlayerInfoListNodeIncRef(plVault::kAgeOwnersFolder, 1)) {
                 VaultAddChildNode(rvnAgeOwners->nodeId, plyrInfo->nodeId, 0, (FVaultAddChildNodeCallback)_AddPlayerInfoNode, nil);
                 rvnAgeOwners->DecRef();
@@ -2867,7 +2866,7 @@ namespace _VaultRegisterOwnedAge {
     void _InitAgeCallback(ENetError result, void* state, void* param, UInt32 ageVaultId, UInt32 ageInfoVaultId) {
         if (IS_NET_SUCCESS(result)) {
             _Params* p = TRACKED_NEW _Params();
-            p->fAgeInfoId = TRACKED_NEW UInt32(ageInfoVaultId);
+            p->fAgeInfoId = (void*)ageInfoVaultId;
             p->fSpawn = (plSpawnPointInfo*)param;
 
             VaultDownload(
@@ -3165,11 +3164,10 @@ namespace _VaultRegisterVisitAge {
     struct _Params {
 
         plSpawnPointInfo* fSpawn;
-        UInt32*           fAgeInfoId;
+        void*             fAgeInfoId;
 
         ~_Params() {
             DEL(fSpawn);
-            DEL(fAgeInfoId);
         }
     };
 
@@ -3181,7 +3179,7 @@ namespace _VaultRegisterVisitAge {
         }
 
         _Params* p = (_Params*)param;
-        RelVaultNode* ageInfo = VaultGetNodeIncRef(*p->fAgeInfoId);
+        RelVaultNode* ageInfo = VaultGetNodeIncRef((UInt32)p->fAgeInfoId);
 
         // Add ourselves to the Can Visit folder of the age
         if (RelVaultNode * playerInfo = VaultGetPlayerInfoNodeIncRef()) {
@@ -3234,7 +3232,7 @@ namespace _VaultRegisterVisitAge {
 
         // Save the AgeInfo nodeID, then download the age vault
         _Params* p = (_Params*)param;
-        p->fAgeInfoId = TRACKED_NEW UInt32(ageInfoId);
+        p->fAgeInfoId = (void*)ageInfoId;
         
         VaultDownload(L"RegisterVisitAge",
                       ageInfoId,
@@ -4436,14 +4434,11 @@ namespace _VaultCreateSubAge {
     void _CreateNodeCallback(ENetError result, void* state, void* param, RelVaultNode* node) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "CreateSubAge: Failed to create AgeLink (async)");
-            DEL(param);
             return;
         }
 
-        UInt32 ageInfoId = *(UInt32*)param;
-
         // Add the children to the right places
-        VaultAddChildNode(node->nodeId, ageInfoId, 0, nil, nil);
+        VaultAddChildNode(node->nodeId, (UInt32)param, 0, nil, nil);
         if (RelVaultNode* saFldr = VaultGetAgeSubAgesFolderIncRef()) {
             VaultAddChildNode(saFldr->nodeId, node->nodeId, 0, nil, nil);
             saFldr->DecRef();
@@ -4456,14 +4451,11 @@ namespace _VaultCreateSubAge {
         msg->SetResultCode(result);
         msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->nodeId);
         msg->Send();
-
-        DEL(param);
     }
 
     void _DownloadCallback(ENetError result, void* param) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "CreateSubAge: Failed to download age vault (async)");
-            DEL(param);
             return;
         }
 
@@ -4485,7 +4477,7 @@ namespace _VaultCreateSubAge {
         VaultDownload(L"CreateSubAge",
                       ageInfoId,
                       (FVaultDownloadCallback)_DownloadCallback,
-                      TRACKED_NEW UInt32(ageInfoId),
+                      (void*)ageInfoId,
                       nil,
                       nil
         );
@@ -4799,13 +4791,8 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
 //============================================================================
 namespace _VaultCreateChildAge {
     struct _Params {
-        UInt32* fChildAgesFldr;
-        UInt32* fAgeInfoId;
-
-        ~_Params() {
-            DEL(fChildAgesFldr);
-            DEL(fAgeInfoId);
-        }
+        void* fChildAgesFldr;
+        void* fAgeInfoId;
     };
 
     void _CreateNodeCallback(ENetError result, void* state, void* param, RelVaultNode* node) {
@@ -4818,8 +4805,8 @@ namespace _VaultCreateChildAge {
         _Params* p = (_Params*)param;
 
         // Add the children to the right places
-        VaultAddChildNode(node->nodeId, *p->fAgeInfoId, 0, nil, nil);
-        VaultAddChildNode(*p->fChildAgesFldr, node->nodeId, 0, nil, nil);
+        VaultAddChildNode(node->nodeId, (UInt32)p->fAgeInfoId, 0, nil, nil);
+        VaultAddChildNode((UInt32)p->fChildAgesFldr, node->nodeId, 0, nil, nil);
 
         // Send the VaultNotify that the plNetLinkingMgr wants...
         plVaultNotifyMsg * msg = NEWZERO(plVaultNotifyMsg);
@@ -4854,7 +4841,7 @@ namespace _VaultCreateChildAge {
         }
 
         _Params* p = (_Params*)param;
-        p->fAgeInfoId = TRACKED_NEW UInt32(ageInfoId);
+        p->fAgeInfoId = (void*)ageInfoId;
 
         // Download age vault
         VaultDownload(L"CreateChildAge",
@@ -4920,7 +4907,7 @@ UInt8 VaultAgeFindOrCreateChildAgeLink(
             retval = TRUE;
         } else {
             _Params* p = TRACKED_NEW _Params;
-            p->fChildAgesFldr = TRACKED_NEW UInt32(rvnChildAges->nodeId);
+            p->fChildAgesFldr = (void*)rvnChildAges->nodeId;
 
             VaultAgeInfoNode accParentInfo(rvnParentInfo);
             VaultInitAge(info,
