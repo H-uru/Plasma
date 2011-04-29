@@ -54,16 +54,6 @@ class pyAgeLinkStruct;
 
 class pySDLStateDataRecord;
 
-// Async Helpers... :)
-#ifndef BUILDING_PYPLASMA
-enum ENetError;
-struct RelVaultNode;
-
-void _InvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node);
-void _UninvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node);
-#endif // BUILDING_PYPLASMA
-
-
 class pyVault
 {
 #ifndef BUILDING_PYPLASMA
