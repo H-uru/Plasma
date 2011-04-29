@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRenderLevel.h"
 #include "plPhysicalProps.h"
 #include "hsBitVector.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "plLoadMask.h"
 
 class plMaxNodeBase;

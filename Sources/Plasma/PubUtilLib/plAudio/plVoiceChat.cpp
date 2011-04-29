@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <al.h>
 #include <alc.h>
 #include "plDSoundBuffer.h"
-#include <speex.h>
-#include <speex_bits.h>
+#include <speex/speex.h>
+#include <speex/speex_bits.h>
 #include "hsGeometry3.h"
 #include "plVoiceChat.h"
 #include "plAudioSystem.h"
@@ -535,13 +535,13 @@ hsBool plSpeex::Init(Mode mode)
 
     if(mode == kNarrowband)
     {
-        fEncoderState = speex_encoder_init(&speex_nb_mode);                         // narrowband
-        fDecoderState = speex_decoder_init(&speex_nb_mode);
+        fEncoderState = speex_encoder_init(speex_lib_get_mode(SPEEX_MODEID_NB));                         // narrowband
+        fDecoderState = speex_decoder_init(speex_lib_get_mode(SPEEX_MODEID_NB));
     }
     else if(mode == kWideband)
     {
-        fEncoderState = speex_encoder_init(&speex_wb_mode);
-        fDecoderState = speex_decoder_init(&speex_wb_mode);
+        fEncoderState = speex_encoder_init(speex_lib_get_mode(SPEEX_MODEID_WB));
+        fDecoderState = speex_decoder_init(speex_lib_get_mode(SPEEX_MODEID_WB));
     }
     
     speex_encoder_ctl(fEncoderState, SPEEX_GET_FRAME_SIZE, &fFrameSize);            // get frame size

@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 #include "pyVaultNode.h"

@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "pfGameMgr/pfGameMgr.h"
 
-#include <python.h>
+#include <Python.h>
 #include "../pyGlueHelpers.h"
 
 class pyGameMgrMsg

@@ -2,17 +2,9 @@
 //
 #include "resource.h"
 
-#define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
-#define APSTUDIO_HIDDEN_SYMBOLS
-#include "windows.h"
-#undef APSTUDIO_HIDDEN_SYMBOLS
-
-/////////////////////////////////////////////////////////////////////////////
-#undef APSTUDIO_READONLY_SYMBOLS
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#define IDC_STATIC              (-1)     // all static controls
 
 /////////////////////////////////////////////////////////////////////////////
 // English (U.S.) resources
@@ -388,9 +380,6 @@ END
 
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "#include ""windows.h""\r\n"
-    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "\0"
 END
 

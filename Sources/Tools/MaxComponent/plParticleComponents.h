@@ -71,9 +71,6 @@ public:
                       fXTiles(1), fYTiles(1), fHSize(1), fVSize(1), fImmortal(false) {}
 };  
 
-class ParticleCompDlgProc;
-extern ParticleCompDlgProc gParticleCompDlgProc;
-
 class plParticleCoreComponent : public plComponent
 {
 protected:

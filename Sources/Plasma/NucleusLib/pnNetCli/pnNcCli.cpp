@@ -589,20 +589,22 @@ static void ClientConnect (NetCli * cli) {
     {
         ZERO(cli->seed);
         unsigned bytes;
-        const void * data = clientSeed.GetData(&bytes);
+        unsigned char * data = clientSeed.GetData_LE(&bytes);
         MemCopy(cli->seed, data, min(bytes, sizeof(cli->seed)));
+        delete [] data;
     }
 
     // Send server seed
     if (cli->sock) {
         unsigned bytes;
         NetCli_Cli2Srv_Connect msg;
-        const void * data = serverSeed.GetData(&bytes);
+        unsigned char * data = serverSeed.GetData_LE(&bytes);
         ASSERTMSG(bytes <= sizeof(msg.dh_y_data), "4");
         msg.message    = kNetCliCli2SrvConnect;
         msg.length     = (byte) (sizeof(msg) - sizeof(msg.dh_y_data) +  bytes);
         MemCopy(msg.dh_y_data, data, bytes);
         AsyncSocketSend(cli->sock, &msg, msg.length);
+        delete [] data;
     }
 }
 
@@ -643,8 +645,9 @@ static bool ServerRecvConnect (
 
         ZERO(clientSeed);
         unsigned bytes;
-        const void * data = clientSeedValue.GetData(&bytes);
+        unsigned char * data = clientSeedValue.GetData_LE(&bytes);
         MemCopy(clientSeed, data, min(bytes, sizeof(clientSeed)));
+        delete [] data;
     }
 
     // Create the symmetric key from a combination

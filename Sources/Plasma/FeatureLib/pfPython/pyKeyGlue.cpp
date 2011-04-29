@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pySceneObject.h"
 #endif
 
-#include <python.h>
+#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptKey, pyKey);

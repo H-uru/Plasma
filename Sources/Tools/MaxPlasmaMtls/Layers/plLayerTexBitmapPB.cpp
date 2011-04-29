@@ -32,8 +32,365 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class BMTexPBAccessor;
 extern BMTexPBAccessor bmtex_accessor;
 
-class BitmapDlgProc; 
-extern BitmapDlgProc gBitmapDlgProc;
+class BMCropper : public CropCallback
+{
+    IParamBlock2 *fPBlock;
+
+public:
+    BMCropper(IParamBlock2* pblock) : fPBlock(pblock) {}
+
+    float GetInitU() { return fPBlock->GetFloat(kBmpClipU); }
+    float GetInitV() { return fPBlock->GetFloat(kBmpClipV); }
+    float GetInitW() { return fPBlock->GetFloat(kBmpClipW); }
+    float GetInitH() { return fPBlock->GetFloat(kBmpClipH); }
+    BOOL GetInitMode() { return fPBlock->GetInt(kBmpCropPlace); }
+    void SetValues(float u, float v, float w, float h, BOOL md);
+    void OnClose();
+};
+
+class BitmapDlgProc : public ParamMap2UserDlgProc
+{
+    friend class BMTexPBAccessor;
+    
+    
+    PBBitmap    *fLastBMap;
+    bool        fSettingDetailValues;
+    
+public:
+    /// Called to update the controls of the dialog
+    /// Note: we're bad that we use a static here, but 
+    virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map )
+    {
+        ICustButton     *bmSelectBtn;
+        IParamBlock2    *pblock;
+        int             width, height;
+        
+        
+        ParamMap2UserDlgProc::Update( t, valid, map );
+        
+        if( fSettingDetailValues )
+        {
+            // We're getting an update just because we changed detail values, so we
+            // know we don't have to do anything ourselves
+            return;
+        }
+        
+        pblock = map->GetParamBlock();
+        
+        // Update texture map button
+        bmSelectBtn = GetICustButton( GetDlgItem( map->GetHWnd(), IDC_LAYER_NAME ) );
+        PBBitmap *pbbm = pblock->GetBitmap( kBmpBitmap, t );
+        if( pbbm )
+        {
+            if( pbbm != fLastBMap )
+            {
+                bmSelectBtn->SetText( (TCHAR *)pbbm->bi.Filename() );
+                
+                // Init values for clamping spinners to powers of 2
+                width = IFloorPow2( pbbm->bi.Width() );
+                map->SetRange( kBmpExportWidth, 4.f, (float)width );
+                
+                height = IFloorPow2( pbbm->bi.Height() );
+                map->SetRange( kBmpExportHeight, 4.f, (float)height );
+                
+                IClampTexSizeSpinner( t, map, true );
+                ISetDetailCurveNumLevels( map, t );
+            }
+        }
+        else if( pbbm != fLastBMap )
+            bmSelectBtn->SetText( _T( "None" ) );
+        
+        fLastBMap = pbbm;
+        
+        ReleaseICustButton( bmSelectBtn );
+        
+        // Update detail curve control
+        HWND dlg = map->GetHWnd();
+        
+        plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( dlg, IDC_DETAIL_CURVE_CTRL );
+        if( ctrl == NULL )
+        {
+            // The control hasn't been created, so create it already!
+            HWND                basis;
+            RECT                r;
+            
+            // Create the detail map control
+            basis = GetDlgItem( dlg, IDC_DETAIL_SAMPLE );
+            GetClientRect( basis, &r );
+            MapWindowPoints( basis, dlg, (POINT *)&r, 2 );
+            
+            ctrl = TRACKED_NEW plDetailCurveCtrl( dlg, IDC_DETAIL_CURVE_CTRL, &r );
+        }
+        
+        EnableWindow( GetDlgItem( dlg, IDC_DETAIL_CURVE_CTRL ), (BOOL)pblock->GetInt( kBmpUseDetail, t ) );
+        
+        if( ctrl != NULL )
+        {
+            ctrl->SetStartPoint( (float)pblock->GetInt( kBmpDetailStartSize, t ) / 100.f,
+                (float)pblock->GetInt( kBmpDetailStartOpac, t ) / 100.f );
+            ctrl->SetEndPoint(   (float)pblock->GetInt( kBmpDetailStopSize, t ) / 100.f,
+                (float)pblock->GetInt( kBmpDetailStopOpac, t ) / 100.f );
+        }
+        
+    }
+    
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        static ICustButton* bmSelectBtn;
+        
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            fLastBMap = NULL;
+            fSettingDetailValues = false;
+            break;
+            
+            /// Note: the following *could* be done in the accessor, except that you end up in an
+            /// infinite loop updating the values. Not good. 
+        case CC_SPINNER_CHANGE: 
+            
+            if( LOWORD( wParam ) == IDC_EXPORTWIDTH_SPINNER )
+                IClampTexSizeSpinner( t, map, true );
+            
+            else if( LOWORD( wParam ) == IDC_EXPORTHEIGHT_SPINNER )
+                IClampTexSizeSpinner( t, map, false );
+            
+            break;
+            
+            // Message from the detail curve that a point got dragged
+        case PL_DC_POINT_DRAGGED:
+            {
+                plDetailCurveCtrl   *ctrl = (plDetailCurveCtrl *)lParam;
+                IParamBlock2        *pblock = map->GetParamBlock();
+                float               x, y;
+                
+                
+                fSettingDetailValues = true;
+                
+                if( wParam == PL_DC_START_POINT )
+                {
+                    ctrl->GetStartPoint( x, y );
+                    pblock->SetValue( kBmpDetailStartSize, t, (int)( x * 100.f ) );
+                    pblock->SetValue( kBmpDetailStartOpac, t, (int)( y * 100.f ) );
+                }
+                else
+                {
+                    ctrl->GetEndPoint( x, y );
+                    pblock->SetValue( kBmpDetailStopSize, t, (int)( x * 100.f ) );
+                    pblock->SetValue( kBmpDetailStopOpac, t, (int)( y * 100.f ) );
+                }
+                
+                map->UpdateUI( t );
+                fSettingDetailValues = false;
+            }
+            return 0;
+            
+        case WM_COMMAND:
+            if( HIWORD( wParam ) == EN_CHANGE && LOWORD( wParam ) == IDC_EXPORTWIDTH )
+                IClampTexSizeSpinner( t, map, true );
+            
+            else if( HIWORD( wParam ) == EN_CHANGE && LOWORD( wParam ) == IDC_EXPORTHEIGHT )
+                IClampTexSizeSpinner( t, map, false );
+            
+            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_BM_CROP_IMAGE)
+            {
+                IParamBlock2 *pblock = map->GetParamBlock();
+                PBBitmap *pbbm = pblock->GetBitmap(kBmpBitmap, t);
+                if (pbbm)
+                {
+                    if (!pbbm->bm)
+                        pbbm->bm = TheManager->Load(&pbbm->bi);
+                    
+                    BMCropper *cropper = TRACKED_NEW BMCropper(pblock);
+                    
+                    pbbm->bm->Display("Specify Cropping/Placement", BMM_CN, FALSE, TRUE, cropper);
+                }
+                //              bm->DeleteThis();
+                return TRUE;
+            }
+            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_LAYER_RELOAD)
+            {
+                // TEMP
+                IParamBlock2 *pblock = map->GetParamBlock();
+                PBBitmap *pbbm = pblock->GetBitmap(kBmpBitmap, t);
+                if (pbbm)
+                {
+                    plLayerTex *layer = (plLayerTex*)map->GetParamBlock()->GetOwner();
+
+                    layer->RefreshBitmaps();
+                    
+                    layer->fMtlParams->MtlChanged();
+                    layer->IChanged();
+                }
+                return TRUE;
+            }
+            else if (LOWORD(wParam) == IDC_LAYER_NAME)
+            {
+                plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)map->GetParamBlock()->GetOwner();
+                if (layer == nil)
+                    return FALSE;
+                BOOL selectedNewBitmap = layer->HandleBitmapSelection();
+                
+                if(selectedNewBitmap)
+                {
+                    IParamBlock2 *pblock = map->GetParamBlock();
+                    //plLayerTex *layer = (plLayerTex*)map->GetParamBlock()->GetOwner();
+                    
+                    //layer->SetBitmap(&bi);
+                    //layer->IChanged();
+                    //BitmapInfo *bi = &layer->GetPBBitmap()->bi;
+                    
+                    bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_LAYER_NAME));
+                    PBBitmap *pbbm = layer->GetPBBitmap();
+                    bmSelectBtn->SetText(pbbm != nil ? (TCHAR*)pbbm->bi.Filename() : "");
+                    ReleaseICustButton(bmSelectBtn);
+                    
+                    if (pbbm != nil)
+                    {
+                        // Init values for clamping spinners to powers of 2
+                        int width = IFloorPow2( pbbm->bi.Width() );
+                        map->SetRange( kBmpExportWidth, 4.f, (float)width );
+                        
+                        int height = IFloorPow2( pbbm->bi.Height() );
+                        map->SetRange( kBmpExportHeight, 4.f, (float)height );
+                        
+                        if( width > 512 )
+                        {
+                            height = (int)( 512.f * (float)( (float)height / (float)width ) );
+                            width = 512;
+                        }
+                        else if( height > 512 )
+                        {
+                            width = (int)( 512.f * (float)( (float)width / (float)height ) );
+                            height = 512;
+                        }
+                        pblock->SetValue( kBmpExportWidth, t, width );
+                        pblock->SetValue( kBmpExportLastWidth, t, width );
+                        pblock->SetValue( kBmpExportHeight, t, height );
+                        pblock->SetValue( kBmpExportLastHeight, t, height );
+                        
+                        IClampTexSizeSpinner( t, map, true );
+                    }   
+                    return TRUE;
+                }
+                else
+                {
+                    return FALSE;
+                }
+            }
+            break;
+        }
+        
+        return FALSE;
+    }
+    virtual void DeleteThis() {};
+    
+    void    ISetDetailCurveNumLevels( IParamMap2 *map, TimeValue t )
+    {
+        /// Set the level count on the detail control
+        plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( map->GetHWnd(), IDC_DETAIL_CURVE_CTRL );
+        if( ctrl != NULL )
+        {
+            IParamBlock2 *pblock = map->GetParamBlock();
+            int w = pblock->GetInt( kBmpExportWidth, t );
+            int h = pblock->GetInt( kBmpExportHeight, t );
+            int numLevels = 0;
+            while( w > 1 && h > 1 )
+            {
+                w >>= 1;
+                h >>= 1;
+                numLevels++;
+            }
+            ctrl->SetNumLevels( numLevels );
+        }
+    }
+    
+    /// Clamp texture sizes to a power of 2
+    void    IClampTexSizeSpinner( TimeValue t, IParamMap2 *map, bool clampWidth )
+    {
+        IParamBlock2 *pblock = map->GetParamBlock();
+        ParamID     clampNew, clampOld;
+        ParamID     otherNew, otherOld;
+        
+        if( clampWidth )
+        {
+            clampNew = kBmpExportWidth; clampOld = kBmpExportLastWidth;
+            otherNew = kBmpExportHeight; otherOld = kBmpExportLastHeight;
+        }
+        else
+        {
+            clampNew = kBmpExportHeight; clampOld = kBmpExportLastHeight;
+            otherNew = kBmpExportWidth; otherOld = kBmpExportLastWidth;
+        }
+        
+        int     lastVal = pblock->GetInt( clampOld, t );
+        int     tempVal, newVal = pblock->GetInt( clampNew, t );
+        
+        if( newVal < lastVal )
+        {
+            lastVal = newVal;
+            for( tempVal = 1; tempVal <= newVal; tempVal <<= 1 );
+            newVal = tempVal >> 1;
+        }
+        else
+        {
+            lastVal = newVal;
+            for( tempVal = 1; tempVal < newVal; tempVal <<= 1 );
+            newVal = tempVal;
+        }
+        
+        pblock->SetValue( clampNew, t, newVal );
+        pblock->SetValue( clampOld, t, newVal );
+        
+        // And clamp aspect ratio
+        PBBitmap        *pbbm = pblock->GetBitmap( kBmpBitmap, t );
+        
+        if( pbbm != NULL )
+        {
+            int realWidth = pbbm->bi.Width();
+            int realHeight = pbbm->bi.Height();
+            
+            float aspect;
+            if( clampWidth )            
+                aspect = (float)realHeight / (float)realWidth;
+            else
+                aspect = (float)realWidth / (float)realHeight;
+            
+            int value = newVal;
+            value *= aspect;
+            
+            if( value < 4 )
+            {
+                // Can't be below 4!
+                value = 4;
+                pblock->SetValue( otherNew, t, value );
+                pblock->SetValue( otherOld, t, value );
+                value = value / aspect;
+                pblock->SetValue( clampNew, t, value );
+                pblock->SetValue( clampOld, t, value );
+            }
+            else
+            {
+                pblock->SetValue( otherNew, t, value );
+                pblock->SetValue( otherOld, t, value );
+            }
+        }
+        
+        ISetDetailCurveNumLevels( map, t );
+    }
+    
+    int     IFloorPow2( int value )
+    {
+        int     v;
+        
+        
+        for( v = 1; v <= value; v <<= 1 );
+        return v >> 1;
+    }
+    
+};
+
+static BitmapDlgProc gBitmapDlgProc;
 
 static ParamBlockDesc2 gBitmapParamBlk
 (
@@ -193,8 +550,6 @@ static ParamBlockDesc2 gBitmapParamBlk
 );
 ParamBlockDesc2 *GetBitmapBlk() { return &gBitmapParamBlk; }
 
-class BMCropper;
-
 class BMTexPBAccessor : public PBAccessor
 {
 public:
@@ -331,27 +686,13 @@ public:
     bool    IIsProcSettingDetailValues( IParamBlock2 *pb );
 
 };
+
 static BMTexPBAccessor bmtex_accessor;
 
 
 //=========================================================================================
 // BMCropper
 //=========================================================================================
-class BMCropper : public CropCallback
-{
-    IParamBlock2 *fPBlock;
-
-public:
-    BMCropper(IParamBlock2* pblock) : fPBlock(pblock) {}
-
-    float GetInitU() { return fPBlock->GetFloat(kBmpClipU); }
-    float GetInitV() { return fPBlock->GetFloat(kBmpClipV); }
-    float GetInitW() { return fPBlock->GetFloat(kBmpClipW); }
-    float GetInitH() { return fPBlock->GetFloat(kBmpClipH); }
-    BOOL GetInitMode() { return fPBlock->GetInt(kBmpCropPlace); }
-    void SetValues(float u, float v, float w, float h, BOOL md);
-    void OnClose();
-};
 
 void BMCropper::SetValues(float u, float v, float w, float h, BOOL md) 
 {
@@ -392,350 +733,6 @@ void BMCropper::OnClose()
 {
     delete this;
 }
-
-class BitmapDlgProc : public ParamMap2UserDlgProc
-{
-    friend class BMTexPBAccessor;
-    
-    
-    PBBitmap    *fLastBMap;
-    bool        fSettingDetailValues;
-    
-    
-    /// Called to update the controls of the dialog
-    /// Note: we're bad that we use a static here, but 
-    virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map )
-    {
-        ICustButton     *bmSelectBtn;
-        IParamBlock2    *pblock;
-        int             width, height;
-        
-        
-        ParamMap2UserDlgProc::Update( t, valid, map );
-        
-        if( fSettingDetailValues )
-        {
-            // We're getting an update just because we changed detail values, so we
-            // know we don't have to do anything ourselves
-            return;
-        }
-        
-        pblock = map->GetParamBlock();
-        
-        // Update texture map button
-        bmSelectBtn = GetICustButton( GetDlgItem( map->GetHWnd(), IDC_LAYER_NAME ) );
-        PBBitmap *pbbm = pblock->GetBitmap( kBmpBitmap, t );
-        if( pbbm )
-        {
-            if( pbbm != fLastBMap )
-            {
-                bmSelectBtn->SetText( (TCHAR *)pbbm->bi.Filename() );
-                
-                // Init values for clamping spinners to powers of 2
-                width = IFloorPow2( pbbm->bi.Width() );
-                map->SetRange( kBmpExportWidth, 4.f, (float)width );
-                
-                height = IFloorPow2( pbbm->bi.Height() );
-                map->SetRange( kBmpExportHeight, 4.f, (float)height );
-                
-                IClampTexSizeSpinner( t, map, true );
-                ISetDetailCurveNumLevels( map, t );
-            }
-        }
-        else if( pbbm != fLastBMap )
-            bmSelectBtn->SetText( _T( "None" ) );
-        
-        fLastBMap = pbbm;
-        
-        ReleaseICustButton( bmSelectBtn );
-        
-        // Update detail curve control
-        HWND dlg = map->GetHWnd();
-        
-        plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( dlg, IDC_DETAIL_CURVE_CTRL );
-        if( ctrl == NULL )
-        {
-            // The control hasn't been created, so create it already!
-            HWND                basis;
-            RECT                r;
-            
-            // Create the detail map control
-            basis = GetDlgItem( dlg, IDC_DETAIL_SAMPLE );
-            GetClientRect( basis, &r );
-            MapWindowPoints( basis, dlg, (POINT *)&r, 2 );
-            
-            ctrl = TRACKED_NEW plDetailCurveCtrl( dlg, IDC_DETAIL_CURVE_CTRL, &r );
-        }
-        
-        EnableWindow( GetDlgItem( dlg, IDC_DETAIL_CURVE_CTRL ), (BOOL)pblock->GetInt( kBmpUseDetail, t ) );
-        
-        if( ctrl != NULL )
-        {
-            ctrl->SetStartPoint( (float)pblock->GetInt( kBmpDetailStartSize, t ) / 100.f,
-                (float)pblock->GetInt( kBmpDetailStartOpac, t ) / 100.f );
-            ctrl->SetEndPoint(   (float)pblock->GetInt( kBmpDetailStopSize, t ) / 100.f,
-                (float)pblock->GetInt( kBmpDetailStopOpac, t ) / 100.f );
-        }
-        
-    }
-    
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        static ICustButton* bmSelectBtn;
-        
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            fLastBMap = NULL;
-            fSettingDetailValues = false;
-            break;
-            
-            /// Note: the following *could* be done in the accessor, except that you end up in an
-            /// infinite loop updating the values. Not good. 
-        case CC_SPINNER_CHANGE: 
-            
-            if( LOWORD( wParam ) == IDC_EXPORTWIDTH_SPINNER )
-                IClampTexSizeSpinner( t, map, true );
-            
-            else if( LOWORD( wParam ) == IDC_EXPORTHEIGHT_SPINNER )
-                IClampTexSizeSpinner( t, map, false );
-            
-            break;
-            
-            // Message from the detail curve that a point got dragged
-        case PL_DC_POINT_DRAGGED:
-            {
-                plDetailCurveCtrl   *ctrl = (plDetailCurveCtrl *)lParam;
-                IParamBlock2        *pblock = map->GetParamBlock();
-                float               x, y;
-                
-                
-                fSettingDetailValues = true;
-                
-                if( wParam == PL_DC_START_POINT )
-                {
-                    ctrl->GetStartPoint( x, y );
-                    pblock->SetValue( kBmpDetailStartSize, t, (int)( x * 100.f ) );
-                    pblock->SetValue( kBmpDetailStartOpac, t, (int)( y * 100.f ) );
-                }
-                else
-                {
-                    ctrl->GetEndPoint( x, y );
-                    pblock->SetValue( kBmpDetailStopSize, t, (int)( x * 100.f ) );
-                    pblock->SetValue( kBmpDetailStopOpac, t, (int)( y * 100.f ) );
-                }
-                
-                map->UpdateUI( t );
-                fSettingDetailValues = false;
-            }
-            return 0;
-            
-        case WM_COMMAND:
-            if( HIWORD( wParam ) == EN_CHANGE && LOWORD( wParam ) == IDC_EXPORTWIDTH )
-                IClampTexSizeSpinner( t, map, true );
-            
-            else if( HIWORD( wParam ) == EN_CHANGE && LOWORD( wParam ) == IDC_EXPORTHEIGHT )
-                IClampTexSizeSpinner( t, map, false );
-            
-            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_BM_CROP_IMAGE)
-            {
-                IParamBlock2 *pblock = map->GetParamBlock();
-                PBBitmap *pbbm = pblock->GetBitmap(kBmpBitmap, t);
-                if (pbbm)
-                {
-                    if (!pbbm->bm)
-                        pbbm->bm = TheManager->Load(&pbbm->bi);
-                    
-                    BMCropper *cropper = TRACKED_NEW BMCropper(pblock);
-                    
-                    pbbm->bm->Display("Specify Cropping/Placement", BMM_CN, FALSE, TRUE, cropper);
-                }
-                //              bm->DeleteThis();
-                return TRUE;
-            }
-            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_LAYER_RELOAD)
-            {
-                // TEMP
-                IParamBlock2 *pblock = map->GetParamBlock();
-                PBBitmap *pbbm = pblock->GetBitmap(kBmpBitmap, t);
-                if (pbbm)
-                {
-                    plLayerTex *layer = (plLayerTex*)map->GetParamBlock()->GetOwner();
-
-                    layer->RefreshBitmaps();
-                    
-                    layer->fMtlParams->MtlChanged();
-                    layer->IChanged();
-                }
-                return TRUE;
-            }
-            else if (LOWORD(wParam) == IDC_LAYER_NAME)
-            {
-                plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)map->GetParamBlock()->GetOwner();
-                if (layer == nil)
-                    return FALSE;
-                BOOL selectedNewBitmap = layer->HandleBitmapSelection();
-                
-                if(selectedNewBitmap)
-                {
-                    IParamBlock2 *pblock = map->GetParamBlock();
-                    //plLayerTex *layer = (plLayerTex*)map->GetParamBlock()->GetOwner();
-                    
-                    //layer->SetBitmap(&bi);
-                    //layer->IChanged();
-                    //BitmapInfo *bi = &layer->GetPBBitmap()->bi;
-                    
-                    bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_LAYER_NAME));
-                    PBBitmap *pbbm = layer->GetPBBitmap();
-                    bmSelectBtn->SetText(pbbm != nil ? (TCHAR*)pbbm->bi.Filename() : "");
-                    ReleaseICustButton(bmSelectBtn);
-                    
-                    if (pbbm != nil)
-                    {
-                        // Init values for clamping spinners to powers of 2
-                        int width = IFloorPow2( pbbm->bi.Width() );
-                        map->SetRange( kBmpExportWidth, 4.f, (float)width );
-                        
-                        int height = IFloorPow2( pbbm->bi.Height() );
-                        map->SetRange( kBmpExportHeight, 4.f, (float)height );
-                        
-                        if( width > 512 )
-                        {
-                            height = (int)( 512.f * (float)( (float)height / (float)width ) );
-                            width = 512;
-                        }
-                        else if( height > 512 )
-                        {
-                            width = (int)( 512.f * (float)( (float)width / (float)height ) );
-                            height = 512;
-                        }
-                        pblock->SetValue( kBmpExportWidth, t, width );
-                        pblock->SetValue( kBmpExportLastWidth, t, width );
-                        pblock->SetValue( kBmpExportHeight, t, height );
-                        pblock->SetValue( kBmpExportLastHeight, t, height );
-                        
-                        IClampTexSizeSpinner( t, map, true );
-                    }   
-                    return TRUE;
-                }
-                else
-                {
-                    return FALSE;
-                }
-            }
-            break;
-        }
-        
-        return FALSE;
-    }
-    void DeleteThis() {};
-    
-    void    ISetDetailCurveNumLevels( IParamMap2 *map, TimeValue t )
-    {
-        /// Set the level count on the detail control
-        plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( map->GetHWnd(), IDC_DETAIL_CURVE_CTRL );
-        if( ctrl != NULL )
-        {
-            IParamBlock2 *pblock = map->GetParamBlock();
-            int w = pblock->GetInt( kBmpExportWidth, t );
-            int h = pblock->GetInt( kBmpExportHeight, t );
-            int numLevels = 0;
-            while( w > 1 && h > 1 )
-            {
-                w >>= 1;
-                h >>= 1;
-                numLevels++;
-            }
-            ctrl->SetNumLevels( numLevels );
-        }
-    }
-    
-    /// Clamp texture sizes to a power of 2
-    void    IClampTexSizeSpinner( TimeValue t, IParamMap2 *map, bool clampWidth )
-    {
-        IParamBlock2 *pblock = map->GetParamBlock();
-        ParamID     clampNew, clampOld;
-        ParamID     otherNew, otherOld;
-        
-        if( clampWidth )
-        {
-            clampNew = kBmpExportWidth; clampOld = kBmpExportLastWidth;
-            otherNew = kBmpExportHeight; otherOld = kBmpExportLastHeight;
-        }
-        else
-        {
-            clampNew = kBmpExportHeight; clampOld = kBmpExportLastHeight;
-            otherNew = kBmpExportWidth; otherOld = kBmpExportLastWidth;
-        }
-        
-        int     lastVal = pblock->GetInt( clampOld, t );
-        int     tempVal, newVal = pblock->GetInt( clampNew, t );
-        
-        if( newVal < lastVal )
-        {
-            lastVal = newVal;
-            for( tempVal = 1; tempVal <= newVal; tempVal <<= 1 );
-            newVal = tempVal >> 1;
-        }
-        else
-        {
-            lastVal = newVal;
-            for( tempVal = 1; tempVal < newVal; tempVal <<= 1 );
-            newVal = tempVal;
-        }
-        
-        pblock->SetValue( clampNew, t, newVal );
-        pblock->SetValue( clampOld, t, newVal );
-        
-        // And clamp aspect ratio
-        PBBitmap        *pbbm = pblock->GetBitmap( kBmpBitmap, t );
-        
-        if( pbbm != NULL )
-        {
-            int realWidth = pbbm->bi.Width();
-            int realHeight = pbbm->bi.Height();
-            
-            float aspect;
-            if( clampWidth )            
-                aspect = (float)realHeight / (float)realWidth;
-            else
-                aspect = (float)realWidth / (float)realHeight;
-            
-            int value = newVal;
-            value *= aspect;
-            
-            if( value < 4 )
-            {
-                // Can't be below 4!
-                value = 4;
-                pblock->SetValue( otherNew, t, value );
-                pblock->SetValue( otherOld, t, value );
-                value = value / aspect;
-                pblock->SetValue( clampNew, t, value );
-                pblock->SetValue( clampOld, t, value );
-            }
-            else
-            {
-                pblock->SetValue( otherNew, t, value );
-                pblock->SetValue( otherOld, t, value );
-            }
-        }
-        
-        ISetDetailCurveNumLevels( map, t );
-    }
-    
-    int     IFloorPow2( int value )
-    {
-        int     v;
-        
-        
-        for( v = 1; v <= value; v <<= 1 );
-        return v >> 1;
-    }
-    
-};
-
-static BitmapDlgProc gBitmapDlgProc;
 
 
 // Gotta love hacks....

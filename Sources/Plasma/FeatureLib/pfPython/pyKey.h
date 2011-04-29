@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/plKey.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class plPythonFileMod;

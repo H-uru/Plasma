@@ -2453,8 +2453,29 @@ enum
     kSmooth,
 };
 
-class plCameraCmdComponentProc;
-extern plCameraCmdComponentProc gCameraCmdComponentProc;
+class plCameraCmdComponentProc : public ParamMap2UserDlgProc
+{
+public:
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        return false;
+    }
+
+    void DeleteThis() {}
+
+protected:
+    void IEnableControls(IParamMap2 *map, int type)
+    {
+    }
+
+    void IAddComboItem(HWND hCombo, const char *name, int id)
+    {
+    }
+    void ISetComboSel(HWND hCombo, int type)
+    {
+    }
+};
+static plCameraCmdComponentProc gCameraCmdComponentProc;
 
 enum
 {
@@ -2531,30 +2552,3 @@ hsBool plCameraCmdComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
-
-class plCameraCmdComponentProc : public ParamMap2UserDlgProc
-{
-public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        return false;
-    }
-
-    void DeleteThis() {}
-
-protected:
-    void IEnableControls(IParamMap2 *map, int type)
-    {
-    }
-
-    void IAddComboItem(HWND hCombo, const char *name, int id)
-    {
-    }
-    void ISetComboSel(HWND hCombo, int type)
-    {
-    }
-};
-static plCameraCmdComponentProc gCameraCmdComponentProc;
-
-
-

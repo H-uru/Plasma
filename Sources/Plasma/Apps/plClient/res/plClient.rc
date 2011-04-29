@@ -2,15 +2,9 @@
 //
 #include "resource.h"
 
-#define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
-#include <afxres.h>
-
-/////////////////////////////////////////////////////////////////////////////
-#undef APSTUDIO_READONLY_SYMBOLS
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#define IDC_STATIC              (-1)     // all static controls
 
 /////////////////////////////////////////////////////////////////////////////
 // English (U.S.) resources
@@ -34,25 +28,8 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include <afxres.h>\r\n"
+    "\r\n"
     "\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
-    "#define _AFX_NO_OLE_RESOURCES\r\n"
-    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
-    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
-    "\r\n"
-    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
-    "#ifdef _WIN32\r\n"
-    "LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US\r\n"
-    "#pragma code_page(1252)\r\n"
-    "#endif //_WIN32\r\n"
-    "#endif\r\n"
-    "\r\n"
-    "CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST ""plClient.exe.manifest""\0"
 END
 
 #endif    // APSTUDIO_INVOKED

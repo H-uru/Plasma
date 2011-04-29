@@ -1112,7 +1112,7 @@ hsGMaterial *hsMaterialConverter::ICreateMaterial(Mtl *mtl, plMaxNode *node, con
     hsGuardEnd; 
 }
 
-#include "../MaxPlasmaMtls/Materials/plMultipassMtl.h"
+#include "MaxPlasmaMtls/Materials/plMultipassMtl.h"
 
 //
 // Handle materials for normal non-light, non-particle nodes.
@@ -2618,7 +2618,7 @@ void hsMaterialConverter::IAddLayerToMaterial(hsGMaterial *mat, plLayerInterface
 //
 // Functions called by the converters up above...
 //
-#include "../MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "MaxPlasmaMtls/Layers/plLayerTex.h"
 
 //// IMustBeUniqueMaterial ////////////////////////////////////////////////////
 //  Fun stuff here. If one of the layers of the material is a dynamic EnvMap,

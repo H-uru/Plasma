@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage/plAIMsg.h"
 
-#include <python.h>
+#include <Python.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 //

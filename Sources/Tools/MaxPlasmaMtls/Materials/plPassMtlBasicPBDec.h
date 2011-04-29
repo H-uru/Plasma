@@ -31,8 +31,60 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class PassBasicPBAccessor;
 extern PassBasicPBAccessor basicAccessor;
 
-class PassBasicDlgProc;
-extern PassBasicDlgProc gPassBasicDlgProc;
+class PassBasicDlgProc : public ParamMap2UserDlgProc
+{
+protected:
+    HIMAGELIST hLockButtons;
+
+    void LoadLockButtons()
+    {
+        static bool loaded = false;
+        if (loaded)
+            return;
+        loaded = true;  
+
+        HINSTANCE hInst = hInstance;
+        hLockButtons = ImageList_Create(16, 15, TRUE, 2, 0);
+        HBITMAP hBitmap = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS));
+        HBITMAP hMask   = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MASKBUTTONS));
+        ImageList_Add(hLockButtons, hBitmap, hMask);
+        DeleteObject(hBitmap);
+        DeleteObject(hMask);
+    }
+    void ISetLock(HWND hButton)
+    {
+        LoadLockButtons();
+
+        ICustButton *iBut = GetICustButton(hButton);
+        iBut->SetImage(hLockButtons,0,1,0,1,16,15);
+        iBut->SetType(CBT_CHECK);
+        ReleaseICustButton(iBut);
+    }
+
+
+public:
+    PassBasicDlgProc() : hLockButtons(NULL) {}
+    ~PassBasicDlgProc() { if (hLockButtons) ImageList_Destroy(hLockButtons); }
+
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        IParamBlock2 *pb = map->GetParamBlock();
+
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            {
+                ISetLock(GetDlgItem(hWnd, IDC_LOCK_AD));
+                ISetLock(GetDlgItem(hWnd, IDC_LOCK_COLORS));
+            }
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    virtual void DeleteThis() {}
+};
+static PassBasicDlgProc gPassBasicDlgProc;
 
 static ParamBlockDesc2 gPassBasicPB
 (
@@ -179,62 +231,3 @@ public:
     }
 };
 static PassBasicPBAccessor basicAccessor;
-
-class PassBasicDlgProc : public ParamMap2UserDlgProc
-{
-#if 1
-protected:
-    HIMAGELIST hLockButtons;
-
-    void LoadLockButtons()
-    {
-        static bool loaded = false;
-        if (loaded)
-            return;
-        loaded = true;  
-
-        HINSTANCE hInst = hInstance;
-        hLockButtons = ImageList_Create(16, 15, TRUE, 2, 0);
-        HBITMAP hBitmap = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS));
-        HBITMAP hMask   = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MASKBUTTONS));
-        ImageList_Add(hLockButtons, hBitmap, hMask);
-        DeleteObject(hBitmap);
-        DeleteObject(hMask);
-    }
-    void ISetLock(HWND hButton)
-    {
-        LoadLockButtons();
-
-        ICustButton *iBut = GetICustButton(hButton);
-        iBut->SetImage(hLockButtons,0,1,0,1,16,15);
-        iBut->SetType(CBT_CHECK);
-        ReleaseICustButton(iBut);
-    }
-
-
-public:
-    PassBasicDlgProc() : hLockButtons(NULL) {}
-    ~PassBasicDlgProc() { if (hLockButtons) ImageList_Destroy(hLockButtons); }
-#endif
-
-public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        IParamBlock2 *pb = map->GetParamBlock();
-
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            {
-                ISetLock(GetDlgItem(hWnd, IDC_LOCK_AD));
-                ISetLock(GetDlgItem(hWnd, IDC_LOCK_COLORS));
-            }
-            return TRUE;
-        }
-        return FALSE;
-    }
-    void DeleteThis() {}
-};
-static PassBasicDlgProc gPassBasicDlgProc;
-
-

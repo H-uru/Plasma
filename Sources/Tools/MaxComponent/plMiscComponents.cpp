@@ -2013,10 +2013,10 @@ hsBool plReferencePointComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *
 //
 //
 
-#include "../pnNetCommon/plSDLTypes.h"
-#include "../MaxConvert/hsMaterialConverter.h"
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "MaxConvert/hsMaterialConverter.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 #include "plCreatableIndex.h"
 
 class plNetSyncComponent : public plComponent

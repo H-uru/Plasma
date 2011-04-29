@@ -9019,7 +9019,10 @@ hsBool plDXPipeline::TestVisibleWorld( const hsBounds3Ext& wBnd )
 {
     if( fView.fCullTreeDirty )
         IRefreshCullTree();
-    return fView.fCullTree.BoundsVisible(wBnd);
+    if (wBnd.GetType() == kBoundsNormal)
+        return fView.fCullTree.BoundsVisible(wBnd);
+    else
+        return false;
 }
 
 hsBool plDXPipeline::TestVisibleWorld( const plSceneObject* sObj )

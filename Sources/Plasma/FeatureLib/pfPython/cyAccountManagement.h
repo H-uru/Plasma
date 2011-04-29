@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Python wrapper for account management functions
 //
 
-#include <python.h>
+#include <Python.h>
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 

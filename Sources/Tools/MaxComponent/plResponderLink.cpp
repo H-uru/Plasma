@@ -66,9 +66,59 @@ enum
 
 #define kDefaultLinkInAnimName "LinkOut"
 
-class plResponderLinkProc;
-extern plResponderLinkProc gResponderLinkProc;
+class plResponderLinkProc : public ParamMap2UserDlgProc
+{
+protected:
+    void ILoadLinkingRulesCombo(HWND hWnd, IParamBlock2* pb);
+    void ILoadAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb);
+    void ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb);
 
+public:
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            ILoadLinkingRulesCombo(hWnd, pm->GetParamBlock());
+            ILoadAgeFilenamesCombo(hWnd, pm->GetParamBlock());
+            ILoadParentAgeFilenamesCombo(hWnd, pm->GetParamBlock());
+            return TRUE;
+
+        case WM_COMMAND:
+            if (HIWORD(wParam) == CBN_SELCHANGE)
+            {
+                int sel = ComboBox_GetCurSel((HWND)lParam);
+                if (sel != CB_ERR)
+                {
+                    if (LOWORD(wParam) == IDC_LINKINGRULE)
+                    {
+                        int data = ComboBox_GetItemData((HWND)lParam, sel);
+                        pm->GetParamBlock()->SetValue(kLinkingRule, 0, data);
+                        return TRUE;
+                    }
+                    else if (LOWORD(wParam) == IDC_LINKAGEFILENAME)
+                    {
+                        char buf[256];
+                        SendMessage((HWND)lParam, CB_GETLBTEXT, sel, (LPARAM)buf);
+                        pm->GetParamBlock()->SetValue(kLinkAgeFilename, 0, buf);
+                        return TRUE;
+                    }
+                    else if (LOWORD(wParam) == IDC_PARENTAGEFILENAME)
+                    {
+                        char buf[256];
+                        SendMessage((HWND)lParam, CB_GETLBTEXT, sel, (LPARAM)buf);
+                        pm->GetParamBlock()->SetValue(kLinkParentAgeFilename, 0, buf);
+                        return TRUE;
+                    }
+                }
+            }
+            break;
+        }
+        return FALSE;
+    }
+    virtual void DeleteThis() {}
+};
+static plResponderLinkProc gResponderLinkProc;
 
 ParamBlockDesc2 gResponderLinkBlock
 (
@@ -200,60 +250,6 @@ plMessage *plResponderCmdLink::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, I
     return msg;
 }
 
-class plResponderLinkProc : public ParamMap2UserDlgProc
-{
-protected:
-    void ILoadLinkingRulesCombo(HWND hWnd, IParamBlock2* pb);
-    void ILoadAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb);
-    void ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb);
-
-public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            ILoadLinkingRulesCombo(hWnd, pm->GetParamBlock());
-            ILoadAgeFilenamesCombo(hWnd, pm->GetParamBlock());
-            ILoadParentAgeFilenamesCombo(hWnd, pm->GetParamBlock());
-            return TRUE;
-
-        case WM_COMMAND:
-            if (HIWORD(wParam) == CBN_SELCHANGE)
-            {
-                int sel = ComboBox_GetCurSel((HWND)lParam);
-                if (sel != CB_ERR)
-                {
-                    if (LOWORD(wParam) == IDC_LINKINGRULE)
-                    {
-                        int data = ComboBox_GetItemData((HWND)lParam, sel);
-                        pm->GetParamBlock()->SetValue(kLinkingRule, 0, data);
-                        return TRUE;
-                    }
-                    else if (LOWORD(wParam) == IDC_LINKAGEFILENAME)
-                    {
-                        char buf[256];
-                        SendMessage((HWND)lParam, CB_GETLBTEXT, sel, (LPARAM)buf);
-                        pm->GetParamBlock()->SetValue(kLinkAgeFilename, 0, buf);
-                        return TRUE;
-                    }
-                    else if (LOWORD(wParam) == IDC_PARENTAGEFILENAME)
-                    {
-                        char buf[256];
-                        SendMessage((HWND)lParam, CB_GETLBTEXT, sel, (LPARAM)buf);
-                        pm->GetParamBlock()->SetValue(kLinkParentAgeFilename, 0, buf);
-                        return TRUE;
-                    }
-                }
-            }
-            break;
-        }
-        return FALSE;
-    }
-    void DeleteThis() {}
-};
-static plResponderLinkProc gResponderLinkProc;
-
 static int ComboBox_AddStringData(HWND hCombo, const char* str, int data)
 {
     int idx = ComboBox_AddString(hCombo, str);
@@ -368,7 +364,8 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
 #include "plComponentBase.h"
 
 // Needed for message creation
-#include "../plModifier/plResponderModifier.h"
+#include "plModifier/plResponderModifier.h"
+#include "plResponderGetComp.h"
 
 enum
 {
@@ -376,70 +373,6 @@ enum
     kEnableNode,
     kEnableResponder,
 };
-
-class plResponderEnableProc;
-extern plResponderEnableProc gResponderEnableProc;
-
-ParamBlockDesc2 gResponderEnableBlock
-(
-    kResponderEnableMsgBlk, _T("enableCmd"), 0, NULL, P_AUTO_UI,
-
-    IDD_COMP_RESPOND_ENABLE, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderEnableProc,
-
-    kEnable,        _T("enable"),       TYPE_BOOL,      0, 0,
-        p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
-        p_default,  TRUE,
-        end,
-
-    kEnableNode,    _T("node"),         TYPE_REFTARG,       0, 0,
-        end,
-
-    kEnableResponder, _T("responder"),  TYPE_REFTARG,       P_NO_REF, 0,
-        end,
-
-    end
-);
-
-plResponderCmdEnable& plResponderCmdEnable::Instance()
-{
-    static plResponderCmdEnable theInstance;
-    return theInstance;
-}
-
-ParamBlockDesc2 *plResponderCmdEnable::GetDesc()
-{
-    return &gResponderEnableBlock;
-}
-
-#include "plResponderGetComp.h"
-
-const char *plResponderCmdEnable::GetInstanceName(IParamBlock2 *pb)
-{
-    static char name[256];
-
-    plComponentBase *comp = plResponderGetComp::Instance().GetSavedComp(pb, kEnableNode, kEnableResponder, true);
-    sprintf(name, "Responder Enable (%s)", comp ? comp->GetINode()->GetName() : "none");
-
-    return name;
-}
-
-plMessage *plResponderCmdEnable::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
-{
-    plComponentBase *comp = plResponderGetComp::Instance().GetSavedComp(pb, kEnableNode, kEnableResponder, true);
-    if (!comp)
-        throw "No responder component specified";
-
-    BOOL enable = pb->GetInt(kEnable);
-
-    plResponderEnableMsg *msg = TRACKED_NEW plResponderEnableMsg;
-    msg->fEnable = (enable != false);
-    
-    plMaxNodeBase *respondNode = (plMaxNodeBase*)pb->GetReferenceTarget(kEnableNode);
-    plKey responderKey = Responder::GetKey(comp, respondNode);
-    msg->AddReceiver(responderKey);
-
-    return msg;
-}
 
 class plResponderEnableProc : public ParamMap2UserDlgProc
 {
@@ -455,7 +388,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         switch (msg)
         {
@@ -488,14 +421,73 @@ public:
         }
         return FALSE;
     }
-    void DeleteThis() {}
+    virtual void DeleteThis() {}
 };
 static plResponderEnableProc gResponderEnableProc;
 
+ParamBlockDesc2 gResponderEnableBlock
+(
+    kResponderEnableMsgBlk, _T("enableCmd"), 0, NULL, P_AUTO_UI,
+
+    IDD_COMP_RESPOND_ENABLE, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderEnableProc,
+
+    kEnable,        _T("enable"),       TYPE_BOOL,      0, 0,
+        p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
+        p_default,  TRUE,
+        end,
+
+    kEnableNode,    _T("node"),         TYPE_REFTARG,       0, 0,
+        end,
+
+    kEnableResponder, _T("responder"),  TYPE_REFTARG,       P_NO_REF, 0,
+        end,
+
+    end
+);
+
+plResponderCmdEnable& plResponderCmdEnable::Instance()
+{
+    static plResponderCmdEnable theInstance;
+    return theInstance;
+}
+
+ParamBlockDesc2 *plResponderCmdEnable::GetDesc()
+{
+    return &gResponderEnableBlock;
+}
+
+const char *plResponderCmdEnable::GetInstanceName(IParamBlock2 *pb)
+{
+    static char name[256];
+
+    plComponentBase *comp = plResponderGetComp::Instance().GetSavedComp(pb, kEnableNode, kEnableResponder, true);
+    sprintf(name, "Responder Enable (%s)", comp ? comp->GetINode()->GetName() : "none");
+
+    return name;
+}
+
+plMessage *plResponderCmdEnable::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
+{
+    plComponentBase *comp = plResponderGetComp::Instance().GetSavedComp(pb, kEnableNode, kEnableResponder, true);
+    if (!comp)
+        throw "No responder component specified";
+
+    BOOL enable = pb->GetInt(kEnable);
+
+    plResponderEnableMsg *msg = TRACKED_NEW plResponderEnableMsg;
+    msg->fEnable = (enable != false);
+    
+    plMaxNodeBase *respondNode = (plMaxNodeBase*)pb->GetReferenceTarget(kEnableNode);
+    plKey responderKey = Responder::GetKey(comp, respondNode);
+    msg->AddReceiver(responderKey);
+
+    return msg;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 
 enum
 {
@@ -542,7 +534,7 @@ const char *plResponderCmdPhysEnable::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../plMessage/plSimStateMsg.h"
+#include "plMessage/plSimStateMsg.h"
 plMessage *plResponderCmdPhysEnable::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
     plMaxNode* physNode = (plMaxNode*)pb->GetINode(kEnablePhysNode);
@@ -562,86 +554,14 @@ plMessage *plResponderCmdPhysEnable::CreateMsg(plMaxNode* node, plErrorMsg *pErr
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "plMessage/plOneShotMsg.h"
+#include "plOneShotComponent.h"
+
 enum
 {
     kOneShotComp,
     kOneShotNode,
 };
-
-class plResponderOneShotProc;
-extern plResponderOneShotProc gResponderOneShotProc;
-
-ParamBlockDesc2 gResponderOneShotBlock
-(
-    kResponderOneShotMsgBlk, _T("oneShotCmd"), 0, NULL, P_AUTO_UI,
-
-    IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderOneShotProc,
-
-    kOneShotComp,   _T("oneShotComp"),          TYPE_REFTARG,       0, 0,
-        end,
-
-    kOneShotNode,   _T("oneShotNode"),          TYPE_REFTARG,       0, 0,
-        end,
-
-    end
-);
-
-plResponderCmdOneShot& plResponderCmdOneShot::Instance()
-{
-    static plResponderCmdOneShot theInstance;
-    return theInstance;
-}
-
-ParamBlockDesc2 *plResponderCmdOneShot::GetDesc()
-{
-    return &gResponderOneShotBlock;
-}
-
-const char *plResponderCmdOneShot::GetInstanceName(IParamBlock2 *pb)
-{
-    static char name[256];
-
-    plMaxNode *node = (plMaxNode*)pb->GetReferenceTarget(kOneShotComp);
-    sprintf(name, "One Shot (%s)", node ? node->GetName() : "none");
-
-    return name;
-}
-
-#include "../plMessage/plOneShotMsg.h"
-#include "plOneShotComponent.h"
-
-plMessage *plResponderCmdOneShot::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
-{
-    plResponderCompNode compNode;
-    plResponderCompNode::ClassIDs cids;
-    cids.push_back(ONESHOTCLASS_ID);
-    compNode.Init(pb, kOneShotComp, kOneShotNode, IDC_RESPONDER_COMP, IDC_RESPONDER_NODE, &cids);
-
-    plComponentBase *comp;
-    plMaxNodeBase *targNode;
-    if (compNode.GetCompAndNode(comp, targNode))
-    {
-        plKey oneShotKey = OneShotComp::GetOneShotKey(comp, targNode);
-        if (!oneShotKey)
-            throw "One-shot component didn't convert";
-
-        plOneShotMsg *msg = TRACKED_NEW plOneShotMsg;
-        msg->AddReceiver(oneShotKey);
-        return msg;
-    }
-    else
-        throw "No one-shot component specified";
-}
-
-#include "../plMessage/plOneShotCallbacks.h"
-
-void plResponderCmdOneShot::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo)
-{
-    plOneShotMsg *oneShotMsg = plOneShotMsg::ConvertNoRef(waitInfo.msg);
-    hsAssert(oneShotMsg, "Bad One-Shot message");
-    if (oneShotMsg)
-        oneShotMsg->fCallbacks->AddCallback(waitInfo.point, waitInfo.receiver, waitInfo.callbackUser);
-}
 
 class plResponderOneShotProc : public ParamMap2UserDlgProc
 {
@@ -685,6 +605,75 @@ public:
 };
 static plResponderOneShotProc gResponderOneShotProc;
 
+ParamBlockDesc2 gResponderOneShotBlock
+(
+    kResponderOneShotMsgBlk, _T("oneShotCmd"), 0, NULL, P_AUTO_UI,
+
+    IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderOneShotProc,
+
+    kOneShotComp,   _T("oneShotComp"),          TYPE_REFTARG,       0, 0,
+        end,
+
+    kOneShotNode,   _T("oneShotNode"),          TYPE_REFTARG,       0, 0,
+        end,
+
+    end
+);
+
+plResponderCmdOneShot& plResponderCmdOneShot::Instance()
+{
+    static plResponderCmdOneShot theInstance;
+    return theInstance;
+}
+
+ParamBlockDesc2 *plResponderCmdOneShot::GetDesc()
+{
+    return &gResponderOneShotBlock;
+}
+
+const char *plResponderCmdOneShot::GetInstanceName(IParamBlock2 *pb)
+{
+    static char name[256];
+
+    plMaxNode *node = (plMaxNode*)pb->GetReferenceTarget(kOneShotComp);
+    sprintf(name, "One Shot (%s)", node ? node->GetName() : "none");
+
+    return name;
+}
+
+plMessage *plResponderCmdOneShot::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
+{
+    plResponderCompNode compNode;
+    plResponderCompNode::ClassIDs cids;
+    cids.push_back(ONESHOTCLASS_ID);
+    compNode.Init(pb, kOneShotComp, kOneShotNode, IDC_RESPONDER_COMP, IDC_RESPONDER_NODE, &cids);
+
+    plComponentBase *comp;
+    plMaxNodeBase *targNode;
+    if (compNode.GetCompAndNode(comp, targNode))
+    {
+        plKey oneShotKey = OneShotComp::GetOneShotKey(comp, targNode);
+        if (!oneShotKey)
+            throw "One-shot component didn't convert";
+
+        plOneShotMsg *msg = TRACKED_NEW plOneShotMsg;
+        msg->AddReceiver(oneShotKey);
+        return msg;
+    }
+    else
+        throw "No one-shot component specified";
+}
+
+#include "plMessage/plOneShotCallbacks.h"
+
+void plResponderCmdOneShot::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo)
+{
+    plOneShotMsg *oneShotMsg = plOneShotMsg::ConvertNoRef(waitInfo.msg);
+    hsAssert(oneShotMsg, "Bad One-Shot message");
+    if (oneShotMsg)
+        oneShotMsg->fCallbacks->AddCallback(waitInfo.point, waitInfo.receiver, waitInfo.callbackUser);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -706,7 +695,7 @@ ParamBlockDesc2 *plResponderCmdNotify::GetDesc()
     return &gResponderNotifyBlock;
 }
 
-#include "../pnMessage/plNotifyMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 plMessage *plResponderCmdNotify::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
@@ -721,11 +710,46 @@ plMessage *plResponderCmdNotify::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg,
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "plCameraComponents.h"
-
-class plResponderActivatorEnableProc;
-extern plResponderActivatorEnableProc gResponderActivatorEnableProc;
+#include "plPickNode.h"
 
 enum { kActivatorComp, kActivatorEnable };
+
+class plResponderActivatorEnableProc : public ParamMap2UserDlgProc
+{
+protected:
+    void IUpdateButton(IParamBlock2 *pb, HWND hWnd)
+    {
+        INode *node = pb->GetINode(kActivatorComp);
+        if (node)
+            SetDlgItemText(hWnd, IDC_RESPONDER_BUTTON, node->GetName());
+        else
+            SetDlgItemText(hWnd, IDC_RESPONDER_BUTTON, "(none)");
+    }
+
+public:
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            IUpdateButton(pm->GetParamBlock(), hWnd);
+            return TRUE;
+
+        case WM_COMMAND:
+            if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_BUTTON)
+            {
+                if (plPick::DetectorEnable(pm->GetParamBlock(), kActivatorComp, true))
+                    IUpdateButton(pm->GetParamBlock(), hWnd);
+                return TRUE;
+            }
+            break;
+        }
+
+        return FALSE;
+    }
+    void DeleteThis() {}
+};
+static plResponderActivatorEnableProc gResponderActivatorEnableProc;
 
 ParamBlockDesc2 gResponderActivatorEnableBlock
 (
@@ -765,7 +789,7 @@ const char *plResponderCmdDetectorEnable::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 #include "plActivatorBaseComponent.h"
 #include "plVolumeGadgetComponent.h"
 #include "plNavigableComponents.h"
@@ -835,19 +859,18 @@ plMessage *plResponderCmdDetectorEnable::CreateMsg(plMaxNode* node, plErrorMsg *
     return msg;
 }
 
-#include "plPickNode.h"
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
 
-class plResponderActivatorEnableProc : public ParamMap2UserDlgProc
+#include "plMessage/plExcludeRegionMsg.h"
+#include "plExcludeRegionComponent.h"
+
+enum { kXRegionComp, kXRegionType, kXRegionNode };
+
+class plResponderXRegionProc : public ParamMap2UserDlgProc
 {
 protected:
-    void IUpdateButton(IParamBlock2 *pb, HWND hWnd)
-    {
-        INode *node = pb->GetINode(kActivatorComp);
-        if (node)
-            SetDlgItemText(hWnd, IDC_RESPONDER_BUTTON, node->GetName());
-        else
-            SetDlgItemText(hWnd, IDC_RESPONDER_BUTTON, "(none)");
-    }
+    plResponderCompNode fCompNode;
 
 public:
     BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -855,14 +878,25 @@ public:
         switch (msg)
         {
         case WM_INITDIALOG:
-            IUpdateButton(pm->GetParamBlock(), hWnd);
+            {
+                IParamBlock2 *pb = pm->GetParamBlock();
+
+                plResponderCompNode::ClassIDs cids;
+                cids.push_back(XREGION_CID);
+                fCompNode.Init(pb, kXRegionComp, kXRegionNode, IDC_RESPONDER_COMP, IDC_RESPONDER_NODE, &cids);
+                fCompNode.InitDlg(hWnd);
+            }
             return TRUE;
 
         case WM_COMMAND:
-            if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_BUTTON)
+            if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_COMP)
             {
-                if (plPick::DetectorEnable(pm->GetParamBlock(), kActivatorComp, true))
-                    IUpdateButton(pm->GetParamBlock(), hWnd);
+                fCompNode.CompButtonPress(hWnd);
+                return TRUE;
+            }
+            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_NODE)
+            {
+                fCompNode.NodeButtonPress(hWnd);
                 return TRUE;
             }
             break;
@@ -872,15 +906,7 @@ public:
     }
     void DeleteThis() {}
 };
-static plResponderActivatorEnableProc gResponderActivatorEnableProc;
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-class plResponderXRegionProc;
-extern plResponderXRegionProc gResponderXRegionProc;
-
-enum { kXRegionComp, kXRegionType, kXRegionNode };
+static plResponderXRegionProc gResponderXRegionProc;
 
 ParamBlockDesc2 gResponderXRegionBlock
 (
@@ -963,9 +989,6 @@ const char *plResponderCmdXRegion::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../plMessage/plExcludeRegionMsg.h"
-#include "plExcludeRegionComponent.h"
-
 plMessage *plResponderCmdXRegion::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
     plResponderCompNode compNode;
@@ -1000,52 +1023,8 @@ plMessage *plResponderCmdXRegion::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg
         throw "No exclude region component specified";
 }
 
-class plResponderXRegionProc : public ParamMap2UserDlgProc
-{
-protected:
-    plResponderCompNode fCompNode;
-
-public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            {
-                IParamBlock2 *pb = pm->GetParamBlock();
-
-                plResponderCompNode::ClassIDs cids;
-                cids.push_back(XREGION_CID);
-                fCompNode.Init(pb, kXRegionComp, kXRegionNode, IDC_RESPONDER_COMP, IDC_RESPONDER_NODE, &cids);
-                fCompNode.InitDlg(hWnd);
-            }
-            return TRUE;
-
-        case WM_COMMAND:
-            if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_COMP)
-            {
-                fCompNode.CompButtonPress(hWnd);
-                return TRUE;
-            }
-            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_NODE)
-            {
-                fCompNode.NodeButtonPress(hWnd);
-                return TRUE;
-            }
-            break;
-        }
-
-        return FALSE;
-    }
-    void DeleteThis() {}
-};
-static plResponderXRegionProc gResponderXRegionProc;
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
-
-class plResponderCameraTransitionProc;
-extern plResponderCameraTransitionProc gResponderCameraTransitionProc;
 
 enum 
 {   kCameraObj,
@@ -1093,7 +1072,7 @@ const char *plResponderCmdCamTransition::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../pnMessage/plCameraMsg.h"
+#include "pnMessage/plCameraMsg.h"
 #include "plCameraComponents.h"
 
 plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
@@ -1148,9 +1127,6 @@ plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *p
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
-
-class plResponderCameraForceProc;
-extern plResponderCameraForceProc gResponderCameraForceProc;
 
 enum 
 {
@@ -1243,7 +1219,7 @@ const char *plResponderCmdDelay::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../plMessage/plTimerCallbackMsg.h"
+#include "plMessage/plTimerCallbackMsg.h"
 
 plMessage *plResponderCmdDelay::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
@@ -1368,7 +1344,7 @@ const char *plResponderCmdVisibility::GetInstanceName(IParamBlock2 *pb)
     return name;
 }
 
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 
 static void AddChildKeysRecur(plMaxNode* node, plMessage* msg)
 {
@@ -1420,9 +1396,46 @@ plMessage *plResponderCmdVisibility::CreateMsg(plMaxNode* node, plErrorMsg *pErr
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 enum { kSubWorldNode, kSubWorldType };
+enum
+{
+    kRespondSubWorldEnter,
+    kRespondSubWorldExit,
+};
 
-class plResponderSubWorldProc;
-extern plResponderSubWorldProc gResponderSubWorldProc;
+class plResponderSubWorldProc : public ParamMap2UserDlgProc
+{
+public:
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            {
+                IParamBlock2 *pb = pm->GetParamBlock();
+                int type = pb->GetInt(kSubWorldType);
+
+                HWND nButton = GetDlgItem(hWnd, IDC_NODE_BUTTON);
+                //HWND sEnterText = GetDlgItem(hWnd, IDC_SUBWORLD_ENTER);
+                HWND sExitText = GetDlgItem(hWnd, IDC_SUBWORLD_EXIT);
+
+                BOOL isEnter = (type == kRespondSubWorldEnter) ? TRUE : FALSE;
+
+                ShowWindow(nButton, (isEnter) ? SW_SHOW : SW_HIDE);
+                //ShowWindow(sEnterText,(isEnter) ? SW_SHOW : SW_HIDE);
+                ShowWindow(sExitText, (isEnter) ? SW_HIDE : SW_SHOW);
+            }
+            return TRUE;
+
+        case WM_COMMAND:
+            break;
+        }
+
+        return FALSE;
+    }
+    virtual void DeleteThis() {}
+};
+
+static plResponderSubWorldProc gResponderSubWorldProc;
 
 ParamBlockDesc2 gResponderSubWorldBlock
 (
@@ -1439,12 +1452,6 @@ ParamBlockDesc2 gResponderSubWorldBlock
 
     end
 );
-
-enum
-{
-    kRespondSubWorldEnter,
-    kRespondSubWorldExit,
-};
 
 plResponderCmdSubWorld& plResponderCmdSubWorld::Instance()
 {
@@ -1532,54 +1539,45 @@ plMessage *plResponderCmdSubWorld::CreateMsg(plMaxNode* node, plErrorMsg *pErrMs
 
     return swMsg;
 }
-
-class plResponderSubWorldProc : public ParamMap2UserDlgProc
-{
-public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            {
-                IParamBlock2 *pb = pm->GetParamBlock();
-                int type = pb->GetInt(kSubWorldType);
-
-                HWND nButton = GetDlgItem(hWnd, IDC_NODE_BUTTON);
-                //HWND sEnterText = GetDlgItem(hWnd, IDC_SUBWORLD_ENTER);
-                HWND sExitText = GetDlgItem(hWnd, IDC_SUBWORLD_EXIT);
-
-                BOOL isEnter = (type == kRespondSubWorldEnter) ? TRUE : FALSE;
-
-                ShowWindow(nButton, (isEnter) ? SW_SHOW : SW_HIDE);
-                //ShowWindow(sEnterText,(isEnter) ? SW_SHOW : SW_HIDE);
-                ShowWindow(sExitText, (isEnter) ? SW_HIDE : SW_SHOW);
-            }
-            return TRUE;
-
-        case WM_COMMAND:
-            break;
-        }
-
-        return FALSE;
-    }
-    void DeleteThis() {}
-};
-
-static plResponderSubWorldProc gResponderSubWorldProc;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "../pfMessage/plArmatureEffectMsg.h"
-#include "../plAvatar/plArmatureEffects.h"
-
-class plResponderFootSurfaceProc;
-extern plResponderFootSurfaceProc gResponderFootSurfaceProc;
+#include "pfMessage/plArmatureEffectMsg.h"
+#include "plAvatar/plArmatureEffects.h"
 
 enum 
 {   
     kSurface,
 };
+
+class plResponderFootSurfaceProc : public ParamMap2UserDlgProc
+{
+public:
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        IParamBlock2 *pb = pm->GetParamBlock();
+        HWND hCB = GetDlgItem(hWnd, IDC_COMP_RESPOND_FOOT_SURFACE);
+        int i;
+
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            for (i = 0; i < plArmatureEffectsMgr::kMaxSurface; i++)
+                ComboBox_AddString(hCB, plArmatureEffectsMgr::SurfaceStrings[i]);
+
+            ComboBox_SetCurSel(hCB, pb->GetInt(ParamID(kSurface)));
+
+            return TRUE;
+
+        case WM_COMMAND:
+            if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_COMP_RESPOND_FOOT_SURFACE)
+                pb->SetValue(ParamID(kSurface), 0, ComboBox_GetCurSel(hCB));                
+        }
+        return FALSE;
+    }
+    void DeleteThis() {}
+};
+static plResponderFootSurfaceProc gResponderFootSurfaceProc;
 
 ParamBlockDesc2 gResponderFootSurfaceBlock
 (
@@ -1623,44 +1621,52 @@ plMessage *plResponderCmdFootSurface::CreateMsg(plMaxNode* node, plErrorMsg *pEr
     return msg;
 }
 
-class plResponderFootSurfaceProc : public ParamMap2UserDlgProc
-{
-public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        IParamBlock2 *pb = pm->GetParamBlock();
-        HWND hCB = GetDlgItem(hWnd, IDC_COMP_RESPOND_FOOT_SURFACE);
-        int i;
-
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            for (i = 0; i < plArmatureEffectsMgr::kMaxSurface; i++)
-                ComboBox_AddString(hCB, plArmatureEffectsMgr::SurfaceStrings[i]);
-
-            ComboBox_SetCurSel(hCB, pb->GetInt(ParamID(kSurface)));
-
-            return TRUE;
-
-        case WM_COMMAND:
-            if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_COMP_RESPOND_FOOT_SURFACE)
-                pb->SetValue(ParamID(kSurface), 0, ComboBox_GetCurSel(hCB));                
-        }
-        return FALSE;
-    }
-    void DeleteThis() {}
-};
-static plResponderFootSurfaceProc gResponderFootSurfaceProc;
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "plMultistageBehComponent.h"
-
-class plResponderMultistageProc;
-extern plResponderMultistageProc gResponderMultistageProc;
-
 enum { kMultistageComp, kMultistageNode };
+
+class plResponderMultistageProc : public ParamMap2UserDlgProc
+{
+protected:
+    plResponderCompNode fCompNode;
+
+public:
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            {
+                IParamBlock2 *pb = pm->GetParamBlock();
+
+                plResponderCompNode::ClassIDs cids;
+                cids.push_back(MULTISTAGE_BEH_CID);
+                fCompNode.Init(pb, kMultistageComp, kMultistageNode, IDC_RESPONDER_COMP, IDC_RESPONDER_NODE, &cids);
+                fCompNode.InitDlg(hWnd);
+            }
+            return TRUE;
+
+        case WM_COMMAND:
+            if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_COMP)
+            {
+                fCompNode.CompButtonPress(hWnd);
+                return TRUE;
+            }
+            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_NODE)
+            {
+                fCompNode.NodeButtonPress(hWnd);
+                return TRUE;
+            }
+            break;
+        }
+
+        return FALSE;
+    }
+    virtual void DeleteThis() {}
+};
+static plResponderMultistageProc gResponderMultistageProc;
 
 ParamBlockDesc2 gResponderMultistageBlock
 (
@@ -1722,44 +1728,3 @@ plMessage *plResponderCmdMultistage::CreateMsg(plMaxNode* node, plErrorMsg *pErr
     else
         throw "No Multistage component specified";
 }
-
-class plResponderMultistageProc : public ParamMap2UserDlgProc
-{
-protected:
-    plResponderCompNode fCompNode;
-
-public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            {
-                IParamBlock2 *pb = pm->GetParamBlock();
-
-                plResponderCompNode::ClassIDs cids;
-                cids.push_back(MULTISTAGE_BEH_CID);
-                fCompNode.Init(pb, kMultistageComp, kMultistageNode, IDC_RESPONDER_COMP, IDC_RESPONDER_NODE, &cids);
-                fCompNode.InitDlg(hWnd);
-            }
-            return TRUE;
-
-        case WM_COMMAND:
-            if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_COMP)
-            {
-                fCompNode.CompButtonPress(hWnd);
-                return TRUE;
-            }
-            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RESPONDER_NODE)
-            {
-                fCompNode.NodeButtonPress(hWnd);
-                return TRUE;
-            }
-            break;
-        }
-
-        return FALSE;
-    }
-    void DeleteThis() {}
-};
-static plResponderMultistageProc gResponderMultistageProc;

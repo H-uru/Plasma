@@ -42,7 +42,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         switch (msg)
         {
@@ -79,7 +79,7 @@ public:
         return FALSE;
     }
 
-    void DeleteThis() {}
+    virtual void DeleteThis() {}
 };  
 
 #endif

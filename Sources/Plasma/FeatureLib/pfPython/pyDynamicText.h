@@ -40,7 +40,7 @@ class pyImage;
 #include "hsTemplates.h"
 #include "hsStlUtils.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 

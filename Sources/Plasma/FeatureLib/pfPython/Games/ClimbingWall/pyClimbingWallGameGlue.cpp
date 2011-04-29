@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pyClimbingWallGame.h"
 
-#include <python.h>
+#include <Python.h>
 #include "../../pyEnum.h"
 
 ///////////////////////////////////////////////////////////////////////////////

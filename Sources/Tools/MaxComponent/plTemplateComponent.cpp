@@ -100,7 +100,7 @@ const char* plTemplateComponent::IGetAgeName(plMaxNode *node)
     return nil;
 }
 
-#include "../MaxMain/plMaxNodeData.h"
+#include "MaxMain/plMaxNodeData.h"
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
@@ -150,7 +150,7 @@ hsBool plTemplateComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../plModifier/plCloneSpawnModifier.h"
+#include "plModifier/plCloneSpawnModifier.h"
 
 class plSpawnComponent : public plComponent
 {

@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyEnum.h"
 #include "pyKey.h"
 
-#include <python.h>
+#include <Python.h>
 
 void pySDL::AddPlasmaConstantsClasses(PyObject *m)
 {

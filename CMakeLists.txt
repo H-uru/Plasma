@@ -9,7 +9,7 @@ find_package(OpenAL REQUIRED)
 find_package(PythonLibs REQUIRED)
 find_package(EXPAT REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(PHYSX REQUIRED)  #TODO: Not required if we aren't building the client
+find_package(PhysX REQUIRED)  #TODO: Not required if we aren't building the client
 find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the client
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
 find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
@@ -69,10 +69,21 @@ if(PLASMA_TARGETS STREQUAL "Ethereal")
     add_definitions(-DSTREAM_LOGGER)
 endif(PLASMA_TARGETS STREQUAL "Ethereal")
 
+include(TestBigEndian)
+test_big_endian(BIG_ENDIAN)
+if(BIG_ENDIAN)
+    add_definitions(-DBIG_ENDIAN)
+else()
+    add_definitions(-DLITTLE_ENDIAN)
+endif()
+
 if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 endif(MSVC)
+
+#TODO: Make the OpenSSL includes less promiscuous so this isn't needed
+include_directories(${OPENSSL_INCLUDE_DIR})
 
 add_subdirectory(Sources/Plasma)
 add_subdirectory(Sources/Tools)

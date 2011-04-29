@@ -61,14 +61,6 @@ void PrintStringF(void pfun(const char *),const char * fmt, ...)
 *
 ***/
 
-//TODO: Fix Plasma to use OpenSSL's byte order (or better yet, to use OpenSSL),
-//      so this hack isn't needed
-static void swap_key_bytes(byte keyData[])
-{
-    for (size_t i = 0; i < (kNetDiffieHellmanKeyBits / 16); ++i)
-        std::swap(keyData[i], keyData[ (kNetDiffieHellmanKeyBits / 8) - i - 1 ]);
-}
-
 //============================================================================
 // Server group
 PF_CONSOLE_GROUP(Server)
@@ -159,7 +151,6 @@ PF_CONSOLE_CMD(
 
     Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kAuthDhNData);
-    swap_key_bytes(kAuthDhNData);
 }
 
 //============================================================================
@@ -178,7 +169,6 @@ PF_CONSOLE_CMD(
 
     Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kAuthDhXData);
-    swap_key_bytes(kAuthDhXData);
 }
 
 
@@ -214,7 +204,6 @@ PF_CONSOLE_CMD(
 
     Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kCsrDhNData);
-    swap_key_bytes(kCsrDhNData);
 }
 
 //============================================================================
@@ -233,7 +222,6 @@ PF_CONSOLE_CMD(
 
     Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kCsrDhXData);
-    swap_key_bytes(kCsrDhXData);
 }
 
 
@@ -257,7 +245,6 @@ PF_CONSOLE_CMD(
 
     Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGameDhNData);
-    swap_key_bytes(kGameDhNData);
 }
 
 //============================================================================
@@ -276,7 +263,6 @@ PF_CONSOLE_CMD(
 
     Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGameDhXData);
-    swap_key_bytes(kGameDhXData);
 }
 
 
@@ -312,7 +298,6 @@ PF_CONSOLE_CMD(
 
     Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGateKeeperDhNData);
-    swap_key_bytes(kGateKeeperDhNData);
 }
 
 //============================================================================
@@ -331,5 +316,4 @@ PF_CONSOLE_CMD(
 
     Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGateKeeperDhXData);
-    swap_key_bytes(kGateKeeperDhXData);
 }
