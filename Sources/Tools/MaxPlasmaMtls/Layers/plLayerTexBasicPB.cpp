@@ -64,7 +64,7 @@ static const char *kUsageTypes[] =
 class BasicDlgProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         IParamBlock2 *pb = map->GetParamBlock();
 
@@ -101,6 +101,6 @@ public:
 
         return false;
     }
-    void DeleteThis() {};
+    virtual void DeleteThis() {};
 };
 static BasicDlgProc gBasicDlgProc;

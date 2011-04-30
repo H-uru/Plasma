@@ -58,9 +58,9 @@ protected:
     
 public:
     plAnimCompProc();
-    void DeleteThis() {}
+    virtual void DeleteThis() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    virtual BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
     bool GetCompAndNode(IParamBlock2* pb, plComponentBase*& comp, plMaxNode*& node);
 };

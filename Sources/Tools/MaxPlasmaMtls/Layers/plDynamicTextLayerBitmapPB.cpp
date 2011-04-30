@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class DTLBitmapDlgProc : public ParamMap2UserDlgProc
 {
+public:
     /// Called to update the controls of the dialog
     virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map )
     {
@@ -69,7 +70,7 @@ class DTLBitmapDlgProc : public ParamMap2UserDlgProc
     }
 
     /// Main message proc
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
 
         switch (msg)
@@ -136,7 +137,7 @@ class DTLBitmapDlgProc : public ParamMap2UserDlgProc
 
         return FALSE;
     }
-    void DeleteThis() {};
+    virtual void DeleteThis() {};
 
 protected:
     /// Clamp texture sizes to a power of 2
