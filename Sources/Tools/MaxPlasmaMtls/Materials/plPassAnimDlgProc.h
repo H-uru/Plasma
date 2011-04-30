@@ -59,9 +59,9 @@ class plPassAnimDlgProc : public ParamMap2UserDlgProc, public plMtlChangeCallbac
         plPassAnimDlgProc();
         virtual ~plPassAnimDlgProc();
 
-        BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-        void DeleteThis() {}
-        void SetThing(ReferenceTarget *m);
+        virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+        virtual void DeleteThis() {}
+        virtual void SetThing(ReferenceTarget *m);
         virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap);
 
         void    SegmentListChanged( void );

@@ -72,8 +72,23 @@ enum MtlNodeType
     kNodeResponder  // Use the node the responder is attached to
 };
 
-class plResponderMtlProc;
-extern plResponderMtlProc gResponderMtlProc;
+#include "plAnimCompProc.h"
+
+class plResponderMtlProc : public plMtlAnimProc
+{
+public:
+    plResponderMtlProc();
+
+protected:
+    virtual void IOnInitDlg(HWND hWnd, IParamBlock2* pb);
+    virtual void ILoadUser(HWND hWnd, IParamBlock2* pb);
+    virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID);
+
+    virtual void IPickNode(IParamBlock2* pb);
+
+    virtual void ISetNodeButtonText(HWND hWnd, IParamBlock2* pb);
+};
+static plResponderMtlProc gResponderMtlProc;
 
 ParamBlockDesc2 gResponderMtlBlock
 (
@@ -460,24 +475,6 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-#include "plAnimCompProc.h"
-
-class plResponderMtlProc : public plMtlAnimProc
-{
-public:
-    plResponderMtlProc();
-
-protected:
-    virtual void IOnInitDlg(HWND hWnd, IParamBlock2* pb);
-    virtual void ILoadUser(HWND hWnd, IParamBlock2* pb);
-    virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID);
-
-    virtual void IPickNode(IParamBlock2* pb);
-
-    virtual void ISetNodeButtonText(HWND hWnd, IParamBlock2* pb);
-};
-static plResponderMtlProc gResponderMtlProc;
 
 plResponderMtlProc::plResponderMtlProc()
 {

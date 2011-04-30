@@ -99,6 +99,7 @@ class PickAnchorNode : public PickObjectProc
 
 class DELBitmapDlgProc : public ParamMap2UserDlgProc
 {
+public:
     PickAnchorNode  fPickAnchorCallback;
 
     /// Called to update the controls of the dialog
@@ -149,7 +150,7 @@ class DELBitmapDlgProc : public ParamMap2UserDlgProc
     }
 
     /// Main message proc
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         switch (msg)
         {
@@ -183,7 +184,7 @@ class DELBitmapDlgProc : public ParamMap2UserDlgProc
         return FALSE;
     }
 
-    void DeleteThis() {};
+    virtual void DeleteThis() {};
 };
 
 static DELBitmapDlgProc gDELBitmapDlgProc;

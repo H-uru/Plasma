@@ -618,6 +618,130 @@ void plParticleCoreComponent::SetParticleStats(plParticleMtl *mtl)
     fUserInput.fOrientation = pb->GetInt(plParticleMtl::kOrientation);
 }
 
+class ParticleCompDlgProc : public ParamMap2UserDlgProc
+{
+protected:
+    void EnableDynGenParams(IParamMap2 *pm, bool enabled)
+    {
+        pm->Enable(plParticleComponent::kConeAngle, enabled);
+        pm->Enable(plParticleComponent::kVelocityMin, enabled);
+        pm->Enable(plParticleComponent::kVelocityMax, enabled);
+        pm->Enable(plParticleComponent::kLifeMin, enabled);
+        pm->Enable(plParticleComponent::kLifeMax, enabled);
+        pm->Enable(plParticleComponent::kImmortal, enabled);
+        pm->Enable(plParticleComponent::kPPS, enabled);
+        pm->Enable(plParticleComponent::kGravity, enabled);
+        pm->Enable(plParticleComponent::kPreSim, enabled);
+        pm->Enable(plParticleComponent::kDrag, enabled);
+    }
+
+public:
+    ParticleCompDlgProc() {}
+    ~ParticleCompDlgProc() {}
+
+    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, UInt32 id)
+    {
+        UInt32 minIndex, maxIndex;
+        hsBool adjustMin;
+        switch(id)
+        {
+        case IDC_COMP_PARTICLE_VELMIN:
+        case IDC_COMP_PARTICLE_VELMIN_SPIN:
+            minIndex = plParticleCoreComponent::kVelocityMin; maxIndex = plParticleCoreComponent::kVelocityMax; adjustMin = false;
+            break;
+        case IDC_COMP_PARTICLE_VELMAX:
+        case IDC_COMP_PARTICLE_VELMAX_SPIN:
+            minIndex = plParticleCoreComponent::kVelocityMin; maxIndex = plParticleCoreComponent::kVelocityMax; adjustMin = true;
+            break;
+        case IDC_COMP_PARTICLE_LIFEMIN:
+        case IDC_COMP_PARTICLE_LIFEMIN_SPIN:
+            minIndex = plParticleCoreComponent::kLifeMin; maxIndex = plParticleCoreComponent::kLifeMax; adjustMin = false;
+            break;
+        case IDC_COMP_PARTICLE_LIFEMAX:
+        case IDC_COMP_PARTICLE_LIFEMAX_SPIN:
+            minIndex = plParticleCoreComponent::kLifeMin; maxIndex = plParticleCoreComponent::kLifeMax; adjustMin = true;
+            break;
+        default:
+            return;
+        }
+
+        float min, max;
+        min = pb->GetFloat(minIndex, t);
+        max = pb->GetFloat(maxIndex, t);
+
+        if (min > max)
+        {
+            if (adjustMin)
+                pb->SetValue(minIndex, t, max);
+            else
+                pb->SetValue(maxIndex, t, min);
+
+            map->Invalidate(minIndex);
+            map->Invalidate(maxIndex);
+        }
+    }
+
+    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        int id = LOWORD(wParam);
+        int code = HIWORD(wParam);
+
+        IParamBlock2 *pb = map->GetParamBlock();
+        HWND cbox = NULL;
+
+        int selection;
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+            int j;
+            for (j = 0; j < plParticleCoreComponent::kGenNumOptions; j++)
+            {
+                cbox = GetDlgItem(hWnd, IDC_GEN_TYPE);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plParticleCoreComponent::GenStrings[j]);
+            }
+            selection = pb->GetInt(plParticleCoreComponent::kGenType);
+            SendMessage(cbox, CB_SETCURSEL, selection, 0);
+            EnableDynGenParams(map, selection != plParticleCoreComponent::kGenOnePerVertex);
+
+            CheckDlgButton(hWnd, IDC_TRACKVIEW_SHOW, plParticleComponent::fAllowUnhide ? BST_CHECKED : BST_UNCHECKED);
+            return TRUE;
+
+        case WM_COMMAND:  
+            if (id == IDC_GEN_TYPE)
+            {
+                selection = SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
+                pb->SetValue(plParticleCoreComponent::kGenType, t, selection);
+                EnableDynGenParams(map, selection != plParticleCoreComponent::kGenOnePerVertex);
+                return TRUE;
+            }
+            else if (id == IDC_COMP_PARTICLE_VELMIN || id == IDC_COMP_PARTICLE_VELMAX ||
+                id == IDC_COMP_PARTICLE_LIFEMIN || id == IDC_COMP_PARTICLE_LIFEMAX)
+            {
+                IValidateSpinners(t, pb, map, id);
+                return TRUE;
+            }
+            else if (id == IDC_TRACKVIEW_SHOW && code == BN_CLICKED)
+            {
+                plParticleComponent::fAllowUnhide = (IsDlgButtonChecked(hWnd, IDC_TRACKVIEW_SHOW) == BST_CHECKED);
+                plComponentShow::Update();
+                return TRUE;
+            }
+            break;
+        case CC_SPINNER_CHANGE:
+            if (id == IDC_COMP_PARTICLE_VELMIN_SPIN || id == IDC_COMP_PARTICLE_VELMAX_SPIN ||
+                id == IDC_COMP_PARTICLE_LIFEMIN_SPIN || id == IDC_COMP_PARTICLE_LIFEMAX_SPIN)
+            {
+                IValidateSpinners(t, pb, map, id);
+                return TRUE;
+            }
+            break;
+        }
+        return FALSE;
+    }
+    virtual void DeleteThis() {}
+};
+static ParticleCompDlgProc gParticleCompDlgProc;
+
 CLASS_DESC(plParticleComponent, gParticleDesc, "Particle System",  "ParticleSystem", COMP_TYPE_PARTICLE, PARTICLE_SYSTEM_COMPONENT_CLASS_ID)
 
 ParamBlockDesc2 gParticleBk
@@ -777,130 +901,6 @@ hsBool plParticleComponent::GetParamVals(plMaxNode *pNode)
 
     return true;
 }
-
-class ParticleCompDlgProc : public ParamMap2UserDlgProc
-{
-protected:
-    void EnableDynGenParams(IParamMap2 *pm, bool enabled)
-    {
-        pm->Enable(plParticleComponent::kConeAngle, enabled);
-        pm->Enable(plParticleComponent::kVelocityMin, enabled);
-        pm->Enable(plParticleComponent::kVelocityMax, enabled);
-        pm->Enable(plParticleComponent::kLifeMin, enabled);
-        pm->Enable(plParticleComponent::kLifeMax, enabled);
-        pm->Enable(plParticleComponent::kImmortal, enabled);
-        pm->Enable(plParticleComponent::kPPS, enabled);
-        pm->Enable(plParticleComponent::kGravity, enabled);
-        pm->Enable(plParticleComponent::kPreSim, enabled);
-        pm->Enable(plParticleComponent::kDrag, enabled);
-    }
-
-public:
-    ParticleCompDlgProc() {}
-    ~ParticleCompDlgProc() {}
-
-    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, UInt32 id)
-    {
-        UInt32 minIndex, maxIndex;
-        hsBool adjustMin;
-        switch(id)
-        {
-        case IDC_COMP_PARTICLE_VELMIN:
-        case IDC_COMP_PARTICLE_VELMIN_SPIN:
-            minIndex = plParticleCoreComponent::kVelocityMin; maxIndex = plParticleCoreComponent::kVelocityMax; adjustMin = false;
-            break;
-        case IDC_COMP_PARTICLE_VELMAX:
-        case IDC_COMP_PARTICLE_VELMAX_SPIN:
-            minIndex = plParticleCoreComponent::kVelocityMin; maxIndex = plParticleCoreComponent::kVelocityMax; adjustMin = true;
-            break;
-        case IDC_COMP_PARTICLE_LIFEMIN:
-        case IDC_COMP_PARTICLE_LIFEMIN_SPIN:
-            minIndex = plParticleCoreComponent::kLifeMin; maxIndex = plParticleCoreComponent::kLifeMax; adjustMin = false;
-            break;
-        case IDC_COMP_PARTICLE_LIFEMAX:
-        case IDC_COMP_PARTICLE_LIFEMAX_SPIN:
-            minIndex = plParticleCoreComponent::kLifeMin; maxIndex = plParticleCoreComponent::kLifeMax; adjustMin = true;
-            break;
-        default:
-            return;
-        }
-
-        float min, max;
-        min = pb->GetFloat(minIndex, t);
-        max = pb->GetFloat(maxIndex, t);
-
-        if (min > max)
-        {
-            if (adjustMin)
-                pb->SetValue(minIndex, t, max);
-            else
-                pb->SetValue(maxIndex, t, min);
-
-            map->Invalidate(minIndex);
-            map->Invalidate(maxIndex);
-        }
-    }
-
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        int id = LOWORD(wParam);
-        int code = HIWORD(wParam);
-
-        IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
-
-        int selection;
-        switch (msg)
-        {
-        case WM_INITDIALOG:
-            int j;
-            for (j = 0; j < plParticleCoreComponent::kGenNumOptions; j++)
-            {
-                cbox = GetDlgItem(hWnd, IDC_GEN_TYPE);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plParticleCoreComponent::GenStrings[j]);
-            }
-            selection = pb->GetInt(plParticleCoreComponent::kGenType);
-            SendMessage(cbox, CB_SETCURSEL, selection, 0);
-            EnableDynGenParams(map, selection != plParticleCoreComponent::kGenOnePerVertex);
-
-            CheckDlgButton(hWnd, IDC_TRACKVIEW_SHOW, plParticleComponent::fAllowUnhide ? BST_CHECKED : BST_UNCHECKED);
-            return TRUE;
-
-        case WM_COMMAND:  
-            if (id == IDC_GEN_TYPE)
-            {
-                selection = SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
-                pb->SetValue(plParticleCoreComponent::kGenType, t, selection);
-                EnableDynGenParams(map, selection != plParticleCoreComponent::kGenOnePerVertex);
-                return TRUE;
-            }
-            else if (id == IDC_COMP_PARTICLE_VELMIN || id == IDC_COMP_PARTICLE_VELMAX ||
-                id == IDC_COMP_PARTICLE_LIFEMIN || id == IDC_COMP_PARTICLE_LIFEMAX)
-            {
-                IValidateSpinners(t, pb, map, id);
-                return TRUE;
-            }
-            else if (id == IDC_TRACKVIEW_SHOW && code == BN_CLICKED)
-            {
-                plParticleComponent::fAllowUnhide = (IsDlgButtonChecked(hWnd, IDC_TRACKVIEW_SHOW) == BST_CHECKED);
-                plComponentShow::Update();
-                return TRUE;
-            }
-            break;
-        case CC_SPINNER_CHANGE:
-            if (id == IDC_COMP_PARTICLE_VELMIN_SPIN || id == IDC_COMP_PARTICLE_VELMAX_SPIN ||
-                id == IDC_COMP_PARTICLE_LIFEMIN_SPIN || id == IDC_COMP_PARTICLE_LIFEMAX_SPIN)
-            {
-                IValidateSpinners(t, pb, map, id);
-                return TRUE;
-            }
-            break;
-        }
-        return FALSE;
-    }
-    void DeleteThis() {}
-};
-static ParticleCompDlgProc gParticleCompDlgProc;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
