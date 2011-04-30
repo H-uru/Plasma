@@ -86,6 +86,7 @@ void SetCsrSrvHostname (const wchar addr[]);
 
 unsigned GetGateKeeperSrvHostnames (const wchar *** addrs); // returns addrCount
 void SetGateKeeperSrvHostname (const wchar addr[]);
+bool GateKeeperSrvHostnameOverride ();
 
 const wchar *GetServerStatusUrl ();
 void SetServerStatusUrl (const wchar url[]);

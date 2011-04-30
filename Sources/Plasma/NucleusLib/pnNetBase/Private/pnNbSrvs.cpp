@@ -145,6 +145,11 @@ void SetGateKeeperSrvHostname (const wchar addr[]) {
     StrCopy(s_gateKeeperAddrConsole, addr, arrsize(s_gateKeeperAddrConsole));
 }
 
+//============================================================================
+bool GateKeeperSrvHostnameOverride () {
+    return s_gateKeeperAddrConsole[0];
+}
+
 
 //============================================================================
 // User-visible Server
