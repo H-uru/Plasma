@@ -212,7 +212,7 @@ class xOpeningSequence(ptModifier):
                     # start rendering the scene again
                     PtEnableRenderScene()
                     PtGUICursorOn()
-                    Orientation.dialog.show()
+                    OrientationDlg.dialog.show()
                     PtDebugPrint("xOpeningSequence - no intro movie!!!",level=kDebugDumpLevel)
             elif event == kAction or event == kValueChanged:
                 orientationID = control.getTagID()
