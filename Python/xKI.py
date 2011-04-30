@@ -4961,8 +4961,8 @@ class xKI(ptModifier):
         return 0
 
     def IGetAgeDisplayName(self,ageInfo=None):
-        "Returns the way the name should be displayed"
-        "Top right KI display"
+        """Returns the way the name should be displayed
+           Top right KI display"""
         isSubAge = 0
         agevault = ptAgeVault()
         if type(ageInfo) == type(None):
@@ -4971,7 +4971,7 @@ class xKI(ptModifier):
         isChildAge = self.IIsChildAge(ageInfo)
 
         if type(ageInfo) != type(None):
-            print "Age display name input ", ageInfo.getAgeFilename()
+            PtDebugPrint("Age display name input " + ageInfo.getAgeFilename(), level=kDebugDumpLevel)
 
             if ageInfo.getAgeFilename() != "Neighborhood":
                 subAges = agevault.getSubAgesFolder()
@@ -5052,8 +5052,8 @@ class xKI(ptModifier):
             return "?UNKNOWN?"
 
     def IFilterAgeName(self,ageName):
-        "filter and lastminute switching of the age names... can be anywhere in string"
-        "KI Age folders"
+        """filter and lastminute switching of the age names... can be anywhere in string
+           KI Age folders"""
         #print "IFilterAgeName input as %s" % (ageName)
         if ageName.find("Garrison") != -1:
             ageName = ageName.replace("Garrison", "Gahreesen")
@@ -5122,7 +5122,7 @@ class xKI(ptModifier):
 
         if ageName.find("(null)") != -1:
             ageName = ageName.replace("(null)", "").strip()
-        # print "AgeName output as %s" % (ageName)
+        #print "AgeName output as %s" % (ageName)
         return ageName
 
 
@@ -6079,7 +6079,7 @@ class xKI(ptModifier):
                                     self.IAddPlayerToRecents(eplyr.playerGetID())
                                     break
             if not foundBuddy:
-                PtDebugPrint("xKI:SendRTChat: /p codmand can't find player %s"%(pwords[1]),level=kDebugDumpLevel)
+                PtDebugPrint("xKI:SendRTChat: /p command can't find player %s"%(pwords[1]),level=kDebugDumpLevel)
                 self.IAddRTChat(None,PtGetLocalizedString("KI.Chat.CannotFindBuddy", [pwords[1]]),kChatSystemMessage)
                 return
         elif message.startswith(str(PtGetLocalizedString("KI.Commands.ChatNeighbors"))):

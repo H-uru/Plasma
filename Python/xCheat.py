@@ -362,7 +362,7 @@ def GZGiveMeFullAccess(args):
     # Finally, update the KI display
     Plasma.PtSendKIMessage(PlasmaKITypes.kGZUpdated,0)
 
-    
+
 def GZGiveMeGPS(args):
     import Plasma
     import PlasmaKITypes

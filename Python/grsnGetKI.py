@@ -40,11 +40,6 @@ clkDispensor = ptAttribActivator(1,"The clickable to get KI")
 rspDispensor = ptAttribResponder(2, "The responder to get KI")
 
 #----------
-# globals
-#----------
-WasAvatarLocal = 0
-
-#----------
 # constants
 #----------
 
@@ -56,17 +51,11 @@ class grsnGetKI(ptModifier):
         self.version = 1
 
     def OnNotify(self,state,id,events):
-        global WasAvatarLocal
-        #~ PtDebugPrint("grsnGetKI: Notify event state=%f,id=%d,events=" % (state,id),events)
+        #~PtDebugPrint("grsnGetKI: Notify event state=%f,id=%d,events=" % (state,id),events)
         # is this our activator notifying us?
         if state and id == clkDispensor.id:
-            avatar_who_clicked = PtFindAvatar(events)
-            if avatar_who_clicked == PtGetLocalAvatar():
-                WasAvatarLocal = 1
-            else:
-                WasAvatarLocal = 0
-            rspDispensor.run(self.key,events=events)
+            if PtGetLocalAvatar() == PtFindAvatar(events):
+                rspDispensor.run(self.key, events=events, netForce=1)
         if state and id == rspDispensor.id:
-            if WasAvatarLocal:
+            if PtWasLocallyNotified(self.key):
                 PtSendKIMessageInt(kUpgradeKILevel,kNormalKI)
-            WasAvatarLocal = 0
