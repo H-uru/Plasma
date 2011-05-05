@@ -986,7 +986,7 @@ void NetCommConnect () {
     if (!gDataServerLocal) {
 
         // if a console override was specified for a filesrv, connect directly to the fileserver rather than going through the gatekeeper
-        if(GetFileSrvHostnames(&addrs) && FileSrvHostnameOverride())
+        if(GetFileSrvHostnames(&addrs) && wcslen(addrs[0]))
         {
             NetCliFileStartConnect(addrs, count);
         }
