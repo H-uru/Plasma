@@ -838,6 +838,8 @@ void PythonInterface::initPython()
         // initialize the Python stuff
         // let Python do some initialization...
         Py_SetProgramName("plasma");
+        Py_NoSiteFlag = 1;
+        Py_IgnoreEnvironmentFlag = 1;
         Py_Initialize();
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
