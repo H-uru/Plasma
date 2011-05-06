@@ -41,6 +41,8 @@ void PythonInterface::initPython(std::string rootDir)
         // initialize the Python stuff
         // let Python do some intialization...
         Py_SetProgramName("plasma");
+        Py_NoSiteFlag = 1;
+        Py_IgnoreEnvironmentFlag = 1;
         Py_Initialize();
 
         // intialize any of our special plasma python modules
