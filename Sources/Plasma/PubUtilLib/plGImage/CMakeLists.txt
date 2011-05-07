@@ -3,6 +3,9 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
+find_package(PNG REQUIRED)
+include_directories(${PNG_INCLUDE_DIR})
+
 set(plGImage_SOURCES
     hsCodecManager.cpp
     hsDXTDirectXCodec.cpp
@@ -17,6 +20,7 @@ set(plGImage_SOURCES
     plFontCache.cpp
     plLODMipmap.cpp
     plMipmap.cpp
+    plPNG.cpp
     plTGAWriter.cpp
     plWinFontCache.cpp
 )
@@ -37,6 +41,7 @@ set(plGImage_HEADERS
     plGImageCreatable.h
     plLODMipmap.h
     plMipmap.h
+    plPNG.h
     plTGAWriter.h
     plWinFontCache.h
 )
