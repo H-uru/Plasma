@@ -885,7 +885,6 @@ PYTHON_METHOD_DEFINITION(ptImportHook, load_module, args)
     // Grab sys.__dict__ so we can get started
     PyObject* sys_mod  = PyImport_ImportModule("sys");
     PyObject* sys_dict = PyModule_GetDict(sys_mod);
-    Py_INCREF(sys_dict);
 
     // We want to check sys.modules for the module first
     // If it's not in there, we have to load the module
@@ -893,7 +892,6 @@ PYTHON_METHOD_DEFINITION(ptImportHook, load_module, args)
     // otherwise reload() will not work properly.
     PyObject* result = nil;
     PyObject* modules = PyDict_GetItemString(sys_dict, "modules");
-    Py_INCREF(modules);
     hsAssert(PyDict_Check(modules), "sys.modules is not a dict");
 
     if (result = PyDict_GetItemString(modules, module_name))
@@ -923,9 +921,6 @@ PYTHON_METHOD_DEFINITION(ptImportHook, load_module, args)
         else
             PyErr_SetString(PyExc_ImportError, "module not found in python.pak");
     }
-
-    Py_DECREF(modules);
-    Py_DECREF(sys_dict);
 
     if (result)
         return result;
