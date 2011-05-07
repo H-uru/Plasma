@@ -847,12 +847,7 @@ BOOL WinInit(HINSTANCE hInst, int nCmdShow)
 
     char windowName[256];
     wchar productString[256];
-//#ifdef PLASMA_EXTERNAL_RELEASE    
-#if 0   // Show the full product string in external build window title until we roll it into the options dialog -eap
     StrCopy(productString, ProductLongName(), arrsize(productString));
-#else
-    ProductString(productString, arrsize(productString));
-#endif
     StrToAnsi(windowName, productString, arrsize(windowName));
     
     // Create a window
