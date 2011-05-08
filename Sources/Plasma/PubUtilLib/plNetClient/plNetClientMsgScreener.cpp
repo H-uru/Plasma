@@ -23,9 +23,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "plCreatableIndex.h"
 #include "plNetClientMsgScreener.h"
 #include "plNetLinkingMgr.h"
 
+#include "pfMessage/pfKIMsg.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnMessage/plMessage.h"
 
@@ -86,7 +88,7 @@ bool plNetClientMsgScreener::IIsSenderCCR(const plNetGameMember* gm) const
 //
 // return true if msg is allowed/accepted as a net msg
 //
-bool plNetClientMsgScreener::AllowMessage(const plMessage* msg) const
+bool plNetClientMsgScreener::AllowOutgoingMessage(const plMessage* msg) const
 {
     if (!msg)
         return false;
@@ -96,14 +98,60 @@ bool plNetClientMsgScreener::AllowMessage(const plMessage* msg) const
         return true;
     if (ans==kNo)
     {
-        // WarningMsg("Quick-reject net propagated msg %s", msg->ClassName());
+        WarningMsg("Rejected: (Outgoing) %s [Illegal Message]", msg->ClassName());
         return false;
     }
 
     if (!IValidateMessage(msg))
     {
-        // WarningMsg("Validation failed.  Blocking net propagated msg %s", msg->ClassName());
+        WarningMsg("Rejected: (Outgoing) %s [Validation Failed]", msg->ClassName());
         return false;
     }
     return true;
+}
+
+//
+// Return false for obvious hacked network messages
+// This is all because we cannot trust Cyan's servers
+//
+bool plNetClientMsgScreener::AllowIncomingMessage(const plMessage* msg) const
+{
+    if (!msg)
+        return false;
+
+    bool result = IScreenIncoming(msg);
+    if (!result)
+        WarningMsg("Rejected: (Incoming) %s", msg->ClassName());
+
+    return result;
+}
+
+bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
+{
+    // Why would you EVER send a RefMsg accross the network???
+    if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plRefMsg), msg->ClassIndex()))
+        return false;
+
+    // Blacklist some obvious hacks here...
+    switch (msg->ClassIndex())
+    {
+    case CLASS_INDEX_SCOPED(plAudioSysMsg):
+        // This message has a flawed read/write
+        return false;
+    case CLASS_INDEX_SCOPED(plConsoleMsg):
+        // Python remote code execution vunerability
+        return false;
+    case CLASS_INDEX_SCOPED(pfKIMsg):
+        {
+            // Only accept Chat Messages!
+            const pfKIMsg* ki = pfKIMsg::ConvertNoRef(msg);
+            if (ki->GetCommand() != pfKIMsg::kHACKChatMsg)
+                return false;
+            return true;
+        }
+    default:
+        // Default allow everything else, otherweise we
+        // might break something that we really shouldn't...
+        return true;
+    }
 }
