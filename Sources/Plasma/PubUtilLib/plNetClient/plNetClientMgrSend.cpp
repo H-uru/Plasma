@@ -28,7 +28,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientMgr.h"
 #include "plCreatableIndex.h"   
 #include "plNetObjectDebugger.h"
-#include "plNetClientMsgScreener.h"
 
 #include "pnNetCommon/plSynchedObject.h"
 #include "pnNetCommon/plSDLTypes.h"
@@ -220,8 +219,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     if (GetFlagsBit(kDisabled))
         return hsOK;
 
-    static plNetClientMsgScreener screener;     // make static so that there's only 1 log per session
-    if (!screener.AllowMessage(msg))
+    if (!fScreener.AllowOutgoingMessage(msg))
     {
         if (GetFlagsBit(kScreenMessages))
             return hsOK;        // filter out illegal messages

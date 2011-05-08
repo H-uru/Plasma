@@ -34,6 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetVoiceList.h"
 #include "plNetClientMsgHandler.h"
 #include "plNetClientStats.h"       // STATS Counters
+#include "plNetClientMsgScreener.h"
 
 #include "pnNetCommon/plNetApp.h"
 
@@ -162,6 +163,7 @@ private:
     plNetTalkList fTalkList;            // other players I'm talking to
 
     plNetClientMsgHandler   fMsgHandler;
+    plNetClientMsgScreener  fScreener;
 
     // recorder support
     plNetClientRecorder* fMsgRecorder;

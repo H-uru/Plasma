@@ -41,11 +41,13 @@ protected:
     bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const;
     bool IIsSenderCCR(const plNetGameMember* gm=nil) const;
     bool IAmClient() const { return true; }
+    bool IScreenIncoming(const plMessage* msg) const;
 public:
 
     plNetClientMsgScreener();
     
-    bool AllowMessage(const plMessage* msg) const;
+    bool AllowOutgoingMessage(const plMessage* msg) const;
+    bool AllowIncomingMessage(const plMessage* msg) const;
 };
 
 
