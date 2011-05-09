@@ -847,12 +847,7 @@ BOOL WinInit(HINSTANCE hInst, int nCmdShow)
 
     char windowName[256];
     wchar productString[256];
-//#ifdef PLASMA_EXTERNAL_RELEASE    
-#if 0   // Show the full product string in external build window title until we roll it into the options dialog -eap
     StrCopy(productString, ProductLongName(), arrsize(productString));
-#else
-    ProductString(productString, arrsize(productString));
-#endif
     StrToAnsi(windowName, productString, arrsize(windowName));
     
     // Create a window
@@ -1581,21 +1576,20 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     si.cb = sizeof(si);
     wchar cmdLine[MAX_PATH];
     const wchar ** addrs;
-    unsigned count;
     
     if (!eventExists) // if it is missing, assume patcher wasn't launched
     {
         StrCopy(cmdLine, s_patcherExeName, arrsize(cmdLine));
-        count = GetAuthSrvHostnames(&addrs);
-        if(count && AuthSrvHostnameOverride())
+        GetAuthSrvHostnames(&addrs);
+        if(wcslen(addrs[0]))
             StrPrintf(cmdLine, arrsize(cmdLine), L"%ws /AuthSrv=%ws", cmdLine, addrs[0]);
 
-        count = GetFileSrvHostnames(&addrs);
-        if(count && FileSrvHostnameOverride())
+        GetFileSrvHostnames(&addrs);
+        if(wcslen(addrs[0]))
             StrPrintf(cmdLine, arrsize(cmdLine), L"%ws /FileSrv=%ws", cmdLine, addrs[0]);
 
-        count = GetGateKeeperSrvHostnames(&addrs);
-        if(count && GateKeeperSrvHostnameOverride())
+        GetGateKeeperSrvHostnames(&addrs);
+        if(wcslen(addrs[0]))
             StrPrintf(cmdLine, arrsize(cmdLine), L"%ws /GateKeeperSrv=%ws", cmdLine, addrs[0]);
 
         if(!CreateProcessW(NULL, cmdLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))

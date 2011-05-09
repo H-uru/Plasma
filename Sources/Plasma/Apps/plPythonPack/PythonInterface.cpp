@@ -41,6 +41,8 @@ void PythonInterface::initPython(std::string rootDir)
         // initialize the Python stuff
         // let Python do some intialization...
         Py_SetProgramName("plasma");
+        Py_NoSiteFlag = 1;
+        Py_IgnoreEnvironmentFlag = 1;
         Py_Initialize();
 
         // intialize any of our special plasma python modules
@@ -142,7 +144,7 @@ hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Int32* size)
 #if (PY_MAJOR_VERSION == 2) && (PY_MINOR_VERSION < 4)
     s = PyMarshal_WriteObjectToString(pyobj);
 #else
-    s = PyMarshal_WriteObjectToString(pyobj, 0);
+    s = PyMarshal_WriteObjectToString(pyobj, Py_MARSHAL_VERSION);
 #endif
     // did it actually do it?
     if ( s != NULL )

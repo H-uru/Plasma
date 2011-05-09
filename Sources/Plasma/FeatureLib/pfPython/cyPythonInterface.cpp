@@ -31,6 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //       only be one instance of this interface. 
 //
 #include "cyPythonInterface.h"
+#include "plPythonPack.h"
 
 #include "compile.h"
 #include "marshal.h"
@@ -823,6 +824,165 @@ PYTHON_CLASS_CHECK_IMPL(ptErrorRedirector, pyErrorRedirector)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptErrorRedirector, pyErrorRedirector)
 
 /////////////////////////////////////////////////////////////////////////////
+// PEP 302 Import Hook
+/////////////////////////////////////////////////////////////////////////////
+#ifndef BUILDING_PYPLASMA
+struct ptImportHook
+{
+    PyObject_HEAD
+};
+
+// First three functions are just so I can be lazy
+// and use the already existing macros to do my dirty
+// work. I'm seriously lazy.
+
+static PyObject* ptImportHook_new(PyTypeObject* type, PyObject* args, PyObject*)
+{
+    ptImportHook* self = (ptImportHook*)type->tp_alloc(type, 0);
+    return (PyObject*)self;
+}
+
+PYTHON_NO_INIT_DEFINITION(ptImportHook)
+
+static void ptImportHook_dealloc(ptImportHook *self)
+{
+    self->ob_type->tp_free((PyObject*)self);
+}
+
+PYTHON_METHOD_DEFINITION(ptImportHook, find_module, args)
+{
+    char* module_name;
+    PyObject* module_path;
+
+    if (!PyArg_ParseTuple(args, "s|O", &module_name, &module_path))
+    {
+        PyErr_SetString(PyExc_TypeError, "find_module expects string, string");
+        PYTHON_RETURN_ERROR;
+    }
+
+    // If this is set, we can't do it.
+    if (PyString_Check(module_path))
+        PYTHON_RETURN_NONE;
+
+    if (PythonPack::IsItPythonPacked(module_name))
+    {
+        Py_INCREF(self);
+        return (PyObject*)self;
+    }
+    else
+        PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION(ptImportHook, load_module, args)
+{
+    char* module_name;
+    if (!PyArg_ParseTuple(args, "s", &module_name))
+    {
+        PyErr_SetString(PyExc_TypeError, "load_module expects string");
+        PYTHON_RETURN_ERROR;
+    }
+
+    // Grab sys.__dict__ so we can get started
+    PyObject* sys_mod  = PyImport_ImportModule("sys");
+    PyObject* sys_dict = PyModule_GetDict(sys_mod);
+
+    // We want to check sys.modules for the module first
+    // If it's not in there, we have to load the module
+    // and add it to the sys.modules dict for future reference,
+    // otherwise reload() will not work properly.
+    PyObject* result = nil;
+    PyObject* modules = PyDict_GetItemString(sys_dict, "modules");
+    hsAssert(PyDict_Check(modules), "sys.modules is not a dict");
+
+    if (result = PyDict_GetItemString(modules, module_name))
+    {
+        if (!PyModule_Check(result))
+        {
+            hsAssert(false, "PEP 302 hook found module in sys.modules, but it isn't a module! O.o");
+            result = nil;
+            PyErr_SetString(PyExc_TypeError, "module in sys.modules isn't a module");
+        }
+    }
+    else
+    {
+        if (PyObject* pyc = PythonPack::OpenPythonPacked(module_name))
+        {
+            result = PyImport_ExecCodeModule(module_name, pyc);
+            if (result == nil)
+            {
+                PyErr_Print();
+            }
+            else
+            {
+                PyModule_AddObject(result, "__loader__", (PyObject*)self);
+                PyDict_SetItemString(modules, module_name, result);
+            }
+        }
+        else
+            PyErr_SetString(PyExc_ImportError, "module not found in python.pak");
+    }
+
+    if (result)
+        return result;
+    else
+        PYTHON_RETURN_ERROR;
+}
+
+PYTHON_START_METHODS_TABLE(ptImportHook)
+    PYTHON_METHOD(ptImportHook, find_module, "Params: module_name,package_path\nChecks to see if a given module exists (NOTE: package_path is not used!)"),
+    PYTHON_METHOD(ptImportHook, load_module, "Params: module_name \\nReturns the module given by module_name, if it exists in python.pak"),
+PYTHON_END_METHODS_TABLE;
+
+PYTHON_TYPE_START(ptImportHook)
+    0,
+    "Plasma.ptImportHook",
+    sizeof(ptImportHook),                       /* tp_basicsize */
+    0,                                          /* tp_itemsize */
+    (destructor)ptImportHook_dealloc,           /* tp_dealloc */
+    0,                                          /* tp_print */
+    0,                                          /* tp_getattr */
+    0,                                          /* tp_setattr */
+    0,                                          /* tp_compare */
+    0,                                          /* tp_repr */
+    0,                                          /* tp_as_number */
+    0,                                          /* tp_as_sequence */
+    0,                                          /* tp_as_mapping */
+    0,                                          /* tp_hash */
+    0,                                          /* tp_call */
+    0,                                          /* tp_str */
+    0,                                          /* tp_getattro */
+    0,                                          /* tp_setattro */
+    0,                                          /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */
+    "PEP 302 Import Hook",                      /* tp_doc */
+    0,                                          /* tp_traverse */
+    0,                                          /* tp_clear */
+    0,                                          /* tp_richcompare */
+    0,                                          /* tp_weaklistoffset */
+    0,                                          /* tp_iter */
+    0,                                          /* tp_iternext */
+    PYTHON_DEFAULT_METHODS_TABLE(ptImportHook), /* tp_methods */
+    0,                                          /* tp_members */
+    0,                                          /* tp_getset */
+    0,                                          /* tp_base */
+    0,                                          /* tp_dict */
+    0,                                          /* tp_descr_get */
+    0,                                          /* tp_descr_set */
+    0,                                          /* tp_dictoffset */
+    PYTHON_DEFAULT_INIT(ptImportHook),          /* tp_init */
+    0,                                          /* tp_alloc */
+    ptImportHook_new                            /* tp_new */
+PYTHON_TYPE_END;
+
+void ptImportHook_AddPlasmaClasses(PyObject* m)
+{
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptImportHook);
+    PYTHON_CLASS_IMPORT_END(m);
+}
+#endif // BUILDING_PYPLASMA
+
+/////////////////////////////////////////////////////////////////////////////
 //
 //  Function   : initPython
 //  PARAMETERS : none
@@ -838,6 +998,8 @@ void PythonInterface::initPython()
         // initialize the Python stuff
         // let Python do some initialization...
         Py_SetProgramName("plasma");
+        Py_NoSiteFlag = 1;
+        Py_IgnoreEnvironmentFlag = 1;
         Py_Initialize();
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
@@ -954,7 +1116,6 @@ void PythonInterface::initPython()
             return;
         }
 
-        Py_DECREF(sys_dict);
         Py_DECREF(path_list);
 
         std::vector<PyMethodDef> methods; // this is temporary, for easy addition of new methods
@@ -988,6 +1149,26 @@ void PythonInterface::initPython()
             std::string error;
             getOutputAndReset(&error);
         }
+
+ #ifndef BUILDING_PYPLASMA
+        // Begin PEP 302 Import Hook stuff
+        // We need to create a ptImportHook object
+        ptImportHook* hook = PyObject_New(ptImportHook, &ptImportHook_type);
+        PyObject* metapath = PyDict_GetItemString(sys_dict, "meta_path");
+        Py_INCREF(metapath);
+
+        // Since PEP 302 is insane, let's be sure things are the way
+        // that we expect them to be. Silent failures != cool.
+        hsAssert(metapath != nil, "PEP 302: sys.__dict__['meta_path'] missing!");
+        hsAssert(PyList_Check(metapath), "PEP 302: sys.__dict__['meta_path'] is not a list!");
+
+        // Now that we have meta_path, add our hook to the list
+        PyList_Append(metapath, (PyObject*)hook);
+        Py_DECREF(metapath);
+        // And we're done!
+#endif // BUILDING_PYPLASMA
+
+        Py_DECREF(sys_dict);
 
         // initialize the PlasmaConstants module
         PyMethodDef noMethods = {NULL};
@@ -1277,6 +1458,9 @@ void PythonInterface::AddPlasmaClasses()
 
     // AI
     pyCritterBrain::AddPlasmaClasses(plasmaMod);
+
+    // Stupid thing
+    ptImportHook_AddPlasmaClasses(plasmaMod);
 }
 
 
@@ -1907,7 +2091,7 @@ hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Int32* size)
 #if (PY_MAJOR_VERSION == 2) && (PY_MINOR_VERSION < 4)
     s = PyMarshal_WriteObjectToString(pyobj);
 #else
-    s = PyMarshal_WriteObjectToString(pyobj, 0);
+    s = PyMarshal_WriteObjectToString(pyobj, Py_MARSHAL_VERSION);
 #endif
 
     // did it actually do it?
