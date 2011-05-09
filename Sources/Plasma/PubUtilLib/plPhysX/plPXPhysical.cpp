@@ -837,10 +837,12 @@ void plPXPhysical::ISetTransformGlobal(const hsMatrix44& l2w)
         }
     }
 
-    if (GetProperty(plSimulationInterface::kPhysAnim))
-    {   hsAssert(fActor->readBodyFlag(NX_BF_KINEMATIC),"This Should be kinematic");
+    // This used to check for the kPhysAnim flag, however animated detectors
+    // are also kinematic but not kPhysAnim, therefore, this would break on PhysX
+    // SDKs (yes, I'm looking at you, 2.6.4) that actually obey the ***GlobalPose 
+    // rules set forth in the SDK documentation.
+    if (fActor->readBodyFlag(NX_BF_KINEMATIC))
         fActor->moveGlobalPose(mat);
-    }
     else
         fActor->setGlobalPose(mat);
 }

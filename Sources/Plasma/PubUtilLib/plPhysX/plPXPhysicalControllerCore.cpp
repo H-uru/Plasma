@@ -951,7 +951,7 @@ void plPXPhysicalControllerCore::HandleEnableChanged()
         // PHYSX FIXME - after re-enabling check to see if we are inside any convex hull detector regions
         hsPoint3 pos;
         IGetPositionSim(pos);
-        plSimulationMgr::GetInstance()->UpdateDetectorsInScene(fWorldKey,GetOwner(),pos,fEnable);
+        plSimulationMgr::GetInstance()->UpdateDetectorsInScene(fWorldKey,GetOwner(),pos,fEnabled);
 #endif  // USE_PHYSX_CONVEXHULL_WORKAROUND
         //IInformDetectors(true);
 }
