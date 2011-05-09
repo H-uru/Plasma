@@ -351,6 +351,12 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
                 nc->DebugMsg("Converting game msg future timeStamp, curT=%f, futT=%f", secs, timeStamp);
             }
 
+            // Do some basic security checks on the incoming message because
+            // we cannot nesecarily trust the server because the server trusts
+            // the remote client WAY too much.
+            if (!IGetNetClientMgr()->fScreener.AllowIncomingMessage(gameMsg))
+                return hsOK;
+
             plgDispatch::Dispatch()->MsgSend(gameMsg);
             
             // Debug

@@ -376,13 +376,7 @@ bool plStatusLogMgr::DumpLogs( const wchar *newFolderName )
 //// plStatusLog ////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#if defined(PLASMA_EXTERNAL_RELEASE) && (BUILD_TYPE == BUILD_TYPE_LIVE)
-// If this is an external live build then don't write log files
-UInt32 plStatusLog::fLoggingOff = true;
-#else
 UInt32 plStatusLog::fLoggingOff = false;
-#endif
-
 
 plStatusLog::plStatusLog( UInt8 numDisplayLines, const wchar *filename, UInt32 flags )
 {

@@ -200,7 +200,6 @@ void WritePythonFile(const char *fileName, const char* path, hsStream *s)
         if (chars_read > 0)
         {
             printf(errmsg);
-            printf("\n");
         }
     }
 

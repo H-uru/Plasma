@@ -75,11 +75,9 @@ enum ESrvType {
 
 unsigned GetAuthSrvHostnames (const wchar *** addrs);   // returns addrCount
 void SetAuthSrvHostname (const wchar addr[]);
-bool AuthSrvHostnameOverride ();
 
 unsigned GetFileSrvHostnames (const wchar *** addrs);   // returns addrCount
 void SetFileSrvHostname (const wchar addr[]);
-bool FileSrvHostnameOverride ();
 
 unsigned GetCsrSrvHostnames (const wchar *** addrs);    // returns addrCount
 void SetCsrSrvHostname (const wchar addr[]);

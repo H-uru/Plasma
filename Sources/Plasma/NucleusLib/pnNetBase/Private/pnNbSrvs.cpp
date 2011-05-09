@@ -89,12 +89,6 @@ void SetAuthSrvHostname (const wchar addr[]) {
 }
 
 //============================================================================
-bool AuthSrvHostnameOverride () {
-
-    return s_authAddrConsole[0];
-}
-
-//============================================================================
 // File
 //============================================================================
 unsigned GetFileSrvHostnames (const wchar *** addrs) {
@@ -107,12 +101,6 @@ unsigned GetFileSrvHostnames (const wchar *** addrs) {
 void SetFileSrvHostname (const wchar addr[]) {
 
     StrCopy(s_fileAddrConsole, addr, arrsize(s_fileAddrConsole));
-}
-
-//============================================================================
-bool FileSrvHostnameOverride () {
-
-    return s_fileAddrConsole[0];
 }
 
 //============================================================================
