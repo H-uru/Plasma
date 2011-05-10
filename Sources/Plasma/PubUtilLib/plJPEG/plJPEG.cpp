@@ -230,11 +230,25 @@ plMipmap*   plJPEG::ReadFromFile( const char *fileName )
 plMipmap*   plJPEG::ReadFromFile( const wchar *fileName )
 {
     // we use a stream because the IJL can't handle unicode
-    hsUNIXStream out;
-    if (!out.Open(fileName, L"rb"))
+    hsRAMStream tempstream;
+    hsUNIXStream in;
+    if (!in.Open(fileName, L"rb"))
         return false;
-    plMipmap* ret = IRead(&out);
-    out.Close();
+
+    // The stream reader for JPEGs expects a 32-bit size at the start,
+    // so insert that into the stream before passing it on
+    in.FastFwd();
+    UInt32 fsize = in.GetPosition();
+    UInt8 *tempbuffer = TRACKED_NEW UInt8[fsize];
+    in.Rewind();
+    in.Read(fsize, tempbuffer);
+    tempstream.WriteSwap32(fsize);
+    tempstream.Write(fsize, tempbuffer);
+    delete [] tempbuffer;
+    tempstream.Rewind();
+
+    plMipmap* ret = IRead(&tempstream);
+    in.Close();
     return ret;
 }
 
@@ -344,10 +358,23 @@ hsBool  plJPEG::WriteToFile( const char *fileName, plMipmap *sourceData )
 hsBool  plJPEG::WriteToFile( const wchar *fileName, plMipmap *sourceData )
 {
     // we use a stream because the IJL can't handle unicode
+    hsRAMStream tempstream;
     hsUNIXStream out;
     if (!out.Open(fileName, L"wb"))
         return false;
-    hsBool ret = IWrite(sourceData, &out);
+    hsBool ret = IWrite(sourceData, &tempstream);
+    if (ret)
+    {
+        // The stream writer for JPEGs prepends a 32-bit size,
+        // so remove that from the stream before saving to a file
+        tempstream.Rewind();
+        UInt32 fsize = tempstream.ReadSwap32();
+        UInt8 *tempbuffer = TRACKED_NEW UInt8[fsize];
+        tempstream.Read(fsize, tempbuffer);
+        out.Write(fsize, tempbuffer);
+
+        delete [] tempbuffer;
+    }
     out.Close();
     return ret;
 }
