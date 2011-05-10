@@ -49,6 +49,8 @@ class plPNG
         hsBool WriteToStream( hsStream *outStream, plMipmap *sourceData ) { return IWrite( sourceData, outStream ); }
         hsBool WriteToFile( const char *fileName, plMipmap *sourceData );
         hsBool WriteToFile( const wchar *fileName, plMipmap *sourceData );
+
+        static plPNG &Instance( void );
 };
 
 #endif // _plPNG_h
