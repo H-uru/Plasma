@@ -203,6 +203,7 @@ if (WIN32)
     target_link_libraries(MaxMain Strmiids)
     target_link_libraries(MaxMain Vfw32)
     target_link_libraries(MaxMain Ws2_32)
+    target_link_libraries(MaxMain winmm)
 endif(WIN32)
 
 source_group("Header Files" FILES ${MaxMain_HEADERS})
