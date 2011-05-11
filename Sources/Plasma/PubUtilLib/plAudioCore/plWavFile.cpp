@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdio.h>
 #include "plWavFile.h"
 
-#ifdef MAXPLUGINCODE
+#ifdef BUILDING_MAXPLUGIN
 
 #ifdef DX_OLD_SDK
     #include <dxerr9.h>
@@ -1094,4 +1094,4 @@ public:
 
 #endif
 
-#endif //MAXPLUGINCODE
+#endif // BUILDING_MAXPLUGIN

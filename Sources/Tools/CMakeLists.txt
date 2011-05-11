@@ -4,8 +4,6 @@
 #add_subdirectory(plResBrowser)
 
 # Max Stuff goes below here...
-option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF)
-
 if(3dsm_BUILD_PLUGIN)
     add_definitions(-DMAXPLUGINCODE)
     
