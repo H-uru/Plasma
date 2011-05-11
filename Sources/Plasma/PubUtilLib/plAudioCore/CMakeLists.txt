@@ -10,6 +10,7 @@ include_directories(${Vorbis_INCLUDE_DIR})
 set(plAudioCore_SOURCES
     plAudioFileReader.cpp
     plBufferedFileReader.cpp
+    plCachedFileReader.cpp
     plFastWavReader.cpp
     plOGGCodec.cpp
     plSoundBuffer.cpp
@@ -22,6 +23,7 @@ set(plAudioCore_HEADERS
     plAudioCoreCreatable.h
     plAudioFileReader.h
     plBufferedFileReader.h
+    plCachedFileReader.h
     plFastWavReader.h
     plOGGCodec.h
     plSoundBuffer.h
