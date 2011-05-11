@@ -33,24 +33,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMipmap;
 class hsStream;
 
-class plPNG
-{
-    protected:
+class plPNG {
+protected:
 
-        plMipmap *IRead( hsStream *inStream );
-        hsBool IWrite( plMipmap *source, hsStream *outStream );
+    plMipmap* IRead(hsStream* inStream);
+    hsBool IWrite(plMipmap* source, hsStream* outStream);
 
-    public:
+public:
 
-        plMipmap *ReadFromStream( hsStream *inStream ) { return IRead( inStream ); }
-        plMipmap *ReadFromFile( const char *fileName );
-        plMipmap *ReadFromFile( const wchar *fileName );
+    plMipmap* ReadFromStream(hsStream* inStream) { return IRead(inStream); }
+    plMipmap* ReadFromFile(const char* fileName);
+    plMipmap* ReadFromFile(const wchar* fileName);
 
-        hsBool WriteToStream( hsStream *outStream, plMipmap *sourceData ) { return IWrite( sourceData, outStream ); }
-        hsBool WriteToFile( const char *fileName, plMipmap *sourceData );
-        hsBool WriteToFile( const wchar *fileName, plMipmap *sourceData );
+    hsBool WriteToStream(hsStream* outStream, plMipmap* sourceData) { return IWrite(sourceData, outStream); }
+    hsBool WriteToFile(const char* fileName, plMipmap* sourceData);
+    hsBool WriteToFile(const wchar* fileName, plMipmap* sourceData);
 
-        static plPNG &Instance( void );
+    static plPNG& Instance(void);
 };
 
 #endif // _plPNG_h

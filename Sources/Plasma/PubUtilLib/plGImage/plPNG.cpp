@@ -38,19 +38,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  used by libPNG's respective functions
 void pngReadDelegate(png_structp png_ptr, png_bytep png_data, png_size_t length)
 {
-    hsStream *inStream = (hsStream *)png_get_io_ptr(png_ptr);
-    inStream->Read(length, (UInt8 *)png_data);
+    hsStream* inStream = (hsStream*)png_get_io_ptr(png_ptr);
+    inStream->Read(length, (UInt8*)png_data);
 }
 
 void pngWriteDelegate(png_structp png_ptr, png_bytep png_data, png_size_t length)
 {
-    hsStream *outStream = (hsStream *)png_get_io_ptr(png_ptr);
-    outStream->Write(length, (UInt8 *)png_data);
+    hsStream* outStream = (hsStream*)png_get_io_ptr(png_ptr);
+    outStream->Write(length, (UInt8*)png_data);
 }
 
 //// Singleton Instance ///////////////////////////////////////////////////////
 
-plPNG &plPNG::Instance( void )
+plPNG& plPNG::Instance(void)
 {
     static plPNG theInstance;
     return theInstance;
@@ -62,42 +62,42 @@ plPNG &plPNG::Instance( void )
 //  being a packed RGBA buffer.
 //  Returns a pointer to the new mipmap if successful, NULL otherwise.
 
-plMipmap* plPNG::IRead( hsStream *inStream )
+plMipmap* plPNG::IRead(hsStream* inStream)
 {
-    plMipmap *newMipmap = NULL;
+    plMipmap* newMipmap = NULL;
     png_structp png_ptr;
     png_infop info_ptr;
     png_infop end_info;
 
-    try
-    {
+    try {
         //  Check PNG Signature
         png_byte sig[PNGSIGSIZE];
-        inStream->Read8Bytes((char *) sig);
-        if (!png_sig_cmp(sig, 0, PNGSIGSIZE))
-        {
+        inStream->Read8Bytes((char*) sig);
+
+        if (!png_sig_cmp(sig, 0, PNGSIGSIZE)) {
             //  Allocate required structs
             png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-            if (!png_ptr)
-               throw( false );
+
+            if (!png_ptr) {
+                throw(false);
+            }
 
             info_ptr = png_create_info_struct(png_ptr);
-            if (!info_ptr)
-            {
-               png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-               throw( false );
+
+            if (!info_ptr) {
+                png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
+                throw(false);
             }
 
             end_info = png_create_info_struct(png_ptr);
-            if (!end_info)
-            {
-               png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-               throw( false );
+
+            if (!end_info) {
+                png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+                throw(false);
             }
 
             //  Assign delegate function for reading from hsStream
             png_set_read_fn(png_ptr, (png_voidp)inStream, pngReadDelegate);
-
             //  Get PNG Header information
             png_set_sig_bytes(png_ptr, PNGSIGSIZE);
             png_read_info(png_ptr, info_ptr);
@@ -114,45 +114,41 @@ plMipmap* plPNG::IRead( hsStream *inStream )
                     channels = 3;
                     break;
                 case PNG_COLOR_TYPE_GRAY:
-                    if (bitdepth < 8)
+
+                    if (bitdepth < 8) {
                         png_set_expand_gray_1_2_4_to_8(png_ptr);
+                    }
+
                     bitdepth = 8;
-                break;
+                    break;
             }
 
             //  Convert transparency (if needed) to a full alpha channel
-            if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-            {
+            if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
                 png_set_tRNS_to_alpha(png_ptr);
-                channels+=1;
+                channels += 1;
             }
 
             // Invert color byte-order as used by plMipmap for DirectX
             png_set_bgr(png_ptr);
-
             /// Construct a new mipmap to hold everything
             newMipmap = TRACKED_NEW plMipmap(imgWidth, imgHeight, plMipmap::kARGB32Config, 1, plMipmap::kUncompressed);
-
-            char *destp = (char *)newMipmap->GetImage();
-            png_bytep *row_ptrs = TRACKED_NEW png_bytep[imgHeight];
+            char* destp = (char*)newMipmap->GetImage();
+            png_bytep* row_ptrs = TRACKED_NEW png_bytep[imgHeight];
             const unsigned int stride = imgWidth * bitdepth * channels / 8;
 
             //  Assign row pointers to the appropriate locations in the newly-created Mipmap
-            for (size_t i = 0; i < imgHeight; i++)
-            {
+            for (size_t i = 0; i < imgHeight; i++) {
                 row_ptrs[i] = (png_bytep)destp + (i * stride);
             }
-            png_read_image(png_ptr, row_ptrs);
 
+            png_read_image(png_ptr, row_ptrs);
             //  Clean up allocated structs
             png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
             delete [] row_ptrs;
         }
-    }
-    catch( ... )
-    {
-        if (newMipmap != NULL)
-        {
+    } catch (...) {
+        if (newMipmap != NULL) {
             delete newMipmap;
             newMipmap = NULL;
         }
@@ -161,7 +157,7 @@ plMipmap* plPNG::IRead( hsStream *inStream )
     return newMipmap;
 }
 
-plMipmap* plPNG::ReadFromFile( const char *fileName )
+plMipmap* plPNG::ReadFromFile(const char* fileName)
 {
     wchar* wFilename = hsStringToWString(fileName);
     plMipmap* retVal = ReadFromFile(wFilename);
@@ -169,72 +165,69 @@ plMipmap* plPNG::ReadFromFile( const char *fileName )
     return retVal;
 }
 
-plMipmap* plPNG::ReadFromFile( const wchar *fileName )
+plMipmap* plPNG::ReadFromFile(const wchar* fileName)
 {
     hsUNIXStream in;
-    if (!in.Open(fileName, L"rb"))
+
+    if (!in.Open(fileName, L"rb")) {
         return false;
+    }
+
     plMipmap* ret = IRead(&in);
     in.Close();
     return ret;
 }
 
-hsBool plPNG::IWrite( plMipmap *source, hsStream *outStream )
+hsBool plPNG::IWrite(plMipmap* source, hsStream* outStream)
 {
     hsBool result = true;
 
-    try
-    {
+    try {
         //  Allocate required structs
         png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-        if (!png_ptr)
-            throw( false );
+
+        if (!png_ptr) {
+            throw(false);
+        }
 
         png_infop info_ptr = png_create_info_struct(png_ptr);
-        if (!info_ptr)
-        {
+
+        if (!info_ptr) {
             png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
-            throw( false );
+            throw(false);
         }
 
         //  Assign delegate function for writing to hsStream
         png_set_write_fn(png_ptr, (png_voidp)outStream, pngWriteDelegate, NULL);
-
         UInt8 psize = source->GetPixelSize();
-        png_set_IHDR(png_ptr, info_ptr, source->GetWidth(), source->GetHeight(), 8, PNG_COLOR_TYPE_RGB_ALPHA, 
-            PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-
+        png_set_IHDR(png_ptr, info_ptr, source->GetWidth(), source->GetHeight(), 8, PNG_COLOR_TYPE_RGB_ALPHA,
+                     PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
         // Invert color byte-order as used by plMipmap for DirectX
         png_set_bgr(png_ptr);
-
         // Write out the image metadata
         png_write_info(png_ptr, info_ptr);
-
-        char *srcp = (char *)source->GetImage();
-        png_bytep *row_ptrs = TRACKED_NEW png_bytep[source->GetHeight()];
+        char* srcp = (char*)source->GetImage();
+        png_bytep* row_ptrs = TRACKED_NEW png_bytep[source->GetHeight()];
         const unsigned int stride = source->GetWidth() * source->GetPixelSize() / 8;
 
         //  Assign row pointers to the appropriate locations in the newly-created Mipmap
-        for (size_t i = 0; i < source->GetHeight(); i++)
-        {
+        for (size_t i = 0; i < source->GetHeight(); i++) {
             row_ptrs[i] = (png_bytep)srcp + (i * stride);
         }
+
         png_write_image(png_ptr, row_ptrs);
         png_write_end(png_ptr, info_ptr);
-
         //  Clean up allocated structs
         png_destroy_write_struct(&png_ptr, &info_ptr);
         delete [] row_ptrs;
-    }
-    catch( ... )
-    {
+    } catch (...) {
         result = false;
     }
 
     return result;
 }
 
-hsBool plPNG::WriteToFile( const char *fileName, plMipmap *sourceData )
+hsBool plPNG::WriteToFile(const char* fileName, plMipmap* sourceData)
 {
     wchar* wFilename = hsStringToWString(fileName);
     hsBool retVal = WriteToFile(wFilename, sourceData);
@@ -242,11 +235,14 @@ hsBool plPNG::WriteToFile( const char *fileName, plMipmap *sourceData )
     return retVal;
 }
 
-hsBool plPNG::WriteToFile( const wchar *fileName, plMipmap *sourceData )
+hsBool plPNG::WriteToFile(const wchar* fileName, plMipmap* sourceData)
 {
     hsUNIXStream out;
-    if (!out.Open(fileName, L"wb"))
+
+    if (!out.Open(fileName, L"wb")) {
         return false;
+    }
+
     hsBool ret = IWrite(sourceData, &out);
     out.Close();
     return ret;
