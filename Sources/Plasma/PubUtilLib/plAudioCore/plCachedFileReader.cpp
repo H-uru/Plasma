@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plCachedFileReader::plCachedFileReader(const char *path,
                                        plAudioCore::ChannelSelect whichChan)
-        : fFileHandle(nil)
+        : fFileHandle(nil), fCurPosition(0)
 {
     hsAssert(path != nil, "Invalid path specified in plCachedFileReader");
 
