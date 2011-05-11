@@ -44,10 +44,8 @@ void pngReadDelegate(png_structp png_ptr, png_bytep png_data, png_size_t length)
 
 void pngWriteDelegate(png_structp png_ptr, png_bytep png_data, png_size_t length)
 {
-}
-
-void pngFlushDelegate(png_structp png_ptr)
-{
+    hsStream *outStream = (hsStream *)png_get_io_ptr(png_ptr);
+    outStream->Write(length, (UInt8 *)png_data);
 }
 
 //// Singleton Instance ///////////////////////////////////////////////////////
@@ -129,13 +127,14 @@ plMipmap* plPNG::IRead( hsStream *inStream )
                 channels+=1;
             }
 
+            // Invert color byte-order as used by plMipmap for DirectX
             png_set_bgr(png_ptr);
 
             /// Construct a new mipmap to hold everything
             newMipmap = TRACKED_NEW plMipmap(imgWidth, imgHeight, plMipmap::kARGB32Config, 1, plMipmap::kUncompressed);
 
             char *destp = (char *)newMipmap->GetImage();
-            png_bytep *row_ptrs = new png_bytep[imgHeight];
+            png_bytep *row_ptrs = TRACKED_NEW png_bytep[imgHeight];
             const unsigned int stride = imgWidth * bitdepth * channels / 8;
 
             //  Assign row pointers to the appropriate locations in the newly-created Mipmap
@@ -186,7 +185,46 @@ hsBool plPNG::IWrite( plMipmap *source, hsStream *outStream )
 
     try
     {
-        //png_set_write_fn(png_ptr, (png_voidp)&outStream, pngWriteDelegate, pngFlushDelegate);
+        //  Allocate required structs
+        png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+        if (!png_ptr)
+            throw( false );
+
+        png_infop info_ptr = png_create_info_struct(png_ptr);
+        if (!info_ptr)
+        {
+            png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+            throw( false );
+        }
+
+        //  Assign delegate function for writing to hsStream
+        png_set_write_fn(png_ptr, (png_voidp)outStream, pngWriteDelegate, NULL);
+
+        UInt8 psize = source->GetPixelSize();
+        png_set_IHDR(png_ptr, info_ptr, source->GetWidth(), source->GetHeight(), 8, PNG_COLOR_TYPE_RGB_ALPHA, 
+            PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+        // Invert color byte-order as used by plMipmap for DirectX
+        png_set_bgr(png_ptr);
+
+        // Write out the image metadata
+        png_write_info(png_ptr, info_ptr);
+
+        char *srcp = (char *)source->GetImage();
+        png_bytep *row_ptrs = TRACKED_NEW png_bytep[source->GetHeight()];
+        const unsigned int stride = source->GetWidth() * source->GetPixelSize() / 8;
+
+        //  Assign row pointers to the appropriate locations in the newly-created Mipmap
+        for (size_t i = 0; i < source->GetHeight(); i++)
+        {
+            row_ptrs[i] = (png_bytep)srcp + (i * stride);
+        }
+        png_write_image(png_ptr, row_ptrs);
+        png_write_end(png_ptr, info_ptr);
+
+        //  Clean up allocated structs
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        delete [] row_ptrs;
     }
     catch( ... )
     {
