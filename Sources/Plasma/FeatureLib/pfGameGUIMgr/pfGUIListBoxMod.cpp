@@ -766,7 +766,7 @@ Int32   pfGUIListBoxMod::IGetItemFromPoint( hsPoint3 &mousePt )
     hsPoint3    localPt = mousePt; // despite getting a ref to the point (why?) we do NOT want to modify it
     IScreenToLocalPt( localPt );
     UInt32      i;
-    Int16       clickItem, clickY = (Int16)( localPt.fY * ( fDynTextMap->GetVisibleHeight() - 1 ) );
+    Int16       clickItem = -1 , clickY = (Int16)( localPt.fY * ( fDynTextMap->GetVisibleHeight() - 1 ) );
     Int16       clickX = (Int16)( localPt.fX * ( fDynTextMap->GetVisibleWidth() - 1 ) );
 
     // We have a nice array that has the starting (top) Y's of each visible element. So we just
@@ -791,7 +791,7 @@ Int32   pfGUIListBoxMod::IGetItemFromPoint( hsPoint3 &mousePt )
         }
     }
 
-    if( clickItem > fElements.GetCount() - 1 || clickItem < 0 )
+    if( clickItem > fElements.GetCount() - 1 )
         clickItem = -1;
 
     return clickItem;
