@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <eax.h>
 #include <eaxlegacy.h>
 #endif
+#include <iostream>
 #include <DShow.h>
 
 #include "plStatusLog/plStatusLog.h"
