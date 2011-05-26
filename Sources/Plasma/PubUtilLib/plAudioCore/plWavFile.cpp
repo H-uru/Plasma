@@ -26,6 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdio.h>
 #include "plWavFile.h"
 
+#ifdef BUILDING_MAXPLUGIN
+
 #ifdef DX_OLD_SDK
     #include <dxerr9.h>
 #else
@@ -1091,3 +1093,5 @@ public:
 };
 
 #endif
+
+#endif // BUILDING_MAXPLUGIN
