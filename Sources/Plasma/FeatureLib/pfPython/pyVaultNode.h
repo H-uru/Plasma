@@ -69,12 +69,14 @@ public:
         PyObject *          fCbObject;
         RelVaultNode *      fNode;
         PyObject *          fPyNodeRef;
+        UInt32              fContext;
 
         pyVaultNodeOperationCallback(PyObject * cbObject);
         ~pyVaultNodeOperationCallback();
 
         void VaultOperationStarted(UInt32 context);
         void VaultOperationComplete(UInt32 context, int resultCode);
+        void VaultOperationComplete(int resultCode) { VaultOperationComplete(fContext, resultCode); }
         
         void SetNode (RelVaultNode * rvn);
         RelVaultNode * GetNode ();

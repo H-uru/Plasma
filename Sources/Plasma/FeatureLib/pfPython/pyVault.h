@@ -54,7 +54,6 @@ class pyAgeLinkStruct;
 
 class pySDLStateDataRecord;
 
-
 class pyVault
 {
 #ifndef BUILDING_PYPLASMA

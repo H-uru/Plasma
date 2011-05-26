@@ -34,6 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plLinkToAgeMsg.h"
 
 class plMessage;
+class plVaultNotifyMsg;
 struct plNCAgeJoiner;
 struct plNCAgeLeaver;
 
@@ -75,10 +76,23 @@ class plNetLinkingMgr
         kLinkPlayerToPrevAge
     };
 
-    bool IPreProcessLink( void );
+    plLinkToAgeMsg* fDeferredLink;
+
+    enum PreProcessResult {
+        // Old style IPreProcessLink style "false" result
+        kLinkFailed,
+        // Old style IPreProcessLink style "true" result
+        kLinkImmediately,
+        // Defer the link until later, don't trash the structs
+        kLinkDeferred,
+    };
+
+    UInt8 IPreProcessLink( void );
     void IPostProcessLink( void );
     bool IProcessLinkingMgrMsg( plLinkingMgrMsg * msg );
     bool IProcessLinkToAgeMsg( plLinkToAgeMsg * msg );
+    void IDoLink(plLinkToAgeMsg* link);
+    bool IProcessVaultNotifyMsg(plVaultNotifyMsg* msg);
 
     bool IDispatchMsg( plMessage * msg, UInt32 playerID );
 

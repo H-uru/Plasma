@@ -332,12 +332,16 @@ bool            VaultSetOwnedAgePublicAndWait (const plAgeInfoStruct * info, boo
 RelVaultNode *  VaultGetVisitAgeLinkIncRef (const plAgeInfoStruct * info);
 bool            VaultGetVisitAgeLink (const plAgeInfoStruct * info, class plAgeLinkStruct * link);
 bool            VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link);
+void            VaultRegisterOwnedAge(const plAgeLinkStruct* link);
 bool            VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link);
+void            VaultRegisterVisitAge (const plAgeLinkStruct* link);
 bool            VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info);
 bool            VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info);
 RelVaultNode *  VaultFindChronicleEntryIncRef (const wchar entryName[], int entryType = -1);
 bool            VaultHasChronicleEntry (const wchar entryName[], int entryType = -1);
 // if entry of same name and type already exists, value is updated
+void VaultAddChronicleEntry (const wchar entryName[], int entryType, const wchar entryValue[]);
+void _VaultAddChronicleEntryCB(ENetError result, void* state, void * param, RelVaultNode*  node);
 void            VaultAddChronicleEntryAndWait (
     const wchar entryName[],
     int         entryType,
@@ -404,6 +408,7 @@ void VaultAgeUpdateAgeSDL (const class plStateDataRecord * rec);
 
 unsigned VaultAgeGetAgeTime ();
 
+RelVaultNode * VaultGetSubAgeLinkIncRef (const plAgeInfoStruct * info);
 bool VaultAgeGetSubAgeLink (
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
@@ -413,11 +418,13 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
     plAgeLinkStruct *       link,
     const Uuid &            parentAgeInstId
 );
+bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const Uuid& parentUuid);
 bool VaultAgeFindOrCreateChildAgeLinkAndWait (
     const wchar             parentAgeName[],    // nil --> current age, non-nil --> owned age by given name
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 );
+UInt8 VaultAgeFindOrCreateChildAgeLink(const wchar parentAgeName[], const plAgeInfoStruct* info, plAgeLinkStruct* link);
 
 
 
