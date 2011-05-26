@@ -214,6 +214,7 @@ if (WIN32)
     target_link_libraries(plClient Version)
     target_link_libraries(plClient Vfw32)
     target_link_libraries(plClient Ws2_32)
+    target_link_libraries(plClient winmm)
     target_link_libraries(plClient strmiids)
 endif(WIN32)
 
