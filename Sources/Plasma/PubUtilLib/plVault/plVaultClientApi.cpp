@@ -2787,6 +2787,123 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
 }
 
 //============================================================================
+namespace _VaultRegisterOwnedAge {
+    struct _Params {
+        plSpawnPointInfo* fSpawn;
+        void*           fAgeInfoId;
+
+        ~_Params() {
+            DEL(fSpawn);
+        }
+    };
+
+    void _AddAgeInfoNode(ENetError result, void* param) {
+        if (IS_NET_ERROR(result))
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to add info to link (async)");
+    }
+
+    void _AddAgeLinkNode(ENetError result, void* param) {
+        if (IS_NET_ERROR(result))
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to add age to bookshelf (async)");
+    }
+
+    void _AddPlayerInfoNode(ENetError result, void* param) {
+        if (IS_NET_ERROR(result))
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to add playerInfo to ageOwners (async)");
+    }
+
+    void _CreateAgeLinkNode(ENetError result, void* state, void* param, RelVaultNode* node) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to create AgeLink (async)");
+            DEL(param);
+            return;
+        }
+
+        // Grab our params
+        _Params* p = (_Params*)param;
+
+        // Set swpoint
+        VaultAgeLinkNode aln(node);
+        aln.AddSpawnPoint(*(p->fSpawn));
+
+        // Make some refs
+        RelVaultNode* agesIOwn = VaultGetAgesIOwnFolderIncRef();
+        RelVaultNode* plyrInfo = VaultGetPlayerInfoNodeIncRef();
+        VaultAddChildNode(agesIOwn->nodeId, node->nodeId, 0, (FVaultAddChildNodeCallback)_AddAgeLinkNode, nil); 
+        VaultAddChildNode(node->nodeId, (UInt32)p->fAgeInfoId, 0, (FVaultAddChildNodeCallback)_AddAgeInfoNode, nil);
+
+        // Add our PlayerInfo to important places
+        if (RelVaultNode* rvnAgeInfo = VaultGetNodeIncRef((UInt32)p->fAgeInfoId)) {
+            if (RelVaultNode* rvnAgeOwners = rvnAgeInfo->GetChildPlayerInfoListNodeIncRef(plVault::kAgeOwnersFolder, 1)) {
+                VaultAddChildNode(rvnAgeOwners->nodeId, plyrInfo->nodeId, 0, (FVaultAddChildNodeCallback)_AddPlayerInfoNode, nil);
+                rvnAgeOwners->DecRef();
+            }
+
+            rvnAgeInfo->DecRef();
+        }
+
+        // Fire off vault callbacks
+        plVaultNotifyMsg* msg = NEWZERO(plVaultNotifyMsg);
+        msg->SetType(plVaultNotifyMsg::kRegisteredOwnedAge);
+        msg->SetResultCode(result);
+        msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->nodeId);
+        msg->Send();
+
+        // Don't leak memory
+        agesIOwn->DecRef();
+        plyrInfo->DecRef();
+        DEL(p);
+    }
+
+    void _DownloadCallback(ENetError result, void* param) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to download age vault (async)");
+            DEL(param);
+        } else
+            VaultCreateNode(plVault::kNodeType_AgeLink, (FVaultCreateNodeCallback)_CreateAgeLinkNode, nil, param);
+    }
+
+    void _InitAgeCallback(ENetError result, void* state, void* param, UInt32 ageVaultId, UInt32 ageInfoVaultId) {
+        if (IS_NET_SUCCESS(result)) {
+            _Params* p = TRACKED_NEW _Params();
+            p->fAgeInfoId = (void*)ageInfoVaultId;
+            p->fSpawn = (plSpawnPointInfo*)param;
+
+            VaultDownload(
+                L"RegisterOwnedAge",
+                ageInfoVaultId,
+                (FVaultDownloadCallback)_DownloadCallback,
+                p,
+                nil,
+                nil);
+        } else
+            LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to init age (async)");
+    }
+}; // namespace _VaultRegisterOwnedAge
+
+void VaultRegisterOwnedAge(const plAgeLinkStruct* link) {
+    using namespace _VaultRegisterOwnedAge;
+
+    RelVaultNode* agesIOwn = VaultGetAgesIOwnFolderIncRef();
+    if (agesIOwn == nil) {
+        LogMsg(kLogError, "VaultRegisterOwnedAge: Couldn't find the stupid AgesIOwnfolder!");
+        return;
+    }
+
+    // Make sure we don't already have the age
+    plAgeLinkStruct existing;
+    if (VaultGetOwnedAgeLink(link->GetAgeInfo(), &existing))
+        return;
+
+    // Let's go async, my friend :)
+    VaultInitAge(link->GetAgeInfo(), 
+        kNilGuid, 
+        (FVaultInitAgeCallback)_InitAgeCallback, 
+        nil,
+        TRACKED_NEW plSpawnPointInfo(link->SpawnPoint()));
+}
+
+//============================================================================
 namespace _VaultRegisterVisitAgeAndWait {
 
 struct _InitAgeParam {
@@ -3042,6 +3159,112 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
     return result;
 }
 
+//============================================================================
+namespace _VaultRegisterVisitAge {
+    struct _Params {
+
+        plSpawnPointInfo* fSpawn;
+        void*             fAgeInfoId;
+
+        ~_Params() {
+            DEL(fSpawn);
+        }
+    };
+
+    void _CreateAgeLinkNode(ENetError result, void* state, void* param, RelVaultNode* node) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "RegisterVisitAge: Failed to create AgeLink (async)");
+            DEL(param);
+            return;
+        }
+
+        _Params* p = (_Params*)param;
+        RelVaultNode* ageInfo = VaultGetNodeIncRef((UInt32)p->fAgeInfoId);
+
+        // Add ourselves to the Can Visit folder of the age
+        if (RelVaultNode * playerInfo = VaultGetPlayerInfoNodeIncRef()) {
+            if (RelVaultNode* canVisit = ageInfo->GetChildPlayerInfoListNodeIncRef(plVault::kCanVisitFolder, 1)) {
+                VaultAddChildNode(canVisit->nodeId, playerInfo->nodeId, 0, nil, nil);
+                canVisit->DecRef();
+            }
+
+            playerInfo->DecRef();
+        }
+
+        // Get our AgesICanVisit folder
+        if (RelVaultNode* iCanVisit = VaultGetAgesICanVisitFolderIncRef()) {
+            VaultAddChildNode(node->nodeId, ageInfo->nodeId, 0, nil, nil);
+            VaultAddChildNode(iCanVisit->nodeId, node->nodeId, 0, nil, nil);
+        }
+
+        // Update the AgeLink with a spawn point
+        VaultAgeLinkNode access(node);
+        access.AddSpawnPoint(*p->fSpawn);
+
+        // Send out the VaultNotify msg
+        plVaultNotifyMsg * msg = NEWZERO(plVaultNotifyMsg);
+        msg->SetType(plVaultNotifyMsg::kRegisteredVisitAge);
+        msg->SetResultCode(true);
+        msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->nodeId);
+        msg->Send();
+
+        //Don't leak memory
+        DEL(param);
+    }
+
+    void _DownloadCallback(ENetError result, void* param) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "RegisterVisitAge: Failed to download age vault (async)");
+            DEL(param);
+            return;
+        }
+
+        // Create the AgeLink node 
+        VaultCreateNode(plVault::kNodeType_AgeLink, (FVaultCreateNodeCallback)_CreateAgeLinkNode, nil, param);
+    }
+    
+    void _InitAgeCallback(ENetError result, void* state, void* param, UInt32 ageVaultId, UInt32 ageInfoId) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "RegisterVisitAge: Failed to init age vault (async)");
+            DEL(param);
+            return;
+        }
+
+        // Save the AgeInfo nodeID, then download the age vault
+        _Params* p = (_Params*)param;
+        p->fAgeInfoId = (void*)ageInfoId;
+        
+        VaultDownload(L"RegisterVisitAge",
+                      ageInfoId,
+                      (FVaultDownloadCallback)_DownloadCallback,
+                      param,
+                      nil,
+                      nil
+        );
+    }
+};
+
+void VaultRegisterVisitAge(const plAgeLinkStruct* link) {
+    using namespace _VaultRegisterVisitAge;
+
+    // Test to see if we already have this visit age...
+    plAgeLinkStruct existing;
+    if (VaultGetVisitAgeLink(link->GetAgeInfo(), &existing))
+        return;
+
+    // Still here? We need to actually do some work, then.
+    _Params* p = TRACKED_NEW _Params;
+    p->fSpawn = TRACKED_NEW plSpawnPointInfo(link->SpawnPoint());
+
+    // This doesn't actually *create* a new age but rather fetches the
+    // already existing age vault. Weird? Yes...
+    VaultInitAge(link->GetAgeInfo(),
+                 kNilGuid,
+                 (FVaultInitAgeCallback)_InitAgeCallback,
+                 nil,
+                 p
+    );
+}
 
 //============================================================================
 bool VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info) {
@@ -3197,6 +3420,38 @@ bool VaultHasChronicleEntry (const wchar entryName[], int entryType) {
         return true;
     }
     return false;
+}
+
+//============================================================================
+void VaultAddChronicleEntry (const wchar entryName[], int entryType, const wchar entryValue[]) {
+    // Sometimes we try to create chrons in StartUp.
+    // This is bad...
+    if (GetPlayerNode() == nil)
+        return;
+
+    if (RelVaultNode* rvnChrn = VaultFindChronicleEntryIncRef(entryName, entryType)) {
+        VaultChronicleNode chrnNode(rvnChrn);
+        chrnNode.SetEntryValue(entryValue);
+        rvnChrn->DecRef();
+    } else {
+        NetVaultNode* templateNode = NEWZERO(NetVaultNode);
+        templateNode->IncRef();
+        templateNode->SetNodeType(plVault::kNodeType_Chronicle);
+        VaultChronicleNode chrnNode(templateNode);
+        chrnNode.SetEntryName(entryName);
+        chrnNode.SetEntryType(entryType);
+        chrnNode.SetEntryValue(entryValue);
+        VaultCreateNode(templateNode, (FVaultCreateNodeCallback)(_VaultAddChronicleEntryCB), nil, nil);
+        templateNode->DecRef();
+    }
+}
+
+void _VaultAddChronicleEntryCB(ENetError result, void* state, void * param, RelVaultNode*  node) {
+    if (result == ENetError::kNetSuccess) {
+        RelVaultNode* rvnFldr = GetChildFolderNode(GetPlayerNode(), plVault::kChronicleFolder, 1);
+        if (rvnFldr != nil) 
+            VaultAddChildNode(rvnFldr->nodeId, node->nodeId, 0, nil, nil);
+    }
 }
 
 //============================================================================
@@ -3436,7 +3691,7 @@ void VaultProcessVisitNote(RelVaultNode * rvnVisit) {
         plAgeLinkStruct link;
         if (visitAcc.GetVisitInfo(link.GetAgeInfo())) {
             // Add it to our "ages i can visit" folder
-            VaultRegisterVisitAgeAndWait(&link);
+            VaultRegisterVisitAge(&link);
         }
         // remove it from the inbox
         VaultRemoveChildNode(rvnInbox->nodeId, rvnVisit->nodeId, nil, nil);
@@ -3483,7 +3738,7 @@ void VaultProcessPlayerInbox () {
                 plAgeLinkStruct link;
                 if (visitAcc.GetVisitInfo(link.GetAgeInfo())) {
                     // Add it to our "ages i can visit" folder
-                    VaultRegisterVisitAgeAndWait(&link);
+                    VaultRegisterVisitAge(&link);
                 }
                 // remove it from the inbox
                 VaultRemoveChildNode(rvnInbox->nodeId, rvnVisit->nodeId, nil, nil);
@@ -4174,6 +4429,88 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
     return true;
 }
 
+//============================================================================
+namespace _VaultCreateSubAge {
+    void _CreateNodeCallback(ENetError result, void* state, void* param, RelVaultNode* node) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "CreateSubAge: Failed to create AgeLink (async)");
+            return;
+        }
+
+        // Add the children to the right places
+        VaultAddChildNode(node->nodeId, (UInt32)param, 0, nil, nil);
+        if (RelVaultNode* saFldr = VaultGetAgeSubAgesFolderIncRef()) {
+            VaultAddChildNode(saFldr->nodeId, node->nodeId, 0, nil, nil);
+            saFldr->DecRef();
+        } else
+            LogMsg(kLogError, "CreateSubAge: Couldn't find SubAges folder (async)");
+
+        // Send the VaultNotify that the plNetLinkingMgr wants...
+        plVaultNotifyMsg * msg = NEWZERO(plVaultNotifyMsg);
+        msg->SetType(plVaultNotifyMsg::kRegisteredSubAgeLink);
+        msg->SetResultCode(result);
+        msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->nodeId);
+        msg->Send();
+    }
+
+    void _DownloadCallback(ENetError result, void* param) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "CreateSubAge: Failed to download age vault (async)");
+            return;
+        }
+
+        // Create the AgeLink node
+        VaultCreateNode(plVault::kNodeType_AgeLink,
+                        (FVaultCreateNodeCallback)_CreateNodeCallback,
+                        nil,
+                        param
+        );
+    }
+
+    void _InitAgeCallback(ENetError result, void* state, void* param, UInt32 ageVaultId, UInt32 ageInfoId) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "CreateSubAge: Failed to init age (async)");
+            return;
+        }
+
+        // Download age vault
+        VaultDownload(L"CreateSubAge",
+                      ageInfoId,
+                      (FVaultDownloadCallback)_DownloadCallback,
+                      (void*)ageInfoId,
+                      nil,
+                      nil
+        );
+    }
+}; // namespace _VaultCreateSubAge
+
+bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const Uuid& parentUuid) {
+    using namespace _VaultCreateSubAge;
+
+    // First, try to find an already existing subage
+    if (RelVaultNode* rvnLink = VaultGetSubAgeLinkIncRef(info)) {
+        VaultAgeLinkNode accLink(rvnLink);
+        accLink.CopyTo(link);
+
+        if (RelVaultNode* rvnInfo = rvnLink->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1)) {
+            VaultAgeInfoNode accInfo(rvnInfo);
+            accInfo.CopyTo(link->GetAgeInfo());
+            rvnInfo->DecRef();
+        }
+
+        rvnLink->DecRef();
+        return true;
+    }
+    
+    VaultInitAge(info,
+                 parentUuid,
+                 (FVaultInitAgeCallback)_InitAgeCallback,
+                 nil,
+                 nil
+    );
+
+    return false;
+}
 
 //============================================================================
 namespace _VaultCreateChildAgeAndWait {
@@ -4449,6 +4786,145 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
     }
 
     return true;
+}
+
+//============================================================================
+namespace _VaultCreateChildAge {
+    struct _Params {
+        void* fChildAgesFldr;
+        void* fAgeInfoId;
+    };
+
+    void _CreateNodeCallback(ENetError result, void* state, void* param, RelVaultNode* node) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "CreateChildAge: Failed to create AgeLink (async)");
+            DEL(param);
+            return;
+        }
+
+        _Params* p = (_Params*)param;
+
+        // Add the children to the right places
+        VaultAddChildNode(node->nodeId, (UInt32)p->fAgeInfoId, 0, nil, nil);
+        VaultAddChildNode((UInt32)p->fChildAgesFldr, node->nodeId, 0, nil, nil);
+
+        // Send the VaultNotify that the plNetLinkingMgr wants...
+        plVaultNotifyMsg * msg = NEWZERO(plVaultNotifyMsg);
+        msg->SetType(plVaultNotifyMsg::kRegisteredChildAgeLink);
+        msg->SetResultCode(result);
+        msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->nodeId);
+        msg->Send();
+
+        DEL(param);
+    }
+
+    void _DownloadCallback(ENetError result, void* param) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "CreateChildAge: Failed to download age vault (async)");
+            DEL(param);
+            return;
+        }
+
+        // Create the AgeLink node
+        VaultCreateNode(plVault::kNodeType_AgeLink,
+                        (FVaultCreateNodeCallback)_CreateNodeCallback,
+                        nil,
+                        param
+        );
+    }
+
+    void _InitAgeCallback(ENetError result, void* state, void* param, UInt32 ageVaultId, UInt32 ageInfoId) {
+        if (IS_NET_ERROR(result)) {
+            LogMsg(kLogError, "CreateChildAge: Failed to init age (async)");
+            DEL(param);
+            return;
+        }
+
+        _Params* p = (_Params*)param;
+        p->fAgeInfoId = (void*)ageInfoId;
+
+        // Download age vault
+        VaultDownload(L"CreateChildAge",
+                      ageInfoId,
+                      (FVaultDownloadCallback)_DownloadCallback,
+                      param,
+                      nil,
+                      nil
+        );
+    }
+}; // namespace _VaultCreateAge
+
+UInt8 VaultAgeFindOrCreateChildAgeLink(
+    const wchar            parentAgeName[], 
+    const plAgeInfoStruct* info,
+    plAgeLinkStruct*       link) 
+{
+    using namespace _VaultCreateChildAge;
+
+    // First, try to find an already existing ChildAge
+    char name[MAX_PATH];
+    StrToAnsi(name, parentAgeName, arrsize(parentAgeName));
+    plAgeInfoStruct search;
+    search.SetAgeFilename(name);
+
+    RelVaultNode* rvnParentInfo = nil;
+    if (RelVaultNode* rvnParentLink = VaultGetOwnedAgeLinkIncRef(&search)) {
+        rvnParentInfo = rvnParentLink->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1);
+        rvnParentLink->DecRef();
+    } else // Fallback to current age
+        rvnParentInfo = VaultGetAgeInfoNodeIncRef();
+
+    // Test to make sure nothing went horribly wrong...
+    if (rvnParentInfo == nil) {
+        LogMsg(kLogError, "CreateChildAge: Couldn't find the parent ageinfo (async)");
+        return hsFail;
+    }
+
+    // Still here? Try to find the Child Ages folder
+    UInt8 retval = hsFail;
+    if (RelVaultNode* rvnChildAges = rvnParentInfo->GetChildAgeInfoListNodeIncRef(plVault::kChildAgesFolder, 1)) {
+        const char* ageName = info->GetAgeFilename();
+        wchar hack[MAX_PATH];
+        StrToUnicode(hack, ageName, arrsize(ageName));
+
+        // Search for our age
+        NetVaultNode* temp = NEWZERO(NetVaultNode);
+        temp->SetNodeType(plVault::kNodeType_AgeInfo);
+        VaultAgeInfoNode theAge(temp);
+        theAge.SetAgeFilename(hack);
+
+        if (RelVaultNode* rvnAgeInfo = rvnChildAges->GetChildNodeIncRef(temp, 2)) {
+            RelVaultNode* rvnAgeLink = rvnAgeInfo->GetParentAgeLinkIncRef();
+
+            VaultAgeLinkNode accAgeLink(rvnAgeLink);
+            accAgeLink.CopyTo(link);
+            VaultAgeInfoNode accAgeInfo(rvnAgeInfo);
+            accAgeInfo.CopyTo(link->GetAgeInfo());
+
+            rvnAgeLink->DecRef();
+            rvnAgeInfo->DecRef();
+
+            retval = TRUE;
+        } else {
+            _Params* p = TRACKED_NEW _Params;
+            p->fChildAgesFldr = (void*)rvnChildAges->nodeId;
+
+            VaultAgeInfoNode accParentInfo(rvnParentInfo);
+            VaultInitAge(info,
+                         accParentInfo.ageInstUuid,
+                         (FVaultInitAgeCallback)_InitAgeCallback,
+                         nil,
+                         p
+            );
+        }
+
+        temp->DecRef();
+        rvnChildAges->DecRef();
+        retval = FALSE;
+    }
+
+    rvnParentInfo->DecRef();
+    return retval;
 }
 
 
