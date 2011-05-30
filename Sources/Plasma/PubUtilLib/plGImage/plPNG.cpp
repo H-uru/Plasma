@@ -143,6 +143,7 @@ plMipmap* plPNG::IRead(hsStream* inStream)
             }
 
             png_read_image(png_ptr, row_ptrs);
+            png_read_end(png_ptr, end_info);
             //  Clean up allocated structs
             png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
             delete [] row_ptrs;
