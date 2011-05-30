@@ -79,8 +79,8 @@ public:
     PyObject* GetUpAxis() { return pyVector3::New(fMatrix.GetAxis(hsMatrix44::kUp)); } // returns pyVector3
     PyObject* GetRightAxis() { return pyVector3::New(fMatrix.GetAxis(hsMatrix44::kRight)); } // returns pyVector3
 
-    std::vector< std::vector<hsScalar> > GetData();
-    void SetData(const std::vector< std::vector<hsScalar> > & mat);
+    hsScalar* GetData();
+    void SetData(const hsScalar mat[]);
 };
 
 
