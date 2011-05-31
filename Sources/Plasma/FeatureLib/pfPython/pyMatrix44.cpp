@@ -99,4 +99,5 @@ void pyMatrix44::SetData(const hsScalar mat[])
     fMatrix.fMap[3][1] = mat[13];
     fMatrix.fMap[3][2] = mat[14];
     fMatrix.fMap[3][3] = mat[15];
+    fMatrix.NotIdentity();
 }
