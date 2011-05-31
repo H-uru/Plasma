@@ -284,61 +284,40 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptMatrix44, right)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptMatrix44, getData)
 {
-    std::vector< std::vector<hsScalar> > mat = self->fThis->GetData();
-    PyObject *retVal = PyTuple_New(4);
-    for (int curRow = 0; curRow < mat.size(); curRow++)
+    hsScalar *mat = self->fThis->GetData();
+
+    PyObject *retVal = Py_BuildValue("(ffff)(ffff)(ffff)(ffff)",
+        mat[0],  mat[1],  mat[2], mat[3],
+        mat[4],  mat[5],  mat[6], mat[7],
+        mat[8],  mat[9],  mat[10], mat[11],
+        mat[12], mat[13], mat[14], mat[15]);
+
+    if (retVal == NULL) 
     {
-        PyObject *row = PyTuple_New(4);
-        for (int curElement = 0; curElement < mat[curRow].size(); curElement++)
-        {
-            PyObject *item = PyInt_FromLong((long)mat[curRow][curElement]);
-            PyTuple_SetItem(row, curElement, item); // steals the ref
-        }
-        PyTuple_SetItem(retVal, curRow, row); // steals the ref
+        PyErr_SetString(PyExc_TypeError, "setData expects a 4x4 tuple of floats");
+        PYTHON_RETURN_ERROR;
     }
+
+    delete mat;
     return retVal;
 }
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, setData, args)
 {
-    PyObject *matTuple = NULL;
-    if (!PyArg_ParseTuple(args, "O", &matTuple))
+    hsScalar mat[4*4];
+
+    if (!PyArg_ParseTuple(args, "((ffff)(ffff)(ffff)(ffff))", 
+        &mat[0], &mat[1], &mat[2], &mat[3], 
+        &mat[4], &mat[5], &mat[6], &mat[7], 
+        &mat[8], &mat[9], &mat[10], &mat[11], 
+        &mat[12], &mat[13], &mat[14], &mat[15]))
     {
         PyErr_SetString(PyExc_TypeError, "setData expects a 4x4 tuple of floats");
         PYTHON_RETURN_ERROR;
     }
-    if (!PyTuple_Check(matTuple))
-    {
-        PyErr_SetString(PyExc_TypeError, "setData expects a 4x4 tuple of floats");
-        PYTHON_RETURN_ERROR;
-    }
-
-    std::vector< std::vector<hsScalar> > mat;
-    int numRows = PyTuple_Size(matTuple);
-    for (int curRow = 0; curRow < numRows; curRow++)
-    {
-        std::vector<hsScalar> vecRow;
-        PyObject *row = PyTuple_GetItem(matTuple, curRow); // borrowed ref
-        if (!PyTuple_Check(row))
-        {
-            PyErr_SetString(PyExc_TypeError, "setData expects a 4x4 tuple of floats");
-            PYTHON_RETURN_ERROR;
-        }
-        int numElements = PyTuple_Size(row);
-        for (int curElement = 0; curElement < numElements; curElement++)
-        {
-            PyObject *item = PyTuple_GetItem(row, curElement); // borrowed ref
-            if (!PyFloat_Check(item))
-            {
-                PyErr_SetString(PyExc_TypeError, "setData expects a 4x4 tuple of floats");
-                PYTHON_RETURN_ERROR;
-            }
-            vecRow.push_back((float)PyFloat_AsDouble(item));
-        }
-        mat.push_back(vecRow);
-    }
-
+   
     self->fThis->SetData(mat);
+   
     if (PyErr_Occurred())
         PYTHON_RETURN_ERROR;
     PYTHON_RETURN_NONE;

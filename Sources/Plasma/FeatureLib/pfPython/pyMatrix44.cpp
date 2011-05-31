@@ -67,50 +67,37 @@ PyObject* pyMatrix44::GetTranslate(PyObject* pt)
     return pt;
 }
 
-std::vector< std::vector<hsScalar> > pyMatrix44::GetData()
+hsScalar* pyMatrix44::GetData()
 {
-    std::vector<hsScalar> row0, row1, row2, row3;
-    row0.push_back(fMatrix.fMap[0][0]); row0.push_back(fMatrix.fMap[0][1]); row0.push_back(fMatrix.fMap[0][2]); row0.push_back(fMatrix.fMap[0][3]);
-    row1.push_back(fMatrix.fMap[1][0]); row1.push_back(fMatrix.fMap[1][1]); row1.push_back(fMatrix.fMap[1][2]); row1.push_back(fMatrix.fMap[1][3]);
-    row2.push_back(fMatrix.fMap[2][0]); row2.push_back(fMatrix.fMap[2][1]); row2.push_back(fMatrix.fMap[2][2]); row2.push_back(fMatrix.fMap[2][3]);
-    row3.push_back(fMatrix.fMap[3][0]); row3.push_back(fMatrix.fMap[3][1]); row3.push_back(fMatrix.fMap[3][2]); row3.push_back(fMatrix.fMap[3][3]);
+    hsScalar *res = new hsScalar[4*4];
+    res[0] = fMatrix.fMap[0][0];  res[1] = fMatrix.fMap[0][1];  res[2] = fMatrix.fMap[0][2];  res[3] = fMatrix.fMap[0][3];
+    res[4] = fMatrix.fMap[1][0];  res[5] = fMatrix.fMap[1][1];  res[6] = fMatrix.fMap[1][2];  res[7] = fMatrix.fMap[1][3];
+    res[8] = fMatrix.fMap[2][0];  res[9] = fMatrix.fMap[2][1];  res[10] = fMatrix.fMap[2][2]; res[11] = fMatrix.fMap[2][3];
+    res[12] = fMatrix.fMap[3][0]; res[13] = fMatrix.fMap[3][1]; res[14] = fMatrix.fMap[3][2]; res[15] = fMatrix.fMap[3][3];
 
-    std::vector< std::vector<hsScalar> > pyMat;
-    pyMat.push_back(row0);
-    pyMat.push_back(row1);
-    pyMat.push_back(row2);
-    pyMat.push_back(row3);
-
-    return pyMat;
+    return res;
 }
 
-void pyMatrix44::SetData(const std::vector< std::vector<hsScalar> > & mat)
+void pyMatrix44::SetData(const hsScalar mat[])
 {
-    // make sure they are passing us the correct size
-    if ( mat.size() == 4 )
-    {
-        int i,j;
-        for ( i=0;i<3;i++)
-        {
-            std::vector<hsScalar> pyrow = mat[i];
-            if ( pyrow.size() == 4 )
-            {
-                for ( j=0;j<3;j++)
-                    fMatrix.fMap[i][j] = pyrow[j];
-            }
-            else  // not enough ... throw error
-            {
-                char errmsg[256];
-                sprintf(errmsg, "Wrong number of elements in row of matrix");
-                PyErr_SetString(PyExc_TypeError, errmsg);
-                return;
-            }
-        }
-    }
-    else
-    {
-        char errmsg[256];
-        sprintf(errmsg, "Wrong number of rows in the matrix");
-        PyErr_SetString(PyExc_TypeError, errmsg);
-    }
+    fMatrix.fMap[0][0] = mat[0];
+    fMatrix.fMap[0][1] = mat[1];
+    fMatrix.fMap[0][2] = mat[2];
+    fMatrix.fMap[0][3] = mat[3];
+
+    fMatrix.fMap[1][0] = mat[4];
+    fMatrix.fMap[1][1] = mat[5];
+    fMatrix.fMap[1][2] = mat[6];
+    fMatrix.fMap[1][3] = mat[7];
+
+    fMatrix.fMap[2][0] = mat[8];
+    fMatrix.fMap[2][1] = mat[9];
+    fMatrix.fMap[2][2] = mat[10];
+    fMatrix.fMap[2][3] = mat[11];
+
+    fMatrix.fMap[3][0] = mat[12];
+    fMatrix.fMap[3][1] = mat[13];
+    fMatrix.fMap[3][2] = mat[14];
+    fMatrix.fMap[3][3] = mat[15];
+    fMatrix.NotIdentity();
 }
