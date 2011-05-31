@@ -2903,21 +2903,19 @@ void cyMisc::VaultDownload(unsigned nodeId)
     );
 }
 
-PyObject* cyMisc::CloneKey(pyKey* object, bool netForce) {
+PyObject* cyMisc::CloneKey(pyKey* object, bool loading) {
 
     plKey obj = object->getKey();
     plUoid uoid = obj->GetUoid();
+
     plLoadCloneMsg* cloneMsg;
     if (uoid.IsClone())
-        cloneMsg = new plLoadCloneMsg(obj, plNetClientMgr::GetInstance()->GetKey(), 0, true);
+        cloneMsg = new plLoadCloneMsg(obj, plNetClientMgr::GetInstance()->GetKey(), 0, loading);
     else 
         cloneMsg = new plLoadCloneMsg(uoid, plNetClientMgr::GetInstance()->GetKey(), 0);
 
-    if (netForce) {
-        cloneMsg->SetBCastFlag(plMessage::kNetPropagate);
-        cloneMsg->SetBCastFlag(plMessage::kNetForce);
-    }
-
+    cloneMsg->SetBCastFlag(plMessage::kNetPropagate);
+    cloneMsg->SetBCastFlag(plMessage::kNetForce);
     cloneMsg->Send();
 
     return pyKey::New(cloneMsg->GetCloneKey());
