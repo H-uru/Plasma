@@ -55,13 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plNetClient/plNetClientMgr.h"
-//#define aspect_HDTV // maybe someday we'll be on the xbox...
-
-#ifdef aspect_HDTV
-#define FOV_RATIO 1.78
-#else
-#define FOV_RATIO 1.33333333
-#endif
 
 hsBool plCameraBrain1_FirstPerson::fDontFade = false;
 hsScalar plCameraBrain1::fFallAccel         = 20.0f;
@@ -241,7 +234,7 @@ void plCameraBrain1::IAnimateFOV(double time)
         dH = fFOVGoal;
     }
 
-    fCamera->SetFOVw( (hsScalar)(dH * FOV_RATIO) );
+    fCamera->SetFOVw( (hsScalar)(dH * plVirtualCam1::Instance()->GetAspectRatio()) );
     fCamera->SetFOVh( dH );
 
 }
