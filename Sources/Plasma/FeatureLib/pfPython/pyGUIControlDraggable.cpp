@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyKey.h"
 
-#include "../pfGameGUIMgr/pfGUIDraggableMod.h"
-#include "../pfGameGUIMgr/pfGUIDialogMod.h"
+#include "pfGameGUIMgr/pfGUIDraggableMod.h"
+#include "pfGameGUIMgr/pfGUIDialogMod.h"
 
 #include "pyGUIControlDraggable.h"
 #include "pyGUIDialog.h"
@@ -47,30 +47,30 @@ pyGUIControlDraggable::pyGUIControlDraggable(plKey objkey) : pyGUIControl(objkey
 
 hsBool pyGUIControlDraggable::IsGUIControlDraggable(pyKey& gckey)
 {
-	if ( gckey.getKey() && pfGUIDraggableMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
-		return true;
-	return false;
+    if ( gckey.getKey() && pfGUIDraggableMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+        return true;
+    return false;
 }
 
 void pyGUIControlDraggable::StopDragging( hsBool cancel )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIDraggableMod* pcmmod = pfGUIDraggableMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pcmmod )
-			pcmmod->StopDragging(cancel);
-	}
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIDraggableMod* pcmmod = pfGUIDraggableMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pcmmod )
+            pcmmod->StopDragging(cancel);
+    }
 }
 
 PyObject* pyGUIControlDraggable::GetLastMousePt( void )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIDraggableMod* pcmmod = pfGUIDraggableMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pcmmod )
-			return pyPoint3::New(pcmmod->GetLastMousePt());
-	}
-	PYTHON_RETURN_NONE;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIDraggableMod* pcmmod = pfGUIDraggableMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pcmmod )
+            return pyPoint3::New(pcmmod->GetLastMousePt());
+    }
+    PYTHON_RETURN_NONE;
 }

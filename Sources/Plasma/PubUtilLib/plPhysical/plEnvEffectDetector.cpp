@@ -32,45 +32,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /*
 hsBool plEnvEffectDetector::MsgReceive(plMessage* msg)
 {
-	plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
+    plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
 
-	if (pCollMsg)
-	{
-		for (int i = 0; i < fEffectMsg.Count(); i++)
-		{
-			fEffectMsg[i]->ClearReceivers();
-			if(pCollMsg->fEntering)
-			{
-				fEffectMsg[i]->Enable( true );
-			} else {
-				fEffectMsg[i]->Enable( false );
-			}
-			fEffectMsg[i]->AddReceiver( pCollMsg->fOtherKey );
-			hsRefCnt_SafeRef(fEffectMsg[i]);
-			plgDispatch::MsgSend( fEffectMsg[i] );
-		}
-	}
-	return plDetectorModifier::MsgReceive(msg);
+    if (pCollMsg)
+    {
+        for (int i = 0; i < fEffectMsg.Count(); i++)
+        {
+            fEffectMsg[i]->ClearReceivers();
+            if(pCollMsg->fEntering)
+            {
+                fEffectMsg[i]->Enable( true );
+            } else {
+                fEffectMsg[i]->Enable( false );
+            }
+            fEffectMsg[i]->AddReceiver( pCollMsg->fOtherKey );
+            hsRefCnt_SafeRef(fEffectMsg[i]);
+            plgDispatch::MsgSend( fEffectMsg[i] );
+        }
+    }
+    return plDetectorModifier::MsgReceive(msg);
 }
 
 void plEnvEffectDetector::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plDetectorModifier::Read(stream, mgr);
-	int n = stream->ReadSwap32();
-	fEffectMsg.SetCountAndZero(n);
-	for(int i = 0; i < n; i++ )
-	{	
-		plEnvEffectMsg* pMsg =  plEnvEffectMsg::ConvertNoRef(mgr->ReadCreatable(stream));
-		fEffectMsg[i] = pMsg;
-	}	
+    plDetectorModifier::Read(stream, mgr);
+    int n = stream->ReadSwap32();
+    fEffectMsg.SetCountAndZero(n);
+    for(int i = 0; i < n; i++ )
+    {   
+        plEnvEffectMsg* pMsg =  plEnvEffectMsg::ConvertNoRef(mgr->ReadCreatable(stream));
+        fEffectMsg[i] = pMsg;
+    }   
 }
 
 void plEnvEffectDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plDetectorModifier::Write(stream, mgr);
-	stream->WriteSwap32(fEffectMsg.GetCount());
-	for(int i = 0; i < fEffectMsg.GetCount(); i++ )
-		mgr->WriteCreatable( stream, fEffectMsg[i] );
+    plDetectorModifier::Write(stream, mgr);
+    stream->WriteSwap32(fEffectMsg.GetCount());
+    for(int i = 0; i < fEffectMsg.GetCount(); i++ )
+        mgr->WriteCreatable( stream, fEffectMsg[i] );
 
 }
 */

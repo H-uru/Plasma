@@ -28,13 +28,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace hsLOD
 {
-	enum
-	{
-		kLODNone			= 0x00000000,
-		kLODLow				= 0x00000001,
-		kLODHigh			= 0x00000002,
-		kLODAll				= kLODLow | kLODHigh
-	};
+    enum
+    {
+        kLODNone            = 0x00000000,
+        kLODLow             = 0x00000001,
+        kLODHigh            = 0x00000002,
+        kLODAll             = kLODLow | kLODHigh
+    };
 }
 
 #endif // hsLOD_inc

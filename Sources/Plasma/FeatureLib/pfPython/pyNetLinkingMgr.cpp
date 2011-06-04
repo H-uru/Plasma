@@ -31,66 +31,66 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 
 #include "pyNetLinkingMgr.h"
-#include "../plNetClient/plNetLinkingMgr.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plNetClient/plNetLinkingMgr.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plArmatureMod.h"
 
 #include "pyAgeInfoStruct.h"
 #include "pyAgeLinkStruct.h"
 
 hsBool pyNetLinkingMgr::IsEnabled( void ) const
 {
-	return plNetLinkingMgr::GetInstance()->IsEnabled();
+    return plNetLinkingMgr::GetInstance()->IsEnabled();
 }
 
 void pyNetLinkingMgr::SetEnabled( hsBool b )
 {
-	plNetLinkingMgr::GetInstance()->SetEnabled( b?true:false );
+    plNetLinkingMgr::GetInstance()->SetEnabled( b?true:false );
 }
 
 void pyNetLinkingMgr::LinkToAge( pyAgeLinkStruct & link, const char* linkAnim )
 {
-	plNetLinkingMgr::GetInstance()->LinkToAge( link.GetAgeLink(), linkAnim );
+    plNetLinkingMgr::GetInstance()->LinkToAge( link.GetAgeLink(), linkAnim );
 }
 
 void pyNetLinkingMgr::LinkToMyPersonalAge()
 {
-	plNetLinkingMgr::GetInstance()->LinkToMyPersonalAge();
+    plNetLinkingMgr::GetInstance()->LinkToMyPersonalAge();
 }
 
 void pyNetLinkingMgr::LinkToMyPersonalAgeWithYeeshaBook()
 {
-	// use special avatar's open my personal book and link
-	plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
-	avatar->PersonalLink();
+    // use special avatar's open my personal book and link
+    plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
+    avatar->PersonalLink();
 }
 
 void pyNetLinkingMgr::LinkToMyNeighborhoodAge()
 {
-	plNetLinkingMgr::GetInstance()->LinkToMyNeighborhoodAge();
+    plNetLinkingMgr::GetInstance()->LinkToMyNeighborhoodAge();
 }
 
 void pyNetLinkingMgr::LinkPlayerHere( UInt32 playerID )
 {
-	plNetLinkingMgr::GetInstance()->LinkPlayerHere( playerID );
+    plNetLinkingMgr::GetInstance()->LinkPlayerHere( playerID );
 }
 
 void pyNetLinkingMgr::LinkPlayerToAge( pyAgeLinkStruct & link, UInt32 playerID )
 {
-	plNetLinkingMgr::GetInstance()->LinkPlayerToAge( link.GetAgeLink(), playerID );
+    plNetLinkingMgr::GetInstance()->LinkPlayerToAge( link.GetAgeLink(), playerID );
 }
 
 void pyNetLinkingMgr::LinkToPlayersAge( UInt32 playerID )
 {
-	plNetLinkingMgr::GetInstance()->LinkToPlayersAge( playerID );
+    plNetLinkingMgr::GetInstance()->LinkToPlayersAge( playerID );
 }
 
 PyObject* pyNetLinkingMgr::GetCurrAgeLink()
 {
-	return pyAgeLinkStructRef::New( *plNetLinkingMgr::GetInstance()->GetAgeLink() );
+    return pyAgeLinkStructRef::New( *plNetLinkingMgr::GetInstance()->GetAgeLink() );
 }
 
 PyObject* pyNetLinkingMgr::GetPrevAgeLink()
 {
-	return pyAgeLinkStructRef::New( *plNetLinkingMgr::GetInstance()->GetPrevAgeLink() );
+    return pyAgeLinkStructRef::New( *plNetLinkingMgr::GetInstance()->GetPrevAgeLink() );
 }

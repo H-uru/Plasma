@@ -34,26 +34,26 @@ class plNetAddress;
 class plOutgoingUdpSocket : public plSocket
 {
 public:
-	plOutgoingUdpSocket();
-	plOutgoingUdpSocket(SOCKET sck);
-	bool operator==(const plOutgoingUdpSocket & rhs);
-	int SetSendBufferSize(int size);
-	bool ActiveOpen(plNetAddress & addr);
-	bool ActiveOpenNonBlocking(plNetAddress & addr);
-	int SendData(const char * data, int size);
-	friend bool operator<(const plOutgoingUdpSocket & lhs, const plOutgoingUdpSocket & rhs);
-	friend bool operator==(const plOutgoingUdpSocket & lhs, const plOutgoingUdpSocket & rhs);
+    plOutgoingUdpSocket();
+    plOutgoingUdpSocket(SOCKET sck);
+    bool operator==(const plOutgoingUdpSocket & rhs);
+    int SetSendBufferSize(int size);
+    bool ActiveOpen(plNetAddress & addr);
+    bool ActiveOpenNonBlocking(plNetAddress & addr);
+    int SendData(const char * data, int size);
+    friend bool operator<(const plOutgoingUdpSocket & lhs, const plOutgoingUdpSocket & rhs);
+    friend bool operator==(const plOutgoingUdpSocket & lhs, const plOutgoingUdpSocket & rhs);
 };
 
 
 inline bool operator<(const plOutgoingUdpSocket & lhs, const plOutgoingUdpSocket & rhs)
 {
-	return lhs.fSocket<rhs.fSocket;
+    return lhs.fSocket<rhs.fSocket;
 }
 
 inline bool operator==(const plOutgoingUdpSocket & lhs, const plOutgoingUdpSocket & rhs)
 {
-	return lhs.fSocket==rhs.fSocket;
+    return lhs.fSocket==rhs.fSocket;
 }
 
 

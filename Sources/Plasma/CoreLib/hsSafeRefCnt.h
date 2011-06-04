@@ -36,14 +36,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsSafeRefCnt : public hsRefCnt
 {
 private:
-	static hsMutex fMutex;
+    static hsMutex fMutex;
 protected:
-	virtual void IRef() { } 
-	virtual void IUnRef() { }; 
+    virtual void IRef() { } 
+    virtual void IUnRef() { }; 
 public:
-	virtual int RefCnt() const { hsTempMutexLock temp(fMutex); return hsRefCnt::RefCnt(); }
-	void UnRef() { hsTempMutexLock temp(fMutex); IUnRef(); hsRefCnt::UnRef(); }
-	void Ref() { hsTempMutexLock temp(fMutex); IRef(); hsRefCnt::Ref(); }
+    virtual int RefCnt() const { hsTempMutexLock temp(fMutex); return hsRefCnt::RefCnt(); }
+    void UnRef() { hsTempMutexLock temp(fMutex); IUnRef(); hsRefCnt::UnRef(); }
+    void Ref() { hsTempMutexLock temp(fMutex); IRef(); hsRefCnt::Ref(); }
 };
 
 #endif //HS_SAFE_REF_CNT_H

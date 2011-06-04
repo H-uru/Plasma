@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetGroup_h
 #define plNetGroup_h
 
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 #include "hsStream.h"
 #include "hsStlUtils.h"
 
@@ -35,13 +35,13 @@ class plNetGroupId
 private:
    enum NetGroupConstants
    {
-      kNetGroupConstant	= 0x01,
-      kNetGroupLocal	= 0x02,
+      kNetGroupConstant = 0x01,
+      kNetGroupLocal    = 0x02,
    };
    
    plLocation fId;
    UInt8 fFlags;
-   std::string	fDesc;		// description of room
+   std::string  fDesc;      // description of room
 public:
 
    plNetGroupId() : fFlags(0) {}
@@ -66,12 +66,12 @@ public:
 
 namespace plNetGroup
 {
-	extern plNetGroupId kNetGroupLocalPlayer;
-	extern plNetGroupId kNetGroupRemotePlayer;
-	extern plNetGroupId kNetGroupUnknown;
-	extern plNetGroupId kNetGroupLocalPhysicals;
-	extern plNetGroupId kNetGroupRemotePhysicals;
+    extern plNetGroupId kNetGroupLocalPlayer;
+    extern plNetGroupId kNetGroupRemotePlayer;
+    extern plNetGroupId kNetGroupUnknown;
+    extern plNetGroupId kNetGroupLocalPhysicals;
+    extern plNetGroupId kNetGroupRemotePhysicals;
 }
 
-#endif	// plNetGroup_h
+#endif  // plNetGroup_h
 

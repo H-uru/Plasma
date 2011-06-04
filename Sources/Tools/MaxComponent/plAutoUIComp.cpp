@@ -36,8 +36,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plAutoUIComp::plAutoUIComp(plAutoUIClassDesc *cd)
 {
-	fDesc = TRACKED_NEW ParamBlockDesc2(plComponentBase::kBlkComp, "Auto", IDS_COMP_AUTO, cd, P_AUTO_CONSTRUCT, plComponentBase::kRefComp, end);
-	cd->autoComp = this;
+    fDesc = TRACKED_NEW ParamBlockDesc2(plComponentBase::kBlkComp, "Auto", IDS_COMP_AUTO, cd, P_AUTO_CONSTRUCT, plComponentBase::kRefComp, end);
+    cd->autoComp = this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,48 +46,48 @@ plAutoUIComp::plAutoUIComp(plAutoUIClassDesc *cd)
 
 hsBool plAutoUIComp::GetCheckBox(Int16 id, plComponentBase *comp)
 {
-	IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
-	return pblock->GetInt(id);
+    IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
+    return pblock->GetInt(id);
 }
 
 hsScalar plAutoUIComp::GetFloatSpinner(Int16 id, plComponentBase *comp)
 {
-	IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
-	return pblock->GetFloat(id);
+    IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
+    return pblock->GetFloat(id);
 }
 
 int plAutoUIComp::GetIntSpinner(Int16 id, plComponentBase *comp)
 {
-	IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
-	return pblock->GetInt(id);
+    IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
+    return pblock->GetInt(id);
 }
 
 TSTR plAutoUIComp::GetEditBox(Int16 id, plComponentBase *comp)
 {
-	IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
-	return pblock->GetStr(id);	
+    IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
+    return pblock->GetStr(id);  
 }
 
 INode *plAutoUIComp::GetPickNode(Int16 id, plComponentBase *comp, int idx)
 {
-	IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
-	return pblock->GetINode(id, 0, idx);
+    IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
+    return pblock->GetINode(id, 0, idx);
 }
 
 int plAutoUIComp::Count(Int16 id, plComponentBase *comp)
 {
-	IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
-	return pblock->Count(id);
+    IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
+    return pblock->Count(id);
 }
 
 //
 
 void plAutoUIComp::BeginEditParams(IObjParam *ip, ReferenceMaker *obj, ULONG flags, Animatable *prev)
 {
-	CreateAutoRollup(((plComponentBase*)obj)->GetParamBlockByID(plComponentBase::kBlkComp));
+    CreateAutoRollup(((plComponentBase*)obj)->GetParamBlockByID(plComponentBase::kBlkComp));
 }
 
 void plAutoUIComp::EndEditParams(IObjParam *ip, ReferenceMaker *obj, ULONG flags, Animatable *prev)
 {
-	DestroyAutoRollup();
+    DestroyAutoRollup();
 }

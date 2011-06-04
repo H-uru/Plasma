@@ -24,27 +24,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plInputIfaceMgrMsg														//
-//	Message wrapper for commands to plDynamicTextMap.						//
-//																			//
+//                                                                          //
+//  plInputIfaceMgrMsg                                                      //
+//  Message wrapper for commands to plDynamicTextMap.                       //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
 #include "plInputIfaceMgrMsg.h"
-#include "../plInputCore/plInputInterface.h"
+#include "plInputCore/plInputInterface.h"
 #include "hsResMgr.h"
 #include "hsRefCnt.h"
 
 
 plInputIfaceMgrMsg::~plInputIfaceMgrMsg() 
 {
-	if( fInterface != nil )
-		hsRefCnt_SafeUnRef( fInterface );
+    if( fInterface != nil )
+        hsRefCnt_SafeUnRef( fInterface );
 }
 
-void	plInputIfaceMgrMsg::SetIFace( plInputInterface *iface )
+void    plInputIfaceMgrMsg::SetIFace( plInputInterface *iface )
 {
-	fInterface = iface; 
-	hsRefCnt_SafeRef( fInterface );
+    fInterface = iface; 
+    hsRefCnt_SafeRef( fInterface );
 }

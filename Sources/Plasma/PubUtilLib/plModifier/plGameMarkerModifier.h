@@ -26,48 +26,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plGameMarkerModifier_h_inc
 #define plGameMarkerModifier_h_inc
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 
 class plGameMarkerModifier : public plSingleModifier
 {
 protected:
-	plKey fGreenAnimKey;
-	plKey fRedAnimKey;
-	plKey fOpenAnimKey;
-	plKey fBounceAnimKey;
-	UInt16 fPlaceSndIdx;
-	UInt16 fHitSndIdx;
+    plKey fGreenAnimKey;
+    plKey fRedAnimKey;
+    plKey fOpenAnimKey;
+    plKey fBounceAnimKey;
+    UInt16 fPlaceSndIdx;
+    UInt16 fHitSndIdx;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
 
-	plKey IFindCloneKey(plKey baseKey);
-	
-	friend class pfMarkerInfo;
-	friend class pfMarkerInfoOwned;
+    plKey IFindCloneKey(plKey baseKey);
+    
+    friend class pfMarkerInfo;
+    friend class pfMarkerInfoOwned;
 
 public:
-	plGameMarkerModifier() {}
+    plGameMarkerModifier() {}
 
-	CLASSNAME_REGISTER(plGameMarkerModifier);
-	GETINTERFACE_ANY(plGameMarkerModifier, plSingleModifier);
+    CLASSNAME_REGISTER(plGameMarkerModifier);
+    GETINTERFACE_ANY(plGameMarkerModifier, plSingleModifier);
 
-	void ExportInit(plKey greenKey, plKey redKey, plKey openKey, plKey bounceAnimKey,
-					UInt16 placeSndIdx, UInt16 hitSndIdx)
-	{
-		fGreenAnimKey = greenKey;
-		fRedAnimKey = redKey;
-		fOpenAnimKey = openKey;
-		fBounceAnimKey = bounceAnimKey;
-		fPlaceSndIdx = placeSndIdx;
-		fHitSndIdx = hitSndIdx;
-	}
+    void ExportInit(plKey greenKey, plKey redKey, plKey openKey, plKey bounceAnimKey,
+                    UInt16 placeSndIdx, UInt16 hitSndIdx)
+    {
+        fGreenAnimKey = greenKey;
+        fRedAnimKey = redKey;
+        fOpenAnimKey = openKey;
+        fBounceAnimKey = bounceAnimKey;
+        fPlaceSndIdx = placeSndIdx;
+        fHitSndIdx = hitSndIdx;
+    }
 
-	void FixupAnimKeys();
+    void FixupAnimKeys();
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plGameMarkerModifier_h_inc

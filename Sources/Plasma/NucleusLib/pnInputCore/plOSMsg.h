@@ -38,20 +38,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum plOSMsg
 {
-	KEYDOWN			= WM_KEYDOWN,
-	KEYUP			= WM_KEYUP,
-	MOUSEMOVE		= WM_MOUSEMOVE,
-	L_BUTTONDN		= WM_LBUTTONDOWN,
-	L_BUTTONUP		= WM_LBUTTONUP,
-	R_BUTTONDN		= WM_RBUTTONDOWN,
-	R_BUTTONUP		= WM_RBUTTONUP,
-	MOUSEWHEEL		= 0x020A,
-	L_BUTTONDBLCLK	= WM_LBUTTONDBLCLK,
-	R_BUTTONDBLCLK	= WM_RBUTTONDBLCLK,
-	SYSKEYDOWN		= WM_SYSKEYDOWN,
-	SYSKEYUP		= WM_SYSKEYUP,
-	M_BUTTONDN		= WM_MBUTTONDOWN,
-	M_BUTTONUP		= WM_MBUTTONUP,
+    KEYDOWN         = WM_KEYDOWN,
+    KEYUP           = WM_KEYUP,
+    MOUSEMOVE       = WM_MOUSEMOVE,
+    L_BUTTONDN      = WM_LBUTTONDOWN,
+    L_BUTTONUP      = WM_LBUTTONUP,
+    R_BUTTONDN      = WM_RBUTTONDOWN,
+    R_BUTTONUP      = WM_RBUTTONUP,
+    MOUSEWHEEL      = 0x020A,
+    L_BUTTONDBLCLK  = WM_LBUTTONDBLCLK,
+    R_BUTTONDBLCLK  = WM_RBUTTONDBLCLK,
+    SYSKEYDOWN      = WM_SYSKEYDOWN,
+    SYSKEYUP        = WM_SYSKEYUP,
+    M_BUTTONDN      = WM_MBUTTONDOWN,
+    M_BUTTONUP      = WM_MBUTTONUP,
 };
 
 
@@ -63,15 +63,15 @@ enum plOSMsg
 
 struct plMouseState
 {
-	enum
-	{
-		kLeftButton		= 	0x0001,
-		kRightButton	=	0x0002,
-		kMiddleButton	=	0x0004,	
-	};
-	float	fX;
-	float	fY;
-	UInt32	fButtonState;
+    enum
+    {
+        kLeftButton     =   0x0001,
+        kRightButton    =   0x0002,
+        kMiddleButton   =   0x0004, 
+    };
+    float   fX;
+    float   fY;
+    UInt32  fButtonState;
 };
 
 

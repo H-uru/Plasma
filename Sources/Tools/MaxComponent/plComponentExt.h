@@ -28,24 +28,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plComponentBase.h"
 #include "plComponentTools.h"
-#include "../MaxExport/plErrorMsg.h"
+#include "MaxExport/plErrorMsg.h"
 
 class plMaxNodeBase;
 
 class plComponentExt : public plComponentBase
 {
 public:
-	int CanConvertToType(Class_ID obtype)
-		{ return (obtype == EXT_COMPONENT_CLASSID) ? 1 : plComponentBase::CanConvertToType(obtype); }
+    int CanConvertToType(Class_ID obtype)
+        { return (obtype == EXT_COMPONENT_CLASSID) ? 1 : plComponentBase::CanConvertToType(obtype); }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
-	virtual hsBool PreConvert(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
-	virtual hsBool Convert(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) = 0;
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
+    virtual hsBool PreConvert(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
+    virtual hsBool Convert(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) = 0;
 
-	// DeInit pass--free up any temp memory you might have allocated here
-	virtual hsBool DeInit(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
+    // DeInit pass--free up any temp memory you might have allocated here
+    virtual hsBool DeInit(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
 };
 
 #endif

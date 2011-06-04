@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pyGameScore.h"
 
-#include "../pfGameScoreMgr/pfGameScoreMgr.h"
+#include "pfGameScoreMgr/pfGameScoreMgr.h"
 
 pyGameScore::pyGameScore() : fScore(nil)
 {
@@ -33,89 +33,89 @@ pyGameScore::pyGameScore() : fScore(nil)
 
 pyGameScore::pyGameScore(pfGameScore * score) : fScore(score)
 {
-	fScore->IncRef();
+    fScore->IncRef();
 }
 
 pyGameScore::~pyGameScore()
 {
-	if (fScore)
-		fScore->DecRef();
+    if (fScore)
+        fScore->DecRef();
 }
 
 int pyGameScore::GetScoreID()
 {
-	if (fScore)
-		return fScore->scoreId;
+    if (fScore)
+        return fScore->scoreId;
 
-	return 0;
+    return 0;
 }
 
 UInt32 pyGameScore::GetCreatedTime()
 {
-	if (fScore)
-		return fScore->createdTime;
+    if (fScore)
+        return fScore->createdTime;
 
-	return 0;
+    return 0;
 }
 
 int pyGameScore::GetOwnerID()
 {
-	if (fScore)
-		return fScore->ownerId;
+    if (fScore)
+        return fScore->ownerId;
 
-	return 0;
+    return 0;
 }
 
 int pyGameScore::GetGameType()
 {
-	if (fScore)
-		return fScore->gameType;
+    if (fScore)
+        return fScore->gameType;
 
-	return 0;
+    return 0;
 }
 
 int pyGameScore::GetValue()
 {
-	if (fScore)
-		return fScore->value;
+    if (fScore)
+        return fScore->value;
 
-	return 0;
+    return 0;
 }
 
 const char* pyGameScore::GetGameName()
 {
-	if (fScore)
-		return fScore->gameName;
+    if (fScore)
+        return fScore->gameName;
 
-	return "";
+    return "";
 }
 
 bool pyGameScore::AddPoints(int numPoints)
 {
-	ENetError result = kNetErrScoreWrongType;
+    ENetError result = kNetErrScoreWrongType;
 
-	if (fScore && fScore->gameType != kScoreTypeFixed)
-		result = pfGameScoreMgr::GetInstance()->AddPoints(fScore->scoreId, numPoints);
+    if (fScore && fScore->gameType != kScoreTypeFixed)
+        result = pfGameScoreMgr::GetInstance()->AddPoints(fScore->scoreId, numPoints);
 
-	return IS_NET_SUCCESS(result);
+    return IS_NET_SUCCESS(result);
 }
 
 bool pyGameScore::TransferPoints(unsigned destination, int numPoints)
 {
-	ENetError result = kNetErrScoreWrongType;
+    ENetError result = kNetErrScoreWrongType;
 
-	if (fScore && fScore->gameType != kScoreTypeFixed)
-		result = pfGameScoreMgr::GetInstance()->TransferPoints(fScore->scoreId, destination, numPoints);
+    if (fScore && fScore->gameType != kScoreTypeFixed)
+        result = pfGameScoreMgr::GetInstance()->TransferPoints(fScore->scoreId, destination, numPoints);
 
-	return IS_NET_SUCCESS(result);
+    return IS_NET_SUCCESS(result);
 }
 
 bool pyGameScore::SetPoints(int numPoints)
 {
-	ENetError result = kNetErrScoreWrongType;
+    ENetError result = kNetErrScoreWrongType;
 
-	if (fScore && fScore->gameType != kScoreTypeFixed)
-		result = pfGameScoreMgr::GetInstance()->SetPoints(fScore->scoreId, numPoints);
+    if (fScore && fScore->gameType != kScoreTypeFixed)
+        result = pfGameScoreMgr::GetInstance()->SetPoints(fScore->scoreId, numPoints);
 
-	return IS_NET_SUCCESS(result);
+    return IS_NET_SUCCESS(result);
 }

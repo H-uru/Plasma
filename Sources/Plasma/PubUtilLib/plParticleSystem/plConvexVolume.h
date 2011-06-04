@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConvexVolume_inc
 #define plConvexVolume_inc
 
-#include "../pnSceneObject/plObjInterface.h"
+#include "pnSceneObject/plObjInterface.h"
 
 struct hsPlane3;
 struct hsPoint3;
@@ -39,49 +39,49 @@ class hsResMgr;
 class plConvexVolume : public plCreatable
 {
 public:
-	plConvexVolume();
-	~plConvexVolume();
+    plConvexVolume();
+    ~plConvexVolume();
 
-	CLASSNAME_REGISTER( plConvexVolume );
-	GETINTERFACE_ANY( plConvexVolume, plCreatable );
+    CLASSNAME_REGISTER( plConvexVolume );
+    GETINTERFACE_ANY( plConvexVolume, plCreatable );
 
-	void Update(const hsMatrix44 &l2w);
+    void Update(const hsMatrix44 &l2w);
 
-	hsBool AddPlane(const hsPlane3 &plane);
-	void SetNumPlanesAndClear(const UInt32 num);
-	void SetPlane(const hsPlane3 &plane, const UInt32 index);
+    hsBool AddPlane(const hsPlane3 &plane);
+    void SetNumPlanesAndClear(const UInt32 num);
+    void SetPlane(const hsPlane3 &plane, const UInt32 index);
 
-	// If you only care about the test, call this. Otherwise call ResolvePoint.
-	hsBool IsInside(const hsPoint3 &pos) const;
+    // If you only care about the test, call this. Otherwise call ResolvePoint.
+    hsBool IsInside(const hsPoint3 &pos) const;
 
-	// returns true if the point was inside the volume, and thus moved outward.
-	hsBool ResolvePoint(hsPoint3 &pos) const; 
+    // returns true if the point was inside the volume, and thus moved outward.
+    hsBool ResolvePoint(hsPoint3 &pos) const; 
 
-	// returns true if the point was inside and pos and velocity updated to bounce off offending plane.
-	// input bounce==1.f for perfect bounce, bounce==0 to slide.
-	hsBool BouncePoint(hsPoint3 &pos, hsVector3 &velocity, hsScalar bounce, hsScalar friction) const;
+    // returns true if the point was inside and pos and velocity updated to bounce off offending plane.
+    // input bounce==1.f for perfect bounce, bounce==0 to slide.
+    hsBool BouncePoint(hsPoint3 &pos, hsVector3 &velocity, hsScalar bounce, hsScalar friction) const;
 
-	inline hsBool TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const; // Is the point inside the plane?
-	virtual void Read(hsStream* s, hsResMgr *mgr);
-	virtual void Write(hsStream* s, hsResMgr *mgr);
-	//virtual hsBool MsgReceive(plMessage* msg);
-	
+    inline hsBool TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const; // Is the point inside the plane?
+    virtual void Read(hsStream* s, hsResMgr *mgr);
+    virtual void Write(hsStream* s, hsResMgr *mgr);
+    //virtual hsBool MsgReceive(plMessage* msg);
+    
 protected:
-	void IClear();
+    void IClear();
 
-	hsPlane3 *fLocalPlanes;
-	hsPlane3 *fWorldPlanes;
-	UInt32 fNumPlanes;
+    hsPlane3 *fLocalPlanes;
+    hsPlane3 *fWorldPlanes;
+    UInt32 fNumPlanes;
 };
 
 inline hsBool plConvexVolume::TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const
 {
-	hsScalar dis = plane.fN.InnerProduct(pos);
-	dis += plane.fD;
-	if( dis >= 0.f )	
-		return false;	
-						
-	return true;
+    hsScalar dis = plane.fN.InnerProduct(pos);
+    dis += plane.fD;
+    if( dis >= 0.f )    
+        return false;   
+                        
+    return true;
 }
 
 #endif

@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 #include "pyVaultNode.h"
@@ -48,72 +48,72 @@ class pyAgeInfoStruct;
 class pyVaultAgeInfoNode : public pyVaultNode
 {
 private:
-	mutable char fAgeInstGuid[64];
-	mutable std::string fAgeFilename;
-	mutable std::string fAgeInstName;
-	mutable std::string fAgeUserName;
-	mutable std::string fAgeDispName;
-	mutable std::string fAgeDescription;
+    mutable char fAgeInstGuid[64];
+    mutable std::string fAgeFilename;
+    mutable std::string fAgeInstName;
+    mutable std::string fAgeUserName;
+    mutable std::string fAgeDispName;
+    mutable std::string fAgeDescription;
 
 protected:
-	// should only be created from C++ side
-	pyVaultAgeInfoNode(RelVaultNode* vaultNode);
+    // should only be created from C++ side
+    pyVaultAgeInfoNode(RelVaultNode* vaultNode);
 
-	//create from the Python side
-	pyVaultAgeInfoNode(int n=0);
+    //create from the Python side
+    pyVaultAgeInfoNode(int n=0);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVaultAgeInfoNode);
-	static PyObject *New(RelVaultNode* vaultNode);
-	static PyObject *New(int n=0);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultAgeInfoNode object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultAgeInfoNode); // converts a PyObject to a pyVaultAgeInfoNode (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVaultAgeInfoNode);
+    static PyObject *New(RelVaultNode* vaultNode);
+    static PyObject *New(int n=0);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultAgeInfoNode object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultAgeInfoNode); // converts a PyObject to a pyVaultAgeInfoNode (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-	PyObject *	GetCanVisitFolder() const; // returns pyVaultPlayerInfoListNode
-	PyObject * GetAgeOwnersFolder() const; // returns pyVaultPlayerInfoListNode
-	PyObject* GetChildAgesFolder( void ); // returns pyVaultFolderNode
-	PyObject *	GetAgeSDL() const; // returns pyVaultSDLNode
-	PyObject * GetCzar() const; // returns pyVaultPlayerInfoNode
+    PyObject *  GetCanVisitFolder() const; // returns pyVaultPlayerInfoListNode
+    PyObject * GetAgeOwnersFolder() const; // returns pyVaultPlayerInfoListNode
+    PyObject* GetChildAgesFolder( void ); // returns pyVaultFolderNode
+    PyObject *  GetAgeSDL() const; // returns pyVaultSDLNode
+    PyObject * GetCzar() const; // returns pyVaultPlayerInfoNode
 
-	PyObject * GetParentAgeLink () const;	// returns pyVaultAgeLinkNode, or None if not a child age.
+    PyObject * GetParentAgeLink () const;   // returns pyVaultAgeLinkNode, or None if not a child age.
 
-	const char * GetAgeFilename() const;
-	void	SetAgeFilename( const char * v );
+    const char * GetAgeFilename() const;
+    void    SetAgeFilename( const char * v );
 
-	const char * GetAgeInstanceName() const;
-	void	SetAgeInstanceName( const char * v );
+    const char * GetAgeInstanceName() const;
+    void    SetAgeInstanceName( const char * v );
 
-	const char * GetAgeUserDefinedName() const;
-	void	SetAgeUserDefinedName( const char * v );
+    const char * GetAgeUserDefinedName() const;
+    void    SetAgeUserDefinedName( const char * v );
 
-	const char * GetAgeInstanceGuid() const;
-	void	SetAgeInstanceGuid( const char * guid );
+    const char * GetAgeInstanceGuid() const;
+    void    SetAgeInstanceGuid( const char * guid );
 
-	const char * GetAgeDescription() const;
-	void	SetAgeDescription( const char * v );
+    const char * GetAgeDescription() const;
+    void    SetAgeDescription( const char * v );
 
-	Int32	GetSequenceNumber() const;
-	void	SetSequenceNumber( Int32 v );
-	
-	Int32	GetAgeLanguage() const;
-	void	SetAgeLanguage( Int32 v );
+    Int32   GetSequenceNumber() const;
+    void    SetSequenceNumber( Int32 v );
+    
+    Int32   GetAgeLanguage() const;
+    void    SetAgeLanguage( Int32 v );
 
-	UInt32	GetAgeID() const;
-	void	SetAgeID( UInt32 v );
+    UInt32  GetAgeID() const;
+    void    SetAgeID( UInt32 v );
 
-	UInt32	GetCzarID() const;
+    UInt32  GetCzarID() const;
 
-	bool	IsPublic() const;
+    bool    IsPublic() const;
 
-	const char * GetDisplayName() const;
+    const char * GetDisplayName() const;
 
-	PyObject * AsAgeInfoStruct() const; // returns pyAgeInfoStruct
+    PyObject * AsAgeInfoStruct() const; // returns pyAgeInfoStruct
 };
 
 #endif // _pyVaultAgeInfoNode_h_

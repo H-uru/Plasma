@@ -27,30 +27,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLocalPlayerInBoxConditionalObject_inc
 #define plLocalPlayerInBoxConditionalObject_inc
 
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"
+#include "pnModifier/plConditionalObject.h"
 
 class plKey;
 
 class plLocalPlayerInBoxConditionalObject : public plConditionalObject
 {
 protected:
-	plKey	fPlayer;
-	plKey	fBox;
+    plKey   fPlayer;
+    plKey   fBox;
 
 public:
-	
-	plLocalPlayerInBoxConditionalObject();
-	~plLocalPlayerInBoxConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plLocalPlayerInBoxConditionalObject );
-	GETINTERFACE_ANY( plLocalPlayerInBoxConditionalObject, plConditionalObject );
-	
-	hsBool MsgReceive(plMessage* msg);
+    
+    plLocalPlayerInBoxConditionalObject();
+    ~plLocalPlayerInBoxConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plLocalPlayerInBoxConditionalObject );
+    GETINTERFACE_ANY( plLocalPlayerInBoxConditionalObject, plConditionalObject );
+    
+    hsBool MsgReceive(plMessage* msg);
 
-	void SetBox(plKey pKey) { fBox = pKey; }
-	
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(false); }
+    void SetBox(plKey pKey) { fBox = pKey; }
+    
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(false); }
 
 };
 

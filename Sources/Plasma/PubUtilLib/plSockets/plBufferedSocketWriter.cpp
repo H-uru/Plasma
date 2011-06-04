@@ -27,83 +27,83 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plTcpSocket.h"
 
 plBufferedSocketWriter::plBufferedSocketWriter(int size, int bytesPerFlush, bool blockOnSend, int flushPoint)
-:	plRingBuffer(size)
-,	fFlushPoint(flushPoint)
-,	fBlockOnSend(blockOnSend)
-,	fBytesPerFlush(bytesPerFlush)
+:   plRingBuffer(size)
+,   fFlushPoint(flushPoint)
+,   fBlockOnSend(blockOnSend)
+,   fBytesPerFlush(bytesPerFlush)
 {}
 
 
 int plBufferedSocketWriter::WriteBlock(const char * data, int len, plTcpSocket & sck)
 {
-	int ans = kSuccessNoDataSent;
-	
-	if(len > BufferAvailable())
-		ans = Flush(sck);
-	
-	if(ans >= 0)
-		ans = WriteBlock(data,len);
-	
-	if(ans >= 0 && fFlushPoint >= 0 && fFlushPoint < AmountBuffered())
-		ans = Flush(sck);
-			
-	return ans;
+    int ans = kSuccessNoDataSent;
+    
+    if(len > BufferAvailable())
+        ans = Flush(sck);
+    
+    if(ans >= 0)
+        ans = WriteBlock(data,len);
+    
+    if(ans >= 0 && fFlushPoint >= 0 && fFlushPoint < AmountBuffered())
+        ans = Flush(sck);
+            
+    return ans;
 }
 
 int plBufferedSocketWriter::WriteBlock(const char * data, int len)
 {
-	int ans = kSuccessNoDataSent;
-	if(!Put(data,len))
-		ans = kFailedNoBufferSpace;
-	return ans;
+    int ans = kSuccessNoDataSent;
+    if(!Put(data,len))
+        ans = kFailedNoBufferSpace;
+    return ans;
 }
 
-int plBufferedSocketWriter::Flush(plTcpSocket & sck)	// this is where things get ugly.
+int plBufferedSocketWriter::Flush(plTcpSocket & sck)    // this is where things get ugly.
 {
-	int ans = kSuccessNoDataSent;
+    int ans = kSuccessNoDataSent;
 
-	int writeSize = MIN(FastAmountBuffered(),fBytesPerFlush);
-	
-	if(writeSize > 0)
-	{
-		int nBytesWritten = 0;
-//		int nBytesWritten = sck.SendData(FastGetBufferStart(), writeSize);
+    int writeSize = MIN(FastAmountBuffered(),fBytesPerFlush);
+    
+    if(writeSize > 0)
+    {
+        int nBytesWritten = 0;
+//      int nBytesWritten = sck.SendData(FastGetBufferStart(), writeSize);
 
-//		if (nBytesWritten<0 && fBlockOnSend
-//			&& plNet::GetError()==kBlockingError)
-		{
-			bool wasBlockingOrNot = sck.IsBlocking();
-			sck.SetBlocking(fBlockOnSend);
-			nBytesWritten = sck.SendData(FastGetBufferStart(), writeSize);        
-			sck.SetBlocking(wasBlockingOrNot);
-		}
+//      if (nBytesWritten<0 && fBlockOnSend
+//          && plNet::GetError()==kBlockingError)
+        {
+            bool wasBlockingOrNot = sck.IsBlocking();
+            sck.SetBlocking(fBlockOnSend);
+            nBytesWritten = sck.SendData(FastGetBufferStart(), writeSize);        
+            sck.SetBlocking(wasBlockingOrNot);
+        }
 
-		if (nBytesWritten > 0)
-		{
-			fStartPos += nBytesWritten;
-			FullCompress();
-			ans = kSuccessDataSent;
-		}
-		else if (nBytesWritten < 0)
-		{
-			if (plNet::GetError()!=kBlockingError)
-				ans = kFailedWriteError;
-		}
-		else
-		{
-			ans = kFailedSocketClosed;
-		}
-	}        
-	return ans;
+        if (nBytesWritten > 0)
+        {
+            fStartPos += nBytesWritten;
+            FullCompress();
+            ans = kSuccessDataSent;
+        }
+        else if (nBytesWritten < 0)
+        {
+            if (plNet::GetError()!=kBlockingError)
+                ans = kFailedWriteError;
+        }
+        else
+        {
+            ans = kFailedSocketClosed;
+        }
+    }        
+    return ans;
 }
 
 bool plBufferedSocketWriter::IsEmpty()
 {
-	return !(FastAmountBuffered() > 0);
+    return !(FastAmountBuffered() > 0);
 }
 
 void plBufferedSocketWriter::Reset()
 {
-	plRingBuffer::Reset();
+    plRingBuffer::Reset();
 }
 

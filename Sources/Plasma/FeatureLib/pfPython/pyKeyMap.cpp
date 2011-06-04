@@ -32,237 +32,237 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKeyMap.h"
 
 
-#include "../plInputCore/plInputInterfaceMgr.h"
-#include "../pnInputCore/plKeyMap.h"
+#include "plInputCore/plInputInterfaceMgr.h"
+#include "pnInputCore/plKeyMap.h"
 
 // conversion functions
 const char* pyKeyMap::ConvertVKeyToChar( UInt32 vk, UInt32 flags )
 {
-	char *key = plKeyMap::ConvertVKeyToChar( vk );
-	static char shortKey[ 2 ];
-	if( key == nil )
-	{
-		if( isalnum( vk ) )
-		{
-			shortKey[ 0 ] = (char)vk;
-			shortKey[ 1 ] = 0;
-			key = shortKey;
-		}
-		else
-			return "(unmapped)";
-	}
+    char *key = plKeyMap::ConvertVKeyToChar( vk );
+    static char shortKey[ 2 ];
+    if( key == nil )
+    {
+        if( isalnum( vk ) )
+        {
+            shortKey[ 0 ] = (char)vk;
+            shortKey[ 1 ] = 0;
+            key = shortKey;
+        }
+        else
+            return "(unmapped)";
+    }
 
-	static char newKey[ 16 ];
-	strcpy( newKey, key );
-	if( flags & kShift )
-		strcat( newKey, "_S" );
-	if( flags & kCtrl )
-		strcat( newKey, "_C" );
+    static char newKey[ 16 ];
+    strcpy( newKey, key );
+    if( flags & kShift )
+        strcat( newKey, "_S" );
+    if( flags & kCtrl )
+        strcat( newKey, "_C" );
 
-	return newKey;
+    return newKey;
 }
 
 UInt32 pyKeyMap::ConvertCharToVKey( const char* charVKey )
 {
-	char	str[ 16 ];
-	int		i;
+    char    str[ 16 ];
+    int     i;
 
-	if( strcmp( charVKey, "(unmapped" ) == 0 )
-		return KEY_UNMAPPED;
+    if( strcmp( charVKey, "(unmapped" ) == 0 )
+        return KEY_UNMAPPED;
 
-	strcpy( str, charVKey );
+    strcpy( str, charVKey );
 
-	// Get rid of modififers
-	for( i = 0; str[ i ] != 0 && str[ i ] != '_'; i++ );
-	str[ i ] = 0;
+    // Get rid of modififers
+    for( i = 0; str[ i ] != 0 && str[ i ] != '_'; i++ );
+    str[ i ] = 0;
 
-	// Convert raw key and return
-	return plKeyMap::ConvertCharToVKey( str );
+    // Convert raw key and return
+    return plKeyMap::ConvertCharToVKey( str );
 }
 
 UInt32 pyKeyMap::ConvertCharToFlags( const char *charVKey )
 {
-	char	str[ 16 ];
-	strcpy( str, charVKey );
+    char    str[ 16 ];
+    strcpy( str, charVKey );
 
-	// Find modifiers to set flags with
-	UInt32 keyFlags = 0;
-	if( strstr( str, "_S" ) || strstr( str, "_s" ) )
-		keyFlags |= plKeyCombo::kShift;
-	if( strstr( str, "_C" ) || strstr( str, "_c" ) )
-		keyFlags |= plKeyCombo::kCtrl;
+    // Find modifiers to set flags with
+    UInt32 keyFlags = 0;
+    if( strstr( str, "_S" ) || strstr( str, "_s" ) )
+        keyFlags |= plKeyCombo::kShift;
+    if( strstr( str, "_C" ) || strstr( str, "_c" ) )
+        keyFlags |= plKeyCombo::kCtrl;
 
-	return keyFlags;
+    return keyFlags;
 }
 
 
 UInt32 pyKeyMap::ConvertCharToControlCode(const char* charCode)
 {
-	ControlEventCode code = plInputMap::ConvertCharToControlCode(charCode);
-	return (UInt32)code;
+    ControlEventCode code = plInputMap::ConvertCharToControlCode(charCode);
+    return (UInt32)code;
 }
 
 const char* pyKeyMap::ConvertControlCodeToString( UInt32 code )
 {
-	return plInputMap::ConvertControlCodeToString((ControlEventCode)code);
+    return plInputMap::ConvertControlCodeToString((ControlEventCode)code);
 }
 
 
 // bind a key to an action
 void pyKeyMap::BindKey( const char* keyStr1, const char* keyStr2, const char* act)
 {
-	
-	ControlEventCode code = plKeyMap::ConvertCharToControlCode( act );
-	if( code == END_CONTROLS )
-	{
-		// error.... traceback?
-		return;
-	}
+    
+    ControlEventCode code = plKeyMap::ConvertCharToControlCode( act );
+    if( code == END_CONTROLS )
+    {
+        // error.... traceback?
+        return;
+    }
 
-	if( plInputInterfaceMgr::GetInstance() != nil )
-	{
-		plKeyCombo key1 = IBindKeyToVKey( keyStr1 );
-		if (keyStr2)
-		{
-			plKeyCombo key2 = IBindKeyToVKey( keyStr2 );
-			plInputInterfaceMgr::GetInstance()->BindAction( key1, key2, code );
-		}
-		else
-			plInputInterfaceMgr::GetInstance()->BindAction( key1, code );
-	}
+    if( plInputInterfaceMgr::GetInstance() != nil )
+    {
+        plKeyCombo key1 = IBindKeyToVKey( keyStr1 );
+        if (keyStr2)
+        {
+            plKeyCombo key2 = IBindKeyToVKey( keyStr2 );
+            plInputInterfaceMgr::GetInstance()->BindAction( key1, key2, code );
+        }
+        else
+            plInputInterfaceMgr::GetInstance()->BindAction( key1, code );
+    }
 }
 
 // bind a key to an action
 void pyKeyMap::BindKeyToConsoleCommand( const char* keyStr1, const char* command)
 {
-	
-	if( command && plInputInterfaceMgr::GetInstance() != nil )
-	{
-		plKeyCombo key1;
-		if (keyStr1)
-			key1 = IBindKeyToVKey( keyStr1 );
-		else
-			key1 = IBindKeyToVKey( "(unmapped)" );
-		plInputInterfaceMgr::GetInstance()->BindConsoleCmd( key1, command, plKeyMap::kFirstAlways);
-	}
+    
+    if( command && plInputInterfaceMgr::GetInstance() != nil )
+    {
+        plKeyCombo key1;
+        if (keyStr1)
+            key1 = IBindKeyToVKey( keyStr1 );
+        else
+            key1 = IBindKeyToVKey( "(unmapped)" );
+        plInputInterfaceMgr::GetInstance()->BindConsoleCmd( key1, command, plKeyMap::kFirstAlways);
+    }
 }
 
 plKeyCombo pyKeyMap::IBindKeyToVKey( const char *keyStr )
 {
-	char	str[ 16 ];
-	int		i;
+    char    str[ 16 ];
+    int     i;
 
-	plKeyCombo	combo;
+    plKeyCombo  combo;
 
 
-	strcpy( str, keyStr );
+    strcpy( str, keyStr );
 
-	// Find modifiers to set flags with
-	combo.fFlags = 0;
-	if( strstr( str, "_S" ) || strstr( str, "_s" ) )
-		combo.fFlags |= plKeyCombo::kShift;
-	if( strstr( str, "_C" ) || strstr( str, "_c" ) )
-		combo.fFlags |= plKeyCombo::kCtrl;
-	
-	// Get rid of modififers
-	for( i = 0; str[ i ] != 0 && str[ i ] != '_'; i++ );
-	str[ i ] = 0;
+    // Find modifiers to set flags with
+    combo.fFlags = 0;
+    if( strstr( str, "_S" ) || strstr( str, "_s" ) )
+        combo.fFlags |= plKeyCombo::kShift;
+    if( strstr( str, "_C" ) || strstr( str, "_c" ) )
+        combo.fFlags |= plKeyCombo::kCtrl;
+    
+    // Get rid of modififers
+    for( i = 0; str[ i ] != 0 && str[ i ] != '_'; i++ );
+    str[ i ] = 0;
 
-	// Convert raw key
-	combo.fKey = plKeyMap::ConvertCharToVKey( str );
-	if( combo.fKey == KEY_UNMAPPED )
-		combo = plKeyCombo::kUnmapped;
+    // Convert raw key
+    combo.fKey = plKeyMap::ConvertCharToVKey( str );
+    if( combo.fKey == KEY_UNMAPPED )
+        combo = plKeyCombo::kUnmapped;
 
-	// And return!
-	return combo;
+    // And return!
+    return combo;
 }
 
 UInt32 pyKeyMap::GetBindingKey1(UInt32 code)
 {
-	if( plInputInterfaceMgr::GetInstance() != nil )
-	{
-		const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
-		if ( keymap )
-		{
-			plKeyCombo key = keymap->GetKey1();
-			return (UInt32)(key.fKey);
-		}
-	}
-	return 0;
+    if( plInputInterfaceMgr::GetInstance() != nil )
+    {
+        const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
+        if ( keymap )
+        {
+            plKeyCombo key = keymap->GetKey1();
+            return (UInt32)(key.fKey);
+        }
+    }
+    return 0;
 }
 
 UInt32 pyKeyMap::GetBindingFlags1(UInt32 code)
 {
-	if( plInputInterfaceMgr::GetInstance() != nil )
-	{
-		const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
-		if ( keymap )
-		{
-			plKeyCombo key = keymap->GetKey1();
-			return (UInt32)(key.fFlags);
-		}
-	}
-	return 0;
+    if( plInputInterfaceMgr::GetInstance() != nil )
+    {
+        const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
+        if ( keymap )
+        {
+            plKeyCombo key = keymap->GetKey1();
+            return (UInt32)(key.fFlags);
+        }
+    }
+    return 0;
 }
 
 UInt32 pyKeyMap::GetBindingKey2(UInt32 code)
 {
-	if( plInputInterfaceMgr::GetInstance() != nil )
-	{
-		const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
-		if ( keymap )
-		{
-			plKeyCombo key = keymap->GetKey2();
-			return (UInt32)(key.fKey);
-		}
-	}
-	return 0;
+    if( plInputInterfaceMgr::GetInstance() != nil )
+    {
+        const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
+        if ( keymap )
+        {
+            plKeyCombo key = keymap->GetKey2();
+            return (UInt32)(key.fKey);
+        }
+    }
+    return 0;
 }
 
 UInt32 pyKeyMap::GetBindingFlags2(UInt32 code)
 {
-	if( plInputInterfaceMgr::GetInstance() != nil )
-	{
-		const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
-		if ( keymap )
-		{
-			plKeyCombo key = keymap->GetKey2();
-			return (UInt32)(key.fFlags);
-		}
-	}
-	return 0;
+    if( plInputInterfaceMgr::GetInstance() != nil )
+    {
+        const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
+        if ( keymap )
+        {
+            plKeyCombo key = keymap->GetKey2();
+            return (UInt32)(key.fFlags);
+        }
+    }
+    return 0;
 }
 
 UInt32 pyKeyMap::GetBindingKeyConsole(const char* command)
 {
-	if( plInputInterfaceMgr::GetInstance() != nil )
-	{
-		const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBindingByConsoleCmd(command);
-		if ( keymap )
-		{
-			plKeyCombo key = keymap->GetKey1();
-			return (UInt32)(key.fKey);
-		}
-	}
-	return 0;
+    if( plInputInterfaceMgr::GetInstance() != nil )
+    {
+        const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBindingByConsoleCmd(command);
+        if ( keymap )
+        {
+            plKeyCombo key = keymap->GetKey1();
+            return (UInt32)(key.fKey);
+        }
+    }
+    return 0;
 }
 
 UInt32 pyKeyMap::GetBindingFlagsConsole(const char* command)
 {
-	if( plInputInterfaceMgr::GetInstance() != nil )
-	{
-		const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBindingByConsoleCmd(command);
-		if ( keymap )
-		{
-			plKeyCombo key = keymap->GetKey1();
-			return (UInt32)(key.fFlags);
-		}
-	}
-	return 0;
+    if( plInputInterfaceMgr::GetInstance() != nil )
+    {
+        const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBindingByConsoleCmd(command);
+        if ( keymap )
+        {
+            plKeyCombo key = keymap->GetKey1();
+            return (UInt32)(key.fFlags);
+        }
+    }
+    return 0;
 }
 
 void pyKeyMap::WriteKeyMap()
 {
-	if( plInputInterfaceMgr::GetInstance() != nil )
-		plInputInterfaceMgr::GetInstance()->WriteKeyMap();
+    if( plInputInterfaceMgr::GetInstance() != nil )
+        plInputInterfaceMgr::GetInstance()->WriteKeyMap();
 }

@@ -35,42 +35,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plNetClientStats
 {
 public:
-	plNetClientStats();
+    plNetClientStats();
 
-	//
-	// Vault Stats
-	//
+    //
+    // Vault Stats
+    //
 private:
-	// Vault msg counters
-	UInt32	fNumVaultMsgsSent;
-	UInt32	fNumVaultMsgsRcvd;
-	UInt32	fVaultMsgSentBytes;
-	UInt32	fVaultMsgRcvdBytes;
+    // Vault msg counters
+    UInt32  fNumVaultMsgsSent;
+    UInt32  fNumVaultMsgsRcvd;
+    UInt32  fVaultMsgSentBytes;
+    UInt32  fVaultMsgRcvdBytes;
 public:
-	// msg counters
-	UInt32	GetNumVaultMsgsSent() const { return fNumVaultMsgsSent;	}
-	UInt32	GetNumVaultMsgsRcvd() const { return fNumVaultMsgsRcvd; }
-	UInt32	GetVaultMsgSentBytes() const { return fVaultMsgSentBytes; }
-	UInt32	GetVaultMsgRcvdBytes() const { return fVaultMsgRcvdBytes; }
-	void	TallyVaultMsgSent( int size ) { fNumVaultMsgsSent++; fVaultMsgSentBytes+=size; }
-	void	TallyVaultMsgRcvd( int size ) { fNumVaultMsgsRcvd++; fVaultMsgRcvdBytes+=size; }
-	void	ResetVaultMsgCounters() { fNumVaultMsgsSent=fNumVaultMsgsRcvd=fVaultMsgSentBytes=fVaultMsgRcvdBytes=0;  }
-	
-	//
-	// NetClient BW Stats, kept per age
-	//
+    // msg counters
+    UInt32  GetNumVaultMsgsSent() const { return fNumVaultMsgsSent; }
+    UInt32  GetNumVaultMsgsRcvd() const { return fNumVaultMsgsRcvd; }
+    UInt32  GetVaultMsgSentBytes() const { return fVaultMsgSentBytes; }
+    UInt32  GetVaultMsgRcvdBytes() const { return fVaultMsgRcvdBytes; }
+    void    TallyVaultMsgSent( int size ) { fNumVaultMsgsSent++; fVaultMsgSentBytes+=size; }
+    void    TallyVaultMsgRcvd( int size ) { fNumVaultMsgsRcvd++; fVaultMsgRcvdBytes+=size; }
+    void    ResetVaultMsgCounters() { fNumVaultMsgsSent=fNumVaultMsgsRcvd=fVaultMsgSentBytes=fVaultMsgRcvdBytes=0;  }
+    
+    //
+    // NetClient BW Stats, kept per age
+    //
 private:
-	int fAgeStatsULBits, fAgeStatsDLBits;
-	UInt32 fRecvdMultipleAcks;
-	double fAgeStatsLinkInTime;
-	
+    int fAgeStatsULBits, fAgeStatsDLBits;
+    UInt32 fRecvdMultipleAcks;
+    double fAgeStatsLinkInTime;
+    
 public:
-	void UpdateAgeStats();
-	void ResetAgeStats();
-	float GetAgeStatsULBitsPerSec() const;
-	float GetAgeStatsDLBitsPerSec() const;
-	UInt32 GetRecvdMultipleAcks() const;
+    void UpdateAgeStats();
+    void ResetAgeStats();
+    float GetAgeStatsULBitsPerSec() const;
+    float GetAgeStatsDLBitsPerSec() const;
+    UInt32 GetRecvdMultipleAcks() const;
 };
 
-#endif	// plNetClientStats_h
+#endif  // plNetClientStats_h
 

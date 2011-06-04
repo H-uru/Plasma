@@ -30,6 +30,6 @@ class plAutoUIBlock;
 
 namespace PythonFile
 {
-	plComponentClassDesc *GetClassDesc();
-	void AddAutoUIBlock(plAutoUIBlock *block);
+    plComponentClassDesc *GetClassDesc();
+    void AddAutoUIBlock(plAutoUIBlock *block);
 }

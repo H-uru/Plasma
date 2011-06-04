@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIKnobCtrl Header													//
-//																			//
+//                                                                          //
+//  pfGUIKnobCtrl Header                                                    //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIKnobCtrl_h
@@ -39,62 +39,62 @@ class plAGMasterMod;
 
 class pfGUIKnobCtrl : public pfGUIValueCtrl
 {
-	protected:
+    protected:
 
-		hsTArray<plKey>	fAnimationKeys;
-		char			*fAnimName;
+        hsTArray<plKey> fAnimationKeys;
+        char            *fAnimName;
 
-		hsPoint3		fDragStart;
-		hsScalar		fDragValue;
-		hsBool			fDragging;
+        hsPoint3        fDragStart;
+        hsScalar        fDragValue;
+        hsBool          fDragging;
 
-		hsPoint3		fAnimStartPos, fAnimEndPos;	// Calculated at export time for kMapToScreenRange
-		hsScalar		fDragRangeMin, fDragRangeMax;
+        hsPoint3        fAnimStartPos, fAnimEndPos; // Calculated at export time for kMapToScreenRange
+        hsScalar        fDragRangeMin, fDragRangeMax;
 
-						// Computed once, once an anim is loaded that we can compute this with
-		hsScalar		fAnimBegin, fAnimEnd;
-		hsBool			fAnimTimesCalced;
+                        // Computed once, once an anim is loaded that we can compute this with
+        hsScalar        fAnimBegin, fAnimEnd;
+        hsBool          fAnimTimesCalced;
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
-		virtual UInt32		IGetDesiredCursor( void ) const;	// As specified in plInputInterface.h
+        virtual UInt32      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
-		hsBool			ICalcAnimTimes( void );
+        hsBool          ICalcAnimTimes( void );
 
-	public:
+    public:
 
-		pfGUIKnobCtrl();
-		virtual ~pfGUIKnobCtrl();
+        pfGUIKnobCtrl();
+        virtual ~pfGUIKnobCtrl();
 
-		CLASSNAME_REGISTER( pfGUIKnobCtrl );
-		GETINTERFACE_ANY( pfGUIKnobCtrl, pfGUIValueCtrl );
+        CLASSNAME_REGISTER( pfGUIKnobCtrl );
+        GETINTERFACE_ANY( pfGUIKnobCtrl, pfGUIValueCtrl );
 
 
-		enum OurFlags
-		{
-			kReverseValues = kDerivedFlagsStart,
-			kLeftRightOrientation,
-			kMapToScreenRange,
-			kTriggerOnlyOnMouseUp,
-			kMapToAnimationRange
-		};
+        enum OurFlags
+        {
+            kReverseValues = kDerivedFlagsStart,
+            kLeftRightOrientation,
+            kMapToScreenRange,
+            kTriggerOnlyOnMouseUp,
+            kMapToAnimationRange
+        };
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		virtual void	HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
 
-		virtual void	UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
+        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
 
-		virtual void	SetCurrValue( hsScalar v );
+        virtual void    SetCurrValue( hsScalar v );
 
-		// Export only
-		void	SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
-		void	SetScreenRange( const hsPoint3 &startPos, const hsPoint3 &endPos ) { fAnimStartPos = startPos; fAnimEndPos = endPos; }
+        // Export only
+        void    SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
+        void    SetScreenRange( const hsPoint3 &startPos, const hsPoint3 &endPos ) { fAnimStartPos = startPos; fAnimEndPos = endPos; }
 };
 
 #endif // _pfGUIKnobCtrl_h

@@ -29,54 +29,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Max.h>
 #include <commdlg.h>
 #include <bmmlib.h>
+
+#ifdef BINK_SDK_AVAILABLE
 #include "Bink.h"
+#endif
 
 class plBinkBitmapIO : public BitmapIO
 {
 private:
-	HBINK fHBink;			// Handle to currently opened Bink
-	TCHAR fName[MAX_PATH];	// Name of currently opened Bink
+#ifdef BINK_SDK_AVAILABLE
+    HBINK fHBink;           // Handle to currently opened Bink
+#endif
+    TCHAR fName[MAX_PATH];  // Name of currently opened Bink
 
-	BOOL OpenBink(BitmapInfo* fbi);
-	void CloseBink();
+    BOOL OpenBink(BitmapInfo* fbi);
+    void CloseBink();
 
 public:
-	plBinkBitmapIO();
-	~plBinkBitmapIO();
+    plBinkBitmapIO();
+    ~plBinkBitmapIO();
 
-	//-- Number of extensions supported, name
-	int ExtCount() { return 1; }
-	const TCHAR* Ext(int n) { return _T("bik"); }
+    //-- Number of extensions supported, name
+    int ExtCount() { return 1; }
+    const TCHAR* Ext(int n) { return _T("bik"); }
         
-	//-- Descriptions
-	const TCHAR* LongDesc() { return "Bink File"; }
-	const TCHAR* ShortDesc(){ return "Bink"; }
+    //-- Descriptions
+    const TCHAR* LongDesc() { return "Bink File"; }
+    const TCHAR* ShortDesc(){ return "Bink"; }
 
-	//-- Miscellaneous Messages
-	const TCHAR* AuthorName()			{ return _T("Colin Bonstead"); }
-	const TCHAR* CopyrightMessage()		{ return _T("Copyright 2004, Cyan Inc."); }
-	unsigned int Version()				{ return 100; }
+    //-- Miscellaneous Messages
+    const TCHAR* AuthorName()           { return _T("Colin Bonstead"); }
+    const TCHAR* CopyrightMessage()     { return _T("Copyright 2004, Cyan Inc."); }
+    unsigned int Version()              { return 100; }
 
-	//-- Driver capabilities
-	int Capability() { return	BMMIO_READER		| // Reads files
-								BMMIO_MULTIFRAME	| // File contains multiple frames
-								BMMIO_EXTENSION		| // Uses file extension
-								BMMIO_NON_CONCURRENT_ACCESS | // Cannot handle multiple, concurrent requests (necessary?)
-								BMMIO_UNINTERRUPTIBLE // Cannot be started and stopped (necessary?)
-								;}
+    //-- Driver capabilities
+    int Capability() { return   BMMIO_READER        | // Reads files
+                                BMMIO_MULTIFRAME    | // File contains multiple frames
+                                BMMIO_EXTENSION     | // Uses file extension
+                                BMMIO_NON_CONCURRENT_ACCESS | // Cannot handle multiple, concurrent requests (necessary?)
+                                BMMIO_UNINTERRUPTIBLE // Cannot be started and stopped (necessary?)
+                                ;}
 
-	DWORD EvaluateConfigure() { return 0; }
-	BOOL LoadConfigure(void* ptr) { return FALSE; }
-	BOOL SaveConfigure(void* ptr) { return FALSE; }
+    DWORD EvaluateConfigure() { return 0; }
+    BOOL LoadConfigure(void* ptr) { return FALSE; }
+    BOOL SaveConfigure(void* ptr) { return FALSE; }
 
-	//-- Return info about image
-	BMMRES GetImageInfo(BitmapInfo* fbi);
+    //-- Return info about image
+    BMMRES GetImageInfo(BitmapInfo* fbi);
 
-	//-- Image Input
-	BitmapStorage* Load(BitmapInfo* fbi, Bitmap* map, BMMRES* status);
+    //-- Image Input
+    BitmapStorage* Load(BitmapInfo* fbi, Bitmap* map, BMMRES* status);
 
-	//-- Show DLL's "About..." box
-	void ShowAbout(HWND hWnd);
+    //-- Show DLL's "About..." box
+    void ShowAbout(HWND hWnd);
 };
 
 #endif // plBinkBitmap_h_inc

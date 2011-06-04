@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plLayerInterface.h"
 #include "plLayer.h"
-#include "../plMessage/plMatRefMsg.h"
+#include "plMessage/plMatRefMsg.h"
 #include "plProfile.h"
 
 plProfile_CreateTimer("MaterialAnims", "Animation", MaterialAnims);
@@ -54,178 +54,178 @@ fLastUpdateTime(0)
 
 hsGMaterial::~hsGMaterial()
 {
-	IClearLayers();
+    IClearLayers();
 }
 
 plLayerInterface* hsGMaterial::GetPiggyBack(UInt32 which)
 {
-	return fPiggyBacks[which];
+    return fPiggyBacks[which];
 }
 
 plLayerInterface* hsGMaterial::GetLayer(UInt32 which)
 {
-	return fLayers[which];
+    return fLayers[which];
 }
 
 UInt32 hsGMaterial::IMakeExtraLayer()
 {
-	fLayers.ExpandAndZero(GetNumLayers()+1);
-	return fLayers.GetCount();
+    fLayers.ExpandAndZero(GetNumLayers()+1);
+    return fLayers.GetCount();
 }
 
 void hsGMaterial::IClearLayers()
 {
-	fLayers.Reset();
+    fLayers.Reset();
 }
 
 void hsGMaterial::SetNumLayers(int cnt)
 {
-	if( cnt < fLayers.GetCount() )
-		fLayers.SetCount(cnt);
-	else
-		fLayers.ExpandAndZero(cnt);
+    if( cnt < fLayers.GetCount() )
+        fLayers.SetCount(cnt);
+    else
+        fLayers.ExpandAndZero(cnt);
 }
 
 hsGMaterial* hsGMaterial::Clone()
 {
-	hsGMaterial* clo = CloneNoLayers();
+    hsGMaterial* clo = CloneNoLayers();
 
-	clo->SetNumLayers(GetNumLayers());
-	
-	int i;
-	for( i = 0; i < GetNumLayers(); i++ )
-		clo->SetLayer(fLayers[i], i);
+    clo->SetNumLayers(GetNumLayers());
+    
+    int i;
+    for( i = 0; i < GetNumLayers(); i++ )
+        clo->SetLayer(fLayers[i], i);
 
-	return clo;
+    return clo;
 }
 
 hsGMaterial* hsGMaterial::CloneNoLayers()
 {
-	hsGMaterial* clo = TRACKED_NEW hsGMaterial;
+    hsGMaterial* clo = TRACKED_NEW hsGMaterial;
 
-	clo->fCompFlags = fCompFlags;
-	clo->fLoadFlags = fLoadFlags;
+    clo->fCompFlags = fCompFlags;
+    clo->fLoadFlags = fLoadFlags;
 
-	return clo;
+    return clo;
 }
 
 plLayer* hsGMaterial::MakeBaseLayer()
 {
-	plLayer* newLay = TRACKED_NEW plLayer;
-	newLay->InitToDefault();
-	IClearLayers();
-	
-	hsAssert(GetKey(), "All materials need a key (or temp key)");
+    plLayer* newLay = TRACKED_NEW plLayer;
+    newLay->InitToDefault();
+    IClearLayers();
+    
+    hsAssert(GetKey(), "All materials need a key (or temp key)");
 
-	char buff[256];
-	if( GetKey()->GetName() )
-		sprintf(buff, "%s_%s", GetKey()->GetName(), "Layer");
-	else
-		strcpy(buff, "Layer");
-	hsgResMgr::ResMgr()->NewKey( buff, newLay, GetKey() != nil ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
+    char buff[256];
+    if( GetKey()->GetName() )
+        sprintf(buff, "%s_%s", GetKey()->GetName(), "Layer");
+    else
+        strcpy(buff, "Layer");
+    hsgResMgr::ResMgr()->NewKey( buff, newLay, GetKey() != nil ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 
-	// Add layer so we have it now.
-	AddLayerViaNotify(newLay);
+    // Add layer so we have it now.
+    AddLayerViaNotify(newLay);
 
-	return newLay;
+    return newLay;
 }
 
 UInt32 hsGMaterial::AddLayerViaNotify(plLayerInterface* layer)
 {
-	int idx = GetNumLayers();
+    int idx = GetNumLayers();
 
-	// Add via notify so we'll dispose of it properly later.
-	plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnRequest, idx, plMatRefMsg::kLayer);
-	hsgResMgr::ResMgr()->SendRef(layer->GetKey(), msg, plRefFlags::kActiveRef);
+    // Add via notify so we'll dispose of it properly later.
+    plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnRequest, idx, plMatRefMsg::kLayer);
+    hsgResMgr::ResMgr()->SendRef(layer->GetKey(), msg, plRefFlags::kActiveRef);
 
-	fLayers.SetCount(idx+1);
-	fLayers[idx] = layer;
+    fLayers.SetCount(idx+1);
+    fLayers[idx] = layer;
 
-	return idx;
+    return idx;
 }
 
 void hsGMaterial::ReplaceLayer(plLayerInterface* oldLay, plLayerInterface* newLay, hsBool piggyBack)
 {
-	hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
-	int i;
-	for( i = 0; i < layers.GetCount(); i++ )
-	{
-		if( layers[i] == oldLay )
-			break;
-	}
-	hsAssert(i < layers.GetCount(), "Replacing a layer we don't have");
-	if( i >= layers.GetCount() )
-		return;
-	SetLayer(newLay, i, piggyBack);
+    hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
+    int i;
+    for( i = 0; i < layers.GetCount(); i++ )
+    {
+        if( layers[i] == oldLay )
+            break;
+    }
+    hsAssert(i < layers.GetCount(), "Replacing a layer we don't have");
+    if( i >= layers.GetCount() )
+        return;
+    SetLayer(newLay, i, piggyBack);
 }
 
 void hsGMaterial::RemoveLayer(plLayerInterface* lay, hsBool piggyBack)
 {
-	hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
-	int i;
-	for( i = 0; i < layers.GetCount(); i++ )
-	{
-		if( layers[i] == lay )
-			break;
-	}
+    hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
+    int i;
+    for( i = 0; i < layers.GetCount(); i++ )
+    {
+        if( layers[i] == lay )
+            break;
+    }
 
-	if (i >= layers.GetCount())
-		return;
+    if (i >= layers.GetCount())
+        return;
 
-	layers.Remove(i);
+    layers.Remove(i);
 }
 
 void hsGMaterial::InsertLayer(plLayerInterface* layer, Int32 which, hsBool piggyBack)
 {
-	hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
-	hsAssert(which <= layers.GetCount(), "Material layers Exceeding test depth");
-	layers.InsertAtIndex(which, layer);
+    hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
+    hsAssert(which <= layers.GetCount(), "Material layers Exceeding test depth");
+    layers.InsertAtIndex(which, layer);
 }
 
 void hsGMaterial::SetLayer(plLayerInterface* layer, Int32 which, hsBool insert, hsBool piggyBack)
 {
-	if( insert )
-	{
-		InsertLayer(layer, which, piggyBack);
-	}
-	else
-	{
-		hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
-		if( which < 0 )
-			which = layers.GetCount();
-		hsAssert(which <= layers.GetCount(), "Material layers Exceeding test depth");
-		if( which < layers.GetCount() )
-			layers[which] = layer;
-		else
-			layers.Append(layer);
-	}
+    if( insert )
+    {
+        InsertLayer(layer, which, piggyBack);
+    }
+    else
+    {
+        hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
+        if( which < 0 )
+            which = layers.GetCount();
+        hsAssert(which <= layers.GetCount(), "Material layers Exceeding test depth");
+        if( which < layers.GetCount() )
+            layers[which] = layer;
+        else
+            layers.Append(layer);
+    }
 }
 
 
 void hsGMaterial::Write(hsStream* s)
 {
-	s->WriteSwap32(fLoadFlags);
-	s->WriteSwap32(fCompFlags);
+    s->WriteSwap32(fLoadFlags);
+    s->WriteSwap32(fCompFlags);
 
-	s->WriteSwap32(GetNumLayers());
-	s->WriteSwap32(GetNumPiggyBacks());
+    s->WriteSwap32(GetNumLayers());
+    s->WriteSwap32(GetNumPiggyBacks());
 }
 
 void hsGMaterial::Read(hsStream* s)
 {
-	fLoadFlags = s->ReadSwap32();
-	fCompFlags = s->ReadSwap32();
+    fLoadFlags = s->ReadSwap32();
+    fCompFlags = s->ReadSwap32();
 
-	IClearLayers();
-	int n = s->ReadSwap32();
-	fLayers.SetCountAndZero(n);
-	n = s->ReadSwap32();
-	fPiggyBacks.SetCountAndZero(n);
+    IClearLayers();
+    int n = s->ReadSwap32();
+    fLayers.SetCountAndZero(n);
+    n = s->ReadSwap32();
+    fPiggyBacks.SetCountAndZero(n);
 }
 
 void hsGMaterial::Write(hsStream *stream, hsResMgr *group)
 {
-	plSynchedObject::Write(stream, group);
+    plSynchedObject::Write(stream, group);
 
     Write(stream);
 
@@ -233,90 +233,90 @@ void hsGMaterial::Write(hsStream *stream, hsResMgr *group)
     int iLay;
     for( iLay = 0; iLay < GetNumLayers(); iLay++ )
     {
-		group->WriteKey(stream,GetLayer(iLay));
+        group->WriteKey(stream,GetLayer(iLay));
     }
-	for( iLay = 0; iLay < GetNumPiggyBacks(); iLay++ )
-	{
-		group->WriteKey(stream, GetPiggyBack(iLay));
-	}
+    for( iLay = 0; iLay < GetNumPiggyBacks(); iLay++ )
+    {
+        group->WriteKey(stream, GetPiggyBack(iLay));
+    }
 }
 
 void hsGMaterial::Read(hsStream *stream, hsResMgr *group)
 {
-	plSynchedObject::Read(stream, group);
+    plSynchedObject::Read(stream, group);
 
     Read(stream);
 
-	int iLay;    
+    int iLay;    
     // Assign texture(s)
     for (iLay = 0; iLay < GetNumLayers(); iLay++)
     {
-		plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kLayer);
-		plKey key = group->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
+        plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kLayer);
+        plKey key = group->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
     }
     for (iLay = 0; iLay < GetNumPiggyBacks(); iLay++)
     {
-		plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kPiggyBack);
-		plKey key = group->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
+        plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kPiggyBack);
+        plKey key = group->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
     }
 }
 
 void hsGMaterial::Eval(double secs, UInt32 frame)
 {
-	plProfile_BeginLap(MaterialAnims, GetKeyName());
+    plProfile_BeginLap(MaterialAnims, GetKeyName());
 
-	int i;
-	for( i = 0; i < GetNumLayers(); i++ )
-	{
-		if( fLayers[i] )
-			fLayers[i]->Eval(secs, frame, 0);
-	}
-	for( i = 0; i < GetNumPiggyBacks(); i++ )
-	{
-		if( fPiggyBacks[i] )
-			fPiggyBacks[i]->Eval(secs, frame, 0);
-	}
+    int i;
+    for( i = 0; i < GetNumLayers(); i++ )
+    {
+        if( fLayers[i] )
+            fLayers[i]->Eval(secs, frame, 0);
+    }
+    for( i = 0; i < GetNumPiggyBacks(); i++ )
+    {
+        if( fPiggyBacks[i] )
+            fPiggyBacks[i]->Eval(secs, frame, 0);
+    }
 
-	plProfile_EndLap(MaterialAnims, GetKeyName());
+    plProfile_EndLap(MaterialAnims, GetKeyName());
 }
 
 void hsGMaterial::Reset()
 {
-	int i;
-	for( i = 0; i < GetNumLayers(); i++ )
-	{
-		if( fLayers[i] )
-			fLayers[i]->Eval(0, 0, 0);
-	}
+    int i;
+    for( i = 0; i < GetNumLayers(); i++ )
+    {
+        if( fLayers[i] )
+            fLayers[i]->Eval(0, 0, 0);
+    }
 }
 
 void hsGMaterial::Init()
 {
-	Reset();
+    Reset();
 }
 
 hsBool hsGMaterial::MsgReceive(plMessage* msg)
 {
-	plMatRefMsg* refMsg = plMatRefMsg::ConvertNoRef(msg);
-	if( refMsg )
-	{
-		int which = refMsg->fWhich;
-		hsBool piggyBack = 0 != (refMsg->fType & plMatRefMsg::kPiggyBack);
-		plLayerInterface* lay= plLayerInterface::ConvertNoRef(refMsg->GetRef());
-		if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest) )
-		{
-			hsBool insert = 0 != (refMsg->fType & plMatRefMsg::kInsert);
-			SetLayer(lay, which, 
-				insert,
-				piggyBack );
-		}
-		else if( refMsg->GetContext() & plRefMsg::kOnReplace )
-			ReplaceLayer(plLayerInterface::ConvertNoRef(refMsg->GetOldRef()), lay, piggyBack);
-		else if( refMsg->GetContext() & (plRefMsg::kOnRemove | plRefMsg::kOnDestroy) )
-			RemoveLayer(lay, piggyBack);
-		else
-			ReplaceLayer(lay, &defaultLayer, piggyBack);
-		return true;
-	}
-	return plSynchedObject::MsgReceive(msg);
+    plMatRefMsg* refMsg = plMatRefMsg::ConvertNoRef(msg);
+    if( refMsg )
+    {
+        int which = refMsg->fWhich;
+        hsBool piggyBack = 0 != (refMsg->fType & plMatRefMsg::kPiggyBack);
+        plLayerInterface* lay= plLayerInterface::ConvertNoRef(refMsg->GetRef());
+        if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest) )
+        {
+            hsBool insert = 0 != (refMsg->fType & plMatRefMsg::kInsert);
+            SetLayer(lay, which, 
+                insert,
+                piggyBack );
+        }
+        else if( refMsg->GetContext() & plRefMsg::kOnReplace )
+            ReplaceLayer(plLayerInterface::ConvertNoRef(refMsg->GetOldRef()), lay, piggyBack);
+        else if( refMsg->GetContext() & (plRefMsg::kOnRemove | plRefMsg::kOnDestroy) )
+            RemoveLayer(lay, piggyBack);
+        else
+            ReplaceLayer(lay, &defaultLayer, piggyBack);
+        return true;
+    }
+    return plSynchedObject::MsgReceive(msg);
 }

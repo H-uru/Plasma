@@ -32,42 +32,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static hsMatrix44* InvTRS(const hsMatrix44& trs, hsMatrix44& inv)
 {
-	inv.NotIdentity();
+    inv.NotIdentity();
 
-	hsScalar invSSq[3];
-	invSSq[0] = 1.f / (trs.fMap[0][0] * trs.fMap[0][0] + trs.fMap[1][0] * trs.fMap[1][0] + trs.fMap[2][0] * trs.fMap[2][0]);
-	invSSq[1] = 1.f / (trs.fMap[0][1] * trs.fMap[0][1] + trs.fMap[1][1] * trs.fMap[1][1] + trs.fMap[2][1] * trs.fMap[2][1]);
-	invSSq[2] = 1.f / (trs.fMap[0][2] * trs.fMap[0][2] + trs.fMap[1][2] * trs.fMap[1][2] + trs.fMap[2][2] * trs.fMap[2][2]);
+    hsScalar invSSq[3];
+    invSSq[0] = 1.f / (trs.fMap[0][0] * trs.fMap[0][0] + trs.fMap[1][0] * trs.fMap[1][0] + trs.fMap[2][0] * trs.fMap[2][0]);
+    invSSq[1] = 1.f / (trs.fMap[0][1] * trs.fMap[0][1] + trs.fMap[1][1] * trs.fMap[1][1] + trs.fMap[2][1] * trs.fMap[2][1]);
+    invSSq[2] = 1.f / (trs.fMap[0][2] * trs.fMap[0][2] + trs.fMap[1][2] * trs.fMap[1][2] + trs.fMap[2][2] * trs.fMap[2][2]);
 
-	inv.fMap[0][0] = invSSq[0] * trs.fMap[0][0];
-	inv.fMap[0][1] = invSSq[0] * trs.fMap[1][0];
-	inv.fMap[0][2] = invSSq[0] * trs.fMap[2][0];
+    inv.fMap[0][0] = invSSq[0] * trs.fMap[0][0];
+    inv.fMap[0][1] = invSSq[0] * trs.fMap[1][0];
+    inv.fMap[0][2] = invSSq[0] * trs.fMap[2][0];
 
-	inv.fMap[0][3] = -(inv.fMap[0][0] * trs.fMap[0][3] + inv.fMap[0][1] * trs.fMap[1][3] + inv.fMap[0][2] * trs.fMap[2][3]);
+    inv.fMap[0][3] = -(inv.fMap[0][0] * trs.fMap[0][3] + inv.fMap[0][1] * trs.fMap[1][3] + inv.fMap[0][2] * trs.fMap[2][3]);
 
-	inv.fMap[1][0] = invSSq[1] * trs.fMap[0][1];
-	inv.fMap[1][1] = invSSq[1] * trs.fMap[1][1];
-	inv.fMap[1][2] = invSSq[1] * trs.fMap[2][1];
+    inv.fMap[1][0] = invSSq[1] * trs.fMap[0][1];
+    inv.fMap[1][1] = invSSq[1] * trs.fMap[1][1];
+    inv.fMap[1][2] = invSSq[1] * trs.fMap[2][1];
 
-	inv.fMap[1][3] = -(inv.fMap[1][0] * trs.fMap[0][3] + inv.fMap[1][1] * trs.fMap[1][3] + inv.fMap[1][2] * trs.fMap[2][3]);
+    inv.fMap[1][3] = -(inv.fMap[1][0] * trs.fMap[0][3] + inv.fMap[1][1] * trs.fMap[1][3] + inv.fMap[1][2] * trs.fMap[2][3]);
 
-	inv.fMap[2][0] = invSSq[2] * trs.fMap[0][2];
-	inv.fMap[2][1] = invSSq[2] * trs.fMap[1][2];
-	inv.fMap[2][2] = invSSq[2] * trs.fMap[2][2];
+    inv.fMap[2][0] = invSSq[2] * trs.fMap[0][2];
+    inv.fMap[2][1] = invSSq[2] * trs.fMap[1][2];
+    inv.fMap[2][2] = invSSq[2] * trs.fMap[2][2];
 
-	inv.fMap[2][3] = -(inv.fMap[2][0] * trs.fMap[0][3] + inv.fMap[2][1] * trs.fMap[1][3] + inv.fMap[2][2] * trs.fMap[2][3]);
+    inv.fMap[2][3] = -(inv.fMap[2][0] * trs.fMap[0][3] + inv.fMap[2][1] * trs.fMap[1][3] + inv.fMap[2][2] * trs.fMap[2][3]);
 
-	inv.fMap[3][0] = inv.fMap[3][1] = inv.fMap[3][2] = 0;
-	inv.fMap[3][3] = 1.f;
+    inv.fMap[3][0] = inv.fMap[3][1] = inv.fMap[3][2] = 0;
+    inv.fMap[3][3] = 1.f;
 
-	return &inv;
+    return &inv;
 }
 
 
 plFilterCoordInterface::plFilterCoordInterface()
-:	fFilterMask(kNoRotation)
+:   fFilterMask(kNoRotation)
 {
-	fRefParentLocalToWorld.Reset();
+    fRefParentLocalToWorld.Reset();
 }
 
 plFilterCoordInterface::~plFilterCoordInterface()
@@ -76,58 +76,58 @@ plFilterCoordInterface::~plFilterCoordInterface()
 
 void plFilterCoordInterface::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plCoordinateInterface::Read(stream, mgr);
+    plCoordinateInterface::Read(stream, mgr);
 
-	fFilterMask = stream->ReadSwap32();
-	fRefParentLocalToWorld.Read(stream);
+    fFilterMask = stream->ReadSwap32();
+    fRefParentLocalToWorld.Read(stream);
 }
 
 void plFilterCoordInterface::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plCoordinateInterface::Write(stream, mgr);
+    plCoordinateInterface::Write(stream, mgr);
 
-	stream->WriteSwap32(fFilterMask);
-	fRefParentLocalToWorld.Write(stream);
+    stream->WriteSwap32(fFilterMask);
+    fRefParentLocalToWorld.Write(stream);
 }
 
 void plFilterCoordInterface::IRecalcTransforms()
 {
-	if( !(fFilterMask && fParent) )
-	{
-		plCoordinateInterface::IRecalcTransforms();
-		return;
-	}
+    if( !(fFilterMask && fParent) )
+    {
+        plCoordinateInterface::IRecalcTransforms();
+        return;
+    }
 
-	hsMatrix44 origL2W = fRefParentLocalToWorld * fLocalToParent;
-	fLocalToWorld = fParent->GetLocalToWorld() * fLocalToParent;
+    hsMatrix44 origL2W = fRefParentLocalToWorld * fLocalToParent;
+    fLocalToWorld = fParent->GetLocalToWorld() * fLocalToParent;
 
-	// Filter out the stuff we're discarding. Nothing fancy here,
-	// we're taking the simple (and fast) form and just stuffing in
-	// what we want to preserve based on our reference matrix.
-	if( fFilterMask & kNoTransX )
-	{
-		fLocalToWorld.fMap[0][3] = origL2W.fMap[0][3];
-	}
-	if( fFilterMask & kNoTransY )
-	{
-		fLocalToWorld.fMap[1][3] = origL2W.fMap[1][3];
-	}
-	if( fFilterMask & kNoTransZ )
-	{
-		fLocalToWorld.fMap[2][3] = origL2W.fMap[2][3];
-	}
-	if( fFilterMask & kNoRotation )
-	{
-		int i;
-		for( i = 0; i < 3; i++ )
-		{
-			int j;
-			for( j = 0; j < 3; j++ )
-			{
-				fLocalToWorld.fMap[i][j] = origL2W.fMap[i][j];
-			}
-		}
-	}
-	// Construct the inverse of local to world for world to local.
-	InvTRS(fLocalToWorld, fWorldToLocal);
+    // Filter out the stuff we're discarding. Nothing fancy here,
+    // we're taking the simple (and fast) form and just stuffing in
+    // what we want to preserve based on our reference matrix.
+    if( fFilterMask & kNoTransX )
+    {
+        fLocalToWorld.fMap[0][3] = origL2W.fMap[0][3];
+    }
+    if( fFilterMask & kNoTransY )
+    {
+        fLocalToWorld.fMap[1][3] = origL2W.fMap[1][3];
+    }
+    if( fFilterMask & kNoTransZ )
+    {
+        fLocalToWorld.fMap[2][3] = origL2W.fMap[2][3];
+    }
+    if( fFilterMask & kNoRotation )
+    {
+        int i;
+        for( i = 0; i < 3; i++ )
+        {
+            int j;
+            for( j = 0; j < 3; j++ )
+            {
+                fLocalToWorld.fMap[i][j] = origL2W.fMap[i][j];
+            }
+        }
+    }
+    // Construct the inverse of local to world for world to local.
+    InvTRS(fLocalToWorld, fWorldToLocal);
 }

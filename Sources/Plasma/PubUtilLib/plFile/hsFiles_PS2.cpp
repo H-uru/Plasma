@@ -59,10 +59,10 @@ const char* hsFolderIterator::GetFileName() const
 {
 }
 
-hsBool	hsFolderIterator::IsDirectory( void ) const
+hsBool  hsFolderIterator::IsDirectory( void ) const
 {
-	hsAssert( false, "hsFolderIterator::IsDirectory() not defined on this platform!!!" );
-	return false;
+    hsAssert( false, "hsFolderIterator::IsDirectory() not defined on this platform!!!" );
+    return false;
 }
 
-#endif	// HS_BUILD_FOR_PS2
+#endif  // HS_BUILD_FOR_PS2

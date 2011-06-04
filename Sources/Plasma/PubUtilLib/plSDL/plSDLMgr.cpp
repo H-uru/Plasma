@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsStlUtils.h"
 #include "plSDL.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnNetCommon/pnNetCommon.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/pnNetCommon.h"
 #include <algorithm>
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -47,19 +47,19 @@ plSDLMgr::plSDLMgr() : fSDLDir("SDL"), fNetApp(nil), fBehaviorFlags(0)
 //
 plSDLMgr::~plSDLMgr()
 {
-	DeInit();
+    DeInit();
 }
 
 bool plSDLMgr::Init( UInt32 behaviorFlags )
 {
-	fBehaviorFlags = behaviorFlags;
-	plSDLParser parser;
-	return parser.Parse();
+    fBehaviorFlags = behaviorFlags;
+    plSDLParser parser;
+    return parser.Parse();
 }
 
 void plSDLMgr::DeInit()
 {
-	IDeleteDescriptors(&fDescriptors);
+    IDeleteDescriptors(&fDescriptors);
 }
 
 //
@@ -67,8 +67,8 @@ void plSDLMgr::DeInit()
 //
 void plSDLMgr::IDeleteDescriptors(plSDL::DescriptorList* dl)
 {
-	std::for_each( dl->begin(), dl->end(), xtl::delete_ptr() );
-	dl->clear();
+    std::for_each( dl->begin(), dl->end(), xtl::delete_ptr() );
+    dl->clear();
 }
 
 
@@ -77,8 +77,8 @@ void plSDLMgr::IDeleteDescriptors(plSDL::DescriptorList* dl)
 //
 plSDLMgr* plSDLMgr::GetInstance()
 {
-	static plSDLMgr gSDLMgr;
-	return &gSDLMgr;
+    static plSDLMgr gSDLMgr;
+    return &gSDLMgr;
 }
 
 //
@@ -87,35 +87,35 @@ plSDLMgr* plSDLMgr::GetInstance()
 //
 plStateDescriptor* plSDLMgr::FindDescriptor(const char* name, int version, const plSDL::DescriptorList * dl) const
 {
-	if (!name)
-		return nil;
+    if (!name)
+        return nil;
 
-	if ( !dl )
-		dl = &fDescriptors;
+    if ( !dl )
+        dl = &fDescriptors;
 
-	plStateDescriptor* sd = nil;
+    plStateDescriptor* sd = nil;
 
-	plSDL::DescriptorList::const_iterator it;
+    plSDL::DescriptorList::const_iterator it;
 
-	int highestFound = -1;
-	for(it=(*dl).begin(); it!= (*dl).end(); it++)
-	{
-		if (!_stricmp((*it)->GetName(), name) )
-		{
-			if ( (*it)->GetVersion()==version )
-			{
-				sd = *it;
-				break;
-			}
-			else if ( version==plSDL::kLatestVersion && (*it)->GetVersion()>highestFound )
-			{
-				sd = *it;
-				highestFound = (*it)->GetVersion();
-			}
-		}
-	}
+    int highestFound = -1;
+    for(it=(*dl).begin(); it!= (*dl).end(); it++)
+    {
+        if (!_stricmp((*it)->GetName(), name) )
+        {
+            if ( (*it)->GetVersion()==version )
+            {
+                sd = *it;
+                break;
+            }
+            else if ( version==plSDL::kLatestVersion && (*it)->GetVersion()>highestFound )
+            {
+                sd = *it;
+                highestFound = (*it)->GetVersion();
+            }
+        }
+    }
 
-	return sd;
+    return sd;
 }
 
 //
@@ -124,24 +124,24 @@ plStateDescriptor* plSDLMgr::FindDescriptor(const char* name, int version, const
 //
 int plSDLMgr::Write(hsStream* s, const plSDL::DescriptorList* dl)
 {
-	int pos=s->GetPosition();
+    int pos=s->GetPosition();
 
-	if (dl==nil)
-		dl=&fDescriptors;
+    if (dl==nil)
+        dl=&fDescriptors;
 
-	UInt16 num=dl->size();
-	s->WriteSwap(num);
+    UInt16 num=dl->size();
+    s->WriteSwap(num);
 
-	plSDL::DescriptorList::const_iterator it;
-	for(it=dl->begin(); it!= dl->end(); it++)
-		(*it)->Write(s);	
+    plSDL::DescriptorList::const_iterator it;
+    for(it=dl->begin(); it!= dl->end(); it++)
+        (*it)->Write(s);    
 
-	int bytes=s->GetPosition()-pos;
-	if (fNetApp)
-	{
-		hsLogEntry(fNetApp->DebugMsg("Writing %d SDL descriptors, %d bytes", num, bytes));
-	}
-	return bytes;
+    int bytes=s->GetPosition()-pos;
+    if (fNetApp)
+    {
+        hsLogEntry(fNetApp->DebugMsg("Writing %d SDL descriptors, %d bytes", num, bytes));
+    }
+    return bytes;
 }
 
 //
@@ -150,42 +150,42 @@ int plSDLMgr::Write(hsStream* s, const plSDL::DescriptorList* dl)
 //
 int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
 {
-	int pos=s->GetPosition();
+    int pos=s->GetPosition();
 
-	if (dl==nil)
-		dl=&fDescriptors;
+    if (dl==nil)
+        dl=&fDescriptors;
 
-	// clear dl
-	IDeleteDescriptors(dl);
+    // clear dl
+    IDeleteDescriptors(dl);
 
-	UInt16 num;
-	try
-	{		
-		// read dtor list
-		s->ReadSwap(&num);
+    UInt16 num;
+    try
+    {       
+        // read dtor list
+        s->ReadSwap(&num);
 
-		int i;
-		for(i=0;i<num;i++)
-		{
-			plStateDescriptor* sd=TRACKED_NEW plStateDescriptor;
-			if (sd->Read(s))
-				dl->push_back(sd);
-		}		
-	}
-	catch(...)
-	{
-		if (fNetApp)
-		{
-			hsLogEntry(fNetApp->DebugMsg("Something bad happened while reading SDLMgr data"));
-		}
-		return 0;
-	}
+        int i;
+        for(i=0;i<num;i++)
+        {
+            plStateDescriptor* sd=TRACKED_NEW plStateDescriptor;
+            if (sd->Read(s))
+                dl->push_back(sd);
+        }       
+    }
+    catch(...)
+    {
+        if (fNetApp)
+        {
+            hsLogEntry(fNetApp->DebugMsg("Something bad happened while reading SDLMgr data"));
+        }
+        return 0;
+    }
 
-	int bytes=s->GetPosition()-pos;
-	if (fNetApp)
-	{
-		hsLogEntry(fNetApp->DebugMsg("Reading %d SDL descriptors, %d bytes", num, bytes));
-	}
-	return bytes;
+    int bytes=s->GetPosition()-pos;
+    if (fNetApp)
+    {
+        hsLogEntry(fNetApp->DebugMsg("Reading %d SDL descriptors, %d bytes", num, bytes));
+    }
+    return bytes;
 }
 

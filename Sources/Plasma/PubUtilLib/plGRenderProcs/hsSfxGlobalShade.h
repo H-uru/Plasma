@@ -37,67 +37,67 @@ class hsGLayer;
 
 class hsSfxGlobalShade : public hsGRenderProcs {
 public:
-	enum {
-		kNone				= 0x0,
-		kFromFog			= 0x1,
-		kFromClear			= 0x2,
-		kFromLights			= 0x4,
-		kSourceMask			= kFromFog | kFromClear | kFromLights,
-		kScalarIntensity	= 0x8,
-		kAffectDiffuse		= 0x10
-	};
+    enum {
+        kNone               = 0x0,
+        kFromFog            = 0x1,
+        kFromClear          = 0x2,
+        kFromLights         = 0x4,
+        kSourceMask         = kFromFog | kFromClear | kFromLights,
+        kScalarIntensity    = 0x8,
+        kAffectDiffuse      = 0x10
+    };
 protected:
 
-	// Constants from which to work.
-	UInt32					fGSFlags;
+    // Constants from which to work.
+    UInt32                  fGSFlags;
 
-	hsColorRGBA				fAmbient;
-	hsColorRGBA				fDiffuse;
+    hsColorRGBA             fAmbient;
+    hsColorRGBA             fDiffuse;
 
-	// Calculated each invocation.
-	hsColorRGBA				fIntensity;
-	
-	hsGLayer*				fCurrentLayer;
-	hsColorRGBA				fRestoreColor;
+    // Calculated each invocation.
+    hsColorRGBA             fIntensity;
+    
+    hsGLayer*               fCurrentLayer;
+    hsColorRGBA             fRestoreColor;
 
-	void					ISetIntensity(hsPoint3& pos);
-	void					ISetFromFog(hsPoint3& pos);
-	void					ISetFromClear(hsPoint3& pos);
-	void					ISetFromLights(hsPoint3& pos);
-	hsColorRGBA				ISumLights(hsPoint3& pos);
+    void                    ISetIntensity(hsPoint3& pos);
+    void                    ISetFromFog(hsPoint3& pos);
+    void                    ISetFromClear(hsPoint3& pos);
+    void                    ISetFromLights(hsPoint3& pos);
+    hsColorRGBA             ISumLights(hsPoint3& pos);
 public:
-	hsSfxGlobalShade();
-	virtual ~hsSfxGlobalShade();
+    hsSfxGlobalShade();
+    virtual ~hsSfxGlobalShade();
 
-	virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
+    virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
 
-	virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
-	virtual void EndObject();
+    virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
+    virtual void EndObject();
 
-	virtual void Read(hsStream* s);
-	virtual void Write(hsStream* s);
+    virtual void Read(hsStream* s);
+    virtual void Write(hsStream* s);
 
-	virtual const char* GetLabel() const { return "hsSfxGlobalShade"; }
+    virtual const char* GetLabel() const { return "hsSfxGlobalShade"; }
 
-	virtual ProcType GetType() const { return kTypeGlobalShade; }
+    virtual ProcType GetType() const { return kTypeGlobalShade; }
 
-	void SetAmbient(const hsColorRGBA& col) { fAmbient = col; }
-	hsColorRGBA GetAmbient() const { return fAmbient; }
+    void SetAmbient(const hsColorRGBA& col) { fAmbient = col; }
+    hsColorRGBA GetAmbient() const { return fAmbient; }
 
-	void SetDiffuse(const hsColorRGBA& col) { fDiffuse = col; }
-	hsColorRGBA GetDiffuse() const { return fDiffuse; }
+    void SetDiffuse(const hsColorRGBA& col) { fDiffuse = col; }
+    hsColorRGBA GetDiffuse() const { return fDiffuse; }
 
-	void SetSource(UInt32 f) { fGSFlags &= ~kSourceMask; fGSFlags |= f; }
-	UInt32 GetSource() { return fGSFlags & kSourceMask; }
+    void SetSource(UInt32 f) { fGSFlags &= ~kSourceMask; fGSFlags |= f; }
+    UInt32 GetSource() { return fGSFlags & kSourceMask; }
 
-	void SetScalar(hsBool32 on) { if(on)fGSFlags |= kScalarIntensity; else fGSFlags &= ~kScalarIntensity; }
-	hsBool32 GetScalar() { return 0 != (fGSFlags & kScalarIntensity); }
+    void SetScalar(hsBool32 on) { if(on)fGSFlags |= kScalarIntensity; else fGSFlags &= ~kScalarIntensity; }
+    hsBool32 GetScalar() { return 0 != (fGSFlags & kScalarIntensity); }
 
-	void SetAffectDiffuse(hsBool32 on) { if(on)fGSFlags |= kAffectDiffuse; else fGSFlags &= ~kAffectDiffuse; }
-	hsBool32 GetAffectDiffuse() { return 0 != (fGSFlags & kAffectDiffuse); }
+    void SetAffectDiffuse(hsBool32 on) { if(on)fGSFlags |= kAffectDiffuse; else fGSFlags &= ~kAffectDiffuse; }
+    hsBool32 GetAffectDiffuse() { return 0 != (fGSFlags & kAffectDiffuse); }
 
-	CLASSNAME_REGISTER( hsSfxGlobalShade );
-	GETINTERFACE_ANY( hsSfxGlobalShade, hsGRenderProcs );
+    CLASSNAME_REGISTER( hsSfxGlobalShade );
+    GETINTERFACE_ANY( hsSfxGlobalShade, hsGRenderProcs );
 
 };
 

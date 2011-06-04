@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plLoadCloneMsg.h"
 #include "hsUtils.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plUoid.h"
 
 class plAvTask;
 
@@ -48,73 +48,73 @@ class hsResMgr;
 class plLoadAvatarMsg : public plLoadCloneMsg
 {
 public:
-	plLoadAvatarMsg();
-	/** Canonical constructor. If you're trying to initiate a clone, this is
-		the one you want to use.
-		These messages are *always* sent to the net client manager. You can't
-		address them.
-		After they are received on the remote machines, they are forwarded
-		the remote versions of the requestor.
+    plLoadAvatarMsg();
+    /** Canonical constructor. If you're trying to initiate a clone, this is
+        the one you want to use.
+        These messages are *always* sent to the net client manager. You can't
+        address them.
+        After they are received on the remote machines, they are forwarded
+        the remote versions of the requestor.
 
-		\param uoidToClone - Specifies the template that will be cloned.
-		\param requestorKey - The key of the object that is requesting the clone. It's
-			strongly recommended that this be a local object, so that we don't get the same
-			requestor creating multiple clones by starting the process on several machines.
-		\param userData - Whatever you want. Will be propagated to the requestor after cloning.
-		\param isPlayer - this is a player, not an NPC
-		\param spawnPoint - warp to this spot after loading
-		\param initialTask - queue up this task after loading (and spawning)
-		\param userStr - a string that the user can set
-		*/
-	plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, UInt32 userData,
-					hsBool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const char *userStr = nil);
+        \param uoidToClone - Specifies the template that will be cloned.
+        \param requestorKey - The key of the object that is requesting the clone. It's
+            strongly recommended that this be a local object, so that we don't get the same
+            requestor creating multiple clones by starting the process on several machines.
+        \param userData - Whatever you want. Will be propagated to the requestor after cloning.
+        \param isPlayer - this is a player, not an NPC
+        \param spawnPoint - warp to this spot after loading
+        \param initialTask - queue up this task after loading (and spawning)
+        \param userStr - a string that the user can set
+        */
+    plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, UInt32 userData,
+                    hsBool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const char *userStr = nil);
 
-	/** Use this form if you're sending a message about an existing clone -- either
-		to propagate it to other machines or to tell them to unload it.
-		\param existing - The key to the clone you want to unload
-		\param requestorKey - The key of the object that is requesting the clone. It's
-			strongly recommended that this be a local object, so that we don't get the same
-			requestor creating multiple clones by starting the process on several machines.
-		\param userData - Whatever you want. Will be propagated to the requestor after cloning.
-		\param isPlayer - this is a player, not an NPC
-		\param isLoading - Are we loading or unloading?
-		\param userStr - a string that the user can set
-		*/
-	plLoadAvatarMsg(const plKey &existing, const plKey &requestorKey, UInt32 userData,
-					hsBool isPlayer, hsBool isLoading, const char *userStr = nil);
+    /** Use this form if you're sending a message about an existing clone -- either
+        to propagate it to other machines or to tell them to unload it.
+        \param existing - The key to the clone you want to unload
+        \param requestorKey - The key of the object that is requesting the clone. It's
+            strongly recommended that this be a local object, so that we don't get the same
+            requestor creating multiple clones by starting the process on several machines.
+        \param userData - Whatever you want. Will be propagated to the requestor after cloning.
+        \param isPlayer - this is a player, not an NPC
+        \param isLoading - Are we loading or unloading?
+        \param userStr - a string that the user can set
+        */
+    plLoadAvatarMsg(const plKey &existing, const plKey &requestorKey, UInt32 userData,
+                    hsBool isPlayer, hsBool isLoading, const char *userStr = nil);
 
-	virtual ~plLoadAvatarMsg();
+    virtual ~plLoadAvatarMsg();
 
-	void SetIsPlayer(bool is);
-	hsBool GetIsPlayer();
+    void SetIsPlayer(bool is);
+    hsBool GetIsPlayer();
 
-	void SetSpawnPoint(const plKey &spawnSceneObjectKey);
-	plKey GetSpawnPoint();
+    void SetSpawnPoint(const plKey &spawnSceneObjectKey);
+    plKey GetSpawnPoint();
 
-	void SetInitialTask(plAvTask *task);
-	plAvTask * GetInitialTask();
+    void SetInitialTask(plAvTask *task);
+    plAvTask * GetInitialTask();
 
-	void SetUserStr(const char *userStr);
-	const char* GetUserStr();
+    void SetUserStr(const char *userStr);
+    const char* GetUserStr();
 
-	CLASSNAME_REGISTER(plLoadAvatarMsg);
-	GETINTERFACE_ANY(plLoadAvatarMsg, plLoadCloneMsg);
+    CLASSNAME_REGISTER(plLoadAvatarMsg);
+    GETINTERFACE_ANY(plLoadAvatarMsg, plLoadCloneMsg);
 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
-	void ReadVersion(hsStream* stream, hsResMgr* mgr);
-	void WriteVersion(hsStream* stream, hsResMgr* mgr);
-	
+    void ReadVersion(hsStream* stream, hsResMgr* mgr);
+    void WriteVersion(hsStream* stream, hsResMgr* mgr);
+    
 protected:
-	hsBool fIsPlayer;
-	plKey fSpawnPoint;
-	plAvTask *fInitialTask;
-	char *fUserStr;
+    hsBool fIsPlayer;
+    plKey fSpawnPoint;
+    plAvTask *fInitialTask;
+    char *fUserStr;
 };
 
 
-#endif	// plLoadAvatarMsg_INC
+#endif  // plLoadAvatarMsg_INC
 
 
 #endif // ndef SERVER

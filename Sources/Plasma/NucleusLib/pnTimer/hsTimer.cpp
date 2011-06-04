@@ -34,21 +34,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //
 // plTimerShare - the actual worker. All process spaces should share a single
-//		plTimerShare to keep time synchronized across spaces.
+//      plTimerShare to keep time synchronized across spaces.
 //
 plTimerShare::plTimerShare()
-:	fFirstTime(true),
-	fSysSeconds(0),
-	fRealSeconds(0),
-	fDelSysSeconds(0),
-	fFrameTimeInc(0.03f),
-	fSysTimeScale(1.f),
-	fTimeClampSecs(0.1f),
-	fSmoothingClampSecs(-1.0f),
-	fRunningFrameTime(false),
-	fClamping(false),
-	fResetSmooth(true),
-	fCurrSlot(0)
+:   fFirstTime(true),
+    fSysSeconds(0),
+    fRealSeconds(0),
+    fDelSysSeconds(0),
+    fFrameTimeInc(0.03f),
+    fSysTimeScale(1.f),
+    fTimeClampSecs(0.1f),
+    fSmoothingClampSecs(-1.0f),
+    fRunningFrameTime(false),
+    fClamping(false),
+    fResetSmooth(true),
+    fCurrSlot(0)
 {
 }
 
@@ -58,139 +58,139 @@ plTimerShare::~plTimerShare()
 
 double plTimerShare::GetSeconds() const
 {
-	hsWide	ticks;
-	return hsTimer::GetRawTicks(&ticks)->AsDouble() / hsTimer::GetRawBase().AsDouble();
+    hsWide  ticks;
+    return hsTimer::GetRawTicks(&ticks)->AsDouble() / hsTimer::GetRawBase().AsDouble();
 }
 
 double plTimerShare::GetMilliSeconds() const
 {
-	return GetSeconds() * 1.e3;
+    return GetSeconds() * 1.e3;
 }
 
 hsWide plTimerShare::DSecondsToRawTicks(double secs)
 {
-	hsWide retVal;
-	double ticks = secs * hsTimer::GetRawBase().AsDouble();
-	double hi = ticks / double(65536) / double(65536);
-	ticks -= hi;
-	retVal.fHi = Int32(hi);
-	retVal.fLo = Int32(ticks);
-	return retVal;
+    hsWide retVal;
+    double ticks = secs * hsTimer::GetRawBase().AsDouble();
+    double hi = ticks / double(65536) / double(65536);
+    ticks -= hi;
+    retVal.fHi = Int32(hi);
+    retVal.fLo = Int32(ticks);
+    return retVal;
 }
 
 double plTimerShare::RawTicksToDSeconds(const hsWide& ticks)
 {
-	return ticks.AsDouble() / hsTimer::GetRawBase().AsDouble();
+    return ticks.AsDouble() / hsTimer::GetRawBase().AsDouble();
 }
 
 
 inline hsWide* plTimerShare::FactorInTimeZero(hsWide* ticks) const
 {
-	if( fFirstTime )
-	{	
-		fFirstTime = false;
-		fRawTimeZero = *ticks;
-		ticks->Set(0, 0);
-	}
-	else
-	{
-		ticks->Sub(&fRawTimeZero);
-	}
-	return ticks;
+    if( fFirstTime )
+    {   
+        fFirstTime = false;
+        fRawTimeZero = *ticks;
+        ticks->Set(0, 0);
+    }
+    else
+    {
+        ticks->Sub(&fRawTimeZero);
+    }
+    return ticks;
 }
 
 double plTimerShare::IncSysSeconds()
 {
-	if( fRunningFrameTime )
-	{
-		fDelSysSeconds = fFrameTimeInc * fSysTimeScale;
-		fSysSeconds += fDelSysSeconds;
+    if( fRunningFrameTime )
+    {
+        fDelSysSeconds = fFrameTimeInc * fSysTimeScale;
+        fSysSeconds += fDelSysSeconds;
 
-		fResetSmooth = true;
-	}
-	else if( fSmoothingClampSecs >= 0 )
-	{
-		double t = GetSeconds();
-		hsScalar delSys = hsScalar(t - fRealSeconds);
-		fClamping = ( (fTimeClampSecs > 0) && (delSys > fTimeClampSecs) );
-		if (fClamping)
-		{
-			delSys = fTimeClampSecs;
-		}
-		delSys *= fSysTimeScale;
-		if( fDelSysSeconds > 0 && fDelSysSeconds < fSmoothingClampSecs )
-		{
-			const hsScalar kFrac = 0.1f;
-			const hsScalar kOneMinusFrac = 1.f-kFrac;
-			delSys *= kFrac;
-			delSys += fDelSysSeconds * kOneMinusFrac;
-		}
-		if (delSys > 4.0f && delSys < 5.0f)
-		{
-			//got that mysterious bug, (Win2k? certain CPU's?) try again...
+        fResetSmooth = true;
+    }
+    else if( fSmoothingClampSecs >= 0 )
+    {
+        double t = GetSeconds();
+        hsScalar delSys = hsScalar(t - fRealSeconds);
+        fClamping = ( (fTimeClampSecs > 0) && (delSys > fTimeClampSecs) );
+        if (fClamping)
+        {
+            delSys = fTimeClampSecs;
+        }
+        delSys *= fSysTimeScale;
+        if( fDelSysSeconds > 0 && fDelSysSeconds < fSmoothingClampSecs )
+        {
+            const hsScalar kFrac = 0.1f;
+            const hsScalar kOneMinusFrac = 1.f-kFrac;
+            delSys *= kFrac;
+            delSys += fDelSysSeconds * kOneMinusFrac;
+        }
+        if (delSys > 4.0f && delSys < 5.0f)
+        {
+            //got that mysterious bug, (Win2k? certain CPU's?) try again...
 #if HS_BUILD_FOR_WIN32
-			int count = 10;
-			while( delSys >= fDelSysSeconds * 2 && count > 0 )
-			{
-				fRealSeconds = t;
-				t = GetSeconds();
-				delSys = hsScalar(t - fRealSeconds);
-				count--;
-			}
+            int count = 10;
+            while( delSys >= fDelSysSeconds * 2 && count > 0 )
+            {
+                fRealSeconds = t;
+                t = GetSeconds();
+                delSys = hsScalar(t - fRealSeconds);
+                count--;
+            }
 #endif
-		}
-		fDelSysSeconds = delSys;
-		fSysSeconds += fDelSysSeconds;
-		fRealSeconds = t;
+        }
+        fDelSysSeconds = delSys;
+        fSysSeconds += fDelSysSeconds;
+        fRealSeconds = t;
 
-		fResetSmooth = true;
-	}
-	else
-	{
-		double t = GetSeconds();
-		plCONST(int) kSmoothBuffUsed(kSmoothBuffLen);
+        fResetSmooth = true;
+    }
+    else
+    {
+        double t = GetSeconds();
+        plCONST(int) kSmoothBuffUsed(kSmoothBuffLen);
 
-		if( fResetSmooth )
-		{
-			int i;
-			for( i = 0; i < kSmoothBuffUsed; i++ )
-				fSmoothBuff[i] = t;
-			fResetSmooth = false;
-		}
+        if( fResetSmooth )
+        {
+            int i;
+            for( i = 0; i < kSmoothBuffUsed; i++ )
+                fSmoothBuff[i] = t;
+            fResetSmooth = false;
+        }
 
-		if( ++fCurrSlot >= kSmoothBuffUsed )
-			fCurrSlot = 0;
-		fSmoothBuff[fCurrSlot] = t;
+        if( ++fCurrSlot >= kSmoothBuffUsed )
+            fCurrSlot = 0;
+        fSmoothBuff[fCurrSlot] = t;
 
-		double avg = 0;
-		int j;
-		for( j = 0; j < kSmoothBuffUsed; j++ )
-		{
-			avg += fSmoothBuff[j];
-		}
-		avg /= double(kSmoothBuffUsed);
+        double avg = 0;
+        int j;
+        for( j = 0; j < kSmoothBuffUsed; j++ )
+        {
+            avg += fSmoothBuff[j];
+        }
+        avg /= double(kSmoothBuffUsed);
 
-		plCONST(hsScalar) kMaxSmoothable(0.15f);
-		fDelSysSeconds = hsScalar(avg - fRealSeconds) * fSysTimeScale;
-		if( fDelSysSeconds > kMaxSmoothable * fSysTimeScale )
-		{
-			avg = t;
-			fDelSysSeconds = hsScalar(avg - fRealSeconds) * fSysTimeScale;
-			fResetSmooth = true;
-		}
-		fSysSeconds += fDelSysSeconds;
-		fRealSeconds = avg;
-	}
-	return fSysSeconds;
+        plCONST(hsScalar) kMaxSmoothable(0.15f);
+        fDelSysSeconds = hsScalar(avg - fRealSeconds) * fSysTimeScale;
+        if( fDelSysSeconds > kMaxSmoothable * fSysTimeScale )
+        {
+            avg = t;
+            fDelSysSeconds = hsScalar(avg - fRealSeconds) * fSysTimeScale;
+            fResetSmooth = true;
+        }
+        fSysSeconds += fDelSysSeconds;
+        fRealSeconds = avg;
+    }
+    return fSysSeconds;
 }
 
 void plTimerShare::SetRealTime(hsBool realTime)
 { 
-	fRunningFrameTime = !realTime; 
-	if( realTime )
-	{
-		fRealSeconds = GetSeconds();
-	}
+    fRunningFrameTime = !realTime; 
+    if( realTime )
+    {
+        fRealSeconds = GetSeconds();
+    }
 }
 
 #if HS_BUILD_FOR_WIN32
@@ -199,30 +199,30 @@ void plTimerShare::SetRealTime(hsBool realTime)
 
 hsWide* plTimerShare::GetRawTicks(hsWide* ticks) const
 {
-	LARGE_INTEGER	large;
+    LARGE_INTEGER   large;
 
-	if (::QueryPerformanceCounter(&large))
-	{			
-		ticks->Set(large.HighPart, large.LowPart);
-	}
-	else
-	{
-		ticks->Set(0, ::GetTickCount());
-	}
+    if (::QueryPerformanceCounter(&large))
+    {           
+        ticks->Set(large.HighPart, large.LowPart);
+    }
+    else
+    {
+        ticks->Set(0, ::GetTickCount());
+    }
 
-	return FactorInTimeZero(ticks);
+    return FactorInTimeZero(ticks);
 }
 
 hsWide hsTimer::IInitRawBase()
 {
-	hsWide base;
-	LARGE_INTEGER	large;
-	if (::QueryPerformanceFrequency(&large))
-		base.Set(large.HighPart, large.LowPart);
-	else
-		base.Set(0, 1000);
+    hsWide base;
+    LARGE_INTEGER   large;
+    if (::QueryPerformanceFrequency(&large))
+        base.Set(large.HighPart, large.LowPart);
+    else
+        base.Set(0, 1000);
 
-	return base;
+    return base;
 }
 
 #elif HS_BUILD_FOR_MAC
@@ -232,90 +232,90 @@ hsWide hsTimer::IInitRawBase()
 
 //#define HS_USE_TICKCOUNT
 hsWide* plTimerShare::GetRawTicks(hsWide* ticks)
-{	
+{   
 #ifndef HS_USE_TICKCOUNT
-	UnsignedWide ns = AbsoluteToNanoseconds(UpTime());
-	ticks->Set(ns.hi, ns.lo);
+    UnsignedWide ns = AbsoluteToNanoseconds(UpTime());
+    ticks->Set(ns.hi, ns.lo);
 #else
-	ticks->Set(0, TickCount());
+    ticks->Set(0, TickCount());
 #endif
-	return FactorInTimeZero(ticks);
+    return FactorInTimeZero(ticks);
 }
 
 hsWide plTimerShare::IInitRawBase()
 {
-	hsWide base;
+    hsWide base;
 #ifndef HS_USE_TICKCOUNT
-	base.Set(0, 1000000000L);
+    base.Set(0, 1000000000L);
 #else
-	base.Set(0, 60);
+    base.Set(0, 60);
 #endif
-	return base;
+    return base;
 }
 
 #elif HS_BUILD_FOR_UNIX
 
 #include <sys/time.h>
 
-#define kMicroSecondsUnit	1000000
-static UInt32	gBaseTime = 0;
+#define kMicroSecondsUnit   1000000
+static UInt32   gBaseTime = 0;
 
 hsWide* plTimerShare::GetRawTicks(hsWide* ticks) const
 {
-	timeval	tv;
+    timeval tv;
 
-	(void)::gettimeofday(&tv, nil);
-	if (gBaseTime == 0)
-		gBaseTime = tv.tv_sec;
+    (void)::gettimeofday(&tv, nil);
+    if (gBaseTime == 0)
+        gBaseTime = tv.tv_sec;
 
-	ticks->Mul(tv.tv_sec - gBaseTime, kMicroSecondsUnit)->Add(tv.tv_usec);
-	return ticks;
+    ticks->Mul(tv.tv_sec - gBaseTime, kMicroSecondsUnit)->Add(tv.tv_usec);
+    return ticks;
 }
 
 hsWide hsTimer::IInitRawBase()
 {
-	hsWide base;
-	base.Set(0, kMicroSecondsUnit);
-	return base;
+    hsWide base;
+    base.Set(0, kMicroSecondsUnit);
+    return base;
 }
 
 
 #elif HS_BUILD_FOR_PS2
 
 extern unsigned long psTimerGetCount();
-//#define kTickMul (150000000)		// kTickMul/kTickDiv :: 4577.636719
-#define kTickMul (100000000)	// kTickMul/kTickDiv :: 3051.757813	// for debugger
+//#define kTickMul (150000000)      // kTickMul/kTickDiv :: 4577.636719
+#define kTickMul (100000000)    // kTickMul/kTickDiv :: 3051.757813 // for debugger
 #define kTickDiv (256*128)
 
 
 hsWide* plTimerShare::GetRawTicks(hsWide* ticks)
 {
-	unsigned long t= psTimerGetCount();
-	ticks->Set( (Int32)(t>>32), (Int32)(t&((1ul<<32)-1)));
-	return ticks;
+    unsigned long t= psTimerGetCount();
+    ticks->Set( (Int32)(t>>32), (Int32)(t&((1ul<<32)-1)));
+    return ticks;
 }
 
 hsWide plTimerShare::IInitRawBase()
 {
-	hsWide base;
-	base.Set(0, kTickMul/kTickDiv );
-	return base;
+    hsWide base;
+    base.Set(0, kTickMul/kTickDiv );
+    return base;
 }
 
 #endif
 
 // 
 // hsTimer - thin static interface to plTimerShare. Also keeps a couple of
-//		constants.
+//      constants.
 //
-static plTimerShare			staticTimer;
-plTimerShare*				hsTimer::fTimer = &staticTimer; // until overridden.
-const double				hsTimer::fPrecTicksPerSec = hsTimer::GetPrecTicksPerSec();
-const hsWide				hsTimer::fRawBase = hsTimer::IInitRawBase();
+static plTimerShare         staticTimer;
+plTimerShare*               hsTimer::fTimer = &staticTimer; // until overridden.
+const double                hsTimer::fPrecTicksPerSec = hsTimer::GetPrecTicksPerSec();
+const hsWide                hsTimer::fRawBase = hsTimer::IInitRawBase();
 
 void hsTimer::SetTheTimer(plTimerShare* timer)
 {
-	fTimer = timer;
+    fTimer = timer;
 }
 
 ///////////////////////////
@@ -328,78 +328,78 @@ void hsTimer::SetTheTimer(plTimerShare* timer)
 double hsTimer::GetPrecTicksPerSec()
 {
 #if HS_BUILD_FOR_WIN32
-	LARGE_INTEGER freq;
-	if( !QueryPerformanceFrequency(&freq) )
-	{
-		return 1000.f;
-	}
-	return ((double) freq.LowPart);
+    LARGE_INTEGER freq;
+    if( !QueryPerformanceFrequency(&freq) )
+    {
+        return 1000.f;
+    }
+    return ((double) freq.LowPart);
 #endif
 #if HS_BUILD_FOR_MAC
-	return 1000.f;
+    return 1000.f;
 #endif
 #if HS_BUILD_FOR_PS2
-	return 1000.f;
+    return 1000.f;
 #endif
-	
-	return 1;
+    
+    return 1;
 }
 
 UInt32 hsTimer::GetPrecTickCount()
 {
 #if HS_BUILD_FOR_WIN32
-	LARGE_INTEGER ti;
-	if( !QueryPerformanceCounter(&ti) )
-		return GetTickCount();
+    LARGE_INTEGER ti;
+    if( !QueryPerformanceCounter(&ti) )
+        return GetTickCount();
 
-	return ti.LowPart;
+    return ti.LowPart;
 #endif
 #if HS_BUILD_FOR_MACPPC
-	return hsTimer::GetMSeconds();
+    return hsTimer::GetMSeconds();
 #endif
 
 #if HS_BUILD_FOR_PS2
-	return hsTimer::GetMSeconds();
+    return hsTimer::GetMSeconds();
 #endif
 }
 UInt32 hsTimer::PrecSecsToTicks(hsScalar secs)
 {
-	return (UInt32)(((double)secs) * fPrecTicksPerSec);
+    return (UInt32)(((double)secs) * fPrecTicksPerSec);
 }
 double hsTimer::PrecTicksToSecs(UInt32 ticks)
 {
-	return ((double)ticks) / fPrecTicksPerSec;
+    return ((double)ticks) / fPrecTicksPerSec;
 }
 double hsTimer::PrecTicksToHz(UInt32 ticks)
 {
-	return fPrecTicksPerSec / ((double)ticks);
+    return fPrecTicksPerSec / ((double)ticks);
 }
 
 UInt64 hsTimer::GetFullTickCount()
 {
 #if HS_BUILD_FOR_WIN32
-	LARGE_INTEGER ticks;
-	QueryPerformanceCounter(&ticks);
-	return ticks.QuadPart;
+    LARGE_INTEGER ticks;
+    QueryPerformanceCounter(&ticks);
+    return ticks.QuadPart;
 #else
-	return 0;
+    return 0;
 #endif
 }
 
 float hsTimer::FullTicksToMs(UInt64 ticks)
 {
 #ifdef HS_BUILD_FOR_WIN32
-	static UInt64 ticksPerTenthMs = 0;
+    static UInt64 ticksPerTenthMs = 0;
 
-	if (ticksPerTenthMs == 0)
-	{
-		LARGE_INTEGER perfFreq;
-		QueryPerformanceFrequency(&perfFreq);
-		ticksPerTenthMs = perfFreq.QuadPart / 10000;
-	}
+    if (ticksPerTenthMs == 0)
+    {
+        LARGE_INTEGER perfFreq;
+        QueryPerformanceFrequency(&perfFreq);
+        ticksPerTenthMs = perfFreq.QuadPart / 10000;
+    }
 
-	return float(ticks / ticksPerTenthMs) / 10.f;
+    return float(ticks / ticksPerTenthMs) / 10.f;
 #else
-	return 0.f;
+    return 0.f;
 #endif
 }

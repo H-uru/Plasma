@@ -29,14 +29,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plLOSHitMsg::plLOSHitMsg()
 {
-	SetBCastFlag(plMessage::kPropagateToModifiers);
-	fHitFlags = 0;
+    SetBCastFlag(plMessage::kPropagateToModifiers);
+    fHitFlags = 0;
 }
 plLOSHitMsg::plLOSHitMsg(const plKey &s, 
-				const plKey &r, 
-				const double* t)
+                const plKey &r, 
+                const double* t)
 : plMessage(s, r, t)
 {
-	SetBCastFlag(plMessage::kPropagateToModifiers);
-	fHitFlags = 0;
+    SetBCastFlag(plMessage::kPropagateToModifiers);
+    fHitFlags = 0;
 }

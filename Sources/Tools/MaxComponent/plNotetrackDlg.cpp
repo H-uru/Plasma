@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "max.h"
 #include "iparamb2.h"
-#include "../plInterp/plAnimEaseTypes.h"
+#include "plInterp/plAnimEaseTypes.h"
 
 plNoteTrackDlg::plNoteTrackDlg() : fhAnim(NULL), fhLoop(NULL), fPB(nil), fAnimID(-1), fLoopID(-1), fSegMap(nil), fOwner(nil)
 {
@@ -37,147 +37,147 @@ plNoteTrackDlg::plNoteTrackDlg() : fhAnim(NULL), fhLoop(NULL), fPB(nil), fAnimID
 
 plNoteTrackDlg::~plNoteTrackDlg()
 {
-	DeleteCache();
+    DeleteCache();
 }
 
 void plNoteTrackDlg::Init(HWND hAnim, HWND hLoop, int animID, int loopID, IParamBlock2 *pb, Animatable *owner)
 {
-	fhAnim = hAnim;
-	fhLoop = hLoop;
-	fPB = pb;
-	fAnimID = animID;
-	fLoopID = loopID;
-	fOwner = owner;
+    fhAnim = hAnim;
+    fhLoop = hLoop;
+    fPB = pb;
+    fAnimID = animID;
+    fLoopID = loopID;
+    fOwner = owner;
 }
 
 void plNoteTrackDlg::ICacheNoteTrack()
 {
-	DeleteCache();
+    DeleteCache();
 
-	fSegMap = GetAnimSegmentMap(fOwner, nil);
+    fSegMap = GetAnimSegmentMap(fOwner, nil);
 }
 
 void plNoteTrackDlg::DeleteCache()
 {
-	if (fSegMap)
-	{
-		DeleteSegmentMap(fSegMap);
-		fSegMap = nil;
-	}
+    if (fSegMap)
+    {
+        DeleteSegmentMap(fSegMap);
+        fSegMap = nil;
+    }
 }
 
 void plNoteTrackDlg::Load()
 {
-	ICacheNoteTrack();
+    ICacheNoteTrack();
 
-	ILoadAnims();
-	ILoadLoops();
+    ILoadAnims();
+    ILoadLoops();
 }
 
 void plNoteTrackDlg::AnimChanged()
 {
-	const char *animName = IGetSel(fhAnim);
-	fPB->SetValue(fAnimID, 0, (TCHAR*)animName);
+    const char *animName = IGetSel(fhAnim);
+    fPB->SetValue(fAnimID, 0, (TCHAR*)animName);
 
-	ILoadLoops();
+    ILoadLoops();
 }
 
 void plNoteTrackDlg::LoopChanged()
 {
-	const char *loopName = IGetSel(fhLoop);
-	fPB->SetValue(fLoopID, 0, (TCHAR*)loopName);
+    const char *loopName = IGetSel(fhLoop);
+    fPB->SetValue(fLoopID, 0, (TCHAR*)loopName);
 }
 
 void plNoteTrackDlg::ILoadAnims()
 {
-	if(fAnimID < 0 || !fhAnim)
-		return;
+    if(fAnimID < 0 || !fhAnim)
+        return;
 
-	ComboBox_ResetContent(fhAnim);
+    ComboBox_ResetContent(fhAnim);
 
-	// Add the default option
-	int def = ComboBox_AddString(fhAnim, ENTIRE_ANIMATION_NAME);
-	ComboBox_SetItemData(fhAnim, def, kDefault);
-	ComboBox_SetCurSel(fhAnim, def);
+    // Add the default option
+    int def = ComboBox_AddString(fhAnim, ENTIRE_ANIMATION_NAME);
+    ComboBox_SetItemData(fhAnim, def, kDefault);
+    ComboBox_SetCurSel(fhAnim, def);
 
-	if (!fSegMap)
-		return;
+    if (!fSegMap)
+        return;
 
-	const char *savedAnim = fPB->GetStr(fAnimID);
-	if (!savedAnim)
-		savedAnim = "";
+    const char *savedAnim = fPB->GetStr(fAnimID);
+    if (!savedAnim)
+        savedAnim = "";
 
-	// Add the names of the animations
-	for (SegmentMap::iterator it = fSegMap->begin(); it != fSegMap->end(); it++)
-	{
-		SegmentSpec *spec = it->second;
-		if (spec->fType == SegmentSpec::kAnim)
-		{
-			int idx = ComboBox_AddString(fhAnim, spec->fName);
-			ComboBox_SetItemData(fhAnim, idx, kName);
+    // Add the names of the animations
+    for (SegmentMap::iterator it = fSegMap->begin(); it != fSegMap->end(); it++)
+    {
+        SegmentSpec *spec = it->second;
+        if (spec->fType == SegmentSpec::kAnim)
+        {
+            int idx = ComboBox_AddString(fhAnim, spec->fName);
+            ComboBox_SetItemData(fhAnim, idx, kName);
 
-			// If this is the saved animation name, select it
-			if (!strcmp(spec->fName, savedAnim))
-				ComboBox_SetCurSel(fhAnim, idx);
-		}
-	}
+            // If this is the saved animation name, select it
+            if (!strcmp(spec->fName, savedAnim))
+                ComboBox_SetCurSel(fhAnim, idx);
+        }
+    }
 }
 
 void plNoteTrackDlg::ILoadLoops()
 {
-	if(fLoopID < 0 || !fhLoop)
-		return;
+    if(fLoopID < 0 || !fhLoop)
+        return;
 
-	ComboBox_ResetContent(fhLoop);
+    ComboBox_ResetContent(fhLoop);
 
-	// Add the default option
-	int def = ComboBox_AddString(fhLoop, ENTIRE_ANIMATION_NAME);
-	ComboBox_SetItemData(fhLoop, def, kDefault);
-	ComboBox_SetCurSel(fhLoop, def);
+    // Add the default option
+    int def = ComboBox_AddString(fhLoop, ENTIRE_ANIMATION_NAME);
+    ComboBox_SetItemData(fhLoop, def, kDefault);
+    ComboBox_SetCurSel(fhLoop, def);
 
-	if (fSegMap)
-	{
-		// Get the animation segment (or leave it nil if we're using the entire animation)
-		SegmentSpec *animSpec = nil;
-		const char *animName = fPB->GetStr(fAnimID);
-		if (animName && *animName != '\0' && fSegMap->find(animName) != fSegMap->end())
-			animSpec = (*fSegMap)[animName];
+    if (fSegMap)
+    {
+        // Get the animation segment (or leave it nil if we're using the entire animation)
+        SegmentSpec *animSpec = nil;
+        const char *animName = fPB->GetStr(fAnimID);
+        if (animName && *animName != '\0' && fSegMap->find(animName) != fSegMap->end())
+            animSpec = (*fSegMap)[animName];
 
-		// Get the saved loop name
-		const char *loopName = fPB->GetStr(fLoopID);
-		if (!loopName)
-			loopName = "";
+        // Get the saved loop name
+        const char *loopName = fPB->GetStr(fLoopID);
+        if (!loopName)
+            loopName = "";
 
-		for (SegmentMap::iterator i = fSegMap->begin(); i != fSegMap->end(); i++)
-		{
-			SegmentSpec *spec = i->second;
+        for (SegmentMap::iterator i = fSegMap->begin(); i != fSegMap->end(); i++)
+        {
+            SegmentSpec *spec = i->second;
 
-			if (spec->fType == SegmentSpec::kLoop)
-			{
-				// If the loop is contained by the animation, add it
-				if (!animSpec || animSpec->Contains(spec))
-				{
-					// Add the name
-					int idx = ComboBox_AddString(fhLoop, spec->fName);
-					ComboBox_SetItemData(fhLoop, idx, kName);
+            if (spec->fType == SegmentSpec::kLoop)
+            {
+                // If the loop is contained by the animation, add it
+                if (!animSpec || animSpec->Contains(spec))
+                {
+                    // Add the name
+                    int idx = ComboBox_AddString(fhLoop, spec->fName);
+                    ComboBox_SetItemData(fhLoop, idx, kName);
 
-					if (!strcmp(loopName, spec->fName))
-						ComboBox_SetCurSel(fhLoop, idx);
-				}
-			}
-		}
-	}
+                    if (!strcmp(loopName, spec->fName))
+                        ComboBox_SetCurSel(fhLoop, idx);
+                }
+            }
+        }
+    }
 }
 
 const char *plNoteTrackDlg::IGetSel(HWND hCombo)
 {
-	int sel = ComboBox_GetCurSel(hCombo);
-	if (sel != CB_ERR && ComboBox_GetItemData(hCombo, sel) == kName)
-	{
-		char buf[256];
-		ComboBox_GetText(hCombo, buf, sizeof(buf));
-		return (*fSegMap)[buf]->fName;
-	}
+    int sel = ComboBox_GetCurSel(hCombo);
+    if (sel != CB_ERR && ComboBox_GetItemData(hCombo, sel) == kName)
+    {
+        char buf[256];
+        ComboBox_GetText(hCombo, buf, sizeof(buf));
+        return (*fSegMap)[buf]->fName;
+    }
 
-	return "";
+    return "";
 }

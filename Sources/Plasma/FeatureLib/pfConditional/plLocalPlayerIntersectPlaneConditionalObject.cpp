@@ -25,27 +25,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plLocalPlayerIntersectPlaneConditionalObject.h"
-#include "../../PubUtilLib/plPhysical/plDetectorModifier.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
+#include "plPhysical/plDetectorModifier.h"
+#include "pnModifier/plLogicModBase.h"
 
 plLocalPlayerIntersectPlaneConditionalObject::plLocalPlayerIntersectPlaneConditionalObject()
 {
-	SetFlag(kLocalElement);		// since it relies on the local player		
+    SetFlag(kLocalElement);     // since it relies on the local player      
 }
 
 hsBool plLocalPlayerIntersectPlaneConditionalObject::MsgReceive(plMessage* msg)
 {
-	/*
-	
-	 if our target is within the bounds of the object our logic modifier is attached to...
-	
-	{
-		SetSatisfied(true);
-		fLogicMod->RequestTrigger();
-		return true;
-	}
-	*/
-	return plConditionalObject::MsgReceive(msg);
+    /*
+    
+     if our target is within the bounds of the object our logic modifier is attached to...
+    
+    {
+        SetSatisfied(true);
+        fLogicMod->RequestTrigger();
+        return true;
+    }
+    */
+    return plConditionalObject::MsgReceive(msg);
 }
 
 

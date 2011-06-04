@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConnectedToVaultMsg_INC
 #define plConnectedToVaultMsg_INC
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 //
 // A msg sent locally (once) when the client has successfully connected to the vault.
@@ -42,8 +42,8 @@ public:
    plConnectedToVaultMsg() { SetBCastFlag(kBCastByType);   }
 
    // IO 
-   void Read(hsStream* stream, hsResMgr* mgr) {	plMessage::IMsgRead(stream, mgr); }
-   void Write(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgWrite(stream, mgr); }
+   void Read(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgRead(stream, mgr); }
+   void Write(hsStream* stream, hsResMgr* mgr)  {   plMessage::IMsgWrite(stream, mgr); }
 };
 
-#endif		// plConnectedToVaultMsg
+#endif      // plConnectedToVaultMsg

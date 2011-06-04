@@ -34,49 +34,49 @@ plOneShotCallbacks::plOneShotCallbacks()
 
 plOneShotCallbacks::~plOneShotCallbacks()
 {
-	int size = fCallbacks.size();
-	for (int i = 0; i < size; i++)
-		delete [] fCallbacks[i].fMarker;
-	fCallbacks.clear();
+    int size = fCallbacks.size();
+    for (int i = 0; i < size; i++)
+        delete [] fCallbacks[i].fMarker;
+    fCallbacks.clear();
 }
 
 void plOneShotCallbacks::AddCallback(const char *marker, plKey &receiver, Int16 user)
 {
-	fCallbacks.push_back(plOneShotCallback(hsStrcpy(marker), receiver, user));
+    fCallbacks.push_back(plOneShotCallback(hsStrcpy(marker), receiver, user));
 }
 
 int plOneShotCallbacks::GetNumCallbacks()
 {
-	return fCallbacks.size();
+    return fCallbacks.size();
 }
 
 plOneShotCallbacks::plOneShotCallback& plOneShotCallbacks::GetCallback(int i)
 {
-	return fCallbacks[i];
+    return fCallbacks[i];
 }
 
 void plOneShotCallbacks::Read(hsStream* stream, hsResMgr* mgr)
 {
-	int size = stream->ReadSwap32();
-	fCallbacks.reserve(size);
-	for (int i = 0; i < size; i++)
-	{
-		char *marker = stream->ReadSafeString();
-		plKey receiver = mgr->ReadKey(stream);
-		Int16 user = stream->ReadSwap16();
+    int size = stream->ReadSwap32();
+    fCallbacks.reserve(size);
+    for (int i = 0; i < size; i++)
+    {
+        char *marker = stream->ReadSafeString();
+        plKey receiver = mgr->ReadKey(stream);
+        Int16 user = stream->ReadSwap16();
 
-		fCallbacks.push_back(plOneShotCallback(marker, receiver, user));
-	}
+        fCallbacks.push_back(plOneShotCallback(marker, receiver, user));
+    }
 }
 
 void plOneShotCallbacks::Write(hsStream* stream, hsResMgr* mgr)
 {
-	int size = fCallbacks.size();
-	stream->WriteSwap32(size);
-	for (int i = 0; i < size; i++)
-	{
-		stream->WriteSafeString(fCallbacks[i].fMarker);
-		mgr->WriteKey(stream, fCallbacks[i].fReceiver);
-		stream->WriteSwap16(fCallbacks[i].fUser);
-	}
+    int size = fCallbacks.size();
+    stream->WriteSwap32(size);
+    for (int i = 0; i < size; i++)
+    {
+        stream->WriteSafeString(fCallbacks[i].fMarker);
+        mgr->WriteKey(stream, fCallbacks[i].fReceiver);
+        stream->WriteSwap16(fCallbacks[i].fUser);
+    }
 }

@@ -24,11 +24,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plFastWavReader - Quick, dirty, and highly optimized class for reading	//
-//					  in the samples of a WAV file when you're in a hurry.	//
-//					  ONLY WORKS WITH PCM (i.e. uncompressed) DATA			//
-//																			//
+//                                                                          //
+//  plFastWavReader - Quick, dirty, and highly optimized class for reading  //
+//                    in the samples of a WAV file when you're in a hurry.  //
+//                    ONLY WORKS WITH PCM (i.e. uncompressed) DATA          //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plFastWavReader_h
@@ -44,39 +44,39 @@ class plRIFFChunk;
 class plFastWAV : public plAudioFileReader
 {
 public:
-	plFastWAV( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
-	virtual ~plFastWAV();
+    plFastWAV( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
+    virtual ~plFastWAV();
 
-	virtual plWAVHeader	&GetHeader( void );
+    virtual plWAVHeader &GetHeader( void );
 
-	virtual void	Open();
-	virtual void	Close( void );
+    virtual void    Open();
+    virtual void    Close( void );
 
-	virtual UInt32	GetDataSize( void ) { return fDataSize / fChannelAdjust; }
-	virtual float	GetLengthInSecs( void );
+    virtual UInt32  GetDataSize( void ) { return fDataSize / fChannelAdjust; }
+    virtual float   GetLengthInSecs( void );
 
-	virtual hsBool	SetPosition( UInt32 numBytes );
-	virtual hsBool	Read( UInt32 numBytes, void *buffer );
-	virtual UInt32	NumBytesLeft( void );
+    virtual hsBool  SetPosition( UInt32 numBytes );
+    virtual hsBool  Read( UInt32 numBytes, void *buffer );
+    virtual UInt32  NumBytesLeft( void );
 
-	virtual hsBool	IsValid( void ) { return ( fFileHandle != nil ) ? true : false; }
+    virtual hsBool  IsValid( void ) { return ( fFileHandle != nil ) ? true : false; }
 
 protected:
-	enum
-	{
-		kPCMFormatTag = 1
-	};
+    enum
+    {
+        kPCMFormatTag = 1
+    };
 
-	char			fFilename[ 512 ];
-	FILE *			fFileHandle;
-	plWAVHeader		fHeader, fFakeHeader;
-	UInt32			fDataStartPos, fCurrDataPos, fDataSize;
-	UInt32			fChunkStart;
-	plAudioCore::ChannelSelect	fWhichChannel;
-	UInt32						fChannelAdjust, fChannelOffset;
+    char            fFilename[ 512 ];
+    FILE *          fFileHandle;
+    plWAVHeader     fHeader, fFakeHeader;
+    UInt32          fDataStartPos, fCurrDataPos, fDataSize;
+    UInt32          fChunkStart;
+    plAudioCore::ChannelSelect  fWhichChannel;
+    UInt32                      fChannelAdjust, fChannelOffset;
 
-	void	IError( const char *msg );
-	bool	ISeekToChunk( const char *type, plRIFFChunk *c );
+    void    IError( const char *msg );
+    bool    ISeekToChunk( const char *type, plRIFFChunk *c );
 };
 
 #endif //_plFastWavReader_h

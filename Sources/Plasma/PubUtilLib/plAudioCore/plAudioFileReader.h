@@ -24,11 +24,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plAudioFileReader - Microsoft's way of making our lives difficult when	//
-//				  reading in .WMA files. Hacking Winamp's plugins is		//
-//				  probably easier...										//
-//																			//
+//                                                                          //
+//  plAudioFileReader - Microsoft's way of making our lives difficult when  //
+//                reading in .WMA files. Hacking Winamp's plugins is        //
+//                probably easier...                                        //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plAudioFileReader_h
@@ -44,40 +44,40 @@ class plWAVHeader;
 class plAudioFileReader
 {
 public:
-	virtual ~plAudioFileReader() {}
-	virtual plWAVHeader	&GetHeader( void ) = 0;
+    virtual ~plAudioFileReader() {}
+    virtual plWAVHeader &GetHeader( void ) = 0;
 
-	enum StreamType
-	{
-		kStreamRAM,		// Stream from a WAV loaded into RAM
-		kStreamWAV,		// Stream from a WAV on disk
-		kStreamNative,	// Stream from the native type (ie, an Ogg on disk)
-	};
+    enum StreamType
+    {
+        kStreamRAM,     // Stream from a WAV loaded into RAM
+        kStreamWAV,     // Stream from a WAV on disk
+        kStreamNative,  // Stream from the native type (ie, an Ogg on disk)
+    };
 
-	virtual void	Open(){}
-	virtual void	Close( void ) = 0;
+    virtual void    Open(){}
+    virtual void    Close( void ) = 0;
 
-	virtual UInt32	GetDataSize( void ) = 0;
-	virtual float	GetLengthInSecs( void ) = 0;
+    virtual UInt32  GetDataSize( void ) = 0;
+    virtual float   GetLengthInSecs( void ) = 0;
 
-	virtual hsBool	SetPosition( UInt32 numBytes ) = 0;
-	virtual hsBool	Read( UInt32 numBytes, void *buffer ) = 0;
-	virtual UInt32	NumBytesLeft( void ) = 0;
+    virtual hsBool  SetPosition( UInt32 numBytes ) = 0;
+    virtual hsBool  Read( UInt32 numBytes, void *buffer ) = 0;
+    virtual UInt32  NumBytesLeft( void ) = 0;
 
-	virtual hsBool	OpenForWriting( const char *path, plWAVHeader &header ) { return false; }
-	virtual UInt32	Write( UInt32 bytes, void *buffer ) { return 0; }
+    virtual hsBool  OpenForWriting( const char *path, plWAVHeader &header ) { return false; }
+    virtual UInt32  Write( UInt32 bytes, void *buffer ) { return 0; }
 
-	virtual hsBool	IsValid( void ) = 0;
+    virtual hsBool  IsValid( void ) = 0;
 
-	static plAudioFileReader* CreateReader(const char* path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll, StreamType type = kStreamWAV);
-	static plAudioFileReader* CreateWriter(const char* path, plWAVHeader& header);
+    static plAudioFileReader* CreateReader(const char* path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll, StreamType type = kStreamWAV);
+    static plAudioFileReader* CreateWriter(const char* path, plWAVHeader& header);
 
-	// Decompresses a compressed file to the cache directory
-	static void	CacheFile(const char* path, bool splitChannels=false, bool noOverwrite=false);
+    // Decompresses a compressed file to the cache directory
+    static void CacheFile(const char* path, bool splitChannels=false, bool noOverwrite=false);
 
 protected:
-	static void IGetCachedPath(const char* path, char* cachedPath, plAudioCore::ChannelSelect whichChan);
-	static void ICacheFile(const char* path, bool noOverwrite, plAudioCore::ChannelSelect whichChan);	
+    static void IGetCachedPath(const char* path, char* cachedPath, plAudioCore::ChannelSelect whichChan);
+    static void ICacheFile(const char* path, bool noOverwrite, plAudioCore::ChannelSelect whichChan);   
 };
 
 #endif //_plAudioFileReader_h

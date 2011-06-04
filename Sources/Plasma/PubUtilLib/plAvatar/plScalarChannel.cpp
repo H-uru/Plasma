@@ -37,10 +37,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 // other
-#include "../plGLight/plLightInfo.h"
-#include "../plInterp/plController.h"
-#include "../plInterp/plAnimTimeConvert.h"
-#include "../plSDL/plSDL.h"
+#include "plGLight/plLightInfo.h"
+#include "plInterp/plController.h"
+#include "plInterp/plAnimTimeConvert.h"
+#include "plSDL/plSDL.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -66,54 +66,54 @@ plScalarChannel::~plScalarChannel()
 // ------
 const hsScalar & plScalarChannel::Value(double time, hsBool peek)
 {
-	return fResult;
+    return fResult;
 }
 
 // value --------------------------------------------------------------
 // ------
 void plScalarChannel::Value(hsScalar &scalar, double time, hsBool peek)
 {
-	scalar = Value(time, peek);
+    scalar = Value(time, peek);
 }
 
 // MakeCombine -----------------------------------------------
 // ------------
 plAGChannel * plScalarChannel::MakeCombine(plAGChannel *other)
 {
-	return nil;
+    return nil;
 }
 
 // MakeBlend ---------------------------------------------------
 // ----------
 plAGChannel * plScalarChannel::MakeBlend(plAGChannel * channelB,
-										 plScalarChannel * channelBias,
-										 int blendPriority)
+                                         plScalarChannel * channelBias,
+                                         int blendPriority)
 {
-	plScalarChannel * chanB = plScalarChannel::ConvertNoRef(channelB);
-	plScalarChannel * chanBias = plScalarChannel::ConvertNoRef(channelBias);
-	plAGChannel * result = this;
+    plScalarChannel * chanB = plScalarChannel::ConvertNoRef(channelB);
+    plScalarChannel * chanBias = plScalarChannel::ConvertNoRef(channelBias);
+    plAGChannel * result = this;
 
-	if (chanB)
-	{
-		result = TRACKED_NEW plScalarBlend(this, chanB, chanBias);
-	} else {
-		hsStatusMessage("Blend operation failed.");
-	}
-	return result;
+    if (chanB)
+    {
+        result = TRACKED_NEW plScalarBlend(this, chanB, chanBias);
+    } else {
+        hsStatusMessage("Blend operation failed.");
+    }
+    return result;
 }
 
 // MakeZeroState -----------------------------
 // --------------
 plAGChannel * plScalarChannel::MakeZeroState()
 {
-	return TRACKED_NEW plScalarConstant(Value(0));
+    return TRACKED_NEW plScalarConstant(Value(0));
 }
 
 // MakeTimeScale --------------------------------------------------------
 // --------------
 plAGChannel * plScalarChannel::MakeTimeScale(plScalarChannel *timeSource)
 {
-	return TRACKED_NEW plScalarTimeScale(this, timeSource);
+    return TRACKED_NEW plScalarTimeScale(this, timeSource);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ plScalarConstant::plScalarConstant()
 // -----
 plScalarConstant::plScalarConstant(hsScalar value)
 {
-	fResult = value;
+    fResult = value;
 }
 
 // dtor -----------------------------
@@ -143,14 +143,14 @@ plScalarConstant::~plScalarConstant()
 
 void plScalarConstant::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plScalarChannel::Read(stream, mgr);
-	fResult = stream->ReadSwapScalar();
+    plScalarChannel::Read(stream, mgr);
+    fResult = stream->ReadSwapScalar();
 }
 
 void plScalarConstant::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plScalarChannel::Write(stream, mgr);
-	stream->WriteSwapScalar(fResult);
+    plScalarChannel::Write(stream, mgr);
+    stream->WriteSwapScalar(fResult);
 }
 
 
@@ -180,34 +180,34 @@ plScalarTimeScale::~plScalarTimeScale()
 {
 }
 
-plScalarTimeScale::IsStoppedAt(double time)
+hsBool plScalarTimeScale::IsStoppedAt(double time)
 {
-	return fTimeSource->IsStoppedAt(time);
+    return fTimeSource->IsStoppedAt(time);
 }
 
 // VALUE
 const hsScalar & plScalarTimeScale::Value(double time, hsBool peek)
 {
-	fResult = fChannelIn->Value(fTimeSource->Value(time, peek));
+    fResult = fChannelIn->Value(fTimeSource->Value(time, peek));
 
-	return fResult;
+    return fResult;
 }
 
 // DETACH
 plAGChannel * plScalarTimeScale::Detach(plAGChannel * detach)
 {
-	plAGChannel *result = this;
-	
-	fChannelIn = plScalarChannel::ConvertNoRef(fChannelIn->Detach(detach));
-	
-	if(!fChannelIn || detach == this)
-		result = nil;
-	
-	if(result != this)
-		delete this;
-	
-	return result;
-	
+    plAGChannel *result = this;
+    
+    fChannelIn = plScalarChannel::ConvertNoRef(fChannelIn->Detach(detach));
+    
+    if(!fChannelIn || detach == this)
+        result = nil;
+    
+    if(result != this)
+        delete this;
+    
+    return result;
+    
 }
 
 
@@ -229,7 +229,7 @@ plScalarBlend::plScalarBlend()
 // ctor ----------------------------------------------------------------------------
 // -----
 plScalarBlend::plScalarBlend(plScalarChannel * channelA, plScalarChannel * channelB,
-							 plScalarChannel * channelBias)
+                             plScalarChannel * channelBias)
 : fChannelA(channelA),
   fChannelB(channelB),
   fChannelBias(channelBias)
@@ -240,41 +240,41 @@ plScalarBlend::plScalarBlend(plScalarChannel * channelA, plScalarChannel * chann
 // -----
 plScalarBlend::~plScalarBlend()
 {
-	fChannelA = nil;
-	fChannelB = nil;
-	fChannelBias = nil;
+    fChannelA = nil;
+    fChannelB = nil;
+    fChannelBias = nil;
 }
 
 // IsStoppedAt -------------------------------
 // ------------
 hsBool plScalarBlend::IsStoppedAt(double time)
 {
-	hsScalar blend = fChannelBias->Value(time);
-	if (blend == 0)
-		return fChannelA->IsStoppedAt(time);
-	if (blend == 1)
-		return fChannelB->IsStoppedAt(time);
+    hsScalar blend = fChannelBias->Value(time);
+    if (blend == 0)
+        return fChannelA->IsStoppedAt(time);
+    if (blend == 1)
+        return fChannelB->IsStoppedAt(time);
 
-	return (fChannelA->IsStoppedAt(time) && fChannelB->IsStoppedAt(time));
+    return (fChannelA->IsStoppedAt(time) && fChannelB->IsStoppedAt(time));
 }
 
 // Value ------------------------------------------------------
 // ------
 const hsScalar & plScalarBlend::Value(double time, hsBool peek)
 {
-	hsScalar curBlend = fChannelBias->Value(time, peek);
-	if(curBlend == 0) {
-		fChannelA->Value(fResult, time, peek);
-	} else {
-		if(curBlend == 1) {
-			fChannelB->Value(fResult, time, peek);
-		} else {
-			const hsScalar &scalarA = fChannelA->Value(time, peek);
-			const hsScalar &scalarB = fChannelB->Value(time, peek);
-			fResult = scalarA + curBlend * (scalarB - scalarA);
-		}
-	}
-	return fResult;
+    hsScalar curBlend = fChannelBias->Value(time, peek);
+    if(curBlend == 0) {
+        fChannelA->Value(fResult, time, peek);
+    } else {
+        if(curBlend == 1) {
+            fChannelB->Value(fResult, time, peek);
+        } else {
+            const hsScalar &scalarA = fChannelA->Value(time, peek);
+            const hsScalar &scalarB = fChannelB->Value(time, peek);
+            fResult = scalarA + curBlend * (scalarB - scalarA);
+        }
+    }
+    return fResult;
 }
 
 
@@ -282,27 +282,27 @@ const hsScalar & plScalarBlend::Value(double time, hsBool peek)
 // -------
 plAGChannel * plScalarBlend::Detach(plAGChannel *remove)
 {
-	plAGChannel *result = this;
+    plAGChannel *result = this;
 
-	// it's possible that the incoming channel could reside down *all* of our
-	// branches (it's a graph, not a tree,) so we always pass down all limbs
-	fChannelBias = plScalarChannel::ConvertNoRef(fChannelBias->Detach(remove));
-	fChannelA = plScalarChannel::ConvertNoRef(fChannelA->Detach(remove));
-	fChannelB = plScalarChannel::ConvertNoRef(fChannelB->Detach(remove));
+    // it's possible that the incoming channel could reside down *all* of our
+    // branches (it's a graph, not a tree,) so we always pass down all limbs
+    fChannelBias = plScalarChannel::ConvertNoRef(fChannelBias->Detach(remove));
+    fChannelA = plScalarChannel::ConvertNoRef(fChannelA->Detach(remove));
+    fChannelB = plScalarChannel::ConvertNoRef(fChannelB->Detach(remove));
 
-	if(!fChannelBias)
-		result = fChannelA;
-	else if(fChannelA && !fChannelB)
-		result = fChannelA;
-	else if(fChannelB && !fChannelA)
-		result = fChannelB;
-	else if(!fChannelA && !fChannelB)
-		result = nil;
+    if(!fChannelBias)
+        result = fChannelA;
+    else if(fChannelA && !fChannelB)
+        result = fChannelA;
+    else if(fChannelB && !fChannelA)
+        result = fChannelB;
+    else if(!fChannelA && !fChannelB)
+        result = nil;
 
-	if(result != this)
-		delete this;
+    if(result != this)
+        delete this;
 
-	return result;
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -329,54 +329,54 @@ plScalarControllerChannel::plScalarControllerChannel(plController *controller)
 // -----
 plScalarControllerChannel::~plScalarControllerChannel()
 {
-	if(fController) {
-		delete fController;
-		fController = nil;
-	}
+    if(fController) {
+        delete fController;
+        fController = nil;
+    }
 }
 
 // Value ------------------------------------------------------------------
 // ------
 const hsScalar & plScalarControllerChannel::Value(double time, hsBool peek)
 {
-	return Value(time, peek, nil);
+    return Value(time, peek, nil);
 }
 
 // Value ------------------------------------------------------------------
 // ------
 const hsScalar & plScalarControllerChannel::Value(double time, hsBool peek,
-												  plControllerCacheInfo *cache)
-{		
-	fController->Interp((hsScalar)time, &fResult, cache);
-	return fResult;
+                                                  plControllerCacheInfo *cache)
+{       
+    fController->Interp((hsScalar)time, &fResult, cache);
+    return fResult;
 }
 
 // MakeCacheChannel ------------------------------------------------------------
 // -----------------
 plAGChannel *plScalarControllerChannel::MakeCacheChannel(plAnimTimeConvert *atc)
 {
-	plControllerCacheInfo *cache = fController->CreateCache();
-	cache->SetATC(atc);
-	return TRACKED_NEW plScalarControllerCacheChannel(this, cache);
+    plControllerCacheInfo *cache = fController->CreateCache();
+    cache->SetATC(atc);
+    return TRACKED_NEW plScalarControllerCacheChannel(this, cache);
 }
 
 // Write -------------------------------------------------------------
 // ------
 void plScalarControllerChannel::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plScalarChannel::Write(stream, mgr);
+    plScalarChannel::Write(stream, mgr);
 
-	hsAssert(fController, "Trying to write plScalarControllerChannel with nil controller. File will not be importable.");
-	mgr->WriteCreatable(stream, fController);
+    hsAssert(fController, "Trying to write plScalarControllerChannel with nil controller. File will not be importable.");
+    mgr->WriteCreatable(stream, fController);
 }
 
 // Read -------------------------------------------------------------
 // -----
 void plScalarControllerChannel::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plScalarChannel::Read(stream, mgr);
-	
-	fController = plController::ConvertNoRef(mgr->ReadCreatable(stream));
+    plScalarChannel::Read(stream, mgr);
+    
+    fController = plController::ConvertNoRef(mgr->ReadCreatable(stream));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -396,7 +396,7 @@ plScalarControllerCacheChannel::plScalarControllerCacheChannel()
 // ctor ---------------------------------------------------------------------------------------------
 // -----
 plScalarControllerCacheChannel::plScalarControllerCacheChannel(plScalarControllerChannel *controller,
-															   plControllerCacheInfo *cache)
+                                                               plControllerCacheInfo *cache)
 : fControllerChannel(controller),
   fCache(cache)
 {
@@ -406,36 +406,36 @@ plScalarControllerCacheChannel::plScalarControllerCacheChannel(plScalarControlle
 // -----
 plScalarControllerCacheChannel::~plScalarControllerCacheChannel()
 {
-	delete fCache;
-	fControllerChannel = nil;
+    delete fCache;
+    fControllerChannel = nil;
 }
 
 // Value ---------------------------------------------------------------------
 // ------
 const hsScalar & plScalarControllerCacheChannel::Value(double time, bool peek)
 {
-	return fControllerChannel->Value(time, peek, fCache);
+    return fControllerChannel->Value(time, peek, fCache);
 }
 
 // Detach -----------------------------------------------------------------
 // -------
 plAGChannel * plScalarControllerCacheChannel::Detach(plAGChannel * channel)
 {
-	plAGChannel *result = this;
+    plAGChannel *result = this;
 
-	if(channel == this)
-	{
-		result = nil;
-	} else {
-		fControllerChannel = plScalarControllerChannel::ConvertNoRef(fControllerChannel->Detach(channel));
-		
-		if(!fControllerChannel)
-			result = nil;
-	}
-	if(result != this)
-		delete this;
+    if(channel == this)
+    {
+        result = nil;
+    } else {
+        fControllerChannel = plScalarControllerChannel::ConvertNoRef(fControllerChannel->Detach(channel));
+        
+        if(!fControllerChannel)
+            result = nil;
+    }
+    if(result != this)
+        delete this;
 
-	return result;
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -465,15 +465,15 @@ plATCChannel::~plATCChannel()
 // ------------
 hsBool plATCChannel::IsStoppedAt(double time)
 {
-	return fConvert->IsStoppedAt(time);
+    return fConvert->IsStoppedAt(time);
 }
 
 // Value -----------------------------------------------------
 // ------
 const hsScalar & plATCChannel::Value(double time, hsBool peek)
 {
-	fResult = (peek ? fConvert->WorldToAnimTimeNoUpdate(time) : fConvert->WorldToAnimTime(time));
-	return fResult;
+    fResult = (peek ? fConvert->WorldToAnimTimeNoUpdate(time) : fConvert->WorldToAnimTime(time));
+    return fResult;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -487,13 +487,13 @@ const hsScalar & plATCChannel::Value(double time, hsBool peek)
 plScalarSDLChannel::plScalarSDLChannel()
 : fLength(1), fVar(nil) 
 {
-	fResult = 0;
+    fResult = 0;
 }
 
 plScalarSDLChannel::plScalarSDLChannel(hsScalar length)
 : fLength(length), fVar(nil) 
 {
-	fResult = 0;
+    fResult = 0;
 }
 
 // dtor ---------------------------------
@@ -505,19 +505,19 @@ plScalarSDLChannel::~plScalarSDLChannel()
 // ------------
 hsBool plScalarSDLChannel::IsStoppedAt(double time) 
 { 
-	return false; 
+    return false; 
 }
 
 // Value -----------------------------------------------------------
 // ------
 const hsScalar & plScalarSDLChannel::Value(double time, hsBool peek)
 {
-	if (fVar)
-		fVar->Get(&fResult);
+    if (fVar)
+        fVar->Get(&fResult);
 
-	// the var will return a 0-1 value, scale to match our anim length.
-	fResult *= fLength;
-	return fResult;
+    // the var will return a 0-1 value, scale to match our anim length.
+    fResult *= fLength;
+    return fResult;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -536,55 +536,55 @@ void plScalarChannelApplicator::IApply(const plAGModifier *mod, double time)
 // -------
 void plSpotInnerApplicator::IApply(const plAGModifier *mod, double time)
 {
-	plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-	hsAssert(scalarChan, "Invalid channel given to plSpotInnerApplicator");
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plSpotInnerApplicator");
 
-	plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
+    plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
 
-	const hsScalar &scalar = scalarChan->Value(time);
-	sli->SetSpotInner(hsScalarDegToRad(scalar)*0.5f);
+    const hsScalar &scalar = scalarChan->Value(time);
+    sli->SetSpotInner(hsScalarDegToRad(scalar)*0.5f);
 }
 
 // IApply --------------------------------------------------------------
 // -------
 void plSpotOuterApplicator::IApply(const plAGModifier *mod, double time)
 {
-	plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-	hsAssert(scalarChan, "Invalid channel given to plSpotInnerApplicator");
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plSpotInnerApplicator");
 
-	plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
+    plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
 
-	const hsScalar &scalar = scalarChan->Value(time);
-	sli->SetSpotOuter(hsScalarDegToRad(scalar)*0.5f);
+    const hsScalar &scalar = scalarChan->Value(time);
+    sli->SetSpotOuter(hsScalarDegToRad(scalar)*0.5f);
 }
 
 
 void plOmniApplicator::IApply(const plAGModifier *modifier, double time)
 {
-	plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-	hsAssert(scalarChan, "Invalid channel given to plLightOmniApplicator");
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plLightOmniApplicator");
 
-	plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
+    plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
 
-	oli->SetLinearAttenuation(scalarChan->Value(time));
+    oli->SetLinearAttenuation(scalarChan->Value(time));
 }
 
 void plOmniSqApplicator::IApply(const plAGModifier *modifier, double time)
 {
-	plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-	hsAssert(scalarChan, "Invalid channel given to plLightOmniApplicator");
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plLightOmniApplicator");
 
-	plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
+    plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
 
-	oli->SetQuadraticAttenuation(scalarChan->Value(time));
+    oli->SetQuadraticAttenuation(scalarChan->Value(time));
 }
 
 void plOmniCutoffApplicator::IApply(const plAGModifier *modifier, double time)
 {
-	plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-	hsAssert(scalarChan, "Invalid channel given to plOmniCutoffApplicator");
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plOmniCutoffApplicator");
 
-	plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
+    plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
 
-	oli->SetCutoffAttenuation( scalarChan->Value( time ) );
+    oli->SetCutoffAttenuation( scalarChan->Value( time ) );
 }

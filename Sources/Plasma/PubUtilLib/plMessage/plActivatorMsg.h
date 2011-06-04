@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plActivatorMsg_inc
 #define plActivatorMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
 
 class hsStream;
@@ -37,58 +37,58 @@ class hsResMgr;
 class plActivatorMsg : public plMessage
 {
 
-	void IReset() { fPickedObj=fHiteeObj=fHitterObj=nil; fTriggerType=0; fHitPoint.Set(0,0,0); }
+    void IReset() { fPickedObj=fHiteeObj=fHitterObj=nil; fTriggerType=0; fHitPoint.Set(0,0,0); }
 public:
-	plActivatorMsg() { IReset(); }
-	plActivatorMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t) { IReset(); }
-	~plActivatorMsg() { }
+    plActivatorMsg() { IReset(); }
+    plActivatorMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t) { IReset(); }
+    ~plActivatorMsg() { }
 
-	CLASSNAME_REGISTER( plActivatorMsg );
-	GETINTERFACE_ANY( plActivatorMsg, plMessage );
-	
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fTriggerType = stream->ReadSwap32();
-		fHitPoint.Read(stream);
-	}
+    CLASSNAME_REGISTER( plActivatorMsg );
+    GETINTERFACE_ANY( plActivatorMsg, plMessage );
+    
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fTriggerType = stream->ReadSwap32();
+        fHitPoint.Read(stream);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		stream->WriteSwap32( fTriggerType );
-		fHitPoint.Write(stream);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        stream->WriteSwap32( fTriggerType );
+        fHitPoint.Write(stream);
+    }
 
-	hsBool TriggerType() { return fTriggerType; }
-	void SetTriggerType(int n) { fTriggerType = n; }
+    hsBool TriggerType() { return fTriggerType; }
+    void SetTriggerType(int n) { fTriggerType = n; }
 
-	enum 
-	{
-		kUndefined	= 0,
-		kPickedTrigger,
-		kUnPickedTrigger,
-		kCollideEnter,
-		kCollideExit,
-		kCollideContact,
-		kCollideUnTrigger,
-		kRoomEntryTrigger,
-		kLogicMod,
-		kVolumeEnter,
-		kVolumeExit,
-		kEnterUnTrigger,
-		kExitUnTrigger,
-	};
+    enum 
+    {
+        kUndefined  = 0,
+        kPickedTrigger,
+        kUnPickedTrigger,
+        kCollideEnter,
+        kCollideExit,
+        kCollideContact,
+        kCollideUnTrigger,
+        kRoomEntryTrigger,
+        kLogicMod,
+        kVolumeEnter,
+        kVolumeExit,
+        kEnterUnTrigger,
+        kExitUnTrigger,
+    };
 
-	UInt32	fTriggerType;
-	plKey	fPickedObj;
-	plKey	fHiteeObj;
-	plKey	fHitterObj;
+    UInt32  fTriggerType;
+    plKey   fPickedObj;
+    plKey   fHiteeObj;
+    plKey   fHitterObj;
 
-	hsPoint3	fHitPoint;		// currently only useful for Picked events
+    hsPoint3    fHitPoint;      // currently only useful for Picked events
 
 
 };

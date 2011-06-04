@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysicalSDLModifier_inc
 #define plPhysicalSDLModifier_inc
 
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 class plStateDataRecord;
 class plStatusLog;
@@ -39,23 +39,23 @@ class plPhysical;
 class plPhysicalSDLModifier : public plSDLModifier
 {
 public:
-	CLASSNAME_REGISTER( plPhysicalSDLModifier );
-	GETINTERFACE_ANY( plPhysicalSDLModifier, plSDLModifier);
+    CLASSNAME_REGISTER( plPhysicalSDLModifier );
+    GETINTERFACE_ANY( plPhysicalSDLModifier, plSDLModifier);
 
-	const char* GetSDLName() const { return kSDLPhysical; }
+    const char* GetSDLName() const { return kSDLPhysical; }
 
-	// For the console
-	static void SetLogLevel(int level) { fLogLevel = level; }
+    // For the console
+    static void SetLogLevel(int level) { fLogLevel = level; }
 
 protected:
-	static int fLogLevel;
-	static plStatusLog* IGetLog();
-	void ILogState(const plStateDataRecord* state, bool useDirty, const char* prefix, UInt32 color);
+    static int fLogLevel;
+    static plStatusLog* IGetLog();
+    void ILogState(const plStateDataRecord* state, bool useDirty, const char* prefix, UInt32 color);
 
-	plPhysical* IGetPhysical();
-	virtual void IPutCurrentStateIn(plStateDataRecord* dstState);
-	virtual void ISetCurrentStateFrom(const plStateDataRecord* srcState);
-	virtual void ISentState(const plStateDataRecord* sentState);
+    plPhysical* IGetPhysical();
+    virtual void IPutCurrentStateIn(plStateDataRecord* dstState);
+    virtual void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    virtual void ISentState(const plStateDataRecord* sentState);
 };
 
-#endif	// plPhysicalSDLModifier_inc
+#endif  // plPhysicalSDLModifier_inc

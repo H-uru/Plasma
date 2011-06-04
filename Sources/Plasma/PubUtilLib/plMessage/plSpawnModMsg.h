@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSpawnModMsg_inc
 #define plSpawnModMsg_inc
 
-#include "../pnMessage/plMessage.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnMessage/plMessage.h"
+#include "pnKeyedObject/plUoid.h"
 #include "hsGeometry3.h"
 
 class hsStream;
@@ -39,32 +39,32 @@ class plSpawnModMsg : public plMessage
 {
 
 public:
-	plSpawnModMsg(){;}
-	plSpawnModMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t){;}
-	~plSpawnModMsg(){;}
+    plSpawnModMsg(){;}
+    plSpawnModMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t){;}
+    ~plSpawnModMsg(){;}
 
-	CLASSNAME_REGISTER( plSpawnModMsg );
-	GETINTERFACE_ANY( plSpawnModMsg, plMessage );
-	
-	hsPoint3	fPos;
-	plUoid		fObj;
+    CLASSNAME_REGISTER( plSpawnModMsg );
+    GETINTERFACE_ANY( plSpawnModMsg, plMessage );
+    
+    hsPoint3    fPos;
+    plUoid      fObj;
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fPos.Read(stream);
-		fObj.Read(stream);
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fPos.Read(stream);
+        fObj.Read(stream);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		fPos.Write(stream);
-		fObj.Write(stream);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        fPos.Write(stream);
+        fObj.Write(stream);
+    }
 };
 
 #endif // plSpawnModMsg_inc

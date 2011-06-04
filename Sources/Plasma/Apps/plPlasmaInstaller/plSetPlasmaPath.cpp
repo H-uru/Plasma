@@ -28,77 +28,77 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static HKEY GetEnvironKey()
 {
-	HKEY hSystemKey = NULL;
-	HKEY hControlSetKey = NULL;
-	HKEY hControlKey = NULL;
-	HKEY hSessionKey = NULL;
-	HKEY hEnvironKey = NULL;
+    HKEY hSystemKey = NULL;
+    HKEY hControlSetKey = NULL;
+    HKEY hControlKey = NULL;
+    HKEY hSessionKey = NULL;
+    HKEY hEnvironKey = NULL;
 
-	if ((RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SYSTEM", 0, KEY_READ, &hSystemKey) == ERROR_SUCCESS) &&
-		(RegOpenKeyEx(hSystemKey, "CurrentControlSet", 0, KEY_READ, &hControlSetKey) == ERROR_SUCCESS) &&
-		(RegOpenKeyEx(hControlSetKey, "Control", 0, KEY_READ, &hControlKey) == ERROR_SUCCESS) &&
-		(RegOpenKeyEx(hControlKey, "Session Manager", 0, KEY_READ, &hSessionKey) == ERROR_SUCCESS))
-	{
-		RegOpenKeyEx(hSessionKey, "Environment", 0, KEY_READ | KEY_WRITE, &hEnvironKey);
-	}
+    if ((RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SYSTEM", 0, KEY_READ, &hSystemKey) == ERROR_SUCCESS) &&
+        (RegOpenKeyEx(hSystemKey, "CurrentControlSet", 0, KEY_READ, &hControlSetKey) == ERROR_SUCCESS) &&
+        (RegOpenKeyEx(hControlSetKey, "Control", 0, KEY_READ, &hControlKey) == ERROR_SUCCESS) &&
+        (RegOpenKeyEx(hControlKey, "Session Manager", 0, KEY_READ, &hSessionKey) == ERROR_SUCCESS))
+    {
+        RegOpenKeyEx(hSessionKey, "Environment", 0, KEY_READ | KEY_WRITE, &hEnvironKey);
+    }
 
-	if (hSystemKey != NULL)
-		RegCloseKey(hSystemKey);
-	if (hControlSetKey != NULL)
-		RegCloseKey(hControlSetKey);
-	if (hControlKey != NULL)
-		RegCloseKey(hControlKey);
-	if (hSessionKey != NULL)
-		RegCloseKey(hSessionKey);
+    if (hSystemKey != NULL)
+        RegCloseKey(hSystemKey);
+    if (hControlSetKey != NULL)
+        RegCloseKey(hControlSetKey);
+    if (hControlKey != NULL)
+        RegCloseKey(hControlKey);
+    if (hSessionKey != NULL)
+        RegCloseKey(hSessionKey);
 
-	return hEnvironKey;
+    return hEnvironKey;
 }
 
 void SetPlasmaPath(const char* plasmaPath)
 {
-	bool pathSet = false;
+    bool pathSet = false;
 
-	HKEY hEnvironKey = GetEnvironKey();
-	if (hEnvironKey)
-	{
-		// Make sure the PlasmaGameDir var is in the path
-		DWORD size = 0;
-		if (ERROR_SUCCESS == RegQueryValueEx(hEnvironKey, "Path", NULL, NULL, NULL, &size))
-		{
-			char* oldPath = new char[size];
-			static const char* kPlasmaVar = "%PlasmaGameDir%";
+    HKEY hEnvironKey = GetEnvironKey();
+    if (hEnvironKey)
+    {
+        // Make sure the PlasmaGameDir var is in the path
+        DWORD size = 0;
+        if (ERROR_SUCCESS == RegQueryValueEx(hEnvironKey, "Path", NULL, NULL, NULL, &size))
+        {
+            char* oldPath = new char[size];
+            static const char* kPlasmaVar = "%PlasmaGameDir%";
 
-			if (ERROR_SUCCESS == RegQueryValueEx(hEnvironKey, "Path", NULL, NULL, (BYTE*)oldPath, &size))
-			{
-				pathSet = (strstr(oldPath, kPlasmaVar) != NULL);
+            if (ERROR_SUCCESS == RegQueryValueEx(hEnvironKey, "Path", NULL, NULL, (BYTE*)oldPath, &size))
+            {
+                pathSet = (strstr(oldPath, kPlasmaVar) != NULL);
 
-				if (!pathSet)
-				{
-					char* newPath = new char[size+strlen(kPlasmaVar)+1];
-					strcpy(newPath, oldPath);
-					strcat(newPath, ";");
-					strcat(newPath, kPlasmaVar);
+                if (!pathSet)
+                {
+                    char* newPath = new char[size+strlen(kPlasmaVar)+1];
+                    strcpy(newPath, oldPath);
+                    strcat(newPath, ";");
+                    strcat(newPath, kPlasmaVar);
 
-					RegSetValueEx(hEnvironKey, "Path", 0, REG_EXPAND_SZ, (BYTE*)newPath, strlen(newPath)+1);
+                    RegSetValueEx(hEnvironKey, "Path", 0, REG_EXPAND_SZ, (BYTE*)newPath, strlen(newPath)+1);
 
-					delete [] newPath;
-				}
-			}
+                    delete [] newPath;
+                }
+            }
 
-			delete [] oldPath;
-		}
+            delete [] oldPath;
+        }
 
-		// Set the PlasmaGameDir var
-		RegSetValueEx(hEnvironKey, "PlasmaGameDir", 0, REG_SZ, (BYTE*)plasmaPath, strlen(plasmaPath)+1);
+        // Set the PlasmaGameDir var
+        RegSetValueEx(hEnvironKey, "PlasmaGameDir", 0, REG_SZ, (BYTE*)plasmaPath, strlen(plasmaPath)+1);
 
-		// Notify command prompts and stuff that environ changed
-		DWORD ret;
-		SendMessageTimeout(HWND_BROADCAST,
-							WM_SETTINGCHANGE,
-							0,
-							(LPARAM)"Environment",
-							SMTO_ABORTIFHUNG,
-							5000,
-							&ret);
-	}
+        // Notify command prompts and stuff that environ changed
+        DWORD ret;
+        SendMessageTimeout(HWND_BROADCAST,
+                            WM_SETTINGCHANGE,
+                            0,
+                            (LPARAM)"Environment",
+                            SMTO_ABORTIFHUNG,
+                            5000,
+                            &ret);
+    }
 }

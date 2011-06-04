@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShadowCastMsg_inc
 #define plShadowCastMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plPipeline;
 class plShadowCaster;
@@ -35,25 +35,25 @@ class plShadowCaster;
 class plShadowCastMsg : public plMessage
 {
 protected:
-	plPipeline*			fPipe;
-	plShadowCaster*		fCaster;
+    plPipeline*         fPipe;
+    plShadowCaster*     fCaster;
 
 public:
-	plShadowCastMsg() : fPipe(nil), fCaster(nil) { SetBCastFlag(kBCastByType); }
-	plShadowCastMsg(plKey sender, plShadowCaster* cast, plPipeline* pipe) : plMessage(sender, nil, nil), fPipe(pipe), fCaster(cast) { SetBCastFlag(kBCastByType); }
-	~plShadowCastMsg() {}
+    plShadowCastMsg() : fPipe(nil), fCaster(nil) { SetBCastFlag(kBCastByType); }
+    plShadowCastMsg(plKey sender, plShadowCaster* cast, plPipeline* pipe) : plMessage(sender, nil, nil), fPipe(pipe), fCaster(cast) { SetBCastFlag(kBCastByType); }
+    ~plShadowCastMsg() {}
 
-	CLASSNAME_REGISTER( plShadowCastMsg );
-	GETINTERFACE_ANY( plShadowCastMsg, plMessage );
+    CLASSNAME_REGISTER( plShadowCastMsg );
+    GETINTERFACE_ANY( plShadowCastMsg, plMessage );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Non-networkable"); }
-	virtual void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Non-networkable"); }
+    virtual void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Non-networkable"); }
+    virtual void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Non-networkable"); }
 
-	plPipeline*		Pipeline() const { return fPipe; }
-	plShadowCaster*	Caster() const { return fCaster; }
+    plPipeline*     Pipeline() const { return fPipe; }
+    plShadowCaster* Caster() const { return fCaster; }
 
-	void SetPipeline(plPipeline* pipe) { fPipe = pipe; }
-	void SetCaster(plShadowCaster* c) { fCaster = c; }
+    void SetPipeline(plPipeline* pipe) { fPipe = pipe; }
+    void SetCaster(plShadowCaster* c) { fCaster = c; }
 };
 
 #endif // plShadowCastMsg_inc

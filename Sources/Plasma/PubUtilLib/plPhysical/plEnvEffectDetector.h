@@ -37,20 +37,20 @@ class hsResMgr;
 class plEnvEffectDetector : public plDetectorModifier
 {
 protected:
-	
+    
 public:
-	plEnvEffectDetector(){;}
-	virtual ~plEnvEffectDetector(){;}
-	
-	virtual hsBool MsgReceive(plMessage* msg);
+    plEnvEffectDetector(){;}
+    virtual ~plEnvEffectDetector(){;}
+    
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	CLASSNAME_REGISTER( plEnvEffectDetector );
-	GETINTERFACE_ANY( plEnvEffectDetector, plDetectorModifier );
+    CLASSNAME_REGISTER( plEnvEffectDetector );
+    GETINTERFACE_ANY( plEnvEffectDetector, plDetectorModifier );
 
-	hsTArray<plEnvEffectMsg*>	fEffectMsg;
+    hsTArray<plEnvEffectMsg*>   fEffectMsg;
 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
 };
 

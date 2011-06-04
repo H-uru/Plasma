@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "max.h"
 #include "MaxIcon.h"
 
-#include "resource.h"
+#include "../resource.h"
 #include "plMultipassMtl.h"
 #include "plMultipassMtlPB.h"
 //#include "plMaxLayer.h"
@@ -35,21 +35,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct LayerID
 {
-	int layerID;
-	int activeID;
+    int layerID;
+    int activeID;
 };
 static LayerID kLayerID[] =
 {
-	{ IDC_TEX1, IDC_TEXON1 },
-	{ IDC_TEX2, IDC_TEXON2 },
-	{ IDC_TEX3, IDC_TEXON3 },
-	{ IDC_TEX4, IDC_TEXON4 },
-	{ IDC_TEX5, IDC_TEXON5 },
-	{ IDC_TEX6, IDC_TEXON6 },
-	{ IDC_TEX7, IDC_TEXON7 },
-	{ IDC_TEX8, IDC_TEXON8 },
-	{ IDC_TEX9, IDC_TEXON9 },
-	{ IDC_TEX10, IDC_TEXON10 },
+    { IDC_TEX1, IDC_TEXON1 },
+    { IDC_TEX2, IDC_TEXON2 },
+    { IDC_TEX3, IDC_TEXON3 },
+    { IDC_TEX4, IDC_TEXON4 },
+    { IDC_TEX5, IDC_TEXON5 },
+    { IDC_TEX6, IDC_TEXON6 },
+    { IDC_TEX7, IDC_TEXON7 },
+    { IDC_TEX8, IDC_TEXON8 },
+    { IDC_TEX9, IDC_TEXON9 },
+    { IDC_TEX10, IDC_TEXON10 },
 };
 
 //-----------------------------------------------------------------------------
@@ -58,41 +58,41 @@ static LayerID kLayerID[] =
 
 plMultipassMtlDlg::plMultipassMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plMultipassMtl *m)
 {
-	fDADMgr.Init(this);
+    fDADMgr.Init(this);
 
-	fhMtlEdit = hwMtlEdit;
-	fhRollup = NULL;
-	fMtl = m;
-	fPBlock = fMtl->GetParamBlockByID(plMultipassMtl::kBlkPasses);
-	ip = imp;
-	valid = FALSE;
+    fhMtlEdit = hwMtlEdit;
+    fhRollup = NULL;
+    fMtl = m;
+    fPBlock = fMtl->GetParamBlockByID(plMultipassMtl::kBlkPasses);
+    ip = imp;
+    valid = FALSE;
 
-	for (int i = 0; i < NSUBMTLS; i++)
-		fLayerBtns[i] = NULL;
+    for (int i = 0; i < NSUBMTLS; i++)
+        fLayerBtns[i] = NULL;
 
-	curTime = imp->GetTime();
+    curTime = imp->GetTime();
 
-	fhRollup = ip->AddRollupPage(
-		hInstance,
-		MAKEINTRESOURCE(IDD_MULTIPASS),
-		ForwardProc,
-		"Multipass Parameters",
-		(LPARAM)this);
+    fhRollup = ip->AddRollupPage(
+        hInstance,
+        MAKEINTRESOURCE(IDD_MULTIPASS),
+        ForwardProc,
+        "Multipass Parameters",
+        (LPARAM)this);
 }
 
 plMultipassMtlDlg::~plMultipassMtlDlg()
 {
-	fMtl->SetParamDlg(NULL);
-	for (int i = 0; i < NSUBMTLS; i++)
-	{
-		ReleaseICustButton(fLayerBtns[i]);
-		fLayerBtns[i] = NULL; 
-	}
+    fMtl->SetParamDlg(NULL);
+    for (int i = 0; i < NSUBMTLS; i++)
+    {
+        ReleaseICustButton(fLayerBtns[i]);
+        fLayerBtns[i] = NULL; 
+    }
 
-	SetWindowLong(fhRollup, GWL_USERDATA, NULL);
-	ip->DeleteRollupPage(fhRollup);
+    SetWindowLong(fhRollup, GWL_USERDATA, NULL);
+    ip->DeleteRollupPage(fhRollup);
 
-	fhRollup = NULL;
+    fhRollup = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -101,37 +101,37 @@ plMultipassMtlDlg::~plMultipassMtlDlg()
 
 void plMultipassMtlDlg::SetThing(ReferenceTarget *m)
 {
-	assert(m->SuperClassID() == MATERIAL_CLASS_ID);
-	assert(m->ClassID() == MULTIMTL_CLASS_ID);
+    assert(m->SuperClassID() == MATERIAL_CLASS_ID);
+    assert(m->ClassID() == MULTIMTL_CLASS_ID);
 
-	// Bad?
-	if (fMtl) 
-		fMtl->SetParamDlg(NULL);
-	fMtl = (plMultipassMtl *)m;
-	if (fMtl)
-		fMtl->SetParamDlg(this);
+    // Bad?
+    if (fMtl) 
+        fMtl->SetParamDlg(NULL);
+    fMtl = (plMultipassMtl *)m;
+    if (fMtl)
+        fMtl->SetParamDlg(this);
 
-	LoadDialog();
-	IUpdateMtlDisplay();
+    LoadDialog();
+    IUpdateMtlDisplay();
 }
 
 void plMultipassMtlDlg::SetTime(TimeValue t)
 {
-	if (t != curTime)
-	{
-		curTime = t;
-		Interval v;
-		fMtl->Update(ip->GetTime(),v);
-		LoadDialog();
-		IUpdateMtlDisplay();
-	}
+    if (t != curTime)
+    {
+        curTime = t;
+        Interval v;
+        fMtl->Update(ip->GetTime(),v);
+        LoadDialog();
+        IUpdateMtlDisplay();
+    }
 }
 
 void plMultipassMtlDlg::ReloadDialog()
 {
-	Interval v;
-	fMtl->Update(ip->GetTime(), v);
-	LoadDialog();
+    Interval v;
+    fMtl->Update(ip->GetTime(), v);
+    LoadDialog();
 }
 
 void plMultipassMtlDlg::ActivateDlg(BOOL onOff)
@@ -140,31 +140,31 @@ void plMultipassMtlDlg::ActivateDlg(BOOL onOff)
 
 int plMultipassMtlDlg::FindSubMtlFromHWND(HWND hwnd)
 {
-	for (int i = 0; i < NSUBMTLS; i++)
-	{
-		if (hwnd == fLayerBtns[i]->GetHwnd()) 
-			return i;
-	}
+    for (int i = 0; i < NSUBMTLS; i++)
+    {
+        if (hwnd == fLayerBtns[i]->GetHwnd()) 
+            return i;
+    }
 
-	return -1;
+    return -1;
 }
 
 BOOL plMultipassMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
 {
-	plMultipassMtlDlg *theDlg;
-	if (msg == WM_INITDIALOG)
-	{
-		theDlg = (plMultipassMtlDlg*)lParam;
-		theDlg->fhRollup = hDlg;
-		SetWindowLong(hDlg, GWL_USERDATA, lParam);
-	}
-	else
-	{
-		if ((theDlg = (plMultipassMtlDlg *)GetWindowLong(hDlg, GWL_USERDATA)) == NULL)
-			return FALSE; 
-	}
+    plMultipassMtlDlg *theDlg;
+    if (msg == WM_INITDIALOG)
+    {
+        theDlg = (plMultipassMtlDlg*)lParam;
+        theDlg->fhRollup = hDlg;
+        SetWindowLong(hDlg, GWL_USERDATA, lParam);
+    }
+    else
+    {
+        if ((theDlg = (plMultipassMtlDlg *)GetWindowLong(hDlg, GWL_USERDATA)) == NULL)
+            return FALSE; 
+    }
 
-	return theDlg->LayerPanelProc(hDlg,msg,wParam,lParam);
+    return theDlg->LayerPanelProc(hDlg,msg,wParam,lParam);
 }
 
 
@@ -174,153 +174,153 @@ BOOL plMultipassMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 //----------------------------------------------------------------------------
 BOOL plMultipassMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	int id = LOWORD(wParam);
-	int code = HIWORD(wParam);
-	int i;
+    int id = LOWORD(wParam);
+    int code = HIWORD(wParam);
+    int i;
 
-	switch (msg)
-	{
-	case WM_INITDIALOG:
-		{
-			int nLayers = fPBlock->GetInt(kMultCount);
+    switch (msg)
+    {
+    case WM_INITDIALOG:
+        {
+            int nLayers = fPBlock->GetInt(kMultCount);
 
-			for (i = 0; i < NSUBMTLS; i++)
-			{
-				fLayerBtns[i] = GetICustButton(GetDlgItem(hDlg, kLayerID[i].layerID));
-				fLayerBtns[i]->SetDADMgr(&fDADMgr);
+            for (i = 0; i < NSUBMTLS; i++)
+            {
+                fLayerBtns[i] = GetICustButton(GetDlgItem(hDlg, kLayerID[i].layerID));
+                fLayerBtns[i]->SetDADMgr(&fDADMgr);
 
-/*				if (i < nLayers)
-				{
-					SetCheckBox(hDlg, kLayerID[i].activeID, fPBlock->GetInt(kMtlLayerOn, curTime, i));
-				}
+/*              if (i < nLayers)
+                {
+                    SetCheckBox(hDlg, kLayerID[i].activeID, fPBlock->GetInt(kMtlLayerOn, curTime, i));
+                }
 */
-				fNumTexSpin = SetupIntSpinner(hDlg, IDC_LAYER_SPIN, IDC_LAYER_EDIT, 1, 10, nLayers);
-			}
+                fNumTexSpin = SetupIntSpinner(hDlg, IDC_LAYER_SPIN, IDC_LAYER_EDIT, 1, 10, nLayers);
+            }
 
-			// TEMP testing
-			UpdateLayerDisplay();
+            // TEMP testing
+            UpdateLayerDisplay();
 
-			IUpdateMtlDisplay();
-		}
-		return TRUE;
+            IUpdateMtlDisplay();
+        }
+        return TRUE;
 
-	case WM_DESTROY:
-		for (i = 0; i < NSUBMTLS; i++)
-		{
-			ReleaseICustButton(fLayerBtns[i]);
-			fLayerBtns[i] = NULL;
-		}
-		ReleaseISpinner(fNumTexSpin);
-		fNumTexSpin = NULL;
-		break;
+    case WM_DESTROY:
+        for (i = 0; i < NSUBMTLS; i++)
+        {
+            ReleaseICustButton(fLayerBtns[i]);
+            fLayerBtns[i] = NULL;
+        }
+        ReleaseISpinner(fNumTexSpin);
+        fNumTexSpin = NULL;
+        break;
 
-	case CC_SPINNER_CHANGE:
-		if (id == IDC_LAYER_SPIN && !code)
-		{
-			IGetSpinnerVal();
-			return TRUE;
-		}
-		break;
-	case CC_SPINNER_BUTTONUP:
-		if (id == IDC_LAYER_SPIN && code)
-		{
-			IGetSpinnerVal();
-			return TRUE;
-		}
-		break;
+    case CC_SPINNER_CHANGE:
+        if (id == IDC_LAYER_SPIN && !code)
+        {
+            IGetSpinnerVal();
+            return TRUE;
+        }
+        break;
+    case CC_SPINNER_BUTTONUP:
+        if (id == IDC_LAYER_SPIN && code)
+        {
+            IGetSpinnerVal();
+            return TRUE;
+        }
+        break;
 
     case WM_COMMAND:  
         {
-			for (i = 0; i < NSUBMTLS; i++)
-			{
-				if (id == kLayerID[i].activeID)
-				{
-//					fMtl->EnableMap(i,GetCheckBox(hwndDlg, id));
-					bool checked = SendMessage(GetDlgItem(hDlg, id), BM_GETCHECK, 0, 0) == BST_CHECKED;
-					fPBlock->SetValue(kMultOn, curTime, checked, i);
-					return TRUE;
-				}
-				if (id == kLayerID[i].layerID)
-				{
-					PostMessage(fhMtlEdit, WM_SUB_MTL_BUTTON, i, (LPARAM)fMtl);
-					return TRUE;
-				}
-			}
+            for (i = 0; i < NSUBMTLS; i++)
+            {
+                if (id == kLayerID[i].activeID)
+                {
+//                  fMtl->EnableMap(i,GetCheckBox(hwndDlg, id));
+                    bool checked = SendMessage(GetDlgItem(hDlg, id), BM_GETCHECK, 0, 0) == BST_CHECKED;
+                    fPBlock->SetValue(kMultOn, curTime, checked, i);
+                    return TRUE;
+                }
+                if (id == kLayerID[i].layerID)
+                {
+                    PostMessage(fhMtlEdit, WM_SUB_MTL_BUTTON, i, (LPARAM)fMtl);
+                    return TRUE;
+                }
+            }
 
-		}
-//		IUpdateMtlDisplay();
+        }
+//      IUpdateMtlDisplay();
         break;
-	}
+    }
 
-	return FALSE;
+    return FALSE;
 }
 
 void plMultipassMtlDlg::UpdateLayerDisplay() 
 {
-	int numlayers = fPBlock->GetInt(kMultCount);
+    int numlayers = fPBlock->GetInt(kMultCount);
 
-	fNumTexSpin->SetValue(numlayers, FALSE);
+    fNumTexSpin->SetValue(numlayers, FALSE);
 
-	int i;
-	for (i = 0; i < numlayers && i < NSUBMTLS; i++)
-	{
-		Mtl *m = fPBlock->GetMtl(kMultPasses, curTime, i);
-		TSTR nm;
-		if (m) 
-			nm = m->GetName();
-		else 
-			nm = "None";
-		fLayerBtns[i]->SetText(nm.data());
-		
-		ShowWindow(GetDlgItem(fhRollup, kLayerID[i].layerID), SW_SHOW);
-		ShowWindow(GetDlgItem(fhRollup, kLayerID[i].activeID), SW_SHOW);
-		SetCheckBox(fhRollup, kLayerID[i].activeID, fPBlock->GetInt(kMultOn, curTime, i));	
-	}
+    int i;
+    for (i = 0; i < numlayers && i < NSUBMTLS; i++)
+    {
+        Mtl *m = fPBlock->GetMtl(kMultPasses, curTime, i);
+        TSTR nm;
+        if (m) 
+            nm = m->GetName();
+        else 
+            nm = "None";
+        fLayerBtns[i]->SetText(nm.data());
+        
+        ShowWindow(GetDlgItem(fhRollup, kLayerID[i].layerID), SW_SHOW);
+        ShowWindow(GetDlgItem(fhRollup, kLayerID[i].activeID), SW_SHOW);
+        SetCheckBox(fhRollup, kLayerID[i].activeID, fPBlock->GetInt(kMultOn, curTime, i));  
+    }
 
-	for (i = numlayers; i < NSUBMTLS; i++)
-	{
-		ShowWindow(GetDlgItem(fhRollup, kLayerID[i].layerID), SW_HIDE);
-		ShowWindow(GetDlgItem(fhRollup, kLayerID[i].activeID), SW_HIDE);
-	}
+    for (i = numlayers; i < NSUBMTLS; i++)
+    {
+        ShowWindow(GetDlgItem(fhRollup, kLayerID[i].layerID), SW_HIDE);
+        ShowWindow(GetDlgItem(fhRollup, kLayerID[i].activeID), SW_HIDE);
+    }
 }
 
 void plMultipassMtlDlg::LoadDialog()
 {
-	if (fMtl)
-	{
-		fPBlock = fMtl->GetParamBlockByID(plMultipassMtl::kBlkPasses);
+    if (fMtl)
+    {
+        fPBlock = fMtl->GetParamBlockByID(plMultipassMtl::kBlkPasses);
 
-		if (fhRollup)
-			UpdateLayerDisplay();
-	}
+        if (fhRollup)
+            UpdateLayerDisplay();
+    }
 }
 
 bool plMultipassMtlDlg::ISetNumLayers(int num)
 {
-	if (num >= 1 && num <= NSUBMTLS)
-	{
-		fMtl->SetNumSubMtls(num);
-		UpdateLayerDisplay();
-//		IUpdateMtlDisplay();
+    if (num >= 1 && num <= NSUBMTLS)
+    {
+        fMtl->SetNumSubMtls(num);
+        UpdateLayerDisplay();
+//      IUpdateMtlDisplay();
 
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 void plMultipassMtlDlg::IGetSpinnerVal()
 {
-	ISpinnerControl *spin = GetISpinner(GetDlgItem(fhRollup, IDC_LAYER_SPIN));
-	if (!spin)
-		return;
+    ISpinnerControl *spin = GetISpinner(GetDlgItem(fhRollup, IDC_LAYER_SPIN));
+    if (!spin)
+        return;
 
-	// If new number of layers is invalid, set to current num
-	if (!ISetNumLayers(spin->GetIVal()))
-	{
-		int nLayers = fPBlock->GetInt(kMultCount);
-		spin->SetValue(nLayers, FALSE);
-	}
+    // If new number of layers is invalid, set to current num
+    if (!ISetNumLayers(spin->GetIVal()))
+    {
+        int nLayers = fPBlock->GetInt(kMultCount);
+        spin->SetValue(nLayers, FALSE);
+    }
 
-	ReleaseISpinner(spin);
+    ReleaseISpinner(spin);
 }

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerSDLModifier_inc
 #define plLayerSDLModifier_inc
 
-#include "../plModifier/plAnimTimeConvertSDLModifier.h"
+#include "plModifier/plAnimTimeConvertSDLModifier.h"
 
 //
 // This modifier is responsible for sending and recving 
@@ -39,30 +39,30 @@ class plLayerSDLModifier : public plAnimTimeConvertSDLModifier
 {
 protected:
 
-	static char	kStrAtc[];		// animTimeConvert var name
-	static char	kStrPassThruChannels[];
-	static char	kStrTransform[];
-	static char kStrChannelData[];
-	//static char	kStrPreShadeColor[];
-	//static char	kStrRuntimeColor[];
-	//static char	kStrAmbientColor[];
-	//static char	kStrOpacity[];
-	plLayerAnimation* fLayerAnimation;
+    static char kStrAtc[];      // animTimeConvert var name
+    static char kStrPassThruChannels[];
+    static char kStrTransform[];
+    static char kStrChannelData[];
+    //static char   kStrPreShadeColor[];
+    //static char   kStrRuntimeColor[];
+    //static char   kStrAmbientColor[];
+    //static char   kStrOpacity[];
+    plLayerAnimation* fLayerAnimation;
 
-	void IPutCurrentStateIn(plStateDataRecord* dstState);
-	void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
 public:
-	CLASSNAME_REGISTER( plLayerSDLModifier);
-	GETINTERFACE_ANY( plLayerSDLModifier, plAnimTimeConvertSDLModifier);
-		
-	plLayerSDLModifier() : fLayerAnimation(nil) {}
-	
-	const char* GetSDLName() const { return kSDLLayer; }
-	
-	plLayerAnimation* GetLayerAnimation() const { return fLayerAnimation; }
-	void SetLayerAnimation(plLayerAnimation* l) { fLayerAnimation=l; AddTarget(nil); }
-	plKey GetStateOwnerKey() const;
+    CLASSNAME_REGISTER( plLayerSDLModifier);
+    GETINTERFACE_ANY( plLayerSDLModifier, plAnimTimeConvertSDLModifier);
+        
+    plLayerSDLModifier() : fLayerAnimation(nil) {}
+    
+    const char* GetSDLName() const { return kSDLLayer; }
+    
+    plLayerAnimation* GetLayerAnimation() const { return fLayerAnimation; }
+    void SetLayerAnimation(plLayerAnimation* l) { fLayerAnimation=l; AddTarget(nil); }
+    plKey GetStateOwnerKey() const;
 };
 
-#endif	// plLayerSDLModifier_inc
+#endif  // plLayerSDLModifier_inc
 

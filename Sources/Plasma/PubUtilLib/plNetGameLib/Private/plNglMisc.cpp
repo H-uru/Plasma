@@ -62,9 +62,9 @@ unsigned ConnGetId (ENetProtocol protocol) {
     switch (protocol) {
         case kNetProtocolCli2Auth: return AuthGetConnId();
         case kNetProtocolCli2Game: return GameGetConnId();
-		case kNetProtocolCli2File: return FileGetConnId();
-		case kNetProtocolCli2Csr:  return CsrGetConnId();
-		case kNetProtocolCli2GateKeeper: return GateKeeperGetConnId();
+        case kNetProtocolCli2File: return FileGetConnId();
+        case kNetProtocolCli2Csr:  return CsrGetConnId();
+        case kNetProtocolCli2GateKeeper: return GateKeeperGetConnId();
         DEFAULT_FATAL(protocol);
     }
 }

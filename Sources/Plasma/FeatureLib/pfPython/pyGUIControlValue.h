@@ -36,98 +36,98 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyGUIControl.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class pyGUIControlValue : public pyGUIControl
 {
 protected:
-	pyGUIControlValue(): pyGUIControl() {} // for python glue only, do NOT call
-	pyGUIControlValue(pyKey& gckey);
-	pyGUIControlValue(plKey objkey);
+    pyGUIControlValue(): pyGUIControl() {} // for python glue only, do NOT call
+    pyGUIControlValue(pyKey& gckey);
+    pyGUIControlValue(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE;
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlValue);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlValue object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlValue); // converts a PyObject to a pyGUIControlValue (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE;
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlValue);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlValue object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlValue); // converts a PyObject to a pyGUIControlValue (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlValue(pyKey& gckey);
+    static hsBool IsGUIControlValue(pyKey& gckey);
 
-	virtual hsScalar	GetValue();
-	virtual void		SetValue( hsScalar v );
-	virtual hsScalar	GetMin( void );
-	virtual hsScalar	GetMax( void );
-	virtual hsScalar	GetStep( void );
-	virtual void		SetRange( hsScalar min, hsScalar max );
-	virtual void		SetStep( hsScalar step );
+    virtual hsScalar    GetValue();
+    virtual void        SetValue( hsScalar v );
+    virtual hsScalar    GetMin( void );
+    virtual hsScalar    GetMax( void );
+    virtual hsScalar    GetStep( void );
+    virtual void        SetRange( hsScalar min, hsScalar max );
+    virtual void        SetStep( hsScalar step );
 };
 
 class pyGUIControlKnob : public pyGUIControlValue
 {
 protected:
-	pyGUIControlKnob(): pyGUIControlValue() {} // for python glue only, do NOT call
-	pyGUIControlKnob(pyKey& gckey);
-	pyGUIControlKnob(plKey objkey);
+    pyGUIControlKnob(): pyGUIControlValue() {} // for python glue only, do NOT call
+    pyGUIControlKnob(pyKey& gckey);
+    pyGUIControlKnob(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlKnob);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlKnob object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlKnob); // converts a PyObject to a pyGUIControlKnob (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlKnob);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlKnob object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlKnob); // converts a PyObject to a pyGUIControlKnob (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlKnob(pyKey& gckey);
+    static hsBool IsGUIControlKnob(pyKey& gckey);
 };
 
 class pyGUIControlUpDownPair : public pyGUIControlValue
 {
 protected:
-	pyGUIControlUpDownPair(): pyGUIControlValue() {} // for python glue only, do NOT call
-	pyGUIControlUpDownPair(pyKey& gckey);
-	pyGUIControlUpDownPair(plKey objkey);
+    pyGUIControlUpDownPair(): pyGUIControlValue() {} // for python glue only, do NOT call
+    pyGUIControlUpDownPair(pyKey& gckey);
+    pyGUIControlUpDownPair(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlUpDownPair);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlUpDownPair object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlUpDownPair); // converts a PyObject to a pyGUIControlUpDownPair (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlUpDownPair);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlUpDownPair object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlUpDownPair); // converts a PyObject to a pyGUIControlUpDownPair (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlUpDownPair(pyKey& gckey);
+    static hsBool IsGUIControlUpDownPair(pyKey& gckey);
 };
 
 class pyGUIControlProgress : public pyGUIControlValue
 {
 protected:
-	pyGUIControlProgress(): pyGUIControlValue() {} // for python glue only, do NOT call
-	pyGUIControlProgress(pyKey& gckey);
-	pyGUIControlProgress(plKey objkey);
+    pyGUIControlProgress(): pyGUIControlValue() {} // for python glue only, do NOT call
+    pyGUIControlProgress(pyKey& gckey);
+    pyGUIControlProgress(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlProgress);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlProgress object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlProgress); // converts a PyObject to a pyGUIControlProgress (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlProgress);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlProgress object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlProgress); // converts a PyObject to a pyGUIControlProgress (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlProgress(pyKey& gckey);
-	
-	void AnimateToPercentage(float percent);
+    static hsBool IsGUIControlProgress(pyKey& gckey);
+    
+    void AnimateToPercentage(float percent);
 };
 
 #endif // _pyGUIControlValue_h_

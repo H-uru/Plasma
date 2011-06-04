@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class AtomicRef {
 #ifdef HS_DEBUGGING
-	bool	zeroed;
+    bool    zeroed;
 #endif
 public:
     inline AtomicRef ()
@@ -68,72 +68,69 @@ public:
     {}
     
     inline void AcknowledgeZeroRef () {
-		#ifdef HS_DEBUGGING
-		zeroed = false;
-		#endif
-	}
+        #ifdef HS_DEBUGGING
+        zeroed = false;
+        #endif
+    }
 
     inline long IncRef () {
-		#ifdef HS_DEBUGGING
-		ASSERT(!zeroed);
-		#endif
+        #ifdef HS_DEBUGGING
+        ASSERT(!zeroed);
+        #endif
         long prev = AtomicAdd(&m_ref, 1);
         REFTRACE("Inc %p: %u", this, prev+1);
         return prev+1;
     }
     inline long IncRef (const char tag[]) {
-		#ifdef HS_DEBUGGING
-		ASSERT(!zeroed);
-		#endif
+        #ifdef HS_DEBUGGING
+        ASSERT(!zeroed);
+        #endif
         long prev = AtomicAdd(&m_ref, 1);
-        ref(tag);
         REFTRACE("Inc %p %s: %u", this, tag, prev+1);
         return prev+1;
     }
     inline long IncRef (unsigned n) {
-		#ifdef HS_DEBUGGING
-		ASSERT(!zeroed);
-		#endif
+        #ifdef HS_DEBUGGING
+        ASSERT(!zeroed);
+        #endif
         long prev = AtomicAdd(&m_ref, n);
         REFTRACE("Inc %p: %u", this, prev+n);
         return prev+n;
     }
     inline long IncRef (unsigned n, const char tag[]) {
-		#ifdef HS_DEBUGGING
-		ASSERT(!zeroed);
-		#endif
+        #ifdef HS_DEBUGGING
+        ASSERT(!zeroed);
+        #endif
         long prev = AtomicAdd(&m_ref, n);
-        ref(tag);
         REFTRACE("Inc %p %s: %u", this, tag, prev+n);
         return prev+n;
     }
 
     inline long DecRef () {
-		#ifdef HS_DEBUGGING
-		ASSERT(!zeroed);
-		#endif
-		long prev;
+        #ifdef HS_DEBUGGING
+        ASSERT(!zeroed);
+        #endif
+        long prev;
         if ((prev = AtomicAdd(&m_ref, -1)) == 1) {
-			#ifdef HS_DEBUGGING
-			zeroed = true;
-			#endif
+            #ifdef HS_DEBUGGING
+            zeroed = true;
+            #endif
             OnZeroRef();
         }
         REFTRACE("Dec %p: %u", this, prev-1);
         return prev-1;
     }
     inline long DecRef (const char tag[]) {
-		#ifdef HS_DEBUGGING
-		ASSERT(!zeroed);
-		#endif
-		long prev;
+        #ifdef HS_DEBUGGING
+        ASSERT(!zeroed);
+        #endif
+        long prev;
         if ((prev = AtomicAdd(&m_ref, -1)) == 1) {
-			#ifdef HS_DEBUGGING
-			zeroed = true;
-			#endif
+            #ifdef HS_DEBUGGING
+            zeroed = true;
+            #endif
             OnZeroRef();
         }
-        ref(tag);
         REFTRACE("Dec %p %s: %u", this, tag, prev-1);
         return prev-1;
     }
@@ -142,11 +139,9 @@ public:
         const char oldTag[],
         const char newTag[]
     ) {
-		#ifdef HS_DEBUGGING
-		ASSERT(!zeroed);
-		#endif
-        ref(oldTag);
-        ref(newTag);
+        #ifdef HS_DEBUGGING
+        ASSERT(!zeroed);
+        #endif
         REFTRACE("Inc %p %s: (xfer)", this, newTag);
         REFTRACE("Dec %p %s: (xfer)", this, oldTag);
     }

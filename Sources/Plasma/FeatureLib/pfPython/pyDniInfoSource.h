@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class pyDniCoordinates;
@@ -38,31 +38,31 @@ class pyDniCoordinates;
 class pyDniInfoSource
 {
 private:
-	mutable char * fAgeName;
-	mutable char fAgeGuid[MAX_PATH];
+    mutable char * fAgeName;
+    mutable char fAgeGuid[MAX_PATH];
 
 protected:
-	pyDniInfoSource();
+    pyDniInfoSource();
 
 public:
-	~pyDniInfoSource();
+    ~pyDniInfoSource();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptDniInfoSource);
-	PYTHON_CLASS_NEW_DEFINITION;
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyDniInfoSource object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyDniInfoSource); // converts a PyObject to a pyDniInfoSource (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptDniInfoSource);
+    PYTHON_CLASS_NEW_DEFINITION;
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyDniInfoSource object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyDniInfoSource); // converts a PyObject to a pyDniInfoSource (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	// current coords of the player in current age as a pyDniCoordinates
-	PyObject* GetAgeCoords( void ); // returns pyDniCoordinates
-	// current time in current age (tbd)
-	UInt32			GetAgeTime( void ) const;
-	// name of current age
-	const char *	GetAgeName( void ) const;
-	// unique identifier for this age instance
-	const char *	GetAgeGuid( void ) const;
+    // current coords of the player in current age as a pyDniCoordinates
+    PyObject* GetAgeCoords( void ); // returns pyDniCoordinates
+    // current time in current age (tbd)
+    UInt32          GetAgeTime( void ) const;
+    // name of current age
+    const char *    GetAgeName( void ) const;
+    // unique identifier for this age instance
+    const char *    GetAgeGuid( void ) const;
 };
 
 

@@ -27,31 +27,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLocalPlayerIntersectPlaneConditionalObject_inc
 #define plLocalPlayerIntersectPlaneConditionalObject_inc
 
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"
+#include "pnModifier/plConditionalObject.h"
 
 class plKey;
 
 class plLocalPlayerIntersectPlaneConditionalObject : public plConditionalObject
 {
 protected:
-	plKey	fTarget;
-	plKey	fPlane;
+    plKey   fTarget;
+    plKey   fPlane;
 
 public:
-	
-	plLocalPlayerIntersectPlaneConditionalObject();
-	~plLocalPlayerIntersectPlaneConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plLocalPlayerIntersectPlaneConditionalObject );
-	GETINTERFACE_ANY( plLocalPlayerIntersectPlaneConditionalObject, plConditionalObject );
-	
-	hsBool MsgReceive(plMessage* msg);
+    
+    plLocalPlayerIntersectPlaneConditionalObject();
+    ~plLocalPlayerIntersectPlaneConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plLocalPlayerIntersectPlaneConditionalObject );
+    GETINTERFACE_ANY( plLocalPlayerIntersectPlaneConditionalObject, plConditionalObject );
+    
+    hsBool MsgReceive(plMessage* msg);
 
-	void SetTarget(plKey pKey) { fTarget = pKey; }
-	void SetPlane(plKey pKey) { fPlane = pKey; }
-	
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(false); }
+    void SetTarget(plKey pKey) { fTarget = pKey; }
+    void SetPlane(plKey pKey) { fPlane = pKey; }
+    
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(false); }
 
 };
 

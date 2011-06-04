@@ -37,61 +37,61 @@ const Class_ID hsEnvironMapMtlClassID(0x98777b3, 0x5eb270dd);
 class hsMaxLayerBase : public BitmapTex {
 public:
    enum hsMatBlendFlags {
-        kBlendTest	= 0x1,							// dev
+        kBlendTest  = 0x1,                          // dev
             // Rest of blends are mutually exclusive
-            kBlendAlpha						= 0x2,		// dev
-            kBlendMult						= 0x4,		// dev
-            kBlendAdd						= 0x8,		// dev
-            kBlendAddColorTimesAlpha		= 0x10,		// dev
-            kBlendAntiAlias					= 0x20,
-            kBlendDetail					= 0x40,
+            kBlendAlpha                     = 0x2,      // dev
+            kBlendMult                      = 0x4,      // dev
+            kBlendAdd                       = 0x8,      // dev
+            kBlendAddColorTimesAlpha        = 0x10,     // dev
+            kBlendAntiAlias                 = 0x20,
+            kBlendDetail                    = 0x40,
             kBlendDetailAdd                 = 0x80,
-            kBlendMask						= kBlendAlpha
+            kBlendMask                      = kBlendAlpha
             | kBlendMult
             | kBlendAdd
             | kBlendAddColorTimesAlpha
             | kBlendAntiAlias
             | kBlendDetail
             | kBlendDetailAdd,
-            kBlendInvertAlpha				= 0x1000,	// dev
-            kBlendInvertColor				= 0x2000,	// dev
-			kBlendAlphaMult					= 0x4000,
-			kBlendAlphaAdd					= 0x8000,
-			kBlendNoColor					= 0x10000,
-			kBlendNoVtxAlpha				= 0x20000
+            kBlendInvertAlpha               = 0x1000,   // dev
+            kBlendInvertColor               = 0x2000,   // dev
+            kBlendAlphaMult                 = 0x4000,
+            kBlendAlphaAdd                  = 0x8000,
+            kBlendNoColor                   = 0x10000,
+            kBlendNoVtxAlpha                = 0x20000
     };
     
    enum hsMatZFlags {
-       kZIncLayer			= 0x1, // dev
-           kZOnlyZ				= 0x2,		// dev
-           kZClearZ			= 0x4, // dev
-           kZNoZRead			= 0x8, // dev
-           kZNoZWrite			= 0x10,
-           kZMask				= kZNoZWrite | kZClearZ | kZNoZRead,
-           kZLODBias			= 0x20
+       kZIncLayer           = 0x1, // dev
+           kZOnlyZ              = 0x2,      // dev
+           kZClearZ         = 0x4, // dev
+           kZNoZRead            = 0x8, // dev
+           kZNoZWrite           = 0x10,
+           kZMask               = kZNoZWrite | kZClearZ | kZNoZRead,
+           kZLODBias            = 0x20
    };
 
     enum hsMatShadeFlags {
-        kShadeSoftShadow		= 0x1,			// view, dev
-            kShadeNoProjectors		= 0x2,			// projector
-            kShadeVertexShade		= 0x20,			// dev
-            kShadeNoShade			= 0x40,			// view,dev
-            kShadeBlack				= kShadeNoShade,
-            kShadeSpecular			= 0x80,			// view, dev
-            kShadeNoFog				= 0x100,		// dev
-            kShadeWhite				= 0x200,
-            kShadeSpecularAlpha		= 0x400,
-            kShadeSpecularColor		= 0x800,
-            kShadeSpecularHighlight	= 0x1000,
-	        kShadeVertColShade		= 0x2000,
+        kShadeSoftShadow        = 0x1,          // view, dev
+            kShadeNoProjectors      = 0x2,          // projector
+            kShadeVertexShade       = 0x20,         // dev
+            kShadeNoShade           = 0x40,         // view,dev
+            kShadeBlack             = kShadeNoShade,
+            kShadeSpecular          = 0x80,         // view, dev
+            kShadeNoFog             = 0x100,        // dev
+            kShadeWhite             = 0x200,
+            kShadeSpecularAlpha     = 0x400,
+            kShadeSpecularColor     = 0x800,
+            kShadeSpecularHighlight = 0x1000,
+            kShadeVertColShade      = 0x2000,
             kShadeInherit           = 0x4000
     };
 
     enum hsMatMiscFlags {
-        kMiscWireFrame			= 0x1,			// dev (running out of bits)
-            kMiscDrawMeshOutlines	= 0x2,			// dev, currently unimplemented
-            kMiscTwoSided			= 0x4,			// view,dev
-            kMiscDrawAsSplats		= 0x8,			// dev? bwt
+        kMiscWireFrame          = 0x1,          // dev (running out of bits)
+            kMiscDrawMeshOutlines   = 0x2,          // dev, currently unimplemented
+            kMiscTwoSided           = 0x4,          // view,dev
+            kMiscDrawAsSplats       = 0x8,          // dev? bwt
             kMiscMipMap             = 0x10,
             kMiscUseBitmap          = 0x20,
             kMiscIntensityOnly      = 0x40,
@@ -99,38 +99,38 @@ public:
             kMiscDetailBias         = 0x100,    // obsolete...
             kMiscDetailMax          = 0x200,    // obsolete...
             kMiscExplicitMipmap     = 0x400,
-            kMiscAdjustPlane		= 0x800,
-            kMiscAdjustCylinder		= 0x1000,
-            kMiscAdjustSphere		= 0x2000,
-            kMiscTroubledLoner		= 0x4000,
-			kMiscBindSkip			= 0x8000,
-			kMiscBindMask			= 0x10000,
-			kMiscForceNonCompressed	= 0x20000,
-			kMiscNoMaxSize			= 0x40000,
-			kMiscHalfSize			= 0x80000,
-			kMiscBindNext			= 0x100000,
-			kMiscBindPrev			= 0x200000,
-			kMiscReserved			= 0x400000
+            kMiscAdjustPlane        = 0x800,
+            kMiscAdjustCylinder     = 0x1000,
+            kMiscAdjustSphere       = 0x2000,
+            kMiscTroubledLoner      = 0x4000,
+            kMiscBindSkip           = 0x8000,
+            kMiscBindMask           = 0x10000,
+            kMiscForceNonCompressed = 0x20000,
+            kMiscNoMaxSize          = 0x40000,
+            kMiscHalfSize           = 0x80000,
+            kMiscBindNext           = 0x100000,
+            kMiscBindPrev           = 0x200000,
+            kMiscReserved           = 0x400000
     };
 
-	enum ProcType {
-		kProcTypeDefault,
-		kProcTypeWater
-	};
+    enum ProcType {
+        kProcTypeDefault,
+        kProcTypeWater
+    };
 
-	enum hsMatUsage {
-		kUseNone		= 0x0,
-		kUseBase		= 0x1,
-		kUseDetail		= 0x2,
-		kUseGrime		= 0x4,
-		kUseTransition	= 0x8,
-		kUseHighlight	= 0x10,
-		kUseMask		= 0x20,
-		kUseShadowLight	= 0x40,
-		kUseHelper		= 0x80,
-		
-		kUseGuess		= 0x10000000
-	};
+    enum hsMatUsage {
+        kUseNone        = 0x0,
+        kUseBase        = 0x1,
+        kUseDetail      = 0x2,
+        kUseGrime       = 0x4,
+        kUseTransition  = 0x8,
+        kUseHighlight   = 0x10,
+        kUseMask        = 0x20,
+        kUseShadowLight = 0x40,
+        kUseHelper      = 0x80,
+        
+        kUseGuess       = 0x10000000
+    };
 
 public:
     // For hsMaxMtl...  Special case for higher layers.  Sigh.
@@ -139,9 +139,9 @@ public:
     virtual void SetZFlag(int flag, BOOL state) = 0;
     virtual void SetShadeFlag(int flag, BOOL state) = 0;
     virtual void SetMiscFlag(int flag, BOOL state) = 0;
-	virtual void SetProcType(ProcType type) = 0;
-	virtual void SetUsage(hsMatUsage use) = 0;
-	virtual void GuessUsage() = 0;
+    virtual void SetProcType(ProcType type) = 0;
+    virtual void SetUsage(hsMatUsage use) = 0;
+    virtual void GuessUsage() = 0;
 
     // For interactive renderer
     virtual Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE) = 0;
@@ -172,17 +172,17 @@ public:
     virtual ULONG GetZFlags() const = 0;
     virtual ULONG GetShadeFlags() const = 0;
     virtual ULONG GetMiscFlags() const = 0;
-	virtual ProcType GetProcType() const = 0;
-	virtual hsMatUsage GetUsage() const = 0;
+    virtual ProcType GetProcType() const = 0;
+    virtual hsMatUsage GetUsage() const = 0;
 
     virtual int GetNumExplicitMipmaps() const = 0;
     virtual TCHAR *GetExplicitMipmapName(int i) const = 0;
     virtual BOOL ExplicitMipmapEnabled(int i) const = 0;
     virtual int GetExplicitMipmapLevel(int i) const = 0;
 
-	// KLUDGE - Had to do this to compile under MAX4 beta
-	virtual void fnReload() {};
-	virtual void fnViewImage() {};
+    // KLUDGE - Had to do this to compile under MAX4 beta
+    virtual void fnReload() {};
+    virtual void fnViewImage() {};
 };
 
 #endif

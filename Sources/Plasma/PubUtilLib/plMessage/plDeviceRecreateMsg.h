@@ -24,29 +24,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plDeviceRecreateMsg Header												//
-//	Tiny message to let sceneNodes know that they need to clean up.			//
-//																			//
+//                                                                          //
+//  plDeviceRecreateMsg Header                                              //
+//  Tiny message to let sceneNodes know that they need to clean up.         //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plDeviceRecreateMsg_h
 #define _plDeviceRecreateMsg_h
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plDeviceRecreateMsg : public plMessage
 {
 public:
-	plDeviceRecreateMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); }
-	~plDeviceRecreateMsg() {}
+    plDeviceRecreateMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); }
+    ~plDeviceRecreateMsg() {}
 
-	CLASSNAME_REGISTER( plDeviceRecreateMsg );
-	GETINTERFACE_ANY( plDeviceRecreateMsg, plMessage );
+    CLASSNAME_REGISTER( plDeviceRecreateMsg );
+    GETINTERFACE_ANY( plDeviceRecreateMsg, plMessage );
 
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgRead( stream, mgr ); }
-	void Write(hsStream* stream, hsResMgr* mgr)	{ plMessage::IMsgWrite( stream, mgr ); }
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead( stream, mgr ); }
+    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite( stream, mgr ); }
 };
 
 #endif // _plDeviceRecreateMsg_h

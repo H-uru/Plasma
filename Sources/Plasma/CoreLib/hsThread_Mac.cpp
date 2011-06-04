@@ -27,137 +27,137 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 
 extern "C" {
-	static OSStatus gEntryPoint(void* param)
-	{
-		return ((hsThread*)param)->Run();
-	}
+    static OSStatus gEntryPoint(void* param)
+    {
+        return ((hsThread*)param)->Run();
+    }
 }
 
 hsThread::hsThread(UInt32 stackSize) : fTaskId(0), fStackSize(stackSize), fQuit(false)
 {
-	if (MPLibraryIsLoaded() == false)
-		throw "MPLibraryIsLoaded() returned false";
+    if (MPLibraryIsLoaded() == false)
+        throw "MPLibraryIsLoaded() returned false";
 }
 
 hsThread::~hsThread()
 {
-	this->Stop();
+    this->Stop();
 }
 
 void hsThread::Start()
 {
-	if (fTaskId == 0)
-	{	OSStatus	status = ::MPCreateQueue(&fNotifyQ);
-		hsThrowIfOSErr(status);
+    if (fTaskId == 0)
+    {   OSStatus    status = ::MPCreateQueue(&fNotifyQ);
+        hsThrowIfOSErr(status);
 
-		status = ::MPCreateTask(gEntryPoint, this, fStackSize, fNotifyQ, nil, nil, 0, &fTaskId);
-		if (status)
-		{	::MPDeleteQueue(fNotifyQ);
-			throw hsOSException(status);
-		}
-	}
-	else
-		hsDebugMessage("Calling hsThread::Start() more than once", 0);
+        status = ::MPCreateTask(gEntryPoint, this, fStackSize, fNotifyQ, nil, nil, 0, &fTaskId);
+        if (status)
+        {   ::MPDeleteQueue(fNotifyQ);
+            throw hsOSException(status);
+        }
+    }
+    else
+        hsDebugMessage("Calling hsThread::Start() more than once", 0);
 }
 
 void hsThread::Stop()
 {
-	if (fTaskId)
-	{	this->fQuit = true;
+    if (fTaskId)
+    {   this->fQuit = true;
 
-		OSStatus	status = ::MPTerminateTask(fTaskId, 0);
-		hsThrowIfOSErr(status);
-		
-		//	Wait for the task to tell us that its actually quit
-		status = ::MPWaitOnQueue(fNotifyQ, nil, nil, nil, kDurationForever);
-		hsThrowIfOSErr(status);
+        OSStatus    status = ::MPTerminateTask(fTaskId, 0);
+        hsThrowIfOSErr(status);
+        
+        //  Wait for the task to tell us that its actually quit
+        status = ::MPWaitOnQueue(fNotifyQ, nil, nil, nil, kDurationForever);
+        hsThrowIfOSErr(status);
 
-		status = ::MPDeleteQueue(fNotifyQ);
-		hsThrowIfOSErr(status);
-		
-		fTaskId = 0;
-	}
+        status = ::MPDeleteQueue(fNotifyQ);
+        hsThrowIfOSErr(status);
+        
+        fTaskId = 0;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 void* hsThread::Alloc(size_t size)
 {
-	return ::MPAllocate(size);
+    return ::MPAllocate(size);
 }
 
 void hsThread::Free(void* p)
 {
-	if (p)
-		::MPFree(p);
+    if (p)
+        ::MPFree(p);
 }
 
 void hsThread::ThreadYield()
 {
-	::MPYield();
+    ::MPYield();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 hsMutex::hsMutex()
 {
-	OSStatus status = ::MPCreateCriticalRegion(&fCriticalRegion);
-	hsThrowIfOSErr(status);
+    OSStatus status = ::MPCreateCriticalRegion(&fCriticalRegion);
+    hsThrowIfOSErr(status);
 }
 
 hsMutex::~hsMutex()
 {
-	OSStatus	status = ::MPDeleteCriticalRegion(fCriticalRegion);
-	hsThrowIfOSErr(status);
+    OSStatus    status = ::MPDeleteCriticalRegion(fCriticalRegion);
+    hsThrowIfOSErr(status);
 }
 
 void hsMutex::Lock()
 {
-	OSStatus	status = ::MPEnterCriticalRegion(fCriticalRegion, kDurationForever);
-	hsThrowIfOSErr(status);
+    OSStatus    status = ::MPEnterCriticalRegion(fCriticalRegion, kDurationForever);
+    hsThrowIfOSErr(status);
 }
 
 void hsMutex::Unlock()
 {
-	OSStatus	status = ::MPExitCriticalRegion(fCriticalRegion);
-	hsThrowIfOSErr(status);
+    OSStatus    status = ::MPExitCriticalRegion(fCriticalRegion);
+    hsThrowIfOSErr(status);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 hsSemaphore::hsSemaphore(int initialValue)
 {
-	OSStatus	status = MPCreateSemaphore(kPosInfinity32, initialValue, &fSemaId);
-	hsThrowIfOSErr(status);
+    OSStatus    status = MPCreateSemaphore(kPosInfinity32, initialValue, &fSemaId);
+    hsThrowIfOSErr(status);
 }
 
 hsSemaphore::~hsSemaphore()
 {
-	OSStatus	status = MPDeleteSemaphore(fSemaId);
-	hsThrowIfOSErr(status);
+    OSStatus    status = MPDeleteSemaphore(fSemaId);
+    hsThrowIfOSErr(status);
 }
 
 hsBool hsSemaphore::Wait(hsMilliseconds timeToWait)
 {
-	Duration	duration;
+    Duration    duration;
 
-	if (timeToWait == kPosInfinity32)
-		duration = kDurationForever;
-	else
-		duration = 0;	// THEY DON'T IMPLEMENT delay times yet !!!
+    if (timeToWait == kPosInfinity32)
+        duration = kDurationForever;
+    else
+        duration = 0;   // THEY DON'T IMPLEMENT delay times yet !!!
 
-	OSStatus	status = MPWaitOnSemaphore(fSemaId, duration);
+    OSStatus    status = MPWaitOnSemaphore(fSemaId, duration);
 /*
-	if (status == kMPTimeoutErr)
-		return false;
+    if (status == kMPTimeoutErr)
+        return false;
 */
-	hsThrowIfOSErr(status);
-	return true;
+    hsThrowIfOSErr(status);
+    return true;
 }
 
 void hsSemaphore::Signal()
 {
-	OSStatus	status = MPSignalSemaphore(fSemaId);
-	hsThrowIfOSErr(status);
+    OSStatus    status = MPSignalSemaphore(fSemaId);
+    hsThrowIfOSErr(status);
 }
 

@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plRenderTarget.cpp - RenderTarget functions					   			 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plRenderTarget.cpp - RenderTarget functions                              //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	7.19.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  7.19.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeline.h"
 #include "plgDispatch.h"
-#include "../pnMessage/plPipeResMakeMsg.h"
+#include "pnMessage/plPipeResMakeMsg.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //// plRenderTarget Functions /////////////////////////////////////////////////
@@ -50,140 +50,140 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plRenderTarget::SetKey(plKey k)
 {
-	hsKeyedObject::SetKey(k);
-	if( k )
-	{
-		if( !fParent )
-			plgDispatch::Dispatch()->RegisterForExactType( plPipeRTMakeMsg::Index(), GetKey() );
-	}
+    hsKeyedObject::SetKey(k);
+    if( k )
+    {
+        if( !fParent )
+            plgDispatch::Dispatch()->RegisterForExactType( plPipeRTMakeMsg::Index(), GetKey() );
+    }
 }
 
 
 
 hsBool plRenderTarget::MsgReceive(plMessage* msg)
 {
-	plPipeRTMakeMsg* make = plPipeRTMakeMsg::ConvertNoRef(msg);
-	if( make )
-	{
-		if( !GetDeviceRef() || GetDeviceRef()->IsDirty() )
-		{
-			make->Pipeline()->MakeRenderTargetRef(this);
-		}
-		return true;
-	}
-	return plBitmap::MsgReceive(msg);
+    plPipeRTMakeMsg* make = plPipeRTMakeMsg::ConvertNoRef(msg);
+    if( make )
+    {
+        if( !GetDeviceRef() || GetDeviceRef()->IsDirty() )
+        {
+            make->Pipeline()->MakeRenderTargetRef(this);
+        }
+        return true;
+    }
+    return plBitmap::MsgReceive(msg);
 }
 
-UInt32	plRenderTarget::Read( hsStream *s )
+UInt32  plRenderTarget::Read( hsStream *s )
 {
-	UInt32	total = plBitmap::Read( s );
+    UInt32  total = plBitmap::Read( s );
 
-	fWidth = s->ReadSwap16();
-	fHeight = s->ReadSwap16();
+    fWidth = s->ReadSwap16();
+    fHeight = s->ReadSwap16();
 
-	fProportionalViewport = s->ReadBool();
-	if( fProportionalViewport )
-	{
-		fViewport.fProportional.fLeft = s->ReadSwapScalar();
-		fViewport.fProportional.fTop = s->ReadSwapScalar();
-		fViewport.fProportional.fRight = s->ReadSwapScalar();
-		fViewport.fProportional.fBottom = s->ReadSwapScalar();
-	}
-	else
-	{
-		fViewport.fAbsolute.fLeft = s->ReadSwap16();
-		fViewport.fAbsolute.fTop = s->ReadSwap16();
-		fViewport.fAbsolute.fRight = s->ReadSwap16();
-		fViewport.fAbsolute.fBottom = s->ReadSwap16();
-	}
+    fProportionalViewport = s->ReadBool();
+    if( fProportionalViewport )
+    {
+        fViewport.fProportional.fLeft = s->ReadSwapScalar();
+        fViewport.fProportional.fTop = s->ReadSwapScalar();
+        fViewport.fProportional.fRight = s->ReadSwapScalar();
+        fViewport.fProportional.fBottom = s->ReadSwapScalar();
+    }
+    else
+    {
+        fViewport.fAbsolute.fLeft = s->ReadSwap16();
+        fViewport.fAbsolute.fTop = s->ReadSwap16();
+        fViewport.fAbsolute.fRight = s->ReadSwap16();
+        fViewport.fAbsolute.fBottom = s->ReadSwap16();
+    }
 
-	fZDepth = s->ReadByte();
-	fStencilDepth = s->ReadByte();
+    fZDepth = s->ReadByte();
+    fStencilDepth = s->ReadByte();
 
-	return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( hsScalar ) : sizeof( UInt16 ) ) + sizeof( hsBool );
+    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( hsScalar ) : sizeof( UInt16 ) ) + sizeof( hsBool );
 }
 
-UInt32	plRenderTarget::Write( hsStream *s )
+UInt32  plRenderTarget::Write( hsStream *s )
 {
-	UInt32	total = plBitmap::Write( s );
+    UInt32  total = plBitmap::Write( s );
 
-	s->WriteSwap16( fWidth );
-	s->WriteSwap16( fHeight );
+    s->WriteSwap16( fWidth );
+    s->WriteSwap16( fHeight );
 
-	s->WriteBool( fProportionalViewport );
-	if( fProportionalViewport )
-	{
-		s->WriteSwapScalar( fViewport.fProportional.fLeft );
-		s->WriteSwapScalar( fViewport.fProportional.fTop );
-		s->WriteSwapScalar( fViewport.fProportional.fRight );
-		s->WriteSwapScalar( fViewport.fProportional.fBottom );
-	}
-	else
-	{
-		s->WriteSwap16( fViewport.fAbsolute.fLeft );
-		s->WriteSwap16( fViewport.fAbsolute.fTop );
-		s->WriteSwap16( fViewport.fAbsolute.fRight );
-		s->WriteSwap16( fViewport.fAbsolute.fBottom );
-	}
+    s->WriteBool( fProportionalViewport );
+    if( fProportionalViewport )
+    {
+        s->WriteSwapScalar( fViewport.fProportional.fLeft );
+        s->WriteSwapScalar( fViewport.fProportional.fTop );
+        s->WriteSwapScalar( fViewport.fProportional.fRight );
+        s->WriteSwapScalar( fViewport.fProportional.fBottom );
+    }
+    else
+    {
+        s->WriteSwap16( fViewport.fAbsolute.fLeft );
+        s->WriteSwap16( fViewport.fAbsolute.fTop );
+        s->WriteSwap16( fViewport.fAbsolute.fRight );
+        s->WriteSwap16( fViewport.fAbsolute.fBottom );
+    }
 
-	s->WriteByte( fZDepth );
-	s->WriteByte( fStencilDepth );
+    s->WriteByte( fZDepth );
+    s->WriteByte( fStencilDepth );
 
-	return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( hsScalar ) : sizeof( UInt16 ) ) + sizeof( hsBool );
+    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( hsScalar ) : sizeof( UInt16 ) ) + sizeof( hsBool );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //// plCubicRenderTarget Functions ////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-UInt32	plCubicRenderTarget::Read( hsStream *s )
+UInt32  plCubicRenderTarget::Read( hsStream *s )
 {
-	int		i;
-	UInt32	total = plRenderTarget::Read( s );
+    int     i;
+    UInt32  total = plRenderTarget::Read( s );
 
 
-	for( i = 0; i < 6; i++ )
-	{
-		if( fFaces[ i ] == nil )
-			fFaces[ i ] = TRACKED_NEW plRenderTarget();
+    for( i = 0; i < 6; i++ )
+    {
+        if( fFaces[ i ] == nil )
+            fFaces[ i ] = TRACKED_NEW plRenderTarget();
 
-		fFaces[ i ]->fParent = this;
-		total += fFaces[ i ]->Read( s );
-	}
+        fFaces[ i ]->fParent = this;
+        total += fFaces[ i ]->Read( s );
+    }
 
-	return total;
+    return total;
 }
 
-UInt32	plCubicRenderTarget::Write( hsStream *s )
+UInt32  plCubicRenderTarget::Write( hsStream *s )
 {
-	int		i;
-	UInt32	total = plRenderTarget::Write( s );
-	
+    int     i;
+    UInt32  total = plRenderTarget::Write( s );
+    
 
-	for( i = 0; i < 6; i++ )
-	{
-		total += fFaces[ i ]->Write( s );
-	}
+    for( i = 0; i < 6; i++ )
+    {
+        total += fFaces[ i ]->Write( s );
+    }
 
-	return total;
+    return total;
 }
 
-UInt32	plCubicRenderTarget::GetTotalSize( void ) const
+UInt32  plCubicRenderTarget::GetTotalSize( void ) const
 {
-	UInt32		size = 0, i;
-	
-	for( i = 0; i < 6; i++ )
-	{
-		if( fFaces[ i ] != nil )
-			size += fFaces[ i ]->GetTotalSize();
-	}
+    UInt32      size = 0, i;
+    
+    for( i = 0; i < 6; i++ )
+    {
+        if( fFaces[ i ] != nil )
+            size += fFaces[ i ]->GetTotalSize();
+    }
 
-	return size;
+    return size;
 }
 
 //// SetCameraMatrix //////////////////////////////////////////////////////////
 
-void	plCubicRenderTarget::SetCameraMatrix(const hsPoint3& pos)
+void    plCubicRenderTarget::SetCameraMatrix(const hsPoint3& pos)
 {
-	hsMatrix44::MakeEnvMapMatrices(pos, fWorldToCameras, fCameraToWorlds);
+    hsMatrix44::MakeEnvMapMatrices(pos, fWorldToCameras, fCameraToWorlds);
 }

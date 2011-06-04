@@ -30,65 +30,65 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plControl : public plWindow
 {
 public:
-	WNDPROC WindowDefWndProc;
+    WNDPROC WindowDefWndProc;
 
-	plControl()
-	{}
-	plControl( plWindow * ownerWindow, int inId, WNDPROC inSuperProc )
-	: plWindow( ownerWindow )
-	{
-		CHECK(fOwnerWindow);
-		WindowDefWndProc = inSuperProc;
-		fControlID = inId ? inId : ownerWindow->fTopControlID++;
-		fOwnerWindow->fControls.push_back( this );
-	}
-	~plControl()
-	{
-		CHECK(fOwnerWindow);
-		std::vector<plControl*>::iterator it = std::find(fOwnerWindow->fControls.begin(),fOwnerWindow->fControls.end(),this);
-		if (it!=fOwnerWindow->fControls.end())
-			fOwnerWindow->fControls.erase(it);
-	}
+    plControl()
+    {}
+    plControl( plWindow * ownerWindow, int inId, WNDPROC inSuperProc )
+    : plWindow( ownerWindow )
+    {
+        CHECK(fOwnerWindow);
+        WindowDefWndProc = inSuperProc;
+        fControlID = inId ? inId : ownerWindow->fTopControlID++;
+        fOwnerWindow->fControls.push_back( this );
+    }
+    ~plControl()
+    {
+        CHECK(fOwnerWindow);
+        std::vector<plControl*>::iterator it = std::find(fOwnerWindow->fControls.begin(),fOwnerWindow->fControls.end(),this);
+        if (it!=fOwnerWindow->fControls.end())
+            fOwnerWindow->fControls.erase(it);
+    }
 
-	int CallDefaultProc( unsigned int message, unsigned int wParam, LONG lParam )
-	{
-		return CallWindowProc( WindowDefWndProc, Handle(), message, wParam, lParam );
-	}
-	static WNDPROC RegisterWindowClass( const wchar_t * name, const wchar_t * winBaseClass )
-	{
+    int CallDefaultProc( unsigned int message, unsigned int wParam, LONG lParam )
+    {
+        return CallWindowProc( WindowDefWndProc, Handle(), message, wParam, lParam );
+    }
+    static WNDPROC RegisterWindowClass( const wchar_t * name, const wchar_t * winBaseClass )
+    {
 #ifdef UNICODE
-		WNDPROC superProc=nil;
-		WNDCLASSEX cls;
-		HSMemory::ClearMemory( &cls, sizeof(cls) );
-		cls.cbSize        = sizeof(cls);
-		CHECK( GetClassInfoEx( nil, winBaseClass, &cls ) );
-		superProc         = cls.lpfnWndProc;
-		cls.lpfnWndProc   = plWindow::StaticWndProc;
-		cls.lpszClassName = name;
-		cls.hInstance     = plWndCtrls::Instance();
-		CHECK(cls.lpszMenuName==nil);
-		CHECK(RegisterClassEx( &cls ));
+        WNDPROC superProc=nil;
+        WNDCLASSEX cls;
+        HSMemory::ClearMemory( &cls, sizeof(cls) );
+        cls.cbSize        = sizeof(cls);
+        CHECK( GetClassInfoEx( nil, winBaseClass, &cls ) );
+        superProc         = cls.lpfnWndProc;
+        cls.lpfnWndProc   = plWindow::StaticWndProc;
+        cls.lpszClassName = name;
+        cls.hInstance     = plWndCtrls::Instance();
+        CHECK(cls.lpszMenuName==nil);
+        CHECK(RegisterClassEx( &cls ));
 #else
-		char* cWinBaseClass = hsWStringToString(winBaseClass);
-		char* cName = hsWStringToString(name);
+        char* cWinBaseClass = hsWStringToString(winBaseClass);
+        char* cName = hsWStringToString(name);
 
-		WNDPROC superProc=nil;
-		WNDCLASSEX cls;
-		HSMemory::ClearMemory( &cls, sizeof(cls) );
-		cls.cbSize        = sizeof(cls);
-		CHECK( GetClassInfoEx( nil, cWinBaseClass, &cls ) );
-		superProc         = cls.lpfnWndProc;
-		cls.lpfnWndProc   = plWindow::StaticWndProc;
-		cls.lpszClassName = cName;
-		cls.hInstance     = plWndCtrls::Instance();
-		CHECK(cls.lpszMenuName==nil);
-		CHECK(RegisterClassEx( &cls ));
+        WNDPROC superProc=nil;
+        WNDCLASSEX cls;
+        HSMemory::ClearMemory( &cls, sizeof(cls) );
+        cls.cbSize        = sizeof(cls);
+        CHECK( GetClassInfoEx( nil, cWinBaseClass, &cls ) );
+        superProc         = cls.lpfnWndProc;
+        cls.lpfnWndProc   = plWindow::StaticWndProc;
+        cls.lpszClassName = cName;
+        cls.hInstance     = plWndCtrls::Instance();
+        CHECK(cls.lpszMenuName==nil);
+        CHECK(RegisterClassEx( &cls ));
 
-		delete [] cName;
-		delete [] cWinBaseClass;
+        delete [] cName;
+        delete [] cWinBaseClass;
 #endif
-		return superProc;
-	}
+        return superProc;
+    }
 };
 
 

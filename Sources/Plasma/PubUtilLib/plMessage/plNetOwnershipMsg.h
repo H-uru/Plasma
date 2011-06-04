@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetOwnershipMsg_INC
 
 #include "hsStlUtils.h"
-#include "../pnMessage/plMessage.h"
-#include "../plNetMessage/plNetMessage.h"
+#include "pnMessage/plMessage.h"
+#include "plNetMessage/plNetMessage.h"
 
 //
 // A msg sent locally when this client changes ownership of a group of objects
@@ -38,24 +38,24 @@ class hsStream;
 class plNetOwnershipMsg : public plMessage
 {
 protected:
-	std::vector<plNetMsgGroupOwner::GroupInfo> fGroups;	
+    std::vector<plNetMsgGroupOwner::GroupInfo> fGroups; 
 public:
-	plNetOwnershipMsg() { SetBCastFlag(plMessage::kBCastByType); }
-	
-	CLASSNAME_REGISTER( plNetOwnershipMsg );
-	GETINTERFACE_ANY( plNetOwnershipMsg, plMessage );
-	
-	// getters
-	int GetNumGroups() const { return fGroups.size(); }
-	plNetMsgGroupOwner::GroupInfo GetGroupInfo(int i) const { return fGroups[i]; }
-	
-	// setters
-	void AddGroupInfo(plNetMsgGroupOwner::GroupInfo gi) { fGroups.push_back(gi); }
-	void ClearGroupInfo() { fGroups.clear(); }
-	
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr) {	hsAssert(false, "NA: localOnly msg"); }
-	void Write(hsStream* stream, hsResMgr* mgr)	{	hsAssert(false, "NA: localOnly msg"); }
+    plNetOwnershipMsg() { SetBCastFlag(plMessage::kBCastByType); }
+    
+    CLASSNAME_REGISTER( plNetOwnershipMsg );
+    GETINTERFACE_ANY( plNetOwnershipMsg, plMessage );
+    
+    // getters
+    int GetNumGroups() const { return fGroups.size(); }
+    plNetMsgGroupOwner::GroupInfo GetGroupInfo(int i) const { return fGroups[i]; }
+    
+    // setters
+    void AddGroupInfo(plNetMsgGroupOwner::GroupInfo gi) { fGroups.push_back(gi); }
+    void ClearGroupInfo() { fGroups.clear(); }
+    
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr) {    hsAssert(false, "NA: localOnly msg"); }
+    void Write(hsStream* stream, hsResMgr* mgr) {   hsAssert(false, "NA: localOnly msg"); }
 };
 
-#endif		// plNetOwnershipMsg
+#endif      // plNetOwnershipMsg

@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 #include "pyVaultNode.h"
@@ -47,31 +47,31 @@ class pySDLStateDataRecord;
 class pyVaultSDLNode : public pyVaultNode
 {
 protected:
-	// should only be created from C++ side
-	pyVaultSDLNode(RelVaultNode* nfsNode);
+    // should only be created from C++ side
+    pyVaultSDLNode(RelVaultNode* nfsNode);
 
-	//create from the Python side
-	pyVaultSDLNode();
+    //create from the Python side
+    pyVaultSDLNode();
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVaultSDLNode);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(RelVaultNode* nfsNode);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultSDLNode object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultSDLNode); // converts a PyObject to a pyVaultSDLNode (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVaultSDLNode);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(RelVaultNode* nfsNode);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultSDLNode object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultSDLNode); // converts a PyObject to a pyVaultSDLNode (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-	int		GetIdent() const;
-	void	SetIdent( int v );
-	void InitStateDataRecord( const char* agename, int flags);
+    int     GetIdent() const;
+    void    SetIdent( int v );
+    void InitStateDataRecord( const char* agename, int flags);
 
-	PyObject * GetStateDataRecord() const; // returns pySDLStateDataRecord
-	void SetStateDataRecord( const pySDLStateDataRecord & rec, int writeOptions=0 );
+    PyObject * GetStateDataRecord() const; // returns pySDLStateDataRecord
+    void SetStateDataRecord( const pySDLStateDataRecord & rec, int writeOptions=0 );
 };
 
 #endif // _pyVaultSDLNode_h_

@@ -34,8 +34,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
-#include "../pnUtils/pnUtils.h"
-#include "../pnNetBase/pnNetBase.h"
+#include "pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
 
 
 /*****************************************************************************
@@ -48,36 +48,36 @@ class plMessage;
 struct plNCAgeLeaver;
 
 enum ENCAgeLeaverNotify {
-	kAgeLeaveComplete,		// notify --> NCAgeLeaveCompleteNotify *, after callback, leaver is destroyed
-	kNumAgeLeaverNotifications
+    kAgeLeaveComplete,      // notify --> NCAgeLeaveCompleteNotify *, after callback, leaver is destroyed
+    kNumAgeLeaverNotifications
 };
 
 struct NCAgeLeaveCompleteNotify {
-	bool			success;
-	const char *	msg;
+    bool            success;
+    const char *    msg;
 };
 
 
 typedef void (* FNCAgeLeaverCallback)(
-	plNCAgeLeaver *			leaver,
-	unsigned				type,		// ENCAgeLeaverNotify
-	void *					notify,
-	void *					userState
+    plNCAgeLeaver *         leaver,
+    unsigned                type,       // ENCAgeLeaverNotify
+    void *                  notify,
+    void *                  userState
 );
 
 
 void NCAgeLeaverCreate (
-	plNCAgeLeaver **		leaver,
-	bool					quitting,
-	FNCAgeLeaverCallback	callback,
-	void *					userState
+    plNCAgeLeaver **        leaver,
+    bool                    quitting,
+    FNCAgeLeaverCallback    callback,
+    void *                  userState
 );
-bool NCAgeLeaverMsgReceive (	// returns true of message was processed
-	plNCAgeLeaver *			leaver,
-	plMessage *				msg
+bool NCAgeLeaverMsgReceive (    // returns true of message was processed
+    plNCAgeLeaver *         leaver,
+    plMessage *             msg
 );
 void NCAgeLeaverUpdate (
-	plNCAgeLeaver *			leaver
+    plNCAgeLeaver *         leaver
 );
 
 

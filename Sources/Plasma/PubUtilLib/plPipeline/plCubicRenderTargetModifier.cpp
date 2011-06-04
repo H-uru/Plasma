@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plCubicRenderTargetModifier Class Functions								 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plCubicRenderTargetModifier Class Functions                              //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	7.20.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  7.20.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -42,12 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable.h"
 #include "hsBounds.h"
 
-#include "../plScene/plRenderRequest.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../plMessage/plRenderRequestMsg.h"
+#include "plScene/plRenderRequest.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnMessage/plTimeMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
@@ -56,188 +56,188 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plCubicRenderTargetModifier::plCubicRenderTargetModifier()
 {
-	fTarget = nil;
-	fCubic = nil;
+    fTarget = nil;
+    fCubic = nil;
 
-	fRequests[ 0 ] = fRequests[ 1 ] = fRequests[ 2 ] = fRequests[ 3 ] = fRequests[ 4 ] = fRequests[ 5 ] = nil;
+    fRequests[ 0 ] = fRequests[ 1 ] = fRequests[ 2 ] = fRequests[ 3 ] = fRequests[ 4 ] = fRequests[ 5 ] = nil;
 }
 
 plCubicRenderTargetModifier::~plCubicRenderTargetModifier()
 {
-	int		i;
+    int     i;
 
 
-	for( i = 0; i < 6; i++ )
-		delete fRequests[ i ];
+    for( i = 0; i < 6; i++ )
+        delete fRequests[ i ];
 }
 
 //// ICreateRenderRequest /////////////////////////////////////////////////////
-//	Creates a blank renderRequest to use for fun stuff.
+//  Creates a blank renderRequest to use for fun stuff.
 
-void	plCubicRenderTargetModifier::ICreateRenderRequest( int face )
+void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
 {
-	plRenderRequest	*rr = fRequests[ face ];
-	hsColorRGBA		c;
-	
-	
-	if( rr == nil )
-		rr = fRequests[ face ] = TRACKED_NEW plRenderRequest;
+    plRenderRequest *rr = fRequests[ face ];
+    hsColorRGBA     c;
+    
+    
+    if( rr == nil )
+        rr = fRequests[ face ] = TRACKED_NEW plRenderRequest;
 
-	UInt32 renderState 
-		= plPipeline::kRenderNormal
-		| plPipeline::kRenderClearColor
-		| plPipeline::kRenderClearDepth;
-	rr->SetRenderState( renderState );
+    UInt32 renderState 
+        = plPipeline::kRenderNormal
+        | plPipeline::kRenderClearColor
+        | plPipeline::kRenderClearDepth;
+    rr->SetRenderState( renderState );
 
-	rr->SetDrawableMask( plDrawable::kNormal );
-	rr->SetSubDrawableMask( plDrawable::kSubAllTypes );
+    rr->SetDrawableMask( plDrawable::kNormal );
+    rr->SetSubDrawableMask( plDrawable::kSubAllTypes );
 
-	rr->SetHither(0.3f); // MF_HORSE ????
-	rr->SetYon(1000.f); // MF_HORSE ????
+    rr->SetHither(0.3f); // MF_HORSE ????
+    rr->SetYon(1000.f); // MF_HORSE ????
 
-	rr->SetFovX( 90 );
-	rr->SetFovY( 90 );
+    rr->SetFovX( 90 );
+    rr->SetFovY( 90 );
 
-	c.Set( 0, 0, 0, 1 );
-	rr->SetClearColor( c );
-	rr->SetClearDepth( 1.f );
+    c.Set( 0, 0, 0, 1 );
+    rr->SetClearColor( c );
+    rr->SetClearDepth( 1.f );
 
-	rr->SetClearDrawable( nil );
-	rr->SetRenderTarget( fCubic->GetFace( face ) );
+    rr->SetClearDrawable( nil );
+    rr->SetRenderTarget( fCubic->GetFace( face ) );
 }
 
 //// IEval ////////////////////////////////////////////////////////////////////
 
-hsBool	plCubicRenderTargetModifier::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  plCubicRenderTargetModifier::IEval( double secs, hsScalar del, UInt32 dirty )
 {
-	hsPoint3	center;
-	hsMatrix44	mtx, invMtx;
-	int			i;
+    hsPoint3    center;
+    hsMatrix44  mtx, invMtx;
+    int         i;
 
-	plRenderRequestMsg	*msg;
+    plRenderRequestMsg  *msg;
 
 
-	if( fCubic == nil || fTarget == nil )
-		return true;
+    if( fCubic == nil || fTarget == nil )
+        return true;
 
-	/// Get center point for RT
-	plCoordinateInterface	*ci = IGetTargetCoordinateInterface( 0 );
-	if( ci == nil )
-	{
-		plDrawInterface	*di = IGetTargetDrawInterface( 0 );
-		center = di->GetWorldBounds().GetCenter();
-	}
-	else
-		center = ci->GetLocalToWorld().GetTranslate();
+    /// Get center point for RT
+    plCoordinateInterface   *ci = IGetTargetCoordinateInterface( 0 );
+    if( ci == nil )
+    {
+        plDrawInterface *di = IGetTargetDrawInterface( 0 );
+        center = di->GetWorldBounds().GetCenter();
+    }
+    else
+        center = ci->GetLocalToWorld().GetTranslate();
 
-	/// Set camera position of RT to this center
-	fCubic->SetCameraMatrix(center);
+    /// Set camera position of RT to this center
+    fCubic->SetCameraMatrix(center);
 
-	/// Submit render requests!
-	for( i = 0; i < 6; i++ )
-	{
-		if( fRequests[ i ] != nil )
-		{
-			fRequests[ i ]->SetCameraTransform(fCubic->GetWorldToCamera(i), fCubic->GetCameraToWorld(i));
+    /// Submit render requests!
+    for( i = 0; i < 6; i++ )
+    {
+        if( fRequests[ i ] != nil )
+        {
+            fRequests[ i ]->SetCameraTransform(fCubic->GetWorldToCamera(i), fCubic->GetCameraToWorld(i));
 
-			msg = TRACKED_NEW plRenderRequestMsg( nil, fRequests[ i ] );
-			plgDispatch::MsgSend( msg );
-		}
-	}
+            msg = TRACKED_NEW plRenderRequestMsg( nil, fRequests[ i ] );
+            plgDispatch::MsgSend( msg );
+        }
+    }
 
-	/// Done!
-	return true;
+    /// Done!
+    return true;
 }
 
 //// MsgReceive ///////////////////////////////////////////////////////////////
 
-hsBool	plCubicRenderTargetModifier::MsgReceive( plMessage* msg )
+hsBool  plCubicRenderTargetModifier::MsgReceive( plMessage* msg )
 {
-	plSceneObject		*scene;
-	plCubicRenderTarget	*cubic;
-	int					i;
+    plSceneObject       *scene;
+    plCubicRenderTarget *cubic;
+    int                 i;
 
 
-	plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
-	if( eval )
-	{
-		const double secs = eval->DSeconds();
-		const hsScalar del = eval->DelSeconds();
-		IEval( secs, del, 0 );
-		return true;
-	}
-	plRefMsg			*refMsg = plRefMsg::ConvertNoRef( msg );
-	if( refMsg )
-	{
-		if( scene = plSceneObject::ConvertNoRef( refMsg->GetRef() ) )
-		{
-			if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
-				AddTarget( scene );
-			else
-				RemoveTarget( scene );
-		}
-		if( cubic = plCubicRenderTarget::ConvertNoRef( refMsg->GetRef() ) )
-		{
-			if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
-			{
-				fCubic = cubic;
-				for( i = 0; i < 6; i++ )
-					ICreateRenderRequest( i );
-			}
-			else
-			{
-				fCubic = nil;
-				for( i = 0; i < 6; i++ )
-				{
-					delete fRequests[ i ];
-					fRequests[ i ] = nil;
-				}
-			}
-		}
-		return true;
-	}
+    plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
+    if( eval )
+    {
+        const double secs = eval->DSeconds();
+        const hsScalar del = eval->DelSeconds();
+        IEval( secs, del, 0 );
+        return true;
+    }
+    plRefMsg            *refMsg = plRefMsg::ConvertNoRef( msg );
+    if( refMsg )
+    {
+        if( scene = plSceneObject::ConvertNoRef( refMsg->GetRef() ) )
+        {
+            if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
+                AddTarget( scene );
+            else
+                RemoveTarget( scene );
+        }
+        if( cubic = plCubicRenderTarget::ConvertNoRef( refMsg->GetRef() ) )
+        {
+            if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
+            {
+                fCubic = cubic;
+                for( i = 0; i < 6; i++ )
+                    ICreateRenderRequest( i );
+            }
+            else
+            {
+                fCubic = nil;
+                for( i = 0; i < 6; i++ )
+                {
+                    delete fRequests[ i ];
+                    fRequests[ i ] = nil;
+                }
+            }
+        }
+        return true;
+    }
 
-	return plModifier::MsgReceive( msg );
+    return plModifier::MsgReceive( msg );
 }
 
 //// AddTarget ////////////////////////////////////////////////////////////////
 
-void	plCubicRenderTargetModifier::AddTarget( plSceneObject *so )
+void    plCubicRenderTargetModifier::AddTarget( plSceneObject *so )
 {
-	if( fTarget != nil )
-		RemoveTarget( fTarget );
+    if( fTarget != nil )
+        RemoveTarget( fTarget );
 
-	fTarget = so;
-	plgDispatch::Dispatch()->RegisterForExactType( plEvalMsg::Index(), GetKey() );
+    fTarget = so;
+    plgDispatch::Dispatch()->RegisterForExactType( plEvalMsg::Index(), GetKey() );
 }
 
 //// RemoveTarget /////////////////////////////////////////////////////////////
 
-void	plCubicRenderTargetModifier::RemoveTarget( plSceneObject *so )
+void    plCubicRenderTargetModifier::RemoveTarget( plSceneObject *so )
 {
-	fTarget = nil;
+    fTarget = nil;
 }
 
 //// Read /////////////////////////////////////////////////////////////////////
 
-void	plCubicRenderTargetModifier::Read( hsStream *s, hsResMgr *mgr )
+void    plCubicRenderTargetModifier::Read( hsStream *s, hsResMgr *mgr )
 {
-	hsKeyedObject::Read( s, mgr );
+    hsKeyedObject::Read( s, mgr );
 
-	plGenRefMsg* msg;
-	msg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // SceneObject
-	mgr->ReadKeyNotifyMe( s, msg, plRefFlags::kActiveRef );
+    plGenRefMsg* msg;
+    msg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // SceneObject
+    mgr->ReadKeyNotifyMe( s, msg, plRefFlags::kActiveRef );
 
-	msg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // cubicRT
-	mgr->ReadKeyNotifyMe( s, msg, plRefFlags::kActiveRef );
+    msg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // cubicRT
+    mgr->ReadKeyNotifyMe( s, msg, plRefFlags::kActiveRef );
 }
 
 //// Write ////////////////////////////////////////////////////////////////////
 
-void	plCubicRenderTargetModifier::Write( hsStream *s, hsResMgr *mgr )
+void    plCubicRenderTargetModifier::Write( hsStream *s, hsResMgr *mgr )
 {
-	hsKeyedObject::Write(s, mgr);
+    hsKeyedObject::Write(s, mgr);
 
-	mgr->WriteKey( s, fTarget ); // Write the SceneNode
-	mgr->WriteKey( s, fCubic );	// Write the cubicRT
+    mgr->WriteKey( s, fTarget ); // Write the SceneNode
+    mgr->WriteKey( s, fCubic ); // Write the cubicRT
 }

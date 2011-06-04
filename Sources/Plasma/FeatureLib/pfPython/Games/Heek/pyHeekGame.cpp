@@ -34,53 +34,53 @@ pyHeekGame::pyHeekGame(): pyGameCli() {}
 
 pyHeekGame::pyHeekGame(pfGameCli* client): pyGameCli(client)
 {
-	if (client && (client->GetGameTypeId() != kGameTypeId_Heek))
-		gameClient = nil; // wrong type, just clear it out
+    if (client && (client->GetGameTypeId() != kGameTypeId_Heek))
+        gameClient = nil; // wrong type, just clear it out
 }
 
 bool pyHeekGame::IsHeekGame(std::wstring guid)
 {
-	Uuid gameUuid(guid.c_str());
-	return gameUuid == kGameTypeId_Heek;
+    Uuid gameUuid(guid.c_str());
+    return gameUuid == kGameTypeId_Heek;
 }
 
 void pyHeekGame::JoinCommonHeekGame(pyKey& callbackKey, unsigned gameID)
 {
-	pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_Heek, gameID, 0, NULL);
+    pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_Heek, gameID, 0, NULL);
 }
 
 void pyHeekGame::PlayGame(int position, UInt32 points, std::wstring name)
 {
-	if (gameClient)
-	{
-		pfGmHeek* heek = pfGmHeek::ConvertNoRef(gameClient);
-		heek->PlayGame((unsigned)position, (dword)points, name.c_str());
-	}
+    if (gameClient)
+    {
+        pfGmHeek* heek = pfGmHeek::ConvertNoRef(gameClient);
+        heek->PlayGame((unsigned)position, (dword)points, name.c_str());
+    }
 }
 
 void pyHeekGame::LeaveGame()
 {
-	if (gameClient)
-	{
-		pfGmHeek* heek = pfGmHeek::ConvertNoRef(gameClient);
-		heek->LeaveGame();
-	}
+    if (gameClient)
+    {
+        pfGmHeek* heek = pfGmHeek::ConvertNoRef(gameClient);
+        heek->LeaveGame();
+    }
 }
 
 void pyHeekGame::Choose(int choice)
 {
-	if (gameClient)
-	{
-		pfGmHeek* heek = pfGmHeek::ConvertNoRef(gameClient);
-		heek->Choose((EHeekChoice)choice);
-	}
+    if (gameClient)
+    {
+        pfGmHeek* heek = pfGmHeek::ConvertNoRef(gameClient);
+        heek->Choose((EHeekChoice)choice);
+    }
 }
 
 void pyHeekGame::SequenceFinished(int seq)
 {
-	if (gameClient)
-	{
-		pfGmHeek* heek = pfGmHeek::ConvertNoRef(gameClient);
-		heek->SequenceFinished((EHeekSeqFinished)seq);
-	}
+    if (gameClient)
+    {
+        pfGmHeek* heek = pfGmHeek::ConvertNoRef(gameClient);
+        heek->SequenceFinished((EHeekSeqFinished)seq);
+    }
 }

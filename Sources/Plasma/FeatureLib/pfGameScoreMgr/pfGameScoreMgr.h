@@ -33,105 +33,105 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMESCOREMGR_PFGAMESCOREMGR_H
 
 #include "hsTypes.h"
-#include "../pnNetBase/pnNetBase.h"
-#include "../pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnUtils/pnUtils.h"
 
 struct NetGameRank;
 
 struct pfGameScore : AtomicRef
 {
-	unsigned	scoreId;
-	unsigned	ownerId;
-	UInt32		createdTime;
-	char		gameName[kMaxGameScoreNameLength];
-	unsigned	gameType;
-	int			value;
+    unsigned    scoreId;
+    unsigned    ownerId;
+    UInt32      createdTime;
+    char        gameName[kMaxGameScoreNameLength];
+    unsigned    gameType;
+    int         value;
 
-	pfGameScore();
-	~pfGameScore();
+    pfGameScore();
+    ~pfGameScore();
 
-	void Init(
-		unsigned sid,
-		unsigned oid,
-		UInt32 createTime,
-		const char gname[],
-		unsigned gType,
-		int val
-	);
+    void Init(
+        unsigned sid,
+        unsigned oid,
+        UInt32 createTime,
+        const char gname[],
+        unsigned gType,
+        int val
+    );
 
-	void CopyFrom(const pfGameScore* score);
+    void CopyFrom(const pfGameScore* score);
 };
 
 class pfGameScoreMgr
 {
 private:
-	pfGameScoreMgr();
+    pfGameScoreMgr();
 
-	struct GameScoreLink : THashKeyVal<unsigned>
-	{
-		HASHLINK(GameScoreLink)		link;
-		pfGameScore *				score;
+    struct GameScoreLink : THashKeyVal<unsigned>
+    {
+        HASHLINK(GameScoreLink)     link;
+        pfGameScore *               score;
 
-		GameScoreLink(pfGameScore * gscore)
-		:	THashKeyVal<unsigned>(gscore->scoreId)
-		,	score(gscore)
-		{
-		}
-	};
+        GameScoreLink(pfGameScore * gscore)
+        :   THashKeyVal<unsigned>(gscore->scoreId)
+        ,   score(gscore)
+        {
+        }
+    };
 
-	HASHTABLEDECL(
-		GameScoreLink,
-		THashKeyVal<unsigned>,
-		link
-	) fScores;
+    HASHTABLEDECL(
+        GameScoreLink,
+        THashKeyVal<unsigned>,
+        link
+    ) fScores;
 
 public:
-	static pfGameScoreMgr* GetInstance();
+    static pfGameScoreMgr* GetInstance();
 
-	void AddCachedScore(pfGameScore * score);
-	void RemoveCachedScore(unsigned scoreId);
+    void AddCachedScore(pfGameScore * score);
+    void RemoveCachedScore(unsigned scoreId);
 
-	ENetError CreateScore(
-		unsigned		ownerId,
-		const char*		gameName,
-		unsigned		gameType,
-		int				value,
-		pfGameScore&	score
-	);
-	ENetError DeleteScore(
-		unsigned		scoreId
-	);
-	ENetError AddPoints(
-		unsigned		scoreId,
-		int				numPoints
-	);
-	ENetError TransferPoints(
-		unsigned		srcScoreId,
-		unsigned		destScoreId,
-		int				numPoints
-	);
-	ENetError SetPoints(
-		unsigned		scoreId,
-		int				numPoints
-	);
-	ENetError GetScoresIncRef(
-		unsigned		ownerId,
-		const char*		gameName,
-		pfGameScore**&	outScoreList,
-		int&			outScoreListCount
-	);
-	ENetError GetRankList(
-		unsigned		ownerId,
-		unsigned		scoreGroup,
-		unsigned		parentFolderId,
-		const char *	gameName,
-		unsigned		timePeriod,
-		unsigned		numResults,
-		unsigned		pageNumber,
-		bool			sortDesc,
-		NetGameRank**&	outRankList,
-		int&			outRankListCount
-	);
+    ENetError CreateScore(
+        unsigned        ownerId,
+        const char*     gameName,
+        unsigned        gameType,
+        int             value,
+        pfGameScore&    score
+    );
+    ENetError DeleteScore(
+        unsigned        scoreId
+    );
+    ENetError AddPoints(
+        unsigned        scoreId,
+        int             numPoints
+    );
+    ENetError TransferPoints(
+        unsigned        srcScoreId,
+        unsigned        destScoreId,
+        int             numPoints
+    );
+    ENetError SetPoints(
+        unsigned        scoreId,
+        int             numPoints
+    );
+    ENetError GetScoresIncRef(
+        unsigned        ownerId,
+        const char*     gameName,
+        pfGameScore**&  outScoreList,
+        int&            outScoreListCount
+    );
+    ENetError GetRankList(
+        unsigned        ownerId,
+        unsigned        scoreGroup,
+        unsigned        parentFolderId,
+        const char *    gameName,
+        unsigned        timePeriod,
+        unsigned        numResults,
+        unsigned        pageNumber,
+        bool            sortDesc,
+        NetGameRank**&  outRankList,
+        int&            outRankListCount
+    );
 };
 
 #endif // PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMESCOREMGR_PFGAMESCOREMGR_H

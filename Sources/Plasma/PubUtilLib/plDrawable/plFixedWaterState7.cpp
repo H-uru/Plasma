@@ -31,163 +31,163 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plFixedWaterState7::WaveState::Set(const plFixedWaterState7::WaveState& w, hsScalar secs)
 {
-	fMaxLength.Set(w.fMaxLength, secs);
-	fMinLength.Set(w.fMinLength, secs);
-	fAmpOverLen.Set(w.fAmpOverLen, secs);
-	fChop.Set(w.fChop, secs);
-	fAngleDev.Set(w.fAngleDev, secs);
+    fMaxLength.Set(w.fMaxLength, secs);
+    fMinLength.Set(w.fMinLength, secs);
+    fAmpOverLen.Set(w.fAmpOverLen, secs);
+    fChop.Set(w.fChop, secs);
+    fAngleDev.Set(w.fAngleDev, secs);
 }
 
 void plFixedWaterState7::Set(const plFixedWaterState7& t, hsScalar secs)
 {
-	fWindDir.Set(t.fWindDir, secs);
+    fWindDir.Set(t.fWindDir, secs);
 
-	fGeoState.Set(t.fGeoState, secs);
+    fGeoState.Set(t.fGeoState, secs);
 
-	fTexState.Set(t.fTexState, secs);
-	fRippleScale.Set(t.fRippleScale, secs);
+    fTexState.Set(t.fTexState, secs);
+    fRippleScale.Set(t.fRippleScale, secs);
 
-	fSpecVec.Set(t.fSpecVec, secs);
+    fSpecVec.Set(t.fSpecVec, secs);
 
-	fWaterHeight.Set(t.fWaterHeight, secs);
-	fWaterOffset.Set(t.fWaterOffset, secs);
-	fMaxAtten.Set(t.fMaxAtten, secs);
-	fMinAtten.Set(t.fMinAtten, secs);
-	fDepthFalloff.Set(t.fDepthFalloff, secs);
+    fWaterHeight.Set(t.fWaterHeight, secs);
+    fWaterOffset.Set(t.fWaterOffset, secs);
+    fMaxAtten.Set(t.fMaxAtten, secs);
+    fMinAtten.Set(t.fMinAtten, secs);
+    fDepthFalloff.Set(t.fDepthFalloff, secs);
 
-	fWispiness.Set(t.fWispiness, secs);
-	fShoreTint.Set(t.fShoreTint, secs);
-	fMaxColor.Set(t.fMaxColor, secs);
-	fMinColor.Set(t.fMinColor, secs);
-	fEdgeOpac.Set(t.fEdgeOpac, secs);
-	fEdgeRadius.Set(t.fEdgeRadius, secs);
+    fWispiness.Set(t.fWispiness, secs);
+    fShoreTint.Set(t.fShoreTint, secs);
+    fMaxColor.Set(t.fMaxColor, secs);
+    fMinColor.Set(t.fMinColor, secs);
+    fEdgeOpac.Set(t.fEdgeOpac, secs);
+    fEdgeRadius.Set(t.fEdgeRadius, secs);
 
-	fPeriod.Set(t.fPeriod, secs);
-	fFingerLength.Set(t.fFingerLength, secs);
+    fPeriod.Set(t.fPeriod, secs);
+    fFingerLength.Set(t.fFingerLength, secs);
 
 
-	fWaterTint.Set(t.fWaterTint, secs);
-	fSpecularTint.Set(t.fSpecularTint, secs);
+    fWaterTint.Set(t.fWaterTint, secs);
+    fSpecularTint.Set(t.fSpecularTint, secs);
 
-	fEnvCenter.Set(t.fEnvCenter, secs);
-	fEnvRefresh.Set(t.fEnvRefresh, secs);
-	fEnvRadius.Set(t.fEnvRadius, secs);
+    fEnvCenter.Set(t.fEnvCenter, secs);
+    fEnvRefresh.Set(t.fEnvRefresh, secs);
+    fEnvRadius.Set(t.fEnvRadius, secs);
 
-	
+    
 }
 
 void plFixedWaterState7::WaveState::Read(hsStream* s)
 {
-	fMaxLength.Read(s);
-	fMinLength.Read(s);
-	fAmpOverLen.Read(s);
-	fChop.Read(s);
-	fAngleDev.Read(s);
+    fMaxLength.Read(s);
+    fMinLength.Read(s);
+    fAmpOverLen.Read(s);
+    fChop.Read(s);
+    fAngleDev.Read(s);
 }
 
 void plFixedWaterState7::WaveState::Write(hsStream* s) const
 {
-	fMaxLength.Write(s);
-	fMinLength.Write(s);
-	fAmpOverLen.Write(s);
-	fChop.Write(s);
-	fAngleDev.Write(s);
+    fMaxLength.Write(s);
+    fMinLength.Write(s);
+    fAmpOverLen.Write(s);
+    fChop.Write(s);
+    fAngleDev.Write(s);
 }
 
 void plFixedWaterState7::Read(hsStream* s)
 {
-	// Geometric waves
-	fGeoState.Read(s);
+    // Geometric waves
+    fGeoState.Read(s);
 
-	// Texture waves
-	fTexState.Read(s);
-	fRippleScale.Read(s);
+    // Texture waves
+    fTexState.Read(s);
+    fRippleScale.Read(s);
 
-	// Geometric and Texture share wind direction
-	fWindDir.Read(s);
+    // Geometric and Texture share wind direction
+    fWindDir.Read(s);
 
-	// Level of noise added during summation of texture waves
-	fSpecVec.Read(s);
+    // Level of noise added during summation of texture waves
+    fSpecVec.Read(s);
 
-	// Depth parameters. Affect how the depth of
-	// the water vertex is interpreted into water
-	// surface properties.
-	fWaterHeight.Read(s);
-	fWaterOffset.Read(s);
-	fMaxAtten.Read(s);
-	fMinAtten.Read(s);
-	fDepthFalloff.Read(s);
+    // Depth parameters. Affect how the depth of
+    // the water vertex is interpreted into water
+    // surface properties.
+    fWaterHeight.Read(s);
+    fWaterOffset.Read(s);
+    fMaxAtten.Read(s);
+    fMinAtten.Read(s);
+    fDepthFalloff.Read(s);
 
-	// Shore parameters
+    // Shore parameters
 
-	// Appearance
-	fWispiness.Read(s);
-	fShoreTint.Read(s);
-	// Next two only used in generation of bubble layer
-	fMaxColor.Read(s);
-	fMinColor.Read(s);
-	fEdgeOpac.Read(s);
-	fEdgeRadius.Read(s);
+    // Appearance
+    fWispiness.Read(s);
+    fShoreTint.Read(s);
+    // Next two only used in generation of bubble layer
+    fMaxColor.Read(s);
+    fMinColor.Read(s);
+    fEdgeOpac.Read(s);
+    fEdgeRadius.Read(s);
 
-	// Simulation
-	fPeriod.Read(s);
-	fFingerLength.Read(s);
+    // Simulation
+    fPeriod.Read(s);
+    fFingerLength.Read(s);
 
 
-	// Water appearance.
-	fWaterTint.Read(s);
-	fSpecularTint.Read(s);
+    // Water appearance.
+    fWaterTint.Read(s);
+    fSpecularTint.Read(s);
 
-	fEnvCenter.Read(s);
-	fEnvRefresh.Read(s);
-	fEnvRadius.Read(s);
+    fEnvCenter.Read(s);
+    fEnvRefresh.Read(s);
+    fEnvRadius.Read(s);
 }
 
 void plFixedWaterState7::Write(hsStream* s) const
 {
-	// Geometric waves
-	fGeoState.Write(s);
+    // Geometric waves
+    fGeoState.Write(s);
 
-	// Texture waves
-	fTexState.Write(s);
-	fRippleScale.Write(s);
+    // Texture waves
+    fTexState.Write(s);
+    fRippleScale.Write(s);
 
-	// Geometric and Texture share wind direction
-	fWindDir.Write(s);
+    // Geometric and Texture share wind direction
+    fWindDir.Write(s);
 
-	// Level of noise added during summation of texture waves
-	fSpecVec.Write(s);
+    // Level of noise added during summation of texture waves
+    fSpecVec.Write(s);
 
-	// Depth parameters. Affect how the depth of
-	// the water vertex is interpreted into water
-	// surface properties.
-	fWaterHeight.Write(s);
-	fWaterOffset.Write(s);
-	fMaxAtten.Write(s);
-	fMinAtten.Write(s);
-	fDepthFalloff.Write(s);
+    // Depth parameters. Affect how the depth of
+    // the water vertex is interpreted into water
+    // surface properties.
+    fWaterHeight.Write(s);
+    fWaterOffset.Write(s);
+    fMaxAtten.Write(s);
+    fMinAtten.Write(s);
+    fDepthFalloff.Write(s);
 
-	// Shore parameters
+    // Shore parameters
 
-	// Appearance
-	fWispiness.Write(s);
-	fShoreTint.Write(s);
-	// Next two only used in generation of bubble layer
-	fMaxColor.Write(s);
-	fMinColor.Write(s);
-	fEdgeOpac.Write(s);
-	fEdgeRadius.Write(s);
+    // Appearance
+    fWispiness.Write(s);
+    fShoreTint.Write(s);
+    // Next two only used in generation of bubble layer
+    fMaxColor.Write(s);
+    fMinColor.Write(s);
+    fEdgeOpac.Write(s);
+    fEdgeRadius.Write(s);
 
-	// Simulation
-	fPeriod.Write(s);
-	fFingerLength.Write(s);
+    // Simulation
+    fPeriod.Write(s);
+    fFingerLength.Write(s);
 
 
-	// Water appearance.
-	fWaterTint.Write(s);
-	fSpecularTint.Write(s);
+    // Water appearance.
+    fWaterTint.Write(s);
+    fSpecularTint.Write(s);
 
-	fEnvCenter.Write(s);
-	fEnvRefresh.Write(s);
-	fEnvRadius.Write(s);
+    fEnvCenter.Write(s);
+    fEnvRefresh.Write(s);
+    fEnvRadius.Write(s);
 }

@@ -24,15 +24,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plOGGCodec - Plasma codec support for the OGG/Vorbis file format.		//
-//																			//
+//                                                                          //
+//  plOGGCodec - Plasma codec support for the OGG/Vorbis file format.       //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plOGGCodec_h
 #define _plOGGCodec_h
 
-#include "../plAudioCore/plAudioFileReader.h"
+#include "plAudioFileReader.h"
 
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -43,64 +43,64 @@ class plOGGCodec : public plAudioFileReader
 {
 public:
 
-	plOGGCodec( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
-	virtual ~plOGGCodec();
+    plOGGCodec( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
+    virtual ~plOGGCodec();
 
-	enum DecodeFormat
-	{
-		k8bitUnsigned,
-		k16bitSigned
-	};
+    enum DecodeFormat
+    {
+        k8bitUnsigned,
+        k16bitSigned
+    };
 
-	enum DecodeFlags
-	{
-		kFastSeeking = 0x01
-	};
-	
-	virtual plWAVHeader	&GetHeader( void );
+    enum DecodeFlags
+    {
+        kFastSeeking = 0x01
+    };
+    
+    virtual plWAVHeader &GetHeader( void );
 
-	virtual void	Close( void );
+    virtual void    Close( void );
 
-	virtual UInt32	GetDataSize( void ) { return fDataSize / fChannelAdjust; }
-	virtual float	GetLengthInSecs( void );
+    virtual UInt32  GetDataSize( void ) { return fDataSize / fChannelAdjust; }
+    virtual float   GetLengthInSecs( void );
 
-	virtual hsBool	SetPosition( UInt32 numBytes );
-	virtual hsBool	Read( UInt32 numBytes, void *buffer );
-	virtual UInt32	NumBytesLeft( void );
+    virtual hsBool  SetPosition( UInt32 numBytes );
+    virtual hsBool  Read( UInt32 numBytes, void *buffer );
+    virtual UInt32  NumBytesLeft( void );
 
-	virtual hsBool	IsValid( void ) { return ( fOggFile != nil ) ? true : false; }
+    virtual hsBool  IsValid( void ) { return ( fOggFile != nil ) ? true : false; }
 
-	static void		SetDecodeFormat( DecodeFormat f ) { fDecodeFormat = f; }
-	static void		SetDecodeFlag( UInt8 flag, hsBool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }
-	static UInt8	GetDecodeFlags( void ) { return fDecodeFlags; }
-	void			ResetWaveHeaderRef() { fCurHeaderPos = 0; }
-	void			BuildActualWaveHeader();
-	bool			ReadFromHeader(int numBytes, void *data); // read from Actual wave header
+    static void     SetDecodeFormat( DecodeFormat f ) { fDecodeFormat = f; }
+    static void     SetDecodeFlag( UInt8 flag, hsBool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }
+    static UInt8    GetDecodeFlags( void ) { return fDecodeFlags; }
+    void            ResetWaveHeaderRef() { fCurHeaderPos = 0; }
+    void            BuildActualWaveHeader();
+    bool            ReadFromHeader(int numBytes, void *data); // read from Actual wave header
 
 protected:
 
-	enum
-	{
-		kPCMFormatTag = 1
-	};
+    enum
+    {
+        kPCMFormatTag = 1
+    };
 
-	char			fFilename[ 512 ];
-	FILE			*fFileHandle;
-	OggVorbis_File	*fOggFile;
+    char            fFilename[ 512 ];
+    FILE            *fFileHandle;
+    OggVorbis_File  *fOggFile;
 
-	plWAVHeader		fHeader, fFakeHeader;
-	UInt32			fDataStartPos, fCurrDataPos, fDataSize;
+    plWAVHeader     fHeader, fFakeHeader;
+    UInt32          fDataStartPos, fCurrDataPos, fDataSize;
 
-	plAudioCore::ChannelSelect	fWhichChannel;
-	UInt32						fChannelAdjust, fChannelOffset;
+    plAudioCore::ChannelSelect  fWhichChannel;
+    UInt32                      fChannelAdjust, fChannelOffset;
 
-	static DecodeFormat	fDecodeFormat;
-	static UInt8		fDecodeFlags;
-	UInt8 *				fHeadBuf;
-	int					fCurHeaderPos;
+    static DecodeFormat fDecodeFormat;
+    static UInt8        fDecodeFlags;
+    UInt8 *             fHeadBuf;
+    int                 fCurHeaderPos;
 
-	void	IError( const char *msg );
-	void	IOpen( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
+    void    IError( const char *msg );
+    void    IOpen( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
 };
 
 #endif //_plOGGCodec_h

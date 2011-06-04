@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plObjectInBoxConditionalObject_inc
 #define plObjectInBoxConditionalObject_inc
 
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"
+#include "pnModifier/plConditionalObject.h"
 #include "hsTemplates.h"
 
 class plKey;
@@ -36,23 +36,23 @@ class plObjectInBoxConditionalObject : public plConditionalObject
 {
 protected:
 
-	hsTArray<plKey>		fInside;
-	plKey				fCurrentTrigger;
+    hsTArray<plKey>     fInside;
+    plKey               fCurrentTrigger;
 
 public:
-	
-	plObjectInBoxConditionalObject();
-	~plObjectInBoxConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plObjectInBoxConditionalObject );
-	GETINTERFACE_ANY( plObjectInBoxConditionalObject, plConditionalObject );
-	
-	hsBool MsgReceive(plMessage* msg);
+    
+    plObjectInBoxConditionalObject();
+    ~plObjectInBoxConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plObjectInBoxConditionalObject );
+    GETINTERFACE_ANY( plObjectInBoxConditionalObject, plConditionalObject );
+    
+    hsBool MsgReceive(plMessage* msg);
 
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(false); }
-	virtual hsBool Satisfied() { return true; }
-	virtual hsBool Verify(plMessage* msg);
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(false); }
+    virtual hsBool Satisfied() { return true; }
+    virtual hsBool Verify(plMessage* msg);
 
 };
 
@@ -61,55 +61,55 @@ class plVolumeSensorConditionalObject : public plConditionalObject
 
 protected:
 
-	hsTArray<plKey>	fInside;
-	int					fTrigNum;
-	int					fType;
-	hsBool				fFirst;
-	hsBool				fTriggered;
-	hsBool				fIgnoreExtraEnters;
+    hsTArray<plKey> fInside;
+    int                 fTrigNum;
+    int                 fType;
+    hsBool              fFirst;
+    hsBool              fTriggered;
+    hsBool              fIgnoreExtraEnters;
 public:
 
-	static bool makeBriceHappyVar;
+    static bool makeBriceHappyVar;
 
 
-	enum
-	{
-		kTypeEnter	= 1,
-		kTypeExit,
-	};
-	plVolumeSensorConditionalObject();
-	~plVolumeSensorConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plVolumeSensorConditionalObject );
-	GETINTERFACE_ANY( plVolumeSensorConditionalObject, plConditionalObject );
-	
-	virtual hsBool MsgReceive(plMessage* msg);
+    enum
+    {
+        kTypeEnter  = 1,
+        kTypeExit,
+    };
+    plVolumeSensorConditionalObject();
+    ~plVolumeSensorConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plVolumeSensorConditionalObject );
+    GETINTERFACE_ANY( plVolumeSensorConditionalObject, plConditionalObject );
+    
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(false); }
-	virtual hsBool Satisfied();
-	void	SetType(int i) { fType = i; }
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(false); }
+    virtual hsBool Satisfied();
+    void    SetType(int i) { fType = i; }
 
-	void SetTrigNum(int i) { fTrigNum = i; }
-	void SetFirst(hsBool b) { fFirst = b; }
+    void SetTrigNum(int i) { fTrigNum = i; }
+    void SetFirst(hsBool b) { fFirst = b; }
 
-	void IgnoreExtraEnters(hsBool ignore = true) {fIgnoreExtraEnters = ignore;}
+    void IgnoreExtraEnters(hsBool ignore = true) {fIgnoreExtraEnters = ignore;}
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr); 
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr); 
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 };
 class plVolumeSensorConditionalObjectNoArbitration : public plVolumeSensorConditionalObject
 {
 public:
-	plVolumeSensorConditionalObjectNoArbitration ():plVolumeSensorConditionalObject(){;}
-	~plVolumeSensorConditionalObjectNoArbitration (){;}
-	CLASSNAME_REGISTER( plVolumeSensorConditionalObjectNoArbitration );
-	GETINTERFACE_ANY( plVolumeSensorConditionalObjectNoArbitration, plConditionalObject );
-	virtual hsBool MsgReceive(plMessage* msg);
-	virtual void Read(hsStream* stream, hsResMgr* mgr); 
+    plVolumeSensorConditionalObjectNoArbitration ():plVolumeSensorConditionalObject(){;}
+    ~plVolumeSensorConditionalObjectNoArbitration (){;}
+    CLASSNAME_REGISTER( plVolumeSensorConditionalObjectNoArbitration );
+    GETINTERFACE_ANY( plVolumeSensorConditionalObjectNoArbitration, plConditionalObject );
+    virtual hsBool MsgReceive(plMessage* msg);
+    virtual void Read(hsStream* stream, hsResMgr* mgr); 
 protected:
-	plKey fHittee;
+    plKey fHittee;
 };
 
 

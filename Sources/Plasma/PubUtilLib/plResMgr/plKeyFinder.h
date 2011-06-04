@@ -39,17 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // EXAMPLE OF USE:
 //----------------------------
 //
-//	plKeyFinder *pFind = hsgResMgr::ResMgr()->GetKeyFinder();
-//	plKey pKey = pFind->StupidSearch("Global", "Globalx", "1", "plSceneNode", "1");
-//	if (!pKey)
-//		hsStatusMessage(pFind->GetLastErrorString());
-//	delete pFind;
+//  plKeyFinder *pFind = hsgResMgr::ResMgr()->GetKeyFinder();
+//  plKey pKey = pFind->StupidSearch("Global", "Globalx", "1", "plSceneNode", "1");
+//  if (!pKey)
+//      hsStatusMessage(pFind->GetLastErrorString());
+//  delete pFind;
 //
 //----------------------------
 
 #include "hsTypes.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
 #include "hsStlUtils.h"
 #include <string>
 
@@ -59,48 +59,48 @@ class plPageInfo;
 
 class plKeyFinder
 {
-public:	
-	enum eErrCodes
-	{
-		kOk,
-		kAgeNotFound,
-		kPageNotFound,
-		kInvalidClass,
-		kNoClassesInPage,
-		kObjectNotFound
-	};
+public: 
+    enum eErrCodes
+    {
+        kOk,
+        kAgeNotFound,
+        kPageNotFound,
+        kInvalidClass,
+        kNoClassesInPage,
+        kObjectNotFound
+    };
 
-	static plKeyFinder& Instance();
+    static plKeyFinder& Instance();
 
-	// These are Stupid search because they just do string searchs on the objects.
-	plKey StupidSearch(const char * age, const char * rm, const char *className, const char *obName, hsBool subString=false);
-	plKey StupidSearch(const char * age, const char * rm, UInt16 objType, const char *obName, hsBool subString=false);
+    // These are Stupid search because they just do string searchs on the objects.
+    plKey StupidSearch(const char * age, const char * rm, const char *className, const char *obName, hsBool subString=false);
+    plKey StupidSearch(const char * age, const char * rm, UInt16 objType, const char *obName, hsBool subString=false);
 
-	eErrCodes	GetLastErrorCode() { return fLastError; }
-	const char*	GetLastErrorString(); // For Console display
+    eErrCodes   GetLastErrorCode() { return fLastError; }
+    const char* GetLastErrorString(); // For Console display
 
-	void ReallyStupidResponderSearch(const char* name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
-	void ReallyStupidActivatorSearch(const char* name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
+    void ReallyStupidResponderSearch(const char* name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
+    void ReallyStupidActivatorSearch(const char* name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
 
-	void ReallyStupidSubstringSearch(const char* name, UInt16 objType, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
+    void ReallyStupidSubstringSearch(const char* name, UInt16 objType, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
 
-	void GetActivatorNames(std::vector<std::string>& names);
-	void GetResponderNames(std::vector<std::string>& names);
+    void GetActivatorNames(std::vector<std::string>& names);
+    void GetResponderNames(std::vector<std::string>& names);
 
-	plKey FindSceneNodeKey(const char* pageOrFullLocName) const;
-	plKey FindSceneNodeKey(const char* ageName, const char* pageName) const;
-	plKey FindSceneNodeKey(const plLocation& location) const;
+    plKey FindSceneNodeKey(const char* pageOrFullLocName) const;
+    plKey FindSceneNodeKey(const char* ageName, const char* pageName) const;
+    plKey FindSceneNodeKey(const plLocation& location) const;
 
-	const plLocation& FindLocation(const char* age, const char* page) const;
-	const plPageInfo* GetLocationInfo(const plLocation& loc) const;
+    const plLocation& FindLocation(const char* age, const char* page) const;
+    const plPageInfo* GetLocationInfo(const plLocation& loc) const;
 
 protected:
-	plKeyFinder() {}
+    plKeyFinder() {}
 
-	void IGetNames(std::vector<std::string>& names, const char* name, int index);
-	plKey IFindSceneNodeKey(plRegistryPageNode* page) const;
+    void IGetNames(std::vector<std::string>& names, const char* name, int index);
+    plKey IFindSceneNodeKey(plRegistryPageNode* page) const;
 
-	eErrCodes fLastError;
+    eErrCodes fLastError;
 };
 
 #endif // plKeyFinder_h_inc

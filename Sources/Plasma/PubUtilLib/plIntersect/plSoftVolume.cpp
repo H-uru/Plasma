@@ -30,15 +30,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSoftVolume.h"
 
 #include "plgDispatch.h"
-#include "../plMessage/plListenerMsg.h"
+#include "plMessage/plListenerMsg.h"
 
 plSoftVolume::plSoftVolume() 
-:	fListenState(0),
-	fListenStrength(0),
-	fInsideStrength(1.f),
-	fOutsideStrength(0)
+:   fListenState(0),
+    fListenStrength(0),
+    fInsideStrength(1.f),
+    fOutsideStrength(0)
 {
-	fListenPos.Set(0,0,0);
+    fListenPos.Set(0,0,0);
 }
 
 plSoftVolume::~plSoftVolume()
@@ -47,97 +47,97 @@ plSoftVolume::~plSoftVolume()
 
 void plSoftVolume::Read(hsStream* s, hsResMgr* mgr)
 {
-	plRegionBase::Read(s, mgr);
+    plRegionBase::Read(s, mgr);
 
-	fListenState = s->ReadSwap32();
+    fListenState = s->ReadSwap32();
 
-	SetCheckListener(0 != (fListenState & kListenCheck));
+    SetCheckListener(0 != (fListenState & kListenCheck));
 
-	fInsideStrength = s->ReadSwapScalar();
-	fOutsideStrength = s->ReadSwapScalar();
+    fInsideStrength = s->ReadSwapScalar();
+    fOutsideStrength = s->ReadSwapScalar();
 }
 
 void plSoftVolume::Write(hsStream* s, hsResMgr* mgr)
 {
-	plRegionBase::Write(s, mgr);
+    plRegionBase::Write(s, mgr);
 
-	s->WriteSwap32(fListenState);
+    s->WriteSwap32(fListenState);
 
-	s->WriteSwapScalar(fInsideStrength);
-	s->WriteSwapScalar(fOutsideStrength);
+    s->WriteSwapScalar(fInsideStrength);
+    s->WriteSwapScalar(fOutsideStrength);
 }
 
 hsScalar plSoftVolume::GetStrength(const hsPoint3& pos) const 
 { 
-	return IRemapStrength(IGetStrength(pos));
+    return IRemapStrength(IGetStrength(pos));
 }
 
 hsScalar plSoftVolume::GetListenerStrength() const
 {
-	if( !(fListenState & kListenPosSet) )
-	{
-		// Some screw-up, haven't received a pos yet. Turn it off till we do.
-		return fListenStrength = IRemapStrength(0);
-	}
-	if( fListenState & kListenDirty )
-	{
-		fListenStrength = IUpdateListenerStrength();
-		fListenState &= ~kListenDirty;
-	}
-	return fListenStrength;
+    if( !(fListenState & kListenPosSet) )
+    {
+        // Some screw-up, haven't received a pos yet. Turn it off till we do.
+        return fListenStrength = IRemapStrength(0);
+    }
+    if( fListenState & kListenDirty )
+    {
+        fListenStrength = IUpdateListenerStrength();
+        fListenState &= ~kListenDirty;
+    }
+    return fListenStrength;
 }
 
 void plSoftVolume::UpdateListenerPosition(const hsPoint3& pos)
 {
-	fListenPos = pos;
-	fListenState |= kListenDirty | kListenPosSet;
+    fListenPos = pos;
+    fListenState |= kListenDirty | kListenPosSet;
 }
 
 void plSoftVolume::SetCheckListener(hsBool on)
 {
-	if( on )
-	{
-		plgDispatch::Dispatch()->RegisterForExactType(plListenerMsg::Index(), GetKey());
-		fListenState |= kListenCheck | kListenDirty | kListenRegistered;
-	}
-	else
-	{
-		plgDispatch::Dispatch()->UnRegisterForExactType(plListenerMsg::Index(), GetKey());
-		fListenState &= ~(kListenCheck | kListenDirty | kListenRegistered);
-	}
+    if( on )
+    {
+        plgDispatch::Dispatch()->RegisterForExactType(plListenerMsg::Index(), GetKey());
+        fListenState |= kListenCheck | kListenDirty | kListenRegistered;
+    }
+    else
+    {
+        plgDispatch::Dispatch()->UnRegisterForExactType(plListenerMsg::Index(), GetKey());
+        fListenState &= ~(kListenCheck | kListenDirty | kListenRegistered);
+    }
 }
 
 hsBool plSoftVolume::MsgReceive(plMessage* msg)
 {
-	plListenerMsg* list = plListenerMsg::ConvertNoRef(msg);
-	if( list )
-	{
-		UpdateListenerPosition(list->GetPosition());
-		return true;
-	}
+    plListenerMsg* list = plListenerMsg::ConvertNoRef(msg);
+    if( list )
+    {
+        UpdateListenerPosition(list->GetPosition());
+        return true;
+    }
 
-	return plRegionBase::MsgReceive(msg);
+    return plRegionBase::MsgReceive(msg);
 }
 
 hsScalar plSoftVolume::IUpdateListenerStrength() const
 {
-	return fListenStrength = GetStrength(fListenPos);
+    return fListenStrength = GetStrength(fListenPos);
 }
 
 void plSoftVolume::SetInsideStrength(hsScalar s)
 {
-	if( s < 0 )
-		s = 0;
-	else if( s > 1.f )
-		s = 1.f;
-	fInsideStrength = s;
+    if( s < 0 )
+        s = 0;
+    else if( s > 1.f )
+        s = 1.f;
+    fInsideStrength = s;
 }
 
 void plSoftVolume::SetOutsideStrength(hsScalar s)
 {
-	if( s < 0 )
-		s = 0;
-	else if( s > 1.f )
-		s = 1.f;
-	fOutsideStrength = s;
+    if( s < 0 )
+        s = 0;
+    else if( s > 1.f )
+        s = 1.f;
+    fOutsideStrength = s;
 }

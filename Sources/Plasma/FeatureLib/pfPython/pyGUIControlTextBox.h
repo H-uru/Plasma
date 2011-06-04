@@ -35,9 +35,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyKey.h"
 #include "pyGUIControl.h"
-#include "../pfGameGUIMgr/pfGUIControlMod.h"
+#include "pfGameGUIMgr/pfGUIControlMod.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class pyColor;
@@ -45,35 +45,35 @@ class pyColor;
 class pyGUIControlTextBox : public pyGUIControl
 {
 private:
-	pfGUIColorScheme*		fOriginalColorScheme;
+    pfGUIColorScheme*       fOriginalColorScheme;
 
 protected:
-	pyGUIControlTextBox(): pyGUIControl() {} // for python glue only, do NOT call
-	pyGUIControlTextBox(pyKey& gckey);
-	pyGUIControlTextBox(plKey objkey);
+    pyGUIControlTextBox(): pyGUIControl() {} // for python glue only, do NOT call
+    pyGUIControlTextBox(pyKey& gckey);
+    pyGUIControlTextBox(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlTextBox);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlTextBox object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlTextBox); // converts a PyObject to a pyGUIControlTextBox (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlTextBox);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlTextBox object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlTextBox); // converts a PyObject to a pyGUIControlTextBox (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlTextBox(pyKey& gckey);
+    static hsBool IsGUIControlTextBox(pyKey& gckey);
 
-	virtual void	SetText( const char *text );
-	virtual void	SetTextW( std::wstring text );
-	virtual std::string GetText();
-	virtual std::wstring GetTextW();
-	virtual void	SetFontSize( UInt8 size );
-	virtual void	SetForeColor( pyColor& color );
-	virtual void	SetBackColor( pyColor& color );
-	virtual void	SetJustify( UInt8 justify );
-	virtual UInt8	GetJustify();
-	virtual PyObject* GetForeColor(); // returns pyColor
+    virtual void    SetText( const char *text );
+    virtual void    SetTextW( std::wstring text );
+    virtual std::string GetText();
+    virtual std::wstring GetTextW();
+    virtual void    SetFontSize( UInt8 size );
+    virtual void    SetForeColor( pyColor& color );
+    virtual void    SetBackColor( pyColor& color );
+    virtual void    SetJustify( UInt8 justify );
+    virtual UInt8   GetJustify();
+    virtual PyObject* GetForeColor(); // returns pyColor
 };
 
 #endif // _pyGUIControlTextBox_h_

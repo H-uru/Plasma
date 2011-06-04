@@ -31,41 +31,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // plRef count addes refcount abilities to any plCreatable
 
 class plRefCnt
-{	UInt32 fRefCnt;
+{   UInt32 fRefCnt;
 public:
-	plRefCnt() : fRefCnt(1){}
-	~plRefCnt(){}
-	hsBool TimeToDelete()	{ return (fRefCnt == 1); }
-	void	Incr()			{ fRefCnt++; }
-	void	Decr()			{ fRefCnt--; }
+    plRefCnt() : fRefCnt(1){}
+    ~plRefCnt(){}
+    hsBool TimeToDelete()   { return (fRefCnt == 1); }
+    void    Incr()          { fRefCnt++; }
+    void    Decr()          { fRefCnt--; }
 };
 
 
 #define DEFINE_REF_COUNT  plRefCnt fMyRef;\
-	virtual void	UnRef()	{	/*hsDebugCode(hsThrowIfFalse(fRefCnt >= 1);)*/if (fMyRef.TimeToDelete()) delete this; else fMyRef.Decr(); }\
-	virtual void	Ref() { fMyRef.Incr(); }
+    virtual void    UnRef() {   /*hsDebugCode(hsThrowIfFalse(fRefCnt >= 1);)*/if (fMyRef.TimeToDelete()) delete this; else fMyRef.Decr(); }\
+    virtual void    Ref() { fMyRef.Incr(); }
 /*
 class hsRefCnt {
 private:
-	Int32		fRefCnt;
+    Int32       fRefCnt;
 public:
-				hsRefCnt() : fRefCnt(1) {}
-	virtual		~hsRefCnt();
+                hsRefCnt() : fRefCnt(1) {}
+    virtual     ~hsRefCnt();
 
-	Int32		RefCnt() const { return fRefCnt; }
-	virtual void	UnRef();
-	virtual void	Ref();
+    Int32       RefCnt() const { return fRefCnt; }
+    virtual void    UnRef();
+    virtual void    Ref();
 };
 
-#define hsRefCnt_SafeRef(obj)		do { if (obj) (obj)->Ref(); } while (0)
-#define hsRefCnt_SafeUnRef(obj)	do { if (obj) (obj)->UnRef(); } while (0)
+#define hsRefCnt_SafeRef(obj)       do { if (obj) (obj)->Ref(); } while (0)
+#define hsRefCnt_SafeUnRef(obj) do { if (obj) (obj)->UnRef(); } while (0)
 
-#define hsRefCnt_SafeAssign(dst, src)		\
-		do {							\
-			hsRefCnt_SafeRef(src);		\
-			hsRefCnt_SafeUnRef(dst);		\
-			dst = src;					\
-		} while (0)
+#define hsRefCnt_SafeAssign(dst, src)       \
+        do {                            \
+            hsRefCnt_SafeRef(src);      \
+            hsRefCnt_SafeUnRef(dst);        \
+            dst = src;                  \
+        } while (0)
 
 */
 

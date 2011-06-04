@@ -23,17 +23,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../plMessage/plSimStateMsg.h"
+#include "plMessage/plSimStateMsg.h"
 #include "hsResMgr.h"
 
 void plSubWorldMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSimulationMsg::Read(stream, mgr);
-	fWorldKey = mgr->ReadKey(stream);
+    plSimulationMsg::Read(stream, mgr);
+    fWorldKey = mgr->ReadKey(stream);
 }
 
 void plSubWorldMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plSimulationMsg::Write(stream, mgr);
-	mgr->WriteKey(stream, fWorldKey);
+    plSimulationMsg::Write(stream, mgr);
+    mgr->WriteKey(stream, fWorldKey);
 }

@@ -33,36 +33,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCorrectionMsg : public plMessage
 {
 public:
-	plCorrectionMsg() : plMessage(nil, nil, nil) { }
-	plCorrectionMsg(plKey &r, const hsMatrix44& l2w, const hsMatrix44& w2l, hsBool dirtySynch = false)
-		: plMessage(nil, r, nil),
-		  fLocalToWorld(l2w),
-		  fWorldToLocal(w2l),
-		  fDirtySynch(dirtySynch)
-	{ }
+    plCorrectionMsg() : plMessage(nil, nil, nil) { }
+    plCorrectionMsg(plKey &r, const hsMatrix44& l2w, const hsMatrix44& w2l, hsBool dirtySynch = false)
+        : plMessage(nil, r, nil),
+          fLocalToWorld(l2w),
+          fWorldToLocal(w2l),
+          fDirtySynch(dirtySynch)
+    { }
 
-	CLASSNAME_REGISTER( plCorrectionMsg );
-	GETINTERFACE_ANY( plCorrectionMsg, plMessage );
+    CLASSNAME_REGISTER( plCorrectionMsg );
+    GETINTERFACE_ANY( plCorrectionMsg, plMessage );
 
-	hsMatrix44		fLocalToWorld;
-	hsMatrix44		fWorldToLocal;
-	
-	hsBool			fDirtySynch;
+    hsMatrix44      fLocalToWorld;
+    hsMatrix44      fWorldToLocal;
+    
+    hsBool          fDirtySynch;
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fLocalToWorld.Read(stream);
-		fWorldToLocal.Read(stream);
-	}
-	
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		fLocalToWorld.Write(stream);
-		fWorldToLocal.Write(stream);
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fLocalToWorld.Read(stream);
+        fWorldToLocal.Read(stream);
+    }
+    
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        fLocalToWorld.Write(stream);
+        fWorldToLocal.Write(stream);
+    }
 
 
 };

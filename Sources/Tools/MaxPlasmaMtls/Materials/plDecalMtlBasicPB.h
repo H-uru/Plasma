@@ -29,23 +29,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Param ID's
 enum
 {
-	kDecalBasColorLock,
-	kDecalBasColorAmb,
-	kDecalBasColor,
+    kDecalBasColorLock,
+    kDecalBasColorAmb,
+    kDecalBasColor,
 
-	kDecalBasOpacity,
+    kDecalBasOpacity,
 
-	kDecalBasEmissive,
+    kDecalBasEmissive,
 
-	// Specular
-	kDecalBasUseSpec,
-	kDecalBasShine,
-	kDecalBasShineStr,
-	
-	// New color stuff
-	kDecalBasDiffuseLock,
-	kDecalBasRunColor,
-	kDecalBasSpecColor
+    // Specular
+    kDecalBasUseSpec,
+    kDecalBasShine,
+    kDecalBasShineStr,
+    
+    // New color stuff
+    kDecalBasDiffuseLock,
+    kDecalBasRunColor,
+    kDecalBasSpecColor
 
 };
 

@@ -28,8 +28,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsTemplates.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnTimer/plTimedValue.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnTimer/plTimedValue.h"
 
 class plAGAnim;
 class plAGAnimInstance;
@@ -41,31 +41,31 @@ class plDebugText;
 class plArmatureBehavior
 {
 public:
-	plArmatureBehavior();
-	virtual ~plArmatureBehavior();
+    plArmatureBehavior();
+    virtual ~plArmatureBehavior();
 
-	void Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature,  UInt8 index);
-	virtual void Process(double time, float elapsed);
-	virtual void SetStrength(hsScalar val, hsScalar rate = 0.f); // default instant change
-	virtual hsScalar GetStrength();
-	virtual void Rewind();
-	void DumpDebug(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature,  UInt8 index);
+    virtual void Process(double time, float elapsed);
+    virtual void SetStrength(hsScalar val, hsScalar rate = 0.f); // default instant change
+    virtual hsScalar GetStrength();
+    virtual void Rewind();
+    void DumpDebug(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
 
-	enum
-	{
-		kBehaviorFlagNotifyOnStop = 0x01,
-	};
-	UInt32 fFlags;
-	
+    enum
+    {
+        kBehaviorFlagNotifyOnStop = 0x01,
+    };
+    UInt32 fFlags;
+    
 protected:
-	plAGAnimInstance *fAnim;
-	plArmatureModBase *fArmature;
-	plArmatureBrain *fBrain;
-	plTimedValue<hsScalar> fStrength;
-	UInt8 fIndex;
+    plAGAnimInstance *fAnim;
+    plArmatureModBase *fArmature;
+    plArmatureBrain *fBrain;
+    plTimedValue<hsScalar> fStrength;
+    UInt8 fIndex;
 
-	virtual void IStart();
-	virtual void IStop();
+    virtual void IStart();
+    virtual void IStop();
 };
 
 #endif

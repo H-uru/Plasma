@@ -24,31 +24,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plMaintainersMarkerModifier.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plAvatar/plAvatarMgr.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plAvatar/plAvatarMgr.h"
 
 void plMaintainersMarkerModifier::AddTarget(plSceneObject* so)
 {
-	plMultiModifier::AddTarget(so);
-	plAvatarMgr::GetInstance()->AddMaintainersMarker(this);
+    plMultiModifier::AddTarget(so);
+    plAvatarMgr::GetInstance()->AddMaintainersMarker(this);
 }
 
 void plMaintainersMarkerModifier::RemoveTarget(plSceneObject* so)
 {
-	plMultiModifier::RemoveTarget(so);
-	hsAssert(fTargets.GetCount() == 0, "Spawn modifier has multiple targets. Matt.");
+    plMultiModifier::RemoveTarget(so);
+    hsAssert(fTargets.GetCount() == 0, "Spawn modifier has multiple targets. Matt.");
 
-	plAvatarMgr::GetInstance()->RemoveMaintainersMarker(this);
+    plAvatarMgr::GetInstance()->RemoveMaintainersMarker(this);
 }
 
 void plMaintainersMarkerModifier::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plMultiModifier::Read(stream, mgr);
-	stream->ReadSwap(&fCalibrated);
+    plMultiModifier::Read(stream, mgr);
+    stream->ReadSwap(&fCalibrated);
 }
 
 void plMaintainersMarkerModifier::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plMultiModifier::Write(stream, mgr);
-	stream->WriteSwap(fCalibrated);
+    plMultiModifier::Write(stream, mgr);
+    stream->WriteSwap(fCalibrated);
 }

@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plTcpSocket.h"
 #include "plFdSet.h"
-#include "../pnNetCommon/plNetAddress.h"
+#include "pnNetCommon/plNetAddress.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <sys/types.h>
@@ -39,102 +39,102 @@ plTcpSocket::plTcpSocket()
 }
 
 plTcpSocket::plTcpSocket(SOCKET sck)
-:	plSocket(sck)
+:   plSocket(sck)
 {
 
 }
 
 bool plTcpSocket::operator==(const plTcpSocket & rhs)
 {
-	return fSocket==rhs.fSocket;
+    return fSocket==rhs.fSocket;
 }
 
 // Disable Nagle algorithm.
 int plTcpSocket::SetNoDelay(void)
 {
-	int  nodel = 1;
-	int ret1;    
-	ret1 = setsockopt(fSocket, IPPROTO_TCP, TCP_NODELAY,(char *)&nodel, sizeof(nodel));
-	
-	if(ret1 != 0)
-		return -1;
-	
-	return 0;
+    int  nodel = 1;
+    int ret1;    
+    ret1 = setsockopt(fSocket, IPPROTO_TCP, TCP_NODELAY,(char *)&nodel, sizeof(nodel));
+    
+    if(ret1 != 0)
+        return -1;
+    
+    return 0;
 }
 
 
 // Control the behavior of SO_LINGER
 int plTcpSocket::SetLinger(int intervalSecs)
 {
-	linger  ll;        
-	ll.l_linger = intervalSecs;
-	ll.l_onoff = intervalSecs?1:0;
-	int ret1 = setsockopt(fSocket, SOL_SOCKET, SO_LINGER, (const char *)&ll,sizeof(linger));     
-	if(ret1 != 0)
-		return -1;        
-	return 0;
+    linger  ll;        
+    ll.l_linger = intervalSecs;
+    ll.l_onoff = intervalSecs?1:0;
+    int ret1 = setsockopt(fSocket, SOL_SOCKET, SO_LINGER, (const char *)&ll,sizeof(linger));     
+    if(ret1 != 0)
+        return -1;        
+    return 0;
 }
 
 
 int plTcpSocket::SetSendBufferSize(int insize)
 {
-	if (setsockopt(fSocket, (int) SOL_SOCKET, (int) SO_SNDBUF, (char *) &insize, sizeof(int)))
-		return -1;    
-	return 0;
+    if (setsockopt(fSocket, (int) SOL_SOCKET, (int) SO_SNDBUF, (char *) &insize, sizeof(int)))
+        return -1;    
+    return 0;
 }
 
 bool plTcpSocket::ActiveOpen(plNetAddress & addr)
 {
-	SetSocket(plNet::NewTCP());
-	if(fSocket == kBadSocket)
-		return false;
-	
-	if(plNet::Connect(fSocket, &addr.GetAddressInfo()) != 0)
-		return ErrorClose();
-	
-	return true;
+    SetSocket(plNet::NewTCP());
+    if(fSocket == kBadSocket)
+        return false;
+    
+    if(plNet::Connect(fSocket, &addr.GetAddressInfo()) != 0)
+        return ErrorClose();
+    
+    return true;
 }
 
 
 bool plTcpSocket::ActiveOpenNonBlocking(plNetAddress & addr)
 {
-	SetSocket(plNet::NewTCP());
-	if(fSocket == kBadSocket)
-		return false;
+    SetSocket(plNet::NewTCP());
+    if(fSocket == kBadSocket)
+        return false;
 
-	SetBlocking(false);
+    SetBlocking(false);
 
-	if(plNet::Connect(fSocket, &addr.GetAddressInfo()) != 0)
-		return ErrorClose();
-	
-	return true;
+    if(plNet::Connect(fSocket, &addr.GetAddressInfo()) != 0)
+        return ErrorClose();
+    
+    return true;
 }
 
 
 // Returns:
-//	- if error
-//	0 if socket closed or size=0
-//	+ bytes written
+//  - if error
+//  0 if socket closed or size=0
+//  + bytes written
 int plTcpSocket::SendData(const char * data, int size)
 {
-	return plNet::Write(fSocket,data,size);
+    return plNet::Write(fSocket,data,size);
 }
 
 
 // Returns:
-//	- if error
-//	0 if socket closed or size=0
-//	+ bytes read
+//  - if error
+//  0 if socket closed or size=0
+//  + bytes read
 int plTcpSocket::RecvData(char * data, int len)
 {
-	plFdSet fdset;
-	fdset.SetForSocket(*this);
-	fdset.WaitForRead(false,fRecvTimeOut);
-	if (fdset.IsErrFor(*this))
-		return -1;
-	if (fdset.IsSetFor(*this))
-		return plNet::Read(fSocket,data,len);	// returns -1 on error
-	else
-		return -2;
+    plFdSet fdset;
+    fdset.SetForSocket(*this);
+    fdset.WaitForRead(false,fRecvTimeOut);
+    if (fdset.IsErrFor(*this))
+        return -1;
+    if (fdset.IsSetFor(*this))
+        return plNet::Read(fSocket,data,len);   // returns -1 on error
+    else
+        return -2;
 };
 

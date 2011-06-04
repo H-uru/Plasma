@@ -37,21 +37,21 @@ class plVaultImageNode;
 class plNetClientVault : public plVaultClient
 {
 protected:
-	void IInitNode( plVaultNode * node );
-	void IFiniNode( plVaultNode * node );
-	int ISendNetMsg( plNetMsgVault * msg, UInt32 sendFlags=0 );
-	void IOnTaskTimedOut( plVaultTask * task );
-	bool IAmOnline( void ) const;
+    void IInitNode( plVaultNode * node );
+    void IFiniNode( plVaultNode * node );
+    int ISendNetMsg( plNetMsgVault * msg, UInt32 sendFlags=0 );
+    void IOnTaskTimedOut( plVaultTask * task );
+    bool IAmOnline( void ) const;
 
 public:
-	plNetClientVault();
+    plNetClientVault();
 
-	plNetApp * GetNetApp( void ) const;
-	plAgeInfoSource * GetAgeInfo( void ) const;
+    plNetApp * GetNetApp( void ) const;
+    plAgeInfoSource * GetAgeInfo( void ) const;
 
-	// static helpers to convert between plMipmap and plVaultImageNode
-	static hsBool StuffImageIntoNode( plMipmap * src, plVaultImageNode * dst );
-	static hsBool ExtractImageFromNode( plVaultImageNode * src );
+    // static helpers to convert between plMipmap and plVaultImageNode
+    static hsBool StuffImageIntoNode( plMipmap * src, plVaultImageNode * dst );
+    static hsBool ExtractImageFromNode( plVaultImageNode * src );
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -59,13 +59,13 @@ public:
 class plNetPlayerVault : public plNetClientVault
 {
 protected:
-	bool IIsThisMe( plVaultPlayerInfoNode * node ) const;
-	void IFillOutConnectFields( plNetMsgVault * msg ) const;
-	bool IIsThisMsgMine( plNetMsgVault * msg ) const;
+    bool IIsThisMe( plVaultPlayerInfoNode * node ) const;
+    void IFillOutConnectFields( plNetMsgVault * msg ) const;
+    bool IIsThisMsgMine( plNetMsgVault * msg ) const;
 
 public:
-	plNetPlayerVault();
-	plVaultPlayerNode * GetPlayer( void ) const;
+    plNetPlayerVault();
+    plVaultPlayerNode * GetPlayer( void ) const;
 };
 
 #endif // plNetClientVault_h_inc

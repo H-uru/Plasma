@@ -32,22 +32,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMorphArray
 {
 protected:
-	hsTArray<plMorphDelta>		fDeltas;
+    hsTArray<plMorphDelta>      fDeltas;
 public:
-	plMorphArray();
-	virtual ~plMorphArray();
+    plMorphArray();
+    virtual ~plMorphArray();
 
-	void Apply(hsTArray<plAccessSpan>& dst, hsTArray<hsScalar>* weights = nil) const;
+    void Apply(hsTArray<plAccessSpan>& dst, hsTArray<hsScalar>* weights = nil) const;
 
-	void Read(hsStream* s, hsResMgr* mgr);
-	void Write(hsStream* s, hsResMgr* mgr);	
+    void Read(hsStream* s, hsResMgr* mgr);
+    void Write(hsStream* s, hsResMgr* mgr); 
 
-	void Reset();
-	void AddDelta(const plMorphDelta& delta);
+    void Reset();
+    void AddDelta(const plMorphDelta& delta);
 
-	int GetNumDeltas() const { return fDeltas.GetCount(); }
-	hsScalar GetWeight(int iDel) { return fDeltas[iDel].GetWeight(); }
-	void SetWeight(int iDel, hsScalar w) { if( iDel < fDeltas.GetCount() )fDeltas[iDel].SetWeight(w); }
+    int GetNumDeltas() const { return fDeltas.GetCount(); }
+    hsScalar GetWeight(int iDel) { return fDeltas[iDel].GetWeight(); }
+    void SetWeight(int iDel, hsScalar w) { if( iDel < fDeltas.GetCount() )fDeltas[iDel].SetWeight(w); }
 };
 
 #endif // plMorphArray_inc

@@ -28,18 +28,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plMultistageModMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 
-	fCmds.Read(stream);
-	fStageNum = stream->ReadByte();
-	fNumLoops = stream->ReadByte();
+    fCmds.Read(stream);
+    fStageNum = stream->ReadByte();
+    fNumLoops = stream->ReadByte();
 }
-	
+    
 void plMultistageModMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	fCmds.Write(stream);
-	stream->WriteByte(fStageNum);
-	stream->WriteByte(fNumLoops);
+    fCmds.Write(stream);
+    stream->WriteByte(fStageNum);
+    stream->WriteByte(fNumLoops);
 }

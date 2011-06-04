@@ -41,30 +41,30 @@ extern ClassDesc2* GetStealthClassDesc();
 extern ClassDesc2* GetBinkClassDesc();
 extern ClassDesc2* GetMAXCameraLayerDesc();
 
-int			plPlasmaMtlImport::GetNumMtlDescs( void )
+int         plPlasmaMtlImport::GetNumMtlDescs( void )
 {
-	return 15;
+    return 15;
 }
 
-ClassDesc2	*plPlasmaMtlImport::GetMtlDesc( int i )
+ClassDesc2  *plPlasmaMtlImport::GetMtlDesc( int i )
 {
-	switch (i)
-	{
-		case 0: return GetPassMtlDesc();
-		case 1: return GetLayerTexDesc();
-		case 2: return GetMultiMtlDesc();
-		case 3: return GetDecalMtlDesc();
-		case 4: return GetCompMtlDesc();
-		case 5: return GetStaticEnvLayerDesc();
-		case 6: return GetParticleMtlDesc();
-		case 7: return GetDynamicEnvLayerDesc();
-		case 8: return GetBumpMtlDesc();
-		case 9: return GetDynamicTextLayerDesc();
-		case 10: return GetClothingMtlDesc();
-		case 11: return GetAngleAttenLayerDesc();
-		case 12: return GetStealthClassDesc();
-		case 13: return GetBinkClassDesc();
-		case 14: return GetMAXCameraLayerDesc();
-		default: return 0;
-	}
+    switch (i)
+    {
+        case 0: return GetPassMtlDesc();
+        case 1: return GetLayerTexDesc();
+        case 2: return GetMultiMtlDesc();
+        case 3: return GetDecalMtlDesc();
+        case 4: return GetCompMtlDesc();
+        case 5: return GetStaticEnvLayerDesc();
+        case 6: return GetParticleMtlDesc();
+        case 7: return GetDynamicEnvLayerDesc();
+        case 8: return GetBumpMtlDesc();
+        case 9: return GetDynamicTextLayerDesc();
+        case 10: return GetClothingMtlDesc();
+        case 11: return GetAngleAttenLayerDesc();
+        case 12: return GetStealthClassDesc();
+        case 13: return GetBinkClassDesc();
+        case 14: return GetMAXCameraLayerDesc();
+        default: return 0;
+    }
 }

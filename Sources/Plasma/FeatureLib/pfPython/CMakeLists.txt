@@ -1,0 +1,353 @@
+include_directories(../../CoreLib)
+include_directories(../../FeatureLib)
+include_directories(../../NucleusLib)
+include_directories(../../NucleusLib/inc)
+include_directories(../../PubUtilLib)
+include_directories(../../)
+
+include_directories(${PYTHON_INCLUDE_DIR})
+include_directories(${OPENAL_INCLUDE_DIR})
+
+set(pfPython_SOURCES
+    cyAccountManagement.cpp
+    cyAnimation.cpp
+    cyAvatar.cpp
+    cyCamera.cpp
+    cyDraw.cpp
+    cyInputInterface.cpp
+    cyMisc.cpp
+    cyParticleSys.cpp
+    cyPhysics.cpp
+    cyPythonInterface.cpp
+    plPythonFileMod.cpp
+    plPythonPack.cpp
+    plPythonSDLModifier.cpp
+    pyAgeInfoStruct.cpp
+    pyAgeLinkStruct.cpp
+    pyAgeVault.cpp
+    pyAlarm.cpp
+    pyAudioControl.cpp
+    pyCCRMgr.cpp
+    pyCluster.cpp
+    pyColor.cpp
+    pyCritterBrain.cpp
+    pyDniCoordinates.cpp
+    pyDniInfoSource.cpp
+    pyDrawControl.cpp
+    pyDynamicText.cpp
+    pyEnum.cpp
+    pyGameScore.cpp
+    pyGeometry3.cpp
+    pyGrassShader.cpp
+    pyGUIControl.cpp
+    pyGUIControlButton.cpp
+    pyGUIControlCheckBox.cpp
+    pyGUIControlClickMap.cpp
+    pyGUIControlDragBar.cpp
+    pyGUIControlDraggable.cpp
+    pyGUIControlDynamicText.cpp
+    pyGUIControlEditBox.cpp
+    pyGUIControlListBox.cpp
+    pyGUIControlMultiLineEdit.cpp
+    pyGUIControlRadioGroup.cpp
+    pyGUIControlTextBox.cpp
+    pyGUIControlValue.cpp
+    pyGUIDialog.cpp
+    pyGUIPopUpMenu.cpp
+    pyGUISkin.cpp
+    pyImage.cpp
+    pyJournalBook.cpp
+    pyKey.cpp
+    pyKeyMap.cpp
+    pyMarkerMgr.cpp
+    pyMatrix44.cpp
+    pyMoviePlayer.cpp
+    pyNetLinkingMgr.cpp
+    pyNetServerSessionInfo.cpp
+    pyNotify.cpp
+    pyPlayer.cpp
+    pySceneObject.cpp
+    pyScoreMgr.cpp
+    pySDL.cpp
+    pySpawnPointInfo.cpp
+    pyStatusLog.cpp
+    pyStream.cpp
+    pySwimCurrentInterface.cpp
+    pyVault.cpp
+    pyVaultAgeInfoListNode.cpp
+    pyVaultAgeInfoNode.cpp
+    pyVaultAgeLinkNode.cpp
+    pyVaultChronicleNode.cpp
+    pyVaultFolderNode.cpp
+    pyVaultImageNode.cpp
+    pyVaultMarkerGameNode.cpp
+    pyVaultNode.cpp
+    pyVaultNodeRef.cpp
+    pyVaultPlayerInfoListNode.cpp
+    pyVaultPlayerInfoNode.cpp
+    pyVaultPlayerNode.cpp
+    pyVaultSDLNode.cpp
+    pyVaultSystemNode.cpp
+    pyVaultTextNoteNode.cpp
+    pyWaveSet.cpp
+)
+
+set(pfPython_HEADERS
+    cyAccountManagement.h
+    cyAnimation.h
+    cyAvatar.h
+    cyCamera.h
+    cyDraw.h
+    cyInputInterface.h
+    cyMisc.h
+    cyParticleSys.h
+    cyPhysics.h
+    cyPythonInterface.h
+    pfPythonCreatable.h
+    plPythonFileMod.h
+    plPythonHelpers.h
+    plPythonPack.h
+    plPythonParameter.h
+    plPythonSDLModifier.h
+    pyAgeInfoStruct.h
+    pyAgeLinkStruct.h
+    pyAgeVault.h
+    pyAlarm.h
+    pyAudioControl.h
+    pyCCRMgr.h
+    pyCluster.h
+    pyColor.h
+    pyCritterBrain.h
+    pyDniCoordinates.h
+    pyDniInfoSource.h
+    pyDrawControl.h
+    pyDynamicText.h
+    pyEnum.h
+    pyGameScore.h
+    pyGeometry3.h
+    pyGrassShader.h
+    pyGUIControl.h
+    pyGUIControlButton.h
+    pyGUIControlCheckBox.h
+    pyGUIControlClickMap.h
+    pyGUIControlDragBar.h
+    pyGUIControlDraggable.h
+    pyGUIControlDynamicText.h
+    pyGUIControlEditBox.h
+    pyGUIControlListBox.h
+    pyGUIControlMultiLineEdit.h
+    pyGUIControlRadioGroup.h
+    pyGUIControlTextBox.h
+    pyGUIControlValue.h
+    pyGUIDialog.h
+    pyGUIPopUpMenu.h
+    pyGUISkin.h
+    pyImage.h
+    pyJournalBook.h
+    pyKey.h
+    pyKeyMap.h
+    pyMarkerMgr.h
+    pyMatrix44.h
+    pyMoviePlayer.h
+    pyNetLinkingMgr.h
+    pyNetServerSessionInfo.h
+    pyNotify.h
+    pyPlayer.h
+    pySceneObject.h
+    pyScoreMgr.h
+    pySDL.h
+    pySpawnPointInfo.h
+    pyStatusLog.h
+    pyStream.h
+    pySwimCurrentInterface.h
+    pyVault.h
+    pyVaultAgeInfoListNode.h
+    pyVaultAgeInfoNode.h
+    pyVaultAgeLinkNode.h
+    pyVaultChronicleNode.h
+    pyVaultFolderNode.h
+    pyVaultImageNode.h
+    pyVaultMarkerGameNode.h
+    pyVaultNode.h
+    pyVaultNodeRef.h
+    pyVaultPlayerInfoListNode.h
+    pyVaultPlayerInfoNode.h
+    pyVaultPlayerNode.h
+    pyVaultSDLNode.h
+    pyVaultSystemNode.h
+    pyVaultTextNoteNode.h
+    pyWaveSet.h
+)
+
+set(pfPython_GLUE
+    cyAccountManagementGlue.cpp
+    cyAnimationGlue.cpp
+    cyAvatarGlue.cpp
+    cyCameraGlue.cpp
+    cyDrawGlue.cpp
+    cyInputInterfaceGlue.cpp
+    cyMiscGlue.cpp
+    cyMiscGlue2.cpp
+    cyMiscGlue3.cpp
+    cyMiscGlue4.cpp
+    cyParticleSysGlue.cpp
+    cyPhysicsGlue.cpp
+    plPythonSDLModifierGlue.cpp
+    pyAgeInfoStructGlue.cpp
+    pyAgeLinkStructGlue.cpp
+    pyAgeVaultGlue.cpp
+    pyAudioControlGlue.cpp
+    pyCCRMgrGlue.cpp
+    pyCCRMgrGlue2.cpp
+    pyClusterGlue.cpp
+    pyColorGlue.cpp
+    pyCritterBrainGlue.cpp
+    pyDniCoordinatesGlue.cpp
+    pyDniInfoSourceGlue.cpp
+    pyDrawControlGlue.cpp
+    pyDynamicTextGlue.cpp
+    pyGameScoreGlue.cpp
+    pyGeometry3Glue.cpp
+    pyGlueHelpers.h
+    pyGrassShaderGlue.cpp
+    pyGUIControlButtonGlue.cpp
+    pyGUIControlCheckBoxGlue.cpp
+    pyGUIControlClickMapGlue.cpp
+    pyGUIControlDragBarGlue.cpp
+    pyGUIControlDraggableGlue.cpp
+    pyGUIControlDynamicTextGlue.cpp
+    pyGUIControlEditBoxGlue.cpp
+    pyGUIControlGlue.cpp
+    pyGUIControlListBoxGlue.cpp
+    pyGUIControlMultiLineEditGlue.cpp
+    pyGUIControlRadioGroupGlue.cpp
+    pyGUIControlTextBoxGlue.cpp
+    pyGUIControlValueGlue.cpp
+    pyGUIDialogGlue.cpp
+    pyGUIPopUpMenuGlue.cpp
+    pyGUISkinGlue.cpp
+    pyImageGlue.cpp
+    pyJournalBookGlue.cpp
+    pyKeyGlue.cpp
+    pyKeyMapGlue.cpp
+    pyMarkerMgrGlue.cpp
+    pyMatrix44Glue.cpp
+    pyMoviePlayerGlue.cpp
+    pyNetLinkingMgrGlue.cpp
+    pyNetServerSessionInfoGlue.cpp
+    pyNotifyGlue.cpp
+    pyPlayerGlue.cpp
+    pySceneObjectGlue.cpp
+    pyScoreMgrGlue.cpp
+    pySDLGlue.cpp
+    pySpawnPointInfoGlue.cpp
+    pyStatusLogGlue.cpp
+    pyStreamGlue.cpp
+    pySwimCurrentInterfaceGlue.cpp
+    pyVaultAgeInfoListNodeGlue.cpp
+    pyVaultAgeInfoNodeGlue.cpp
+    pyVaultAgeLinkNodeGlue.cpp
+    pyVaultChronicleNodeGlue.cpp
+    pyVaultFolderNodeGlue.cpp
+    pyVaultGlue.cpp
+    pyVaultImageNodeGlue.cpp
+    pyVaultMarkerGameNodeGlue.cpp
+    pyVaultNodeGlue.cpp
+    pyVaultNodeRefGlue.cpp
+    pyVaultPlayerInfoListNodeGlue.cpp
+    pyVaultPlayerInfoNodeGlue.cpp
+    pyVaultPlayerNodeGlue.cpp
+    pyVaultSDLNodeGlue.cpp
+    pyVaultSystemNodeGlue.cpp
+    pyVaultTextNoteNodeGlue.cpp
+    pyWaveSetGlue.cpp
+)
+
+set(pfPython_GAME_GLUE
+    Games/pyGameCli.cpp
+    Games/pyGameCli.h
+    Games/pyGameCliGlue.cpp
+    Games/pyGameCliMsg.cpp
+    Games/pyGameCliMsg.h
+    Games/pyGameCliMsgGlue.cpp
+    Games/pyGameMgrMsg.cpp
+    Games/pyGameMgrMsg.h
+    Games/pyGameMgrMsg.cpp
+    Games/pyGameMgrMsgGlue.cpp
+)
+
+set(pfPython_TTT
+    Games/TicTacToe/pyTTTGame.cpp
+    Games/TicTacToe/pyTTTGame.h
+    Games/TicTacToe/pyTTTGameGlue.cpp
+    Games/TicTacToe/pyTTTMsg.cpp
+    Games/TicTacToe/pyTTTMsg.h
+    Games/TicTacToe/pyTTTMsgGlue.cpp
+)
+
+set(pfPython_HEEK
+    Games/Heek/pyHeekGame.cpp
+    Games/Heek/pyHeekGame.h
+    Games/Heek/pyHeekGameGlue.cpp
+    Games/Heek/pyHeekMsg.cpp
+    Games/Heek/pyHeekMsg.h
+    Games/Heek/pyHeekMsgGlue.cpp
+)
+
+set(pfPython_MARKER
+    Games/Marker/pyMarkerGame.cpp
+    Games/Marker/pyMarkerGame.h
+    Games/Marker/pyMarkerGameGlue.cpp
+    Games/Marker/pyMarkerMsg.cpp
+    Games/Marker/pyMarkerMsg.h
+    Games/Marker/pyMarkerMsgGlue.cpp
+)
+
+set(pfPython_BSPIRAL
+    Games/BlueSpiral/pyBlueSpiralGame.cpp
+    Games/BlueSpiral/pyBlueSpiralGame.h
+    Games/BlueSpiral/pyBlueSpiralGameGlue.cpp
+    Games/BlueSpiral/pyBlueSpiralMsg.cpp
+    Games/BlueSpiral/pyBlueSpiralMsg.h
+    Games/BlueSpiral/pyBlueSpiralMsgGlue.cpp
+)
+
+set(pfPython_WALL
+    Games/ClimbingWall/pyClimbingWallGame.cpp
+    Games/ClimbingWall/pyClimbingWallGame.h
+    Games/ClimbingWall/pyClimbingWallGameGlue.cpp
+    Games/ClimbingWall/pyClimbingWallMsg.cpp
+    Games/ClimbingWall/pyClimbingWallMsg.h
+    Games/ClimbingWall/pyClimbingWallMsgGlue.cpp
+)
+
+set(pfPython_VSYNC
+    Games/VarSync/pyVarSyncGame.cpp
+    Games/VarSync/pyVarSyncGame.h
+    Games/VarSync/pyVarSyncGameGlue.cpp
+    Games/VarSync/pyVarSyncMsg.cpp
+    Games/VarSync/pyVarSyncMsg.h
+    Games/VarSync/pyVarSyncMsgGlue.cpp
+)
+
+set(pfPython_GAMES
+    ${pfPython_TTT}
+    ${pfPython_HEEK}
+    ${pfPython_MARKER}
+    ${pfPython_BSPIRAL}
+    ${pfPython_WALL}
+    ${pfPython_VSYNC}
+)
+
+add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE} ${pfPython_GAME_GLUE} ${pfPython_GAMES})
+
+source_group("Source Files" FILES ${pfPython_SOURCES})
+source_group("Header Files" FILES ${pfPython_HEADERS})
+source_group("Glue Files" FILES ${pfPython_GLUE})
+source_group("Game Glue" FILES ${pfPython_GAME_GLUE})
+source_group("Game Glue\\TicTacToe" FILES ${pfPython_TTT})
+source_group("Game Glue\\Heek" FILES ${pfPython_HEEK})
+source_group("Game Glue\\Marker" FILES ${pfPython_MARKER})
+source_group("Game Glue\\BlueSpiral" FILES ${pfPython_BSPIRAL})
+source_group("Game Glue\\ClimbingWall" FILES ${pfPython_WALL})
+source_group("Game Glue\\VarSync" FILES ${pfPython_VSYNC})

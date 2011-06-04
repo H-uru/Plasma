@@ -32,28 +32,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plPlasmaServers
 {
 protected:
-	class ServerInfo
-	{
-	public:
-		std::string fServerAddress;
-		std::string fServerName;
-		std::string fURLBase;
-		std::string fOutputDir;
-		std::string fCurrentDir;
-		std::string fCodeDir;
-	};
-	std::vector<ServerInfo> fServers;
+    class ServerInfo
+    {
+    public:
+        std::string fServerAddress;
+        std::string fServerName;
+        std::string fURLBase;
+        std::string fOutputDir;
+        std::string fCurrentDir;
+        std::string fCodeDir;
+    };
+    std::vector<ServerInfo> fServers;
 
 public:
-	bool GetServerInfo();
+    bool GetServerInfo();
 
-	int GetNumServers() { return fServers.size(); }
-	std::string& GetServerAddress(int i) { return fServers[i].fServerAddress; }
-	std::string& GetServerName(int i) { return fServers[i].fServerName; }
-	std::string& GetServerURLBase(int i) { return fServers[i].fURLBase; }
-	std::string& GetServerOutputDir(int i) { return fServers[i].fOutputDir; }
-	std::string& GetServerCurrentDir(int i) { return fServers[i].fCurrentDir; }
-	std::string& GetServerCodeDir(int i) { return fServers[i].fCodeDir; }
+    int GetNumServers() { return fServers.size(); }
+    std::string& GetServerAddress(int i) { return fServers[i].fServerAddress; }
+    std::string& GetServerName(int i) { return fServers[i].fServerName; }
+    std::string& GetServerURLBase(int i) { return fServers[i].fURLBase; }
+    std::string& GetServerOutputDir(int i) { return fServers[i].fOutputDir; }
+    std::string& GetServerCurrentDir(int i) { return fServers[i].fCurrentDir; }
+    std::string& GetServerCodeDir(int i) { return fServers[i].fCodeDir; }
 };
 
 #endif // plPlasmaServers_h_inc

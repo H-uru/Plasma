@@ -29,91 +29,91 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsUtils.h"
 #include "hsBitVector.h"
 
-void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)	
-{	
-	plMessage::IMsgRead(stream, mgr);	
+void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)    
+{   
+    plMessage::IMsgRead(stream, mgr);   
 
-	delete [] fAgeFilename;
-	
-	// read agename
-	UInt8 len;
-	stream->ReadSwap(&len);
-	if (len)
-	{
-		fAgeFilename=TRACKED_NEW char[len+1];
-		stream->Read(len, fAgeFilename);
-		fAgeFilename[len]=0;
-	}
-	fUnload = stream->ReadBool();
-	stream->ReadSwap(&fPlayerID);
-	fAgeGuid.Read(stream);
+    delete [] fAgeFilename;
+    
+    // read agename
+    UInt8 len;
+    stream->ReadSwap(&len);
+    if (len)
+    {
+        fAgeFilename=TRACKED_NEW char[len+1];
+        stream->Read(len, fAgeFilename);
+        fAgeFilename[len]=0;
+    }
+    fUnload = stream->ReadBool();
+    stream->ReadSwap(&fPlayerID);
+    fAgeGuid.Read(stream);
 }
 
-void plLoadAgeMsg::Write(hsStream* stream, hsResMgr* mgr)	
-{	
-	plMessage::IMsgWrite(stream, mgr);	
+void plLoadAgeMsg::Write(hsStream* stream, hsResMgr* mgr)   
+{   
+    plMessage::IMsgWrite(stream, mgr);  
 
-	// write agename
-	UInt8 len=fAgeFilename?hsStrlen(fAgeFilename):0;
-	stream->WriteSwap(len);
-	if (len)
-	{
-		stream->Write(len, fAgeFilename);
-	}
-	stream->WriteBool(fUnload);
-	stream->WriteSwap(fPlayerID);
-	fAgeGuid.Write(stream);
+    // write agename
+    UInt8 len=fAgeFilename?hsStrlen(fAgeFilename):0;
+    stream->WriteSwap(len);
+    if (len)
+    {
+        stream->Write(len, fAgeFilename);
+    }
+    stream->WriteBool(fUnload);
+    stream->WriteSwap(fPlayerID);
+    fAgeGuid.Write(stream);
 }
 
 enum LoadAgeFlags
 {
-	kLoadAgeAgeName,
-	kLoadAgeUnload,
-	kLoadAgePlayerID,
-	kLoadAgeAgeGuid,
+    kLoadAgeAgeName,
+    kLoadAgeUnload,
+    kLoadAgePlayerID,
+    kLoadAgeAgeGuid,
 };
-	
+    
 void plLoadAgeMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgReadVersion(s, mgr);
+    plMessage::IMsgReadVersion(s, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.Read(s);
+    hsBitVector contentFlags;
+    contentFlags.Read(s);
 
-	if (contentFlags.IsBitSet(kLoadAgeAgeName))
-	{
-		// read agename
-		delete [] fAgeFilename;
-		fAgeFilename = s->ReadSafeString();
-	}
+    if (contentFlags.IsBitSet(kLoadAgeAgeName))
+    {
+        // read agename
+        delete [] fAgeFilename;
+        fAgeFilename = s->ReadSafeString();
+    }
 
-	if (contentFlags.IsBitSet(kLoadAgeUnload))
-		fUnload = s->ReadBool();
+    if (contentFlags.IsBitSet(kLoadAgeUnload))
+        fUnload = s->ReadBool();
 
-	if (contentFlags.IsBitSet(kLoadAgePlayerID))
-		s->ReadSwap(&fPlayerID);
+    if (contentFlags.IsBitSet(kLoadAgePlayerID))
+        s->ReadSwap(&fPlayerID);
 
-	if (contentFlags.IsBitSet(kLoadAgeAgeGuid))
-		fAgeGuid.Read(s);
+    if (contentFlags.IsBitSet(kLoadAgeAgeGuid))
+        fAgeGuid.Read(s);
 }
 
 void plLoadAgeMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgWriteVersion(s, mgr);
+    plMessage::IMsgWriteVersion(s, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.SetBit(kLoadAgeAgeName);
-	contentFlags.SetBit(kLoadAgeUnload);
-	contentFlags.SetBit(kLoadAgePlayerID);
-	contentFlags.SetBit(kLoadAgeAgeGuid);
-	contentFlags.Write(s);
+    hsBitVector contentFlags;
+    contentFlags.SetBit(kLoadAgeAgeName);
+    contentFlags.SetBit(kLoadAgeUnload);
+    contentFlags.SetBit(kLoadAgePlayerID);
+    contentFlags.SetBit(kLoadAgeAgeGuid);
+    contentFlags.Write(s);
 
-	// kLoadAgeAgeName
-	s->WriteSafeString(fAgeFilename);
-	// kLoadAgeUnload
-	s->WriteBool(fUnload);
-	// kLoadAgePlayerID
-	s->WriteSwap(fPlayerID);
-	// kLoadAgeAgeGuid
-	fAgeGuid.Write(s);
+    // kLoadAgeAgeName
+    s->WriteSafeString(fAgeFilename);
+    // kLoadAgeUnload
+    s->WriteBool(fUnload);
+    // kLoadAgePlayerID
+    s->WriteSwap(fPlayerID);
+    // kLoadAgeAgeGuid
+    fAgeGuid.Write(s);
 }

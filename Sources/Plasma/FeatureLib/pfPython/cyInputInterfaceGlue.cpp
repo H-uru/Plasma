@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "cyInputInterface.h"
 
-#include <python.h>
+#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptInputInterface, cyInputInterface);
@@ -36,15 +36,15 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptInputInterface)
 
 PYTHON_INIT_DEFINITION(ptInputInterface, args, keywords)
 {
-	PYTHON_RETURN_INIT_OK;
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptInputInterface, pushTelescope, PushTelescopeInterface)
 PYTHON_BASIC_METHOD_DEFINITION(ptInputInterface, popTelescope, PopTelescope)
 
 PYTHON_START_METHODS_TABLE(ptInputInterface)
-	PYTHON_BASIC_METHOD(ptInputInterface, pushTelescope, "pushes on the telescope interface"),
-	PYTHON_BASIC_METHOD(ptInputInterface, popTelescope, "pops off the telescope interface and gos back to previous interface"),
+    PYTHON_BASIC_METHOD(ptInputInterface, pushTelescope, "pushes on the telescope interface"),
+    PYTHON_BASIC_METHOD(ptInputInterface, popTelescope, "pops off the telescope interface and gos back to previous interface"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -61,7 +61,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptInputInterface, cyInputInterface)
 //
 void cyInputInterface::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptInputInterface);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptInputInterface);
+    PYTHON_CLASS_IMPORT_END(m);
 }

@@ -34,60 +34,60 @@ class hsKeyedObject;
 class plRefMsg : public plMessage
 {
 public:
-	enum Context
-	{
-		kOnCreate			= 0x1,	// fRef just created.
-		kOnDestroy			= 0x2,	// fRef about to be destroyed
-		kOnRequest			= 0x4,	// fRef wants to be added
-		kOnRemove			= 0x8,	// fRef has moved elsewhere
-		kOnReplace			= 0x10	// fRef replaces fOldRef
-	};
+    enum Context
+    {
+        kOnCreate           = 0x1,  // fRef just created.
+        kOnDestroy          = 0x2,  // fRef about to be destroyed
+        kOnRequest          = 0x4,  // fRef wants to be added
+        kOnRemove           = 0x8,  // fRef has moved elsewhere
+        kOnReplace          = 0x10  // fRef replaces fOldRef
+    };
 
 protected:
-	hsKeyedObject*			fRef;
-	hsKeyedObject*			fOldRef; // on replace
+    hsKeyedObject*          fRef;
+    hsKeyedObject*          fOldRef; // on replace
 
-	UInt8					fContext;
+    UInt8                   fContext;
 public:
-	plRefMsg();
-	plRefMsg(const plKey &r, UInt8 c);
+    plRefMsg();
+    plRefMsg(const plKey &r, UInt8 c);
 
-	virtual ~plRefMsg();
+    virtual ~plRefMsg();
 
-	CLASSNAME_REGISTER( plRefMsg );
-	GETINTERFACE_ANY( plRefMsg, plMessage );
+    CLASSNAME_REGISTER( plRefMsg );
+    GETINTERFACE_ANY( plRefMsg, plMessage );
 
-	plRefMsg&		SetRef(hsKeyedObject* ref);
-	hsKeyedObject*	GetRef() { return fRef; }
+    plRefMsg&       SetRef(hsKeyedObject* ref);
+    hsKeyedObject*  GetRef() { return fRef; }
 
-	plRefMsg&		SetOldRef(hsKeyedObject* oldRef);
-	hsKeyedObject*	GetOldRef() { return fOldRef; }
+    plRefMsg&       SetOldRef(hsKeyedObject* oldRef);
+    hsKeyedObject*  GetOldRef() { return fOldRef; }
 
-	plRefMsg&	SetContext(UInt8 c) { fContext = c; return *this; }
-	UInt8		GetContext() { return fContext; }
+    plRefMsg&   SetContext(UInt8 c) { fContext = c; return *this; }
+    UInt8       GetContext() { return fContext; }
 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 
 class plGenRefMsg : public plRefMsg
 {
 public:
-	plGenRefMsg() : fType(-1), fWhich(-1) {}
-	plGenRefMsg(const plKey &r, UInt8 c, Int32 which, Int8 type) : plRefMsg(r, c), fWhich(which), fType(type) {}
+    plGenRefMsg() : fType(-1), fWhich(-1) {}
+    plGenRefMsg(const plKey &r, UInt8 c, Int32 which, Int8 type) : plRefMsg(r, c), fWhich(which), fType(type) {}
 
-	CLASSNAME_REGISTER(plGenRefMsg);
-	GETINTERFACE_ANY(plGenRefMsg, plRefMsg);
+    CLASSNAME_REGISTER(plGenRefMsg);
+    GETINTERFACE_ANY(plGenRefMsg, plRefMsg);
 
-	// User variables.  You can put anything here, but the standard convention
-	// is an enum telling what type of ref it is in fType, and an index in
-	// fWhich, for keeping track of multiple refs of the same type.
-	Int8	fType;
-	Int32	fWhich;
+    // User variables.  You can put anything here, but the standard convention
+    // is an enum telling what type of ref it is in fType, and an index in
+    // fWhich, for keeping track of multiple refs of the same type.
+    Int8    fType;
+    Int32   fWhich;
 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plRefMsg_inc

@@ -27,24 +27,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLCOLLIDEMSG_INC
 #define PLCOLLIDEMSG_INC
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plCollideMsg : public plMessage
 {
 protected:
 public:
-	plKey fOtherKey;
-	hsBool fEntering;		// otherwise it's leaving
+    plKey fOtherKey;
+    hsBool fEntering;       // otherwise it's leaving
 
-	plCollideMsg() { SetBCastFlag(plMessage::kPropagateToModifiers); }
-	~plCollideMsg() {}
+    plCollideMsg() { SetBCastFlag(plMessage::kPropagateToModifiers); }
+    ~plCollideMsg() {}
 
-	CLASSNAME_REGISTER( plCollideMsg );
-	GETINTERFACE_ANY( plCollideMsg, plMessage );
+    CLASSNAME_REGISTER( plCollideMsg );
+    GETINTERFACE_ANY( plCollideMsg, plMessage );
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgRead(stream, mgr);	}
-	void Write(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgWrite(stream, mgr);	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)  {   plMessage::IMsgRead(stream, mgr);   }
+    void Write(hsStream* stream, hsResMgr* mgr) {   plMessage::IMsgWrite(stream, mgr);  }
 };
 
 #endif // PLCOLLIDEMSG_INC

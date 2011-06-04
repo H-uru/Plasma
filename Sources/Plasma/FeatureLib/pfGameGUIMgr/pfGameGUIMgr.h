@@ -24,15 +24,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGameGUIMgr Header 													//
-//	A.K.A. "Ooh, we get a GUI!"												//
-//																			//
+//                                                                          //
+//  pfGameGUIMgr Header                                                     //
+//  A.K.A. "Ooh, we get a GUI!"                                             //
+//                                                                          //
 //// Description /////////////////////////////////////////////////////////////
-//																			//
-//	The in-game GUI manager. Handles reading, creation, and input for		//
-//	dialog boxes at runtime.												//
-//																			//
+//                                                                          //
+//  The in-game GUI manager. Handles reading, creation, and input for       //
+//  dialog boxes at runtime.                                                //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGameGUIMgr_h
@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsTemplates.h"
-#include "../pnInputCore/plKeyDef.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnInputCore/plKeyDef.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include <vector>
 
 class plPipeline;
@@ -52,19 +52,19 @@ class pfGameUIInputInterface;
 class plPostEffectMod;
 
 //// Tag Definitions /////////////////////////////////////////////////////////
-//	Each dialog/control gets an optional tag ID number. This is the link
-//	between MAX and C++. You attach a Tag component to a control or dialog
-//	in MAX and assign it an ID (supplied by a list of konstants that are
-//	hard-coded). Then, in code, you ask the gameGUIMgr for the dialog (or
-//	control) with that ID, and pop, you get it back. Then you run with it.
+//  Each dialog/control gets an optional tag ID number. This is the link
+//  between MAX and C++. You attach a Tag component to a control or dialog
+//  in MAX and assign it an ID (supplied by a list of konstants that are
+//  hard-coded). Then, in code, you ask the gameGUIMgr for the dialog (or
+//  control) with that ID, and pop, you get it back. Then you run with it.
 //
-//	Easy, huh?
+//  Easy, huh?
 
 class pfGUITag
 {
-	public:
-		UInt32	fID;
-		char	fName[ 128 ];
+    public:
+        UInt32  fID;
+        char    fName[ 128 ];
 };
 
 
@@ -74,13 +74,13 @@ class pfGUITag
 class pfDialogNameSetKey
 {
 private:
-	char	*fName;
-	plKey	fKey;
+    char    *fName;
+    plKey   fKey;
 public:
-	pfDialogNameSetKey(const char *name, plKey key) { fName = hsStrcpy(name); fKey=key; }
-	~pfDialogNameSetKey() { delete [] fName; }
-	const char *GetName() { return fName; }
-	plKey GetKey() { return fKey; }
+    pfDialogNameSetKey(const char *name, plKey key) { fName = hsStrcpy(name); fKey=key; }
+    ~pfDialogNameSetKey() { delete [] fName; }
+    const char *GetName() { return fName; }
+    plKey GetKey() { return fKey; }
 };
 
 //// Manager Class Definition ////////////////////////////////////////////////
@@ -88,133 +88,133 @@ public:
 class pfGUIPopUpMenu;
 class pfGameGUIMgr : public hsKeyedObject
 {
-	friend class pfGameUIInputInterface;
+    friend class pfGameUIInputInterface;
 
-	public:
+    public:
 
-		enum EventType
-		{
-			kMouseDown,
-			kMouseUp,
-			kMouseMove,
-			kMouseDrag,
-			kKeyDown,
-			kKeyUp,
-			kKeyRepeat,
-			kMouseDblClick
-		};
+        enum EventType
+        {
+            kMouseDown,
+            kMouseUp,
+            kMouseMove,
+            kMouseDrag,
+            kKeyDown,
+            kKeyUp,
+            kKeyRepeat,
+            kMouseDblClick
+        };
 
-		enum
-		{
-			kNoModifiers = 0,
-			kShiftDown	= 0x01,
-			kCtrlDown	= 0x02,
-			kCapsDown	= 0x04
-		};
+        enum
+        {
+            kNoModifiers = 0,
+            kShiftDown  = 0x01,
+            kCtrlDown   = 0x02,
+            kCapsDown   = 0x04
+        };
 
-	private:
+    private:
 
-		static pfGameGUIMgr	*fInstance;
+        static pfGameGUIMgr *fInstance;
 
-	protected:
+    protected:
 
-		hsTArray<pfGUIDialogMod *>	fDialogs;
-		pfGUIDialogMod				*fActiveDialogs;
+        hsTArray<pfGUIDialogMod *>  fDialogs;
+        pfGUIDialogMod              *fActiveDialogs;
 
-		// These two lists help us manage when dialogs get told to load or unload versus when they actually *do*
-		hsTArray<pfDialogNameSetKey *>	fDlgsPendingLoad;
-		hsTArray<pfDialogNameSetKey *>	fDlgsPendingUnload;
+        // These two lists help us manage when dialogs get told to load or unload versus when they actually *do*
+        hsTArray<pfDialogNameSetKey *>  fDlgsPendingLoad;
+        hsTArray<pfDialogNameSetKey *>  fDlgsPendingUnload;
 
-		hsBool	fActivated;
-		UInt32	fActiveDlgCount;
+        hsBool  fActivated;
+        UInt32  fActiveDlgCount;
 
-		pfGameUIInputInterface		*fInputConfig;
-		UInt32						fInputCtlIndex;
+        pfGameUIInputInterface      *fInputConfig;
+        UInt32                      fInputCtlIndex;
 
-		UInt32						fDefaultCursor;
-		hsScalar					fCursorOpacity;
-		hsScalar				fAspectRatio;
+        UInt32                      fDefaultCursor;
+        hsScalar                    fCursorOpacity;
+        hsScalar                fAspectRatio;
 
-		// This is an array of the dialogs (by name) that need their
-		// receiver key set once they are loaded.
-		// This array shouldn't get more than one entry... but
-		// it could be more....
-		// LoadDialog adds an entry and MsgReceive removes it
-		hsTArray<pfDialogNameSetKey *>	fDialogToSetKeyOf;
+        // This is an array of the dialogs (by name) that need their
+        // receiver key set once they are loaded.
+        // This array shouldn't get more than one entry... but
+        // it could be more....
+        // LoadDialog adds an entry and MsgReceive removes it
+        hsTArray<pfDialogNameSetKey *>  fDialogToSetKeyOf;
 
-		void	ILoadDialog( const char *name );
-		void	IShowDialog( const char *name );
-		void	IHideDialog( const char *name );
+        void    ILoadDialog( const char *name );
+        void    IShowDialog( const char *name );
+        void    IHideDialog( const char *name );
 
-		void	IAddDlgToList( hsKeyedObject *obj );
-		void	IRemoveDlgFromList( hsKeyedObject *obj );
+        void    IAddDlgToList( hsKeyedObject *obj );
+        void    IRemoveDlgFromList( hsKeyedObject *obj );
 
-		void	IActivateGUI( hsBool activate );
+        void    IActivateGUI( hsBool activate );
 
-		hsBool	IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers, UInt32 *desiredCursor );
-		hsBool	IHandleKeyEvt( EventType event, plKeyDef key, UInt8 modifiers );
-		hsBool	IHandleKeyPress( char key, UInt8 modifiers );
+        hsBool  IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers, UInt32 *desiredCursor );
+        hsBool  IHandleKeyEvt( EventType event, plKeyDef key, UInt8 modifiers );
+        hsBool  IHandleKeyPress( char key, UInt8 modifiers );
 
-		hsBool	IModalBlocking( void );
+        hsBool  IModalBlocking( void );
 
-		pfGUIDialogMod	*IGetTopModal( void ) const;
+        pfGUIDialogMod  *IGetTopModal( void ) const;
 
-	public:
+    public:
 
-		enum
-		{
-			kDlgModRef = 0
-		};
+        enum
+        {
+            kDlgModRef = 0
+        };
 
 
-		pfGameGUIMgr();
-		~pfGameGUIMgr();
+        pfGameGUIMgr();
+        ~pfGameGUIMgr();
 
-		CLASSNAME_REGISTER( pfGameGUIMgr );
-		GETINTERFACE_ANY( pfGameGUIMgr, hsKeyedObject );
+        CLASSNAME_REGISTER( pfGameGUIMgr );
+        GETINTERFACE_ANY( pfGameGUIMgr, hsKeyedObject );
 
-		void		Draw( plPipeline *p );
+        void        Draw( plPipeline *p );
 
-		hsBool		Init( void );
+        hsBool      Init( void );
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
 
-		void	LoadDialog( const char *name, plKey recvrKey=nil, const char *ageName = nil );	// AgeName = nil defaults to "GUI"
-		void	ShowDialog( const char *name ) { IShowDialog(name); }
-		void	HideDialog( const char *name ) { IHideDialog(name); }
-		void	UnloadDialog( const char *name );
-		void	UnloadDialog( pfGUIDialogMod *dlg );
+        void    LoadDialog( const char *name, plKey recvrKey=nil, const char *ageName = nil );  // AgeName = nil defaults to "GUI"
+        void    ShowDialog( const char *name ) { IShowDialog(name); }
+        void    HideDialog( const char *name ) { IHideDialog(name); }
+        void    UnloadDialog( const char *name );
+        void    UnloadDialog( pfGUIDialogMod *dlg );
 
-		void	ShowDialog( pfGUIDialogMod *dlg, bool resetClickables=true );
-		void	HideDialog( pfGUIDialogMod *dlg );
+        void    ShowDialog( pfGUIDialogMod *dlg, bool resetClickables=true );
+        void    HideDialog( pfGUIDialogMod *dlg );
 
-		hsBool	IsDialogLoaded( const char *name );
-		pfGUIDialogMod *GetDialogFromString( const char *name );
+        hsBool  IsDialogLoaded( const char *name );
+        pfGUIDialogMod *GetDialogFromString( const char *name );
 
-		void	SetDialogToNotify(const char *name, plKey recvrKey);
-		void	SetDialogToNotify(pfGUIDialogMod *dlg, plKey recvrKey);
+        void    SetDialogToNotify(const char *name, plKey recvrKey);
+        void    SetDialogToNotify(pfGUIDialogMod *dlg, plKey recvrKey);
 
-		void	SetDefaultCursor(UInt32 defaultCursor) { fDefaultCursor = defaultCursor; }
-		UInt32	GetDefaultCursor() { return fDefaultCursor; }
-		void	SetCursorOpacity(hsScalar opacity) { fCursorOpacity = opacity; }
-		hsScalar	GetCursorOpacity() { return fCursorOpacity; }
+        void    SetDefaultCursor(UInt32 defaultCursor) { fDefaultCursor = defaultCursor; }
+        UInt32  GetDefaultCursor() { return fDefaultCursor; }
+        void    SetCursorOpacity(hsScalar opacity) { fCursorOpacity = opacity; }
+        hsScalar    GetCursorOpacity() { return fCursorOpacity; }
 
-		pfGUIPopUpMenu	*FindPopUpMenu( const char *name );
+        pfGUIPopUpMenu  *FindPopUpMenu( const char *name );
 
-		std::vector<plPostEffectMod*> GetDlgRenderMods( void ) const;
-		hsBool	IsModalBlocking( void ) {return IModalBlocking();}
+        std::vector<plPostEffectMod*> GetDlgRenderMods( void ) const;
+        hsBool  IsModalBlocking( void ) {return IModalBlocking();}
 
-		// Tag ID stuff
-		pfGUIDialogMod	*GetDialogFromTag( UInt32 tagID );
-		pfGUIControlMod	*GetControlFromTag( pfGUIDialogMod *dlg, UInt32 tagID );
+        // Tag ID stuff
+        pfGUIDialogMod  *GetDialogFromTag( UInt32 tagID );
+        pfGUIControlMod *GetControlFromTag( pfGUIDialogMod *dlg, UInt32 tagID );
 
-		static UInt32		GetNumTags( void );
-		static pfGUITag		*GetTag( UInt32 tagIndex );
-		static UInt32		GetHighestTag( void );
-		void SetAspectRatio(hsScalar aspectratio);
-		hsScalar GetAspectRatio() { return fAspectRatio; }
+        static UInt32       GetNumTags( void );
+        static pfGUITag     *GetTag( UInt32 tagIndex );
+        static UInt32       GetHighestTag( void );
+        void SetAspectRatio(hsScalar aspectratio);
+        hsScalar GetAspectRatio() { return fAspectRatio; }
  
-		static pfGameGUIMgr	*GetInstance( void ) { return fInstance; }
+        static pfGameGUIMgr *GetInstance( void ) { return fInstance; }
 };
 
 #endif //_pfGameGUIMgr_h

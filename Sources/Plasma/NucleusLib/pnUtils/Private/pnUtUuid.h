@@ -70,7 +70,7 @@ bool            GuidIsNil (const Uuid & uuid);
 unsigned        GuidHash (const Uuid & uuid);
 const wchar *   GuidToString (const Uuid & uuid, wchar * dst, unsigned chars);  // returns dst
 const char *    GuidToString (const Uuid & uuid, char * dst, unsigned chars);   // returns dst
-const wchar *	GuidToHex (const Uuid & uuid, wchar * dst, unsigned chars);		// returns dst
+const wchar *   GuidToHex (const Uuid & uuid, wchar * dst, unsigned chars);     // returns dst
 bool            GuidFromHex (const byte buf[], unsigned length, Uuid * uuid);
 
 
@@ -80,12 +80,12 @@ bool            GuidFromHex (const byte buf[], unsigned length, Uuid * uuid);
 *
 ***/
 
-#include <PshPack1.h>
+#include <pshpack1.h>
 struct Uuid {
-	union {
-		dword	dwords[4];
-		byte	data[16];
-	};
+    union {
+        dword   dwords[4];
+        byte    data[16];
+    };
 
     Uuid () {}
     Uuid (const wchar str[]);
@@ -94,10 +94,10 @@ struct Uuid {
     inline bool operator ! ()                  const { return GuidIsNil(*this); }
     inline bool operator <  (const Uuid & rhs) const { return GuidCompare(*this, rhs) < 0; }
     inline bool operator == (const Uuid & rhs) const { return GuidsAreEqual(*this, rhs); }
-    inline bool operator == (int rhs)          const { ref(rhs); ASSERT(!rhs); return GuidsAreEqual(*this, kNilGuid); }
+    inline bool operator == (int rhs)          const { ASSERT(!rhs); return GuidsAreEqual(*this, kNilGuid); }
     inline bool operator != (const Uuid & rhs) const { return !GuidsAreEqual(*this, rhs); }
-    inline bool operator != (int rhs)          const { ref(rhs); ASSERT(!rhs); return !GuidsAreEqual(*this, kNilGuid); }
+    inline bool operator != (int rhs)          const { ASSERT(!rhs); return !GuidsAreEqual(*this, kNilGuid); }
 };
-#include <PopPack.h>
+#include <poppack.h>
 
 

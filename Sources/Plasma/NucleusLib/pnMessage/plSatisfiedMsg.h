@@ -27,19 +27,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSatisfiedMsg_inc
 #define plSatisfiedMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plSatisfiedMsg : public plMessage
 {
 public:
-	plSatisfiedMsg() {}
-	plSatisfiedMsg(const plKey &s) : plMessage(s, s, nil) {}
+    plSatisfiedMsg() {}
+    plSatisfiedMsg(const plKey &s) : plMessage(s, s, nil) {}
 
-	CLASSNAME_REGISTER( plSatisfiedMsg );
-	GETINTERFACE_ANY( plSatisfiedMsg, plMessage );
+    CLASSNAME_REGISTER( plSatisfiedMsg );
+    GETINTERFACE_ANY( plSatisfiedMsg, plMessage );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr) { IMsgRead(stream, mgr); }
-	virtual void Write(hsStream* stream, hsResMgr* mgr) { IMsgWrite(stream, mgr); }
+    virtual void Read(hsStream* stream, hsResMgr* mgr) { IMsgRead(stream, mgr); }
+    virtual void Write(hsStream* stream, hsResMgr* mgr) { IMsgWrite(stream, mgr); }
 
 };
 

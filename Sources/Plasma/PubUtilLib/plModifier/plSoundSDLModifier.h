@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSoundSDLModifier_inc
 #define plSoundSDLModifier_inc
 
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 //
 // This modifier is responsible for sending and recving 
@@ -36,19 +36,19 @@ class plStateDataRecord;
 class plSoundSDLModifier : public plSDLModifier
 {
 protected:
-	// var labels 
-	static char kStrVolume[];	
-	static char kStrTime[];	
-	static char kStrPlaying[];	
-	static char kStrSounds[];	
+    // var labels 
+    static char kStrVolume[];   
+    static char kStrTime[]; 
+    static char kStrPlaying[];  
+    static char kStrSounds[];   
 
-	void IPutCurrentStateIn(plStateDataRecord* dstState);
-	void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
 public:
-	CLASSNAME_REGISTER( plSoundSDLModifier );
-	GETINTERFACE_ANY( plSoundSDLModifier, plSDLModifier);
-		
-	const char* GetSDLName() const { return kSDLSound; }
+    CLASSNAME_REGISTER( plSoundSDLModifier );
+    GETINTERFACE_ANY( plSoundSDLModifier, plSDLModifier);
+        
+    const char* GetSDLName() const { return kSDLSound; }
 };
 
-#endif	// plSoundSDLModifier_inc
+#endif  // plSoundSDLModifier_inc

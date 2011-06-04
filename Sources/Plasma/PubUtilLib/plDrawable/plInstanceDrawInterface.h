@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInstanceDrawInterface_inc
 #define plInstanceDrawInterface_inc
 
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
 
 class plDrawableSpans;
 class plSharedMesh;
@@ -34,34 +34,34 @@ class plSharedMesh;
 class plInstanceDrawInterface : public plDrawInterface
 {
 protected:
-	plDrawableSpans *fDrawable;
-	hsTArray<plSharedMesh*>	fMeshes;
+    plDrawableSpans *fDrawable;
+    hsTArray<plSharedMesh*> fMeshes;
 
-	virtual void ICheckDrawableIndex(UInt8 which);
+    virtual void ICheckDrawableIndex(UInt8 which);
 
 public:
-	UInt32 fTargetID;
+    UInt32 fTargetID;
 
-	plInstanceDrawInterface();
-	virtual ~plInstanceDrawInterface();
+    plInstanceDrawInterface();
+    virtual ~plInstanceDrawInterface();
 
-	CLASSNAME_REGISTER( plInstanceDrawInterface );
-	GETINTERFACE_ANY( plInstanceDrawInterface, plDrawInterface );
+    CLASSNAME_REGISTER( plInstanceDrawInterface );
+    GETINTERFACE_ANY( plInstanceDrawInterface, plDrawInterface );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	void AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat, hsBool addToFront, int LOD, hsBool partialSort);
-	void RemoveSharedMesh(plSharedMesh *mesh);
+    void AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat, hsBool addToFront, int LOD, hsBool partialSort);
+    void RemoveSharedMesh(plSharedMesh *mesh);
 
-	virtual void ReleaseData();
-	virtual void SetSharedMesh(UInt8 which, plSharedMesh *mesh);
-	virtual void IClearIndex(UInt8 which);
-	plDrawableSpans *GetInstanceDrawable() const { return fDrawable; }
+    virtual void ReleaseData();
+    virtual void SetSharedMesh(UInt8 which, plSharedMesh *mesh);
+    virtual void IClearIndex(UInt8 which);
+    plDrawableSpans *GetInstanceDrawable() const { return fDrawable; }
 
-	Int32 GetSharedMeshIndex(const plSharedMesh *mesh) const;
+    Int32 GetSharedMeshIndex(const plSharedMesh *mesh) const;
 };
 
 

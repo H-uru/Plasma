@@ -42,15 +42,15 @@ int plQuality::fCapability = 0;
 
 void plQuality::SetQuality(int q) 
 { 
-	fQuality = q; 
-	plLoadMask::SetGlobalQuality(q); 
+    fQuality = q; 
+    plLoadMask::SetGlobalQuality(q); 
 }
 
 // Set by the pipeline according to platform capabilities.
 void plQuality::SetCapability(int c) 
 { 
-	fCapability = c; 
-	plLoadMask::SetGlobalCapability(c); 
+    fCapability = c; 
+    plLoadMask::SetGlobalCapability(c); 
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -64,107 +64,107 @@ UInt8 plLoadMask::fGlobalCapability = UInt8(0);
 
 void plLoadMask::Read(hsStream* s)
 {
-	// read as packed byte
-	UInt8 qc;
-	s->LogReadSwap(&qc,"Quality|Capabilty");
+    // read as packed byte
+    UInt8 qc;
+    s->LogReadSwap(&qc,"Quality|Capabilty");
 
-	fQuality[0] = (qc & 0xf0) >> 4;
-	fQuality[1] = (qc & 0x0f);
+    fQuality[0] = (qc & 0xf0) >> 4;
+    fQuality[1] = (qc & 0x0f);
 
-	// Or in the bits we stripped on write, or else IsUsed() won't work.
-	fQuality[0] |= 0xf0;
-	fQuality[1] |= 0xf0;
+    // Or in the bits we stripped on write, or else IsUsed() won't work.
+    fQuality[0] |= 0xf0;
+    fQuality[1] |= 0xf0;
 }
 
 void plLoadMask::Write(hsStream* s) const
 {
-	// write packed into 1 byte
-	UInt8 qc = (fQuality[0]<<4) | (fQuality[1] & 0xf);
-	s->WriteSwap(qc);
+    // write packed into 1 byte
+    UInt8 qc = (fQuality[0]<<4) | (fQuality[1] & 0xf);
+    s->WriteSwap(qc);
 }
 
 UInt32 plLoadMask::ValidateReps(int num, const int quals[], const int caps[])
 {
-	UInt32 retVal = 0;
-	int i;
-	for( i = 1; i < num; i++ )
-	{
-		int j;
-		for( j = 0; j < i; j++ )
-		{
-			if( (quals[i] >= quals[j]) && (caps[i] >= caps[j]) )
-			{
-				// Bogus, this would double load.
-				retVal |= (1 << i);
-			}
-		}
-	}
-	return retVal;
+    UInt32 retVal = 0;
+    int i;
+    for( i = 1; i < num; i++ )
+    {
+        int j;
+        for( j = 0; j < i; j++ )
+        {
+            if( (quals[i] >= quals[j]) && (caps[i] >= caps[j]) )
+            {
+                // Bogus, this would double load.
+                retVal |= (1 << i);
+            }
+        }
+    }
+    return retVal;
 }
 
 UInt32 plLoadMask::ValidateMasks(int num, plLoadMask masks[])
 {
-	UInt32 retVal = 0;
-	int i;
-	for( i = 0; i < num; i++ )
-	{
-		if( !masks[i].fQuality[0] && !masks[i].fQuality[1] )
-			retVal |= (1 << i);
+    UInt32 retVal = 0;
+    int i;
+    for( i = 0; i < num; i++ )
+    {
+        if( !masks[i].fQuality[0] && !masks[i].fQuality[1] )
+            retVal |= (1 << i);
 
-		int j;
-		for( j = 0; j < i; j++ )
-		{
-			int k;
-			for( k = 0; k <= kMaxCap; k++ )
-			{
-				if( masks[i].fQuality[k] & masks[j].fQuality[k] )
-				{
-					masks[i].fQuality[k] &= ~masks[j].fQuality[k];
-					retVal |= (1 << i);
-				}
-			}
-		}
-	}
-	return retVal;
+        int j;
+        for( j = 0; j < i; j++ )
+        {
+            int k;
+            for( k = 0; k <= kMaxCap; k++ )
+            {
+                if( masks[i].fQuality[k] & masks[j].fQuality[k] )
+                {
+                    masks[i].fQuality[k] &= ~masks[j].fQuality[k];
+                    retVal |= (1 << i);
+                }
+            }
+        }
+    }
+    return retVal;
 }
 
 hsBool plLoadMask::ComputeRepMasks(
-								   int num,
-								   const int quals[], 
-								   const int caps[], 
-								   plLoadMask masks[])
+                                   int num,
+                                   const int quals[], 
+                                   const int caps[], 
+                                   plLoadMask masks[])
 {
-	hsBool retVal = false; // Okay till proven otherwise.
+    hsBool retVal = false; // Okay till proven otherwise.
 
-	int i;
-	for( i = 0; i < num; i++ )
-	{
-		int k;
-		for( k = 0; k <= kMaxCap; k++ )
-		{
-			// Q starts off the bits higher than or equal to 1 << qual.
-			// I.e. we just turned off all lower quality bits.
-			UInt8 q = ~( (1 << quals[i]) - 1 );
+    int i;
+    for( i = 0; i < num; i++ )
+    {
+        int k;
+        for( k = 0; k <= kMaxCap; k++ )
+        {
+            // Q starts off the bits higher than or equal to 1 << qual.
+            // I.e. we just turned off all lower quality bits.
+            UInt8 q = ~( (1 << quals[i]) - 1 );
 
-			// For this cap level, if we require higher caps,
-			// turn off our quality (i.e. we won't load at this
-			// cap for any quality setting.
-			UInt8 c = caps[i] > kMaxCap ? kMaxCap : caps[i];
-			if( c > k )
-				q = 0;
+            // For this cap level, if we require higher caps,
+            // turn off our quality (i.e. we won't load at this
+            // cap for any quality setting.
+            UInt8 c = caps[i] > kMaxCap ? kMaxCap : caps[i];
+            if( c > k )
+                q = 0;
 
-			// Turn off all bits already covered for this cap level
-			// so we never double load.
-			int j;
-			for( j = 0; j < i; j++ )
-			{
-				q &= ~masks[j].fQuality[k];
-			}
-			masks[i].fQuality[k] = q;
-		}
-		if( masks[i].NeverLoads() )
-			retVal = true;
-	}
+            // Turn off all bits already covered for this cap level
+            // so we never double load.
+            int j;
+            for( j = 0; j < i; j++ )
+            {
+                q &= ~masks[j].fQuality[k];
+            }
+            masks[i].fQuality[k] = q;
+        }
+        if( masks[i].NeverLoads() )
+            retVal = true;
+    }
 
-	return retVal;
+    return retVal;
 }

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimEventModifier_h_inc
 #define plAnimEventModifier_h_inc
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsTemplates.h"
 
 //
@@ -35,28 +35,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimEventModifier : public plSingleModifier
 {
 protected:
-	hsTArray<plKey> fReceivers;// Keys to notify when the anim event happens
-	plMessage* fCallback;		// The callback setup message we send when the anim loads
+    hsTArray<plKey> fReceivers;// Keys to notify when the anim event happens
+    plMessage* fCallback;       // The callback setup message we send when the anim loads
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
 
-	void ISendNotify(bool triggered);
-	hsBool fDisabled;
+    void ISendNotify(bool triggered);
+    hsBool fDisabled;
 public:
-	plAnimEventModifier();
-	virtual ~plAnimEventModifier();
+    plAnimEventModifier();
+    virtual ~plAnimEventModifier();
 
-	CLASSNAME_REGISTER(plAnimEventModifier);
-	GETINTERFACE_ANY(plAnimEventModifier, plSingleModifier);
+    CLASSNAME_REGISTER(plAnimEventModifier);
+    GETINTERFACE_ANY(plAnimEventModifier, plSingleModifier);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	// Export only
-	void SetReceivers(hsTArray<plKey>& receivers) { fReceivers = receivers; }
-	void SetCallback(plMessage* callback) { fCallback = callback; }
+    // Export only
+    void SetReceivers(hsTArray<plKey>& receivers) { fReceivers = receivers; }
+    void SetCallback(plMessage* callback) { fCallback = callback; }
 };
 
 #endif // plAnimEventModifier_h_inc

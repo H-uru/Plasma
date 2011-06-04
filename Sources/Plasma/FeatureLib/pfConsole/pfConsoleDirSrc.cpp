@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfConsoleDirSrc Functions												//
-//																			//
+//                                                                          //
+//  pfConsoleDirSrc Functions                                               //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "pfConsoleDirSrc.h"
@@ -37,7 +37,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define WIN32_EXTRA_LEAN
 #define WIN32_LEAN_AND_MEAN
-#ifndef _WINDOWS_H_	// redundant include guard to minimize compile times
+#ifndef _WINDOWS_H_ // redundant include guard to minimize compile times
 #define _WINDOWS_H_
 #include <windows.h>
 #endif // _WINDOWS_H_
@@ -49,66 +49,66 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// ParseDirectory //////////////////////////////////////////////////////////
 
-hsBool	pfConsoleDirSrc::ParseDirectory(const std::string& path, const std::string& mask /* = "*.*" */)
+hsBool  pfConsoleDirSrc::ParseDirectory(const std::string& path, const std::string& mask /* = "*.*" */)
 {
-	wchar* wPath = hsStringToWString(path.c_str());
-	wchar* wMask = hsStringToWString(mask.c_str());
-	hsBool ret = ParseDirectory(wPath, wMask);
-	delete [] wPath;
-	delete [] wMask;
-	return ret;
+    wchar* wPath = hsStringToWString(path.c_str());
+    wchar* wMask = hsStringToWString(mask.c_str());
+    hsBool ret = ParseDirectory(wPath, wMask);
+    delete [] wPath;
+    delete [] wMask;
+    return ret;
 }
 
-hsBool	pfConsoleDirSrc::ParseDirectory(const std::wstring& path, const std::wstring& mask /* = L"*.*" */)
+hsBool  pfConsoleDirSrc::ParseDirectory(const std::wstring& path, const std::wstring& mask /* = L"*.*" */)
 {
-	std::wstringstream	search;
-	std::wstring		file;
-	WIN32_FIND_DATAW 	findInfo;
-	HANDLE				handle;
+    std::wstringstream  search;
+    std::wstring        file;
+    WIN32_FIND_DATAW    findInfo;
+    HANDLE              handle;
 
-	hsAssert( fEngine != nil, "Cannot do a dir execute without an engine!" );
+    hsAssert( fEngine != nil, "Cannot do a dir execute without an engine!" );
 
-	search << path << L"\\" << mask;
-	handle = FindFirstFileW(search.str().c_str(), &findInfo);
-	if (handle == INVALID_HANDLE_VALUE)
-		return false;
+    search << path << L"\\" << mask;
+    handle = FindFirstFileW(search.str().c_str(), &findInfo);
+    if (handle == INVALID_HANDLE_VALUE)
+        return false;
 
-	do
-	{
-		if (!( findInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) 
-		{
-			std::wstringstream fileAndPath;
-			fileAndPath << path << L"\\" << findInfo.cFileName;
-			if (AlreadyProcessedFile(path, findInfo.cFileName))
-				continue;
-			AddProcessedFile(path, findInfo.cFileName);
-			if (!fEngine->ExecuteFile(fileAndPath.str().c_str()))
-			{
-				// Change the following line once we have a better way of reporting
-				// errors in the parsing
-				std::wstringstream error;
-				std::wstringstream caption;
-				wchar* errorMsg = hsStringToWString(fEngine->GetErrorMsg());
-				wchar* errorLine = hsStringToWString(fEngine->GetLastErrorLine());
+    do
+    {
+        if (!( findInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) 
+        {
+            std::wstringstream fileAndPath;
+            fileAndPath << path << L"\\" << findInfo.cFileName;
+            if (AlreadyProcessedFile(path, findInfo.cFileName))
+                continue;
+            AddProcessedFile(path, findInfo.cFileName);
+            if (!fEngine->ExecuteFile(fileAndPath.str().c_str()))
+            {
+                // Change the following line once we have a better way of reporting
+                // errors in the parsing
+                std::wstringstream error;
+                std::wstringstream caption;
+                wchar* errorMsg = hsStringToWString(fEngine->GetErrorMsg());
+                wchar* errorLine = hsStringToWString(fEngine->GetLastErrorLine());
 
-				caption << L"Error parsing " << findInfo.cFileName;
-				error << errorMsg << L":\n\nCommand: '" << errorLine << L"'\n\nPress OK to continue parsing files.";
+                caption << L"Error parsing " << findInfo.cFileName;
+                error << errorMsg << L":\n\nCommand: '" << errorLine << L"'\n\nPress OK to continue parsing files.";
 
-				hsMessageBox(error.str().c_str(), caption.str().c_str(), hsMessageBoxNormal);				
-				
-				delete [] errorMsg;
-				delete [] errorLine;
+                hsMessageBox(error.str().c_str(), caption.str().c_str(), hsMessageBoxNormal);               
+                
+                delete [] errorMsg;
+                delete [] errorLine;
 
-				FindClose(handle);
-				SetCheckProcessedFiles(true);
-				return false;
-			}
-		}
-	} while (FindNextFileW(handle, &findInfo) != 0);
+                FindClose(handle);
+                SetCheckProcessedFiles(true);
+                return false;
+            }
+        }
+    } while (FindNextFileW(handle, &findInfo) != 0);
 
-	FindClose(handle);
-	SetCheckProcessedFiles(true);
-	return true;
+    FindClose(handle);
+    SetCheckProcessedFiles(true);
+    return true;
 }
 
 #else
@@ -119,10 +119,10 @@ hsBool	pfConsoleDirSrc::ParseDirectory(const std::wstring& path, const std::wstr
 
 void pfConsoleDirSrc::ResetProcessedFiles()
 {
-	int i;
-	for(i=0;i<fProcessedFiles.size(); i++)
-		delete fProcessedFiles[i];
-	fProcessedFiles.clear();	
+    int i;
+    for(i=0;i<fProcessedFiles.size(); i++)
+        delete fProcessedFiles[i];
+    fProcessedFiles.clear();    
 }
 
 //
@@ -131,19 +131,19 @@ void pfConsoleDirSrc::ResetProcessedFiles()
 //
 hsBool pfConsoleDirSrc::AlreadyProcessedFile(const std::wstring& path, const std::wstring& file)
 {
-	if (fCheckProcessedFiles)
-	{
-		int i;
-		for(i=0; i<fProcessedFiles.size(); i++)
-		{
-			if (file == fProcessedFiles[i]->fFile && path == fProcessedFiles[i]->fPath)
-				return true;
-		}
-	}
-	return false;
+    if (fCheckProcessedFiles)
+    {
+        int i;
+        for(i=0; i<fProcessedFiles.size(); i++)
+        {
+            if (file == fProcessedFiles[i]->fFile && path == fProcessedFiles[i]->fPath)
+                return true;
+        }
+    }
+    return false;
 }
 
 void pfConsoleDirSrc::AddProcessedFile(const std::wstring& path, const std::wstring& file)
 {
-	fProcessedFiles.push_back(TRACKED_NEW FileName(path, file));	
+    fProcessedFiles.push_back(TRACKED_NEW FileName(path, file));    
 }

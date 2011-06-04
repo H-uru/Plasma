@@ -24,15 +24,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	hsDXTDirectXCodec Class Functions										 //
-//	DirectX-based codec functions											 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  hsDXTDirectXCodec Class Functions                                        //
+//  DirectX-based codec functions                                            //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	6.8.2001 mcn - Got a much-needed Plasma 2.0/DX8 update.					 //
-//																			 //
+//                                                                           //
+//  6.8.2001 mcn - Got a much-needed Plasma 2.0/DX8 update.                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef hsDXTDirectXCodec_inc
@@ -49,43 +49,43 @@ struct IDirectDraw7;
 class hsDXTDirectXCodec : public hsCodec
 {
 private:
-	hsDXTDirectXCodec();
+    hsDXTDirectXCodec();
 public:
-	~hsDXTDirectXCodec();
-	static hsDXTDirectXCodec& Instance();
+    ~hsDXTDirectXCodec();
+    static hsDXTDirectXCodec& Instance();
 
-	static void Init()	{ fRegistered = Register(); }
+    static void Init()  { fRegistered = Register(); }
 
-	plMipmap	*CreateCompressedMipmap(plMipmap *uncompressed);
-	plMipmap	*CreateUncompressedMipmap(plMipmap *compressed, UInt8 bitDepth = 0);
+    plMipmap    *CreateCompressedMipmap(plMipmap *uncompressed);
+    plMipmap    *CreateUncompressedMipmap(plMipmap *compressed, UInt8 bitDepth = 0);
 
-	// Colorize a compressed mipmap
-	hsBool	ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask );
+    // Colorize a compressed mipmap
+    hsBool  ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask );
 
-	void		Initialize( IDirect3DDevice8 *directDraw );
-	hsBool		Initialized()			{ return (fFlags & kInitialized) != 0; }
+    void        Initialize( IDirect3DDevice8 *directDraw );
+    hsBool      Initialized()           { return (fFlags & kInitialized) != 0; }
 
 private:
-	UInt32 ICompressedFormat(const plMipmap *uncompressed);
-	IDirectDrawSurface7		*IMakeDirect3DSurface( UInt32 formatType, UInt32 mipMapLevels, UInt32 width, UInt32 height );
-	void					IFillSurface( hsRGBAColor32* src, UInt32 mmlvs, IDirectDrawSurface7 *pddsDest );
-	void					IFillFromSurface( hsRGBAColor32* dest, UInt32 mmlvs, IDirectDrawSurface7 *pddsSrc );
-	void					ICopySurface( IDirectDrawSurface7 *dest, IDirectDrawSurface7 *src, Int32 mipMapLevels );
-	void					CheckErrorCode(HRESULT res);
-	hsBool					IInitialize();
+    UInt32 ICompressedFormat(const plMipmap *uncompressed);
+    IDirectDrawSurface7     *IMakeDirect3DSurface( UInt32 formatType, UInt32 mipMapLevels, UInt32 width, UInt32 height );
+    void                    IFillSurface( hsRGBAColor32* src, UInt32 mmlvs, IDirectDrawSurface7 *pddsDest );
+    void                    IFillFromSurface( hsRGBAColor32* dest, UInt32 mmlvs, IDirectDrawSurface7 *pddsSrc );
+    void                    ICopySurface( IDirectDrawSurface7 *dest, IDirectDrawSurface7 *src, Int32 mipMapLevels );
+    void                    CheckErrorCode(HRESULT res);
+    hsBool                  IInitialize();
 
-	IDirectDraw7	*fDirectDraw;
+    IDirectDraw7    *fDirectDraw;
     HINSTANCE       fDDLibraryInstance;
-	UInt32			fFlags;
-	
-	enum
-	{
-		kInitialized			= 0x1,
-		kExternalInit			= 0x2
-	};
+    UInt32          fFlags;
+    
+    enum
+    {
+        kInitialized            = 0x1,
+        kExternalInit           = 0x2
+    };
 
-	static hsBool Register();
-	static hsBool fRegistered;
+    static hsBool Register();
+    static hsBool fRegistered;
 };
 
 #endif // hsDXTDirectXCodec_inc

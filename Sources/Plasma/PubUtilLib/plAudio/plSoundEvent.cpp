@@ -24,160 +24,160 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plSoundEvent															//
-//																			//
+//                                                                          //
+//  plSoundEvent                                                            //
+//                                                                          //
 //// Notes ///////////////////////////////////////////////////////////////////
-//																			//
-//	10.30.2001 - Created by mcn.											//
-//																			//
+//                                                                          //
+//  10.30.2001 - Created by mcn.                                            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
 #include "plSoundEvent.h"
 
 #include "plgDispatch.h"
-#include "../pnMessage/plEventCallbackMsg.h"
-#include "../pnMessage/plSoundMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plSoundMsg.h"
 #include "plSound.h"
 
 plSoundEvent::plSoundEvent( Types type, plSound *owner )
 {
-	fType = type;
-	fBytePosTime = 0;
-	fOwner = owner;
-	fCallbacks.Reset();
-	fCallbackEndingFlags.Reset();
+    fType = type;
+    fBytePosTime = 0;
+    fOwner = owner;
+    fCallbacks.Reset();
+    fCallbackEndingFlags.Reset();
 }
 
 plSoundEvent::plSoundEvent( Types type, UInt32 bytePos, plSound *owner )
 {
-	fType = type;
-	fBytePosTime = bytePos;
-	fOwner = owner;
-	fCallbacks.Reset();
-	fCallbackEndingFlags.Reset();
+    fType = type;
+    fBytePosTime = bytePos;
+    fOwner = owner;
+    fCallbacks.Reset();
+    fCallbackEndingFlags.Reset();
 }
 
 plSoundEvent::plSoundEvent()
 {
-	fType = kStart;
-	fBytePosTime = 0;
-	fOwner = nil;
-	fCallbacks.Reset();
-	fCallbackEndingFlags.Reset();
+    fType = kStart;
+    fBytePosTime = 0;
+    fOwner = nil;
+    fCallbacks.Reset();
+    fCallbackEndingFlags.Reset();
 }
 
 plSoundEvent::~plSoundEvent()
 {
-	int		i;
+    int     i;
 
 
-	for( i = 0; i < fCallbacks.GetCount(); i++ )
-		hsRefCnt_SafeUnRef( fCallbacks[ i ] ); 
+    for( i = 0; i < fCallbacks.GetCount(); i++ )
+        hsRefCnt_SafeUnRef( fCallbacks[ i ] ); 
 }
 
-void	plSoundEvent::AddCallback( plEventCallbackMsg *msg )
+void    plSoundEvent::AddCallback( plEventCallbackMsg *msg )
 {
-	hsRefCnt_SafeRef( msg ); 
-	fCallbacks.Append( msg );
-	fCallbackEndingFlags.Append( 0 );
+    hsRefCnt_SafeRef( msg ); 
+    fCallbacks.Append( msg );
+    fCallbackEndingFlags.Append( 0 );
 }
 
-hsBool	plSoundEvent::RemoveCallback( plEventCallbackMsg *msg )
+hsBool  plSoundEvent::RemoveCallback( plEventCallbackMsg *msg )
 {
-	int idx = fCallbacks.Find( msg );
-	if( idx != fCallbacks.kMissingIndex )
-	{
-		hsRefCnt_SafeUnRef( msg ); 
-		fCallbacks.Remove( idx );
-		fCallbackEndingFlags.Remove( idx );
-		return true;
-	}
+    int idx = fCallbacks.Find( msg );
+    if( idx != fCallbacks.kMissingIndex )
+    {
+        hsRefCnt_SafeUnRef( msg ); 
+        fCallbacks.Remove( idx );
+        fCallbackEndingFlags.Remove( idx );
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
-void	plSoundEvent::SendCallbacks( void )
+void    plSoundEvent::SendCallbacks( void )
 {
-	int			j;
-	plSoundMsg	*sMsg;
+    int         j;
+    plSoundMsg  *sMsg;
 
 
-	for( j = fCallbacks.GetCount() - 1; j >= 0; j-- )
-	{
-		plEventCallbackMsg *msg = fCallbacks[ j ];
-		
-		if (!msg->HasBCastFlag(plMessage::kNetPropagate) || !fOwner ||
-			fOwner->IsLocallyOwned() == plSynchedObject::kYes )		
-		{
-			/// Do this a bit differently so we can do our MsgSend last
-			sMsg = nil;
+    for( j = fCallbacks.GetCount() - 1; j >= 0; j-- )
+    {
+        plEventCallbackMsg *msg = fCallbacks[ j ];
+        
+        if (!msg->HasBCastFlag(plMessage::kNetPropagate) || !fOwner ||
+            fOwner->IsLocallyOwned() == plSynchedObject::kYes )     
+        {
+            /// Do this a bit differently so we can do our MsgSend last
+            sMsg = nil;
 
-			// Ref to make sure the dispatcher doesn't delete it on us
-			hsRefCnt_SafeRef( msg );
-			if( msg->fRepeats == 0 && fCallbackEndingFlags[ j ] == 0 )
-			{
-				// Note: we get fancy here. We never want to remove the callback directly,
-				// because the sound won't know about it. So instead, send it a message to
-				// remove the callback for us
-				sMsg = TRACKED_NEW plSoundMsg();
-				sMsg->SetBCastFlag( plMessage::kLocalPropagate, true );
-				sMsg->AddReceiver( fOwner->GetKey() );
-				sMsg->SetCmd( plSoundMsg::kRemoveCallbacks );
-				sMsg->AddCallback( msg );
-			}
+            // Ref to make sure the dispatcher doesn't delete it on us
+            hsRefCnt_SafeRef( msg );
+            if( msg->fRepeats == 0 && fCallbackEndingFlags[ j ] == 0 )
+            {
+                // Note: we get fancy here. We never want to remove the callback directly,
+                // because the sound won't know about it. So instead, send it a message to
+                // remove the callback for us
+                sMsg = TRACKED_NEW plSoundMsg();
+                sMsg->SetBCastFlag( plMessage::kLocalPropagate, true );
+                sMsg->AddReceiver( fOwner->GetKey() );
+                sMsg->SetCmd( plSoundMsg::kRemoveCallbacks );
+                sMsg->AddCallback( msg );
+            }
 
-			// If this isn't infinite, decrement the number of repeats
-			if( msg->fRepeats > 0 )
-				msg->fRepeats--;
+            // If this isn't infinite, decrement the number of repeats
+            if( msg->fRepeats > 0 )
+                msg->fRepeats--;
 
-			// And finally...
-			if( fCallbackEndingFlags[ j ] == 0 )
-			{
-				plgDispatch::MsgSend( msg, true );
-			}
+            // And finally...
+            if( fCallbackEndingFlags[ j ] == 0 )
+            {
+                plgDispatch::MsgSend( msg, true );
+            }
 
-			if( sMsg != nil )
-			{
-				plgDispatch::MsgSend( sMsg, true );
-				fCallbackEndingFlags[ j ] = 0xff;		// Our special flag to mean "hey, don't
-														// process this, just waiting for 
-														// it to die"
-			}
-		}
-	}
+            if( sMsg != nil )
+            {
+                plgDispatch::MsgSend( sMsg, true );
+                fCallbackEndingFlags[ j ] = 0xff;       // Our special flag to mean "hey, don't
+                                                        // process this, just waiting for 
+                                                        // it to die"
+            }
+        }
+    }
 }
 
-UInt32	plSoundEvent::GetNumCallbacks( void ) const
+UInt32  plSoundEvent::GetNumCallbacks( void ) const
 {
-	return fCallbacks.GetCount();
+    return fCallbacks.GetCount();
 }
 
-int	plSoundEvent::GetType( void ) const
+int plSoundEvent::GetType( void ) const
 {
-	return (int)fType;
+    return (int)fType;
 }
 
-void	plSoundEvent::SetType( Types type )
+void    plSoundEvent::SetType( Types type )
 {
-	fType = type;
+    fType = type;
 }
 
-UInt32	plSoundEvent::GetTime( void ) const
+UInt32  plSoundEvent::GetTime( void ) const
 {
-	return fBytePosTime;
+    return fBytePosTime;
 }
 
-plSoundEvent::Types	plSoundEvent::GetTypeFromCallbackMsg( plEventCallbackMsg *msg )
+plSoundEvent::Types plSoundEvent::GetTypeFromCallbackMsg( plEventCallbackMsg *msg )
 {
-	switch( msg->fEvent )
-	{
-		case ::kStart: return kStart;
-		case ::kTime: return kTime;
-		case ::kStop: return kStop;
-		case ::kLoop: return kLoop;
-	}
+    switch( msg->fEvent )
+    {
+        case ::kStart: return kStart;
+        case ::kTime: return kTime;
+        case ::kStop: return kStop;
+        case ::kLoop: return kLoop;
+    }
 
-	return kStop;
+    return kStop;
 }

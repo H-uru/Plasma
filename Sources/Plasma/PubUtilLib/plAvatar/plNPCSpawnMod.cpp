@@ -32,13 +32,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatarMgr.h"
 
 // global
-#include <hsMatrix44.h>
+#include "hsMatrix44.h"
 
 // other
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-//#include "../pnMessage/plWarpMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+//#include "pnMessage/plWarpMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 
 // plNPCSpawnMod ctor
@@ -54,131 +54,131 @@ plNPCSpawnMod::plNPCSpawnMod()
 plNPCSpawnMod::plNPCSpawnMod(const char * modelName, const char * accountName, bool autoSpawn)
 : fAutoSpawn(autoSpawn), fNotify(nil)
 {
-	fModelName = hsStrcpy(modelName);
-	fAccountName = hsStrcpy(accountName);
+    fModelName = hsStrcpy(modelName);
+    fAccountName = hsStrcpy(accountName);
 }
 
 // plNPCSpawnMod dtor
 plNPCSpawnMod::~plNPCSpawnMod()
 {
-	if(fModelName)
-	{
-		delete[] fModelName;
-		fModelName = nil;
-	}
-	if(fAccountName)
-	{
-		delete[] fAccountName;
-		fAccountName = nil;
-	}
-	if (fNotify)
-		fNotify->UnRef();
+    if(fModelName)
+    {
+        delete[] fModelName;
+        fModelName = nil;
+    }
+    if(fAccountName)
+    {
+        delete[] fAccountName;
+        fAccountName = nil;
+    }
+    if (fNotify)
+        fNotify->UnRef();
 }
 
 void plNPCSpawnMod::AddTarget(plSceneObject* so)
 {
-	plSingleModifier::AddTarget(so);
+    plSingleModifier::AddTarget(so);
 
-	if(fAutoSpawn)
-		Trigger();
+    if(fAutoSpawn)
+        Trigger();
 }
 
 void plNPCSpawnMod::RemoveTarget(plSceneObject *so)
 {
-	plSingleModifier::RemoveTarget(so);
+    plSingleModifier::RemoveTarget(so);
 
-	if(fSpawnedKey)
-	{
-		plAvatarMgr::GetInstance()->UnLoadAvatar(fSpawnedKey, false);
-	}
+    if(fSpawnedKey)
+    {
+        plAvatarMgr::GetInstance()->UnLoadAvatar(fSpawnedKey, false);
+    }
 }
 
 // TRIGGER
 bool plNPCSpawnMod::Trigger()
 {
-	bool result = false;
+    bool result = false;
 
-	// you can ONLY spawn if you are local. the spawn message
-	// will netpropagate
-	if(this->IsLocallyOwned())
-	{
-		if(fModelName)
-		{
-			// spawn the NPC
-			plKey spawnPoint = GetTarget(0)->GetKey();
+    // you can ONLY spawn if you are local. the spawn message
+    // will netpropagate
+    if(this->IsLocallyOwned())
+    {
+        if(fModelName)
+        {
+            // spawn the NPC
+            plKey spawnPoint = GetTarget(0)->GetKey();
 
-			fSpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(fModelName, fAccountName, false, spawnPoint, nil);
+            fSpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(fModelName, fAccountName, false, spawnPoint, nil);
 
-			ISendNotify(fSpawnedKey);
-		}
-	}
+            ISendNotify(fSpawnedKey);
+        }
+    }
 
-	return result;
+    return result;
 }
 
 // SETNOTIFY
 void plNPCSpawnMod::SetNotify(plNotifyMsg *notify)
 {
-	fNotify = notify;
+    fNotify = notify;
 }
 
 // GETNOTIFY
 plNotifyMsg * plNPCSpawnMod::GetNotify()
 {
-	return fNotify;
+    return fNotify;
 }
 
 // READ
 void plNPCSpawnMod::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plSingleModifier::Read(stream, mgr);
+    plSingleModifier::Read(stream, mgr);
 
-	fModelName = stream->ReadSafeString();
-	fAccountName = stream->ReadSafeString();
-	fAutoSpawn = stream->Readbool();
-	if(stream->Readbool())
-		fNotify = plNotifyMsg::ConvertNoRef(mgr->ReadCreatable(stream));
+    fModelName = stream->ReadSafeString();
+    fAccountName = stream->ReadSafeString();
+    fAutoSpawn = stream->Readbool();
+    if(stream->Readbool())
+        fNotify = plNotifyMsg::ConvertNoRef(mgr->ReadCreatable(stream));
 }
 
 // WRITE
 void plNPCSpawnMod::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plSingleModifier::Write(stream, mgr);
-	
-	stream->WriteSafeString(fModelName);
-	stream->WriteSafeString(fAccountName);
-	stream->Writebool(fAutoSpawn);
-	if(fNotify)
-	{
-		stream->Writebool(true);
-		mgr->WriteCreatable(stream, fNotify);
-	} else {
-		stream->Writebool(false);
-	}
+    plSingleModifier::Write(stream, mgr);
+    
+    stream->WriteSafeString(fModelName);
+    stream->WriteSafeString(fAccountName);
+    stream->Writebool(fAutoSpawn);
+    if(fNotify)
+    {
+        stream->Writebool(true);
+        mgr->WriteCreatable(stream, fNotify);
+    } else {
+        stream->Writebool(false);
+    }
 }
 
 // IEVAL
 // attack of the bogons
 hsBool plNPCSpawnMod::IEval(double secs, hsScalar del, UInt32 dirty)
 {
-	return true;
+    return true;
 }
 
 // ISENDNOTIFY
 void plNPCSpawnMod::ISendNotify(plKey &avatarKey)
 {
-	if(fNotify)
-	{
-		proSpawnedEventData * event = TRACKED_NEW proSpawnedEventData;
-		event->fSpawner = GetKey();
-		event->fSpawnee = avatarKey;
-		fNotify->ClearEvents();
-		fNotify->AddEvent(event);
-		delete event; // fNotify->AddEvent makes a copy
-		int i = fNotify->GetEventCount();
-		fNotify->Ref();		// so we still hold onto it after it is delivered
-		fNotify->Send();
-	} else {
-		hsStatusMessage("NPC Spawner is spawning but there is no notify message to send.");
-	}
+    if(fNotify)
+    {
+        proSpawnedEventData * event = TRACKED_NEW proSpawnedEventData;
+        event->fSpawner = GetKey();
+        event->fSpawnee = avatarKey;
+        fNotify->ClearEvents();
+        fNotify->AddEvent(event);
+        delete event; // fNotify->AddEvent makes a copy
+        int i = fNotify->GetEventCount();
+        fNotify->Ref();     // so we still hold onto it after it is delivered
+        fNotify->Send();
+    } else {
+        hsStatusMessage("NPC Spawner is spawning but there is no notify message to send.");
+    }
 }

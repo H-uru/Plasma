@@ -29,8 +29,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSIMINFLUENCEMSG_H
 #define PLSIMINFLUENCEMSG_H
 /*
-#include "../../NucleusLib/pnMessage/plSimulationMsg.h"
-#include "../../CoreLib/hsGeometry3.h"
+#include "pnMessage/plSimulationMsg.h"
+#include "hsGeometry3.h"
 
 ////////////
 //
@@ -40,18 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // PLSIMULATIONINFLUENCEMSG (virtual)
 // base for messages that are used to push physical objects around in one way or another
-class plSimInfluenceMsg	: public plSimulationMsg
+class plSimInfluenceMsg : public plSimulationMsg
 {
 public:
-	plSimInfluenceMsg() : plSimulationMsg() {};
-	plSimInfluenceMsg(const plKey& sender, const plKey &receiver, double *time)
-		:plSimulationMsg(sender, receiver, time){};
+    plSimInfluenceMsg() : plSimulationMsg() {};
+    plSimInfluenceMsg(const plKey& sender, const plKey &receiver, double *time)
+        :plSimulationMsg(sender, receiver, time){};
 
-	CLASSNAME_REGISTER( plSimInfluenceMsg );
-	GETINTERFACE_ANY( plSimInfluenceMsg, plSimulationMsg);
+    CLASSNAME_REGISTER( plSimInfluenceMsg );
+    GETINTERFACE_ANY( plSimInfluenceMsg, plSimulationMsg);
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 };
 
 
@@ -63,53 +63,53 @@ public:
 class plForceMsg : public plSimInfluenceMsg
 {
 public:
-	plForceMsg() : plSimInfluenceMsg() { };
-	plForceMsg::plForceMsg(const plKey& sender, const plKey &receiver, hsVector3 &force)
-		:plSimInfluenceMsg(sender, receiver, nil), fForce(force) {};
-	plForceMsg::plForceMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &force)
-		:plSimInfluenceMsg(sender, receiver, time), fForce(force) {};
+    plForceMsg() : plSimInfluenceMsg() { };
+    plForceMsg::plForceMsg(const plKey& sender, const plKey &receiver, hsVector3 &force)
+        :plSimInfluenceMsg(sender, receiver, nil), fForce(force) {};
+    plForceMsg::plForceMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &force)
+        :plSimInfluenceMsg(sender, receiver, time), fForce(force) {};
 
-	CLASSNAME_REGISTER( plForceMsg );
-	GETINTERFACE_ANY( plForceMsg, plSimInfluenceMsg);
+    CLASSNAME_REGISTER( plForceMsg );
+    GETINTERFACE_ANY( plForceMsg, plSimInfluenceMsg);
 
-	void Read(hsStream *stream, hsResMgr *mgr);
-	void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr);
 
-	hsVector3 GetForce() const { return fForce; }
+    hsVector3 GetForce() const { return fForce; }
 
-	void SetForce(const hsVector3 &the_Force)
-		{ fForce = the_Force; }
+    void SetForce(const hsVector3 &the_Force)
+        { fForce = the_Force; }
 
 protected:
-	hsVector3 fForce;
+    hsVector3 fForce;
 };
 
 
 // PLOFFSETFORCE
 // apply a force to the receiver as though it were being impacted at the
 // given point in global space
-class plOffsetForceMsg	: public plForceMsg
+class plOffsetForceMsg  : public plForceMsg
 {
 public:
-	plOffsetForceMsg() : plForceMsg() { };
-	plOffsetForceMsg(const plKey& sender, const plKey &receiver, hsVector3 &force, hsPoint3 &point)
-		:plForceMsg(sender, receiver, nil, force), fPoint(point) {};
-	plOffsetForceMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &force, hsPoint3 &point)
-		:plForceMsg(sender, receiver, time, force), fPoint(point) {};
+    plOffsetForceMsg() : plForceMsg() { };
+    plOffsetForceMsg(const plKey& sender, const plKey &receiver, hsVector3 &force, hsPoint3 &point)
+        :plForceMsg(sender, receiver, nil, force), fPoint(point) {};
+    plOffsetForceMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &force, hsPoint3 &point)
+        :plForceMsg(sender, receiver, time, force), fPoint(point) {};
 
-	CLASSNAME_REGISTER( plOffsetForceMsg );
-	GETINTERFACE_ANY( plOffsetForceMsg, plForceMsg);
+    CLASSNAME_REGISTER( plOffsetForceMsg );
+    GETINTERFACE_ANY( plOffsetForceMsg, plForceMsg);
 
-	void Read(hsStream *stream, hsResMgr *mgr);
-	void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr);
 
-	hsPoint3 GetPoint() const { return fPoint; 	}
+    hsPoint3 GetPoint() const { return fPoint;  }
 
-	void SetPoint(const hsPoint3 &the_Point)
-		{ fPoint = the_Point; }
+    void SetPoint(const hsPoint3 &the_Point)
+        { fPoint = the_Point; }
 
 protected:
-	hsPoint3 fPoint;
+    hsPoint3 fPoint;
 };
 
 // PLTORQUEMSG
@@ -118,21 +118,21 @@ protected:
 class plTorqueMsg : public plSimInfluenceMsg
 {
 public:
-	plTorqueMsg() : plSimInfluenceMsg() { };
-	plTorqueMsg(const plKey& sender, const plKey &receiver, hsVector3 & torque)
-		:plSimInfluenceMsg(sender, receiver, nil), fTorque(torque) {};
+    plTorqueMsg() : plSimInfluenceMsg() { };
+    plTorqueMsg(const plKey& sender, const plKey &receiver, hsVector3 & torque)
+        :plSimInfluenceMsg(sender, receiver, nil), fTorque(torque) {};
 
-	CLASSNAME_REGISTER( plTorqueMsg );
-	GETINTERFACE_ANY( plTorqueMsg, plSimInfluenceMsg);
+    CLASSNAME_REGISTER( plTorqueMsg );
+    GETINTERFACE_ANY( plTorqueMsg, plSimInfluenceMsg);
 
-	void Read(hsStream *stream, hsResMgr *mgr);
-	void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr);
 
-	hsVector3 GetTorque() const { return fTorque; }
-	void SetTorque(const hsVector3 &the_Torque) { fTorque = the_Torque; }
+    hsVector3 GetTorque() const { return fTorque; }
+    void SetTorque(const hsVector3 &the_Torque) { fTorque = the_Torque; }
 
 protected:
-	hsVector3 fTorque;
+    hsVector3 fTorque;
 
 };
 
@@ -141,26 +141,26 @@ protected:
 
 // PLIMPULSE
 // Add the given vector to the objects velocity
-class plImpulseMsg	: public plSimInfluenceMsg
+class plImpulseMsg  : public plSimInfluenceMsg
 {
 public:
-	plImpulseMsg() : plSimInfluenceMsg() { };
-	plImpulseMsg(const plKey& sender, const plKey &receiver, hsVector3 &impulse)
-		:plSimInfluenceMsg(sender, receiver, nil), fImpulse(impulse) {};
-	plImpulseMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &impulse)
-		:plSimInfluenceMsg(sender, receiver, time), fImpulse(impulse) {};
+    plImpulseMsg() : plSimInfluenceMsg() { };
+    plImpulseMsg(const plKey& sender, const plKey &receiver, hsVector3 &impulse)
+        :plSimInfluenceMsg(sender, receiver, nil), fImpulse(impulse) {};
+    plImpulseMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &impulse)
+        :plSimInfluenceMsg(sender, receiver, time), fImpulse(impulse) {};
 
-	CLASSNAME_REGISTER( plImpulseMsg );
-	GETINTERFACE_ANY( plImpulseMsg, plSimInfluenceMsg);
+    CLASSNAME_REGISTER( plImpulseMsg );
+    GETINTERFACE_ANY( plImpulseMsg, plSimInfluenceMsg);
 
-	void Read(hsStream *stream, hsResMgr *mgr);
-	void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr);
 
-	hsVector3 GetImpulse() const { return fImpulse; }
-	void SetImpulse(const hsVector3 &the_Impulse) { fImpulse = the_Impulse; }
+    hsVector3 GetImpulse() const { return fImpulse; }
+    void SetImpulse(const hsVector3 &the_Impulse) { fImpulse = the_Impulse; }
 
 protected:
-	hsVector3 fImpulse;
+    hsVector3 fImpulse;
 
 };
 
@@ -170,23 +170,23 @@ protected:
 class plOffsetImpulseMsg : public plImpulseMsg
 {
 public:
-	plOffsetImpulseMsg() : plImpulseMsg() { };
-	plOffsetImpulseMsg(const plKey& sender, const plKey &receiver, hsVector3 & impulse, hsPoint3 &point)
-		: plImpulseMsg(sender, receiver, impulse), fPoint(point) {};
-	plOffsetImpulseMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 & impulse, hsPoint3 &point)
-		: plImpulseMsg(sender, receiver, time, impulse), fPoint(point) {};
+    plOffsetImpulseMsg() : plImpulseMsg() { };
+    plOffsetImpulseMsg(const plKey& sender, const plKey &receiver, hsVector3 & impulse, hsPoint3 &point)
+        : plImpulseMsg(sender, receiver, impulse), fPoint(point) {};
+    plOffsetImpulseMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 & impulse, hsPoint3 &point)
+        : plImpulseMsg(sender, receiver, time, impulse), fPoint(point) {};
 
-	CLASSNAME_REGISTER( plOffsetImpulseMsg );
-	GETINTERFACE_ANY( plOffsetImpulseMsg, plImpulseMsg);
+    CLASSNAME_REGISTER( plOffsetImpulseMsg );
+    GETINTERFACE_ANY( plOffsetImpulseMsg, plImpulseMsg);
 
-	void Read(hsStream *stream, hsResMgr *mgr);
-	void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr);
 
-	hsPoint3 GetPoint() const { return fPoint; }
-	void SetPoint(const hsPoint3 &the_Point) { fPoint = the_Point; }
+    hsPoint3 GetPoint() const { return fPoint; }
+    void SetPoint(const hsPoint3 &the_Point) { fPoint = the_Point; }
 
 protected:
-	hsPoint3 fPoint;
+    hsPoint3 fPoint;
 
 };
 
@@ -194,28 +194,28 @@ protected:
 // PLANGULARIMPULSE
 // Add the given vector (representing a rotation axis and magnitude)
 // to the 
-class plAngularImpulseMsg	: public plSimInfluenceMsg
+class plAngularImpulseMsg   : public plSimInfluenceMsg
 {
 public:
-	plAngularImpulseMsg() : plSimInfluenceMsg() { };
-	plAngularImpulseMsg(const plKey& sender, const plKey &receiver, hsVector3 &impulse)
-		: plSimInfluenceMsg(sender, receiver, nil), fImpulse(impulse) {};
-	plAngularImpulseMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &impulse)
-		: plSimInfluenceMsg(sender, receiver, time), fImpulse(impulse) {};
+    plAngularImpulseMsg() : plSimInfluenceMsg() { };
+    plAngularImpulseMsg(const plKey& sender, const plKey &receiver, hsVector3 &impulse)
+        : plSimInfluenceMsg(sender, receiver, nil), fImpulse(impulse) {};
+    plAngularImpulseMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &impulse)
+        : plSimInfluenceMsg(sender, receiver, time), fImpulse(impulse) {};
 
-	CLASSNAME_REGISTER( plAngularImpulseMsg );
-	GETINTERFACE_ANY( plAngularImpulseMsg, plSimInfluenceMsg);
+    CLASSNAME_REGISTER( plAngularImpulseMsg );
+    GETINTERFACE_ANY( plAngularImpulseMsg, plSimInfluenceMsg);
 
-	void Read(hsStream *stream, hsResMgr *mgr);
-	void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr);
 
-	hsVector3 GetImpulse() const { return fImpulse; }
+    hsVector3 GetImpulse() const { return fImpulse; }
 
-	void SetImpulse(const hsVector3 &the_Impulse)
-		{ fImpulse = the_Impulse; }
+    void SetImpulse(const hsVector3 &the_Impulse)
+        { fImpulse = the_Impulse; }
 
 protected:
-	hsVector3 fImpulse;
+    hsVector3 fImpulse;
 };
 
 
@@ -229,52 +229,52 @@ protected:
 class plDampMsg : public plSimInfluenceMsg
 {
 public:
-	plDampMsg() : plSimInfluenceMsg() { };
-	plDampMsg(const plKey& sender, const plKey &receiver, float dampFactor)
-		: plSimInfluenceMsg(sender, receiver, nil), fDamp(dampFactor) {};
-	plDampMsg(const plKey& sender, const plKey &receiver, double *time, float dampFactor)
-		: plSimInfluenceMsg(sender, receiver, time), fDamp(dampFactor) {};
+    plDampMsg() : plSimInfluenceMsg() { };
+    plDampMsg(const plKey& sender, const plKey &receiver, float dampFactor)
+        : plSimInfluenceMsg(sender, receiver, nil), fDamp(dampFactor) {};
+    plDampMsg(const plKey& sender, const plKey &receiver, double *time, float dampFactor)
+        : plSimInfluenceMsg(sender, receiver, time), fDamp(dampFactor) {};
 
-	CLASSNAME_REGISTER( plDampMsg );
-	GETINTERFACE_ANY( plDampMsg, plSimInfluenceMsg);
+    CLASSNAME_REGISTER( plDampMsg );
+    GETINTERFACE_ANY( plDampMsg, plSimInfluenceMsg);
 
-	void Read(hsStream *stream, hsResMgr *mgr);
-	void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr);
 
-	float GetDamp() const { return fDamp; }
+    float GetDamp() const { return fDamp; }
 
-	void SetDamp( float the_Damp )
-		{ fDamp = the_Damp; }
+    void SetDamp( float the_Damp )
+        { fDamp = the_Damp; }
 
 protected:
-	float fDamp;
+    float fDamp;
 };
 
 // PLSHIFTCENTERMSG
 // Shift the center of mass of the given object by the given
 // amount in the given direction.
-class plShiftMassMsg	: public plSimInfluenceMsg
+class plShiftMassMsg    : public plSimInfluenceMsg
 {
 public:
-	plShiftMassMsg() : plSimInfluenceMsg() { };
-	plShiftMassMsg(const plKey& sender, const plKey &receiver, hsVector3 &offset)
-		:plSimInfluenceMsg(sender, receiver, nil), fOffset(offset) {};
-	plShiftMassMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &offset)
-		:plSimInfluenceMsg(sender, receiver, time), fOffset(offset) {};
+    plShiftMassMsg() : plSimInfluenceMsg() { };
+    plShiftMassMsg(const plKey& sender, const plKey &receiver, hsVector3 &offset)
+        :plSimInfluenceMsg(sender, receiver, nil), fOffset(offset) {};
+    plShiftMassMsg(const plKey& sender, const plKey &receiver, double *time, hsVector3 &offset)
+        :plSimInfluenceMsg(sender, receiver, time), fOffset(offset) {};
 
-	CLASSNAME_REGISTER( plShiftMassMsg );
-	GETINTERFACE_ANY( plShiftMassMsg, plSimInfluenceMsg);
+    CLASSNAME_REGISTER( plShiftMassMsg );
+    GETINTERFACE_ANY( plShiftMassMsg, plSimInfluenceMsg);
 
-	void Read(hsStream *stream, hsResMgr *mgr);
-	void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr);
 
-	hsVector3 GetOffset() const { return fOffset; }
+    hsVector3 GetOffset() const { return fOffset; }
 
-	void SetOffset(const hsVector3 &the_Offset)
-		{ fOffset = the_Offset; }
+    void SetOffset(const hsVector3 &the_Offset)
+        { fOffset = the_Offset; }
 
 protected:
-	hsVector3 fOffset;
+    hsVector3 fOffset;
 };
 */
 #endif // PLSIMINFLUENCEMSG_H

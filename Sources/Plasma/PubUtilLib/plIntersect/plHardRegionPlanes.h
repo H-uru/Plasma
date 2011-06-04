@@ -32,39 +32,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plHardRegionPlanes : public plHardRegion
 {
 protected:
-	class HardPlane
-	{
-	public:
-		hsVector3			fNorm;
-		hsPoint3			fPos;
+    class HardPlane
+    {
+    public:
+        hsVector3           fNorm;
+        hsPoint3            fPos;
 
-		hsVector3			fWorldNorm;
-		hsPoint3			fWorldPos;
-		hsScalar			fWorldDist;
-	};
-	hsTArray<HardPlane>			fPlanes;
+        hsVector3           fWorldNorm;
+        hsPoint3            fWorldPos;
+        hsScalar            fWorldDist;
+    };
+    hsTArray<HardPlane>         fPlanes;
 
 protected:
 public:
-	plHardRegionPlanes();
-	virtual ~plHardRegionPlanes();
+    plHardRegionPlanes();
+    virtual ~plHardRegionPlanes();
 
-	CLASSNAME_REGISTER( plHardRegionPlanes );
-	GETINTERFACE_ANY( plHardRegionPlanes, plHardRegion );
+    CLASSNAME_REGISTER( plHardRegionPlanes );
+    GETINTERFACE_ANY( plHardRegionPlanes, plHardRegion );
 
-	virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	// Now Planes specifics
-	void AddPlane(const hsVector3& n, const hsPoint3& p);
-	UInt32 GetNumPlanes() const { return fPlanes.GetCount(); }
-	void GetPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fNorm; p = fPlanes[i].fPos; }
-	void GetWorldPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fWorldNorm; p = fPlanes[i].fWorldPos; }
+    // Now Planes specifics
+    void AddPlane(const hsVector3& n, const hsPoint3& p);
+    UInt32 GetNumPlanes() const { return fPlanes.GetCount(); }
+    void GetPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fNorm; p = fPlanes[i].fPos; }
+    void GetWorldPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fWorldNorm; p = fPlanes[i].fWorldPos; }
 
-	virtual hsBool IIsInside(const hsPoint3& pos) const;
-	virtual hsBool ICameraInside() const;
+    virtual hsBool IIsInside(const hsPoint3& pos) const;
+    virtual hsBool ICameraInside() const;
 
 };
 

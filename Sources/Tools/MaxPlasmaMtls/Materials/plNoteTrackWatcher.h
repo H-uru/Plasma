@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plNoteTrackWatcher - Dummy object to watch for notetrack additions or	//
-//						 removals from the main material that owns it.		//
-//						 All of this is required because MAX will notify	//
-//						 an object's dependents about notetrack actions but	//
-//						 NOT the object itself, and the Add/DeleteNoteTrack	//
-//						 functions are non-virtual. ARRRGH!					//
-//																			//
+//                                                                          //
+//  plNoteTrackWatcher - Dummy object to watch for notetrack additions or   //
+//                       removals from the main material that owns it.      //
+//                       All of this is required because MAX will notify    //
+//                       an object's dependents about notetrack actions but //
+//                       NOT the object itself, and the Add/DeleteNoteTrack //
+//                       functions are non-virtual. ARRRGH!                 //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plNoteTrackWatcher_h
@@ -46,9 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;
 
-#define NTWATCHER_CLASSID		Class_ID(0x313f531e, 0xa5f132f)
+#define NTWATCHER_CLASSID       Class_ID(0x313f531e, 0xa5f132f)
 
-#define REFMSG_NOTETRACK_ADDED	REFMSG_USER + 1
+#define REFMSG_NOTETRACK_ADDED  REFMSG_USER + 1
 
 class plPassMtlBase;
 class NoteTrack;
@@ -58,31 +58,31 @@ class NoteTrack;
 class plNoteTrackWatcher : public ReferenceMaker
 {
 protected:
-	plPassMtlBase	*fParentMtl;
+    plPassMtlBase   *fParentMtl;
 
-	// For tracking notetrack additions to the parent
-	int				fNoteTrackCount;
+    // For tracking notetrack additions to the parent
+    int             fNoteTrackCount;
 
 public:
 
-	enum Refs
-	{
-		kRefParentMtl = 0
-	};
+    enum Refs
+    {
+        kRefParentMtl = 0
+    };
 
-	plNoteTrackWatcher( plPassMtlBase *parentMtl );
-	virtual ~plNoteTrackWatcher();
-	void DeleteThis() { delete this; }
+    plNoteTrackWatcher( plPassMtlBase *parentMtl );
+    virtual ~plNoteTrackWatcher();
+    void DeleteThis() { delete this; }
 
-	Class_ID	ClassID()				{ return NTWATCHER_CLASSID; }      
-	SClass_ID	SuperClassID()			{ return REF_MAKER_CLASS_ID; }
-	
-	int				NumRefs();
-	RefTargetHandle	GetReference(int i);
-	void			SetReference(int i, RefTargetHandle rtarg);
-	RefResult		NotifyRefChanged(Interval changeInt,RefTargetHandle hTarget, PartID& partID, RefMessage message);
+    Class_ID    ClassID()               { return NTWATCHER_CLASSID; }      
+    SClass_ID   SuperClassID()          { return REF_MAKER_CLASS_ID; }
+    
+    int             NumRefs();
+    RefTargetHandle GetReference(int i);
+    void            SetReference(int i, RefTargetHandle rtarg);
+    RefResult       NotifyRefChanged(Interval changeInt,RefTargetHandle hTarget, PartID& partID, RefMessage message);
 
-	virtual BOOL	IsRealDependency( ReferenceTarget *rtarg );
+    virtual BOOL    IsRealDependency( ReferenceTarget *rtarg );
 };
 
 #endif //_plNoteTrackWatcher_h 

@@ -28,9 +28,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
-#include "../plNetCommon/plSpawnPointInfo.h"
+#include "plNetCommon/plSpawnPointInfo.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -42,62 +42,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pySpawnPointInfo
 {
 protected:
-	pySpawnPointInfo();
-	pySpawnPointInfo( const plSpawnPointInfo & info ): fInfo( info ) {}
-	pySpawnPointInfo( const char * title, const char * spawnPt );
+    pySpawnPointInfo();
+    pySpawnPointInfo( const plSpawnPointInfo & info ): fInfo( info ) {}
+    pySpawnPointInfo( const char * title, const char * spawnPt );
 
 public:
-	plSpawnPointInfo	fInfo;
+    plSpawnPointInfo    fInfo;
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptSpawnPointInfo);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(const plSpawnPointInfo& info);
-	static PyObject *New(const char* title, const char* spawnPt);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a ptSpawnPointInfo object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySpawnPointInfo); // converts a PyObject to a pySpawnPointInfo (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptSpawnPointInfo);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(const plSpawnPointInfo& info);
+    static PyObject *New(const char* title, const char* spawnPt);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a ptSpawnPointInfo object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySpawnPointInfo); // converts a PyObject to a pySpawnPointInfo (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
-	static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
 
-	plSpawnPointInfo & SpawnPoint() { return fInfo; }
-	void	SetTitle( const char * v ) { fInfo.SetTitle( v ); }
-	const char * GetTitle() const { return fInfo.GetTitle(); }
-	void	SetName( const char * v ) { fInfo.SetName( v ); }
-	const char * GetName() const { return fInfo.GetName(); }
-	void	SetCameraStack(const char * v ) { fInfo.SetCameraStack( v ); }
-	const char * GetCameraStack() const { return fInfo.GetCameraStack(); }
+    plSpawnPointInfo & SpawnPoint() { return fInfo; }
+    void    SetTitle( const char * v ) { fInfo.SetTitle( v ); }
+    const char * GetTitle() const { return fInfo.GetTitle(); }
+    void    SetName( const char * v ) { fInfo.SetName( v ); }
+    const char * GetName() const { return fInfo.GetName(); }
+    void    SetCameraStack(const char * v ) { fInfo.SetCameraStack( v ); }
+    const char * GetCameraStack() const { return fInfo.GetCameraStack(); }
 
-	static PyObject* GetDefaultSpawnPoint();
+    static PyObject* GetDefaultSpawnPoint();
 };
 
 class pySpawnPointInfoRef
 {
 private:
-	static plSpawnPointInfo fDefaultSPInfo; // created so a default constructor could be made for python, do NOT use
+    static plSpawnPointInfo fDefaultSPInfo; // created so a default constructor could be made for python, do NOT use
 
 protected:
-	pySpawnPointInfoRef(): fInfo(fDefaultSPInfo) {} // only used by python glue, do NOT call directly
-	pySpawnPointInfoRef( plSpawnPointInfo & info ): fInfo( info ) {}
+    pySpawnPointInfoRef(): fInfo(fDefaultSPInfo) {} // only used by python glue, do NOT call directly
+    pySpawnPointInfoRef( plSpawnPointInfo & info ): fInfo( info ) {}
 
 public:
-	plSpawnPointInfo & fInfo;
+    plSpawnPointInfo & fInfo;
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptSpawnPointInfoRef);
-	static PyObject *New(plSpawnPointInfo& info);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a ptSpawnPointInfoRef object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySpawnPointInfoRef); // converts a PyObject to a pySpawnPointInfoRef (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptSpawnPointInfoRef);
+    static PyObject *New(plSpawnPointInfo& info);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a ptSpawnPointInfoRef object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySpawnPointInfoRef); // converts a PyObject to a pySpawnPointInfoRef (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	plSpawnPointInfo & SpawnPoint() { return fInfo; }
-	void	SetTitle( const char * v ) { fInfo.SetTitle( v ); }
-	const char * GetTitle() const { return fInfo.GetTitle(); }
-	void	SetName( const char * v ) { fInfo.SetName( v ); }
-	const char * GetName() const { return fInfo.GetName(); }
-	void	SetCameraStack(const char * v ) { fInfo.SetCameraStack( v ); }
-	const char * GetCameraStack() const { return fInfo.GetCameraStack(); }
+    plSpawnPointInfo & SpawnPoint() { return fInfo; }
+    void    SetTitle( const char * v ) { fInfo.SetTitle( v ); }
+    const char * GetTitle() const { return fInfo.GetTitle(); }
+    void    SetName( const char * v ) { fInfo.SetName( v ); }
+    const char * GetName() const { return fInfo.GetName(); }
+    void    SetCameraStack(const char * v ) { fInfo.SetCameraStack( v ); }
+    const char * GetCameraStack() const { return fInfo.GetCameraStack(); }
 };
 
 #endif // pySpawnPointInfo_h_inc

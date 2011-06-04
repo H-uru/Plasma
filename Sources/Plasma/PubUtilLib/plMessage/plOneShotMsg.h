@@ -33,20 +33,20 @@ class plOneShotCallbacks;
 class plOneShotMsg : public plResponderMsg
 {
 public:
-	// We can't use a plEventCallbackMsg since we don't know the actual times we
-	// want to be called back at.  We need to use a string, then the plAGAnim
-	// will figure out the time internally and create a plEventCallbackMsg.
-	plOneShotCallbacks *fCallbacks;
+    // We can't use a plEventCallbackMsg since we don't know the actual times we
+    // want to be called back at.  We need to use a string, then the plAGAnim
+    // will figure out the time internally and create a plEventCallbackMsg.
+    plOneShotCallbacks *fCallbacks;
 
-	plOneShotMsg();
-	~plOneShotMsg();
+    plOneShotMsg();
+    ~plOneShotMsg();
 
-	CLASSNAME_REGISTER(plOneShotMsg);
-	GETINTERFACE_ANY(plOneShotMsg, plResponderMsg);
+    CLASSNAME_REGISTER(plOneShotMsg);
+    GETINTERFACE_ANY(plOneShotMsg, plResponderMsg);
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plOneShotMsg_inc

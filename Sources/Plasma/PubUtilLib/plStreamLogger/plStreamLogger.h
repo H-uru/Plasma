@@ -33,46 +33,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plStreamLogger
 {
 public:
-	class Event
-	{
-	public:
-		enum Type
-		{
-			kSubStart,
-			kSubEnd,
-			kValue,
-			kString,
-		};
-	private:
-		Type fType;
-		plGenericVar fVar;
-		unsigned int fSize;
-	public:
-		Event(Type type, unsigned int size, plGenericVar& var) : fType(type), fSize(size), fVar(var) { }
-		Type GetType() { return fType; }
-		const plGenericVar& GetVar() { return fVar; }
-		unsigned int  GetSize() { return fSize; }
-	};
+    class Event
+    {
+    public:
+        enum Type
+        {
+            kSubStart,
+            kSubEnd,
+            kValue,
+            kString,
+        };
+    private:
+        Type fType;
+        plGenericVar fVar;
+        unsigned int fSize;
+    public:
+        Event(Type type, unsigned int size, plGenericVar& var) : fType(type), fSize(size), fVar(var) { }
+        Type GetType() { return fType; }
+        const plGenericVar& GetVar() { return fVar; }
+        unsigned int  GetSize() { return fSize; }
+    };
 
-	typedef std::list<Event> EventList;
-	typedef std::list<std::string> DescStack;
+    typedef std::list<Event> EventList;
+    typedef std::list<std::string> DescStack;
 
 #ifdef STREAM_LOGGER
 protected:
 
-	EventList* fList;
-	bool fEntryWaiting;  // don't log an "Unknown" b/c an entry is waiting
-	DescStack fDescStack;
+    EventList* fList;
+    bool fEntryWaiting;  // don't log an "Unknown" b/c an entry is waiting
+    DescStack fDescStack;
 
-	void ILogEntryWaiting();
+    void ILogEntryWaiting();
 
 public:
-	plStreamLogger() : fEntryWaiting(false), fList(nil) { }
-	const EventList* GetList() { return fList; }
-	void LogSetList(EventList* el) { fList = el; }
+    plStreamLogger() : fEntryWaiting(false), fList(nil) { }
+    const EventList* GetList() { return fList; }
+    void LogSetList(EventList* el) { fList = el; }
 
-	void LogEntry(plGenericType::Types type, unsigned int size, void* value, const char* desc);
-	bool IsLogEntryWaiting();
+    void LogEntry(plGenericType::Types type, unsigned int size, void* value, const char* desc);
+    bool IsLogEntryWaiting();
 
 #endif
 };
@@ -83,57 +83,57 @@ public:
 #else
 
 #define LOG_READ_SWAP(type, enumtype) \
-	void LogReadSwap(type* value, const char* desc) \
-			{ ILogEntryWaiting(); ReadSwap(value); LogEntry(plGenericType::enumtype,sizeof(type),value, desc);}
+    void LogReadSwap(type* value, const char* desc) \
+            { ILogEntryWaiting(); ReadSwap(value); LogEntry(plGenericType::enumtype,sizeof(type),value, desc);}
 
 #define LOG_READ_SWAP_ARRAY(type, enumtype) \
-	void LogReadSwapV(int count, type values[], const char* desc) \
-			{ ILogEntryWaiting(); ReadSwap(count,values); int i; for (i=0; i < count; i++) LogEntry(plGenericType::enumtype,sizeof(type),&(values[i]), desc);}
+    void LogReadSwapV(int count, type values[], const char* desc) \
+            { ILogEntryWaiting(); ReadSwap(count,values); int i; for (i=0; i < count; i++) LogEntry(plGenericType::enumtype,sizeof(type),&(values[i]), desc);}
 
 class hsReadOnlyLoggingStream : public hsReadOnlyStream, public plStreamLogger
 {
 private:
 
 public:
-	void	Rewind();
-	void	FastFwd();
+    void    Rewind();
+    void    FastFwd();
     void    SetPosition(UInt32 position);
 
-	UInt32 Read(UInt32 byteCount, void * buffer);
-	void Skip(UInt32 deltaByteCount);
+    UInt32 Read(UInt32 byteCount, void * buffer);
+    void Skip(UInt32 deltaByteCount);
 
-	UInt32	LogRead(UInt32 byteCount, void * buffer, const char* desc);
-	char*   LogReadSafeString();
-	char*   LogReadSafeStringLong();
-	void	LogSkip(UInt32 deltaByteCount, const char* desc);
-	void	LogStringString(const char* s);
-	void	LogSubStreamStart(const char* desc);
-	void	LogSubStreamEnd();
-	void	LogSubStreamPushDesc(const char* desc);
+    UInt32  LogRead(UInt32 byteCount, void * buffer, const char* desc);
+    char*   LogReadSafeString();
+    char*   LogReadSafeStringLong();
+    void    LogSkip(UInt32 deltaByteCount, const char* desc);
+    void    LogStringString(const char* s);
+    void    LogSubStreamStart(const char* desc);
+    void    LogSubStreamEnd();
+    void    LogSubStreamPushDesc(const char* desc);
 
-	LOG_READ_SWAP(bool, kBool)
-	LOG_READ_SWAP(UInt8, kUInt)
-	LOG_READ_SWAP(UInt16, kUInt)
-	LOG_READ_SWAP(UInt32, kUInt)
-	LOG_READ_SWAP_ARRAY(UInt8, kUInt)
-	LOG_READ_SWAP_ARRAY(UInt16, kUInt)
-	LOG_READ_SWAP_ARRAY(UInt32, kUInt)
+    LOG_READ_SWAP(bool, kBool)
+    LOG_READ_SWAP(UInt8, kUInt)
+    LOG_READ_SWAP(UInt16, kUInt)
+    LOG_READ_SWAP(UInt32, kUInt)
+    LOG_READ_SWAP_ARRAY(UInt8, kUInt)
+    LOG_READ_SWAP_ARRAY(UInt16, kUInt)
+    LOG_READ_SWAP_ARRAY(UInt32, kUInt)
 
-	LOG_READ_SWAP(Int8, kInt)
-	LOG_READ_SWAP(char, kChar)
-	LOG_READ_SWAP(Int16, kInt)
-	LOG_READ_SWAP(Int32, kInt)
-	LOG_READ_SWAP(int, kInt)
-	LOG_READ_SWAP_ARRAY(Int8, kInt)
-	LOG_READ_SWAP_ARRAY(char, kChar)
-	LOG_READ_SWAP_ARRAY(Int16, kInt)
-	LOG_READ_SWAP_ARRAY(Int32, kInt)
-	LOG_READ_SWAP_ARRAY(int, kInt)
+    LOG_READ_SWAP(Int8, kInt)
+    LOG_READ_SWAP(char, kChar)
+    LOG_READ_SWAP(Int16, kInt)
+    LOG_READ_SWAP(Int32, kInt)
+    LOG_READ_SWAP(int, kInt)
+    LOG_READ_SWAP_ARRAY(Int8, kInt)
+    LOG_READ_SWAP_ARRAY(char, kChar)
+    LOG_READ_SWAP_ARRAY(Int16, kInt)
+    LOG_READ_SWAP_ARRAY(Int32, kInt)
+    LOG_READ_SWAP_ARRAY(int, kInt)
 
-	LOG_READ_SWAP(float, kFloat)
-	LOG_READ_SWAP(double, kDouble)
-	LOG_READ_SWAP_ARRAY(float, kFloat)
-	LOG_READ_SWAP_ARRAY(double, kDouble)
+    LOG_READ_SWAP(float, kFloat)
+    LOG_READ_SWAP(double, kDouble)
+    LOG_READ_SWAP_ARRAY(float, kFloat)
+    LOG_READ_SWAP_ARRAY(double, kDouble)
 
 };
 

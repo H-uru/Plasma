@@ -27,11 +27,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plDecalEnableMod.h"
-#include "../plMessage/plDynaDecalEnableMsg.h"
-#include "../plMessage/plCollideMsg.h"
+#include "plMessage/plDynaDecalEnableMsg.h"
+#include "plMessage/plCollideMsg.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plAvatar/plArmatureMod.h"
 
 #include "hsTimer.h"
 #include "hsStream.h"
@@ -47,54 +47,54 @@ plDecalEnableMod::~plDecalEnableMod()
 
 hsBool plDecalEnableMod::MsgReceive(plMessage* msg)
 {
-	plCollideMsg* coll = plCollideMsg::ConvertNoRef(msg);
-	if( coll )
-	{
-		plSceneObject* obj = plSceneObject::ConvertNoRef(coll->fOtherKey->ObjectIsLoaded());
-		if( !obj )
-			return true;
+    plCollideMsg* coll = plCollideMsg::ConvertNoRef(msg);
+    if( coll )
+    {
+        plSceneObject* obj = plSceneObject::ConvertNoRef(coll->fOtherKey->ObjectIsLoaded());
+        if( !obj )
+            return true;
 
-		const plArmatureMod* arm = (const plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
-		if( !arm )
-			return true;
+        const plArmatureMod* arm = (const plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
+        if( !arm )
+            return true;
 
-		plKey armKey = arm->GetKey();
+        plKey armKey = arm->GetKey();
 
-		int i;
-		for( i = 0; i < fDecalMgrs.GetCount(); i++ )
-		{
-			plDynaDecalEnableMsg* ena = TRACKED_NEW plDynaDecalEnableMsg(fDecalMgrs[i], armKey, hsTimer::GetSysSeconds(), fWetLength, !coll->fEntering);
+        int i;
+        for( i = 0; i < fDecalMgrs.GetCount(); i++ )
+        {
+            plDynaDecalEnableMsg* ena = TRACKED_NEW plDynaDecalEnableMsg(fDecalMgrs[i], armKey, hsTimer::GetSysSeconds(), fWetLength, !coll->fEntering);
 
-			ena->Send();
-		}
-		return true;
-	}
+            ena->Send();
+        }
+        return true;
+    }
 
-	return plSingleModifier::MsgReceive(msg);
+    return plSingleModifier::MsgReceive(msg);
 }
-	
+    
 void plDecalEnableMod::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plSingleModifier::Read(stream, mgr);
+    plSingleModifier::Read(stream, mgr);
 
-	int n = stream->ReadSwap32();
-	fDecalMgrs.SetCount(n);
-	int i;
-	for( i = 0; i < n; i++ )
-		fDecalMgrs[i] = mgr->ReadKey(stream);
+    int n = stream->ReadSwap32();
+    fDecalMgrs.SetCount(n);
+    int i;
+    for( i = 0; i < n; i++ )
+        fDecalMgrs[i] = mgr->ReadKey(stream);
 
-	fWetLength = stream->ReadSwapScalar();
+    fWetLength = stream->ReadSwapScalar();
 }
 
 void plDecalEnableMod::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plSingleModifier::Write(stream, mgr);
+    plSingleModifier::Write(stream, mgr);
 
-	stream->WriteSwap32(fDecalMgrs.GetCount());
+    stream->WriteSwap32(fDecalMgrs.GetCount());
 
-	int i;
-	for( i = 0; i < fDecalMgrs.GetCount(); i++ )
-		mgr->WriteKey(stream, fDecalMgrs[i]);
+    int i;
+    for( i = 0; i < fDecalMgrs.GetCount(); i++ )
+        mgr->WriteKey(stream, fDecalMgrs[i]);
 
-	stream->WriteSwapScalar(fWetLength);
+    stream->WriteSwapScalar(fWetLength);
 }

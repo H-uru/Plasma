@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVisRegion_inc
 #define plVisRegion_inc
 
-#include "../pnSceneObject/plObjInterface.h"
+#include "pnSceneObject/plObjInterface.h"
 
 class hsStream;
 class hsResMgr;
@@ -39,55 +39,55 @@ struct hsPoint3;
 class plVisRegion : public plObjInterface
 {
 public:
-	enum
-	{
-		kRefRegion,
-		kRefVisMgr
-	};
-	enum
-	{
-		kDisable = 0, // Always disable is zero
-		kIsNot,
-		kReplaceNormal,	// Defaults to true
-		kDisableNormal
-	};
+    enum
+    {
+        kRefRegion,
+        kRefVisMgr
+    };
+    enum
+    {
+        kDisable = 0, // Always disable is zero
+        kIsNot,
+        kReplaceNormal, // Defaults to true
+        kDisableNormal
+    };
 protected:
-	plRegionBase*			fRegion;
+    plRegionBase*           fRegion;
 
-	plVisMgr*				fMgr;
+    plVisMgr*               fMgr;
 
-	Int32					fIndex;
+    Int32                   fIndex;
 
-	void					SetIndex(Int32 i) { fIndex = i; }
+    void                    SetIndex(Int32 i) { fIndex = i; }
 
-	friend class plVisMgr;
+    friend class plVisMgr;
 public:
-	plVisRegion(); 
-	virtual ~plVisRegion();
+    plVisRegion(); 
+    virtual ~plVisRegion();
 
-	CLASSNAME_REGISTER( plVisRegion );
-	GETINTERFACE_ANY( plVisRegion, plObjInterface );
+    CLASSNAME_REGISTER( plVisRegion );
+    GETINTERFACE_ANY( plVisRegion, plObjInterface );
 
-	virtual Int32   GetNumProperties() const { return 3; } // This is stupid.
+    virtual Int32   GetNumProperties() const { return 3; } // This is stupid.
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	// Set transform doesn't do anything, because the regions themselves are
-	// object interfaces, so they'll move when their sceneobjects move.
-	virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
+    // Set transform doesn't do anything, because the regions themselves are
+    // object interfaces, so they'll move when their sceneobjects move.
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	hsBool			Eval(const hsPoint3& pos) const;
+    hsBool          Eval(const hsPoint3& pos) const;
 
-	Int32			GetIndex() const { return fIndex; }
+    Int32           GetIndex() const { return fIndex; }
 
-	hsBool			Registered() const { return GetIndex() > 0; }
+    hsBool          Registered() const { return GetIndex() > 0; }
 
-	hsBool			IsNot() const { return GetProperty(kIsNot); }
-	hsBool			ReplaceNormal() const { return GetProperty(kReplaceNormal); }
-	hsBool			DisableNormal() const { return GetProperty(kDisableNormal); }
+    hsBool          IsNot() const { return GetProperty(kIsNot); }
+    hsBool          ReplaceNormal() const { return GetProperty(kReplaceNormal); }
+    hsBool          DisableNormal() const { return GetProperty(kDisableNormal); }
 };
 
 #endif // plVisRegion_inc

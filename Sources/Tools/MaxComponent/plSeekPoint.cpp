@@ -31,27 +31,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNode.h"
 
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "hsResMgr.h"
 
-#include "../plScene/plSceneNode.h"
-#include "../MaxConvert/hsConverterUtils.h"
-#include "../MaxConvert/plConvert.h"
-#include "../MaxConvert/hsControlConverter.h"
-#include "../MaxMain/plMaxNode.h"
+#include "plScene/plSceneNode.h"
+#include "MaxConvert/hsConverterUtils.h"
+#include "MaxConvert/plConvert.h"
+#include "MaxConvert/hsControlConverter.h"
+#include "MaxMain/plMaxNode.h"
 #include "hsGeometry3.h"
 
-#include "../plAvatar/plSeekPointMod.h"
+#include "plAvatar/plSeekPointMod.h"
 
 //Necessary Empty function.  Otherwise Linker throws the Paramblock away as extraneous.
 void DummyCodeIncludeFuncSeekPoint()
 {
 }
 
-//	SeekPoint Component
+//  SeekPoint Component
 // Denotes a special location in the world that the avatar can "magically" move to.
 
 
@@ -59,12 +59,12 @@ void DummyCodeIncludeFuncSeekPoint()
 class plSeekPointComponent : public plComponent
 {
 public:
-	plSeekPointComponent();
-	void DeleteThis() { delete this; }
-	
-	hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-	//hsBool IsValidNodeType(plMaxNode *pNode);
+    plSeekPointComponent();
+    void DeleteThis() { delete this; }
+    
+    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    //hsBool IsValidNodeType(plMaxNode *pNode);
 };
 
 //Max desc stuff necessary.
@@ -74,45 +74,45 @@ CLASS_DESC(plSeekPointComponent, gSeekPtDesc, "Seek Point",  "Seek", COMP_TYPE_T
 // In this case, there isn't really a user interface.
 ParamBlockDesc2 gSeekPtBk
 (
-	1, _T(""), 0, &gSeekPtDesc, P_AUTO_CONSTRUCT, 0,
+    1, _T(""), 0, &gSeekPtDesc, P_AUTO_CONSTRUCT, 0,
 
-	end
+    end
 );
 
 // CTOR (default)
 plSeekPointComponent::plSeekPointComponent()
 {
-	fClassDesc = &gSeekPtDesc;
-	fClassDesc->MakeAutoParamBlocks(this);
+    fClassDesc = &gSeekPtDesc;
+    fClassDesc->MakeAutoParamBlocks(this);
 }
 
 // CONVERT
 hsBool plSeekPointComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	const char *objName = node->GetName();
-	char *name = TRACKED_NEW char[strlen(objName) + 1];
+    const char *objName = node->GetName();
+    char *name = TRACKED_NEW char[strlen(objName) + 1];
 
-	strcpy(name, objName);
+    strcpy(name, objName);
 
-	plSeekPointMod* pointMod = TRACKED_NEW plSeekPointMod(name);
-	node->AddModifier(pointMod, IGetUniqueName(node));
-	return true;
+    plSeekPointMod* pointMod = TRACKED_NEW plSeekPointMod(name);
+    node->AddModifier(pointMod, IGetUniqueName(node));
+    return true;
 }
 
 // PRECONVERT
 hsBool plSeekPointComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
-	pNode->SetForceLocal(true);
-	return true;
+    pNode->SetForceLocal(true);
+    return true;
 }
 
 /*hsBool IsValidNodeType(plMaxNode *pNode)
 {
-	Object *obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
-	if(obj->SuperClassID() == CAMERA_CLASS_ID)
-		return true;
-	else
-		return false;
+    Object *obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
+    if(obj->SuperClassID() == CAMERA_CLASS_ID)
+        return true;
+    else
+        return false;
 
 
 }

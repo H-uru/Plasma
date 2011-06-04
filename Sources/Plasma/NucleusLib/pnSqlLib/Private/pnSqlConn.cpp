@@ -265,7 +265,7 @@ static void LogStmtError (
     }
     diagRecs.Add(L'\0');
 
-	// If the statement doesn't have a handler, handle it the default way
+    // If the statement doesn't have a handler, handle it the default way
     if (!stmt->errHandler) {
         LogErr(result, SQL_HANDLE_STMT, stmt->hstmt, function, stmt->debug);
         return;
@@ -385,8 +385,8 @@ bool SqlStmt::Initialize (const wchar connectStr[]) {
             break;
 
         // Set login timeout
-        /*	-- Crashes EasySoft Oracle driver
-			-- Not supported by Oracle's driver
+        /*  -- Crashes EasySoft Oracle driver
+            -- Not supported by Oracle's driver
         result = SQLSetConnectAttr(
             hdbc,
             SQL_ATTR_LOGIN_TIMEOUT,
@@ -399,24 +399,24 @@ bool SqlStmt::Initialize (const wchar connectStr[]) {
          */
 
 #ifdef ODBC_TRACING
-		result = SQLSetConnectAttr(
-			hdbc,
-			SQL_ATTR_TRACEFILE,
-			"odbc.log",
-			SQL_NTS
-		);		
+        result = SQLSetConnectAttr(
+            hdbc,
+            SQL_ATTR_TRACEFILE,
+            "odbc.log",
+            SQL_NTS
+        );      
         LogErr(result, SQL_HANDLE_DBC, hdbc, L"SQLSetConnectAttr(tracefile)", debug);
-		result = SQLSetConnectAttr(
-			hdbc,
-			SQL_ATTR_TRACE,
-			(SQLPOINTER) SQL_OPT_TRACE_ON,
-			SQL_IS_INTEGER
-		);
+        result = SQLSetConnectAttr(
+            hdbc,
+            SQL_ATTR_TRACE,
+            (SQLPOINTER) SQL_OPT_TRACE_ON,
+            SQL_IS_INTEGER
+        );
         LogErr(result, SQL_HANDLE_DBC, hdbc, L"SQLSetConnectAttr(trace)", debug);
 #endif
 
-        /*	-- Crashes EasySoft Oracle driver
-			-- Not supported by Oracle's driver
+        /*  -- Crashes EasySoft Oracle driver
+            -- Not supported by Oracle's driver
         result = SQLSetConnectAttr(
             hdbc,
             SQL_ATTR_CONNECTION_TIMEOUT,
@@ -475,27 +475,27 @@ void SqlStmt::Reset () {
     SqlConnBindColReset(this);
     SqlConnBindParameterReset(this);
 
-	#ifdef ORACLE_FREE_DRIVER
-	{	// Oracle's driver can't handle cached stmts, so blow it all away.
-		int result;
-		
-		// Destroy old statement
-		if (hstmt) {
-			result = SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
-			LogStmtError(result, this, L"SQLFreeHandle");
-		}
-		
-		// Create new statement
-		result = SQLAllocHandle(
-			SQL_HANDLE_STMT,
-			hdbc,
-			&hstmt
-		);
-		LogStmtError(result, this, L"SQLAllocHandle(stmt)");
-		if (!SQL_SUCCEEDED(result))
-			ASSERT(!hstmt);
-	}
-	#endif // ORACLE_FREE_DRIVER
+    #ifdef ORACLE_FREE_DRIVER
+    {   // Oracle's driver can't handle cached stmts, so blow it all away.
+        int result;
+        
+        // Destroy old statement
+        if (hstmt) {
+            result = SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+            LogStmtError(result, this, L"SQLFreeHandle");
+        }
+        
+        // Create new statement
+        result = SQLAllocHandle(
+            SQL_HANDLE_STMT,
+            hdbc,
+            &hstmt
+        );
+        LogStmtError(result, this, L"SQLAllocHandle(stmt)");
+        if (!SQL_SUCCEEDED(result))
+            ASSERT(!hstmt);
+    }
+    #endif // ORACLE_FREE_DRIVER
 
     FREE(data);
     data = nil;
@@ -634,7 +634,7 @@ void SqlConn::AsyncGrowConnections_CS () {
             taskList,
             SqlConnConnectCallback,
             this,
-			L"pnSqlConn.SqlConn::AsyncGrowConnections_CS"
+            L"pnSqlConn.SqlConn::AsyncGrowConnections_CS"
         );
     }
 }
@@ -721,7 +721,7 @@ void SqlConn::AsyncCheckDead_CS () {
             taskList,
             SqlConnCheckDeadCallback,
             this,
-			L"pnSqlConn.SqlConn::AsyncCheckDead_CS"
+            L"pnSqlConn.SqlConn::AsyncCheckDead_CS"
         );
     }
 }
@@ -841,11 +841,11 @@ void SqlConnFreeStmt (SqlStmt * stmt) {
 
     SqlConnCloseCursor(stmt);
     
-	#ifdef ORACLE_FREE_DRIVER
-	{	// Oracle's driver can't handle cached stmts, so blow it all away.
-		stmt->flags |= kStmtFlagReset;
-	}
-	#endif // ORACLE_FREE_DRIVER
+    #ifdef ORACLE_FREE_DRIVER
+    {   // Oracle's driver can't handle cached stmts, so blow it all away.
+        stmt->flags |= kStmtFlagReset;
+    }
+    #endif // ORACLE_FREE_DRIVER
     
     // If this statement was used for an ad hoc query
     // then it can't be cached, so reset the bindings
@@ -873,20 +873,20 @@ void SqlConnFreeStmt (SqlStmt * stmt) {
 
 //============================================================================
 void SqlStmtSetAttr (
-	SqlStmt *		stmt,
-	int				attr,
-	void *			valPtr,
-	int				strLen
+    SqlStmt *       stmt,
+    int             attr,
+    void *          valPtr,
+    int             strLen
 ) {
-	ASSERT(stmt);
-	ASSERT(!stmt->prepare);
-	int result = SQLSetStmtAttr(
-		stmt->hstmt,
-		(SQLINTEGER)attr,
-		(SQLPOINTER)valPtr,
-		(SQLINTEGER)strLen
-	);
-	LogErr(result, SQL_HANDLE_STMT, stmt->hstmt, L"SQLSetStmtAttr", nil);
+    ASSERT(stmt);
+    ASSERT(!stmt->prepare);
+    int result = SQLSetStmtAttr(
+        stmt->hstmt,
+        (SQLINTEGER)attr,
+        (SQLPOINTER)valPtr,
+        (SQLINTEGER)strLen
+    );
+    LogErr(result, SQL_HANDLE_STMT, stmt->hstmt, L"SQLSetStmtAttr", nil);
 }
 
 
@@ -1254,7 +1254,7 @@ void SqlConnBindParameterStringA (
     SqlStmt *       stmt,
     SQLINTEGER      inputOutputType,
     SQLUINTEGER     columnSize,         // bytes, NOT chars
-    SQLCHAR *		parameterValuePtr,
+    SQLCHAR *       parameterValuePtr,
     SQLINTEGER *    indPtr
 ) {
     SqlConnBindParameter(
@@ -1275,9 +1275,9 @@ int SqlConnExecDirect (
     SqlStmt *       stmt,
     const wchar     string[]
 ) {
-	#ifdef LOG_SQL_STMTS
-	LogMsg(kLogDebug, L"SQL: %s", string);
-	#endif
+    #ifdef LOG_SQL_STMTS
+    LogMsg(kLogDebug, L"SQL: %s", string);
+    #endif
     StrCopy(stmt->debug, string, arrsize(stmt->debug));
     int result = SQLExecDirectW(stmt->hstmt, const_cast<wchar *>(string), SQL_NTS);
     LogStmtError(result, stmt, L"SqlExecute");

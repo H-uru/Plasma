@@ -37,38 +37,38 @@ class hsResMgr;
 class plMultiModMsg : public plMessage
 {
 public:
-	plMultiModMsg()
-		: plMessage(nil, nil, nil) {}
-	plMultiModMsg(const plKey &s, 
-				const plKey &r, 
-				const double* t)
-		: plMessage(s, r, t) {}
-	~plMultiModMsg() {}
+    plMultiModMsg()
+        : plMessage(nil, nil, nil) {}
+    plMultiModMsg(const plKey &s, 
+                const plKey &r, 
+                const double* t)
+        : plMessage(s, r, t) {}
+    ~plMultiModMsg() {}
 
-	CLASSNAME_REGISTER( plMultiModMsg );
-	GETINTERFACE_ANY( plMultiModMsg, plMessage );
+    CLASSNAME_REGISTER( plMultiModMsg );
+    GETINTERFACE_ANY( plMultiModMsg, plMessage );
 
-	enum ModCmds
-	{
-	};
+    enum ModCmds
+    {
+    };
 
-	hsBitVector		fCmd;
+    hsBitVector     fCmd;
 
-	hsBool Cmd(int n) { return fCmd.IsBitSet(n); }
-	void SetCmd(int n) { fCmd.SetBit(n); }
-	void ClearCmd() { fCmd.Clear(); }
+    hsBool Cmd(int n) { return fCmd.IsBitSet(n); }
+    void SetCmd(int n) { fCmd.SetBit(n); }
+    void ClearCmd() { fCmd.Clear(); }
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr) 
-	{	
-		plMessage::IMsgRead(stream, mgr); 
-		fCmd.Read(stream);
-	}
-	void Write(hsStream* stream, hsResMgr* mgr)	
-	{	
-		plMessage::IMsgWrite(stream, mgr);
-		fCmd.Write(stream);
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr) 
+    {   
+        plMessage::IMsgRead(stream, mgr); 
+        fCmd.Read(stream);
+    }
+    void Write(hsStream* stream, hsResMgr* mgr) 
+    {   
+        plMessage::IMsgWrite(stream, mgr);
+        fCmd.Write(stream);
+    }
 };
 
 #endif // plMultiModMsg_inc

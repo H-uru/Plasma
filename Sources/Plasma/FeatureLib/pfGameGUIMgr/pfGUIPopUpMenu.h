@@ -24,13 +24,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIPopUpMenu Header													//
-//																			//
-//	Pop-up menus are really just dialogs that know how to create themselves	//
-//	and create buttons on themselves to simulate a menu (after all, that's	//
-//	all a menu really is anyway).											//
-//																			//
+//                                                                          //
+//  pfGUIPopUpMenu Header                                                   //
+//                                                                          //
+//  Pop-up menus are really just dialogs that know how to create themselves //
+//  and create buttons on themselves to simulate a menu (after all, that's  //
+//  all a menu really is anyway).                                           //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIPopUpMenu_h
@@ -51,104 +51,104 @@ class pfGUISkin;
 
 class pfGUIPopUpMenu : public pfGUIDialogMod
 {
-	public:
+    public:
 
-		enum Alignment
-		{
-			kAlignUpLeft,
-			kAlignUpRight,
-			kAlignDownLeft,
-			kAlignDownRight		// Default
-		};
+        enum Alignment
+        {
+            kAlignUpLeft,
+            kAlignUpRight,
+            kAlignDownLeft,
+            kAlignDownRight     // Default
+        };
 
-	protected:
+    protected:
 
-		friend class pfGUIMenuItemProc;
+        friend class pfGUIMenuItemProc;
 
-		pfGUIDialogMod		*fParent;	// Pop-up menus also have a sense of who owns them
-		plSceneNode			*fParentNode;
+        pfGUIDialogMod      *fParent;   // Pop-up menus also have a sense of who owns them
+        plSceneNode         *fParentNode;
 
-		pfPopUpKeyGenerator	*fKeyGen;	// Generates keys for our dynamic objects
+        pfPopUpKeyGenerator *fKeyGen;   // Generates keys for our dynamic objects
 
-		class pfMenuItem
-		{
-			// Simple wrapper class that tells us how to build our menu
-			public:
-				std::wstring		fName;
-				pfGUICtrlProcObject	*fHandler;
-				pfGUIPopUpMenu		*fSubMenu;
-				float				fYOffsetToNext;		// Filled in by IBuildMenu()
+        class pfMenuItem
+        {
+            // Simple wrapper class that tells us how to build our menu
+            public:
+                std::wstring        fName;
+                pfGUICtrlProcObject *fHandler;
+                pfGUIPopUpMenu      *fSubMenu;
+                float               fYOffsetToNext;     // Filled in by IBuildMenu()
 
-				pfMenuItem& operator=(const int zero) { fName = L""; fHandler = nil; fSubMenu = nil; fYOffsetToNext = 0; return *this; }
-		};
+                pfMenuItem& operator=(const int zero) { fName = L""; fHandler = nil; fSubMenu = nil; fYOffsetToNext = 0; return *this; }
+        };
 
-		// Array of info to rebuild our menu from. Note that this is ONLY used when rebuilding
-		hsBool					fNeedsRebuilding, fWaitingForSkin;
-		hsScalar				fOriginX, fOriginY;
-		UInt16					fMargin;
-		hsTArray<pfMenuItem>	fMenuItems;
-		Int32					fSubMenuOpen;
+        // Array of info to rebuild our menu from. Note that this is ONLY used when rebuilding
+        hsBool                  fNeedsRebuilding, fWaitingForSkin;
+        hsScalar                fOriginX, fOriginY;
+        UInt16                  fMargin;
+        hsTArray<pfMenuItem>    fMenuItems;
+        Int32                   fSubMenuOpen;
 
-		pfGUISkin				*fSkin;
+        pfGUISkin               *fSkin;
 
-		plSceneObject			*fOriginAnchor;
-		pfGUIDialogMod			*fOriginContext;
+        plSceneObject           *fOriginAnchor;
+        pfGUIDialogMod          *fOriginContext;
 
-		Alignment				fAlignment;
+        Alignment               fAlignment;
 
 
-		hsBool		IBuildMenu( void );
-		void		ITearDownMenu( void );
+        hsBool      IBuildMenu( void );
+        void        ITearDownMenu( void );
 
-		hsGMaterial	*ICreateDynMaterial( void );
+        hsGMaterial *ICreateDynMaterial( void );
 
-		void		IHandleMenuSomething( UInt32 idx, pfGUIControlMod *ctrl, Int32 extended = -1 );
+        void        IHandleMenuSomething( UInt32 idx, pfGUIControlMod *ctrl, Int32 extended = -1 );
 
-		void		ISeekToOrigin( void );
+        void        ISeekToOrigin( void );
 
-	public:
+    public:
 
-		pfGUIPopUpMenu();
-		virtual ~pfGUIPopUpMenu();
+        pfGUIPopUpMenu();
+        virtual ~pfGUIPopUpMenu();
 
-		CLASSNAME_REGISTER( pfGUIPopUpMenu );
-		GETINTERFACE_ANY( pfGUIPopUpMenu, pfGUIDialogMod );
+        CLASSNAME_REGISTER( pfGUIPopUpMenu );
+        GETINTERFACE_ANY( pfGUIPopUpMenu, pfGUIDialogMod );
 
-		enum MenuFlags
-		{
-			kStayOpenAfterClick = kDerivedFlagsStart,
-			kModalOutsideMenus,
-			kOpenSubMenusOnHover,
-			kScaleWithResolution
-		};
+        enum MenuFlags
+        {
+            kStayOpenAfterClick = kDerivedFlagsStart,
+            kModalOutsideMenus,
+            kOpenSubMenusOnHover,
+            kScaleWithResolution
+        };
 
-		enum Refs
-		{
-			kRefSkin = kRefDerviedStart,
-			kRefSubMenu,
-			kRefOriginAnchor,
-			kRefOriginContext,
-			kRefParentNode
-		};
+        enum Refs
+        {
+            kRefSkin = kRefDerviedStart,
+            kRefSubMenu,
+            kRefOriginAnchor,
+            kRefOriginContext,
+            kRefParentNode
+        };
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		virtual void	SetEnabled( hsBool e );
-		virtual hsBool	HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers );
+        virtual void    SetEnabled( hsBool e );
+        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers );
 
-		void			Show( hsScalar x, hsScalar y );
+        void            Show( hsScalar x, hsScalar y );
 
-		void	SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *context );
-		void	SetAlignment( Alignment a ) { fAlignment = a; }
-		void	ClearItems( void );
-		void	AddItem( const char *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
-		void	AddItem( const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
-		void	SetSkin( pfGUISkin *skin );
+        void    SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *context );
+        void    SetAlignment( Alignment a ) { fAlignment = a; }
+        void    ClearItems( void );
+        void    AddItem( const char *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
+        void    AddItem( const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
+        void    SetSkin( pfGUISkin *skin );
 
-		static pfGUIPopUpMenu	*Build( const char *name, pfGUIDialogMod *parent, hsScalar x, hsScalar y, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
+        static pfGUIPopUpMenu   *Build( const char *name, pfGUIDialogMod *parent, hsScalar x, hsScalar y, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
 
 };
 
@@ -156,70 +156,70 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
 class plMipmap;
 class pfGUISkin : public hsKeyedObject
 {
-	public:
-		enum Elements
-		{
-			kUpLeftCorner = 0,
-			kTopSpan,
-			kUpRightCorner,
-			kRightSpan,
-			kLowerRightCorner,
-			kBottomSpan,
-			kLowerLeftCorner,
-			kLeftSpan,
-			kMiddleFill,
-			kSelectedFill,
-			kSubMenuArrow,
-			kSelectedSubMenuArrow,
-			kTreeButtonClosed,
-			kTreeButtonOpen,
-			kNumElements
-		};
+    public:
+        enum Elements
+        {
+            kUpLeftCorner = 0,
+            kTopSpan,
+            kUpRightCorner,
+            kRightSpan,
+            kLowerRightCorner,
+            kBottomSpan,
+            kLowerLeftCorner,
+            kLeftSpan,
+            kMiddleFill,
+            kSelectedFill,
+            kSubMenuArrow,
+            kSelectedSubMenuArrow,
+            kTreeButtonClosed,
+            kTreeButtonOpen,
+            kNumElements
+        };
 
-		class pfSRect
-		{
-			public:
-				UInt16	fX, fY, fWidth, fHeight;
+        class pfSRect
+        {
+            public:
+                UInt16  fX, fY, fWidth, fHeight;
 
-				void	Empty( void ) { fX = fY = fWidth = fHeight = 0; }
-				void	Read( hsStream *s );
-				void	Write( hsStream *s );
-		};
+                void    Empty( void ) { fX = fY = fWidth = fHeight = 0; }
+                void    Read( hsStream *s );
+                void    Write( hsStream *s );
+        };
 
-	protected:
+    protected:
 
-		plMipmap	*fTexture;
-		pfSRect		fElements[ kNumElements ];
-		UInt16		fItemMargin, fBorderMargin;
+        plMipmap    *fTexture;
+        pfSRect     fElements[ kNumElements ];
+        UInt16      fItemMargin, fBorderMargin;
 
-	public:
+    public:
 
-		pfGUISkin();
-		pfGUISkin( plMipmap *texture );
-		virtual ~pfGUISkin();
+        pfGUISkin();
+        pfGUISkin( plMipmap *texture );
+        virtual ~pfGUISkin();
 
-		CLASSNAME_REGISTER( pfGUISkin );
-		GETINTERFACE_ANY( pfGUISkin, hsKeyedObject );
+        CLASSNAME_REGISTER( pfGUISkin );
+        GETINTERFACE_ANY( pfGUISkin, hsKeyedObject );
 
-		enum Refs
-		{
-			kRefMipmap
-		};
+        enum Refs
+        {
+            kRefMipmap
+        };
 
-		virtual void	Read( hsStream *s, hsResMgr *mgr );
-		virtual void	Write( hsStream *s, hsResMgr *mgr );
-		virtual hsBool	MsgReceive( plMessage *msg );
+        virtual void    Read( hsStream *s, hsResMgr *mgr );
+        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        virtual hsBool  MsgReceive( plMessage *msg );
 
-		plMipmap		*GetTexture( void ) const { return fTexture; }
-		void			SetTexture( plMipmap *tex );
+        plMipmap        *GetTexture( void ) const { return fTexture; }
+        void            SetTexture( plMipmap *tex );
 
-		const pfSRect	&GetElement( UInt32 idx ) const { return fElements[ idx ]; }
-		hsBool			IsElementSet( UInt32 idx ) const { return ( fElements[ idx ].fWidth > 0 && fElements[ idx ].fHeight > 0 ); }
-		void			SetElement( UInt32 idx, UInt16 x, UInt16 y, UInt16 w, UInt16 h );
+        const pfSRect   &GetElement( UInt32 idx ) const { return fElements[ idx ]; }
+        hsBool          IsElementSet( UInt32 idx ) const { return ( fElements[ idx ].fWidth > 0 && fElements[ idx ].fHeight > 0 ); }
+        void            SetElement( UInt32 idx, UInt16 x, UInt16 y, UInt16 w, UInt16 h );
 
-		void			SetMargins( UInt16 item, UInt16 border ) { fItemMargin = item; fBorderMargin = border; }
-		UInt16			GetItemMargin( void ) const { return fItemMargin; }
-		UInt16			GetBorderMargin( void ) const { return fBorderMargin; }
+        void            SetMargins( UInt16 item, UInt16 border ) { fItemMargin = item; fBorderMargin = border; }
+        UInt16          GetItemMargin( void ) const { return fItemMargin; }
+        UInt16          GetBorderMargin( void ) const { return fBorderMargin; }
 };
 
 #endif // _pfGUIPopUpMenu_h

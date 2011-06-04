@@ -41,18 +41,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define EXTERN_CLASS_INDEX_SCOPED(plClassName) plExternalCreatableIndex::EXTERN_CLASS_INDEX(plClassName)
 
 // Macros for the start and end of the class index list
-#define CLASS_INDEX_LIST_START		const int KEYED_OBJ_DELINEATOR	= 512; \
-									const int EXTERNAL_KEYED_DLL_BEGIN	= 256; \
-									const int EXTERNAL_KEYED_DLL_END	= 511; \
-									const int EXTERNAL_NONKEYED_DLL_BEGIN	= 1436; \
-									const int EXTERNAL_NONKEYED_DLL_END	= 1536; \
-									class plCreatableIndex { public: enum {
-#define CLASS_INDEX_LIST_END	plNumClassIndices = EXTERNAL_NONKEYED_DLL_END + 1, }; };
+#define CLASS_INDEX_LIST_START      const int KEYED_OBJ_DELINEATOR  = 512; \
+                                    const int EXTERNAL_KEYED_DLL_BEGIN  = 256; \
+                                    const int EXTERNAL_KEYED_DLL_END    = 511; \
+                                    const int EXTERNAL_NONKEYED_DLL_BEGIN   = 1436; \
+                                    const int EXTERNAL_NONKEYED_DLL_END = 1536; \
+                                    class plCreatableIndex { public: enum {
+#define CLASS_INDEX_LIST_END    plNumClassIndices = EXTERNAL_NONKEYED_DLL_END + 1, }; };
 // Macro to mark which class index is the start of the nonkeyed object section
-#define CLASS_INDEX_NONKEYED_OBJ_START		kKeyedObjDelineator = KEYED_OBJ_DELINEATOR-1,
+#define CLASS_INDEX_NONKEYED_OBJ_START      kKeyedObjDelineator = KEYED_OBJ_DELINEATOR-1,
 
-#define CLASS_INDEX_DATABASE_STRUCT_INDEXES_START	kDatabaseStructIndexesStart,
-#define CLASS_INDEX_DATABASE_STRUCT_INDEXES_END		kDatabaseStructIndexesEnd=kDatabaseStructIndexesStart+100,
+#define CLASS_INDEX_DATABASE_STRUCT_INDEXES_START   kDatabaseStructIndexesStart,
+#define CLASS_INDEX_DATABASE_STRUCT_INDEXES_END     kDatabaseStructIndexesEnd=kDatabaseStructIndexesStart+100,
 
 
 #endif // plClassIndexMacros_inc

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetClientMsgScreener_h
 #define plNetClientMsgScreener_h
 
-#include "../plNetCommon/plNetMsgScreener.h"
+#include "plNetCommon/plNetMsgScreener.h"
 
 //
 // Client-side version
@@ -34,19 +34,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plNetClientMsgScreener : public plNetMsgScreener
 {
 protected:
-	void ICreateStatusLog() const;
-	const char* IGetSenderName(const plNetGameMember* gm) const { return "local";	}
-	const char* IGetAgeName() const;
-	bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const;
-	bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const;
-	bool IIsSenderCCR(const plNetGameMember* gm=nil) const;
-	bool IAmClient() const { return true; }
+    void ICreateStatusLog() const;
+    const char* IGetSenderName(const plNetGameMember* gm) const { return "local";   }
+    const char* IGetAgeName() const;
+    bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const;
+    bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const;
+    bool IIsSenderCCR(const plNetGameMember* gm=nil) const;
+    bool IAmClient() const { return true; }
+    bool IScreenIncoming(const plMessage* msg) const;
 public:
 
-	plNetClientMsgScreener();
-	
-	bool AllowMessage(const plMessage* msg) const;
+    plNetClientMsgScreener();
+    
+    bool AllowOutgoingMessage(const plMessage* msg) const;
+    bool AllowIncomingMessage(const plMessage* msg) const;
 };
 
 
-#endif	// plNetClientMsgScreener_h
+#endif  // plNetClientMsgScreener_h

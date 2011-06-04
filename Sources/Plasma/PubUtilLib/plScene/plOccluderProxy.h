@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plOccluderProxy_inc
 #define plOccluderProxy_inc
 
-#include "../plDrawable/plProxyGen.h"
+#include "plDrawable/plProxyGen.h"
 
 class plOccluder;
 class plDrawableSpans;
@@ -36,16 +36,16 @@ class hsGMaterial;
 class plOccluderProxy : public plProxyGen
 {
 protected:
-	plOccluder*			fOwner;
+    plOccluder*         fOwner;
 
 
-	virtual plDrawableSpans*	ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
-	virtual plKey				IGetNode() const;
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
+    virtual plKey               IGetNode() const;
 public:
-	plOccluderProxy();
-	virtual ~plOccluderProxy();
+    plOccluderProxy();
+    virtual ~plOccluderProxy();
 
-	hsBool  Init(plOccluder* occluder);
+    hsBool  Init(plOccluder* occluder);
 };
 
 #endif // plOccluderProxy_inc

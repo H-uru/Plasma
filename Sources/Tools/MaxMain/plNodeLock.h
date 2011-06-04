@@ -30,14 +30,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plNodeLock
 {
 protected:
-	void		ISetLockRecur(INode* node, BOOL on);
+    void        ISetLockRecur(INode* node, BOOL on);
 
 public:
-	plNodeLock() {}
-	~plNodeLock() {}
+    plNodeLock() {}
+    ~plNodeLock() {}
 
-	void		Lock(BOOL on = true); // on = true locks, on = false unlocks
-	void		Unlock() { Lock(false); }
+    void        Lock(BOOL on = true); // on = true locks, on = false unlocks
+    void        Unlock() { Lock(false); }
 };
 
 #endif // plNodeLock_inc

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayRefMsg_inc
 #define plLayRefMsg_inc
 
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 
 class hsStream;
 class hsResMgr;
@@ -35,25 +35,25 @@ class hsResMgr;
 class plLayRefMsg : public plRefMsg
 {
 public:
-	enum {
-		kTexture		= 1,
-		kUnderLay		= 2,
-		kVertexShader	= 3,
-		kPixelShader	= 4
-	};
+    enum {
+        kTexture        = 1,
+        kUnderLay       = 2,
+        kVertexShader   = 3,
+        kPixelShader    = 4
+    };
 
-	plLayRefMsg() : fType(-1), fWhich(-1) {}
-	plLayRefMsg(const plKey &r, UInt8 f, Int8 which, Int8 type) : plRefMsg(r, f), fWhich(which), fType(type) {}
+    plLayRefMsg() : fType(-1), fWhich(-1) {}
+    plLayRefMsg(const plKey &r, UInt8 f, Int8 which, Int8 type) : plRefMsg(r, f), fWhich(which), fType(type) {}
 
-	CLASSNAME_REGISTER( plLayRefMsg );
-	GETINTERFACE_ANY( plLayRefMsg, plRefMsg );
+    CLASSNAME_REGISTER( plLayRefMsg );
+    GETINTERFACE_ANY( plLayRefMsg, plRefMsg );
 
-	Int8		fType;
-	Int8		fWhich;
+    Int8        fType;
+    Int8        fWhich;
 
-	// IO - not really applicable to ref msgs, but anyway
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // IO - not really applicable to ref msgs, but anyway
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plLayRefMsg_inc

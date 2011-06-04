@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMessageCreatable_inc
 #define plMessageCreatable_inc
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "plInterestingPing.h"
 
@@ -272,7 +272,7 @@ REGISTER_CREATABLE(plRippleShapeMsg);
 #include "plNetOwnershipMsg.h"
 REGISTER_CREATABLE(plNetOwnershipMsg);
 
-#include "plCCRMessageCreatable.h"	// kept separately for selective server include 
+#include "plCCRMessageCreatable.h"  // kept separately for selective server include 
 
 #include "plConnectedToVaultMsg.h"
 REGISTER_CREATABLE(plConnectedToVaultMsg);

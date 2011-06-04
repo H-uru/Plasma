@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#if 1	// for debugging
-#include "plCreatableIndex.h"	
-#include "../plModifier/plResponderModifier.h"
-#include "../plSurface/plLayerAnimation.h"
+#if 1   // for debugging
+#include "plCreatableIndex.h"   
+#include "plModifier/plResponderModifier.h"
+#include "plSurface/plLayerAnimation.h"
 #endif
 
 #include "hsStream.h"
@@ -36,40 +36,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include "../plNetMessage/plNetMessage.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnModifier/plModifier.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../pnMessage/plNodeChangeMsg.h"
-#include "../pnMessage/plPlayerPageMsg.h"
+#include "plNetMessage/plNetMessage.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnModifier/plModifier.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plNodeChangeMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
 
-#include "../plScene/plSceneNode.h"
-#include "../plScene/plRelevanceMgr.h"
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plAgeDescription/plAgeDescription.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plSDL/plSDL.h"
+#include "plScene/plSceneNode.h"
+#include "plScene/plRelevanceMgr.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plAgeDescription/plAgeDescription.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plSDL/plSDL.h"
 
 /// TEMP HACK TO LOAD CONSOLE INIT FILES ON AGE LOAD
-#include "../plMessage/plConsoleMsg.h"
-#include "../plMessage/plLoadAvatarMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
 
-#include "../plAgeLoader/plResPatcher.h"
-#include "../plProgressMgr/plProgressMgr.h"
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plRegistryNode.h"
-#include "../plResMgr/plResManager.h"
+#include "plAgeLoader/plResPatcher.h"
+#include "plProgressMgr/plProgressMgr.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plRegistryNode.h"
+#include "plResMgr/plResManager.h"
 
-#include "process.h"	// for getpid()
+#ifdef _MSC_VER
+#include <process.h>    // for getpid()
+#else
+#include <sys/types.h>
+#include <unistd.h>
+#endif
 
-extern	hsBool	gDataServerLocal;
+extern  hsBool  gDataServerLocal;
 
 
 // Load Player object
@@ -80,66 +85,66 @@ extern	hsBool	gDataServerLocal;
 // Load an object, optionally cloning if necessary. 
 plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
 {
-	plKey cloneKey = pCloneMsg->GetCloneKey();
+    plKey cloneKey = pCloneMsg->GetCloneKey();
 
-	if(pCloneMsg->GetIsLoading())
-	{
-		if (cloneKey->ObjectIsLoaded())
-		{
-			char tmp[256];
-			DebugMsg("ILoadClone: object %s is already loaded, ignoring", cloneKey->GetUoid().StringIze(tmp));
-			return cloneKey;
-		}
+    if(pCloneMsg->GetIsLoading())
+    {
+        if (cloneKey->ObjectIsLoaded())
+        {
+            char tmp[256];
+            DebugMsg("ILoadClone: object %s is already loaded, ignoring", cloneKey->GetUoid().StringIze(tmp));
+            return cloneKey;
+        }
 
-		// check if local or remote player before loading
-		plLoadAvatarMsg* loadAvMsg=plLoadAvatarMsg::ConvertNoRef(pCloneMsg);
-		if (loadAvMsg && loadAvMsg->GetIsPlayer())
-		{
-			bool originating = ( pCloneMsg->GetOriginatingPlayerID() == this->GetPlayerID() );
-			if (originating)
-				fLocalPlayerKey = cloneKey;
-			else
-				AddRemotePlayerKey(cloneKey);
-		}
+        // check if local or remote player before loading
+        plLoadAvatarMsg* loadAvMsg=plLoadAvatarMsg::ConvertNoRef(pCloneMsg);
+        if (loadAvMsg && loadAvMsg->GetIsPlayer())
+        {
+            bool originating = ( pCloneMsg->GetOriginatingPlayerID() == this->GetPlayerID() );
+            if (originating)
+                fLocalPlayerKey = cloneKey;
+            else
+                AddRemotePlayerKey(cloneKey);
+        }
 
-		plKey cloneNodeKey = hsgResMgr::ResMgr()->FindKey(kNetClientCloneRoom_KEY);
+        plKey cloneNodeKey = hsgResMgr::ResMgr()->FindKey(kNetClientCloneRoom_KEY);
 
-		// Put the clone into the room, which also forces it to load.
-		plNodeRefMsg* nodeRefCloneMsg = TRACKED_NEW plNodeRefMsg(cloneNodeKey, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
-		hsgResMgr::ResMgr()->AddViaNotify(cloneKey, nodeRefCloneMsg, plRefFlags::kActiveRef);
+        // Put the clone into the room, which also forces it to load.
+        plNodeRefMsg* nodeRefCloneMsg = TRACKED_NEW plNodeRefMsg(cloneNodeKey, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
+        hsgResMgr::ResMgr()->AddViaNotify(cloneKey, nodeRefCloneMsg, plRefFlags::kActiveRef);
 
-		// Finally, pump the dispatch system so all the new refs get delivered. ?
-		plgDispatch::Dispatch()->MsgQueueProcess();
-	}
-	else		// we're unloading a clone
-	{
-		if (!cloneKey->ObjectIsLoaded())
-		{
-			DebugMsg("ILoadClone: object %s is already unloaded, ignoring", cloneKey->GetName());
-			return cloneKey;
-		}
+        // Finally, pump the dispatch system so all the new refs get delivered. ?
+        plgDispatch::Dispatch()->MsgQueueProcess();
+    }
+    else        // we're unloading a clone
+    {
+        if (!cloneKey->ObjectIsLoaded())
+        {
+            DebugMsg("ILoadClone: object %s is already unloaded, ignoring", cloneKey->GetName());
+            return cloneKey;
+        }
 
-		ICheckPendingStateLoad(hsTimer::GetSysSeconds());
-		plSynchEnabler p(false);	// turn off dirty tracking while in this function
+        ICheckPendingStateLoad(hsTimer::GetSysSeconds());
+        plSynchEnabler p(false);    // turn off dirty tracking while in this function
 
-		GetKey()->Release(cloneKey);		// undo the active ref we took in ILoadClone
+        GetKey()->Release(cloneKey);        // undo the active ref we took in ILoadClone
 
-		// send message to scene object to remove him from the room
-		plNodeChangeMsg* nodeChange = TRACKED_NEW plNodeChangeMsg(GetKey(), cloneKey, nil);
-		plgDispatch::MsgSend(nodeChange);
-	}
+        // send message to scene object to remove him from the room
+        plNodeChangeMsg* nodeChange = TRACKED_NEW plNodeChangeMsg(GetKey(), cloneKey, nil);
+        plgDispatch::MsgSend(nodeChange);
+    }
 
-	plKey requestorKey = pCloneMsg->GetRequestorKey();
+    plKey requestorKey = pCloneMsg->GetRequestorKey();
 
-	// Readdress the message to the requestor and send it again
-	plKey myKey = GetKey();
-	pCloneMsg->SetBCastFlag(plMessage::kNetPropagate, false);
-	pCloneMsg->ClearReceivers();
-	pCloneMsg->AddReceiver(requestorKey);
-	pCloneMsg->Ref();					// each message send unrefs once
-	pCloneMsg->Send();
+    // Readdress the message to the requestor and send it again
+    plKey myKey = GetKey();
+    pCloneMsg->SetBCastFlag(plMessage::kNetPropagate, false);
+    pCloneMsg->ClearReceivers();
+    pCloneMsg->AddReceiver(requestorKey);
+    pCloneMsg->Ref();                   // each message send unrefs once
+    pCloneMsg->Send();
 
-	return cloneKey;
+    return cloneKey;
 }
 
 //
@@ -148,24 +153,24 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
 //
 void plNetClientMgr::IPlayerChangeAge(hsBool exitAge, Int32 spawnPt)
 {
-	plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
-	
-	if (avatar)
-	{
-		plSynchEnabler ps(false);	// disable state change tracking while we change ages
-		if (exitAge)
-			avatar->LeaveAge();
-		else
-		{
-			hsBool validSpawn = (spawnPt >= 0);
-			avatar->EnterAge(!validSpawn);
-			if (validSpawn)
-				avatar->SpawnAt(spawnPt, hsTimer::GetSysSeconds());
-		}
-	}
-	else if (fLocalPlayerKey)
-	{
-		ErrorMsg("Can't find avatarMod %s", fLocalPlayerKey->GetName());
-	}
+    plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
+    
+    if (avatar)
+    {
+        plSynchEnabler ps(false);   // disable state change tracking while we change ages
+        if (exitAge)
+            avatar->LeaveAge();
+        else
+        {
+            hsBool validSpawn = (spawnPt >= 0);
+            avatar->EnterAge(!validSpawn);
+            if (validSpawn)
+                avatar->SpawnAt(spawnPt, hsTimer::GetSysSeconds());
+        }
+    }
+    else if (fLocalPlayerKey)
+    {
+        ErrorMsg("Can't find avatarMod %s", fLocalPlayerKey->GetName());
+    }
 }
 

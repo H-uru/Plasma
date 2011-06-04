@@ -40,39 +40,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plRandom
 {
 protected:
-	mutable UInt32		fSeed;
+    mutable UInt32      fSeed;
 public:
-	inline float		RandNorm() const;
-	inline int			Rand() const;
-	inline int			RandRangeI(int lo, int hi) const;
-	inline float		RandRangeF(float lo, float hi) const;
-	inline float		RandMinusOneToOne() const;
-	inline float		RandZeroToOne() const;
+    inline float        RandNorm() const;
+    inline int          Rand() const;
+    inline int          RandRangeI(int lo, int hi) const;
+    inline float        RandRangeF(float lo, float hi) const;
+    inline float        RandMinusOneToOne() const;
+    inline float        RandZeroToOne() const;
 
-	UInt32				GetSeed() const { return fSeed; }
-	void				SetSeed(int seed) { fSeed = seed; }
+    UInt32              GetSeed() const { return fSeed; }
+    void                SetSeed(int seed) { fSeed = seed; }
 
-	plRandom(int seed = 1) : fSeed(seed) {}
+    plRandom(int seed = 1) : fSeed(seed) {}
 };
 
 inline float plRandom::RandNorm() const
 { 
 #ifndef FAST_Q
-	return 1.f / 32767.f; 
+    return 1.f / 32767.f; 
 #else // FAST_Q
-	return (1.f / float(~0UL));
+    return (1.f / float(~0UL));
 #endif // FAST_Q
 } 
 
 inline int plRandom::Rand() const
 {
 #ifndef FAST_Q
-	register int temp;
-	fSeed = fSeed * 1103515245 + 12345;
-	temp = (int)((fSeed/65536)&32767);
-	return (temp);
+    register int temp;
+    fSeed = fSeed * 1103515245 + 12345;
+    temp = (int)((fSeed/65536)&32767);
+    return (temp);
 #else // FAST_Q
-	return fSeed = 1664525L * fSeed + 1013904223L;
+    return fSeed = 1664525L * fSeed + 1013904223L;
 #endif // FAST_Q
 }
 
@@ -84,11 +84,11 @@ inline int plRandom::Rand() const
 inline float plRandom::RandZeroToOne() const
 {
 #ifndef FAST_Q
-	return Rand() * RandNorm();
+    return Rand() * RandNorm();
 #else // FAST_Q
-	const UInt32 kOneExp = 0x3f800000;
-	register UInt32 temp = kOneExp | (UInt32(Rand()) >> 9);
-	return (*(float*)&temp) - 1.f;
+    const UInt32 kOneExp = 0x3f800000;
+    register UInt32 temp = kOneExp | (UInt32(Rand()) >> 9);
+    return (*(float*)&temp) - 1.f;
 #endif // FAST_Q
 }
 
@@ -98,22 +98,22 @@ inline float plRandom::RandZeroToOne() const
 inline float plRandom::RandMinusOneToOne() const
 {
 #ifndef FAST_Q
-	return RandZeroToOne() * 2.f - 1.f;
+    return RandZeroToOne() * 2.f - 1.f;
 #else // FAST_Q
-	const UInt32 kTwoExp = 0x40000000;
-	register UInt32 temp = kTwoExp | (UInt32(Rand()) >> 9);
-	return (*(float*)&temp) - 3.f;
+    const UInt32 kTwoExp = 0x40000000;
+    register UInt32 temp = kTwoExp | (UInt32(Rand()) >> 9);
+    return (*(float*)&temp) - 3.f;
 #endif // FAST_Q
 }
 
 inline float plRandom::RandRangeF(float lo, float hi) const
 {
-	return lo + RandZeroToOne() * (hi - lo);
+    return lo + RandZeroToOne() * (hi - lo);
 }
 
 inline int plRandom::RandRangeI(int lo, int hi) const
 {
-	return lo + int(RandZeroToOne() * float(hi + 1 - lo));
+    return lo + int(RandZeroToOne() * float(hi + 1 - lo));
 }
 
 

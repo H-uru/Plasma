@@ -25,27 +25,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	CCR Console Commands and Groups											//
-//  These console commands are meant for use by customer care reps.			//
+//                                                                          //
+//  CCR Console Commands and Groups                                         //
+//  These console commands are meant for use by customer care reps.         //
 //  Eventually the functionality defined here will be accessed through a GUI//
-//																			//
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 //
 // Only calls to the CCRMgr interface are allowed here
 // See me if you need to include any other files...
 //
-#include "pfConsoleCmd.h"
+#include "pfConsoleCore/pfConsoleCmd.h"
 #include "pfConsole.h"
-#include "../pfCCR/plCCRMgr.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "pfCCR/plCCRMgr.h"
+#include "plNetClient/plNetClientMgr.h"
 
+//// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
-// YOU ALSO NEED TO CALL THIS FXN
-void	pfConsoleCmdGroup::DummyCCR( void )
-{
-}
+PF_CONSOLE_FILE_DUMMY(CCR)
+//// DO NOT REMOVE!!!!
 
 void PrintStringF(void pfun(const char *),const char * fmt, ...);
 

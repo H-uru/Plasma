@@ -27,23 +27,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightProxy_inc
 #define plLightProxy_inc
 
-#include "../plDrawable/plProxyGen.h"
+#include "plDrawable/plProxyGen.h"
 
 class plLightInfo;
 
 class plLightProxy : public plProxyGen
 {
 protected:
-	plLightInfo*			fOwner;
+    plLightInfo*            fOwner;
 
 
-	virtual plDrawableSpans*	ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
-	virtual plKey				IGetNode() const;
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
+    virtual plKey               IGetNode() const;
 public:
-	plLightProxy();
-	virtual ~plLightProxy();
+    plLightProxy();
+    virtual ~plLightProxy();
 
-	hsBool  Init(plLightInfo* liInfo);
+    hsBool  Init(plLightInfo* liInfo);
 };
 
 #endif // plLightProxy_inc

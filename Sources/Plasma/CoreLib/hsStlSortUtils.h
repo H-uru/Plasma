@@ -31,19 +31,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class stringSorter
 {
 public:
-	bool operator() (const char *s1, const char *s2) const
-	{
-		return (strcmp(s1,s2) < 0);
-	}
+    bool operator() (const char *s1, const char *s2) const
+    {
+        return (strcmp(s1,s2) < 0);
+    }
 };
 
 class stringISorter
 {
 public:
-	bool operator() (const char *s1, const char *s2) const
-	{
-		return (stricmp(s1,s2) < 0);
-	}
+    bool operator() (const char *s1, const char *s2) const
+    {
+        return (stricmp(s1,s2) < 0);
+    }
 };
 
 #endif // hsStlSortUtils_inc

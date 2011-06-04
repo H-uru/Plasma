@@ -26,49 +26,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClimbMsg_h
 #define plClimbMsg_h
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 /** \class plClimbMsg
-	Things you can say with a climb message:
-	"mount the climbing wall with an upward/downward/leftward/rightward mount"
-	"dis-/enable climbing in the up/down/left/right direction"
-	"dis-/enable dismounting in the up/down/left/right direction"
-*/	
+    Things you can say with a climb message:
+    "mount the climbing wall with an upward/downward/leftward/rightward mount"
+    "dis-/enable climbing in the up/down/left/right direction"
+    "dis-/enable dismounting in the up/down/left/right direction"
+*/  
 class plClimbMsg : public plMessage
 {
 public:
-	enum Direction {
-		kUp =		0x01,
-		kDown =		0x02,
-		kLeft =		0x04,
-		kRight =	0x08,
-		kCenter =	0x10
-	};
+    enum Direction {
+        kUp =       0x01,
+        kDown =     0x02,
+        kLeft =     0x04,
+        kRight =    0x08,
+        kCenter =   0x10
+    };
 
-	enum Command {
-		kNoCommand =		0x0,
-		kEnableClimb =		0x1,
-		kEnableDismount =	0x2,
-		kFallOff =			0x4,
-		kRelease =			0x8,
-		kStartClimbing =	0x8
-	};
+    enum Command {
+        kNoCommand =        0x0,
+        kEnableClimb =      0x1,
+        kEnableDismount =   0x2,
+        kFallOff =          0x4,
+        kRelease =          0x8,
+        kStartClimbing =    0x8
+    };
 
-	// tors
-	plClimbMsg();
-	plClimbMsg(const plKey &sender, const plKey &receiver, Command command = kNoCommand, Direction direction = kCenter, hsBool status = false, plKey target = nil);
+    // tors
+    plClimbMsg();
+    plClimbMsg(const plKey &sender, const plKey &receiver, Command command = kNoCommand, Direction direction = kCenter, hsBool status = false, plKey target = nil);
 
-	// plasma protocol
-	CLASSNAME_REGISTER( plClimbMsg );
-	GETINTERFACE_ANY( plClimbMsg, plMessage );
+    // plasma protocol
+    CLASSNAME_REGISTER( plClimbMsg );
+    GETINTERFACE_ANY( plClimbMsg, plMessage );
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 
-	Command fCommand;
-	Direction fDirection;
-	hsBool fStatus;
-	plKey fTarget;	// used for seeking to mount points
+    Command fCommand;
+    Direction fDirection;
+    hsBool fStatus;
+    plKey fTarget;  // used for seeking to mount points
 private:
 };
 

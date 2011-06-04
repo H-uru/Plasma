@@ -30,22 +30,22 @@ ClassDesc2* GetCompMtlDesc();
 
 static ParamBlockDesc2 gCompositeMtlPB
 (
-	plCompositeMtl::kBlkPasses, _T("composite"), 0, GetCompMtlDesc(), 
-	P_AUTO_CONSTRUCT, plCompositeMtl::kRefPasses, 
+    plCompositeMtl::kBlkPasses, _T("composite"), 0, GetCompMtlDesc(), 
+    P_AUTO_CONSTRUCT, plCompositeMtl::kRefPasses, 
 
-	plCompositeMtl::kCompPasses,		_T("passes"),			TYPE_MTL_TAB, 3,		0, 0,
-		end,
-	plCompositeMtl::kCompOn,			_T("passOn"),			TYPE_BOOL_TAB, 2,		0, 0,
-		p_default,		TRUE,
-		end,
-	plCompositeMtl::kCompBlend,			_T("BlendMethod"),		TYPE_INT_TAB, 2,		0, 0,
-		p_default,		0,
-		end,
-	plCompositeMtl::kCompUVChannels,	_T("UVChannels"),		TYPE_INT_TAB, 2,		0, 0,
-		p_default,		0,
-		end,
-	plCompositeMtl::kCompLayerCounts,	_T("LayerCounts"),		TYPE_INT_TAB, 3,		0, 0,
-		p_default,		0,
-		end,
-	end
+    plCompositeMtl::kCompPasses,        _T("passes"),           TYPE_MTL_TAB, 3,        0, 0,
+        end,
+    plCompositeMtl::kCompOn,            _T("passOn"),           TYPE_BOOL_TAB, 2,       0, 0,
+        p_default,      TRUE,
+        end,
+    plCompositeMtl::kCompBlend,         _T("BlendMethod"),      TYPE_INT_TAB, 2,        0, 0,
+        p_default,      0,
+        end,
+    plCompositeMtl::kCompUVChannels,    _T("UVChannels"),       TYPE_INT_TAB, 2,        0, 0,
+        p_default,      0,
+        end,
+    plCompositeMtl::kCompLayerCounts,   _T("LayerCounts"),      TYPE_INT_TAB, 3,        0, 0,
+        p_default,      0,
+        end,
+    end
 );

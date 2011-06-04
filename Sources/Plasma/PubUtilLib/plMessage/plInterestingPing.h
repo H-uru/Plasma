@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInterestingPing_inc
 #define plInterestingPing_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
 
@@ -35,68 +35,68 @@ class plInterestingModMsg : public plMessage
 {
 
 public:
-	plInterestingModMsg(){}
-	plInterestingModMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t){}
-	~plInterestingModMsg(){;}
+    plInterestingModMsg(){}
+    plInterestingModMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t){}
+    ~plInterestingModMsg(){;}
 
-	CLASSNAME_REGISTER( plInterestingModMsg );
-	GETINTERFACE_ANY( plInterestingModMsg, plMessage );
-	
-	hsScalar	fWeight;
-	hsScalar	fRadius;
-	hsScalar	fSize;
-	hsPoint3	fPos;
-	plKey		fObj;
-	UInt8		fType;
+    CLASSNAME_REGISTER( plInterestingModMsg );
+    GETINTERFACE_ANY( plInterestingModMsg, plMessage );
+    
+    hsScalar    fWeight;
+    hsScalar    fRadius;
+    hsScalar    fSize;
+    hsPoint3    fPos;
+    plKey       fObj;
+    UInt8       fType;
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		stream->ReadSwap(&fWeight);
-		stream->ReadSwap(&fRadius);
-		stream->ReadSwap(&fSize);
-		fPos.Read(stream);
-		fObj = mgr->ReadKey(stream);
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        stream->ReadSwap(&fWeight);
+        stream->ReadSwap(&fRadius);
+        stream->ReadSwap(&fSize);
+        fPos.Read(stream);
+        fObj = mgr->ReadKey(stream);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		stream->WriteSwap(fWeight);
-		stream->WriteSwap(fRadius);
-		stream->WriteSwap(fSize);
-		fPos.Write(stream);
-		mgr->WriteKey(stream, fObj);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        stream->WriteSwap(fWeight);
+        stream->WriteSwap(fRadius);
+        stream->WriteSwap(fSize);
+        fPos.Write(stream);
+        mgr->WriteKey(stream, fObj);
+    }
 };
 
 class plInterestingPing : public plMessage
 {
 
 public:
-	plInterestingPing(){SetBCastFlag(plMessage::kBCastByExactType);}
-	plInterestingPing(const plKey &s) {SetBCastFlag(plMessage::kBCastByExactType);SetSender(s);}  
-	plInterestingPing(const plKey &s, 
-					const plKey &r, 
-					const double* t){SetBCastFlag(plMessage::kBCastByExactType);}
-	~plInterestingPing(){;}
+    plInterestingPing(){SetBCastFlag(plMessage::kBCastByExactType);}
+    plInterestingPing(const plKey &s) {SetBCastFlag(plMessage::kBCastByExactType);SetSender(s);}  
+    plInterestingPing(const plKey &s, 
+                    const plKey &r, 
+                    const double* t){SetBCastFlag(plMessage::kBCastByExactType);}
+    ~plInterestingPing(){;}
 
-	CLASSNAME_REGISTER( plInterestingPing );
-	GETINTERFACE_ANY( plInterestingPing, plMessage );
-	
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-	}
+    CLASSNAME_REGISTER( plInterestingPing );
+    GETINTERFACE_ANY( plInterestingPing, plMessage );
+    
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+    }
 };
 
 #endif // plInterestingPing

@@ -41,103 +41,103 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // must not change unless all front-end servers are synchronously replaced.
 enum {
     // Account
-    kSrv2Db_AccountCreateRequest			= 0,
-    kSrv2Db_AccountLoginRequest				= 1,
-    kSrv2Db_AccountLogout					= 2,
-	kSrv2Db_AccountChangePasswordRequest	= 3,
-	kSrv2Db_AccountSetRolesRequest			= 4,
-	kSrv2Db_AccountSetBillingTypeRequest	= 5,
-	kSrv2Db_AccountActivateRequest			= 6,
-	kSrv2Db_AccountCreateFromKeyRequest		= 7,
-	kSrv2Db_AccountLockPlayerNameRequest	= 8,
-	kSrv2Db_SetPlayerBanStatusRequest		= 9,
-	kSrv2Db_AccountLoginRequest2			= 10,
-	kSrv2Db_AccountExistsRequest			= 11,
+    kSrv2Db_AccountCreateRequest            = 0,
+    kSrv2Db_AccountLoginRequest             = 1,
+    kSrv2Db_AccountLogout                   = 2,
+    kSrv2Db_AccountChangePasswordRequest    = 3,
+    kSrv2Db_AccountSetRolesRequest          = 4,
+    kSrv2Db_AccountSetBillingTypeRequest    = 5,
+    kSrv2Db_AccountActivateRequest          = 6,
+    kSrv2Db_AccountCreateFromKeyRequest     = 7,
+    kSrv2Db_AccountLockPlayerNameRequest    = 8,
+    kSrv2Db_SetPlayerBanStatusRequest       = 9,
+    kSrv2Db_AccountLoginRequest2            = 10,
+    kSrv2Db_AccountExistsRequest            = 11,
 
-	// VaultNodes
-	kSrv2Db_VaultNodeCreateRequest		= 20,
-	kSrv2Db_VaultNodeFetchRequest		= 21,
-	kSrv2Db_VaultNodeSaveRequest		= 22,
-	kSrv2Db_VaultNodeDeleteRequest		= 23,
-	kSrv2Db_VaultNodeFindRequest		= 24,
-	kSrv2Db_VaultSendNode				= 25,
-	kSrv2Db_SetAgeSequenceNumRequest	= 26,
-	kSrv2Db_VaultNodeChanged			= 27,
-	kSrv2Db_FetchInviterInfo			= 28,
-	
-	// VaultNodeRefs
-	kSrv2Db_VaultNodeAddRefs		= 40,
-	kSrv2Db_VaultNodeDelRefs		= 41,
-	kSrv2Db_VaultNodeGetChildRefs	= 42,
-	kSrv2Db_VaultNodeGetParentRefs	= 43,
+    // VaultNodes
+    kSrv2Db_VaultNodeCreateRequest      = 20,
+    kSrv2Db_VaultNodeFetchRequest       = 21,
+    kSrv2Db_VaultNodeSaveRequest        = 22,
+    kSrv2Db_VaultNodeDeleteRequest      = 23,
+    kSrv2Db_VaultNodeFindRequest        = 24,
+    kSrv2Db_VaultSendNode               = 25,
+    kSrv2Db_SetAgeSequenceNumRequest    = 26,
+    kSrv2Db_VaultNodeChanged            = 27,
+    kSrv2Db_FetchInviterInfo            = 28,
+    
+    // VaultNodeRefs
+    kSrv2Db_VaultNodeAddRefs        = 40,
+    kSrv2Db_VaultNodeDelRefs        = 41,
+    kSrv2Db_VaultNodeGetChildRefs   = 42,
+    kSrv2Db_VaultNodeGetParentRefs  = 43,
 
-	// State Objects
-	kSrv2Db_StateSaveObject			= 60,
-	kSrv2Db_StateDeleteObject		= 61,
-	kSrv2Db_StateFetchObject		= 62,
-	
-	// Public ages
-	kSrv2Db_GetPublicAgeInfoIds		= 80,
-	kSrv2Db_SetAgePublic			= 81,
-	
-	// Score
-	kSrv2Db_ScoreCreate				= 100,
-	kSrv2Db_ScoreFindScoreIds		= 101,
-	kSrv2Db_ScoreFetchScores		= 102,
-	kSrv2Db_ScoreSave				= 103,
-	kSrv2Db_ScoreDelete				= 104,
-	kSrv2Db_ScoreGetRanks			= 105,
+    // State Objects
+    kSrv2Db_StateSaveObject         = 60,
+    kSrv2Db_StateDeleteObject       = 61,
+    kSrv2Db_StateFetchObject        = 62,
+    
+    // Public ages
+    kSrv2Db_GetPublicAgeInfoIds     = 80,
+    kSrv2Db_SetAgePublic            = 81,
+    
+    // Score
+    kSrv2Db_ScoreCreate             = 100,
+    kSrv2Db_ScoreFindScoreIds       = 101,
+    kSrv2Db_ScoreFetchScores        = 102,
+    kSrv2Db_ScoreSave               = 103,
+    kSrv2Db_ScoreDelete             = 104,
+    kSrv2Db_ScoreGetRanks           = 105,
 
-	// Vault Notifications
-	kSrv2Db_PlayerOnline			= 120,
-	kSrv2Db_PlayerOffline			= 121,
-	kSrv2Db_AgeOnline				= 122,
-	kSrv2Db_AgeOffline				= 123,
+    // Vault Notifications
+    kSrv2Db_PlayerOnline            = 120,
+    kSrv2Db_PlayerOffline           = 121,
+    kSrv2Db_AgeOnline               = 122,
+    kSrv2Db_AgeOffline              = 123,
 
-	// CSR
-	kSrv2Db_CsrAcctInfoRequest		= 140,
+    // CSR
+    kSrv2Db_CsrAcctInfoRequest      = 140,
 };
 
 enum {
     // Account
-    kDb2Srv_AccountCreateReply			= 0,
-    kDb2Srv_AccountLoginReply		    = 1,
-	kDb2Srv_AccountCreateFromKeyReply	= 2,
-	kDb2Srv_AccountExistsReply			= 3,
+    kDb2Srv_AccountCreateReply          = 0,
+    kDb2Srv_AccountLoginReply           = 1,
+    kDb2Srv_AccountCreateFromKeyReply   = 2,
+    kDb2Srv_AccountExistsReply          = 3,
 
-	// VaultNodes
-	kDb2Srv_VaultNodeCreateReply	= 20,
-	kDb2Srv_VaultNodeFetchReply		= 21,
-	kDb2Srv_VaultNodeSaveReply		= 22,
-	kDb2Srv_VaultNodeDeleteReply	= 23,
-	kDb2Srv_VaultNodeFindReply		= 24,
-	kDb2Srv_SetAgeSequenceNumReply	= 25,
-	kDb2Srv_FetchInviterInfoReply	= 26,
-	
-	// VaultNodeRefs
-	kDb2Srv_VaultNodeRefs			= 40,
-	
-	// State Objects
-	kDb2Srv_StateObjectFetched		= 60,
+    // VaultNodes
+    kDb2Srv_VaultNodeCreateReply    = 20,
+    kDb2Srv_VaultNodeFetchReply     = 21,
+    kDb2Srv_VaultNodeSaveReply      = 22,
+    kDb2Srv_VaultNodeDeleteReply    = 23,
+    kDb2Srv_VaultNodeFindReply      = 24,
+    kDb2Srv_SetAgeSequenceNumReply  = 25,
+    kDb2Srv_FetchInviterInfoReply   = 26,
+    
+    // VaultNodeRefs
+    kDb2Srv_VaultNodeRefs           = 40,
+    
+    // State Objects
+    kDb2Srv_StateObjectFetched      = 60,
 
-	// Vault Notification
-	kDb2Srv_NotifyVaultNodeChanged	= 80,
-	kDb2Srv_NotifyVaultNodeAdded	= 81,
-	kDb2Srv_NotifyVaultNodeRemoved	= 82,
-	kDb2Srv_NotifyVaultNodeDeleted	= 83,
+    // Vault Notification
+    kDb2Srv_NotifyVaultNodeChanged  = 80,
+    kDb2Srv_NotifyVaultNodeAdded    = 81,
+    kDb2Srv_NotifyVaultNodeRemoved  = 82,
+    kDb2Srv_NotifyVaultNodeDeleted  = 83,
 
-	// Public ages
-	kDb2Srv_PublicAgeInfoIds		= 100,
+    // Public ages
+    kDb2Srv_PublicAgeInfoIds        = 100,
 
-	// Score
-	kDb2Srv_ScoreCreateReply		= 120,
-	kDb2Srv_ScoreFindScoreIdsReply	= 121,
-	kDb2Srv_ScoreFetchScoresReply	= 122,
-	kDb2Srv_ScoreDeleteReply		= 123,
-	kDb2Srv_ScoreGetRanksReply		= 124,
-	
-	// CSR
-	kDb2Srv_CsrAcctInfoReply		= 140,
+    // Score
+    kDb2Srv_ScoreCreateReply        = 120,
+    kDb2Srv_ScoreFindScoreIdsReply  = 121,
+    kDb2Srv_ScoreFetchScoresReply   = 122,
+    kDb2Srv_ScoreDeleteReply        = 123,
+    kDb2Srv_ScoreGetRanksReply      = 124,
+    
+    // CSR
+    kDb2Srv_CsrAcctInfoReply        = 140,
 };
 
 
@@ -178,15 +178,15 @@ struct Srv2Db_AccountCreateRequest : SrvMsgHeader {
     wchar       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
     dword       billingType;
-	dword		accountFlags;
-	wchar		foreignAcctId[kMaxPublisherAuthKeyLength];
+    dword       accountFlags;
+    wchar       foreignAcctId[kMaxPublisherAuthKeyLength];
 };
 
 struct Srv2Db_AccountCreateFromKeyRequest : SrvMsgHeader {
     wchar       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
-    Uuid		key;
-	dword		billingType;
+    Uuid        key;
+    dword       billingType;
 };
 
 struct Srv2Db_AccountLoginRequest : SrvMsgHeader {
@@ -195,7 +195,7 @@ struct Srv2Db_AccountLoginRequest : SrvMsgHeader {
 
 struct Srv2Db_AccountLoginRequest2 : SrvMsgHeader {
     wchar       accountName[kMaxAccountNameLength];
-    dword		buildId;
+    dword       buildId;
 };
 
 struct Srv2Db_AccountLogout : SrvMsgHeader {
@@ -210,193 +210,193 @@ struct Srv2Db_AccountChangePasswordRequest : SrvMsgHeader {
 
 struct Srv2Db_AccountSetRolesRequest : SrvMsgHeader {
     wchar       accountName[kMaxAccountNameLength];
-    dword		accountFlags;
+    dword       accountFlags;
 };
 
 struct Srv2Db_AccountSetBillingTypeRequest : SrvMsgHeader {
     wchar       accountName[kMaxAccountNameLength];
-    dword		billingType;
+    dword       billingType;
 };
 
 struct Srv2Db_AccountActivateRequest : SrvMsgHeader {
-    Uuid		activationKey;
+    Uuid        activationKey;
 };
 
 struct Srv2Db_AccountLockPlayerNameRequest :SrvMsgHeader {
-	wchar		playerName[kMaxPlayerNameLength];
-	Uuid		accountUuid;
+    wchar       playerName[kMaxPlayerNameLength];
+    Uuid        accountUuid;
 };
 
 struct Srv2Db_VaultNodeCreateRequest : SrvMsgHeader {
     Uuid        accountUuid;
-	dword		creatorId;
-	dword		nodeBytes;
-	byte		nodeBuffer[1];
+    dword       creatorId;
+    dword       nodeBytes;
+    byte        nodeBuffer[1];
 };
 
 struct Srv2Db_VaultNodeFetchRequest : SrvMsgHeader {
-	dword		nodeId;
+    dword       nodeId;
 };
 
 struct Srv2Db_VaultNodeChanged : SrvMsgHeader {
-	dword		nodeId;
-	Uuid		revisionId;
+    dword       nodeId;
+    Uuid        revisionId;
 };
 
 struct Srv2Db_VaultNodeSaveRequest : SrvMsgHeader {
-	Uuid		revisionId;
-	dword		nodeId;
-	unsigned	playerCheckId;
-	unsigned	isRequestFromAuth;
-	dword		nodeBytes;
-	byte		buffer[1];	// buffer[bytes], actually
-	// no more fields after var length alloc
+    Uuid        revisionId;
+    dword       nodeId;
+    unsigned    playerCheckId;
+    unsigned    isRequestFromAuth;
+    dword       nodeBytes;
+    byte        buffer[1];  // buffer[bytes], actually
+    // no more fields after var length alloc
 };
 
 struct Srv2Db_VaultNodeDeleteRequest : SrvMsgHeader {
-	dword		nodeId;
-	unsigned	playerCheckId;
-	unsigned	isRequestFromAuth;
+    dword       nodeId;
+    unsigned    playerCheckId;
+    unsigned    isRequestFromAuth;
 };
 
 
 struct Srv2Db_VaultNodeFindRequest : SrvMsgHeader {
-	// Template node to match
-	dword	nodeBytes;
-	byte	nodeBuffer[1];	// [nodeBytes], actually
-	// no more fields after var length alloc
+    // Template node to match
+    dword   nodeBytes;
+    byte    nodeBuffer[1];  // [nodeBytes], actually
+    // no more fields after var length alloc
 };
 
 struct Srv2Db_VaultNodeAddRefs : SrvMsgHeader {
-	dword			refCount;
-	NetVaultNodeRef	refs[1];
-	// no more fields after var length alloc
+    dword           refCount;
+    NetVaultNodeRef refs[1];
+    // no more fields after var length alloc
 };
 
 struct Srv2Db_VaultNodeDelRefs : SrvMsgHeader {
-	dword			refCount;
-	unsigned		playerCheckId;
-	unsigned		isRequestFromAuth;
-	NetVaultNodeRef	refs[1];
-	// no more fields after var length alloc
+    dword           refCount;
+    unsigned        playerCheckId;
+    unsigned        isRequestFromAuth;
+    NetVaultNodeRef refs[1];
+    // no more fields after var length alloc
 };
 
 struct Srv2Db_VaultNodeGetChildRefs : SrvMsgHeader {
-	dword			nodeId;
-	dword			maxDepth;
+    dword           nodeId;
+    dword           maxDepth;
 };
 
 struct Srv2Db_VaultNodeGetParentRefs : SrvMsgHeader {
-	dword			nodeId;
-	dword			maxDepth;
+    dword           nodeId;
+    dword           maxDepth;
 };
 
 struct Srv2Db_VaultSendNode : SrvMsgHeader {
-	dword	srcPlayerId;	// sender
-	dword	srcNodeId;		// sent item
-	dword	dstPlayerId;	// recipient
+    dword   srcPlayerId;    // sender
+    dword   srcNodeId;      // sent item
+    dword   dstPlayerId;    // recipient
 };
 
 struct Srv2Db_SetAgeSequenceNumRequest : SrvMsgHeader {
-	dword		nodeId;
-	wchar		ageInstName[kMaxAgeNameLength];
-	wchar		ageUserName[kMaxAgeNameLength];
+    dword       nodeId;
+    wchar       ageInstName[kMaxAgeNameLength];
+    wchar       ageUserName[kMaxAgeNameLength];
 };
 
 struct Srv2Db_StateSaveObject : SrvMsgHeader {
-	dword	buildId;
-	Uuid	ownerId;		
-	wchar	objectName[kMaxStateObjectName];
-	dword	objectDataBytes;
-	byte	objectData[1];
-	// no more fields after var length alloc
+    dword   buildId;
+    Uuid    ownerId;        
+    wchar   objectName[kMaxStateObjectName];
+    dword   objectDataBytes;
+    byte    objectData[1];
+    // no more fields after var length alloc
 };
 
 struct Srv2Db_StateDeleteObject : SrvMsgHeader {
-	Uuid	ownerId;
-	wchar	objectName[kMaxStateObjectName];
+    Uuid    ownerId;
+    wchar   objectName[kMaxStateObjectName];
 };
 
 struct Srv2Db_StateFetchObject : SrvMsgHeader {
-	Uuid	ownerId;
-	wchar	objectName[kMaxStateObjectName];
+    Uuid    ownerId;
+    wchar   objectName[kMaxStateObjectName];
 };
 
 struct Srv2Db_GetPublicAgeInfoIds : SrvMsgHeader {
-	wchar	ageName[kMaxAgeNameLength];
+    wchar   ageName[kMaxAgeNameLength];
 };
 
 struct Srv2Db_SetAgePublic : SrvMsgHeader {
-	dword	playerId;
-	dword	ageInfoId;
-	byte	publicOrNot;
+    dword   playerId;
+    dword   ageInfoId;
+    byte    publicOrNot;
 };
 
 struct Srv2Db_SetPlayerBanStatusRequest : SrvMsgHeader {
-    dword	playerId;
-	dword	banned;
+    dword   playerId;
+    dword   banned;
 };
 
 struct Srv2Db_ScoreCreate : SrvMsgHeader {
-    dword	ownerId;
-	wchar	gameName[kMaxGameScoreNameLength];
-	dword	gameType;
-	dword	value;
+    dword   ownerId;
+    wchar   gameName[kMaxGameScoreNameLength];
+    dword   gameType;
+    dword   value;
 };
 
 struct Srv2Db_ScoreDelete : SrvMsgHeader {
-    dword	scoreId;
+    dword   scoreId;
 };
 
 struct Srv2Db_ScoreFindScoreIds : SrvMsgHeader {
-    dword	ownerId;
-	wchar	gameName[kMaxGameScoreNameLength];
+    dword   ownerId;
+    wchar   gameName[kMaxGameScoreNameLength];
 };
 
 struct Srv2Db_ScoreFetchScores : SrvMsgHeader {
-	dword			scoreCount;
-	dword			scoreIds[1];	// [scoreCount], actually
-	// no more fields after var length alloc
+    dword           scoreCount;
+    dword           scoreIds[1];    // [scoreCount], actually
+    // no more fields after var length alloc
 };
 
 struct Srv2Db_ScoreSave : SrvMsgHeader {
-    dword	scoreId;
-	dword	value;
+    dword   scoreId;
+    dword   value;
 };
 
 struct Srv2Db_ScoreGetRanks : SrvMsgHeader {
-	dword ownerId;
-	dword scoreGroup;
-	dword parentFolderId;
-	wchar gameName[kMaxGameScoreNameLength];
-	dword timePeriod;
-	dword numResults;
-	dword pageNumber;
-	dword sortDesc;
+    dword ownerId;
+    dword scoreGroup;
+    dword parentFolderId;
+    wchar gameName[kMaxGameScoreNameLength];
+    dword timePeriod;
+    dword numResults;
+    dword pageNumber;
+    dword sortDesc;
 };
 
 struct Srv2Db_PlayerOnline : SrvMsgHeader {
-	dword	playerId;
+    dword   playerId;
 };
 
 struct Srv2Db_PlayerOffline : SrvMsgHeader {
-	dword	playerId;
+    dword   playerId;
 };
 
 struct Srv2Db_AgeOnline : SrvMsgHeader {
-	Uuid	ageInstId;
+    Uuid    ageInstId;
 };
 
 struct Srv2Db_AgeOffline : SrvMsgHeader {
-	Uuid	ageInstId;
+    Uuid    ageInstId;
 };
 
 struct Srv2Db_CsrAcctInfoRequest : SrvMsgHeader {
-	wchar	csrName[kMaxAccountNameLength];
+    wchar   csrName[kMaxAccountNameLength];
 };
 
 struct Srv2Db_FetchInviterInfo : SrvMsgHeader {
-	Uuid	inviteUuid;
+    Uuid    inviteUuid;
 };
 
 
@@ -407,7 +407,7 @@ struct Srv2Db_FetchInviterInfo : SrvMsgHeader {
 ***/
 
 struct Db2Srv_AccountExistsReply : SrvMsgHeader {
-	byte			exists;
+    byte            exists;
 };
 
 struct Db2Srv_AccountCreateReply : SrvMsgHeader {
@@ -416,122 +416,122 @@ struct Db2Srv_AccountCreateReply : SrvMsgHeader {
 
 struct Db2Srv_AccountCreateFromKeyReply : SrvMsgHeader {
     Uuid            accountUuid;
-	Uuid			activationKey;
+    Uuid            activationKey;
 };
 
 struct Db2Srv_AccountLoginReply : SrvMsgHeader {
-	Uuid			accountUuid;
-	dword			accountFlags;
-	dword			billingType;
-	ShaDigest		namePassHash;
+    Uuid            accountUuid;
+    dword           accountFlags;
+    dword           billingType;
+    ShaDigest       namePassHash;
 };
 
 struct Db2Srv_VaultNodeCreateReply : SrvMsgHeader {
-	dword			nodeId;
+    dword           nodeId;
 };
 
 struct Db2Srv_VaultNodeFetchReply : SrvMsgHeader {
-	dword			nodeBytes;
-	byte			buffer[1];
-	// no more fields after var length alloc
+    dword           nodeBytes;
+    byte            buffer[1];
+    // no more fields after var length alloc
 };
 
 struct Db2Srv_VaultNodeFindReply : SrvMsgHeader {
-	// out: ids of matching nodes
-	dword			nodeIdCount;
-	dword			nodeIds[1];	// [nodeIdCount], actually
-	// no more fields after var length alloc
+    // out: ids of matching nodes
+    dword           nodeIdCount;
+    dword           nodeIds[1]; // [nodeIdCount], actually
+    // no more fields after var length alloc
 };
 
 struct Db2Srv_VaultNodeRefs : SrvMsgHeader {
-	dword			refCount;
-	NetVaultNodeRef refs[1];
-	// no more fields after var length alloc
+    dword           refCount;
+    NetVaultNodeRef refs[1];
+    // no more fields after var length alloc
 };
 
 struct Db2Srv_SetAgeSequenceNumReply : SrvMsgHeader {
-	dword		sequenceNum;
+    dword       sequenceNum;
 };
 
 struct Db2Srv_FetchInviterInfoReply : SrvMsgHeader {
-	Uuid		hoodInstance;
+    Uuid        hoodInstance;
 };
 
 struct Db2Srv_StateObjectFetched : SrvMsgHeader {
-	dword		buildId;
-	Uuid		ownerId;		
-	wchar		objectName[kMaxStateObjectName];
-	dword		objectDataBytes;
-	byte		objectData[1];
-	// no more fields after var length alloc
+    dword       buildId;
+    Uuid        ownerId;        
+    wchar       objectName[kMaxStateObjectName];
+    dword       objectDataBytes;
+    byte        objectData[1];
+    // no more fields after var length alloc
 };
 
 struct Db2Srv_NotifyVaultNodeChanged : SrvMsgHeader {
-	dword			nodeId;
-	Uuid			revId;
-	dword			notifyIdCount;
-	dword			notifyIds[1];
+    dword           nodeId;
+    Uuid            revId;
+    dword           notifyIdCount;
+    dword           notifyIds[1];
 };
 
 struct Db2Srv_NotifyVaultNodeAdded : SrvMsgHeader {
-	NetVaultNodeRef	ref;
-	dword			notifyIdCount;
-	dword			notifyIds[1];
+    NetVaultNodeRef ref;
+    dword           notifyIdCount;
+    dword           notifyIds[1];
 };
 
 struct Db2Srv_NotifyVaultNodeRemoved : SrvMsgHeader {
-	dword			parentId;
-	dword			childId;
-	dword			notifyIdCount;
-	dword			notifyIds[1];
+    dword           parentId;
+    dword           childId;
+    dword           notifyIdCount;
+    dword           notifyIds[1];
 };
 
 struct Db2Srv_NotifyVaultNodeDeleted : SrvMsgHeader {
-	dword			nodeId;
-	dword			notifyIdCount;
-	dword			notifyIds[1];
+    dword           nodeId;
+    dword           notifyIdCount;
+    dword           notifyIds[1];
 };
 
 struct Db2Srv_PublicAgeInfoIds : SrvMsgHeader {
-	dword			idCount;
-	dword			ids[1];	// [idCount], actually
-	// no more fields after var length alloc
+    dword           idCount;
+    dword           ids[1]; // [idCount], actually
+    // no more fields after var length alloc
 };
 
 struct Db2Srv_ScoreCreateReply : SrvMsgHeader {
-	dword			scoreId;
-	dword			createdTime;
+    dword           scoreId;
+    dword           createdTime;
 };
 
 struct Db2Srv_ScoreDeleteReply : SrvMsgHeader {
-	dword			ownerId;
-	wchar			gameName[kMaxGameScoreNameLength];
+    dword           ownerId;
+    wchar           gameName[kMaxGameScoreNameLength];
 };
 
 struct Db2Srv_ScoreFindScoreIdsReply : SrvMsgHeader {
-	dword			idCount;
-	dword			scoreIds[1];	// [idCount], actually
-	// no more fields after var length alloc
+    dword           idCount;
+    dword           scoreIds[1];    // [idCount], actually
+    // no more fields after var length alloc
 };
 
 struct Db2Srv_ScoreFetchScoresReply : SrvMsgHeader {
-	dword			scoreCount;
-	dword			byteCount;
-	byte			buffer[1];	// [byteCount], actually
-	// no more fields after var length alloc
+    dword           scoreCount;
+    dword           byteCount;
+    byte            buffer[1];  // [byteCount], actually
+    // no more fields after var length alloc
 };
 
 struct Db2Srv_ScoreGetRanksReply : SrvMsgHeader {
-	dword			rankCount;
-	dword			byteCount;
-	byte			buffer[1];	// [byteCount], actually
-	// no more fields after var length alloc
+    dword           rankCount;
+    dword           byteCount;
+    byte            buffer[1];  // [byteCount], actually
+    // no more fields after var length alloc
 };
 
 struct Db2Srv_CsrAcctInfoReply : SrvMsgHeader {
-	Uuid			csrId;
-	dword			csrFlags;
-	ShaDigest		namePassHash;
+    Uuid            csrId;
+    dword           csrFlags;
+    ShaDigest       namePassHash;
 };
 
 

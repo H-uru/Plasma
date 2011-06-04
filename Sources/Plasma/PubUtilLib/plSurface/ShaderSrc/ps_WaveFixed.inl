@@ -41,13 +41,13 @@ texm3x3vspec t3,  t0_bx2   // Third row of matrix multiply to get a 3-vector.
 // We've (presumably) attenuated the effect on a vertex basis
 // and have our color w/ attenuated alpha in v0. So all we need
 // is to multiply t3 by v0 into r0, add our base color from v1 and we're done.
-mad			r0.rgb, t3, v0, v1;
+mad         r0.rgb, t3, v0, v1;
 /* HACKAGE
-//+mul			r0.a, v1, v0;
+//+mul          r0.a, v1, v0;
 HACKAGE */
 mov r0.a, v0; //HACKAGE
 /*
-mov	r0.rgb, v0;
+mov r0.rgb, v0;
 mov r0.a, v0;
 */
 
@@ -59,7 +59,7 @@ texcoord t3;
 
 mov r0.rgb, t3;
 
-+mov	r0.a, c0;
++mov    r0.a, c0;
 */
 
 

@@ -28,11 +28,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace ClientUpdate
 {
-	enum
-	{
-		kUpdate,
-		kShutdown,
-	};
+    enum
+    {
+        kUpdate,
+        kShutdown,
+    };
 }
 
 //

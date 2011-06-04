@@ -42,41 +42,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 class pfGmClimbingWall : public pfGameCli {
 
-	// Encapsulate all implementation details such as member fields
-	// in an opaque friend class, in this case that's IClimbingWall.
-	friend struct IClimbingWall;
-	struct IClimbingWall * internal;
+    // Encapsulate all implementation details such as member fields
+    // in an opaque friend class, in this case that's IClimbingWall.
+    friend struct IClimbingWall;
+    struct IClimbingWall * internal;
 
-	//========================================================================
-	// Required subclass methods
-	//--------------------------
-	void Recv			(GameMsgHeader * msg, void * param);
-	void OnPlayerJoined	(const Srv2Cli_Game_PlayerJoined & msg);
-	void OnPlayerLeft	(const Srv2Cli_Game_PlayerLeft & msg);
-	void OnInviteFailed	(const Srv2Cli_Game_InviteFailed & msg);
-	void OnOwnerChange	(const Srv2Cli_Game_OwnerChange & msg);
-	//========================================================================
+    //========================================================================
+    // Required subclass methods
+    //--------------------------
+    void Recv           (GameMsgHeader * msg, void * param);
+    void OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg);
+    void OnPlayerLeft   (const Srv2Cli_Game_PlayerLeft & msg);
+    void OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg);
+    void OnOwnerChange  (const Srv2Cli_Game_OwnerChange & msg);
+    //========================================================================
 
 public:
-	#pragma warning(push, 0)
-	// These macros produce warnings on W4
-	CLASSNAME_REGISTER(pfGmClimbingWall);
-	GETINTERFACE_ANY(pfGmClimbingWall, pfGameCli);
-	#pragma warning(pop)
-	
-	pfGmClimbingWall (unsigned gameId, plKey receiver);
-	~pfGmClimbingWall ();
-	
-	//========================================================================
-	// Game methods
-	//-------------
-	void ChangeNumBlockers	(int amountToAdjust);
-	void Ready (unsigned readyType, unsigned teamNumber);
-	void ChangeBlocker (unsigned teamNumber, unsigned blockerNumber, bool added);
-	void Reset ();
-	void PlayerEntered (unsigned teamNumber);
-	void FinishedGame ();
-	void Panic ();
-	//========================================================================
+    #pragma warning(push, 0)
+    // These macros produce warnings on W4
+    CLASSNAME_REGISTER(pfGmClimbingWall);
+    GETINTERFACE_ANY(pfGmClimbingWall, pfGameCli);
+    #pragma warning(pop)
+    
+    pfGmClimbingWall (unsigned gameId, plKey receiver);
+    ~pfGmClimbingWall ();
+    
+    //========================================================================
+    // Game methods
+    //-------------
+    void ChangeNumBlockers  (int amountToAdjust);
+    void Ready (unsigned readyType, unsigned teamNumber);
+    void ChangeBlocker (unsigned teamNumber, unsigned blockerNumber, bool added);
+    void Reset ();
+    void PlayerEntered (unsigned teamNumber);
+    void FinishedGame ();
+    void Panic ();
+    //========================================================================
 };
 

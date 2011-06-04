@@ -28,19 +28,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
-#include <python.h>
+#include <Python.h>
 
 struct pyAlarm;
 class pyAlarmMgr
 {
-	typedef std::list<pyAlarm*>	Alarms;
-	Alarms	fAlarms;
+    typedef std::list<pyAlarm*> Alarms;
+    Alarms  fAlarms;
 public:
-	~pyAlarmMgr();
-	static pyAlarmMgr * GetInstance();
-	void	Update( double secs );
-	void	SetAlarm( float secs, PyObject * cb, UInt32 cbContext );
-	void	Clear();
+    ~pyAlarmMgr();
+    static pyAlarmMgr * GetInstance();
+    void    Update( double secs );
+    void    SetAlarm( float secs, PyObject * cb, UInt32 cbContext );
+    void    Clear();
 };
 
 

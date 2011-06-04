@@ -26,6 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWavFile_H
 #define plWavFile_H
 
+#ifdef BUILDING_MAXPLUGIN
 #define WAVEFILE_READ   1
 #define WAVEFILE_WRITE  2
 
@@ -33,15 +34,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include "hsStlUtils.h"
 #include <mmsystem.h>
-#include "../plAudioCore/plAudioFileReader.h"
+#include "plAudioFileReader.h"
 
 
 struct plSoundMarker
 {
-	char *fName;
-	double fOffset; // in Secs
+    char *fName;
+    double fOffset; // in Secs
 
-	plSoundMarker () { fName = NULL;fOffset = 0.0; }
+    plSoundMarker () { fName = NULL;fOffset = 0.0; }
 
 };
 
@@ -70,24 +71,24 @@ public:
     HRESULT ResetFile();
     WAVEFORMATEX* GetFormat() { return m_pwfx; };
 
-	DWORD GetNumMarkers() { return fMarkers.size() ; };
-	plSoundMarker *GetSoundMarker(int i) { return fMarkers[i]; }
+    DWORD GetNumMarkers() { return fMarkers.size() ; };
+    plSoundMarker *GetSoundMarker(int i) { return fMarkers[i]; }
 
 
-	// Overloads for plAudioFileReader
-	CWaveFile( const char *path, plAudioCore::ChannelSelect whichChan );
-	virtual hsBool	OpenForWriting( const char *path, plWAVHeader &header );
-	virtual plWAVHeader	&GetHeader( void );
-	virtual void	Close( void );
-	virtual UInt32	GetDataSize( void );
-	virtual float	GetLengthInSecs( void );
+    // Overloads for plAudioFileReader
+    CWaveFile( const char *path, plAudioCore::ChannelSelect whichChan );
+    virtual hsBool  OpenForWriting( const char *path, plWAVHeader &header );
+    virtual plWAVHeader &GetHeader( void );
+    virtual void    Close( void );
+    virtual UInt32  GetDataSize( void );
+    virtual float   GetLengthInSecs( void );
 
-	virtual hsBool	SetPosition( UInt32 numBytes );
-	virtual hsBool	Read( UInt32 numBytes, void *buffer );
-	virtual UInt32	NumBytesLeft( void );
-	virtual UInt32	Write( UInt32 bytes, void *buffer );
+    virtual hsBool  SetPosition( UInt32 numBytes );
+    virtual hsBool  Read( UInt32 numBytes, void *buffer );
+    virtual UInt32  NumBytesLeft( void );
+    virtual UInt32  Write( UInt32 bytes, void *buffer );
 
-	virtual hsBool	IsValid( void );
+    virtual hsBool  IsValid( void );
     WAVEFORMATEX* m_pwfx;        // Pointer to WAVEFORMATEX structure
     HMMIO         m_hmmio;       // MM I/O handle for the WAVE
     MMCKINFO      m_ck;          // Multimedia RIFF chunk
@@ -99,16 +100,17 @@ public:
     BYTE*         m_pbData;
     BYTE*         m_pbDataCur;
     ULONG         m_ulDataSize;
-	
-	plWAVHeader		fHeader;
+    
+    plWAVHeader     fHeader;
 
-	std::vector<plSoundMarker*>	 fMarkers;
-	double		fSecsPerSample;
+    std::vector<plSoundMarker*>  fMarkers;
+    double      fSecsPerSample;
 
 protected:
     HRESULT ReadMMIO();
     HRESULT WriteMMIO( WAVEFORMATEX *pwfxDest );
     HRESULT IClose();
 };
+#endif // BUILDING_MAXPLUGIN
 
 #endif // plWavFile_H

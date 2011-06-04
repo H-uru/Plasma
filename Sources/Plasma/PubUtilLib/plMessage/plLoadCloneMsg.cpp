@@ -33,7 +33,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 // other
-#include "../pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetApp.h"
 #include "hsTypes.h"
 
 
@@ -44,41 +44,41 @@ plLoadCloneMsg::plLoadCloneMsg()
   fOriginatingPlayerID(0),
   fTriggerMsg(nil)
 {
-	SetBCastFlag(plMessage::kNetPropagate);
+    SetBCastFlag(plMessage::kNetPropagate);
 };
 
 // CTOR uoidToClone, requestorKey, userData, isLoading
 // this form is for creating new clones
 plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestorKey, UInt32 userData)
-	: fRequestorKey(requestorKey),
-	  fUserData(userData),
-	  fValidMsg(false),
-	  fTriggerMsg(nil),
-	  fIsLoading(true)		// this constructor form is only used for loading
+    : fRequestorKey(requestorKey),
+      fUserData(userData),
+      fValidMsg(false),
+      fTriggerMsg(nil),
+      fIsLoading(true)      // this constructor form is only used for loading
 {
-	SetBCastFlag(plMessage::kNetPropagate);
-	
-	hsKeyedObject * koRequestor = fRequestorKey->ObjectIsLoaded();
-	if(koRequestor)
-	{
-		plNetClientApp *app = plNetClientApp::GetInstance();
-		plKey originalKey = hsgResMgr::ResMgr()->FindKey(uoidToClone);
+    SetBCastFlag(plMessage::kNetPropagate);
+    
+    hsKeyedObject * koRequestor = fRequestorKey->ObjectIsLoaded();
+    if(koRequestor)
+    {
+        plNetClientApp *app = plNetClientApp::GetInstance();
+        plKey originalKey = hsgResMgr::ResMgr()->FindKey(uoidToClone);
 
-		if(originalKey)
-		{
-			// all is well. finish it off.
-			fCloneKey = hsgResMgr::ResMgr()->CloneKey(originalKey);
-			fOriginatingPlayerID = app->GetPlayerID();
-			fValidMsg = true;
-			this->AddReceiver(plNetApp::GetInstance()->GetKey());
-		} else {
-			char buffer[128];
-			sprintf(buffer, "Can't find key named %s", uoidToClone.GetObjectName());				
-			hsAssert(0, buffer);
-		}
-	} else {
-		hsStatusMessage("Clone requestor is not loaded.");
-	}
+        if(originalKey)
+        {
+            // all is well. finish it off.
+            fCloneKey = hsgResMgr::ResMgr()->CloneKey(originalKey);
+            fOriginatingPlayerID = app->GetPlayerID();
+            fValidMsg = true;
+            this->AddReceiver(plNetApp::GetInstance()->GetKey());
+        } else {
+            char buffer[128];
+            sprintf(buffer, "Can't find key named %s", uoidToClone.GetObjectName());                
+            hsAssert(0, buffer);
+        }
+    } else {
+        hsStatusMessage("Clone requestor is not loaded.");
+    }
 }
 
 // CTOR existing, requestor, userData, isLoading
@@ -91,169 +91,169 @@ plLoadCloneMsg::plLoadCloneMsg(const plKey &existing, const plKey &requestor, UI
   fTriggerMsg(nil),
   fIsLoading(isLoading)
 {
-	if (plNetApp::GetInstance())
-	{
-		SetBCastFlag(plMessage::kNetPropagate);
-		AddReceiver(plNetApp::GetInstance()->GetKey());
-	}
-	if (plNetClientApp::GetInstance())
-		fOriginatingPlayerID = plNetClientApp::GetInstance()->GetPlayerID();
-	hsAssert(fRequestorKey->ObjectIsLoaded(), "Clone (unloading) requestor is not loaded.");
+    if (plNetApp::GetInstance())
+    {
+        SetBCastFlag(plMessage::kNetPropagate);
+        AddReceiver(plNetApp::GetInstance()->GetKey());
+    }
+    if (plNetClientApp::GetInstance())
+        fOriginatingPlayerID = plNetClientApp::GetInstance()->GetPlayerID();
+    hsAssert(fRequestorKey->ObjectIsLoaded(), "Clone (unloading) requestor is not loaded.");
 }
 
 plLoadCloneMsg::~plLoadCloneMsg()
 {
-	hsRefCnt_SafeUnRef(fTriggerMsg);
+    hsRefCnt_SafeUnRef(fTriggerMsg);
 }
 
 // READ
 void plLoadCloneMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
-	fCloneKey = mgr->ReadKey(stream);
-	fRequestorKey = mgr->ReadKey(stream);
-	fOriginatingPlayerID = stream->ReadSwap32();
-	fUserData = stream->ReadSwap32();
-	fValidMsg = stream->ReadBool();
-	fIsLoading = stream->ReadBool();
-	fTriggerMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
+    plMessage::IMsgRead(stream, mgr);
+    fCloneKey = mgr->ReadKey(stream);
+    fRequestorKey = mgr->ReadKey(stream);
+    fOriginatingPlayerID = stream->ReadSwap32();
+    fUserData = stream->ReadSwap32();
+    fValidMsg = stream->ReadBool();
+    fIsLoading = stream->ReadBool();
+    fTriggerMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
 }
 
 // WRITE
 void plLoadCloneMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream,mgr);
-	mgr->WriteKey(stream, fCloneKey);
-	mgr->WriteKey(stream, fRequestorKey);
-	stream->WriteSwap32(fOriginatingPlayerID);
-	stream->WriteSwap32(fUserData);
-	stream->WriteBool(fValidMsg);
-	stream->WriteBool(fIsLoading);
-	mgr->WriteCreatable(stream, fTriggerMsg);
+    plMessage::IMsgWrite(stream,mgr);
+    mgr->WriteKey(stream, fCloneKey);
+    mgr->WriteKey(stream, fRequestorKey);
+    stream->WriteSwap32(fOriginatingPlayerID);
+    stream->WriteSwap32(fUserData);
+    stream->WriteBool(fValidMsg);
+    stream->WriteBool(fIsLoading);
+    mgr->WriteCreatable(stream, fTriggerMsg);
 }
 
 enum LoadCloneMsgFlags
 {
-	kLoadCloneMsgCloneKey,
-	kLoadCloneMsgRequestorKey,
-	kLoadCloneMsgOrigPlayerID,
-	kLoadCloneMsgUserData,
-	kLoadCloneMsgValidMsg,
-	kLoadCloneMsgIsLoading,
-	kLoadCloneMsgTriggerMsg,
+    kLoadCloneMsgCloneKey,
+    kLoadCloneMsgRequestorKey,
+    kLoadCloneMsgOrigPlayerID,
+    kLoadCloneMsgUserData,
+    kLoadCloneMsgValidMsg,
+    kLoadCloneMsgIsLoading,
+    kLoadCloneMsgTriggerMsg,
 };
 
 void plLoadCloneMsg::ReadVersion(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgReadVersion(stream, mgr);
+    plMessage::IMsgReadVersion(stream, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.Read(stream);
+    hsBitVector contentFlags;
+    contentFlags.Read(stream);
 
-	if (contentFlags.IsBitSet(kLoadCloneMsgCloneKey))
-		fCloneKey = mgr->ReadKey(stream);
+    if (contentFlags.IsBitSet(kLoadCloneMsgCloneKey))
+        fCloneKey = mgr->ReadKey(stream);
 
-	if (contentFlags.IsBitSet(kLoadCloneMsgRequestorKey))
-		fRequestorKey = mgr->ReadKey(stream);
+    if (contentFlags.IsBitSet(kLoadCloneMsgRequestorKey))
+        fRequestorKey = mgr->ReadKey(stream);
 
-	if (contentFlags.IsBitSet(kLoadCloneMsgOrigPlayerID))
-		fOriginatingPlayerID = stream->ReadSwap32();
+    if (contentFlags.IsBitSet(kLoadCloneMsgOrigPlayerID))
+        fOriginatingPlayerID = stream->ReadSwap32();
 
-	if (contentFlags.IsBitSet(kLoadCloneMsgUserData))
-		fUserData = stream->ReadSwap32();
+    if (contentFlags.IsBitSet(kLoadCloneMsgUserData))
+        fUserData = stream->ReadSwap32();
 
-	if (contentFlags.IsBitSet(kLoadCloneMsgValidMsg))
-		fValidMsg = stream->ReadBool();
+    if (contentFlags.IsBitSet(kLoadCloneMsgValidMsg))
+        fValidMsg = stream->ReadBool();
 
-	if (contentFlags.IsBitSet(kLoadCloneMsgIsLoading))
-		fIsLoading = stream->ReadBool();
+    if (contentFlags.IsBitSet(kLoadCloneMsgIsLoading))
+        fIsLoading = stream->ReadBool();
 
-	if (contentFlags.IsBitSet(kLoadCloneMsgTriggerMsg))
-		fTriggerMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
+    if (contentFlags.IsBitSet(kLoadCloneMsgTriggerMsg))
+        fTriggerMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
 }
 
 void plLoadCloneMsg::WriteVersion(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWriteVersion(stream,mgr);
+    plMessage::IMsgWriteVersion(stream,mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.SetBit(kLoadCloneMsgCloneKey);
-	contentFlags.SetBit(kLoadCloneMsgRequestorKey);
-	contentFlags.SetBit(kLoadCloneMsgOrigPlayerID);
-	contentFlags.SetBit(kLoadCloneMsgUserData);
-	contentFlags.SetBit(kLoadCloneMsgValidMsg);
-	contentFlags.SetBit(kLoadCloneMsgIsLoading);
-	contentFlags.SetBit(kLoadCloneMsgTriggerMsg);
-	contentFlags.Write(stream);
+    hsBitVector contentFlags;
+    contentFlags.SetBit(kLoadCloneMsgCloneKey);
+    contentFlags.SetBit(kLoadCloneMsgRequestorKey);
+    contentFlags.SetBit(kLoadCloneMsgOrigPlayerID);
+    contentFlags.SetBit(kLoadCloneMsgUserData);
+    contentFlags.SetBit(kLoadCloneMsgValidMsg);
+    contentFlags.SetBit(kLoadCloneMsgIsLoading);
+    contentFlags.SetBit(kLoadCloneMsgTriggerMsg);
+    contentFlags.Write(stream);
 
-	// kLoadCloneMsgCloneKey
-	mgr->WriteKey(stream, fCloneKey);
-	// kLoadCloneMsgRequestorKey
-	mgr->WriteKey(stream, fRequestorKey);
-	// kLoadCloneMsgOrigPlayerID
-	stream->WriteSwap32(fOriginatingPlayerID);
-	// kLoadCloneMsgUserData
-	stream->WriteSwap32(fUserData);
-	// kLoadCloneMsgValidMsg
-	stream->WriteBool(fValidMsg);
-	// kLoadCloneMsgIsLoading
-	stream->WriteBool(fIsLoading);
-	// kLoadCloneMsgTriggerMSg
-	mgr->WriteCreatable(stream, fTriggerMsg);
+    // kLoadCloneMsgCloneKey
+    mgr->WriteKey(stream, fCloneKey);
+    // kLoadCloneMsgRequestorKey
+    mgr->WriteKey(stream, fRequestorKey);
+    // kLoadCloneMsgOrigPlayerID
+    stream->WriteSwap32(fOriginatingPlayerID);
+    // kLoadCloneMsgUserData
+    stream->WriteSwap32(fUserData);
+    // kLoadCloneMsgValidMsg
+    stream->WriteBool(fValidMsg);
+    // kLoadCloneMsgIsLoading
+    stream->WriteBool(fIsLoading);
+    // kLoadCloneMsgTriggerMSg
+    mgr->WriteCreatable(stream, fTriggerMsg);
 }
 
 // GETCLONEKEY
 plKey plLoadCloneMsg::GetCloneKey()
 {
-	return fCloneKey;
+    return fCloneKey;
 }
 
 // GETREQUESTORKEY
 plKey plLoadCloneMsg::GetRequestorKey()
 {
-	return fRequestorKey;
+    return fRequestorKey;
 }
 
 // ISVALIDMESSAGE
 hsBool plLoadCloneMsg::IsValidMessage()
 {
-	return fValidMsg;
+    return fValidMsg;
 }
 
 // GETUSERDATA
 UInt32 plLoadCloneMsg::GetUserData()
 {
-	return fUserData;
+    return fUserData;
 }
 
 // GETORIGINATINGPLAYERID
 UInt32 plLoadCloneMsg::GetOriginatingPlayerID()
 {
-	return fOriginatingPlayerID;
+    return fOriginatingPlayerID;
 }
 
 void plLoadCloneMsg::SetOriginatingPlayerID(UInt32 playerId)
 {
-	fOriginatingPlayerID = playerId;
+    fOriginatingPlayerID = playerId;
 }
 
 hsBool plLoadCloneMsg::GetIsLoading()
 {
-	return fIsLoading;
+    return fIsLoading;
 }
 
 void plLoadCloneMsg::SetTriggerMsg(plMessage *msg)
 {
-	if (fTriggerMsg != nil)
-		hsRefCnt_SafeUnRef(fTriggerMsg);
+    if (fTriggerMsg != nil)
+        hsRefCnt_SafeUnRef(fTriggerMsg);
 
-	hsRefCnt_SafeRef(msg);
-	fTriggerMsg = msg;
+    hsRefCnt_SafeRef(msg);
+    fTriggerMsg = msg;
 }
 
 plMessage *plLoadCloneMsg::GetTriggerMsg()
 {
-	return fTriggerMsg;
+    return fTriggerMsg;
 }
 
 #endif // ndef SERVER

@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRippleShapeMsg_inc
 #define plRippleShapeMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plPrintShape;
 
@@ -38,20 +38,20 @@ class hsResMgr;
 class plRippleShapeMsg : public plMessage
 {
 protected:
-	const plPrintShape*		fShape;
+    const plPrintShape*     fShape;
 public:
-	plRippleShapeMsg();
-	plRippleShapeMsg(const plKey& r, const plPrintShape* shape);
-	~plRippleShapeMsg();
+    plRippleShapeMsg();
+    plRippleShapeMsg(const plKey& r, const plPrintShape* shape);
+    ~plRippleShapeMsg();
 
-	CLASSNAME_REGISTER( plRippleShapeMsg );
-	GETINTERFACE_ANY( plRippleShapeMsg, plMessage );
+    CLASSNAME_REGISTER( plRippleShapeMsg );
+    GETINTERFACE_ANY( plRippleShapeMsg, plMessage );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	const plPrintShape*	GetShape() const { return fShape; }
-	void SetShape(const plPrintShape* shape) { fShape = shape; }
+    const plPrintShape* GetShape() const { return fShape; }
+    void SetShape(const plPrintShape* shape) { fShape = shape; }
 
 };
 

@@ -29,16 +29,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plComponentNoteTrackDlg::ICacheNoteTrack()
 {
-	DeleteCache();
+    DeleteCache();
 
-	plComponentBase *comp = (plComponentBase*)fOwner;
-	
-	std::vector<Animatable*> targets;
-	for (int i = 0; i < comp->NumTargets(); i++)
-	{
-		if (comp->GetTarget(i))
-			targets.push_back((Animatable*)comp->GetTarget(i));
-	}
+    plComponentBase *comp = (plComponentBase*)fOwner;
+    
+    std::vector<Animatable*> targets;
+    for (int i = 0; i < comp->NumTargets(); i++)
+    {
+        if (comp->GetTarget(i))
+            targets.push_back((Animatable*)comp->GetTarget(i));
+    }
 
-	fSegMap = GetSharedAnimSegmentMap(targets, nil);
+    fSegMap = GetSharedAnimSegmentMap(targets, nil);
 }

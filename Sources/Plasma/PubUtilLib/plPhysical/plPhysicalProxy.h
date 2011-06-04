@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysicalProxy_inc
 #define plPhysicalProxy_inc
 
-#include "../plDrawable/plProxyGen.h"
+#include "plDrawable/plProxyGen.h"
 
 class plDrawableSpans;
 class hsGMaterial;
@@ -36,19 +36,19 @@ class plPXPhysicalControllerCore;
 class plPhysicalProxy : public plProxyGen
 {
 public:
-	plPhysicalProxy();
-	plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac);
-	virtual ~plPhysicalProxy();
+    plPhysicalProxy();
+    plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac);
+    virtual ~plPhysicalProxy();
 
-	bool Init(plPhysical* phys);
-	bool Init(plPXPhysicalControllerCore* controller);
+    bool Init(plPhysical* phys);
+    bool Init(plPXPhysicalControllerCore* controller);
 
 protected:
-	plPhysical* fOwner;
-	plPXPhysicalControllerCore* fController;
+    plPhysical* fOwner;
+    plPXPhysicalControllerCore* fController;
 
-	virtual plDrawableSpans*	ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
-	virtual plKey				IGetNode() const;
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
+    virtual plKey               IGetNode() const;
 };
 
 #endif // plPhysicalProxy_inc

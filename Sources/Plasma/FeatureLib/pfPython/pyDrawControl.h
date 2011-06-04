@@ -36,36 +36,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class pyDrawControl
 {
 protected:
-	pyDrawControl() {};
+    pyDrawControl() {};
 
 public:
-	static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
-	//static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    //static void AddPlasmaConstantsClasses(PyObject* m);
 
-	// static python functions
-	static void SetGamma2(hsScalar gamma);
-	static void SetShadowVisDistance(hsScalar distance);
-	static hsScalar GetShadowVisDistance();
-	static void EnableShadows();
-	static void DisableShadows();
-	static hsBool IsShadowsEnabled();
-	static hsBool CanShadowCast();
+    // static python functions
+    static void SetGamma2(hsScalar gamma);
+    static void SetShadowVisDistance(hsScalar distance);
+    static hsScalar GetShadowVisDistance();
+    static void EnableShadows();
+    static void DisableShadows();
+    static hsBool IsShadowsEnabled();
+    static hsBool CanShadowCast();
 
-	static void DisableRenderScene();
-	static void EnableRenderScene();
+    static void DisableRenderScene();
+    static void EnableRenderScene();
 
-	static void SetMouseInverted();
-	static void SetMouseUninverted();
-	static hsBool IsMouseInverted();
+    static void SetMouseInverted();
+    static void SetMouseUninverted();
+    static hsBool IsMouseInverted();
 
-	static void SetClickToTurn(hsBool state);
-	static hsBool IsClickToTurn();
+    static void SetClickToTurn(hsBool state);
+    static hsBool IsClickToTurn();
 };
 
 #endif // _pyDrawControl_h_

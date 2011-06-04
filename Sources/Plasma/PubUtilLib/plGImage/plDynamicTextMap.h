@@ -24,40 +24,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plDynamicTextMap Class Header											 //
-//	I derived from plMipmap not because I inherit a lot of the functionality,//
-//	but because this acts very very much like a mipmap with one mip level.	 //
-//	The only difference is that the actual data gets generated on the fly,	 //
-//	instead of converted at export time. However, to the outside world,		 //
-//	we're just a plain old mipmap, and I'd like to keep it that way.		 //
-//																			 //
-//	Note that we are also of a fixed format--ARGB8888. Keeps things nice and //
-//	simple that way.														 //
-//																			 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plDynamicTextMap Class Header                                            //
+//  I derived from plMipmap not because I inherit a lot of the functionality,//
+//  but because this acts very very much like a mipmap with one mip level.   //
+//  The only difference is that the actual data gets generated on the fly,   //
+//  instead of converted at export time. However, to the outside world,      //
+//  we're just a plain old mipmap, and I'd like to keep it that way.         //
+//                                                                           //
+//  Note that we are also of a fixed format--ARGB8888. Keeps things nice and //
+//  simple that way.                                                         //
+//                                                                           //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	1.14.2002 mcn - Created.												 //
-//	10.28.2002 mcn - Changing the arrangement a bit. Now we have a single	 //
-//					 writable "creation" surface that actually generates	 //
-//					 data, which then copies out on a flush to the actual	 //
-//					 mipmap data. This is slower because it requires two	 //
-//					 copies (second one when we prepare to write to a new	 //
-//					 surface, unless kDiscard is specified as a flush option)//
-//					 but it lets us allocate only one OS surface, which saves//
-//					 us on Win98/ME where we're very limited in terms of	 //
-//					 available OS surfaces.									 //
-//					 To facilitate this, we create a new abstract class to	 //
-//					 encapsulate the actual GDI functionality of Windows.	 //
-//					 This way, we have two options when creating DTMaps:	 //
-//					 allocate an OS writer per surface, which lets us avoid	 //
-//					 the copy problem mentioned above, or allocate one to	 //
-//					 share. This will also let us optimize by switching to	 //
-//					 non-shared writers once we write a non-OS-reliant		 //
-//					 writer/text renderer.								     //
-//																			 //
+//                                                                           //
+//  1.14.2002 mcn - Created.                                                 //
+//  10.28.2002 mcn - Changing the arrangement a bit. Now we have a single    //
+//                   writable "creation" surface that actually generates     //
+//                   data, which then copies out on a flush to the actual    //
+//                   mipmap data. This is slower because it requires two     //
+//                   copies (second one when we prepare to write to a new    //
+//                   surface, unless kDiscard is specified as a flush option)//
+//                   but it lets us allocate only one OS surface, which saves//
+//                   us on Win98/ME where we're very limited in terms of     //
+//                   available OS surfaces.                                  //
+//                   To facilitate this, we create a new abstract class to   //
+//                   encapsulate the actual GDI functionality of Windows.    //
+//                   This way, we have two options when creating DTMaps:     //
+//                   allocate an OS writer per surface, which lets us avoid  //
+//                   the copy problem mentioned above, or allocate one to    //
+//                   share. This will also let us optimize by switching to   //
+//                   non-shared writers once we write a non-OS-reliant       //
+//                   writer/text renderer.                                   //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plDynamicTextMap_h
@@ -73,155 +73,155 @@ struct hsMatrix44;
 class plFont;
 class plDynamicTextMap : public plMipmap
 {
-	protected:
+    protected:
 
-		UInt16		fVisWidth, fVisHeight;
+        UInt16      fVisWidth, fVisHeight;
 
-		virtual UInt32 	Read( hsStream *s );
-		virtual UInt32 	Write( hsStream *s );
+        virtual UInt32  Read( hsStream *s );
+        virtual UInt32  Write( hsStream *s );
 
-	public:
-		//// Public Flags ////
+    public:
+        //// Public Flags ////
 
-		enum Justify
-		{
-			kLeftJustify = 0,
-			kCenter,
-			kRightJustify
-		};
+        enum Justify
+        {
+            kLeftJustify = 0,
+            kCenter,
+            kRightJustify
+        };
 
-		//// Public Data /////
-		
-		
-		//// Public Members ////
-
-
-		plDynamicTextMap();
-		plDynamicTextMap( UInt32 width, UInt32 height, hsBool hasAlpha = false, UInt32 extraWidth = 0, UInt32 extraHeight = 0 );
-		virtual ~plDynamicTextMap();
-
-		CLASSNAME_REGISTER( plDynamicTextMap );
-		GETINTERFACE_ANY( plDynamicTextMap, plMipmap );
+        //// Public Data /////
+        
+        
+        //// Public Members ////
 
 
-		void			Create( UInt32 width, UInt32 height, hsBool hasAlpha, UInt32 extraWidth = 0, UInt32 extraHeight = 0 );
-		void			SetNoCreate( UInt32 width, UInt32 height, hsBool hasAlpha );
+        plDynamicTextMap();
+        plDynamicTextMap( UInt32 width, UInt32 height, hsBool hasAlpha = false, UInt32 extraWidth = 0, UInt32 extraHeight = 0 );
+        virtual ~plDynamicTextMap();
 
-		virtual void	Reset( void );
-
-		virtual void	Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
-		virtual void	Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
-
-		virtual UInt8	GetNumLevels( void ) const { return 1; }
-
-		virtual void		Colorize( void ) { ; }
-		virtual plMipmap	*Clone( void );
-		virtual void		CopyFrom( plMipmap *source );
+        CLASSNAME_REGISTER( plDynamicTextMap );
+        GETINTERFACE_ANY( plDynamicTextMap, plMipmap );
 
 
-		/// Operations to perform on the text block
+        void            Create( UInt32 width, UInt32 height, hsBool hasAlpha, UInt32 extraWidth = 0, UInt32 extraHeight = 0 );
+        void            SetNoCreate( UInt32 width, UInt32 height, hsBool hasAlpha );
 
-		hsBool	IsValid() { return IIsValid(); }
+        virtual void    Reset( void );
 
-		// allow the user of the DynaTextMap that they are done with the image... for now
-		// ... the fImage will be re-created on the next operation that requires the image
-		void	PurgeImage();
+        virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
+        virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
 
-		void	ClearToColor( hsColorRGBA &color );
+        virtual UInt8   GetNumLevels( void ) const { return 1; }
 
-		enum FontFlags
-		{
-			kFontBold		= 0x01,
-			kFontItalic		= 0x02,
-			kFontShadowed	= 0x04
-		};
+        virtual void        Colorize( void ) { ; }
+        virtual plMipmap    *Clone( void );
+        virtual void        CopyFrom( plMipmap *source );
 
-		void	SetFont( const char *face, UInt16 size, UInt8 fontFlags = 0, hsBool antiAliasRGB = true );
-		void	SetFont( const wchar_t *face, UInt16 size, UInt8 fontFlags = 0, hsBool antiAliasRGB = true );
-		void	SetLineSpacing( Int16 spacing );
-		void	SetTextColor( hsColorRGBA &color, hsBool blockRGB = false );
-		void	SetJustify( Justify j );
 
-		void	DrawString( UInt16 x, UInt16 y, const char *text );
-		void	DrawString( UInt16 x, UInt16 y, const wchar_t *text );
-		void	DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 width, UInt16 height );
-		void	DrawClippedString( Int16 x, Int16 y, const wchar_t *text, UInt16 width, UInt16 height );
-		void	DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height );
-		void	DrawClippedString( Int16 x, Int16 y, const wchar_t *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height );
-		void	DrawWrappedString( UInt16 x, UInt16 y, const char *text, UInt16 width, UInt16 height, UInt16 *lastX = nil, UInt16 *lastY = nil );
-		void	DrawWrappedString( UInt16 x, UInt16 y, const wchar_t *text, UInt16 width, UInt16 height, UInt16 *lastX = nil, UInt16 *lastY = nil );
-		UInt16	CalcStringWidth( const char *text, UInt16 *height = nil );
-		UInt16	CalcStringWidth( const wchar_t *text, UInt16 *height = nil );
-		void	CalcWrappedStringSize( const char *text, UInt16 *width, UInt16 *height, UInt32 *firstClippedChar = nil, UInt16 *maxAscent = nil, UInt16 *lastX = nil, UInt16 *lastY = nil );
-		void	CalcWrappedStringSize( const wchar_t *text, UInt16 *width, UInt16 *height, UInt32 *firstClippedChar = nil, UInt16 *maxAscent = nil, UInt16 *lastX = nil, UInt16 *lastY = nil );
-		void	FillRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color );
-		void	FrameRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color );
-		void	SetFirstLineIndent( Int16 indent );
+        /// Operations to perform on the text block
 
-		enum DrawMethods
-		{
-			kImgNoAlpha,		// Just copy color data, force alpha to full if present
-			kImgBlend,			// Blend color onto dest using src alpha, keep dest alpha
-			kImgSprite			// Copy color data and alphas
-		};
-		void	DrawImage( UInt16 x, UInt16 y, plMipmap *image, DrawMethods method = kImgNoAlpha );
-		void	DrawClippedImage( UInt16 x, UInt16 y, plMipmap *image, UInt16 srcClipX, UInt16 srcClipY, 
-								UInt16 srcClipWidth, UInt16 srcClipHeight, DrawMethods method = kImgNoAlpha );
+        hsBool  IsValid() { return IIsValid(); }
 
-		void	FlushToHost( void );
+        // allow the user of the DynaTextMap that they are done with the image... for now
+        // ... the fImage will be re-created on the next operation that requires the image
+        void    PurgeImage();
 
-		hsBool	MsgReceive( plMessage *msg );
+        void    ClearToColor( hsColorRGBA &color );
 
-		UInt16	GetVisibleWidth( void ) { return fVisWidth; }
-		UInt16	GetVisibleHeight( void ) { return fVisHeight; }
+        enum FontFlags
+        {
+            kFontBold       = 0x01,
+            kFontItalic     = 0x02,
+            kFontShadowed   = 0x04
+        };
 
-		// Since the dynamic text can actually create a texture bigger than you were expecting,
-		// you want to be able to apply a layer texture transform that will compensate. This
-		// function will give you that transform. Just feed it into plLayer->SetTransform().
+        void    SetFont( const char *face, UInt16 size, UInt8 fontFlags = 0, hsBool antiAliasRGB = true );
+        void    SetFont( const wchar_t *face, UInt16 size, UInt8 fontFlags = 0, hsBool antiAliasRGB = true );
+        void    SetLineSpacing( Int16 spacing );
+        void    SetTextColor( hsColorRGBA &color, hsBool blockRGB = false );
+        void    SetJustify( Justify j );
 
-		hsMatrix44	GetLayerTransform( void );
+        void    DrawString( UInt16 x, UInt16 y, const char *text );
+        void    DrawString( UInt16 x, UInt16 y, const wchar_t *text );
+        void    DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 width, UInt16 height );
+        void    DrawClippedString( Int16 x, Int16 y, const wchar_t *text, UInt16 width, UInt16 height );
+        void    DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height );
+        void    DrawClippedString( Int16 x, Int16 y, const wchar_t *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height );
+        void    DrawWrappedString( UInt16 x, UInt16 y, const char *text, UInt16 width, UInt16 height, UInt16 *lastX = nil, UInt16 *lastY = nil );
+        void    DrawWrappedString( UInt16 x, UInt16 y, const wchar_t *text, UInt16 width, UInt16 height, UInt16 *lastX = nil, UInt16 *lastY = nil );
+        UInt16  CalcStringWidth( const char *text, UInt16 *height = nil );
+        UInt16  CalcStringWidth( const wchar_t *text, UInt16 *height = nil );
+        void    CalcWrappedStringSize( const char *text, UInt16 *width, UInt16 *height, UInt32 *firstClippedChar = nil, UInt16 *maxAscent = nil, UInt16 *lastX = nil, UInt16 *lastY = nil );
+        void    CalcWrappedStringSize( const wchar_t *text, UInt16 *width, UInt16 *height, UInt32 *firstClippedChar = nil, UInt16 *maxAscent = nil, UInt16 *lastX = nil, UInt16 *lastY = nil );
+        void    FillRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color );
+        void    FrameRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color );
+        void    SetFirstLineIndent( Int16 indent );
 
-		void	SetInitBuffer( UInt32 *buffer );
+        enum DrawMethods
+        {
+            kImgNoAlpha,        // Just copy color data, force alpha to full if present
+            kImgBlend,          // Blend color onto dest using src alpha, keep dest alpha
+            kImgSprite          // Copy color data and alphas
+        };
+        void    DrawImage( UInt16 x, UInt16 y, plMipmap *image, DrawMethods method = kImgNoAlpha );
+        void    DrawClippedImage( UInt16 x, UInt16 y, plMipmap *image, UInt16 srcClipX, UInt16 srcClipY, 
+                                UInt16 srcClipWidth, UInt16 srcClipHeight, DrawMethods method = kImgNoAlpha );
 
-		// Gets for font values
-		Justify		GetFontJustify( void ) const { return fJustify; }
-		const char	*GetFontFace( void ) const { return fFontFace; }
-		UInt16		GetFontSize( void ) const { return fFontSize; }
-		hsBool		GetFontAARGB( void ) const { return fFontAntiAliasRGB; }
-		hsColorRGBA	GetFontColor( void ) const { return fFontColor; }
-		hsBool		GetFontBlockRGB( void ) const { return fFontBlockRGB; }
-		Int16		GetLineSpacing( void ) const { return fLineSpacing; }
+        void    FlushToHost( void );
 
-		plFont		*GetCurrFont( void ) const { return fCurrFont; }
+        hsBool  MsgReceive( plMessage *msg );
 
-		virtual void	Swap( plDynamicTextMap *other );
+        UInt16  GetVisibleWidth( void ) { return fVisWidth; }
+        UInt16  GetVisibleHeight( void ) { return fVisHeight; }
 
-	protected:
+        // Since the dynamic text can actually create a texture bigger than you were expecting,
+        // you want to be able to apply a layer texture transform that will compensate. This
+        // function will give you that transform. Just feed it into plLayer->SetTransform().
 
-		//// Protected Members ////
+        hsMatrix44  GetLayerTransform( void );
 
-		hsBool		IIsValid( void );
-		void		IClearFromBuffer( UInt32 *clearBuffer );
+        void    SetInitBuffer( UInt32 *buffer );
 
-		UInt32		*IAllocateOSSurface( UInt16 width, UInt16 height );
-		void		IDestroyOSSurface( void );
+        // Gets for font values
+        Justify     GetFontJustify( void ) const { return fJustify; }
+        const char  *GetFontFace( void ) const { return fFontFace; }
+        UInt16      GetFontSize( void ) const { return fFontSize; }
+        hsBool      GetFontAARGB( void ) const { return fFontAntiAliasRGB; }
+        hsColorRGBA GetFontColor( void ) const { return fFontColor; }
+        hsBool      GetFontBlockRGB( void ) const { return fFontBlockRGB; }
+        Int16       GetLineSpacing( void ) const { return fLineSpacing; }
 
-		hsBool		fHasAlpha, fShadowed;
+        plFont      *GetCurrFont( void ) const { return fCurrFont; }
 
-		Justify		fJustify;
-		char		*fFontFace;
-		UInt16		fFontSize;
-		UInt8		fFontFlags;
-		hsBool		fFontAntiAliasRGB;
-		hsColorRGBA	fFontColor;
-		hsBool		fFontBlockRGB;
-		Int16		fLineSpacing;
+        virtual void    Swap( plDynamicTextMap *other );
 
-		plFont		*fCurrFont;
+    protected:
 
-		UInt32		*fInitBuffer;
-		
-		hsBool		fHasCreateBeenCalled;
+        //// Protected Members ////
+
+        hsBool      IIsValid( void );
+        void        IClearFromBuffer( UInt32 *clearBuffer );
+
+        UInt32      *IAllocateOSSurface( UInt16 width, UInt16 height );
+        void        IDestroyOSSurface( void );
+
+        hsBool      fHasAlpha, fShadowed;
+
+        Justify     fJustify;
+        char        *fFontFace;
+        UInt16      fFontSize;
+        UInt8       fFontFlags;
+        hsBool      fFontAntiAliasRGB;
+        hsColorRGBA fFontColor;
+        hsBool      fFontBlockRGB;
+        Int16       fLineSpacing;
+
+        plFont      *fCurrFont;
+
+        UInt32      *fInitBuffer;
+        
+        hsBool      fHasCreateBeenCalled;
 };
 
 

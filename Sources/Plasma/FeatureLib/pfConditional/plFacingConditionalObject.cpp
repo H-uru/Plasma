@@ -26,108 +26,108 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plFacingConditionalObject.h"
 #include "plgDispatch.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
-#include "../plMessage/plActivatorMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnMessage/plFakeOutMsg.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "pnModifier/plLogicModBase.h"
+#include "plMessage/plActivatorMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plFakeOutMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
 plFacingConditionalObject::plFacingConditionalObject() :
 fTolerance(-1.0f),
 fDirectional(false)
 {
-	SetSatisfied(true);
+    SetSatisfied(true);
 }
 
 hsBool plFacingConditionalObject::MsgReceive(plMessage* msg)
 {
-	return plConditionalObject::MsgReceive(msg);
+    return plConditionalObject::MsgReceive(msg);
 }
 
 
 void plFacingConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Write(stream, mgr);
-	stream->WriteSwap(fTolerance);
-	stream->WriteBool(fDirectional);
+    plConditionalObject::Write(stream, mgr);
+    stream->WriteSwap(fTolerance);
+    stream->WriteBool(fDirectional);
 }
 
 void plFacingConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Read(stream, mgr);
-	stream->ReadSwap(&fTolerance);
-	fDirectional = stream->ReadBool();
+    plConditionalObject::Read(stream, mgr);
+    stream->ReadSwap(&fTolerance);
+    fDirectional = stream->ReadBool();
 }
 
 hsBool plFacingConditionalObject::Verify(plMessage* msg)
 {
-	plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
-	if (pActivateMsg && pActivateMsg->fHitterObj)
-	{	
-		plSceneObject* pPlayer = plSceneObject::ConvertNoRef(pActivateMsg->fHitterObj->ObjectIsLoaded());
-		if (pPlayer)
-		{
-			hsVector3 playerView = pPlayer->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
-			hsVector3 ourView;
-			if (fDirectional)
-				ourView = fLogicMod->GetTarget()->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
-			else
-			{
-				hsVector3 v(fLogicMod->GetTarget()->GetCoordinateInterface()->GetLocalToWorld().GetTranslate() - pPlayer->GetCoordinateInterface()->GetLocalToWorld().GetTranslate());
-				ourView = v;
-				ourView.Normalize();
-			}
-			hsScalar dot = playerView * ourView;
-			if (dot >= fTolerance)
-			{
-				fLogicMod->GetNotify()->AddFacingEvent( pActivateMsg->fHitterObj, fLogicMod->GetTarget()->GetKey(), dot, true);
-				return true;			
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
-	plFakeOutMsg* pFakeMsg = plFakeOutMsg::ConvertNoRef(msg);
-	if (pFakeMsg && plNetClientApp::GetInstance()->GetLocalPlayerKey())
-	{
-		// sanity check
-		if (!fLogicMod->GetTarget()->GetCoordinateInterface())
-			return false;
+    plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
+    if (pActivateMsg && pActivateMsg->fHitterObj)
+    {   
+        plSceneObject* pPlayer = plSceneObject::ConvertNoRef(pActivateMsg->fHitterObj->ObjectIsLoaded());
+        if (pPlayer)
+        {
+            hsVector3 playerView = pPlayer->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
+            hsVector3 ourView;
+            if (fDirectional)
+                ourView = fLogicMod->GetTarget()->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
+            else
+            {
+                hsVector3 v(fLogicMod->GetTarget()->GetCoordinateInterface()->GetLocalToWorld().GetTranslate() - pPlayer->GetCoordinateInterface()->GetLocalToWorld().GetTranslate());
+                ourView = v;
+                ourView.Normalize();
+            }
+            hsScalar dot = playerView * ourView;
+            if (dot >= fTolerance)
+            {
+                fLogicMod->GetNotify()->AddFacingEvent( pActivateMsg->fHitterObj, fLogicMod->GetTarget()->GetKey(), dot, true);
+                return true;            
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+    plFakeOutMsg* pFakeMsg = plFakeOutMsg::ConvertNoRef(msg);
+    if (pFakeMsg && plNetClientApp::GetInstance()->GetLocalPlayerKey())
+    {
+        // sanity check
+        if (!fLogicMod->GetTarget()->GetCoordinateInterface())
+            return false;
 
-		plSceneObject* pPlayer = plSceneObject::ConvertNoRef(plNetClientApp::GetInstance()->GetLocalPlayerKey()->ObjectIsLoaded());
-		if (pPlayer)
-		{
-			hsVector3 playerView = pPlayer->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
-			hsVector3 ourView;
-			if (fDirectional)
-				ourView = fLogicMod->GetTarget()->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
-			else
-			{
-				hsVector3 v(fLogicMod->GetTarget()->GetCoordinateInterface()->GetLocalToWorld().GetTranslate() - pPlayer->GetCoordinateInterface()->GetLocalToWorld().GetTranslate());
-				ourView = v;
-				ourView.fZ = playerView.fZ;
-				ourView.Normalize();
-			}
-			hsScalar dot = playerView * ourView;
-			if (dot >= fTolerance)
-			{
-				return true;			
-			}
-			else
-			{
-				if (!IsToggle())
-				{
-					fLogicMod->GetNotify()->AddFacingEvent( pPlayer->GetKey(), fLogicMod->GetTarget()->GetKey(), dot, false);
-					fLogicMod->RequestUnTrigger();
-					return false;
-				}
-			}
-		}
-	}
-	return false;
+        plSceneObject* pPlayer = plSceneObject::ConvertNoRef(plNetClientApp::GetInstance()->GetLocalPlayerKey()->ObjectIsLoaded());
+        if (pPlayer)
+        {
+            hsVector3 playerView = pPlayer->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
+            hsVector3 ourView;
+            if (fDirectional)
+                ourView = fLogicMod->GetTarget()->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
+            else
+            {
+                hsVector3 v(fLogicMod->GetTarget()->GetCoordinateInterface()->GetLocalToWorld().GetTranslate() - pPlayer->GetCoordinateInterface()->GetLocalToWorld().GetTranslate());
+                ourView = v;
+                ourView.fZ = playerView.fZ;
+                ourView.Normalize();
+            }
+            hsScalar dot = playerView * ourView;
+            if (dot >= fTolerance)
+            {
+                return true;            
+            }
+            else
+            {
+                if (!IsToggle())
+                {
+                    fLogicMod->GetNotify()->AddFacingEvent( pPlayer->GetKey(), fLogicMod->GetTarget()->GetKey(), dot, false);
+                    fLogicMod->RequestUnTrigger();
+                    return false;
+                }
+            }
+        }
+    }
+    return false;
 }

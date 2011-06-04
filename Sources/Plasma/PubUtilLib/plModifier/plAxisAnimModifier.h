@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAxisAnimMod_inc
 
 #include "hsStlUtils.h"
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 
 
 class plKey;
@@ -38,54 +38,54 @@ class plAxisInputInterface;
 class plAxisAnimModifier : public plSingleModifier
 {
 public:
-	enum
-	{
-		kTypeX,
-		kTypeY,
-		kTypeLogic,
-	};
+    enum
+    {
+        kTypeX,
+        kTypeY,
+        kTypeLogic,
+    };
 protected:
-	
-	plKey fXAnim;
-	plKey fYAnim;
-	plKey fNotificationKey;
-	
-	hsScalar	fXPos;
-	hsScalar	fYPos;
+    
+    plKey fXAnim;
+    plKey fYAnim;
+    plKey fNotificationKey;
+    
+    hsScalar    fXPos;
+    hsScalar    fYPos;
 
-	hsBool			fActive;
-	hsBool			fAllOrNothing;
-	int				fIface;
-	plNotifyMsg*	fNotify;
-	
-	std::string		fAnimLabel;
+    hsBool          fActive;
+    hsBool          fAllOrNothing;
+    int             fIface;
+    plNotifyMsg*    fNotify;
+    
+    std::string     fAnimLabel;
 
-	plAxisInputInterface	*fInputIface;
+    plAxisInputInterface    *fInputIface;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
 
 public:
-	plAxisAnimModifier(); 
-	virtual ~plAxisAnimModifier();
+    plAxisAnimModifier(); 
+    virtual ~plAxisAnimModifier();
 
-	CLASSNAME_REGISTER( plAxisAnimModifier );
-	GETINTERFACE_ANY( plAxisAnimModifier, plSingleModifier );
+    CLASSNAME_REGISTER( plAxisAnimModifier );
+    GETINTERFACE_ANY( plAxisAnimModifier, plSingleModifier );
 
-	virtual hsBool	MsgReceive(plMessage* msg);
-	virtual void	SetTarget(plSceneObject* so);
+    virtual hsBool  MsgReceive(plMessage* msg);
+    virtual void    SetTarget(plSceneObject* so);
 
-	void SetAllOrNothing(hsBool b) { fAllOrNothing = b; }
+    void SetAllOrNothing(hsBool b) { fAllOrNothing = b; }
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	void SetXAnim(plKey c) { fXAnim = c; }
-	void SetYAnim(plKey c) { fYAnim = c; }
-	void SetNotificationKey(plKey k) { fNotificationKey = k; }
-	plNotifyMsg* GetNotify() { return fNotify; }
+    void SetXAnim(plKey c) { fXAnim = c; }
+    void SetYAnim(plKey c) { fYAnim = c; }
+    void SetNotificationKey(plKey k) { fNotificationKey = k; }
+    plNotifyMsg* GetNotify() { return fNotify; }
 
-	const char* GetAnimLabel() const {return fAnimLabel.c_str();}
-	void SetAnimLabel(const char* a) {fAnimLabel = a;			}
+    const char* GetAnimLabel() const {return fAnimLabel.c_str();}
+    void SetAnimLabel(const char* a) {fAnimLabel = a;           }
 
 };
 

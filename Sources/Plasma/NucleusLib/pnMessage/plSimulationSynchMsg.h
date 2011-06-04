@@ -36,27 +36,27 @@ class plSimulationSynchMsg : public plMessage
 {
 public:
 
-	// ???
-	// This message is not really creatable: it's abstract. It's designed to sneak
-	// havok-specific data through the generalized simulation logic
-	CLASSNAME_REGISTER( plSimulationSynchMsg );
-	GETINTERFACE_ANY( plSimulationSynchMsg, plMessage );
+    // ???
+    // This message is not really creatable: it's abstract. It's designed to sneak
+    // havok-specific data through the generalized simulation logic
+    CLASSNAME_REGISTER( plSimulationSynchMsg );
+    GETINTERFACE_ANY( plSimulationSynchMsg, plMessage );
 
-	// Don't be fooled: this class is *not* to be instantiated.
+    // Don't be fooled: this class is *not* to be instantiated.
 
-	void Read(hsStream *stream, hsResMgr *mgr);
-	void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr);
 };
 
 
 inline void plSimulationSynchMsg::Read(hsStream *s, hsResMgr *mgr)
 {
-	hsAssert(false, "plSimulationSynchMsg should never be instantiated directly");
+    hsAssert(false, "plSimulationSynchMsg should never be instantiated directly");
 }
 
 inline void plSimulationSynchMsg::Write(hsStream *s, hsResMgr *mgr)
 {
-	hsAssert(false, "plSimulationSynchMsg should never be instantiated directly");
+    hsAssert(false, "plSimulationSynchMsg should never be instantiated directly");
 }
 
-#endif	// PLSIMULATIONSYNCHMSG_h
+#endif  // PLSIMULATIONSYNCHMSG_h

@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plParticleSDLMod_inc
 #define plParticleSDLMod_inc
 
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 //
 // This modifier is responsible for sending and recving 
@@ -36,25 +36,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plParticleSDLMod : public plSDLModifier
 {
 private:
-	bool fAttachedToAvatar;
+    bool fAttachedToAvatar;
 
 protected:
-	void IPutCurrentStateIn(plStateDataRecord* dstState);
-	void ISetCurrentStateFrom(const plStateDataRecord* srcState);
-	UInt32 IApplyModFlags(UInt32 sendFlags);
+    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    UInt32 IApplyModFlags(UInt32 sendFlags);
 public:
-	// var labels 
-	static char kStrNumParticles[];	
-	
-	CLASSNAME_REGISTER( plParticleSDLMod );
-	GETINTERFACE_ANY( plParticleSDLMod, plSDLModifier);
-	
-	plParticleSDLMod(bool attachedToAvatar = false): fAttachedToAvatar(attachedToAvatar) {}
-	
-	void PutCurrentStateIn(plStateDataRecord* dstState);
-	const char* GetSDLName() const { return kSDLParticleSystem; }
+    // var labels 
+    static char kStrNumParticles[]; 
+    
+    CLASSNAME_REGISTER( plParticleSDLMod );
+    GETINTERFACE_ANY( plParticleSDLMod, plSDLModifier);
+    
+    plParticleSDLMod(bool attachedToAvatar = false): fAttachedToAvatar(attachedToAvatar) {}
+    
+    void PutCurrentStateIn(plStateDataRecord* dstState);
+    const char* GetSDLName() const { return kSDLParticleSystem; }
 
-	void SetAttachedToAvatar(bool attached) {fAttachedToAvatar = attached;}
+    void SetAttachedToAvatar(bool attached) {fAttachedToAvatar = attached;}
 };
 
-#endif	// plParticleSDLMod_inc
+#endif  // plParticleSDLMod_inc

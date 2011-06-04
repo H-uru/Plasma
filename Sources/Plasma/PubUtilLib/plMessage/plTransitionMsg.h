@@ -29,53 +29,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStream.h"
-#include "../pnMessage/plMessageWithCallbacks.h"
+#include "pnMessage/plMessageWithCallbacks.h"
 
 class plTransitionMsg : public plMessageWithCallbacks
 {
 protected:
 
-	UInt32		fEffect;
-	hsScalar	fLengthInSecs;
-	hsBool		fHoldUntilNext;
+    UInt32      fEffect;
+    hsScalar    fLengthInSecs;
+    hsBool      fHoldUntilNext;
 public:
-	enum 
-	{
-		kFadeIn,
-		kFadeOut,
-		kFadeInNoSound,
-		kFadeOutNoSound
-	};
+    enum 
+    {
+        kFadeIn,
+        kFadeOut,
+        kFadeInNoSound,
+        kFadeOutNoSound
+    };
 
-	plTransitionMsg() : plMessageWithCallbacks(nil, nil, nil), fEffect( 0 ) { SetBCastFlag(kBCastByExactType);  }
-	plTransitionMsg( UInt32 type, hsScalar lengthInSecs, hsBool holdUntilNext = false ) : 
-				plMessageWithCallbacks(nil, nil, nil), fEffect( type ), fLengthInSecs( lengthInSecs ), fHoldUntilNext( holdUntilNext )
-				{ SetBCastFlag( kBCastByExactType );  }
-	
-	~plTransitionMsg();
+    plTransitionMsg() : plMessageWithCallbacks(nil, nil, nil), fEffect( 0 ) { SetBCastFlag(kBCastByExactType);  }
+    plTransitionMsg( UInt32 type, hsScalar lengthInSecs, hsBool holdUntilNext = false ) : 
+                plMessageWithCallbacks(nil, nil, nil), fEffect( type ), fLengthInSecs( lengthInSecs ), fHoldUntilNext( holdUntilNext )
+                { SetBCastFlag( kBCastByExactType );  }
+    
+    ~plTransitionMsg();
 
-	CLASSNAME_REGISTER( plTransitionMsg );
-	GETINTERFACE_ANY( plTransitionMsg, plMessageWithCallbacks );
+    CLASSNAME_REGISTER( plTransitionMsg );
+    GETINTERFACE_ANY( plTransitionMsg, plMessageWithCallbacks );
 
-	UInt32		GetEffect( void ) const { return fEffect; }
-	hsScalar	GetLengthInSecs( void ) const { return fLengthInSecs; }
-	hsBool		GetHoldState( void ) const { return fHoldUntilNext; }
+    UInt32      GetEffect( void ) const { return fEffect; }
+    hsScalar    GetLengthInSecs( void ) const { return fLengthInSecs; }
+    hsBool      GetHoldState( void ) const { return fHoldUntilNext; }
 
-	virtual void Read(hsStream* s, hsResMgr* mgr) 
-	{ 
-		plMessageWithCallbacks::Read(s, mgr); 
-		s->ReadSwap(&fEffect);
-		s->ReadSwap(&fLengthInSecs);
-		s->ReadSwap(&fHoldUntilNext);
-	}
-	
-	virtual void Write(hsStream* s, hsResMgr* mgr) 
-	{ 
-		plMessageWithCallbacks::Write(s, mgr); 
-		s->WriteSwap(fEffect);
-		s->WriteSwap(fLengthInSecs);
-		s->WriteSwap(fHoldUntilNext);
-	}
+    virtual void Read(hsStream* s, hsResMgr* mgr) 
+    { 
+        plMessageWithCallbacks::Read(s, mgr); 
+        s->ReadSwap(&fEffect);
+        s->ReadSwap(&fLengthInSecs);
+        s->ReadSwap(&fHoldUntilNext);
+    }
+    
+    virtual void Write(hsStream* s, hsResMgr* mgr) 
+    { 
+        plMessageWithCallbacks::Write(s, mgr); 
+        s->WriteSwap(fEffect);
+        s->WriteSwap(fLengthInSecs);
+        s->WriteSwap(fHoldUntilNext);
+    }
 };
 
 #endif // plTransitionMsg_inc

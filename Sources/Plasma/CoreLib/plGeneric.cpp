@@ -36,16 +36,16 @@ plGeneric::plGeneric(const double& val): fType(kFloat), fBoolVal(false), fIntVal
 
 plGeneric::plGeneric(const char* val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0)
 {
-	wchar_t* temp = hsStringToWString(val);
-	fStringVal = temp;
-	delete [] temp;
+    wchar_t* temp = hsStringToWString(val);
+    fStringVal = temp;
+    delete [] temp;
 }
 
 plGeneric::plGeneric(const std::string& val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0)
 {
-	wchar_t* temp = hsStringToWString(val.c_str());
-	fStringVal = temp;
-	delete [] temp;
+    wchar_t* temp = hsStringToWString(val.c_str());
+    fStringVal = temp;
+    delete [] temp;
 }
 
 plGeneric::plGeneric(const wchar_t* val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0),
@@ -56,132 +56,132 @@ fStringVal(val) {}
 
 void plGeneric::IReset()
 {
-	fType = kNull;
-	fBoolVal = false;
-	fIntVal = 0;
-	fFloatVal = 0.0;
-	fStringVal = L"";
+    fType = kNull;
+    fBoolVal = false;
+    fIntVal = 0;
+    fFloatVal = 0.0;
+    fStringVal = L"";
 }
 
 plGeneric& plGeneric::operator=(const bool& val)
 {
-	IReset();
-	fType = kBool;
-	fBoolVal = val;
-	return *this;
+    IReset();
+    fType = kBool;
+    fBoolVal = val;
+    return *this;
 }
 
 plGeneric& plGeneric::operator=(const int& val)
 {
-	IReset();
-	fType = kInt;
-	fIntVal = val;
-	return *this;
+    IReset();
+    fType = kInt;
+    fIntVal = val;
+    return *this;
 }
 
 plGeneric& plGeneric::operator=(const double& val)
 {
-	IReset();
-	fType = kFloat;
-	fFloatVal = val;
-	return *this;
+    IReset();
+    fType = kFloat;
+    fFloatVal = val;
+    return *this;
 }
 
 plGeneric& plGeneric::operator=(const char* val)
 {
-	IReset();
-	fType = kString;
-	wchar_t* temp = hsStringToWString(val);
-	fStringVal = temp;
-	delete [] temp;
-	return *this;
+    IReset();
+    fType = kString;
+    wchar_t* temp = hsStringToWString(val);
+    fStringVal = temp;
+    delete [] temp;
+    return *this;
 }
 
 plGeneric& plGeneric::operator=(const std::string& val)
 {
-	IReset();
-	fType = kString;
-	wchar_t* temp = hsStringToWString(val.c_str());
-	fStringVal = temp;
-	delete [] temp;
-	return *this;
+    IReset();
+    fType = kString;
+    wchar_t* temp = hsStringToWString(val.c_str());
+    fStringVal = temp;
+    delete [] temp;
+    return *this;
 }
 
 plGeneric& plGeneric::operator=(const wchar_t* val)
 {
-	IReset();
-	fType = kString;
-	fStringVal = val;
-	return *this;
+    IReset();
+    fType = kString;
+    fStringVal = val;
+    return *this;
 }
 
 plGeneric& plGeneric::operator=(const std::wstring& val)
 {
-	IReset();
-	fType = kString;
-	fStringVal = val;
-	return *this;
+    IReset();
+    fType = kString;
+    fStringVal = val;
+    return *this;
 }
 
 int plGeneric::Write(hsStream* stream)
 {
-	stream->WriteByte((UInt8)fType);
+    stream->WriteByte((UInt8)fType);
 
-	switch (fType)
-	{
-	case kNull:
-		break; // nothing to write
+    switch (fType)
+    {
+    case kNull:
+        break; // nothing to write
 
-	case kBool:
-		stream->WriteBool(fBoolVal);
-		break;
+    case kBool:
+        stream->WriteBool(fBoolVal);
+        break;
 
-	case kInt:
-		stream->WriteSwap(fIntVal);
-		break;
+    case kInt:
+        stream->WriteSwap(fIntVal);
+        break;
 
-	case kFloat:
-		stream->WriteSwap(fFloatVal);
-		break;
+    case kFloat:
+        stream->WriteSwap(fFloatVal);
+        break;
 
-	case kString:
-		stream->WriteSafeWString(fStringVal.c_str());
-		break;
-	}
-	return stream->GetPosition();
+    case kString:
+        stream->WriteSafeWString(fStringVal.c_str());
+        break;
+    }
+    return stream->GetPosition();
 }
 
 int plGeneric::Read(hsStream* stream)
 {
-	IReset();
-	fType = (GenericType)stream->ReadByte();
-	switch (fType)
-	{
-	case kNull:
-		break; // nothing to read
+    IReset();
+    fType = (GenericType)stream->ReadByte();
+    switch (fType)
+    {
+    case kNull:
+        break; // nothing to read
 
-	case kBool:
-		fBoolVal = (stream->ReadBool() != 0);
-		break;
+    case kBool:
+        fBoolVal = (stream->ReadBool() != 0);
+        break;
 
-	case kInt:
-		stream->ReadSwap(&fIntVal);
-		break;
+    case kInt:
+        stream->ReadSwap(&fIntVal);
+        break;
 
-	case kFloat:
-		stream->ReadSwap(&fFloatVal);
-		break;
+    case kFloat:
+        stream->ReadSwap(&fFloatVal);
+        break;
 
-	case kString:
-		{
-			wchar_t* temp = stream->ReadSafeWString();
-			if (temp)
-			{
-				fStringVal = temp;
-				delete [] temp;
-			}
-		}
-		break;
-	}
-	return stream->GetPosition();
+    case kString:
+        {
+            wchar_t* temp = stream->ReadSafeWString();
+            if (temp)
+            {
+                fStringVal = temp;
+                delete [] temp;
+            }
+        }
+        break;
+    }
+    return stream->GetPosition();
 }

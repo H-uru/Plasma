@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCondRefMsg_inc
 #define plCondRefMsg_inc
 
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "hsStream.h"
 
 class hsResMgr;
@@ -37,27 +37,27 @@ class plCondRefMsg : public plRefMsg
 
 public:
 
-	plCondRefMsg() { fWhich = -1; }
-	plCondRefMsg::plCondRefMsg(const plKey &s, int which)
-		: plRefMsg(s, plRefMsg::kOnCreate), fWhich(which) {}
+    plCondRefMsg() { fWhich = -1; }
+    plCondRefMsg::plCondRefMsg(const plKey &s, int which)
+        : plRefMsg(s, plRefMsg::kOnCreate), fWhich(which) {}
 
-	CLASSNAME_REGISTER( plCondRefMsg );
-	GETINTERFACE_ANY( plCondRefMsg, plRefMsg );
+    CLASSNAME_REGISTER( plCondRefMsg );
+    GETINTERFACE_ANY( plCondRefMsg, plRefMsg );
 
-	Int8					fWhich;
+    Int8                    fWhich;
 
-	// IO - not really applicable to ref msgs, but anyway
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Read(stream, mgr);
-		stream->ReadSwap(&fWhich);
-	}
+    // IO - not really applicable to ref msgs, but anyway
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Read(stream, mgr);
+        stream->ReadSwap(&fWhich);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Write(stream, mgr);
-		stream->WriteSwap(fWhich);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Write(stream, mgr);
+        stream->WriteSwap(fWhich);
+    }
 };
 
 #endif // plCondRefMsg_inc

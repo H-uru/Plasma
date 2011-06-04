@@ -28,10 +28,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum
 {
-	kMultCount,
-	kMultPasses,
-	kMultOn,
-	kMultLayerCounts
+    kMultCount,
+    kMultPasses,
+    kMultOn,
+    kMultLayerCounts
 };
 
 #endif //PL_MULTIPASS_MTL_PB_H

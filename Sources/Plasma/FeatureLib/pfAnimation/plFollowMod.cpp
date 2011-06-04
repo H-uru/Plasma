@@ -27,17 +27,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plFollowMod.h"
 #include "plgDispatch.h"
-#include "../pnNetCommon/plNetApp.h"
-#include "../plMessage/plListenerMsg.h"
-#include "../plMessage/plRenderMsg.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plRefMsg.h"
+#include "pnNetCommon/plNetApp.h"
+#include "plMessage/plListenerMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plRefMsg.h"
 #include "hsResMgr.h"
 #include "plPipeline.h"
 
 plFollowMod::plFollowMod()
-:	fLeader(nil), fMode(kPosition), fLeaderType(kLocalPlayer), fLeaderSet(false)
+:   fLeader(nil), fMode(kPosition), fLeaderType(kLocalPlayer), fLeaderSet(false)
 {
 }
 
@@ -50,233 +50,233 @@ plProfile_CreateTimer("FollowMod", "RenderSetup", FollowMod);
 
 hsBool plFollowMod::MsgReceive(plMessage* msg)
 {
-	plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
-	if( rend )
-	{
-		plProfile_BeginLap(FollowMod, this->GetKey()->GetUoid().GetObjectName());
-		fLeaderL2W = rend->Pipeline()->GetCameraToWorld();
-		fLeaderW2L = rend->Pipeline()->GetWorldToCamera();
-		fLeaderSet = true;
-		plProfile_EndLap(FollowMod, this->GetKey()->GetUoid().GetObjectName());
-		return true;
-	}
-	plListenerMsg* list = plListenerMsg::ConvertNoRef(msg);
-	if( list )
-	{
-		hsVector3 pos;
-		pos.Set(list->GetPosition().fX, list->GetPosition().fY, list->GetPosition().fZ);
-		fLeaderL2W.MakeTranslateMat(&pos);
-		fLeaderW2L.MakeTranslateMat(&-pos);
-		fLeaderSet = true;
+    plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
+    if( rend )
+    {
+        plProfile_BeginLap(FollowMod, this->GetKey()->GetUoid().GetObjectName());
+        fLeaderL2W = rend->Pipeline()->GetCameraToWorld();
+        fLeaderW2L = rend->Pipeline()->GetWorldToCamera();
+        fLeaderSet = true;
+        plProfile_EndLap(FollowMod, this->GetKey()->GetUoid().GetObjectName());
+        return true;
+    }
+    plListenerMsg* list = plListenerMsg::ConvertNoRef(msg);
+    if( list )
+    {
+        hsVector3 pos;
+        pos.Set(list->GetPosition().fX, list->GetPosition().fY, list->GetPosition().fZ);
+        fLeaderL2W.MakeTranslateMat(&pos);
+        fLeaderW2L.MakeTranslateMat(&-pos);
+        fLeaderSet = true;
 
-		return true;
-	}
+        return true;
+    }
 
-	plGenRefMsg* ref = plGenRefMsg::ConvertNoRef(msg);
-	if( ref )
-	{
-		switch( ref->fType )
-		{
-		case kRefLeader:
+    plGenRefMsg* ref = plGenRefMsg::ConvertNoRef(msg);
+    if( ref )
+    {
+        switch( ref->fType )
+        {
+        case kRefLeader:
 
-			if( ref->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
-				fLeader = plSceneObject::ConvertNoRef(ref->GetRef());
-			else if( ref->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-				fLeader = nil;
-			return true;
-		default:
-			hsAssert(false, "Unknown ref type to FollowMod");
-			break;
-		}
-	}
+            if( ref->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
+                fLeader = plSceneObject::ConvertNoRef(ref->GetRef());
+            else if( ref->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
+                fLeader = nil;
+            return true;
+        default:
+            hsAssert(false, "Unknown ref type to FollowMod");
+            break;
+        }
+    }
 
-	return plSingleModifier::MsgReceive(msg);
+    return plSingleModifier::MsgReceive(msg);
 }
 
 hsBool plFollowMod::ICheckLeader()
 {
-	switch( fLeaderType )
-	{
-	case kLocalPlayer:
-		{
-			plSceneObject* player = plSceneObject::ConvertNoRef(plNetClientApp::GetInstance()->GetLocalPlayer());
-			if( player )
-			{
-				fLeaderL2W = player->GetLocalToWorld();
-				fLeaderW2L = player->GetWorldToLocal();
-				fLeaderSet = true;
-			}
-			else
-				fLeaderSet = false;
-		}
-		break;
-	case kObject:
-		if( fLeader )
-		{
-			fLeaderL2W = fLeader->GetLocalToWorld();
-			fLeaderW2L = fLeader->GetWorldToLocal();
-			fLeaderSet = true;
-		}
-		else
-			fLeaderSet = false;
-		break;
-	case kCamera:
-		break;
-	case kListener:
-		break;
-	}
-	return fLeaderSet;
+    switch( fLeaderType )
+    {
+    case kLocalPlayer:
+        {
+            plSceneObject* player = plSceneObject::ConvertNoRef(plNetClientApp::GetInstance()->GetLocalPlayer());
+            if( player )
+            {
+                fLeaderL2W = player->GetLocalToWorld();
+                fLeaderW2L = player->GetWorldToLocal();
+                fLeaderSet = true;
+            }
+            else
+                fLeaderSet = false;
+        }
+        break;
+    case kObject:
+        if( fLeader )
+        {
+            fLeaderL2W = fLeader->GetLocalToWorld();
+            fLeaderW2L = fLeader->GetWorldToLocal();
+            fLeaderSet = true;
+        }
+        else
+            fLeaderSet = false;
+        break;
+    case kCamera:
+        break;
+    case kListener:
+        break;
+    }
+    return fLeaderSet;
 }
 
 void plFollowMod::IMoveTarget()
 {
-	if( fMode == kFullTransform )
-	{
-		GetTarget()->SetTransform(fLeaderL2W, fLeaderW2L);
-		return;
-	}
+    if( fMode == kFullTransform )
+    {
+        GetTarget()->SetTransform(fLeaderL2W, fLeaderW2L);
+        return;
+    }
 
-	hsMatrix44 l2w = GetTarget()->GetLocalToWorld();
-	hsMatrix44 w2l = GetTarget()->GetWorldToLocal();
+    hsMatrix44 l2w = GetTarget()->GetLocalToWorld();
+    hsMatrix44 w2l = GetTarget()->GetWorldToLocal();
 
-	if( fMode & kRotate )
-	{
-		int i, j;
-		for( i = 0; i < 3; i++ )
-		{
-			for( j = 0; j < 3; j++ )
-			{
-				l2w.fMap[i][j] = fLeaderL2W.fMap[i][j];
-				w2l.fMap[i][j] = fLeaderW2L.fMap[i][j];
-			}
-		}
-	}
+    if( fMode & kRotate )
+    {
+        int i, j;
+        for( i = 0; i < 3; i++ )
+        {
+            for( j = 0; j < 3; j++ )
+            {
+                l2w.fMap[i][j] = fLeaderL2W.fMap[i][j];
+                w2l.fMap[i][j] = fLeaderW2L.fMap[i][j];
+            }
+        }
+    }
 
-	if( fMode & kPosition )
-	{
-		hsMatrix44 invMove;
-		invMove.Reset();
+    if( fMode & kPosition )
+    {
+        hsMatrix44 invMove;
+        invMove.Reset();
 
-		hsPoint3 newPos = fLeaderL2W.GetTranslate();
-		hsPoint3 newInvPos = fLeaderW2L.GetTranslate();
+        hsPoint3 newPos = fLeaderL2W.GetTranslate();
+        hsPoint3 newInvPos = fLeaderW2L.GetTranslate();
 
-		hsPoint3 oldPos = l2w.GetTranslate();
+        hsPoint3 oldPos = l2w.GetTranslate();
 
-		// l2w = newPosMat * -oldPosMat * l2w
-		// so w2l = w2l * inv-oldPosMat * invNewPosMat 
-		if( fMode & kPositionX )
-		{
-			l2w.fMap[0][3] = newPos.fX;
-			invMove.fMap[0][3] = oldPos.fX - newPos.fX;
-		}
+        // l2w = newPosMat * -oldPosMat * l2w
+        // so w2l = w2l * inv-oldPosMat * invNewPosMat 
+        if( fMode & kPositionX )
+        {
+            l2w.fMap[0][3] = newPos.fX;
+            invMove.fMap[0][3] = oldPos.fX - newPos.fX;
+        }
 
-		if( fMode & kPositionY )
-		{
-			l2w.fMap[1][3] = newPos.fY;
-			invMove.fMap[1][3] = oldPos.fY - newPos.fY;
-		}
+        if( fMode & kPositionY )
+        {
+            l2w.fMap[1][3] = newPos.fY;
+            invMove.fMap[1][3] = oldPos.fY - newPos.fY;
+        }
 
-		if( fMode & kPositionZ )
-		{
-			l2w.fMap[2][3] = newPos.fZ;
-			invMove.fMap[2][3] = oldPos.fZ - newPos.fZ;
-		}
+        if( fMode & kPositionZ )
+        {
+            l2w.fMap[2][3] = newPos.fZ;
+            invMove.fMap[2][3] = oldPos.fZ - newPos.fZ;
+        }
 
-		invMove.NotIdentity();
+        invMove.NotIdentity();
 
-		// InvMove must happen after rotation.
-		w2l = w2l * invMove;
+        // InvMove must happen after rotation.
+        w2l = w2l * invMove;
 
-	}
+    }
 
-	l2w.NotIdentity();
-	w2l.NotIdentity();
+    l2w.NotIdentity();
+    w2l.NotIdentity();
 
 #ifdef HS_DEBUGGING
-	//MFHORSE hackola
-	hsMatrix44 inv;
-	l2w.GetInverse(&inv);
+    //MFHORSE hackola
+    hsMatrix44 inv;
+    l2w.GetInverse(&inv);
 #endif // HS_DEBUGGING
 
-	GetTarget()->SetTransform(l2w, w2l);
+    GetTarget()->SetTransform(l2w, w2l);
 }
 
 hsBool plFollowMod::IEval(double secs, hsScalar del, UInt32 dirty)
 {
-	if( ICheckLeader() )
-		IMoveTarget();
-	return true;
+    if( ICheckLeader() )
+        IMoveTarget();
+    return true;
 }
 
 void plFollowMod::SetTarget(plSceneObject* so) 
 { 
-	plSingleModifier::SetTarget(so);
-	if( fTarget )
-		Activate();
-	else
-		Deactivate();
+    plSingleModifier::SetTarget(so);
+    if( fTarget )
+        Activate();
+    else
+        Deactivate();
 }
 
 void plFollowMod::Activate()
 {
-	switch( fLeaderType )
-	{
-	case kLocalPlayer:
-		break;
-	case kObject:
-		break;
-	case kCamera:
-		plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
-		break;
-	case kListener:
-		plgDispatch::Dispatch()->RegisterForExactType(plListenerMsg::Index(), GetKey());
-		break;
-	}
-	if( fTarget )
-		plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
+    switch( fLeaderType )
+    {
+    case kLocalPlayer:
+        break;
+    case kObject:
+        break;
+    case kCamera:
+        plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
+        break;
+    case kListener:
+        plgDispatch::Dispatch()->RegisterForExactType(plListenerMsg::Index(), GetKey());
+        break;
+    }
+    if( fTarget )
+        plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
 void plFollowMod::Deactivate()
 {
-	switch( fLeaderType )
-	{
-	case kLocalPlayer:
-		if( fTarget )
-			plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
-		break;
-	case kObject:
-		if( fTarget )
-			plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
-		break;
-	case kCamera:
-		plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
-		break;
-	case kListener:
-		plgDispatch::Dispatch()->UnRegisterForExactType(plListenerMsg::Index(), GetKey());
-		break;
-	}
+    switch( fLeaderType )
+    {
+    case kLocalPlayer:
+        if( fTarget )
+            plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
+        break;
+    case kObject:
+        if( fTarget )
+            plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
+        break;
+    case kCamera:
+        plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
+        break;
+    case kListener:
+        plgDispatch::Dispatch()->UnRegisterForExactType(plListenerMsg::Index(), GetKey());
+        break;
+    }
 }
 
 void plFollowMod::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plSingleModifier::Read(stream, mgr);
+    plSingleModifier::Read(stream, mgr);
 
-	fLeaderType = FollowLeaderType(stream->ReadByte());
-	fMode = stream->ReadByte();
+    fLeaderType = FollowLeaderType(stream->ReadByte());
+    fMode = stream->ReadByte();
 
-	mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefLeader), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefLeader), plRefFlags::kActiveRef);
 
-	// If active?
-	Activate();
+    // If active?
+    Activate();
 }
 
 void plFollowMod::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plSingleModifier::Write(stream, mgr);
+    plSingleModifier::Write(stream, mgr);
 
-	stream->WriteByte(fLeaderType);
-	stream->WriteByte(fMode);
+    stream->WriteByte(fLeaderType);
+    stream->WriteByte(fMode);
 
-	mgr->WriteKey(stream, fLeader);
+    mgr->WriteKey(stream, fLeader);
 }
 

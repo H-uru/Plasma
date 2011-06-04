@@ -31,7 +31,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "utilapi.h"
 
 #include <vector>
-using namespace std;
 
 class ClassDesc2;
 class Class_ID;
@@ -54,26 +53,26 @@ class plTimerShare;
 class plComponentMgr : public UtilityObj
 {
 private:
-	vector<ClassDesc*> fDescs;
+    std::vector<ClassDesc*> fDescs;
 
-	plComponentMgr() {};
+    plComponentMgr() {};
 
 public:
-	static plComponentMgr &Inst();
+    static plComponentMgr &Inst();
 
-	// Required Max functions
-	virtual void BeginEditParams(Interface *ip,IUtil *iu) {}
-	virtual void EndEditParams(Interface *ip,IUtil *iu) {}
-	virtual void SelectionSetChanged(Interface *ip,IUtil *iu) {}
-	virtual void DeleteThis() {}
+    // Required Max functions
+    virtual void BeginEditParams(Interface *ip,IUtil *iu) {}
+    virtual void EndEditParams(Interface *ip,IUtil *iu) {}
+    virtual void SelectionSetChanged(Interface *ip,IUtil *iu) {}
+    virtual void DeleteThis() {}
 
-	virtual UInt32 Count();
-	virtual ClassDesc *Get(UInt32 i);
+    virtual UInt32 Count();
+    virtual ClassDesc *Get(UInt32 i);
 
-	virtual UInt32 FindClassID(Class_ID id);
+    virtual UInt32 FindClassID(Class_ID id);
 
-	// Registers a component.  Only used by the classdesc macro.
-	virtual void Register(ClassDesc *desc);
+    // Registers a component.  Only used by the classdesc macro.
+    virtual void Register(ClassDesc *desc);
 };
 
 #endif //PL_COMPONENTMGR_H

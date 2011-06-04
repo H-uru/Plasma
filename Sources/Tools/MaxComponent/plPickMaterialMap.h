@@ -37,12 +37,12 @@ template <class T> class hsTArray;
 
 namespace plPickMaterialMap
 {
-	bool PickTexmap(IParamBlock2 *pb, int id);
-	Mtl *PickMaterial(unsigned int flags);
+    bool PickTexmap(IParamBlock2 *pb, int id);
+    Mtl *PickMaterial(unsigned int flags);
 };
 
 struct plPickMaterialInfo
 {
-	Mtl *fMtl;
-	unsigned int fFlags;
+    Mtl *fMtl;
+    unsigned int fFlags;
 };

@@ -40,90 +40,90 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 plExportLogErrorMsg::~plExportLogErrorMsg()
 {
-	if ( fErrfile )
-	{
-		fprintf(fErrfile, "\n%d total number of error!!!! ", fNumberErrors);
-		if ( fNumberErrors > 10 )
-			if ( fNumberErrors > 20 )
-				if ( fNumberErrors > 50 )
-					fprintf(fErrfile, "(CRISIS CRISIS!)");
-				else
-					fprintf(fErrfile, "(which is a disaster!)");
-			else
-				fprintf(fErrfile, "(which is way too many!)");
-		fclose(fErrfile);
-	}
+    if ( fErrfile )
+    {
+        fprintf(fErrfile, "\n%d total number of error!!!! ", fNumberErrors);
+        if ( fNumberErrors > 10 )
+            if ( fNumberErrors > 20 )
+                if ( fNumberErrors > 50 )
+                    fprintf(fErrfile, "(CRISIS CRISIS!)");
+                else
+                    fprintf(fErrfile, "(which is a disaster!)");
+            else
+                fprintf(fErrfile, "(which is way too many!)");
+        fclose(fErrfile);
+    }
 #ifdef ERRORLOG_ALWAYS_WRITE_SOMETHING
-	else
-	{
-		fErrfile = hsFopen(fErrfile_name, "wt");
-		setbuf(fErrfile, nil);
-		fprintf(fErrfile, "No errors found! Good job.");
-		fclose(fErrfile);
-	}
+    else
+    {
+        fErrfile = hsFopen(fErrfile_name, "wt");
+        setbuf(fErrfile, nil);
+        fprintf(fErrfile, "No errors found! Good job.");
+        fclose(fErrfile);
+    }
 #endif // ERRORLOG_ALWAYS_WRITE_SOMETHING
 }
 
 
 hsBool plExportLogErrorMsg::Show()
 {
-	if( GetBogus() )
-	{
-		IWriteErrorFile(GetLabel(),GetMsg());
-	}
-	return GetBogus();
+    if( GetBogus() )
+    {
+        IWriteErrorFile(GetLabel(),GetMsg());
+    }
+    return GetBogus();
 }
 hsBool plExportLogErrorMsg::Ask()
 {
-	if( GetBogus() )
-	{
-		IWriteErrorFile(GetLabel(),GetMsg());
-	}
-	return false;
+    if( GetBogus() )
+    {
+        IWriteErrorFile(GetLabel(),GetMsg());
+    }
+    return false;
 }
 
 hsBool plExportLogErrorMsg::CheckAndAsk()
 {
-	if( GetBogus() )
-	{
-		strncat(GetMsg(), " - File corruption possible!", 255);
-		IWriteErrorFile(GetLabel(),GetMsg());
-	}
-	return GetBogus();
+    if( GetBogus() )
+    {
+        strncat(GetMsg(), " - File corruption possible!", 255);
+        IWriteErrorFile(GetLabel(),GetMsg());
+    }
+    return GetBogus();
 }
 
 hsBool plExportLogErrorMsg::CheckAskOrCancel()
 {
-	if( GetBogus() )
-	{
-		IWriteErrorFile(GetLabel(),GetMsg());
-	}
-	return false;
+    if( GetBogus() )
+    {
+        IWriteErrorFile(GetLabel(),GetMsg());
+    }
+    return false;
 }
 
 hsBool plExportLogErrorMsg::CheckAndShow()
 {
-	if ( GetBogus() )
-	{
-		Show();
-		Check();
-	}
+    if ( GetBogus() )
+    {
+        Show();
+        Check();
+    }
 
-	return false;
+    return false;
 }
 
 
 hsBool plExportLogErrorMsg::Check()
 {
-	if( GetBogus() )
-	{
-		// ... how many ways can you say something is bad?
-		strncat(GetMsg(), " !Output File Corrupt!", 255);
-		IWriteErrorFile(GetLabel(),GetMsg());
-		IDebugThrow();
-	}
+    if( GetBogus() )
+    {
+        // ... how many ways can you say something is bad?
+        strncat(GetMsg(), " !Output File Corrupt!", 255);
+        IWriteErrorFile(GetLabel(),GetMsg());
+        IDebugThrow();
+    }
 
-	return false;
+    return false;
 }
 
 //
@@ -131,13 +131,13 @@ hsBool plExportLogErrorMsg::Check()
 //
 void plExportLogErrorMsg::Quit()
 {
-	if( GetBogus() )
-	{
-		strncat(GetMsg(), " -- Quit! (must be real bad!)", 255);
-		IWriteErrorFile(GetLabel(),GetMsg());
-		SetBogus(false);
-		hsThrow( *this );
-	}
+    if( GetBogus() )
+    {
+        strncat(GetMsg(), " -- Quit! (must be real bad!)", 255);
+        IWriteErrorFile(GetLabel(),GetMsg());
+        SetBogus(false);
+        hsThrow( *this );
+    }
 }
 
 //
@@ -145,20 +145,20 @@ void plExportLogErrorMsg::Quit()
 //
 void plExportLogErrorMsg::IWriteErrorFile(const char* label, const char* msg)
 {
-	//make sure that there is a filename 
-	if (fErrfile_name[0] != '\0')
-	{
-		// do we have it open, yet?
-		if ( !fErrfile )
-		{
-			// must be the first write... open the error file
-			fErrfile = hsFopen(fErrfile_name, "wt");
-			setbuf(fErrfile, nil);
-			fNumberErrors = 0;
-		}
-		fprintf(fErrfile, "%s: %s\n", label, msg);
-		fNumberErrors++;	// oh, boy... another error to count
-	}
+    //make sure that there is a filename 
+    if (fErrfile_name[0] != '\0')
+    {
+        // do we have it open, yet?
+        if ( !fErrfile )
+        {
+            // must be the first write... open the error file
+            fErrfile = hsFopen(fErrfile_name, "wt");
+            setbuf(fErrfile, nil);
+            fNumberErrors = 0;
+        }
+        fprintf(fErrfile, "%s: %s\n", label, msg);
+        fNumberErrors++;    // oh, boy... another error to count
+    }
 
    // Check to see if we are running an export server
    // If so, then pass the update on to the export server
@@ -175,13 +175,13 @@ void plExportLogErrorMsg::IWriteErrorFile(const char* label, const char* msg)
 
 void plExportLogErrorMsg::IDebugThrow()
 {
-	try {
+    try {
 #if HS_BUILD_FOR_WIN32
-		DebugBreak();
+        DebugBreak();
 #endif // HS_BUILD_FOR_WIN32
-	}
-	catch(...)
-	{
-		hsThrow( *this );
-	}
+    }
+    catch(...)
+    {
+        hsThrow( *this );
+    }
 }

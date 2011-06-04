@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSEEKPOINTMOD_INC
 #define PLSEEKPOINTMOD_INC
 
-#include "../pnModifier/plMultiModifier.h"
-#include "../pnMessage/plMessage.h"
+#include "pnModifier/plMultiModifier.h"
+#include "pnMessage/plMessage.h"
 
 // PLSEEKPOINTMOD
 // This modifier is something the avatar knows how to go to. (you know, seek)
@@ -36,27 +36,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSeekPointMod : public plMultiModifier
 {
 protected:
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
-	char * fName;										// public because you can't change it
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
+    char * fName;                                       // public because you can't change it
 
 public:
 
-	plSeekPointMod();
-	plSeekPointMod(char *name);
-	virtual ~plSeekPointMod();
+    plSeekPointMod();
+    plSeekPointMod(char *name);
+    virtual ~plSeekPointMod();
 
-	const char * GetName() { return fName; };
-	void SetName(char * name) { fName = name; };
+    const char * GetName() { return fName; };
+    void SetName(char * name) { fName = name; };
 
-	CLASSNAME_REGISTER( plSeekPointMod );
-	GETINTERFACE_ANY( plSeekPointMod, plMultiModifier );
-	
-	virtual void AddTarget(plSceneObject* so);
+    CLASSNAME_REGISTER( plSeekPointMod );
+    GETINTERFACE_ANY( plSeekPointMod, plMultiModifier );
+    
+    virtual void AddTarget(plSceneObject* so);
 
-	hsBool MsgReceive(plMessage* msg);
+    hsBool MsgReceive(plMessage* msg);
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 };
 
 #endif

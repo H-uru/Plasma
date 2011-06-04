@@ -26,12 +26,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetClientCreatable_inc
 #define plNetClientCreatable_inc
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "plNetClientMgr.h"
 REGISTER_CREATABLE( plNetClientMgr );
 
-#include "../plNetTransport/plNetTransportMember.h"
+#include "plNetTransport/plNetTransportMember.h"
 REGISTER_CREATABLE( plNetTransportMember );
 
 #include "plLinkEffectsMgr.h"

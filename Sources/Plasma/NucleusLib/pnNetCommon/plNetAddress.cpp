@@ -31,23 +31,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plNetAddress::plNetAddress()
 {
-	Clear();
+    Clear();
 }
 
 
 plNetAddress::plNetAddress(UInt32 addr, int port)
 {
-	Clear();
-	SetHost(addr);
-	SetPort(port);
+    Clear();
+    SetHost(addr);
+    SetPort(port);
 }
 
 
 plNetAddress::plNetAddress(const char * addr, int port)
 {
-	Clear();
-	SetHost(addr);
-	SetPort(port);
+    Clear();
+    SetHost(addr);
+    SetPort(port);
 }
 
 
@@ -77,7 +77,7 @@ bool plNetAddress::SetPort(int port)
 
 void plNetAddress::Clear()
 {
-	memset(&fAddr,0,sizeof(fAddr));
+    memset(&fAddr,0,sizeof(fAddr));
     fAddr.sin_family = AF_INET;
     fAddr.sin_addr.s_addr = INADDR_ANY;
 }
@@ -91,12 +91,12 @@ int plNetAddress::GetPort() const
 
 std::string plNetAddress::GetHostString() const 
 {
-	return std::string(pnNetCommon::GetTextAddr(fAddr.sin_addr.s_addr));
+    return std::string(pnNetCommon::GetTextAddr(fAddr.sin_addr.s_addr));
 }
 
 UInt32 plNetAddress::GetHost() const
 {
-	return fAddr.sin_addr.s_addr;
+    return fAddr.sin_addr.s_addr;
 }
 
 
@@ -125,24 +125,24 @@ bool plNetAddress::SetHost(UInt32 addr)
 
 std::string plNetAddress::AsString() const
 {
-	char buf[100] = "";
-	sprintf(buf,"IP:%s:%d",pnNetCommon::GetTextAddr(fAddr.sin_addr.s_addr),GetPort());
-	return std::string(buf);
+    char buf[100] = "";
+    sprintf(buf,"IP:%s:%d",pnNetCommon::GetTextAddr(fAddr.sin_addr.s_addr),GetPort());
+    return std::string(buf);
 }
 
 
 void plNetAddress::Read(hsStream * s)
 {
-	s->ReadSwap((UInt32*)&fAddr.sin_addr.s_addr);
-	s->ReadSwap(&fAddr.sin_port);
-	s->ReadSwap(&fAddr.sin_family);
+    s->ReadSwap((UInt32*)&fAddr.sin_addr.s_addr);
+    s->ReadSwap(&fAddr.sin_port);
+    s->ReadSwap(&fAddr.sin_family);
 }
 
 void plNetAddress::Write(hsStream * s)
 {
-	s->WriteSwap((UInt32)fAddr.sin_addr.s_addr);
-	s->WriteSwap(fAddr.sin_port);
-	s->WriteSwap(fAddr.sin_family);
+    s->WriteSwap((UInt32)fAddr.sin_addr.s_addr);
+    s->WriteSwap(fAddr.sin_port);
+    s->WriteSwap(fAddr.sin_family);
 }
 
 

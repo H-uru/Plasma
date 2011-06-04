@@ -26,25 +26,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plTempKey_inc
 #define plTempKey_inc
 
-#include "plKeyImp.h"	
+#include "plKeyImp.h"   
 
 class hsKeyedObject;
 
-	//------------------------------------
-	// plTempKey is a handle to a keyedObject, which is not registered
-	// The key may be handed to others to send messages.
-	// when done with a plTempKey call ReleaseTemporary (from Base class plKey)
-	//------------------------------------
+    //------------------------------------
+    // plTempKey is a handle to a keyedObject, which is not registered
+    // The key may be handed to others to send messages.
+    // when done with a plTempKey call ReleaseTemporary (from Base class plKey)
+    //------------------------------------
 
 class plTempKey : public plKeyImp
 {
 
 public:
-		plTempKey(hsKeyedObject *pO,const char *nm=nil);
-		plTempKey(plUoid u) { fUoid=u; }	// used server side
-		~plTempKey();		// USE plKey->ReleaseTemporary to delete this...
+        plTempKey(hsKeyedObject *pO,const char *nm=nil);
+        plTempKey(plUoid u) { fUoid=u; }    // used server side
+        ~plTempKey();       // USE plKey->ReleaseTemporary to delete this...
 
-		virtual void        VerifyLoaded() const;
+        virtual void        VerifyLoaded() const;
 };
 
 

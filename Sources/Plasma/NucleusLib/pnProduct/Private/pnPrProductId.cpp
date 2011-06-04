@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 namespace Product {
 
 namespace Uru {
-    static const wchar kCoreName[]	= L"UruLive";
-    static const wchar kShortName[]	= L"UruLive";
-    static const wchar kLongName[]	= L"Uru Live";
+    static const wchar kCoreName[]  = L"UruLive";
+    static const wchar kShortName[] = L"UruLive";
+    static const wchar kLongName[]  = L"Uru Live";
     static const Uuid  kId(L"ea489821-6c35-4bd0-9dae-bb17c585e680");
 }
 
@@ -60,7 +60,7 @@ namespace Uru {
 
 #if BUILD_PRODUCT_ID == BUILD_PRODUCT_ID_URU
 
-#define PRODUCT_CORE_NAME	Product::Uru::kCoreName
+#define PRODUCT_CORE_NAME   Product::Uru::kCoreName
 #define PRODUCT_SHORT_NAME  Product::Uru::kShortName
 #define PRODUCT_LONG_NAME   Product::Uru::kLongName
 #define PRODUCT_ID          Product::Uru::kId
@@ -102,24 +102,24 @@ const wchar * ProductLongName () {
 
 //============================================================================
 void ProductString (wchar * dest, unsigned destChars) {
-	// Example: "UruLive.Beta.2.214 - External.Release"
-	StrPrintf(
-		dest,
-		destChars,
-		L"%s.%s.%u.%u - %s.%s",
-		ProductCoreName(),
-		BuildTypeString(),
-		BranchId(),
-		BuildId(),
-		#ifdef PLASMA_EXTERNAL_RELEASE
-			L"External",
-		#else
-			L"Internal",
-		#endif
-		#ifdef HS_DEBUGGING
-			L"Debug"
-		#else
-			L"Release"
-		#endif
-	);
+    // Example: "UruLive.Beta.2.214 - External.Release"
+    StrPrintf(
+        dest,
+        destChars,
+        L"%s.%s.%u.%u - %s.%s",
+        ProductCoreName(),
+        BuildTypeString(),
+        BranchId(),
+        BuildId(),
+        #ifdef PLASMA_EXTERNAL_RELEASE
+            L"External",
+        #else
+            L"Internal",
+        #endif
+        #ifdef HS_DEBUGGING
+            L"Debug"
+        #else
+            L"Release"
+        #endif
+    );
 }

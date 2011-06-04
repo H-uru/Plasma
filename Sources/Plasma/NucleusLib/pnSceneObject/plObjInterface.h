@@ -27,12 +27,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInterface_inc
 #define plInterface_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnMessage/plRefMsg.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnMessage/plRefMsg.h"
 #include "plSceneObject.h"
 #include "hsStream.h"
-#include "../pnNetCommon/plSynchedObject.h"
-#include "../pnNetCommon/plSynchedValue.h"
+#include "pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plSynchedValue.h"
 #include "hsBitVector.h"
 
 class hsResMgr;
@@ -49,54 +49,54 @@ class plAudioInterface;
 class plObjInterface : public plSynchedObject
 {
 protected:
-	enum {
-		kDisable		= 0x0 // Derived interfaces duplicate this, so if you add more here, they need to know.
-	};
-	friend class plSynchedValueBase;
-	friend class plSceneObject;
+    enum {
+        kDisable        = 0x0 // Derived interfaces duplicate this, so if you add more here, they need to know.
+    };
+    friend class plSynchedValueBase;
+    friend class plSceneObject;
 protected:
-	plSceneObject*				fOwner;
-	hsBitVector					fProps;
+    plSceneObject*              fOwner;
+    hsBitVector                 fProps;
 
-	// SetSceneNode just called by owner. If we're an interface to external data,
-	// we need to pass the change on. Otherwise, do nothing.
-	virtual void	ISetSceneNode(plKey node) {} 
-	plSceneObject*	IGetOwner() const { return fOwner; }
-	virtual void	ISetOwner(plSceneObject* owner);
-	void			ISetAllProperties(const hsBitVector& b);	
+    // SetSceneNode just called by owner. If we're an interface to external data,
+    // we need to pass the change on. Otherwise, do nothing.
+    virtual void    ISetSceneNode(plKey node) {} 
+    plSceneObject*  IGetOwner() const { return fOwner; }
+    virtual void    ISetOwner(plSceneObject* owner);
+    void            ISetAllProperties(const hsBitVector& b);    
 
-	plDrawInterface* IGetOwnerDrawInterface() { return fOwner ? fOwner->GetVolatileDrawInterface() : nil; }
-	plSimulationInterface* IGetOwnerSimulationInterface() { return fOwner ? fOwner->GetVolatileSimulationInterface() : nil; }
-	plCoordinateInterface* IGetOwnerCoordinateInterface() { return fOwner ? fOwner->GetVolatileCoordinateInterface() : nil; }
-	plAudioInterface* IGetOwnerAudioInterface() { return fOwner ? fOwner->GetVolatileAudioInterface() : nil; }
+    plDrawInterface* IGetOwnerDrawInterface() { return fOwner ? fOwner->GetVolatileDrawInterface() : nil; }
+    plSimulationInterface* IGetOwnerSimulationInterface() { return fOwner ? fOwner->GetVolatileSimulationInterface() : nil; }
+    plCoordinateInterface* IGetOwnerCoordinateInterface() { return fOwner ? fOwner->GetVolatileCoordinateInterface() : nil; }
+    plAudioInterface* IGetOwnerAudioInterface() { return fOwner ? fOwner->GetVolatileAudioInterface() : nil; }
 public:
 
-	plObjInterface();
-	~plObjInterface();
+    plObjInterface();
+    ~plObjInterface();
 
-	CLASSNAME_REGISTER( plObjInterface );
-	GETINTERFACE_ANY( plObjInterface, plSynchedObject );
+    CLASSNAME_REGISTER( plObjInterface );
+    GETINTERFACE_ANY( plObjInterface, plSynchedObject );
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	const plSceneObject* GetOwner() const { return IGetOwner(); }
-	plKey GetOwnerKey() const { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
-	
-	virtual plKey GetSceneNode() const { return IGetOwner() ? IGetOwner()->GetSceneNode() : nil; } 
+    const plSceneObject* GetOwner() const { return IGetOwner(); }
+    plKey GetOwnerKey() const { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
+    
+    virtual plKey GetSceneNode() const { return IGetOwner() ? IGetOwner()->GetSceneNode() : nil; } 
 
-	// override SetProperty to pass the prop down to the pool objects 
-	virtual void	SetProperty(int prop, hsBool on) { fProps.SetBit(prop, on); }
-	
-	// shouldn't need to override GetProperty()
-	hsBool	GetProperty(int prop) const { return fProps.IsBitSet(prop); }
-	virtual Int32   GetNumProperties() const = 0;
+    // override SetProperty to pass the prop down to the pool objects 
+    virtual void    SetProperty(int prop, hsBool on) { fProps.SetBit(prop, on); }
+    
+    // shouldn't need to override GetProperty()
+    hsBool  GetProperty(int prop) const { return fProps.IsBitSet(prop); }
+    virtual Int32   GetNumProperties() const = 0;
 
-	virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual void	ReleaseData( void ) { }
+    virtual void    ReleaseData( void ) { }
 };
 
 

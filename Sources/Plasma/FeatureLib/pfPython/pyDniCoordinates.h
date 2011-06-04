@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsGeometry3.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class plDniCoordinateInfo;
@@ -43,30 +43,30 @@ class plDniCoordinateInfo;
 class pyDniCoordinates
 {
 private:
-	plDniCoordinateInfo* fCoords;
+    plDniCoordinateInfo* fCoords;
 
 protected:
-	pyDniCoordinates();
-	pyDniCoordinates(plDniCoordinateInfo* coord);
+    pyDniCoordinates();
+    pyDniCoordinates(plDniCoordinateInfo* coord);
 
 public:
-	~pyDniCoordinates();
+    ~pyDniCoordinates();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptDniCoordinates);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(plDniCoordinateInfo* coord);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyDniCoordinates object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyDniCoordinates); // converts a PyObject to a pyDniCoordinates (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptDniCoordinates);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(plDniCoordinateInfo* coord);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyDniCoordinates object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyDniCoordinates); // converts a PyObject to a pyDniCoordinates (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	// python get attributes helpers
-	int			GetHSpans() const;
-	int			GetVSpans() const;
-	int			GetTorans() const;
-	void		UpdateCoordinates();
-	void		FromPoint(const hsPoint3& pt);
+    // python get attributes helpers
+    int         GetHSpans() const;
+    int         GetVSpans() const;
+    int         GetTorans() const;
+    void        UpdateCoordinates();
+    void        FromPoint(const hsPoint3& pt);
 };
 
 

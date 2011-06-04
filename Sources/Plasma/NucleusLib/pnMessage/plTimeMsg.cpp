@@ -34,14 +34,14 @@ plTimeMsg::plTimeMsg()
 }
 
 plTimeMsg::plTimeMsg(const plKey &s, 
-				const plKey &r, 
-				const double* t, const hsScalar* d)
+                const plKey &r, 
+                const double* t, const hsScalar* d)
 : plMessage(s, r, t)
 {
-	fSeconds = t ? *t : hsTimer::GetSysSeconds();
-	fDelSecs = d ? *d : hsTimer::GetDelSysSeconds();
-	
-	SetBCastFlag(plMessage::kBCastByExactType);
+    fSeconds = t ? *t : hsTimer::GetSysSeconds();
+    fDelSecs = d ? *d : hsTimer::GetDelSysSeconds();
+    
+    SetBCastFlag(plMessage::kBCastByExactType);
 }
 
 plTimeMsg::~plTimeMsg()
@@ -53,8 +53,8 @@ plEvalMsg::plEvalMsg()
 }
 
 plEvalMsg::plEvalMsg(const plKey &s, 
-				const plKey &r, 
-				const double* t, const hsScalar* d)
+                const plKey &r, 
+                const double* t, const hsScalar* d)
 : plTimeMsg(s, r, t, d)
 {
 }
@@ -68,11 +68,11 @@ plTransformMsg::plTransformMsg()
 }
 
 plTransformMsg::plTransformMsg(const plKey &s, 
-				const plKey &r, 
-				const double* t, const hsScalar* d)
+                const plKey &r, 
+                const double* t, const hsScalar* d)
 : plTimeMsg(s, r, t, d)
 {
-	SetBCastFlag(plMessage::kClearAfterBCast);
+    SetBCastFlag(plMessage::kClearAfterBCast);
 }
 
 plTransformMsg::~plTransformMsg()

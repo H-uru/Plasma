@@ -38,22 +38,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plProgressBar
 {
 public:
-	plProgressBar(hsScalar min, hsScalar max) : fMin(min), fMax(max) 
-	{ 
-		  hsAssert(min >= 0, "Min too small.");
-		  hsAssert(min <= 1, "Min too big.");
-		  hsAssert(max >= 0, "Max too small.");
-		  hsAssert(max <= 1, "Max too big.");
-		  hsAssert(min <= max, "Min and max out of order.");
-	}
+    plProgressBar(hsScalar min, hsScalar max) : fMin(min), fMax(max) 
+    { 
+          hsAssert(min >= 0, "Min too small.");
+          hsAssert(min <= 1, "Min too big.");
+          hsAssert(max >= 0, "Max too small.");
+          hsAssert(max <= 1, "Max too big.");
+          hsAssert(min <= max, "Min and max out of order.");
+    }
 
-	virtual hsBool32 Update(hsScalar fraction) = 0;
+    virtual hsBool32 Update(hsScalar fraction) = 0;
 
-	hsScalar GetTotalFraction(hsScalar f) const { return fMin + f * (fMax - fMin); }
+    hsScalar GetTotalFraction(hsScalar f) const { return fMin + f * (fMax - fMin); }
 
 private:
-	hsScalar fMin;
-	hsScalar fMax;
+    hsScalar fMin;
+    hsScalar fMax;
 };
 
 #endif // plProgressBar_inc

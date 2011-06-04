@@ -37,20 +37,20 @@ class plNetTransportMember;
 class plNetVoiceList
 {
 protected:
-	typedef std::vector<plNetTransportMember*> VoiceListType;	
+    typedef std::vector<plNetTransportMember*> VoiceListType;   
 protected:
-	VoiceListType fMembers;	
+    VoiceListType fMembers; 
 
-public:	
-	plNetVoiceList() {}
-	virtual ~plNetVoiceList() {}
-	
-	int GetNumMembers() const { return fMembers.size(); }
-	plNetTransportMember* GetMember(int i) const { return fMembers[i];	}
-	virtual void AddMember(plNetTransportMember* e) = 0;
-	virtual void RemoveMember(plNetTransportMember* e) = 0;
-	virtual void Clear() { fMembers.clear(); }
-	int FindMember(plNetTransportMember* e);	// return index or -1
+public: 
+    plNetVoiceList() {}
+    virtual ~plNetVoiceList() {}
+    
+    int GetNumMembers() const { return fMembers.size(); }
+    plNetTransportMember* GetMember(int i) const { return fMembers[i];  }
+    virtual void AddMember(plNetTransportMember* e) = 0;
+    virtual void RemoveMember(plNetTransportMember* e) = 0;
+    virtual void Clear() { fMembers.clear(); }
+    int FindMember(plNetTransportMember* e);    // return index or -1
 };
 
 //
@@ -60,23 +60,23 @@ public:
 class plNetListenList : public plNetVoiceList
 {
 private:
-	double fLastUpdateTime;
-	int fNumUpdates;
+    double fLastUpdateTime;
+    int fNumUpdates;
 public:
-	plNetListenList() : fNumUpdates(0) {}
-	~plNetListenList() {}
+    plNetListenList() : fNumUpdates(0) {}
+    ~plNetListenList() {}
 
-	static float kUpdateInterval;
-	static int kMaxListenListSize;
-	static float kMaxListenDistSq;
-	
-	void SetLastUpdateTime(double t) { fLastUpdateTime=t; fNumUpdates++;	}
-	double GetLastUpdateTime() { return fLastUpdateTime; 	}
+    static float kUpdateInterval;
+    static int kMaxListenListSize;
+    static float kMaxListenDistSq;
+    
+    void SetLastUpdateTime(double t) { fLastUpdateTime=t; fNumUpdates++;    }
+    double GetLastUpdateTime() { return fLastUpdateTime;    }
 
-	hsBool CheckForceSynch() { if (fNumUpdates>10) { fNumUpdates=0; return true;} return false; }
+    hsBool CheckForceSynch() { if (fNumUpdates>10) { fNumUpdates=0; return true;} return false; }
 
-	virtual void AddMember(plNetTransportMember* e);
-	virtual void RemoveMember(plNetTransportMember* e);
+    virtual void AddMember(plNetTransportMember* e);
+    virtual void RemoveMember(plNetTransportMember* e);
 
 };
 
@@ -88,20 +88,20 @@ class plNetClientMgr;
 class plNetTalkList : public plNetVoiceList
 {
 private:
-	enum
-	{
-		kDirty	= 0x1
-	};
-	UInt32 fFlags;
+    enum
+    {
+        kDirty  = 0x1
+    };
+    UInt32 fFlags;
 public:
-	plNetTalkList() : fFlags(0) {}
-	~plNetTalkList() {}
+    plNetTalkList() : fFlags(0) {}
+    ~plNetTalkList() {}
 
-	void UpdateTransportGroup(plNetClientMgr* nc);
+    void UpdateTransportGroup(plNetClientMgr* nc);
 
-	void AddMember(plNetTransportMember* e);
-	void RemoveMember(plNetTransportMember* e);
-	void Clear();
+    void AddMember(plNetTransportMember* e);
+    void RemoveMember(plNetTransportMember* e);
+    void Clear();
 };
 
-#endif	// plNetVoiceList_h
+#endif  // plNetVoiceList_h

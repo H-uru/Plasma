@@ -34,50 +34,50 @@ class plLayer : public plLayerInterface
 {
 protected:
 public:
-	plLayer();
-	virtual ~plLayer();
+    plLayer();
+    virtual ~plLayer();
 
-	CLASSNAME_REGISTER( plLayer );
-	GETINTERFACE_ANY( plLayer, plLayerInterface );
+    CLASSNAME_REGISTER( plLayer );
+    GETINTERFACE_ANY( plLayer, plLayerInterface );
 
-	virtual UInt32			Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
 
-	virtual void			Read(hsStream* s, hsResMgr* mgr);
-	virtual void			Write(hsStream* s, hsResMgr* mgr);
+    virtual void            Read(hsStream* s, hsResMgr* mgr);
+    virtual void            Write(hsStream* s, hsResMgr* mgr);
 
-	virtual hsBool			MsgReceive(plMessage* msg);
+    virtual hsBool          MsgReceive(plMessage* msg);
 
-	// Flat layer specifics
-	plLayer& InitToDefault();
+    // Flat layer specifics
+    plLayer& InitToDefault();
 
-	void SetBlendFlags(UInt32 f) { fState->fBlendFlags = f; }
-	void SetClampFlags(UInt32 f) { fState->fClampFlags = f; }
-	void SetShadeFlags(UInt32 f) { fState->fShadeFlags = f; }
-	void SetZFlags(UInt32 f) { fState->fZFlags = f; }
-	void SetMiscFlags(UInt32 f) { fState->fMiscFlags = f; }
-	void SetState(const hsGMatState& state);
+    void SetBlendFlags(UInt32 f) { fState->fBlendFlags = f; }
+    void SetClampFlags(UInt32 f) { fState->fClampFlags = f; }
+    void SetShadeFlags(UInt32 f) { fState->fShadeFlags = f; }
+    void SetZFlags(UInt32 f) { fState->fZFlags = f; }
+    void SetMiscFlags(UInt32 f) { fState->fMiscFlags = f; }
+    void SetState(const hsGMatState& state);
 
-	void SetTexture(plBitmap* t) { *fTexture = t; }
+    void SetTexture(plBitmap* t) { *fTexture = t; }
 
-	void SetPreshadeColor(const hsColorRGBA& col) { *fPreshadeColor = col; }
-	void SetRuntimeColor( const hsColorRGBA& col ) { *fRuntimeColor = col; }
-	void SetAmbientColor(const hsColorRGBA& col) { *fAmbientColor = col; }
-	void SetSpecularColor(const hsColorRGBA& col) { *fSpecularColor = col; }
-	void SetOpacity(hsScalar a) { *fOpacity = a; }
-	void SetTransform(const hsMatrix44& xfm);
-	void SetUVWSrc(UInt32 chan) { *fUVWSrc = chan; }
-	void SetLODBias(hsScalar f) { *fLODBias = f; }
-	void SetSpecularPower(hsScalar f) { *fSpecularPower = f; }
+    void SetPreshadeColor(const hsColorRGBA& col) { *fPreshadeColor = col; }
+    void SetRuntimeColor( const hsColorRGBA& col ) { *fRuntimeColor = col; }
+    void SetAmbientColor(const hsColorRGBA& col) { *fAmbientColor = col; }
+    void SetSpecularColor(const hsColorRGBA& col) { *fSpecularColor = col; }
+    void SetOpacity(hsScalar a) { *fOpacity = a; }
+    void SetTransform(const hsMatrix44& xfm);
+    void SetUVWSrc(UInt32 chan) { *fUVWSrc = chan; }
+    void SetLODBias(hsScalar f) { *fLODBias = f; }
+    void SetSpecularPower(hsScalar f) { *fSpecularPower = f; }
 
-	void SetVertexShader(plShader* shader) { *fVertexShader = shader; }
-	void SetPixelShader(plShader* shader) { *fPixelShader = shader; }
+    void SetVertexShader(plShader* shader) { *fVertexShader = shader; }
+    void SetPixelShader(plShader* shader) { *fPixelShader = shader; }
 
-	void SetBumpEnvMatrix(const hsMatrix44& xfm);
+    void SetBumpEnvMatrix(const hsMatrix44& xfm);
 
-	static plLayerInterface* DefaultLayer();
+    static plLayerInterface* DefaultLayer();
 
-	// Copies all the fields from the original layer given, not including the texture
-	void CloneNoTexture( plLayerInterface *original );
+    // Copies all the fields from the original layer given, not including the texture
+    void CloneNoTexture( plLayerInterface *original );
 };
 
 #endif // plLayerInterfaceStack_inc

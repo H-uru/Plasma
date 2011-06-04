@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /*****************************************************************************
 *
 *   
-	Look at psLogEvents/psLeAuth for an example of how to create a new LogEvent
+    Look at psLogEvents/psLeAuth for an example of how to create a new LogEvent
 *
 ***/
 
@@ -52,46 +52,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 enum ELogParamType {
-	kLogParamInt,		// (int)
-	kLogParamUnsigned,	// (unsigned)
-	kLogParamFloat,		// (float)
-	kLogParamUuid,		// Uuid
-	kLogParamStringW,	// (const wchar *)
-	kLogParamLong,		// (long) or (dword)
-	kLogParamLongLong,	// (long long) or (qword)
-	kNumLogParamTypes
+    kLogParamInt,       // (int)
+    kLogParamUnsigned,  // (unsigned)
+    kLogParamFloat,     // (float)
+    kLogParamUuid,      // Uuid
+    kLogParamStringW,   // (const wchar *)
+    kLogParamLong,      // (long) or (dword)
+    kLogParamLongLong,  // (long long) or (qword)
+    kNumLogParamTypes
 };
 
 struct NetLogField {
-    ELogParamType		type;   // element type
-	wchar				name[MAX_PATH];
+    ELogParamType       type;   // element type
+    wchar               name[MAX_PATH];
 };
 
 struct NetLogEvent {
-	ESrvType				srvType;
-	unsigned				logEventType;
-	const wchar *			eventName;
-	const NetLogField *		fields;
-	unsigned				numFields;
+    ESrvType                srvType;
+    unsigned                logEventType;
+    const wchar *           eventName;
+    const NetLogField *     fields;
+    unsigned                numFields;
 };
 
 struct NetLogSrvField {
-	const wchar *name;
-	const wchar *data;
+    const wchar *name;
+    const wchar *data;
 };
 
-#define NET_LOG_FIELD_INT(name)			{ kLogParamInt, name }
-#define NET_LOG_FIELD_UNSIGNED(name)	{ kLogParamUnsigned, name }
-#define NET_LOG_FIELD_FLOAT(name)		{ kLogParamFloat, name }
-#define NET_LOG_FIELD_STRING(name)		{ kLogParamStringW, name }
-#define NET_LOG_FIELD_UUID(name)		{ kLogParamUuid, name }
-#define NET_LOG_FIELD_LONG(name)		{ kLogParamLong, name }
-#define NET_LOG_FIELD_LONGLONG(name)	{ kLogParamLongLong, name }
+#define NET_LOG_FIELD_INT(name)         { kLogParamInt, name }
+#define NET_LOG_FIELD_UNSIGNED(name)    { kLogParamUnsigned, name }
+#define NET_LOG_FIELD_FLOAT(name)       { kLogParamFloat, name }
+#define NET_LOG_FIELD_STRING(name)      { kLogParamStringW, name }
+#define NET_LOG_FIELD_UUID(name)        { kLogParamUuid, name }
+#define NET_LOG_FIELD_LONG(name)        { kLogParamLong, name }
+#define NET_LOG_FIELD_LONGLONG(name)    { kLogParamLongLong, name }
 
-#define NET_LOG_EVENT_AUTH(name)		{ kSrvTypeAuth, kLogEventId_##name, L#name, kLogEventFields_##name, arrsize( kLogEventFields_##name )}
-#define NET_LOG_EVENT_GAME(name)		{ kSrvTypeGame, kLogEventId_##name, L#name, kLogEventFields_##name, arrsize( kLogEventFields_##name )}
-#define NET_LOG_EVENT_MCP(name)			{ kSrvTypeMcp,  kLogEventId_##name, L#name, kLogEventFields_##name, arrsize( kLogEventFields_##name )}
-#define NET_LOG_EVENT_DB(name)			{ kSrvTypeDb,	kLogEventId_##name, L#name, kLogEventFields_##name, arrsize( kLogEventFields_##name )}
+#define NET_LOG_EVENT_AUTH(name)        { kSrvTypeAuth, kLogEventId_##name, L#name, kLogEventFields_##name, arrsize( kLogEventFields_##name )}
+#define NET_LOG_EVENT_GAME(name)        { kSrvTypeGame, kLogEventId_##name, L#name, kLogEventFields_##name, arrsize( kLogEventFields_##name )}
+#define NET_LOG_EVENT_MCP(name)         { kSrvTypeMcp,  kLogEventId_##name, L#name, kLogEventFields_##name, arrsize( kLogEventFields_##name )}
+#define NET_LOG_EVENT_DB(name)          { kSrvTypeDb,   kLogEventId_##name, L#name, kLogEventFields_##name, arrsize( kLogEventFields_##name )}
 
 
 /*****************************************************************************
@@ -107,8 +107,8 @@ void NetLogRegisterEvents (const NetLogEvent events[], unsigned count);
 
 // Should only be called by psLogEvents - look there for logging functions
 void NetLogSendEvent (
-	unsigned type,
-	...
+    unsigned type,
+    ...
 );
 
 
@@ -119,10 +119,10 @@ void NetLogSendEvent (
 ***/
 
 enum {
-	kNlCliNumConn,
-	kNlCliNumTrans,
-	kNlCliNumPendingSaves,
-	kNlCliNumPerf,
+    kNlCliNumConn,
+    kNlCliNumTrans,
+    kNlCliNumPendingSaves,
+    kNlCliNumPerf,
 };
 
 long NlCliGetPerf (unsigned index);
@@ -136,8 +136,8 @@ long NlCliGetPerf (unsigned index);
 
 struct LogConn;
 enum {
-	kNlSrvPerfConnCount,
-	kNlSrvPerfConnDenied,
+    kNlSrvPerfConnCount,
+    kNlSrvPerfConnDenied,
     kNlSrvNumPerf
 };
 

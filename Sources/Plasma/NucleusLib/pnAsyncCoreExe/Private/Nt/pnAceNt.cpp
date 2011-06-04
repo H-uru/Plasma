@@ -228,8 +228,6 @@ static void INtOpDispatch (
 
 //===========================================================================
 static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
-	ref(thread);
-	
     ThreadDenyBlock();
 
     unsigned sleepMs    = INFINITE;
@@ -253,19 +251,19 @@ static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
             );
 
             if (op) {
-				// Queue for deadlock detection
-				#ifdef SERVER
-				void * check = CrashAddDeadlockCheck(thread->handle, L"pnAceNt.NtWorkerThread");
-				#endif
+                // Queue for deadlock detection
+                #ifdef SERVER
+                void * check = CrashAddDeadlockCheck(thread->handle, L"pnAceNt.NtWorkerThread");
+                #endif
 
-				// Dispatch event to app
+                // Dispatch event to app
                 INtOpDispatch(ntObj, op, bytes);
                 
                 // Unqueue from deadlock detection
-				#ifdef SERVER
+                #ifdef SERVER
                 CrashRemoveDeadlockCheck(check);
-				#endif
-				                
+                #endif
+                                
                 sleepMs = 0;
                 continue;
             }
@@ -324,7 +322,6 @@ void INtConnCompleteOperation (NtObject * ntObj) {
         return;
 
     DWORD err = GetLastError();
-    ref(err);
     switch (ntObj->ioType) {
         case kNtFile:
             INtFileDelete((NtFile *) ntObj);

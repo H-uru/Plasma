@@ -29,40 +29,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plServerReplyMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
-	stream->ReadSwap(&fType);
+    plMessage::IMsgRead(stream, mgr);
+    stream->ReadSwap(&fType);
 }
 
 void plServerReplyMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
-	stream->WriteSwap(fType);
+    plMessage::IMsgWrite(stream, mgr);
+    stream->WriteSwap(fType);
 }
 
 enum ServerReplyFlags
 {
-	kServerReplyType,
+    kServerReplyType,
 };
 
 void plServerReplyMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgReadVersion(s, mgr);
+    plMessage::IMsgReadVersion(s, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.Read(s);
+    hsBitVector contentFlags;
+    contentFlags.Read(s);
 
-	if (contentFlags.IsBitSet(kServerReplyType))
-		s->ReadSwap(&fType);
+    if (contentFlags.IsBitSet(kServerReplyType))
+        s->ReadSwap(&fType);
 }
 
 void plServerReplyMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgWriteVersion(s, mgr);
+    plMessage::IMsgWriteVersion(s, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.SetBit(kServerReplyType);
-	contentFlags.Write(s);
+    hsBitVector contentFlags;
+    contentFlags.SetBit(kServerReplyType);
+    contentFlags.Write(s);
 
-	// kServerReplyType
-	s->WriteSwap(fType);
+    // kServerReplyType
+    s->WriteSwap(fType);
 }

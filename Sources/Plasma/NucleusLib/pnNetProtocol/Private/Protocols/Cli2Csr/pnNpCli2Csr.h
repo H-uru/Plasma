@@ -48,16 +48,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Cli2Csr
 
 enum {
-	// Misc
-	kCli2Csr_PingRequest		= 0,
-	// Encrypt
-	kCli2Csr_RegisterRequest	= 1,
-	// Login
-	kCli2Csr_LoginRequest		= 2,
-	// Patch
-	kCli2Csr_PatchRequest		= 3,
+    // Misc
+    kCli2Csr_PingRequest        = 0,
+    // Encrypt
+    kCli2Csr_RegisterRequest    = 1,
+    // Login
+    kCli2Csr_LoginRequest       = 2,
+    // Patch
+    kCli2Csr_PatchRequest       = 3,
 
-	kNumCli2CsrMessages
+    kNumCli2CsrMessages
 };
 COMPILER_ASSERT_HEADER(Cli2Scr, kNumCli2CsrMessages <= (word)-1);
 
@@ -66,16 +66,16 @@ COMPILER_ASSERT_HEADER(Cli2Scr, kNumCli2CsrMessages <= (word)-1);
 // Csr2Cli
 
 enum {
-	// Misc
-	kCsr2Cli_PingReply			= 0,
-	// Encrypt
-	kCsr2Cli_RegisterReply		= 1,
-	// Login
-	kCsr2Cli_LoginReply			= 2,
-	// Patch
-	kCli2Csr_PatchReply			= 3,
-	
-	kNumCsr2CliMessages
+    // Misc
+    kCsr2Cli_PingReply          = 0,
+    // Encrypt
+    kCsr2Cli_RegisterReply      = 1,
+    // Login
+    kCsr2Cli_LoginReply         = 2,
+    // Patch
+    kCli2Csr_PatchReply         = 3,
+    
+    kNumCsr2CliMessages
 };
 COMPILER_ASSERT_HEADER(Cli2Scr, kNumCsr2CliMessages <= (word)-1);
 
@@ -91,19 +91,19 @@ COMPILER_ASSERT_HEADER(Cli2Scr, kNumCsr2CliMessages <= (word)-1);
 // Connect packet
 
 struct Cli2Csr_ConnData {
-	dword	dataBytes;
+    dword   dataBytes;
 };
 struct Cli2Csr_Connect {
-	AsyncSocketConnectPacket	hdr;
-	Cli2Csr_ConnData			data;
+    AsyncSocketConnectPacket    hdr;
+    Cli2Csr_ConnData            data;
 };
 
 //============================================================================
 // Message header
 
 struct Cli2Csr_MsgHeader {
-	dword		messageId;
-	dword		transId;
+    dword       messageId;
+    dword       transId;
 };
 
 //============================================================================
@@ -112,9 +112,9 @@ struct Cli2Csr_MsgHeader {
 // PingRequest
 extern const NetMsg kNetMsg_Cli2Csr_PingRequest;
 struct Cli2Csr_PingRequest : Cli2Csr_MsgHeader {
-	dword		pingTimeMs;
-	dword		payloadBytes;
-	byte		payload[1];	// [payloadBytes]
+    dword       pingTimeMs;
+    dword       payloadBytes;
+    byte        payload[1]; // [payloadBytes]
 };
 
 // RegisterRequest
@@ -125,9 +125,9 @@ struct Cli2Csr_RegisterRequest : Cli2Csr_MsgHeader {
 // LoginRequest
 extern const NetMsg kNetMsg_Cli2Csr_LoginRequest;
 struct Cli2Csr_LoginRequest : Cli2Csr_MsgHeader {
-	dword		clientChallenge;
-	wchar		csrName[kMaxAccountNameLength];
-	ShaDigest	challengeHash;
+    dword       clientChallenge;
+    wchar       csrName[kMaxAccountNameLength];
+    ShaDigest   challengeHash;
 };
 
 
@@ -137,24 +137,24 @@ struct Cli2Csr_LoginRequest : Cli2Csr_MsgHeader {
 // PingReply
 extern const NetMsg kNetMsg_Csr2Cli_PingReply;
 struct Csr2Cli_PingReply : Cli2Csr_MsgHeader {
-	dword		pingTimeMs;
-	dword		payloadBytes;
-	byte		payload[1];	// [payloadBytes]
+    dword       pingTimeMs;
+    dword       payloadBytes;
+    byte        payload[1]; // [payloadBytes]
 };
 
 // RegisterReply
 extern const NetMsg kNetMsg_Csr2Cli_RegisterReply;
 struct Csr2Cli_RegisterReply : Cli2Csr_MsgHeader {
-	dword		serverChallenge;
-	dword		csrBuildId;	// buildId of the latest csr client
+    dword       serverChallenge;
+    dword       csrBuildId; // buildId of the latest csr client
 };
 
 // LoginReply
 extern const NetMsg kNetMsg_Csr2Cli_LoginReply;
 struct Csr2Cli_LoginReply : Cli2Csr_MsgHeader {
-	ENetError	result;
-	Uuid		csrId;
-	dword		csrFlags;
+    ENetError   result;
+    Uuid        csrId;
+    dword       csrFlags;
 };
 
 

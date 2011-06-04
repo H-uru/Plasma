@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUITagDefs.cpp														//
-//	List of Tag IDs for the GameGUIMgr										//
-//																			//
+//                                                                          //
+//  pfGUITagDefs.cpp                                                        //
+//  List of Tag IDs for the GameGUIMgr                                      //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUITagDefs_h
@@ -36,51 +36,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGameGUIMgr.h"
 
 //// Tag List ////////////////////////////////////////////////////////////////
-//	Here's the actual list of tags. It's basically a list of konstants, but
-//	they get translated into two things:
-//			1. An enum, to send as a UInt32 to the GetDialogFromTag() and
-//			   GetControlFromTag() functions.
-//			2. A string, which gets put in a dropdown box in the appropriate
-//			   MAX component, which sets the given control's tag ID to the
-//			   right konstant.
+//  Here's the actual list of tags. It's basically a list of konstants, but
+//  they get translated into two things:
+//          1. An enum, to send as a UInt32 to the GetDialogFromTag() and
+//             GetControlFromTag() functions.
+//          2. A string, which gets put in a dropdown box in the appropriate
+//             MAX component, which sets the given control's tag ID to the
+//             right konstant.
 
 
 // Step 1: Add your konstant to the end of this list
 
 enum
 {
-	kKIMainDialog = 1,
-	kKITestEditBox,
-	kKIEntryDlg,
-	kKICloseButton,
-	kKITestControl2,
-	kKIAddButton,
-	kKIEditButton,
-	kKIRemoveButton,
-	kKIYesNoDlg,
-	kKIYesBtn,
-	kKINoBtn,
-	kKIStaticText,
-	kKITestControl3,
-	kKIMiniDialog,
-	kPlayerBook,
-	kPBLinkToBtn,
-	kPBSaveLinkBtn,
-	kPBSaveSlotRadio,
-	kPBSaveSlotPrev1,
-	kPBSaveSlotPrev2,
-	kPBSaveSlotPrev3,
-	kPBSaveSlotPrev4,
-	kPBSaveSlotPrev5,
-	kPBSaveSlotPrev6,
+    kKIMainDialog = 1,
+    kKITestEditBox,
+    kKIEntryDlg,
+    kKICloseButton,
+    kKITestControl2,
+    kKIAddButton,
+    kKIEditButton,
+    kKIRemoveButton,
+    kKIYesNoDlg,
+    kKIYesBtn,
+    kKINoBtn,
+    kKIStaticText,
+    kKITestControl3,
+    kKIMiniDialog,
+    kPlayerBook,
+    kPBLinkToBtn,
+    kPBSaveLinkBtn,
+    kPBSaveSlotRadio,
+    kPBSaveSlotPrev1,
+    kPBSaveSlotPrev2,
+    kPBSaveSlotPrev3,
+    kPBSaveSlotPrev4,
+    kPBSaveSlotPrev5,
+    kPBSaveSlotPrev6,
 
-	kKICurrPlayerText	= 30,
-	kKIPlayerList		= 31,
-	kKIChatModeBtn		= 32,
+    kKICurrPlayerText   = 30,
+    kKIPlayerList       = 31,
+    kKIChatModeBtn      = 32,
 
-	kBlackBarDlg		= 33,
-	kBlackBarKIButtons	= 34,
-	kKILogoutButton		= 35,
+    kBlackBarDlg        = 33,
+    kBlackBarKIButtons  = 34,
+    kKILogoutButton     = 35,
 };
 
 // Step 2: Add the string to the .cpp file

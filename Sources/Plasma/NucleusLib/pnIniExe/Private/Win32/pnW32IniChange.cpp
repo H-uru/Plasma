@@ -110,8 +110,6 @@ static void ChangeDispatch_WL (IniChangeReg * marker) {
 
 //===========================================================================
 static unsigned THREADCALL IniSrvThreadProc (AsyncThread * thread) {
-	ref(thread);
-	
     IniChangeReg marker;
     marker.fNotify = nil;
     s_lock.EnterWrite();
@@ -159,19 +157,19 @@ static unsigned THREADCALL IniSrvThreadProc (AsyncThread * thread) {
             s_lock.LeaveWrite();
         }
         else if ((result == WAIT_OBJECT_0 + 1) || (result == WAIT_TIMEOUT)) {
-			// Queue for deadlock check
-			#ifdef SERVER
-			void * check = CrashAddDeadlockCheck(thread->handle, L"plW32IniChange.NtWorkerThreadProc");
-			#endif
-	
+            // Queue for deadlock check
+            #ifdef SERVER
+            void * check = CrashAddDeadlockCheck(thread->handle, L"plW32IniChange.NtWorkerThreadProc");
+            #endif
+    
             s_lock.EnterWrite();
             ChangeDispatch_WL(&marker);
             s_lock.LeaveWrite();
 
-			// Unqueue for deadlock check
-			#ifdef SERVER
-			CrashRemoveDeadlockCheck(check);
-			#endif
+            // Unqueue for deadlock check
+            #ifdef SERVER
+            CrashRemoveDeadlockCheck(check);
+            #endif
         }
         else {
             LogMsg(

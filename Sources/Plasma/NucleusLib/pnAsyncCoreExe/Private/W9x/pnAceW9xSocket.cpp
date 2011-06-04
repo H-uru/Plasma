@@ -697,8 +697,8 @@ bool CSocket::Send (  // returns false if disconnected
             (const byte *)data + result,
             bytes - result
         );
-	}
-	
+    }
+    
     // Leave the critical section
     m_critSect.Leave();
 
@@ -991,10 +991,6 @@ void W9xSocketConnect (
     unsigned                connectMs,
     unsigned                localPort
 ) {
-    // Not supported for W9X
-    ref(connectMs);
-    ref(localPort);
-
     // If necessary, startup the window and message queue
     HWND window = StartupWindow();
 
@@ -1139,8 +1135,6 @@ unsigned W9xSocketStartListening (
     const NetAddress &      listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
-    ref(listenAddr);
-    ref(notifyProc);
     return 0;
 
 }
@@ -1150,8 +1144,6 @@ void W9xSocketStopListening (
     const NetAddress &      listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
-    ref(listenAddr);
-    ref(notifyProc);
 }
 
 //===========================================================================
@@ -1174,9 +1166,6 @@ void W9xSocketSetNotifyProc (
     AsyncSocket             sock, 
     FAsyncNotifySocketProc  notifyProc
 ) {
-    ref(sock);
-    ref(notifyProc);
-
     // This provider does not allow changing the notification procedure
     FATAL("SocketSetNotifyProc");
 }
@@ -1188,8 +1177,6 @@ void W9xSocketSetBacklogAlloc (
 ) {
 
     // This provider does not limit the maximum backlog allocation
-    ref(sock);
-    ref(bufferSize);
 
 }
 

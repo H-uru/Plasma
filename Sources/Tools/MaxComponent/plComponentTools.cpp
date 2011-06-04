@@ -25,46 +25,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "max.h"
-#include "../pnModifier/plModifier.h"
+#include "pnModifier/plModifier.h"
 
 #include "plComponentTools.h"
 
 plKey plComponentTools::AddModifier(plMaxNodeBase *node, plModifier *mod)
 {
-	return fAddModFunc(node, mod);
+    return fAddModFunc(node, mod);
 }
 
 plKey plComponentTools::GetNewKey(const char *name, plModifier *mod, plLocation loc)
 {
-	return fNewKey(name, mod, loc);
+    return fNewKey(name, mod, loc);
 }
 
 void plComponentTools::SetActivatorKey(plMaxNodeBase *activatorNode, plMaxNodeBase *responderNode, plMaxNodeBase *convertNode, plResponderModifier *responderLogic)
 {
-	fActivator(activatorNode, responderNode, convertNode, responderLogic);
+    fActivator(activatorNode, responderNode, convertNode, responderLogic);
 }
 
 plKey plComponentTools::GetAnimCompModKey(plComponentBase *comp, plMaxNodeBase *node)
 {
-	return fAnimKey(comp, node);
+    return fAnimKey(comp, node);
 }
 /*
 plKey plComponentTools::GetAnimCompLightModKey(plComponentBase *comp, plMaxNodeBase *node)
 {
-	return fAnimLightKey(comp, node);
+    return fAnimLightKey(comp, node);
 }
 */
 const char *plComponentTools::GetAnimCompAnimName(plComponentBase *comp)
 {
-	return fAnimName(comp);
+    return fAnimName(comp);
 }
 
 int plComponentTools::GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const char *segName, hsTArray<plKey>& keys)
 {
-	return fMatMod(mtl, node, segName, keys);
+    return fMatMod(mtl, node, segName, keys);
 }
 
 int plComponentTools::GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const char*& name)
 {
-	return fSndNameAndIdx(comp, node, name);
+    return fSndNameAndIdx(comp, node, name);
 }

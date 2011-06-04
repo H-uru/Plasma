@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 struct pfGameScore;
@@ -44,31 +44,31 @@ struct pfGameScore;
 class pyGameScore
 {
 private:
-	pfGameScore * fScore;
+    pfGameScore * fScore;
 
 public:
-	pyGameScore();
-	pyGameScore(pfGameScore * score);
-	~pyGameScore();
+    pyGameScore();
+    pyGameScore(pfGameScore * score);
+    ~pyGameScore();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGameScore);
-	static PyObject* New(pfGameScore* score);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameScore object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameScore); // converts a PyObject to a pyGameScore (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGameScore);
+    static PyObject* New(pfGameScore* score);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameScore object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameScore); // converts a PyObject to a pyGameScore (throws error if not correct type)
 
-	static void		AddPlasmaClasses(PyObject *m);
+    static void     AddPlasmaClasses(PyObject *m);
 
-	int				GetScoreID();
-	UInt32			GetCreatedTime();
-	int				GetOwnerID();
-	int				GetGameType();
-	int				GetValue();
-	const char*		GetGameName();
+    int             GetScoreID();
+    UInt32          GetCreatedTime();
+    int             GetOwnerID();
+    int             GetGameType();
+    int             GetValue();
+    const char*     GetGameName();
 
-	bool			AddPoints(int numPoints);
-	bool			TransferPoints(unsigned destination, int numPoints);
-	bool			SetPoints(int numPoints);
+    bool            AddPoints(int numPoints);
+    bool            TransferPoints(unsigned destination, int numPoints);
+    bool            SetPoints(int numPoints);
 };
 
 #endif

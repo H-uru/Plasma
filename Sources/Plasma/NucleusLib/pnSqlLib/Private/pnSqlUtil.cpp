@@ -41,8 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //===========================================================================
 void SqlConnBindParameterInputGuid (
-    SqlStmt *		stmt,
-    Uuid *			uuid,
+    SqlStmt *       stmt,
+    Uuid *          uuid,
     SQLINTEGER *    uuidLen
 ) {
     SqlConnBindParameter(
@@ -136,10 +136,10 @@ bool SqlConnGetBlobData (
 
         // Handle SQL_NO_TOTAL and SQL_NULL_DATA values
         if (length < 0) {
-			buffer->ZeroCount();
-			*bytesAdded = 0;
-			return result == SQL_SUCCESS;
-		}
+            buffer->ZeroCount();
+            *bytesAdded = 0;
+            return result == SQL_SUCCESS;
+        }
 
         // Keep getting data until we have the entire buffer
         if (result == SQL_SUCCESS_WITH_INFO) {

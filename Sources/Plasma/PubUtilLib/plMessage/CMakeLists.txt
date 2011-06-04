@@ -1,0 +1,131 @@
+include_directories("../../CoreLib")
+include_directories("../../NucleusLib/inc")
+include_directories("../../NucleusLib")
+include_directories("../../PubUtilLib")
+
+set(plMessage_SOURCES
+    plAccountUpdateMsg.cpp
+    plAIMsg.cpp
+    plAnimCmdMsg.cpp
+    plAvatarMsg.cpp
+    plAvCoopMsg.cpp
+    plBulletMsg.cpp
+    plCaptureRenderMsg.cpp
+    plCCRMsg.cpp
+    plClimbMsg.cpp
+    plCollideMsg.cpp
+    plDynaDecalEnableMsg.cpp
+    plDynamicEnvMapMsg.cpp
+    plDynamicTextMsg.cpp
+    plInputEventMsg.cpp
+    plInputIfaceMgrMsg.cpp
+    plLayRefMsg.cpp
+    plLinkToAgeMsg.cpp
+    plListenerMsg.cpp
+    plLoadAgeMsg.cpp
+    plLoadAvatarMsg.cpp
+    plLoadCloneMsg.cpp
+    plLOSHitMsg.cpp
+    plLOSRequestMsg.cpp
+    plMatrixUpdateMsg.cpp
+    plMultistageMsg.cpp
+    plNCAgeJoinerMsg.cpp
+    plNetClientMgrMsg.cpp
+    plNetCommMsgs.cpp
+    plNetVoiceListMsg.cpp
+    plOneShotCallbacks.cpp
+    plOneShotMsg.cpp
+    plRenderRequestMsg.cpp
+    plRideAnimatedPhysMsg.cpp
+    plRippleShapeMsg.cpp
+    plSimInfluenceMsg.cpp
+    plSimStateMsg.cpp
+    plSwimMsg.cpp
+    plSynchEnableMsg.cpp
+    plTransitionMsg.cpp
+    plVaultNotifyMsg.cpp
+)
+
+set(plMessage_HEADERS
+    plAccountUpdateMsg.h
+    plActivatorMsg.h
+    plAgeLoadedMsg.h
+    plAIMsg.h
+    plAngularVelocityMsg.h
+    plAnimCmdMsg.h
+    plAvatarFootMsg.h
+    plAvatarMsg.h
+    plAvCoopMsg.h
+    plBulletMsg.h
+    plCaptureRenderMsg.h
+    plCCRMessageCreatable.h
+    plCCRMsg.h
+    plClimbEventMsg.h
+    plClimbMsg.h
+    plCollideMsg.h
+    plCondRefMsg.h
+    plConnectedToVaultMsg.h
+    plConsoleMsg.h
+    plDeviceRecreateMsg.h
+    plDynaDecalEnableMsg.h
+    plDynamicEnvMapMsg.h
+    plDynamicTextMsg.h
+    plElementRefMsg.h
+    plExcludeRegionMsg.h
+    plInputEventMsg.h
+    plInputIfaceMgrMsg.h
+    plInterestingPing.h
+    plLayRefMsg.h
+    plLightRefMsg.h
+    plLinearVelocityMsg.h
+    plLinkToAgeMsg.h
+    plListenerMsg.h
+    plLoadAgeMsg.h
+    plLoadAvatarMsg.h
+    plLoadCloneMsg.h
+    plLOSHitMsg.h
+    plLOSRequestMsg.h
+    plMatRefMsg.h
+    plMatrixUpdateMsg.h
+    plMemberUpdateMsg.h
+    plMeshRefMsg.h
+    plMessageCreatable.h
+    plMovieMsg.h
+    plMultistageMsg.h
+    plNCAgeJoinerMsg.h
+    plNetClientMgrMsg.h
+    plNetCommMsgs.h
+    plNetOwnershipMsg.h
+    plNetVoiceListMsg.h
+    plNodeCleanupMsg.h
+    plOneShotCallbacks.h
+    plOneShotMsg.h
+    plParticleUpdateMsg.h
+    plPickedMsg.h
+    plPreloaderMsg.h
+    plRenderMsg.h
+    plRenderRequestMsg.h
+    plReplaceGeometryMsg.h
+    plResMgrHelperMsg.h
+    plResponderMsg.h
+    plRideAnimatedPhysMsg.h
+    plRippleShapeMsg.h
+    plRoomLoadNotifyMsg.h
+    plShadowCastMsg.h
+    plSimInfluenceMsg.h
+    plSimStateMsg.h
+    plSpawnModMsg.h
+    plSpawnRequestMsg.h
+    plSwimMsg.h
+    plSynchEnableMsg.h
+    plTimerCallbackMsg.h
+    plTransitionMsg.h
+    plTriggerMsg.h
+    plUniqueIdsMsg.h
+    plVaultNotifyMsg.h
+)
+
+add_library(plMessage STATIC ${plMessage_SOURCES} ${plMessage_HEADERS})
+
+source_group("Source Files" FILES ${plMessage_SOURCES})
+source_group("Header Files" FILES ${plMessage_HEADERS})

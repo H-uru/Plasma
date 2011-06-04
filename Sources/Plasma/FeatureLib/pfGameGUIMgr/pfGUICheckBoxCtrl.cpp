@@ -24,23 +24,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUICheckBoxCtrl Definition											//
-//																			//
-//	Almost like buttons, only they keep their stated (pressed/unpressed)	//
-//	when you click them, instead of reverting on mouse up.					//
-//																			//
+//                                                                          //
+//  pfGUICheckBoxCtrl Definition                                            //
+//                                                                          //
+//  Almost like buttons, only they keep their stated (pressed/unpressed)    //
+//  when you click them, instead of reverting on mouse up.                  //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
 #include "pfGUICheckBoxCtrl.h"
 #include "pfGameGUIMgr.h"
 
-#include "../plInputCore/plInputInterface.h"
- #include "../pnMessage/plRefMsg.h"
-#include "../pfMessage/pfGameGUIMsg.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../plAvatar/plAGModifier.h"
+#include "plInputCore/plInputInterface.h"
+#include "pnMessage/plRefMsg.h"
+#include "pfMessage/pfGameGUIMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plAvatar/plAGModifier.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
@@ -49,158 +49,158 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pfGUICheckBoxCtrl::pfGUICheckBoxCtrl()
 {
-	fAnimName = nil;
-	SetFlag( kWantsInterest );
-	fChecked = false;
-	fClicking = false;
-	fPlaySound = true;
+    fAnimName = nil;
+    SetFlag( kWantsInterest );
+    fChecked = false;
+    fClicking = false;
+    fPlaySound = true;
 }
 
 pfGUICheckBoxCtrl::~pfGUICheckBoxCtrl()
 {
-	delete [] fAnimName;
+    delete [] fAnimName;
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool	pfGUICheckBoxCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUICheckBoxCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
 {
-	return pfGUIControlMod::IEval( secs, del, dirty );
+    return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool	pfGUICheckBoxCtrl::MsgReceive( plMessage *msg )
+hsBool  pfGUICheckBoxCtrl::MsgReceive( plMessage *msg )
 {
-	return pfGUIControlMod::MsgReceive( msg );
+    return pfGUIControlMod::MsgReceive( msg );
 }
 
 //// Read/Write //////////////////////////////////////////////////////////////
 
-void	pfGUICheckBoxCtrl::Read( hsStream *s, hsResMgr *mgr )
+void    pfGUICheckBoxCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
-	pfGUIControlMod::Read(s, mgr);
+    pfGUIControlMod::Read(s, mgr);
 
-	fAnimationKeys.Reset();
-	UInt32 i, count = s->ReadSwap32();
-	for( i = 0; i < count; i++ )
-		fAnimationKeys.Append( mgr->ReadKey( s ) );
+    fAnimationKeys.Reset();
+    UInt32 i, count = s->ReadSwap32();
+    for( i = 0; i < count; i++ )
+        fAnimationKeys.Append( mgr->ReadKey( s ) );
 
-	fAnimName = s->ReadSafeString();
-	fChecked = s->ReadBool();
+    fAnimName = s->ReadSafeString();
+    fChecked = s->ReadBool();
 }
 
-void	pfGUICheckBoxCtrl::Write( hsStream *s, hsResMgr *mgr )
+void    pfGUICheckBoxCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
-	pfGUIControlMod::Write( s, mgr );
+    pfGUIControlMod::Write( s, mgr );
 
-	UInt32 i, count = fAnimationKeys.GetCount();
-	s->WriteSwap32( count );
-	for( i = 0; i < count; i++ )
-		mgr->WriteKey( s, fAnimationKeys[ i ] );
+    UInt32 i, count = fAnimationKeys.GetCount();
+    s->WriteSwap32( count );
+    for( i = 0; i < count; i++ )
+        mgr->WriteKey( s, fAnimationKeys[ i ] );
 
-	s->WriteSafeString( fAnimName );
-	s->WriteBool( fChecked );
+    s->WriteSafeString( fAnimName );
+    s->WriteBool( fChecked );
 }
 
 //// UpdateBounds ////////////////////////////////////////////////////////////
 
-void	pfGUICheckBoxCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
+void    pfGUICheckBoxCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
 {
-	pfGUIControlMod::UpdateBounds( invXformMatrix, force );
-	if( fAnimationKeys.GetCount() > 0 )
-		fBoundsValid = false;
+    pfGUIControlMod::UpdateBounds( invXformMatrix, force );
+    if( fAnimationKeys.GetCount() > 0 )
+        fBoundsValid = false;
 }
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void	pfGUICheckBoxCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUICheckBoxCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
 {
-	fClicking = true;
-	if(fPlaySound)
-		IPlaySound( kMouseDown );
+    fClicking = true;
+    if(fPlaySound)
+        IPlaySound( kMouseDown );
 }
 
-void	pfGUICheckBoxCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUICheckBoxCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
 {
-	if( fClicking )
-	{
-		fClicking = false;
+    if( fClicking )
+    {
+        fClicking = false;
 
-		if(fPlaySound)
-			IPlaySound( kMouseUp );
+        if(fPlaySound)
+            IPlaySound( kMouseUp );
 
-		// Don't run the command if the mouse is outside our bounds
-		if( fBounds.IsInside( &mousePt ) )
-		{
-			SetChecked( !fChecked );
-			DoSomething();
-		}
-	}
+        // Don't run the command if the mouse is outside our bounds
+        if( fBounds.IsInside( &mousePt ) )
+        {
+            SetChecked( !fChecked );
+            DoSomething();
+        }
+    }
 }
 
 //// SetChecked //////////////////////////////////////////////////////////////
 
-void	pfGUICheckBoxCtrl::SetChecked( hsBool checked, hsBool immediate /*= false*/ )
+void    pfGUICheckBoxCtrl::SetChecked( hsBool checked, hsBool immediate /*= false*/ )
 {
-	fChecked = checked;
-	if( fAnimationKeys.GetCount() > 0 )
-	{
-		plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
-		if( fChecked )
-		{
-			// Moving to true
-			if( immediate )
-			{
-				msg->SetCmd( plAnimCmdMsg::kGoToEnd );
-			}
-			else
-			{
-				msg->SetCmd( plAnimCmdMsg::kContinue );
-				msg->SetCmd( plAnimCmdMsg::kSetForewards );
-				msg->SetCmd( plAnimCmdMsg::kGoToBegin );
-			}
-		}
-		else
-		{
-			// Moving to false
-			if( immediate )
-			{
-				msg->SetCmd( plAnimCmdMsg::kGoToBegin );
-			}
-			else
-			{
-				msg->SetCmd( plAnimCmdMsg::kContinue );
-				msg->SetCmd( plAnimCmdMsg::kSetBackwards );
-				msg->SetCmd( plAnimCmdMsg::kGoToEnd );
-			}
-		}
-		msg->SetAnimName( fAnimName );
-		msg->AddReceivers( fAnimationKeys );
-		plgDispatch::MsgSend( msg );
-	}
+    fChecked = checked;
+    if( fAnimationKeys.GetCount() > 0 )
+    {
+        plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+        if( fChecked )
+        {
+            // Moving to true
+            if( immediate )
+            {
+                msg->SetCmd( plAnimCmdMsg::kGoToEnd );
+            }
+            else
+            {
+                msg->SetCmd( plAnimCmdMsg::kContinue );
+                msg->SetCmd( plAnimCmdMsg::kSetForewards );
+                msg->SetCmd( plAnimCmdMsg::kGoToBegin );
+            }
+        }
+        else
+        {
+            // Moving to false
+            if( immediate )
+            {
+                msg->SetCmd( plAnimCmdMsg::kGoToBegin );
+            }
+            else
+            {
+                msg->SetCmd( plAnimCmdMsg::kContinue );
+                msg->SetCmd( plAnimCmdMsg::kSetBackwards );
+                msg->SetCmd( plAnimCmdMsg::kGoToEnd );
+            }
+        }
+        msg->SetAnimName( fAnimName );
+        msg->AddReceivers( fAnimationKeys );
+        plgDispatch::MsgSend( msg );
+    }
 }
 
-void	pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *name )
+void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *name )
 {
-	fAnimationKeys = keys;
-	delete [] fAnimName;
-	if( name != nil )
-	{
-		fAnimName = TRACKED_NEW char[ strlen( name ) + 1 ];
-		strcpy( fAnimName, name );
-	}
-	else
-		fAnimName = nil;
+    fAnimationKeys = keys;
+    delete [] fAnimName;
+    if( name != nil )
+    {
+        fAnimName = TRACKED_NEW char[ strlen( name ) + 1 ];
+        strcpy( fAnimName, name );
+    }
+    else
+        fAnimName = nil;
 }
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32		pfGUICheckBoxCtrl::IGetDesiredCursor( void ) const
+UInt32      pfGUICheckBoxCtrl::IGetDesiredCursor( void ) const
 {
-	if( fClicking )
-		return plInputInterface::kCursorClicked;
+    if( fClicking )
+        return plInputInterface::kCursorClicked;
 
-	return plInputInterface::kCursorPoised;
+    return plInputInterface::kCursorPoised;
 }
 

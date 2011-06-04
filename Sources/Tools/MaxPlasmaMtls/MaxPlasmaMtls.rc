@@ -2,15 +2,9 @@
 //
 #include "resource.h"
 
-#define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
-#include "afxres.h"
-
-/////////////////////////////////////////////////////////////////////////////
-#undef APSTUDIO_READONLY_SYMBOLS
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#define IDC_STATIC              (-1)     // all static controls
 
 /////////////////////////////////////////////////////////////////////////////
 // English (U.S.) resources
@@ -870,7 +864,7 @@ BEGIN
     LTEXT           "Reference Node (Must have a Water->EnvironmentMap component). For reflections, this node determines the plane of reflection (Z axis of pivot point). For a specified camera, you probably want this to be the camera node.",
                     IDC_STATIC,9,47,200,32
     LTEXT           "Camera Node:",IDC_STATIC,18,14,66,8
-	CONTROL         "",IDC_CAM_LAYER_DISABLE_COLOR,"ColorSwatch",0x0,107,107,
+    CONTROL         "",IDC_CAM_LAYER_DISABLE_COLOR,"ColorSwatch",0x0,107,107,
                     27,12
     LTEXT           "If reflections are disabled, render this solid color instead:",
                     IDC_STATIC,9,105,100,16
@@ -1051,7 +1045,6 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include ""afxres.h""\r\n"
     "\0"
 END
 

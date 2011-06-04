@@ -24,13 +24,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plAudioFileReader														//
-//																			//
+//                                                                          //
+//  plAudioFileReader                                                       //
+//                                                                          //
 //// Notes ///////////////////////////////////////////////////////////////////
-//																			//
-//	3.5.2001 - Created by mcn.												//
-//																			//
+//                                                                          //
+//  3.5.2001 - Created by mcn.                                              //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 #include <string.h>
 
@@ -39,131 +39,139 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioCore.h"
 //#include "hsTimer.h"
 #include "hsUtils.h"
-#include "../plFile/hsFiles.h"
-#include "../plFile/plFileUtils.h"
-#include "../plUnifiedTime/plUnifiedTime.h"
+#include "plFile/hsFiles.h"
+#include "plFile/plFileUtils.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 #include "plBufferedFileReader.h"
+#include "plCachedFileReader.h"
 #include "plFastWavReader.h"
-#include "../plAudio/plOGGCodec.h"
-#include "../plAudio/plWavFile.h"
+#include "plOGGCodec.h"
+#include "plWavFile.h"
 
-#define kCacheDirName	"streamingCache"
+#define kCacheDirName   "temp"
 
 static void hsStrUpper(char *s)
 {
-	if (s)
-	{
-		int len = hsStrlen(s);
-		for (int i = 0; i < len; i++)
-			s[i] = toupper(s[i]); 
-	}
+    if (s)
+    {
+        int len = hsStrlen(s);
+        for (int i = 0; i < len; i++)
+            s[i] = toupper(s[i]); 
+    }
 }
 
 plAudioFileReader* plAudioFileReader::CreateReader(const char* path, plAudioCore::ChannelSelect whichChan, StreamType type)
 {
-	const char* ext = plFileUtils::GetFileExt(path);
+    const char* ext = plFileUtils::GetFileExt(path);
 
-	if (type == kStreamWAV)
-	{
-		bool isWav = (stricmp(ext, "wav") == 0);
-		// We want to stream a wav off disk, but this is a compressed file.
-		// Get the uncompressed path. Ignore the requested channel, since it 
-		// will have already been split into two files if that is necessary.
-		if (!isWav)
-		{
-			char cachedPath[256];
-			IGetCachedPath(path, cachedPath, whichChan);
-			plAudioFileReader *r =  TRACKED_NEW plFastWAV(cachedPath, plAudioCore::kAll);
-			return r;
-		}
-		
-		plAudioFileReader *r =  TRACKED_NEW plFastWAV(path, whichChan);
-		return r;
-	}
-	else if (type == kStreamRAM)
-		return TRACKED_NEW plBufferedFileReader(path, whichChan);
-	else if (type == kStreamNative)
-		return TRACKED_NEW plOGGCodec(path, whichChan);
+    if (type == kStreamWAV)
+    {
+        bool isWav = (stricmp(ext, "wav") == 0);
+        // We want to stream a wav off disk, but this is a compressed file.
+        // Get the uncompressed path. Ignore the requested channel, since it 
+        // will have already been split into two files if that is necessary.
+        if (!isWav)
+        {
+            char cachedPath[256];
+            IGetCachedPath(path, cachedPath, whichChan);
+            plAudioFileReader *r =  TRACKED_NEW plCachedFileReader(cachedPath, plAudioCore::kAll);
+            if (!r->IsValid()) {
+                // So we tried to play a cached file and it didn't exist
+                // Oops... we should cache it now
+                delete r;
+                ICacheFile(path, true, whichChan);
+                r = TRACKED_NEW plCachedFileReader(cachedPath, plAudioCore::kAll);
+            }
+            return r;
+        }
+        
+        plAudioFileReader *r =  TRACKED_NEW plFastWAV(path, whichChan);
+        return r;
+    }
+    else if (type == kStreamRAM)
+        return TRACKED_NEW plBufferedFileReader(path, whichChan);
+    else if (type == kStreamNative)
+        return TRACKED_NEW plOGGCodec(path, whichChan);
 
-	return nil;
+    return nil;
 }
 
 plAudioFileReader* plAudioFileReader::CreateWriter(const char* path, plWAVHeader& header)
 {
-	const char* ext = plFileUtils::GetFileExt(path);
+    const char* ext = plFileUtils::GetFileExt(path);
 
-	plAudioFileReader* writer = TRACKED_NEW CWaveFile(path, plAudioCore::kAll);
-	writer->OpenForWriting(path, header);
-	return writer;
+    plAudioFileReader* writer = TRACKED_NEW plCachedFileReader(path, plAudioCore::kAll);
+    writer->OpenForWriting(path, header);
+    return writer;
 }
 
 void plAudioFileReader::IGetCachedPath(const char* path, char* cachedPath, plAudioCore::ChannelSelect whichChan)
 {
-	// Get the file's path and add our streaming cache folder to it
-	strcpy(cachedPath, path);
-	plFileUtils::StripFile(cachedPath);
-	strcat(cachedPath, kCacheDirName"\\");
+    // Get the file's path and add our streaming cache folder to it
+    strcpy(cachedPath, path);
+    plFileUtils::StripFile(cachedPath);
+    strcat(cachedPath, kCacheDirName"\\");
 
-	// Create the directory first
-	plFileUtils::CreateDir(cachedPath);
+    // Create the directory first
+    plFileUtils::CreateDir(cachedPath);
 
-	// Get the path to the cached version of the file, without the extension
-	const char* fileName = plFileUtils::GetFileName(path);
-	const char* fileExt = plFileUtils::GetFileExt(fileName);
-	strncat(cachedPath, fileName, fileExt-fileName-1);
+    // Get the path to the cached version of the file, without the extension
+    const char* fileName = plFileUtils::GetFileName(path);
+    const char* fileExt = plFileUtils::GetFileExt(fileName);
+    strncat(cachedPath, fileName, fileExt-fileName-1);
 
-	if (whichChan == plAudioCore::kLeft)
-		strcat(cachedPath, "-Left.wav");
-	else if (whichChan == plAudioCore::kRight)
-		strcat(cachedPath, "-Right.wav");
-	else if (whichChan == plAudioCore::kAll)
-		strcat(cachedPath, ".wav");
+    if (whichChan == plAudioCore::kLeft)
+        strcat(cachedPath, "-Left.tmp");
+    else if (whichChan == plAudioCore::kRight)
+        strcat(cachedPath, "-Right.tmp");
+    else if (whichChan == plAudioCore::kAll)
+        strcat(cachedPath, ".tmp");
 }
 
 void plAudioFileReader::ICacheFile(const char* path, bool noOverwrite, plAudioCore::ChannelSelect whichChan)
 {
-	char cachedPath[256];
-	IGetCachedPath(path, cachedPath, whichChan);
-	if (!noOverwrite || !plFileUtils::FileExists(cachedPath))
-	{
-		plAudioFileReader* reader = plAudioFileReader::CreateReader(path, whichChan, kStreamNative);
-		if (!reader || !reader->IsValid())
-		{
-			delete reader;
-			return;
-		}
-		plAudioFileReader* writer = CreateWriter(cachedPath, reader->GetHeader());
-		if (!writer || !writer->IsValid())
-		{
-			delete reader;
-			delete writer;
-			return;
-		}
+    char cachedPath[256];
+    IGetCachedPath(path, cachedPath, whichChan);
+    if (!noOverwrite || !plFileUtils::FileExists(cachedPath))
+    {
+        plAudioFileReader* reader = plAudioFileReader::CreateReader(path, whichChan, kStreamNative);
+        if (!reader || !reader->IsValid())
+        {
+            delete reader;
+            return;
+        }
+        plAudioFileReader* writer = CreateWriter(cachedPath, reader->GetHeader());
+        if (!writer || !writer->IsValid())
+        {
+            delete reader;
+            delete writer;
+            return;
+        }
 
-		UInt8 buffer[4096];
-		UInt32 numLeft;
-		while ((numLeft = reader->NumBytesLeft()) > 0)
-		{
-			UInt32 toRead = (numLeft < sizeof(buffer)) ? numLeft : sizeof(buffer);
-			reader->Read(toRead, buffer);
-			writer->Write(toRead, buffer);
-		}
-		writer->Close();
+        UInt8 buffer[4096];
+        UInt32 numLeft;
+        while ((numLeft = reader->NumBytesLeft()) > 0)
+        {
+            UInt32 toRead = (numLeft < sizeof(buffer)) ? numLeft : sizeof(buffer);
+            reader->Read(toRead, buffer);
+            writer->Write(toRead, buffer);
+        }
+        writer->Close();
 
-		delete writer;
-		delete reader;
-	}
+        delete writer;
+        delete reader;
+    }
 }
 
 void plAudioFileReader::CacheFile(const char* path, bool splitChannels, bool noOverwrite)
 {
-	if (splitChannels)
-	{
-		ICacheFile(path, noOverwrite, plAudioCore::kLeft);
-		ICacheFile(path, noOverwrite, plAudioCore::kRight);
-	}
-	else
-	{
-		ICacheFile(path, noOverwrite, plAudioCore::kAll);
-	}
+    if (splitChannels)
+    {
+        ICacheFile(path, noOverwrite, plAudioCore::kLeft);
+        ICacheFile(path, noOverwrite, plAudioCore::kRight);
+    }
+    else
+    {
+        ICacheFile(path, noOverwrite, plAudioCore::kAll);
+    }
 }

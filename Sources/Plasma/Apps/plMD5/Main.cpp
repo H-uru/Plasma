@@ -42,17 +42,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //============================================================================
 int __cdecl main (int argc, char ** argv) {
 
-	if (argc < 2) {
-		fprintf(stderr, "ERROR: Please specify filename.\n");
-		return 1;
-	}
+    if (argc < 2) {
+        fprintf(stderr, "ERROR: Please specify filename.\n");
+        return 1;
+    }
 
-	plMD5Checksum md5(argv[1]);
-	if (!md5.IsValid()) {
-		fprintf(stderr, "ERROR: MD5 failed.\n");
-		return 1;
-	}
-	
-	fprintf(stdout, "%s\n", md5.GetAsHexString());
-	return 0;
+    plMD5Checksum md5(argv[1]);
+    if (!md5.IsValid()) {
+        fprintf(stderr, "ERROR: MD5 failed.\n");
+        return 1;
+    }
+    
+    fprintf(stdout, "%s\n", md5.GetAsHexString());
+    return 0;
 }

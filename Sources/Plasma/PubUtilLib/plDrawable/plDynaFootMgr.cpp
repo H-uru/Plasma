@@ -38,37 +38,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include "../plMessage/plDynaDecalEnableMsg.h"
+#include "plMessage/plDynaDecalEnableMsg.h"
 
-#include "../plMessage/plAvatarFootMsg.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../plAvatar/plAvBrainHuman.h"
+#include "plMessage/plAvatarFootMsg.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
 
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 static plRandom sRand;
 
 static const UInt32 kNumPrintIDs = 2;
 static const UInt32 kPrintIDs[kNumPrintIDs] =
 {
-	plAvBrainHuman::RFootPrint,
-	plAvBrainHuman::LFootPrint
+    plAvBrainHuman::RFootPrint,
+    plAvBrainHuman::LFootPrint
 };
 
 
-int	plDynaFootMgr::INewDecal()
+int plDynaFootMgr::INewDecal()
 {
-	int idx = fDecals.GetCount();
-	fDecals.Append(TRACKED_NEW plDynaSplot());
+    int idx = fDecals.GetCount();
+    fDecals.Append(TRACKED_NEW plDynaSplot());
 
-	return idx;
+    return idx;
 }
 
 plDynaFootMgr::plDynaFootMgr()
 {
-	fPartIDs.SetCount(kNumPrintIDs);
-	int i;
-	for( i = 0; i < kNumPrintIDs; i++ )
-		fPartIDs[i] = kPrintIDs[i];
+    fPartIDs.SetCount(kNumPrintIDs);
+    int i;
+    for( i = 0; i < kNumPrintIDs; i++ )
+        fPartIDs[i] = kPrintIDs[i];
 }
 
 plDynaFootMgr::~plDynaFootMgr()
@@ -77,79 +77,79 @@ plDynaFootMgr::~plDynaFootMgr()
 
 void plDynaFootMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plDynaDecalMgr::Read(stream, mgr);
+    plDynaDecalMgr::Read(stream, mgr);
 
-	plgDispatch::Dispatch()->RegisterForExactType(plAvatarFootMsg::Index(), GetKey());
+    plgDispatch::Dispatch()->RegisterForExactType(plAvatarFootMsg::Index(), GetKey());
 }
 
 void plDynaFootMgr::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plDynaDecalMgr::Write(stream, mgr);
+    plDynaDecalMgr::Write(stream, mgr);
 }
 
 
 hsBool plDynaFootMgr::MsgReceive(plMessage* msg)
 {
-	plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
-	if( footMsg )
-	{
-		UInt32 id = footMsg->IsLeft() ? plAvBrainHuman::LFootPrint : plAvBrainHuman::RFootPrint;
+    plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
+    if( footMsg )
+    {
+        UInt32 id = footMsg->IsLeft() ? plAvBrainHuman::LFootPrint : plAvBrainHuman::RFootPrint;
 
-		plArmatureMod* armMod = footMsg->GetArmature();
-		const plPrintShape* shape = IGetPrintShape(armMod, id);
-		if( shape )
-		{
-			plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
-			if( IPrintFromShape(shape, footMsg->IsLeft()) )
-			{
-				INotifyActive(info, armMod->GetKey(), id);
-			}
-			else
-			{
-				INotifyInactive(info, armMod->GetKey(), id);
-			}
-		}
+        plArmatureMod* armMod = footMsg->GetArmature();
+        const plPrintShape* shape = IGetPrintShape(armMod, id);
+        if( shape )
+        {
+            plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+            if( IPrintFromShape(shape, footMsg->IsLeft()) )
+            {
+                INotifyActive(info, armMod->GetKey(), id);
+            }
+            else
+            {
+                INotifyInactive(info, armMod->GetKey(), id);
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	return plDynaDecalMgr::MsgReceive(msg);
+    return plDynaDecalMgr::MsgReceive(msg);
 }
 
 hsBool plDynaFootMgr::IPrintFromShape(const plPrintShape* shape, hsBool flip)
 {
-	hsBool retVal = false;
+    hsBool retVal = false;
 
-	if( shape )
-	{
-		plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+    if( shape )
+    {
+        plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
 
-		double secs = hsTimer::GetSysSeconds();
-		hsScalar wetness = IHowWet(info, secs);
-		fInitAtten = wetness;
+        double secs = hsTimer::GetSysSeconds();
+        hsScalar wetness = IHowWet(info, secs);
+        fInitAtten = wetness;
 
-		if( wetness <= 0 )
-			return true;
+        if( wetness <= 0 )
+            return true;
 
-		hsMatrix44 shapeL2W = shape->GetOwner()->GetLocalToWorld();
-		hsPoint3 newPos = shapeL2W.GetTranslate();
-		hsVector3 newDir = shapeL2W.GetAxis(hsMatrix44::kView);
-		hsVector3 newUp(0.f, 0.f, 1.f);
+        hsMatrix44 shapeL2W = shape->GetOwner()->GetLocalToWorld();
+        hsPoint3 newPos = shapeL2W.GetTranslate();
+        hsVector3 newDir = shapeL2W.GetAxis(hsMatrix44::kView);
+        hsVector3 newUp(0.f, 0.f, 1.f);
 
-		hsVector3 size(shape->GetWidth() * fScale.fX, shape->GetLength() * fScale.fY, shape->GetHeight() * fScale.fZ * 2.f);
-		fCutter->SetLength(size);
-		fCutter->Set(newPos, newDir, newUp, flip);
+        hsVector3 size(shape->GetWidth() * fScale.fX, shape->GetLength() * fScale.fY, shape->GetHeight() * fScale.fZ * 2.f);
+        fCutter->SetLength(size);
+        fCutter->Set(newPos, newDir, newUp, flip);
 
-		// Should this be moved inside the if( ICutout() ) clause? I think so. Probably doesn't
-		// matter for foot prints, but it seems more correct, since fLastPos/fLastTime is the
-		// last time and position we actually dropped a print, not tried to.
-		info.fLastPos = newPos;
-		info.fLastTime = secs;
+        // Should this be moved inside the if( ICutout() ) clause? I think so. Probably doesn't
+        // matter for foot prints, but it seems more correct, since fLastPos/fLastTime is the
+        // last time and position we actually dropped a print, not tried to.
+        info.fLastPos = newPos;
+        info.fLastTime = secs;
 
-		if( ICutoutTargets(secs) )
-		{
-			retVal = true;
-		}
-	}
-	return retVal;
+        if( ICutoutTargets(secs) )
+        {
+            retVal = true;
+        }
+    }
+    return retVal;
 }

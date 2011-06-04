@@ -33,52 +33,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for the game client base class
 //
 
-#include "../pfGameMgr/pfGameMgr.h"
+#include "pfGameMgr/pfGameMgr.h"
 
-#include <python.h>
+#include <Python.h>
 #include "../pyGlueHelpers.h"
 #include "../pyKey.h"
 
 class pyGameCli
 {
 protected:
-	pfGameCli* gameClient;
+    pfGameCli* gameClient;
 
-	pyGameCli();
-	pyGameCli(pfGameCli* client);
+    pyGameCli();
+    pyGameCli(pfGameCli* client);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE; // so we can subclass
-	PYTHON_CLASS_NEW_FRIEND(ptGameCli);
-	static PyObject* New(pfGameCli* client);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameCli object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameCli); // converts a PyObject to a pyGameCli (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE; // so we can subclass
+    PYTHON_CLASS_NEW_FRIEND(ptGameCli);
+    static PyObject* New(pfGameCli* client);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameCli object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameCli); // converts a PyObject to a pyGameCli (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-	static std::vector<unsigned> GetGameIDs();
-	static PyObject* GetGameCli(unsigned gameID); // returns a ptGameCli
-	static std::wstring GetGameNameByTypeID(std::wstring typeID);
-	static void JoinGame(pyKey& callbackKey, unsigned gameID);
+    static std::vector<unsigned> GetGameIDs();
+    static PyObject* GetGameCli(unsigned gameID); // returns a ptGameCli
+    static std::wstring GetGameNameByTypeID(std::wstring typeID);
+    static void JoinGame(pyKey& callbackKey, unsigned gameID);
 
-	unsigned GameID() const;
-	std::wstring GameTypeID() const;
-	std::wstring Name() const;
-	unsigned PlayerCount() const;
+    unsigned GameID() const;
+    std::wstring GameTypeID() const;
+    std::wstring Name() const;
+    unsigned PlayerCount() const;
 
-	void InvitePlayer(unsigned playerID);
-	void UninvitePlayer(unsigned playerID);
+    void InvitePlayer(unsigned playerID);
+    void UninvitePlayer(unsigned playerID);
 
-	void LeaveGame();
+    void LeaveGame();
 
-	PyObject* UpcastToTTTGame(); // returns ptTTTGame
-	PyObject* UpcastToHeekGame(); // returns ptHeekGame
-	PyObject* UpcastToMarkerGame(); // returns ptMarkerGame
-	PyObject* UpcastToBlueSpiralGame(); // returns ptBlueSpiralGame
-	PyObject* UpcastToClimbingWallGame(); // returns ptClimbingWallGame
-	PyObject* UpcastToVarSyncGame(); // returns ptVarSyncGame
+    PyObject* UpcastToTTTGame(); // returns ptTTTGame
+    PyObject* UpcastToHeekGame(); // returns ptHeekGame
+    PyObject* UpcastToMarkerGame(); // returns ptMarkerGame
+    PyObject* UpcastToBlueSpiralGame(); // returns ptBlueSpiralGame
+    PyObject* UpcastToClimbingWallGame(); // returns ptClimbingWallGame
+    PyObject* UpcastToVarSyncGame(); // returns ptVarSyncGame
 };
 
 #endif // pyGameCli_h

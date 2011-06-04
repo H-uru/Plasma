@@ -30,15 +30,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Abstract base class for CCR Mgr
 //
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 class plCCRMgrBase : public hsKeyedObject
 {
 protected:
-	static plCCRMgrBase* fBaseInstance;
+    static plCCRMgrBase* fBaseInstance;
 public:
-	static plCCRMgrBase* GetInstance() { return fBaseInstance; }
+    static plCCRMgrBase* GetInstance() { return fBaseInstance; }
 };
 
 
-#endif	// plCCRMgrBase_inc
+#endif  // plCCRMgrBase_inc

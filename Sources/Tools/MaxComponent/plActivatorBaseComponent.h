@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalComponents.h"
 #include <map>
 #include "hsTemplates.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 class plMaxNode;
 
@@ -39,30 +39,30 @@ class plMaxNode;
 class plActivatorBaseComponent : public plPhysicCoreComponent
 {
 public:
-	typedef std::map<plMaxNode*, plKey> LogicKeys;
+    typedef std::map<plMaxNode*, plKey> LogicKeys;
 protected:
-	LogicKeys fLogicModKeys;
-	typedef std::multimap<plMaxNode*, plKey> ReceiverKeys;
-	typedef std::pair<plMaxNode*, plKey> ReceiverKey;
-	ReceiverKeys fReceivers;
-//	hsTArray<plKey> fReceivers;
+    LogicKeys fLogicModKeys;
+    typedef std::multimap<plMaxNode*, plKey> ReceiverKeys;
+    typedef std::pair<plMaxNode*, plKey> ReceiverKey;
+    ReceiverKeys fReceivers;
+//  hsTArray<plKey> fReceivers;
 
-	void IGetReceivers(plMaxNode* node, hsTArray<plKey>& receivers);
+    void IGetReceivers(plMaxNode* node, hsTArray<plKey>& receivers);
 
 public:
-	// Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual	hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-	virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    // Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
-	const LogicKeys& GetLogicKeys() { return fLogicModKeys; }
-	virtual plKey GetLogicKey(plMaxNode* node);
-	virtual void AddReceiverKey(plKey pKey, plMaxNode* node=nil);
-	virtual bool HasLogicOut() { return false; }
+    const LogicKeys& GetLogicKeys() { return fLogicModKeys; }
+    virtual plKey GetLogicKey(plMaxNode* node);
+    virtual void AddReceiverKey(plKey pKey, plMaxNode* node=nil);
+    virtual bool HasLogicOut() { return false; }
 
-	int CanConvertToType(Class_ID obtype)
-	{ return (obtype == ACTIVATOR_BASE_CID) ? 1 : plComponent::CanConvertToType(obtype); }
+    int CanConvertToType(Class_ID obtype)
+    { return (obtype == ACTIVATOR_BASE_CID) ? 1 : plComponent::CanConvertToType(obtype); }
 };
 
 #endif // plActivatorBaseComponent_inc

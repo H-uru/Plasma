@@ -30,19 +30,19 @@ typedef const UInt32* (*GETKEY)();
 
 const UInt32* plClientKey::GetKey()
 {
-	HMODULE hDll = LoadLibrary("sp.dll");
-	if (hDll)
-	{
-		GETKEY getKey = (GETKEY)GetProcAddress(hDll, "GetKey");
-		if (getKey)
-		{
-			static UInt32 key[4];
-			memcpy(key, getKey(), sizeof(key));
-			FreeLibrary(hDll);
-			return key;
-		}
-	}
+    HMODULE hDll = LoadLibrary("sp.dll");
+    if (hDll)
+    {
+        GETKEY getKey = (GETKEY)GetProcAddress(hDll, "GetKey");
+        if (getKey)
+        {
+            static UInt32 key[4];
+            memcpy(key, getKey(), sizeof(key));
+            FreeLibrary(hDll);
+            return key;
+        }
+    }
 
-	return nil;
+    return nil;
 }
 

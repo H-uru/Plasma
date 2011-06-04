@@ -43,89 +43,89 @@ plAGApplicator::plAGApplicator(const char *channelName)
 : fChannel(nil),
   fEnabled(true)
 {
-	fChannelName = hsStrcpy(channelName);
+    fChannelName = hsStrcpy(channelName);
 };
 
 plAGApplicator::~plAGApplicator()
 {
-	if(fChannelName)
-		delete[] fChannelName;
+    if(fChannelName)
+        delete[] fChannelName;
 }
 
 void plAGApplicator::Apply(const plAGModifier *mod, double time, hsBool force)
 {
-	if (fEnabled || force)
-		IApply(mod, time);
+    if (fEnabled || force)
+        IApply(mod, time);
 }
 
 void plAGApplicator::SetChannelName(const char *name)
 {
-	if(name)
-		fChannelName = hsStrcpy(name);
+    if(name)
+        fChannelName = hsStrcpy(name);
 };
 
 
 const char * plAGApplicator::GetChannelName()
 {
-	return fChannelName;
+    return fChannelName;
 };
 
 plAGChannel *plAGApplicator::MergeChannel(plAGApplicator *app, plAGChannel *channel, 
-										  plScalarChannel *blend, int blendPriority)	
+                                          plScalarChannel *blend, int blendPriority)    
 {
-	plAGChannel *result = nil;
-	if(fChannel)
-	{
-		if (CanCombine(app))
-			result = fChannel->MakeCombine(channel);
-		else if (CanBlend(app))
-			result = fChannel->MakeBlend(channel, blend, blendPriority);
-	} else {
-		result = channel;
-	}
+    plAGChannel *result = nil;
+    if(fChannel)
+    {
+        if (CanCombine(app))
+            result = fChannel->MakeCombine(channel);
+        else if (CanBlend(app))
+            result = fChannel->MakeBlend(channel, blend, blendPriority);
+    } else {
+        result = channel;
+    }
 
-	if (result && result != fChannel)
-		SetChannel(result);
+    if (result && result != fChannel)
+        SetChannel(result);
 
-	return result;
+    return result;
 }
 
 plAGApplicator *plAGApplicator::CloneWithChannel(plAGChannel *channel)
 {
-	plAGApplicator *app = plAGApplicator::ConvertNoRef(plFactory::Create(ClassIndex()));
-	app->SetChannel(channel);
-	app->Enable(fEnabled);
-	app->SetChannelName(fChannelName);
-	return app;
+    plAGApplicator *app = plAGApplicator::ConvertNoRef(plFactory::Create(ClassIndex()));
+    app->SetChannel(channel);
+    app->Enable(fEnabled);
+    app->SetChannelName(fChannelName);
+    return app;
 }
 
 hsBool plAGApplicator::CanBlend(plAGApplicator *app)
 {
-	UInt16 ourClass = ClassIndex();
-	UInt16 theirClass = app->ClassIndex();
+    UInt16 ourClass = ClassIndex();
+    UInt16 theirClass = app->ClassIndex();
 
-	return(ourClass == theirClass);
+    return(ourClass == theirClass);
 
-//	return(this->HasBaseClass(theirClass)
-//		   || app->HasBaseClass(ourClass));
+//  return(this->HasBaseClass(theirClass)
+//         || app->HasBaseClass(ourClass));
 }
 
 
 void plAGApplicator::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plCreatable::Write(stream, mgr);
+    plCreatable::Write(stream, mgr);
 
-	stream->WriteBool(fEnabled);
-	stream->WriteSafeString(fChannelName);
+    stream->WriteBool(fEnabled);
+    stream->WriteSafeString(fChannelName);
 }
 
 void plAGApplicator::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plCreatable::Read(stream, mgr);
+    plCreatable::Read(stream, mgr);
 
-	fEnabled = stream->ReadBool();
-	fChannel = nil; // Whatever is reading this applicator in should know what channel to assign it
-	fChannelName = stream->ReadSafeString();
+    fEnabled = stream->ReadBool();
+    fChannel = nil; // Whatever is reading this applicator in should know what channel to assign it
+    fChannelName = stream->ReadSafeString();
 }
 
 // IGETxI
@@ -138,28 +138,28 @@ void plAGApplicator::Read(hsStream *stream, hsResMgr *mgr)
 // IGETAI
 plAudioInterface * plAGApplicator::IGetAI(const plAGModifier *modifier) const
 {
-	return modifier->LeakAI();
+    return modifier->LeakAI();
 }
 
 // IGETCI
 plCoordinateInterface * plAGApplicator::IGetCI(const plAGModifier* modifier) const
 {
-	return modifier->LeakCI();
+    return modifier->LeakCI();
 }
 
 // IGETDI
 plDrawInterface * plAGApplicator::IGetDI(const plAGModifier * modifier) const
 {
-	return modifier->LeakDI();
+    return modifier->LeakDI();
 }
 
 // IGETSI
 plSimulationInterface * plAGApplicator::IGetSI(const plAGModifier * modifier) const
 {
-	return modifier->LeakSI();
+    return modifier->LeakSI();
 }
 
 plObjInterface * plAGApplicator::IGetGI(const plAGModifier * modifier, UInt16 classIdx) const
 {
-	return modifier->LeakGI(classIdx);
+    return modifier->LeakGI(classIdx);
 }

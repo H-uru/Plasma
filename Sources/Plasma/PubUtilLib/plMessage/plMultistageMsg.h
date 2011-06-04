@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMultistageMsg_inc
 #define plMultistageMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsBitVector.h"
 
 // Messages sent to a MultistageModifier.
@@ -34,29 +34,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMultistageModMsg : public plMessage
 {
 protected:
-	hsBitVector fCmds;
+    hsBitVector fCmds;
 
 public:
-	enum // Commands
-	{
-		kSetLoopCount,
-	};
+    enum // Commands
+    {
+        kSetLoopCount,
+    };
 
-	UInt8 fStageNum;
-	UInt8 fNumLoops;
+    UInt8 fStageNum;
+    UInt8 fNumLoops;
 
-	plMultistageModMsg() : fStageNum(0), fNumLoops(1) {}
-	plMultistageModMsg(const plKey &sender, const plKey &receiver) : plMessage(sender,receiver,nil),fStageNum(0),fNumLoops(1) {}
+    plMultistageModMsg() : fStageNum(0), fNumLoops(1) {}
+    plMultistageModMsg(const plKey &sender, const plKey &receiver) : plMessage(sender,receiver,nil),fStageNum(0),fNumLoops(1) {}
 
-	hsBool GetCommand(UInt8 cmd) { return fCmds.IsBitSet(cmd); }
-	void SetCommand(UInt8 cmd, hsBool val = true) { fCmds.SetBit(cmd, val); }
-	
-	// plasma protocol
-	CLASSNAME_REGISTER( plMultistageModMsg );
-	GETINTERFACE_ANY( plMultistageModMsg, plMessage );
+    hsBool GetCommand(UInt8 cmd) { return fCmds.IsBitSet(cmd); }
+    void SetCommand(UInt8 cmd, hsBool val = true) { fCmds.SetBit(cmd, val); }
+    
+    // plasma protocol
+    CLASSNAME_REGISTER( plMultistageModMsg );
+    GETINTERFACE_ANY( plMultistageModMsg, plMessage );
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 };
 
 #endif

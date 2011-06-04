@@ -38,231 +38,231 @@ const plLocation plLocation::kInvalidLoc;
 
 plLocation::plLocation(const plLocation& toCopyFrom)
 {
-	*this = toCopyFrom;
+    *this = toCopyFrom;
 }
 
 void plLocation::Read(hsStream* s)
 {
-	s->LogReadSwap(&fSequenceNumber, "Location Sequence Number");
-	s->LogReadSwap(&fFlags, "Location Flags");
+    s->LogReadSwap(&fSequenceNumber, "Location Sequence Number");
+    s->LogReadSwap(&fFlags, "Location Flags");
 }
 
 void plLocation::Write(hsStream* s) const
 {
-	s->WriteSwap(fSequenceNumber);
-	s->WriteSwap(fFlags);
+    s->WriteSwap(fSequenceNumber);
+    s->WriteSwap(fFlags);
 }
 
 plLocation& plLocation::operator=(const plLocation& rhs)
 {
-	fSequenceNumber = rhs.fSequenceNumber;
-	fFlags = rhs.fFlags;
-	return *this;
+    fSequenceNumber = rhs.fSequenceNumber;
+    fFlags = rhs.fFlags;
+    return *this;
 }
 
 hsBool plLocation::operator==(const plLocation& u) const
 {
-	// Ignore the itinerant flag when comparing, because
-	return (fSequenceNumber == u.fSequenceNumber) && ((fFlags & ~kItinerant) == (u.fFlags & ~kItinerant));
+    // Ignore the itinerant flag when comparing, because
+    return (fSequenceNumber == u.fSequenceNumber) && ((fFlags & ~kItinerant) == (u.fFlags & ~kItinerant));
 }
 
 void plLocation::Set(UInt32 seqNum)
 {
-	fSequenceNumber = seqNum;
+    fSequenceNumber = seqNum;
 }
 
 void plLocation::Invalidate()
 {
-	fSequenceNumber = kInvalidLocIdx;
-	fFlags = 0; // Set to kInvalid?
+    fSequenceNumber = kInvalidLocIdx;
+    fFlags = 0; // Set to kInvalid?
 }
 
 hsBool plLocation::IsValid() const
 {
-	return (fSequenceNumber == kInvalidLocIdx) ? false : true;
+    return (fSequenceNumber == kInvalidLocIdx) ? false : true;
 }
 
 hsBool plLocation::IsReserved() const
 {
-	return hsCheckBits(fFlags, kReserved);
+    return hsCheckBits(fFlags, kReserved);
 }
 
 hsBool plLocation::IsItinerant() const
 {
-	return hsCheckBits(fFlags, kItinerant);
+    return hsCheckBits(fFlags, kItinerant);
 }
 
 hsBool plLocation::IsVirtual() const
 {
-	// This returns whether the location is "virtual", i.e. isn't a true room per se. Like fixed keys
-	if (fSequenceNumber == kGlobalFixedLocIdx)
-		return true;
+    // This returns whether the location is "virtual", i.e. isn't a true room per se. Like fixed keys
+    if (fSequenceNumber == kGlobalFixedLocIdx)
+        return true;
 
-	return false;
+    return false;
 }
 
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
 char* plLocation::StringIze(char* str)  const // Format to displayable string
 {
-	sprintf(str, "S0x%xF0x%x", fSequenceNumber, int(fFlags));
-	return str;
+    sprintf(str, "S0x%xF0x%x", fSequenceNumber, int(fFlags));
+    return str;
 }
 
 plLocation plLocation::MakeReserved(UInt32 number)
 {
-	return plLocation(kReservedLocAvailableStart + number, kReserved);
+    return plLocation(kReservedLocAvailableStart + number, kReserved);
 }
 
 plLocation plLocation::MakeNormal(UInt32 number)
 {
-	return plLocation(kNormalLocStartIdx + number);
+    return plLocation(kNormalLocStartIdx + number);
 }
 
 //// plUoid //////////////////////////////////////////////////////////////////
 
 plUoid::plUoid(const plLocation& location, UInt16 classType, const char* objectName, const plLoadMask& m)
 {
-	fObjectName = nil;
-	Invalidate();
+    fObjectName = nil;
+    Invalidate();
 
-	fLocation = location;
-	fClassType = classType;
-	fObjectName = hsStrcpy(objectName);
-	fLoadMask = m;
-	fClonePlayerID = 0;
+    fLocation = location;
+    fClassType = classType;
+    fObjectName = hsStrcpy(objectName);
+    fLoadMask = m;
+    fClonePlayerID = 0;
 }
 
 plUoid::plUoid(const plUoid& src)
 {
-	fObjectName = nil;
-	Invalidate();
-	*this = src;
+    fObjectName = nil;
+    Invalidate();
+    *this = src;
 }
 
 plUoid::~plUoid()
 {
-	Invalidate();
+    Invalidate();
 }
 
 void plUoid::Read(hsStream* s)
 {
-	hsAssert(fObjectName == nil, "Reading over an old uoid? You're just asking for trouble, aren't you?");
+    hsAssert(fObjectName == nil, "Reading over an old uoid? You're just asking for trouble, aren't you?");
 
-	// first read contents flags
-	UInt8 contents = s->ReadByte();
+    // first read contents flags
+    UInt8 contents = s->ReadByte();
 
-	fLocation.Read(s);
+    fLocation.Read(s);
 
-	// conditional loadmask read
-	if (contents & kHasLoadMask)
-		fLoadMask.Read(s);
-	else
-		fLoadMask.SetAlways();
+    // conditional loadmask read
+    if (contents & kHasLoadMask)
+        fLoadMask.Read(s);
+    else
+        fLoadMask.SetAlways();
 
-	s->LogReadSwap(&fClassType, "ClassType");
-	s->LogReadSwap(&fObjectID, "ObjectID");
-	s->LogSubStreamPushDesc("ObjectName");
-	fObjectName = s->LogReadSafeString();
+    s->LogReadSwap(&fClassType, "ClassType");
+    s->LogReadSwap(&fObjectID, "ObjectID");
+    s->LogSubStreamPushDesc("ObjectName");
+    fObjectName = s->LogReadSafeString();
 
-	// conditional cloneIDs read
-	if (contents & kHasCloneIDs)
-	{		
-		s->LogReadSwap( &fCloneID ,"CloneID");
-		UInt16 dummy;
-		s->LogReadSwap(&dummy, "dummy"); // To avoid breaking format
-		s->LogReadSwap( &fClonePlayerID ,"ClonePlayerID");
-	}
-	else
-	{
-		fCloneID = 0;
-		fClonePlayerID = 0;
-	}
+    // conditional cloneIDs read
+    if (contents & kHasCloneIDs)
+    {       
+        s->LogReadSwap( &fCloneID ,"CloneID");
+        UInt16 dummy;
+        s->LogReadSwap(&dummy, "dummy"); // To avoid breaking format
+        s->LogReadSwap( &fClonePlayerID ,"ClonePlayerID");
+    }
+    else
+    {
+        fCloneID = 0;
+        fClonePlayerID = 0;
+    }
 }
 
 void plUoid::Write(hsStream* s) const
 {
-	// first write contents byte
-	UInt8 contents = IsClone() ? kHasCloneIDs : 0;
-	if (fLoadMask.IsUsed())
-		contents |= kHasLoadMask;
-	s->WriteByte(contents);
+    // first write contents byte
+    UInt8 contents = IsClone() ? kHasCloneIDs : 0;
+    if (fLoadMask.IsUsed())
+        contents |= kHasLoadMask;
+    s->WriteByte(contents);
 
-	fLocation.Write(s);
+    fLocation.Write(s);
 
-	// conditional loadmask write
-	if (contents & kHasLoadMask)
-		fLoadMask.Write(s);
+    // conditional loadmask write
+    if (contents & kHasLoadMask)
+        fLoadMask.Write(s);
 
-	s->WriteSwap( fClassType );
-	s->WriteSwap( fObjectID );
-	s->WriteSafeString( fObjectName );
+    s->WriteSwap( fClassType );
+    s->WriteSwap( fObjectID );
+    s->WriteSafeString( fObjectName );
 
-	// conditional cloneIDs write
-	if (contents & kHasCloneIDs)
-	{
-		s->WriteSwap(fCloneID);
-		UInt16 dummy = 0;
-		s->WriteSwap(dummy); // to avoid breaking format
-		s->WriteSwap(fClonePlayerID);
-	}
+    // conditional cloneIDs write
+    if (contents & kHasCloneIDs)
+    {
+        s->WriteSwap(fCloneID);
+        UInt16 dummy = 0;
+        s->WriteSwap(dummy); // to avoid breaking format
+        s->WriteSwap(fClonePlayerID);
+    }
 }
 
 void plUoid::Invalidate()
 {
-	fObjectID = 0;
-	fCloneID = 0;
-	fClonePlayerID = 0;
-	fClassType = 0;
-	if (fObjectName)
-		delete [] fObjectName;
-	fObjectName = nil;
-	fLocation.Invalidate();
-	fLoadMask = plLoadMask::kAlways;
+    fObjectID = 0;
+    fCloneID = 0;
+    fClonePlayerID = 0;
+    fClassType = 0;
+    if (fObjectName)
+        delete [] fObjectName;
+    fObjectName = nil;
+    fLocation.Invalidate();
+    fLoadMask = plLoadMask::kAlways;
 
 }
 
 hsBool plUoid::IsValid() const
 {
-	if (!fLocation.IsValid() || fObjectName == nil)
-		return false;
+    if (!fLocation.IsValid() || fObjectName == nil)
+        return false;
 
-	return true;
+    return true;
 }
 
 hsBool plUoid::operator==(const plUoid& u) const
 {
-	return	fLocation == u.fLocation
-			&& fLoadMask == u.fLoadMask
-			&& fClassType == u.fClassType
-			&& hsStrEQ(fObjectName, u.fObjectName)
-			&& fObjectID == u.fObjectID
-			&& fCloneID == u.fCloneID
-			&& fClonePlayerID == u.fClonePlayerID;
+    return  fLocation == u.fLocation
+            && fLoadMask == u.fLoadMask
+            && fClassType == u.fClassType
+            && hsStrEQ(fObjectName, u.fObjectName)
+            && fObjectID == u.fObjectID
+            && fCloneID == u.fCloneID
+            && fClonePlayerID == u.fClonePlayerID;
 }
 
 plUoid& plUoid::operator=(const plUoid& rhs)
 {
-	fObjectID = rhs.fObjectID;
-	fCloneID = rhs.fCloneID;
-	fClonePlayerID = rhs.fClonePlayerID;
-	fClassType = rhs.fClassType;
-	if (fObjectName)
-		delete [] fObjectName;
-	fObjectName = hsStrcpy(rhs.fObjectName);
-	fLocation = rhs.fLocation;
-	fLoadMask = rhs.fLoadMask;
+    fObjectID = rhs.fObjectID;
+    fCloneID = rhs.fCloneID;
+    fClonePlayerID = rhs.fClonePlayerID;
+    fClassType = rhs.fClassType;
+    if (fObjectName)
+        delete [] fObjectName;
+    fObjectName = hsStrcpy(rhs.fObjectName);
+    fLocation = rhs.fLocation;
+    fLoadMask = rhs.fLoadMask;
 
-	return *this;
+    return *this;
 }
 
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
 char* plUoid::StringIze(char* str) const // Format to displayable string
 {
-	sprintf(str, "(0x%x:0x%x:%s:C:[%lu,%lu])", 
-		fLocation.GetSequenceNumber(), 
-		int(fLocation.GetFlags()), 
-		fObjectName, 
-		GetClonePlayerID(), 
-		GetCloneID());
-	return str;
+    sprintf(str, "(0x%x:0x%x:%s:C:[%lu,%lu])", 
+        fLocation.GetSequenceNumber(), 
+        int(fLocation.GetFlags()), 
+        fObjectName, 
+        GetClonePlayerID(), 
+        GetCloneID());
+    return str;
 }

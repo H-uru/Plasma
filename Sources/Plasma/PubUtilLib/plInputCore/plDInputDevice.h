@@ -35,15 +35,15 @@ struct DIDEVICEOBJECTDATA;
 class plDInputDevice : public plInputDevice
 {
 public:
-	plDInputDevice();
-	~plDInputDevice();
+    plDInputDevice();
+    ~plDInputDevice();
 
-	const char* GetInputName() { return "DInput"; }
-	
-	virtual void Update(DIDEVICEOBJECTDATA* js);
+    const char* GetInputName() { return "DInput"; }
+    
+    virtual void Update(DIDEVICEOBJECTDATA* js);
 
 protected:
-	hsScalar fX,fY;
+    hsScalar fX,fY;
 };
 
 

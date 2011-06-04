@@ -33,73 +33,73 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSoundMsg : public plMessageWithCallbacks
 {
 private:
-	void IInit() { fLoop=false; fPlaying = false; fBegin=fEnd=fTime=fRepeats=0; fSpeed = 0.f; fVolume = 0.f; fIndex = -1; fNameStr = 0; fFadeType = kLinear; }
+    void IInit() { fLoop=false; fPlaying = false; fBegin=fEnd=fTime=fRepeats=0; fSpeed = 0.f; fVolume = 0.f; fIndex = -1; fNameStr = 0; fFadeType = kLinear; }
 public:
-	plSoundMsg()
-		: plMessageWithCallbacks(nil, nil, nil) { IInit(); }
-	plSoundMsg(const plKey &s, 
-				const plKey &r, 
-				const double* t)
-		: plMessageWithCallbacks(s, r, t) { IInit(); }
-	~plSoundMsg();
+    plSoundMsg()
+        : plMessageWithCallbacks(nil, nil, nil) { IInit(); }
+    plSoundMsg(const plKey &s, 
+                const plKey &r, 
+                const double* t)
+        : plMessageWithCallbacks(s, r, t) { IInit(); }
+    ~plSoundMsg();
 
-	CLASSNAME_REGISTER( plSoundMsg );
-	GETINTERFACE_ANY( plSoundMsg, plMessageWithCallbacks );
+    CLASSNAME_REGISTER( plSoundMsg );
+    GETINTERFACE_ANY( plSoundMsg, plMessageWithCallbacks );
 
-	enum ModCmds
-	{
-		kPlay=0,
-		kStop,
-		kSetLooping,
-		kUnSetLooping,
-		kSetBegin,
-		kToggleState,
-		kAddCallbacks,
-		kRemoveCallbacks,
-		kGetStatus,
-		kGetNumSounds,
-		kStatusReply,
-		kGoToTime,
-		kSetVolume,
-		kSetTalkIcon,
-		kClearTalkIcon,
-		kSetFadeIn,
-		kSetFadeOut,
-		kIsLocalOnly,		// Not really a command, just a flag
-		kSelectFromGroup,
-		kNumCmds,
-		kFastForwardPlay,
-		kFastForwardToggle,
-		kSynchedPlay,
-	};
+    enum ModCmds
+    {
+        kPlay=0,
+        kStop,
+        kSetLooping,
+        kUnSetLooping,
+        kSetBegin,
+        kToggleState,
+        kAddCallbacks,
+        kRemoveCallbacks,
+        kGetStatus,
+        kGetNumSounds,
+        kStatusReply,
+        kGoToTime,
+        kSetVolume,
+        kSetTalkIcon,
+        kClearTalkIcon,
+        kSetFadeIn,
+        kSetFadeOut,
+        kIsLocalOnly,       // Not really a command, just a flag
+        kSelectFromGroup,
+        kNumCmds,
+        kFastForwardPlay,
+        kFastForwardToggle,
+        kSynchedPlay,
+    };
 
-	hsBitVector		fCmd;
+    hsBitVector     fCmd;
 
-	hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
-	void SetCmd(int n) { fCmd.SetBit(n); }
-	void ClearCmd();
+    hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
+    void SetCmd(int n) { fCmd.SetBit(n); }
+    void ClearCmd();
 
-	double	 fBegin;
-	double	 fEnd;
-	hsBool	 fLoop;
-	hsScalar fSpeed;
-	double	 fTime;
-	int		 fIndex;
-	int		 fRepeats;
-	hsBool	 fPlaying;
-	UInt32	 fNameStr;	
-	hsScalar fVolume;	// Range: 0 - silence, 1.f - loudest
+    double   fBegin;
+    double   fEnd;
+    hsBool   fLoop;
+    hsScalar fSpeed;
+    double   fTime;
+    int      fIndex;
+    int      fRepeats;
+    hsBool   fPlaying;
+    UInt32   fNameStr;  
+    hsScalar fVolume;   // Range: 0 - silence, 1.f - loudest
 
-	enum FadeType
-	{
-		kLinear,
-		kLogarithmic,
-		kExponential
-	} fFadeType;
+    enum FadeType
+    {
+        kLinear,
+        kLogarithmic,
+        kExponential
+    } fFadeType;
 
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 

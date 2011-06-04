@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPythonCreatable_inc
 #define plPythonCreatable_inc
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "plPythonFileMod.h"
 REGISTER_CREATABLE( plPythonFileMod );

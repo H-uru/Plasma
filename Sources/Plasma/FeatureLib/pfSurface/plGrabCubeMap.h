@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plGrabCubeMap_inc
 #define plGrabCubeMap_inc
 
-#include "../plScene/plRenderRequest.h"
+#include "plScene/plRenderRequest.h"
 
 class plSceneObject;
 class plPipeline;
@@ -40,24 +40,24 @@ struct hsColorRGBA;
 class plGrabCubeRenderRequest : public plRenderRequest
 {
 public:
-	plGrabCubeRenderRequest();
+    plGrabCubeRenderRequest();
 
-	char			fFileName[256];
-	UInt8			fQuality;
+    char            fFileName[256];
+    UInt8           fQuality;
 
-	// This function is called after the render request is processed by the client
-	virtual void	Render(plPipeline* pipe, plPageTreeMgr* pageMgr);
+    // This function is called after the render request is processed by the client
+    virtual void    Render(plPipeline* pipe, plPageTreeMgr* pageMgr);
 };
 
 class plGrabCubeMap
 {
 protected:
-	void ISetupRenderRequests(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, UInt8 q) const;
+    void ISetupRenderRequests(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, UInt8 q) const;
 
 public:
-	plGrabCubeMap() {}
-	void GrabCube(plPipeline* pipe, plSceneObject* obj, const char* pref, const hsColorRGBA& clearColor, UInt8 q=75);
-	void GrabCube(plPipeline* pipe, const hsPoint3& pos, const char* pref, const hsColorRGBA& clearColor, UInt8 q=75);
+    plGrabCubeMap() {}
+    void GrabCube(plPipeline* pipe, plSceneObject* obj, const char* pref, const hsColorRGBA& clearColor, UInt8 q=75);
+    void GrabCube(plPipeline* pipe, const hsPoint3& pos, const char* pref, const hsColorRGBA& clearColor, UInt8 q=75);
 };
 
 

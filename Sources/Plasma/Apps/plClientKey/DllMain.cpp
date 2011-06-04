@@ -27,9 +27,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 __declspec(dllexport) const unsigned long* GetKey()
 {
-	// So the crackers know who the tard is
-	static const char* tauntText = "My copy protection is uncrackable! -Brice";
+    // So the crackers know who the tard is
+    static const char* tauntText = "My copy protection is uncrackable! -Brice";
 
-	static const unsigned long kDefaultKey[4] = { 0x6c0a5452, 0x3827d0f, 0x3a170b92, 0x16db7fc2 };
-	return kDefaultKey;
+    static const unsigned long kDefaultKey[4] = { 0x6c0a5452, 0x3827d0f, 0x3a170b92, 0x16db7fc2 };
+    return kDefaultKey;
 }

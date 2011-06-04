@@ -37,17 +37,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plPipeResReq
 {
 protected:
-	hsBool	fReq;
+    hsBool  fReq;
 
-	plPipeResReq() : fReq(false) {}
+    plPipeResReq() : fReq(false) {}
 
-	static plPipeResReq& Instance();
+    static plPipeResReq& Instance();
 
 public:
 
-	static void Request() { PIPELOG("Request"); Instance().fReq = true; }
-	static hsBool Check() { PIPELOG("Check"); return Instance().fReq; }
-	static void Clear() { PIPELOG("Clear"); Instance().fReq = false; }
+    static void Request() { PIPELOG("Request"); Instance().fReq = true; }
+    static hsBool Check() { PIPELOG("Check"); return Instance().fReq; }
+    static void Clear() { PIPELOG("Clear"); Instance().fReq = false; }
 };
 
 #endif // plPipeResReq_inc

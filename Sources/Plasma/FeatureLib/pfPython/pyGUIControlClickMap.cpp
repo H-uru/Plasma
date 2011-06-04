@@ -30,8 +30,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyKey.h"
 
-#include "../pfGameGUIMgr/pfGUIClickMapCtrl.h"
-#include "../pfGameGUIMgr/pfGUIDialogMod.h"
+#include "pfGameGUIMgr/pfGUIClickMapCtrl.h"
+#include "pfGameGUIMgr/pfGUIDialogMod.h"
 
 #include "pyGUIControlClickMap.h"
 #include "pyGUIDialog.h"
@@ -47,44 +47,44 @@ pyGUIControlClickMap::pyGUIControlClickMap(plKey objkey) : pyGUIControl(objkey)
 
 hsBool pyGUIControlClickMap::IsGUIControlClickMap(pyKey& gckey)
 {
-	if ( gckey.getKey() && pfGUIClickMapCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
-		return true;
-	return false;
+    if ( gckey.getKey() && pfGUIClickMapCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+        return true;
+    return false;
 }
 
 
 PyObject* pyGUIControlClickMap::GetLastMousePt( void )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIClickMapCtrl* pcmmod = pfGUIClickMapCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pcmmod )
-			return pyPoint3::New(pcmmod->GetLastMousePt());
-	}
-	PYTHON_RETURN_NONE;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIClickMapCtrl* pcmmod = pfGUIClickMapCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pcmmod )
+            return pyPoint3::New(pcmmod->GetLastMousePt());
+    }
+    PYTHON_RETURN_NONE;
 }
 
 PyObject* pyGUIControlClickMap::GetLastMouseUpPt( void )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIClickMapCtrl* pcmmod = pfGUIClickMapCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pcmmod )
-			return pyPoint3::New(pcmmod->GetLastMouseUpPt());
-	}
-	PYTHON_RETURN_NONE;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIClickMapCtrl* pcmmod = pfGUIClickMapCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pcmmod )
+            return pyPoint3::New(pcmmod->GetLastMouseUpPt());
+    }
+    PYTHON_RETURN_NONE;
 }
 
 PyObject* pyGUIControlClickMap::GetLastMouseDragPt( void )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIClickMapCtrl* pcmmod = pfGUIClickMapCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( pcmmod )
-			return pyPoint3::New(pcmmod->GetLastMouseDragPt());
-	}
-	PYTHON_RETURN_NONE;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIClickMapCtrl* pcmmod = pfGUIClickMapCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pcmmod )
+            return pyPoint3::New(pcmmod->GetLastMouseDragPt());
+    }
+    PYTHON_RETURN_NONE;
 }

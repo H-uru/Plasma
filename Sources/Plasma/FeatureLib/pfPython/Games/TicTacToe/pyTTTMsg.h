@@ -33,92 +33,92 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for TTT game messages
 //
 
-#include "../pfGameMgr/pfGameMgr.h"
+#include "pfGameMgr/pfGameMgr.h"
 
-#include <python.h>
+#include <Python.h>
 #include "../../pyGlueHelpers.h"
 #include "../pyGameCliMsg.h"
 
 class pyTTTMsg : public pyGameCliMsg
 {
 protected:
-	pyTTTMsg();
-	pyTTTMsg(pfGameCliMsg* msg);
+    pyTTTMsg();
+    pyTTTMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE; // so we can subclass
-	PYTHON_CLASS_NEW_FRIEND(ptTTTMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTMsg); // converts a PyObject to a pyTTTMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE; // so we can subclass
+    PYTHON_CLASS_NEW_FRIEND(ptTTTMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTMsg); // converts a PyObject to a pyTTTMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
-	int GetTTTMsgType() const;
+    int GetTTTMsgType() const;
 
-	PyObject* UpcastToFinalTTTMsg() const; // returns the ttt message that this really is
+    PyObject* UpcastToFinalTTTMsg() const; // returns the ttt message that this really is
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyTTTGameStartedMsg : public pyTTTMsg
 {
 protected:
-	pyTTTGameStartedMsg();
-	pyTTTGameStartedMsg(pfGameCliMsg* msg);
+    pyTTTGameStartedMsg();
+    pyTTTGameStartedMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptTTTGameStartedMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTGameStartedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTGameStartedMsg); // converts a PyObject to a pyTTTGameStartedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptTTTGameStartedMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTGameStartedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTGameStartedMsg); // converts a PyObject to a pyTTTGameStartedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	bool YourTurn() const;
+    bool YourTurn() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyTTTGameOverMsg : public pyTTTMsg
 {
 protected:
-	pyTTTGameOverMsg();
-	pyTTTGameOverMsg(pfGameCliMsg* msg);
+    pyTTTGameOverMsg();
+    pyTTTGameOverMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptTTTGameOverMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTGameOverMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTGameOverMsg); // converts a PyObject to a pyTTTGameOverMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptTTTGameOverMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTGameOverMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTGameOverMsg); // converts a PyObject to a pyTTTGameOverMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	int Result() const;
-	unsigned long WinnerID() const;
+    int Result() const;
+    unsigned long WinnerID() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyTTTMoveMadeMsg : public pyTTTMsg
 {
 protected:
-	pyTTTMoveMadeMsg();
-	pyTTTMoveMadeMsg(pfGameCliMsg* msg);
+    pyTTTMoveMadeMsg();
+    pyTTTMoveMadeMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptTTTMoveMadeMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTMoveMadeMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTMoveMadeMsg); // converts a PyObject to a pyTTTMoveMadeMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptTTTMoveMadeMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyTTTMoveMadeMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyTTTMoveMadeMsg); // converts a PyObject to a pyTTTMoveMadeMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	unsigned long PlayerID() const;
-	int Row() const;
-	int Col() const;
+    unsigned long PlayerID() const;
+    int Row() const;
+    int Col() const;
 };
 
 #endif // pyTTTMsg_h

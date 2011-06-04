@@ -31,9 +31,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 plPrintShape::plPrintShape()
-:	fWidth(0.5f),
-	fLength(1.f),
-	fHeight(1.f)
+:   fWidth(0.5f),
+    fLength(1.f),
+    fHeight(1.f)
 {
 }
 
@@ -43,19 +43,19 @@ plPrintShape::~plPrintShape()
 
 void plPrintShape::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plObjInterface::Read(stream, mgr);
+    plObjInterface::Read(stream, mgr);
 
-	fWidth = stream->ReadSwapScalar();
-	fLength = stream->ReadSwapScalar();
-	fHeight = stream->ReadSwapScalar();
+    fWidth = stream->ReadSwapScalar();
+    fLength = stream->ReadSwapScalar();
+    fHeight = stream->ReadSwapScalar();
 }
 
 void plPrintShape::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plObjInterface::Write(stream, mgr);
+    plObjInterface::Write(stream, mgr);
 
-	stream->WriteSwapScalar(fWidth);
-	stream->WriteSwapScalar(fLength);
-	stream->WriteSwapScalar(fHeight);
+    stream->WriteSwapScalar(fWidth);
+    stream->WriteSwapScalar(fLength);
+    stream->WriteSwapScalar(fHeight);
 }
 

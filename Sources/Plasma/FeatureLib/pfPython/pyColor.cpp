@@ -27,10 +27,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pyColor::pyColor(hsScalar r, hsScalar g, hsScalar b, hsScalar a)
 {
-	fColor.Set(r, g, b ,a);
+    fColor.Set(r, g, b ,a);
 }
 
 pyColor::pyColor(hsColorRGBA color)
 {
-	fColor = color;
+    fColor = color;
 }

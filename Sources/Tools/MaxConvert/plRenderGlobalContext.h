@@ -33,25 +33,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plRenderGlobalContext : public RenderGlobalContext
 {
 protected:
-	Interface*							fInterface;
+    Interface*                          fInterface;
 
-	hsTArray<plRenderInstance>			fInstList;
+    hsTArray<plRenderInstance>          fInstList;
 
-	void								IMakeRenderInstances(plMaxNode* node, TimeValue t, hsBool isBarney);
+    void                                IMakeRenderInstances(plMaxNode* node, TimeValue t, hsBool isBarney);
 
 public:
-	plRenderGlobalContext(Interface* ip, TimeValue t);
-	~plRenderGlobalContext();
+    plRenderGlobalContext(Interface* ip, TimeValue t);
+    ~plRenderGlobalContext();
 
-	void Update(TimeValue t);
+    void Update(TimeValue t);
 
-	void MakeRenderInstances(plMaxNode* root, TimeValue t);
+    void MakeRenderInstances(plMaxNode* root, TimeValue t);
 
-	virtual int NumRenderInstances() { return fInstList.GetCount(); }
-	virtual RenderInstance* GetRenderInstance( int i ) { return i < fInstList.GetCount() ? &fInstList[i] : nil; }
+    virtual int NumRenderInstances() { return fInstList.GetCount(); }
+    virtual RenderInstance* GetRenderInstance( int i ) { return i < fInstList.GetCount() ? &fInstList[i] : nil; }
 
-	virtual void IntersectRay(RenderInstance *inst, Ray& ray, ISect &isct, ISectList &xpList, BOOL findExit);
-	virtual BOOL IntersectWorld(Ray &ray, int skipID, ISect &hit, ISectList &xplist, int blurFrame = NO_MOTBLUR);
+    virtual void IntersectRay(RenderInstance *inst, Ray& ray, ISect &isct, ISectList &xpList, BOOL findExit);
+    virtual BOOL IntersectWorld(Ray &ray, int skipID, ISect &hit, ISectList &xplist, int blurFrame = NO_MOTBLUR);
 };
 
 #endif // plRenderGlobalContext_inc

@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUICheckBoxCtrl Header												//
-//																			//
+//                                                                          //
+//  pfGUICheckBoxCtrl Header                                                //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUICheckBoxCtrl_h
@@ -40,56 +40,56 @@ class plAGMasterMod;
 
 class pfGUICheckBoxCtrl : public pfGUIControlMod
 {
-	protected:
+    protected:
 
-		hsTArray<plKey>	fAnimationKeys;
-		char			*fAnimName;
-		hsBool			fClicking;
+        hsTArray<plKey> fAnimationKeys;
+        char            *fAnimName;
+        hsBool          fClicking;
 
-		hsBool			fChecked;
-		hsBool			fPlaySound;
+        hsBool          fChecked;
+        hsBool          fPlaySound;
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
-		virtual UInt32		IGetDesiredCursor( void ) const;	// As specified in plInputInterface.h
+        virtual UInt32      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
-	public:
+    public:
 
-		pfGUICheckBoxCtrl();
-		virtual ~pfGUICheckBoxCtrl();
+        pfGUICheckBoxCtrl();
+        virtual ~pfGUICheckBoxCtrl();
 
-		CLASSNAME_REGISTER( pfGUICheckBoxCtrl );
-		GETINTERFACE_ANY( pfGUICheckBoxCtrl, pfGUIControlMod );
+        CLASSNAME_REGISTER( pfGUICheckBoxCtrl );
+        GETINTERFACE_ANY( pfGUICheckBoxCtrl, pfGUIControlMod );
 
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
-		
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+        
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
 
-		virtual void	HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-		virtual void	HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
 
-		virtual void	UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
+        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
 
-		void		SetChecked( hsBool checked, hsBool immediate = false );
-		hsBool		IsChecked( void ) { return fChecked; }
+        void        SetChecked( hsBool checked, hsBool immediate = false );
+        hsBool      IsChecked( void ) { return fChecked; }
 
-		void DontPlaySounds() { fPlaySound = false; } // should the checkbox play sounds?
-		
-		const hsTArray<plKey>	&GetAnimationKeys( void ) const { return fAnimationKeys; }
-		const char				*GetAnimationName( void ) const { return fAnimName; }
+        void DontPlaySounds() { fPlaySound = false; } // should the checkbox play sounds?
+        
+        const hsTArray<plKey>   &GetAnimationKeys( void ) const { return fAnimationKeys; }
+        const char              *GetAnimationName( void ) const { return fAnimName; }
 
-		enum SoundEvents
-		{
-			kMouseDown,
-			kMouseUp,
-			kMouseOver,
-			kMouseOff
-		};
+        enum SoundEvents
+        {
+            kMouseDown,
+            kMouseUp,
+            kMouseOver,
+            kMouseOff
+        };
 
-		// Export only
-		void	SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
+        // Export only
+        void    SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
 };
 
 #endif // _pfGUICheckBoxCtrl_h

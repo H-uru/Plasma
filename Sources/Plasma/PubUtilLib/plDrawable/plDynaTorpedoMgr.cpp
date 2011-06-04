@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plDynaTorpedoMgr.h"
 
-#include "../plMessage/plBulletMsg.h"
+#include "plMessage/plBulletMsg.h"
 
 #include "plCutter.h"
 
@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plTweak.h"
 
-#include "../plMath/plRandom.h"
+#include "plMath/plRandom.h"
 
 static const UInt32 kNumPrintIDs = 0;
 
@@ -46,7 +46,7 @@ static plRandom sRand;
 
 plDynaTorpedoMgr::plDynaTorpedoMgr()
 {
-	fPartIDs.SetCount(kNumPrintIDs);
+    fPartIDs.SetCount(kNumPrintIDs);
 }
 
 plDynaTorpedoMgr::~plDynaTorpedoMgr()
@@ -55,89 +55,89 @@ plDynaTorpedoMgr::~plDynaTorpedoMgr()
 
 void plDynaTorpedoMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plDynaRippleMgr::Read(stream, mgr);
+    plDynaRippleMgr::Read(stream, mgr);
 
-	plgDispatch::Dispatch()->RegisterForExactType(plBulletMsg::Index(), GetKey());
+    plgDispatch::Dispatch()->RegisterForExactType(plBulletMsg::Index(), GetKey());
 }
 
 hsBool plDynaTorpedoMgr::IHandleShot(plBulletMsg* bull)
 {
-	hsScalar partyTime = fPartyTime;
+    hsScalar partyTime = fPartyTime;
 
-	plConst(int) kNumShots(3);
-	int i;
-	for( i = 0; i < kNumShots; i++ )
-	{
-		hsVector3 up = IRandomUp(bull->Dir());
-		hsVector3 pert = bull->Dir() % up;
+    plConst(int) kNumShots(3);
+    int i;
+    for( i = 0; i < kNumShots; i++ )
+    {
+        hsVector3 up = IRandomUp(bull->Dir());
+        hsVector3 pert = bull->Dir() % up;
 
-		plConst(hsScalar) kMaxPert(1.f);
-		hsScalar maxPert = i ? kMaxPert * bull->Radius() : 0;
-		pert *= sRand.RandMinusOneToOne() * maxPert * fScale.fX;
+        plConst(hsScalar) kMaxPert(1.f);
+        hsScalar maxPert = i ? kMaxPert * bull->Radius() : 0;
+        pert *= sRand.RandMinusOneToOne() * maxPert * fScale.fX;
 
-		pert += up * (sRand.RandMinusOneToOne() * maxPert * fScale.fY);
+        pert += up * (sRand.RandMinusOneToOne() * maxPert * fScale.fY);
 
-		hsPoint3 pos = bull->From() + bull->Dir() * (bull->Range() * 0.5f);
-		pos += pert;
+        hsPoint3 pos = bull->From() + bull->Dir() * (bull->Range() * 0.5f);
+        pos += pert;
 
-		hsScalar scaleX = bull->Radius() * fScale.fX * fInitUVW.fX;
-		hsScalar scaleY = bull->Radius() * fScale.fY * fInitUVW.fY;
+        hsScalar scaleX = bull->Radius() * fScale.fX * fInitUVW.fX;
+        hsScalar scaleY = bull->Radius() * fScale.fY * fInitUVW.fY;
 
 #if 0
-		plConst(hsScalar) kMinScale(0.5f);
-		if( i )
-		{
-			scaleX *= sRand.RandRangeF(kMinScale, 1.f);
-			scaleY *= sRand.RandRangeF(kMinScale, 1.f);
-		}
+        plConst(hsScalar) kMinScale(0.5f);
+        if( i )
+        {
+            scaleX *= sRand.RandRangeF(kMinScale, 1.f);
+            scaleY *= sRand.RandRangeF(kMinScale, 1.f);
+        }
 #elif 0
-		hsScalar div = 1.f / (1.f + hsScalar(i));
-		scaleX *= div;
-		scaleY *= div;
+        hsScalar div = 1.f / (1.f + hsScalar(i));
+        scaleX *= div;
+        scaleY *= div;
 #else
-		plConst(hsScalar) kMinScale(0.25f);
-		plConst(hsScalar) kMaxScale(0.75f);
-		if( i ) 
-		{
-			hsScalar scale = sRand.RandRangeF(kMinScale, kMaxScale);
-			scaleX *= scale;
-			scaleY *= scale;
-		}
+        plConst(hsScalar) kMinScale(0.25f);
+        plConst(hsScalar) kMaxScale(0.75f);
+        if( i ) 
+        {
+            hsScalar scale = sRand.RandRangeF(kMinScale, kMaxScale);
+            scaleX *= scale;
+            scaleY *= scale;
+        }
 #endif
 
-		fCutter->SetLength(hsVector3(scaleX, scaleY, bull->Range()));
-		fCutter->Set(pos, up, -bull->Dir());
+        fCutter->SetLength(hsVector3(scaleX, scaleY, bull->Range()));
+        fCutter->Set(pos, up, -bull->Dir());
 
-		plDynaDecalInfo& info = IGetDecalInfo(UInt32(this), GetKey());
+        plDynaDecalInfo& info = IGetDecalInfo(UInt32(this), GetKey());
 
-		if( bull->PartyTime() > 0 )
-			fPartyTime = bull->PartyTime();
+        if( bull->PartyTime() > 0 )
+            fPartyTime = bull->PartyTime();
 
-		double secs = hsTimer::GetSysSeconds();
+        double secs = hsTimer::GetSysSeconds();
 
-		if( ICutoutTargets(secs) )
-			info.fLastTime = secs;
+        if( ICutoutTargets(secs) )
+            info.fLastTime = secs;
 
-		fPartyTime = 0;
-	
-	}
-	fPartyTime = partyTime;
+        fPartyTime = 0;
+    
+    }
+    fPartyTime = partyTime;
 
-	return true;
+    return true;
 }
 
 hsBool plDynaTorpedoMgr::MsgReceive(plMessage* msg)
 {
-	plBulletMsg* bullMsg = plBulletMsg::ConvertNoRef(msg);
-	if( bullMsg )
-	{
-		if( bullMsg->Shot() )
-		{
-			return IHandleShot(bullMsg);
-		}
-		return true;
-	}
+    plBulletMsg* bullMsg = plBulletMsg::ConvertNoRef(msg);
+    if( bullMsg )
+    {
+        if( bullMsg->Shot() )
+        {
+            return IHandleShot(bullMsg);
+        }
+        return true;
+    }
 
-	return plDynaRippleMgr::MsgReceive(msg);
+    return plDynaRippleMgr::MsgReceive(msg);
 }
 

@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 
 #include "pyGUIControlButton.h"
-#include "../pfGameGUIMgr/pfGUIButtonMod.h"
+#include "pfGameGUIMgr/pfGUIButtonMod.h"
 
 pyGUIControlButton::pyGUIControlButton(pyKey& gckey) : pyGUIControl(gckey)
 {
@@ -43,42 +43,42 @@ pyGUIControlButton::pyGUIControlButton(plKey objkey) : pyGUIControl(objkey)
 
 hsBool pyGUIControlButton::IsGUIControlButton(pyKey& gckey)
 {
-	if ( gckey.getKey() && pfGUIButtonMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
-		return true;
-	return false;
+    if ( gckey.getKey() && pfGUIButtonMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+        return true;
+    return false;
 }
 
-void	pyGUIControlButton::SetNotifyType(Int32 kind)
+void    pyGUIControlButton::SetNotifyType(Int32 kind)
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIButtonMod* butnmod = pfGUIButtonMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( butnmod )
-			butnmod->SetNotifyType(kind);
-	}
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIButtonMod* butnmod = pfGUIButtonMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( butnmod )
+            butnmod->SetNotifyType(kind);
+    }
 }
 
-Int32	pyGUIControlButton::GetNotifyType()
+Int32   pyGUIControlButton::GetNotifyType()
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIButtonMod* butnmod = pfGUIButtonMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( butnmod )
-			return butnmod->GetNotifyType();
-	}
-	return false;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIButtonMod* butnmod = pfGUIButtonMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( butnmod )
+            return butnmod->GetNotifyType();
+    }
+    return false;
 }
 
-hsBool	pyGUIControlButton::IsButtonDown()
+hsBool  pyGUIControlButton::IsButtonDown()
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIButtonMod* butnmod = pfGUIButtonMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( butnmod )
-			return butnmod->IsButtonDown();
-	}
-	return false;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIButtonMod* butnmod = pfGUIButtonMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( butnmod )
+            return butnmod->IsButtonDown();
+    }
+    return false;
 }

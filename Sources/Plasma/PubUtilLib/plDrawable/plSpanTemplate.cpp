@@ -34,104 +34,104 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plSpanTemplate::plSpanTemplate()
-:	fNumVerts(0),
-	fFormat(0),
-	fData(nil),
-	fNumTris(0),
-	fIndices(nil)
+:   fNumVerts(0),
+    fFormat(0),
+    fData(nil),
+    fNumTris(0),
+    fIndices(nil)
 {
 }
 
 UInt32 plSpanTemplate::CalcStride() 
 {
-	fStride = 0;
-	if( NumPos() )
-		fStride += sizeof(hsPoint3);
-	if( NumNorm() )
-		fStride += sizeof(hsVector3);
-	if( NumColor() )
-		fStride += sizeof(UInt32);
-	if( NumColor2() )
-		fStride += sizeof(UInt32);
-	if( NumWgtIdx() )
-		fStride += sizeof(UInt32);
-	if( NumUVWs() )
-		fStride += (UInt8)(sizeof(hsPoint3) * NumUVWs());
-	if( NumWeights() )
-		fStride += (UInt8)(sizeof(hsScalar) * NumWeights());
+    fStride = 0;
+    if( NumPos() )
+        fStride += sizeof(hsPoint3);
+    if( NumNorm() )
+        fStride += sizeof(hsVector3);
+    if( NumColor() )
+        fStride += sizeof(UInt32);
+    if( NumColor2() )
+        fStride += sizeof(UInt32);
+    if( NumWgtIdx() )
+        fStride += sizeof(UInt32);
+    if( NumUVWs() )
+        fStride += (UInt8)(sizeof(hsPoint3) * NumUVWs());
+    if( NumWeights() )
+        fStride += (UInt8)(sizeof(hsScalar) * NumWeights());
 
-	return UInt32(fStride);
+    return UInt32(fStride);
 }
 
 void plSpanTemplate::Alloc(UInt16 format, UInt32 numVerts, UInt32 numTris)
 {
-	DeAlloc();
-	fNumVerts = (UInt16)numVerts;
-	fFormat = format;
-	CalcStride();
+    DeAlloc();
+    fNumVerts = (UInt16)numVerts;
+    fFormat = format;
+    CalcStride();
 
-	fNumTris = (UInt16)numTris;
+    fNumTris = (UInt16)numTris;
 
-	fData = TRACKED_NEW UInt8[VertSize()];
+    fData = TRACKED_NEW UInt8[VertSize()];
 
-	fIndices = TRACKED_NEW UInt16[NumIndices()];
+    fIndices = TRACKED_NEW UInt16[NumIndices()];
 }
 
 void plSpanTemplate::DeAlloc()
 {
-	delete [] fData;
-	delete [] fIndices;
+    delete [] fData;
+    delete [] fIndices;
 
-	fNumTris = 0;
-	fNumVerts = 0;
-	fFormat = 0;
+    fNumTris = 0;
+    fNumVerts = 0;
+    fFormat = 0;
 
-	fData = nil;
-	fIndices = nil;
+    fData = nil;
+    fIndices = nil;
 }
 
 void plSpanTemplate::Read(hsStream* stream)
 {
-	fNumVerts = stream->ReadSwap16();
-	fFormat = stream->ReadSwap16();
-	fNumTris = stream->ReadSwap16();
+    fNumVerts = stream->ReadSwap16();
+    fFormat = stream->ReadSwap16();
+    fNumTris = stream->ReadSwap16();
 
-	Alloc(fFormat, fNumVerts, fNumTris);
+    Alloc(fFormat, fNumVerts, fNumTris);
 
-	stream->Read(VertSize(), fData);
-	stream->Read(IndexSize(), fIndices);
+    stream->Read(VertSize(), fData);
+    stream->Read(IndexSize(), fIndices);
 }
 
 void plSpanTemplate::Write(hsStream* stream) const
 {
-	stream->WriteSwap16(fNumVerts);
-	stream->WriteSwap16(fFormat);
-	stream->WriteSwap16(fNumTris);
+    stream->WriteSwap16(fNumVerts);
+    stream->WriteSwap16(fFormat);
+    stream->WriteSwap16(fNumTris);
 
-	stream->Write(VertSize(), fData);
-	stream->Write(IndexSize(), fIndices);
+    stream->Write(VertSize(), fData);
+    stream->Write(IndexSize(), fIndices);
 }
 
 
 void plSpanTemplateB::ComputeBounds()
 {
-	fLocalBounds.MakeEmpty();
-	int i;
-	for( i = 0; i < NumVerts(); i++ )
-		fLocalBounds.Union(Position(i));
+    fLocalBounds.MakeEmpty();
+    int i;
+    for( i = 0; i < NumVerts(); i++ )
+        fLocalBounds.Union(Position(i));
 }
 
 void plSpanTemplateB::AllocColors()
 {
-	fMultColors = TRACKED_NEW hsColorRGBA[NumVerts()];
-	fAddColors = TRACKED_NEW hsColorRGBA[NumVerts()];
+    fMultColors = TRACKED_NEW hsColorRGBA[NumVerts()];
+    fAddColors = TRACKED_NEW hsColorRGBA[NumVerts()];
 }
 
 void plSpanTemplateB::DeAllocColors()
 {
-	delete [] fMultColors;
-	delete [] fAddColors;
+    delete [] fMultColors;
+    delete [] fAddColors;
 
-	fMultColors = nil;
-	fAddColors = nil;
+    fMultColors = nil;
+    fAddColors = nil;
 }

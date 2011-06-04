@@ -31,140 +31,140 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 struct hsColorRGBA {
-	hsScalar		r,g,b,a;
-	
-	hsRGBAColor32 ToRGBA32() const;
+    hsScalar        r,g,b,a;
+    
+    hsRGBAColor32 ToRGBA32() const;
 
-	hsColorRGBA& Set(hsScalar red, hsScalar grn, hsScalar blu, hsScalar alp) { r = red; g = grn; b = blu; a = alp; return *this; }
+    hsColorRGBA& Set(hsScalar red, hsScalar grn, hsScalar blu, hsScalar alp) { r = red; g = grn; b = blu; a = alp; return *this; }
 
-	hsBool operator==(const hsColorRGBA&c) const { return (r==c.r)&&(g==c.g)&&(b==c.b)&&(a==c.a); }
-	hsBool operator!=(const hsColorRGBA&c) const { return !(c == *this); }
+    hsBool operator==(const hsColorRGBA&c) const { return (r==c.r)&&(g==c.g)&&(b==c.b)&&(a==c.a); }
+    hsBool operator!=(const hsColorRGBA&c) const { return !(c == *this); }
 
-	friend inline hsColorRGBA operator+(const hsColorRGBA& s, const hsColorRGBA& t);
-	hsColorRGBA& operator+=(const hsColorRGBA& s);
-	
-	friend inline hsColorRGBA operator*(const hsColorRGBA& s, const hsColorRGBA& t);
-	hsColorRGBA& operator*=(const hsColorRGBA& s);
-	
-	friend inline hsColorRGBA operator-(const hsColorRGBA& s, const hsColorRGBA& t);
-	hsColorRGBA& operator-=(const hsColorRGBA& s);
-	
-	friend inline hsColorRGBA operator*(const hsColorRGBA& c, const hsScalar s);
-	friend inline hsColorRGBA operator*(const hsScalar s, const hsColorRGBA& c);
-	hsColorRGBA& operator*=(const hsScalar s);
+    friend inline hsColorRGBA operator+(const hsColorRGBA& s, const hsColorRGBA& t);
+    hsColorRGBA& operator+=(const hsColorRGBA& s);
+    
+    friend inline hsColorRGBA operator*(const hsColorRGBA& s, const hsColorRGBA& t);
+    hsColorRGBA& operator*=(const hsColorRGBA& s);
+    
+    friend inline hsColorRGBA operator-(const hsColorRGBA& s, const hsColorRGBA& t);
+    hsColorRGBA& operator-=(const hsColorRGBA& s);
+    
+    friend inline hsColorRGBA operator*(const hsColorRGBA& c, const hsScalar s);
+    friend inline hsColorRGBA operator*(const hsScalar s, const hsColorRGBA& c);
+    hsColorRGBA& operator*=(const hsScalar s);
 
-	hsColorRGBA&	FromARGB32(UInt32 c);
-	UInt32			ToARGB32() const;
+    hsColorRGBA&    FromARGB32(UInt32 c);
+    UInt32          ToARGB32() const;
 
-	void Read(hsStream *stream);
-	void Write(hsStream *stream) const;
+    void Read(hsStream *stream);
+    void Write(hsStream *stream) const;
 };
 
 inline void hsColorRGBA::Read(hsStream *s)
 {
-	r = s->ReadSwapScalar();
-	g = s->ReadSwapScalar();
-	b = s->ReadSwapScalar();
-	a = s->ReadSwapScalar();
+    r = s->ReadSwapScalar();
+    g = s->ReadSwapScalar();
+    b = s->ReadSwapScalar();
+    a = s->ReadSwapScalar();
 }
 inline void hsColorRGBA::Write(hsStream *s) const
 {
-	s->WriteSwapScalar(r);
-	s->WriteSwapScalar(g);
-	s->WriteSwapScalar(b);
-	s->WriteSwapScalar(a);
+    s->WriteSwapScalar(r);
+    s->WriteSwapScalar(g);
+    s->WriteSwapScalar(b);
+    s->WriteSwapScalar(a);
 }
 
 inline hsColorRGBA& hsColorRGBA::FromARGB32(UInt32 c)
 {
-	const hsScalar oo255 = 1.f / 255.f;
-	a = hsScalar((c >> 24) & 0xff) * oo255;
-	r = hsScalar((c >> 16) & 0xff) * oo255;
-	g = hsScalar((c >> 8) & 0xff) * oo255;
-	b = hsScalar((c >> 0) & 0xff) * oo255;
-	return *this;
+    const hsScalar oo255 = 1.f / 255.f;
+    a = hsScalar((c >> 24) & 0xff) * oo255;
+    r = hsScalar((c >> 16) & 0xff) * oo255;
+    g = hsScalar((c >> 8) & 0xff) * oo255;
+    b = hsScalar((c >> 0) & 0xff) * oo255;
+    return *this;
 }
 
 inline UInt32 hsColorRGBA::ToARGB32() const
 {
-	return (UInt32(a * 255.99f) << 24)
-		| (UInt32(r * 255.99f) << 16)
-		| (UInt32(g * 255.99f) << 8)
-		| (UInt32(b * 255.99f) << 0);
+    return (UInt32(a * 255.99f) << 24)
+        | (UInt32(r * 255.99f) << 16)
+        | (UInt32(g * 255.99f) << 8)
+        | (UInt32(b * 255.99f) << 0);
 }
 
 inline hsColorRGBA operator+(const hsColorRGBA& s, const hsColorRGBA& t)
 {
-	hsColorRGBA res;
-	return res.Set(s.r + t.r, s.g + t.g, s.b + t.b, s.a + t.a);
+    hsColorRGBA res;
+    return res.Set(s.r + t.r, s.g + t.g, s.b + t.b, s.a + t.a);
 }
 inline hsColorRGBA& hsColorRGBA::operator+=(const hsColorRGBA& s)
 {
-	r += s.r;
-	g += s.g;
-	b += s.b;
-	a += s.a;
-	return *this;
+    r += s.r;
+    g += s.g;
+    b += s.b;
+    a += s.a;
+    return *this;
 }
 
 inline hsColorRGBA operator*(const hsColorRGBA& s, const hsColorRGBA& t)
 {
-	hsColorRGBA res;
-	return res.Set(s.r * t.r, s.g * t.g, s.b * t.b, s.a * t.a);
+    hsColorRGBA res;
+    return res.Set(s.r * t.r, s.g * t.g, s.b * t.b, s.a * t.a);
 }
 inline hsColorRGBA& hsColorRGBA::operator*=(const hsColorRGBA& s)
 {
-	r *= s.r;
-	g *= s.g;
-	b *= s.b;
-	a *= s.a;
-	return *this;
+    r *= s.r;
+    g *= s.g;
+    b *= s.b;
+    a *= s.a;
+    return *this;
 }
 
 inline hsColorRGBA operator-(const hsColorRGBA& s, const hsColorRGBA& t)
 {
-	hsColorRGBA res;
-	return res.Set(s.r - t.r, s.g - t.g, s.b - t.b, s.a - t.a);
+    hsColorRGBA res;
+    return res.Set(s.r - t.r, s.g - t.g, s.b - t.b, s.a - t.a);
 }
 inline hsColorRGBA& hsColorRGBA::operator-=(const hsColorRGBA& s)
 {
-	r -= s.r;
-	g -= s.g;
-	b -= s.b;
-	a -= s.a;
-	return *this;
+    r -= s.r;
+    g -= s.g;
+    b -= s.b;
+    a -= s.a;
+    return *this;
 }
 
 inline hsColorRGBA operator*(const hsColorRGBA& t, const hsScalar s)
 {
-	hsColorRGBA res;
-	return res.Set(s * t.r, s * t.g, s * t.b, s * t.a);
+    hsColorRGBA res;
+    return res.Set(s * t.r, s * t.g, s * t.b, s * t.a);
 }
 inline hsColorRGBA operator*(const hsScalar s, const hsColorRGBA&t)
 {
-	return t * s;
+    return t * s;
 }
 inline hsColorRGBA& hsColorRGBA::operator*=(const hsScalar s)
 {
-	r *= s;
-	g *= s;
-	b *= s;
-	a *= s;
-	return *this;
+    r *= s;
+    g *= s;
+    b *= s;
+    a *= s;
+    return *this;
 }
 
 class hsColorOverride
 {
 public:
-	enum {
-		kNone,
-		kModColor,
-		kModAlpha,
-		kModShade
-	};
-	hsColorRGBA			fShade;
-	hsColorRGBA			fColor;
-	hsBool				fFlags;
+    enum {
+        kNone,
+        kModColor,
+        kModAlpha,
+        kModShade
+    };
+    hsColorRGBA         fShade;
+    hsColorRGBA         fColor;
+    hsBool              fFlags;
 };
 
 

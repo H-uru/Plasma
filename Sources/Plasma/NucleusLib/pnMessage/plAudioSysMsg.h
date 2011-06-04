@@ -35,59 +35,59 @@ class plKey;
 
 class plAudioSysMsg : public plMessage
 {
-	int	fAudFlag;	
-	plKey pObj;
-	hsBool	fBoolFlag;
+    int fAudFlag;   
+    plKey pObj;
+    hsBool  fBoolFlag;
 public:
-	enum
-	{
-		kActivate	= 0,
-		kDeActivate,
-		kDestroy,
-		kInitialize,
-		kPing,
-		kSetVol,
-		kMuteAll,
-		kUnmuteAll,
-		kRequestMuteState,
-		kChannelVolChanged,
-		kRegisteringSound,
-		kForceListUpdate
-	};
+    enum
+    {
+        kActivate   = 0,
+        kDeActivate,
+        kDestroy,
+        kInitialize,
+        kPing,
+        kSetVol,
+        kMuteAll,
+        kUnmuteAll,
+        kRequestMuteState,
+        kChannelVolChanged,
+        kRegisteringSound,
+        kForceListUpdate
+    };
 
 
-	plAudioSysMsg() : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);}
-	plAudioSysMsg(const plKey &s) : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);SetSender(s);}  
-	plAudioSysMsg(int i) : pObj(nil){fAudFlag = i; SetBCastFlag(plMessage::kBCastByExactType );}  
-	plAudioSysMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t) : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);}
-	~plAudioSysMsg(){;}
+    plAudioSysMsg() : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);}
+    plAudioSysMsg(const plKey &s) : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);SetSender(s);}  
+    plAudioSysMsg(int i) : pObj(nil){fAudFlag = i; SetBCastFlag(plMessage::kBCastByExactType );}  
+    plAudioSysMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t) : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);}
+    ~plAudioSysMsg(){;}
 
-	CLASSNAME_REGISTER( plAudioSysMsg );
-	GETINTERFACE_ANY( plAudioSysMsg, plMessage );
-	
-	int GetAudFlag() { return fAudFlag; }
-	plKey GetSceneObject() { return pObj; }
-	void SetSceneObject(plKey &k) { pObj = k; }
+    CLASSNAME_REGISTER( plAudioSysMsg );
+    GETINTERFACE_ANY( plAudioSysMsg, plMessage );
+    
+    int GetAudFlag() { return fAudFlag; }
+    plKey GetSceneObject() { return pObj; }
+    void SetSceneObject(plKey &k) { pObj = k; }
 
-	hsBool	GetBoolFlag() { return fBoolFlag; }
-	void	SetBoolFlag( hsBool b ) { fBoolFlag = b; }
+    hsBool  GetBoolFlag() { return fBoolFlag; }
+    void    SetBoolFlag( hsBool b ) { fBoolFlag = b; }
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		stream->WriteSwap(fAudFlag);
-		mgr->WriteKey(stream, pObj);
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        stream->WriteSwap(fAudFlag);
+        mgr->WriteKey(stream, pObj);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		stream->ReadSwap(&fAudFlag);
-		pObj = mgr->ReadKey(stream);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        stream->ReadSwap(&fAudFlag);
+        pObj = mgr->ReadKey(stream);
+    }
 };
 
 #endif // plAudioSysMsg

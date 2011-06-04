@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyTTTMsg.h"
 #include "../../pyEnum.h"
 
-#include <python.h>
+#include <Python.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -42,17 +42,17 @@ PYTHON_NO_INIT_DEFINITION(ptTTTMsg)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptTTTMsg, getTTTMsgType)
 {
-	return PyInt_FromLong(self->fThis->GetTTTMsgType());
+    return PyInt_FromLong(self->fThis->GetTTTMsgType());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptTTTMsg, upcastToFinalTTTMsg)
 {
-	return self->fThis->UpcastToFinalTTTMsg();
+    return self->fThis->UpcastToFinalTTTMsg();
 }
 
 PYTHON_START_METHODS_TABLE(ptTTTMsg)
-	PYTHON_METHOD_NOARGS(ptTTTMsg, getTTTMsgType, "Returns the type of the TTT message (see PtTTTMsgTypes)"),
-	PYTHON_METHOD_NOARGS(ptTTTMsg, upcastToFinalTTTMsg, "Returns this message as the TTT msg it is"),
+    PYTHON_METHOD_NOARGS(ptTTTMsg, getTTTMsgType, "Returns the type of the TTT message (see PtTTTMsgTypes)"),
+    PYTHON_METHOD_NOARGS(ptTTTMsg, upcastToFinalTTTMsg, "Returns this message as the TTT msg it is"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -62,10 +62,10 @@ PYTHON_EXPOSE_TYPE_DEFINITION(ptTTTMsg, pyTTTMsg);
 // required functions for PyObject interoperability
 PyObject* pyTTTMsg::New(pfGameCliMsg* msg)
 {
-	ptTTTMsg *newObj = (ptTTTMsg*)ptTTTMsg_type.tp_new(&ptTTTMsg_type, NULL, NULL);
-	if (msg && (msg->gameCli->GetGameTypeId() == kGameTypeId_TicTacToe))
-		newObj->fThis->message = msg;
-	return (PyObject*)newObj;
+    ptTTTMsg *newObj = (ptTTTMsg*)ptTTTMsg_type.tp_new(&ptTTTMsg_type, NULL, NULL);
+    if (msg && (msg->gameCli->GetGameTypeId() == kGameTypeId_TicTacToe))
+        newObj->fThis->message = msg;
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptTTTMsg, pyTTTMsg)
@@ -74,18 +74,18 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptTTTMsg, pyTTTMsg)
 // Module and method definitions
 void pyTTTMsg::AddPlasmaClasses(PyObject* m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptTTTMsg);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptTTTMsg);
+    PYTHON_CLASS_IMPORT_END(m);
 }
 
 void pyTTTMsg::AddPlasmaConstantsClasses(PyObject* m)
 {
-	PYTHON_ENUM_START(PtTTTMsgTypes);
-	PYTHON_ENUM_ELEMENT(PtTTTMsgTypes, kTTTGameStarted, kSrv2Cli_TTT_GameStarted);
-	PYTHON_ENUM_ELEMENT(PtTTTMsgTypes, kTTTGameOver, kSrv2Cli_TTT_GameOver);
-	PYTHON_ENUM_ELEMENT(PtTTTMsgTypes, kTTTMoveMade, kSrv2Cli_TTT_MoveMade);
-	PYTHON_ENUM_END(m, PtTTTMsgTypes);
+    PYTHON_ENUM_START(PtTTTMsgTypes);
+    PYTHON_ENUM_ELEMENT(PtTTTMsgTypes, kTTTGameStarted, kSrv2Cli_TTT_GameStarted);
+    PYTHON_ENUM_ELEMENT(PtTTTMsgTypes, kTTTGameOver, kSrv2Cli_TTT_GameOver);
+    PYTHON_ENUM_ELEMENT(PtTTTMsgTypes, kTTTMoveMade, kSrv2Cli_TTT_MoveMade);
+    PYTHON_ENUM_END(m, PtTTTMsgTypes);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,11 +102,11 @@ PYTHON_NO_INIT_DEFINITION(ptTTTGameStartedMsg)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptTTTGameStartedMsg, yourTurn)
 {
-	PYTHON_RETURN_BOOL(self->fThis->YourTurn());
+    PYTHON_RETURN_BOOL(self->fThis->YourTurn());
 }
 
 PYTHON_START_METHODS_TABLE(ptTTTGameStartedMsg)
-	PYTHON_METHOD_NOARGS(ptTTTGameStartedMsg, yourTurn, "Returns true if you are the first player (and therefore it's your turn)"),
+    PYTHON_METHOD_NOARGS(ptTTTGameStartedMsg, yourTurn, "Returns true if you are the first player (and therefore it's your turn)"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -115,10 +115,10 @@ PLASMA_DEFAULT_TYPE_WBASE(ptTTTGameStartedMsg, pyTTTMsg, "TicTacToe message rece
 // required functions for PyObject interoperability
 PyObject* pyTTTGameStartedMsg::New(pfGameCliMsg* msg)
 {
-	ptTTTGameStartedMsg *newObj = (ptTTTGameStartedMsg*)ptTTTGameStartedMsg_type.tp_new(&ptTTTGameStartedMsg_type, NULL, NULL);
-	if (msg && (msg->netMsg->messageId == kSrv2Cli_TTT_GameStarted))
-		newObj->fThis->message = msg;
-	return (PyObject*)newObj;
+    ptTTTGameStartedMsg *newObj = (ptTTTGameStartedMsg*)ptTTTGameStartedMsg_type.tp_new(&ptTTTGameStartedMsg_type, NULL, NULL);
+    if (msg && (msg->netMsg->messageId == kSrv2Cli_TTT_GameStarted))
+        newObj->fThis->message = msg;
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptTTTGameStartedMsg, pyTTTGameStartedMsg)
@@ -127,9 +127,9 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptTTTGameStartedMsg, pyTTTGameStartedMsg)
 // Module and method definitions
 void pyTTTGameStartedMsg::AddPlasmaClasses(PyObject* m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptTTTGameStartedMsg);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptTTTGameStartedMsg);
+    PYTHON_CLASS_IMPORT_END(m);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -142,17 +142,17 @@ PYTHON_NO_INIT_DEFINITION(ptTTTGameOverMsg)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptTTTGameOverMsg, result)
 {
-	return PyInt_FromLong(self->fThis->Result());
+    return PyInt_FromLong(self->fThis->Result());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptTTTGameOverMsg, winnerID)
 {
-	return PyLong_FromUnsignedLong(self->fThis->WinnerID());
+    return PyLong_FromUnsignedLong(self->fThis->WinnerID());
 }
 
 PYTHON_START_METHODS_TABLE(ptTTTGameOverMsg)
-	PYTHON_METHOD_NOARGS(ptTTTGameOverMsg, result, "Returns the result of the game (see PtTTTGameResult)"),
-	PYTHON_METHOD_NOARGS(ptTTTGameOverMsg, winnerID, "Returns the winner's ID"),
+    PYTHON_METHOD_NOARGS(ptTTTGameOverMsg, result, "Returns the result of the game (see PtTTTGameResult)"),
+    PYTHON_METHOD_NOARGS(ptTTTGameOverMsg, winnerID, "Returns the winner's ID"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -161,10 +161,10 @@ PLASMA_DEFAULT_TYPE_WBASE(ptTTTGameOverMsg, pyTTTMsg, "TicTacToe message receive
 // required functions for PyObject interoperability
 PyObject* pyTTTGameOverMsg::New(pfGameCliMsg* msg)
 {
-	ptTTTGameOverMsg *newObj = (ptTTTGameOverMsg*)ptTTTGameOverMsg_type.tp_new(&ptTTTGameOverMsg_type, NULL, NULL);
-	if (msg && (msg->netMsg->messageId == kSrv2Cli_TTT_GameOver))
-		newObj->fThis->message = msg;
-	return (PyObject*)newObj;
+    ptTTTGameOverMsg *newObj = (ptTTTGameOverMsg*)ptTTTGameOverMsg_type.tp_new(&ptTTTGameOverMsg_type, NULL, NULL);
+    if (msg && (msg->netMsg->messageId == kSrv2Cli_TTT_GameOver))
+        newObj->fThis->message = msg;
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptTTTGameOverMsg, pyTTTGameOverMsg)
@@ -173,9 +173,9 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptTTTGameOverMsg, pyTTTGameOverMsg)
 // Module and method definitions
 void pyTTTGameOverMsg::AddPlasmaClasses(PyObject* m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptTTTGameOverMsg);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptTTTGameOverMsg);
+    PYTHON_CLASS_IMPORT_END(m);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -188,23 +188,23 @@ PYTHON_NO_INIT_DEFINITION(ptTTTMoveMadeMsg)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptTTTMoveMadeMsg, playerID)
 {
-	return PyLong_FromUnsignedLong(self->fThis->PlayerID());
+    return PyLong_FromUnsignedLong(self->fThis->PlayerID());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptTTTMoveMadeMsg, row)
 {
-	return PyInt_FromLong(self->fThis->Row());
+    return PyInt_FromLong(self->fThis->Row());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptTTTMoveMadeMsg, col)
 {
-	return PyInt_FromLong(self->fThis->Col());
+    return PyInt_FromLong(self->fThis->Col());
 }
 
 PYTHON_START_METHODS_TABLE(ptTTTMoveMadeMsg)
-	PYTHON_METHOD_NOARGS(ptTTTMoveMadeMsg, playerID, "Returns the the ID of the player that just moved"),
-	PYTHON_METHOD_NOARGS(ptTTTMoveMadeMsg, row, "Returns the row index of the move (1..3)"),
-	PYTHON_METHOD_NOARGS(ptTTTMoveMadeMsg, col, "Returns the col index of the move (1..3)"),
+    PYTHON_METHOD_NOARGS(ptTTTMoveMadeMsg, playerID, "Returns the the ID of the player that just moved"),
+    PYTHON_METHOD_NOARGS(ptTTTMoveMadeMsg, row, "Returns the row index of the move (1..3)"),
+    PYTHON_METHOD_NOARGS(ptTTTMoveMadeMsg, col, "Returns the col index of the move (1..3)"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -213,10 +213,10 @@ PLASMA_DEFAULT_TYPE_WBASE(ptTTTMoveMadeMsg, pyTTTMsg, "TicTacToe message receive
 // required functions for PyObject interoperability
 PyObject* pyTTTMoveMadeMsg::New(pfGameCliMsg* msg)
 {
-	ptTTTMoveMadeMsg *newObj = (ptTTTMoveMadeMsg*)ptTTTMoveMadeMsg_type.tp_new(&ptTTTMoveMadeMsg_type, NULL, NULL);
-	if (msg && (msg->netMsg->messageId == kSrv2Cli_TTT_MoveMade))
-		newObj->fThis->message = msg;
-	return (PyObject*)newObj;
+    ptTTTMoveMadeMsg *newObj = (ptTTTMoveMadeMsg*)ptTTTMoveMadeMsg_type.tp_new(&ptTTTMoveMadeMsg_type, NULL, NULL);
+    if (msg && (msg->netMsg->messageId == kSrv2Cli_TTT_MoveMade))
+        newObj->fThis->message = msg;
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptTTTMoveMadeMsg, pyTTTMoveMadeMsg)
@@ -225,7 +225,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptTTTMoveMadeMsg, pyTTTMoveMadeMsg)
 // Module and method definitions
 void pyTTTMoveMadeMsg::AddPlasmaClasses(PyObject* m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptTTTMoveMadeMsg);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptTTTMoveMadeMsg);
+    PYTHON_CLASS_IMPORT_END(m);
 }

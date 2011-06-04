@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGUIControlButton.h"
 #include "pyEnum.h"
 
-#include "../pfGameGUIMgr/pfGUIButtonMod.h"
-#include <python.h>
+#include "pfGameGUIMgr/pfGUIButtonMod.h"
+#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlButton, pyGUIControlButton);
@@ -37,50 +37,50 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlButton)
 
 PYTHON_INIT_DEFINITION(ptGUIControlButton, args, keywords)
 {
-	PyObject *keyObject = NULL;
-	if (!PyArg_ParseTuple(args, "O", &keyObject))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	if (!pyKey::Check(keyObject))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
+    PyObject *keyObject = NULL;
+    if (!PyArg_ParseTuple(args, "O", &keyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    if (!pyKey::Check(keyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
 
-	pyKey *key = pyKey::ConvertFrom(keyObject);
-	self->fThis->setKey(key->getKey());
+    pyKey *key = pyKey::ConvertFrom(keyObject);
+    self->fThis->setKey(key->getKey());
 
-	PYTHON_RETURN_INIT_OK;
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlButton, setNotifyType, args)
 {
-	long kind;
-	if (!PyArg_ParseTuple(args, "l", &kind))
-	{
-		PyErr_SetString(PyExc_TypeError, "setNotifyType expects a long");
-		PYTHON_RETURN_ERROR;
-	}
-	self->fThis->SetNotifyType(kind);
-	PYTHON_RETURN_NONE;
+    long kind;
+    if (!PyArg_ParseTuple(args, "l", &kind))
+    {
+        PyErr_SetString(PyExc_TypeError, "setNotifyType expects a long");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetNotifyType(kind);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlButton, getNotifyType)
 {
-	return PyLong_FromLong(self->fThis->GetNotifyType());
+    return PyLong_FromLong(self->fThis->GetNotifyType());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlButton, isButtonDown)
 {
-	PYTHON_RETURN_BOOL(self->fThis->IsButtonDown());
+    PYTHON_RETURN_BOOL(self->fThis->IsButtonDown());
 }
 
 PYTHON_START_METHODS_TABLE(ptGUIControlButton)
-	PYTHON_METHOD(ptGUIControlButton, setNotifyType, "Params: kind\nSets this button's notify type. See PtButtonNotifyTypes"),
-	PYTHON_METHOD_NOARGS(ptGUIControlButton, getNotifyType, "Returns this button's notify type. See PtButtonNotifyTypes"),
-	PYTHON_METHOD_NOARGS(ptGUIControlButton, isButtonDown, "Is the button down? Returns 1 for true otherwise returns 0"),
+    PYTHON_METHOD(ptGUIControlButton, setNotifyType, "Params: kind\nSets this button's notify type. See PtButtonNotifyTypes"),
+    PYTHON_METHOD_NOARGS(ptGUIControlButton, getNotifyType, "Returns this button's notify type. See PtButtonNotifyTypes"),
+    PYTHON_METHOD_NOARGS(ptGUIControlButton, isButtonDown, "Is the button down? Returns 1 for true otherwise returns 0"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -89,16 +89,16 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlButton, pyGUIControl, "Params: ctrlKey\nPl
 // required functions for PyObject interoperability
 PyObject *pyGUIControlButton::New(pyKey& gckey)
 {
-	ptGUIControlButton *newObj = (ptGUIControlButton*)ptGUIControlButton_type.tp_new(&ptGUIControlButton_type, NULL, NULL);
-	newObj->fThis->fGCkey = gckey.getKey();
-	return (PyObject*)newObj;
+    ptGUIControlButton *newObj = (ptGUIControlButton*)ptGUIControlButton_type.tp_new(&ptGUIControlButton_type, NULL, NULL);
+    newObj->fThis->fGCkey = gckey.getKey();
+    return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlButton::New(plKey objkey)
 {
-	ptGUIControlButton *newObj = (ptGUIControlButton*)ptGUIControlButton_type.tp_new(&ptGUIControlButton_type, NULL, NULL);
-	newObj->fThis->fGCkey = objkey;
-	return (PyObject*)newObj;
+    ptGUIControlButton *newObj = (ptGUIControlButton*)ptGUIControlButton_type.tp_new(&ptGUIControlButton_type, NULL, NULL);
+    newObj->fThis->fGCkey = objkey;
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptGUIControlButton, pyGUIControlButton)
@@ -110,16 +110,16 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptGUIControlButton, pyGUIControlButton)
 //
 void pyGUIControlButton::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptGUIControlButton);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptGUIControlButton);
+    PYTHON_CLASS_IMPORT_END(m);
 }
 
 void pyGUIControlButton::AddPlasmaConstantsClasses(PyObject *m)
 {
-	PYTHON_ENUM_START(PtButtonNotifyTypes);
-	PYTHON_ENUM_ELEMENT(PtButtonNotifyTypes, kNotifyOnUp,			pfGUIButtonMod::kNotifyOnUp);
-	PYTHON_ENUM_ELEMENT(PtButtonNotifyTypes, kNotifyOnDown,			pfGUIButtonMod::kNotifyOnDown);
-	PYTHON_ENUM_ELEMENT(PtButtonNotifyTypes, kNotifyOnUpAndDown,	pfGUIButtonMod::kNotifyOnUpAndDown);
-	PYTHON_ENUM_END(m, PtButtonNotifyTypes);
+    PYTHON_ENUM_START(PtButtonNotifyTypes);
+    PYTHON_ENUM_ELEMENT(PtButtonNotifyTypes, kNotifyOnUp,           pfGUIButtonMod::kNotifyOnUp);
+    PYTHON_ENUM_ELEMENT(PtButtonNotifyTypes, kNotifyOnDown,         pfGUIButtonMod::kNotifyOnDown);
+    PYTHON_ENUM_ELEMENT(PtButtonNotifyTypes, kNotifyOnUpAndDown,    pfGUIButtonMod::kNotifyOnUpAndDown);
+    PYTHON_ENUM_END(m, PtButtonNotifyTypes);
 }

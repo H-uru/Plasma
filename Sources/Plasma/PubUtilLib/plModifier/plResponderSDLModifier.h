@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plResponderSDLModifier_inc
 #define plResponderSDLModifier_inc
 
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 //
 // This modifier is responsible for sending and recving responder state
@@ -36,30 +36,30 @@ class plStateDataRecord;
 class plResponderSDLModifier : public plSDLModifier
 {
 protected:
-	// var labels 
-	static char kStrCurState[];	
-	static char kStrCurCommand[];	
-	static char kStrNetRequest[];	
-	static char kStrCompletedEvents[];
-	static char kStrEnabled[];
-	static char kStrPlayerKey[];
-	static char kStrTriggerer[];
-	
-	plResponderModifier* fResponder;
+    // var labels 
+    static char kStrCurState[]; 
+    static char kStrCurCommand[];   
+    static char kStrNetRequest[];   
+    static char kStrCompletedEvents[];
+    static char kStrEnabled[];
+    static char kStrPlayerKey[];
+    static char kStrTriggerer[];
+    
+    plResponderModifier* fResponder;
 
-	void IPutCurrentStateIn(plStateDataRecord* dstState);
-	void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
 public:
-	CLASSNAME_REGISTER( plResponderSDLModifier );
-	GETINTERFACE_ANY( plResponderSDLModifier, plSDLModifier);
-		
-	plResponderSDLModifier() : fResponder(nil) {}
+    CLASSNAME_REGISTER( plResponderSDLModifier );
+    GETINTERFACE_ANY( plResponderSDLModifier, plSDLModifier);
+        
+    plResponderSDLModifier() : fResponder(nil) {}
 
-	const char* GetSDLName() const { return kSDLResponder; }
-	plKey GetStateOwnerKey() const;
-	
-	plResponderModifier* GetResponder() const { return fResponder; }
-	void SetResponder(plResponderModifier* r) { fResponder=r; AddTarget(nil); }
+    const char* GetSDLName() const { return kSDLResponder; }
+    plKey GetStateOwnerKey() const;
+    
+    plResponderModifier* GetResponder() const { return fResponder; }
+    void SetResponder(plResponderModifier* r) { fResponder=r; AddTarget(nil); }
 };
 
-#endif	// plResponderSDLModifier_inc
+#endif  // plResponderSDLModifier_inc

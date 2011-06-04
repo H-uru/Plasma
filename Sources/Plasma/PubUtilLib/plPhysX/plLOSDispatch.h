@@ -23,29 +23,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 class plLOSRequestMsg;
 struct hsMatrix44;
 
 /** \class plLOSDispatch
-	Line-of-sight requests are sent to this guy, who then hands them
-	to the appropriate solvers, which can vary depending on such
-	criteria as which subworld the player is currently in.
-	Eventually we will have more variants of requests, such as 
-	"search all subworlds," etc.  */
+    Line-of-sight requests are sent to this guy, who then hands them
+    to the appropriate solvers, which can vary depending on such
+    criteria as which subworld the player is currently in.
+    Eventually we will have more variants of requests, such as 
+    "search all subworlds," etc.  */
 class plLOSDispatch : public hsKeyedObject
 {
 public:
-	plLOSDispatch();
-	~plLOSDispatch();
+    plLOSDispatch();
+    ~plLOSDispatch();
 
-	CLASSNAME_REGISTER(plLOSDispatch);
-	GETINTERFACE_ANY(plLOSDispatch, hsKeyedObject);
-	
-	virtual hsBool MsgReceive(plMessage* msg);
+    CLASSNAME_REGISTER(plLOSDispatch);
+    GETINTERFACE_ANY(plLOSDispatch, hsKeyedObject);
+    
+    virtual hsBool MsgReceive(plMessage* msg);
 
 protected:
-	plMessage* ICreateHitMsg(plLOSRequestMsg* requestMsg, hsMatrix44& l2w);
-	plMessage* ICreateMissMsg(plLOSRequestMsg* requestMsg);
+    plMessage* ICreateHitMsg(plLOSRequestMsg* requestMsg, hsMatrix44& l2w);
+    plMessage* ICreateMissMsg(plLOSRequestMsg* requestMsg);
 };

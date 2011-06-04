@@ -30,35 +30,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnKeyedObject/plKey.h"
 
-hsVector3	plAudibleNull::GetVelocity(int index) const
+hsVector3   plAudibleNull::GetVelocity(int index) const
 {
-	hsVector3 ret(0,0,0);
-	return(ret);
+    hsVector3 ret(0,0,0);
+    return(ret);
 }
-hsPoint3	plAudibleNull::GetPosition(int index)
+hsPoint3    plAudibleNull::GetPosition(int index)
 {
-	hsPoint3 ret(0,0,0);
-	return(ret);
+    hsPoint3 ret(0,0,0);
+    return(ret);
 }
 
 void plAudibleNull::SetSceneNode(plKey newNode)
 {
-	plKey oldNode = GetSceneNode();
-	if( oldNode == newNode )
-		return;
+    plKey oldNode = GetSceneNode();
+    if( oldNode == newNode )
+        return;
 
-	if( newNode )
-	{
-		plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kAudible);
-		hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kActiveRef);
-	}
-	if( oldNode )
-	{
-		oldNode->Release(GetKey());
-	}
+    if( newNode )
+    {
+        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kAudible);
+        hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kActiveRef);
+    }
+    if( oldNode )
+    {
+        oldNode->Release(GetKey());
+    }
 }
 
 

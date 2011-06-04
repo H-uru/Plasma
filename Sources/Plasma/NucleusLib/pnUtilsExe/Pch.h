@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILSEXE_PCH_H
 
 
-#include "../pnUtils/Pch.h"
+#include "pnUtils/Pch.h"
 #include "Intern.h"
 
 #include <malloc.h>

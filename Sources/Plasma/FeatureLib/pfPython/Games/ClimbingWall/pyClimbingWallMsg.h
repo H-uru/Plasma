@@ -33,155 +33,155 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for ClimbingWall game messages
 //
 
-#include "../pfGameMgr/pfGameMgr.h"
+#include "pfGameMgr/pfGameMgr.h"
 
-#include <python.h>
+#include <Python.h>
 #include "../../pyGlueHelpers.h"
 #include "../pyGameCliMsg.h"
 
 class pyClimbingWallMsg : public pyGameCliMsg
 {
 protected:
-	pyClimbingWallMsg();
-	pyClimbingWallMsg(pfGameCliMsg* msg);
+    pyClimbingWallMsg();
+    pyClimbingWallMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE; // so we can subclass
-	PYTHON_CLASS_NEW_FRIEND(ptClimbingWallMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallMsg); // converts a PyObject to a pyClimbingWallMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE; // so we can subclass
+    PYTHON_CLASS_NEW_FRIEND(ptClimbingWallMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallMsg); // converts a PyObject to a pyClimbingWallMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
-	int GetClimbingWallMsgType() const;
+    int GetClimbingWallMsgType() const;
 
-	PyObject* UpcastToFinalClimbingWallMsg() const; // returns the climbing wall message that this really is
+    PyObject* UpcastToFinalClimbingWallMsg() const; // returns the climbing wall message that this really is
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyClimbingWallNumBlockersChangedMsg : public pyClimbingWallMsg
 {
 protected:
-	pyClimbingWallNumBlockersChangedMsg();
-	pyClimbingWallNumBlockersChangedMsg(pfGameCliMsg* msg);
+    pyClimbingWallNumBlockersChangedMsg();
+    pyClimbingWallNumBlockersChangedMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptClimbingWallNumBlockersChangedMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallNumBlockersChangedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallNumBlockersChangedMsg); // converts a PyObject to a pyClimbingWallNumBlockersChangedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptClimbingWallNumBlockersChangedMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallNumBlockersChangedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallNumBlockersChangedMsg); // converts a PyObject to a pyClimbingWallNumBlockersChangedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	int NewBlockerCount() const;
-	bool LocalOnly() const;
+    int NewBlockerCount() const;
+    bool LocalOnly() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyClimbingWallReadyMsg : public pyClimbingWallMsg
 {
 protected:
-	pyClimbingWallReadyMsg();
-	pyClimbingWallReadyMsg(pfGameCliMsg* msg);
+    pyClimbingWallReadyMsg();
+    pyClimbingWallReadyMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptClimbingWallReadyMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallReadyMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallReadyMsg); // converts a PyObject to a pyClimbingWallReadyMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptClimbingWallReadyMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallReadyMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallReadyMsg); // converts a PyObject to a pyClimbingWallReadyMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	int ReadyType() const;
-	bool Team1Ready() const;
-	bool Team2Ready() const;
-	bool LocalOnly() const;
+    int ReadyType() const;
+    bool Team1Ready() const;
+    bool Team2Ready() const;
+    bool LocalOnly() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyClimbingWallBlockersChangedMsg : public pyClimbingWallMsg
 {
 protected:
-	pyClimbingWallBlockersChangedMsg();
-	pyClimbingWallBlockersChangedMsg(pfGameCliMsg* msg);
+    pyClimbingWallBlockersChangedMsg();
+    pyClimbingWallBlockersChangedMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptClimbingWallBlockersChangedMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallBlockersChangedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallBlockersChangedMsg); // converts a PyObject to a pyClimbingWallBlockersChangedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptClimbingWallBlockersChangedMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallBlockersChangedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallBlockersChangedMsg); // converts a PyObject to a pyClimbingWallBlockersChangedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	int TeamNumber() const;
-	std::vector<int> BlockersSet() const;
-	bool LocalOnly() const;
+    int TeamNumber() const;
+    std::vector<int> BlockersSet() const;
+    bool LocalOnly() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyClimbingWallPlayerEnteredMsg : public pyClimbingWallMsg
 {
 protected:
-	pyClimbingWallPlayerEnteredMsg();
-	pyClimbingWallPlayerEnteredMsg(pfGameCliMsg* msg);
+    pyClimbingWallPlayerEnteredMsg();
+    pyClimbingWallPlayerEnteredMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptClimbingWallPlayerEnteredMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallPlayerEnteredMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallPlayerEnteredMsg); // converts a PyObject to a pyClimbingWallPlayerEnteredMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptClimbingWallPlayerEnteredMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallPlayerEnteredMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallPlayerEnteredMsg); // converts a PyObject to a pyClimbingWallPlayerEnteredMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyClimbingWallSuitMachineLockedMsg : public pyClimbingWallMsg
 {
 protected:
-	pyClimbingWallSuitMachineLockedMsg();
-	pyClimbingWallSuitMachineLockedMsg(pfGameCliMsg* msg);
+    pyClimbingWallSuitMachineLockedMsg();
+    pyClimbingWallSuitMachineLockedMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptClimbingWallSuitMachineLockedMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallSuitMachineLockedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallSuitMachineLockedMsg); // converts a PyObject to a pyClimbingWallSuitMachineLockedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptClimbingWallSuitMachineLockedMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallSuitMachineLockedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallSuitMachineLockedMsg); // converts a PyObject to a pyClimbingWallSuitMachineLockedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	bool Team1MachineLocked() const;
-	bool Team2MachineLocked() const;
-	bool LocalOnly() const;
+    bool Team1MachineLocked() const;
+    bool Team2MachineLocked() const;
+    bool LocalOnly() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyClimbingWallGameOverMsg : public pyClimbingWallMsg
 {
 protected:
-	pyClimbingWallGameOverMsg();
-	pyClimbingWallGameOverMsg(pfGameCliMsg* msg);
+    pyClimbingWallGameOverMsg();
+    pyClimbingWallGameOverMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptClimbingWallGameOverMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallGameOverMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallGameOverMsg); // converts a PyObject to a pyClimbingWallGameOverMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptClimbingWallGameOverMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyClimbingWallGameOverMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyClimbingWallGameOverMsg); // converts a PyObject to a pyClimbingWallGameOverMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	int TeamWon() const;
-	std::vector<int> Team1Blockers() const;
-	std::vector<int> Team2Blockers() const;
-	bool LocalOnly() const;
+    int TeamWon() const;
+    std::vector<int> Team1Blockers() const;
+    std::vector<int> Team2Blockers() const;
+    bool LocalOnly() const;
 };
 
 #endif // pyClimbingWallMsg_h

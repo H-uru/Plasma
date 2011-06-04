@@ -34,19 +34,19 @@ class plMaxNode;
 class plMaxMeshExtractor
 {
 public:
-	struct NeutralMesh
-	{
-		int fNumVerts;
-		hsPoint3* fVerts;
-		int fNumFaces;
-		UInt16* fFaces;
+    struct NeutralMesh
+    {
+        int fNumVerts;
+        hsPoint3* fVerts;
+        int fNumFaces;
+        UInt16* fFaces;
 
-		hsMatrix44 fL2W;
-	};
+        hsMatrix44 fL2W;
+    };
 
-	// Converts a max node into a position, rotation, and arrays of verts and faces
-	// relative to those.
-	static bool Extract(NeutralMesh& mesh, plMaxNode* pNode, bool makeAABB = false, plMaxNode* sOwningNode = nil);
+    // Converts a max node into a position, rotation, and arrays of verts and faces
+    // relative to those.
+    static bool Extract(NeutralMesh& mesh, plMaxNode* pNode, bool makeAABB = false, plMaxNode* sOwningNode = nil);
 };
 
 #endif // plMaxMeshExtractor_h_inc

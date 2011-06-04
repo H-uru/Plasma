@@ -28,21 +28,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "../plPhysical/plCollisionDetector.h"	// MM
-#include "../pnMessage/plObjRefMsg.h"
-#include "../pnMessage/plCameraMsg.h"
+#include "plPhysical/plCollisionDetector.h"  // MM
+#include "pnMessage/plObjRefMsg.h"
+#include "pnMessage/plCameraMsg.h"
 
 #include "hsResMgr.h"
-#include "../MaxMain/plMaxNode.h"
-#include "../MaxConvert/plConvert.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxConvert/plConvert.h"
 
-#include "../MaxMain/plPhysicalProps.h"
-#include "../plHavok1/plHKPhysicsGroups.h"
+#include "MaxMain/plPhysicalProps.h"
+//#include "plHavok1/plHKPhysicsGroups.h"
 
 void DummyCodeIncludeFuncCamera() {}
 
@@ -50,113 +50,110 @@ OBSOLETE_CLASS_DESC(plCameraCmdComponent, gCameraCmdDesc, "(ex)Camera Command Re
 
 enum
 {
-	kCommand,
-	kOffsetX,
-	kOffsetY,
-	kOffsetZ,
-	kCustomBoundListStuff,
-	kSmooth,
+    kCommand,
+    kOffsetX,
+    kOffsetY,
+    kOffsetZ,
+    kCustomBoundListStuff,
+    kSmooth,
 };
 
-class plCameraCmdComponentProc;
-extern plCameraCmdComponentProc gCameraCmdComponentProc;
+class plCameraCmdComponentProc : public ParamMap2UserDlgProc
+{
+public:
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        return false;
+    }
+
+    void DeleteThis() {}
+
+protected:
+    void IEnableControls(IParamMap2 *map, int type)
+    {
+    }
+
+    void IAddComboItem(HWND hCombo, const char *name, int id)
+    {
+    }
+    void ISetComboSel(HWND hCombo, int type)
+    {
+    }
+};
+static plCameraCmdComponentProc gCameraCmdComponentProc;
 
 enum
 {
-	kCommandSetOffset,
-	kCommandSetFP,
-	kCommandSetFixedCam,
+    kCommandSetOffset,
+    kCommandSetFP,
+    kCommandSetFixedCam,
 };
 
 ParamBlockDesc2 gCameraCmdBlock
 (
-	plComponent::kBlkComp, _T("cameraComp"), 0, &gCameraCmdDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
+    plComponent::kBlkComp, _T("cameraComp"), 0, &gCameraCmdDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-	IDD_COMP_CAMERACMD, IDS_COMP_CAMERACMD, 0, 0, &gCameraCmdComponentProc,
+    IDD_COMP_CAMERACMD, IDS_COMP_CAMERACMD, 0, 0, &gCameraCmdComponentProc,
 
-	kCommand,		_T("Command"),		TYPE_INT,				0, 0,
-		p_default, kCommandSetFixedCam,
-		end,
-		
-	kOffsetX,	_T("X Offset"), TYPE_FLOAT,	P_ANIMATABLE,	0,
-		p_range, 0.0f, 50.0f,
-		p_default, 0.0f,
-		p_ui,	TYPE_SPINNER, EDITTYPE_FLOAT,
-		IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-		end,
+    kCommand,       _T("Command"),      TYPE_INT,               0, 0,
+        p_default, kCommandSetFixedCam,
+        end,
+        
+    kOffsetX,   _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
+        p_range, 0.0f, 50.0f,
+        p_default, 0.0f,
+        p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
+        IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
+        end,
 
-	kOffsetY,	_T("Y Offset"), TYPE_FLOAT,	P_ANIMATABLE,	0,
-		p_range, 0.0f, 50.0f,
-		p_default, 10.0f,
-		p_ui,	TYPE_SPINNER, EDITTYPE_FLOAT,
-		IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-		end,
+    kOffsetY,   _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
+        p_range, 0.0f, 50.0f,
+        p_default, 10.0f,
+        p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
+        IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
+        end,
 
-	kOffsetZ,	_T("Z Offset"), TYPE_FLOAT,	P_ANIMATABLE,	0,
-		p_range, 0.0f, 50.0f,
-		p_default, 3.0f,
-		p_ui,	TYPE_SPINNER, EDITTYPE_FLOAT,
-		IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-		end,
+    kOffsetZ,   _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
+        p_range, 0.0f, 50.0f,
+        p_default, 3.0f,
+        p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
+        IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
+        end,
 
-	kCustomBoundListStuff, _T("FixedCamera"),	TYPE_INODE,		0, 0,
-		p_ui,	TYPE_PICKNODEBUTTON, IDC_COMP_CAMERACMD_PICKSTATE_BASE,
-		p_sclassID,	 CAMERA_CLASS_ID,
-		p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-		end,
+    kCustomBoundListStuff, _T("FixedCamera"),   TYPE_INODE,     0, 0,
+        p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERACMD_PICKSTATE_BASE,
+        p_sclassID,  CAMERA_CLASS_ID,
+        p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
+        end,
 
-	kSmooth,	_T("useCut"),		TYPE_BOOL,				0, 0,
-		p_ui,				TYPE_SINGLECHEKBOX,	IDC_COMP_CAMERACMD_CUT,
-		end,
+    kSmooth,    _T("useCut"),       TYPE_BOOL,              0, 0,
+        p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CAMERACMD_CUT,
+        end,
 
 
 
-	end
+    end
 );
 
 plCameraCmdComponent::plCameraCmdComponent()
 {
-	fClassDesc = &gCameraCmdDesc;
-	fClassDesc->MakeAutoParamBlocks(this);
+    fClassDesc = &gCameraCmdDesc;
+    fClassDesc->MakeAutoParamBlocks(this);
 }
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
 hsBool plCameraCmdComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	return true;
+    return true;
 }
 
 hsBool plCameraCmdComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	return true;
+    return true;
 }
 
 hsBool plCameraCmdComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-	return true;
+    return true;
 }
-
-class plCameraCmdComponentProc : public ParamMap2UserDlgProc
-{
-public:
-	BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
-		return false;
-	}
-
-	void DeleteThis() {}
-
-protected:
-	void IEnableControls(IParamMap2 *map, int type)
-	{
-	}
-
-	void IAddComboItem(HWND hCombo, const char *name, int id)
-	{
-	}
-	void ISetComboSel(HWND hCombo, int type)
-	{
-	}
-};
-static plCameraCmdComponentProc gCameraCmdComponentProc;

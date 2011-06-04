@@ -42,12 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Srv2Log
 enum {
-	kSrv2Log_LogMsg				= 0,
+    kSrv2Log_LogMsg             = 0,
 };
 
 // Log2Srv
 enum {
-	
+    
 };
 
 
@@ -61,13 +61,13 @@ struct Srv2Log_ConnData {
     dword   dataBytes;
     dword   buildId;
     dword   srvType;
-	dword	buildType;
-	dword	productId;
+    dword   buildType;
+    dword   productId;
 };
 
 struct Srv2Log_Connect {
     AsyncSocketConnectPacket    hdr;
-    Srv2Log_ConnData			data;
+    Srv2Log_ConnData            data;
 };
 
 
@@ -78,8 +78,8 @@ struct Srv2Log_Connect {
 ***/
 
 struct Srv2Log_LogMsg : SrvMsgHeader {
-	unsigned	eventType;
-	qword		timestamp;
+    unsigned    eventType;
+    qword       timestamp;
 };
 
 

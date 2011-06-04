@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerMovie_inc
 #define plLayerMovie_inc
 
-#include "../plSurface/plLayerAnimation.h"
-#include "../plInterp/plAnimTimeConvert.h"
+#include "plSurface/plLayerAnimation.h"
+#include "plInterp/plAnimTimeConvert.h"
 
 class plMessage;
 class hsStream;
@@ -37,53 +37,53 @@ class hsResMgr;
 class plLayerMovie : public plLayerAnimation
 {
 protected:
-	char*						fMovieName;
+    char*                       fMovieName;
 
-//	plAnimTimeConvert			fTimeConvert;
+//  plAnimTimeConvert           fTimeConvert;
 
-	Int32						fCurrentFrame;
-	hsScalar					fLength;
-	UInt32						fWidth, fHeight;
+    Int32                       fCurrentFrame;
+    hsScalar                    fLength;
+    UInt32                      fWidth, fHeight;
 
-	virtual Int32				ISecsToFrame(hsScalar secs) = 0;
+    virtual Int32               ISecsToFrame(hsScalar secs) = 0;
 
-	hsBool						IGetFault() const { return !(fMovieName &&  *fMovieName); }
-	hsBool						ISetFault(const char* errStr);
-	hsBool						ICheckBitmap();
-	hsBool						IMovieIsIdle(); // will call IRelease();
-	hsBool						ISetupBitmap();
-	hsBool						ISetSize(int w, int h);
-	hsBool						ISetLength(hsScalar secs);
-	hsBool						ICurrentFrameDirty(double wSecs);
+    hsBool                      IGetFault() const { return !(fMovieName &&  *fMovieName); }
+    hsBool                      ISetFault(const char* errStr);
+    hsBool                      ICheckBitmap();
+    hsBool                      IMovieIsIdle(); // will call IRelease();
+    hsBool                      ISetupBitmap();
+    hsBool                      ISetSize(int w, int h);
+    hsBool                      ISetLength(hsScalar secs);
+    hsBool                      ICurrentFrameDirty(double wSecs);
 
-	virtual hsBool				IInit() = 0; // Load header etc, must call ISetSize(w, h), ISetLength(s)
-	virtual hsBool				IGetCurrentFrame() = 0; // Load fCurrentFrame into bitmap
-	virtual hsBool				IRelease() = 0; // release any system resources.
+    virtual hsBool              IInit() = 0; // Load header etc, must call ISetSize(w, h), ISetLength(s)
+    virtual hsBool              IGetCurrentFrame() = 0; // Load fCurrentFrame into bitmap
+    virtual hsBool              IRelease() = 0; // release any system resources.
 public:
-	plLayerMovie();
-	virtual ~plLayerMovie();
+    plLayerMovie();
+    virtual ~plLayerMovie();
 
-	CLASSNAME_REGISTER( plLayerMovie );
-	GETINTERFACE_ANY( plLayerMovie, plLayerAnimation );
+    CLASSNAME_REGISTER( plLayerMovie );
+    GETINTERFACE_ANY( plLayerMovie, plLayerAnimation );
 
-	virtual UInt32			Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
 
-	virtual void			Read(hsStream* s, hsResMgr* mgr);
-	virtual void			Write(hsStream* s, hsResMgr* mgr);
+    virtual void            Read(hsStream* s, hsResMgr* mgr);
+    virtual void            Write(hsStream* s, hsResMgr* mgr);
 
-	hsBool					IsStopped() { return fTimeConvert.IsStopped(); }
+    hsBool                  IsStopped() { return fTimeConvert.IsStopped(); }
 
-	void					SetMovieName(const char* n);
-	const char*				GetMovieName() const { return fMovieName; }
+    void                    SetMovieName(const char* n);
+    const char*             GetMovieName() const { return fMovieName; }
 
-	virtual hsBool			MsgReceive(plMessage* msg);
+    virtual hsBool          MsgReceive(plMessage* msg);
 
-	// Movie specific
-	int						GetWidth() const;
-	int						GetHeight() const;
-	hsScalar				GetLength() const { return fLength; }
+    // Movie specific
+    int                     GetWidth() const;
+    int                     GetHeight() const;
+    hsScalar                GetLength() const { return fLength; }
 
-	virtual void			DefaultMovie();
+    virtual void            DefaultMovie();
 };
 
 #endif // plLayerMovie_inc

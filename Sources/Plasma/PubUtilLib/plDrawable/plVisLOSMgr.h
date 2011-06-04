@@ -42,43 +42,43 @@ class hsBounds3Ext;
 class plVisHit
 {
 public:
-	hsPoint3		fPos;
+    hsPoint3        fPos;
 };
 
 class plSpaceHit
 {
 public:
-	int			fIdx;
-	hsScalar	fClosest;
+    int         fIdx;
+    hsScalar    fClosest;
 };
 
 class plVisLOSMgr
 {
 protected:
-	plPageTreeMgr*	fPageMgr;
-	plPipeline*		fPipe;
+    plPageTreeMgr*  fPageMgr;
+    plPipeline*     fPipe;
 
-	hsScalar		fMaxDist;
+    hsScalar        fMaxDist;
 
-	hsPoint3		fCurrFrom;
-	hsPoint3		fCurrTarg;
+    hsPoint3        fCurrFrom;
+    hsPoint3        fCurrTarg;
 
-	hsBool ISetup(const hsPoint3& pStart, const hsPoint3& pEnd);
-	hsBool ICheckBound(const hsBounds3Ext& bnd, hsScalar& closest);
-	hsBool ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<plSpaceHit>& hits);
-	hsBool ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits);
-	hsBool ICheckSceneNode(plSceneNode* node, plVisHit& hit);
-	hsBool ICheckDrawable(plDrawable* d, plVisHit& hit);
-	hsBool ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hit);
-	
+    hsBool ISetup(const hsPoint3& pStart, const hsPoint3& pEnd);
+    hsBool ICheckBound(const hsBounds3Ext& bnd, hsScalar& closest);
+    hsBool ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<plSpaceHit>& hits);
+    hsBool ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits);
+    hsBool ICheckSceneNode(plSceneNode* node, plVisHit& hit);
+    hsBool ICheckDrawable(plDrawable* d, plVisHit& hit);
+    hsBool ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hit);
+    
 public:
-	hsBool Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& hit);
-	hsBool CursorCheck(plVisHit& hit);
+    hsBool Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& hit);
+    hsBool CursorCheck(plVisHit& hit);
 
-	static plVisLOSMgr* Instance();
+    static plVisLOSMgr* Instance();
 
-	static void Init(plPipeline* pipe, plPageTreeMgr* mgr) { Instance()->fPipe = pipe; Instance()->fPageMgr = mgr; }
-	static void DeInit() { Instance()->fPipe = nil; Instance()->fPageMgr = nil; }
+    static void Init(plPipeline* pipe, plPageTreeMgr* mgr) { Instance()->fPipe = pipe; Instance()->fPageMgr = mgr; }
+    static void DeInit() { Instance()->fPipe = nil; Instance()->fPageMgr = nil; }
 };
 
 #endif // plVisLOSMgr_inc

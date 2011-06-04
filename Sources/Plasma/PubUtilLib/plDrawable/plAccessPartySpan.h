@@ -33,7 +33,7 @@ class plAccessPartySpan : public plAccessVtxSpan
 {
 public:
 
-	
+    
 };
 
 #endif // plAccessPartySpan_inc

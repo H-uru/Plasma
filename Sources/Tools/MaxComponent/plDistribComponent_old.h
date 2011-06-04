@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 const Class_ID DISTRIBUTOR_COMP_CID_OLD(0x490b247f, 0x56f60a0e);
 
-#include "../MaxConvert/plDistributor.h"
+#include "MaxConvert/plDistributor.h"
 
 class plMaxNode;
 class plDistributor;
@@ -41,127 +41,127 @@ class plDistTree;
 class plDistribComponent_old : public plComponent
 {
 public:
-	enum 
-	{
-		kTemplates = 0,
-		kSpacing,
-		kRndPosRadius,
+    enum 
+    {
+        kTemplates = 0,
+        kSpacing,
+        kRndPosRadius,
 
-		kAlignVecX,
-		kAlignVecY,
-		kAlignVecZ,
+        kAlignVecX,
+        kAlignVecY,
+        kAlignVecZ,
 
-		kAlignWgt,
-		
-		kPolarRange,
-		kAzimuthRange,
-		
-		kOverallProb,
-		
-		kPolarBunch,
-		
-		kScaleLoX,
-		kScaleLoY,
-		kScaleLoZ,
+        kAlignWgt,
+        
+        kPolarRange,
+        kAzimuthRange,
+        
+        kOverallProb,
+        
+        kPolarBunch,
+        
+        kScaleLoX,
+        kScaleLoY,
+        kScaleLoZ,
 
-		kScaleHiX,
-		kScaleHiY,
-		kScaleHiZ,
+        kScaleHiX,
+        kScaleHiY,
+        kScaleHiZ,
 
-		kReplicants,
+        kReplicants,
 
-		kProbTexmap,
-		kProbColorChan,
+        kProbTexmap,
+        kProbColorChan,
 
-		kSeedLocked,
-		kSeed,
-		kNextSeed,
+        kSeedLocked,
+        kSeed,
+        kNextSeed,
 
-		kRemapFromLo,
-		kRemapFromHi,
-		kRemapToLo,
-		kRemapToHi,
+        kRemapFromLo,
+        kRemapFromHi,
+        kRemapToLo,
+        kRemapToHi,
 
-		kAngProbX,
-		kAngProbY,
-		kAngProbZ,
+        kAngProbX,
+        kAngProbY,
+        kAngProbZ,
 
-		kAngProbHi,
-		kAngProbLo,
+        kAngProbHi,
+        kAngProbLo,
 
-		kFadeInTran,
-		kFadeInOpaq,
-		kFadeOutTran,
-		kFadeOutOpaq,
-		kFadeInActive,
+        kFadeInTran,
+        kFadeInOpaq,
+        kFadeOutTran,
+        kFadeOutOpaq,
+        kFadeInActive,
 
-		kWindBone,
+        kWindBone,
 
-		kLockScaleXY,
-		kLockScaleXYZ,
+        kLockScaleXY,
+        kLockScaleXYZ,
 
-		kWindBoneActive,
+        kWindBoneActive,
 
-		kIsolation,
+        kIsolation,
 
-		kNumParams
+        kNumParams
 
-	};
+    };
 
-	plMeshCacheTab		fDistCache;
+    plMeshCacheTab      fDistCache;
 
-	void		ISetProbTexmap(plDistributor& distrib);
-	INode*		IMakeOne(plDistribInstTab& nodes);
+    void        ISetProbTexmap(plDistributor& distrib);
+    INode*      IMakeOne(plDistribInstTab& nodes);
 
-	BOOL		IValidateFade(Box3& fade);
+    BOOL        IValidateFade(Box3& fade);
 
 public:
-	plDistribComponent_old();
-	void DeleteThis() { delete this; }
+    plDistribComponent_old();
+    void DeleteThis() { delete this; }
 
 
-	BOOL			Distribute(plDistribInstTab& reps, plExportProgressBar& bar, plDistTree* dt=nil);
-	void			Done();
+    BOOL            Distribute(plDistribInstTab& reps, plExportProgressBar& bar, plDistTree* dt=nil);
+    void            Done();
 
-	void			Clear();
-	void			Preview();
+    void            Clear();
+    void            Preview();
 
-	// See notes below
-	Box3			GetFade();
-	BOOL			IsFlexible() const;
-	float			GetIsoPriority() const;
-	plDistributor::IsoType GetIsolation() const;
+    // See notes below
+    Box3            GetFade();
+    BOOL            IsFlexible() const;
+    float           GetIsoPriority() const;
+    plDistributor::IsoType GetIsolation() const;
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)		{ return true; }
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 
-	// GetFade() notes.
-	// Fade returned as follows:
-	// Box3.Min()[0] == fadeInTransparent
-	// Box3.Min()[1] == fadeInOpaque
-	// Box3.Max()[0] == fadeOutTransparent
-	// Box3.Max()[1] == fadeOutOpaque
-	//
-	// Box3.Min()[2] == 0 turns off fadein.
-	// Box3.Max()[2] == 0 turns off fadeout.
-	// 
-	// In all cases, max(Min()[0],Min()[1]) <= min(Max()[0], Max()[1])
-	//
-	// Also, either Min()[0] <= Min()[1] && Max()[0] >= Max()[1]
-	//			or Min()[0] >= Min()[1] && Max()[0] <= Max()[1]
-	// that is, we either start transparent, go to opaque and back to transparent,
-	//				or we start opaque, go transparent, and back to opaque.
-	// Makes sense if you think about it.
-	//
-	// If Min()[0] == Min()[1], there is no fade in, we start transparent or opaque
-	//		as determined by Max()[0] and Max()[1].
-	// Same for equal Maxs.
-	// Naturally, Min()[0] == Min()[1] && Max()[0] == Max()[1] turns the whole thing off.
-	//
+    // GetFade() notes.
+    // Fade returned as follows:
+    // Box3.Min()[0] == fadeInTransparent
+    // Box3.Min()[1] == fadeInOpaque
+    // Box3.Max()[0] == fadeOutTransparent
+    // Box3.Max()[1] == fadeOutOpaque
+    //
+    // Box3.Min()[2] == 0 turns off fadein.
+    // Box3.Max()[2] == 0 turns off fadeout.
+    // 
+    // In all cases, max(Min()[0],Min()[1]) <= min(Max()[0], Max()[1])
+    //
+    // Also, either Min()[0] <= Min()[1] && Max()[0] >= Max()[1]
+    //          or Min()[0] >= Min()[1] && Max()[0] <= Max()[1]
+    // that is, we either start transparent, go to opaque and back to transparent,
+    //              or we start opaque, go transparent, and back to opaque.
+    // Makes sense if you think about it.
+    //
+    // If Min()[0] == Min()[1], there is no fade in, we start transparent or opaque
+    //      as determined by Max()[0] and Max()[1].
+    // Same for equal Maxs.
+    // Naturally, Min()[0] == Min()[1] && Max()[0] == Max()[1] turns the whole thing off.
+    //
 
 #endif // plDistribComponent_inc

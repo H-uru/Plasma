@@ -584,28 +584,23 @@ void CCmdParser::Initialize (const CmdArgDef def[], unsigned defCount) {
 //===========================================================================
 bool CCmdParser::IsSpecified (unsigned id) const {
     if (const CmdArgData * data = fParser->FindArgById(id))
-		return data->isSpecified;
-	return false;
+        return data->isSpecified;
+    return false;
 }
 
 //===========================================================================
 bool CCmdParser::IsSpecified (const wchar name[]) const {
     if (const CmdArgData * data = fParser->FindArgByName(name))
-		return data->isSpecified;
-	return false;
+        return data->isSpecified;
+    return false;
 }
 
 //===========================================================================
 void CCmdParser::OnError (const wchar str[], ECmdError errorCode, const wchar arg[], const wchar value[]) {
-    ref(str);
-    ref(errorCode);
-    ref(arg);
-    ref(value);
 }
 
 //===========================================================================
 bool CCmdParser::OnExtra (const wchar str[]) {
-    ref(str);
     return false;
 }
 

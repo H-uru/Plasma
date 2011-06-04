@@ -67,5 +67,5 @@ unsigned BuildId () {
 
 //============================================================================
 void OverrideBuildId (unsigned buildId) {
-	s_buildIdOverride = buildId;
+    s_buildIdOverride = buildId;
 }

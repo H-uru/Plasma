@@ -31,24 +31,24 @@ class plMaxNode;
 class plGetLocationDlg
 {
 protected:
-	plMaxNode *fNode;
-	plErrorMsg *fErrMsg;
-	plMaxNode *fDefaultLocation;
-	
+    plMaxNode *fNode;
+    plErrorMsg *fErrMsg;
+    plMaxNode *fDefaultLocation;
+    
 public:
-	static plGetLocationDlg& Instance();
-	bool GetLocation(plMaxNode *node, plErrorMsg *errMsg);
+    static plGetLocationDlg& Instance();
+    bool GetLocation(plMaxNode *node, plErrorMsg *errMsg);
 
-	// This should be called at the start of each convert to prevent any
-	// problems with bad pointers
-	void ResetDefaultLocation();
+    // This should be called at the start of each convert to prevent any
+    // problems with bad pointers
+    void ResetDefaultLocation();
 
 protected:
-	plGetLocationDlg();
-	void IListRooms(plMaxNode *node, HWND hList);
-	void IAddSelection(HWND hList, bool setDefault);
-	void ISetLocation(plMaxNode *locNode);
+    plGetLocationDlg();
+    void IListRooms(plMaxNode *node, HWND hList);
+    void IAddSelection(HWND hList, bool setDefault);
+    void ISetLocation(plMaxNode *locNode);
 
-	static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 };

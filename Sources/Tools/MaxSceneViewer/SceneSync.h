@@ -37,66 +37,66 @@ class hsSemaphore;
 class SceneWatcher;
 class plSceneNode;
 
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKey.h"
 
 class SceneSync
 {
 protected:
-	SceneWatcher *fSceneWatcher;
-	hsSemaphore *fUpdateSignal;
-	const char *fPipeName;
-	int fTimerID;
-	int fUpdateFreq;
-	
-	SceneSync();
+    SceneWatcher *fSceneWatcher;
+    hsSemaphore *fUpdateSignal;
+    const char *fPipeName;
+    int fTimerID;
+    int fUpdateFreq;
+    
+    SceneSync();
 
 public:
-	static SceneSync& Instance();
+    static SceneSync& Instance();
 
-	// Get the path where the current Max file will be exported to (not including "dat")
-	bool GetOutputDir(char *buf);
+    // Get the path where the current Max file will be exported to (not including "dat")
+    bool GetOutputDir(char *buf);
 
-	bool IsClientRunning();
+    bool IsClientRunning();
 
-	// Is there valid data on disk that we can load into the ResMgr or do we need to reconvert?
-	bool CanLoadOldResMgr();
+    // Is there valid data on disk that we can load into the ResMgr or do we need to reconvert?
+    bool CanLoadOldResMgr();
 
-	// Create client data
-	bool CreateClientData();
+    // Create client data
+    bool CreateClientData();
 
-	void SetUpdateFreq(int freq);	// In milliseconds
+    void SetUpdateFreq(int freq);   // In milliseconds
 
-	// Start updating the client
-	bool BeginClientSync(const char *semaphoreName, const char *pipeName);
-	// Stop updating the client.  If abort is true, don't try saving, something went wrong
-	void EndClientSync(bool abort);
+    // Start updating the client
+    bool BeginClientSync(const char *semaphoreName, const char *pipeName);
+    // Stop updating the client.  If abort is true, don't try saving, something went wrong
+    void EndClientSync(bool abort);
 
 protected:
-	bool SaveResMgr();
+    bool SaveResMgr();
 
-	void IShutdownClient();
+    void IShutdownClient();
 
-	// Reconvert any dirty nodes to sync the Plasma database and the Max one
-	bool Update();
+    // Reconvert any dirty nodes to sync the Plasma database and the Max one
+    bool Update();
 
-	void AddSceneNodes(std::set<plSceneNode*>& sceneNodes, std::vector<plUoid>& delUoids, std::vector<plKey>& newKeys);
+    void AddSceneNodes(std::set<plSceneNode*>& sceneNodes, std::vector<plUoid>& delUoids, std::vector<plKey>& newKeys);
 
-	bool IStartWatching(bool forceWatch=false);
-	bool IStopWatching();
+    bool IStartWatching(bool forceWatch=false);
+    bool IStopWatching();
 
-	// Called by open and close scene.
-	bool IReadNodeMap(const char *dir);
-	bool IWriteNodeMap(const char *dir);
+    // Called by open and close scene.
+    bool IReadNodeMap(const char *dir);
+    bool IWriteNodeMap(const char *dir);
 
-	void IShutdown();
+    void IShutdown();
 
-	void IDeletePath(const char *path);
-	void IClearDirtyRecur(plMaxNode *node);
+    void IDeletePath(const char *path);
+    void IClearDirtyRecur(plMaxNode *node);
 
-	static void INotify(void *param, NotifyInfo *info);
+    static void INotify(void *param, NotifyInfo *info);
 
-	static void CALLBACK ITimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
+    static void CALLBACK ITimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 };
 
 #endif //SCENE_SYNC_H

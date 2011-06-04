@@ -29,24 +29,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Param ID's
 enum
 {
-	kBasicUsage,
+    kBasicUsage,
 };
 
 // Usage types
 enum
 {
-	kUsageNone,
-	kUsageBase,
-	kUsageDetail,
-	kUsageGrime,
-	kUsageTransition,
-	kUsageHighlight,
-	kUsageAlphaMask,
-	kUsageShadowLight,
-	kUsageHelper,
-	kUsageGuess,
+    kUsageNone,
+    kUsageBase,
+    kUsageDetail,
+    kUsageGrime,
+    kUsageTransition,
+    kUsageHighlight,
+    kUsageAlphaMask,
+    kUsageShadowLight,
+    kUsageHelper,
+    kUsageGuess,
 
-	kUsageNumTypes
+    kUsageNumTypes
 };
 
 #endif //PL_LAYERTEXBASICPB_H

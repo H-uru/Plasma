@@ -40,41 +40,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /** \class plAvTaskBrain
-	Push a new brain onto the avatar or pull an old brain off.
-	If a brain is supplied, it's a push. Otherwise it's a pull.
+    Push a new brain onto the avatar or pull an old brain off.
+    If a brain is supplied, it's a push. Otherwise it's a pull.
 */
 class plAvTaskBrain : public plAvTask
 {
 public:
-	/** Default constructor. Used as is, will function as a pop brain message. */
-	plAvTaskBrain();
-	/** Constructor for a push configuration. If the brain is non, nil, it 
-		will be pushed onto the receiving avatar when the task is dequeued.
-		If the brain is nil, the current brain will be popped. */
-	plAvTaskBrain(plArmatureBrain *brain);
-	virtual ~plAvTaskBrain();
+    /** Default constructor. Used as is, will function as a pop brain message. */
+    plAvTaskBrain();
+    /** Constructor for a push configuration. If the brain is non, nil, it 
+        will be pushed onto the receiving avatar when the task is dequeued.
+        If the brain is nil, the current brain will be popped. */
+    plAvTaskBrain(plArmatureBrain *brain);
+    virtual ~plAvTaskBrain();
 
-	// task protocol
-	virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
-	virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
-		
-	/** dump descriptive stuff to the given debug text */
-	virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    // task protocol
+    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
+    virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
+        
+    /** dump descriptive stuff to the given debug text */
+    virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt);
 
-	plArmatureBrain *GetBrain();
+    plArmatureBrain *GetBrain();
 
-	CLASSNAME_REGISTER( plAvTaskBrain );
-	GETINTERFACE_ANY( plAvTaskBrain, plAvTask );
+    CLASSNAME_REGISTER( plAvTaskBrain );
+    GETINTERFACE_ANY( plAvTaskBrain, plAvTask );
 
-	/** Read the task from a stream. Not all tasks need to read/write, so the base implementation
-		gives a warning to expose tasks that are being read/written unexpectedly. */
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
+    /** Read the task from a stream. Not all tasks need to read/write, so the base implementation
+        gives a warning to expose tasks that are being read/written unexpectedly. */
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
 
-	/** Write the task to a stream. Not all tasks need to read/write, so the base implementation
-		gives a warning to expose tasks that are being read/written unexpectedly. */
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    /** Write the task to a stream. Not all tasks need to read/write, so the base implementation
+        gives a warning to expose tasks that are being read/written unexpectedly. */
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 protected:
-	plArmatureBrain *fBrain;
+    plArmatureBrain *fBrain;
 };
 
 #endif

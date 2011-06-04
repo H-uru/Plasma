@@ -36,115 +36,115 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsColorRGBA.h"
 #include "hsBounds.h"
 
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
 
-#include "../plGImage/plMipmap.h"
+#include "plGImage/plMipmap.h"
 
-#include "../plJPEG/plJPEG.h"
+#include "plJPEG/plJPEG.h"
 
-#include "../plMessage/plRenderRequestMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
 
 plGrabCubeRenderRequest::plGrabCubeRenderRequest()
-:	fQuality(75)
+:   fQuality(75)
 {
 }
 
 void plGrabCubeRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
 {
-	if( !fFileName[0] )
-		return;
+    if( !fFileName[0] )
+        return;
 
-	plRenderRequest::Render(pipe, pageMgr);
+    plRenderRequest::Render(pipe, pageMgr);
 
-	pipe->EndRender();
+    pipe->EndRender();
 
-	plMipmap		mipmap;
-	if( pipe->CaptureScreen(&mipmap) )
-	{
-		plJPEG::Instance().SetWriteQuality(fQuality);
+    plMipmap        mipmap;
+    if( pipe->CaptureScreen(&mipmap) )
+    {
+        plJPEG::Instance().SetWriteQuality(fQuality);
 
-		plJPEG::Instance().WriteToFile(fFileName, &mipmap);
-	}
+        plJPEG::Instance().WriteToFile(fFileName, &mipmap);
+    }
 
-	pipe->BeginRender();
+    pipe->BeginRender();
 }
 
 
 void plGrabCubeMap::GrabCube(plPipeline* pipe, plSceneObject* obj, const char* pref, const hsColorRGBA& clearColor, UInt8 q)
 {
-	hsPoint3 center;
-	if( obj && !(obj->GetLocalToWorld().fFlags & hsMatrix44::kIsIdent) )
-	{
-		center = obj->GetLocalToWorld().GetTranslate();
-	}
-	else if( obj && obj->GetDrawInterface() )
-	{
-		center = obj->GetDrawInterface()->GetWorldBounds().GetCenter();
-	}
-	else
-	{
-		center = pipe->GetCameraToWorld().GetTranslate();
-	}
-	ISetupRenderRequests(pipe, center, pref, clearColor, q);
+    hsPoint3 center;
+    if( obj && !(obj->GetLocalToWorld().fFlags & hsMatrix44::kIsIdent) )
+    {
+        center = obj->GetLocalToWorld().GetTranslate();
+    }
+    else if( obj && obj->GetDrawInterface() )
+    {
+        center = obj->GetDrawInterface()->GetWorldBounds().GetCenter();
+    }
+    else
+    {
+        center = pipe->GetCameraToWorld().GetTranslate();
+    }
+    ISetupRenderRequests(pipe, center, pref, clearColor, q);
 }
 
 void plGrabCubeMap::GrabCube(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, UInt8 q)
 {
-	ISetupRenderRequests(pipe, center, pref, clearColor, q);
+    ISetupRenderRequests(pipe, center, pref, clearColor, q);
 }
 
 void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, UInt8 q) const
 {
-	hsMatrix44 worldToCameras[6];
-	hsMatrix44 cameraToWorlds[6];
-	hsMatrix44::MakeEnvMapMatrices(center, worldToCameras, cameraToWorlds);
+    hsMatrix44 worldToCameras[6];
+    hsMatrix44 cameraToWorlds[6];
+    hsMatrix44::MakeEnvMapMatrices(center, worldToCameras, cameraToWorlds);
 
-	UInt32 renderState 
-		= plPipeline::kRenderNormal
-		| plPipeline::kRenderClearColor
-		| plPipeline::kRenderClearDepth;
+    UInt32 renderState 
+        = plPipeline::kRenderNormal
+        | plPipeline::kRenderClearColor
+        | plPipeline::kRenderClearDepth;
 
-	float hither;
-	float yon;
-	pipe->GetDepth(hither, yon);
+    float hither;
+    float yon;
+    pipe->GetDepth(hither, yon);
 
-	const char* suff[6] = {
-		"LF",
-		"RT",
-		"BK",
-		"FR",
-		"UP",
-		"DN" };
+    const char* suff[6] = {
+        "LF",
+        "RT",
+        "BK",
+        "FR",
+        "UP",
+        "DN" };
 
-	int i;
-	for( i = 0; i < 6; i++ )
-	{
-		plGrabCubeRenderRequest* req = TRACKED_NEW plGrabCubeRenderRequest;
-		req->SetRenderState(renderState);
+    int i;
+    for( i = 0; i < 6; i++ )
+    {
+        plGrabCubeRenderRequest* req = TRACKED_NEW plGrabCubeRenderRequest;
+        req->SetRenderState(renderState);
 
-		req->SetDrawableMask(plDrawable::kNormal);
-		req->SetSubDrawableMask(plDrawable::kSubAllTypes);
+        req->SetDrawableMask(plDrawable::kNormal);
+        req->SetSubDrawableMask(plDrawable::kSubAllTypes);
 
-		req->SetHither(hither);
-		req->SetYon(yon);
+        req->SetHither(hither);
+        req->SetYon(yon);
 
-		req->SetFovX(90.f);
-		req->SetFovY(90.f);
+        req->SetFovX(90.f);
+        req->SetFovY(90.f);
 
-		req->SetClearColor(clearColor);
-		req->SetClearDepth(1.f);
+        req->SetClearColor(clearColor);
+        req->SetClearDepth(1.f);
 
-		req->SetClearDrawable(nil);
-		req->SetRenderTarget(nil);
+        req->SetClearDrawable(nil);
+        req->SetRenderTarget(nil);
 
-		req->SetCameraTransform(worldToCameras[i], cameraToWorlds[i]);
+        req->SetCameraTransform(worldToCameras[i], cameraToWorlds[i]);
 
-		req->fQuality = q;
-		sprintf(req->fFileName, "%s_%s.jpg", pref, suff[i]);
+        req->fQuality = q;
+        sprintf(req->fFileName, "%s_%s.jpg", pref, suff[i]);
 
-		plRenderRequestMsg* reqMsg = TRACKED_NEW plRenderRequestMsg(nil, req);
-		reqMsg->Send();
-		hsRefCnt_SafeUnRef(req);
-	}
+        plRenderRequestMsg* reqMsg = TRACKED_NEW plRenderRequestMsg(nil, req);
+        reqMsg->Send();
+        hsRefCnt_SafeUnRef(req);
+    }
 }

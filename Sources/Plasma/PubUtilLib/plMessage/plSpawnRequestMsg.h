@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSpawnRequestMsg_inc
 #define plSpawnRequestMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class hsStream;
 class hsResMgr;
@@ -37,25 +37,25 @@ class plSpawnRequestMsg : public plMessage
 {
 
 public:
-	plSpawnRequestMsg(){SetBCastFlag(plMessage::kBCastByExactType);}
-	plSpawnRequestMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t){SetBCastFlag(plMessage::kBCastByExactType);}
-	~plSpawnRequestMsg(){;}
+    plSpawnRequestMsg(){SetBCastFlag(plMessage::kBCastByExactType);}
+    plSpawnRequestMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t){SetBCastFlag(plMessage::kBCastByExactType);}
+    ~plSpawnRequestMsg(){;}
 
-	CLASSNAME_REGISTER( plSpawnRequestMsg );
-	GETINTERFACE_ANY( plSpawnRequestMsg, plMessage );
-	
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-	}
+    CLASSNAME_REGISTER( plSpawnRequestMsg );
+    GETINTERFACE_ANY( plSpawnRequestMsg, plMessage );
+    
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+    }
 };
 
 #endif // plSpawnRequestMsg_inc

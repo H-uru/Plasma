@@ -36,29 +36,29 @@ struct hsVector3;
 class plSpanHandle
 {
 public:
-	plDrawableSpans*		fDrawable;
-	UInt32					fSpanIdx;
+    plDrawableSpans*        fDrawable;
+    UInt32                  fSpanIdx;
 };
 
 class plInterMeshSmooth
 {
 protected:
-	hsScalar		fMinNormDot;
+    hsScalar        fMinNormDot;
 
-	void			FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxList, hsTArray<UInt16>& edgeVerts);
-	void			FindEdges(hsTArray<plSpanHandle>& sets, hsTArray<UInt16>* edgeVerts);
-	void			FindSharedVerts(hsPoint3& searchPos, plSpanHandle& set, hsTArray<UInt16>& edgeVerts, hsTArray<UInt16>& shareVtx, hsVector3& normAccum);
-	void			SetNormals(plSpanHandle& set, hsTArray<UInt16>& shareVtx, hsVector3& norm);
-	hsPoint3&		GetPosition(plSpanHandle& set, UInt16 idx);
-	hsVector3&		GetNormal(plSpanHandle& set, UInt16 idx);
+    void            FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxList, hsTArray<UInt16>& edgeVerts);
+    void            FindEdges(hsTArray<plSpanHandle>& sets, hsTArray<UInt16>* edgeVerts);
+    void            FindSharedVerts(hsPoint3& searchPos, plSpanHandle& set, hsTArray<UInt16>& edgeVerts, hsTArray<UInt16>& shareVtx, hsVector3& normAccum);
+    void            SetNormals(plSpanHandle& set, hsTArray<UInt16>& shareVtx, hsVector3& norm);
+    hsPoint3&       GetPosition(plSpanHandle& set, UInt16 idx);
+    hsVector3&      GetNormal(plSpanHandle& set, UInt16 idx);
 
 public:
-	plInterMeshSmooth() : fMinNormDot(0.25f) {}
+    plInterMeshSmooth() : fMinNormDot(0.25f) {}
 
-	void		SetAngle(hsScalar degs);
-	hsScalar	GetAngle() const; // returns degrees
+    void        SetAngle(hsScalar degs);
+    hsScalar    GetAngle() const; // returns degrees
 
-	void		SmoothNormals(hsTArray<plSpanHandle>& sets);
+    void        SmoothNormals(hsTArray<plSpanHandle>& sets);
 };
 
 #endif // plInterMeshSmooth_inc

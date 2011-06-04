@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "CS/bipexp.h"
 #include "decomp.h"
 
-#pragma warning(disable: 4786)		// disable warnings about excessive STL symbol name length
+#pragma warning(disable: 4786)      // disable warnings about excessive STL symbol name length
 
 #include <map>
 #include <vector>
@@ -50,9 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
-#include "../MaxMain/plMaxNodeBase.h"
+#include "MaxMain/plMaxNodeBase.h"
 
-#include "../plTransform/hsAffineParts.h"
+#include "plTransform/hsAffineParts.h"
 #include "hsMatrix44.h"
 
 //////////////
@@ -65,8 +65,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // A local handy thing to remember a matrix and the time we sampled it
 struct nodeTMInfo
 {
-	TimeValue fTime;
-	Matrix3 fMat3;
+    TimeValue fTime;
+    Matrix3 fMat3;
 };
 
 // PLSAMPLEVEC
@@ -119,52 +119,52 @@ void FreeMotionSamples(plSampleVec *samples);
 // REMOVEBIPED
 void RemoveBiped(INode *bipRoot, Interface *theInterface)
 {
-	SuspendAnimate();	
-	AnimateOn();
-	
-	// remember Max's default controllers (for the user)
-	ClassDesc* defaultRotCtrl=GetDefaultController(CTRL_ROTATION_CLASS_ID);
-	ClassDesc* defaultPosCtrl=GetDefaultController(CTRL_POSITION_CLASS_ID);
-	ClassDesc* defaultScaleCtrl=GetDefaultController(CTRL_SCALE_CLASS_ID);
-	
-	// change default controllers to linear to create linear controllers
-	// since we have no tan info
-	DllDir* dllDir=&theInterface->GetDllDir();
-	ClassDirectory* classDir=&dllDir->ClassDir();
+    SuspendAnimate();   
+    AnimateOn();
+    
+    // remember Max's default controllers (for the user)
+    ClassDesc* defaultRotCtrl=GetDefaultController(CTRL_ROTATION_CLASS_ID);
+    ClassDesc* defaultPosCtrl=GetDefaultController(CTRL_POSITION_CLASS_ID);
+    ClassDesc* defaultScaleCtrl=GetDefaultController(CTRL_SCALE_CLASS_ID);
+    
+    // change default controllers to linear to create linear controllers
+    // since we have no tan info
+    DllDir* dllDir=&theInterface->GetDllDir();
+    ClassDirectory* classDir=&dllDir->ClassDir();
 
-	ClassDesc* rotCtrl = classDir->FindClass( SClass_ID(CTRL_ROTATION_CLASS_ID),
-								Class_ID(TCBINTERP_ROTATION_CLASS_ID,0));  // was Class_ID(LININTERP_ROTATION_CLASS_ID,0));
+    ClassDesc* rotCtrl = classDir->FindClass( SClass_ID(CTRL_ROTATION_CLASS_ID),
+                                Class_ID(TCBINTERP_ROTATION_CLASS_ID,0));  // was Class_ID(LININTERP_ROTATION_CLASS_ID,0));
 
-	ClassDesc* posCtrl = classDir->FindClass( SClass_ID(CTRL_POSITION_CLASS_ID),
-									Class_ID(LININTERP_POSITION_CLASS_ID, 0));
+    ClassDesc* posCtrl = classDir->FindClass( SClass_ID(CTRL_POSITION_CLASS_ID),
+                                    Class_ID(LININTERP_POSITION_CLASS_ID, 0));
 
-	ClassDesc* scaleCtrl = classDir->FindClass( SClass_ID(CTRL_SCALE_CLASS_ID),
-											Class_ID(LININTERP_SCALE_CLASS_ID, 0));
+    ClassDesc* scaleCtrl = classDir->FindClass( SClass_ID(CTRL_SCALE_CLASS_ID),
+                                            Class_ID(LININTERP_SCALE_CLASS_ID, 0));
 
-	SetDefaultController(CTRL_ROTATION_CLASS_ID, rotCtrl);
-	SetDefaultController(CTRL_POSITION_CLASS_ID, posCtrl);
-	SetDefaultController(CTRL_SCALE_CLASS_ID, scaleCtrl);
+    SetDefaultController(CTRL_ROTATION_CLASS_ID, rotCtrl);
+    SetDefaultController(CTRL_POSITION_CLASS_ID, posCtrl);
+    SetDefaultController(CTRL_SCALE_CLASS_ID, scaleCtrl);
 
-	ProcessNodeRecurse(bipRoot, nil, theInterface);
+    ProcessNodeRecurse(bipRoot, nil, theInterface);
 
-	//deinit
-	ResumeAnimate();
-	
-	// remember Max's default controllers (for the user)
-	SetDefaultController(CTRL_ROTATION_CLASS_ID, defaultRotCtrl);
-	SetDefaultController(CTRL_POSITION_CLASS_ID, defaultPosCtrl);
-	SetDefaultController(CTRL_SCALE_CLASS_ID, defaultScaleCtrl);
+    //deinit
+    ResumeAnimate();
+    
+    // remember Max's default controllers (for the user)
+    SetDefaultController(CTRL_ROTATION_CLASS_ID, defaultRotCtrl);
+    SetDefaultController(CTRL_POSITION_CLASS_ID, defaultPosCtrl);
+    SetDefaultController(CTRL_SCALE_CLASS_ID, defaultScaleCtrl);
 }
 
 // PROCESSNODERECURSE
 void ProcessNodeRecurse(INode *node, INode *parent, Interface *theInterface)
 {
-	if(HasBipController(node))
-	{
-		ProcessBipedNodeRecurse(node, parent, theInterface);
-	} else {
-		ProcessNonBipedNodeRecurse(node, parent, theInterface);
-	}
+    if(HasBipController(node))
+    {
+        ProcessBipedNodeRecurse(node, parent, theInterface);
+    } else {
+        ProcessNonBipedNodeRecurse(node, parent, theInterface);
+    }
 }
 
 // PROCESSBIPNODERECURSE
@@ -174,100 +174,100 @@ void ProcessNodeRecurse(INode *node, INode *parent, Interface *theInterface)
 // biped node.
 void ProcessBipedNodeRecurse(INode *bipNode, INode *parent, Interface *theInterface)
 {
-	int numChildren = bipNode->NumberOfChildren();
-	char *bipName = bipNode ? bipNode->GetName() : nil;
-	INode *replacement = nil;
+    int numChildren = bipNode->NumberOfChildren();
+    char *bipName = bipNode ? bipNode->GetName() : nil;
+    INode *replacement = nil;
 
-	for (int i = 0; i < numChildren; i++)
-	{
-		INode *child = bipNode->GetChildNode(i);
-		char *childName = child ? child->GetName() : nil;
+    for (int i = 0; i < numChildren; i++)
+    {
+        INode *child = bipNode->GetChildNode(i);
+        char *childName = child ? child->GetName() : nil;
 
-		if( ! HasBipController(child) )
-		{
-			replacement = child;					// this child is going to be our replacement for this bipnode
+        if( ! HasBipController(child) )
+        {
+            replacement = child;                    // this child is going to be our replacement for this bipnode
 
-			// sample the animation (into global space)
-			plSampleVec *samples = SampleNodeMotion(replacement, bipNode, 1, theInterface);
+            // sample the animation (into global space)
+            plSampleVec *samples = SampleNodeMotion(replacement, bipNode, 1, theInterface);
 
-			// detach from the parent (this blows away the animation)
-			replacement->Detach(0);
+            // detach from the parent (this blows away the animation)
+            replacement->Detach(0);
 
-			// attach the node to the biped's parent.
-			parent->AttachChild(replacement);	
+            // attach the node to the biped's parent.
+            parent->AttachChild(replacement);   
 
-			ReapplyAnimation(child, samples);
-			FreeMotionSamples(samples);
+            ReapplyAnimation(child, samples);
+            FreeMotionSamples(samples);
 
-			// we only need one replacement for the bip node
-			break;
-		}
-	}
-	
-	if(replacement)
-	{
-		// reparent the siblings to the newly promoted replacement node
-		numChildren = bipNode->NumberOfChildren();
-		for (i = 0; i < numChildren; i++)
-		{
-			INode *child = bipNode->GetChildNode(i);
+            // we only need one replacement for the bip node
+            break;
+        }
+    }
+    
+    if(replacement)
+    {
+        // reparent the siblings to the newly promoted replacement node
+        numChildren = bipNode->NumberOfChildren();
+        for (int i = 0; i < numChildren; i++)
+        {
+            INode *child = bipNode->GetChildNode(i);
 
-			if( HasBipController(child) )
-			{
-				ProcessBipedNodeRecurse(child, replacement, theInterface);
-			} else {
-				child->Detach(0);					// remove the (non-bip) child from the bip node
-				replacement->AttachChild(child);	// attach it to the non-bip parent
+            if( HasBipController(child) )
+            {
+                ProcessBipedNodeRecurse(child, replacement, theInterface);
+            } else {
+                child->Detach(0);                   // remove the (non-bip) child from the bip node
+                replacement->AttachChild(child);    // attach it to the non-bip parent
 
-				ProcessNonBipedNodeRecurse(child, replacement, theInterface);
-			}
-		}
-	} else {
-		// this is an error condition: we've got a bip node that has no non-bip child for us to promote
-		char buf[256];
-		sprintf(buf, "Couldn't find non-bip node to transfer motion to for bip node %s\n", bipNode->GetName());
-		hsStatusMessage(buf);
-	}
+                ProcessNonBipedNodeRecurse(child, replacement, theInterface);
+            }
+        }
+    } else {
+        // this is an error condition: we've got a bip node that has no non-bip child for us to promote
+        char buf[256];
+        sprintf(buf, "Couldn't find non-bip node to transfer motion to for bip node %s\n", bipNode->GetName());
+        hsStatusMessage(buf);
+    }
 }
 
 // PROCESSNONBIPEDNODERECURSE
 // Sample motion for a hierarchy that does not have any Biped controllers in it.
 void ProcessNonBipedNodeRecurse(INode *node, INode *parent, Interface *theInterface)
 {
-	if( ! ExportableAnimationController(node) )
-	{
-		plSampleVec *samples = SampleNodeMotion(node, parent, 2, theInterface);
-		ReapplyAnimation(node, samples);
-		FreeMotionSamples(samples);
-	}
+    if( ! ExportableAnimationController(node) )
+    {
+        plSampleVec *samples = SampleNodeMotion(node, parent, 2, theInterface);
+        ReapplyAnimation(node, samples);
+        FreeMotionSamples(samples);
+    }
 
-	int numChildren = node->NumberOfChildren();
-	for (int i = 0; i < numChildren; i++)
-	{
-		INode *child = node->GetChildNode(i);
+    int numChildren = node->NumberOfChildren();
+    for (int i = 0; i < numChildren; i++)
+    {
+        INode *child = node->GetChildNode(i);
 
-		ProcessNodeRecurse(child, node, theInterface);
-	}
+        ProcessNodeRecurse(child, node, theInterface);
+    }
 }
 
 // ADJUSTROTKEYS
 void AdjustRotKeys(INode *node)
 {
-	Control *controller = node->GetTMController();
-	Control *rotControl = controller->GetRotationController();
-	IKeyControl *rotKeyCont = GetKeyControlInterface(rotControl);
-	int numKeys = rotKeyCont->GetNumKeys();
+    Control *controller = node->GetTMController();
+    Control *rotControl = controller->GetRotationController();
+    IKeyControl *rotKeyCont = GetKeyControlInterface(rotControl);
+    int numKeys = rotKeyCont->GetNumKeys();
 
-	for(int i = 0; i < numKeys; i++)
-	{
-		ITCBKey key;
-		rotKeyCont->GetKey(i, &key);
+    for(int i = 0; i < numKeys; i++)
+    {
+        ITCBKey key;
+        rotKeyCont->GetKey(i, &key);
 
-		key.cont = 0;
-		rotKeyCont->SetKey(i, &key);
+        key.cont = 0;
+        rotKeyCont->SetKey(i, &key);
 
-	}
-	
+    }
+    
 }
 
 #define boolTrue = (0 == 0);
@@ -276,155 +276,155 @@ void AdjustRotKeys(INode *node)
 // *** todo: generalize this for rotation keys as well.
 int CompareKeys(ILinPoint3Key &a, ILinPoint3Key &b)
 {
-	int result = a.val.Equals(b.val, .001);
+    int result = a.val.Equals(b.val, .001);
 #if 0
-	hsStatusMessageF("COMPAREKEYS(point): (%f %f %f) vs (%f, %f, %f) = %s\n", a.val.x, a.val.y, a.val.z, b.val.x, b.val.y, b.val.z, result ? "yes" : "no");
+    hsStatusMessageF("COMPAREKEYS(point): (%f %f %f) vs (%f, %f, %f) = %s\n", a.val.x, a.val.y, a.val.z, b.val.x, b.val.y, b.val.z, result ? "yes" : "no");
 #endif
-	return result;
+    return result;
 }
 
 template<class T>
 void ReduceKeys(INode *node, IKeyControl *keyCont)
 {
 
-	keyCont->SortKeys();		// ensure the keys are sorted by time
-	
-	int to;			// the next key we're setting
-	int from;		// the next key we're examining
-	int origNumKeys = keyCont->GetNumKeys();
-	int finalNumKeys = origNumKeys;
-	
-	for (to = 1, from = 1; from < origNumKeys - 1; to++, from++)
-	{
-		T prevKey, curKey, nextKey;
+    keyCont->SortKeys();        // ensure the keys are sorted by time
+    
+    int to;         // the next key we're setting
+    int from;       // the next key we're examining
+    int origNumKeys = keyCont->GetNumKeys();
+    int finalNumKeys = origNumKeys;
+    
+    for (to = 1, from = 1; from < origNumKeys - 1; to++, from++)
+    {
+        T prevKey, curKey, nextKey;
 
-		keyCont->GetKey(from - 1, &prevKey);
-		keyCont->GetKey(from, &curKey);
-		keyCont->GetKey(from + 1, &nextKey);
+        keyCont->GetKey(from - 1, &prevKey);
+        keyCont->GetKey(from, &curKey);
+        keyCont->GetKey(from + 1, &nextKey);
 
-		if (CompareKeys(curKey, prevKey) && CompareKeys(curKey, nextKey))
-			finalNumKeys--; // skip it
-		else
-			keyCont->SetKey(to, &curKey); // copy current key
-	}
-	// copy the last one without peeking ahead
-	T lastKey;
-	keyCont->GetKey(from, &lastKey);
-	keyCont->SetKey(to, &lastKey);
+        if (CompareKeys(curKey, prevKey) && CompareKeys(curKey, nextKey))
+            finalNumKeys--; // skip it
+        else
+            keyCont->SetKey(to, &curKey); // copy current key
+    }
+    // copy the last one without peeking ahead
+    T lastKey;
+    keyCont->GetKey(from, &lastKey);
+    keyCont->SetKey(to, &lastKey);
 
-	keyCont->SetNumKeys(finalNumKeys);
-	keyCont->SortKeys();
+    keyCont->SetNumKeys(finalNumKeys);
+    keyCont->SortKeys();
 }
 
 void EliminateScaleKeys(INode *node, IKeyControl *keyCont)
 {
-	int numKeys = keyCont->GetNumKeys();
-	ILinScaleKey last;
-	keyCont->GetKey(numKeys - 1, &last);
-	keyCont->SetKey(1, &last);		// move the last to the second
-	keyCont->SetNumKeys(2);
+    int numKeys = keyCont->GetNumKeys();
+    ILinScaleKey last;
+    keyCont->GetKey(numKeys - 1, &last);
+    keyCont->SetKey(1, &last);      // move the last to the second
+    keyCont->SetNumKeys(2);
 }
 
 // REAPPLYANIMATION
 // Now that we've reparented a node within the hierarchy, re-apply all its animation.
 void ReapplyAnimation(INode *node, plSampleVec *samples)
 {
-	Control *controller = node->GetTMController();
+    Control *controller = node->GetTMController();
 
-	Control *rotControl = NewDefaultRotationController();	// we set the default rotation controller type above in RemoveBiped()
-	Control *posControl = NewDefaultPositionController();	// '' ''
-	Control *scaleControl = NewDefaultScaleController();	// '' ''
-	
-	controller->SetRotationController(rotControl);
-	controller->SetPositionController(posControl);
-	controller->SetScaleController(scaleControl);
+    Control *rotControl = NewDefaultRotationController();   // we set the default rotation controller type above in RemoveBiped()
+    Control *posControl = NewDefaultPositionController();   // '' ''
+    Control *scaleControl = NewDefaultScaleController();    // '' ''
+    
+    controller->SetRotationController(rotControl);
+    controller->SetPositionController(posControl);
+    controller->SetScaleController(scaleControl);
 
-	for(int i = 0; i < samples->size(); i++)
-	{
-		nodeTMInfo *info = (*samples)[i];
-		Matrix3 m = info->fMat3;
-		TimeValue t = info->fTime;
+    for(int i = 0; i < samples->size(); i++)
+    {
+        nodeTMInfo *info = (*samples)[i];
+        Matrix3 m = info->fMat3;
+        TimeValue t = info->fTime;
 
 #if 1
-		node->SetNodeTM(t, m);
+        node->SetNodeTM(t, m);
 #else
-		AffineParts parts;
+        AffineParts parts;
 
-		INode *parent = node->GetParentNode();
-		Matrix3 parentTM = parent->GetNodeTM(t);
-		Matrix3 invParentTM = Inverse(parentTM);
-		m *= invParentTM;
+        INode *parent = node->GetParentNode();
+        Matrix3 parentTM = parent->GetNodeTM(t);
+        Matrix3 invParentTM = Inverse(parentTM);
+        m *= invParentTM;
 
-		decomp_affine(m, &parts);
+        decomp_affine(m, &parts);
 
-		Quat q(parts.q.x, parts.q.y, parts.q.z, parts.q.w);
-		Point3 p(parts.t.x, parts.t.y, parts.t.z);
+        Quat q(parts.q.x, parts.q.y, parts.q.z, parts.q.w);
+        Point3 p(parts.t.x, parts.t.y, parts.t.z);
 
-		rotControl->SetValue(t, q);
-		posControl->SetValue(t, p);
+        rotControl->SetValue(t, q);
+        posControl->SetValue(t, p);
 #endif
-	}
+    }
 
-	IKeyControl *posKeyCont = GetKeyControlInterface(posControl);
-	IKeyControl *scaleKeyCont = GetKeyControlInterface(scaleControl);
+    IKeyControl *posKeyCont = GetKeyControlInterface(posControl);
+    IKeyControl *scaleKeyCont = GetKeyControlInterface(scaleControl);
 
-	ReduceKeys<ILinPoint3Key>(node, posKeyCont);
-	EliminateScaleKeys(node, scaleKeyCont);
-	// grrrr ReduceKeys<ILinScaleKey>(node, scaleKeyCont);
+    ReduceKeys<ILinPoint3Key>(node, posKeyCont);
+    EliminateScaleKeys(node, scaleKeyCont);
+    // grrrr ReduceKeys<ILinScaleKey>(node, scaleKeyCont);
 }
 
 // HASBIPCONTROLLER
 bool HasBipController(INode* node)
 {
-	if (!node)
-		return false;
-	Control* c = node->GetTMController();
-	if (c && ((c->ClassID()== BIPSLAVE_CONTROL_CLASS_ID) ||
-		(c->ClassID()== BIPBODY_CONTROL_CLASS_ID) || 
-		(c->ClassID()== FOOTPRINT_CLASS_ID)) )
-		return true;
-	return false;
+    if (!node)
+        return false;
+    Control* c = node->GetTMController();
+    if (c && ((c->ClassID()== BIPSLAVE_CONTROL_CLASS_ID) ||
+        (c->ClassID()== BIPBODY_CONTROL_CLASS_ID) || 
+        (c->ClassID()== FOOTPRINT_CLASS_ID)) )
+        return true;
+    return false;
 
 }
 
 // EXPORTABLEANIMATIONCONTROLLER
 bool ExportableAnimationController(INode* node)
 {
-	bool result = false;
+    bool result = false;
 
-	if(node)
-	{
-		Control *c = node->GetTMController();
-		if(c)
-		{
-			Class_ID id = c->ClassID();
-			if(id == Class_ID(LININTERP_ROTATION_CLASS_ID, 0)
-				|| id == Class_ID(PRS_CONTROL_CLASS_ID, 0)
-				|| id == Class_ID(LININTERP_POSITION_CLASS_ID, 0)
-				|| id == Class_ID(TCBINTERP_FLOAT_CLASS_ID, 0)
-				|| id == Class_ID(TCBINTERP_POSITION_CLASS_ID, 0)
-				|| id == Class_ID(TCBINTERP_ROTATION_CLASS_ID, 0)
-				|| id == Class_ID(TCBINTERP_POINT3_CLASS_ID, 0)
-				|| id == Class_ID(TCBINTERP_SCALE_CLASS_ID, 0))
-			{
-				result = true;
-			}
-		}
-	}
-	return result;
+    if(node)
+    {
+        Control *c = node->GetTMController();
+        if(c)
+        {
+            Class_ID id = c->ClassID();
+            if(id == Class_ID(LININTERP_ROTATION_CLASS_ID, 0)
+                || id == Class_ID(PRS_CONTROL_CLASS_ID, 0)
+                || id == Class_ID(LININTERP_POSITION_CLASS_ID, 0)
+                || id == Class_ID(TCBINTERP_FLOAT_CLASS_ID, 0)
+                || id == Class_ID(TCBINTERP_POSITION_CLASS_ID, 0)
+                || id == Class_ID(TCBINTERP_ROTATION_CLASS_ID, 0)
+                || id == Class_ID(TCBINTERP_POINT3_CLASS_ID, 0)
+                || id == Class_ID(TCBINTERP_SCALE_CLASS_ID, 0))
+            {
+                result = true;
+            }
+        }
+    }
+    return result;
 }
 
 // SAMPLENODEMOTION
 // top level function for sampling all the motion on a single node
 plSampleVec * SampleNodeMotion(INode* node, INode* parent, int sampleRate, Interface *theInterface)
 {
-	Interval interval = theInterface->GetAnimRange();
-	TimeValue start = interval.Start();					// in ticks
-	TimeValue end = interval.End();
+    Interval interval = theInterface->GetAnimRange();
+    TimeValue start = interval.Start();                 // in ticks
+    TimeValue end = interval.End();
 
-	sampleRate *= GetTicksPerFrame();					// convert sample rate to ticks
+    sampleRate *= GetTicksPerFrame();                   // convert sample rate to ticks
 
-	return SampleNodeMotion(node, parent, sampleRate, start, end);
+    return SampleNodeMotion(node, parent, sampleRate, start, end);
 }
 
 // SAMPLENODEMOTION
@@ -432,39 +432,39 @@ plSampleVec * SampleNodeMotion(INode* node, INode* parent, int sampleRate, Inter
 // intended for use in the context of a full tree traversal
 plSampleVec * SampleNodeMotion(INode * node, INode* parent, int sampleRate, TimeValue start, TimeValue end)
 {
-	plSampleVec *result = TRACKED_NEW plSampleVec;
+    plSampleVec *result = TRACKED_NEW plSampleVec;
 
-	bool done = false;
-	
+    bool done = false;
+    
     for(int i = start; ! done; i += sampleRate)
-	{
-		if (i > end) i = end;
-		if (i == end) done = true;
+    {
+        if (i > end) i = end;
+        if (i == end) done = true;
 
-		// Get key time
-		TimeValue keyTime = i;
-		int frameNum= keyTime / GetTicksPerFrame();
+        // Get key time
+        TimeValue keyTime = i;
+        int frameNum= keyTime / GetTicksPerFrame();
 
-		// get localTM
-		nodeTMInfo * nti = TRACKED_NEW nodeTMInfo;
-		nti->fTime = keyTime;
-		Matrix3 localTM = node->GetNodeTM(keyTime);
+        // get localTM
+        nodeTMInfo * nti = TRACKED_NEW nodeTMInfo;
+        nti->fTime = keyTime;
+        Matrix3 localTM = node->GetNodeTM(keyTime);
 
-		nti->fMat3 = localTM;
-		result->push_back(nti);
-	}
-	return result;
+        nti->fMat3 = localTM;
+        result->push_back(nti);
+    }
+    return result;
 }
 
 // FREEMOTIONSAMPLES
 void FreeMotionSamples(plSampleVec *samples)
 {
-	int count = samples->size();
-	for(int i = 0; i < count; i++)
-	{
-		delete (*samples)[i];
-	}
-	delete samples;
+    int count = samples->size();
+    for(int i = 0; i < count; i++)
+    {
+        delete (*samples)[i];
+    }
+    delete samples;
 }
 
 // LIMITTRANSFORM
@@ -473,58 +473,58 @@ void FreeMotionSamples(plSampleVec *samples)
 int LimitTransform(INode* node, Matrix3* nodeTM)
 {
 /* NOT sure if we want to support this functionality: probably eventually.
-	hsBool32 noRotX=false,noRotY=false,noRotZ=false;
-	hsBool32 noRot=gUserPropMgr.UserPropExists(node,"BEHNoRot") || MatWrite::HasToken(node->GetName(), "norot");
-	if (!noRot)
-	{
-		noRotX=gUserPropMgr.UserPropExists(node,"BEHNoRotX") || MatWrite::HasToken(node->GetName(), "norotx");
-		noRotY=gUserPropMgr.UserPropExists(node,"BEHNoRotY") || MatWrite::HasToken(node->GetName(), "noroty");
-		noRotZ=gUserPropMgr.UserPropExists(node,"BEHNoRotZ") || MatWrite::HasToken(node->GetName(), "norotz");
-	}
+    hsBool32 noRotX=false,noRotY=false,noRotZ=false;
+    hsBool32 noRot=gUserPropMgr.UserPropExists(node,"BEHNoRot") || MatWrite::HasToken(node->GetName(), "norot");
+    if (!noRot)
+    {
+        noRotX=gUserPropMgr.UserPropExists(node,"BEHNoRotX") || MatWrite::HasToken(node->GetName(), "norotx");
+        noRotY=gUserPropMgr.UserPropExists(node,"BEHNoRotY") || MatWrite::HasToken(node->GetName(), "noroty");
+        noRotZ=gUserPropMgr.UserPropExists(node,"BEHNoRotZ") || MatWrite::HasToken(node->GetName(), "norotz");
+    }
 
-	hsBool32 noTransX=false,noTransY=false,noTransZ=false;
-	hsBool32 noTrans=gUserPropMgr.UserPropExists(node,"BEHNoTrans") || MatWrite::HasToken(node->GetName(), "notrans");
-	if (!noTrans)
-	{
-		noTransX=gUserPropMgr.UserPropExists(node,"BEHNoTransX") || MatWrite::HasToken(node->GetName(), "notransx");
-		noTransY=gUserPropMgr.UserPropExists(node,"BEHNoTransY") || MatWrite::HasToken(node->GetName(), "notransy");
-		noTransZ=gUserPropMgr.UserPropExists(node,"BEHNoTransZ") || MatWrite::HasToken(node->GetName(), "notransz");
-	}
+    hsBool32 noTransX=false,noTransY=false,noTransZ=false;
+    hsBool32 noTrans=gUserPropMgr.UserPropExists(node,"BEHNoTrans") || MatWrite::HasToken(node->GetName(), "notrans");
+    if (!noTrans)
+    {
+        noTransX=gUserPropMgr.UserPropExists(node,"BEHNoTransX") || MatWrite::HasToken(node->GetName(), "notransx");
+        noTransY=gUserPropMgr.UserPropExists(node,"BEHNoTransY") || MatWrite::HasToken(node->GetName(), "notransy");
+        noTransZ=gUserPropMgr.UserPropExists(node,"BEHNoTransZ") || MatWrite::HasToken(node->GetName(), "notransz");
+    }
 
-	if (noRot || noTrans || 
-		noRotX || noRotY || noRotZ ||
-		noTransX || noTransY || noTransZ)
-	{
-		Matrix3 tm(true);			// identity
-		
-		Quat q(*nodeTM);			// matrix to quat
-		float eulerAng[3];
-		QuatToEuler(q, eulerAng);	// to euler
-		
-		// rotation
-		if (!noRot && !noRotX)
-			tm.RotateX(eulerAng[0]);
-		if (!noRot && !noRotY)
-			tm.RotateY(eulerAng[1]);
-		if (!noRot && !noRotZ)
-			tm.RotateZ(eulerAng[2]);
+    if (noRot || noTrans || 
+        noRotX || noRotY || noRotZ ||
+        noTransX || noTransY || noTransZ)
+    {
+        Matrix3 tm(true);           // identity
+        
+        Quat q(*nodeTM);            // matrix to quat
+        float eulerAng[3];
+        QuatToEuler(q, eulerAng);   // to euler
+        
+        // rotation
+        if (!noRot && !noRotX)
+            tm.RotateX(eulerAng[0]);
+        if (!noRot && !noRotY)
+            tm.RotateY(eulerAng[1]);
+        if (!noRot && !noRotZ)
+            tm.RotateZ(eulerAng[2]);
 
-		// translation
-		Point3 trans=nodeTM->GetTrans();
-		if (noTrans || noTransX)
-			trans.x=0;
-		if (noTrans || noTransY)
-			trans.y=0;
-		if (noTrans || noTransZ)
-			trans.z=0;
-		tm.Translate(trans);
+        // translation
+        Point3 trans=nodeTM->GetTrans();
+        if (noTrans || noTransX)
+            trans.x=0;
+        if (noTrans || noTransY)
+            trans.y=0;
+        if (noTrans || noTransZ)
+            trans.z=0;
+        tm.Translate(trans);
 
-		// copy back
-		*nodeTM = tm;
-		return true;
-	}
+        // copy back
+        *nodeTM = tm;
+        return true;
+    }
 */
-	return false;
+    return false;
 }
 
 
@@ -545,213 +545,213 @@ int LimitTransform(INode* node, Matrix3* nodeTM)
 // Sample all the (non-bip) motion in the whole tree
 plSampleVecMap *SampleTreeMotion(INode* node, INode* parent, int sampleRate, Interface *theInterface)
 {
-	Interval interval = theInterface->GetAnimRange();
-	TimeValue start = interval.Start();				// in ticks
-	TimeValue end = interval.End();
-	plSampleVecMap *ourMap = TRACKED_NEW plSampleVecMap();
+    Interval interval = theInterface->GetAnimRange();
+    TimeValue start = interval.Start();             // in ticks
+    TimeValue end = interval.End();
+    plSampleVecMap *ourMap = TRACKED_NEW plSampleVecMap();
 
-	sampleRate *= GetTicksPerFrame();					// convert sample rate to ticks
+    sampleRate *= GetTicksPerFrame();                   // convert sample rate to ticks
 
-	SampleTreeMotionRecurse(node, parent, sampleRate, start, end, ourMap);
+    SampleTreeMotionRecurse(node, parent, sampleRate, start, end, ourMap);
 
-	return ourMap;
+    return ourMap;
 }
 
 // SAMPLETREEMOTIONRECURSE
 void SampleTreeMotionRecurse(INode * node, INode* parent, int sampleRate,
-							 TimeValue start, TimeValue end, plSampleVecMap *ourMap)
+                             TimeValue start, TimeValue end, plSampleVecMap *ourMap)
 {
-	// if it's not a bip, sample the fuck out of it
-	if(!HasBipController(node))
-	{
-		char *nodeName = node->GetName();
-		char *nameCopy = TRACKED_NEW char[strlen(nodeName) + 1];
-		strcpy(nameCopy, nodeName);
+    // if it's not a bip, sample the fuck out of it
+    if(!HasBipController(node))
+    {
+        char *nodeName = node->GetName();
+        char *nameCopy = TRACKED_NEW char[strlen(nodeName) + 1];
+        strcpy(nameCopy, nodeName);
 
-		plSampleVec *branch = SampleNodeMotion(node, parent, sampleRate, start, end);
-		(*ourMap)[nameCopy] = branch;
-	}
+        plSampleVec *branch = SampleNodeMotion(node, parent, sampleRate, start, end);
+        (*ourMap)[nameCopy] = branch;
+    }
 
-	// whether it's a bip or not, paw through its children
-	for(int i = 0; i < node->NumberOfChildren(); i++)
-	{
-		INode *child = node->GetChildNode(i);
-		SampleTreeMotionRecurse(child, node, sampleRate, start, end, ourMap);
-	}
+    // whether it's a bip or not, paw through its children
+    for(int i = 0; i < node->NumberOfChildren(); i++)
+    {
+        INode *child = node->GetChildNode(i);
+        SampleTreeMotionRecurse(child, node, sampleRate, start, end, ourMap);
+    }
 }
 
 // GETPARTS
 void GetParts(Int32 i, std::vector<nodeTMInfo *>& mat3Array,  hsAffineParts* parts)
 {
-	hsAssert(parts, "nil parts");
+    hsAssert(parts, "nil parts");
 
-	// decomp matrix
-	gemAffineParts ap;
-	hsMatrix44 tXform =	plMaxNodeBase::Matrix3ToMatrix44(mat3Array[i]->fMat3);
+    // decomp matrix
+    gemAffineParts ap;
+    hsMatrix44 tXform = plMaxNodeBase::Matrix3ToMatrix44(mat3Array[i]->fMat3);
 
-	decomp_affine(tXform.fMap, &ap); 
-	AP_SET((*parts), ap);
+    decomp_affine(tXform.fMap, &ap); 
+    AP_SET((*parts), ap);
 }
 
 // MAKEROTKEY
 Quat MakeRotKey(INode *node, INode *parent, TimeValue t)
 {
-	AffineParts parts = GetLocalNodeParts(node, parent, t);
+    AffineParts parts = GetLocalNodeParts(node, parent, t);
 
-	Quat q(parts.q.x, parts.q.y, parts.q.z, parts.q.w);
-	if( parts.f < 0.f )
-	{
-//		q = Quat(parts.q.x, parts.q.y, parts.q.z, -parts.q.w);
-	}
-	else
-	{
-//		q=Quat(-parts.q.x, -parts.q.y, -parts.q.z, parts.q.w);
-	}
+    Quat q(parts.q.x, parts.q.y, parts.q.z, parts.q.w);
+    if( parts.f < 0.f )
+    {
+//      q = Quat(parts.q.x, parts.q.y, parts.q.z, -parts.q.w);
+    }
+    else
+    {
+//      q=Quat(-parts.q.x, -parts.q.y, -parts.q.z, parts.q.w);
+    }
 
-	return q;
+    return q;
 }
 
 Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array)
 {
-	Matrix3 m = mat3Array[i]->fMat3;
-	AffineParts parts;
+    Matrix3 m = mat3Array[i]->fMat3;
+    AffineParts parts;
 
-	decomp_affine(m, &parts);
+    decomp_affine(m, &parts);
 
-	Quat q(parts.q.x, parts.q.y, parts.q.z, parts.q.w);
+    Quat q(parts.q.x, parts.q.y, parts.q.z, parts.q.w);
 
-	return q;
+    return q;
 }
 
 
 // GETROTKEY
 Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
 {
-	hsAffineParts myParts;
-	if (!parts)
-	{
-		parts=&myParts;
-		GetParts(i, mat3Array, parts);
-	}
+    hsAffineParts myParts;
+    if (!parts)
+    {
+        parts=&myParts;
+        GetParts(i, mat3Array, parts);
+    }
 
-	Quat q;
-	if( parts->fF < 0.f )
-	{
-		q = Quat(parts->fQ.fX, parts->fQ.fY, parts->fQ.fZ, -parts->fQ.fW); // ??? why are we inverting W?
+    Quat q;
+    if( parts->fF < 0.f )
+    {
+        q = Quat(parts->fQ.fX, parts->fQ.fY, parts->fQ.fZ, -parts->fQ.fW); // ??? why are we inverting W?
 #if 0
-		if( false)
-		{
-			Point3 ax;
-			float ang;
-			AngAxisFromQ(q, &ang, ax);
-			//ang -= hsScalarPI;
-			ax = -ax;
-			q = QFromAngAxis(ang, ax);
-		}
+        if( false)
+        {
+            Point3 ax;
+            float ang;
+            AngAxisFromQ(q, &ang, ax);
+            //ang -= hsScalarPI;
+            ax = -ax;
+            q = QFromAngAxis(ang, ax);
+        }
 #endif
-	}
-	else
-	{
-		q=Quat(-parts->fQ.fX, -parts->fQ.fY, -parts->fQ.fZ, parts->fQ.fW);
-	}
+    }
+    else
+    {
+        q=Quat(-parts->fQ.fX, -parts->fQ.fY, -parts->fQ.fZ, parts->fQ.fW);
+    }
 
-	return q;
+    return q;
 }
 
 // MAKEPOSKEY
 Point3 MakePosKey(INode *node, INode *parent, TimeValue t)
 {
-	AffineParts parts = GetLocalNodeParts(node, parent, t);
+    AffineParts parts = GetLocalNodeParts(node, parent, t);
 
-	return Point3(parts.t.x, parts.t.y, parts.t.z);
+    return Point3(parts.t.x, parts.t.y, parts.t.z);
 }
 
 
 // GETPOSKEY
 Point3 GetPosKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
 {
-	hsAffineParts myParts;
-	if (!parts)
-	{
-		parts=&myParts;
-		GetParts(i, mat3Array, parts);
-	}
-	return Point3(parts->fT.fX, parts->fT.fY, parts->fT.fZ);
+    hsAffineParts myParts;
+    if (!parts)
+    {
+        parts=&myParts;
+        GetParts(i, mat3Array, parts);
+    }
+    return Point3(parts->fT.fX, parts->fT.fY, parts->fT.fZ);
 }
 
 // MAKESCALEKEY
 ScaleValue MakeScaleKey(INode *node, INode *parent, TimeValue t)
 {
-	Matrix3 m1 = node->GetNodeTM(t);
-	hsMatrix44 hsM = plMaxNodeBase::Matrix3ToMatrix44(m1);
-	gemAffineParts ap;
-	hsAffineParts hsParts;
+    Matrix3 m1 = node->GetNodeTM(t);
+    hsMatrix44 hsM = plMaxNodeBase::Matrix3ToMatrix44(m1);
+    gemAffineParts ap;
+    hsAffineParts hsParts;
 
-	decomp_affine(hsM.fMap, &ap);
-	AP_SET(hsParts, ap);
+    decomp_affine(hsM.fMap, &ap);
+    AP_SET(hsParts, ap);
 
-	Point3 sAx1;
-	sAx1=Point3(hsParts.fK.fX, hsParts.fK.fY, hsParts.fK.fZ);
-	if( hsParts.fF < 0.f )
-	{
-		sAx1=-sAx1;
-	}
-	Quat sQ1(hsParts.fU.fX, hsParts.fU.fY, hsParts.fU.fZ, hsParts.fU.fW);
+    Point3 sAx1;
+    sAx1=Point3(hsParts.fK.fX, hsParts.fK.fY, hsParts.fK.fZ);
+    if( hsParts.fF < 0.f )
+    {
+        sAx1=-sAx1;
+    }
+    Quat sQ1(hsParts.fU.fX, hsParts.fU.fY, hsParts.fU.fZ, hsParts.fU.fW);
 
-//	return ScaleValue(sAx, sQ);
+//  return ScaleValue(sAx, sQ);
 
-	AffineParts parts = GetLocalNodeParts(node, parent, t);
+    AffineParts parts = GetLocalNodeParts(node, parent, t);
 
-	Point3 sAx(parts.k.x, parts.k.y, parts.k.z);
-	if( parts.f < 0.f )
-	{
-		sAx=-sAx;
-	}
-	Quat sQ(parts.u.x, parts.u.y, parts.u.z, parts.u.w);
+    Point3 sAx(parts.k.x, parts.k.y, parts.k.z);
+    if( parts.f < 0.f )
+    {
+        sAx=-sAx;
+    }
+    Quat sQ(parts.u.x, parts.u.y, parts.u.z, parts.u.w);
 
-	return ScaleValue(sAx, sQ);
+    return ScaleValue(sAx, sQ);
 }
 
 // GETSCALEKEY
 ScaleValue GetScaleKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
 {
-	hsAffineParts myParts;
-	if (!parts)
-	{
-		parts=&myParts;
-		GetParts(i, mat3Array, parts);
-	}
+    hsAffineParts myParts;
+    if (!parts)
+    {
+        parts=&myParts;
+        GetParts(i, mat3Array, parts);
+    }
 
-	Point3 sAx;
-	sAx=Point3(parts->fK.fX, parts->fK.fY, parts->fK.fZ);
-	if( parts->fF < 0.f )
-	{
-		sAx=-sAx;
-	}
-	Quat sQ(parts->fU.fX, parts->fU.fY, parts->fU.fZ, parts->fU.fW);
+    Point3 sAx;
+    sAx=Point3(parts->fK.fX, parts->fK.fY, parts->fK.fZ);
+    if( parts->fF < 0.f )
+    {
+        sAx=-sAx;
+    }
+    Quat sQ(parts->fU.fX, parts->fU.fY, parts->fU.fZ, parts->fU.fW);
 
-	return ScaleValue(sAx, sQ);
+    return ScaleValue(sAx, sQ);
 }
 
 
 // GETLOCALNODEPARTS
 AffineParts GetLocalNodeParts(INode *node, INode *parent, TimeValue t)
 {
-	Matrix3 localTM = node->GetNodeTM(t);		// world transform of source node
+    Matrix3 localTM = node->GetNodeTM(t);       // world transform of source node
 
-	INode *parent2 = node->GetParentNode();
-	// localize it
-	Matrix3 parentTMX = parent->GetNodeTM(t);
-	Matrix3 parentTM = parent2->GetNodeTM(t);
+    INode *parent2 = node->GetParentNode();
+    // localize it
+    Matrix3 parentTMX = parent->GetNodeTM(t);
+    Matrix3 parentTM = parent2->GetNodeTM(t);
 
-	Matrix3 invParent = Inverse(parentTM);
-	localTM *= invParent;
+    Matrix3 invParent = Inverse(parentTM);
+    localTM *= invParent;
 
-	AffineParts parts;
+    AffineParts parts;
 
-	decomp_affine(localTM, &parts);
+    decomp_affine(localTM, &parts);
 
-	return parts;
+    return parts;
 }
 
 

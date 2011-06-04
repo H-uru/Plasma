@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfCharacterCreatable_inc
 #define pfCharacterCreatable_inc
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "pfMarkerMgr.h"
 REGISTER_NONCREATABLE(pfMarkerMgr);

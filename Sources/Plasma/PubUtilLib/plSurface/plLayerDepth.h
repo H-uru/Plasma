@@ -32,11 +32,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plLayerDepth : public plLayer
 {
 public:
-	plLayerDepth();
-	virtual ~plLayerDepth();
+    plLayerDepth();
+    virtual ~plLayerDepth();
 
-	CLASSNAME_REGISTER( plLayerDepth );
-	GETINTERFACE_ANY( plLayerDepth, plLayer );
+    CLASSNAME_REGISTER( plLayerDepth );
+    GETINTERFACE_ANY( plLayerDepth, plLayer );
 
 };
 

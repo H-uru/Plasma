@@ -32,22 +32,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plNodeRefMsg : public plGenRefMsg
 {
 public:
-	enum {
-		kDrawable,
-		kPhysical,
-		kAudible,
-		kObject,
-		kNeighbor,
-		kLight,
-		kOccluder,
-		kGeneric
-	};
+    enum {
+        kDrawable,
+        kPhysical,
+        kAudible,
+        kObject,
+        kNeighbor,
+        kLight,
+        kOccluder,
+        kGeneric
+    };
 
-	plNodeRefMsg() {}
-	plNodeRefMsg(const plKey &r, UInt8 flags, Int8 which, Int8 type) : plGenRefMsg(r, flags, which, type) {}
+    plNodeRefMsg() {}
+    plNodeRefMsg(const plKey &r, UInt8 flags, Int8 which, Int8 type) : plGenRefMsg(r, flags, which, type) {}
 
-	CLASSNAME_REGISTER( plNodeRefMsg );
-	GETINTERFACE_ANY( plNodeRefMsg, plGenRefMsg );
+    CLASSNAME_REGISTER( plNodeRefMsg );
+    GETINTERFACE_ANY( plNodeRefMsg, plGenRefMsg );
 };
 
 #endif // plNodeRefMsg_inc

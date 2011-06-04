@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDispatchBase_inc
 #define plDispatchBase_inc
 
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 
 class plMessage;
 class plKey;
@@ -35,30 +35,30 @@ class plKey;
 class plDispatchBase : public plCreatable
 {
 public:
-	CLASSNAME_REGISTER( plDispatchBase );
-	GETINTERFACE_ANY( plDispatchBase, plCreatable );
+    CLASSNAME_REGISTER( plDispatchBase );
+    GETINTERFACE_ANY( plDispatchBase, plCreatable );
 
-	virtual void RegisterForType(UInt16 hClass, const plKey& receiver) = 0;
-	virtual void RegisterForExactType(UInt16 hClass, const plKey& receiver) = 0;
+    virtual void RegisterForType(UInt16 hClass, const plKey& receiver) = 0;
+    virtual void RegisterForExactType(UInt16 hClass, const plKey& receiver) = 0;
 
-	virtual void UnRegisterForType(UInt16 hClass, const plKey& receiver) = 0;
-	virtual void UnRegisterForExactType(UInt16 hClass, const plKey& receiver) = 0;
+    virtual void UnRegisterForType(UInt16 hClass, const plKey& receiver) = 0;
+    virtual void UnRegisterForExactType(UInt16 hClass, const plKey& receiver) = 0;
 
-	virtual void UnRegisterAll(const plKey& receiver) = 0;
+    virtual void UnRegisterAll(const plKey& receiver) = 0;
 
-	virtual hsBool MsgSend(plMessage* msg, hsBool async=false) = 0;
-	virtual void	MsgQueue(plMessage* msg)=0;	// Used by other thread to Send Messages, they are handled as soon as Practicable
-	virtual void	MsgQueueProcess() = 0;
-	virtual void	MsgQueueOnOff(hsBool) = 0;		// Turn on or off Queued Messages, if off, uses MsgSend Immediately (for plugins)
+    virtual hsBool MsgSend(plMessage* msg, hsBool async=false) = 0;
+    virtual void    MsgQueue(plMessage* msg)=0; // Used by other thread to Send Messages, they are handled as soon as Practicable
+    virtual void    MsgQueueProcess() = 0;
+    virtual void    MsgQueueOnOff(hsBool) = 0;      // Turn on or off Queued Messages, if off, uses MsgSend Immediately (for plugins)
 
-	virtual hsBool	SetMsgBuffering(hsBool on) = 0; // On starts deferring msg delivery until buffering is set to off again.
+    virtual hsBool  SetMsgBuffering(hsBool on) = 0; // On starts deferring msg delivery until buffering is set to off again.
 };
 
 class plgDispatch
 {
 public:
-	static plDispatchBase* Dispatch();
-	static hsBool MsgSend(plMessage* msg, hsBool async = false) { return Dispatch()->MsgSend(msg, async); }
+    static plDispatchBase* Dispatch();
+    static hsBool MsgSend(plMessage* msg, hsBool async = false) { return Dispatch()->MsgSend(msg, async); }
 };
 
 

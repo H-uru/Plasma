@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pyWaveSet.h"
 
-#include <python.h>
+#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptWaveSet, pyWaveSet);
@@ -35,20 +35,20 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptWaveSet)
 
 PYTHON_INIT_DEFINITION(ptWaveSet, args, keywords)
 {
-	PyObject* keyObj = NULL;
-	if (!PyArg_ParseTuple(args, "O", &keyObj))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	if (!pyKey::Check(keyObj))
-	{
-		PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
-		PYTHON_RETURN_INIT_ERROR;
-	}
-	pyKey* key = pyKey::ConvertFrom(keyObj);
-	self->fThis->setKey(*key);
-	PYTHON_RETURN_INIT_OK;
+    PyObject* keyObj = NULL;
+    if (!PyArg_ParseTuple(args, "O", &keyObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    if (!pyKey::Check(keyObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
+        PYTHON_RETURN_INIT_ERROR;
+    }
+    pyKey* key = pyKey::ConvertFrom(keyObj);
+    self->fThis->setKey(*key);
+    PYTHON_RETURN_INIT_OK;
 }
 
 // some macros to make all this easier
@@ -57,18 +57,18 @@ PYTHON_INIT_DEFINITION(ptWaveSet, args, keywords)
 #define WAVESET_FLOAT_DEF(funcSuffix) \
 PYTHON_METHOD_DEFINITION(ptWaveSet, set##funcSuffix, args) \
 { \
-	float s, secs = 0; \
-	if (!PyArg_ParseTuple(args, "f|f", &s, &secs)) \
-	{ \
-		PyErr_SetString(PyExc_TypeError, "set" #funcSuffix " expects a float and an optional float"); \
-		PYTHON_RETURN_ERROR; \
-	} \
-	self->fThis->Set##funcSuffix(s, secs); \
-	PYTHON_RETURN_NONE; \
+    float s, secs = 0; \
+    if (!PyArg_ParseTuple(args, "f|f", &s, &secs)) \
+    { \
+        PyErr_SetString(PyExc_TypeError, "set" #funcSuffix " expects a float and an optional float"); \
+        PYTHON_RETURN_ERROR; \
+    } \
+    self->fThis->Set##funcSuffix(s, secs); \
+    PYTHON_RETURN_NONE; \
 } \
 PYTHON_METHOD_DEFINITION_NOARGS(ptWaveSet, get##funcSuffix) \
 { \
-	return PyFloat_FromDouble(self->fThis->Get##funcSuffix()); \
+    return PyFloat_FromDouble(self->fThis->Get##funcSuffix()); \
 }
 
 #define WAVESET_FLOAT(funcSuffix) \
@@ -78,25 +78,25 @@ PYTHON_METHOD_NOARGS(ptWaveSet, get##funcSuffix, "Returns the attribute's value"
 #define WAVESET_OBJ_DEF(funcSuffix, pyObjType, cObjType) \
 PYTHON_METHOD_DEFINITION(ptWaveSet, set##funcSuffix, args) \
 { \
-	PyObject* sObj = NULL; \
-	float secs = 0; \
-	if (!PyArg_ParseTuple(args, "O|f", &sObj, &secs)) \
-	{ \
-		PyErr_SetString(PyExc_TypeError, "set" #funcSuffix " expects a " #pyObjType " and an optional float"); \
-		PYTHON_RETURN_ERROR; \
-	} \
-	if (!cObjType::Check(sObj)) \
-	{ \
-		PyErr_SetString(PyExc_TypeError, "set" #funcSuffix " expects a " #pyObjType " and an optional float"); \
-		PYTHON_RETURN_ERROR; \
-	} \
-	cObjType* s = cObjType::ConvertFrom(sObj); \
-	self->fThis->Set##funcSuffix(*s, secs); \
-	PYTHON_RETURN_NONE; \
+    PyObject* sObj = NULL; \
+    float secs = 0; \
+    if (!PyArg_ParseTuple(args, "O|f", &sObj, &secs)) \
+    { \
+        PyErr_SetString(PyExc_TypeError, "set" #funcSuffix " expects a " #pyObjType " and an optional float"); \
+        PYTHON_RETURN_ERROR; \
+    } \
+    if (!cObjType::Check(sObj)) \
+    { \
+        PyErr_SetString(PyExc_TypeError, "set" #funcSuffix " expects a " #pyObjType " and an optional float"); \
+        PYTHON_RETURN_ERROR; \
+    } \
+    cObjType* s = cObjType::ConvertFrom(sObj); \
+    self->fThis->Set##funcSuffix(*s, secs); \
+    PYTHON_RETURN_NONE; \
 } \
 PYTHON_METHOD_DEFINITION_NOARGS(ptWaveSet, get##funcSuffix) \
 { \
-	return self->fThis->Get##funcSuffix(); \
+    return self->fThis->Get##funcSuffix(); \
 }
 
 #define WAVESET_OBJ(funcSuffix) \
@@ -149,47 +149,47 @@ WAVESET_OBJ_DEF(EnvCenter, ptPoint3, pyPoint3)
 WAVESET_FLOAT_DEF(EnvRadius)
 
 PYTHON_START_METHODS_TABLE(ptWaveSet)
-	WAVESET_FLOAT(GeoMaxLength),
-	WAVESET_FLOAT(GeoMinLength),
-	WAVESET_FLOAT(GeoAmpOverLen),
-	WAVESET_FLOAT(GeoChop),
-	WAVESET_FLOAT(GeoAngleDev),
+    WAVESET_FLOAT(GeoMaxLength),
+    WAVESET_FLOAT(GeoMinLength),
+    WAVESET_FLOAT(GeoAmpOverLen),
+    WAVESET_FLOAT(GeoChop),
+    WAVESET_FLOAT(GeoAngleDev),
 
-	WAVESET_FLOAT(TexMaxLength),
-	WAVESET_FLOAT(TexMinLength),
-	WAVESET_FLOAT(TexAmpOverLen),
-	WAVESET_FLOAT(TexChop),
-	WAVESET_FLOAT(TexAngleDev),
+    WAVESET_FLOAT(TexMaxLength),
+    WAVESET_FLOAT(TexMinLength),
+    WAVESET_FLOAT(TexAmpOverLen),
+    WAVESET_FLOAT(TexChop),
+    WAVESET_FLOAT(TexAngleDev),
 
-	WAVESET_FLOAT(RippleScale),
-	WAVESET_OBJ(WindDir),
+    WAVESET_FLOAT(RippleScale),
+    WAVESET_OBJ(WindDir),
 
-	WAVESET_FLOAT(SpecularNoise),
-	WAVESET_FLOAT(SpecularStart),
-	WAVESET_FLOAT(SpecularEnd),
+    WAVESET_FLOAT(SpecularNoise),
+    WAVESET_FLOAT(SpecularStart),
+    WAVESET_FLOAT(SpecularEnd),
 
-	WAVESET_FLOAT(WaterHeight),
+    WAVESET_FLOAT(WaterHeight),
 
-	WAVESET_OBJ(WaterOffset),
-	WAVESET_FLOAT(OpacOffset),
-	WAVESET_FLOAT(ReflOffset),
-	WAVESET_FLOAT(WaveOffset),
+    WAVESET_OBJ(WaterOffset),
+    WAVESET_FLOAT(OpacOffset),
+    WAVESET_FLOAT(ReflOffset),
+    WAVESET_FLOAT(WaveOffset),
 
-	WAVESET_OBJ(DepthFalloff),
-	WAVESET_FLOAT(OpacFalloff),
-	WAVESET_FLOAT(ReflFalloff),
-	WAVESET_FLOAT(WaveFalloff),
+    WAVESET_OBJ(DepthFalloff),
+    WAVESET_FLOAT(OpacFalloff),
+    WAVESET_FLOAT(ReflFalloff),
+    WAVESET_FLOAT(WaveFalloff),
 
-	WAVESET_OBJ(MaxAtten),
-	WAVESET_OBJ(MinAtten),
+    WAVESET_OBJ(MaxAtten),
+    WAVESET_OBJ(MinAtten),
 
-	WAVESET_OBJ(WaterTint),
-	WAVESET_FLOAT(WaterOpacity),
-	WAVESET_OBJ(SpecularTint),
-	WAVESET_FLOAT(SpecularMute),
+    WAVESET_OBJ(WaterTint),
+    WAVESET_FLOAT(WaterOpacity),
+    WAVESET_OBJ(SpecularTint),
+    WAVESET_FLOAT(SpecularMute),
 
-	WAVESET_OBJ(EnvCenter),
-	WAVESET_FLOAT(EnvRadius),
+    WAVESET_OBJ(EnvCenter),
+    WAVESET_FLOAT(EnvRadius),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -198,16 +198,16 @@ PLASMA_DEFAULT_TYPE(ptWaveSet, "Params:key\nCreates a new ptWaveSet");
 // required functions for PyObject interoperability
 PyObject *pyWaveSet::New(plKey key)
 {
-	ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, NULL, NULL);
-	newObj->fThis->fWaterKey = key;
-	return (PyObject*)newObj;
+    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, NULL, NULL);
+    newObj->fThis->fWaterKey = key;
+    return (PyObject*)newObj;
 }
 
 PyObject *pyWaveSet::New(pyKey &key)
 {
-	ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, NULL, NULL);
-	newObj->fThis->fWaterKey = key.getKey();
-	return (PyObject*)newObj;
+    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, NULL, NULL);
+    newObj->fThis->fWaterKey = key.getKey();
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptWaveSet, pyWaveSet)
@@ -219,7 +219,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptWaveSet, pyWaveSet)
 //
 void pyWaveSet::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptWaveSet);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptWaveSet);
+    PYTHON_CLASS_IMPORT_END(m);
 }

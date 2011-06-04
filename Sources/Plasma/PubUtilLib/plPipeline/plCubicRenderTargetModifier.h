@@ -24,25 +24,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plCubicRenderTargetModifier Class Header								 //
-//	Modifier applied to an object to specify the source object to render a	 //
-//	cubicRenderTarget from. Owns a key to the cubicRenderTarget in question, //
-//	which it updates with positions and submits renderRequests for.			 //
-//																			 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plCubicRenderTargetModifier Class Header                                 //
+//  Modifier applied to an object to specify the source object to render a   //
+//  cubicRenderTarget from. Owns a key to the cubicRenderTarget in question, //
+//  which it updates with positions and submits renderRequests for.          //
+//                                                                           //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	7.20.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  7.20.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plCubicRenderTargetModifier_h
 #define _plCubicRenderTargetModifier_h
 
-#include "../../NucleusLib/pnModifier/plModifier.h"
-#include "../pnNetCommon/plSynchedValue.h"
+#include "pnModifier/plModifier.h"
+#include "pnNetCommon/plSynchedValue.h"
 
 
 class plCubicRenderTarget;
@@ -54,34 +54,34 @@ class plCubicRenderTargetModifier : public plModifier
 {
 
 public:
-	plCubicRenderTargetModifier();
-	virtual ~plCubicRenderTargetModifier();
+    plCubicRenderTargetModifier();
+    virtual ~plCubicRenderTargetModifier();
 
-	CLASSNAME_REGISTER( plCubicRenderTargetModifier );
-	GETINTERFACE_ANY( plCubicRenderTargetModifier, plModifier);
+    CLASSNAME_REGISTER( plCubicRenderTargetModifier );
+    GETINTERFACE_ANY( plCubicRenderTargetModifier, plModifier);
 
-	// Functions related to/required by plModifier
-	virtual int				GetNumTargets( void ) const { return fTarget ? 1 : 0; }
-	virtual plSceneObject	*GetTarget( int w ) const { hsAssert(w < GetNumTargets(), "Bad target"); return fTarget; }
-	virtual void			AddTarget( plSceneObject* so );
-	virtual void			RemoveTarget( plSceneObject* so );
+    // Functions related to/required by plModifier
+    virtual int             GetNumTargets( void ) const { return fTarget ? 1 : 0; }
+    virtual plSceneObject   *GetTarget( int w ) const { hsAssert(w < GetNumTargets(), "Bad target"); return fTarget; }
+    virtual void            AddTarget( plSceneObject* so );
+    virtual void            RemoveTarget( plSceneObject* so );
 
-	virtual void	Read( hsStream* s, hsResMgr* mgr ); 
-	virtual void	Write( hsStream* s, hsResMgr* mgr );
-	virtual hsBool	MsgReceive( plMessage* msg );
+    virtual void    Read( hsStream* s, hsResMgr* mgr ); 
+    virtual void    Write( hsStream* s, hsResMgr* mgr );
+    virtual hsBool  MsgReceive( plMessage* msg );
 
 protected:
 
-	plSceneObject			*fTarget;
-	plCubicRenderTarget		*fCubic;
+    plSceneObject           *fTarget;
+    plCubicRenderTarget     *fCubic;
 
-	plRenderRequest			*fRequests[ 6 ];
+    plRenderRequest         *fRequests[ 6 ];
 
-	virtual hsBool	IEval( double secs, hsScalar del, UInt32 dirty ); // required by plModifier
+    virtual hsBool  IEval( double secs, hsScalar del, UInt32 dirty ); // required by plModifier
 
-	void			ICreateRenderRequest( int face );
+    void            ICreateRenderRequest( int face );
 
 };
 
 
-#endif	//_plCubicRenderTargetModifier_h
+#endif  //_plCubicRenderTargetModifier_h

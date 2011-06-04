@@ -39,106 +39,106 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class DeviceSelector
 {
 protected:
-	UInt32	fSelDevType;	// Current type of driver. Set by the SetDirect3D/Glide/OpenGL functions
-	UInt32	fSelDev;		// Index of selected device. Set by SetDevice() or 
-	UInt32	fSelMode;		// Index of selected mode for current device
+    UInt32  fSelDevType;    // Current type of driver. Set by the SetDirect3D/Glide/OpenGL functions
+    UInt32  fSelDev;        // Index of selected device. Set by SetDevice() or 
+    UInt32  fSelMode;       // Index of selected mode for current device
 
-	int		fDevDesc;	// Used by GetDeviceDescription() to store index of current device
-	int		fModeDesc;	// Used by GetModeDescription() to store index of current mode
+    int     fDevDesc;   // Used by GetDeviceDescription() to store index of current device
+    int     fModeDesc;  // Used by GetModeDescription() to store index of current mode
 
-	char	fStr[1024];		// Used to return text
+    char    fStr[1024];     // Used to return text
 
-	UInt16	fPerformance;	// Performance level (0-100)
+    UInt16  fPerformance;   // Performance level (0-100)
 
-	int		fFilterBPP, fFilterWidth, fFilterHeight;
+    int     fFilterBPP, fFilterWidth, fFilterHeight;
 
-	bool fWindowed;
+    bool fWindowed;
 
-	hsG3DDeviceSelector			fSelector;
-	hsTArray<hsG3DDeviceRecord>	fRecords;	// Copy of all records for the current device type
-	hsG3DDeviceRecord			fSelRec;	// Device copy for reading/writing
+    hsG3DDeviceSelector         fSelector;
+    hsTArray<hsG3DDeviceRecord> fRecords;   // Copy of all records for the current device type
+    hsG3DDeviceRecord           fSelRec;    // Device copy for reading/writing
 
-	hsTArray<int>	fFilteredModes;
+    hsTArray<int>   fFilteredModes;
 
-	void	IRefreshFilter( void );
-	int		IFindFiltered( int realIndex );
-	int		IGetModeNumNoBPP( const hsG3DDeviceMode *pLoadMode );		// Returns index of passed in mode
+    void    IRefreshFilter( void );
+    int     IFindFiltered( int realIndex );
+    int     IGetModeNumNoBPP( const hsG3DDeviceMode *pLoadMode );       // Returns index of passed in mode
 
 public:
-	DeviceSelector();
+    DeviceSelector();
 
-	hsBool Enumerate(HWND hWnd, hsBool expertMode);	// Enumerates all devices
-	const char	*GetErrorString( void );
+    hsBool Enumerate(HWND hWnd, hsBool expertMode); // Enumerates all devices
+    const char  *GetErrorString( void );
 
-	// Determines if any devices of the specified type are available
-	hsBool IsDirect3DAvailable();
-	hsBool IsGlideAvailable();
-	hsBool IsOpenGLAvailable();
-	hsBool IsDirect3DTnLAvailable();
+    // Determines if any devices of the specified type are available
+    hsBool IsDirect3DAvailable();
+    hsBool IsGlideAvailable();
+    hsBool IsOpenGLAvailable();
+    hsBool IsDirect3DTnLAvailable();
 
-	// Set current device type
-	void SetDirect3D();
-	void SetGlide();
-	void SetOpenGL();
-	void SetDirect3DTnL();
+    // Set current device type
+    void SetDirect3D();
+    void SetGlide();
+    void SetOpenGL();
+    void SetDirect3DTnL();
 
-	// Returns true if current device is of the specified type
-	hsBool IsDirect3D();
-	hsBool IsDirect3DTnL();
-	hsBool IsGlide();
-	hsBool IsOpenGL();
+    // Returns true if current device is of the specified type
+    hsBool IsDirect3D();
+    hsBool IsDirect3DTnL();
+    hsBool IsGlide();
+    hsBool IsOpenGL();
 
-	// Gets and sets the current device or mode.
-	UInt32 GetSelectedDevice()	{ return fSelDev; }
-	UInt32 GetSelectedMode()	{ return fSelMode; }
-	hsBool SetDevice(UInt32 index);
-	hsBool SetMode(UInt32 index);
+    // Gets and sets the current device or mode.
+    UInt32 GetSelectedDevice()  { return fSelDev; }
+    UInt32 GetSelectedMode()    { return fSelMode; }
+    hsBool SetDevice(UInt32 index);
+    hsBool SetMode(UInt32 index);
 
-	// Returns the device or mode descriptions.  Call repeatedly until nil is returned.
-	char* GetDeviceDescription();
-	char* GetModeDescription( void );
+    // Returns the device or mode descriptions.  Call repeatedly until nil is returned.
+    char* GetDeviceDescription();
+    char* GetModeDescription( void );
 
-	UInt32 GetNumModes();
-	void GetMode(UInt32 i, int& width, int& height, int& depth);
+    UInt32 GetNumModes();
+    void GetMode(UInt32 i, int& width, int& height, int& depth);
 
-	void	SetModeFilter( int bitDepth = 0, int minWidth = 0, int minHeight = 0 );
+    void    SetModeFilter( int bitDepth = 0, int minWidth = 0, int minHeight = 0 );
 
-	void	SetPerformance (UInt16 value) { fPerformance = value; }
-	UInt16	GetPerformance () { return fPerformance; }
+    void    SetPerformance (UInt16 value) { fPerformance = value; }
+    UInt16  GetPerformance () { return fPerformance; }
 
-	// Returns max number of samples allowed for AA
-	UInt8	CanAntiAlias		();
-	// Returns current # of samples selected for AA, 0 if none
-	UInt8	IsAntiAliased	();
-	void   SetAntiAlias		(UInt8 numSamples);
+    // Returns max number of samples allowed for AA
+    UInt8   CanAntiAlias        ();
+    // Returns current # of samples selected for AA, 0 if none
+    UInt8   IsAntiAliased   ();
+    void   SetAntiAlias     (UInt8 numSamples);
 
-	UInt8	CanAnisotropicFilter();
-	UInt8	GetAnisotropicLevel();
-	void	SetAnisotropicLevel( UInt8 level );
+    UInt8   CanAnisotropicFilter();
+    UInt8   GetAnisotropicLevel();
+    void    SetAnisotropicLevel( UInt8 level );
 
-	bool CanWindow();
-	bool IsWindowed();
-	void SetWindowed(bool state);
+    bool CanWindow();
+    bool IsWindowed();
+    void SetWindowed(bool state);
 
-	hsBool CanCompress		();
-	hsBool IsCompressed		();
-	void   SetCompressed	(hsBool state);
+    hsBool CanCompress      ();
+    hsBool IsCompressed     ();
+    void   SetCompressed    (hsBool state);
 
-	// Caps from hsG3DDeviceSelector
-	bool GetCap(UInt32 cap);
+    // Caps from hsG3DDeviceSelector
+    bool GetCap(UInt32 cap);
 
-	// Save and load
-	hsBool Save();			// Returns false if output file can't be opened
-	hsBool Load();			// Returns false if input file can't be opened
-	hsBool SetDefault();	// Returns false if no suitable renderers are found
+    // Save and load
+    hsBool Save();          // Returns false if output file can't be opened
+    hsBool Load();          // Returns false if input file can't be opened
+    hsBool SetDefault();    // Returns false if no suitable renderers are found
 
 protected:
-	hsBool CheckDeviceType(UInt32 type);	// Used by the Is*Available() functions
-	void SetDeviceType(UInt32 type);		// Used by SetDirect3D/Glide/OpenGL
+    hsBool CheckDeviceType(UInt32 type);    // Used by the Is*Available() functions
+    void SetDeviceType(UInt32 type);        // Used by SetDirect3D/Glide/OpenGL
 
-	// Helpers for LoadDeviceMode()
-	int GetDeviceNum(const hsG3DDeviceRecord *pLoadRec);	// Returns index of passed in device
-	int GetModeNum(const hsG3DDeviceMode *pLoadMode);		// Returns index of passed in mode
+    // Helpers for LoadDeviceMode()
+    int GetDeviceNum(const hsG3DDeviceRecord *pLoadRec);    // Returns index of passed in device
+    int GetModeNum(const hsG3DDeviceMode *pLoadMode);       // Returns index of passed in mode
 };
 
 #endif //DEVICESELECTOR_H

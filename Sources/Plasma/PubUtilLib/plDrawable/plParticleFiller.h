@@ -34,8 +34,8 @@ class plDrawableSpans;
 
 namespace plParticleFiller
 {
-	void FillParticles(plPipeline* pipe, plDrawableSpans* drawable, plParticleSpan* span);
-	void FillParticlePolys(plPipeline* pipe, plDrawInterface* di);
+    void FillParticles(plPipeline* pipe, plDrawableSpans* drawable, plParticleSpan* span);
+    void FillParticlePolys(plPipeline* pipe, plDrawInterface* di);
 };
 
 #endif // plParticleFiller_inc

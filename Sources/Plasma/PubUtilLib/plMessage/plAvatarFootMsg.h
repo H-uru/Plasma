@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAvatarFootMsg_inc
 #define plAvatarFootMsg_inc
 
-#include "../pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
 
 class hsStream;
 class hsResMgr;
@@ -37,37 +37,37 @@ class plAvBrain;
 class plAvatarFootMsg : public plEventCallbackMsg
 {
 protected:
-	hsBool			fIsLeft;
-	plArmatureMod*	fArmature;
+    hsBool          fIsLeft;
+    plArmatureMod*  fArmature;
 public:
-	plAvatarFootMsg() 
-	{
-		fEvent = kTime;
-		SetBCastFlag(plMessage::kBCastByExactType);
-	}
-	plAvatarFootMsg(const plKey& s, plArmatureMod *armature, hsBool isLeft) : plEventCallbackMsg(s, nil, nil), fArmature(armature), fIsLeft(isLeft) 
-	{
-		fEvent = kTime;
-		SetBCastFlag(plMessage::kBCastByExactType);
-	}
+    plAvatarFootMsg() 
+    {
+        fEvent = kTime;
+        SetBCastFlag(plMessage::kBCastByExactType);
+    }
+    plAvatarFootMsg(const plKey& s, plArmatureMod *armature, hsBool isLeft) : plEventCallbackMsg(s, nil, nil), fArmature(armature), fIsLeft(isLeft) 
+    {
+        fEvent = kTime;
+        SetBCastFlag(plMessage::kBCastByExactType);
+    }
 
-	CLASSNAME_REGISTER( plAvatarFootMsg );
-	GETINTERFACE_ANY( plAvatarFootMsg, plEventCallbackMsg );
+    CLASSNAME_REGISTER( plAvatarFootMsg );
+    GETINTERFACE_ANY( plAvatarFootMsg, plEventCallbackMsg );
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr)
-	{
-		hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
-	}
-	virtual void Write(hsStream *stream, hsResMgr *mgr)
-	{
-		hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
-	}
+    virtual void Read(hsStream *stream, hsResMgr *mgr)
+    {
+        hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
+    }
+    virtual void Write(hsStream *stream, hsResMgr *mgr)
+    {
+        hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
+    }
 
-	hsBool IsLeft() const { return fIsLeft; }
-	void SetIsLeft(hsBool on) { fIsLeft = (0 != on); }
+    hsBool IsLeft() const { return fIsLeft; }
+    void SetIsLeft(hsBool on) { fIsLeft = (0 != on); }
 
-	plArmatureMod* GetArmature() const { return fArmature; }
-	void SetArmature(plArmatureMod* a) { fArmature = a; }
+    plArmatureMod* GetArmature() const { return fArmature; }
+    void SetArmature(plArmatureMod* a) { fArmature = a; }
 
 };
 

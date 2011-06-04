@@ -1,0 +1,6 @@
+add_subdirectory(Apps)
+add_subdirectory(CoreLib)
+add_subdirectory(CoreLibExe)
+add_subdirectory(FeatureLib)
+add_subdirectory(NucleusLib)
+add_subdirectory(PubUtilLib)

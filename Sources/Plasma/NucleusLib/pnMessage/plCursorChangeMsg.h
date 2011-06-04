@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // this message is to fake out a gadget to see if it would potentially trigger...
 //
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsBitVector.h"
 
 class hsStream;
@@ -41,50 +41,50 @@ class plCursorChangeMsg : public plMessage
 protected:
 
 public:
-	plCursorChangeMsg() : fType(0),fPriority(0){;}
-	plCursorChangeMsg(int i, int p) { fType = i;fPriority =p; }
-	plCursorChangeMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t) : fType(0),fPriority(0){;}
-	
-	CLASSNAME_REGISTER( plCursorChangeMsg );
-	GETINTERFACE_ANY( plCursorChangeMsg, plMessage );
+    plCursorChangeMsg() : fType(0),fPriority(0){;}
+    plCursorChangeMsg(int i, int p) { fType = i;fPriority =p; }
+    plCursorChangeMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t) : fType(0),fPriority(0){;}
+    
+    CLASSNAME_REGISTER( plCursorChangeMsg );
+    GETINTERFACE_ANY( plCursorChangeMsg, plMessage );
 
-	enum 
-	{
-		kNoChange	= 0,
-		kCursorUp,
-		kCursorLeft,
-		kCursorRight,
-		kCursorDown,
-		kCursorPoised,
-		kCursorClicked,
-		kCursorUnClicked,
-		kCursorHidden,
-		kCursorOpen,
-		kCursorGrab,
-		kCursorArrow,
-		kNullCursor
-	};
+    enum 
+    {
+        kNoChange   = 0,
+        kCursorUp,
+        kCursorLeft,
+        kCursorRight,
+        kCursorDown,
+        kCursorPoised,
+        kCursorClicked,
+        kCursorUnClicked,
+        kCursorHidden,
+        kCursorOpen,
+        kCursorGrab,
+        kCursorArrow,
+        kNullCursor
+    };
 
-	int				fType;
-	int				fPriority;
+    int             fType;
+    int             fPriority;
 
 
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fType = stream->ReadSwap32();
-		fPriority = stream->ReadSwap32();
-	}
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fType = stream->ReadSwap32();
+        fPriority = stream->ReadSwap32();
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		stream->WriteSwap32(fType);
-		stream->WriteSwap32(fPriority);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        stream->WriteSwap32(fType);
+        stream->WriteSwap32(fPriority);
+    }
 
 };
 

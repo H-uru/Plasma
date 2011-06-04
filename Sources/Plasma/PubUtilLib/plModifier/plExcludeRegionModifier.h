@@ -26,10 +26,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plExcludeRegionModifier_inc
 #define plExcludeRegionModifier_inc
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsMatrix44.h"
 #include "hsTemplates.h"
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 //
 // Moves all of the avatars out of the area it's SceneObject occupies and makes it
@@ -39,62 +39,62 @@ class plExcludeRegionSDLModifier;
 class plExcludeRegionModifier : public plSingleModifier
 {
 protected:
-	enum
-	{
-		kBlockCameras,	
-	};
-	std::vector<plKey> fSafePoints;	// Safe positions to move avatars to
-	hsTArray<plKey> fContainedAvatars;		// Avatars inside our volume
-	plExcludeRegionSDLModifier	*fSDLModifier;
-	hsBool fSeek; // use smart seek or teleport?
-	hsScalar fSeekTime; // how long to seek for
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {	return true; }
+    enum
+    {
+        kBlockCameras,  
+    };
+    std::vector<plKey> fSafePoints; // Safe positions to move avatars to
+    hsTArray<plKey> fContainedAvatars;      // Avatars inside our volume
+    plExcludeRegionSDLModifier  *fSDLModifier;
+    hsBool fSeek; // use smart seek or teleport?
+    hsScalar fSeekTime; // how long to seek for
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
 
-	void ISetPhysicalState(bool cleared);
+    void ISetPhysicalState(bool cleared);
 
-	int IFindClosestSafePoint(plKey avatar);
-	bool ICheckSubworlds(plKey avatar);
-	void IMoveAvatars();
+    int IFindClosestSafePoint(plKey avatar);
+    bool ICheckSubworlds(plKey avatar);
+    void IMoveAvatars();
 
-	friend class plExcludeRegionSDLModifier;
+    friend class plExcludeRegionSDLModifier;
 
 public:
-	plExcludeRegionModifier();
-	~plExcludeRegionModifier();
+    plExcludeRegionModifier();
+    ~plExcludeRegionModifier();
 
-	CLASSNAME_REGISTER(plExcludeRegionModifier);
-	GETINTERFACE_ANY(plExcludeRegionModifier, plSingleModifier);
+    CLASSNAME_REGISTER(plExcludeRegionModifier);
+    GETINTERFACE_ANY(plExcludeRegionModifier, plSingleModifier);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual void AddTarget(plSceneObject* so);
-	virtual void RemoveTarget( plSceneObject *so );
+    virtual void AddTarget(plSceneObject* so);
+    virtual void RemoveTarget( plSceneObject *so );
 
-	void AddSafePoint(plKey& key);
-	void UseSmartSeek() { fSeek = true; }
-	void SetSeekTime(hsScalar s) { fSeekTime = s; }
-	void SetBlockCameras(bool block) { fFlags.SetBit(kBlockCameras, block); }
+    void AddSafePoint(plKey& key);
+    void UseSmartSeek() { fSeek = true; }
+    void SetSeekTime(hsScalar s) { fSeekTime = s; }
+    void SetBlockCameras(bool block) { fFlags.SetBit(kBlockCameras, block); }
 };
 
 class plExcludeRegionSDLModifier : public plSDLModifier
 {
 protected:
-	plExcludeRegionModifier* fXRegion;
+    plExcludeRegionModifier* fXRegion;
 
-	void IPutCurrentStateIn(plStateDataRecord* dstState);
-	void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
 
 public:
-	plExcludeRegionSDLModifier();
-	plExcludeRegionSDLModifier(plExcludeRegionModifier* xregion);
+    plExcludeRegionSDLModifier();
+    plExcludeRegionSDLModifier(plExcludeRegionModifier* xregion);
 
-	CLASSNAME_REGISTER(plExcludeRegionSDLModifier);
-	GETINTERFACE_ANY(plExcludeRegionSDLModifier, plSDLModifier);
+    CLASSNAME_REGISTER(plExcludeRegionSDLModifier);
+    GETINTERFACE_ANY(plExcludeRegionSDLModifier, plSDLModifier);
 
-	const char* GetSDLName() const { return kSDLXRegion; }
+    const char* GetSDLName() const { return kSDLXRegion; }
 };
 
 #endif // plExcludeRegionModifier_inc

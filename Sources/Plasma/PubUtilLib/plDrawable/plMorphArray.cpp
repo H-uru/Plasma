@@ -39,46 +39,46 @@ plMorphArray::~plMorphArray()
 // MorphArray - Apply
 void plMorphArray::Apply(hsTArray<plAccessSpan>& dst, hsTArray<hsScalar>* weights /* = nil */) const
 {
-	// Have our choice of cache thrashing here
-	// We can for each delta/for each vert
-	// or for each vert/for each delta
-	// I'll go for the former, though I can't say why at the moment.
-	// A nice thing about the outer loop being for each delta is
-	// that a delta with a weight of zero can just bag it with one if.
-	//
-	// For each delta
-	int i;
-	for( i = 0; i < fDeltas.GetCount(); i++ )
-	{
-		// delta->Apply
-		fDeltas[i].Apply(dst, (weights ? weights->Get(i) : -1.f));
-	}
+    // Have our choice of cache thrashing here
+    // We can for each delta/for each vert
+    // or for each vert/for each delta
+    // I'll go for the former, though I can't say why at the moment.
+    // A nice thing about the outer loop being for each delta is
+    // that a delta with a weight of zero can just bag it with one if.
+    //
+    // For each delta
+    int i;
+    for( i = 0; i < fDeltas.GetCount(); i++ )
+    {
+        // delta->Apply
+        fDeltas[i].Apply(dst, (weights ? weights->Get(i) : -1.f));
+    }
 }
 
 void plMorphArray::Read(hsStream* s, hsResMgr* mgr)
 {
-	int n = s->ReadSwap32();
-	fDeltas.SetCount(n);
-	int i;
-	for( i = 0; i < n; i++ )
-		fDeltas[i].Read(s, mgr);
+    int n = s->ReadSwap32();
+    fDeltas.SetCount(n);
+    int i;
+    for( i = 0; i < n; i++ )
+        fDeltas[i].Read(s, mgr);
 }
 
 void plMorphArray::Write(hsStream* s, hsResMgr* mgr)
 {
-	s->WriteSwap32(fDeltas.GetCount());
+    s->WriteSwap32(fDeltas.GetCount());
 
-	int i;
-	for( i = 0; i < fDeltas.GetCount(); i++ )
-		fDeltas[i].Write(s, mgr);
+    int i;
+    for( i = 0; i < fDeltas.GetCount(); i++ )
+        fDeltas[i].Write(s, mgr);
 }
 
 void plMorphArray::Reset()
 {
-	fDeltas.Reset();
+    fDeltas.Reset();
 }
 
 void plMorphArray::AddDelta(const plMorphDelta& delta)
 {
-	fDeltas.Append(delta);
+    fDeltas.Append(delta);
 }

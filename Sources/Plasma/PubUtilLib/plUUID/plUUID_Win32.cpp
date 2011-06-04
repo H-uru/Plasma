@@ -33,54 +33,54 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plUUID::Clear()
 {
-	UuidCreateNil( (GUID *)this );
+    UuidCreateNil( (GUID *)this );
 }
 
 int plUUID::CompareTo( const plUUID * v ) const
 {
-	RPC_STATUS s;
-	return UuidCompare( (GUID *)this, (GUID *)v, &s );
+    RPC_STATUS s;
+    return UuidCompare( (GUID *)this, (GUID *)v, &s );
 }
 
 bool plUUID::IsEqualTo( const plUUID * v ) const
 {
-	return ( CompareTo( v )==0 );
+    return ( CompareTo( v )==0 );
 }
 
 bool plUUID::IsNull() const
 {
-	RPC_STATUS s;
-	return 1 == UuidIsNil( (GUID *)this, &s );
+    RPC_STATUS s;
+    return 1 == UuidIsNil( (GUID *)this, &s );
 }
 
 bool plUUID::FromString( const char * str )
 {
-	Clear();
-	if ( !str )
-		return false;
-	return RPC_S_OK == UuidFromString( (unsigned char *)str, (GUID *)this );
+    Clear();
+    if ( !str )
+        return false;
+    return RPC_S_OK == UuidFromString( (unsigned char *)str, (GUID *)this );
 }
 
 bool plUUID::ToStdString( std::string & out ) const
 {
-	out = "";
-	unsigned char * ubuf;
-	RPC_STATUS s;
-	s = UuidToString( (GUID *) this, &ubuf );
-	bool success = ( s==RPC_S_OK );
-	if ( success )
-		out = (char*)ubuf;
-	RpcStringFree( &ubuf );
-	return success;
+    out = "";
+    unsigned char * ubuf;
+    RPC_STATUS s;
+    s = UuidToString( (GUID *) this, &ubuf );
+    bool success = ( s==RPC_S_OK );
+    if ( success )
+        out = (char*)ubuf;
+    RpcStringFree( &ubuf );
+    return success;
 }
 
 // static
 plUUID plUUID::Generate()
 {
     hsAssert(sizeof(plUUID) >= sizeof(GUID), "plUUID size");
-	plUUID result;
-	UuidCreate( (GUID *)&result );
-	return result;
+    plUUID result;
+    UuidCreate( (GUID *)&result );
+    return result;
 }
 
 #endif

@@ -26,40 +26,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plBoundInterface_inc
 #define plBoundInterface_inc
 
-#include "../pnSceneObject/plObjInterface.h"
+#include "pnSceneObject/plObjInterface.h"
 
 class plConvexVolume;
 struct hsMatrix44;
 
 class plBoundInterface : public plObjInterface
 {
-	enum {
-		kDisable		= 0x0,
+    enum {
+        kDisable        = 0x0,
 
-		kNumProps // last
-	};
+        kNumProps // last
+    };
 
 protected:
-	//hsMatrix44 fLocalToWorld;
-	plConvexVolume *fBounds;
+    //hsMatrix44 fLocalToWorld;
+    plConvexVolume *fBounds;
 
 public:
-	plBoundInterface();
-	~plBoundInterface();
+    plBoundInterface();
+    ~plBoundInterface();
 
-	void Init(plConvexVolume *bounds);
-	plConvexVolume *GetVolume() { return fBounds; }
+    void Init(plConvexVolume *bounds);
+    plConvexVolume *GetVolume() { return fBounds; }
 
-	CLASSNAME_REGISTER( plBoundInterface );
-	GETINTERFACE_ANY( plBoundInterface, plObjInterface );
-	
-	virtual Int32 GetNumProperties() const { return kNumProps; }
-	virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    CLASSNAME_REGISTER( plBoundInterface );
+    GETINTERFACE_ANY( plBoundInterface, plObjInterface );
+    
+    virtual Int32 GetNumProperties() const { return kNumProps; }
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual void ReleaseData();
+    virtual void ReleaseData();
 };
 
 

@@ -76,7 +76,7 @@ using namespace plShaderID;
 
 
 plShaderTableInst::plShaderTableInst()
-:	fFlags(0)
+:   fFlags(0)
 {
 }
 
@@ -86,16 +86,16 @@ plShaderTableInst::~plShaderTableInst()
 
 void plShaderTableInst::Register(const plShaderDecl* decl)
 {
-	hsAssert(decl->GetID() && (decl->GetID() < plShaderID::kNumShaders), "Unexpected registration");
-	fTable[decl->GetID()] = decl;
+    hsAssert(decl->GetID() && (decl->GetID() < plShaderID::kNumShaders), "Unexpected registration");
+    fTable[decl->GetID()] = decl;
 }
 
 plShaderTableInst& plShaderTable::IMakeInstance()
 {
-	static plShaderTableInst inst;
-	fInst = &inst;
+    static plShaderTableInst inst;
+    fInst = &inst;
 
-	return *fInst;
+    return *fInst;
 }
 
 

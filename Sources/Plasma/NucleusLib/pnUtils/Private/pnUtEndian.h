@@ -42,22 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /*****************************************************************************
 *
-*   Types and constants
-*
-***/
-
-#ifdef _M_IX86
-# define LITTLE_ENDIAN  1
-#else
-# define BIG_ENDIAN     1
-// That was a pretty weak check for endian-ness, if it
-// failed then we probably need to strengthen it a bit.
-# error "Are you sure this is a big-endian CPU?"
-#endif
-
-
-/*****************************************************************************
-*
 *   Little endian functions
 *
 ***/
@@ -74,8 +58,6 @@ inline void EndianConvert (
     word *      array, 
     unsigned    count
 ) {
-    ref(array); 
-    ref(count); 
     return; 
 }
 
@@ -84,8 +66,6 @@ inline void EndianConvert (
     dword *     array, 
     unsigned    count
 ) {
-    ref(array); 
-    ref(count); 
     return; 
 }
 
@@ -94,8 +74,6 @@ inline void EndianConvert (
     qword *     array, 
     unsigned    count
 ) {
-    ref(array); 
-    ref(count); 
     return; 
 }
 
@@ -105,9 +83,6 @@ inline void EndianConvert (
     unsigned    elemCount,
     unsigned    elemBytes
 ) {
-    ref(data);
-    ref(elemCount);
-    ref(elemBytes);
     return;
 }
 

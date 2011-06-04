@@ -25,15 +25,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /**********************************************************************
  *<
-	FILE: prim.h
+    FILE: prim.h
 
-	DESCRIPTION:
+    DESCRIPTION:
 
-	CREATED BY: Dan Silva
+    CREATED BY: Dan Silva
 
-	HISTORY:
+    HISTORY:
 
- *>	Copyright (c) 1994, All Rights Reserved.
+ *> Copyright (c) 1994, All Rights Reserved.
  **********************************************************************/
 
 #ifndef __PRIM__H

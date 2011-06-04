@@ -31,17 +31,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <guplib.h>
 
 namespace {
-	DWORD WINAPI ProgressDummyFunc(LPVOID arg) 
-	{
-		return(0);
-	}
+    DWORD WINAPI ProgressDummyFunc(LPVOID arg) 
+    {
+        return(0);
+    }
 }
 
 plExportProgressBar::plExportProgressBar() :
-	fTotalSteps(0),
-	fCurStep(0)
+    fTotalSteps(0),
+    fCurStep(0)
 {
-	fInterface = GetCOREInterface();
+    fInterface = GetCOREInterface();
 }
 
 plExportProgressBar::~plExportProgressBar()
@@ -51,11 +51,11 @@ plExportProgressBar::~plExportProgressBar()
 
 void plExportProgressBar::Start(char *name, UInt32 steps)
 {
-	fTotalSteps = steps;
-	fCurStep = 0;
+    fTotalSteps = steps;
+    fCurStep = 0;
 
-	fInterface->ProgressEnd();
-	fInterface->ProgressStart(name, TRUE, ProgressDummyFunc, nil);
+    fInterface->ProgressEnd();
+    fInterface->ProgressStart(name, TRUE, ProgressDummyFunc, nil);
    
    GUP* exportServerGup = OpenGupPlugIn(Class_ID(470000004,99));
    if(exportServerGup && name)
@@ -67,7 +67,7 @@ void plExportProgressBar::Start(char *name, UInt32 steps)
 
 bool plExportProgressBar::Update(char *name, UInt32 inc)
 {
-	fCurStep += inc;
+    fCurStep += inc;
 
    // Check to see if we are running an export server
    // If so, then pass the update on to the export server
@@ -86,37 +86,37 @@ bool plExportProgressBar::Update(char *name, UInt32 inc)
    
    fInterface->ProgressUpdate((int)((fCurStep * 100) / fTotalSteps), FALSE, name);
 
-	if (fInterface->GetCancel()) 
-	{
-		int retval = MessageBox(fInterface->GetMAXHWnd(), _T("Really Cancel?"),
-			_T("Question"), MB_ICONQUESTION | MB_YESNO);
-		if (retval == IDYES)
-		{
-			return true;
-		}
-		else if (retval == IDNO)
-		{
-			fInterface->SetCancel(FALSE);
-		}
-	}
+    if (fInterface->GetCancel()) 
+    {
+        int retval = MessageBox(fInterface->GetMAXHWnd(), _T("Really Cancel?"),
+            _T("Question"), MB_ICONQUESTION | MB_YESNO);
+        if (retval == IDYES)
+        {
+            return true;
+        }
+        else if (retval == IDNO)
+        {
+            fInterface->SetCancel(FALSE);
+        }
+    }
 
-	return false;
+    return false;
 }
 
 UInt32 plExportProgressBar::CountNodes()
 {
-	return INodeCount(GetCOREInterface()->GetRootNode());
+    return INodeCount(GetCOREInterface()->GetRootNode());
 }
 
 UInt32 plExportProgressBar::INodeCount(INode *node)
 {
-	UInt32 count = 1;
+    UInt32 count = 1;
 
-	for (int i = 0; i < node->NumberOfChildren(); i++)
-	{
-		INode *child = node->GetChildNode(i);
-		count += INodeCount(child);
-	}
+    for (int i = 0; i < node->NumberOfChildren(); i++)
+    {
+        INode *child = node->GetChildNode(i);
+        count += INodeCount(child);
+    }
 
-	return count;
+    return count;
 }

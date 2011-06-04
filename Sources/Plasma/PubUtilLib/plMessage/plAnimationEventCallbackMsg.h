@@ -31,33 +31,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum AnimationEvent
 {
-	kAnimStart = 0,
-	kAnimStop,
-	kAnimReverse,
-	kAnimTime,
-	kAnimEventEnd
+    kAnimStart = 0,
+    kAnimStop,
+    kAnimReverse,
+    kAnimTime,
+    kAnimEventEnd
 };
 
 class plAnimationEventCallbackMsg : public plMessage
 {
 protected:
-	
+    
 public:
-	AnimationEvent	fEvent;
-	hsScalar		fEventTime;	
+    AnimationEvent  fEvent;
+    hsScalar        fEventTime; 
 
-	plAnimationEventCallbackMsg(){;}
-	plAnimationEventCallbackMsg(const plKey* s, 
-					const plKey* r, 
-					const double* t){;}
-	~plAnimationEventCallbackMsg(){;}
+    plAnimationEventCallbackMsg(){;}
+    plAnimationEventCallbackMsg(const plKey* s, 
+                    const plKey* r, 
+                    const double* t){;}
+    ~plAnimationEventCallbackMsg(){;}
 
-	CLASSNAME_REGISTER( plAnimationEventCallbackMsg );
-	GETINTERFACE_ANY( plAnimationEventCallbackMsg, plMessage );
+    CLASSNAME_REGISTER( plAnimationEventCallbackMsg );
+    GETINTERFACE_ANY( plAnimationEventCallbackMsg, plMessage );
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr) {	plMessage::IMsgRead(stream, mgr);	}
-	void Write(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgWrite(stream, mgr);	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr) {    plMessage::IMsgRead(stream, mgr);   }
+    void Write(hsStream* stream, hsResMgr* mgr) {   plMessage::IMsgWrite(stream, mgr);  }
 };
 
 

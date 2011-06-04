@@ -224,12 +224,12 @@ bool AsyncFileSeek (
 
 #include <PshPack1.h>
 struct AsyncSocketConnectPacket {
-    byte		connType;
-    word		hdrBytes;
-    dword		buildId;
-    dword		buildType;
-    dword		branchId;
-    Uuid		productId;
+    byte        connType;
+    word        hdrBytes;
+    dword       buildId;
+    dword       buildType;
+    dword       branchId;
+    Uuid        productId;
 };
 #include <PopPack.h>
 
@@ -263,7 +263,7 @@ struct AsyncNotifySocketConnect : AsyncNotifySocket {
 struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
     unsigned        buildId;
     unsigned        buildType;
-    unsigned		branchId;
+    unsigned        branchId;
     Uuid            productId;
     NetAddress      addr;
     byte *          buffer;
@@ -308,13 +308,13 @@ enum EConnType {
     kConnTypeSrvToMcp               = 13,
     kConnTypeSrvToVault             = 14,
     kConnTypeSrvToDb                = 15,
-	kConnTypeCliToFile				= 16,
-	kConnTypeSrvToState				= 17,
-	kConnTypeSrvToLog 				= 18,
-	kConnTypeSrvToScore				= 19,
-	kConnTypeCliToCsr				= 20,
-    kConnTypeSimpleNet				= 21,
-	kConnTypeCliToGateKeeper		= 22,
+    kConnTypeCliToFile              = 16,
+    kConnTypeSrvToState             = 17,
+    kConnTypeSrvToLog               = 18,
+    kConnTypeSrvToScore             = 19,
+    kConnTypeCliToCsr               = 20,
+    kConnTypeSimpleNet              = 21,
+    kConnTypeCliToGateKeeper        = 22,
     
     // Text connections
     kConnTypeAdminInterface         = 97,   // 'a'
@@ -332,7 +332,7 @@ void AsyncSocketRegisterNotifyProc (
     FAsyncNotifySocketProc  notifyProc,
     unsigned                buildId = 0,
     unsigned                buildType = 0,
-    unsigned				branchId = 0,
+    unsigned                branchId = 0,
     const Uuid &            productId = kNilGuid
 );
 
@@ -341,7 +341,7 @@ void AsyncSocketUnregisterNotifyProc (
     FAsyncNotifySocketProc  notifyProc,
     unsigned                buildId = 0,
     unsigned                buildType = 0,
-    unsigned				branchId = 0,
+    unsigned                branchId = 0,
     const Uuid &            productId = kNilGuid
 );
 
@@ -352,7 +352,7 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
     unsigned *              connType,
     unsigned *              buildId,
     unsigned *              buildType,
-    unsigned *				branchId,
+    unsigned *              branchId,
     Uuid *                  productId
 );
 

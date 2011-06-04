@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDynamicEnvMapMsg_inc
 #define plDynamicEnvMapMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 #include "hsGeometry3.h"
 #include "hsColorRGBA.h"
@@ -38,35 +38,35 @@ class hsResMgr;
 class plDynamicEnvMapMsg : public plMessage
 {
 public:
-	enum {
-		kReRender		= 0x1,
-		kSetPosition	= 0x2,
-		kSetHither		= 0x4,
-		kSetYon			= 0x8,
-		kSetColor		= 0x10,
-		kSetFogStart	= 0x20,
-		kSetRefresh		= 0x40
-	};
+    enum {
+        kReRender       = 0x1,
+        kSetPosition    = 0x2,
+        kSetHither      = 0x4,
+        kSetYon         = 0x8,
+        kSetColor       = 0x10,
+        kSetFogStart    = 0x20,
+        kSetRefresh     = 0x40
+    };
 
-	UInt32				fCmd;
+    UInt32              fCmd;
 
-	hsPoint3			fPos;
-	hsScalar			fHither;
-	hsScalar			fYon;
-	hsScalar			fFogStart;
-	hsColorRGBA			fColor;			
-	hsScalar			fRefresh;
+    hsPoint3            fPos;
+    hsScalar            fHither;
+    hsScalar            fYon;
+    hsScalar            fFogStart;
+    hsColorRGBA         fColor;         
+    hsScalar            fRefresh;
 
 public:
-	plDynamicEnvMapMsg() : plMessage(nil, nil, nil), fCmd(0) {}
-	plDynamicEnvMapMsg(const plKey& rcv) : plMessage(nil, rcv, nil), fCmd(0) {}
-	virtual ~plDynamicEnvMapMsg() {}
+    plDynamicEnvMapMsg() : plMessage(nil, nil, nil), fCmd(0) {}
+    plDynamicEnvMapMsg(const plKey& rcv) : plMessage(nil, rcv, nil), fCmd(0) {}
+    virtual ~plDynamicEnvMapMsg() {}
 
-	CLASSNAME_REGISTER( plDynamicEnvMapMsg );
-	GETINTERFACE_ANY( plDynamicEnvMapMsg, plMessage );
+    CLASSNAME_REGISTER( plDynamicEnvMapMsg );
+    GETINTERFACE_ANY( plDynamicEnvMapMsg, plMessage );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plDynamicEnvMapMsg_inc

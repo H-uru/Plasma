@@ -25,8 +25,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plRawResManager - Small public resManager thingy for reading/writing
-//					  objects raw.
+//  plRawResManager - Small public resManager thingy for reading/writing
+//                    objects raw.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,14 +42,14 @@ class plKeyImp;
 
 class plRawResManager : public plResManager
 {
-	public:
+    public:
 
-		plRegistryPageNode	*FindPage( const char *age, const char *chapter, const char *page );
-		plRegistryPageNode	*CreatePage( const plPageInfo &info );
+        plRegistryPageNode  *FindPage( const char *age, const char *chapter, const char *page );
+        plRegistryPageNode  *CreatePage( const plPageInfo &info );
 
-		UInt8				*ReadObjectBuffer( plKeyImp *key, UInt32 &retLength );
+        UInt8               *ReadObjectBuffer( plKeyImp *key, UInt32 &retLength );
 
-		plKey				NewBlankKey( const plUoid &newUoid );
+        plKey               NewBlankKey( const plUoid &newUoid );
 };
 
 

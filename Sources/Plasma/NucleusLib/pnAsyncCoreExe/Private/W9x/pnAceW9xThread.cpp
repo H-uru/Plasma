@@ -376,8 +376,6 @@ bool W9xThreadWaitId (
     AsyncId     asyncId, 
     unsigned    timeoutMs
 ) {
-    ref(file);
-
     // Find a pending I/O operation with the given id
     s_critSect.Enter();
     CThreadDispRec * disp;

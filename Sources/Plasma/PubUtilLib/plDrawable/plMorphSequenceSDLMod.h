@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMorphSequenceSDLMod_inc
 #define plMorphSequenceSDLMod_inc
 
-#include "../plModifier/plSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
 
 #include "hsTypes.h"
 
@@ -38,42 +38,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMorphSequenceSDLMod : public plSDLModifier
 {
 protected:
-	void IPutCurrentStateIn(plStateDataRecord* dstState);
-	void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
 
-	UInt32 IApplyModFlags(UInt32 sendFlags)
-	{
-		if (fIsAvatar)
-			return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
-		else
-			return sendFlags;
-	}
+    UInt32 IApplyModFlags(UInt32 sendFlags)
+    {
+        if (fIsAvatar)
+            return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
+        else
+            return sendFlags;
+    }
 
-	bool fIsAvatar;
+    bool fIsAvatar;
 
 public:
-	// var labels 	
-	static char kStrMorphArrayDescName[];
-	static char kStrWeights[];	
-	
-	static char kStrMorphSetDescName[];
-	static char kStrMesh[];
-	static char kStrArrays[];
-	
-	static char kStrTargetID[];
-	static char kStrMorphs[];
-	
+    // var labels   
+    static char kStrMorphArrayDescName[];
+    static char kStrWeights[];  
+    
+    static char kStrMorphSetDescName[];
+    static char kStrMesh[];
+    static char kStrArrays[];
+    
+    static char kStrTargetID[];
+    static char kStrMorphs[];
+    
 
-	CLASSNAME_REGISTER( plMorphSequenceSDLMod );
-	GETINTERFACE_ANY( plMorphSequenceSDLMod, plSDLModifier);
-	
-	plMorphSequenceSDLMod() : fIsAvatar(false) {}
-	
-	void SetCurrentStateFrom(const plStateDataRecord* srcState);
-	void PutCurrentStateIn(plStateDataRecord* dstState);
-	const char* GetSDLName() const { return kSDLMorphSequence; }
+    CLASSNAME_REGISTER( plMorphSequenceSDLMod );
+    GETINTERFACE_ANY( plMorphSequenceSDLMod, plSDLModifier);
+    
+    plMorphSequenceSDLMod() : fIsAvatar(false) {}
+    
+    void SetCurrentStateFrom(const plStateDataRecord* srcState);
+    void PutCurrentStateIn(plStateDataRecord* dstState);
+    const char* GetSDLName() const { return kSDLMorphSequence; }
 
-	void SetIsAvatar(bool avatar) { fIsAvatar = avatar; }
+    void SetIsAvatar(bool avatar) { fIsAvatar = avatar; }
 };
 
-#endif	// plMorphSequenceSDLMod_inc
+#endif  // plMorphSequenceSDLMod_inc

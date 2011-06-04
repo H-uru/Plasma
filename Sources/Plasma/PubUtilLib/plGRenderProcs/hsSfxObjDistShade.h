@@ -32,50 +32,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsSfxObjDistShade : public hsGRenderProcs {
 public:
-	enum {
-		kShadeConstant		= 0x10000,
-		kByBoundsCenter		= 0x800000,
+    enum {
+        kShadeConstant      = 0x10000,
+        kByBoundsCenter     = 0x800000,
 
-	};
+    };
 
-	struct hsSfxDfTableEntry {
-		hsScalar			fDistDel;
-		hsScalar			fDistNorm;
-		hsScalar			fShade;
-	};
+    struct hsSfxDfTableEntry {
+        hsScalar            fDistDel;
+        hsScalar            fDistNorm;
+        hsScalar            fShade;
+    };
 protected:
 
-	hsScalar							fMinDist;
-	hsScalar							fMaxDist;
+    hsScalar                            fMinDist;
+    hsScalar                            fMaxDist;
 
-	hsScalar							fConstShade;
+    hsScalar                            fConstShade;
 
-	hsScalar							fMinIdle;
-	hsScalar							fMaxIdle;
+    hsScalar                            fMinIdle;
+    hsScalar                            fMaxIdle;
 
-	Int32								fTreeCnt;
+    Int32                               fTreeCnt;
 
-	hsExpander<hsSfxDfTableEntry>		fTable;
+    hsExpander<hsSfxDfTableEntry>       fTable;
 
-	hsBool32 ISetShade(plDrawable* refObj);
-	hsScalar	IShadeFromDist(hsScalar dist);
+    hsBool32 ISetShade(plDrawable* refObj);
+    hsScalar    IShadeFromDist(hsScalar dist);
 public:
-	hsSfxObjDistShade();
-	virtual ~hsSfxObjDistShade();
+    hsSfxObjDistShade();
+    virtual ~hsSfxObjDistShade();
 
-	virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
+    virtual hsBool32 BeginObject(plPipeline* pipe, plDrawable* obj);
 
-	void MakeTable(float* distList, float* shadeList, int num); // lists sorted from lowest cosine to highest
+    void MakeTable(float* distList, float* shadeList, int num); // lists sorted from lowest cosine to highest
 
-	virtual void Read(hsStream* s);
-	virtual void Write(hsStream* s);
+    virtual void Read(hsStream* s);
+    virtual void Write(hsStream* s);
 
-	virtual const char* GetLabel() const { return "hsSfxObjDistShade"; }
+    virtual const char* GetLabel() const { return "hsSfxObjDistShade"; }
 
-	virtual ProcType GetType() const { return kTypeObjDistShade; }
+    virtual ProcType GetType() const { return kTypeObjDistShade; }
 
-	CLASSNAME_REGISTER( hsSfxObjDistShade );
-	GETINTERFACE_ANY( hsSfxObjDistShade, hsGRenderProcs );
+    CLASSNAME_REGISTER( hsSfxObjDistShade );
+    GETINTERFACE_ANY( hsSfxObjDistShade, hsGRenderProcs );
 
 };
 

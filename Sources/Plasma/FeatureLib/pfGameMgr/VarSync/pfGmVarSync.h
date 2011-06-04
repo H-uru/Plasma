@@ -42,39 +42,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 class pfGmVarSync : public pfGameCli {
 
-	// Encapsulate all implementation details such as member fields
-	// in an opaque friend class, in this case that's IVarSync.
-	friend struct IVarSync;
-	struct IVarSync * internal;
+    // Encapsulate all implementation details such as member fields
+    // in an opaque friend class, in this case that's IVarSync.
+    friend struct IVarSync;
+    struct IVarSync * internal;
 
-	//========================================================================
-	// Required subclass methods
-	//--------------------------
-	void Recv			(GameMsgHeader * msg, void * param);
-	void OnPlayerJoined	(const Srv2Cli_Game_PlayerJoined & msg);
-	void OnPlayerLeft	(const Srv2Cli_Game_PlayerLeft & msg);
-	void OnInviteFailed	(const Srv2Cli_Game_InviteFailed & msg);
-	void OnOwnerChange	(const Srv2Cli_Game_OwnerChange & msg);
-	//========================================================================
+    //========================================================================
+    // Required subclass methods
+    //--------------------------
+    void Recv           (GameMsgHeader * msg, void * param);
+    void OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg);
+    void OnPlayerLeft   (const Srv2Cli_Game_PlayerLeft & msg);
+    void OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg);
+    void OnOwnerChange  (const Srv2Cli_Game_OwnerChange & msg);
+    //========================================================================
 
 public:
-	#pragma warning(push, 0)
-	// These macros produce warnings on W4
-	CLASSNAME_REGISTER(pfGmVarSync);
-	GETINTERFACE_ANY(pfGmVarSync, pfGameCli);
-	#pragma warning(pop)
-	
-	pfGmVarSync (unsigned gameId, plKey receiver);
-	~pfGmVarSync ();
-	
-	//========================================================================
-	// Game methods
-	//-------------
-	void SetStringVar	(unsigned long id, const wchar* val);
-	void SetNumericVar	(unsigned long id, double val);
-	void RequestAllVars	();
-	void CreateStringVar	(const wchar* name, const wchar* val);
-	void CreateNumericVar	(const wchar* name, double val);
-	//========================================================================
+    #pragma warning(push, 0)
+    // These macros produce warnings on W4
+    CLASSNAME_REGISTER(pfGmVarSync);
+    GETINTERFACE_ANY(pfGmVarSync, pfGameCli);
+    #pragma warning(pop)
+    
+    pfGmVarSync (unsigned gameId, plKey receiver);
+    ~pfGmVarSync ();
+    
+    //========================================================================
+    // Game methods
+    //-------------
+    void SetStringVar   (unsigned long id, const wchar* val);
+    void SetNumericVar  (unsigned long id, double val);
+    void RequestAllVars ();
+    void CreateStringVar    (const wchar* name, const wchar* val);
+    void CreateNumericVar   (const wchar* name, double val);
+    //========================================================================
 };
 

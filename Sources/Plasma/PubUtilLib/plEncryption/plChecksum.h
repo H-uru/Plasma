@@ -27,59 +27,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_CHECKSUM_H
 
 #include "hsTypes.h"
-#include "../../../../../StaticSDKs/Win32/OpenSSL/include/openssl/md5.h"
+#include <openssl/md5.h>
 
 class plChecksum
 {
 public:
-	typedef UInt32 SumStorage;
+    typedef UInt32 SumStorage;
 private:
-	SumStorage fSum;
+    SumStorage fSum;
 public:
-	plChecksum(unsigned int bufsize, const char* buffer);
-	static int GetChecksumSize() { return sizeof(SumStorage); }
-	static int GetWindowSize() { return sizeof(SumStorage); }
-	SumStorage GetChecksum() { return fSum; }
+    plChecksum(unsigned int bufsize, const char* buffer);
+    static int GetChecksumSize() { return sizeof(SumStorage); }
+    static int GetWindowSize() { return sizeof(SumStorage); }
+    SumStorage GetChecksum() { return fSum; }
 };
 
 class plMD5Checksum 
 {
-	protected:
+    protected:
 
-		hsBool	fValid;
-		MD5_CTX	fContext;
-		UInt8	fChecksum[ MD5_DIGEST_LENGTH ];
+        hsBool  fValid;
+        MD5_CTX fContext;
+        UInt8   fChecksum[ MD5_DIGEST_LENGTH ];
 
-		UInt8	IHexCharToInt( char c ) const;
+        UInt8   IHexCharToInt( char c ) const;
 
-	public:
+    public:
 
-		plMD5Checksum( UInt32 size, UInt8 *buffer );
-		plMD5Checksum();
-		plMD5Checksum( const plMD5Checksum &rhs );
-		plMD5Checksum( const char *fileName );
+        plMD5Checksum( UInt32 size, UInt8 *buffer );
+        plMD5Checksum();
+        plMD5Checksum( const plMD5Checksum &rhs );
+        plMD5Checksum( const char *fileName );
 
-		hsBool	IsValid( void ) const { return fValid; }
-		void	Clear();
+        hsBool  IsValid( void ) const { return fValid; }
+        void    Clear();
 
-		void	CalcFromFile( const char *fileName );
+        void    CalcFromFile( const char *fileName );
 
-		void	Start( void );
-		void	AddTo( UInt32 size, const UInt8 *buffer );
-		void	Finish( void );
+        void    Start( void );
+        void    AddTo( UInt32 size, const UInt8 *buffer );
+        void    Finish( void );
 
-		const UInt8	*GetValue( void ) const { return fChecksum; }
-		UInt32		GetSize( void ) const { return sizeof( fChecksum ); }
+        const UInt8 *GetValue( void ) const { return fChecksum; }
+        UInt32      GetSize( void ) const { return sizeof( fChecksum ); }
 
-		// Backdoor for cached checksums (ie, if you loaded it off disk)
-		void SetValue(UInt8* checksum);
+        // Backdoor for cached checksums (ie, if you loaded it off disk)
+        void SetValue(UInt8* checksum);
 
-		// Note: GetAsHexString() returns a pointer to a static string; do not rely on the contents of this string between calls!
-		const char	*GetAsHexString( void ) const;
-		void		SetFromHexString( const char *string );
+        // Note: GetAsHexString() returns a pointer to a static string; do not rely on the contents of this string between calls!
+        const char  *GetAsHexString( void ) const;
+        void        SetFromHexString( const char *string );
 
-		bool	operator==( const plMD5Checksum &rhs ) const;
-		bool	operator!=( const plMD5Checksum &rhs ) const { return !operator==( rhs ); }
+        bool    operator==( const plMD5Checksum &rhs ) const;
+        bool    operator!=( const plMD5Checksum &rhs ) const { return !operator==( rhs ); }
 };
 #endif // PL_CHECKSUM_H
 

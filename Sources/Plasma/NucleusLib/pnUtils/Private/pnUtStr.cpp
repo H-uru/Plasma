@@ -68,8 +68,8 @@ static chartype * IStrDup (const chartype str[]) {
 template<class chartype>
 static chartype * IStrDupLen (const chartype str[], unsigned chars) {
     unsigned len = IStrLen(str) + 1;
-	if (len > chars)
-		len = chars;
+    if (len > chars)
+        len = chars;
     chartype * buffer = (chartype *)ALLOC(len * sizeof(chartype));
     IStrCopy(buffer, str, len);
     return buffer;
@@ -335,11 +335,11 @@ static bool IStrTokenize (const chartype * source[], chartype * dest, unsigned c
 
     // Skip past leading whitespace
     bool inQuotes = false;
-	unsigned whitespaceSkipped = 0;
+    unsigned whitespaceSkipped = 0;
     while (**source && IStrChr(whitespace, **source, (unsigned)-1) && whitespaceSkipped < maxWhitespaceSkipCount) {
         inQuotes = (**source == '\"');
         ++*source;
-		++whitespaceSkipped;
+        ++whitespaceSkipped;
         if (inQuotes)
             break;
     }
@@ -378,11 +378,11 @@ static bool IStrTokenize (const chartype * source[], ARRAY(chartype) * destArray
 
     // Skip past leading whitespace
     bool inQuotes = false;
-	unsigned whitespaceSkipped = 0;
+    unsigned whitespaceSkipped = 0;
     while (**source && IStrChr(whitespace, **source, (unsigned)-1) && whitespaceSkipped < maxWhitespaceSkipCount) {
         inQuotes = (**source == '\"');
         ++*source;
-		++whitespaceSkipped;
+        ++whitespaceSkipped;
         if (inQuotes)
             break;
     }
@@ -438,18 +438,18 @@ wchar * StrDupLen (const wchar str[], unsigned chars) {
 
 //============================================================================
 wchar * StrDupToUnicode (const char str[]) {
-	unsigned bytes = StrBytes(str) * sizeof(wchar);
-	wchar * dst = (wchar*)ALLOC(bytes);
-	StrToUnicode(dst, str, bytes / sizeof(wchar));
-	return dst;
+    unsigned bytes = StrBytes(str) * sizeof(wchar);
+    wchar * dst = (wchar*)ALLOC(bytes);
+    StrToUnicode(dst, str, bytes / sizeof(wchar));
+    return dst;
 }
 
 //============================================================================
 char * StrDupToAnsi (const wchar str[]) {
-	unsigned bytes = StrBytes(str) / sizeof(wchar);
-	char * dst = (char*)ALLOC(bytes);
-	StrToAnsi(dst, str, bytes);
-	return dst;
+    unsigned bytes = StrBytes(str) / sizeof(wchar);
+    char * dst = (char*)ALLOC(bytes);
+    StrToAnsi(dst, str, bytes);
+    return dst;
 }
 
 //===========================================================================

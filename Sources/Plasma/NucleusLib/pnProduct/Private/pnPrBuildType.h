@@ -44,11 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define BUILD_TYPE BUILD_TYPE_DEV 
 #endif  
 
-#define BUILD_TYPE_DEV		10
-#define BUILD_TYPE_QA		20
-#define BUILD_TYPE_TEST		30
-#define BUILD_TYPE_BETA		40
-#define BUILD_TYPE_LIVE		50
+#define BUILD_TYPE_DEV      10
+#define BUILD_TYPE_QA       20
+#define BUILD_TYPE_TEST     30
+#define BUILD_TYPE_BETA     40
+#define BUILD_TYPE_LIVE     50
 
 
 /*****************************************************************************

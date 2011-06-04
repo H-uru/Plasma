@@ -60,80 +60,80 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern "C" __declspec(dllexport) void PyInit_pyPlasma(void)
 {
-	// If a glue function (AddPlasmaClasses, AddPlasmaMethds, etc) is commented out, it is included
-	// in the source in this project... but the original version of this function did not call the
-	// function. So in order to keep the module identical, those specified classes/functions are not
-	// added, but can be un-commented in the future if needed
+    // If a glue function (AddPlasmaClasses, AddPlasmaMethds, etc) is commented out, it is included
+    // in the source in this project... but the original version of this function did not call the
+    // function. So in order to keep the module identical, those specified classes/functions are not
+    // added, but can be un-commented in the future if needed
 
-	std::vector<PyMethodDef> methods; // this is temporary, for easy addition of new methods
-	//pyImage::AddPlasmaMethods(methods);
-	pySpawnPointInfo::AddPlasmaMethods(methods);
+    std::vector<PyMethodDef> methods; // this is temporary, for easy addition of new methods
+    //pyImage::AddPlasmaMethods(methods);
+    pySpawnPointInfo::AddPlasmaMethods(methods);
 
-	// now copy the data to our real method definition structure
-	PyMethodDef* plasmaMethods = new PyMethodDef[methods.size() + 1];
-	for (int curMethod = 0; curMethod < methods.size(); curMethod++)
-		plasmaMethods[curMethod] = methods[curMethod];
-	PyMethodDef terminator = {NULL};
-	plasmaMethods[methods.size()] = terminator; // add the terminator
+    // now copy the data to our real method definition structure
+    PyMethodDef* plasmaMethods = new PyMethodDef[methods.size() + 1];
+    for (int curMethod = 0; curMethod < methods.size(); curMethod++)
+        plasmaMethods[curMethod] = methods[curMethod];
+    PyMethodDef terminator = {NULL};
+    plasmaMethods[methods.size()] = terminator; // add the terminator
 
-	// Init the module
-	PyObject *m = Py_InitModule("pyPlasma", plasmaMethods);
+    // Init the module
+    PyObject *m = Py_InitModule("pyPlasma", plasmaMethods);
 
-	// Inits
-	plSDLMgr::GetInstance()->Init();
-	plVaultCache::GetInstance()->SetEnabled( true );
+    // Inits
+    plSDLMgr::GetInstance()->Init();
+    plVaultCache::GetInstance()->SetEnabled( true );
 
-	// Enum
-	pyEnum::AddPlasmaConstantsClasses(m);
+    // Enum
+    pyEnum::AddPlasmaConstantsClasses(m);
 
-	// Classes
-	pyAgeInfoStruct::AddPlasmaClasses(m);
-	pyAgeInfoStructRef::AddPlasmaClasses(m);
-	pyAgeLinkStruct::AddPlasmaClasses(m);
-	pyAgeLinkStructRef::AddPlasmaClasses(m);
-	pyColor::AddPlasmaClasses(m);
-	//pyDniCoordinates::AddPlasmaClasses(m);
-	//pyPoint3::AddPlasmaClasses(m);
-	//pyVector3::AddPlasmaClasses(m);
-	//pyImage::AddPlasmaClasses(m);
-	//pyMatrix44::AddPlasmaClasses(m);
-	pyNetClientComm::AddPlasmaClasses(m);
-	pyNetServerSessionInfo::AddPlasmaClasses(m);
-	pyNetServerSessionInfoRef::AddPlasmaClasses(m);
-	pySDLStateDataRecord::AddPlasmaClasses(m);
-	pySimpleStateVariable::AddPlasmaClasses(m);
-	pySpawnPointInfo::AddPlasmaClasses(m);
-	pySpawnPointInfoRef::AddPlasmaClasses(m);
-	pyStatusLog::AddPlasmaClasses(m);
+    // Classes
+    pyAgeInfoStruct::AddPlasmaClasses(m);
+    pyAgeInfoStructRef::AddPlasmaClasses(m);
+    pyAgeLinkStruct::AddPlasmaClasses(m);
+    pyAgeLinkStructRef::AddPlasmaClasses(m);
+    pyColor::AddPlasmaClasses(m);
+    //pyDniCoordinates::AddPlasmaClasses(m);
+    //pyPoint3::AddPlasmaClasses(m);
+    //pyVector3::AddPlasmaClasses(m);
+    //pyImage::AddPlasmaClasses(m);
+    //pyMatrix44::AddPlasmaClasses(m);
+    pyNetClientComm::AddPlasmaClasses(m);
+    pyNetServerSessionInfo::AddPlasmaClasses(m);
+    pyNetServerSessionInfoRef::AddPlasmaClasses(m);
+    pySDLStateDataRecord::AddPlasmaClasses(m);
+    pySimpleStateVariable::AddPlasmaClasses(m);
+    pySpawnPointInfo::AddPlasmaClasses(m);
+    pySpawnPointInfoRef::AddPlasmaClasses(m);
+    pyStatusLog::AddPlasmaClasses(m);
 
-	pyVNodeMgr::AddPlasmaClasses(m);
-	pyAdminVNodeMgr::AddPlasmaClasses(m);
-	pyAgeVNodeMgr::AddPlasmaClasses(m);
-	pyPlayerVNodeMgr::AddPlasmaClasses(m);
+    pyVNodeMgr::AddPlasmaClasses(m);
+    pyAdminVNodeMgr::AddPlasmaClasses(m);
+    pyAgeVNodeMgr::AddPlasmaClasses(m);
+    pyPlayerVNodeMgr::AddPlasmaClasses(m);
 
-	pyVaultNode::AddPlasmaClasses(m);
-	pyVaultNodeRef::AddPlasmaClasses(m);
-	pyVaultFolderNode::AddPlasmaClasses(m);
+    pyVaultNode::AddPlasmaClasses(m);
+    pyVaultNodeRef::AddPlasmaClasses(m);
+    pyVaultFolderNode::AddPlasmaClasses(m);
 
-	pyVaultAgeInfoListNode::AddPlasmaClasses(m);
-	pyVaultAgeInfoNode::AddPlasmaClasses(m);
-	pyVaultAgeLinkNode::AddPlasmaClasses(m);
-	pyVaultChronicleNode::AddPlasmaClasses(m);
-	pyVaultImageNode::AddPlasmaClasses(m);
-	//pyVaultMarkerListNode::AddPlasmaClasses(m);
-	pyVaultMarkerNode::AddPlasmaClasses(m);
-	pyVaultPlayerInfoListNode::AddPlasmaClasses(m);
-	pyVaultPlayerInfoNode::AddPlasmaClasses(m);
-	pyVaultPlayerNode::AddPlasmaClasses(m);
-	pyVaultSDLNode::AddPlasmaClasses(m);
-	//pyVaultSystemNode::AddPlasmaClasses(m);
-	pyVaultTextNoteNode::AddPlasmaClasses(m);
+    pyVaultAgeInfoListNode::AddPlasmaClasses(m);
+    pyVaultAgeInfoNode::AddPlasmaClasses(m);
+    pyVaultAgeLinkNode::AddPlasmaClasses(m);
+    pyVaultChronicleNode::AddPlasmaClasses(m);
+    pyVaultImageNode::AddPlasmaClasses(m);
+    //pyVaultMarkerListNode::AddPlasmaClasses(m);
+    pyVaultMarkerNode::AddPlasmaClasses(m);
+    pyVaultPlayerInfoListNode::AddPlasmaClasses(m);
+    pyVaultPlayerInfoNode::AddPlasmaClasses(m);
+    pyVaultPlayerNode::AddPlasmaClasses(m);
+    pyVaultSDLNode::AddPlasmaClasses(m);
+    //pyVaultSystemNode::AddPlasmaClasses(m);
+    pyVaultTextNoteNode::AddPlasmaClasses(m);
 
-	// Constants
-	pyNetLinkingMgr::AddPlasmaConstantsClasses(m);
-	pySDL::AddPlasmaConstantsClasses(m);
-	pyStatusLog::AddPlasmaConstantsClasses(m);
-	pyVault::AddPlasmaConstantsClasses(m);
+    // Constants
+    pyNetLinkingMgr::AddPlasmaConstantsClasses(m);
+    pySDL::AddPlasmaConstantsClasses(m);
+    pyStatusLog::AddPlasmaConstantsClasses(m);
+    pyVault::AddPlasmaConstantsClasses(m);
 
-	delete [] plasmaMethods; // cleanup
+    delete [] plasmaMethods; // cleanup
 }

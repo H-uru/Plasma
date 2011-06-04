@@ -30,49 +30,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plSoundMsg::~plSoundMsg()
 {
-	ClearCmd();
+    ClearCmd();
 }
 
 
 void plSoundMsg::ClearCmd() 
 { 
-	plMessageWithCallbacks::Clear();
-	fCmd.Clear(); 
+    plMessageWithCallbacks::Clear();
+    fCmd.Clear(); 
 }
 
 
 void plSoundMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessageWithCallbacks::Read(stream, mgr);
+    plMessageWithCallbacks::Read(stream, mgr);
 
-	fCmd.Read(stream);
-	stream->ReadSwap(&fBegin);
-	stream->ReadSwap(&fEnd);
-	fLoop = stream->ReadBool();
-	fPlaying = stream->ReadBool();
-	stream->ReadSwap(&fSpeed);
-	stream->ReadSwap(&fTime);
-	stream->ReadSwap(&fIndex);
-	stream->ReadSwap(&fRepeats);
-	stream->ReadSwap(&fNameStr);
-	stream->ReadSwap(&fVolume);
-	fFadeType = (plSoundMsg::FadeType)stream->ReadByte();
+    fCmd.Read(stream);
+    stream->ReadSwap(&fBegin);
+    stream->ReadSwap(&fEnd);
+    fLoop = stream->ReadBool();
+    fPlaying = stream->ReadBool();
+    stream->ReadSwap(&fSpeed);
+    stream->ReadSwap(&fTime);
+    stream->ReadSwap(&fIndex);
+    stream->ReadSwap(&fRepeats);
+    stream->ReadSwap(&fNameStr);
+    stream->ReadSwap(&fVolume);
+    fFadeType = (plSoundMsg::FadeType)stream->ReadByte();
 }
 
 void plSoundMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessageWithCallbacks::Write(stream, mgr);
+    plMessageWithCallbacks::Write(stream, mgr);
 
-	fCmd.Write(stream);
-	stream->WriteSwap(fBegin);
-	stream->WriteSwap(fEnd);
-	stream->WriteBool(fLoop);
-	stream->WriteBool(fPlaying);
-	stream->WriteSwap(fSpeed);
-	stream->WriteSwap(fTime);
-	stream->WriteSwap(fIndex);
-	stream->WriteSwap(fRepeats);
-	stream->WriteSwap(fNameStr);
-	stream->WriteSwap(fVolume);
-	stream->WriteByte( (UInt8)fFadeType );
+    fCmd.Write(stream);
+    stream->WriteSwap(fBegin);
+    stream->WriteSwap(fEnd);
+    stream->WriteBool(fLoop);
+    stream->WriteBool(fPlaying);
+    stream->WriteSwap(fSpeed);
+    stream->WriteSwap(fTime);
+    stream->WriteSwap(fIndex);
+    stream->WriteSwap(fRepeats);
+    stream->WriteSwap(fNameStr);
+    stream->WriteSwap(fVolume);
+    stream->WriteByte( (UInt8)fFadeType );
 }

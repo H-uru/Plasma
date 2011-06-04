@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMeshRefMsg_inc
 #define plMeshRefMsg_inc
 
-#include "../pnMessage/plRefMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "hsStream.h"
 
 class hsResMgr;
@@ -35,34 +35,34 @@ class hsResMgr;
 class plMeshRefMsg : public plRefMsg
 {
 public:
-	enum {
-		kVertexPool		= 1,
-		kMaterial		= 2
-	};
+    enum {
+        kVertexPool     = 1,
+        kMaterial       = 2
+    };
 
-	plMeshRefMsg() : fType(-1), fWhich(-1) {}
-	plMeshRefMsg(const plKey &r, int which, int type) : plRefMsg(r, kOnCreate), fWhich(which), fType(type) {}
+    plMeshRefMsg() : fType(-1), fWhich(-1) {}
+    plMeshRefMsg(const plKey &r, int which, int type) : plRefMsg(r, kOnCreate), fWhich(which), fType(type) {}
 
-	CLASSNAME_REGISTER( plMeshRefMsg );
-	GETINTERFACE_ANY( plMeshRefMsg, plRefMsg );
+    CLASSNAME_REGISTER( plMeshRefMsg );
+    GETINTERFACE_ANY( plMeshRefMsg, plRefMsg );
 
-	UInt8		fType;
-	UInt8		fWhich;
+    UInt8       fType;
+    UInt8       fWhich;
 
-	// IO - not really applicable to ref msgs, but anyway
-	virtual void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Read(stream, mgr);
-		stream->ReadSwap(&fType);
-		stream->ReadSwap(&fWhich);
-	}
+    // IO - not really applicable to ref msgs, but anyway
+    virtual void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Read(stream, mgr);
+        stream->ReadSwap(&fType);
+        stream->ReadSwap(&fWhich);
+    }
 
-	virtual void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plRefMsg::Write(stream, mgr);
-		stream->WriteSwap(fType);
-		stream->WriteSwap(fWhich);
-	}
+    virtual void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plRefMsg::Write(stream, mgr);
+        stream->WriteSwap(fType);
+        stream->WriteSwap(fWhich);
+    }
 
 };
 

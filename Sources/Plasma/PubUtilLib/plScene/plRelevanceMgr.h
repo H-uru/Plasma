@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRelevanceMgr_inc
 #define plRelevanceMgr_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "hsBitVector.h"
@@ -39,38 +39,38 @@ class hsStream;
 class plRelevanceMgr : public hsKeyedObject
 {
 protected:
-	static plRelevanceMgr *fInstance;
+    static plRelevanceMgr *fInstance;
 public:
-	static plRelevanceMgr *Instance() { return fInstance; }
-	
-	static void Init();
-	static void DeInit();	
+    static plRelevanceMgr *Instance() { return fInstance; }
+    
+    static void Init();
+    static void DeInit();   
 
 protected:
-	hsTArray<plRelevanceRegion*> fRegions;	
-	hsBool fEnabled;
+    hsTArray<plRelevanceRegion*> fRegions;  
+    hsBool fEnabled;
 
-	void IAddRegion(plRelevanceRegion *);
-	void IRemoveRegion(plRelevanceRegion *);
-	
+    void IAddRegion(plRelevanceRegion *);
+    void IRemoveRegion(plRelevanceRegion *);
+    
 public:
-	plRelevanceMgr();
-	
-	CLASSNAME_REGISTER( plRelevanceMgr );
-	GETINTERFACE_ANY( plRelevanceMgr, hsKeyedObject );
-	
-	virtual hsBool MsgReceive(plMessage* msg);
+    plRelevanceMgr();
+    
+    CLASSNAME_REGISTER( plRelevanceMgr );
+    GETINTERFACE_ANY( plRelevanceMgr, hsKeyedObject );
+    
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	hsBool GetEnabled() { return fEnabled; }
-	void SetEnabled(hsBool val) { fEnabled = val; }
+    hsBool GetEnabled() { return fEnabled; }
+    void SetEnabled(hsBool val) { fEnabled = val; }
 
-	UInt32 GetIndex(char *regionName);
-	void MarkRegion(UInt32 localIdx, UInt32 remoteIdx, hsBool doICare);
-	void SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsImIn, hsBitVector &regionsICareAbout);
-	UInt32 GetNumRegions() const; // includes the secret 0 region in its count
-	void ParseCsvInput(hsStream *s);
+    UInt32 GetIndex(char *regionName);
+    void MarkRegion(UInt32 localIdx, UInt32 remoteIdx, hsBool doICare);
+    void SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsImIn, hsBitVector &regionsICareAbout);
+    UInt32 GetNumRegions() const; // includes the secret 0 region in its count
+    void ParseCsvInput(hsStream *s);
 
-	std::string GetRegionNames(hsBitVector regions);
+    std::string GetRegionNames(hsBitVector regions);
 };
 
 #endif // plRelevanceMgr_inc

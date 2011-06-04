@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plTransitionMgr - Class to handle fullscreen transitions (fades, etc)	//
-//																			//
+//                                                                          //
+//  plTransitionMgr - Class to handle fullscreen transitions (fades, etc)   //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plTransitionMgr_h
@@ -34,7 +34,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsTemplates.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "hsUtils.h"
 
 
@@ -45,44 +45,44 @@ class plEventCallbackMsg;
 
 class plTransitionMgr : public hsKeyedObject
 {
-	protected:
+    protected:
 
-		plPlate		*fEffectPlate;
-		
-		enum
-		{
-			kIdle,
-			kFadeOut,
-			kFadeIn,
-			kTransitionFadeIn,
-			kTransitionFadeOut
-		};
+        plPlate     *fEffectPlate;
+        
+        enum
+        {
+            kIdle,
+            kFadeOut,
+            kFadeIn,
+            kTransitionFadeIn,
+            kTransitionFadeOut
+        };
 
-		UInt8		fCurrentEffect;
-		hsBool		fRegisteredForTime, fHoldAtEnd, fPlaying, fNoSoundFade;
-		hsScalar	fEffectLength, fCurrOpacity, fOpacDelta;
-		hsScalar	fLastTime;
+        UInt8       fCurrentEffect;
+        hsBool      fRegisteredForTime, fHoldAtEnd, fPlaying, fNoSoundFade;
+        hsScalar    fEffectLength, fCurrOpacity, fOpacDelta;
+        hsScalar    fLastTime;
 
-		void	IStartFadeIn( hsScalar lengthInSecs, UInt8 effect = kFadeIn );
-		void	IStartFadeOut( hsScalar lengthInSecs, UInt8 effect = kFadeOut );
+        void    IStartFadeIn( hsScalar lengthInSecs, UInt8 effect = kFadeIn );
+        void    IStartFadeOut( hsScalar lengthInSecs, UInt8 effect = kFadeOut );
 
-		void	ICreatePlate( void );
+        void    ICreatePlate( void );
 
-		void	IStop( hsBool aboutToStartAgain = false );
+        void    IStop( hsBool aboutToStartAgain = false );
 
-		hsTArray<plEventCallbackMsg	*>	fCallbacks;
+        hsTArray<plEventCallbackMsg *>  fCallbacks;
 
-	public:
+    public:
 
-		plTransitionMgr();
-		virtual ~plTransitionMgr();
-		
-		CLASSNAME_REGISTER( plTransitionMgr );
-		GETINTERFACE_ANY( plTransitionMgr, hsKeyedObject );
+        plTransitionMgr();
+        virtual ~plTransitionMgr();
+        
+        CLASSNAME_REGISTER( plTransitionMgr );
+        GETINTERFACE_ANY( plTransitionMgr, hsKeyedObject );
 
-		void	Init( void );
+        void    Init( void );
 
-		virtual hsBool MsgReceive( plMessage* msg );
+        virtual hsBool MsgReceive( plMessage* msg );
 };
 
 

@@ -25,44 +25,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plKeyPressConditionalObject.h"
-#include "../plPhysical/plDetectorModifier.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
-#include "../plMessage/plInputEventMsg.h"
+#include "plPhysical/plDetectorModifier.h"
+#include "pnModifier/plLogicModBase.h"
+#include "plMessage/plInputEventMsg.h"
 
 plKeyPressConditionalObject::plKeyPressConditionalObject()
 {
-	SetFlag(kLocalElement);		// since it relies on user input	
+    SetFlag(kLocalElement);     // since it relies on user input    
 }
 
 hsBool plKeyPressConditionalObject::MsgReceive(plMessage* msg)
 {
-	plKeyEventMsg* pKeyMsg = plKeyEventMsg::ConvertNoRef(msg);
-	if( pKeyMsg )
-	{
-		if (pKeyMsg && pKeyMsg->GetKeyCode() == fKeyEvent && pKeyMsg->GetKeyDown() && !Satisfied() )
-		{
-			SetSatisfied(true);
-			//		fLogicMod->RequestTrigger();
-		}
-		else
-		if (pKeyMsg && pKeyMsg->GetKeyCode() == fKeyEvent && !pKeyMsg->GetKeyDown() && Satisfied() )
-		{
-			SetSatisfied(false);
-		}
-		return true;
-	}
-	return plConditionalObject::MsgReceive(msg);
+    plKeyEventMsg* pKeyMsg = plKeyEventMsg::ConvertNoRef(msg);
+    if( pKeyMsg )
+    {
+        if (pKeyMsg && pKeyMsg->GetKeyCode() == fKeyEvent && pKeyMsg->GetKeyDown() && !Satisfied() )
+        {
+            SetSatisfied(true);
+            //      fLogicMod->RequestTrigger();
+        }
+        else
+        if (pKeyMsg && pKeyMsg->GetKeyCode() == fKeyEvent && !pKeyMsg->GetKeyDown() && Satisfied() )
+        {
+            SetSatisfied(false);
+        }
+        return true;
+    }
+    return plConditionalObject::MsgReceive(msg);
 }
 
 void plKeyPressConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Read(stream, mgr);
-	fKeyEvent = (plKeyDef)stream->ReadSwap32();
+    plConditionalObject::Read(stream, mgr);
+    fKeyEvent = (plKeyDef)stream->ReadSwap32();
 }
 void plKeyPressConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Write(stream, mgr);
-	stream->WriteSwap32((UInt32)fKeyEvent);
+    plConditionalObject::Write(stream, mgr);
+    stream->WriteSwap32((UInt32)fKeyEvent);
 
 }
 

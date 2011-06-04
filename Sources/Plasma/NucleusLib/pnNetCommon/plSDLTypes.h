@@ -39,4 +39,4 @@ extern const char kSDLMorphSequence[];
 extern const char kSDLParticleSystem[];
 extern const char kSDLCloneMessage[];
 
-#endif	// plSDLTypes_inc
+#endif  // plSDLTypes_inc

@@ -27,61 +27,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsConverterUtils.h"
 #include "hsResMgr.h"
+#include "MaxMain/MaxCompat.h"
 
 #if HS_BUILD_FOR_WIN32
 
 #include <math.h>
 
 #include "hsMaxLayerBase.h"
-#include "../plInterp/plController.h"
+#include "plInterp/plController.h"
 
-#include "../MaxExport/plErrorMsg.h"
+#include "MaxExport/plErrorMsg.h"
 #include "UserPropMgr.h"
 #include "hsStringTokenizer.h"
 //#include "hsDXTDirectXCodec.h"
 //#include "hsDXTSoftwareCodec.h"
-#include "../plGImage/hsCodecManager.h"
+#include "plGImage/hsCodecManager.h"
 ///#include "SwitchUtil.h"
 #include "hsExceptionStack.h"
 #include "hsHashTable.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 const char hsConverterUtils::fTagSeps[] = " ,\t\n=:;";
 
 extern UserPropMgr gUserPropMgr;
 
 namespace {
-	class ObjectInstancedEnumProc : public DependentEnumProc
-	{
-	public:
-		ObjectInstancedEnumProc() : fInstanceCount(0) { }
-		
-		int proc(ReferenceMaker *rmaker)
-		{
-			hsGuardBegin("ObjectInstancedEnumProc::proc");
+    class ObjectInstancedEnumProc : public DependentEnumProc
+    {
+    public:
+        ObjectInstancedEnumProc() : fInstanceCount(0) { }
+        
+        int proc(ReferenceMaker *rmaker)
+        {
+            hsGuardBegin("ObjectInstancedEnumProc::proc");
 
-			if (rmaker->SuperClassID()==BASENODE_CLASS_ID)
-			{
-				fInstanceCount++;
-			}
-			
-			return 0;
-			hsGuardEnd;
-		}
-		
-		Int32	GetInstanceCount()	{ return fInstanceCount; }
-		
-	private:
-		Int32	fInstanceCount;
-	};
+            if (rmaker->SuperClassID()==BASENODE_CLASS_ID)
+            {
+                fInstanceCount++;
+            }
+            
+            return 0;
+            hsGuardEnd;
+        }
+        
+        Int32   GetInstanceCount()  { return fInstanceCount; }
+        
+    private:
+        Int32   fInstanceCount;
+    };
 }
 
 hsConverterUtils& hsConverterUtils::Instance()
 {
-	static hsConverterUtils the_instance;
+    static hsConverterUtils the_instance;
 
-	return the_instance;
+    return the_instance;
 }
 
 hsConverterUtils::hsConverterUtils() :
@@ -94,74 +95,74 @@ fWarned(0)
 
 void hsConverterUtils::Init(hsBool save, plErrorMsg *msg)
 {
-	hsGuardBegin("hsConverterUtils::Init");
+    hsGuardBegin("hsConverterUtils::Init");
 
     fErrorMsg = msg;
     
     fSuppressMangling = false;
     fWarned = 0;
-	fSave = save;
-	
-	hsGuardEnd;
+    fSave = save;
+    
+    hsGuardEnd;
 }
 
 TimeValue hsConverterUtils::GetTime(Interface *gi)
 {
-	hsGuardBegin("hsConverterUtils::GetTime");
+    hsGuardBegin("hsConverterUtils::GetTime");
 
-	return ((TimeValue)0);
+    return ((TimeValue)0);
     hsGuardEnd; 
-    //	return gi->GetTime();
-    //	return theSceneEnum->time;
+    //  return gi->GetTime();
+    //  return theSceneEnum->time;
 }
 
 hsBool hsConverterUtils::IsEnvironHolder(INode *node)
 {
-	hsGuardBegin("hsConverterUtils::IsEnvironHolder");
+    hsGuardBegin("hsConverterUtils::IsEnvironHolder");
 
-	return (gUserPropMgr.UserPropExists(node, "EnvironMap"));
+    return (gUserPropMgr.UserPropExists(node, "EnvironMap"));
     hsGuardEnd; 
 }
 
 hsBool hsConverterUtils::AutoStartDynamics(INode *node)
 {
-	hsGuardBegin("hsConverterUtils::AutoStartDynamics");
+    hsGuardBegin("hsConverterUtils::AutoStartDynamics");
 
-	return (gUserPropMgr.UserPropExists(node,"AutoStart") || gUserPropMgr.UserPropExists(node,"aud"));
+    return (gUserPropMgr.UserPropExists(node,"AutoStart") || gUserPropMgr.UserPropExists(node,"aud"));
     hsGuardEnd; 
 }
 
 hsBool hsConverterUtils::RandomStartDynamics(INode *node)
 {
-	hsGuardBegin("hsConverterUtils::RandomStartDynamics");
+    hsGuardBegin("hsConverterUtils::RandomStartDynamics");
 
-	return (gUserPropMgr.UserPropExists(node,"RandomStart"));
+    return (gUserPropMgr.UserPropExists(node,"RandomStart"));
     hsGuardEnd; 
 }
 
 void hsConverterUtils::StripOffTail(char* path)
 {
-	hsGuardBegin("hsConverterUtils::StripOffTail");
+    hsGuardBegin("hsConverterUtils::StripOffTail");
 
-	int i = strlen(path)-1;
-	while(path[i] != '\\')
-		i--;
-	path[i+1] = 0;
+    int i = strlen(path)-1;
+    while(path[i] != '\\')
+        i--;
+    path[i+1] = 0;
 
     hsGuardEnd;
 }
 
 void hsConverterUtils::StripOffPath(char* fileName)
 {
-	hsGuardBegin("hsConverterUtils::StripOffPath");
+    hsGuardBegin("hsConverterUtils::StripOffPath");
 
-	char tmp[256];
-	// Remove preceding path
-	int i = strlen(fileName)-1;
-	while(fileName[i] != '\\')
-		i--;
-	strcpy(tmp, fileName+i+1);
-	strcpy(fileName, tmp);
+    char tmp[256];
+    // Remove preceding path
+    int i = strlen(fileName)-1;
+    while(fileName[i] != '\\')
+        i--;
+    strcpy(tmp, fileName+i+1);
+    strcpy(fileName, tmp);
 
     hsGuardEnd;
 }
@@ -171,42 +172,42 @@ void hsConverterUtils::StripOffPath(char* fileName)
 //
 hsBool hsConverterUtils::IsReservedKeyword(const char* nodeName)
 {
-	hsGuardBegin("hsConverterUtils::IsReservedKeyword");
+    hsGuardBegin("hsConverterUtils::IsReservedKeyword");
 
-	return (nodeName!=nil &&
-		(  !_stricmp(nodeName, "theplayer")
-		|| !_stricmp(nodeName, "the_player")
-		|| !_stricmp(nodeName, "thecamera")
-		|| !_stricmp(nodeName, "the_camera")
-		|| !_stricmp(nodeName, "thedetector")
-		|| !_stricmp(nodeName, "the_detector")
-		|| !_stricmp(nodeName, "themonitor")
-		|| !_stricmp(nodeName, "the_monitor")
-		|| !_stricmp(nodeName, "thedetectorshape")
-		|| !_stricmp(nodeName, "the_detector_shape")) );
+    return (nodeName!=nil &&
+        (  !_stricmp(nodeName, "theplayer")
+        || !_stricmp(nodeName, "the_player")
+        || !_stricmp(nodeName, "thecamera")
+        || !_stricmp(nodeName, "the_camera")
+        || !_stricmp(nodeName, "thedetector")
+        || !_stricmp(nodeName, "the_detector")
+        || !_stricmp(nodeName, "themonitor")
+        || !_stricmp(nodeName, "the_monitor")
+        || !_stricmp(nodeName, "thedetectorshape")
+        || !_stricmp(nodeName, "the_detector_shape")) );
 
-	hsGuardEnd; 
+    hsGuardEnd; 
 }
 
 char *hsConverterUtils::MangleReference(char *mangName, const char *nodeName, const char* defRoom)
 {
-	hsGuardBegin("hsConverterUtils::MangleReference");
+    hsGuardBegin("hsConverterUtils::MangleReference");
 
     //hsAssert(nodeName, "No node name in hsConverterUtils::MangleReference.");
-	if(!nodeName)
-	{
-		fErrorMsg->Set(true, "Mangle Reference Error", "No node name in hsConverterUtils::MangleReference.").Show();
-		fErrorMsg->Set();
-		return mangName;		
-	}
-	if (!*nodeName)
-	 return hsStrcpy(mangName, nodeName);
+    if(!nodeName)
+    {
+        fErrorMsg->Set(true, "Mangle Reference Error", "No node name in hsConverterUtils::MangleReference.").Show();
+        fErrorMsg->Set();
+        return mangName;        
+    }
+    if (!*nodeName)
+     return hsStrcpy(mangName, nodeName);
 
-	// doesn't want to be mangled
-	if (('.' == nodeName[0])&&('.' == nodeName[1]))
-		return hsStrcpy(mangName, nodeName + 2);
+    // doesn't want to be mangled
+    if (('.' == nodeName[0])&&('.' == nodeName[1]))
+        return hsStrcpy(mangName, nodeName + 2);
 
-	// already mangled or reserved
+    // already mangled or reserved
     if (strstr(nodeName, "..") || IsReservedKeyword(nodeName))
         return hsStrcpy(mangName, nodeName);
 
@@ -214,22 +215,22 @@ char *hsConverterUtils::MangleReference(char *mangName, const char *nodeName, co
 
     if (!node)
     {
-		// no room so make global
-		// Default is to make it global, but you can set another default (like same
-		// room as referencer) with defRoom.
+        // no room so make global
+        // Default is to make it global, but you can set another default (like same
+        // room as referencer) with defRoom.
         char tempName[256];
 
-		sprintf(tempName, "%s..%s", defRoom, nodeName);
+        sprintf(tempName, "%s..%s", defRoom, nodeName);
         return hsStrcpy(mangName, tempName);
     }
 
     return MangleReference(mangName, node);
-	hsGuardEnd; 
+    hsGuardEnd; 
 }
 
 char *hsConverterUtils::MangleReference(char *mangName, INode *node, const char* defRoom)
 {
-	hsGuardBegin("hsConverterUtils::MangleReference");
+    hsGuardBegin("hsConverterUtils::MangleReference");
 
     if (!node)
         return nil;
@@ -238,217 +239,217 @@ char *hsConverterUtils::MangleReference(char *mangName, INode *node, const char*
 
     char *nodeName = node->GetName();
     char *roomName = nil;
-	TSTR sdata;
-	hsStringTokenizer toker;
-	if (gUserPropMgr.GetUserPropString(node, "Rooms", sdata)) 
+    TSTR sdata;
+    hsStringTokenizer toker;
+    if (gUserPropMgr.GetUserPropString(node, "Rooms", sdata)) 
     {
-		toker.Reset(sdata, fTagSeps);
-		roomName = toker.next();
-	}
-
-	if (fSuppressMangling)
-    {
-		return hsStrcpy(mangName, nodeName);
+        toker.Reset(sdata, fTagSeps);
+        roomName = toker.next();
     }
 
-	if (('.' == nodeName[0])&&('.' == nodeName[1]))
-		hsStrcpy(tempName, nodeName + 2);
-	else if (!*nodeName 
-			|| strstr(nodeName, "..")
-			|| IsReservedKeyword(nodeName)
-	)
-		hsStrcpy(tempName, nodeName);
-	else if (roomName && *roomName)
-		sprintf(tempName, "%s..%s", roomName, nodeName);
-	else
-		sprintf(tempName, "%s..%s", defRoom, nodeName);
+    if (fSuppressMangling)
+    {
+        return hsStrcpy(mangName, nodeName);
+    }
+
+    if (('.' == nodeName[0])&&('.' == nodeName[1]))
+        hsStrcpy(tempName, nodeName + 2);
+    else if (!*nodeName 
+            || strstr(nodeName, "..")
+            || IsReservedKeyword(nodeName)
+    )
+        hsStrcpy(tempName, nodeName);
+    else if (roomName && *roomName)
+        sprintf(tempName, "%s..%s", roomName, nodeName);
+    else
+        sprintf(tempName, "%s..%s", defRoom, nodeName);
 
     return hsStrcpy(mangName, tempName);
 
-	hsGuardEnd; 
+    hsGuardEnd; 
 }
 
 char *hsConverterUtils::MangleRefWithRoom(char *mangName, const char *nodeName, const char* roomName)
 {
-	hsGuardBegin("hsConverterUtils::MangleRefWithRoom");
+    hsGuardBegin("hsConverterUtils::MangleRefWithRoom");
 
     //hsAssert(nodeName && roomName, "No node or room name in hsConverterUtils::MangleRefWithRoom.");
-	if(!(nodeName && roomName))
-	{
-		fErrorMsg->Set(true, "Mangle Room Reference Error", "No node or room name in hsConverterUtils::MangleRefWithRoom.").Show();
-		fErrorMsg->Set();
-		return mangName;		
-	}
+    if(!(nodeName && roomName))
+    {
+        fErrorMsg->Set(true, "Mangle Room Reference Error", "No node or room name in hsConverterUtils::MangleRefWithRoom.").Show();
+        fErrorMsg->Set();
+        return mangName;        
+    }
 
-	if (!*nodeName)
-		return hsStrcpy(mangName,nodeName);
+    if (!*nodeName)
+        return hsStrcpy(mangName,nodeName);
 
-	// doesn't want to be mangled
-	if (('.' == nodeName[0])&&('.' == nodeName[1]))
-		return hsStrcpy(mangName, nodeName + 2);
+    // doesn't want to be mangled
+    if (('.' == nodeName[0])&&('.' == nodeName[1]))
+        return hsStrcpy(mangName, nodeName + 2);
 
-	// already mangled or reserved
+    // already mangled or reserved
     if (strstr(nodeName, "..") || IsReservedKeyword(nodeName))
         return hsStrcpy(mangName, nodeName);
 
-	sprintf(mangName, "%s..%s", roomName, nodeName);
-	return mangName;
+    sprintf(mangName, "%s..%s", roomName, nodeName);
+    return mangName;
 
-	hsGuardEnd; 
+    hsGuardEnd; 
 }
 
 
 INode* hsConverterUtils::FindINodeFromMangledName(const char* mangName)
 {
-	hsGuardBegin("hsConverterUtils::FindINodeFromMangledName");
+    hsGuardBegin("hsConverterUtils::FindINodeFromMangledName");
 
-	if( !(mangName && *mangName) )
-		return nil;
+    if( !(mangName && *mangName) )
+        return nil;
 
-	const char* nodeName = mangName;
+    const char* nodeName = mangName;
 
-	char* p;
-	while( p = strstr(nodeName, "..") )
-	{
-		nodeName = p + 2;
-	}
-	if( !(nodeName && *nodeName) )
-		nodeName = mangName;
+    char* p;
+    while( p = strstr((char*)nodeName, "..") )
+    {
+        nodeName = p + 2;
+    }
+    if( !(nodeName && *nodeName) )
+        nodeName = mangName;
 
-	return GetINodeByName(nodeName);
-	hsGuardEnd; 
+    return GetINodeByName(nodeName);
+    hsGuardEnd; 
 }
 
 INode* hsConverterUtils::FindINodeFromKeyedObject(hsKeyedObject* obj)
 {
-	hsGuardBegin("hsConverterUtils::FindINodeFromKeyedObject");
+    hsGuardBegin("hsConverterUtils::FindINodeFromKeyedObject");
 
-	INode* retVal = FindINodeFromMangledName(obj->GetKey()->GetName());
-	if( retVal )
-		return (retVal);
+    INode* retVal = FindINodeFromMangledName(obj->GetKey()->GetName());
+    if( retVal )
+        return (retVal);
 
-/*	No more other Keys plasma 2.0
-	int i;
-	for( i = 0; i < obj->GetNumOtherKeys(); i++ )
-	{
-		retVal = FindINodeFromMangledName(obj->GetOtherKey(i)->GetName());
-		if( retVal )
-			return retVal;
-	}
+/*  No more other Keys plasma 2.0
+    int i;
+    for( i = 0; i < obj->GetNumOtherKeys(); i++ )
+    {
+        retVal = FindINodeFromMangledName(obj->GetOtherKey(i)->GetName());
+        if( retVal )
+            return retVal;
+    }
 */
-	return nil;
-	hsGuardEnd; 
+    return nil;
+    hsGuardEnd; 
 }
 
 // Uses MangleRef so all mangling happens in one place.  Compares the name with a mangled version of it
 hsBool hsConverterUtils::IsMangled(const char *name) 
 {
-	hsGuardBegin("hsConverterUtils::IsMangled");
+    hsGuardBegin("hsConverterUtils::IsMangled");
 
-	char mang[255];
-	return !strcmp(name,MangleReference(mang,name));
-	hsGuardEnd; 
+    char mang[255];
+    return !strcmp(name,MangleReference(mang,name));
+    hsGuardEnd; 
 }
 
 // Undoes the process of mangling.  This includes taking a "name" back to "..name"
 char *hsConverterUtils::UnMangleReference(char *dest, const char *name) 
 {
-	hsGuardBegin("hsConverterUtils::IsMangled");
+    hsGuardBegin("hsConverterUtils::IsMangled");
 
-	char *u = strstr(name,"..");
-	if (u) 
-	{
-		u+=2;
-		strcpy(dest,u);
-	} 
-	else if (!IsMangled(name)) 
-	{
-		strcpy(dest,"..");
-		strcat(dest,name);
-	} 
-	else 
-	{
-		strcpy(dest,name);
-	}
+    char *u = strstr((char*)name,"..");
+    if (u) 
+    {
+        u+=2;
+        strcpy(dest,u);
+    } 
+    else if (!IsMangled(name)) 
+    {
+        strcpy(dest,"..");
+        strcat(dest,name);
+    } 
+    else 
+    {
+        strcpy(dest,name);
+    }
 
-	return dest;
-	hsGuardEnd; 
+    return dest;
+    hsGuardEnd; 
 }
 
 // Similar to UnMangle but doesn't take "name" back to "..name"
 char* hsConverterUtils::StripMangledReference(char* dest, const char* name)
 {
-	hsGuardBegin("hsConverterUtils::StripMangledReference");
+    hsGuardBegin("hsConverterUtils::StripMangledReference");
 
-	char *u = strstr(name,"..");
-	if (u) 
-	{
-		u+=2;
-		strcpy(dest,u);
-	}
-	else
-	{
-		strcpy(dest,name);
-	}
+    char *u = strstr((char*)name,"..");
+    if (u) 
+    {
+        u+=2;
+        strcpy(dest,u);
+    }
+    else
+    {
+        strcpy(dest,name);
+    }
 
-	return dest;
-	hsGuardEnd; 
+    return dest;
+    hsGuardEnd; 
 }
 
 Int32 hsConverterUtils::FindNamedSelSetFromName(const char *name)
 {
-	hsGuardBegin("hsConverterUtils::FindNamedSelSetFromName");
+    hsGuardBegin("hsConverterUtils::FindNamedSelSetFromName");
 
-	for (Int32 i=0; i<fInterface->GetNumNamedSelSets(); i++)
-	{
-		if (!_stricmp(name, fInterface->GetNamedSelSetName(i)))
-			return (i);
-	}
+    for (Int32 i=0; i<fInterface->GetNumNamedSelSets(); i++)
+    {
+        if (!_stricmp(name, fInterface->GetNamedSelSetName(i)))
+            return (i);
+    }
 
-	return (-1);
-	hsGuardEnd; 
+    return (-1);
+    hsGuardEnd; 
 }
 
 hsBool hsConverterUtils::IsInstanced(Object* maxObject)
 {
-	hsGuardBegin("hsConverterUtils::IsInstanced");
+    hsGuardBegin("hsConverterUtils::IsInstanced");
 
-	if (!maxObject)
-	{
-		return false;
-	}
+    if (!maxObject)
+    {
+        return false;
+    }
 
-	ObjectInstancedEnumProc instProc;
-	maxObject->EnumDependents(&instProc);
+    ObjectInstancedEnumProc instProc;
+    ENUMDEPENDENTS(maxObject, &instProc);
 
-	return (instProc.GetInstanceCount() > 1);
-	hsGuardEnd; 
+    return (instProc.GetInstanceCount() > 1);
+    hsGuardEnd; 
 }
 
 
 INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const char* wantName)
 {
-	hsGuardBegin("hsConverterUtils::IGetINodeByNameRecur");
+    hsGuardBegin("hsConverterUtils::IGetINodeByNameRecur");
 
-	if (!node || !node->GetName())
-		return nil;
+    if (!node || !node->GetName())
+        return nil;
 
-	char* nodeName=node->GetName();
-	if (!_stricmp(nodeName, wantName))
-		return node;
+    char* nodeName=node->GetName();
+    if (!_stricmp(nodeName, wantName))
+        return node;
 
-	// Process children
-	int num = node->NumberOfChildren();
-	int i;
-	for(i=0; i<num; i++)
-	{
-		INode* ret;
-		if ((ret=IGetINodeByNameRecur(node->GetChildNode(i), wantName)))
-			return ret;
-	}
-	
-	return nil;
-	hsGuardEnd; 
+    // Process children
+    int num = node->NumberOfChildren();
+    int i;
+    for(i=0; i<num; i++)
+    {
+        INode* ret;
+        if ((ret=IGetINodeByNameRecur(node->GetChildNode(i), wantName)))
+            return ret;
+    }
+    
+    return nil;
+    hsGuardEnd; 
 }
 
 //
@@ -456,92 +457,94 @@ INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const char* wantName)
 //
 INode* hsConverterUtils::GetINodeByName(const char* name, hsBool caseSensitive)
 {
-	hsGuardBegin("hsConverterUtils::GetINodeByName");
+    hsGuardBegin("hsConverterUtils::GetINodeByName");
 
-	if (!name)
-	{
-		return nil;
-	}
+    if (!name)
+    {
+        return nil;
+    }
 
-	if (fNodeSearchCache)
-	{
-		CacheNode cNode(name);
-		cNode.SetCaseSensitive(caseSensitive);
-		hsHashTableIterator<CacheNode> it = fNodeSearchCache->find(cNode);
-		return it->GetNode();
-	}
+    if (fNodeSearchCache)
+    {
+        CacheNode cNode(name);
+        cNode.SetCaseSensitive(caseSensitive);
+        hsHashTableIterator<CacheNode> it = fNodeSearchCache->find(cNode);
+        return it->GetNode();
+    }
 
-	//hsAssert(fInterface, "nil fInterface in hsConverterUtils::GetINodeByName()");
-	if(!fInterface)
-	{
-		fErrorMsg->Set(true, "Get INode by Name Error", "nil fInterface in hsConverterUtils::GetINodeByName()").Show();
-		fErrorMsg->Set();
-		return NULL;		
-	}
+    //hsAssert(fInterface, "nil fInterface in hsConverterUtils::GetINodeByName()");
+    if(!fInterface)
+    {
+        fErrorMsg->Set(true, "Get INode by Name Error", "nil fInterface in hsConverterUtils::GetINodeByName()").Show();
+        fErrorMsg->Set();
+        return NULL;        
+    }
 
 
-	if (caseSensitive)
-	{
-		return fInterface->GetINodeByName(name);
-	}
+    if (caseSensitive)
+    {
+        return fInterface->GetINodeByName(name);
+    }
 
-	return IGetINodeByNameRecur(fInterface->GetRootNode(), name);
-	hsGuardEnd; 
+    return IGetINodeByNameRecur(fInterface->GetRootNode(), name);
+    hsGuardEnd; 
 }
 
 void hsConverterUtils::CreateNodeSearchCache()
 {
-	if (!fNodeSearchCache)
-	{
-		fNodeSearchCache = TRACKED_NEW hsHashTable<CacheNode>();
-	}
-	fNodeSearchCache->clear();
+    if (!fNodeSearchCache)
+    {
+        fNodeSearchCache = TRACKED_NEW hsHashTable<CacheNode>();
+    }
+    fNodeSearchCache->clear();
 
-	IBuildNodeSearchCacheRecur(fInterface->GetRootNode());
+    IBuildNodeSearchCacheRecur(fInterface->GetRootNode());
 }
 
 void hsConverterUtils::DestroyNodeSearchCache()
 {
-	delete fNodeSearchCache;
-	fNodeSearchCache = nil;
+    delete fNodeSearchCache;
+    fNodeSearchCache = nil;
 }
 
 void hsConverterUtils::IBuildNodeSearchCacheRecur(INode* node)
 {
-	if (!node || !node->GetName())
-		return ;
+    if (!node || !node->GetName())
+        return ;
 
-	CacheNode cNode(node);
-	fNodeSearchCache->insert(cNode);
+    CacheNode cNode(node);
+    fNodeSearchCache->insert(cNode);
 
-	// Process children
-	int num = node->NumberOfChildren();
-	int i;
-	for(i=0; i<num; i++)
-	{
-		IBuildNodeSearchCacheRecur(node->GetChildNode(i));
-	}
+    // Process children
+    int num = node->NumberOfChildren();
+    int i;
+    for(i=0; i<num; i++)
+    {
+        IBuildNodeSearchCacheRecur(node->GetChildNode(i));
+    }
 }
 
 UInt32 hsConverterUtils::CacheNode::GetHash() const
 {
-	const char* k = GetName();
-	int len = k ? strlen(k) : 0;
-	for (int h=len; len--;) 
-	{ 
-		h = ((h<<5)^(h>>27))^tolower(*k++);
-	}
-	return h;
+    const char* k = GetName();
+    int len = k ? strlen(k) : 0;
+
+    int h;
+    for (h=len; len--;) 
+    { 
+        h = ((h<<5)^(h>>27))^tolower(*k++);
+    }
+    return h;
 }
 
 bool hsConverterUtils::CacheNode::operator==(const CacheNode& other) const
 {
-	const char* k1 = GetName();
-	const char* k2 = other.GetName();
-	if (other.fCaseSensitive || fCaseSensitive)
-		return !strcmp(k1,k2);
-	else
-		return !_stricmp(k1,k2);
+    const char* k1 = GetName();
+    const char* k2 = other.GetName();
+    if (other.fCaseSensitive || fCaseSensitive)
+        return !strcmp(k1,k2);
+    else
+        return !_stricmp(k1,k2);
 }
 
-#endif	// HS_BUILD_FOR_WIN32
+#endif  // HS_BUILD_FOR_WIN32

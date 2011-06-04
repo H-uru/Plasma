@@ -27,8 +27,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plControlEventConditionalObject_inc
 #define plControlEventConditionalObject_inc
 
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"
-#include "../../NucleusLib/pnInputCore/plControlEventCodes.h"
+#include "pnModifier/plConditionalObject.h"
+#include "pnInputCore/plControlEventCodes.h"
 
 
 class plControlEventConditionalObject : public plConditionalObject
@@ -37,23 +37,23 @@ protected:
 
 
 public:
-	
-	plControlEventConditionalObject();
-	~plControlEventConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plControlEventConditionalObject );
-	GETINTERFACE_ANY( plControlEventConditionalObject, plConditionalObject );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    plControlEventConditionalObject();
+    ~plControlEventConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plControlEventConditionalObject );
+    GETINTERFACE_ANY( plControlEventConditionalObject, plConditionalObject );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 
-	hsBool MsgReceive(plMessage* msg);
-	
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(false); }
+    hsBool MsgReceive(plMessage* msg);
+    
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(false); }
 
-	ControlEventCode fControlEvent;
+    ControlEventCode fControlEvent;
 
 };
 

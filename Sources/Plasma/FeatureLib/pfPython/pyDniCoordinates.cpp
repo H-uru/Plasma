@@ -24,89 +24,89 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "pyDniCoordinates.h"
-#include "../plVault/plDniCoordinateInfo.h"
+#include "plVault/plDniCoordinateInfo.h"
 #ifndef BUILDING_PYPLASMA
-#include "../plAvatar/plAvatarMgr.h"
+#include "plAvatar/plAvatarMgr.h"
 #include "pyVault.h"
 #endif
 
 pyDniCoordinates::pyDniCoordinates(plDniCoordinateInfo* coord)
 {
-	fCoords = TRACKED_NEW plDniCoordinateInfo;
-	if (coord) {
-		// copy their coords into our copy
-		fCoords->SetTorans(coord->GetTorans());
-		fCoords->SetHSpans(coord->GetHSpans());
-		fCoords->SetVSpans(coord->GetVSpans());
-	}
+    fCoords = TRACKED_NEW plDniCoordinateInfo;
+    if (coord) {
+        // copy their coords into our copy
+        fCoords->SetTorans(coord->GetTorans());
+        fCoords->SetHSpans(coord->GetHSpans());
+        fCoords->SetVSpans(coord->GetVSpans());
+    }
 }
 
 
 pyDniCoordinates::pyDniCoordinates()
 {
-	fCoords = TRACKED_NEW plDniCoordinateInfo;
-	fCoords->SetTorans(0);
-	fCoords->SetHSpans(0);
-	fCoords->SetVSpans(0);
+    fCoords = TRACKED_NEW plDniCoordinateInfo;
+    fCoords->SetTorans(0);
+    fCoords->SetHSpans(0);
+    fCoords->SetVSpans(0);
 }
 
 pyDniCoordinates::~pyDniCoordinates()
 {
-	if (fCoords)
-		delete(fCoords);
+    if (fCoords)
+        delete(fCoords);
 }
 
 int pyDniCoordinates::GetHSpans() const
 {
-	if ( fCoords )
-	{
-		return fCoords->GetHSpans();
-	}
-	return 0;
+    if ( fCoords )
+    {
+        return fCoords->GetHSpans();
+    }
+    return 0;
 }
 
 int pyDniCoordinates::GetVSpans() const
 {
-	if ( fCoords )
-	{
-		return fCoords->GetVSpans();
-	}
-	return 0;
+    if ( fCoords )
+    {
+        return fCoords->GetVSpans();
+    }
+    return 0;
 }
 
 int pyDniCoordinates::GetTorans() const
 {
-	if ( fCoords )
-	{
-		return fCoords->GetTorans();
-	}
-	return 0;
+    if ( fCoords )
+    {
+        return fCoords->GetTorans();
+    }
+    return 0;
 }
 
 void pyDniCoordinates::UpdateCoordinates()
 {
 #ifndef BUILDING_PYPLASMA
-	if (fCoords)
-	{
-		// reset GPS to 0,0,0 in case there is no maintainers marker in this age
-		fCoords->SetTorans(0);
-		fCoords->SetHSpans(0);
-		fCoords->SetVSpans(0);
-		plAvatarMgr::GetInstance()->GetDniCoordinate(fCoords);
-	}
+    if (fCoords)
+    {
+        // reset GPS to 0,0,0 in case there is no maintainers marker in this age
+        fCoords->SetTorans(0);
+        fCoords->SetHSpans(0);
+        fCoords->SetVSpans(0);
+        plAvatarMgr::GetInstance()->GetDniCoordinate(fCoords);
+    }
 #endif
 }
 
 void pyDniCoordinates::FromPoint(const hsPoint3& pt)
 {
 #ifndef BUILDING_PYPLASMA
-	if (fCoords)
-	{
-		// reset GPS to 0,0,0 in case there is no maintainers marker in this age
-		fCoords->SetTorans(0);
-		fCoords->SetHSpans(0);
-		fCoords->SetVSpans(0);
-		plAvatarMgr::GetInstance()->PointToDniCoordinate(pt, fCoords);
-	}
+    if (fCoords)
+    {
+        // reset GPS to 0,0,0 in case there is no maintainers marker in this age
+        fCoords->SetTorans(0);
+        fCoords->SetHSpans(0);
+        fCoords->SetVSpans(0);
+        plAvatarMgr::GetInstance()->PointToDniCoordinate(pt, fCoords);
+    }
 #endif
 }

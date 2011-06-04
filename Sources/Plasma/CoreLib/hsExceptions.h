@@ -34,47 +34,47 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 enum hsErrorEnum {
-	kNo_hsError,
-	kBadAlloc_hsError,
-	kNilParam_hsError,
-	kBadParam_hsError,
-	kInternal_hsError,
-	kOS_hsError
+    kNo_hsError,
+    kBadAlloc_hsError,
+    kNilParam_hsError,
+    kBadParam_hsError,
+    kInternal_hsError,
+    kOS_hsError
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 class hsException {
 public:
-	hsErrorEnum	fError;
-	long			fParam;
-	
-	hsException(hsErrorEnum error, long param = 0) : fError(error), fParam(param) {}
+    hsErrorEnum fError;
+    long            fParam;
+    
+    hsException(hsErrorEnum error, long param = 0) : fError(error), fParam(param) {}
 };
 
 class hsBadAllocException : public hsException {
 public:
-	hsBadAllocException() : hsException(kBadAlloc_hsError) {}
+    hsBadAllocException() : hsException(kBadAlloc_hsError) {}
 };
 
 class hsNilParamException : public hsException {
 public:
-	hsNilParamException() : hsException(kNilParam_hsError) {}
+    hsNilParamException() : hsException(kNilParam_hsError) {}
 };
 
 class hsBadParamException : public hsException {
 public:
-	hsBadParamException() : hsException(kBadParam_hsError) {}
+    hsBadParamException() : hsException(kBadParam_hsError) {}
 };
 
 class hsInternalException : public hsException {
 public:
-	hsInternalException() : hsException(kInternal_hsError) {}
+    hsInternalException() : hsException(kInternal_hsError) {}
 };
 
 class hsOSException : public hsException {
 public:
-	hsOSException(long error) : hsException(kOS_hsError, error) {}
+    hsOSException(long error) : hsException(kOS_hsError, error) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -88,65 +88,65 @@ public:
 
 inline void hsThrowIfNilParam(const void* p)
 {
-	if (p == nil)
-	{
-		hsAssert(0,"hsNilParamException");
-		throw hsNilParamException();
-	}
+    if (p == nil)
+    {
+        hsAssert(0,"hsNilParamException");
+        throw hsNilParamException();
+    }
 }
 
 inline void hsThrowIfBadParam(hsBool trueIfBadParam)
 {
-	if (trueIfBadParam)
-	{
-		hsAssert(0,"hsBadParamException");
-		throw hsBadParamException();
-	}
+    if (trueIfBadParam)
+    {
+        hsAssert(0,"hsBadParamException");
+        throw hsBadParamException();
+    }
 }
 
 inline void hsThrowIfOSErr(long osErr)
 {
-	if (osErr != 0)
-	{
-		hsAssert(0,"hsOSException");
-		throw hsOSException(osErr);
-	}
+    if (osErr != 0)
+    {
+        hsAssert(0,"hsOSException");
+        throw hsOSException(osErr);
+    }
 }
 
 inline void hsThrowIfTrue(hsBool condition)
 {
-	if (condition)
-	{
-		hsAssert(0,"hsThrowIfTrue");
-		throw hsInternalException();
-	}
+    if (condition)
+    {
+        hsAssert(0,"hsThrowIfTrue");
+        throw hsInternalException();
+    }
 }
 
 inline void hsThrowIfFalse(hsBool condition)
 {
-	if (condition == false)
-	{
-		hsAssert(0,"hsThrowIfFalse");
-		throw hsInternalException();
-	}
+    if (condition == false)
+    {
+        hsAssert(0,"hsThrowIfFalse");
+        throw hsInternalException();
+    }
 }
 
 inline void hsThrowIfTrue(hsBool condition, const char message[])
 {
-	if (condition)
-	{
-		hsAssert(0,message);
-		throw message;
-	}
+    if (condition)
+    {
+        hsAssert(0,message);
+        throw message;
+    }
 }
 
 inline void hsThrowIfFalse(hsBool condition, const char message[])
 {
-	if (condition == false)
-	{
-		hsAssert(0,message);
-		throw message;
-	}
+    if (condition == false)
+    {
+        hsAssert(0,message);
+        throw message;
+    }
 }
 
 #else
@@ -157,37 +157,37 @@ inline void hsThrowIfFalse(hsBool condition, const char message[])
 
 inline void hsThrowIfNilParam(const void* p)
 {
-	hsAssert(p!=nil,"hsThrowIfNilParam");
+    hsAssert(p!=nil,"hsThrowIfNilParam");
 }
 
 inline void hsThrowIfBadParam(hsBool trueIfBadParam)
 {
-	hsAssert(!trueIfBadParam,"hsThrowIfBadParam");
+    hsAssert(!trueIfBadParam,"hsThrowIfBadParam");
 }
 
 inline void hsThrowIfOSErr(long osErr)
 {
-	hsAssert(osErr==0,"hsThrowIfOSErr");
+    hsAssert(osErr==0,"hsThrowIfOSErr");
 }
 
 inline void hsThrowIfTrue(hsBool condition)
 {
-	hsAssert(!condition,"hsThrowIfTrue");
+    hsAssert(!condition,"hsThrowIfTrue");
 }
 
 inline void hsThrowIfFalse(hsBool condition)
 {
-	hsAssert(condition,"hsThrowIfFalse");
+    hsAssert(condition,"hsThrowIfFalse");
 }
 
 inline void hsThrowIfTrue(hsBool condition, const char message[])
 {
-	hsAssert(!condition,message);
+    hsAssert(!condition,message);
 }
 
 inline void hsThrowIfFalse(hsBool condition, const char message[])
 {
-	hsAssert(condition,message);
+    hsAssert(condition,message);
 }
 
 

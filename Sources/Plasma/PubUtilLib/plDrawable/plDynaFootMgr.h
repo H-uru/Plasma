@@ -34,20 +34,20 @@ class plAvatarFootMsg;
 class plDynaFootMgr : public plDynaDecalMgr
 {
 protected:
-	virtual hsBool		IPrintFromShape(const plPrintShape* shape, hsBool flip);
+    virtual hsBool      IPrintFromShape(const plPrintShape* shape, hsBool flip);
 
-	virtual int			INewDecal();
+    virtual int         INewDecal();
 public:
-	plDynaFootMgr();
-	virtual ~plDynaFootMgr();
+    plDynaFootMgr();
+    virtual ~plDynaFootMgr();
 
-	CLASSNAME_REGISTER( plDynaFootMgr );
-	GETINTERFACE_ANY( plDynaFootMgr, plDynaDecalMgr );
+    CLASSNAME_REGISTER( plDynaFootMgr );
+    GETINTERFACE_ANY( plDynaFootMgr, plDynaDecalMgr );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
 };
 

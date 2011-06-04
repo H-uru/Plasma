@@ -31,13 +31,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "plSceneObject.h"
-#include "../pnMessage/plEnableMsg.h"
-#include "../pnMessage/plIntRefMsg.h"
-#include "../pnMessage/plWarpMsg.h"
-#include "../pnMessage/plSimulationSynchMsg.h"
-#include "../pnMessage/plSimulationMsg.h"
-#include "../pnMessage/plNodeRefMsg.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "pnMessage/plSimulationSynchMsg.h"
+#include "pnMessage/plSimulationMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnKeyedObject/plKey.h"
 
 plSimulationInterface::plSimulationInterface() : fPhysical(nil)
 {
@@ -49,145 +49,145 @@ plSimulationInterface::~plSimulationInterface()
 
 void plSimulationInterface::ISetSceneNode(plKey newNode)
 {
-	if (fPhysical)
-		fPhysical->SetSceneNode(newNode);
+    if (fPhysical)
+        fPhysical->SetSceneNode(newNode);
 }
 
 void plSimulationInterface::SetProperty(int prop, hsBool on)
 {
-	plObjInterface::SetProperty(prop, on);		// set the property locally
+    plObjInterface::SetProperty(prop, on);      // set the property locally
 
-	if (fPhysical)
-		fPhysical->SetProperty(prop, on ? true : false);
+    if (fPhysical)
+        fPhysical->SetProperty(prop, on ? true : false);
 }
 
 void plSimulationInterface::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
-	if (fPhysical)
-		fPhysical->SetTransform(l2w, w2l);
+    if (fPhysical)
+        fPhysical->SetTransform(l2w, w2l);
 }
 
 void plSimulationInterface::ClearLinearVelocity()
 {
-	if (fPhysical)
-		fPhysical->ClearLinearVelocity();
+    if (fPhysical)
+        fPhysical->ClearLinearVelocity();
 }
 
 void plSimulationInterface::Read(hsStream* s, hsResMgr* mgr)
 {
-	plObjInterface::Read(s, mgr);
+    plObjInterface::Read(s, mgr);
 
-	// fProps is already read by plObjInterface, but we'll do it again here to
-	// avoid breaking the format
-	fProps.Read(s);
-	// Also unnecessary
-	int poop = s->ReadSwap32();
+    // fProps is already read by plObjInterface, but we'll do it again here to
+    // avoid breaking the format
+    fProps.Read(s);
+    // Also unnecessary
+    int poop = s->ReadSwap32();
 
-	plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kPhysical, 0);
-	mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
+    plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kPhysical, 0);
+    mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
 }
 
 void plSimulationInterface::Write(hsStream* s, hsResMgr* mgr)
 {
-	plObjInterface::Write(s, mgr);
+    plObjInterface::Write(s, mgr);
 
-	// Legacy crap
-	fProps.Write(s);
-	s->WriteSwap32(0);
+    // Legacy crap
+    fProps.Write(s);
+    s->WriteSwap32(0);
 
-	mgr->WriteKey(s, fPhysical);
+    mgr->WriteKey(s, fPhysical);
 }
 
 void plSimulationInterface::ReleaseData()
 {
-	plPhysical *physical = fPhysical;
+    plPhysical *physical = fPhysical;
 
-	if (physical)
-	{
-		// To get rid of our data, we need to release our active ref and tell the SceneNode
-		// to dump it. It will autodestruct after those two active refs are released, unless
-		// someone else has a ref on it as well (in which case we don't want to be nuking it
-		// anyway).
-		if (physical->GetSceneNode())
-		{
-			plKey nodeKey = physical->GetSceneNode();
+    if (physical)
+    {
+        // To get rid of our data, we need to release our active ref and tell the SceneNode
+        // to dump it. It will autodestruct after those two active refs are released, unless
+        // someone else has a ref on it as well (in which case we don't want to be nuking it
+        // anyway).
+        if (physical->GetSceneNode())
+        {
+            plKey nodeKey = physical->GetSceneNode();
 
-			nodeKey->Release(physical->GetKey());
-		}
+            nodeKey->Release(physical->GetKey());
+        }
 
-		GetKey()->Release(physical->GetKey());
-	}
+        GetKey()->Release(physical->GetKey());
+    }
 }
 
 hsBool plSimulationInterface::MsgReceive(plMessage* msg)
 {
-	plIntRefMsg* intRefMsg = plIntRefMsg::ConvertNoRef(msg);
-	if (intRefMsg)
-	{
-		switch (intRefMsg->fType)
-		{
-		case plIntRefMsg::kPhysical:
-			if (intRefMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove))
-			{
-				plPhysical* phys = plPhysical::ConvertNoRef(intRefMsg->GetRef());
-				// *** for some reason, we sometimes get a null pointer here
-				// *** if we do, we're just going to ignore it for now
-				if (phys)
-				{
-					hsAssert(phys == fPhysical, "Removing Physical I don't have");
-					fPhysical = nil;
-				}
-			}
-			else
-			{
-				fPhysical = plPhysical::ConvertNoRef(intRefMsg->GetRef());
-			}
-			return true;
-		}
-	}
+    plIntRefMsg* intRefMsg = plIntRefMsg::ConvertNoRef(msg);
+    if (intRefMsg)
+    {
+        switch (intRefMsg->fType)
+        {
+        case plIntRefMsg::kPhysical:
+            if (intRefMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove))
+            {
+                plPhysical* phys = plPhysical::ConvertNoRef(intRefMsg->GetRef());
+                // *** for some reason, we sometimes get a null pointer here
+                // *** if we do, we're just going to ignore it for now
+                if (phys)
+                {
+                    hsAssert(phys == fPhysical, "Removing Physical I don't have");
+                    fPhysical = nil;
+                }
+            }
+            else
+            {
+                fPhysical = plPhysical::ConvertNoRef(intRefMsg->GetRef());
+            }
+            return true;
+        }
+    }
 
-	plEnableMsg* pEnableMsg = plEnableMsg::ConvertNoRef(msg);
-	if (pEnableMsg)
-	{
-		SetProperty(kDisable, pEnableMsg->Cmd(kDisable));
-		SetProperty(kPinned, pEnableMsg->Cmd(kDisable));
-		return true;
-	}
+    plEnableMsg* pEnableMsg = plEnableMsg::ConvertNoRef(msg);
+    if (pEnableMsg)
+    {
+        SetProperty(kDisable, pEnableMsg->Cmd(kDisable));
+        SetProperty(kPinned, pEnableMsg->Cmd(kDisable));
+        return true;
+    }
 
-	plWarpMsg* pWarpMsg = plWarpMsg::ConvertNoRef(msg);
-	if (pWarpMsg)
-	{
-		if (fPhysical)
-		{
-			hsMatrix44 l2w = pWarpMsg->GetTransform();
-			hsMatrix44 inv;
-			l2w.GetInverse(&inv);
-			SetTransform(l2w, inv);
-			if (pWarpMsg->GetWarpFlags() & plWarpMsg::kZeroVelocity)
-			{
-				ClearLinearVelocity();
-			}
-		}
-	}
+    plWarpMsg* pWarpMsg = plWarpMsg::ConvertNoRef(msg);
+    if (pWarpMsg)
+    {
+        if (fPhysical)
+        {
+            hsMatrix44 l2w = pWarpMsg->GetTransform();
+            hsMatrix44 inv;
+            l2w.GetInverse(&inv);
+            SetTransform(l2w, inv);
+            if (pWarpMsg->GetWarpFlags() & plWarpMsg::kZeroVelocity)
+            {
+                ClearLinearVelocity();
+            }
+        }
+    }
 
-	plSimulationMsg* pSimMsg = plSimulationMsg::ConvertNoRef(msg);
-	if (pSimMsg)
-	{
-		if (fPhysical)
-			fPhysical->MsgReceive(pSimMsg);
-	}
-	
-	return plObjInterface::MsgReceive(msg);
+    plSimulationMsg* pSimMsg = plSimulationMsg::ConvertNoRef(msg);
+    if (pSimMsg)
+    {
+        if (fPhysical)
+            fPhysical->MsgReceive(pSimMsg);
+    }
+    
+    return plObjInterface::MsgReceive(msg);
 }
 
 // Export only. Use messages for runtime.
 void plSimulationInterface::SetPhysical(plPhysical* ph)
 {
-	fPhysical = ph;
+    fPhysical = ph;
 }
 
 plPhysical* plSimulationInterface::GetPhysical() const
 {
-	return fPhysical;
+    return fPhysical;
 }
 

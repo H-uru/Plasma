@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyDraw.h"
 #include "pyKey.h"
 
-#include <python.h>
+#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDraw, cyDraw);
@@ -38,38 +38,38 @@ PYTHON_NO_INIT_DEFINITION(ptDraw)
 
 PYTHON_METHOD_DEFINITION(ptDraw, netForce, args)
 {
-	char forceFlag;
-	if (!PyArg_ParseTuple(args, "b", &forceFlag))
-	{
-		PyErr_SetString(PyExc_TypeError, "netForce requires a boolean argument");
-		PYTHON_RETURN_ERROR;
-	}
-	self->fThis->SetNetForce(forceFlag != 0);
-	PYTHON_RETURN_NONE;
+    char forceFlag;
+    if (!PyArg_ParseTuple(args, "b", &forceFlag))
+    {
+        PyErr_SetString(PyExc_TypeError, "netForce requires a boolean argument");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetNetForce(forceFlag != 0);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptDraw, enable, args)
 {
-	char state = 1;
-	if (!PyArg_ParseTuple(args, "|b", &state))
-	{
-		PyErr_SetString(PyExc_TypeError, "enable expects an optional boolean argument");
-		PYTHON_RETURN_ERROR;
-	}
+    char state = 1;
+    if (!PyArg_ParseTuple(args, "|b", &state))
+    {
+        PyErr_SetString(PyExc_TypeError, "enable expects an optional boolean argument");
+        PYTHON_RETURN_ERROR;
+    }
 
-	self->fThis->EnableT(state != 0);
-	PYTHON_RETURN_NONE;
+    self->fThis->EnableT(state != 0);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptDraw, disable, Disable)
 
 PYTHON_START_METHODS_TABLE(ptDraw)
-	PYTHON_METHOD(ptDraw, netForce, "Params: forceFlag\nSpecify whether this object needs to use messages that are forced to the network\n"
-				"- This is to be used if your Python program is running on only one client\n"
-				"Such as a game master, only running on the client that owns a particular object"),
-	PYTHON_METHOD(ptDraw, enable, "Params: state=1\nSets the draw enable for the sceneobject attached"),
-	PYTHON_BASIC_METHOD(ptDraw, disable, "Disables the draw on the sceneobject attached\n"
-				"In other words, makes it invisible"),
+    PYTHON_METHOD(ptDraw, netForce, "Params: forceFlag\nSpecify whether this object needs to use messages that are forced to the network\n"
+                "- This is to be used if your Python program is running on only one client\n"
+                "Such as a game master, only running on the client that owns a particular object"),
+    PYTHON_METHOD(ptDraw, enable, "Params: state=1\nSets the draw enable for the sceneobject attached"),
+    PYTHON_BASIC_METHOD(ptDraw, disable, "Disables the draw on the sceneobject attached\n"
+                "In other words, makes it invisible"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -78,20 +78,20 @@ PLASMA_DEFAULT_TYPE(ptDraw, "Plasma Draw class");
 // required functions for PyObject interoperability
 PyObject *cyDraw::New(PyObject *sender, PyObject *recvr)
 {
-	ptDraw *newObj = (ptDraw*)ptDraw_type.tp_new(&ptDraw_type, NULL, NULL);
-	if (sender != NULL)
-	{
-		pyKey *senderKey = pyKey::ConvertFrom(sender);
-		newObj->fThis->SetSender(senderKey->getKey());
-	}
-	if (recvr != NULL)
-	{
-		pyKey *recvrKey = pyKey::ConvertFrom(recvr);
-		newObj->fThis->AddRecvr(recvrKey->getKey());
-	}
-	newObj->fThis->fNetForce = false;
+    ptDraw *newObj = (ptDraw*)ptDraw_type.tp_new(&ptDraw_type, NULL, NULL);
+    if (sender != NULL)
+    {
+        pyKey *senderKey = pyKey::ConvertFrom(sender);
+        newObj->fThis->SetSender(senderKey->getKey());
+    }
+    if (recvr != NULL)
+    {
+        pyKey *recvrKey = pyKey::ConvertFrom(recvr);
+        newObj->fThis->AddRecvr(recvrKey->getKey());
+    }
+    newObj->fThis->fNetForce = false;
 
-	return (PyObject*)newObj;
+    return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptDraw, cyDraw)
@@ -103,7 +103,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptDraw, cyDraw)
 //
 void cyDraw::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptDraw);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptDraw);
+    PYTHON_CLASS_IMPORT_END(m);
 }

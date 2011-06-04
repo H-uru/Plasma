@@ -36,64 +36,64 @@ pyVarSyncGame::pyVarSyncGame(): pyGameCli() {}
 
 pyVarSyncGame::pyVarSyncGame(pfGameCli* client): pyGameCli(client)
 {
-	if (client && (client->GetGameTypeId() != kGameTypeId_VarSync))
-		gameClient = nil; // wrong type, just clear it out
+    if (client && (client->GetGameTypeId() != kGameTypeId_VarSync))
+        gameClient = nil; // wrong type, just clear it out
 }
 
 bool pyVarSyncGame::IsVarSyncGame(std::wstring guid)
 {
-	Uuid gameUuid(guid.c_str());
-	return gameUuid == kGameTypeId_VarSync;
+    Uuid gameUuid(guid.c_str());
+    return gameUuid == kGameTypeId_VarSync;
 }
 
 void pyVarSyncGame::JoinCommonVarSyncGame(pyKey& callbackKey)
 {
-	// NOTE: We don't let the player specify the game ID, because there should only be one of these in an age, ever
-	VarSync_CreateParam init;
-	pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_VarSync, kGameId, sizeof(init), &init);
+    // NOTE: We don't let the player specify the game ID, because there should only be one of these in an age, ever
+    VarSync_CreateParam init;
+    pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_VarSync, kGameId, sizeof(init), &init);
 }
 
 void pyVarSyncGame::SetStringVar(unsigned long id, std::wstring val)
 {
-	if (gameClient)
-	{
-		pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
-		vsync->SetStringVar(id, val.c_str());
-	}
+    if (gameClient)
+    {
+        pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
+        vsync->SetStringVar(id, val.c_str());
+    }
 }
 
 void pyVarSyncGame::SetNumericVar(unsigned long id, double val)
 {
-	if (gameClient)
-	{
-		pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
-		vsync->SetNumericVar(id, val);
-	}
+    if (gameClient)
+    {
+        pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
+        vsync->SetNumericVar(id, val);
+    }
 }
 
 void pyVarSyncGame::RequestAllVars()
 {
-	if (gameClient)
-	{
-		pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
-		vsync->RequestAllVars();
-	}
+    if (gameClient)
+    {
+        pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
+        vsync->RequestAllVars();
+    }
 }
 
 void pyVarSyncGame::CreateStringVar(std::wstring name, std::wstring val)
 {
-	if (gameClient)
-	{
-		pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
-		vsync->CreateStringVar(name.c_str(), val.c_str());
-	}
+    if (gameClient)
+    {
+        pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
+        vsync->CreateStringVar(name.c_str(), val.c_str());
+    }
 }
 
 void pyVarSyncGame::CreateNumericVar(std::wstring name, double val)
 {
-	if (gameClient)
-	{
-		pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
-		vsync->CreateNumericVar(name.c_str(), val);
-	}
+    if (gameClient)
+    {
+        pfGmVarSync* vsync = pfGmVarSync::ConvertNoRef(gameClient);
+        vsync->CreateNumericVar(name.c_str(), val);
+    }
 }

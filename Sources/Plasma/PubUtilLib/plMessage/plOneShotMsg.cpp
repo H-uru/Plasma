@@ -28,23 +28,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plOneShotMsg::plOneShotMsg()
 {
-	fCallbacks = TRACKED_NEW plOneShotCallbacks;
+    fCallbacks = TRACKED_NEW plOneShotCallbacks;
 }
 
 plOneShotMsg::~plOneShotMsg()
 {
-	hsRefCnt_SafeUnRef(fCallbacks);
-	fCallbacks = nil;
+    hsRefCnt_SafeUnRef(fCallbacks);
+    fCallbacks = nil;
 }
 
 void plOneShotMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plResponderMsg::Read(stream, mgr);
-	fCallbacks->Read(stream, mgr);
+    plResponderMsg::Read(stream, mgr);
+    fCallbacks->Read(stream, mgr);
 }
 
 void plOneShotMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plResponderMsg::Write(stream, mgr);
-	fCallbacks->Write(stream, mgr);
+    plResponderMsg::Write(stream, mgr);
+    fCallbacks->Write(stream, mgr);
 }

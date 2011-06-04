@@ -27,19 +27,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plReceiver_inc
 #define plReceiver_inc
 
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 
 class plMessage;
 
 class plReceiver : public plCreatable
 {
 public:
-	plReceiver() {}
+    plReceiver() {}
 
-	CLASSNAME_REGISTER( plReceiver );
-	GETINTERFACE_ANY( plReceiver, plCreatable );
+    CLASSNAME_REGISTER( plReceiver );
+    GETINTERFACE_ANY( plReceiver, plCreatable );
 
-	virtual hsBool MsgReceive(plMessage* msg) { return false; }
+    virtual hsBool MsgReceive(plMessage* msg) { return false; }
 };
 
 #endif // plReceiver_inc

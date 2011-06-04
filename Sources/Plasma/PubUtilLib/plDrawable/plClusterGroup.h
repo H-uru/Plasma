@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsBitVector.h"
 #include "plRenderLevel.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 class hsStream;
 class hsResMgr;
@@ -46,102 +46,102 @@ class plDrawableSpans;
 class plLODDist
 {
 public:
-	hsScalar fMinDist;
-	hsScalar fMaxDist;
+    hsScalar fMinDist;
+    hsScalar fMaxDist;
 
-	plLODDist(hsScalar minDist, hsScalar maxDist) : fMinDist(minDist), fMaxDist(maxDist) {}
-	plLODDist() : fMinDist(0), fMaxDist(0) {}
+    plLODDist(hsScalar minDist, hsScalar maxDist) : fMinDist(minDist), fMaxDist(maxDist) {}
+    plLODDist() : fMinDist(0), fMaxDist(0) {}
 
-	plLODDist& Set(float minDist, float maxDist) { fMinDist = minDist; fMaxDist = maxDist; return *this; }
+    plLODDist& Set(float minDist, float maxDist) { fMinDist = minDist; fMaxDist = maxDist; return *this; }
 
-	plLODDist& operator=(int d) { fMinDist = hsScalar(d); fMaxDist = hsScalar(d); return *this; }
+    plLODDist& operator=(int d) { fMinDist = hsScalar(d); fMaxDist = hsScalar(d); return *this; }
 
-	int operator==(const plLODDist& d) const { return (fMinDist == d.fMinDist)&&(fMaxDist == d.fMaxDist); }
+    int operator==(const plLODDist& d) const { return (fMinDist == d.fMinDist)&&(fMaxDist == d.fMaxDist); }
 
-	void Read(hsStream* s);
-	void Write(hsStream* s) const;
+    void Read(hsStream* s);
+    void Write(hsStream* s) const;
 
 };
 
 class plClusterGroup : public hsKeyedObject
 {
 public:
-	enum RefType {
-		kRefMaterial,
-		kRefRegion,
-		kRefLight
-	};
+    enum RefType {
+        kRefMaterial,
+        kRefRegion,
+        kRefLight
+    };
 protected:
-	plSpanTemplate*					fTemplate;
+    plSpanTemplate*                 fTemplate;
 
-	hsGMaterial*					fMaterial;
+    hsGMaterial*                    fMaterial;
 
-	hsTArray<plVisRegion*>			fRegions;
-	hsBitVector						fVisSet;
-	hsBitVector						fVisNot;
+    hsTArray<plVisRegion*>          fRegions;
+    hsBitVector                     fVisSet;
+    hsBitVector                     fVisNot;
 
-	hsTArray<plLightInfo*>			fLights;
+    hsTArray<plLightInfo*>          fLights;
 
-	plLODDist						fLOD;
+    plLODDist                       fLOD;
 
-	hsTArray<plCluster*>			fClusters;
-	UInt32							fUnPacked;
+    hsTArray<plCluster*>            fClusters;
+    UInt32                          fUnPacked;
 
-	plKey							fSceneNode;
-	plKey							fDrawable;
+    plKey                           fSceneNode;
+    plKey                           fDrawable;
 
-	plRenderLevel					fRenderLevel;
+    plRenderLevel                   fRenderLevel;
 
-	hsBool		IAddVisRegion(plVisRegion* reg);
-	hsBool		IRemoveVisRegion(plVisRegion* reg);
-	hsBool		IAddLight(plLightInfo* li);
-	hsBool		IRemoveLight(plLightInfo* li);
-	hsBool		IOnRef(plGenRefMsg* ref);
-	hsBool		IOnRemove(plGenRefMsg* ref);
-	hsBool		IOnReceive(plGenRefMsg* ref);
-	void		ISetVisBits();
-	void		ISendToSelf(RefType t, hsKeyedObject* ref);
+    hsBool      IAddVisRegion(plVisRegion* reg);
+    hsBool      IRemoveVisRegion(plVisRegion* reg);
+    hsBool      IAddLight(plLightInfo* li);
+    hsBool      IRemoveLight(plLightInfo* li);
+    hsBool      IOnRef(plGenRefMsg* ref);
+    hsBool      IOnRemove(plGenRefMsg* ref);
+    hsBool      IOnReceive(plGenRefMsg* ref);
+    void        ISetVisBits();
+    void        ISendToSelf(RefType t, hsKeyedObject* ref);
 
-	plCluster*	IAddCluster();
-	plCluster*	IGetCluster(int i) const;
+    plCluster*  IAddCluster();
+    plCluster*  IGetCluster(int i) const;
 
-	friend class plClusterUtil;
+    friend class plClusterUtil;
 public:
-	plClusterGroup();
-	~plClusterGroup();
+    plClusterGroup();
+    ~plClusterGroup();
 
-	CLASSNAME_REGISTER( plClusterGroup );
-	GETINTERFACE_ANY( plClusterGroup, hsKeyedObject );
+    CLASSNAME_REGISTER( plClusterGroup );
+    GETINTERFACE_ANY( plClusterGroup, hsKeyedObject );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	hsGMaterial* GetMaterial() const { return fMaterial; }
-	const hsBitVector& GetVisSet() const { return fVisSet; }
-	const hsBitVector& GetVisNot() const { return fVisNot; }
-	const hsTArray<plLightInfo*>& GetLights() const { return fLights; }
-	const plLODDist& GetLOD() const { return fLOD; }
+    hsGMaterial* GetMaterial() const { return fMaterial; }
+    const hsBitVector& GetVisSet() const { return fVisSet; }
+    const hsBitVector& GetVisNot() const { return fVisNot; }
+    const hsTArray<plLightInfo*>& GetLights() const { return fLights; }
+    const plLODDist& GetLOD() const { return fLOD; }
 
-	const plSpanTemplate* GetTemplate() const { return fTemplate; }
+    const plSpanTemplate* GetTemplate() const { return fTemplate; }
 
-	const plCluster* GetCluster(int i) const;
-	int			GetNumClusters() const { return fClusters.GetCount(); }
-	UInt32		NumInst() const;
+    const plCluster* GetCluster(int i) const;
+    int         GetNumClusters() const { return fClusters.GetCount(); }
+    UInt32      NumInst() const;
 
-	// The drawable needs us to be able to convert our data
-	// into, well, drawable stuff.
-	void UnPack();
+    // The drawable needs us to be able to convert our data
+    // into, well, drawable stuff.
+    void UnPack();
 
-	void SetVisible(bool visible=true);
+    void SetVisible(bool visible=true);
 
-	void SetSceneNode(const plKey& key) { fSceneNode = key; }
-	plKey GetSceneNode() const { return fSceneNode; }
-	
-	plKey GetDrawable() const { return fDrawable; }
+    void SetSceneNode(const plKey& key) { fSceneNode = key; }
+    plKey GetSceneNode() const { return fSceneNode; }
+    
+    plKey GetDrawable() const { return fDrawable; }
 
-	plRenderLevel GetRenderLevel() const { return fRenderLevel; }
+    plRenderLevel GetRenderLevel() const { return fRenderLevel; }
 };
 
 #endif // plClusterGroup_inc

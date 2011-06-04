@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../pnFactory/plCreator.h"
 
 /* Taken out 6.12.2001 mcn - You can remove this file entirely if you wish, I just left
-	it in in case we wanted to use it in the future...
+    it in in case we wanted to use it in the future...
 
 #include "hsGVertexPool.h"
 

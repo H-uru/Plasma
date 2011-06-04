@@ -30,57 +30,57 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plCompositeMtlDlg : public ParamDlg
 {
-	
+    
 protected:
-	IParamBlock2 *fPBlock;
+    IParamBlock2 *fPBlock;
 
-	HWND fhMtlEdit;		// Window handle of the materials editor dialog
-	HWND fhRollup;		// Our rollup panel
-	IMtlParams *ip;
-	plCompositeMtl *fMtl;	    // current mtl being edited.
-	TimeValue curTime;
-	int isActive;
-	BOOL valid;
-//	int offset;
+    HWND fhMtlEdit;     // Window handle of the materials editor dialog
+    HWND fhRollup;      // Our rollup panel
+    IMtlParams *ip;
+    plCompositeMtl *fMtl;       // current mtl being edited.
+    TimeValue curTime;
+    int isActive;
+    BOOL valid;
+//  int offset;
 
-	ICustButton *fLayerBtns[NSUBMTLS];
+    ICustButton *fLayerBtns[NSUBMTLS];
 
-	MtlDADMgr fDADMgr;	// For drag-drop sub-materials
+    MtlDADMgr fDADMgr;  // For drag-drop sub-materials
 public:
-	// Constructor and destructor
-	plCompositeMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plCompositeMtl *m); 
-	~plCompositeMtlDlg();
+    // Constructor and destructor
+    plCompositeMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plCompositeMtl *m); 
+    ~plCompositeMtlDlg();
 
-	// Functions inherited from ParamDLg:
-	Class_ID ClassID()                  { return COMP_MTL_CLASS_ID;  }
-	void SetThing(ReferenceTarget *m);
-	ReferenceTarget* GetThing()         { return (ReferenceTarget*)fMtl; }
-	void SetTime(TimeValue t);
-	void ReloadDialog();
-	void ActivateDlg(BOOL onOff);
-	void DeleteThis()                   { delete this;  }	
-	int FindSubMtlFromHWND(HWND hw);
+    // Functions inherited from ParamDLg:
+    Class_ID ClassID()                  { return COMP_MTL_CLASS_ID;  }
+    void SetThing(ReferenceTarget *m);
+    ReferenceTarget* GetThing()         { return (ReferenceTarget*)fMtl; }
+    void SetTime(TimeValue t);
+    void ReloadDialog();
+    void ActivateDlg(BOOL onOff);
+    void DeleteThis()                   { delete this;  }   
+    int FindSubMtlFromHWND(HWND hw);
 
-	static BOOL CALLBACK ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	BOOL LayerPanelProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+    static BOOL CALLBACK ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL LayerPanelProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-	void UpdateLayerDisplay();
-	void LoadDialog();
+    void UpdateLayerDisplay();
+    void LoadDialog();
 /*
-	// Lower-level crap
-	void Invalidate();              // Called by ParamMtl
-	BOOL IsActive()						{ return isActive; }
+    // Lower-level crap
+    void Invalidate();              // Called by ParamMtl
+    BOOL IsActive()                     { return isActive; }
 
 private:
-	void ClampOffset();
-	void SetNumMats();
+    void ClampOffset();
+    void SetNumMats();
 
-	void UpdateLayers();
-	void UpdateControlFor(int np);
-	void VScroll(int code, short int cpos );
+    void UpdateLayers();
+    void UpdateControlFor(int np);
+    void VScroll(int code, short int cpos );
 */
 protected:
-	void IUpdateMtlDisplay() { if (ip) ip->MtlChanged(); }
+    void IUpdateMtlDisplay() { if (ip) ip->MtlChanged(); }
 };
 
 #endif

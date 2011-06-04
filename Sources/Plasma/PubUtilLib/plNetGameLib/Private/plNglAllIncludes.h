@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 // libs on which we rely
-#include "../pnGameMgr/pnGameMgr.h"
+#include "pnGameMgr/pnGameMgr.h"
 
 #include "plNglCore.h"
 #include "plNglAuth.h"

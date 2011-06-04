@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "pyKey.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 #include "pyGUIControl.h"
@@ -46,41 +46,41 @@ class pyColor;
 class pyGUIControlEditBox : public pyGUIControl
 {
 protected:
-	pyGUIControlEditBox(): pyGUIControl() {} // for python glue only, do NOT call
-	pyGUIControlEditBox(pyKey& gckey);
-	pyGUIControlEditBox(plKey objkey);
+    pyGUIControlEditBox(): pyGUIControl() {} // for python glue only, do NOT call
+    pyGUIControlEditBox(pyKey& gckey);
+    pyGUIControlEditBox(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlEditBox);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlEditBox object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlEditBox); // converts a PyObject to a pyGUIControlEditBox (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlEditBox);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlEditBox object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlEditBox); // converts a PyObject to a pyGUIControlEditBox (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlEditBox(pyKey& gckey);
+    static hsBool IsGUIControlEditBox(pyKey& gckey);
 
-	virtual void	SetBufferSize( UInt32 size );
-	virtual std::string GetBuffer( void );
-	virtual std::wstring GetBufferW( void );
-	virtual void	ClearBuffer( void );
-	virtual void	SetText( const char *str );
-	virtual void	SetTextW( const wchar_t *str );
-	virtual void	SetCursorToHome(void);
-	virtual void	SetCursorToEnd(void);
-	virtual void	SetColor(pyColor& forecolor, pyColor& backcolor);
-	virtual void	SetSelColor(pyColor& forecolor, pyColor& backcolor);
+    virtual void    SetBufferSize( UInt32 size );
+    virtual std::string GetBuffer( void );
+    virtual std::wstring GetBufferW( void );
+    virtual void    ClearBuffer( void );
+    virtual void    SetText( const char *str );
+    virtual void    SetTextW( const wchar_t *str );
+    virtual void    SetCursorToHome(void);
+    virtual void    SetCursorToEnd(void);
+    virtual void    SetColor(pyColor& forecolor, pyColor& backcolor);
+    virtual void    SetSelColor(pyColor& forecolor, pyColor& backcolor);
 
-	virtual hsBool	WasEscaped();
+    virtual hsBool  WasEscaped();
 
-	virtual void    SetSpecialCaptureKeyMode(hsBool state);
-	virtual UInt32  GetLastKeyCaptured();
-	virtual UInt32  GetLastModifiersCaptured();
-	virtual void    SetLastKeyCapture(UInt32 key, UInt32 modifiers);
+    virtual void    SetSpecialCaptureKeyMode(hsBool state);
+    virtual UInt32  GetLastKeyCaptured();
+    virtual UInt32  GetLastModifiersCaptured();
+    virtual void    SetLastKeyCapture(UInt32 key, UInt32 modifiers);
 
-	virtual void	SetChatMode(hsBool state);
+    virtual void    SetChatMode(hsBool state);
 
 };
 

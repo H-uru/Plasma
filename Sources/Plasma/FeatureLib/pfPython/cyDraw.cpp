@@ -27,79 +27,79 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "hsBitVector.h"
-#include "../pnMessage/plEnableMsg.h"
+#include "pnMessage/plEnableMsg.h"
 
 cyDraw::cyDraw(plKey sender, plKey recvr)
 {
-	SetSender(sender);
-	AddRecvr(recvr);
-	fNetForce = false;
+    SetSender(sender);
+    AddRecvr(recvr);
+    fNetForce = false;
 }
 
 // setters
 void cyDraw::SetSender(plKey &sender)
 {
-	fSender = sender;
+    fSender = sender;
 }
 
 void cyDraw::AddRecvr(plKey &recvr)
 {
-	if ( recvr != nil )
-		fRecvr.Append(recvr);
+    if ( recvr != nil )
+        fRecvr.Append(recvr);
 }
 
 
 void cyDraw::SetNetForce(hsBool state)
 {
-	// set our flag
-	fNetForce = state;
+    // set our flag
+    fNetForce = state;
 }
 
 
 void cyDraw::EnableT(hsBool state)
 {
-	// must have a receiver!
-	if ( fRecvr.Count() > 0 )
-	{
-		// create message
-		plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
-		// check if this needs to be network forced to all clients
-		if (fNetForce )
-		{
-			// set the network propagate flag to make sure it gets to the other clients
-			pMsg->SetBCastFlag(plMessage::kNetPropagate);
-			pMsg->SetBCastFlag(plMessage::kNetForce);
-		}
-		if ( fSender )
-			pMsg->SetSender(fSender);
+    // must have a receiver!
+    if ( fRecvr.Count() > 0 )
+    {
+        // create message
+        plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+        // check if this needs to be network forced to all clients
+        if (fNetForce )
+        {
+            // set the network propagate flag to make sure it gets to the other clients
+            pMsg->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg->SetBCastFlag(plMessage::kNetForce);
+        }
+        if ( fSender )
+            pMsg->SetSender(fSender);
 
-		// add all our receivers to the message receiver list
-		int i;
-		for ( i=0; i<fRecvr.Count(); i++ )
-		{
-			pMsg->AddReceiver(fRecvr[i]);
-		}
-		// set the interface to the draw
-		pMsg->SetCmd(plEnableMsg::kDrawable);
-		pMsg->AddType(plEnableMsg::kDrawable);
+        // add all our receivers to the message receiver list
+        int i;
+        for ( i=0; i<fRecvr.Count(); i++ )
+        {
+            pMsg->AddReceiver(fRecvr[i]);
+        }
+        // set the interface to the draw
+        pMsg->SetCmd(plEnableMsg::kDrawable);
+        pMsg->AddType(plEnableMsg::kDrawable);
 
-		pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
+        pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
 
-		// which way are we doin' it?
-		if ( state )
-			pMsg->SetCmd(plEnableMsg::kEnable);
-		else
-			pMsg->SetCmd(plEnableMsg::kDisable);
-		plgDispatch::MsgSend( pMsg );	// whoosh... off it goes
-	}
+        // which way are we doin' it?
+        if ( state )
+            pMsg->SetCmd(plEnableMsg::kEnable);
+        else
+            pMsg->SetCmd(plEnableMsg::kDisable);
+        plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
+    }
 }
 
 void cyDraw::Enable()
 {
-	EnableT(true);
+    EnableT(true);
 }
 
 void cyDraw::Disable()
 {
-	EnableT(false);
+    EnableT(false);
 }

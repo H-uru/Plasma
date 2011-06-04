@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLoadAgeMsg_INC
 #define plLoadAgeMsg_INC
 
-#include "../pnMessage/plMessage.h"
-#include "../plUUID/plUUID.h"
+#include "pnMessage/plMessage.h"
+#include "plUUID/plUUID.h"
 #include "hsUtils.h"
 
 //
@@ -39,35 +39,35 @@ class hsResMgr;
 class plLoadAgeMsg : public plMessage
 {
 protected:
-	char* fAgeFilename;				// the age to load/unload
-	plUUID fAgeGuid;
-	hsBool fUnload;			// true if we want to unload the age
-	int	fPlayerID;
+    char* fAgeFilename;             // the age to load/unload
+    plUUID fAgeGuid;
+    hsBool fUnload;         // true if we want to unload the age
+    int fPlayerID;
 public:
-	plLoadAgeMsg() : fAgeFilename(nil), fUnload(false), fPlayerID(-1){ }
-	virtual ~plLoadAgeMsg() { delete [] fAgeFilename;  }
+    plLoadAgeMsg() : fAgeFilename(nil), fUnload(false), fPlayerID(-1){ }
+    virtual ~plLoadAgeMsg() { delete [] fAgeFilename;  }
 
-	CLASSNAME_REGISTER( plLoadAgeMsg );
-	GETINTERFACE_ANY( plLoadAgeMsg, plMessage );
+    CLASSNAME_REGISTER( plLoadAgeMsg );
+    GETINTERFACE_ANY( plLoadAgeMsg, plMessage );
 
-	void SetAgeFilename(const char* a) { delete [] fAgeFilename; fAgeFilename=a?hsStrcpy(a):nil; }
-	char* GetAgeFilename() const { return fAgeFilename; }
+    void SetAgeFilename(const char* a) { delete [] fAgeFilename; fAgeFilename=a?hsStrcpy(a):nil; }
+    char* GetAgeFilename() const { return fAgeFilename; }
 
-	void SetAgeGuid( const plUUID * v ) { fAgeGuid.CopyFrom( v ); }
-	const plUUID * GetAgeGuid() const { return &fAgeGuid; }
+    void SetAgeGuid( const plUUID * v ) { fAgeGuid.CopyFrom( v ); }
+    const plUUID * GetAgeGuid() const { return &fAgeGuid; }
 
-	void SetLoading(hsBool l) { fUnload=!l; }
-	hsBool GetLoading() const { return !fUnload; }
+    void SetLoading(hsBool l) { fUnload=!l; }
+    hsBool GetLoading() const { return !fUnload; }
 
-	void SetPlayerID(int p) { fPlayerID=p; }
-	int GetPlayerID() const { return fPlayerID;	}
-	
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void SetPlayerID(int p) { fPlayerID=p; }
+    int GetPlayerID() const { return fPlayerID; }
+    
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 
-	void ReadVersion(hsStream* s, hsResMgr* mgr);
-	void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr);
+    void WriteVersion(hsStream* s, hsResMgr* mgr);
 };
 
 //
@@ -77,10 +77,10 @@ public:
 class plLinkOutUnloadMsg : public plLoadAgeMsg
 {
 public:
-	plLinkOutUnloadMsg() { fUnload=true; }
+    plLinkOutUnloadMsg() { fUnload=true; }
 
-	CLASSNAME_REGISTER( plLinkOutUnloadMsg );
-	GETINTERFACE_ANY( plLinkOutUnloadMsg, plLoadAgeMsg );	
+    CLASSNAME_REGISTER( plLinkOutUnloadMsg );
+    GETINTERFACE_ANY( plLinkOutUnloadMsg, plLoadAgeMsg );   
 };
 
 //
@@ -92,15 +92,15 @@ class plLinkInDoneMsg : public plMessage
 {
 public:
 
-	CLASSNAME_REGISTER( plLinkInDoneMsg );
-	GETINTERFACE_ANY( plLinkInDoneMsg, plMessage );	
+    CLASSNAME_REGISTER( plLinkInDoneMsg );
+    GETINTERFACE_ANY( plLinkInDoneMsg, plMessage ); 
 
-	void Read(hsStream* stream, hsResMgr* mgr) { IMsgRead(stream, mgr);	}
-	void Write(hsStream* stream, hsResMgr* mgr) { IMsgWrite(stream, mgr);	}
+    void Read(hsStream* stream, hsResMgr* mgr) { IMsgRead(stream, mgr); }
+    void Write(hsStream* stream, hsResMgr* mgr) { IMsgWrite(stream, mgr);   }
 
-	void ReadVersion(hsStream* stream, hsResMgr* mgr) { IMsgRead(stream, mgr);	};
-	void WriteVersion(hsStream* stream, hsResMgr* mgr) {  IMsgWrite(stream, mgr);	};
+    void ReadVersion(hsStream* stream, hsResMgr* mgr) { IMsgRead(stream, mgr);  };
+    void WriteVersion(hsStream* stream, hsResMgr* mgr) {  IMsgWrite(stream, mgr);   };
 
 };
 
-#endif		// plLoadAgeMsg
+#endif      // plLoadAgeMsg

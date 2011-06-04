@@ -32,11 +32,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvBrain.h"
 
 // other
-#include "../plPipeline/plDebugText.h"
+#include "plPipeline/plDebugText.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
-// 	PLAVTASKBRAIN
+//  PLAVTASKBRAIN
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,21 +54,21 @@ plAvTaskBrain::plAvTaskBrain(plArmatureBrain *brain)
 
 plAvTaskBrain::~plAvTaskBrain()
 {
-	delete fBrain;
+    delete fBrain;
 }
 
 // Start ------------------------------------------------------------------------------------------
 // ------
 hsBool plAvTaskBrain::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
 {
-	if(fBrain)
-		avatar->PushBrain(fBrain);
-	else
-		avatar->PopBrain();
+    if(fBrain)
+        avatar->PushBrain(fBrain);
+    else
+        avatar->PopBrain();
 
-	fBrain = nil; // We've passed it on the the avatar, set our pointer to nil so we don't destroy it
-	
-	return true;
+    fBrain = nil; // We've passed it on the the avatar, set our pointer to nil so we don't destroy it
+    
+    return true;
 }
 
 void plAvTaskBrain::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
@@ -80,13 +80,13 @@ void plAvTaskBrain::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double
 // ----------
 void plAvTaskBrain::DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt)
 {
-	if(fBrain)
-	{
-		debugTxt.DrawString(x, y, "Brain task -- Push New Brain.");
-	} else {
-		debugTxt.DrawString(x, y, "Brain task -- Pop Current Brain.");
-	}
-	y += lineHeight;
+    if(fBrain)
+    {
+        debugTxt.DrawString(x, y, "Brain task -- Push New Brain.");
+    } else {
+        debugTxt.DrawString(x, y, "Brain task -- Pop Current Brain.");
+    }
+    y += lineHeight;
 }
 
 
@@ -94,22 +94,22 @@ void plAvTaskBrain::DumpDebug(const char *name, int &x, int&y, int lineHeight, c
 // ---------
 plArmatureBrain *plAvTaskBrain::GetBrain()
 {
-	return fBrain;
+    return fBrain;
 }
 
 // Read ------------------------------------------
 // -----
 void plAvTaskBrain::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAvTask::Read(stream, mgr);
-	fBrain = plArmatureBrain::ConvertNoRef(mgr->ReadCreatable(stream));
+    plAvTask::Read(stream, mgr);
+    fBrain = plArmatureBrain::ConvertNoRef(mgr->ReadCreatable(stream));
 }
 
 // Write ------------------------------------------
 // ------
 void plAvTaskBrain::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAvTask::Write(stream, mgr);
-	mgr->WriteCreatable(stream, fBrain);
-	
+    plAvTask::Write(stream, mgr);
+    mgr->WriteCreatable(stream, fBrain);
+    
 }

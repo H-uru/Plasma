@@ -52,13 +52,13 @@ enum ESrvType {
     kSrvTypeVault       = 4,
     kSrvTypeDb          = 5,
     kSrvTypeMcp         = 6,
-    kSrvTypeState		= 7,
-    kSrvTypeFile		= 8,
-    kSrvTypeLog			= 9,
-    kSrvTypeDll			= 10,
-	kSrvTypeScore		= 11,
-    kSrvTypeCsr			= 12,
-	kSrvTypeGateKeeper  = 13,
+    kSrvTypeState       = 7,
+    kSrvTypeFile        = 8,
+    kSrvTypeLog         = 9,
+    kSrvTypeDll         = 10,
+    kSrvTypeScore       = 11,
+    kSrvTypeCsr         = 12,
+    kSrvTypeGateKeeper  = 13,
 
     kNumSrvTypes,
 
@@ -73,18 +73,23 @@ enum ESrvType {
 *
 ***/
 
-unsigned GetAuthSrvHostnames (const wchar *** addrs);	// returns addrCount
+unsigned GetAuthSrvHostnames (const wchar *** addrs);   // returns addrCount
 void SetAuthSrvHostname (const wchar addr[]);
-bool AuthSrvHostnameOverride ();
 
-unsigned GetFileSrvHostnames (const wchar *** addrs);	// returns addrCount
+unsigned GetFileSrvHostnames (const wchar *** addrs);   // returns addrCount
 void SetFileSrvHostname (const wchar addr[]);
-bool FileSrvHostnameOverride ();
 
-unsigned GetCsrSrvHostnames (const wchar *** addrs);	// returns addrCount
+unsigned GetCsrSrvHostnames (const wchar *** addrs);    // returns addrCount
 void SetCsrSrvHostname (const wchar addr[]);
-bool CsrSrvHostnameOverride ();
 
-unsigned GetGateKeeperSrvHostnames (const wchar *** addrs);	// returns addrCount
+unsigned GetGateKeeperSrvHostnames (const wchar *** addrs); // returns addrCount
 void SetGateKeeperSrvHostname (const wchar addr[]);
-bool GateKeeperSrvHostnameOverride ();
+
+const wchar *GetServerStatusUrl ();
+void SetServerStatusUrl (const wchar url[]);
+
+const wchar *GetServerSignupUrl ();
+void SetServerSignupUrl (const wchar url[]);
+
+const wchar *GetServerDisplayName ();
+void SetServerDisplayName (const wchar name[]);

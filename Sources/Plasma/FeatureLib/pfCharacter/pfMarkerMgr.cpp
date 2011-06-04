@@ -24,17 +24,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "pfMarkerMgr.h"
-#include "../pfMessage/pfMarkerMsg.h"
+#include "pfMessage/pfMarkerMsg.h"
 #include "pfMarkerInfo.h"
 
-#include "../plModifier/plCloneSpawnModifier.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plModifier/plCloneSpawnModifier.h"
+#include "plStatusLog/plStatusLog.h"
 
-#include "../plMessage/plLoadCloneMsg.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
+#include "plMessage/plLoadCloneMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
-#include "../plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plgDispatch.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,270 +44,270 @@ const UInt32 pfMarkerMgr::kNoMarkerSelected = (UInt32)(-1);
 
 pfMarkerMgr* pfMarkerMgr::Instance()
 {
-	if (!pfMarkerMgr::fInstance)
-	{
-		pfMarkerMgr::fInstance = TRACKED_NEW pfMarkerMgr;
-		pfMarkerMgr::fInstance->IInit();
-	}
+    if (!pfMarkerMgr::fInstance)
+    {
+        pfMarkerMgr::fInstance = TRACKED_NEW pfMarkerMgr;
+        pfMarkerMgr::fInstance->IInit();
+    }
 
-	return pfMarkerMgr::fInstance;
+    return pfMarkerMgr::fInstance;
 }
 
 void pfMarkerMgr::Shutdown()
 {
-	if (pfMarkerMgr::fInstance)
-	{
-		pfMarkerMgr::fInstance->IShutdown();
-		pfMarkerMgr::fInstance = nil;
-	}
+    if (pfMarkerMgr::fInstance)
+    {
+        pfMarkerMgr::fInstance->IShutdown();
+        pfMarkerMgr::fInstance = nil;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 pfMarkerMgr::pfMarkerMgr(): fSelectedMarker(kNoMarkerSelected), fShowingLocalMarkers(false), fMarkersRespawn(false)
 {
-	fLog = plStatusLogMgr::GetInstance().CreateStatusLog(20, "Marker.log", plStatusLog::kAlignToTop | plStatusLog::kFilledBackground);
-	pfMarkerInfo::Init();
+    fLog = plStatusLogMgr::GetInstance().CreateStatusLog(20, "Marker.log", plStatusLog::kAlignToTop | plStatusLog::kFilledBackground);
+    pfMarkerInfo::Init();
 }
 
 pfMarkerMgr::~pfMarkerMgr()
 {
-	delete fLog;
+    delete fLog;
 }
 
 void pfMarkerMgr::IInit()
 {
-	fMyKey = RegisterAs(kMarkerMgr_KEY);
-	plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
+    fMyKey = RegisterAs(kMarkerMgr_KEY);
+    plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
 void pfMarkerMgr::IShutdown()
 {
-	std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
-	while (curMarker != fMarkers.end())
-	{
-		curMarker->second->Remove();
-		DEL(curMarker->second);
-		++curMarker;
-	}
-	fMarkers.clear();
+    std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+    while (curMarker != fMarkers.end())
+    {
+        curMarker->second->Remove();
+        DEL(curMarker->second);
+        ++curMarker;
+    }
+    fMarkers.clear();
 
-	plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
-	UnRegisterAs(kMarkerMgr_KEY);
+    plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
+    UnRegisterAs(kMarkerMgr_KEY);
 }
 
 pfMarkerInfo* pfMarkerMgr::IFindMarker(plKey markerKey, UInt32& id)
 {
-	std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
-	while (curMarker != fMarkers.end())
-	{
-		if (curMarker->second->GetKey() == markerKey)
-		{
-			id = curMarker->first;
-			return curMarker->second;
-		}
-		++curMarker;
-	}
-	id = kNoMarkerSelected;
-	return nil;
+    std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+    while (curMarker != fMarkers.end())
+    {
+        if (curMarker->second->GetKey() == markerKey)
+        {
+            id = curMarker->first;
+            return curMarker->second;
+        }
+        ++curMarker;
+    }
+    id = kNoMarkerSelected;
+    return nil;
 }
 
 void pfMarkerMgr::IUpdate()
 {
-	// Update all markers
-	std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
-	while (curMarker != fMarkers.end())
-	{
-		curMarker->second->Update(hsTimer::GetSeconds());
-		++curMarker;
-	}
+    // Update all markers
+    std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+    while (curMarker != fMarkers.end())
+    {
+        curMarker->second->Update(hsTimer::GetSeconds());
+        ++curMarker;
+    }
 }
 
 void pfMarkerMgr::IMarkerHit(plKey markerKey, plKey playerKey)
 {
-	if (playerKey != plNetClientMgr::GetInstance()->GetLocalPlayerKey())
-		return; // not the local player, abort
+    if (playerKey != plNetClientMgr::GetInstance()->GetLocalPlayerKey())
+        return; // not the local player, abort
 
-	// make sure the marker isn't frozen
-	UInt32 id;
-	pfMarkerInfo* hitMarker = IFindMarker(markerKey, id);
-	if (!hitMarker)
-		return; // abort, something weird is going on
-	if (hitMarker->IsFrozen())
-		return; // marker frozen, abort
+    // make sure the marker isn't frozen
+    UInt32 id;
+    pfMarkerInfo* hitMarker = IFindMarker(markerKey, id);
+    if (!hitMarker)
+        return; // abort, something weird is going on
+    if (hitMarker->IsFrozen())
+        return; // marker frozen, abort
 
-	// tell people about it
-	pfMarkerMsg* msg = TRACKED_NEW pfMarkerMsg;
-	msg->fType = pfMarkerMsg::kMarkerCaptured;
-	msg->fMarkerID = id;
-	msg->Send();
+    // tell people about it
+    pfMarkerMsg* msg = TRACKED_NEW pfMarkerMsg;
+    msg->fType = pfMarkerMsg::kMarkerCaptured;
+    msg->fMarkerID = id;
+    msg->Send();
 }
 
 void pfMarkerMgr::AddMarker(double x, double y, double z, UInt32 id, bool justCreated)
 {
-	if (fMarkers.find(id) != fMarkers.end())
-	{
-		// delete existing one if we're changing its location
-		fMarkers[id]->Remove();
-		DEL(fMarkers[id]);
-	}
+    if (fMarkers.find(id) != fMarkers.end())
+    {
+        // delete existing one if we're changing its location
+        fMarkers[id]->Remove();
+        DEL(fMarkers[id]);
+    }
 
-	hsPoint3 pos((hsScalar)x, (hsScalar)y, (hsScalar)z);
-	fMarkers[id] = TRACKED_NEW pfMarkerInfo(pos, justCreated);
-	fMarkers[id]->Spawn(pfMarkerInfo::kMarkerOpen);
+    hsPoint3 pos((hsScalar)x, (hsScalar)y, (hsScalar)z);
+    fMarkers[id] = TRACKED_NEW pfMarkerInfo(pos, justCreated);
+    fMarkers[id]->Spawn(pfMarkerInfo::kMarkerOpen);
 }
 
 void pfMarkerMgr::RemoveMarker(UInt32 id)
 {
-	if (fMarkers.find(id) == fMarkers.end())
-		return;
-	fMarkers[id]->Remove();
-	DEL(fMarkers[id]);
-	fMarkers.erase(id);
+    if (fMarkers.find(id) == fMarkers.end())
+        return;
+    fMarkers[id]->Remove();
+    DEL(fMarkers[id]);
+    fMarkers.erase(id);
 }
 
 void pfMarkerMgr::RemoveAllMarkers()
 {
-	std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
-	while (curMarker != fMarkers.end())
-	{
-		curMarker->second->Remove();
-		DEL(curMarker->second);
-		++curMarker;
-	}
-	fMarkers.clear();
+    std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+    while (curMarker != fMarkers.end())
+    {
+        curMarker->second->Remove();
+        DEL(curMarker->second);
+        ++curMarker;
+    }
+    fMarkers.clear();
 }
 
 void pfMarkerMgr::ClearSelectedMarker()
 {
-	if (fSelectedMarker != kNoMarkerSelected)
-	{
-		if (fMarkers.find(fSelectedMarker) != fMarkers.end())
-			fMarkers[fSelectedMarker]->SetType(pfMarkerInfo::kMarkerOpen);
-		fSelectedMarker = kNoMarkerSelected;
-	}
+    if (fSelectedMarker != kNoMarkerSelected)
+    {
+        if (fMarkers.find(fSelectedMarker) != fMarkers.end())
+            fMarkers[fSelectedMarker]->SetType(pfMarkerInfo::kMarkerOpen);
+        fSelectedMarker = kNoMarkerSelected;
+    }
 }
 
 void pfMarkerMgr::SetSelectedMarker(UInt32 id)
 {
-	ClearSelectedMarker();
+    ClearSelectedMarker();
 
-	if (id != kNoMarkerSelected)
-	{
-		if (fMarkers.find(id) != fMarkers.end())
-		{
-			fMarkers[id]->SetType(pfMarkerInfo::kMarkerLocalSelected);
-			fSelectedMarker = id;
-		}
-	}
+    if (id != kNoMarkerSelected)
+    {
+        if (fMarkers.find(id) != fMarkers.end())
+        {
+            fMarkers[id]->SetType(pfMarkerInfo::kMarkerLocalSelected);
+            fSelectedMarker = id;
+        }
+    }
 }
 
 UInt32 pfMarkerMgr::GetSelectedMarker()
 {
-	return fSelectedMarker;
+    return fSelectedMarker;
 }
 
 // for QUEST games (no teams)
 void pfMarkerMgr::CaptureMarker(UInt32 id, bool captured)
 {
-	if (fMarkers.find(id) == fMarkers.end())
-		return;
+    if (fMarkers.find(id) == fMarkers.end())
+        return;
 
-	if (fMarkersRespawn)
-		fMarkers[id]->SetFrozen(hsTimer::GetSeconds());
-	else
-		fMarkers[id]->Show(!captured);
+    if (fMarkersRespawn)
+        fMarkers[id]->SetFrozen(hsTimer::GetSeconds());
+    else
+        fMarkers[id]->Show(!captured);
 
-	fMarkers[id]->PlayHitSound();
-	fMarkers[id]->SetType(captured ? pfMarkerInfo::kMarkerGreen : pfMarkerInfo::kMarkerOpen);
+    fMarkers[id]->PlayHitSound();
+    fMarkers[id]->SetType(captured ? pfMarkerInfo::kMarkerGreen : pfMarkerInfo::kMarkerOpen);
 }
 
 // for TEAM games (0 = not captured)
 void pfMarkerMgr::CaptureMarker(UInt32 id, int team)
 {
-	if (fMarkers.find(id) == fMarkers.end())
-		return;
+    if (fMarkers.find(id) == fMarkers.end())
+        return;
 
-	if (fMarkersRespawn)
-		fMarkers[id]->SetFrozen(hsTimer::GetSeconds());
-	else
-		fMarkers[id]->Show(team == 0); // 0 = uncaptured
+    if (fMarkersRespawn)
+        fMarkers[id]->SetFrozen(hsTimer::GetSeconds());
+    else
+        fMarkers[id]->Show(team == 0); // 0 = uncaptured
 
-	fMarkers[id]->PlayHitSound();
-	if (team == 0)
-		fMarkers[id]->SetType(pfMarkerInfo::kMarkerOpen);
-	else if (team == 1)
-		fMarkers[id]->SetType(pfMarkerInfo::kMarkerGreen);
-	else
-		fMarkers[id]->SetType(pfMarkerInfo::kMarkerRed);
+    fMarkers[id]->PlayHitSound();
+    if (team == 0)
+        fMarkers[id]->SetType(pfMarkerInfo::kMarkerOpen);
+    else if (team == 1)
+        fMarkers[id]->SetType(pfMarkerInfo::kMarkerGreen);
+    else
+        fMarkers[id]->SetType(pfMarkerInfo::kMarkerRed);
 }
 
 void pfMarkerMgr::LocalShowMarkers(bool show)
 {
-	fShowingLocalMarkers = show;
-	if (show)
-	{
-		std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
-		while (curMarker != fMarkers.end())
-			curMarker->second->Show(true);
-	}
-	else
-	{
-		std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
-		while (curMarker != fMarkers.end())
-			curMarker->second->Show(false);
-	}
+    fShowingLocalMarkers = show;
+    if (show)
+    {
+        std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+        while (curMarker != fMarkers.end())
+            curMarker->second->Show(true);
+    }
+    else
+    {
+        std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+        while (curMarker != fMarkers.end())
+            curMarker->second->Show(false);
+    }
 }
 
 bool pfMarkerMgr::AreLocalMarkersShowing()
 {
-	return fShowingLocalMarkers;
+    return fShowingLocalMarkers;
 }
 
 hsBool pfMarkerMgr::MsgReceive(plMessage* msg)
 {
-	plEvalMsg* evalMsg = plEvalMsg::ConvertNoRef(msg);
-	if (evalMsg)
-	{
-		IUpdate();
-		return true;
-	}
+    plEvalMsg* evalMsg = plEvalMsg::ConvertNoRef(msg);
+    if (evalMsg)
+    {
+        IUpdate();
+        return true;
+    }
 
-	// Somebody hit a marker
-	plNotifyMsg* notify = plNotifyMsg::ConvertNoRef(msg);
-	if (notify)
-	{
-		proCollisionEventData* cEvent = (proCollisionEventData*)notify->FindEventRecord(proEventData::kCollision);
-		if (cEvent)
-		{
-			plKey markerKey = cEvent->fHittee;
-			plKey playerKey = cEvent->fHitter;
-			if (plNetClientMgr::GetInstance()->IsAPlayerKey(cEvent->fHittee))
-			{
-				// swap the above, since the hittee is actually the player
-				playerKey = cEvent->fHittee;
-				markerKey = cEvent->fHitter;
-			}
+    // Somebody hit a marker
+    plNotifyMsg* notify = plNotifyMsg::ConvertNoRef(msg);
+    if (notify)
+    {
+        proCollisionEventData* cEvent = (proCollisionEventData*)notify->FindEventRecord(proEventData::kCollision);
+        if (cEvent)
+        {
+            plKey markerKey = cEvent->fHittee;
+            plKey playerKey = cEvent->fHitter;
+            if (plNetClientMgr::GetInstance()->IsAPlayerKey(cEvent->fHittee))
+            {
+                // swap the above, since the hittee is actually the player
+                playerKey = cEvent->fHittee;
+                markerKey = cEvent->fHitter;
+            }
 
-			IMarkerHit(markerKey, playerKey);
-		}
+            IMarkerHit(markerKey, playerKey);
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	plLoadCloneMsg* cloneMsg = plLoadCloneMsg::ConvertNoRef(msg);
-	if (cloneMsg)
-	{
-		plKey cloneKey = cloneMsg->GetCloneKey();
-		if (cloneMsg->GetIsLoading() && cloneKey)
-		{
-			UInt32 id;
-			pfMarkerInfo* marker = IFindMarker(cloneKey, id);
-			marker->InitSpawned(cloneKey);
-		}
+    plLoadCloneMsg* cloneMsg = plLoadCloneMsg::ConvertNoRef(msg);
+    if (cloneMsg)
+    {
+        plKey cloneKey = cloneMsg->GetCloneKey();
+        if (cloneMsg->GetIsLoading() && cloneKey)
+        {
+            UInt32 id;
+            pfMarkerInfo* marker = IFindMarker(cloneKey, id);
+            marker->InitSpawned(cloneKey);
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	return hsKeyedObject::MsgReceive(msg);
+    return hsKeyedObject::MsgReceive(msg);
 }

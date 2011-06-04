@@ -24,34 +24,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plPlasmaMAXLayer - MAX Layer type that is the basis for all Plasma layer //
-//					   types												 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plPlasmaMAXLayer - MAX Layer type that is the basis for all Plasma layer //
+//                     types                                                 //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	1.13.2002 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  1.13.2002 mcn - Created.                                                 //
+//                                                                           //
 //// Notes from the Author ////////////////////////////////////////////////////
-//																			 //
-//	This base class is actually a quite-recent addition. As a result, most	 //
-//	of the old, non-base-class-structured code is still lying around. This   //
-//	code will be slowly converted over as time goes on; the theory was that  //
-//	this conversion would be far more likely to occur if the base class		 //
-//	actually already existed.												 //
-//																			 //
+//                                                                           //
+//  This base class is actually a quite-recent addition. As a result, most   //
+//  of the old, non-base-class-structured code is still lying around. This   //
+//  code will be slowly converted over as time goes on; the theory was that  //
+//  this conversion would be far more likely to occur if the base class      //
+//  actually already existed.                                                //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plPlasmaMAXLayer_h
 #define _plPlasmaMAXLayer_h
 
 #include "Max.h"
+#include "iparamm2.h"
 #include "hsTypes.h"
 
 //// Derived Type Class IDs ///////////////////////////////////////////////////
-//	If you create a new Plasma layer type, add a define for the class ID here 
-//	and also add the ID to the list in plPlasmaMAXLayer.cpp.
+//  If you create a new Plasma layer type, add a define for the class ID here 
+//  and also add the ID to the list in plPlasmaMAXLayer.cpp.
 
 const Class_ID LAYER_TEX_CLASS_ID( 0x4223c620, 0x183c4868 );
 const Class_ID STATIC_ENV_LAYER_CLASS_ID( 0x379a0a20, 0x3d0b1244 );
@@ -76,73 +77,75 @@ class jvUniqueId;
 class plLayerTargetContainer;
 class plPlasmaMAXLayer : public Texmap
 {
-	friend class plLayerConverter;
+    friend class plLayerConverter;
 
-	protected:
+    protected:
 
-		static const Class_ID	fDerivedTypes[];
+        static const Class_ID   fDerivedTypes[];
 
-		plLayerTargetContainer	*fConversionTargets;
-
-
-		void	IAddConversionTarget( plLayerInterface *target );
-		void	IClearConversionTargets( void );
-
-	public:
-
-		plPlasmaMAXLayer();
-		virtual ~plPlasmaMAXLayer();
-
-		void	DeleteThis() { delete this; }		
+        plLayerTargetContainer  *fConversionTargets;
 
 
-		// Static that checks the classID of the given texMap and, if it's a valid Plasma MAX Layer, returns a pointer to such
-		static plPlasmaMAXLayer		*GetPlasmaMAXLayer( Texmap *map );
+        void    IAddConversionTarget( plLayerInterface *target );
+        void    IClearConversionTargets( void );
 
-		// Some layers must be unique for each node they're applied to (i.e. can't be shared among nodes).
-		// This returns true if the layer must be unique.
-		virtual bool MustBeUnique( void ) { return false; }
+    public:
 
-		// These let the material make an informed decision on what to do with
-		// the color and alpha values coming out of an EvalColor call. Something
-		// like an InvertColor can be handled within EvalColor, but there needs
-		// to be a way to tell the caller that the color returned should be completely
-		// ignored.
-		virtual BOOL	DiscardColor() { return false; }
-		virtual BOOL	DiscardAlpha() { return false; }
+        plPlasmaMAXLayer();
+        virtual ~plPlasmaMAXLayer();
+
+        void    DeleteThis() { delete this; }       
 
 
-		// Return the number of conversion targets (only valid after the MakeMesh pass)
-		int		GetNumConversionTargets( void );
+        // Static that checks the classID of the given texMap and, if it's a valid Plasma MAX Layer, returns a pointer to such
+        static plPlasmaMAXLayer     *GetPlasmaMAXLayer( Texmap *map );
 
-		// Get an indexed conversion target
-		plLayerInterface	*GetConversionTarget( int index );
-		
-		virtual BOOL HandleBitmapSelection(int index = 0);
-		virtual void SetBitmap(BitmapInfo *bi, int index = 0);
-		virtual void SetBitmapAssetId(jvUniqueId& assetId, int index = 0);
-		virtual void GetBitmapAssetId(jvUniqueId& assetId, int index = 0);
+        // Some layers must be unique for each node they're applied to (i.e. can't be shared among nodes).
+        // This returns true if the layer must be unique.
+        virtual bool MustBeUnique( void ) { return false; }
 
-		// Pure virtual accessors for the various bitmap related elements
-		virtual Bitmap *GetMaxBitmap(int index = 0) = 0;
-		virtual PBBitmap *GetPBBitmap( int index = 0 ) = 0;
-		virtual int		GetNumBitmaps( void ) = 0;
+        // These let the material make an informed decision on what to do with
+        // the color and alpha values coming out of an EvalColor call. Something
+        // like an InvertColor can be handled within EvalColor, but there needs
+        // to be a way to tell the caller that the color returned should be completely
+        // ignored.
+        virtual BOOL    DiscardColor() { return false; }
+        virtual BOOL    DiscardAlpha() { return false; }
 
-		// Makes sure the textures are the latest versions (including getting
-		// the latest version from AssetMan)
-		void RefreshBitmaps();
 
-		hsBool	GetBitmapFileName( char *destFilename, int maxLength, int index = 0 );
+        // Return the number of conversion targets (only valid after the MakeMesh pass)
+        int     GetNumConversionTargets( void );
 
-		// Virtual function called by plBMSampler to get various things while sampling the layer's image
-		virtual bool	GetSamplerInfo( plBMSamplerData *samplerData ) { return false; }
+        // Get an indexed conversion target
+        plLayerInterface    *GetConversionTarget( int index );
+        
+        virtual BOOL HandleBitmapSelection(int index = 0);
+        virtual void SetBitmap(BitmapInfo *bi, int index = 0);
+#ifdef MAXASS_AVAILABLE
+        virtual void SetBitmapAssetId(jvUniqueId& assetId, int index = 0);
+        virtual void GetBitmapAssetId(jvUniqueId& assetId, int index = 0);
+#endif
 
-		// Backdoor for the texture find and replace util.  Assumes input has the correct aspect ratio and is power of 2.
-		virtual void SetExportSize(int x, int y) {}
-		
-	protected:
-		virtual void ISetMaxBitmap(Bitmap *bitmap, int index = 0) = 0;
-		virtual void ISetPBBitmap( PBBitmap *pbbm, int index = 0 ) = 0;
+        // Pure virtual accessors for the various bitmap related elements
+        virtual Bitmap *GetMaxBitmap(int index = 0) = 0;
+        virtual PBBitmap *GetPBBitmap( int index = 0 ) = 0;
+        virtual int     GetNumBitmaps( void ) = 0;
+
+        // Makes sure the textures are the latest versions (including getting
+        // the latest version from AssetMan)
+        void RefreshBitmaps();
+
+        hsBool  GetBitmapFileName( char *destFilename, int maxLength, int index = 0 );
+
+        // Virtual function called by plBMSampler to get various things while sampling the layer's image
+        virtual bool    GetSamplerInfo( plBMSamplerData *samplerData ) { return false; }
+
+        // Backdoor for the texture find and replace util.  Assumes input has the correct aspect ratio and is power of 2.
+        virtual void SetExportSize(int x, int y) {}
+        
+    protected:
+        virtual void ISetMaxBitmap(Bitmap *bitmap, int index = 0) = 0;
+        virtual void ISetPBBitmap( PBBitmap *pbbm, int index = 0 ) = 0;
 
 };
 

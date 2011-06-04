@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSHAREDMESH_INC
 #define PLSHAREDMESH_INC
 
-#include "../pnKeyedObject/hsKeyedObject.h"
-#include "../pnMessage/plMessage.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnMessage/plMessage.h"
 
 class plGeometrySpan;
 class plDrawableSpans;
@@ -39,48 +39,48 @@ class plMorphDataSet;
 class plSharedMesh : public hsKeyedObject
 {
 public:
-	enum 
-	{
-		kDontSaveMorphState = 0x1,	// Don't save state (duh). Used for a morph that only has global layers
-		kLayer0GlobalToMod	= 0x2	// This mesh's weight for layer 0 should be applied to all meshes on
-									// the same morph mod.
-	};
+    enum 
+    {
+        kDontSaveMorphState = 0x1,  // Don't save state (duh). Used for a morph that only has global layers
+        kLayer0GlobalToMod  = 0x2   // This mesh's weight for layer 0 should be applied to all meshes on
+                                    // the same morph mod.
+    };
 
-	hsTArray<plGeometrySpan *>fSpans;
-	hsTArray<const plSceneObject *> fActiveInstances;
-	plMorphDataSet *fMorphSet;
-	UInt8 fFlags;
-	
-	plSharedMesh();
-	~plSharedMesh();
-	
-	void CreateInstance(plSceneObject *so, UInt8 boneIndex);
-	void RemoveInstance(plSceneObject *so);
-	
-	CLASSNAME_REGISTER( plSharedMesh );
-	GETINTERFACE_ANY( plSharedMesh, hsKeyedObject );
-	
-	virtual hsBool MsgReceive(plMessage* msg);	
+    hsTArray<plGeometrySpan *>fSpans;
+    hsTArray<const plSceneObject *> fActiveInstances;
+    plMorphDataSet *fMorphSet;
+    UInt8 fFlags;
+    
+    plSharedMesh();
+    ~plSharedMesh();
+    
+    void CreateInstance(plSceneObject *so, UInt8 boneIndex);
+    void RemoveInstance(plSceneObject *so);
+    
+    CLASSNAME_REGISTER( plSharedMesh );
+    GETINTERFACE_ANY( plSharedMesh, hsKeyedObject );
+    
+    virtual hsBool MsgReceive(plMessage* msg);  
 
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);	
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr); 
 };
 
 class plSharedMeshBCMsg : public plMessage
 {
 public:
-	plDrawableSpans *fDraw;
-	plSharedMesh *fMesh;
-	hsBool fIsAdding;
-	
-	plSharedMeshBCMsg();
-	~plSharedMeshBCMsg() {}
-	
-	CLASSNAME_REGISTER( plSharedMeshBCMsg );
-	GETINTERFACE_ANY( plSharedMeshBCMsg, plMessage );
+    plDrawableSpans *fDraw;
+    plSharedMesh *fMesh;
+    hsBool fIsAdding;
+    
+    plSharedMeshBCMsg();
+    ~plSharedMeshBCMsg() {}
+    
+    CLASSNAME_REGISTER( plSharedMeshBCMsg );
+    GETINTERFACE_ANY( plSharedMeshBCMsg, plMessage );
 
-	virtual void Read(hsStream* s, hsResMgr* mgr) {}
-	virtual void Write(hsStream* s, hsResMgr* mgr) {}		
+    virtual void Read(hsStream* s, hsResMgr* mgr) {}
+    virtual void Write(hsStream* s, hsResMgr* mgr) {}       
 };
 
 

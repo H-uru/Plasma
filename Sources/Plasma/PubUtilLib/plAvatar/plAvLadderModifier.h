@@ -26,8 +26,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAvLadderMod_INC
 #define plAvLadderMod_INC
 
-#include "../pnModifier/plSingleModifier.h"
-#include "../pnMessage/plMessage.h"
+#include "pnModifier/plSingleModifier.h"
+#include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
 
 // has a detector region. when a local avatar enters that region,
@@ -35,53 +35,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAvLadderMod :  public plSingleModifier
 {
 public:
-	plAvLadderMod();
-	plAvLadderMod(bool goingUp, int type, int loops, bool enabled, hsVector3& ladderView);
-	virtual ~plAvLadderMod() {};
+    plAvLadderMod();
+    plAvLadderMod(bool goingUp, int type, int loops, bool enabled, hsVector3& ladderView);
+    virtual ~plAvLadderMod() {};
 
-	void EmitCommand(const plKey receiver);
+    void EmitCommand(const plKey receiver);
 
-	CLASSNAME_REGISTER( plAvLadderMod );
-	GETINTERFACE_ANY( plAvLadderMod, plSingleModifier );
-	
-	// virtual void AddTarget(plSceneObject* so) {	SetTarget(so);	}
-	virtual hsBool MsgReceive(plMessage* msg);
+    CLASSNAME_REGISTER( plAvLadderMod );
+    GETINTERFACE_ANY( plAvLadderMod, plSingleModifier );
+    
+    // virtual void AddTarget(plSceneObject* so) {  SetTarget(so);  }
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
-	
-	bool GetGoingUp() const;
-	void SetGoingUp(bool v);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    bool GetGoingUp() const;
+    void SetGoingUp(bool v);
 
-	int GetLoops() const;
-	void SetLoops(int v);
+    int GetLoops() const;
+    void SetLoops(int v);
 
-	int GetType() const;
-	void SetType(int v);
+    int GetType() const;
+    void SetType(int v);
 
-	void SetEnabled(bool enabled) { fEnabled = enabled; }
+    void SetEnabled(bool enabled) { fEnabled = enabled; }
 
 protected:
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
-	bool IIsReadyToClimb();
-	void ITriggerSelf(plKey avKey);
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
+    bool IIsReadyToClimb();
+    void ITriggerSelf(plKey avKey);
 
-	enum fTypeField
-	{
-		kBig,				// big ladders are built from a mount, N traverse loops, and a dismount
-		kFourFeet,			// four-foot ladders are a one-shot
-		kTwoFeet,			// two-foot (step)ladders are a one-shot
-		kNumOfTypeFields,
-	};
+    enum fTypeField
+    {
+        kBig,               // big ladders are built from a mount, N traverse loops, and a dismount
+        kFourFeet,          // four-foot ladders are a one-shot
+        kTwoFeet,           // two-foot (step)ladders are a one-shot
+        kNumOfTypeFields,
+    };
 
-	bool fGoingUp;		// true means heading up; false means down		
-	int fType;			// what type of ladder are we?
-	int fLoops;			// if we're a big ladder, how many traverse loops do we need?
-	hsVector3 fLadderView;
-	bool fEnabled;
-	bool fAvatarInBox;
-	bool fAvatarMounting;	// True if the avatar is in the process of mounting the ladder.
-							// Don't try to trigger during this time.
+    bool fGoingUp;      // true means heading up; false means down      
+    int fType;          // what type of ladder are we?
+    int fLoops;         // if we're a big ladder, how many traverse loops do we need?
+    hsVector3 fLadderView;
+    bool fEnabled;
+    bool fAvatarInBox;
+    bool fAvatarMounting;   // True if the avatar is in the process of mounting the ladder.
+                            // Don't try to trigger during this time.
 };
 
 #endif plAvLadderMod_INC

@@ -27,60 +27,60 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConditionalObject_inc
 #define plConditionalObject_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "hsBitVector.h"
-#include "../pnNetCommon/plSynchedValue.h"
+#include "pnNetCommon/plSynchedValue.h"
 
 class plLogicModBase;
 
 class plConditionalObject : public hsKeyedObject
 {
 private:
-	// since 'this' is not derived from synchedObject, its synched values must be associated
-	// with it's logicModifier (which is a synchedObject).  Thus it's a synched value 'friend'.
-	hsBool							bSatisfied;		
-	hsBool							fToggle;
+    // since 'this' is not derived from synchedObject, its synched values must be associated
+    // with it's logicModifier (which is a synchedObject).  Thus it's a synched value 'friend'.
+    hsBool                          bSatisfied;     
+    hsBool                          fToggle;
 public:
-	enum
-	{
-		kLocalElement	= 0,
-		kNOT,
-	};
+    enum
+    {
+        kLocalElement   = 0,
+        kNOT,
+    };
 protected:
-	plLogicModBase*					fLogicMod;
-	hsBitVector						fFlags;
-	hsBool							fReset;
+    plLogicModBase*                 fLogicMod;
+    hsBitVector                     fFlags;
+    hsBool                          fReset;
 public:
-	plConditionalObject();
-	virtual ~plConditionalObject();
+    plConditionalObject();
+    virtual ~plConditionalObject();
 
-	CLASSNAME_REGISTER( plConditionalObject );
-	GETINTERFACE_ANY( plConditionalObject, hsKeyedObject );
+    CLASSNAME_REGISTER( plConditionalObject );
+    GETINTERFACE_ANY( plConditionalObject, hsKeyedObject );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr) { hsKeyedObject::Read(stream, mgr); bSatisfied = stream->ReadBool(); fToggle = stream->ReadBool();}
-	virtual void Write(hsStream* stream, hsResMgr* mgr){ hsKeyedObject::Write(stream, mgr); stream->WriteBool( bSatisfied ); stream->WriteBool(fToggle);}
+    virtual void Read(hsStream* stream, hsResMgr* mgr) { hsKeyedObject::Read(stream, mgr); bSatisfied = stream->ReadBool(); fToggle = stream->ReadBool();}
+    virtual void Write(hsStream* stream, hsResMgr* mgr){ hsKeyedObject::Write(stream, mgr); stream->WriteBool( bSatisfied ); stream->WriteBool(fToggle);}
 
-	virtual void SetLogicMod(plLogicModBase* pMod) { fLogicMod = pMod; }
+    virtual void SetLogicMod(plLogicModBase* pMod) { fLogicMod = pMod; }
 
-//	virtual hsBool MsgReceive(plMessage* msg) = 0;
+//  virtual hsBool MsgReceive(plMessage* msg) = 0;
 
-	virtual hsBool Satisfied() { if(HasFlag(kNOT)) return !bSatisfied; else return bSatisfied; }
-	void SetSatisfied(hsBool b) { bSatisfied=b; }
-	hsBool IsToggle() { return fToggle; }
-	void SetToggle(hsBool b) { fToggle = b; }
+    virtual hsBool Satisfied() { if(HasFlag(kNOT)) return !bSatisfied; else return bSatisfied; }
+    void SetSatisfied(hsBool b) { bSatisfied=b; }
+    hsBool IsToggle() { return fToggle; }
+    void SetToggle(hsBool b) { fToggle = b; }
 
-	// this is used if condtiton 1 is dependent on another condition's state at the
-	// time of a message coming into condition 1;
-	virtual hsBool Verify(plMessage* msg) { return true; }
+    // this is used if condtiton 1 is dependent on another condition's state at the
+    // time of a message coming into condition 1;
+    virtual hsBool Verify(plMessage* msg) { return true; }
 
-	virtual void Evaluate() = 0;
-	
-	virtual void Reset() = 0;
-	virtual hsBool ResetOnTrigger() { return fReset; }
+    virtual void Evaluate() = 0;
+    
+    virtual void Reset() = 0;
+    virtual hsBool ResetOnTrigger() { return fReset; }
 
-	hsBool	HasFlag(int f) const { return fFlags.IsBitSet(f); }
-	void	SetFlag(int f) { fFlags.SetBit(f); }
-	void	ClearFlag(int which) { fFlags.ClearBit( which ); }
+    hsBool  HasFlag(int f) const { return fFlags.IsBitSet(f); }
+    void    SetFlag(int f) { fFlags.SetBit(f); }
+    void    ClearFlag(int which) { fFlags.ClearBit( which ); }
 
 
 };

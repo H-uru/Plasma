@@ -24,10 +24,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plSoundDeswizzler - Quick helper class to extract a single channel of	//
-//						data from stereo (or more)-channel data.			//
-//																			//
+//                                                                          //
+//  plSoundDeswizzler - Quick helper class to extract a single channel of   //
+//                      data from stereo (or more)-channel data.            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plSoundDeswizzler_h
@@ -41,17 +41,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSoundDeswizzler
 {
 public:
-	plSoundDeswizzler( void *srcPtr, UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize );
-	plSoundDeswizzler( UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize );
-	~plSoundDeswizzler();
+    plSoundDeswizzler( void *srcPtr, UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize );
+    plSoundDeswizzler( UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize );
+    ~plSoundDeswizzler();
 
-	void	*GetSourceBuffer( void ) const { return fData; }
-	void	Extract( UInt8 channelSelect, void *destPtr, UInt32 numBytesToProcess = 0 );
+    void    *GetSourceBuffer( void ) const { return fData; }
+    void    Extract( UInt8 channelSelect, void *destPtr, UInt32 numBytesToProcess = 0 );
 
 protected:
-	UInt8	*fData;
-	UInt32	fNumSamples, fSampleSize, fStride;
-	hsBool	fOwnsData;
+    UInt8   *fData;
+    UInt32  fNumSamples, fSampleSize, fStride;
+    hsBool  fOwnsData;
 };
 
 #endif //_plSoundDeswizzler_h

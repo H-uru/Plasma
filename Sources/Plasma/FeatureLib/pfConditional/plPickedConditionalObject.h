@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPickedConditionalObject_inc
 #define plPickedConditionalObject_inc
 
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"
+#include "pnModifier/plConditionalObject.h"
 
 class plKey;
 
@@ -37,17 +37,17 @@ protected:
 
 
 public:
-	
-	plPickedConditionalObject();
-	~plPickedConditionalObject(){;}
-	
-	CLASSNAME_REGISTER( plPickedConditionalObject );
-	GETINTERFACE_ANY( plPickedConditionalObject, plConditionalObject );
-	
-	hsBool MsgReceive(plMessage* msg);
-	
-	void Evaluate(){;}
-	void Reset() { SetSatisfied(false); }
+    
+    plPickedConditionalObject();
+    ~plPickedConditionalObject(){;}
+    
+    CLASSNAME_REGISTER( plPickedConditionalObject );
+    GETINTERFACE_ANY( plPickedConditionalObject, plConditionalObject );
+    
+    hsBool MsgReceive(plMessage* msg);
+    
+    void Evaluate(){;}
+    void Reset() { SetSatisfied(false); }
 
 };
 

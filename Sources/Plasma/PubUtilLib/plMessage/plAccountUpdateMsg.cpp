@@ -28,57 +28,57 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plAccountUpdateMsg::plAccountUpdateMsg()
 {
-	fUpdateType = 0;
+    fUpdateType = 0;
 }
 
 plAccountUpdateMsg::plAccountUpdateMsg(unsigned updateType)
 {
-	fUpdateType = updateType;
+    fUpdateType = updateType;
 }
 
 void plAccountUpdateMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
-	fUpdateType = stream->ReadSwap32();
-	fResult		= stream->ReadSwap32();
-	fPlayerInt	= stream->ReadSwap32();
+    plMessage::IMsgRead(stream, mgr);
+    fUpdateType = stream->ReadSwap32();
+    fResult     = stream->ReadSwap32();
+    fPlayerInt  = stream->ReadSwap32();
 }
 
 void plAccountUpdateMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
-	stream->WriteSwap32(fUpdateType);
-	stream->WriteSwap32(fResult);
-	stream->WriteSwap32(fPlayerInt);
+    plMessage::IMsgWrite(stream, mgr);
+    stream->WriteSwap32(fUpdateType);
+    stream->WriteSwap32(fResult);
+    stream->WriteSwap32(fPlayerInt);
 }
 
 unsigned plAccountUpdateMsg::GetUpdateType()
 {
-	return fUpdateType;
+    return fUpdateType;
 }
 
 void plAccountUpdateMsg::SetUpdateType(unsigned type)
 {
-	fUpdateType = type;
+    fUpdateType = type;
 }
 
 unsigned plAccountUpdateMsg::GetResult()
 {
-	return fResult;
+    return fResult;
 }
 
 void plAccountUpdateMsg::SetResult(unsigned result)
 {
-	fResult = result;
+    fResult = result;
 }
 
 unsigned plAccountUpdateMsg::GetPlayerInt()
 {
-	return fPlayerInt;
+    return fPlayerInt;
 }
 
 void plAccountUpdateMsg::SetPlayerInt(unsigned playerInt)
 {
-	fPlayerInt = playerInt;
+    fPlayerInt = playerInt;
 }
 

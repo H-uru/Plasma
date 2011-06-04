@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plListener_h
 #define plListener_h
 
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 
 
 class plSceneObject;
@@ -36,47 +36,47 @@ class plListener : public plSingleModifier
 {
 public:
 
-	plListener() :	fVCam(nil), fInitMe(true){;}
-	~plListener(){;}
+    plListener() :  fVCam(nil), fInitMe(true){;}
+    ~plListener(){;}
 
-	CLASSNAME_REGISTER( plListener );
-	GETINTERFACE_ANY( plListener, plSingleModifier );
+    CLASSNAME_REGISTER( plListener );
+    GETINTERFACE_ANY( plListener, plSingleModifier );
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	static void	ShowDebugInfo( hsBool s ) { fPrintDbgInfo = s; }
+    static void ShowDebugInfo( hsBool s ) { fPrintDbgInfo = s; }
 
-	// Get info for which object these things are attached to - camera or refObject
-	UInt8 GetAttachedPosType() { return (UInt8)fPosRatio; }
-	UInt8 GetAttachedFacingType() { return (UInt8)fFacingRatio; }
-	UInt8 GetAttachedVelType() { return (UInt8)fVelRatio; }
-	
-	enum 
-	{
-		kCamera = 0,
-		kAvatar = 1
-	};
+    // Get info for which object these things are attached to - camera or refObject
+    UInt8 GetAttachedPosType() { return (UInt8)fPosRatio; }
+    UInt8 GetAttachedFacingType() { return (UInt8)fFacingRatio; }
+    UInt8 GetAttachedVelType() { return (UInt8)fVelRatio; }
+    
+    enum 
+    {
+        kCamera = 0,
+        kAvatar = 1
+    };
 
 protected:
-	
-	enum Refs
-	{
-		kRefObject,
-		kRefVCam
-	};
+    
+    enum Refs
+    {
+        kRefObject,
+        kRefVCam
+    };
 
-	plVirtualCam1*		fVCam;
+    plVirtualCam1*      fVCam;
 
-	hsScalar			fPosRatio, fFacingRatio, fVelRatio;	 // 0 is vCam, 1 is refObject
-	hsBool				fInitMe;
+    hsScalar            fPosRatio, fFacingRatio, fVelRatio;  // 0 is vCam, 1 is refObject
+    hsBool              fInitMe;
 
-	static hsBool		fPrintDbgInfo;
+    static hsBool       fPrintDbgInfo;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
-	void			ISetRef( const plKey &ref, hsBool binding, int type );
-	void			ICheckAudio( void ) const;
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    void            ISetRef( const plKey &ref, hsBool binding, int type );
+    void            ICheckAudio( void ) const;
 
-	void			IEnsureVCamValid( void );
+    void            IEnsureVCamValid( void );
 };
 
 #endif //plWin32Sound_h

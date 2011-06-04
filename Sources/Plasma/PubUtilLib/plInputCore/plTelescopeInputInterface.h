@@ -24,50 +24,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plTelescopeInputInterface													//
-//																			//
+//                                                                          //
+//  plTelescopeInputInterface                                                   //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plTelescopeInputInterface_h
 #define _plTelescopeInputInterface_h
 
 #include "plInputInterface.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
-		
+        
 class plTelescopeInputInterface : public plInputInterface
 {
-	protected:
+    protected:
 
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
 
-	public:
+    public:
 
-		plTelescopeInputInterface();
-		virtual ~plTelescopeInputInterface();
+        plTelescopeInputInterface();
+        virtual ~plTelescopeInputInterface();
 
-		virtual void		RestoreDefaultKeyMappings( void );
-		
-		virtual hsBool	InterpretInputEvent( plInputEventMsg *pMsg );
+        virtual void        RestoreDefaultKeyMappings( void );
+        
+        virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg );
 
-		virtual hsBool	MsgReceive( plMessage *msg );
+        virtual hsBool  MsgReceive( plMessage *msg );
 
-		virtual void	Init( plInputInterfaceMgr *manager );
-		virtual void	Shutdown( void ) {;}
+        virtual void    Init( plInputInterfaceMgr *manager );
+        virtual void    Shutdown( void ) {;}
 
-		// Returns the priority of this interface layer, based on the Priorities enum
-		virtual UInt32	GetPriorityLevel( void ) const { return kTelescopeInputPriority; }
+        // Returns the priority of this interface layer, based on the Priorities enum
+        virtual UInt32  GetPriorityLevel( void ) const { return kTelescopeInputPriority; }
 
-		// Returns the currently active mouse cursor for this layer, as defined in pnMessage/plCursorChangeMsg.h
-		virtual UInt32		GetCurrentCursorID( void ) const { return kCursorUp; }
+        // Returns the currently active mouse cursor for this layer, as defined in pnMessage/plCursorChangeMsg.h
+        virtual UInt32      GetCurrentCursorID( void ) const { return kCursorUp; }
 
-		// Returns the current opacity that this layer wants the cursor to be, from 0 (xparent) to 1 (opaque)
-		virtual hsScalar	GetCurrentCursorOpacity( void ) const { return 1.f; }
+        // Returns the current opacity that this layer wants the cursor to be, from 0 (xparent) to 1 (opaque)
+        virtual hsScalar    GetCurrentCursorOpacity( void ) const { return 1.f; }
 
-		// Returns true if this layer is wanting to change the mouse, false if it isn't interested
-		virtual hsBool		HasInterestingCursorID( void ) const { return false; }
+        // Returns true if this layer is wanting to change the mouse, false if it isn't interested
+        virtual hsBool      HasInterestingCursorID( void ) const { return false; }
 };
 
 

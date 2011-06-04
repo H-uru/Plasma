@@ -38,57 +38,57 @@ class hsResMgr;
 class plNetClientRecorder
 {
 public:
-	class TimeWrapper
-	{
-	public:
-		virtual double GetWrappedTime() = 0;
-	};
+    class TimeWrapper
+    {
+    public:
+        virtual double GetWrappedTime() = 0;
+    };
 protected:
-	TimeWrapper *fTimeWrapper;
-	
-	// Puts the full path to recName in path
-	virtual void IMakeFilename(const char* recName, char* path);
+    TimeWrapper *fTimeWrapper;
+    
+    // Puts the full path to recName in path
+    virtual void IMakeFilename(const char* recName, char* path);
 public:
 
-	plNetClientRecorder(TimeWrapper* timeWrapper);
-	virtual ~plNetClientRecorder();
+    plNetClientRecorder(TimeWrapper* timeWrapper);
+    virtual ~plNetClientRecorder();
 
-	virtual bool BeginRecording(const char* recName) = 0;;
-	virtual bool BeginPlayback(const char* recName) { hsAssert(false,"plNetClientRecording: Playback not supported"); return false; }
+    virtual bool BeginRecording(const char* recName) = 0;;
+    virtual bool BeginPlayback(const char* recName) { hsAssert(false,"plNetClientRecording: Playback not supported"); return false; }
 
-	// Recording functions
-	virtual bool IsRecordableMsg(plNetMessage* msg) const;
-	virtual void RecordMsg(plNetMessage* msg, double secs) = 0;
-	virtual void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs) = 0;
-	virtual void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) = 0;
+    // Recording functions
+    virtual bool IsRecordableMsg(plNetMessage* msg) const;
+    virtual void RecordMsg(plNetMessage* msg, double secs) = 0;
+    virtual void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs) = 0;
+    virtual void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) = 0;
 
-	// Playback functions
-	double GetTime();
-	virtual bool IsQueueEmpty() { hsAssert(false,"plNetClientRecording: Playback not supported"); return true; }
-	virtual plNetMessage* GetNextMessage() { hsAssert(false,"plNetClientRecording: Playback not supported"); return nil; }
-	virtual double GetNextMessageTimeDelta() { hsAssert(false,"plNetClientRecording: Playback not supported"); return 0; }
+    // Playback functions
+    double GetTime();
+    virtual bool IsQueueEmpty() { hsAssert(false,"plNetClientRecording: Playback not supported"); return true; }
+    virtual plNetMessage* GetNextMessage() { hsAssert(false,"plNetClientRecording: Playback not supported"); return nil; }
+    virtual double GetNextMessageTimeDelta() { hsAssert(false,"plNetClientRecording: Playback not supported"); return 0; }
 };
 
 class plNetClientLoggingRecorder : public plNetClientRecorder
 {
 protected:
-	double fPlaybackTimeOffset;
-	double fNextPlaybackTime;
+    double fPlaybackTimeOffset;
+    double fNextPlaybackTime;
 
-	plStatusLog* fLog;
+    plStatusLog* fLog;
 
-	// We don't send messages when between ages
-	bool fBetweenAges;
+    // We don't send messages when between ages
+    bool fBetweenAges;
 
-	virtual void ILogMsg(plNetMessage* msg, const char* preText="") = 0;
+    virtual void ILogMsg(plNetMessage* msg, const char* preText="") = 0;
 
-	bool IProcessRecordMsg(plNetMessage* msg, double secs);
+    bool IProcessRecordMsg(plNetMessage* msg, double secs);
 public:
-	plNetClientLoggingRecorder(TimeWrapper* timeWrapper);
-	~plNetClientLoggingRecorder();
+    plNetClientLoggingRecorder(TimeWrapper* timeWrapper);
+    ~plNetClientLoggingRecorder();
 
-	void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs);
-	virtual void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) = 0;
+    void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs);
+    virtual void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) = 0;
 
 };
 
@@ -98,81 +98,81 @@ public:
 class plNetClientStreamRecorder : public plNetClientLoggingRecorder
 {
 protected:
-	hsStream* fRecordStream;
+    hsStream* fRecordStream;
 
-	hsResMgr* fResMgr;
+    hsResMgr* fResMgr;
 
-	plNetMessage* IGetNextMessage();
-	virtual bool IIsValidMsg(plNetMessage* msg);
+    plNetMessage* IGetNextMessage();
+    virtual bool IIsValidMsg(plNetMessage* msg);
 
-	void ILogMsg(plNetMessage* msg, const char* preText="");
+    void ILogMsg(plNetMessage* msg, const char* preText="");
 
 public:
-	plNetClientStreamRecorder(TimeWrapper* timeWrapper = nil);
-	~plNetClientStreamRecorder();
+    plNetClientStreamRecorder(TimeWrapper* timeWrapper = nil);
+    ~plNetClientStreamRecorder();
 
-	bool BeginRecording(const char* recName);
-	bool BeginPlayback(const char* recName);
+    bool BeginRecording(const char* recName);
+    bool BeginPlayback(const char* recName);
 
-	// Recording functions
-	void RecordMsg(plNetMessage* msg, double secs);
-	void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg);
+    // Recording functions
+    void RecordMsg(plNetMessage* msg, double secs);
+    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg);
 
-	// Playback functions
-	void SetResMgr(hsResMgr* resmgr) { fResMgr = resmgr; }
-	hsResMgr* GetResMgr();
-	bool IsQueueEmpty();
-	plNetMessage* GetNextMessage();
-	double GetNextMessageTimeDelta();
+    // Playback functions
+    void SetResMgr(hsResMgr* resmgr) { fResMgr = resmgr; }
+    hsResMgr* GetResMgr();
+    bool IsQueueEmpty();
+    plNetMessage* GetNextMessage();
+    double GetNextMessageTimeDelta();
 };
 
 class plNetClientStatsRecorder : public plNetClientLoggingRecorder
 {
 protected:
-	void ILogMsg(plNetMessage* msg, const char* preText="");
+    void ILogMsg(plNetMessage* msg, const char* preText="");
 
 public:
-	plNetClientStatsRecorder(TimeWrapper* timeWrapper = nil);
-	~plNetClientStatsRecorder();
+    plNetClientStatsRecorder(TimeWrapper* timeWrapper = nil);
+    ~plNetClientStatsRecorder();
 
-	bool BeginRecording(const char* recName);
+    bool BeginRecording(const char* recName);
 
-	// Recording functions
-	void RecordMsg(plNetMessage* msg, double secs);
-	void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) { };
+    // Recording functions
+    void RecordMsg(plNetMessage* msg, double secs);
+    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) { };
 };
 
 class plNetClientStreamAndStatsRecorder : public plNetClientRecorder
 {
 protected:
-	plNetClientStreamRecorder* fStreamRecorder;
-	plNetClientStatsRecorder* fStatsRecorder;
+    plNetClientStreamRecorder* fStreamRecorder;
+    plNetClientStatsRecorder* fStatsRecorder;
 
 public:
-	plNetClientStreamAndStatsRecorder(plNetClientStreamRecorder* streamrec, plNetClientStatsRecorder* statrec) :
-	  plNetClientRecorder(nil),fStreamRecorder(streamrec), fStatsRecorder(statrec) {}
-	  ~plNetClientStreamAndStatsRecorder() { delete fStreamRecorder; delete fStatsRecorder; }
+    plNetClientStreamAndStatsRecorder(plNetClientStreamRecorder* streamrec, plNetClientStatsRecorder* statrec) :
+      plNetClientRecorder(nil),fStreamRecorder(streamrec), fStatsRecorder(statrec) {}
+      ~plNetClientStreamAndStatsRecorder() { delete fStreamRecorder; delete fStatsRecorder; }
 
-	bool BeginRecording(const char* recName) { return fStreamRecorder->BeginRecording(recName) && fStatsRecorder->BeginRecording(recName); }
-	bool BeginPlayback(const char* recName) { return fStreamRecorder->BeginPlayback(recName); }
-	
-	// Recording functions
-	bool IsRecordableMsg(plNetMessage* msg) const { return fStreamRecorder->IsRecordableMsg(msg) || fStatsRecorder->IsRecordableMsg(msg); }
-	void RecordMsg(plNetMessage* msg, double secs) { fStreamRecorder->RecordMsg(msg,secs); fStatsRecorder->RecordMsg(msg,secs); }
-	void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs) { fStreamRecorder->RecordLinkMsg(linkMsg,secs); fStatsRecorder->RecordLinkMsg(linkMsg,secs); }
-	void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) { fStreamRecorder->RecordAgeLoadedMsg(ageLoadedMsg); fStatsRecorder->RecordAgeLoadedMsg(ageLoadedMsg); }
+    bool BeginRecording(const char* recName) { return fStreamRecorder->BeginRecording(recName) && fStatsRecorder->BeginRecording(recName); }
+    bool BeginPlayback(const char* recName) { return fStreamRecorder->BeginPlayback(recName); }
+    
+    // Recording functions
+    bool IsRecordableMsg(plNetMessage* msg) const { return fStreamRecorder->IsRecordableMsg(msg) || fStatsRecorder->IsRecordableMsg(msg); }
+    void RecordMsg(plNetMessage* msg, double secs) { fStreamRecorder->RecordMsg(msg,secs); fStatsRecorder->RecordMsg(msg,secs); }
+    void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs) { fStreamRecorder->RecordLinkMsg(linkMsg,secs); fStatsRecorder->RecordLinkMsg(linkMsg,secs); }
+    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) { fStreamRecorder->RecordAgeLoadedMsg(ageLoadedMsg); fStatsRecorder->RecordAgeLoadedMsg(ageLoadedMsg); }
 
-	// Playback functions
-	bool IsQueueEmpty() { return fStreamRecorder->IsQueueEmpty(); }
-	plNetMessage* GetNextMessage() { return fStreamRecorder->GetNextMessage(); }
-	double GetNextMessageTimeDelta() { return fStreamRecorder->GetNextMessageTimeDelta(); }
+    // Playback functions
+    bool IsQueueEmpty() { return fStreamRecorder->IsQueueEmpty(); }
+    plNetMessage* GetNextMessage() { return fStreamRecorder->GetNextMessage(); }
+    double GetNextMessageTimeDelta() { return fStreamRecorder->GetNextMessageTimeDelta(); }
 };
 
 class plNetClientStressStreamRecorder : public plNetClientStreamRecorder
 {
 public:
-	plNetClientStressStreamRecorder(TimeWrapper* timeWrapper = nil) : plNetClientStreamRecorder(timeWrapper) {}
-	bool IsRecordableMsg(plNetMessage* msg) const;
+    plNetClientStressStreamRecorder(TimeWrapper* timeWrapper = nil) : plNetClientStreamRecorder(timeWrapper) {}
+    bool IsRecordableMsg(plNetMessage* msg) const;
 };
 
 #endif // plNetClientRecorder_h_inc

@@ -32,37 +32,37 @@ hsResMgr* hsgResMgr::fResMgr = nil;
 
 plDispatchBase* plgDispatch::Dispatch()
 {
-	return hsgResMgr::Dispatch();
+    return hsgResMgr::Dispatch();
 }
 
 hsBool hsgResMgr::Init(hsResMgr* m)
 {
-	hsRefCnt_SafeAssign(fResMgr, m); 
-	hsRefCnt_SafeUnRef(m);
-	if (!m->IInit())
-		return false;
-	return true; 
+    hsRefCnt_SafeAssign(fResMgr, m); 
+    hsRefCnt_SafeUnRef(m);
+    if (!m->IInit())
+        return false;
+    return true; 
 }
 
 void hsgResMgr::Shutdown()
 {
-	if (fResMgr)
-	{
-		if (fResMgr->RefCnt() <= 1)
-		{
-			fResMgr->IShutdown();
-			hsRefCnt_SafeUnRef(fResMgr); 
-			fResMgr = nil; 
-		}
-		else
-		{
-			hsRefCnt_SafeUnRef(fResMgr);
-		}
-	}
+    if (fResMgr)
+    {
+        if (fResMgr->RefCnt() <= 1)
+        {
+            fResMgr->IShutdown();
+            hsRefCnt_SafeUnRef(fResMgr); 
+            fResMgr = nil; 
+        }
+        else
+        {
+            hsRefCnt_SafeUnRef(fResMgr);
+        }
+    }
 }
 
 plPipeResReq& plPipeResReq::Instance() 
 { 
-	static  plPipeResReq r; 
-	return r; 
+    static  plPipeResReq r; 
+    return r; 
 }

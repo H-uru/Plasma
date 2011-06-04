@@ -35,9 +35,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNGAMESCOMMON_PCH_H
 
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnNetBase/pnNetBase.h"
-#include "../pnProduct/pnProduct.h"
+#include "pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnProduct/pnProduct.h"
 
 #include "pnGameMgr.h"
 #include "Intern.h"

@@ -39,35 +39,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 const pnAddrInfo* pnAddrInfo::GetInterface()
 {
-	static pnAddrInfo addrinfo;
-	return &addrinfo;
+    static pnAddrInfo addrinfo;
+    return &addrinfo;
 }
 
 struct addrinfo* pnAddrInfo::GetAddrByNameSimple(const char* name, const int family)
 {
-	struct addrinfo* info;
-	struct addrinfo hints;
-	memset(&hints,0,sizeof(hints));
-	hints.ai_family = family;
-	hints.ai_flags = AI_CANONNAME;
-	if (Get(name,NULL,&hints,&info) != 0)
-		info = NULL;
-	return info;
+    struct addrinfo* info;
+    struct addrinfo hints;
+    memset(&hints,0,sizeof(hints));
+    hints.ai_family = family;
+    hints.ai_flags = AI_CANONNAME;
+    if (Get(name,NULL,&hints,&info) != 0)
+        info = NULL;
+    return info;
 };
 
 int pnAddrInfo::Get(const char* node, const char* service, const struct addrinfo* hints, struct addrinfo** res)
 {
-	return getaddrinfo(node,service,hints,res);
+    return getaddrinfo(node,service,hints,res);
 }
 
 void pnAddrInfo::Free(struct addrinfo* res)
 {
-	freeaddrinfo(res);
+    freeaddrinfo(res);
 }
 
 const char* pnAddrInfo::GetErrorString(int errcode)
 {
-	return gai_strerror(errcode);
+    return gai_strerror(errcode);
 }
 
 //////////////////////////////////
@@ -85,31 +85,31 @@ pnAddrInfo::~pnAddrInfo()
 
 void pnAddrInfo::GetLocalAddrs(List& addrslist, bool incLoopBack)
 {
-	struct ifconf info;
-	struct ifreq infos[128];
-	
-	info.ifc_len = sizeof(infos);
-	info.ifc_req = infos;
-	
-	int s = socket(AF_INET, SOCK_DGRAM, 0); 
-	
-	if (ioctl(s,SIOCGIFCONF,&info) == 0)
-	{
-		int i;
-		int entries = info.ifc_len / sizeof(struct ifreq);
-		
-		for (i = 0; i < entries; i++)
-		{
-			struct in_addr addr = ((struct sockaddr_in *)&(infos[i].ifr_addr))->sin_addr;
-			
-			if (incLoopBack || (addr.s_addr != htonl(INADDR_LOOPBACK)))
-			{
-				addrslist.push_back(inet_ntoa(addr));
-			}
-		}
-	}
-	
-	close(s);
+    struct ifconf info;
+    struct ifreq infos[128];
+    
+    info.ifc_len = sizeof(infos);
+    info.ifc_req = infos;
+    
+    int s = socket(AF_INET, SOCK_DGRAM, 0); 
+    
+    if (ioctl(s,SIOCGIFCONF,&info) == 0)
+    {
+        int i;
+        int entries = info.ifc_len / sizeof(struct ifreq);
+        
+        for (i = 0; i < entries; i++)
+        {
+            struct in_addr addr = ((struct sockaddr_in *)&(infos[i].ifr_addr))->sin_addr;
+            
+            if (incLoopBack || (addr.s_addr != htonl(INADDR_LOOPBACK)))
+            {
+                addrslist.push_back(inet_ntoa(addr));
+            }
+        }
+    }
+    
+    close(s);
 }
 
 #endif
@@ -121,39 +121,39 @@ void pnAddrInfo::GetLocalAddrs(List& addrslist, bool incLoopBack)
 #if HS_BUILD_FOR_WIN32
 pnAddrInfo::pnAddrInfo()
 {
-	WSADATA data;
-	WSAStartup(MAKEWORD( 2, 2 ), &data);
+    WSADATA data;
+    WSAStartup(MAKEWORD( 2, 2 ), &data);
 }
 
 pnAddrInfo::~pnAddrInfo()
 {
-		WSACleanup();
+        WSACleanup();
 }
 
 void pnAddrInfo::GetLocalAddrs(List& addrslist, bool incLoopBack)
 {
-	INTERFACE_INFO infos[128];  // get at most 128 interfaces
-	const unsigned int bufSize = sizeof(infos);
-	DWORD retSize;
+    INTERFACE_INFO infos[128];  // get at most 128 interfaces
+    const unsigned int bufSize = sizeof(infos);
+    DWORD retSize;
 
-	SOCKET s = socket(AF_INET, SOCK_DGRAM, 0); 
+    SOCKET s = socket(AF_INET, SOCK_DGRAM, 0); 
 
-	if (WSAIoctl(s,SIO_GET_INTERFACE_LIST,NULL,NULL,(void*)infos,bufSize,&retSize,NULL,NULL) == 0)
-	{
-		unsigned int entries = retSize/sizeof(INTERFACE_INFO);
-		int i;
-		for (i = 0; i < entries; i++)
-		{
-			if (infos[i].iiFlags & IFF_UP)
-			{
-				struct in_addr addr = infos[i].iiAddress.AddressIn.sin_addr;
-				if (incLoopBack || (addr.s_addr != htonl(INADDR_LOOPBACK)))
-					addrslist.push_back(inet_ntoa(addr));
-			}
-		}
-	}
+    if (WSAIoctl(s,SIO_GET_INTERFACE_LIST,NULL,NULL,(void*)infos,bufSize,&retSize,NULL,NULL) == 0)
+    {
+        unsigned int entries = retSize/sizeof(INTERFACE_INFO);
+        int i;
+        for (i = 0; i < entries; i++)
+        {
+            if (infos[i].iiFlags & IFF_UP)
+            {
+                struct in_addr addr = infos[i].iiAddress.AddressIn.sin_addr;
+                if (incLoopBack || (addr.s_addr != htonl(INADDR_LOOPBACK)))
+                    addrslist.push_back(inet_ntoa(addr));
+            }
+        }
+    }
 
-	closesocket(s);
+    closesocket(s);
 }
 #endif
 

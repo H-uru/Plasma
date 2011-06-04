@@ -26,45 +26,47 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVaultNotifyMsg_h_inc
 #define plVaultNotifyMsg_h_inc
 
-#include "../pnMessage/plMessage.h"
-#include "../plNetCommon/plNetCommonHelpers.h"
-#include "../plNetCommon/plNetCommon.h"
+#include "pnMessage/plMessage.h"
+#include "plNetCommon/plNetCommonHelpers.h"
+#include "plNetCommon/plNetCommon.h"
 
 class plVaultNotifyMsg : public plMessage
 {
-	UInt16					fType;
-	plCreatableListHelper	fArgs;
-	Int8					fResultCode;
+    UInt16                  fType;
+    plCreatableListHelper   fArgs;
+    Int8                    fResultCode;
 
 public:
-	enum VaultNotifyTypes
-	{
-		kNothing,
-		kRegisteredOwnedAge = plNetCommon::VaultTasks::kRegisterOwnedAge,
-		kRegisteredVisitAge = plNetCommon::VaultTasks::kRegisterVisitAge,
-		kUnRegisteredOwnedAge = plNetCommon::VaultTasks::kUnRegisterOwnedAge,
-		kUnRegisteredVisitAge = plNetCommon::VaultTasks::kUnRegisterVisitAge,
-		kPublicAgeCreated, 
-		kPublicAgeRemoved
-	};
+    enum VaultNotifyTypes
+    {
+        kNothing,
+        kRegisteredOwnedAge = plNetCommon::VaultTasks::kRegisterOwnedAge,
+        kRegisteredVisitAge = plNetCommon::VaultTasks::kRegisterVisitAge,
+        kUnRegisteredOwnedAge = plNetCommon::VaultTasks::kUnRegisterOwnedAge,
+        kUnRegisteredVisitAge = plNetCommon::VaultTasks::kUnRegisterVisitAge,
+        kPublicAgeCreated, 
+        kPublicAgeRemoved,
+        kRegisteredSubAgeLink,
+        kRegisteredChildAgeLink,
+    };
 
-	plVaultNotifyMsg();
-	~plVaultNotifyMsg();
+    plVaultNotifyMsg();
+    ~plVaultNotifyMsg();
 
-	CLASSNAME_REGISTER( plVaultNotifyMsg );
-	GETINTERFACE_ANY_AUX( plVaultNotifyMsg, plMessage, plCreatableListHelper, fArgs );
+    CLASSNAME_REGISTER( plVaultNotifyMsg );
+    GETINTERFACE_ANY_AUX( plVaultNotifyMsg, plMessage, plCreatableListHelper, fArgs );
 
-	UInt16	GetType() const { return fType; }
-	void	SetType( UInt16 v ) { fType=v; }
+    UInt16  GetType() const { return fType; }
+    void    SetType( UInt16 v ) { fType=v; }
 
-	Int8	GetResultCode() const { return fResultCode; }
-	void	SetResultCode( Int8 v ) { fResultCode=v; }
+    Int8    GetResultCode() const { return fResultCode; }
+    void    SetResultCode( Int8 v ) { fResultCode=v; }
 
-	plCreatableListHelper * GetArgs() { return &fArgs; }
-	const plCreatableListHelper * GetArgs() const { return &fArgs; }
+    plCreatableListHelper * GetArgs() { return &fArgs; }
+    const plCreatableListHelper * GetArgs() const { return &fArgs; }
 
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 #endif // plVaultNotifyMsg_h_inc

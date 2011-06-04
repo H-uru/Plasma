@@ -25,27 +25,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plObjectIntersectPlaneConditionalObject.h"
-#include "../../PubUtilLib/plPhysical/plDetectorModifier.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
+#include "plPhysical/plDetectorModifier.h"
+#include "pnModifier/plLogicModBase.h"
 
 plObjectIntersectPlaneConditionalObject::plObjectIntersectPlaneConditionalObject()
 {
-	
+    
 }
 
 hsBool plObjectIntersectPlaneConditionalObject::MsgReceive(plMessage* msg)
 {
-	/*
-	
-	 if our target is within the bounds of the object our logic modifier is attached to...
-	
-	{
-		bSatisfied = true;
-		fLogicMod->RequestTrigger();
-		return true;
-	}
-	*/
-	return plConditionalObject::MsgReceive(msg);
+    /*
+    
+     if our target is within the bounds of the object our logic modifier is attached to...
+    
+    {
+        bSatisfied = true;
+        fLogicMod->RequestTrigger();
+        return true;
+    }
+    */
+    return plConditionalObject::MsgReceive(msg);
 }
 
 

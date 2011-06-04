@@ -30,31 +30,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 template <class T> class hsQueue {
 private:
-	
-	int			fArraySize;
-	T			*fArray;
-	int 		fHead;		// Index of first element in the queue
-	int 		fTail;		// Index of next free spot in the queue 
-	int 		fLook;		// Index of look pointer
-	hsBool		fFull;		// Is queue full?
-	hsBool		fEmpty;		// Is queue empty?
-	
-	void 		Inc(int *index);
-	int 		Inc(int index);
+    
+    int         fArraySize;
+    T           *fArray;
+    int         fHead;      // Index of first element in the queue
+    int         fTail;      // Index of next free spot in the queue 
+    int         fLook;      // Index of look pointer
+    hsBool      fFull;      // Is queue full?
+    hsBool      fEmpty;     // Is queue empty?
+    
+    void        Inc(int *index);
+    int         Inc(int index);
 
-	void 		Dec(int *index);
-	int 		Dec(int index);
-	
+    void        Dec(int *index);
+    int         Dec(int index);
+    
 public:
-							hsQueue( int size );
-							~hsQueue();
-	hsBool					Append(const T &newTail);	// Add to end of line
-	hsBool					Remove(const T &someElement);	// Find and remove element in the line
-	hsBool					Pop(T *headElement);			// Remove and return the head of the line
-	hsBool					StartLook(T *headElement);		// Return the head of the line w/out removing it
-	hsBool					NextLook(T *nextElement);		// Return the head of the line w/out removing it
-	hsBool					IsEmpty(void) { return fEmpty; }
-	hsBool					IsFull(void) { return fFull; }
+                            hsQueue( int size );
+                            ~hsQueue();
+    hsBool                  Append(const T &newTail);   // Add to end of line
+    hsBool                  Remove(const T &someElement);   // Find and remove element in the line
+    hsBool                  Pop(T *headElement);            // Remove and return the head of the line
+    hsBool                  StartLook(T *headElement);      // Return the head of the line w/out removing it
+    hsBool                  NextLook(T *nextElement);       // Return the head of the line w/out removing it
+    hsBool                  IsEmpty(void) { return fEmpty; }
+    hsBool                  IsFull(void) { return fFull; }
 };
 
 //
@@ -63,13 +63,13 @@ public:
 //
 template <class T> hsQueue<T>::hsQueue( int size )
 {
-	fArraySize = size;
-	fArray = TRACKED_NEW T[ size ];
-	fHead = -1;
-	fTail = -1;
-	fLook = -1;
-	fEmpty = true;
-	fFull = false;
+    fArraySize = size;
+    fArray = TRACKED_NEW T[ size ];
+    fHead = -1;
+    fTail = -1;
+    fLook = -1;
+    fEmpty = true;
+    fFull = false;
 }
 
 //
@@ -77,7 +77,7 @@ template <class T> hsQueue<T>::hsQueue( int size )
 //
 template <class T> hsQueue<T>::~hsQueue()
 {
-	delete [] fArray;
+    delete [] fArray;
 }
 
 //
@@ -85,10 +85,10 @@ template <class T> hsQueue<T>::~hsQueue()
 //
 template <class T> void hsQueue<T>::Inc( int *index )
 {
-	(*index) ++;
-	if ((*index) == fArraySize) {
-		*index = 0;
-	}
+    (*index) ++;
+    if ((*index) == fArraySize) {
+        *index = 0;
+    }
 }
 
 //
@@ -96,11 +96,11 @@ template <class T> void hsQueue<T>::Inc( int *index )
 //
 template <class T> int hsQueue<T>::Inc( int index )
 {
-	(index) ++;
-	if ((index) == fArraySize) {
-		index = 0;
-	}
-	return index;
+    (index) ++;
+    if ((index) == fArraySize) {
+        index = 0;
+    }
+    return index;
 }
 
 //
@@ -108,10 +108,10 @@ template <class T> int hsQueue<T>::Inc( int index )
 //
 template <class T> void hsQueue<T>::Dec( int *index )
 {
-	(*index) --;
-	if ((*index) < 0) {
-		*index = fArraySize-1;
-	}
+    (*index) --;
+    if ((*index) < 0) {
+        *index = fArraySize-1;
+    }
 }
 
 //
@@ -119,11 +119,11 @@ template <class T> void hsQueue<T>::Dec( int *index )
 //
 template <class T> int hsQueue<T>::Dec( int index )
 {
-	(index) --;
-	if ((index) < 0) {
-		index = fArraySize-1;
-	}
-	return index;
+    (index) --;
+    if ((index) < 0) {
+        index = fArraySize-1;
+    }
+    return index;
 }
 
 //
@@ -131,34 +131,34 @@ template <class T> int hsQueue<T>::Dec( int index )
 //
 template <class T> hsBool hsQueue<T>::Append(const T &thing)
 {
-	if (fHead == -1 && fTail == -1) {
-		// init case
-		fHead = 0;
-		fTail = 0;
-	}
+    if (fHead == -1 && fTail == -1) {
+        // init case
+        fHead = 0;
+        fTail = 0;
+    }
 
-	if (fFull) {
-		// Queue is full
-		return false;
-	}
-	
-	if ( (fHead<0 || fHead>=fArraySize) ) {
-		hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "Append: Illegal head pointer", fHead);				
-	}
-	
-	hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "Append: Illegal tail pointer", fTail);
+    if (fFull) {
+        // Queue is full
+        return false;
+    }
+    
+    if ( (fHead<0 || fHead>=fArraySize) ) {
+        hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "Append: Illegal head pointer", fHead);               
+    }
+    
+    hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "Append: Illegal tail pointer", fTail);
 
-	// Copy
-	fArray[fTail] = thing;
-	fEmpty = false;
+    // Copy
+    fArray[fTail] = thing;
+    fEmpty = false;
 
-	// increment tail pointer
-	Inc(&fTail);
-	if (fTail == fHead) {
-		fFull = true;
-	}
-	
-	return true;	
+    // increment tail pointer
+    Inc(&fTail);
+    if (fTail == fHead) {
+        fFull = true;
+    }
+    
+    return true;    
 }
 
 //
@@ -166,24 +166,24 @@ template <class T> hsBool hsQueue<T>::Append(const T &thing)
 //
 template <class T> hsBool hsQueue<T>::Pop(T *thing)
 {
-	if (fEmpty) {
-		return false;
-	}
-	
-	hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "Pop: Illegal head pointer", fHead);
-	hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "Pop: Illegal tail pointer", fTail);
-			
-	// Copy
-	*thing = fArray[fHead];
-	fFull = false;
+    if (fEmpty) {
+        return false;
+    }
+    
+    hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "Pop: Illegal head pointer", fHead);
+    hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "Pop: Illegal tail pointer", fTail);
+            
+    // Copy
+    *thing = fArray[fHead];
+    fFull = false;
 
-	// Increment head pointer
-	Inc(&fHead);
-	if (fHead == fTail) {
-		fEmpty = true;
-	}		
-	
-	return true;
+    // Increment head pointer
+    Inc(&fHead);
+    if (fHead == fTail) {
+        fEmpty = true;
+    }       
+    
+    return true;
 }
 
 //
@@ -191,40 +191,40 @@ template <class T> hsBool hsQueue<T>::Pop(T *thing)
 //
 template <class T> hsBool hsQueue<T>::Remove(const T &thing)
 {
-	if (fEmpty) {
-		return false;
-	}
-	
-	hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "Remove: Illegal head pointer", fHead);
-	hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "Remove: Illegal tail pointer", fTail);
-	
-	// loop through list, find item
-	int i = fHead;
-	do {
-		if (fArray[i] == thing) {
-			// Found it - now remove it by sliding everything down 1
-			int j=Inc(i);
-			while(j!= fTail) {
-				if (fLook==j)
-					Dec(&fLook);
-				fArray[Dec(j)] = fArray[j];
-				Inc(&j);
-			}
-			if (fLook==fTail)
-				Dec(&fLook);
-			Dec(&fTail);
-			if (fTail == fHead) {
-				fEmpty = true;
-			}
-			return true;
-		}
+    if (fEmpty) {
+        return false;
+    }
+    
+    hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "Remove: Illegal head pointer", fHead);
+    hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "Remove: Illegal tail pointer", fTail);
+    
+    // loop through list, find item
+    int i = fHead;
+    do {
+        if (fArray[i] == thing) {
+            // Found it - now remove it by sliding everything down 1
+            int j=Inc(i);
+            while(j!= fTail) {
+                if (fLook==j)
+                    Dec(&fLook);
+                fArray[Dec(j)] = fArray[j];
+                Inc(&j);
+            }
+            if (fLook==fTail)
+                Dec(&fLook);
+            Dec(&fTail);
+            if (fTail == fHead) {
+                fEmpty = true;
+            }
+            return true;
+        }
 
-	 	Inc(&i);
-	 	if (i==fTail) {
-	 		return false;
-	 	}
+        Inc(&i);
+        if (i==fTail) {
+            return false;
+        }
 
-	} while(true);
+    } while(true);
 }
 
 //
@@ -233,21 +233,21 @@ template <class T> hsBool hsQueue<T>::Remove(const T &thing)
 //
 template <class T> hsBool hsQueue<T>::StartLook(T *thing)
 {
-	if (fEmpty) {
-		return false;
-	}
-	
-	hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "StartLook: Illegal head pointer", fHead);
-	hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "StartLook: Illegal tail pointer", fTail);
-	
-	fLook = fHead;
-	*thing = fArray[fLook];
+    if (fEmpty) {
+        return false;
+    }
+    
+    hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "StartLook: Illegal head pointer", fHead);
+    hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "StartLook: Illegal tail pointer", fTail);
+    
+    fLook = fHead;
+    *thing = fArray[fLook];
 
-	// inc look pointer 
-	Inc(&fLook);
-		
-	// success
-	return true;
+    // inc look pointer 
+    Inc(&fLook);
+        
+    // success
+    return true;
 }
 
 //
@@ -257,18 +257,18 @@ template <class T> hsBool hsQueue<T>::StartLook(T *thing)
 //
 template <class T> hsBool hsQueue<T>::NextLook(T *thing)
 {
-	if (fEmpty || fLook == fTail) {
-		return false;
-	}
-	
-	hsAssert(fLook != -1, "Must call StartLook first\n");
-	hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "NextLook: Illegal head pointer", fHead);
-	hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "NextLook: Illegal tail pointer", fTail);
-	
-	// Return copy of item without removing it
-	*thing = fArray[fLook];		
-	Inc(&fLook);
-	return true;
+    if (fEmpty || fLook == fTail) {
+        return false;
+    }
+    
+    hsAssert(fLook != -1, "Must call StartLook first\n");
+    hsIfDebugMessage( (fHead<0 || fHead>=fArraySize), "NextLook: Illegal head pointer", fHead);
+    hsIfDebugMessage( (fTail<0 || fTail>=fArraySize), "NextLook: Illegal tail pointer", fTail);
+    
+    // Return copy of item without removing it
+    *thing = fArray[fLook];     
+    Inc(&fLook);
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -279,73 +279,73 @@ template <class T> hsBool hsQueue<T>::NextLook(T *thing)
 
 #include "hsThread.h"
 #if HS_BUILD_FOR_UNIX
-	#include <mqueue.h>
+    #include <mqueue.h>
 #endif
 
 class hsListQue {
 public:
-	struct Elem {
-		Elem*	fNext;
-	};
+    struct Elem {
+        Elem*   fNext;
+    };
 private:
-	Elem*	fHead;
-	Elem*	fTail;
-	int		fCount;
+    Elem*   fHead;
+    Elem*   fTail;
+    int     fCount;
 public:
-				hsListQue();
-	virtual		~hsListQue();
+                hsListQue();
+    virtual     ~hsListQue();
 
-	virtual int		Count();
-	virtual void	Enqueue(Elem* newItem);
-	virtual Elem*	Dequeue();
+    virtual int     Count();
+    virtual void    Enqueue(Elem* newItem);
+    virtual Elem*   Dequeue();
 };
 
 class hsMutexQueue : public hsListQue {
-	hsMutex		fMutex;
+    hsMutex     fMutex;
 public:
-	hsMutexQueue() {}
+    hsMutexQueue() {}
 
-	virtual int		Count();
-	virtual void	Enqueue(Elem* newItem);
-	virtual Elem*	Dequeue();	// will return nil if the queue is empty
+    virtual int     Count();
+    virtual void    Enqueue(Elem* newItem);
+    virtual Elem*   Dequeue();  // will return nil if the queue is empty
 };
 
 class hsSemaphoreQueue : public hsMutexQueue {
-	hsSemaphore	fSema;
+    hsSemaphore fSema;
 public:
-	hsSemaphoreQueue() {}
+    hsSemaphoreQueue() {}
 
-	virtual void	Enqueue(Elem* newItem);
-	virtual Elem*	Dequeue();	// never returns nil, it just waits
+    virtual void    Enqueue(Elem* newItem);
+    virtual Elem*   Dequeue();  // never returns nil, it just waits
 };
 
 class hsMsgQueue {
-	int	fMaxSize;
+    int fMaxSize;
 #if HS_BUILD_FOR_UNIX
-	mqd_t	fMQ;
+    mqd_t   fMQ;
 #else
-	class hsPrivateMQ*	fMQ;
-	UInt32	fAccess;
+    class hsPrivateMQ*  fMQ;
+    UInt32  fAccess;
 #endif
 public:
-	enum {
-		kRead	= 0x0001,
-		kWrite	= 0x0002,
-		kBlock	= 0x0004
-	};
+    enum {
+        kRead   = 0x0001,
+        kWrite  = 0x0002,
+        kBlock  = 0x0004
+    };
 
-		hsMsgQueue();
-	virtual	~hsMsgQueue();
+        hsMsgQueue();
+    virtual ~hsMsgQueue();
 
-	hsBool	Create(const char name[], int maxSize, UInt32 access);
-	hsBool	Open(const char name[], UInt32 access);
-	void	Close();
+    hsBool  Create(const char name[], int maxSize, UInt32 access);
+    hsBool  Open(const char name[], UInt32 access);
+    void    Close();
 
-	int	GetMaxSize() const { return fMaxSize; }
-	hsBool	Send(const void* data, int size = 0);
-	int	Receive(void* data);	// returns actual size or 0
+    int GetMaxSize() const { return fMaxSize; }
+    hsBool  Send(const void* data, int size = 0);
+    int Receive(void* data);    // returns actual size or 0
 
-	static void	Delete(const char name[]);
+    static void Delete(const char name[]);
 };
 #endif // MQUEUE
 

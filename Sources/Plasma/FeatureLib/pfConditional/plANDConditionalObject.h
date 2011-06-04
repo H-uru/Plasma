@@ -27,28 +27,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plANDConditionalObject_inc
 #define plANDConditionalObject_inc
 
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"
+#include "pnModifier/plConditionalObject.h"
 #include "hsTemplates.h"
 
 class plANDConditionalObject : public plConditionalObject
 {
 protected:
-	hsTArray<plConditionalObject*>	fChildren;
+    hsTArray<plConditionalObject*>  fChildren;
 
 public:
-	
-	plANDConditionalObject();
-	~plANDConditionalObject();
-	
-	CLASSNAME_REGISTER( plANDConditionalObject );
-	GETINTERFACE_ANY( plANDConditionalObject, plConditionalObject );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    plANDConditionalObject();
+    ~plANDConditionalObject();
+    
+    CLASSNAME_REGISTER( plANDConditionalObject );
+    GETINTERFACE_ANY( plANDConditionalObject, plConditionalObject );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	hsBool MsgReceive(plMessage* msg);
-	void Evaluate();
-	void Reset();
+    hsBool MsgReceive(plMessage* msg);
+    void Evaluate();
+    void Reset();
 
 };
 

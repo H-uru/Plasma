@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnKeyedObject_inc
 #define pnKeyedObject_inc
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "hsKeyedObject.h"
 REGISTER_CREATABLE( hsKeyedObject );

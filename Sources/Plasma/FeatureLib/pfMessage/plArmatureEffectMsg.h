@@ -26,40 +26,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plArmatureEffectMsg_inc
 #define plArmatureEffectMsg_inc
 
-#include "../pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
 
 class plArmatureEffectMsg : public plEventCallbackMsg
 {
 public:
-	plArmatureEffectMsg() : plEventCallbackMsg(), fTriggerIdx(-1) {}
-	plArmatureEffectMsg(const plKey &receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
-		plEventCallbackMsg(receiver, e, idx, t, repeats, user), fTriggerIdx(-1) {}
+    plArmatureEffectMsg() : plEventCallbackMsg(), fTriggerIdx(-1) {}
+    plArmatureEffectMsg(const plKey &receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+        plEventCallbackMsg(receiver, e, idx, t, repeats, user), fTriggerIdx(-1) {}
 
-	CLASSNAME_REGISTER( plArmatureEffectMsg );
-	GETINTERFACE_ANY( plArmatureEffectMsg, plEventCallbackMsg );
+    CLASSNAME_REGISTER( plArmatureEffectMsg );
+    GETINTERFACE_ANY( plArmatureEffectMsg, plEventCallbackMsg );
 
-	// These aren't meant to go across the net, so no IO necessary.
-	void Read(hsStream* stream, hsResMgr* mgr) {}
-	void Write(hsStream* stream, hsResMgr* mgr) {}
+    // These aren't meant to go across the net, so no IO necessary.
+    void Read(hsStream* stream, hsResMgr* mgr) {}
+    void Write(hsStream* stream, hsResMgr* mgr) {}
 
-	Int8 fTriggerIdx;
+    Int8 fTriggerIdx;
 };
 
 class plArmatureEffectStateMsg : public plMessage
 {
 public:
-	plArmatureEffectStateMsg();
-	~plArmatureEffectStateMsg();
-	
-	CLASSNAME_REGISTER( plArmatureEffectStateMsg );
-	GETINTERFACE_ANY( plArmatureEffectStateMsg, plMessage );	
+    plArmatureEffectStateMsg();
+    ~plArmatureEffectStateMsg();
+    
+    CLASSNAME_REGISTER( plArmatureEffectStateMsg );
+    GETINTERFACE_ANY( plArmatureEffectStateMsg, plMessage );    
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr); 
-	virtual void Write(hsStream* stream, hsResMgr* mgr); 
+    virtual void Read(hsStream* stream, hsResMgr* mgr); 
+    virtual void Write(hsStream* stream, hsResMgr* mgr); 
 
-	Int8 fSurface;
-	hsBool fAddSurface;
+    Int8 fSurface;
+    hsBool fAddSurface;
 };
-	
+    
 
 #endif

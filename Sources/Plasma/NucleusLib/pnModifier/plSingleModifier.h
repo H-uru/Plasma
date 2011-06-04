@@ -29,7 +29,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plModifier.h"
 #include "hsBitVector.h"
-#include "../pnNetCommon/plSynchedValue.h"
+#include "pnNetCommon/plSynchedValue.h"
 
 class plSceneObject;
 class plSingleModMsg;
@@ -37,33 +37,33 @@ class plSingleModMsg;
 class plSingleModifier : public plModifier
 {
 protected:
-	plSceneObject*	fTarget;
-	hsBitVector		fFlags;
+    plSceneObject*  fTarget;
+    hsBitVector     fFlags;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) = 0;
-	
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) = 0;
+    
 public:
-	plSingleModifier();
-	virtual ~plSingleModifier();
+    plSingleModifier();
+    virtual ~plSingleModifier();
 
-	CLASSNAME_REGISTER( plSingleModifier );
-	GETINTERFACE_ANY( plSingleModifier, plModifier );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    CLASSNAME_REGISTER( plSingleModifier );
+    GETINTERFACE_ANY( plSingleModifier, plModifier );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual int GetNumTargets() const { return 1; }
-	virtual plSceneObject* GetTarget(int iTarg) const {return fTarget;}
-	virtual void AddTarget(plSceneObject* so) {SetTarget(so);}
-	virtual void RemoveTarget(plSceneObject* so) {fTarget = 0;} 
+    virtual int GetNumTargets() const { return 1; }
+    virtual plSceneObject* GetTarget(int iTarg) const {return fTarget;}
+    virtual void AddTarget(plSceneObject* so) {SetTarget(so);}
+    virtual void RemoveTarget(plSceneObject* so) {fTarget = 0;} 
 
 
-	virtual plSceneObject* GetTarget() const { return fTarget; }
-	virtual void SetTarget(plSceneObject* so) { fTarget = so; }
+    virtual plSceneObject* GetTarget() const { return fTarget; }
+    virtual void SetTarget(plSceneObject* so) { fTarget = so; }
 
-	hsBool HasFlag(int f) const { return fFlags.IsBitSet(f); }
-	plSingleModifier& SetFlag(int f) { fFlags.SetBit(f); return *this; }
-	plSingleModifier& ClearFlag(int f) { fFlags.ClearBit(f); return *this; }
+    hsBool HasFlag(int f) const { return fFlags.IsBitSet(f); }
+    plSingleModifier& SetFlag(int f) { fFlags.SetBit(f); return *this; }
+    plSingleModifier& ClearFlag(int f) { fFlags.ClearBit(f); return *this; }
 
 };
 

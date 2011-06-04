@@ -43,19 +43,19 @@ namespace Cli2GateKeeper {
 ***/
 
 static const NetMsgField kPingRequestFields[] = {
-	kNetMsgFieldTransId,					// transId
-	kNetMsgFieldTimeMs,						// pingTimeMs
-	NET_MSG_FIELD_VAR_COUNT(1, 64 * 1024),	// payloadBytes
-	NET_MSG_FIELD_VAR_PTR(),				// payload
+    kNetMsgFieldTransId,                    // transId
+    kNetMsgFieldTimeMs,                     // pingTimeMs
+    NET_MSG_FIELD_VAR_COUNT(1, 64 * 1024),  // payloadBytes
+    NET_MSG_FIELD_VAR_PTR(),                // payload
 };
 
 static const NetMsgField kFileSrvIpAddressRequestFields[] = {
-	kNetMsgFieldTransId,					// transId
-	NET_MSG_FIELD_BYTE(),					// isPatcher
+    kNetMsgFieldTransId,                    // transId
+    NET_MSG_FIELD_BYTE(),                   // isPatcher
 };
 
 static const NetMsgField kAuthSrvIpAddressRequestFields[] = {
-	kNetMsgFieldTransId,					// transId
+    kNetMsgFieldTransId,                    // transId
 };
 
 
@@ -66,29 +66,29 @@ static const NetMsgField kAuthSrvIpAddressRequestFields[] = {
 ***/
 
 static const NetMsgField kPingReplyFields[] = {
-	kNetMsgFieldTransId,					// transId
-	kNetMsgFieldTimeMs,						// pingTimeMs
-	NET_MSG_FIELD_VAR_COUNT(1, 64 * 1024),	// payloadBytes
-	NET_MSG_FIELD_VAR_PTR(),				// payload
+    kNetMsgFieldTransId,                    // transId
+    kNetMsgFieldTimeMs,                     // pingTimeMs
+    NET_MSG_FIELD_VAR_COUNT(1, 64 * 1024),  // payloadBytes
+    NET_MSG_FIELD_VAR_PTR(),                // payload
 };
 
 static const NetMsgField kFileSrvIpAddressReplyFields[] = {
-	kNetMsgFieldTransId,					// transId
-	NET_MSG_FIELD_STRING(24),				// IpAddress
+    kNetMsgFieldTransId,                    // transId
+    NET_MSG_FIELD_STRING(24),               // IpAddress
 };
 
 static const NetMsgField kAuthSrvIpAddressReplyFields[] = {
-	kNetMsgFieldTransId,					// transId
-	NET_MSG_FIELD_STRING(24),				// IpAddress
+    kNetMsgFieldTransId,                    // transId
+    NET_MSG_FIELD_STRING(24),               // IpAddress
 };
 
 } using namespace Cli2GateKeeper;
 
 
-const NetMsg kNetMsg_Cli2GateKeeper_PingRequest				= NET_MSG(kCli2GateKeeper_PingRequest,				kPingRequestFields);
-const NetMsg kNetMsg_Cli2GateKeeper_FileSrvIpAddressRequest	= NET_MSG(kCli2GateKeeper_FileSrvIpAddressRequest,	kFileSrvIpAddressRequestFields);
-const NetMsg kNetMsg_Cli2GateKeeper_AuthSrvIpAddressRequest	= NET_MSG(kCli2GateKeeper_AuthSrvIpAddressRequest,	kAuthSrvIpAddressRequestFields);
+const NetMsg kNetMsg_Cli2GateKeeper_PingRequest             = NET_MSG(kCli2GateKeeper_PingRequest,              kPingRequestFields);
+const NetMsg kNetMsg_Cli2GateKeeper_FileSrvIpAddressRequest = NET_MSG(kCli2GateKeeper_FileSrvIpAddressRequest,  kFileSrvIpAddressRequestFields);
+const NetMsg kNetMsg_Cli2GateKeeper_AuthSrvIpAddressRequest = NET_MSG(kCli2GateKeeper_AuthSrvIpAddressRequest,  kAuthSrvIpAddressRequestFields);
 
-const NetMsg kNetMsg_GateKeeper2Cli_PingReply				= NET_MSG(kGateKeeper2Cli_PingReply,				kPingReplyFields);
-const NetMsg kNetMsg_GateKeeper2Cli_FileSrvIpAddressReply	= NET_MSG(kGateKeeper2Cli_FileSrvIpAddressReply,	kFileSrvIpAddressReplyFields);
-const NetMsg kNetMsg_GateKeeper2Cli_AuthSrvIpAddressReply	= NET_MSG(kGateKeeper2Cli_AuthSrvIpAddressReply,	kAuthSrvIpAddressReplyFields);
+const NetMsg kNetMsg_GateKeeper2Cli_PingReply               = NET_MSG(kGateKeeper2Cli_PingReply,                kPingReplyFields);
+const NetMsg kNetMsg_GateKeeper2Cli_FileSrvIpAddressReply   = NET_MSG(kGateKeeper2Cli_FileSrvIpAddressReply,    kFileSrvIpAddressReplyFields);
+const NetMsg kNetMsg_GateKeeper2Cli_AuthSrvIpAddressReply   = NET_MSG(kGateKeeper2Cli_AuthSrvIpAddressReply,    kAuthSrvIpAddressReplyFields);

@@ -24,16 +24,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plProgressMgr Header 													//
-//																			//
+//                                                                          //
+//  plProgressMgr Header                                                    //
+//                                                                          //
 //// Description /////////////////////////////////////////////////////////////
-//																			//
-//	The plProgressMgr is a method by which any part of the client can		//
-//	display a progress bar indicating a lengthy operation.					//
-//	Basically, a function/class/whatnot registers an operation with the		//
-//	plProgressMgr. 
-//																			//
+//                                                                          //
+//  The plProgressMgr is a method by which any part of the client can       //
+//  display a progress bar indicating a lengthy operation.                  //
+//  Basically, a function/class/whatnot registers an operation with the     //
+//  plProgressMgr. 
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plProgressMgr_h
@@ -46,187 +46,187 @@ class plPipeline;
 class plPlate;
 
 //// plOperationProgress Definition //////////////////////////////////////////
-//	The object you get back when you register a lengthy operation. Call this
-//	to update your progress, destroy it when you're done.
+//  The object you get back when you register a lengthy operation. Call this
+//  to update your progress, destroy it when you're done.
 
 class plProgressMgr;
 class plOperationProgress
 {
-	friend class plProgressMgr;
-	friend class plDTProgressMgr;
+    friend class plProgressMgr;
+    friend class plDTProgressMgr;
 
-	protected:
+    protected:
 
-		hsScalar	fValue, fMax;
-		char		fStatusText[ 256 ];
-		char		fTitle[ 256 ];
-		UInt32		fContext;
-		double		fStartTime;
+        hsScalar    fValue, fMax;
+        char        fStatusText[ 256 ];
+        char        fTitle[ 256 ];
+        UInt32      fContext;
+        double      fStartTime;
 
-		UInt32 fElapsedSecs, fRemainingSecs;
-		hsScalar fAmtPerSec;
+        UInt32 fElapsedSecs, fRemainingSecs;
+        hsScalar fAmtPerSec;
 
-		enum Flags
-		{
-			kShouldCancel	= 0x1,
-			kInitUpdate		= 0x2,
-			kFirstUpdate	= 0x4,
-			kLastUpdate		= 0x8,
-			kAborting		= 0x10,
-			kRetry			= 0x20,
-			kOverall		= 0x40,
-			kAlwaysDrawText	= 0x80,
-		};
-		UInt8 fFlags;
+        enum Flags
+        {
+            kShouldCancel   = 0x1,
+            kInitUpdate     = 0x2,
+            kFirstUpdate    = 0x4,
+            kLastUpdate     = 0x8,
+            kAborting       = 0x10,
+            kRetry          = 0x20,
+            kOverall        = 0x40,
+            kAlwaysDrawText = 0x80,
+        };
+        UInt8 fFlags;
 
-		plOperationProgress	*fNext, *fBack;
+        plOperationProgress *fNext, *fBack;
 
-		void IUpdateStats();
+        void IUpdateStats();
 
-		// For overall progress bars
-		void IChildUpdateBegin(plOperationProgress* child);
-		void IChildUpdateEnd(plOperationProgress* child);
+        // For overall progress bars
+        void IChildUpdateBegin(plOperationProgress* child);
+        void IChildUpdateEnd(plOperationProgress* child);
 
-		plOperationProgress( hsScalar length );
+        plOperationProgress( hsScalar length );
 
-	public:
+    public:
 
-		~plOperationProgress();
+        ~plOperationProgress();
 
-		hsScalar GetMax( void ) const { return fMax; }
-		hsScalar GetProgress( void ) const { return fValue; }
-		const char * GetTitle( void ) const { return fTitle; }
-		const char * GetStatusText( void ) const { return fStatusText; }
-		UInt32	GetContext( void ) const { return fContext; }
-		UInt32 GetElapsedSecs() { return fElapsedSecs; }
-		UInt32 GetRemainingSecs() { return fRemainingSecs; }
-		hsScalar GetAmtPerSec() { return fAmtPerSec; }
+        hsScalar GetMax( void ) const { return fMax; }
+        hsScalar GetProgress( void ) const { return fValue; }
+        const char * GetTitle( void ) const { return fTitle; }
+        const char * GetStatusText( void ) const { return fStatusText; }
+        UInt32  GetContext( void ) const { return fContext; }
+        UInt32 GetElapsedSecs() { return fElapsedSecs; }
+        UInt32 GetRemainingSecs() { return fRemainingSecs; }
+        hsScalar GetAmtPerSec() { return fAmtPerSec; }
 
-		// Adds on to current value
-		void	Increment( hsScalar byHowMuch );
+        // Adds on to current value
+        void    Increment( hsScalar byHowMuch );
 
-		// Sets current value
-		void	SetHowMuch( hsScalar byHowMuch );
+        // Sets current value
+        void    SetHowMuch( hsScalar byHowMuch );
 
-		// Set the length
-		void	SetLength( hsScalar length );
+        // Set the length
+        void    SetLength( hsScalar length );
 
-		// Sets the display text above the bar (nil for nothing)
-		void	SetStatusText( const char *text );
+        // Sets the display text above the bar (nil for nothing)
+        void    SetStatusText( const char *text );
 
-		// Sets the title
-		void	SetTitle( const char *title );
+        // Sets the title
+        void    SetTitle( const char *title );
 
-		// Application data
-		void	SetContext( UInt32 context ) { fContext = context;}
+        // Application data
+        void    SetContext( UInt32 context ) { fContext = context;}
 
-		hsBool	IsDone( void ) { return ( fValue < fMax ) ? false : true; }
+        hsBool  IsDone( void ) { return ( fValue < fMax ) ? false : true; }
 
-		// True if this is the initial update (progress was just created)
-		bool IsInitUpdate() { return hsCheckBits(fFlags, kInitUpdate); }
-		// True if this is the first time the progress was updated
-		bool IsFirstUpdate() { return hsCheckBits(fFlags, kFirstUpdate); }
-		// Returns true if this is the last update you'll get from this
-		// operation (because it's getting deleted)
-		bool IsLastUpdate() { return hsCheckBits(fFlags, kLastUpdate); }
+        // True if this is the initial update (progress was just created)
+        bool IsInitUpdate() { return hsCheckBits(fFlags, kInitUpdate); }
+        // True if this is the first time the progress was updated
+        bool IsFirstUpdate() { return hsCheckBits(fFlags, kFirstUpdate); }
+        // Returns true if this is the last update you'll get from this
+        // operation (because it's getting deleted)
+        bool IsLastUpdate() { return hsCheckBits(fFlags, kLastUpdate); }
 
-		// This type of progress is just tracking the overall progress of it's children
-		bool IsOverallProgress() { return hsCheckBits(fFlags, kOverall); }
+        // This type of progress is just tracking the overall progress of it's children
+        bool IsOverallProgress() { return hsCheckBits(fFlags, kOverall); }
 
-		// Set if this progress is aborting before it completes.  This will let any overall
-		// progress bars above this one know to adjust their totals to not include any amount
-		// that wasn't completed, and will set this progress bar to zero
-		void SetAborting();
-		// If you're reusing an existing progress bar to retry a failed operation, call this.
-		// It will set the retry flag, and reset the progress bar so the next update will
-		// count as the first.  If you set retry in RegisterOperation, don't use this too.
-		void SetRetry();
-		bool IsRetry() { return hsCheckBits(fFlags, kRetry); }
+        // Set if this progress is aborting before it completes.  This will let any overall
+        // progress bars above this one know to adjust their totals to not include any amount
+        // that wasn't completed, and will set this progress bar to zero
+        void SetAborting();
+        // If you're reusing an existing progress bar to retry a failed operation, call this.
+        // It will set the retry flag, and reset the progress bar so the next update will
+        // count as the first.  If you set retry in RegisterOperation, don't use this too.
+        void SetRetry();
+        bool IsRetry() { return hsCheckBits(fFlags, kRetry); }
 
-		// The progress manager can decide at any time to cancel your operation on you. Check this
-		// value if you want to play nice and behave.
-		bool ShouldCancel() const { return hsCheckBits(fFlags, kShouldCancel); }
+        // The progress manager can decide at any time to cancel your operation on you. Check this
+        // value if you want to play nice and behave.
+        bool ShouldCancel() const { return hsCheckBits(fFlags, kShouldCancel); }
 
-		bool AlwaysDrawText() const { return hsCheckBits(fFlags, kAlwaysDrawText); }
+        bool AlwaysDrawText() const { return hsCheckBits(fFlags, kAlwaysDrawText); }
 
-		// Please ignore this and don't use it unless you're me :P
-		plOperationProgress* GetPrev() const { return fBack; }
-		plOperationProgress* GetNext() const { return fNext; }
+        // Please ignore this and don't use it unless you're me :P
+        plOperationProgress* GetPrev() const { return fBack; }
+        plOperationProgress* GetNext() const { return fNext; }
 
-		// Or this
-		void	SetCancelFlag( hsBool f ) { hsChangeBits(fFlags, kShouldCancel, f); }
+        // Or this
+        void    SetCancelFlag( hsBool f ) { hsChangeBits(fFlags, kShouldCancel, f); }
 };
 
 // This is a callback proc you set that gets called every time the progressManager
 // needs updating (like, say, you need to redraw progress bars). The client generally
 // sets this callback and nobody should ever touch it.
-typedef	void(*plProgressMgrCallbackProc)( plOperationProgress* );
+typedef void(*plProgressMgrCallbackProc)( plOperationProgress* );
 
 //// Manager Class Definition ////////////////////////////////////////////////
 
 class plProgressMgr
 {
-	friend class plOperationProgress;
+    friend class plOperationProgress;
 
-	public:
-		// this must match the order of the fStaticTextIDs array
-		// for it to be useful
-		enum StaticText
-		{
-			kNone,
-			kUpdateText,
-		};
+    public:
+        // this must match the order of the fStaticTextIDs array
+        // for it to be useful
+        enum StaticText
+        {
+            kNone,
+            kUpdateText,
+        };
 
-	private:
+    private:
 
-		static plProgressMgr	*fManager;
-		static int				fImageRotation[];
-		static int				fStaticTextIDs[];
+        static plProgressMgr    *fManager;
+        static int              fImageRotation[];
+        static int              fStaticTextIDs[];
 
-	protected:
+    protected:
 
-		plProgressMgr();
+        plProgressMgr();
 
-		plOperationProgress		*fOperations;
+        plOperationProgress     *fOperations;
 
-		plProgressMgrCallbackProc	fCallbackProc;
+        plProgressMgrCallbackProc   fCallbackProc;
 
-		StaticText	fCurrentStaticText;
+        StaticText  fCurrentStaticText;
 
-		void IUpdateCallbackProc(plOperationProgress* progress);
-		// For derived classes to use, so they don't have to set a callback proc
-		virtual void IDerivedCallbackProc(plOperationProgress* progress) {}
+        void IUpdateCallbackProc(plOperationProgress* progress);
+        // For derived classes to use, so they don't have to set a callback proc
+        virtual void IDerivedCallbackProc(plOperationProgress* progress) {}
 
-		void IUpdateFlags(plOperationProgress* progress);
+        void IUpdateFlags(plOperationProgress* progress);
 
-		plOperationProgress* IRegisterOperation(hsScalar length, const char *title, StaticText staticTextType, bool isRetry, bool isOverall, bool alwaysDrawText);
-		// Called by the operation
-		void IUnregisterOperation(plOperationProgress* op);
+        plOperationProgress* IRegisterOperation(hsScalar length, const char *title, StaticText staticTextType, bool isRetry, bool isOverall, bool alwaysDrawText);
+        // Called by the operation
+        void IUnregisterOperation(plOperationProgress* op);
 
-		virtual void Activate() {}
-		virtual void Deactivate() {}
+        virtual void Activate() {}
+        virtual void Deactivate() {}
 
-		static plProgressMgr	*IGetManager( void ) { return fManager; }
+        static plProgressMgr    *IGetManager( void ) { return fManager; }
 
-	public:
+    public:
 
-		virtual ~plProgressMgr();
+        virtual ~plProgressMgr();
 
-		static plProgressMgr* GetInstance() { return fManager; }
-		static int GetLoadingFrameID(int index);
-		static int GetStaticTextID(StaticText staticTextType);
+        static plProgressMgr* GetInstance() { return fManager; }
+        static int GetLoadingFrameID(int index);
+        static int GetStaticTextID(StaticText staticTextType);
 
-		virtual void	Draw( plPipeline *p ) { }
+        virtual void    Draw( plPipeline *p ) { }
 
-		plOperationProgress* RegisterOperation(hsScalar length, const char *title = nil, StaticText staticTextType = kNone, bool isRetry = false, bool alwaysDrawText = false);
-		plOperationProgress* RegisterOverallOperation(hsScalar length, const char *title = nil, StaticText staticTextType = kNone, bool alwaysDrawText = false);
+        plOperationProgress* RegisterOperation(hsScalar length, const char *title = nil, StaticText staticTextType = kNone, bool isRetry = false, bool alwaysDrawText = false);
+        plOperationProgress* RegisterOverallOperation(hsScalar length, const char *title = nil, StaticText staticTextType = kNone, bool alwaysDrawText = false);
 
 
-		plProgressMgrCallbackProc SetCallbackProc( plProgressMgrCallbackProc proc );
+        plProgressMgrCallbackProc SetCallbackProc( plProgressMgrCallbackProc proc );
 
-		hsBool		IsActive( void ) const { return ( fOperations != nil ) ? true : false; }
+        hsBool      IsActive( void ) const { return ( fOperations != nil ) ? true : false; }
 
-		void	CancelAllOps( void );
+        void    CancelAllOps( void );
 };
 
 

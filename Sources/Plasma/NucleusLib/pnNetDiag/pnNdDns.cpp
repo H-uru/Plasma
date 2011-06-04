@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct DNSParam {
-	NetDiag *				diag;
-	FNetDiagDumpProc		dump;
-	FNetDiagTestCallback	callback;
-	void *					param;
-	ENetProtocol			protocol;
-	unsigned				srv;
+    NetDiag *               diag;
+    FNetDiagDumpProc        dump;
+    FNetDiagTestCallback    callback;
+    void *                  param;
+    ENetProtocol            protocol;
+    unsigned                srv;
 };
 
 
@@ -62,44 +62,42 @@ static void LookupCallback (
     unsigned            addrCount,
     const NetAddress    addrs[]
 ) {
-	ref(name);
-	
-	DNSParam * p = (DNSParam *)param;
-	if (addrCount) {
-		unsigned node = NetAddressGetNode(addrs[0]);
-		p->diag->critsect.Enter();
-		{
-			p->diag->nodes[p->srv] = node;
-		}
-		p->diag->critsect.Leave();
-		wchar nodeStr[64];
-		NetAddressNodeToString(p->diag->nodes[p->srv], nodeStr, arrsize(nodeStr));
-		p->dump(L"[DNS] Success. %s --> %s", name, nodeStr);
-		p->callback(
-			p->diag,
-			p->protocol,
-			kNetSuccess,
-			p->param
-		);
-	}
-	else {
-		p->diag->critsect.Enter();
-		{
-			// if the hostname still matches, then clear the node
-			if (p->diag->hosts[p->srv] && 0 == StrCmp(p->diag->hosts[p->srv], name))
-				p->diag->nodes[p->srv] = 0;
-		}
-		p->diag->critsect.Leave();
-		p->dump(L"[DNS] Failed to resolve hostname %s", name);
-		p->callback(
-			p->diag,
-			p->protocol,
-			kNetErrNameLookupFailed,
-			p->param
-		);
-	}
-	p->diag->DecRef("DNS");
-	DEL(p);
+    DNSParam * p = (DNSParam *)param;
+    if (addrCount) {
+        unsigned node = NetAddressGetNode(addrs[0]);
+        p->diag->critsect.Enter();
+        {
+            p->diag->nodes[p->srv] = node;
+        }
+        p->diag->critsect.Leave();
+        wchar nodeStr[64];
+        NetAddressNodeToString(p->diag->nodes[p->srv], nodeStr, arrsize(nodeStr));
+        p->dump(L"[DNS] Success. %s --> %s", name, nodeStr);
+        p->callback(
+            p->diag,
+            p->protocol,
+            kNetSuccess,
+            p->param
+        );
+    }
+    else {
+        p->diag->critsect.Enter();
+        {
+            // if the hostname still matches, then clear the node
+            if (p->diag->hosts[p->srv] && 0 == StrCmp(p->diag->hosts[p->srv], name))
+                p->diag->nodes[p->srv] = 0;
+        }
+        p->diag->critsect.Leave();
+        p->dump(L"[DNS] Failed to resolve hostname %s", name);
+        p->callback(
+            p->diag,
+            p->protocol,
+            kNetErrNameLookupFailed,
+            p->param
+        );
+    }
+    p->diag->DecRef("DNS");
+    DEL(p);
 }
 
 
@@ -126,55 +124,55 @@ void DnsShutdown () {
 
 //============================================================================
 void NetDiagDns (
-	NetDiag *				diag,
-	ENetProtocol			protocol,
-	FNetDiagDumpProc		dump,
-	FNetDiagTestCallback	callback,
-	void *					param
+    NetDiag *               diag,
+    ENetProtocol            protocol,
+    FNetDiagDumpProc        dump,
+    FNetDiagTestCallback    callback,
+    void *                  param
 ) {
-	ASSERT(diag);
-	ASSERT(dump);
-	ASSERT(callback);
-	
-	unsigned srv = NetProtocolToSrv(protocol);
-	if (srv == kNumDiagSrvs) {
-		dump(L"[DNS] Unsupported protocol: %s", NetProtocolToString(protocol));
-		callback(diag, protocol, kNetErrNotSupported, param);
-		return;
-	}
+    ASSERT(diag);
+    ASSERT(dump);
+    ASSERT(callback);
+    
+    unsigned srv = NetProtocolToSrv(protocol);
+    if (srv == kNumDiagSrvs) {
+        dump(L"[DNS] Unsupported protocol: %s", NetProtocolToString(protocol));
+        callback(diag, protocol, kNetErrNotSupported, param);
+        return;
+    }
 
-	wchar * host = nil;
-	diag->critsect.Enter();
-	{
-		if (diag->hosts[srv])
-			host = StrDup(diag->hosts[srv]);
-	}
-	diag->critsect.Leave();
+    wchar * host = nil;
+    diag->critsect.Enter();
+    {
+        if (diag->hosts[srv])
+            host = StrDup(diag->hosts[srv]);
+    }
+    diag->critsect.Leave();
 
-	if (!host) {
-		dump(L"[DNS] No hostname set for protocol: %s", NetProtocolToString(protocol));
-		callback(diag, protocol, kNetSuccess, param);
-		return;
-	}
-			
-	diag->IncRef("DNS");
-	dump(L"[DNS] Looking up %s...", host);
+    if (!host) {
+        dump(L"[DNS] No hostname set for protocol: %s", NetProtocolToString(protocol));
+        callback(diag, protocol, kNetSuccess, param);
+        return;
+    }
+            
+    diag->IncRef("DNS");
+    dump(L"[DNS] Looking up %s...", host);
 
-	DNSParam * dnsParam	= NEWZERO(DNSParam);
-	dnsParam->diag		= diag;
-	dnsParam->srv		= srv;
-	dnsParam->protocol	= protocol;
-	dnsParam->dump		= dump;
-	dnsParam->callback	= callback;
-	dnsParam->param		= param;
+    DNSParam * dnsParam = NEWZERO(DNSParam);
+    dnsParam->diag      = diag;
+    dnsParam->srv       = srv;
+    dnsParam->protocol  = protocol;
+    dnsParam->dump      = dump;
+    dnsParam->callback  = callback;
+    dnsParam->param     = param;
 
-	AsyncCancelId cancelId;
-	AsyncAddressLookupName(
-		&cancelId,
-		LookupCallback,
-		host,
-		0,
-		dnsParam
-	);
-	FREE(host);
+    AsyncCancelId cancelId;
+    AsyncAddressLookupName(
+        &cancelId,
+        LookupCallback,
+        host,
+        0,
+        dnsParam
+    );
+    FREE(host);
 }

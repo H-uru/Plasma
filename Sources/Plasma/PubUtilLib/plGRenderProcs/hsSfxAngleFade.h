@@ -33,41 +33,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsSfxAngleFade : public hsGRenderProcs {
 public:
-	enum {
-		kDirectional		= 0x10000,
-		kTargetRelative		= 0x20000,
-		kTwoSided			= 0x40000,
-		kFaceNormals		= 0x80000
-	};
-	struct hsSfxAfTableEntry {
-		hsScalar			fCosineDel;
-		hsScalar			fCosineNorm;
-		hsScalar			fOpacity;
-	};
+    enum {
+        kDirectional        = 0x10000,
+        kTargetRelative     = 0x20000,
+        kTwoSided           = 0x40000,
+        kFaceNormals        = 0x80000
+    };
+    struct hsSfxAfTableEntry {
+        hsScalar            fCosineDel;
+        hsScalar            fCosineNorm;
+        hsScalar            fOpacity;
+    };
 protected:
 
-	hsBitVector							fSetVector;
-	hsExpander<hsSfxAfTableEntry>		fTable;
+    hsBitVector                         fSetVector;
+    hsExpander<hsSfxAfTableEntry>       fTable;
 
-	hsScalar IOpacFromDot(hsScalar dot);
+    hsScalar IOpacFromDot(hsScalar dot);
 public:
-	hsSfxAngleFade();
-	virtual ~hsSfxAngleFade();
+    hsSfxAngleFade();
+    virtual ~hsSfxAngleFade();
 
-	virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
-	virtual void ProcessPreInterpTris(hsExpander<hsTriangle3*>& tList, hsExpander<hsGTriVertex*>& vList);
+    virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
+    virtual void ProcessPreInterpTris(hsExpander<hsTriangle3*>& tList, hsExpander<hsGTriVertex*>& vList);
 
-	void MakeTable(float* cosList, float* opacList, int num); // lists sorted from lowest cosine to highest
+    void MakeTable(float* cosList, float* opacList, int num); // lists sorted from lowest cosine to highest
 
-	virtual void Read(hsStream* s);
-	virtual void Write(hsStream* s);
+    virtual void Read(hsStream* s);
+    virtual void Write(hsStream* s);
 
-	virtual const char* GetLabel() const { return "hsSfxAngleFade"; }
+    virtual const char* GetLabel() const { return "hsSfxAngleFade"; }
 
-	virtual ProcType GetType() const { return kTypeAngleFade; }
+    virtual ProcType GetType() const { return kTypeAngleFade; }
 
-	CLASSNAME_REGISTER( hsSfxAngleFade );
-	GETINTERFACE_ANY( hsSfxAngleFade, hsGRenderProcs );
+    CLASSNAME_REGISTER( hsSfxAngleFade );
+    GETINTERFACE_ANY( hsSfxAngleFade, hsGRenderProcs );
 
 };
 

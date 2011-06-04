@@ -32,42 +32,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plFileGrabber
 {
 public:
-	virtual bool IsServerAvailable(const char* serverName, const char* currentDir) = 0;
-	virtual bool FileToStream(const char* path, hsStream* stream) = 0;
-	virtual void SetServer(const char* server) = 0;
-	virtual void MakeProperPath(char* path) = 0;
-	virtual bool NeedsAuth() { return false; }
-	virtual void SetUsernamePassword(const std::string& username, const std::string& password) {}
+    virtual bool IsServerAvailable(const char* serverName, const char* currentDir) = 0;
+    virtual bool FileToStream(const char* path, hsStream* stream) = 0;
+    virtual void SetServer(const char* server) = 0;
+    virtual void MakeProperPath(char* path) = 0;
+    virtual bool NeedsAuth() { return false; }
+    virtual void SetUsernamePassword(const std::string& username, const std::string& password) {}
 };
 
 /* Not needed currently - if we want it again we'll have to reimplement HTTP comm
 class plHttpFileGrabber : public plFileGrabber
 {
 private:
-	plHttpDiverseRequestMgr fRequestMgr;
+    plHttpDiverseRequestMgr fRequestMgr;
 
 public:
-	plHttpFileGrabber();
-	virtual bool IsServerAvailable(const char* serverName);
-	virtual bool FileToStream(const char* path, hsStream* stream);
-	virtual void SetServer(const char* server);
-	virtual void MakeProperPath(char* path);
-	virtual bool NeedsAuth() { return true; }
-	virtual void SetUsernamePassword(const std::string& username, const std::string& password);
+    plHttpFileGrabber();
+    virtual bool IsServerAvailable(const char* serverName);
+    virtual bool FileToStream(const char* path, hsStream* stream);
+    virtual void SetServer(const char* server);
+    virtual void MakeProperPath(char* path);
+    virtual bool NeedsAuth() { return true; }
+    virtual void SetUsernamePassword(const std::string& username, const std::string& password);
 };
 */
 
 class plNetShareFileGrabber : public plFileGrabber
 {
 private:
-	std::string fServerName;
+    std::string fServerName;
 
 public:
-	plNetShareFileGrabber();
-	virtual bool IsServerAvailable(const char* serverName, const char* currentDir);
-	virtual bool FileToStream(const char* path, hsStream* stream);
-	virtual void SetServer(const char* server);
-	virtual void MakeProperPath(char* path);
+    plNetShareFileGrabber();
+    virtual bool IsServerAvailable(const char* serverName, const char* currentDir);
+    virtual bool FileToStream(const char* path, hsStream* stream);
+    virtual void SetServer(const char* server);
+    virtual void MakeProperPath(char* path);
 };
 
 #endif

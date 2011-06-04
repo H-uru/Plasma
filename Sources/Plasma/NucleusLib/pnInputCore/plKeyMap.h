@@ -25,8 +25,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plKeyMap - Generic class that defines a mapping of 1-or-2 key codes to
-//				ControlEventCodes
+//  plKeyMap - Generic class that defines a mapping of 1-or-2 key codes to
+//              ControlEventCodes
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,180 +42,180 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 //// plKeyCombo //////////////////////////////////////////////////////////////
-//	Tiny class/data type representing a single key combo. Ex. shift+C
+//  Tiny class/data type representing a single key combo. Ex. shift+C
 
 class plKeyCombo
 {
-	public:
-		plKeyDef	fKey;
-		UInt8		fFlags;
+    public:
+        plKeyDef    fKey;
+        UInt8       fFlags;
 
-		// The ordering of this lets us treat the flags as a priority number.
-		// kCtrl + kShift > kCtrl > kShift > no flags
-		enum Flags
-		{
-			kShift	= 0x01,
-			kCtrl	= 0x02
-		};
+        // The ordering of this lets us treat the flags as a priority number.
+        // kCtrl + kShift > kCtrl > kShift > no flags
+        enum Flags
+        {
+            kShift  = 0x01,
+            kCtrl   = 0x02
+        };
 
-		static plKeyCombo	kUnmapped;
+        static plKeyCombo   kUnmapped;
 
-		plKeyCombo();
-		plKeyCombo( plKeyDef k, UInt8 flags = 0 ) : fKey( k ), fFlags( flags ) { }
-		
-		hsBool	IsSatisfiedBy(const plKeyCombo &combo) const;		
+        plKeyCombo();
+        plKeyCombo( plKeyDef k, UInt8 flags = 0 ) : fKey( k ), fFlags( flags ) { }
+        
+        hsBool  IsSatisfiedBy(const plKeyCombo &combo) const;       
 
-		hsBool	operator==( const plKeyCombo &rhs ) const { return ( fKey == rhs.fKey ) && ( fFlags == rhs.fFlags ); }
-		hsBool	operator!=( const plKeyCombo &rhs ) const { return ( fKey != rhs.fKey ) || ( fFlags != rhs.fFlags ); }
+        hsBool  operator==( const plKeyCombo &rhs ) const { return ( fKey == rhs.fKey ) && ( fFlags == rhs.fFlags ); }
+        hsBool  operator!=( const plKeyCombo &rhs ) const { return ( fKey != rhs.fKey ) || ( fFlags != rhs.fFlags ); }
 };
 
 //// For the Particularly Lazy... ////////////////////////////////////////////
 
 class plShiftKeyCombo : public plKeyCombo
 {
-	public:
-		plShiftKeyCombo( plKeyDef k ) : plKeyCombo( k, kShift ) {}
+    public:
+        plShiftKeyCombo( plKeyDef k ) : plKeyCombo( k, kShift ) {}
 };
 
 class plCtrlKeyCombo : public plKeyCombo
 {
-	public:
-		plCtrlKeyCombo( plKeyDef k ) : plKeyCombo( k, kCtrl ) {}
+    public:
+        plCtrlKeyCombo( plKeyDef k ) : plKeyCombo( k, kCtrl ) {}
 };
 
 class plCtrlShiftKeyCombo : public plKeyCombo
 {
-	public:
-		plCtrlShiftKeyCombo( plKeyDef k ) : plKeyCombo( k, kCtrl | kShift ) {}
+    public:
+        plCtrlShiftKeyCombo( plKeyDef k ) : plKeyCombo( k, kCtrl | kShift ) {}
 };
 
 //// plKeyBinding ////////////////////////////////////////////////////////////
-//	Record for a single binding of 1-or-2 keys to a ControlEventCode, with
-//	optional string if necessary (for, say console command bindings)
+//  Record for a single binding of 1-or-2 keys to a ControlEventCode, with
+//  optional string if necessary (for, say console command bindings)
 
 class plKeyBinding
 {
-	protected:
+    protected:
 
-		ControlEventCode	fCode;
-		UInt32				fCodeFlags;	// Needed?
-		plKeyCombo			fKey1;		// KEY_UNMAPPED for not-used
-		plKeyCombo			fKey2;
-		char				*fString;
+        ControlEventCode    fCode;
+        UInt32              fCodeFlags; // Needed?
+        plKeyCombo          fKey1;      // KEY_UNMAPPED for not-used
+        plKeyCombo          fKey2;
+        char                *fString;
 
-	public:
+    public:
 
-		plKeyBinding();
-		plKeyBinding( ControlEventCode code, UInt32 codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string = nil );
-		virtual ~plKeyBinding();
+        plKeyBinding();
+        plKeyBinding( ControlEventCode code, UInt32 codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string = nil );
+        virtual ~plKeyBinding();
 
-		ControlEventCode	GetCode( void ) const { return fCode; }
-		UInt32				GetCodeFlags( void ) const { return fCodeFlags; }
-		const plKeyCombo	&GetKey1( void ) const { return fKey1; }
-		const plKeyCombo	&GetKey2( void ) const { return fKey2; }
-		const char			*GetExtendedString( void ) const { return fString; }
-		const plKeyCombo	&GetMatchingKey( plKeyDef keyDef ) const;
+        ControlEventCode    GetCode( void ) const { return fCode; }
+        UInt32              GetCodeFlags( void ) const { return fCodeFlags; }
+        const plKeyCombo    &GetKey1( void ) const { return fKey1; }
+        const plKeyCombo    &GetKey2( void ) const { return fKey2; }
+        const char          *GetExtendedString( void ) const { return fString; }
+        const plKeyCombo    &GetMatchingKey( plKeyDef keyDef ) const;
 
-		void	SetKey1( const plKeyCombo &newCombo );
-		void	SetKey2( const plKeyCombo &newCombo );
-		void	ClearKeys( void );
-		hsBool	HasUnmappedKey() const;
+        void    SetKey1( const plKeyCombo &newCombo );
+        void    SetKey2( const plKeyCombo &newCombo );
+        void    ClearKeys( void );
+        hsBool  HasUnmappedKey() const;
 };
 
 //// plKeyMap ////////////////////////////////////////////////////////////////
-//	Basically an array of plKeyBindings with some extra helpers
+//  Basically an array of plKeyBindings with some extra helpers
 
 class plKeyMap : public plInputMap
 {
-	public:
+    public:
 
-		// Konstants for the bind preference
-		enum BindPref
-		{
-			kNoPreference = 0,		// Just bind to any free one, else first
-			kNoPreference2nd,		// Bind to a free one, or second key if no free one
-			kFirstAlways,			// Bind to first key no matter what
-			kSecondAlways			// Ditto but for 2nd key
-		};
+        // Konstants for the bind preference
+        enum BindPref
+        {
+            kNoPreference = 0,      // Just bind to any free one, else first
+            kNoPreference2nd,       // Bind to a free one, or second key if no free one
+            kFirstAlways,           // Bind to first key no matter what
+            kSecondAlways           // Ditto but for 2nd key
+        };
 
-	protected:
+    protected:
 
-		hsTArray<plKeyBinding *>	fBindings;
+        hsTArray<plKeyBinding *>    fBindings;
 
-		plKeyBinding	*IFindBindingByKey( const plKeyCombo &combo ) const;
-		void			 IFindAllBindingsByKey( const plKeyCombo &combo, hsTArray<plKeyBinding*> &result ) const;
-		plKeyBinding	*IFindBinding( ControlEventCode code ) const;
-		plKeyBinding	*IFindConsoleBinding( const char *command ) const;
+        plKeyBinding    *IFindBindingByKey( const plKeyCombo &combo ) const;
+        void             IFindAllBindingsByKey( const plKeyCombo &combo, hsTArray<plKeyBinding*> &result ) const;
+        plKeyBinding    *IFindBinding( ControlEventCode code ) const;
+        plKeyBinding    *IFindConsoleBinding( const char *command ) const;
 
-		void			IActuallyBind( plKeyBinding *binding, const plKeyCombo &combo, BindPref pref );
-		void			ICheckAndBindDupe( plKeyDef origKey, plKeyDef dupeKey );
-			
-	public:
+        void            IActuallyBind( plKeyBinding *binding, const plKeyCombo &combo, BindPref pref );
+        void            ICheckAndBindDupe( plKeyDef origKey, plKeyDef dupeKey );
+            
+    public:
 
-		plKeyMap();
-		virtual ~plKeyMap();
+        plKeyMap();
+        virtual ~plKeyMap();
 
-		// Adds a given control code to the map. Once you add it, you can't change its flags. Returns false if the code is already present
-		hsBool	AddCode( ControlEventCode code, UInt32 codeFlags );
+        // Adds a given control code to the map. Once you add it, you can't change its flags. Returns false if the code is already present
+        hsBool  AddCode( ControlEventCode code, UInt32 codeFlags );
 
-		// Same but for console commands. No flags b/c console commands always use the same flags
-		hsBool	AddConsoleCommand( const char *command );
-
-
-		// Adds a key binding to a given code. Returns false if the code isn't in this map or if key is already mapped.
-		hsBool	BindKey( const plKeyCombo &combo, ControlEventCode code, BindPref pref = kNoPreference );
-
-		// Console command version
-		hsBool	BindKeyToConsoleCmd( const plKeyCombo &combo, const char *command, BindPref pref = kNoPreference );
+        // Same but for console commands. No flags b/c console commands always use the same flags
+        hsBool  AddConsoleCommand( const char *command );
 
 
-		// Searches for the binding for a given code. Returns nil if not found
-		const plKeyBinding	*FindBinding( ControlEventCode code ) const;
+        // Adds a key binding to a given code. Returns false if the code isn't in this map or if key is already mapped.
+        hsBool  BindKey( const plKeyCombo &combo, ControlEventCode code, BindPref pref = kNoPreference );
 
-		// Searches for the binding by key. Returns nil if not found
-		const plKeyBinding	*FindBindingByKey( const plKeyCombo &combo ) const;
-
-		// Finds multiple bindings (when there are unneeded ctrl/shift flags)
-		void FindAllBindingsByKey( const plKeyCombo &combo, hsTArray<const plKeyBinding*> &result ) const;
-		
-		// Searches for the binding by console command. Returns nil if not found
-		const plKeyBinding* plKeyMap::FindConsoleBinding( const char *command ) const;
-
-		// Make sure the given keys are clear of bindings, i.e. not used
-		void	EnsureKeysClear( const plKeyCombo &key1, const plKeyCombo &key2 );
-
-		// Unmaps the given key, no matter what binding it is in
-		void	UnmapKey( const plKeyCombo &combo );
-
-		// Unmaps the keys for a single binding
-		void	UnmapBinding( ControlEventCode code );
-
-		// Unmaps all the bindings, but leaves the code records themselves
-		void	UnmapAllBindings( void );
-
-		// Erases the given code binding. Note: should never really be used, but provided here for completeness
-		void	EraseBinding( ControlEventCode code );
-
-		// Clears ALL bindings
-		void	ClearAll( void );
-
-		static const char* GetStringCtrl();
-		static const char* GetStringShift();
-		static const char* GetStringUnmapped();
+        // Console command version
+        hsBool  BindKeyToConsoleCmd( const plKeyCombo &combo, const char *command, BindPref pref = kNoPreference );
 
 
-		UInt32				GetNumBindings( void ) const { return fBindings.GetCount(); }
-		const plKeyBinding	&GetBinding( UInt32 i ) const { return *fBindings[ i ]; }
-		void				HandleAutoDualBinding( plKeyDef key1, plKeyDef key2 );
+        // Searches for the binding for a given code. Returns nil if not found
+        const plKeyBinding  *FindBinding( ControlEventCode code ) const;
 
-		static char		*ConvertVKeyToChar( UInt32 vk );
-		static plKeyDef	ConvertCharToVKey( const char *c );
+        // Searches for the binding by key. Returns nil if not found
+        const plKeyBinding  *FindBindingByKey( const plKeyCombo &combo ) const;
 
-		static Win32keyConvert  fKeyConversionEnglish[];
-		static Win32keyConvert  fKeyConversionFrench[];
-		static Win32keyConvert  fKeyConversionGerman[];
-		//static Win32keyConvert  fKeyConversionSpanish[];
-		//static Win32keyConvert  fKeyConversionItalian[];
+        // Finds multiple bindings (when there are unneeded ctrl/shift flags)
+        void FindAllBindingsByKey( const plKeyCombo &combo, hsTArray<const plKeyBinding*> &result ) const;
+        
+        // Searches for the binding by console command. Returns nil if not found
+        const plKeyBinding* plKeyMap::FindConsoleBinding( const char *command ) const;
+
+        // Make sure the given keys are clear of bindings, i.e. not used
+        void    EnsureKeysClear( const plKeyCombo &key1, const plKeyCombo &key2 );
+
+        // Unmaps the given key, no matter what binding it is in
+        void    UnmapKey( const plKeyCombo &combo );
+
+        // Unmaps the keys for a single binding
+        void    UnmapBinding( ControlEventCode code );
+
+        // Unmaps all the bindings, but leaves the code records themselves
+        void    UnmapAllBindings( void );
+
+        // Erases the given code binding. Note: should never really be used, but provided here for completeness
+        void    EraseBinding( ControlEventCode code );
+
+        // Clears ALL bindings
+        void    ClearAll( void );
+
+        static const char* GetStringCtrl();
+        static const char* GetStringShift();
+        static const char* GetStringUnmapped();
+
+
+        UInt32              GetNumBindings( void ) const { return fBindings.GetCount(); }
+        const plKeyBinding  &GetBinding( UInt32 i ) const { return *fBindings[ i ]; }
+        void                HandleAutoDualBinding( plKeyDef key1, plKeyDef key2 );
+
+        static char     *ConvertVKeyToChar( UInt32 vk );
+        static plKeyDef ConvertCharToVKey( const char *c );
+
+        static Win32keyConvert  fKeyConversionEnglish[];
+        static Win32keyConvert  fKeyConversionFrench[];
+        static Win32keyConvert  fKeyConversionGerman[];
+        //static Win32keyConvert  fKeyConversionSpanish[];
+        //static Win32keyConvert  fKeyConversionItalian[];
 
 };
 

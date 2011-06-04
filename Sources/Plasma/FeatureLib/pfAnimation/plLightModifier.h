@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightModifier_inc
 #define plLightModifier_inc
 
-#include "../../PubUtilLib/plModifier/plSimpleModifier.h"
+#include "plModifier/plSimpleModifier.h"
 #include "hsGeometry3.h"
 
 class plController;
@@ -41,141 +41,141 @@ class plLightModifier : public plSimpleModifier
 {
 protected:
 
-	plController*		fColorCtl;
-	plController*		fAmbientCtl;
-	plController*		fSpecularCtl;
+    plController*       fColorCtl;
+    plController*       fAmbientCtl;
+    plController*       fSpecularCtl;
 
-	plLightInfo*		fLight;
+    plLightInfo*        fLight;
 
-	virtual void IApplyDynamic();
+    virtual void IApplyDynamic();
 
-	virtual void IClearCtls();
+    virtual void IClearCtls();
 public:
-	plLightModifier();
-	virtual ~plLightModifier();
+    plLightModifier();
+    virtual ~plLightModifier();
 
-	CLASSNAME_REGISTER( plLightModifier );
-	GETINTERFACE_ANY( plLightModifier, plSimpleModifier );
+    CLASSNAME_REGISTER( plLightModifier );
+    GETINTERFACE_ANY( plLightModifier, plSimpleModifier );
 
-	virtual void AddTarget(plSceneObject* so);
-	virtual void RemoveTarget(plSceneObject* so);
+    virtual void AddTarget(plSceneObject* so);
+    virtual void RemoveTarget(plSceneObject* so);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool HasAnima() const { return fColorCtl || fAmbientCtl || fSpecularCtl; }
+    virtual hsBool HasAnima() const { return fColorCtl || fAmbientCtl || fSpecularCtl; }
 
-	// Export only
-	void SetColorCtl(plController* ctl) { fColorCtl = ctl; }
-	void SetAmbientCtl(plController* ctl) { fAmbientCtl = ctl; }
-	void SetSpecularCtl(plController* ctl) { fSpecularCtl = ctl; }
+    // Export only
+    void SetColorCtl(plController* ctl) { fColorCtl = ctl; }
+    void SetAmbientCtl(plController* ctl) { fAmbientCtl = ctl; }
+    void SetSpecularCtl(plController* ctl) { fSpecularCtl = ctl; }
 
-	virtual void DefaultAnimation();
-	virtual hsScalar MaxAnimLength(hsScalar len) const;
+    virtual void DefaultAnimation();
+    virtual hsScalar MaxAnimLength(hsScalar len) const;
 };
 
 class plOmniModifier : public plLightModifier
 {
 protected:
 
-	plOmniLightInfo*	fOmni;
+    plOmniLightInfo*    fOmni;
 
-	plController*		fAttenCtl;
-	hsPoint3			fInitAtten;
+    plController*       fAttenCtl;
+    hsPoint3            fInitAtten;
 
-	virtual void IApplyDynamic();
+    virtual void IApplyDynamic();
 
-	virtual void IClearCtls();
+    virtual void IClearCtls();
 public:
-	plOmniModifier();
-	virtual ~plOmniModifier();
+    plOmniModifier();
+    virtual ~plOmniModifier();
 
-	CLASSNAME_REGISTER( plOmniModifier );
-	GETINTERFACE_ANY( plOmniModifier, plLightModifier );
+    CLASSNAME_REGISTER( plOmniModifier );
+    GETINTERFACE_ANY( plOmniModifier, plLightModifier );
 
-	virtual void AddTarget(plSceneObject* so);
-	virtual void RemoveTarget(plSceneObject* so);
+    virtual void AddTarget(plSceneObject* so);
+    virtual void RemoveTarget(plSceneObject* so);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool HasAnima() const { return plLightModifier::HasAnima() || fAttenCtl; }
+    virtual hsBool HasAnima() const { return plLightModifier::HasAnima() || fAttenCtl; }
 
-	// Export Only
-	void SetAttenCtl(plController* ctl) { fAttenCtl = ctl; }
-	void SetInitAtten(const hsPoint3& p) { fInitAtten = p; }
+    // Export Only
+    void SetAttenCtl(plController* ctl) { fAttenCtl = ctl; }
+    void SetInitAtten(const hsPoint3& p) { fInitAtten = p; }
 
-	virtual hsScalar MaxAnimLength(hsScalar len) const;
+    virtual hsScalar MaxAnimLength(hsScalar len) const;
 };
 
 class plSpotModifier : public plOmniModifier
 {
 protected:
 
-	plSpotLightInfo*			fSpot;
+    plSpotLightInfo*            fSpot;
 
-	plController*			fInnerCtl;
-	plController*			fOuterCtl;
+    plController*           fInnerCtl;
+    plController*           fOuterCtl;
 
-	virtual void IApplyDynamic();
+    virtual void IApplyDynamic();
 
-	virtual void IClearCtls();
+    virtual void IClearCtls();
 public:
-	plSpotModifier();
-	virtual ~plSpotModifier();
+    plSpotModifier();
+    virtual ~plSpotModifier();
 
-	CLASSNAME_REGISTER( plSpotModifier );
-	GETINTERFACE_ANY( plSpotModifier, plLightModifier );
+    CLASSNAME_REGISTER( plSpotModifier );
+    GETINTERFACE_ANY( plSpotModifier, plLightModifier );
 
-	virtual void AddTarget(plSceneObject* so);
-	virtual void RemoveTarget(plSceneObject* so);
+    virtual void AddTarget(plSceneObject* so);
+    virtual void RemoveTarget(plSceneObject* so);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool HasAnima() const { return plOmniModifier::HasAnima() || fInnerCtl || fOuterCtl; }
+    virtual hsBool HasAnima() const { return plOmniModifier::HasAnima() || fInnerCtl || fOuterCtl; }
 
-	// Export Only
-	void SetInnerCtl(plController* ctl) { fInnerCtl = ctl; }
-	void SetOuterCtl(plController* ctl) { fOuterCtl = ctl; }
+    // Export Only
+    void SetInnerCtl(plController* ctl) { fInnerCtl = ctl; }
+    void SetOuterCtl(plController* ctl) { fOuterCtl = ctl; }
 
-	virtual hsScalar MaxAnimLength(hsScalar len) const;
+    virtual hsScalar MaxAnimLength(hsScalar len) const;
 };
 
 class plLtdDirModifier : public plLightModifier
 {
 protected:
 
-	plLimitedDirLightInfo*		fLtdDir;
+    plLimitedDirLightInfo*      fLtdDir;
 
-	plController*			fWidthCtl;
-	plController*			fHeightCtl;
-	plController*			fDepthCtl;
+    plController*           fWidthCtl;
+    plController*           fHeightCtl;
+    plController*           fDepthCtl;
 
-	virtual void IApplyDynamic();
+    virtual void IApplyDynamic();
 
-	virtual void IClearCtls();
+    virtual void IClearCtls();
 public:
-	plLtdDirModifier();
-	virtual ~plLtdDirModifier();
+    plLtdDirModifier();
+    virtual ~plLtdDirModifier();
 
-	CLASSNAME_REGISTER( plLtdDirModifier );
-	GETINTERFACE_ANY( plLtdDirModifier, plLightModifier );
+    CLASSNAME_REGISTER( plLtdDirModifier );
+    GETINTERFACE_ANY( plLtdDirModifier, plLightModifier );
 
-	virtual void AddTarget(plSceneObject* so);
-	virtual void RemoveTarget(plSceneObject* so);
+    virtual void AddTarget(plSceneObject* so);
+    virtual void RemoveTarget(plSceneObject* so);
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool HasAnima() const { return plLightModifier::HasAnima() || fWidthCtl || fHeightCtl || fDepthCtl; }
+    virtual hsBool HasAnima() const { return plLightModifier::HasAnima() || fWidthCtl || fHeightCtl || fDepthCtl; }
 
-	// Export Only
-	void SetWidthCtl(plController* ctl) { fWidthCtl = ctl; }
-	void SetHeightCtl(plController* ctl) { fHeightCtl = ctl; }
-	void SetDepthCtl(plController* ctl) { fDepthCtl = ctl; }
+    // Export Only
+    void SetWidthCtl(plController* ctl) { fWidthCtl = ctl; }
+    void SetHeightCtl(plController* ctl) { fHeightCtl = ctl; }
+    void SetDepthCtl(plController* ctl) { fDepthCtl = ctl; }
 
-	virtual hsScalar MaxAnimLength(hsScalar len) const;
+    virtual hsScalar MaxAnimLength(hsScalar len) const;
 };
 
 #endif // plLightModifier_inc

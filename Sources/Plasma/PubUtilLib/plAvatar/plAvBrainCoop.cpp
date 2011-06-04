@@ -39,14 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatarMgr.h"
 
 // other
-#include "../plScene/plSceneNode.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "plScene/plSceneNode.h"
+#include "pnNetCommon/plNetApp.h"
 
 // messages
-#include "../plMessage/plAvatarMsg.h"
-#include "../plMessage/plAvCoopMsg.h"
-#include "../plMessage/plPickedMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plAvCoopMsg.h"
+#include "plMessage/plPickedMsg.h"
+#include "pnMessage/plNotifyMsg.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -76,22 +76,22 @@ plAvBrainCoop::plAvBrainCoop()
 // plAvBrainCoop ----------------------------------------------------------
 // --------------
 plAvBrainCoop::plAvBrainCoop(UInt32 exitFlags, float fadeIn, float fadeOut,
-							 MoveMode moveMode, plKey guestKey)
+                             MoveMode moveMode, plKey guestKey)
 : plAvBrainGeneric(exitFlags, fadeIn, fadeOut, moveMode),
   fGuestKey(guestKey)
 {
-	static UInt16 coopSerial = 0;
+    static UInt16 coopSerial = 0;
 
-	// this particular constructor is only called by the initiator...
-	fInitiatorID = plNetClientApp::GetInstance()->GetPlayerID();
-	fInitiatorSerial = coopSerial++;
+    // this particular constructor is only called by the initiator...
+    fInitiatorID = plNetClientApp::GetInstance()->GetPlayerID();
+    fInitiatorSerial = coopSerial++;
 }
 
 // plAvBrainCoop ----------------------------------------------------------
 // --------------
 plAvBrainCoop::plAvBrainCoop(UInt32 exitFlags, float fadeIn, float fadeOut,
-							 MoveMode moveMode,	UInt32 initiatorID, UInt16 initiatorSerial,
-							 plKey hostKey)
+                             MoveMode moveMode, UInt32 initiatorID, UInt16 initiatorSerial,
+                             plKey hostKey)
 : plAvBrainGeneric(exitFlags, fadeIn, fadeOut, moveMode),
   fInitiatorID(initiatorID), fInitiatorSerial(initiatorSerial),
   fHostKey(hostKey)
@@ -102,140 +102,140 @@ plAvBrainCoop::plAvBrainCoop(UInt32 exitFlags, float fadeIn, float fadeOut,
 // -----------
 hsBool plAvBrainCoop::MsgReceive(plMessage *msg)
 {
-	plPickedMsg *pickM = plPickedMsg::ConvertNoRef(msg);
-	if(pickM)
-	{
-		if(fWaitingForClick)
-		{
-			fWaitingForClick = false;
-			// clicks are never network propagated, so we can be sure that the
-			// click was performed by the local player.
-			plKey localPlayer = plNetClientApp::GetInstance()->GetLocalPlayerKey();
+    plPickedMsg *pickM = plPickedMsg::ConvertNoRef(msg);
+    if(pickM)
+    {
+        if(fWaitingForClick)
+        {
+            fWaitingForClick = false;
+            // clicks are never network propagated, so we can be sure that the
+            // click was performed by the local player.
+            plKey localPlayer = plNetClientApp::GetInstance()->GetLocalPlayerKey();
 
-			if(localPlayer == fGuestKey)
-			{
-				plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestAccepted, fInitiatorID, fInitiatorSerial);
-				coopM->SetBCastFlag(plMessage::kNetPropagate);
-				coopM->Send();
+            if(localPlayer == fGuestKey)
+            {
+                plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestAccepted, fInitiatorID, fInitiatorSerial);
+                coopM->SetBCastFlag(plMessage::kNetPropagate);
+                coopM->Send();
 
-			}
-		}
-	}
-	return plAvBrainGeneric::MsgReceive(msg);
+            }
+        }
+    }
+    return plAvBrainGeneric::MsgReceive(msg);
 }
 
 // RelayNotifyMsg ----------------------------------
 // ---------------
 bool plAvBrainCoop::RelayNotifyMsg(plNotifyMsg *msg)
 {
-	// add a coop event so the receiver will know what coop this message is from
-	msg->AddCoopEvent(fInitiatorID, fInitiatorSerial);
+    // add a coop event so the receiver will know what coop this message is from
+    msg->AddCoopEvent(fInitiatorID, fInitiatorSerial);
 
-	proMultiStageEventData * mtevt = static_cast<proMultiStageEventData *>(msg->FindEventRecord(proEventData::kMultiStage));
-	if(mtevt)
-		DebugMsg("COOP: Relaying multi-stage event to %d recipients (via plAvBrainCoop)", fRecipients.size());
+    proMultiStageEventData * mtevt = static_cast<proMultiStageEventData *>(msg->FindEventRecord(proEventData::kMultiStage));
+    if(mtevt)
+        DebugMsg("COOP: Relaying multi-stage event to %d recipients (via plAvBrainCoop)", fRecipients.size());
 
-	if(fRecipients.size() != 0)
-	{
-		bool foundARecipient = false;
-		for (unsigned curRecipient = 0; curRecipient < fRecipients.size(); curRecipient++)
-		{
-			if (fRecipients[curRecipient])
-			{
-				foundARecipient = true;
-				msg->AddReceiver(fRecipients[curRecipient]);
-			}
-		}
+    if(fRecipients.size() != 0)
+    {
+        bool foundARecipient = false;
+        for (unsigned curRecipient = 0; curRecipient < fRecipients.size(); curRecipient++)
+        {
+            if (fRecipients[curRecipient])
+            {
+                foundARecipient = true;
+                msg->AddReceiver(fRecipients[curRecipient]);
+            }
+        }
 
-		if (!foundARecipient)
-			return false;
+        if (!foundARecipient)
+            return false;
 
-		msg->Send();
-		return true;
-	}
-	else
-		return false;
+        msg->Send();
+        return true;
+    }
+    else
+        return false;
 }
 
 
 void plAvBrainCoop::EnableGuestClick()
 {
-	fWaitingForClick = true;
+    fWaitingForClick = true;
 }
 
 // GetInitiatorID --------------------
 // ---------------
 UInt32 plAvBrainCoop::GetInitiatorID()
 {
-	return fInitiatorID;
+    return fInitiatorID;
 }
 
 // GetInitiatorSerial --------------------
 // -------------------
 UInt16 plAvBrainCoop::GetInitiatorSerial()
 {
-	return fInitiatorSerial;
+    return fInitiatorSerial;
 }
 
 // Read -------------------------------------------------
 // -----
 void plAvBrainCoop::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plAvBrainGeneric::Read(stream, mgr);
+    plAvBrainGeneric::Read(stream, mgr);
 
-	fInitiatorID = stream->ReadSwap32();
-	fInitiatorSerial = stream->ReadSwap16();
+    fInitiatorID = stream->ReadSwap32();
+    fInitiatorSerial = stream->ReadSwap16();
 
-	if(stream->Readbool())
-	{
-		fHostKey = mgr->ReadKey(stream);
-	}
-	if(stream->Readbool())
-	{
-		fGuestKey = mgr->ReadKey(stream);
-	}
-	fWaitingForClick = stream->Readbool();
+    if(stream->Readbool())
+    {
+        fHostKey = mgr->ReadKey(stream);
+    }
+    if(stream->Readbool())
+    {
+        fGuestKey = mgr->ReadKey(stream);
+    }
+    fWaitingForClick = stream->Readbool();
 
-	unsigned numRecipients = stream->ReadSwap16();
-	for (unsigned i = 0; i < numRecipients; i++)
-		fRecipients.push_back(mgr->ReadKey(stream));
+    unsigned numRecipients = stream->ReadSwap16();
+    for (unsigned i = 0; i < numRecipients; i++)
+        fRecipients.push_back(mgr->ReadKey(stream));
 }
 
 // Write -------------------------------------------------
 // ------
 void plAvBrainCoop::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plAvBrainGeneric::Write(stream, mgr);
+    plAvBrainGeneric::Write(stream, mgr);
 
-	stream->WriteSwap32(fInitiatorID);
-	stream->WriteSwap16(fInitiatorSerial);
+    stream->WriteSwap32(fInitiatorID);
+    stream->WriteSwap16(fInitiatorSerial);
 
-	bool hasHostKey = (fHostKey != nil);
-	bool hasGuestKey = (fGuestKey != nil);
+    bool hasHostKey = (fHostKey != nil);
+    bool hasGuestKey = (fGuestKey != nil);
 
-	stream->Writebool(hasHostKey);
-	if(hasHostKey)
-		mgr->WriteKey(stream, fHostKey);
+    stream->Writebool(hasHostKey);
+    if(hasHostKey)
+        mgr->WriteKey(stream, fHostKey);
 
-	stream->Writebool(hasGuestKey);
-	if(hasGuestKey)
-		mgr->WriteKey(stream, fGuestKey);
+    stream->Writebool(hasGuestKey);
+    if(hasGuestKey)
+        mgr->WriteKey(stream, fGuestKey);
 
-	stream->Writebool(fWaitingForClick);
+    stream->Writebool(fWaitingForClick);
 
-	stream->WriteSwap16(fRecipients.size());
-	for (unsigned i = 0; i < fRecipients.size(); i++)
-		mgr->WriteKey(stream, fRecipients[i]);
+    stream->WriteSwap16(fRecipients.size());
+    for (unsigned i = 0; i < fRecipients.size(); i++)
+        mgr->WriteKey(stream, fRecipients[i]);
 }
 
 plKey plAvBrainCoop::GetRecipient()
 {
-	if (fRecipients.size() == 0)
-		return nil;
-	return fRecipients[0];
+    if (fRecipients.size() == 0)
+        return nil;
+    return fRecipients[0];
 }
 
 void plAvBrainCoop::SetRecipient(plKey &recipient)
 {
-	fRecipients.push_back(recipient);
+    fRecipients.push_back(recipient);
 }

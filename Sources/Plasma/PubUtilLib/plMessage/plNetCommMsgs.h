@@ -33,27 +33,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLNETCOMMMSGS_H
 
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnNetBase/pnNetBase.h"
-#include "../pnMessage/plMessage.h"
-#include "../pnNetProtocol/pnNetProtocol.h"
+#include "pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnMessage/plMessage.h"
+#include "pnNetProtocol/pnNetProtocol.h"
 
 
 class plNetCommReplyMsg : public plMessage {
 public:
     enum EParamType {
-		kParamTypeOther	= 0,
-		kParamTypePython,
-	};
+        kParamTypeOther = 0,
+        kParamTypePython,
+    };
 
     ENetError   result;
     void *      param;
-    EParamType	ptype;
+    EParamType  ptype;
 
     plNetCommReplyMsg () { SetBCastFlag(kBCastByExactType); }
 
-	void Read (hsStream * s, hsResMgr * mgr) { plMessage::IMsgRead(s, mgr); }
-	void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
+    void Read (hsStream * s, hsResMgr * mgr) { plMessage::IMsgRead(s, mgr); }
+    void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
 };
 
 class plNetCommAuthMsg : public plNetCommReplyMsg {
@@ -69,8 +69,8 @@ public:
     CLASSNAME_REGISTER(plNetCommAuthConnectedMsg);
     GETINTERFACE_ANY(plNetCommAuthConnectedMsg, plMessage);
 
-	void Read (hsStream * s, hsResMgr * mgr) { plMessage::IMsgRead(s, mgr); }
-	void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
+    void Read (hsStream * s, hsResMgr * mgr) { plMessage::IMsgRead(s, mgr); }
+    void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
 };
 
 struct NetCliAuthFileInfo;
@@ -126,7 +126,7 @@ public:
     CLASSNAME_REGISTER(plNetCommPublicAgeListMsg);
     GETINTERFACE_ANY(plNetCommPublicAgeListMsg, plMessage);
     
-    ARRAY(struct NetAgeInfo)	ages;
+    ARRAY(struct NetAgeInfo)    ages;
 };
 
 class plNetCommPublicAgeMsg : public plNetCommReplyMsg {
@@ -151,8 +151,8 @@ class plNetCommDisconnectedMsg : public plMessage {
 public:
     ENetProtocol    protocol;
 
-	void Read (hsStream * s, hsResMgr * mgr) { plMessage::IMsgRead(s, mgr); }
-	void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
+    void Read (hsStream * s, hsResMgr * mgr) { plMessage::IMsgRead(s, mgr); }
+    void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
 };
 
 

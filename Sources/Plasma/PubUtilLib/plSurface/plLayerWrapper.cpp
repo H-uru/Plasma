@@ -33,10 +33,10 @@ plLayerWrapper::plLayerWrapper()
 
 void plLayerWrapper::Init(hsGLayer* lay)
 {
-	fState = &lay->fState;
-	fUVWSrc = &lay->fUVWSrc;
-	fTransform = lay->fXform;
-	fColor = &lay->fColor;
-	fAmbientColor = &lay->fAmbientColor;
-	fTexture = lay->fTexture;
+    fState = &lay->fState;
+    fUVWSrc = &lay->fUVWSrc;
+    fTransform = lay->fXform;
+    fColor = &lay->fColor;
+    fAmbientColor = &lay->fAmbientColor;
+    fTexture = lay->fTexture;
 }

@@ -33,31 +33,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsSfxIntenseAlpha : public hsGRenderProcs
 {
 protected:
-	hsVector3			fDirViewPerp;
-	hsVector3			fDirScreen;
-	hsScalar			fOpacityScale;
-	hsScalar			fOpacityMax;
+    hsVector3           fDirViewPerp;
+    hsVector3           fDirScreen;
+    hsScalar            fOpacityScale;
+    hsScalar            fOpacityMax;
 
-	hsScalar			fMinAlpha;
+    hsScalar            fMinAlpha;
 
 public:
-	hsSfxIntenseAlpha();
-	virtual ~hsSfxIntenseAlpha();
+    hsSfxIntenseAlpha();
+    virtual ~hsSfxIntenseAlpha();
 
-	void SetMinAlpha(hsScalar s) { fMinAlpha = s; }
-	hsScalar GetMinAlpha() { return fMinAlpha; }
+    void SetMinAlpha(hsScalar s) { fMinAlpha = s; }
+    hsScalar GetMinAlpha() { return fMinAlpha; }
 
-	virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
+    virtual void ProcessPreInterpShadeVerts(hsExpander<hsGShadeVertex*>& vList);
 
-	virtual void Read(hsStream* s);
-	virtual void Write(hsStream* s);
+    virtual void Read(hsStream* s);
+    virtual void Write(hsStream* s);
 
-	virtual const char* GetLabel() const { return "hsSfxIntenseAlpha"; }
+    virtual const char* GetLabel() const { return "hsSfxIntenseAlpha"; }
 
-	virtual ProcType GetType() const { return kTypeIntenseAlpha; }
+    virtual ProcType GetType() const { return kTypeIntenseAlpha; }
 
-	CLASSNAME_REGISTER( hsSfxIntenseAlpha );
-	GETINTERFACE_ANY( hsSfxIntenseAlpha, hsGRenderProcs );
+    CLASSNAME_REGISTER( hsSfxIntenseAlpha );
+    GETINTERFACE_ANY( hsSfxIntenseAlpha, hsGRenderProcs );
 
 };
 

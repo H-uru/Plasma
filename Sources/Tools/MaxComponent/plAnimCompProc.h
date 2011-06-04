@@ -35,34 +35,34 @@ class plMaxNode;
 class plAnimCompProc : public ParamMap2UserDlgProc
 {
 protected:
-	int fCompButtonID;
-	int fCompParamID;
-	int fNodeButtonID;
-	int fNodeParamID;
+    int fCompButtonID;
+    int fCompParamID;
+    int fNodeButtonID;
+    int fNodeParamID;
 
-	virtual void IPickComponent(IParamBlock2* pb)=0;
-	virtual void IPickNode(IParamBlock2* pb, plComponentBase* comp);
-	
-	virtual void ILoadUser(HWND hWnd, IParamBlock2* pb)=0;
-	virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID)=0;
+    virtual void IPickComponent(IParamBlock2* pb)=0;
+    virtual void IPickNode(IParamBlock2* pb, plComponentBase* comp);
+    
+    virtual void ILoadUser(HWND hWnd, IParamBlock2* pb)=0;
+    virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID)=0;
 
-	plMaxNode* IGetNode(IParamBlock2* pb);
-	void IClearNode(IParamBlock2* pb);
-	plComponentBase* IGetComp(IParamBlock2* pb);
+    plMaxNode* IGetNode(IParamBlock2* pb);
+    void IClearNode(IParamBlock2* pb);
+    plComponentBase* IGetComp(IParamBlock2* pb);
 
-	void ICompButtonPress(HWND hWnd, IParamBlock2* pb);
-	void INodeButtonPress(HWND hWnd, IParamBlock2* pb);
+    void ICompButtonPress(HWND hWnd, IParamBlock2* pb);
+    void INodeButtonPress(HWND hWnd, IParamBlock2* pb);
 
-	void IUpdateCompButton(HWND hWnd, IParamBlock2* pb);
-	virtual void IUpdateNodeButton(HWND hWnd, IParamBlock2* pb);
-	
+    void IUpdateCompButton(HWND hWnd, IParamBlock2* pb);
+    virtual void IUpdateNodeButton(HWND hWnd, IParamBlock2* pb);
+    
 public:
-	plAnimCompProc();
-	void DeleteThis() {}
+    plAnimCompProc();
+    virtual void DeleteThis() {}
 
-	BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    virtual BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	bool GetCompAndNode(IParamBlock2* pb, plComponentBase*& comp, plMaxNode*& node);
+    bool GetCompAndNode(IParamBlock2* pb, plComponentBase*& comp, plMaxNode*& node);
 };
 
 
@@ -72,37 +72,37 @@ public:
 class plMtlAnimProc : public ParamMap2UserDlgProc
 {
 protected:
-	int fMtlButtonID;
-	int fMtlParamID;
-	int fNodeButtonID;
-	int fNodeParamID;
-	int fAnimComboID;
-	int fAnimParamID;
+    int fMtlButtonID;
+    int fMtlParamID;
+    int fNodeButtonID;
+    int fNodeParamID;
+    int fAnimComboID;
+    int fAnimParamID;
 
-	Mtl* IGetMtl(IParamBlock2* pb);
+    Mtl* IGetMtl(IParamBlock2* pb);
 
-	virtual void IOnInitDlg(HWND hWnd, IParamBlock2* pb) {}
-	virtual void ILoadUser(HWND hWnd, IParamBlock2* pb)=0;
-	virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID)=0;
+    virtual void IOnInitDlg(HWND hWnd, IParamBlock2* pb) {}
+    virtual void ILoadUser(HWND hWnd, IParamBlock2* pb)=0;
+    virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID)=0;
 
-	virtual void IPickNode(IParamBlock2* pb);
+    virtual void IPickNode(IParamBlock2* pb);
 
-	virtual void ISetNodeButtonText(HWND hWnd, IParamBlock2* pb);
+    virtual void ISetNodeButtonText(HWND hWnd, IParamBlock2* pb);
 
 public:
-	plMtlAnimProc();
-	void DeleteThis() {}
+    plMtlAnimProc();
+    void DeleteThis() {}
 
-	BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 private:
-	void IMtlButtonPress(HWND hWnd, IParamBlock2* pb);
-	void INodeButtonPress(HWND hWnd, IParamBlock2* pb);
-	void IAnimComboChanged(HWND hWnd, IParamBlock2* pb);
+    void IMtlButtonPress(HWND hWnd, IParamBlock2* pb);
+    void INodeButtonPress(HWND hWnd, IParamBlock2* pb);
+    void IAnimComboChanged(HWND hWnd, IParamBlock2* pb);
 
-	void IUpdateMtlButton(HWND hWnd, IParamBlock2* pb);
-	void IUpdateNodeButton(HWND hWnd, IParamBlock2* pb);
-	void ILoadAnimCombo(HWND hWnd, IParamBlock2* pb);
+    void IUpdateMtlButton(HWND hWnd, IParamBlock2* pb);
+    void IUpdateNodeButton(HWND hWnd, IParamBlock2* pb);
+    void ILoadAnimCombo(HWND hWnd, IParamBlock2* pb);
 };
 
 #endif // plAnimCompProc_h_inc

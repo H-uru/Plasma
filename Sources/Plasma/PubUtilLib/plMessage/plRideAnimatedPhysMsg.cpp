@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plRideAnimatedPhysMsg::plRideAnimatedPhysMsg()
 :fRegion(nil)
 ,fEntering(false)
-{	
+{   
 }
 plRideAnimatedPhysMsg::plRideAnimatedPhysMsg(const plKey &sender, const plKey &receiver, bool entering, plKey regionKey)
 : plMessage(sender, receiver, nil)
@@ -42,13 +42,13 @@ plRideAnimatedPhysMsg::plRideAnimatedPhysMsg(const plKey &sender, const plKey &r
 
 void plRideAnimatedPhysMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
-	fEntering = stream->Readbool();
-	fRegion = mgr->ReadKey(stream);
+    plMessage::IMsgRead(stream, mgr);
+    fEntering = stream->Readbool();
+    fRegion = mgr->ReadKey(stream);
 }
 void plRideAnimatedPhysMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
-	stream->Writebool(fEntering);
-	mgr->WriteKey(stream, fRegion);
+    plMessage::IMsgWrite(stream, mgr);
+    stream->Writebool(fEntering);
+    mgr->WriteKey(stream, fRegion);
 }

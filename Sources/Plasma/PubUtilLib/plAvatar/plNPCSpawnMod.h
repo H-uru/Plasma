@@ -23,40 +23,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 
 class plNotifyMsg;
 
 class plNPCSpawnMod : public plSingleModifier
 {
 public:
-	plNPCSpawnMod();
-	plNPCSpawnMod(const char * modelName, const char *accountName, bool autoSpawn);
-	~plNPCSpawnMod();
+    plNPCSpawnMod();
+    plNPCSpawnMod(const char * modelName, const char *accountName, bool autoSpawn);
+    ~plNPCSpawnMod();
 
-	bool Trigger();
-	void SetNotify(plNotifyMsg *notify);
-	plNotifyMsg * GetNotify();
-	
-	CLASSNAME_REGISTER( plNPCSpawnMod );
-	GETINTERFACE_ANY( plNPCSpawnMod, plSingleModifier );
-	
-	virtual void AddTarget(plSceneObject* so);
-	virtual void RemoveTarget(plSceneObject *so);
-//	hsBool MsgReceive(plMessage* msg);
+    bool Trigger();
+    void SetNotify(plNotifyMsg *notify);
+    plNotifyMsg * GetNotify();
+    
+    CLASSNAME_REGISTER( plNPCSpawnMod );
+    GETINTERFACE_ANY( plNPCSpawnMod, plSingleModifier );
+    
+    virtual void AddTarget(plSceneObject* so);
+    virtual void RemoveTarget(plSceneObject *so);
+//  hsBool MsgReceive(plMessage* msg);
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 
 protected:
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
-	void ISendNotify(plKey &avatarKey);		// send our notification message
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    void ISendNotify(plKey &avatarKey);     // send our notification message
 
 private:
-	char *fModelName;
-	char *fAccountName;
-	bool fAutoSpawn;			// spawn immediately on loading
-	plKey fSpawnedKey;			// if we want to be able to spawn many things, we should make this a vector
-	plNotifyMsg *fNotify;		// notify message that we send when we spawn.
+    char *fModelName;
+    char *fAccountName;
+    bool fAutoSpawn;            // spawn immediately on loading
+    plKey fSpawnedKey;          // if we want to be able to spawn many things, we should make this a vector
+    plNotifyMsg *fNotify;       // notify message that we send when we spawn.
 };
 

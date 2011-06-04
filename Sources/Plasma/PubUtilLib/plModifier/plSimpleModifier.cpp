@@ -29,157 +29,157 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 #include "hsStream.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plTimeMsg.h"
-#include "../pnMessage/plRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "hsTimer.h"
-// #include "../pfConditional/plAnimationEventConditionalObject.h"
-#include "../plMessage/plAnimCmdMsg.h"
+// #include "pfConditional/plAnimationEventConditionalObject.h"
+#include "plMessage/plAnimCmdMsg.h"
 
 plSimpleModifier::plSimpleModifier()
 : 
-	fTarget(nil)
+    fTarget(nil)
 {
-	fTimeConvert.SetOwner(this);
+    fTimeConvert.SetOwner(this);
 }
 
 plSimpleModifier::~plSimpleModifier()
 {
-	if( !fTimeConvert.IsStopped() )
-		IEnd();
+    if( !fTimeConvert.IsStopped() )
+        IEnd();
 }
 
 void plSimpleModifier::Read(hsStream* s, hsResMgr* mgr)
 {
-	plModifier::Read(s, mgr);
+    plModifier::Read(s, mgr);
 
-	fTimeConvert.Read(s, mgr);
+    fTimeConvert.Read(s, mgr);
 
-	if( !fTimeConvert.IsStopped() )
-		IBegin();		// TEMP TILL Message causes IBEGIN
+    if( !fTimeConvert.IsStopped() )
+        IBegin();       // TEMP TILL Message causes IBEGIN
 }
 
 void plSimpleModifier::Write(hsStream* s, hsResMgr* mgr)
 {
-	plModifier::Write(s, mgr);
+    plModifier::Write(s, mgr);
 
-	fTimeConvert.Write(s, mgr);
+    fTimeConvert.Write(s, mgr);
 }
 
 void plSimpleModifier::AddTarget(plSceneObject* o)
 {
-	fTarget = o;
-	if( !fTimeConvert.IsStopped() )
-		IBegin();		// TEMP TILL Message causes IBEGIN
+    fTarget = o;
+    if( !fTimeConvert.IsStopped() )
+        IBegin();       // TEMP TILL Message causes IBEGIN
 }
 
 void plSimpleModifier::RemoveTarget(plSceneObject* o)
 {
-	hsAssert(o == fTarget, "Removing target I don't have");
-	fTarget = nil;
+    hsAssert(o == fTarget, "Removing target I don't have");
+    fTarget = nil;
 }
 
 void plSimpleModifier::IBegin()
 {
-	if( fTarget )
-	{
-		fTimeConvert.Start();
-		plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
-		
-	}
+    if( fTarget )
+    {
+        fTimeConvert.Start();
+        plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
+        
+    }
 }
 
 void plSimpleModifier::IEnd()
 {
-	fTimeConvert.Stop();
-	if( fTarget )
-	{
-		plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
-	}
+    fTimeConvert.Stop();
+    if( fTarget )
+    {
+        plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
+    }
 }
 
 hsBool plSimpleModifier::IEval(double secs, hsScalar del, UInt32 dirty)
 {
-	return IHandleTime(secs, del);
+    return IHandleTime(secs, del);
 }
 
 hsBool plSimpleModifier::MsgReceive(plMessage* msg)
 {
-	plRefMsg* refMsg = plRefMsg::ConvertNoRef(msg);
-	if( refMsg )
-	{
-		return IHandleRef(refMsg);
-	}
-	plAnimCmdMsg* modMsg = plAnimCmdMsg::ConvertNoRef(msg);
-	if( modMsg )
-	{
-		return IHandleCmd(modMsg);
-	}
-	return plModifier::MsgReceive(msg);
+    plRefMsg* refMsg = plRefMsg::ConvertNoRef(msg);
+    if( refMsg )
+    {
+        return IHandleRef(refMsg);
+    }
+    plAnimCmdMsg* modMsg = plAnimCmdMsg::ConvertNoRef(msg);
+    if( modMsg )
+    {
+        return IHandleCmd(modMsg);
+    }
+    return plModifier::MsgReceive(msg);
 }
 
 hsBool plSimpleModifier::IHandleRef(plRefMsg* refMsg)
 {
-	if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
-		AddTarget(plSceneObject::ConvertNoRef(refMsg->GetRef()));
-	else
-		RemoveTarget(plSceneObject::ConvertNoRef(refMsg->GetRef()));
+    if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
+        AddTarget(plSceneObject::ConvertNoRef(refMsg->GetRef()));
+    else
+        RemoveTarget(plSceneObject::ConvertNoRef(refMsg->GetRef()));
 
-	return true;
+    return true;
 }
 
 hsBool plSimpleModifier::IHandleCmd(plAnimCmdMsg* modMsg)
 {
-	hsBool wasStopped = fTimeConvert.IsStopped();
+    hsBool wasStopped = fTimeConvert.IsStopped();
 
-	fTimeConvert.HandleCmd(modMsg);
+    fTimeConvert.HandleCmd(modMsg);
 
-	hsBool isStopped = fTimeConvert.IsStopped();
+    hsBool isStopped = fTimeConvert.IsStopped();
 
-	if( wasStopped != isStopped )
-	{
-		if( isStopped )
-		{
-			IEnd();
-		}
-		else
-		{
-			IBegin();
-		}
-	}
+    if( wasStopped != isStopped )
+    {
+        if( isStopped )
+        {
+            IEnd();
+        }
+        else
+        {
+            IBegin();
+        }
+    }
 
-#if 0	// debug
-	char str[256];
-		sprintf(str, "ModHandleCmd: time=%f, ts=%f FWD=%d, BWD=%d, SpeedChange=%d sp=%f, CONT=%d, STOP=%d\n",
-			hsTimer::GetSysSeconds(),
-			modMsg->GetTimeStamp(),
-			modMsg->Cmd(plAnimCmdMsg::kSetForewards),
-			modMsg->Cmd(plAnimCmdMsg::kSetBackwards),
-			modMsg->Cmd(plAnimCmdMsg::kSetSpeed),
-			modMsg->fSpeed,
-			modMsg->Cmd(plAnimCmdMsg::kContinue),
-			modMsg->Cmd(plAnimCmdMsg::kStop));
-		hsStatusMessage(str);
+#if 0   // debug
+    char str[256];
+        sprintf(str, "ModHandleCmd: time=%f, ts=%f FWD=%d, BWD=%d, SpeedChange=%d sp=%f, CONT=%d, STOP=%d\n",
+            hsTimer::GetSysSeconds(),
+            modMsg->GetTimeStamp(),
+            modMsg->Cmd(plAnimCmdMsg::kSetForewards),
+            modMsg->Cmd(plAnimCmdMsg::kSetBackwards),
+            modMsg->Cmd(plAnimCmdMsg::kSetSpeed),
+            modMsg->fSpeed,
+            modMsg->Cmd(plAnimCmdMsg::kContinue),
+            modMsg->Cmd(plAnimCmdMsg::kStop));
+        hsStatusMessage(str);
 #endif
-	return true;
-}	
+    return true;
+}   
 
 hsBool plSimpleModifier::IHandleTime(double wSecs, hsScalar del)
 {
 
-	if( !fTarget )
-		return true;
+    if( !fTarget )
+        return true;
 
-	hsScalar secs = fTimeConvert.WorldToAnimTime(wSecs);
-	
-	if( secs != fCurrentTime )
-	{
-		fCurrentTime = secs;
+    hsScalar secs = fTimeConvert.WorldToAnimTime(wSecs);
+    
+    if( secs != fCurrentTime )
+    {
+        fCurrentTime = secs;
 
-		IApplyDynamic();
-	}
+        IApplyDynamic();
+    }
 
-	return true;
+    return true;
 }
 
 

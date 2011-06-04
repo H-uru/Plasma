@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfKI Header																//
-//																			//
+//                                                                          //
+//  pfKI Header                                                             //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfKI_h
@@ -47,34 +47,34 @@ class pfKITextVaultCallback;
 
 class pfKI : public hsKeyedObject 
 {
-	protected:
+    protected:
 
-		plKIYesNoBox	*fYesNoProc;
-		plKIAddEditBox	*fAddEditProc;
-		plKIMainProc	*fMainProc;
-		plKIMiniProc	*fMiniProc;
+        plKIYesNoBox    *fYesNoProc;
+        plKIAddEditBox  *fAddEditProc;
+        plKIMainProc    *fMainProc;
+        plKIMiniProc    *fMiniProc;
 
-		plPlayerBookProc	*fPBProc;
+        plPlayerBookProc    *fPBProc;
 
-		pfKITextVaultCallback	*fKIVaultCallback;
+        pfKITextVaultCallback   *fKIVaultCallback;
 
-		static pfKI	*fInstance;
+        static pfKI *fInstance;
 
-		void	IInitPlayerBook( void );
+        void    IInitPlayerBook( void );
 
-	public:
+    public:
 
-		pfKI();
-		~pfKI();
+        pfKI();
+        ~pfKI();
 
-		CLASSNAME_REGISTER( pfKI );
-		GETINTERFACE_ANY( pfKI, plReceiver );
+        CLASSNAME_REGISTER( pfKI );
+        GETINTERFACE_ANY( pfKI, plReceiver );
 
-		virtual hsBool	MsgReceive( plMessage *msg );
+        virtual hsBool  MsgReceive( plMessage *msg );
 
-		void	Init( void );
+        void    Init( void );
 
-		static pfKI	*GetInstance( void ) { return fInstance; }
+        static pfKI *GetInstance( void ) { return fInstance; }
 };
 
 

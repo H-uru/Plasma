@@ -42,36 +42,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 class pfGmTicTacToe : public pfGameCli {
 
-	// Encapsulate all implementation details such as member fields
-	// in an opaque friend class, in this case that's ITicTacToe.
-	friend struct ITicTacToe;
-	struct ITicTacToe * internal;
+    // Encapsulate all implementation details such as member fields
+    // in an opaque friend class, in this case that's ITicTacToe.
+    friend struct ITicTacToe;
+    struct ITicTacToe * internal;
 
-	//========================================================================
-	// Required subclass methods
-	//--------------------------
-	void Recv			(GameMsgHeader * msg, void * param);
-	void OnPlayerJoined	(const Srv2Cli_Game_PlayerJoined & msg);
-	void OnPlayerLeft	(const Srv2Cli_Game_PlayerLeft & msg);
-	void OnInviteFailed	(const Srv2Cli_Game_InviteFailed & msg);
-	void OnOwnerChange	(const Srv2Cli_Game_OwnerChange & msg);
-	//========================================================================
+    //========================================================================
+    // Required subclass methods
+    //--------------------------
+    void Recv           (GameMsgHeader * msg, void * param);
+    void OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg);
+    void OnPlayerLeft   (const Srv2Cli_Game_PlayerLeft & msg);
+    void OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg);
+    void OnOwnerChange  (const Srv2Cli_Game_OwnerChange & msg);
+    //========================================================================
 
 public:
-	#pragma warning(push, 0)
-	// These macros produce warnings on W4
-	CLASSNAME_REGISTER(pfGmTicTacToe);
-	GETINTERFACE_ANY(pfGmTicTacToe, pfGameCli);
-	#pragma warning(pop)
-	
-	pfGmTicTacToe (unsigned gameId, plKey receiver);
-	~pfGmTicTacToe ();
-	
-	//========================================================================
-	// Game methods
-	//-------------
-	void MakeMove	(unsigned row, unsigned col);
-	void ShowBoard	();
-	//========================================================================
+    #pragma warning(push, 0)
+    // These macros produce warnings on W4
+    CLASSNAME_REGISTER(pfGmTicTacToe);
+    GETINTERFACE_ANY(pfGmTicTacToe, pfGameCli);
+    #pragma warning(pop)
+    
+    pfGmTicTacToe (unsigned gameId, plKey receiver);
+    ~pfGmTicTacToe ();
+    
+    //========================================================================
+    // Game methods
+    //-------------
+    void MakeMove   (unsigned row, unsigned col);
+    void ShowBoard  ();
+    //========================================================================
 };
 

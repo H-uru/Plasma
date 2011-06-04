@@ -29,25 +29,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pfMovieEventMsg::~pfMovieEventMsg()
 {
-	delete [] fMovieName;
+    delete [] fMovieName;
 }
 
 
 void pfMovieEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 
-	fReason = (Reason)stream->ReadByte();
+    fReason = (Reason)stream->ReadByte();
 
-	fMovieName = stream->ReadSafeString();
+    fMovieName = stream->ReadSafeString();
 }
 
 void pfMovieEventMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	stream->WriteByte(fReason);
+    stream->WriteByte(fReason);
 
-	stream->WriteSafeString(fMovieName);
+    stream->WriteSafeString(fMovieName);
 }
 

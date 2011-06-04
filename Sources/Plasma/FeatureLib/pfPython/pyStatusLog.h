@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 #include "pyColor.h"
@@ -45,31 +45,31 @@ class plStatusLog;
 class pyStatusLog
 {
 private:
-	plStatusLog*	fLog;
-	bool	fICreatedLog;
+    plStatusLog*    fLog;
+    bool    fICreatedLog;
 
 protected:
-	pyStatusLog( plStatusLog* log=nil );
+    pyStatusLog( plStatusLog* log=nil );
 
 public:
-	~pyStatusLog();
+    ~pyStatusLog();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptStatusLog);
-	PYTHON_CLASS_NEW_DEFINITION;
-	static PyObject *New(plStatusLog* log);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyStatusLog object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyStatusLog); // converts a PyObject to a pyStatusLog (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptStatusLog);
+    PYTHON_CLASS_NEW_DEFINITION;
+    static PyObject *New(plStatusLog* log);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyStatusLog object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyStatusLog); // converts a PyObject to a pyStatusLog (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
-	static void AddPlasmaConstantsClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaConstantsClasses(PyObject *m);
 
-	virtual hsBool Open(const char* logName, UInt32 numLines, UInt32 flags);
-	virtual hsBool Write(const char* text);
-	virtual hsBool WriteColor(const char* text, pyColor& color);
-	virtual void Close();
+    virtual hsBool Open(const char* logName, UInt32 numLines, UInt32 flags);
+    virtual hsBool Write(const char* text);
+    virtual hsBool WriteColor(const char* text, pyColor& color);
+    virtual void Close();
 
-	virtual hsBool IsOpen();
+    virtual hsBool IsOpen();
 };
 
 

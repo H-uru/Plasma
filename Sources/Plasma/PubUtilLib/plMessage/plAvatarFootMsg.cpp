@@ -30,24 +30,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 plAvatarFootMsg::plAvatarFootMsg()
-:	fArmature(nil),
-	fIsLeft(false);
+:   fArmature(nil),
+    fIsLeft(false);
 {
 }
 
 plAvatarFootMsg::plAvatarFootMsg(const plKey& s, plArmatureMod *armature, plAvBrain *brain, hsBool isLocal, hsBool isLeft)
-:	plArmatureUpdateMsg(s, isLocal, true, armature, brain),
-	fIsLeft(isLeft)
+:   plArmatureUpdateMsg(s, isLocal, true, armature, brain),
+    fIsLeft(isLeft)
 {
-	SetBCastFlag(plMessage::kBCastByExactType);
+    SetBCastFlag(plMessage::kBCastByExactType);
 }
 
 void plAvatarFootMsg::Read(hsStream* s, hsResMgr* mgr)
 {
-	hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
+    hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
 }
 
 void plAvatarFootMsg::Write(hsStream* s, hsResMgr* mgr)
 {
-	hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
+    hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
 }

@@ -36,40 +36,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 template<typename chartype>
 struct SubstParsedData {
-	template<typename chartype>
-	struct SubstBlock {
-		bool		isVar;
-		chartype *	data;
-		unsigned	strLen;
+    template<typename chartype>
+    struct SubstBlock {
+        bool        isVar;
+        chartype *  data;
+        unsigned    strLen;
 
-		SubstBlock()
-		:	isVar(false)
-		,	data(nil)
-		{
-		}
+        SubstBlock()
+        :   isVar(false)
+        ,   data(nil)
+        {
+        }
 
-		~SubstBlock() {
-			FREE(data);
-		}
-	};
+        ~SubstBlock() {
+            FREE(data);
+        }
+    };
 
-	ARRAY(SubstBlock<chartype>*)		blocks;
+    ARRAY(SubstBlock<chartype>*)        blocks;
 
-	~SubstParsedData() {
-		for (unsigned i = 0; i < blocks.Count(); ++i) {
-			SubstBlock<chartype> * block = blocks[i];
-			DEL(block);
-		}
-	}
+    ~SubstParsedData() {
+        for (unsigned i = 0; i < blocks.Count(); ++i) {
+            SubstBlock<chartype> * block = blocks[i];
+            DEL(block);
+        }
+    }
 };
 
 bool ParseForSubst (
-	SubstParsedData<wchar> *	dest,
-	const wchar					src[]
+    SubstParsedData<wchar> *    dest,
+    const wchar                 src[]
 );
 bool ParseForSubst (
-	SubstParsedData<char> *		dest,
-	const char					src[]
+    SubstParsedData<char> *     dest,
+    const char                  src[]
 );
 
 // Return value is for validation purposes only; it may be ignored
@@ -88,16 +88,16 @@ bool VarSubstitute (
     const char *    varValues[]    // [varCount]
 );
 bool VarSubstitute (
-    ARRAY(wchar) *						dst,
-    const SubstParsedData<wchar> *		src,
-    unsigned							varCount,
-    const wchar *						varNames[],   // [varCount]
-    const wchar *						varValues[]   // [varCount]
+    ARRAY(wchar) *                      dst,
+    const SubstParsedData<wchar> *      src,
+    unsigned                            varCount,
+    const wchar *                       varNames[],   // [varCount]
+    const wchar *                       varValues[]   // [varCount]
 );
 bool VarSubstitute (
-    ARRAY(char) *						dst,
-    const SubstParsedData<char> *		src,
-    unsigned							varCount,
-    const char *						varNames[],   // [varCount]
-    const char *						varValues[]   // [varCount]
+    ARRAY(char) *                       dst,
+    const SubstParsedData<char> *       src,
+    unsigned                            varCount,
+    const char *                        varNames[],   // [varCount]
+    const char *                        varValues[]   // [varCount]
 );

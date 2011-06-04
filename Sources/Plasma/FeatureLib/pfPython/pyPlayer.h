@@ -36,7 +36,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "pyKey.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class plKey;
@@ -44,59 +44,59 @@ class plKey;
 class pyPlayer
 {
 protected:
-	plKey			fAvatarKey;
-	std::string		fPlayerName;
-	UInt32			fPlayerID;
-	hsScalar		fDistSq;			// from local player, temp
-	hsBool			fIsCCR;
-	hsBool			fIsServer;
+    plKey           fAvatarKey;
+    std::string     fPlayerName;
+    UInt32          fPlayerID;
+    hsScalar        fDistSq;            // from local player, temp
+    hsBool          fIsCCR;
+    hsBool          fIsServer;
 
-	pyPlayer(); // only used by python glue, do NOT call
-	pyPlayer(pyKey& avKey, const char* pname, UInt32 pid, hsScalar distsq);
-	pyPlayer(plKey avKey, const char* pname, UInt32 pid, hsScalar distsq);
-	// another way to create a player with just a name and number
-	pyPlayer(const char* pname, UInt32 pid);
+    pyPlayer(); // only used by python glue, do NOT call
+    pyPlayer(pyKey& avKey, const char* pname, UInt32 pid, hsScalar distsq);
+    pyPlayer(plKey avKey, const char* pname, UInt32 pid, hsScalar distsq);
+    // another way to create a player with just a name and number
+    pyPlayer(const char* pname, UInt32 pid);
 public:
-	void Init(plKey avKey, const char* pname, UInt32 pid, hsScalar distsq); // used by python glue, do NOT call
+    void Init(plKey avKey, const char* pname, UInt32 pid, hsScalar distsq); // used by python glue, do NOT call
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptPlayer);
-	static PyObject *New(pyKey& avKey, const char* pname, UInt32 pid, hsScalar distsq);
-	static PyObject *New(plKey avKey, const char* pname, UInt32 pid, hsScalar distsq);
-	static PyObject *New(const char* pname, UInt32 pid);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyPlayer object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyPlayer); // converts a PyObject to a pyPlayer (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptPlayer);
+    static PyObject *New(pyKey& avKey, const char* pname, UInt32 pid, hsScalar distsq);
+    static PyObject *New(plKey avKey, const char* pname, UInt32 pid, hsScalar distsq);
+    static PyObject *New(const char* pname, UInt32 pid);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyPlayer object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyPlayer); // converts a PyObject to a pyPlayer (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	// override the equals to operator
-	hsBool operator==(const pyPlayer &player) const
-	{
-		// only thing that needs testing is the playerid, which is unique for all
-		if ( ((pyPlayer*)this)->GetPlayerID() == player.GetPlayerID() )
-			return true;
-		else
-			return false;
-	}
-	hsBool operator!=(const pyPlayer &player) const { return !(player == *this);	}
+    // override the equals to operator
+    hsBool operator==(const pyPlayer &player) const
+    {
+        // only thing that needs testing is the playerid, which is unique for all
+        if ( ((pyPlayer*)this)->GetPlayerID() == player.GetPlayerID() )
+            return true;
+        else
+            return false;
+    }
+    hsBool operator!=(const pyPlayer &player) const { return !(player == *this);    }
 
-	// for C++ access
-	plKey GetKey() { return fAvatarKey; }
+    // for C++ access
+    plKey GetKey() { return fAvatarKey; }
 
-	// for python access
-	const char * GetPlayerName() const { return fPlayerName.c_str();}
-	UInt32 GetPlayerID() const 
-	{
-		return fPlayerID;
-	}
+    // for python access
+    const char * GetPlayerName() const { return fPlayerName.c_str();}
+    UInt32 GetPlayerID() const 
+    {
+        return fPlayerID;
+    }
 
-	hsScalar GetDistSq() const { return fDistSq; }
+    hsScalar GetDistSq() const { return fDistSq; }
 
-	void SetCCRFlag(hsBool state);
-	hsBool IsCCR();
+    void SetCCRFlag(hsBool state);
+    hsBool IsCCR();
 
-	void SetServerFlag(hsBool state);
-	hsBool IsServer();
+    void SetServerFlag(hsBool state);
+    hsBool IsServer();
 
 };
 

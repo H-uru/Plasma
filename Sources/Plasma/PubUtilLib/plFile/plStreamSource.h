@@ -35,34 +35,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plStreamSource
 {
 private:
-	struct fileData
-	{
-		std::wstring	fFilename; // includes path
-		std::wstring	fDir; // parent directory
-		std::wstring	fExt;
-		hsStream*		fStream; // we own this pointer, so clean it up
-	};
-	std::map<std::wstring, fileData> fFileData; // key is filename
+    struct fileData
+    {
+        std::wstring    fFilename; // includes path
+        std::wstring    fDir; // parent directory
+        std::wstring    fExt;
+        hsStream*       fStream; // we own this pointer, so clean it up
+    };
+    std::map<std::wstring, fileData> fFileData; // key is filename
 
-	void ICleanup(); // closes all file pointers and cleans up after itself
-	void IBreakupFilename(std::wstring filename, std::wstring& dir, std::wstring& ext);
+    void ICleanup(); // closes all file pointers and cleans up after itself
+    void IBreakupFilename(std::wstring filename, std::wstring& dir, std::wstring& ext);
 
-	plStreamSource() {}
+    plStreamSource() {}
 public:
-	~plStreamSource() {ICleanup();}
+    ~plStreamSource() {ICleanup();}
 
-	// Force a cleanup of all data (some apps need to get at those file again, and they can't while we have them open)
-	void Cleanup() {ICleanup();}
+    // Force a cleanup of all data (some apps need to get at those file again, and they can't while we have them open)
+    void Cleanup() {ICleanup();}
 
-	// File access functions
-	hsStream* GetFile(std::wstring filename); // internal builds will read from disk if it doesn't exist
-	std::vector<std::wstring> GetListOfNames(std::wstring dir, std::wstring ext); // internal builds merge from disk
+    // File access functions
+    hsStream* GetFile(std::wstring filename); // internal builds will read from disk if it doesn't exist
+    std::vector<std::wstring> GetListOfNames(std::wstring dir, std::wstring ext); // internal builds merge from disk
 
-	// For other classes to insert files (takes ownership of the stream if successful)
-	bool InsertFile(std::wstring filename, hsStream* stream);
+    // For other classes to insert files (takes ownership of the stream if successful)
+    bool InsertFile(std::wstring filename, hsStream* stream);
 
-	// Instance handling
-	static plStreamSource* GetInstance();
+    // Instance handling
+    static plStreamSource* GetInstance();
 };
 
 #endif // plStreamSource_h_inc

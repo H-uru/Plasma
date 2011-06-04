@@ -33,10 +33,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBALLINCLUDES_H
 
 
-#include "../pnProduct/pnProduct.h"
+#include "pnProduct/pnProduct.h"
 
 #include "pnNbConst.h"
 #include "pnNbError.h"
+#include "pnNbKeys.h"
 #include "pnNbProtocol.h"
 #include "pnNbSrvs.h"
 

@@ -125,6 +125,6 @@ void AsyncThreadTaskAdd (
     AsyncThreadTaskList *   taskList,
     FAsyncThreadTask        callback,
     void *                  param,
-	const wchar				debugStr[],
+    const wchar             debugStr[],
     EThreadTaskPriority     priority = kThreadTaskPriorityNormal
 );

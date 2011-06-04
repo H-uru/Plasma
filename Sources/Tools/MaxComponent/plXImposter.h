@@ -37,14 +37,14 @@ const Class_ID XIMPOSTER_COMP_CID(0x68c9300f, 0x7c5428af);
 class plXImposterComp : public plComponent
 {
 public:
-	plXImposterComp();
-	void DeleteThis() { delete this; }
+    plXImposterComp();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)		{ return true; }
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 #endif // plXImposter_inc

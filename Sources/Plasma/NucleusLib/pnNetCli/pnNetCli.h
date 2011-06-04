@@ -239,7 +239,7 @@ struct NetMsgField {
 };
 
 struct NetMsg {
-	const char *		name;
+    const char *        name;
     unsigned            messageId;
     const NetMsgField * fields;
     unsigned            count;

@@ -24,11 +24,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plInitFileReader - Helper class that parses a standard-format .ini file	//
-//					   and allows you to specify derived classes to handle	//
-//					   interpreting specific portions.						//
-//																			//
+//                                                                          //
+//  plInitFileReader - Helper class that parses a standard-format .ini file //
+//                     and allows you to specify derived classes to handle  //
+//                     interpreting specific portions.                      //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -44,159 +44,159 @@ plInitSectionTokenReader::plInitSectionTokenReader( const char *separators ) : f
 {
 }
 
-hsBool		plInitSectionTokenReader::ParseLine( const char *line, UInt32 userData )
+hsBool      plInitSectionTokenReader::ParseLine( const char *line, UInt32 userData )
 {
-	hsStringTokenizer izer( line, fSeparators );
+    hsStringTokenizer izer( line, fSeparators );
 
-	char *token = izer.next();
-	return IParseToken( token, &izer, userData );
+    char *token = izer.next();
+    return IParseToken( token, &izer, userData );
 }
 
-void	plInitFileReader::IInitReaders( plInitSectionReader **readerArray )
+void    plInitFileReader::IInitReaders( plInitSectionReader **readerArray )
 {
-	UInt32		i;
+    UInt32      i;
 
 
-	for( i = 0; readerArray[ i ] != nil; i++ )
-		fSections.Append( readerArray[ i ] );
+    for( i = 0; readerArray[ i ] != nil; i++ )
+        fSections.Append( readerArray[ i ] );
 
-	hsAssert( fSections.GetCount() > 0, "No sections for initFileReader" );
+    hsAssert( fSections.GetCount() > 0, "No sections for initFileReader" );
 
-	fCurrSection = fSections[ 0 ];
+    fCurrSection = fSections[ 0 ];
 }
 
 plInitFileReader::plInitFileReader( plInitSectionReader **readerArray, UInt16 lineSize )
 {
-	fRequireEncrypted = true;
-	fCurrLine = nil;
-	fLineSize = lineSize;
-	fStream = fOurStream = nil;
-	IInitReaders( readerArray );
-	fUnhandledSection = nil;
+    fRequireEncrypted = true;
+    fCurrLine = nil;
+    fLineSize = lineSize;
+    fStream = fOurStream = nil;
+    IInitReaders( readerArray );
+    fUnhandledSection = nil;
 }
 
 plInitFileReader::plInitFileReader( const char *fileName, plInitSectionReader **readerArray, UInt16 lineSize )
 {
-	fRequireEncrypted = true;
-	fCurrLine = nil;
-	fLineSize = lineSize;
-	fStream = fOurStream = nil;
-	IInitReaders( readerArray );
-	if( !Open( fileName ) )
-		hsAssert( false, "Constructor open for plInitFileReader failed!" );
-	fUnhandledSection = nil;
+    fRequireEncrypted = true;
+    fCurrLine = nil;
+    fLineSize = lineSize;
+    fStream = fOurStream = nil;
+    IInitReaders( readerArray );
+    if( !Open( fileName ) )
+        hsAssert( false, "Constructor open for plInitFileReader failed!" );
+    fUnhandledSection = nil;
 }
 
 plInitFileReader::plInitFileReader( hsStream *stream, plInitSectionReader **readerArray, UInt16 lineSize )
 {
-	fRequireEncrypted = true;
-	fCurrLine = nil;
-	fLineSize = lineSize;
-	fStream = fOurStream = nil;
-	IInitReaders( readerArray );
-	if( !Open( stream ) )
-		hsAssert( false, "Constructor open for plInitFileReader failed!" );
-	fUnhandledSection = nil;
+    fRequireEncrypted = true;
+    fCurrLine = nil;
+    fLineSize = lineSize;
+    fStream = fOurStream = nil;
+    IInitReaders( readerArray );
+    if( !Open( stream ) )
+        hsAssert( false, "Constructor open for plInitFileReader failed!" );
+    fUnhandledSection = nil;
 }
 
 plInitFileReader::~plInitFileReader()
 {
-	Close();
-	delete [] fCurrLine;
+    Close();
+    delete [] fCurrLine;
 }
 
-hsBool	plInitFileReader::Open( const char *fileName )
+hsBool  plInitFileReader::Open( const char *fileName )
 {
-	if( fStream != nil )
-	{
-		hsAssert( false, "Unable to open initFileReader; already open" );
-		return false;
-	}
+    if( fStream != nil )
+    {
+        hsAssert( false, "Unable to open initFileReader; already open" );
+        return false;
+    }
 
-	fOurStream = plEncryptedStream::OpenEncryptedFile( fileName, fRequireEncrypted );
+    fOurStream = plEncryptedStream::OpenEncryptedFile( fileName, fRequireEncrypted );
 
-	if( fOurStream == nil )
-		return false;
+    if( fOurStream == nil )
+        return false;
 
-	fStream = fOurStream;
+    fStream = fOurStream;
 
-	return true;
+    return true;
 }
 
-hsBool	plInitFileReader::Open( hsStream *stream )
+hsBool  plInitFileReader::Open( hsStream *stream )
 {
-	if( fStream != nil )
-	{
-		hsAssert( false, "Unable to open initFileReader; already open" );
-		return false;
-	}
+    if( fStream != nil )
+    {
+        hsAssert( false, "Unable to open initFileReader; already open" );
+        return false;
+    }
 
-	fStream = stream;
-	return true;
+    fStream = stream;
+    return true;
 }
 
-hsBool	plInitFileReader::Parse( UInt32 userData )
+hsBool  plInitFileReader::Parse( UInt32 userData )
 {
-	hsAssert( fStream != nil, "Nil stream in initFileReader::Parse(); file not yet open?" );
+    hsAssert( fStream != nil, "Nil stream in initFileReader::Parse(); file not yet open?" );
 
-	if( fCurrLine == nil )
-		fCurrLine = TRACKED_NEW char[ fLineSize + 1 ];
+    if( fCurrLine == nil )
+        fCurrLine = TRACKED_NEW char[ fLineSize + 1 ];
 
-	// Start parsing lines
-	while( fStream->ReadLn( fCurrLine, fLineSize ) )
-	{
-		// puts( fCurrLine );
+    // Start parsing lines
+    while( fStream->ReadLn( fCurrLine, fLineSize ) )
+    {
+        // puts( fCurrLine );
 
-		// Is line a section header?
-		if( fCurrLine[ 0 ] == '[' )
-		{
-			// Yes--match against our sections and switch to the given one
-			char *end = strchr( fCurrLine, ']' );
-			if( end != nil )
-				*end = 0;
+        // Is line a section header?
+        if( fCurrLine[ 0 ] == '[' )
+        {
+            // Yes--match against our sections and switch to the given one
+            char *end = strchr( fCurrLine, ']' );
+            if( end != nil )
+                *end = 0;
 
-			UInt32		i;
+            UInt32      i;
 
-			bool foundSection = false;
-			for( i = 0; i < fSections.GetCount(); i++ )
-			{
-				if( stricmp( fSections[ i ]->GetSectionName(), &fCurrLine[ 1 ] ) == 0 )
-				{
-					fCurrSection = fSections[ i ];
-					foundSection = true;
-					break;
-				}
-			}
+            bool foundSection = false;
+            for( i = 0; i < fSections.GetCount(); i++ )
+            {
+                if( stricmp( fSections[ i ]->GetSectionName(), &fCurrLine[ 1 ] ) == 0 )
+                {
+                    fCurrSection = fSections[ i ];
+                    foundSection = true;
+                    break;
+                }
+            }
 
-			if (!foundSection && fUnhandledSection)
-			{
-				fCurrSection = fUnhandledSection;
-				fCurrSection->SetSectionName(&fCurrLine[1]);
-			}
-		}
-		else
-		{
-			// Nope, just a line, pass to our current section tokenizer
-			if( !fCurrSection->ParseLine( fCurrLine, userData ) )
-				return false;
-		}
-	}
+            if (!foundSection && fUnhandledSection)
+            {
+                fCurrSection = fUnhandledSection;
+                fCurrSection->SetSectionName(&fCurrLine[1]);
+            }
+        }
+        else
+        {
+            // Nope, just a line, pass to our current section tokenizer
+            if( !fCurrSection->ParseLine( fCurrLine, userData ) )
+                return false;
+        }
+    }
 
-	return true;
+    return true;
 }
 
-void	plInitFileReader::Close( void )
+void    plInitFileReader::Close( void )
 {
-	if( fStream == nil )
-		return;
+    if( fStream == nil )
+        return;
 
-	if( fStream == fOurStream )
-	{
-		fStream->Close();
-		delete fOurStream;
-		fOurStream = nil;
-	}
+    if( fStream == fOurStream )
+    {
+        fStream->Close();
+        delete fOurStream;
+        fOurStream = nil;
+    }
 
-	fStream = nil;
+    fStream = nil;
 }
 

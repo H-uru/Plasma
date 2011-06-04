@@ -33,25 +33,25 @@ static hsGDDrawDllLoad staticDllLoad;
 
 hsGDDrawDllLoad::hsGDDrawDllLoad()
 {
-	hsAssert(!staticDllLoad.fD3DDll, "Don't make instances of this class, just use GetDDrawDll func");
+    hsAssert(!staticDllLoad.fD3DDll, "Don't make instances of this class, just use GetDDrawDll func");
 
-	fD3DDll = LoadLibrary( "D3D9.DLL" );
-	if (fD3DDll)
-		hsStatusMessage( "--- D3D9.DLL loaded successfully.\n" );
-	else
-		hsStatusMessage( "--- Unable to load D3D9.DLL successfully.\n" );
+    fD3DDll = LoadLibrary( "D3D9.DLL" );
+    if (fD3DDll)
+        hsStatusMessage( "--- D3D9.DLL loaded successfully.\n" );
+    else
+        hsStatusMessage( "--- Unable to load D3D9.DLL successfully.\n" );
 }
 
 hsGDDrawDllLoad::~hsGDDrawDllLoad()
 {
-	if (fD3DDll != nil)
-	{
-		hsStatusMessage( "--- Unloading D3D.DLL.\n" );
-		FreeLibrary(fD3DDll);
-	}
+    if (fD3DDll != nil)
+    {
+        hsStatusMessage( "--- Unloading D3D.DLL.\n" );
+        FreeLibrary(fD3DDll);
+    }
 }
 
 HMODULE hsGDDrawDllLoad::GetD3DDll()
 {
-	return staticDllLoad.fD3DDll;
+    return staticDllLoad.fD3DDll;
 }

@@ -27,11 +27,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPointChannel.h"
 #include "plMatrixChannel.h"
 
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plAudioInterface.h"
-#include "../plInterp/plAnimTimeConvert.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "plInterp/plAnimTimeConvert.h"
 
 #include "hsMatrix44.h"
 
@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plQuatChannel::plQuatChannel()
 : plAGChannel()
 {
-	fResult.Identity();
+    fResult.Identity();
 }
 
 // DTOR
@@ -54,62 +54,62 @@ plQuatChannel::~plQuatChannel()
 // VALUE (time)
 const hsQuat &plQuatChannel::Value(double time)
 {
-	return fResult;
+    return fResult;
 }
 
 // VALUE (quaternion, time)
 void plQuatChannel::Value(hsQuat &quat, double time)
 {
-	quat = Value(time);
+    quat = Value(time);
 }
 
 // CANCOMBINE
 hsBool plQuatChannel::CanCombine(plAGChannel *channelA)
 {
-	return false;
-	if(plPointChannel::ConvertNoRef(channelA))
-	{
-		return true;
-	} else {
-		return false;
-	}
+    return false;
+    if(plPointChannel::ConvertNoRef(channelA))
+    {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 // MAKECOMBINE
 plAGChannel * plQuatChannel::MakeCombine(plAGChannel *channelA)
 {
-	if(plPointChannel::ConvertNoRef(channelA))
-	{
-		return TRACKED_NEW plQuatPointCombine(this, (plPointChannel *)channelA);
-	} else {
-		return nil;
-	}
+    if(plPointChannel::ConvertNoRef(channelA))
+    {
+        return TRACKED_NEW plQuatPointCombine(this, (plPointChannel *)channelA);
+    } else {
+        return nil;
+    }
 }
 
 // MAKEBLEND
 plAGChannel *plQuatChannel::MakeBlend(plAGChannel *channelB, plScalarChannel *channelBias, int blendPriority)
 {
-	plQuatChannel *chanB = plQuatChannel::ConvertNoRef(channelB);
-	plScalarChannel *chanBias = plScalarChannel::ConvertNoRef(channelBias);
-	if(chanB && chanBias)
-	{
-		return TRACKED_NEW plQuatBlend(this, chanB, chanBias);
-	} else {
-		hsStatusMessageF("Blend operation failed.");
-		return this;
-	}
+    plQuatChannel *chanB = plQuatChannel::ConvertNoRef(channelB);
+    plScalarChannel *chanBias = plScalarChannel::ConvertNoRef(channelBias);
+    if(chanB && chanBias)
+    {
+        return TRACKED_NEW plQuatBlend(this, chanB, chanBias);
+    } else {
+        hsStatusMessageF("Blend operation failed.");
+        return this;
+    }
 }
 
 // MAKEZEROSTATE
 plAGChannel * plQuatChannel::MakeZeroState()
 {
-	return TRACKED_NEW plQuatConstant(Value(0));
+    return TRACKED_NEW plQuatConstant(Value(0));
 }
 
 // MAKETIMESCALE
 plAGChannel * plQuatChannel::MakeTimeScale(plScalarChannel *timeSource)
 {
-	return TRACKED_NEW plQuatTimeScale(this, timeSource);
+    return TRACKED_NEW plQuatTimeScale(this, timeSource);
 }
 
 /////////////////
@@ -125,7 +125,7 @@ plQuatConstant::plQuatConstant()
 // CTOR(name, quaternion)
 plQuatConstant::plQuatConstant(const hsQuat &quaternion)
 {
-	fResult = quaternion;
+    fResult = quaternion;
 }
 
 // DTOR
@@ -135,14 +135,14 @@ plQuatConstant::~plQuatConstant()
 
 void plQuatConstant::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plQuatChannel::Read(stream, mgr);
-	fResult.Read(stream);
+    plQuatChannel::Read(stream, mgr);
+    fResult.Read(stream);
 }
 
 void plQuatConstant::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plQuatChannel::Write(stream, mgr);
-	fResult.Write(stream);
+    plQuatChannel::Write(stream, mgr);
+    fResult.Write(stream);
 }
 
 ////////////////////
@@ -170,33 +170,33 @@ plQuatTimeScale::~plQuatTimeScale()
 {
 }
 
-plQuatTimeScale::IsStoppedAt(double time)
+hsBool plQuatTimeScale::IsStoppedAt(double time)
 {
-	return fTimeSource->IsStoppedAt(time);
+    return fTimeSource->IsStoppedAt(time);
 }
 
 // VALUE
 const hsQuat & plQuatTimeScale::Value(double time)
 {
-	fResult = fChannelIn->Value(fTimeSource->Value(time));
+    fResult = fChannelIn->Value(fTimeSource->Value(time));
 
-	return fResult;
+    return fResult;
 }
 
 // DETACH
 plAGChannel * plQuatTimeScale::Detach(plAGChannel * channel)
 {
-	plAGChannel *result = this;
+    plAGChannel *result = this;
 
-	fChannelIn = plQuatChannel::ConvertNoRef(fChannelIn->Detach(channel));
+    fChannelIn = plQuatChannel::ConvertNoRef(fChannelIn->Detach(channel));
 
-	if(!fChannelIn || channel == this)
-		result = nil;
+    if(!fChannelIn || channel == this)
+        result = nil;
 
-	if (result != this)
-		delete this;
+    if (result != this)
+        delete this;
 
-	return result;
+    return result;
 }
 
 //////////////
@@ -222,32 +222,32 @@ plQuatBlend::plQuatBlend(plQuatChannel *channelA, plQuatChannel *channelB, plSca
 // DTOR
 plQuatBlend::~plQuatBlend()
 {
-	//if (fQuatA) delete fQuatA;
-	//if (fQuatB) delete fQuatB;
-	fQuatA = fQuatB = nil;
-	fChannelBias = nil;
+    //if (fQuatA) delete fQuatA;
+    //if (fQuatB) delete fQuatB;
+    fQuatA = fQuatB = nil;
+    fChannelBias = nil;
 }
 
 hsBool plQuatBlend::IsStoppedAt(double time)
 {
-	hsScalar blend = fChannelBias->Value(time);
-	if (blend == 0)
-		return fQuatA->IsStoppedAt(time);
-	if (blend == 1)
-		return fQuatB->IsStoppedAt(time);
+    hsScalar blend = fChannelBias->Value(time);
+    if (blend == 0)
+        return fQuatA->IsStoppedAt(time);
+    if (blend == 1)
+        return fQuatB->IsStoppedAt(time);
 
-	return (fQuatA->IsStoppedAt(time) && fQuatB->IsStoppedAt(time));
+    return (fQuatA->IsStoppedAt(time) && fQuatB->IsStoppedAt(time));
 }
 
 // VALUE(time)
 const hsQuat &plQuatBlend::Value(double time)
 {
-	hsQuat quatA = fQuatA->Value(time);
-	hsQuat quatB = fQuatB->Value(time);
+    hsQuat quatA = fQuatA->Value(time);
+    hsQuat quatB = fQuatB->Value(time);
 
-	fResult.SetFromSlerp(quatA, quatB, fChannelBias->Value(time));
+    fResult.SetFromSlerp(quatA, quatB, fChannelBias->Value(time));
 
-	return fResult;
+    return fResult;
 }
 
 
@@ -255,41 +255,41 @@ const hsQuat &plQuatBlend::Value(double time)
 // Remove the given channel wherever it may be in the graph (including this node)
 plAGChannel * plQuatBlend::Detach(plAGChannel *remove)
 {
-	plAGChannel *result = this;
+    plAGChannel *result = this;
 
-	hsAssert(remove != this, "Cannot remove blenders explicitly. Remove blended source instead.");
+    hsAssert(remove != this, "Cannot remove blenders explicitly. Remove blended source instead.");
 
-	if (remove != this)
-	{
-		fChannelBias = plScalarChannel::ConvertNoRef(fChannelBias->Detach(remove));
-		if (!fChannelBias)
-		{
-			// No more bias channel, assume it's zero from now on, (a.k.a. We just want channelA)
-			result = fQuatA;
-		}
-		else
-		{
-			fQuatA = (plQuatChannel *)fQuatA->Detach(remove);
-			if(fQuatA)
-			{
-				// channel a still here(although children may be gone); try channel b
-				fQuatB = (plQuatChannel *)fQuatB->Detach(remove);
+    if (remove != this)
+    {
+        fChannelBias = plScalarChannel::ConvertNoRef(fChannelBias->Detach(remove));
+        if (!fChannelBias)
+        {
+            // No more bias channel, assume it's zero from now on, (a.k.a. We just want channelA)
+            result = fQuatA;
+        }
+        else
+        {
+            fQuatA = (plQuatChannel *)fQuatA->Detach(remove);
+            if(fQuatA)
+            {
+                // channel a still here(although children may be gone); try channel b
+                fQuatB = (plQuatChannel *)fQuatB->Detach(remove);
 
-				if(!fQuatB)
-				{
-					result = fQuatA;	// channel b is gone: return channel a as blender's replacement
-				}
-			} else {
-				result = fQuatB;		// channel a is gone: return channel b
-			}
+                if(!fQuatB)
+                {
+                    result = fQuatA;    // channel b is gone: return channel a as blender's replacement
+                }
+            } else {
+                result = fQuatB;        // channel a is gone: return channel b
+            }
 
-			if (result != this)
-			{
-				delete this;			// lost one of our channels: kill the blender.
-			}
-		}
-	}
-	return result;
+            if (result != this)
+            {
+                delete this;            // lost one of our channels: kill the blender.
+            }
+        }
+    }
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -297,18 +297,18 @@ plAGChannel * plQuatBlend::Detach(plAGChannel *remove)
 
 void plQuatChannelApplicator::IApply(const plAGModifier *mod, double time)
 {
-	plQuatChannel *quatChan = plQuatChannel::ConvertNoRef(fChannel);
-	hsAssert(quatChan, "Invalid channel in plQuatChannelApplicator");
+    plQuatChannel *quatChan = plQuatChannel::ConvertNoRef(fChannel);
+    hsAssert(quatChan, "Invalid channel in plQuatChannelApplicator");
 
-	const hsQuat &rotate = quatChan->Value(time);
+    const hsQuat &rotate = quatChan->Value(time);
 
-	plCoordinateInterface *CI = IGetCI(mod);
+    plCoordinateInterface *CI = IGetCI(mod);
 
-	hsMatrix44 l2w;
-	hsMatrix44 w2l;
+    hsMatrix44 l2w;
+    hsMatrix44 w2l;
 
-	rotate.MakeMatrix(&l2w);
-	l2w.GetInverse(&w2l);
+    rotate.MakeMatrix(&l2w);
+    l2w.GetInverse(&w2l);
 
-	CI->SetLocalToParent(l2w, w2l);
+    CI->SetLocalToParent(l2w, w2l);
 }

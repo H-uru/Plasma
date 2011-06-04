@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plModulator_inc
 #define plModulator_inc
 
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 
 struct hsMatrix44;
 struct hsPoint3;
@@ -37,29 +37,29 @@ class hsBounds3Ext;
 class plModulator : public plCreatable
 {
 protected:
-	plVolumeIsect*			fVolume;
-	hsScalar				fSoftDist;
+    plVolumeIsect*          fVolume;
+    hsScalar                fSoftDist;
 
 public:
-	plModulator();
-	virtual ~plModulator();
+    plModulator();
+    virtual ~plModulator();
 
-	CLASSNAME_REGISTER( plModulator );
-	GETINTERFACE_ANY( plModulator, plCreatable );
+    CLASSNAME_REGISTER( plModulator );
+    GETINTERFACE_ANY( plModulator, plCreatable );
 
-	const plVolumeIsect*	GetVolume() const { return fVolume; }
-	void					SetVolume(plVolumeIsect* vol); // Takes ownership, so don't delete after handing it in.
+    const plVolumeIsect*    GetVolume() const { return fVolume; }
+    void                    SetVolume(plVolumeIsect* vol); // Takes ownership, so don't delete after handing it in.
 
-	hsScalar				Modulation(const hsPoint3& pos) const;
-	hsScalar				Modulation(const hsBounds3Ext& bnd) const;
+    hsScalar                Modulation(const hsPoint3& pos) const;
+    hsScalar                Modulation(const hsBounds3Ext& bnd) const;
 
-	void					SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void                    SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-	hsScalar				GetSoftDist() const { return fSoftDist; }
-	void					SetSoftDist(hsScalar s) { fSoftDist = s; }
+    hsScalar                GetSoftDist() const { return fSoftDist; }
+    void                    SetSoftDist(hsScalar s) { fSoftDist = s; }
 
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr);
 };
 
 #endif // plModulator_inc

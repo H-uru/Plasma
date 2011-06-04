@@ -24,20 +24,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	Animation Rollout Dialog Proc Class Definition  						 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  Animation Rollout Dialog Proc Class Definition                           //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	8.6.2001 mcn - Created.													 //
-//																			 //
+//                                                                           //
+//  8.6.2001 mcn - Created.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #if 0//ndef _plRTLightBaseAnimDlgProc_h
 #define _plRTLightBaseAnimDlgProc_h
 
-#include "../MaxComponent/plNotetrackDlg.h"
+#include "plNotetrackDlg.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Dialog Proc for Animation Rollout ////////////////////////////////////////
@@ -45,23 +45,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plRTLightBaseAnimDlgProc : public ParamMap2UserDlgProc
 {
-	protected:
-		plNoteTrackDlg fNoteTrackDlg;
+    protected:
+        plNoteTrackDlg fNoteTrackDlg;
 
-		HWND		fhWnd;
+        HWND        fhWnd;
 
-		static plRTLightBaseAnimDlgProc		fInstance;
-		static const char					*kDecalNameNone;
+        static plRTLightBaseAnimDlgProc     fInstance;
+        static const char                   *kDecalNameNone;
 
-	public:
-		BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
-		void DeleteThis() { fNoteTrackDlg.DeleteCache(); }
-		void SetThing( ReferenceTarget *m );
+    public:
+        BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+        void DeleteThis() { fNoteTrackDlg.DeleteCache(); }
+        void SetThing( ReferenceTarget *m );
 
-		static plRTLightBaseAnimDlgProc	*Instance() { return &fInstance; }
+        static plRTLightBaseAnimDlgProc *Instance() { return &fInstance; }
 
-	protected:
-		void IInitControls( Animatable *anim, IParamBlock2 *pb );
+    protected:
+        void IInitControls( Animatable *anim, IParamBlock2 *pb );
 
 };
 

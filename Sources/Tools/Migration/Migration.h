@@ -35,13 +35,13 @@ unsigned int __stdcall RunTasks(void* args);
 class MigrationTaskList
 {
 public:
-	typedef std::vector<MigrationTask*> TaskList;
+    typedef std::vector<MigrationTask*> TaskList;
 private:
-	TaskList fList;
+    TaskList fList;
 public:
-	MigrationTaskList();
-	static MigrationTaskList* GetInstance();
-	TaskList* GetList() { return &fList; }
+    MigrationTaskList();
+    static MigrationTaskList* GetInstance();
+    TaskList* GetList() { return &fList; }
 };
 
 

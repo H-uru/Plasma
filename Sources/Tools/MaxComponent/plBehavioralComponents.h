@@ -33,23 +33,23 @@ class plSittingModifier;
 class plAvBehaviorSittingComponent : public plActivatorBaseComponent
 {
 public:
-	enum
-	{
-		kTriggerNode_DEAD,
-		kSeekTimeFloat_DEAD,
-		kBoundState_DEAD,
-		kDetector,
-		kUseSmartSeek_DEAD,
-		kApproachFront,
-		kApproachLeft,
-		kApproachRight,
-		kDisableForward,
-	};
+    enum
+    {
+        kTriggerNode_DEAD,
+        kSeekTimeFloat_DEAD,
+        kBoundState_DEAD,
+        kDetector,
+        kUseSmartSeek_DEAD,
+        kApproachFront,
+        kApproachLeft,
+        kApproachRight,
+        kDisableForward,
+    };
 
-	plAvBehaviorSittingComponent();
-	hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
-	hsBool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    plAvBehaviorSittingComponent();
+    hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+    hsBool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 #define BEHAVIORAL_SITTING_CID Class_ID(0x617e22cc, 0x31ef310d)

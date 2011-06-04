@@ -26,25 +26,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_RIDE_ANIMATED_PHYS_MSG
 #define PL_RIDE_ANIMATED_PHYS_MSG
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plRideAnimatedPhysMsg : public plMessage
 {
 public:
-	plRideAnimatedPhysMsg();
-	plRideAnimatedPhysMsg(const plKey &sender, const plKey &receiver, bool entering, plKey regionKey);
-	bool Entering(){return fEntering;}
+    plRideAnimatedPhysMsg();
+    plRideAnimatedPhysMsg(const plKey &sender, const plKey &receiver, bool entering, plKey regionKey);
+    bool Entering(){return fEntering;}
 //PLASMA 
-	CLASSNAME_REGISTER( plRideAnimatedPhysMsg );
-	GETINTERFACE_ANY( plRideAnimatedPhysMsg, plMessage );
+    CLASSNAME_REGISTER( plRideAnimatedPhysMsg );
+    GETINTERFACE_ANY( plRideAnimatedPhysMsg, plMessage );
 
-	virtual void Read(hsStream *stream, hsResMgr *mgr);
-	virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    virtual void Write(hsStream *stream, hsResMgr *mgr);
 
 
 private:
-	bool fEntering;
-	plKey fRegion;
+    bool fEntering;
+    plKey fRegion;
 };
 
 #endif

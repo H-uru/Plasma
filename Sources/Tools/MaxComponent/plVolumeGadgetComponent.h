@@ -27,31 +27,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plVolumeGadgetComponent_inc
 
 #include "plActivatorBaseComponent.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 #define VOLUMEGADGET_CID Class_ID(0x1f77b56, 0x209a09d8)
 
 class plVolumeGadgetComponent : public plActivatorBaseComponent
 {
 protected:
-	plActivatorBaseComponent::LogicKeys fLogicModOutKeys;
+    plActivatorBaseComponent::LogicKeys fLogicModOutKeys;
 
-	void ICreateConditions(plMaxNode* node, plErrorMsg* errMsg, bool enter);
-	
+    void ICreateConditions(plMaxNode* node, plErrorMsg* errMsg, bool enter);
+    
 public:
-	plVolumeGadgetComponent();
+    plVolumeGadgetComponent();
 
-	hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-	hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-	hsBool DeInit(plMaxNode *node, plErrorMsg* pErrMsg);
+    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    hsBool DeInit(plMaxNode *node, plErrorMsg* pErrMsg);
 
-	virtual bool HasLogicOut() { return true; }
-	
-	const LogicKeys& GetLogicOutKeys() { return fLogicModOutKeys; }
-	virtual plKey GetLogicOutKey(plMaxNode* node);
+    virtual bool HasLogicOut() { return true; }
+    
+    const LogicKeys& GetLogicOutKeys() { return fLogicModOutKeys; }
+    virtual plKey GetLogicOutKey(plMaxNode* node);
 
-	virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    virtual void CollectNonDrawables(INodeTab& nonDrawables);
 };
 
 #endif // plVolumeGadgetComponent_inc

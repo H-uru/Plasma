@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plDXLightRef.h - Hardware Light DeviceRef Definition					 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plDXLightRef.h - Hardware Light DeviceRef Definition                     //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	4.25.2001 mcn - Created.												 //
-//																			 //
+//                                                                           //
+//  4.25.2001 mcn - Created.                                                 //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plDXLightRef_h
@@ -49,32 +49,32 @@ class plLightInfo;
 class plDXLightSettings;
 class plDXLightRef : public plDXDeviceRef
 {
-	public:
-		plLightInfo			*fOwner;
+    public:
+        plLightInfo         *fOwner;
 
-		D3DLIGHT9	fD3DInfo;
-		UInt32		fD3DIndex;
-		hsScalar	fScale;
+        D3DLIGHT9   fD3DInfo;
+        UInt32      fD3DIndex;
+        hsScalar    fScale;
 
-		plDXLightSettings	*fParentSettings;
-		IDirect3DDevice9	*fD3DDevice;
+        plDXLightSettings   *fParentSettings;
+        IDirect3DDevice9    *fD3DDevice;
 
-		void			Link( plDXLightRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
-		plDXLightRef	*GetNext( void ) { return (plDXLightRef *)fNext; }
+        void            Link( plDXLightRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
+        plDXLightRef    *GetNext( void ) { return (plDXLightRef *)fNext; }
 
-		plDXLightRef()
-		{
-			fOwner = nil;
-			fParentSettings = nil;
-			fD3DDevice = nil;
-			fD3DIndex = -1;
-			fScale = 1.f;
-		}
+        plDXLightRef()
+        {
+            fOwner = nil;
+            fParentSettings = nil;
+            fD3DDevice = nil;
+            fD3DIndex = -1;
+            fScale = 1.f;
+        }
 
-		virtual ~plDXLightRef();
-		void	Release( void );
+        virtual ~plDXLightRef();
+        void    Release( void );
 
-		void	UpdateD3DInfo( IDirect3DDevice9 *dev, plDXLightSettings *settings );
+        void    UpdateD3DInfo( IDirect3DDevice9 *dev, plDXLightSettings *settings );
 };
 
 

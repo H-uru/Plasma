@@ -27,29 +27,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvBrainHuman.h"
 #include "plArmatureMod.h"
 #include "plAGAnimInstance.h"
-#include "../plMessage/plAvatarMsg.h"
+#include "plMessage/plAvatarMsg.h"
 
-#include "../plPipeline/plDebugText.h"
+#include "plPipeline/plDebugText.h"
 
 plArmatureBehavior::plArmatureBehavior() : fAnim(nil), fArmature(nil), fBrain(nil), fIndex((UInt8)-1), fFlags(0) {}
 
 plArmatureBehavior::~plArmatureBehavior() 
 {
-	if (fAnim)
-		fAnim->Detach();
+    if (fAnim)
+        fAnim->Detach();
 }
 
 void plArmatureBehavior::Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature, UInt8 index)
 {
-	fArmature = armature;
-	fBrain = brain;
-	fIndex = index;
-	fStrength.Set(0);
-	if (anim)
-	{	
-		fAnim = fArmature->AttachAnimationBlended(anim, 0, 0, true);
-		fAnim->SetLoop(loop);
-	}
+    fArmature = armature;
+    fBrain = brain;
+    fIndex = index;
+    fStrength.Set(0);
+    if (anim)
+    {   
+        fAnim = fArmature->AttachAnimationBlended(anim, 0, 0, true);
+        fAnim->SetLoop(loop);
+    }
 }
 
 void plArmatureBehavior::Process(double time, float elapsed)
@@ -58,64 +58,64 @@ void plArmatureBehavior::Process(double time, float elapsed)
 
 void plArmatureBehavior::SetStrength(hsScalar val, hsScalar rate /* = 0.f */)
 {
-	hsScalar oldStrength = GetStrength();
-	if (rate == 0)
-		fStrength.Set(val);
-	else
-		fStrength.Set(val, fabs(val - oldStrength) / rate);
+    hsScalar oldStrength = GetStrength();
+    if (rate == 0)
+        fStrength.Set(val);
+    else
+        fStrength.Set(val, fabs(val - oldStrength) / rate);
 
-	if (fAnim)
-		fAnim->Fade(val, rate);
-	if (val > 0 && oldStrength == 0)
-		IStart();
-	else if (val == 0 && oldStrength > 0)
-		IStop();
+    if (fAnim)
+        fAnim->Fade(val, rate);
+    if (val > 0 && oldStrength == 0)
+        IStart();
+    else if (val == 0 && oldStrength > 0)
+        IStop();
 }
 
 hsScalar plArmatureBehavior::GetStrength()
 {
-	return fStrength.Value();
+    return fStrength.Value();
 }
 
 void plArmatureBehavior::Rewind()
 {
-	if (fAnim)
-		fAnim->SetCurrentTime(0.0f, true);
+    if (fAnim)
+        fAnim->SetCurrentTime(0.0f, true);
 }
 
 void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt)
 {
-	hsScalar strength = GetStrength();
-	const char *onOff = strength > 0 ? "on" : "off";
-	char blendBar[11] = "||||||||||";
-	int bars = (int)__min(10 * strength, 10);
-	blendBar[bars] = '\0';
+    hsScalar strength = GetStrength();
+    const char *onOff = strength > 0 ? "on" : "off";
+    char blendBar[11] = "||||||||||";
+    int bars = (int)__min(10 * strength, 10);
+    blendBar[bars] = '\0';
 
-	if (fAnim)
-	{
-		const char *animName = fAnim->GetName();
-		float time = fAnim->GetTimeConvert()->CurrentAnimTime();	
-		sprintf(strBuf, "%20s %3s time: %5.2f %s", animName, onOff, time, blendBar);
-	}
-	else
-		sprintf(strBuf, "         Behavior %2d %3s %s", fIndex, onOff, blendBar);
+    if (fAnim)
+    {
+        const char *animName = fAnim->GetName();
+        float time = fAnim->GetTimeConvert()->CurrentAnimTime();    
+        sprintf(strBuf, "%20s %3s time: %5.2f %s", animName, onOff, time, blendBar);
+    }
+    else
+        sprintf(strBuf, "         Behavior %2d %3s %s", fIndex, onOff, blendBar);
 
-	debugTxt.DrawString(x, y, strBuf);
-	y += lineHeight; 
+    debugTxt.DrawString(x, y, strBuf);
+    y += lineHeight; 
 }
 
 
 void plArmatureBehavior::IStart()
 {
-	if (fAnim) 
-	{			
-		fAnim->SetCurrentTime(0.0f, true);
-		fAnim->Start();
-	}
+    if (fAnim) 
+    {           
+        fAnim->SetCurrentTime(0.0f, true);
+        fAnim->Start();
+    }
 }
-	
+    
 void plArmatureBehavior::IStop()
 {
-	if (fFlags & kBehaviorFlagNotifyOnStop)
-		fBrain->OnBehaviorStop(fIndex);
+    if (fFlags & kBehaviorFlagNotifyOnStop)
+        fBrain->OnBehaviorStop(fIndex);
 }

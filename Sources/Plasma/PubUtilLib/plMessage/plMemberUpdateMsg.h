@@ -26,12 +26,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMemberUpdateMsg_INC
 #define plMemberUpdateMsg_INC
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsUtils.h"
 
 //
 // A msg sent locally when remote players have joined or left the game
-//	(whenever the netClientMgr's remote player list changes).
+//  (whenever the netClientMgr's remote player list changes).
 // Also sent initially when we first join a game.
 //
 class plMemberUpdateMsg : public plMessage
@@ -43,8 +43,8 @@ public:
    plMemberUpdateMsg() { SetBCastFlag( kBCastByExactType ); }
 
    // IO 
-   void Read(hsStream* stream, hsResMgr* mgr) {	plMessage::IMsgRead(stream, mgr); }
-   void Write(hsStream* stream, hsResMgr* mgr)	{	plMessage::IMsgWrite(stream, mgr); }
+   void Read(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgRead(stream, mgr); }
+   void Write(hsStream* stream, hsResMgr* mgr)  {   plMessage::IMsgWrite(stream, mgr); }
 };
 
-#endif		// plMemberUpdateMsg
+#endif      // plMemberUpdateMsg

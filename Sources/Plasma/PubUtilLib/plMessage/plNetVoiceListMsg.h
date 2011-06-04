@@ -27,42 +27,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetVoiceListMsg_inc
 #define plNetVoiceListMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsTemplates.h"
 
 class plNetVoiceListMsg : public plMessage
 {
 protected:
 
-	hsTArray<UInt32>	fClientIDs;
-	int					fCmd;
-	plKey				fRemoved;
+    hsTArray<UInt32>    fClientIDs;
+    int                 fCmd;
+    plKey               fRemoved;
 
 public:
 
-	enum 
-	{
-		kForcedListenerMode,
-		kDistanceMode,
-	};
+    enum 
+    {
+        kForcedListenerMode,
+        kDistanceMode,
+    };
 
-	plNetVoiceListMsg() : plMessage(nil, nil, nil), fCmd( 0 ) { SetBCastFlag(kBCastByExactType); }
-	plNetVoiceListMsg( UInt32 cmd ) : 
-				plMessage(nil, nil, nil), fCmd( cmd )
-				{ SetBCastFlag( kBCastByExactType ); }
-	
-	~plNetVoiceListMsg() { ; }
+    plNetVoiceListMsg() : plMessage(nil, nil, nil), fCmd( 0 ) { SetBCastFlag(kBCastByExactType); }
+    plNetVoiceListMsg( UInt32 cmd ) : 
+                plMessage(nil, nil, nil), fCmd( cmd )
+                { SetBCastFlag( kBCastByExactType ); }
+    
+    ~plNetVoiceListMsg() { ; }
 
-	CLASSNAME_REGISTER( plNetVoiceListMsg );
-	GETINTERFACE_ANY( plNetVoiceListMsg, plMessage );
+    CLASSNAME_REGISTER( plNetVoiceListMsg );
+    GETINTERFACE_ANY( plNetVoiceListMsg, plMessage );
 
-	UInt32		GetCmd( void ) { return fCmd; }
-	hsTArray<UInt32>* GetClientList( void ) { return &fClientIDs; };
-	plKey GetRemovedKey() { return fRemoved; }
-	void SetRemovedKey(plKey& k) { fRemoved = k; }
-	virtual void Read(hsStream* s, hsResMgr* mgr); 
-	
-	virtual void Write(hsStream* s, hsResMgr* mgr); 
+    UInt32      GetCmd( void ) { return fCmd; }
+    hsTArray<UInt32>* GetClientList( void ) { return &fClientIDs; };
+    plKey GetRemovedKey() { return fRemoved; }
+    void SetRemovedKey(plKey& k) { fRemoved = k; }
+    virtual void Read(hsStream* s, hsResMgr* mgr); 
+    
+    virtual void Write(hsStream* s, hsResMgr* mgr); 
 };
 
 

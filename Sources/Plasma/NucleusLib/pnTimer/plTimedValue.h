@@ -39,24 +39,24 @@ class hsStream;
 template <class T> class plTimedValue
 {
 protected:
-	T			fGoal;
-	T			fInit;
-	double		fStart;
-	hsScalar	fInvSecs;
+    T           fGoal;
+    T           fInit;
+    double      fStart;
+    hsScalar    fInvSecs;
 
 public:
-	plTimedValue() {}
-	plTimedValue(const plTimedValue<T>& o) { Set(o, 0.f); }
-	plTimedValue(const T& v) { Set(v, 0.f); }
+    plTimedValue() {}
+    plTimedValue(const plTimedValue<T>& o) { Set(o, 0.f); }
+    plTimedValue(const T& v) { Set(v, 0.f); }
 
-	plTimedValue<T>& operator=(const plTimedValue<T>& o) { return Set(o, 0.f); }
-	plTimedValue<T>& operator=(const T& v) { return Set(v, 0.f); }
+    plTimedValue<T>& operator=(const plTimedValue<T>& o) { return Set(o, 0.f); }
+    plTimedValue<T>& operator=(const T& v) { return Set(v, 0.f); }
 
-	plTimedValue<T>& Set(const T& v, hsScalar secs=0);
+    plTimedValue<T>& Set(const T& v, hsScalar secs=0);
 
-	operator T () const { return Value(); }
+    operator T () const { return Value(); }
 
-	T Value() const;
+    T Value() const;
 
 };
 
@@ -65,13 +65,13 @@ public:
 template <class T> class plTimedSimple : public plTimedValue<T>
 {
 public:
-	plTimedSimple<T>& operator=(const plTimedValue<T>& o) { return Set(o, 0.f); }
-	plTimedSimple<T>& operator=(const T& v) { return Set(v, 0.f); }
+    plTimedSimple<T>& operator=(const plTimedValue<T>& o) { return Set(o, 0.f); }
+    plTimedSimple<T>& operator=(const T& v) { return Set(v, 0.f); }
 
-	plTimedSimple<T>& Set(const T& v, hsScalar secs=0) { plTimedValue<T>::Set(v, secs); return *this; }
+    plTimedSimple<T>& Set(const T& v, hsScalar secs=0) { plTimedValue<T>::Set(v, secs); return *this; }
 
-	void Read(hsStream* s);
-	void Write(hsStream* s) const;
+    void Read(hsStream* s);
+    void Write(hsStream* s) const;
 };
 
 // Read/Writable version of plTimedValue, for compound types (e.g. hsVector3, hsColorRGBA).
@@ -79,77 +79,77 @@ public:
 template <class T> class plTimedCompound : public plTimedValue<T>
 {
 public:
-	plTimedCompound<T>& operator=(const plTimedValue<T>& o) { return Set(o, 0.f); }
-	plTimedCompound<T>& operator=(const T& v) { return Set(v, 0.f); }
+    plTimedCompound<T>& operator=(const plTimedValue<T>& o) { return Set(o, 0.f); }
+    plTimedCompound<T>& operator=(const T& v) { return Set(v, 0.f); }
 
-	plTimedCompound<T>& Set(const T& v, hsScalar secs=0) { plTimedValue<T>::Set(v, secs); return *this; }
+    plTimedCompound<T>& Set(const T& v, hsScalar secs=0) { plTimedValue<T>::Set(v, secs); return *this; }
 
-	void Read(hsStream* s);
-	void Write(hsStream* s) const;
+    void Read(hsStream* s);
+    void Write(hsStream* s) const;
 };
 
 template <class T> 
 plTimedValue<T>& plTimedValue<T>::Set(const T& v, hsScalar secs)
 {
-	if( secs <= 0 )
-	{
-		fGoal = fInit = v;
-		fInvSecs = 0;
-	}
-	else
-	{
-		fInit = Value();
-		fStart = hsTimer::GetSysSeconds();
-		fInvSecs = 1.f / secs;
-		fGoal = v;
-	}
-	return *this;
+    if( secs <= 0 )
+    {
+        fGoal = fInit = v;
+        fInvSecs = 0;
+    }
+    else
+    {
+        fInit = Value();
+        fStart = hsTimer::GetSysSeconds();
+        fInvSecs = 1.f / secs;
+        fGoal = v;
+    }
+    return *this;
 }
 
 template <class T> 
 T plTimedValue<T>::Value() const
 {
-	if( fInvSecs > 0 )
-	{
-		hsScalar t = (hsScalar)((hsTimer::GetSysSeconds() - fStart) * fInvSecs);
-		hsAssert(t >= 0, "Moving back in time");
+    if( fInvSecs > 0 )
+    {
+        hsScalar t = (hsScalar)((hsTimer::GetSysSeconds() - fStart) * fInvSecs);
+        hsAssert(t >= 0, "Moving back in time");
 
-		if( t < 1.f )
-			return fGoal * t + fInit * (1.f - t);
+        if( t < 1.f )
+            return fGoal * t + fInit * (1.f - t);
 
-	}
-	return fGoal;
+    }
+    return fGoal;
 }
 
 
 template <class T> 
 void plTimedSimple<T>::Read(hsStream* s)
 {
-	T val;
-	s->ReadSwap(&val);
-	Set(val, 0.f);
+    T val;
+    s->ReadSwap(&val);
+    Set(val, 0.f);
 }
 
 template <class T> 
 void plTimedSimple<T>::Write(hsStream* s) const
 {
-	T val = Value();
-	s->WriteSwap(val);
+    T val = Value();
+    s->WriteSwap(val);
 }
 
 template <class T> 
 void plTimedCompound<T>::Read(hsStream* s)
 {
-	T val;
-	val.Read(s);
-	Set(val, 0.f);
+    T val;
+    val.Read(s);
+    Set(val, 0.f);
 }
 
 template <class T> 
 void plTimedCompound<T>::Write(hsStream* s) const
 {
-	T val = Value();
-	val.Write(s);
+    T val = Value();
+    val.Write(s);
 }
 
 #endif // plTimedValue_inc

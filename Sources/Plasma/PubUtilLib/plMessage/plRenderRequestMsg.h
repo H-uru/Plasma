@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRenderRequestMsg_inc
 #define plRenderRequestMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsRefCnt.h"
 
 class plRenderRequest;
@@ -52,48 +52,48 @@ class plRenderRequestMsg : public plMessage
 {
 protected:
 
-	plRenderRequestBase*		fReq;
+    plRenderRequestBase*        fReq;
 
 public:
-	// Argumentless constructor useless (except for compiling).
-	plRenderRequestMsg();
-	// non-nil sender will get an ack when render is "done".
-	plRenderRequestMsg(plKey sender, plRenderRequestBase* req);
-	virtual ~plRenderRequestMsg();
+    // Argumentless constructor useless (except for compiling).
+    plRenderRequestMsg();
+    // non-nil sender will get an ack when render is "done".
+    plRenderRequestMsg(plKey sender, plRenderRequestBase* req);
+    virtual ~plRenderRequestMsg();
 
-	CLASSNAME_REGISTER( plRenderRequestMsg );
-	GETINTERFACE_ANY( plRenderRequestMsg, plMessage );
+    CLASSNAME_REGISTER( plRenderRequestMsg );
+    GETINTERFACE_ANY( plRenderRequestMsg, plMessage );
 
-	// These aren't really implemented. Read/Write/Transmission of
-	// these messages doesn't currently make sense.
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    // These aren't really implemented. Read/Write/Transmission of
+    // these messages doesn't currently make sense.
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	plRenderRequest* Request() const { return (plRenderRequest*)fReq; }
+    plRenderRequest* Request() const { return (plRenderRequest*)fReq; }
 
 };
 
 class plRenderRequestAck: public plMessage
 {
 protected:
-	UInt32			fUserData;
-	UInt32			fNumDrawn; // number of objects drawn.
+    UInt32          fUserData;
+    UInt32          fNumDrawn; // number of objects drawn.
 public:
-	// Argumentless constructor useless (except for compiling).
-	plRenderRequestAck();
-	plRenderRequestAck(plKey r, UInt32 userData=0);
-	~plRenderRequestAck() {}
+    // Argumentless constructor useless (except for compiling).
+    plRenderRequestAck();
+    plRenderRequestAck(plKey r, UInt32 userData=0);
+    ~plRenderRequestAck() {}
 
-	CLASSNAME_REGISTER( plRenderRequestAck );
-	GETINTERFACE_ANY( plRenderRequestAck, plMessage );
+    CLASSNAME_REGISTER( plRenderRequestAck );
+    GETINTERFACE_ANY( plRenderRequestAck, plMessage );
 
-	void		SetNumDrawn(UInt32 n) { fNumDrawn = n; }
-	UInt32		GetNumDrawn() const { return fNumDrawn; }
+    void        SetNumDrawn(UInt32 n) { fNumDrawn = n; }
+    UInt32      GetNumDrawn() const { return fNumDrawn; }
 
-	// These aren't really implemented. Read/Write/Transmission of
-	// these messages doesn't currently make sense.
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    // These aren't really implemented. Read/Write/Transmission of
+    // these messages doesn't currently make sense.
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 };
 

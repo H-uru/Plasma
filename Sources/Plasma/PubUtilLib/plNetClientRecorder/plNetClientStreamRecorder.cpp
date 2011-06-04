@@ -25,338 +25,338 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plNetClientRecorder.h"
 #include "hsStream.h"
-#include "../plNetMessage/plNetMessage.h"
+#include "plNetMessage/plNetMessage.h"
 #include "plCreatableIndex.h"
 #include "hsResMgr.h"
 #include "plgDispatch.h"
-#include "../plSDL/plSDL.h"
-#include "../pnNetCommon/plNetApp.h"
+#include "plSDL/plSDL.h"
+#include "pnNetCommon/plNetApp.h"
 
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../plMessage/plLoadAvatarMsg.h"
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../pnMessage/plNotifyMsg.h"
-#include "../plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
 
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 plNetClientStreamRecorder::plNetClientStreamRecorder(TimeWrapper* timeWrapper) :
-	plNetClientLoggingRecorder(timeWrapper),
-	fRecordStream(nil),
-	fResMgr(nil)
+    plNetClientLoggingRecorder(timeWrapper),
+    fRecordStream(nil),
+    fResMgr(nil)
 {
-	if (fLog)
-		delete fLog;
-	fLog = plStatusLogMgr::GetInstance().CreateStatusLog(30, "StreamRecorder.log", plStatusLog::kAlignToTop);
+    if (fLog)
+        delete fLog;
+    fLog = plStatusLogMgr::GetInstance().CreateStatusLog(30, "StreamRecorder.log", plStatusLog::kAlignToTop);
 }
 
 
 plNetClientStreamRecorder::~plNetClientStreamRecorder()
 {
-	if (fRecordStream)
-	{
-		fRecordStream->Close();
-		delete fRecordStream;
-	}
+    if (fRecordStream)
+    {
+        fRecordStream->Close();
+        delete fRecordStream;
+    }
 }
 
 hsResMgr* plNetClientStreamRecorder::GetResMgr()
 {
-	if (fResMgr)
-		return fResMgr;
-	else
-		return hsgResMgr::ResMgr();
+    if (fResMgr)
+        return fResMgr;
+    else
+        return hsgResMgr::ResMgr();
 }
 
 double plNetClientStreamRecorder::GetNextMessageTimeDelta()
 {
-	return fNextPlaybackTime - (GetTime() - fPlaybackTimeOffset);
+    return fNextPlaybackTime - (GetTime() - fPlaybackTimeOffset);
 }
 
 enum NetClientRecFlags
 {
-	kNetClientRecSDLDesc,
+    kNetClientRecSDLDesc,
 };
 
 bool plNetClientStreamRecorder::BeginRecording(const char* recName)
 {
-	if (!fRecordStream)
-	{
-		fRecordStream = TRACKED_NEW hsUNIXStream;
-		char path[256];
-		IMakeFilename(recName, path);
+    if (!fRecordStream)
+    {
+        fRecordStream = TRACKED_NEW hsUNIXStream;
+        char path[256];
+        IMakeFilename(recName, path);
 
-		if (!fRecordStream->Open(path, "wb"))
-		{
-			delete fRecordStream;
-			return false;
-		}
+        if (!fRecordStream->Open(path, "wb"))
+        {
+            delete fRecordStream;
+            return false;
+        }
 
-		hsBitVector contentFlags;
-		contentFlags.SetBit(kNetClientRecSDLDesc);
-		contentFlags.Write(fRecordStream);
+        hsBitVector contentFlags;
+        contentFlags.SetBit(kNetClientRecSDLDesc);
+        contentFlags.Write(fRecordStream);
 
-		// kNetClientRecSDLDesc
-		plSDLMgr::GetInstance()->Write(fRecordStream);
+        // kNetClientRecSDLDesc
+        plSDLMgr::GetInstance()->Write(fRecordStream);
 
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 bool plNetClientStreamRecorder::BeginPlayback(const char* recName)
 {
-	if (!fRecordStream)
-	{
-		fRecordStream = TRACKED_NEW hsUNIXStream;
-		char path[256];
-		IMakeFilename(recName, path);
+    if (!fRecordStream)
+    {
+        fRecordStream = TRACKED_NEW hsUNIXStream;
+        char path[256];
+        IMakeFilename(recName, path);
 
-		if (fRecordStream->Open(path, "rb"))
-		{
-			hsBitVector contentFlags;
-			contentFlags.Read(fRecordStream);
+        if (fRecordStream->Open(path, "rb"))
+        {
+            hsBitVector contentFlags;
+            contentFlags.Read(fRecordStream);
 
-			if (contentFlags.IsBitSet(kNetClientRecSDLDesc))
-				plSDLMgr::GetInstance()->Read(fRecordStream);
+            if (contentFlags.IsBitSet(kNetClientRecSDLDesc))
+                plSDLMgr::GetInstance()->Read(fRecordStream);
 
-			fPlaybackTimeOffset = GetTime();
-			fNextPlaybackTime = fRecordStream->ReadSwapDouble();
-			fBetweenAges = false;
-		}
-		else
-		{
-			delete fRecordStream;
-			fRecordStream = nil;
-			return false;
-		}
+            fPlaybackTimeOffset = GetTime();
+            fNextPlaybackTime = fRecordStream->ReadSwapDouble();
+            fBetweenAges = false;
+        }
+        else
+        {
+            delete fRecordStream;
+            fRecordStream = nil;
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 void plNetClientStreamRecorder::RecordMsg(plNetMessage* msg, double secs)
 {
-	if (!fRecordStream)
-		return;
+    if (!fRecordStream)
+        return;
 
-	if (IProcessRecordMsg(msg,secs))
-	{
-		fRecordStream->WriteSwapDouble(secs - fPlaybackTimeOffset);
-		GetResMgr()->WriteCreatableVersion(fRecordStream, msg);
+    if (IProcessRecordMsg(msg,secs))
+    {
+        fRecordStream->WriteSwapDouble(secs - fPlaybackTimeOffset);
+        GetResMgr()->WriteCreatableVersion(fRecordStream, msg);
 
-		ILogMsg(msg);
-	}
+        ILogMsg(msg);
+    }
 }
 
 void plNetClientStreamRecorder::RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg)
 {
-	fLog->AddLineF("Age %s", ageLoadedMsg->fLoaded ? "Loaded" : "Unloaded");
+    fLog->AddLineF("Age %s", ageLoadedMsg->fLoaded ? "Loaded" : "Unloaded");
 
-	if (ageLoadedMsg->fLoaded)
-	{
-		fBetweenAges = false;
-		fPlaybackTimeOffset = GetTime();
-	}
-	else
-	{
-		fBetweenAges = true;
-	}
+    if (ageLoadedMsg->fLoaded)
+    {
+        fBetweenAges = false;
+        fPlaybackTimeOffset = GetTime();
+    }
+    else
+    {
+        fBetweenAges = true;
+    }
 }
 
 bool plNetClientStreamRecorder::IsQueueEmpty()
 {
-	return (fRecordStream == nil);
+    return (fRecordStream == nil);
 }
 
 
 plNetMessage* plNetClientStreamRecorder::GetNextMessage()
 {
-	plNetMessage* msg = nil;
-	while (!fBetweenAges && (msg = IGetNextMessage()))
-	{
-		if (IIsValidMsg(msg))
-			return msg;
-		else
-			hsRefCnt_SafeUnRef(msg);
-	}
+    plNetMessage* msg = nil;
+    while (!fBetweenAges && (msg = IGetNextMessage()))
+    {
+        if (IIsValidMsg(msg))
+            return msg;
+        else
+            hsRefCnt_SafeUnRef(msg);
+    }
 
-	return nil;
+    return nil;
 }
 
 plNetMessage* plNetClientStreamRecorder::IGetNextMessage()
 {
-	plNetMessage* msg = nil;
+    plNetMessage* msg = nil;
 
-	if (!IsQueueEmpty() && GetNextMessageTimeDelta() <= 0 )
-	{
-		msg = plNetMessage::ConvertNoRef(GetResMgr()->ReadCreatableVersion(fRecordStream));
-		// msg->SetPeeked(true);
+    if (!IsQueueEmpty() && GetNextMessageTimeDelta() <= 0 )
+    {
+        msg = plNetMessage::ConvertNoRef(GetResMgr()->ReadCreatableVersion(fRecordStream));
+        // msg->SetPeeked(true);
 
-		// Fix the flags on game messages, so we won't get an assert later
-		plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
-		if (gameMsg)
-		{
-			plMessage* plMsg = gameMsg->GetContainedMsg(GetResMgr());
-			plNetClientApp::GetInstance()->UnInheritNetMsgFlags(plMsg);
+        // Fix the flags on game messages, so we won't get an assert later
+        plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
+        if (gameMsg)
+        {
+            plMessage* plMsg = gameMsg->GetContainedMsg(GetResMgr());
+            plNetClientApp::GetInstance()->UnInheritNetMsgFlags(plMsg);
 
-			// write message (and label) to ram stream
-			hsRAMStream stream;
-			GetResMgr()->WriteCreatable(&stream, plMsg);
+            // write message (and label) to ram stream
+            hsRAMStream stream;
+            GetResMgr()->WriteCreatable(&stream, plMsg);
 
-			// put stream in net msg wrapper
-			gameMsg->StreamInfo()->CopyStream(&stream);
-			// gameMsg->StreamInfo()->SetStreamType(plMsg->ClassIndex());		// type of game msg
-		}
+            // put stream in net msg wrapper
+            gameMsg->StreamInfo()->CopyStream(&stream);
+            // gameMsg->StreamInfo()->SetStreamType(plMsg->ClassIndex());       // type of game msg
+        }
 
-		double nextPlaybackTime = fRecordStream->ReadSwapDouble();
-		if (nextPlaybackTime < fNextPlaybackTime)
-			fBetweenAges = true;
+        double nextPlaybackTime = fRecordStream->ReadSwapDouble();
+        if (nextPlaybackTime < fNextPlaybackTime)
+            fBetweenAges = true;
 
-		fNextPlaybackTime = nextPlaybackTime;
+        fNextPlaybackTime = nextPlaybackTime;
 
-		// If this was the last message, stop playing back
-		if (fRecordStream->AtEnd())
-		{
-			fRecordStream->Close();
-			delete fRecordStream;
-			fRecordStream = nil;
-		}
-	}
-	
-	return msg;
+        // If this was the last message, stop playing back
+        if (fRecordStream->AtEnd())
+        {
+            fRecordStream->Close();
+            delete fRecordStream;
+            fRecordStream = nil;
+        }
+    }
+    
+    return msg;
 }
 
 bool plNetClientStreamRecorder::IIsValidMsg(plNetMessage* msg)
 {
-	if (plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg))
-	{
-		Int16 type = gameMsg->StreamInfo()->GetStreamType();
+    if (plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg))
+    {
+        Int16 type = gameMsg->StreamInfo()->GetStreamType();
 
-		//
-		// These messages will be regenerated if they are for the local avatar,
-		// so don't dispatch them in that case.
-		//
+        //
+        // These messages will be regenerated if they are for the local avatar,
+        // so don't dispatch them in that case.
+        //
 
-		if (type == CLASS_INDEX_SCOPED(plLinkEffectsTriggerMsg))
-		{
-			plLinkEffectsTriggerMsg* linkMsg = plLinkEffectsTriggerMsg::ConvertNoRef(gameMsg->GetContainedMsg(GetResMgr()));
-			if (plNetClientApp::GetInstance())
-			{
-				bool isLocal = (linkMsg->GetLinkKey() == plNetClientApp::GetInstance()->GetLocalPlayerKey());
-				hsRefCnt_SafeUnRef(linkMsg);
+        if (type == CLASS_INDEX_SCOPED(plLinkEffectsTriggerMsg))
+        {
+            plLinkEffectsTriggerMsg* linkMsg = plLinkEffectsTriggerMsg::ConvertNoRef(gameMsg->GetContainedMsg(GetResMgr()));
+            if (plNetClientApp::GetInstance())
+            {
+                bool isLocal = (linkMsg->GetLinkKey() == plNetClientApp::GetInstance()->GetLocalPlayerKey());
+                hsRefCnt_SafeUnRef(linkMsg);
 
-				if (isLocal)
-				{
-					ILogMsg(msg, "IGNORING ");
-					return false;
-				}
-			}
-		}
-		else if (type == CLASS_INDEX_SCOPED(plLoadAvatarMsg))
-		{
-			plLoadAvatarMsg* loadAvMsg = plLoadAvatarMsg::ConvertNoRef(gameMsg->GetContainedMsg(GetResMgr()));
-			if (plNetClientApp::GetInstance())
-			{
-				bool isLocal = (loadAvMsg->GetCloneKey() == plNetClientApp::GetInstance()->GetLocalPlayerKey());
-				hsRefCnt_SafeUnRef(loadAvMsg);
+                if (isLocal)
+                {
+                    ILogMsg(msg, "IGNORING ");
+                    return false;
+                }
+            }
+        }
+        else if (type == CLASS_INDEX_SCOPED(plLoadAvatarMsg))
+        {
+            plLoadAvatarMsg* loadAvMsg = plLoadAvatarMsg::ConvertNoRef(gameMsg->GetContainedMsg(GetResMgr()));
+            if (plNetClientApp::GetInstance())
+            {
+                bool isLocal = (loadAvMsg->GetCloneKey() == plNetClientApp::GetInstance()->GetLocalPlayerKey());
+                hsRefCnt_SafeUnRef(loadAvMsg);
 
-				if (isLocal)
-				{
-					ILogMsg(msg, "IGNORING ");
-					return false;
-				}
-			}
-		}
-	}
+                if (isLocal)
+                {
+                    ILogMsg(msg, "IGNORING ");
+                    return false;
+                }
+            }
+        }
+    }
 
-	ILogMsg(msg);
-	return true;
+    ILogMsg(msg);
+    return true;
 }
 
 void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
 {
-	if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plNetMsgGameMessage))
-	{
-		plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
-		fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), plFactory::GetNameOfClass(gameMsg->StreamInfo()->GetStreamType()));
+    if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plNetMsgGameMessage))
+    {
+        plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
+        fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), plFactory::GetNameOfClass(gameMsg->StreamInfo()->GetStreamType()));
 
-		if (gameMsg->StreamInfo()->GetStreamType() == CLASS_INDEX_SCOPED(plNotifyMsg))
-		{
-			plNotifyMsg* notifyMsg = plNotifyMsg::ConvertNoRef(gameMsg->GetContainedMsg(GetResMgr()));
-			int numEvents = notifyMsg->GetEventCount();
-			for (int i = 0; i < numEvents; i++)
-			{
-				const char* eventName = "";
+        if (gameMsg->StreamInfo()->GetStreamType() == CLASS_INDEX_SCOPED(plNotifyMsg))
+        {
+            plNotifyMsg* notifyMsg = plNotifyMsg::ConvertNoRef(gameMsg->GetContainedMsg(GetResMgr()));
+            int numEvents = notifyMsg->GetEventCount();
+            for (int i = 0; i < numEvents; i++)
+            {
+                const char* eventName = "";
 
-				proEventData* event = notifyMsg->GetEventRecord(i);
-				switch (event->fEventType)
-				{
-				case proEventData::kCollision:		eventName = "Collision";		break;
-				case proEventData::kPicked:			eventName = "Picked";			break;
-				case proEventData::kControlKey:		eventName = "ControlKey";		break;
-				case proEventData::kVariable:		eventName = "Variable";			break;
-				case proEventData::kFacing:			eventName = "Facing";			break;
-				case proEventData::kContained:		eventName = "Contained";		break;
-				case proEventData::kActivate:		eventName = "Activate";			break;
-				case proEventData::kCallback:		eventName = "Callback";			break;
-				case proEventData::kResponderState:	eventName = "ResponderState";	break;
-				case proEventData::kMultiStage:		eventName = "MultiStage";		break;
-				case proEventData::kSpawned:		eventName = "Spawned";			break;
-				case proEventData::kClickDrag:		eventName = "ClickDrag";		break;
-				}
+                proEventData* event = notifyMsg->GetEventRecord(i);
+                switch (event->fEventType)
+                {
+                case proEventData::kCollision:      eventName = "Collision";        break;
+                case proEventData::kPicked:         eventName = "Picked";           break;
+                case proEventData::kControlKey:     eventName = "ControlKey";       break;
+                case proEventData::kVariable:       eventName = "Variable";         break;
+                case proEventData::kFacing:         eventName = "Facing";           break;
+                case proEventData::kContained:      eventName = "Contained";        break;
+                case proEventData::kActivate:       eventName = "Activate";         break;
+                case proEventData::kCallback:       eventName = "Callback";         break;
+                case proEventData::kResponderState: eventName = "ResponderState";   break;
+                case proEventData::kMultiStage:     eventName = "MultiStage";       break;
+                case proEventData::kSpawned:        eventName = "Spawned";          break;
+                case proEventData::kClickDrag:      eventName = "ClickDrag";        break;
+                }
 
-				fLog->AddLineF("\t%s", eventName);
-			}
+                fLog->AddLineF("\t%s", eventName);
+            }
 
-			hsRefCnt_SafeUnRef(notifyMsg);
-		}
-	}
-	else if (plNetMsgSDLState* sdlMsg = plNetMsgSDLState::ConvertNoRef(msg))
-	{
-		hsReadOnlyStream stream(sdlMsg->StreamInfo()->GetStreamLen(), sdlMsg->StreamInfo()->GetStreamBuf());		
-		char* descName=nil;
-		int ver;
-		if (plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver))
-		{
-			fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), descName);
+            hsRefCnt_SafeUnRef(notifyMsg);
+        }
+    }
+    else if (plNetMsgSDLState* sdlMsg = plNetMsgSDLState::ConvertNoRef(msg))
+    {
+        hsReadOnlyStream stream(sdlMsg->StreamInfo()->GetStreamLen(), sdlMsg->StreamInfo()->GetStreamBuf());        
+        char* descName=nil;
+        int ver;
+        if (plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver))
+        {
+            fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), descName);
 
-			int i;
+            int i;
 
-			plStateDataRecord sdRec(descName, ver);
-			sdRec.Read(&stream, 0);
-			plStateDataRecord::SimpleVarsList vars;
-			sdRec.GetDirtyVars(&vars);
-			for (i = 0; i < vars.size(); i++)
-			{
-				fLog->AddLineF("\t%s", vars[i]->GetVarDescriptor()->GetName());
-			}
+            plStateDataRecord sdRec(descName, ver);
+            sdRec.Read(&stream, 0);
+            plStateDataRecord::SimpleVarsList vars;
+            sdRec.GetDirtyVars(&vars);
+            for (i = 0; i < vars.size(); i++)
+            {
+                fLog->AddLineF("\t%s", vars[i]->GetVarDescriptor()->GetName());
+            }
 
-			plStateDataRecord::SDVarsList sdVars;
-			sdRec.GetDirtySDVars(&sdVars);
-			for (i = 0; i < sdVars.size(); i++)
-			{
-				fLog->AddLineF("\t%s", sdVars[i]->GetSDVarDescriptor()->GetName());
-			}
-		}
-		delete [] descName;
-	}
-	else
-		fLog->AddLineF("%s%s", preText, msg->ClassName());
+            plStateDataRecord::SDVarsList sdVars;
+            sdRec.GetDirtySDVars(&sdVars);
+            for (i = 0; i < sdVars.size(); i++)
+            {
+                fLog->AddLineF("\t%s", sdVars[i]->GetSDVarDescriptor()->GetName());
+            }
+        }
+        delete [] descName;
+    }
+    else
+        fLog->AddLineF("%s%s", preText, msg->ClassName());
 }
 
 
 bool plNetClientStressStreamRecorder::IsRecordableMsg(plNetMessage* msg) const
 {
-	UInt16 idx = msg->ClassIndex();
+    UInt16 idx = msg->ClassIndex();
 
-	return (
-		plNetClientStreamRecorder::IsRecordableMsg(msg)
-		|| idx == CLASS_INDEX_SCOPED(plNetMsgTestAndSet)
-		|| idx == CLASS_INDEX_SCOPED(plNetMsgGameMessageDirected)
-		|| idx == CLASS_INDEX_SCOPED(plNetMsgVoice)
-		);
+    return (
+        plNetClientStreamRecorder::IsRecordableMsg(msg)
+        || idx == CLASS_INDEX_SCOPED(plNetMsgTestAndSet)
+        || idx == CLASS_INDEX_SCOPED(plNetMsgGameMessageDirected)
+        || idx == CLASS_INDEX_SCOPED(plNetMsgVoice)
+        );
 }

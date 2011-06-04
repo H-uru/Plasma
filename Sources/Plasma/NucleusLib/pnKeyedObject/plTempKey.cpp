@@ -33,27 +33,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plTempKey::plTempKey(hsKeyedObject *pO,const char *nm)
 {
-	hsAssert(pO,"plTempKey, Need Object!");
-	pO->SetKey(this);
-	plLocation loc( plLocation::kGlobalFixedLoc );
-	fUoid = plUoid( loc, pO->ClassIndex(), "temp");
-	fUoid.SetTemporary( true );					// Must set temp flag!
+    hsAssert(pO,"plTempKey, Need Object!");
+    pO->SetKey(this);
+    plLocation loc( plLocation::kGlobalFixedLoc );
+    fUoid = plUoid( loc, pO->ClassIndex(), "temp");
+    fUoid.SetTemporary( true );                 // Must set temp flag!
 
 #ifdef HS_DEBUGGING
-	fIDName = fUoid.GetObjectName();
-	fClassType = plFactory::GetNameOfClass( fUoid.GetClassType() );
+    fIDName = fUoid.GetObjectName();
+    fClassType = plFactory::GetNameOfClass( fUoid.GetClassType() );
 #endif
 }
 
 plTempKey::~plTempKey() 
 { 
-	UnRegister();
-	delete fObjectPtr;
-	fObjectPtr = nil;
+    UnRegister();
+    delete fObjectPtr;
+    fObjectPtr = nil;
 }
 
 void plTempKey::VerifyLoaded() const
 {
-	// Can't do a whole lot in this case for tempKeys :)
+    // Can't do a whole lot in this case for tempKeys :)
 }
 

@@ -41,50 +41,50 @@ struct hsGVertex3;
 class hsPerterber : public hsKeyedObject
 {
 public:
-	enum {
-		kTypeUndefined		= 0x0,
-		kTypeOscillator		= 0x1
-	};
+    enum {
+        kTypeUndefined      = 0x0,
+        kTypeOscillator     = 0x1
+    };
 protected:
-	static		hsBool32	fDisabled;
+    static      hsBool32    fDisabled;
 
-	virtual void IUpdate(hsScalar secs, plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l);
+    virtual void IUpdate(hsScalar secs, plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-	virtual void IPerterb(const hsPoint3& in, hsGVertex3& out) const = 0;
+    virtual void IPerterb(const hsPoint3& in, hsGVertex3& out) const = 0;
 
-	hsGMesh* IGetMesh(hsGShape3* shape);
+    hsGMesh* IGetMesh(hsGShape3* shape);
 public:
-	hsPerterber();
-	virtual ~hsPerterber();
+    hsPerterber();
+    virtual ~hsPerterber();
 
-	static void SetDisabled(hsBool32 on) { fDisabled = on; }
-	static void ToggleDisabled() { fDisabled = !fDisabled; }
-	static hsBool32 GetDisabled() { return fDisabled; }
+    static void SetDisabled(hsBool32 on) { fDisabled = on; }
+    static void ToggleDisabled() { fDisabled = !fDisabled; }
+    static hsBool32 GetDisabled() { return fDisabled; }
 
-	virtual void Perterb(hsScalar secs, plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l, hsGShape3* shape);
+    virtual void Perterb(hsScalar secs, plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l, hsGShape3* shape);
 
-	virtual void AdjustWorldBounds(const hsMatrix44& l2w, const hsMatrix44& w2l, hsBounds3Ext& bnd) const = 0;
+    virtual void AdjustWorldBounds(const hsMatrix44& l2w, const hsMatrix44& w2l, hsBounds3Ext& bnd) const = 0;
 
-	virtual UInt32 GetType() const = 0;
+    virtual UInt32 GetType() const = 0;
 
-	virtual void Write(hsStream* s) = 0;
-	virtual void Read(hsStream* s) = 0;
+    virtual void Write(hsStream* s) = 0;
+    virtual void Read(hsStream* s) = 0;
 
-	virtual void Save(hsStream* s, hsScalar secs) = 0;
-	virtual void Load(hsStream* s, hsScalar secs) = 0;
+    virtual void Save(hsStream* s, hsScalar secs) = 0;
+    virtual void Load(hsStream* s, hsScalar secs) = 0;
 
-	void TimeStampAndSave(hsStream* s);
-	void TimeStampAndLoad(hsStream* s);
+    void TimeStampAndSave(hsStream* s);
+    void TimeStampAndLoad(hsStream* s);
 
-	void LabelAndWrite(hsStream* s);
-	static hsPerterber* CreateAndRead(hsStream* s);
+    void LabelAndWrite(hsStream* s);
+    static hsPerterber* CreateAndRead(hsStream* s);
 
-	virtual void Init(Int32 nParams, hsScalar* params) = 0;
+    virtual void Init(Int32 nParams, hsScalar* params) = 0;
 
-#if 0	// Used Registry...need to change paulg
-	static void InitSystem(plResMgr* reg);
+#if 0   // Used Registry...need to change paulg
+    static void InitSystem(plResMgr* reg);
 
-	static void Shutdown(plResMgr* reg);
+    static void Shutdown(plResMgr* reg);
 #endif
 };
 

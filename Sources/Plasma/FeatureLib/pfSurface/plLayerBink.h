@@ -31,20 +31,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plLayerBink : public plLayerMovie
 {
 protected:
-	void* fHBink;
-	float fFPS;
+    void* fHBink;
+    float fFPS;
 
-	virtual Int32 ISecsToFrame(hsScalar secs);
-	hsBool IInit();
-	hsBool IGetCurrentFrame();
-	hsBool IRelease();
+    virtual Int32 ISecsToFrame(hsScalar secs);
+    hsBool IInit();
+    hsBool IGetCurrentFrame();
+    hsBool IRelease();
 
 public:
-	plLayerBink();
-	virtual ~plLayerBink();
+    plLayerBink();
+    virtual ~plLayerBink();
 
-	CLASSNAME_REGISTER(plLayerBink);
-	GETINTERFACE_ANY(plLayerBink, plLayerMovie);
+    CLASSNAME_REGISTER(plLayerBink);
+    GETINTERFACE_ANY(plLayerBink, plLayerMovie);
 };
 
 #endif // plLayerBink_inc

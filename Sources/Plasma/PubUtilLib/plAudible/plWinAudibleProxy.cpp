@@ -28,12 +28,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWinAudibleProxy.h"
 #include "plWinAudible.h"
 
-#include "../plDrawable/plDrawableGenerator.h"
-#include "../pnMessage/plProxyDrawMsg.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "pnMessage/plProxyDrawMsg.h"
 
 plWinAudibleProxy::plWinAudibleProxy()
-:	plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.2f),
-	fOwner(nil)
+:   plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.2f),
+    fOwner(nil)
 {
 }
 
@@ -43,24 +43,24 @@ plWinAudibleProxy::~plWinAudibleProxy()
 
 hsBool plWinAudibleProxy::Init(plWinAudible* aud)
 {
-	plProxyGen::Init(aud);
+    plProxyGen::Init(aud);
 
-	fOwner = aud;
-	fProxyMsgType = plProxyDrawMsg::kAudible;
+    fOwner = aud;
+    fProxyMsgType = plProxyDrawMsg::kAudible;
 
-	return fOwner != nil;
+    return fOwner != nil;
 }
 
 plKey plWinAudibleProxy::IGetNode() const 
 { 
-	return fOwner ? fOwner->GetSceneNode() : nil; 
+    return fOwner ? fOwner->GetSceneNode() : nil; 
 }
 
 plDrawableSpans* plWinAudibleProxy::ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
 {
-	if( fOwner )
-	{
-		return fOwner->CreateProxy(mat, idx, addTo);
-	}
-	return nil;
+    if( fOwner )
+    {
+        return fOwner->CreateProxy(mat, idx, addTo);
+    }
+    return nil;
 }

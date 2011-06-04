@@ -27,29 +27,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCaptureRenderMsg_inc
 #define plCaptureRenderMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class plMipmap;
 
 class plCaptureRenderMsg : public plMessage
 {
 public:
-	plCaptureRenderMsg() : plMessage(), fMipmap(nil) {}
-	plCaptureRenderMsg(const plKey &r, plMipmap* mipmap) : plMessage(nil, r, nil), fMipmap(mipmap) {}
+    plCaptureRenderMsg() : plMessage(), fMipmap(nil) {}
+    plCaptureRenderMsg(const plKey &r, plMipmap* mipmap) : plMessage(nil, r, nil), fMipmap(mipmap) {}
 
-	virtual ~plCaptureRenderMsg();
-	
-	CLASSNAME_REGISTER( plCaptureRenderMsg );
-	GETINTERFACE_ANY( plCaptureRenderMsg, plMessage );
+    virtual ~plCaptureRenderMsg();
+    
+    CLASSNAME_REGISTER( plCaptureRenderMsg );
+    GETINTERFACE_ANY( plCaptureRenderMsg, plMessage );
 
-	// Mipmap will be unref'd on destruction of message. If you plan to
-	// hang onto it, you need to ref it when you receive this message.
-	// You can either use hsRefCnt or use the ResMgr to give it a new key.
-	plMipmap* GetMipmap() const { return fMipmap; }
-	plMipmap*		fMipmap;
+    // Mipmap will be unref'd on destruction of message. If you plan to
+    // hang onto it, you need to ref it when you receive this message.
+    // You can either use hsRefCnt or use the ResMgr to give it a new key.
+    plMipmap* GetMipmap() const { return fMipmap; }
+    plMipmap*       fMipmap;
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Transient message"); }
-	virtual void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Transient message"); }
+    virtual void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Transient message"); }
+    virtual void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Transient message"); }
 };
 
 #endif // plCaptureRenderMsg_inc

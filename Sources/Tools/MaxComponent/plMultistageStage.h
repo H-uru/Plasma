@@ -31,86 +31,86 @@ class plAnimStage;
 
 enum StageTypes
 {
-	// Data for the multistage
-	kMultiStage,
+    // Data for the multistage
+    kMultiStage,
 
-	// Stage types
-	kStandard
+    // Stage types
+    kStandard
 };
 
 class plBaseStage
 {
 protected:
-	char* fName;
+    char* fName;
 
-	static BOOL CALLBACK IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	virtual BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static BOOL CALLBACK IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    virtual BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	HWND ICreateDlg(int dialogID, char* title);
-	void IDestroyDlg(HWND hDlg);
+    HWND ICreateDlg(int dialogID, char* title);
+    void IDestroyDlg(HWND hDlg);
 
-	void IBaseClone(plBaseStage* clone);
+    void IBaseClone(plBaseStage* clone);
 
 public:
-	plBaseStage();
-	virtual ~plBaseStage();
+    plBaseStage();
+    virtual ~plBaseStage();
 
-	// From StageTypes
-	virtual int GetType()=0;
+    // From StageTypes
+    virtual int GetType()=0;
 
-	// Derived classes need to call this from their implementation
-	virtual void Read(hsStream *stream);
-	virtual void Write(hsStream *stream);
+    // Derived classes need to call this from their implementation
+    virtual void Read(hsStream *stream);
+    virtual void Write(hsStream *stream);
 
-	virtual void CreateDlg()=0;
-	virtual void DestroyDlg()=0;
+    virtual void CreateDlg()=0;
+    virtual void DestroyDlg()=0;
 
-	virtual plAnimStage* CreateStage()=0;
+    virtual plAnimStage* CreateStage()=0;
 
-	virtual plBaseStage* Clone()=0;
+    virtual plBaseStage* Clone()=0;
 
-	const char* GetName();
-	void SetName(const char* name);
+    const char* GetName();
+    void SetName(const char* name);
 };
 
 class plStandardStage : public plBaseStage
 {
 protected:
-	static HWND fDlg;
+    static HWND fDlg;
 
-	char *fAnimName;
-	UInt32 fNumLoops;
-	bool fLoopForever;
-	UInt8 fForward;
-	UInt8 fBackward;
-	UInt8 fStageAdvance;
-	UInt8 fStageRegress;
-	UInt8 fNotify;
-	bool fUseGlobalCoord;
-	bool fDoAdvanceTo;
-	UInt32 fAdvanceTo;
-	bool fDoRegressTo;
-	UInt32 fRegressTo;
+    char *fAnimName;
+    UInt32 fNumLoops;
+    bool fLoopForever;
+    UInt8 fForward;
+    UInt8 fBackward;
+    UInt8 fStageAdvance;
+    UInt8 fStageRegress;
+    UInt8 fNotify;
+    bool fUseGlobalCoord;
+    bool fDoAdvanceTo;
+    UInt32 fAdvanceTo;
+    bool fDoRegressTo;
+    UInt32 fRegressTo;
 
-	BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	void IInitDlg();
+    BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    void IInitDlg();
 
-	void IGetAnimName();
+    void IGetAnimName();
 
 public:
-	plStandardStage();
-	~plStandardStage();
+    plStandardStage();
+    ~plStandardStage();
 
-	int GetType() { return kStandard; }
+    int GetType() { return kStandard; }
 
-	void Read(hsStream *stream);
-	void Write(hsStream *stream);
+    void Read(hsStream *stream);
+    void Write(hsStream *stream);
 
-	void CreateDlg();
-	void DestroyDlg();
+    void CreateDlg();
+    void DestroyDlg();
 
-	plAnimStage* CreateStage();
+    plAnimStage* CreateStage();
 
-	plBaseStage* Clone();
+    plBaseStage* Clone();
 };
 

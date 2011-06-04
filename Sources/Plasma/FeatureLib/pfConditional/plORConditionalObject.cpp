@@ -25,88 +25,88 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 #include "plORConditionalObject.h"
-#include "../plPhysical/plDetectorModifier.h"
+#include "plPhysical/plDetectorModifier.h"
 #include "hsResMgr.h"
-#include "../../NucleusLib/pnModifier/plLogicModBase.h"
+#include "pnModifier/plLogicModBase.h"
 
-#include "../plMessage/plCondRefMsg.h"
+#include "plMessage/plCondRefMsg.h"
 
 
 plORConditionalObject::plORConditionalObject() 
 {
-	
+    
 }
 
 plORConditionalObject::~plORConditionalObject()
 {
-	fChildren.SetCountAndZero(0);
+    fChildren.SetCountAndZero(0);
 }
 
 hsBool plORConditionalObject::MsgReceive(plMessage* msg)
 {
-	plCondRefMsg* pCondMsg = plCondRefMsg::ConvertNoRef(msg);
-	if (pCondMsg)
-	{
-		fChildren[pCondMsg->fWhich] = plConditionalObject::ConvertNoRef( pCondMsg->GetRef() );
-		fChildren[pCondMsg->fWhich]->SetLogicMod(fLogicMod);
-		return true;
-	}
-	
-	return plConditionalObject::MsgReceive(msg);
+    plCondRefMsg* pCondMsg = plCondRefMsg::ConvertNoRef(msg);
+    if (pCondMsg)
+    {
+        fChildren[pCondMsg->fWhich] = plConditionalObject::ConvertNoRef( pCondMsg->GetRef() );
+        fChildren[pCondMsg->fWhich]->SetLogicMod(fLogicMod);
+        return true;
+    }
+    
+    return plConditionalObject::MsgReceive(msg);
 }
 
 void plORConditionalObject::SetLogicMod(plLogicModBase* pMod)
 {
-	fLogicMod = pMod;
-	for (int i = 0; i < fChildren.Count(); i++)
-	{
-		if( fChildren[i] )
-			fChildren[i]->SetLogicMod(pMod);
-	}
+    fLogicMod = pMod;
+    for (int i = 0; i < fChildren.Count(); i++)
+    {
+        if( fChildren[i] )
+            fChildren[i]->SetLogicMod(pMod);
+    }
 }
 
 hsBool plORConditionalObject::Satisfied() 
 {
-	for (int i = 0; i < fChildren.Count(); i++)
-	{
-		if (fChildren[i]->Satisfied())
-			return true;
-	}
-	return false;
+    for (int i = 0; i < fChildren.Count(); i++)
+    {
+        if (fChildren[i]->Satisfied())
+            return true;
+    }
+    return false;
 }
 
 void plORConditionalObject::AddChild(plConditionalObject* pObj)
 {
-	fChildren.Append(pObj);
-	pObj->SetLogicMod(fLogicMod);
+    fChildren.Append(pObj);
+    pObj->SetLogicMod(fLogicMod);
 }
 
 void plORConditionalObject::Reset()
 {
-	for (int i = 0; i < fChildren.Count(); i++)
-		fChildren[i]->Reset();
+    for (int i = 0; i < fChildren.Count(); i++)
+        fChildren[i]->Reset();
 }
 
 void plORConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Read(stream, mgr);
-	
-	plCondRefMsg* refMsg;
-	int n = stream->ReadSwap32();
-	fChildren.SetCountAndZero(n);
-	for(int i = 0; i < n; i++ )
-	{	
-		refMsg = TRACKED_NEW plCondRefMsg(GetKey(), i);
-		mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
-	}	
+    plConditionalObject::Read(stream, mgr);
+    
+    plCondRefMsg* refMsg;
+    int n = stream->ReadSwap32();
+    fChildren.SetCountAndZero(n);
+    for(int i = 0; i < n; i++ )
+    {   
+        refMsg = TRACKED_NEW plCondRefMsg(GetKey(), i);
+        mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
+    }   
 }
 
 void plORConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plConditionalObject::Write(stream, mgr);
-	
-	stream->WriteSwap32(fChildren.GetCount());
-	for( int i = 0; i < fChildren.GetCount(); i++ )
-		mgr->WriteKey(stream, fChildren[i]);
+    plConditionalObject::Write(stream, mgr);
+    
+    stream->WriteSwap32(fChildren.GetCount());
+    for( int i = 0; i < fChildren.GetCount(); i++ )
+        mgr->WriteKey(stream, fChildren[i]);
 }
 

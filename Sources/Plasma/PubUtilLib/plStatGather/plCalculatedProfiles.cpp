@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plProfile.h"
 #include "plProfileManager.h"
-#include "../plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "hsTimer.h"
 
 plProfile_CreateCounter("Age Upload BitsPerSec", "Network", UploadAgeBitsPerSec);
@@ -69,54 +69,54 @@ plProfile_CreateCounter("Polys Per Material", "General", PolysPerMat);
 
 void CalculateProfiles()
 {
-	// KLUDGE - do timing that overlaps the beginframe / endframe (where timing is normally reset)
-	static UInt32 lastTicks = plProfileManager::GetTime();
-	UInt32 curTicks = plProfileManager::GetTime();
-	gVarRFPS.Set(curTicks - lastTicks);
-	lastTicks = curTicks;
+    // KLUDGE - do timing that overlaps the beginframe / endframe (where timing is normally reset)
+    static UInt32 lastTicks = plProfileManager::GetTime();
+    UInt32 curTicks = plProfileManager::GetTime();
+    gVarRFPS.Set(curTicks - lastTicks);
+    lastTicks = curTicks;
 
-	// KLUDGE - calulate the polys per material
-	if (plProfile_GetValue(MatChange) == 0)
-		plProfile_Set(PolysPerMat, 0);
-	else
-		plProfile_Set(PolysPerMat, plProfile_GetValue(DrawTriangles) / plProfile_GetValue(MatChange));
+    // KLUDGE - calulate the polys per material
+    if (plProfile_GetValue(MatChange) == 0)
+        plProfile_Set(PolysPerMat, 0);
+    else
+        plProfile_Set(PolysPerMat, plProfile_GetValue(DrawTriangles) / plProfile_GetValue(MatChange));
 
-	#ifdef HS_FIND_MEM_LEAKS
-//	plProfile_Set(MemAllocated, MemGetAllocated());
-//	plProfile_Set(MemPeakAlloc, MemGetPeakAllocated());
-	#endif
+    #ifdef HS_FIND_MEM_LEAKS
+//  plProfile_Set(MemAllocated, MemGetAllocated());
+//  plProfile_Set(MemPeakAlloc, MemGetPeakAllocated());
+    #endif
 
-	// Network stats
-	plNetClientMgr* nc = plNetClientMgr::GetInstance();
-	if (!nc->GetFlagsBit(plNetClientMgr::kDisabled))
-	{
+    // Network stats
+    plNetClientMgr* nc = plNetClientMgr::GetInstance();
+    if (!nc->GetFlagsBit(plNetClientMgr::kDisabled))
+    {
 #if 0
-		hsAssert(nc->GetNetCore(), "nil net core in stats?");
-		plNetCoreStats* ns = nc->GetNetCore()->GetStats();
+        hsAssert(nc->GetNetCore(), "nil net core in stats?");
+        plNetCoreStats* ns = nc->GetNetCore()->GetStats();
 
-		plProfile_Set(UploadAgeBitsPerSec, (UInt32)nc->GetNetClientStats().GetAgeStatsULBitsPerSec());
-		plProfile_Set(UploadBW, ns->GetULBits()/8);
-		plProfile_Set(UploadPPS, ns->GetULPackets());
-		plProfile_Set(UploadAPS, (UInt32)ns->GetULAvgPacketBytes());
-		plProfile_Set(UploadPQ, (UInt32)ns->GetULAvgNumPacketsQueued());
-		plProfile_Set(RMultAcksPQ, nc->GetNetClientStats().GetRecvdMultipleAcks());
+        plProfile_Set(UploadAgeBitsPerSec, (UInt32)nc->GetNetClientStats().GetAgeStatsULBitsPerSec());
+        plProfile_Set(UploadBW, ns->GetULBits()/8);
+        plProfile_Set(UploadPPS, ns->GetULPackets());
+        plProfile_Set(UploadAPS, (UInt32)ns->GetULAvgPacketBytes());
+        plProfile_Set(UploadPQ, (UInt32)ns->GetULAvgNumPacketsQueued());
+        plProfile_Set(RMultAcksPQ, nc->GetNetClientStats().GetRecvdMultipleAcks());
 
-		plProfile_Set(DownloadAgeBitsPerSec, (UInt32)nc->GetNetClientStats().GetAgeStatsDLBitsPerSec());
-		plProfile_Set(DownloadBW, ns->GetDLBits()/8);
-		plProfile_Set(DownloadPPS, ns->GetDLPackets());
-		plProfile_Set(DownloadAPS, (UInt32)ns->GetDLAvgPacketBytes());
-		plProfile_Set(DownloadPQ, (UInt32)ns->GetDLAvgNumPacketsQueued());
-		plProfile_Set(DownloadDP, ns->GetDLDroppedPackets());
+        plProfile_Set(DownloadAgeBitsPerSec, (UInt32)nc->GetNetClientStats().GetAgeStatsDLBitsPerSec());
+        plProfile_Set(DownloadBW, ns->GetDLBits()/8);
+        plProfile_Set(DownloadPPS, ns->GetDLPackets());
+        plProfile_Set(DownloadAPS, (UInt32)ns->GetDLAvgPacketBytes());
+        plProfile_Set(DownloadPQ, (UInt32)ns->GetDLAvgNumPacketsQueued());
+        plProfile_Set(DownloadDP, ns->GetDLDroppedPackets());
 
-		plProfile_Set(RemotePlayers, nc->RemotePlayerKeys().size());
-		plProfile_Set(Peers, ns->GetNumPeers());
-		plProfile_Set(PlayerID, nc->GetPlayerID());
-		plProfile_Set(AccountID, nc->GetAccountID());
+        plProfile_Set(RemotePlayers, nc->RemotePlayerKeys().size());
+        plProfile_Set(Peers, ns->GetNumPeers());
+        plProfile_Set(PlayerID, nc->GetPlayerID());
+        plProfile_Set(AccountID, nc->GetAccountID());
 
-		plProfile_Set(AvgReceiptTime, hsTimer::PrecSecsToTicks(ns->GetAvgReceiptTime()));
-		plProfile_Set(PeakReceiptTime, hsTimer::PrecSecsToTicks(ns->GetPeakReceiptTime()));
+        plProfile_Set(AvgReceiptTime, hsTimer::PrecSecsToTicks(ns->GetAvgReceiptTime()));
+        plProfile_Set(PeakReceiptTime, hsTimer::PrecSecsToTicks(ns->GetPeakReceiptTime()));
 #endif
-	}
+    }
 }
 
 #include "../plPipeline/plPlates.h"
@@ -131,96 +131,96 @@ static plGraphPlate* fNetAvgQueuesPlate = nil;
 
 static int ICreateStdPlate(plGraphPlate** graph)
 {
-	if (plPlateManager::InstanceValid())
-	{
-		plPlateManager::Instance().CreateGraphPlate(graph);
-		(*graph)->SetSize(0.25, 0.25);
-		(*graph)->SetDataRange(0, 100, 100);
-		return hsOK;
-	}
-	return hsFail;
+    if (plPlateManager::InstanceValid())
+    {
+        plPlateManager::Instance().CreateGraphPlate(graph);
+        (*graph)->SetSize(0.25, 0.25);
+        (*graph)->SetDataRange(0, 100, 100);
+        return hsOK;
+    }
+    return hsFail;
 }
 
 void CreateStandardGraphs(const char* groupName, bool create)
 {
-	if (strcmp(groupName, "General") == 0)
-	{
-		if (create)
-		{
-			if (ICreateStdPlate(&fFPSPlate) == hsOK)
-			{
-				fFPSPlate->SetTitle("mSecs");		
-				fFPSPlate->SetLabelText("Tot", "Draw", "Upd");
-			}
-		}
-		else
-		{
-			plPlateManager::Instance().DestroyPlate(fFPSPlate);
-			fFPSPlate = nil;
-		}
-	}
-	else if (strcmp(groupName, "Network") == 0)
-	{
-		if (create)
-		{
-			if (ICreateStdPlate(&fNetBWPlate) == hsOK)
-			{
-				fNetBWPlate->SetDataLabels(0, 2000);
-				fNetBWPlate->SetTitle("Bytes");
-				fNetBWPlate->SetLabelText("UL", "DL");
+    if (strcmp(groupName, "General") == 0)
+    {
+        if (create)
+        {
+            if (ICreateStdPlate(&fFPSPlate) == hsOK)
+            {
+                fFPSPlate->SetTitle("mSecs");       
+                fFPSPlate->SetLabelText("Tot", "Draw", "Upd");
+            }
+        }
+        else
+        {
+            plPlateManager::Instance().DestroyPlate(fFPSPlate);
+            fFPSPlate = nil;
+        }
+    }
+    else if (strcmp(groupName, "Network") == 0)
+    {
+        if (create)
+        {
+            if (ICreateStdPlate(&fNetBWPlate) == hsOK)
+            {
+                fNetBWPlate->SetDataLabels(0, 2000);
+                fNetBWPlate->SetTitle("Bytes");
+                fNetBWPlate->SetLabelText("UL", "DL");
 
-				ICreateStdPlate(&fNetPPSPlate);
-				fNetPPSPlate->SetDataLabels(0, 20);
-				fNetPPSPlate->SetTitle("Packets");
-				fNetPPSPlate->SetLabelText("UL", "DL");
+                ICreateStdPlate(&fNetPPSPlate);
+                fNetPPSPlate->SetDataLabels(0, 20);
+                fNetPPSPlate->SetTitle("Packets");
+                fNetPPSPlate->SetLabelText("UL", "DL");
 
-				ICreateStdPlate(&fNetQueuesPlate);
-				fNetQueuesPlate->SetDataLabels(0, 20);
-				fNetQueuesPlate->SetTitle("Queue Counts");
-				fNetQueuesPlate->SetLabelText("UL", "DL");
+                ICreateStdPlate(&fNetQueuesPlate);
+                fNetQueuesPlate->SetDataLabels(0, 20);
+                fNetQueuesPlate->SetTitle("Queue Counts");
+                fNetQueuesPlate->SetLabelText("UL", "DL");
 
-				ICreateStdPlate(&fNetQueuesPlate);
-				fNetQueuesPlate->SetDataLabels(0, 20);
-				fNetQueuesPlate->SetTitle("Queue Counts");
-				fNetQueuesPlate->SetLabelText("UL", "DL");
+                ICreateStdPlate(&fNetQueuesPlate);
+                fNetQueuesPlate->SetDataLabels(0, 20);
+                fNetQueuesPlate->SetTitle("Queue Counts");
+                fNetQueuesPlate->SetLabelText("UL", "DL");
 
-				ICreateStdPlate(&fNetQueuesPlate);
-				fNetQueuesPlate->SetDataLabels(0, 20);
-				fNetQueuesPlate->SetTitle("Queue Counts");
-				fNetQueuesPlate->SetLabelText("UL", "DL");
+                ICreateStdPlate(&fNetQueuesPlate);
+                fNetQueuesPlate->SetDataLabels(0, 20);
+                fNetQueuesPlate->SetTitle("Queue Counts");
+                fNetQueuesPlate->SetLabelText("UL", "DL");
 
-				ICreateStdPlate(&fNetAvgBWPlate);
-				fNetAvgBWPlate->SetDataLabels(0, 5000);
-				fNetAvgBWPlate->SetTitle("Avg BytesPS");
-				fNetAvgBWPlate->SetLabelText("UL", "DL");
+                ICreateStdPlate(&fNetAvgBWPlate);
+                fNetAvgBWPlate->SetDataLabels(0, 5000);
+                fNetAvgBWPlate->SetTitle("Avg BytesPS");
+                fNetAvgBWPlate->SetLabelText("UL", "DL");
 
-				ICreateStdPlate(&fNetAvgPPSPlate);
-				fNetAvgPPSPlate->SetDataLabels(0, 40);
-				fNetAvgPPSPlate->SetTitle("Avg PacketsPS");
-				fNetAvgPPSPlate->SetLabelText("UL", "DL");
+                ICreateStdPlate(&fNetAvgPPSPlate);
+                fNetAvgPPSPlate->SetDataLabels(0, 40);
+                fNetAvgPPSPlate->SetTitle("Avg PacketsPS");
+                fNetAvgPPSPlate->SetLabelText("UL", "DL");
 
-				ICreateStdPlate(&fNetAvgQueuesPlate);
-				fNetAvgQueuesPlate->SetDataLabels(0, 40);
-				fNetAvgQueuesPlate->SetTitle("Avg Queue CountsPS");
-				fNetAvgQueuesPlate->SetLabelText("UL", "DL");
-			}
-		}
-		else
-		{
-			plPlateManager::Instance().DestroyPlate(fNetBWPlate);
-			plPlateManager::Instance().DestroyPlate(fNetPPSPlate);
-			plPlateManager::Instance().DestroyPlate(fNetQueuesPlate);
-			plPlateManager::Instance().DestroyPlate(fNetAvgBWPlate);
-			plPlateManager::Instance().DestroyPlate(fNetAvgPPSPlate);
-			plPlateManager::Instance().DestroyPlate(fNetAvgQueuesPlate);
-			fNetBWPlate = nil;
-			fNetPPSPlate = nil;
-			fNetQueuesPlate = nil;
-			fNetAvgBWPlate = nil;
-			fNetAvgPPSPlate = nil;
-			fNetAvgQueuesPlate = nil;
-		}
-	}
+                ICreateStdPlate(&fNetAvgQueuesPlate);
+                fNetAvgQueuesPlate->SetDataLabels(0, 40);
+                fNetAvgQueuesPlate->SetTitle("Avg Queue CountsPS");
+                fNetAvgQueuesPlate->SetLabelText("UL", "DL");
+            }
+        }
+        else
+        {
+            plPlateManager::Instance().DestroyPlate(fNetBWPlate);
+            plPlateManager::Instance().DestroyPlate(fNetPPSPlate);
+            plPlateManager::Instance().DestroyPlate(fNetQueuesPlate);
+            plPlateManager::Instance().DestroyPlate(fNetAvgBWPlate);
+            plPlateManager::Instance().DestroyPlate(fNetAvgPPSPlate);
+            plPlateManager::Instance().DestroyPlate(fNetAvgQueuesPlate);
+            fNetBWPlate = nil;
+            fNetPPSPlate = nil;
+            fNetQueuesPlate = nil;
+            fNetAvgBWPlate = nil;
+            fNetAvgPPSPlate = nil;
+            fNetAvgQueuesPlate = nil;
+        }
+    }
 }
 
 plProfile_CreateTimer("Draw", "General", DrawTime);
@@ -228,77 +228,77 @@ plProfile_CreateTimer("Update", "General", UpdateTime);
 
 void UpdateStandardGraphs(float xPos, float yPos)
 {
-	#define PositionPlate(plate)		\
-		plate->SetPosition(xPos, yPos);	\
-		yPos += 0.25;					\
-		plate->SetVisible(true);
+    #define PositionPlate(plate)        \
+        plate->SetPosition(xPos, yPos); \
+        yPos += 0.25;                   \
+        plate->SetVisible(true);
 
-	if (fFPSPlate)
-	{
-		fFPSPlate->AddData(
-			gVarRFPS.GetValue(),
-			plProfile_GetValue(DrawTime),
-			plProfile_GetValue(UpdateTime));
-		PositionPlate(fFPSPlate);
-	}
+    if (fFPSPlate)
+    {
+        fFPSPlate->AddData(
+            gVarRFPS.GetValue(),
+            plProfile_GetValue(DrawTime),
+            plProfile_GetValue(UpdateTime));
+        PositionPlate(fFPSPlate);
+    }
 
-	plNetClientMgr* nc = plNetClientMgr::GetInstance();
+    plNetClientMgr* nc = plNetClientMgr::GetInstance();
 
 
 #if 0
-	plNetCoreStats* ns = nc ? nc->GetNetCore()->GetStats() : nil;
+    plNetCoreStats* ns = nc ? nc->GetNetCore()->GetStats() : nil;
 
-	if (!nc || !ns)
-		return;
+    if (!nc || !ns)
+        return;
 
-	if (fNetBWPlate)
-	{
-		fNetBWPlate->AddData(
-			(UInt32)(ns->GetULBits()/8.f),
-			(UInt32)(ns->GetDLBits()/8.f));
-		PositionPlate(fNetBWPlate);
-	}
+    if (fNetBWPlate)
+    {
+        fNetBWPlate->AddData(
+            (UInt32)(ns->GetULBits()/8.f),
+            (UInt32)(ns->GetDLBits()/8.f));
+        PositionPlate(fNetBWPlate);
+    }
 
-	if (fNetPPSPlate)
-	{
-		fNetPPSPlate->AddData(
-			ns->GetULPackets(),
-			ns->GetDLPackets());
-		PositionPlate(fNetPPSPlate);
-	}
+    if (fNetPPSPlate)
+    {
+        fNetPPSPlate->AddData(
+            ns->GetULPackets(),
+            ns->GetDLPackets());
+        PositionPlate(fNetPPSPlate);
+    }
 
-	if (fNetQueuesPlate)
-	{
-		unsigned int ul, dl;
-		nc->GetNetCore()->GetOutQueueMsgCount(plNetCore::kPeerAll,ul);
-		nc->GetNetCore()->GetInQueueMsgCount(plNetCore::kPeerAll,dl);
-		fNetQueuesPlate->AddData(ul,dl);
-		PositionPlate(fNetQueuesPlate);
-	}
+    if (fNetQueuesPlate)
+    {
+        unsigned int ul, dl;
+        nc->GetNetCore()->GetOutQueueMsgCount(plNetCore::kPeerAll,ul);
+        nc->GetNetCore()->GetInQueueMsgCount(plNetCore::kPeerAll,dl);
+        fNetQueuesPlate->AddData(ul,dl);
+        PositionPlate(fNetQueuesPlate);
+    }
 
-	if (fNetAvgBWPlate)
-	{
-		fNetAvgBWPlate->AddData(
-			(UInt32)(ns->GetULBitsPS()/8.f),
-			(UInt32)(ns->GetDLBitsPS()/8.f));
-		PositionPlate(fNetAvgBWPlate);
-	}
+    if (fNetAvgBWPlate)
+    {
+        fNetAvgBWPlate->AddData(
+            (UInt32)(ns->GetULBitsPS()/8.f),
+            (UInt32)(ns->GetDLBitsPS()/8.f));
+        PositionPlate(fNetAvgBWPlate);
+    }
 
-	if (fNetAvgPPSPlate)
-	{
-		fNetAvgPPSPlate->AddData(
-			(Int32)ns->GetULNumPacketsPS(),
-			(Int32)ns->GetDLNumPacketsPS());
-		PositionPlate(fNetAvgPPSPlate);
-	}
+    if (fNetAvgPPSPlate)
+    {
+        fNetAvgPPSPlate->AddData(
+            (Int32)ns->GetULNumPacketsPS(),
+            (Int32)ns->GetDLNumPacketsPS());
+        PositionPlate(fNetAvgPPSPlate);
+    }
 
-	if (fNetAvgQueuesPlate)
-	{
-		fNetAvgQueuesPlate->AddData(
-			(Int32)ns->GetULAvgNumPacketsQueued(),
-			(Int32)ns->GetDLAvgNumPacketsQueued());
-		PositionPlate(fNetAvgQueuesPlate);
-	}
+    if (fNetAvgQueuesPlate)
+    {
+        fNetAvgQueuesPlate->AddData(
+            (Int32)ns->GetULAvgNumPacketsQueued(),
+            (Int32)ns->GetDLAvgNumPacketsQueued());
+        PositionPlate(fNetAvgQueuesPlate);
+    }
 #endif
 
 }

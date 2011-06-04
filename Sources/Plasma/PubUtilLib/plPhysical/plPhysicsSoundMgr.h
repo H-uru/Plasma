@@ -33,46 +33,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plPhysicsSoundMgr
 {
 public:
-	void AddContact(plPhysical* phys1, plPhysical* phys2, const hsPoint3& hitPoint, const hsVector3& hitNormal);
-	void Update();
+    void AddContact(plPhysical* phys1, plPhysical* phys2, const hsPoint3& hitPoint, const hsVector3& hitNormal);
+    void Update();
 
 private:
-	enum EventType
-	{
-		kSlide,
-		kContact,
-		kEndSlide
-	};
+    enum EventType
+    {
+        kSlide,
+        kContact,
+        kEndSlide
+    };
 
-	enum EventStopType
-	{
-		kStopFromImpact = 0,
-		kStopFromEndSlide = 2
-	};
+    enum EventStopType
+    {
+        kStopFromImpact = 0,
+        kStopFromEndSlide = 2
+    };
 
-	class CollidePair
-	{
-	public:
-		plKey firstPhysKey;
-		plKey secondPhysKey;
-		hsPoint3 point;
-		hsVector3 normalForce;
+    class CollidePair
+    {
+    public:
+        plKey firstPhysKey;
+        plKey secondPhysKey;
+        hsPoint3 point;
+        hsVector3 normalForce;
 
-		CollidePair(const plKey& firstPhys, const plKey& secondPhys, const hsPoint3& point, const hsVector3& normal);
-		bool operator<(const CollidePair& rhs) const;
-		bool operator==(const CollidePair& rhs) const;
-		plPhysical* FirstPhysical() const;
-		plPhysical* SecondPhysical() const;
-	};
+        CollidePair(const plKey& firstPhys, const plKey& secondPhys, const hsPoint3& point, const hsVector3& normal);
+        bool operator<(const CollidePair& rhs) const;
+        bool operator==(const CollidePair& rhs) const;
+        plPhysical* FirstPhysical() const;
+        plPhysical* SecondPhysical() const;
+    };
 
-	void IStartCollision(CollidePair& cp);
-	void IStopCollision(CollidePair& cp);
-	void IUpdateCollision(CollidePair& cp);
-	void IProcessSlide(plPhysicalSndGroup* sndA, plPhysicalSndGroup* sndB, hsScalar strength);
-	
-	typedef std::set<CollidePair> CollideSet;
-	CollideSet fPrevCollisions;
-	CollideSet fCurCollisions;
+    void IStartCollision(const CollidePair& cp);
+    void IStopCollision(const CollidePair& cp);
+    void IUpdateCollision(const CollidePair& cp);
+    void IProcessSlide(plPhysicalSndGroup* sndA, plPhysicalSndGroup* sndB, hsScalar strength);
+    
+    typedef std::set<CollidePair> CollideSet;
+    CollideSet fPrevCollisions;
+    CollideSet fCurCollisions;
 };
 
 #endif // plPhysicsSoundMgr_h_inc

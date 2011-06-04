@@ -41,44 +41,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //============================================================================
 static void FormatTime (
-    qword		time,
-    wchar const	dateFmt[],
-    wchar const	timeFmt[],
-    unsigned	chars,
-    wchar *		buffer
+    qword       time,
+    wchar const dateFmt[],
+    wchar const timeFmt[],
+    unsigned    chars,
+    wchar *     buffer
 ) {
-	COMPILER_ASSERT(sizeof(FILETIME) == sizeof(qword));
+    COMPILER_ASSERT(sizeof(FILETIME) == sizeof(qword));
 
-	SYSTEMTIME sysTime;
-	FileTimeToSystemTime((FILETIME *)&time, &sysTime);
+    SYSTEMTIME sysTime;
+    FileTimeToSystemTime((FILETIME *)&time, &sysTime);
 
-	unsigned offset = GetDateFormatW(
-		LOCALE_SYSTEM_DEFAULT,
-		0,
-		&sysTime,
-		dateFmt,
-		buffer,
-		chars
-	);
+    unsigned offset = GetDateFormatW(
+        LOCALE_SYSTEM_DEFAULT,
+        0,
+        &sysTime,
+        dateFmt,
+        buffer,
+        chars
+    );
 
-	if (timeFmt) {
-		// if we printed any characters, move offset back to overwrite the string terminator
-		if (offset)
-		--offset;
+    if (timeFmt) {
+        // if we printed any characters, move offset back to overwrite the string terminator
+        if (offset)
+        --offset;
 
-		offset += GetTimeFormatW(
-			LOCALE_SYSTEM_DEFAULT,
-			0,
-			&sysTime,
-			timeFmt,
-			buffer + offset,
-			chars - offset
-		);
-	}
+        offset += GetTimeFormatW(
+            LOCALE_SYSTEM_DEFAULT,
+            0,
+            &sysTime,
+            timeFmt,
+            buffer + offset,
+            chars - offset
+        );
+    }
 
-	// if we didn't print any characters, NULL terminate the buffer
-	if (!offset && chars)
-		buffer[0] = 0;
+    // if we didn't print any characters, NULL terminate the buffer
+    if (!offset && chars)
+        buffer[0] = 0;
 }
 
 
@@ -129,17 +129,17 @@ qword TimeGetLocalTime () {
 
 //============================================================================
 void TimePrettyPrint (
-	qword       time,
-	unsigned    chars,
-	wchar *     buffer
+    qword       time,
+    unsigned    chars,
+    wchar *     buffer
 ) {
-	FormatTime(
-		time,
-		L"ddd MMM dd',' yyyy ",
-		L"hh':'mm':'ss tt",
-		chars,
-		buffer
-	);
+    FormatTime(
+        time,
+        L"ddd MMM dd',' yyyy ",
+        L"hh':'mm':'ss tt",
+        chars,
+        buffer
+    );
 }
 
 

@@ -30,60 +30,60 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plRenderLevel
 {
 public:
-	// A renderlevel is [Major bits 32..8]|[Minor bits 7..0]
-	// The major render level is further broken into 3 ranges.
-	// Range [0x00..0xff] - Blend onto the frame buffer (before even opaque objects)
-	// Range [0x0100..0xffff] - Opaque and nearly opaque objects
-	// Range [0x010000..0xffffff] - For blending objects (typically sorted amongst each other)
-	// The minor bits denote a slight difference in draw order. For example, a decal wants
-	// to be drawn after the opaque object it is applied to, but hopefully not very long after.
-	// The avatar gets a render priority of kDefRendMajorLevel,kAvatarRendMinorLevel. This puts
-	// it in the group of normal opaque objects with no render dependencies, but with the maximum
-	// permitted minor level. So it will be drawn after the opaque background, and the opaque background's
-	// decals, but before the first thing with a render dependency on the background (e.g. plants).
+    // A renderlevel is [Major bits 32..8]|[Minor bits 7..0]
+    // The major render level is further broken into 3 ranges.
+    // Range [0x00..0xff] - Blend onto the frame buffer (before even opaque objects)
+    // Range [0x0100..0xffff] - Opaque and nearly opaque objects
+    // Range [0x010000..0xffffff] - For blending objects (typically sorted amongst each other)
+    // The minor bits denote a slight difference in draw order. For example, a decal wants
+    // to be drawn after the opaque object it is applied to, but hopefully not very long after.
+    // The avatar gets a render priority of kDefRendMajorLevel,kAvatarRendMinorLevel. This puts
+    // it in the group of normal opaque objects with no render dependencies, but with the maximum
+    // permitted minor level. So it will be drawn after the opaque background, and the opaque background's
+    // decals, but before the first thing with a render dependency on the background (e.g. plants).
 
-	// Removed kAvatarBlendRendMinorLevel, not being used anywhere. mf
-	
-	enum {
-		kOpaqueMajorLevel		= 0x0,
-		kFBMajorLevel			= 0x1,
-		kDefRendMajorLevel		= 0x2,
-		kBlendRendMajorLevel	= 0x4,
-		kLateRendMajorLevel		= 0x8
+    // Removed kAvatarBlendRendMinorLevel, not being used anywhere. mf
+    
+    enum {
+        kOpaqueMajorLevel       = 0x0,
+        kFBMajorLevel           = 0x1,
+        kDefRendMajorLevel      = 0x2,
+        kBlendRendMajorLevel    = 0x4,
+        kLateRendMajorLevel     = 0x8
 
-	};
-	enum {
-		kMajorShift				= 28
-	};
-	enum {
-		kDefRendMinorLevel					= 0x00,
-		kOpaqueMinorLevel					= 0x0,
-		kMinorLevelMask						= ((1 << kMajorShift) - 1),
-		kAvatarRendMinorLevel				= kMinorLevelMask-1
-	};
+    };
+    enum {
+        kMajorShift             = 28
+    };
+    enum {
+        kDefRendMinorLevel                  = 0x00,
+        kOpaqueMinorLevel                   = 0x0,
+        kMinorLevelMask                     = ((1 << kMajorShift) - 1),
+        kAvatarRendMinorLevel               = kMinorLevelMask-1
+    };
 public:
-	plRenderLevel() { Set(kDefRendMajorLevel, kDefRendMinorLevel); }
-	plRenderLevel(UInt32 l) : fLevel(l) {}
-	plRenderLevel(UInt32 major, UInt32 minor) { Set(major, minor); }
+    plRenderLevel() { Set(kDefRendMajorLevel, kDefRendMinorLevel); }
+    plRenderLevel(UInt32 l) : fLevel(l) {}
+    plRenderLevel(UInt32 major, UInt32 minor) { Set(major, minor); }
 
-	int operator==(const plRenderLevel& l) const { return fLevel == l.fLevel; }
-	int operator!=(const plRenderLevel& l) const { return fLevel != l.fLevel; }
-	int operator>(const plRenderLevel& l) const { return fLevel > l.fLevel; }
-	int operator<(const plRenderLevel& l) const { return fLevel < l.fLevel; }
-	int operator>=(const plRenderLevel& l) const { return fLevel >= l.fLevel; }
-	int operator<=(const plRenderLevel& l) const { return fLevel <= l.fLevel; }
+    int operator==(const plRenderLevel& l) const { return fLevel == l.fLevel; }
+    int operator!=(const plRenderLevel& l) const { return fLevel != l.fLevel; }
+    int operator>(const plRenderLevel& l) const { return fLevel > l.fLevel; }
+    int operator<(const plRenderLevel& l) const { return fLevel < l.fLevel; }
+    int operator>=(const plRenderLevel& l) const { return fLevel >= l.fLevel; }
+    int operator<=(const plRenderLevel& l) const { return fLevel <= l.fLevel; }
 
-	UInt32	Level() const { return fLevel; }
+    UInt32  Level() const { return fLevel; }
 
-	UInt32  Minor() const { return UInt32(fLevel & kMinorLevelMask); }
-	UInt32	Major() const { return UInt32(fLevel >> kMajorShift); }
+    UInt32  Minor() const { return UInt32(fLevel & kMinorLevelMask); }
+    UInt32  Major() const { return UInt32(fLevel >> kMajorShift); }
 
-	plRenderLevel& Set(UInt32 l) { fLevel = l; return *this; }
-	plRenderLevel& Set(UInt32 major, UInt32 minor) { fLevel = (UInt32(major) << kMajorShift) | UInt32(minor); return *this; }
+    plRenderLevel& Set(UInt32 l) { fLevel = l; return *this; }
+    plRenderLevel& Set(UInt32 major, UInt32 minor) { fLevel = (UInt32(major) << kMajorShift) | UInt32(minor); return *this; }
 
-	UInt32	fLevel;
+    UInt32  fLevel;
 
-	static plRenderLevel OpaqueRenderLevel() { return plRenderLevel(kOpaqueMajorLevel, kOpaqueMinorLevel); }
+    static plRenderLevel OpaqueRenderLevel() { return plRenderLevel(kOpaqueMajorLevel, kOpaqueMinorLevel); }
 };
 
 #endif // plRenderLevel_inc

@@ -29,20 +29,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////
 plLayerLightBase::plLayerLightBase()
-:	fDirty(true)
+:   fDirty(true)
 {
-	fOwnedChannels = kState
-				| kAmbientColor
-				| kPreshadeColor;
+    fOwnedChannels = kState
+                | kAmbientColor
+                | kPreshadeColor;
 
-	fState = TRACKED_NEW hsGMatState;
-	fState->Reset();
-	
-	fAmbientColor = TRACKED_NEW hsColorRGBA;
-	fAmbientColor->Set(0,0,0,1.f);
+    fState = TRACKED_NEW hsGMatState;
+    fState->Reset();
+    
+    fAmbientColor = TRACKED_NEW hsColorRGBA;
+    fAmbientColor->Set(0,0,0,1.f);
 
-	fPreshadeColor = TRACKED_NEW hsColorRGBA;
-	fPreshadeColor->Set(0,0,0,1.f);
+    fPreshadeColor = TRACKED_NEW hsColorRGBA;
+    fPreshadeColor->Set(0,0,0,1.f);
 }
 
 plLayerLightBase::~plLayerLightBase()
@@ -51,61 +51,61 @@ plLayerLightBase::~plLayerLightBase()
 
 plLayerInterface* plLayerLightBase::Attach(plLayerInterface* prev)
 {
-	fDirty = true;
-	return plLayerInterface::Attach(prev);
+    fDirty = true;
+    return plLayerInterface::Attach(prev);
 }
 
 UInt32 plLayerLightBase::Eval(double secs, UInt32 frame, UInt32 ignore)
 {
-	UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
-	if( fUnderLay )
-	{
-		if( fDirty || (ret & kState) )
-		{
-			*fState = fUnderLay->GetState();
+    UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
+    if( fUnderLay )
+    {
+        if( fDirty || (ret & kState) )
+        {
+            *fState = fUnderLay->GetState();
 
-			UInt32 blend = fState->fBlendFlags;
+            UInt32 blend = fState->fBlendFlags;
 
-			fState->fBlendFlags &= ~hsGMatState::kBlendMask;
+            fState->fBlendFlags &= ~hsGMatState::kBlendMask;
 
-			switch( blend )
-			{
-			case hsGMatState::kBlendAlpha:
-				fState->fBlendFlags |= hsGMatState::kBlendAddColorTimesAlpha;
-				break;
-			default:
-				fState->fBlendFlags |= hsGMatState::kBlendAdd;
-				break;
-			}
+            switch( blend )
+            {
+            case hsGMatState::kBlendAlpha:
+                fState->fBlendFlags |= hsGMatState::kBlendAddColorTimesAlpha;
+                break;
+            default:
+                fState->fBlendFlags |= hsGMatState::kBlendAdd;
+                break;
+            }
 
-			fState->fZFlags |= hsGMatState::kZNoZWrite;
+            fState->fZFlags |= hsGMatState::kZNoZWrite;
 
-			fState->fShadeFlags |= hsGMatState::kShadeIgnoreVtxIllum;
+            fState->fShadeFlags |= hsGMatState::kShadeIgnoreVtxIllum;
 
-			ret |= kState | kAmbientColor;
+            ret |= kState | kAmbientColor;
 
-			fDirty = false;
-		}
-	}
-	return ret;
+            fDirty = false;
+        }
+    }
+    return ret;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 plLayerShadowBase::plLayerShadowBase()
-:	fDirty(true)
+:   fDirty(true)
 {
-	fOwnedChannels = kState
-				| kAmbientColor
-				| kPreshadeColor;
+    fOwnedChannels = kState
+                | kAmbientColor
+                | kPreshadeColor;
 
-	fState = TRACKED_NEW hsGMatState;
-	fState->Reset();
-	
-	fAmbientColor = TRACKED_NEW hsColorRGBA;
-	fAmbientColor->Set(0,0,0,1.f);
+    fState = TRACKED_NEW hsGMatState;
+    fState->Reset();
+    
+    fAmbientColor = TRACKED_NEW hsColorRGBA;
+    fAmbientColor->Set(0,0,0,1.f);
 
-	fPreshadeColor = TRACKED_NEW hsColorRGBA;
-	fPreshadeColor->Set(0,0,0,1.f);
+    fPreshadeColor = TRACKED_NEW hsColorRGBA;
+    fPreshadeColor->Set(0,0,0,1.f);
 }
 
 plLayerShadowBase::~plLayerShadowBase()
@@ -114,31 +114,31 @@ plLayerShadowBase::~plLayerShadowBase()
 
 plLayerInterface* plLayerShadowBase::Attach(plLayerInterface* prev)
 {
-	fDirty = true;
-	return plLayerInterface::Attach(prev);
+    fDirty = true;
+    return plLayerInterface::Attach(prev);
 }
 
 UInt32 plLayerShadowBase::Eval(double secs, UInt32 frame, UInt32 ignore)
 {
-	UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
-	if( fUnderLay )
-	{
-		if( fDirty || (ret & kState) )
-		{
-			*fState = fUnderLay->GetState();
-			fState->fBlendFlags &= ~hsGMatState::kBlendMask;
-			//WHITE
-			fState->fBlendFlags |= hsGMatState::kBlendAlpha;
+    UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
+    if( fUnderLay )
+    {
+        if( fDirty || (ret & kState) )
+        {
+            *fState = fUnderLay->GetState();
+            fState->fBlendFlags &= ~hsGMatState::kBlendMask;
+            //WHITE
+            fState->fBlendFlags |= hsGMatState::kBlendAlpha;
 
-			fState->fZFlags |= hsGMatState::kZNoZWrite;
+            fState->fZFlags |= hsGMatState::kZNoZWrite;
 
-			fState->fShadeFlags |= hsGMatState::kShadeIgnoreVtxIllum;
+            fState->fShadeFlags |= hsGMatState::kShadeIgnoreVtxIllum;
 
-			ret |= kState | kAmbientColor | kPreshadeColor;
+            ret |= kState | kAmbientColor | kPreshadeColor;
 
-			fDirty = false;
-		}
-	}
+            fDirty = false;
+        }
+    }
 
-	return ret;
+    return ret;
 }

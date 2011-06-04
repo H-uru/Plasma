@@ -34,29 +34,29 @@ class plNetAddress;
 class plTcpSocket : public plSocket
 {
 public:
-	plTcpSocket();
-	plTcpSocket(SOCKET sck);
-	bool operator==(const plTcpSocket & rhs);
-	int SetNoDelay();
-	int SetLinger(int intervalSecs=0);
-	int SetSendBufferSize(int size);
-	bool ActiveOpen(plNetAddress & addr);
-	bool ActiveOpenNonBlocking(plNetAddress & addr);
-	int SendData(const char * data, int size);
-	int RecvData(char * data, int size);
-	friend bool operator<(const plTcpSocket & lhs, const plTcpSocket & rhs);
-	friend bool operator==(const plTcpSocket & lhs, const plTcpSocket & rhs);
+    plTcpSocket();
+    plTcpSocket(SOCKET sck);
+    bool operator==(const plTcpSocket & rhs);
+    int SetNoDelay();
+    int SetLinger(int intervalSecs=0);
+    int SetSendBufferSize(int size);
+    bool ActiveOpen(plNetAddress & addr);
+    bool ActiveOpenNonBlocking(plNetAddress & addr);
+    int SendData(const char * data, int size);
+    int RecvData(char * data, int size);
+    friend bool operator<(const plTcpSocket & lhs, const plTcpSocket & rhs);
+    friend bool operator==(const plTcpSocket & lhs, const plTcpSocket & rhs);
 };
 
 
 inline bool operator<(const plTcpSocket & lhs, const plTcpSocket & rhs)
 {
-	return lhs.fSocket<rhs.fSocket;
+    return lhs.fSocket<rhs.fSocket;
 }
 
 inline bool operator==(const plTcpSocket & lhs, const plTcpSocket & rhs)
 {
-	return lhs.fSocket==rhs.fSocket;
+    return lhs.fSocket==rhs.fSocket;
 }
 
 

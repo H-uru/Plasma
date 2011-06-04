@@ -33,9 +33,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for the BlueSpiral game client
 //
 
-#include "../pfGameMgr/pfGameMgr.h"
+#include "pfGameMgr/pfGameMgr.h"
 
-#include <python.h>
+#include <Python.h>
 #include "../../pyGlueHelpers.h"
 #include "../pyGameCli.h"
 #include "../../pyKey.h"
@@ -43,24 +43,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyBlueSpiralGame : public pyGameCli
 {
 protected:
-	pyBlueSpiralGame();
-	pyBlueSpiralGame(pfGameCli* client);
+    pyBlueSpiralGame();
+    pyBlueSpiralGame(pfGameCli* client);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralGame);
-	static PyObject* New(pfGameCli* client);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralGame object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralGame); // converts a PyObject to a pyBlueSpiralGame (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralGame);
+    static PyObject* New(pfGameCli* client);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralGame object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralGame); // converts a PyObject to a pyBlueSpiralGame (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-	static bool IsBlueSpiralGame(std::wstring guid);
-	static void JoinCommonBlueSpiralGame(pyKey& callbackKey, unsigned gameID);
+    static bool IsBlueSpiralGame(std::wstring guid);
+    static void JoinCommonBlueSpiralGame(pyKey& callbackKey, unsigned gameID);
 
-	void StartGame();
-	void HitCloth(int clothNum);
+    void StartGame();
+    void HitCloth(int clothNum);
 };
 
 #endif // pyBlueSpiralGame_h

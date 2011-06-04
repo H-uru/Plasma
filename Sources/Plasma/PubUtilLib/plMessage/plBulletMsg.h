@@ -27,55 +27,55 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plBulletMsg_inc
 #define plBulletMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
 
 class plBulletMsg : public plMessage
 {
 public:
-	enum Cmd
-	{
-		kStop,
-		kShot,
-		kSpray
-	};
+    enum Cmd
+    {
+        kStop,
+        kShot,
+        kSpray
+    };
 protected:
-	Cmd			fCmd;
+    Cmd         fCmd;
 
-	hsPoint3	fFrom;
-	hsVector3	fDir;
-	hsScalar	fRange;
-	hsScalar	fRadius;
-	hsScalar	fPartyTime;
+    hsPoint3    fFrom;
+    hsVector3   fDir;
+    hsScalar    fRange;
+    hsScalar    fRadius;
+    hsScalar    fPartyTime;
 public:
-	plBulletMsg() { SetBCastFlag(kNetPropagate | kBCastByType, true); }
-	plBulletMsg(const plKey &s,
-				const plKey &r,
-				const double* t) : plMessage(s, r, t) { SetBCastFlag(kNetPropagate | kBCastByType, true); }
+    plBulletMsg() { SetBCastFlag(kNetPropagate | kBCastByType, true); }
+    plBulletMsg(const plKey &s,
+                const plKey &r,
+                const double* t) : plMessage(s, r, t) { SetBCastFlag(kNetPropagate | kBCastByType, true); }
 
-	~plBulletMsg() {}
-	
-	CLASSNAME_REGISTER( plBulletMsg );
-	GETINTERFACE_ANY( plBulletMsg, plMessage );
+    ~plBulletMsg() {}
+    
+    CLASSNAME_REGISTER( plBulletMsg );
+    GETINTERFACE_ANY( plBulletMsg, plMessage );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	hsBool Shot() const { return fCmd == kShot; }
-	hsBool Spray() const { return fCmd == kSpray; }
-	hsBool Stop() const { return fCmd == kStop; }
+    hsBool Shot() const { return fCmd == kShot; }
+    hsBool Spray() const { return fCmd == kSpray; }
+    hsBool Stop() const { return fCmd == kStop; }
 
-	void FireShot(const hsPoint3& from, const hsVector3& dir, hsScalar radius, hsScalar range, hsScalar psecs=-1.f);
-	void FireShot(const hsPoint3& from, const hsPoint3& at, hsScalar radius, hsScalar psecs=-1.f);
+    void FireShot(const hsPoint3& from, const hsVector3& dir, hsScalar radius, hsScalar range, hsScalar psecs=-1.f);
+    void FireShot(const hsPoint3& from, const hsPoint3& at, hsScalar radius, hsScalar psecs=-1.f);
 
-	Cmd GetCmd() const { return fCmd; }
-	void SetCmd(Cmd c) { fCmd = c; }
+    Cmd GetCmd() const { return fCmd; }
+    void SetCmd(Cmd c) { fCmd = c; }
 
-	const hsPoint3& From() const { return fFrom; }
-	const hsVector3& Dir() const { return fDir; }
-	hsScalar Range() const { return fRange; }
-	hsScalar Radius() const { return fRadius; }
-	hsScalar PartyTime() const { return fPartyTime; }
+    const hsPoint3& From() const { return fFrom; }
+    const hsVector3& Dir() const { return fDir; }
+    hsScalar Range() const { return fRange; }
+    hsScalar Radius() const { return fRadius; }
+    hsScalar PartyTime() const { return fPartyTime; }
 };
 
 #endif // plBulletMsg_inc

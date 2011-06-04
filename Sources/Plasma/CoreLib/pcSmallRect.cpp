@@ -24,26 +24,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	pcSmallRect - A tiny Int16-based 2D rectangle class						 //
-//																			 //
+//                                                                           //
+//  pcSmallRect - A tiny Int16-based 2D rectangle class                      //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "pcSmallRect.h"
 #include "hsStream.h"
 
-void	pcSmallRect::Read( hsStream *s )
+void    pcSmallRect::Read( hsStream *s )
 {
-	s->ReadSwap( &fX );
-	s->ReadSwap( &fY );
-	s->ReadSwap( &fWidth );
-	s->ReadSwap( &fHeight );
+    s->ReadSwap( &fX );
+    s->ReadSwap( &fY );
+    s->ReadSwap( &fWidth );
+    s->ReadSwap( &fHeight );
 }
 
-void	pcSmallRect::Write( hsStream *s )
+void    pcSmallRect::Write( hsStream *s )
 {
-	s->WriteSwap( fX );
-	s->WriteSwap( fY );
-	s->WriteSwap( fWidth );
-	s->WriteSwap( fHeight );
+    s->WriteSwap( fX );
+    s->WriteSwap( fY );
+    s->WriteSwap( fWidth );
+    s->WriteSwap( fHeight );
 }

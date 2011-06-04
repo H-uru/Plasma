@@ -33,57 +33,57 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 UInt32 hsMMIOStream::Read(UInt32 bytes,  void* buffer)
 {
-	fBytesRead += bytes;
+    fBytesRead += bytes;
     fPosition += bytes;
-	int numItems = ::mmioRead(fHmfr, (char*)buffer, bytes);
-	if ((unsigned)numItems < bytes) 
-	{
-		if (numItems>=0 && ::mmioSeek(fHmfr,0,SEEK_CUR)==::mmioSeek(fHmfr,0,SEEK_END)) {
-			// EOF ocurred
-			char str[128];
-			sprintf(str, "Hit EOF on MMIO Read, only read %d out of requested %d bytes\n", numItems, bytes);
-			hsDebugMessage(str, 0);
-		}
-		else 
-		{
-			hsDebugMessage("Error on MMIO Read",0);
-		}
-	}
-	return numItems;
+    int numItems = ::mmioRead(fHmfr, (char*)buffer, bytes);
+    if ((unsigned)numItems < bytes) 
+    {
+        if (numItems>=0 && ::mmioSeek(fHmfr,0,SEEK_CUR)==::mmioSeek(fHmfr,0,SEEK_END)) {
+            // EOF ocurred
+            char str[128];
+            sprintf(str, "Hit EOF on MMIO Read, only read %d out of requested %d bytes\n", numItems, bytes);
+            hsDebugMessage(str, 0);
+        }
+        else 
+        {
+            hsDebugMessage("Error on MMIO Read",0);
+        }
+    }
+    return numItems;
 }
 
 hsBool  hsMMIOStream::AtEnd()
 {
-	return (::mmioSeek(fHmfr,0,SEEK_CUR)==::mmioSeek(fHmfr,0,SEEK_END));
+    return (::mmioSeek(fHmfr,0,SEEK_CUR)==::mmioSeek(fHmfr,0,SEEK_END));
 }
 
 UInt32 hsMMIOStream::Write(UInt32 bytes, const void* buffer)
 {
     fPosition += bytes;
-	return ::mmioWrite(fHmfr,(const char*)buffer,bytes);
+    return ::mmioWrite(fHmfr,(const char*)buffer,bytes);
 }
 
 void hsMMIOStream::Skip(UInt32 delta)
 {
-	fBytesRead += delta;
+    fBytesRead += delta;
     fPosition += delta;
-	(void)::mmioSeek(fHmfr, delta, SEEK_CUR);
+    (void)::mmioSeek(fHmfr, delta, SEEK_CUR);
 }
 
 void hsMMIOStream::Rewind()
 {
-	fBytesRead = 0;
+    fBytesRead = 0;
     fPosition = 0;
-	(void)::mmioSeek(fHmfr, 0, SEEK_SET);
+    (void)::mmioSeek(fHmfr, 0, SEEK_SET);
 }
 
 void hsMMIOStream::FastFwd()
 {
-	fBytesRead = fPosition = ::mmioSeek(fHmfr, 0, SEEK_END);
+    fBytesRead = fPosition = ::mmioSeek(fHmfr, 0, SEEK_END);
 }
 
 void hsMMIOStream::Truncate()
 {
-	hsThrow("Truncate unimplemented by subclass of stream");
+    hsThrow("Truncate unimplemented by subclass of stream");
 }
 #endif

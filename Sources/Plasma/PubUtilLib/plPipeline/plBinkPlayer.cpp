@@ -27,30 +27,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include "hsTypes.h"
 #ifdef BINK_SDK_AVAILABLE
-#include "BINK.h"
+#include <BINK.h>
 #endif
 #include <d3d9.h>
 #include "plDXPipeline.h"
 #include "plBinkPlayer.h"
 #include "plDXBufferRefs.h"
 #include "hsPoint2.h"
-#include "../pnMessage/plMessage.h"
-#include "../plResMgr/plLocalization.h"
+#include "pnMessage/plMessage.h"
+#include "plResMgr/plLocalization.h"
 
 #include "hsTimer.h"
-#include <dsound.h>
 
 static const D3DMATRIX ident = { 1.0f, 0.0f, 0.0f, 0.0f,
-									 0.0f, 1.0f, 0.0f, 0.0f,
-									 0.0f, 0.0f, 1.0f, 0.0f,
-									 0.0f, 0.0f, 0.0f, 1.0f };
+                                     0.0f, 1.0f, 0.0f, 0.0f,
+                                     0.0f, 0.0f, 1.0f, 0.0f,
+                                     0.0f, 0.0f, 0.0f, 1.0f };
 
 static const UInt16 kMaxVolume = 32768;
-const U32	kDefaultBack	= 0;
-const U32	kDefaultFore	= 1;
+const U32   kDefaultBack    = 0;
+const U32   kDefaultFore    = 1;
 const UInt32 kBackTrack = 0;
 const UInt32 kForeTrack = 1;
-IDirectSound8 *plBinkPlayer::fSoundDevice = nil;
 
 const int fSndTrack(0); // STUB
 
@@ -65,573 +63,560 @@ fPipeline(nil),
 fTexture(nil), 
 fNumPrimitives(2)
 {
-	SetDefaults();
+    SetDefaults();
 
-	memset(fVerts, 0, kNumVerts*sizeof(D3DVertex));
+    memset(fVerts, 0, kNumVerts*sizeof(D3DVertex));
 }
 
 plBinkPlayer::~plBinkPlayer()
 {
-	delete [] fFileName;
-	fFileName = nil;
-	Stop();
+    delete [] fFileName;
+    fFileName = nil;
+    Stop();
 }
 
 void plBinkPlayer::SetBackGroundTrack(UInt32 t)
 {
-	fTracks[kBackTrack] = t;
+    fTracks[kBackTrack] = t;
 }
 
 void plBinkPlayer::SetForeGroundTrack(UInt32 t)
 {
-	fTracks[kForeTrack] = t;
+    fTracks[kForeTrack] = t;
 }
 
 UInt32 plBinkPlayer::GetForeGroundTrack()
 {
-	return fTracks[kForeTrack];
+    return fTracks[kForeTrack];
 }
 
 UInt32 plBinkPlayer::GetBackGroundTrack()
 {
-	return fTracks[kBackTrack];
+    return fTracks[kBackTrack];
 }
 
 
 hsBool plBinkPlayer::Init( hsWindowHndl hWnd )
 {
-	fInit = true;
+    fInit = true;
 
-	switch (plLocalization::GetLanguage())
-	{
-	case plLocalization::kEnglish:	SetForeGroundTrack(1); break;
-	case plLocalization::kFrench:	SetForeGroundTrack(2); break;
-	case plLocalization::kGerman:	SetForeGroundTrack(3); break;
-	//case plLocalization::kSpanish:	SetForeGroundTrack(4); break;
-	//case plLocalization::kItalian:	SetForeGroundTrack(5); break;
-	case plLocalization::kJapanese:	SetForeGroundTrack(2); break;
-	}
+    switch (plLocalization::GetLanguage())
+    {
+    case plLocalization::kEnglish:  SetForeGroundTrack(1); break;
+    case plLocalization::kFrench:   SetForeGroundTrack(2); break;
+    case plLocalization::kGerman:   SetForeGroundTrack(3); break;
+    //case plLocalization::kSpanish:    SetForeGroundTrack(4); break;
+    //case plLocalization::kItalian:    SetForeGroundTrack(5); break;
+    case plLocalization::kJapanese: SetForeGroundTrack(2); break;
+    }
 
-	HRESULT hr;
-	/// Create the DirectSound object and set our cooperative level
-    hr = DirectSoundCreate8( NULL, &fSoundDevice, NULL );
-	if(SUCCEEDED(hr))
-	{
-		hr = fSoundDevice->SetCooperativeLevel( hWnd, DSSCL_PRIORITY );
-	}
 #ifdef BINK_SDK_AVAILABLE
-	if(SUCCEEDED(hr))
-	{
-		return BinkSoundUseDirectSound( fSoundDevice );	// must be before open		
-	}
-	BinkSetSoundTrack(0, nil);
+    if(BinkSoundUseWaveOut())
+    {
+        return true;    
+    }
+    BinkSetSoundTrack(0, nil);
 #endif
 
-	return true;
+    return true;
 }
 
 hsBool plBinkPlayer::DeInit()
 {
-	if(fSoundDevice)
-	{
-		fSoundDevice->Release();
-		fSoundDevice = nil;
-	}
-
-	return true;
+    return true;
 }
 
 void plBinkPlayer::SetDefaults()
 {
-	fTextureSize[0] = fTextureSize[1] = 0;
-	fPos.Set(0.f, 0.f);
-	fScale.Set(1.f, 1.f);
-	fVolume[kBackTrack] = kMaxVolume;
-	fVolume[kForeTrack] = kMaxVolume;
-	fColor.Set(1.f, 1.f, 1.f, 1.f);
-	fCurrColor = fColor;
+    fTextureSize[0] = fTextureSize[1] = 0;
+    fPos.Set(0.f, 0.f);
+    fScale.Set(1.f, 1.f);
+    fVolume[kBackTrack] = kMaxVolume;
+    fVolume[kForeTrack] = kMaxVolume;
+    fColor.Set(1.f, 1.f, 1.f, 1.f);
+    fCurrColor = fColor;
 
-	fFadeFromTime = 0.f;
-	fFadeFromColor.Set(0,0,0,0);
-	fFadeToTime = 0.f;
-	fFadeToColor.Set(0,0,0,0);
+    fFadeFromTime = 0.f;
+    fFadeFromColor.Set(0,0,0,0);
+    fFadeToTime = 0.f;
+    fFadeToColor.Set(0,0,0,0);
 }
 
 void plBinkPlayer::AddCallback(plMessage* msg)
 {
-	hsRefCnt_SafeRef(msg);
-	fCallbacks.Append(msg);
+    hsRefCnt_SafeRef(msg);
+    fCallbacks.Append(msg);
 }
 
 void plBinkPlayer::SetFileName(const char* fileName)
 {
-	delete [] fFileName;
-	fFileName = hsStrcpy(fileName);
+    delete [] fFileName;
+    fFileName = hsStrcpy(fileName);
 }
 
 hsBool plBinkPlayer::Start(plPipeline* pipe,  hsWindowHndl hWnd) 
 {
 #ifdef BINK_SDK_AVAILABLE
-	// If we haven't got a movie to play, we're done.
-	if( !fFileName )
-		return false;
+    // If we haven't got a movie to play, we're done.
+    if( !fFileName )
+        return false;
 
-	// If we're already playing, there's nothing to do.
-	if( fBink )
-		return true;
+    // If we're already playing, there's nothing to do.
+    if( fBink )
+        return true;
 
-	HRESULT hr;
-	fPipeline = plDXPipeline::ConvertNoRef( pipe );
+    HRESULT hr;
+    fPipeline = plDXPipeline::ConvertNoRef( pipe );
 
-	if( !fInit )
-		Init(hWnd);
+    if( !fInit )
+        Init(hWnd);
 
-	BinkSetSoundTrack(2, fTracks);
-	fBink = BinkOpen(fFileName, BINKSNDTRACK);
-	if( !fBink ) 
-		return Stop();
+    BinkSetSoundTrack(2, fTracks);
+    fBink = BinkOpen(fFileName, BINKSNDTRACK);
+    if( !fBink ) 
+        return Stop();
 
-	BinkSetVolume(fBink, fTracks[kBackTrack], fVolume[kBackTrack]);
-	BinkSetVolume(fBink, fTracks[kForeTrack], fVolume[kForeTrack]);
+    BinkSetVolume(fBink, fTracks[kBackTrack], fVolume[kBackTrack]);
+    BinkSetVolume(fBink, fTracks[kForeTrack], fVolume[kForeTrack]);
 
-	D3DFORMAT format = D3DFMT_A8R8G8B8; // STUB
+    D3DFORMAT format = D3DFMT_A8R8G8B8; // STUB
 
 #if 0
-	fTextureSize[0] = 512;
-	fTextureSize[1] = 512;
+    fTextureSize[0] = 512;
+    fTextureSize[1] = 512;
 #else
-	fTextureSize[0] = fBink->Width;
-	fTextureSize[1] = fBink->Height;
+    fTextureSize[0] = fBink->Width;
+    fTextureSize[1] = fBink->Height;
 #endif
-	
-	hr = fPipeline->fD3DDevice->CreateTexture(fTextureSize[0], fTextureSize[1], 1, 0, format, D3DPOOL_MANAGED, &fTexture, NULL); 
-	if(FAILED(hr)) 
-		return Stop(); 
+    
+    hr = fPipeline->fD3DDevice->CreateTexture(fTextureSize[0], fTextureSize[1], 1, 0, format, D3DPOOL_MANAGED, &fTexture, NULL); 
+    if(FAILED(hr)) 
+        return Stop(); 
 
-	ISetVerts();
+    ISetVerts();
 
-	fNumPrimitives = 2;
+    fNumPrimitives = 2;
 
-	fCurrColor = fColor;
-	if( fFadeFromTime > 0 )
-	{
-		fCurrColor = fFadeFromColor;
-		fFadeState = kFadeFrom;
-		fFadeStart = hsTimer::GetSeconds();
-		fFadeParm = 0.f;
-		BinkPause(fBink, true);
-	}
+    fCurrColor = fColor;
+    if( fFadeFromTime > 0 )
+    {
+        fCurrColor = fFadeFromColor;
+        fFadeState = kFadeFrom;
+        fFadeStart = hsTimer::GetSeconds();
+        fFadeParm = 0.f;
+        BinkPause(fBink, true);
+    }
 
-	return true;
+    return true;
 #else
-	return false;
+    return false;
 #endif /* BINK_SDK_AVAILABLE */
 }
 
 void plBinkPlayer::ISetVerts()
 {
 #ifdef BINK_SDK_AVAILABLE
-	float sizeX = float(fBink->Width) / float(fPipeline->Width());
-	float sizeY = float(fBink->Height) / float(fPipeline->Height());
+    float sizeX = float(fBink->Width) / float(fPipeline->Width());
+    float sizeY = float(fBink->Height) / float(fPipeline->Height());
 
-	sizeX *= fScale.fX * 2.f;
-	sizeY *= fScale.fY * 2.f;
+    sizeX *= fScale.fX * 2.f;
+    sizeY *= fScale.fY * 2.f;
 
-	fVerts[0].x = fPos.fX - sizeX * 0.5f;
-	fVerts[0].y = fPos.fY - sizeY * 0.5f;
-	fVerts[0].z = 0.5f;
-	fVerts[0].u = 0.0f;
-	fVerts[0].v = 1.0f;
+    fVerts[0].x = fPos.fX - sizeX * 0.5f;
+    fVerts[0].y = fPos.fY - sizeY * 0.5f;
+    fVerts[0].z = 0.5f;
+    fVerts[0].u = 0.0f;
+    fVerts[0].v = 1.0f;
 
-	fVerts[1] = fVerts[0];
-	fVerts[1].x += sizeX ;
-	fVerts[1].u = 1.0f;
+    fVerts[1] = fVerts[0];
+    fVerts[1].x += sizeX ;
+    fVerts[1].u = 1.0f;
 
-	fVerts[2] = fVerts[0];
-	fVerts[2].y += sizeY ;
-	fVerts[2].v = 0.0f;
+    fVerts[2] = fVerts[0];
+    fVerts[2].y += sizeY ;
+    fVerts[2].v = 0.0f;
 
-	fVerts[3] = fVerts[0];
-	fVerts[3].x += sizeX;
-	fVerts[3].y += sizeY;
-	fVerts[3].u = 1.0f;
-	fVerts[3].v = 0.0f;
+    fVerts[3] = fVerts[0];
+    fVerts[3].x += sizeX;
+    fVerts[3].y += sizeY;
+    fVerts[3].u = 1.0f;
+    fVerts[3].v = 0.0f;
 #endif
 }
 
 hsBool plBinkPlayer::IGetFrame()
 {
 #ifdef BINK_SDK_AVAILABLE
-	HRESULT hr;
-	D3DLOCKED_RECT locked_rect;
-	// Get the next frame
+    HRESULT hr;
+    D3DLOCKED_RECT locked_rect;
+    // Get the next frame
 
-	BinkDoFrame( fBink );
+    BinkDoFrame( fBink );
 
-	hr = fTexture->LockRect(0, &locked_rect, nil, 0);
-	if(FAILED(hr))
-		return Stop();
+    hr = fTexture->LockRect(0, &locked_rect, nil, 0);
+    if(FAILED(hr))
+        return Stop();
 
-	U32 copyFlags = BINKSURFACE32;
-	BinkCopyToBuffer( fBink, locked_rect.pBits, locked_rect.Pitch, fTextureSize[1], 0, 0,  copyFlags);
+    U32 copyFlags = BINKSURFACE32;
+    BinkCopyToBuffer( fBink, locked_rect.pBits, locked_rect.Pitch, fTextureSize[1], 0, 0,  copyFlags);
 
-	hr = fTexture->UnlockRect(0);
-	if(FAILED(hr))
-		return Stop();
-	
-	if( !IAtEnd() )
-		BinkNextFrame(fBink);
+    hr = fTexture->UnlockRect(0);
+    if(FAILED(hr))
+        return Stop();
+    
+    if( !IAtEnd() )
+        BinkNextFrame(fBink);
 
-	return true;
+    return true;
 #else
-	return false;
+    return false;
 #endif
 }
 
 hsBool plBinkPlayer::ICheckFadingFrom()
 {
-	if( fFadeState == kFadeFrom )
-	{
-		fFadeParm = (hsScalar)((hsTimer::GetSeconds() - fFadeStart) / fFadeFromTime);
-		if( fFadeParm >= 1.f )
-		{
-			// We're done, go into normal mode
-			fFadeState = kFadeNone;
+    if( fFadeState == kFadeFrom )
+    {
+        fFadeParm = (hsScalar)((hsTimer::GetSeconds() - fFadeStart) / fFadeFromTime);
+        if( fFadeParm >= 1.f )
+        {
+            // We're done, go into normal mode
+            fFadeState = kFadeNone;
 #ifdef BINK_SDK_AVAILABLE
-			BinkPause(fBink, false);
+            BinkPause(fBink, false);
 #endif
-		}
-		else
-		{
-			fCurrColor = fColor - fFadeFromColor;
-			fCurrColor *= fFadeParm;
-			fCurrColor += fFadeFromColor;
-		}
-	}
-	return true;
+        }
+        else
+        {
+            fCurrColor = fColor - fFadeFromColor;
+            fCurrColor *= fFadeParm;
+            fCurrColor += fFadeFromColor;
+        }
+    }
+    return true;
 }
 
 hsBool plBinkPlayer::INotFadingFrom()
 {
-	return (fFadeState != kFadeFrom) && (fFadeState != kFadeFromPaused);
+    return (fFadeState != kFadeFrom) && (fFadeState != kFadeFromPaused);
 }
 
 hsBool plBinkPlayer::ICheckFadingTo()
 {
-	if( IAtEnd() && (fFadeState != kFadeToPaused) )
-	{
-		if( fFadeState != kFadeTo )
-		{
-			if( fFadeToTime > 0 )
-			{
-				fFadeState = kFadeTo;
-				fFadeStart = hsTimer::GetSeconds();
+    if( IAtEnd() && (fFadeState != kFadeToPaused) )
+    {
+        if( fFadeState != kFadeTo )
+        {
+            if( fFadeToTime > 0 )
+            {
+                fFadeState = kFadeTo;
+                fFadeStart = hsTimer::GetSeconds();
 #ifdef BINK_SDK_AVAILABLE
-				BinkPause(fBink, true);
+                BinkPause(fBink, true);
 #endif
-			}
-			else
-			{
-				fFadeState = kFadeNone;
-				return true;
-			}
-		}
-		else
-		{
-			fFadeParm = (hsScalar)((hsTimer::GetSeconds() - fFadeStart) / fFadeToTime);
-			if( fFadeParm >= 1.f )
-			{
-				fFadeState = kFadeNone;
+            }
+            else
+            {
+                fFadeState = kFadeNone;
+                return true;
+            }
+        }
+        else
+        {
+            fFadeParm = (hsScalar)((hsTimer::GetSeconds() - fFadeStart) / fFadeToTime);
+            if( fFadeParm >= 1.f )
+            {
+                fFadeState = kFadeNone;
 #ifdef BINK_SDK_AVAILABLE
-				BinkPause(fBink, false);
+                BinkPause(fBink, false);
 #endif
-			}
-			else
-			{
-				fCurrColor = fFadeToColor - fColor;
-				fCurrColor *= fFadeParm;
-				fCurrColor += fColor;
-			}
-		}
-		return false;
-	}
-	return true;
+            }
+            else
+            {
+                fCurrColor = fFadeToColor - fColor;
+                fCurrColor *= fFadeParm;
+                fCurrColor += fColor;
+            }
+        }
+        return false;
+    }
+    return true;
 }
 
 hsBool plBinkPlayer::INotFadingTo()
 {
-	return (fFadeState != kFadeTo) && (fFadeState != kFadeToPaused);
+    return (fFadeState != kFadeTo) && (fFadeState != kFadeToPaused);
 }
 
 hsBool plBinkPlayer::IAtEnd()
 {
 #ifdef BINK_SDK_AVAILABLE
-	return fBink->FrameNum == fBink->Frames;
+    return fBink->FrameNum == fBink->Frames;
 #else
-	return true;
+    return true;
 #endif
 }
 
 hsBool plBinkPlayer::NextFrame()
 {
 #ifndef BINK_SDK_AVAILABLE
-	return false;
+    return false;
 #endif
-	if( !fFileName )
-		return false;
+    if( !fFileName )
+        return false;
 
-	if( !fBink )
-		return true;
+    if( !fBink )
+        return true;
 
-	ICheckFadingFrom();
+    ICheckFadingFrom();
 
-	ICheckFadingTo();
+    ICheckFadingTo();
 
-	// check for end of movie
-	if( IAtEnd() && INotFadingTo() )
-	{
-		return Stop();
-	}
+    // check for end of movie
+    if( IAtEnd() && INotFadingTo() )
+    {
+        return Stop();
+    }
 
 #ifdef BINK_SDK_AVAILABLE
-	if ( !BinkWait( fBink ) )  
-	{
-		if( !IGetFrame() )
-			return false;
-	}
+    if ( !BinkWait( fBink ) )  
+    {
+        if( !IGetFrame() )
+            return false;
+    }
 #endif
 
-	if( fFadeState == kFadeNone )
-		fCurrColor = fColor;
+    if( fFadeState == kFadeNone )
+        fCurrColor = fColor;
 
-	return IBlitFrame();
+    return IBlitFrame();
 }
 
 hsBool plBinkPlayer::Pause(hsBool on)
 {
-	if( fBink )
-	{
-		switch( fFadeState )
-		{
-		case kFadeNone:
+    if( fBink )
+    {
+        switch( fFadeState )
+        {
+        case kFadeNone:
 #ifdef BINK_SDK_AVAILABLE
-			BinkPause(fBink, on);
+            BinkPause(fBink, on);
 #endif
-			break;
-		case kFadeFrom:
-			if( on )
-				fFadeState = kFadeFromPaused;
-			break;
-		case kFadeFromPaused:
-			if( !on )
-			{
-				fFadeState = kFadeFrom;
-				fFadeStart = hsTimer::GetSeconds() - fFadeParm * fFadeFromTime;
-			}
-			break;
-		case kFadeTo:
-			if( on )
-				fFadeState = kFadeToPaused;
-			break;
-		case kFadeToPaused:
-			if( !on )
-			{
-				fFadeState = kFadeTo;
-				fFadeStart = hsTimer::GetSeconds() - fFadeParm * fFadeToTime;
-			}
-			break;
-		}
-		return true;
-	}
-	return false;
+            break;
+        case kFadeFrom:
+            if( on )
+                fFadeState = kFadeFromPaused;
+            break;
+        case kFadeFromPaused:
+            if( !on )
+            {
+                fFadeState = kFadeFrom;
+                fFadeStart = hsTimer::GetSeconds() - fFadeParm * fFadeFromTime;
+            }
+            break;
+        case kFadeTo:
+            if( on )
+                fFadeState = kFadeToPaused;
+            break;
+        case kFadeToPaused:
+            if( !on )
+            {
+                fFadeState = kFadeTo;
+                fFadeStart = hsTimer::GetSeconds() - fFadeParm * fFadeToTime;
+            }
+            break;
+        }
+        return true;
+    }
+    return false;
 }
 
 void plBinkPlayer::ISendCallbacks()
 {
-	int i;
-	for( i = 0; i < fCallbacks.GetCount(); i++ )
-		fCallbacks[i]->Send();
-	fCallbacks.Reset();
+    int i;
+    for( i = 0; i < fCallbacks.GetCount(); i++ )
+        fCallbacks[i]->Send();
+    fCallbacks.Reset();
 }
 
 hsBool plBinkPlayer::Stop()
 {
-	ISendCallbacks();
-	fPipeline = nil;
+    ISendCallbacks();
+    fPipeline = nil;
 
-	if(fTexture)
-	{
-		fTexture->Release();
-		fTexture = nil;
-	}
+    if(fTexture)
+    {
+        fTexture->Release();
+        fTexture = nil;
+    }
 
-	delete [] fFileName;
-	fFileName = nil;
+    delete [] fFileName;
+    fFileName = nil;
 
-	if( fBink )
-	{
+    if( fBink )
+    {
 #ifdef BINK_SDK_AVAILABLE
-		BinkClose( fBink );
+        BinkClose( fBink );
 #endif
-		fBink = nil;
-	}
+        fBink = nil;
+    }
 
-	return false;
+    return false;
 }
 
 void plBinkPlayer::SetColor(const hsColorRGBA& color)
 {
-	fColor = color;
+    fColor = color;
 }
 
 void plBinkPlayer::SetPosition(hsScalar x, hsScalar y)
 {
-	fPos.Set(x, y);
-	if( fBink )
-		ISetVerts();
+    fPos.Set(x, y);
+    if( fBink )
+        ISetVerts();
 }
 
 void plBinkPlayer::SetScale(hsScalar x, hsScalar y)
 {
-	fScale.Set(x, y);
-	if( fBink )
-		ISetVerts();
+    fScale.Set(x, y);
+    if( fBink )
+        ISetVerts();
 }
 
 hsScalar plBinkPlayer::IGetVolume(int background) const
 {
-	int t = background ? kBackTrack : kForeTrack;
-	return hsScalar(fVolume[t]) / hsScalar(kMaxVolume);
+    int t = background ? kBackTrack : kForeTrack;
+    return hsScalar(fVolume[t]) / hsScalar(kMaxVolume);
 }
 
 void plBinkPlayer::ISetVolume(hsScalar v, int background)
 {
-	int track = background ? kBackTrack : kForeTrack;
-	UInt16 volume;
-	if( v < 0 )
-		volume = 0;
-	else if( v >= 1.f )
-		volume = kMaxVolume;
-	else
-		volume = UInt16(v * float(kMaxVolume));
+    int track = background ? kBackTrack : kForeTrack;
+    UInt16 volume;
+    if( v < 0 )
+        volume = 0;
+    else if( v >= 1.f )
+        volume = kMaxVolume;
+    else
+        volume = UInt16(v * float(kMaxVolume));
 
-	if( volume != fVolume[track] )
-	{
-		fVolume[track] = volume;
+    if( volume != fVolume[track] )
+    {
+        fVolume[track] = volume;
 #ifdef BINK_SDK_AVAILABLE
-		if( fBink )
-			BinkSetVolume(fBink, fTracks[track], fVolume[track]);
+        if( fBink )
+            BinkSetVolume(fBink, fTracks[track], fVolume[track]);
 #endif
-	}
+    }
 }
 
 hsBool plBinkPlayer::IBlitFrame()
 {
-	HRESULT hr;
+    HRESULT hr;
 
-	plViewTransform resetTransform = fPipeline->GetViewTransform();
+    plViewTransform resetTransform = fPipeline->GetViewTransform();
 
-	fPipeline->fD3DDevice->SetTransform(D3DTS_WORLD, &ident);
-	fPipeline->fD3DDevice->SetTransform(D3DTS_VIEW, &ident);
-	fPipeline->fD3DDevice->SetTransform(D3DTS_PROJECTION, &ident);
+    fPipeline->fD3DDevice->SetTransform(D3DTS_WORLD, &ident);
+    fPipeline->fD3DDevice->SetTransform(D3DTS_VIEW, &ident);
+    fPipeline->fD3DDevice->SetTransform(D3DTS_PROJECTION, &ident);
 
-	if( !ISetRenderState() )
-		return Stop();
+    if( !ISetRenderState() )
+        return Stop();
 
-	hr = fPipeline->fD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, fNumPrimitives, fVerts, sizeof(D3DVertex));
-	if(FAILED(hr))
-		return Stop();
+    hr = fPipeline->fD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, fNumPrimitives, fVerts, sizeof(D3DVertex));
+    if(FAILED(hr))
+        return Stop();
 
-	fPipeline->SetViewTransform(resetTransform);
+    fPipeline->SetViewTransform(resetTransform);
 
-	return true;
+    return true;
 }
 
 hsBool plBinkPlayer::ISetRenderState()
 {
-	HRESULT hr;
-	
-	hr = fPipeline->fD3DDevice->SetTexture(0, fTexture);
-	if(FAILED(hr)) 
-		return Stop();
+    HRESULT hr;
+    
+    hr = fPipeline->fD3DDevice->SetTexture(0, fTexture);
+    if(FAILED(hr)) 
+        return Stop();
 
-	fPipeline->fSettings.fCurrVertexShader = NULL;
-	hr = fPipeline->fD3DDevice->SetVertexShader(NULL);
-	if(FAILED(hr)) 
-		return Stop();
-	fPipeline->fD3DDevice->SetFVF(fPipeline->fSettings.fCurrFVFFormat = (D3DFVF_XYZ | D3DFVF_TEX1));
-	fPipeline->fLayerState[0].fMiscFlags |= hsGMatState::kMiscTwoSided;
-	fPipeline->fD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+    fPipeline->fSettings.fCurrVertexShader = NULL;
+    hr = fPipeline->fD3DDevice->SetVertexShader(NULL);
+    if(FAILED(hr)) 
+        return Stop();
+    fPipeline->fD3DDevice->SetFVF(fPipeline->fSettings.fCurrFVFFormat = (D3DFVF_XYZ | D3DFVF_TEX1));
+    fPipeline->fLayerState[0].fMiscFlags |= hsGMatState::kMiscTwoSided;
+    fPipeline->fD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
-	fPipeline->fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_DISABLE);
-	fPipeline->ISetLocalToWorld(hsMatrix44::IdentityMatrix(), hsMatrix44::IdentityMatrix());
+    fPipeline->fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_DISABLE);
+    fPipeline->ISetLocalToWorld(hsMatrix44::IdentityMatrix(), hsMatrix44::IdentityMatrix());
 
-	fPipeline->fD3DDevice->SetTransform(D3DTS_TEXTURE0, &ident);
-	fPipeline->fLayerTransform[0] = false;
+    fPipeline->fD3DDevice->SetTransform(D3DTS_TEXTURE0, &ident);
+    fPipeline->fLayerTransform[0] = false;
 
-	fPipeline->fD3DDevice->SetStreamSource(0, nil, 0, 0);
-	hsRefCnt_SafeUnRef(fPipeline->fSettings.fCurrVertexBuffRef);
-	fPipeline->fSettings.fCurrVertexBuffRef = nil;
+    fPipeline->fD3DDevice->SetStreamSource(0, nil, 0, 0);
+    hsRefCnt_SafeUnRef(fPipeline->fSettings.fCurrVertexBuffRef);
+    fPipeline->fSettings.fCurrVertexBuffRef = nil;
 
-	fPipeline->fD3DDevice->SetIndices(nil);
-	hsRefCnt_SafeUnRef(fPipeline->fSettings.fCurrIndexBuffRef);
-	fPipeline->fSettings.fCurrIndexBuffRef = nil;
+    fPipeline->fD3DDevice->SetIndices(nil);
+    hsRefCnt_SafeUnRef(fPipeline->fSettings.fCurrIndexBuffRef);
+    fPipeline->fSettings.fCurrIndexBuffRef = nil;
 
-	if( !fPipeline->fCurrD3DLiteState )
-	{
-		fPipeline->fD3DDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-		fPipeline->fCurrD3DLiteState = true;
-	}
+    if( !fPipeline->fCurrD3DLiteState )
+    {
+        fPipeline->fD3DDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+        fPipeline->fCurrD3DLiteState = true;
+    }
 
-	static D3DMATERIAL9	mat;
-	mat.Diffuse.r = mat.Diffuse.g = mat.Diffuse.b = 0;
-	mat.Diffuse.a = fCurrColor.a;
-	mat.Ambient.r = mat.Ambient.g = mat.Ambient.b = mat.Ambient.a = 1.f;
-	fPipeline->fD3DDevice->SetMaterial( &mat );
-	fPipeline->fD3DDevice->SetRenderState( D3DRS_DIFFUSEMATERIALSOURCE, D3DMCS_MATERIAL );
-	fPipeline->fD3DDevice->SetRenderState( D3DRS_SPECULARMATERIALSOURCE, D3DMCS_MATERIAL );
-	fPipeline->fD3DDevice->SetRenderState( D3DRS_EMISSIVEMATERIALSOURCE, D3DMCS_MATERIAL );
-	fPipeline->fD3DDevice->SetRenderState( D3DRS_AMBIENTMATERIALSOURCE, D3DMCS_MATERIAL );
-	fPipeline->fD3DDevice->SetRenderState( D3DRS_AMBIENT, fCurrColor.ToARGB32());
+    static D3DMATERIAL9 mat;
+    mat.Diffuse.r = mat.Diffuse.g = mat.Diffuse.b = 0;
+    mat.Diffuse.a = fCurrColor.a;
+    mat.Ambient.r = mat.Ambient.g = mat.Ambient.b = mat.Ambient.a = 1.f;
+    fPipeline->fD3DDevice->SetMaterial( &mat );
+    fPipeline->fD3DDevice->SetRenderState( D3DRS_DIFFUSEMATERIALSOURCE, D3DMCS_MATERIAL );
+    fPipeline->fD3DDevice->SetRenderState( D3DRS_SPECULARMATERIALSOURCE, D3DMCS_MATERIAL );
+    fPipeline->fD3DDevice->SetRenderState( D3DRS_EMISSIVEMATERIALSOURCE, D3DMCS_MATERIAL );
+    fPipeline->fD3DDevice->SetRenderState( D3DRS_AMBIENTMATERIALSOURCE, D3DMCS_MATERIAL );
+    fPipeline->fD3DDevice->SetRenderState( D3DRS_AMBIENT, fCurrColor.ToARGB32());
 
-	// Always alpha blending to get started. Should be smarter and only
-	// have blend on when we're blending.
+    // Always alpha blending to get started. Should be smarter and only
+    // have blend on when we're blending.
     fPipeline->fD3DDevice->SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCALPHA);
     fPipeline->fD3DDevice->SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCALPHA);
 
     fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-//	fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
+//  fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
     fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
     fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
 //    fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-	fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2);
+    fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2);
     fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+    fPipeline->fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-	fPipeline->fLayerState[0].fBlendFlags = hsGMatState::kBlendAlpha | hsGMatState::kBlendNoTexAlpha;
-	fPipeline->IStageStop(1);
+    fPipeline->fLayerState[0].fBlendFlags = hsGMatState::kBlendAlpha | hsGMatState::kBlendNoTexAlpha;
+    fPipeline->IStageStop(1);
 
-	fPipeline->fD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-	fPipeline->fD3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-	fPipeline->fLayerState[0].fZFlags = hsGMatState::kZNoZWrite | hsGMatState::kZNoZRead;
+    fPipeline->fD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+    fPipeline->fD3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+    fPipeline->fLayerState[0].fZFlags = hsGMatState::kZNoZWrite | hsGMatState::kZNoZRead;
 
-	fPipeline->fD3DDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
-	fPipeline->fCurrFog.fEnvPtr = nil;
+    fPipeline->fD3DDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
+    fPipeline->fCurrFog.fEnvPtr = nil;
 
-	fPipeline->fD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	fPipeline->fD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	fPipeline->fLayerState[0].fClampFlags |= hsGMatState::kClampTexture;
+    fPipeline->fD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+    fPipeline->fD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+    fPipeline->fLayerState[0].fClampFlags |= hsGMatState::kClampTexture;
 
 #ifdef HS_DEBUGGING
-	DWORD nPass;
-	DWORD error;
-	error = fPipeline->fD3DDevice->ValidateDevice(&nPass);
-	if( FAILED(error) )
-	{
-		error = fPipeline->fD3DDevice->ValidateDevice(&nPass);
-	}
+    DWORD nPass;
+    DWORD error;
+    error = fPipeline->fD3DDevice->ValidateDevice(&nPass);
+    if( FAILED(error) )
+    {
+        error = fPipeline->fD3DDevice->ValidateDevice(&nPass);
+    }
 #endif // HS_DEBUGGING
 
-	return true;
+    return true;
 }

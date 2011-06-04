@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plStatGatherCreatable_h_inc
 #define plStatGatherCreatable_h_inc
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "plAutoProfile.h"
 REGISTER_NONCREATABLE(plAutoProfile);

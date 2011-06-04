@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyKey.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 #include "pyGUIControl.h"
@@ -44,24 +44,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyGUIControlCheckBox : public pyGUIControl
 {
 protected:
-	pyGUIControlCheckBox(): pyGUIControl() {} // only used by python glue, do NOT call
-	pyGUIControlCheckBox(pyKey& gckey);
-	pyGUIControlCheckBox(plKey objkey);
+    pyGUIControlCheckBox(): pyGUIControl() {} // only used by python glue, do NOT call
+    pyGUIControlCheckBox(pyKey& gckey);
+    pyGUIControlCheckBox(plKey objkey);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptGUIControlCheckBox);
-	static PyObject *New(pyKey& gckey);
-	static PyObject *New(plKey objkey);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlCheckBox object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlCheckBox); // converts a PyObject to a pyGUIControlCheckBox (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGUIControlCheckBox);
+    static PyObject *New(pyKey& gckey);
+    static PyObject *New(plKey objkey);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlCheckBox object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlCheckBox); // converts a PyObject to a pyGUIControlCheckBox (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	static hsBool IsGUIControlCheckBox(pyKey& gckey);
+    static hsBool IsGUIControlCheckBox(pyKey& gckey);
 
-	virtual void	SetChecked( hsBool checked );
-	virtual hsBool	IsChecked( void );
+    virtual void    SetChecked( hsBool checked );
+    virtual hsBool  IsChecked( void );
 
 };
 

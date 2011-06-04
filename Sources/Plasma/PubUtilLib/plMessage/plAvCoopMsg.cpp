@@ -34,8 +34,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 // other
-#include "../plAvatar/plAvatarMgr.h"
-#include "../plAvatar/plCoopCoordinator.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plCoopCoordinator.h"
 
 // plAvCoopMsg -----------
 // ------------
@@ -81,31 +81,31 @@ plAvCoopMsg::plAvCoopMsg(plKey sender, plCoopCoordinator *coordinator)
 // -----
 void plAvCoopMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 
-	if(stream->Readbool())
-		fCoordinator = reinterpret_cast<plCoopCoordinator *>(mgr->ReadCreatable(stream));
+    if(stream->Readbool())
+        fCoordinator = reinterpret_cast<plCoopCoordinator *>(mgr->ReadCreatable(stream));
 
-	fInitiatorID = stream->ReadSwap32();
-	fInitiatorSerial = stream->ReadSwap16();
+    fInitiatorID = stream->ReadSwap32();
+    fInitiatorSerial = stream->ReadSwap16();
 
-	fCommand = static_cast<Command>(stream->ReadSwap16());
+    fCommand = static_cast<Command>(stream->ReadSwap16());
 }
 
 // Write -----------------------------------------------
 // ------
 void plAvCoopMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	stream->Writebool(fCoordinator != nil);
-	if(fCoordinator)
-		mgr->WriteCreatable(stream, fCoordinator);
+    stream->Writebool(fCoordinator != nil);
+    if(fCoordinator)
+        mgr->WriteCreatable(stream, fCoordinator);
 
-	stream->WriteSwap32(fInitiatorID);
-	stream->WriteSwap16(fInitiatorSerial);
+    stream->WriteSwap32(fInitiatorID);
+    stream->WriteSwap16(fInitiatorSerial);
 
-	stream->WriteSwap16(fCommand);
+    stream->WriteSwap16(fCommand);
 }
 
 #endif // ndef NO_AV_MSGS

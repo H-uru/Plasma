@@ -27,33 +27,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plORConditionalObject_inc
 #define plORConditionalObject_inc
 
-#include "../../NucleusLib/pnModifier/plConditionalObject.h"
+#include "pnModifier/plConditionalObject.h"
 #include "hsTemplates.h"
 
 class plORConditionalObject : public plConditionalObject
 {
 protected:
-	hsTArray<plConditionalObject*>	fChildren;
+    hsTArray<plConditionalObject*>  fChildren;
 
 public:
-	
-	plORConditionalObject();
-	~plORConditionalObject();
-	
-	CLASSNAME_REGISTER( plORConditionalObject );
-	GETINTERFACE_ANY( plORConditionalObject, plConditionalObject );
-	
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    
+    plORConditionalObject();
+    ~plORConditionalObject();
+    
+    CLASSNAME_REGISTER( plORConditionalObject );
+    GETINTERFACE_ANY( plORConditionalObject, plConditionalObject );
+    
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool Satisfied(); 
+    virtual hsBool Satisfied(); 
 
-	virtual hsBool MsgReceive(plMessage* msg);
-	void Evaluate(){;}
-	void Reset();
+    virtual hsBool MsgReceive(plMessage* msg);
+    void Evaluate(){;}
+    void Reset();
 
-	virtual void SetLogicMod(plLogicModBase* pMod);
-	void AddChild(plConditionalObject* pObj);
+    virtual void SetLogicMod(plLogicModBase* pMod);
+    void AddChild(plConditionalObject* pObj);
 
 };
 

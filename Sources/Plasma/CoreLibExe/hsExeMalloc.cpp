@@ -153,10 +153,10 @@ const unsigned kMemIgnoreBlock          = 1<<2; // don't track this allocation
         bool        showDialog;
     };
     
-    static unsigned	s_memColor;
-	static unsigned s_memCheckOff;
+    static unsigned s_memColor;
+    static unsigned s_memCheckOff;
 
-	static CCritSect * s_critsect;
+    static CCritSect * s_critsect;
 
 #endif // MEM_DEBUG
 
@@ -279,8 +279,6 @@ static void __cdecl ReportMem (EMemFile file, bool showDialog, const char fmt[],
 //============================================================================
 #ifdef MEM_DEBUG
 static void __cdecl MemDumpCallback (void * mem, void * param) {
-    ref(MemDumpCallback);
-
     const _CrtMemBlockHeader * pHead = pHdr(mem);
     MemDumpParam * dumpParam = (MemDumpParam *) param;
     
@@ -291,12 +289,12 @@ static void __cdecl MemDumpCallback (void * mem, void * param) {
         filename
     );
 
-	// HACK: Don't report array memory leaks since these underly the hash
-	// table type and may not be cleaned up until after the mem leak
-	// checker runs.  =(    
+    // HACK: Don't report array memory leaks since these underly the hash
+    // table type and may not be cleaned up until after the mem leak
+    // checker runs.  =(    
     if (strstr(filename, "pnUtArray"))
-		return;
-		
+        return;
+        
     ReportMem(
         dumpParam->file,
         dumpParam->showDialog,
@@ -314,14 +312,13 @@ static void __cdecl MemDumpCallback (void * mem, void * param) {
 static void __cdecl OnExitMemDumpCallback (void * mem, size_t) {
     static MemDumpParam param = { kMemLeaks, true };
     if (!ErrorGetOption(kErrOptDisableMemLeakChecking))
-		MemDumpCallback(mem, &param);
+        MemDumpCallback(mem, &param);
 }
 #endif // MEM_DEBUG
 
 //===========================================================================
 #ifdef MEM_DEBUG
 static void __cdecl CheckLeaksOnExit () {
-	ref(CheckLeaksOnExit);
     if (!ErrorGetOption(kErrOptDisableMemLeakChecking)) {
         MemDumpParam param;
         param.file          = kMemLeaks;
@@ -333,40 +330,31 @@ static void __cdecl CheckLeaksOnExit () {
 
 //============================================================================
 static int __cdecl CrtAllocHook (
-	int						method,
-	void *					pUserData,
-	size_t					nSize,
-	int						nBlockUse,
-	long					lRequest,
-	const unsigned char *	szFileName,
-	int						nLine
+    int                     method,
+    void *                  pUserData,
+    size_t                  nSize,
+    int                     nBlockUse,
+    long                    lRequest,
+    const unsigned char *   szFileName,
+    int                     nLine
 ) {
-	ref(method);
-	ref(pUserData);
-	ref(nSize);
-	ref(nBlockUse);
-	ref(lRequest);
-	ref(szFileName);
-	ref(nLine);
-
-	if (nBlockUse == _NORMAL_BLOCK) {
-		int xx = 0;
-		ref(xx);
-	}
-	
-	return 1;
+    if (nBlockUse == _NORMAL_BLOCK) {
+        int xx = 0;
+    }
+    
+    return 1;
 }
 
 //===========================================================================
 #ifdef MEM_DEBUG
 AUTO_INIT_FUNC(hsExeMallocInit) {
-	// The critical section has to be initialized
-	// before program startup and never freed
-	static byte rawMemory[sizeof CCritSect];
-	s_critsect = new(rawMemory) CCritSect;
-	SET_CRT_DEBUG_FIELD(_CRTDBG_LEAK_CHECK_DF);
-	_CrtSetAllocHook(CrtAllocHook);
-	_CrtSetDumpClient(OnExitMemDumpCallback);
+    // The critical section has to be initialized
+    // before program startup and never freed
+    static byte rawMemory[sizeof CCritSect];
+    s_critsect = new(rawMemory) CCritSect;
+    SET_CRT_DEBUG_FIELD(_CRTDBG_LEAK_CHECK_DF);
+    _CrtSetAllocHook(CrtAllocHook);
+    _CrtSetDumpClient(OnExitMemDumpCallback);
 //    atexit(CheckLeaksOnExit);
 }
 #endif // MEM_DEBUG
@@ -380,10 +368,10 @@ AUTO_INIT_FUNC(hsExeMallocInit) {
 
 //============================================================================
 void MemSetLeakChecking (bool on) {
-	if (on)
-		SET_CRT_DEBUG_FIELD(_CRTDBG_LEAK_CHECK_DF);
-	else
-		CLEAR_CRT_DEBUG_FIELD(_CRTDBG_LEAK_CHECK_DF);
+    if (on)
+        SET_CRT_DEBUG_FIELD(_CRTDBG_LEAK_CHECK_DF);
+    else
+        CLEAR_CRT_DEBUG_FIELD(_CRTDBG_LEAK_CHECK_DF);
 }
 
 
@@ -418,8 +406,6 @@ void MemValidateNow () {
 
 //============================================================================
 void MemSetValidation (unsigned on) {
-    ref(on);
-
 #ifdef MEM_DEBUG
 #endif // MEM_DEBUG
 }
@@ -428,7 +414,7 @@ void MemSetValidation (unsigned on) {
 void MemPushDisableTracking () {
 
 #ifdef MEM_DEBUG
-	++s_memCheckOff;
+    ++s_memCheckOff;
 #endif // MEM_DEBUG
 }
 
@@ -436,50 +422,45 @@ void MemPushDisableTracking () {
 void MemPopDisableTracking () {
 
 #ifdef MEM_DEBUG
-	ASSERT(s_memCheckOff);
-	--s_memCheckOff;
+    ASSERT(s_memCheckOff);
+    --s_memCheckOff;
 #endif // MEM_DEBUG
 }
 
 //============================================================================
 void MemSetColor (unsigned short color) {
-	ref(color);
-	
 #ifdef MEM_DEBUG
-	s_memColor = color & 0xFFFF;
+    s_memColor = color & 0xFFFF;
 #endif // MEM_DEBUG
 }
 
 //===========================================================================
 void * MemAlloc (unsigned bytes, unsigned flags, const char file[], int line) {
 
-    ref(file);
-    ref(line);
-
 #ifdef MEM_DEBUG
-	unsigned block;
-	if (flags & kMemIgnoreBlock || s_memCheckOff)
-		block = _IGNORE_BLOCK;
-	else
-		block = _CLIENT_BLOCK | (s_memColor << 16);
+    unsigned block;
+    if (flags & kMemIgnoreBlock || s_memCheckOff)
+        block = _IGNORE_BLOCK;
+    else
+        block = _CLIENT_BLOCK | (s_memColor << 16);
 #endif // MEM_DEBUG
 
 #ifdef MEM_DEBUG
-	if (s_critsect)
-		s_critsect->Enter();
-	if (block == _IGNORE_BLOCK)
-		CLEAR_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
+    if (s_critsect)
+        s_critsect->Enter();
+    if (block == _IGNORE_BLOCK)
+        CLEAR_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
 #endif
 
-	void * ptr = (flags & kMemZero)
-		? _calloc_dbg(bytes, 1, block, file, line)
-		: _malloc_dbg(bytes, block, file, line);
+    void * ptr = (flags & kMemZero)
+        ? _calloc_dbg(bytes, 1, block, file, line)
+        : _malloc_dbg(bytes, block, file, line);
 
 #ifdef MEM_DEBUG
-	if (block == _IGNORE_BLOCK)
-		SET_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
-	if (s_critsect)
-		s_critsect->Leave();
+    if (block == _IGNORE_BLOCK)
+        SET_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
+    if (s_critsect)
+        s_critsect->Leave();
 #endif
 
     if (!ptr)
@@ -504,14 +485,12 @@ void * MemAlloc (unsigned bytes, unsigned flags, const char file[], int line) {
 
 //============================================================================
 void MemFree (void * ptr, unsigned flags) {
-	ref(flags);
-
-	if (!ptr)
+    if (!ptr)
         return;
 
 #ifdef MEM_DEBUG
-	const _CrtMemBlockHeader * pHead = pHdr(ptr);
-	unsigned block = pHead->nBlockUse;
+    const _CrtMemBlockHeader * pHead = pHdr(ptr);
+    unsigned block = pHead->nBlockUse;
 #endif // MEM_DEBUG
     
     _free_dbg(ptr, block);
@@ -519,61 +498,58 @@ void MemFree (void * ptr, unsigned flags) {
 
 //===========================================================================
 void * MemRealloc (void * ptr, unsigned bytes, unsigned flags, const char file[], int line) {
-    ref(file);
-    ref(line);
-
     #ifdef HS_DEBUGGING
     unsigned oldBytes = ptr ? MemSize(ptr) : 0;
     #endif
 
 #ifdef MEM_DEBUG
-	unsigned block;        
-	if (flags & kMemIgnoreBlock || s_memCheckOff)
-		block = _IGNORE_BLOCK;
-	else
-		block = _CLIENT_BLOCK | (s_memColor << 16);
+    unsigned block;        
+    if (flags & kMemIgnoreBlock || s_memCheckOff)
+        block = _IGNORE_BLOCK;
+    else
+        block = _CLIENT_BLOCK | (s_memColor << 16);
 #endif
 
     void * newPtr = nil;
 
 #ifdef MEM_DEBUG
-	if (s_critsect)
-		s_critsect->Enter();
-	if (block == _IGNORE_BLOCK)
-		CLEAR_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
+    if (s_critsect)
+        s_critsect->Enter();
+    if (block == _IGNORE_BLOCK)
+        CLEAR_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
 #endif
 
-	for (;;) {
-		if (flags & kMemReallocInPlaceOnly) {
+    for (;;) {
+        if (flags & kMemReallocInPlaceOnly) {
 #ifndef MEM_DEBUG
-			break;
+            break;
 #else
-			newPtr = _expand_dbg(ptr, bytes, block, file, line);
+            newPtr = _expand_dbg(ptr, bytes, block, file, line);
 
-			// expand can succeed without making the block big enough -- check for this case!
-			if (!newPtr || _msize_dbg(newPtr, block) < bytes)
-				break;
+            // expand can succeed without making the block big enough -- check for this case!
+            if (!newPtr || _msize_dbg(newPtr, block) < bytes)
+                break;
 #endif  // MEM_DEBUG
-		}
-		else if (!bytes) {
-			newPtr = _malloc_dbg(0, block, file, line);
-			_free_dbg(ptr, block);
-		}
-		else {
-			newPtr = _realloc_dbg(ptr, bytes, block, file, line);
-		}
+        }
+        else if (!bytes) {
+            newPtr = _malloc_dbg(0, block, file, line);
+            _free_dbg(ptr, block);
+        }
+        else {
+            newPtr = _realloc_dbg(ptr, bytes, block, file, line);
+        }
 
-		if (!newPtr)
-			ErrorFatal(__LINE__, __FILE__, "Out of memory");
+        if (!newPtr)
+            ErrorFatal(__LINE__, __FILE__, "Out of memory");
 
-		break;
-	}
+        break;
+    }
 
 #ifdef MEM_DEBUG
-	if (block == _IGNORE_BLOCK)
-		SET_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
-	if (s_critsect)
-		s_critsect->Leave();
+    if (block == _IGNORE_BLOCK)
+        SET_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
+    if (s_critsect)
+        s_critsect->Leave();
 #endif
 
     /* This code doesn't work because the memory manager may have "rounded" the size
@@ -600,11 +576,11 @@ unsigned MemSize (void * ptr) {
     unsigned result;
 
 #ifdef MEM_DEBUG
-	const _CrtMemBlockHeader * pHead = pHdr(ptr);
-	unsigned block = pHead->nBlockUse;
+    const _CrtMemBlockHeader * pHead = pHdr(ptr);
+    unsigned block = pHead->nBlockUse;
 #endif
 
-	result = (unsigned)_msize_dbg(ptr, block);
+    result = (unsigned)_msize_dbg(ptr, block);
     return result;
 }
 

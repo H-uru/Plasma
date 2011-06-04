@@ -24,16 +24,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	plCubicRenderTarget Class Header										 //
-//	Derived renderTarget class representing a collection of render targets	 //
-//	to be used for DYNAMIC cubic environment mapping.						 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  plCubicRenderTarget Class Header                                         //
+//  Derived renderTarget class representing a collection of render targets   //
+//  to be used for DYNAMIC cubic environment mapping.                        //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	6.7.2001 mcn - Created.													 //
-//																			 //
+//                                                                           //
+//  6.7.2001 mcn - Created.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plCubicRenderTarget_h
@@ -47,73 +47,73 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plCubicRenderTarget : public plRenderTarget
 {
-	protected:
+    protected:
 
-		//// Protected Members ////
+        //// Protected Members ////
 
-		plRenderTarget	*fFaces[6];
-		hsMatrix44		fWorldToCameras[6];
-		hsMatrix44		fCameraToWorlds[6];
-	
-	public:
+        plRenderTarget  *fFaces[6];
+        hsMatrix44      fWorldToCameras[6];
+        hsMatrix44      fCameraToWorlds[6];
+    
+    public:
 
-		//// Public Data ////
+        //// Public Data ////
 
-		enum Faces
-		{
-			kLeftFace = 0,
-			kRightFace,
-			kFrontFace,
-			kBackFace,
-			kTopFace,
-			kBottomFace
-		};
+        enum Faces
+        {
+            kLeftFace = 0,
+            kRightFace,
+            kFrontFace,
+            kBackFace,
+            kTopFace,
+            kBottomFace
+        };
 
-		//// Public Members ////
+        //// Public Members ////
 
-		CLASSNAME_REGISTER( plCubicRenderTarget );
-		GETINTERFACE_ANY( plCubicRenderTarget, plRenderTarget );
+        CLASSNAME_REGISTER( plCubicRenderTarget );
+        GETINTERFACE_ANY( plCubicRenderTarget, plRenderTarget );
 
-		plCubicRenderTarget()
-		{
-			fFaces[0] = fFaces[1] = fFaces[2] = fFaces[3] = fFaces[4] = fFaces[5] = nil;
-		}
+        plCubicRenderTarget()
+        {
+            fFaces[0] = fFaces[1] = fFaces[2] = fFaces[3] = fFaces[4] = fFaces[5] = nil;
+        }
 
-		plCubicRenderTarget( UInt16 flags, UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth = -1, UInt8 sDepth = -1 ) 
-			: plRenderTarget( flags, width, height, bitDepth, zDepth, sDepth )
-		{
-			int		i;
-
-
-			for( i = 0; i < 6; i++ )
-			{
-				fFaces[i] = TRACKED_NEW plRenderTarget( flags, width, height, bitDepth, zDepth, sDepth );
-				fFaces[i]->fParent = this;
-				fWorldToCameras[i].Reset();
-				fCameraToWorlds[i].Reset();
-			}
-		}
-
-		virtual ~plCubicRenderTarget()
-		{
-			int			i;
+        plCubicRenderTarget( UInt16 flags, UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth = -1, UInt8 sDepth = -1 ) 
+            : plRenderTarget( flags, width, height, bitDepth, zDepth, sDepth )
+        {
+            int     i;
 
 
-			for( i = 0; i < 6; i++ ) 
-				delete fFaces[i];
-		}
+            for( i = 0; i < 6; i++ )
+            {
+                fFaces[i] = TRACKED_NEW plRenderTarget( flags, width, height, bitDepth, zDepth, sDepth );
+                fFaces[i]->fParent = this;
+                fWorldToCameras[i].Reset();
+                fCameraToWorlds[i].Reset();
+            }
+        }
 
-		// Get the total size in bytes
-		virtual UInt32	GetTotalSize( void ) const;
+        virtual ~plCubicRenderTarget()
+        {
+            int         i;
 
-		virtual void				SetCameraMatrix(const hsPoint3& pos);
-		virtual const hsMatrix44&	GetWorldToCamera(UInt8 face) const { return fWorldToCameras[face]; }
-		virtual const hsMatrix44&	GetCameraToWorld(UInt8 face) const { return fCameraToWorlds[face]; }
 
-		plRenderTarget	*GetFace(UInt8 face) const { return fFaces[face]; }
+            for( i = 0; i < 6; i++ ) 
+                delete fFaces[i];
+        }
 
-		virtual UInt32	Read(hsStream *s);
-		virtual UInt32	Write(hsStream *s);
+        // Get the total size in bytes
+        virtual UInt32  GetTotalSize( void ) const;
+
+        virtual void                SetCameraMatrix(const hsPoint3& pos);
+        virtual const hsMatrix44&   GetWorldToCamera(UInt8 face) const { return fWorldToCameras[face]; }
+        virtual const hsMatrix44&   GetCameraToWorld(UInt8 face) const { return fCameraToWorlds[face]; }
+
+        plRenderTarget  *GetFace(UInt8 face) const { return fFaces[face]; }
+
+        virtual UInt32  Read(hsStream *s);
+        virtual UInt32  Write(hsStream *s);
 
 };
 

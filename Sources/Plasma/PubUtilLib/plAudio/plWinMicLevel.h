@@ -27,15 +27,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plWinMicLevel_h
 
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plWinMicLevel - Annoying class to deal with the annoying problem of		//
-//					setting the microphone recording volume in Windows.		//
-//					Yeah, you'd THINK there'd be some easier way...			//
-//																			//
+//                                                                          //
+//  plWinMicLevel - Annoying class to deal with the annoying problem of     //
+//                  setting the microphone recording volume in Windows.     //
+//                  Yeah, you'd THINK there'd be some easier way...         //
+//                                                                          //
 //// Notes ///////////////////////////////////////////////////////////////////
-//																			//
-//	5.8.2001 - Created by mcn.												//
-//																			//
+//                                                                          //
+//  5.8.2001 - Created by mcn.                                              //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 
@@ -45,20 +45,20 @@ class plWinMicLevel
 {
 public:
 
-	~plWinMicLevel();
-	// Gets the microphone volume, range 0-1, -1 if error
-	static hsScalar	GetLevel( void );
+    ~plWinMicLevel();
+    // Gets the microphone volume, range 0-1, -1 if error
+    static hsScalar GetLevel( void );
 
-	// Sets the microphone volume, range 0-1
-	static void		SetLevel( hsScalar level );
+    // Sets the microphone volume, range 0-1
+    static void     SetLevel( hsScalar level );
 
-	// Returns whether we can set the level
-	static hsBool	CanSetLevel( void );
+    // Returns whether we can set the level
+    static hsBool   CanSetLevel( void );
 
 protected:
-	plWinMicLevel();	// Protected constructor for IGetInstance. Just to init some stuff
-	static plWinMicLevel	&IGetInstance( void );
-	void	IShutdown( void );
+    plWinMicLevel();    // Protected constructor for IGetInstance. Just to init some stuff
+    static plWinMicLevel    &IGetInstance( void );
+    void    IShutdown( void );
 };
 
 #endif // _plWinMicLevel_h

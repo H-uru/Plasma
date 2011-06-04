@@ -30,149 +30,149 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plAnimCmdMsg::~plAnimCmdMsg()
 {
-	ClearCmd();
-	delete [] fAnimName;
-	delete [] fLoopName;
+    ClearCmd();
+    delete [] fAnimName;
+    delete [] fLoopName;
 }
 
 
 void plAnimCmdMsg::ClearCmd() 
 { 
-	plMessageWithCallbacks::Clear();
-	fCmd.Clear(); 
+    plMessageWithCallbacks::Clear();
+    fCmd.Clear(); 
 }
 
 void plAnimCmdMsg::SetAnimName(const char *name)
 {
-	delete [] fAnimName;
-	fAnimName = hsStrcpy(name);
+    delete [] fAnimName;
+    fAnimName = hsStrcpy(name);
 }
 
 const char *plAnimCmdMsg::GetAnimName()
 {
-	return fAnimName;
+    return fAnimName;
 }
 
 void plAnimCmdMsg::SetLoopName(const char *name)
 {
-	delete [] fLoopName;
-	fLoopName = hsStrcpy(name);
+    delete [] fLoopName;
+    fLoopName = hsStrcpy(name);
 }
 
 const char *plAnimCmdMsg::GetLoopName()
 {
-	return fLoopName;
+    return fLoopName;
 }
 
 hsBool plAnimCmdMsg::CmdChangesAnimTime()
 {
-	return (Cmd(kContinue) ||
-			Cmd(kStop) ||
-			Cmd(kGoToTime) ||
-			Cmd(kToggleState) ||
-			Cmd(kGoToBegin) ||
-			Cmd(kGoToEnd) ||
-			Cmd(kGoToLoopBegin) ||
-			Cmd(kGoToLoopEnd) ||
-			Cmd(kIncrementForward) ||
-			Cmd(kIncrementBackward) ||
-			Cmd(kFastForward) ||
-			Cmd(kPlayToTime) ||
-			Cmd(kPlayToPercentage));
+    return (Cmd(kContinue) ||
+            Cmd(kStop) ||
+            Cmd(kGoToTime) ||
+            Cmd(kToggleState) ||
+            Cmd(kGoToBegin) ||
+            Cmd(kGoToEnd) ||
+            Cmd(kGoToLoopBegin) ||
+            Cmd(kGoToLoopEnd) ||
+            Cmd(kIncrementForward) ||
+            Cmd(kIncrementBackward) ||
+            Cmd(kFastForward) ||
+            Cmd(kPlayToTime) ||
+            Cmd(kPlayToPercentage));
 }
-	
+    
 void plAnimCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessageWithCallbacks::Read(stream, mgr);
+    plMessageWithCallbacks::Read(stream, mgr);
 
-	fCmd.Read(stream);
-	stream->ReadSwap(&fBegin);
-	stream->ReadSwap(&fEnd);
-	stream->ReadSwap(&fLoopEnd);
-	stream->ReadSwap(&fLoopBegin);
-	stream->ReadSwap(&fSpeed);
-	stream->ReadSwap(&fSpeedChangeRate);
-	stream->ReadSwap(&fTime);
+    fCmd.Read(stream);
+    stream->ReadSwap(&fBegin);
+    stream->ReadSwap(&fEnd);
+    stream->ReadSwap(&fLoopEnd);
+    stream->ReadSwap(&fLoopBegin);
+    stream->ReadSwap(&fSpeed);
+    stream->ReadSwap(&fSpeedChangeRate);
+    stream->ReadSwap(&fTime);
 
-	fAnimName = stream->ReadSafeString();
-	fLoopName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString();
+    fLoopName = stream->ReadSafeString();
 }
 
 void plAnimCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessageWithCallbacks::Write(stream, mgr);
+    plMessageWithCallbacks::Write(stream, mgr);
 
-	fCmd.Write(stream);
-	stream->WriteSwap(fBegin);
-	stream->WriteSwap(fEnd);
-	stream->WriteSwap(fLoopEnd);
-	stream->WriteSwap(fLoopBegin);
-	stream->WriteSwap(fSpeed);
-	stream->WriteSwap(fSpeedChangeRate);
-	stream->WriteSwap(fTime);
+    fCmd.Write(stream);
+    stream->WriteSwap(fBegin);
+    stream->WriteSwap(fEnd);
+    stream->WriteSwap(fLoopEnd);
+    stream->WriteSwap(fLoopBegin);
+    stream->WriteSwap(fSpeed);
+    stream->WriteSwap(fSpeedChangeRate);
+    stream->WriteSwap(fTime);
 
-	stream->WriteSafeString(fAnimName);
-	stream->WriteSafeString(fLoopName);
+    stream->WriteSafeString(fAnimName);
+    stream->WriteSafeString(fLoopName);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 plAGCmdMsg::~plAGCmdMsg()
 {
-	ClearCmd();
-	delete [] fAnimName;
+    ClearCmd();
+    delete [] fAnimName;
 }
 
 void plAGCmdMsg::SetAnimName(const char *name)
 {
-	delete [] fAnimName;
-	fAnimName = hsStrcpy(name);
+    delete [] fAnimName;
+    fAnimName = hsStrcpy(name);
 }
 
 const char *plAGCmdMsg::GetAnimName()
 {
-	return fAnimName;
+    return fAnimName;
 }
 
 void plAGCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 
-	fCmd.Read(stream);
-	stream->ReadSwap(&fBlend);
-	stream->ReadSwap(&fBlendRate);
-	stream->ReadSwap(&fAmp);
-	stream->ReadSwap(&fAmpRate);
+    fCmd.Read(stream);
+    stream->ReadSwap(&fBlend);
+    stream->ReadSwap(&fBlendRate);
+    stream->ReadSwap(&fAmp);
+    stream->ReadSwap(&fAmpRate);
 
-	fAnimName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString();
 }
 
 void plAGCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	fCmd.Write(stream);
-	stream->WriteSwap(fBlend);
-	stream->WriteSwap(fBlendRate);
-	stream->WriteSwap(fAmp);
-	stream->WriteSwap(fAmpRate);
+    fCmd.Write(stream);
+    stream->WriteSwap(fBlend);
+    stream->WriteSwap(fBlendRate);
+    stream->WriteSwap(fAmp);
+    stream->WriteSwap(fAmpRate);
 
-	stream->WriteSafeString(fAnimName);
+    stream->WriteSafeString(fAnimName);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 
 plAGDetachCallbackMsg::~plAGDetachCallbackMsg()
 {
-	delete [] fAnimName;
+    delete [] fAnimName;
 }
 
 void plAGDetachCallbackMsg::SetAnimName(const char *name)
 {
-	fAnimName = hsStrcpy(name);
+    fAnimName = hsStrcpy(name);
 }
 
 char *plAGDetachCallbackMsg::GetAnimName()
 {
-	return fAnimName;
+    return fAnimName;
 }

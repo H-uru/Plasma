@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // kept separate for a reason
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 #include "plNetMessage.h"
 
 // NON CREATABLES
@@ -74,4 +74,4 @@ REGISTER_CREATABLE(plNetMsgInitialAgeStateSent);
 REGISTER_CREATABLE(plNetMsgRelevanceRegions);
 
 
-#endif	// plNetMsgCreatable_h
+#endif  // plNetMsgCreatable_h

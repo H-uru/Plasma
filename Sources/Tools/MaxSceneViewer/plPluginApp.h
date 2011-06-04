@@ -23,7 +23,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../../Plasma/Apps/plClient/plApp.h"
+#include "plClient/plApp.h"
 
 class plPluginClient;
 
@@ -33,11 +33,11 @@ class plPluginClient;
 class plPluginApp : public plApp
 {
 protected:
-	plPluginClient *fClient;
+    plPluginClient *fClient;
 
 public:
-	plPluginApp() : fClient(NULL) {}
+    plPluginApp() : fClient(NULL) {}
 
-	virtual plClient *Startup(char *CmdLine);
-	virtual void Shutdown();
+    virtual plClient *Startup(char *CmdLine);
+    virtual void Shutdown();
 };

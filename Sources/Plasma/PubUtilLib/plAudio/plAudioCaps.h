@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plAudioCaps - Utility class to query and detect available audio options.//
-//																			//
+//                                                                          //
+//  plAudioCaps - Utility class to query and detect available audio options.//
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plAudioCaps_h
@@ -42,43 +42,43 @@ class plAudioCaps
 {
 public:
 
-	plAudioCaps() { Clear(); }
+    plAudioCaps() { Clear(); }
 
-	void	Clear( void )
-	{
-		fIsAvailable = false;
-		fEAXAvailable = false;
-		fEAXUnified = false;
-		fMaxNumSources = 0;
-	}
+    void    Clear( void )
+    {
+        fIsAvailable = false;
+        fEAXAvailable = false;
+        fEAXUnified = false;
+        fMaxNumSources = 0;
+    }
 
-	hsBool	IsAvailable( void ) const { return fIsAvailable; }
-	hsBool	IsEAXAvailable( void ) const { return fEAXAvailable; }
-	hsBool	UsingEAXUnified( void ) const { return fEAXUnified; }
-	unsigned GetMaxNumVoices() { return fMaxNumSources; }
+    hsBool  IsAvailable( void ) const { return fIsAvailable; }
+    hsBool  IsEAXAvailable( void ) const { return fEAXAvailable; }
+    hsBool  UsingEAXUnified( void ) const { return fEAXUnified; }
+    unsigned GetMaxNumVoices() { return fMaxNumSources; }
 
 protected:
-	friend class plAudioCapsDetector;
+    friend class plAudioCapsDetector;
 
-	hsBool	fIsAvailable, fEAXAvailable, fEAXUnified;
-	unsigned fMaxNumSources;
+    hsBool  fIsAvailable, fEAXAvailable, fEAXUnified;
+    unsigned fMaxNumSources;
 };
 
 class plAudioCapsDetector
 {
 public:
-	plAudioCapsDetector();
-	virtual ~plAudioCapsDetector();
+    plAudioCapsDetector();
+    virtual ~plAudioCapsDetector();
 
-	static plAudioCaps &Detect( hsBool log = false, hsBool init = false );
+    static plAudioCaps &Detect( hsBool log = false, hsBool init = false );
 
 protected:
-	static plStatusLog	*fLog;
-	static plAudioCaps	fCaps;
-	static hsBool		fGotCaps;
-	
-	static hsBool	IDetectEAX( );
-	static void		EnumerateAudioDevices();
+    static plStatusLog  *fLog;
+    static plAudioCaps  fCaps;
+    static hsBool       fGotCaps;
+    
+    static hsBool   IDetectEAX( );
+    static void     EnumerateAudioDevices();
 };
 
 #endif //_plAudioCaps_h

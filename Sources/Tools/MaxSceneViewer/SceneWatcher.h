@@ -32,62 +32,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include <set>
 
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 class plMaxNode;
 
 class SceneWatcher : public ReferenceMaker
 {
 public:
-	typedef std::vector<plMaxNode*>	NodeList;
-	typedef std::set<plMaxNode*>	NodeSet;
-	typedef std::vector<plKey>		KeyList;
+    typedef std::vector<plMaxNode*> NodeList;
+    typedef std::set<plMaxNode*>    NodeSet;
+    typedef std::vector<plKey>      KeyList;
 
 protected:
-	NodeList fNodes;
-	KeyList fDeleted;
+    NodeList fNodes;
+    KeyList fDeleted;
 
-	bool fDirty;
+    bool fDirty;
 
 public:
-	SceneWatcher();
-	~SceneWatcher();
+    SceneWatcher();
+    ~SceneWatcher();
 
-	////////////////////////////////////////////////////////////////////////////
-	// ReferenceMaker functions
-	//
-	RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-		PartID& partID, RefMessage message);
+    ////////////////////////////////////////////////////////////////////////////
+    // ReferenceMaker functions
+    //
+    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
+        PartID& partID, RefMessage message);
 
-	int NumRefs();
-	RefTargetHandle GetReference(int i);
-	void SetReference(int i, RefTargetHandle rtarg);
+    int NumRefs();
+    RefTargetHandle GetReference(int i);
+    void SetReference(int i, RefTargetHandle rtarg);
 
-	BOOL IsRealDependency(ReferenceTarget *rtarg) { return FALSE; }
+    BOOL IsRealDependency(ReferenceTarget *rtarg) { return FALSE; }
 
-	// Get all the nodes we're watching
-	const NodeList& GetWatchNodes();
+    // Get all the nodes we're watching
+    const NodeList& GetWatchNodes();
 
-	// Get all the nodes that need to be reconverted
-	bool AnyDirty();
-	void GetDirty(NodeSet& dirtyNodes);
+    // Get all the nodes that need to be reconverted
+    bool AnyDirty();
+    void GetDirty(NodeSet& dirtyNodes);
 
-	bool AnyDeleted();
-	KeyList& GetDeleted();
+    bool AnyDeleted();
+    KeyList& GetDeleted();
 
 protected:
-	void IAddRef(plMaxNode *node);
-	void IRemoveRef(plMaxNode *node);
+    void IAddRef(plMaxNode *node);
+    void IRemoveRef(plMaxNode *node);
 
-	void IAddNodeRecur(plMaxNode *node);
+    void IAddNodeRecur(plMaxNode *node);
 
-	// Helpers for GetDirtyNodes
-	void IGetDependents(plMaxNode *node, NodeSet& nodes);
-	void IGetLogicDependents(plMaxNode *node, NodeSet& nodes);
+    // Helpers for GetDirtyNodes
+    void IGetDependents(plMaxNode *node, NodeSet& nodes);
+    void IGetLogicDependents(plMaxNode *node, NodeSet& nodes);
 
-	void ISetDirty();
+    void ISetDirty();
 
-	static void INotify(void *param, NotifyInfo *info);
+    static void INotify(void *param, NotifyInfo *info);
 };
 
 #endif //SCENE_WATCHER_H

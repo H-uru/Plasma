@@ -1,0 +1,107 @@
+include_directories("../../CoreLib")
+include_directories("../../NucleusLib/inc")
+include_directories("../../NucleusLib")
+include_directories("../../PubUtilLib")
+
+set(plDrawable_SOURCES
+    plAccessGeometry.cpp
+    plAccessSnapShot.cpp
+    plAccMeshSmooth.cpp
+    plActivePrintShape.cpp
+    plAvMeshSmooth.cpp
+    plCluster.cpp
+    plClusterGroup.cpp
+    plCutter.cpp
+    plDrawableGenerator.cpp
+    plDrawableSpans.cpp
+    plDrawableSpansExport.cpp
+    plDynaBulletMgr.cpp
+    plDynaDecal.cpp
+    plDynaDecalMgr.cpp
+    plDynaFootMgr.cpp
+    plDynaPuddleMgr.cpp
+    plDynaRippleMgr.cpp
+    plDynaRippleMgrVS.cpp
+    plDynaTorpedoMgr.cpp
+    plDynaTorpedoVSMgr.cpp
+    plDynaWakeMgr.cpp
+    plFixedWaterState7.cpp
+    plGeometrySpan.cpp
+    plGeoSpanDice.cpp
+    plInstanceDrawInterface.cpp
+    plInterMeshSmooth.cpp
+    plMorphArray.cpp
+    plMorphDelta.cpp
+    plMorphSequence.cpp
+    plMorphSequenceSDLMod.cpp
+    plParticleFiller.cpp
+    plPrintShape.cpp
+    plProxyGen.cpp
+    plSharedMesh.cpp
+    plSpaceTree.cpp
+    plSpaceTreeMaker.cpp
+    plSpanInstance.cpp
+    plSpanTemplate.cpp
+    plSpanTypes.cpp
+    plVisLOSMgr.cpp
+    plWaveSet7.cpp
+    plWaveSetBase.cpp
+)
+
+set(plDrawable_HEADERS
+    plAccessGeometry.h
+    plAccessPartySpan.h
+    plAccessSnapShot.h
+    plAccessSpan.h
+    plAccessTriSpan.h
+    plAccessVtxSpan.h
+    plAccMeshSmooth.h
+    plActivePrintShape.h
+    plAuxSpan.h
+    plAvMeshSmooth.h
+    plCluster.h
+    plClusterGroup.h
+    plCutter.h
+    plDrawableCreatable.h
+    plDrawableGenerator.h
+    plDrawableSpans.h
+    plDynaBulletMgr.h
+    plDynaDecal.h
+    plDynaDecalMgr.h
+    plDynaFootMgr.h
+    plDynaPuddleMgr.h
+    plDynaRippleMgr.h
+    plDynaRippleVSMgr.h
+    plDynaTorpedoMgr.h
+    plDynaTorpedoVSMgr.h
+    plDynaWakeMgr.h
+    plFixedWaterState7.h
+    plGeometrySpan.h
+    plGeoSpanDice.h
+    plInstanceDrawInterface.h
+    plInterMeshSmooth.h
+    plMorphArray.h
+    plMorphDelta.h
+    plMorphSequence.h
+    plMorphSequenceSDLMod.h
+    plParticleFiller.h
+    plPrintShape.h
+    plProxyGen.h
+    plRipVSConsts.h
+    plSharedMesh.h
+    plSpaceTree.h
+    plSpaceTreeMaker.h
+    plSpanInstance.h
+    plSpanTemplate.h
+    plSpanTypes.h
+    plTimedInterp.h
+    plVisLOSMgr.h
+    plWaveSet7.h
+    plWaveSetBase.h
+    plWaveSetShaderConsts.h
+)
+
+add_library(plDrawable STATIC ${plDrawable_SOURCES} ${plDrawable_HEADERS})
+
+source_group("Source Files" FILES ${plDrawable_SOURCES})
+source_group("Header Files" FILES ${plDrawable_HEADERS})

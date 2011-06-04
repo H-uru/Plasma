@@ -46,52 +46,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plWndCtrls
 {
 public:
-	static void Init(HINSTANCE hInst);
-	static void Shutdown();
-	static HINSTANCE Instance() { return hInstance;}
-	static void MakeWndClassName(wchar_t * result, const wchar_t * base)
-	{
-		swprintf(result, L"Plasma_%s", base);
-	}
-	static void SetLanguage(DWORD lang) { fLanguage = lang;	}
-	static DWORD GetLanguage() { return fLanguage; }
+    static void Init(HINSTANCE hInst);
+    static void Shutdown();
+    static HINSTANCE Instance() { return hInstance;}
+    static void MakeWndClassName(wchar_t * result, const wchar_t * base)
+    {
+        swprintf(result, L"Plasma_%s", base);
+    }
+    static void SetLanguage(DWORD lang) { fLanguage = lang; }
+    static DWORD GetLanguage() { return fLanguage; }
 
 private:
-	static HINSTANCE	hInstance;
-	static DWORD fLanguage;
-	plWndCtrls();
-	plWndCtrls & operator=(const plWndCtrls &);
+    static HINSTANCE    hInstance;
+    static DWORD fLanguage;
+    plWndCtrls();
+    plWndCtrls & operator=(const plWndCtrls &);
 };
 
 ////////////////////////////////////////////////////////////////////
 
-#define CHECK(c)		hsAssert(c,#c)
-#define N_ELEMENTS(a)	( sizeof(a) / sizeof((a)[0]) )
+#define CHECK(c)        hsAssert(c,#c)
+#define N_ELEMENTS(a)   ( sizeof(a) / sizeof((a)[0]) )
 
 template<class T> inline T Max(const T & A, const T & B){return (A>=B)?A:B;}
 template<class T> inline T Min(const T & A, const T & B){return (A<=B)?A:B;}
 
 
 ////////////////////////////////////////////////////////////////////
-//	Window class definition macros.
+//  Window class definition macros.
 
 
 #define DECLARE_WINDOWCLASS(cls,parentcls) \
 public: \
-	void GetWindowClassName( wchar_t * result ) {plWndCtrls::MakeWndClassName(result,L#cls);}
+    void GetWindowClassName( wchar_t * result ) {plWndCtrls::MakeWndClassName(result,L#cls);}
 
 #define DECLARE_WINDOWSUBCLASS(cls,parentcls) \
-	DECLARE_WINDOWCLASS(cls,parentcls) \
-	static WNDPROC _SuperProc;
+    DECLARE_WINDOWCLASS(cls,parentcls) \
+    static WNDPROC _SuperProc;
 
 #define REGISTER_WINDOWCLASS(cls,clsf) \
-	{wchar_t Temp[256]; plWndCtrls::MakeWndClassName(Temp,L#cls); cls::RegisterWindowClass( Temp, clsf );}
+    {wchar_t Temp[256]; plWndCtrls::MakeWndClassName(Temp,L#cls); cls::RegisterWindowClass( Temp, clsf );}
 
 #define REGISTER_WINDOWCLASSWITHICON(cls,clsf,iconid) \
-	{wchar_t Temp[256]; plWndCtrls::MakeWndClassName(Temp,L#cls); cls::RegisterWindowClass( Temp, clsf, iconid );}
+    {wchar_t Temp[256]; plWndCtrls::MakeWndClassName(Temp,L#cls); cls::RegisterWindowClass( Temp, clsf, iconid );}
 
 #define REGISTER_WINDOWSUBCLASS(cls,wincls) \
-	{wchar_t Temp[256]; plWndCtrls::MakeWndClassName(Temp,L#cls); cls::_SuperProc = cls::RegisterWindowClass( Temp, wincls );}
+    {wchar_t Temp[256]; plWndCtrls::MakeWndClassName(Temp,L#cls); cls::_SuperProc = cls::RegisterWindowClass( Temp, wincls );}
 
 #define FIRST_AUTO_CONTROL 8192
 
@@ -100,167 +100,167 @@ public: \
 
 struct plPoint
 {
-	int X, Y;
-	plPoint()
-	{}
-	plPoint( int InX, int InY )
-	:	X( InX )
-	,	Y( InY )
-	{}
-	static plPoint ZeroValue()
-	{
-		return plPoint(0,0);
-	}
-	static plPoint NoneValue()
-	{
-		return plPoint(-1,-1);
-	}
-	operator POINT*() const
-	{
-		return (POINT*)this;
-	}
-	const int& operator()( int i ) const
-	{
-		return (&X)[i];
-	}
-	int& operator()( int i )
-	{
-		return (&X)[i];
-	}
-	static int Num()
-	{
-		return 2;
-	}
-	bool operator==( const plPoint& Other ) const
-	{
-		return X==Other.X && Y==Other.Y;
-	}
-	bool operator!=( const plPoint& Other ) const
-	{
-		return X!=Other.X || Y!=Other.Y;
-	}
-	plPoint& operator+=( const plPoint& Other )
-	{
-		X += Other.X;
-		Y += Other.Y;
-		return *this;
-	}
-	plPoint& operator-=( const plPoint& Other )
-	{
-		X -= Other.X;
-		Y -= Other.Y;
-		return *this;
-	}
-	plPoint operator+( const plPoint& Other ) const
-	{
-		return plPoint(*this) += Other;
-	}
-	plPoint operator-( const plPoint& Other ) const
-	{
-		return plPoint(*this) -= Other;
-	}
+    int X, Y;
+    plPoint()
+    {}
+    plPoint( int InX, int InY )
+    :   X( InX )
+    ,   Y( InY )
+    {}
+    static plPoint ZeroValue()
+    {
+        return plPoint(0,0);
+    }
+    static plPoint NoneValue()
+    {
+        return plPoint(-1,-1);
+    }
+    operator POINT*() const
+    {
+        return (POINT*)this;
+    }
+    const int& operator()( int i ) const
+    {
+        return (&X)[i];
+    }
+    int& operator()( int i )
+    {
+        return (&X)[i];
+    }
+    static int Num()
+    {
+        return 2;
+    }
+    bool operator==( const plPoint& Other ) const
+    {
+        return X==Other.X && Y==Other.Y;
+    }
+    bool operator!=( const plPoint& Other ) const
+    {
+        return X!=Other.X || Y!=Other.Y;
+    }
+    plPoint& operator+=( const plPoint& Other )
+    {
+        X += Other.X;
+        Y += Other.Y;
+        return *this;
+    }
+    plPoint& operator-=( const plPoint& Other )
+    {
+        X -= Other.X;
+        Y -= Other.Y;
+        return *this;
+    }
+    plPoint operator+( const plPoint& Other ) const
+    {
+        return plPoint(*this) += Other;
+    }
+    plPoint operator-( const plPoint& Other ) const
+    {
+        return plPoint(*this) -= Other;
+    }
 };
 
 ////////////////////////////////////////////////////////////////////
 
 struct plRect
 {
-	plPoint Min, Max;
-	plRect()
-	{}
-	plRect( int X0, int Y0, int X1, int Y1 )
-	:	Min( X0, Y0 )
-	,	Max( X1, Y1 )
-	{}
-	plRect( plPoint InMin, plPoint InMax )
-	:	Min( InMin )
-	,	Max( InMax )
-	{}
-	plRect( RECT R )
-	:	Min( R.left, R.top )
-	,	Max( R.right, R.bottom )
-	{}
-	operator RECT*() const
-	{
-		return (RECT*)this;
-	}
-	const plPoint& operator()( int i ) const
-	{
-		return (&Min)[i];
-	}
-	plPoint& operator()( int i )
-	{
-		return (&Min)[i];
-	}
-	bool operator==( const plRect& Other ) const
-	{
-		return Min==Other.Min && Max==Other.Max;
-	}
-	bool operator!=( const plRect& Other ) const
-	{
-		return Min!=Other.Min || Max!=Other.Max;
-	}
-	plRect Right( int Width )
-	{
-		return plRect( ::Max(Min.X,Max.X-Width), Min.Y, Max.X, Max.Y );
-	}
-	plRect Bottom( int Height )
-	{
-		return plRect( Min.X, ::Max(Min.Y,Max.Y-Height), Max.X, Max.Y );
-	}
-	plPoint Size()
-	{
-		return plPoint( Max.X-Min.X, Max.Y-Min.Y );
-	}
-	void Resize(plPoint size)
-	{
-		Max.X=Min.X+size.X;
-		Max.Y=Min.Y+size.Y;
-	}
-	int Width()
-	{
-		return Max.X-Min.X;
-	}
-	int Height()
-	{
-		return Max.Y-Min.Y;
-	}
-	plRect& operator+=( const plPoint& P )
-	{
-		Min += P;
-		Max += P;
-		return *this;
-	}
-	plRect& operator-=( const plPoint& P )
-	{
-		Min -= P;
-		Max -= P;
-		return *this;
-	}
-	plRect operator+( const plPoint& P ) const
-	{
-		return plRect( Min+P, Max+P );
-	}
-	plRect operator-( const plPoint& P ) const
-	{
-		return plRect( Min-P, Max-P );
-	}
-	plRect operator+( const plRect& R ) const
-	{
-		return plRect( Min+R.Min, Max+R.Max );
-	}
-	plRect operator-( const plRect& R ) const
-	{
-		return plRect( Min-R.Min, Max-R.Max );
-	}
-	plRect Inner( plPoint P ) const
-	{
-		return plRect( Min+P, Max-P );
-	}
-	bool Contains( plPoint P ) const
-	{
-		return P.X>=Min.X && P.X<Max.X && P.Y>=Min.Y && P.Y<Max.Y;
-	}
+    plPoint Min, Max;
+    plRect()
+    {}
+    plRect( int X0, int Y0, int X1, int Y1 )
+    :   Min( X0, Y0 )
+    ,   Max( X1, Y1 )
+    {}
+    plRect( plPoint InMin, plPoint InMax )
+    :   Min( InMin )
+    ,   Max( InMax )
+    {}
+    plRect( RECT R )
+    :   Min( R.left, R.top )
+    ,   Max( R.right, R.bottom )
+    {}
+    operator RECT*() const
+    {
+        return (RECT*)this;
+    }
+    const plPoint& operator()( int i ) const
+    {
+        return (&Min)[i];
+    }
+    plPoint& operator()( int i )
+    {
+        return (&Min)[i];
+    }
+    bool operator==( const plRect& Other ) const
+    {
+        return Min==Other.Min && Max==Other.Max;
+    }
+    bool operator!=( const plRect& Other ) const
+    {
+        return Min!=Other.Min || Max!=Other.Max;
+    }
+    plRect Right( int Width )
+    {
+        return plRect( ::Max(Min.X,Max.X-Width), Min.Y, Max.X, Max.Y );
+    }
+    plRect Bottom( int Height )
+    {
+        return plRect( Min.X, ::Max(Min.Y,Max.Y-Height), Max.X, Max.Y );
+    }
+    plPoint Size()
+    {
+        return plPoint( Max.X-Min.X, Max.Y-Min.Y );
+    }
+    void Resize(plPoint size)
+    {
+        Max.X=Min.X+size.X;
+        Max.Y=Min.Y+size.Y;
+    }
+    int Width()
+    {
+        return Max.X-Min.X;
+    }
+    int Height()
+    {
+        return Max.Y-Min.Y;
+    }
+    plRect& operator+=( const plPoint& P )
+    {
+        Min += P;
+        Max += P;
+        return *this;
+    }
+    plRect& operator-=( const plPoint& P )
+    {
+        Min -= P;
+        Max -= P;
+        return *this;
+    }
+    plRect operator+( const plPoint& P ) const
+    {
+        return plRect( Min+P, Max+P );
+    }
+    plRect operator-( const plPoint& P ) const
+    {
+        return plRect( Min-P, Max-P );
+    }
+    plRect operator+( const plRect& R ) const
+    {
+        return plRect( Min+R.Min, Max+R.Max );
+    }
+    plRect operator-( const plRect& R ) const
+    {
+        return plRect( Min-R.Min, Max-R.Max );
+    }
+    plRect Inner( plPoint P ) const
+    {
+        return plRect( Min+P, Max-P );
+    }
+    bool Contains( plPoint P ) const
+    {
+        return P.X>=Min.X && P.X<Max.X && P.Y>=Min.Y && P.Y<Max.Y;
+    }
 };
 
 
@@ -270,13 +270,13 @@ typedef void (plClass::*TDelegate)();
 
 struct plDelegate
 {
-	plClass * fTarget;
-	void (plClass::*fDelegate)();
-	plDelegate( plClass * target=nil, TDelegate delegate=nil )
-	: fTarget( target )
-	, fDelegate( delegate )
-	{}
-	void operator()() { if (fTarget){(fTarget->*fDelegate)();} }
+    plClass * fTarget;
+    void (plClass::*fDelegate)();
+    plDelegate( plClass * target=nil, TDelegate delegate=nil )
+    : fTarget( target )
+    , fDelegate( delegate )
+    {}
+    void operator()() { if (fTarget){(fTarget->*fDelegate)();} }
 };
 
 ////////////////////////////////////////////////////////////////////

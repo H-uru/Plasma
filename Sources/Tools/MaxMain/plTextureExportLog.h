@@ -24,12 +24,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plTextureExportLog - Lil' utility class for collating and writing out	//
-//						 a log of all textures exported, or rather, in the	//
-//						 resManager, or rather, the ones passed in to this	//
-//						 sucker.											//
-//																			//
+//                                                                          //
+//  plTextureExportLog - Lil' utility class for collating and writing out   //
+//                       a log of all textures exported, or rather, in the  //
+//                       resManager, or rather, the ones passed in to this  //
+//                       sucker.                                            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plTextureExportLog_h
@@ -43,32 +43,32 @@ class hsStream;
 
 class plTextureExportLog
 {
-	protected:
+    protected:
 
-		char	*fFileName;
+        char    *fFileName;
 
-		// Tiny linked list helper
-		class plBMapNode
-		{
-			public:
-				UInt32		fRank;	// Sort with biggest first
-				plBitmap	*fBitmap;
-				plBMapNode	*fNextNode;
-		};
+        // Tiny linked list helper
+        class plBMapNode
+        {
+            public:
+                UInt32      fRank;  // Sort with biggest first
+                plBitmap    *fBitmap;
+                plBMapNode  *fNextNode;
+        };
 
-		plBMapNode	*fNodeList;
+        plBMapNode  *fNodeList;
 
 
-		void	IAddBMapNode( UInt32 rank, plBitmap *bMap );
-		void	IWriteTabbedString( hsStream *stream, const char *string, Int8 numTabs );
+        void    IAddBMapNode( UInt32 rank, plBitmap *bMap );
+        void    IWriteTabbedString( hsStream *stream, const char *string, Int8 numTabs );
 
-	public:	
+    public: 
 
-		plTextureExportLog( const char *fileName );
-		~plTextureExportLog();
+        plTextureExportLog( const char *fileName );
+        ~plTextureExportLog();
 
-		void	AddTexture( plBitmap *texture );
-		void	Write( void );
+        void    AddTexture( plBitmap *texture );
+        void    Write( void );
 };
 
 

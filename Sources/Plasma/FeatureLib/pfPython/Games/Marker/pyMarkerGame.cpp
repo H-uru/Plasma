@@ -34,112 +34,112 @@ pyMarkerGame::pyMarkerGame(): pyGameCli() {}
 
 pyMarkerGame::pyMarkerGame(pfGameCli* client): pyGameCli(client)
 {
-	if (client && (client->GetGameTypeId() != kGameTypeId_Marker))
-		gameClient = nil; // wrong type, just clear it out
+    if (client && (client->GetGameTypeId() != kGameTypeId_Marker))
+        gameClient = nil; // wrong type, just clear it out
 }
 
 bool pyMarkerGame::IsMarkerGame(std::wstring guid)
 {
-	Uuid gameUuid(guid.c_str());
-	return gameUuid == kGameTypeId_Marker;
+    Uuid gameUuid(guid.c_str());
+    return gameUuid == kGameTypeId_Marker;
 }
 
 void pyMarkerGame::CreateMarkerGame(pyKey& callbackKey, unsigned gameType, std::wstring gameName, unsigned long timeLimit, std::wstring templateId)
 {
-	Marker_CreateParam init;
-	init.gameType = gameType;
-	StrCopy(init.gameName, gameName.c_str(), arrsize(init.gameName));
-	init.timeLimit = timeLimit;
-	StrCopy(init.templateID, templateId.c_str(), arrsize(init.templateID));
-	pfGameMgr::GetInstance()->CreateGame(callbackKey.getKey(), kGameTypeId_Marker, 0, sizeof(init), &init);
+    Marker_CreateParam init;
+    init.gameType = gameType;
+    StrCopy(init.gameName, gameName.c_str(), arrsize(init.gameName));
+    init.timeLimit = timeLimit;
+    StrCopy(init.templateID, templateId.c_str(), arrsize(init.templateID));
+    pfGameMgr::GetInstance()->CreateGame(callbackKey.getKey(), kGameTypeId_Marker, 0, sizeof(init), &init);
 }
 
 void pyMarkerGame::StartGame()
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->StartGame();
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->StartGame();
+    }
 }
 
 void pyMarkerGame::PauseGame()
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->PauseGame();
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->PauseGame();
+    }
 }
 
 void pyMarkerGame::ResetGame()
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->ResetGame();
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->ResetGame();
+    }
 }
 
 void pyMarkerGame::ChangeGameName(std::wstring newName)
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->ChangeGameName(newName.c_str());
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->ChangeGameName(newName.c_str());
+    }
 }
 
 void pyMarkerGame::ChangeTimeLimit(unsigned long timeLimit)
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->ChangeTimeLimit(timeLimit);
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->ChangeTimeLimit(timeLimit);
+    }
 }
 
 void pyMarkerGame::DeleteGame()
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->DeleteGame();
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->DeleteGame();
+    }
 }
 
 void pyMarkerGame::AddMarker(double x, double y, double z, std::wstring name, std::wstring age)
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->AddMarker(x, y, z, name.c_str(), age.c_str());
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->AddMarker(x, y, z, name.c_str(), age.c_str());
+    }
 }
 
 void pyMarkerGame::DeleteMarker(unsigned long markerId)
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->DeleteMarker(markerId);
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->DeleteMarker(markerId);
+    }
 }
 
 void pyMarkerGame::ChangeMarkerName(unsigned long markerId, std::wstring newName)
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->ChangeMarkerName(markerId, newName.c_str());
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->ChangeMarkerName(markerId, newName.c_str());
+    }
 }
 
 void pyMarkerGame::CaptureMarker(unsigned long markerId)
 {
-	if (gameClient)
-	{
-		pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
-		marker->CaptureMarker(markerId);
-	}
+    if (gameClient)
+    {
+        pfGmMarker* marker = pfGmMarker::ConvertNoRef(gameClient);
+        marker->CaptureMarker(markerId);
+    }
 }

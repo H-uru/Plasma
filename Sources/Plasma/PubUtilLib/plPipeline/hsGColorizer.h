@@ -34,17 +34,17 @@ class plPipeline;
 
 class hsGColorizer {
 protected:
-	hsColorOverride	fResetColor;
-	plPipeline*	fPipeline;
+    hsColorOverride fResetColor;
+    plPipeline* fPipeline;
 
 public:
-	hsGColorizer() : fPipeline(nil) {}
-	hsBool Colorizing();
-	hsBool Alpharizing();
-	hsColorRGBA GetCurrentColor();
-	void Init(plPipeline* pipe);
-	void PushColorize(hsColorRGBA& col, hsBool alphaOnly);
-	void PopColorize();
+    hsGColorizer() : fPipeline(nil) {}
+    hsBool Colorizing();
+    hsBool Alpharizing();
+    hsColorRGBA GetCurrentColor();
+    void Init(plPipeline* pipe);
+    void PushColorize(hsColorRGBA& col, hsBool alphaOnly);
+    void PopColorize();
 };
 
 #endif // hsGColorizer_inc

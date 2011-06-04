@@ -27,96 +27,100 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetClientGroup_h
 
 #include "hsStlUtils.h"
-#include "../../NucleusLib/pnNetCommon/plNetGroup.h"
+#include "pnNetCommon/plNetGroup.h"
 
 //
 // represents a collection of net groups.
 // abstracted so that we can switch to a different container structure if necessary
 //
 class plNetClientGroups
-{	
-	friend class plNetClientMgr;
+{   
+    friend class plNetClientMgr;
 private:
-	struct OwnedGroup
-	{
-		plNetGroupId fGroup;
-		bool fOwnIt;
-		
-		bool operator<(const OwnedGroup& other) const { return other.fGroup<fGroup; }
-		bool operator==(const OwnedGroup& other) const { return (other.fGroup==fGroup && other.fOwnIt==fOwnIt); }
-		OwnedGroup(plNetGroupId g, bool o) : fGroup(g),fOwnIt(o) { fGroup.SetDesc(g.GetDesc()); }
-		OwnedGroup() : fOwnIt(false) {}
-	};
-	std::set<OwnedGroup> fGroups;
-	
-	std::set<OwnedGroup>::iterator IFind(const plNetGroupId& grpId)
-	{
-		std::set<OwnedGroup>::iterator it=fGroups.begin();
-		for( ; it != fGroups.end(); it++)
-			if ((*it).fGroup==grpId)
-				break;
-		return it;
-	}
-	
-	// const version
-	std::set<OwnedGroup>::const_iterator IFind(const plNetGroupId& grpId) const
-	{
-		std::set<OwnedGroup>::const_iterator it=fGroups.begin();
-		for( ; it != fGroups.end(); it++)
-			if ((*it).fGroup==grpId)
-				break;
-		return it;
-	}
+    struct OwnedGroup
+    {
+        plNetGroupId fGroup;
+        bool fOwnIt;
+        
+        bool operator<(const OwnedGroup& other) const { return other.fGroup<fGroup; }
+        bool operator==(const OwnedGroup& other) const { return (other.fGroup==fGroup && other.fOwnIt==fOwnIt); }
+        OwnedGroup(plNetGroupId g, bool o) : fGroup(g),fOwnIt(o) { fGroup.SetDesc(g.GetDesc()); }
+        OwnedGroup() : fOwnIt(false) {}
+    };
+    std::set<OwnedGroup> fGroups;
+    
+    std::set<OwnedGroup>::iterator IFind(const plNetGroupId& grpId)
+    {
+        std::set<OwnedGroup>::iterator it=fGroups.begin();
+        for( ; it != fGroups.end(); it++)
+            if ((*it).fGroup==grpId)
+                break;
+        return it;
+    }
+    
+    // const version
+    std::set<OwnedGroup>::const_iterator IFind(const plNetGroupId& grpId) const
+    {
+        std::set<OwnedGroup>::const_iterator it=fGroups.begin();
+        for( ; it != fGroups.end(); it++)
+            if ((*it).fGroup==grpId)
+                break;
+        return it;
+    }
 
-	void ISetGroupDesc(plNetGroupId& grpId);
+    void ISetGroupDesc(plNetGroupId& grpId);
 public:
-	void Reset()
-	{
-		ClearGroups();
-		SetGroup(plNetGroup::kNetGroupLocalPlayer, true /*ownit*/);
-		SetGroup(plNetGroup::kNetGroupRemotePlayer, false /*ownit*/);
-		SetGroup(plNetGroup::kNetGroupLocalPhysicals, true /*ownit*/);
-		SetGroup(plNetGroup::kNetGroupRemotePhysicals, false /*ownit*/);
-	}
-	
-	void SetGroup(plNetGroupId& grpId, bool ownIt) 
-	{ 
-		std::set<OwnedGroup>::iterator it=IFind(grpId);
-		if (it != fGroups.end())
-			(*it).fOwnIt=ownIt;
-		else
-		{
-			ISetGroupDesc(grpId);
-			fGroups.insert(OwnedGroup(grpId, ownIt));
-		}
-	}
-	
+    void Reset()
+    {
+        ClearGroups();
+        SetGroup(plNetGroup::kNetGroupLocalPlayer, true /*ownit*/);
+        SetGroup(plNetGroup::kNetGroupRemotePlayer, false /*ownit*/);
+        SetGroup(plNetGroup::kNetGroupLocalPhysicals, true /*ownit*/);
+        SetGroup(plNetGroup::kNetGroupRemotePhysicals, false /*ownit*/);
+    }
+    
+    void SetGroup(plNetGroupId& grpId, bool ownIt) 
+    { 
+        std::set<OwnedGroup>::iterator it=IFind(grpId);
+        if (it != fGroups.end())
+        {
+            OwnedGroup grp(it->fGroup, it->fOwnIt);
+            fGroups.erase(it);
+            fGroups.insert(grp);
+        }
+        else
+        {
+            ISetGroupDesc(grpId);
+            fGroups.insert(OwnedGroup(grpId, ownIt));
+        }
+    }
+    
 #if 0
-	void RemoveGroup(const plNetGroupId& grpId) 
-	{ 
-		std::set<OwnedGroup>::iterator it=IFind(grpId);
-		if (it != fGroups.end())
-			fGroups.erase(it);
-	}
+    void RemoveGroup(const plNetGroupId& grpId) 
+    { 
+        std::set<OwnedGroup>::iterator it=IFind(grpId);
+        if (it != fGroups.end())
+            fGroups.erase(it);
+    }
 #else
-	void ClearGroups()
-	{
-		fGroups.clear();
-	}
+    void ClearGroups()
+    {
+        fGroups.clear();
+    }
 #endif
-	int IsGroupLocal(const plNetGroupId& grpId) const
-	{ 
-		std::set<OwnedGroup>::const_iterator it=IFind(grpId);
-		if (it != fGroups.end())
-		{
-			if ((*it).fOwnIt) 
-				return 1;	// yes
-			return 0;		// no
-		}
-		return -1;			// don't know about it
-	}
+    int IsGroupLocal(const plNetGroupId& grpId) const
+    { 
+        std::set<OwnedGroup>::const_iterator it=IFind(grpId);
+        if (it != fGroups.end())
+        {
+            if ((*it).fOwnIt) 
+                return 1;   // yes
+            return 0;       // no
+        }
+        return -1;          // don't know about it
+    }
 };
 
 
 
-#endif	//  plNetClientGroup_h
+#endif  //  plNetClientGroup_h

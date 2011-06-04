@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTemplates.h"
 #include "plSpanTypes.h"
-#include "../plPipeline/plGBufferGroup.h"
+#include "plPipeline/plGBufferGroup.h"
 
 class plDrawableSpans;
 class hsGMaterial;
@@ -40,60 +40,60 @@ class plDecalVtxFormat;
 class plAuxSpan
 {
 public:
-	enum
-	{
-		kRTLit					= 0x1,
-		kOverrideLiteModel		= 0x2,
-		kAttenColor				= 0x4,
-		kWorldSpace				= 0x8,
-		kVertexShader			= 0x10
-	};
+    enum
+    {
+        kRTLit                  = 0x1,
+        kOverrideLiteModel      = 0x2,
+        kAttenColor             = 0x4,
+        kWorldSpace             = 0x8,
+        kVertexShader           = 0x10
+    };
 
-	void*						fOwner;
+    void*                       fOwner;
 
-	plDrawableSpans*			fDrawable;
-	UInt32						fBaseSpanIdx;
-	hsGMaterial*				fMaterial;
-	UInt32						fFlags;
+    plDrawableSpans*            fDrawable;
+    UInt32                      fBaseSpanIdx;
+    hsGMaterial*                fMaterial;
+    UInt32                      fFlags;
 
-	hsTArray<hsPoint3>			fOrigPos;
-	hsTArray<hsPoint3>			fOrigUVW;
+    hsTArray<hsPoint3>          fOrigPos;
+    hsTArray<hsPoint3>          fOrigUVW;
 
-	plGBufferGroup*	fGroup;		// Which buffer group, i.e. which vertex format
+    plGBufferGroup* fGroup;     // Which buffer group, i.e. which vertex format
 
-	UInt32			fVBufferIdx;	// Which vertex buffer in group
-	UInt32			fCellIdx;		// Cell index inside the vertex buffer
-	UInt32			fCellOffset;	// Offset inside the cell
-	UInt32			fVStartIdx;		// Start vertex # in the actual interlaced buffer
-	UInt32			fVLength;		// Length of this span in the buffer
+    UInt32          fVBufferIdx;    // Which vertex buffer in group
+    UInt32          fCellIdx;       // Cell index inside the vertex buffer
+    UInt32          fCellOffset;    // Offset inside the cell
+    UInt32          fVStartIdx;     // Start vertex # in the actual interlaced buffer
+    UInt32          fVLength;       // Length of this span in the buffer
 
-	UInt32			fVBufferInit;
-	UInt32			fVBufferLimit;
+    UInt32          fVBufferInit;
+    UInt32          fVBufferLimit;
 
-	UInt32			fIBufferIdx;	// Which index buffer in group
-	UInt32			fIStartIdx;		// Redundant, since all spans are contiguous. Here for debugging
-	UInt32			fILength;		// Length of this span in the buffer
+    UInt32          fIBufferIdx;    // Which index buffer in group
+    UInt32          fIStartIdx;     // Redundant, since all spans are contiguous. Here for debugging
+    UInt32          fILength;       // Length of this span in the buffer
 
-	UInt32			fIBufferInit;
-	UInt32			fIBufferLimit;
+    UInt32          fIBufferInit;
+    UInt32          fIBufferLimit;
 
-	plDecalVtxFormat* GetBaseVtxPtr() const
-	{
-		plGBufferGroup* grp = fGroup;
-		plGBufferCell* cell = grp->GetCell(fVBufferIdx, fCellIdx);
+    plDecalVtxFormat* GetBaseVtxPtr() const
+    {
+        plGBufferGroup* grp = fGroup;
+        plGBufferCell* cell = grp->GetCell(fVBufferIdx, fCellIdx);
 
-		UInt8* ptr = grp->GetVertBufferData(fVBufferIdx);
-		
-		ptr += cell->fVtxStart + fCellOffset;
+        UInt8* ptr = grp->GetVertBufferData(fVBufferIdx);
+        
+        ptr += cell->fVtxStart + fCellOffset;
 
-		return (plDecalVtxFormat*)ptr;
-	}
-	UInt16* GetBaseIdxPtr() const
-	{
-		plGBufferGroup* grp = fGroup;
+        return (plDecalVtxFormat*)ptr;
+    }
+    UInt16* GetBaseIdxPtr() const
+    {
+        plGBufferGroup* grp = fGroup;
 
-		return grp->GetIndexBufferData(fIBufferIdx) + fIBufferInit;
-	}
+        return grp->GetIndexBufferData(fIBufferIdx) + fIBufferInit;
+    }
 
 };
 

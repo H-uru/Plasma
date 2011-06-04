@@ -31,21 +31,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class StringTokenizer {
 private:
-	char *seps;
-	char *tok;
-	hsBool isSep(char c);
-	Int32 numSeps;
-	hsBool qAsTok;
-	hsBool inQuote;
+    char *seps;
+    char *tok;
+    hsBool isSep(char c);
+    Int32 numSeps;
+    hsBool qAsTok;
+    hsBool inQuote;
 public:
-	StringTokenizer();
-	StringTokenizer(const char *string, const char *seps);
-	~StringTokenizer();
-	char *next();
-	hsBool hasMoreTokens();
-	void reset(const char *string, const char *seps);
-	void ParseQuotes(hsBool qAsTok);
-	char *string;
+    StringTokenizer();
+    StringTokenizer(const char *string, const char *seps);
+    ~StringTokenizer();
+    char *next();
+    hsBool hasMoreTokens();
+    void reset(const char *string, const char *seps);
+    void ParseQuotes(hsBool qAsTok);
+    char *string;
 };
 
 #endif

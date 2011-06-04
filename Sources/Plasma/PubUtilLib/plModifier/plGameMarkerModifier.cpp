@@ -24,63 +24,63 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plGameMarkerModifier.h"
-#include "../plMessage/plCollideMsg.h"
+#include "plMessage/plCollideMsg.h"
 
-#include "../pnMessage/plNotifyMsg.h"
-#include "../pnSceneObject/plSceneObject.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
 hsBool plGameMarkerModifier::MsgReceive(plMessage* msg)
 {
-	plCollideMsg *collideMsg = plCollideMsg::ConvertNoRef(msg);
-	if (collideMsg)
-	{
-		if (collideMsg->fEntering)
-		{
-			plNotifyMsg* notify = TRACKED_NEW plNotifyMsg;
-			notify->AddCollisionEvent(true, collideMsg->fOtherKey, GetTarget()->GetKey());
-			notify->Send(hsgResMgr::ResMgr()->FindKey(kMarkerMgr_KEY));
-		}
-	}
+    plCollideMsg *collideMsg = plCollideMsg::ConvertNoRef(msg);
+    if (collideMsg)
+    {
+        if (collideMsg->fEntering)
+        {
+            plNotifyMsg* notify = TRACKED_NEW plNotifyMsg;
+            notify->AddCollisionEvent(true, collideMsg->fOtherKey, GetTarget()->GetKey());
+            notify->Send(hsgResMgr::ResMgr()->FindKey(kMarkerMgr_KEY));
+        }
+    }
 
-	return plSingleModifier::MsgReceive(msg);
+    return plSingleModifier::MsgReceive(msg);
 }
 
 plKey plGameMarkerModifier::IFindCloneKey(plKey baseKey)
 {
-	const plUoid& myUoid = GetKey()->GetUoid();
-	plUoid cloneUoid = baseKey->GetUoid();
-	cloneUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-	return hsgResMgr::ResMgr()->FindKey(cloneUoid);
+    const plUoid& myUoid = GetKey()->GetUoid();
+    plUoid cloneUoid = baseKey->GetUoid();
+    cloneUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
+    return hsgResMgr::ResMgr()->FindKey(cloneUoid);
 }
 
 void plGameMarkerModifier::FixupAnimKeys()
 {
-	fGreenAnimKey	= IFindCloneKey(fGreenAnimKey);
-	fRedAnimKey		= IFindCloneKey(fRedAnimKey);
-	fOpenAnimKey	= IFindCloneKey(fOpenAnimKey);
-	fBounceAnimKey	= IFindCloneKey(fBounceAnimKey);
+    fGreenAnimKey   = IFindCloneKey(fGreenAnimKey);
+    fRedAnimKey     = IFindCloneKey(fRedAnimKey);
+    fOpenAnimKey    = IFindCloneKey(fOpenAnimKey);
+    fBounceAnimKey  = IFindCloneKey(fBounceAnimKey);
 }
 
 void plGameMarkerModifier::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plSingleModifier::Read(stream, mgr);
+    plSingleModifier::Read(stream, mgr);
 
-	fGreenAnimKey	= mgr->ReadKey(stream);
-	fRedAnimKey		= mgr->ReadKey(stream);
-	fOpenAnimKey	= mgr->ReadKey(stream);
-	fBounceAnimKey	= mgr->ReadKey(stream);
-	fPlaceSndIdx	= stream->ReadSwap16();
-	fHitSndIdx		= stream->ReadSwap16();
+    fGreenAnimKey   = mgr->ReadKey(stream);
+    fRedAnimKey     = mgr->ReadKey(stream);
+    fOpenAnimKey    = mgr->ReadKey(stream);
+    fBounceAnimKey  = mgr->ReadKey(stream);
+    fPlaceSndIdx    = stream->ReadSwap16();
+    fHitSndIdx      = stream->ReadSwap16();
 }
 
 void plGameMarkerModifier::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plSingleModifier::Write(stream, mgr);
+    plSingleModifier::Write(stream, mgr);
 
-	mgr->WriteKey(stream, fGreenAnimKey);
-	mgr->WriteKey(stream, fRedAnimKey);
-	mgr->WriteKey(stream, fOpenAnimKey);
-	mgr->WriteKey(stream, fBounceAnimKey);
-	stream->WriteSwap16(fPlaceSndIdx);
-	stream->WriteSwap16(fHitSndIdx);
+    mgr->WriteKey(stream, fGreenAnimKey);
+    mgr->WriteKey(stream, fRedAnimKey);
+    mgr->WriteKey(stream, fOpenAnimKey);
+    mgr->WriteKey(stream, fBounceAnimKey);
+    stream->WriteSwap16(fPlaceSndIdx);
+    stream->WriteSwap16(fHitSndIdx);
 }

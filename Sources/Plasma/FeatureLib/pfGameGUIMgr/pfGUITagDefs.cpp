@@ -24,59 +24,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUITagDefs.cpp														//
-//	List of Tag IDs for the GameGUIMgr										//
-//																			//
+//                                                                          //
+//  pfGUITagDefs.cpp                                                        //
+//  List of Tag IDs for the GameGUIMgr                                      //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "pfGameGUIMgr.h"
 #include "pfGUITagDefs.h"
 
 //// Tag List ////////////////////////////////////////////////////////////////
-//	Here's the actual list of tags. It's basically a list of konstants, but
-//	they get translated into two things:
-//			1. An enum, to send as a UInt32 to the GetDialogFromTag() and
-//			   GetControlFromTag() functions.
-//			2. A string, which gets put in a dropdown box in the appropriate
-//			   MAX component, which sets the given control's tag ID to the
-//			   right konstant.
+//  Here's the actual list of tags. It's basically a list of konstants, but
+//  they get translated into two things:
+//          1. An enum, to send as a UInt32 to the GetDialogFromTag() and
+//             GetControlFromTag() functions.
+//          2. A string, which gets put in a dropdown box in the appropriate
+//             MAX component, which sets the given control's tag ID to the
+//             right konstant.
 
 // Step 1: add your konstant to the end of the .h file list
 
 // Step 2: Add the string here
 
-pfGUITag	gGUITags[] = {
-	{ kKIMainDialog, "KI Main Dialog" },
-	{ kKITestEditBox, "KI Test Control" },
-	{ kKIEntryDlg, "KI Entry Dlg" },
-	{ kKICloseButton, "KI Close Dlg Button" },
-	{ kKITestControl2, "KI Test Control 2" },
-	{ kKIAddButton, "KI Add Button" },
-	{ kKIEditButton, "KI Edit Button" },
-	{ kKIRemoveButton, "KI Remove Button" },
-	{ kKIYesNoDlg, "KI Yes/No Dialog" },
-	{ kKIYesBtn, "KI Yes Button" },
-	{ kKINoBtn, "KI No Button" },
-	{ kKIStaticText, "KI Static Text" },
-	{ kKITestControl3, "KI Test Control 3" },
-	{ kKIMiniDialog, "KI Mini Dialog" },
-	{ kPlayerBook, "PB Dialog" },
-	{ kPBLinkToBtn, "PB Link To Button" },
-	{ kPBSaveLinkBtn, "PB Save Link Button" },
-	{ kPBSaveSlotRadio, "PB Save Slot Radio" },
-	{ kPBSaveSlotPrev1, "PB Save Slot Preview 1" },
-	{ kPBSaveSlotPrev2, "PB Save Slot Preview 2" },
-	{ kPBSaveSlotPrev3, "PB Save Slot Preview 3" },
-	{ kPBSaveSlotPrev4, "PB Save Slot Preview 4" },
-	{ kPBSaveSlotPrev5, "PB Save Slot Preview 5" },
-	{ kPBSaveSlotPrev6, "PB Save Slot Preview 6" },
-	{ kKICurrPlayerText, "KI Current Player Label" },
-	{ kKIPlayerList,	"KI Mini Friends List" },
-	{ kKIChatModeBtn,	"KI Toggle Chat Mode Btn" },
-	{ kBlackBarDlg,		"Black Bar Dialog" },
-	{ kBlackBarKIButtons, "Black Bar KI Radio Group" },
-	{ kKILogoutButton, "KI Logout Button" },
+pfGUITag    gGUITags[] = {
+    { kKIMainDialog, "KI Main Dialog" },
+    { kKITestEditBox, "KI Test Control" },
+    { kKIEntryDlg, "KI Entry Dlg" },
+    { kKICloseButton, "KI Close Dlg Button" },
+    { kKITestControl2, "KI Test Control 2" },
+    { kKIAddButton, "KI Add Button" },
+    { kKIEditButton, "KI Edit Button" },
+    { kKIRemoveButton, "KI Remove Button" },
+    { kKIYesNoDlg, "KI Yes/No Dialog" },
+    { kKIYesBtn, "KI Yes Button" },
+    { kKINoBtn, "KI No Button" },
+    { kKIStaticText, "KI Static Text" },
+    { kKITestControl3, "KI Test Control 3" },
+    { kKIMiniDialog, "KI Mini Dialog" },
+    { kPlayerBook, "PB Dialog" },
+    { kPBLinkToBtn, "PB Link To Button" },
+    { kPBSaveLinkBtn, "PB Save Link Button" },
+    { kPBSaveSlotRadio, "PB Save Slot Radio" },
+    { kPBSaveSlotPrev1, "PB Save Slot Preview 1" },
+    { kPBSaveSlotPrev2, "PB Save Slot Preview 2" },
+    { kPBSaveSlotPrev3, "PB Save Slot Preview 3" },
+    { kPBSaveSlotPrev4, "PB Save Slot Preview 4" },
+    { kPBSaveSlotPrev5, "PB Save Slot Preview 5" },
+    { kPBSaveSlotPrev6, "PB Save Slot Preview 6" },
+    { kKICurrPlayerText, "KI Current Player Label" },
+    { kKIPlayerList,    "KI Mini Friends List" },
+    { kKIChatModeBtn,   "KI Toggle Chat Mode Btn" },
+    { kBlackBarDlg,     "Black Bar Dialog" },
+    { kBlackBarKIButtons, "Black Bar KI Radio Group" },
+    { kKILogoutButton, "KI Logout Button" },
 
-	{ 0, "" }		// Ending tag, MUST ALWAYS BE HERE
+    { 0, "" }       // Ending tag, MUST ALWAYS BE HERE
 };

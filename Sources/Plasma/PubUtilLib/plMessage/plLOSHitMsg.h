@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLOSHitMsg_inc
 #define plLOSHitMsg_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "hsGeometry3.h"
@@ -38,44 +38,44 @@ class plLOSHitMsg : public plMessage
 protected:
 
 public:
-	
-	plKey				fObj;
-	hsPoint3			fHitPoint;
-	hsBool				fNoHit;
-	UInt32				fRequestID;
-	UInt32				fHitFlags;
-	hsVector3			fNormal;
-	float				fDistance;
+    
+    plKey               fObj;
+    hsPoint3            fHitPoint;
+    hsBool              fNoHit;
+    UInt32              fRequestID;
+    UInt32              fHitFlags;
+    hsVector3           fNormal;
+    float               fDistance;
 
-	plLOSHitMsg();
-	plLOSHitMsg(const plKey &s, 
-					const plKey &r, 
-					const double* t);
-	~plLOSHitMsg(){;}
+    plLOSHitMsg();
+    plLOSHitMsg(const plKey &s, 
+                    const plKey &r, 
+                    const double* t);
+    ~plLOSHitMsg(){;}
 
-	CLASSNAME_REGISTER( plLOSHitMsg );
-	GETINTERFACE_ANY( plLOSHitMsg, plMessage );
+    CLASSNAME_REGISTER( plLOSHitMsg );
+    GETINTERFACE_ANY( plLOSHitMsg, plMessage );
 
-	// IO 
-	void Read(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgRead(stream, mgr);
-		fObj = mgr->ReadKey(stream);
-		fHitPoint.Read(stream);
-		fNoHit = stream->ReadBool();
-		stream->ReadSwap(&fRequestID);
-		stream->ReadSwap(&fHitFlags);
-	}
+    // IO 
+    void Read(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fObj = mgr->ReadKey(stream);
+        fHitPoint.Read(stream);
+        fNoHit = stream->ReadBool();
+        stream->ReadSwap(&fRequestID);
+        stream->ReadSwap(&fHitFlags);
+    }
 
-	void Write(hsStream* stream, hsResMgr* mgr)
-	{
-		plMessage::IMsgWrite(stream, mgr);
-		mgr->WriteKey(stream, fObj);
-		fHitPoint.Write(stream);
-		stream->WriteBool(fNoHit);
-		stream->WriteSwap(fRequestID);
-		stream->WriteSwap(fHitFlags);
-	}
+    void Write(hsStream* stream, hsResMgr* mgr)
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        mgr->WriteKey(stream, fObj);
+        fHitPoint.Write(stream);
+        stream->WriteBool(fNoHit);
+        stream->WriteSwap(fRequestID);
+        stream->WriteSwap(fHitFlags);
+    }
 };
 
 

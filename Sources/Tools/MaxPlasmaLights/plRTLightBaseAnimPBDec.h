@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
-//																			 //
-//	Animation Rollout ParamBlock for Runtime Lights							 //
-//	Cyan, Inc.																 //
-//																			 //
+//                                                                           //
+//  Animation Rollout ParamBlock for Runtime Lights                          //
+//  Cyan, Inc.                                                               //
+//                                                                           //
 //// Version History //////////////////////////////////////////////////////////
-//																			 //
-//	8.3.2001 mcn - Created.													 //
-//																			 //
+//                                                                           //
+//  8.3.2001 mcn - Created.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #if 0//ndef _plRTLightBaseAnimPB_h
@@ -43,24 +43,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ParamBlockDesc2 plRTLightBaseAnimPB
 (
-	plRTLightBase::kBlkAnim, _T("anim"), IDS_LIGHT_ANIM, nil,	// To be added manually
-	P_AUTO_CONSTRUCT + P_AUTO_UI, plRTLightBase::kRefAnimParams,
+    plRTLightBase::kBlkAnim, _T("anim"), IDS_LIGHT_ANIM, nil,   // To be added manually
+    P_AUTO_CONSTRUCT + P_AUTO_UI, plRTLightBase::kRefAnimParams,
 
-	// UI
-	IDD_LIGHT_ANIM, IDS_LIGHT_ANIM, 0, APPENDROLL_CLOSED, plRTLightBaseAnimDlgProc::Instance(),
+    // UI
+    IDD_LIGHT_ANIM, IDS_LIGHT_ANIM, 0, APPENDROLL_CLOSED, plRTLightBaseAnimDlgProc::Instance(),
 
-	plRTLightBase::kAnimName,		_T("animName"),		TYPE_STRING,		0, 0,
-		end,
+    plRTLightBase::kAnimName,       _T("animName"),     TYPE_STRING,        0, 0,
+        end,
 
-	plRTLightBase::kAnimAutoStart,	_T("autoStart"),	TYPE_BOOL,			0, 0,
-		end,
+    plRTLightBase::kAnimAutoStart,  _T("autoStart"),    TYPE_BOOL,          0, 0,
+        end,
 
-	plRTLightBase::kAnimLoop,		_T("loop"),			TYPE_BOOL,			0, 0,
-		end,
-	plRTLightBase::kAnimLoopName,	_T("loopName"),		TYPE_STRING,		0, 0,
-		end,
+    plRTLightBase::kAnimLoop,       _T("loop"),         TYPE_BOOL,          0, 0,
+        end,
+    plRTLightBase::kAnimLoopName,   _T("loopName"),     TYPE_STRING,        0, 0,
+        end,
 
-	end
+    end
 );
 
 

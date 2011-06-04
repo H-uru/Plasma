@@ -33,121 +33,121 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for BlueSpiral game messages
 //
 
-#include "../pfGameMgr/pfGameMgr.h"
+#include "pfGameMgr/pfGameMgr.h"
 
-#include <python.h>
+#include <Python.h>
 #include "../../pyGlueHelpers.h"
 #include "../pyGameCliMsg.h"
 
 class pyBlueSpiralMsg : public pyGameCliMsg
 {
 protected:
-	pyBlueSpiralMsg();
-	pyBlueSpiralMsg(pfGameCliMsg* msg);
+    pyBlueSpiralMsg();
+    pyBlueSpiralMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_EXPOSE_TYPE; // so we can subclass
-	PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralMsg); // converts a PyObject to a pyBlueSpiralMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_EXPOSE_TYPE; // so we can subclass
+    PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralMsg); // converts a PyObject to a pyBlueSpiralMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
-	static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
-	int GetBlueSpiralMsgType() const;
+    int GetBlueSpiralMsgType() const;
 
-	PyObject* UpcastToFinalBlueSpiralMsg() const; // returns this message as the blue spiral message it is
+    PyObject* UpcastToFinalBlueSpiralMsg() const; // returns this message as the blue spiral message it is
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyBlueSpiralClothOrderMsg : public pyBlueSpiralMsg
 {
 protected:
-	pyBlueSpiralClothOrderMsg();
-	pyBlueSpiralClothOrderMsg(pfGameCliMsg* msg);
+    pyBlueSpiralClothOrderMsg();
+    pyBlueSpiralClothOrderMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralClothOrderMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralClothOrderMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralClothOrderMsg); // converts a PyObject to a pyBlueSpiralClothOrderMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralClothOrderMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralClothOrderMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralClothOrderMsg); // converts a PyObject to a pyBlueSpiralClothOrderMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	std::vector<int> Order();
+    std::vector<int> Order();
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyBlueSpiralSuccessfulHitMsg : public pyBlueSpiralMsg
 {
 protected:
-	pyBlueSpiralSuccessfulHitMsg();
-	pyBlueSpiralSuccessfulHitMsg(pfGameCliMsg* msg);
+    pyBlueSpiralSuccessfulHitMsg();
+    pyBlueSpiralSuccessfulHitMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralSuccessfulHitMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralSuccessfulHitMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralSuccessfulHitMsg); // converts a PyObject to a pyBlueSpiralSuccessfulHitMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralSuccessfulHitMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralSuccessfulHitMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralSuccessfulHitMsg); // converts a PyObject to a pyBlueSpiralSuccessfulHitMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyBlueSpiralGameWonMsg : public pyBlueSpiralMsg
 {
 protected:
-	pyBlueSpiralGameWonMsg();
-	pyBlueSpiralGameWonMsg(pfGameCliMsg* msg);
+    pyBlueSpiralGameWonMsg();
+    pyBlueSpiralGameWonMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralGameWonMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralGameWonMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralGameWonMsg); // converts a PyObject to a pyBlueSpiralGameWonMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralGameWonMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralGameWonMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralGameWonMsg); // converts a PyObject to a pyBlueSpiralGameWonMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyBlueSpiralGameOverMsg : public pyBlueSpiralMsg
 {
 protected:
-	pyBlueSpiralGameOverMsg();
-	pyBlueSpiralGameOverMsg(pfGameCliMsg* msg);
+    pyBlueSpiralGameOverMsg();
+    pyBlueSpiralGameOverMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralGameOverMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralGameOverMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralGameOverMsg); // converts a PyObject to a pyBlueSpiralGameOverMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralGameOverMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralGameOverMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralGameOverMsg); // converts a PyObject to a pyBlueSpiralGameOverMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class pyBlueSpiralGameStartedMsg : public pyBlueSpiralMsg
 {
 protected:
-	pyBlueSpiralGameStartedMsg();
-	pyBlueSpiralGameStartedMsg(pfGameCliMsg* msg);
+    pyBlueSpiralGameStartedMsg();
+    pyBlueSpiralGameStartedMsg(pfGameCliMsg* msg);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralGameStartedMsg);
-	static PyObject* New(pfGameCliMsg* msg);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralGameStartedMsg object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralGameStartedMsg); // converts a PyObject to a pyBlueSpiralGameStartedMsg (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptBlueSpiralGameStartedMsg);
+    static PyObject* New(pfGameCliMsg* msg);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyBlueSpiralGameStartedMsg object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyBlueSpiralGameStartedMsg); // converts a PyObject to a pyBlueSpiralGameStartedMsg (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
-	bool StartSpin();
+    bool StartSpin();
 };
 
 #endif // pyBlueSpiralMsg_h

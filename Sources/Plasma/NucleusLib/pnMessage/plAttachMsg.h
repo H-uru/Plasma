@@ -35,15 +35,15 @@ class hsResMgr;
 class plAttachMsg : public plRefMsg
 {
 public:
-	plAttachMsg() {}
-	// child is the plSceneObject being added as a child to the receiver. If rcv is not loaded, this will have no effect.
-	// flags should be either:
-	//		plRefMsg::kOnRequest - I'm adding this child to the receiver
-	//		plRefMsg::kOnRemove - I'm detaching this child from the receiver
-	plAttachMsg(const plKey &rcv, hsKeyedObject* child, UInt8 context, const plKey snd=nil) : plRefMsg(rcv, context) { SetSender(snd); SetRef(child); }
+    plAttachMsg() {}
+    // child is the plSceneObject being added as a child to the receiver. If rcv is not loaded, this will have no effect.
+    // flags should be either:
+    //      plRefMsg::kOnRequest - I'm adding this child to the receiver
+    //      plRefMsg::kOnRemove - I'm detaching this child from the receiver
+    plAttachMsg(const plKey &rcv, hsKeyedObject* child, UInt8 context, const plKey snd=nil) : plRefMsg(rcv, context) { SetSender(snd); SetRef(child); }
 
-	CLASSNAME_REGISTER( plAttachMsg );
-	GETINTERFACE_ANY( plAttachMsg, plRefMsg );
+    CLASSNAME_REGISTER( plAttachMsg );
+    GETINTERFACE_ANY( plAttachMsg, plRefMsg );
 
 };
 

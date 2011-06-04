@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plFadeOpacityMod_inc
 
 #include "hsGeometry3.h"
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsTemplates.h"
 
 class plPipeline;
@@ -38,83 +38,83 @@ class plFadeOpacityLay;
 class plFadeOpacityMod : public plSingleModifier
 {
 public:
-	enum {
-		kBoundsCenter	= 1
-	};
+    enum {
+        kBoundsCenter   = 1
+    };
 
 protected:
 
-	enum {
-		kRefFadeLay
-	};
+    enum {
+        kRefFadeLay
+    };
 
-	// Input parameters
-	hsScalar		fFadeUp;
-	hsScalar		fFadeDown;
+    // Input parameters
+    hsScalar        fFadeUp;
+    hsScalar        fFadeDown;
 
-	// Internal fade state
-	enum FadeState {
-		kUp			= 0,
-		kDown		= 1,
-		kFadeUp		= 2,
-		kFadeDown	= 3,
-		kImmediate	= 4
-	};
-	hsScalar		fOpCurrent;
+    // Internal fade state
+    enum FadeState {
+        kUp         = 0,
+        kDown       = 1,
+        kFadeUp     = 2,
+        kFadeDown   = 3,
+        kImmediate  = 4
+    };
+    hsScalar        fOpCurrent;
 
-	double			fStart;
-	FadeState		fFade;
-	UInt8			fSetup;
+    double          fStart;
+    FadeState       fFade;
+    UInt8           fSetup;
 
-	hsPoint3		fLastEye;
+    hsPoint3        fLastEye;
 
-	// The target layers
-	hsTArray<plFadeOpacityLay*> fFadeLays;
+    // The target layers
+    hsTArray<plFadeOpacityLay*> fFadeLays;
 
-	// A global to turn the whole thing off for debug/perf
-	static hsBool	fLOSCheckDisabled;
+    // A global to turn the whole thing off for debug/perf
+    static hsBool   fLOSCheckDisabled;
 
-	void		IOnRenderMsg(plRenderMsg* rend);
-	hsBool		IReady();
-	hsBool		IShouldCheck(plPipeline* pipe);
-	hsPoint3	IGetOurPos();
-	void		ICalcOpacity();
-	void		ISetOpacity();
-	void		IFadeUp();
-	void		IFadeDown();
-	void		ISetup(plSceneObject* so);
+    void        IOnRenderMsg(plRenderMsg* rend);
+    hsBool      IReady();
+    hsBool      IShouldCheck(plPipeline* pipe);
+    hsPoint3    IGetOurPos();
+    void        ICalcOpacity();
+    void        ISetOpacity();
+    void        IFadeUp();
+    void        IFadeDown();
+    void        ISetup(plSceneObject* so);
 
-	// We only act in response to messages.
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    // We only act in response to messages.
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
 
 public:
-	plFadeOpacityMod();
-	virtual ~plFadeOpacityMod();
+    plFadeOpacityMod();
+    virtual ~plFadeOpacityMod();
 
-	CLASSNAME_REGISTER( plFadeOpacityMod );
-	GETINTERFACE_ANY( plFadeOpacityMod, plSingleModifier );
+    CLASSNAME_REGISTER( plFadeOpacityMod );
+    GETINTERFACE_ANY( plFadeOpacityMod, plSingleModifier );
 
-	virtual void			SetKey(plKey k);
+    virtual void            SetKey(plKey k);
 
-	virtual hsBool			MsgReceive(plMessage* msg);
+    virtual hsBool          MsgReceive(plMessage* msg);
 
-	virtual void			Read(hsStream* s, hsResMgr* mgr);
-	virtual void			Write(hsStream* s, hsResMgr* mgr);
+    virtual void            Read(hsStream* s, hsResMgr* mgr);
+    virtual void            Write(hsStream* s, hsResMgr* mgr);
 
-	virtual void			SetTarget(plSceneObject* so);
+    virtual void            SetTarget(plSceneObject* so);
 
-	void FadeUp();
-	void FadeDown();
-	void Fade(hsBool up) { if( up ) FadeUp(); else FadeDown(); }
+    void FadeUp();
+    void FadeDown();
+    void Fade(hsBool up) { if( up ) FadeUp(); else FadeDown(); }
 
-	void SetFadeUp(hsScalar f) { fFadeUp = f; }
-	hsScalar GetFadeUp() const { return fFadeUp; }
+    void SetFadeUp(hsScalar f) { fFadeUp = f; }
+    hsScalar GetFadeUp() const { return fFadeUp; }
 
-	void SetFadeDown(hsScalar f) { fFadeDown = f; }
-	hsScalar GetFadeDown() const { return fFadeDown; }
+    void SetFadeDown(hsScalar f) { fFadeDown = f; }
+    hsScalar GetFadeDown() const { return fFadeDown; }
 
-	static hsBool GetLOSCheckDisabled() { return fLOSCheckDisabled; }
-	static void SetLOSCheckDisabled(hsBool on) { fLOSCheckDisabled = on; }
+    static hsBool GetLOSCheckDisabled() { return fLOSCheckDisabled; }
+    static void SetLOSCheckDisabled(hsBool on) { fLOSCheckDisabled = on; }
 };
 
 #endif // plFadeOpacityMod_inc

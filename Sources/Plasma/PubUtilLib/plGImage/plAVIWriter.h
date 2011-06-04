@@ -26,30 +26,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAVIWriter_h_inc
 #define plAVIWriter_h_inc
 
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 class plPipeline;
 
 class plAVIWriter : public hsKeyedObject
 {
 protected:
-	static bool fInitialized;
+    static bool fInitialized;
 
-	virtual ~plAVIWriter();
+    virtual ~plAVIWriter();
 
 public:
-	static plAVIWriter& Instance();
+    static plAVIWriter& Instance();
 
-	// If IsInitialized returns true, you need to call Shutdown before clearing
-	// the registry (dang key).
-	static bool IsInitialized() { return fInitialized; }
-	virtual void Shutdown()=0;
+    // If IsInitialized returns true, you need to call Shutdown before clearing
+    // the registry (dang key).
+    static bool IsInitialized() { return fInitialized; }
+    virtual void Shutdown()=0;
 
-	CLASSNAME_REGISTER(plAVIWriter);
-	GETINTERFACE_ANY(plAVIWriter, hsKeyedObject);
+    CLASSNAME_REGISTER(plAVIWriter);
+    GETINTERFACE_ANY(plAVIWriter, hsKeyedObject);
 
-	virtual bool Open(const char* fileName, plPipeline* pipeline)=0;
-	virtual void Close()=0;
+    virtual bool Open(const char* fileName, plPipeline* pipeline)=0;
+    virtual void Close()=0;
 };
 
 #endif // plAVIWriter_h_inc

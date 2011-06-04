@@ -219,7 +219,7 @@ public:
     int GetUVWSource() { return uvGen->GetUVWSource(); }
     UVGen *GetTheUVGen() { return uvGen; }
 #ifdef MAXR3
-	int GetMapChannel () { return uvGen->GetMapChannel(); }
+    int GetMapChannel () { return uvGen->GetMapChannel(); }
 #endif // MAXR3
     
     int RenderBegin(TimeValue t, ULONG flags) { 
@@ -310,8 +310,8 @@ public:
     ULONG GetZFlags() const     { return zFlags; }
     ULONG GetShadeFlags() const { return shadeFlags; }
     ULONG GetMiscFlags() const  { return miscFlags; }
-	ProcType GetProcType() const	{ return procType; }
-	hsMatUsage GetUsage() const { return usageType; }
+    ProcType GetProcType() const    { return procType; }
+    hsMatUsage GetUsage() const { return usageType; }
 
     // Setting the things in hsMaxLayerBase
     void SetShininess(float v, TimeValue t);        
@@ -338,17 +338,17 @@ public:
     void SetZFlag(int flag, BOOL state);
     void SetShadeFlag(int flag, BOOL state);
     void SetMiscFlag(int flag, BOOL state);
-	void SetProcType(ProcType type);
-	void SetUsage(hsMatUsage use);
-	void GuessUsage();
+    void SetProcType(ProcType type);
+    void SetUsage(hsMatUsage use);
+    void GuessUsage();
 
     // IO
     IOResult Save(ISave *isave);
     IOResult Load(ILoad *iload);
     
-	// Colin Hack
-	BOOL GetApplyCrop() { return applyCrop; }
-	BOOL GetPlaceImage() { return placeImage; }
+    // Colin Hack
+    BOOL GetApplyCrop() { return applyCrop; }
+    BOOL GetPlaceImage() { return placeImage; }
 
 private:
     UVGen *uvGen;          // ref #0
@@ -410,8 +410,8 @@ private:
     ULONG zFlags;
     ULONG shadeFlags;
     ULONG miscFlags;
-	ProcType procType;
-	hsMatUsage usageType;
+    ProcType procType;
+    hsMatUsage usageType;
 
     Tab<BitmapInfo> mipmapInfo;        // references
     Tab<BOOL> mipmapOn;

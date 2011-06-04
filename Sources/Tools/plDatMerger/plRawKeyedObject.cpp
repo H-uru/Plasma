@@ -25,22 +25,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //
-//	plRawPageAccessor - Dangerous little class that lets you take a
-//					    plRegistryPageNode and load the objects in raw (i.e.
-//						as block memory buffers).
-//						This should NOT be used in any normal app, only 
-//						utility apps that don't want to load objects in
-//						normally (which basically means if you're not mcn,
-//						don't use this!)
+//  plRawPageAccessor - Dangerous little class that lets you take a
+//                      plRegistryPageNode and load the objects in raw (i.e.
+//                      as block memory buffers).
+//                      This should NOT be used in any normal app, only 
+//                      utility apps that don't want to load objects in
+//                      normally (which basically means if you're not mcn,
+//                      don't use this!)
 //
 //// Why We're Bad ///////////////////////////////////////////////////////////
 //
-//	To store all the raw buffers, we stuff them as pointers into the keys
-//	themselves. This is Way Bad(tm) because those pointers are expecting
-//	hsKeyedObjects, and what we're giving them certainly ain't those.
-//	This is why it's only safe to use this class in a very small, controlled
-//	environment, one where we know the keys won't be accessed in a normal
-//	fashion so we know nobody will try to use our pointers in a bad way.
+//  To store all the raw buffers, we stuff them as pointers into the keys
+//  themselves. This is Way Bad(tm) because those pointers are expecting
+//  hsKeyedObjects, and what we're giving them certainly ain't those.
+//  This is why it's only safe to use this class in a very small, controlled
+//  environment, one where we know the keys won't be accessed in a normal
+//  fashion so we know nobody will try to use our pointers in a bad way.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -55,155 +55,155 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plPublicKeyImp : public plKeyImp
 {
-	public:
+    public:
 
-		void	SetObjectPtrDirect( hsKeyedObject *obj ) 
-		{
-			fObjectPtr = obj;
-		}
+        void    SetObjectPtrDirect( hsKeyedObject *obj ) 
+        {
+            fObjectPtr = obj;
+        }
 
-		void	SetAsEmpty( void )
-		{
-			fStartPos = (UInt32)-1;
-			fDataLen = (UInt32)-1;
-		}
+        void    SetAsEmpty( void )
+        {
+            fStartPos = (UInt32)-1;
+            fDataLen = (UInt32)-1;
+        }
 
-		void	SetStartPosFromStream( hsStream *stream )
-		{
-			fStartPos = stream->GetPosition();
-		}
+        void    SetStartPosFromStream( hsStream *stream )
+        {
+            fStartPos = stream->GetPosition();
+        }
 
-		void	SetLengthFromStream( hsStream *stream ) 
-		{ 
-			fDataLen = stream->GetPosition() - fStartPos;
-		}
+        void    SetLengthFromStream( hsStream *stream ) 
+        { 
+            fDataLen = stream->GetPosition() - fStartPos;
+        }
 };
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 plRawKeyedObject::plRawKeyedObject()
 {
-	fSrcKey = nil;
-	fBuffer = nil;
-	fBufferSize = 0;
+    fSrcKey = nil;
+    fBuffer = nil;
+    fBufferSize = 0;
 }
 
 plRawKeyedObject::plRawKeyedObject( const plKey &key, UInt32 size, UInt8 *data )
 {
-	fSrcKey = key;
-	( (plPublicKeyImp *)(plKeyImp *)key )->SetObjectPtrDirect( this );
+    fSrcKey = key;
+    ( (plPublicKeyImp *)(plKeyImp *)key )->SetObjectPtrDirect( this );
 
-	fBuffer = nil;
-	fBufferSize = 0;
+    fBuffer = nil;
+    fBufferSize = 0;
 
-	SetBuffer( size, data );
+    SetBuffer( size, data );
 }
 
 plRawKeyedObject::~plRawKeyedObject()
 {
-	if( fSrcKey != nil )
-	{
-		( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetObjectPtrDirect( nil );
-		fSrcKey = nil;
-	}
+    if( fSrcKey != nil )
+    {
+        ( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetObjectPtrDirect( nil );
+        fSrcKey = nil;
+    }
 
-	delete [] fBuffer;
+    delete [] fBuffer;
 }
 
-void	plRawKeyedObject::SetBuffer( UInt32 size, UInt8 *data )
+void    plRawKeyedObject::SetBuffer( UInt32 size, UInt8 *data )
 {
-	delete [] fBuffer;
+    delete [] fBuffer;
 
-	if( data == nil )
-	{
-		fBufferSize = 0;
-		fBuffer = nil;
-		return;
-	}
+    if( data == nil )
+    {
+        fBufferSize = 0;
+        fBuffer = nil;
+        return;
+    }
 
-	fBufferSize = size;
-	fBuffer = new UInt8[ size ];
-	memcpy( fBuffer, data, size );
+    fBufferSize = size;
+    fBuffer = new UInt8[ size ];
+    memcpy( fBuffer, data, size );
 }
 
-void	plRawKeyedObject::SetKey( plKey k )
+void    plRawKeyedObject::SetKey( plKey k )
 {
-	if( fSrcKey != nil )
-	{
-		( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetObjectPtrDirect( nil );
-	}
+    if( fSrcKey != nil )
+    {
+        ( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetObjectPtrDirect( nil );
+    }
 
-	fSrcKey = k;
-	if( fSrcKey != nil )
-	{
-		( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetObjectPtrDirect( this );
-	}
+    fSrcKey = k;
+    if( fSrcKey != nil )
+    {
+        ( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetObjectPtrDirect( this );
+    }
 }
 
-void	plRawKeyedObject::MarkAsEmpty( plKey &key )
+void    plRawKeyedObject::MarkAsEmpty( plKey &key )
 {
-	( (plPublicKeyImp *)(plKeyImp *)key )->SetAsEmpty();
+    ( (plPublicKeyImp *)(plKeyImp *)key )->SetAsEmpty();
 }
 
-void	plRawKeyedObject::Write( hsStream *stream )
+void    plRawKeyedObject::Write( hsStream *stream )
 {
-	// BEFORE we write out, somewhere at the top of our buffer is the key to ourselves
-	// that all hsKeyedObjects write out as part of their Write() function. We need
-	// to REPLACE that key with our new key, since our location has now changed. Note
-	// that this will ONLY work if our location changes, NOT if our name changes, 
-	// because we're relying on the fact that the written size of our key is not
-	// going to change!!!
-	{
-		hsWriteOnlyStream	replaceStream( fBufferSize, fBuffer );
+    // BEFORE we write out, somewhere at the top of our buffer is the key to ourselves
+    // that all hsKeyedObjects write out as part of their Write() function. We need
+    // to REPLACE that key with our new key, since our location has now changed. Note
+    // that this will ONLY work if our location changes, NOT if our name changes, 
+    // because we're relying on the fact that the written size of our key is not
+    // going to change!!!
+    {
+        hsWriteOnlyStream   replaceStream( fBufferSize, fBuffer );
 
-		// Here's the part that REALLY sucks, 'cause it assumes our written format will never change!!!!
-		// It ALSO assumes, VERY dangerously, that ReadSwap16() will ALWAYS read a size UInt16
+        // Here's the part that REALLY sucks, 'cause it assumes our written format will never change!!!!
+        // It ALSO assumes, VERY dangerously, that ReadSwap16() will ALWAYS read a size UInt16
 
-		replaceStream.SetPosition( sizeof( UInt16 ) );	// Get past creatable class that resManager writes out
+        replaceStream.SetPosition( sizeof( UInt16 ) );  // Get past creatable class that resManager writes out
 
-		hsgResMgr::ResMgr()->WriteKey( &replaceStream, fSrcKey, hsResMgr::kWriteNoCheck );
-	}
+        hsgResMgr::ResMgr()->WriteKey( &replaceStream, fSrcKey, hsResMgr::kWriteNoCheck );
+    }
 
-	( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetStartPosFromStream( stream );
+    ( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetStartPosFromStream( stream );
 
-	stream->Write( fBufferSize, fBuffer );
+    stream->Write( fBufferSize, fBuffer );
 
-	( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetLengthFromStream( stream );
+    ( (plPublicKeyImp *)(plKeyImp *)fSrcKey )->SetLengthFromStream( stream );
 }
 
 
 //// Warning Stubs ///////////////////////////////////////////////////////////
 
-void	plRawKeyedObject::Validate()
+void    plRawKeyedObject::Validate()
 {
-	hsAssert( false, "Invalid call on plRawKeyedObject" );
+    hsAssert( false, "Invalid call on plRawKeyedObject" );
 }
 
-hsBool	plRawKeyedObject::IsFinal()
+hsBool  plRawKeyedObject::IsFinal()
 {
-	hsAssert( false, "Invalid call on plRawKeyedObject" );
-	return false;
+    hsAssert( false, "Invalid call on plRawKeyedObject" );
+    return false;
 }
 
-void	plRawKeyedObject::Read(hsStream *s, hsResMgr *mgr )
+void    plRawKeyedObject::Read(hsStream *s, hsResMgr *mgr )
 {
-	hsAssert( false, "Invalid call on plRawKeyedObject" );
+    hsAssert( false, "Invalid call on plRawKeyedObject" );
 }
 
-void	plRawKeyedObject::Write(hsStream *s, hsResMgr *mgr )
+void    plRawKeyedObject::Write(hsStream *s, hsResMgr *mgr )
 {
-	hsAssert( false, "Invalid call on plRawKeyedObject" );
+    hsAssert( false, "Invalid call on plRawKeyedObject" );
 }
 
-hsBool	plRawKeyedObject::MsgReceive( plMessage *msg )
+hsBool  plRawKeyedObject::MsgReceive( plMessage *msg )
 {
-	hsAssert( false, "Invalid call on plRawKeyedObject" );
-	return false;
+    hsAssert( false, "Invalid call on plRawKeyedObject" );
+    return false;
 }
 
 hsKeyedObject *plRawKeyedObject::GetSharedObject()
 {
-	hsAssert( false, "Invalid call on plRawKeyedObject" );
-	return nil;
+    hsAssert( false, "Invalid call on plRawKeyedObject" );
+    return nil;
 }
 

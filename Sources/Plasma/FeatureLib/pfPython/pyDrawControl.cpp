@@ -36,136 +36,136 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #ifndef BUILDING_PYPLASMA
-#include "../plMessage/plInputEventMsg.h"
-#include "../pnMessage/plClientMsg.h"
-#include "../plInputCore/plInputDevice.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plMessage/plInputEventMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "plInputCore/plInputDevice.h"
+#include "plAvatar/plArmatureMod.h"
 #endif
 
 void pyDrawControl::SetGamma2(hsScalar gamma)
 {
 #ifndef BUILDING_PYPLASMA
-	char command[256];
-	sprintf(command,"Graphics.Renderer.Gamma2 %f",gamma);
-	// create message to send to the console
-	plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
-	pMsg->SetBCastFlag(plMessage::kBCastByType);
-	pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
-	pMsg->SetControlActivated(true);
-	pMsg->SetCmdString(command);
-	plgDispatch::MsgSend( pMsg );	// whoosh... off it goes
+    char command[256];
+    sprintf(command,"Graphics.Renderer.Gamma2 %f",gamma);
+    // create message to send to the console
+    plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
+    pMsg->SetBCastFlag(plMessage::kBCastByType);
+    pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
+    pMsg->SetControlActivated(true);
+    pMsg->SetCmdString(command);
+    plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
 #endif
 }
 
 #ifndef BUILDING_PYPLASMA
-#include "../plGLight/plShadowMaster.h"
+#include "plGLight/plShadowMaster.h"
 #endif
 
 void pyDrawControl::SetShadowVisDistance(hsScalar distance)
 {
 #ifndef BUILDING_PYPLASMA
-	plShadowMaster::SetGlobalShadowQuality(distance);
+    plShadowMaster::SetGlobalShadowQuality(distance);
 #endif
 }
 
 hsScalar pyDrawControl::GetShadowVisDistance()
 {
 #ifndef BUILDING_PYPLASMA
-	return plShadowMaster::GetGlobalShadowQuality();
+    return plShadowMaster::GetGlobalShadowQuality();
 #else
-	return 1.0;
+    return 1.0;
 #endif
 }
 
 #ifndef BUILDING_PYPLASMA
-#include "../plGLight/plShadowCaster.h"
+#include "plGLight/plShadowCaster.h"
 #endif
 
 void pyDrawControl::EnableShadows()
 {
 #ifndef BUILDING_PYPLASMA
-	plShadowCaster::EnableShadowCast();
+    plShadowCaster::EnableShadowCast();
 #endif
 }
 void pyDrawControl::DisableShadows()
 {
 #ifndef BUILDING_PYPLASMA
-	plShadowCaster::DisableShadowCast();
+    plShadowCaster::DisableShadowCast();
 #endif
 }
 hsBool pyDrawControl::IsShadowsEnabled()
 {
 #ifndef BUILDING_PYPLASMA
-	return !plShadowCaster::ShadowCastDisabled();
+    return !plShadowCaster::ShadowCastDisabled();
 #else
-	return true;
+    return true;
 #endif
 }
 
 hsBool pyDrawControl::CanShadowCast()
 {
 #ifndef BUILDING_PYPLASMA
-	return plShadowCaster::CanShadowCast();
+    return plShadowCaster::CanShadowCast();
 #else
-	return false;
+    return false;
 #endif
 }
 
 void pyDrawControl::DisableRenderScene()
 {
 #ifndef BUILDING_PYPLASMA
-	plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
-	plClientMsg* msg = TRACKED_NEW plClientMsg(plClientMsg::kDisableRenderScene);
-	msg->AddReceiver( clientKey );
-	msg->Send();
+    plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
+    plClientMsg* msg = TRACKED_NEW plClientMsg(plClientMsg::kDisableRenderScene);
+    msg->AddReceiver( clientKey );
+    msg->Send();
 #endif
 }
 
 void pyDrawControl::EnableRenderScene()
 {
 #ifndef BUILDING_PYPLASMA
-	plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
-	plClientMsg* msg = TRACKED_NEW plClientMsg(plClientMsg::kEnableRenderScene);
-	msg->AddReceiver( clientKey );
-	msg->Send();
+    plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
+    plClientMsg* msg = TRACKED_NEW plClientMsg(plClientMsg::kEnableRenderScene);
+    msg->AddReceiver( clientKey );
+    msg->Send();
 #endif
 }
 
 void pyDrawControl::SetMouseInverted()
 {
 #ifndef BUILDING_PYPLASMA
-	plMouseDevice::SetInverted(true);
+    plMouseDevice::SetInverted(true);
 #endif
 }
 
 void pyDrawControl::SetMouseUninverted()
 {
 #ifndef BUILDING_PYPLASMA
-	plMouseDevice::SetInverted(false);
+    plMouseDevice::SetInverted(false);
 #endif
 }
 
 hsBool pyDrawControl::IsMouseInverted()
 {
 #ifndef BUILDING_PYPLASMA
-	return plMouseDevice::GetInverted();
+    return plMouseDevice::GetInverted();
 #else
-	return false;
+    return false;
 #endif
 }
 
 void pyDrawControl::SetClickToTurn(hsBool state)
 {
 #ifndef BUILDING_PYPLASMA
-	plArmatureMod::fClickToTurn = state;
+    plArmatureMod::fClickToTurn = state;
 #endif
 }
 
 hsBool pyDrawControl::IsClickToTurn()
 {
 #ifndef BUILDING_PYPLASMA
-	if (plArmatureMod::fClickToTurn)
-		return true;
+    if (plArmatureMod::fClickToTurn)
+        return true;
 #endif
-	return false;
+    return false;
 }

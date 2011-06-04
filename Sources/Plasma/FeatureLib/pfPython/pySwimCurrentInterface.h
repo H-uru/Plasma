@@ -28,48 +28,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyKey.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class pySwimCurrentInterface
 {
 private:
-	plKey fSwimCurrentKey;
+    plKey fSwimCurrentKey;
 
 protected:
-	pySwimCurrentInterface(): fSwimCurrentKey(nil) {} // for python glue only, do NOT call
-	pySwimCurrentInterface(plKey key);
-	pySwimCurrentInterface(pyKey& key);
+    pySwimCurrentInterface(): fSwimCurrentKey(nil) {} // for python glue only, do NOT call
+    pySwimCurrentInterface(plKey key);
+    pySwimCurrentInterface(pyKey& key);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptSwimCurrentInterface);
-	static PyObject *New(plKey key);
-	static PyObject *New(pyKey& key);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySwimCurrentInterface object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySwimCurrentInterface); // converts a PyObject to a pySwimCurrentInterface (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptSwimCurrentInterface);
+    static PyObject *New(plKey key);
+    static PyObject *New(pyKey& key);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySwimCurrentInterface object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySwimCurrentInterface); // converts a PyObject to a pySwimCurrentInterface (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
-	void setKey(pyKey& key) {fSwimCurrentKey = key.getKey();} // for python glue only, do NOT call
+    void setKey(pyKey& key) {fSwimCurrentKey = key.getKey();} // for python glue only, do NOT call
 
-	hsScalar getNearDist();
-	void setNearDist(hsScalar val);
+    hsScalar getNearDist();
+    void setNearDist(hsScalar val);
 
-	hsScalar getFarDist();
-	void setFarDist(hsScalar val);
+    hsScalar getFarDist();
+    void setFarDist(hsScalar val);
 
-	hsScalar getNearVel();
-	void setNearVel(hsScalar val);
+    hsScalar getNearVel();
+    void setNearVel(hsScalar val);
 
-	hsScalar getFarVel();
-	void setFarVel(hsScalar val);
+    hsScalar getFarVel();
+    void setFarVel(hsScalar val);
 
-	hsScalar getRotation();
-	void setRotation(hsScalar val);
+    hsScalar getRotation();
+    void setRotation(hsScalar val);
 
-	void enable();
-	void disable();
+    void enable();
+    void disable();
 };
 
 #endif

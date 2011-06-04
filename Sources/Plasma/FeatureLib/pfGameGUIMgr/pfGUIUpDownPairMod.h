@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIUpDownPairMod Header												//
-//																			//
+//                                                                          //
+//  pfGUIUpDownPairMod Header                                               //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfGUIUpDownPairMod_h
@@ -40,45 +40,45 @@ class pfUpDownBtnProc;
 
 class pfGUIUpDownPairMod : public pfGUIValueCtrl
 {
-	friend class pfUpDownBtnProc;
+    friend class pfUpDownBtnProc;
 
-	protected:
+    protected:
 
-		enum
-		{
-			kRefUpControl = kRefDerivedStart,
-			kRefDownControl
-		};
+        enum
+        {
+            kRefUpControl = kRefDerivedStart,
+            kRefDownControl
+        };
 
-		pfGUIButtonMod	*fUpControl, *fDownControl;
-		pfUpDownBtnProc	*fButtonProc;
-
-
-		virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
-		virtual void	IUpdate( void );
-
-	public:
-
-		pfGUIUpDownPairMod();
-		virtual ~pfGUIUpDownPairMod();
-
-		CLASSNAME_REGISTER( pfGUIUpDownPairMod );
-		GETINTERFACE_ANY( pfGUIUpDownPairMod, pfGUIValueCtrl );
+        pfGUIButtonMod  *fUpControl, *fDownControl;
+        pfUpDownBtnProc *fButtonProc;
 
 
-		virtual hsBool	MsgReceive( plMessage* pMsg );
+        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual void    IUpdate( void );
 
-		virtual void	Update( void );
+    public:
 
-		virtual void Read( hsStream* s, hsResMgr* mgr );
-		virtual void Write( hsStream* s, hsResMgr* mgr );
+        pfGUIUpDownPairMod();
+        virtual ~pfGUIUpDownPairMod();
 
-		virtual void	SetRange( hsScalar min, hsScalar max );
-		virtual void	SetCurrValue( hsScalar v );
+        CLASSNAME_REGISTER( pfGUIUpDownPairMod );
+        GETINTERFACE_ANY( pfGUIUpDownPairMod, pfGUIValueCtrl );
 
-		/// Export ONLY
 
-		void	SetControls( pfGUIButtonMod *up, pfGUIButtonMod *down ) { fUpControl = up; fDownControl = down; }
+        virtual hsBool  MsgReceive( plMessage* pMsg );
+
+        virtual void    Update( void );
+
+        virtual void Read( hsStream* s, hsResMgr* mgr );
+        virtual void Write( hsStream* s, hsResMgr* mgr );
+
+        virtual void    SetRange( hsScalar min, hsScalar max );
+        virtual void    SetCurrValue( hsScalar v );
+
+        /// Export ONLY
+
+        void    SetControls( pfGUIButtonMod *up, pfGUIButtonMod *down ) { fUpControl = up; fDownControl = down; }
 };
 
 #endif // _pfGUIUpDownPairMod_h

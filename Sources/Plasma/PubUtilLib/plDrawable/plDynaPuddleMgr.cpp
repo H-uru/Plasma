@@ -34,25 +34,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 
-#include "../plMessage/plAvatarFootMsg.h"
+#include "plMessage/plAvatarFootMsg.h"
 
-#include "../plAvatar/plAvBrainHuman.h"
-#include "../plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plAvatar/plArmatureMod.h"
 
 static const UInt32 kNumPrintIDs = 2;
 static const UInt32 kPrintIDs[kNumPrintIDs] =
 {
-	plAvBrainHuman::RFootPrint,
-	plAvBrainHuman::LFootPrint
+    plAvBrainHuman::RFootPrint,
+    plAvBrainHuman::LFootPrint
 };
 
 
 plDynaPuddleMgr::plDynaPuddleMgr()
 {
-	fPartIDs.SetCount(kNumPrintIDs);
-	int i;
-	for( i = 0; i < kNumPrintIDs; i++ )
-		fPartIDs[i] = kPrintIDs[i];
+    fPartIDs.SetCount(kNumPrintIDs);
+    int i;
+    for( i = 0; i < kNumPrintIDs; i++ )
+        fPartIDs[i] = kPrintIDs[i];
 }
 
 plDynaPuddleMgr::~plDynaPuddleMgr()
@@ -61,37 +61,37 @@ plDynaPuddleMgr::~plDynaPuddleMgr()
 
 void plDynaPuddleMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plDynaRippleMgr::Read(stream, mgr);
+    plDynaRippleMgr::Read(stream, mgr);
 
-	plgDispatch::Dispatch()->RegisterForExactType(plAvatarFootMsg::Index(), GetKey());
+    plgDispatch::Dispatch()->RegisterForExactType(plAvatarFootMsg::Index(), GetKey());
 }
 
 hsBool plDynaPuddleMgr::MsgReceive(plMessage* msg)
 {
-	plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
-	if( footMsg )
-	{
-		int i;
-		for( i = 0; i < fPartIDs.GetCount(); i++ )
-		{
-			plArmatureMod* armMod = footMsg->GetArmature();
-			const plPrintShape* shape = IGetPrintShape(armMod, fPartIDs[i]);
-			if( shape )
-			{
-				plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
-				if( IRippleFromShape(shape, true) )
-				{
-					INotifyActive(info, armMod->GetKey(), fPartIDs[i]);
-				}
-				else
-				{
-					INotifyInactive(info, armMod->GetKey(), fPartIDs[i]);
-				}
-			}
-		}
-		return true;
-	}
+    plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
+    if( footMsg )
+    {
+        int i;
+        for( i = 0; i < fPartIDs.GetCount(); i++ )
+        {
+            plArmatureMod* armMod = footMsg->GetArmature();
+            const plPrintShape* shape = IGetPrintShape(armMod, fPartIDs[i]);
+            if( shape )
+            {
+                plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+                if( IRippleFromShape(shape, true) )
+                {
+                    INotifyActive(info, armMod->GetKey(), fPartIDs[i]);
+                }
+                else
+                {
+                    INotifyInactive(info, armMod->GetKey(), fPartIDs[i]);
+                }
+            }
+        }
+        return true;
+    }
 
-	return plDynaRippleMgr::MsgReceive(msg);
+    return plDynaRippleMgr::MsgReceive(msg);
 }
 

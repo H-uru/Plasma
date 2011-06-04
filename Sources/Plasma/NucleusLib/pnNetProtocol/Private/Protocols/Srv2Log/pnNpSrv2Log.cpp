@@ -60,7 +60,7 @@ bool Srv2LogValidateConnect (
 
     // Validate connect server type
     if (!(connect.srvType == kSrvTypeAuth || connect.srvType == kSrvTypeGame || connect.srvType == kSrvTypeVault || connect.srvType == kSrvTypeDb || 
-		  connect.srvType == kSrvTypeMcp || connect.srvType == kSrvTypeState || connect.srvType == kSrvTypeFile || connect.srvType == kSrvTypeDll))
+          connect.srvType == kSrvTypeMcp || connect.srvType == kSrvTypeState || connect.srvType == kSrvTypeFile || connect.srvType == kSrvTypeDll))
         return false;
 
     ZEROPTR(connectPtr);

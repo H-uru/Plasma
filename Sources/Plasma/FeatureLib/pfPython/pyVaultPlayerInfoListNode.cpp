@@ -37,7 +37,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultPlayerInfoNode.h"
 #include "pyVaultNodeRef.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
 #include <algorithm>
 
@@ -51,7 +51,7 @@ pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode(RelVaultNode* nfsNode)
 pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode(int n)
 : pyVaultFolderNode(n)
 {
-	fNode->SetNodeType(plVault::kNodeType_PlayerInfoList);
+    fNode->SetNodeType(plVault::kNodeType_PlayerInfoList);
 }
 
 //==================================================================
@@ -59,97 +59,97 @@ pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode(int n)
 //
 hsBool pyVaultPlayerInfoListNode::HasPlayer( UInt32 playerID )
 {
-	if (!fNode)
-		return false;
+    if (!fNode)
+        return false;
 
-	NetVaultNode * templateNode = NEWZERO(NetVaultNode);
-	templateNode->IncRef();
-	templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-	VaultPlayerInfoNode access(templateNode);
-	access.SetPlayerId(playerID);
-	
-	RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1);
-	if (rvn)
-		rvn->DecRef();
-	
-	templateNode->DecRef();
-	return (rvn != nil);
+    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    templateNode->IncRef();
+    templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
+    VaultPlayerInfoNode access(templateNode);
+    access.SetPlayerId(playerID);
+    
+    RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1);
+    if (rvn)
+        rvn->DecRef();
+    
+    templateNode->DecRef();
+    return (rvn != nil);
 }
 
 hsBool pyVaultPlayerInfoListNode::AddPlayer( UInt32 playerID )
 {
-	if (HasPlayer(playerID))
-		return true;
-		
-	if (!fNode)
-		return false;
-		
-	NetVaultNode * templateNode = NEWZERO(NetVaultNode);
-	templateNode->IncRef();
-	templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-	VaultPlayerInfoNode access(templateNode);
-	access.SetPlayerId(playerID);
+    if (HasPlayer(playerID))
+        return true;
+        
+    if (!fNode)
+        return false;
+        
+    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    templateNode->IncRef();
+    templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
+    VaultPlayerInfoNode access(templateNode);
+    access.SetPlayerId(playerID);
 
-	ARRAY(unsigned)	nodeIds;
-	VaultLocalFindNodes(templateNode, &nodeIds);
-	
-	if (!nodeIds.Count())
-		VaultFindNodesAndWait(templateNode, &nodeIds);
-		
-	if (nodeIds.Count())
-		VaultAddChildNodeAndWait(fNode->nodeId, nodeIds[0], VaultGetPlayerId());
-		
-	templateNode->DecRef();
-	return nodeIds.Count() != 0;
+    ARRAY(unsigned) nodeIds;
+    VaultLocalFindNodes(templateNode, &nodeIds);
+    
+    if (!nodeIds.Count())
+        VaultFindNodesAndWait(templateNode, &nodeIds);
+        
+    if (nodeIds.Count())
+        VaultAddChildNodeAndWait(fNode->nodeId, nodeIds[0], VaultGetPlayerId());
+        
+    templateNode->DecRef();
+    return nodeIds.Count() != 0;
 }
 
 void pyVaultPlayerInfoListNode::RemovePlayer( UInt32 playerID )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	NetVaultNode * templateNode = NEWZERO(NetVaultNode);
-	templateNode->IncRef();
-	templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-	VaultPlayerInfoNode access(templateNode);
-	access.SetPlayerId(playerID);
-			
-	if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1)) {
-		VaultRemoveChildNode(fNode->nodeId, rvn->nodeId, nil, nil);
-		rvn->DecRef();
-	}
-	
-	templateNode->DecRef();
+    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    templateNode->IncRef();
+    templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
+    VaultPlayerInfoNode access(templateNode);
+    access.SetPlayerId(playerID);
+            
+    if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1)) {
+        VaultRemoveChildNode(fNode->nodeId, rvn->nodeId, nil, nil);
+        rvn->DecRef();
+    }
+    
+    templateNode->DecRef();
 }
 
 PyObject * pyVaultPlayerInfoListNode::GetPlayer( UInt32 playerID )
 {
-	if (!fNode)
-		PYTHON_RETURN_NONE;
+    if (!fNode)
+        PYTHON_RETURN_NONE;
 
-	NetVaultNode * templateNode = NEWZERO(NetVaultNode);
-	templateNode->IncRef();
-	templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-	VaultPlayerInfoNode access(templateNode);
-	access.SetPlayerId(playerID);
+    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    templateNode->IncRef();
+    templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
+    VaultPlayerInfoNode access(templateNode);
+    access.SetPlayerId(playerID);
 
-	PyObject * result = nil;
-	if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1)) {
-		result = pyVaultPlayerInfoNode::New(rvn);
-		rvn->DecRef();
-	}
-	
-	templateNode->DecRef();
-	
-	if (!result)
-		PYTHON_RETURN_NONE;
-		
-	return result;
+    PyObject * result = nil;
+    if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1)) {
+        result = pyVaultPlayerInfoNode::New(rvn);
+        rvn->DecRef();
+    }
+    
+    templateNode->DecRef();
+    
+    if (!result)
+        PYTHON_RETURN_NONE;
+        
+    return result;
 }
 
 
 void pyVaultPlayerInfoListNode::Sort()
 {
-	hsAssert(false, "eric, port me");
+    hsAssert(false, "eric, port me");
 }
 

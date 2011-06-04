@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef SERVER
 #include "pnIni/pnIni.h"
-#include "../ServerLib/psUtils/psUtils.h"   // for SrvMsgHeader, ugh
+#include "psUtils/psUtils.h"   // for SrvMsgHeader, ugh
 #endif
 
 #include "Private/pnNpAllIncludes.h"

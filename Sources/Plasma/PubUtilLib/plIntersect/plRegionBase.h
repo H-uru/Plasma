@@ -27,20 +27,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRegionBase_inc
 #define plRegionBase_inc
 
-#include "../pnSceneObject/plObjInterface.h"
+#include "pnSceneObject/plObjInterface.h"
 
 struct hsPoint3;
 
 class plRegionBase : public plObjInterface
 {
 public:
-	plRegionBase() {}
-	virtual ~plRegionBase() {}
+    plRegionBase() {}
+    virtual ~plRegionBase() {}
 
-	CLASSNAME_REGISTER( plRegionBase );
-	GETINTERFACE_ANY( plRegionBase, plObjInterface );
+    CLASSNAME_REGISTER( plRegionBase );
+    GETINTERFACE_ANY( plRegionBase, plObjInterface );
 
-	virtual hsBool IsInside(const hsPoint3& pos) const = 0;
+    virtual hsBool IsInside(const hsPoint3& pos) const = 0;
 };
 
 #endif // plRegionBase_inc

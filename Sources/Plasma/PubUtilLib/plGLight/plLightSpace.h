@@ -30,28 +30,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsStream;
 class hsResMgr;
 
-#include "../pnModifier/plMultiModifier.h"
+#include "pnModifier/plMultiModifier.h"
 
 class plLightSpace : public plMultiModifier
 {
 protected:
 
-	hsKeyedObject*		fLightInfo;
+    hsKeyedObject*      fLightInfo;
 
-	hsKeyedObject*		IGetLightInfo() const { return fLightInfo; }
+    hsKeyedObject*      IGetLightInfo() const { return fLightInfo; }
 public:
-	plLightSpace() : fLightInfo(nil) {}
-	virtual ~plLightSpace() {}
+    plLightSpace() : fLightInfo(nil) {}
+    virtual ~plLightSpace() {}
 
-	CLASSNAME_REGISTER( plLightSpace );
-	GETINTERFACE_ANY( plLightSpace, plMultiModifier );
+    CLASSNAME_REGISTER( plLightSpace );
+    GETINTERFACE_ANY( plLightSpace, plMultiModifier );
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
 
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
 
 };

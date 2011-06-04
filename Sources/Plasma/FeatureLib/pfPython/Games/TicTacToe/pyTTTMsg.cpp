@@ -34,32 +34,32 @@ pyTTTMsg::pyTTTMsg(): pyGameCliMsg() {}
 
 pyTTTMsg::pyTTTMsg(pfGameCliMsg* msg): pyGameCliMsg(msg)
 {
-	if (message && (message->gameCli->GetGameTypeId() != kGameTypeId_TicTacToe))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->gameCli->GetGameTypeId() != kGameTypeId_TicTacToe))
+        message = nil; // wrong type, just clear it out
 }
 
 int pyTTTMsg::GetTTTMsgType() const
 {
-	if (message)
-		return message->netMsg->messageId;
-	return -1;
+    if (message)
+        return message->netMsg->messageId;
+    return -1;
 }
 
 PyObject* pyTTTMsg::UpcastToFinalTTTMsg() const
 {
-	if (!message)
-		PYTHON_RETURN_NONE;
-	switch (message->netMsg->messageId)
-	{
-	case kSrv2Cli_TTT_GameStarted:
-		return pyTTTGameStartedMsg::New(message);
-	case kSrv2Cli_TTT_GameOver:
-		return pyTTTGameOverMsg::New(message);
-	case kSrv2Cli_TTT_MoveMade:
-		return pyTTTMoveMadeMsg::New(message);
-	default:
-		PYTHON_RETURN_NONE;
-	}
+    if (!message)
+        PYTHON_RETURN_NONE;
+    switch (message->netMsg->messageId)
+    {
+    case kSrv2Cli_TTT_GameStarted:
+        return pyTTTGameStartedMsg::New(message);
+    case kSrv2Cli_TTT_GameOver:
+        return pyTTTGameOverMsg::New(message);
+    case kSrv2Cli_TTT_MoveMade:
+        return pyTTTMoveMadeMsg::New(message);
+    default:
+        PYTHON_RETURN_NONE;
+    }
 }
 
 
@@ -72,18 +72,18 @@ pyTTTGameStartedMsg::pyTTTGameStartedMsg(): pyTTTMsg() {}
 
 pyTTTGameStartedMsg::pyTTTGameStartedMsg(pfGameCliMsg* msg): pyTTTMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_TTT_GameStarted))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_TTT_GameStarted))
+        message = nil; // wrong type, just clear it out
 }
 
 bool pyTTTGameStartedMsg::YourTurn() const
 {
-	if (message)
-	{
-		const Srv2Cli_TTT_GameStarted* gmMsg = (const Srv2Cli_TTT_GameStarted*)message->netMsg;
-		return gmMsg->yourTurn;
-	}
-	return false;
+    if (message)
+    {
+        const Srv2Cli_TTT_GameStarted* gmMsg = (const Srv2Cli_TTT_GameStarted*)message->netMsg;
+        return gmMsg->yourTurn;
+    }
+    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,28 +91,28 @@ pyTTTGameOverMsg::pyTTTGameOverMsg(): pyTTTMsg() {}
 
 pyTTTGameOverMsg::pyTTTGameOverMsg(pfGameCliMsg* msg): pyTTTMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_TTT_GameOver))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_TTT_GameOver))
+        message = nil; // wrong type, just clear it out
 }
 
 int pyTTTGameOverMsg::Result() const
 {
-	if (message)
-	{
-		const Srv2Cli_TTT_GameOver* gmMsg = (const Srv2Cli_TTT_GameOver*)message->netMsg;
-		return gmMsg->result;
-	}
-	return false;
+    if (message)
+    {
+        const Srv2Cli_TTT_GameOver* gmMsg = (const Srv2Cli_TTT_GameOver*)message->netMsg;
+        return gmMsg->result;
+    }
+    return false;
 }
 
 unsigned long pyTTTGameOverMsg::WinnerID() const
 {
-	if (message)
-	{
-		const Srv2Cli_TTT_GameOver* gmMsg = (const Srv2Cli_TTT_GameOver*)message->netMsg;
-		return gmMsg->winnerId;
-	}
-	return false;
+    if (message)
+    {
+        const Srv2Cli_TTT_GameOver* gmMsg = (const Srv2Cli_TTT_GameOver*)message->netMsg;
+        return gmMsg->winnerId;
+    }
+    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -120,36 +120,36 @@ pyTTTMoveMadeMsg::pyTTTMoveMadeMsg(): pyTTTMsg() {}
 
 pyTTTMoveMadeMsg::pyTTTMoveMadeMsg(pfGameCliMsg* msg): pyTTTMsg(msg)
 {
-	if (message && (message->netMsg->messageId != kSrv2Cli_TTT_MoveMade))
-		message = nil; // wrong type, just clear it out
+    if (message && (message->netMsg->messageId != kSrv2Cli_TTT_MoveMade))
+        message = nil; // wrong type, just clear it out
 }
 
 unsigned long pyTTTMoveMadeMsg::PlayerID() const
 {
-	if (message)
-	{
-		const Srv2Cli_TTT_MoveMade* gmMsg = (const Srv2Cli_TTT_MoveMade*)message->netMsg;
-		return gmMsg->playerId;
-	}
-	return false;
+    if (message)
+    {
+        const Srv2Cli_TTT_MoveMade* gmMsg = (const Srv2Cli_TTT_MoveMade*)message->netMsg;
+        return gmMsg->playerId;
+    }
+    return false;
 }
 
 int pyTTTMoveMadeMsg::Row() const
 {
-	if (message)
-	{
-		const Srv2Cli_TTT_MoveMade* gmMsg = (const Srv2Cli_TTT_MoveMade*)message->netMsg;
-		return gmMsg->row;
-	}
-	return false;
+    if (message)
+    {
+        const Srv2Cli_TTT_MoveMade* gmMsg = (const Srv2Cli_TTT_MoveMade*)message->netMsg;
+        return gmMsg->row;
+    }
+    return false;
 }
 
 int pyTTTMoveMadeMsg::Col() const
 {
-	if (message)
-	{
-		const Srv2Cli_TTT_MoveMade* gmMsg = (const Srv2Cli_TTT_MoveMade*)message->netMsg;
-		return gmMsg->col;
-	}
-	return false;
+    if (message)
+    {
+        const Srv2Cli_TTT_MoveMade* gmMsg = (const Srv2Cli_TTT_MoveMade*)message->netMsg;
+        return gmMsg->col;
+    }
+    return false;
 }

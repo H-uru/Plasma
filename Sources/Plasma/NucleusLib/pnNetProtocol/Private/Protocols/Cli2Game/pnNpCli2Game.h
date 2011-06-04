@@ -81,8 +81,8 @@ COMPILER_ASSERT_HEADER(Cli2Game, kNumGame2CliMessages <= (word)-1);
 
 struct Cli2Game_ConnData {
     dword   dataBytes;
-    Uuid	accountUuid;
-    Uuid	ageUuid;
+    Uuid    accountUuid;
+    Uuid    ageUuid;
 };
 struct Cli2Game_Connect {
     AsyncSocketConnectPacket    hdr;
@@ -108,7 +108,7 @@ extern const NetMsg kNetMsg_Cli2Game_JoinAgeRequest;
 struct Cli2Game_JoinAgeRequest {
     dword       messageId;
     dword       transId;
-    dword		ageMcpId;
+    dword       ageMcpId;
     Uuid        accountUuid;
     dword       playerInt;
 };
@@ -126,9 +126,9 @@ struct Cli2Game_PropagateBuffer {
 // GameMgrMsg
 extern const NetMsg kNetMsg_Cli2Game_GameMgrMsg;
 struct Cli2Game_GameMgrMsg {
-	dword		messageId;
-	dword		bytes;
-	byte		buffer[1];	// actually: buffer[bytes]
+    dword       messageId;
+    dword       bytes;
+    byte        buffer[1];  // actually: buffer[bytes]
 };
 
 
@@ -141,8 +141,8 @@ struct Cli2Game_GameMgrMsg {
 // PingReply
 extern const NetMsg kNetMsg_Game2Cli_PingReply;
 struct Game2Cli_PingReply{
-    dword		messageId;
-    dword		pingTimeMs;
+    dword       messageId;
+    dword       pingTimeMs;
 };
 
 // JoinAgeReply
@@ -150,25 +150,25 @@ extern const NetMsg kNetMsg_Game2Cli_JoinAgeReply;
 struct Game2Cli_JoinAgeReply {
     dword       messageId;
     dword       transId;
-    ENetError	result;
+    ENetError   result;
 };
 
 // PropagateBuffer
 extern const NetMsg kNetMsg_Game2Cli_PropagateBuffer;
 struct Game2Cli_PropagateBuffer {
-    dword		messageId;
-    dword		type;
-    dword		bytes;
-    byte		buffer[1];  // actually, buffer[bytes]
+    dword       messageId;
+    dword       type;
+    dword       bytes;
+    byte        buffer[1];  // actually, buffer[bytes]
     // no more fields
 };
 
 // GameMgrMsg
 extern const NetMsg kNetMsg_Game2Cli_GameMgrMsg;
 struct Game2Cli_GameMgrMsg {
-	dword		messageId;
-	dword		bytes;
-	byte		buffer[1];	// actually: buffer[bytes]
+    dword       messageId;
+    dword       bytes;
+    byte        buffer[1];  // actually: buffer[bytes]
 };
 
 

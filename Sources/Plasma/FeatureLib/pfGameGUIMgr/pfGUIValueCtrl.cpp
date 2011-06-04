@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfGUIValueCtrl Definition												//
-//																			//
+//                                                                          //
+//  pfGUIValueCtrl Definition                                               //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pfGUIValueCtrl::pfGUIValueCtrl()
 {
-	fValue = fMin = fMax = fStep = 0.f;
+    fValue = fMin = fMax = fStep = 0.f;
 }
 
 pfGUIValueCtrl::~pfGUIValueCtrl()
@@ -50,46 +50,46 @@ pfGUIValueCtrl::~pfGUIValueCtrl()
 
 //// SetCurrValue ////////////////////////////////////////////////////////////
 
-void	pfGUIValueCtrl::SetCurrValue( hsScalar v )
+void    pfGUIValueCtrl::SetCurrValue( hsScalar v )
 {
-	fValue = v;
-	if( fValue < fMin )
-		fValue = fMin;
-	else if( fValue > fMax )
-		fValue = fMax;
+    fValue = v;
+    if( fValue < fMin )
+        fValue = fMin;
+    else if( fValue > fMax )
+        fValue = fMax;
 }
 
 //// SetRange ////////////////////////////////////////////////////////////////
 
-void	pfGUIValueCtrl::SetRange( hsScalar min, hsScalar max )
+void    pfGUIValueCtrl::SetRange( hsScalar min, hsScalar max )
 {
-	fMin = min; 
-	fMax = max; 
-	if( fValue < fMin )
-		SetCurrValue( fMin );
-	else if( fValue > fMax )
-		SetCurrValue( fMax );
+    fMin = min; 
+    fMax = max; 
+    if( fValue < fMin )
+        SetCurrValue( fMin );
+    else if( fValue > fMax )
+        SetCurrValue( fMax );
 }
 
 //// Read/Write //////////////////////////////////////////////////////////////
 
-void	pfGUIValueCtrl::Read( hsStream *s, hsResMgr *mgr )
+void    pfGUIValueCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
-	pfGUIControlMod::Read(s, mgr);
+    pfGUIControlMod::Read(s, mgr);
 
-	s->ReadSwap( &fMin );
-	s->ReadSwap( &fMax );
-	s->ReadSwap( &fStep );
+    s->ReadSwap( &fMin );
+    s->ReadSwap( &fMax );
+    s->ReadSwap( &fStep );
 
-	fValue = fMin;
+    fValue = fMin;
 }
 
-void	pfGUIValueCtrl::Write( hsStream *s, hsResMgr *mgr )
+void    pfGUIValueCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
-	pfGUIControlMod::Write( s, mgr );
+    pfGUIControlMod::Write( s, mgr );
 
-	s->WriteSwap( fMin );
-	s->WriteSwap( fMax );
-	s->WriteSwap( fStep );
+    s->WriteSwap( fMin );
+    s->WriteSwap( fMax );
+    s->WriteSwap( fStep );
 }
 

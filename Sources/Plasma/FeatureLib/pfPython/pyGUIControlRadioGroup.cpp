@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyKey.h"
 
-#include "../pfGameGUIMgr/pfGUIRadioGroupCtrl.h"
+#include "pfGameGUIMgr/pfGUIRadioGroupCtrl.h"
 
 #include "pyGUIControlRadioGroup.h"
 
@@ -44,30 +44,30 @@ pyGUIControlRadioGroup::pyGUIControlRadioGroup(plKey objkey) : pyGUIControl(objk
 
 hsBool pyGUIControlRadioGroup::IsGUIControlRadioGroup(pyKey& gckey)
 {
-	if ( gckey.getKey() && pfGUIRadioGroupCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
-		return true;
-	return false;
+    if ( gckey.getKey() && pfGUIRadioGroupCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+        return true;
+    return false;
 }
 
 Int32 pyGUIControlRadioGroup::GetValue( void )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIRadioGroupCtrl* prgmod = pfGUIRadioGroupCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( prgmod )
-			return prgmod->GetValue();
-	}
-	return -1;
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIRadioGroupCtrl* prgmod = pfGUIRadioGroupCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( prgmod )
+            return prgmod->GetValue();
+    }
+    return -1;
 }
 
 void pyGUIControlRadioGroup::SetValue( Int32 value )
 {
-	if ( fGCkey )
-	{
-		// get the pointer to the modifier
-		pfGUIRadioGroupCtrl* prgmod = pfGUIRadioGroupCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-		if ( prgmod )
-			prgmod->SetValue(value);
-	}
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIRadioGroupCtrl* prgmod = pfGUIRadioGroupCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( prgmod )
+            prgmod->SetValue(value);
+    }
 }

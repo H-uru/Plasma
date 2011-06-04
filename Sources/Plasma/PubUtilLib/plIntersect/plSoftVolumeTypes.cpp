@@ -37,62 +37,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////////////////////////////////
 
 plSoftVolumeSimple::plSoftVolumeSimple()
-:	fVolume(nil),
-	fSoftDist(0)
+:   fVolume(nil),
+    fSoftDist(0)
 {
 }
 
 plSoftVolumeSimple::~plSoftVolumeSimple()
 {
-	delete fVolume;
+    delete fVolume;
 }
 
 hsScalar plSoftVolumeSimple::IGetStrength(const hsPoint3& pos) const
 {
-	if( !fVolume || GetProperty(kDisable) )
-		return 0;
+    if( !fVolume || GetProperty(kDisable) )
+        return 0;
 
-	hsScalar dist = fVolume->Test(pos);
+    hsScalar dist = fVolume->Test(pos);
 
-	if( dist <= 0 )
-		return 1.f;
+    if( dist <= 0 )
+        return 1.f;
 
-	if( dist >= fSoftDist )
-		return 0;
+    if( dist >= fSoftDist )
+        return 0;
 
-	dist /= fSoftDist;
+    dist /= fSoftDist;
 
-	return 1.f - dist;
+    return 1.f - dist;
 }
 
 void plSoftVolumeSimple::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
-	if( fVolume )
-		fVolume->SetTransform(l2w, w2l);
+    if( fVolume )
+        fVolume->SetTransform(l2w, w2l);
 }
 
 void plSoftVolumeSimple::Read(hsStream* s, hsResMgr* mgr)
 {
-	plSoftVolume::Read(s, mgr);
+    plSoftVolume::Read(s, mgr);
 
-	fSoftDist = s->ReadSwapScalar();
+    fSoftDist = s->ReadSwapScalar();
 
-	fVolume = plVolumeIsect::ConvertNoRef(mgr->ReadCreatable(s));
+    fVolume = plVolumeIsect::ConvertNoRef(mgr->ReadCreatable(s));
 }
 
 void plSoftVolumeSimple::Write(hsStream* s, hsResMgr* mgr)
 {
-	plSoftVolume::Write(s, mgr);
+    plSoftVolume::Write(s, mgr);
 
-	s->WriteSwapScalar(fSoftDist);
+    s->WriteSwapScalar(fSoftDist);
 
-	mgr->WriteCreatable(s, fVolume);
+    mgr->WriteCreatable(s, fVolume);
 }
 
 void plSoftVolumeSimple::SetVolume(plVolumeIsect* v)
 {
-	delete fVolume;
-	fVolume = v;
+    delete fVolume;
+    fVolume = v;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -108,53 +108,53 @@ plSoftVolumeComplex::~plSoftVolumeComplex()
 
 void plSoftVolumeComplex::Read(hsStream* s, hsResMgr* mgr)
 {
-	plSoftVolume::Read(s, mgr);
+    plSoftVolume::Read(s, mgr);
 
-	int n = s->ReadSwap32();
-	int i;
-	for( i = 0; i < n; i++ )
-		mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSubVolume), plRefFlags::kActiveRef);
+    int n = s->ReadSwap32();
+    int i;
+    for( i = 0; i < n; i++ )
+        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSubVolume), plRefFlags::kActiveRef);
 }
 
 void plSoftVolumeComplex::Write(hsStream* s, hsResMgr* mgr)
 {
-	plSoftVolume::Write(s, mgr);
+    plSoftVolume::Write(s, mgr);
 
-	s->WriteSwap32(fSubVolumes.GetCount());
-	int i;
-	for( i = 0; i < fSubVolumes.GetCount(); i++ )
-		mgr->WriteKey(s, fSubVolumes[i]);
+    s->WriteSwap32(fSubVolumes.GetCount());
+    int i;
+    for( i = 0; i < fSubVolumes.GetCount(); i++ )
+        mgr->WriteKey(s, fSubVolumes[i]);
 }
 
 hsBool plSoftVolumeComplex::MsgReceive(plMessage* msg)
 {
-	plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
-	if( refMsg )
-	{
-		if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest) )
-		{
-			plSoftVolume* sub = plSoftVolume::ConvertNoRef(refMsg->GetRef());
-			hsAssert(fSubVolumes.kMissingIndex == fSubVolumes.Find(sub), "Adding subvolume I already have");
-			fSubVolumes.Append(sub);
-		}
-		else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-		{
-			plSoftVolume* sub = (plSoftVolume*)refMsg->GetRef();
-			int idx = fSubVolumes.Find(sub);
-			if( idx != fSubVolumes.kMissingIndex )
-				fSubVolumes.Remove(idx);
-		}
-		return true;
-	}
-	return plSoftVolume::MsgReceive(msg);
+    plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
+    if( refMsg )
+    {
+        if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest) )
+        {
+            plSoftVolume* sub = plSoftVolume::ConvertNoRef(refMsg->GetRef());
+            hsAssert(fSubVolumes.kMissingIndex == fSubVolumes.Find(sub), "Adding subvolume I already have");
+            fSubVolumes.Append(sub);
+        }
+        else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
+        {
+            plSoftVolume* sub = (plSoftVolume*)refMsg->GetRef();
+            int idx = fSubVolumes.Find(sub);
+            if( idx != fSubVolumes.kMissingIndex )
+                fSubVolumes.Remove(idx);
+        }
+        return true;
+    }
+    return plSoftVolume::MsgReceive(msg);
 }
 
 void plSoftVolumeComplex::UpdateListenerPosition(const hsPoint3& pos)
 {
-	plSoftVolume::UpdateListenerPosition(pos);
-	int i;
-	for( i = 0; i < fSubVolumes.GetCount(); i++ )
-		fSubVolumes[i]->UpdateListenerPosition(pos);
+    plSoftVolume::UpdateListenerPosition(pos);
+    int i;
+    for( i = 0; i < fSubVolumes.GetCount(); i++ )
+        fSubVolumes[i]->UpdateListenerPosition(pos);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -170,35 +170,35 @@ plSoftVolumeUnion::~plSoftVolumeUnion()
 
 hsScalar plSoftVolumeUnion::IGetStrength(const hsPoint3& pos) const
 {
-	hsScalar retVal = 0;
-	int i;
-	for( i = 0; i < fSubVolumes.GetCount(); i++ )
-	{
-		hsScalar subRet = fSubVolumes[i]->GetStrength(pos);
-		if( subRet >= 1.f )
-			return 1.f;
-		if( subRet > retVal )
-			retVal = subRet;
-	}
-	return retVal;
+    hsScalar retVal = 0;
+    int i;
+    for( i = 0; i < fSubVolumes.GetCount(); i++ )
+    {
+        hsScalar subRet = fSubVolumes[i]->GetStrength(pos);
+        if( subRet >= 1.f )
+            return 1.f;
+        if( subRet > retVal )
+            retVal = subRet;
+    }
+    return retVal;
 }
 
 hsScalar plSoftVolumeUnion::IUpdateListenerStrength() const
 {
-	hsScalar retVal = 0;
-	int i;
-	for( i = 0; i < fSubVolumes.GetCount(); i++ )
-	{
-		hsScalar subRet = fSubVolumes[i]->GetListenerStrength();
-		if( subRet >= 1.f )
-		{
-			retVal = 1.f;
-			break;
-		}
-		if( subRet > retVal )
-			retVal = subRet;
-	}
-	return fListenStrength = IRemapStrength(retVal);
+    hsScalar retVal = 0;
+    int i;
+    for( i = 0; i < fSubVolumes.GetCount(); i++ )
+    {
+        hsScalar subRet = fSubVolumes[i]->GetListenerStrength();
+        if( subRet >= 1.f )
+        {
+            retVal = 1.f;
+            break;
+        }
+        if( subRet > retVal )
+            retVal = subRet;
+    }
+    return fListenStrength = IRemapStrength(retVal);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -214,35 +214,35 @@ plSoftVolumeIntersect::~plSoftVolumeIntersect()
 
 hsScalar plSoftVolumeIntersect::IGetStrength(const hsPoint3& pos) const
 {
-	hsScalar retVal = 1.f;
-	int i;
-	for( i = 0; i < fSubVolumes.GetCount(); i++ )
-	{
-		hsScalar subRet = fSubVolumes[i]->GetStrength(pos);
-		if( subRet <= 0 )
-			return 0;
-		if( subRet < retVal )
-			retVal = subRet;
-	}
-	return retVal;
+    hsScalar retVal = 1.f;
+    int i;
+    for( i = 0; i < fSubVolumes.GetCount(); i++ )
+    {
+        hsScalar subRet = fSubVolumes[i]->GetStrength(pos);
+        if( subRet <= 0 )
+            return 0;
+        if( subRet < retVal )
+            retVal = subRet;
+    }
+    return retVal;
 }
 
 hsScalar plSoftVolumeIntersect::IUpdateListenerStrength() const
 {
-	hsScalar retVal = 1.f;
-	int i;
-	for( i = 0; i < fSubVolumes.GetCount(); i++ )
-	{
-		hsScalar subRet = fSubVolumes[i]->GetListenerStrength();
-		if( subRet <= 0 )
-		{
-			retVal = 0.f;
-			break;
-		}
-		if( subRet < retVal )
-			retVal = subRet;
-	}
-	return fListenStrength = IRemapStrength(retVal);
+    hsScalar retVal = 1.f;
+    int i;
+    for( i = 0; i < fSubVolumes.GetCount(); i++ )
+    {
+        hsScalar subRet = fSubVolumes[i]->GetListenerStrength();
+        if( subRet <= 0 )
+        {
+            retVal = 0.f;
+            break;
+        }
+        if( subRet < retVal )
+            retVal = subRet;
+    }
+    return fListenStrength = IRemapStrength(retVal);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -258,21 +258,21 @@ plSoftVolumeInvert::~plSoftVolumeInvert()
 
 hsScalar plSoftVolumeInvert::IGetStrength(const hsPoint3& pos) const
 {
-	hsAssert(fSubVolumes.GetCount() <= 1, "Too many subvolumes on inverter");
-	if( fSubVolumes.GetCount() )
-		return 1.f - fSubVolumes[0]->GetStrength(pos);
+    hsAssert(fSubVolumes.GetCount() <= 1, "Too many subvolumes on inverter");
+    if( fSubVolumes.GetCount() )
+        return 1.f - fSubVolumes[0]->GetStrength(pos);
 
-	return 1.f;
+    return 1.f;
 }
 
 hsScalar plSoftVolumeInvert::IUpdateListenerStrength() const
 {
-	hsAssert(fSubVolumes.GetCount() <= 1, "Too many subvolumes on inverter");
-	hsScalar retVal = 1.f;
-	if( fSubVolumes.GetCount() )
-		retVal = (1.f - fSubVolumes[0]->GetListenerStrength());
+    hsAssert(fSubVolumes.GetCount() <= 1, "Too many subvolumes on inverter");
+    hsScalar retVal = 1.f;
+    if( fSubVolumes.GetCount() )
+        retVal = (1.f - fSubVolumes[0]->GetListenerStrength());
 
-	return fListenStrength = IRemapStrength(retVal);
+    return fListenStrength = IRemapStrength(retVal);
 }
 
 /////////////////////////////////////////////////////////////////////////////

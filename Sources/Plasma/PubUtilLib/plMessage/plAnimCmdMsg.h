@@ -27,91 +27,91 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimCmdMsg_inc
 #define plAnimCmdMsg_inc
 
-#include "../pnMessage/plMessageWithCallbacks.h"
+#include "pnMessage/plMessageWithCallbacks.h"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
-#include "../plInterp/plAnimEaseTypes.h"
-#include "../plInterp/plAnimTimeConvert.h"
+#include "plInterp/plAnimEaseTypes.h"
+#include "plInterp/plAnimTimeConvert.h"
 
 class plAGAnimInstance;
 
 class plAnimCmdMsg : public plMessageWithCallbacks
 {
 protected:
-	char *fAnimName;
-	char *fLoopName;
+    char *fAnimName;
+    char *fLoopName;
 
 private:
-	void IInit() { fBegin=fEnd=fLoopBegin=fLoopEnd=fSpeed=fSpeedChangeRate=fTime=0; fAnimName=fLoopName=nil;}
+    void IInit() { fBegin=fEnd=fLoopBegin=fLoopEnd=fSpeed=fSpeedChangeRate=fTime=0; fAnimName=fLoopName=nil;}
 public:
-	plAnimCmdMsg()
-		: plMessageWithCallbacks(nil, nil, nil) { IInit(); }
-	plAnimCmdMsg(const plKey &s, 
-				const plKey &r, 
-				const double* t)
-		: plMessageWithCallbacks(s, r, t) { IInit(); }
-	virtual ~plAnimCmdMsg();
+    plAnimCmdMsg()
+        : plMessageWithCallbacks(nil, nil, nil) { IInit(); }
+    plAnimCmdMsg(const plKey &s, 
+                const plKey &r, 
+                const double* t)
+        : plMessageWithCallbacks(s, r, t) { IInit(); }
+    virtual ~plAnimCmdMsg();
 
-	CLASSNAME_REGISTER( plAnimCmdMsg );
-	GETINTERFACE_ANY( plAnimCmdMsg, plMessageWithCallbacks );
+    CLASSNAME_REGISTER( plAnimCmdMsg );
+    GETINTERFACE_ANY( plAnimCmdMsg, plMessageWithCallbacks );
 
-	// When adding a command, add a check for it in CmdChangesAnimTime if appropriate
-	enum ModCmds
-	{
-		kContinue=0,
-		kStop,
-		kSetLooping,
-		kUnSetLooping,
-		kSetBegin,
-		kSetEnd,
-		kSetLoopEnd,
-		kSetLoopBegin,
-		kSetSpeed,
-		kGoToTime,
-		kSetBackwards,
-		kSetForewards,
-		kToggleState,
-		kAddCallbacks,
-		kRemoveCallbacks,
-		kGoToBegin,
-		kGoToEnd,
-		kGoToLoopBegin,
-		kGoToLoopEnd,
-		kIncrementForward,
-		kIncrementBackward,
-		kRunForward,
-		kRunBackward,
-		kPlayToTime,
-		kPlayToPercentage,
-		kFastForward,
-		kGoToPercent,
-		kNumCmds,
-	};
+    // When adding a command, add a check for it in CmdChangesAnimTime if appropriate
+    enum ModCmds
+    {
+        kContinue=0,
+        kStop,
+        kSetLooping,
+        kUnSetLooping,
+        kSetBegin,
+        kSetEnd,
+        kSetLoopEnd,
+        kSetLoopBegin,
+        kSetSpeed,
+        kGoToTime,
+        kSetBackwards,
+        kSetForewards,
+        kToggleState,
+        kAddCallbacks,
+        kRemoveCallbacks,
+        kGoToBegin,
+        kGoToEnd,
+        kGoToLoopBegin,
+        kGoToLoopEnd,
+        kIncrementForward,
+        kIncrementBackward,
+        kRunForward,
+        kRunBackward,
+        kPlayToTime,
+        kPlayToPercentage,
+        kFastForward,
+        kGoToPercent,
+        kNumCmds,
+    };
 
-	hsBitVector		fCmd;
+    hsBitVector     fCmd;
 
-	hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
-	void SetCmd(int n) { fCmd.SetBit(n); }
-	void ClearCmd();
-	void SetAnimName(const char *name);
-	const char *GetAnimName();
-	hsBool CmdChangesAnimTime(); // Will this command cause an update to the current anim time?
+    hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
+    void SetCmd(int n) { fCmd.SetBit(n); }
+    void ClearCmd();
+    void SetAnimName(const char *name);
+    const char *GetAnimName();
+    hsBool CmdChangesAnimTime(); // Will this command cause an update to the current anim time?
 
-	void SetLoopName(const char *name);
-	const char *GetLoopName();
+    void SetLoopName(const char *name);
+    const char *GetLoopName();
 
-	hsScalar fBegin;
-	hsScalar fEnd;
-	hsScalar fLoopEnd;
-	hsScalar fLoopBegin;
-	hsScalar fSpeed;
-	hsScalar fSpeedChangeRate;
-	hsScalar fTime;
+    hsScalar fBegin;
+    hsScalar fEnd;
+    hsScalar fLoopEnd;
+    hsScalar fLoopBegin;
+    hsScalar fSpeed;
+    hsScalar fSpeedChangeRate;
+    hsScalar fTime;
 
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 // plAnimCmdMsg is intented for animation commands sent to a plAnimTimeConvert. Commands that only apply to the
@@ -120,86 +120,86 @@ public:
 class plAGCmdMsg : public plMessage
 {
 protected:
-	char *fAnimName;
+    char *fAnimName;
 
 private:
-	void IInit() { fBlend = fAmp = 0;
-				   fAnimName=nil;}
+    void IInit() { fBlend = fAmp = 0;
+                   fAnimName=nil;}
 public:
-	plAGCmdMsg()
-		: plMessage(nil, nil, nil) { IInit(); }
-	plAGCmdMsg(const plKey &s, 
-			   const plKey &r, 
-			   const double* t)
-		: plMessage(s, r, t) { IInit(); }
-	virtual ~plAGCmdMsg();
+    plAGCmdMsg()
+        : plMessage(nil, nil, nil) { IInit(); }
+    plAGCmdMsg(const plKey &s, 
+               const plKey &r, 
+               const double* t)
+        : plMessage(s, r, t) { IInit(); }
+    virtual ~plAGCmdMsg();
 
-	CLASSNAME_REGISTER( plAGCmdMsg );
-	GETINTERFACE_ANY( plAGCmdMsg, plMessage );
+    CLASSNAME_REGISTER( plAGCmdMsg );
+    GETINTERFACE_ANY( plAGCmdMsg, plMessage );
 
-	enum ModCmds
-	{
-		kSetBlend,
-		kSetAmp,
-		kSetAnimTime,
-	};
+    enum ModCmds
+    {
+        kSetBlend,
+        kSetAmp,
+        kSetAnimTime,
+    };
 
-	hsBitVector		fCmd;
+    hsBitVector     fCmd;
 
-	hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
-	void SetCmd(int n) { fCmd.SetBit(n); }
-	void ClearCmd() { fCmd.Clear(); }
-	void SetAnimName(const char *name);
-	const char *GetAnimName();
+    hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
+    void SetCmd(int n) { fCmd.SetBit(n); }
+    void ClearCmd() { fCmd.Clear(); }
+    void SetAnimName(const char *name);
+    const char *GetAnimName();
 
-	hsScalar fBlend;
-	hsScalar fBlendRate;
-	hsScalar fAmp;
-	hsScalar fAmpRate;
-	hsScalar fAnimTime;
+    hsScalar fBlend;
+    hsScalar fBlendRate;
+    hsScalar fAmp;
+    hsScalar fAmpRate;
+    hsScalar fAnimTime;
 
-	// IO
-	void Read(hsStream* stream, hsResMgr* mgr);
-	void Write(hsStream* stream, hsResMgr* mgr);
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 class plAGInstanceCallbackMsg : public plEventCallbackMsg
 {
 public:
-	plAGInstanceCallbackMsg() : plEventCallbackMsg(), fInstance(nil) {}
-	plAGInstanceCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
-	  plEventCallbackMsg(receiver, e, idx, t, repeats, user), fInstance(nil) {}
+    plAGInstanceCallbackMsg() : plEventCallbackMsg(), fInstance(nil) {}
+    plAGInstanceCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+      plEventCallbackMsg(receiver, e, idx, t, repeats, user), fInstance(nil) {}
 
-	CLASSNAME_REGISTER( plAGInstanceCallbackMsg );
-	GETINTERFACE_ANY( plAGInstanceCallbackMsg, plEventCallbackMsg );
+    CLASSNAME_REGISTER( plAGInstanceCallbackMsg );
+    GETINTERFACE_ANY( plAGInstanceCallbackMsg, plEventCallbackMsg );
 
-	// These aren't meant to go across the net, so no IO necessary.
-	void Read(hsStream* stream, hsResMgr* mgr) {}
-	void Write(hsStream* stream, hsResMgr* mgr) {}
+    // These aren't meant to go across the net, so no IO necessary.
+    void Read(hsStream* stream, hsResMgr* mgr) {}
+    void Write(hsStream* stream, hsResMgr* mgr) {}
 
-	plAGAnimInstance *fInstance;
+    plAGAnimInstance *fInstance;
 };
 
 class plAGDetachCallbackMsg : public plEventCallbackMsg
 {
 protected:
-	char *fAnimName;
+    char *fAnimName;
 
 public:
-	plAGDetachCallbackMsg() : plEventCallbackMsg(), fAnimName(nil) {}
-	plAGDetachCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
-						  plEventCallbackMsg(receiver, e, idx, t, repeats, user), fAnimName(nil) {}
-	virtual ~plAGDetachCallbackMsg();
+    plAGDetachCallbackMsg() : plEventCallbackMsg(), fAnimName(nil) {}
+    plAGDetachCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+                          plEventCallbackMsg(receiver, e, idx, t, repeats, user), fAnimName(nil) {}
+    virtual ~plAGDetachCallbackMsg();
 
-	CLASSNAME_REGISTER( plAGDetachCallbackMsg );
-	GETINTERFACE_ANY( plAGDetachCallbackMsg, plEventCallbackMsg );
-	
-	// These aren't meant to go across the net, so no IO necessary.
-	void Read(hsStream* stream, hsResMgr* mgr) {}
-	void Write(hsStream* stream, hsResMgr* mgr) {}
-	
-	void SetAnimName(const char *name);
-	char *GetAnimName();
+    CLASSNAME_REGISTER( plAGDetachCallbackMsg );
+    GETINTERFACE_ANY( plAGDetachCallbackMsg, plEventCallbackMsg );
+    
+    // These aren't meant to go across the net, so no IO necessary.
+    void Read(hsStream* stream, hsResMgr* mgr) {}
+    void Write(hsStream* stream, hsResMgr* mgr) {}
+    
+    void SetAnimName(const char *name);
+    char *GetAnimName();
 };
 
 

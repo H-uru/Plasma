@@ -27,20 +27,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plNetClientMgr.h"
 #include "plNetVoiceList.h"
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../pnMessage/plSoundMsg.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../plStatusLog/plStatusLog.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "pnMessage/plSoundMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "plStatusLog/plStatusLog.h"
 
 // statics
 float plNetListenList::kUpdateInterval=0.5f;
-int plNetListenList::kMaxListenListSize=-1;		// -1 is unlimited
+int plNetListenList::kMaxListenListSize=-1;     // -1 is unlimited
 float plNetListenList::kMaxListenDistSq=75.0f*75.0f;
 
 int plNetVoiceList::FindMember(plNetTransportMember* e) 
 {
-	VoiceListType::iterator result = std::find(fMembers.begin(), fMembers.end(), e);
-	return result!=fMembers.end() ? result-fMembers.begin() : -1;
+    VoiceListType::iterator result = std::find(fMembers.begin(), fMembers.end(), e);
+    return result!=fMembers.end() ? result-fMembers.begin() : -1;
 }
 
 
@@ -52,47 +52,47 @@ int plNetVoiceList::FindMember(plNetTransportMember* e)
 
 void plNetTalkList::UpdateTransportGroup(plNetClientMgr* nc)
 {
-	if (fFlags & kDirty)
-	{
-		nc->fTransport.ClearChannelGrp(plNetClientMgr::kNetChanVoice);
-		if (nc->IsPeerToPeer())
-		{
-			int i;
-			for(i=0;i<GetNumMembers();i++)
-			{
-				if (GetMember(i)->IsPeerToPeer())
-					nc->fTransport.SubscribeToChannelGrp(GetMember(i), plNetClientMgr::kNetChanVoice);
-			}
-		}
-		fFlags &= ~kDirty;
-	}
+    if (fFlags & kDirty)
+    {
+        nc->fTransport.ClearChannelGrp(plNetClientMgr::kNetChanVoice);
+        if (nc->IsPeerToPeer())
+        {
+            int i;
+            for(i=0;i<GetNumMembers();i++)
+            {
+                if (GetMember(i)->IsPeerToPeer())
+                    nc->fTransport.SubscribeToChannelGrp(GetMember(i), plNetClientMgr::kNetChanVoice);
+            }
+        }
+        fFlags &= ~kDirty;
+    }
 }
 
 void plNetTalkList::AddMember(plNetTransportMember* e) 
 { 
-	if (FindMember(e)==-1)
-	{
-		plStatusLog::AddLineS("voice.log", "Adding %s to talk list", e->AsStdString().c_str());
-		fMembers.push_back(e);
-	}
-	fFlags |= kDirty;	
+    if (FindMember(e)==-1)
+    {
+        plStatusLog::AddLineS("voice.log", "Adding %s to talk list", e->AsStdString().c_str());
+        fMembers.push_back(e);
+    }
+    fFlags |= kDirty;   
 }
-	
+    
 void plNetTalkList::RemoveMember(plNetTransportMember* e) 
 { 
-	int idx=FindMember(e);
-	if (idx!=-1)
-	{
-		plStatusLog::AddLineS("voice.log", "Removing %s from talklist", e->AsStdString().c_str());
-		fMembers.erase(fMembers.begin()+idx);
-	}
-	fFlags |= kDirty; 
+    int idx=FindMember(e);
+    if (idx!=-1)
+    {
+        plStatusLog::AddLineS("voice.log", "Removing %s from talklist", e->AsStdString().c_str());
+        fMembers.erase(fMembers.begin()+idx);
+    }
+    fFlags |= kDirty; 
 }
-	
+    
 void plNetTalkList::Clear() 
 { 
-	plNetVoiceList::Clear(); 
-	fFlags |= kDirty; 
+    plNetVoiceList::Clear(); 
+    fFlags |= kDirty; 
 }
 
 
@@ -104,42 +104,42 @@ void plNetTalkList::Clear()
 
 void plNetListenList::AddMember(plNetTransportMember* e)
 {
-	if (FindMember(e)==-1)
-	{
-		plStatusLog::AddLineS("voice.log", "Adding %s to listen list ", e->AsStdString().c_str());
-		fMembers.push_back(e);
-	
-#if 0	
-		// call the new member's win audible and set talk icon parameters
+    if (FindMember(e)==-1)
+    {
+        plStatusLog::AddLineS("voice.log", "Adding %s to listen list ", e->AsStdString().c_str());
+        fMembers.push_back(e);
+    
+#if 0   
+        // call the new member's win audible and set talk icon parameters
 
-		plSoundMsg* pMsg = TRACKED_NEW plSoundMsg;
-		plArmatureMod* pMod = plArmatureMod::ConvertNoRef(e->GetAvatarKey()->GetObjectPtr());
-		if (pMod)
-			pMsg->AddReceiver(pMod->GetTarget(0)->GetKey());
-		pMsg->SetCmd(plSoundMsg::kSetTalkIcon);
-		pMsg->fIndex = GetNumMembers();
-		pMsg->fNameStr = (UInt32)e->GetName();
-		plgDispatch::MsgSend(pMsg);
-#endif	
-	}
+        plSoundMsg* pMsg = TRACKED_NEW plSoundMsg;
+        plArmatureMod* pMod = plArmatureMod::ConvertNoRef(e->GetAvatarKey()->GetObjectPtr());
+        if (pMod)
+            pMsg->AddReceiver(pMod->GetTarget(0)->GetKey());
+        pMsg->SetCmd(plSoundMsg::kSetTalkIcon);
+        pMsg->fIndex = GetNumMembers();
+        pMsg->fNameStr = (UInt32)e->GetName();
+        plgDispatch::MsgSend(pMsg);
+#endif  
+    }
 }
 
 void plNetListenList::RemoveMember(plNetTransportMember* e)
 {
-	int idx=FindMember(e);
-	if (idx!=-1)
-	{
-		fMembers.erase(fMembers.begin()+idx);
-		plStatusLog::AddLineS("voice.log", "Removing %s from listen list", e->AsStdString().c_str());
+    int idx=FindMember(e);
+    if (idx!=-1)
+    {
+        fMembers.erase(fMembers.begin()+idx);
+        plStatusLog::AddLineS("voice.log", "Removing %s from listen list", e->AsStdString().c_str());
 #if 0
-		// call the new member's win audible and set talk icon parameters
+        // call the new member's win audible and set talk icon parameters
 
-		plSoundMsg* pMsg = TRACKED_NEW plSoundMsg;
-		plArmatureMod* pMod = plArmatureMod::ConvertNoRef(e->GetAvatarKey()->GetObjectPtr());
-		if (pMod)
-			pMsg->AddReceiver(pMod->GetTarget(0)->GetKey());
-		pMsg->SetCmd(plSoundMsg::kClearTalkIcon);
-		plgDispatch::MsgSend(pMsg);
-#endif	
-	}
+        plSoundMsg* pMsg = TRACKED_NEW plSoundMsg;
+        plArmatureMod* pMod = plArmatureMod::ConvertNoRef(e->GetAvatarKey()->GetObjectPtr());
+        if (pMod)
+            pMsg->AddReceiver(pMod->GetTarget(0)->GetKey());
+        pMsg->SetCmd(plSoundMsg::kClearTalkIcon);
+        plgDispatch::MsgSend(pMsg);
+#endif  
+    }
 }

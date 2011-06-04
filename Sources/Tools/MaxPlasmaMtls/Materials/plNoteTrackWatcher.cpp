@@ -24,14 +24,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plNoteTrackWatcher - Dummy object to watch for notetrack additions or	//
-//						 removals from the main material that owns it.		//
-//						 All of this is required because MAX will notify	//
-//						 an object's dependents about notetrack actions but	//
-//						 NOT the object itself, and the Add/DeleteNoteTrack	//
-//						 functions are non-virtual. ARRRGH!					//
-//																			//
+//                                                                          //
+//  plNoteTrackWatcher - Dummy object to watch for notetrack additions or   //
+//                       removals from the main material that owns it.      //
+//                       All of this is required because MAX will notify    //
+//                       an object's dependents about notetrack actions but //
+//                       NOT the object itself, and the Add/DeleteNoteTrack //
+//                       functions are non-virtual. ARRRGH!                 //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #include "hsTypes.h"
@@ -40,88 +40,88 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "iparamm2.h"
 
-#include "resource.h"
+#include "../resource.h"
 
 
 //// Watcher Class Desc //////////////////////////////////////////////////////
 
 plNoteTrackWatcher::plNoteTrackWatcher( plPassMtlBase *parentMtl ) : fParentMtl(nil)
 {
-	fNoteTrackCount = parentMtl->NumNoteTracks();
-	MakeRefByID( FOREVER, kRefParentMtl, parentMtl );
+    fNoteTrackCount = parentMtl->NumNoteTracks();
+    ReplaceReference(kRefParentMtl, parentMtl);
 }
 
 plNoteTrackWatcher::~plNoteTrackWatcher()
 {
-	if( fParentMtl != nil )
-	{
-		fParentMtl->fNTWatcher = nil;
-		DeleteReference( kRefParentMtl );
-	}
-	DeleteAllRefsFromMe();
+    if( fParentMtl != nil )
+    {
+        fParentMtl->fNTWatcher = nil;
+        DeleteReference( kRefParentMtl );
+    }
+    DeleteAllRefsFromMe();
 }
 
-BOOL	plNoteTrackWatcher::IsRealDependency( ReferenceTarget *rtarg )
+BOOL    plNoteTrackWatcher::IsRealDependency( ReferenceTarget *rtarg )
 {
-	if( rtarg == fParentMtl )
-		return false;
+    if( rtarg == fParentMtl )
+        return false;
 
-	return true;
+    return true;
 }
 
 int plNoteTrackWatcher::NumRefs()
 {
-	return 1;
+    return 1;
 }
 
 RefTargetHandle plNoteTrackWatcher::GetReference( int i )
 {
-	if( i == kRefParentMtl )
-		return fParentMtl;
+    if( i == kRefParentMtl )
+        return fParentMtl;
 
-	return nil;
+    return nil;
 }
 
 void plNoteTrackWatcher::SetReference( int i, RefTargetHandle rtarg )
 {
-	if( i == kRefParentMtl )
-		fParentMtl = (plPassMtlBase *)rtarg;
+    if( i == kRefParentMtl )
+        fParentMtl = (plPassMtlBase *)rtarg;
 }
 
 RefResult plNoteTrackWatcher::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
 {
-	switch( message )
-	{
-		case REFMSG_SUBANIM_STRUCTURE_CHANGED:
-			if( hTarget == fParentMtl && fParentMtl != nil )
-			{
-				// Structure of parent material changed--did it gain or lose a notetrack?
-				int oldCount = fNoteTrackCount;
-				fNoteTrackCount = fParentMtl->NumNoteTracks();
-				if( oldCount != fNoteTrackCount )
-				{
-					// Is it an addition?
-					if( fNoteTrackCount > oldCount )
-						// Yes, notify parent.
-						fParentMtl->NoteTrackAdded();
-					else 
-						// Deletion, also notify parent
-						fParentMtl->NoteTrackRemoved();
-				}
-			}
-			break;
+    switch( message )
+    {
+        case REFMSG_SUBANIM_STRUCTURE_CHANGED:
+            if( hTarget == fParentMtl && fParentMtl != nil )
+            {
+                // Structure of parent material changed--did it gain or lose a notetrack?
+                int oldCount = fNoteTrackCount;
+                fNoteTrackCount = fParentMtl->NumNoteTracks();
+                if( oldCount != fNoteTrackCount )
+                {
+                    // Is it an addition?
+                    if( fNoteTrackCount > oldCount )
+                        // Yes, notify parent.
+                        fParentMtl->NoteTrackAdded();
+                    else 
+                        // Deletion, also notify parent
+                        fParentMtl->NoteTrackRemoved();
+                }
+            }
+            break;
 
-		case REFMSG_NODE_NAMECHANGE:
-			if( hTarget == fParentMtl )
-			{
-				fParentMtl->NameChanged();
-			}
-			break;
+        case REFMSG_NODE_NAMECHANGE:
+            if( hTarget == fParentMtl )
+            {
+                fParentMtl->NameChanged();
+            }
+            break;
 
-		case REFMSG_TARGET_DELETED:
-			fParentMtl = nil;
-			break;
-	}
+        case REFMSG_TARGET_DELETED:
+            fParentMtl = nil;
+            break;
+    }
 
-	return REF_SUCCEED;
+    return REF_SUCCEED;
 }

@@ -35,64 +35,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum KAddValueMode
 {
-	kAlwaysAdd,			// Add another value if key already exists
-	kReplaceIfExists,	// Replace any existing key with new value.
-	kFailIfExists,		// Do not add if key already exists.
+    kAlwaysAdd,         // Add another value if key already exists
+    kReplaceIfExists,   // Replace any existing key with new value.
+    kFailIfExists,      // Do not add if key already exists.
 };
 
 
 // class plKeysAndValues
-//	A multimap class. Stores multiple values per key.
+//  A multimap class. Stores multiple values per key.
 class plKeysAndValues : public hsStreamable
 {
 public:    
-	typedef std::list<xtl::istring>
-		Values;
-	typedef std::map<xtl::istring, Values>
-		Keys;
+    typedef std::list<xtl::istring>
+        Values;
+    typedef std::map<xtl::istring, Values>
+        Keys;
 
 private:
-	mutable Keys fKeys;
+    mutable Keys fKeys;
 
 public:
-	// ctor
-	plKeysAndValues();
-	plKeysAndValues(const plKeysAndValues & src);
-	virtual ~plKeysAndValues(){}
-	// assign
-	plKeysAndValues & operator =(const plKeysAndValues & src);
-	// clear
-	void Clear();
-	void RemoveKey(const std::string & key);
-	// query
-	bool HasKey(const std::string & key) const;
-	bool KeyHasValue(const std::string & key, const std::string & value);
-	bool KeyHasValue(const std::string & key, int value);
-	bool KeyHasValue(const std::string & key, double value);
-	// add
-	bool AddValue(const std::string & key, const std::string & value, KAddValueMode mode=kAlwaysAdd);
-	bool AddValue(const std::string & key, int value, KAddValueMode mode=kAlwaysAdd);
-	bool AddValue(const std::string & key, double value, KAddValueMode mode=kAlwaysAdd);
-	bool AddValues(const std::string & key, const std::vector<std::string> & values, KAddValueMode mode=kAlwaysAdd);
-	// set (clear and add)
-	bool SetValue(const std::string & key, const std::string & value);
-	bool SetValue(const std::string & key, int value);
-	bool SetValue(const std::string & key, double value);
-	// get single value
-	std::string GetValue(const std::string & key, const std::string & defval="", bool * outFound=nil) const;
-	UInt32 GetValue(const std::string & key, UInt32 defval, bool * outFound=nil) const;
-	int GetValue(const std::string & key, int defval, bool * outFound=nil) const;
-	double GetValue(const std::string & key, double defval, bool * outFound=nil) const;
-	std::vector<std::string> GetAllValues(const std::string & key);
-	// key iterator
-	bool GetKeyIterators(Keys::const_iterator & iter, Keys::const_iterator & end) const;
-	// value iterator (use for getting all values for key)
-	bool GetValueIterators(const xtl::istring & key, Values::const_iterator & iter, Values::const_iterator & end) const;
-	// streamable
-	void Read(hsStream * s);
-	void Write(hsStream * s);
-	// TODO:
-	UInt32 GetStreamSize() { return 0;}
+    // ctor
+    plKeysAndValues();
+    plKeysAndValues(const plKeysAndValues & src);
+    virtual ~plKeysAndValues(){}
+    // assign
+    plKeysAndValues & operator =(const plKeysAndValues & src);
+    // clear
+    void Clear();
+    void RemoveKey(const std::string & key);
+    // query
+    bool HasKey(const std::string & key) const;
+    bool KeyHasValue(const std::string & key, const std::string & value);
+    bool KeyHasValue(const std::string & key, int value);
+    bool KeyHasValue(const std::string & key, double value);
+    // add
+    bool AddValue(const std::string & key, const std::string & value, KAddValueMode mode=kAlwaysAdd);
+    bool AddValue(const std::string & key, int value, KAddValueMode mode=kAlwaysAdd);
+    bool AddValue(const std::string & key, double value, KAddValueMode mode=kAlwaysAdd);
+    bool AddValues(const std::string & key, const std::vector<std::string> & values, KAddValueMode mode=kAlwaysAdd);
+    // set (clear and add)
+    bool SetValue(const std::string & key, const std::string & value);
+    bool SetValue(const std::string & key, int value);
+    bool SetValue(const std::string & key, double value);
+    // get single value
+    std::string GetValue(const std::string & key, const std::string & defval="", bool * outFound=nil) const;
+    UInt32 GetValue(const std::string & key, UInt32 defval, bool * outFound=nil) const;
+    int GetValue(const std::string & key, int defval, bool * outFound=nil) const;
+    double GetValue(const std::string & key, double defval, bool * outFound=nil) const;
+    std::vector<std::string> GetAllValues(const std::string & key);
+    // key iterator
+    bool GetKeyIterators(Keys::const_iterator & iter, Keys::const_iterator & end) const;
+    // value iterator (use for getting all values for key)
+    bool GetValueIterators(const xtl::istring & key, Values::const_iterator & iter, Values::const_iterator & end) const;
+    // streamable
+    void Read(hsStream * s);
+    void Write(hsStream * s);
+    // TODO:
+    UInt32 GetStreamSize() { return 0;}
 };
 
 

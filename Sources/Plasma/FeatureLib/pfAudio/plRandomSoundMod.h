@@ -27,62 +27,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRandomSoundMod_inc
 #define plRandomSoundMod_inc
 
-#include "../pfAnimation/plRandomCommandMod.h"
+#include "pfAnimation/plRandomCommandMod.h"
 class plSound;
 struct hsPoint3;
 
 class plRandomSoundModGroup
 {
 public:
-	hsBitVector	fExcluded;
-	Int8 fCurrent;
-	UInt16 fNumSounds;
-	UInt16 *fIndices;
-	Int16	fGroupedIdx;		// Only used if we point to a groupedSound, in which case fIndices are indices into
-								// that sound. -1 if unused.
+    hsBitVector fExcluded;
+    Int8 fCurrent;
+    UInt16 fNumSounds;
+    UInt16 *fIndices;
+    Int16   fGroupedIdx;        // Only used if we point to a groupedSound, in which case fIndices are indices into
+                                // that sound. -1 if unused.
 
-	plRandomSoundModGroup();
-	~plRandomSoundModGroup();
+    plRandomSoundModGroup();
+    ~plRandomSoundModGroup();
 
-	void Read(hsStream *s);
-	void Write(hsStream *s);
+    void Read(hsStream *s);
+    void Write(hsStream *s);
 };
 
 class plRandomSoundMod : public plRandomCommandMod
 {
 protected:
-	UInt16 fCurrentGroup;
-	UInt16 fNumGroups;
-	plRandomSoundModGroup *fGroups;
-	std::vector<UInt16> fActiveList;	// list of sounds we're allowed to choose
-	int				 fOldPriority;		// old sound priority
-	hsBool			fFirstTimePlay;
-	
-	virtual void	IPlayNext();
-	virtual void	IPlayNextIfMaster();
-	virtual void	IStop();
-	void			ISetVolume(hsScalar volume);
-	void			ISetPosition(hsPoint3);
-	plSound         *IGetSoundPtr(); 
-	
+    UInt16 fCurrentGroup;
+    UInt16 fNumGroups;
+    plRandomSoundModGroup *fGroups;
+    std::vector<UInt16> fActiveList;    // list of sounds we're allowed to choose
+    int              fOldPriority;      // old sound priority
+    hsBool          fFirstTimePlay;
+    
+    virtual void    IPlayNext();
+    virtual void    IPlayNextIfMaster();
+    virtual void    IStop();
+    void            ISetVolume(hsScalar volume);
+    void            ISetPosition(hsPoint3);
+    plSound         *IGetSoundPtr(); 
+    
 public:
-	plRandomSoundMod();
-	~plRandomSoundMod();
+    plRandomSoundMod();
+    ~plRandomSoundMod();
 
-	CLASSNAME_REGISTER( plRandomSoundMod );
-	GETINTERFACE_ANY( plRandomSoundMod, plRandomCommandMod );
+    CLASSNAME_REGISTER( plRandomSoundMod );
+    GETINTERFACE_ANY( plRandomSoundMod, plRandomCommandMod );
 
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr);
 
-	void SetCurrentGroup(UInt16 group);
-		
-	void	ForceSoundLoadState( hsBool loaded );
-	hsBool  MsgReceive(plMessage* msg);
-	float			GetVolume();
+    void SetCurrentGroup(UInt16 group);
+        
+    void    ForceSoundLoadState( hsBool loaded );
+    hsBool  MsgReceive(plMessage* msg);
+    float           GetVolume();
 
-	// EXPORT ONLY
-	void SetGroupInfo(UInt16 numGroups, plRandomSoundModGroup *groups) { fNumGroups = numGroups; fGroups = groups; }
+    // EXPORT ONLY
+    void SetGroupInfo(UInt16 numGroups, plRandomSoundModGroup *groups) { fNumGroups = numGroups; fGroups = groups; }
 };
 
 #endif // plRandomSoundMod_inc

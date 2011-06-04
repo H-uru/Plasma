@@ -29,74 +29,74 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plClothingMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 
-	fCommands = stream->ReadSwap32();
-	if (stream->ReadBool())
-		fItemKey = mgr->ReadKey(stream);
-	fColor.Read(stream);
-	fLayer = stream->ReadByte();
-	fDelta = stream->ReadByte();
-	fWeight = stream->ReadSwapScalar();
+    fCommands = stream->ReadSwap32();
+    if (stream->ReadBool())
+        fItemKey = mgr->ReadKey(stream);
+    fColor.Read(stream);
+    fLayer = stream->ReadByte();
+    fDelta = stream->ReadByte();
+    fWeight = stream->ReadSwapScalar();
 }
 
 void plClothingMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 
-	stream->WriteSwap32(fCommands);
-	stream->WriteBool(fItemKey != nil);
-	if (fItemKey)
-		mgr->WriteKey(stream, fItemKey);
-	fColor.Write(stream);
-	stream->WriteByte(fLayer);
-	stream->WriteByte(fDelta);
-	stream->WriteSwapScalar(fWeight);
+    stream->WriteSwap32(fCommands);
+    stream->WriteBool(fItemKey != nil);
+    if (fItemKey)
+        mgr->WriteKey(stream, fItemKey);
+    fColor.Write(stream);
+    stream->WriteByte(fLayer);
+    stream->WriteByte(fDelta);
+    stream->WriteSwapScalar(fWeight);
 }
 
 enum ClothingFlags
 {
-	kClothingCommands,
-	kClothingItemKey,
-	kClothingColor,
+    kClothingCommands,
+    kClothingItemKey,
+    kClothingColor,
 };
 
 void plClothingMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgReadVersion(s, mgr);
+    plMessage::IMsgReadVersion(s, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.Read(s);
+    hsBitVector contentFlags;
+    contentFlags.Read(s);
 
-	if (contentFlags.IsBitSet(kClothingCommands))
-		fCommands = s->ReadSwap32();
-	if (contentFlags.IsBitSet(kClothingItemKey))
-	{
-		if (s->ReadBool())
-			fItemKey = mgr->ReadKey(s);
-	}
-	if (contentFlags.IsBitSet(kClothingColor))
-		fColor.Read(s);
+    if (contentFlags.IsBitSet(kClothingCommands))
+        fCommands = s->ReadSwap32();
+    if (contentFlags.IsBitSet(kClothingItemKey))
+    {
+        if (s->ReadBool())
+            fItemKey = mgr->ReadKey(s);
+    }
+    if (contentFlags.IsBitSet(kClothingColor))
+        fColor.Read(s);
 }
 
 void plClothingMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
 {
-	plMessage::IMsgWriteVersion(s, mgr);
+    plMessage::IMsgWriteVersion(s, mgr);
 
-	hsBitVector contentFlags;
-	contentFlags.SetBit(kClothingCommands);
-	contentFlags.SetBit(kClothingItemKey);
-	contentFlags.SetBit(kClothingColor);
-	contentFlags.Write(s);
+    hsBitVector contentFlags;
+    contentFlags.SetBit(kClothingCommands);
+    contentFlags.SetBit(kClothingItemKey);
+    contentFlags.SetBit(kClothingColor);
+    contentFlags.Write(s);
 
-	// kClothingCommands
-	s->WriteSwap32(fCommands);
-	// kClothingItemKey
-	s->WriteBool(fItemKey != nil);
-	if (fItemKey)
-		mgr->WriteKey(s, fItemKey);
-	// kClothingColor
-	fColor.Write(s);
+    // kClothingCommands
+    s->WriteSwap32(fCommands);
+    // kClothingItemKey
+    s->WriteBool(fItemKey != nil);
+    if (fItemKey)
+        mgr->WriteKey(s, fItemKey);
+    // kClothingColor
+    fColor.Write(s);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -105,10 +105,10 @@ plClothingUpdateBCMsg::plClothingUpdateBCMsg() { SetBCastFlag(plMessage::kBCastB
 
 void plClothingUpdateBCMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgRead(stream, mgr);
+    plMessage::IMsgRead(stream, mgr);
 }
 
 void plClothingUpdateBCMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-	plMessage::IMsgWrite(stream, mgr);
+    plMessage::IMsgWrite(stream, mgr);
 }

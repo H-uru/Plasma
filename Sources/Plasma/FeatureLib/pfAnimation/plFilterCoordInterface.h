@@ -27,41 +27,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plFilterCoordInterface_inc
 #define plFilterCoordInterface_inc
 
-#include "../pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 class plFilterCoordInterface : public plCoordinateInterface
 {
 public:
-	enum
-	{
-		kNoRotation = 0x1,
-		kNoTransX	= 0x2,
-		kNoTransY	= 0x4,
-		kNoTransZ	= 0x8,
-		kNoMove		= kNoTransX | kNoTransY | kNoTransZ,
-		kNoNothing	= kNoRotation | kNoMove
-	};
+    enum
+    {
+        kNoRotation = 0x1,
+        kNoTransX   = 0x2,
+        kNoTransY   = 0x4,
+        kNoTransZ   = 0x8,
+        kNoMove     = kNoTransX | kNoTransY | kNoTransZ,
+        kNoNothing  = kNoRotation | kNoMove
+    };
 protected:
-	UInt32				fFilterMask;
-	hsMatrix44			fRefParentLocalToWorld;
+    UInt32              fFilterMask;
+    hsMatrix44          fRefParentLocalToWorld;
 
-	virtual void IRecalcTransforms(); 
+    virtual void IRecalcTransforms(); 
 public:
-	plFilterCoordInterface();
-	~plFilterCoordInterface();
+    plFilterCoordInterface();
+    ~plFilterCoordInterface();
 
-	CLASSNAME_REGISTER( plFilterCoordInterface );
-	GETINTERFACE_ANY( plFilterCoordInterface, plCoordinateInterface );
+    CLASSNAME_REGISTER( plFilterCoordInterface );
+    GETINTERFACE_ANY( plFilterCoordInterface, plCoordinateInterface );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 
-	void SetFilterMask(UInt32 f) { fFilterMask = f; }
-	UInt32 GetFilterMask() const { return fFilterMask; }
+    void SetFilterMask(UInt32 f) { fFilterMask = f; }
+    UInt32 GetFilterMask() const { return fFilterMask; }
 
-	void SetRefLocalToWorld(const hsMatrix44& m) { fRefParentLocalToWorld = m; }
-	const hsMatrix44& GetRefLocalToWorld() const { return fRefParentLocalToWorld; }
+    void SetRefLocalToWorld(const hsMatrix44& m) { fRefParentLocalToWorld = m; }
+    const hsMatrix44& GetRefLocalToWorld() const { return fRefParentLocalToWorld; }
 
 };
 

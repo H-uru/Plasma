@@ -26,12 +26,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plModifier.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnSceneObject/plDrawInterface.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../pnSceneObject/plAudioInterface.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "pnMessage/plTimeMsg.h"
 
 plModifier::plModifier()
 {
@@ -43,44 +43,44 @@ plModifier::~plModifier()
 
 plDrawInterface* plModifier::IGetTargetDrawInterface(int iTarg) const
 { 
-	return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileDrawInterface() : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileDrawInterface() : nil; 
 }
 
 plSimulationInterface* plModifier::IGetTargetSimulationInterface(int iTarg) const
 { 
-	return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileSimulationInterface() : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileSimulationInterface() : nil; 
 }
 
 plCoordinateInterface* plModifier::IGetTargetCoordinateInterface(int iTarg) const
 { 
-	return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileCoordinateInterface() : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileCoordinateInterface() : nil; 
 }
 
 plAudioInterface* plModifier::IGetTargetAudioInterface(int iTarg) const
 { 
-	return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileAudioInterface() : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileAudioInterface() : nil; 
 }
 
 plObjInterface* plModifier::IGetTargetGenericInterface(int iTarg, UInt32 classIdx) const
 {
-	return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileGenericInterface((UInt16)classIdx) : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileGenericInterface((UInt16)classIdx) : nil; 
 }
 
 plModifier* plModifier::IGetTargetModifier(int iTarg, int iMod) const
 { 
-	return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileModifier(iMod) : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileModifier(iMod) : nil; 
 }
 
 hsBool plModifier::MsgReceive(plMessage* msg)
 {
-	plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
-	if( eval )
-	{
-		UInt32 dirty = ~0L;
-		IEval(eval->DSeconds(), eval->DelSeconds(), dirty);
-		return true;
-	}
+    plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
+    if( eval )
+    {
+        UInt32 dirty = ~0L;
+        IEval(eval->DSeconds(), eval->DelSeconds(), dirty);
+        return true;
+    }
 
-	return plSynchedObject::MsgReceive(msg);
+    return plSynchedObject::MsgReceive(msg);
 }
 

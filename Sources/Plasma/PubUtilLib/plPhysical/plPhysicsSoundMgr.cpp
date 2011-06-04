@@ -24,193 +24,194 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <algorithm>
+#include <iterator>
 #include "hsTimer.h"
 #include "plPhysicsSoundMgr.h"
 #include "plPhysicalSndGroup.h"
-#include "../pnKeyedObject/plFixedKey.h"
-#include "../plStatusLog/plStatusLog.h"
-#include "../plMessage/plAnimCmdMsg.h"
-#include "../FeatureLib/pfAudio/plRandomSoundMod.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "pfAudio/plRandomSoundMod.h"
 
 #define MIN_VOLUME 0.0001f
 
 void plPhysicsSoundMgr::AddContact(plPhysical* phys1, plPhysical* phys2, const hsPoint3& hitPoint, const hsVector3& hitNormal)
 {
-	CollidePair cp(phys1->GetKey(), phys2->GetKey(), hitPoint, hitNormal);
-	fCurCollisions.insert(cp);
+    CollidePair cp(phys1->GetKey(), phys2->GetKey(), hitPoint, hitNormal);
+    fCurCollisions.insert(cp);
 }
 
 void plPhysicsSoundMgr::Update()
 {
-	// Get all the physicals that only in the new list (started colliding)
-	CollideSet startedColliding;
-	std::set_difference(fCurCollisions.begin(), fCurCollisions.end(),
-		fPrevCollisions.begin(), fPrevCollisions.end(),
-		std::inserter(startedColliding, startedColliding.begin()));
+    // Get all the physicals that only in the new list (started colliding)
+    CollideSet startedColliding;
+    std::set_difference(fCurCollisions.begin(), fCurCollisions.end(),
+        fPrevCollisions.begin(), fPrevCollisions.end(),
+        std::inserter(startedColliding, startedColliding.begin()));
 
-	for (CollideSet::iterator it = startedColliding.begin(); it != startedColliding.end(); it++)
-		IStartCollision(*it);
+    for (CollideSet::iterator it = startedColliding.begin(); it != startedColliding.end(); it++)
+        IStartCollision(*it);
 
-	for (CollideSet::iterator it = fPrevCollisions.begin(); it != fPrevCollisions.end(); it++)
-	{
-		CollideSet::iterator old = fCurCollisions.find(*it);
-		if (old != fCurCollisions.end())
-		{
-			IUpdateCollision(*it);
-		}
-		else
-		{
-			IStopCollision(*it);
-		}
-	}
+    for (CollideSet::iterator it = fPrevCollisions.begin(); it != fPrevCollisions.end(); it++)
+    {
+        CollideSet::iterator old = fCurCollisions.find(*it);
+        if (old != fCurCollisions.end())
+        {
+            IUpdateCollision(*it);
+        }
+        else
+        {
+            IStopCollision(*it);
+        }
+    }
 
-	fPrevCollisions = fCurCollisions;
-	fCurCollisions.clear();
+    fPrevCollisions = fCurCollisions;
+    fCurCollisions.clear();
 }
 
-void plPhysicsSoundMgr::IStartCollision(CollidePair& cp)
+void plPhysicsSoundMgr::IStartCollision(const CollidePair& cp)
 {
-	hsVector3 v1, v2;
-	const hsScalar strengthThreshold = 20.0f;
+    hsVector3 v1, v2;
+    const hsScalar strengthThreshold = 20.0f;
 
-	plPhysical* physicalA = cp.FirstPhysical();
-	plPhysical* physicalB = cp.SecondPhysical();
-	if (!physicalA || !physicalB)
-		return;
+    plPhysical* physicalA = cp.FirstPhysical();
+    plPhysical* physicalB = cp.SecondPhysical();
+    if (!physicalA || !physicalB)
+        return;
 
-	plPhysicalSndGroup* sndA = physicalA->GetSoundGroup();
-	plPhysicalSndGroup* sndB = physicalB->GetSoundGroup();
+    plPhysicalSndGroup* sndA = physicalA->GetSoundGroup();
+    plPhysicalSndGroup* sndB = physicalB->GetSoundGroup();
 
-	// If no impact sounds were specified in max don't do anything here.
-	if (!sndA->HasImpactSound(sndB->GetGroup()) &&
-		!sndB->HasImpactSound(sndA->GetGroup()))
-		return;
+    // If no impact sounds were specified in max don't do anything here.
+    if (!sndA->HasImpactSound(sndB->GetGroup()) &&
+        !sndB->HasImpactSound(sndA->GetGroup()))
+        return;
 
-	physicalA->GetLinearVelocitySim(v1);
-	physicalB->GetLinearVelocitySim(v2);
-	hsVector3 vel = v1 - v2;
-	hsScalar strength = vel.MagnitudeSquared();
-	
-	if (strength >= strengthThreshold)
-	{
-		if (sndA->HasImpactSound(sndB->GetGroup()))
-		{
-			sndA->PlayImpactSound(sndB->GetGroup());
-		}
-		else
-		{
-			sndB->PlayImpactSound(sndA->GetGroup());
-		}
-	}
+    physicalA->GetLinearVelocitySim(v1);
+    physicalB->GetLinearVelocitySim(v2);
+    hsVector3 vel = v1 - v2;
+    hsScalar strength = vel.MagnitudeSquared();
+    
+    if (strength >= strengthThreshold)
+    {
+        if (sndA->HasImpactSound(sndB->GetGroup()))
+        {
+            sndA->PlayImpactSound(sndB->GetGroup());
+        }
+        else
+        {
+            sndB->PlayImpactSound(sndA->GetGroup());
+        }
+    }
 }
 
-void plPhysicsSoundMgr::IStopCollision(CollidePair& cp)
+void plPhysicsSoundMgr::IStopCollision(const CollidePair& cp)
 {
-	plPhysical* physicalA = cp.FirstPhysical();
-	plPhysical* physicalB = cp.SecondPhysical();
-	if (physicalA && physicalB)
-	{
-		plPhysicalSndGroup* sndA = physicalA->GetSoundGroup();
-		plPhysicalSndGroup* sndB = physicalB->GetSoundGroup();
+    plPhysical* physicalA = cp.FirstPhysical();
+    plPhysical* physicalB = cp.SecondPhysical();
+    if (physicalA && physicalB)
+    {
+        plPhysicalSndGroup* sndA = physicalA->GetSoundGroup();
+        plPhysicalSndGroup* sndB = physicalB->GetSoundGroup();
 
-		if (sndA->HasSlideSound(sndB->GetGroup()))
-		{
-			if(sndA->IsSliding())
-			{
-				sndA->StopSlideSound(sndB->GetGroup());	
-			}
-		}
-		if (sndB->HasSlideSound(sndA->GetGroup()))
-		{
-			if(sndB->IsSliding())
-			{
-				sndB->StopSlideSound(sndA->GetGroup());		
-			}
-		}
-	}
+        if (sndA->HasSlideSound(sndB->GetGroup()))
+        {
+            if(sndA->IsSliding())
+            {
+                sndA->StopSlideSound(sndB->GetGroup()); 
+            }
+        }
+        if (sndB->HasSlideSound(sndA->GetGroup()))
+        {
+            if(sndB->IsSliding())
+            {
+                sndB->StopSlideSound(sndA->GetGroup());     
+            }
+        }
+    }
 }
 
-void plPhysicsSoundMgr::IUpdateCollision(CollidePair& cp)
+void plPhysicsSoundMgr::IUpdateCollision(const CollidePair& cp)
 {
-	const hsScalar slideThreshhold = 0.f;	
-	hsVector3 v1, v2;
-	plPhysical* physicalA = cp.FirstPhysical();
-	plPhysical* physicalB = cp.SecondPhysical();
-	if (!physicalA || !physicalB)
-		return;
+    const hsScalar slideThreshhold = 0.f;   
+    hsVector3 v1, v2;
+    plPhysical* physicalA = cp.FirstPhysical();
+    plPhysical* physicalB = cp.SecondPhysical();
+    if (!physicalA || !physicalB)
+        return;
 
-	plPhysicalSndGroup* sndA = physicalA->GetSoundGroup();
-	plPhysicalSndGroup* sndB = physicalB->GetSoundGroup();
+    plPhysicalSndGroup* sndA = physicalA->GetSoundGroup();
+    plPhysicalSndGroup* sndB = physicalB->GetSoundGroup();
 
-	physicalA->GetLinearVelocitySim(v1);
-	physicalB->GetLinearVelocitySim(v2);
-	hsVector3 vel = v1 - v2;
-	hsScalar strength = vel.MagnitudeSquared();
-	
-	// scale strength to use as volume
-	strength /= 16*8;
-	if(strength < MIN_VOLUME)
-		strength = 0;
-	
-	if (sndA->HasSlideSound(sndB->GetGroup()))
-		IProcessSlide(sndA, sndB, strength);
-	else
-		IProcessSlide(sndB, sndA, strength);
+    physicalA->GetLinearVelocitySim(v1);
+    physicalB->GetLinearVelocitySim(v2);
+    hsVector3 vel = v1 - v2;
+    hsScalar strength = vel.MagnitudeSquared();
+    
+    // scale strength to use as volume
+    strength /= 16*8;
+    if(strength < MIN_VOLUME)
+        strength = 0;
+    
+    if (sndA->HasSlideSound(sndB->GetGroup()))
+        IProcessSlide(sndA, sndB, strength);
+    else
+        IProcessSlide(sndB, sndA, strength);
 }
 
 void plPhysicsSoundMgr::IProcessSlide(plPhysicalSndGroup* sndA, plPhysicalSndGroup* sndB, hsScalar strength)
 {
-	sndA->SetSlideSoundVolume(sndB->GetGroup(), strength);
+    sndA->SetSlideSoundVolume(sndB->GetGroup(), strength);
 
-	if(strength > MIN_VOLUME)
-	{
-		if(!sndA->IsSliding())
-		{
-			sndA->PlaySlideSound(sndB->GetGroup());
-		}
-	}
+    if(strength > MIN_VOLUME)
+    {
+        if(!sndA->IsSliding())
+        {
+            sndA->PlaySlideSound(sndB->GetGroup());
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 plPhysicsSoundMgr::CollidePair::CollidePair(const plKey& firstPhys, const plKey& secondPhys, const hsPoint3& point, const hsVector3& normal)
 {
-	// To simplify searching and sorting, all pairs are set up with the pointer value of the
-	// first element greater than the pointer value of the second.
-	if (firstPhys->GetObjectPtr() < secondPhys->GetObjectPtr())
-	{
-		this->firstPhysKey = secondPhys;
-		this->secondPhysKey = firstPhys;
-	}
-	else
-	{
-		this->firstPhysKey = firstPhys;
-		this->secondPhysKey = secondPhys;
-	}
+    // To simplify searching and sorting, all pairs are set up with the pointer value of the
+    // first element greater than the pointer value of the second.
+    if (firstPhys->GetObjectPtr() < secondPhys->GetObjectPtr())
+    {
+        this->firstPhysKey = secondPhys;
+        this->secondPhysKey = firstPhys;
+    }
+    else
+    {
+        this->firstPhysKey = firstPhys;
+        this->secondPhysKey = secondPhys;
+    }
 
-	this->point = point;
-	this->normalForce = normal;
+    this->point = point;
+    this->normalForce = normal;
 }
 
 bool plPhysicsSoundMgr::CollidePair::operator<(const CollidePair& rhs) const
 {
-	return (firstPhysKey->GetObjectPtr() < rhs.firstPhysKey->GetObjectPtr() 
-		|| (rhs.firstPhysKey->GetObjectPtr() == firstPhysKey->GetObjectPtr() && secondPhysKey->GetObjectPtr() < rhs.secondPhysKey->GetObjectPtr()));
+    return (firstPhysKey->GetObjectPtr() < rhs.firstPhysKey->GetObjectPtr() 
+        || (rhs.firstPhysKey->GetObjectPtr() == firstPhysKey->GetObjectPtr() && secondPhysKey->GetObjectPtr() < rhs.secondPhysKey->GetObjectPtr()));
 }
 
 bool plPhysicsSoundMgr::CollidePair::operator==(const CollidePair& rhs) const
 {
-	if (firstPhysKey == rhs.firstPhysKey && secondPhysKey == rhs.secondPhysKey)
-		return true;
-	return false;
+    if (firstPhysKey == rhs.firstPhysKey && secondPhysKey == rhs.secondPhysKey)
+        return true;
+    return false;
 }
 
 plPhysical* plPhysicsSoundMgr::CollidePair::FirstPhysical() const
 {
-	return firstPhysKey ? static_cast<plPhysical*>(firstPhysKey->GetObjectPtr()) : nil;
+    return firstPhysKey ? static_cast<plPhysical*>(firstPhysKey->GetObjectPtr()) : nil;
 }
 
 plPhysical* plPhysicsSoundMgr::CollidePair::SecondPhysical() const
 {
-	return secondPhysKey ? static_cast<plPhysical*>(secondPhysKey->GetObjectPtr()) : nil;
+    return secondPhysKey ? static_cast<plPhysical*>(secondPhysKey->GetObjectPtr()) : nil;
 }

@@ -34,28 +34,28 @@ class plComponentBase;
 
 namespace plPick
 {
-	bool Node(IParamBlock2 *pb, int paramID, std::vector<Class_ID>* cids, bool single, bool canConvertToType);
-	bool Activator(IParamBlock2 *pb, int paramID, bool single);
-	bool GUIDialog(IParamBlock2 *pb, int paramID, bool single);
-	bool ExcludeRegion(IParamBlock2 *pb, int paramID, bool single);
-	bool WaterComponent(IParamBlock2 *pb, int paramID, bool single);
-	bool Swim2DComponent(IParamBlock2 *pb, int paramID, bool single);
-	bool ClusterComponent(IParamBlock2 *pb, int paramID, bool single);
-	bool Animation(IParamBlock2 *pb, int paramID, bool single);
-	bool Behavior(IParamBlock2 *pb, int paramID, bool single);
-	bool GenericClass(IParamBlock2 *pb, int paramID, bool single, Class_ID classIDToPick );
-	bool GrassComponent(IParamBlock2 *pb, int paramID, bool single);
+    bool Node(IParamBlock2 *pb, int paramID, std::vector<Class_ID>* cids, bool single, bool canConvertToType);
+    bool Activator(IParamBlock2 *pb, int paramID, bool single);
+    bool GUIDialog(IParamBlock2 *pb, int paramID, bool single);
+    bool ExcludeRegion(IParamBlock2 *pb, int paramID, bool single);
+    bool WaterComponent(IParamBlock2 *pb, int paramID, bool single);
+    bool Swim2DComponent(IParamBlock2 *pb, int paramID, bool single);
+    bool ClusterComponent(IParamBlock2 *pb, int paramID, bool single);
+    bool Animation(IParamBlock2 *pb, int paramID, bool single);
+    bool Behavior(IParamBlock2 *pb, int paramID, bool single);
+    bool GenericClass(IParamBlock2 *pb, int paramID, bool single, Class_ID classIDToPick );
+    bool GrassComponent(IParamBlock2 *pb, int paramID, bool single);
 
-	// Basically the same as activator, but includes other things with built in detectors (ladder)
-	// that you can enable/disable but shouldn't be triggering off of
-	bool DetectorEnable(IParamBlock2 *pb, int paramID, bool single);
+    // Basically the same as activator, but includes other things with built in detectors (ladder)
+    // that you can enable/disable but shouldn't be triggering off of
+    bool DetectorEnable(IParamBlock2 *pb, int paramID, bool single);
 
-	// Can only pick a target of comp
-	bool CompTargets(IParamBlock2 *pb, int paramID, plComponentBase *comp);
-	// Can only pick a node this material is applied to
-	bool MtlNodes(IParamBlock2* pb, int paramID, Mtl* mtl);
+    // Can only pick a target of comp
+    bool CompTargets(IParamBlock2 *pb, int paramID, plComponentBase *comp);
+    // Can only pick a node this material is applied to
+    bool MtlNodes(IParamBlock2* pb, int paramID, Mtl* mtl);
 
-	bool NodeRefKludge(IParamBlock2 *pb, int paramID, std::vector<Class_ID>* cids, bool single, bool canConvertToType);
+    bool NodeRefKludge(IParamBlock2 *pb, int paramID, std::vector<Class_ID>* cids, bool single, bool canConvertToType);
 }
 
 #endif // plPickNode_h_inc

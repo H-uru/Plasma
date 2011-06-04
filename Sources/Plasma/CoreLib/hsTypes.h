@@ -32,27 +32,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /************************** Other Includes *****************************/
 
 #if !(HS_BUILD_FOR_REFERENCE)
-	#if HS_BUILD_FOR_MAC
-		#include <Types.h>
-		#include <string.h>
-		#include <ctype.h>
-		#include <memory.h>
-	#endif
-		#include <stdlib.h>
-		#include <stdio.h>
-		
+    #if HS_BUILD_FOR_MAC
+        #include <Types.h>
+        #include <string.h>
+        #include <ctype.h>
+        #include <memory.h>
+    #endif
+        #include <stdlib.h>
+        #include <stdio.h>
+        
 #endif
 #if HS_CAN_USE_FLOAT
-	#include <math.h>
+    #include <math.h>
 #endif
 
 
 /************************** Basic Macros *****************************/
 
 #ifdef __cplusplus
-	#define hsCTypeDefStruct(foo)
+    #define hsCTypeDefStruct(foo)
 #else
-	#define hsCTypeDefStruct(foo)		typedef struct foo foo;
+    #define hsCTypeDefStruct(foo)       typedef struct foo foo;
 #endif
 
 /************************** Basic Types *****************************/
@@ -69,156 +69,155 @@ typedef unsigned long long  qword;
 
 typedef size_t              unsigned_ptr;
 
-typedef unsigned short      wchar_t;
 typedef wchar_t             wchar;
 
-#define kPosInfinity16		(32767)
-#define kNegInfinity16		(-32768)
+#define kPosInfinity16      (32767)
+#define kNegInfinity16      (-32768)
 
-#define kPosInfinity32		(0x7fffffff)
-#define kNegInfinity32		(0x80000000)
+#define kPosInfinity32      (0x7fffffff)
+#define kNegInfinity32      (0x80000000)
 
 #if HS_BUILD_FOR_PS2
-typedef int			Int32;
+typedef int         Int32;
 #else
-typedef long			Int32;
+typedef long            Int32;
 #endif
 
-typedef short			Int16;
-typedef signed char		Int8;
+typedef short           Int16;
+typedef signed char     Int8;
 
 #if !(HS_BUILD_FOR_MAC)
-	typedef unsigned char	UInt8;
-	typedef unsigned short	UInt16;
+    typedef unsigned char   UInt8;
+    typedef unsigned short  UInt16;
 #if HS_BUILD_FOR_PS2
-	typedef unsigned int	UInt32;
+    typedef unsigned int    UInt32;
 #else
-	typedef unsigned long	UInt32;
+    typedef unsigned long   UInt32;
 #endif
 
-	#ifndef Byte
-		typedef UInt8		Byte;
-	#endif
+    #ifndef Byte
+        typedef UInt8       Byte;
+    #endif
 
-	#ifndef false
-		#define false		0
-	#endif
-	#ifndef true
-		#define true		1
-	#endif
-	#ifndef Boolean
-		#if HS_BUILD_FOR_UNIX
-			typedef char	Boolean;
-		#else
-			typedef UInt8	Boolean;
-		#endif
-	#endif
+    #ifndef false
+        #define false       0
+    #endif
+    #ifndef true
+        #define true        1
+    #endif
+    #ifndef Boolean
+        #if HS_BUILD_FOR_UNIX
+            typedef char    Boolean;
+        #else
+            typedef UInt8   Boolean;
+        #endif
+    #endif
 #endif
 
 #if HS_BUILD_FOR_WIN32
-	typedef __int64				Int64;
-	typedef unsigned __int64	UInt64;
+    typedef __int64             Int64;
+    typedef unsigned __int64    UInt64;
 #else
-	typedef long long			Int64;
-	typedef unsigned long long	UInt64;
+    typedef long long           Int64;
+    typedef unsigned long long  UInt64;
 #endif
 
-typedef Int32 			hsFixed;
-typedef Int32 			hsFract;
+typedef Int32           hsFixed;
+typedef Int32           hsFract;
 
 #ifdef __cplusplus
 
-typedef int		hsBool;
+typedef int     hsBool;
 
 #endif
 
 #include "hsScalar.h"
 
 #if HS_CAN_USE_FLOAT
-	#define HS_PI		3.1415927
+    #define HS_PI       3.1415927
 #endif
 
 #ifndef nil
 #define nil (0)
 #endif
 
-typedef Int32	hsError;
-typedef UInt32	hsGSeedValue;
+typedef Int32   hsError;
+typedef UInt32  hsGSeedValue;
 
-#define hsOK				0
-#define hsFail				-1
-#define hsFailed(r)			((hsError)(r)<hsOK)
-#define hsSucceeded(r)		((hsError)(r)>=hsOK)
+#define hsOK                0
+#define hsFail              -1
+#define hsFailed(r)         ((hsError)(r)<hsOK)
+#define hsSucceeded(r)      ((hsError)(r)>=hsOK)
 
-#define hsLongAlign(n)		(((n) + 3) & ~3L)
+#define hsLongAlign(n)      (((n) + 3) & ~3L)
 
-#define hsMaximum(a, b)		((a) > (b) ? (a) : (b))
-#define hsMinimum(a, b)		((a) < (b) ? (a) : (b))
-#define hsABS(x)			((x) < 0 ? -(x) : (x))
-#define hsSGN(x) 			(((x) < 0) ? -1 : ( ((x) > 0) ? 1 : 0 ))
+#define hsMaximum(a, b)     ((a) > (b) ? (a) : (b))
+#define hsMinimum(a, b)     ((a) < (b) ? (a) : (b))
+#define hsABS(x)            ((x) < 0 ? -(x) : (x))
+#define hsSGN(x)            (((x) < 0) ? -1 : ( ((x) > 0) ? 1 : 0 ))
 
-#define hsBitTst2Bool(value, mask)		(((value) & (mask)) != 0)
+#define hsBitTst2Bool(value, mask)      (((value) & (mask)) != 0)
 
-#define hsFourByteTag(a, b, c, d)		(((UInt32)(a) << 24) | ((UInt32)(b) << 16) | ((UInt32)(c) << 8) | (d))
+#define hsFourByteTag(a, b, c, d)       (((UInt32)(a) << 24) | ((UInt32)(b) << 16) | ((UInt32)(c) << 8) | (d))
 
 
 /************************** Swap Macros *****************************/
 
 #ifdef __cplusplus
-	inline UInt16 hsSwapEndian16(UInt16 value)
-	{
-		return (value >> 8) | (value << 8);
-	}
-	inline UInt32 hsSwapEndian32(UInt32 value)
-	{
-		return	(value << 24) |
-				((value & 0xFF00) << 8) |
-				((value >> 8) & 0xFF00) |
-				(value >> 24);
-	}
-	#if HS_CAN_USE_FLOAT
-		inline float hsSwapEndianFloat(float fvalue)
-		{
-			UInt32 value = *(UInt32*)&fvalue;
-			value = hsSwapEndian32(value);
-			return *(float*)&value;
-		}
-	#endif
+    inline UInt16 hsSwapEndian16(UInt16 value)
+    {
+        return (value >> 8) | (value << 8);
+    }
+    inline UInt32 hsSwapEndian32(UInt32 value)
+    {
+        return  (value << 24) |
+                ((value & 0xFF00) << 8) |
+                ((value >> 8) & 0xFF00) |
+                (value >> 24);
+    }
+    #if HS_CAN_USE_FLOAT
+        inline float hsSwapEndianFloat(float fvalue)
+        {
+            UInt32 value = *(UInt32*)&fvalue;
+            value = hsSwapEndian32(value);
+            return *(float*)&value;
+        }
+    #endif
 
-	#if HS_CPU_LENDIAN
-		#define hsUNSWAP16(n)	hsSwapEndian16(n)
-		#define hsUNSWAP32(n)	hsSwapEndian32(n)
-		#define hsSWAP16(n)	(n)
-		#define hsSWAP32(n)	(n)
-	#else
-		#define hsUNSWAP16(n)	(n)
-		#define hsUNSWAP32(n)	(n)
-		#define hsSWAP16(n)	hsSwapEndian16(n)
-		#define hsSWAP32(n)	hsSwapEndian32(n)
-	#endif
+    #if HS_CPU_LENDIAN
+        #define hsUNSWAP16(n)   hsSwapEndian16(n)
+        #define hsUNSWAP32(n)   hsSwapEndian32(n)
+        #define hsSWAP16(n) (n)
+        #define hsSWAP32(n) (n)
+    #else
+        #define hsUNSWAP16(n)   (n)
+        #define hsUNSWAP32(n)   (n)
+        #define hsSWAP16(n) hsSwapEndian16(n)
+        #define hsSWAP32(n) hsSwapEndian32(n)
+    #endif
 
-	inline void hsSwap(Int32& a, Int32& b)
-	{
-		Int32	c = a;
-		a = b;
-		b = c;
-	}
+    inline void hsSwap(Int32& a, Int32& b)
+    {
+        Int32   c = a;
+        a = b;
+        b = c;
+    }
 
-	inline void hsSwap(UInt32& a, UInt32& b)
-	{
-		UInt32	c = a;
-		a = b;
-		b = c;
-	}
+    inline void hsSwap(UInt32& a, UInt32& b)
+    {
+        UInt32  c = a;
+        a = b;
+        b = c;
+    }
 
-	#if HS_CAN_USE_FLOAT
-		inline void hsSwap(float& a, float& b)
-		{
-			float	c = a;
-			a = b;
-			b = c;
-		}
-	#endif
+    #if HS_CAN_USE_FLOAT
+        inline void hsSwap(float& a, float& b)
+        {
+            float   c = a;
+            a = b;
+            b = c;
+        }
+    #endif
 #endif
 
 /************************** Color32 Type *****************************/
@@ -226,45 +225,45 @@ typedef UInt32	hsGSeedValue;
 struct hsColor32 {
 
 #if 1 // hsColor32 fixed-format optimization
-	UInt8	b, g, r, a;
+    UInt8   b, g, r, a;
 #else
 #if (HS_BUILD_FOR_WIN32 || HS_BUILD_FOR_BE)
-	UInt8	b, g, r, a;
+    UInt8   b, g, r, a;
 #elif (HS_BUILD_FOR_UNIX && HS_CPU_BENDIAN)
-	UInt8	a, b, g, r;
+    UInt8   a, b, g, r;
 #else
-	UInt8	a, r, g, b;
+    UInt8   a, r, g, b;
 #endif
 #endif
 
 #ifdef __cplusplus
-	void		SetARGB(UInt8 aa, UInt8 rr, UInt8 gg, UInt8 bb)
-			{
-				this->a = aa; this->r = rr; this->g = gg; this->b = bb;
-			}
+    void        SetARGB(UInt8 aa, UInt8 rr, UInt8 gg, UInt8 bb)
+            {
+                this->a = aa; this->r = rr; this->g = gg; this->b = bb;
+            }
 
-	//	Compatibility inlines, should be depricated
-	void		Set(UInt8 rr, UInt8 gg, UInt8 bb)
-			{
-				this->r = rr; this->g = gg; this->b = bb;
-			}
-	void		Set(UInt8 aa, UInt8 rr, UInt8 gg, UInt8 bb)
-			{
-				this->SetARGB(aa, rr, gg, bb);
-			}
+    //  Compatibility inlines, should be depricated
+    void        Set(UInt8 rr, UInt8 gg, UInt8 bb)
+            {
+                this->r = rr; this->g = gg; this->b = bb;
+            }
+    void        Set(UInt8 aa, UInt8 rr, UInt8 gg, UInt8 bb)
+            {
+                this->SetARGB(aa, rr, gg, bb);
+            }
 
 #if 0
-	friend int	operator==(const hsColor32& a, const hsColor32& b)
-			{
-				return *(UInt32*)&a == *(UInt32*)&b;
-			}
-	friend int	operator!=(const hsColor32& a, const hsColor32& b) { return !(a == b); }
+    friend int  operator==(const hsColor32& a, const hsColor32& b)
+            {
+                return *(UInt32*)&a == *(UInt32*)&b;
+            }
+    friend int  operator!=(const hsColor32& a, const hsColor32& b) { return !(a == b); }
 #else
-	int operator==(const hsColor32& aa) const
-	{
-			return *(UInt32*)&aa == *(UInt32*)this;
-	}
-	int	operator!=(const hsColor32& aa) { return !(aa == *this); }
+    int operator==(const hsColor32& aa) const
+    {
+            return *(UInt32*)&aa == *(UInt32*)this;
+    }
+    int operator!=(const hsColor32& aa) { return !(aa == *this); }
 #endif
 #endif
 };
@@ -290,16 +289,6 @@ typedef hsColor32 hsRGBAColor32;
 #else
 # define  NULL_STMT  ((void)0)
 #endif
-
-
-/****************************************************************************
-*
-*   ref
-*   References a variable to prevent compiler warnings
-*
-***/
-
-#define  ref(a)  ((void *)&(a))
 
 
 /****************************************************************************
@@ -460,6 +449,8 @@ void SWAP (T & a, T & b) {
 *
 ***/
 
+#include <stddef.h>
+
 #ifndef  offsetof
 #define  offsetof(s,m)  (size_t)&(((s *)0)->m)
 #endif   // ifndef offsetof
@@ -514,7 +505,7 @@ extern "C" {
 
 typedef void (*hsDebugMessageProc)(const char message[]);
 extern hsDebugMessageProc gHSDebugProc;
-#define HSDebugProc(m)	{ if (gHSDebugProc)	gHSDebugProc(m); }
+#define HSDebugProc(m)  { if (gHSDebugProc) gHSDebugProc(m); }
 hsDebugMessageProc hsSetDebugMessageProc(hsDebugMessageProc newProc);
 
 extern hsDebugMessageProc gHSStatusProc;
@@ -539,10 +530,10 @@ void DebugMsgV (const char fmt[], va_list args);
 
 
 #ifdef HS_DEBUGGING
-	
-	void	hsDebugMessage(const char message[], long refcon);
-	#define hsDebugCode(code)		            code
-	#define hsIfDebugMessage(expr, msg, ref)    (void)( ((expr) != 0) || (hsDebugMessage(msg, ref), 0) )
+    
+    void    hsDebugMessage(const char message[], long refcon);
+    #define hsDebugCode(code)                   code
+    #define hsIfDebugMessage(expr, msg, ref)    (void)( ((expr) != 0) || (hsDebugMessage(msg, ref), 0) )
     #define hsAssert(expr, msg)                 (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, msg), 0) )
     #define ASSERT(expr)                        (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, #expr), 0) )
     #define ASSERTMSG(expr, msg)                (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, msg), 0) )
@@ -551,12 +542,12 @@ void DebugMsgV (const char fmt[], va_list args);
     #define DEBUG_MSGV                          DebugMsgV
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     DebugBreakIfDebuggerPresent
     
-#else	/* Not debugging */
+#else   /* Not debugging */
 
-	#define hsDebugMessage(message, refcon)     NULL_STMT
-	#define hsDebugCode(code)                   /* empty */
-	#define hsIfDebugMessage(expr, msg, ref)    NULL_STMT
-	#define hsAssert(expr, msg)                 NULL_STMT
+    #define hsDebugMessage(message, refcon)     NULL_STMT
+    #define hsDebugCode(code)                   /* empty */
+    #define hsIfDebugMessage(expr, msg, ref)    NULL_STMT
+    #define hsAssert(expr, msg)                 NULL_STMT
     #define ASSERT(expr)                        NULL_STMT
     #define ASSERTMSG(expr, msg)                NULL_STMT
     #define FATAL(msg)                          NULL_STMT
@@ -564,7 +555,7 @@ void DebugMsgV (const char fmt[], va_list args);
     #define DEBUG_MSGV                          NULL_STMT
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     NULL_STMT
 
-#endif	// HS_DEBUGGING
+#endif  // HS_DEBUGGING
 
 
 #ifdef _MSC_VER
@@ -576,8 +567,8 @@ void DebugMsgV (const char fmt[], va_list args);
 
 #ifdef PLASMA_EXTERNAL_RELEASE
 
-	#define hsStatusMessage(x)                  NULL_STMT
-	#define hsStatusMessageF(x,y)               NULL_STMT
+    #define hsStatusMessage(x)                  NULL_STMT
+    #define hsStatusMessageF(x,y)               NULL_STMT
 
 #else   /* Not external release */
 

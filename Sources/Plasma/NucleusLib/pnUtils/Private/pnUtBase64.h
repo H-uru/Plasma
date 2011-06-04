@@ -46,7 +46,8 @@ const unsigned kBase64EncodeBlock    = 4;
 const unsigned kBase64EncodeMultiple = 3;
 
 inline unsigned Base64EncodeSize (unsigned srcChars) {
-    return srcChars * kBase64EncodeBlock / kBase64EncodeMultiple + kBase64EncodeBlock;
+    return (srcChars + kBase64EncodeMultiple - 1) / kBase64EncodeMultiple
+         * kBase64EncodeBlock;
 }
 unsigned Base64Encode (
     unsigned    srcChars,
@@ -55,8 +56,10 @@ unsigned Base64Encode (
     char *      dstData
 );
 
-inline unsigned Base64DecodeSize (unsigned srcChars) {
-    return srcChars * kBase64EncodeMultiple / kBase64EncodeBlock + kBase64EncodeMultiple;
+inline unsigned Base64DecodeSize (unsigned srcChars, const char srcData[]) {
+    return srcChars * kBase64EncodeMultiple / kBase64EncodeBlock
+         - ((srcChars >= 1 && srcData[srcChars - 1] == '=') ? 1 : 0)
+         - ((srcChars >= 2 && srcData[srcChars - 2] == '=') ? 1 : 0);
 }
 unsigned Base64Decode (
     unsigned    srcChars,

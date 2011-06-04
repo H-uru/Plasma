@@ -36,64 +36,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 
 class pyScoreMgr
 {
 public:
-	pyScoreMgr();
-	~pyScoreMgr();
+    pyScoreMgr();
+    ~pyScoreMgr();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptScoreMgr);
-	PYTHON_CLASS_NEW_DEFINITION;
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyScoreMgr object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyScoreMgr); // converts a PyObject to a pyScoreMgr (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptScoreMgr);
+    PYTHON_CLASS_NEW_DEFINITION;
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyScoreMgr object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyScoreMgr); // converts a PyObject to a pyScoreMgr (throws error if not correct type)
 
-	static void		AddPlasmaClasses(PyObject *m);
-	static void		AddPlasmaConstantsClasses(PyObject *m);
+    static void     AddPlasmaClasses(PyObject *m);
+    static void     AddPlasmaConstantsClasses(PyObject *m);
 
-	bool DeleteScore(unsigned scoreId);
+    bool DeleteScore(unsigned scoreId);
 
-	PyObject* CreateGlobalScore(
-		const char *	gameName,
-		unsigned		gameType,
-		int				value
-	);
-	PyObject* GetGlobalScores(const char* gameName);
+    PyObject* CreateGlobalScore(
+        const char *    gameName,
+        unsigned        gameType,
+        int             value
+    );
+    PyObject* GetGlobalScores(const char* gameName);
 
-	PyObject* CreatePlayerScore(
-		const char *	gameName,
-		unsigned		gameType,
-		int				value
-	);
-	PyObject* GetPlayerScores(const char* gameName);
+    PyObject* CreatePlayerScore(
+        const char *    gameName,
+        unsigned        gameType,
+        int             value
+    );
+    PyObject* GetPlayerScores(const char* gameName);
 
-	PyObject* CreateNeighborhoodScore(
-		const char *	gameName,
-		unsigned		gameType,
-		int				value
-	);
-	PyObject* GetNeighborhoodScores(const char* gameName);
+    PyObject* CreateNeighborhoodScore(
+        const char *    gameName,
+        unsigned        gameType,
+        int             value
+    );
+    PyObject* GetNeighborhoodScores(const char* gameName);
 
-	PyObject* CreateCurrentAgeScore(
-		const char *	gameName,
-		unsigned		gameType,
-		int				value
-	);
-	PyObject* GetCurrentAgeScores(const char* gameName);
+    PyObject* CreateCurrentAgeScore(
+        const char *    gameName,
+        unsigned        gameType,
+        int             value
+    );
+    PyObject* GetCurrentAgeScores(const char* gameName);
 
-	PyObject * GetRankList(
-		unsigned		scoreGroup,
-		unsigned		parentFolderId,
-		const char *	gameName,
-		unsigned		timePeriod,
-		unsigned		numResults,
-		unsigned		pageNumber,
-		bool			sortDesc
-	);
+    PyObject * GetRankList(
+        unsigned        scoreGroup,
+        unsigned        parentFolderId,
+        const char *    gameName,
+        unsigned        timePeriod,
+        unsigned        numResults,
+        unsigned        pageNumber,
+        bool            sortDesc
+    );
 };
 
 #endif

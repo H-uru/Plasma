@@ -32,127 +32,127 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 template <class T> class hsTempPointer {
 private:
-	T**			fArray;
+    T**         fArray;
 
-	UInt32		fCurrBlock;
-	UInt32		fNumBlockAlloc;
-	
-	UInt32		fCurrElem;
-	UInt32		fNumElemAlloc;
+    UInt32      fCurrBlock;
+    UInt32      fNumBlockAlloc;
+    
+    UInt32      fCurrElem;
+    UInt32      fNumElemAlloc;
 
-	UInt32		fGrowBy; // def = 0, to double
-	UInt32		fMinSize; // def = 1
+    UInt32      fGrowBy; // def = 0, to double
+    UInt32      fMinSize; // def = 1
 
-	hsTempPointer<T>& operator=(const hsTempPointer<T>&);
+    hsTempPointer<T>& operator=(const hsTempPointer<T>&);
 
-	void		IConsolidate();
-	void		IGrow();
+    void        IConsolidate();
+    void        IGrow();
 
 public:
-	hsTempPointer(UInt32 minSize = 1, UInt32 growBy = 0);
-	~hsTempPointer();
+    hsTempPointer(UInt32 minSize = 1, UInt32 growBy = 0);
+    ~hsTempPointer();
 
-	void		Reset();
+    void        Reset();
 
-	T*			Next();
-	T*			Array(int n);
+    T*          Next();
+    T*          Array(int n);
 };
 
 template <class T>
 hsTempPointer<T>::~hsTempPointer()
 {
-	int i;
-	for( i = 0; i <= fCurrBlock; i++ )
-		delete [] fArray[i];
-	delete [] fArray;
+    int i;
+    for( i = 0; i <= fCurrBlock; i++ )
+        delete [] fArray[i];
+    delete [] fArray;
 }
 
 template <class T>
 hsTempPointer<T>::hsTempPointer(UInt32 minSize, UInt32 growBy)
 {
-	fGrowBy = growBy;
-	fMinSize = minSize;
+    fGrowBy = growBy;
+    fMinSize = minSize;
 
-	fArray = TRACKED_NEW T*[2];
-	fNumBlockAlloc = 2;
-	fCurrBlock = 0;
+    fArray = TRACKED_NEW T*[2];
+    fNumBlockAlloc = 2;
+    fCurrBlock = 0;
 
-	fArray[fCurrBlock] = TRACKED_NEW T[fMinSize];
-	fNumElemAlloc = minSize;
+    fArray[fCurrBlock] = TRACKED_NEW T[fMinSize];
+    fNumElemAlloc = minSize;
 
-	fCurrElem = 0;
+    fCurrElem = 0;
 }
 
 
 template <class T>
 void hsTempPointer<T>::IConsolidate()
 {
-	hsAssert(fCurrBlock > 0, "Shouldn't consolidate when nothing to do");
+    hsAssert(fCurrBlock > 0, "Shouldn't consolidate when nothing to do");
 
-	UInt32 numUsed = fCurrBlock * fNumElemAlloc + fCurrElem;
+    UInt32 numUsed = fCurrBlock * fNumElemAlloc + fCurrElem;
 
-	UInt32 newSize = fNumElemAlloc;
-	if( !fGrowBy )
-	{
-		while( newSize <= numUsed )
-			newSize <<= 1;
-	}
-	else
-	{
-		while( newSize <= numUsed )
-			newSize += fGrowBy;
-	}
-	int i;
-	for( i = 0; i <= fCurrBlock; i++ )
-		delete [] fArray[i];
+    UInt32 newSize = fNumElemAlloc;
+    if( !fGrowBy )
+    {
+        while( newSize <= numUsed )
+            newSize <<= 1;
+    }
+    else
+    {
+        while( newSize <= numUsed )
+            newSize += fGrowBy;
+    }
+    int i;
+    for( i = 0; i <= fCurrBlock; i++ )
+        delete [] fArray[i];
 
-	fArray[0] = TRACKED_NEW T[newSize];
-	fNumElemAlloc = newSize;
-	fCurrElem = 0;
-	fCurrBlock = 0;
+    fArray[0] = TRACKED_NEW T[newSize];
+    fNumElemAlloc = newSize;
+    fCurrElem = 0;
+    fCurrBlock = 0;
 }
 
 template <class T>
 void hsTempPointer<T>::IGrow()
 {
-	if( ++fCurrBlock >= fNumBlockAlloc )
-	{
-		T** newBlockArray = TRACKED_NEW T*[fNumBlockAlloc <<= 1];
-		HSMemory::BlockMove(fArray, newBlockArray, fCurrBlock * sizeof(*fArray));
-		delete [] fArray;
-		fArray = newBlockArray;
-	}
-	fArray[fCurrBlock] = TRACKED_NEW T[fNumElemAlloc];
-	fCurrElem = 0;
+    if( ++fCurrBlock >= fNumBlockAlloc )
+    {
+        T** newBlockArray = TRACKED_NEW T*[fNumBlockAlloc <<= 1];
+        HSMemory::BlockMove(fArray, newBlockArray, fCurrBlock * sizeof(*fArray));
+        delete [] fArray;
+        fArray = newBlockArray;
+    }
+    fArray[fCurrBlock] = TRACKED_NEW T[fNumElemAlloc];
+    fCurrElem = 0;
 
 }
 
 template <class T>
 T* hsTempPointer<T>::Next()
 {
-	if( fCurrElem >= fNumElemAlloc )
-		IGrow();
-	return fArray[fCurrBlock] + fCurrElem++;
+    if( fCurrElem >= fNumElemAlloc )
+        IGrow();
+    return fArray[fCurrBlock] + fCurrElem++;
 }
 
 template <class T>
 T* hsTempPointer<T>::Array(int n)
 {
-	// minSize (on constructor) should be greater than max n
-	hsDebugCode(hsThrowIfBadParam((UInt32)n > (UInt32)fNumElemAlloc);)
-	if( fCurrElem + n >= fNumElemAlloc )
-		IGrow();
-	int idx = fCurrElem;
-	fCurrElem += n;
-	return fArray[fCurrBlock] + idx;
+    // minSize (on constructor) should be greater than max n
+    hsDebugCode(hsThrowIfBadParam((UInt32)n > (UInt32)fNumElemAlloc);)
+    if( fCurrElem + n >= fNumElemAlloc )
+        IGrow();
+    int idx = fCurrElem;
+    fCurrElem += n;
+    return fArray[fCurrBlock] + idx;
 }
 
 template <class T>
 void hsTempPointer<T>::Reset()
 {
-	if( fCurrBlock > 0 )
-		IConsolidate();
-	fCurrElem = 0;
+    if( fCurrBlock > 0 )
+        IConsolidate();
+    fCurrElem = 0;
 }
 
 #endif // hsTempPointer_inc

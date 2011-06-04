@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plDistOpacityMod_inc
 
 #include "hsGeometry3.h"
-#include "../pnModifier/plSingleModifier.h"
+#include "pnModifier/plSingleModifier.h"
 #include "hsTemplates.h"
 
 class plPipeline;
@@ -40,73 +40,73 @@ class plDistOpacityMod : public plSingleModifier
 {
 public:
 
-	enum {
-		kTrackAvatar,
-		kTrackCamera
-	};
+    enum {
+        kTrackAvatar,
+        kTrackCamera
+    };
 protected:
 
-	enum {
-		kRefFadeLay
-	};
+    enum {
+        kRefFadeLay
+    };
 
-	// Volatile flag, whether we're setup yet or not.
-	UInt8			fSetup;
+    // Volatile flag, whether we're setup yet or not.
+    UInt8           fSetup;
 
-	enum {
-		kNearTrans,
-		kNearOpaq,
-		kFarOpaq,
-		kFarTrans,
+    enum {
+        kNearTrans,
+        kNearOpaq,
+        kFarOpaq,
+        kFarTrans,
 
-		kNumDists
-	};
-	hsScalar		fDists[kNumDists];
+        kNumDists
+    };
+    hsScalar        fDists[kNumDists];
 
-	hsPoint3		fRefPos;
+    hsPoint3        fRefPos;
 
-	hsTArray<plFadeOpacityLay*> fFadeLays;
+    hsTArray<plFadeOpacityLay*> fFadeLays;
 
-	// We only act in response to messages.
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    // We only act in response to messages.
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
 
-	hsScalar ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const;
-	void ISetOpacity();
+    hsScalar ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const;
+    void ISetOpacity();
 
-	void ISetup();
+    void ISetup();
 
-	void ICheckDists()
-	{
-		hsAssert(fDists[kNearTrans] <= fDists[kNearOpaq], "Bad transition values");
-		hsAssert(fDists[kNearOpaq] <= fDists[kFarOpaq], "Bad transition values");
-		hsAssert(fDists[kFarOpaq] <= fDists[kFarTrans], "Bad transition values");
-	}
+    void ICheckDists()
+    {
+        hsAssert(fDists[kNearTrans] <= fDists[kNearOpaq], "Bad transition values");
+        hsAssert(fDists[kNearOpaq] <= fDists[kFarOpaq], "Bad transition values");
+        hsAssert(fDists[kFarOpaq] <= fDists[kFarTrans], "Bad transition values");
+    }
 
 public:
-	plDistOpacityMod();
-	virtual ~plDistOpacityMod();
+    plDistOpacityMod();
+    virtual ~plDistOpacityMod();
 
-	CLASSNAME_REGISTER( plDistOpacityMod );
-	GETINTERFACE_ANY( plDistOpacityMod, plSingleModifier );
+    CLASSNAME_REGISTER( plDistOpacityMod );
+    GETINTERFACE_ANY( plDistOpacityMod, plSingleModifier );
 
-	virtual void			SetKey(plKey k);
+    virtual void            SetKey(plKey k);
 
-	virtual hsBool			MsgReceive(plMessage* msg);
+    virtual hsBool          MsgReceive(plMessage* msg);
 
-	virtual void			Read(hsStream* s, hsResMgr* mgr);
-	virtual void			Write(hsStream* s, hsResMgr* mgr);
+    virtual void            Read(hsStream* s, hsResMgr* mgr);
+    virtual void            Write(hsStream* s, hsResMgr* mgr);
 
-	virtual void			SetTarget(plSceneObject* so);
+    virtual void            SetTarget(plSceneObject* so);
 
-	// Rules are:
-	// NearTrans <= NearOpaq <= FarOpaque <= FarTrans
-	void SetFarDist(hsScalar opaque, hsScalar transparent);
-	void SetNearDist(hsScalar transparent, hsScalar opaque);
+    // Rules are:
+    // NearTrans <= NearOpaq <= FarOpaque <= FarTrans
+    void SetFarDist(hsScalar opaque, hsScalar transparent);
+    void SetNearDist(hsScalar transparent, hsScalar opaque);
 
-	hsScalar GetFarTransparent() const { return fDists[kFarTrans]; }
-	hsScalar GetNearTransparent() const { return fDists[kNearTrans]; }
-	hsScalar GetFarOpaque() const { return fDists[kFarOpaq]; }
-	hsScalar GetNearOpaque() const { return fDists[kNearOpaq]; }
+    hsScalar GetFarTransparent() const { return fDists[kFarTrans]; }
+    hsScalar GetNearTransparent() const { return fDists[kNearTrans]; }
+    hsScalar GetFarOpaque() const { return fDists[kFarOpaq]; }
+    hsScalar GetNearOpaque() const { return fDists[kNearOpaq]; }
 };
 
 #endif // plDistOpacityMod_inc

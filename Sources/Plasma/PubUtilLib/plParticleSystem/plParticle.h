@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plParticle_inc
 
 #include "hsGeometry3.h"
-#include "../CoreLib/hsColorRGBA.h"
+#include "hsColorRGBA.h"
 
 // The meat of the particle. These classes, in combination with the plParticleEmitter that spawned it,
 // should contain everything specific to a particle, necessary to build a renderable poly to represent a 
@@ -37,18 +37,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // For any reference in this object to a particle's poly vertices, the structure is as follows:
 /*
 
-		|---| "HSize"
+        |---| "HSize"
 
-	V3-----V2  -
-	|     / |  | "VSize"
-	|    /  |  |
-	|   P   |  -
-	|  /    |
-	| /     |  ("P" is the current position of the particle)
-	V0-----V1
+    V3-----V2  -
+    |     / |  | "VSize"
+    |    /  |  |
+    |   P   |  -
+    |  /    |
+    | /     |  ("P" is the current position of the particle)
+    V0-----V1
 
-	So the vertices are arranged counter-clockwise, starting in the lower-left corner. Order all other attributes
-	accordingly.
+    So the vertices are arranged counter-clockwise, starting in the lower-left corner. Order all other attributes
+    accordingly.
 
 */
 
@@ -65,34 +65,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plParticleCore
 {
 public:
-	hsPoint3 fPos;
-	UInt32 fColor; // Particle opacity goes into the color's alpha.
-	hsPoint3 fOrientation; // fMiscFlags determines how this should be used.
-	hsVector3 fNormal;
-	hsScalar fHSize, fVSize; // distance from the heart of the particle to the borders of its poly.
-	hsPoint3 fUVCoords[4];
+    hsPoint3 fPos;
+    UInt32 fColor; // Particle opacity goes into the color's alpha.
+    hsPoint3 fOrientation; // fMiscFlags determines how this should be used.
+    hsVector3 fNormal;
+    hsScalar fHSize, fVSize; // distance from the heart of the particle to the borders of its poly.
+    hsPoint3 fUVCoords[4];
 };
 
 class plParticleExt
 {
 public:
-	//hsPoint3 fOldPos;
-	hsVector3 fVelocity;
-	hsScalar fInvMass; // The inverse (1 / mass) is what we actually need for calculations. Storing it this
-					   // way allows us to make an object immovable with an inverse mass of 0 (and save a divide).
-	hsVector3 fAcceleration; // Accumulated from multiple forces.
-	hsScalar fLife; // how many seconds before we recycle this? (My particle has more of a life than I do...)
-	hsScalar fStartLife;
-	hsScalar fScale;
-	hsScalar fRadsPerSec;
-	//UInt32 fOrigColor;
+    //hsPoint3 fOldPos;
+    hsVector3 fVelocity;
+    hsScalar fInvMass; // The inverse (1 / mass) is what we actually need for calculations. Storing it this
+                       // way allows us to make an object immovable with an inverse mass of 0 (and save a divide).
+    hsVector3 fAcceleration; // Accumulated from multiple forces.
+    hsScalar fLife; // how many seconds before we recycle this? (My particle has more of a life than I do...)
+    hsScalar fStartLife;
+    hsScalar fScale;
+    hsScalar fRadsPerSec;
+    //UInt32 fOrigColor;
 
-	enum // Miscellaneous flags for particles
-	{
-		kImmortal					= 0x00000001,
-	};
-	UInt32 fMiscFlags;	// I know... 32 bits for a single flag...
-						// Feel free to change this if you've got something to pack it against.
+    enum // Miscellaneous flags for particles
+    {
+        kImmortal                   = 0x00000001,
+    };
+    UInt32 fMiscFlags;  // I know... 32 bits for a single flag...
+                        // Feel free to change this if you've got something to pack it against.
 };
 
 #endif

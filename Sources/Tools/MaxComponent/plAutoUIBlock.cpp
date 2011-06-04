@@ -35,32 +35,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plAutoUIBlock::plAutoUIBlock(plComponentClassDesc *cd, int blockID, const char *name, int version)
 {
-	fName = hsStrcpy(name);
-	fVersion = version;
-	fDesc = TRACKED_NEW ParamBlockDesc2(blockID, "Auto", IDS_COMP_AUTO, cd, 0, end);
-	fIsMultiModifier = false;
+    fName = hsStrcpy(name);
+    fVersion = version;
+    fDesc = TRACKED_NEW ParamBlockDesc2(blockID, "Auto", IDS_COMP_AUTO, cd, 0, end);
+    fIsMultiModifier = false;
 }
 
 int plAutoUIBlock::NumParams()
 {
-	return fParams.size();
+    return fParams.size();
 }
 
 plAutoUIParam *plAutoUIBlock::GetParam(int idx)
 {
-	if (idx < fParams.size())
-		return fParams[idx];
+    if (idx < fParams.size())
+        return fParams[idx];
 
-	hsAssert(0, "Param index out of range");
-	return nil;
+    hsAssert(0, "Param index out of range");
+    return nil;
 }
 
 IParamBlock2 *plAutoUIBlock::CreatePB()
 {
-	return CreateParameterBlock2(fDesc, nil);
+    return CreateParameterBlock2(fDesc, nil);
 }
 
 int plAutoUIBlock::GetBlockID()
 {
-	return fDesc->ID;
+    return fDesc->ID;
 }

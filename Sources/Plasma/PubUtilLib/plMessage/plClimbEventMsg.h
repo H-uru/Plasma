@@ -26,19 +26,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClimbEventMsg_h_inc
 #define plClimbEventMsg_h_inc
 
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 
 
 class plClimbEventMsg : public plMessage
 {
 public:
-	plClimbEventMsg(){;}
-	virtual ~plClimbEventMsg(){;}
-	CLASSNAME_REGISTER(plClimbEventMsg);
-	GETINTERFACE_ANY(plClimbEventMsg, plMessage);
-	virtual void Read(hsStream* stream, hsResMgr* mgr){plMessage::IMsgRead(stream,mgr);}
-	virtual void Write(hsStream* stream, hsResMgr* mgr){plMessage::IMsgWrite(stream,mgr);}
+    plClimbEventMsg(){;}
+    virtual ~plClimbEventMsg(){;}
+    CLASSNAME_REGISTER(plClimbEventMsg);
+    GETINTERFACE_ANY(plClimbEventMsg, plMessage);
+    virtual void Read(hsStream* stream, hsResMgr* mgr){plMessage::IMsgRead(stream,mgr);}
+    virtual void Write(hsStream* stream, hsResMgr* mgr){plMessage::IMsgWrite(stream,mgr);}
 };
 
 #endif // plClimbEventMsg_h_inc

@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define  SORTARRAYTYPE(type)                      TSortArray< type, TArrayCopyBits< type >, type, 0>
 #define  SORTARRAYTYPEOBJ(type)                   TSortArray< type, TArrayCopyObject< type >, type, 0>
 
-#define  ARR_MEMORY_FLAGS		0 /*| kMemIgnoreBlock*/
+#define  ARR_MEMORY_FLAGS       0 /*| kMemIgnoreBlock*/
 
 
 /****************************************************************************
@@ -275,12 +275,12 @@ template<class T>
 class TArrayCopyBits {
 public:
     inline static void Assign (T * dest, const T source[], unsigned count);
-    inline static void Construct (T * dest) { ref(dest); }
-    inline static void Construct (T * dest, unsigned count) { ref(dest); ref(count); }
+    inline static void Construct (T * dest) { }
+    inline static void Construct (T * dest, unsigned count) { }
     inline static void CopyConstruct (T * dest, const T & source);
     inline static void CopyConstruct (T * dest, const T source[], unsigned count);
-    inline static void Destruct (T * dest) { ref(dest); }
-    inline static void Destruct (T * dest, unsigned count) { ref(dest); ref(count); }
+    inline static void Destruct (T * dest) { }
+    inline static void Destruct (T * dest, unsigned count) { }
 };
 
 //===========================================================================
@@ -362,14 +362,12 @@ void TArrayCopyObject<T>::CopyConstruct (T * dest, const T source[], unsigned co
 //===========================================================================
 template<class T>
 void TArrayCopyObject<T>::Destruct (T * dest) {
-    ref(dest);
     dest->~T();
 }
 
 //===========================================================================
 template<class T>
 void TArrayCopyObject<T>::Destruct (T * dest, unsigned count) {
-    ref(dest);
     for (unsigned loop = count; loop--; )
         dest[loop].~T();
 }

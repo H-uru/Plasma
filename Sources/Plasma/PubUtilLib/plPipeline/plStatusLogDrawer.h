@@ -24,15 +24,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plStatusLogDrawer class													//
-//																			//
+//                                                                          //
+//  plStatusLogDrawer class                                                 //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plStatusLogDrawer_h
 #define _plStatusLogDrawer_h
 
-#include "../plStatusLog/plStatusLog.h"
+#include "plStatusLog/plStatusLog.h"
 
 
 //// plStatusLogDrawer Class Definition ////////////////////////////////////////////
@@ -40,17 +40,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plPipeline;
 class plStatusLogDrawer : public plStatusLogDrawerStub
 {
-	protected:
-		plPipeline	*fPipeline;
+    protected:
+        plPipeline  *fPipeline;
 
-		void IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog);
+        void IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog);
 
-	public:
+    public:
 
-		plStatusLogDrawer( plPipeline *pipe ) : fPipeline( pipe ) {}
-		virtual ~plStatusLogDrawer() {}
+        plStatusLogDrawer( plPipeline *pipe ) : fPipeline( pipe ) {}
+        virtual ~plStatusLogDrawer() {}
 
-		virtual void	Draw(plStatusLog* curLog, plStatusLog* firstLog);
+        virtual void    Draw(plStatusLog* curLog, plStatusLog* firstLog);
 };
 
 

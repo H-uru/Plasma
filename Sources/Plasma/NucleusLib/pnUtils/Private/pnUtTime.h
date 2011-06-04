@@ -71,9 +71,9 @@ void TimeGetElapsedDesc (
 );
 
 void TimePrettyPrint (
-	qword       time,
-	unsigned    chars,
-	wchar *     buffer
+    qword       time,
+    unsigned    chars,
+    wchar *     buffer
 );
 
 
@@ -109,5 +109,5 @@ dword TimeGetSecondsSince1970Utc ();
 // These magic numbers taken from Microsoft's "Shared Source CLI implementation" source code.
 // http://msdn.microsoft.com/library/en-us/Dndotnet/html/mssharsourcecli.asp
 
-static const qword kTime1601To1970	= 11644473600 * kTimeIntervalsPerSecond;
-static const qword kTime1601To2001	= 12622780800 * kTimeIntervalsPerSecond;
+static const qword kTime1601To1970  = 11644473600 * kTimeIntervalsPerSecond;
+static const qword kTime1601To2001  = 12622780800 * kTimeIntervalsPerSecond;

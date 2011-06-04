@@ -46,56 +46,56 @@ typedef bool(*ActionCallbackFunc)(int);
 
 class ActionTableMgrCB : public ActionCallback
 {
-	ActionCallbackFunc fCallbackFunc;
+    ActionCallbackFunc fCallbackFunc;
 
 public:
-	ActionTableMgrCB(ActionCallbackFunc cbFunc) {fCallbackFunc = cbFunc;}
+    ActionTableMgrCB(ActionCallbackFunc cbFunc) {fCallbackFunc = cbFunc;}
 
-	BOOL ExecuteAction(int id) { return fCallbackFunc(id) ? TRUE : FALSE; }
+    BOOL ExecuteAction(int id) { return fCallbackFunc(id) ? TRUE : FALSE; }
 };
 
 
 class ActionTableInfo
 {
-	friend class plActionTableMgr;
+    friend class plActionTableMgr;
 
 private:
-	ActionTableMgrCB* ActionCB;
-	bool Created;
+    ActionTableMgrCB* ActionCB;
+    bool Created;
 
 public:
-	ActionTableId TableId;
-	ActionContextId ContextId;
-	TSTR Name;
+    ActionTableId TableId;
+    ActionContextId ContextId;
+    TSTR Name;
 
-	std::vector<ActionDescription> Actions;
+    std::vector<ActionDescription> Actions;
 
-	ActionTableInfo(ActionTableId actionId, TCHAR* name, ActionDescription actions[], int numActions)
-	{
-		TableId = actionId;
-		ContextId = actionId;
-		Name = name;
-		Created = false;
-		ActionCB = NULL;
+    ActionTableInfo(ActionTableId actionId, TCHAR* name, ActionDescription actions[], int numActions)
+    {
+        TableId = actionId;
+        ContextId = actionId;
+        Name = name;
+        Created = false;
+        ActionCB = NULL;
 
-		for(int i = 0; i < numActions; i++)
-		{
-			Actions.push_back(actions[i]);
-		}
-	}
+        for(int i = 0; i < numActions; i++)
+        {
+            Actions.push_back(actions[i]);
+        }
+    }
 
-	ActionTableInfo()
-	{
-		TableId = 0;
-		ContextId = 0;
-		Created = false;
-		ActionCB = NULL;
-	}
+    ActionTableInfo()
+    {
+        TableId = 0;
+        ContextId = 0;
+        Created = false;
+        ActionCB = NULL;
+    }
 
-	virtual ~ActionTableInfo()
-	{
-		delete ActionCB;
-	}
+    virtual ~ActionTableInfo()
+    {
+        delete ActionCB;
+    }
 };
 
 
@@ -106,20 +106,20 @@ public:
 
 class plActionTableMgr
 {
-	std::vector<ActionTableInfo*> fActionTables;
+    std::vector<ActionTableInfo*> fActionTables;
 
 public:
-	plActionTableMgr(ActionTableInfo& actionTable, ActionCallbackFunc cbFunc);
-	virtual ~plActionTableMgr();
+    plActionTableMgr(ActionTableInfo& actionTable, ActionCallbackFunc cbFunc);
+    virtual ~plActionTableMgr();
 
-	void AddActionTable(ActionTableInfo& actionTable, ActionCallbackFunc cbFunc);
+    void AddActionTable(ActionTableInfo& actionTable, ActionCallbackFunc cbFunc);
 
-	int NumActionTables() { return fActionTables.size(); }
-	ActionTable* GetActionTable(int i);
+    int NumActionTables() { return fActionTables.size(); }
+    ActionTable* GetActionTable(int i);
 
 private:
-	static void SysStartup(void *param, NotifyInfo *info);
-	static void SysShutdown(void *param, NotifyInfo *info);
+    static void SysStartup(void *param, NotifyInfo *info);
+    static void SysShutdown(void *param, NotifyInfo *info);
 };
 
 

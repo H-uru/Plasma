@@ -35,9 +35,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeLinkStruct.h"
 #include "pySpawnPointInfo.h"
 
-#include "../plVault/plVault.h"
+#include "plVault/plVault.h"
 
-#include "../plNetCommon/plSpawnPointInfo.h"
+#include "plNetCommon/plSpawnPointInfo.h"
 
 // should only be created from C++ side
 pyVaultAgeLinkNode::pyVaultAgeLinkNode(RelVaultNode* nfsNode)
@@ -49,7 +49,7 @@ pyVaultAgeLinkNode::pyVaultAgeLinkNode(RelVaultNode* nfsNode)
 pyVaultAgeLinkNode::pyVaultAgeLinkNode(int n)
 : pyVaultNode(NEWZERO(RelVaultNode))
 {
-	fNode->SetNodeType(plVault::kNodeType_AgeLink);
+    fNode->SetNodeType(plVault::kNodeType_AgeLink);
 }
 
 
@@ -59,138 +59,138 @@ pyVaultAgeLinkNode::pyVaultAgeLinkNode(int n)
 
 PyObject* pyVaultAgeLinkNode::GetAgeInfo() const
 {
-	if (!fNode)
-		PYTHON_RETURN_NONE;
+    if (!fNode)
+        PYTHON_RETURN_NONE;
 
-	PyObject * result = nil;		
-	if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1)) {
-		result = pyVaultAgeInfoNode::New(rvn);
-		rvn->DecRef();
-	}
-	
-	if (result)
-		return result;
-		
-	PYTHON_RETURN_NONE;
+    PyObject * result = nil;        
+    if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1)) {
+        result = pyVaultAgeInfoNode::New(rvn);
+        rvn->DecRef();
+    }
+    
+    if (result)
+        return result;
+        
+    PYTHON_RETURN_NONE;
 }
 
 
 void pyVaultAgeLinkNode::SetLocked( bool v )
 {
-	if (!fNode)
-		return;
-		
-	VaultAgeLinkNode access(fNode);
-	access.SetUnlocked(!v);
+    if (!fNode)
+        return;
+        
+    VaultAgeLinkNode access(fNode);
+    access.SetUnlocked(!v);
 }
 
 bool pyVaultAgeLinkNode::GetLocked() const
 {
-	if (!fNode)
-		return false;
+    if (!fNode)
+        return false;
 
-	VaultAgeLinkNode access(fNode);
-	return !access.unlocked;
+    VaultAgeLinkNode access(fNode);
+    return !access.unlocked;
 }
 
 void pyVaultAgeLinkNode::SetVolatile( bool v )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultAgeLinkNode access(fNode);
-	access.SetVolatile(v);
+    VaultAgeLinkNode access(fNode);
+    access.SetVolatile(v);
 }
 
 bool pyVaultAgeLinkNode::GetVolatile() const
 {
-	if (!fNode)
-		return false;
+    if (!fNode)
+        return false;
 
-	VaultAgeLinkNode access(fNode);
-	return access.volat;
+    VaultAgeLinkNode access(fNode);
+    return access.volat;
 }
 
 void pyVaultAgeLinkNode::AddSpawnPoint( pySpawnPointInfo & point )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultAgeLinkNode access(fNode);
-	access.AddSpawnPoint(point.fInfo);
+    VaultAgeLinkNode access(fNode);
+    access.AddSpawnPoint(point.fInfo);
 }
 
 void pyVaultAgeLinkNode::AddSpawnPointRef( pySpawnPointInfoRef & point )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultAgeLinkNode access(fNode);
-	access.AddSpawnPoint(point.fInfo);
+    VaultAgeLinkNode access(fNode);
+    access.AddSpawnPoint(point.fInfo);
 }
 
 void pyVaultAgeLinkNode::RemoveSpawnPoint( pySpawnPointInfo & point )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultAgeLinkNode access(fNode);
-	access.RemoveSpawnPoint(point.GetName());
+    VaultAgeLinkNode access(fNode);
+    access.RemoveSpawnPoint(point.GetName());
 }
 
 void pyVaultAgeLinkNode::RemoveSpawnPointRef( pySpawnPointInfoRef & point )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultAgeLinkNode access(fNode);
-	access.RemoveSpawnPoint(point.GetName());
+    VaultAgeLinkNode access(fNode);
+    access.RemoveSpawnPoint(point.GetName());
 }
 
 void pyVaultAgeLinkNode::RemoveSpawnPointByName( const char * spawnPtName )
 {
-	if (!fNode)
-		return;
+    if (!fNode)
+        return;
 
-	VaultAgeLinkNode access(fNode);
-	access.RemoveSpawnPoint(spawnPtName);
+    VaultAgeLinkNode access(fNode);
+    access.RemoveSpawnPoint(spawnPtName);
 }
 
 bool pyVaultAgeLinkNode::HasSpawnPoint( const char * spawnPtName ) const
 {
-	if (!fNode)
-		return false;
+    if (!fNode)
+        return false;
 
-	VaultAgeLinkNode access(fNode);
-	return access.HasSpawnPoint(spawnPtName);
+    VaultAgeLinkNode access(fNode);
+    return access.HasSpawnPoint(spawnPtName);
 }
 
 PyObject * pyVaultAgeLinkNode::GetSpawnPoints() const
 {
-	PyObject* pyEL = PyList_New(0);
+    PyObject* pyEL = PyList_New(0);
 
-	if (!fNode)
-		return pyEL;
+    if (!fNode)
+        return pyEL;
 
-	plSpawnPointVec points;
-	VaultAgeLinkNode access(fNode);
-	access.GetSpawnPoints(&points);
-	for (unsigned i = 0; i < points.size(); ++i) {
-		PyObject* elementObj = pySpawnPointInfo::New(points[i]);
-		PyList_Append(pyEL, elementObj);
-		Py_DECREF(elementObj);
-	}
+    plSpawnPointVec points;
+    VaultAgeLinkNode access(fNode);
+    access.GetSpawnPoints(&points);
+    for (unsigned i = 0; i < points.size(); ++i) {
+        PyObject* elementObj = pySpawnPointInfo::New(points[i]);
+        PyList_Append(pyEL, elementObj);
+        Py_DECREF(elementObj);
+    }
 
-	return pyEL;
+    return pyEL;
 }
 
 PyObject * pyVaultAgeLinkNode::AsAgeLinkStruct() const
 {
-	if (!fNode)
-		PYTHON_RETURN_NONE;
+    if (!fNode)
+        PYTHON_RETURN_NONE;
 
-	VaultAgeLinkNode access(fNode);
-	access.CopyTo(&fAgeLinkStruct);
-	
-	return pyAgeLinkStruct::New(&fAgeLinkStruct);
+    VaultAgeLinkNode access(fNode);
+    access.CopyTo(&fAgeLinkStruct);
+    
+    return pyAgeLinkStruct::New(&fAgeLinkStruct);
 }

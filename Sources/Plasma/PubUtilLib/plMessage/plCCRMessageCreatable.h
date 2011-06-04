@@ -39,6 +39,6 @@ REGISTER_CREATABLE(plCCRCommunicationMsg);
 REGISTER_CREATABLE(plCCRBanLinkingMsg);
 REGISTER_CREATABLE(plCCRSilencePlayerMsg);
 
-#endif	// plCCRMessageCreatable_inc
+#endif  // plCCRMessageCreatable_inc
 
  

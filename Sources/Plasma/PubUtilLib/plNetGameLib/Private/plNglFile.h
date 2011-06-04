@@ -46,15 +46,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Connect
 //============================================================================
 void NetCliFileStartConnect (
-	const wchar *	fileAddrList[],
-	unsigned		fileAddrCount,
-	bool			isPatcher = false
+    const wchar *   fileAddrList[],
+    unsigned        fileAddrCount,
+    bool            isPatcher = false
 );
 void NetCliFileStartConnectAsServer (
-	const wchar *	fileAddrList[],
-	unsigned		fileAddrCount,
-	unsigned		serverType,
-	unsigned		serverBuildId
+    const wchar *   fileAddrList[],
+    unsigned        fileAddrCount,
+    unsigned        serverType,
+    unsigned        serverBuildId
 );
 
 //============================================================================
@@ -66,13 +66,13 @@ void NetCliFileDisconnect ();
 // File server related messages
 //============================================================================
 typedef void (*FNetCliFileBuildIdRequestCallback)(
-	ENetError		result,
-	void *			param,
-	unsigned		buildId
+    ENetError       result,
+    void *          param,
+    unsigned        buildId
 );
 void NetCliFileBuildIdRequest (
-	FNetCliFileBuildIdRequestCallback	callback,
-	void *								param
+    FNetCliFileBuildIdRequestCallback   callback,
+    void *                              param
 );
 typedef void (*FNetCliFileBuildIdUpdateCallback)(unsigned buildId);
 void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback);
@@ -81,41 +81,41 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 // Manifest
 //============================================================================
 struct NetCliFileManifestEntry {
-	wchar		clientName[MAX_PATH]; // path and file on client side (for comparison)
-	wchar		downloadName[MAX_PATH]; // path and file on server side (for download)
-	wchar		md5[MAX_PATH];
-	wchar		md5compressed[MAX_PATH]; // md5 for the compressed file
-	unsigned	fileSize;
-	unsigned	zipSize;
-	unsigned	flags;
+    wchar       clientName[MAX_PATH]; // path and file on client side (for comparison)
+    wchar       downloadName[MAX_PATH]; // path and file on server side (for download)
+    wchar       md5[MAX_PATH];
+    wchar       md5compressed[MAX_PATH]; // md5 for the compressed file
+    unsigned    fileSize;
+    unsigned    zipSize;
+    unsigned    flags;
 };
 typedef void (*FNetCliFileManifestRequestCallback)(
-	ENetError						result,
-	void *							param,
-	const wchar						group[],
-	const NetCliFileManifestEntry	manifest[],
-	unsigned						entryCount
+    ENetError                       result,
+    void *                          param,
+    const wchar                     group[],
+    const NetCliFileManifestEntry   manifest[],
+    unsigned                        entryCount
 );
 void NetCliFileManifestRequest (
-	FNetCliFileManifestRequestCallback	callback,
-	void *								param,
-	const wchar							group[], // the group of files you want (empty or nil = all)
-	unsigned							buildId = 0 // 0 = get latest, other = get particular build (servers only)
+    FNetCliFileManifestRequestCallback  callback,
+    void *                              param,
+    const wchar                         group[], // the group of files you want (empty or nil = all)
+    unsigned                            buildId = 0 // 0 = get latest, other = get particular build (servers only)
 );
 
 //============================================================================
 // File Download
 //============================================================================
 typedef void (*FNetCliFileDownloadRequestCallback)(
-	ENetError       result,
-	void *          param,
-	const wchar     filename[],
-	hsStream *      writer
+    ENetError       result,
+    void *          param,
+    const wchar     filename[],
+    hsStream *      writer
 );
 void NetCliFileDownloadRequest (
-	const wchar							filename[],
-	hsStream *							writer,
-	FNetCliFileDownloadRequestCallback	callback,
-	void *								param,
-	unsigned							buildId = 0 // 0 = get latest, other = get particular build (servers only)
+    const wchar                         filename[],
+    hsStream *                          writer,
+    FNetCliFileDownloadRequestCallback  callback,
+    void *                              param,
+    unsigned                            buildId = 0 // 0 = get latest, other = get particular build (servers only)
 );

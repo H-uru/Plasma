@@ -30,39 +30,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plStatusBar : public plControl
 {
 public:
-	DECLARE_WINDOWSUBCLASS(plStatusBar,plControl)
+    DECLARE_WINDOWSUBCLASS(plStatusBar,plControl)
 
-	plStatusBar()
-	{}
-	plStatusBar( plWindow * inOwner, int inId=0, WNDPROC inSuperProc=nil )
-	: plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
-	{}
+    plStatusBar()
+    {}
+    plStatusBar( plWindow * inOwner, int inId=0, WNDPROC inSuperProc=nil )
+    : plControl( inOwner, inId, inSuperProc?inSuperProc:_SuperProc )
+    {}
 
-	void OpenWindow( plWindow * inOwner, bool Visible )
-	{
-		if (inOwner)
-		{
-			if (fOwnerWindow)
-			{
-				std::vector<plControl*>::iterator it = std::find(fOwnerWindow->fControls.begin(),fOwnerWindow->fControls.end(),this);
-				if (it!=fOwnerWindow->fControls.end())
-					fOwnerWindow->fControls.erase(it);
-			}
-			fOwnerWindow = inOwner;
-			fOwnerWindow->fControls.push_back( this );
-		}
-		CHECK(fOwnerWindow);
-		LONG style = WS_CHILD|WS_BORDER;
-		if (Visible)
-			style |= WS_VISIBLE;
+    void OpenWindow( plWindow * inOwner, bool Visible )
+    {
+        if (inOwner)
+        {
+            if (fOwnerWindow)
+            {
+                std::vector<plControl*>::iterator it = std::find(fOwnerWindow->fControls.begin(),fOwnerWindow->fControls.end(),this);
+                if (it!=fOwnerWindow->fControls.end())
+                    fOwnerWindow->fControls.erase(it);
+            }
+            fOwnerWindow = inOwner;
+            fOwnerWindow->fControls.push_back( this );
+        }
+        CHECK(fOwnerWindow);
+        LONG style = WS_CHILD|WS_BORDER;
+        if (Visible)
+            style |= WS_VISIBLE;
 #if UNICODE
-		fhWnd = CreateStatusWindow(style,
-			L"",*fOwnerWindow,fControlID);
+        fhWnd = CreateStatusWindow(style,
+            L"",*fOwnerWindow,fControlID);
 #else
-		fhWnd = CreateStatusWindow(style,
-			"",*fOwnerWindow,fControlID);
+        fhWnd = CreateStatusWindow(style,
+            "",*fOwnerWindow,fControlID);
 #endif
-	}
+    }
 };
 
 #endif // plStatusBar_h_inc

@@ -24,9 +24,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	pfBackdoorMsg Header 															//
-//																			//
+//                                                                          //
+//  pfBackdoorMsg Header                                                            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _pfBackdoorMsg_h
@@ -34,50 +34,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStream.h"
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 
 class pfBackdoorMsg : public plMessage
 {
-	protected:
-		char	*fTarget;
-		char	*fString;
+    protected:
+        char    *fTarget;
+        char    *fString;
 
-	public:
-		pfBackdoorMsg() : plMessage( nil, nil, nil ),fTarget(nil),fString(nil) {}
-		pfBackdoorMsg( const char* target, const char* string) : plMessage( nil, nil, nil )
-		{
-			// across the net and just to those listening
-			SetBCastFlag( plMessage::kNetPropagate );
-			SetBCastFlag( plMessage::kBCastByExactType );
-			fTarget = hsStrcpy( target );
-			fString = hsStrcpy( string );
-		}
+    public:
+        pfBackdoorMsg() : plMessage( nil, nil, nil ),fTarget(nil),fString(nil) {}
+        pfBackdoorMsg( const char* target, const char* string) : plMessage( nil, nil, nil )
+        {
+            // across the net and just to those listening
+            SetBCastFlag( plMessage::kNetPropagate );
+            SetBCastFlag( plMessage::kBCastByExactType );
+            fTarget = hsStrcpy( target );
+            fString = hsStrcpy( string );
+        }
 
-		~pfBackdoorMsg()
-		{
-			delete [] fTarget;
-			delete [] fString;
-		}
+        ~pfBackdoorMsg()
+        {
+            delete [] fTarget;
+            delete [] fString;
+        }
 
-		CLASSNAME_REGISTER( pfBackdoorMsg );
-		GETINTERFACE_ANY( pfBackdoorMsg, plMessage );
+        CLASSNAME_REGISTER( pfBackdoorMsg );
+        GETINTERFACE_ANY( pfBackdoorMsg, plMessage );
 
-		virtual void Read(hsStream* s, hsResMgr* mgr) 
-		{ 
-			plMessage::IMsgRead( s, mgr ); 
-			fTarget = s->ReadSafeString();
-			fString = s->ReadSafeString();
-		}
-		
-		virtual void Write(hsStream* s, hsResMgr* mgr) 
-		{ 
-			plMessage::IMsgWrite( s, mgr ); 
-			s->WriteSafeString( fTarget );
-			s->WriteSafeString( fString );
-		}
+        virtual void Read(hsStream* s, hsResMgr* mgr) 
+        { 
+            plMessage::IMsgRead( s, mgr ); 
+            fTarget = s->ReadSafeString();
+            fString = s->ReadSafeString();
+        }
+        
+        virtual void Write(hsStream* s, hsResMgr* mgr) 
+        { 
+            plMessage::IMsgWrite( s, mgr ); 
+            s->WriteSafeString( fTarget );
+            s->WriteSafeString( fString );
+        }
 
-		const char	*GetTarget( void ) { return fTarget; }
-		const char	*GetString( void ) { return fString; }
+        const char  *GetTarget( void ) { return fTarget; }
+        const char  *GetString( void ) { return fString; }
 
 };
 

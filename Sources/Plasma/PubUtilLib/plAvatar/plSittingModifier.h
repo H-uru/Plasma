@@ -32,9 +32,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#include "../pnModifier/plSingleModifier.h"	// base class
-#include "../pnKeyedobject/plKey.h"			// for the notification keys
-#include "hsTemplates.h"					// for the array they're kept in
+#include "pnModifier/plSingleModifier.h"    // base class
+#include "pnKeyedobject/plKey.h"            // for the notification keys
+#include "hsTemplates.h"                    // for the array they're kept in
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -53,58 +53,58 @@ class plArmatureMod;
 
 class plSittingModifier : public plSingleModifier
 {
-public:	
-	enum
-	{
-		kApproachFront	= 0x01,
-		kApproachLeft	= 0x02,
-		kApproachRight	= 0x04,
-		kApproachRear	= 0x08,
-		kApproachMask	= kApproachFront | kApproachLeft | kApproachRight | kApproachRear,
-		kDisableForward = 0x10,
-	};
-	
-	UInt8 fMiscFlags;	
+public: 
+    enum
+    {
+        kApproachFront  = 0x01,
+        kApproachLeft   = 0x02,
+        kApproachRight  = 0x04,
+        kApproachRear   = 0x08,
+        kApproachMask   = kApproachFront | kApproachLeft | kApproachRight | kApproachRear,
+        kDisableForward = 0x10,
+    };
+    
+    UInt8 fMiscFlags;   
 
-	plSittingModifier();
-	plSittingModifier(bool hasFront, bool hasLeft, bool hasRight);
-	virtual ~plSittingModifier();
+    plSittingModifier();
+    plSittingModifier(bool hasFront, bool hasLeft, bool hasRight);
+    virtual ~plSittingModifier();
 
-	CLASSNAME_REGISTER( plSittingModifier );
-	GETINTERFACE_ANY( plSittingModifier, plSingleModifier );
+    CLASSNAME_REGISTER( plSittingModifier );
+    GETINTERFACE_ANY( plSittingModifier, plSingleModifier );
 
-	virtual void Read(hsStream* stream, hsResMgr* mgr);
-	virtual void Write(hsStream* stream, hsResMgr* mgr);
+    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage *msg);
+    virtual hsBool MsgReceive(plMessage *msg);
 
-	void AddNotifyKey(plKey key) { fNotifyKeys.Append(key); }
+    void AddNotifyKey(plKey key) { fNotifyKeys.Append(key); }
 
-	virtual void Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
-	virtual void UnTrigger();
+    virtual void Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
+    virtual void UnTrigger();
 
 protected:
-	/** We've been triggered: go ahead and send the seek and brain tasks to the 
-		triggering avatar. */
-	hsBool IEmitCommand(plKey playerKey, plMessage *enterCallback, plMessage *exitCallback);
+    /** We've been triggered: go ahead and send the seek and brain tasks to the 
+        triggering avatar. */
+    hsBool IEmitCommand(plKey playerKey, plMessage *enterCallback, plMessage *exitCallback);
 
-	/** Set up generic notification messages which were passed in by the responder / 
-		max authoring stuff. */
-	void ISetupNotify(plNotifyMsg *notifyMsg, plNotifyMsg *originalNotify);
+    /** Set up generic notification messages which were passed in by the responder / 
+        max authoring stuff. */
+    void ISetupNotify(plNotifyMsg *notifyMsg, plNotifyMsg *originalNotify);
 
-	/** Figure out which approach we should use to the sit target, and add the relevant
-		stages to the brain. */
-	plAvBrainGeneric * IBuildSitBrain(plKey avModKey, plKey seekKey,char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
+    /** Figure out which approach we should use to the sit target, and add the relevant
+        stages to the brain. */
+    plAvBrainGeneric * IBuildSitBrain(plKey avModKey, plKey seekKey,char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
 
-	/** Unused. */
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    /** Unused. */
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
 
-	/** An array of keys to objects that are interested in receiving our sit messages. */
-	hsTArray<plKey> fNotifyKeys;
+    /** An array of keys to objects that are interested in receiving our sit messages. */
+    hsTArray<plKey> fNotifyKeys;
 
-	/** The chair in question is in use. It will untrigger when the avatar leaves it. */
-	//hsBool			fTriggered;
-	plKey			fTriggeredAvatarKey;
+    /** The chair in question is in use. It will untrigger when the avatar leaves it. */
+    //hsBool            fTriggered;
+    plKey           fTriggeredAvatarKey;
 };
 
 

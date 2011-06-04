@@ -31,13 +31,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsGDDrawDllLoad
 {
 private:
-	HMODULE		fD3DDll;
+    HMODULE     fD3DDll;
 
 public:
-	hsGDDrawDllLoad();
-	~hsGDDrawDllLoad();
+    hsGDDrawDllLoad();
+    ~hsGDDrawDllLoad();
 
-	static HMODULE GetD3DDll();
+    static HMODULE GetD3DDll();
 };
 
 #endif hsGDDrawDllLoad_inc

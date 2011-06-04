@@ -34,45 +34,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
 
-#include "../pnNetBase/pnNetBase.h"
+#include "pnNetBase/pnNetBase.h"
 
 struct RelVaultNode;
 
 class pyVaultMarkerGameNode : public pyVaultNode
 {
 private:
-	mutable char fGameName[kMaxVaultNodeStringLength];
-	mutable char fGameGuid[64];
+    mutable char fGameName[kMaxVaultNodeStringLength];
+    mutable char fGameGuid[64];
 
 protected:
-	// should only be created from C++ side
-	pyVaultMarkerGameNode(RelVaultNode* vaultNode);
+    // should only be created from C++ side
+    pyVaultMarkerGameNode(RelVaultNode* vaultNode);
 
-	//create from the Python side
-	pyVaultMarkerGameNode(int n=0);
+    //create from the Python side
+    pyVaultMarkerGameNode(int n=0);
 
 public:
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVaultMarkerGameNode);
-	static PyObject *New(RelVaultNode* vaultNode);
-	static PyObject *New(int n=0);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultMarkerGameNode object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultMarkerGameNode); // converts a PyObject to a pyVaultMarkerGameNode (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVaultMarkerGameNode);
+    static PyObject *New(RelVaultNode* vaultNode);
+    static PyObject *New(int n=0);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultMarkerGameNode object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultMarkerGameNode); // converts a PyObject to a pyVaultMarkerGameNode (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-	const char *	GetGameName () const;
-	void			SetGameName (const char v[]);
+    const char *    GetGameName () const;
+    void            SetGameName (const char v[]);
 
-	const char *	GetGameGuid () const;
-	void			SetGameGuid (const char v[]);
+    const char *    GetGameGuid () const;
+    void            SetGameGuid (const char v[]);
 };
 
 #endif // _pyVaultMarkerGameNode_h_

@@ -35,54 +35,54 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 
-#include <python.h>
+#include <Python.h>
 #include "pyGlueHelpers.h"
 
 #include "pyVaultNode.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 struct RelVaultNode;
 
 
 class pyVaultImageNode : public pyVaultNode
 {
-	plKey		fMipmapKey;
-	plMipmap *	fMipmap;
-	
+    plKey       fMipmapKey;
+    plMipmap *  fMipmap;
+    
 protected:
-	// should only be created from C++ side
-	pyVaultImageNode(RelVaultNode* nfsNode);
+    // should only be created from C++ side
+    pyVaultImageNode(RelVaultNode* nfsNode);
 
-	//create from the Python side
-	pyVaultImageNode(int n=0);
-	
+    //create from the Python side
+    pyVaultImageNode(int n=0);
+    
 
 public:
-	~pyVaultImageNode ();
+    ~pyVaultImageNode ();
 
-	// required functions for PyObject interoperability
-	PYTHON_CLASS_NEW_FRIEND(ptVaultImageNode);
-	static PyObject *New(RelVaultNode* nfsNode);
-	static PyObject *New(int n=0);
-	PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultImageNode object
-	PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultImageNode); // converts a PyObject to a pyVaultImageNode (throws error if not correct type)
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptVaultImageNode);
+    static PyObject *New(RelVaultNode* nfsNode);
+    static PyObject *New(int n=0);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultImageNode object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultImageNode); // converts a PyObject to a pyVaultImageNode (throws error if not correct type)
 
-	static void AddPlasmaClasses(PyObject *m);
+    static void AddPlasmaClasses(PyObject *m);
 
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-	void Image_SetTitle( const char * text );
-	void Image_SetTitleW( const wchar_t * text );
-	std::string Image_GetTitle( void );
-	std::wstring Image_GetTitleW( void );
+    void Image_SetTitle( const char * text );
+    void Image_SetTitleW( const wchar_t * text );
+    std::string Image_GetTitle( void );
+    std::wstring Image_GetTitleW( void );
 
-	PyObject* Image_GetImage( void ); // returns pyImage
-	void Image_SetImage(pyImage& image);
+    PyObject* Image_GetImage( void ); // returns pyImage
+    void Image_SetImage(pyImage& image);
 
-	void SetImageFromBuf( PyObject * buf );
-	
-	void SetImageFromScrShot();
+    void SetImageFromBuf( PyObject * buf );
+    
+    void SetImageFromScrShot();
 
 };
 

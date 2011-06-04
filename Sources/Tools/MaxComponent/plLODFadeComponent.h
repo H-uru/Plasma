@@ -39,97 +39,97 @@ class plExportProgressBar;
 class plLODFadeComponent : public plComponent
 {
 public:
-	enum
-	{
-		kHasBase,
-		kBase,
-		kDistance,
-		kTransition,
-		kFadeBase,
-		kBaseFirst
-	};
+    enum
+    {
+        kHasBase,
+        kBase,
+        kDistance,
+        kTransition,
+        kFadeBase,
+        kBaseFirst
+    };
 protected:
-	void	ISetToFadeBase(plMaxNode* node, plMaxNode* base, plErrorMsg* pErrMsg);
+    void    ISetToFadeBase(plMaxNode* node, plMaxNode* base, plErrorMsg* pErrMsg);
 
 public:
-	plLODFadeComponent();
-	void DeleteThis() { delete this; }
+    plLODFadeComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plBlendOntoComponent : public plComponent
 {
 public:
-	enum
-	{
-		kBaseNodes,
-		kSortFaces
-	};
+    enum
+    {
+        kBaseNodes,
+        kSortFaces
+    };
 
 public:
-	plBlendOntoComponent();
-	void DeleteThis() { delete this; }
+    plBlendOntoComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plBlendOntoAdvComponent : public plComponent
 {
 public:
-	enum
-	{
-		kBaseNodes,
-		kSortFaces,
-		kSortObjects,
-		kOntoBlending
-	};
+    enum
+    {
+        kBaseNodes,
+        kSortFaces,
+        kSortObjects,
+        kOntoBlending
+    };
 
 public:
-	plBlendOntoAdvComponent();
-	void DeleteThis() { delete this; }
+    plBlendOntoAdvComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plDistFadeComponent : public plComponent
 {
 public:
-	enum
-	{
-		kFadeInActive,
-		kFadeInStart,
-		kFadeInEnd,
-		kFadeOutActive,
-		kFadeOutStart,
-		kFadeOutEnd
-	};
+    enum
+    {
+        kFadeInActive,
+        kFadeInStart,
+        kFadeInEnd,
+        kFadeOutActive,
+        kFadeOutStart,
+        kFadeOutEnd
+    };
 protected:
-	void			ISwap(float& p0, float& p1);
-	Box3			IFadeFromPoint(Point3& mins);
-	Box3			IFadeFromPair(Point3& mins, Point3& maxs);
+    void            ISwap(float& p0, float& p1);
+    Box3            IFadeFromPoint(Point3& mins);
+    Box3            IFadeFromPair(Point3& mins, Point3& maxs);
 
 public:
-	plDistFadeComponent();
-	void DeleteThis() { delete this; }
+    plDistFadeComponent();
+    void DeleteThis() { delete this; }
 
-	// SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
-	// of properties on the MaxNode, as it's still indeterminant.
-	virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-	virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
+    // of properties on the MaxNode, as it's still indeterminant.
+    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 #endif // plLODFadeComponent_inc

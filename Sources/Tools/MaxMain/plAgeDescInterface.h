@@ -35,87 +35,87 @@ class ISpinnerControl;
 class plAgeDescription;
 class plAgeFile;
 
-typedef struct _TREEITEM	*HTREEITEM;
+typedef struct _TREEITEM    *HTREEITEM;
 
 class MaxAssBranchAccess;
 class plAgeDescInterface
 {
 protected:
-	HWND fhDlg;
-	bool fDirty;
-	int fCurAge;
-	
-	ISpinnerControl *fSpin;
-	ISpinnerControl *fCapSpin;
-	ISpinnerControl *fSeqPrefixSpin;
+    HWND fhDlg;
+    bool fDirty;
+    int fCurAge;
+    
+    ISpinnerControl *fSpin;
+    ISpinnerControl *fCapSpin;
+    ISpinnerControl *fSeqPrefixSpin;
 
-	HTREEITEM		fCurrAgeItem;
-	bool			fCurrAgeCheckedOut;
-	char			fCheckedOutPath[ MAX_PATH ];
-	bool			fForceSeqNumLocal;
+    HTREEITEM       fCurrAgeItem;
+    bool            fCurrAgeCheckedOut;
+    char            fCheckedOutPath[ MAX_PATH ];
+    bool            fForceSeqNumLocal;
 
-	HTREEITEM	fAssetManBranch, fLocalBranch;
+    HTREEITEM   fAssetManBranch, fLocalBranch;
 
-	HFONT		fBoldFont;
-	HBRUSH		fHiliteBrush;
+    HFONT       fBoldFont;
+    HBRUSH      fHiliteBrush;
 
-	vector<plAgeFile*> fAgeFiles;
+    vector<plAgeFile*> fAgeFiles;
 //   vector<_variant_t> fAssetIds;
    
-	MaxAssBranchAccess	*fAssetManIface;
+    MaxAssBranchAccess  *fAssetManIface;
 
-	plAgeDescInterface();
+    plAgeDescInterface();
 
 public:
-	~plAgeDescInterface();
-	static plAgeDescInterface& Instance();
-	
-	// Open the dialog
-	void Open();
-	
-	static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-	BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    ~plAgeDescInterface();
+    static plAgeDescInterface& Instance();
+    
+    // Open the dialog
+    void Open();
+    
+    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	static void	BuildAgeFileList( hsTArray<char *> &ageList );
+    static void BuildAgeFileList( hsTArray<char *> &ageList );
 
 protected:
-	static int IFindAge(const char* ageName, vector<plAgeFile*>& ageFiles);
-	static void IGetAgeFiles(vector<plAgeFile*>& ageFiles);
-	static void IClearAgeFiles(vector<plAgeFile*>& ageFiles);
+    static int IFindAge(const char* ageName, vector<plAgeFile*>& ageFiles);
+    static void IGetAgeFiles(vector<plAgeFile*>& ageFiles);
+    static void IClearAgeFiles(vector<plAgeFile*>& ageFiles);
 
-	void IResetParams();
-	
-	void IInitControls();
-	void ISetControlDefaults();
-	void IEnableControls(bool enable);
-	void IEnablePageControls(bool enable);
-	void ICheckedPageFlag(int ctrlID);
-	
-	// Save the settings for the last age and load the settings for the currently one
-	void IUpdateCurAge();
-	void ISaveCurAge( const char *path, hsBool checkSeqNum = false );
-	void ILoadAge( const char *path, hsBool checkSeqNum = false );
+    void IResetParams();
+    
+    void IInitControls();
+    void ISetControlDefaults();
+    void IEnableControls(bool enable);
+    void IEnablePageControls(bool enable);
+    void ICheckedPageFlag(int ctrlID);
+    
+    // Save the settings for the last age and load the settings for the currently one
+    void IUpdateCurAge();
+    void ISaveCurAge( const char *path, hsBool checkSeqNum = false );
+    void ILoadAge( const char *path, hsBool checkSeqNum = false );
 
-	static bool IGetLocalAgePath(char *path);
+    static bool IGetLocalAgePath(char *path);
 
-	// Fill out the age tree view
-	void IFillAgeTree( void );
+    // Fill out the age tree view
+    void IFillAgeTree( void );
 
-	// Create a new age file and select it in the browser
-	void INewAge();
-	void INewPage();
+    // Create a new age file and select it in the browser
+    void INewAge();
+    void INewPage();
 
 
-	UInt32	IGetNextFreeSequencePrefix( hsBool getReservedPrefix );
-	UInt32	IGetFreePageSeqSuffix( HWND pageCombo );
+    UInt32  IGetNextFreeSequencePrefix( hsBool getReservedPrefix );
+    UInt32  IGetFreePageSeqSuffix( HWND pageCombo );
 
-	void	ICheckOutCurrentAge( void );
-	void	ICheckInCurrentAge( void );
-	void	IUndoCheckOutCurrentAge( void );
-	hsBool	IMakeSureCheckedIn( void );
+    void    ICheckOutCurrentAge( void );
+    void    ICheckInCurrentAge( void );
+    void    IUndoCheckOutCurrentAge( void );
+    hsBool  IMakeSureCheckedIn( void );
 
-	plAgeFile* IGetCurrentAge( void );
+    plAgeFile* IGetCurrentAge( void );
 
-	void	IInvalidateCheckOutIndicator( void );
-	void	ICheckSequenceNumber( plAgeDescription &aged );
+    void    IInvalidateCheckOutIndicator( void );
+    void    ICheckSequenceNumber( plAgeDescription &aged );
 };

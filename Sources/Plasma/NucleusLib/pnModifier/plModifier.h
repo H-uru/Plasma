@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plModifier_inc
 #define plModifier_inc
 
-#include "../pnNetCommon/plSynchedObject.h"
+#include "pnNetCommon/plSynchedObject.h"
 
 class hsStream;
 class hsResMgr;
@@ -44,32 +44,32 @@ class plModifier : public plSynchedObject
 {
 protected:
 
-	plDrawInterface*			IGetTargetDrawInterface(int iTarg) const;
-	plSimulationInterface*		IGetTargetSimulationInterface(int iTarg) const;
-	plCoordinateInterface*		IGetTargetCoordinateInterface(int iTarg) const;
-	plAudioInterface*			IGetTargetAudioInterface(int iTarg) const;
-	plObjInterface*				IGetTargetGenericInterface(int iTarg, UInt32 classIdx) const;
-	plModifier*					IGetTargetModifier(int iTarg, int iMod) const;
+    plDrawInterface*            IGetTargetDrawInterface(int iTarg) const;
+    plSimulationInterface*      IGetTargetSimulationInterface(int iTarg) const;
+    plCoordinateInterface*      IGetTargetCoordinateInterface(int iTarg) const;
+    plAudioInterface*           IGetTargetAudioInterface(int iTarg) const;
+    plObjInterface*             IGetTargetGenericInterface(int iTarg, UInt32 classIdx) const;
+    plModifier*                 IGetTargetModifier(int iTarg, int iMod) const;
 
-	virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) = 0; // called only by owner object's Eval()
+    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) = 0; // called only by owner object's Eval()
 
-	friend class plSceneObject;
+    friend class plSceneObject;
 public:
 
-	plModifier();
-	virtual ~plModifier();
+    plModifier();
+    virtual ~plModifier();
 
-	CLASSNAME_REGISTER( plModifier );
-	GETINTERFACE_ANY( plModifier, plSynchedObject );
+    CLASSNAME_REGISTER( plModifier );
+    GETINTERFACE_ANY( plModifier, plSynchedObject );
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	virtual int GetNumTargets() const = 0;
-	virtual plSceneObject* GetTarget(int iTarg) const = 0;
-	virtual void AddTarget(plSceneObject* so) = 0;
-	virtual void RemoveTarget(plSceneObject* so) = 0; 
+    virtual int GetNumTargets() const = 0;
+    virtual plSceneObject* GetTarget(int iTarg) const = 0;
+    virtual void AddTarget(plSceneObject* so) = 0;
+    virtual void RemoveTarget(plSceneObject* so) = 0; 
 
-	virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
 
 };
 

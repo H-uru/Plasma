@@ -24,13 +24,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
-//																			//
-//	plEncryptLogLine Header													//
-//																			//
+//                                                                          //
+//  plEncryptLogLine Header                                                 //
+//                                                                          //
 //// Description /////////////////////////////////////////////////////////////
-//																			//
-//	Broken into a separate file for easy include in utility apps			//
-//																			//
+//                                                                          //
+//  Broken into a separate file for easy include in utility apps            //
+//                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plEncryptLogLine_h
@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace plStatusEncrypt
 {
-	void	Encrypt( UInt8 *line, UInt8 hint );
-	void	Decrypt( UInt8 *line, Int32 length, UInt8 hint );
+    void    Encrypt( UInt8 *line, UInt8 hint );
+    void    Decrypt( UInt8 *line, Int32 length, UInt8 hint );
 };
 
 #endif //_plEncryptLogLine_h

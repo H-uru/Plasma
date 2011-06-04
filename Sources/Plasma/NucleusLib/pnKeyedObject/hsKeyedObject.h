@@ -42,48 +42,48 @@ public:
     hsKeyedObject() : fpKey(nil) {}
     virtual ~hsKeyedObject();
 
-	CLASSNAME_REGISTER(hsKeyedObject);
-	GETINTERFACE_ANY(hsKeyedObject, plReceiver);
+    CLASSNAME_REGISTER(hsKeyedObject);
+    GETINTERFACE_ANY(hsKeyedObject, plReceiver);
 
-    const plKey&	GetKey() const { return fpKey; }
-    const char*		GetKeyName() const;
+    const plKey&    GetKey() const { return fpKey; }
+    const char*     GetKeyName() const;
 
     virtual void Validate();
-	virtual hsBool	IsFinal() { return true; };		// experimental; currently "is ready to process Loads"
+    virtual hsBool  IsFinal() { return true; };     // experimental; currently "is ready to process Loads"
 
-	virtual void Read(hsStream* s, hsResMgr* mgr);
-	virtual void Write(hsStream* s, hsResMgr* mgr);
+    virtual void Read(hsStream* s, hsResMgr* mgr);
+    virtual void Write(hsStream* s, hsResMgr* mgr);
 
-	virtual hsBool MsgReceive(plMessage* msg);
+    virtual hsBool MsgReceive(plMessage* msg);
 
-	//----------------------
-	// Send a reference to GetKey() via enclosed message. See plKey::SendRef()
-	//----------------------
-	hsBool SendRef(plRefMsg* refMsg, plRefFlags::Type flags);
+    //----------------------
+    // Send a reference to GetKey() via enclosed message. See plKey::SendRef()
+    //----------------------
+    hsBool SendRef(plRefMsg* refMsg, plRefFlags::Type flags);
 
-	//----------------------------------------
-	// Fixed key functions
-	// The following are to be matched pairs!
-	//----------------------------------------
-	plKey	RegisterAs(plFixedKeyId fixedKey);   // a fixed Key value from plFixedKey.h
-	void	UnRegisterAs(plFixedKeyId fixedKey);
+    //----------------------------------------
+    // Fixed key functions
+    // The following are to be matched pairs!
+    //----------------------------------------
+    plKey   RegisterAs(plFixedKeyId fixedKey);   // a fixed Key value from plFixedKey.h
+    void    UnRegisterAs(plFixedKeyId fixedKey);
 
-	// used when manually loading the player room
-	plKey 	RegisterAsManual(plUoid& uoid, const char* p); 
-	void	UnRegisterAsManual(plUoid& uoid);
+    // used when manually loading the player room
+    plKey   RegisterAsManual(plUoid& uoid, const char* p); 
+    void    UnRegisterAsManual(plUoid& uoid);
 
-	// If you want clone keys to share a type of object, override this function for it.
-	// (You can also return a new object that shares only some of the original's data)
-	virtual hsKeyedObject* GetSharedObject() { return nil; }
+    // If you want clone keys to share a type of object, override this function for it.
+    // (You can also return a new object that shares only some of the original's data)
+    virtual hsKeyedObject* GetSharedObject() { return nil; }
 
 protected:
-	friend class plResManager;
+    friend class plResManager;
 
-    virtual void	SetKey(plKey k);
-	void			UnRegister();
+    virtual void    SetKey(plKey k);
+    void            UnRegister();
 
 private:
-	plKey fpKey;
+    plKey fpKey;
 };
 
 #endif // hsKeyedObject_h_inc

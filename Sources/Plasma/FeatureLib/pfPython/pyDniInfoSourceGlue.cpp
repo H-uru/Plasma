@@ -25,7 +25,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pyDniInfoSource.h"
 
-#include <python.h>
+#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDniInfoSource, pyDniInfoSource);
@@ -35,34 +35,34 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptDniInfoSource)
 
 PYTHON_INIT_DEFINITION(ptDniInfoSource, args, keywords)
 {
-	PYTHON_RETURN_INIT_OK;
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniInfoSource, getAgeCoords)
 {
-	return self->fThis->GetAgeCoords();
+    return self->fThis->GetAgeCoords();
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniInfoSource, getAgeTime)
 {
-	return PyLong_FromUnsignedLong(self->fThis->GetAgeTime());
+    return PyLong_FromUnsignedLong(self->fThis->GetAgeTime());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniInfoSource, getAgeName)
 {
-	return PyString_FromString(self->fThis->GetAgeName());
+    return PyString_FromString(self->fThis->GetAgeName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniInfoSource, getAgeGuid)
 {
-	return PyString_FromString(self->fThis->GetAgeGuid());
+    return PyString_FromString(self->fThis->GetAgeGuid());
 }
 
 PYTHON_START_METHODS_TABLE(ptDniInfoSource)
-	PYTHON_METHOD_NOARGS(ptDniInfoSource, getAgeCoords, "Current coords of the player in current age as a ptDniCoordinates"),
-	PYTHON_METHOD_NOARGS(ptDniInfoSource, getAgeTime, "Current time in current age (tbd)"),
-	PYTHON_METHOD_NOARGS(ptDniInfoSource, getAgeName, "Name of current age"),
-	PYTHON_METHOD_NOARGS(ptDniInfoSource, getAgeGuid, "Unique identifier for this age instance"),
+    PYTHON_METHOD_NOARGS(ptDniInfoSource, getAgeCoords, "Current coords of the player in current age as a ptDniCoordinates"),
+    PYTHON_METHOD_NOARGS(ptDniInfoSource, getAgeTime, "Current time in current age (tbd)"),
+    PYTHON_METHOD_NOARGS(ptDniInfoSource, getAgeName, "Name of current age"),
+    PYTHON_METHOD_NOARGS(ptDniInfoSource, getAgeGuid, "Unique identifier for this age instance"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -80,7 +80,7 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptDniInfoSource, pyDniInfoSource)
 //
 void pyDniInfoSource::AddPlasmaClasses(PyObject *m)
 {
-	PYTHON_CLASS_IMPORT_START(m);
-	PYTHON_CLASS_IMPORT(m, ptDniInfoSource);
-	PYTHON_CLASS_IMPORT_END(m);
+    PYTHON_CLASS_IMPORT_START(m);
+    PYTHON_CLASS_IMPORT(m, ptDniInfoSource);
+    PYTHON_CLASS_IMPORT_END(m);
 }

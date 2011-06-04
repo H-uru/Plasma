@@ -30,34 +30,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsQuat.h"
 #include "hsMatrix44.h"
 
-#include "NxVec3.h"
-#include "NxQuat.h"
-#include "NxMat34.h"
+#include <NxVec3.h>
+#include <NxQuat.h>
+#include <NxMat34.h>
 
 // Converts to and from the PhysX types
 namespace plPXConvert
 {
-	// The following conversions are just casts, due to the fact that the Plasma
-	// and PhysX vector and quat classes don't have any virtual fuctions and have
-	// all their data in the same offsets.
-	inline NxVec3&         Point(hsPoint3& vec)			{ return *((NxVec3*)&vec); }
-	inline const NxVec3&   Point(const hsPoint3& vec)	{ return *((NxVec3*)&vec); }
-	inline hsPoint3&       Point(NxVec3& vec)			{ return *((hsPoint3*)&vec); }
-	inline const hsPoint3& Point(const NxVec3& vec)		{ return *((hsPoint3*)&vec); }
+    // The following conversions are just casts, due to the fact that the Plasma
+    // and PhysX vector and quat classes don't have any virtual fuctions and have
+    // all their data in the same offsets.
+    inline NxVec3&         Point(hsPoint3& vec)         { return *((NxVec3*)&vec); }
+    inline const NxVec3&   Point(const hsPoint3& vec)   { return *((NxVec3*)&vec); }
+    inline hsPoint3&       Point(NxVec3& vec)           { return *((hsPoint3*)&vec); }
+    inline const hsPoint3& Point(const NxVec3& vec)     { return *((hsPoint3*)&vec); }
 
-	inline NxVec3&          Vector(hsVector3& vel)		{ return *((NxVec3*)&vel); }
-	inline const NxVec3&    Vector(const hsVector3& vel){ return *((NxVec3*)&vel); }
-	inline hsVector3&       Vector(NxVec3& vec)			{ return *((hsVector3*)&vec); }
-	inline const hsVector3& Vector(const NxVec3& vec)	{ return *((hsVector3*)&vec); }
+    inline NxVec3&          Vector(hsVector3& vel)      { return *((NxVec3*)&vel); }
+    inline const NxVec3&    Vector(const hsVector3& vel){ return *((NxVec3*)&vel); }
+    inline hsVector3&       Vector(NxVec3& vec)         { return *((hsVector3*)&vec); }
+    inline const hsVector3& Vector(const NxVec3& vec)   { return *((hsVector3*)&vec); }
 
-	inline const NxQuat& Quat(const hsQuat& quat) { return *((NxQuat*)&quat); }
-	inline const hsQuat& Quat(const NxQuat& quat) { return *((hsQuat*)&quat); }
+    inline const NxQuat& Quat(const hsQuat& quat) { return *((NxQuat*)&quat); }
+    inline const hsQuat& Quat(const NxQuat& quat) { return *((hsQuat*)&quat); }
 
-	// The matrix data doesn't match up, so we have to convert it
-	inline void Matrix(const hsMatrix44& fromMat, NxMat34& toMat) { toMat.setRowMajor44(&fromMat.fMap[0][0]); }
-	inline void Matrix(const NxMat34& fromMat, hsMatrix44& toMat) { toMat.NotIdentity(); fromMat.getRowMajor44(&toMat.fMap[0][0]); }
+    // The matrix data doesn't match up, so we have to convert it
+    inline void Matrix(const hsMatrix44& fromMat, NxMat34& toMat) { toMat.setRowMajor44(&fromMat.fMap[0][0]); }
+    inline void Matrix(const NxMat34& fromMat, hsMatrix44& toMat) { toMat.NotIdentity(); fromMat.getRowMajor44(&toMat.fMap[0][0]); }
 
-	bool Validate();
+    bool Validate();
 };
 
 #endif // plPXConvert_h_inc

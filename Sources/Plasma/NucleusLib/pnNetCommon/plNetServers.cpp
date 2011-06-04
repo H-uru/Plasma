@@ -32,42 +32,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 const char* plNetServerConstants::ServerPrograms[] =
 {
 #ifndef HS_DEBUGGING
-#if	HS_BUILD_FOR_WIN32
-		"plNetServerAgent.exe",
-		"plNetLobbyServer.exe",
-		"plNetGameServer.exe",
-		"plNetVaultServer.exe",
-		"plNetAuthServer.exe",
-		"plNetAdminServer.exe",
-		"plNetLookupServer.exe",
+#if HS_BUILD_FOR_WIN32
+        "plNetServerAgent.exe",
+        "plNetLobbyServer.exe",
+        "plNetGameServer.exe",
+        "plNetVaultServer.exe",
+        "plNetAuthServer.exe",
+        "plNetAdminServer.exe",
+        "plNetLookupServer.exe",
 #elif HS_BUILD_FOR_UNIX
-		"plNetServerAgent",
-		"plNetLobbyServer",
-		"plNetGameServer",
-		"plNetVaultServer",
-		"plNetAuthServer",
-		"plNetAdminServer",
-		"plNetLookupServer",
+        "plNetServerAgent",
+        "plNetLobbyServer",
+        "plNetGameServer",
+        "plNetVaultServer",
+        "plNetAuthServer",
+        "plNetAdminServer",
+        "plNetLookupServer",
 #else
 #error "No servers work on this Platform!"
 #endif
 #else // Debug
-#if	HS_BUILD_FOR_WIN32
-		"plNetServerAgent_dbg.exe",
-		"plNetLobbyServer_dbg.exe",
-		"plNetGameServer_dbg.exe",
-		"plNetVaultServer_dbg.exe",
-		"plNetAuthServer_dbg.exe",
-		"plNetAdminServer_dbg.exe",
-		"plNetLookupServer_dbg.exe",
+#if HS_BUILD_FOR_WIN32
+        "plNetServerAgent_dbg.exe",
+        "plNetLobbyServer_dbg.exe",
+        "plNetGameServer_dbg.exe",
+        "plNetVaultServer_dbg.exe",
+        "plNetAuthServer_dbg.exe",
+        "plNetAdminServer_dbg.exe",
+        "plNetLookupServer_dbg.exe",
 #elif HS_BUILD_FOR_UNIX
-		"plNetServerAgent.dbg",
-		"plNetLobbyServer.dbg",
-		"plNetGameServer.dbg",
-		"plNetVaultServer.dbg",
-		"plNetAuthServer.dbg",
-		"plNetAdminServer.dbg",
-		"plNetLookupServer.dbg",
+        "plNetServerAgent.dbg",
+        "plNetLobbyServer.dbg",
+        "plNetGameServer.dbg",
+        "plNetVaultServer.dbg",
+        "plNetAuthServer.dbg",
+        "plNetAdminServer.dbg",
+        "plNetLookupServer.dbg",
 #else
 #error "No servers work on this Platform!"
 #endif
@@ -79,50 +79,50 @@ const char* plNetServerConstants::ServerPrograms[] =
 //
 const char* plNetServerConstants::GetServerName(int type) 
 { 
-	switch(type)
-	{
-	default:
-//		hsAssert(false, "unknown type"); // not the right place to catch this problem.
-		return "UNKNOWN";
-	case kAgent:
-		return plNetServerAgentConstants::GetName();
-	case kLobby:
-		return plNetLobbyServerConstants::GetName();
-	case kGame:
-		return plNetGameServerConstants::GetName();
-	case kVault:
-		return plNetVaultServerConstants::GetName();
-	case kAuth:
-		return plNetAuthServerConstants::GetName();
-	case kAdmin:
-		return plNetAdminServerConstants::GetName();
-	case kLookup:
-		return plNetLookupServerConstants::GetName();
-	case kClient:
-		return "plClient";
-	}
+    switch(type)
+    {
+    default:
+//      hsAssert(false, "unknown type"); // not the right place to catch this problem.
+        return "UNKNOWN";
+    case kAgent:
+        return plNetServerAgentConstants::GetName();
+    case kLobby:
+        return plNetLobbyServerConstants::GetName();
+    case kGame:
+        return plNetGameServerConstants::GetName();
+    case kVault:
+        return plNetVaultServerConstants::GetName();
+    case kAuth:
+        return plNetAuthServerConstants::GetName();
+    case kAdmin:
+        return plNetAdminServerConstants::GetName();
+    case kLookup:
+        return plNetLookupServerConstants::GetName();
+    case kClient:
+        return "plClient";
+    }
 }
 
 UInt16 plNetServerConstants::GetPort(int type)
 { 
-	switch(type)
-	{
-	default:
-//		hsAssert(false, "unknown type"); // not the right place to catch this problem.
-		return 0;
-	case kGame:
-		return 0;
-	case kAgent:
-		return plNetServerAgentConstants::GetPort();
-	case kLobby:
-		return plNetLobbyServerConstants::GetPort();
-	case kVault:
-		return plNetVaultServerConstants::GetPort();
-	case kAuth:
-		return plNetAuthServerConstants::GetPort();
-	case kAdmin:
-		return plNetAdminServerConstants::GetPort();
-	case kLookup:
-		return plNetLookupServerConstants::GetPort();
-	}
+    switch(type)
+    {
+    default:
+//      hsAssert(false, "unknown type"); // not the right place to catch this problem.
+        return 0;
+    case kGame:
+        return 0;
+    case kAgent:
+        return plNetServerAgentConstants::GetPort();
+    case kLobby:
+        return plNetLobbyServerConstants::GetPort();
+    case kVault:
+        return plNetVaultServerConstants::GetPort();
+    case kAuth:
+        return plNetAuthServerConstants::GetPort();
+    case kAdmin:
+        return plNetAdminServerConstants::GetPort();
+    case kLookup:
+        return plNetLookupServerConstants::GetPort();
+    }
 }

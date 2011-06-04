@@ -29,39 +29,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Param ID's
 enum
 {
-	// Specular
-	kDecalAdvUseSpec,	// Not used anymore, feel free to replace with new fields as necessary
-	kDecalAdvSpecType,	// ditto
-	kDecalAdvShine,		// ...
-	kDecalAdvShineStr,	// ...
+    // Specular
+    kDecalAdvUseSpec,   // Not used anymore, feel free to replace with new fields as necessary
+    kDecalAdvSpecType,  // ditto
+    kDecalAdvShine,     // ...
+    kDecalAdvShineStr,  // ...
 
-	// Misc
-	kDecalAdvWire,
-	kDecalAdvMeshOutlines,
-	kDecalAdvTwoSided,
+    // Misc
+    kDecalAdvWire,
+    kDecalAdvMeshOutlines,
+    kDecalAdvTwoSided,
 
-	// Shading
-	kDecalAdvSoftShadow,
-	kDecalAdvNoProj,
-	kDecalAdvVertexShade,
-	kDecalAdvNoShade,
-	kDecalAdvNoFog,
-	kDecalAdvWhite,
+    // Shading
+    kDecalAdvSoftShadow,
+    kDecalAdvNoProj,
+    kDecalAdvVertexShade,
+    kDecalAdvNoShade,
+    kDecalAdvNoFog,
+    kDecalAdvWhite,
 
-	// Z
-	kDecalAdvZOnly,
-	kDecalAdvZClear,
-	kDecalAdvZNoRead,
-	kDecalAdvZNoWrite,
-	kDecalAdvZInc,
+    // Z
+    kDecalAdvZOnly,
+    kDecalAdvZClear,
+    kDecalAdvZNoRead,
+    kDecalAdvZNoWrite,
+    kDecalAdvZInc,
 };
 
 // Specular types
 enum
 {
-	kSpecTypeAlpha,
-	kSpecTypeColor,
-	kSpecTypeHighlight
+    kSpecTypeAlpha,
+    kSpecTypeColor,
+    kSpecTypeHighlight
 };
 
 #endif //PL_DECALMTLADVPB_H
