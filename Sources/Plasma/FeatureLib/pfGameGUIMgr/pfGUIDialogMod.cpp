@@ -551,7 +551,7 @@ hsBool      pfGUIDialogMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKey
 
 //// HandleKeyPress //////////////////////////////////////////////////////////
 
-hsBool      pfGUIDialogMod::HandleKeyPress( char key, UInt8 modifiers )
+hsBool      pfGUIDialogMod::HandleKeyPress( wchar_t key, UInt8 modifiers )
 {
     // Same deal as HandleKeyPress. Only problem is, we needed the msg to translate
     // to a char, so it had to be done up at the mgr level (sadly)

@@ -594,10 +594,13 @@ hsBool  pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, UInt8 modifi
 //  Like IHandleKeyPress, but takes in a char for distributing actual 
 //  characters typed.
 
-hsBool  pfGameGUIMgr::IHandleKeyPress( char key, UInt8 modifiers ) 
+hsBool  pfGameGUIMgr::IHandleKeyPress( wchar_t key, UInt8 modifiers ) 
 {
     pfGUIDialogMod  *dlg;
 
+    // Really... Don't handle any nil keypresses
+    if (key == nil)
+        return false;
 
     for( dlg = fActiveDialogs; dlg != nil; dlg = dlg->GetNext() )
     {

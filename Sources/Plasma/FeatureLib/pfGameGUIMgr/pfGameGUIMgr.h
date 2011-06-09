@@ -153,7 +153,7 @@ class pfGameGUIMgr : public hsKeyedObject
 
         hsBool  IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers, UInt32 *desiredCursor );
         hsBool  IHandleKeyEvt( EventType event, plKeyDef key, UInt8 modifiers );
-        hsBool  IHandleKeyPress( char key, UInt8 modifiers );
+        hsBool  IHandleKeyPress( wchar_t key, UInt8 modifiers );
 
         hsBool  IModalBlocking( void );
 
