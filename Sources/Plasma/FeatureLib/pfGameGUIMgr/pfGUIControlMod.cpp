@@ -879,7 +879,7 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
 
 //// HandleKeyPress/Event ////////////////////////////////////////////////////
 
-hsBool  pfGUIControlMod::HandleKeyPress( char key, UInt8 modifiers ) 
+hsBool  pfGUIControlMod::HandleKeyPress( wchar_t key, UInt8 modifiers ) 
 {
     return false; 
 }

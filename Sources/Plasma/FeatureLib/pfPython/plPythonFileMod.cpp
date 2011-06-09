@@ -890,7 +890,7 @@ void plPythonFileMod::RemoveTarget(plSceneObject* so)
 void    plPythonFileMod::HandleDiscardedKey( plKeyEventMsg *msg )
 {
     // So OnDefaultKeyCaught takes two parameters: the key character pressed and a boolean saying up or down
-    char keyChar = plKeyboardDevice::KeyEventToChar( msg );
+    wchar_t keyChar = plKeyboardDevice::KeyEventToChar( msg );
 
     // if the caps lock is down then reverse upper and lowercase
     if ( msg->GetCapsLockKeyDown() )

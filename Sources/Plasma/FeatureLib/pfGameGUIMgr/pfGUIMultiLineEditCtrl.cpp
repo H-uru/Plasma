@@ -1072,10 +1072,8 @@ void    pfGUIMultiLineEditCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifi
     IMoveCursorTo( IPointToPosition( (Int16)(mousePt.fX), (Int16)(mousePt.fY) ) );
 }
 
-hsBool  pfGUIMultiLineEditCtrl::HandleKeyPress( char keyIn, UInt8 modifiers )
+hsBool  pfGUIMultiLineEditCtrl::HandleKeyPress( wchar_t key, UInt8 modifiers )
 {
-    wchar_t key = (wchar_t)keyIn;
-
     if ((fPrevCtrl || fNextCtrl) && (fLineStarts.GetCount() <= GetFirstVisibleLine()))
         return true; // we're ignoring if we can't actually edit our visible frame (and we're linked)
 

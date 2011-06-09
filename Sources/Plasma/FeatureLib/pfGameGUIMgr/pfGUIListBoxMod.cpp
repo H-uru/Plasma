@@ -905,7 +905,7 @@ void    pfGUIListBoxMod::AddSelection( Int32 item )
 
 //// HandleKeyPress //////////////////////////////////////////////////////////
 
-hsBool  pfGUIListBoxMod::HandleKeyPress( char key, UInt8 modifiers )
+hsBool  pfGUIListBoxMod::HandleKeyPress( wchar_t key, UInt8 modifiers )
 {
     return false;
 }
