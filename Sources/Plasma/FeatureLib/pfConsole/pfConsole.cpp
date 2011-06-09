@@ -519,7 +519,8 @@ hsBool  pfConsole::MsgReceive( plMessage *msg )
 
 void    pfConsole::IHandleKey( plKeyEventMsg *msg )
 {
-    char            *c, key;
+    char            *c;
+    wchar_t         key;
     int             i,eol;
     static hsBool   findAgain = false;
     static UInt32   findCounter = 0;
@@ -831,13 +832,13 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     {
         key = plKeyboardDevice::KeyEventToChar( msg );
         // do they want to go into help mode?
-        if( !fPythonMode && key == '?' && fWorkingCursor == 0 )
+        if( !fPythonMode && key == L'?' && fWorkingCursor == 0 )
         {
             /// Go into help mode
             fHelpMode = true;
         }
         // do they want to go into Python mode?
-        else if( !fHelpMode && key == '\\' && fWorkingCursor == 0 )
+        else if( !fHelpMode && key == L'\\' && fWorkingCursor == 0 )
         {
             // toggle Python mode
             fPythonMode = fPythonMode ? false:true;

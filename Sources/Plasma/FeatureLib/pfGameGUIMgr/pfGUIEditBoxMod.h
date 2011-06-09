@@ -90,7 +90,7 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
         virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
 
-        virtual hsBool  HandleKeyPress( char key, UInt8 modifiers );
+        virtual hsBool  HandleKeyPress( wchar_t key, UInt8 modifiers );
         virtual hsBool  HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, UInt8 modifiers );
 
         virtual void    PurgeDynaTextMapImage();

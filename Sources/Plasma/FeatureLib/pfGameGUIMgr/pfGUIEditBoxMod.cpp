@@ -277,10 +277,8 @@ void    pfGUIEditBoxMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
 {
 }
 
-hsBool  pfGUIEditBoxMod::HandleKeyPress( char inKey, UInt8 modifiers )
+hsBool  pfGUIEditBoxMod::HandleKeyPress( wchar_t key, UInt8 modifiers )
 {
-    wchar_t key = (wchar_t)inKey;
-
     if( fBuffer == nil )
         return false;
 

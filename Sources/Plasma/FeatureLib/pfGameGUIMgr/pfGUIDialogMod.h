@@ -119,7 +119,7 @@ class pfGUIDialogMod : public plSingleModifier
 
         virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers );
         hsBool          HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, UInt8 modifiers );
-        hsBool          HandleKeyPress( char key, UInt8 modifiers );
+        hsBool          HandleKeyPress( wchar_t key, UInt8 modifiers );
         void            UpdateInterestingThings( hsScalar mouseX, hsScalar mouseY, UInt8 modifiers, hsBool modalPreset );
 
         void            SetControlOfInterest( pfGUIControlMod *c );

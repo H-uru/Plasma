@@ -113,7 +113,7 @@ public:
     
     static plKeyboardDevice* GetInstance() { return fInstance; }
 
-    static char KeyEventToChar( plKeyEventMsg *msg );
+    static wchar_t KeyEventToChar( plKeyEventMsg *msg );
 };
 
 class plPlate;

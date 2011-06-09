@@ -204,120 +204,43 @@ void plKeyboardDevice::HandleWindowActivate(bool bActive, HWND hWnd)
 
 //// KeyEventToChar //////////////////////////////////////////////////////////
 //  Translate a Plasma key event to an actual char
-char    plKeyboardDevice::KeyEventToChar( plKeyEventMsg *msg )
+wchar_t    plKeyboardDevice::KeyEventToChar( plKeyEventMsg *msg )
 {
-    short   code = msg->GetKeyCode();
-    char    c = 0;
+    unsigned int   code = msg->GetKeyCode();
+    wchar_t    c = 0;
     unsigned char kbState[256];
-    unsigned char buffer[256];
-    UINT scanCode;
+    wchar_t buffer[256];
+    unsigned int scanCode;
     int     retVal;
 
     buffer[0] = 0;
 
-    switch( code )
+    // let windows translate everything for us!
+    scanCode = MapVirtualKeyW(code, 0);
+    GetKeyboardState(kbState);
+    if (fIgnoreCapsLock)
+        kbState[KEY_CAPSLOCK] = 0; // clear the caps lock key
+    retVal = ToUnicode(code, scanCode, kbState, (wchar_t*)buffer, 256, 0);
+    if (retVal == -1)
     {
-        case KEY_A:
-        case KEY_B:
-        case KEY_C:
-        case KEY_D:
-        case KEY_E:
-        case KEY_F:
-        case KEY_G:
-        case KEY_H:
-        case KEY_I:
-        case KEY_J:
-        case KEY_K:
-        case KEY_L:
-        case KEY_M:
-        case KEY_N:
-        case KEY_O:
-        case KEY_P:
-        case KEY_Q:
-        case KEY_R:
-        case KEY_S:
-        case KEY_T:
-        case KEY_U:
-        case KEY_V:
-        case KEY_W:
-        case KEY_X:
-        case KEY_Y:
-        case KEY_Z:
-        case KEY_1:
-        case KEY_2:
-        case KEY_3:
-        case KEY_4:
-        case KEY_5:
-        case KEY_6:
-        case KEY_7:
-        case KEY_8:
-        case KEY_9:
-        case KEY_0:
-        case KEY_TILDE:
-        case KEY_COMMA:
-        case KEY_PERIOD:
-        case KEY_LBRACKET:
-        case KEY_RBRACKET:
-        case KEY_BACKSLASH:
-        case KEY_SLASH:
-        case KEY_DASH:
-        case KEY_EQUAL:
-        case KEY_SEMICOLON:
-        case KEY_QUOTE:
-            // let windows translate everything for us!
-            scanCode = MapVirtualKeyEx(code,0,GetKeyboardLayout(0));
-            GetKeyboardState(kbState);
-            if (fIgnoreCapsLock)
-                kbState[KEY_CAPSLOCK] = 0; // clear the caps lock key
-            retVal = ToAsciiEx(code,scanCode,kbState,(unsigned short*)buffer,0,GetKeyboardLayout(0));
-            if (retVal == 2)
-            {
-                if ((buffer[0] == buffer[1]) && (!fKeyIsDeadKey))
-                {
-                    // it's actually a dead key, since the previous key wasn't a dead key
-                    c = (char)buffer[0];
-                    fKeyIsDeadKey = true;
-                }
-                else
-                {
-                    c = (char)buffer[1]; // it was an untranslated dead key, so copy the unconverted key
-                    fKeyIsDeadKey = false;
-                }
-            }
-            else if (retVal == 0)
-                c = 0; // it's invalid
-            else
-            {
-                c = (char)buffer[0];
-                if (retVal < 0) // the key was a dead key
-                    fKeyIsDeadKey = true;
-                else
-                    fKeyIsDeadKey = false;
-            }
-            break;
-
-        case KEY_ESCAPE: c = 27; break;
-        case KEY_TAB: c = '\t'; break;
-        case KEY_BACKSPACE: c = 8; break;
-        case KEY_ENTER: c = '\n'; break;
-        case KEY_SPACE: c = ' '; break;
-
-        // numlock on numbers
-        case KEY_NUMPAD0: c = '0'; break;
-        case KEY_NUMPAD1: c = '1'; break;
-        case KEY_NUMPAD2: c = '2'; break;
-        case KEY_NUMPAD3: c = '3'; break;
-        case KEY_NUMPAD4: c = '4'; break;
-        case KEY_NUMPAD5: c = '5'; break;
-        case KEY_NUMPAD6: c = '6'; break;
-        case KEY_NUMPAD7: c = '7'; break;
-        case KEY_NUMPAD8: c = '8'; break;
-        case KEY_NUMPAD9: c = '9'; break;
-
-        // everything else
-        default:
-            c = 0;
-            break;
+        // It's a stored dead key.
+        c = 0;
+        fKeyIsDeadKey = true;
+    }
+    else if (retVal == 0)
+        // Invalid crap
+        c = 0;
+    else if (retVal == 1)
+    {
+        // Exactly one good character
+        fKeyIsDeadKey = false;
+        c = buffer[0];
+    }
+    else if (retVal >= 2)
+    {
+        fKeyIsDeadKey = !fKeyIsDeadKey;
+        if (!fKeyIsDeadKey)
+            c = buffer[0];
     }
 
     return c;
