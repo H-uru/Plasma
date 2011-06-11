@@ -864,7 +864,13 @@ PYTHON_METHOD_DEFINITION(ptImportHook, find_module, args)
     if (PyString_Check(module_path))
         PYTHON_RETURN_NONE;
 
+    std::string package_module_name = module_name;
+    package_module_name += ".__init__";
     if (PythonPack::IsItPythonPacked(module_name))
+    {
+        Py_INCREF(self);
+        return (PyObject*)self;
+    } else if (PythonPack::IsItPythonPacked(package_module_name.c_str()))
     {
         Py_INCREF(self);
         return (PyObject*)self;
@@ -873,25 +879,14 @@ PYTHON_METHOD_DEFINITION(ptImportHook, find_module, args)
         PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptImportHook, load_module, args)
+PyObject *ptImportHook_load_module_detail(ptImportHook *self, char* module_name, char* packed_name, bool isPackage, bool& found)
 {
-    char* module_name;
-    if (!PyArg_ParseTuple(args, "s", &module_name))
-    {
-        PyErr_SetString(PyExc_TypeError, "load_module expects string");
-        PYTHON_RETURN_ERROR;
-    }
-
-    // Grab sys.__dict__ so we can get started
-    PyObject* sys_mod  = PyImport_ImportModule("sys");
-    PyObject* sys_dict = PyModule_GetDict(sys_mod);
-
     // We want to check sys.modules for the module first
     // If it's not in there, we have to load the module
     // and add it to the sys.modules dict for future reference,
     // otherwise reload() will not work properly.
     PyObject* result = nil;
-    PyObject* modules = PyDict_GetItemString(sys_dict, "modules");
+    PyObject* modules = PyImport_GetModuleDict();
     hsAssert(PyDict_Check(modules), "sys.modules is not a dict");
 
     if (result = PyDict_GetItemString(modules, module_name))
@@ -905,27 +900,58 @@ PYTHON_METHOD_DEFINITION(ptImportHook, load_module, args)
     }
     else
     {
-        if (PyObject* pyc = PythonPack::OpenPythonPacked(module_name))
+        if (PyObject* pyc = PythonPack::OpenPythonPacked(packed_name))
         {
-            result = PyImport_ExecCodeModule(module_name, pyc);
-            if (result == nil)
-            {
-                PyErr_Print();
+            result = PyImport_AddModule(module_name);
+            if(!result)
+                return nil;
+            PyObject* d = PyModule_GetDict(result);
+            PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
+            PyObject *file = PyString_FromString(packed_name);
+            PyModule_AddObject(result, "__file__", file);
+            PyDict_SetItemString(d, "__loader__", (PyObject*)self);
+            if(isPackage) {
+                PyObject *path = PyString_FromString(module_name);
+                PyObject *l = PyList_New(1);
+                PyList_SetItem(l, 0, path);
+                PyDict_SetItemString(d, "__path__", l);
+                Py_DECREF(l);
             }
-            else
+            PyObject* v = PyEval_EvalCode((PyCodeObject *)pyc, d, d);
+            if(!v) 
             {
-                PyModule_AddObject(result, "__loader__", (PyObject*)self);
-                PyDict_SetItemString(modules, module_name, result);
+                PyDict_DelItemString(modules, module_name);
+                return nil;
             }
+            Py_INCREF(result);
         }
-        else
+        else {
+            found = false;
             PyErr_SetString(PyExc_ImportError, "module not found in python.pak");
+        }
     }
 
-    if (result)
-        return result;
-    else
+    return result;
+}
+
+PYTHON_METHOD_DEFINITION(ptImportHook, load_module, args)
+{
+    char* module_name;
+    if (!PyArg_ParseTuple(args, "s", &module_name))
+    {
+        PyErr_SetString(PyExc_TypeError, "load_module expects string");
         PYTHON_RETURN_ERROR;
+    }
+    bool found = true;
+    PyObject *result = ptImportHook_load_module_detail(self, module_name, module_name, false, found);
+    if (!found)
+    {
+        PyErr_Clear();
+        std::string package_module_name = module_name;
+        package_module_name += ".__init__";
+        result = ptImportHook_load_module_detail(self, module_name, (char*)package_module_name.c_str(), true, found);
+    }
+    return result;
 }
 
 PYTHON_START_METHODS_TABLE(ptImportHook)
