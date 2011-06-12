@@ -118,27 +118,27 @@ public:
 
 class plPlate;
 
-#define CURSOR_UP                   IDB_CURSOR_UP                                   
-#define CURSOR_DOWN                 IDB_CURSOR_DOWN     
-#define CURSOR_RIGHT                IDB_CURSOR_RIGHT    
-#define CURSOR_LEFT                 IDB_CURSOR_LEFT     
-#define CURSOR_OPEN                 IDB_CURSOR_OPEN     
-#define CURSOR_GRAB                 IDB_CURSOR_GRAB     
-#define CURSOR_CLICKED              IDB_CURSOR_CLICKED  
-#define CURSOR_POISED               IDB_CURSOR_POISED   
-#define CURSOR_ARROW                IDB_CURSOR_ARROW    
-#define CURSOR_4WAY_OPEN            IDB_CURSOR_4WAYOPEN         
-#define CURSOR_4WAY_CLOSED          IDB_CURSOR_4WAYCLOSED       
-#define CURSOR_UPDOWN_CLOSED        IDB_CURSOR_UPDOWNCLOSED     
-#define CURSOR_UPDOWN_OPEN          IDB_CURSOR_UPDOWNOPEN       
-#define CURSOR_LEFTRIGHT_CLOSED     IDB_CURSOR_LEFTRIGHTCLOSED  
-#define CURSOR_LEFTRIGHT_OPEN       IDB_CURSOR_LEFTRIGHTOPEN    
-#define CURSOR_OFFER_BOOK           IDB_CURSOR_BOOK      
-#define CURSOR_OFFER_BOOK_HI        IDB_CURSOR_BOOK_HIGHLIGHT
-#define CURSOR_OFFER_BOOK_CLICKED   IDB_CURSOR_BOOK_CLICKED  
-#define CURSOR_CLICK_DISABLED       IDB_CURSOR_DISABLED
-#define CURSOR_HAND                 IDB_CURSOR_HAND
-#define CURSOR_UPWARD               IDB_CURSOR_UPWARD
+#define CURSOR_UP                   IDR_CURSOR_UP                                   
+#define CURSOR_DOWN                 IDR_CURSOR_DOWN     
+#define CURSOR_RIGHT                IDR_CURSOR_RIGHT    
+#define CURSOR_LEFT                 IDR_CURSOR_LEFT     
+#define CURSOR_OPEN                 IDR_CURSOR_OPEN     
+#define CURSOR_GRAB                 IDR_CURSOR_GRAB     
+#define CURSOR_CLICKED              IDR_CURSOR_CLICKED  
+#define CURSOR_POISED               IDR_CURSOR_POISED   
+#define CURSOR_ARROW                IDR_CURSOR_ARROW    
+#define CURSOR_4WAY_OPEN            IDR_CURSOR_4WAYOPEN         
+#define CURSOR_4WAY_CLOSED          IDR_CURSOR_4WAYCLOSED       
+#define CURSOR_UPDOWN_CLOSED        IDR_CURSOR_UPDOWNCLOSED     
+#define CURSOR_UPDOWN_OPEN          IDR_CURSOR_UPDOWNOPEN       
+#define CURSOR_LEFTRIGHT_CLOSED     IDR_CURSOR_LEFTRIGHTCLOSED  
+#define CURSOR_LEFTRIGHT_OPEN       IDR_CURSOR_LEFTRIGHTOPEN    
+#define CURSOR_OFFER_BOOK           IDR_CURSOR_BOOK      
+#define CURSOR_OFFER_BOOK_HI        IDR_CURSOR_BOOK_HIGHLIGHT
+#define CURSOR_OFFER_BOOK_CLICKED   IDR_CURSOR_BOOK_CLICKED  
+#define CURSOR_CLICK_DISABLED       IDR_CURSOR_DISABLED
+#define CURSOR_HAND                 IDR_CURSOR_HAND
+#define CURSOR_UPWARD               IDR_CURSOR_UPWARD
 
 class plInputEventMsg;
 

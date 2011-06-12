@@ -526,6 +526,42 @@ void    plPlate::ReloadFromJPEGResource( const char *resName, UInt32 colorKey )
     }
 }
 
+
+void    plPlate::CreateOrReloadFromRawResource(const char *resName, bool create)
+{
+    HRSRC res = FindResource(NULL, resName, "RAWBMP");
+    if (!res)
+        goto error;
+
+    HGLOBAL resourceLoaded = LoadResource(NULL, res);
+    if (!resourceLoaded)
+        goto error;
+
+    UInt32* data = (UInt32*)LockResource(resourceLoaded);
+    if (!data)
+        goto error;
+
+    UInt32 width = data[0];
+    UInt32 height = data[1];
+    if (create)
+    {
+        CreateMaterial(width, height, true);
+    }
+    memcpy(fMipmap->GetImage(), &data[2], width*height*4);
+    if (!create && fMipmap->GetDeviceRef())
+    {
+        fMipmap->GetDeviceRef()->SetDirty(true);
+    }
+    return;
+
+error:
+    if (create)
+    {
+        CreateMaterial(32, 32, true);
+        SetSize(0.1, 0.1);
+    }
+}
+
 //// ILink ///////////////////////////////////////////////////////////////////
 //  Links a plate into a plate list, but also sorts by decreasing depth,
 //  so the plate won't actually necessarily be added after the pointer
