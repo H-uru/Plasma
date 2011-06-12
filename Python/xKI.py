@@ -5962,10 +5962,15 @@ class xKI(ptModifier):
         # if we were in AFK Mode then exit it:
         if PtGetLocalAvatar().avatar.getCurrentMode() == PtBrainModes.kAFK:
             PtAvatarExitAFK()
+        
+        try:
+            message = unicode(message, kCharSet)
+        except UnicodeError:
+            message = None
+            self.IAddRTChat(None, PtGetLocalizedString("KI.Errors.TextOnly"), kChatSystemMessage)
+        
         # any special commands
-        # (6/8/2011): Use the cp1252 (latin_1) encoding since that's the set our p2fs support
-        #             It's not unicode, but it works better than pure ascii
-        message = self.ICheckChatCommands(unicode(message, kCharSet))
+        message = self.ICheckChatCommands(message)
         if not message:
             return
         if IAmAdmin:
@@ -7056,7 +7061,6 @@ class xKI(ptModifier):
         cflags = ChatFlags(0)
         cflags.toSelf = 1
         cflags.status = 1
-        statusMessage = str(statusMessage) # HACK for unicode
 
         if netPropagate:
             plyrList = self.IGetPlayersInChatDistance()
