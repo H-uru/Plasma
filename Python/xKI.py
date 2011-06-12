@@ -116,6 +116,10 @@ KIJalakGUIClose = ptAttribResponder(37, "Jalak GUI 'close' resp")
 KIJalakBtnLights = ptAttribResponder(38, "Jalak GUI btn lights resp",statelist=JalakBtnStates,netForce=0)
 
 
+# Character set constant
+# We should update this when the p2fs really support unicode...
+kCharSet = "cp1252"
+
 # globals
 KIGUIInitialized = 0
 IAmAdmin = 0
@@ -4158,6 +4162,7 @@ class xKI(ptModifier):
     def OnRTChat(self,player,message,flags):
         "On receipt of RTChat message"
         if type(message) != type(None):
+            message = unicode(message, kCharSet)
             cflags = ChatFlags(flags)
             # make sure that its a channel that we are on (but only if a broadcast message)
             if cflags.broadcast:
@@ -5960,7 +5965,7 @@ class xKI(ptModifier):
         # any special commands
         # (6/8/2011): Use the cp1252 (latin_1) encoding since that's the set our p2fs support
         #             It's not unicode, but it works better than pure ascii
-        message = self.ICheckChatCommands(unicode(message, "cp1252"))
+        message = self.ICheckChatCommands(unicode(message, kCharSet))
         if not message:
             return
         if IAmAdmin:
