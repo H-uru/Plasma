@@ -14,14 +14,10 @@
         codecs. In addition to these, a few Python specific codec
         aliases have also been added.
 
-    About the CJK codec aliases:
-
-        The codecs for these encodings are not distributed with the
-        Python core, but are included here for reference, since the
-        locale module relies on having these aliases available.
-
 """
 aliases = {
+
+    # Please keep this list sorted alphabetically by value !
 
     # ascii codec
     '646'                : 'ascii',
@@ -41,7 +37,19 @@ aliases = {
     'base64'             : 'base64_codec',
     'base_64'            : 'base64_codec',
 
+    # big5 codec
+    'big5_tw'            : 'big5',
+    'csbig5'             : 'big5',
+
+    # big5hkscs codec
+    'big5_hkscs'         : 'big5hkscs',
+    'hkscs'              : 'big5hkscs',
+
+    # bz2_codec codec
+    'bz2'                : 'bz2_codec',
+
     # cp037 codec
+    '037'                : 'cp037',
     'csibm037'           : 'cp037',
     'ebcdic_cp_ca'       : 'cp037',
     'ebcdic_cp_nl'       : 'cp037',
@@ -51,40 +59,52 @@ aliases = {
     'ibm039'             : 'cp037',
 
     # cp1026 codec
+    '1026'               : 'cp1026',
     'csibm1026'          : 'cp1026',
     'ibm1026'            : 'cp1026',
 
     # cp1140 codec
+    '1140'               : 'cp1140',
     'ibm1140'            : 'cp1140',
 
     # cp1250 codec
+    '1250'               : 'cp1250',
     'windows_1250'       : 'cp1250',
 
     # cp1251 codec
+    '1251'               : 'cp1251',
     'windows_1251'       : 'cp1251',
 
     # cp1252 codec
+    '1252'               : 'cp1252',
     'windows_1252'       : 'cp1252',
 
     # cp1253 codec
+    '1253'               : 'cp1253',
     'windows_1253'       : 'cp1253',
 
     # cp1254 codec
+    '1254'               : 'cp1254',
     'windows_1254'       : 'cp1254',
 
     # cp1255 codec
+    '1255'               : 'cp1255',
     'windows_1255'       : 'cp1255',
 
     # cp1256 codec
+    '1256'               : 'cp1256',
     'windows_1256'       : 'cp1256',
 
     # cp1257 codec
+    '1257'               : 'cp1257',
     'windows_1257'       : 'cp1257',
 
     # cp1258 codec
+    '1258'               : 'cp1258',
     'windows_1258'       : 'cp1258',
 
     # cp424 codec
+    '424'                : 'cp424',
     'csibm424'           : 'cp424',
     'ebcdic_cp_he'       : 'cp424',
     'ibm424'             : 'cp424',
@@ -95,12 +115,14 @@ aliases = {
     'ibm437'             : 'cp437',
 
     # cp500 codec
+    '500'                : 'cp500',
     'csibm500'           : 'cp500',
     'ebcdic_cp_be'       : 'cp500',
     'ebcdic_cp_ch'       : 'cp500',
     'ibm500'             : 'cp500',
 
     # cp775 codec
+    '775'                : 'cp775',
     'cspc775baltic'      : 'cp775',
     'ibm775'             : 'cp775',
 
@@ -124,6 +146,11 @@ aliases = {
     'csibm857'           : 'cp857',
     'ibm857'             : 'cp857',
 
+    # cp858 codec
+    '858'                : 'cp858',
+    'csibm858'           : 'cp858',
+    'ibm858'             : 'cp858',
+
     # cp860 codec
     '860'                : 'cp860',
     'csibm860'           : 'cp860',
@@ -146,6 +173,7 @@ aliases = {
     'ibm863'             : 'cp863',
 
     # cp864 codec
+    '864'                : 'cp864',
     'csibm864'           : 'cp864',
     'ibm864'             : 'cp864',
 
@@ -165,8 +193,103 @@ aliases = {
     'csibm869'           : 'cp869',
     'ibm869'             : 'cp869',
 
+    # cp932 codec
+    '932'                : 'cp932',
+    'ms932'              : 'cp932',
+    'mskanji'            : 'cp932',
+    'ms_kanji'           : 'cp932',
+
+    # cp949 codec
+    '949'                : 'cp949',
+    'ms949'              : 'cp949',
+    'uhc'                : 'cp949',
+
+    # cp950 codec
+    '950'                : 'cp950',
+    'ms950'              : 'cp950',
+
+    # euc_jis_2004 codec
+    'jisx0213'           : 'euc_jis_2004',
+    'eucjis2004'         : 'euc_jis_2004',
+    'euc_jis2004'        : 'euc_jis_2004',
+
+    # euc_jisx0213 codec
+    'eucjisx0213'        : 'euc_jisx0213',
+
+    # euc_jp codec
+    'eucjp'              : 'euc_jp',
+    'ujis'               : 'euc_jp',
+    'u_jis'              : 'euc_jp',
+
+    # euc_kr codec
+    'euckr'              : 'euc_kr',
+    'korean'             : 'euc_kr',
+    'ksc5601'            : 'euc_kr',
+    'ks_c_5601'          : 'euc_kr',
+    'ks_c_5601_1987'     : 'euc_kr',
+    'ksx1001'            : 'euc_kr',
+    'ks_x_1001'          : 'euc_kr',
+
+    # gb18030 codec
+    'gb18030_2000'       : 'gb18030',
+
+    # gb2312 codec
+    'chinese'            : 'gb2312',
+    'csiso58gb231280'    : 'gb2312',
+    'euc_cn'             : 'gb2312',
+    'euccn'              : 'gb2312',
+    'eucgb2312_cn'       : 'gb2312',
+    'gb2312_1980'        : 'gb2312',
+    'gb2312_80'          : 'gb2312',
+    'iso_ir_58'          : 'gb2312',
+
+    # gbk codec
+    '936'                : 'gbk',
+    'cp936'              : 'gbk',
+    'ms936'              : 'gbk',
+
     # hex_codec codec
     'hex'                : 'hex_codec',
+
+    # hp_roman8 codec
+    'roman8'             : 'hp_roman8',
+    'r8'                 : 'hp_roman8',
+    'csHPRoman8'         : 'hp_roman8',
+
+    # hz codec
+    'hzgb'               : 'hz',
+    'hz_gb'              : 'hz',
+    'hz_gb_2312'         : 'hz',
+
+    # iso2022_jp codec
+    'csiso2022jp'        : 'iso2022_jp',
+    'iso2022jp'          : 'iso2022_jp',
+    'iso_2022_jp'        : 'iso2022_jp',
+
+    # iso2022_jp_1 codec
+    'iso2022jp_1'        : 'iso2022_jp_1',
+    'iso_2022_jp_1'      : 'iso2022_jp_1',
+
+    # iso2022_jp_2 codec
+    'iso2022jp_2'        : 'iso2022_jp_2',
+    'iso_2022_jp_2'      : 'iso2022_jp_2',
+
+    # iso2022_jp_2004 codec
+    'iso_2022_jp_2004'   : 'iso2022_jp_2004',
+    'iso2022jp_2004'     : 'iso2022_jp_2004',
+
+    # iso2022_jp_3 codec
+    'iso2022jp_3'        : 'iso2022_jp_3',
+    'iso_2022_jp_3'      : 'iso2022_jp_3',
+
+    # iso2022_jp_ext codec
+    'iso2022jp_ext'      : 'iso2022_jp_ext',
+    'iso_2022_jp_ext'    : 'iso2022_jp_ext',
+
+    # iso2022_kr codec
+    'csiso2022kr'        : 'iso2022_kr',
+    'iso2022kr'          : 'iso2022_kr',
+    'iso_2022_kr'        : 'iso2022_kr',
 
     # iso8859_10 codec
     'csisolatin6'        : 'iso8859_10',
@@ -176,8 +299,15 @@ aliases = {
     'l6'                 : 'iso8859_10',
     'latin6'             : 'iso8859_10',
 
+    # iso8859_11 codec
+    'thai'               : 'iso8859_11',
+    'iso_8859_11'        : 'iso8859_11',
+    'iso_8859_11_2001'   : 'iso8859_11',
+
     # iso8859_13 codec
     'iso_8859_13'        : 'iso8859_13',
+    'l7'                 : 'iso8859_13',
+    'latin7'             : 'iso8859_13',
 
     # iso8859_14 codec
     'iso_8859_14'        : 'iso8859_14',
@@ -189,6 +319,15 @@ aliases = {
 
     # iso8859_15 codec
     'iso_8859_15'        : 'iso8859_15',
+    'l9'                 : 'iso8859_15',
+    'latin9'             : 'iso8859_15',
+
+    # iso8859_16 codec
+    'iso_8859_16'        : 'iso8859_16',
+    'iso_8859_16_2001'   : 'iso8859_16',
+    'iso_ir_226'         : 'iso8859_16',
+    'l10'                : 'iso8859_16',
+    'latin10'            : 'iso8859_16',
 
     # iso8859_2 codec
     'csisolatin2'        : 'iso8859_2',
@@ -255,19 +394,26 @@ aliases = {
     'l5'                 : 'iso8859_9',
     'latin5'             : 'iso8859_9',
 
-    # jis_7 codec
-    'csiso2022jp'        : 'jis_7',
-    'iso_2022_jp'        : 'jis_7',
+    # johab codec
+    'cp1361'             : 'johab',
+    'ms1361'             : 'johab',
 
     # koi8_r codec
     'cskoi8r'            : 'koi8_r',
 
     # latin_1 codec
+    #
+    # Note that the latin_1 codec is implemented internally in C and a
+    # lot faster than the charmap codec iso8859_1 which uses the same
+    # encoding. This is why we discourage the use of the iso8859_1
+    # codec and alias it to latin_1 instead.
+    #
     '8859'               : 'latin_1',
     'cp819'              : 'latin_1',
     'csisolatin1'        : 'latin_1',
     'ibm819'             : 'latin_1',
     'iso8859'            : 'latin_1',
+    'iso8859_1'          : 'latin_1',
     'iso_8859_1'         : 'latin_1',
     'iso_8859_1_1987'    : 'latin_1',
     'iso_ir_100'         : 'latin_1',
@@ -297,6 +443,12 @@ aliases = {
     # mbcs codec
     'dbcs'               : 'mbcs',
 
+    # ptcp154 codec
+    'csptcp154'          : 'ptcp154',
+    'pt154'              : 'ptcp154',
+    'cp154'              : 'ptcp154',
+    'cyrillic_asian'     : 'ptcp154',
+
     # quopri_codec codec
     'quopri'             : 'quopri_codec',
     'quoted_printable'   : 'quopri_codec',
@@ -305,8 +457,31 @@ aliases = {
     # rot_13 codec
     'rot13'              : 'rot_13',
 
+    # shift_jis codec
+    'csshiftjis'         : 'shift_jis',
+    'shiftjis'           : 'shift_jis',
+    'sjis'               : 'shift_jis',
+    's_jis'              : 'shift_jis',
+
+    # shift_jis_2004 codec
+    'shiftjis2004'       : 'shift_jis_2004',
+    'sjis_2004'          : 'shift_jis_2004',
+    's_jis_2004'         : 'shift_jis_2004',
+
+    # shift_jisx0213 codec
+    'shiftjisx0213'      : 'shift_jisx0213',
+    'sjisx0213'          : 'shift_jisx0213',
+    's_jisx0213'         : 'shift_jisx0213',
+
     # tactis codec
     'tis260'             : 'tactis',
+
+    # tis_620 codec
+    'tis620'             : 'tis_620',
+    'tis_620_0'          : 'tis_620',
+    'tis_620_2529_0'     : 'tis_620',
+    'tis_620_2529_1'     : 'tis_620',
+    'iso_ir_166'         : 'tis_620',
 
     # utf_16 codec
     'u16'                : 'utf_16',
@@ -320,9 +495,20 @@ aliases = {
     'unicodelittleunmarked' : 'utf_16_le',
     'utf_16le'           : 'utf_16_le',
 
+    # utf_32 codec
+    'u32'                : 'utf_32',
+    'utf32'              : 'utf_32',
+
+    # utf_32_be codec
+    'utf_32be'           : 'utf_32_be',
+
+    # utf_32_le codec
+    'utf_32le'           : 'utf_32_le',
+
     # utf_7 codec
     'u7'                 : 'utf_7',
     'utf7'               : 'utf_7',
+    'unicode_1_1_utf_7'  : 'utf_7',
 
     # utf_8 codec
     'u8'                 : 'utf_8',
