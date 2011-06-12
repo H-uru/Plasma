@@ -116,6 +116,10 @@ KIJalakGUIClose = ptAttribResponder(37, "Jalak GUI 'close' resp")
 KIJalakBtnLights = ptAttribResponder(38, "Jalak GUI btn lights resp",statelist=JalakBtnStates,netForce=0)
 
 
+# Character set constant
+# We should update this when the p2fs really support unicode...
+kCharSet = "cp1252"
+
 # globals
 KIGUIInitialized = 0
 IAmAdmin = 0
@@ -4158,6 +4162,7 @@ class xKI(ptModifier):
     def OnRTChat(self,player,message,flags):
         "On receipt of RTChat message"
         if type(message) != type(None):
+            message = unicode(message, kCharSet)
             cflags = ChatFlags(flags)
             # make sure that its a channel that we are on (but only if a broadcast message)
             if cflags.broadcast:
@@ -5958,7 +5963,9 @@ class xKI(ptModifier):
         if PtGetLocalAvatar().avatar.getCurrentMode() == PtBrainModes.kAFK:
             PtAvatarExitAFK()
         # any special commands
-        message = self.ICheckChatCommands(message)
+        # (6/8/2011): Use the cp1252 (latin_1) encoding since that's the set our p2fs support
+        #             It's not unicode, but it works better than pure ascii
+        message = self.ICheckChatCommands(unicode(message, kCharSet))
         if not message:
             return
         if IAmAdmin:
@@ -6281,7 +6288,8 @@ class xKI(ptModifier):
                     # no petition commands from the chat line... yet
                     self.IAddRTChat(None,PtGetLocalizedString("KI.Errors.CommandError", [chatmessage]),kChatSystemMessage)
                     return None
-            except UnicodeDecodeError:
+            except UnicodeDecodeError, detail:
+                PtDebugPrint(detail)
                 self.IAddRTChat(None,PtGetLocalizedString("KI.Errors.TextOnly"),kChatSystemMessage)
                 return None
         if string.lower(chatmessage).startswith(str(PtGetLocalizedString("KI.Commands.CCR"))):
@@ -6827,15 +6835,16 @@ class xKI(ptModifier):
         if PtIsSinglePlayerMode():
             return
 
-        message = str(message) # HACK, so we handle unicode (this isn't really the best way)
-
         #This is to get rid of any annoying log filling admin messages that tell you to log out and then log back in!
         #They're so ANNOYING!
         if kInternalDev:
             if message.find("Uru has been updated.") > -1:
                 return
-
-        PtDebugPrint("xKI:IAddRTChat: message=%s"%(message),player,cflags, level=kDebugDumpLevel)
+        
+        try:
+            PtDebugPrint("xKI:IAddRTChat: message=%s"%message,player,cflags, level=kDebugDumpLevel)
+        except UnicodeDecodeError:
+            pass
 
         # Begin Fix for CoD --> Character of Doom
         (message, RogueCount) = re.subn('[\x00-\x08\x0a-\x1f]', '', message)
@@ -6944,14 +6953,14 @@ class xKI(ptModifier):
             mKIdialog.show()
         if type(player) != type(None):
             chatHeaderFormatted = pretext + unicode(player.getPlayerName()) + U":"
-            chatMessageFormatted =  U" " + unicode(message)
+            chatMessageFormatted =  U" " + message
         else:
             # must be a system type or error message
             chatHeaderFormatted = pretext
             if pretext == U"":
-                chatMessageFormatted = unicode(message)
+                chatMessageFormatted = message
             else:
-                chatMessageFormatted = " " + unicode(message)
+                chatMessageFormatted = " " + message
 
         chatarea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kChatDisplayArea))
         chatarea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
