@@ -39,13 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeline/plPlates.h"
 #include "plPipeline/plDebugText.h"
+#include "plGImage/plMipmap.h"
 
 #include "hsWindows.h"
 #include "plPipeline.h"
-
-// base size of the cursor 
-#define CURSOR_SIZE_X 0.0675f   
-#define CURSOR_SIZE_Y 0.09f
 
 // The resolution that uses the base size of the cursor. 
 // All other resolutions will scale the cursor size to keep the same physical size.
@@ -304,11 +301,11 @@ void    plMouseDevice::CreateCursor( int cursor )
     if( fCursor == nil )
     {
         plPlateManager::Instance().CreatePlate( &fCursor );
-        fCursor->CreateFromResource( MAKEINTRESOURCE( cursor ) );
+        fCursor->CreateFromRawResource( MAKEINTRESOURCE( cursor ) );
     }
     else
     {
-        fCursor->ReloadFromResource( MAKEINTRESOURCE( cursor ) );
+        fCursor->ReloadFromRawResource( MAKEINTRESOURCE( cursor ) );
     }
     fCursor->SetPosition( 0, 0, 0 );
     IUpdateCursorSize();
@@ -322,7 +319,7 @@ void plMouseDevice::IUpdateCursorSize()
     if(fCursor)
     {
         // set the size of the cursor based on resolution.
-        fCursor->SetSize( CURSOR_SIZE_X * BASE_WIDTH / fWidth, CURSOR_SIZE_Y * BASE_HEIGHT / fHeight );
+        fCursor->SetSize( 2*fCursor->GetMipmap()->GetWidth()/fWidth, 2*fCursor->GetMipmap()->GetHeight()/fHeight );
     }
 }
 

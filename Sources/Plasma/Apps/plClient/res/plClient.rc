@@ -40,29 +40,8 @@ END
 // Bitmap
 //
 
-IDB_CURSOR_UP           BITMAP                  "cursor_up.bmp"
-IDB_CURSOR_DOWN         BITMAP                  "cursor_down.bmp"
-IDB_CURSOR_LEFT         BITMAP                  "cursor_right.bmp"
-IDB_CURSOR_RIGHT        BITMAP                  "cursor_left.bmp"
-IDB_CURSOR_OPEN         BITMAP                  "cursor_open.bmp"
-IDB_CURSOR_GRAB         BITMAP                  "cursor_grab.bmp"
-IDB_CURSOR_CLICKED      BITMAP                  "cursor_clicked.bmp"
-IDB_CURSOR_POISED       BITMAP                  "cursor_poised.bmp"
-IDB_CURSOR_ARROW        BITMAP                  "cursor_u.bmp"
-IDB_CURSOR_4WAYOPEN     BITMAP                  "bitmap1.bmp"
-IDB_CURSOR_UPDOWNCLOSED BITMAP                  "bmp00001.bmp"
-IDB_CURSOR_UPDOWNOPEN   BITMAP                  "bitmap2.bmp"
-IDB_CURSOR_4WAYCLOSED   BITMAP                  "bitmap3.bmp"
-IDB_CURSOR_LEFTRIGHTCLOSED BITMAP                  "bmp00003.bmp"
-IDB_CURSOR_LEFTRIGHTOPEN BITMAP                  "bmp00002.bmp"
 IDB_MICROPHONE          BITMAP                  "Microphone.bmp"
 IDB_TALKING             BITMAP                  "Speaker.bmp"
-IDB_CURSOR_BOOK_HIGHLIGHT BITMAP                  "book_hig.bmp"
-IDB_CURSOR_BOOK         BITMAP                  "book.bmp"
-IDB_CURSOR_BOOK_CLICKED BITMAP                  "book_cli.bmp"
-IDB_CURSOR_DISABLED     BITMAP                  "cursor_disabled.bmp"
-IDB_CURSOR_HAND         BITMAP                  "bmp00005.bmp"
-IDB_CURSOR_UPWARD       BITMAP                  "cursor_upward.bmp"
 IDB_BANNER              BITMAP                  "banner.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -329,6 +308,33 @@ IDR_LOADING_17          JPEG                    "xLoading_Linking.17.jpg"
 IDR_LOADING_18          JPEG                    "xLoading_Linking.18.jpg"
 IDR_LOADING_LINKTEXT    JPEG                    "xLoading_Linking_Text.jpg"
 IDR_LOADING_UPDATETEXT  JPEG                    "xLoading_Updating_Text.jpg"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RAWBMP
+//
+
+IDR_CURSOR_UP           RAWBMP                  "cursor_up.raw"
+IDR_CURSOR_DOWN         RAWBMP                  "cursor_down.raw"
+IDR_CURSOR_RIGHT        RAWBMP                  "cursor_right.raw"
+IDR_CURSOR_LEFT         RAWBMP                  "cursor_left.raw"
+IDR_CURSOR_OPEN         RAWBMP                  "cursor_open.raw"
+IDR_CURSOR_GRAB         RAWBMP                  "cursor_grab.raw"
+IDR_CURSOR_CLICKED      RAWBMP                  "cursor_clicked.raw"
+IDR_CURSOR_POISED       RAWBMP                  "cursor_poised.raw"
+IDR_CURSOR_ARROW        RAWBMP                  "cursor_arrow.raw"
+IDR_CURSOR_4WAYOPEN     RAWBMP                  "cursor_4wayopen.raw"
+IDR_CURSOR_UPDOWNCLOSED RAWBMP                  "cursor_updownclosed.raw"
+IDR_CURSOR_UPDOWNOPEN   RAWBMP                  "cursor_updownopen.raw"
+IDR_CURSOR_4WAYCLOSED   RAWBMP                  "cursor_4wayclosed.raw"
+IDR_CURSOR_LEFTRIGHTCLOSED RAWBMP                  "cursor_leftrightclosed.raw"
+IDR_CURSOR_LEFTRIGHTOPEN RAWBMP                  "cursor_leftrightopen.raw"
+IDR_CURSOR_BOOK_HIGHLIGHT RAWBMP                  "cursor_book_highlight.raw"
+IDR_CURSOR_BOOK         RAWBMP                  "cursor_book.raw"
+IDR_CURSOR_BOOK_CLICKED RAWBMP                  "cursor_book_clicked.raw"
+IDR_CURSOR_DISABLED     RAWBMP                  "cursor_disabled.raw"
+IDR_CURSOR_HAND         RAWBMP                  "cursor_hand.raw"
+IDR_CURSOR_UPWARD       RAWBMP                  "cursor_upward.raw"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

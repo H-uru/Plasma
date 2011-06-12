@@ -42,29 +42,28 @@ set(plClient_RESOURCES
     res/resource.h
 
     res/banner.bmp
-    res/bitmap1.bmp
-    res/bitmap2.bmp
-    res/bitmap3.bmp
-    res/bmp00001.bmp
-    res/bmp00002.bmp
-    res/bmp00003.bmp
-    res/bmp00004.bmp
-    res/bmp00005.bmp
-    res/book.bmp
-    res/book_cli.bmp
-    res/book_hig.bmp
     res/cnsl1.bin
-    res/cursor_clicked.bmp
-    res/cursor_disabled.bmp
-    res/cursor_down.bmp
-    res/cursor_grab.bmp
-    res/cursor_left.bmp
-    res/cursor_open.bmp
-    res/cursor_poised.bmp
-    res/cursor_right.bmp
-    res/cursor_u.bmp
-    res/cursor_up.bmp
-    res/cursor_upward.bmp
+    res/cursor_4wayclosed.raw
+    res/cursor_4wayopen.raw
+    res/cursor_arrow.raw
+    res/cursor_book.raw
+    res/cursor_book_clicked.raw
+    res/cursor_book_highlight.raw
+    res/cursor_clicked.raw
+    res/cursor_disabled.raw
+    res/cursor_down.raw
+    res/cursor_grab.raw
+    res/cursor_hand.raw
+    res/cursor_left.raw
+    res/cursor_leftrightclosed.raw
+    res/cursor_leftrightopen.raw
+    res/cursor_open.raw
+    res/cursor_poised.raw
+    res/cursor_right.raw
+    res/cursor_up.raw
+    res/cursor_updownclosed.raw
+    res/cursor_updownopen.raw
+    res/cursor_upward.raw
     res/Dirt.ICO
     res/headspin.ico
     res/Microphone.bmp
