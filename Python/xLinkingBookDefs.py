@@ -335,4 +335,4 @@ xLinkingPages = {\
     "BahroCaveLower":       ( PageStart + NoShare + LinkStart + 'xLinkPanelBahroCaveLower' + LinkEndPage ),
 }
 
-CityBookLinks = ["islmPalaceBalcony02", "islmPalaceBalcony03", "islmDakotahRoof", "KadishGallery", "BaronCityOffice", "dsntShaftFall", "grtzGrtZeroLinkRm", "islmConcertHallFoyer", "Spyroom", "islmGreatTree", "Kveer"]
+CityBookLinks = ["islmPalaceBalcony02", "islmPalaceBalcony03", "islmDakotahRoof", "KadishGallery", "BaronCityOffice", "dsntShaftFall", "grtzGrtZeroLinkRm", "Spyroom", "islmGreatTree", "Kveer"]
