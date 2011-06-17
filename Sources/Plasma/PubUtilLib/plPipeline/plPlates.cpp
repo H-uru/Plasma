@@ -35,6 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPlates.h"
 
 #include "plJPEG/plJPEG.h"
+#include "plGImage/plPNG.h"
 #include "plGImage/plMipmap.h"
 #include "plSurface/plLayer.h"
 #include "plSurface/hsGMaterial.h"
@@ -43,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGDeviceRef.h"
 #include "hsResMgr.h"
 #include "plPipeDebugFlags.h"
+#include "plClientResMgr/plClientResMgr.h"
 
 
 // A bit of a hack so that we will have the correct instance in the SceneViewer
@@ -523,6 +525,33 @@ void    plPlate::ReloadFromJPEGResource( const char *resName, UInt32 colorKey )
             fMipmap->GetDeviceRef()->SetDirty( true );
 
         delete jpgTexture;
+    }
+}
+
+void plPlate::CreateFromResourceDat(const char *resName)
+{
+    if (resName)
+    {
+        plMipmap* resTexture = TRACKED_NEW plMipmap;
+        resTexture->CopyFrom(plClientResMgr::Instance().getResource(resName));
+
+        char keyName[128];
+        sprintf( keyName, "PlateResource#%d", fMagicUniqueKeyInt++ );
+        hsgResMgr::ResMgr()->NewKey(keyName, resTexture, plLocation::kGlobalFixedLoc);
+        CreateMaterial(resTexture->GetWidth(), resTexture->GetHeight(), true, resTexture);
+    }
+    else
+    {
+        // Null resource request - Create a blank Material instead
+        CreateMaterial(32, 32, true);
+    }
+}
+
+void plPlate::ReloadFromResourceDat(const char *resName)
+{
+    if (resName)
+    {
+        fMipmap->CopyFrom(plClientResMgr::Instance().getResource(resName));
     }
 }
 

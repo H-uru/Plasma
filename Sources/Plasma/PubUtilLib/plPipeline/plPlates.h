@@ -131,6 +131,8 @@ class plPlate
         void            ReloadFromResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
         void            CreateFromJPEGResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
         void            ReloadFromJPEGResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
+        void            CreateFromResourceDat( const char *resName );
+        void            ReloadFromResourceDat( const char *resName );
 };
 
 //// plGraphPlate Class Definition ///////////////////////////////////////////
