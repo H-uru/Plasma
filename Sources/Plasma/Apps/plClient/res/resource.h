@@ -14,8 +14,6 @@
 #define IDD_URULOGIN_EULA               154
 #define IDD_AUTHFAILED                  155
 #define IDD_AUTHENTICATING              156
-#define IDR_LOADING_LINKTEXT            195
-#define IDR_LOADING_UPDATETEXT          196
 #define IDC_CRASHINFO                   1001
 #define IDC_COPY                        1002
 #define IDC_MSG                         1003
