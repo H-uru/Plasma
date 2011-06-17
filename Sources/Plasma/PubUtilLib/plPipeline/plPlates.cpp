@@ -295,7 +295,7 @@ void plPlate::ISetResourceAlphas(UInt32 colorKey)
     }
 }
 
-void    plPlate::CreateFromResource( const char *resName, UInt32 colorKey )
+void    plPlate::CreateFromBMPResource( const char *resName, UInt32 colorKey )
 {
 /*
     Someday the following might actually work, once we get a plugin that
@@ -374,7 +374,7 @@ void    plPlate::CreateFromResource( const char *resName, UInt32 colorKey )
 //// ReloadFromResource //////////////////////////////////////////////////////
 //  Creates a plate's material from a resource of the given name.
 
-void    plPlate::ReloadFromResource( const char *resName, UInt32 colorKey )
+void    plPlate::ReloadFromBMPResource( const char *resName, UInt32 colorKey )
 {
     UInt32      width, height;
 
@@ -528,7 +528,7 @@ void    plPlate::ReloadFromJPEGResource( const char *resName, UInt32 colorKey )
     }
 }
 
-void plPlate::CreateFromResourceDat(const char *resName)
+void plPlate::CreateFromResource(const char *resName)
 {
     if (resName)
     {
@@ -547,7 +547,7 @@ void plPlate::CreateFromResourceDat(const char *resName)
     }
 }
 
-void plPlate::ReloadFromResourceDat(const char *resName)
+void plPlate::ReloadFromResource(const char *resName)
 {
     if (resName)
     {
