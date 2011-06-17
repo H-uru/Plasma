@@ -42,53 +42,9 @@ set(plClient_RESOURCES
     res/resource.h
 
     res/banner.bmp
-    res/bitmap1.bmp
-    res/bitmap2.bmp
-    res/bitmap3.bmp
-    res/bmp00001.bmp
-    res/bmp00002.bmp
-    res/bmp00003.bmp
-    res/bmp00004.bmp
-    res/bmp00005.bmp
-    res/book.bmp
-    res/book_cli.bmp
-    res/book_hig.bmp
     res/cnsl1.bin
-    res/cursor_clicked.bmp
-    res/cursor_disabled.bmp
-    res/cursor_down.bmp
-    res/cursor_grab.bmp
-    res/cursor_left.bmp
-    res/cursor_open.bmp
-    res/cursor_poised.bmp
-    res/cursor_right.bmp
-    res/cursor_u.bmp
-    res/cursor_up.bmp
-    res/cursor_upward.bmp
     res/Dirt.ICO
     res/headspin.ico
-    res/Microphone.bmp
-    res/Speaker.bmp
-    res/xLoading_Linking.01.jpg
-    res/xLoading_Linking.02.jpg
-    res/xLoading_Linking.03.jpg
-    res/xLoading_Linking.04.jpg
-    res/xLoading_Linking.05.jpg
-    res/xLoading_Linking.06.jpg
-    res/xLoading_Linking.07.jpg
-    res/xLoading_Linking.08.jpg
-    res/xLoading_Linking.09.jpg
-    res/xLoading_Linking.10.jpg
-    res/xLoading_Linking.11.jpg
-    res/xLoading_Linking.12.jpg
-    res/xLoading_Linking.13.jpg
-    res/xLoading_Linking.14.jpg
-    res/xLoading_Linking.15.jpg
-    res/xLoading_Linking.16.jpg
-    res/xLoading_Linking.17.jpg
-    res/xLoading_Linking.18.jpg
-    res/xLoading_Linking_Text.jpg
-    res/xLoading_Updating_Text.jpg
 )
 
 add_executable(plClient WIN32 ${plClient_SOURCES} ${plClient_HEADERS}

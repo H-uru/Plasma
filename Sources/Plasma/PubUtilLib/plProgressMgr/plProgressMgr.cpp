@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 #include "../plPipeline/plPlates.h"
-#include "../Apps/plClient/res/resource.h"
 
 #include <string.h>
 
