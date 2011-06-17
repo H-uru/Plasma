@@ -50,26 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plProgressMgr   *plProgressMgr::fManager = nil;
 
-int plProgressMgr::fImageRotation[] = {
-    IDR_LOADING_01,
-    IDR_LOADING_18,
-    IDR_LOADING_17,
-    IDR_LOADING_16,
-    IDR_LOADING_15,
-    IDR_LOADING_14,
-    IDR_LOADING_13,
-    IDR_LOADING_12,
-    IDR_LOADING_11,
-    IDR_LOADING_10,
-    IDR_LOADING_09,
-    IDR_LOADING_08,
-    IDR_LOADING_07,
-    IDR_LOADING_06,
-    IDR_LOADING_05,
-    IDR_LOADING_04,
-    IDR_LOADING_03,
-    IDR_LOADING_02
-};
+#define LOADING_RES         "xLoading_Linking.%02d.png"
+#define LOADING_RES_COUNT   18
+
+char* plProgressMgr::fImageRotation[LOADING_RES_COUNT];
 
 int plProgressMgr::fStaticTextIDs[] = {
     0,
@@ -84,10 +68,23 @@ plProgressMgr::plProgressMgr()
     fManager = this;
     fCallbackProc = nil;
     fCurrentStaticText = kNone;
+
+    // Fill array with pre-computed loading frame IDs
+    for (int i=0; i < LOADING_RES_COUNT; i++)
+    {
+        char* frameID = TRACKED_NEW char[128];
+        sprintf(frameID, LOADING_RES, i);
+        fImageRotation[i] = frameID;
+    }
 }
 
 plProgressMgr::~plProgressMgr()
 {
+    for (int i=0; i < LOADING_RES_COUNT; i++)
+    {
+        delete fImageRotation[i];
+    }
+
     while( fOperations != nil )
         delete fOperations;
     fManager = nil;
@@ -229,9 +226,9 @@ void    plProgressMgr::CancelAllOps( void )
     fCurrentStaticText = kNone;
 }
 
-int     plProgressMgr::GetLoadingFrameID(int index)
+char*   plProgressMgr::GetLoadingFrameID(int index)
 {
-    if (index < (sizeof(fImageRotation) / sizeof(int)))
+    if (index < LOADING_RES_COUNT)
         return fImageRotation[index];
     else
         return fImageRotation[0];

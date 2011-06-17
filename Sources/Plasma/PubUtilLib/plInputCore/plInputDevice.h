@@ -118,27 +118,27 @@ public:
 
 class plPlate;
 
-#define CURSOR_UP                   IDB_CURSOR_UP                                   
-#define CURSOR_DOWN                 IDB_CURSOR_DOWN     
-#define CURSOR_RIGHT                IDB_CURSOR_RIGHT    
-#define CURSOR_LEFT                 IDB_CURSOR_LEFT     
-#define CURSOR_OPEN                 IDB_CURSOR_OPEN     
-#define CURSOR_GRAB                 IDB_CURSOR_GRAB     
-#define CURSOR_CLICKED              IDB_CURSOR_CLICKED  
-#define CURSOR_POISED               IDB_CURSOR_POISED   
-#define CURSOR_ARROW                IDB_CURSOR_ARROW    
-#define CURSOR_4WAY_OPEN            IDB_CURSOR_4WAYOPEN         
-#define CURSOR_4WAY_CLOSED          IDB_CURSOR_4WAYCLOSED       
-#define CURSOR_UPDOWN_CLOSED        IDB_CURSOR_UPDOWNCLOSED     
-#define CURSOR_UPDOWN_OPEN          IDB_CURSOR_UPDOWNOPEN       
-#define CURSOR_LEFTRIGHT_CLOSED     IDB_CURSOR_LEFTRIGHTCLOSED  
-#define CURSOR_LEFTRIGHT_OPEN       IDB_CURSOR_LEFTRIGHTOPEN    
-#define CURSOR_OFFER_BOOK           IDB_CURSOR_BOOK      
-#define CURSOR_OFFER_BOOK_HI        IDB_CURSOR_BOOK_HIGHLIGHT
-#define CURSOR_OFFER_BOOK_CLICKED   IDB_CURSOR_BOOK_CLICKED  
-#define CURSOR_CLICK_DISABLED       IDB_CURSOR_DISABLED
-#define CURSOR_HAND                 IDB_CURSOR_HAND
-#define CURSOR_UPWARD               IDB_CURSOR_UPWARD
+#define CURSOR_UP                   "cursor_up.png"
+#define CURSOR_DOWN                 "cursor_down.png"
+#define CURSOR_RIGHT                "cursor_right.png"
+#define CURSOR_LEFT                 "cursor_left.png"
+#define CURSOR_OPEN                 "cursor_open.png"
+#define CURSOR_GRAB                 "cursor_grab.png"
+#define CURSOR_CLICKED              "cursor_clicked.png"
+#define CURSOR_POISED               "cursor_poised.png"
+#define CURSOR_ARROW                "cursor_up.png"
+#define CURSOR_4WAY_OPEN            "bitmap1.png"
+#define CURSOR_4WAY_CLOSED          "bitmap3.png"
+#define CURSOR_UPDOWN_CLOSED        "bmp00001.png"
+#define CURSOR_UPDOWN_OPEN          "bitmap2.png"
+#define CURSOR_LEFTRIGHT_CLOSED     "bmp00003.png"
+#define CURSOR_LEFTRIGHT_OPEN       "bmp00002.png"
+#define CURSOR_OFFER_BOOK           "book.png"
+#define CURSOR_OFFER_BOOK_HI        "book_hig.png"
+#define CURSOR_OFFER_BOOK_CLICKED   "book_cli.png"
+#define CURSOR_CLICK_DISABLED       "cursor_disabled.png"
+#define CURSOR_HAND                 "cursor_up.png"
+#define CURSOR_UPWARD               "cursor_upward.png"
 
 class plInputEventMsg;
 
@@ -171,7 +171,7 @@ public:
     
     static void SetMsgAlways(bool b) { plMouseDevice::bMsgAlways = b; }
     static void ShowCursor(hsBool override = false);
-    static void NewCursor(int cursor);
+    static void NewCursor(char* cursor);
     static void HideCursor(hsBool override = false);
     static bool GetHideCursor() { return plMouseDevice::bCursorHidden; }
     static void SetCursorOpacity( hsScalar opacity = 1.f );
@@ -201,11 +201,11 @@ protected:
     
     
     plPlate *fCursor;
-    int     fCursorID;
+    char*    fCursorID;
 
     static plMouseDevice* fInstance;
     static plMouseInfo  fDefaultMouseControlMap[];
-    void    CreateCursor( int cursor );
+    void    CreateCursor( char* cursor );
     void IUpdateCursorSize();
     static bool bMsgAlways;
     static bool bCursorHidden;

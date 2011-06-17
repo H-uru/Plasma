@@ -235,7 +235,7 @@ void plInputInterfaceMgr::ResetClickableState()
 
 void    plInputInterfaceMgr::IUpdateCursor( Int32 newCursor )
 {
-    int     mouseCursorResID;
+    char*     mouseCursorResID;
 
 
     fCurrentCursor = newCursor;
