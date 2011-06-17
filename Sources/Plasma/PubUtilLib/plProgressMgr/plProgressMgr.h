@@ -181,7 +181,7 @@ class plProgressMgr
 
         static plProgressMgr    *fManager;
         static char*            fImageRotation[];
-        static int              fStaticTextIDs[];
+        static char*            fStaticTextIDs[];
 
     protected:
 
@@ -214,7 +214,7 @@ class plProgressMgr
 
         static plProgressMgr* GetInstance() { return fManager; }
         static char* GetLoadingFrameID(int index);
-        static int GetStaticTextID(StaticText staticTextType);
+        static char* GetStaticTextID(StaticText staticTextType);
 
         virtual void    Draw( plPipeline *p ) { }
 

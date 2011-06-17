@@ -68,7 +68,7 @@ void    plDTProgressMgr::Activate()
     {
         plPlateManager::Instance().CreatePlate(&fStaticTextPlate);
 
-        fStaticTextPlate->CreateFromJPEGResource(MAKEINTRESOURCE(plProgressMgr::GetStaticTextID(fCurrentStaticText)), 0);
+        fStaticTextPlate->CreateFromResource(plProgressMgr::GetStaticTextID(fCurrentStaticText));
         fStaticTextPlate->SetVisible(true);
         fStaticTextPlate->SetOpacity(1.0f);
         fStaticTextPlate->SetSize(2 * 0.192f, 2 * 0.041f, true);
