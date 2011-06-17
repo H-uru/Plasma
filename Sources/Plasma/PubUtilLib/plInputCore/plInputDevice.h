@@ -118,6 +118,7 @@ public:
 class plPlate;
 
 #define CURSOR_UP                   "cursor_up.png"
+#define CURSOR_UPWARD               "cursor_upward.png"
 #define CURSOR_DOWN                 "cursor_down.png"
 #define CURSOR_RIGHT                "cursor_right.png"
 #define CURSOR_LEFT                 "cursor_left.png"
@@ -125,19 +126,18 @@ class plPlate;
 #define CURSOR_GRAB                 "cursor_grab.png"
 #define CURSOR_CLICKED              "cursor_clicked.png"
 #define CURSOR_POISED               "cursor_poised.png"
-#define CURSOR_ARROW                "cursor_up.png"
-#define CURSOR_4WAY_OPEN            "bitmap1.png"
-#define CURSOR_4WAY_CLOSED          "bitmap3.png"
-#define CURSOR_UPDOWN_CLOSED        "bmp00001.png"
-#define CURSOR_UPDOWN_OPEN          "bitmap2.png"
-#define CURSOR_LEFTRIGHT_CLOSED     "bmp00003.png"
-#define CURSOR_LEFTRIGHT_OPEN       "bmp00002.png"
-#define CURSOR_OFFER_BOOK           "book.png"
-#define CURSOR_OFFER_BOOK_HI        "book_hig.png"
-#define CURSOR_OFFER_BOOK_CLICKED   "book_cli.png"
+#define CURSOR_4WAY_OPEN            "cursor_4way_open.png"
+#define CURSOR_4WAY_CLOSED          "cursor_4way_closed.png"
+#define CURSOR_UPDOWN_OPEN          "cursor_updown_open.png"
+#define CURSOR_UPDOWN_CLOSED        "cursor_updown_closed.png"
+#define CURSOR_LEFTRIGHT_OPEN       "cursor_leftright_open.png"
+#define CURSOR_LEFTRIGHT_CLOSED     "cursor_leftright_closed.png"
+#define CURSOR_OFFER_BOOK           "cursor_book.png"
+#define CURSOR_OFFER_BOOK_HI        "cursor_book_poised.png"
+#define CURSOR_OFFER_BOOK_CLICKED   "cursor_book_clicked.png"
 #define CURSOR_CLICK_DISABLED       "cursor_disabled.png"
 #define CURSOR_HAND                 "cursor_up.png"
-#define CURSOR_UPWARD               "cursor_upward.png"
+#define CURSOR_ARROW                "cursor_up.png"
 
 class plInputEventMsg;
 
