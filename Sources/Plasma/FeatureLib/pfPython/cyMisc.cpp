@@ -602,7 +602,7 @@ UInt32 cyMisc::GetAgeTime( void )
 
 
 
-UInt32 cyMisc::GetDniTime(void)
+time_t cyMisc::GetDniTime(void)
 {
     const plUnifiedTime utime = plNetClientMgr::GetInstance()->GetServerTime();
     if ( utime.GetSecs() != 0)
@@ -611,7 +611,7 @@ UInt32 cyMisc::GetDniTime(void)
         return 0;
 }
 
-UInt32 cyMisc::GetServerTime(void)
+time_t cyMisc::GetServerTime(void)
 {
     const plUnifiedTime utime = plNetClientMgr::GetInstance()->GetServerTime();
     return utime.GetSecs();
@@ -626,10 +626,10 @@ float cyMisc::GetAgeTimeOfDayPercent(void)
 #define kOneHour (UInt32)3600
 #define kOneDay (UInt32)86400
 
-UInt32 cyMisc::ConvertGMTtoDni(UInt32 gtime)
+time_t cyMisc::ConvertGMTtoDni(time_t gtime)
 {
     // convert to mountain time
-    UInt32 dtime = gtime - kMST;
+    time_t dtime = gtime - kMST;
     plUnifiedTime utime = plUnifiedTime();
     utime.SetSecs(dtime);
     // check for daylight savings time in New Mexico and adjust
@@ -638,10 +638,10 @@ UInt32 cyMisc::ConvertGMTtoDni(UInt32 gtime)
         plUnifiedTime dstStart = plUnifiedTime();
         dstStart.SetGMTime(utime.GetYear(),4,1,2,0,0);
         // find first Sunday after 4/1 (first sunday of April)
-        UInt32 days_to_go = 7 - dstStart.GetDayOfWeek();
+        int days_to_go = 7 - dstStart.GetDayOfWeek();
         if (days_to_go == 7)
             days_to_go = 0;
-        UInt32 dstStartSecs = dstStart.GetSecs() + days_to_go * kOneDay;
+        time_t dstStartSecs = dstStart.GetSecs() + days_to_go * kOneDay;
 
         plUnifiedTime dstEnd = plUnifiedTime();
         dstEnd.SetGMTime(utime.GetYear(),10,25,1,0,0);
@@ -649,7 +649,7 @@ UInt32 cyMisc::ConvertGMTtoDni(UInt32 gtime)
         days_to_go = 7 - dstEnd.GetDayOfWeek();
         if (days_to_go == 7)
             days_to_go = 0;
-        UInt32 dstEndSecs = dstEnd.GetSecs() + days_to_go * kOneDay;
+        time_t dstEndSecs = dstEnd.GetSecs() + days_to_go * kOneDay;
 
         if ( dtime > dstStartSecs && dtime < dstEndSecs )
             // add hour for daylight savings time
