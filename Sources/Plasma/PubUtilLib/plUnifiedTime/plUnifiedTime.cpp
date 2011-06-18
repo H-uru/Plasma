@@ -59,7 +59,7 @@ hsBool plUnifiedTime::SetFromWinFileTime(const FILETIME ft)
 
     if (ffsecs >= MAGICWINDOWSOFFSET)  // make sure we won't end up negatice
     {
-        fSecs = (UInt32)(ffsecs-MAGICWINDOWSOFFSET);
+        fSecs = (time_t)(ffsecs-MAGICWINDOWSOFFSET);
         fMicros = (UInt32)(ff % 10000000)/10;
         return true;
     }
@@ -200,14 +200,14 @@ const plUnifiedTime & plUnifiedTime::operator=(const plUnifiedTime * src)
 
 const plUnifiedTime & plUnifiedTime::operator=(time_t src)
 {
-    fSecs = (UInt32)src;
+    fSecs = src;
     fMicros = 0;
     return *this;
 }
 
 const plUnifiedTime & plUnifiedTime::operator=(unsigned long src)
 {
-    fSecs = src;
+    fSecs = (time_t)src;
     fMicros = 0;
     return *this;
 }
@@ -222,7 +222,7 @@ const plUnifiedTime & plUnifiedTime::operator=(const struct timeval & src)
 const plUnifiedTime & plUnifiedTime::operator=(const struct tm & src)
 {
     struct tm atm = src;
-    fSecs = (UInt32)mktime(&atm);   // this won't work after 2030 something, sorry
+    fSecs = mktime(&atm);
     return *this;
 }
 
@@ -231,14 +231,8 @@ void plUnifiedTime::SetSecsDouble(double secs)
     hsAssert(secs>=0, "plUnifiedTime::SetSecsDouble negative time");
     double x,y;
     x = modf(secs,&y);
-    fSecs = (UInt32)y;
+    fSecs = (time_t)y;
     fMicros = (UInt32)(x*1000000);
-}
-
-void plUnifiedTime::FromMillis(UInt32 millis)
-{
-    fSecs = millis/1000;
-    fMicros = 0;
 }
 
 
@@ -268,7 +262,7 @@ hsBool plUnifiedTime::SetTime(short year, short month, short day, short hour, sh
     atm.tm_mon = month - 1;
     atm.tm_year = year - 1900;
     atm.tm_isdst = dst;
-    fSecs = (UInt32)mktime(&atm);   // this won't work after 2030 something, sorry
+    fSecs = mktime(&atm);
     if (fSecs == -1)
         return false;
     if (fMicros >= 1000000)
@@ -280,7 +274,7 @@ hsBool plUnifiedTime::SetTime(short year, short month, short day, short hour, sh
 
 hsBool plUnifiedTime::GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const
 {
-    struct tm* time = IGetTime((const time_t *)&fSecs);
+    struct tm* time = IGetTime(&fSecs);
     if (!time)
         return false;
     year = time->tm_year+1900;
@@ -308,8 +302,8 @@ const char* plUnifiedTime::Print() const
 const char* plUnifiedTime::PrintWMillis() const
 {
     static std::string s;
-    xtl::format(s,"%s,s:%d,ms:%d",
-        Print(), GetSecs(), GetMillis() );
+    xtl::format(s,"%s,s:%lu,ms:%d",
+        Print(), (unsigned long)GetSecs(), GetMillis() );
     return s.c_str();
 }
 
@@ -317,11 +311,11 @@ struct tm * plUnifiedTime::GetTm(struct tm * ptm) const
 {
     if (ptm != nil)
     {
-        *ptm = *IGetTime((const time_t *)&fSecs);
+        *ptm = *IGetTime(&fSecs);
         return ptm;
     }
     else
-        return IGetTime((const time_t *)&fSecs);
+        return IGetTime(&fSecs);
 }
 
 int plUnifiedTime::GetYear() const
@@ -367,15 +361,12 @@ double plUnifiedTime::GetSecsDouble() const
 }
 #pragma optimize( "", on )  // restore optimizations to their defaults
 
-UInt32 plUnifiedTime::AsMillis()
-{
-    return GetSecs()*1000;
-}
-
 void plUnifiedTime::Read(hsStream* s)
 {
     s->LogSubStreamStart("UnifiedTime");
-    s->LogReadSwap(&fSecs,"Seconds");
+    UInt32 secs;
+    s->LogReadSwap(&secs,"Seconds");
+    fSecs = (time_t)secs;
     s->LogReadSwap(&fMicros,"MicroSeconds");
     s->LogSubStreamEnd();
     // preserve fMode
@@ -383,7 +374,7 @@ void plUnifiedTime::Read(hsStream* s)
 
 void plUnifiedTime::Write(hsStream* s) const
 {
-    s->WriteSwap(fSecs);
+    s->WriteSwap((UInt32)fSecs);
     s->WriteSwap(fMicros);
     // preserve fMode
 }
@@ -442,7 +433,12 @@ bool plUnifiedTime::operator>=(const plUnifiedTime & rhs) const
 
 plUnifiedTime::operator timeval() const
 {
+#if HS_BUILD_FOR_WIN32
+    // tv_secs should be a time_t, but on Windows it is a long
+    struct timeval t = {(long)fSecs, (long)fMicros};
+#else
     struct timeval t = {fSecs, fMicros};
+#endif
     return t;
 }
 
@@ -456,7 +452,7 @@ plUnifiedTime::operator struct tm() const
 std::string plUnifiedTime::Format(const char * fmt) const
 {
     char buf[128];
-    struct tm * t = IGetTime((const time_t *)&fSecs);
+    struct tm * t = IGetTime(&fSecs);
     if (t == nil ||
         !strftime(buf, sizeof(buf), fmt, t))
         buf[0] = '\0';

@@ -338,7 +338,7 @@ void plAgeDescription::Write(hsStream* stream) const
     char buf[256];
 
     // Write the date/time
-    sprintf(buf, "StartDateTime=%010u\n", fStart.GetSecs());
+    sprintf(buf, "StartDateTime=%010lu\n", (unsigned long)fStart.GetSecs());
     stream->WriteString(buf);
 
     // Write the day length

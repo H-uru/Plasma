@@ -59,7 +59,7 @@ public:
     };
 
 protected:
-    UInt32  fSecs;
+    time_t  fSecs;
     UInt32  fMicros;
     Mode    fMode;
 
@@ -92,7 +92,7 @@ public:
     const plUnifiedTime & operator=(const struct tm & src);
 
     // getters
-    UInt32 GetSecs() const { return fSecs; }
+    time_t GetSecs() const { return fSecs; }
     UInt32 GetMicros() const { return fMicros; }
     double GetSecsDouble() const;  // get the secs and micros as a double floating point value
     hsBool GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const;
@@ -106,10 +106,9 @@ public:
     int GetMillis() const;
     int GetDayOfWeek() const;
     int GetMode() const {return fMode;} // local or gmt.
-    UInt32 AsMillis();
 
     // setters
-    void SetSecs(const UInt32 secs) { fSecs = secs; }
+    void SetSecs(const time_t secs) { fSecs = secs; }
     void SetSecsDouble(double secs);
     void SetMicros(const UInt32 micros) { fMicros = micros; }
     hsBool SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
@@ -118,7 +117,6 @@ public:
     void ToCurrentTime();
     void ToEpoch() { fSecs = 0; fMicros = 0;}
     void SetMode(Mode mode) { fMode=mode;}
-    void FromMillis(UInt32 millis);
 #if HS_BUILD_FOR_WIN32
     hsBool SetFromWinFileTime(const FILETIME ft);
 #endif

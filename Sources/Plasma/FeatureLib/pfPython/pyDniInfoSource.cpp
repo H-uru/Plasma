@@ -55,10 +55,10 @@ UInt32 pyDniInfoSource::GetAgeTime( void ) const
     if (!node)
         return 0;
     
-    unsigned result;
+    UInt32 result;
     VaultAgeInfoNode ageInfo(node);
     if (const plUnifiedTime * utime = ageInfo.GetAgeTime())
-        result = utime->GetSecs();
+        result = (UInt32)utime->GetSecs();
     else
         result = 0;
     node->DecRef();
