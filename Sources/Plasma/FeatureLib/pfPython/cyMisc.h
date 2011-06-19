@@ -274,9 +274,9 @@ public:
     static PyObject* GetPrevAgeInfo();
     // current time in current age
     static UInt32 GetAgeTime( void );
-    static UInt32 GetDniTime(void);
-    static UInt32 ConvertGMTtoDni(UInt32 time);
-    static UInt32 GetServerTime( void ); // returns the current server time in GMT
+    static time_t GetDniTime(void);
+    static time_t ConvertGMTtoDni(time_t time);
+    static time_t GetServerTime( void ); // returns the current server time in GMT
     static float GetAgeTimeOfDayPercent(void);
 
     /////////////////////////////////////////////////////////////////////////////

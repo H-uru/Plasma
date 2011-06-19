@@ -59,12 +59,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPrevAgeInfo, "Returns ptAgeInfoStruc
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDniTime, "Returns current D'Ni time")
 {
-    return PyLong_FromUnsignedLong(cyMisc::GetDniTime());
+    return PyLong_FromUnsignedLong((unsigned long)cyMisc::GetDniTime());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetServerTime, "Returns the current time on the server (which is GMT)")
 {
-    return PyLong_FromUnsignedLong(cyMisc::GetServerTime());
+    return PyLong_FromUnsignedLong((unsigned long)cyMisc::GetServerTime());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtGMTtoDniTime, args, "Params: gtime\nConverts GMT time (passed in) to D'Ni time")
@@ -75,7 +75,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGMTtoDniTime, args, "Params: gtime\nConverts G
         PyErr_SetString(PyExc_TypeError, "PtGMTtoDniTime expects a long");
         PYTHON_RETURN_ERROR;
     }
-    return PyLong_FromUnsignedLong(cyMisc::ConvertGMTtoDni(gtime));
+    return PyLong_FromUnsignedLong((unsigned long)cyMisc::ConvertGMTtoDni(gtime));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientName, args, "Params: avatarKey=None\nThis will return the name of the client that is owned by the avatar\n"

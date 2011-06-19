@@ -28,22 +28,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 long plTimeSpan::GetTotalDays() const
 {
-    return fSecs / (24*3600L);
+    return (long)(fSecs / (24*3600L));
 }
 
 long plTimeSpan::GetTotalHours() const
 {
-    return fSecs / 3600;
+    return (long)(fSecs / 3600);
 }
 
 long plTimeSpan::GetTotalMinutes() const
 {
-    return fSecs / 60;
+    return (long)(fSecs / 60);
 }
 
 long plTimeSpan::GetTotalSeconds() const
 {
-    return fSecs;
+    return (long)fSecs;
 }
 
 

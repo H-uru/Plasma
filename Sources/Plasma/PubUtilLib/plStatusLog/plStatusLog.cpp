@@ -786,7 +786,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, UInt32 count )
             }
             if ( fFlags & kTimeInSeconds )
             {
-                StrPrintf(work, arrsize(work), "(%u) ", plUnifiedTime(kNow).GetSecs());
+                StrPrintf(work, arrsize(work), "(%lu) ", (unsigned long)plUnifiedTime(kNow).GetSecs());
                 StrPack(buf, work, arrsize(buf));
             }
             if ( fFlags & kTimeAsDouble )
