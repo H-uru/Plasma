@@ -9,6 +9,7 @@ set(plResMgr_SOURCES
     plKeyFinder.cpp
     plLocalization.cpp
     plPageInfo.cpp
+    plPagePatcher.cpp
     plRegistryHelpers.cpp
     plRegistryKeyList.cpp
     plRegistryNode.cpp
@@ -23,6 +24,7 @@ set(plResMgr_HEADERS
     plKeyFinder.h
     plLocalization.h
     plPageInfo.h
+    plPagePatcher.h
     plRegistryHelpers.h
     plRegistryKeyList.h
     plRegistryNode.h
