@@ -4326,26 +4326,31 @@ class xKI(ptModifier):
 
         WeAreTakingAPicture = 0
 
-        basePath = PtGetUserPath() + U"\\" + kImageDirectory + U"\\"
-        gImageFileSearch = ((basePath + kImageFileNameTemplate) + U'*.jpg')
+        # Detect if saveAsPNG is available, otherwise use saveAsJPEG
+        if "saveAsPNG" in dir(image):
+            preferredExtension = "png"
+        else:
+            preferredExtension = "jpg"
+
+        basePath = os.path.join(PtGetUserPath(), kImageDirectory)
         if not PtCreateDir(basePath):
-            PtDebugPrint(U"xKI::OnScreenCaptureDone(): Unable to create \"" + basePath + "\" directory. Image not saved to disk.")
+            PtDebugPrint(U'xKI::OnScreenCaptureDone(): Unable to create "{0}" directory. Image not saved to disk.'.format(basePath))
             return
 
-        found = 0
-        gCurrentImageFilename = None
-        gLastImageFileNumber = 0
+        imageList = glob.iglob(os.path.join(basePath,"KIimage[0-9][0-9][0-9][0-9].{0}".format(preferredExtension)))
+        imageNumbers = [int(os.path.basename(img)[7:-4]) for img in imageList] + [0]
+        missingNumbers = set(range(1, max(imageNumbers))).difference(set(imageNumbers))
+        if len(missingNumbers) > 0:
+            firstMissing = min(missingNumbers)
+        else:
+            firstMissing = max(imageNumbers) + 1
+        tryName = os.path.join(basePath,  U'{0}{1:04d}.{2}'.format(kImageFileNameTemplate, firstMissing, preferredExtension))
 
-        while (not found):
-            gLastImageFileNumber += 1
-            tryName = ((basePath + kImageFileNameTemplate) + (U'%04d.jpg' % gLastImageFileNumber))
-            if PtFileExists(tryName):
-                pass
-            else:
-                found = 1
-
-        PtDebugPrint(U"xKI::OnScreenCaptureDone(): Saving image to \"" + tryName + "\"", level=kWarningLevel)
-        image.saveAsJPEG(tryName, 90)
+        PtDebugPrint(U'xKI::OnScreenCaptureDone(): Saving image to "{0}"'.format(tryName), level=kWarningLevel)
+        if "saveAsPNG" in dir(image):
+            image.saveAsPNG(tryName)
+        else:
+            image.saveAsJPEG(tryName, 90)
 
     def OnMemberUpdate(self):
         "The userlist has been updated, get a fresh copy"
