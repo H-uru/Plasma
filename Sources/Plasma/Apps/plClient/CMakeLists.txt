@@ -15,6 +15,8 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIR})
 include_directories(${CURL_INCLUDE_DIR})
 
+add_subdirectory(external)
+
 set(plClient_HEADERS
     plClient.h
     plClientCreatable.h
@@ -40,7 +42,6 @@ set(plClient_TEXT
 set(plClient_RESOURCES
     res/plClient.rc
     res/resource.h
-
     res/banner.bmp
     res/cnsl1.bin
     res/Dirt.ICO
@@ -49,6 +50,9 @@ set(plClient_RESOURCES
 
 add_executable(plClient WIN32 ${plClient_SOURCES} ${plClient_HEADERS}
                               ${plClient_TEXT} ${plClient_RESOURCES})
+
+add_dependencies(plClient externalResources)
+
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
 endif(PLASMA_EXTERNAL_RELEASE)
