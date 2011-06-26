@@ -127,6 +127,10 @@ plMipmap* plPNG::IRead(hsStream* inStream)
             if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
                 png_set_tRNS_to_alpha(png_ptr);
                 channels += 1;
+            } else if (channels == 3) {
+                // Add an opaque alpha channel if still none exists
+                png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+                channels = 4;
             }
 
             // Invert color byte-order as used by plMipmap for DirectX
