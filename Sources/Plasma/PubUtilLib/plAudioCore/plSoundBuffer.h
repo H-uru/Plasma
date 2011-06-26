@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plAudioCore.h"
 #include "plAudioFileReader.h"
-#include "pnUtils/pnUtils.h"
+#include "hsThread.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
 
@@ -55,8 +55,6 @@ public:
     CLASSNAME_REGISTER( plSoundBuffer );
     GETINTERFACE_ANY( plSoundBuffer, hsKeyedObject );
     
-    LINK(plSoundBuffer) link;
-
     enum Flags
     {
         kIsExternal         = 0x0001,
@@ -141,6 +139,40 @@ protected:
 
     // for plugins only
     plAudioFileReader   *IGetReader( hsBool fullpath );
+};
+
+
+class plSoundPreloader : public hsThread
+{
+protected:
+	hsTArray<plSoundBuffer*> fBuffers;
+	hsEvent fEvent;
+	bool fRunning;
+	hsMutex fCritSect;
+
+public:
+	virtual hsError Run();
+
+	virtual void Start() {
+		fRunning = true;
+		hsThread::Start();
+	}
+
+	virtual void Stop() {
+		fRunning = false;
+		fEvent.Signal();
+		hsThread::Stop();
+	}
+
+	bool IsRunning() const { return fRunning; }
+
+	void AddBuffer(plSoundBuffer* buffer) {
+		fCritSect.Lock();
+		fBuffers.Push(buffer);
+		fCritSect.Unlock();
+
+		fEvent.Signal();
+	}
 };
 
 #endif //_plSoundBuffer_h
