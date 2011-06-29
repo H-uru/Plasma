@@ -101,6 +101,9 @@ void plClientResMgr::ILoadResources(const char* resfile)
                         // Original Myst5 format only is known to support Targa,
                         // so default fallback is targa
                         // TODO - Add plTarga::ReadFromStream()
+                        // for now, just skip the unknown resource and put NULL into the map
+                        res_size = in.ReadSwap32();
+                        in.Skip(res_size);
                     }
 
                     (*this->ClientResources)[res_name] = res_data;
