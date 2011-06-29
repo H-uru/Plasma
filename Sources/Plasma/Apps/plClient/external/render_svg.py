@@ -125,7 +125,7 @@ def render_loading_books(inpath, outpath):
 			enable_only_layers(["circles"],layers)
 			svg = rsvg.Handle(data=bookSVG.toxml())
 			ctx.translate(resSize["height"] / 2, resSize["width"] / 2)
-			ctx.rotate(math.radians(angle*(-5)))
+			ctx.rotate(math.radians(angle*(5)))
 			ctx.translate(-resSize["width"] / 2, -resSize["height"] / 2)
 			ctx.scale(ratioW, ratioH)
 			svg.render_cairo(ctx)
