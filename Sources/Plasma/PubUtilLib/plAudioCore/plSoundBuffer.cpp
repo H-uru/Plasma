@@ -76,30 +76,30 @@ static plAudioFileReader *CreateReader( hsBool fullpath, const char filename[], 
 
 hsError plSoundPreloader::Run()
 {
-	hsTArray<plSoundBuffer*> templist;
+    hsTArray<plSoundBuffer*> templist;
 
-	while (fRunning)
-	{
-		fCritSect.Lock();
-		for (int i = fBuffers.GetCount(); i > 0; i--)
-		{
-			templist.Append(fBuffers.Pop());
-		}
-		fCritSect.Unlock();
+    while (fRunning)
+    {
+        fCritSect.Lock();
+        for (int i = fBuffers.GetCount(); i > 0; i--)
+        {
+            templist.Append(fBuffers.Pop());
+        }
+        fCritSect.Unlock();
 
-		if (templist.GetCount() == 0)
-		{
-			fEvent.Wait();
-		}
-		else
-		{
+        if (templist.GetCount() == 0)
+        {
+            fEvent.Wait();
+        }
+        else
+        {
             plAudioFileReader *reader = nil;
-			for (int i = templist.GetCount(); i > 0; i--)
-			{
-				plSoundBuffer* buf = templist.Pop();
+            for (int i = templist.GetCount(); i > 0; i--)
+            {
+                plSoundBuffer* buf = templist.Pop();
 
-				if (buf->GetData())
-				{
+                if (buf->GetData())
+                {
                     reader = CreateReader(true, buf->GetFileName(), buf->GetAudioReaderType(), buf->GetReaderSelect());  
                     
                     if( reader )
@@ -109,39 +109,39 @@ hsError plSoundPreloader::Run()
                         buf->SetAudioReader(reader);     // give sound buffer reader, since we may need it later
                     }
                     else
-					{
+                    {
                         buf->SetError();
-					}
-				}
+                    }
+                }
 
-				buf->SetLoaded(true);
-			}
-		}
-	}
+                buf->SetLoaded(true);
+            }
+        }
+    }
 
     // we need to be sure that all buffers are removed from our load list when shutting this thread down or we will hang,
     // since the sound buffer will wait to be destroyed until it is marked as loaded 
-	fCritSect.Lock();
-	for (int i = fBuffers.GetCount(); i > 0; i--)
-	{
-		plSoundBuffer* buf = fBuffers.Pop();
-		buf->SetLoaded(true);
-	}
-	fCritSect.Unlock();
+    fCritSect.Lock();
+    for (int i = fBuffers.GetCount(); i > 0; i--)
+    {
+        plSoundBuffer* buf = fBuffers.Pop();
+        buf->SetLoaded(true);
+    }
+    fCritSect.Unlock();
 
-	return hsOK;
+    return hsOK;
 }
 
 static plSoundPreloader gLoaderThread;
 
 void plSoundBuffer::Init()
 {
-	gLoaderThread.Start();
+    gLoaderThread.Start();
 }
 
 void plSoundBuffer::Shutdown()
 {
-	gLoaderThread.Stop();
+    gLoaderThread.Stop();
 }
 
 //// Constructor/Destructor //////////////////////////////////////////////////
@@ -350,8 +350,8 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::AsyncLoad(plAudioFileReader::Stream
                 return kError;
         }
 
-		gLoaderThread.AddBuffer(this);
-		fLoading = true;
+        gLoaderThread.AddBuffer(this);
+        fLoading = true;
     }
     if(fLoaded) 
     {   

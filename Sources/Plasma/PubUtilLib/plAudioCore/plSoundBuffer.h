@@ -145,34 +145,34 @@ protected:
 class plSoundPreloader : public hsThread
 {
 protected:
-	hsTArray<plSoundBuffer*> fBuffers;
-	hsEvent fEvent;
-	bool fRunning;
-	hsMutex fCritSect;
+    hsTArray<plSoundBuffer*> fBuffers;
+    hsEvent fEvent;
+    bool fRunning;
+    hsMutex fCritSect;
 
 public:
-	virtual hsError Run();
+    virtual hsError Run();
 
-	virtual void Start() {
-		fRunning = true;
-		hsThread::Start();
-	}
+    virtual void Start() {
+        fRunning = true;
+        hsThread::Start();
+    }
 
-	virtual void Stop() {
-		fRunning = false;
-		fEvent.Signal();
-		hsThread::Stop();
-	}
+    virtual void Stop() {
+        fRunning = false;
+        fEvent.Signal();
+        hsThread::Stop();
+    }
 
-	bool IsRunning() const { return fRunning; }
+    bool IsRunning() const { return fRunning; }
 
-	void AddBuffer(plSoundBuffer* buffer) {
-		fCritSect.Lock();
-		fBuffers.Push(buffer);
-		fCritSect.Unlock();
+    void AddBuffer(plSoundBuffer* buffer) {
+        fCritSect.Lock();
+        fBuffers.Push(buffer);
+        fCritSect.Unlock();
 
-		fEvent.Signal();
-	}
+        fEvent.Signal();
+    }
 };
 
 #endif //_plSoundBuffer_h
