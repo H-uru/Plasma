@@ -547,7 +547,6 @@ void plDInputMgr::AddDevice(IDirectInputDevice8* device)
 
 void plDInputMgr::ConfigureDevice()
 {
-    ::ClipCursor(nil);
     ::ShowCursor( TRUE );
     ReleaseCapture();
         
@@ -571,10 +570,6 @@ void plDInputMgr::ConfigureDevice()
     for (int i = 0; i < fDI->fSticks.Count(); i++)
         fDI->fSticks[i]->fDevice->SetActionMap( fDI->fActionFormat, NULL, DIDSAM_FORCESAVE );
 
-    RECT rect;
-    ::GetClientRect(fhWnd,&rect);
-    ::ClientToScreen(fhWnd,(LPPOINT)&rect);
-    ::ClipCursor(&rect);
     ::ShowCursor( FALSE );
     SetCapture(fhWnd);
 
