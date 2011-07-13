@@ -1286,6 +1286,8 @@ void plClient::IIncProgress (hsScalar byHowMuch, const char * text)
 //============================================================================
 void    plClient::IStartProgress( const char *title, hsScalar len )
 {
+    plInputManager::SetRecenterMouse(false);
+
     if (fProgressBar)
     {
         fProgressBar->SetLength(fProgressBar->GetMax()+len);
@@ -2191,7 +2193,6 @@ void plClient::ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool 
     else
     {
         SetWindowPos( fWindowHndl, HWND_TOP, 0, 0, Width, Height, flags );
-        ::ClipCursor(nil);
     }
 
     WindowActivate(true);
