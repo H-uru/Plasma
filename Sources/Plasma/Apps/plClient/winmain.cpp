@@ -1602,7 +1602,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 #endif
 
-    plLocalization::SetDefaultLanguage();
     // Load an optional general.ini
     wchar gipath[MAX_PATH];
     PathGetInitDirectory(gipath, arrsize(gipath));
