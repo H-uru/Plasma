@@ -8,6 +8,7 @@ import os
 import math
 from xml.dom.minidom import parse
 from optparse import OptionParser
+import scalergba
 
 try:
 	import rsvg
@@ -86,7 +87,7 @@ def get_layers_from_svg(svgData):
 	return layers
 
 def render_cursors(inpath, outpath):
-	scalefactor = 1
+	scalefactor = 4
 	with open(os.path.join(inpath,"Cursor_Base.svg"), "r") as svgFile:
 		cursorSVG = parse(svgFile)
 		layers = get_layers_from_svg(cursorSVG)
@@ -111,7 +112,9 @@ def render_cursors(inpath, outpath):
 			ctx.scale(scalefactor, scalefactor)
 			svg.render_cairo(ctx)
 
-			surface.write_to_png(os.path.join(outpath, cursor + ".png"))
+			outfile = os.path.join(outpath, cursor + ".png")
+			surface.write_to_png(outfile)
+			scalergba.scale(outfile, outfile, scalefactor)
 
 def render_loading_books(inpath, outpath):
 	resSize = {"width":256, "height":256}
