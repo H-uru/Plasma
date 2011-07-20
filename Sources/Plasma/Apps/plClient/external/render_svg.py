@@ -20,30 +20,32 @@ cursorList = {
 	"cursor_up": ["circleOuter"],
 	"cursor_poised": ["circleOuter", "circleInnerOpen"],
 	"cursor_clicked": ["circleOuter", "circleInnerClosed"],
-	"cursor_disabled": ["circleOuter", "cross"],
+	"cursor_disabled": ["cross"],
 
-	"cursor_open": ["circleOuter", "arrowGreyUpper", "arrowGreyLower"],
-	"cursor_grab": ["circleOuter", "circleInnerClosed", "arrowGreyUpper", "arrowGreyLower"],
-	"cursor_updown_open": ["circleOuter", "circleInnerClosed", "arrowGreyUpper", "arrowGreyLower"],
-	"cursor_updown_closed": ["circleOuter", "circleInnerClosed", "arrowWhiteUpper", "arrowWhiteLower"],
+	"cursor_open": ["circleOuter", "arrowTranslucentUpper", "arrowTranslucentLower"],
+	"cursor_grab": ["circleOuter", "circleInnerOpen", "arrowTranslucentUpper", "arrowTranslucentLower"],
+	"cursor_updown_open": ["circleOuter", "circleInnerOpen", "arrowTranslucentUpper", "arrowTranslucentLower"],
+	"cursor_updown_closed": ["circleOuter", "circleInnerClosed", "arrowOpaqueUpper", "arrowOpaqueLower"],
 
-	"cursor_leftright_open": ["circleOuter", "circleInnerClosed", "arrowGreyRight", "arrowGreyLeft"],
-	"cursor_leftright_closed": ["circleOuter", "circleInnerClosed", "arrowWhiteRight", "arrowWhiteLeft"],
+	"cursor_leftright_open": ["circleOuter", "circleInnerOpen", "arrowTranslucentLeft", "arrowTranslucentRight"],
+	"cursor_leftright_closed": ["circleOuter", "circleInnerClosed", "arrowOpaqueLeft", "arrowOpaqueRight"],
 
-	"cursor_4way_open": ["circleOuter", "circleInnerClosed", "arrowGreyUpper", "arrowGreyRight", "arrowGreyLower", "arrowGreyLeft"],
-	"cursor_4way_closed": ["circleOuter", "circleInnerClosed", "arrowWhiteUpper", "arrowWhiteRight", "arrowWhiteLower", "arrowWhiteLeft"],
+	"cursor_4way_open": ["circleOuter", "circleInnerOpen", "arrowTranslucentUpper", "arrowTranslucentRight", "arrowTranslucentLower", "arrowTranslucentLeft"],
+	"cursor_4way_closed": ["circleOuter", "circleInnerClosed", "arrowOpaqueUpper", "arrowOpaqueRight", "arrowOpaqueLower", "arrowOpaqueLeft"],
 
-	"cursor_upward": ["circleOuter", "arrowWhiteUpper"],
-	"cursor_right": ["circleOuter", "arrowWhiteRight"],
-	"cursor_down": ["circleOuter", "arrowWhiteLower"],
-	"cursor_left": ["circleOuter", "arrowWhiteLeft"],
+	"cursor_upward": ["circleOuter", "arrowOpaqueUpper"],
+	"cursor_right": ["circleOuter", "arrowOpaqueRight"],
+	"cursor_down": ["circleOuter", "arrowOpaqueLower"],
+	"cursor_left": ["circleOuter", "arrowOpaqueLeft"],
 
 	"cursor_book": ["circleOuter", "book"],
 	"cursor_book_poised": ["circleOuter", "circleInnerOpen", "book"],
 	"cursor_book_clicked": ["circleOuter", "circleInnerClosed", "book"],
 }
 cursorOffsetList = {
-	"book": [8, 8]
+	"cursor_book": [7, 7],
+	"cursor_book_poised": [7, 7],
+	"cursor_book_clicked": [7, 7]
 }
 
 textList = {
@@ -62,6 +64,15 @@ def enable_only_layers(layerlist, layers):
 			layers[layer].setAttribute("style","")
 		else:
 			layers[layer].setAttribute("style","display:none")
+	# sanity check
+	for layer in layerlist:
+		if layer not in layers:
+			print("warning: unknown layer", layer)
+
+def shift_all_layers(layers, shiftx, shifty):
+	# note: this assumes that all layers start out with no transform of their own
+	for layer in layers:
+		layers[layer].setAttribute("transform", "translate(%g,%g)" % (shiftx, shifty))
 
 def get_layers_from_svg(svgData):
 	inkscapeNS = "http://www.inkscape.org/namespaces/inkscape"
@@ -75,13 +86,13 @@ def get_layers_from_svg(svgData):
 	return layers
 
 def render_cursors(inpath, outpath):
-	resSize = {"width":32, "height":32}
+	scalefactor = 1
 	with open(os.path.join(inpath,"Cursor_Base.svg"), "r") as svgFile:
 		cursorSVG = parse(svgFile)
 		layers = get_layers_from_svg(cursorSVG)
-		ratioW = resSize["width"] / float(cursorSVG.documentElement.getAttribute("width"))
-		ratioH = resSize["height"] / float(cursorSVG.documentElement.getAttribute("height"))
-		surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, resSize["width"], resSize["height"])
+		svgwidth = float(cursorSVG.documentElement.getAttribute("width"))
+		svgheight = float(cursorSVG.documentElement.getAttribute("height"))
+		surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, int(math.ceil(scalefactor*svgwidth)), int(math.ceil(scalefactor*svgheight)))
 
 		for cursor in cursorList:
 			ctx = cairo.Context(surface)
@@ -90,13 +101,14 @@ def render_cursors(inpath, outpath):
 			ctx.paint()
 			ctx.restore()
 
-			enable_only_layers(cursorList[cursor], layers)
+			enabledlayers = cursorList[cursor]
+			enabledlayers = enabledlayers + [l + "Shadow" for l in enabledlayers]
+			enable_only_layers(enabledlayers, layers)
 
-			for layerName in cursorOffsetList:
-				if layerName in cursorList[cursor]:
-					ctx.translate(*cursorOffsetList[layerName])
+			shift_all_layers(layers, *cursorOffsetList.get(cursor, [0, 0]))
+
 			svg = rsvg.Handle(data=cursorSVG.toxml())
-			ctx.scale(ratioW, ratioH)
+			ctx.scale(scalefactor, scalefactor)
 			svg.render_cairo(ctx)
 
 			surface.write_to_png(os.path.join(outpath, cursor + ".png"))
