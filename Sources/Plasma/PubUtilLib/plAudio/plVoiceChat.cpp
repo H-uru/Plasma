@@ -50,8 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plDebugText.h"
 #include "plStatusLog/plStatusLog.h"
 
-#define MICROPHONE          121
-#define TALKING             122
+#define MICROPHONE          "ui_microphone.png"
+#define TALKING             "ui_speaker.png"
 #define NUM_CHANNELS        1
 #define VOICE_STOP_MS       2000
 #define MAX_DATA_SIZE       1024 * 4    // 4 KB
@@ -68,13 +68,13 @@ hsBool                  plVoicePlayer::fEnabled =                   true;
 plVoiceRecorder::plVoiceRecorder()
 {
     plPlateManager::Instance().CreatePlate( &fDisabledIcon );
-    fDisabledIcon->CreateFromResource( MAKEINTRESOURCE( MICROPHONE ) );
+    fDisabledIcon->CreateFromResource( MICROPHONE );
     fDisabledIcon->SetPosition(-0.90, -0.90);
     fDisabledIcon->SetSize(0.0675, 0.09);
     fDisabledIcon->SetVisible(false);
 
     plPlateManager::Instance().CreatePlate( &fTalkIcon );
-    fTalkIcon->CreateFromResource( MAKEINTRESOURCE( TALKING ) );
+    fTalkIcon->CreateFromResource( TALKING );
     fTalkIcon->SetPosition(-0.9,-0.9);
     fTalkIcon->SetSize(0.0675, 0.09);
     fTalkIcon->SetVisible(false);
@@ -192,7 +192,7 @@ void plVoiceRecorder::DrawDisabledIcon(hsBool b)
         plPlateManager::Instance().CreatePlate( &fDisabledIcon );
         if (fDisabledIcon)
         {
-            fDisabledIcon->CreateFromResource( MAKEINTRESOURCE( MICROPHONE ) );
+            fDisabledIcon->CreateFromResource( MICROPHONE );
             fDisabledIcon->SetPosition(-0.90, -0.90);
             fDisabledIcon->SetSize(0.0675, 0.09);
             fDisabledIcon->SetVisible(false);
@@ -209,7 +209,7 @@ void plVoiceRecorder::DrawTalkIcon(hsBool b)
     {   
         plPlateManager::Instance().CreatePlate( &fTalkIcon );
         if (fTalkIcon)
-        {   fTalkIcon->CreateFromResource( MAKEINTRESOURCE( TALKING ) );
+        {   fTalkIcon->CreateFromResource( TALKING );
             fTalkIcon->SetPosition(-0.9,-0.9);
             fTalkIcon->SetSize(0.0675, 0.09);
             fTalkIcon->SetVisible(false);
