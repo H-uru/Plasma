@@ -54,7 +54,8 @@ plClientResMgr::~plClientResMgr()
         std::map<std::string, plMipmap*>::iterator it;
 
         for (it = this->ClientResources->begin(); it != this->ClientResources->end(); ++it) {
-            it->second->UnRef();
+            if (it->second)
+                it->second->UnRef();
         }
 
         delete this->ClientResources;
