@@ -158,6 +158,41 @@ PYTHON_METHOD_DEFINITION(ptImage, saveAsJPEG, args)
         PYTHON_RETURN_ERROR;
     }
 }
+
+PYTHON_METHOD_DEFINITION(ptImage, saveAsPNG, args)
+{
+    PyObject* filenameObj;
+    if (!PyArg_ParseTuple(args, "O", &filenameObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "saveAsPNG expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+
+    if (PyUnicode_Check(filenameObj))
+    {
+        int strLen = PyUnicode_GetSize(filenameObj);
+        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
+        text[strLen] = L'\0';
+        self->fThis->SaveAsPNG(text);
+        delete [] text;
+        PYTHON_RETURN_NONE;
+    }
+    else if (PyString_Check(filenameObj))
+    {
+        // we'll allow this, just in case something goes weird
+        char* text = PyString_AsString(filenameObj);
+        wchar_t* wText = hsStringToWString(text);
+        self->fThis->SaveAsPNG(wText);
+        delete [] wText;
+        PYTHON_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_TypeError, "saveAsPNG expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+}
 #endif // BUILDING_PYPLASMA
 
 PYTHON_START_METHODS_TABLE(ptImage)
@@ -167,6 +202,7 @@ PYTHON_START_METHODS_TABLE(ptImage)
     PYTHON_METHOD_NOARGS(ptImage, getWidth, "Returns the width of the image"),
     PYTHON_METHOD_NOARGS(ptImage, getHeight, "Returns the height of the image"),
     PYTHON_METHOD(ptImage, saveAsJPEG, "Params: filename,quality=75\nSaves this image to disk as a JPEG file"),
+    PYTHON_METHOD(ptImage, saveAsPNG, "Params: filename\nSaves this image to disk as a PNG file"),
 #endif
 PYTHON_END_METHODS_TABLE;
 

@@ -127,10 +127,8 @@ class plPlate
         void    SetSize( hsScalar width, hsScalar height, bool adjustByAspectRatio = false );
 
         plMipmap        *CreateMaterial( UInt32 width, UInt32 height, hsBool withAlpha, plMipmap* texture = NULL );
-        void            CreateFromResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
-        void            ReloadFromResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
-        void            CreateFromJPEGResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
-        void            ReloadFromJPEGResource( const char *resName, UInt32 colorKey = 0x00ff00ff );
+        void            CreateFromResource( const char *resName );
+        void            ReloadFromResource( const char *resName );
 };
 
 //// plGraphPlate Class Definition ///////////////////////////////////////////

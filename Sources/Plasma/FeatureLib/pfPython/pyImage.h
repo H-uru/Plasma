@@ -150,6 +150,7 @@ public:
     UInt32 GetWidth(); // returns the width of the image
     UInt32 GetHeight(); // returns the height of the image
     void SaveAsJPEG(const wchar* fileName, UInt8 quality = 75);
+    void SaveAsPNG(const wchar* fileName);
     static PyObject* LoadJPEGFromDisk(const wchar* filename, UInt16 width, UInt16 height); // returns pyImage
 #endif
 };
