@@ -35,6 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPlates.h"
 
 #include "plJPEG/plJPEG.h"
+#include "plGImage/plPNG.h"
 #include "plGImage/plMipmap.h"
 #include "plSurface/plLayer.h"
 #include "plSurface/hsGMaterial.h"
@@ -43,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGDeviceRef.h"
 #include "hsResMgr.h"
 #include "plPipeDebugFlags.h"
+#include "plClientResMgr/plClientResMgr.h"
 
 
 // A bit of a hack so that we will have the correct instance in the SceneViewer
@@ -227,302 +229,30 @@ plMipmap    *plPlate::CreateMaterial( UInt32 width, UInt32 height, hsBool withAl
 //// CreateFromResource //////////////////////////////////////////////////////
 //  Creates a plate's material from a resource of the given name.
 
-// This is where hacks beget hacks.
-// We have two problems here. First, the main cursor we use most of the time (IDB_CURSOR_UP)
-// is a greyscale cursor, so it's color is copied to alpha and then set to white. But its
-// color doesn't go to black, it goes to 0x040404, which when used for alpha is just enough
-// to be annoying in 32 bit (ghost white square around cursor).
-// Second, Win98 seems to be doing some sort of dither on the cursors that use a color key
-// (colorKey == 0xff00ff), so the purple parts aren't exactly matching the colorKey, so
-// we have a big opaque (except for the parts that dither out to 0xff00ff) purple square
-// around the cursor.
-// So, when it comes to color keying, we're going to pretend we're in 16 bit mode, and only
-// check the upper 5 bits of each channel. If they match the colorKey, close enough to be 
-// transparent.
-// For grey scale, if the alpha comes out less than 8 (upper 5 bits off), again close enough
-// for complete transparency.
-//
-// All this happens in CreateFromResource and ReloadFromResource, so I've moved the alpha setting
-// code to a function they can both use, rather than cut and pasting code (what a concept, must
-// be one of those new-fangled OOP patterns).
-//
-void plPlate::ISetResourceAlphas(UInt32 colorKey)
+void plPlate::CreateFromResource(const char *resName)
 {
-    if( !fMipmap )
-        return;
-
-    /// Set alphas
-    colorKey &= 0x00f8f8f8;
-
-    UInt32 numPix = fMipmap->GetWidth() * fMipmap->GetHeight();
-
-    UInt32 *d;
-    int     i;
-    hsBool  hasColorKey = false;
-    for( i = 0, d = (UInt32 *)(fMipmap->GetImage()); i < numPix; i++ )
+    if (resName)
     {
-        if( (d[ i ] & 0x00f8f8f8) == colorKey )
-        {
-            hasColorKey = true;
-            break;
-        }
-    }
-    if( hasColorKey )
-    {
-        for( i = 0, d = (UInt32 *)(fMipmap->GetImage()); i < numPix; i++ )
-        {
-            // Win98 for some reason likes to return full alpha on the pixels,
-            // whereas Win2k/XP likes 0 alpha. Go figure...
-            if( ( d[ i ] & 0x00f8f8f8 ) == colorKey )
-                d[ i ] = 0;
-            else
-                d[ i ] |= 0xff000000;
-        }
+        plMipmap* resTexture = TRACKED_NEW plMipmap;
+        resTexture->CopyFrom(plClientResMgr::Instance().getResource(resName));
+
+        char keyName[128];
+        sprintf( keyName, "PlateResource#%d", fMagicUniqueKeyInt++ );
+        hsgResMgr::ResMgr()->NewKey(keyName, resTexture, plLocation::kGlobalFixedLoc);
+        CreateMaterial(resTexture->GetWidth(), resTexture->GetHeight(), true, resTexture);
     }
     else
     {
-        // No color key, must be a b/w alpha mask
-        for( i = 0, d = (UInt32 *)(fMipmap->GetImage()); i < numPix; i++ )
-        {
-            UInt32 alpha = d[i] & 0xff;
-            if( !(alpha & 0xf8) )
-                d[i] = 0x00ffffff;
-            else
-                d[ i ] = ( alpha << 24 ) | 0x00ffffff;
-        }
+        // Null resource request - Create a blank Material instead
+        CreateMaterial(32, 32, true);
     }
 }
 
-void    plPlate::CreateFromResource( const char *resName, UInt32 colorKey )
+void plPlate::ReloadFromResource(const char *resName)
 {
-/*
-    Someday the following might actually work, once we get a plugin that
-    exports a material in the latest format, plus have the material actually
-    read in its layers (or maybe we'll have to read() them in manually?)
-    Right now, we just keep it here so we don't have to look up how to do it
-    when we need it.
-
-    hsRAMStream     rsrcStream;
-    HGLOBAL         rsrcHdl;
-    HRSRC           findInfo;
-    UInt8           *ptr;
-    UInt32          size;
-
-
-    findInfo = FindResource( GetModuleHandle( nil ), (LPCTSTR)1001, "HSMR" );
-    size = SizeofResource( GetModuleHandle( nil ), findInfo );
-    rsrcHdl = LoadResource( GetModuleHandle( nil ), findInfo );
-    ptr = (UInt8 *)LockResource( rsrcHdl );
-
-    rsrcStream.Write( size, ptr );
-
-    UnlockResource( rsrcHdl );
-
-    rsrcStream.Rewind();
-
-    fMaterial = TRACKED_NEW hsGMaterial;
-    fMaterial->Read( &rsrcStream );
-*/
-    UInt32          width, height;
-
-
-#if HS_BUILD_FOR_WIN32
-    HBITMAP         rsrc;
-    BITMAPINFO      bMapInfo;
-    HDC             hDC = GetDC( nil );
-
-    rsrc = (HBITMAP)LoadImage( gHInstance, resName, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION );
-    if( rsrc == nil )
+    if (resName)
     {
-        /// Copy data into a new material
-        CreateMaterial( 32, 32, true );
-        SetSize( 0.1, 0.1 );
-        ReleaseDC( nil, hDC );
-        return;
-    }
-
-//  hsAssert( rsrc != nil, "Cannot find specified resource" );
-
-    memset( &bMapInfo, 0, sizeof( bMapInfo ) );
-    bMapInfo.bmiHeader.biSize = sizeof( bMapInfo.bmiHeader );
-    height = GetDIBits( hDC, rsrc, 0, 0, nil, &bMapInfo, DIB_RGB_COLORS );
-    hsAssert( height != 0, "Cannot get resource bitmap bits" );
-
-    width = bMapInfo.bmiHeader.biWidth;
-    height = bMapInfo.bmiHeader.biHeight;
-    bMapInfo.bmiHeader.biBitCount = 32;
-    bMapInfo.bmiHeader.biCompression = BI_RGB;
-#endif
-
-    /// Copy data into a new material
-    CreateMaterial( width, height, true );
-    SetSize( (float)width, (float)height );
-
-#if HS_BUILD_FOR_WIN32
-    bMapInfo.bmiHeader.biHeight *= -1;
-    GetDIBits( hDC, rsrc, 0, height, fMipmap->GetImage(), &bMapInfo, DIB_RGB_COLORS );
-
-    ReleaseDC( nil, hDC );
-    DeleteObject( rsrc );
-#endif
-
-    ISetResourceAlphas(colorKey);
-}
-
-//// ReloadFromResource //////////////////////////////////////////////////////
-//  Creates a plate's material from a resource of the given name.
-
-void    plPlate::ReloadFromResource( const char *resName, UInt32 colorKey )
-{
-    UInt32      width, height;
-
-
-    if( !fMaterial || fMaterial->GetNumLayers() < 1 || fMaterial->GetLayer( 0 ) == nil || fMipmap == nil )
-    {
-        hsStatusMessage( "WARNING: Not refilling plate material; bitmap not yet assigned\n" );
-        return;
-    }
-
-#if HS_BUILD_FOR_WIN32
-    HBITMAP         rsrc;
-    BITMAPINFO      bMapInfo;
-    HDC             hDC = GetDC( nil );
-
-    rsrc = (HBITMAP)LoadImage( gHInstance, resName, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION );
-    if( rsrc == nil )
-    {
-        ReleaseDC( nil, hDC );
-        return;
-    }
-
-//  hsAssert( rsrc != nil, "Cannot find specified resource" );
-
-    memset( &bMapInfo, 0, sizeof( bMapInfo ) );
-    bMapInfo.bmiHeader.biSize = sizeof( bMapInfo.bmiHeader );
-    height = GetDIBits( hDC, rsrc, 0, 0, nil, &bMapInfo, DIB_RGB_COLORS );
-    hsAssert( height != 0, "Cannot get resource bitmap bits" );
-
-    width = bMapInfo.bmiHeader.biWidth;
-    height = bMapInfo.bmiHeader.biHeight;
-    bMapInfo.bmiHeader.biBitCount = 32;
-    bMapInfo.bmiHeader.biCompression = BI_RGB;
-#endif
-
-    /// Copy the data into the existing material
-    if( fMipmap->GetWidth() != width || fMipmap->GetHeight() != height )
-    {
-        hsStatusMessage( "WARNING: Not refilling plate material; resource size does not match\n" );
-    }
-
-#if HS_BUILD_FOR_WIN32
-    bMapInfo.bmiHeader.biHeight *= -1;
-    GetDIBits( hDC, rsrc, 0, height, fMipmap->GetImage(), &bMapInfo, DIB_RGB_COLORS );
-
-    ReleaseDC( nil, hDC );
-    DeleteObject( rsrc );
-#endif
-
-    ISetResourceAlphas(colorKey);
-
-    if( fMipmap->GetDeviceRef() )
-        fMipmap->GetDeviceRef()->SetDirty( true );
-}
-
-void    plPlate::CreateFromJPEGResource( const char *resName, UInt32 colorKey )
-{
-    hsRAMStream stream;
-    plMipmap* jpgTexture = nil;
-
-#if HS_BUILD_FOR_WIN32
-
-    HRSRC res = FindResource(NULL, resName, "JPEG");
-    if (!res)
-        goto error;
-
-    HGLOBAL resourceLoaded = LoadResource(NULL, res);
-    if (!resourceLoaded)
-        goto error;
-
-    byte* data = (byte*)LockResource(resourceLoaded);
-    if (!data)
-        goto error;
-
-    DWORD resSize = SizeofResource(NULL, res);
-    if (resSize == 0)
-        goto error;
-
-    stream.Write(sizeof(DWORD), &resSize);
-    stream.Write(resSize, data);
-    stream.Rewind();
-
-    UnlockResource(resourceLoaded);
-
-    char keyName[128];
-    sprintf( keyName, "PlateJPEG#%d", fMagicUniqueKeyInt++ );
-
-    jpgTexture = plJPEG::Instance().ReadFromStream(&stream);
-
-    if (jpgTexture)
-    {
-        hsgResMgr::ResMgr()->NewKey(keyName, jpgTexture, plLocation::kGlobalFixedLoc);
-
-#endif
-
-        CreateMaterial( 256, 256, true, jpgTexture);
-        ISetResourceAlphas(colorKey);
-        return;
-    }
-
-error:
-    /// Copy data into a new material
-    CreateMaterial( 32, 32, true );
-    SetSize( 0.1, 0.1 );
-    return;
-}
-
-void    plPlate::ReloadFromJPEGResource( const char *resName, UInt32 colorKey )
-{
-    hsRAMStream stream;
-    plMipmap* jpgTexture = nil;
-
-#if HS_BUILD_FOR_WIN32
-
-    HRSRC res = FindResource(NULL, resName, "JPEG");
-    if (!res)
-        return;
-
-    HGLOBAL resourceLoaded = LoadResource(NULL, res);
-    if (!resourceLoaded)
-        return;
-
-    byte* data = (byte*)LockResource(resourceLoaded);
-    if (!data)
-        return;
-
-    DWORD resSize = SizeofResource(NULL, res);
-    if (resSize == 0)
-        return;
-
-    stream.Write(sizeof(DWORD), &resSize);
-    stream.Write(resSize, data);
-    stream.Rewind();
-
-    UnlockResource(resourceLoaded);
-
-    jpgTexture = plJPEG::Instance().ReadFromStream(&stream);
-
-    if (jpgTexture)
-    {
-
-#endif
-        fMipmap->CopyFrom(jpgTexture);
-
-        ISetResourceAlphas(colorKey);
-
-        if( fMipmap->GetDeviceRef() )
-            fMipmap->GetDeviceRef()->SetDirty( true );
-
-        delete jpgTexture;
+        fMipmap->CopyFrom(plClientResMgr::Instance().getResource(resName));
     }
 }
 

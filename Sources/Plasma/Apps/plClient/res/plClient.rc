@@ -40,29 +40,6 @@ END
 // Bitmap
 //
 
-IDB_CURSOR_UP           BITMAP                  "cursor_up.bmp"
-IDB_CURSOR_DOWN         BITMAP                  "cursor_down.bmp"
-IDB_CURSOR_LEFT         BITMAP                  "cursor_right.bmp"
-IDB_CURSOR_RIGHT        BITMAP                  "cursor_left.bmp"
-IDB_CURSOR_OPEN         BITMAP                  "cursor_open.bmp"
-IDB_CURSOR_GRAB         BITMAP                  "cursor_grab.bmp"
-IDB_CURSOR_CLICKED      BITMAP                  "cursor_clicked.bmp"
-IDB_CURSOR_POISED       BITMAP                  "cursor_poised.bmp"
-IDB_CURSOR_ARROW        BITMAP                  "cursor_u.bmp"
-IDB_CURSOR_4WAYOPEN     BITMAP                  "bitmap1.bmp"
-IDB_CURSOR_UPDOWNCLOSED BITMAP                  "bmp00001.bmp"
-IDB_CURSOR_UPDOWNOPEN   BITMAP                  "bitmap2.bmp"
-IDB_CURSOR_4WAYCLOSED   BITMAP                  "bitmap3.bmp"
-IDB_CURSOR_LEFTRIGHTCLOSED BITMAP                  "bmp00003.bmp"
-IDB_CURSOR_LEFTRIGHTOPEN BITMAP                  "bmp00002.bmp"
-IDB_MICROPHONE          BITMAP                  "Microphone.bmp"
-IDB_TALKING             BITMAP                  "Speaker.bmp"
-IDB_CURSOR_BOOK_HIGHLIGHT BITMAP                  "book_hig.bmp"
-IDB_CURSOR_BOOK         BITMAP                  "book.bmp"
-IDB_CURSOR_BOOK_CLICKED BITMAP                  "book_cli.bmp"
-IDB_CURSOR_DISABLED     BITMAP                  "cursor_disabled.bmp"
-IDB_CURSOR_HAND         BITMAP                  "bmp00005.bmp"
-IDB_CURSOR_UPWARD       BITMAP                  "cursor_upward.bmp"
 IDB_BANNER              BITMAP                  "banner.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -303,32 +280,6 @@ END
 //
 
 IDR_CNSL1               CNSL                    "cnsl1.bin"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// JPEG
-//
-
-IDR_LOADING_01          JPEG                    "xLoading_Linking.01.jpg"
-IDR_LOADING_02          JPEG                    "xLoading_Linking.02.jpg"
-IDR_LOADING_03          JPEG                    "xLoading_Linking.03.jpg"
-IDR_LOADING_04          JPEG                    "xLoading_Linking.04.jpg"
-IDR_LOADING_05          JPEG                    "xLoading_Linking.05.jpg"
-IDR_LOADING_06          JPEG                    "xLoading_Linking.06.jpg"
-IDR_LOADING_07          JPEG                    "xLoading_Linking.07.jpg"
-IDR_LOADING_08          JPEG                    "xLoading_Linking.08.jpg"
-IDR_LOADING_09          JPEG                    "xLoading_Linking.09.jpg"
-IDR_LOADING_10          JPEG                    "xLoading_Linking.10.jpg"
-IDR_LOADING_11          JPEG                    "xLoading_Linking.11.jpg"
-IDR_LOADING_12          JPEG                    "xLoading_Linking.12.jpg"
-IDR_LOADING_13          JPEG                    "xLoading_Linking.13.jpg"
-IDR_LOADING_14          JPEG                    "xLoading_Linking.14.jpg"
-IDR_LOADING_15          JPEG                    "xLoading_Linking.15.jpg"
-IDR_LOADING_16          JPEG                    "xLoading_Linking.16.jpg"
-IDR_LOADING_17          JPEG                    "xLoading_Linking.17.jpg"
-IDR_LOADING_18          JPEG                    "xLoading_Linking.18.jpg"
-IDR_LOADING_LINKTEXT    JPEG                    "xLoading_Linking_Text.jpg"
-IDR_LOADING_UPDATETEXT  JPEG                    "xLoading_Updating_Text.jpg"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

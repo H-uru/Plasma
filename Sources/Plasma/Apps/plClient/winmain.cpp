@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsUtils.h"
 #include "plClient.h"
+#include "plClientResMgr/plClientResMgr.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plInputCore/plInputManager.h"
@@ -754,6 +755,9 @@ bool    InitClient( HWND hWnd )
     plResManager *resMgr = TRACKED_NEW plResManager;
     resMgr->SetDataPath("dat");
     hsgResMgr::Init(resMgr);
+
+    plClientResMgr::Instance().ILoadResources("resource.dat");
+
     gClient = TRACKED_NEW plClient;
     if( gClient == nil )
         return false;
