@@ -751,7 +751,7 @@ hsBool plClient::MsgReceive(plMessage* msg)
             {
                 ISetGraphicsDefaults();
                 ResetDisplayDevice(plPipeline::fDefaultPipeParams.Width, plPipeline::fDefaultPipeParams.Height, plPipeline::fDefaultPipeParams.ColorDepth, plPipeline::fDefaultPipeParams.Windowed,
-                    plPipeline::fDefaultPipeParams.AntiAliasingAmount, plPipeline::fDefaultPipeParams.AnisotropicLevel, plPipeline::fDefaultPipeParams.VSync, true);
+                    plPipeline::fDefaultPipeParams.AntiAliasingAmount, plPipeline::fDefaultPipeParams.AnisotropicLevel, plPipeline::fDefaultPipeParams.VSync);
             }
             break;
 
@@ -2150,54 +2150,60 @@ hsG3DDeviceModeRecord plClient::ILoadDevMode(const char* devModeFile)
     return dmr;
 }
 
-void plClient::ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync, hsBool windowOnly)
+void plClient::ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync)
 {
     if(!fPipeline) return;
-    int BorderWidth = 0, BorderHeight = 0, CaptionHeight = 0;
 
     WindowActivate(false);
-    int ActualWidth;
-    int ActualHeight;
 
-    if( Windowed )
-    {
-        BorderWidth = GetSystemMetrics( SM_CXSIZEFRAME );
-        BorderHeight = GetSystemMetrics( SM_CYSIZEFRAME );
-        CaptionHeight = GetSystemMetrics( SM_CYCAPTION );
-        ActualWidth = Width + BorderWidth * 2;
-        ActualHeight = Height + BorderHeight * 2 + CaptionHeight;
-        SetWindowLong( fWindowHndl, GWL_STYLE,
-            WS_POPUP | WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE);
-        SetWindowLong(fWindowHndl, GWL_EXSTYLE, 0);
-    }
-    else
-    {
-        SetWindowLong(fWindowHndl, GWL_STYLE,
-            WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_MAXIMIZE | WS_VISIBLE);
+    ResizeDisplayDevice(Width, Height, Windowed);
 
-        SetWindowLong(fWindowHndl, GWL_EXSTYLE, WS_EX_APPWINDOW);
-    }
-
-    if(!windowOnly)
-        fPipeline->ResetDisplayDevice(Width, Height, ColorDepth, Windowed, NumAASamples, MaxAnisotropicSamples, VSync);
-
-    float aspectratio = (float)Width / (float)Height;
-    plMouseDevice::Instance()->SetDisplayResolution((float)Width, (float)Height);
-    pfGameGUIMgr::GetInstance()->SetAspectRatio( aspectratio );
-
-    UINT flags = SWP_NOCOPYBITS | SWP_NOMOVE | SWP_SHOWWINDOW;
-    if(Windowed)
-    {
-        SetWindowPos( fWindowHndl, HWND_NOTOPMOST, 0, 0, ActualWidth, ActualHeight, flags );
-    }
-    else
-    {
-        SetWindowPos( fWindowHndl, HWND_TOP, 0, 0, Width, Height, flags );
-    }
+    fPipeline->ResetDisplayDevice(Width, Height, ColorDepth, Windowed, NumAASamples, MaxAnisotropicSamples, VSync);
 
     WindowActivate(true);
 }
 
+void plClient::ResizeDisplayDevice(int Width, int Height, hsBool Windowed)
+{
+
+    if (plMouseDevice::Instance())
+        plMouseDevice::Instance()->SetDisplayResolution((float)Width, (float)Height);
+
+    float aspectratio = (float)Width / (float)Height;
+    if (pfGameGUIMgr::GetInstance())
+        pfGameGUIMgr::GetInstance()->SetAspectRatio( aspectratio );
+
+
+    UInt32 winStyle, winExStyle;
+    if( Windowed )
+    {
+        winStyle = WS_OVERLAPPEDWINDOW;
+        winExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+    } else {
+        winStyle = WS_POPUP;
+        winExStyle = WS_EX_APPWINDOW;
+    }
+    SetWindowLong(fWindowHndl, GWL_STYLE, winStyle);
+    SetWindowLong(fWindowHndl, GWL_EXSTYLE, winExStyle);
+
+
+    UInt32 flags = SWP_NOCOPYBITS | SWP_SHOWWINDOW | SWP_FRAMECHANGED;
+    UInt32 OutsideWidth, OutsideHeight;
+    HWND insertAfter;
+    if( Windowed )
+    {
+        RECT winRect = { 0, 0, Width, Height };
+        AdjustWindowRectEx(&winRect, winStyle, false, winExStyle);
+        OutsideWidth = winRect.right - winRect.left;
+        OutsideHeight = winRect.bottom - winRect.top;
+        insertAfter = HWND_NOTOPMOST;
+    } else {
+        OutsideWidth = Width;
+        OutsideHeight = Height;
+        insertAfter = HWND_TOP;
+    }
+    SetWindowPos( fWindowHndl, insertAfter, 0, 0, OutsideWidth, OutsideHeight, flags );
+}
 
 void WriteBool(hsStream *stream, char *name, hsBool on )
 {

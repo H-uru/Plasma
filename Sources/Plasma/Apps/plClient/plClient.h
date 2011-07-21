@@ -276,7 +276,8 @@ public:
     virtual hsBool WindowActive() const { return fWindowActive; }
 
     void    SetMessagePumpProc( plMessagePumpProc proc ) { fMessagePumpProc = proc; }
-    void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false, hsBool windowOnly = false);
+    void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false);
+    void ResizeDisplayDevice(int Width, int Height, hsBool Windowed);
     void IDetectAudioVideoSettings();
     void IWriteDefaultGraphicsSettings(const wchar* destFile);
 
