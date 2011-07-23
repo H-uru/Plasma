@@ -81,7 +81,7 @@ hsError plSoundPreloader::Run()
     while (fRunning)
     {
         fCritSect.Lock();
-        for (int i = fBuffers.GetCount(); i > 0; i--)
+        while (fBuffers.GetCount())
         {
             templist.Append(fBuffers.Pop());
         }
@@ -94,7 +94,7 @@ hsError plSoundPreloader::Run()
         else
         {
             plAudioFileReader *reader = nil;
-            for (int i = templist.GetCount(); i > 0; i--)
+            while (templist.GetCount())
             {
                 plSoundBuffer* buf = templist.Pop();
 
@@ -122,7 +122,7 @@ hsError plSoundPreloader::Run()
     // we need to be sure that all buffers are removed from our load list when shutting this thread down or we will hang,
     // since the sound buffer will wait to be destroyed until it is marked as loaded 
     fCritSect.Lock();
-    for (int i = fBuffers.GetCount(); i > 0; i--)
+    while (fBuffers.GetCount())
     {
         plSoundBuffer* buf = fBuffers.Pop();
         buf->SetLoaded(true);
