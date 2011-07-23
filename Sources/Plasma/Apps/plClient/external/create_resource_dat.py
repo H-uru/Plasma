@@ -18,6 +18,10 @@ def create_resource_dat(resfilepath, inrespath):
 	## Get list of files to archive
 	resourceList = glob.glob(os.path.join(inrespath, "*"))
 	resourceList.sort()
+	try:
+		resourceList.remove(os.path.join(inrespath, "Thumbs.db")) # likely to be there on Windows and likely to be unwanted
+	except ValueError:
+		pass
 	if len(resourceList) == 0:
 		print("No files found in '{0}'.  Quitting.\n".format(inrespath))
 		return False
