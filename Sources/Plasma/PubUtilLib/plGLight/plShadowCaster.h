@@ -79,7 +79,7 @@ protected:
     hsScalar            fMaxOpacity;
     hsTArray<DrawSpan>  fSpans;
 
-    friend plShadowMaster;
+    friend class plShadowMaster;
 
     void ICollectAllSpans();
 

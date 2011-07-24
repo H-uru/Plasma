@@ -164,11 +164,11 @@ protected:
     
     /** Handle an incoming clone message; do any necessary post-processing
         on the avatar. */
-    void plAvatarMgr::IFinishLoadingAvatar(plLoadAvatarMsg *cloneMsg);
+    void IFinishLoadingAvatar(plLoadAvatarMsg *cloneMsg);
 
     /** Handle an incoming clone message which holds an unload request.
     */
-    void plAvatarMgr::IFinishUnloadingAvatar(plLoadAvatarMsg *cloneMsg);
+    void IFinishUnloadingAvatar(plLoadAvatarMsg *cloneMsg);
     
     /** When an armature modifier attached to the given scene object is loaded,
         send it the given message.
@@ -177,10 +177,10 @@ protected:
         We'll get that notification via the AddAvatar call later. In this function
         we're going to squirrel away an initialization message to pass to the armature
         modifier when it arrives. */
-    void plAvatarMgr::IDeferInit(plKey playerSOKey, plMessage *initMsg);
+    void IDeferInit(plKey playerSOKey, plMessage *initMsg);
     
     /** See if we have an avatar type message saved for the given avatar and send them. */
-    void plAvatarMgr::ISendDeferredInit(plKey playerSOKey);
+    void ISendDeferredInit(plKey playerSOKey);
 
     static plAvatarMgr* fInstance;      // the single instance of the avatar manager
 

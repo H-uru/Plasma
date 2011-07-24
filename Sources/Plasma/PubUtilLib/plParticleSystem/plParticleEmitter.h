@@ -45,8 +45,8 @@ class hsResMgr;
 
 class plParticleEmitter : public plCreatable
 {
-    friend plParticleSystem;
-    friend plSimpleParticleGenerator;
+    friend class plParticleSystem;
+    friend class plSimpleParticleGenerator;
 
 public:
     plParticleEmitter();

@@ -40,4 +40,4 @@ public:
     static HMODULE GetD3DDll();
 };
 
-#endif hsGDDrawDllLoad_inc
+#endif // hsGDDrawDllLoad_inc

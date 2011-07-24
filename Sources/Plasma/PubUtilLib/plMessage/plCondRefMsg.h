@@ -38,7 +38,7 @@ class plCondRefMsg : public plRefMsg
 public:
 
     plCondRefMsg() { fWhich = -1; }
-    plCondRefMsg::plCondRefMsg(const plKey &s, int which)
+    plCondRefMsg(const plKey &s, int which)
         : plRefMsg(s, plRefMsg::kOnCreate), fWhich(which) {}
 
     CLASSNAME_REGISTER( plCondRefMsg );

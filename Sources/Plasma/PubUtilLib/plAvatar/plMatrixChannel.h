@@ -154,7 +154,7 @@ public:
     plMatrixBlend(plMatrixChannel * channelA, plMatrixChannel * channelB, plScalarChannel * channelBias, int priority);
     virtual ~plMatrixBlend();
 
-    virtual plAGChannel * plMatrixBlend::MakeBlend(plAGChannel *newChannel, plScalarChannel *channelBias, int blendPriority);
+    virtual plAGChannel * MakeBlend(plAGChannel *newChannel, plScalarChannel *channelBias, int blendPriority);
 
     // you cannot blend on top of a channel that has higher priority than you do.
     virtual UInt16 GetPriority();
@@ -182,7 +182,7 @@ public:
     virtual plAGChannel * Detach(plAGChannel * channel);
     virtual void Dump(int indent, bool optimized, double time);
 
-    plAGChannel *plMatrixBlend::Optimize(double time);
+    plAGChannel* Optimize(double time);
     
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plMatrixBlend );

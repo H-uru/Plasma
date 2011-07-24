@@ -88,8 +88,8 @@ public:
     virtual void LoadFromSDL(const plStateDataRecord *sdl);
 
     void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-    const char * plAvBrainClimb::WorldDirStr(plClimbMsg::Direction dir);
-    const char *plAvBrainClimb::ModeStr(Mode mode);
+    const char * WorldDirStr(plClimbMsg::Direction dir);
+    const char *ModeStr(Mode mode);
 
     // plasma protocol
     virtual hsBool MsgReceive(plMessage *msg);
