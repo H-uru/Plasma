@@ -179,7 +179,7 @@ class plKeyMap : public plInputMap
         void FindAllBindingsByKey( const plKeyCombo &combo, hsTArray<const plKeyBinding*> &result ) const;
         
         // Searches for the binding by console command. Returns nil if not found
-        const plKeyBinding* plKeyMap::FindConsoleBinding( const char *command ) const;
+        const plKeyBinding* FindConsoleBinding( const char *command ) const;
 
         // Make sure the given keys are clear of bindings, i.e. not used
         void    EnsureKeysClear( const plKeyCombo &key1, const plKeyCombo &key2 );
