@@ -1673,7 +1673,7 @@ hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, 
         }
         else
             tstDepths[i+6] = 0;
-#endif;
+#endif
     }
 
     hsVector3 norm;
