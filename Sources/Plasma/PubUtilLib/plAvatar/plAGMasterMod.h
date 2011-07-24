@@ -188,7 +188,7 @@ public:
     virtual void AddTarget(plSceneObject * object);
     virtual void RemoveTarget(plSceneObject * object);
 
-    hsBool plAGMasterMod::MsgReceive(plMessage* msg);
+    hsBool MsgReceive(plMessage* msg);
 
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream * stream, hsResMgr *mgr);

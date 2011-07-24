@@ -82,4 +82,4 @@ public:
 };
 
 
-#endif plDetectorModifier_inc
+#endif //plDetectorModifier_inc

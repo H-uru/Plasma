@@ -240,7 +240,7 @@ public:
     virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
 
     // plasma protocol
-    hsBool plAvBrainGeneric::MsgReceive(plMessage *msg);
+    hsBool MsgReceive(plMessage *msg);
     CLASSNAME_REGISTER( plAvBrainGeneric );
     GETINTERFACE_ANY( plAvBrainGeneric, plArmatureBrain );
 

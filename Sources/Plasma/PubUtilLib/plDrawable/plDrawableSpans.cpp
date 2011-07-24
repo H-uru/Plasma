@@ -2785,7 +2785,7 @@ void    plDrawableSpans::RemoveDISpans( UInt32 index )
                 }
             }
         }
-#else MF_RENDDEP
+#else // MF_RENDDEP
         spanInverseTable[(*spanIndices)[i]] = -1;
         for( j = (*spanIndices)[i]; j < fSpans.GetCount(); j++ )
             spanInverseTable[j]--;

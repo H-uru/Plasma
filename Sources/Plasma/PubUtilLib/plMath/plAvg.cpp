@@ -68,7 +68,7 @@ void TimeBasedAvgRing<T>::AddItem(T value, double time)
                 // remove RingStart from the avg part of the average calc
                 fTotal -= (*fRingStart).GetValue();
 
-                TimeList::iterator prev = fRingStart++;
+                typename TimeList::iterator prev = fRingStart++;
 
                 // loop the ring if needed
                 if (fRingStart == fList.end())

@@ -148,7 +148,7 @@ class plEAXSourceSettings
 
     protected:
         friend class plEAXSource;
-        friend  plEAXSourceSoftSettings;
+        friend class plEAXSourceSoftSettings;
 
         hsBool      fEnabled;
         Int16       fRoom, fRoomHF;
@@ -176,8 +176,8 @@ class plEAXSourceSettings
 class plEAXSource
 {
 public:
-    friend plEAXSourceSettings;
-    friend  plEAXSourceSoftSettings;
+    friend class plEAXSourceSettings;
+    friend class plEAXSourceSoftSettings;
 
     plEAXSource();
     virtual ~plEAXSource();

@@ -83,7 +83,7 @@ struct plNet
     static int Listen(const SOCKET sck, const int qsize);
     static int Accept(const SOCKET sck, sockaddr_in * addr);
     static int Ioctl(const SOCKET sck, const long flags, unsigned long * val);
-    static const char * plNet::GetErrorMsg(int error);
+    static const char * GetErrorMsg(int error);
     // TODO: Add get/setsockopt() here
     ~plNet();
 private:
