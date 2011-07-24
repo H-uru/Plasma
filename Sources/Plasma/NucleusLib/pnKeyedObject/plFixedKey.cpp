@@ -119,7 +119,7 @@ class plFixedKeyValidator
     private:
         static plFixedKeyValidator  fValidator;
 
-        plFixedKeyValidator::plFixedKeyValidator()
+        plFixedKeyValidator()
         {
             // verify that each Seed is in the correct spot...via the enum...
             int i;

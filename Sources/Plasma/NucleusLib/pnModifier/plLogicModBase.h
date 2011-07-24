@@ -69,7 +69,7 @@ protected:
     void CreateNotifyMsg();
     
 public:
-    friend plVolumeSensorConditionalObjectNoArbitration;
+    friend class plVolumeSensorConditionalObjectNoArbitration;
     plLogicModBase();
     ~plLogicModBase();
     CLASSNAME_REGISTER( plLogicModBase );
