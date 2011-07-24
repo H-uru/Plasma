@@ -232,4 +232,4 @@ private:
 };
 
 
-#endif plVirtualCam1_inc
+#endif //plVirtualCam1_inc

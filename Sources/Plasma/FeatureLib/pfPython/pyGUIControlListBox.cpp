@@ -273,14 +273,14 @@ class pfListTextInBox : public pfGUIListText
         UInt32              fMinHeight;
 
     public:
-        pfListTextInBox::pfListTextInBox( const char *text, UInt32 min_width=0, UInt32 min_height=0 ) : pfGUIListText( text )
+        pfListTextInBox( const char *text, UInt32 min_width=0, UInt32 min_height=0 ) : pfGUIListText( text )
         {
             fMinWidth = min_width;
             fMinHeight = min_height;
             fJustify = pfGUIListText::kCenter;
         }
 
-        pfListTextInBox::pfListTextInBox( const wchar_t *text, UInt32 min_width=0, UInt32 min_height=0 ) : pfGUIListText( text )
+        pfListTextInBox( const wchar_t *text, UInt32 min_width=0, UInt32 min_height=0 ) : pfGUIListText( text )
         {
             fMinWidth = min_width;
             fMinHeight = min_height;
@@ -313,7 +313,7 @@ class pfListPictureInBox : public pfGUIListPicture
         UInt32              fSrcHeight;
 
     public:
-        pfListPictureInBox::pfListPictureInBox( plKey mipKey, UInt32 x, UInt32 y, UInt32 width, UInt32 height, hsBool respectAlpha ) : pfGUIListPicture( mipKey,respectAlpha )
+        pfListPictureInBox( plKey mipKey, UInt32 x, UInt32 y, UInt32 width, UInt32 height, hsBool respectAlpha ) : pfGUIListPicture( mipKey,respectAlpha )
         {
             fSrcX = x;
             fSrcY = y;
@@ -378,7 +378,7 @@ class pfListPictureInBoxWithSwatches : public pfListPictureInBox
 
         static UInt16   fSwatchSize, fSwatchOffset;
 
-        pfListPictureInBoxWithSwatches::pfListPictureInBoxWithSwatches( plKey mipKey, UInt32 x, UInt32 y, 
+        pfListPictureInBoxWithSwatches( plKey mipKey, UInt32 x, UInt32 y, 
                                                                             UInt32 width, UInt32 height, 
                                                                             hsBool respectAlpha,
                                                                             const hsColorRGBA &primaryColor, const hsColorRGBA &secondaryColor )
