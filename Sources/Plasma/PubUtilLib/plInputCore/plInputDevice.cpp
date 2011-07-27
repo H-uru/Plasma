@@ -296,16 +296,16 @@ void plMouseDevice::SetDisplayResolution(hsScalar Width, hsScalar Height)
     IUpdateCursorSize();
 }
 
-void    plMouseDevice::CreateCursor( int cursor )
+void    plMouseDevice::CreateCursor( char* cursor )
 {
     if( fCursor == nil )
     {
         plPlateManager::Instance().CreatePlate( &fCursor );
-        fCursor->CreateFromResource( MAKEINTRESOURCE( cursor ) );
+        fCursor->CreateFromResource(cursor);
     }
     else
     {
-        fCursor->ReloadFromResource( MAKEINTRESOURCE( cursor ) );
+        fCursor->ReloadFromResource(cursor);
     }
     fCursor->SetPosition( 0, 0, 0 );
     IUpdateCursorSize();
@@ -406,7 +406,7 @@ void plMouseDevice::ShowCursor(hsBool override)
     fInstance->fCursor->SetVisible( true );
 }
 
-void plMouseDevice::NewCursor(int cursor)
+void plMouseDevice::NewCursor(char* cursor)
 {
     fInstance->fCursorID = cursor;
     fInstance->CreateCursor(cursor);
@@ -795,7 +795,6 @@ void plMouseDevice::HandleWindowActivate(bool bActive, HWND hWnd)
 //      rect.bottom /= plInputManager::GetInstance()->GetMouseScale();
 
         ::MapWindowPoints( hWnd, NULL, (POINT *)&rect, 2 );
-        ::ClipCursor(&rect);
         ::ShowCursor( FALSE );
         SetCapture(hWnd);
 
@@ -803,7 +802,6 @@ void plMouseDevice::HandleWindowActivate(bool bActive, HWND hWnd)
     else
     {
         ReleaseCapture();
-        ::ClipCursor(nil);
         ::ShowCursor( TRUE );
     }   
 }

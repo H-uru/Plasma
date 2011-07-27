@@ -160,6 +160,13 @@ void pyImage::SaveAsJPEG(const wchar* fileName, UInt8 quality)
     plJPEG::Instance().WriteToFile( fileName, this->GetImage() );
 }
 
+#include "plGImage/plPNG.h"
+void pyImage::SaveAsPNG(const wchar* fileName)
+{
+
+    plPNG::Instance().WriteToFile( fileName, this->GetImage() );
+}
+
 #include "hsResMgr.h"
 #include "pnKeyedObject/plUoid.h"
 PyObject* pyImage::LoadJPEGFromDisk(const wchar* filename, UInt16 width, UInt16 height)

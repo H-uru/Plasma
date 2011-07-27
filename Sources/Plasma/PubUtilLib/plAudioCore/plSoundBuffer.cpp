@@ -40,11 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "hsTimer.h"
 
-static bool s_running;
-static LISTDECL(plSoundBuffer, link) s_loading;
-static CCritSect s_critsect;
-static CEvent s_event(kEventAutoReset);
-
 static void GetFullPath( const char filename[], char *destStr )
 {
     char    path[ kFolderIterator_MaxPath ];
@@ -79,73 +74,74 @@ static plAudioFileReader *CreateReader( hsBool fullpath, const char filename[], 
     return reader;
 }
 
-// our loading thread
-static void LoadCallback(void *)
+hsError plSoundPreloader::Run()
 {
-    LISTDECL(plSoundBuffer, link) templist;
-    while(s_running)
+    hsTArray<plSoundBuffer*> templist;
+
+    while (fRunning)
     {
-        s_critsect.Enter(); 
+        fCritSect.Lock();
+        while (fBuffers.GetCount())
         {
-            while(plSoundBuffer *buffer = s_loading.Head())
-            {
-                templist.Link(buffer);
-            }
+            templist.Append(fBuffers.Pop());
         }
-        s_critsect.Leave();
-        
-        if(!templist.Head())
+        fCritSect.Unlock();
+
+        if (templist.GetCount() == 0)
         {
-            s_event.Wait(kEventWaitForever);
+            fEvent.Wait();
         }
         else
         {
             plAudioFileReader *reader = nil;
-            while(plSoundBuffer *buffer = templist.Head())
-            {       
-                if(buffer->GetData())
+            while (templist.GetCount())
+            {
+                plSoundBuffer* buf = templist.Pop();
+
+                if (buf->GetData())
                 {
-                    reader = CreateReader(true, buffer->GetFileName(), buffer->GetAudioReaderType(), buffer->GetReaderSelect());  
+                    reader = CreateReader(true, buf->GetFileName(), buf->GetAudioReaderType(), buf->GetReaderSelect());  
                     
                     if( reader )
                     {
-                        unsigned readLen = buffer->GetAsyncLoadLength() ? buffer->GetAsyncLoadLength() : buffer->GetDataLength(); 
-                        reader->Read( readLen, buffer->GetData() );
-                        buffer->SetAudioReader(reader);     // give sound buffer reader, since we may need it later
+                        unsigned readLen = buf->GetAsyncLoadLength() ? buf->GetAsyncLoadLength() : buf->GetDataLength(); 
+                        reader->Read( readLen, buf->GetData() );
+                        buf->SetAudioReader(reader);     // give sound buffer reader, since we may need it later
                     }
                     else
-                        buffer->SetError();
+                    {
+                        buf->SetError();
+                    }
                 }
-                
-                templist.Unlink(buffer);
-                buffer->SetLoaded(true);
+
+                buf->SetLoaded(true);
             }
         }
     }
 
     // we need to be sure that all buffers are removed from our load list when shutting this thread down or we will hang,
     // since the sound buffer will wait to be destroyed until it is marked as loaded 
-    s_critsect.Enter();
+    fCritSect.Lock();
+    while (fBuffers.GetCount())
     {
-        while(plSoundBuffer *buffer = s_loading.Head())
-        {
-            buffer->SetLoaded(true);
-            s_loading.Unlink(buffer);
-        }
+        plSoundBuffer* buf = fBuffers.Pop();
+        buf->SetLoaded(true);
     }
-    s_critsect.Leave();
+    fCritSect.Unlock();
+
+    return hsOK;
 }
+
+static plSoundPreloader gLoaderThread;
 
 void plSoundBuffer::Init()
 {
-    s_running = true;
-    _beginthread(LoadCallback, 0, 0);
+    gLoaderThread.Start();
 }
 
 void plSoundBuffer::Shutdown()
 {
-    s_running = false;
-    s_event.Signal();
+    gLoaderThread.Stop();
 }
 
 //// Constructor/Destructor //////////////////////////////////////////////////
@@ -175,7 +171,6 @@ plSoundBuffer::~plSoundBuffer()
         }
     }
 
-    ASSERT(!link.IsLinked());
     delete [] fFileName;
     UnLoad();
 }
@@ -342,7 +337,7 @@ void    plSoundBuffer::IGetFullPath( char *destStr )
 // While a file is loading(fLoading == true, and fLoaded == false) a buffer, no paremeters of the buffer should be modified.
 plSoundBuffer::ELoadReturnVal plSoundBuffer::AsyncLoad(plAudioFileReader::StreamType type, unsigned length /* = 0 */ )
 {
-    if(!s_running)
+    if(!gLoaderThread.IsRunning())
         return kError;  // we cannot load the data since the load thread is no longer running
     if(!fLoading && !fLoaded)
     {
@@ -354,13 +349,9 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::AsyncLoad(plAudioFileReader::Stream
             if( fData == nil )
                 return kError;
         }
-        s_critsect.Enter();
-        {
-            fLoading = true;
-            s_loading.Link(this);
-        }
-        s_critsect.Leave();
-        s_event.Signal();
+
+        gLoaderThread.AddBuffer(this);
+        fLoading = true;
     }
     if(fLoaded) 
     {   
