@@ -14,11 +14,13 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR})
 set(SOURCES
     plNetLog.cpp
     GateKeeper.cpp
+    Auth.cpp
 )
 
 set(HEADERS
     plNetLog.h
     GateKeeper.h
+    Auth.h
 )
 
 qt4_wrap_cpp(MOC_SOURCES ${HEADERS})

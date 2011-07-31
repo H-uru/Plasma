@@ -31,6 +31,7 @@
 #include <QProcess>
 
 #include "GateKeeper.h"
+#include "Auth.h"
 
 #define HURU_PIPE_NAME "\\\\.\\pipe\\H-Uru_NetLog"
 
@@ -183,6 +184,9 @@ void plNetLogGUI::addLogItem(unsigned protocol, unsigned time, int direction,
         case kNetProtocolCli2GateKeeper:
             haveData = GateKeeper_Factory(m_logView, timeFmt, direction, data, size);
             break;
+        case kNetProtocolCli2Auth:
+            haveData = Auth_Factory(m_logView, timeFmt, direction, data, size);
+            break;
         default:
             {
                 QTreeWidgetItem* item = new QTreeWidgetItem(m_logView, QStringList()
@@ -233,6 +237,61 @@ QString chompString(const unsigned char*& data, size_t& size)
     QString temp = QString::fromUtf16(utf16, length);
     delete[] utf16;
     return temp;
+}
+
+QString chompUuid(const unsigned char*& data, size_t& size)
+{
+    unsigned int u1 = chompBuffer<unsigned int>(data, size);
+    unsigned short u2 = chompBuffer<unsigned short>(data, size);
+    unsigned short u3 = chompBuffer<unsigned short>(data, size);
+    unsigned char u4[8];
+    memcpy(u4, data, 8);
+    data += 8;
+    size -= 8;
+
+    return QString("{%1-%2-%3-%4%5-%6%7%8%9%10%11}").arg(u1, 8, 16, QChar('0'))
+           .arg(u2, 4, 16, QChar('0')).arg(u3, 4, 16, QChar('0'))
+           .arg(u4[0], 2, 16, QChar('0')).arg(u4[1], 2, 16, QChar('0'))
+           .arg(u4[2], 2, 16, QChar('0')).arg(u4[3], 2, 16, QChar('0'))
+           .arg(u4[4], 2, 16, QChar('0')).arg(u4[5], 2, 16, QChar('0'))
+           .arg(u4[6], 2, 16, QChar('0')).arg(u4[7], 2, 16, QChar('0'));
+}
+
+QString chompResultCode(const unsigned char*& data, size_t& size)
+{
+    static QString errMap[] = {
+        "kNetSuccess",                  "kNetErrInternalError",
+        "kNetErrTimeout",               "kNetErrBadServerData",
+        "kNetErrAgeNotFound",           "kNetErrConnectFailed",
+        "kNetErrDisconnected",          "kNetErrFileNotFound",
+        "kNetErrOldBuildId",            "kNetErrRemoteShutdown",
+        "kNetErrTimeoutOdbc",           "kNetErrAccountAlreadyExists",
+        "kNetErrPlayerAlreadyExists",   "kNetErrAccountNotFound",
+        "kNetErrPlayerNotFound",        "kNetErrInvalidParameter",
+        "kNetErrNameLookupFailed",      "kNetErrLoggedInElsewhere",
+        "kNetErrVaultNodeNotFound",     "kNetErrMaxPlayersOnAcct",
+        "kNetErrAuthenticationFailed",  "kNetErrStateObjectNotFound",
+        "kNetErrLoginDenied",           "kNetErrCircularReference",
+        "kNetErrAccountNotActivated",   "kNetErrKeyAlreadyUsed",
+        "kNetErrKeyNotFound",           "kNetErrActivationCodeNotFound",
+        "kNetErrPlayerNameInvalid",     "kNetErrNotSupported",
+        "kNetErrServiceForbidden",      "kNetErrAuthTokenTooOld",
+        "kNetErrMustUseGameTapClient",  "kNetErrTooManyFailedLogins",
+        "kNetErrGameTapConnectionFailed", "kNetErrGTTooManyAuthOptions",
+        "kNetErrGTMissingParameter",    "kNetErrGTServerError",
+        "kNetErrAccountBanned",         "kNetErrKickedByCCR",
+        "kNetErrScoreWrongType",        "kNetErrScoreNotEnoughPoints",
+        "kNetErrScoreAlreadyExists",    "kNetErrScoreNoDataFound",
+        "kNetErrInviteNoMatchingPlayer", "kNetErrInviteTooManyHoods",
+        "kNetErrNeedToPay",             "kNetErrServerBusy",
+        "kNetErrVaultNodeAccessViolation",
+    };
+
+    unsigned result = chompBuffer<unsigned>(data, size);
+
+    if (result < (sizeof(errMap) / sizeof(errMap[0])))
+        return errMap[result];
+    return QString("(INVALID RESULT CODE - %1)").arg(result);
 }
 
 

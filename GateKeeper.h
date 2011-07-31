@@ -23,6 +23,8 @@ enum
     kCli2GateKeeper_FileSrvIpAddressRequest,
     kCli2GateKeeper_AuthSrvIpAddressRequest,
 
+    // -------------------------------------------------------------- //
+
     kGateKeeper2Cli_PingReply = 0,
     kGateKeeper2Cli_FileSrvIpAddressReply,
     kGateKeeper2Cli_AuthSrvIpAddressReply,

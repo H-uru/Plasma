@@ -56,6 +56,10 @@ enum ENetProtocol {
 
 enum Direction { kCli2Srv, kSrv2Cli };
 
+#define kColorGateKeeper    Qt::darkMagenta
+#define kColorAuth          Qt::blue
+#define kColorGame          Qt::darkGreen
+
 struct NetLogMessage_Header
 {
     unsigned        m_protocol;
@@ -108,6 +112,18 @@ _Tp chompBuffer(const unsigned char*& data, size_t& size)
     return temp;
 }
 
+template<size_t _Length>
+QString chompHex(const unsigned char*& data, size_t& size)
+{
+    char buffer[_Length];
+    memcpy(buffer, data, _Length);
+    data += _Length;
+    size -= _Length;
+    return QString(QByteArray(buffer, _Length).toHex());
+}
+
 QString chompString(const unsigned char*& data, size_t& size);
+QString chompUuid(const unsigned char*& data, size_t& size);
+QString chompResultCode(const unsigned char*& data, size_t& size);
 
 #endif
