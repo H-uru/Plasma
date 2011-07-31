@@ -136,8 +136,7 @@ void ErrorMinimizeAppWindow () {
         // If the application's topmost window is a fullscreen
         // popup window, minimize it before displaying an error
         HWND appWindow = GetActiveWindow();
-        if ( ((GetWindowLong(appWindow, GWL_STYLE) & WS_POPUP) != 0) &&
-            ((GetWindowLong(appWindow, GWL_EXSTYLE) & WS_EX_TOPMOST) != 0) )
+        if ( ((GetWindowLong(appWindow, GWL_STYLE) & WS_POPUP) != 0) )
             SetWindowPos(
                 appWindow,
                 HWND_NOTOPMOST,
