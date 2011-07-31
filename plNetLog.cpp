@@ -171,7 +171,11 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     layout->addWidget(m_logView, 1, 0);
     layout->addWidget(pathSpec, 2, 0);
     layout->addWidget(btnLaunch, 3, 0);
-    resize(512, 640);
+    
+    if (settings.contains("Geometry"))
+        setGeometry(settings.value("Geometry").toRect());
+    else
+        resize(512, 640);
 
     connect(btnLaunch, SIGNAL(clicked()), SLOT(onLaunch()));
     connect(btnClear, SIGNAL(clicked()), SLOT(onClear()));
@@ -181,6 +185,8 @@ void plNetLogGUI::closeEvent(QCloseEvent* event)
 {
     QSettings settings("H-uru", "plNetLog");
     settings.setValue("ClientPath", m_exePath->text());
+    settings.setValue("Geometry", geometry());
+
     event->accept();
 }
 
