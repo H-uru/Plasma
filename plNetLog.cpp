@@ -32,6 +32,7 @@
 
 #include "GateKeeper.h"
 #include "Auth.h"
+#include "Game.h"
 
 #define HURU_PIPE_NAME "\\\\.\\pipe\\H-Uru_NetLog"
 
@@ -216,6 +217,10 @@ void plNetLogGUI::addLogItems(unsigned protocol, int direction, ChunkBuffer& buf
             break;
         case kWatchedProtocolCli2Auth:
             if (!Auth_Factory(m_logView, timeFmt, direction, buffer))
+                buffer.clear();
+            break;
+        case kWatchedProtocolCli2Game:
+            if (!Game_Factory(m_logView, timeFmt, direction, buffer))
                 buffer.clear();
             break;
         default:

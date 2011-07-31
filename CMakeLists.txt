@@ -16,6 +16,7 @@ set(SOURCES
     plNetLog.cpp
     GateKeeper.cpp
     Auth.cpp
+    Game.cpp
 )
 
 set(HEADERS
@@ -23,6 +24,7 @@ set(HEADERS
     plNetLog.h
     GateKeeper.h
     Auth.h
+    Game.h
 )
 
 set(MOCSRC
