@@ -16,6 +16,7 @@
  ******************************************************************************/
 
 #include "Game.h"
+#include "GameMsg/Factory.h"
 
 bool Game_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                   ChunkBuffer& buffer)
@@ -46,6 +47,18 @@ bool Game_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Account UUID: %1").arg(buffer.readUuid()));
                 new QTreeWidgetItem(top, QStringList()
                     << QString("Player ID: %1").arg(buffer.read<unsigned>()));
+                break;
+            }
+        case kCli2Game_PropagateBuffer:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Game_PropagateBuffer").arg(timeFmt));
+                top->setForeground(0, kColorGame);
+                unsigned typeId = buffer.read<unsigned>();
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Type: %1").arg(typeId, 4, 16, QChar('0')));
+                QTreeWidgetItem* creatable = new QTreeWidgetItem(top, QStringList() << Factory_Name(typeId));
+                Factory_Create(creatable, buffer, buffer.read<unsigned>());
                 break;
             }
         default:
@@ -80,6 +93,18 @@ bool Game_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
                 new QTreeWidgetItem(top, QStringList()
                     << QString("Result: %1").arg(buffer.readResultCode()));
+                break;
+            }
+        case kGame2Cli_PropagateBuffer:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Game2Cli_PropagateBuffer").arg(timeFmt));
+                top->setForeground(0, kColorGame);
+                unsigned typeId = buffer.read<unsigned>();
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Type: %1").arg(typeId, 4, 16, QChar('0')));
+                QTreeWidgetItem* creatable = new QTreeWidgetItem(top, QStringList() << Factory_Name(typeId));
+                Factory_Create(creatable, buffer, buffer.read<unsigned>());
                 break;
             }
         default:
