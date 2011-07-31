@@ -187,6 +187,12 @@ void plNetLogGUI::closeEvent(QCloseEvent* event)
     settings.setValue("ClientPath", m_exePath->text());
     settings.setValue("Geometry", geometry());
 
+    // Kill the thread if it's active
+    if (s_pipeThread) {
+        s_pipeThread->terminate();
+        delete s_pipeThread;
+    }
+
     event->accept();
 }
 
