@@ -115,8 +115,8 @@ QString Factory_Name(unsigned type)
     case kAvBrainRideAnimatedPhysical:
         return "plAvBrainRideAnimatedPhysical";
     default:
-        OutputDebugStringA(QString("Unknown class ID (%1)\n").arg(type).toUtf8().data());
-        return QString("Unknown class ID (%1)").arg(type);
+        OutputDebugStringA(QString("Unknown class ID (%1)\n").arg(type, 4, 16, QChar('0')).toUtf8().data());
+        return QString("Unknown class ID (%1)").arg(type, 4, 16, QChar('0'));
     }
 }
 
@@ -128,7 +128,7 @@ void Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size)
     default:
         {
             new QTreeWidgetItem(parent, QStringList()
-                << QString("Unsupported creatable (%1)").arg(type));
+                << QString("Unsupported creatable (%1)").arg(type, 4, 16, QChar('0')));
 
             QTreeWidgetItem* item = parent;
             while (item->parent())
@@ -138,7 +138,8 @@ void Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size)
             item->setFont(0, warnFont);
             item->setForeground(0, Qt::red);
 
-            OutputDebugStringA(QString("Unsupported creatable (%1)\n").arg(type).toUtf8().data());
+            OutputDebugStringA(QString("Unsupported creatable (%1)\n")
+                               .arg(type, 4, 16, QChar('0')).toUtf8().data());
             if (size)
                 buffer.skip(size - sizeof(unsigned short));
         }
