@@ -16,6 +16,7 @@
  ******************************************************************************/
 
 #include "Factory.h"
+#include "plNetMessage.h"
 
 QString Factory_Name(unsigned type)
 {
@@ -125,6 +126,9 @@ void Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size)
     unsigned short type = buffer.read<unsigned short>();
 
     switch (type) {
+    case kNetMsgGroupOwner:
+        Create_NetMsgGroupOwner(parent, buffer);
+        break;
     default:
         {
             new QTreeWidgetItem(parent, QStringList()
@@ -144,4 +148,27 @@ void Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size)
                 buffer.skip(size - sizeof(unsigned short));
         }
     }
+}
+
+void FlagField(QTreeWidgetItem* parent, const char* title,
+               unsigned flags, const char* names[])
+{
+    QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList()
+        << QString("%1: 0x%2").arg(title).arg(flags, 8, 16, QChar('0')));
+
+    int idx = 0;
+    while (flags) {
+        if (flags & 0x1)
+            new QTreeWidgetItem(top, QStringList() << names[idx]);
+        flags >>= 1;
+        idx += 1;
+    }
+}
+
+void Location(QTreeWidgetItem* parent, const char* title, ChunkBuffer& buffer)
+{
+    QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList()
+        << QString("%1: %2 (Flags: %3)").arg(title)
+           .arg(buffer.read<unsigned>(), 8, 16, QChar('0'))
+           .arg(buffer.read<unsigned short>(), 4, 16, QChar('0')));
 }

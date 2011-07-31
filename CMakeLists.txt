@@ -31,16 +31,22 @@ set(MOCSRC
     plNetLog.h
 )
 
+set(GameMsg_HEADERS
+    GameMsg/Factory.h
+    GameMsg/plNetMessage.h
+)
+
 set(GameMsg_SOURCES
     GameMsg/Factory.cpp
-    GameMsg/Factory.h
+    GameMsg/plNetMessage.cpp
 )
 
 qt4_wrap_cpp(MOC_SOURCES ${MOCSRC})
 add_executable(plNetLog WIN32 ${HEADERS} ${SOURCES} ${MOC_SOURCES}
-               ${GameMsg_SOURCES}
+               ${GameMsg_HEADERS} ${GameMsg_SOURCES}
 )
 target_link_libraries(plNetLog ${QT_LIBRARIES})
 
 source_group("Moc Files" FILES ${MOC_SOURCES})
-source_group("GameMsg" FILES ${GameMsg_SOURCES})
+source_group("GameMsg\\Header Files" FILES ${GameMsg_HEADERS})
+source_group("GameMsg\\Source Files" FILES ${GameMsg_SOURCES})

@@ -70,3 +70,7 @@ enum ClassIDs
 
 QString Factory_Name(unsigned type);
 void Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size);
+
+void FlagField(QTreeWidgetItem* parent, const char* title,
+               unsigned flags, const char* names[]);
+void Location(QTreeWidgetItem* parent, const char* title, ChunkBuffer& buffer);
