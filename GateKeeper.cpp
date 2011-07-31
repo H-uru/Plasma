@@ -27,94 +27,106 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
     if (direction == kCli2Srv) {
         switch (msgId) {
         case kCli2GateKeeper_PingRequest:
-        {
-            QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
-                << QString("%1 - Cli2GateKeeper_PingRequest").arg(timeFmt));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Ping Time: %1").arg(QDateTime::fromTime_t(chompBuffer<uint>(data, size)).toString()));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
-            size_t payloadSize = chompBuffer<unsigned>(data, size);
-            if (payloadSize > 0) {
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 - Cli2GateKeeper_PingRequest").arg(timeFmt));
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Payload: %1 bytes").arg(payloadSize));
-                data += payloadSize;
-                size -= payloadSize;
-                QFont bold = top->font(0);
-                bold.setBold(true);
-                top->setFont(0, bold);
+                    << QString("Ping Time: %1").arg(QDateTime::fromTime_t(chompBuffer<uint>(data, size)).toString()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                size_t payloadSize = chompBuffer<unsigned>(data, size);
+                if (payloadSize > 0) {
+                    new QTreeWidgetItem(top, QStringList()
+                        << QString("Payload: %1 bytes").arg(payloadSize));
+                    data += payloadSize;
+                    size -= payloadSize;
+                    QFont bold = top->font(0);
+                    bold.setBold(true);
+                    top->setFont(0, bold);
+                }
+                break;
             }
-            break;
-        }
         case kCli2GateKeeper_FileSrvIpAddressRequest:
-        {
-            QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
-                << QString("%1 - Cli2GateKeeper_FileSrvIpAddressRequest").arg(timeFmt));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Patcher: %1").arg(chompBuffer<unsigned char>(data, size) == 0 ? "False" : "True"));
-            break;
-        }
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 - Cli2GateKeeper_FileSrvIpAddressRequest").arg(timeFmt));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Patcher: %1").arg(chompBuffer<unsigned char>(data, size) == 0 ? "False" : "True"));
+                break;
+            }
         case kCli2GateKeeper_AuthSrvIpAddressRequest:
-        {
-            QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
-                << QString("%1 - Cli2GateKeeper_AuthSrvIpAddressRequest").arg(timeFmt));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
-            break;
-        }
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 - Cli2GateKeeper_AuthSrvIpAddressRequest").arg(timeFmt));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                break;
+            }
         default:
-            new QTreeWidgetItem(logger, QStringList()
-                << QString("%1 - Invalid Cli2GateKeeper message (%2)").arg(timeFmt).arg(msgId));
-            return false;
+            {
+                QTreeWidgetItem* item = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 - Invalid Cli2GateKeeper message (%2)").arg(timeFmt).arg(msgId));
+                QFont warnFont = item->font(0);
+                warnFont.setBold(true);
+                item->setFont(0, warnFont);
+                item->setForeground(0, Qt::red);
+                return false;
+            }
         }
     } else {
         switch (msgId) {
         case kGateKeeper2Cli_PingReply:
-        {
-            QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
-                << QString("%1 - GateKeeper2Cli_PingReply").arg(timeFmt));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Ping Time: %1").arg(QDateTime::fromTime_t(chompBuffer<uint>(data, size)).toString()));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
-            size_t payloadSize = chompBuffer<unsigned>(data, size);
-            if (payloadSize > 0) {
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 - GateKeeper2Cli_PingReply").arg(timeFmt));
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Payload: %1 bytes").arg(payloadSize));
-                data += payloadSize;
-                size -= payloadSize;
-                QFont bold = top->font(0);
-                bold.setBold(true);
-                top->setFont(0, bold);
+                    << QString("Ping Time: %1").arg(QDateTime::fromTime_t(chompBuffer<uint>(data, size)).toString()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                size_t payloadSize = chompBuffer<unsigned>(data, size);
+                if (payloadSize > 0) {
+                    new QTreeWidgetItem(top, QStringList()
+                        << QString("Payload: %1 bytes").arg(payloadSize));
+                    data += payloadSize;
+                    size -= payloadSize;
+                    QFont bold = top->font(0);
+                    bold.setBold(true);
+                    top->setFont(0, bold);
+                }
+                break;
             }
-            break;
-        }
         case kGateKeeper2Cli_FileSrvIpAddressReply:
-        {
-            QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
-                << QString("%1 - GateKeeper2Cli_FileSrvIpAddressReply").arg(timeFmt));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Address: %1").arg(chompString(data, size)));
-            break;
-        }
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 - GateKeeper2Cli_FileSrvIpAddressReply").arg(timeFmt));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Address: %1").arg(chompString(data, size)));
+                break;
+            }
         case kGateKeeper2Cli_AuthSrvIpAddressReply:
-        {
-            QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
-                << QString("%1 - GateKeeper2Cli_AuthSrvIpAddressReply").arg(timeFmt));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
-            new QTreeWidgetItem(top, QStringList()
-                << QString("Address: %1").arg(chompString(data, size)));
-            break;
-        }
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 - GateKeeper2Cli_AuthSrvIpAddressReply").arg(timeFmt));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Address: %1").arg(chompString(data, size)));
+                break;
+            }
         default:
-            new QTreeWidgetItem(logger, QStringList()
-                << QString("%1 - Invalid GateKeeper2Cli message (%2)").arg(timeFmt).arg(msgId));
-            return false;
+            {
+                QTreeWidgetItem* item = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 - Invalid GateKeeper2Cli message (%2)").arg(timeFmt).arg(msgId));
+                QFont warnFont = item->font(0);
+                warnFont.setBold(true);
+                item->setFont(0, warnFont);
+                item->setForeground(0, Qt::red);
+                return false;
+            }
         }
     }
 

@@ -184,9 +184,15 @@ void plNetLogGUI::addLogItem(unsigned protocol, unsigned time, int direction,
             haveData = GateKeeper_Factory(m_logView, timeFmt, direction, data, size);
             break;
         default:
-            new QTreeWidgetItem(m_logView, QStringList()
-                << QString("%1 - Invalid protocol (%2)").arg(timeFmt).arg(protocol));
-            haveData = false;
+            {
+                QTreeWidgetItem* item = new QTreeWidgetItem(m_logView, QStringList()
+                    << QString("%1 - Invalid protocol (%2)").arg(timeFmt).arg(protocol));
+                QFont warnFont = item->font(0);
+                warnFont.setBold(true);
+                item->setFont(0, warnFont);
+                item->setForeground(0, Qt::red);
+                haveData = false;
+            }
         }
 
         if (haveData)
