@@ -26,9 +26,9 @@
 #include <QPushButton>
 #include <QCloseEvent>
 #include <QSettings>
-#include <QThread>
 #include <QMessageBox>
 #include <QProcess>
+#include <QScrollBar>
 
 #include "GateKeeper.h"
 #include "Auth.h"
@@ -51,59 +51,46 @@ static void ShowWinError(QString title)
     OutputDebugStringA(QString("[%1]\n%2\n").arg(title).arg(errbuf).toUtf8().data());
 }
 
-class PipeThread : public QThread
+PipeThread::PipeThread(plNetLogGUI* gui)
+    : QThread(gui)
 {
-private:
-    HANDLE m_netPipe;
+    // Create the pipe for listening to the client
+    m_netPipe = CreateNamedPipeA(HURU_PIPE_NAME, PIPE_ACCESS_DUPLEX,
+                                 PIPE_TYPE_BYTE, PIPE_UNLIMITED_INSTANCES,
+                                 0, 0, 0, NULL);
+    if (m_netPipe == INVALID_HANDLE_VALUE)
+        ShowWinError(tr("Error creating pipe"));
+}
 
-public:
-    PipeThread(plNetLogGUI* gui)
-        : QThread(gui)
-    {
-        // Create the pipe for listening to the client
-        m_netPipe = CreateNamedPipeA(HURU_PIPE_NAME, PIPE_ACCESS_DUPLEX,
-                                     PIPE_TYPE_BYTE, PIPE_UNLIMITED_INSTANCES,
-                                     0, 0, 0, NULL);
-        if (m_netPipe == INVALID_HANDLE_VALUE)
-            ShowWinError(tr("Error creating pipe"));
-    }
+void PipeThread::run()
+{
+    NetLogMessage_Header header;
 
-    ~PipeThread()
-    {
-        CloseHandle(m_netPipe);
-    }
+    if (m_netPipe == INVALID_HANDLE_VALUE)
+        return;
 
-protected:
-    virtual void run()
-    {
-        NetLogMessage_Header header;
+    if (!ConnectNamedPipe(m_netPipe, NULL))
+        ShowWinError(tr("Error waiting for client"));
 
-        if (m_netPipe == INVALID_HANDLE_VALUE)
-            return;
+    for ( ;; ) {
+        DWORD bytesRead;
 
-        if (!ConnectNamedPipe(m_netPipe, NULL))
-            ShowWinError(tr("Error waiting for client"));
-
-        for ( ;; ) {
-            DWORD bytesRead;
-
-            if (!ReadFile(m_netPipe, &header, sizeof(header), &bytesRead, NULL)) {
-                ShowWinError(tr("Error reading pipe"));
-                break;
-            }
-
-            unsigned char* data = new unsigned char[header.m_size];
-            if (!ReadFile(m_netPipe, data, header.m_size, &bytesRead, NULL)) {
-                ShowWinError(tr("Error reading pipe"));
-                break;
-            }
-
-            static_cast<plNetLogGUI*>(parent())->queueMessage(header.m_protocol,
-                header.m_time, header.m_direction, data, header.m_size);
-            static_cast<plNetLogGUI*>(parent())->update();
+        if (!ReadFile(m_netPipe, &header, sizeof(header), &bytesRead, NULL)) {
+            ShowWinError(tr("Error reading pipe"));
+            break;
         }
+
+        unsigned char* data = new unsigned char[header.m_size];
+        if (!ReadFile(m_netPipe, data, header.m_size, &bytesRead, NULL)) {
+            ShowWinError(tr("Error reading pipe"));
+            break;
+        }
+
+        static_cast<plNetLogGUI*>(parent())->queueMessage(header.m_protocol,
+            header.m_time, header.m_direction, data, header.m_size);
+        emit moreLogItemsAreAvailable();
     }
-};
+}
 
 PipeThread* s_pipeThread = 0;
 
@@ -158,16 +145,23 @@ void plNetLogGUI::closeEvent(QCloseEvent* event)
     event->accept();
 }
 
-void plNetLogGUI::paintEvent(QPaintEvent* event)
+void plNetLogGUI::addNodes()
 {
-    QDialog::paintEvent(event);
+    static bool ImAlreadyAddingStuffSoGoAway = false;
+    if (ImAlreadyAddingStuffSoGoAway)
+        return;
 
     // Handle this here so it gets done efficiently on the GUI thread, instead of
     // blocking up the message queue
+    ImAlreadyAddingStuffSoGoAway = true;
+    bool updateScroll = (m_logView->verticalScrollBar()->value() == m_logView->verticalScrollBar()->maximum());
     for (int i = 0; i < kWatchedProtocolCount; ++i) {
         addLogItems(i, kCli2Srv, m_msgQueues[i].m_send);
         addLogItems(i, kSrv2Cli, m_msgQueues[i].m_recv);
     }
+    if (updateScroll)
+        m_logView->verticalScrollBar()->setValue(m_logView->verticalScrollBar()->maximum());
+    ImAlreadyAddingStuffSoGoAway = false;
 }
 
 void plNetLogGUI::addLogItems(unsigned protocol, int direction, ChunkBuffer& buffer)
@@ -227,8 +221,11 @@ void plNetLogGUI::queueMessage(unsigned protocol, unsigned time, int direction,
 
 void plNetLogGUI::onLaunch()
 {
-    if (!s_pipeThread)
+    if (!s_pipeThread) {
         s_pipeThread = new PipeThread(this);
+        connect(s_pipeThread, SIGNAL(moreLogItemsAreAvailable()),
+                SLOT(addNodes()), Qt::QueuedConnection);
+    }
 
     s_pipeThread->start();
     HANDLE hEvent = CreateEventW(NULL, TRUE, FALSE, L"UruPatcherEvent");

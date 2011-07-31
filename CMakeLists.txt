@@ -25,6 +25,10 @@ set(HEADERS
     Auth.h
 )
 
-qt4_wrap_cpp(MOC_SOURCES ${HEADERS})
+set(MOCSRC
+	plNetLog.h
+)
+
+qt4_wrap_cpp(MOC_SOURCES ${MOCSRC})
 add_executable(plNetLog WIN32 ${HEADERS} ${SOURCES} ${MOC_SOURCES})
 target_link_libraries(plNetLog ${QT_LIBRARIES})

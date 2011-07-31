@@ -72,6 +72,7 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                 warnFont.setBold(true);
                 item->setFont(0, warnFont);
                 item->setForeground(0, Qt::red);
+                OutputDebugStringA(QString("Invalid Cli2GateKeeper message (%1)\n").arg(msgId).toUtf8().data());
                 return false;
             }
         }
@@ -127,6 +128,7 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                 warnFont.setBold(true);
                 item->setFont(0, warnFont);
                 item->setForeground(0, Qt::red);
+                OutputDebugStringA(QString("Invalid GateKeeper2Cli message (%1)\n").arg(msgId).toUtf8().data());
                 return false;
             }
         }

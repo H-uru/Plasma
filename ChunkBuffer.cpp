@@ -20,7 +20,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include <QMessageBox>
+#include <QApplication>
 
 void ChunkBuffer::chomp(void* out, size_t size)
 {
@@ -124,7 +124,8 @@ void ChunkBuffer::waitOnData()
     while (m_chunks.size() == 0) {
         // Give the buffer some time to fill
         m_mutex.unlock();
-        Sleep(50);
+        QApplication::processEvents();
+        Sleep(100);
         m_mutex.lock();
     }
 }

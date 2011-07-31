@@ -24,6 +24,7 @@
 #include <QDialog>
 #include <QTreeWidget>
 #include <QLineEdit>
+#include <QThread>
 #include <QMutex>
 #include <QLinkedList>
 #include "ChunkBuffer.h"
@@ -90,16 +91,37 @@ public:
 public slots:
     void onLaunch();
     void onClear() { m_logView->clear(); }
+    void addNodes();
 
 protected:
     virtual void closeEvent(QCloseEvent*);
-    virtual void paintEvent(QPaintEvent*);
 
 private:
     QTreeWidget*    m_logView;
     QLineEdit*      m_exePath;
 
     MessageQueue    m_msgQueues[kWatchedProtocolCount];
+};
+
+class PipeThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    PipeThread(plNetLogGUI* parent);
+    ~PipeThread()
+    {
+        CloseHandle(m_netPipe);
+    }
+
+protected:
+    virtual void run();
+
+signals:
+    void moreLogItemsAreAvailable();
+
+private:
+    HANDLE m_netPipe;
 };
 
 #endif
