@@ -124,11 +124,6 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     dirCompleter->setModel(model);
     m_exePath->setCompleter(dirCompleter);
 
-    QToolButton* btnBrowse = new QToolButton(pathSpec);
-    btnBrowse->setAutoRaise(false);
-    btnBrowse->setText("...");
-    btnBrowse->setStatusTip(tr("Browse for plClient executable"));
-
     QLabel* lblPath = new QLabel(tr("MOULa &Client:"), pathSpec);
     lblPath->setBuddy(m_exePath);
     QGridLayout* pathLayout = new QGridLayout(pathSpec);
@@ -136,18 +131,20 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     pathLayout->setHorizontalSpacing(4);
     pathLayout->addWidget(lblPath, 0, 0);
     pathLayout->addWidget(m_exePath, 0, 1);
-    pathLayout->addWidget(btnBrowse, 0, 2);
 
     QPushButton* btnLaunch = new QPushButton(tr("&Launch!"), this);
+    QPushButton* btnClear = new QPushButton(tr("&Clear output"), this);
 
     QGridLayout* layout = new QGridLayout(this);
     layout->setMargin(4);
-    layout->addWidget(m_logView, 0, 0);
-    layout->addWidget(pathSpec, 1, 0);
-    layout->addWidget(btnLaunch, 2, 0);
-    resize(512, 512);
+    layout->addWidget(btnClear, 0, 0);
+    layout->addWidget(m_logView, 1, 0);
+    layout->addWidget(pathSpec, 2, 0);
+    layout->addWidget(btnLaunch, 3, 0);
+    resize(512, 640);
 
     connect(btnLaunch, SIGNAL(clicked()), SLOT(onLaunch()));
+    connect(btnClear, SIGNAL(clicked()), SLOT(onClear()));
 }
 
 void plNetLogGUI::closeEvent(QCloseEvent* event)

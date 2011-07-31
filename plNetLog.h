@@ -90,6 +90,7 @@ public:
 
 public slots:
     void onLaunch();
+    void onClear() { m_logView->clear(); }
 
 protected:
     virtual void closeEvent(QCloseEvent*);
