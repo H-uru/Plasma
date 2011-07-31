@@ -239,7 +239,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayer
     }
     else if (PyUnicode_Check(message))
     {
-        Py_ssize_t size = PyUnicode_GetSize(message);
+        int size = PyUnicode_GetSize(message);
         wchar_t* msg = TRACKED_NEW wchar_t[size + 1]; msg[size] = 0;
         PyUnicode_AsWideChar((PyUnicodeObject*)message, msg, size);
         UInt32 retval = cyMisc::SendRTChat(*fromPlayer, toPlayerList, msg, msgFlags);
