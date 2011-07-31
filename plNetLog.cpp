@@ -60,6 +60,18 @@ PipeThread::PipeThread(plNetLogGUI* gui)
                                  0, 0, 0, NULL);
     if (m_netPipe == INVALID_HANDLE_VALUE)
         ShowWinError(tr("Error creating pipe"));
+
+    m_logDump[kWatchedProtocolCli2GateKeeper] = fopen("GateKeeper.log", "wb");
+    m_logDump[kWatchedProtocolCli2Auth] = fopen("Auth.log", "wb");
+    m_logDump[kWatchedProtocolCli2Game] = fopen("Game.log", "wb");
+}
+
+PipeThread::~PipeThread()
+{
+    CloseHandle(m_netPipe);
+    fclose(m_logDump[kWatchedProtocolCli2GateKeeper]);
+    fclose(m_logDump[kWatchedProtocolCli2Auth]);
+    fclose(m_logDump[kWatchedProtocolCli2Game]);
 }
 
 void PipeThread::run()
@@ -86,7 +98,33 @@ void PipeThread::run()
             break;
         }
 
-        static_cast<plNetLogGUI*>(parent())->queueMessage(header.m_protocol,
+        int intProtocol;
+        switch (header.m_protocol) {
+        case kNetProtocolCli2GateKeeper:
+            intProtocol = kWatchedProtocolCli2GateKeeper;
+            break;
+        case kNetProtocolCli2Auth:
+            intProtocol = kWatchedProtocolCli2Auth;
+            break;
+        case kNetProtocolCli2Game:
+            intProtocol = kWatchedProtocolCli2Game;
+            break;
+        default:
+            OutputDebugStringA(QString("[queueMessage]\nUnsupported protocol %d\n")
+                               .arg(header.m_protocol).toUtf8().data());
+            delete[] data;
+            continue;
+        }
+
+        fprintf(m_logDump[intProtocol], "[%s %d]\n",
+                header.m_direction == kCli2Srv ? ">>>" : "<<<", header.m_time);
+        for (size_t i=0; i<header.m_size; ++i) {
+            fprintf(m_logDump[intProtocol], "%02X%s", data[i],
+                    ((i + 1) % 16 == 0) || ((i + 1) == header.m_size) ? "\n" : " ");
+        }
+        fflush(m_logDump[intProtocol]);
+
+        static_cast<plNetLogGUI*>(parent())->queueMessage(intProtocol,
             header.m_time, header.m_direction, data, header.m_size);
         emit moreLogItemsAreAvailable();
     }
@@ -197,26 +235,10 @@ void plNetLogGUI::addLogItems(unsigned protocol, int direction, ChunkBuffer& buf
 void plNetLogGUI::queueMessage(unsigned protocol, unsigned time, int direction,
                                const unsigned char* data, size_t size)
 {
-    int whichQueue;
-    switch (protocol) {
-    case kNetProtocolCli2GateKeeper:
-        whichQueue = kWatchedProtocolCli2GateKeeper;
-        break;
-    case kNetProtocolCli2Auth:
-        whichQueue = kWatchedProtocolCli2Auth;
-        break;
-    case kNetProtocolCli2Game:
-        whichQueue = kWatchedProtocolCli2Game;
-        break;
-    default:
-        OutputDebugStringA("[queueMessage]\nUnsupported protocol");
-        *(unsigned*)(0) = protocol;
-    }
-
     if (direction == kCli2Srv)
-        m_msgQueues[whichQueue].m_send.append(data, size, time);
+        m_msgQueues[protocol].m_send.append(data, size, time);
     else
-        m_msgQueues[whichQueue].m_recv.append(data, size, time);
+        m_msgQueues[protocol].m_recv.append(data, size, time);
 }
 
 void plNetLogGUI::onLaunch()

@@ -26,7 +26,7 @@
 #include <QLineEdit>
 #include <QThread>
 #include <QMutex>
-#include <QLinkedList>
+#include <cstdio>
 #include "ChunkBuffer.h"
 
 /* From pnNbProtocol.h */
@@ -109,10 +109,7 @@ class PipeThread : public QThread
 
 public:
     PipeThread(plNetLogGUI* parent);
-    ~PipeThread()
-    {
-        CloseHandle(m_netPipe);
-    }
+    ~PipeThread();
 
 protected:
     virtual void run();
@@ -121,7 +118,8 @@ signals:
     void moreLogItemsAreAvailable();
 
 private:
-    HANDLE m_netPipe;
+    HANDLE  m_netPipe;
+    FILE*   m_logDump[kWatchedProtocolCount];
 };
 
 #endif

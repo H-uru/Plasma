@@ -61,11 +61,10 @@ static const QString s_nodeTypeNames[] = {
 
 QString readNodeString(ChunkBuffer& buffer)
 {
-    unsigned length = buffer.read<unsigned>();
-    unsigned short* utf16 = new unsigned short[length + 1];
-    buffer.chomp(utf16, length);
-    utf16[length] = 0;
-    QString str = QString::fromUtf16(utf16);
+    unsigned length = buffer.read<unsigned>() / sizeof(unsigned short);
+    unsigned short* utf16 = new unsigned short[length];
+    buffer.chomp(utf16, length * sizeof(unsigned short));
+    QString str = QString::fromUtf16(utf16, length-1);
     delete[] utf16;
     return str;
 }
