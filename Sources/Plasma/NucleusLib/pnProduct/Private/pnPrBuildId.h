@@ -43,3 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 unsigned BuildId ();
 void OverrideBuildId (unsigned buildId);
+
+
+/*****************************************************************************
+*
+*   BuildType definition
+*
+***/
+
+#define BUILD_TYPE_LIVE     50

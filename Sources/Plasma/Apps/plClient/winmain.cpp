@@ -70,12 +70,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define UPDATE_STATUSMSG_SECONDS 30
 #define WM_USER_SETSTATUSMSG WM_USER+1
 
-#if BUILD_TYPE == BUILD_TYPE_DEV
-    #define STATUS_PATH L"www2.cyanworlds.com"
-#else
-    #define STATUS_PATH L"support.cyanworlds.com"
-#endif
-
 //
 // Globals
 //
