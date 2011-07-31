@@ -165,20 +165,17 @@ void plNetLogGUI::paintEvent(QPaintEvent* event)
     m_msgLock.lock();
     while (!m_msgQueue.isEmpty()) {
         NetLogMessage* msg = m_msgQueue.takeFirst();
-        addLogItem(msg->m_protocol, &msg->m_time, msg->m_direction, msg->m_data, msg->m_size);
+        addLogItem(msg->m_protocol, msg->m_time, msg->m_direction, msg->m_data, msg->m_size);
         delete msg;
     }
     m_msgLock.unlock();
 }
 
-void plNetLogGUI::addLogItem(unsigned protocol, const FILETIME* time,
-                             int direction, const unsigned char* data, size_t size)
+void plNetLogGUI::addLogItem(unsigned protocol, unsigned time, int direction,
+                             const unsigned char* data, size_t size)
 {
-    SYSTEMTIME systime;
-    FileTimeToSystemTime(time, &systime);
-    QString timeFmt = QString("%1.%2").arg(systime.wSecond + (systime.wMinute * 60) +
-                                           (systime.wHour * 3600), 5, 10, QChar('0'))
-                                      .arg(systime.wMilliseconds, 3, 10, QChar('0'));
+    QString timeFmt = QString("%1.%2").arg(time / 10000000, 5, 10, QChar('0'))
+                                      .arg((time / 10000) % 1000, 3, 10, QChar('0'));
 
     bool haveData = true;
     while (haveData) {

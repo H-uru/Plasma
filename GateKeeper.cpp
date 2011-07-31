@@ -56,6 +56,14 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                 << QString("Patcher: %1").arg(chompBuffer<unsigned char>(data, size) == 0 ? "False" : "True"));
             break;
         }
+        case kCli2GateKeeper_AuthSrvIpAddressRequest:
+        {
+            QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                << QString("%1 - Cli2GateKeeper_AuthSrvIpAddressRequest").arg(timeFmt));
+            new QTreeWidgetItem(top, QStringList()
+                << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+            break;
+        }
         default:
             new QTreeWidgetItem(logger, QStringList()
                 << QString("%1 - Invalid Cli2GateKeeper message (%2)").arg(timeFmt).arg(msgId));
@@ -87,6 +95,16 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
         {
             QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
                 << QString("%1 - GateKeeper2Cli_FileSrvIpAddressReply").arg(timeFmt));
+            new QTreeWidgetItem(top, QStringList()
+                << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+            new QTreeWidgetItem(top, QStringList()
+                << QString("Address: %1").arg(chompString(data, size)));
+            break;
+        }
+        case kGateKeeper2Cli_AuthSrvIpAddressReply:
+        {
+            QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                << QString("%1 - GateKeeper2Cli_AuthSrvIpAddressReply").arg(timeFmt));
             new QTreeWidgetItem(top, QStringList()
                 << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
             new QTreeWidgetItem(top, QStringList()

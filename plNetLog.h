@@ -60,7 +60,7 @@ struct NetLogMessage_Header
 {
     unsigned        m_protocol;
     int             m_direction;
-    FILETIME        m_time;
+    unsigned        m_time;
     size_t          m_size;
 };
 
@@ -68,7 +68,7 @@ struct NetLogMessage
 {
     unsigned        m_protocol;
     int             m_direction;
-    FILETIME        m_time;
+    unsigned        m_time;
     size_t          m_size;
     unsigned char*  m_data;
 };
@@ -80,8 +80,8 @@ class plNetLogGUI : public QDialog
 public:
     plNetLogGUI(QWidget* parent = 0);
 
-    void addLogItem(unsigned protocol, const FILETIME* time,
-                    int direction, const unsigned char* data, size_t size);
+    void addLogItem(unsigned protocol, unsigned time, int direction,
+                    const unsigned char* data, size_t size);
     void queueMessage(NetLogMessage* msg);
 
 public slots:
