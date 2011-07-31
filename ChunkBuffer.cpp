@@ -30,8 +30,9 @@ void ChunkBuffer::chomp(void* out, size_t size)
 
         Buffer& current = m_chunks.front();
         if (size >= (current.m_size - current.m_cur)) {
-            size -= current.m_size - current.m_cur;
             memcpy(out, current.m_data + current.m_cur, current.m_size - current.m_cur);
+            size -= current.m_size - current.m_cur;
+            out = (unsigned char*)out + current.m_size - current.m_cur;
             delete[] current.m_data;
             m_chunks.pop_front();
         } else {
