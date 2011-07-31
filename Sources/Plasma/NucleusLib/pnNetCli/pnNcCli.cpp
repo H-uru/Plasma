@@ -42,6 +42,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define NO_ENCRYPTION
 
+struct NetLogMessage_Header
+{
+    unsigned    m_protocol;
+    int         m_direction;
+    FILETIME    m_time;
+    unsigned    m_size;
+};
+
+#define HURU_PIPE_NAME "\\\\.\\pipe\\H-Uru_NetLog"
+
+static CRITICAL_SECTION s_pipeCritical;
+static HANDLE           s_netlog = 0;
+
 namespace pnNetCli {
 
 /*****************************************************************************
@@ -127,6 +140,21 @@ namespace pnNetCli {
 static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
         byte * temp, * heap = NULL;
+
+    // Write to the netlog
+    if (s_netlog) {
+        NetLogMessage_Header header;
+        header.m_protocol = cli->protocol;
+        header.m_direction = 0; // kCli2Srv
+        GetSystemTimeAsFileTime(&header.m_time);
+        header.m_size = bytes;
+
+        EnterCriticalSection(&s_pipeCritical);
+        DWORD bytesWritten;
+        WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, NULL);
+        WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
+        LeaveCriticalSection(&s_pipeCritical);
+    }
 
     if (cli->mode == kNetCliModeEncrypted) {
         // Encrypt data...
@@ -822,6 +850,21 @@ static NetCli * ConnCreate (
     cli->mode           = mode;
     cli->SetValue(kNilGuid);
 
+    // Network debug pipe
+    if (!s_netlog) {
+        InitializeCriticalSection(&s_pipeCritical);
+        WaitNamedPipe(HURU_PIPE_NAME, NMPWAIT_WAIT_FOREVER);
+        s_netlog = CreateFileA(
+            HURU_PIPE_NAME,
+            GENERIC_READ | GENERIC_WRITE,
+            0,
+            NULL,
+            OPEN_EXISTING,
+            FILE_ATTRIBUTE_NORMAL,
+            NULL
+        );
+    }
+
     ResetSendRecv(cli);
 
     return cli;
@@ -1008,6 +1051,21 @@ bool NetCliDispatch (
             // Add data to accumulator and dispatch
             cli->input.Add(bytes, data);
             bool result = DispatchData(cli, param);
+
+            // Write to the netlog
+            if (s_netlog) {
+                NetLogMessage_Header header;
+                header.m_protocol = cli->protocol;
+                header.m_direction = 1; // kSrv2Cli
+                GetSystemTimeAsFileTime(&header.m_time);
+                header.m_size = bytes;
+                
+                EnterCriticalSection(&s_pipeCritical);
+                DWORD bytesWritten;
+                WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, NULL);
+                WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
+                LeaveCriticalSection(&s_pipeCritical);
+            }
 
 #ifdef SERVER
             cli->recvDispatch = result;
