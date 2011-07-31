@@ -174,4 +174,4 @@ enum
 };
 
 bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
-                  const unsigned char*& data, size_t& size);
+                  ChunkBuffer& buffer);

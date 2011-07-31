@@ -18,9 +18,9 @@
 #include "GateKeeper.h"
 
 bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
-                        const unsigned char*& data, size_t& size)
+                        ChunkBuffer& buffer)
 {
-    unsigned short msgId = chompBuffer<unsigned short>(data, size);
+    unsigned short msgId = buffer.read<unsigned short>();
 
     if (direction == kCli2Srv) {
         switch (msgId) {
@@ -30,15 +30,14 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("%1 --> Cli2GateKeeper_PingRequest").arg(timeFmt));
                 top->setForeground(0, kColorGateKeeper);
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Ping Time: %1 ms").arg(chompBuffer<unsigned>(data, size)));
+                    << QString("Ping Time: %1 ms").arg(buffer.read<unsigned>()));
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
-                size_t payloadSize = chompBuffer<unsigned>(data, size);
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                size_t payloadSize = buffer.read<unsigned>();
                 if (payloadSize > 0) {
                     new QTreeWidgetItem(top, QStringList()
                         << QString("Payload: %1 bytes").arg(payloadSize));
-                    data += payloadSize;
-                    size -= payloadSize;
+                    buffer.skip(payloadSize);
                     QFont bold = top->font(0);
                     bold.setBold(true);
                     top->setFont(0, bold);
@@ -51,9 +50,9 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("%1 --> Cli2GateKeeper_FileSrvIpAddressRequest").arg(timeFmt));
                 top->setForeground(0, kColorGateKeeper);
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Patcher: %1").arg(chompBuffer<unsigned char>(data, size) == 0 ? "False" : "True"));
+                    << QString("Patcher: %1").arg(buffer.read<bool>() ? "True" : "False"));
                 break;
             }
         case kCli2GateKeeper_AuthSrvIpAddressRequest:
@@ -62,7 +61,7 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("%1 --> Cli2GateKeeper_AuthSrvIpAddressRequest").arg(timeFmt));
                 top->setForeground(0, kColorGateKeeper);
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
                 break;
             }
         default:
@@ -84,15 +83,14 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("%1 <-- GateKeeper2Cli_PingReply").arg(timeFmt));
                 top->setForeground(0, kColorGateKeeper);
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Ping Time: %1 ms").arg(chompBuffer<unsigned>(data, size)));
+                    << QString("Ping Time: %1 ms").arg(buffer.read<unsigned>()));
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
-                size_t payloadSize = chompBuffer<unsigned>(data, size);
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                size_t payloadSize = buffer.read<unsigned>();
                 if (payloadSize > 0) {
                     new QTreeWidgetItem(top, QStringList()
                         << QString("Payload: %1 bytes").arg(payloadSize));
-                    data += payloadSize;
-                    size -= payloadSize;
+                    buffer.skip(payloadSize);
                     QFont bold = top->font(0);
                     bold.setBold(true);
                     top->setFont(0, bold);
@@ -105,9 +103,9 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("%1 <-- GateKeeper2Cli_FileSrvIpAddressReply").arg(timeFmt));
                 top->setForeground(0, kColorGateKeeper);
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Address: %1").arg(chompString(data, size)));
+                    << QString("Address: %1").arg(buffer.readString()));
                 break;
             }
         case kGateKeeper2Cli_AuthSrvIpAddressReply:
@@ -116,9 +114,9 @@ bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("%1 <-- GateKeeper2Cli_AuthSrvIpAddressReply").arg(timeFmt));
                 top->setForeground(0, kColorGateKeeper);
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Trans ID: %1").arg(chompBuffer<unsigned>(data, size)));
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
                 new QTreeWidgetItem(top, QStringList()
-                    << QString("Address: %1").arg(chompString(data, size)));
+                    << QString("Address: %1").arg(buffer.readString()));
                 break;
             }
         default:

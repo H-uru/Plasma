@@ -35,6 +35,14 @@
 
 #define HURU_PIPE_NAME "\\\\.\\pipe\\H-Uru_NetLog"
 
+struct NetLogMessage_Header
+{
+    unsigned        m_protocol;
+    int             m_direction;
+    unsigned        m_time;
+    size_t          m_size;
+};
+
 static void ShowWinError(QString title)
 {
     char errbuf[1024];
@@ -84,18 +92,14 @@ protected:
                 break;
             }
 
-            NetLogMessage* msg = new NetLogMessage();
-            msg->m_protocol = header.m_protocol;
-            msg->m_direction = header.m_direction;
-            msg->m_time = header.m_time;
-            msg->m_size = header.m_size;
-            msg->m_data = new unsigned char[msg->m_size];
-            if (!ReadFile(m_netPipe, msg->m_data, msg->m_size, &bytesRead, NULL)) {
+            unsigned char* data = new unsigned char[header.m_size];
+            if (!ReadFile(m_netPipe, data, header.m_size, &bytesRead, NULL)) {
                 ShowWinError(tr("Error reading pipe"));
                 break;
             }
 
-            static_cast<plNetLogGUI*>(parent())->queueMessage(msg);
+            static_cast<plNetLogGUI*>(parent())->queueMessage(header.m_protocol,
+                header.m_time, header.m_direction, data, header.m_size);
             static_cast<plNetLogGUI*>(parent())->update();
         }
     }
@@ -160,29 +164,27 @@ void plNetLogGUI::paintEvent(QPaintEvent* event)
 
     // Handle this here so it gets done efficiently on the GUI thread, instead of
     // blocking up the message queue
-    m_msgLock.lock();
-    while (!m_msgQueue.isEmpty()) {
-        NetLogMessage* msg = m_msgQueue.takeFirst();
-        addLogItem(msg->m_protocol, msg->m_time, msg->m_direction, msg->m_data, msg->m_size);
-        delete msg;
+    for (int i = 0; i < kWatchedProtocolCount; ++i) {
+        addLogItems(i, kCli2Srv, m_msgQueues[i].m_send);
+        addLogItems(i, kSrv2Cli, m_msgQueues[i].m_recv);
     }
-    m_msgLock.unlock();
 }
 
-void plNetLogGUI::addLogItem(unsigned protocol, unsigned time, int direction,
-                             const unsigned char* data, size_t size)
+void plNetLogGUI::addLogItems(unsigned protocol, int direction, ChunkBuffer& buffer)
 {
-    QString timeFmt = QString("%1.%2").arg(time / 10000000, 5, 10, QChar('0'))
-                                      .arg((time / 10000) % 1000, 3, 10, QChar('0'));
+    while (!buffer.isEmpty()) {
+        unsigned time = buffer.currentTime();
+        QString timeFmt = QString("%1.%2").arg(time / 10000000, 5, 10, QChar('0'))
+                                          .arg((time / 10000) % 1000, 3, 10, QChar('0'));
 
-    bool haveData = true;
-    while (haveData) {
         switch (protocol) {
-        case kNetProtocolCli2GateKeeper:
-            haveData = GateKeeper_Factory(m_logView, timeFmt, direction, data, size);
+        case kWatchedProtocolCli2GateKeeper:
+            if (!GateKeeper_Factory(m_logView, timeFmt, direction, buffer))
+                buffer.clear();
             break;
-        case kNetProtocolCli2Auth:
-            haveData = Auth_Factory(m_logView, timeFmt, direction, data, size);
+        case kWatchedProtocolCli2Auth:
+            if (!Auth_Factory(m_logView, timeFmt, direction, buffer))
+                buffer.clear();
             break;
         default:
             {
@@ -192,20 +194,35 @@ void plNetLogGUI::addLogItem(unsigned protocol, unsigned time, int direction,
                 warnFont.setBold(true);
                 item->setFont(0, warnFont);
                 item->setForeground(0, Qt::red);
-                haveData = false;
+                buffer.clear();
             }
         }
-
-        if (haveData)
-            haveData = (size != 0);
     }
 }
 
-void plNetLogGUI::queueMessage(NetLogMessage* msg)
+void plNetLogGUI::queueMessage(unsigned protocol, unsigned time, int direction,
+                               const unsigned char* data, size_t size)
 {
-    m_msgLock.lock();
-    m_msgQueue.push_back(msg);
-    m_msgLock.unlock();
+    int whichQueue;
+    switch (protocol) {
+    case kNetProtocolCli2GateKeeper:
+        whichQueue = kWatchedProtocolCli2GateKeeper;
+        break;
+    case kNetProtocolCli2Auth:
+        whichQueue = kWatchedProtocolCli2Auth;
+        break;
+    case kNetProtocolCli2Game:
+        whichQueue = kWatchedProtocolCli2Game;
+        break;
+    default:
+        OutputDebugStringA("[queueMessage]\nUnsupported protocol");
+        *(unsigned*)(0) = protocol;
+    }
+
+    if (direction == kCli2Srv)
+        m_msgQueues[whichQueue].m_send.append(data, size, time);
+    else
+        m_msgQueues[whichQueue].m_recv.append(data, size, time);
 }
 
 void plNetLogGUI::onLaunch()
@@ -223,74 +240,6 @@ void plNetLogGUI::onLaunch()
     QProcess::startDetached(m_exePath->text(),
         QStringList() << "/LocalData",
         dir.absolutePath());
-}
-
-QString chompString(const unsigned char*& data, size_t& size)
-{
-    unsigned short length = chompBuffer<unsigned short>(data, size);
-    unsigned short* utf16 = new unsigned short[length + 1];
-    memcpy(utf16, data, length * sizeof(unsigned short));
-    utf16[length] = 0;
-    data += length * sizeof(unsigned short);
-    size -= length * sizeof(unsigned short);
-    QString temp = QString::fromUtf16(utf16, length);
-    delete[] utf16;
-    return temp;
-}
-
-QString chompUuid(const unsigned char*& data, size_t& size)
-{
-    unsigned int u1 = chompBuffer<unsigned int>(data, size);
-    unsigned short u2 = chompBuffer<unsigned short>(data, size);
-    unsigned short u3 = chompBuffer<unsigned short>(data, size);
-    unsigned char u4[8];
-    memcpy(u4, data, 8);
-    data += 8;
-    size -= 8;
-
-    return QString("{%1-%2-%3-%4%5-%6%7%8%9%10%11}").arg(u1, 8, 16, QChar('0'))
-           .arg(u2, 4, 16, QChar('0')).arg(u3, 4, 16, QChar('0'))
-           .arg(u4[0], 2, 16, QChar('0')).arg(u4[1], 2, 16, QChar('0'))
-           .arg(u4[2], 2, 16, QChar('0')).arg(u4[3], 2, 16, QChar('0'))
-           .arg(u4[4], 2, 16, QChar('0')).arg(u4[5], 2, 16, QChar('0'))
-           .arg(u4[6], 2, 16, QChar('0')).arg(u4[7], 2, 16, QChar('0'));
-}
-
-QString chompResultCode(const unsigned char*& data, size_t& size)
-{
-    static QString errMap[] = {
-        "kNetSuccess",                  "kNetErrInternalError",
-        "kNetErrTimeout",               "kNetErrBadServerData",
-        "kNetErrAgeNotFound",           "kNetErrConnectFailed",
-        "kNetErrDisconnected",          "kNetErrFileNotFound",
-        "kNetErrOldBuildId",            "kNetErrRemoteShutdown",
-        "kNetErrTimeoutOdbc",           "kNetErrAccountAlreadyExists",
-        "kNetErrPlayerAlreadyExists",   "kNetErrAccountNotFound",
-        "kNetErrPlayerNotFound",        "kNetErrInvalidParameter",
-        "kNetErrNameLookupFailed",      "kNetErrLoggedInElsewhere",
-        "kNetErrVaultNodeNotFound",     "kNetErrMaxPlayersOnAcct",
-        "kNetErrAuthenticationFailed",  "kNetErrStateObjectNotFound",
-        "kNetErrLoginDenied",           "kNetErrCircularReference",
-        "kNetErrAccountNotActivated",   "kNetErrKeyAlreadyUsed",
-        "kNetErrKeyNotFound",           "kNetErrActivationCodeNotFound",
-        "kNetErrPlayerNameInvalid",     "kNetErrNotSupported",
-        "kNetErrServiceForbidden",      "kNetErrAuthTokenTooOld",
-        "kNetErrMustUseGameTapClient",  "kNetErrTooManyFailedLogins",
-        "kNetErrGameTapConnectionFailed", "kNetErrGTTooManyAuthOptions",
-        "kNetErrGTMissingParameter",    "kNetErrGTServerError",
-        "kNetErrAccountBanned",         "kNetErrKickedByCCR",
-        "kNetErrScoreWrongType",        "kNetErrScoreNotEnoughPoints",
-        "kNetErrScoreAlreadyExists",    "kNetErrScoreNoDataFound",
-        "kNetErrInviteNoMatchingPlayer", "kNetErrInviteTooManyHoods",
-        "kNetErrNeedToPay",             "kNetErrServerBusy",
-        "kNetErrVaultNodeAccessViolation",
-    };
-
-    unsigned result = chompBuffer<unsigned>(data, size);
-
-    if (result < (sizeof(errMap) / sizeof(errMap[0])))
-        return errMap[result];
-    return QString("(INVALID RESULT CODE - %1)").arg(result);
 }
 
 

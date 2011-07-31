@@ -26,6 +26,7 @@
 #include <QLineEdit>
 #include <QMutex>
 #include <QLinkedList>
+#include "ChunkBuffer.h"
 
 /* From pnNbProtocol.h */
 enum { kNetProtocolServerBit = 0x80 };
@@ -54,27 +55,25 @@ enum ENetProtocol {
     kNetProtocolSrv2Score           = 6 | kNetProtocolServerBit,
 };
 
+enum WatchedProtocols
+{
+    kWatchedProtocolCli2GateKeeper,
+    kWatchedProtocolCli2Auth,
+    kWatchedProtocolCli2Game,
+
+    kWatchedProtocolCount
+};
+
 enum Direction { kCli2Srv, kSrv2Cli };
 
 #define kColorGateKeeper    Qt::darkMagenta
 #define kColorAuth          Qt::blue
 #define kColorGame          Qt::darkGreen
 
-struct NetLogMessage_Header
+struct MessageQueue
 {
-    unsigned        m_protocol;
-    int             m_direction;
-    unsigned        m_time;
-    size_t          m_size;
-};
-
-struct NetLogMessage
-{
-    unsigned        m_protocol;
-    int             m_direction;
-    unsigned        m_time;
-    size_t          m_size;
-    unsigned char*  m_data;
+    ChunkBuffer m_send;
+    ChunkBuffer m_recv;
 };
 
 class plNetLogGUI : public QDialog
@@ -84,9 +83,9 @@ class plNetLogGUI : public QDialog
 public:
     plNetLogGUI(QWidget* parent = 0);
 
-    void addLogItem(unsigned protocol, unsigned time, int direction,
-                    const unsigned char* data, size_t size);
-    void queueMessage(NetLogMessage* msg);
+    void addLogItems(unsigned protocol, int direction, ChunkBuffer& buffer);
+    void queueMessage(unsigned protocol, unsigned time, int direction,
+                      const unsigned char* data, size_t size);
 
 public slots:
     void onLaunch();
@@ -100,31 +99,7 @@ private:
     QTreeWidget*    m_logView;
     QLineEdit*      m_exePath;
 
-    QMutex          m_msgLock;
-    QLinkedList<NetLogMessage*> m_msgQueue;
+    MessageQueue    m_msgQueues[kWatchedProtocolCount];
 };
-
-template<typename _Tp>
-_Tp chompBuffer(const unsigned char*& data, size_t& size)
-{
-    _Tp temp = *(_Tp*)data;
-    data += sizeof(_Tp);
-    size -= sizeof(_Tp);
-    return temp;
-}
-
-template<size_t _Length>
-QString chompHex(const unsigned char*& data, size_t& size)
-{
-    char buffer[_Length];
-    memcpy(buffer, data, _Length);
-    data += _Length;
-    size -= _Length;
-    return QString(QByteArray(buffer, _Length).toHex());
-}
-
-QString chompString(const unsigned char*& data, size_t& size);
-QString chompUuid(const unsigned char*& data, size_t& size);
-QString chompResultCode(const unsigned char*& data, size_t& size);
 
 #endif
