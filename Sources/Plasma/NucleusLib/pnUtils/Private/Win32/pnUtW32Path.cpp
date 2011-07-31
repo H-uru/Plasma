@@ -531,11 +531,6 @@ void PathGetUserDirectory (
     // append the product name
     PathAddFilename(dst, temp, ProductLongName(), dstChars);
 
-#if BUILD_TYPE != BUILD_TYPE_LIVE
-    // non-live builds live in a subdir
-    PathAddFilename(dst, dst, BuildTypeString(), dstChars);
-#endif
-
     // ensure it exists
     if (!PathDoesDirectoryExist(dst))
         PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);

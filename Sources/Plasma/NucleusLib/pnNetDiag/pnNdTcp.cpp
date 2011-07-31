@@ -622,7 +622,7 @@ static void StartAuthTcpTest (
     connect.hdr.connType    = (byte) kConnTypeCliToAuth;
     connect.hdr.hdrBytes    = sizeof(connect.hdr);
     connect.hdr.buildId     = BuildId();
-    connect.hdr.buildType   = BuildType();
+    connect.hdr.buildType   = BUILD_TYPE_LIVE;
     connect.hdr.branchId    = BranchId();
     connect.hdr.productId   = ProductId();
     connect.data.token      = kNilGuid;
@@ -665,7 +665,7 @@ static void StartFileTcpTest (
     connect.hdr.connType    = kConnTypeCliToFile;
     connect.hdr.hdrBytes    = sizeof(connect.hdr);
     connect.hdr.buildId     = 0;
-    connect.hdr.buildType   = BuildType();
+    connect.hdr.buildType   = BUILD_TYPE_LIVE;
     connect.hdr.branchId    = BranchId();
     connect.hdr.productId   = ProductId();
     connect.data.buildId    = BuildId();

@@ -14,8 +14,6 @@ set(pnProduct_PRIVATE
     Private/pnPrBuildId.cpp
     Private/pnPrBuildString.h
     Private/pnPrBuildString.cpp
-    Private/pnPrBuildType.h
-    Private/pnPrBuildType.cpp
     Private/pnPrProductId.h
     Private/pnPrProductId.cpp
 )

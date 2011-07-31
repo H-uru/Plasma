@@ -1161,7 +1161,7 @@ bool plSimpleStateVariable::ConvertTo(plSimpleVarDescriptor* toVar, bool force )
     int cnt = toVar->GetCount() ? toVar->GetCount() : fVar.GetCount();
 
     if (cnt > fVar.GetCount()) {
-        #if BUILD_TYPE == BUILD_TYPE_DEV
+        #ifndef PLASMA_EXTERNAL_RELEASE
             FATAL("SDL Convert: array size increased, conversion loses data");
         #endif
         // Reallocate new memory (destroys existing variable state)
