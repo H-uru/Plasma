@@ -220,7 +220,9 @@ void plNetLogGUI::onLaunch()
 
     QDir dir(m_exePath->text());
     dir.cdUp();
-    QProcess::startDetached(m_exePath->text(), QStringList(), dir.absolutePath());
+    QProcess::startDetached(m_exePath->text(),
+        QStringList() << "/LocalData",
+        dir.absolutePath());
 }
 
 QString chompString(const unsigned char*& data, size_t& size)
