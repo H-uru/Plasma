@@ -46,7 +46,7 @@ struct NetLogMessage_Header
 {
     unsigned    m_protocol;
     int         m_direction;
-    FILETIME    m_time;
+    unsigned    m_time;
     unsigned    m_size;
 };
 
@@ -54,6 +54,18 @@ struct NetLogMessage_Header
 
 static CRITICAL_SECTION s_pipeCritical;
 static HANDLE           s_netlog = 0;
+static ULARGE_INTEGER   s_timeOffset;
+
+static unsigned GetAdjustedTimer()
+{
+    FILETIME time;
+    ULARGE_INTEGER maths;
+    GetSystemTimeAsFileTime(&time);
+    maths.HighPart = time.dwHighDateTime;
+    maths.LowPart = time.dwLowDateTime;
+    maths.QuadPart -= s_timeOffset.QuadPart;
+    return maths.LowPart % 864000000;
+}
 
 namespace pnNetCli {
 
@@ -146,7 +158,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
         NetLogMessage_Header header;
         header.m_protocol = cli->protocol;
         header.m_direction = 0; // kCli2Srv
-        GetSystemTimeAsFileTime(&header.m_time);
+        header.m_time = GetAdjustedTimer();
         header.m_size = bytes;
 
         EnterCriticalSection(&s_pipeCritical);
@@ -863,6 +875,12 @@ static NetCli * ConnCreate (
             FILE_ATTRIBUTE_NORMAL,
             NULL
         );
+
+        // Not exactly the start, but close enough ;)
+        FILETIME timeBase;
+        GetSystemTimeAsFileTime(&timeBase);
+        s_timeOffset.HighPart = timeBase.dwHighDateTime;
+        s_timeOffset.LowPart = timeBase.dwLowDateTime;
     }
 
     ResetSendRecv(cli);
@@ -1057,7 +1075,7 @@ bool NetCliDispatch (
                 NetLogMessage_Header header;
                 header.m_protocol = cli->protocol;
                 header.m_direction = 1; // kSrv2Cli
-                GetSystemTimeAsFileTime(&header.m_time);
+                header.m_time = GetAdjustedTimer();
                 header.m_size = bytes;
                 
                 EnterCriticalSection(&s_pipeCritical);
