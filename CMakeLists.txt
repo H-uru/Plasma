@@ -8,8 +8,9 @@ else()
 endif()
 
 find_package(Qt4 COMPONENTS QtMain QtCore QtGui REQUIRED)
+find_package(ZLIB REQUIRED)
 include(${QT_USE_FILE})
-include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${ZLIB_INCLUDE_DIR})
 
 set(SOURCES
     ChunkBuffer.cpp
@@ -45,7 +46,7 @@ qt4_wrap_cpp(MOC_SOURCES ${MOCSRC})
 add_executable(plNetLog WIN32 ${HEADERS} ${SOURCES} ${MOC_SOURCES}
                ${GameMsg_HEADERS} ${GameMsg_SOURCES}
 )
-target_link_libraries(plNetLog ${QT_LIBRARIES})
+target_link_libraries(plNetLog ${QT_LIBRARIES} ${ZLIB_LIBRARY})
 
 source_group("Moc Files" FILES ${MOC_SOURCES})
 source_group("GameMsg\\Header Files" FILES ${GameMsg_HEADERS})

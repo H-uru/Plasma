@@ -340,6 +340,12 @@ void Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size)
     case kNetMsgGameStateRequest:
         Create_NetMsgRoomsList(parent, buffer);
         break;
+    case kNetMsgGameMessage:
+        Create_NetMsgGameMessage(parent, buffer);
+        break;
+    case kNetMsgLoadClone:
+        Create_NetMsgLoadClone(parent, buffer);
+        break;
     case kNetMsgPlayerPage:
         Create_NetMsgPlayerPage(parent, buffer);
         break;

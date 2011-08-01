@@ -22,6 +22,16 @@
 
 #include <QApplication>
 
+size_t ChunkBuffer::size() const
+{
+    size_t accum = 0;
+    foreach (const Buffer& buf, m_chunks)
+        accum += buf.m_size;
+    if (!isEmpty())
+        accum -= m_chunks.front().m_cur;
+    return accum;
+}
+
 void ChunkBuffer::chomp(void* out, size_t size)
 {
     m_mutex.lock();

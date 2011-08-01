@@ -18,6 +18,32 @@
 #include "plNetMessage.h"
 #include "Factory.h"
 
+#include <zlib.h>
+
+static ChunkBuffer* NetMessageStream(ChunkBuffer& buffer)
+{
+    unsigned uncompressedSize = buffer.read<unsigned>();
+    unsigned char compression = buffer.read<unsigned char>();
+    unsigned streamSize = buffer.read<unsigned>();
+    unsigned char* stream = new unsigned char[streamSize];
+    buffer.chomp(stream, streamSize);
+
+    ChunkBuffer* chunk = new ChunkBuffer();
+    if (compression == 2) {
+        unsigned char* ustream = new unsigned char[uncompressedSize];
+        ustream[0] = stream[0];
+        ustream[1] = stream[1];
+        uLongf zlength = uncompressedSize - 2;
+        uncompress(ustream + 2, &zlength, stream + 2, streamSize - 2);
+        chunk->append(ustream, uncompressedSize, 0);
+        delete[] stream;
+    } else {
+        chunk->append(stream, streamSize, 0);
+    }
+
+    return chunk;
+}
+
 enum NetMsg_ContentFlags
 {
     kHasTimeSent               = (1<<0),
@@ -87,6 +113,23 @@ void Create_NetMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     }
 }
 
+void Create_NetMsgGameMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+
+    ChunkBuffer* subStream = NetMessageStream(buffer);
+    Factory_Create(new QTreeWidgetItem(parent, QStringList() << "Game Message"),
+                   *subStream, subStream->size());
+    delete subStream;
+
+    if (buffer.read<bool>()) {
+        new QTreeWidgetItem(parent, QStringList()
+            << QString("Delivery Time: %1.%2")
+               .arg(buffer.read<unsigned>())
+               .arg(buffer.read<unsigned>()));
+    }
+}
+
 void Create_NetMsgGroupOwner(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     static const char* s_flagNames[] = {
@@ -94,7 +137,7 @@ void Create_NetMsgGroupOwner(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         "(1<<4)", "(1<<5)", "(1<<6)", "(1<<7)"
     };
 
-    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "NetMessage"), buffer);
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
 
     unsigned count = buffer.read<unsigned>();
     for (unsigned i = 0; i < count; ++i) {
@@ -107,9 +150,31 @@ void Create_NetMsgGroupOwner(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     }
 }
 
+void Create_NetMsgLoadClone(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMsgGameMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMsgGameMessage>"), buffer);
+
+    Uoid(parent, "Clone Key", buffer);
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Is Player: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Is Loading: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Initial State: %1").arg(buffer.read<bool>() ? "True" : "False"));
+}
+
+void Create_NetMsgPlayerPage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Unload: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    Uoid(parent, "Player Key", buffer);
+}
+
 void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
-    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "NetMessage"), buffer);
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
 
     unsigned count = buffer.read<unsigned>();
     for (unsigned i = 0; i < count; ++i) {
@@ -119,13 +184,4 @@ void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         new QTreeWidgetItem(room, QStringList()
             << QString("Name: %1").arg(buffer.readString()));
     }
-}
-
-void Create_NetMsgPlayerPage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
-{
-    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "NetMessage"), buffer);
-
-    new QTreeWidgetItem(parent, QStringList()
-        << QString("Unload: %1").arg(buffer.read<bool>() ? "True" : "False"));
-    Uoid(parent, "Player Key", buffer);
 }

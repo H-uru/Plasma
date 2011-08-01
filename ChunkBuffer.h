@@ -24,6 +24,10 @@
 
 class ChunkBuffer
 {
+private:
+    ChunkBuffer(const ChunkBuffer&) { }
+    ChunkBuffer& operator=(const ChunkBuffer&) { }
+
 public:
     ChunkBuffer() { }
     ~ChunkBuffer() { clear(); }
@@ -32,6 +36,7 @@ public:
     void skip(size_t size);
 
     bool isEmpty() const { return m_chunks.isEmpty(); }
+    size_t size() const;
 
     void clear()
     {
