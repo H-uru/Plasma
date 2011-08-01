@@ -37,7 +37,7 @@ enum
     kCli2Auth_AcctSetBillingTypeRequest,
     kCli2Auth_AcctActivateRequest,
     kCli2Auth_AcctCreateFromKeyRequest,
-    
+
     // Player
     kCli2Auth_PlayerDeleteRequest,
     kCli2Auth_PlayerUndeleteRequest,
@@ -76,7 +76,7 @@ enum
     // Game
     kCli2Auth_PropagateBuffer,
 
-    // Public ages    
+    // Public ages
     kCli2Auth_GetPublicAgeList,
     kCli2Auth_SetAgePublic,
 
@@ -84,7 +84,7 @@ enum
     kCli2Auth_LogPythonTraceback,
     kCli2Auth_LogStackDump,
     kCli2Auth_LogClientDebuggerConnect,
-    
+
     // Score
     kCli2Auth_ScoreCreate,
     kCli2Auth_ScoreDelete,
@@ -117,7 +117,7 @@ enum
     kAuth2Cli_AcctSetBillingTypeReply,
     kAuth2Cli_AcctActivateReply,
     kAuth2Cli_AcctCreateFromKeyReply,
-    
+
     // Player
     kAuth2Cli_PlayerList,
     kAuth2Cli_PlayerChat,
@@ -154,11 +154,11 @@ enum
 
     // Game
     kAuth2Cli_PropagateBuffer,
-    
+
     // Admin
     kAuth2Cli_KickedOff,
 
-    // Public ages    
+    // Public ages
     kAuth2Cli_PublicAgeList,
 
     // Score
