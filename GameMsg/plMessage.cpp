@@ -43,6 +43,44 @@ void Create_Message(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     FlagField(parent, "Bcast Flags", buffer.read<unsigned>(), s_flagNames);
 }
 
+void Create_LoadCloneMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
+
+    Key(parent, "Clone Key", buffer);
+    Key(parent, "Requestor", buffer);
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Origin Player ID: %1").arg(buffer.read<unsigned>()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("User Data: %1").arg(buffer.read<unsigned>()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Message Valid: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Is Loading: %1").arg(buffer.read<bool>() ? "True" : "False"));
+
+    QTreeWidgetItem* message = new QTreeWidgetItem(parent, QStringList());
+    QString msgType = Factory_Create(message, buffer, 0);
+    message->setText(0, QString("Trigger Message: %1").arg(msgType));
+}
+
+void Create_LoadAvatarMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_LoadCloneMsg(new QTreeWidgetItem(parent, QStringList() << "<plLoadCloneMsg>"), buffer);
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Is Player: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    Key(parent, "Spawn Point", buffer);
+
+    if (buffer.read<bool>()) {
+        QTreeWidgetItem* initTask = new QTreeWidgetItem(parent, QStringList());
+        QString msgType = Factory_Create(initTask, buffer, 0);
+        initTask->setText(0, QString("Initial Task: %1").arg(msgType));
+    }
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("User String: %1").arg(buffer.readSafeString()));
+}
+
 void Create_NotifyMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     static const char* s_typeNames[] = {
@@ -50,7 +88,7 @@ void Create_NotifyMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         "Responder State Change"
     };
 
-    Create_Message(parent, buffer);
+    Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
 
     unsigned type = buffer.read<unsigned>();
     if (type < (sizeof(s_typeNames) / sizeof(s_typeNames[0]))) {

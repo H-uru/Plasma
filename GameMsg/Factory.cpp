@@ -347,12 +347,17 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kNotifyMsg:
         Create_NotifyMsg(parent, buffer);
         break;
+    case kLoadAvatarMsg:
+        Create_LoadAvatarMsg(parent, buffer);
+        break;
     case kNetMsgLoadClone:
         Create_NetMsgLoadClone(parent, buffer);
         break;
     case kNetMsgPlayerPage:
         Create_NetMsgPlayerPage(parent, buffer);
         break;
+    case 0x8000:
+        return "(NULL)";
     default:
         {
             new QTreeWidgetItem(parent, QStringList()
@@ -368,8 +373,11 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
 
             OutputDebugStringA(QString("Unsupported creatable (%1)\n")
                                .arg(type, 4, 16, QChar('0')).toUtf8().data());
-            if (size)
+            if (size) {
                 buffer.skip(size - sizeof(unsigned short));
+            } else {
+                buffer.clear();
+            }
         }
     }
 
@@ -441,6 +449,6 @@ void Key(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
         Uoid(parent, title, buffer);
     } else {
         new QTreeWidgetItem(parent, QStringList()
-            << QString("%1 (NULL)").arg(title));
+            << QString("%1: (NULL)").arg(title));
     }
 }
