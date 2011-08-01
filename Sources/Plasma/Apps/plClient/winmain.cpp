@@ -1008,6 +1008,8 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
                 SetDlgItemText(hwndDlg, IDC_URULOGIN_EULATEXT, eulaData);
                 delete [] eulaData;
             }
+            else // no TOS found, go ahead
+                EndDialog(hwndDlg, true);
 
             break;
         }
