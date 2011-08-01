@@ -153,6 +153,13 @@ static void ManifestCallback (
         return;
     }
 
+#ifndef PLASMA_EXTERNAL_RELEASE
+    if (entryCount == 0)  { // dataserver does not contain a patcher
+        s_downloadComplete = true;
+        return;
+    }
+#endif
+
     char ansi[MAX_PATH];
 
     // MD5 check current patcher against value in manifest
