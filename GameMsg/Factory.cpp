@@ -17,6 +17,7 @@
 
 #include "Factory.h"
 #include "plNetMessage.h"
+#include "plMessage.h"
 
 QString Factory_Name(unsigned type)
 {
@@ -329,7 +330,7 @@ QString Factory_Name(unsigned type)
     return QString("Unknown class ID (%1)").arg(type, 4, 16, QChar('0'));
 }
 
-void Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size)
+QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size)
 {
     unsigned short type = buffer.read<unsigned short>();
 
@@ -342,6 +343,9 @@ void Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size)
         break;
     case kNetMsgGameMessage:
         Create_NetMsgGameMessage(parent, buffer);
+        break;
+    case kNotifyMsg:
+        Create_NotifyMsg(parent, buffer);
         break;
     case kNetMsgLoadClone:
         Create_NetMsgLoadClone(parent, buffer);
@@ -368,9 +372,11 @@ void Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size)
                 buffer.skip(size - sizeof(unsigned short));
         }
     }
+
+    return Factory_Name(type);
 }
 
-void FlagField(QTreeWidgetItem* parent, const char* title,
+void FlagField(QTreeWidgetItem* parent, QString title,
                unsigned flags, const char* names[])
 {
     QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList()
@@ -385,7 +391,7 @@ void FlagField(QTreeWidgetItem* parent, const char* title,
     }
 }
 
-void Location(QTreeWidgetItem* parent, const char* title, ChunkBuffer& buffer)
+void Location(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
 {
     new QTreeWidgetItem(parent, QStringList()
         << QString("%1: %2 (Flags: %3)").arg(title)
@@ -399,7 +405,7 @@ enum UoidContents
     kHasLoadMask    = (1<<1),
 };
 
-void Uoid(QTreeWidgetItem* parent, const char* title, ChunkBuffer& buffer)
+void Uoid(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
 {
     static const char* s_uoidContents[] = {
         "kHasCloneIDs", "kHasLoadMask", "(1<<2)", "(1<<3)",
@@ -426,5 +432,15 @@ void Uoid(QTreeWidgetItem* parent, const char* title, ChunkBuffer& buffer)
             << QString("Clone ID: %1").arg(buffer.read<unsigned>()));
         new QTreeWidgetItem(top, QStringList()
             << QString("Clone Player ID: %1").arg(buffer.read<unsigned>()));
+    }
+}
+
+void Key(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
+{
+    if (buffer.read<bool>()) {
+        Uoid(parent, title, buffer);
+    } else {
+        new QTreeWidgetItem(parent, QStringList()
+            << QString("%1 (NULL)").arg(title));
     }
 }

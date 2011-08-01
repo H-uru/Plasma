@@ -118,8 +118,9 @@ void Create_NetMsgGameMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
 
     ChunkBuffer* subStream = NetMessageStream(buffer);
-    Factory_Create(new QTreeWidgetItem(parent, QStringList() << "Game Message"),
-                   *subStream, subStream->size());
+    QTreeWidgetItem* message = new QTreeWidgetItem(parent, QStringList());
+    QString msgType = Factory_Create(message, *subStream, subStream->size());
+    message->setText(0, QString("Game Message: %1").arg(msgType));
     delete subStream;
 
     if (buffer.read<bool>()) {
