@@ -120,6 +120,26 @@ QString ChunkBuffer::readResultCode()
     return QString("(INVALID RESULT CODE - %1)").arg(result);
 }
 
+QString ChunkBuffer::readSafeString()
+{
+    unsigned short length = read<unsigned short>();
+    if (!(length & 0xF000))
+        read<unsigned short>();   // Discarded
+    length &= 0x0FFF;
+
+    char* buffer = new char[length + 1];
+    chomp(buffer, length);
+    buffer[length] = 0;
+    if (length && (buffer[0] & 0x80)) {
+        for (unsigned i = 0; i < length; ++i)
+            buffer[i] = ~buffer[i];
+    }
+
+    QString str = QString::fromUtf8(buffer, length);
+    delete[] buffer;
+    return str;
+}
+
 void ChunkBuffer::waitOnData()
 {
     while (m_chunks.size() == 0) {

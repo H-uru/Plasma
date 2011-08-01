@@ -106,3 +106,26 @@ void Create_NetMsgGroupOwner(QTreeWidgetItem* parent, ChunkBuffer& buffer)
             << QString("Owned: %1").arg(buffer.read<bool>() ? "True" : "False"));
     }
 }
+
+void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "NetMessage"), buffer);
+
+    unsigned count = buffer.read<unsigned>();
+    for (unsigned i = 0; i < count; ++i) {
+        QTreeWidgetItem* room = new QTreeWidgetItem(parent, QStringList()
+            << QString("Room %1").arg(i));
+        Location(room, "Location", buffer);
+        new QTreeWidgetItem(room, QStringList()
+            << QString("Name: %1").arg(buffer.readString()));
+    }
+}
+
+void Create_NetMsgPlayerPage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "NetMessage"), buffer);
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Unload: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    Uoid(parent, "Player Key", buffer);
+}

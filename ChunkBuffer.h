@@ -88,6 +88,7 @@ public:
     }
 
     QString readResultCode();
+    QString readSafeString();
 
 private:
     struct Buffer
