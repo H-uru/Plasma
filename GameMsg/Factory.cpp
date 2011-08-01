@@ -347,6 +347,12 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kNotifyMsg:
         Create_NotifyMsg(parent, buffer);
         break;
+    case kAvatarInputStateMsg:
+        Create_AvatarInputStateMsg(parent, buffer);
+        break;
+    case kNetMsgRelevanceRegions:
+        Create_NetMsgRelevanceRegions(parent, buffer);
+        break;
     case kLoadAvatarMsg:
         Create_LoadAvatarMsg(parent, buffer);
         break;
@@ -450,5 +456,22 @@ void Key(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
     } else {
         new QTreeWidgetItem(parent, QStringList()
             << QString("%1: (NULL)").arg(title));
+    }
+}
+
+void BitVector(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
+{
+    QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList() << title);
+
+    unsigned wordCount = buffer.read<unsigned>();
+    for (unsigned i = 0; i < wordCount; ++i) {
+        unsigned value = (i * 32);
+        unsigned bits = buffer.read<unsigned>();
+        while (bits) {
+            if (bits & 0x1)
+                new QTreeWidgetItem(top, QStringList() << QString("%1").arg(value));
+            bits >>= 1;
+            ++value;
+        }
     }
 }

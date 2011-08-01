@@ -22,4 +22,5 @@ void Create_NetMsgGameMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgGroupOwner(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgLoadClone(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgPlayerPage(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_NetMsgRelevanceRegions(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer);

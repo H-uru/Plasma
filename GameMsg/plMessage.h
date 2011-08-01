@@ -19,5 +19,6 @@
 
 void Create_Message(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_LoadCloneMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvatarInputStateMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_LoadAvatarMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NotifyMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);

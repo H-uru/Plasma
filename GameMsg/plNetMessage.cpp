@@ -173,6 +173,14 @@ void Create_NetMsgPlayerPage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     Uoid(parent, "Player Key", buffer);
 }
 
+void Create_NetMsgRelevanceRegions(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+
+    BitVector(parent, "Regions I Care About", buffer);
+    BitVector(parent, "Regions I Am In", buffer);
+}
+
 void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);

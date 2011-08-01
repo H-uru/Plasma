@@ -76,3 +76,4 @@ void FlagField(QTreeWidgetItem* parent, QString title,
 void Location(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer);
 void Uoid(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer);
 void Key(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer);
+void BitVector(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer);

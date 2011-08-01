@@ -63,6 +63,13 @@ void Create_LoadCloneMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     message->setText(0, QString("Trigger Message: %1").arg(msgType));
 }
 
+void Create_AvatarInputStateMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("State: %1").arg(buffer.read<unsigned short>()));
+}
+
 void Create_LoadAvatarMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     Create_LoadCloneMsg(new QTreeWidgetItem(parent, QStringList() << "<plLoadCloneMsg>"), buffer);
