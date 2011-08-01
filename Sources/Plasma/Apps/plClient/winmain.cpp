@@ -86,7 +86,6 @@ extern hsBool gUseBackgroundDownloader;
 
 enum
 {
-    kArgToDni,
     kArgSkipLoginDialog,
     kArgServerIni,
     kArgLocalData,
@@ -94,7 +93,6 @@ enum
 };
 
 static const CmdArgDef s_cmdLineArgs[] = {
-    { kCmdArgFlagged  | kCmdTypeBool,       L"ToDni",           kArgToDni   },
     { kCmdArgFlagged  | kCmdTypeBool,       L"SkipLoginDialog", kArgSkipLoginDialog },
     { kCmdArgFlagged  | kCmdTypeString,     L"ServerIni",       kArgServerIni },
     { kCmdArgFlagged  | kCmdTypeBool,       L"LocalData",       kArgLocalData   },
