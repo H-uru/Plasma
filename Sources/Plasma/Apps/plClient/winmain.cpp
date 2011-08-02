@@ -1193,7 +1193,7 @@ void StatusCallback(void *param)
         curl_easy_setopt(hCurl, CURLOPT_WRITEFUNCTION, &CurlCallback);
         curl_easy_setopt(hCurl, CURLOPT_WRITEDATA, param);
 
-        if (curl_easy_perform(hCurl) != 0)
+        if (statusUrl[0] && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
             PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) curlError);
         
         for(unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && s_loginDlgRunning; ++i)
