@@ -50,5 +50,3 @@ add_subdirectory(plTransform)
 add_subdirectory(plUnifiedTime)
 add_subdirectory(plUUID)
 add_subdirectory(plVault)
-#add_subdirectory(plWinStrBlock)        # Not being used by any current slns
-#add_subdirectory(plWndCtrls)           # Not being used by any current slns
