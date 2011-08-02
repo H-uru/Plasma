@@ -164,8 +164,11 @@ double              ProcessManifestEntryParam::startTime = 0;
 // IMPORTANT:   This string may NEVER change.  Doing so will break self-patching,
 //              leaving clients with older patchers "dead in the water", without
 //              a way to play Uru.
+#ifdef PLASMA_EXTERNAL_RELEASE
 const wchar kPatcherExeFilename[] = L"UruLauncher.exe";
-
+#else
+const wchar kPatcherExeFilename[] = L"plUruLauncher.exe";
+#endif
 
 
 //============================================================================
