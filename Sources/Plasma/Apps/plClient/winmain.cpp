@@ -116,18 +116,11 @@ static const unsigned   AUTH_FAILED_TIMER   = 2;
 #define FAKE_PASS_STRING "********"
 
 //============================================================================
-// External patcher file
+// External patcher file (directly starting plClient is not allowed)
 //============================================================================
 #ifdef PLASMA_EXTERNAL_RELEASE
 
 static wchar s_patcherExeName[] = L"UruLauncher.exe";
-
-//============================================================================
-// Internal patcher file
-//============================================================================
-#else
-
-static wchar s_patcherExeName[] = L"plUruLauncher.exe";
 
 #endif // PLASMA_EXTERNAL_RELEASE
 
