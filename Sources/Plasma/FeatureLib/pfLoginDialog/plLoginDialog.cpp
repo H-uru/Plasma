@@ -63,7 +63,6 @@ plLoginDialog::plLoginDialog( HWND parentWnd )
 
 std::string plLoginDialog::MakeSafeLobbyServerName(const std::string & value)
 {
-    //return plIDataServer::MakeSafeMachineName(value,"parablegame.cyanworlds.com");
     return "";
 }
 

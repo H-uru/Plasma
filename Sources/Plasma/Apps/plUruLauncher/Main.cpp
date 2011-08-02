@@ -39,19 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define WHITESPACE     L" \"\t\r\n\x1A"
 #define UPDATE_STATUSMSG_SECONDS 30     // Must be an int
 
-#if BUILD_TYPE == BUILD_TYPE_DEV
-    #define STATUS_PATH L"www2.cyanworlds.com"
-#else
-    #define STATUS_PATH L"support.cyanworlds.com"
-#endif
-
-
-#if BUILD_TYPE == BUILD_TYPE_BETA
-    static const char s_postKey[] = ""; //"betakey=6C5DC90EFD7AF8892D2A65CDE5DF46D55A2777EC3D196ED83F912B62185A74DD";
-#else
-    static const char s_postKey[] = "";
-#endif
-
 
 /*****************************************************************************
 *
