@@ -944,7 +944,7 @@ bool ManifestRequestTrans::Recv (
 
     dword numFiles = reply.numFiles;
     dword wcharCount = reply.wcharCount;
-    const wchar* curChar = reply.manifestData;
+    const wchar* curChar = reply.manifestData; // the pointer is not yet dereferenced here!
 
     // tell the server we got the data
     Cli2File_ManifestEntryAck manifestAck;
@@ -955,9 +955,9 @@ bool ManifestRequestTrans::Recv (
 
     m_conn->Send(&manifestAck, manifestAck.messageBytes);   
 
-    // if wcharCount is 2, the data only contains the terminator "\0\0" and we
+    // if wcharCount is 2 or less, the data only contains the terminator "\0\0" and we
     // don't need to convert anything (and we are done)
-    if ((IS_NET_ERROR(reply.result)) || (wcharCount == 2)) {
+    if ((IS_NET_ERROR(reply.result)) || (wcharCount <= 2)) {
         // we have a problem... or we have nothing to so, so we're done
         m_result    = reply.result;
         m_state     = kTransStateComplete;
