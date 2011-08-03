@@ -523,8 +523,8 @@ protected:
     void            ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
 
     // Plate management
-    friend plDXPlateManager;
-    friend plBinkPlayer;
+    friend class plDXPlateManager;
+    friend class plBinkPlayer;
 
     void        IDrawPlate( plPlate *plate );
 

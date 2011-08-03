@@ -89,7 +89,7 @@ hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
         while( n-- )
         {
             hsScalar initOpac = *sPtr;
-            *alpha = unsigned char(initOpac * atten * 255.99f);
+            *alpha = (unsigned char)(initOpac * atten * 255.99f);
 
             alpha += stride;
             sPtr += 3;
@@ -166,7 +166,7 @@ hsBool plDynaRipple::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
         while( n-- )
         {
             unsigned char* alpha = ((unsigned char*)&vtx->fDiffuse) + 3;
-            *alpha = unsigned char(origUVW->fZ * atten * 255.99f);
+            *alpha = (unsigned char)(origUVW->fZ * atten * 255.99f);
 
             vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
             vtx->fUVW[0].fY = (origUVW->fY - 0.5f) * scaleV + 0.5f;
@@ -246,7 +246,7 @@ hsBool plDynaWake::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
         while( n-- )
         {
             unsigned char* alpha = ((unsigned char*)&vtx->fDiffuse) + 3;
-            *alpha = unsigned char(origUVW->fZ * atten * 255.99f);
+            *alpha = (unsigned char)(origUVW->fZ * atten * 255.99f);
 
             vtx->fUVW[0].fX = (origUVW->fX - 0.5f) * scaleU + 0.5f;
             vtx->fUVW[0].fY = origUVW->fY * scaleV;
@@ -326,7 +326,7 @@ hsBool plDynaWave::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
         while( n-- )
         {
             unsigned char* alpha = ((unsigned char*)&vtx->fDiffuse) + 3;
-            *alpha = unsigned char(origUVW->fZ * atten * 255.99f);
+            *alpha = (unsigned char)(origUVW->fZ * atten * 255.99f);
 
             vtx->fUVW[0].fX = origUVW->fX;
             vtx->fUVW[0].fY = origUVW->fY * scale + scroll;

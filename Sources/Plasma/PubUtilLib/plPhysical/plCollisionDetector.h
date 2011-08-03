@@ -287,4 +287,4 @@ public:
     CLASSNAME_REGISTER( plRidingAnimatedPhysicalDetector );
     GETINTERFACE_ANY( plRidingAnimatedPhysicalDetector, plSimpleRegionSensor);
 };
-#endif plCollisionDetector_inc
+#endif //plCollisionDetector_inc

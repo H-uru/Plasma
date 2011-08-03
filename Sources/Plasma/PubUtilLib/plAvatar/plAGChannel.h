@@ -179,4 +179,4 @@ protected:
 
 };
 
-#endif PLAGCHANNEL_H
+#endif //PLAGCHANNEL_H

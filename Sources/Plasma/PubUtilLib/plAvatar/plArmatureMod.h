@@ -281,7 +281,7 @@ public:
         kSwim,
     };
 
-    const char *plArmatureMod::GetAnimRootName(const char *name);
+    const char *GetAnimRootName(const char *name);
     Int8 AnimNameToIndex(const char *name);
     void SetBodyType(int type) { fBodyType = type; }
     int  GetBodyType(int type) { return fBodyType; }
@@ -466,4 +466,4 @@ protected:
 
 #define TWO_PI (hsScalarPI * 2)
 
-#endif plArmatureMod_inc
+#endif //plArmatureMod_inc

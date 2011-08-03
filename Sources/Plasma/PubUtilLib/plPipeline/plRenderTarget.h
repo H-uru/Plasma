@@ -51,7 +51,7 @@ class plCubicRenderTarget;
 
 class plRenderTarget : public plBitmap
 {
-    friend plCubicRenderTarget;
+    friend class plCubicRenderTarget;
 
     protected:
 

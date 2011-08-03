@@ -50,7 +50,7 @@ public:
 #endif // PLASMA_EXTERNAL_RELEASE
 class plPXPhysicalControllerCore: public plPhysicalControllerCore
 {
-    friend PXControllerHitReportWalk;
+    friend class PXControllerHitReportWalk;
 public:
     plPXPhysicalControllerCore(plKey ownerSO, hsScalar height, hsScalar radius);
     ~plPXPhysicalControllerCore();
@@ -104,7 +104,7 @@ public:
 #ifndef PLASMA_EXTERNAL_RELEASE
     static hsBool fDebugDisplay;
 #endif // PLASMA_EXTERNAL_RELEASE
-    static void plPXPhysicalControllerCore::SetMaxNumberOfControllers(int max) { fPXControllersMax = max; }
+    static void SetMaxNumberOfControllers(int max) { fPXControllersMax = max; }
     static int fPXControllersMax;
     virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, UInt32& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut);
     virtual void BehaveLikeAnimatedPhysical(hsBool actLikeAnAnimatedPhys);
@@ -127,14 +127,14 @@ protected:
     void ICreateController();
     void IDeleteController();
     void IInformDetectors(bool entering,bool deferUntilNextSim);
-    void plPXPhysicalControllerCore::ICreateController(const hsPoint3& pos);
+    void ICreateController(const hsPoint3& pos);
     NxActor* fKinematicActor;
     NxCapsuleController* fController;
 #ifndef PLASMA_EXTERNAL_RELEASE
     hsTArray<plDbgCollisionInfo> fDbgCollisionInfo;
     void IDrawDebugDisplay();
 #endif
-    void plPXPhysicalControllerCore::IHandleResize();
+    void IHandleResize();
     hsTArray<plCollideMsg*> fQueuedCollideMsgs;
     hsScalar fPreferedRadius;
     hsScalar fPreferedHeight;

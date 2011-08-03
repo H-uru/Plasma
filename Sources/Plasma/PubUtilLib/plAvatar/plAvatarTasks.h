@@ -174,7 +174,7 @@ public:
         \param brain The brain to attach the task to.
         */
     plAvOneShotTask (plAvOneShotMsg *msg, plArmatureMod *avatar, plArmatureBrain *brain);
-    virtual plAvOneShotTask::~plAvOneShotTask();
+    virtual ~plAvOneShotTask();
 
     // task protocol
     virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
