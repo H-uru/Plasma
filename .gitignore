@@ -8,6 +8,7 @@ tags
 *.swp
 *.o
 *.orig
+*.pyc
 
 Makefile
 CMakeCache.txt
