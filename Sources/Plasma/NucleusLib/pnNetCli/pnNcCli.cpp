@@ -42,6 +42,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define NO_ENCRYPTION
 
+#ifndef PLASMA_EXTERNAL_RELEASE
+
+struct NetLogMessage_Header
+{
+    unsigned    m_protocol;
+    int         m_direction;
+    unsigned    m_time;
+    unsigned    m_size;
+};
+
+#define HURU_PIPE_NAME "\\\\.\\pipe\\H-Uru_NetLog"
+
+static CRITICAL_SECTION s_pipeCritical;
+static HANDLE           s_netlog = 0;
+static ULARGE_INTEGER   s_timeOffset;
+
+static unsigned GetAdjustedTimer()
+{
+    FILETIME time;
+    ULARGE_INTEGER maths;
+    GetSystemTimeAsFileTime(&time);
+    maths.HighPart = time.dwHighDateTime;
+    maths.LowPart = time.dwLowDateTime;
+    maths.QuadPart -= s_timeOffset.QuadPart;
+    return maths.LowPart % 864000000;
+}
+
+#endif // PLASMA_EXTERNAL_RELEASE
+
 namespace pnNetCli {
 
 /*****************************************************************************
@@ -127,6 +156,23 @@ namespace pnNetCli {
 static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
         byte * temp, * heap = NULL;
+
+#ifndef PLASMA_EXTERNAL_RELEASE
+    // Write to the netlog
+    if (s_netlog) {
+        NetLogMessage_Header header;
+        header.m_protocol = cli->protocol;
+        header.m_direction = 0; // kCli2Srv
+        header.m_time = GetAdjustedTimer();
+        header.m_size = bytes;
+
+        EnterCriticalSection(&s_pipeCritical);
+        DWORD bytesWritten;
+        WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, NULL);
+        WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
+        LeaveCriticalSection(&s_pipeCritical);
+    }
+#endif // PLASMA_EXTERNAL_RELEASE
 
     if (cli->mode == kNetCliModeEncrypted) {
         // Encrypt data...
@@ -822,6 +868,29 @@ static NetCli * ConnCreate (
     cli->mode           = mode;
     cli->SetValue(kNilGuid);
 
+#ifndef PLASMA_EXTERNAL_RELEASE
+    // Network debug pipe
+    if (!s_netlog) {
+        InitializeCriticalSection(&s_pipeCritical);
+        WaitNamedPipe(HURU_PIPE_NAME, NMPWAIT_WAIT_FOREVER);
+        s_netlog = CreateFileA(
+            HURU_PIPE_NAME,
+            GENERIC_READ | GENERIC_WRITE,
+            0,
+            NULL,
+            OPEN_EXISTING,
+            FILE_ATTRIBUTE_NORMAL,
+            NULL
+        );
+
+        // Not exactly the start, but close enough ;)
+        FILETIME timeBase;
+        GetSystemTimeAsFileTime(&timeBase);
+        s_timeOffset.HighPart = timeBase.dwHighDateTime;
+        s_timeOffset.LowPart = timeBase.dwLowDateTime;
+    }
+#endif // PLASMA_EXTERNAL_RELEASE
+
     ResetSendRecv(cli);
 
     return cli;
@@ -1008,6 +1077,23 @@ bool NetCliDispatch (
             // Add data to accumulator and dispatch
             cli->input.Add(bytes, data);
             bool result = DispatchData(cli, param);
+
+#ifndef PLASMA_EXTERNAL_RELEASE
+            // Write to the netlog
+            if (s_netlog) {
+                NetLogMessage_Header header;
+                header.m_protocol = cli->protocol;
+                header.m_direction = 1; // kSrv2Cli
+                header.m_time = GetAdjustedTimer();
+                header.m_size = bytes;
+
+                EnterCriticalSection(&s_pipeCritical);
+                DWORD bytesWritten;
+                WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, NULL);
+                WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
+                LeaveCriticalSection(&s_pipeCritical);
+            }
+#endif // PLASMA_EXTERNAL_RELEASE
 
 #ifdef SERVER
             cli->recvDispatch = result;
