@@ -449,21 +449,6 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_CURSOR_UP           BITMAP                  "../../Plasma/Apps/plClient/res/cursor_up.bmp"
-IDB_CURSOR_DOWN         BITMAP                  "../../Plasma/Apps/plClient/res/cursor_down.bmp"
-IDB_CURSOR_RIGHT        BITMAP                  "../../Plasma/Apps/plClient/res/cursor_right.bmp"
-IDB_CURSOR_LEFT         BITMAP                  "../../Plasma/Apps/plClient/res/cursor_left.bmp"
-IDB_CURSOR_OPEN         BITMAP                  "../../Plasma/Apps/plClient/res/cursor_open.bmp"
-IDB_CURSOR_GRAB         BITMAP                  "../../Plasma/Apps/plClient/res/cursor_grab.bmp"
-IDB_CURSOR_CLICKED      BITMAP                  "../../Plasma/Apps/plClient/res/cursor_clicked.bmp"
-IDB_CURSOR_POISED       BITMAP                  "../../Plasma/Apps/plClient/res/cursor_poised.bmp"
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
