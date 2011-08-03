@@ -484,7 +484,7 @@ public:
     //
     //  PURPOSE    : Enter the personal book mode...stay until further notice.
     //
-    static bool cyAvatar::EnterPBMode();
+    static bool EnterPBMode();
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -494,7 +494,7 @@ public:
     //  PURPOSE    : Leave the personal book mode. Currently leaves any mode; will become
     //             : more specific in future version
     //
-    static bool cyAvatar::ExitPBMode();
+    static bool ExitPBMode();
     
     /////////////////////////////////////////////////////////////////////////////
     //

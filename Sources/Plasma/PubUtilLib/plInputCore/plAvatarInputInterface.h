@@ -249,4 +249,4 @@ class plAvatarInputInterface : public plInputInterface
 
 
 
-#endif plAvatarInputInterface_inc
+#endif //plAvatarInputInterface_inc

@@ -55,4 +55,4 @@ class plLayerOr : public plLayerInterface
         virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
 };
 
-#endif _plLayerOr_h
+#endif //_plLayerOr_h

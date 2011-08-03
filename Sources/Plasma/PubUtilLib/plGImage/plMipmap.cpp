@@ -383,7 +383,7 @@ plMipmap *plMipmap::ISplitAlpha()
 
     switch( fUncompressedInfo.fType )
     {
-    case fUncompressedInfo.kRGB8888:
+    case UncompressedInfo::kRGB8888:
         // first byte is the alpha channel, we will drop this byte into the red channel for compression
         while (curByte < numBytes)
         {
@@ -411,7 +411,7 @@ void plMipmap::IRecombineAlpha( plMipmap *alphaChannel )
 
     switch( fUncompressedInfo.fType )
     {
-    case fUncompressedInfo.kRGB8888:
+    case UncompressedInfo::kRGB8888:
         // first byte is the alpha channel, we will grab this byte from the red channel for reconstitution
         while (curByte < numBytes)
         {

@@ -834,7 +834,7 @@ template<class mapT>
 std::vector<std::wstring> pfLocalizationDataMgr::pf3PartMap<mapT>::getAgeList()
 {
     std::vector<std::wstring> retVal;
-    ThreePartMap::iterator curAge;
+    typename ThreePartMap::iterator curAge;
 
     for (curAge = fData.begin(); curAge != fData.end(); curAge++)
         retVal.push_back(curAge->first);
@@ -848,7 +848,7 @@ template<class mapT>
 std::vector<std::wstring> pfLocalizationDataMgr::pf3PartMap<mapT>::getSetList(const std::wstring & age)
 {
     std::vector<std::wstring> retVal;
-    std::map<std::wstring, std::map<std::wstring, mapT> >::iterator curSet;
+    typename std::map<std::wstring, std::map<std::wstring, mapT> >::iterator curSet;
 
     if (fData.find(age) == fData.end())
         return retVal; // return an empty list, the age doesn't exist
@@ -865,7 +865,7 @@ template<class mapT>
 std::vector<std::wstring> pfLocalizationDataMgr::pf3PartMap<mapT>::getNameList(const std::wstring & age, const std::wstring & set)
 {
     std::vector<std::wstring> retVal;
-    std::map<std::wstring, mapT>::iterator curName;
+    typename std::map<std::wstring, mapT>::iterator curName;
 
     if (fData.find(age) == fData.end())
         return retVal; // return an empty list, the age doesn't exist

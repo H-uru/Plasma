@@ -344,7 +344,7 @@ public:
     const plKey& GetAgeSDLObjectKey() const { return fAgeSDLObjectKey; }
     plUoid GetAgeSDLObjectUoid(const char* ageName) const;
     plNetClientComm& GetNetClientComm()  { return fNetClientComm; }
-    const char* plNetClientMgr::GetNextAgeFilename();
+    const char* GetNextAgeFilename();
     plNetClientStats& GetNetClientStats() { return fNetClientStats; }
     void SetOverrideAgeTimeOfDayPercent(float f) { fOverrideAgeTimeOfDayPercent=f;  }
 
