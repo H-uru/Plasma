@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "hsWindows.h"
 
-bool DumpSpecificMsgInfo(plMessage* msg, std::string& info);
+static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info);
 
 plDispatchLog::plDispatchLog() :
     fLog(nil),
@@ -184,7 +184,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
     if (kiMsg)
     {
         const char* typeName = "(unknown)";
-        #define PrintKIType(type)   if (kiMsg->GetCommand() == pfKIMsg::##type) typeName = #type;
+        #define PrintKIType(type)   if (kiMsg->GetCommand() == pfKIMsg::type) typeName = #type;
         PrintKIType(kHACKChatMsg);              // send chat message via pfKIMsg
         PrintKIType(kEnterChatMode);                // toggle chat mode
         PrintKIType(kSetChatFadeDelay);         // set the chat delay
@@ -253,7 +253,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
     plClientMsg* clientMsg = plClientMsg::ConvertNoRef(msg);
     if (clientMsg)
     {
-        #define PrintType(type) if (clientMsg->GetClientMsgFlag() == plClientMsg::##type) info = #type;
+        #define PrintType(type) if (clientMsg->GetClientMsgFlag() == plClientMsg::type) info = #type;
         PrintType(kLoadRoom);
         PrintType(kLoadRoomHold);
         PrintType(kUnloadRoom);
@@ -297,7 +297,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
     if (refMsg)
     {
         const char* typeName = nil;
-        #define GetType(type)   if (refMsg->GetContext() == plRefMsg::##type) typeName = #type;
+        #define GetType(type)   if (refMsg->GetContext() == plRefMsg::type) typeName = #type;
         GetType(kOnCreate);
         GetType(kOnDestroy);
         GetType(kOnRequest);

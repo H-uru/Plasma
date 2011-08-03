@@ -32,11 +32,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plLODMipmap : public plMipmap
 {
 protected:
-    const enum 
+    enum 
     {
         kRefBase    = 0
     };
-    const enum
+
+    enum
     {
         kNumLODs    = 5
     };

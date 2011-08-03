@@ -169,4 +169,4 @@ public:
     virtual void Write(hsStream* s, hsResMgr* mgr);
 };
 
-#endif plAnimPath_inc
+#endif //plAnimPath_inc

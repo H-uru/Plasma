@@ -98,7 +98,7 @@ protected:
 
 public:
 #ifndef BUILDING_PYPLASMA
-    pyImage::~pyImage()
+    ~pyImage()
     {
         if (fMipmap && fMipMapKey)
             fMipMapKey->UnRefObject();

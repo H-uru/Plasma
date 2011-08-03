@@ -52,8 +52,8 @@ class Mtl;
 
 class plParticleSystem : public plModifier
 {
-    friend plParticleEmitter;
-    friend plSimpleParticleGenerator;
+    friend class plParticleEmitter;
+    friend class plSimpleParticleGenerator;
 
 protected:
     static const hsScalar GRAVITY_ACCEL_FEET_PER_SEC2;

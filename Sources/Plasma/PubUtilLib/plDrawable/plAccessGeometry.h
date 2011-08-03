@@ -46,8 +46,6 @@ class plAccessGeometry : public hsRefCnt
 protected:
     void                    Nilify() { fPipe = nil; }
 
-    friend class plAccessGeometry;
-
     plPipeline*                     fPipe;
 
     static plAccessGeometry*        fInstance;

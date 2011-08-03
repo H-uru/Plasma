@@ -43,7 +43,7 @@ public:
         kNumLanguages,
     };
     
-    typedef enum encodingTypes
+    enum encodingTypes
     {
         Enc_Unencoded,  // This can also mean that python did the decoding for us and we don't need to tweak it on our end
         Enc_Split_String,

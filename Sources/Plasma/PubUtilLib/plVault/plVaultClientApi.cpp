@@ -3447,7 +3447,7 @@ void VaultAddChronicleEntry (const wchar entryName[], int entryType, const wchar
 }
 
 void _VaultAddChronicleEntryCB(ENetError result, void* state, void * param, RelVaultNode*  node) {
-    if (result == ENetError::kNetSuccess) {
+    if (result == kNetSuccess) {
         RelVaultNode* rvnFldr = GetChildFolderNode(GetPlayerNode(), plVault::kChronicleFolder, 1);
         if (rvnFldr != nil) 
             VaultAddChildNode(rvnFldr->nodeId, node->nodeId, 0, nil, nil);

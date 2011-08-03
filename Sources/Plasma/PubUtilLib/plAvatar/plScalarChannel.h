@@ -192,7 +192,7 @@ public:
     virtual const hsScalar & Value(double time, hsBool peek = false);
     virtual const hsScalar & Value(double time, hsBool peek, plControllerCacheInfo *cache);
     
-    virtual plAGChannel *plScalarControllerChannel::MakeCacheChannel(plAnimTimeConvert *atc);
+    virtual plAGChannel *MakeCacheChannel(plAnimTimeConvert *atc);
         
     // PLASMA PROTOCOL
     // rtti

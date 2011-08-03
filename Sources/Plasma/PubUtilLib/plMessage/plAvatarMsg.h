@@ -301,7 +301,7 @@ public:
         \param stage Which stage are we setting the loop count for?
         \param newLoopCount The loop count we are setting on the stage
     */
-    plAvBrainGenericMsg::plAvBrainGenericMsg(plKey sender, plKey receiver,
+    plAvBrainGenericMsg(plKey sender, plKey receiver,
                                              Type type, int stage, int newLoopCount);
     // plasma protocol
     CLASSNAME_REGISTER( plAvBrainGenericMsg );

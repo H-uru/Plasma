@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef SERVER
 class plNetCoreStatsSummary : public plCreatable
 {
-    static const UInt8 plNetCoreStatsSummary::StreamVersion;
+    static const UInt8 StreamVersion;
     float fULBitsPS;
     float fDLBitsPS;
     float fULPeakBitsPS;

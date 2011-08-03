@@ -238,10 +238,10 @@ public:
     //
     static const char* GetClientName(pyKey &avKey);
 
-    static PyObject* cyMisc::GetAvatarKeyFromClientID(int clientID); // returns pyKey
-    static int cyMisc::GetLocalClientID();
-    static int cyMisc::GetClientIDFromAvatarKey(pyKey& avatar);
-    static hsBool cyMisc::ValidateKey(pyKey& key);
+    static PyObject* GetAvatarKeyFromClientID(int clientID); // returns pyKey
+    static int GetLocalClientID();
+    static int GetClientIDFromAvatarKey(pyKey& avatar);
+    static hsBool ValidateKey(pyKey& key);
 
 
 
@@ -519,7 +519,7 @@ public:
     //
     //  PURPOSE    : knocks all the cameras off the current stack
     //
-    static void cyMisc::ClearCameraStack();
+    static void ClearCameraStack();
 
     /////////////////////////////////////////////////////////////////////////////
     //
