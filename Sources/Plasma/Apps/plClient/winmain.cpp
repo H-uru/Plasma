@@ -86,7 +86,6 @@ extern hsBool gUseBackgroundDownloader;
 
 enum
 {
-    kArgToDni,
     kArgSkipLoginDialog,
     kArgServerIni,
     kArgLocalData,
@@ -94,7 +93,6 @@ enum
 };
 
 static const CmdArgDef s_cmdLineArgs[] = {
-    { kCmdArgFlagged  | kCmdTypeBool,       L"ToDni",           kArgToDni   },
     { kCmdArgFlagged  | kCmdTypeBool,       L"SkipLoginDialog", kArgSkipLoginDialog },
     { kCmdArgFlagged  | kCmdTypeString,     L"ServerIni",       kArgServerIni },
     { kCmdArgFlagged  | kCmdTypeBool,       L"LocalData",       kArgLocalData   },
@@ -1008,6 +1006,8 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
                 SetDlgItemText(hwndDlg, IDC_URULOGIN_EULATEXT, eulaData);
                 delete [] eulaData;
             }
+            else // no TOS found, go ahead
+                EndDialog(hwndDlg, true);
 
             break;
         }
