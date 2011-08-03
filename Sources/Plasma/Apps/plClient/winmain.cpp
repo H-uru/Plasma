@@ -86,7 +86,6 @@ extern hsBool gUseBackgroundDownloader;
 
 enum
 {
-    kArgToDni,
     kArgSkipLoginDialog,
     kArgServerIni,
     kArgLocalData,
@@ -94,7 +93,6 @@ enum
 };
 
 static const CmdArgDef s_cmdLineArgs[] = {
-    { kCmdArgFlagged  | kCmdTypeBool,       L"ToDni",           kArgToDni   },
     { kCmdArgFlagged  | kCmdTypeBool,       L"SkipLoginDialog", kArgSkipLoginDialog },
     { kCmdArgFlagged  | kCmdTypeString,     L"ServerIni",       kArgServerIni },
     { kCmdArgFlagged  | kCmdTypeBool,       L"LocalData",       kArgLocalData   },
@@ -769,11 +767,6 @@ bool    InitClient( HWND hWnd )
 
 #ifdef DETACH_EXE
     hInstance = ((LPCREATESTRUCT) lParam)->hInstance;
-#endif
-    // If in fullscreen mode, get rid of the window borders.  Note: this won't take
-    // effect until the next SetWindowPos call
-
-#ifdef DETACH_EXE
 
     // This Function loads the EXE into Virtual memory...supposedly
     HRESULT hr = DetachFromMedium(hInstance, DMDFM_ALWAYS | DMDFM_ALLPAGES);
@@ -783,34 +776,7 @@ bool    InitClient( HWND hWnd )
         gClient->SetDone(true);
     else
     {
-        if( gClient->GetPipeline()->IsFullScreen() )
-        {
-            SetWindowLong(hWnd, GWL_STYLE, WS_POPUP);
-            SetWindowLong(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
-            SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-            gWinBorderDX = gWinBorderDY = gWinMenuDY = 0;
-        }
-        else {
-            SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPED | WS_CAPTION);
-            SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-        }
-
-        int goodWidth = gClient->GetPipeline()->Width() + gWinBorderDX * 2;
-        int goodHeight = gClient->GetPipeline()->Height() + gWinBorderDY * 2 + gWinMenuDY;
-
-        SetWindowPos(
-            hWnd,
-            nil,
-            0,
-            0,
-            goodWidth,
-            goodHeight,
-            SWP_NOCOPYBITS 
-                | SWP_NOMOVE
-                | SWP_NOOWNERZORDER
-                | SWP_NOZORDER
-                | SWP_FRAMECHANGED
-        );
+        gClient->ResizeDisplayDevice(gClient->GetPipeline()->Width(), gClient->GetPipeline()->Height(), !gClient->GetPipeline()->IsFullScreen());
     }
     
     if( gPendingActivate )
@@ -1040,6 +1006,8 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
                 SetDlgItemText(hwndDlg, IDC_URULOGIN_EULATEXT, eulaData);
                 delete [] eulaData;
             }
+            else // no TOS found, go ahead
+                EndDialog(hwndDlg, true);
 
             break;
         }
