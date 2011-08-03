@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define NO_ENCRYPTION
 
+#ifndef PLASMA_EXTERNAL_RELEASE
+
 struct NetLogMessage_Header
 {
     unsigned    m_protocol;
@@ -66,6 +68,8 @@ static unsigned GetAdjustedTimer()
     maths.QuadPart -= s_timeOffset.QuadPart;
     return maths.LowPart % 864000000;
 }
+
+#endif // PLASMA_EXTERNAL_RELEASE
 
 namespace pnNetCli {
 
@@ -153,6 +157,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
         byte * temp, * heap = NULL;
 
+#ifndef PLASMA_EXTERNAL_RELEASE
     // Write to the netlog
     if (s_netlog) {
         NetLogMessage_Header header;
@@ -167,6 +172,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
         WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
         LeaveCriticalSection(&s_pipeCritical);
     }
+#endif // PLASMA_EXTERNAL_RELEASE
 
     if (cli->mode == kNetCliModeEncrypted) {
         // Encrypt data...
@@ -862,6 +868,7 @@ static NetCli * ConnCreate (
     cli->mode           = mode;
     cli->SetValue(kNilGuid);
 
+#ifndef PLASMA_EXTERNAL_RELEASE
     // Network debug pipe
     if (!s_netlog) {
         InitializeCriticalSection(&s_pipeCritical);
@@ -882,6 +889,7 @@ static NetCli * ConnCreate (
         s_timeOffset.HighPart = timeBase.dwHighDateTime;
         s_timeOffset.LowPart = timeBase.dwLowDateTime;
     }
+#endif // PLASMA_EXTERNAL_RELEASE
 
     ResetSendRecv(cli);
 
@@ -1070,6 +1078,7 @@ bool NetCliDispatch (
             cli->input.Add(bytes, data);
             bool result = DispatchData(cli, param);
 
+#ifndef PLASMA_EXTERNAL_RELEASE
             // Write to the netlog
             if (s_netlog) {
                 NetLogMessage_Header header;
@@ -1077,13 +1086,14 @@ bool NetCliDispatch (
                 header.m_direction = 1; // kSrv2Cli
                 header.m_time = GetAdjustedTimer();
                 header.m_size = bytes;
-                
+
                 EnterCriticalSection(&s_pipeCritical);
                 DWORD bytesWritten;
                 WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, NULL);
                 WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
                 LeaveCriticalSection(&s_pipeCritical);
             }
+#endif // PLASMA_EXTERNAL_RELEASE
 
 #ifdef SERVER
             cli->recvDispatch = result;
