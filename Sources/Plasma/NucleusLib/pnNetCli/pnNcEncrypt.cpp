@@ -83,6 +83,7 @@ static void GetCachedServerKey (
     const BigNum *  DH_A;
     const BigNum *  DH_N;
     NetMsgChannelGetDhConstants(channel, &DH_G, &DH_A, &DH_N);
+    hsAssert(!DH_N->isZero(), "DH_N must not be zero in encrypted mode");
 
     // Compute the result
     ka->PowMod(dh_y, *DH_A, *DH_N);
@@ -107,17 +108,22 @@ void NetMsgCryptClientStart (
     const BigNum * DH_X;
     const BigNum * DH_N;
     NetMsgChannelGetDhConstants(channel, &DH_G, &DH_X, &DH_N);
+    if (DH_N->isZero()) { // no actual encryption, but the caller expects a seed
+        clientSeed->SetZero();
+        serverSeed->SetZero();
+    }
+    else {
+        // Client chooses b and y on connect
+        BigNum g(DH_G);
+        BigNum seed(seedBytes, seedData);
+        BigNum b; b.Rand(kNetDiffieHellmanKeyBits, &seed);
 
-    // Client chooses b and y on connect
-    BigNum g(DH_G);
-    BigNum seed(seedBytes, seedData);
-    BigNum b; b.Rand(kNetDiffieHellmanKeyBits, &seed);
+        // Client computes key: kb = x^b mod n
+        clientSeed->PowMod(*DH_X, b, *DH_N);
 
-    // Client computes key: kb = x^b mod n
-    clientSeed->PowMod(*DH_X, b, *DH_N);
-
-    // Client sends y to server
-    serverSeed->PowMod(g, b, *DH_N);
+        // Client sends y to server
+        serverSeed->PowMod(g, b, *DH_N);
+    }
 }
 
 //============================================================================
