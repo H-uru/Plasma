@@ -157,27 +157,17 @@ static TGUNIXAppClose pTGUNIXAppClose;
 // LoginDialogParam
 //============================================================================
 struct LoginDialogParam {
-    bool        fromGT;
     ENetError   authError;
     wchar       accountName[kMaxAccountNameLength];
 };
 
-bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd);
-bool IsExpired();
-void GetCryptKey(UInt32* cryptKey, unsigned size);
-static void SaveUserPass (char *username, char *password, ShaDigest *pNamePassHash, bool remember_password,
-                                  bool fromGT);
-static void LoadUserPass (const wchar *accountName, char *username, ShaDigest *pNamePassHash, bool *pRemember,
-                                  bool fromGT, int *pFocus);
-static void AuthFailedStrings (ENetError authError, bool fromGT,
+static bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd);
+static void GetCryptKey(UInt32* cryptKey, unsigned size);
+static void SaveUserPass (char *username, char *password, ShaDigest *pNamePassHash, bool remember_password);
+static void LoadUserPass (const wchar *accountName, char *username, ShaDigest *pNamePassHash, bool *pRemember, int *pFocus);
+static void AuthFailedStrings (ENetError authError,
                                          const char **ppStr1, const char **ppStr2,
                                          const wchar **ppWStr);
-
-#if 0
-// For networking
-const GUID NEXUS_GUID = { 
-     0x5bfdb060, 0x6a4, 0x11d0, 0x9c, 0x4f, 0x0, 0xa0, 0xc9, 0x5, 0x42, 0x5e};
-#endif
 
 
 // Detect whether we're running under TRANSGAMING Cider
@@ -206,14 +196,14 @@ static void TGDoCiderDetection ()
     pTGUNIXAppClose = (TGUNIXAppClose)GetProcAddress (hMod, "TGUNIXAppClose");
 }
 
-static bool TGRunLoginDialog (const wchar *accountName, bool fromGT)
+static bool TGRunLoginDialog (const wchar *accountName)
 {
     ShaDigest NamePassHash;
     char Username[kMaxAccountNameLength + 5];
     int Focus;
     bool bRemember = false;
 
-    LoadUserPass (accountName, Username, &NamePassHash, &bRemember, fromGT, &Focus);
+    LoadUserPass (accountName, Username, &NamePassHash, &bRemember, &Focus);
 
     while (true)
     {
@@ -282,7 +272,7 @@ static bool TGRunLoginDialog (const wchar *accountName, bool fromGT)
         if (Remember[0] == 'y')
           bRemember = true;
 
-        SaveUserPass (Username, Password, &NamePassHash, bRemember, fromGT);
+        SaveUserPass (Username, Password, &NamePassHash, bRemember);
 
         // Do login & see if it failed
         ENetError auth;
@@ -298,7 +288,7 @@ static bool TGRunLoginDialog (const wchar *accountName, bool fromGT)
                 unsigned int Len;
                 char *pTmpStr;
 
-                AuthFailedStrings (auth, fromGT, &pStr1, &pStr2, &pWStr);
+                AuthFailedStrings (auth, &pStr1, &pStr2, &pWStr);
 
                 Len = StrLen (pStr1) + 1;
                 if (pStr2)
@@ -645,7 +635,7 @@ BOOL CALLBACK AuthDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     return DefWindowProc(hwndDlg, uMsg, wParam, lParam);
 }
 
-bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd)
+static bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd)
 {
     if (!NetCliAuthQueryConnected())
         NetCommConnect();
@@ -878,7 +868,7 @@ inline static dword ToBigEndian (dword value) {
     return ((value) << 24) | ((value & 0x0000ff00) << 8) | ((value & 0x00ff0000) >> 8) | ((value) >> 24);
 }
 
-static void AuthFailedStrings (ENetError authError, bool fromGT,
+static void AuthFailedStrings (ENetError authError,
                                          const char **ppStr1, const char **ppStr2,
                                          const wchar **ppWStr)
 {
@@ -912,10 +902,7 @@ static void AuthFailedStrings (ENetError authError, bool fromGT,
                     *ppStr2 = "Disconnected from Myst Online.";
                     break;
                 case kNetErrAuthenticationFailed:
-                    if (fromGT)
-                        *ppStr2 = "GameTap authentication failed, please enter your GameTap username and password.";
-                    else
-                        *ppStr2 = "Incorrect password.\n\nMake sure CAPS LOCK is not on.";
+                    *ppStr2 = "Incorrect password.\n\nMake sure CAPS LOCK is not on.";
                     break;
                 case kNetErrGTServerError:
                 case kNetErrGameTapConnectionFailed:
@@ -943,7 +930,7 @@ BOOL CALLBACK AuthFailedDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
                 const char *pStr1, *pStr2;
                 const wchar *pWStr;
 
-                AuthFailedStrings (loginParam->authError, loginParam->fromGT,
+                AuthFailedStrings (loginParam->authError,
                                          &pStr1, &pStr2, &pWStr);
 
                 if (pStr1)
@@ -1014,8 +1001,7 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     return FALSE;
 }
 
-static void SaveUserPass (char *username, char *password, ShaDigest *pNamePassHash, bool remember_password,
-                          bool fromGT)
+static void SaveUserPass (char *username, char *password, ShaDigest *pNamePassHash, bool remember_password)
 {
     UInt32 cryptKey[4];
     ZeroMemory(cryptKey, sizeof(cryptKey));
@@ -1061,34 +1047,32 @@ static void SaveUserPass (char *username, char *password, ShaDigest *pNamePassHa
     else
         NetCommSetAuthTokenAndOS(nil, L"win");
 
-    if (!fromGT) {
-        wchar fileAndPath[MAX_PATH];
-        PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
-        PathAddFilename(fileAndPath, fileAndPath, L"login.dat", arrsize(fileAndPath));
+    wchar fileAndPath[MAX_PATH];
+    PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
+    PathAddFilename(fileAndPath, fileAndPath, L"login.dat", arrsize(fileAndPath));
 #ifndef PLASMA_EXTERNAL_RELEASE
-        // internal builds can use the local init directory
-        wchar localFileAndPath[MAX_PATH];
-        StrCopy(localFileAndPath, L"init\\login.dat", arrsize(localFileAndPath));
-        if (PathDoesFileExist(localFileAndPath))
-            StrCopy(fileAndPath, localFileAndPath, arrsize(localFileAndPath));
+    // internal builds can use the local init directory
+    wchar localFileAndPath[MAX_PATH];
+    StrCopy(localFileAndPath, L"init\\login.dat", arrsize(localFileAndPath));
+    if (PathDoesFileExist(localFileAndPath))
+        StrCopy(fileAndPath, localFileAndPath, arrsize(localFileAndPath));
 #endif
-        hsStream* stream = plEncryptedStream::OpenEncryptedFileWrite(fileAndPath, cryptKey);
-        if (stream)
-        {
-            stream->Write(sizeof(cryptKey), cryptKey);
-            stream->WriteSafeString(username);
-            stream->Writebool(remember_password);
-            if (remember_password)
-                stream->Write(sizeof(pNamePassHash->data), pNamePassHash->data);
-            stream->Close();
-            delete stream;
-        }
+    hsStream* stream = plEncryptedStream::OpenEncryptedFileWrite(fileAndPath, cryptKey);
+    if (stream)
+    {
+        stream->Write(sizeof(cryptKey), cryptKey);
+        stream->WriteSafeString(username);
+        stream->Writebool(remember_password);
+        if (remember_password)
+            stream->Write(sizeof(pNamePassHash->data), pNamePassHash->data);
+        stream->Close();
+        delete stream;
     }
 }
 
 
 static void LoadUserPass (const wchar *accountName, char *username, ShaDigest *pNamePassHash, bool *pRemember,
-                          bool fromGT, int *pFocus)
+                          int *pFocus)
 {
             UInt32 cryptKey[4];
             ZeroMemory(cryptKey, sizeof(cryptKey));
@@ -1098,55 +1082,47 @@ static void LoadUserPass (const wchar *accountName, char *username, ShaDigest *p
     *pRemember = false;
     username[0] = '\0';
 
-    if (!fromGT)
-            {
-                wchar fileAndPath[MAX_PATH];
-                PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
-                PathAddFilename(fileAndPath, fileAndPath, L"login.dat", arrsize(fileAndPath));
+    wchar fileAndPath[MAX_PATH];
+    PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
+    PathAddFilename(fileAndPath, fileAndPath, L"login.dat", arrsize(fileAndPath));
 #ifndef PLASMA_EXTERNAL_RELEASE
-                // internal builds can use the local init directory
-                wchar localFileAndPath[MAX_PATH];
-                StrCopy(localFileAndPath, L"init\\login.dat", arrsize(localFileAndPath));
-                if (PathDoesFileExist(localFileAndPath))
-                    StrCopy(fileAndPath, localFileAndPath, arrsize(localFileAndPath));
+    // internal builds can use the local init directory
+    wchar localFileAndPath[MAX_PATH];
+    StrCopy(localFileAndPath, L"init\\login.dat", arrsize(localFileAndPath));
+    if (PathDoesFileExist(localFileAndPath))
+        StrCopy(fileAndPath, localFileAndPath, arrsize(localFileAndPath));
 #endif
-                hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileAndPath, true, cryptKey);
-                if (stream && !stream->AtEnd())
-                {
-                    UInt32 savedKey[4];
-                    stream->Read(sizeof(savedKey), savedKey);
+    hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileAndPath, true, cryptKey);
+    if (stream && !stream->AtEnd())
+    {
+        UInt32 savedKey[4];
+        stream->Read(sizeof(savedKey), savedKey);
 
-                    if (memcmp(cryptKey, savedKey, sizeof(savedKey)) == 0)
-                    {
-                        temp = stream->ReadSafeString();
+        if (memcmp(cryptKey, savedKey, sizeof(savedKey)) == 0)
+        {
+            temp = stream->ReadSafeString();
 
-                        if (temp)
-                        {
-                    StrCopy(username, temp, kMaxAccountNameLength);
-                            delete temp;
-                        }
-                        else
-                            username[0] = '\0';
-
-                *pRemember = stream->Readbool();
-
-                if (*pRemember)
-                        {
-                    stream->Read(sizeof(pNamePassHash->data), pNamePassHash->data);
-                    *pFocus = IDOK;
-                        }
-                        else
-                    *pFocus = IDC_URULOGIN_PASSWORD;
-                    }
-
-                    stream->Close();
-                    delete stream;
-                }
+            if (temp)
+            {
+        StrCopy(username, temp, kMaxAccountNameLength);
+                delete temp;
             }
             else
+                username[0] = '\0';
+
+    *pRemember = stream->Readbool();
+
+    if (*pRemember)
             {
-        StrToAnsi (username, accountName, kMaxAccountNameLength);
+        stream->Read(sizeof(pNamePassHash->data), pNamePassHash->data);
+        *pFocus = IDOK;
+            }
+            else
         *pFocus = IDC_URULOGIN_PASSWORD;
+        }
+
+        stream->Close();
+        delete stream;
     }
 }
 
@@ -1219,14 +1195,12 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
             int focus_control = IDC_URULOGIN_USERNAME;
 
-            LoadUserPass (loginParam->accountName, username, &namePassHash, &remember_password, loginParam->fromGT, &focus_control);
+            LoadUserPass (loginParam->accountName, username, &namePassHash, &remember_password, &focus_control);
 
             SetDlgItemText(hwndDlg, IDC_URULOGIN_USERNAME, username);
             CheckDlgButton(hwndDlg, IDC_URULOGIN_REMEMBERPASS, remember_password ? BST_CHECKED : BST_UNCHECKED);
             if (remember_password)
                 SetDlgItemText(hwndDlg, IDC_URULOGIN_PASSWORD, FAKE_PASS_STRING);
-            if (loginParam->fromGT)
-                EnableWindow(GetDlgItem(hwndDlg, IDC_URULOGIN_REMEMBERPASS), FALSE);
 
             SetFocus(GetDlgItem(hwndDlg, focus_control));
 
@@ -1288,7 +1262,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                     GetDlgItemText(hwndDlg, IDC_URULOGIN_PASSWORD, password, kMaxPasswordLength);
                     remember_password = (IsDlgButtonChecked(hwndDlg, IDC_URULOGIN_REMEMBERPASS) == BST_CHECKED);
 
-                    SaveUserPass (username, password, &namePassHash, remember_password, loginParam->fromGT);
+                    SaveUserPass (username, password, &namePassHash, remember_password);
 
                     LoginDialogParam loginParam;
                     MemSet(&loginParam, 0, sizeof(loginParam));
@@ -1589,16 +1563,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         return PARABLE_NORMAL_EXIT;
     }
 
-    if (IsExpired())
+    FILE *serverIniFile = _wfopen(serverIni, L"rb");
+    if (serverIniFile)
     {
-        hsMessageBox("This client is over 30 days old.  You need to get a new one.", "Error", hsMessageBoxNormal);
-        return PARABLE_NORMAL_EXIT;
-    }
-
-    FILE *serverini = _wfopen(serverIni, L"rb");
-    if (serverini)
-    {
-        fclose(serverini);
+        fclose(serverIniFile);
         pfConsoleEngine tempConsole;
         tempConsole.ExecuteFile(serverIni);
     }
@@ -1616,46 +1584,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     curl_global_init(CURL_GLOBAL_ALL);
 
     wchar       acctName[kMaxAccountNameLength];
-
-    // if we're being launched from gametap then don't use the intro dialogs
-    if (StrStrI(lpCmdLine, "screenname=")) {
-        doIntroDialogs = false;
-
-        wchar       authToken[kMaxPublisherAuthKeyLength];
-        wchar       os[kMaxGTOSIdLength];
-        ShaDigest   emptyDigest;
-
-        MemSet(acctName, 0, sizeof(acctName));
-        MemSet(authToken, 0, sizeof(authToken));
-        MemSet(os, 0, sizeof(os));
-
-        const char* temp = lpCmdLine;
-        char token[128];
-        while (StrTokenize(&temp, token, arrsize(token), " =")) {
-            if (StrCmpI(token, "screenname") == 0) {
-                if (!StrTokenize(&temp, token, arrsize(token), " ="))
-                    break;
-
-                StrToUnicode(acctName, token, arrsize(acctName));
-            }
-            else if (StrCmpI(token, "authtoken") == 0) {
-                if (!StrTokenize(&temp, token, arrsize(token), " ="))
-                    break;
-
-                StrToUnicode(authToken, token, arrsize(authToken));
-            }
-            else if (StrCmpI(token, "os") == 0) {
-                if (!StrTokenize(&temp, token, arrsize(token), " ="))
-                    break;
-
-                StrToUnicode(os, token, arrsize(os));
-            }
-        }
-
-        NetCommSetAccountUsernamePassword(acctName, emptyDigest);
-        NetCommSetAuthTokenAndOS(authToken, os);
-    }
-
     bool                needExit = false;
     LoginDialogParam    loginParam;
     MemSet(&loginParam, 0, sizeof(loginParam));
@@ -1668,7 +1596,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         if (IS_NET_ERROR(auth) || cancelled) {
             doIntroDialogs = true;
 
-            loginParam.fromGT = true;
             loginParam.authError = auth;
             StrCopy(loginParam.accountName, acctName, arrsize(loginParam.accountName));
 
@@ -1681,7 +1608,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     if (doIntroDialogs) {
         if (TGIsCider)
-            needExit = !TGRunLoginDialog (loginParam.accountName, loginParam.fromGT);
+            needExit = !TGRunLoginDialog (loginParam.accountName);
         else if (::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_MAIN ), NULL, UruLoginDialogProc, (LPARAM)&loginParam ) <= 0)
             needExit = true;
     }
@@ -1867,76 +1794,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     return PARABLE_NORMAL_EXIT;
 }
 
-bool IsExpired()
-{
-    bool expired = false;
-
-#ifndef PLASMA_EXTERNAL_RELEASE
-    char ourPath[MAX_PATH];
-    GetModuleFileName(NULL, ourPath, sizeof(ourPath));
-    DWORD ok = 0;
-    DWORD size = GetFileVersionInfoSize(ourPath, &ok);
-    if (size > 0)
-    {
-        void* data = TRACKED_NEW UInt8[size];
-        GetFileVersionInfo(ourPath, ok, size, data);
-
-        unsigned int descLen = 0;
-        void* desc = nil;
-        if (VerQueryValue(data, "\\StringFileInfo\\040904B0\\FileDescription", &desc, &descLen))
-        {
-            const char* buildDateStart = strstr((const char*)desc, " - Built ");
-            if (buildDateStart)
-            {
-                buildDateStart += strlen(" - Built ");
-                const char* buildDateEnd = strstr(buildDateStart, " at");
-                if (buildDateEnd)
-                {
-                    int len = buildDateEnd-buildDateStart;
-
-                    char buf[32];
-                    strncpy(buf, buildDateStart, len);
-                    buf[len] = '\0';
-
-                    int month = atoi(strtok(buf, "/"));
-                    int day = atoi(strtok(nil, "/"));
-                    int year = atoi(strtok(nil, "/"));
-
-                    SYSTEMTIME curTime, buildTime;
-                    GetLocalTime(&buildTime);
-                    GetLocalTime(&curTime);
-                    buildTime.wDay = day;
-                    buildTime.wMonth = month;
-                    buildTime.wYear = year;
-
-                    ULARGE_INTEGER iCurTime, iBuildTime;
-                    FILETIME ft;
-
-                    SystemTimeToFileTime(&curTime, &ft);
-                    iCurTime.LowPart = ft.dwLowDateTime;
-                    iCurTime.HighPart = ft.dwHighDateTime;
-
-                    SystemTimeToFileTime(&buildTime, &ft);
-                    iBuildTime.LowPart = ft.dwLowDateTime;
-                    iBuildTime.HighPart = ft.dwHighDateTime;
-
-                    int secsOld = (int)((iCurTime.QuadPart - iBuildTime.QuadPart) / 10000000);
-                    int daysOld = secsOld / (60 * 60 * 24);
-
-                    if (daysOld > 30)
-                        expired = true;
-                }
-            }
-        }
-
-        delete [] data;
-    }
-#endif
-
-    return expired;
-}
-
-void GetCryptKey(UInt32* cryptKey, unsigned numElements)
+static void GetCryptKey(UInt32* cryptKey, unsigned numElements)
 {
     char volName[] = "C:\\";
     int index = 0;
