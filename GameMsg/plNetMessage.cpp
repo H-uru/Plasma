@@ -194,3 +194,84 @@ void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
             << QString("Name: %1").arg(buffer.readString()));
     }
 }
+
+enum GenericVarType
+{
+    kTypeInt, kTypeFloat, kTypeBool, kTypeString, kTypeByte,
+    kTypeAny, kTypeUint, kTypeDouble, kTypeNone = 0xFF,
+};
+
+void Create_NetMsgSharedState(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+    Uoid(parent, "Object", buffer);
+
+    ChunkBuffer* state = NetMessageStream(buffer);
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("State Name: %1").arg(state->readPString<unsigned short>()));
+
+    unsigned count = state->read<unsigned>();
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Server May Delete: %1").arg(state->read<bool>() ? "True" : "False"));
+    QTreeWidgetItem* vars = new QTreeWidgetItem(parent, QStringList() << "Variables");
+    for (unsigned i = 0; i < count; ++i) {
+        QString varName = state->readSafeString();
+
+        unsigned char type = state->read<unsigned char>();
+        switch (type) {
+        case kTypeInt:
+            new QTreeWidgetItem(vars, QStringList()
+                << QString("%1: (Int) %2").arg(varName).arg(state->read<int>()));
+            break;
+        case kTypeUint:
+            new QTreeWidgetItem(vars, QStringList()
+                << QString("%1: (UInt) %2").arg(varName).arg(state->read<unsigned>()));
+            break;
+        case kTypeString:
+            new QTreeWidgetItem(vars, QStringList()
+                << QString("%1: (String) \"%2\"").arg(varName).arg(state->readSafeString()));
+            break;
+        case kTypeAny:
+            new QTreeWidgetItem(vars, QStringList()
+                << QString("%1: (Any) \"%2\"").arg(varName).arg(state->readSafeString()));
+            break;
+        case kTypeFloat:
+            new QTreeWidgetItem(vars, QStringList()
+                << QString("%1: (Float) %2").arg(varName).arg(state->read<float>()));
+            break;
+        case kTypeBool:
+            new QTreeWidgetItem(vars, QStringList()
+                << QString("%1: (Bool) %2").arg(varName)
+                   .arg(state->read<bool>() ? "True" : "False"));
+            break;
+        case kTypeByte:
+            new QTreeWidgetItem(vars, QStringList()
+                << QString("%1: (Byte) %2").arg(varName).arg(state->read<unsigned char>()));
+            break;
+        case kTypeDouble:
+            new QTreeWidgetItem(vars, QStringList()
+                << QString("%1: (Double) %2").arg(varName).arg(state->read<double>()));
+            break;
+        default:
+            {
+                new QTreeWidgetItem(parent, QStringList()
+                    << QString("Unsupported GenericVar (%1)").arg(type, 4, 16, QChar('0')));
+
+                QTreeWidgetItem* item = parent;
+                while (item->parent())
+                    item = item->parent();
+                QFont warnFont = item->font(0);
+                warnFont.setBold(true);
+                item->setFont(0, warnFont);
+                item->setForeground(0, Qt::red);
+
+                OutputDebugStringA(QString("Unsupported GenericVar (%1)\n")
+                                   .arg(type, 4, 16, QChar('0')).toUtf8().data());
+                i = count;
+            }
+        }
+    }
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Lock Request: %1").arg(buffer.read<bool>() ? "True" : "False"));
+}

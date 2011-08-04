@@ -76,6 +76,18 @@ public:
         return temp;
     }
 
+    template <typename _Tp>
+    QString readPString()
+    {
+        _Tp length = read<_Tp>();
+        char* str = new char[length + 1];
+        chomp(str, length);
+        str[length] = 0;
+        QString temp = QString::fromUtf8(str, length);
+        delete[] str;
+        return temp;
+    }
+
     QString readUuid()
     {
         unsigned int u1 = read<unsigned int>();

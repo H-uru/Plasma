@@ -344,6 +344,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kNetMsgGameMessage:
         Create_NetMsgGameMessage(parent, buffer);
         break;
+    case kNetMsgTestAndSet:
+        Create_NetMsgSharedState(parent, buffer);
+        break;
     case kNotifyMsg:
         Create_NotifyMsg(parent, buffer);
         break;
