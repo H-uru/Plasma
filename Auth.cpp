@@ -283,6 +283,34 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                 Node_Factory(node, buffer);
                 break;
             }
+        case kCli2Auth_VaultNodeAdd:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_VaultNodeAdd").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Parent ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Child ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Owner ID: %1").arg(buffer.read<unsigned>()));
+                break;
+            }
+        case kCli2Auth_VaultNodeRemove:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_VaultNodeRemove").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Parent ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Child ID: %1").arg(buffer.read<unsigned>()));
+                break;
+            }
         case kCli2Auth_VaultFetchNodeRefs:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
@@ -469,6 +497,30 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Revision ID: %1").arg(buffer.readUuid()));
                 break;
             }
+        case kAuth2Cli_VaultNodeAdded:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_VaultNodeAdded").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Parent ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Child ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Owner ID: %1").arg(buffer.read<unsigned>()));
+                break;
+            }
+        case kAuth2Cli_VaultNodeRemoved:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_VaultNodeRemoved").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Parent ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Child ID: %1").arg(buffer.read<unsigned>()));
+                break;
+            }
         case kAuth2Cli_VaultNodeRefsFetched:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
@@ -511,6 +563,17 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
                     << QString("%1 <-- Auth2Cli_VaultSaveNodeReply").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Result: %1").arg(buffer.readResultCode()));
+                break;
+            }
+        case kAuth2Cli_VaultAddNodeReply:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_VaultAddNodeReply").arg(timeFmt));
                 top->setForeground(0, kColorAuth);
                 new QTreeWidgetItem(top, QStringList()
                     << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
