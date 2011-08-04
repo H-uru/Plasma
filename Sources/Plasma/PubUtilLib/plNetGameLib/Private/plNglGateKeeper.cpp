@@ -427,7 +427,7 @@ static void Connect (
     connect.hdr.connType        = kConnTypeCliToGateKeeper;
     connect.hdr.hdrBytes        = sizeof(connect.hdr);
     connect.hdr.buildId         = BuildId();
-    connect.hdr.buildType       = BuildType();
+    connect.hdr.buildType       = BUILD_TYPE_LIVE;
     connect.hdr.branchId        = BranchId();
     connect.hdr.productId       = ProductId();
     connect.data.token          = conn->token;

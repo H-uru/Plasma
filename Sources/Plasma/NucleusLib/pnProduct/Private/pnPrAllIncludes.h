@@ -36,7 +36,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtils/pnUtils.h"
 
 #include "pnPrBuildId.h"
-#include "pnPrBuildType.h"
 #include "pnPrBranchId.h"
 #include "pnPrProductId.h"
 #include "pnPrBuildString.h"

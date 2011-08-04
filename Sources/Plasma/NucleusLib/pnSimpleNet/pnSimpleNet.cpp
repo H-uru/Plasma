@@ -366,7 +366,7 @@ static void Connect (const NetAddress & addr, ConnectParam * cp) {
         connect.hdr.connType    = kConnTypeSimpleNet;
         connect.hdr.hdrBytes    = sizeof(connect.hdr);
         connect.hdr.buildId     = BuildId();
-        connect.hdr.buildType   = BuildType();
+        connect.hdr.buildType   = BUILD_TYPE_LIVE;
         connect.hdr.branchId    = BranchId();
         connect.hdr.productId   = ProductId();
         connect.data.channelId  = cp->channel->GetValue();

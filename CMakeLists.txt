@@ -27,27 +27,9 @@ if(CURL_IS_STATIC)
 endif(CURL_IS_STATIC)
 
 option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
-
 if(PLASMA_EXTERNAL_RELEASE)
     add_definitions(-DPLASMA_EXTERNAL_RELEASE)
 endif(PLASMA_EXTERNAL_RELEASE)
-
-set(PLASMA_BUILD_TYPE "Live"
-    CACHE STRING "Which type of client to build")
-set_property(CACHE PLASMA_BUILD_TYPE PROPERTY STRINGS
-             "Dev" "QA" "Test" "Beta" "Live")
-
-if(PLASMA_BUILD_TYPE STREQUAL "Dev")
-    add_definitions(-DBUILD_TYPE=BUILD_TYPE_DEV)
-elseif(PLASMA_BUILD_TYPE STREQUAL "QA")
-    add_definitions(-DBUILD_TYPE=BUILD_TYPE_QA)
-elseif(PLASMA_BUILD_TYPE STREQUAL "Test")
-    add_definitions(-DBUILD_TYPE=BUILD_TYPE_TEST)
-elseif(PLASMA_BUILD_TYPE STREQUAL "Beta")
-    add_definitions(-DBUILD_TYPE=BUILD_TYPE_BETA)
-elseif(PLASMA_BUILD_TYPE STREQUAL "Live")
-    add_definitions(-DBUILD_TYPE=BUILD_TYPE_LIVE)
-endif(PLASMA_BUILD_TYPE STREQUAL "Dev")
 
 set(PLASMA_TARGETS "Client"
     CACHE STRING "Which set of plasma targets to build and use")

@@ -102,13 +102,12 @@ const wchar * ProductLongName () {
 
 //============================================================================
 void ProductString (wchar * dest, unsigned destChars) {
-    // Example: "UruLive.Beta.2.214 - External.Release"
+    // Example: "UruLive.2.214 - External.Release"
     StrPrintf(
         dest,
         destChars,
-        L"%s.%s.%u.%u - %s.%s",
+        L"%s.%u.%u - %s.%s",
         ProductCoreName(),
-        BuildTypeString(),
         BranchId(),
         BuildId(),
         #ifdef PLASMA_EXTERNAL_RELEASE
