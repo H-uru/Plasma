@@ -364,6 +364,7 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
                     << QString("%1 <-- Auth2Cli_ServerAddr").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
                 unsigned addr = buffer.read<unsigned>();
                 new QTreeWidgetItem(top, QStringList()
                     << QString("Address: %1.%2.%3.%4").arg(addr & 0xFF)
@@ -371,7 +372,6 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                        .arg((addr >> 24) & 0xFF));
                 new QTreeWidgetItem(top, QStringList()
                     << QString("Token: %1").arg(buffer.readUuid()));
-                top->setForeground(0, kColorAuth);
                 break;
             }
         case kAuth2Cli_ClientRegisterReply:

@@ -44,6 +44,99 @@ static ChunkBuffer* NetMessageStream(ChunkBuffer& buffer)
     return chunk;
 }
 
+enum ClientGuidContents
+{
+    kHasAcctUuid       = (1<<0),
+    kHasPlayerId       = (1<<1),
+    kHasTempPlayerId   = (1<<2),
+    kHasCCRLevel       = (1<<3),
+    kHasProtectedLogin = (1<<4),
+    kHasBuildType      = (1<<5),
+    kHasPlayerName     = (1<<6),
+    kHasSrcAddr        = (1<<7),
+    kHasSrcPort        = (1<<8),
+    kHasReserved       = (1<<9),
+    kHasClientKey      = (1<<10),
+};
+
+static void ClientGuid(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
+{
+    static const char* s_flagNames[] = {
+        "kHasAcctUuid", "kHasPlayerId", "kHasTempPlayerId", "kHasCCRLevel",
+        "kHasProtectedLogin", "kHasBuildType", "kHasPlayerName", "kHasSrcAddr",
+        "kHasSrcPort", "kHasReserved", "kHasClientKey", "(1<<11)",
+        "(1<<12)", "(1<<13)", "(1<<14)", "(1<<15)"
+    };
+
+    QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList() << title);
+
+    unsigned short contents = buffer.read<unsigned short>();
+    FlagField(top, "Contents", contents, s_flagNames);
+
+    if (contents & kHasAcctUuid) {
+        new QTreeWidgetItem(top, QStringList()
+            << QString("Account UUID: %1").arg(buffer.readUuid()));
+    }
+    if ((contents & kHasPlayerId) || (contents & kHasTempPlayerId)) {
+        new QTreeWidgetItem(top, QStringList()
+            << QString("Player ID: %1").arg(buffer.read<unsigned>()));
+    }
+    if (contents & kHasPlayerName) {
+        new QTreeWidgetItem(top, QStringList()
+            << QString("Player Name: %1").arg(buffer.readPString<unsigned short>()));
+    }
+    if (contents & kHasCCRLevel) {
+        new QTreeWidgetItem(top, QStringList()
+            << QString("CCR Level: %1").arg(buffer.read<unsigned char>()));
+    }
+    if (contents & kHasProtectedLogin) {
+        new QTreeWidgetItem(top, QStringList()
+            << QString("Protected Login: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    }
+    if (contents & kHasBuildType) {
+        unsigned char buildType = buffer.read<unsigned char>();
+        switch (buildType) {
+        case 0:
+            new QTreeWidgetItem(top, QStringList() << "Build Type: Unknown");
+            break;
+        case 1:
+            new QTreeWidgetItem(top, QStringList() << "Build Type: Debug");
+            break;
+        case 2:
+            new QTreeWidgetItem(top, QStringList() << "Build Type: Internal");
+            break;
+        case 3:
+            new QTreeWidgetItem(top, QStringList() << "Build Type: External");
+            break;
+        default:
+            {
+                QTreeWidgetItem* item = new QTreeWidgetItem(top, QStringList()
+                    << QString("Build Type: %1").arg(buildType));
+                item->setForeground(0, Qt::red);
+            }
+        }
+    }
+    if (contents & kHasSrcAddr) {
+        unsigned addr = buffer.read<unsigned>();
+        new QTreeWidgetItem(top, QStringList()
+            << QString("Source Address: %1.%2.%3.%4").arg(addr & 0xFF)
+               .arg((addr >> 8) & 0xFF).arg((addr >> 16) & 0xFF)
+               .arg((addr >> 24) & 0xFF));
+    }
+    if (contents & kHasSrcPort) {
+        new QTreeWidgetItem(top, QStringList()
+            << QString("Source Port: %1").arg(buffer.read<unsigned short>()));
+    }
+    if (contents & kHasReserved) {
+        new QTreeWidgetItem(top, QStringList()
+            << QString("Reserved: %1").arg(buffer.read<unsigned short>()));
+    }
+    if (contents & kHasClientKey) {
+        new QTreeWidgetItem(top, QStringList()
+            << QString("Client Key: %1").arg(buffer.readPString<unsigned short>()));
+    }
+}
+
 enum NetMsg_ContentFlags
 {
     kHasTimeSent               = (1<<0),
@@ -60,7 +153,7 @@ enum NetMsg_ContentFlags
     kInitialAgeStateRequest    = (1<<11),
     kHasPlayerID               = (1<<12),
     kUseRelevanceRegions       = (1<<13),
-    kHasAcctUuid               = (1<<14),
+    kHasAcctUuid_1             = (1<<14),
     kInterAgeRouting           = (1<<15),
     kHasVersion                = (1<<16),
     kIsSystemMessage           = (1<<17),
@@ -107,7 +200,7 @@ void Create_NetMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         new QTreeWidgetItem(parent, QStringList()
             << QString("Player ID: %1").arg(buffer.read<unsigned>()));
     }
-    if (contentFlags & kHasAcctUuid) {
+    if (contentFlags & kHasAcctUuid_1) {
         new QTreeWidgetItem(parent, QStringList()
             << QString("Account ID: %1").arg(buffer.readUuid()));
     }
@@ -164,6 +257,37 @@ void Create_NetMsgLoadClone(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         << QString("Initial State: %1").arg(buffer.read<bool>() ? "True" : "False"));
 }
 
+void Create_NetMsgMembersList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    static const char* s_flagNames[] = {
+        "kWaitingForLinkQuery", "kIndirectMember", "kRequestP2P",
+        "kWaitingForChallengeResponse", "kIsServer", "kAllowTimeOut",
+        "(1<<6)", "(1<<7)", "(1<<8)", "(1<<9)", "(1<<10)", "(1<<11)",
+        "(1<<12)", "(1<<13)", "(1<<14)", "(1<<15)",
+        "(1<<16)", "(1<<17)", "(1<<18)", "(1<<19)",
+        "(1<<20)", "(1<<21)", "(1<<22)", "(1<<23)",
+        "(1<<24)", "(1<<25)", "(1<<26)", "(1<<27)",
+        "(1<<28)", "(1<<29)", "(1<<30)", "(1<<31)",
+    };
+
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+
+    unsigned short count = buffer.read<unsigned short>();
+    QTreeWidgetItem* members = new QTreeWidgetItem(parent, QStringList() << "Members");
+    for (unsigned short i = 0; i < count; ++i) {
+        QTreeWidgetItem* member = new QTreeWidgetItem(members, QStringList()
+            << QString("Member %1").arg(i));
+        FlagField(member, "Flags", buffer.read<unsigned>(), s_flagNames);
+        ClientGuid(member, "Client GUID", buffer);
+        Uoid(member, "Avatar Key", buffer);
+    }
+}
+
+void Create_NetMsgMembersListReq(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+}
+
 void Create_NetMsgPlayerPage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
@@ -186,8 +310,9 @@ void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
 
     unsigned count = buffer.read<unsigned>();
+    QTreeWidgetItem* rooms = new QTreeWidgetItem(parent, QStringList() << "Rooms");
     for (unsigned i = 0; i < count; ++i) {
-        QTreeWidgetItem* room = new QTreeWidgetItem(parent, QStringList()
+        QTreeWidgetItem* room = new QTreeWidgetItem(rooms, QStringList()
             << QString("Room %1").arg(i));
         Location(room, "Location", buffer);
         new QTreeWidgetItem(room, QStringList()
