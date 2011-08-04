@@ -137,9 +137,9 @@ void SetGateKeeperSrvHostname (const wchar addr[]) {
 //============================================================================
 // User-visible Server
 //============================================================================
-static wchar s_serverStatusUrl[256];
-static wchar s_serverSignupUrl[256];
-static wchar s_serverName[256];
+static wchar s_serverStatusUrl[256] = {0};
+static wchar s_serverSignupUrl[256] = {0};
+static wchar s_serverName[256] = {0};
 
 //============================================================================
 const wchar *GetServerStatusUrl () {
