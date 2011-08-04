@@ -318,6 +318,17 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Age UUID: %1").arg(buffer.readUuid()));
                 break;
             }
+        case kCli2Auth_GetPublicAgeList:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_GetPublicAgeList").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age Filename: %1").arg(buffer.readString()));
+                break;
+            }
         case kCli2Auth_LogPythonTraceback:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
@@ -527,6 +538,49 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Address: %1.%2.%3.%4").arg(addr & 0xFF)
                        .arg((addr >> 8) & 0xFF).arg((addr >> 16) & 0xFF)
                        .arg((addr >> 24) & 0xFF));
+                break;
+            }
+        case kAuth2Cli_PublicAgeList:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_PublicAgeList").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Result: %1").arg(buffer.readResultCode()));
+                unsigned count = buffer.read<unsigned>();
+                QTreeWidgetItem* ages = new QTreeWidgetItem(top, QStringList() << "Ages");
+                for (unsigned i=0; i<count; ++i) {
+                    unsigned short strbuf[1024];
+                    QTreeWidgetItem* age = new QTreeWidgetItem(ages, QStringList()
+                        << QString("Age Instance %1").arg(buffer.readUuid()));
+
+                    buffer.chomp(strbuf, 64 * sizeof(unsigned short));
+                    strbuf[63] = 0;
+                    new QTreeWidgetItem(age, QStringList()
+                        << QString("Age Filename: %1").arg(QString::fromUtf16(strbuf)));
+                    buffer.chomp(strbuf, 64 * sizeof(unsigned short));
+                    strbuf[63] = 0;
+                    new QTreeWidgetItem(age, QStringList()
+                        << QString("Age Instance Name: %1").arg(QString::fromUtf16(strbuf)));
+                    buffer.chomp(strbuf, 64 * sizeof(unsigned short));
+                    strbuf[63] = 0;
+                    new QTreeWidgetItem(age, QStringList()
+                        << QString("Age User Name: %1").arg(QString::fromUtf16(strbuf)));
+                    buffer.chomp(strbuf, 1024 * sizeof(unsigned short));
+                    strbuf[1023] = 0;
+                    new QTreeWidgetItem(age, QStringList()
+                        << QString("Age Description: %1").arg(QString::fromUtf16(strbuf)));
+                    new QTreeWidgetItem(age, QStringList()
+                        << QString("Age Sequence: %1").arg(buffer.read<unsigned>()));
+                    new QTreeWidgetItem(age, QStringList()
+                        << QString("Age Language: %1").arg(buffer.read<unsigned>()));
+                    new QTreeWidgetItem(age, QStringList()
+                        << QString("Population: %1").arg(buffer.read<unsigned>()));
+                    new QTreeWidgetItem(age, QStringList()
+                        << QString("Current Population: %1").arg(buffer.read<unsigned>()));
+                }
                 break;
             }
         default:
