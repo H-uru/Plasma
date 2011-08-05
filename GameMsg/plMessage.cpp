@@ -77,6 +77,39 @@ void Create_AvatarInputStateMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     FlagField(parent, "State", buffer.read<unsigned short>(), s_stateNames);
 }
 
+void Create_InputIfaceMgrMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    static const char* s_commands[] = {
+        "kAddInterface", "kRemoveInterface", "kEnableClickables", "kDisableClickables",
+        "kSetOfferBookMode", "kClearOfferBookMode", "kNotifyOfferAccepted",
+        "kNotifyOfferRejected", "kNotifyOfferCompleted", "kDisableAvatarClickable",
+        "kEnableAvatarClickable", "kGUIDisableAvatarClickable",
+        "kGUIEnableAvatarClickable", "kSetShareSpawnPoint", "kSetShareAgeInstanceGuid",
+    };
+
+    Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
+
+    unsigned char command = buffer.read<unsigned char>();
+    if (command < (sizeof(s_commands) / sizeof(s_commands[0]))) {
+        new QTreeWidgetItem(parent, QStringList()
+            << QString("Command: %1").arg(s_commands[command]));
+    } else {
+        QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList()
+            << QString("Command: %1").arg(command));
+        item->setForeground(0, Qt::red);
+    }
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Page ID: 0x%1").arg(buffer.read<unsigned>(), 8, 16, QChar('0')));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Age Name: %1").arg(buffer.readSafeString()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Age Filename: %1").arg(buffer.readSafeString()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Spawn Point: %1").arg(buffer.readSafeString()));
+    Key(parent, "Avatar", buffer);
+}
+
 void Create_LinkEffectsTriggerMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);

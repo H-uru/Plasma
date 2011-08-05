@@ -377,6 +377,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kAvatarInputStateMsg:
         Create_AvatarInputStateMsg(parent, buffer);
         break;
+    case kInputIfaceMgrMsg:
+        Create_InputIfaceMgrMsg(parent, buffer);
+        break;
     case kNetMsgRelevanceRegions:
         Create_NetMsgRelevanceRegions(parent, buffer);
         break;
