@@ -65,9 +65,30 @@ void Create_LoadCloneMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 
 void Create_AvatarInputStateMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
+    static const char* s_stateNames[] = {
+        "Move Forward", "Move Backward", "Rotate Left", "Rotate Right",
+        "Strafe Left", "Strafe Right", "Always Run", "Jump",
+        "Consumable Jump", "Fast Modifier", "Strafe Modifier", "Ladder Inverted",
+        "(1<<12)", "(1<<13)", "(1<<14)", "(1<<15)"
+    };
+
     Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
+
+    FlagField(parent, "State", buffer.read<unsigned short>(), s_stateNames);
+}
+
+void Create_LinkEffectsTriggerMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
+
     new QTreeWidgetItem(parent, QStringList()
-        << QString("State: %1").arg(buffer.read<unsigned short>()));
+        << QString("Invisibility Level: %1").arg(buffer.read<unsigned>()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Leaving: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    Key(parent, "Link Key", buffer);
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Effects (Ignored): 0x%1").arg(buffer.read<unsigned>(), 8, 16, QChar('0')));
+    Key(parent, "Animation Key", buffer);
 }
 
 void Create_LoadAvatarMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)

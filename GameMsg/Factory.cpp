@@ -362,6 +362,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kNotifyMsg:
         Create_NotifyMsg(parent, buffer);
         break;
+    case kLinkEffectsTriggerMsg:
+        Create_LinkEffectsTriggerMsg(parent, buffer);
+        break;
     case kAvatarInputStateMsg:
         Create_AvatarInputStateMsg(parent, buffer);
         break;
