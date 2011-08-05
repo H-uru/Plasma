@@ -120,3 +120,27 @@ void Create_NotifyMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         EventData_Factory(item, buffer);
     }
 }
+
+void Create_ServerReplyMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
+
+    int reply = buffer.read<int>();
+    switch (reply) {
+    case -1:
+        new QTreeWidgetItem(parent, QStringList() << "Reply: Invalid");
+        break;
+    case 0:
+        new QTreeWidgetItem(parent, QStringList() << "Reply: Deny");
+        break;
+    case 1:
+        new QTreeWidgetItem(parent, QStringList() << "Reply: Affirm");
+        break;
+    default:
+        {
+            QTreeWidgetItem* item = new QTreeWidgetItem(parent,
+                QStringList() << QString("Reply: %1").arg(reply));
+            item->setForeground(0, Qt::red);
+        }
+    }
+}

@@ -244,6 +244,13 @@ void Create_NetMsgGroupOwner(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     }
 }
 
+void Create_NetMsgInitialAgeStateSent(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Num States: %1").arg(buffer.read<unsigned>()));
+}
+
 void Create_NetMsgLoadClone(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     Create_NetMsgGameMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMsgGameMessage>"), buffer);
