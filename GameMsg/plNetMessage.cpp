@@ -214,6 +214,10 @@ void Create_NetMsgGameMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     QTreeWidgetItem* message = new QTreeWidgetItem(parent, QStringList());
     QString msgType = Factory_Create(message, *subStream, subStream->size());
     message->setText(0, QString("Game Message: %1").arg(msgType));
+    if (subStream->size() != 0) {
+        OutputDebugStringA("Substream parse incomplete\n");
+        *(unsigned*)(0) = 0;
+    }
     delete subStream;
 
     if (buffer.read<bool>()) {
@@ -495,6 +499,11 @@ void Create_NetMsgSharedState(QTreeWidgetItem* parent, ChunkBuffer& buffer)
                 i = count;
             }
         }
+    }
+
+    if (state->size() != 0) {
+        OutputDebugStringA("SharedState parse incomplete\n");
+        *(unsigned*)(0) = 0;
     }
     delete state;
 
