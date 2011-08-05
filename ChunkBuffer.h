@@ -88,6 +88,18 @@ public:
         return temp;
     }
 
+    template <typename _Tp>
+    QString readWPString()
+    {
+        _Tp length = read<_Tp>();
+        unsigned short* str = new unsigned short[length + 1];
+        chomp(str, length * sizeof(unsigned short));
+        str[length] = 0;
+        QString temp = QString::fromUtf16(str, length);
+        delete[] str;
+        return temp;
+    }
+
     QString readUuid()
     {
         unsigned int u1 = read<unsigned int>();

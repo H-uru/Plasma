@@ -59,7 +59,7 @@ static const QString s_nodeTypeNames[] = {
     "Marker", "AgeInfo", "AgeInfoList", "MarkerList"
 };
 
-QString readNodeString(ChunkBuffer& buffer)
+static QString readNodeString(ChunkBuffer& buffer)
 {
     unsigned length = buffer.read<unsigned>() / sizeof(unsigned short);
     unsigned short* utf16 = new unsigned short[length];
@@ -69,7 +69,7 @@ QString readNodeString(ChunkBuffer& buffer)
     return str;
 }
 
-void Node_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+static void Node_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     unsigned nodeSize = buffer.read<unsigned>();
     if (nodeSize < sizeof(unsigned __int64))
@@ -189,6 +189,39 @@ void Node_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
             << QString("Blob_2: %1 bytes").arg(size));
         buffer.skip(size);
     }
+}
+
+static void Score_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList()
+        << QString("Score %1").arg(buffer.read<unsigned>()));
+    new QTreeWidgetItem(top, QStringList()
+        << QString("Owner: %1").arg(buffer.read<unsigned>()));
+    new QTreeWidgetItem(top, QStringList()
+        << QString("Created Time: %1").arg(buffer.read<unsigned>()));
+
+    unsigned type = buffer.read<unsigned>();
+    switch (type) {
+    case 0:
+        new QTreeWidgetItem(top, QStringList() << "Game Type: Fixed");
+        break;
+    case 1:
+        new QTreeWidgetItem(top, QStringList() << "Game Type: Accumulative");
+        break;
+    case 2:
+        new QTreeWidgetItem(top, QStringList() << "Game Type: Accumulative (Allow Negative)");
+        break;
+    default:
+        QTreeWidgetItem* item = new QTreeWidgetItem(top, QStringList()
+            << QString("Game Type: %1").arg(type));
+        item->setForeground(0, Qt::red);
+        break;
+    }
+
+    new QTreeWidgetItem(top, QStringList()
+        << QString("Value: %1").arg(buffer.read<int>()));
+    new QTreeWidgetItem(top, QStringList()
+        << QString("Game Name: %1").arg(readNodeString(buffer)));
 }
 
 bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
@@ -363,6 +396,19 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("%1 --> Cli2Auth_LogPythonTraceback").arg(timeFmt));
                 top->setForeground(0, kColorAuth);
                 new QTreeWidgetItem(top, QStringList() << buffer.readString());
+                break;
+            }
+        case kCli2Auth_ScoreGetScores:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_ScoreGetScores").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Owner ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Game Name: %1").arg(buffer.readString()));
                 break;
             }
         default:
@@ -644,6 +690,22 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     new QTreeWidgetItem(age, QStringList()
                         << QString("Current Population: %1").arg(buffer.read<unsigned>()));
                 }
+                break;
+            }
+        case kAuth2Cli_ScoreGetScoresReply:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_ScoreGetScoresReply").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Result: %1").arg(buffer.readResultCode()));
+                unsigned scoreCount = buffer.read<unsigned>();
+                /*unsigned byteCount =*/ buffer.read<unsigned>();
+                QTreeWidgetItem* scores = new QTreeWidgetItem(top, QStringList() << "Scores");
+                for (unsigned i = 0; i < scoreCount; ++i)
+                    Score_Factory(scores, buffer);
                 break;
             }
         default:
