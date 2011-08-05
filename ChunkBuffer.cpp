@@ -150,6 +150,27 @@ QString ChunkBuffer::readSafeString()
     return str;
 }
 
+QString ChunkBuffer::readSafeWString()
+{
+    unsigned short length = read<unsigned short>();
+    if (!(length & 0xF000))
+        read<unsigned short>();   // Discarded
+    length &= 0x0FFF;
+
+    unsigned short* buffer = new unsigned short[length + 1];
+    chomp(buffer, length * sizeof(unsigned short));
+    read<unsigned short>(); // Extra \0
+    buffer[length] = 0;
+    if (length && (buffer[0] & 0x8000)) {
+        for (unsigned i = 0; i < length; ++i)
+            buffer[i] = ~buffer[i];
+    }
+
+    QString str = QString::fromUtf16(buffer, length);
+    delete[] buffer;
+    return str;
+}
+
 void ChunkBuffer::waitOnData()
 {
     while (m_chunks.size() == 0) {

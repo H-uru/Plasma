@@ -110,6 +110,68 @@ void Create_InputIfaceMgrMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     Key(parent, "Avatar", buffer);
 }
 
+void Create_KIMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    static const char* s_commands[] = {
+        "kHACKChatMsg", "kEnterChatMode", "kSetChatFadeDelay", "kSetTextChatAdminMode",
+        "kDisableKIandBB", "kEnableKIandBB", "kYesNoDialog", "kAddPlayerDevice",
+        "kRemovePlayerDevice", "kUpgradeKILevel", "kDowngradeKILevel", "kRateIt",
+        "kSetPrivateChatChannel", "kUnsetPrivateChatChannel", "kStartBookAlert",
+        "kMiniBigKIToggle", "kKIPutAway", "kChatAreaPageUp", "kChatAreaPageDown",
+        "kChatAreaGoToBegin", "kChatAreaGoToEnd", "kKITakePicture", "kKICreateJournalNote",
+        "kKIToggleFade", "kKIToggleFadeEnable", "kKIChatStatusMsg", "kKILocalChatStatusMsg",
+        "kKIUpSizeFont", "kKIDownSizeFont", "kKIOpenYeehsaBook", "kKIOpenKI",
+        "kKIShowCCRHelp", "kKICreateMarker", "kKICreateMarkerFolder",
+        "kKILocalChatErrorMsg", "kKIPhasedAllOn", "kKIPhasedAllOff", "kKIOKDialog",
+        "kDisableYeeshaBook", "kEnableYeeshaBook", "kQuitDialog", "kTempDisableKIandBB",
+        "kTempEnableKIandBB", "kDisableEntireYeeshaBook", "kEnableEntireYeeshaBook",
+        "kKIOKDialogNoQuit", "kGZUpdated", "kGZInRange", "kGZOutRange",
+        "kUpgradeKIMarkerLevel", "kKIShowMiniKI", "kGZFlashUpdate", "kStartJournalAlert",
+        "kAddJournalBook", "kRemoveJournalBook", "kKIOpenJournalBook", "kMGStartCGZGame",
+        "kMGStopCGZGame", "kKICreateMarkerNode", "kStartKIAlert", "kUpdatePelletScore",
+        "kFriendInviteSent", "kRegisterImager", "kNoCommand"
+    };
+
+    static const char* s_flagNames[] = {
+        "kPrivateMsg", "kAdminMsg", "kDead", "kUNUSED1",
+        "kStatusMsg", "kNeighborMsg", "(1<<6)", "(1<<7)",
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        "(1<<16)", "(1<<17)", "(1<<18)", "(1<<19)",
+        "(1<<20)", "(1<<21)", "(1<<22)", "(1<<23)",
+        "(1<<24)", "(1<<25)", "(1<<26)", "(1<<27)",
+        "(1<<28)", "(1<<29)", "(1<<30)", "(1<<31)",
+    };
+
+    Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
+
+    unsigned char command = buffer.read<unsigned char>();
+    if (command < (sizeof(s_commands) / sizeof(s_commands[0]))) {
+        new QTreeWidgetItem(parent, QStringList()
+            << QString("Command: %1").arg(s_commands[command]));
+    } else {
+        QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList()
+            << QString("Command: %1").arg(command));
+        item->setForeground(0, Qt::red);
+    }
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("User: %1").arg(buffer.readSafeString()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Player ID: %1").arg(buffer.read<unsigned>()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("String: %1").arg(buffer.readSafeWString()));
+
+    unsigned flags = buffer.read<unsigned>();
+    FlagField(parent, "Flags", flags & 0xFFFF00FF, s_flagNames);
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Channel: %1").arg((flags >> 8) & 0xFF));
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Delay: %1").arg(buffer.read<float>()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Value: %1").arg(buffer.read<int>()));
+}
+
 void Create_LinkEffectsTriggerMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);

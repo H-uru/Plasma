@@ -386,6 +386,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kInputIfaceMgrMsg:
         Create_InputIfaceMgrMsg(parent, buffer);
         break;
+    case kKIMessage:
+        Create_KIMessage(parent, buffer);
+        break;
     case kNetMsgRelevanceRegions:
         Create_NetMsgRelevanceRegions(parent, buffer);
         break;
