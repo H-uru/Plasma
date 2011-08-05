@@ -239,6 +239,18 @@ void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     }
 }
 
+void Create_NetMsgGameMessageDirected(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMsgGameMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMsgGameMessage>"), buffer);
+
+    unsigned char count = buffer.read<unsigned char>();
+    QTreeWidgetItem* receivers = new QTreeWidgetItem(parent, QStringList() << "Receivers");
+    for (unsigned char i = 0; i < count; ++i) {
+        new QTreeWidgetItem(receivers, QStringList()
+            << QString("%1").arg(buffer.read<unsigned>()));
+    }
+}
+
 void Create_NetMsgGroupOwner(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     static const char* s_flagNames[] = {
