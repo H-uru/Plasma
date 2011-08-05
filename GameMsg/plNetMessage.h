@@ -28,4 +28,5 @@ void Create_NetMsgMembersListReq(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgPlayerPage(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgRelevanceRegions(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_NetMsgSDLState(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgSharedState(QTreeWidgetItem* parent, ChunkBuffer& buffer);

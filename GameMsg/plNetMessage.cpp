@@ -327,6 +327,57 @@ void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     }
 }
 
+void Create_NetMsgSDLState(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+    Uoid(parent, "Object", buffer);
+
+    ChunkBuffer* state = NetMessageStream(buffer);
+    // TODO:  Add SDL parsing...  I really hate SDL
+    unsigned size = state->size();
+    QString contents;
+    while (size) {
+        if (size > 16) {
+            contents.append(QString("%1 %2 %3 %4 %5 %6 %7 %8  %9 %10 %11 %12 %13 %14 %15 %16%17")
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                            .arg(size == 16 ? "" : "\n"));
+            size -= 16;
+        } else {
+            for (unsigned i = 0; i < size; ++i)
+                contents.append(QString("%1%2")
+                                .arg(state->read<unsigned char>(), 2, 16, QChar('0'))
+                                .arg(i == size ? "" : i == 8 ? "  " : " "));
+            size = 0;
+        }
+    }
+    QTreeWidgetItem* blob = new QTreeWidgetItem(parent, QStringList() << "SDL Blob");
+    QTreeWidgetItem* sdl = new QTreeWidgetItem(blob, QStringList() << contents.toUpper());
+    sdl->setFont(0, QFont("Courier New", sdl->font(0).pointSize()));
+    delete state;
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Initial State: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Persist on Server: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Is Avatar: %1").arg(buffer.read<bool>() ? "True" : "False"));
+}
+
 enum GenericVarType
 {
     kTypeInt, kTypeFloat, kTypeBool, kTypeString, kTypeByte,
@@ -403,6 +454,7 @@ void Create_NetMsgSharedState(QTreeWidgetItem* parent, ChunkBuffer& buffer)
             }
         }
     }
+    delete state;
 
     new QTreeWidgetItem(parent, QStringList()
         << QString("Lock Request: %1").arg(buffer.read<bool>() ? "True" : "False"));

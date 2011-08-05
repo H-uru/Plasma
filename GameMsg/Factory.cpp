@@ -359,6 +359,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kNetMsgInitialAgeStateSent:
         Create_NetMsgInitialAgeStateSent(parent, buffer);
         break;
+    case kNetMsgSDLState:
+        Create_NetMsgSDLState(parent, buffer);
+        break;
     case kNotifyMsg:
         Create_NotifyMsg(parent, buffer);
         break;
