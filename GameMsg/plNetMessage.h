@@ -27,6 +27,7 @@ void Create_NetMsgInitialAgeStateSent(QTreeWidgetItem* parent, ChunkBuffer& buff
 void Create_NetMsgLoadClone(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgMembersList(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgMembersListReq(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_NetMsgMemberUpdate(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgPagingRoom(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgPlayerPage(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 void Create_NetMsgRelevanceRegions(QTreeWidgetItem* parent, ChunkBuffer& buffer);

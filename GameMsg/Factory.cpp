@@ -359,6 +359,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kNetMsgMembersList:
         Create_NetMsgMembersList(parent, buffer);
         break;
+    case kNetMsgMemberUpdate:
+        Create_NetMsgMemberUpdate(parent, buffer);
+        break;
     case kNetMsgInitialAgeStateSent:
         Create_NetMsgInitialAgeStateSent(parent, buffer);
         break;
@@ -373,6 +376,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
         break;
     case kNetMsgSDLStateBCast:
         Create_NetMsgSDLState(parent, buffer);
+        break;
+    case kNetMsgGameMessageDirected:
+        Create_NetMsgGameMessageDirected(parent, buffer);
         break;
     case kAvatarInputStateMsg:
         Create_AvatarInputStateMsg(parent, buffer);

@@ -291,19 +291,19 @@ void Create_NetMsgLoadClone(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         << QString("Initial State: %1").arg(buffer.read<bool>() ? "True" : "False"));
 }
 
+static const char* s_memberFlagNames[] = {
+    "kWaitingForLinkQuery", "kIndirectMember", "kRequestP2P",
+    "kWaitingForChallengeResponse", "kIsServer", "kAllowTimeOut",
+    "(1<<6)", "(1<<7)", "(1<<8)", "(1<<9)", "(1<<10)", "(1<<11)",
+    "(1<<12)", "(1<<13)", "(1<<14)", "(1<<15)",
+    "(1<<16)", "(1<<17)", "(1<<18)", "(1<<19)",
+    "(1<<20)", "(1<<21)", "(1<<22)", "(1<<23)",
+    "(1<<24)", "(1<<25)", "(1<<26)", "(1<<27)",
+    "(1<<28)", "(1<<29)", "(1<<30)", "(1<<31)",
+};
+
 void Create_NetMsgMembersList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
-    static const char* s_flagNames[] = {
-        "kWaitingForLinkQuery", "kIndirectMember", "kRequestP2P",
-        "kWaitingForChallengeResponse", "kIsServer", "kAllowTimeOut",
-        "(1<<6)", "(1<<7)", "(1<<8)", "(1<<9)", "(1<<10)", "(1<<11)",
-        "(1<<12)", "(1<<13)", "(1<<14)", "(1<<15)",
-        "(1<<16)", "(1<<17)", "(1<<18)", "(1<<19)",
-        "(1<<20)", "(1<<21)", "(1<<22)", "(1<<23)",
-        "(1<<24)", "(1<<25)", "(1<<26)", "(1<<27)",
-        "(1<<28)", "(1<<29)", "(1<<30)", "(1<<31)",
-    };
-
     Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
 
     unsigned short count = buffer.read<unsigned short>();
@@ -311,7 +311,7 @@ void Create_NetMsgMembersList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     for (unsigned short i = 0; i < count; ++i) {
         QTreeWidgetItem* member = new QTreeWidgetItem(members, QStringList()
             << QString("Member %1").arg(i));
-        FlagField(member, "Flags", buffer.read<unsigned>(), s_flagNames);
+        FlagField(member, "Flags", buffer.read<unsigned>(), s_memberFlagNames);
         ClientGuid(member, "Client GUID", buffer);
         Uoid(member, "Avatar Key", buffer);
     }
@@ -320,6 +320,19 @@ void Create_NetMsgMembersList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 void Create_NetMsgMembersListReq(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+}
+
+void Create_NetMsgMemberUpdate(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+
+    QTreeWidgetItem* member = new QTreeWidgetItem(parent, QStringList() << "Member");
+    FlagField(member, "Flags", buffer.read<unsigned>(), s_memberFlagNames);
+    ClientGuid(member, "Client GUID", buffer);
+    Uoid(member, "Avatar Key", buffer);
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Add Member: %1").arg(buffer.read<bool>() ? "True" : "False"));
 }
 
 void Create_NetMsgPlayerPage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
