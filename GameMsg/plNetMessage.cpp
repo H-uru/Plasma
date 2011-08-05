@@ -224,6 +224,21 @@ void Create_NetMsgGameMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     }
 }
 
+void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+
+    unsigned count = buffer.read<unsigned>();
+    QTreeWidgetItem* rooms = new QTreeWidgetItem(parent, QStringList() << "Rooms");
+    for (unsigned i = 0; i < count; ++i) {
+        QTreeWidgetItem* room = new QTreeWidgetItem(rooms, QStringList()
+            << QString("Room %1").arg(i));
+        Location(room, "Location", buffer);
+        new QTreeWidgetItem(room, QStringList()
+            << QString("Name: %1").arg(buffer.readPString<unsigned short>()));
+    }
+}
+
 void Create_NetMsgGroupOwner(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     static const char* s_flagNames[] = {
@@ -312,19 +327,21 @@ void Create_NetMsgRelevanceRegions(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     BitVector(parent, "Regions I Am In", buffer);
 }
 
-void Create_NetMsgRoomsList(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+void Create_NetMsgPagingRoom(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
-    Create_NetMessage(new QTreeWidgetItem(parent, QStringList() << "<plNetMessage>"), buffer);
+    static const char* s_flagNames[] = {
+        "kPagingOut", "kResetList", "kRequestState", "kFinalRoomInAge",
+        "(1<<4)", "(1<<5)", "(1<<6)", "(1<<7)",
+        "(1<<8)", "(1<<9)", "(1<<10)", "(1<<11)",
+        "(1<<12)", "(1<<13)", "(1<<14)", "(1<<15)",
+        "(1<<16)", "(1<<17)", "(1<<18)", "(1<<19)",
+        "(1<<20)", "(1<<21)", "(1<<22)", "(1<<23)",
+        "(1<<24)", "(1<<25)", "(1<<26)", "(1<<27)",
+        "(1<<28)", "(1<<29)", "(1<<30)", "(1<<31)",
+    };
 
-    unsigned count = buffer.read<unsigned>();
-    QTreeWidgetItem* rooms = new QTreeWidgetItem(parent, QStringList() << "Rooms");
-    for (unsigned i = 0; i < count; ++i) {
-        QTreeWidgetItem* room = new QTreeWidgetItem(rooms, QStringList()
-            << QString("Room %1").arg(i));
-        Location(room, "Location", buffer);
-        new QTreeWidgetItem(room, QStringList()
-            << QString("Name: %1").arg(buffer.readString()));
-    }
+    Create_NetMsgRoomsList(new QTreeWidgetItem(parent, QStringList() << "<plNetMessageRoomsList>"), buffer);
+    FlagField(parent, "Paging Flags", buffer.read<unsigned char>(), s_flagNames);
 }
 
 void Create_NetMsgSDLState(QTreeWidgetItem* parent, ChunkBuffer& buffer)

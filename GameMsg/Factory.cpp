@@ -335,6 +335,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     unsigned short type = buffer.read<unsigned short>();
 
     switch (type) {
+    case kNetMsgPagingRoom:
+        Create_NetMsgPagingRoom(parent, buffer);
+        break;
     case kNetMsgGroupOwner:
         Create_NetMsgGroupOwner(parent, buffer);
         break;
@@ -367,6 +370,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
         break;
     case kLinkEffectsTriggerMsg:
         Create_LinkEffectsTriggerMsg(parent, buffer);
+        break;
+    case kNetMsgSDLStateBCast:
+        Create_NetMsgSDLState(parent, buffer);
         break;
     case kAvatarInputStateMsg:
         Create_AvatarInputStateMsg(parent, buffer);
