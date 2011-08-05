@@ -627,6 +627,17 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Result: %1").arg(buffer.readResultCode()));
                 break;
             }
+        case kAuth2Cli_VaultRemoveNodeReply:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_VaultRemoveNodeReply").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Result: %1").arg(buffer.readResultCode()));
+                break;
+            }
         case kAuth2Cli_AgeReply:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
