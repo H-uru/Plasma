@@ -58,44 +58,6 @@ void hsBounds::Write(hsStream *s)
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#if 0 // MESH_GEN_DEFER
-void hsBounds3::Draw(hsGView3* v, hsG3DDevice* d, 
-                hsScalar r, hsScalar g, hsScalar b, hsScalar a, 
-                hsBool spheric) 
-{
-
-    hsGViewClipState* clipState = v->SaveClipDisabled();
-    if( hsGClip3::kClipCulled & v->ClipTestBounds(this) )
-    {
-        v->RestoreClipDisabled(clipState);
-        return;
-    }
-
-    // Setup Material
-    hsGMaterial *mat = TRACKED_NEW hsGMaterial;
-    hsGLayer* lay = mat->MakeBaseLayer();
-    lay->SetAmbientColor(r,g,b,a);
-    lay->SetMiscFlags(hsGMatState::kMiscWireFrame | hsGMatState::kMiscTwoSided);
-    lay->SetShadeFlags(hsGMatState::kShadeNoShade);
-    mat->SetLayer(lay, 0);
-
-    // Setup tMesh
-    hsGTriMesh tMesh;
-    if( spheric )
-        MakeTriMeshSphere(&tMesh);
-    else
-        MakeTriMesh(&tMesh, hsTriangle3::kTwoSided);
-    
-
-    tMesh.SetMaterial(mat);
-    hsRefCnt_SafeUnRef(mat);
-
-    tMesh.Render(v,d);
-
-    v->RestoreClipDisabled(clipState);
-}
-#endif // MESH_GEN_DEFER
-
 void hsBounds3::Transform(const hsMatrix44 *mat) 
 {
 #if 0 // IDENT
@@ -637,55 +599,6 @@ void    hsBoundsOriented::Union(const hsBounds3 *b)
 //
 //
 //
-void hsBoundsOriented::Reset(hsGTriMesh *tMesh)
-{
-#if 0 // MESH_GEN_DEFER
-    const float OBJCVT_ABOUT_ZERO = 1.0e-4f;
-    const float OBJCVT_ABOUT_ONE = 1.0f - OBJCVT_ABOUT_ZERO;
-
-    hsPlane3 *planes = TRACKED_NEW hsPlane3[tMesh->GetNumTriangles()];
-    UInt32 nPlanes = 0;
-
-    int i;
-    for( i = 0; i < tMesh->GetNumTriangles(); i++ )
-    {
-        hsTriangle3 *tri;
-        tri = tMesh->GetTriangle(i);
-        hsPlane3 pln;
-        tri->ComputePlane(&pln);
-        
-        hsScalar norm = hsFastMath::InvSqrRoot(pln.fN.MagnitudeSquared());
-        pln.fN *= norm;
-
-        int j;
-        for( j = 0; j < nPlanes; j++ )
-        {
-            if( (pln.fN.InnerProduct(planes[j].fN)> OBJCVT_ABOUT_ONE)
-                &&((pln.fD/planes[j].fD) >= 1.0-OBJCVT_ABOUT_ZERO)
-                &&((pln.fD/planes[j].fD) <= 1.0+OBJCVT_ABOUT_ZERO) )
-                break;
-        }
-        if( j == nPlanes )
-            planes[nPlanes++] = pln;
-    }
-
-    SetNumberPlanes(nPlanes);
-    for( i = 0; i < nPlanes; i++ )
-        SetPlane(i, planes+i);
-
-    delete [] planes;
-
-    // Compute center
-    hsPoint3 centroid(0,0,0);
-    for(i=0; i<tMesh->GetNumPoints(); i++)
-    {
-        centroid = centroid + *tMesh->GetPoint(i);
-    }
-    centroid = centroid / (hsScalar)tMesh->GetNumPoints();
-    SetCenter(&centroid);
-#endif // MESH_GEN_DEFER
-}
-
 
 void hsBoundsOriented::Write(hsStream *stream)
 {
