@@ -23,7 +23,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <process.h>
+
 #include "hsTypes.h"
 #include "plSoundBuffer.h"
 
@@ -166,7 +166,7 @@ plSoundBuffer::~plSoundBuffer()
     {
         while(!fLoaded)
         {
-            Sleep(10);
+            hsSleep::Sleep(10);
         }
     }
 
