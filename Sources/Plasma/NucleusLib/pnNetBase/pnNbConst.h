@@ -90,7 +90,7 @@ const unsigned kBillingTypeGameTap              = 1 << 1;
 
 struct AccountRoleInfo {
     unsigned    Role;
-    char*       Descriptor;
+    const char* Descriptor;
 };
 
 // Account role flags

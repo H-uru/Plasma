@@ -35,7 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnProduct/pnProduct.h"
 
-#include "pnNbConst.h"
+#include "../pnNbConst.h"
 #include "pnNbError.h"
 #include "pnNbKeys.h"
 #include "pnNbProtocol.h"
