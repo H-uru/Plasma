@@ -428,7 +428,7 @@ static bool     showBounds = false;
                     float y = sH * fControls[ i ]->fBoundsPoints[ j ].fY;
                     plDebugText::Instance().DrawRect( (UInt16)(x - 2), (UInt16)(y - 2), (UInt16)(x + 2), (UInt16)(y + 2), color );
                     char str[ 16 ];
-                    itoa( j, str, 10 );
+                    snprintf(str, 16, "%d", j);
                     plDebugText::Instance().DrawString( (UInt16)(x + 8), (UInt16)(y - 8), str, color );
                 }
             }

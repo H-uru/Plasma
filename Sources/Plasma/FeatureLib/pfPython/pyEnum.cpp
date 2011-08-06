@@ -274,7 +274,7 @@ PyObject *EnumValue_oct(EnumValue *v)
     if (x == 0)
         strcpy(buf, "0");
     else
-        _snprintf(buf, sizeof(buf), "0%lo", x);
+        snprintf(buf, sizeof(buf), "0%lo", x);
     return PyString_FromString(buf);
 }
 
@@ -287,7 +287,7 @@ PyObject *EnumValue_hex(EnumValue *v)
         Py_INCREF(Py_NotImplemented);
         return Py_NotImplemented;
     }
-    _snprintf(buf, sizeof(buf), "0x%lx", x);
+    snprintf(buf, sizeof(buf), "0x%lx", x);
     return PyString_FromString(buf);
 }
 
