@@ -416,15 +416,15 @@ hsBool hsStream::GetToken(char *s, UInt32 maxLen, const char beginComment, const
     s[k] = 0;
 
 
-    if( (k > 0)&&!_stricmp(s, "skip") )
+    if( (k > 0)&&!stricmp(s, "skip") )
     {
         int depth = 1;
         while( depth && GetToken(s, maxLen, beginComment, endCom) )
         {
-            if( !_stricmp(s, "skip") )
+            if( !stricmp(s, "skip") )
                 depth++;
             else
-            if( !_stricmp(s, "piks") )
+            if( !stricmp(s, "piks") )
                 depth--;
         }
         return GetToken(s, maxLen, beginComment, endCom);
@@ -466,15 +466,15 @@ hsBool hsStream::ReadLn(char *s, UInt32 maxLen, const char beginComment, const c
     s[k] = 0;
 
 
-    if( (k > 0)&&!_stricmp(s, "skip") )
+    if( (k > 0)&&!stricmp(s, "skip") )
     {
         int depth = 1;
         while( depth && ReadLn(s, maxLen, beginComment, endCom) )
         {
-            if( !_stricmp(s, "skip") )
+            if( !stricmp(s, "skip") )
                 depth++;
             else
-            if( !_stricmp(s, "piks") )
+            if( !stricmp(s, "piks") )
                 depth--;
         }
         return ReadLn(s, maxLen, beginComment, endCom);
@@ -987,7 +987,7 @@ hsBool hsUNIXStream::Open(const char *name, const char *mode)
 hsBool hsUNIXStream::Open(const wchar *name, const wchar *mode)
 {
     fPosition = 0;
-    fRef = _wfopen(name, mode);
+    fRef = hsWFopen(name, mode);
     return (fRef) ? true : false;
 }
 

@@ -37,7 +37,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #if HS_BUILD_FOR_WIN32
+#ifdef _MSC_VER
 # include <crtdbg.h>        /* for _RPT_BASE */
+#endif
 # define WIN32_LEAN_AND_MEAN
 # define WIN32_EXTRA_LEAN
 # include <windows.h>   // For OutputDebugString()

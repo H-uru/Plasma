@@ -97,21 +97,43 @@ void MemSetColor (unsigned short color);
 
 #ifdef __cplusplus
 
+#include <new>
+
+#ifndef _MSC_VER
+#define THROW(x) throw(x)
+#define THROW_EMPTY throw()
+#else
+#define THROW(x)
+#define THROW_EMPTY
+#endif
+
 // standard new and delete
-inline void * __cdecl operator new (size_t bytes) { return MemAlloc((unsigned)bytes, 0, __FILE__, __LINE__); }
-inline void __cdecl operator delete (void * ptr)  { MemFree(ptr, 0); }
+inline void* CDECL operator new (size_t bytes) THROW(std::bad_alloc)
+    { return MemAlloc((unsigned)bytes, 0, __FILE__, __LINE__); }
+inline void* CDECL operator new [](size_t bytes) THROW(std::bad_alloc)
+    { return MemAlloc((unsigned)bytes, 0, __FILE__, __LINE__); }
+inline void CDECL operator delete (void * ptr) THROW_EMPTY
+    { MemFree(ptr, 0); }
+inline void CDECL operator delete [](void * ptr) THROW_EMPTY
+    { MemFree(ptr, 0); }
 
 // memcheck-friendly new
-inline void * __cdecl operator new (size_t bytes, const char file[], unsigned line) { return MemAlloc((unsigned)bytes, 0, file, line); }
-inline void __cdecl operator delete (void * ptr, const char []     , unsigned)      { return MemFree(ptr, 0); }
+inline void* CDECL operator new (size_t bytes, const char file[], unsigned line)
+    { return MemAlloc((unsigned)bytes, 0, file, line); }
+inline void* CDECL operator new [](size_t bytes, const char file[], unsigned line)
+    { return MemAlloc((unsigned)bytes, 0, file, line); }
+inline void CDECL operator delete (void * ptr, const char [], unsigned)
+    { return MemFree(ptr, 0); }
+inline void CDECL operator delete [](void * ptr, const char [], unsigned)
+    { return MemFree(ptr, 0); }
 #define TRACKED_NEW new(__FILE__, __LINE__)
 
 
 // placement new
-#ifndef __PLACEMENT_NEW_INLINE
+#if defined(_MSC_VER) && !defined(__PLACEMENT_NEW_INLINE)
 #define __PLACEMENT_NEW_INLINE
-inline void * __cdecl operator new (size_t, void * ptr) { return ptr; }
-inline void __cdecl operator delete (void *, void *) {}
+inline void* CDECL operator new (size_t, void * ptr) { return ptr; }
+inline void CDECL operator delete (void *, void *) {}
 #endif  // ifndef __PLACEMENT_NEW_INLINE
 
 #endif // ifdef __cplusplus
