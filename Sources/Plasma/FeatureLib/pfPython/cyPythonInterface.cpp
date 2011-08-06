@@ -1919,7 +1919,7 @@ void PythonInterface::WriteToStdErr(const char* text)
 //
 //  PURPOSE    : Find module. If it doesn't exist then don't create, return nil.
 //
-PyObject* PythonInterface::FindModule(char* module)
+PyObject* PythonInterface::FindModule(const char* module)
 {
     PyObject *m;
     // first we must get rid of any old modules of the same name, we'll replace it
@@ -1960,7 +1960,7 @@ hsBool PythonInterface::IsModuleNameUnique(char* module)
 //
 //  PURPOSE    : create a new module with built-ins
 //
-PyObject* PythonInterface::CreateModule(char* module)
+PyObject* PythonInterface::CreateModule(const char* module)
 {
     PyObject *m, *d;
     // first we must get rid of any old modules of the same name, we'll replace it
