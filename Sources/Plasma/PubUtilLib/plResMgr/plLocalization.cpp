@@ -30,7 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plLocalization::Language plLocalization::fLanguage = plLocalization::kEnglish;
 
-char* plLocalization::fLangTags[] =
+const char* plLocalization::fLangTags[] =
 {
     "_eng", // kEnglish
     "_fre", // kFrench
@@ -41,7 +41,7 @@ char* plLocalization::fLangTags[] =
 };
 const int kLangTagLen = 4;
 
-char* plLocalization::fLangNames[] =
+const char* plLocalization::fLangNames[] =
 {
     "English", // kEnglish
     "French",  // kFrench

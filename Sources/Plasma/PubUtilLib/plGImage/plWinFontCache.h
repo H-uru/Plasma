@@ -107,7 +107,7 @@ class plWinFontCache
         void    LoadCustomFonts( const char *dir );
 
         // Our custom font extension
-        static char *kCustFontExtension;
+        static const char* kCustFontExtension;
 };
 
 

@@ -232,7 +232,7 @@ public:
     // debug
     virtual std::string AsStdString() const
     {
-        char * delim = "";
+        const char* delim = "";
 
         std::stringstream ss;
         if ( GetHasPlayerID() )
