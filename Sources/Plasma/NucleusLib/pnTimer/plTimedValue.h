@@ -28,8 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plTimedValue_inc
 
 #include "hsTimer.h"
-
-class hsStream;
+#include "hsStream.h"
 
 // plTimedValue
 // To use, replace your member var of type T with plTimedValue<T>.
@@ -133,7 +132,7 @@ void plTimedSimple<T>::Read(hsStream* s)
 template <class T> 
 void plTimedSimple<T>::Write(hsStream* s) const
 {
-    T val = Value();
+    T val = this->Value();
     s->WriteSwap(val);
 }
 
@@ -148,7 +147,7 @@ void plTimedCompound<T>::Read(hsStream* s)
 template <class T> 
 void plTimedCompound<T>::Write(hsStream* s) const
 {
-    T val = Value();
+    T val = this->Value();
     val.Write(s);
 }
 
