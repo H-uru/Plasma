@@ -100,7 +100,7 @@ plStateDescriptor* plSDLMgr::FindDescriptor(const char* name, int version, const
     int highestFound = -1;
     for(it=(*dl).begin(); it!= (*dl).end(); it++)
     {
-        if (!_stricmp((*it)->GetName(), name) )
+        if (!stricmp((*it)->GetName(), name) )
         {
             if ( (*it)->GetVersion()==version )
             {

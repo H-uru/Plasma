@@ -206,7 +206,7 @@ bool plFileUtils::FileMove(const wchar* existingFile, const wchar* newFile)
 
 bool plFileUtils::FileExists(const wchar* file)
 {
-    FILE* fp = _wfopen(file, L"rb");
+    FILE* fp = hsWFopen(file, L"rb");
     bool retVal = (fp != nil);
     if (fp)
         fclose(fp);

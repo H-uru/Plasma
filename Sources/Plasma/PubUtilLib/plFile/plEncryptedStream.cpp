@@ -114,7 +114,7 @@ hsBool plEncryptedStream::Open(const wchar* name, const wchar* mode)
 {
     if (wcscmp(mode, L"rb") == 0)
     {
-        fRef = _wfopen(name, mode);
+        fRef = hsWFopen(name, mode);
         fPosition = 0;
 
         if (!fRef)
@@ -515,7 +515,7 @@ bool plEncryptedStream::IsEncryptedFile(const char* fileName)
 
 bool plEncryptedStream::IsEncryptedFile(const wchar* fileName)
 {
-    FILE* fp = _wfopen(fileName, L"rb");
+    FILE* fp = hsWFopen(fileName, L"rb");
     if (!fp)
         return false;
 
