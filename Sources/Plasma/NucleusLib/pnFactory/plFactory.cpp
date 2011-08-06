@@ -188,7 +188,7 @@ UInt16 plFactory::FindClassIndex(const char* className)
         int i;
         for( i = 0; i < theFactory->fCreators.GetCount(); i++ )
         {
-            if( theFactory->fCreators[i] && !_stricmp(className, theFactory->fCreators[i]->ClassName()) )
+            if( theFactory->fCreators[i] && !stricmp(className, theFactory->fCreators[i]->ClassName()) )
             {
                 return theFactory->fCreators[i]->ClassIndex();
             }
