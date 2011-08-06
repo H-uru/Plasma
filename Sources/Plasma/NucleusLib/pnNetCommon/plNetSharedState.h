@@ -44,7 +44,7 @@ protected:
     bool    fServerMayDelete;   // ok to delete (don't save) since this state is equivalent to the default state
 public:
     
-    plNetSharedState(char* name=nil);
+    plNetSharedState(const char* name=nil);
     virtual ~plNetSharedState();
 
     virtual void Copy(plNetSharedState* ss);
