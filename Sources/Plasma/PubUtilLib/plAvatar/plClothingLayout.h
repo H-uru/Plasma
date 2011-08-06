@@ -61,7 +61,7 @@ public:
     UInt32 fWidth;
     UInt32 fHeight;
 
-    plClothingElement(char *name, UInt32 xPos, UInt32 yPos, UInt32 width, UInt32 height)
+    plClothingElement(const char *name, UInt32 xPos, UInt32 yPos, UInt32 width, UInt32 height)
     {
         fName = hsStrcpy(name);
         fXPos = xPos;

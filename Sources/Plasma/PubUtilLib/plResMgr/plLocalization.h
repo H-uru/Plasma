@@ -59,8 +59,8 @@ public:
 
 protected:
     static Language fLanguage;
-    static char* fLangTags[kNumLanguages];
-    static char* fLangNames[kNumLanguages];
+    static const char* fLangTags[kNumLanguages];
+    static const char* fLangNames[kNumLanguages];
     static bool fUsesUnicode[kNumLanguages];
     static encodingTypes fUnicodeEncoding[kNumLanguages];
 
@@ -73,7 +73,7 @@ public:
     static void SetLanguage(Language lang) { fLanguage = lang; }
     static Language GetLanguage() { return fLanguage; }
 
-    static char* GetLanguageName(Language lang) { return fLangNames[lang]; }
+    static const char* GetLanguageName(Language lang) { return fLangNames[lang]; }
 
     static hsBool UsingUnicode() { return fUsesUnicode[fLanguage]; }
     static encodingTypes UnicodeEncoding() { return fUnicodeEncoding[fLanguage]; }

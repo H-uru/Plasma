@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <wingdi.h>
 
 
-char    *plWinFontCache::kCustFontExtension = ".prf";
+const char* plWinFontCache::kCustFontExtension = ".prf";
 
 
 plWinFontCache::plWinFontCache()

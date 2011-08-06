@@ -97,13 +97,13 @@ enum
 struct Win32keyConvert
 {
     UInt32  fVKey;
-    char*   fKeyName;
+    const char*   fKeyName;
 };
 
 struct CommandConvert
 {
     ControlEventCode fCode;
-    char* fDesc;
+    const char* fDesc;
 };
 
 
