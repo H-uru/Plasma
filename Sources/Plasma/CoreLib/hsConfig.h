@@ -34,16 +34,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 
-#ifdef BUILDPS2
-#define HS_BUILD_FOR_PS2        1
-#define PLASMA_NO_NETWORK       1 
-#define PLASMA_NO_KEYBOARD      1
-#define PLASMA_NO_GLIDE         1
-#define PLASMA_NO_DDRAW         1
-#define HS_BUILD_PLASMA         1
-#define NEXUS_NO_2D             1
-#endif
-
 //////////////////// Change the 1s and 0s //////////////////////
 
 #define HS_CAN_USE_FLOAT            1
@@ -140,13 +130,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if (!defined(HS_NO_MEM_TRACKER))
 #define HS_FIND_MEM_LEAKS
 #endif
-#endif
-
-
-#if HS_BUILD_FOR_PS2
-#define ATTRIBUTE_FOR_PS2 __attribute__((aligned (16)))     /* SUNSOFT */
-#else
-#define ATTRIBUTE_FOR_PS2
 #endif
 
 
