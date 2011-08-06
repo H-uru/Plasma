@@ -43,7 +43,7 @@ UInt32              pfConsoleCmdGroup::fBaseCmdGroupRef = 0;
 
 //// Constructor & Destructor ////////////////////////////////////////////////
 
-pfConsoleCmdGroup::pfConsoleCmdGroup( char *name, char *parent )
+pfConsoleCmdGroup::pfConsoleCmdGroup(const char *name, const char *parent )
 {
     fNext = nil;
     fPrevPtr = nil;
@@ -160,7 +160,7 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindNestedPartialCommand( char *name, UInt32
     // Try us
     for( cmd = fCommands; cmd != nil; cmd = cmd->GetNext() )
     {
-        if( _strnicmp( cmd->GetName(), name, strlen( name ) ) == 0 )
+        if(strnicmp( cmd->GetName(), name, strlen( name ) ) == 0 )
         {
             if( *counter == 0 )
                 return cmd;
@@ -250,7 +250,7 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindCommandNoCase( char *name, UInt8 flags, 
     {
         for( cmd = start; cmd != nil; cmd = cmd->GetNext() )
         {
-            if( _strnicmp( cmd->GetName(), name, strlen( name ) ) == 0 )
+            if(strnicmp( cmd->GetName(), name, strlen( name ) ) == 0 )
                 return cmd;
         }
     }
@@ -285,7 +285,7 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupNoCase( char *name, UInt8 fl
     {
         for( group = start; group != nil; group = group->GetNext() )
         {
-            if( _strnicmp( group->GetName(), name, strlen( name ) ) == 0 )
+            if(strnicmp( group->GetName(), name, strlen( name ) ) == 0 )
                 return group;
         }
     }
@@ -355,7 +355,8 @@ int  pfConsoleCmdGroup::IterateCommands(pfConsoleCmdIterator* t, int depth)
 
 char    pfConsoleCmd::fSigTypes[ kNumTypes ][ 8 ] = { "int", "float", "bool", "string", "char", "void", "..." };
 
-pfConsoleCmd::pfConsoleCmd( char *group, char *name, char *paramList, char *help, 
+pfConsoleCmd::pfConsoleCmd(const char *group, const char *name,
+                            const char *paramList, const char *help, 
                             pfConsoleCmdPtr func, hsBool localOnly )
 {
     fNext = nil;
@@ -390,7 +391,7 @@ pfConsoleCmd::~pfConsoleCmd()
 //// ICreateSignature ////////////////////////////////////////////////////////
 //  Creates the signature and sig labels based on the given string.
 
-void    pfConsoleCmd::ICreateSignature( char *paramList )
+void    pfConsoleCmd::ICreateSignature(const char *paramList )
 {
     static char seps[] = " :-";
 
@@ -461,7 +462,7 @@ void    pfConsoleCmd::ICreateSignature( char *paramList )
 //  Finds the group this command should be in and registers it with that
 //  group.
 
-void    pfConsoleCmd::Register( char *group, char *name )
+void    pfConsoleCmd::Register(const char *group, const char *name )
 {
     pfConsoleCmdGroup   *g;
 

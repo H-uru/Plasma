@@ -58,7 +58,7 @@ class pfConsoleEngine
         char    fErrorMsg[ 128 ];
         char    fLastErrorLine[ 512 ];
 
-        void    ISetErrorMsg( char *msg ) { hsStrncpy( fErrorMsg, msg, sizeof( fErrorMsg ) ); }
+        void    ISetErrorMsg(const char *msg ) { hsStrncpy( fErrorMsg, msg, sizeof( fErrorMsg ) ); }
 
         // Recursive function to build a string of the groups a command is in
         void        IBuildCmdNameRecurse( pfConsoleCmdGroup *group, char *string );
