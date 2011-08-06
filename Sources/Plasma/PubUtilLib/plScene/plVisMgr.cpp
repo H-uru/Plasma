@@ -60,13 +60,13 @@ void plVisMgr::Write(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Write(s, mgr);
 }
 
-void plVisMgr::Register(plVisRegion* reg, hsBool not)
+void plVisMgr::Register(plVisRegion* reg, hsBool bnot)
 {
     // This should happen pretty infrequently, or
     // I wouldn't be doing it so cloth-headed-ly.
-    hsTArray<plVisRegion*>& regions = not ? fNotRegions : fRegions;
-    hsBitVector& indices = not ? fIdxNot : fIdxSet;
-    int& maxIdx = not ? fMaxNot : fMaxSet;
+    hsTArray<plVisRegion*>& regions = bnot ? fNotRegions : fRegions;
+    hsBitVector& indices = bnot ? fIdxNot : fIdxSet;
+    int& maxIdx = bnot ? fMaxNot : fMaxSet;
     int i;
     for( i = kNumReserved; ; i++ )
     {
@@ -84,14 +84,14 @@ void plVisMgr::Register(plVisRegion* reg, hsBool not)
     hsAssert(false, "Infinite bitvector has all bits set?");
 }
 
-void plVisMgr::UnRegister(plVisRegion* reg, hsBool not)
+void plVisMgr::UnRegister(plVisRegion* reg, hsBool bnot)
 {
     // Mark our index for recycling
-    hsBitVector& indices= not ? fIdxNot : fIdxSet;
+    hsBitVector& indices= bnot ? fIdxNot : fIdxSet;
     indices.ClearBit(reg->GetIndex());
 
     // Nuke the region from our list.
-    hsTArray<plVisRegion*>& regions = not ? fNotRegions : fRegions;
+    hsTArray<plVisRegion*>& regions = bnot ? fNotRegions : fRegions;
     int idx = regions.Find(reg);
     if( regions.kMissingIndex != idx )
         regions.Remove(idx);
