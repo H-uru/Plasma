@@ -79,7 +79,7 @@ void MachineGetName (wchar * computerName, unsigned length = 32);
 ***/
 
 // used to dump the internal state of a module
-typedef void (__cdecl * FStateDump)(
+typedef void (CDECL * FStateDump)(
     void *      param,
     const wchar fmt[],
     ...

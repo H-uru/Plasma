@@ -35,19 +35,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTREF_H
 
 
-/*****************************************************************************
-*
-*   Debug macros
-*
-***/
-
-#ifdef REFCOUNT_DEBUGGING
-    #define REFTRACE    DEBUG_MSG
-#else
-    #define REFTRACE    NULL_STMT
-#endif
-
-
 /****************************************************************************
 *
 *   AtomicRef
@@ -78,7 +65,9 @@ public:
         ASSERT(!zeroed);
         #endif
         long prev = AtomicAdd(&m_ref, 1);
-        REFTRACE("Inc %p: %u", this, prev+1);
+        #ifdef REFCOUNT_DEBUGGING
+        DEBUG_MSG("Inc %p: %u", this, prev+1);
+        #endif
         return prev+1;
     }
     inline long IncRef (const char tag[]) {
@@ -86,7 +75,9 @@ public:
         ASSERT(!zeroed);
         #endif
         long prev = AtomicAdd(&m_ref, 1);
-        REFTRACE("Inc %p %s: %u", this, tag, prev+1);
+        #ifdef REFCOUNT_DEBUGGING
+        DEBUG_MSG("Inc %p %s: %u", this, tag, prev+1);
+        #endif
         return prev+1;
     }
     inline long IncRef (unsigned n) {
@@ -94,7 +85,9 @@ public:
         ASSERT(!zeroed);
         #endif
         long prev = AtomicAdd(&m_ref, n);
-        REFTRACE("Inc %p: %u", this, prev+n);
+        #ifdef REFCOUNT_DEBUGGING
+        DEBUG_MSG("Inc %p: %u", this, prev+n);
+        #endif
         return prev+n;
     }
     inline long IncRef (unsigned n, const char tag[]) {
@@ -102,7 +95,9 @@ public:
         ASSERT(!zeroed);
         #endif
         long prev = AtomicAdd(&m_ref, n);
-        REFTRACE("Inc %p %s: %u", this, tag, prev+n);
+        #ifdef REFCOUNT_DEBUGGING
+        DEBUG_MSG("Inc %p %s: %u", this, tag, prev+n);
+        #endif
         return prev+n;
     }
 
@@ -117,7 +112,9 @@ public:
             #endif
             OnZeroRef();
         }
-        REFTRACE("Dec %p: %u", this, prev-1);
+        #ifdef REFCOUNT_DEBUGGING
+        DEBUG_MSG("Dec %p: %u", this, prev-1);
+        #endif
         return prev-1;
     }
     inline long DecRef (const char tag[]) {
@@ -131,7 +128,9 @@ public:
             #endif
             OnZeroRef();
         }
-        REFTRACE("Dec %p %s: %u", this, tag, prev-1);
+        #ifdef REFCOUNT_DEBUGGING
+        DEBUG_MSG("Dec %p %s: %u", this, tag, prev-1);
+        #endif
         return prev-1;
     }
 
@@ -142,8 +141,10 @@ public:
         #ifdef HS_DEBUGGING
         ASSERT(!zeroed);
         #endif
-        REFTRACE("Inc %p %s: (xfer)", this, newTag);
-        REFTRACE("Dec %p %s: (xfer)", this, oldTag);
+        #ifdef REFCOUNT_DEBUGGING
+        DEBUG_MSG("Inc %p %s: (xfer)", this, newTag);
+        DEBUG_MSG("Dec %p %s: (xfer)", this, oldTag);
+        #endif
     }
 
     inline unsigned GetRefCount () {
