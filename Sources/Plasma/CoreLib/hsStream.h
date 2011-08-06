@@ -338,9 +338,6 @@ public:
     virtual void    SetFileRef(UInt32 refNum);
 };
 
-#if !HS_BUILD_FOR_PS2
-#if !(HS_BUILD_FOR_REFERENCE)
-
 class hsUNIXStream: public hsStream
 {   
     FILE*       fRef;
@@ -398,9 +395,6 @@ public:
 
     virtual UInt32  GetEOF();
 };
-
-#endif
-#endif
 
 class hsRAMStream : public hsStream {
     hsAppender          fAppender;
