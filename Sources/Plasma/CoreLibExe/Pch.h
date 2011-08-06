@@ -51,6 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <malloc.h>
 
-#ifdef HS_BUILD_FOR_WIN32
+#if _MSC_VER
 #include <crtdbg.h>
 #endif
