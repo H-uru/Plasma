@@ -761,7 +761,6 @@ void plDSoundBuffer::SetTimeOffsetSec(float seconds)
 
 void plDSoundBuffer::SetTimeOffsetBytes(unsigned bytes)
 {
-    alSourcef(source, AL_BYTE_OFFSET, bytes);
+    alSourcei(source, AL_BYTE_OFFSET, bytes);
     ALenum error = alGetError();
 }
-        
