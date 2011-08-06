@@ -554,7 +554,7 @@ inline T * TList<T>::NewFlags (unsigned flags, ELinkType linkType, T * existingN
 //===========================================================================
 template<class T>
 inline T * TList<T>::NewZero (ELinkType linkType, T * existingNode, const char file[], int line) {
-    return NewFlags(MEM_ZERO, linkType, existingNode, file, line);
+    return NewFlags(0, linkType, existingNode, file, line);
 }
 
 //===========================================================================
@@ -605,7 +605,7 @@ public:
 //===========================================================================
 template<class T, int linkOffset>
 TListDecl<T,linkOffset>::TListDecl () {
-    SetLinkOffset(linkOffset);
+    this->SetLinkOffset(linkOffset);
 }
 
 
@@ -626,5 +626,5 @@ public:
 //===========================================================================
 template<class T>
 void TListDyn<T>::Initialize (int linkOffset) {
-    SetLinkOffset(linkOffset);
+    this->SetLinkOffset(linkOffset);
 }

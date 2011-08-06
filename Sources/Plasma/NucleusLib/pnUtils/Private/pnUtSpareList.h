@@ -102,13 +102,13 @@ public:
 //===========================================================================
 template<class T>
 void * TSpareList<T>::Alloc () {
-    return CBaseSpareList::Alloc(OBJECT_SIZE, typeid(T).raw_name());
+    return CBaseSpareList::Alloc(OBJECT_SIZE, typeid(T).name());
 }
 
 //===========================================================================
 template<class T>
 void TSpareList<T>::CleanUp () {
-    CBaseSpareList::CleanUp(typeid(T).raw_name());
+    CBaseSpareList::CleanUp(typeid(T).name());
 }
 
 //===========================================================================
@@ -127,5 +127,5 @@ void TSpareList<T>::Free (T * node) {
 //===========================================================================
 template<class T>
 T * TSpareList<T>::New () {
-    return new(CBaseSpareList::Alloc(OBJECT_SIZE, typeid(T).raw_name())) T;
+    return new(CBaseSpareList::Alloc(OBJECT_SIZE, typeid(T).name())) T;
 }

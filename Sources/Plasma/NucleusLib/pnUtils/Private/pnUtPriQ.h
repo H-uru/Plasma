@@ -99,7 +99,7 @@ private:
     int m_linkOffset;
     ARRAY(C *) m_array;
 
-    friend TBasePriority<C,P>;
+    friend class TBasePriority<C,P>;
 };
 
 //===========================================================================
@@ -332,7 +332,7 @@ inline void TPriorityQueue<C,P>::UnlinkAll () {
 template<class C, class P, int linkOffset>
 class TPriorityQueueDecl : public TPriorityQueue<C,P> {
 public:
-    TPriorityQueueDecl () { SetLinkOffset(linkOffset); }
+    TPriorityQueueDecl () { this->SetLinkOffset(linkOffset); }
 };
 
 
@@ -345,7 +345,7 @@ public:
 template<class C, class P>
 class TPriorityQueueDyn : public TPriorityQueue<C,P> {
 public:
-    void Initialize (int linkOffset) { SetLinkOffset(linkOffset); }
+    void Initialize (int linkOffset) { this->SetLinkOffset(linkOffset); }
 };
 
 
@@ -381,7 +381,7 @@ private:
     TPriorityQueue<C,P> * m_queue;
     unsigned              m_index;
 
-    friend TPriorityQueue<C,P>; 
+    friend class TPriorityQueue<C,P>;
 };
 
 //===========================================================================
@@ -421,7 +421,7 @@ public:
         if (value == m_value)
             return;
         m_value = value;
-        Relink();
+        this->Relink();
     }
     T Get () const {
         return m_value;
@@ -454,7 +454,7 @@ public:
         if (m_time == time)
             return;
         m_time = time;
-        Relink();
+        this->Relink();
     }
     unsigned Get () const {
         return m_time;
