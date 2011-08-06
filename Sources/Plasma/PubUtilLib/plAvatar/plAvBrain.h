@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <deque>
 
 class plArmatureModBase;
+class plArmatureMod;
 class plArmatureBehavior;
 class plHKAction;
 class plAvTask;

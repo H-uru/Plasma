@@ -33,7 +33,6 @@ class plDSoundBuffer;
 class DSoundCallbackHandle;
 class plAudioFileReader;
 class plStreamingSoundThread;
-enum CallbackHandleType;
 class plSoundDeswizzler;
 
 class plWin32StreamingSound : public plWin32Sound
