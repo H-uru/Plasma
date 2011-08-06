@@ -65,7 +65,7 @@ class pfConsoleCmdGroup
             kFindPartial = 0x01
         };
 
-        pfConsoleCmdGroup( char *name, char *parent );
+        pfConsoleCmdGroup(const char *name, const char *parent );
         ~pfConsoleCmdGroup();
 
         void    AddCommand( pfConsoleCmd *cmd );
@@ -159,7 +159,7 @@ class pfConsoleCmd
 {
     protected:
         char            fName[ 128 ];
-        char            *fHelpString;
+        const char*     fHelpString;
 
         pfConsoleCmdPtr fFunction;
         hsBool          fLocalOnly;
@@ -172,7 +172,7 @@ class pfConsoleCmd
         hsExpander<UInt8>   fSignature;
         hsExpander<char *>  fSigLabels;
 
-        void    ICreateSignature( char *paramList );
+        void    ICreateSignature(const char *paramList );
 
     public:
 
@@ -192,10 +192,10 @@ class pfConsoleCmd
         static char         fSigTypes[ kNumTypes ][ 8 ];
 
 
-        pfConsoleCmd( char *group, char *name, char *paramList, char *help, pfConsoleCmdPtr func, hsBool localOnly = false );
+        pfConsoleCmd(const char *group, const char *name, const char *paramList, const char *help, pfConsoleCmdPtr func, hsBool localOnly = false );
         ~pfConsoleCmd();
 
-        void    Register( char *group, char *name );
+        void    Register(const char *group, const char *name );
         void    Unregister();
         void    Execute( Int32 numParams, pfConsoleCmdParam *params, void (*PrintFn)( const char * ) = nil );
 
@@ -204,7 +204,7 @@ class pfConsoleCmd
 
         pfConsoleCmd    *GetNext( void ) { return fNext; }
         char            *GetName( void ) { return fName; }
-        char            *GetHelp( void ) { return fHelpString; }
+        const char      *GetHelp( void ) { return fHelpString; }
         const char      *GetSignature( void );
 
         pfConsoleCmdGroup   *GetParent( void ) { return fParentGroup; }
