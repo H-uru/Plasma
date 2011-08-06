@@ -86,7 +86,7 @@ public:
     bool operator>=(pfLocalizedString &obj);
     bool operator!=(pfLocalizedString &obj);
 
-    operator const wchar_t *() {return fPlainTextRep.c_str();}
+    //operator const wchar_t *() {return fPlainTextRep.c_str();}
     operator std::wstring() {return fPlainTextRep;}
 
     pfLocalizedString operator+(pfLocalizedString &obj);
