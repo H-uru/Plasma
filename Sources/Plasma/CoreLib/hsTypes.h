@@ -521,8 +521,8 @@ hsDebugMessageProc hsSetDebugMessageProc(hsDebugMessageProc newProc);
 extern hsDebugMessageProc gHSStatusProc;
 hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 
-void __cdecl ErrorAssert (int line, const char file[], const char fmt[], ...);
-void __cdecl ErrorFatal (int line, const char file[], const char fmt[], ...);
+void CDECL ErrorAssert (int line, const char file[], const char fmt[], ...);
+void CDECL ErrorFatal (int line, const char file[], const char fmt[], ...);
 void ErrorMinimizeAppWindow ();
 
 enum EErrorOption {
@@ -561,7 +561,7 @@ void DebugMsgV (const char fmt[], va_list args);
     #define ASSERT(expr)                        NULL_STMT
     #define ASSERTMSG(expr, msg)                NULL_STMT
     #define FATAL(msg)                          NULL_STMT
-    #define DEBUG_MSG                           NULL_STMT
+    #define DEBUG_MSG                           (void)
     #define DEBUG_MSGV                          NULL_STMT
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     NULL_STMT
 
