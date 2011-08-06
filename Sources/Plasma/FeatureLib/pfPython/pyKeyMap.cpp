@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // conversion functions
 const char* pyKeyMap::ConvertVKeyToChar( UInt32 vk, UInt32 flags )
 {
-    char *key = plKeyMap::ConvertVKeyToChar( vk );
+    const char *key = plKeyMap::ConvertVKeyToChar( vk );
     static char shortKey[ 2 ];
     if( key == nil )
     {
