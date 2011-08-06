@@ -26,6 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVersion.h"
 #include "pnFactory/plFactory.h"
 #include <vector>
+#include <cstring>
 
 #include "plCreatableIndex.h"
 #define ChangedCreatable(ver, creatable) if (minorVersion == ver) creatables.push_back(CLASS_INDEX_SCOPED(creatable));
