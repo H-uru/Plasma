@@ -44,51 +44,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 
-///////////////////////Impulse Defines////////////////////////////////////////////////
-
-#define HS_IMPULSE_SUPPORT_GRAY4 0
-
-///////////////////////Plasma Defines //////////////////////////////////////////////////
-
-#ifdef   HS_BUILD_PLASMA
-
-    #define HS_IGNORE_T2K         1
-    #define HS_SUPPORT_NFNT_FONTS 1
-
-#endif // HS_BUILD_PLASMA
-
-
-
 ////////////////////  Specific Compiler Stuff This Section is computed  ////////////
 
 #if defined(macintosh) && defined(__POWERPC__)
     #define HS_BUILD_FOR_MACPPC         1
-    #define HS_CPU_BENDIAN              1
 #elif defined(macintosh)
     #define HS_BUILD_FOR_MAC68K         1
-#elif defined(_M_IX86) && defined(_WIN32)
+#elif defined(_WIN32)
     #define HS_BUILD_FOR_WIN32          1
-    #define HS_CPU_LENDIAN              1
 #elif defined(__unix__)
     #define HS_BUILD_FOR_UNIX           1
-    #if defined(__intel__) || defined(__i386__)
-        #define HS_CPU_LENDIAN              1
-    #elif defined(__mips__)
-        #define HS_CPU_BENDIAN              1
-    #endif
-#elif !HS_BUILD_FOR_PS2
-    #define HS_BUILD_FOR_REFERENCE      1
-#endif
-
-#if defined(HS_BUILD_FOR_MAC68K) || defined(HS_BUILD_FOR_MACPPC) 
-    #define HS_BUILD_FOR_MAC        1
-#endif
-
-#if defined(__INTEL__) && defined(HS_BUILD_FOR_MAC)
-    #error "Can't have HS_BUILD_FOR_MAC defined"
-#endif
-#if (defined(GENERATING68K) || defined(GENERATINGPOWERPC)) && defined(HS_BUILD_FOR_WIN32)
-    #define "Can't define HS_BUILD_FOR_WIN32"
 #endif
 
 #define HS_SCALAR_IS_FIXED          !(HS_SCALAR_IS_FLOAT)
@@ -130,17 +95,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if (!defined(HS_NO_MEM_TRACKER))
 #define HS_FIND_MEM_LEAKS
 #endif
-#endif
-
-
-/////////////////////Myst3D Defines /////////////////////////////////////
-
-#ifdef M3DRELEASE
-#define PLASMA_NO_NETWORK   1
-#define NEXUS_NO_2D         1
-#define NO_LOAD_MSG         1
-#define PLASMA_NO_CONSOLE   1
-#define NEXUS_NO_DEBUG      1
 #endif
 
 
