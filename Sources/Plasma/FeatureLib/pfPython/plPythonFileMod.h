@@ -191,7 +191,7 @@ public:
     // array of matching Python instance where the functions are, if defined
     PyObject* fPyFunctionInstances[kfunc_lastone];
     // array of the names of the standard functions that can be called
-    static char*    fFunctionNames[];
+    static const char* fFunctionNames[];
 
     // The konstant hard-coded name to be used for all global pythonFileMods
     static char kGlobalNameKonstant[];

@@ -133,47 +133,47 @@ plProfile_CreateTimer("Update", "Python", PythonUpdate);
 //
 // fFunctionNames    - the actual names of the functions for On[event] types
 //
-char*   plPythonFileMod::fFunctionNames[] = 
+const char* plPythonFileMod::fFunctionNames[] = 
 {
-    { "OnFirstUpdate" },        // kfunc_FirstUpdate
-    { "OnUpdate" },             // kfunc_Update
-    { "OnNotify" },             // kfunc_Notify
-    { "OnTimer" },              // kfunc_AtTimer
-    { "OnControlKeyEvent" },    // kfunc_OnKeyEvent
-    { "Load" },                 // kfunc_Load
-    { "Save" },                 // kfunc_Save
-    { "OnGUINotify" },          // kfunc_GUINotify
-    { "OnPageLoad"  },          // kfunc_PageLoad
-    { "OnClothingUpdate" },     // kfunc_ClothingUpdate
-    { "OnKIMsg" },              // kfunc_KIMsg,
-    { "OnMemberUpdate" },       // kfunc_MemberUpdate,
-    { "OnRemoteAvatarInfo" },   // kfunc_RemoteAvatarInfo,
-    { "OnRTChat" },             // kfunc_RTChat,
-    { "OnVaultEvent" },         // kfunc_VaultEvent,
-    { "AvatarPage" },           // kfunc_AvatarPage,
-    { "OnSDLNotify" },          // kfunc_SDLNotify
-    { "OnOwnershipChanged" },   // kfunc_OwnershipNotify
-    { "OnAgeVaultEvent" },      // kfunc_AgeVaultEvent
-    { "OnInit" },               // kfunc_Init,
-    { "OnCCRMsg" },             // kfunc_OnCCRMsg,
-    { "OnServerInitComplete" }, // kfunc_OnServerInitComplete
-    { "OnVaultNotify" },        // kfunc_OnVaultNotify
-    { "OnDefaultKeyCaught" },   // kfunc_OnDefaultKeyCaught
-    { "OnMarkerMsg" },          // kfunc_OnMarkerMsg,
-    { "OnBackdoorMsg" },        // kfunc_OnBackdoorMsg,
-    { "OnBehaviorNotify" },     // kfunc_OnBehaviorNotify,
-    { "OnLOSNotify" },          // kfunc_OnLOSNotify,
-    { "BeginAgeUnLoad" },       // kfunc_OnBeginAgeLoad,
-    { "OnMovieEvent" },         // kfunc_OnMovieEvent,
-    { "OnScreenCaptureDone" },  // kfunc_OnScreenCaptureDone,
-    { "OnClimbingBlockerEvent"},// kFunc_OnClimbingBlockerEvent,
-    { "OnAvatarSpawn"},         // kFunc_OnAvatarSpawn
-    { "OnAccountUpdate"},       // kFunc_OnAccountUpdate
-    { "gotPublicAgeList"},      // kfunc_gotPublicAgeList
-    { "OnGameMgrMsg" },         // kfunc_OnGameMgrMsg
-    { "OnGameCliMsg" },         // kfunc_OnGameCliMsg
-    { "OnAIMsg" },              // kfunc_OnAIMsg
-    { nil }
+    "OnFirstUpdate",        // kfunc_FirstUpdate
+    "OnUpdate",             // kfunc_Update
+    "OnNotify",             // kfunc_Notify
+    "OnTimer",              // kfunc_AtTimer
+    "OnControlKeyEvent",    // kfunc_OnKeyEvent
+    "Load",                 // kfunc_Load
+    "Save",                 // kfunc_Save
+    "OnGUINotify",          // kfunc_GUINotify
+    "OnPageLoad",           // kfunc_PageLoad
+    "OnClothingUpdate",     // kfunc_ClothingUpdate
+    "OnKIMsg",              // kfunc_KIMsg,
+    "OnMemberUpdate",       // kfunc_MemberUpdate,
+    "OnRemoteAvatarInfo",   // kfunc_RemoteAvatarInfo,
+    "OnRTChat",             // kfunc_RTChat,
+    "OnVaultEvent",         // kfunc_VaultEvent,
+    "AvatarPage",           // kfunc_AvatarPage,
+    "OnSDLNotify",          // kfunc_SDLNotify
+    "OnOwnershipChanged",   // kfunc_OwnershipNotify
+    "OnAgeVaultEvent",      // kfunc_AgeVaultEvent
+    "OnInit",               // kfunc_Init,
+    "OnCCRMsg",             // kfunc_OnCCRMsg,
+    "OnServerInitComplete", // kfunc_OnServerInitComplete
+    "OnVaultNotify",        // kfunc_OnVaultNotify
+    "OnDefaultKeyCaught",   // kfunc_OnDefaultKeyCaught
+    "OnMarkerMsg",          // kfunc_OnMarkerMsg,
+    "OnBackdoorMsg",        // kfunc_OnBackdoorMsg,
+    "OnBehaviorNotify",     // kfunc_OnBehaviorNotify,
+    "OnLOSNotify",          // kfunc_OnLOSNotify,
+    "BeginAgeUnLoad",       // kfunc_OnBeginAgeLoad,
+    "OnMovieEvent",         // kfunc_OnMovieEvent,
+    "OnScreenCaptureDone",  // kfunc_OnScreenCaptureDone,
+    "OnClimbingBlockerEvent",// kFunc_OnClimbingBlockerEvent,
+    "OnAvatarSpawn",        // kFunc_OnAvatarSpawn
+    "OnAccountUpdate",      // kFunc_OnAccountUpdate
+    "gotPublicAgeList",     // kfunc_gotPublicAgeList
+    "OnGameMgrMsg",         // kfunc_OnGameMgrMsg
+    "OnGameCliMsg",         // kfunc_OnGameCliMsg
+    "OnAIMsg",              // kfunc_OnAIMsg
+    nil
 };
 
 //// Callback From the Vault Events //////////////////////////////////////////////
@@ -199,9 +199,10 @@ public:
             PyTuple_SetItem(ptuple, 0, pyVaultNodeRef::New(parentNode, childNode));
             // call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                        fPyFileMod->fFunctionNames[fFunctionIdx],
-                        "lO",pyVault::kVaultNodeRefAdded,ptuple);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFileMod->fPyFunctionInstances[fFunctionIdx],
+                    (char*)fPyFileMod->fFunctionNames[fFunctionIdx],
+                    "lO",pyVault::kVaultNodeRefAdded,ptuple);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -228,9 +229,10 @@ public:
             PyTuple_SetItem(ptuple, 0, pyVaultNodeRef::New(parentNode, childNode));
             // call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                        fPyFileMod->fFunctionNames[fFunctionIdx],
-                        "lO",pyVault::kVaultRemovingNodeRef,ptuple);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFileMod->fPyFunctionInstances[fFunctionIdx],
+                    (char*)fPyFileMod->fFunctionNames[fFunctionIdx],
+                    "lO",pyVault::kVaultRemovingNodeRef,ptuple);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -257,9 +259,10 @@ public:
             PyTuple_SetItem(ptuple, 0, pyVaultNode::New(changedNode));
             // call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                        fPyFileMod->fFunctionNames[fFunctionIdx],
-                        "lO",pyVault::kVaultNodeSaved,ptuple);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFileMod->fPyFunctionInstances[fFunctionIdx],
+                    (char*)fPyFileMod->fFunctionNames[fFunctionIdx],
+                    "lO",pyVault::kVaultNodeSaved,ptuple);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -686,7 +689,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 }
 
             //  - find functions in class they've defined.
-                PythonInterface::CheckInstanceForFunctions(fInstance,fFunctionNames,fPyFunctionInstances);
+                PythonInterface::CheckInstanceForFunctions(fInstance,(char**)fFunctionNames,fPyFunctionInstances);
                 // clear any errors created by checking for methods in a class
                 PyErr_Clear();      // clear the error
             // register for messages that they have functions defined for
@@ -818,7 +821,9 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 {
                     plProfile_BeginTiming(PythonUpdate);
                     // call it
-                    PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_Init],fFunctionNames[kfunc_Init],nil);
+                    PyObject* retVal = PyObject_CallMethod(
+                            fPyFunctionInstances[kfunc_Init],
+                            (char*)fFunctionNames[kfunc_Init], nil);
                     if ( retVal == nil )
                     {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -906,8 +911,9 @@ void    plPythonFileMod::HandleDiscardedKey( plKeyEventMsg *msg )
 
     plProfile_BeginTiming( PythonUpdate );
 
-    PyObject* retVal = PyObject_CallMethod( fPyFunctionInstances[ kfunc_OnDefaultKeyCaught ],
-                fFunctionNames[ kfunc_OnDefaultKeyCaught ],
+    PyObject* retVal = PyObject_CallMethod(
+                fPyFunctionInstances[ kfunc_OnDefaultKeyCaught ],
+                (char*)fFunctionNames[ kfunc_OnDefaultKeyCaught ],
                 "ciiiii",
                 keyChar, 
                 (int)msg->GetKeyDown(),
@@ -1135,7 +1141,9 @@ hsBool plPythonFileMod::IEval(double secs, hsScalar del, UInt32 dirty)
             {
                 plProfile_BeginTiming(PythonUpdate);
                 // call it
-                PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_FirstUpdate],fFunctionNames[kfunc_FirstUpdate],nil);
+                PyObject* retVal = PyObject_CallMethod(
+                        fPyFunctionInstances[kfunc_FirstUpdate],
+                        (char*)fFunctionNames[kfunc_FirstUpdate], nil);
                 if ( retVal == nil )
                 {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1157,7 +1165,10 @@ hsBool plPythonFileMod::IEval(double secs, hsScalar del, UInt32 dirty)
         {
             plProfile_BeginTiming(PythonUpdate);
             // call it
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_Update],fFunctionNames[kfunc_Update],"df",secs,del);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_Update],
+                    (char*)fFunctionNames[kfunc_Update],
+                    "df", secs, del);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1507,8 +1518,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
 
             // call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_Notify],fFunctionNames[kfunc_Notify],
-                        "flO",pNtfyMsg->fState,id,levents);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_Notify],
+                    (char*)fFunctionNames[kfunc_Notify],
+                    "flO", pNtfyMsg->fState, id, levents);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1537,8 +1550,11 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
         {
             // call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnKeyEvent],fFunctionNames[kfunc_OnKeyEvent],
-                        "ll",pEMsg->GetControlCode(),pEMsg->ControlActivated());
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnKeyEvent],
+                    (char*)fFunctionNames[kfunc_OnKeyEvent],
+                    "ll", pEMsg->GetControlCode(),
+                    pEMsg->ControlActivated());
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1568,8 +1584,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             // yes...
             // call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_AtTimer],fFunctionNames[kfunc_AtTimer],
-                        "l",pTimerMsg->fID);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_AtTimer],
+                    (char*)fFunctionNames[kfunc_AtTimer],
+                    "l", pTimerMsg->fID);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1702,8 +1720,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
 
             // call their OnGUINotify method
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_GUINotify],fFunctionNames[kfunc_GUINotify],
-                        "lOl",id,pyControl,pGUIMsg->GetEvent() );
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_GUINotify],
+                    (char*)fFunctionNames[kfunc_GUINotify],
+                    "lOl", id, pyControl, pGUIMsg->GetEvent());
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1737,8 +1757,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 roomname = (char*)pRLNMsg->GetRoom()->GetName();
 
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_PageLoad],fFunctionNames[kfunc_PageLoad],
-                        "ls",pRLNMsg->GetWhatHappen(),roomname);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_PageLoad],
+                    (char*)fFunctionNames[kfunc_PageLoad],
+                    "ls", pRLNMsg->GetWhatHappen(), roomname);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1768,7 +1790,9 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             // yes...
             // call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_ClothingUpdate],fFunctionNames[kfunc_ClothingUpdate],nil);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_ClothingUpdate],
+                    (char*)fFunctionNames[kfunc_ClothingUpdate], nil);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1862,8 +1886,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             }
 
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_KIMsg],fFunctionNames[kfunc_KIMsg],
-                        "lO",pkimsg->GetCommand(),value);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_KIMsg],
+                    (char*)fFunctionNames[kfunc_KIMsg],
+                    "lO", pkimsg->GetCommand(), value);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1892,7 +1918,9 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
         {
             // yes... then call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_MemberUpdate],fFunctionNames[kfunc_MemberUpdate],nil);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_MemberUpdate],
+                    (char*)fFunctionNames[kfunc_MemberUpdate], nil);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1943,8 +1971,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             }
 
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_RemoteAvatarInfo],fFunctionNames[kfunc_RemoteAvatarInfo],
-                        "O",player);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_RemoteAvatarInfo],
+                    (char*)fFunctionNames[kfunc_RemoteAvatarInfo],
+                    "O", player);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1976,8 +2006,11 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             if ( textmessage == nil)
                 textmessage = "";
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnCCRMsg],fFunctionNames[kfunc_OnCCRMsg],
-                        "lsl",ccrmsg->GetType(),textmessage,ccrmsg->GetCCRPlayerID());
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnCCRMsg],
+                    (char*)fFunctionNames[kfunc_OnCCRMsg],
+                    "lsl", ccrmsg->GetType(), textmessage,
+                    ccrmsg->GetCCRPlayerID());
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2035,8 +2068,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 }
 
                 plProfile_BeginTiming(PythonUpdate);
-                PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnVaultNotify],fFunctionNames[kfunc_OnVaultNotify],
-                            "lO",vaultNotifyMsg->GetType(),ptuple);
+                PyObject* retVal = PyObject_CallMethod(
+                        fPyFunctionInstances[kfunc_OnVaultNotify],
+                        (char*)fFunctionNames[kfunc_OnVaultNotify],
+                        "lO", vaultNotifyMsg->GetType(), ptuple);
                 if ( retVal == nil )
                 {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2089,8 +2124,11 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 }
 
                 plProfile_BeginTiming(PythonUpdate);
-                PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_RTChat],fFunctionNames[kfunc_RTChat],
-                            "Osl",player,pkimsg->GetString().c_str(),pkimsg->GetFlags());
+                PyObject* retVal = PyObject_CallMethod(
+                        fPyFunctionInstances[kfunc_RTChat],
+                        (char*)fFunctionNames[kfunc_RTChat],
+                        "Osl", player, pkimsg->GetString().c_str(),
+                        pkimsg->GetFlags());
                 if ( retVal == nil )
                 {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2122,8 +2160,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 plProfile_BeginTiming(PythonUpdate);
                 plSynchEnabler ps(true);    // enable dirty state tracking during shutdown  
     
-                PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_AvatarPage],fFunctionNames[kfunc_AvatarPage],
-                            "Oli",pSobj,!ppMsg->fUnload,ppMsg->fLastOut);
+                PyObject* retVal = PyObject_CallMethod(
+                        fPyFunctionInstances[kfunc_AvatarPage],
+                        (char*)fFunctionNames[kfunc_AvatarPage],
+                        "Oli", pSobj, !ppMsg->fUnload, ppMsg->fLastOut);
                 if ( retVal == nil )
                 {
     #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2155,8 +2195,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 plProfile_BeginTiming(PythonUpdate);
                 plSynchEnabler ps(true);    // enable dirty state tracking during shutdown  
     
-                PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnBeginAgeLoad],fFunctionNames[kfunc_OnBeginAgeLoad],
-                            "O",pSobj);
+                PyObject* retVal = PyObject_CallMethod(
+                        fPyFunctionInstances[kfunc_OnBeginAgeLoad],
+                        (char*)fFunctionNames[kfunc_OnBeginAgeLoad],
+                        "O", pSobj);
                 if ( retVal == nil )
                 {
     #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2188,7 +2230,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
         }
         if (fPyFunctionInstances[kfunc_OnServerInitComplete])
         {
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnServerInitComplete],fFunctionNames[kfunc_OnServerInitComplete],nil);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnServerInitComplete],
+                    (char*)fFunctionNames[kfunc_OnServerInitComplete],
+                    nil);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2219,8 +2264,11 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 tag = "";
             // yes... then call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_SDLNotify],fFunctionNames[kfunc_SDLNotify],
-                        "ssls",sn->fVar->GetName(),sn->fSDLName.c_str(),sn->fPlayerID,tag);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_SDLNotify],
+                    (char*)fFunctionNames[kfunc_SDLNotify],
+                    "ssls", sn->fVar->GetName(), sn->fSDLName.c_str(),
+                    sn->fPlayerID, tag);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2247,8 +2295,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
         {
             // yes... then call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OwnershipNotify],fFunctionNames[kfunc_OwnershipNotify],
-                        nil);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OwnershipNotify],
+                    (char*)fFunctionNames[kfunc_OwnershipNotify],
+                    nil);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2286,8 +2336,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                     break;
             }
 
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnMarkerMsg], fFunctionNames[kfunc_OnMarkerMsg],
-                        "lO", (UInt32)markermsg->fType, ptuple);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnMarkerMsg],
+                    (char*)fFunctionNames[kfunc_OnMarkerMsg],
+                    "lO", (UInt32)markermsg->fType, ptuple);
             if (retVal == nil)
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2317,9 +2369,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
         {
             // yes... then call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnBackdoorMsg],
-                        fFunctionNames[kfunc_OnBackdoorMsg],
-                        "ss",dt->GetTarget(),dt->GetString());
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnBackdoorMsg],
+                    (char*)fFunctionNames[kfunc_OnBackdoorMsg],
+                    "ss", dt->GetTarget(), dt->GetString());
             if ( retVal == nil )
             {
                 // if there was an error make sure that the stderr gets flushed so it can be seen
@@ -2360,10 +2413,11 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 hitpoint = Py_None;
             }
                     
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnLOSNotify],
-                        fFunctionNames[kfunc_OnLOSNotify],
-                        "llOOf",pLOSMsg->fRequestID,pLOSMsg->fNoHit,
-                        scobj, hitpoint, pLOSMsg->fDistance);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnLOSNotify],
+                    (char*)fFunctionNames[kfunc_OnLOSNotify],
+                    "llOOf", pLOSMsg->fRequestID, pLOSMsg->fNoHit,
+                    scobj, hitpoint, pLOSMsg->fDistance);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2407,9 +2461,11 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 Py_INCREF(Py_None);
                 pSobj = Py_None;
             }
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnBehaviorNotify],
-                        fFunctionNames[kfunc_OnBehaviorNotify],
-                        "lOl",behNotifymsg->fType,pSobj,behNotifymsg->state);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnBehaviorNotify],
+                    (char*)fFunctionNames[kfunc_OnBehaviorNotify],
+                    "lOl", behNotifymsg->fType, pSobj,
+                    behNotifymsg->state);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2438,9 +2494,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
         {
             // yes... then call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnMovieEvent],
-                        fFunctionNames[kfunc_OnMovieEvent],
-                        "si",moviemsg->fMovieName,(UInt32)moviemsg->fReason);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnMovieEvent],
+                    (char*)fFunctionNames[kfunc_OnMovieEvent],
+                    "si", moviemsg->fMovieName, (UInt32)moviemsg->fReason);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2480,9 +2537,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 Py_INCREF(Py_None);
                 pSobj = Py_None;
             }
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnScreenCaptureDone],
-                        fFunctionNames[kfunc_OnScreenCaptureDone],
-                        "O",pSobj);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnScreenCaptureDone],
+                    (char*)fFunctionNames[kfunc_OnScreenCaptureDone],
+                    "O", pSobj);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2510,9 +2568,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             PyObject* pSobj = pySceneObject::New(pEvent->GetSender(), fSelfKey);
             
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnClimbBlockerEvent],
-                        fFunctionNames[kfunc_OnClimbBlockerEvent],
-                        "O",pSobj);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnClimbBlockerEvent],
+                    (char*)fFunctionNames[kfunc_OnClimbBlockerEvent],
+                    "O", pSobj);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2532,9 +2591,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
         plAvatarSpawnNotifyMsg* pSpawn = plAvatarSpawnNotifyMsg::ConvertNoRef(msg);
         if (pSpawn)
         {
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnAvatarSpawn],
-                        fFunctionNames[kfunc_OnAvatarSpawn],
-                        "l",1);
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnAvatarSpawn],
+                    (char*)fFunctionNames[kfunc_OnAvatarSpawn],
+                    "l", 1);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2555,8 +2615,12 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
         if (pUpdateMsg)
         {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnAccountUpdate], fFunctionNames[kfunc_OnAccountUpdate],
-                "iii", (int)pUpdateMsg->GetUpdateType(), (int)pUpdateMsg->GetResult(), (int)pUpdateMsg->GetPlayerInt()
+            PyObject* retVal = PyObject_CallMethod(
+                    fPyFunctionInstances[kfunc_OnAccountUpdate],
+                    (char*)fFunctionNames[kfunc_OnAccountUpdate],
+                    "iii", (int)pUpdateMsg->GetUpdateType(), 
+                    (int)pUpdateMsg->GetResult(),
+                    (int)pUpdateMsg->GetPlayerInt()
             );
             if ( retVal == nil )
             {
@@ -2598,7 +2662,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             
             PyObject* retVal = PyObject_CallMethod(
                 fPyFunctionInstances[kfunc_gotPublicAgeList],
-                fFunctionNames[kfunc_gotPublicAgeList],
+                (char*)fFunctionNames[kfunc_gotPublicAgeList],
                 "O",
                 pyEL
             );
@@ -2629,7 +2693,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             PyObject* pythonMsg = pyGameMgrMsg::New(gameMgrMsg);
             PyObject* retVal = PyObject_CallMethod(
                 fPyFunctionInstances[kfunc_OnGameMgrMsg],
-                fFunctionNames[kfunc_OnGameMgrMsg],
+                (char*)fFunctionNames[kfunc_OnGameMgrMsg],
                 "O",
                 pythonMsg
             );
@@ -2661,7 +2725,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             PyObject* pythonMsg = pyGameCliMsg::New(gameMgrMsg);
             PyObject* retVal = PyObject_CallMethod(
                 fPyFunctionInstances[kfunc_OnGameCliMsg],
-                fFunctionNames[kfunc_OnGameCliMsg],
+                (char*)fFunctionNames[kfunc_OnGameCliMsg],
                 "O",
                 pythonMsg
             );
@@ -2732,7 +2796,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             // call the function with the above arguments
             PyObject* retVal = PyObject_CallMethod(
                 fPyFunctionInstances[kfunc_OnAIMsg],
-                fFunctionNames[kfunc_OnAIMsg],
+                (char*)fFunctionNames[kfunc_OnAIMsg],
                 "OisO",
                 brainObj, msgType, aiMsg->BrainUserString().c_str(), args
             );
