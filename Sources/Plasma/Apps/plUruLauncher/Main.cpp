@@ -39,19 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define WHITESPACE     L" \"\t\r\n\x1A"
 #define UPDATE_STATUSMSG_SECONDS 30     // Must be an int
 
-#if BUILD_TYPE == BUILD_TYPE_DEV
-    #define STATUS_PATH L"www2.cyanworlds.com"
-#else
-    #define STATUS_PATH L"support.cyanworlds.com"
-#endif
-
-
-#if BUILD_TYPE == BUILD_TYPE_BETA
-    static const char s_postKey[] = ""; //"betakey=6C5DC90EFD7AF8892D2A65CDE5DF46D55A2777EC3D196ED83F912B62185A74DD";
-#else
-    static const char s_postKey[] = "";
-#endif
-
 
 /*****************************************************************************
 *
@@ -605,39 +592,19 @@ static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *)
 //============================================================================
 static void StatusCallback(void *)
 {
-    CURL *hCurl;
+    char *serverUrl = hsWStringToString(GetServerStatusUrl());
 
-    char *serverStatus = hsWStringToString(BuildTypeServerStatusPath());
-    char  serverUrl[256];
-    snprintf(serverUrl, 256, "http://support.cyanworlds.com%s", serverStatus);
-    delete [] serverStatus;
-
-    hCurl = curl_easy_init();
+    CURL * hCurl = curl_easy_init();
     curl_easy_setopt(hCurl, CURLOPT_ERRORBUFFER, s_curlError);
 
     // update while we are running
     while(!s_shutdown)
     {
-        if(BuildTypeServerStatusPath())
-        {
-            //TODO: Get a server status path from the server.ini, without
-            //      pulling in all the annoying pfConsole dependencies.
-            //      Alternatively, make a better launcher...
+        curl_easy_setopt(hCurl, CURLOPT_USERAGENT, "UruClient/1.0");
+        curl_easy_setopt(hCurl, CURLOPT_URL, serverUrl);
 
-            curl_easy_setopt(hCurl, CURLOPT_USERAGENT, "UruClient/1.0");
-            curl_easy_setopt(hCurl, CURLOPT_URL, serverUrl);
-
-            if(StrLen(s_postKey))
-            {
-                char *safeData = curl_easy_escape(hCurl, s_postKey, strlen(s_postKey));
-                curl_easy_setopt(hCurl, CURLOPT_POST, 1);
-                curl_easy_setopt(hCurl, CURLOPT_POSTFIELDS, safeData);
-                curl_free(safeData);
-            }
-
-            if (curl_easy_perform(hCurl) != 0)
-                SetStatusText(s_curlError);
-        }
+        if (serverUrl[0] && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
+            SetStatusText(s_curlError);
 
         for(unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && !s_shutdown; ++i)
         {
@@ -646,6 +613,7 @@ static void StatusCallback(void *)
     }
 
     curl_easy_cleanup(hCurl);
+    delete [] serverUrl;
 
     s_statusEvent.Signal();
 }

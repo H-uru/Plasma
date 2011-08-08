@@ -70,12 +70,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define UPDATE_STATUSMSG_SECONDS 30
 #define WM_USER_SETSTATUSMSG WM_USER+1
 
-#if BUILD_TYPE == BUILD_TYPE_DEV
-    #define STATUS_PATH L"www2.cyanworlds.com"
-#else
-    #define STATUS_PATH L"support.cyanworlds.com"
-#endif
-
 //
 // Globals
 //
@@ -122,18 +116,11 @@ static const unsigned   AUTH_FAILED_TIMER   = 2;
 #define FAKE_PASS_STRING "********"
 
 //============================================================================
-// External patcher file
+// External patcher file (directly starting plClient is not allowed)
 //============================================================================
 #ifdef PLASMA_EXTERNAL_RELEASE
 
 static wchar s_patcherExeName[] = L"UruLauncher.exe";
-
-//============================================================================
-// Internal patcher file
-//============================================================================
-#else
-
-static wchar s_patcherExeName[] = L"plUruLauncher.exe";
 
 #endif // PLASMA_EXTERNAL_RELEASE
 
@@ -1193,7 +1180,7 @@ void StatusCallback(void *param)
         curl_easy_setopt(hCurl, CURLOPT_WRITEFUNCTION, &CurlCallback);
         curl_easy_setopt(hCurl, CURLOPT_WRITEDATA, param);
 
-        if (curl_easy_perform(hCurl) != 0)
+        if (statusUrl[0] && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
             PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) curlError);
         
         for(unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && s_loginDlgRunning; ++i)
