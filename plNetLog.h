@@ -93,6 +93,9 @@ public slots:
     void onClear() { m_logView->clear(); }
     void addNodes();
     void onSearch();
+    void onLoadGate();
+    void onLoadAuth();
+    void onLoadGame();
 
 protected:
     virtual void closeEvent(QCloseEvent*);

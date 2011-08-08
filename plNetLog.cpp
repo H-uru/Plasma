@@ -29,6 +29,7 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QScrollBar>
+#include <QFileDialog>
 
 #include "GateKeeper.h"
 #include "Auth.h"
@@ -140,6 +141,17 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     QSettings settings("H-uru", "plNetLog");
 
     // Create the GUI
+    QPushButton* btnClear = new QPushButton(tr("&Clear output"), this);
+
+    QWidget* searchBar = new QWidget(this);
+    m_searchText = new QLineEdit(searchBar);
+    QPushButton* btnSearch = new QPushButton(tr("&Search..."), searchBar);
+    QGridLayout* searchLayout = new QGridLayout(searchBar);
+    searchLayout->setMargin(0);
+    searchLayout->setHorizontalSpacing(4);
+    searchLayout->addWidget(m_searchText, 0, 0);
+    searchLayout->addWidget(btnSearch, 0, 1);
+
     m_logView = new QTreeWidget(this);
     m_logView->setHeaderHidden(true);
     m_logView->setRootIsDecorated(true);
@@ -161,18 +173,18 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     pathLayout->setHorizontalSpacing(4);
     pathLayout->addWidget(lblPath, 0, 0);
     pathLayout->addWidget(m_exePath, 0, 1);
-
     QPushButton* btnLaunch = new QPushButton(tr("&Launch!"), this);
-    QPushButton* btnClear = new QPushButton(tr("&Clear output"), this);
 
-    QWidget* searchBar = new QWidget(this);
-    m_searchText = new QLineEdit(searchBar);
-    QPushButton* btnSearch = new QPushButton(tr("&Search..."), searchBar);
-    QGridLayout* searchLayout = new QGridLayout(searchBar);
-    searchLayout->setMargin(0);
-    searchLayout->setHorizontalSpacing(4);
-    searchLayout->addWidget(m_searchText, 0, 0);
-    searchLayout->addWidget(btnSearch, 0, 1);
+    QWidget* loadBar = new QWidget(this);
+    QPushButton* loadGate = new QPushButton(tr("Load GateKeeper Log"), loadBar);
+    QPushButton* loadAuth = new QPushButton(tr("Load Auth Log"), loadBar);
+    QPushButton* loadGame = new QPushButton(tr("Load Game Log"), loadBar);
+    QGridLayout* loadLayout = new QGridLayout(loadBar);
+    loadLayout->setMargin(0);
+    loadLayout->setHorizontalSpacing(4);
+    loadLayout->addWidget(loadGate, 0, 0);
+    loadLayout->addWidget(loadAuth, 0, 1);
+    loadLayout->addWidget(loadGame, 0, 2);
 
     QGridLayout* layout = new QGridLayout(this);
     layout->setMargin(4);
@@ -181,16 +193,21 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     layout->addWidget(m_logView, 2, 0);
     layout->addWidget(pathSpec, 3, 0);
     layout->addWidget(btnLaunch, 4, 0);
-    
+    layout->addWidget(loadBar, 5, 0);
+
     if (settings.contains("Geometry"))
         setGeometry(settings.value("Geometry").toRect());
     else
         resize(512, 640);
+    btnLaunch->setFocus();
 
     connect(btnLaunch, SIGNAL(clicked()), SLOT(onLaunch()));
     connect(btnClear, SIGNAL(clicked()), SLOT(onClear()));
     connect(btnSearch, SIGNAL(clicked()), SLOT(onSearch()));
     connect(m_searchText, SIGNAL(returnPressed()), SLOT(onSearch()));
+    connect(loadGate, SIGNAL(clicked()), SLOT(onLoadGate()));
+    connect(loadAuth, SIGNAL(clicked()), SLOT(onLoadAuth()));
+    connect(loadGame, SIGNAL(clicked()), SLOT(onLoadGame()));
 }
 
 void plNetLogGUI::closeEvent(QCloseEvent* event)
@@ -336,6 +353,120 @@ void plNetLogGUI::onSearch()
         item = item->parent();
         item->setExpanded(true);
     }
+}
+
+static bool getChunk(FILE* file, unsigned& size, unsigned char*& data,
+                     unsigned& time, int& direction)
+{
+    int ch = fgetc(file);
+    if (ch == EOF) {
+        return false;
+    } else if (ch != '[') {
+        OutputDebugStringA("[getChunk]\nUnexpected character in input\n");
+        return false;
+    }
+
+    char buffer[50];
+    fread(buffer, 1, 4, file);
+    if (memcmp(buffer, ">>>", 3) == 0) {
+        direction = kCli2Srv;
+    } else if (memcmp(buffer, "<<<", 3) == 0) {
+        direction = kSrv2Cli;
+    } else {
+        OutputDebugStringA("[getChunk]\nUnexpected character in input\n");
+        return false;
+    }
+
+    fgets(buffer, 50, file);
+    time = strtoul(buffer, NULL, 10);
+
+    QLinkedList<unsigned char> dataQueue;
+    for ( ;; ) {
+        ch = fgetc(file);
+        ungetc(ch, file);
+        if (ch == EOF || ch == '[')
+            break;
+
+        fread(buffer, 1, 3, file);
+        buffer[2] = 0;
+        dataQueue.push_back(strtoul(buffer, NULL, 16));
+    }
+    size = dataQueue.size();
+    data = new unsigned char[size];
+
+    unsigned i = 0;
+    while (!dataQueue.isEmpty())
+        data[i++] = dataQueue.takeFirst();
+    return true;
+}
+
+void plNetLogGUI::onLoadGate()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open GateKeeper Log"));
+    if (filename.isEmpty())
+        return;
+
+    FILE* log = fopen(filename.toUtf8().data(), "rb");
+    if (!log) {
+        QMessageBox::critical(this, tr("Error"), tr("Cannot open log file"));
+        return;
+    }
+
+    unsigned size;
+    unsigned char* data;
+    unsigned time;
+    int direction;
+    while (getChunk(log, size, data, time, direction))
+        queueMessage(kWatchedProtocolCli2GateKeeper, time, direction, data, size);
+
+    addNodes();
+    m_logView->sortItems(0, Qt::AscendingOrder);
+}
+
+void plNetLogGUI::onLoadAuth()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Auth Log"));
+    if (filename.isEmpty())
+        return;
+
+    FILE* log = fopen(filename.toUtf8().data(), "rb");
+    if (!log) {
+        QMessageBox::critical(this, tr("Error"), tr("Cannot open log file"));
+        return;
+    }
+
+    unsigned size;
+    unsigned char* data;
+    unsigned time;
+    int direction;
+    while (getChunk(log, size, data, time, direction))
+        queueMessage(kWatchedProtocolCli2Auth, time, direction, data, size);
+
+    addNodes();
+    m_logView->sortItems(0, Qt::AscendingOrder);
+}
+
+void plNetLogGUI::onLoadGame()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Game Log"));
+    if (filename.isEmpty())
+        return;
+
+    FILE* log = fopen(filename.toUtf8().data(), "rb");
+    if (!log) {
+        QMessageBox::critical(this, tr("Error"), tr("Cannot open log file"));
+        return;
+    }
+
+    unsigned size;
+    unsigned char* data;
+    unsigned time;
+    int direction;
+    while (getChunk(log, size, data, time, direction))
+        queueMessage(kWatchedProtocolCli2Game, time, direction, data, size);
+
+    addNodes();
+    m_logView->sortItems(0, Qt::AscendingOrder);
 }
 
 
