@@ -290,6 +290,32 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Player ID: %1").arg(buffer.read<unsigned>()));
                 break;
             }
+        case kCli2Auth_PlayerDeleteRequest:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_PlayerDeleteRequest").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Player ID: %1").arg(buffer.read<unsigned>()));
+                break;
+            }
+        case kCli2Auth_PlayerCreateRequest:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_PlayerCreateRequest").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Player Name: %1").arg(buffer.readString()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Avatar Shape: %1").arg(buffer.readString()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Friend Invite: %1").arg(buffer.readString()));
+                break;
+            }
         case kCli2Auth_VaultNodeFetch:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
@@ -512,6 +538,36 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
                     << QString("%1 <-- Auth2Cli_AcctSetPlayerReply").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Result: %1").arg(buffer.readResultCode()));
+                break;
+            }
+        case kAuth2Cli_PlayerCreateReply:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_PlayerCreateReply").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Result: %1").arg(buffer.readResultCode()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Player ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Explorer: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Player Name: %1").arg(buffer.readString()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Avatar Shape: %1").arg(buffer.readString()));
+                break;
+            }
+        case kAuth2Cli_PlayerDeleteReply:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_PlayerDeleteReply").arg(timeFmt));
                 top->setForeground(0, kColorAuth);
                 new QTreeWidgetItem(top, QStringList()
                     << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
