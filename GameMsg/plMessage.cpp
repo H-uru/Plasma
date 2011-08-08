@@ -77,6 +77,38 @@ void Create_AvatarInputStateMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     FlagField(parent, "State", buffer.read<unsigned short>(), s_stateNames);
 }
 
+void Create_AvBrainGenericMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    static const char* s_types[] = {
+        "kNextStage", "kPrevStage", "kGotoStage", "kSetLoopCount"
+    };
+
+    Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
+
+    unsigned type = buffer.read<unsigned>();
+    if (type < (sizeof(s_types) / sizeof(s_types[0]))) {
+        new QTreeWidgetItem(parent, QStringList()
+            << QString("Type: %1").arg(s_types[type]));
+    } else {
+        QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList()
+            << QString("Type: %1").arg(type));
+        item->setForeground(0, Qt::red);
+    }
+
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Stage: %1").arg(buffer.read<int>()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Set Time: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("New Time: %1").arg(buffer.read<float>()));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Set Direction: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("New Direction: %1").arg(buffer.read<bool>() ? "True" : "False"));
+    new QTreeWidgetItem(parent, QStringList()
+        << QString("Transition Time: %1").arg(buffer.read<float>()));
+}
+
 void Create_InputIfaceMgrMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     static const char* s_commands[] = {

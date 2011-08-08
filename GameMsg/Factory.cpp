@@ -389,6 +389,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kKIMessage:
         Create_KIMessage(parent, buffer);
         break;
+    case kAvBrainGenericMsg:
+        Create_AvBrainGenericMsg(parent, buffer);
+        break;
     case kNetMsgRelevanceRegions:
         Create_NetMsgRelevanceRegions(parent, buffer);
         break;
