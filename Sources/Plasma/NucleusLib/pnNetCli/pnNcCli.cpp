@@ -40,8 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # define NCCLI_LOG  NULL_STMT
 #endif
 
-//#define NO_ENCRYPTION
-
 #ifndef PLASMA_EXTERNAL_RELEASE
 
 struct NetLogMessage_Header
@@ -120,8 +118,8 @@ struct NetCli : THashKeyVal<Uuid> {
     ENetCliMode             mode;
     FNetCliEncrypt          encryptFcn;
     byte                    seed[kNetMaxSymmetricSeedBytes];
-    CryptKey *              cryptIn;
-    CryptKey *              cryptOut;
+    CryptKey *              cryptIn; // nil if encrytpion is disabled
+    CryptKey *              cryptOut; // nil if encrytpion is disabled
     void *                  encryptParam;
 
     // Message buffers
@@ -174,9 +172,8 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 
-    if (cli->mode == kNetCliModeEncrypted) {
+    if (cli->mode == kNetCliModeEncrypted && cli->cryptOut) {
         // Encrypt data...
-#ifndef NO_ENCRYPTION
         if (bytes <= 2048)
             // byte count is small, use stack-based buffer
             temp = ALLOCA(byte, bytes);
@@ -187,7 +184,6 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
         MemCopy(temp, data, bytes);
         CryptEncrypt(cli->cryptOut, bytes, temp);
         data = temp;
-#endif
     }
     if (cli->sock)
         AsyncSocketSend(cli->sock, data, bytes);
@@ -644,7 +640,7 @@ static void ClientConnect (NetCli * cli) {
     if (cli->sock) {
         unsigned bytes;
         NetCli_Cli2Srv_Connect msg;
-        unsigned char * data = serverSeed.GetData_LE(&bytes);
+        unsigned char * data = serverSeed.GetData_LE(&bytes); // will be 0 if encryption is disabled, and thereby send an empty seed
         ASSERTMSG(bytes <= sizeof(msg.dh_y_data), "4");
         msg.message    = kNetCliCli2SrvConnect;
         msg.length     = (byte) (sizeof(msg) - sizeof(msg.dh_y_data) +  bytes);
@@ -668,48 +664,55 @@ static bool ServerRecvConnect (
         * (const NetCli_Cli2Srv_Connect *) &pkt;
     if (pkt.length < sizeof(msg))
         return false;
+    int seedLength = msg.length - sizeof(pkt);
 
     // Send the server seed to the client (unencrypted)
     if (cli->sock) {
         NetCli_Srv2Cli_Encrypt reply;
         reply.message   = kNetCliSrv2CliEncrypt;
-        reply.length    = sizeof(reply);
+        reply.length    = seedLength == 0 ? 0 : sizeof(reply); // reply with empty seed if we got empty seed (this means: no encryption)
         MemCopy(reply.serverSeed, cli->seed, sizeof(reply.serverSeed));
-        AsyncSocketSend(cli->sock, &reply, sizeof(reply));
+        AsyncSocketSend(cli->sock, &reply, reply.length);
     }
 
-    // Compute client seed
-    byte clientSeed[kNetMaxSymmetricSeedBytes];
-    {
+    if (seedLength == 0) { // client wishes no encryption (that's okay, nobody else can "fake" us as nobody has the private key, so if the client actually wants encryption it will only work with the correct peer)
+        cli->cryptIn = nil;
+        cli->cryptOut = nil;
+    }
+    else {
+        // Compute client seed
+        byte clientSeed[kNetMaxSymmetricSeedBytes];
         BigNum clientSeedValue;
-        NetMsgCryptServerConnect(
-            cli->channel,
-            msg.length - sizeof(pkt),
-            msg.dh_y_data,
-            &clientSeedValue
+        {
+            NetMsgCryptServerConnect(
+                cli->channel,
+                seedLength,
+                msg.dh_y_data,
+                &clientSeedValue
+            );
+
+            ZERO(clientSeed);
+            unsigned bytes;
+            unsigned char * data = clientSeedValue.GetData_LE(&bytes);
+            MemCopy(clientSeed, data, min(bytes, sizeof(clientSeed)));
+            delete [] data;
+        }
+
+        // Create the symmetric key from a combination
+        // of the client seed and the server seed
+        byte sharedSeed[kNetMaxSymmetricSeedBytes];
+        CreateSymmetricKey(
+            sizeof(cli->seed),  cli->seed,  // server seed
+            sizeof(clientSeed), clientSeed, // client seed
+            sizeof(sharedSeed), sharedSeed  // combined seed
         );
 
-        ZERO(clientSeed);
-        unsigned bytes;
-        unsigned char * data = clientSeedValue.GetData_LE(&bytes);
-        MemCopy(clientSeed, data, min(bytes, sizeof(clientSeed)));
-        delete [] data;
+        // Switch to encrypted mode
+        cli->cryptIn  = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
+        cli->cryptOut = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
     }
-
-    // Create the symmetric key from a combination
-    // of the client seed and the server seed
-    byte sharedSeed[kNetMaxSymmetricSeedBytes];
-    CreateSymmetricKey(
-        sizeof(cli->seed),  cli->seed,  // server seed
-        sizeof(clientSeed), clientSeed, // client seed
-        sizeof(sharedSeed), sharedSeed  // combined seed
-    );
-
-    // Switch to encrypted mode
-    cli->mode = kNetCliModeEncrypted;
-    cli->cryptIn  = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
-    cli->cryptOut = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
-
+    
+    cli->mode = kNetCliModeEncrypted; // should rather be called "established", but whatever
     return cli->encryptFcn(kNetSuccess, cli->encryptParam);
 }
 
@@ -722,26 +725,39 @@ static bool ClientRecvEncrypt (
     if (cli->mode != kNetCliModeClientStart)
         return false;
 
-    // Validate message size
+    // find out if we want encryption
+    const BigNum * DH_N;
+    NetMsgChannelGetDhConstants(cli->channel, nil, nil, &DH_N);
+    bool encrypt = !DH_N->isZero();
+
+    // Process message
     const NetCli_Srv2Cli_Encrypt & msg =
         * (const NetCli_Srv2Cli_Encrypt *) &pkt;
-    if (pkt.length != sizeof(msg))
-        return false;
+    if (encrypt) { // we insist on encryption, don't let some MitM decide for us!
+        if (pkt.length != sizeof(msg))
+            return false;
 
-    // Create the symmetric key from a combination
-    // of the client seed and the server seed
-    byte sharedSeed[kNetMaxSymmetricSeedBytes];
-    CreateSymmetricKey(
-        sizeof(msg.serverSeed), msg.serverSeed, // server seed
-        sizeof(cli->seed),      cli->seed,      // client seed
-        sizeof(sharedSeed),     sharedSeed      // combined seed
-    );
+        // Create the symmetric key from a combination
+        // of the client seed and the server seed
+        byte sharedSeed[kNetMaxSymmetricSeedBytes];
+        CreateSymmetricKey(
+            sizeof(msg.serverSeed), msg.serverSeed, // server seed
+            sizeof(cli->seed),      cli->seed,      // client seed
+            sizeof(sharedSeed),     sharedSeed      // combined seed
+        );
 
-    // Switch to encrypted mode
-    cli->mode = kNetCliModeEncrypted;
-    cli->cryptIn  = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
-    cli->cryptOut = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
+        // Switch to encrypted mode
+        cli->cryptIn  = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
+        cli->cryptOut = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
+    }
+    else { // honestly we do not care what the other side sends, we will send plaintext
+        if (pkt.length != sizeof(pkt))
+            return false;
+        cli->cryptIn = nil;
+        cli->cryptOut = nil;
+    }
 
+    cli->mode = kNetCliModeEncrypted; // should rather be called "established", but whatever
     return cli->encryptFcn(kNetSuccess, cli->encryptParam);
 }
 
@@ -1061,18 +1077,18 @@ bool NetCliDispatch (
             // Decrypt data...
             byte * temp, * heap = NULL;
 
-#ifndef NO_ENCRYPTION
-            if (bytes <= 2048)
-                // byte count is small, use stack-based buffer
-                temp = ALLOCA(byte, bytes);
-            else
-                // byte count is large, use heap-based buffer
-                temp = heap = (byte *)ALLOC(bytes);
+            if (cli->cryptIn) {
+                if (bytes <= 2048)
+                    // byte count is small, use stack-based buffer
+                    temp = ALLOCA(byte, bytes);
+                else
+                    // byte count is large, use heap-based buffer
+                    temp = heap = (byte *)ALLOC(bytes);
 
-            MemCopy(temp, data, bytes);
-            CryptDecrypt(cli->cryptIn, bytes, temp);
-            data = temp;
-#endif
+                MemCopy(temp, data, bytes);
+                CryptDecrypt(cli->cryptIn, bytes, temp);
+                data = temp;
+            }
 
             // Add data to accumulator and dispatch
             cli->input.Add(bytes, data);

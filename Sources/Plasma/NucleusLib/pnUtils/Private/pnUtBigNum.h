@@ -89,6 +89,10 @@ public:
     {
         return BN_cmp(&m_number, &a.m_number);
     }
+    bool isZero() const
+    {
+        return BN_is_zero(&m_number);
+    }
 
     void Div (const BigNum & a, dword b, dword * remainder)
     {

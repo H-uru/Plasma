@@ -735,6 +735,7 @@ static NetMsgInitSend s_send[] = {
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)                },
     { MSG(FileSrvIpAddressReply)    },
+    { MSG(AuthSrvIpAddressReply)    },
 };
 #undef MSG
 
@@ -1114,5 +1115,14 @@ void NetCliGateKeeperFileSrvIpAddressRequest (
     bool                                                isPatcher
 ) {
     FileSrvIpAddressRequestTrans * trans = NEW(FileSrvIpAddressRequestTrans)(callback, param, isPatcher);
+    NetTransSend(trans);
+}
+
+//============================================================================
+void NetCliGateKeeperAuthSrvIpAddressRequest (
+    FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback,
+    void *                                              param
+) {
+    AuthSrvIpAddressRequestTrans * trans = NEW(AuthSrvIpAddressRequestTrans)(callback, param);
     NetTransSend(trans);
 }
