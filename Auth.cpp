@@ -316,6 +316,17 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Friend Invite: %1").arg(buffer.readString()));
                 break;
             }
+        case kCli2Auth_VaultNodeCreate:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_VaultNodeCreate").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                QTreeWidgetItem* node = new QTreeWidgetItem(top, QStringList() << "Node");
+                Node_Factory(node, buffer);
+                break;
+            }
         case kCli2Auth_VaultNodeFetch:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
@@ -598,6 +609,19 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
                 new QTreeWidgetItem(top, QStringList()
                     << QString("Result: %1").arg(buffer.readResultCode()));
+                break;
+            }
+        case kAuth2Cli_VaultNodeCreated:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_VaultNodeCreated").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Result: %1").arg(buffer.readResultCode()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Node ID: %1").arg(buffer.read<unsigned>()));
                 break;
             }
         case kAuth2Cli_VaultNodeFetched:
