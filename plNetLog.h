@@ -92,6 +92,7 @@ public slots:
     void onLaunch();
     void onClear() { m_logView->clear(); }
     void addNodes();
+    void onSearch();
 
 protected:
     virtual void closeEvent(QCloseEvent*);
@@ -99,6 +100,7 @@ protected:
 private:
     QTreeWidget*    m_logView;
     QLineEdit*      m_exePath;
+    QLineEdit*      m_searchText;
 
     MessageQueue    m_msgQueues[kWatchedProtocolCount];
 };

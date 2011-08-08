@@ -165,12 +165,22 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     QPushButton* btnLaunch = new QPushButton(tr("&Launch!"), this);
     QPushButton* btnClear = new QPushButton(tr("&Clear output"), this);
 
+    QWidget* searchBar = new QWidget(this);
+    m_searchText = new QLineEdit(searchBar);
+    QPushButton* btnSearch = new QPushButton(tr("&Search..."), searchBar);
+    QGridLayout* searchLayout = new QGridLayout(searchBar);
+    searchLayout->setMargin(0);
+    searchLayout->setHorizontalSpacing(4);
+    searchLayout->addWidget(m_searchText, 0, 0);
+    searchLayout->addWidget(btnSearch, 0, 1);
+
     QGridLayout* layout = new QGridLayout(this);
     layout->setMargin(4);
     layout->addWidget(btnClear, 0, 0);
-    layout->addWidget(m_logView, 1, 0);
-    layout->addWidget(pathSpec, 2, 0);
-    layout->addWidget(btnLaunch, 3, 0);
+    layout->addWidget(searchBar, 1, 0);
+    layout->addWidget(m_logView, 2, 0);
+    layout->addWidget(pathSpec, 3, 0);
+    layout->addWidget(btnLaunch, 4, 0);
     
     if (settings.contains("Geometry"))
         setGeometry(settings.value("Geometry").toRect());
@@ -179,6 +189,8 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
 
     connect(btnLaunch, SIGNAL(clicked()), SLOT(onLaunch()));
     connect(btnClear, SIGNAL(clicked()), SLOT(onClear()));
+    connect(btnSearch, SIGNAL(clicked()), SLOT(onSearch()));
+    connect(m_searchText, SIGNAL(returnPressed()), SLOT(onSearch()));
 }
 
 void plNetLogGUI::closeEvent(QCloseEvent* event)
@@ -276,6 +288,54 @@ void plNetLogGUI::onLaunch()
     QProcess::startDetached(m_exePath->text(),
         QStringList() << "/LocalData",
         dir.absolutePath());
+}
+
+void plNetLogGUI::onSearch()
+{
+    if (m_logView->topLevelItemCount() == 0)
+        return;
+
+    QString toFind = m_searchText->text();
+    QTreeWidgetItem* start = m_logView->currentItem();
+    if (!start)
+        start = m_logView->topLevelItem(0);
+
+    QTreeWidgetItem* item = start;
+    for ( ;; ) {
+        if (item->childCount()) {
+            item = item->child(0);
+        } else {
+            for ( ;; ) {
+                if (item->parent()){
+                    int childIdx = item->parent()->indexOfChild(item);
+                    item = item->parent();
+                    if (childIdx + 1 < item->childCount()) {
+                        item = item->child(childIdx + 1);
+                        break;
+                    }
+                } else {
+                    int childIdx = m_logView->indexOfTopLevelItem(item);
+                    if (childIdx + 1 < m_logView->topLevelItemCount()) {
+                        item = m_logView->topLevelItem(childIdx + 1);
+                        break;
+                    } else {
+                        item = m_logView->topLevelItem(0);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (item == start)
+            return;
+        if (item->text(0).contains(toFind, Qt::CaseInsensitive))
+            break;
+    }
+    m_logView->setCurrentItem(item);
+    while (item->parent()) {
+        item = item->parent();
+        item->setExpanded(true);
+    }
 }
 
 
