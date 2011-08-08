@@ -381,6 +381,31 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     << QString("Node ID: %1").arg(buffer.read<unsigned>()));
                 break;
             }
+        case kCli2Auth_VaultInitAgeRequest:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_VaultInitAgeRequest").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age Instance ID: %1").arg(buffer.readUuid()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Parent Age Instance ID: %1").arg(buffer.readUuid()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age Filename: %1").arg(buffer.readString()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age Instance Name: %1").arg(buffer.readString()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age User Name: %1").arg(buffer.readString()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age Description: %1").arg(buffer.readString()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age Sequence: %1").arg(buffer.read<int>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age Language: %1").arg(buffer.read<int>()));
+                break;
+            }
         case kCli2Auth_VaultNodeFind:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
@@ -644,6 +669,21 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                 }
                 break;
             }
+        case kAuth2Cli_VaultInitAgeReply:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 <-- Auth2Cli_VaultInitAgeReply").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Trans ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Result: %1").arg(buffer.readResultCode()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age Vault ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Age Info Vault ID: %1").arg(buffer.read<unsigned>()));
+                break;
+            }
         case kAuth2Cli_VaultNodeFindReply:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
@@ -749,9 +789,9 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                     new QTreeWidgetItem(age, QStringList()
                         << QString("Age Description: %1").arg(QString::fromUtf16(strbuf)));
                     new QTreeWidgetItem(age, QStringList()
-                        << QString("Age Sequence: %1").arg(buffer.read<unsigned>()));
+                        << QString("Age Sequence: %1").arg(buffer.read<int>()));
                     new QTreeWidgetItem(age, QStringList()
-                        << QString("Age Language: %1").arg(buffer.read<unsigned>()));
+                        << QString("Age Language: %1").arg(buffer.read<int>()));
                     new QTreeWidgetItem(age, QStringList()
                         << QString("Population: %1").arg(buffer.read<unsigned>()));
                     new QTreeWidgetItem(age, QStringList()

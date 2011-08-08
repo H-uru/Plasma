@@ -420,7 +420,7 @@ void plNetLogGUI::onLoadGate()
         queueMessage(kWatchedProtocolCli2GateKeeper, time, direction, data, size);
 
     addNodes();
-    m_logView->sortItems(0, Qt::AscendingOrder);
+    //m_logView->sortItems(0, Qt::AscendingOrder); -- sorts everything :(
 }
 
 void plNetLogGUI::onLoadAuth()
@@ -443,7 +443,7 @@ void plNetLogGUI::onLoadAuth()
         queueMessage(kWatchedProtocolCli2Auth, time, direction, data, size);
 
     addNodes();
-    m_logView->sortItems(0, Qt::AscendingOrder);
+    //m_logView->sortItems(0, Qt::AscendingOrder); -- sorts everything :(
 }
 
 void plNetLogGUI::onLoadGame()
@@ -466,7 +466,7 @@ void plNetLogGUI::onLoadGame()
         queueMessage(kWatchedProtocolCli2Game, time, direction, data, size);
 
     addNodes();
-    m_logView->sortItems(0, Qt::AscendingOrder);
+    //m_logView->sortItems(0, Qt::AscendingOrder); -- sorts everything :(
 }
 
 
