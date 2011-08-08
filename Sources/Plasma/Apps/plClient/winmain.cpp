@@ -342,38 +342,6 @@ bool TGRunTOSDialog ()
     return (StrCmp (Buf, "accepted") == 0);
 }
 
-void GetMouseCoords(HWND hWnd, WPARAM wParam, LPARAM lParam, int* xPos, int* yPos, int* fwKeys)
-{
-    POINT pt;
-    pt.x=LOWORD(lParam);
-    pt.y=HIWORD(lParam);
-#if 0
-    if (ClientToScreen(hWnd, &pt) == false)
-        HSDebugProc("Error converting client mouse coords to screen");
-#endif
-
-    if (xPos)
-        *xPos = pt.x;  // horizontal position of cursor 
-    if (yPos)
-        *yPos = pt.y;  // vertical position of cursor 
- 
-#if 0
-    char str[128];
-    sprintf(str, "mx=%d my=%d\n", pt.x, pt.y);
-    hsStatusMessage(str);
-#endif
-
-    if (fwKeys)
-        *fwKeys = wParam;        // key flags 
- 
-    // key flag bits
-    // MK_CONTROL  Set if the CTRL key is down. 
-    // MK_LBUTTON  Set if the left mouse button is down. 
-    // MK_MBUTTON  Set if the middle mouse button is down. 
-    // MK_RBUTTON  Set if the right mouse button is down. 
-    // MK_SHIFT  Set if the SHIFT key is down. 
-}
-
 void DebugMsgF(const char* format, ...);
 
 // Handles all the windows messages we might receive
