@@ -17,15 +17,20 @@
 
 #include "plNetLog.h"
 
-void Create_Message(QTreeWidgetItem* parent, ChunkBuffer& buffer);
-void Create_LoadCloneMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AnimStage(QTreeWidgetItem* parent, ChunkBuffer& buffer);
 
-void Create_AvatarInputStateMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
-void Create_AvBrainGenericMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
-void Create_AvTaskMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
-void Create_InputIfaceMgrMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
-void Create_KIMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer);
-void Create_LinkEffectsTriggerMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
-void Create_LoadAvatarMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
-void Create_NotifyMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
-void Create_ServerReplyMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_ArmatureBrain(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvBrainClimb(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvBrainCritter(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvBrainDrive(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvBrainGeneric(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvBrainHuman(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvBrainRideAnimatedPhysical(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvBrainSwim(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+
+void Create_AvAnimTask(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvOneShotTask(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvOneShotLinkTask(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvSeekTask(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvTaskBrain(QTreeWidgetItem* parent, ChunkBuffer& buffer);
+void Create_AvTaskSeek(QTreeWidgetItem* parent, ChunkBuffer& buffer);

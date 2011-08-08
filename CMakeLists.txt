@@ -34,16 +34,18 @@ set(MOCSRC
 
 set(GameMsg_HEADERS
     GameMsg/Factory.h
-    GameMsg/plNetMessage.h
-    GameMsg/plMessage.h
+    GameMsg/Avatar.h
     GameMsg/proEventData.h
+    GameMsg/plMessage.h
+    GameMsg/plNetMessage.h
 )
 
 set(GameMsg_SOURCES
     GameMsg/Factory.cpp
-    GameMsg/plNetMessage.cpp
-    GameMsg/plMessage.cpp
+    GameMsg/Avatar.cpp
     GameMsg/proEventData.cpp
+    GameMsg/plMessage.cpp
+    GameMsg/plNetMessage.cpp
 )
 
 qt4_wrap_cpp(MOC_SOURCES ${MOCSRC})

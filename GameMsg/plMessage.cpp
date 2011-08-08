@@ -109,6 +109,17 @@ void Create_AvBrainGenericMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         << QString("Transition Time: %1").arg(buffer.read<float>()));
 }
 
+void Create_AvTaskMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    Create_Message(new QTreeWidgetItem(parent, QStringList() << "<plMessage>"), buffer);
+
+    if (buffer.read<bool>()) {
+        QTreeWidgetItem* task = new QTreeWidgetItem(parent, QStringList());
+        QString taskType = Factory_Create(task, buffer, 0);
+        task->setText(0, QString("Task: %1").arg(taskType));
+    }
+}
+
 void Create_InputIfaceMgrMsg(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 {
     static const char* s_commands[] = {

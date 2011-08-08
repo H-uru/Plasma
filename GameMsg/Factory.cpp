@@ -16,8 +16,9 @@
  ******************************************************************************/
 
 #include "Factory.h"
-#include "plNetMessage.h"
+#include "Avatar.h"
 #include "plMessage.h"
+#include "plNetMessage.h"
 
 QString Factory_Name(unsigned type)
 {
@@ -353,6 +354,9 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kNetMsgTestAndSet:
         Create_NetMsgSharedState(parent, buffer);
         break;
+    case kAvTaskMsg:
+        Create_AvTaskMsg(parent, buffer);
+        break;
     case kNetMsgMembersListReq:
         Create_NetMsgMembersListReq(parent, buffer);
         break;
@@ -383,14 +387,44 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     case kAvatarInputStateMsg:
         Create_AvatarInputStateMsg(parent, buffer);
         break;
+    case kAvBrainHuman:
+        Create_AvBrainHuman(parent, buffer);
+        break;
+    case kAvBrainCritter:
+        Create_AvBrainCritter(parent, buffer);
+        break;
+    case kAvBrainDrive:
+        Create_AvBrainDrive(parent, buffer);
+        break;
+    case kAvBrainGeneric:
+        Create_AvBrainGeneric(parent, buffer);
+        break;
     case kInputIfaceMgrMsg:
         Create_InputIfaceMgrMsg(parent, buffer);
         break;
     case kKIMessage:
         Create_KIMessage(parent, buffer);
         break;
+    case kAvAnimTask:
+        Create_AvAnimTask(parent, buffer);
+        break;
+    case kAvSeekTask:
+        Create_AvSeekTask(parent, buffer);
+        break;
+    case kAvOneShotTask:
+        Create_AvOneShotTask(parent, buffer);
+        break;
+    case kAvTaskBrain:
+        Create_AvTaskBrain(parent, buffer);
+        break;
+    case kAnimStage:
+        Create_AnimStage(parent, buffer);
+        break;
     case kAvBrainGenericMsg:
         Create_AvBrainGenericMsg(parent, buffer);
+        break;
+    case kAvTaskSeek:
+        Create_AvTaskSeek(parent, buffer);
         break;
     case kNetMsgRelevanceRegions:
         Create_NetMsgRelevanceRegions(parent, buffer);
@@ -403,6 +437,18 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
         break;
     case kNetMsgPlayerPage:
         Create_NetMsgPlayerPage(parent, buffer);
+        break;
+    case kAvBrainSwim:
+        Create_AvBrainSwim(parent, buffer);
+        break;
+    case kAvBrainClimb:
+        Create_AvBrainClimb(parent, buffer);
+        break;
+    case kAvOneShotLinkTask:
+        Create_AvOneShotLinkTask(parent, buffer);
+        break;
+    case kAvBrainRideAnimatedPhysical:
+        Create_AvBrainRideAnimatedPhysical(parent, buffer);
         break;
     case 0x8000:
         return "(NULL)";
