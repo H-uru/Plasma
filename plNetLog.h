@@ -21,7 +21,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include <QDialog>
+#include <QMainWindow>
 #include <QTreeWidget>
 #include <QLineEdit>
 #include <QThread>
@@ -77,7 +77,7 @@ struct MessageQueue
     ChunkBuffer m_recv;
 };
 
-class plNetLogGUI : public QDialog
+class plNetLogGUI : public QMainWindow
 {
     Q_OBJECT
 

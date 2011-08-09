@@ -136,14 +136,15 @@ PipeThread* s_pipeThread = 0;
 
 
 plNetLogGUI::plNetLogGUI(QWidget* parent)
-    : QDialog(parent)
+    : QMainWindow(parent)
 {
     QSettings settings("H-uru", "plNetLog");
 
     // Create the GUI
-    QPushButton* btnClear = new QPushButton(tr("&Clear output"), this);
+    QWidget* window = new QWidget(this);
+    QPushButton* btnClear = new QPushButton(tr("&Clear output"), window);
 
-    QWidget* searchBar = new QWidget(this);
+    QWidget* searchBar = new QWidget(window);
     m_searchText = new QLineEdit(searchBar);
     QPushButton* btnSearch = new QPushButton(tr("&Search..."), searchBar);
     QGridLayout* searchLayout = new QGridLayout(searchBar);
@@ -152,11 +153,11 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     searchLayout->addWidget(m_searchText, 0, 0);
     searchLayout->addWidget(btnSearch, 0, 1);
 
-    m_logView = new QTreeWidget(this);
+    m_logView = new QTreeWidget(window);
     m_logView->setHeaderHidden(true);
     m_logView->setRootIsDecorated(true);
 
-    QWidget* pathSpec = new QWidget(this);
+    QWidget* pathSpec = new QWidget(window);
     m_exePath = new QLineEdit(pathSpec);
     m_exePath->setText(settings.value("ClientPath", "").toString());
     QCompleter* dirCompleter = new QCompleter(this);
@@ -173,9 +174,9 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     pathLayout->setHorizontalSpacing(4);
     pathLayout->addWidget(lblPath, 0, 0);
     pathLayout->addWidget(m_exePath, 0, 1);
-    QPushButton* btnLaunch = new QPushButton(tr("&Launch!"), this);
+    QPushButton* btnLaunch = new QPushButton(tr("&Launch!"), window);
 
-    QWidget* loadBar = new QWidget(this);
+    QWidget* loadBar = new QWidget(window);
     QPushButton* loadGate = new QPushButton(tr("Load GateKeeper Log"), loadBar);
     QPushButton* loadAuth = new QPushButton(tr("Load Auth Log"), loadBar);
     QPushButton* loadGame = new QPushButton(tr("Load Game Log"), loadBar);
@@ -186,7 +187,7 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     loadLayout->addWidget(loadAuth, 0, 1);
     loadLayout->addWidget(loadGame, 0, 2);
 
-    QGridLayout* layout = new QGridLayout(this);
+    QGridLayout* layout = new QGridLayout(window);
     layout->setMargin(4);
     layout->addWidget(btnClear, 0, 0);
     layout->addWidget(searchBar, 1, 0);
@@ -194,12 +195,12 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     layout->addWidget(pathSpec, 3, 0);
     layout->addWidget(btnLaunch, 4, 0);
     layout->addWidget(loadBar, 5, 0);
+    setCentralWidget(window);
 
     if (settings.contains("Geometry"))
         setGeometry(settings.value("Geometry").toRect());
     else
         resize(512, 640);
-    btnLaunch->setFocus();
 
     connect(btnLaunch, SIGNAL(clicked()), SLOT(onLaunch()));
     connect(btnClear, SIGNAL(clicked()), SLOT(onClear()));
