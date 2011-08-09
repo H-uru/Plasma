@@ -428,6 +428,17 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                 Node_Factory(node, buffer);
                 break;
             }
+        case kCli2Auth_VaultSendNode:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_VaultSendNode").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Source Node ID: %1").arg(buffer.read<unsigned>()));
+                new QTreeWidgetItem(top, QStringList()
+                    << QString("Dest Player ID: %1").arg(buffer.read<unsigned>()));
+                break;
+            }
         case kCli2Auth_AgeRequest:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
