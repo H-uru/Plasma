@@ -451,7 +451,7 @@ T * THashTable<T,K>::FindNext (const K & key, T * object) {
 template<class T, class K>
 const T * THashTable<T,K>::Find (const K & key) const {
     unsigned        hash     = key.GetHash();
-    const LIST(T) & slotList = GetSlotList(hash);
+    const LIST(T) & slotList = this->GetSlotList(hash);
     for (const T * curr = slotList.Head(); curr; curr = slotList.Next(curr))
         if ((GetHash(curr) == hash) && (*curr == key))
             return curr;
@@ -462,7 +462,7 @@ const T * THashTable<T,K>::Find (const K & key) const {
 template<class T, class K>
 const T * THashTable<T,K>::FindNext (const K & key, const T * object) const {
     unsigned        hash     = key.GetHash();
-    const LIST(T) & slotList = GetSlotList(hash);
+    const LIST(T) & slotList = this->GetSlotList(hash);
     for (const T * curr = slotList.Next(object); curr; curr = slotList.Next(curr))
         if ((GetHash(curr) == hash) && (*curr == key))
             return curr;
@@ -501,8 +501,8 @@ public:
 //===========================================================================
 template<class T, class K, int linkOffset, unsigned maxSize>
 THashTableDecl<T,K,linkOffset,maxSize>::THashTableDecl () {
-    SetLinkOffset(linkOffset, maxSize);
-    SetSlotMaxCount(maxSize);
+    this->SetLinkOffset(linkOffset, maxSize);
+    this->SetSlotMaxCount(maxSize);
 }
 
 
@@ -523,8 +523,8 @@ public:
 //===========================================================================
 template<class T, class K>
 void THashTableDyn<T,K>::Initialize (int linkOffset, unsigned maxSize) {
-    SetLinkOffset(linkOffset, maxSize);
-    SetSlotMaxCount(maxSize);
+    this->SetLinkOffset(linkOffset, maxSize);
+    this->SetSlotMaxCount(maxSize);
 }
 
 
@@ -581,10 +581,10 @@ template<class C>
 class THashKeyStrCmp : public THashKeyStrBase<C> {
 public:
     bool operator== (const THashKeyStrCmp & rhs) const {
-        return StrCmp(m_str, rhs.m_str) == 0;
+        return StrCmp(this->m_str, rhs.m_str) == 0;
     }
     unsigned GetHash () const {
-        return StrHash(m_str);
+        return StrHash(this->m_str);
     }
 
 protected:
@@ -597,10 +597,10 @@ template<class C>
 class THashKeyStrCmpI : public THashKeyStrBase<C> {
 public:
     bool operator== (const THashKeyStrCmpI & rhs) const {
-        return StrCmpI(m_str, rhs.m_str) == 0;
+        return StrCmpI(this->m_str, rhs.m_str) == 0;
     }
     unsigned GetHash () const {
-        return StrHashI(m_str);
+        return StrHashI(this->m_str);
     }
 protected:
 
@@ -621,7 +621,7 @@ public:
     THashKeyStrPtr () { }
     THashKeyStrPtr (const C str[]) : T(str) { }
     void SetString (const C str[]) {
-        m_str = str;
+        this->m_str = str;
     }
 };
 
@@ -648,12 +648,12 @@ public:
         SetString(nil);
     }
     void SetString (const C str[]) {  // deprecated
-        if (m_str)
-            FREE(const_cast<C *>(m_str));
+        if (this->m_str)
+            FREE(const_cast<C *>(this->m_str));
         if (str)
-            m_str = StrDup(str);
+            this->m_str = StrDup(str);
         else
-            m_str = nil;
+            this->m_str = nil;
     }
 };
 

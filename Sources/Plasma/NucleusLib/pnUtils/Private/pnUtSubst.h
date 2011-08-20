@@ -36,10 +36,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 template<typename chartype>
 struct SubstParsedData {
-    template<typename chartype>
+    template<typename char_type>
     struct SubstBlock {
         bool        isVar;
-        chartype *  data;
+        char_type *  data;
         unsigned    strLen;
 
         SubstBlock()

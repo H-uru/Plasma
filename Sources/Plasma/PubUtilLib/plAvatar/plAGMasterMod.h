@@ -227,7 +227,6 @@ protected:
     plAnimVector fPrivateAnims;
 
     // animations that require AnimTimeConvert state to be synched
-    typedef std::vector<plAGAnim*> plAnimVector;
     plInstanceVector fATCAnimInstances;
     
     hsBool fFirstEval;

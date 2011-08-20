@@ -153,35 +153,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     inline float hsScalarAverage(float a, float b) { return (a + b) * float(0.5); }
     inline float hsScalarAverage(float a, float b, float t) { return a + t * (b - a); }
 
-#if (HS_BUILD_FOR_BE || (HS_BUILD_FOR_UNIX && !HS_BUILD_FOR_GCC322))
-    #define acosf(x)        (float)acos(x)
-    #define asinf(x)        (float)asin(x)
-    #define atanf(x)        (float)atan(x)
-    #define atan2f(x, y)        (float)atan2(x, y)
-    #define ceilf(x)            (float)ceil(x)
-    #define cosf(x)         (float)cos(x)
-    #define coshf(x)        (float)cosh(x)
-    #define expf(x)         (float)exp(x)
-    #define fabsf(x)        (float)fabs(x)
-    #define floorf(x)       (float)floor(x)
-    #define fmodf(x, y)     (float)fmod(x, y)
-    #define logf(x)         (float)log(x)
-    #define log10f(x)       (float)log10(x)
-    #define powf(x, y)      (float)pow(x, y)
-    #define sinf(x)         (float)sin(x)
-    #define sinhf(x)        (float)sinh(x)
-    #define sqrtf(x)        (float)sqrt(x)
-    #define tanf(x)         (float)tan(x)
-    #define tanhf(x)        (float)tanh(x)
-
-    inline float modff(float x, float* y)
-    {
-        double _Di, _Df = modf(x, &_Di);
-        *y = (float)_Di;
-        return ((float)_Df);
-    }
-#endif
-
     inline hsScalar hsSquareRoot(hsScalar scalar) { return sqrtf(scalar); }
     inline hsScalar hsSine(hsScalar angle) { return sinf(angle); }
     inline hsScalar hsCosine(hsScalar angle) { return cosf(angle); }

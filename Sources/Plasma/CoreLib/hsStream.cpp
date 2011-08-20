@@ -54,86 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //////////////////////////////////////////////////////////////////////////////////
 
-#if HS_CPU_BENDIAN
-    static void swapIt(Int32 *swap)
-    {
-        Byte*   c = (Byte*)swap;
-        Byte        t = c[0];
-
-        c[0] = c[3];
-        c[3] = t;
-        t = c[1];
-        c[1] = c[2];
-        c[2] = t;
-    }
-    static void swapIt(int *swap)
-    {
-        swapIt((Int32*)swap);
-    }
-    static void swapIt(float *swap)
-    {
-        swapIt((Int32*)swap);
-    }
-
-    static void swapIt(double *swap)
-    {
-        float* a = (float*)&swap;
-        float* b = (float*)(((Byte*)&swap)+4);
-        swapIt(a);
-        swapIt(b);
-    }
-
-    static void swapIt(Int16 *swap)
-    {
-        Byte *c = (Byte*)swap;
-        Byte t;
-        t = c[0];
-        c[0] = c[1];
-        c[1] = t;
-    }
-    #define unswapIt(value)
-#else
-    #define swapIt(value)
-    static void unswapIt(Int32 *swap)
-    {
-        Byte*   c = (Byte*)swap;
-        Byte        t = c[0];
-
-        c[0] = c[3];
-        c[3] = t;
-        t = c[1];
-        c[1] = c[2];
-        c[2] = t;
-    }
-    static void unswapIt(int *swap)
-    {
-        unswapIt((Int32*)swap);
-    }
-    static void unswapIt(float *swap)
-    {
-        unswapIt((Int32*)swap);
-    }
-
-    static void unswapIt(double *swap)
-    {
-        float* a = (float*)&swap;
-        float* b = (float*)(((Byte*)&swap)+4);
-        swapIt(a);
-        swapIt(b);
-    }
-
-    static void unswapIt(Int16 *swap)
-    {
-        Byte *c = (Byte*)swap;
-        Byte t;
-        t = c[0];
-        c[0] = c[1];
-        c[1] = t;
-    }
-#endif
-
-//////////////////////////////////////////////////////////////////////////////////
-
 void hsStream::FastFwd()
 {
     hsThrow("FastFwd unimplemented by subclass of stream");
@@ -567,87 +487,77 @@ UInt16 hsStream::ReadSwap16()
 {
     UInt16  value;
     this->Read(sizeof(UInt16), &value);
-    swapIt((Int16*)&value);
+    value = hsSWAP16(value);
     return value;
 }
 
 void hsStream::ReadSwap16(int count, UInt16 values[])
 {
     this->Read(count * sizeof(UInt16), values);
-#if HS_CPU_BENDIAN
     for (int i = 0; i < count; i++)
-        swapIt((Int16*)&values[i]);
-#endif
+        values[i] = hsSWAP16(values[i]);
 }
 
 UInt32 hsStream::ReadSwap32()
 {
     UInt32  value;
     Read4Bytes(&value);
-    swapIt((Int32*)&value);
+    value = hsSWAP32(value);
     return value;
 }
 
 void hsStream::ReadSwap32(int count, UInt32 values[])
 {
     this->Read(count * sizeof(UInt32), values);
-#if HS_CPU_BENDIAN
     for (int i = 0; i < count; i++)
-        swapIt((Int32*)&values[i]);
-#endif
+        values[i] = hsSWAP32(values[i]);
 }
 
 UInt32 hsStream::ReadUnswap32()
 {
     UInt32  value;
     Read4Bytes(&value);
-    unswapIt((Int32*)&value);
+    value = hsUNSWAP32(value);
     return value;
 }
 
 #if HS_CAN_USE_FLOAT
     double hsStream::ReadSwapDouble()
     {
-        double  ival;
-        Read8Bytes(&ival);
-        double *pval = (double *)&ival;     // all in the name of speed, 
-        swapIt(pval);
-        return *pval;
+        double  value;
+        Read8Bytes(&value);
+        value = hsSWAPDouble(value);
+        return value;
     }
 
     void hsStream::ReadSwapDouble(int count, double values[])
     {
         this->Read(count * sizeof(double), values);
-#if HS_CPU_BENDIAN
-                for (int i = 0; i < count; i++)
-                        swapIt(&values[i]);
-#endif
-        }
+        for (int i = 0; i < count; i++)
+            values[i] = hsSWAPDouble(values[i]);
+    }
 
 
     float hsStream::ReadSwapFloat()
     {
-        UInt32  ival;
-        Read4Bytes(&ival);
-        float *pval = (float *)&ival;       // all in the name of speed, 
-        swapIt(pval);
-        return *pval;
+        float   value;
+        Read4Bytes(&value);
+        value = hsSWAPFloat(value);
+        return value;
     }
 
     void hsStream::ReadSwapFloat(int count, float values[])
     {
         this->Read(count * sizeof(float), values);
-#if HS_CPU_BENDIAN
         for (int i = 0; i < count; i++)
-            swapIt(&values[i]);
-#endif
+            values[i] = hsSWAPFloat(values[i]);
     }
 
     float hsStream::ReadUnswapFloat()
     {
-        float value;
+        float   value;
         this->Read(sizeof(float), &value);
-        unswapIt(&value);
+        value = hsUNSWAPFloat(value);
         return value;
     }
 #endif
@@ -688,7 +598,7 @@ void hsStream::WriteByte(UInt8 value)
 
 void  hsStream::WriteSwap16(UInt16 value)
 {
-    swapIt((Int16*)&value);
+    value = hsSWAP16(value);
     this->Write(sizeof(Int16), &value);
 }
 
@@ -700,7 +610,7 @@ void  hsStream::WriteSwap16(int count, const UInt16 values[])
 
 void  hsStream::WriteSwap32(UInt32 value)
 {
-    swapIt((Int32*)&value);
+    value = hsSWAP32(value);
     this->Write(sizeof(Int32), &value);
 }
 
@@ -712,14 +622,14 @@ void  hsStream::WriteSwap32(int count, const UInt32 values[])
 
 void hsStream::WriteUnswap32(UInt32 value)
 {
-    unswapIt((Int32*)&value);
+    value = hsUNSWAP32(value);
     this->Write(sizeof(Int32), &value);
 }
 
 #if HS_CAN_USE_FLOAT
     void hsStream::WriteSwapDouble(double value)
     {
-        swapIt(&value);
+        value = hsSWAPDouble(value);
         this->Write(sizeof(double), &value);
     }
 
@@ -731,7 +641,7 @@ void hsStream::WriteUnswap32(UInt32 value)
 
     void hsStream::WriteSwapFloat(float value)
     {
-        swapIt(&value);
+        value = hsSWAPFloat(value);
         this->Write(sizeof(float), &value);
     }
 
@@ -743,7 +653,7 @@ void hsStream::WriteUnswap32(UInt32 value)
 
     void hsStream::WriteUnswapFloat(float value)
     {
-        unswapIt(&value);
+        value = hsUNSWAPFloat(value);
         this->Write(sizeof(float), &value);
     }
 #endif
@@ -1061,8 +971,6 @@ void hsFileStream::Truncate()
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-#if !HS_BUILD_FOR_PS2
-#if !(HS_BUILD_FOR_REFERENCE)
 
 hsUNIXStream::~hsUNIXStream()
 {
@@ -1187,22 +1095,11 @@ void hsUNIXStream::Truncate()
 {
     if (!fRef)
         return;
-#if! __MWERKS__
-    int handle = _fileno(fRef);
-#if !HS_BUILD_FOR_UNIX
+    int handle = fileno(fRef);
+#if HS_BUILD_FOR_WIN32
     _chsize(handle, fPosition);
 #else
     ftruncate(handle, fPosition);
-#endif
-#else
-#if 1
-    UInt32 handle = (UInt32)fRef->handle;
-    OSErr err = ::SetEOF(handle, fPosition); 
-    if(err != noErr)
-    {
-        hsThrow("Truncate error!");
-    }
-#endif
 #endif
 }
 
@@ -1213,8 +1110,6 @@ void hsUNIXStream::Flush()
     (void)::fflush(fRef);
 }
 
-#endif
-#endif
 
 //////////////////////////////////////////////////////////////////////////////////////
 

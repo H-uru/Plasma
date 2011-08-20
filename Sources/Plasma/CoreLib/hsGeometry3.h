@@ -32,84 +32,6 @@ struct hsPoint3;
 struct hsScalarTriple;
 class hsStream;
 
-#if HS_BUILD_FOR_PS2
-#include <eekernel.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <eeregs.h>
-#include <libgraph.h>
-#include <libdma.h>
-#include <libpkt.h>
-#include <sifdev.h>
-#include <libdev.h>
-
-/**** vu0 inline ****/
-#if 1
-#define inline_asm inline   /* inline */
-#else
-#define inline_asm          /* not inline */
-#endif
-
-/******* HeadSpin *******/
-typedef float   hsScalar;
-
-/* -------------------------------------------------------------------------------- */
-/* return(sqrt(x)) */
-inline_asm hsScalar SqrtVU0(hsScalar x)
-{
-    register hsScalar ret;
-
-    asm volatile(" \
-    mfc1    $8,%1 \
-    qmtc2   $8,vf4 \
-    vsqrt   Q,vf4x \
-    vwaitq \
-    cfc2    $2,$vi22 \
-    mtc1    $2,%0 \
-    " :"=f" (ret) : "f" (x), "0" (ret) : "$2", "$8", "memory");
-
-    return ret;
-}
-
-/* -------------------------------------------------------------------------------- */
-/* return(1 / a) */
-inline_asm hsScalar ScalarInvertVU0(hsScalar a)
-{
-    register hsScalar ret;
-
-    asm volatile(" \
-    mfc1    $8,%1 \
-    qmtc2   $8,vf2 \
-    vdiv    Q,vf0w,vf2x \
-    vwaitq \
-    cfc2    $2,$vi22 \
-    mtc1    $2,%0 \
-    " :"=f" (ret) : "f" (a), "0" (ret) : "$2", "$8", "memory");
-
-    return ret;
-}
-
-/* -------------------------------------------------------------------------------- */
-/* return(a * b) */
-inline_asm hsScalar ScalarMulVU0(hsScalar a, hsScalar b)
-{
-    register hsScalar ret;
-
-    asm volatile(" \
-    mfc1    $8,%1 \
-    qmtc2   $8,vf2 \
-    mfc1    $9,%2 \
-    qmtc2   $9,vf3 \
-    vmul.x  vf3,vf2,vf3 \
-    qmfc2   $2 ,vf3 \
-    mtc1    $2,%0 \
-    " :"=f" (ret) : "f" (a), "f" (b), "0" (ret) : "$2", "$8", "$9", "memory");
-
-    return ret;
-}
-
-#endif  // PS2
-
 /*
     If value is already close to hsScalar1, then this is a good approx. of 1/sqrt(value)
 */
@@ -166,12 +88,7 @@ public:
      hsScalar       Magnitude() const;
      hsScalar       MagnitudeSquared() const;
 #else
-
-#if HS_BUILD_FOR_PS2
-     hsScalar       Magnitude() const;
-#else
      hsScalar       Magnitude() const { return hsSquareRoot(MagnitudeSquared()); }
-#endif
      hsScalar       MagnitudeSquared() const { return (fX * fX + fY * fY + fZ * fZ); }
 #endif
 
@@ -183,19 +100,7 @@ public:
     void Read(hsStream *stream);
     void Write(hsStream *stream) const;
 
-} ATTRIBUTE_FOR_PS2;    /* SUNSOFT */
-
-
-#if HS_BUILD_FOR_PS2
-inline hsScalar hsScalarTriple::Magnitude() const
-{
-    MATRIX4 m;
-    m[0] = fX;
-    m[1] = fY;
-    m[2] = fZ;
-    return MagnitudeVU0(m);
-}
-#endif
+};
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -256,7 +161,7 @@ struct hsPoint3  : public hsScalarTriple {
     hsBool operator!=(const hsPoint3& ss) const { return !(*this == ss); }
     hsPoint3 &operator+=(const hsScalarTriple &s) { fX += s.fX; fY += s.fY; fZ += s.fZ; return *this; }
     hsPoint3 &operator*=(const hsScalar s) { fX *= s; fY *= s; fZ *= s; return *this; }
-} ATTRIBUTE_FOR_PS2;    /* SUNSOFT */
+};
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -332,7 +237,7 @@ struct hsVector3 : public hsScalarTriple {
     hsVector3 &operator-=(const hsScalarTriple &s) { fX -= s.fX; fY -= s.fY; fZ -= s.fZ; return *this; }
     hsVector3 &operator*=(const hsScalar s) { fX *= s; fY *= s; fZ *= s; return *this; }
     hsVector3 &operator/=(const hsScalar s) { fX /= s; fY /= s; fZ /= s; return *this; }
-} ATTRIBUTE_FOR_PS2;    /* SUNSOFT */
+};
 
 struct hsPoint4 {   
     hsScalar    fX, fY, fZ, fW;
@@ -345,7 +250,7 @@ struct hsPoint4 {
 
     hsPoint4*   Set(hsScalar x, hsScalar y, hsScalar z, hsScalar w) 
         { fX = x; fY = y; fZ = z; fW = w; return this; }
-} ATTRIBUTE_FOR_PS2;    /* SUNSOFT */
+};
 
 
 inline hsVector3 operator+(const hsVector3& s, const hsVector3& t)
@@ -471,7 +376,7 @@ struct hsPointNorm {
 
     void Read(hsStream* s) { fPos.Read(s); fNorm.Read(s); }
     void Write(hsStream* s) const { fPos.Write(s); fNorm.Write(s); }
-} ATTRIBUTE_FOR_PS2;    /* SUNSOFT */
+};
 
 
 struct hsPlane3 {
@@ -491,6 +396,6 @@ struct hsPlane3 {
 
     void Read(hsStream *stream);
     void Write(hsStream *stream) const;
-} ATTRIBUTE_FOR_PS2;
+};
 
 #endif

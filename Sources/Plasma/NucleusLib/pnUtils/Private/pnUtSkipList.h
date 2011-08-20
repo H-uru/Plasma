@@ -97,13 +97,13 @@ class TSkipList {
 private:
     enum { kMaxLevels = 32 };
 
-    template<class T, class K>
+    template<class T2, class K2>
     struct TNode {
-        const K *     key;
-        T *           object;
+        const K2 *     key;
+        T2 *           object;
         unsigned      level;
-        TNode<T, K> * prev;
-        TNode<T, K> * next[1];      // variable size array
+        TNode<T2, K2> * prev;
+        TNode<T2, K2> * next[1];      // variable size array
     };
     typedef TNode<T,K> Node;
 
@@ -147,7 +147,7 @@ public:
 
 //============================================================================
 template<class T, class K, unsigned keyOffset, class Cmp>
-typename TSkipList<T,K,keyOffset,Cmp>::TNode<T,K> * TSkipList<T,K,keyOffset,Cmp>::AllocNode (unsigned level) {
+typename TSkipList<T,K,keyOffset,Cmp>::Node* TSkipList<T,K,keyOffset,Cmp>::AllocNode (unsigned level) {
 
     unsigned size = offsetof(Node, next) + (level + 1) * sizeof(Node);
     Node * node = (Node *)ALLOC(size);

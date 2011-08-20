@@ -157,7 +157,7 @@ struct hsMatrix44 {
 
     void Read(hsStream *stream);
     void Write(hsStream *stream);
-} ATTRIBUTE_FOR_PS2;    /* SUNSOFT */
+};
 
 #if 0 // Havok reeks
 inline int operator!=(const hsMatrix44& s, const hsMatrix44& t)

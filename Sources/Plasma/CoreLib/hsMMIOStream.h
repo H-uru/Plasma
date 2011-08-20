@@ -31,7 +31,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if HS_BUILD_FOR_WIN32
 #include <mmsystem.h>
-#endif
 
 class hsMMIOStream: public hsStream
 {   
@@ -52,5 +51,6 @@ public:
     HMMIO   GetHandle() { return fHmfr; }
     void    SetHandle(HMMIO handle) { fHmfr = handle; }
 };
+#endif
 
 #endif  // hsMMIOStream_inc

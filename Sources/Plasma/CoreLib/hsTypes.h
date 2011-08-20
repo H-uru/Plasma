@@ -30,18 +30,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 /************************** Other Includes *****************************/
-
-#if !(HS_BUILD_FOR_REFERENCE)
-    #if HS_BUILD_FOR_MAC
-        #include <Types.h>
-        #include <string.h>
-        #include <ctype.h>
-        #include <memory.h>
-    #endif
-        #include <stdlib.h>
-        #include <stdio.h>
+#include <stdlib.h>
+#include <stdio.h>
         
-#endif
 #if HS_CAN_USE_FLOAT
     #include <math.h>
 #endif
@@ -170,30 +161,59 @@ typedef UInt32  hsGSeedValue;
     }
     inline UInt32 hsSwapEndian32(UInt32 value)
     {
-        return  (value << 24) |
-                ((value & 0xFF00) << 8) |
-                ((value >> 8) & 0xFF00) |
-                (value >> 24);
+        return ((value)              << 24) | 
+               ((value & 0x0000ff00) << 8)  |
+               ((value & 0x00ff0000) >> 8)  |
+               ((value)              >> 24);
+    }
+    inline UInt64 hsSwapEndian64(UInt64 value)
+    {
+        return ((value)                      << 56) |
+               ((value & 0x000000000000ff00) << 40) |
+               ((value & 0x0000000000ff0000) << 24) |
+               ((value & 0x00000000ff000000) << 8)  |
+               ((value & 0x000000ff00000000) >> 8)  |
+               ((value & 0x0000ff0000000000) >> 24) |
+               ((value & 0x00ff000000000000) >> 40) |
+               ((value)                      >> 56);
     }
     #if HS_CAN_USE_FLOAT
-        inline float hsSwapEndianFloat(float fvalue)
-        {
-            UInt32 value = *(UInt32*)&fvalue;
-            value = hsSwapEndian32(value);
-            return *(float*)&value;
-        }
+    inline float hsSwapEndianFloat(float fvalue)
+    {
+        UInt32 value = *(UInt32*)&fvalue;
+        value = hsSwapEndian32(value);
+        return *(float*)&value;
+    }
+    inline double hsSwapEndianDouble(double dvalue)
+    {
+        UInt64 value = *(UInt64*)&dvalue;
+        value = hsSwapEndian64(value);
+        return *(double*)&value;
+    }
     #endif
 
-    #if HS_CPU_LENDIAN
-        #define hsUNSWAP16(n)   hsSwapEndian16(n)
-        #define hsUNSWAP32(n)   hsSwapEndian32(n)
-        #define hsSWAP16(n) (n)
-        #define hsSWAP32(n) (n)
+    #if LITTLE_ENDIAN
+        #define hsUNSWAP16(n)       hsSwapEndian16(n)
+        #define hsUNSWAP32(n)       hsSwapEndian32(n)
+        #define hsUNSWAP64(n)       hsSwapEndian64(n)
+        #define hsUNSWAPFloat(n)    hsSwapEndianFloat(n)
+        #define hsUNSWAPDouble(n)   hsSwapEndianDouble(n)
+        #define hsSWAP16(n)         (n)
+        #define hsSWAP32(n)         (n)
+        #define hsSWAP64(n)         (n)
+        #define hsSWAPFloat(n)      (n)
+        #define hsSWAPDouble(n)     (n)
     #else
-        #define hsUNSWAP16(n)   (n)
-        #define hsUNSWAP32(n)   (n)
-        #define hsSWAP16(n) hsSwapEndian16(n)
-        #define hsSWAP32(n) hsSwapEndian32(n)
+        #define hsUNSWAP16(n)       (n)
+        #define hsUNSWAP32(n)       (n)
+        #define hsUNSWAP64(n)       (n)
+        #define hsUNSWAPFloat(n)    (n)
+        #define hsUNSWAPDouble(n)   (n)
+        #define hsSWAP16(n)         hsSwapEndian16(n)
+        #define hsSWAP32(n)         hsSwapEndian32(n)
+        #define hsSWAP64(n)         hsSwapEndian64(n)
+        #define hsSWAPFloat(n)      hsSwapEndianFloat(n)
+        #define hsSWAPDouble(n)     hsSwapEndianDouble(n)
     #endif
 
     inline void hsSwap(Int32& a, Int32& b)
@@ -224,17 +244,7 @@ typedef UInt32  hsGSeedValue;
 
 struct hsColor32 {
 
-#if 1 // hsColor32 fixed-format optimization
     UInt8   b, g, r, a;
-#else
-#if (HS_BUILD_FOR_WIN32 || HS_BUILD_FOR_BE)
-    UInt8   b, g, r, a;
-#elif (HS_BUILD_FOR_UNIX && HS_CPU_BENDIAN)
-    UInt8   a, b, g, r;
-#else
-    UInt8   a, r, g, b;
-#endif
-#endif
 
 #ifdef __cplusplus
     void        SetARGB(UInt8 aa, UInt8 rr, UInt8 gg, UInt8 bb)
