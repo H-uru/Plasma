@@ -91,8 +91,10 @@ static NetCommAge           s_age;
 static NetCommAge           s_startupAge;
 static bool                 s_needAvatarLoad = true;
 static bool                 s_loginComplete = false;
+static bool                 s_hasAuthSrvIpAddress = false;
 static bool                 s_hasFileSrvIpAddress = false;
 static ENetError            s_authResult = kNetErrAuthenticationFailed;
+static wchar                s_authSrvAddr[256];
 static wchar                s_fileSrvAddr[256];
 
 static wchar                s_iniServerAddr[256];
@@ -830,6 +832,16 @@ static void IReadNetIni() {
 }
 
 //============================================================================
+static void AuthSrvIpAddressCallback (
+    ENetError       result,
+    void *          param,
+    const wchar     addr[]
+) {
+    StrCopy(s_authSrvAddr, addr, arrsize(s_authSrvAddr)); 
+    s_hasAuthSrvIpAddress = true;
+}
+
+//============================================================================
 static void FileSrvIpAddressCallback (
     ENetError       result,
     void *          param,
@@ -979,21 +991,47 @@ void NetCommConnect () {
 
     const wchar ** addrs;
     unsigned count;
-    
-    count = GetAuthSrvHostnames(&addrs);
-    NetCliAuthStartConnect(addrs, count);
+    hsBool connectedToKeeper = false;
+
+    // if a console override was specified for a authserv, connect directly to the authserver rather than going through the gatekeeper
+    if((count = GetAuthSrvHostnames(&addrs)) && wcslen(addrs[0]))
+    {
+        NetCliAuthStartConnect(addrs, count);
+    }
+    else
+    {
+        count = GetGateKeeperSrvHostnames(&addrs);
+        NetCliGateKeeperStartConnect(addrs, count);
+        connectedToKeeper = true;
+
+        // request an auth server ip address
+        NetCliGateKeeperAuthSrvIpAddressRequest(AuthSrvIpAddressCallback, nil);
+
+        while(!s_hasAuthSrvIpAddress && !s_netError) {
+            NetClientUpdate();
+            AsyncSleep(10);
+        }
+            
+        const wchar * authSrv[] = {
+            s_authSrvAddr
+        };
+        NetCliAuthStartConnect(authSrv, 1);
+    }
 
     if (!gDataServerLocal) {
 
         // if a console override was specified for a filesrv, connect directly to the fileserver rather than going through the gatekeeper
-        if(GetFileSrvHostnames(&addrs) && wcslen(addrs[0]))
+        if((count = GetFileSrvHostnames(&addrs)) && wcslen(addrs[0]))
         {
             NetCliFileStartConnect(addrs, count);
         }
         else
         {
-            count = GetGateKeeperSrvHostnames(&addrs);
-            NetCliGateKeeperStartConnect(addrs, count);
+            if (!connectedToKeeper) {
+                count = GetGateKeeperSrvHostnames(&addrs);
+                NetCliGateKeeperStartConnect(addrs, count);
+                connectedToKeeper = true;
+            }
 
             // request a file server ip address
             NetCliGateKeeperFileSrvIpAddressRequest(FileSrvIpAddressCallback, nil, false);
@@ -1009,6 +1047,9 @@ void NetCommConnect () {
             NetCliFileStartConnect(fileSrv, 1);
         }
     }
+
+    if (connectedToKeeper)
+        NetCliGateKeeperDisconnect();
 }
 
 //============================================================================
