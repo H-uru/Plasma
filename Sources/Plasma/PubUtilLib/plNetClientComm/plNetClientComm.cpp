@@ -767,8 +767,8 @@ static void IReadNetIni() {
     }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    // @@@: Internal dev build only: Drop a default version of the file if not found    
-    if (!ini && BuildType() == BUILD_TYPE_DEV) {
+    // @@@: Internal build only: Drop a default version of the file if not found    
+    if (!ini) {
         EFileError  fileError;
         qword       fileSize;
         qword       lastWrite;      

@@ -602,6 +602,7 @@ static void StatusCallback(void *)
     {
         curl_easy_setopt(hCurl, CURLOPT_USERAGENT, "UruClient/1.0");
         curl_easy_setopt(hCurl, CURLOPT_URL, serverUrl);
+        curl_easy_setopt(hCurl, CURLOPT_WRITEFUNCTION, &CurlCallback);
 
         if (serverUrl[0] && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
             SetStatusText(s_curlError);

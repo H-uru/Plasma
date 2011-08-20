@@ -344,13 +344,13 @@ void NetLogConn::Connect (
     connect.hdr.connType    = kConnTypeSrvToLog;
     connect.hdr.hdrBytes    = sizeof(connect.hdr);
     connect.hdr.buildId     = BuildId();
-    connect.hdr.buildType   = BuildType();
+    connect.hdr.buildType   = BUILD_TYPE_LIVE;
     connect.hdr.branchId    = BranchId();
     connect.hdr.productId   = ProductId();
     connect.data.dataBytes  = sizeof(connect.data);
     connect.data.buildId    = BuildId();
     connect.data.srvType    = srvType;
-    connect.data.buildType  = BuildType();
+    connect.data.buildType  = BUILD_TYPE_LIVE;
     connect.data.productId  = ProductId();
     
     AsyncSocketConnect(
