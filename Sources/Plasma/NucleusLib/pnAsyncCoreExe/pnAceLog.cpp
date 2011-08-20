@@ -32,8 +32,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Pch.h"
 #pragma hdrstop
 
-#if defined(PLASMA_EXTERNAL_RELEASE) && (BUILD_TYPE == BUILD_TYPE_LIVE)
-    // If this is an external live build then don't write log files
+#if defined(PLASMA_EXTERNAL_RELEASE)
+    // If this is an external build then don't write log files
     #define ACELOG_NO_LOG_FILES
 #endif
 
@@ -84,11 +84,11 @@ static unsigned s_logSize[kNumLogTypes] = {
 
 static const wchar * s_logNameFmt[kNumLogTypes] = {
 #ifdef SERVER
-    L"Dbg%02u%02u%02u.%s.log",
-    L"Inf%02u%02u%02u.%s.log",
-    L"Err%02u%02u%02u.%s.log",
+    L"Dbg%02u%02u%02u.log",
+    L"Inf%02u%02u%02u.log",
+    L"Err%02u%02u%02u.log",
 #else
-    L"%s%02u%02u%02u.%s.log",
+    L"%s%02u%02u%02u.log",
 #endif
 };
 
@@ -176,8 +176,7 @@ static void GetLogFilename (
 #endif
         timeDesc.year % 100,
         timeDesc.month,
-        timeDesc.day,
-        BuildTypeString()
+        timeDesc.day
     );
     PathAddFilename(filename, s_directory, filename, chars);
 }

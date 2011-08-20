@@ -502,7 +502,7 @@ static void Connect (CliFileConn * conn) {
     connect.hdr.connType    = kConnTypeCliToFile;
     connect.hdr.hdrBytes    = sizeof(connect.hdr);
     connect.hdr.buildId     = kFileSrvBuildId;
-    connect.hdr.buildType   = BuildType();
+    connect.hdr.buildType   = BUILD_TYPE_LIVE;
     connect.hdr.branchId    = BranchId();
     connect.hdr.productId   = ProductId();
     connect.data.buildId    = conn->buildId;

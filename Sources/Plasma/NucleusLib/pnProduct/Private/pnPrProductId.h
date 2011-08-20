@@ -73,6 +73,6 @@ const wchar * ProductShortName ();  // e.g: L"Uru"                      (filenam
 const wchar * ProductLongName ();   // e.g: L"Uru: Ages Beyond Myst"    (human friendly)
 
 
-// Returns: "<ProductCoreName>.<BuildTypeString>.<BranchId>.<BuildId>"
-// Example: "Uru.Beta.3.204"
+// Returns: "<ProductCoreName>.<BranchId>.<BuildId> - <External|Internal>.<Debug|Release>"
+// Example: "Uru.3.204 - External.Release"
 void ProductString (wchar * dest, unsigned destChars);
