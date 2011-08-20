@@ -39,6 +39,7 @@ class plATCEaseCurve;
 class plATCState;
 class plATCAnim;
 class plAGMasterMod;
+class plAGAnimInstance;
 
 class plAnimTimeConvert : public plCreatable
 {

@@ -72,7 +72,6 @@ static char hsStrBuf[100];
 
 char *hsScalarToStr(hsScalar s)
 {
-#if !(HS_BUILD_FOR_REFERENCE)
     if (s == hsIntToScalar(hsScalarToInt(s)))
         sprintf(hsStrBuf, "%d", hsScalarToInt(s));
     else
@@ -81,7 +80,6 @@ char *hsScalarToStr(hsScalar s)
     #else
         sprintf(hsStrBuf, "%d:%lu", hsFixedToInt(s), (UInt16)s);
     #endif
-#endif
     return hsStrBuf;
 }
 

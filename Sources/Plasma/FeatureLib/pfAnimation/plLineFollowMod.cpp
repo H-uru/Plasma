@@ -613,11 +613,11 @@ void plLineFollowMod::RemoveStereizer(const plKey& key)
 // it.
 
 plRailCameraMod::plRailCameraMod() :
+plLineFollowMod(),
 fCurrentTime(0.0f),
 fTargetTime(0.0f),
 fFarthest(false)
 {
-    plLineFollowMod::plLineFollowMod();
     fGoal.Set(0,0,0);
 }
 

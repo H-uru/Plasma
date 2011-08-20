@@ -71,7 +71,7 @@ protected:
 
     plRegistryPageNode() {}
 
-    inline plRegistryKeyList* IGetKeyList(UInt16 classType) const;
+    plRegistryKeyList* IGetKeyList(UInt16 classType) const;
     PageCond IVerify();
 
 public:

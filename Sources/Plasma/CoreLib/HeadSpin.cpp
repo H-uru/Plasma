@@ -96,7 +96,7 @@ void hsDebugMessage (const char message[], long val)
     {   OutputDebugString(&s[1]);
         OutputDebugString("\n");
     }
-#elif (HS_BUILD_FOR_BE || HS_BUILD_FOR_UNIX )
+#elif HS_BUILD_FOR_UNIX
     {   fprintf(stderr, "%s\n", &s[1]);
 //      hsThrow(&s[1]);
     }
