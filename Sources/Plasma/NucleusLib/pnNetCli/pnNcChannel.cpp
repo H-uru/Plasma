@@ -341,9 +341,9 @@ void NetMsgChannelGetDhConstants (
     const BigNum **         dh_xa,
     const BigNum **         dh_n
 ) {
-    *dh_g   =  channel->m_dh_g;
-    *dh_xa  = &channel->m_dh_xa;
-    *dh_n   = &channel->m_dh_n;
+    if (dh_g) *dh_g   =  channel->m_dh_g;
+    if (dh_xa) *dh_xa  = &channel->m_dh_xa;
+    if (dh_n) *dh_n   = &channel->m_dh_n;
 }
 
 
