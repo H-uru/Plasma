@@ -765,16 +765,16 @@ TArray<T,C> & TArray<T,C>::operator= (const TArray<T,C> & source) {
     if (&source == this)
         return *this;
     m_chunkSize = source.m_chunkSize;
-    AdjustSize(max(m_alloc, source.m_count), 0);
-    C::CopyConstruct(m_data, source.m_data, source.m_count);
-    m_count = source.m_count;
+    AdjustSize(max(this->m_alloc, source.m_count), 0);
+    C::CopyConstruct(this->m_data, source.m_data, source.m_count);
+    this->m_count = source.m_count;
     return *this;
 }
 
 //===========================================================================
 template<class T, class C>
 unsigned TArray<T,C>::Add (const T & source) {
-    unsigned index = m_count;
+    unsigned index = this->m_count;
     Push(source);
     return index;
 }
@@ -782,20 +782,20 @@ unsigned TArray<T,C>::Add (const T & source) {
 //===========================================================================
 template<class T, class C>
 unsigned TArray<T,C>::Add (const T * source, unsigned count) {
-    unsigned index = m_count;
-    AdjustSizeChunked(m_count + count, m_count);
-    C::CopyConstruct(&m_data[m_count], source, count);
-    m_count += count;
+    unsigned index = this->m_count;
+    AdjustSizeChunked(this->m_count + count, this->m_count);
+    C::CopyConstruct(&this->m_data[this->m_count], source, count);
+    this->m_count += count;
     return index;
 }
 
 //===========================================================================
 template<class T, class C>
 unsigned TArray<T,C>::AddArray (const TArray<T,C> & source) {
-    unsigned index = m_count;
-    AdjustSizeChunked(m_count + source.m_count, m_count);
-    C::CopyConstruct(&m_data[m_count], source.m_data, source.m_count);
-    m_count += source.m_count;
+    unsigned index = this->m_count;
+    AdjustSizeChunked(this->m_count + source.m_count, this->m_count);
+    C::CopyConstruct(&this->m_data[this->m_count], source.m_data, source.m_count);
+    this->m_count += source.m_count;
     return index;
 }
 
@@ -804,15 +804,15 @@ template<class T, class C>
 void TArray<T,C>::AdjustSizeChunked (unsigned newAlloc, unsigned newCount) {
 
     // Disallow shrinking the allocation
-    if (newAlloc <= m_alloc)
-        newAlloc = m_alloc;
+    if (newAlloc <= this->m_alloc)
+        newAlloc = this->m_alloc;
 
     // Process growing the allocation
     else
-        newAlloc = CalcAllocGrowth(newAlloc, m_alloc, &m_chunkSize);
+        newAlloc = CalcAllocGrowth(newAlloc, this->m_alloc, &this->m_chunkSize);
 
     // Perform the allocation
-    AdjustSize(newAlloc, newCount);
+    this->AdjustSize(newAlloc, newCount);
 
 }
 
@@ -823,38 +823,38 @@ void TArray<T,C>::Copy (unsigned destIndex, unsigned sourceIndex, unsigned count
     // Copy the data to the destination
     ASSERT(destIndex +   count <= m_count);
     ASSERT(sourceIndex + count <= m_count);
-    C::Assign(m_data + destIndex, m_data + sourceIndex, count);
+    C::Assign(this->m_data + destIndex, this->m_data + sourceIndex, count);
 
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::DeleteOrdered (unsigned index) {
-    ASSERT(index < m_count);
-    if (index + 1 < m_count)
-        C::Assign(&m_data[index], &m_data[index + 1], m_count - index - 1);
-    C::Destruct(&m_data[--m_count]);
+    ASSERT(index < this->m_count);
+    if (index + 1 < this->m_count)
+        C::Assign(&this->m_data[index], &this->m_data[index + 1], this->m_count - index - 1);
+    C::Destruct(&this->m_data[--this->m_count]);
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::DeleteUnordered (unsigned index) {
-    ASSERT(index < m_count);
-    if (index + 1 < m_count)
-        C::Assign(&m_data[index], &m_data[m_count - 1], 1);
-    C::Destruct(&m_data[--m_count]);
+    ASSERT(index < this->m_count);
+    if (index + 1 < this->m_count)
+        C::Assign(&this->m_data[index], &this->m_data[this->m_count - 1], 1);
+    C::Destruct(&this->m_data[--this->m_count]);
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::GrowToCount (unsigned count, bool zero) {
-    if (count <= m_count)
+    if (count <= this->m_count)
         return;
-    AdjustSizeChunked(count, m_count);
+    AdjustSizeChunked(count, this->m_count);
     if (zero)
-        memset(m_data + m_count, 0, (count - m_count) * sizeof(T));
-    C::Construct(m_data + m_count, count - m_count);
-    m_count = count;
+        memset(this->m_data + this->m_count, 0, (count - this->m_count) * sizeof(T));
+    C::Construct(this->m_data + this->m_count, count - this->m_count);
+    this->m_count = count;
 }
 
 //===========================================================================
@@ -866,9 +866,9 @@ void TArray<T,C>::GrowToFit (unsigned index, bool zero) {
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::ShrinkBy (unsigned count) {
-    ASSERT(count <= m_count);
-    C::Destruct(m_data + m_count - count, count);
-    m_count -= count;
+    ASSERT(count <= this->m_count);
+    C::Destruct(this->m_data + this->m_count - count, count);
+    this->m_count -= count;
 }
 
 //===========================================================================
@@ -876,20 +876,20 @@ template<class T, class C>
 void TArray<T,C>::Move (unsigned destIndex, unsigned sourceIndex, unsigned count) {
 
     // Copy the data to the destination
-    ASSERT(destIndex +   count <= m_count);
-    ASSERT(sourceIndex + count <= m_count);
-    C::Assign(m_data + destIndex, m_data + sourceIndex, count);
+    ASSERT(destIndex +   count <= this->m_count);
+    ASSERT(sourceIndex + count <= this->m_count);
+    C::Assign(this->m_data + destIndex, this->m_data + sourceIndex, count);
 
     // Remove it from the source
     if (destIndex >= sourceIndex) {
-        C::Destruct(m_data + sourceIndex, min(count, destIndex - sourceIndex));
-        C::Construct(m_data + sourceIndex, min(count, destIndex - sourceIndex));
+        C::Destruct(this->m_data + sourceIndex, min(count, destIndex - sourceIndex));
+        C::Construct(this->m_data + sourceIndex, min(count, destIndex - sourceIndex));
     }
     else {
         unsigned overlap = (destIndex + count > sourceIndex) ? (destIndex + count - sourceIndex) : 0;
         ASSERT(overlap <= count);
-        C::Destruct(m_data + sourceIndex + overlap, count - overlap);
-        C::Construct(m_data + sourceIndex + overlap, count - overlap);
+        C::Destruct(this->m_data + sourceIndex + overlap, count - overlap);
+        C::Construct(this->m_data + sourceIndex + overlap, count - overlap);
     }
 
 }
@@ -897,72 +897,72 @@ void TArray<T,C>::Move (unsigned destIndex, unsigned sourceIndex, unsigned count
 //===========================================================================
 template<class T, class C>
 T * TArray<T,C>::New () {
-    AdjustSizeChunked(m_count + 1, m_count + 1);
-    return &m_data[m_count - 1];
+    AdjustSizeChunked(this->m_count + 1, this->m_count + 1);
+    return &this->m_data[this->m_count - 1];
 }
 
 //===========================================================================
 template<class T, class C>
 T * TArray<T,C>::New (unsigned count) {
-    AdjustSizeChunked(m_count + count, m_count + count);
-    return &m_data[m_count - count];
+    AdjustSizeChunked(this->m_count + count, this->m_count + count);
+    return &this->m_data[this->m_count - count];
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::Push (const T & source) {
-    AdjustSizeChunked(m_count + 1, m_count);
-    C::CopyConstruct(&m_data[m_count], source);
-    ++m_count;
+    AdjustSizeChunked(this->m_count + 1, this->m_count);
+    C::CopyConstruct(&this->m_data[this->m_count], source);
+    ++this->m_count;
 }
 
 //===========================================================================
 template<class T, class C>
 T TArray<T,C>::Pop () {
-    ASSERT(m_count);
-    T result = m_data[--m_count];
-    C::Destruct(m_data + m_count);
+    ASSERT(this->m_count);
+    T result = this->m_data[--this->m_count];
+    C::Destruct(this->m_data + this->m_count);
     return result;
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::Reserve (unsigned additionalCount) {
-    AdjustSizeChunked(max(m_alloc, m_count + additionalCount), m_count);
+    AdjustSizeChunked(max(this->m_alloc, this->m_count + additionalCount), this->m_count);
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::Set (const T * source, unsigned count) {
     AdjustSizeChunked(count, 0);
-    C::CopyConstruct(m_data, source, count);
-    m_count = count;
+    C::CopyConstruct(this->m_data, source, count);
+    this->m_count = count;
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::SetChunkSize (unsigned chunkSize) {
-    m_chunkSize = chunkSize;
+    this->m_chunkSize = chunkSize;
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::SetCount (unsigned count) {
-    AdjustSizeChunked(max(m_alloc, count), count);
+    AdjustSizeChunked(max(this->m_alloc, count), count);
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::SetCountFewer (unsigned count) {
-    ASSERT(count <= m_count);
-    C::Destruct(m_data + count, m_count - count);
-    m_count = count;
+    ASSERT(count <= this->m_count);
+    C::Destruct(this->m_data + count, this->m_count - count);
+    this->m_count = count;
 }
 
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::Trim () {
-    AdjustSize(m_count, m_count);
+    this->AdjustSize(this->m_count, this->m_count);
 }
 
 
@@ -995,15 +995,15 @@ bool TSortArray<T,C,K,OFFSET>::Delete (K sortKey) {
 
     // Find the correct position for this key
     unsigned index;
-    BSEARCH(T, Ptr(), Count(), (sortKey > SortKey(elem)), &index);
+    BSEARCH(T, this->Ptr(), this->Count(), (sortKey > SortKey(elem)), &index);
 
     // Verify that an entry exists for this key
-    unsigned count = Count();
+    unsigned count = this->Count();
     if ((index >= count) || (SortKey((*this)[index]) != sortKey))
         return false;
 
     // Delete the entry
-    DeleteOrdered(index);
+    this->DeleteOrdered(index);
 
     return true;
 }
@@ -1013,8 +1013,8 @@ template<class T, class C, class K, unsigned OFFSET>
 T * TSortArray<T,C,K,OFFSET>::Find (K sortKey, unsigned * index) {
 
     // Find the correct position for this key
-    BSEARCH(T, Ptr(), Count(), (sortKey > SortKey(elem)), index);
-    if (*index >= Count())
+    BSEARCH(T, this->Ptr(), this->Count(), (sortKey > SortKey(elem)), index);
+    if (*index >= this->Count())
         return nil;
 
     // Check whether the key is at that position
@@ -1028,8 +1028,8 @@ template<class T, class C, class K, unsigned OFFSET>
 const T * TSortArray<T,C,K,OFFSET>::Find (K sortKey, unsigned * index) const {
 
     // Find the correct position for this key
-    BSEARCH(T, Ptr(), Count(), (sortKey > SortKey(elem)), index);
-    if (*index >= Count())
+    BSEARCH(T, this->Ptr(), this->Count(), (sortKey > SortKey(elem)), index);
+    if (*index >= this->Count())
         return nil;
 
     // Check whether the key is at that position
@@ -1043,10 +1043,10 @@ template<class T, class C, class K, unsigned OFFSET>
 T * TSortArray<T,C,K,OFFSET>::Insert (K sortKey, unsigned index) {
 
     // Insert a new entry at this position
-    unsigned count = Count();
-    SetCount(count + 1);
+    unsigned count = this->Count();
+    this->SetCount(count + 1);
     if (index < count)
-        Move(index + 1, index, count - index);
+        this->Move(index + 1, index, count - index);
 
     // Fill in the new entry
     T & elem = (*this)[index];
@@ -1058,8 +1058,8 @@ T * TSortArray<T,C,K,OFFSET>::Insert (K sortKey, unsigned index) {
 //===========================================================================
 template<class T, class C, class K, unsigned OFFSET>
 void TSortArray<T,C,K,OFFSET>::Sort () {
-    T *      ptr   = Ptr();
-    unsigned count = Count();
+    T *      ptr   = this->Ptr();
+    unsigned count = this->Count();
     QSORT(
         T,
         ptr,

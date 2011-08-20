@@ -31,10 +31,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsPoint2.h"
 #include "hsMatrix44.h"
 
-class hsTriangle3;
-class hsGView3;
-class hsG3DDevice;
-
 ///////////////////////////////////////////////////////////////////////////////
 // BOUNDS
 ///////////////////////////////////////////////////////////////////////////////
@@ -78,8 +74,6 @@ public:
 //
 //
 //
-class hsGTriMesh;
-struct hsMatrix44;
 class hsBounds3 : public hsBounds
 {
 public:
@@ -117,14 +111,11 @@ public:
     //
     // Only valid for kBounds Normal
     //
-    void Draw(hsGView3* v, hsG3DDevice* d, hsScalar r, hsScalar g, hsScalar b, hsScalar a, hsBool spheric=false);
     virtual void GetCorners(hsPoint3 *b) const;
     const hsPoint3& GetMins() const;
     const hsPoint3& GetMaxs() const;
     hsScalar GetMaxDim() const;     // Computes the answer
     const hsPoint3&  GetCenter() const; // Computes the answer if not already there
-//  void MakeTriMesh(hsGTriMesh* tMesh, UInt32 triFlags, hsPoint3* cornersIn=nil) const;
-//  void MakeTriMeshSphere(hsGTriMesh* tMesh, hsPoint3* cornersIn=nil) const;
     virtual hsBool IsInside(const hsPoint3* pos) const; // ok for full/empty
     virtual void TestPlane(const hsVector3 &n, hsPoint2 &depth) const;
     virtual void TestPlane(const hsPlane3 *p, hsPoint2 &depth) const;
@@ -211,7 +202,6 @@ public:
     // These set type to kBounds Normal
     // 
     virtual void    Reset(const hsBounds3*);
-    void    Reset(hsGTriMesh *tMesh);
     void    SetPlane(UInt32 i, hsPlane3 *p);
 
     //
@@ -224,7 +214,6 @@ public:
     virtual void Read(hsStream *stream);
 };
 
-//class hsBounds3Tri;
 class hsHitInfoExt;
 class hsBounds3Ext : public hsBounds3 {
 protected:
@@ -293,21 +282,9 @@ public:
     virtual hsBool ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const;
     virtual hsBool ISectABB(const hsBounds3Ext &other, const hsVector3 &myVel) const;
     virtual hsBool ISectBS(const hsBounds3Ext &other, const hsVector3 &myVel) const;
-#if 0 // Commenting out this which will be made redundant and/or obsolete by Havok integration
-    virtual hsBool ISectTriABB(hsBounds3Tri &tri, const hsVector3 &myVel) const; 
-    virtual hsBool ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel) const;
-    virtual hsBool ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel, hsHitInfoExt *hit) const;
-
-    virtual hsBool TriBSHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsHitInfoExt* hit) const;
-    virtual hsBool TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsHitInfoExt* hit) const;
-#endif // Commenting out this which will be made redundant and/or obsolete by Havok integration
 
     virtual Int32 IClosestISect(const hsBounds3Ext& other, const hsVector3& myVel,
                                   hsScalar* tClose, hsScalar* tImpact) const;
-#if 0 // Commenting out this which will be made redundant and/or obsolete by Havok integration
-    virtual hsBool ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel) const;
-    virtual hsBool ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel, hsHitInfoExt *hit) const;
-#endif // Commenting out this which will be made redundant and/or obsolete by Havok integration
     virtual hsBool ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const;
     virtual hsBool ISectBSBox(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const;
     virtual hsBool ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVel) const;
@@ -328,96 +305,21 @@ inline hsScalar hsBounds3Ext::GetRadius() const
     return fRadius;
 }
 
-#if 0 // Commenting out this which will be made redundant and/or obsolete by Havok integration
-class hsBounds3Tri {
-protected:
-    enum {
-        kOnEdge0    = (1 << 0),
-        kOnEdge1    = (1 << 1),
-        kOnEdge2    = (1 << 2),
-        kOnTriPlane = (1 << 3)
-    };
-
-public:
-    enum {
-        kAxesSet    = 0x1,
-        kDoubleSide = 0x2
-    };
-    hsVector3       fNormal;
-//  hsVector3       fNormal;
-    hsScalar        fDist;
-    hsPoint3        fVerts[3];
-//  hsVector3       fPerpAxes[3];
-    mutable UInt32          fTriFlags;
-    mutable hsVector3       fPerpAxes[3];
-    mutable hsPoint2        fPerpDists[3];
-    mutable UInt32          fOnIsMax;
-    hsTriangle3*        fTriangle;
-
-    void TestPlane(const hsVector3 &n, hsPoint2 &depth) const;
-    hsBool PointOutsideTriPlane(const hsPoint3 *p) const { return fNormal.InnerProduct(p) > fDist; };
-    hsBool ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsVector3 *ax=nil) const; // sets out, true if out = p + t*fNormal
-    hsBool ISectCone(const hsPoint3& from, const hsPoint3& to, hsScalar cosThetaSq, hsBool32 ignoreBackFacing, hsPoint3& at, hsBool32& backSide) const;
-    void SetAxes() const;
-    hsBounds3Tri* Transform(const hsMatrix44& x);
-    hsBounds3Tri* Translate(const hsVector3& v);
-    void Set(const hsPoint3& v0, 
-                const hsPoint3& v1, 
-                const hsPoint3& v2,
-                hsTriangle3* t,
-                const hsMatrix44& x);
-    hsBounds3Tri(const hsPoint3& v0, 
-                const hsPoint3& v1, 
-                const hsPoint3& v2,
-                hsTriangle3* t,
-                const hsMatrix44& x);
-    hsBounds3Tri(hsTriangle3* t,
-                const hsMatrix44& x);
-    void Set(hsPoint3 *v0, 
-                hsPoint3 *v1, 
-                hsPoint3 *v2, 
-                hsVector3 *n, 
-                UInt32 triFlags, 
-                hsTriangle3 *t=nil);
-    hsBounds3Tri(hsPoint3 *v0, 
-                hsPoint3 *v1, 
-                hsPoint3 *v2, 
-                hsVector3 *n, 
-                UInt32 triFlags, 
-                hsTriangle3 *t=nil);
-    hsBounds3Tri(hsTriangle3* t);
-    hsBounds3Tri() {}
-    ~hsBounds3Tri();
-
-    friend class hsBounds3Ext;
-} ATTRIBUTE_FOR_PS2;    /* SUNSOFT */
-#endif // Commenting out this which will be made redundant and/or obsolete by Havok integration
-
 class hsHitInfoExt {
 public:
     hsScalar        fDepth;
     hsVector3       fNormal;
     hsVector3       fDelPos;
 
-#if 0 // Commenting out this which will be made redundant and/or obsolete by Havok integration
-    const hsBounds3Tri* fTriBnd;
-#endif // Commenting out this which will be made redundant and/or obsolete by Havok integration
     const hsBounds3Ext* fBoxBnd;
     const hsBounds3Ext* fOtherBoxBnd;
     const hsPoint3*     fRootCenter;
 
     hsHitInfoExt(const hsPoint3 *ctr, const hsVector3& offset) { fRootCenter=ctr; fDelPos=offset; };
 
-#if 0 // Commenting out this which will be made redundant and/or obsolete by Havok integration
-    void Set(const hsBounds3Ext *m, const hsBounds3Tri *t, const hsVector3* n, hsScalar d)
-    { fDepth = d; fTriBnd = t; fBoxBnd = m; fNormal = *n; fOtherBoxBnd = nil; }
-    void Set(const hsBounds3Ext *m, const hsBounds3Ext *o, const hsVector3 &norm, hsScalar d)
-    { fDepth = d; fBoxBnd = m, fOtherBoxBnd = o; fNormal = norm; fTriBnd = nil; }
-#else // Commenting out this which will be made redundant and/or obsolete by Havok integration
     void Set(const hsBounds3Ext *m, const hsVector3* n, hsScalar d)
     { fDepth = d; fBoxBnd = m; fNormal = *n; fOtherBoxBnd = nil; }
     void Set(const hsBounds3Ext *m, const hsBounds3Ext *o, const hsVector3 &norm, hsScalar d)
     { fDepth = d; fBoxBnd = m, fOtherBoxBnd = o; fNormal = norm; }
-#endif // Commenting out this which will be made redundant and/or obsolete by Havok integration
 };
 #endif // hsBounds_inc

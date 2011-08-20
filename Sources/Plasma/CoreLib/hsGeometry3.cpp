@@ -73,12 +73,6 @@ void hsScalarTriple::Read(hsStream *stream)
     
     // DANGER for speed read directly into these variables...ASSUMES fX,fY, and fZ are in contiguous order (PBG)
     stream->Read12Bytes(&fX);
-#if HS_BUILD_FOR_MAC
-    fX = hsSwapEndianFloat(fX);
-    fY = hsSwapEndianFloat(fY);
-    fZ = hsSwapEndianFloat(fZ);
-#endif
-
 }
 
 void hsScalarTriple::Write(hsStream *stream) const

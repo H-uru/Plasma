@@ -66,6 +66,7 @@ class plAGChannel;
 class plClothingOutfit;
 class plClothingSDLModifier;
 class plAvatarSDLModifier;
+class plAvatarPhysicalSDLModifier;
 class plMatrixDelayedCorrectionApplicator;
 class plMatrixDifferenceApp;
 class plDebugText;
