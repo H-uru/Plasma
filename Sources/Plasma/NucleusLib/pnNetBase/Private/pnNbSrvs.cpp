@@ -32,10 +32,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Pch.h"
 #pragma hdrstop
 
-#ifndef BUILD_TYPE
-# error "pnProduct not included"
-#endif
-
 
 /*****************************************************************************
 *
