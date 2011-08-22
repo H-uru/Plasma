@@ -129,7 +129,7 @@ class plResDlgLoader : public plRegistryPageIterator, public plRegistryKeyIterat
 
             fCurrPage = page;
             const plPageInfo &info = page->GetPageInfo();
-            sprintf( str, "%s->%s->%s", info.GetAge(), info.GetPage() );
+            sprintf( str, "%s->%s", info.GetAge(), info.GetPage() );
             fCurrItem = AddLeaf( fTree, NULL, str, new plKeyInfo( nil, fCurrPage ) );
 
             fCurrType = (UInt16)-1;
