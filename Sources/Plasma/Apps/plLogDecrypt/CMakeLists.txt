@@ -7,12 +7,12 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib/inc")
 include_directories("../../PubUtilLib")
 
-set(plFileSecure_SOURCES
-    main.cpp
+set(plLogDecrypt_SOURCES
+    plLogDecrypt.cpp
 )
 
-add_executable(plFileSecure ${plFileSecure_SOURCES})
-target_link_libraries(plFileSecure CoreLib CoreLibExe plFile plUnifiedTime pnProduct pnUtils)
-target_link_libraries(plFileSecure Rpcrt4)
+add_executable(plLogDecrypt ${plLogDecrypt_SOURCES})
+target_link_libraries(plLogDecrypt CoreLib CoreLibExe plFile plUnifiedTime plStatusLog pnProduct pnUtils)
+target_link_libraries(plLogDecrypt Rpcrt4)
 
-source_group("Source Files" FILES ${plFileSecure_SOURCES})
+source_group("Source Files" FILES ${plLogDecrypt_SOURCES})

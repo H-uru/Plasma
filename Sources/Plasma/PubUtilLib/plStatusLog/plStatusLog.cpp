@@ -47,12 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "plFile/plFileUtils.h"
 #include "plStatusLog.h"
-#include "plPipeline.h"
-#include "plPipeline/plDebugText.h"
 #include "hsStlUtils.h"
 #include "plFile/hsFiles.h"
 #include "plUnifiedTime/plUnifiedTime.h"
-#include "pnNetCommon/plNetApp.h"
 #include "pnUtils/pnUtils.h"
 #include "pnProduct/pnProduct.h"
 
