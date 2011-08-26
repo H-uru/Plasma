@@ -2478,6 +2478,7 @@ void    pfJournalBook::IFreeSource( void )
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 #include "plJPEG/plJPEG.h"
+#include "plGImage/plPNG.h"
 #endif
 
 plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc )
@@ -2486,12 +2487,22 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
 #ifndef PLASMA_EXTERNAL_RELEASE
     if( strchr( cName, '/' ) != nil || strchr( cName, '\\' ) != nil )
     {
-        // For internal use only--we allow local path names of JPEG images, to
+        // For internal use only--allow local path names of PNG and JPEG images, to
         // facilitate fast prototyping
-        plMipmap *mip = plJPEG::Instance().ReadFromFile( cName );
-        hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
-        delete [] cName;
-        return mip->GetKey();
+        if( strchr( cName, '.png' ) != nil )
+        {
+            plMipmap *mip = plPNG::Instance().ReadFromFile( cName );
+            hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
+            delete [] cName;
+            return mip->GetKey();
+        }
+        else
+        {
+            plMipmap *mip = plJPEG::Instance().ReadFromFile( cName );
+            hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
+            delete [] cName;
+            return mip->GetKey();
+        }
     }
 #endif
 
