@@ -2489,20 +2489,15 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
     {
         // For internal use only--allow local path names of PNG and JPEG images, to
         // facilitate fast prototyping
-        if( strchr( cName, '.png' ) != nil )
-        {
-            plMipmap *mip = plPNG::Instance().ReadFromFile( cName );
-            hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
-            delete [] cName;
-            return mip->GetKey();
-        }
+        plMipmap *mip;
+        if( strstr( cName, ".png" ) != nil )
+            mip = plPNG::Instance().ReadFromFile( cName );
         else
-        {
-            plMipmap *mip = plJPEG::Instance().ReadFromFile( cName );
-            hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
-            delete [] cName;
-            return mip->GetKey();
-        }
+            mip = plJPEG::Instance().ReadFromFile( cName );
+
+        hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
+        delete [] cName;
+        return mip->GetKey();
     }
 #endif
 
