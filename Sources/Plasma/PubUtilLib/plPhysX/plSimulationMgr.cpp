@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plModifier/plDetectorLog.h"
 
 #ifndef PLASMA_EXTERNAL_RELEASE
+#include "plPipeline/plDebugText.h"
 bool plSimulationMgr::fDisplayAwakeActors=false;
 #endif //PLASMA_EXTERNAL_RELEASE
 // This gets called by PhysX whenever a trigger gets penetrated.  This is used
@@ -989,7 +990,6 @@ void plSimulationMgr::ClearLog()
     }
 }
 #ifndef PLASMA_EXTERNAL_RELEASE
-#include "../plPipeline/plDebugText.h"
 
 void plSimulationMgr::IDrawActiveActorList()
 {

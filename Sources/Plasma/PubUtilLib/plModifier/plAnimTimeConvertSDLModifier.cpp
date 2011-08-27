@@ -61,7 +61,6 @@ void plAnimTimeConvertSDLModifier::IPutATC(plStateDataRecord* atcStateDataRec, p
 //
 // Apply state in SDL record to current animation state 
 //
-//#include "../pnSceneObject/plSceneObject.h"
 void plAnimTimeConvertSDLModifier::ISetCurrentATC(const plStateDataRecord* atcStateDataRec, plAnimTimeConvert* objAtc)                                      
 {
 //  if ( GetTarget(0)->GetKeyName() && stricmp( GetTarget(0)->GetKeyName(), "RTDirLight01" )==0 )

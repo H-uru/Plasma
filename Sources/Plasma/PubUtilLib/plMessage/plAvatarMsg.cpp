@@ -32,6 +32,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "pnSceneObject/plSceneObject.h"
 
+#include "plMessage/plOneShotCallbacks.h"
+
 #ifndef SERVER
 #include "plAvatar/plAvBrain.h"
 #endif
@@ -330,8 +332,6 @@ void plAvTaskSeekDoneMsg::Write(hsStream *stream, hsResMgr *mgr)
 // PLAVONESHOTMSG
 //
 /////////////////
-
-#include "../plMessage/plOneShotCallbacks.h"
 
 // CTOR()
 plAvOneShotMsg::plAvOneShotMsg()

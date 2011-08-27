@@ -83,6 +83,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plVisMgr.h"
 #include "plScene/plVisRegion.h"
 
+#include "plStatusLog/plStatusLog.h"
+
 #include <algorithm>
 
 //// Local Konstants /////////////////////////////////////////////////////////
@@ -459,8 +461,6 @@ static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& r
 
     return ret;
 }
-
-#include "../plStatusLog/plStatusLog.h"
 
 #ifdef MF_TEST_UPDATE
 plProfile_CreateCounter("DSSetTrans", "Update", DSSetTrans);

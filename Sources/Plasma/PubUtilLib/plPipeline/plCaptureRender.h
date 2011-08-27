@@ -62,7 +62,7 @@ public:
 #else // MF_FRONTBUFF_CAPTURE
 
 #include "hsTemplates.h"
-#include "../pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKey.h"
 
 class plPipeline;
 
