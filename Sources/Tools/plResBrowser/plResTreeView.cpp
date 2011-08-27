@@ -27,14 +27,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include "plResTreeView.h"
 
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plRegistryNode.h"
-#include "../plResMgr/plPageInfo.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plKeyImp.h"
-#include "../pnFactory/plFactory.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plRegistryNode.h"
+#include "plResMgr/plPageInfo.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnFactory/plFactory.h"
 
 #include <windows.h>
 #include <commctrl.h>
@@ -129,7 +129,7 @@ class plResDlgLoader : public plRegistryPageIterator, public plRegistryKeyIterat
 
             fCurrPage = page;
             const plPageInfo &info = page->GetPageInfo();
-            sprintf( str, "%s->%s->%s", info.GetAge(), info.GetPage() );
+            sprintf( str, "%s->%s", info.GetAge(), info.GetPage() );
             fCurrItem = AddLeaf( fTree, NULL, str, new plKeyInfo( nil, fCurrPage ) );
 
             fCurrType = (UInt16)-1;
