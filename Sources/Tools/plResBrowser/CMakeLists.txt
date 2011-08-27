@@ -7,7 +7,7 @@ include_directories("../../Plasma/NucleusLib")
 include_directories("../../Plasma/PubUtilLib/inc")
 include_directories("../../Plasma/PubUtilLib")
 
-set(plResBrowser_SOURCES
+set(plResBrowser_HEADERS
 	plResTreeView.h
 	plWinRegistryTools.h
 )
@@ -66,5 +66,5 @@ if (WIN32)
 endif(WIN32)
 
 source_group("Source Files" FILES ${plResBrowser_SOURCES})
-source_group("Header Files" FILES ${plClient_HEADERS})
-source_group("Resource Files" FILES ${plClient_RESOURCES})
+source_group("Header Files" FILES ${plResBrowser_HEADERS})
+source_group("Resource Files" FILES ${plResBrowser_RESOURCES})
