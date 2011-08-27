@@ -707,8 +707,8 @@ kQNDeclineText = 121
 AmICCR = 0
 
 
-# default keys that we ignore... like Escape and enter
-DefaultKeyIgnoreList = [ 10,27 ]
+# default keys that we ignore... like Escape, enter, and space
+DefaultKeyIgnoreList = [ 10,27,32 ]
 
 # ======================================
 # localization helpers
