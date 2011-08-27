@@ -23,10 +23,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../plFile/hsFiles.h"
-#include "../plFile/plEncryptedStream.h"
-#include "../pnUtils/pnUtils.h"
-#include "../pnProduct/pnProduct.h"
+#include "plFile/hsFiles.h"
+#include "plFile/plEncryptedStream.h"
+#include "pnUtils/pnUtils.h"
+#include "pnProduct/pnProduct.h"
 #include "hsUtils.h"
 
 void EncryptFiles(const char* dir, const char* ext, bool encrypt);
