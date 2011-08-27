@@ -52,6 +52,7 @@ enum plOSMsg
     SYSKEYUP        = WM_SYSKEYUP,
     M_BUTTONDN      = WM_MBUTTONDOWN,
     M_BUTTONUP      = WM_MBUTTONUP,
+    CHAR_MSG        = WM_CHAR,
 };
 
 

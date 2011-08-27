@@ -57,7 +57,7 @@ public:
 
     UInt32 GetFlags() { return fFlags; }
     void SetFlags(UInt32 f) { fFlags = f; }
-    virtual void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat) {;}
+    virtual void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat, wchar_t c = nil) {;}
     virtual void HandleMouseEvent(plOSMsg message, plMouseState state)  {;}
     virtual void HandleWindowActivate(bool bActive, HWND hWnd) {;}
     virtual hsBool MsgReceive(plMessage* msg) {return false;}
@@ -79,7 +79,6 @@ class plKeyboardDevice : public plInputDevice
 
     static bool     fKeyboardState[256]; // virtual key code is the index, bool is whether it is down or not
     static hsBool   fIgnoreCapsLock; // set if we want it to ignore this key when translating characters (i.e. for chatting)
-    static hsBool   fKeyIsDeadKey; // the key we just got was a dead key, store the value if you're a text input object
 
     static plKeyboardDevice* fInstance;
     void InitKeyboardMaps();
@@ -100,19 +99,15 @@ public:
     void SetControlMode(int i) { fControlMode = i; }
 
     const char* GetInputName() { return "keyboard"; }
-    void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat);
+    void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat, wchar_t c = nil);
     virtual void HandleWindowActivate(bool bActive, HWND hWnd);
     virtual hsBool IsCapsLockKeyOn();
     virtual void Shutdown();
 
     static hsBool   IgnoreCapsLock() { return fIgnoreCapsLock; }
     static void     IgnoreCapsLock(hsBool ignore) { fIgnoreCapsLock = ignore; }
-
-    static hsBool   KeyIsDeadKey() { return fKeyIsDeadKey; }
     
     static plKeyboardDevice* GetInstance() { return fInstance; }
-
-    static wchar_t KeyEventToChar( plKeyEventMsg *msg );
 };
 
 class plPlate;

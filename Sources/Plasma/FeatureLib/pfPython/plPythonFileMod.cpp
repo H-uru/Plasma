@@ -889,18 +889,6 @@ void plPythonFileMod::RemoveTarget(plSceneObject* so)
 
 void    plPythonFileMod::HandleDiscardedKey( plKeyEventMsg *msg )
 {
-    // So OnDefaultKeyCaught takes two parameters: the key character pressed and a boolean saying up or down
-    wchar_t keyChar = plKeyboardDevice::KeyEventToChar( msg );
-
-    // if the caps lock is down then reverse upper and lowercase
-    if ( msg->GetCapsLockKeyDown() )
-    {
-        if ( std::islower(keyChar,std::locale()) )
-            keyChar = std::toupper(keyChar,std::locale());
-        else
-            keyChar = std::tolower(keyChar,std::locale());
-    }
-
     if (!fPyFunctionInstances[kfunc_OnDefaultKeyCaught])
         return;
 
@@ -909,7 +897,7 @@ void    plPythonFileMod::HandleDiscardedKey( plKeyEventMsg *msg )
     PyObject* retVal = PyObject_CallMethod( fPyFunctionInstances[ kfunc_OnDefaultKeyCaught ],
                 fFunctionNames[ kfunc_OnDefaultKeyCaught ],
                 "ciiiii",
-                keyChar, 
+                msg->GetKeyChar(), 
                 (int)msg->GetKeyDown(),
                 (int)msg->GetRepeat(),
                 (int)msg->GetShiftKeyDown(),

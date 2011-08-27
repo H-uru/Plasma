@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plKeyboardDevice* plKeyboardDevice::fInstance = nil;
 bool plKeyboardDevice::fKeyboardState[256];
 hsBool plKeyboardDevice::fIgnoreCapsLock = false;
-hsBool plKeyboardDevice::fKeyIsDeadKey = false;
 
 plKeyboardDevice::plKeyboardDevice() :
 fShiftKeyDown(false),
@@ -148,7 +147,7 @@ void plKeyboardDevice::Shutdown()
 {
 }
 
-void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat)
+void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat, wchar_t c)
 {
     // update the internal keyboard state
     unsigned int keyCode = (unsigned int)key;
@@ -177,6 +176,7 @@ void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDo
 
     // send a key event...
     plKeyEventMsg* pMsg = TRACKED_NEW plKeyEventMsg;
+    pMsg->SetKeyChar( c );
     pMsg->SetKeyCode( key );
     pMsg->SetKeyDown( bKeyDown );
     pMsg->SetShiftKeyDown( fShiftKeyDown );
@@ -197,50 +197,6 @@ void plKeyboardDevice::HandleWindowActivate(bool bActive, HWND hWnd)
         ReleaseAllKeys(); // send key-up events for everything since we're losing focus
     }
 
-}
-
-//// KeyEventToChar //////////////////////////////////////////////////////////
-//  Translate a Plasma key event to an actual char
-wchar_t    plKeyboardDevice::KeyEventToChar( plKeyEventMsg *msg )
-{
-    unsigned int   code = msg->GetKeyCode();
-    wchar_t    c = 0;
-    unsigned char kbState[256];
-    wchar_t buffer[256];
-    unsigned int scanCode;
-    int     retVal;
-
-    buffer[0] = 0;
-
-    // let windows translate everything for us!
-    scanCode = MapVirtualKeyW(code, 0);
-    GetKeyboardState(kbState);
-    if (fIgnoreCapsLock)
-        kbState[KEY_CAPSLOCK] = 0; // clear the caps lock key
-    retVal = ToUnicode(code, scanCode, kbState, (wchar_t*)buffer, 256, 0);
-    if (retVal == -1)
-    {
-        // It's a stored dead key.
-        c = 0;
-        fKeyIsDeadKey = true;
-    }
-    else if (retVal == 0)
-        // Invalid crap
-        c = 0;
-    else if (retVal == 1)
-    {
-        // Exactly one good character
-        fKeyIsDeadKey = false;
-        c = buffer[0];
-    }
-    else if (retVal >= 2)
-    {
-        fKeyIsDeadKey = !fKeyIsDeadKey;
-        if (!fKeyIsDeadKey)
-            c = buffer[0];
-    }
-
-    return c;
 }
 
 

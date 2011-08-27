@@ -72,6 +72,7 @@ class pfConsoleInputInterface : public plInputInterface
         pfConsole   *fConsole;
 
 
+
         virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd )
         {
             if( cmd->fControlCode == B_SET_CONSOLE_MODE )
@@ -99,7 +100,7 @@ class pfConsoleInputInterface : public plInputInterface
 
     public:
 
-        pfConsoleInputInterface( pfConsole *console ) 
+        pfConsoleInputInterface( pfConsole *console )
         {
             fConsole = console; 
             SetEnabled( true );         // Always enabled
@@ -126,12 +127,19 @@ class pfConsoleInputInterface : public plInputInterface
         virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plKeyEventMsg   *keyMsg = plKeyEventMsg::ConvertNoRef( pMsg );
-
-            // HACK for now to let runlock work always (until we can think of a more generic and good way of doing this)
-            if( keyMsg != nil && keyMsg->GetKeyCode() != KEY_CAPSLOCK )
+            if( keyMsg != nil )
             {
                 if( fConsole->fMode )
                 {
+                    // If this is a character input, do not accept the codes (yes, the code) that will toggle
+                    // the console--that's handled elsewhere...
+                    if ( keyMsg->GetKeyChar() )
+                    {
+                        const plKeyBinding* keyb = fControlMap->FindBinding( B_SET_CONSOLE_MODE );
+                        if ( keyb->GetKey1().fKey == keyMsg->GetKeyCode() )
+                            return true;
+                    }
+
                     fConsole->IHandleKey( keyMsg );
                     return true;
                 }
@@ -828,9 +836,9 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     {
         fWorkingCursor = 0;
     }
-    else 
+    else if (msg->GetKeyChar() != nil)
     {
-        key = plKeyboardDevice::KeyEventToChar( msg );
+        key = msg->GetKeyChar();
         // do they want to go into help mode?
         if( !fPythonMode && key == L'?' && fWorkingCursor == 0 )
         {

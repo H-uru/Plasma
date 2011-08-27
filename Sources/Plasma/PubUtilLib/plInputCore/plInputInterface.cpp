@@ -132,6 +132,8 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     plKeyEventMsg   *keyMsg = plKeyEventMsg::ConvertNoRef( msg );
     if( keyMsg == nil )
         return false;
+    if ( keyMsg->GetKeyChar())
+        return false;
 
 
     /// We might have controls that are currently enabled that are triggered in part by 

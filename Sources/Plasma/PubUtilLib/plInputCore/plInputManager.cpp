@@ -273,6 +273,25 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
                 fInputDevices[i]->HandleKeyEvent( KEYUP, UntranslateKey((plKeyDef)Wparam, bExtended), false, false ); 
         }
         break;
+    case CHAR_MSG:
+        {
+            // These are handled by KEYUP/KEYDOWN and should not be sent
+            // We don't like garbage getting in string fields
+            if (Wparam == KEY_BACKSPACE || Wparam == 0x0A || Wparam == KEY_ESCAPE || 
+                Wparam == KEY_TAB || Wparam == 0x0D)
+                break;
+
+            UINT scan = Lparam >> 16;
+            scan = MapVirtualKeyEx(scan, MAPVK_VSC_TO_VK, nil);
+            if (scan == 0) scan = -1;
+
+            bExtended = Lparam >> 24 & 1;
+            hsBool bRepeat = ((Lparam >> 29) & 0xf) != 0;
+            bool down = !(Lparam >> 31);
+            for (int i=0; i<fInputDevices.Count(); i++)
+                fInputDevices[i]->HandleKeyEvent( CHAR_MSG, (plKeyDef)scan, down, bRepeat, (wchar_t)Wparam );
+        }
+        break;
     case MOUSEWHEEL:
         {
             plMouseEventMsg* pMsg = TRACKED_NEW plMouseEventMsg;
