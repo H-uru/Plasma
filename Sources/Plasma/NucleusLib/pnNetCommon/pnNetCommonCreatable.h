@@ -26,7 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnNetCommonCreatable_inc
 #define pnNetCommonCreatable_inc
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "plSynchedObject.h"
 REGISTER_CREATABLE( plSynchedObject );

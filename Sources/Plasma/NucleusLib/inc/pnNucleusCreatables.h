@@ -45,12 +45,12 @@ REGISTER_NONCREATABLE( plPhysical );
 #include "plgDispatch.h"
 REGISTER_NONCREATABLE( plDispatchBase );
 
-#include "../pnDispatch/pnDispatchCreatable.h"
-#include "../pnKeyedObject/pnKeyedObjectCreatable.h"
-#include "../pnMessage/pnMessageCreatable.h"
-#include "../pnModifier/pnModifierCreatable.h"
-#include "../pnNetCommon/pnNetCommonCreatable.h"
-#include "../pnSceneObject/pnSceneObjectCreatable.h"
-#include "../pnTimer/pnTimerCreatable.h"
+#include "pnDispatch/pnDispatchCreatable.h"
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "pnModifier/pnModifierCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
+#include "pnSceneObject/pnSceneObjectCreatable.h"
+#include "pnTimer/pnTimerCreatable.h"
 
 #endif // pnNucleusCreatables_inc

@@ -35,6 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNotifyMsg.h"
 
+#include "pnNetCommon/plNetApp.h"
 
 plNotifyMsg::plNotifyMsg(const plKey &s, const plKey &r)
 {
@@ -877,8 +878,6 @@ enum NotifyMsgFlags
     kNotifyMsgID,
     kNotifyMsgEDs,
 };
-
-#include "../pnNetCommon/plNetApp.h"
 
 void plNotifyMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 {
