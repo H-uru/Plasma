@@ -27,7 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsStlUtils_h_inc
 
 #include "hsUtils.h"
-#include <xmemory>
+//#include <xmemory>
 #include <functional>
 #include <algorithm>
 #include <string>
@@ -46,20 +46,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
         // TEMPLATE CLASS cyallocator
 template<class _Ty>
     class cyallocator
-        : public std::_Allocator_base<_Ty>
+        : public std::allocator<_Ty>
     {   // generic cyallocator for objects of class _Ty
 public:
-    typedef std::_Allocator_base<_Ty> _Mybase;
+    typedef std::allocator<_Ty> _Mybase;
     typedef typename _Mybase::value_type value_type;
 
 
-    typedef value_type _FARQ *pointer;
-    typedef value_type _FARQ& reference;
-    typedef const value_type _FARQ *const_pointer;
-    typedef const value_type _FARQ& const_reference;
+    typedef value_type* pointer;
+    typedef value_type& reference;
+    typedef const value_type* const_pointer;
+    typedef const value_type& const_reference;
 
-    typedef _SIZT size_type;
-    typedef _PDFT difference_type;
+    typedef size_t size_type;
+    typedef ptrdiff_t difference_type;
 
     template<class _Other>
         struct rebind
@@ -106,7 +106,7 @@ public:
         return (pointer)ALLOC(_Count * sizeof(_Ty));
         }
 
-    pointer allocate(size_type _Count, const void _FARQ *)
+    pointer allocate(size_type _Count, const void*)
         {   // allocate array of _Count elements, ignore hint
         return (allocate(_Count));
         }
@@ -121,9 +121,9 @@ public:
         std::_Destroy(_Ptr);
         }
 
-    _SIZT max_size() const
+    size_t max_size() const
         {   // estimate maximum array size
-        _SIZT _Count = (_SIZT)(-1) / sizeof (_Ty);
+        size_t _Count = (size_t)(-1) / sizeof (_Ty);
         return (0 < _Count ? _Count : 1);
         }
     };
@@ -143,13 +143,17 @@ template<class _Ty,
     return (false);
     }
 
+#ifndef _CRTIMP2
+#define _CRTIMP2
+#endif
+
         // CLASS cyallocator<void>
 template<> class _CRTIMP2 cyallocator<void>
     {   // generic cyallocator for type void
 public:
     typedef void _Ty;
-    typedef _Ty _FARQ *pointer;
-    typedef const _Ty _FARQ *const_pointer;
+    typedef _Ty* pointer;
+    typedef const _Ty* const_pointer;
     typedef _Ty value_type;
 
     template<class _Other>
@@ -264,12 +268,12 @@ struct delete_map_ptr_T
 struct stricmp_less : public std::binary_function<std::string, std::string, bool>
 {
     bool operator()(const std::string & _X, const std::string & _Y) const
-    {return ( _stricmp(_X.c_str(),_Y.c_str()) < 0); }
+    {return ( stricmp(_X.c_str(),_Y.c_str()) < 0); }
 };
 struct wstricmp_less : public std::binary_function<std::wstring, std::wstring, bool>
 {
     bool operator()(const std::wstring & _X, const std::wstring & _Y) const
-    {return ( _wcsicmp(_X.c_str(),_Y.c_str()) < 0); }
+    {return ( wcsicmp(_X.c_str(),_Y.c_str()) < 0); }
 };
 
 // struct stricmp_char_traits

@@ -329,6 +329,7 @@ static void __cdecl CheckLeaksOnExit () {
 #endif // MEM_DEBUG
 
 //============================================================================
+#ifdef MEM_DEBUG
 static int __cdecl CrtAllocHook (
     int                     method,
     void *                  pUserData,
@@ -344,6 +345,7 @@ static int __cdecl CrtAllocHook (
     
     return 1;
 }
+#endif // MEM_DEBUG
 
 //===========================================================================
 #ifdef MEM_DEBUG

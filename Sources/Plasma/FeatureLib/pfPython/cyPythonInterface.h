@@ -123,10 +123,10 @@ public:
     static void WriteToStdErr(const char* text);
 
     // Find module. If it doesn't exist then don't create, return nil.
-    static PyObject* FindModule(char* module);
+    static PyObject* FindModule(const char* module);
 
     // create a new module with built-ins
-    static PyObject* CreateModule(char* module);
+    static PyObject* CreateModule(const char* module);
 
     // checks to see if a specific function is defined in this module
     // get an item (probably a function) from the Plasma module

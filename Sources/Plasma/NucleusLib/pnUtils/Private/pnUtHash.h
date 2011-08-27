@@ -63,6 +63,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define HASHTABLEDECLSIZE(object,key,link,size) THashTableDecl<object, key, offsetof(object,link), size >
 
 
+#if defined(_MSC_VER)
+#define forceinline __forceinline
+#else
+#define forceinline inline
+#endif
+
+
 /****************************************************************************
 *
 *   Forward declarations
@@ -74,6 +81,64 @@ class THashLink;
 
 template<class T>
 class TBaseHashTable;
+
+
+/****************************************************************************
+*
+*   CHashValue
+*
+***/
+
+class CHashValue {
+private:
+    static const dword s_hashTable[];
+
+    dword m_result;
+
+    inline void Construct () { m_result = 0x325d1eae; }
+
+public:
+    static dword LookupHashBits (unsigned value) { ASSERT(value < 0x100); return s_hashTable[value]; }
+
+    inline CHashValue () { Construct() ; }
+    inline CHashValue (const CHashValue & source) { m_result = source.m_result; }
+    inline CHashValue (const void * data, unsigned bytes) { Construct(); Hash(data, bytes); }
+    inline CHashValue & operator= (const CHashValue & source) { m_result = source.m_result; return *this; }
+    inline bool operator== (const CHashValue & source) const { return (m_result == source.m_result); }
+
+    inline dword GetHash () const { return m_result; }
+
+    forceinline void Hash   (const void * data, unsigned bytes);
+    forceinline void Hash8  (unsigned data);
+    forceinline void Hash16 (unsigned data);
+    forceinline void Hash32 (unsigned data);
+
+};
+
+//===========================================================================
+void CHashValue::Hash (const void * data, unsigned bytes) {
+    for (const byte * curr = (const byte *)data, * term = curr + bytes; curr != term; ++curr)
+        Hash8(*curr);
+}
+
+//===========================================================================
+void CHashValue::Hash8 (unsigned data) {
+    m_result += s_hashTable[m_result >> 24] ^ (m_result >> 6) ^ s_hashTable[data & 0xff];
+}
+
+//===========================================================================
+void CHashValue::Hash16 (unsigned data) {
+    Hash8(data);
+    Hash8(data >> 8);
+}
+
+//===========================================================================
+void CHashValue::Hash32 (unsigned data) {
+    Hash8(data);
+    Hash8(data >> 8);
+    Hash8(data >> 16);
+    Hash8(data >> 24);
+}
 
 
 /****************************************************************************
@@ -661,61 +726,3 @@ typedef THashKeyStr< wchar, THashKeyStrCmp<wchar> >  CHashKeyStr;
 typedef THashKeyStr< wchar, THashKeyStrCmpI<wchar> > CHashKeyStrI;
 typedef THashKeyStr< char, THashKeyStrCmp<char> >    CHashKeyStrChar;
 typedef THashKeyStr< char, THashKeyStrCmpI<char> >   CHashKeyStrCharI;
-
-
-/****************************************************************************
-*
-*   CHashValue
-*
-***/
-
-class CHashValue {
-private:
-    static const dword s_hashTable[];
-
-    dword m_result;
-
-    inline void Construct () { m_result = 0x325d1eae; }
-
-public:
-    static dword LookupHashBits (unsigned value) { ASSERT(value < 0x100); return s_hashTable[value]; }
-
-    inline CHashValue () { Construct() ; }
-    inline CHashValue (const CHashValue & source) { m_result = source.m_result; }
-    inline CHashValue (const void * data, unsigned bytes) { Construct(); Hash(data, bytes); }
-    inline CHashValue & operator= (const CHashValue & source) { m_result = source.m_result; return *this; }
-    inline bool operator== (const CHashValue & source) const { return (m_result == source.m_result); }
-
-    inline dword GetHash () const { return m_result; }
-
-    __forceinline void Hash   (const void * data, unsigned bytes);
-    __forceinline void Hash8  (unsigned data);
-    __forceinline void Hash16 (unsigned data);
-    __forceinline void Hash32 (unsigned data);
-
-};
-
-//===========================================================================
-void CHashValue::Hash (const void * data, unsigned bytes) {
-    for (const byte * curr = (const byte *)data, * term = curr + bytes; curr != term; ++curr)
-        Hash8(*curr);
-}
-
-//===========================================================================
-void CHashValue::Hash8 (unsigned data) {
-    m_result += s_hashTable[m_result >> 24] ^ (m_result >> 6) ^ s_hashTable[data & 0xff];
-}
-
-//===========================================================================
-void CHashValue::Hash16 (unsigned data) {
-    Hash8(data);
-    Hash8(data >> 8);
-}
-
-//===========================================================================
-void CHashValue::Hash32 (unsigned data) {
-    Hash8(data);
-    Hash8(data >> 8);
-    Hash8(data >> 16);
-    Hash8(data >> 24);
-}

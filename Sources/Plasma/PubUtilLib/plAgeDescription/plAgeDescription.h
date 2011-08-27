@@ -96,7 +96,7 @@ private:
     Int32   fSeqPrefix;
     UInt32  fReleaseVersion;    // 0 for pre-release, 1+ for actual released ages
     
-    static char *fCommonPages[];
+    static const char* fCommonPages[];
 
     void    IInit( void );
     void    IDeInit( void );

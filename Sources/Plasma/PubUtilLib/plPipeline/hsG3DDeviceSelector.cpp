@@ -229,7 +229,7 @@ void hsG3DDeviceRecord::SetDeviceDesc( const char *s )
 
 const char* hsG3DDeviceRecord::GetG3DDeviceTypeName() const
 {
-    static char* deviceNames[hsG3DDeviceSelector::kNumDevTypes] = {
+    static const char* deviceNames[hsG3DDeviceSelector::kNumDevTypes] = {
         "Unknown",
         "Glide",
         "Direct3D",

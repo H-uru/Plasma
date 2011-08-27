@@ -74,8 +74,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // 4018: signed/unsigned mismatch
 // 4786: 255 character debug limit
 // 4284: STL template defined operator-> for a class it doesn't make sense for (int, etc)
-#if !__MWERKS__
-#pragma warning( disable : 4305 4503 4018 4786 4284)
+// 4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+#ifdef _MSC_VER
+#pragma warning( disable : 4305 4503 4018 4786 4284 4800)
 #endif
 
 // VC++ version greater than 6.0, must be building for .NET
@@ -85,6 +86,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #pragma optimize( "y", off )
 
+#endif
+
+
+#ifdef HS_BUILD_FOR_WIN32
+#   define CDECL __cdecl
+#else
+#   define CDECL
 #endif
 
 

@@ -501,7 +501,7 @@ void    plKeyMap::EraseBinding( ControlEventCode code )
 }
 
 
-char* plKeyMap::ConvertVKeyToChar( UInt32 vk )
+const char* plKeyMap::ConvertVKeyToChar( UInt32 vk )
 {
     Win32keyConvert* keyConvert = &fKeyConversionEnglish[0];
     switch (plLocalization::GetLanguage())
