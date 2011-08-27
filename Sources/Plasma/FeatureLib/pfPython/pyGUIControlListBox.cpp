@@ -234,7 +234,7 @@ class pfColorListElement : public pfGUIListText
             {
                 size_t length = wcslen( fString1 ) + wcslen( fString2 ) + 3;
                 thestring = TRACKED_NEW wchar_t[ length ];
-                swprintf( thestring, length, L"%s %s", fString1, fString2 );
+                snwprintf( thestring, length, L"%s %s", fString1, fString2 );
                 wemade_string = true;
             }
             else if (fString1)

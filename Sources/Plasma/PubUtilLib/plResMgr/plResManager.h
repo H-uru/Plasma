@@ -30,6 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <set>
 #include <map>
 #include <vector>
+#include <string>
 
 class plRegistryPageNode;
 class plRegistryKeyIterator;

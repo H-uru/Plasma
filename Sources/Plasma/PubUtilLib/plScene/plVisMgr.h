@@ -82,8 +82,8 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void Register(plVisRegion* reg, hsBool not);
-    void UnRegister(plVisRegion* reg, hsBool not);
+    void Register(plVisRegion* reg, hsBool bnot);
+    void UnRegister(plVisRegion* reg, hsBool bnot);
 
     void Eval(const hsPoint3& pos);
 

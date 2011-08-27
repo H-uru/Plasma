@@ -40,10 +40,16 @@ static UInt32 gCyclesPerMS = 0;
 #pragma warning (push)
 #pragma warning (disable : 4035)    // disable no return value warning
 
-__forceinline UInt32 GetPentiumCounter()
+#ifdef _MSC_VER
+#define forceinline __forceinline
+#else
+#define forceinline inline
+#endif
+
+forceinline UInt32 GetPentiumCounter()
 {
-    __asm
-    {
+#ifdef _MSC_VER
+    __asm {
         xor   eax,eax       // VC won't realize that eax is modified w/out this
                             //   instruction to modify the val.
                             //   Problem shows up in release mode builds
@@ -52,6 +58,7 @@ __forceinline UInt32 GetPentiumCounter()
         
         xor   edx,edx       // so VC gets that edx is modified
     }
+#endif
 }
 
 #pragma warning (pop)

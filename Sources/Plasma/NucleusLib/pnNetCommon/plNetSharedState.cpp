@@ -28,7 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGenericVar.h"
 #include "pnMessage/plMessage.h"
 
-plNetSharedState::plNetSharedState(char* name) : fServerMayDelete(false)
+plNetSharedState::plNetSharedState(const char* name) : fServerMayDelete(false)
 { 
     SetName(name);
 }

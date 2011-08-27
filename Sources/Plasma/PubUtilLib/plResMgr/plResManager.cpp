@@ -298,7 +298,8 @@ hsBool plResManager::ReadObject(plKeyImp* key)
     // it will just inc/dec the open/close count during its read, and not actually 
     // close the stream, so we don't lose our place, lose our file handle, and thrash.
 
-    kResMgrLog(4, ILog(4, "   ...Opening page data stream for location 0x%x...", key->GetUoid().GetLocation()));
+    char locstr[64];
+    kResMgrLog(4, ILog(4, "   ...Opening page data stream for location %s...", key->GetUoid().GetLocation().StringIze(locstr)));
     plRegistryPageNode *pageNode = FindPage(key->GetUoid().GetLocation());
     if (!pageNode)
     {

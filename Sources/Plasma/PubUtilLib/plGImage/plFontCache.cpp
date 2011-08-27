@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plUoid.h"
 
 
-char    *plFontCache::kCustFontExtension = ".prf";
+const char* plFontCache::kCustFontExtension = ".prf";
 
 
 plFontCache *plFontCache::fInstance = nil;

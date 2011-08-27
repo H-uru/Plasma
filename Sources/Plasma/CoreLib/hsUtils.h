@@ -45,17 +45,17 @@ char *  hsFormatStr(const char * fmt, ...); // You are responsible for returned 
 char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible for returned memory.
 
 // Use "correct" stricmp based on the selected compiler / library
-#ifdef _MSC_VER
-#define stricmp _stricmp
-#define strnicmp _strnicmp
-#define wcsicmp _wcsicmp
-#define wcsnicmp _wcsnicmp
-#define strlwr _strlwr
+#if HS_BUILD_FOR_WIN32
+#    define stricmp     _stricmp
+#    define strnicmp    _strnicmp
+#    define wcsicmp     _wcsicmp
+#    define wcsnicmp    _wcsnicmp
+#    define strlwr      _strlwr
 #else
-#define stricmp strcasecmp
-#define strnicmp strncasecmp
-#define wcsicmp wcscasecmp
-#define wcsnicmp wcsncasecmp
+#    define stricmp     strcasecmp
+#    define strnicmp    strncasecmp
+#    define wcsicmp     wcscasecmp
+#    define wcsnicmp    wcsncasecmp
 #endif
 
 
@@ -125,41 +125,31 @@ inline hsBool hsCompare(hsScalar a, hsScalar b, hsScalar delta=0.0001)
 
 
 #if HS_BUILD_FOR_WIN32
-#define hsVsnprintf _vsnprintf
-#define hsVsnwprintf _vsnwprintf
-#define snprintf _snprintf
-#define snwprintf _snwprintf
-#define hsSnprintf snprintf
-#define hsSnwprintf snwprintf
+// This is for Windows
+#    define hsVsnprintf     _vsnprintf
+#    define hsVsnwprintf    _vsnwprintf
+#    define hsSnprintf      _snprintf
+#    define hsSnwprintf     _snwprintf
+
+#    define snprintf        _snprintf
+#    define snwprintf       _snwprintf
+#    define swprintf        _snwprintf
+
+#    ifndef fileno
+#        define fileno(__F)       _fileno(__F)
+#    endif
+
+#   define hsWFopen(name, mode)     _wfopen(name, mode)
 #else
-#define hsVsnprintf vsnprintf
-#define hsWvnwprintf vsnwprintf
-#define hsSnprintf snprintf
-#define hsSnwprintf snwprintf
-#define _snprintf snprintf
-#define _snwprintf snwprintf
+// This is for Unix, Linux, OSX, etc.
+#    define hsVsnprintf     vsnprintf
+#    define hsVsnwprintf    vswprintf
+#    define hsSnprintf      snprintf
+#    define hsSnwprintf     swprintf
+
+#   define hsWFopen(name, mode)     fopen(hsWStringToString(name), hsWStringToString(mode))
 #endif
 
-
-#if HS_BUILD_FOR_UNIX || HS_BUILD_FOR_PS2
-
-#define _stricmp(s1, s2)        strcasecmp(s1, s2)
-#define _strnicmp(s1, s2, n)    strncasecmp(s1, s2, n)
-#define stricmp(s1, s2)     strcasecmp(s1, s2)
-#define strnicmp(s1, s2, n) strncasecmp(s1, s2, n)
-
-#define _fileno(n) fileno(n)
-
-
-#elif HS_BUILD_FOR_MAC //  HS_BUILD_FOR_UNIX || HS_BUILD_FOR_PS2
-
-int hsStrcasecmp(const char s1[], const char s2[]);
-int hsStrncasecmp(const char s1[], const char s2[], int n);
-
-#define _stricmp(s1, s2)        hsStrcasecmp(s1, s2)
-#define _strnicmp(s1, s2, n)    hsStrncasecmp(s1, s2, n)
-
-#endif  // HS_BUILD_FOR_UNIX || HS_BUILD_FOR_PS2
 
 /////////////////////////////
 // Physical memory functions

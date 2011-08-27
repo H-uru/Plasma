@@ -26,6 +26,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plChecksum.h"
 #include "hsStream.h"
 
+#include <cstring>
 
 plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
 {

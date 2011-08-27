@@ -497,7 +497,7 @@ namespace pvt_strptime
     
 #define match_char(ch1, ch2) if (ch1 != ch2) return NULL
 #define match_string(cs1, s2) \
-    (_strnicmp((cs1), (s2), strlen (cs1)) ? 0 : ((s2) += strlen (cs1), 1))
+    (strnicmp((cs1), (s2), strlen (cs1)) ? 0 : ((s2) += strlen (cs1), 1))
 #define get_number(from, to, n) \
     do {                                          \
     int __n = n;                                  \

@@ -514,7 +514,7 @@ plSynchedObject::SDLStateList::const_iterator plSynchedObject::IFindInSDLStateLi
 
     SDLStateList::const_iterator it = list.begin();
     for(; it != list.end(); it++)
-        if (!_stricmp((*it).c_str(), sdlName))
+        if (!stricmp((*it).c_str(), sdlName))
             return it;
 
     return it;  // .end(), false

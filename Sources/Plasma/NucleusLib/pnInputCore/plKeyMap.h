@@ -208,7 +208,7 @@ class plKeyMap : public plInputMap
         const plKeyBinding  &GetBinding( UInt32 i ) const { return *fBindings[ i ]; }
         void                HandleAutoDualBinding( plKeyDef key1, plKeyDef key2 );
 
-        static char     *ConvertVKeyToChar( UInt32 vk );
+        static const char* ConvertVKeyToChar( UInt32 vk );
         static plKeyDef ConvertCharToVKey( const char *c );
 
         static Win32keyConvert  fKeyConversionEnglish[];

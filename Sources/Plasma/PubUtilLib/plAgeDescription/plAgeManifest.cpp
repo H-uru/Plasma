@@ -100,7 +100,7 @@ bool plManifestFile::LocalExists()
 
 //////////////////////////////////////////////////////////////////////////////
 
-char* plManifest::fTimeFormat = "%m/%d/%y %H:%M:%S";
+const char* plManifest::fTimeFormat = "%m/%d/%y %H:%M:%S";
 static const UInt32 kLatestFormatVersion = 5;
 
 plManifest::plManifest()

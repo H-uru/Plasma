@@ -605,7 +605,7 @@ void CSocket::ProcessQueue () {
         // Dispatch it
         switch (command->code) {
 
-            case command->WRITE: {
+            case Command::WRITE: {
                 AsyncNotifySocketWrite notify;
                 notify.param          = command->param;
                 notify.asyncId        = 0;

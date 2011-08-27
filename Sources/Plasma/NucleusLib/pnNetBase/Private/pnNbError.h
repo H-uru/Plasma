@@ -103,10 +103,10 @@ enum ENetError {
     kNumNetErrors,
 
     // Net messages require ENetError to be sizeof(dword)
-    kNetErrorForceDword             = (dword) -1
+    kNetErrorForceDword             = (dword)(-1)
 };
 
-COMPILER_ASSERT_HEADER(pnNbError, sizeof(ENetError) == sizeof(dword));
+//COMPILER_ASSERT_HEADER(pnNbError, sizeof(ENetError) == sizeof(dword));
 
 #define IS_NET_ERROR(a)     (((int)(a)) > kNetSuccess)
 #define IS_NET_SUCCESS(a)   (((int)(a)) == kNetSuccess)
