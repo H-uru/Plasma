@@ -32,11 +32,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "res/resource.h"
 
 #include "pnAllCreatables.h"
-#include "../plResMgr/plResMgrCreatable.h"
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plResMgrSettings.h"
-#include "../plMessage/plResMgrHelperMsg.h"
-#include "../plUnifiedTime/plUnifiedTimeCreatable.h"
+#include "plResMgr/plResMgrCreatable.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plResMgrSettings.h"
+#include "plMessage/plResMgrHelperMsg.h"
+#include "plUnifiedTime/plUnifiedTimeCreatable.h"
 REGISTER_CREATABLE(plResMgrHelperMsg);
 
 
