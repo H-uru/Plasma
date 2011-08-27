@@ -751,7 +751,8 @@ hsBool  pfGameUIInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 else
                     handled = fGUIManager->IHandleKeyEvt( pfGameGUIMgr::kKeyRepeat, pKeyMsg->GetKeyCode(), fModifiers );
 
-                handled |= fGUIManager->IHandleKeyPress( plKeyboardDevice::KeyEventToChar( pKeyMsg ), fModifiers );
+                if (pKeyMsg->GetKeyChar())
+                    handled |= fGUIManager->IHandleKeyPress( pKeyMsg->GetKeyChar(), fModifiers );
             }
             else
                 handled = fGUIManager->IHandleKeyEvt( pfGameGUIMgr::kKeyUp, pKeyMsg->GetKeyCode(), fModifiers );
@@ -765,7 +766,7 @@ hsBool  pfGameUIInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
         // also trigger on key-down and we don't want to be taking screen shots when
         // the user re-binds the screenshot command.
         // HACK HACK HACK
-        if ((!handled) && (pKeyMsg->GetKeyDown()))
+        if ((!handled) && (pKeyMsg->GetKeyDown()) && !pKeyMsg->GetKeyChar())
         {
             const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBindingByConsoleCmd("Game.KITakePicture");
             if (keymap)

@@ -145,9 +145,6 @@ pfGUIMultiLineEditCtrl::pfGUIMultiLineEditCtrl()
     fLastKeyPressed = 0;
     fLockCount = 0;
 
-    fLastDeadKey = 0;
-    SetupDeadKeyConverter();
-
     fNextCtrl = nil;
     fPrevCtrl = nil;
 
@@ -172,61 +169,6 @@ pfGUIMultiLineEditCtrl::~pfGUIMultiLineEditCtrl()
         delete fScrollProc;
     if (fEventProc)
         delete fEventProc;
-}
-
-void pfGUIMultiLineEditCtrl::SetupDeadKeyConverter()
-{
-    int i,j;
-    for (i=0; i<255; i++)
-        for (j=0; j<255; j++)
-            fDeadKeyConverter[i][j] = 0L;
-
-    // we are adding 100 to the indexes because some of these chars have a negative index for some reason
-    fDeadKeyConverter['^'+100]['a'] = L'â';
-    fDeadKeyConverter['^'+100]['e'] = L'ê';
-    fDeadKeyConverter['^'+100]['i'] = L'î';
-    fDeadKeyConverter['^'+100]['o'] = L'ô';
-    fDeadKeyConverter['^'+100]['u'] = L'û';
-    fDeadKeyConverter['^'+100]['A'] = L'Â';
-    fDeadKeyConverter['^'+100]['E'] = L'Ê';
-    fDeadKeyConverter['^'+100]['I'] = L'Î';
-    fDeadKeyConverter['^'+100]['O'] = L'Ô';
-    fDeadKeyConverter['^'+100]['U'] = L'Û';
-    
-    fDeadKeyConverter['¨'+100]['a'] = L'ä';
-    fDeadKeyConverter['¨'+100]['e'] = L'ë';
-    fDeadKeyConverter['¨'+100]['i'] = L'ï';
-    fDeadKeyConverter['¨'+100]['o'] = L'ö';
-    fDeadKeyConverter['¨'+100]['u'] = L'ü';
-    fDeadKeyConverter['¨'+100]['A'] = L'Ä';
-    fDeadKeyConverter['¨'+100]['E'] = L'Ë';
-    fDeadKeyConverter['¨'+100]['I'] = L'Ï';
-    fDeadKeyConverter['¨'+100]['O'] = L'Ö';
-    fDeadKeyConverter['¨'+100]['U'] = L'Ü';
-
-    fDeadKeyConverter['´'+100]['a'] = L'á';
-    fDeadKeyConverter['´'+100]['e'] = L'é';
-    fDeadKeyConverter['´'+100]['i'] = L'í';
-    fDeadKeyConverter['´'+100]['o'] = L'ó';
-    fDeadKeyConverter['´'+100]['u'] = L'ú';
-    fDeadKeyConverter['´'+100]['y'] = L'ý';
-    fDeadKeyConverter['´'+100]['A'] = L'Á';
-    fDeadKeyConverter['´'+100]['E'] = L'É';
-    fDeadKeyConverter['´'+100]['I'] = L'Í';
-    fDeadKeyConverter['´'+100]['O'] = L'Ó';
-    fDeadKeyConverter['´'+100]['U'] = L'Ú';
-    fDeadKeyConverter['´'+100]['Y'] = L'Ý';
-
-    fDeadKeyConverter['`'+100]['a'] = L'à';
-    fDeadKeyConverter['`'+100]['e'] = L'è';
-    fDeadKeyConverter['`'+100]['i'] = L'ì';
-    fDeadKeyConverter['`'+100]['o'] = L'ò';
-    fDeadKeyConverter['`'+100]['u'] = L'ù';
-    fDeadKeyConverter['`'+100]['A'] = L'À';
-    fDeadKeyConverter['`'+100]['E'] = L'È';
-    fDeadKeyConverter['`'+100]['I'] = L'Ì';
-    fDeadKeyConverter['`'+100]['O'] = L'Ò';
-    fDeadKeyConverter['`'+100]['U'] = L'Ù';
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -1097,48 +1039,6 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyPress( wchar_t key, UInt8 modifiers )
     // We discard keys when locked only after we give our handler the key
     if( IsLocked() )
         return true;
-
-    if (plKeyboardDevice::KeyIsDeadKey())
-    {
-        if (fLastDeadKey != 0)
-        {
-            wchar_t temp = key; // we have two dead keys in a row, print out the old one and store the new one
-            key = fLastDeadKey;
-            fLastDeadKey = temp;
-        }
-        else
-        {
-            fLastDeadKey = key; // store the dead key and don't print it until we get the next char
-            return true;
-        }
-    }
-
-    if (fLastDeadKey != 0) // we have a dead key that needs to be added in
-    {
-        wchar_t translatedKey = fDeadKeyConverter[(char)fLastDeadKey+100][(char)key];
-        if (translatedKey == 0) // no translation possible?
-        {
-            // so we need to print the dead key, followed by the typed key
-            // unless key is a space, then we just type the dead key
-            if (key == ' ')
-            {
-                // Insert character at the current cursor position, then inc the cursor by one
-                // Note: we always want selection mode off when we're typing
-                InsertChar( fLastDeadKey );
-                fLastDeadKey = 0;
-                return true;
-            }
-            // Insert characters at the current cursor position, then inc the cursor by one
-            // Note: we always want selection mode off when we're typing
-            InsertChar( fLastDeadKey );
-            InsertChar( key );
-            fLastDeadKey = 0;
-            return true;
-        }
-        // ok, so we have a translated key now, so assign it to our key and print it normally
-        key = translatedKey;
-        fLastDeadKey = 0;
-    }
 
     // Insert character at the current cursor position, then inc the cursor by one
     // Note: we always want selection mode off when we're typing

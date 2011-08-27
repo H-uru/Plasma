@@ -365,6 +365,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     gClient->SetQuitIntro(true);
             }
             // Fall through to other events
+        case WM_CHAR:
         case WM_KEYUP :
         case WM_LBUTTONUP :
         case WM_RBUTTONUP :

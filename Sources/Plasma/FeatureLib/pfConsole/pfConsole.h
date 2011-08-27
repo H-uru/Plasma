@@ -95,7 +95,6 @@ class pfConsole : public hsKeyedObject
         pfConsoleEngine     *fEngine;
 
         void    IHandleKey( plKeyEventMsg *msg );
-        char    IKeyEventToChar( plKeyEventMsg *msg );
 
         static UInt32       fConsoleTextColor;
         static pfConsole    *fTheConsole;

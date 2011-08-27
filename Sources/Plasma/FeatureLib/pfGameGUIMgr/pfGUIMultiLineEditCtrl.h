@@ -94,11 +94,6 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         static wchar_t  fColorCodeChar, fStyleCodeChar;
         static UInt32   fColorCodeSize, fStyleCodeSize;
-        
-        wchar_t         fLastDeadKey; // if the previous key was a dead key, its value goes here
-        wchar_t         fDeadKeyConverter[256][256]; // first index is the dead key, second index is the char to combine it with
-
-        void SetupDeadKeyConverter();
 
         virtual hsBool  IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 

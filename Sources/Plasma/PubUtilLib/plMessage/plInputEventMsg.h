@@ -109,6 +109,7 @@ public:
 class plKeyEventMsg : public plInputEventMsg
 {
 protected:
+    wchar_t         fKeyChar;
     plKeyDef        fKeyCode;
     hsBool          fKeyDown;
     hsBool          fCapsLockKeyDown;
@@ -128,6 +129,7 @@ public:
     CLASSNAME_REGISTER( plKeyEventMsg );
     GETINTERFACE_ANY( plKeyEventMsg, plInputEventMsg );
 
+    void SetKeyChar(wchar_t key) { fKeyChar = key; }
     void SetKeyCode(plKeyDef w) { fKeyCode = w; }
     void SetKeyDown(hsBool b)   { fKeyDown = b; }
     void SetShiftKeyDown(hsBool b)  { fShiftKeyDown = b; }
@@ -135,6 +137,7 @@ public:
     void SetCapsLockKeyDown(hsBool b)   { fCapsLockKeyDown = b; }
     void SetRepeat(hsBool b)    { fRepeat = b; }
     
+    wchar_t     GetKeyChar()        { return fKeyChar; }
     plKeyDef    GetKeyCode()        { return fKeyCode; }
     hsBool      GetKeyDown()        { return fKeyDown; }
     hsBool      GetShiftKeyDown()   { return fShiftKeyDown; }
