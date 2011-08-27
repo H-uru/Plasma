@@ -27,14 +27,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include "plResTreeView.h"
 
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plRegistryNode.h"
-#include "../plResMgr/plPageInfo.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnKeyedObject/plKeyImp.h"
-#include "../pnFactory/plFactory.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plRegistryNode.h"
+#include "plResMgr/plPageInfo.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnFactory/plFactory.h"
 
 #include <windows.h>
 #include <commctrl.h>

@@ -33,10 +33,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <shlobj.h>
 
 #include "plResTreeView.h"
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plResMgrSettings.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plResMgrSettings.h"
 #include "plWinRegistryTools.h"
-#include "../plFile/hsFiles.h"
+#include "plFile/hsFiles.h"
 
 #define IDC_REGTREEVIEW     1000
 
