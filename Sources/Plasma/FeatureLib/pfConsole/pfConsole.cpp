@@ -131,15 +131,6 @@ class pfConsoleInputInterface : public plInputInterface
             {
                 if( fConsole->fMode )
                 {
-                    // If this is a character input, do not accept the codes (yes, the code) that will toggle
-                    // the console--that's handled elsewhere...
-                    if ( keyMsg->GetKeyChar() )
-                    {
-                        const plKeyBinding* keyb = fControlMap->FindBinding( B_SET_CONSOLE_MODE );
-                        if ( keyb->GetKey1().fKey == keyMsg->GetKeyCode() )
-                            return true;
-                    }
-
                     fConsole->IHandleKey( keyMsg );
                     return true;
                 }

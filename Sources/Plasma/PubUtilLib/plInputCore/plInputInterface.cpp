@@ -132,8 +132,6 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     plKeyEventMsg   *keyMsg = plKeyEventMsg::ConvertNoRef( msg );
     if( keyMsg == nil )
         return false;
-    if ( keyMsg->GetKeyChar())
-        return false;
 
 
     /// We might have controls that are currently enabled that are triggered in part by 
@@ -271,6 +269,11 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
             return false;
         }
     }
+
+    // Still here? Only proces bound keys for KEYDOWNS.
+    // We'll pretend to process CHARs so they don't get sent on...
+    if ( keyMsg->GetKeyChar() )
+        return true;
 
     /// OK, generate the message to send
     plCtrlCmd *pCmd = TRACKED_NEW plCtrlCmd( this );
