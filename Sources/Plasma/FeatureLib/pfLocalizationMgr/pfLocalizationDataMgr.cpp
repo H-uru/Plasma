@@ -50,6 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <bxwchar.h>
 #endif
 
+// MinGW sucks
+#if defined(_WIN32) && !defined(_MSC_VER)
+#   define swprintf _snwprintf
+#endif
+
 //////////////////////////////////////////////////////////////////////
 //
 // LocalizationXMLFile - a basic class for storing all the
@@ -422,7 +427,7 @@ bool LocalizationXMLFile::Parse(const std::string & fileName)
         if (XML_Parse(fParser, Buff, (int)len, done) == XML_STATUS_ERROR)
         {
             wchar_t lineNumber[256];
-            _itow(XML_GetCurrentLineNumber(fParser), lineNumber, 10);
+            swprintf(lineNumber, 256, L"%d", XML_GetCurrentLineNumber(fParser));
             fLastError += L"ERROR: Parse error at line ";
             fLastError += lineNumber;
             fLastError += L": ";
@@ -466,7 +471,7 @@ bool LocalizationXMLFile::Parse(const std::string & fileName)
 void LocalizationXMLFile::AddError(const std::wstring & errorText)
 {
     wchar_t lineNumber[256];
-    _itow(XML_GetCurrentLineNumber(fParser), lineNumber, 10);
+    swprintf(lineNumber, 256, L"%d", XML_GetCurrentLineNumber(fParser));
     fLastError += L"ERROR (line ";
     fLastError += lineNumber;
     fLastError += L"): " + errorText + L"\n";
@@ -603,7 +608,7 @@ void LocalizationDatabase::IVerifyElement(const std::wstring &ageName, const std
     int numLocales = plLocalization::GetNumLocales();
     for (int curLocale = 0; curLocale <= numLocales; curLocale++)
     {
-        char *name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
+        const char *name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
         wchar_t *wName = hsStringToWString(name);
         languageNames.push_back(wName);
         delete [] wName;
@@ -629,12 +634,7 @@ void LocalizationDatabase::IVerifyElement(const std::wstring &ageName, const std
         {
             fErrorString += L"ERROR: The language " + curTranslation->first + L" used by " + ageName + L"." + setName + L".";
             fErrorString += elementName + L" is not supported, discarding translation\n";
-#if !HS_BUILD_FOR_MAC
-            curTranslation = theElement.erase(curTranslation);
-#else
-            // jfim: I thought std::map::erase returned void?
             theElement.erase(curTranslation);
-#endif
             curTranslation--; // because this will be incremented on the next run through the loop
             continue;
         }
@@ -645,12 +645,7 @@ void LocalizationDatabase::IVerifyElement(const std::wstring &ageName, const std
     {
         fErrorString += L"ERROR: Default language " + defaultLanguage + L" is missing from the translations in element ";
         fErrorString += ageName + L"." + setName + L"." + elementName + L", deleting element\n";
-#if !HS_BUILD_FOR_MAC
-        curElement = theSet.erase(curElement);
-#else
-        // jfim: I thought std::map::erase returned void?
         theSet.erase(curElement);
-#endif
         curElement--;
         return;
     }
@@ -918,7 +913,7 @@ pfLocalizationDataMgr::localizedElement pfLocalizationDataMgr::ICreateLocalizedE
 
     for (int curLocale = 0; curLocale <= numLocales; curLocale++)
     {
-        char *name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
+        const char *name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
         wchar_t *wName = hsStringToWString(name);
         retVal[wName] = L"";
         delete [] wName;
@@ -932,7 +927,7 @@ pfLocalizationDataMgr::localizedElement pfLocalizationDataMgr::ICreateLocalizedE
 std::wstring pfLocalizationDataMgr::IGetCurrentLanguageName()
 {
     std::wstring retVal;
-    char *name = plLocalization::GetLanguageName(plLocalization::GetLanguage());
+    const char *name = plLocalization::GetLanguageName(plLocalization::GetLanguage());
     wchar_t *wName = hsStringToWString(name);
     retVal = wName;
     delete [] wName;
@@ -948,7 +943,7 @@ std::vector<std::wstring> pfLocalizationDataMgr::IGetAllLanguageNames()
 
     for (int curLocale = 0; curLocale <= numLocales; curLocale++)
     {
-        char *name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
+        const char *name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
         wchar_t *wName = hsStringToWString(name);
         retVal.push_back(wName);
         delete [] wName;
@@ -1257,7 +1252,7 @@ std::wstring pfLocalizationDataMgr::GetElementPlainTextData(const std::wstring &
     if (fLocalizedElements.exists(name))
     {
         if (fLocalizedElements[name].find(languageName) != fLocalizedElements[name].end())
-            retVal = (std::wstring)fLocalizedElements[name][languageName];
+            retVal = fLocalizedElements[name][languageName];
     }
     return retVal;
 }

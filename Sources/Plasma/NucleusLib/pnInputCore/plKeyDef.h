@@ -33,6 +33,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <windows.h>
 
 #define VK_BACK_QUOTE   0xc0
+// MinGW is missing these definitions:
+#ifndef VK_OEM_PLUS
+#define VK_OEM_PLUS     0xBB
+#endif
+#ifndef VK_OEM_COMMA
+#define VK_OEM_COMMA    0xBC
+#endif
+#ifndef VK_OEM_MINUS
+#define VK_OEM_MINUS    0xBD
+#endif
+#ifndef VK_OEM_PERIOD
+#define VK_OEM_PERIOD   0xBE
+#endif
+
 //
 // keyboard definitions:
 //

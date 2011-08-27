@@ -88,7 +88,7 @@ hsBool NameMatches(const char* obName, const char* pKName, hsBool subString)
 
     if (!subString)
     {
-        if (!_stricmp(o, p))
+        if (!stricmp(o, p))
             return true;            // FOUND IT!!!!!!!!!!!!!!!!!!!
     }
     else

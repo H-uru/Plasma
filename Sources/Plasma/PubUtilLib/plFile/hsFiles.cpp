@@ -133,7 +133,7 @@ hsBool hsFolderIterator::NextFileSuffix(const char suffix[])
 {
     while (this->NextFile())
     {   const char* fileSuffix = ::strrchr(this->GetFileName(), '.');
-        if (fileSuffix != nil && ::_stricmp(fileSuffix, suffix) == 0)
+        if (fileSuffix != nil && stricmp(fileSuffix, suffix) == 0)
             return true;
     }
     return false;

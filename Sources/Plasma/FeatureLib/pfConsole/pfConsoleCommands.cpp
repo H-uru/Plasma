@@ -841,7 +841,7 @@ PF_CONSOLE_CMD( Console, SetVar, "string name, string value",
 
     hsBool oldF = ctx.GetAddWhenNotFound();
     ctx.SetAddWhenNotFound( true );
-    ctx.SetVar( params[ 0 ], params[ 1 ] );
+    ctx.SetVar((char*)params[ 0 ], (char*)params[ 1 ] );
     ctx.SetAddWhenNotFound( oldF );
 }
 
@@ -2251,17 +2251,17 @@ PF_CONSOLE_CMD( App,
 
     char* eventStr = params[1];
     CallbackEvent event;
-    if( !_stricmp(eventStr, "Start") )
+    if( !stricmp(eventStr, "Start") )
     {
         event = kStart;
     }
     else
-    if( !_stricmp(eventStr, "Stop") )
+    if( !stricmp(eventStr, "Stop") )
     {
         event = kStop;
     }
     else
-    if( !_stricmp(eventStr, "Time") )
+    if( !stricmp(eventStr, "Time") )
     {
         event = kTime;
         secs = params[2];
@@ -2306,17 +2306,17 @@ PF_CONSOLE_CMD( App,
 
     char* eventStr = params[1];
     CallbackEvent event;
-    if( !_stricmp(eventStr, "Start") )
+    if( !stricmp(eventStr, "Start") )
     {
         event = kStart;
     }
     else
-    if( !_stricmp(eventStr, "Stop") )
+    if( !stricmp(eventStr, "Stop") )
     {
         event = kStop;
     }
     else
-    if( !_stricmp(eventStr, "Time") )
+    if( !stricmp(eventStr, "Time") )
     {
         event = kTime;
         secs = params[2];

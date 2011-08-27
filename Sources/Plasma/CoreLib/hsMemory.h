@@ -27,6 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsMemoryDefined
 
 #include "hsTypes.h"
+#include "hsMalloc.h"
 //#include "hsTemplates.h"
 
 class HSMemory {

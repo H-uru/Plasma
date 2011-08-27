@@ -56,7 +56,7 @@ static bool         s_options[kNumErrorOptions];
 AUTO_INIT_FUNC(hsExeErrorInit) {
     // The critical section has to be initialized
     // before program startup and never freed
-    static byte rawMemory[sizeof CCritSect];
+    static byte rawMemory[sizeof(CCritSect)];
     s_critsect = new(rawMemory) CCritSect;
 }
 

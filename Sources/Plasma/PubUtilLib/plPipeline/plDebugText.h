@@ -121,7 +121,7 @@ class plDebugText
 
         void    SetManager( plDebugTextManager *m ) { fManager = m; }
 
-        void            SetFont( char *face, UInt16 size ) { hsStrncpy( fFontFace, face, sizeof( fFontFace ) ); fFontSize = size; }
+        void            SetFont(const char *face, UInt16 size ) { hsStrncpy( fFontFace, face, sizeof( fFontFace ) ); fFontSize = size; }
         const char      *GetFontFace( void ) { return fFontFace; }
         const UInt16    GetFontSize( void ) { return fFontSize; }
         UInt16          GetFontHeight();

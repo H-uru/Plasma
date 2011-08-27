@@ -29,12 +29,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "pnAddrInfo.h"
 #include <string.h>
+
 #if HS_BUILD_FOR_UNIX
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <net/if.h>
-#include <sys/ioctl.h>
+#   include <unistd.h>
+#   include <arpa/inet.h>
+#   include <netinet/in.h>
+#   include <net/if.h>
+#   include <sys/ioctl.h>
 #endif
 
 const pnAddrInfo* pnAddrInfo::GetInterface()
@@ -138,7 +139,8 @@ void pnAddrInfo::GetLocalAddrs(List& addrslist, bool incLoopBack)
 
     SOCKET s = socket(AF_INET, SOCK_DGRAM, 0); 
 
-    if (WSAIoctl(s,SIO_GET_INTERFACE_LIST,NULL,NULL,(void*)infos,bufSize,&retSize,NULL,NULL) == 0)
+    if (WSAIoctl(s, SIO_GET_INTERFACE_LIST, NULL, 0,
+                (void*)infos, bufSize, &retSize, NULL, NULL) == 0)
     {
         unsigned int entries = retSize/sizeof(INTERFACE_INFO);
         int i;

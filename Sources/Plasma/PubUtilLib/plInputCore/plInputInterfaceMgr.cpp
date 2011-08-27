@@ -861,7 +861,7 @@ const char  *plInputInterfaceMgr::IKeyComboToString( const plKeyCombo &combo )
         sprintf( str, "(unmapped)" );
     else
     {
-        char *c = plKeyMap::ConvertVKeyToChar( combo.fKey );
+        const char *c = plKeyMap::ConvertVKeyToChar( combo.fKey );
         if( c != nil )
             strncpy( str, c, sizeof( str ) );
         else

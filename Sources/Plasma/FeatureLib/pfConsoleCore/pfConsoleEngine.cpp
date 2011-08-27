@@ -149,8 +149,10 @@ hsBool  pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
         PrintFn( "  Commands:" );
         for( cmd = group->GetFirstCommand(); cmd != nil; cmd = cmd->GetNext() )
         {
-            for( ptr = cmd->GetHelp(), i = 0; ptr[ i ] != 0 && ptr[ i ] != '\n'; i++ )
-                tempString[ i ] = ptr[ i ];
+            const char* p = cmd->GetHelp();
+            for(i = 0; p[ i ] != 0 && p[ i ] != '\n'; i++) {
+                tempString[ i ] = p[ i ];
+            }
             tempString[ i ] = 0;
 
             sprintf( string, "    %s: %s", cmd->GetName(), tempString );

@@ -66,7 +66,7 @@ class plAvatarInputMap
 
         plAvatarInputMap();
         virtual ~plAvatarInputMap();
-        virtual char *GetName() = 0;
+        virtual const char *GetName() = 0;
         virtual hsBool IsBasic() { return false; }
 
         plMouseMap      *fMouseMap;
@@ -78,7 +78,7 @@ class plSuspendedMovementMap : public plAvatarInputMap
 {
 public:
     plSuspendedMovementMap();
-    virtual char *GetName() { return "Suspended Movement"; }
+    virtual const char *GetName() { return "Suspended Movement"; }
 };
 
 // The above, plus movement
@@ -86,7 +86,7 @@ class plBasicControlMap : public plSuspendedMovementMap
 {
 public:
     plBasicControlMap();
-    virtual char *GetName() { return "Basic"; }
+    virtual const char *GetName() { return "Basic"; }
     virtual hsBool IsBasic() { return true; }
 
 };
@@ -95,28 +95,28 @@ class plBasicThirdPersonControlMap : public plBasicControlMap
 {
 public:
     plBasicThirdPersonControlMap();
-    virtual char *GetName() { return "Basic Third Person"; }
+    virtual const char *GetName() { return "Basic Third Person"; }
 };
 
 class plLadderControlMap : public plSuspendedMovementMap
 {
 public:
     plLadderControlMap();
-    virtual char *GetName() { return "LadderClimb"; }
+    virtual const char *GetName() { return "LadderClimb"; }
 };
 
 class plLadderMountMap : public plSuspendedMovementMap
 {
 public:
     plLadderMountMap();
-    virtual char *GetName() { return "Ladder Mount"; }
+    virtual const char *GetName() { return "Ladder Mount"; }
 };
 
 class plLadderDismountMap : public plSuspendedMovementMap
 {
 public:
     plLadderDismountMap();
-    virtual char *GetName() { return "Ladder Dismount"; }
+    virtual const char *GetName() { return "Ladder Dismount"; }
 };
 
 
@@ -124,7 +124,7 @@ class plBasicFirstPersonControlMap : public plBasicControlMap
 {
 public:
     plBasicFirstPersonControlMap();
-    virtual char *GetName() { return "Basic First Person"; }
+    virtual const char *GetName() { return "Basic First Person"; }
 };
 
 // Mouse walk mode
@@ -139,21 +139,21 @@ class pl3rdWalkForwardMap : public pl3rdWalkMap
 {
 public:
     pl3rdWalkForwardMap();
-    virtual char *GetName() { return "Walking Forward"; }
+    virtual const char *GetName() { return "Walking Forward"; }
 };
 
 class pl3rdWalkBackwardMap : public pl3rdWalkMap
 {
 public:
     pl3rdWalkBackwardMap();
-    virtual char *GetName() { return "Walking Backward"; }
+    virtual const char *GetName() { return "Walking Backward"; }
 };
 
 class pl3rdWalkBackwardLBMap : public pl3rdWalkMap
 {
 public:
     pl3rdWalkBackwardLBMap();
-    virtual char *GetName() { return "Walking Backward (LB)"; }
+    virtual const char *GetName() { return "Walking Backward (LB)"; }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -215,7 +215,7 @@ class plAvatarInputInterface : public plInputInterface
         virtual UInt32      GetPriorityLevel( void ) const { return kAvatarInputPriority; }
         virtual UInt32      GetCurrentCursorID( void ) const { return fCurrentCursor; }
         virtual hsScalar    GetCurrentCursorOpacity( void ) const { return fCursorOpacity; }
-        char*               GetInputMapName() { return fInputMap ? fInputMap->GetName() : ""; }
+        const char*         GetInputMapName() { return fInputMap ? fInputMap->GetName() : ""; }
 
         virtual hsBool      InterpretInputEvent( plInputEventMsg *pMsg );
         virtual void        MissedInputEvent( plInputEventMsg *pMsg );

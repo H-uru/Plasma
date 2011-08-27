@@ -33,15 +33,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  Unix and XP use native code
 
 #if HS_BUILD_FOR_UNIX
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
+#   include <sys/types.h>
+#   include <sys/socket.h>
+#   include <netdb.h>
 #elif HS_BUILD_FOR_WIN32
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#   if (_WIN32_WINNT < 0x0501)
+#       define _WIN32_WINNT 0x0501
+#   endif
+#   include <winsock2.h>
+#   include <ws2tcpip.h>
 #else
-#error "pnAddrInfo Not Implemented!"
+#   error "pnAddrInfo Not Implemented!"
 #endif
+
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 

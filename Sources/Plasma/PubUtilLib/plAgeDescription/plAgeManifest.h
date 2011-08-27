@@ -98,7 +98,7 @@ protected:
     void IReset();
 
 public:
-    static char* fTimeFormat;       // Standard string for the printed version of our timestamps
+    static const char* fTimeFormat;       // Standard string for the printed version of our timestamps
 
     void SetFormatVersion(UInt32 v) { fFormatVersion = v; }
     void AddFile(plManifestFile* file);

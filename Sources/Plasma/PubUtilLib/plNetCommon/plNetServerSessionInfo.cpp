@@ -692,11 +692,11 @@ bool plNetServerSessionInfo::IsEqualTo(const plNetServerSessionInfo * other) con
     if (match && IsFlagSet(kHasServerGuid) && other->IsFlagSet(kHasServerGuid))
         match = match && fServerGuid.IsEqualTo(other->GetServerGuid());
     if (match && IsFlagSet(kHasServerName) && other->IsFlagSet(kHasServerName))
-        match = match && (_stricmp(fServerName.c_str(),other->fServerName.c_str())==0);
+        match = match && (stricmp(fServerName.c_str(),other->fServerName.c_str())==0);
     if (match && IsFlagSet(kHasServerType) && other->IsFlagSet(kHasServerType))
         match = match && fServerType==other->fServerType;
     if (match && IsFlagSet(kHasServerAddr) && other->IsFlagSet(kHasServerAddr))
-        match = match && (_stricmp(fServerAddr.c_str(),other->fServerAddr.c_str())==0);
+        match = match && (stricmp(fServerAddr.c_str(),other->fServerAddr.c_str())==0);
     if (match && IsFlagSet(kHasServerPort) && other->IsFlagSet(kHasServerPort))
         match = match && fServerPort==other->fServerPort;
     return match;
