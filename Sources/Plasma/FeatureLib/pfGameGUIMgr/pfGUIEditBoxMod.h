@@ -57,16 +57,11 @@ class pfGUIEditBoxMod : public pfGUIControlMod
 
         plKeyDef        fSavedKey;
         UInt8           fSavedModifiers;
-        
-        wchar_t         fLastDeadKey; // if the previous key was a dead key, its value goes here
-        wchar_t         fDeadKeyConverter[256][256]; // first index is the dead key, second index is the char to combine it with
 
         virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
 
         virtual void    IPostSetUpDynTextMap( void );
         virtual void    IUpdate( void );
-
-        void SetupDeadKeyConverter();
 
     public:
         enum

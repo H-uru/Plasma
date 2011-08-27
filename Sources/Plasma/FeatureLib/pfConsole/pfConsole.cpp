@@ -828,9 +828,9 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     {
         fWorkingCursor = 0;
     }
-    else 
+    else if (msg->GetKeyChar() != nil)
     {
-        key = plKeyboardDevice::KeyEventToChar( msg );
+        key = msg->GetKeyChar();
         // do they want to go into help mode?
         if( !fPythonMode && key == L'?' && fWorkingCursor == 0 )
         {
