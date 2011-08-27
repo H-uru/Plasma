@@ -281,11 +281,15 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
                 Wparam == KEY_TAB || Wparam == 0x0D)
                 break;
 
+            UINT scan = Lparam >> 16;
+            scan = MapVirtualKeyEx(scan, MAPVK_VSC_TO_VK, nil);
+            if (scan == 0) scan = -1;
+
             bExtended = Lparam >> 24 & 1;
             hsBool bRepeat = ((Lparam >> 29) & 0xf) != 0;
             bool down = !(Lparam >> 31);
             for (int i=0; i<fInputDevices.Count(); i++)
-                fInputDevices[i]->HandleKeyEvent( CHAR_MSG, (plKeyDef)-1, down, bRepeat, (wchar_t)Wparam );
+                fInputDevices[i]->HandleKeyEvent( CHAR_MSG, (plKeyDef)scan, down, bRepeat, (wchar_t)Wparam );
         }
         break;
     case MOUSEWHEEL:
