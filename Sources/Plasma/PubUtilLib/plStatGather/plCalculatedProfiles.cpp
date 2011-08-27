@@ -27,6 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfileManager.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "hsTimer.h"
+#include "plPipeline/plPlates.h"
 
 plProfile_CreateCounter("Age Upload BitsPerSec", "Network", UploadAgeBitsPerSec);
 plProfile_CreateMemCounter("Upload Bytes", "Network", UploadBW);
@@ -118,8 +119,6 @@ void CalculateProfiles()
 #endif
     }
 }
-
-#include "../plPipeline/plPlates.h"
 
 static plGraphPlate* fFPSPlate = nil;
 static plGraphPlate* fNetBWPlate = nil;

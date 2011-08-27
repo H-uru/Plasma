@@ -32,18 +32,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "res/resource.h"
 
 #include "pnAllCreatables.h"
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plResMgrCreatable.h"
-#include "../plResMgr/plResMgrSettings.h"
-#include "../plMessage/plResMgrHelperMsg.h"
-#include "../plUnifiedTime/plUnifiedTimeCreatable.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plResMgrCreatable.h"
+#include "plResMgr/plResMgrSettings.h"
+#include "plMessage/plResMgrHelperMsg.h"
 REGISTER_CREATABLE(plResMgrHelperMsg);
 
-#include "../plGImage/plFont.h"
+#include "plGImage/plFont.h"
 REGISTER_CREATABLE(plFont);
 
-#include "../plGImage/plBitmap.h"
-#include "../plGImage/plMipmap.h"
+#include "plGImage/plBitmap.h"
+#include "plGImage/plMipmap.h"
 REGISTER_NONCREATABLE(plBitmap);
 REGISTER_CREATABLE(plMipmap);
 

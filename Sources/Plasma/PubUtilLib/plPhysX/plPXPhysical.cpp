@@ -56,7 +56,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPXConvert.h"
 #include "plPXPhysicalControllerCore.h"
 
-#include "../plModifier/plDetectorLog.h"
+#include "plModifier/plDetectorLog.h"
+
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 
 #if 0
@@ -1253,9 +1256,6 @@ hsBool plPXPhysical::IsDynamic() const
     return fGroup == plSimDefs::kGroupDynamic &&
         !GetProperty(plSimulationInterface::kPhysAnim);
 }
-
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
 
 // Some helper functions for pulling info out of a PhysX trimesh description
 inline hsPoint3& GetTrimeshVert(NxTriangleMeshDesc& desc, int idx)

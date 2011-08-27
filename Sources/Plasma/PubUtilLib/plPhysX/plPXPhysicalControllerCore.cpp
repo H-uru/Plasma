@@ -27,22 +27,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSimulationMgr.h"
 #include "plPXPhysical.h"
 #include "plPXConvert.h"
-#include "../pnSceneObject/plSimulationInterface.h"
-#include "../pnSceneObject/plSceneObject.h"
-#include "../pnMessage/plCorrectionMsg.h"
-#include "../plAvatar/plArmatureMod.h"
-#include "../pnSceneObject/plCoordinateInterface.h"
-#include "../plDrawable/plDrawableGenerator.h"
-#include "../plPhysical/plPhysicalProxy.h"
-#include "../pnMessage/plSetNetGroupIDMsg.h"
-#include "../plMessage/plCollideMsg.h"
-#include "../plModifier/plDetectorLog.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plCorrectionMsg.h"
+#include "plAvatar/plArmatureMod.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "plPhysical/plPhysicalProxy.h"
+#include "pnMessage/plSetNetGroupIDMsg.h"
+#include "plMessage/plCollideMsg.h"
+#include "plModifier/plDetectorLog.h"
 //#include "NxVecExtendedVec3.h"
 
 #include "NxPhysics.h"
 #include "ControllerManager.h" 
 #include "NxCapsuleController.h"
 #include "NxCapsuleShape.h"
+
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
+
+
+#ifndef PLASMA_EXTERNAL_RELEASE
+#include "plPipeline/plDebugText.h"
+#endif
+
 #define kPhysxSkinWidth 0.1f
 #define kPhysZOffset ((fRadius + (fHeight / 2)) + kPhysxSkinWidth)
 //#define kSLOPELIMIT (cosf(NxMath::degToRad(55.f)))
@@ -1162,9 +1171,6 @@ const hsVector3& plPXPhysicalControllerCore::GetLinearVelocity()
     }
 }
 
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
-
 // Make a visible object that can be viewed by users for debugging purposes.
 plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
 {
@@ -1189,7 +1195,6 @@ plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, hsTAr
     return myDraw;
 }
 #ifndef PLASMA_EXTERNAL_RELEASE
-#include "../plPipeline/plDebugText.h"
 
 void plPXPhysicalControllerCore::IDrawDebugDisplay()
 {

@@ -35,8 +35,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plDrawableGenerator.h"
 #include "plPhysical/plPhysicalProxy.h"
 
-#include "pnMessage/plSetNetGroupIDMsg.h"
+#include "pnMessage/plSetNetGroupIDMsg.h
+
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h""
 #include "plMessage/plCollideMsg.h"
+
 
 #include <NxPhysics.h>
 #include <ControllerManager.h>
@@ -55,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #ifndef PLASMA_EXTERNAL_RELEASE
+#include "plPipeline/plDebugText.h"
 hsBool plPXPhysicalController::fDebugDisplay = false;
 #endif // PLASMA_EXTERNAL_RELEASE
 
@@ -1197,9 +1202,6 @@ void plPXPhysicalController::IDeleteController()
     }
 }
 
-#include "../plSurface/hsGMaterial.h"
-#include "../plSurface/plLayerInterface.h"
-
 // Make a visible object that can be viewed by users for debugging purposes.
 plDrawableSpans* plPXPhysicalController::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
 {
@@ -1226,7 +1228,6 @@ plDrawableSpans* plPXPhysicalController::CreateProxy(hsGMaterial* mat, hsTArray<
 }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-#include "../plPipeline/plDebugText.h"
 
 void plPXPhysicalController::IDrawDebugDisplay()
 {
