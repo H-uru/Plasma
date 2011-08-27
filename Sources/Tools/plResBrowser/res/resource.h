@@ -46,6 +46,7 @@
 #define IDC_LOCAL_ONLY                  1025
 #define IDC_BUILTIN                     1026
 #define IDC_VOLATILE                    1027
+#define ID_FILE_OPEN                    40001
 #define ID_FILE_EXIT                    40002
 #define ID_FILE_OPENDIRECTORY           40003
 #define ID_FILE_ABOUT                   40004
