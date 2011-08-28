@@ -78,7 +78,6 @@ protected:
     static hsBool       fGotCaps;
     
     static hsBool   IDetectEAX( );
-    static void     EnumerateAudioDevices();
 };
 
 #endif //_plAudioCaps_h

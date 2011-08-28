@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <eaxlegacy.h>
 #endif
 #include <iostream>
-#include <DShow.h>
 
 #include "plStatusLog/plStatusLog.h"
 
@@ -97,8 +96,6 @@ plAudioCaps &plAudioCapsDetector::Detect( hsBool logIt, hsBool init )
         }
     }
     
-    EnumerateAudioDevices();
-
     if( logIt )
         fLog = plStatusLogMgr::GetInstance().CreateStatusLog( 30, "audioCaps.log" );
     else
@@ -136,59 +133,6 @@ plAudioCaps &plAudioCapsDetector::Detect( hsBool logIt, hsBool init )
         alcCloseDevice(device);
     }
     return fCaps;
-}
-
-void plAudioCapsDetector::EnumerateAudioDevices()
-{ 
-    ICreateDevEnum *pDevEnum;
-    IEnumMoniker *pEnumMon;
-    IMoniker *pMoniker;
-    ULONG cFetched;
-    HRESULT hr;
-    char audioCardName[MAX_AUDIOCARD_NAME];
-    short *pShort;
-
-    // Enumerate audio devices
-    hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pDevEnum);
-    if(SUCCEEDED(hr))
-    {
-        hr = pDevEnum->CreateClassEnumerator(CLSID_AudioRendererCategory, &pEnumMon, 0);
-        if(SUCCEEDED(hr))
-        {
-            while(pEnumMon->Next(1, &pMoniker, &cFetched) == S_OK)
-            {
-                if(pMoniker)
-                {
-                    IPropertyBag *pPropBag;
-                    hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
-                    if(SUCCEEDED(hr))
-                    {
-                        VARIANT varName;
-                        VariantInit(&varName);
-                        hr = pPropBag->Read(L"FriendlyName", &varName, 0);
-                        memset(audioCardName, 0, MAX_AUDIOCARD_NAME);
-                        pShort = varName.piVal;
-
-                        // copy from wide character array to char array
-                        for(int i = 0; *pShort != 0 && i < MAX_AUDIOCARD_NAME; pShort++, i++)
-                        {
-                            audioCardName[i] = (char)*pShort;
-                        }
-                        
-                        if(SUCCEEDED(hr))
-                        {
-                            plStatusLog::AddLineS("audiocaps.log", audioCardName );
-                        }
-                        VariantClear(&varName);
-                        pPropBag->Release();
-                    }
-                    pMoniker->Release();
-                }
-            }
-            pEnumMon->Release();
-        }
-        pDevEnum->Release();
-    }
 }
 
 //// IDetectEAX //////////////////////////////////////////////////////////////
