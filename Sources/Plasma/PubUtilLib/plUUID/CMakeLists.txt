@@ -8,6 +8,8 @@ set(plUUID_SOURCES
 
 if(WIN32)
     set(plUUID_SOURCES ${plUUID_SOURCES} plUUID_Win32.cpp)
+else(WIN32)
+    set(plUUID_SOURCES ${plUUID_SOURCES} plUUID_Unix.cpp)
 endif(WIN32)
 
 set(plUUID_HEADERS
