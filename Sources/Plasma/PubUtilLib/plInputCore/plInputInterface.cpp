@@ -246,15 +246,18 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     hsBool wasActive = IHasKeyControlFlag(binding->GetCode());
 
     // Set or clear our flags, since we do that even if we don't send a message
-    if( activate )
+    if ( !keyMsg->GetKeyChar() )
     {
-        ISetKeyControlFlag( binding->GetCode() );
-        fKeyControlsFrom2ndKeyFlags.SetBit( binding->GetCode(), ( binding->GetKey2() == combo ) ? true : false );
-    }
-    else
-    {
-        IClearKeyControlFlag( binding->GetCode() );
-        fKeyControlsFrom2ndKeyFlags.SetBit( binding->GetCode(), 0 );
+        if( activate )
+        {
+            ISetKeyControlFlag( binding->GetCode() );
+            fKeyControlsFrom2ndKeyFlags.SetBit( binding->GetCode(), ( binding->GetKey2() == combo ) ? true : false );
+        }
+        else
+        {
+            IClearKeyControlFlag( binding->GetCode() );
+            fKeyControlsFrom2ndKeyFlags.SetBit( binding->GetCode(), 0 );
+        }
     }
 
     // Filter out codes that only want their activate messages sent (like console commands)
