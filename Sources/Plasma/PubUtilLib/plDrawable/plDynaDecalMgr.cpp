@@ -68,6 +68,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plPipeResMakeMsg.h"
 
+#include "plGImage/plBumpMapGen.h"
+
 // Stuff for creating a bumpenv decal on demand.
 #include "plGImage/plMipmap.h"
 #include "plSurface/plLayer.h"
@@ -1546,8 +1548,6 @@ hsBool plDynaDecalMgr::ICutoutTargets(double secs)
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-
-#include "../plGImage/plBumpMapGen.h"
 
 hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap)
 {

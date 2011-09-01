@@ -34,6 +34,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plUoid.h"
 #include <string.h>
 
+#include "plFixedKey.h"
+#include "plCreatableIndex.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnFactory/plCreator.h"
+
 //// plKeySeed ///////////////////////////////////////////////////////////////
 //  Our seed struct. Defined here so it doesn't have to be in the .h file
 
@@ -54,11 +59,6 @@ struct plKeySeed
         return false;
     }
 };
-
-#include "plFixedKey.h"
-#include "plCreatableIndex.h"
-#include "../pnKeyedObject/plKey.h"
-#include "../pnFactory/plCreator.h"
 
 // Rules for SeedList:
     // 1) Must be in the Same order as enum fixedKey

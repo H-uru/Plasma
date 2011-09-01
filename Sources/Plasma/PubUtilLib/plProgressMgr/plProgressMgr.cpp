@@ -38,7 +38,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProgressMgr.h"
 #include "hsTimer.h"
 
-#include "../plPipeline/plPlates.h"
+#include "plPipeline/plPlates.h"
 
 #include <string.h>
 

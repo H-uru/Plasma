@@ -153,7 +153,7 @@ static void InitMutexTimerFile()
 #include <time.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "../NucleusLib/inc/hsTimer.h"
+#include "NucleusLib/inc/hsTimer.h"
 
 
 static FILE * gEventLoggingFile = nil;

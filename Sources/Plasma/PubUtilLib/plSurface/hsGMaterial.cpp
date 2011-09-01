@@ -29,7 +29,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsMemory.h"
-//#include "../plGeometry/hsTriangle3.h"
 #include "hsResMgr.h"
 #include "plLayerInterface.h"
 #include "plLayer.h"

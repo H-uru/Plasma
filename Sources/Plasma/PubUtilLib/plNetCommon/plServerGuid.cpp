@@ -25,8 +25,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsWindows.h"
 #include "plServerGuid.h"
-#include "../pnMessage/plMessage.h"
-#include "../PubUtilLib/plStreamLogger/plStreamLogger.h"
+#include "pnMessage/plMessage.h"
+#include "PubUtilLib/plStreamLogger/plStreamLogger.h"
 #if HS_BUILD_FOR_WIN32
 #include <process.h>
 #else

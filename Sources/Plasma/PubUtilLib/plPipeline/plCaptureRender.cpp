@@ -40,6 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 
+#else // MF_FRONTBUFF_CAPTURE
+
+#include "plPipeline.h"
+#include "plgDispatch.h"
+
+#include "plMessage/plCaptureRenderMsg.h"
+#include "plGImage/plMipmap.h"
+
+#endif // MF_FRONTBUFF_CAPTURE
+
+
+#ifndef MF_FRONTBUFF_CAPTURE
 // CaptureRenderRequest
 //
 void plCaptureRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
@@ -178,12 +190,6 @@ void plCaptureRender::Update()
 
 
 #else // MF_FRONTBUFF_CAPTURE
-
-#include "plPipeline.h"
-#include "plgDispatch.h"
-
-#include "../plMessage/plCaptureRenderMsg.h"
-#include "../plGImage/plMipmap.h"
 
 hsTArray<plCaptureRender::CapInfo>  plCaptureRender::fCapReqs;
 
