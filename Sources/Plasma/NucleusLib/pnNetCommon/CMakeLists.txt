@@ -14,6 +14,8 @@ set(pnNetCommon_HEADERS
     plSDLTypes.h
     plSynchedObject.h
     plSynchedValue.h
+    pnNetCommon.h
+    pnNetCommonCreatable.h
 )
 
 set(pnNetCommon_SOURCES

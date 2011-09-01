@@ -24,7 +24,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plLoc.h"
-#include "../pnKeyedObject/hsKeyedObject.h"
+#include "pnKeyedObject/hsKeyedObject.h"
 
 
 plLocFileParser::plLocFileParser(): fThrowBack(nil), fThrowBackLevel(0)     

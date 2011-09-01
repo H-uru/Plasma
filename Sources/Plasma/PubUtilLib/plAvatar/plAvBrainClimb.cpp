@@ -70,6 +70,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plClimbEventMsg.h"
 #include "pnNetCommon/plSDLTypes.h"
 
+#include "plSDL/plSDL.h"
+#include "plAvatarSDLModifier.h"
+
 /////////////////////////////////////////////////////////////////
 //
 // IMPLEMENTATION
@@ -769,8 +772,6 @@ hsBool plAvBrainClimb::IInitAnimations()
 // SDL-BASED PERSISTENCE
 //
 /////////////////////////////////////////////////////////////////////////////////////////
-#include "../plSDL/plSDL.h"
-#include "plAvatarSDLModifier.h"
 
 // SaveToSDL -----------------------------------------
 // ---------

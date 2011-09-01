@@ -59,6 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarMgr.h"
 
+#include "plPipeline/plDebugText.h"
+
 
 //#ifdef HS_DEBUGGING
 #define STATUS_LOG
@@ -699,7 +701,6 @@ void plResponderModifier::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteByte(fFlags);
 }
 
-#include "../plPipeline/plDebugText.h"
 
 bool plResponderModifier::fDebugAnimBox = false;
 

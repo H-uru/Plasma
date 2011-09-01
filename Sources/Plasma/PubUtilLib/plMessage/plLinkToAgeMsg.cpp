@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommon.h"
 #include "hsBitVector.h"
-
+#include "pnNetCommon/plNetApp.h"
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -203,7 +203,6 @@ enum LinkEffectsFlags
     kLinkEffectsLinkInAnimKey,
 };
 
-#include "../pnNetCommon/plNetApp.h"
 void plLinkEffectsTriggerMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgReadVersion(s, mgr);

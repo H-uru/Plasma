@@ -35,6 +35,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "pnMessage/plWarpMsg.h"
 #include "pnMessage/plNodeRefMsg.h"
+#include "plMessage/plLoadCloneMsg.h"
 
 plCloneSpawnModifier::plCloneSpawnModifier() : fTemplateName(nil), fExportTime(false)
 {
@@ -80,7 +81,6 @@ void plCloneSpawnModifier::SetTarget(plSceneObject* so)
     }
 }
 
-#include "../plMessage/plLoadCloneMsg.h"
 
 plKey plCloneSpawnModifier::SpawnClone(const char* cloneName, const char* cloneAge, const hsMatrix44& pos, plKey requestor)
 {

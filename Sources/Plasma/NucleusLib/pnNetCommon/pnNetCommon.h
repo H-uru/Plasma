@@ -31,7 +31,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "hsRefCnt.h"
 #include "hsStream.h"
-#include "../pnFactory/plCreatable.h"
+#include "pnFactory/plCreatable.h"
 
 //
 // main logging switch

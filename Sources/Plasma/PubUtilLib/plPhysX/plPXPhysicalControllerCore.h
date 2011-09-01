@@ -23,7 +23,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../plAvatar/plPhysicalControllerCore.h"
+#include "plAvatar/plPhysicalControllerCore.h"
 #include "hsQuat.h"
 #define PHYSX_ONLY_TRIGGER_FROM_KINEMATIC 1
 
