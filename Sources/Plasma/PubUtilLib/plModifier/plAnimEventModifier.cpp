@@ -32,6 +32,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plEventCallbackMsg.h"
 
+#include "pnNetCommon/plNetApp.h"
+#include "pnMessage/plNotifyMsg.h"
+
 plAnimEventModifier::plAnimEventModifier() : fCallback(nil), fDisabled(false)
 {
 }
@@ -104,9 +107,6 @@ hsBool plAnimEventModifier::MsgReceive(plMessage* msg)
     }
     return plSingleModifier::MsgReceive(msg);
 }
-
-#include "../pnNetCommon/plNetApp.h"
-#include "../pnMessage/plNotifyMsg.h"
 
 void plAnimEventModifier::ISendNotify(bool triggered)
 {

@@ -41,6 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plSceneNode.h"
 #include "plScene/plPageTreeMgr.h"
 
+
+#include "plPipeline.h"
+#include "pnSceneObject/plSceneObject.h"
+
 // Stuff for cursor los
 #include "plInputCore/plInputDevice.h"
 #include "plPipeline.h"
@@ -410,9 +414,6 @@ hsBool plVisLOSMgr::CursorCheck(plVisHit& hit)
 }
 
 /////////////////////////////////////////////////////////////////
-
-#include "plPipeline.h"
-#include "../pnSceneObject/plSceneObject.h"
 
 static plSceneObject* marker = nil;
 static plPipeline* pipe = nil;

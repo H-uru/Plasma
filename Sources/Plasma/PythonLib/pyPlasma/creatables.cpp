@@ -23,12 +23,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../plNetClientComm/plNetClientCommCreatable.h"
-#include "../plUnifiedTime/plUnifiedTimeCreatable.h"
-#include "../pnKeyedObject/pnKeyedObjectCreatable.h"
-#include "../pnNetCommon/pnNetCommonCreatable.h"
-#include "../pnMessage/pnMessageCreatable.h"
-#include "../plNetMessage/plNetMessageCreatable.h"
-#include "../plNetCommon/plNetCommonCreatable.h"
-#include "../plVault/plVaultCreatable.h"
-#include "../plSDL/plSDLCreatable.h"
+#include "plNetClientComm/plNetClientCommCreatable.h"
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "plNetMessage/plNetMessageCreatable.h"
+#include "plNetCommon/plNetCommonCreatable.h"
+#include "plVault/plVaultCreatable.h"
+#include "plSDL/plSDLCreatable.h"
