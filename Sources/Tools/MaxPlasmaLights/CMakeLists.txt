@@ -34,6 +34,7 @@ set(MaxPlasmaLights_SOURCES
     plRTProjDirLight.cpp
 )
 
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
 add_library(MaxPlasmaLights SHARED ${MaxPlasmaLights_HEADERS} ${MaxPlasmaLights_RESOURCES} ${MaxPlasmaLights_SOURCES})
 set_target_properties(MaxPlasmaLights PROPERTIES SUFFIX ".dlo")
 
