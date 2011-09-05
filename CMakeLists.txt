@@ -2,6 +2,7 @@ project(Plasma)
 cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
 
 # Find all 3rd-party libraries that are required
 find_package(OpenSSL REQUIRED)
