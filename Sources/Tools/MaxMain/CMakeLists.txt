@@ -80,6 +80,7 @@ set(MaxMain_SOURCES
     plTextureSearch.cpp
 )
 
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
 add_library(MaxMain SHARED ${MaxMain_HEADERS} ${MaxMain_RESOURCES} ${MaxMain_SOURCES})
 set_target_properties(MaxMain PROPERTIES OUTPUT_NAME "PlasmaMax")
 set_target_properties(MaxMain PROPERTIES SUFFIX ".gup")
