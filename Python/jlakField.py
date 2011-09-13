@@ -839,7 +839,17 @@ class jlakField(ptResponder):
             else:
                 print "jlakField.ExecCode(): ERROR! Invalid btnID %d." % (btnID)
         except:
-            print "jlakField.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            cmd = code.split(';')
+            if len(cmd) != 2:
+                print "jlakField.ExecCode(): ERROR! Malformed Command '%s'." % (code)
+                return
+            
+            if cmd[0] == "SaveColumns":
+                self.SaveColumns(cmd[1])
+            elif cmd[0] == "LoadColumns":
+                self.LoadColumns(cmd[1])
+            else:
+                print "jlakField.ExecCode(): ERROR! Invalid code '%s'." % (code)
 
 #ColumnPos  AnimStart
 #   19      570

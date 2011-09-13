@@ -6496,7 +6496,7 @@ class xKI(ptModifier):
                 fName = fName + ".txt"
             else:
                 fName = "JalakColumns.txt"
-            self.SendNote('self.SaveColumns("%s")' % (fName))
+            self.SendNote("SaveColumns;" + fName)
             return None
         if string.lower(chatmessage).startswith(str("/loadcolumns")) and AgeName == "Jalak":
             fName = chatmessage[13:].strip()
@@ -6504,7 +6504,7 @@ class xKI(ptModifier):
                 fName = fName + ".txt"
             else:
                 fName = "JalakColumns.txt"
-            self.SendNote('self.LoadColumns("%s")' % (fName))
+            self.SendNote("LoadColumns;" + fName)
             return None
         if PtIsInternalRelease() and chatmessage == "/revisitcleft":
             # find the cleft chronicle and delete it
