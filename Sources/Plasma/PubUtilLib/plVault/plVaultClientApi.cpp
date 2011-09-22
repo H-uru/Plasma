@@ -4863,7 +4863,7 @@ UInt8 VaultAgeFindOrCreateChildAgeLink(
 
     // First, try to find an already existing ChildAge
     char name[MAX_PATH];
-    StrToAnsi(name, parentAgeName, arrsize(parentAgeName));
+    StrToAnsi(name, parentAgeName, arrsize(name));
     plAgeInfoStruct search;
     search.SetAgeFilename(name);
 
@@ -4885,7 +4885,7 @@ UInt8 VaultAgeFindOrCreateChildAgeLink(
     if (RelVaultNode* rvnChildAges = rvnParentInfo->GetChildAgeInfoListNodeIncRef(plVault::kChildAgesFolder, 1)) {
         const char* ageName = info->GetAgeFilename();
         wchar hack[MAX_PATH];
-        StrToUnicode(hack, ageName, arrsize(ageName));
+        StrToUnicode(hack, ageName, arrsize(hack));
 
         // Search for our age
         NetVaultNode* temp = NEWZERO(NetVaultNode);
@@ -4916,11 +4916,11 @@ UInt8 VaultAgeFindOrCreateChildAgeLink(
                          nil,
                          p
             );
+            retval = FALSE;
         }
 
         temp->DecRef();
         rvnChildAges->DecRef();
-        retval = FALSE;
     }
 
     rvnParentInfo->DecRef();
