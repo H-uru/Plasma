@@ -1257,6 +1257,7 @@ class xOptionsMenu(ptModifier):
                     control.setValue(int(curVal))
 
                 elif tagID == kVideoWindowedCheckTag:
+                    videoField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResSliderTag))
                     if not control.isChecked():
                         ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResSliderTag)).enable()
                         respDisableItems.run(self.key, state="enableRes")
@@ -1269,11 +1270,13 @@ class xOptionsMenu(ptModifier):
                         respDisableItems.run(self.key, state="disableGamma")
                         ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kGSDisplayGammaSlider)).disable()
                         ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kGSDispGamaText)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
+                    
                     vidResList = self.GetVideoResList()
                     vidRes = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
-                    if not vidRes.getString() in vidResList:
+                    if not self.GetVidResField() in vidResList:
                         vidRes.setString("800x600 [4:3]")
-                    videoField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResSliderTag))
+                        videoField.setValue(0.0)
+                    
                     numRes = len(vidResList)
                     if numRes == 1:
                         videoField.setValue(0)
@@ -1285,7 +1288,7 @@ class xOptionsMenu(ptModifier):
                     else:
                         for res in range(numRes):
                             if vidRes.getString() == vidResList[res]:
-                                videoField.setValue( float(res) / (numRes - 1))
+                                videoField.setValue( float(res) / float(numRes))
                                 break
 
                 elif tagID == kVideoAntiAliasingSliderTag or tagID == kVideoFilteringSliderTag:
@@ -1623,6 +1626,11 @@ class xOptionsMenu(ptModifier):
                 gammaField.setValue( 0 )
             else:
                 gammaField.setValue( float(GammaVal) )
+    
+    def GetVidResField(self):
+        videoResField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
+        value = videoResField.getString().split(' ')
+        return value[0]
     
     def SetVidResField(self, value):
         videoResField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
