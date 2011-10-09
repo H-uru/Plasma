@@ -231,7 +231,7 @@ class xSimpleImager(ptModifier):
             PtDebugPrint("xSimpleImager.OnVaultEvent: tupdata[0] has unhandled object type", level=kWarningLevel)
             return None
         
-        if type != PtVaultNodeTypes.kImageNode or type != PtVaultNodeTypes.kTextNoteNode:
+        if not (type == PtVaultNodeTypes.kImageNode or type == PtVaultNodeTypes.kTextNoteNode):
             PtDebugPrint("xSimpleImager.OnVaultEvent: ... but we don't care!", level=kDebugDumpLevel)
             return None
         
