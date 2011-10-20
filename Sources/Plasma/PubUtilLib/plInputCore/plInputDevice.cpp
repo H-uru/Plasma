@@ -157,19 +157,16 @@ void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDo
     if (key == KEY_SHIFT)
     {
         fShiftKeyDown = bKeyDown;
-//      return;
     }
     if (key == KEY_CTRL)
     {
         fCtrlKeyDown = bKeyDown;
-//      return;
     }
     if (key == KEY_CAPSLOCK)
     {
-        // Keyboards toggle the light on key-down, so I'm going with that.
-        if (bKeyDown && !bKeyRepeat)
+        if (!bKeyRepeat)
         {
-            fCapsLockLock = !fCapsLockLock;
+            fCapsLockLock = (GetKeyState(KEY_CAPSLOCK) & 1) == 1;
             plAvatarInputInterface::GetInstance()->ForceAlwaysRun(fCapsLockLock);
         }
     }
@@ -190,7 +187,8 @@ void plKeyboardDevice::HandleWindowActivate(bool bActive, HWND hWnd)
 {
     if (bActive)
     {
-        fCtrlKeyDown = false;
+        // Refresh the caps lock state
+        HandleKeyEvent(KEYDOWN, KEY_CAPSLOCK, nil, false);
     }
     else
     {
