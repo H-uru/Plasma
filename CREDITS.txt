@@ -1,0 +1,79 @@
+/*==CREDITS.txt==*
+
+LEGAL
+-------
+MYST is a registered trademark of Cyan Worlds, Inc. All rights reserved.
+
+NVIDIA (formerly AGEIA)-provider of the PhysX physics engine. AGEIA™ and
+PhysX™ are trademarks of AGEIA Technologies, Inc. and are used under license.
+
+Uses Bink Video. Copyright C 1997-2006 by RAD Game Tools, Inc.
+
+FaceGen Modeller 2.1 Singular Inversions, Inc.
+
+Artbeats Digital Film Library Artbeats
+
+This product includes software developed by the OpenSSL Project for use in
+the OpenSSL Toolkit (http://www.openssl.org/)
+
+Free Type The FreeType Project is copyright C 1996-2000 by David Turner,
+
+Robert Wilhelm, and Werner Lemberg. All rights reserved.
+
+Python Copyright C 2001, 2002 Python Software Foundation. All rights
+reserved.
+
+Boost Copyright C 2002 CrystalClear Software, inc. Permission to use, copy,
+modify, distribute and sell this software for any purpose is hereby granted
+without fee.
+
+Speex (libspeex) © 2002-2003, Jean-Marc Valin/Xiph.Org Foundation
+Ogg (libogg) Copyright (c) 2002, Xiph.org Foundation
+Vorbis (libvorbis) Copyright (c) 2002-2008 Xiph.org Foundation
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+• Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+• Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in
+the documentation and/or other materials provided with the
+distribution.
+• Neither the name of the Xiph.org Foundation nor the names of its
+contributors may be used to endorse or promote products derived
+from this software without specific prior written permission.
+
+This software is provided by the copyright holders and contributors “as
+is” and any express or implied warranties, including, but not limited
+to, the implied warranties of merchantability and fitness for a
+particular purpose are disclaimed. In no event shall the foundation or
+contributors be liable for any direct, indirect, incidental, special,
+exemplary, or consequential damages (including, but not limited to,
+procurement of substitute goods or services; loss of use, data, or
+profits; or business interruption) however caused and on any theory of
+liability, whether in contract, strict liability, or tort (including
+negligence or otherwise) arising in any way out of the use of this
+software, even if advised of the possibility of such damage.
+
+LibJpeg Libpng versions 1.0.7, July 1, 2000, through 1.2.5, October 3, 2002,
+are Copyright C 2000-2002 Glenn Randers-Pehrson
+
+zLib zlib C1995-2002 Jean-loup Gailly and Mark Adler
+
+Expat Copyright (c) 1998, 1999, 2000 Thai Open Source Software Center Ltd and
+Clark Cooper
+Expat Copyright (c) 2001, 2002, 2003, 2004, 2005, 2006 Expat maintainers.
+
+Uses OpenAL 3D Audio - http://openal.org
+
+Friends of Sironka Dance Troupe Some sounds and vocal recording provided by
+the Friends of Sironka Dance Troupe, nonexclusively licensed by Cyan, used
+by permission.
+
+Burn You Up, Burn You Down performed by Peter Gabriel. Written by Peter
+Gabriel, Neil Sparkes and Karl Wallinger. Published by Real World Music
+Limited/Universal Music Limited. Peter Gabriel appears courtesy of Real
+World Records'/ Geffen Records and EMI Records.
+
+*==CREDITS==*/
