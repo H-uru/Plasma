@@ -1032,18 +1032,18 @@ void pfObjectFlocker::Read(hsStream* s, hsResMgr* mgr)
     SetNumBoids(s->ReadByte());
     fBoidKey = mgr->ReadKey(s);
 
-    fFlock.SetGoalWeight(s->ReadSwapScalar());
-    fFlock.SetWanderWeight(s->ReadSwapScalar());
+    fFlock.SetGoalWeight(s->ReadLEScalar());
+    fFlock.SetWanderWeight(s->ReadLEScalar());
 
-    fFlock.SetSeparationWeight(s->ReadSwapScalar());
-    fFlock.SetSeparationRadius(s->ReadSwapScalar());
+    fFlock.SetSeparationWeight(s->ReadLEScalar());
+    fFlock.SetSeparationRadius(s->ReadLEScalar());
 
-    fFlock.SetCohesionWeight(s->ReadSwapScalar());
-    fFlock.SetCohesionRadius(s->ReadSwapScalar());
+    fFlock.SetCohesionWeight(s->ReadLEScalar());
+    fFlock.SetCohesionRadius(s->ReadLEScalar());
 
-    fFlock.SetMaxForce(s->ReadSwapScalar());
-    fFlock.SetMaxSpeed(s->ReadSwapScalar());
-    fFlock.SetMinSpeed(s->ReadSwapScalar());
+    fFlock.SetMaxForce(s->ReadLEScalar());
+    fFlock.SetMaxSpeed(s->ReadLEScalar());
+    fFlock.SetMinSpeed(s->ReadLEScalar());
 
     fUseTargetRotation = s->ReadBool();
     fRandomizeAnimationStart = s->ReadBool();
@@ -1058,18 +1058,18 @@ void pfObjectFlocker::Write(hsStream* s, hsResMgr* mgr)
     s->WriteByte(fNumBoids);
     mgr->WriteKey(s, fBoidKey);
 
-    s->WriteSwapScalar(fFlock.GoalWeight());
-    s->WriteSwapScalar(fFlock.WanderWeight());
+    s->WriteLEScalar(fFlock.GoalWeight());
+    s->WriteLEScalar(fFlock.WanderWeight());
 
-    s->WriteSwapScalar(fFlock.SeparationWeight());
-    s->WriteSwapScalar(fFlock.SeparationRadius());
+    s->WriteLEScalar(fFlock.SeparationWeight());
+    s->WriteLEScalar(fFlock.SeparationRadius());
 
-    s->WriteSwapScalar(fFlock.CohesionWeight());
-    s->WriteSwapScalar(fFlock.CohesionRadius());
+    s->WriteLEScalar(fFlock.CohesionWeight());
+    s->WriteLEScalar(fFlock.CohesionRadius());
 
-    s->WriteSwapScalar(fFlock.MaxForce());
-    s->WriteSwapScalar(fFlock.MaxSpeed());
-    s->WriteSwapScalar(fFlock.MinSpeed());
+    s->WriteLEScalar(fFlock.MaxForce());
+    s->WriteLEScalar(fFlock.MaxSpeed());
+    s->WriteLEScalar(fFlock.MinSpeed());
 
     s->WriteBool(fUseTargetRotation);
     s->WriteBool(fRandomizeAnimationStart);

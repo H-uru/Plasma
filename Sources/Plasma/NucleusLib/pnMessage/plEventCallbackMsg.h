@@ -91,20 +91,20 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr) 
     {
         plMessage::IMsgRead(stream, mgr);   
-        fEventTime = stream->ReadSwapFloat();
-        fEvent = (CallbackEvent)stream->ReadSwap16();
-        fIndex = stream->ReadSwap16();
-        fRepeats = stream->ReadSwap16();
-        fUser = stream->ReadSwap16();
+        fEventTime = stream->ReadLEFloat();
+        fEvent = (CallbackEvent)stream->ReadLE16();
+        fIndex = stream->ReadLE16();
+        fRepeats = stream->ReadLE16();
+        fUser = stream->ReadLE16();
     }
     virtual void Write(hsStream* stream, hsResMgr* mgr) 
     {
         plMessage::IMsgWrite(stream, mgr);
-        stream->WriteSwapFloat(fEventTime);
-        stream->WriteSwap16((Int16)fEvent);
-        stream->WriteSwap16(fIndex);
-        stream->WriteSwap16(fRepeats);
-        stream->WriteSwap16(fUser);
+        stream->WriteLEFloat(fEventTime);
+        stream->WriteLE16((Int16)fEvent);
+        stream->WriteLE16(fIndex);
+        stream->WriteLE16(fRepeats);
+        stream->WriteLE16(fUser);
     }
 };
 

@@ -100,8 +100,8 @@ class plInputIfaceMgrMsg : public plMessage
         virtual void Read(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgRead( s, mgr ); 
-            s->ReadSwap( &fCommand );
-            s->ReadSwap( &fPageID );
+            s->ReadLE( &fCommand );
+            s->ReadLE( &fPageID );
             ageName = s->ReadSafeString();
             ageFileName = s->ReadSafeString();
             spawnPoint = s->ReadSafeString();
@@ -111,8 +111,8 @@ class plInputIfaceMgrMsg : public plMessage
         virtual void Write(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgWrite( s, mgr ); 
-            s->WriteSwap( fCommand );
-            s->WriteSwap( fPageID );
+            s->WriteLE( fCommand );
+            s->WriteLE( fPageID );
             s->WriteSafeString(ageName);
             s->WriteSafeString(ageFileName);
             s->WriteSafeString(spawnPoint);

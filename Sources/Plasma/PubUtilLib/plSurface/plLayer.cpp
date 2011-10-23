@@ -123,10 +123,10 @@ void plLayer::Read(hsStream* s, hsResMgr* mgr)
     fAmbientColor->Read(s);
     fSpecularColor->Read( s );
 
-    *fUVWSrc = s->ReadSwap32();
-    *fOpacity = s->ReadSwapScalar();
-    *fLODBias = s->ReadSwapScalar();
-    *fSpecularPower = s->ReadSwapScalar();
+    *fUVWSrc = s->ReadLE32();
+    *fOpacity = s->ReadLEScalar();
+    *fLODBias = s->ReadLEScalar();
+    *fSpecularPower = s->ReadLEScalar();
 
     plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture); 
     mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef); 
@@ -154,10 +154,10 @@ void plLayer::Write(hsStream* s, hsResMgr* mgr)
     fAmbientColor->Write(s);
     fSpecularColor->Write( s );
     
-    s->WriteSwap32(*fUVWSrc);
-    s->WriteSwapScalar(*fOpacity);
-    s->WriteSwapScalar(*fLODBias);
-    s->WriteSwapScalar(*fSpecularPower);
+    s->WriteLE32(*fUVWSrc);
+    s->WriteLEScalar(*fOpacity);
+    s->WriteLEScalar(*fLODBias);
+    s->WriteLEScalar(*fSpecularPower);
 
 
     mgr->WriteKey(s, GetTexture());

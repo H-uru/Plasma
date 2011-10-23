@@ -119,14 +119,14 @@ void plMessage::IMsgRead(hsStream* s, hsResMgr* mgr)
 
     fSender = mgr->ReadKey(s);
     int n;
-    s->LogReadSwap(&n,"NumberOfReceivers"); 
+    s->LogReadLE(&n,"NumberOfReceivers"); 
     fReceivers.SetCount(n);
     int i;
     for( i = 0; i < fReceivers.GetCount(); i++ )
         fReceivers[i] = mgr->ReadKey(s);
 
-    s->LogReadSwap(&fTimeStamp,"TimeStamp");    // read as double
-    s->LogReadSwap(&fBCastFlags, "BCastFlags");
+    s->LogReadLE(&fTimeStamp,"TimeStamp");    // read as double
+    s->LogReadLE(&fBCastFlags, "BCastFlags");
 }
 
 void plMessage::IMsgWrite(hsStream* s, hsResMgr* mgr)
@@ -134,13 +134,13 @@ void plMessage::IMsgWrite(hsStream* s, hsResMgr* mgr)
     plCreatable::Write(s, mgr);
     
     mgr->WriteKey(s,fSender);
-    s->WriteSwap32(fReceivers.GetCount());
+    s->WriteLE32(fReceivers.GetCount());
     int i;
     for( i = 0; i < fReceivers.GetCount(); i++ )
         mgr->WriteKey(s,fReceivers[i]);
 
-    s->WriteSwap(fTimeStamp);   // write as double
-    s->WriteSwap32(fBCastFlags);
+    s->WriteLE(fTimeStamp);   // write as double
+    s->WriteLE32(fBCastFlags);
 }
 
 enum MsgFlags
@@ -161,7 +161,7 @@ void plMessage::IMsgReadVersion(hsStream* s, hsResMgr* mgr)
 
     if (contentFlags.IsBitSet(kMsgReceivers))
     {
-        int n = s->ReadSwap32();
+        int n = s->ReadLE32();
         fReceivers.SetCount(n);
         int i;
         for( i = 0; i < fReceivers.GetCount(); i++ )
@@ -169,10 +169,10 @@ void plMessage::IMsgReadVersion(hsStream* s, hsResMgr* mgr)
     }
 
     if (contentFlags.IsBitSet(kMsgTimeStamp))
-        s->ReadSwap(&fTimeStamp);   // read as double
+        s->ReadLE(&fTimeStamp);   // read as double
 
     if (contentFlags.IsBitSet(kMsgBCastFlags))
-        fBCastFlags = s->ReadSwap32();
+        fBCastFlags = s->ReadLE32();
 }
 
 void plMessage::IMsgWriteVersion(hsStream* s, hsResMgr* mgr)
@@ -188,16 +188,16 @@ void plMessage::IMsgWriteVersion(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s,fSender);
 
     // kMsgReceivers
-    s->WriteSwap32(fReceivers.GetCount());
+    s->WriteLE32(fReceivers.GetCount());
     int i;
     for( i = 0; i < fReceivers.GetCount(); i++ )
         mgr->WriteKey(s,fReceivers[i]);
 
     // kMsgTimeStamp
-    s->WriteSwap(fTimeStamp);   // write as double
+    s->WriteLE(fTimeStamp);   // write as double
 
     // kMsgBCastFlags
-    s->WriteSwap32(fBCastFlags);
+    s->WriteLE32(fBCastFlags);
 }
 
 void plMessage::AddNetReceiver( UInt32 plrID )
@@ -222,7 +222,7 @@ int plMsgStdStringHelper::Poke(const std::string & stringref, hsStream* stream, 
     plMessage::plStrLen strlen;
     hsAssert( stringref.length()<0xFFFF, "buf too big for plMsgStdStringHelper" );
     strlen = stringref.length();
-    stream->WriteSwap(strlen);
+    stream->WriteLE(strlen);
     if (strlen)
         stream->Write(strlen,stringref.data());
     return stream->GetPosition();
@@ -231,7 +231,7 @@ int plMsgStdStringHelper::Poke(const std::string & stringref, hsStream* stream, 
 int plMsgStdStringHelper::PokeBig(const std::string & stringref, hsStream* stream, const UInt32 peekOptions)
 {
     UInt32 strlen = stringref.length();
-    stream->WriteSwap(strlen);
+    stream->WriteLE(strlen);
     if (strlen)
         stream->Write(strlen,stringref.data());
     return stream->GetPosition();
@@ -242,7 +242,7 @@ int plMsgStdStringHelper::Poke(const char * buf, UInt32 bufsz, hsStream* stream,
     plMessage::plStrLen strlen;
     hsAssert( bufsz<0xFFFF, "buf too big for plMsgStdStringHelper" );
     strlen = (plMessage::plStrLen)bufsz;
-    stream->WriteSwap(strlen);
+    stream->WriteLE(strlen);
     if (strlen)
         stream->Write(strlen,buf);
     return stream->GetPosition();
@@ -250,7 +250,7 @@ int plMsgStdStringHelper::Poke(const char * buf, UInt32 bufsz, hsStream* stream,
 
 int plMsgStdStringHelper::PokeBig(const char * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions)
 {
-    stream->WriteSwap(bufsz);
+    stream->WriteLE(bufsz);
     if (bufsz)
         stream->Write(bufsz,buf);
     return stream->GetPosition();
@@ -261,7 +261,7 @@ int plMsgStdStringHelper::Peek(std::string  & stringref, hsStream* stream, const
 {
     plMessage::plStrLen strlen;
     stream->LogSubStreamStart("push this");
-    stream->LogReadSwap(&strlen,"StrLen");
+    stream->LogReadLE(&strlen,"StrLen");
     stringref.erase();
     if (strlen <= stream->GetSizeLeft())
     {
@@ -283,7 +283,7 @@ int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, co
 {
     UInt32 bufsz;
     stream->LogSubStreamStart("push this");
-    stream->LogReadSwap(&bufsz,"Bufsz");
+    stream->LogReadLE(&bufsz,"Bufsz");
     stringref.erase();
     if (bufsz <= stream->GetSizeLeft())
     {
@@ -308,7 +308,7 @@ int plMsgXtlStringHelper::Poke(const xtl::istring & stringref, hsStream* stream,
 {
     plMessage::plStrLen strlen;
     strlen = stringref.length();
-    stream->WriteSwap(strlen);
+    stream->WriteLE(strlen);
     if (strlen)
         stream->Write(strlen,stringref.data());
     return stream->GetPosition();
@@ -319,7 +319,7 @@ int plMsgXtlStringHelper::Peek(xtl::istring & stringref, hsStream* stream, const
 {
     plMessage::plStrLen strlen;
     stream->LogSubStreamStart("push me");
-    stream->LogReadSwap(&strlen,"StrLen");
+    stream->LogReadLE(&strlen,"StrLen");
     stringref.erase();
     if (strlen <= stream->GetSizeLeft())
     {
@@ -341,7 +341,7 @@ int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const UInt32 pe
 {
     plMessage::plStrLen strlen;
     strlen = (str)?hsStrlen(str):0;
-    stream->WriteSwap(strlen);
+    stream->WriteLE(strlen);
     if (strlen)
         stream->Write(strlen,str);
     return stream->GetPosition();
@@ -352,7 +352,7 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const UInt32 peekOpt
 {
     plMessage::plStrLen strlen;
     stream->LogSubStreamStart("push me");
-    stream->LogReadSwap(&strlen,"StrLen");
+    stream->LogReadLE(&strlen,"StrLen");
     delete [] str;
     str = nil;
     if (strlen <= stream->GetSizeLeft())

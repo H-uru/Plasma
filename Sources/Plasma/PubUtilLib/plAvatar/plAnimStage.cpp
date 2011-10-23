@@ -744,41 +744,41 @@ void plAnimStage::Read(hsStream *stream, hsResMgr *mgr)
     delete [] fAnimName;
     fAnimName = stream->ReadSafeString();
     fNotify = stream->ReadByte();
-    fForwardType = (ForwardType)stream->ReadSwap32();
-    fBackType = (BackType)stream->ReadSwap32();
-    fAdvanceType = (AdvanceType)stream->ReadSwap32();
-    fRegressType = (RegressType)stream->ReadSwap32();
-    fLoops = stream->ReadSwap32();
+    fForwardType = (ForwardType)stream->ReadLE32();
+    fBackType = (BackType)stream->ReadLE32();
+    fAdvanceType = (AdvanceType)stream->ReadLE32();
+    fRegressType = (RegressType)stream->ReadLE32();
+    fLoops = stream->ReadLE32();
 
     fDoAdvanceTo = stream->Readbool();
-    fAdvanceTo = stream->ReadSwap32();
+    fAdvanceTo = stream->ReadLE32();
     fDoRegressTo = stream->Readbool();
-    fRegressTo = stream->ReadSwap32();
+    fRegressTo = stream->ReadLE32();
 }
 
 void plAnimStage::Write(hsStream *stream, hsResMgr *mgr)
 {
     stream->WriteSafeString(fAnimName);
     stream->WriteByte(fNotify);
-    stream->WriteSwap32(fForwardType);
-    stream->WriteSwap32(fBackType);
-    stream->WriteSwap32(fAdvanceType);
-    stream->WriteSwap32(fRegressType);
-    stream->WriteSwap32(fLoops);
+    stream->WriteLE32(fForwardType);
+    stream->WriteLE32(fBackType);
+    stream->WriteLE32(fAdvanceType);
+    stream->WriteLE32(fRegressType);
+    stream->WriteLE32(fLoops);
 
     stream->Writebool(fDoAdvanceTo);
-    stream->WriteSwap32(fAdvanceTo);
+    stream->WriteLE32(fAdvanceTo);
     stream->Writebool(fDoRegressTo);
-    stream->WriteSwap32(fRegressTo);
+    stream->WriteLE32(fRegressTo);
 }
 
 
 // SAVEAUX
 void plAnimStage::SaveAux(hsStream *stream, hsResMgr *mgr)
 {
-    stream->WriteSwapScalar(fLocalTime);
-    stream->WriteSwapScalar(fLength);
-    stream->WriteSwap32(fCurLoop);
+    stream->WriteLEScalar(fLocalTime);
+    stream->WriteLEScalar(fLength);
+    stream->WriteLE32(fCurLoop);
     stream->Writebool(fAttached);
     // no ephemeral stage at the moment
 }
@@ -786,9 +786,9 @@ void plAnimStage::SaveAux(hsStream *stream, hsResMgr *mgr)
 // LOADAUX
 void plAnimStage::LoadAux(hsStream *stream, hsResMgr *mgr, double time)
 {
-    fLocalTime = stream->ReadSwapScalar();
-    fLength = stream->ReadSwapScalar();
-    fCurLoop = stream->ReadSwap32();
+    fLocalTime = stream->ReadLEScalar();
+    fLength = stream->ReadLEScalar();
+    fCurLoop = stream->ReadLE32();
     // This should actually be Readbool (lowercase), but I won't fix it since that
     // would require a version change
     fAttached = (stream->Readbool() != 0);

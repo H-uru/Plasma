@@ -114,7 +114,7 @@ void plClusterGroup::Read(hsStream* stream, hsResMgr* mgr)
 
     mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefMaterial), plRefFlags::kActiveRef);
 
-    const int numClust = stream->ReadSwap32();
+    const int numClust = stream->ReadLE32();
     fClusters.SetCount(numClust);
     for( i = 0; i < numClust; i++ )
     {
@@ -122,17 +122,17 @@ void plClusterGroup::Read(hsStream* stream, hsResMgr* mgr)
         fClusters[i]->Read(stream, this);
     }
 
-    const int numRegions = stream->ReadSwap32();
+    const int numRegions = stream->ReadLE32();
     for( i = 0; i < numRegions; i++ )
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRegion), plRefFlags::kActiveRef);
 
-    const int numLights = stream->ReadSwap32();
+    const int numLights = stream->ReadLE32();
     for( i = 0; i < numLights; i++ )
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefLight), plRefFlags::kActiveRef);
 
     fLOD.Read(stream);
 
-    fRenderLevel.Set(stream->ReadSwap32());
+    fRenderLevel.Set(stream->ReadLE32());
 
     fSceneNode = mgr->ReadKey(stream);
 
@@ -150,21 +150,21 @@ void plClusterGroup::Write(hsStream* stream, hsResMgr* mgr)
 
     mgr->WriteKey(stream, fMaterial);
 
-    stream->WriteSwap32(fClusters.GetCount());
+    stream->WriteLE32(fClusters.GetCount());
     for( i = 0; i < fClusters.GetCount(); i++ )
         fClusters[i]->Write(stream);
 
-    stream->WriteSwap32(fRegions.GetCount());
+    stream->WriteLE32(fRegions.GetCount());
     for( i = 0; i < fRegions.GetCount(); i++ )
         mgr->WriteKey(stream, fRegions[i]);
 
-    stream->WriteSwap32(fLights.GetCount());
+    stream->WriteLE32(fLights.GetCount());
     for( i = 0; i < fLights.GetCount(); i++ )
         mgr->WriteKey(stream, fLights[i]);
 
     fLOD.Write(stream);
 
-    stream->WriteSwap32(fRenderLevel.Level());
+    stream->WriteLE32(fRenderLevel.Level());
 
     mgr->WriteKey(stream, fSceneNode);
 }
@@ -332,12 +332,12 @@ UInt32 plClusterGroup::NumInst() const
 
 void plLODDist::Read(hsStream* s)
 {
-    fMinDist = s->ReadSwapScalar();
-    fMaxDist = s->ReadSwapScalar();
+    fMinDist = s->ReadLEScalar();
+    fMaxDist = s->ReadLEScalar();
 }
 
 void plLODDist::Write(hsStream* s) const
 {
-    s->WriteSwapScalar(fMinDist);
-    s->WriteSwapScalar(fMaxDist);
+    s->WriteLEScalar(fMinDist);
+    s->WriteLEScalar(fMaxDist);
 }

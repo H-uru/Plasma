@@ -142,7 +142,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         /// or a memory buffer. Since we can't give it the former, we have to read the entire
         /// JPEG stream into a separate buffer before we can decode it. Which means we ALSO
         /// have to write/read a length of said buffer. Such is life, I guess...
-        jpegSourceSize = inStream->ReadSwap32();
+        jpegSourceSize = inStream->ReadLE32();
         jpegSourceBuffer = TRACKED_NEW UInt8[ jpegSourceSize ];
         if( jpegSourceBuffer == nil )
         {
@@ -258,7 +258,7 @@ plMipmap*   plJPEG::ReadFromFile( const wchar *fileName )
     UInt8 *tempbuffer = TRACKED_NEW UInt8[fsize];
     in.Rewind();
     in.Read(fsize, tempbuffer);
-    tempstream.WriteSwap32(fsize);
+    tempstream.WriteLE32(fsize);
     tempstream.Write(fsize, tempbuffer);
     delete [] tempbuffer;
     tempstream.Rewind();
@@ -344,7 +344,7 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
         delete [] jbuffer;
 
         // jpeglib changes bufferSize and bufferAddr
-        outStream->WriteSwap32( bufferSize );
+        outStream->WriteLE32( bufferSize );
         outStream->Write( bufferSize, bufferAddr );
     }
     catch( ... )
@@ -384,7 +384,7 @@ hsBool  plJPEG::WriteToFile( const wchar *fileName, plMipmap *sourceData )
         // The stream writer for JPEGs prepends a 32-bit size,
         // so remove that from the stream before saving to a file
         tempstream.Rewind();
-        UInt32 fsize = tempstream.ReadSwap32();
+        UInt32 fsize = tempstream.ReadLE32();
         UInt8 *tempbuffer = TRACKED_NEW UInt8[fsize];
         tempstream.Read(fsize, tempbuffer);
         out.Write(fsize, tempbuffer);

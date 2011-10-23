@@ -2301,10 +2301,10 @@ public:
                     if ( ageInfoStream && nPlayersStream )
                     {
                         UInt16 nAgeInfoEntries;
-                        ageInfoStream->GetStream()->ReadSwap( &nAgeInfoEntries );
+                        ageInfoStream->GetStream()->ReadLE( &nAgeInfoEntries );
 
                         UInt16 nPlayerCountEntries;
-                        nPlayersStream->GetStream()->ReadSwap( &nPlayerCountEntries );
+                        nPlayersStream->GetStream()->ReadLE( &nPlayerCountEntries );
 
                         hsAssert( nAgeInfoEntries==nPlayerCountEntries, "huh?" );
 
@@ -2316,7 +2316,7 @@ public:
                             plAgeInfoStruct ageInfo;
                             UInt32 nPlayers;
                             ageInfo.Read( ageInfoStream->GetStream(), nil );
-                            nPlayersStream->GetStream()->ReadSwap( &nPlayers );
+                            nPlayersStream->GetStream()->ReadLE( &nPlayers );
                             PyObject* t = PyTuple_New(2);
                             PyTuple_SetItem(t, 0, pyAgeInfoStruct::New(&ageInfo));
                             PyTuple_SetItem(t, 1, PyLong_FromUnsignedLong(nPlayers));

@@ -64,7 +64,7 @@ void plAnimEventModifier::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    int numReceivers = stream->ReadSwap32();
+    int numReceivers = stream->ReadLE32();
     fReceivers.Expand(numReceivers);
     for (int i = 0; i < numReceivers; i++)
         fReceivers.Push(mgr->ReadKey(stream));
@@ -86,7 +86,7 @@ void plAnimEventModifier::Write(hsStream* stream, hsResMgr* mgr)
     plSingleModifier::Write(stream, mgr);
 
     int numReceivers = fReceivers.Count();
-    stream->WriteSwap32(numReceivers);
+    stream->WriteLE32(numReceivers);
     for (int i = 0; i < numReceivers; i++)
         mgr->WriteKey(stream, fReceivers[i]);
 

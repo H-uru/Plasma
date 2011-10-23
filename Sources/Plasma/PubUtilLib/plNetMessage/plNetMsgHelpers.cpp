@@ -121,7 +121,7 @@ int plNetMsgCreatableHelper::Poke(hsStream * s, UInt32 peekOptions)
 {
     hsAssert(fCreatable,"plNetMsgCreatableHelper::Poke: fCreatable not set");
     UInt16 classIndex = fCreatable->ClassIndex();
-    s->WriteSwap(classIndex);
+    s->WriteLE(classIndex);
     fCreatable->Write(s,nil);
     return s->GetPosition();
 }
@@ -130,7 +130,7 @@ int plNetMsgCreatableHelper::Peek(hsStream * s, UInt32 peekOptions)
 {
     UInt16 classIndex;
     s->LogSubStreamStart("push me");
-    s->LogReadSwap(&classIndex,"ClassIdx");
+    s->LogReadLE(&classIndex,"ClassIdx");
     SetObject(plFactory::Create(classIndex));
     fWeCreatedIt = true;
     hsAssert(fCreatable,"plNetMsgCreatableHelper::Peek: Failed to create plCreatable. Invalid ClassIndex?");
@@ -164,9 +164,9 @@ int plNetMsgStreamHelper::Poke(hsStream* stream, UInt32 peekOptions)
 {
     if ( !(peekOptions & plNetMessage::kDontCompress) )
         Compress();
-    stream->WriteSwap(fUncompressedSize);
-    stream->WriteSwap(fCompressionType);
-    stream->WriteSwap(fStreamLen);
+    stream->WriteLE(fUncompressedSize);
+    stream->WriteLE(fCompressionType);
+    stream->WriteLE(fStreamLen);
     stream->Write(fStreamLen, fStreamBuf);
     return stream->GetPosition();
 }
@@ -174,9 +174,9 @@ int plNetMsgStreamHelper::Poke(hsStream* stream, UInt32 peekOptions)
 int plNetMsgStreamHelper::Peek(hsStream* stream, const UInt32 peekOptions)
 {
     stream->LogSubStreamStart("Stream Helper");
-    stream->LogReadSwap(&fUncompressedSize,"UncompressedSize");
-    stream->LogReadSwap(&fCompressionType,"CompressionType");
-    stream->LogReadSwap(&fStreamLen,"StreamLen");
+    stream->LogReadLE(&fUncompressedSize,"UncompressedSize");
+    stream->LogReadLE(&fCompressionType,"CompressionType");
+    stream->LogReadLE(&fStreamLen,"StreamLen");
 
     if (fStreamLen)     // stream data exists
     {
@@ -191,7 +191,7 @@ int plNetMsgStreamHelper::Peek(hsStream* stream, const UInt32 peekOptions)
         }
         else
         {
-            stream->ReadSwap(&fStreamType);     // never compressed, set by reading directly from stream
+            stream->ReadLE(&fStreamType);     // never compressed, set by reading directly from stream
             stream->LogSkip(fStreamLen-sizeof(fStreamType),"SkippedStreamHelper");
         }
     }
@@ -205,11 +205,11 @@ void plNetMsgStreamHelper::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kUncompressedSize))
-        s->ReadSwap(&fUncompressedSize);
+        s->ReadLE(&fUncompressedSize);
     if (contentFlags.IsBitSet(kCompressionType))
-        s->ReadSwap(&fCompressionType);
+        s->ReadLE(&fCompressionType);
     if (contentFlags.IsBitSet(kStreamLen))
-        s->ReadSwap(&fStreamLen);
+        s->ReadLE(&fStreamLen);
     if (contentFlags.IsBitSet(kStreamBuf))
     {
         if (!fStreamBuf)
@@ -227,9 +227,9 @@ void plNetMsgStreamHelper::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.SetBit(kStreamBuf);
     contentFlags.Write(s);
 
-    s->WriteSwap(fUncompressedSize);
-    s->WriteSwap(fCompressionType);
-    s->WriteSwap(fStreamLen);
+    s->WriteLE(fUncompressedSize);
+    s->WriteLE(fCompressionType);
+    s->WriteLE(fStreamLen);
     s->Write(fStreamLen,fStreamBuf);
 }
 
@@ -414,7 +414,7 @@ void plNetMsgObjectListHelper::Reset()
 int plNetMsgObjectListHelper::Poke(hsStream* stream, UInt32 peekOptions)
 {
     Int16 num = GetNumObjects();
-    stream->WriteSwap(num);
+    stream->WriteLE(num);
     int i;
     for( i=0 ;i<num  ;i++  )
     {
@@ -430,7 +430,7 @@ int plNetMsgObjectListHelper::Peek(hsStream* stream, const UInt32 peekOptions)
 
     stream->LogSubStreamStart("push me");
     Int16 num;
-    stream->LogReadSwap(&num,"ObjectListHelper Num");
+    stream->LogReadLE(&num,"ObjectListHelper Num");
 
     int i;
     for( i=0 ;i<num  ;i++  )
@@ -454,7 +454,7 @@ plNetMsgMemberInfoHelper::plNetMsgMemberInfoHelper()
 int plNetMsgMemberInfoHelper::Peek(hsStream* s, const UInt32 peekOptions)
 {
     s->LogSubStreamStart("push me");
-    s->LogReadSwap(&fFlags,"MemberInfoHelper Flags");
+    s->LogReadLE(&fFlags,"MemberInfoHelper Flags");
     fClientGuid.Read( s, nil );
     fAvatarUoid.Read(s);
     s->LogSubStreamEnd();
@@ -463,7 +463,7 @@ int plNetMsgMemberInfoHelper::Peek(hsStream* s, const UInt32 peekOptions)
 
 int plNetMsgMemberInfoHelper::Poke(hsStream* s, const UInt32 peekOptions)
 {
-    s->WriteSwap(fFlags);
+    s->WriteLE(fFlags);
     fClientGuid.Write( s, nil );
     fAvatarUoid.Write(s);
     return s->GetPosition();
@@ -484,7 +484,7 @@ int plNetMsgMemberListHelper::Peek(hsStream* stream, const UInt32 peekOptions)
 {
     Int16 numMembers;
     stream->LogSubStreamStart("push me");
-    stream->LogReadSwap(&numMembers,"MemberListHelper NumMembers");
+    stream->LogReadLE(&numMembers,"MemberListHelper NumMembers");
     fMembers.clear();
     int i;
     for(i=0;i<numMembers;i++)
@@ -500,7 +500,7 @@ int plNetMsgMemberListHelper::Peek(hsStream* stream, const UInt32 peekOptions)
 int plNetMsgMemberListHelper::Poke(hsStream* stream, const UInt32 peekOptions)
 {
     Int16 numMembers = (Int16)GetNumMembers();
-    stream->WriteSwap(numMembers);
+    stream->WriteLE(numMembers);
 
     int i;
     for(i=0;i<numMembers;i++)
@@ -523,14 +523,14 @@ int plNetMsgReceiversListHelper::Peek(hsStream* stream, const UInt32 peekOptions
 {
     UInt8 numIDs;
     stream->LogSubStreamStart("push me");
-    stream->LogReadSwap(&numIDs,"ReceiversListHelper NumIDs");
+    stream->LogReadLE(&numIDs,"ReceiversListHelper NumIDs");
     
     fPlayerIDList.clear();
     int i;
     for(i=0;i<numIDs;i++)
     {
         UInt32 ID;
-        stream->LogReadSwap(&ID,"ReceiversListHelper ID");      
+        stream->LogReadLE(&ID,"ReceiversListHelper ID");      
         AddReceiverPlayerID(ID);
     }
     stream->LogSubStreamEnd();  
@@ -540,11 +540,11 @@ int plNetMsgReceiversListHelper::Peek(hsStream* stream, const UInt32 peekOptions
 int plNetMsgReceiversListHelper::Poke(hsStream* stream, const UInt32 peekOptions)
 {
     UInt8 numIDs = (UInt8)GetNumReceivers();
-    stream->WriteSwap(numIDs);
+    stream->WriteLE(numIDs);
 
     int i;
     for(i=0;i<numIDs;i++)
-        stream->WriteSwap(GetReceiverPlayerID(i));
+        stream->WriteLE(GetReceiverPlayerID(i));
 
     return stream->GetPosition();
 }

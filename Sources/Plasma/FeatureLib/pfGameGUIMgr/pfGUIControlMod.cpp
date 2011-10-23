@@ -127,12 +127,12 @@ void    pfGUIColorScheme::Read( hsStream *s )
     fBackColor.Read( s );
     fSelForeColor.Read( s );
     fSelBackColor.Read( s );
-    s->ReadSwap( &fTransparent );
+    s->ReadLE( &fTransparent );
 
     delete [] fFontFace;
     fFontFace = s->ReadSafeString();
-    s->ReadSwap( &fFontSize );
-    s->ReadSwap( &fFontFlags );
+    s->ReadLE( &fFontSize );
+    s->ReadLE( &fFontFlags );
 }
 
 void    pfGUIColorScheme::Write( hsStream *s )
@@ -141,11 +141,11 @@ void    pfGUIColorScheme::Write( hsStream *s )
     fBackColor.Write( s );
     fSelForeColor.Write( s );
     fSelBackColor.Write( s );
-    s->WriteSwap( fTransparent );
+    s->WriteLE( fTransparent );
 
     s->WriteSafeString( fFontFace );
-    s->WriteSwap( fFontSize );
-    s->WriteSwap( fFontFlags );
+    s->WriteLE( fFontSize );
+    s->WriteLE( fFontFlags );
 }
 
 //// Constructor/Destructor //////////////////////////////////////////////////
@@ -809,7 +809,7 @@ void    pfGUIControlMod::Refresh( void )
 void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
 {
     plSingleModifier::Read(s, mgr);
-    s->ReadSwap( &fTagID );
+    s->ReadLE( &fTagID );
     fVisible = s->ReadBool();
 
     // Read the handler in
@@ -842,7 +842,7 @@ void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
     {
         fSoundIndices.SetCountAndZero( count );
         for( i = 0; i < count; i++ )
-            fSoundIndices[ i ] = (int)s->ReadSwap32();
+            fSoundIndices[ i ] = (int)s->ReadLE32();
     }
 
     if( HasFlag( kHasProxy ) )
@@ -857,7 +857,7 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
         ClearFlag( kHasProxy );
 
     plSingleModifier::Write( s, mgr );
-    s->WriteSwap( fTagID );
+    s->WriteLE( fTagID );
     s->WriteBool( fVisible );
 
     // Write the handler out (if it's not a writeable, damn you)
@@ -885,7 +885,7 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
     s->WriteByte( fSoundIndices.GetCount() );
     UInt8 i;
     for( i = 0; i < fSoundIndices.GetCount(); i++ )
-        s->WriteSwap32( fSoundIndices[ i ] );
+        s->WriteLE32( fSoundIndices[ i ] );
 
     if( HasFlag( kHasProxy ) )
         mgr->WriteKey( s, fProxy->GetKey() );

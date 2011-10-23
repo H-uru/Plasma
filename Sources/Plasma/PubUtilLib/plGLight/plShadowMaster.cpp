@@ -126,15 +126,15 @@ void plShadowMaster::Read(hsStream* stream, hsResMgr* mgr)
 {
     plObjInterface::Read(stream, mgr);
 
-    fAttenDist = stream->ReadSwapScalar();
+    fAttenDist = stream->ReadLEScalar();
 
-    fMaxDist = stream->ReadSwapScalar();
-    fMinDist = stream->ReadSwapScalar();
+    fMaxDist = stream->ReadLEScalar();
+    fMinDist = stream->ReadLEScalar();
 
-    fMaxSize = stream->ReadSwap32();
-    fMinSize = stream->ReadSwap32();
+    fMaxSize = stream->ReadLE32();
+    fMinSize = stream->ReadLE32();
 
-    fPower = stream->ReadSwapScalar();
+    fPower = stream->ReadLEScalar();
 
     Activate();
 }
@@ -143,15 +143,15 @@ void plShadowMaster::Write(hsStream* stream, hsResMgr* mgr)
 {
     plObjInterface::Write(stream, mgr);
 
-    stream->WriteSwapScalar(fAttenDist);
+    stream->WriteLEScalar(fAttenDist);
 
-    stream->WriteSwapScalar(fMaxDist);
-    stream->WriteSwapScalar(fMinDist);
+    stream->WriteLEScalar(fMaxDist);
+    stream->WriteLEScalar(fMinDist);
 
-    stream->WriteSwap32(fMaxSize);
-    stream->WriteSwap32(fMinSize);
+    stream->WriteLE32(fMaxSize);
+    stream->WriteLE32(fMinSize);
 
-    stream->WriteSwapScalar(fPower);
+    stream->WriteLEScalar(fPower);
 }
 
 void plShadowMaster::Activate() const

@@ -121,17 +121,17 @@ void    pfGUIDynDisplayCtrl::Read( hsStream *s, hsResMgr *mgr )
 
     pfGUIControlMod::Read(s, mgr);
 
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     fTextMaps.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
         mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefTextMap ), plRefFlags::kActiveRef );
 
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     fLayers.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
         mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefLayer ), plRefFlags::kActiveRef );
 
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     fMaterials.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
         mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefMaterial ), plRefFlags::kActiveRef );
@@ -144,15 +144,15 @@ void    pfGUIDynDisplayCtrl::Write( hsStream *s, hsResMgr *mgr )
 
     pfGUIControlMod::Write( s, mgr );
 
-    s->WriteSwap32( fTextMaps.GetCount() );
+    s->WriteLE32( fTextMaps.GetCount() );
     for( i = 0; i < fTextMaps.GetCount(); i++ )
         mgr->WriteKey( s, fTextMaps[ i ]->GetKey() );
 
-    s->WriteSwap32( fLayers.GetCount() );
+    s->WriteLE32( fLayers.GetCount() );
     for( i = 0; i < fLayers.GetCount(); i++ )
         mgr->WriteKey( s, fLayers[ i ]->GetKey() );
 
-    s->WriteSwap32( fMaterials.GetCount() );
+    s->WriteLE32( fMaterials.GetCount() );
     for( i = 0; i < fMaterials.GetCount(); i++ )
         mgr->WriteKey( s, fMaterials[ i ]->GetKey() );
 }

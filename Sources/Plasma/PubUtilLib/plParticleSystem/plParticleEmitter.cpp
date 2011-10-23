@@ -545,9 +545,9 @@ void plParticleEmitter::Read(hsStream *s, hsResMgr *mgr)
     plCreatable::Read(s, mgr);
 
     fGenerator = plParticleGenerator::ConvertNoRef(mgr->ReadCreatable(s));
-    fSpanIndex = s->ReadSwap32();
-    fMaxParticles = s->ReadSwap32();
-    fMiscFlags = s->ReadSwap32();
+    fSpanIndex = s->ReadLE32();
+    fMaxParticles = s->ReadLE32();
+    fMiscFlags = s->ReadLE32();
     fColor.Read(s);
 
     if( fMiscFlags & kOnReserve )
@@ -561,9 +561,9 @@ void plParticleEmitter::Write(hsStream *s, hsResMgr *mgr)
     plCreatable::Write(s, mgr);
 
     mgr->WriteCreatable(s, fGenerator);
-    s->WriteSwap32(fSpanIndex);
-    s->WriteSwap32(fMaxParticles);
-    s->WriteSwap32(fMiscFlags);
+    s->WriteLE32(fSpanIndex);
+    s->WriteLE32(fMaxParticles);
+    s->WriteLE32(fMiscFlags);
     fColor.Write(s);
 }
 

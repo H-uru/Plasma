@@ -418,12 +418,12 @@ void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
     UInt32 sz = plCubicRenderTarget::Read(s);
 
     fPos.Read(s);
-    fHither = s->ReadSwapScalar();
-    fYon = s->ReadSwapScalar();
-    fFogStart = s->ReadSwapScalar();
+    fHither = s->ReadLEScalar();
+    fYon = s->ReadLEScalar();
+    fFogStart = s->ReadLEScalar();
     fColor.Read(s);
 
-    fRefreshRate = s->ReadSwapScalar();
+    fRefreshRate = s->ReadLEScalar();
 
     SetPosition(fPos);
 
@@ -431,12 +431,12 @@ void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
 
     fIncCharacters = s->ReadByte();
     SetIncludeCharacters(fIncCharacters);
-    int nVis = s->ReadSwap32();
+    int nVis = s->ReadLE32();
     int i;
     for( i = 0; i < nVis; i++ )
         mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
 
-    nVis = s->ReadSwap32();
+    nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++)
     {
         char *name = s->ReadSafeString();
@@ -458,22 +458,22 @@ void plDynamicEnvMap::Write(hsStream* s, hsResMgr* mgr)
     UInt32 sz = plCubicRenderTarget::Write(s);
 
     fPos.Write(s);
-    s->WriteSwapScalar(fHither);
-    s->WriteSwapScalar(fYon);
-    s->WriteSwapScalar(fFogStart);
+    s->WriteLEScalar(fHither);
+    s->WriteLEScalar(fYon);
+    s->WriteLEScalar(fFogStart);
     fColor.Write(s);
 
-    s->WriteSwapScalar(fRefreshRate);
+    s->WriteLEScalar(fRefreshRate);
 
     sz += sizeof(fPos) + sizeof(fHither) + sizeof(fYon) + sizeof(fFogStart) + sizeof(fColor) + sizeof(fRefreshRate);
 
     s->WriteByte(fIncCharacters);
-    s->WriteSwap32(fVisRegions.GetCount());
+    s->WriteLE32(fVisRegions.GetCount());
     int i;
     for( i = 0; i < fVisRegions.GetCount(); i++ )
         mgr->WriteKey(s, fVisRegions[i]);
 
-    s->WriteSwap32(fVisRegionNames.Count());
+    s->WriteLE32(fVisRegionNames.Count());
     for( i = 0; i < fVisRegionNames.Count(); i++)
     {
         s->WriteSafeString(fVisRegionNames[i]);
@@ -887,12 +887,12 @@ void plDynamicCamMap::Read(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Read(s, mgr);
     plRenderTarget::Read(s);
 
-    fHither = s->ReadSwapScalar();
-    fYon = s->ReadSwapScalar();
-    fFogStart = s->ReadSwapScalar();
+    fHither = s->ReadLEScalar();
+    fYon = s->ReadLEScalar();
+    fFogStart = s->ReadLEScalar();
     fColor.Read(s);
 
-    fRefreshRate = s->ReadSwapScalar();
+    fRefreshRate = s->ReadLEScalar();
     fIncCharacters = s->ReadBool();
     SetIncludeCharacters(fIncCharacters);
     mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
@@ -903,11 +903,11 @@ void plDynamicCamMap::Read(hsStream* s, hsResMgr* mgr)
     for (i = 0; i < numTargs; i++)
         mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kRefTargetNode), plRefFlags::kPassiveRef);
 
-    int nVis = s->ReadSwap32();
+    int nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++ )
         mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisSet), plRefFlags::kActiveRef);
 
-    nVis = s->ReadSwap32();
+    nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++)
     {
         char *name = s->ReadSafeString();
@@ -933,12 +933,12 @@ void plDynamicCamMap::Write(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Write(s, mgr);
     plRenderTarget::Write(s);
 
-    s->WriteSwapScalar(fHither);
-    s->WriteSwapScalar(fYon);
-    s->WriteSwapScalar(fFogStart);
+    s->WriteLEScalar(fHither);
+    s->WriteLEScalar(fYon);
+    s->WriteLEScalar(fFogStart);
     fColor.Write(s);
 
-    s->WriteSwapScalar(fRefreshRate);
+    s->WriteLEScalar(fRefreshRate);
     s->WriteByte(fIncCharacters);
     mgr->WriteKey(s, (fCamera ? fCamera->GetKey() : nil));
     mgr->WriteKey(s, (fRootNode ? fRootNode->GetKey() : nil));
@@ -948,11 +948,11 @@ void plDynamicCamMap::Write(hsStream* s, hsResMgr* mgr)
     for (i = 0; i < fTargetNodes.GetCount(); i++)
         mgr->WriteKey(s, fTargetNodes[i]);
 
-    s->WriteSwap32(fVisRegions.GetCount());
+    s->WriteLE32(fVisRegions.GetCount());
     for( i = 0; i < fVisRegions.GetCount(); i++ )
         mgr->WriteKey(s, fVisRegions[i]);
 
-    s->WriteSwap32(fVisRegionNames.Count());
+    s->WriteLE32(fVisRegionNames.Count());
     for( i = 0; i < fVisRegionNames.Count(); i++)
     {
         s->WriteSafeString(fVisRegionNames[i]);

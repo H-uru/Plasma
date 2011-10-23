@@ -47,27 +47,27 @@ void plClothingMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
 
-    fCommands = stream->ReadSwap32();
+    fCommands = stream->ReadLE32();
     if (stream->ReadBool())
         fItemKey = mgr->ReadKey(stream);
     fColor.Read(stream);
     fLayer = stream->ReadByte();
     fDelta = stream->ReadByte();
-    fWeight = stream->ReadSwapScalar();
+    fWeight = stream->ReadLEScalar();
 }
 
 void plClothingMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
 
-    stream->WriteSwap32(fCommands);
+    stream->WriteLE32(fCommands);
     stream->WriteBool(fItemKey != nil);
     if (fItemKey)
         mgr->WriteKey(stream, fItemKey);
     fColor.Write(stream);
     stream->WriteByte(fLayer);
     stream->WriteByte(fDelta);
-    stream->WriteSwapScalar(fWeight);
+    stream->WriteLEScalar(fWeight);
 }
 
 enum ClothingFlags
@@ -85,7 +85,7 @@ void plClothingMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kClothingCommands))
-        fCommands = s->ReadSwap32();
+        fCommands = s->ReadLE32();
     if (contentFlags.IsBitSet(kClothingItemKey))
     {
         if (s->ReadBool())
@@ -106,7 +106,7 @@ void plClothingMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kClothingCommands
-    s->WriteSwap32(fCommands);
+    s->WriteLE32(fCommands);
     // kClothingItemKey
     s->WriteBool(fItemKey != nil);
     if (fItemKey)

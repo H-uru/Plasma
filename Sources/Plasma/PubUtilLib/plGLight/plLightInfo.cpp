@@ -477,7 +477,7 @@ void plLightInfo::Read(hsStream* s, hsResMgr* mgr)
     plKey nodeKey = mgr->ReadKey(s);
     ISetSceneNode(nodeKey);
 
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     fVisRegions.SetCountAndZero(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -506,7 +506,7 @@ void plLightInfo::Write(hsStream* s, hsResMgr* mgr)
 
     mgr->WriteKey(s, fSceneNode);
 
-    s->WriteSwap32(fVisRegions.GetCount());
+    s->WriteLE32(fVisRegions.GetCount());
     int i;
     for( i = 0; i < fVisRegions.GetCount(); i++ )
         mgr->WriteKey(s, fVisRegions[i]);
@@ -668,18 +668,18 @@ void plLimitedDirLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     plDirectionalLightInfo::Read(s, mgr);
 
-    fWidth = s->ReadSwapScalar();
-    fHeight = s->ReadSwapScalar();
-    fDepth = s->ReadSwapScalar();
+    fWidth = s->ReadLEScalar();
+    fHeight = s->ReadLEScalar();
+    fDepth = s->ReadLEScalar();
 }
 
 void plLimitedDirLightInfo::Write(hsStream* s, hsResMgr* mgr)
 {
     plDirectionalLightInfo::Write(s, mgr);
 
-    s->WriteSwapScalar(fWidth);
-    s->WriteSwapScalar(fHeight);
-    s->WriteSwapScalar(fDepth);
+    s->WriteLEScalar(fWidth);
+    s->WriteLEScalar(fHeight);
+    s->WriteLEScalar(fDepth);
 }
 
 void plLimitedDirLightInfo::IMakeIsect()
@@ -840,20 +840,20 @@ void plOmniLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     plLightInfo::Read(s, mgr);
 
-    fAttenConst = s->ReadSwapScalar();
-    fAttenLinear = s->ReadSwapScalar();
-    fAttenQuadratic = s->ReadSwapScalar();
-    fAttenCutoff = s->ReadSwapScalar();
+    fAttenConst = s->ReadLEScalar();
+    fAttenLinear = s->ReadLEScalar();
+    fAttenQuadratic = s->ReadLEScalar();
+    fAttenCutoff = s->ReadLEScalar();
 }
 
 void plOmniLightInfo::Write(hsStream* s, hsResMgr* mgr)
 {
     plLightInfo::Write(s, mgr);
 
-    s->WriteSwapScalar(fAttenConst);
-    s->WriteSwapScalar(fAttenLinear);
-    s->WriteSwapScalar(fAttenQuadratic);
-    s->WriteSwapScalar( fAttenCutoff );
+    s->WriteLEScalar(fAttenConst);
+    s->WriteLEScalar(fAttenLinear);
+    s->WriteLEScalar(fAttenQuadratic);
+    s->WriteLEScalar( fAttenCutoff );
 }
 
 
@@ -972,18 +972,18 @@ void plSpotLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     plOmniLightInfo::Read(s, mgr);
 
-    fFalloff = s->ReadSwapScalar();
-    fSpotInner = s->ReadSwapScalar();
-    fSpotOuter = s->ReadSwapScalar();
+    fFalloff = s->ReadLEScalar();
+    fSpotInner = s->ReadLEScalar();
+    fSpotOuter = s->ReadLEScalar();
 }
 
 void plSpotLightInfo::Write(hsStream* s, hsResMgr* mgr)
 {
     plOmniLightInfo::Write(s, mgr);
 
-    s->WriteSwapScalar(fFalloff);
-    s->WriteSwapScalar(fSpotInner);
-    s->WriteSwapScalar(fSpotOuter);
+    s->WriteLEScalar(fFalloff);
+    s->WriteLEScalar(fSpotInner);
+    s->WriteLEScalar(fSpotOuter);
 }
 
 

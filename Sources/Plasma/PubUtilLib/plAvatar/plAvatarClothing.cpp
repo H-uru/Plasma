@@ -180,7 +180,7 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
     if (s->ReadBool())
         mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // thumbnail
 
-    int tileCount = s->ReadSwap32();
+    int tileCount = s->ReadLE32();
     int i, j;
     for (i = 0; i < tileCount; i++)
     {
@@ -237,7 +237,7 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
         if (fTextures[i] == nil)
             texSkip++;
 
-    s->WriteSwap32(fTextures.GetCount() - texSkip);
+    s->WriteLE32(fTextures.GetCount() - texSkip);
     for (i = 0; i < fTextures.GetCount(); i++)
     {
         if (fTextures[i] == nil)
@@ -1184,7 +1184,7 @@ void plClothingOutfit::WearRandomOutfit()
 hsBool plClothingOutfit::ReadItems(hsStream* s, hsResMgr* mgr, hsBool broadcast /* = true */)
 {
     hsBool result = true;
-    UInt32 numItems = s->ReadSwap32();
+    UInt32 numItems = s->ReadLE32();
     int i;
     for (i = 0; i < numItems; i++)
     {
@@ -1214,7 +1214,7 @@ hsBool plClothingOutfit::ReadItems(hsStream* s, hsResMgr* mgr, hsBool broadcast 
 
 void plClothingOutfit::WriteItems(hsStream *s, hsResMgr *mgr)
 {
-    s->WriteSwap32(fItems.GetCount());
+    s->WriteLE32(fItems.GetCount());
     int i;
     for (i = 0; i < fItems.GetCount(); i++)
     {

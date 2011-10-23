@@ -89,15 +89,15 @@ void plPhysicalSndGroup::Read( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Read( s, mgr );
 
-    s->ReadSwap( &fGroup );
+    s->ReadLE( &fGroup );
 
-    UInt32 i, count = s->ReadSwap32();
+    UInt32 i, count = s->ReadLE32();
     fImpactSounds.Reset();
 
     for( i = 0; i < count; i++ )
         fImpactSounds.Append( mgr->ReadKey( s ) );
 
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     fSlideSounds.Reset();
     for( i = 0; i < count; i++ )
         fSlideSounds.Append( mgr->ReadKey( s ) );
@@ -108,14 +108,14 @@ void plPhysicalSndGroup::Write( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Write( s, mgr );
 
-    s->WriteSwap( fGroup );
+    s->WriteLE( fGroup );
 
     UInt32 i;
-    s->WriteSwap32( fImpactSounds.GetCount() );
+    s->WriteLE32( fImpactSounds.GetCount() );
     for( i = 0; i < fImpactSounds.GetCount(); i++ )
         mgr->WriteKey( s, fImpactSounds[ i ] );
 
-    s->WriteSwap32( fSlideSounds.GetCount() );
+    s->WriteLE32( fSlideSounds.GetCount() );
     for( i = 0; i < fSlideSounds.GetCount(); i++ )
         mgr->WriteKey( s, fSlideSounds[ i ] );
 }

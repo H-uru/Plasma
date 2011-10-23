@@ -62,7 +62,7 @@ void plHardRegionComplex::Read(hsStream* s, hsResMgr* mgr)
 {
     plHardRegion::Read(s, mgr);
 
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     int i;
     for( i = 0; i < n; i++ )
         mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSubRegion), plRefFlags::kActiveRef);
@@ -72,7 +72,7 @@ void plHardRegionComplex::Write(hsStream* s, hsResMgr* mgr)
 {
     plHardRegion::Write(s, mgr);
 
-    s->WriteSwap32(fSubRegions.GetCount());
+    s->WriteLE32(fSubRegions.GetCount());
     int i;
     for( i = 0; i < fSubRegions.GetCount(); i++ )
         mgr->WriteKey(s, fSubRegions[i]);

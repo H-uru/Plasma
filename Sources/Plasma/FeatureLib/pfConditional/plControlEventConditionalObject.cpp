@@ -73,12 +73,12 @@ hsBool plControlEventConditionalObject::MsgReceive(plMessage* msg)
 void plControlEventConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Read(stream, mgr);
-    fControlEvent = (ControlEventCode)stream->ReadSwap32();
+    fControlEvent = (ControlEventCode)stream->ReadLE32();
 }
 void plControlEventConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteSwap32((UInt32)fControlEvent);
+    stream->WriteLE32((UInt32)fControlEvent);
 
 }
 

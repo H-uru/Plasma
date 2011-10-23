@@ -94,7 +94,7 @@ void plFilterCoordInterface::Read(hsStream* stream, hsResMgr* mgr)
 {
     plCoordinateInterface::Read(stream, mgr);
 
-    fFilterMask = stream->ReadSwap32();
+    fFilterMask = stream->ReadLE32();
     fRefParentLocalToWorld.Read(stream);
 }
 
@@ -102,7 +102,7 @@ void plFilterCoordInterface::Write(hsStream* stream, hsResMgr* mgr)
 {
     plCoordinateInterface::Write(stream, mgr);
 
-    stream->WriteSwap32(fFilterMask);
+    stream->WriteLE32(fFilterMask);
     fRefParentLocalToWorld.Write(stream);
 }
 

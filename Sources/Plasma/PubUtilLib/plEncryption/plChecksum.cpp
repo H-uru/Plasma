@@ -54,7 +54,7 @@ plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
 
     while (buffer < bufferEnvenEnd)
     {
-        fSum += hsSWAP32(*((SumStorage*)buffer));
+        fSum += hsToLE32(*((SumStorage*)buffer));
         buffer += wndsz;
     }
 
@@ -64,7 +64,7 @@ plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
         ((char*)&last)[i % wndsz] = *buffer;
         buffer++;
     }
-    fSum+= hsSWAP32(last);
+    fSum+= hsToLE32(last);
 }
 
 plMD5Checksum::plMD5Checksum( UInt32 size, UInt8 *buffer )

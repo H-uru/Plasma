@@ -216,10 +216,10 @@ UInt32  plMipmap::Read( hsStream *s )
         clampBy = 1;
     UInt32  amtToSkip = 0;
 
-    fWidth = s->ReadSwap32();
-    fHeight = s->ReadSwap32();
-    fRowBytes = s->ReadSwap32();
-    fTotalSize = s->ReadSwap32();
+    fWidth = s->ReadLE32();
+    fHeight = s->ReadLE32();
+    fRowBytes = s->ReadLE32();
+    fTotalSize = s->ReadLE32();
     fNumLevels = s->ReadByte();
 
     totalRead += 4 * 4 + 1;
@@ -285,10 +285,10 @@ UInt32  plMipmap::Write( hsStream *s )
 {
     UInt32 totalWritten = plBitmap::Write( s );
 
-    s->WriteSwap32( fWidth );
-    s->WriteSwap32( fHeight );
-    s->WriteSwap32( fRowBytes );
-    s->WriteSwap32( fTotalSize );
+    s->WriteLE32( fWidth );
+    s->WriteLE32( fHeight );
+    s->WriteLE32( fRowBytes );
+    s->WriteLE32( fTotalSize );
     s->WriteByte( fNumLevels );
 
     totalWritten += 4 * 4 + 1;
@@ -337,7 +337,7 @@ void    plMipmap::IReadRawImage( hsStream *stream )
         case 32:
             for( i = 0; i < fNumLevels; i++ )
             {   
-                stream->ReadSwap32( fLevelSizes[ i ] >> 2, (UInt32 *)data );
+                stream->ReadLE32( fLevelSizes[ i ] >> 2, (UInt32 *)data );
                 data += fLevelSizes[ i ];
             }
             break;
@@ -345,7 +345,7 @@ void    plMipmap::IReadRawImage( hsStream *stream )
         case 16:
             for( i = 0; i < fNumLevels; i++ )
             {
-                stream->ReadSwap16( fLevelSizes[ i ] >> 1, (UInt16 *)data );
+                stream->ReadLE16( fLevelSizes[ i ] >> 1, (UInt16 *)data );
                 data += fLevelSizes[ i ];
             }
             break;
@@ -368,7 +368,7 @@ void    plMipmap::IWriteRawImage( hsStream *stream )
         case 32:
             for( i = 0; i < fNumLevels; i++ )
             {   
-                stream->WriteSwap32( fLevelSizes[ i ] >> 2, (UInt32 *)data );
+                stream->WriteLE32( fLevelSizes[ i ] >> 2, (UInt32 *)data );
                 data += fLevelSizes[ i ];
             }
             break;
@@ -376,7 +376,7 @@ void    plMipmap::IWriteRawImage( hsStream *stream )
         case 16:
             for( i = 0; i < fNumLevels; i++ )
             {
-                stream->WriteSwap16( fLevelSizes[ i ] >> 1, (UInt16 *)data );
+                stream->WriteLE16( fLevelSizes[ i ] >> 1, (UInt16 *)data );
                 data += fLevelSizes[ i ];
             }
             break;
@@ -457,8 +457,8 @@ plMipmap *plMipmap::IReadRLEImage( hsStream *stream )
 
     while (!done)
     {
-        count = stream->ReadSwap32();
-        color = stream->ReadSwap32();
+        count = stream->ReadLE32();
+        color = stream->ReadLE32();
         if (count == 0)
             done = true;
         else
@@ -495,8 +495,8 @@ void plMipmap::IWriteRLEImage( hsStream *stream, plMipmap *mipmap )
         color &= 0x00FFFFFF; // strip the alpha (if there is any)
         if (color != curColor)
         {
-            stream->WriteSwap32(count);
-            stream->WriteSwap32(curColor);
+            stream->WriteLE32(count);
+            stream->WriteLE32(curColor);
             count = 0;
             curColor = color;
         }
@@ -504,10 +504,10 @@ void plMipmap::IWriteRLEImage( hsStream *stream, plMipmap *mipmap )
         src++;
         curPos++;
     }
-    stream->WriteSwap32(count);
-    stream->WriteSwap32(color);
-    stream->WriteSwap32(0); // terminate with zero count
-    stream->WriteSwap32(0);
+    stream->WriteLE32(count);
+    stream->WriteLE32(color);
+    stream->WriteLE32(0); // terminate with zero count
+    stream->WriteLE32(0);
 }
 
 void plMipmap::IReadJPEGImage( hsStream *stream )

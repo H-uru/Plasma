@@ -149,16 +149,16 @@ std::string plNetAddress::AsString() const
 
 void plNetAddress::Read(hsStream * s)
 {
-    s->ReadSwap((UInt32*)&fAddr.sin_addr.s_addr);
-    s->ReadSwap(&fAddr.sin_port);
-    s->ReadSwap(&fAddr.sin_family);
+    s->ReadLE((UInt32*)&fAddr.sin_addr.s_addr);
+    s->ReadLE(&fAddr.sin_port);
+    s->ReadLE(&fAddr.sin_family);
 }
 
 void plNetAddress::Write(hsStream * s)
 {
-    s->WriteSwap((UInt32)fAddr.sin_addr.s_addr);
-    s->WriteSwap(fAddr.sin_port);
-    s->WriteSwap(fAddr.sin_family);
+    s->WriteLE((UInt32)fAddr.sin_addr.s_addr);
+    s->WriteLE(fAddr.sin_port);
+    s->WriteLE(fAddr.sin_family);
 }
 
 

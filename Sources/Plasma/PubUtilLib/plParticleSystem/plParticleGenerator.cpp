@@ -295,11 +295,11 @@ void plSimpleParticleGenerator::UpdateParam(UInt32 paramID, hsScalar paramValue)
 
 void plSimpleParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 {
-    hsScalar genLife = s->ReadSwapScalar();
-    hsScalar partLifeMin = s->ReadSwapScalar();
-    hsScalar partLifeMax = s->ReadSwapScalar();
-    hsScalar pps = s->ReadSwapScalar();
-    UInt32 numSources = s->ReadSwap32();
+    hsScalar genLife = s->ReadLEScalar();
+    hsScalar partLifeMin = s->ReadLEScalar();
+    hsScalar partLifeMax = s->ReadLEScalar();
+    hsScalar pps = s->ReadLEScalar();
+    UInt32 numSources = s->ReadLE32();
     hsPoint3 *pos = TRACKED_NEW hsPoint3[numSources];
     hsScalar *pitch = TRACKED_NEW hsScalar[numSources];
     hsScalar *yaw = TRACKED_NEW hsScalar[numSources];
@@ -307,18 +307,18 @@ void plSimpleParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
     for (i = 0; i < numSources; i++)
     {
         pos[i].Read(s);
-        pitch[i] = s->ReadSwapScalar();
-        yaw[i] = s->ReadSwapScalar();
+        pitch[i] = s->ReadLEScalar();
+        yaw[i] = s->ReadLEScalar();
     }
-    hsScalar angleRange = s->ReadSwapScalar();
-    hsScalar velMin = s->ReadSwapScalar();
-    hsScalar velMax = s->ReadSwapScalar();
-    hsScalar xSize = s->ReadSwapScalar();
-    hsScalar ySize = s->ReadSwapScalar();
-    hsScalar scaleMin = s->ReadSwapScalar();
-    hsScalar scaleMax = s->ReadSwapScalar();
-    hsScalar massRange = s->ReadSwapScalar();
-    hsScalar radsPerSec = s->ReadSwapScalar();
+    hsScalar angleRange = s->ReadLEScalar();
+    hsScalar velMin = s->ReadLEScalar();
+    hsScalar velMax = s->ReadLEScalar();
+    hsScalar xSize = s->ReadLEScalar();
+    hsScalar ySize = s->ReadLEScalar();
+    hsScalar scaleMin = s->ReadLEScalar();
+    hsScalar scaleMax = s->ReadLEScalar();
+    hsScalar massRange = s->ReadLEScalar();
+    hsScalar radsPerSec = s->ReadLEScalar();
 
     Init(genLife, partLifeMin, partLifeMax, pps, numSources, pos, pitch, yaw, angleRange, velMin, velMax,
          xSize, ySize, scaleMin, scaleMax, massRange, radsPerSec);
@@ -326,29 +326,29 @@ void plSimpleParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 
 void plSimpleParticleGenerator::Write(hsStream* s, hsResMgr *mgr)
 {
-    s->WriteSwapScalar(fGenLife);
-    s->WriteSwapScalar(fPartLifeMin);
-    s->WriteSwapScalar(fPartLifeMax);
-    s->WriteSwapScalar(fParticlesPerSecond);
-    s->WriteSwap32(fNumSources);
+    s->WriteLEScalar(fGenLife);
+    s->WriteLEScalar(fPartLifeMin);
+    s->WriteLEScalar(fPartLifeMax);
+    s->WriteLEScalar(fParticlesPerSecond);
+    s->WriteLE32(fNumSources);
     int i;
     for (i = 0; i < fNumSources; i++)
     {
         fInitPos[i].Write(s);
-        s->WriteSwapScalar(fInitPitch[i]);
-        s->WriteSwapScalar(fInitYaw[i]);
+        s->WriteLEScalar(fInitPitch[i]);
+        s->WriteLEScalar(fInitYaw[i]);
     }
-    s->WriteSwapScalar(fAngleRange);
-    s->WriteSwapScalar(fVelMin);
-    s->WriteSwapScalar(fVelMax);
-    s->WriteSwapScalar(fXSize);
-    s->WriteSwapScalar(fYSize);
-    s->WriteSwapScalar(fScaleMin);
-    s->WriteSwapScalar(fScaleMax);
+    s->WriteLEScalar(fAngleRange);
+    s->WriteLEScalar(fVelMin);
+    s->WriteLEScalar(fVelMax);
+    s->WriteLEScalar(fXSize);
+    s->WriteLEScalar(fYSize);
+    s->WriteLEScalar(fScaleMin);
+    s->WriteLEScalar(fScaleMax);
 
     hsScalar massRange = 1.f / fPartInvMassMin - DEFAULT_INVERSE_MASS;
-    s->WriteSwapScalar(massRange);
-    s->WriteSwapScalar(fPartRadsPerSecRange);
+    s->WriteLEScalar(massRange);
+    s->WriteLEScalar(fPartRadsPerSecRange);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -416,12 +416,12 @@ hsBool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, 
 
 void plOneTimeParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 {
-    UInt32 count = s->ReadSwap32();
-    hsScalar xSize = s->ReadSwapScalar();
-    hsScalar ySize = s->ReadSwapScalar();
-    hsScalar scaleMin = s->ReadSwapScalar();
-    hsScalar scaleMax = s->ReadSwapScalar();
-    hsScalar radsPerSecRange = s->ReadSwapScalar();
+    UInt32 count = s->ReadLE32();
+    hsScalar xSize = s->ReadLEScalar();
+    hsScalar ySize = s->ReadLEScalar();
+    hsScalar scaleMin = s->ReadLEScalar();
+    hsScalar scaleMax = s->ReadLEScalar();
+    hsScalar radsPerSecRange = s->ReadLEScalar();
 
     hsPoint3 *pos = TRACKED_NEW hsPoint3[count];
     hsVector3 *dir = TRACKED_NEW hsVector3[count];
@@ -438,12 +438,12 @@ void plOneTimeParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 
 void plOneTimeParticleGenerator::Write(hsStream* s, hsResMgr *mgr)
 {
-    s->WriteSwap32((UInt32)fCount);
-    s->WriteSwapScalar(fXSize);
-    s->WriteSwapScalar(fYSize);
-    s->WriteSwapScalar(fScaleMin);
-    s->WriteSwapScalar(fScaleMax);
-    s->WriteSwapScalar(fPartRadsPerSecRange);
+    s->WriteLE32((UInt32)fCount);
+    s->WriteLEScalar(fXSize);
+    s->WriteLEScalar(fYSize);
+    s->WriteLEScalar(fScaleMin);
+    s->WriteLEScalar(fScaleMax);
+    s->WriteLEScalar(fPartRadsPerSecRange);
 
     int i;
     for (i = 0; i < fCount; i++)

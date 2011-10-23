@@ -426,7 +426,7 @@ void hsAffineParts::Read(hsStream *stream)
     fQ.Read(stream);
     fU.Read(stream);
     fK.Read(stream);
-    fF = stream->ReadSwapFloat();
+    fF = stream->ReadLEFloat();
 }
 
 //
@@ -438,5 +438,5 @@ void hsAffineParts::Write(hsStream *stream)
     fQ.Write(stream);
     fU.Write(stream);
     fK.Write(stream);
-    stream->WriteSwapFloat(fF);
+    stream->WriteLEFloat(fF);
 }

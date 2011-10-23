@@ -61,17 +61,17 @@ void plPrintShape::Read(hsStream* stream, hsResMgr* mgr)
 {
     plObjInterface::Read(stream, mgr);
 
-    fWidth = stream->ReadSwapScalar();
-    fLength = stream->ReadSwapScalar();
-    fHeight = stream->ReadSwapScalar();
+    fWidth = stream->ReadLEScalar();
+    fLength = stream->ReadLEScalar();
+    fHeight = stream->ReadLEScalar();
 }
 
 void plPrintShape::Write(hsStream* stream, hsResMgr* mgr)
 {
     plObjInterface::Write(stream, mgr);
 
-    stream->WriteSwapScalar(fWidth);
-    stream->WriteSwapScalar(fLength);
-    stream->WriteSwapScalar(fHeight);
+    stream->WriteLEScalar(fWidth);
+    stream->WriteLEScalar(fLength);
+    stream->WriteLEScalar(fHeight);
 }
 

@@ -77,7 +77,7 @@ public:
         fLocallyOriginated = stream->ReadBool();
         fLastOut = stream->ReadBool();
         fUnload = stream->ReadBool();
-        fClientID = stream->ReadSwap32();
+        fClientID = stream->ReadLE32();
     }
     void Write(hsStream* stream, hsResMgr* mgr)
     {
@@ -86,7 +86,7 @@ public:
         stream->WriteBool(fLocallyOriginated);
         stream->WriteBool(fLastOut);
         stream->WriteBool(fUnload);
-        stream->WriteSwap32(fClientID);
+        stream->WriteLE32(fClientID);
     }
 };
 

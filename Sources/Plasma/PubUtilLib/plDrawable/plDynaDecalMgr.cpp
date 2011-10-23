@@ -198,40 +198,40 @@ void plDynaDecalMgr::Read(hsStream* stream, hsResMgr* mgr)
 
     mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatRTShade), plRefFlags::kActiveRef);
 
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     int i;
     for( i = 0; i < n; i++ )
     {
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefTarget), plRefFlags::kPassiveRef);
     }
     // Associated slave particle systems. We read in the scene objects now, and find the associated systems on loaded message.
-    n = stream->ReadSwap32();
+    n = stream->ReadLE32();
     for( i = 0; i < n; i++ )
     {
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefPartyObject), plRefFlags::kPassiveRef);
     }
 
-    fMaxNumVerts = (UInt16)(stream->ReadSwap32());
-    fMaxNumIdx = (UInt16)(stream->ReadSwap32());
+    fMaxNumVerts = (UInt16)(stream->ReadLE32());
+    fMaxNumIdx = (UInt16)(stream->ReadLE32());
 
-    fWaitOnEnable = stream->ReadSwap32();
+    fWaitOnEnable = stream->ReadLE32();
 
-    fIntensity = stream->ReadSwapScalar();
+    fIntensity = stream->ReadLEScalar();
     fInitAtten = fIntensity;
 
-    fWetLength = stream->ReadSwapScalar();
-    fRampEnd = stream->ReadSwapScalar();
-    fDecayStart = stream->ReadSwapScalar();
-    fLifeSpan = stream->ReadSwapScalar();
+    fWetLength = stream->ReadLEScalar();
+    fRampEnd = stream->ReadLEScalar();
+    fDecayStart = stream->ReadLEScalar();
+    fLifeSpan = stream->ReadLEScalar();
 
-    fGridSizeU = stream->ReadSwapScalar();
-    fGridSizeV = stream->ReadSwapScalar();
+    fGridSizeU = stream->ReadLEScalar();
+    fGridSizeV = stream->ReadLEScalar();
 
     fScale.Read(stream);
 
-    fPartyTime = stream->ReadSwapScalar();
+    fPartyTime = stream->ReadLEScalar();
 
-    n = stream->ReadSwap32();
+    n = stream->ReadLE32();
     fNotifies.SetCount(n);
     for( i = 0; i < n; i++ )
         fNotifies[i] = mgr->ReadKey(stream);
@@ -256,7 +256,7 @@ void plDynaDecalMgr::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fMatPreShade);
     mgr->WriteKey(stream, fMatRTShade);
 
-    stream->WriteSwap32(fTargets.GetCount());
+    stream->WriteLE32(fTargets.GetCount());
 
     int i;
     for( i = 0; i < fTargets.GetCount(); i++ )
@@ -265,32 +265,32 @@ void plDynaDecalMgr::Write(hsStream* stream, hsResMgr* mgr)
     }
 
     // Particle systems (really their associated sceneobjects).
-    stream->WriteSwap32(fPartyObjects.GetCount());
+    stream->WriteLE32(fPartyObjects.GetCount());
     for( i = 0; i < fPartyObjects.GetCount(); i++ )
     {
         mgr->WriteKey(stream, fPartyObjects[i]);
     }
 
-    stream->WriteSwap32(fMaxNumVerts);
-    stream->WriteSwap32(fMaxNumIdx);
+    stream->WriteLE32(fMaxNumVerts);
+    stream->WriteLE32(fMaxNumIdx);
 
-    stream->WriteSwap32(fWaitOnEnable);
+    stream->WriteLE32(fWaitOnEnable);
 
-    stream->WriteSwapScalar(fIntensity);
+    stream->WriteLEScalar(fIntensity);
 
-    stream->WriteSwapScalar(fWetLength);
-    stream->WriteSwapScalar(fRampEnd);
-    stream->WriteSwapScalar(fDecayStart);
-    stream->WriteSwapScalar(fLifeSpan);
+    stream->WriteLEScalar(fWetLength);
+    stream->WriteLEScalar(fRampEnd);
+    stream->WriteLEScalar(fDecayStart);
+    stream->WriteLEScalar(fLifeSpan);
 
-    stream->WriteSwapScalar(fGridSizeU);
-    stream->WriteSwapScalar(fGridSizeV);
+    stream->WriteLEScalar(fGridSizeU);
+    stream->WriteLEScalar(fGridSizeV);
 
     fScale.Write(stream);
 
-    stream->WriteSwapScalar(fPartyTime);
+    stream->WriteLEScalar(fPartyTime);
 
-    stream->WriteSwap32(fNotifies.GetCount());
+    stream->WriteLE32(fNotifies.GetCount());
     for( i = 0; i < fNotifies.GetCount(); i++ )
         mgr->WriteKey(stream, fNotifies[i]);
 
