@@ -69,7 +69,7 @@ void plCluster::Read(hsStream* s, plClusterGroup* grp)
 
     hsAssert(fGroup->GetTemplate(), "Template should have been loaded by now");
     const int numVerts = fGroup->GetTemplate()->NumVerts();
-    const int numInst = s->ReadSwap32();
+    const int numInst = s->ReadLE32();
     fInsts.SetCount(numInst);
     int i;
     for( i = 0; i < numInst; i++ )
@@ -85,7 +85,7 @@ void plCluster::Write(hsStream* s) const
     fEncoding.Write(s);
 
     const int numVerts = fGroup->GetTemplate()->NumVerts();
-    s->WriteSwap32(fInsts.GetCount());
+    s->WriteLE32(fInsts.GetCount());
     int i;
     for( i = 0; i < fInsts.GetCount(); i++ )
     {

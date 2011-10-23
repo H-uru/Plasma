@@ -103,7 +103,7 @@ void plHardRegionPlanes::Read(hsStream* s, hsResMgr* mgr)
 {
     plHardRegion::Read(s, mgr);
 
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     fPlanes.SetCount(n);
 
     int i;
@@ -123,7 +123,7 @@ void plHardRegionPlanes::Write(hsStream* s, hsResMgr* mgr)
 {
     plHardRegion::Write(s, mgr);
 
-    s->WriteSwap32(fPlanes.GetCount());
+    s->WriteLE32(fPlanes.GetCount());
 
     int i;
     for( i = 0; i < fPlanes.GetCount(); i++ )

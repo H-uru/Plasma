@@ -436,7 +436,7 @@ bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const wchar* output
     outputStream.Write(kMagicStringLen, kMagicString);
 
     // Save some space to write the file size at the end
-    outputStream.WriteSwap32(0);
+    outputStream.WriteLE32(0);
 
     // Write out all the full size encrypted blocks we can
     char buf[kEncryptChunkSize];
@@ -469,7 +469,7 @@ bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const wchar* output
     UInt32 actualSize = sourceStream->GetPosition();
     outputStream.Rewind();
     outputStream.Skip(kMagicStringLen);
-    outputStream.WriteSwap32(actualSize);
+    outputStream.WriteLE32(actualSize);
 
     outputStream.Close();
 

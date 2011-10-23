@@ -55,17 +55,17 @@ plAccountUpdateMsg::plAccountUpdateMsg(unsigned updateType)
 void plAccountUpdateMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    fUpdateType = stream->ReadSwap32();
-    fResult     = stream->ReadSwap32();
-    fPlayerInt  = stream->ReadSwap32();
+    fUpdateType = stream->ReadLE32();
+    fResult     = stream->ReadLE32();
+    fPlayerInt  = stream->ReadLE32();
 }
 
 void plAccountUpdateMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteSwap32(fUpdateType);
-    stream->WriteSwap32(fResult);
-    stream->WriteSwap32(fPlayerInt);
+    stream->WriteLE32(fUpdateType);
+    stream->WriteLE32(fResult);
+    stream->WriteLE32(fPlayerInt);
 }
 
 unsigned plAccountUpdateMsg::GetUpdateType()

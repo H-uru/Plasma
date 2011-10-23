@@ -146,7 +146,7 @@ void plLinkingMgrMsg::Read( hsStream* stream, hsResMgr* mgr )
     contentFlags.Read( stream );
 
     if ( contentFlags.IsBitSet( kLinkingMgrCmd ) )
-        stream->ReadSwap( &fLinkingMgrCmd );
+        stream->ReadLE( &fLinkingMgrCmd );
     if ( contentFlags.IsBitSet( kLinkingMgrArgs ) )
         fArgs.Read( stream, mgr );
 }
@@ -160,7 +160,7 @@ void plLinkingMgrMsg::Write( hsStream* stream, hsResMgr* mgr )
     contentFlags.SetBit( kLinkingMgrArgs );
     contentFlags.Write( stream );
 
-    stream->WriteSwap( fLinkingMgrCmd );
+    stream->WriteLE( fLinkingMgrCmd );
     fArgs.Write( stream, mgr );
 }
 
@@ -189,12 +189,12 @@ void plLinkEffectsTriggerMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead( stream, mgr );
     
-    fInvisLevel = stream->ReadSwap32();
+    fInvisLevel = stream->ReadLE32();
     fLeavingAge = stream->ReadBool();
     fLinkKey = mgr->ReadKey(stream);
 
     // This variable is for internal use only. Still read/written for backwards compatability.
-    fEffects = stream->ReadSwap32();
+    fEffects = stream->ReadLE32();
     fEffects = 0; 
 
     fLinkInAnimKey = mgr->ReadKey(stream);
@@ -204,10 +204,10 @@ void plLinkEffectsTriggerMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite( stream, mgr );
     
-    stream->WriteSwap32(fInvisLevel);
+    stream->WriteLE32(fInvisLevel);
     stream->WriteBool(fLeavingAge);
     mgr->WriteKey(stream, fLinkKey);
-    stream->WriteSwap32(fEffects);
+    stream->WriteLE32(fEffects);
     mgr->WriteKey(stream, fLinkInAnimKey);
 }
 
@@ -231,7 +231,7 @@ void plLinkEffectsTriggerMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kLinkEffectsLinkKey))
         fLinkKey = mgr->ReadKey(s);
     if (contentFlags.IsBitSet(kLinkEffectsEffects))
-        fEffects = s->ReadSwap32();
+        fEffects = s->ReadLE32();
     if (contentFlags.IsBitSet(kLinkEffectsLinkInAnimKey))
         fLinkInAnimKey = mgr->ReadKey(s);
 
@@ -258,7 +258,7 @@ void plLinkEffectsTriggerMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     // kLinkEffectsLinkKey
     mgr->WriteKey(s, fLinkKey);
     // kLinkEffectsEffects
-    s->WriteSwap32(fEffects);
+    s->WriteLE32(fEffects);
     // kLinkEffectsLinkInAnimKey
     mgr->WriteKey(s, fLinkInAnimKey);
 }
@@ -303,7 +303,7 @@ void plLinkEffectBCMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead(stream, mgr);
 
     fLinkKey = mgr->ReadKey(stream);
-    fLinkFlags = stream->ReadSwap32();
+    fLinkFlags = stream->ReadLE32();
 }
 
 void plLinkEffectBCMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -311,7 +311,7 @@ void plLinkEffectBCMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);
 
     mgr->WriteKey(stream, fLinkKey);
-    stream->WriteSwap32(fLinkFlags);
+    stream->WriteLE32(fLinkFlags);
 }
 
 void plLinkEffectBCMsg::SetLinkFlag(UInt32 flag, hsBool on /* = true */)

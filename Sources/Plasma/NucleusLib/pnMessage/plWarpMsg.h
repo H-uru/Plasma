@@ -86,14 +86,14 @@ public:
     {
         plMessage::IMsgRead(stream, mgr);
         fTransform.Read(stream);
-        stream->ReadSwap(&fWarpFlags);
+        stream->ReadLE(&fWarpFlags);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
         fTransform.Write(stream);
-        stream->WriteSwap(fWarpFlags);
+        stream->WriteLE(fWarpFlags);
     }
 };
 

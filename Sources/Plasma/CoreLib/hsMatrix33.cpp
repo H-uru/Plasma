@@ -95,7 +95,7 @@ void hsMatrix33::Read(hsStream* s)
     {
         for( j = 0; j < 3; j++ )
         {
-            fMap[i][j] = s->ReadSwapScalar();
+            fMap[i][j] = s->ReadLEScalar();
         }
     }
 }
@@ -107,7 +107,7 @@ void hsMatrix33::Write(hsStream* s)
     {
         for( j = 0; j < 3; j++ )
         {
-            s->WriteSwapScalar(fMap[i][j]);
+            s->WriteLEScalar(fMap[i][j]);
         }
     }
 }

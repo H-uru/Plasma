@@ -166,7 +166,7 @@ void plOneShotMod::Read(hsStream *stream, hsResMgr *mgr)
 
     // read in the name of the animation itself
     fAnimName = stream->ReadSafeString();
-    fSeekDuration = stream->ReadSwapScalar();
+    fSeekDuration = stream->ReadLEScalar();
     fDrivable = stream->ReadBool();
     fReversable = stream->ReadBool();
     fSmartSeek = (float)stream->ReadBool();
@@ -178,7 +178,7 @@ void plOneShotMod::Write(hsStream *stream, hsResMgr *mgr)
     plMultiModifier::Write(stream, mgr);
 
     stream->WriteSafeString(fAnimName);
-    stream->WriteSwapScalar(fSeekDuration);
+    stream->WriteLEScalar(fSeekDuration);
     stream->WriteBool(fDrivable);
     stream->WriteBool(fReversable);
     stream->WriteBool((hsBool)fSmartSeek);

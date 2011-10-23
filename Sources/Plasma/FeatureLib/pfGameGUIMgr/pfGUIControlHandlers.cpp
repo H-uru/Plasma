@@ -61,18 +61,18 @@ void    pfGUICtrlProcWriteableObject::Write( pfGUICtrlProcWriteableObject *obj, 
 {
     if( obj != nil )
     {
-        s->WriteSwap32( obj->fType );
+        s->WriteLE32( obj->fType );
         obj->IWrite( s );
     }
     else
-        s->WriteSwap32( kNull );
+        s->WriteLE32( kNull );
 }
 
 pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
 {
     pfGUICtrlProcWriteableObject    *obj;
 
-    UInt32 type = s->ReadSwap32();
+    UInt32 type = s->ReadLE32();
 
     switch( type )
     {
@@ -125,7 +125,7 @@ pfGUIConsoleCmdProc::~pfGUIConsoleCmdProc()
 
 void    pfGUIConsoleCmdProc::IRead( hsStream *s )
 {
-    int i = s->ReadSwap32();
+    int i = s->ReadLE32();
     if( i > 0 )
     {
         fCommand = TRACKED_NEW char[ i + 1 ];
@@ -140,11 +140,11 @@ void    pfGUIConsoleCmdProc::IWrite( hsStream *s )
 {
     if( fCommand != nil )
     {
-        s->WriteSwap32( strlen( fCommand ) );
+        s->WriteLE32( strlen( fCommand ) );
         s->Write( strlen( fCommand ), fCommand );
     }
     else
-        s->WriteSwap32( 0 );
+        s->WriteLE32( 0 );
 }
 
 void    pfGUIConsoleCmdProc::DoSomething( pfGUIControlMod *ctrl )

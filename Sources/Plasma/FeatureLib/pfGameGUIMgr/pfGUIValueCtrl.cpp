@@ -93,9 +93,9 @@ void    pfGUIValueCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    s->ReadSwap( &fMin );
-    s->ReadSwap( &fMax );
-    s->ReadSwap( &fStep );
+    s->ReadLE( &fMin );
+    s->ReadLE( &fMax );
+    s->ReadLE( &fStep );
 
     fValue = fMin;
 }
@@ -104,8 +104,8 @@ void    pfGUIValueCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    s->WriteSwap( fMin );
-    s->WriteSwap( fMax );
-    s->WriteSwap( fStep );
+    s->WriteLE( fMin );
+    s->WriteLE( fMax );
+    s->WriteLE( fStep );
 }
 

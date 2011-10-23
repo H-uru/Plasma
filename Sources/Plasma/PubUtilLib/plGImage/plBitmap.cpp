@@ -110,7 +110,7 @@ UInt32  plBitmap::Read( hsStream *s )
 
     fPixelSize = s->ReadByte();
     fSpace = s->ReadByte();
-    fFlags = s->ReadSwap16();
+    fFlags = s->ReadLE16();
     fCompressionType = s->ReadByte();
 
     if(( fCompressionType == kUncompressed )||( fCompressionType == kJPEGCompression ))
@@ -125,8 +125,8 @@ UInt32  plBitmap::Read( hsStream *s )
         read += 2;
     }
 
-    fLowModifiedTime = s->ReadSwap32();
-    fHighModifiedTime = s->ReadSwap32();
+    fLowModifiedTime = s->ReadLE32();
+    fHighModifiedTime = s->ReadLE32();
 
     return read;
 }
@@ -142,7 +142,7 @@ UInt32  plBitmap::Write( hsStream *s )
 
     s->WriteByte( fPixelSize );
     s->WriteByte( fSpace );
-    s->WriteSwap16( fFlags );
+    s->WriteLE16( fFlags );
     s->WriteByte( fCompressionType );
 
     if(( fCompressionType == kUncompressed )||(fCompressionType == kJPEGCompression ))
@@ -157,8 +157,8 @@ UInt32  plBitmap::Write( hsStream *s )
         written += 2;
     }
 
-    s->WriteSwap32(fLowModifiedTime);
-    s->WriteSwap32(fHighModifiedTime);
+    s->WriteLE32(fLowModifiedTime);
+    s->WriteLE32(fHighModifiedTime);
 
     return written;
 }

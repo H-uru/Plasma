@@ -223,16 +223,16 @@ void    plSoundBuffer::Read( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Read( s, mgr );
 
-    s->ReadSwap( &fFlags );
-    s->ReadSwap( &fDataLength );
+    s->ReadLE( &fFlags );
+    s->ReadLE( &fDataLength );
     fFileName = s->ReadSafeString();
 
-    s->ReadSwap( &fHeader.fFormatTag );
-    s->ReadSwap( &fHeader.fNumChannels );
-    s->ReadSwap( &fHeader.fNumSamplesPerSec );
-    s->ReadSwap( &fHeader.fAvgBytesPerSec );
-    s->ReadSwap( &fHeader.fBlockAlign );
-    s->ReadSwap( &fHeader.fBitsPerSample );
+    s->ReadLE( &fHeader.fFormatTag );
+    s->ReadLE( &fHeader.fNumChannels );
+    s->ReadLE( &fHeader.fNumSamplesPerSec );
+    s->ReadLE( &fHeader.fAvgBytesPerSec );
+    s->ReadLE( &fHeader.fBlockAlign );
+    s->ReadLE( &fHeader.fBitsPerSample );
 
     fValid = false;
     if( !( fFlags & kIsExternal ) )
@@ -262,8 +262,8 @@ void    plSoundBuffer::Write( hsStream *s, hsResMgr *mgr )
     if( fData == nil )
         fFlags |= kIsExternal;
 
-    s->WriteSwap( fFlags );
-    s->WriteSwap( fDataLength );
+    s->WriteLE( fFlags );
+    s->WriteLE( fDataLength );
     
     // Truncate the path to just a file name on write
     if( fFileName != nil )
@@ -277,12 +277,12 @@ void    plSoundBuffer::Write( hsStream *s, hsResMgr *mgr )
     else
         s->WriteSafeString( nil );
 
-    s->WriteSwap( fHeader.fFormatTag );
-    s->WriteSwap( fHeader.fNumChannels );
-    s->WriteSwap( fHeader.fNumSamplesPerSec );
-    s->WriteSwap( fHeader.fAvgBytesPerSec );
-    s->WriteSwap( fHeader.fBlockAlign );
-    s->WriteSwap( fHeader.fBitsPerSample );
+    s->WriteLE( fHeader.fFormatTag );
+    s->WriteLE( fHeader.fNumChannels );
+    s->WriteLE( fHeader.fNumSamplesPerSec );
+    s->WriteLE( fHeader.fAvgBytesPerSec );
+    s->WriteLE( fHeader.fBlockAlign );
+    s->WriteLE( fHeader.fBitsPerSample );
 
     if( !( fFlags & kIsExternal ) )
         s->Write( fDataLength, fData );

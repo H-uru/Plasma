@@ -93,24 +93,24 @@ void plDecalEnableMod::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     fDecalMgrs.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
         fDecalMgrs[i] = mgr->ReadKey(stream);
 
-    fWetLength = stream->ReadSwapScalar();
+    fWetLength = stream->ReadLEScalar();
 }
 
 void plDecalEnableMod::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
 
-    stream->WriteSwap32(fDecalMgrs.GetCount());
+    stream->WriteLE32(fDecalMgrs.GetCount());
 
     int i;
     for( i = 0; i < fDecalMgrs.GetCount(); i++ )
         mgr->WriteKey(stream, fDecalMgrs[i]);
 
-    stream->WriteSwapScalar(fWetLength);
+    stream->WriteLEScalar(fWetLength);
 }

@@ -7,20 +7,20 @@
 
 void hsGMatState::Read(hsStream* s)
 {
-    fBlendFlags = s->ReadSwap32();
-    fClampFlags = s->ReadSwap32();
-    fShadeFlags = s->ReadSwap32();
-    fZFlags = s->ReadSwap32();
-    fMiscFlags = s->ReadSwap32();
+    fBlendFlags = s->ReadLE32();
+    fClampFlags = s->ReadLE32();
+    fShadeFlags = s->ReadLE32();
+    fZFlags = s->ReadLE32();
+    fMiscFlags = s->ReadLE32();
 }
 
 void hsGMatState::Write(hsStream* s)
 {
-    s->WriteSwap32(fBlendFlags);
-    s->WriteSwap32(fClampFlags);
-    s->WriteSwap32(fShadeFlags);
-    s->WriteSwap32(fZFlags);
-    s->WriteSwap32(fMiscFlags);
+    s->WriteLE32(fBlendFlags);
+    s->WriteLE32(fClampFlags);
+    s->WriteLE32(fShadeFlags);
+    s->WriteLE32(fZFlags);
+    s->WriteLE32(fMiscFlags);
 }
 
 void hsGMatState::Clear(const hsGMatState& state)

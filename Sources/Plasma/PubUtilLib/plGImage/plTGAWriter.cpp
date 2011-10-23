@@ -84,11 +84,11 @@ void    plTGAWriter::WriteMipmap( const char *fileName, plMipmap *mipmap )
     stream.WriteByte( 0 );  // Color map spec
     stream.WriteByte( 0 );  // Color map spec
 
-    stream.WriteSwap16( 0 );    // xOrigin
-    stream.WriteSwap16( 0 );    // yOrigin
+    stream.WriteLE16( 0 );    // xOrigin
+    stream.WriteLE16( 0 );    // yOrigin
 
-    stream.WriteSwap16( (UInt16)mipmap->GetWidth() );
-    stream.WriteSwap16( (UInt16)mipmap->GetHeight() );
+    stream.WriteLE16( (UInt16)mipmap->GetWidth() );
+    stream.WriteLE16( (UInt16)mipmap->GetHeight() );
 
     stream.WriteByte( 24 );
     stream.WriteByte( 0 );

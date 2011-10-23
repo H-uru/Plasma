@@ -81,7 +81,7 @@ plProfile_CreateTimer("Input", "Update", Input);
 
 void plCtrlCmd::Write(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteSwap32( fControlCode );
+    stream->WriteLE32( fControlCode );
     stream->WriteBool( fControlActivated );
     fPt.Write(stream);
 
@@ -91,7 +91,7 @@ void plCtrlCmd::Write(hsStream* stream, hsResMgr* mgr)
 
 void plCtrlCmd::Read(hsStream* stream, hsResMgr* mgr)
 {
-    fControlCode = (ControlEventCode)stream->ReadSwap32();
+    fControlCode = (ControlEventCode)stream->ReadLE32();
     fControlActivated = stream->ReadBool();
     fPt.Read(stream);
 

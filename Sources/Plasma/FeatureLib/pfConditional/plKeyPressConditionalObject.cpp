@@ -73,12 +73,12 @@ hsBool plKeyPressConditionalObject::MsgReceive(plMessage* msg)
 void plKeyPressConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Read(stream, mgr);
-    fKeyEvent = (plKeyDef)stream->ReadSwap32();
+    fKeyEvent = (plKeyDef)stream->ReadLE32();
 }
 void plKeyPressConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteSwap32((UInt32)fKeyEvent);
+    stream->WriteLE32((UInt32)fKeyEvent);
 
 }
 

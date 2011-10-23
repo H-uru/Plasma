@@ -557,7 +557,7 @@ void plCoordinateInterface::Read(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Read(stream);
     fWorldToLocal.Read(stream);
 
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     int i;
     for( i = 0; i < n; i++ )
     {
@@ -576,7 +576,7 @@ void plCoordinateInterface::Write(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Write(stream);
     fWorldToLocal.Write(stream);
 
-    stream->WriteSwap32(fChildren.GetCount());
+    stream->WriteLE32(fChildren.GetCount());
     int i;
     for( i = 0; i < fChildren.GetCount(); i++ )
         mgr->WriteKey(stream, fChildren[i]);

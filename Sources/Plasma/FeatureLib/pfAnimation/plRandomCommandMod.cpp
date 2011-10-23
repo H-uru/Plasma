@@ -277,8 +277,8 @@ void plRandomCommandMod::Read(hsStream* s, hsResMgr* mgr)
     fMode = s->ReadByte();
     fState = s->ReadByte();
 
-    fMinDelay = s->ReadSwapScalar();
-    fMaxDelay = s->ReadSwapScalar();
+    fMinDelay = s->ReadLEScalar();
+    fMaxDelay = s->ReadLEScalar();
 
     IReset();
 }
@@ -290,8 +290,8 @@ void plRandomCommandMod::Write(hsStream* s, hsResMgr* mgr)
     s->WriteByte(fMode);
     s->WriteByte(fState);
 
-    s->WriteSwapScalar(fMinDelay);
-    s->WriteSwapScalar(fMaxDelay);
+    s->WriteLEScalar(fMinDelay);
+    s->WriteLEScalar(fMaxDelay);
 }
 
 void plRandomCommandMod::IRetry(hsScalar secs)

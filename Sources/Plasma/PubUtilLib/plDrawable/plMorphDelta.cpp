@@ -301,15 +301,15 @@ void plMorphDelta::SetDeltas(int iSpan, const hsTArray<plVertDelta>& deltas, int
 
 void plMorphDelta::Read(hsStream* s, hsResMgr* mgr)
 {
-    fWeight = s->ReadSwapScalar();
+    fWeight = s->ReadLEScalar();
 
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     SetNumSpans(n);
     int iSpan;
     for( iSpan = 0; iSpan < n; iSpan++ )
     {
-        int nDel = s->ReadSwap32();
-        int nUVW = s->ReadSwap32();
+        int nDel = s->ReadLE32();
+        int nUVW = s->ReadLE32();
         AllocDeltas(iSpan, nDel, nUVW);
         if( nDel )
         {
@@ -323,17 +323,17 @@ void plMorphDelta::Read(hsStream* s, hsResMgr* mgr)
 
 void plMorphDelta::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteSwapScalar(fWeight);
+    s->WriteLEScalar(fWeight);
 
-    s->WriteSwap32(fSpans.GetCount());
+    s->WriteLE32(fSpans.GetCount());
 
     int iSpan;
     for( iSpan = 0; iSpan < fSpans.GetCount(); iSpan++ )
     {
         int nDel = fSpans[iSpan].fDeltas.GetCount();
         int nUVW = fSpans[iSpan].fNumUVWChans;
-        s->WriteSwap32(nDel);
-        s->WriteSwap32(nUVW);
+        s->WriteLE32(nDel);
+        s->WriteLE32(nUVW);
 
         if( nDel )
         {

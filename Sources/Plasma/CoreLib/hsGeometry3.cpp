@@ -93,9 +93,9 @@ void hsScalarTriple::Read(hsStream *stream)
 
 void hsScalarTriple::Write(hsStream *stream) const
 {
-    stream->WriteSwapScalar(fX);
-    stream->WriteSwapScalar(fY);
-    stream->WriteSwapScalar(fZ);
+    stream->WriteLEScalar(fX);
+    stream->WriteLEScalar(fY);
+    stream->WriteLEScalar(fZ);
 }
 
 hsPlane3::hsPlane3(const hsPoint3* pt1, const hsPoint3* pt2, const hsPoint3* pt3)
@@ -117,11 +117,11 @@ hsPlane3::hsPlane3(const hsPoint3* pt1, const hsPoint3* pt2, const hsPoint3* pt3
 void hsPlane3::Read(hsStream *stream) 
 { 
     fN.Read(stream); 
-    fD=stream->ReadSwapScalar(); 
+    fD=stream->ReadLEScalar(); 
 }
 
 void hsPlane3::Write(hsStream *stream) const 
 { 
     fN.Write(stream); 
-    stream->WriteSwapScalar(fD); 
+    stream->WriteLEScalar(fD); 
 }

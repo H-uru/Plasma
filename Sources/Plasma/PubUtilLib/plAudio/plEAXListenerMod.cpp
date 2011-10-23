@@ -173,30 +173,30 @@ void plEAXListenerMod::Read( hsStream* s, hsResMgr* mgr )
     mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftRegion ), plRefFlags::kActiveRef );
 
     // Read the listener params
-    fListenerProps->ulEnvironment = s->ReadSwap32();
-    fListenerProps->flEnvironmentSize = s->ReadSwapFloat();
-    fListenerProps->flEnvironmentDiffusion = s->ReadSwapFloat();
-    fListenerProps->lRoom = s->ReadSwap32();
-    fListenerProps->lRoomHF = s->ReadSwap32();
-    fListenerProps->lRoomLF = s->ReadSwap32();
-    fListenerProps->flDecayTime = s->ReadSwapFloat();
-    fListenerProps->flDecayHFRatio = s->ReadSwapFloat();
-    fListenerProps->flDecayLFRatio = s->ReadSwapFloat();
-    fListenerProps->lReflections = s->ReadSwap32();
-    fListenerProps->flReflectionsDelay = s->ReadSwapFloat();
+    fListenerProps->ulEnvironment = s->ReadLE32();
+    fListenerProps->flEnvironmentSize = s->ReadLEFloat();
+    fListenerProps->flEnvironmentDiffusion = s->ReadLEFloat();
+    fListenerProps->lRoom = s->ReadLE32();
+    fListenerProps->lRoomHF = s->ReadLE32();
+    fListenerProps->lRoomLF = s->ReadLE32();
+    fListenerProps->flDecayTime = s->ReadLEFloat();
+    fListenerProps->flDecayHFRatio = s->ReadLEFloat();
+    fListenerProps->flDecayLFRatio = s->ReadLEFloat();
+    fListenerProps->lReflections = s->ReadLE32();
+    fListenerProps->flReflectionsDelay = s->ReadLEFloat();
     //fListenerProps->vReflectionsPan;     // early reflections panning vector
-    fListenerProps->lReverb = s->ReadSwap32();                  // late reverberation level relative to room effect
-    fListenerProps->flReverbDelay = s->ReadSwapFloat();
+    fListenerProps->lReverb = s->ReadLE32();                  // late reverberation level relative to room effect
+    fListenerProps->flReverbDelay = s->ReadLEFloat();
     //fListenerProps->vReverbPan;          // late reverberation panning vector
-    fListenerProps->flEchoTime = s->ReadSwapFloat();
-    fListenerProps->flEchoDepth = s->ReadSwapFloat();
-    fListenerProps->flModulationTime = s->ReadSwapFloat();
-    fListenerProps->flModulationDepth = s->ReadSwapFloat();
-    fListenerProps->flAirAbsorptionHF = s->ReadSwapFloat();
-    fListenerProps->flHFReference = s->ReadSwapFloat();
-    fListenerProps->flLFReference = s->ReadSwapFloat();
-    fListenerProps->flRoomRolloffFactor = s->ReadSwapFloat();
-    fListenerProps->ulFlags = s->ReadSwap32();
+    fListenerProps->flEchoTime = s->ReadLEFloat();
+    fListenerProps->flEchoDepth = s->ReadLEFloat();
+    fListenerProps->flModulationTime = s->ReadLEFloat();
+    fListenerProps->flModulationDepth = s->ReadLEFloat();
+    fListenerProps->flAirAbsorptionHF = s->ReadLEFloat();
+    fListenerProps->flHFReference = s->ReadLEFloat();
+    fListenerProps->flLFReference = s->ReadLEFloat();
+    fListenerProps->flRoomRolloffFactor = s->ReadLEFloat();
+    fListenerProps->ulFlags = s->ReadLE32();
 
     // Done reading, time to tell the audio sys we exist
     IRegister();
@@ -210,30 +210,30 @@ void plEAXListenerMod::Write( hsStream* s, hsResMgr* mgr )
     mgr->WriteKey( s, fSoftRegion );
 
     // Write the listener params
-    s->WriteSwap32( fListenerProps->ulEnvironment );
-    s->WriteSwapFloat( fListenerProps->flEnvironmentSize );
-    s->WriteSwapFloat( fListenerProps->flEnvironmentDiffusion );
-    s->WriteSwap32( fListenerProps->lRoom );
-    s->WriteSwap32( fListenerProps->lRoomHF );
-    s->WriteSwap32( fListenerProps->lRoomLF );
-    s->WriteSwapFloat( fListenerProps->flDecayTime );
-    s->WriteSwapFloat( fListenerProps->flDecayHFRatio );
-    s->WriteSwapFloat( fListenerProps->flDecayLFRatio );
-    s->WriteSwap32( fListenerProps->lReflections );
-    s->WriteSwapFloat( fListenerProps->flReflectionsDelay );
-    //s->WriteSwapFloat( fListenerProps->vReflectionsPan;     // early reflections panning vector
-    s->WriteSwap32( fListenerProps->lReverb );                  // late reverberation level relative to room effect
-    s->WriteSwapFloat( fListenerProps->flReverbDelay );
-    //s->WriteSwapFloat( fListenerProps->vReverbPan;          // late reverberation panning vector
-    s->WriteSwapFloat( fListenerProps->flEchoTime );
-    s->WriteSwapFloat( fListenerProps->flEchoDepth );
-    s->WriteSwapFloat( fListenerProps->flModulationTime );
-    s->WriteSwapFloat( fListenerProps->flModulationDepth );
-    s->WriteSwapFloat( fListenerProps->flAirAbsorptionHF );
-    s->WriteSwapFloat( fListenerProps->flHFReference );
-    s->WriteSwapFloat( fListenerProps->flLFReference );
-    s->WriteSwapFloat( fListenerProps->flRoomRolloffFactor );
-    s->WriteSwap32( fListenerProps->ulFlags );
+    s->WriteLE32( fListenerProps->ulEnvironment );
+    s->WriteLEFloat( fListenerProps->flEnvironmentSize );
+    s->WriteLEFloat( fListenerProps->flEnvironmentDiffusion );
+    s->WriteLE32( fListenerProps->lRoom );
+    s->WriteLE32( fListenerProps->lRoomHF );
+    s->WriteLE32( fListenerProps->lRoomLF );
+    s->WriteLEFloat( fListenerProps->flDecayTime );
+    s->WriteLEFloat( fListenerProps->flDecayHFRatio );
+    s->WriteLEFloat( fListenerProps->flDecayLFRatio );
+    s->WriteLE32( fListenerProps->lReflections );
+    s->WriteLEFloat( fListenerProps->flReflectionsDelay );
+    //s->WriteLEFloat( fListenerProps->vReflectionsPan;     // early reflections panning vector
+    s->WriteLE32( fListenerProps->lReverb );                  // late reverberation level relative to room effect
+    s->WriteLEFloat( fListenerProps->flReverbDelay );
+    //s->WriteLEFloat( fListenerProps->vReverbPan;          // late reverberation panning vector
+    s->WriteLEFloat( fListenerProps->flEchoTime );
+    s->WriteLEFloat( fListenerProps->flEchoDepth );
+    s->WriteLEFloat( fListenerProps->flModulationTime );
+    s->WriteLEFloat( fListenerProps->flModulationDepth );
+    s->WriteLEFloat( fListenerProps->flAirAbsorptionHF );
+    s->WriteLEFloat( fListenerProps->flHFReference );
+    s->WriteLEFloat( fListenerProps->flLFReference );
+    s->WriteLEFloat( fListenerProps->flRoomRolloffFactor );
+    s->WriteLE32( fListenerProps->ulFlags );
 }
 
 

@@ -219,22 +219,22 @@ void hsGMaterial::SetLayer(plLayerInterface* layer, Int32 which, hsBool insert, 
 
 void hsGMaterial::Write(hsStream* s)
 {
-    s->WriteSwap32(fLoadFlags);
-    s->WriteSwap32(fCompFlags);
+    s->WriteLE32(fLoadFlags);
+    s->WriteLE32(fCompFlags);
 
-    s->WriteSwap32(GetNumLayers());
-    s->WriteSwap32(GetNumPiggyBacks());
+    s->WriteLE32(GetNumLayers());
+    s->WriteLE32(GetNumPiggyBacks());
 }
 
 void hsGMaterial::Read(hsStream* s)
 {
-    fLoadFlags = s->ReadSwap32();
-    fCompFlags = s->ReadSwap32();
+    fLoadFlags = s->ReadLE32();
+    fCompFlags = s->ReadLE32();
 
     IClearLayers();
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     fLayers.SetCountAndZero(n);
-    n = s->ReadSwap32();
+    n = s->ReadLE32();
     fPiggyBacks.SetCountAndZero(n);
 }
 

@@ -91,8 +91,8 @@ void plAGMasterMod::Write(hsStream *stream, hsResMgr *mgr)
     plModifier::Write(stream, mgr);
 
     int length = 0;
-    stream->WriteSwap32(length); // backwards compatability. Nuke on next format change.
-    stream->WriteSwap32(fPrivateAnims.size());
+    stream->WriteLE32(length); // backwards compatability. Nuke on next format change.
+    stream->WriteLE32(fPrivateAnims.size());
     int i;
     for (i = 0; i < fPrivateAnims.size(); i++)
     {
@@ -111,14 +111,14 @@ void plAGMasterMod::Read(hsStream * stream, hsResMgr *mgr)
     plModifier::Read(stream, mgr);
 
     //////////////////////////////////////////
-    int nameLength = stream->ReadSwap32();  // Unused. Nuke next format change.
+    int nameLength = stream->ReadLE32();  // Unused. Nuke next format change.
     char *junk = TRACKED_NEW char[nameLength+1];    //
     stream->Read(nameLength, junk);         //
     junk[nameLength] = 0;                   //
     delete [] junk;                         //
     //////////////////////////////////////////
 
-    int numPrivateAnims = stream->ReadSwap32();
+    int numPrivateAnims = stream->ReadLE32();
     fPrivateAnims.reserve(numPrivateAnims);             // pre-allocate for performance
     int i;
     for (i = 0; i < numPrivateAnims; i++)

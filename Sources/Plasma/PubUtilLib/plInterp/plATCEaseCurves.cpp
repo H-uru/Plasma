@@ -119,24 +119,24 @@ void plATCEaseCurve::Read(hsStream *s, hsResMgr *mgr)
 {
     plCreatable::Read(s, mgr);
 
-    fMinLength = s->ReadSwapScalar();
-    fMaxLength = s->ReadSwapScalar();
-    fNormLength = fLength = s->ReadSwapScalar();
-    fStartSpeed = s->ReadSwapScalar();
-    fSpeed = s->ReadSwapScalar();
-    fBeginWorldTime = s->ReadSwapDouble();
+    fMinLength = s->ReadLEScalar();
+    fMaxLength = s->ReadLEScalar();
+    fNormLength = fLength = s->ReadLEScalar();
+    fStartSpeed = s->ReadLEScalar();
+    fSpeed = s->ReadLEScalar();
+    fBeginWorldTime = s->ReadLEDouble();
 }
 
 void plATCEaseCurve::Write(hsStream *s, hsResMgr *mgr)
 {
     plCreatable::Write(s, mgr);
 
-    s->WriteSwapScalar(fMinLength);
-    s->WriteSwapScalar(fMaxLength);
-    s->WriteSwapScalar(fNormLength);
-    s->WriteSwapScalar(fStartSpeed);
-    s->WriteSwapScalar(fSpeed);
-    s->WriteSwapDouble(fBeginWorldTime);
+    s->WriteLEScalar(fMinLength);
+    s->WriteLEScalar(fMaxLength);
+    s->WriteLEScalar(fNormLength);
+    s->WriteLEScalar(fStartSpeed);
+    s->WriteLEScalar(fSpeed);
+    s->WriteLEDouble(fBeginWorldTime);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,19 +345,19 @@ void plSplineEaseCurve::Read(hsStream *s, hsResMgr *mgr)
 {
     plATCEaseCurve::Read(s, mgr);
 
-    fCoef[0] = s->ReadSwapScalar();
-    fCoef[1] = s->ReadSwapScalar();
-    fCoef[2] = s->ReadSwapScalar();
-    fCoef[3] = s->ReadSwapScalar();
+    fCoef[0] = s->ReadLEScalar();
+    fCoef[1] = s->ReadLEScalar();
+    fCoef[2] = s->ReadLEScalar();
+    fCoef[3] = s->ReadLEScalar();
 }
 
 void plSplineEaseCurve::Write(hsStream *s, hsResMgr *mgr)
 {
     plATCEaseCurve::Write(s, mgr);
 
-    s->WriteSwapScalar(fCoef[0]);
-    s->WriteSwapScalar(fCoef[1]);
-    s->WriteSwapScalar(fCoef[2]);
-    s->WriteSwapScalar(fCoef[3]);
+    s->WriteLEScalar(fCoef[0]);
+    s->WriteLEScalar(fCoef[1]);
+    s->WriteLEScalar(fCoef[2]);
+    s->WriteLEScalar(fCoef[3]);
 }
 

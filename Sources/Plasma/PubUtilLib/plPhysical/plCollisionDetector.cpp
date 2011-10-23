@@ -220,12 +220,12 @@ hsBool plCollisionDetector::MsgReceive(plMessage* msg)
 void plCollisionDetector::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Read(stream, mgr);
-    stream->ReadSwap(&fType);
+    stream->ReadLE(&fType);
 }
 void plCollisionDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Write(stream, mgr);
-    stream->WriteSwap(fType);
+    stream->WriteLE(fType);
 }
 
 /////////////////////////////////
@@ -371,7 +371,7 @@ hsBool plCameraRegionDetector::MsgReceive(plMessage* msg)
 void plCameraRegionDetector::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Read(stream, mgr);
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     fMessages.SetCountAndZero(n);
     for(int i = 0; i < n; i++ )
     {   
@@ -383,7 +383,7 @@ void plCameraRegionDetector::Read(hsStream* stream, hsResMgr* mgr)
 void plCameraRegionDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Write(stream, mgr);
-    stream->WriteSwap32(fMessages.GetCount());
+    stream->WriteLE32(fMessages.GetCount());
     for(int i = 0; i < fMessages.GetCount(); i++ )
         mgr->WriteCreatable( stream, fMessages[i] );
 
@@ -842,7 +842,7 @@ void plObjectInVolumeAndFacingDetector::Read(hsStream* stream, hsResMgr* mgr)
 {
     plObjectInVolumeDetector::Read(stream, mgr);
 
-    fFacingTolerance = stream->ReadSwapScalar();
+    fFacingTolerance = stream->ReadLEScalar();
     fNeedWalkingForward = stream->Readbool();
 }
 
@@ -850,7 +850,7 @@ void plObjectInVolumeAndFacingDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plObjectInVolumeDetector::Write(stream, mgr);
 
-    stream->WriteSwapScalar(fFacingTolerance);
+    stream->WriteLEScalar(fFacingTolerance);
     stream->Writebool(fNeedWalkingForward);
 }
 
@@ -1088,8 +1088,8 @@ void plSwimDetector::Write(hsStream *stream, hsResMgr *mgr)
     plSimpleRegionSensor::Write(stream, mgr);
 
     stream->WriteByte(0);
-    stream->WriteSwapScalar(0);
-    stream->WriteSwapScalar(0);
+    stream->WriteLEScalar(0);
+    stream->WriteLEScalar(0);
 }
 
 void plSwimDetector::Read(hsStream *stream, hsResMgr *mgr)
@@ -1097,8 +1097,8 @@ void plSwimDetector::Read(hsStream *stream, hsResMgr *mgr)
     plSimpleRegionSensor::Read(stream, mgr);
 
     stream->ReadByte();
-    stream->ReadSwapScalar();
-    stream->ReadSwapScalar();
+    stream->ReadLEScalar();
+    stream->ReadLEScalar();
 }
 hsBool plSwimDetector::MsgReceive(plMessage *msg)
 {

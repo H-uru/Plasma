@@ -179,10 +179,10 @@ void plRegistryPageNode::LoadKeys()
     stream->SetPosition(GetPageInfo().GetIndexStart());
 
     // Read in the number of key types
-    UInt32 numTypes = stream->ReadSwap32();
+    UInt32 numTypes = stream->ReadLE32();
     for (UInt32 i = 0; i < numTypes; i++)
     {
-        UInt16 classType = stream->ReadSwap16();
+        UInt16 classType = stream->ReadLE16();
         plRegistryKeyList* keyList = IGetKeyList(classType);
         if (!keyList)
         {
@@ -265,11 +265,11 @@ void plRegistryPageNode::Write()
     fPageInfo.SetIndexStart(fStream.GetPosition());
 
     // Write our keys
-    fStream.WriteSwap32(fKeyLists.size());
+    fStream.WriteLE32(fKeyLists.size());
     for (it = fKeyLists.begin(); it != fKeyLists.end(); it++)
     {
         plRegistryKeyList* keyList = it->second;
-        fStream.WriteSwap16(keyList->GetClassType());
+        fStream.WriteLE16(keyList->GetClassType());
         keyList->Write(&fStream);
     }
 

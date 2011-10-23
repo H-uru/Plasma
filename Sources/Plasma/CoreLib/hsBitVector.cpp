@@ -115,24 +115,24 @@ void hsBitVector::Read(hsStream* s)
 {
     Reset();
 
-    s->LogReadSwap(&fNumBitVectors,"NumBitVectors");
+    s->LogReadLE(&fNumBitVectors,"NumBitVectors");
     if( fNumBitVectors )
     {
         delete [] fBitVectors;
         fBitVectors = TRACKED_NEW UInt32[fNumBitVectors];
         int i;
         for( i = 0; i < fNumBitVectors; i++ )
-            s->LogReadSwap(&fBitVectors[i],"BitVector");
+            s->LogReadLE(&fBitVectors[i],"BitVector");
     }
 }
 
 void hsBitVector::Write(hsStream* s) const
 {
-    s->WriteSwap32(fNumBitVectors);
+    s->WriteLE32(fNumBitVectors);
 
     int i;
     for( i = 0; i < fNumBitVectors; i++ )
-        s->WriteSwap32(fBitVectors[i]);
+        s->WriteLE32(fBitVectors[i]);
 }
 
 hsTArray<Int16>& hsBitVector::Enumerate(hsTArray<Int16>& dst) const

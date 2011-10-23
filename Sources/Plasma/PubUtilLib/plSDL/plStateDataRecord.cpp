@@ -65,9 +65,9 @@ void plSDL::VariableLengthRead(hsStream* s, int size, int* val)
         *val = s->ReadByte();
     else
     if (size < (1<<16))
-        *val = s->ReadSwap16();
+        *val = s->ReadLE16();
     else
-        *val = s->ReadSwap32();
+        *val = s->ReadLE32();
 }
 
 //
@@ -86,10 +86,10 @@ void plSDL::VariableLengthWrite(hsStream* s, int size, int val)
     if (size < (1<<16))
     {
         hsAssert(val < (1<<16), "SDL data loss");
-        s->WriteSwap16(val);
+        s->WriteLE16(val);
     }
     else
-        s->WriteSwap32(val);
+        s->WriteLE32(val);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ bool plStateDataRecord::IHasUsedVars(const VarsList& vars) const
 //
 bool plStateDataRecord::Read(hsStream* s, float timeConvert, UInt32 readOptions)
 {
-    fFlags = s->ReadSwap16();
+    fFlags = s->ReadLE16();
     UInt8 ioVersion = s->ReadByte();
     if (ioVersion != kIOVersion)
         return false;
@@ -343,7 +343,7 @@ void plStateDataRecord::Write(hsStream* s, float timeConvert, UInt32 writeOption
     }
 #endif
 
-    s->WriteSwap16((UInt16)fFlags);
+    s->WriteLE16((UInt16)fFlags);
     s->WriteByte(kIOVersion);
 
     //
@@ -395,7 +395,7 @@ void plStateDataRecord::Write(hsStream* s, float timeConvert, UInt32 writeOption
 bool plStateDataRecord::ReadStreamHeader(hsStream* s, char** name, int* version, plUoid* objUoid)
 {
     UInt16 savFlags;
-    s->ReadSwap(&savFlags);
+    s->ReadLE(&savFlags);
     if (!(savFlags & plSDL::kAddedVarLengthIO))     // using to establish a new version in the header, can delete in 8/03
     {
         *name = nil;
@@ -403,7 +403,7 @@ bool plStateDataRecord::ReadStreamHeader(hsStream* s, char** name, int* version,
     }
 
     *name = s->ReadSafeString();
-    *version = s->ReadSwap16();
+    *version = s->ReadLE16();
     
     if (objUoid)
     {
@@ -433,9 +433,9 @@ void plStateDataRecord::WriteStreamHeader(hsStream* s, plUoid* objUoid) const
     if (objUoid)
         savFlags |= plSDL::kHasUoid;
 
-    s->WriteSwap(savFlags);
+    s->WriteLE(savFlags);
     s->WriteSafeString(GetDescriptor()->GetName());         
-    s->WriteSwap16((Int16)GetDescriptor()->GetVersion());
+    s->WriteLE16((Int16)GetDescriptor()->GetVersion());
     if (objUoid)
         objUoid->Write(s);
 }

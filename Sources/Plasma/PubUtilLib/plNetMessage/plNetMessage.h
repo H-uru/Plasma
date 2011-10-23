@@ -691,8 +691,8 @@ public:
         plNetGroupId fGroupID;
         bool fOwnIt;    // else not the owner
 
-        void Read(hsStream* s) { fGroupID.Read(s); s->LogReadSwap(&fOwnIt,"GroupOwner OwnIt"); }
-        void Write(hsStream* s) { fGroupID.Write(s); s->WriteSwap(fOwnIt); }
+        void Read(hsStream* s) { fGroupID.Read(s); s->LogReadLE(&fOwnIt,"GroupOwner OwnIt"); }
+        void Write(hsStream* s) { fGroupID.Write(s); s->WriteLE(fOwnIt); }
 
       GroupInfo() : fGroupID(plNetGroup::kNetGroupUnknown), fOwnIt(false) {}
         GroupInfo(plNetGroupId gID, hsBool o) : fGroupID(gID),fOwnIt(o) {}

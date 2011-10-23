@@ -55,18 +55,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Little shader const helper
 void plShaderConst::Read(hsStream* s)
 {
-    fX = s->ReadSwapScalar();
-    fY = s->ReadSwapScalar();
-    fZ = s->ReadSwapScalar();
-    fW = s->ReadSwapScalar();
+    fX = s->ReadLEScalar();
+    fY = s->ReadLEScalar();
+    fZ = s->ReadLEScalar();
+    fW = s->ReadLEScalar();
 }
 
 void plShaderConst::Write(hsStream* s)
 {
-    s->WriteSwapScalar(fX);
-    s->WriteSwapScalar(fY);
-    s->WriteSwapScalar(fZ);
-    s->WriteSwapScalar(fW);
+    s->WriteLEScalar(fX);
+    s->WriteLEScalar(fY);
+    s->WriteLEScalar(fZ);
+    s->WriteLEScalar(fW);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -287,13 +287,13 @@ void plShader::Read(hsStream* s, hsResMgr* mgr)
 
     hsKeyedObject::Read(s, mgr);
 
-    UInt32 n = s->ReadSwap32();
+    UInt32 n = s->ReadLE32();
     fConsts.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
         fConsts[i].Read(s);
 
-    plShaderID::ID id = plShaderID::ID(s->ReadSwap32());
+    plShaderID::ID id = plShaderID::ID(s->ReadLE32());
     SetDecl(plShaderTable::Decl(id));
 
     fInput = s->ReadByte();
@@ -304,12 +304,12 @@ void plShader::Write(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    s->WriteSwap32(fConsts.GetCount());
+    s->WriteLE32(fConsts.GetCount());
     int i;
     for( i = 0; i < fConsts.GetCount(); i++ )
         fConsts[i].Write(s);
 
-    s->WriteSwap32(fDecl->GetID());
+    s->WriteLE32(fDecl->GetID());
 
     s->WriteByte(fInput);
     s->WriteByte(fOutput);

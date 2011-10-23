@@ -304,33 +304,33 @@ std::string plClientGuid::AsLogString() const
 void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
 {
     s->LogSubStreamStart("push me");
-    s->LogReadSwap(&fFlags,"Flags");
+    s->LogReadLE(&fFlags,"Flags");
     if (IsFlagSet(kAccountUUID))
     {
         s->LogSubStreamPushDesc("AcctUUID");
         fAccountUUID.Read( s );
     }
     if (IsFlagSet(kPlayerID))
-        s->LogReadSwap(&fPlayerID,"PlayerID");
+        s->LogReadLE(&fPlayerID,"PlayerID");
     else if (IsFlagSet(kTempPlayerID))
-        s->LogReadSwap(&fPlayerID,"TempPlayerID");
+        s->LogReadLE(&fPlayerID,"TempPlayerID");
     if (IsFlagSet(kPlayerName))
     {
         s->LogSubStreamPushDesc("PlayerName");
         plMsgStdStringHelper::Peek( fPlayerName, s );
     }
     if (IsFlagSet(kCCRLevel))
-        s->LogReadSwap(&fCCRLevel,"CCRLevel");
+        s->LogReadLE(&fCCRLevel,"CCRLevel");
     if (IsFlagSet(kProtectedLogin))
-        s->LogReadSwap(&fProtectedLogin,"ProtectedLogin");
+        s->LogReadLE(&fProtectedLogin,"ProtectedLogin");
     if (IsFlagSet(kBuildType))
-        s->LogReadSwap(&fBuildType,"BuildType");
+        s->LogReadLE(&fBuildType,"BuildType");
     if (IsFlagSet(kSrcAddr))
-        s->LogReadSwap(&fSrcAddr,"SrcAddr");
+        s->LogReadLE(&fSrcAddr,"SrcAddr");
     if (IsFlagSet(kSrcPort))
-        s->LogReadSwap(&fSrcPort,"SrcPort");
+        s->LogReadLE(&fSrcPort,"SrcPort");
     if (IsFlagSet(kReserved))
-        s->LogReadSwap(&fReserved,"Reserved");
+        s->LogReadLE(&fReserved,"Reserved");
     if (IsFlagSet(kClientKey))
     {
         s->LogSubStreamPushDesc("ClientKey");
@@ -341,27 +341,27 @@ void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
 
 void plClientGuid::Write(hsStream * s, hsResMgr* mgr)
 {
-    s->WriteSwap(fFlags);
+    s->WriteLE(fFlags);
     if (IsFlagSet(kAccountUUID))
         fAccountUUID.Write( s );
     if (IsFlagSet(kPlayerID))
-        s->WriteSwap(fPlayerID);
+        s->WriteLE(fPlayerID);
     else if (IsFlagSet(kTempPlayerID))
-        s->WriteSwap(fPlayerID);
+        s->WriteLE(fPlayerID);
     if (IsFlagSet(kPlayerName))
         plMsgStdStringHelper::Poke( fPlayerName, s );
     if (IsFlagSet(kCCRLevel))
-        s->WriteSwap(fCCRLevel);
+        s->WriteLE(fCCRLevel);
     if (IsFlagSet(kProtectedLogin))
-        s->WriteSwap(fProtectedLogin);
+        s->WriteLE(fProtectedLogin);
     if (IsFlagSet(kBuildType))
-        s->WriteSwap(fBuildType);
+        s->WriteLE(fBuildType);
     if (IsFlagSet(kSrcAddr))
-        s->WriteSwap(fSrcAddr);
+        s->WriteLE(fSrcAddr);
     if (IsFlagSet(kSrcPort))
-        s->WriteSwap(fSrcPort);
+        s->WriteLE(fSrcPort);
     if (IsFlagSet(kReserved))
-        s->WriteSwap(fReserved);
+        s->WriteLE(fReserved);
     if (IsFlagSet(kClientKey))
         plMsgStdStringHelper::Poke( fClientKey, s );
 }

@@ -779,7 +779,7 @@ void plAvBrainGeneric::Write(hsStream *stream, hsResMgr *mgr)
 {
     plArmatureBrain::Write(stream, mgr);
     int numStages = fStages->size();
-    stream->WriteSwap32(numStages);
+    stream->WriteLE32(numStages);
 
     for(int i = 0; i < numStages; i++)
     {
@@ -790,9 +790,9 @@ void plAvBrainGeneric::Write(hsStream *stream, hsResMgr *mgr)
         stage->SaveAux(stream, mgr);            // save ephemeral state 
     }
 
-    stream->WriteSwap32(fCurStage);
-    stream->WriteSwap32(fType);
-    stream->WriteSwap32(fExitFlags);
+    stream->WriteLE32(fCurStage);
+    stream->WriteLE32(fType);
+    stream->WriteLE32(fExitFlags);
     stream->WriteByte(fMode);
     stream->Writebool(fForward);
 
@@ -810,8 +810,8 @@ void plAvBrainGeneric::Write(hsStream *stream, hsResMgr *mgr)
         stream->WriteBool(false);
     }
 
-    stream->WriteSwapScalar(fFadeIn);
-    stream->WriteSwapScalar(fFadeOut);
+    stream->WriteLEScalar(fFadeIn);
+    stream->WriteLEScalar(fFadeOut);
     stream->WriteByte(fMoveMode);
     stream->WriteByte(fBodyUsage);
     mgr->WriteKey(stream, fRecipient);
@@ -822,7 +822,7 @@ void plAvBrainGeneric::Write(hsStream *stream, hsResMgr *mgr)
 void plAvBrainGeneric::Read(hsStream *stream, hsResMgr *mgr)
 {
     plArmatureBrain::Read(stream, mgr);
-    int numStages = stream->ReadSwap32();
+    int numStages = stream->ReadLE32();
 
     for(int i = 0; i < numStages; i++)
     {
@@ -834,9 +834,9 @@ void plAvBrainGeneric::Read(hsStream *stream, hsResMgr *mgr)
         fStages->push_back(stage);
     }
 
-    fCurStage = stream->ReadSwap32();
-    fType = static_cast<plAvBrainGeneric::BrainType>(stream->ReadSwap32());
-    fExitFlags = stream->ReadSwap32();
+    fCurStage = stream->ReadLE32();
+    fType = static_cast<plAvBrainGeneric::BrainType>(stream->ReadLE32());
+    fExitFlags = stream->ReadLE32();
     fMode = static_cast<Mode>(stream->ReadByte());
     fForward = stream->Readbool();
 
@@ -851,8 +851,8 @@ void plAvBrainGeneric::Read(hsStream *stream, hsResMgr *mgr)
         fEndMessage = nil;
     }
 
-    fFadeIn = stream->ReadSwapScalar();
-    fFadeOut = stream->ReadSwapScalar();
+    fFadeIn = stream->ReadLEScalar();
+    fFadeOut = stream->ReadLEScalar();
     fMoveMode = static_cast<MoveMode>(stream->ReadByte());
     fBodyUsage = static_cast<plAGAnim::BodyUsage>(stream->ReadByte());
     fRecipient = mgr->ReadKey(stream);

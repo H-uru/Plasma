@@ -239,7 +239,7 @@ void plLogicModifier::Read(hsStream* stream, hsResMgr* mgr)
 {
     plLogicModBase::Read(stream, mgr);
     plCondRefMsg* refMsg;
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     fConditionList.SetCountAndZero(n);
     int i;
     for(i = 0; i < n; i++ )
@@ -247,16 +247,16 @@ void plLogicModifier::Read(hsStream* stream, hsResMgr* mgr)
         refMsg = TRACKED_NEW plCondRefMsg(GetKey(), i);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
     }
-    fMyCursor = stream->ReadSwap32();
+    fMyCursor = stream->ReadLE32();
 }
 
 void plLogicModifier::Write(hsStream* stream, hsResMgr* mgr)
 {
     plLogicModBase::Write(stream, mgr);
-    stream->WriteSwap32(fConditionList.GetCount());
+    stream->WriteLE32(fConditionList.GetCount());
     for( int i = 0; i < fConditionList.GetCount(); i++ )
         mgr->WriteKey(stream, fConditionList[i]);
-    stream->WriteSwap32(fMyCursor);
+    stream->WriteLE32(fMyCursor);
 }
 
 void plLogicModifier::AddCondition(plConditionalObject* c)

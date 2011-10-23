@@ -333,11 +333,11 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
     hsKeyedObject::Read(stream, mgr);
     fNetGroup = GetKey()->GetUoid().GetLocation();
 
-    stream->ReadSwap(&fSynchFlags);
+    stream->ReadLE(&fSynchFlags);
     if (fSynchFlags & kExcludePersistentState)
     {
         Int16 num;
-        stream->ReadSwap(&num);
+        stream->ReadLE(&num);
         fSDLExcludeList.clear();
         int i;
         for(i=0;i<num;i++)
@@ -351,7 +351,7 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
     if (fSynchFlags & kHasVolatileState)
     {
         Int16 num;
-        stream->ReadSwap(&num);
+        stream->ReadLE(&num);
         fSDLVolatileList.clear();
         int i;
         for(i=0;i<num;i++)
@@ -366,12 +366,12 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
 void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     hsKeyedObject::Write(stream, mgr);
-    stream->WriteSwap(fSynchFlags);
+    stream->WriteLE(fSynchFlags);
 
     if (fSynchFlags & kExcludePersistentState)
     {
         Int16 num=fSDLExcludeList.size();
-        stream->WriteSwap(num);
+        stream->WriteLE(num);
 
         SDLStateList::iterator it=fSDLExcludeList.begin();
         for(; it != fSDLExcludeList.end(); it++)
@@ -383,7 +383,7 @@ void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
     if (fSynchFlags & kHasVolatileState)
     {
         Int16 num=fSDLVolatileList.size();
-        stream->WriteSwap(num);
+        stream->WriteLE(num);
 
         SDLStateList::iterator it=fSDLVolatileList.begin();
         for(; it != fSDLVolatileList.end(); it++)

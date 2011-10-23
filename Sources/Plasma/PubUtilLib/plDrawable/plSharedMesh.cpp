@@ -108,7 +108,7 @@ void plSharedMesh::Read(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Read(s, mgr);
     
     int i;
-    fSpans.SetCount(s->ReadSwap32());
+    fSpans.SetCount(s->ReadLE32());
     for (i = 0; i < fSpans.GetCount(); i++)
     {
         fSpans[i] = TRACKED_NEW plGeometrySpan;
@@ -124,7 +124,7 @@ void plSharedMesh::Write(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Write(s, mgr);
 
     int i;
-    s->WriteSwap32(fSpans.GetCount());
+    s->WriteLE32(fSpans.GetCount());
     for (i = 0; i < fSpans.GetCount(); i++)
         fSpans[i]->Write(s);
 

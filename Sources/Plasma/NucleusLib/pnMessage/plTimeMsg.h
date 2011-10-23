@@ -72,15 +72,15 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgRead(stream, mgr);
-        stream->ReadSwap(&fSeconds);
-        stream->ReadSwap(&fDelSecs);
+        stream->ReadLE(&fSeconds);
+        stream->ReadLE(&fDelSecs);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
-        stream->WriteSwap(fSeconds);
-        stream->WriteSwap(fDelSecs);
+        stream->WriteLE(fSeconds);
+        stream->WriteLE(fDelSecs);
     }
 };
 

@@ -67,14 +67,14 @@ hsBool plFacingConditionalObject::MsgReceive(plMessage* msg)
 void plFacingConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteSwap(fTolerance);
+    stream->WriteLE(fTolerance);
     stream->WriteBool(fDirectional);
 }
 
 void plFacingConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Read(stream, mgr);
-    stream->ReadSwap(&fTolerance);
+    stream->ReadLE(&fTolerance);
     fDirectional = stream->ReadBool();
 }
 
