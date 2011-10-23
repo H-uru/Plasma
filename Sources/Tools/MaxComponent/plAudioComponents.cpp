@@ -80,8 +80,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysX/plPXPhysical.h"
 
 // Sound Related
-#include "plPhysical/plEnvEffectDetector.h"
-#include "pnMessage/plEnvEffectMsg.h"
 #include "plAudible/plWinAudible.h"
 #include "pnSceneObject/plAudioInterface.h"
 
