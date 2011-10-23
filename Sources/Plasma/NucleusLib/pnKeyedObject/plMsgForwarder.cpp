@@ -75,7 +75,7 @@ void plMsgForwarder::Read(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    int numKeys = s->ReadSwap32();
+    int numKeys = s->ReadLE32();
     fForwardKeys.Reset();
     fForwardKeys.Expand(numKeys);
     fForwardKeys.SetCount(numKeys);
@@ -91,7 +91,7 @@ void plMsgForwarder::Write(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Write(s, mgr);
 
     int numKeys = fForwardKeys.Count();
-    s->WriteSwap32(numKeys);
+    s->WriteLE32(numKeys);
     for (int i = 0; i < numKeys; i++)
         mgr->WriteKey(s, fForwardKeys[i]);
 }

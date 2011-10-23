@@ -108,9 +108,9 @@ void plSpanTemplate::DeAlloc()
 
 void plSpanTemplate::Read(hsStream* stream)
 {
-    fNumVerts = stream->ReadSwap16();
-    fFormat = stream->ReadSwap16();
-    fNumTris = stream->ReadSwap16();
+    fNumVerts = stream->ReadLE16();
+    fFormat = stream->ReadLE16();
+    fNumTris = stream->ReadLE16();
 
     Alloc(fFormat, fNumVerts, fNumTris);
 
@@ -120,9 +120,9 @@ void plSpanTemplate::Read(hsStream* stream)
 
 void plSpanTemplate::Write(hsStream* stream) const
 {
-    stream->WriteSwap16(fNumVerts);
-    stream->WriteSwap16(fFormat);
-    stream->WriteSwap16(fNumTris);
+    stream->WriteLE16(fNumVerts);
+    stream->WriteLE16(fFormat);
+    stream->WriteLE16(fNumTris);
 
     stream->Write(VertSize(), fData);
     stream->Write(IndexSize(), fIndices);

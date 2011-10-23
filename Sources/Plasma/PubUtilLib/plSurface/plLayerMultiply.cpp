@@ -57,11 +57,11 @@ void plLayerMultiply::Read(hsStream* s, hsResMgr* mgr)
 {
     plLayerInterface::Read(s, mgr);
 
-    fOwnedChannels = s->ReadSwap32();
+    fOwnedChannels = s->ReadLE32();
     if (fOwnedChannels & kOpacity)
     {
         fOpacity = TRACKED_NEW hsScalar;
-        *fOpacity = fSrcOpacity = s->ReadSwapScalar();
+        *fOpacity = fSrcOpacity = s->ReadLEScalar();
         fDirtyChannels |= kOpacity;
     }
     
@@ -102,9 +102,9 @@ void plLayerMultiply::Write(hsStream* s, hsResMgr* mgr)
 {
     plLayerInterface::Write(s, mgr);
 
-    s->WriteSwap32(fOwnedChannels);
+    s->WriteLE32(fOwnedChannels);
     if (fOwnedChannels & kOpacity)
-        s->WriteSwapScalar(fSrcOpacity);
+        s->WriteLEScalar(fSrcOpacity);
 
     if (fOwnedChannels & kPreshadeColor)
         fSrcPreshadeColor.Write(s);

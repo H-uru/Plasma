@@ -94,23 +94,23 @@ UInt32  plRenderTarget::Read( hsStream *s )
 {
     UInt32  total = plBitmap::Read( s );
 
-    fWidth = s->ReadSwap16();
-    fHeight = s->ReadSwap16();
+    fWidth = s->ReadLE16();
+    fHeight = s->ReadLE16();
 
     fProportionalViewport = s->ReadBool();
     if( fProportionalViewport )
     {
-        fViewport.fProportional.fLeft = s->ReadSwapScalar();
-        fViewport.fProportional.fTop = s->ReadSwapScalar();
-        fViewport.fProportional.fRight = s->ReadSwapScalar();
-        fViewport.fProportional.fBottom = s->ReadSwapScalar();
+        fViewport.fProportional.fLeft = s->ReadLEScalar();
+        fViewport.fProportional.fTop = s->ReadLEScalar();
+        fViewport.fProportional.fRight = s->ReadLEScalar();
+        fViewport.fProportional.fBottom = s->ReadLEScalar();
     }
     else
     {
-        fViewport.fAbsolute.fLeft = s->ReadSwap16();
-        fViewport.fAbsolute.fTop = s->ReadSwap16();
-        fViewport.fAbsolute.fRight = s->ReadSwap16();
-        fViewport.fAbsolute.fBottom = s->ReadSwap16();
+        fViewport.fAbsolute.fLeft = s->ReadLE16();
+        fViewport.fAbsolute.fTop = s->ReadLE16();
+        fViewport.fAbsolute.fRight = s->ReadLE16();
+        fViewport.fAbsolute.fBottom = s->ReadLE16();
     }
 
     fZDepth = s->ReadByte();
@@ -123,23 +123,23 @@ UInt32  plRenderTarget::Write( hsStream *s )
 {
     UInt32  total = plBitmap::Write( s );
 
-    s->WriteSwap16( fWidth );
-    s->WriteSwap16( fHeight );
+    s->WriteLE16( fWidth );
+    s->WriteLE16( fHeight );
 
     s->WriteBool( fProportionalViewport );
     if( fProportionalViewport )
     {
-        s->WriteSwapScalar( fViewport.fProportional.fLeft );
-        s->WriteSwapScalar( fViewport.fProportional.fTop );
-        s->WriteSwapScalar( fViewport.fProportional.fRight );
-        s->WriteSwapScalar( fViewport.fProportional.fBottom );
+        s->WriteLEScalar( fViewport.fProportional.fLeft );
+        s->WriteLEScalar( fViewport.fProportional.fTop );
+        s->WriteLEScalar( fViewport.fProportional.fRight );
+        s->WriteLEScalar( fViewport.fProportional.fBottom );
     }
     else
     {
-        s->WriteSwap16( fViewport.fAbsolute.fLeft );
-        s->WriteSwap16( fViewport.fAbsolute.fTop );
-        s->WriteSwap16( fViewport.fAbsolute.fRight );
-        s->WriteSwap16( fViewport.fAbsolute.fBottom );
+        s->WriteLE16( fViewport.fAbsolute.fLeft );
+        s->WriteLE16( fViewport.fAbsolute.fTop );
+        s->WriteLE16( fViewport.fAbsolute.fRight );
+        s->WriteLE16( fViewport.fAbsolute.fBottom );
     }
 
     s->WriteByte( fZDepth );

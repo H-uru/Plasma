@@ -79,11 +79,11 @@ void plDynaDecalEnableMsg::Read(hsStream* stream, hsResMgr* mgr)
 
     fKey = mgr->ReadKey(stream);
 
-    fConTime = stream->ReadSwapDouble();
+    fConTime = stream->ReadLEDouble();
 
-    fFlags = stream->ReadSwap32();
+    fFlags = stream->ReadLE32();
 
-    fID = stream->ReadSwap32();
+    fID = stream->ReadLE32();
 }
 
 void plDynaDecalEnableMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -92,10 +92,10 @@ void plDynaDecalEnableMsg::Write(hsStream* stream, hsResMgr* mgr)
 
     mgr->WriteKey(stream, fKey);
 
-    stream->WriteSwapDouble(fConTime);
+    stream->WriteLEDouble(fConTime);
 
-    stream->WriteSwap32(fFlags);
+    stream->WriteLE32(fFlags);
 
-    stream->WriteSwap32(fID);
+    stream->WriteLE32(fID);
 }
 

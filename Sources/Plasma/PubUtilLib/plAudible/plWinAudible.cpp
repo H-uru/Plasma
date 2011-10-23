@@ -453,7 +453,7 @@ hsBool plWinAudible::IsPlaying(int index)
 void plWinAudible::Read(hsStream* s, hsResMgr* mgr)
 {
     plAudible::Read(s, mgr);
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     fSoundObjs.SetCountAndZero(n);
     for(int i = 0; i < n; i++ )
     {   
@@ -482,7 +482,7 @@ void plWinAudible::IAssignSoundKey( plSound *sound, const char *name, UInt32 i )
 void plWinAudible::Write(hsStream* s, hsResMgr* mgr)
 {
     plAudible::Write(s, mgr);
-    s->WriteSwap32(fSoundObjs.GetCount());
+    s->WriteLE32(fSoundObjs.GetCount());
     for(int i = 0; i < fSoundObjs.GetCount(); i++ )
 //      mgr->WriteCreatable( s, fSoundObjs[i] );
         mgr->WriteKey(s, fSoundObjs[i]);

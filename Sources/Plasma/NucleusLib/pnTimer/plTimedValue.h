@@ -76,7 +76,7 @@ public:
 };
 
 // Read/Writable version of plTimedValue, for intrinsic types (e.g. int, float, bool).
-// Must be a type that hsStream has an overloaded ReadSwap/WriteSwap defined.
+// Must be a type that hsStream has an overloaded ReadLE/WriteLE defined.
 template <class T> class plTimedSimple : public plTimedValue<T>
 {
 public:
@@ -141,7 +141,7 @@ template <class T>
 void plTimedSimple<T>::Read(hsStream* s)
 {
     T val;
-    s->ReadSwap(&val);
+    s->ReadLE(&val);
     Set(val, 0.f);
 }
 
@@ -149,7 +149,7 @@ template <class T>
 void plTimedSimple<T>::Write(hsStream* s) const
 {
     T val = this->Value();
-    s->WriteSwap(val);
+    s->WriteLE(val);
 }
 
 template <class T> 

@@ -214,20 +214,20 @@ void plArmatureModBase::Read(hsStream * stream, hsResMgr *mgr)
     plAGMasterMod::Read(stream, mgr);
 
     int i;
-    int meshKeyCount = stream->ReadSwap32();
+    int meshKeyCount = stream->ReadLE32();
     for(i = 0; i < meshKeyCount; i++)
     {
         plKey meshKey = mgr->ReadKey(stream);
         fMeshKeys.push_back(meshKey);
         
         plKeyVector *vec = TRACKED_NEW plKeyVector;
-        int boneCount = stream->ReadSwap32();
+        int boneCount = stream->ReadLE32();
         for(int j = 0; j < boneCount; j++)
             vec->push_back(mgr->ReadKey(stream));
         fUnusedBones.push_back(vec);
     }
 
-    int nBrains = stream->ReadSwap32();
+    int nBrains = stream->ReadLE32();
     for (i = 0; i < nBrains; i++)
     {
         plArmatureBrain * brain = (plArmatureBrain *)mgr->ReadCreatable(stream);
@@ -241,20 +241,20 @@ void plArmatureModBase::Write(hsStream *stream, hsResMgr *mgr)
 
     int i;
     int meshKeyCount = fMeshKeys.size();
-    stream->WriteSwap32(meshKeyCount);  
+    stream->WriteLE32(meshKeyCount);  
     for (i = 0; i < meshKeyCount; i++)
     {
         plKey meshKey = fMeshKeys[i];
         mgr->WriteKey(stream, meshKey);
         
         // Should be a list per mesh key
-        stream->WriteSwap32(fUnusedBones[i]->size());
+        stream->WriteLE32(fUnusedBones[i]->size());
         for(int j = 0; j < fUnusedBones[i]->size(); j++)
             mgr->WriteKey(stream, (*fUnusedBones[i])[j]);
     }
     
     int nBrains = fBrains.size();
-    stream->WriteSwap32(nBrains);
+    stream->WriteLE32(nBrains);
     for (i = 0; i < nBrains; i++)
     {
         mgr->WriteCreatable(stream, fBrains[i]);
@@ -1721,7 +1721,7 @@ void plArmatureMod::Write(hsStream *stream, hsResMgr *mgr)
     mgr->WriteKey(stream, fMeshKeys[0]);
     stream->WriteSafeString(fRootName);
     int nBrains = fBrains.size();
-    stream->WriteSwap32(nBrains);
+    stream->WriteLE32(nBrains);
     for (int i = 0; i < nBrains; i++)
         mgr->WriteCreatable(stream, fBrains[i]);
 
@@ -1735,7 +1735,7 @@ void plArmatureMod::Write(hsStream *stream, hsResMgr *mgr)
         mgr->WriteKey(stream, fClothingOutfit->GetKey());
     }
 
-    stream->WriteSwap32(fBodyType);
+    stream->WriteLE32(fBodyType);
     if( fEffects == nil )
         stream->WriteBool( false );
     else
@@ -1744,8 +1744,8 @@ void plArmatureMod::Write(hsStream *stream, hsResMgr *mgr)
         mgr->WriteKey(stream, fEffects->GetKey());
     }
 
-    stream->WriteSwapFloat(fPhysHeight);
-    stream->WriteSwapFloat(fPhysWidth);
+    stream->WriteLEFloat(fPhysHeight);
+    stream->WriteLEFloat(fPhysWidth);
 
     stream->WriteSafeString(fAnimationPrefix.c_str());
     stream->WriteSafeString(fBodyAgeName.c_str());
@@ -1764,7 +1764,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fRootName = stream->ReadSafeString();
 
     // read in the brains
-    int nBrains = stream->ReadSwap32();
+    int nBrains = stream->ReadLE32();
     for (int i = 0; i < nBrains; i++)
     {
         plArmatureBrain * brain = (plArmatureBrain *)mgr->ReadCreatable(stream);
@@ -1776,7 +1776,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     else
         fClothingOutfit = nil;
 
-    fBodyType = stream->ReadSwap32();
+    fBodyType = stream->ReadLE32();
 
     if( stream->ReadBool() )
     {
@@ -1825,8 +1825,8 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     else
         fEffects = nil;
 
-    fPhysHeight = stream->ReadSwapFloat();
-    fPhysWidth = stream->ReadSwapFloat();
+    fPhysHeight = stream->ReadLEFloat();
+    fPhysWidth = stream->ReadLEFloat();
 
     char* temp = stream->ReadSafeString();
     fAnimationPrefix = temp;
@@ -2608,14 +2608,14 @@ void plArmatureLODMod::Read(hsStream *stream, hsResMgr *mgr)
     plArmatureMod::Read(stream, mgr);
 
     fMeshKeys.clear();
-    int meshKeyCount = stream->ReadSwap32();
+    int meshKeyCount = stream->ReadLE32();
     for(int i = 0; i < meshKeyCount; i++)
     {
         plKey meshKey = mgr->ReadKey(stream);
         fMeshKeys.push_back(meshKey);
         
         plKeyVector *vec = TRACKED_NEW plKeyVector;
-        int boneCount = stream->ReadSwap32();
+        int boneCount = stream->ReadLE32();
         for(int j = 0; j < boneCount; j++)
             vec->push_back(mgr->ReadKey(stream));
         fUnusedBones.push_back(vec);
@@ -2628,7 +2628,7 @@ void plArmatureLODMod::Write(hsStream *stream, hsResMgr *mgr)
     plArmatureMod::Write(stream, mgr);
     
     int meshKeyCount = fMeshKeys.size();
-    stream->WriteSwap32(meshKeyCount);
+    stream->WriteLE32(meshKeyCount);
     
     for(int i = 0; i < meshKeyCount; i++)
     {
@@ -2636,7 +2636,7 @@ void plArmatureLODMod::Write(hsStream *stream, hsResMgr *mgr)
         mgr->WriteKey(stream, meshKey);
         
         // Should be a list per mesh key
-        stream->WriteSwap32(fUnusedBones[i]->size());
+        stream->WriteLE32(fUnusedBones[i]->size());
         for(int j = 0; j < fUnusedBones[i]->size(); j++)
             mgr->WriteKey(stream, (*fUnusedBones[i])[j]);
     }

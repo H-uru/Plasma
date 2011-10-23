@@ -189,9 +189,9 @@ class pfKIMsg : public plMessage
         virtual void Read(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgRead( s, mgr ); 
-            s->ReadSwap( &fCommand );
+            s->ReadLE( &fCommand );
             fUser = s->ReadSafeString();
-            fPlayerID = s->ReadSwap32();
+            fPlayerID = s->ReadLE32();
 
             wchar_t *temp = s->ReadSafeWString();
             if (temp) // apparently ReadSafeWString can return null, which std::wstring doesn't like being assigned
@@ -200,21 +200,21 @@ class pfKIMsg : public plMessage
                 fString = L"";
             delete [] temp;
 
-            fFlags = s->ReadSwap32();
-            fDelay = s->ReadSwapScalar();
-            fValue = s->ReadSwap32();
+            fFlags = s->ReadLE32();
+            fDelay = s->ReadLEScalar();
+            fValue = s->ReadLE32();
         }
         
         virtual void Write(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgWrite( s, mgr ); 
-            s->WriteSwap( fCommand );
+            s->WriteLE( fCommand );
             s->WriteSafeString( fUser );
-            s->WriteSwap32( fPlayerID );
+            s->WriteLE32( fPlayerID );
             s->WriteSafeWString( fString.c_str() );
-            s->WriteSwap32( fFlags );
-            s->WriteSwapScalar(fDelay);
-            s->WriteSwap32( fValue );
+            s->WriteLE32( fFlags );
+            s->WriteLEScalar(fDelay);
+            s->WriteLE32( fValue );
         }
 
         UInt8       GetCommand( void ) const { return fCommand; }

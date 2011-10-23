@@ -91,13 +91,13 @@ void plExcludeRegionModifier::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    int numPoints = stream->ReadSwap32();
+    int numPoints = stream->ReadLE32();
     for (int i = 0; i < numPoints; i++)
     {
         fSafePoints.push_back(mgr->ReadKey(stream));
     }
     fSeek = stream->ReadBool();
-    fSeekTime = stream->ReadSwapScalar();
+    fSeekTime = stream->ReadLEScalar();
 }
 
 void plExcludeRegionModifier::Write(hsStream* stream, hsResMgr* mgr)
@@ -105,13 +105,13 @@ void plExcludeRegionModifier::Write(hsStream* stream, hsResMgr* mgr)
     plSingleModifier::Write(stream, mgr);
 
     int numPoints = fSafePoints.size();
-    stream->WriteSwap32(numPoints);
+    stream->WriteLE32(numPoints);
     for (int i = 0; i < numPoints; i++)
     {
         mgr->WriteKey(stream,fSafePoints[i]);
     }
     stream->WriteBool(fSeek);
-    stream->WriteSwapScalar(fSeekTime);
+    stream->WriteLEScalar(fSeekTime);
 }
 
 void plExcludeRegionModifier::ISetPhysicalState(bool cleared)

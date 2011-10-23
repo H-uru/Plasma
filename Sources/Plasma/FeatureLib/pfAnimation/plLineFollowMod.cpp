@@ -159,20 +159,20 @@ void plLineFollowMod::Read(hsStream* stream, hsResMgr* mgr)
 
     mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefObject), plRefFlags::kPassiveRef);
 
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     while(n--)
     {
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefStereizer), plRefFlags::kPassiveRef);
     }
 
-    UInt32 f = stream->ReadSwap32();
+    UInt32 f = stream->ReadLE32();
     SetFollowMode(FollowMode(f & 0xffff));
 
     fFollowFlags = (UInt16)((f >> 16) & 0xffff);
 
     if( fFollowFlags & kOffset )
     {
-        fOffset = stream->ReadSwapScalar();
+        fOffset = stream->ReadLEScalar();
     }
     if( fFollowFlags & kOffsetAng )
     {
@@ -180,11 +180,11 @@ void plLineFollowMod::Read(hsStream* stream, hsResMgr* mgr)
     }
     if( fFollowFlags & kOffsetClamp )
     {
-        fOffsetClamp = stream->ReadSwapScalar();
+        fOffsetClamp = stream->ReadLEScalar();
     }
     if( fFollowFlags & kSpeedClamp )
     {
-        fSpeedClamp = stream->ReadSwapScalar();
+        fSpeedClamp = stream->ReadLEScalar();
     }
 }
 
@@ -198,20 +198,20 @@ void plLineFollowMod::Write(hsStream* stream, hsResMgr* mgr)
 
     mgr->WriteKey(stream, fRefObj); 
 
-    stream->WriteSwap32(fStereizers.GetCount());
+    stream->WriteLE32(fStereizers.GetCount());
     int i;
     for( i = 0; i < fStereizers.GetCount(); i++ )
         mgr->WriteKey(stream, fStereizers[i]->GetKey());
 
     UInt32 f = UInt32(fFollowMode) | (UInt32(fFollowFlags) << 16);
-    stream->WriteSwap32(f);
+    stream->WriteLE32(f);
 
     if( fFollowFlags & kOffset )
-        stream->WriteSwapScalar(fOffset);
+        stream->WriteLEScalar(fOffset);
     if( fFollowFlags & kOffsetClamp )
-        stream->WriteSwapScalar(fOffsetClamp);
+        stream->WriteLEScalar(fOffsetClamp);
     if( fFollowFlags & kSpeedClamp )
-        stream->WriteSwapScalar(fSpeedClamp);
+        stream->WriteLEScalar(fSpeedClamp);
 }
 
 

@@ -605,7 +605,7 @@ hsBool plLeafController::PurgeRedundantSubcontrollers()
 void plLeafController::Read(hsStream* s, hsResMgr *mgr)
 {
     UInt8 type = s->ReadByte();
-    UInt32 numKeys = s->ReadSwap32();
+    UInt32 numKeys = s->ReadLE32();
     AllocKeys(numKeys, type);
 
     int i;
@@ -681,7 +681,7 @@ void plLeafController::Read(hsStream* s, hsResMgr *mgr)
 void plLeafController::Write(hsStream* s, hsResMgr *mgr)
 {
     s->WriteByte(fType);
-    s->WriteSwap32(fNumKeys);
+    s->WriteLE32(fNumKeys);
 
     int i;
     switch (fType)

@@ -57,7 +57,7 @@ void plInstanceDrawInterface::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDrawInterface::Read(stream, mgr);
 
-    fTargetID = stream->ReadSwap32();
+    fTargetID = stream->ReadLE32();
     plSwapSpansRefMsg *sMsg = TRACKED_NEW plSwapSpansRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
     mgr->ReadKeyNotifyMe(stream, sMsg, plRefFlags::kActiveRef);
 }
@@ -66,7 +66,7 @@ void plInstanceDrawInterface::Write(hsStream* stream, hsResMgr* mgr)
 {
     plDrawInterface::Write(stream, mgr);
     
-    stream->WriteSwap32(fTargetID);
+    stream->WriteLE32(fTargetID);
     mgr->WriteKey(stream, fDrawable->GetKey());
 }
 

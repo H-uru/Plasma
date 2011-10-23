@@ -185,7 +185,7 @@ void plLayerMovie::Read(hsStream* s, hsResMgr* mgr)
     plLayerAnimation::Read(s, mgr);
 
     delete [] fMovieName;
-    int len = s->ReadSwap32();
+    int len = s->ReadLE32();
     if( len )
     {
         fMovieName = TRACKED_NEW char[len+1];
@@ -204,7 +204,7 @@ void plLayerMovie::Write(hsStream* s, hsResMgr* mgr)
     plLayerAnimation::Write(s, mgr);
 
     int len = hsStrlen(fMovieName);
-    s->WriteSwap32(len);
+    s->WriteLE32(len);
     if( len )
         s->Write(len, fMovieName);
 }

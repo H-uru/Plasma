@@ -70,7 +70,7 @@ void plMorphDataSet::Read(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Read(s, mgr);
     
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     fMorphs.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -81,7 +81,7 @@ void plMorphDataSet::Write(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    s->WriteSwap32(fMorphs.GetCount());
+    s->WriteLE32(fMorphs.GetCount());
     int i;
     for( i = 0; i < fMorphs.GetCount(); i++ )
         fMorphs[i].Write(s, mgr);
@@ -485,13 +485,13 @@ void plMorphSequence::Read(hsStream* s, hsResMgr* mgr)
 
     fMorphFlags = 0;
 
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     fMorphs.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
         fMorphs[i].Read(s, mgr);
     
-    n = s->ReadSwap32();
+    n = s->ReadLE32();
     for( i = 0; i < n; i++)
         mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
 }
@@ -500,12 +500,12 @@ void plMorphSequence::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
 
-    s->WriteSwap32(fMorphs.GetCount());
+    s->WriteLE32(fMorphs.GetCount());
     int i;
     for( i = 0; i < fMorphs.GetCount(); i++ )
         fMorphs[i].Write(s, mgr);
 
-    s->WriteSwap32(fSharedMeshes.GetCount());
+    s->WriteLE32(fSharedMeshes.GetCount());
     for( i = 0; i < fSharedMeshes.GetCount(); i++ )
         mgr->WriteKey(s, fSharedMeshes[i].fMesh);
 }

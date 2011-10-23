@@ -174,16 +174,16 @@ void plParticleCollisionEffectBounce::Read(hsStream *s, hsResMgr *mgr)
 {
     plParticleCollisionEffect::Read(s, mgr);
 
-    fBounce = s->ReadSwapScalar();
-    fFriction = s->ReadSwapScalar();
+    fBounce = s->ReadLEScalar();
+    fFriction = s->ReadLEScalar();
 }
 
 void plParticleCollisionEffectBounce::Write(hsStream *s, hsResMgr *mgr)
 {
     plParticleCollisionEffect::Write(s, mgr);
 
-    s->WriteSwapScalar(fBounce);
-    s->WriteSwapScalar(fFriction);
+    s->WriteLEScalar(fBounce);
+    s->WriteLEScalar(fFriction);
 }
 
 
@@ -350,7 +350,7 @@ void plParticleFadeVolumeEffect::Read(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    fLength = s->ReadSwapScalar();
+    fLength = s->ReadLEScalar();
     fIgnoreZ = s->ReadBool();
 }
 
@@ -358,7 +358,7 @@ void plParticleFadeVolumeEffect::Write(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    s->WriteSwapScalar(fLength);
+    s->WriteLEScalar(fLength);
     s->WriteBool(fIgnoreZ);
 }
 
@@ -385,9 +385,9 @@ void plParticleWindEffect::Read(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    fStrength = s->ReadSwapScalar();
-    fConstancy = s->ReadSwapScalar();
-    fSwirl = s->ReadSwapScalar();
+    fStrength = s->ReadLEScalar();
+    fConstancy = s->ReadLEScalar();
+    fSwirl = s->ReadLEScalar();
     fHorizontal = s->ReadBool();
     fRefDir.Read(s);
     fDir.Read(s);
@@ -398,9 +398,9 @@ void plParticleWindEffect::Write(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    s->WriteSwapScalar(fStrength);
-    s->WriteSwapScalar(fConstancy);
-    s->WriteSwapScalar(fSwirl);
+    s->WriteLEScalar(fStrength);
+    s->WriteLEScalar(fConstancy);
+    s->WriteLEScalar(fSwirl);
     s->WriteBool(fHorizontal);
     fRefDir.Write(s);
     fDir.Write(s);
@@ -456,7 +456,7 @@ void plParticleLocalWind::Read(hsStream *s, hsResMgr *mgr)
     plParticleWindEffect::Read(s, mgr);
 
     fScale.Read(s);
-    fSpeed = s->ReadSwapScalar();
+    fSpeed = s->ReadLEScalar();
 }
 
 void plParticleLocalWind::Write(hsStream *s, hsResMgr *mgr)
@@ -464,7 +464,7 @@ void plParticleLocalWind::Write(hsStream *s, hsResMgr *mgr)
     plParticleWindEffect::Write(s, mgr);
 
     fScale.Write(s);
-    s->WriteSwapScalar(fSpeed);
+    s->WriteLEScalar(fSpeed);
 }
 
 void plParticleLocalWind::PrepareEffect(const plEffectTargetInfo& target)
@@ -546,9 +546,9 @@ void plParticleUniformWind::Read(hsStream *s, hsResMgr *mgr)
 {
     plParticleWindEffect::Read(s, mgr);
 
-    fFreqMin = s->ReadSwapScalar();
-    fFreqMax = s->ReadSwapScalar();
-    fFreqRate = s->ReadSwapScalar();
+    fFreqMin = s->ReadLEScalar();
+    fFreqMax = s->ReadLEScalar();
+    fFreqRate = s->ReadLEScalar();
 
 #if 0
     fFreqMin = 1.f / 6.f;
@@ -564,9 +564,9 @@ void plParticleUniformWind::Write(hsStream *s, hsResMgr *mgr)
 {
     plParticleWindEffect::Write(s, mgr);
 
-    s->WriteSwapScalar(fFreqMin);
-    s->WriteSwapScalar(fFreqMax);
-    s->WriteSwapScalar(fFreqRate);
+    s->WriteLEScalar(fFreqMin);
+    s->WriteLEScalar(fFreqMax);
+    s->WriteLEScalar(fFreqRate);
 }
 
 void plParticleUniformWind::SetFrequencyRange(hsScalar minSecsPerCycle, hsScalar maxSecsPerCycle)
@@ -822,17 +822,17 @@ void plParticleFlockEffect::Read(hsStream *s, hsResMgr *mgr)
 
     fTargetOffset.Read(s);
     fDissenterTarget.Read(s);
-    fInfAvgRadSq = s->ReadSwapScalar();
-    fInfRepRadSq = s->ReadSwapScalar();
-    fGoalDistSq = s->ReadSwapScalar();
-    fFullChaseDistSq = s->ReadSwapScalar();
-    fAvgVelStr = s->ReadSwapScalar();
-    fRepDirStr = s->ReadSwapScalar();
-    fGoalOrbitStr = s->ReadSwapScalar();
-    fGoalChaseStr = s->ReadSwapScalar();
-    SetMaxOrbitSpeed(s->ReadSwapScalar());
-    SetMaxChaseSpeed(s->ReadSwapScalar());
-    SetMaxParticles((UInt16)s->ReadSwapScalar());
+    fInfAvgRadSq = s->ReadLEScalar();
+    fInfRepRadSq = s->ReadLEScalar();
+    fGoalDistSq = s->ReadLEScalar();
+    fFullChaseDistSq = s->ReadLEScalar();
+    fAvgVelStr = s->ReadLEScalar();
+    fRepDirStr = s->ReadLEScalar();
+    fGoalOrbitStr = s->ReadLEScalar();
+    fGoalChaseStr = s->ReadLEScalar();
+    SetMaxOrbitSpeed(s->ReadLEScalar());
+    SetMaxChaseSpeed(s->ReadLEScalar());
+    SetMaxParticles((UInt16)s->ReadLEScalar());
 }
 
 void plParticleFlockEffect::Write(hsStream *s, hsResMgr *mgr)
@@ -841,17 +841,17 @@ void plParticleFlockEffect::Write(hsStream *s, hsResMgr *mgr)
 
     fTargetOffset.Write(s);
     fDissenterTarget.Write(s);
-    s->WriteSwapScalar(fInfAvgRadSq);
-    s->WriteSwapScalar(fInfRepRadSq);
-    s->WriteSwapScalar(fGoalDistSq);
-    s->WriteSwapScalar(fFullChaseDistSq);
-    s->WriteSwapScalar(fAvgVelStr);
-    s->WriteSwapScalar(fRepDirStr);
-    s->WriteSwapScalar(fGoalOrbitStr);
-    s->WriteSwapScalar(fGoalChaseStr);
-    s->WriteSwapScalar(fMaxOrbitSpeed);
-    s->WriteSwapScalar(fMaxChaseSpeed);
-    s->WriteSwapScalar(fMaxParticles);
+    s->WriteLEScalar(fInfAvgRadSq);
+    s->WriteLEScalar(fInfRepRadSq);
+    s->WriteLEScalar(fGoalDistSq);
+    s->WriteLEScalar(fFullChaseDistSq);
+    s->WriteLEScalar(fAvgVelStr);
+    s->WriteLEScalar(fRepDirStr);
+    s->WriteLEScalar(fGoalOrbitStr);
+    s->WriteLEScalar(fGoalChaseStr);
+    s->WriteLEScalar(fMaxOrbitSpeed);
+    s->WriteLEScalar(fMaxChaseSpeed);
+    s->WriteLEScalar(fMaxParticles);
 }
 
 hsBool plParticleFlockEffect::MsgReceive(plMessage *msg)

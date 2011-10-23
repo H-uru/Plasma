@@ -296,7 +296,7 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
 
     s->Read( sizeof( fName ), fName );
 
-    UInt32  i, count = s->ReadSwap32();
+    UInt32  i, count = s->ReadLE32();
     fControls.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
         mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kControlRef ), plRefFlags::kActiveRef );
@@ -310,13 +310,13 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
         hsgResMgr::ResMgr()->AddViaNotify( GetKey(), refMsg, plRefFlags::kPassiveRef );     
     }
 
-    s->ReadSwap( &fTagID );
+    s->ReadLE( &fTagID );
 
     fProcReceiver = mgr->ReadKey( s );
     if( fProcReceiver != nil )
         SetHandler( TRACKED_NEW pfGUIDialogNotifyProc( fProcReceiver ) );
 
-    s->ReadSwap( &fVersion );
+    s->ReadLE( &fVersion );
 
     fColorScheme->Read( s );
 
@@ -333,15 +333,15 @@ void    pfGUIDialogMod::Write( hsStream *s, hsResMgr *mgr )
     mgr->WriteKey( s, fRenderMod->GetKey() );
     s->Write( sizeof( fName ), fName );
 
-    s->WriteSwap32( fControls.GetCount() );
+    s->WriteLE32( fControls.GetCount() );
     for( i = 0; i < fControls.GetCount(); i++ )
         mgr->WriteKey( s, fControls[ i ]->GetKey() );
 
-    s->WriteSwap( fTagID );
+    s->WriteLE( fTagID );
 
     mgr->WriteKey( s, fProcReceiver );
 
-    s->WriteSwap( fVersion );
+    s->WriteLE( fVersion );
 
     fColorScheme->Write( s );
 

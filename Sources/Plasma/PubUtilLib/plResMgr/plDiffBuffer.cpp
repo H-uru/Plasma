@@ -87,7 +87,7 @@ plDiffBuffer::plDiffBuffer( UInt32 newLength, UInt32 oldLength )
 
     fNewLength = newLength;
     fStream = TRACKED_NEW hsRAMStream();
-    fStream->WriteSwap32( fNewLength );
+    fStream->WriteLE32( fNewLength );
     fStream->WriteBool( f16BitMode );
     fWriting = true;
 }
@@ -118,7 +118,7 @@ plDiffBuffer::plDiffBuffer( void *buffer, UInt32 length )
         fStream->Write( length, buffer );
         fStream->Rewind();
 
-        fNewLength = fStream->ReadSwap32();
+        fNewLength = fStream->ReadLE32();
         f16BitMode = fStream->ReadBool();
     }
 }
@@ -148,9 +148,9 @@ void    plDiffBuffer::Add( Int32 length, void *newData )
     // We flag our two different op types by the sign of the length. Negative
     // lengths are an add operation, positive ones are copy ops.
     if( f16BitMode )
-        fStream->WriteSwap16( -( (Int16)length ) );
+        fStream->WriteLE16( -( (Int16)length ) );
     else
-        fStream->WriteSwap32( -length );
+        fStream->WriteLE32( -length );
     fStream->Write( length, newData );
 }
 
@@ -165,13 +165,13 @@ void    plDiffBuffer::Copy( Int32 length, UInt32 oldOffset )
     // lengths are an add operation, positive ones are copy ops.
     if( f16BitMode )
     {
-        fStream->WriteSwap16( (Int16)length );
-        fStream->WriteSwap16( (UInt16)oldOffset );
+        fStream->WriteLE16( (Int16)length );
+        fStream->WriteLE16( (UInt16)oldOffset );
     }
     else
     {
-        fStream->WriteSwap32( length );
-        fStream->WriteSwap32( oldOffset );
+        fStream->WriteLE32( length );
+        fStream->WriteLE32( oldOffset );
     }
 }
 
@@ -231,14 +231,14 @@ void    plDiffBuffer::Apply( UInt32 oldLength, void *oldBuffer, UInt32 &newLengt
         // Read in the op length
         if( f16BitMode )
         {
-            Int16 opLen16 = fStream->ReadSwap16();
+            Int16 opLen16 = fStream->ReadLE16();
             if( opLen16 < 0 )
                 opLength = -( (Int32)( -opLen16 ) );
             else
                 opLength = (UInt32)opLen16;
         }
         else
-            opLength = fStream->ReadSwap32();
+            opLength = fStream->ReadLE32();
 
         // As defined, negative ops are add ops, positive ones are copys
         if( opLength < 0 )
@@ -252,7 +252,7 @@ void    plDiffBuffer::Apply( UInt32 oldLength, void *oldBuffer, UInt32 &newLengt
         else
         {
             // Copy op, so get the old offset and copy from there
-            UInt32 oldOffset = f16BitMode ? fStream->ReadSwap16() : fStream->ReadSwap32();
+            UInt32 oldOffset = f16BitMode ? fStream->ReadLE16() : fStream->ReadLE32();
 
             hsAssertAndBreak( newBufferPos + opLength > newLength, "Destination buffer offset in plDiffBuffer() is out of range!" );
             hsAssertAndBreak( oldOffset + opLength > oldLength, "Difference buffer offset in plDiffBuffer() is out of range of the old buffer!" );

@@ -81,7 +81,7 @@ void plCameraMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
     fCmd.Read(stream);
-    fTransTime = stream->ReadSwapDouble();
+    fTransTime = stream->ReadLEDouble();
     fActivated = stream->ReadBool();
     fNewCam = mgr->ReadKey(stream);
     fTriggerer = mgr->ReadKey(stream);
@@ -92,7 +92,7 @@ void plCameraMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
     fCmd.Write(stream);
-    stream->WriteSwapDouble(fTransTime);
+    stream->WriteLEDouble(fTransTime);
     stream->WriteBool(fActivated);
     mgr->WriteKey(stream, fNewCam);
     mgr->WriteKey(stream, fTriggerer);
@@ -101,33 +101,33 @@ void plCameraMsg::Write(hsStream* stream, hsResMgr* mgr)
 
 void plCameraConfig::Read(hsStream* stream)
 {
-    fAccel = stream->ReadSwapFloat();
-    fDecel = stream->ReadSwapFloat();
-    fVel = stream->ReadSwapFloat();
-    fFPAccel = stream->ReadSwapFloat();
-    fFPDecel = stream->ReadSwapFloat();
-    fFPVel = stream->ReadSwapFloat();
-    fFOVw = stream->ReadSwapFloat(); 
-    fFOVh = stream->ReadSwapFloat();    
-    fOffset.fX = stream->ReadSwapFloat();
-    fOffset.fY = stream->ReadSwapFloat();
-    fOffset.fZ = stream->ReadSwapFloat();
+    fAccel = stream->ReadLEFloat();
+    fDecel = stream->ReadLEFloat();
+    fVel = stream->ReadLEFloat();
+    fFPAccel = stream->ReadLEFloat();
+    fFPDecel = stream->ReadLEFloat();
+    fFPVel = stream->ReadLEFloat();
+    fFOVw = stream->ReadLEFloat(); 
+    fFOVh = stream->ReadLEFloat();    
+    fOffset.fX = stream->ReadLEFloat();
+    fOffset.fY = stream->ReadLEFloat();
+    fOffset.fZ = stream->ReadLEFloat();
     fWorldspace = stream->ReadBool();
 }
 
 void plCameraConfig::Write(hsStream* stream)
 {
-    stream->WriteSwapFloat(fAccel);
-    stream->WriteSwapFloat(fDecel);
-    stream->WriteSwapFloat(fVel);
-    stream->WriteSwapFloat(fFPAccel);
-    stream->WriteSwapFloat(fFPDecel);
-    stream->WriteSwapFloat(fFPVel);
-    stream->WriteSwapFloat(fFOVw);
-    stream->WriteSwapFloat(fFOVh);
-    stream->WriteSwapFloat(fOffset.fX);
-    stream->WriteSwapFloat(fOffset.fY);
-    stream->WriteSwapFloat(fOffset.fZ);
+    stream->WriteLEFloat(fAccel);
+    stream->WriteLEFloat(fDecel);
+    stream->WriteLEFloat(fVel);
+    stream->WriteLEFloat(fFPAccel);
+    stream->WriteLEFloat(fFPDecel);
+    stream->WriteLEFloat(fFPVel);
+    stream->WriteLEFloat(fFOVw);
+    stream->WriteLEFloat(fFOVh);
+    stream->WriteLEFloat(fOffset.fX);
+    stream->WriteLEFloat(fOffset.fY);
+    stream->WriteLEFloat(fOffset.fZ);
     stream->WriteBool(fWorldspace);
 }
 

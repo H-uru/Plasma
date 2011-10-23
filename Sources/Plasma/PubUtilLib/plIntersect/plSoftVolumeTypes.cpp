@@ -91,7 +91,7 @@ void plSoftVolumeSimple::Read(hsStream* s, hsResMgr* mgr)
 {
     plSoftVolume::Read(s, mgr);
 
-    fSoftDist = s->ReadSwapScalar();
+    fSoftDist = s->ReadLEScalar();
 
     fVolume = plVolumeIsect::ConvertNoRef(mgr->ReadCreatable(s));
 }
@@ -100,7 +100,7 @@ void plSoftVolumeSimple::Write(hsStream* s, hsResMgr* mgr)
 {
     plSoftVolume::Write(s, mgr);
 
-    s->WriteSwapScalar(fSoftDist);
+    s->WriteLEScalar(fSoftDist);
 
     mgr->WriteCreatable(s, fVolume);
 }
@@ -126,7 +126,7 @@ void plSoftVolumeComplex::Read(hsStream* s, hsResMgr* mgr)
 {
     plSoftVolume::Read(s, mgr);
 
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     int i;
     for( i = 0; i < n; i++ )
         mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSubVolume), plRefFlags::kActiveRef);
@@ -136,7 +136,7 @@ void plSoftVolumeComplex::Write(hsStream* s, hsResMgr* mgr)
 {
     plSoftVolume::Write(s, mgr);
 
-    s->WriteSwap32(fSubVolumes.GetCount());
+    s->WriteLE32(fSubVolumes.GetCount());
     int i;
     for( i = 0; i < fSubVolumes.GetCount(); i++ )
         mgr->WriteKey(s, fSubVolumes[i]);

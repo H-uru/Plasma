@@ -118,14 +118,14 @@ static inline void IWriteFloat(hsStream* s, const UInt8*& src, const hsScalar of
 //  hsAssert(fval < hsScalar(UInt16(0xffff)), "Bad offset?");
 
     const UInt16 ival = UInt16(floor(fval + 0.5f));
-    s->WriteSwap16(ival);
+    s->WriteLE16(ival);
 
     src += 4;
 }
 
 static inline void IReadFloat(hsStream* s, UInt8*& dst, const hsScalar offset, const hsScalar quantum)
 {
-    const UInt16 ival = s->ReadSwap16();
+    const UInt16 ival = s->ReadLE16();
     float fval = float(ival) * quantum;
     fval += offset;
 
@@ -141,9 +141,9 @@ inline void plVertCoder::IEncodeFloat(hsStream* s, const UInt32 vertsLeft, const
     {
         ICountFloats(src, (UInt16)vertsLeft, kQuanta[field], stride, fFloats[field][chan].fOffset, fFloats[field][chan].fAllSame, fFloats[field][chan].fCount);
 
-        s->WriteSwapScalar(fFloats[field][chan].fOffset);
+        s->WriteLEScalar(fFloats[field][chan].fOffset);
         s->WriteBool(fFloats[field][chan].fAllSame);
-        s->WriteSwap16(fFloats[field][chan].fCount);
+        s->WriteLE16(fFloats[field][chan].fCount);
 
     }
     if (!fFloats[field][chan].fAllSame)
@@ -158,9 +158,9 @@ inline void plVertCoder::IDecodeFloat(hsStream* s, const int field, const int ch
 {
     if( !fFloats[field][chan].fCount )
     {
-        fFloats[field][chan].fOffset = s->ReadSwapScalar();
+        fFloats[field][chan].fOffset = s->ReadLEScalar();
         fFloats[field][chan].fAllSame = s->ReadBool();
-        fFloats[field][chan].fCount = s->ReadSwap16();
+        fFloats[field][chan].fCount = s->ReadLE16();
     }
 
     if (!fFloats[field][chan].fAllSame)
@@ -283,7 +283,7 @@ inline void plVertCoder::IEncodeByte(hsStream* s, const int chan, const UInt32 v
         UInt16 cnt = fColors[chan].fCount;
         if( fColors[chan].fSame )
             cnt |= kSameMask;
-        s->WriteSwap16(cnt);
+        s->WriteLE16(cnt);
 
         if( fColors[chan].fSame )
             s->WriteByte(*src);
@@ -300,7 +300,7 @@ inline void plVertCoder::IDecodeByte(hsStream* s, const int chan, UInt8*& dst, c
 {
     if( !fColors[chan].fCount )
     {
-        UInt16 cnt = s->ReadSwap16();
+        UInt16 cnt = s->ReadLE16();
         if( cnt & kSameMask )
         {
             fColors[chan].fSame = true;
@@ -356,7 +356,7 @@ inline void plVertCoder::IEncode(hsStream* s, const UInt32 vertsLeft, const UInt
         if( format & plGBufferGroup::kSkinIndices )
         {
             const UInt32 idx = *(UInt32*)src;
-            s->WriteSwap32(idx);
+            s->WriteLE32(idx);
             src += 4;
         }
     }
@@ -395,7 +395,7 @@ inline void plVertCoder::IDecode(hsStream* s, UInt8*& dst, const UInt32 stride, 
         if( format & plGBufferGroup::kSkinIndices )
         {
             UInt32* idx = (UInt32*)dst;
-            *idx = s->ReadSwap32();
+            *idx = s->ReadLE32();
             dst += 4;
         }
     }

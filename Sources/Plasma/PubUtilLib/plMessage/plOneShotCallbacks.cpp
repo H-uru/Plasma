@@ -73,13 +73,13 @@ plOneShotCallbacks::plOneShotCallback& plOneShotCallbacks::GetCallback(int i)
 
 void plOneShotCallbacks::Read(hsStream* stream, hsResMgr* mgr)
 {
-    int size = stream->ReadSwap32();
+    int size = stream->ReadLE32();
     fCallbacks.reserve(size);
     for (int i = 0; i < size; i++)
     {
         char *marker = stream->ReadSafeString();
         plKey receiver = mgr->ReadKey(stream);
-        Int16 user = stream->ReadSwap16();
+        Int16 user = stream->ReadLE16();
 
         fCallbacks.push_back(plOneShotCallback(marker, receiver, user));
     }
@@ -88,11 +88,11 @@ void plOneShotCallbacks::Read(hsStream* stream, hsResMgr* mgr)
 void plOneShotCallbacks::Write(hsStream* stream, hsResMgr* mgr)
 {
     int size = fCallbacks.size();
-    stream->WriteSwap32(size);
+    stream->WriteLE32(size);
     for (int i = 0; i < size; i++)
     {
         stream->WriteSafeString(fCallbacks[i].fMarker);
         mgr->WriteKey(stream, fCallbacks[i].fReceiver);
-        stream->WriteSwap16(fCallbacks[i].fUser);
+        stream->WriteLE16(fCallbacks[i].fUser);
     }
 }

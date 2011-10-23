@@ -85,8 +85,8 @@ void plGameMarkerModifier::Read(hsStream* stream, hsResMgr* mgr)
     fRedAnimKey     = mgr->ReadKey(stream);
     fOpenAnimKey    = mgr->ReadKey(stream);
     fBounceAnimKey  = mgr->ReadKey(stream);
-    fPlaceSndIdx    = stream->ReadSwap16();
-    fHitSndIdx      = stream->ReadSwap16();
+    fPlaceSndIdx    = stream->ReadLE16();
+    fHitSndIdx      = stream->ReadLE16();
 }
 
 void plGameMarkerModifier::Write(hsStream* stream, hsResMgr* mgr)
@@ -97,6 +97,6 @@ void plGameMarkerModifier::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fRedAnimKey);
     mgr->WriteKey(stream, fOpenAnimKey);
     mgr->WriteKey(stream, fBounceAnimKey);
-    stream->WriteSwap16(fPlaceSndIdx);
-    stream->WriteSwap16(fHitSndIdx);
+    stream->WriteLE16(fPlaceSndIdx);
+    stream->WriteLE16(fHitSndIdx);
 }

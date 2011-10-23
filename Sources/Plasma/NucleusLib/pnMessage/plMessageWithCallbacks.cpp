@@ -68,7 +68,7 @@ void plMessageWithCallbacks::Read(hsStream* stream, hsResMgr* mgr)
     Clear();
 
     // read count
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     fCallbacks.SetCount(n);
 
     // read callbacks
@@ -85,7 +85,7 @@ void plMessageWithCallbacks::Write(hsStream* stream, hsResMgr* mgr)
 
     // write count
     int n=fCallbacks.GetCount();
-    stream->WriteSwap32(n);
+    stream->WriteLE32(n);
 
     // write callbacks
     int i;
@@ -110,7 +110,7 @@ void plMessageWithCallbacks::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kMsgWithCBsCallbacks))
     {
         // read count
-        int n = s->ReadSwap32();
+        int n = s->ReadLE32();
         fCallbacks.SetCount(n);
 
         for (int i = 0; i < n; i++)
@@ -128,7 +128,7 @@ void plMessageWithCallbacks::WriteVersion(hsStream* s, hsResMgr* mgr)
 
     // write count
     int n = fCallbacks.GetCount();
-    s->WriteSwap32(n);
+    s->WriteLE32(n);
 
     // write callbacks
     for (int i = 0; i < n; i++)

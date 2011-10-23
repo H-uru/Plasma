@@ -128,8 +128,8 @@ void plLoadCloneMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead(stream, mgr);
     fCloneKey = mgr->ReadKey(stream);
     fRequestorKey = mgr->ReadKey(stream);
-    fOriginatingPlayerID = stream->ReadSwap32();
-    fUserData = stream->ReadSwap32();
+    fOriginatingPlayerID = stream->ReadLE32();
+    fUserData = stream->ReadLE32();
     fValidMsg = stream->ReadBool();
     fIsLoading = stream->ReadBool();
     fTriggerMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
@@ -141,8 +141,8 @@ void plLoadCloneMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream,mgr);
     mgr->WriteKey(stream, fCloneKey);
     mgr->WriteKey(stream, fRequestorKey);
-    stream->WriteSwap32(fOriginatingPlayerID);
-    stream->WriteSwap32(fUserData);
+    stream->WriteLE32(fOriginatingPlayerID);
+    stream->WriteLE32(fUserData);
     stream->WriteBool(fValidMsg);
     stream->WriteBool(fIsLoading);
     mgr->WriteCreatable(stream, fTriggerMsg);
@@ -173,10 +173,10 @@ void plLoadCloneMsg::ReadVersion(hsStream* stream, hsResMgr* mgr)
         fRequestorKey = mgr->ReadKey(stream);
 
     if (contentFlags.IsBitSet(kLoadCloneMsgOrigPlayerID))
-        fOriginatingPlayerID = stream->ReadSwap32();
+        fOriginatingPlayerID = stream->ReadLE32();
 
     if (contentFlags.IsBitSet(kLoadCloneMsgUserData))
-        fUserData = stream->ReadSwap32();
+        fUserData = stream->ReadLE32();
 
     if (contentFlags.IsBitSet(kLoadCloneMsgValidMsg))
         fValidMsg = stream->ReadBool();
@@ -207,9 +207,9 @@ void plLoadCloneMsg::WriteVersion(hsStream* stream, hsResMgr* mgr)
     // kLoadCloneMsgRequestorKey
     mgr->WriteKey(stream, fRequestorKey);
     // kLoadCloneMsgOrigPlayerID
-    stream->WriteSwap32(fOriginatingPlayerID);
+    stream->WriteLE32(fOriginatingPlayerID);
     // kLoadCloneMsgUserData
-    stream->WriteSwap32(fUserData);
+    stream->WriteLE32(fUserData);
     // kLoadCloneMsgValidMsg
     stream->WriteBool(fValidMsg);
     // kLoadCloneMsgIsLoading

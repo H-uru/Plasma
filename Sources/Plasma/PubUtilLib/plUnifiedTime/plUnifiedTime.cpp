@@ -381,17 +381,17 @@ void plUnifiedTime::Read(hsStream* s)
 {
     s->LogSubStreamStart("UnifiedTime");
     UInt32 secs;
-    s->LogReadSwap(&secs,"Seconds");
+    s->LogReadLE(&secs,"Seconds");
     fSecs = (time_t)secs;
-    s->LogReadSwap(&fMicros,"MicroSeconds");
+    s->LogReadLE(&fMicros,"MicroSeconds");
     s->LogSubStreamEnd();
     // preserve fMode
 }
 
 void plUnifiedTime::Write(hsStream* s) const
 {
-    s->WriteSwap((UInt32)fSecs);
-    s->WriteSwap(fMicros);
+    s->WriteLE((UInt32)fSecs);
+    s->WriteLE(fMicros);
     // preserve fMode
 }
 

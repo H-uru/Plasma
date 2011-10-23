@@ -138,7 +138,7 @@ bool plNetClientStreamRecorder::BeginPlayback(const char* recName)
                 plSDLMgr::GetInstance()->Read(fRecordStream);
 
             fPlaybackTimeOffset = GetTime();
-            fNextPlaybackTime = fRecordStream->ReadSwapDouble();
+            fNextPlaybackTime = fRecordStream->ReadLEDouble();
             fBetweenAges = false;
         }
         else
@@ -161,7 +161,7 @@ void plNetClientStreamRecorder::RecordMsg(plNetMessage* msg, double secs)
 
     if (IProcessRecordMsg(msg,secs))
     {
-        fRecordStream->WriteSwapDouble(secs - fPlaybackTimeOffset);
+        fRecordStream->WriteLEDouble(secs - fPlaybackTimeOffset);
         GetResMgr()->WriteCreatableVersion(fRecordStream, msg);
 
         ILogMsg(msg);
@@ -228,7 +228,7 @@ plNetMessage* plNetClientStreamRecorder::IGetNextMessage()
             // gameMsg->StreamInfo()->SetStreamType(plMsg->ClassIndex());       // type of game msg
         }
 
-        double nextPlaybackTime = fRecordStream->ReadSwapDouble();
+        double nextPlaybackTime = fRecordStream->ReadLEDouble();
         if (nextPlaybackTime < fNextPlaybackTime)
             fBetweenAges = true;
 
