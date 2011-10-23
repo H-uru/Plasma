@@ -44,6 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPythonPack.h"
 #include "hsStream.h"
 #include "plFile/hsFiles.h"
+#include "plFile/plFileUtils.h"
+#include "plFile/plEncryptedStream.h"
+#include "plFile/plBrowseFolder.h"
 #include "plFile/plSecureStream.h"
 #include "plFile/plStreamSource.h"
 #include "hsStlSortUtils.h"
@@ -263,9 +266,10 @@ void ReplaceSlashes(std::wstring& path, wchar replaceWith)
     }
 }
 
-std::vector<std::wstring> plPythonPack::GetAllPackFile()
+std::vector<std::wstring> plPythonPack::GetAllPackFiles()
 {
 #ifdef PLASMA_LOCAL_PYTHON_PAK
+    std::wstring dir = L"python";
     std::string searchStr = "python/*.pak";
     std::vector<std::wstring> retVal;
 
@@ -274,7 +278,7 @@ std::vector<std::wstring> plPythonPack::GetAllPackFile()
     {
         const char* filename = folderIter.GetFileName();
         wchar_t* wTemp = hsStringToWString(filename);
-        std::wstring wFilename = L"python/" + wTemp;
+        std::wstring wFilename = dir + L'/' + wTemp;
         delete [] wTemp;
         ToLower(wFilename);
         
