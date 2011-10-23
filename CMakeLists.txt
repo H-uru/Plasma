@@ -36,6 +36,11 @@ if(PLASMA_EXTERNAL_RELEASE)
     add_definitions(-DPLASMA_EXTERNAL_RELEASE)
 endif(PLASMA_EXTERNAL_RELEASE)
 
+option(PLASMA_LOCAL_PYTHON_PAK "Load Python from local python.pak files?" OFF)
+if(PLASMA_LOCAL_PYTHON_PAK)
+    add_definitions(-DPLASMA_LOCAL_PYTHON_PAK)
+endif(PLASMA_LOCAL_PYTHON_PAK)
+
 set(PLASMA_TARGETS "Client"
     CACHE STRING "Which set of plasma targets to build and use")
 set_property(CACHE PLASMA_TARGETS PROPERTY STRINGS

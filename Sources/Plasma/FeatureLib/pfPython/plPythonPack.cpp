@@ -78,6 +78,10 @@ public:
 
     PyObject* OpenPacked(const char *fileName);
     hsBool IsPackedFile(const char* fileName);
+
+private:
+    std::vector<std::wstring> GetAllPackFiles();
+    hsStream* GetPackFile(std::wstring name);
 };
 
 PyObject* PythonPack::OpenPythonPacked(const char* fileName)
@@ -121,7 +125,7 @@ bool plPythonPack::Open()
     fPackNotFound = true;
 
     // Get the names of all the pak files
-    std::vector<std::wstring> files = plStreamSource::GetInstance()->GetListOfNames(L"python", L".pak");
+    std::vector<std::wstring> files = GetAllPackFiles();
 
     std::vector<time_t> modTimes; // the modification time for each of the streams (to resolve duplicate file issues)
 
@@ -129,7 +133,7 @@ bool plPythonPack::Open()
     for (int curName = 0; curName < files.size(); curName++)
     {
         // obtain the stream
-        hsStream *fPackStream = plStreamSource::GetInstance()->GetFile(files[curName]);
+        hsStream *fPackStream = GetPackFile(files[curName]);
         if (fPackStream)
         {
             fPackStream->Rewind(); // make sure we're at the beginning of the file
@@ -242,4 +246,63 @@ hsBool plPythonPack::IsPackedFile(const char* fileName)
         return true;
 
     return false;
+}
+ 
+void ToLower(std::wstring& str)
+{
+    for (unsigned i = 0; i < str.length(); i++)
+        str[i] = towlower(str[i]);
+}
+
+void ReplaceSlashes(std::wstring& path, wchar replaceWith)
+{
+    for (unsigned i = 0; i < path.length(); i++)
+    {
+        if ((path[i] == L'\\') || (path[i] == L'/'))
+            path[i] = replaceWith;
+    }
+}
+
+std::vector<std::wstring> plPythonPack::GetAllPackFile()
+{
+#ifdef PLASMA_LOCAL_PYTHON_PAK
+    std::string searchStr = "python/*.pak";
+    std::vector<std::wstring> retVal;
+
+    hsFolderIterator folderIter(searchStr.c_str(), true);
+    while (folderIter.NextFile())
+    {
+        const char* filename = folderIter.GetFileName();
+        wchar_t* wTemp = hsStringToWString(filename);
+        std::wstring wFilename = L"python/" + wTemp;
+        delete [] wTemp;
+        ToLower(wFilename);
+        
+        retVal.push_back(wFilename);
+    }
+
+    return retVal;
+#else
+    return plStreamSource::GetInstance()->GetListOfNames(L"python", L".pak");
+#endif
+}
+
+hsStream* plPythonPack::GetPackFile(std::wstring name)
+{
+#ifdef PLASMA_LOCAL_PYTHON_PAK
+    ToLower(name);
+    ReplaceSlashes(name, L'/');
+
+    char* temp = hsWStringToString(name.c_str());
+    std::string sFilename = temp;
+    delete [] temp;
+
+    if (plFileUtils::FileExists(sFilename.c_str()))
+    {
+        return plEncryptedStream::OpenEncryptedFile(sFilename.c_str());
+    }
+    return nil;
+#else
+    return plStreamSource::GetInstance()->GetFile(name);
+#endif
 }
