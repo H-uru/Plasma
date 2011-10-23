@@ -116,6 +116,7 @@ plNetMsgScreener::Answer plNetMsgScreener::IAllowMessageType(int16_t classIndex,
     case CLASS_INDEX_SCOPED(plEnableMsg):
     case CLASS_INDEX_SCOPED(plLinkToAgeMsg):
     case CLASS_INDEX_SCOPED(plSubWorldMsg):
+    case CLASS_INDEX_SCOPED(plDynamicTextMsg):
         return kYes;
 
     // conditionally yes, requires further validation of msg contents

@@ -65,7 +65,7 @@ void    plDynamicTextMsg::SetFont( const char *face, int16_t size, bool isBold )
     hsAssert( ( fCmd & ( kPosCmds | kStringCmds | kFlagCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kPosCmds | kStringCmds | kFlagCmds );
     fCmd |= kSetFont; 
-    fString = hsStringToWString( face );
+    fString = face;
     fX = size;
     fFlags = (uint32_t)isBold;
 }
@@ -123,9 +123,7 @@ void    plDynamicTextMsg::DrawString( int16_t x, int16_t y, const wchar_t *text 
     fCmd &= ~( kStringCmds | kPosCmds );
     fCmd |= kDrawString; 
 
-    fString = new wchar_t[wcslen(text)+1];
-    wcscpy( fString, text );
-    fString[wcslen(text)] = L'\0';
+    fString = plString::FromWchar(text);
     fX = x;
     fY = y;
 }
@@ -143,9 +141,7 @@ void    plDynamicTextMsg::DrawClippedString( int16_t x, int16_t y, uint16_t clip
     fCmd &= ~( kStringCmds | kPosCmds | kRectCmds );
     fCmd |= kDrawClippedString; 
 
-    fString = new wchar_t[wcslen(text)+1];
-    wcscpy( fString, text );
-    fString[wcslen(text)] = L'\0';
+    fString = plString::FromWchar(text);
     fX = x;
     fY = y;
 
@@ -168,9 +164,7 @@ void    plDynamicTextMsg::DrawWrappedString( int16_t x, int16_t y, uint16_t wrap
     fCmd &= ~( kStringCmds | kPosCmds | kRectCmds );
     fCmd |= kDrawWrappedString; 
 
-    fString = new wchar_t[wcslen(text)+1];
-    wcscpy( fString, text );
-    fString[wcslen(text)] = L'\0';
+    fString = plString::FromWchar(text);
     fX = x;
     fY = y;
 
@@ -222,7 +216,7 @@ void    plDynamicTextMsg::Read( hsStream *s, hsResMgr *mgr )
     fClearColor.Read( s );
     fColor.Read( s );
 
-    fString = s->ReadSafeWString();
+    fString = s->ReadSafeWString_TEMP();
     fImageKey = mgr->ReadKey( s );
 
     s->ReadLE( &fFlags );
@@ -253,7 +247,8 @@ void    plDynamicTextMsg::Write( hsStream *s, hsResMgr *mgr )
     fClearColor.Write( s );
     fColor.Write( s );
 
-    s->WriteSafeWString( plString::FromWchar(fString) );
+    s->WriteSafeWString(fString);
+
     mgr->WriteKey( s, fImageKey );
 
     s->WriteLE( fFlags );
@@ -306,7 +301,7 @@ void plDynamicTextMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kDynTextMsgColor))
         fColor.Read( s );
     if (contentFlags.IsBitSet(kDynTextMsgString))
-        fString = s->ReadSafeWString();
+        fString = s->ReadSafeWString_TEMP();
     if (contentFlags.IsBitSet(kDynTextMsgImageKey))
         fImageKey = mgr->ReadKey( s );
     if (contentFlags.IsBitSet(kDynTextMsgFlags))
@@ -360,7 +355,7 @@ void plDynamicTextMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     fColor.Write( s );
 
     // kDynTextMsgString
-    s->WriteSafeWString( plString::FromWchar(fString) );
+    s->WriteSafeWString( fString );
     // kDynTextMsgImageKey
     mgr->WriteKey( s, fImageKey );
 

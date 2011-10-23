@@ -815,8 +815,8 @@ bool    plDynamicTextMap::MsgReceive( plMessage *msg )
         if( textMsg->fCmd & plDynamicTextMsg::kSetTextColor )
             SetTextColor( textMsg->fColor, textMsg->fBlockRGB );
 
-        if( (textMsg->fCmd & plDynamicTextMsg::kSetFont ) && textMsg->fString)
-            SetFont( textMsg->fString, textMsg->fX, (uint8_t)(textMsg->fFlags) );
+        if( (textMsg->fCmd & plDynamicTextMsg::kSetFont ) && !textMsg->fString.IsNull())
+            SetFont( textMsg->fString.ToWchar(), textMsg->fX, (uint8_t)(textMsg->fFlags) );
         
         if( textMsg->fCmd & plDynamicTextMsg::kSetLineSpacing )
             SetLineSpacing( textMsg->fLineSpacing );
@@ -832,16 +832,16 @@ bool    plDynamicTextMap::MsgReceive( plMessage *msg )
             FrameRect( textMsg->fLeft, textMsg->fTop, textMsg->fRight - textMsg->fLeft + 1,
                         textMsg->fBottom - textMsg->fTop + 1, textMsg->fColor );
 
-        if( (textMsg->fCmd & plDynamicTextMsg::kDrawString ) && textMsg->fString)
-            DrawString( textMsg->fX, textMsg->fY, textMsg->fString );
+        if( (textMsg->fCmd & plDynamicTextMsg::kDrawString ) && !textMsg->fString.IsNull())
+            DrawString( textMsg->fX, textMsg->fY, textMsg->fString.ToWchar() );
 
-        if( (textMsg->fCmd & plDynamicTextMsg::kDrawClippedString ) && textMsg->fString)
-            DrawClippedString( textMsg->fX, textMsg->fY, textMsg->fString,
+        if( (textMsg->fCmd & plDynamicTextMsg::kDrawClippedString ) && !textMsg->fString.IsNull())
+            DrawClippedString( textMsg->fX, textMsg->fY, textMsg->fString.ToWchar(),
                                 textMsg->fLeft, textMsg->fTop, textMsg->fRight - textMsg->fLeft + 1,
                                 textMsg->fBottom - textMsg->fTop + 1 );
 
-        if( (textMsg->fCmd & plDynamicTextMsg::kDrawWrappedString ) && textMsg->fString)
-            DrawWrappedString( textMsg->fX, textMsg->fY, textMsg->fString, textMsg->fRight, textMsg->fBottom );
+        if( (textMsg->fCmd & plDynamicTextMsg::kDrawWrappedString ) && !textMsg->fString.IsNull())
+            DrawWrappedString( textMsg->fX, textMsg->fY, textMsg->fString.ToWchar(), textMsg->fRight, textMsg->fBottom );
 
         if( textMsg->fCmd & plDynamicTextMsg::kDrawImage )
         {

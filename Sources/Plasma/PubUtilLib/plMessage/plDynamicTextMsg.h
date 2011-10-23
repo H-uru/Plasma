@@ -72,7 +72,7 @@ protected:
     hsColorRGBA fColor;
 
     // String
-    wchar_t     *fString;
+    plString fString;
 
     // Mipmap
     plKey       fImageKey;
@@ -84,8 +84,10 @@ protected:
     int16_t     fLineSpacing;
 
 public:
-    plDynamicTextMsg() : plMessage( nil, nil, nil ) { fCmd = 0; fString = nil; fImageKey = nil; fFlags = 0; fBlockRGB = false; }
-    ~plDynamicTextMsg() { delete [] fString; }
+    plDynamicTextMsg() :
+        plMessage(nullptr, nullptr, nullptr),
+        fCmd(0), fImageKey(nullptr), fFlags(0), fBlockRGB(false)
+    { }
 
     CLASSNAME_REGISTER( plDynamicTextMsg );
     GETINTERFACE_ANY( plDynamicTextMsg, plMessage );
