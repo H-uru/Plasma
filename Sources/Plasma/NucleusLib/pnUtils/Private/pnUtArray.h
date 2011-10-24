@@ -142,7 +142,7 @@ TBuffer<T>::TBuffer (const TBuffer<T> & source) {
 template<class T>
 TBuffer<T>::~TBuffer () {
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
 }
 
 //===========================================================================
@@ -181,7 +181,7 @@ T TBuffer<T>::operator[] (unsigned index) const {
 template<class T>
 void TBuffer<T>::Attach (T * source, unsigned count) {
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
     m_data = source;
     ASSERT(MemSize(source) >= count * sizeof(T));
 }
@@ -196,7 +196,7 @@ unsigned TBuffer<T>::Bytes () const {
 template<class T>
 void TBuffer<T>::Clear () {
     if (m_data) {
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
         m_data = nil;
     }
 }
@@ -247,7 +247,7 @@ void TBuffer<T>::SetBytes (unsigned bytes) {
     if (bytes)
         m_data = (T *)REALLOCFLAGS(m_data, bytes, ARR_MEMORY_FLAGS);
     else if (m_data) {
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
         m_data = nil;
     }
 }
@@ -539,7 +539,7 @@ void TFArray<T,C>::AdjustSize (unsigned newAlloc, unsigned newCount) {
             C::CopyConstruct(newData, m_data, m_count);
             C::Destruct(m_data, m_count);
             if (m_data)
-                FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+                free(m_data);
         }
         m_alloc = newAlloc;
         m_data  = newData;
@@ -558,7 +558,7 @@ template<class T, class C>
 void TFArray<T,C>::Attach (T * source, unsigned count) {
     C::Destruct(m_data, m_count);
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
     m_data  = source;
     m_alloc = MemSize(source) / sizeof(T);
     m_count = count;
@@ -570,7 +570,7 @@ template<class T, class C>
 void TFArray<T,C>::AttachTemp (T * source, unsigned count) {
     C::Destruct(m_data, m_count);
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
     m_data  = source;
     m_alloc = count;
     m_count = count;
@@ -587,7 +587,7 @@ template<class T, class C>
 void TFArray<T,C>::Clear () {
     C::Destruct(m_data, m_count);
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
     m_data = nil;
     m_alloc = m_count = 0;
 }
