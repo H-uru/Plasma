@@ -218,13 +218,13 @@ hsVectorStream* plPhysXCooking::CookHull(int nVerts, hsPoint3* verts, bool infla
 /*
 NxTriangleMesh* ReadExplicit(hsStream* stream)
 {
-    const int nVertices = stream->ReadSwap32();
+    const int nVertices = stream->ReadLE32();
     hsPoint3* pVertices = TRACKED_NEW hsPoint3[nVertices];
-    stream->ReadSwapScalar(nVertices*3, (float*)pVertices);
+    stream->ReadLEScalar(nVertices*3, (float*)pVertices);
 
-    const int nFaces = stream->ReadSwap32();
+    const int nFaces = stream->ReadLE32();
     unsigned short* pTriangles = TRACKED_NEW unsigned short[nFaces * 3];
-    stream->ReadSwap16(nFaces * 3, pTriangles);
+    stream->ReadLE16(nFaces * 3, pTriangles);
 
     NxTriangleMeshDesc triDesc;
     triDesc.numVertices         = nVertices;
@@ -256,9 +256,9 @@ NxTriangleMesh* ReadExplicit(hsStream* stream)
 
 NxConvexMesh* ReadConvexHull(hsStream* stream)
 {
-    const int nVertices = stream->ReadSwap32();
+    const int nVertices = stream->ReadLE32();
     hsPoint3* pVertices = TRACKED_NEW hsPoint3[nVertices];
-    stream->ReadSwapScalar(nVertices*3, (float*)pVertices);
+    stream->ReadLEScalar(nVertices*3, (float*)pVertices);
 
     NxConvexMeshDesc convexDesc;
     convexDesc.numVertices          = nVertices;
@@ -286,9 +286,9 @@ NxConvexMesh* ReadConvexHull(hsStream* stream)
 
 void ReadBoxFromHull(hsStream* stream, NxBoxShapeDesc& box)
 {
-    const int nVertices = stream->ReadSwap32();
+    const int nVertices = stream->ReadLE32();
     hsPoint3* pVertices = TRACKED_NEW hsPoint3[nVertices];
-    stream->ReadSwapScalar(nVertices*3, (float*)pVertices);
+    stream->ReadLEScalar(nVertices*3, (float*)pVertices);
 
     hsScalar minX, minY, minZ, maxX, maxY, maxZ;
     minX = minY = minZ = FLT_MAX;
