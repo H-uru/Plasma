@@ -245,7 +245,7 @@ void TBuffer<T>::Set (const T * source, unsigned count) {
 template<class T>
 void TBuffer<T>::SetBytes (unsigned bytes) {
     if (bytes)
-        m_data = (T *)REALLOCFLAGS(m_data, bytes, ARR_MEMORY_FLAGS);
+        m_data = (T *)realloc(m_data, bytes);
     else if (m_data) {
         free(m_data);
         m_data = nil;
