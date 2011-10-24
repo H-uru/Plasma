@@ -280,7 +280,7 @@ static void BufferedSendData (
     ASSERT(fieldCount-1 == sendMsg->msg.count);
 
     // insert messageId into command stream
-    const word msgId = hsSWAP16((word)msg[0]);
+    const word msgId = hsToLE16((word)msg[0]);
     AddToSendBuffer(cli, sizeof(word), (const void*)&msgId);
     ++msg;
     ASSERT_MSG_VALID(msg < msgEnd);
@@ -303,11 +303,11 @@ static void BufferedSendData (
                     if (cmd->size == sizeof(byte)) {
                         *(byte*)temp = *(byte*)msg;
                     } else if (cmd->size == sizeof(word)) {
-                        *(word*)temp = hsSWAP16(*(word*)msg);
+                        *(word*)temp = hsToLE16(*(word*)msg);
                     } else if (cmd->size == sizeof(dword)) {
-                        *(dword*)temp = hsSWAP32(*(dword*)msg);
+                        *(dword*)temp = hsToLE32(*(dword*)msg);
                     } else if (cmd->size == sizeof(qword)) {
-                        *(qword*)temp = hsSWAP64(*(qword*)msg);
+                        *(qword*)temp = hsToLE64(*(qword*)msg);
                     }
                 }
                 else
@@ -317,11 +317,11 @@ static void BufferedSendData (
                         if (cmd->size == sizeof(byte)) {
                             ((byte*)temp)[i] = ((byte*)*msg)[i];
                         } else if (cmd->size == sizeof(word)) {
-                            ((word*)temp)[i] = hsSWAP16(((word*)*msg)[i]);
+                            ((word*)temp)[i] = hsToLE16(((word*)*msg)[i]);
                         } else if (cmd->size == sizeof(dword)) {
-                            ((dword*)temp)[i] = hsSWAP32(((dword*)*msg)[i]);
+                            ((dword*)temp)[i] = hsToLE32(((dword*)*msg)[i]);
                         } else if (cmd->size == sizeof(qword)) {
-                            ((qword*)temp)[i] = hsSWAP64(((qword*)*msg)[i]);
+                            ((qword*)temp)[i] = hsToLE64(((qword*)*msg)[i]);
                         }
                     }
                 }
@@ -350,7 +350,7 @@ static void BufferedSendData (
                 const word length = (word) StrLen((const wchar *) *msg);
                 ASSERT_MSG_VALID(length < cmd->count);
                 // Write actual string length
-                word size = hsSWAP16(length);
+                word size = hsToLE16(length);
                 AddToSendBuffer(cli, sizeof(word), (const void*)&size);
                 // Write string data
                 AddToSendBuffer(cli, length * sizeof(wchar), (const void *) *msg);
@@ -370,7 +370,7 @@ static void BufferedSendData (
                 // remember the element size
                 varSize  = cmd->size;
                 // write the actual element count
-                varCount = hsSWAP32((dword)*msg);
+                varCount = hsToLE32((dword)*msg);
                 AddToSendBuffer(cli, sizeof(dword), (const void*)&varCount);
             }
             break;
@@ -412,7 +412,7 @@ static bool DispatchData (NetCli * cli, void * param) {
             if (!cli->input.Get(sizeof(msgId), &msgId))
                 goto NEED_MORE_DATA;
 
-            msgId = hsSWAP16(msgId);
+            msgId = hsToLE16(msgId);
 
             if (nil == (cli->recvMsg = NetMsgChannelFindRecvMessage(cli->channel, msgId)))
                 goto ERR_NO_HANDLER;
@@ -453,11 +453,11 @@ static bool DispatchData (NetCli * cli, void * param) {
                     // This is so screwed up >.<
                     for (int i = 0; i < count; i++) {
                         if (cli->recvField->size == sizeof(word)) {
-                            ((word*)data)[i] = hsSWAP16(((word*)data)[i]);
+                            ((word*)data)[i] = hsToLE16(((word*)data)[i]);
                         } else if (cli->recvField->size == sizeof(dword)) {
-                            ((dword*)data)[i] = hsSWAP32(((dword*)data)[i]);
+                            ((dword*)data)[i] = hsToLE32(((dword*)data)[i]);
                         } else if (cli->recvField->size == sizeof(qword)) {
-                            ((qword*)data)[i] = hsSWAP64(((qword*)data)[i]);
+                            ((qword*)data)[i] = hsToLE64(((qword*)data)[i]);
                         }
                     }
 
@@ -507,7 +507,7 @@ static bool DispatchData (NetCli * cli, void * param) {
                     }
 
                     // Byte-swap value
-                    dword val = hsSWAP32(*(dword*)data);
+                    dword val = hsToLE32(*(dword*)data);
 
                     // Prepare to read var-length field
                     cli->recvFieldBytes = val * cli->recvField->size;
@@ -537,7 +537,7 @@ static bool DispatchData (NetCli * cli, void * param) {
                         word length;
                         if (!cli->input.Get(sizeof(word), &length))
                             goto NEED_MORE_DATA;
-                        cli->recvFieldBytes = hsSWAP16(length) * sizeof(wchar);
+                        cli->recvFieldBytes = hsToLE16(length) * sizeof(wchar);
 
                         // Validate size. Use >= instead of > to leave room for the NULL terminator.
                         if (cli->recvFieldBytes >= cli->recvField->count * cli->recvField->size)
