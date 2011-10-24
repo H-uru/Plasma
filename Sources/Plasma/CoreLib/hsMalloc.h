@@ -167,7 +167,6 @@ inline void CDECL operator delete (void *, void *) {}
 #define ALLOC(b)                MemAlloc(b, 0, __FILE__, __LINE__)
 #define ALLOCZERO(b)            MemAlloc(b, kMemZero, __FILE__, __LINE__)
 #define ALLOCFLAGS(b, f)        MemAlloc(b, (f), __FILE__, __LINE__)
-#define FREEFLAGS(p, f)         MemFree(p, (f))
 #define REALLOC(p, b)           MemRealloc(p, b, 0, __FILE__, __LINE__)
 #define REALLOCFLAGS(p, b, f)   MemRealloc(p, b, (f), __FILE__, __LINE__)
 #define CALLOC(n, s)            MemAlloc((n)*(s), kMemZero, __FILE__, __LINE__)
