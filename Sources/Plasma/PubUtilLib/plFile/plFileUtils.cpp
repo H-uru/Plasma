@@ -103,7 +103,8 @@ hsBool  plFileUtils::CreateDir( const wchar *path )
 #if HS_BUILD_FOR_WIN32
     return ( _wmkdir( path ) == 0 ) ? true : ( errno==EEXIST );
 #elif HS_BUILD_FOR_UNIX
-    return ( mkdir( path, 0777 ) == 0 ) ? true : ( errno==EEXIST );
+    const char* cpath = hsWStringToString(path);
+    CreateDir(cpath);
 #endif
 }
 
@@ -148,9 +149,14 @@ bool plFileUtils::RemoveFile(const char* filename, bool delReadOnly)
 
 bool plFileUtils::RemoveFile(const wchar* filename, bool delReadOnly)
 {
+#ifdef HS_BUILD_FOR_WIN32
     if (delReadOnly)
         _wchmod(filename, S_IWRITE);
     return (_wunlink(filename) == 0);
+#elif HS_BUILD_FOR_UNIX
+    const char* cfilename = hsWStringToString(filename);
+    RemoveFile(cfilename, delReadOnly);
+#endif
 }
 
 bool plFileUtils::FileCopy(const char* existingFile, const char* newFile)
@@ -169,8 +175,10 @@ bool plFileUtils::FileCopy(const wchar* existingFile, const wchar* newFile)
     return (::CopyFileW(existingFile, newFile, FALSE) != 0);
 #elif HS_BUILD_FOR_UNIX
     char data[1500];
-    FILE* fp = fopen(existingFile, "rb");
-    FILE* fw = fopen(newFile, "w");
+    const char* cexisting = hsWStringToString(existingFile);
+    const char* cnew = hsWStringToString(newFile);
+    FILE* fp = fopen(cexisting, "rb");
+    FILE* fw = fopen(cnew, "w");
     int num = 0;
     bool retVal =  true;
     if (fp && fw){

@@ -46,6 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <time.h>
 
+#if !HS_BUILD_FOR_WIN32
+#define INVALID_HANDLE_VALUE 0
+#endif
+
 // our default encryption key
 const UInt32 plSecureStream::kDefaultKey[4] = { 0x6c0a5452, 0x3827d0f, 0x3a170b92, 0x16db7fc2 };
 
@@ -143,6 +147,7 @@ hsBool plSecureStream::Open(const wchar* name, const wchar* mode)
 {
     if (wcscmp(mode, L"rb") == 0)
     {
+#if HS_BUILD_FOR_WIN32
         if (fDeleteOnExit)
         {
             fRef = CreateFileW(name,
@@ -179,6 +184,22 @@ hsBool plSecureStream::Open(const wchar* name, const wchar* mode)
 
         DWORD numBytesRead;
         ReadFile(fRef, &fActualFileSize, sizeof(UInt32), &numBytesRead, NULL);
+#elif HS_BUILD_FOR_UNIX
+        const char* cname = hsWStringToString(name);
+        fRef = fopen(cname, "rb");
+
+        fPosition = 0;
+
+        if (fRef == INVALID_HANDLE_VALUE)
+            return false;
+
+        if (!ICheckMagicString(fRef))
+        {
+            fclose(fRef);
+            fRef = INVALID_HANDLE_VALUE;
+            return false;
+        }
+#endif
 
         // The encrypted stream is inefficient if you do reads smaller than
         // 8 bytes.  Since we do a lot of those, any file under a size threshold
@@ -221,7 +242,11 @@ hsBool plSecureStream::Close()
     }
     if (fRef != INVALID_HANDLE_VALUE)
     {
+#if HS_BUILD_FOR_WIN32
         rtn = CloseHandle(fRef);
+#elif HS_BUILD_FOR_UNIX
+        rtn = fclose(fRef);
+#endif
         fRef = INVALID_HANDLE_VALUE;
     }
 
@@ -248,8 +273,13 @@ UInt32 plSecureStream::IRead(UInt32 bytes, void* buffer)
 {
     if (fRef == INVALID_HANDLE_VALUE)
         return 0;
-    DWORD numItems;
+    UInt32 numItems;
+#if HS_BUILD_FOR_WIN32
     bool success = (ReadFile(fRef, buffer, bytes, &numItems, NULL) != 0);
+#elif HS_BUILD_FOR_UNIX
+    numItems = fread(buffer, bytes, 1, fRef);
+    bool success = numItems != 0;
+#endif
     fBytesRead += numItems;
     fPosition += numItems;
     if ((unsigned)numItems < bytes)
@@ -281,7 +311,11 @@ void plSecureStream::IBufferFile()
     fRAMStream->Rewind();
 
     fBufferedStream = true;
+#if HS_BUILD_FOR_WIN32
     CloseHandle(fRef);
+#elif HS_BUILD_FOR_UNIX
+    fclose(fRef);
+#endif
     fRef = INVALID_HANDLE_VALUE;
     fPosition = 0;
 }
@@ -305,7 +339,11 @@ void plSecureStream::Skip(UInt32 delta)
     {
         fBytesRead += delta;
         fPosition += delta;
+#if HS_BUILD_FOR_WIN32
         SetFilePointer(fRef, delta, 0, FILE_CURRENT);
+#elif HS_BUILD_FOR_UNIX
+        fseek(fRef, delta, SEEK_CUR);
+#endif
     }
 }
 
@@ -320,7 +358,11 @@ void plSecureStream::Rewind()
     {
         fBytesRead = 0;
         fPosition = 0;
+#if HS_BUILD_FOR_WIN32
         SetFilePointer(fRef, kFileStartOffset, 0, FILE_BEGIN);
+#elif HS_BUILD_FOR_UNIX
+        fseek(fRef, kFileStartOffset, SEEK_SET);
+#endif
     }
 }
 
@@ -333,7 +375,11 @@ void plSecureStream::FastFwd()
     }
     else if (fRef != INVALID_HANDLE_VALUE)
     {
+#if HS_BUILD_FOR_WIN32
         fBytesRead = fPosition = SetFilePointer(fRef, kFileStartOffset + fActualFileSize, 0, FILE_BEGIN);
+#elif HS_BUILD_FOR_UNIX
+        fBytesRead = fPosition = fseek(fRef, 0, SEEK_END);
+#endif
     }
 }
 
@@ -551,11 +597,14 @@ bool plSecureStream::FileDecrypt(const wchar* fileName, UInt32* key /* = nil */)
     return true;
 }
 
-bool plSecureStream::ICheckMagicString(HANDLE fp)
+bool plSecureStream::ICheckMagicString(hsFD fp)
 {
     char magicString[kMagicStringLen+1];
-    DWORD numBytesRead;
-    ReadFile(fp, &magicString, kMagicStringLen, &numBytesRead, NULL);
+#ifdef HS_BUILD_FOR_WIN32
+    ReadFile(fp, &magicString, kMagicStringLen, NULL, NULL);
+#elif HS_BUILD_FOR_UNIX
+    fread(&magicString, kMagicStringLen, 1, fp);
+#endif
     magicString[kMagicStringLen] = '\0';
     return (hsStrEQ(magicString, kMagicString) != 0);
 }
@@ -570,7 +619,9 @@ bool plSecureStream::IsSecureFile(const char* fileName)
 
 bool plSecureStream::IsSecureFile(const wchar* fileName)
 {
-    HANDLE fp = INVALID_HANDLE_VALUE;
+    hsFD fp = INVALID_HANDLE_VALUE;
+
+#if HS_BUILD_FOR_WIN32
     fp = CreateFileW(fileName,
         GENERIC_READ,   // open for reading
         0,              // no one can open the file until we're done
@@ -578,13 +629,21 @@ bool plSecureStream::IsSecureFile(const wchar* fileName)
         OPEN_EXISTING,  // only open existing files (no creation)
         FILE_ATTRIBUTE_NORMAL,  // normal file attributes
         NULL);          // no template
+#elif HS_BUILD_FOR_UNIX
+    const char* cfile = hsWStringToString(fileName);
+    fp = fopen(cfile, "rb");
+#endif
 
     if (fp == INVALID_HANDLE_VALUE)
         return false;
 
     bool isEncrypted = ICheckMagicString(fp);
 
+#if HS_BUILD_FOR_WIN32
     CloseHandle(fp);
+#elif HS_BUILD_FOR_UNIX
+    fclose(fp);
+#endif
 
     return isEncrypted;
 }
