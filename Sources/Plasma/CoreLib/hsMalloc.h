@@ -174,8 +174,6 @@ inline void CDECL operator delete (void *, void *) {}
 #define MEMDUP(s, b)            MemDup(s, b, 0, __FILE__, __LINE__)
 #define ZERO(s)                 MemSet(&s, 0, sizeof(s))
 #define ZEROPTR(p)              MemSet(p, 0, sizeof(*p))
-// Client must #include <malloc.h>
-#define  ALLOCA(t, n)           (t *)_alloca((n) * sizeof(t))
 
 
 #ifdef __cplusplus

@@ -991,9 +991,10 @@ void NetVaultNodeFieldArray::GetFieldValueString_LCS (
         case NetVaultNode::kString64_6:
         case NetVaultNode::kIString64_1:
         case NetVaultNode::kIString64_2: {
-            wchar_t * tmp = ALLOCA(wchar_t, dstChars);
+            wchar_t * tmp = (wchar_t*)malloc(sizeof(wchar_t) * dstChars);
             IStrSqlEscape(*(wchar_t **)fieldAddr, tmp, dstChars);
             StrPrintf(dst, dstChars, L"'%s'", tmp);
+            free(tmp);
         }
         break;
 

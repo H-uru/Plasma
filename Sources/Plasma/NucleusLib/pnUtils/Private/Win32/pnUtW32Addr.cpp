@@ -355,7 +355,7 @@ unsigned NetAddressGetLocal (
         // Create a buffer to sort the addresses
         NetAddressNode * dst;
         if (found > count)
-            dst = ALLOCA(NetAddressNode, found);
+            dst = (NetAddressNode*)_alloca(found * sizeof(NetAddressNode));
         else
             dst = addresses;
 

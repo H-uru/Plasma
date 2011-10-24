@@ -212,10 +212,12 @@ static bool AdvanceStep (
                 ++start;
             const char * term = StrChr(start, ';');
             if (term) {
-                char * buffer = ALLOCA(char, term + 1 - start);
+                char * buffer = (char*)malloc(term + 1 - start);
                 StrCopy(buffer, start, term + 1 - start);
                 Send(sock, "rcpt to:<", buffer, ">\r\n", nil);
                 transaction->subStep = term + 1 - transaction->recipient;
+
+                free(buffer);
             }
             else {
                 Send(sock, "rcpt to:<", start, ">\r\n", nil);
@@ -445,12 +447,7 @@ static void __cdecl Send (
     }
 
     // Allocate string buffer
-    char * packed;
-    const unsigned kStackBufSize = 8 * 1024;
-    if (bytes > kStackBufSize)
-        packed = (char *) malloc(bytes);
-    else
-        packed = (char *) _alloca(bytes);
+    char* packed = (char *) malloc(bytes);
 
     // Pack the string
     {
@@ -466,8 +463,7 @@ static void __cdecl Send (
     AsyncSocketSend(sock, packed, bytes - 1);
 
     // Free the string
-    if (bytes > kStackBufSize)
-        free(packed);
+    free(packed);
 }
 
 //===========================================================================

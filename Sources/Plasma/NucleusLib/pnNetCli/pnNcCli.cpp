@@ -169,7 +169,7 @@ namespace pnNetCli {
 //============================================================================
 static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
-        uint8_t * temp, * heap = NULL;
+    uint8_t * temp = NULL;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     // Write to the netlog
@@ -189,13 +189,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 #endif // PLASMA_EXTERNAL_RELEASE
 
     if (cli->mode == kNetCliModeEncrypted && cli->cryptOut) {
-        // Encrypt data...
-        if (bytes <= 2048)
-            // uint8_t count is small, use stack-based buffer
-            temp = ALLOCA(uint8_t, bytes);
-        else
-            // uint8_t count is large, use heap-based buffer
-            temp = heap = (uint8_t *)malloc(bytes);
+        temp = (uint8_t *)malloc(bytes);
 
         MemCopy(temp, data, bytes);
         CryptEncrypt(cli->cryptOut, bytes, temp);
@@ -205,7 +199,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
         AsyncSocketSend(cli->sock, data, bytes);
         
     // free heap buffer (if any)
-    free(heap);
+    free(temp);
 }
 
 //============================================================================
@@ -295,7 +289,7 @@ static void BufferedSendData (
             case kNetMsgFieldInteger: {
                 const unsigned count = cmd->count ? cmd->count : 1;
                 const unsigned bytes = cmd->size * count;
-                void * temp = ALLOCA(uint8_t, bytes);
+                void * temp = malloc(bytes);
                 
                 if (count == 1)
                 {
@@ -328,6 +322,8 @@ static void BufferedSendData (
                 
                 // Write values to send buffer
                 AddToSendBuffer(cli, bytes, temp);
+
+                free(temp);
             }
             break;
 
@@ -1112,15 +1108,10 @@ bool NetCliDispatch (
     do {
         if (cli->mode == kNetCliModeEncrypted) {
             // Decrypt data...
-            uint8_t * temp, * heap = NULL;
+            uint8_t * temp = NULL;
 
             if (cli->cryptIn) {
-                if (bytes <= 2048)
-                    // uint8_t count is small, use stack-based buffer
-                    temp = ALLOCA(uint8_t, bytes);
-                else
-                    // uint8_t count is large, use heap-based buffer
-                    temp = heap = (uint8_t *)malloc(bytes);
+                temp = (uint8_t *)malloc(bytes);
 
                 MemCopy(temp, data, bytes);
                 CryptDecrypt(cli->cryptIn, bytes, temp);
@@ -1153,7 +1144,7 @@ bool NetCliDispatch (
 #endif
             
             // free heap buffer (if any)
-            free(heap);
+            free(temp);
 
             cli->input.Compact();
             return cli->recvDispatch;

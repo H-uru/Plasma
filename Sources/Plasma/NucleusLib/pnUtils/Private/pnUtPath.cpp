@@ -234,7 +234,7 @@ void PathSplitEmail (
         return;
 
     // copy email address so we can tokenize it
-    wchar_t * tmp = ALLOCA(wchar_t, len + 1);
+    wchar_t * tmp = (wchar_t*)malloc(sizeof(wchar_t) * (len + 1));
     StrCopy(tmp, emailAddr, len + 1);
     const wchar_t * work = tmp;
 
@@ -255,9 +255,11 @@ void PathSplitEmail (
     ARRAY(wchar_t *) arr;
     while (StrTokenize(&work, token, arrsize(token), L".")) {
         unsigned toklen = StrLen(token);
-        wchar_t * str = ALLOCA(wchar_t, toklen + 1);
+        wchar_t * str = (wchar_t*)malloc(sizeof(wchar_t) * (toklen + 1));
         StrCopy(str, token, toklen + 1);
         arr.Add(str);
+
+        free(str);
     }
 
     // copy domains to output parameters
@@ -285,6 +287,8 @@ void PathSplitEmail (
             if (subDomains)
                 StrCopy(&SUB_DOMAIN(index), arr[index], subDomainChars);
     }
+
+    free(tmp);
     
     #undef SUB_DOMAIN
 }

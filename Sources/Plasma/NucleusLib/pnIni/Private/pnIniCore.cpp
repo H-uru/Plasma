@@ -99,9 +99,11 @@ static void AddValueString (
     const wchar_t src[]
 ) {
     unsigned chars = StrLen(src) + 1;
-    wchar_t * dst = ALLOCA(wchar_t, chars);
+    wchar_t * dst = (wchar_t*)malloc(sizeof(wchar_t) * chars);
     StrTokenize(&src, dst, chars, L" \t\r\n\"");
     value->fArgs.Add(StrDup(dst));
+
+    free(dst);
 }
 
 

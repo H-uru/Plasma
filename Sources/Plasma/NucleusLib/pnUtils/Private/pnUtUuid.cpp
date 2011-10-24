@@ -81,7 +81,7 @@ unsigned GuidHash (const Uuid & uuid) {
 static const wchar_t s_hexChars[] = L"0123456789ABCDEF";
 const wchar_t * GuidToHex (const Uuid & uuid, wchar_t * dst, unsigned chars) {
     
-    wchar_t * str = ALLOCA(wchar_t, sizeof(uuid.data) * 2 + 1);
+    wchar_t * str = (wchar_t*)malloc((sizeof(uuid.data) * 2 + 1) * sizeof(wchar_t));
     wchar_t * cur = str;
     
     for (unsigned i = 0; i < sizeof(uuid.data); ++i) {
@@ -91,6 +91,8 @@ const wchar_t * GuidToHex (const Uuid & uuid, wchar_t * dst, unsigned chars) {
     *cur = 0;
     
     StrCopy(dst, str, chars);
+
+    free(str);
     return dst;
 }
 

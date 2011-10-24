@@ -458,9 +458,11 @@ void OraGetUuid (
     occi::Bytes bytes = oraStmt->getBytes(index);
     if (const unsigned length = bytes.length()) {
         ASSERT(length == msizeof(Uuid, data));
-        uint8_t * buf = ALLOCA(uint8_t, length);
+        uint8_t * buf = malloc(length);
         bytes.getBytes(buf, length);
         GuidFromHex(buf, length, uuid);
+
+        free(buf)
     }
     else {
         GuidClear(uuid);

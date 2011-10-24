@@ -1084,7 +1084,7 @@ void NetCommSendMsg (
     msg->SetPlayerID(NetCommGetPlayer()->playerInt);
 
     unsigned msgSize = msg->GetPackSize();
-    uint8_t * buf = ALLOCA(uint8_t, msgSize);
+    uint8_t * buf = (uint8_t *)malloc(msgSize);
     msg->PokeBuffer((char *)buf, msgSize);
 
     switch (msg->GetNetProtocol()) {
@@ -1106,6 +1106,8 @@ void NetCommSendMsg (
 
         DEFAULT_FATAL(msg->GetNetProtocol());
     }
+
+    free(buf);
 }
 
 //============================================================================

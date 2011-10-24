@@ -96,36 +96,38 @@ void MemoryGetStatus (MemoryStatus * status) {
 
 //============================================================================
 void DiskGetStatus (ARRAY(DiskStatus) * disks) {
-    for (;;) {
-        DWORD length = GetLogicalDriveStrings(0, NULL);
-        if (!length || length > 2048)
-            break;
+    DWORD length = GetLogicalDriveStrings(0, NULL);
+    if (!length || length > 2048)
+        return;
 
-        wchar_t * buffer = ALLOCA(wchar_t, length + 1);
-        if (!GetLogicalDriveStringsW(length, buffer))
-            break;
-
-        for (; *buffer; buffer += StrLen(buffer) + 1) {
-            UINT driveType = GetDriveTypeW(buffer);
-            if (driveType != DRIVE_FIXED)
-                continue;
-
-            ULARGE_INTEGER freeBytes;
-            ULARGE_INTEGER totalBytes;
-            if (!GetDiskFreeSpaceExW(buffer, &freeBytes, &totalBytes, NULL))
-                continue;
-
-            DiskStatus status;
-            StrCopy(status.name, buffer, arrsize(status.name));
-
-            const uint64_t BYTES_PER_MB = 1024 * 1024;
-            status.totalSpaceMB = unsigned(totalBytes.QuadPart / BYTES_PER_MB);
-            status.freeSpaceMB  = unsigned(freeBytes.QuadPart  / BYTES_PER_MB);
-
-            disks->Add(status);
-        }
-        break;
+    wchar_t* buffer = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
+    wchar_t* origbuf = buffer;
+    if (!GetLogicalDriveStringsW(length, buffer))
+    {
+        free(buffer);
+        return;
     }
+
+    for (; *buffer; buffer += StrLen(buffer) + 1) {
+        UINT driveType = GetDriveTypeW(buffer);
+        if (driveType != DRIVE_FIXED)
+            continue;
+
+        ULARGE_INTEGER freeBytes;
+        ULARGE_INTEGER totalBytes;
+        if (!GetDiskFreeSpaceExW(buffer, &freeBytes, &totalBytes, NULL))
+            continue;
+
+        DiskStatus status;
+        StrCopy(status.name, buffer, arrsize(status.name));
+
+        const uint64_t BYTES_PER_MB = 1024 * 1024;
+        status.totalSpaceMB = unsigned(totalBytes.QuadPart / BYTES_PER_MB);
+        status.freeSpaceMB  = unsigned(freeBytes.QuadPart  / BYTES_PER_MB);
+
+        disks->Add(status);
+    }
+    free(origbuf);
 }
 
 //============================================================================

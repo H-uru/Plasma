@@ -415,7 +415,7 @@ void pfGameMgr::CreateGame (
         - sizeof(msg->createData)
         + initBytes;
         
-    msg = (Cli2Srv_GameMgr_CreateGame *)_alloca(msgBytes);
+    msg = (Cli2Srv_GameMgr_CreateGame *)malloc(msgBytes);
         
     msg->messageId          = kCli2Srv_GameMgr_CreateGame;
     msg->recvGameId         = 0;            // send to GameMgr on server
@@ -426,6 +426,8 @@ void pfGameMgr::CreateGame (
     MemCopy(msg->createData, initData, initBytes);
 
     GameMgrSend(msg, NEWZERO(JoinTransState)(receiver));
+
+    free(msg);
 }
 
 //============================================================================
@@ -443,7 +445,7 @@ void pfGameMgr::JoinCommonGame (
         - sizeof(msg->createData)
         + initBytes;
         
-    msg = (Cli2Srv_GameMgr_JoinGame *)_alloca(msgBytes);
+    msg = (Cli2Srv_GameMgr_JoinGame *)malloc(msgBytes);
         
     msg->messageId          = kCli2Srv_GameMgr_JoinGame;
     msg->recvGameId         = 0;            // send to GameMgr on server
@@ -455,6 +457,8 @@ void pfGameMgr::JoinCommonGame (
     MemCopy(msg->createData, initData, initBytes);
 
     GameMgrSend(msg, NEWZERO(JoinTransState)(receiver));
+
+    free(msg);
 }
 
 
