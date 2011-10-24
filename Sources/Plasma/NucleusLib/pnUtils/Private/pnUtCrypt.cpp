@@ -166,9 +166,11 @@ static void Rc4Codec (
     void *          data
 ) {
     // RC4 uses the same algorithm to both encrypt and decrypt
-    uint8_t * temp = ALLOCA(uint8_t, bytes);
+    uint8_t * temp = (uint8_t *)malloc(bytes);
     RC4((RC4_KEY *)key->handle, bytes, (const unsigned char *)data, temp);
     MemCopy(data, temp, bytes);
+
+    free(temp);
 }
 
 } using namespace Crypt;
@@ -337,7 +339,7 @@ void CryptHashPassword (
     unsigned passlen = StrLen(password);
     unsigned userlen = StrLen(username);
 
-    wchar_t * buffer = ALLOCA(wchar_t, passlen + userlen);
+    wchar_t * buffer = (wchar_t*)malloc(sizeof(wchar_t) * (passlen + userlen));
     StrCopy(buffer, password, passlen);
     StrCopy(buffer + passlen, username, userlen);
     StrLower(buffer + passlen); // lowercase the username
@@ -348,6 +350,8 @@ void CryptHashPassword (
         (userlen + passlen) * sizeof(buffer[0]),
         buffer
     );
+
+    free(buffer);
 }
 
 //============================================================================

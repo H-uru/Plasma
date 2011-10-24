@@ -566,17 +566,14 @@ void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned w
     ram.Rewind();
     
     unsigned bytes = ram.GetEOF();
-    uint8_t * buf, * heap = nil;
-    if (bytes <= 2048)
-        buf = ALLOCA(uint8_t, bytes);
-    else
-        buf = (uint8_t *)ALLOC(bytes);
+    uint8_t * buf = nil;
+    buf = (uint8_t *)malloc(bytes);
 
     ram.CopyToMem(buf);     
     
     IVaultNodeSetBlob(kSDLData, base, &sdlData, &sdlDataLen, buf, bytes);
     
-    free(heap);
+    free(buf);
 }
 #endif // def CLIENT
 
