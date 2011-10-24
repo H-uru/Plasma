@@ -54,11 +54,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 char* MyReadSafeString(hsStream* s)
 {
     char *name = nil;
-    UInt16 numChars = s->ReadSwap16();
+    UInt16 numChars = s->ReadLE16();
 
     bool oldFormat = !(numChars & 0xf000);
     if (oldFormat)
-        s->ReadSwap16();
+        s->ReadLE16();
 
     numChars &= ~0xf000;
     hsAssert(numChars <= s->GetSizeLeft(), "Bad string");
@@ -76,7 +76,7 @@ void MyWriteSafeString(hsStream* s, const char* str)
 {
     int len = hsStrlen(str);
     hsAssert(len<0xf000, "String too long");
-    s->WriteSwap16(len | 0xf000);
+    s->WriteLE16(len | 0xf000);
     if (len > 0)
         s->Write(len, str);
 }
@@ -139,14 +139,14 @@ void plBaseStage::SetName(const char* name)
 
 void plBaseStage::Read(hsStream *stream)
 {
-    int version = stream->ReadSwap16();
+    int version = stream->ReadLE16();
     delete [] fName;
     fName = MyReadSafeString(stream);
 }
 
 void plBaseStage::Write(hsStream *stream)
 {
-    stream->WriteSwap16(1);
+    stream->WriteLE16(1);
     MyWriteSafeString(stream, fName);
 }
 
@@ -186,11 +186,11 @@ void plStandardStage::Read(hsStream *stream)
 {
     plBaseStage::Read(stream);
 
-    UInt16 version = stream->ReadSwap16();
+    UInt16 version = stream->ReadLE16();
 
     delete [] fAnimName;
     fAnimName = MyReadSafeString(stream);
-    fNumLoops = stream->ReadSwap32();
+    fNumLoops = stream->ReadLE32();
     fLoopForever = stream->Readbool();
     fForward = stream->ReadByte();
     fBackward = stream->ReadByte();
@@ -202,9 +202,9 @@ void plStandardStage::Read(hsStream *stream)
     {
         // these guys were added in version 2
         fDoAdvanceTo = stream->Readbool();
-        fAdvanceTo = stream->ReadSwap32();
+        fAdvanceTo = stream->ReadLE32();
         fDoRegressTo = stream->Readbool();
-        fRegressTo = stream->ReadSwap32();
+        fRegressTo = stream->ReadLE32();
     }
 }
 
@@ -212,10 +212,10 @@ void plStandardStage::Write(hsStream *stream)
 {
     plBaseStage::Write(stream);
 
-    stream->WriteSwap16(2);
+    stream->WriteLE16(2);
 
     MyWriteSafeString(stream, fAnimName);
-    stream->WriteSwap32(fNumLoops);
+    stream->WriteLE32(fNumLoops);
     stream->Writebool(fLoopForever);
     stream->WriteByte(fForward);
     stream->WriteByte(fBackward);
@@ -226,9 +226,9 @@ void plStandardStage::Write(hsStream *stream)
 
     // these next 4 were added in version 2
     stream->Writebool(fDoAdvanceTo);
-    stream->WriteSwap32(fAdvanceTo);
+    stream->WriteLE32(fAdvanceTo);
     stream->Writebool(fDoRegressTo);
-    stream->WriteSwap32(fRegressTo);
+    stream->WriteLE32(fRegressTo);
 }
 
 void plStandardStage::CreateDlg()

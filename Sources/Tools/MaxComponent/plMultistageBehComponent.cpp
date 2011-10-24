@@ -518,7 +518,7 @@ IOResult plMultistageBehComponent::Save(ISave* isave)
 {
     isave->BeginChunk(kMultiStage);
     MaxStream multiChunk(isave);
-    multiChunk.WriteSwap32(3);
+    multiChunk.WriteLE32(3);
     multiChunk.Writebool(fFreezePhys);
     multiChunk.Writebool(fSmartSeek);
     multiChunk.Writebool(fReverseFBOnRelease);
@@ -554,7 +554,7 @@ IOResult plMultistageBehComponent::Load(ILoad* iload)
             {
                 MaxStream multiChunk(iload);
                 // all versions do this
-                int version = multiChunk.ReadSwap32();
+                int version = multiChunk.ReadLE32();
                 fFreezePhys = multiChunk.Readbool();
 
                 if(version > 1)
