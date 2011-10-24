@@ -48,10 +48,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 #include <algorithm>
 
-#include <direct.h>
+#if HS_BUILD_FOR_WIN32
+#    include <direct.h>
+
+#    define getcwd _getcwd
+#    define chdir _chdir
+
+#    ifndef MAXPATHLEN
+#        define MAXPATHLEN MAX_PATH
+#    endif
+#elif HS_BUILD_FOR_UNIX
+#    include <unistd.h>
+#    include <sys/param.h>
+#endif
 
 static const char* kPackFileName = "python.pak";
-static const char* kGlueFile = ".\\plasma\\glue.py";
+#if HS_BUILD_FOR_WIN32
+    static const char* kGlueFile = ".\\plasma\\glue.py";
+#else
+    static const char* kGlueFile = "./plasma/glue.py";
+#endif
 static char* glueFile = (char*)kGlueFile;
 
 void WritePythonFile(std::string fileName, std::string path, hsStream *s)
@@ -267,16 +283,22 @@ void FindSubDirs(std::vector<std::string> &dirnames, const char *path)
 // adds or removes the ending slash in a path as necessary
 std::string AdjustEndingSlash(std::string path, bool endingSlash = false)
 {
+#if HS_BUILD_FOR_WIN32
+    char slash = '\\';
+#else
+    char slash = '/';
+#endif
+
     std::string retVal = path;
     bool endSlashExists = false;
     char temp = path[path.length()-1];
-    if (temp == '\\')
+    if (temp == slash)
         endSlashExists = true;
 
     if (endingSlash)
     {
         if (!endSlashExists)
-            retVal += "\\";
+            retVal += slash;
     }
     else
     {
@@ -294,17 +316,23 @@ std::string AdjustEndingSlash(std::string path, bool endingSlash = false)
 // appends partialPath onto the end of fullPath, inserting or removing slashes as necesssary
 std::string ConcatDirs(std::string fullPath, std::string partialPath)
 {
+#if HS_BUILD_FOR_WIN32
+    char slash = '\\';
+#else
+    char slash = '/';
+#endif
+
     bool fullSlash = false, partialSlash = false;
     char temp = fullPath[fullPath.length()-1];
-    if (temp == '\\')
+    if (temp == slash)
         fullSlash = true;
     temp = partialPath[0];
-    if (temp == '\\')
+    if (temp == slash)
         partialSlash = true;
 
     std::string retVal = "";
     if (!fullSlash)
-        retVal = fullPath + "\\";
+        retVal = fullPath + slash;
     if (partialSlash)
     {
         std::string temp = "";
@@ -346,7 +374,7 @@ void PackDirectory(std::string dir, std::string rootPath, std::string pakName, s
 
     printf("\nCreating %s using the contents of %s\n",pakName.c_str(),dir.c_str());
     printf("Changing working directory to %s\n",rootPath.c_str());
-    if (_chdir(rootPath.c_str()))
+    if (chdir(rootPath.c_str()))
     {
         printf("ERROR: Directory change to %s failed for some reason\n",rootPath.c_str());
         printf("Unable to continue with the packing of this directory, aborting...\n");
@@ -428,12 +456,12 @@ void PrintUsage()
     printf("      must be a relative path to the current working directory\n");
 }
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     printf("The Python Pack Utility\n");
 
-    char buffer[_MAX_PATH];
-    _getcwd(buffer,_MAX_PATH);
+    char buffer[MAXPATHLEN];
+    getcwd(buffer, MAXPATHLEN);
     std::string baseWorkingDir = buffer;
 
     // are they asking for usage?
@@ -445,14 +473,14 @@ void main(int argc, char *argv[])
             || (temp == "-h") || (temp == "/h"))
         {
             PrintUsage();
-            return;
+            return -1;
         }
     }
     // wrong number of args, print usage
     if (argc > 2)
     {
         PrintUsage();
-        return;
+        return -1;
     }
 
     std::vector<std::string> dirNames;
@@ -476,4 +504,6 @@ void main(int argc, char *argv[])
     {
         PackDirectory(dirNames[i],rootPath,rootPath+dirNames[i]+".pak",dirNames);
     }
+
+    return 0;
 }
