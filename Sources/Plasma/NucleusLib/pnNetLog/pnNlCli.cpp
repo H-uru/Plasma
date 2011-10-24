@@ -416,7 +416,7 @@ bool LogMsgTrans::OnTransReply (
         AddEventNode(msgBuffer);
     }
     else {
-        FREE(msgBuffer);
+        free(msgBuffer);
     }
     return true;
 }

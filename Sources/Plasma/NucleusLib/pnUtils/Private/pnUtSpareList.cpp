@@ -159,7 +159,7 @@ void CBaseSpareList::CleanUp (const char typeName[]) {
     // walk chain of AllocNodes and free each of them
     while (m_allocHead) {
         AllocNode * allocNext = m_allocHead->allocNext;
-        FREE(m_allocHead);
+        free(m_allocHead);
         m_allocHead = allocNext;
     }
 

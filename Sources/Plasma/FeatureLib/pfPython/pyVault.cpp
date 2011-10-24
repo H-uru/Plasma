@@ -369,8 +369,8 @@ void pyVault::AddChronicleEntry( const char * name, uint32_t type, const char * 
     //        Maybe we should insert a dummy into the tree? (currently hard)
     VaultAddChronicleEntryAndWait(wEntryName, type, wEntryValue);
     
-    FREE(wEntryName);
-    FREE(wEntryValue);
+    free(wEntryName);
+    free(wEntryValue);
 }
 
 
@@ -452,7 +452,7 @@ PyObject* pyVault::GetPsnlAgeSDL() const
                 if (sdl.GetStateDataRecord(rec, plSDL::kKeepDirty))
                     result = pySDLStateDataRecord::New(rec);
                 else
-                    DEL(rec);
+                    delete rec;
                 rvnSdl->DecRef();
             }
             rvnInfo->DecRef();

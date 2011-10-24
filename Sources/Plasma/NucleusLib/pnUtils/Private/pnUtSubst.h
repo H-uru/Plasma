@@ -65,7 +65,7 @@ struct SubstParsedData {
         }
 
         ~SubstBlock() {
-            FREE(data);
+            free(data);
         }
     };
 
@@ -74,7 +74,7 @@ struct SubstParsedData {
     ~SubstParsedData() {
         for (unsigned i = 0; i < blocks.Count(); ++i) {
             SubstBlock<chartype> * block = blocks[i];
-            DEL(block);
+            delete block;
         }
     }
 };

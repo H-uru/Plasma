@@ -82,7 +82,7 @@ const wchar_t g_version[] = L"solvent";
 NetDiag::~NetDiag () {
 
     for (unsigned srv = 0; srv < kNumDiagSrvs; ++srv)
-        FREE(hosts[srv]);
+        free(hosts[srv]);
 }
 
 //============================================================================
@@ -90,7 +90,7 @@ void NetDiag::SetHost (unsigned srv, const wchar_t host[]) {
 
     critsect.Enter();
     {       
-        FREE(hosts[srv]);
+        free(hosts[srv]);
         
         if (host)
             hosts[srv] = StrDup(host);

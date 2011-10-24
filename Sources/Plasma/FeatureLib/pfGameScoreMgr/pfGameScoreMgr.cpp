@@ -112,7 +112,7 @@ void pfGameScoreMgr::RemoveCachedScore(unsigned scoreId)
 {
     if (GameScoreLink * link = fScores.Find(scoreId))
     {
-        DEL(link);
+        delete link;
     }
 }
 

@@ -103,7 +103,7 @@ std::string pyVaultTextNoteNode::Note_GetTitle( void )
         std::string result;
         aStr = StrDupToAnsi(textNote.noteTitle);
         result = aStr;
-        FREE(aStr);
+        free(aStr);
         return result;
     }
     return "";
@@ -130,7 +130,7 @@ void pyVaultTextNoteNode::Note_SetText( const char * text )
         wStr = StrDupToUnicode(text);
     VaultTextNoteNode textNote(fNode);
     textNote.SetNoteText(wStr);
-    FREE(wStr);
+    free(wStr);
 }
 
 void pyVaultTextNoteNode::Note_SetTextW( const wchar_t * text )
@@ -153,7 +153,7 @@ std::string pyVaultTextNoteNode::Note_GetText( void )
         std::string result;
         aStr = StrDupToAnsi(textNote.noteText);
         result = aStr;
-        FREE(aStr);
+        free(aStr);
         return result;
     }
     return "";

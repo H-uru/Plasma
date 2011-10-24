@@ -259,7 +259,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayer
         wchar_t* msg = TRACKED_NEW wchar_t[size + 1]; msg[size] = 0;
         PyUnicode_AsWideChar((PyUnicodeObject*)message, msg, size);
         uint32_t retval = cyMisc::SendRTChat(*fromPlayer, toPlayerList, msg, msgFlags);
-        DEL(msg);
+        delete msg;
         return PyLong_FromUnsignedLong(retval);
     }
     else

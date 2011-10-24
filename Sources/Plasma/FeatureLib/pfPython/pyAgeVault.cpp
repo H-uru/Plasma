@@ -220,8 +220,8 @@ void pyAgeVault::AddChronicleEntry( const char * name, uint32_t type, const char
     
     VaultAddAgeChronicleEntry(wEntryName, type, wEntryValue);
     
-    FREE(wEntryName);
-    FREE(wEntryValue);
+    free(wEntryName);
+    free(wEntryValue);
 }
 
 // AGE DEVICES. AKA IMAGERS, WHATEVER.
@@ -311,7 +311,7 @@ PyObject * pyAgeVault::GetAgeSDL() const
 {
     plStateDataRecord * rec = NEWZERO(plStateDataRecord);
     if (!VaultAgeGetAgeSDL(rec)) {
-        DEL(rec);
+        delete rec;
         PYTHON_RETURN_NONE;
     }
     else {

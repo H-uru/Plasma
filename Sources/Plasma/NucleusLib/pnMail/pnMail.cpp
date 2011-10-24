@@ -353,7 +353,7 @@ static void DestroyTransaction (MailTransaction * transaction) {
         );
     }
 
-    DEL(transaction);
+    delete transaction;
 }
 
 //===========================================================================
@@ -448,7 +448,7 @@ static void __cdecl Send (
     char * packed;
     const unsigned kStackBufSize = 8 * 1024;
     if (bytes > kStackBufSize)
-        packed = (char *) ALLOC(bytes);
+        packed = (char *) malloc(bytes);
     else
         packed = (char *) _alloca(bytes);
 
@@ -467,7 +467,7 @@ static void __cdecl Send (
 
     // Free the string
     if (bytes > kStackBufSize)
-        FREE(packed);
+        free(packed);
 }
 
 //===========================================================================

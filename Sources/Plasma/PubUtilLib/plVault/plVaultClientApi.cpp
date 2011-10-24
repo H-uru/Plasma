@@ -308,7 +308,7 @@ static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
             }
         }
 
-        DEL(notify);
+        delete notify;
     }
 }
 
@@ -796,7 +796,7 @@ void VaultCreateNodeTrans::Complete (ENetError result) {
             node
         );
 
-    DEL(this);
+    delete this;
 }
 
 
@@ -821,7 +821,7 @@ void VaultFindNodeTrans::VaultNodeFound (
             nodeIdCount,
             nodeIds
         );
-    DEL(trans);
+    delete trans;
 }
 
 
@@ -870,7 +870,7 @@ void VaultDownloadTrans::VaultNodeFetched (
                 trans->cbParam
             );
 
-        DEL(trans);
+        delete trans;
     }
 }
 
@@ -921,7 +921,7 @@ void VaultDownloadTrans::VaultNodeRefsFetched (
                 trans->cbParam
             );
 
-        DEL(trans);
+        delete trans;
     }
 }
 
@@ -950,7 +950,7 @@ void VaultAgeInitTrans::AgeInitCallback (
             ageInfoVaultId
         );
     
-    DEL(trans);
+    delete trans;
 }
 
 
@@ -992,7 +992,7 @@ void AddChildNodeFetchTrans::VaultNodeRefsFetched (
                 trans->result,
                 trans->cbParam
             );
-        DEL(trans);
+        delete trans;
     }
 }
 
@@ -1016,7 +1016,7 @@ void AddChildNodeFetchTrans::VaultNodeFetched (
                 trans->result,
                 trans->cbParam
             );
-        DEL(trans);
+        delete trans;
     }
 }
 
@@ -1072,14 +1072,14 @@ void IRelVaultNode::Unlink (RelVaultNode * other) {
         link->link.Unlink();
         // remove us from other's tables.
         link->node->state->Unlink(node);
-        DEL(link);
+        delete link;
     }
     if (nil != (link = children.Find(other->nodeId))) {
         // make them non-findable in our children table
         link->link.Unlink();
         // remove us from other's tables.
         link->node->state->Unlink(node);
-        DEL(link);
+        delete link;
     }
 }
 
@@ -1096,7 +1096,7 @@ RelVaultNode::RelVaultNode () {
 
 //============================================================================
 RelVaultNode::~RelVaultNode () {
-    DEL(state);
+    delete state;
 }
 
 //============================================================================
@@ -1474,7 +1474,7 @@ void VaultRegisterCallback (VaultCallback * cb) {
 //============================================================================
 void VaultUnregisterCallback (VaultCallback * cb) {
     ASSERT(cb->internal);
-    DEL(cb->internal);
+    delete cb->internal;
     cb->internal = nil;
 }
 
@@ -1510,7 +1510,7 @@ void VaultDestroy () {
     for (; link; link = next) {
         next = s_nodes.Next(link);
         link->node->state->UnlinkFromRelatives();
-        DEL(link);
+        delete link;
     }
 }
 
@@ -2809,7 +2809,7 @@ namespace _VaultRegisterOwnedAge {
         void*           fAgeInfoId;
 
         ~_Params() {
-            DEL(fSpawn);
+            delete fSpawn;
         }
     };
 
@@ -2831,7 +2831,7 @@ namespace _VaultRegisterOwnedAge {
     void _CreateAgeLinkNode(ENetError result, void* state, void* param, RelVaultNode* node) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to create AgeLink (async)");
-            DEL(param);
+            delete param;
             return;
         }
 
@@ -2868,13 +2868,13 @@ namespace _VaultRegisterOwnedAge {
         // Don't leak memory
         agesIOwn->DecRef();
         plyrInfo->DecRef();
-        DEL(p);
+        delete p;
     }
 
     void _DownloadCallback(ENetError result, void* param) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "VaultRegisterOwnedAge: Failed to download age vault (async)");
-            DEL(param);
+            delete param;
         } else
             VaultCreateNode(plVault::kNodeType_AgeLink, (FVaultCreateNodeCallback)_CreateAgeLinkNode, nil, param);
     }
@@ -3183,14 +3183,14 @@ namespace _VaultRegisterVisitAge {
         void*             fAgeInfoId;
 
         ~_Params() {
-            DEL(fSpawn);
+            delete fSpawn;
         }
     };
 
     void _CreateAgeLinkNode(ENetError result, void* state, void* param, RelVaultNode* node) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "RegisterVisitAge: Failed to create AgeLink (async)");
-            DEL(param);
+            delete param;
             return;
         }
 
@@ -3225,13 +3225,13 @@ namespace _VaultRegisterVisitAge {
         msg->Send();
 
         //Don't leak memory
-        DEL(param);
+        delete param;
     }
 
     void _DownloadCallback(ENetError result, void* param) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "RegisterVisitAge: Failed to download age vault (async)");
-            DEL(param);
+            delete param;
             return;
         }
 
@@ -3242,7 +3242,7 @@ namespace _VaultRegisterVisitAge {
     void _InitAgeCallback(ENetError result, void* state, void* param, uint32_t ageVaultId, uint32_t ageInfoId) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "RegisterVisitAge: Failed to init age vault (async)");
-            DEL(param);
+            delete param;
             return;
         }
 
@@ -3607,7 +3607,7 @@ bool VaultAmOwnerOfCurrentAge () {
         plAgeInfoStruct info;
         info.SetAgeFilename(ageFilename);
 
-        FREE(ageFilename);
+        free(ageFilename);
         
         if (RelVaultNode * rvnLink = VaultGetOwnedAgeLinkIncRef(&info)) {
 
@@ -3979,7 +3979,7 @@ void VaultAgeRemoveDevice (const wchar_t deviceName[]) {
             device->DecRef();
 
             if (DeviceInbox * deviceInbox = s_ageDeviceInboxes.Find(CHashKeyStr(deviceName)))
-                DEL(device);
+                delete device;
         }
         templateNode->DecRef();
         folder->DecRef();
@@ -4098,7 +4098,7 @@ RelVaultNode * VaultAgeGetDeviceInboxIncRef (const wchar_t deviceName[]) {
 //============================================================================
 void VaultClearDeviceInboxMap () {
     while (DeviceInbox * inbox = s_ageDeviceInboxes.Head()) {
-        DEL(inbox);
+        delete inbox;
     }
 }
 
@@ -4782,7 +4782,7 @@ namespace _VaultCreateChildAge {
     void _CreateNodeCallback(ENetError result, void* state, void* param, RelVaultNode* node) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "CreateChildAge: Failed to create AgeLink (async)");
-            DEL(param);
+            delete param;
             return;
         }
 
@@ -4799,13 +4799,13 @@ namespace _VaultCreateChildAge {
         msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->nodeId);
         msg->Send();
 
-        DEL(param);
+        delete param;
     }
 
     void _DownloadCallback(ENetError result, void* param) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "CreateChildAge: Failed to download age vault (async)");
-            DEL(param);
+            delete param;
             return;
         }
 
@@ -4820,7 +4820,7 @@ namespace _VaultCreateChildAge {
     void _InitAgeCallback(ENetError result, void* state, void* param, uint32_t ageVaultId, uint32_t ageInfoId) {
         if (IS_NET_ERROR(result)) {
             LogMsg(kLogError, "CreateChildAge: Failed to init age (async)");
-            DEL(param);
+            delete param;
             return;
         }
 
@@ -4999,7 +4999,7 @@ void VaultCull (unsigned vaultId) {
     if (RelVaultNodeLink * link = s_nodes.Find(vaultId)) {
         LogMsg(kLogDebug, L"Vault: Culling node %u", link->node->nodeId);
         link->node->state->UnlinkFromRelatives();
-        DEL(link);
+        delete link;
     }
 
     // Remove all orphaned nodes from the global table
@@ -5022,7 +5022,7 @@ void VaultCull (unsigned vaultId) {
         if (!foundRoot) {
             LogMsg(kLogDebug, L"Vault: Culling node %u", link->node->nodeId);
             link->node->state->UnlinkFromRelatives();
-            DEL(link);
+            delete link;
         }
     }   
 }

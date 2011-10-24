@@ -551,7 +551,7 @@ static void INetCliAuthGetPublicAgeListCallback (
     msg->ages.Set(ages.Ptr(), ages.Count());
     msg->Send();
     
-    DEL(cp);
+    delete cp;
 }
 
 //============================================================================
@@ -1180,7 +1180,7 @@ void NetCommRemoveMsgHandler (
                 continue;
 
         // We found a matching handler, delete it
-        DEL(handler);        
+        delete handler;        
     }
 }
 

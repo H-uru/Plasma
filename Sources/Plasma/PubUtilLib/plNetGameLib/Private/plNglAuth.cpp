@@ -3634,7 +3634,7 @@ bool FileDownloadRequestTrans::Recv (
         writeTrans->writer  = m_writer;
         writeTrans->bytes   = reply.chunkSize;
         writeTrans->offset  = reply.chunkOffset;
-        writeTrans->data    = (uint8_t *)ALLOC(reply.chunkSize);
+        writeTrans->data    = (uint8_t *)malloc(reply.chunkSize);
         MemCopy(writeTrans->data, reply.chunkData, reply.chunkSize);
         NetTransSend(writeTrans);
     }
@@ -3664,7 +3664,7 @@ bool FileDownloadRequestTrans::Recv (
 
 //============================================================================
 RcvdFileDownloadChunkTrans::~RcvdFileDownloadChunkTrans () {
-    FREE(data);
+    free(data);
 }
 
 //============================================================================
@@ -3687,7 +3687,7 @@ void RcvdFileDownloadChunkTrans::Post () {
 
 //============================================================================
 RcvdPropagatedBufferTrans::~RcvdPropagatedBufferTrans () {
-    FREE(bufferData);
+    free(bufferData);
 }
 
 //============================================================================
@@ -3845,10 +3845,10 @@ VaultInitAgeTrans::VaultInitAgeTrans (
 
 //============================================================================
 VaultInitAgeTrans::~VaultInitAgeTrans () {
-    FREE(m_ageFilename);
-    FREE(m_ageInstName);
-    FREE(m_ageUserName);
-    FREE(m_ageDesc);
+    free(m_ageFilename);
+    free(m_ageInstName);
+    free(m_ageUserName);
+    free(m_ageDesc);
 }
 
 //============================================================================

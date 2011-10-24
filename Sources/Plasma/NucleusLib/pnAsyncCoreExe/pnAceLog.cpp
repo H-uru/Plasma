@@ -145,7 +145,7 @@ static void LogFileNotifyProc (
 ) {
     switch (code) {
         case kNotifyFileWrite:
-            FREE(notify->param);
+            free(notify->param);
             AtomicAdd(&s_opsPending, -1);
         break;
 
@@ -171,7 +171,7 @@ static void AllocLogBuffer_CS (unsigned index) {
 //============================================================================
 static void FreeLogBuffer_CS (unsigned index) {
     if (s_logBuf[index]) {
-        FREE(s_logBuf[index]);
+        free(s_logBuf[index]);
         s_logBuf[index] = nil;
     }
 }
@@ -279,7 +279,7 @@ static void WriteLogFile_CS (unsigned index, bool close) {
                 s_logBuf[index]
             );
             if (flags == kAsyncFileRwSync)
-                DEL(s_logBuf[index]);
+                delete s_logBuf[index];
             else
                 AtomicAdd(&s_opsPending, 1);
             s_logWritePos[index] += s_logPos[index];

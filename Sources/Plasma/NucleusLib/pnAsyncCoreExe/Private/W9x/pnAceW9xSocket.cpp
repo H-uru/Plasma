@@ -457,13 +457,13 @@ void CSocket::OnConnect () {
     );
 
     // Delete the connect command
-    DEL(command);
+    delete command;
 
     // Handle failure to connect
     if (error) {
 
         // Destroy the socket
-        DEL(this);
+        delete this;
 
     }
 
@@ -643,7 +643,7 @@ void CSocket::ProcessQueue () {
         }
 
         // Delete the command
-        DEL(command);
+        delete command;
 
     }
     
@@ -1105,7 +1105,7 @@ void W9xSocketDelete (
 
     // Delete the object
     s_critSect.Enter();
-    DEL(object);
+    delete object;
     s_critSect.Leave();
 
 }

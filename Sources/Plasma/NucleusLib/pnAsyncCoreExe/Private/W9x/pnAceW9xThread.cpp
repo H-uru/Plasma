@@ -234,7 +234,7 @@ static unsigned CALLBACK W9xThreadProc (AsyncThread *) {
         if (rec) {
             s_dispInProcList.Link(rec);
             rec->Complete(&s_critSect);
-            DEL(rec);
+            delete rec;
             timeout = 0;
         }
         else {

@@ -229,7 +229,7 @@ void IMarker::RecvGameDeleted (const Srv2Cli_Marker_GameDeleted & msg, void * pa
     gameCliMsg->Send(gameCli->GetReceiver());
 
     if (!msg.failed)
-        DEL(gameCli);   // we're done
+        delete gameCli;   // we're done
 }
 
 //============================================================================
@@ -280,7 +280,7 @@ pfGmMarker::pfGmMarker (
 //============================================================================
 pfGmMarker::~pfGmMarker () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================

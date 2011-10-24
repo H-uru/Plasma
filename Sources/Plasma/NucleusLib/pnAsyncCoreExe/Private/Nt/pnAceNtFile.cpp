@@ -384,7 +384,7 @@ void INtFileDelete (
     }
     file->critsect.Leave();
 
-    DEL(file);
+    delete file;
 }
 
 //===========================================================================

@@ -513,7 +513,7 @@ void SqlStmt::Reset () {
     }
     #endif // ORACLE_FREE_DRIVER
 
-    FREE(data);
+    free(data);
     data = nil;
     debug[0] = 0;
 }
@@ -562,7 +562,7 @@ SqlConn::SqlConn (
 SqlConn::~SqlConn () {
     ASSERT(!freeStmts.Head());
     ASSERT(!stmts.Head());
-    DEL(connectStr);
+    delete connectStr;
     SQLFreeHandle(SQL_HANDLE_ENV, henv);
     AsyncThreadTaskListDestroy(taskList, kNetErrRemoteShutdown);
     AtomicAdd(&s_perf[kSqlConnPerfConnDesired], - (long) desiredConns);
@@ -598,7 +598,7 @@ bool SqlConn::GrowConnections_CS (unsigned attempts) {
 
         // If the connection failed then bail
         if (!result) {
-            DEL(stmt);
+            delete stmt;
             return false;
         }
 
@@ -695,7 +695,7 @@ void SqlConn::CheckDead_CS () {
 
         // Deallocate the statement if it's bogus
         if (dead) {
-            DEL(stmt);
+            delete stmt;
             AsyncGrowConnections_CS();
         }
         else {
@@ -846,7 +846,7 @@ void SqlConnDestroy (SqlConn * conn) {
         break;
     }
 
-    DEL(conn);
+    delete conn;
 }
 
 //============================================================================
@@ -873,11 +873,11 @@ void SqlConnFreeStmt (SqlStmt * stmt) {
     conn->critsect.Enter();
     {
         if (stmt->flags & kStmtFlagDelete) {
-            DEL(stmt);
+            delete stmt;
             conn->AsyncGrowConnections_CS();
         }
         else if (dead) {
-            DEL(stmt);
+            delete stmt;
             conn->AsyncCheckDead_CS();
         }
         else {

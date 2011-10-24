@@ -654,7 +654,7 @@ static void ProcessManifest (void * param) {
             }
         }
     }
-    DEL(mr);
+    delete mr;
     AtomicAdd(&s_perf[kPerfThreadTaskCount], -1);
 }
 
@@ -920,7 +920,7 @@ void UruPrepProc (void * param) {
     
     while(ManifestFile *mf = s_manifestQueue.Head())
     {
-        DEL(mf);
+        delete mf;
     }
     // If s_patchError, we don't wait around for s_numFiles
     // to drop to zero because it never does for reasons

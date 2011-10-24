@@ -89,7 +89,7 @@ static inline void IReadArray (T ** buf, unsigned * elems, uint8_t ** buffer, un
     ASSERT(bytes % sizeof(T) == 0);
     *elems = bytes / sizeof(T);
     T * src = (T *)*buffer;
-    DEL(*buf);
+    delete *buf;
     *buf = (T *)ALLOC(bytes);
     MemCopy(*buf, src, bytes);
     *buffer += bytes;
@@ -168,7 +168,7 @@ static inline void ICopyValue (T * plhs, const T & rhs) {
 //============================================================================
 template <typename T>
 static inline void ICopyString (T ** plhs, const T rhs[]) {
-    FREE(*plhs);
+    free(*plhs);
     if (rhs)
         *plhs = StrDup(rhs);
     else
@@ -177,7 +177,7 @@ static inline void ICopyString (T ** plhs, const T rhs[]) {
 
 //============================================================================
 static inline void ICopyString (wchar_t ** plhs, const wchar_t rhs[]) {
-    FREE(*plhs);
+    free(*plhs);
     if (rhs)
         *plhs = StrDup(rhs);
     else
@@ -250,7 +250,7 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
     IReadString(&tempstr, &buffer, &bufsz);
 
     StrCopy(gameName, tempstr, arrsize(gameName));
-    DEL(tempstr);
+    delete tempstr;
 
     if (end)
         *end = buffer;
@@ -302,7 +302,7 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
     IReadString(&tempstr, &buffer, &bufsz);
 
     StrCopy(name, tempstr, arrsize(name));
-    DEL(tempstr);
+    delete tempstr;
 
     if (end)
         *end = buffer;
@@ -341,7 +341,7 @@ static void DeallocNodeFields (NetVaultNode * node) {
         if (fieldFlag > node->fieldFlags)
             break;
 
-        #define DELFIELD(f, v) case (uint64_t)(NetVaultNode::f): DEL(node->v); node->v = nil; break
+        #define DELFIELD(f, v) case (uint64_t)(NetVaultNode::f): delete node->v; node->v = nil; break
         switch (fieldFlag & node->fieldFlags) {
             DELFIELD(kCreateAgeName,    createAgeName);
             DELFIELD(kString64_1,       string64_1);

@@ -51,7 +51,7 @@ pyDniInfoSource::pyDniInfoSource()
 {}
 
 pyDniInfoSource::~pyDniInfoSource() {
-    FREE(fAgeName);
+    free(fAgeName);
 }
 
 PyObject* pyDniInfoSource::GetAgeCoords( void )

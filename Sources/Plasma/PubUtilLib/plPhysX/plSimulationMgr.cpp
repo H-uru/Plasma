@@ -297,16 +297,16 @@ class ErrorStream : public NxUserOutputStream
 static class HeapAllocator : public NxUserAllocator {
 public:
     void * malloc (NxU32 size) {
-        return ALLOC(size);
+        return malloc(size);
     }
     void * mallocDEBUG (NxU32 size, const char * fileName, int line) {
         return MemAlloc(size, 0, fileName, line);
     }
     void * realloc (void * memory, NxU32 size) {
-        return REALLOC(memory, size);
+        return realloc(memory, size);
     }
     void free (void * memory) {
-        FREE(memory);
+        free(memory);
     }
 } gHeapAllocator;
 
@@ -380,7 +380,7 @@ void plSimulationMgr::Init()
     {
         // There was an error when creating the PhysX simulation
         // ...then get rid of the simulation instance
-        DEL(gTheInstance); // clean up the memory we allocated
+        delete gTheInstance; // clean up the memory we allocated
         gTheInstance = nil;
     }
 }

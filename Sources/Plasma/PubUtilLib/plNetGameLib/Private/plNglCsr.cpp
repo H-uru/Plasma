@@ -108,7 +108,7 @@ struct ConnectedNotifyTrans : NetNotifyTrans {
     , m_latestBuildId(lbi)
     { }
     ~ConnectedNotifyTrans () {
-        DEL(m_connectParam);
+        delete m_connectParam;
     }
     void Post ();
 };
@@ -543,7 +543,7 @@ CliCsConn::~CliCsConn () {
     if (cli)
         NetCliDelete(cli, true);
         
-    DEL(connectParam);
+    delete connectParam;
 
     AtomicAdd(&s_perf[kPerfConnCount], -1);
 }

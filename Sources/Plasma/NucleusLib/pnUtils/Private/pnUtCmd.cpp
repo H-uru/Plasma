@@ -78,7 +78,7 @@ struct CmdArgData {
 
     ~CmdArgData () {
         if (buffer)
-            FREE(buffer);
+            free(buffer);
     }
 };
 
@@ -218,7 +218,7 @@ void CICmdParser::Error (const CmdTokState * state, ECmdError errorCode, const w
     state->parser->OnError(buffer, errorCode, arg, value);
 
     // Free memory
-    FREE(buffer);
+    free(buffer);
 
 }
 
@@ -350,7 +350,7 @@ bool CICmdParser::ProcessValue (CmdTokState * state, unsigned index, const wchar
 
         case kCmdTypeString:
             if (arg.buffer)
-                FREE(arg.buffer);
+                free(arg.buffer);
             arg.buffer = StrDup(str);
             arg.val.strVal = arg.buffer;
         break;
@@ -539,7 +539,7 @@ CCmdParser::CCmdParser (const CmdArgDef def[], unsigned defCount) {
 
 //===========================================================================
 CCmdParser::~CCmdParser () {
-    DEL(fParser);
+    delete fParser;
 }
 
 //===========================================================================

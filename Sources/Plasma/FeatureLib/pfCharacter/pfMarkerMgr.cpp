@@ -103,7 +103,7 @@ void pfMarkerMgr::IShutdown()
     while (curMarker != fMarkers.end())
     {
         curMarker->second->Remove();
-        DEL(curMarker->second);
+        delete curMarker->second;
         ++curMarker;
     }
     fMarkers.clear();
@@ -165,7 +165,7 @@ void pfMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool just
     {
         // delete existing one if we're changing its location
         fMarkers[id]->Remove();
-        DEL(fMarkers[id]);
+        delete fMarkers[id];
     }
 
     hsPoint3 pos((float)x, (float)y, (float)z);
@@ -178,7 +178,7 @@ void pfMarkerMgr::RemoveMarker(uint32_t id)
     if (fMarkers.find(id) == fMarkers.end())
         return;
     fMarkers[id]->Remove();
-    DEL(fMarkers[id]);
+    delete fMarkers[id];
     fMarkers.erase(id);
 }
 
@@ -188,7 +188,7 @@ void pfMarkerMgr::RemoveAllMarkers()
     while (curMarker != fMarkers.end())
     {
         curMarker->second->Remove();
-        DEL(curMarker->second);
+        delete curMarker->second;
         ++curMarker;
     }
     fMarkers.clear();

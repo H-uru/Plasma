@@ -456,7 +456,7 @@ static bool Recv_PropagateBuffer (
     RcvdPropagatedBufferTrans * trans = NEW(RcvdPropagatedBufferTrans);
     trans->bufferType   = reply.type;
     trans->bufferBytes  = reply.bytes;
-    trans->bufferData   = (uint8_t *)ALLOC(reply.bytes);
+    trans->bufferData   = (uint8_t *)malloc(reply.bytes);
     MemCopy(trans->bufferData, reply.buffer, reply.bytes);
     NetTransSend(trans);
 
@@ -473,7 +473,7 @@ static bool Recv_GameMgrMsg (
 
     RcvdGameMgrMsgTrans * trans = NEW(RcvdGameMgrMsgTrans);
     trans->bufferBytes  = reply.bytes;
-    trans->bufferData   = (uint8_t *)ALLOC(reply.bytes);
+    trans->bufferData   = (uint8_t *)malloc(reply.bytes);
     MemCopy(trans->bufferData, reply.buffer, reply.bytes);
     NetTransSend(trans);
 
@@ -570,7 +570,7 @@ bool JoinAgeRequestTrans::Recv (
 
 //============================================================================
 RcvdPropagatedBufferTrans::~RcvdPropagatedBufferTrans () {
-    FREE(bufferData);
+    free(bufferData);
 }
 
 //============================================================================
@@ -587,7 +587,7 @@ void RcvdPropagatedBufferTrans::Post () {
 
 //============================================================================
 RcvdGameMgrMsgTrans::~RcvdGameMgrMsgTrans () {
-    FREE(bufferData);
+    free(bufferData);
 }
 
 //============================================================================

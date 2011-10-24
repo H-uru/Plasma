@@ -132,7 +132,7 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
     // section because it isn't linked into an ioConn opList
     // and because connection attempts are not waitable
     ASSERT(!lookup->link.IsLinked());
-    DEL(lookup);
+    delete lookup;
     PerfSubCounter(kAsyncPerfNameLookupAttemptsCurr, 1);
 }
 

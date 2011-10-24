@@ -97,7 +97,7 @@ PyObject * pyVaultSDLNode::GetStateDataRecord() const
     if (sdl.GetStateDataRecord(rec))
         return pySDLStateDataRecord::New(rec);
     else
-        DEL(rec);
+        delete rec;
 
     PYTHON_RETURN_NONE;
 }

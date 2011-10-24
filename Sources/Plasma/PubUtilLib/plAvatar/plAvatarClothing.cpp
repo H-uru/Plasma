@@ -973,7 +973,7 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
 
     // Cleanup morph SDRs
     {for (unsigned i = 0; i < morphs.Count(); ++i) {
-        DEL(morphs[i]);
+        delete morphs[i];
     }}
     
     rvn->DecRef();
@@ -1614,7 +1614,7 @@ void plClothingMgr::GetClosetItems(hsTArray<plClosetItem> &out)
         plStateDataRecord * rec = NEWZERO(plStateDataRecord);
         if (sdl.GetStateDataRecord(rec, 0))
             plClothingSDLModifier::HandleSingleSDR(rec, nil, &out[i]);
-        DEL(rec);
+        delete rec;
     }
 
     if (out.GetCount()) {

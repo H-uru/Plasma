@@ -115,7 +115,7 @@ void    plBufferedFileReader::Close( void )
 {
     //plProfile_DelMem( SndBufferedMem, fBufferSize );
 
-    DEL(fBuffer);;
+    delete fBuffer;
     fBuffer = nil;
     fBufferSize = 0;
     fCursor = 0;

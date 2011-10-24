@@ -139,7 +139,7 @@ void plNCAgeLeaver::Complete (bool success, const char msg[]) {
         notify.msg      = msg;
         
         callback(this, kAgeLeaveComplete, &notify, userState);
-        DEL(this);
+        delete this;
     }
 }
 

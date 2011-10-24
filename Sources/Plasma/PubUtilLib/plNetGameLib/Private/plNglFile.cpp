@@ -1195,7 +1195,7 @@ bool DownloadRequestTrans::Recv (
         RcvdFileDownloadChunkTrans * writeTrans = NEW(RcvdFileDownloadChunkTrans);
         writeTrans->writer  = m_writer;
         writeTrans->bytes   = byteCount;
-        writeTrans->data    = (uint8_t *)ALLOC(byteCount);
+        writeTrans->data    = (uint8_t *)malloc(byteCount);
         MemCopy(writeTrans->data, data, byteCount);
         NetTransSend(writeTrans);
     }
@@ -1217,7 +1217,7 @@ bool DownloadRequestTrans::Recv (
 
 //============================================================================
 RcvdFileDownloadChunkTrans::~RcvdFileDownloadChunkTrans () {
-    FREE(data);
+    free(data);
 }
 
 //============================================================================

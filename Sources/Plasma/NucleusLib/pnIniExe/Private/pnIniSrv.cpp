@@ -114,7 +114,7 @@ static void IAddAddressBlock(ADDRESS_BLOCK_TABLE & addrList, NetAddressNode star
 
     if ( (addrBlock->startAddress & CLASS_C_SUBNET_MASK) != (addrBlock->endAddress & CLASS_C_SUBNET_MASK) ) {
         LogMsg(kLogDebug, L"IniSrv: Error creating privileged address block - start address and end address aren't from the same subnet.");
-        DEL(addrBlock);
+        delete addrBlock;
     }
     else {
         addrBlock->SetValue(startAddr & CLASS_C_SUBNET_MASK);

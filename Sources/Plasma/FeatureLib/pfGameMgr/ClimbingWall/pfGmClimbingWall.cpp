@@ -211,7 +211,7 @@ pfGmClimbingWall::pfGmClimbingWall (
 //============================================================================
 pfGmClimbingWall::~pfGmClimbingWall () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================

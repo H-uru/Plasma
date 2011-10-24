@@ -341,7 +341,7 @@ void TBaseHashTable<T>::Clear () {
 //===========================================================================
 template<class T>
 void TBaseHashTable<T>::Delete (T * object) {
-    DEL(object);
+    delete object;
 }
 
 //===========================================================================
@@ -555,7 +555,7 @@ template<class T, class K>
 T * THashTable<T,K>::Unduplicate (T * object, const K & key) {
     T * existing = Find(key);
     if (existing) {
-        DEL(object);
+        delete object;
         return existing;
     }
     else {
@@ -730,7 +730,7 @@ public:
     }
     void SetString (const C str[]) {  // deprecated
         if (this->m_str)
-            FREE(const_cast<C *>(this->m_str));
+            free(const_cast<C *>(this->m_str));
         if (str)
             this->m_str = StrDup(str);
         else

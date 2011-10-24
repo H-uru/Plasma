@@ -260,7 +260,7 @@ void OraConnPool::Shutdown () {
     }
     critsect.Leave();
 
-    DEL(data);
+    delete data;
 }
 
 //============================================================================
@@ -298,7 +298,7 @@ OraConn * OraConnPool::GetConn (const wchar_t tag[]) {
 
     for (;;) {  
         if (!oraConn || !oraConn->occiConn) {
-            DEL(oraConn);
+            delete oraConn;
             oraConn = nil;
             LogMsg(kLogError, L"OraConnPool::GetConn: Failed to aquire a database connection");
             break;
@@ -331,7 +331,7 @@ void OraConnPool::FreeConn (OraConn *& oraConn) {
         LogMsg(kLogPerf, L"OraFreeConn: %u, %p, %s", connCount, oraConn, oraConn->tag);
 #endif
 
-        DEL(oraConn);
+        delete oraConn;
 
         try {
             occiConn->commit();

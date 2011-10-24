@@ -65,7 +65,7 @@ struct Module {
     wchar_t *         name;
     wchar_t *         buildString;
     
-    ~Module () { FREE(name); FREE(buildString); }
+    ~Module () { free(name); free(buildString); }
 };
 
 struct EmailParams : AtomicRef {
@@ -77,12 +77,12 @@ struct EmailParams : AtomicRef {
     char *          replyTo;
     
     ~EmailParams () {
-        FREE(smtp);
-        FREE(sender);
-        FREE(recipients);
-        FREE(username);
-        FREE(password);
-        FREE(replyTo);
+        free(smtp);
+        free(sender);
+        free(recipients);
+        free(username);
+        free(password);
+        free(replyTo);
     }
 };
 
@@ -975,7 +975,7 @@ void CrashRemoveModule (
     Module * module = (Module *) param;
     SAFE_CRITSECT_ENTER();
     {
-        DEL(module);
+        delete module;
     }
     SAFE_CRITSECT_LEAVE();
 }

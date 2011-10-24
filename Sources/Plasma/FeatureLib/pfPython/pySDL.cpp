@@ -56,7 +56,7 @@ pySDLStateDataRecord::pySDLStateDataRecord( plStateDataRecord * rec )
 }
 
 pySDLStateDataRecord::~pySDLStateDataRecord() {
-    DEL(fRec);
+   delete fRec;
 }
 
 plStateDataRecord * pySDLStateDataRecord::GetRec() const

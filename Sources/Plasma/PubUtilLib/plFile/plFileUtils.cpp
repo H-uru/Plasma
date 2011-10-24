@@ -542,14 +542,14 @@ bool plFileUtils::GetSecureEncryptionKey(const wchar_t* filename, uint32_t* key,
         file.Open(keyFile.c_str(), L"rb");
 
         unsigned bytesToRead = length * sizeof(uint32_t);
-        uint8_t* buffer = (uint8_t*)ALLOC(bytesToRead);
+        uint8_t* buffer = (uint8_t*)malloc(bytesToRead);
         unsigned bytesRead = file.Read(bytesToRead, buffer);
 
         file.Close();
 
         unsigned memSize = min(bytesToRead, bytesRead);
         memcpy(key, buffer, memSize);
-        FREE(buffer);
+        free(buffer);
 
         return true;
     }

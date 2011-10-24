@@ -172,7 +172,7 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     
     wchar_t * wStr = StrDupToUnicode(buf.c_str());
     NetCliAuthSendCCRPetition(wStr);
-    FREE(wStr);
+    free(wStr);
 }
 
 //
@@ -470,5 +470,5 @@ void plNetClientMgr::StoreSDLState(const plStateDataRecord* sdRec, const plUoid&
     }
 
     SendMsg(msg);
-    DEL(msg);
+    delete msg;
 }
