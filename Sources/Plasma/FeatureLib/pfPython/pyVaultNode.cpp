@@ -154,7 +154,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( uint32_t
         }
     }
 
-    DEL(this);  // commit hara-kiri
+    delete this;  // commit hara-kiri
 }
 
 void pyVaultNode::pyVaultNodeOperationCallback::SetNode (RelVaultNode * rvn) {
@@ -191,8 +191,8 @@ pyVaultNode::~pyVaultNode()
 {
     if (fNode)
         fNode->DecRef("pyVaultNode");
-    FREE(fCreateAgeGuid);
-    FREE(fCreateAgeName);
+    free(fCreateAgeGuid);
+    free(fCreateAgeName);
 }
 
 
@@ -335,7 +335,7 @@ const char * pyVaultNode::GetCreateAgeGuid( void )
         return fCreateAgeGuid;
         
     if (fNode) {
-        fCreateAgeGuid = (char*)ALLOC(64);
+        fCreateAgeGuid = (char*)malloc(64);
         GuidToString(fNode->createAgeUuid, fCreateAgeGuid, 64);
     }
     
@@ -383,7 +383,7 @@ void pyVaultNode::SetCreatorNodeID( uint32_t v )
 
 void pyVaultNode::SetCreateAgeName( const char * v )
 {
-    FREE(fCreateAgeName);
+    free(fCreateAgeName);
     fCreateAgeName = nil;
 
     ASSERT(fNode);
@@ -394,7 +394,7 @@ void pyVaultNode::SetCreateAgeName( const char * v )
 
 void pyVaultNode::SetCreateAgeGuid( const char * v )
 {
-    FREE(fCreateAgeGuid);
+    free(fCreateAgeGuid);
     fCreateAgeGuid = nil;
     
     ASSERT(fNode);

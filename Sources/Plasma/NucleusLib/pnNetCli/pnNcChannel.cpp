@@ -110,7 +110,7 @@ ChannelCrit::~ChannelCrit () {
             channel->DecRef("ChannelLink");
         }
 
-        DEL(s_channels);
+        delete s_channels;
         s_channels = nil;
     }
     LeaveSafe();

@@ -174,7 +174,7 @@ void ITicTacToe::RecvGameOver (const Srv2Cli_TTT_GameOver & msg, void * param) {
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 
-    DEL(gameCli);   // we're done
+    delete gameCli;   // we're done
 }
 
 //============================================================================
@@ -210,7 +210,7 @@ pfGmTicTacToe::pfGmTicTacToe (
 //============================================================================
 pfGmTicTacToe::~pfGmTicTacToe () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================

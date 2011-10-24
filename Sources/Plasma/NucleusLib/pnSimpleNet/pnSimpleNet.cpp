@@ -135,7 +135,7 @@ static void NotifyConnSocketConnect (SimpleNetConn * conn) {
         kNetSuccess
     );
     
-    DEL(conn->connectParam);
+    delete conn->connectParam;
     conn->connectParam = nil;
 }
 
@@ -154,7 +154,7 @@ static void NotifyConnSocketConnectFailed (SimpleNetConn * conn) {
         kNetErrConnectFailed
     );
     
-    DEL(conn->connectParam);
+    delete conn->connectParam;
     conn->connectParam = nil;
 
     conn->DecRef("Connecting");
@@ -401,8 +401,8 @@ static void Connect (const NetAddress & addr, ConnectParam * cp) {
     }
     s_critsect.Leave();
     
-    DEL(conn);
-    DEL(cp);
+    delete conn;
+    delete cp;
 }
 
 //============================================================================
@@ -417,7 +417,7 @@ static void AsyncLookupCallback (
     if (!addrCount) {
         if (cp->callback)
             cp->callback(cp->param, nil, kNetErrNameLookupFailed);
-        DEL(cp);
+        delete cp;
         return;
     }
 

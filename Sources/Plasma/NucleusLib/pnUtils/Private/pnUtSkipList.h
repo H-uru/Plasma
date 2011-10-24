@@ -175,7 +175,7 @@ typename TSkipList<T,K,keyOffset,Cmp>::Node* TSkipList<T,K,keyOffset,Cmp>::Alloc
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::FreeNode (TNode<T,K> * node) {
 
-    FREE(node);
+    free(node);
 }
 
 //============================================================================
@@ -243,7 +243,7 @@ void TSkipList<T,K,keyOffset,Cmp>::Clear () {
     Node * ptr = m_head->next[0];
     while (ptr != m_stop) {
         Node * next = ptr->next[0];
-        DEL(ptr->object);
+        delete ptr->object;
         FreeNode(ptr);
         ptr = next;
     }
@@ -259,7 +259,7 @@ template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Delete (T * object) {
 
     Unlink(object);
-    DEL(object);
+    delete object;
 }
 
 //============================================================================

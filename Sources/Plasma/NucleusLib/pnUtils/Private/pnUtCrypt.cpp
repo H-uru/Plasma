@@ -254,8 +254,8 @@ void CryptKeyClose (
     if (!key)
         return;
 
-    DEL(key->handle);
-    DEL(key);
+    delete key->handle;
+    delete key;
 }
 
 //============================================================================

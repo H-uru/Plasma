@@ -167,7 +167,7 @@ static bool Recv_PingReply (
     if (trans) {
         unsigned replyAtMs = TimeGetMs();
         trans->conn->dump(L"[TCP] Reply from SrvAuth. ms=%u", replyAtMs - trans->pingAtMs);
-        DEL(trans);
+        delete trans;
         return true;
     }
     else {
@@ -209,7 +209,7 @@ static unsigned TimerCallback (void *) {
                 if (!curr->conn->error)
                     curr->conn->error = error;
                 curr->conn->dump(L"[TCP] No reply from SrvAuth: %u, %s (ms=%u)", error, NetErrorToString(error), diff);
-                DEL(curr);
+                delete curr;
             }
         }}
         {for (FileTrans * next, * curr = s_fileTrans.Head(); curr; curr = next) {
@@ -219,7 +219,7 @@ static unsigned TimerCallback (void *) {
                 if (!curr->conn->error)
                     curr->conn->error = error;
                 curr->conn->dump(L"[TCP] No reply from SrvFile: %u, %s (ms=%u)", error, NetErrorToString(error), diff);
-                DEL(curr);
+                delete curr;
             }
         }}
     }
@@ -244,7 +244,7 @@ static void AuthPingProc (void * param) {
             for (;;) {
                 if (conn->done) {
                     conn->pingsCompleted = kMaxPings;
-                    DEL(trans);
+                    delete trans;
                     break;
                 }
                 while (++s_transId == 0)
@@ -352,7 +352,7 @@ static void NotifyAuthConnSocketDisconnect (AuthConn * conn) {
     
     while (AuthTrans * trans = authTrans.Head()) {
         conn->dump(L"[TCP] No reply from SrvAuth: %u, %s", conn->error, NetErrorToString(conn->error));
-        DEL(trans);
+        delete trans;
     }
     
     conn->DecRef("Connected");
@@ -419,7 +419,7 @@ static bool Recv_File2Cli_ManifestReply (FileConn * conn, const File2Cli_Manifes
     if (trans) {
         unsigned replyAtMs = TimeGetMs();
         trans->conn->dump(L"[TCP] Reply from SrvFile. ms=%u", replyAtMs - trans->pingAtMs);
-        DEL(trans);
+        delete trans;
         return true;
     }
     else {
@@ -443,7 +443,7 @@ static void FilePingProc (void * param) {
             for (;;) {
                 if (conn->done) {
                     conn->pingsCompleted = kMaxPings;
-                    DEL(trans);
+                    delete trans;
                     break;
                 }
                 while (++s_transId == 0)
@@ -523,7 +523,7 @@ static void NotifyFileConnSocketDisconnect (FileConn * conn) {
     
     while (FileTrans * trans = fileTrans.Head()) {
         conn->dump(L"[TCP] No reply from SrvFile: %u, %s", conn->error, NetErrorToString(conn->error));
-        DEL(trans);
+        delete trans;
     }
     
     conn->DecRef("Connected");

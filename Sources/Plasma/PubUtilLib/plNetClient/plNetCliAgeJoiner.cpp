@@ -198,7 +198,7 @@ void plNCAgeJoiner::Complete (bool success, const char msg[]) {
         notify.msg      = msg;
         
         callback(this, kAgeJoinerComplete, &notify, userState);
-        DEL(this);
+        delete this;
     }
 
 }

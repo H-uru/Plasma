@@ -237,7 +237,7 @@ char* hsStrcpy(char dst[], const char src[])
         if (dst == nil)
         {
             int count = hsStrlen(src);
-            dst = (char *)ALLOC(count + 1);
+            dst = (char *)malloc(count + 1);
             memcpy(dst, src, count);
             dst[count] = 0;
             return dst;

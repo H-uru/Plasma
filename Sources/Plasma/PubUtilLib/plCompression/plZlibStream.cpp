@@ -44,12 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 voidpf ZlibAlloc(voidpf opaque, uInt items, uInt size)
 {
-    return ALLOC(items*size);
+    return malloc(items*size);
 }
 
 void ZlibFree(voidpf opaque, voidpf address)
 {
-    FREE(address);
+    free(address);
 }
 
 plZlibStream::plZlibStream() : fOutput(nil), fZStream(nil), fHeader(kNeedMoreData), fDecompressedOk(false)
@@ -85,14 +85,14 @@ hsBool plZlibStream::Close()
     if (fOutput)
     {
         fOutput->Close();
-        DEL(fOutput);
+        delete fOutput;
         fOutput = nil;
     }
     if (fZStream)
     {
         z_streamp zstream = (z_streamp)fZStream;
         inflateEnd(zstream);
-        DEL(zstream);
+        delete zstream;
         fZStream = nil;
     }
 

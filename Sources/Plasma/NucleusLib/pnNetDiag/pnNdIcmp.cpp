@@ -173,7 +173,7 @@ static void __cdecl PingThreadProc (void * param) {
     
     p->callback(p->diag, p->protocol, result, p->param);
     p->diag->DecRef("ICMP");
-    DEL(p);
+    delete p;
 }
 
 

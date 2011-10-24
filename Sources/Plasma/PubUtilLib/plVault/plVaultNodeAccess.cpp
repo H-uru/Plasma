@@ -491,7 +491,7 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
         }           
     }
     
-    FREE(mem);
+    free(mem);
     return true;
 }
 #endif
@@ -539,7 +539,7 @@ bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOpt
         return false;
         
     rec->SetDescriptor(sdlRecName, sdlRecVersion);
-    FREE(sdlRecName);
+    free(sdlRecName);
 
     // Note: Setting from default here results in a bug causing age SDL to
     // be incorrectly shown when immediately linking back to an age you linked
@@ -576,7 +576,7 @@ void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned w
     
     IVaultNodeSetBlob(kSDLData, base, &sdlData, &sdlDataLen, buf, bytes);
     
-    FREE(heap);
+    free(heap);
 }
 #endif // def CLIENT
 
@@ -586,7 +586,7 @@ void VaultSDLNode::InitStateDataRecord (const wchar_t sdlRecName[], unsigned wri
     {
         plStateDataRecord * rec = NEWZERO(plStateDataRecord);
         bool exists = GetStateDataRecord(rec, 0);
-        DEL(rec);
+        delete rec;
         if (exists)
             return;
     }
@@ -640,11 +640,11 @@ void VaultImageNode::StuffImage (plMipmap * src) {
     plJPEG::Instance().SetWriteQuality(30/*percent*/);
     if (plJPEG::Instance().WriteToStream(&ramStream, src)) {
         unsigned bytes = ramStream.GetEOF();        
-        uint8_t * buffer = (uint8_t *)ALLOC(bytes);
+        uint8_t * buffer = (uint8_t *)malloc(bytes);
         ramStream.CopyToMem(buffer);
         IVaultNodeSetBlob(kImageData, base, &imgData, &imgDataLen, buffer, bytes);
         SetImageType(kJPEG);
-        FREE(buffer);
+        free(buffer);
     }
     else {
         IVaultNodeSetBlob(kImageData, base, &imgData, &imgDataLen, nil, 0);

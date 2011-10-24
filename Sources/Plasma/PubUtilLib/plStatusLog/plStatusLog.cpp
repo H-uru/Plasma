@@ -119,7 +119,7 @@ plStatusLogMgr::~plStatusLogMgr()
         fDisplays->IUnlink();
 
         if( log->fFlags & plStatusLog::kDeleteForMe )
-            DEL(log);
+            delete log;
     }
 }
 

@@ -155,15 +155,15 @@ struct LocAgeInfo
 //////////////////////////////////////////////////////////////////////
 
 static void * XMLCALL XmlMalloc (size_t size) {
-    return ALLOC(size);
+    return malloc(size);
 }
 
 static void * XMLCALL XmlRealloc (void * ptr, size_t size) {
-    return REALLOC(ptr, size);
+    return realloc(ptr, size);
 }
 
 static void XMLCALL XmlFree (void * ptr) {
-    FREE(ptr);
+    free(ptr);
 }
 
 XML_Memory_Handling_Suite gHeapAllocator = {

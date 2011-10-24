@@ -189,7 +189,7 @@ PyObject *pyVaultPlayerNode::GetLinkToMyNeighborhood()
         return result;
     }
 
-    DEL(link);
+    delete link;
     PYTHON_RETURN_NONE;
 }
 
@@ -202,7 +202,7 @@ PyObject *pyVaultPlayerNode::GetLinkToCity()
         return result;
     }
 
-    DEL(link);
+    delete link;
     PYTHON_RETURN_NONE;
 }
 

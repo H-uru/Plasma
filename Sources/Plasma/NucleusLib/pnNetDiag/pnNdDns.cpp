@@ -113,7 +113,7 @@ static void LookupCallback (
         );
     }
     p->diag->DecRef("DNS");
-    DEL(p);
+    delete p;
 }
 
 
@@ -190,5 +190,5 @@ void NetDiagDns (
         0,
         dnsParam
     );
-    FREE(host);
+    free(host);
 }

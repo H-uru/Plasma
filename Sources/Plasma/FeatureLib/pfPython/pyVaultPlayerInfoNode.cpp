@@ -70,8 +70,8 @@ pyVaultPlayerInfoNode::pyVaultPlayerInfoNode()
 }
 
 pyVaultPlayerInfoNode::~pyVaultPlayerInfoNode () {
-    FREE(ansiPlayerName);
-    FREE(ansiAgeInstName);
+    free(ansiPlayerName);
+    free(ansiAgeInstName);
 }
 
 //==================================================================
@@ -103,7 +103,7 @@ void pyVaultPlayerInfoNode::Player_SetPlayerName( const char * name )
     wchar_t * wStr = StrDupToUnicode(name);
     VaultPlayerInfoNode playerInfo(fNode);      
     playerInfo.SetPlayerName(wStr);
-    FREE(wStr);
+    free(wStr);
 }
 
 const char * pyVaultPlayerInfoNode::Player_GetPlayerName( void )
@@ -115,7 +115,7 @@ const char * pyVaultPlayerInfoNode::Player_GetPlayerName( void )
     if (!playerInfo.playerName)
         return "";
 
-    FREE(ansiPlayerName);
+    free(ansiPlayerName);
     ansiPlayerName = StrDupToAnsi(playerInfo.playerName);
     return ansiPlayerName;
 }
@@ -129,7 +129,7 @@ void pyVaultPlayerInfoNode::Player_SetAgeInstanceName( const char * agename )
     wchar_t * wStr = StrDupToUnicode(agename);
     VaultPlayerInfoNode playerInfo(fNode);      
     playerInfo.SetAgeInstName(wStr);
-    FREE(wStr);
+    free(wStr);
 }
 
 const char * pyVaultPlayerInfoNode::Player_GetAgeInstanceName( void )
@@ -141,7 +141,7 @@ const char * pyVaultPlayerInfoNode::Player_GetAgeInstanceName( void )
     if (!playerInfo.ageInstName)
         return "";
         
-    FREE(ansiAgeInstName);
+    free(ansiAgeInstName);
     ansiAgeInstName = StrDupToAnsi(playerInfo.ageInstName);
     return ansiAgeInstName;
 }

@@ -148,7 +148,7 @@ static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
             #endif
 
             task->taskList->DecRef("task");
-            DEL(task);
+            delete task;
         }
     }
     PerfSubCounter(kAsyncPerfThreadTaskThreadsActive, 1);

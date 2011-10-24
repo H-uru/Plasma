@@ -366,7 +366,7 @@ void IniChangeRemove (
     s_lock.LeaveWrite();
 
     // Delete object outside critical section
-    DEL(change);
+    delete change;
 }
 
 //===========================================================================

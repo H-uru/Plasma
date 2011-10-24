@@ -143,7 +143,7 @@ inline void TPriorityQueue<C,P>::Clear () {
     // Deleting an object could cause other objects in the queue to be deleted
     // so we can't make any assumptions about indices or counts of items in the array
     while (C * head = Dequeue())
-        DEL(head);
+        delete head;
 
     m_array.Clear();
 }
@@ -164,7 +164,7 @@ C * TPriorityQueue<C,P>::Delete (C * object) {
     unsigned index = priority->GetIndex();
 
     // delete the object
-    DEL(object);
+    delete object;
 
     // return the next object in that queue
     if (queue && (index < queue->Count()))

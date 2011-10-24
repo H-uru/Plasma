@@ -116,7 +116,7 @@ struct NlmLeaveAgeOp : NlmOp {
 struct NlmOpNode {
     LINK(NlmOpNode) link;
     NlmOp *         op;
-    ~NlmOpNode () { DEL(op); }
+    ~NlmOpNode () { delete op; }
 };
     
 
@@ -173,7 +173,7 @@ void plNetLinkingMgr::NCAgeJoinerCallback (
             
             // Pull our wait op off exec queue
             if (NlmOpWaitOp * waitOp = (NlmOpWaitOp *) userState)
-                DEL(waitOp->node);
+                delete waitOp->node;
         }
         break;
         
@@ -195,7 +195,7 @@ void plNetLinkingMgr::NCAgeLeaverCallback (
 
             // Pull our wait op off exec queue
             if (NlmOpWaitOp * waitOp = (NlmOpWaitOp *) userState)
-                DEL(waitOp->node);
+                delete waitOp->node;
         }
         break;
         
@@ -260,7 +260,7 @@ void plNetLinkingMgr::ExecNextOp () {
         break;
     }
     
-    DEL(opNode);
+    delete opNode;
 }
 
 

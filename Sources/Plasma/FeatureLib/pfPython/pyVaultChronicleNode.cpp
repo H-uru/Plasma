@@ -70,8 +70,8 @@ pyVaultChronicleNode::pyVaultChronicleNode(int n)
 }
 
 pyVaultChronicleNode::~pyVaultChronicleNode () {
-    FREE(ansiName);
-    FREE(ansiValue);
+    free(ansiName);
+    free(ansiValue);
 }
 
 
@@ -86,7 +86,7 @@ void pyVaultChronicleNode::Chronicle_SetName( const char * text )
     wchar_t * wStr = StrDupToUnicode(text);
     VaultChronicleNode chron(fNode);
     chron.SetEntryName(wStr);
-    FREE(wStr);
+    free(wStr);
 }
 
 const char * pyVaultChronicleNode::Chronicle_GetName( void )
@@ -94,7 +94,7 @@ const char * pyVaultChronicleNode::Chronicle_GetName( void )
     if (!fNode)
         return "";
 
-    FREE(ansiName);
+    free(ansiName);
     VaultChronicleNode chron(fNode);
     ansiName = StrDupToAnsi(chron.entryName);
     
@@ -109,7 +109,7 @@ void pyVaultChronicleNode::Chronicle_SetValue( const char * text )
     wchar_t * wStr = StrDupToUnicode(text);
     VaultChronicleNode chron(fNode);
     chron.SetEntryValue(wStr);
-    FREE(wStr);
+    free(wStr);
 }
 
 const char * pyVaultChronicleNode::Chronicle_GetValue( void )
@@ -117,7 +117,7 @@ const char * pyVaultChronicleNode::Chronicle_GetValue( void )
     if (!fNode)
         return "";
         
-    FREE(ansiValue);
+    free(ansiValue);
     ansiValue = nil;
     
     VaultChronicleNode chron(fNode);

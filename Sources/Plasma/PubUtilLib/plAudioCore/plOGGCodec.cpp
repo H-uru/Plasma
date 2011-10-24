@@ -82,7 +82,7 @@ void    plOGGCodec::BuildActualWaveHeader()
     int factdata = 0;
     int size = fDataSize+48; // size of data with header except for first four bytes
 
-    fHeadBuf = (uint8_t *) ALLOC(56);
+    fHeadBuf = (uint8_t *)malloc(56);
     memcpy(fHeadBuf, "RIFF", 4);
     memcpy(fHeadBuf+4, &size, 4);
     memcpy(fHeadBuf+8, "WAVE", 4);
@@ -189,12 +189,12 @@ plOGGCodec::~plOGGCodec()
 void    plOGGCodec::Close( void )
 {
     // plNetClientApp::StaticDebugMsg("Ogg Close, t=%f, start", hsTimer::GetSeconds());
-    FREE(fHeadBuf);
+    free(fHeadBuf);
     fHeadBuf = nil;
     if( fOggFile != nil )
     {
         ov_clear( fOggFile );
-        DEL(fOggFile);
+        delete fOggFile;
         fOggFile = nil;
     }
 

@@ -6090,7 +6090,7 @@ PF_CONSOLE_CMD(Age, ShowSDL, "", "Prints the age SDL values")
     plStateDataRecord * rec = NEWZERO(plStateDataRecord);
     if (!VaultAgeGetAgeSDL(rec)) {
         PrintString("Age SDL not found");
-        DEL(rec);
+        delete rec;
         return;
     }
     
@@ -6106,14 +6106,14 @@ PF_CONSOLE_CMD(Age, ShowSDL, "", "Prints the age SDL values")
                 char * str = simple->GetAsString(j);
                 StrPack(line, str, arrsize(line));
                 StrPack(line, ",", arrsize(line));
-                FREE(str);
+                free(str);
             }
             PrintString(line);
             plStatusLog::AddLineS("ShowSDL.log", "%s", line);
         }
     }   
     
-    DEL(rec);
+    delete rec;
 }
 
 PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed days and fractions" )

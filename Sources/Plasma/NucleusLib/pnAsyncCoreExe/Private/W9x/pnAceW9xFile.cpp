@@ -190,7 +190,7 @@ void CFile::Complete (void * op, CCritSect * critSect, AsyncId asyncId) {
 //===========================================================================
 void CFile::Delete (void * op) {
     FileOp * fileOp = (FileOp *)op;
-    DEL(fileOp);
+    delete fileOp;
 }
 
 //===========================================================================

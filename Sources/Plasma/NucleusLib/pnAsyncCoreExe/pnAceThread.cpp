@@ -75,7 +75,7 @@ static unsigned CALLBACK CreateThreadProc (LPVOID param) {
     unsigned result = thread->proc(thread);
 
     // Cleanup thread
-    DEL(thread);
+    delete thread;
 
     PerfSubCounter(kAsyncPerfThreadsCurr, 1);
     return result;

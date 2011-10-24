@@ -148,7 +148,7 @@ static ARRAYOBJ(plKey)  s_receivers;
 static void ShutdownFactories () {
 
     while (Factory * factory = s_factories.Head())
-        DEL(factory);
+        delete factory;
 }
 
 //============================================================================
@@ -200,7 +200,7 @@ void IGameMgr::RecvGameInstance (const Srv2Cli_GameMgr_GameInstance & msg, void 
             cli = internal->gameCli;
     }
 
-    DEL(state);
+    delete state;
 }
 
 //============================================================================
@@ -228,7 +228,7 @@ void IGameMgr::Recv (GameMsgHeader * msg) {
     void * param;
     if (TransState * trans = s_trans.Find(msg->transId)) {
         param       = trans->param;
-        DEL(trans);
+        delete trans;
     }
     else {
         param       = nil;
@@ -280,13 +280,13 @@ pfGameMgrMsg::pfGameMgrMsg () {
 //============================================================================
 pfGameMgrMsg::~pfGameMgrMsg () {
 
-    FREE(netMsg);
+    free(netMsg);
 }
 
 //============================================================================
 void pfGameMgrMsg::Set (const GameMsgHeader & msg) {
 
-    netMsg = (GameMsgHeader *)ALLOC(msg.messageBytes);
+    netMsg = (GameMsgHeader *)malloc(msg.messageBytes);
     MemCopy(netMsg, &msg, msg.messageBytes);
 }
 
@@ -307,13 +307,13 @@ pfGameCliMsg::pfGameCliMsg () {
 //============================================================================
 pfGameCliMsg::~pfGameCliMsg () {
 
-    FREE(netMsg);
+    free(netMsg);
 }
 
 //============================================================================
 void pfGameCliMsg::Set (pfGameCli * cli, const GameMsgHeader & msg) {
 
-    netMsg = (GameMsgHeader *)ALLOC(msg.messageBytes);
+    netMsg = (GameMsgHeader *)malloc(msg.messageBytes);
     MemCopy(netMsg, &msg, msg.messageBytes);
     gameCli     = cli;
 }
@@ -475,7 +475,7 @@ pfGameCli::pfGameCli (
 //============================================================================
 pfGameCli::~pfGameCli () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================

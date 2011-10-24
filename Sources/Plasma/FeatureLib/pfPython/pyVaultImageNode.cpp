@@ -245,7 +245,7 @@ void pyVaultImageNode::SetImageFromScrShot()
         else {
             access.SetImageData(nil, 0);
             access.SetImageType(VaultImageNode::kNone);
-            DEL(fMipmap);
+            delete fMipmap;
             fMipmap = nil;
         }
     }

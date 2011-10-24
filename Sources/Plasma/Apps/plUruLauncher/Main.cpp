@@ -409,7 +409,7 @@ static void DispatchEvents (HWND hwnd) {
             DISPATCH(SetBytesRemaining);
             DEFAULT_FATAL(event->type);
         }
-        DEL(event);  // unlinks from list 
+        delete event;  // unlinks from list 
     }
 #undef DISPATCH
 }

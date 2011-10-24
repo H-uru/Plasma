@@ -90,7 +90,7 @@ IniValue::~IniValue () {
     wchar_t ** cur = fArgs.Ptr();
     wchar_t ** end = fArgs.Term();
     for (; cur < end; ++cur)
-        FREE(*cur);
+        free(*cur);
 }
 
 //===========================================================================
@@ -124,7 +124,7 @@ IniKey::~IniKey () {
     IniValue ** cur = fValues.Ptr();
     IniValue ** end = fValues.Term();
     for (; cur < end; ++cur)
-        DEL(*cur);
+        delete *cur;
 }
 
 //===========================================================================
@@ -430,12 +430,12 @@ static bool ParseFile (
                 }
             }
 
-            FREE(src);
+            free(src);
             buffer = (uint8_t *) dst;
         }
 
         ParseBuffer(ini, (const wchar_t *) buffer);
-        FREE(buffer);
+        free(buffer);
         result = true;
     }
 
@@ -464,7 +464,7 @@ Ini * IniOpen (
 
 //===========================================================================
 void IniClose (Ini * ini) {
-    DEL(ini);
+    delete ini;
 }
 
 //===========================================================================

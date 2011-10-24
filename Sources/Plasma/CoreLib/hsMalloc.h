@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-
 /****************************************************************************
 *
 *   Allocation functions
@@ -168,7 +167,6 @@ inline void CDECL operator delete (void *, void *) {}
 #define ALLOC(b)                MemAlloc(b, 0, __FILE__, __LINE__)
 #define ALLOCZERO(b)            MemAlloc(b, kMemZero, __FILE__, __LINE__)
 #define ALLOCFLAGS(b, f)        MemAlloc(b, (f), __FILE__, __LINE__)
-#define FREE(p)                 MemFree(p, 0)
 #define FREEFLAGS(p, f)         MemFree(p, (f))
 #define REALLOC(p, b)           MemRealloc(p, b, 0, __FILE__, __LINE__)
 #define REALLOCFLAGS(p, b, f)   MemRealloc(p, b, (f), __FILE__, __LINE__)
@@ -185,7 +183,6 @@ inline void CDECL operator delete (void *, void *) {}
 #define NEW(t)                  new(MemAlloc(sizeof(t), 0, __FILE__, __LINE__)) t
 #define NEWFLAGS(t, f)          new(MemAlloc(sizeof(t), (f), __FILE__, __LINE__)) t
 #define NEWZERO(t)              new(MemAlloc(sizeof(t), kMemZero, __FILE__, __LINE__)) t
-#define DEL(t)                  delete (t)
 
 #endif // __cplusplus
 

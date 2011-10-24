@@ -102,7 +102,7 @@ void CNtWaitHandle::IncRef () {
 //===========================================================================
 void CNtWaitHandle::DecRef () {
     if (!InterlockedDecrement(&m_refCount))
-        DEL(this);
+        delete this;
 }
 
 //===========================================================================

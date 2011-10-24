@@ -553,7 +553,7 @@ void AsyncSocketUnregisterNotifyProc (
     s_notifyProcLock.LeaveWrite();
 
     // perform memory deallocation outside the lock
-    DEL(scan);
+    delete scan;
 }
 
 //===========================================================================

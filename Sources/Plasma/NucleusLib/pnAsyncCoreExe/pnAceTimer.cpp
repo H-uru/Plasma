@@ -133,7 +133,7 @@ static inline unsigned RunTimers () {
         while (AsyncTimer * t = s_timerDelete.Head()) {
             if (t->destroyProc)
                 CallTimerProc(t, t->destroyProc);
-            DEL(t);
+            delete t;
         }
 
         // Get first timer to run
@@ -225,7 +225,7 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
     while (AsyncTimer * t = s_timerDelete.Head()) {
         if (t->destroyProc)
             CallTimerProc(t, t->destroyProc);
-        DEL(t);
+        delete t;
     }
     s_timerCrit.Leave();
 

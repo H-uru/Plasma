@@ -137,5 +137,5 @@ void cyAccountManagement::ChangePassword(const char* password)
 {
     wchar_t* wpassword = StrDupToUnicode(password);
     NetCommChangeMyPassword(wpassword);
-    FREE(wpassword);
+    free(wpassword);
 }

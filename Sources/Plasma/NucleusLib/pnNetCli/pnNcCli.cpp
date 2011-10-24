@@ -195,7 +195,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
             temp = ALLOCA(uint8_t, bytes);
         else
             // uint8_t count is large, use heap-based buffer
-            temp = heap = (uint8_t *)ALLOC(bytes);
+            temp = heap = (uint8_t *)malloc(bytes);
 
         MemCopy(temp, data, bytes);
         CryptEncrypt(cli->cryptOut, bytes, temp);
@@ -205,7 +205,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
         AsyncSocketSend(cli->sock, data, bytes);
         
     // free heap buffer (if any)
-    FREE(heap);
+    free(heap);
 }
 
 //============================================================================
@@ -227,10 +227,10 @@ static void AddToSendBuffer (
     if (bytes > arrsize(cli->sendBuffer)) {
         // Let the OS fragment oversize buffers
         FlushSendBuffer(cli);
-        void * heap = ALLOC(bytes);
+        void * heap = malloc(bytes);
         MemCopy(heap, data, bytes);
         PutBufferOnWire(cli, heap, bytes);
-        FREE(heap);
+        free(heap);
     }
     else {
         for (;;) {
@@ -1079,7 +1079,7 @@ void NetCliDelete (
     cli->input.Clear();
     cli->recvBuffer.Clear();
 
-    DEL(cli);
+    delete cli;
 }
 
 //============================================================================
@@ -1120,7 +1120,7 @@ bool NetCliDispatch (
                     temp = ALLOCA(uint8_t, bytes);
                 else
                     // uint8_t count is large, use heap-based buffer
-                    temp = heap = (uint8_t *)ALLOC(bytes);
+                    temp = heap = (uint8_t *)malloc(bytes);
 
                 MemCopy(temp, data, bytes);
                 CryptDecrypt(cli->cryptIn, bytes, temp);
@@ -1153,7 +1153,7 @@ bool NetCliDispatch (
 #endif
             
             // free heap buffer (if any)
-            FREE(heap);
+            free(heap);
 
             cli->input.Compact();
             return cli->recvDispatch;

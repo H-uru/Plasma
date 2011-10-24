@@ -172,6 +172,6 @@ void NetDiagSys (
             dump(L"[SYS] Error getting adaper list");
             callback(diag, kNetProtocolNil, kNetErrFileNotFound, param);
         }
-        FREE(pInfo);
+        free(pInfo);
     }
 }

@@ -334,7 +334,7 @@ inline void IVaultNodeSetString (
     const char      src[],
     unsigned        chars
 ) {
-    FREE(*pdst);
+    free(*pdst);
     if (src && src[0])
         *pdst = StrDupLen(src, chars);
     else
@@ -351,7 +351,7 @@ inline void IVaultNodeSetString (
     const wchar_t   src[],
     unsigned        chars
 ) {
-    FREE(*pdst);
+    free(*pdst);
     if (src && src[0])
         *pdst = StrDupLen(src, chars);
     else
@@ -382,7 +382,7 @@ inline void IVaultNodeSetBlob (
     const uint8_t   src[],
     unsigned        srcLen
 ) {
-    FREE(*pdst);
+    free(*pdst);
     if (src) {
         *pdst = (uint8_t*)MEMDUP(src, srcLen);
         *pdstLen = srcLen;

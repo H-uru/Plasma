@@ -600,7 +600,7 @@ static void ListenPrepareListeners (fd_set * readfds) {
 
         // destroy unused ports
         if (!port->listenCount) {
-            DEL(port);
+            delete port;
             continue;
         }
 
@@ -980,7 +980,7 @@ void INtSocketOpCompleteSocketConnect (NtOpConnAttempt * op) {
     // and because connection attempts are not waitable
     ASSERT(!op->link.IsLinked());
     ASSERT(!op->signalComplete);
-    DEL(op);
+    delete op;
 
     PerfSubCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
 }
@@ -1259,7 +1259,7 @@ void NtSocketDelete (AsyncSocket conn) {
         return;
     }
 
-    DEL(sock);
+    delete sock;
 }
 
 //===========================================================================

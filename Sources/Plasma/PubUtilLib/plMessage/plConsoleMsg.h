@@ -70,7 +70,7 @@ public:
                 plMessage(nil, nil, nil), fCmd( cmd ), fString(hsStrcpy(str))
                 { SetBCastFlag( kBCastByExactType ); }
     
-    ~plConsoleMsg() { FREE(fString); }
+    ~plConsoleMsg() { free(fString); }
 
     CLASSNAME_REGISTER( plConsoleMsg );
     GETINTERFACE_ANY( plConsoleMsg, plMessage );
@@ -79,7 +79,7 @@ public:
     const char  *GetString( void ) const { return fString; };
     
     void SetCmd (uint32_t cmd) { fCmd = cmd; }
-    void SetString (const char str[]) { FREE(fString); fString = hsStrcpy(str); }
+    void SetString (const char str[]) { free(fString); fString = hsStrcpy(str); }
 
     virtual void Read(hsStream* s, hsResMgr* mgr) 
     { 
