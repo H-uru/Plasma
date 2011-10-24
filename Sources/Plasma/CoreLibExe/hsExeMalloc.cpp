@@ -591,14 +591,16 @@ void * MemRealloc (void * ptr, unsigned bytes, unsigned flags, const char file[]
 //===========================================================================
 unsigned MemSize (void * ptr) {
     ASSERT(ptr);
-    unsigned result;
+    unsigned result = 0;
 
 #ifdef MEM_DEBUG
     const _CrtMemBlockHeader * pHead = pHdr(ptr);
     unsigned block = pHead->nBlockUse;
 #endif
 
+#if HS_BUILD_FOR_WIN32
     result = (unsigned)_msize_dbg(ptr, block);
+#endif
     return result;
 }
 

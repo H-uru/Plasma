@@ -61,6 +61,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_WIN32
 typedef CRITICAL_SECTION CritSectHandle;
+#elif HS_BUILD_FOR_UNIX
+#    include <pthread.h>
+typedef pthread_mutex_t CritSectHandle;
 #else
 # error "CCritSect: Not implemented on this platform"
 #endif
