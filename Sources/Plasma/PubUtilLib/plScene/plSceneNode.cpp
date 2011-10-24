@@ -99,7 +99,7 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
     UInt32 n;
     int i;
 
-    n = s->ReadSwap32();
+    n = s->ReadLE32();
     fSceneObjects.Reset();
     for( i = 0; i < n; i++ )
     {
@@ -107,7 +107,7 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
         plKey key = mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
     }
 
-    n = s->ReadSwap32();
+    n = s->ReadLE32();
     fGenericPool.Reset();
     for( i = 0; i < n; i++ )
     {
@@ -122,11 +122,11 @@ void plSceneNode::Write(hsStream* s, hsResMgr* mgr)
 
     int i;
 
-    s->WriteSwap32(fSceneObjects.GetCount());
+    s->WriteLE32(fSceneObjects.GetCount());
     for( i = 0; i < fSceneObjects.GetCount(); i++ )
         mgr->WriteKey(s,fSceneObjects[i]);
 
-    s->WriteSwap32(fGenericPool.GetCount());
+    s->WriteLE32(fGenericPool.GetCount());
     for( i = 0; i < fGenericPool.GetCount(); i++ )
         mgr->WriteKey(s, fGenericPool[i]);
 }

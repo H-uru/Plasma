@@ -48,13 +48,13 @@ const int hsKeyFrame::kMaxFrameNumber = 65535;
 
 void hsPoint3Key::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
+    fFrame = stream->ReadLE16();
     fValue.Read(stream);
 }
 
 void hsPoint3Key::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
+    stream->WriteLE16(fFrame);
     fValue.Write(stream);
 }
 
@@ -67,7 +67,7 @@ hsBool hsPoint3Key::CompareValue(hsPoint3Key *key)
 
 void hsBezPoint3Key::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
+    fFrame = stream->ReadLE16();
     fInTan.Read(stream);
     fOutTan.Read(stream);
     fValue.Read(stream);
@@ -75,7 +75,7 @@ void hsBezPoint3Key::Read(hsStream *stream)
 
 void hsBezPoint3Key::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
+    stream->WriteLE16(fFrame);
     fInTan.Write(stream);
     fOutTan.Write(stream);
     fValue.Write(stream);
@@ -92,14 +92,14 @@ hsBool hsBezPoint3Key::CompareValue(hsBezPoint3Key *key)
 
 void hsScalarKey::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
-    fValue = stream->ReadSwapScalar();
+    fFrame = stream->ReadLE16();
+    fValue = stream->ReadLEScalar();
 }
 
 void hsScalarKey::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
-    stream->WriteSwapScalar(fValue);
+    stream->WriteLE16(fFrame);
+    stream->WriteLEScalar(fValue);
 }
 
 hsBool hsScalarKey::CompareValue(hsScalarKey *key)
@@ -109,18 +109,18 @@ hsBool hsScalarKey::CompareValue(hsScalarKey *key)
 
 void hsBezScalarKey::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
-    fInTan  = stream->ReadSwapScalar();
-    fOutTan = stream->ReadSwapScalar();
-    fValue  = stream->ReadSwapScalar();
+    fFrame = stream->ReadLE16();
+    fInTan  = stream->ReadLEScalar();
+    fOutTan = stream->ReadLEScalar();
+    fValue  = stream->ReadLEScalar();
 }
 
 void hsBezScalarKey::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
-    stream->WriteSwapScalar(fInTan);
-    stream->WriteSwapScalar(fOutTan);
-    stream->WriteSwapScalar(fValue);
+    stream->WriteLE16(fFrame);
+    stream->WriteLEScalar(fInTan);
+    stream->WriteLEScalar(fOutTan);
+    stream->WriteLEScalar(fValue);
 }
 
 hsBool hsBezScalarKey::CompareValue(hsBezScalarKey *key)
@@ -132,13 +132,13 @@ hsBool hsBezScalarKey::CompareValue(hsBezScalarKey *key)
 
 void hsQuatKey::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
+    fFrame = stream->ReadLE16();
     fValue.Read(stream);
 }
 
 void hsQuatKey::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
+    stream->WriteLE16(fFrame);
     fValue.Write(stream);
 }
 
@@ -154,14 +154,14 @@ const hsScalar hsCompressedQuatKey32::k10BitScaleRange = 1023 / (2 * kOneOverRoo
 
 void hsCompressedQuatKey32::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
-    fData = stream->ReadSwap32();
+    fFrame = stream->ReadLE16();
+    fData = stream->ReadLE32();
 }
 
 void hsCompressedQuatKey32::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
-    stream->WriteSwap32(fData);
+    stream->WriteLE16(fFrame);
+    stream->WriteLE32(fData);
 }
 
 hsBool hsCompressedQuatKey32::CompareValue(hsCompressedQuatKey32 *key)
@@ -295,16 +295,16 @@ const hsScalar hsCompressedQuatKey64::k21BitScaleRange = 2097151 / (2 * kOneOver
 
 void hsCompressedQuatKey64::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
-    fData[0] = stream->ReadSwap32();
-    fData[1] = stream->ReadSwap32();
+    fFrame = stream->ReadLE16();
+    fData[0] = stream->ReadLE32();
+    fData[1] = stream->ReadLE32();
 }
 
 void hsCompressedQuatKey64::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
-    stream->WriteSwap32(fData[0]);
-    stream->WriteSwap32(fData[1]);
+    stream->WriteLE16(fFrame);
+    stream->WriteLE32(fData[0]);
+    stream->WriteLE32(fData[1]);
 }
 
 hsBool hsCompressedQuatKey64::CompareValue(hsCompressedQuatKey64 *key)
@@ -456,13 +456,13 @@ void hsScaleValue::Write(hsStream *stream)
 /////////////////////////////////////////
 void hsScaleKey::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
+    fFrame = stream->ReadLE16();
     fValue.Read(stream);
 }
 
 void hsScaleKey::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
+    stream->WriteLE16(fFrame);
     fValue.Write(stream);
 }
 
@@ -473,7 +473,7 @@ hsBool hsScaleKey::CompareValue(hsScaleKey *key)
 
 void hsBezScaleKey::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
+    fFrame = stream->ReadLE16();
     fInTan.Read(stream);
     fOutTan.Read(stream);
     fValue.Read(stream);
@@ -481,7 +481,7 @@ void hsBezScaleKey::Read(hsStream *stream)
 
 void hsBezScaleKey::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
+    stream->WriteLE16(fFrame);
     fInTan.Write(stream);
     fOutTan.Write(stream);
     fValue.Write(stream);
@@ -510,13 +510,13 @@ void hsG3DSMaxKeyFrame::Set(const hsAffineParts &parts, UInt16 frame)
 
 void hsG3DSMaxKeyFrame::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
+    fFrame = stream->ReadLE16();
     fParts.Read(stream);
 }
 
 void hsG3DSMaxKeyFrame::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
+    stream->WriteLE16(fFrame);
     fParts.Write(stream);
 }
 
@@ -529,20 +529,20 @@ hsBool hsG3DSMaxKeyFrame::CompareValue(hsG3DSMaxKeyFrame *key)
 
 void hsMatrix33Key::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
+    fFrame = stream->ReadLE16();
     Int32 i,j;
     for(i=0;i<3;i++)
         for(j=0;j<3;j++)
-            fValue.fMap[j][i] = stream->ReadSwapScalar();
+            fValue.fMap[j][i] = stream->ReadLEScalar();
 }
 
 void hsMatrix33Key::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
+    stream->WriteLE16(fFrame);
     Int32 i,j;
     for(i=0;i<3;i++)
         for(j=0;j<3;j++)
-            stream->WriteSwapScalar(fValue.fMap[j][i]);
+            stream->WriteLEScalar(fValue.fMap[j][i]);
 }
 
 hsBool hsMatrix33Key::CompareValue(hsMatrix33Key *key)
@@ -554,13 +554,13 @@ hsBool hsMatrix33Key::CompareValue(hsMatrix33Key *key)
 
 void hsMatrix44Key::Read(hsStream *stream)
 {
-    fFrame = stream->ReadSwap16();
+    fFrame = stream->ReadLE16();
     fValue.Read(stream);
 }
 
 void hsMatrix44Key::Write(hsStream *stream)
 {
-    stream->WriteSwap16(fFrame);
+    stream->WriteLE16(fFrame);
     fValue.Write(stream);
 }
 

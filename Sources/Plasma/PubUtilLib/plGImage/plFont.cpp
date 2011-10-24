@@ -83,20 +83,20 @@ plFont::plCharacter::plCharacter()
 void    plFont::plCharacter::Read( hsStream *s )
 {
     // Rocket science here...
-    s->ReadSwap( &fBitmapOff );
-    s->ReadSwap( &fHeight );
-    s->ReadSwap( &fBaseline );
-    s->ReadSwap( &fLeftKern );
-    s->ReadSwap( &fRightKern );
+    s->ReadLE( &fBitmapOff );
+    s->ReadLE( &fHeight );
+    s->ReadLE( &fBaseline );
+    s->ReadLE( &fLeftKern );
+    s->ReadLE( &fRightKern );
 }
 
 void    plFont::plCharacter::Write( hsStream *s )
 {
-    s->WriteSwap( fBitmapOff );
-    s->WriteSwap( fHeight );
-    s->WriteSwap( fBaseline );
-    s->WriteSwap( fLeftKern );
-    s->WriteSwap( fRightKern );
+    s->WriteLE( fBitmapOff );
+    s->WriteLE( fHeight );
+    s->WriteLE( fBaseline );
+    s->WriteLE( fLeftKern );
+    s->WriteLE( fRightKern );
 }
 
 //// Constructor/Read/Write/Destructor/etc ////////////////////////////////////
@@ -1126,45 +1126,45 @@ hsBool  plFont::LoadFromFNTStream( hsStream *stream )
 
             void    Read( hsStream *s )
             {
-                version = s->ReadSwap16();
-                size = s->ReadSwap32();
+                version = s->ReadLE16();
+                size = s->ReadLE32();
 
                 s->Read( sizeof( copyright ), copyright );
             
-                s->ReadSwap( &type );
-                s->ReadSwap( &points );
-                s->ReadSwap( &vertRes );
-                s->ReadSwap( &horzRes );
-                s->ReadSwap( &ascent );
-                s->ReadSwap( &internalLeading );
-                s->ReadSwap( &externalLeading );
-                s->ReadSwap( &italic );
-                s->ReadSwap( &underline );
-                s->ReadSwap( &strikeout );
-                s->ReadSwap( &weight );
-                s->ReadSwap( &charSet );
-                s->ReadSwap( &pixWidth );
-                s->ReadSwap( &pixHeight );
-                s->ReadSwap( &pitchFamily );
-                s->ReadSwap( &avgWidth );
-                s->ReadSwap( &maxWidth );
-                s->ReadSwap( &firstChar );
-                s->ReadSwap( &lastChar );
-                s->ReadSwap( &defaultChar );
-                s->ReadSwap( &breakChar );
-                s->ReadSwap( &widthBytes );
-                s->ReadSwap( &device );
-                s->ReadSwap( &face );
-                s->ReadSwap( &bitsPointer );
-                s->ReadSwap( &bitsOffset );
-                s->ReadSwap( &reserved );
+                s->ReadLE( &type );
+                s->ReadLE( &points );
+                s->ReadLE( &vertRes );
+                s->ReadLE( &horzRes );
+                s->ReadLE( &ascent );
+                s->ReadLE( &internalLeading );
+                s->ReadLE( &externalLeading );
+                s->ReadLE( &italic );
+                s->ReadLE( &underline );
+                s->ReadLE( &strikeout );
+                s->ReadLE( &weight );
+                s->ReadLE( &charSet );
+                s->ReadLE( &pixWidth );
+                s->ReadLE( &pixHeight );
+                s->ReadLE( &pitchFamily );
+                s->ReadLE( &avgWidth );
+                s->ReadLE( &maxWidth );
+                s->ReadLE( &firstChar );
+                s->ReadLE( &lastChar );
+                s->ReadLE( &defaultChar );
+                s->ReadLE( &breakChar );
+                s->ReadLE( &widthBytes );
+                s->ReadLE( &device );
+                s->ReadLE( &face );
+                s->ReadLE( &bitsPointer );
+                s->ReadLE( &bitsOffset );
+                s->ReadLE( &reserved );
                 if( version == 0x0300 )
                 {
-                    s->ReadSwap( &flags );
-                    s->ReadSwap( &aSpace );
-                    s->ReadSwap( &bSpace );
-                    s->ReadSwap( &cSpace );
-                    s->ReadSwap( &colorPointer );
+                    s->ReadLE( &flags );
+                    s->ReadLE( &aSpace );
+                    s->ReadLE( &bSpace );
+                    s->ReadLE( &cSpace );
+                    s->ReadLE( &colorPointer );
                     s->Read( sizeof( reserved1 ), reserved1 );
                 }
                 else
@@ -1189,11 +1189,11 @@ hsBool  plFont::LoadFromFNTStream( hsStream *stream )
         charEntries = TRACKED_NEW charEntry[ count ];
         for( i = 0; i < count; i++ )
         {
-            charEntries[ i ].width = stream->ReadSwap16();
+            charEntries[ i ].width = stream->ReadLE16();
             if( fntInfo.version == 0x0200 )
-                charEntries[ i ].offset = stream->ReadSwap16();
+                charEntries[ i ].offset = stream->ReadLE16();
             else
-                charEntries[ i ].offset = stream->ReadSwap32();
+                charEntries[ i ].offset = stream->ReadLE32();
         }
 
         char faceName[ 256 ], deviceName[ 256 ];
@@ -1926,11 +1926,11 @@ hsBool  plFont::ReadRaw( hsStream *s )
 {
     s->Read( sizeof( fFace ), fFace );
     fSize = s->ReadByte();
-    s->ReadSwap( &fFlags );
+    s->ReadLE( &fFlags );
 
-    s->ReadSwap( &fWidth );
-    s->ReadSwap( &fHeight );
-    s->ReadSwap( &fMaxCharHeight );
+    s->ReadLE( &fWidth );
+    s->ReadLE( &fHeight );
+    s->ReadLE( &fMaxCharHeight );
 
     fBPP = s->ReadByte();
 
@@ -1943,10 +1943,10 @@ hsBool  plFont::ReadRaw( hsStream *s )
     else
         fBMapData = nil;
 
-    s->ReadSwap( &fFirstChar );
+    s->ReadLE( &fFirstChar );
 
     UInt32 i;
-    fCharacters.SetCountAndZero( s->ReadSwap32() );
+    fCharacters.SetCountAndZero( s->ReadLE32() );
     for( i = 0; i < fCharacters.GetCount(); i++ )
         fCharacters[ i ].Read( s );
 
@@ -1959,11 +1959,11 @@ hsBool  plFont::WriteRaw( hsStream *s )
 {
     s->Write( sizeof( fFace ), fFace );
     s->WriteByte( fSize );
-    s->WriteSwap( fFlags );
+    s->WriteLE( fFlags );
 
-    s->WriteSwap( fWidth );
-    s->WriteSwap( fHeight );
-    s->WriteSwap( fMaxCharHeight );
+    s->WriteLE( fWidth );
+    s->WriteLE( fHeight );
+    s->WriteLE( fMaxCharHeight );
 
     s->WriteByte( fBPP );
 
@@ -1971,10 +1971,10 @@ hsBool  plFont::WriteRaw( hsStream *s )
     if( size > 0 )
         s->Write( size, fBMapData );
 
-    s->WriteSwap( fFirstChar );
+    s->WriteLE( fFirstChar );
 
     UInt32 i;
-    s->WriteSwap32( fCharacters.GetCount() );
+    s->WriteLE32( fCharacters.GetCount() );
     for( i = 0; i < fCharacters.GetCount(); i++ )
         fCharacters[ i ].Write( s );
 

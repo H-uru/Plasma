@@ -83,7 +83,7 @@ void plArmatureEffectsMgr::Read(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    int numEffects = s->ReadSwap32();
+    int numEffects = s->ReadLE32();
     while (numEffects > 0)
     {
         plRefMsg *msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
@@ -98,7 +98,7 @@ void plArmatureEffectsMgr::Write(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    s->WriteSwap32(fEffects.GetCount());
+    s->WriteLE32(fEffects.GetCount());
     int i;
     for (i = 0; i < fEffects.GetCount(); i++)
         mgr->WriteKey(s, fEffects[i]->GetKey());

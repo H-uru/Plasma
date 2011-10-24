@@ -77,14 +77,14 @@ public:
     {
         plMessage::IMsgRead(stream, mgr);
         fCmd = stream->ReadByte();
-        fSynchFlags = stream->ReadSwap32();
+        fSynchFlags = stream->ReadLE32();
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteByte(fCmd);
-        stream->WriteSwap32(fSynchFlags);
+        stream->WriteLE32(fSynchFlags);
     }
 };
 

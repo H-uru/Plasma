@@ -334,26 +334,26 @@ void plAvLadderMod::Read(hsStream *stream, hsResMgr *mgr)
 {
     plSingleModifier::Read(stream, mgr);
     
-    fType = stream->ReadSwap32();
-    fLoops = stream->ReadSwap32();
+    fType = stream->ReadLE32();
+    fLoops = stream->ReadLE32();
     fGoingUp = stream->Readbool();
     fEnabled = stream->Readbool();
-    fLadderView.fX = stream->ReadSwapScalar();
-    fLadderView.fY = stream->ReadSwapScalar();
-    fLadderView.fZ = stream->ReadSwapScalar();
+    fLadderView.fX = stream->ReadLEScalar();
+    fLadderView.fY = stream->ReadLEScalar();
+    fLadderView.fZ = stream->ReadLEScalar();
 }
 
 void plAvLadderMod::Write(hsStream *stream, hsResMgr *mgr)
 {
     plSingleModifier::Write(stream, mgr);
 
-    stream->WriteSwap32(fType);
-    stream->WriteSwap32(fLoops);
+    stream->WriteLE32(fType);
+    stream->WriteLE32(fLoops);
     stream->Writebool(fGoingUp);
     stream->WriteBool(fEnabled);
-    stream->WriteSwapScalar(fLadderView.fX);
-    stream->WriteSwapScalar(fLadderView.fY);
-    stream->WriteSwapScalar(fLadderView.fZ);
+    stream->WriteLEScalar(fLadderView.fX);
+    stream->WriteLEScalar(fLadderView.fY);
+    stream->WriteLEScalar(fLadderView.fZ);
 }
 
 // true is up; false is down

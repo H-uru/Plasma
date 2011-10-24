@@ -210,14 +210,14 @@ void    plDynamicTextMsg::Read( hsStream *s, hsResMgr *mgr )
 { 
     plMessage::IMsgRead( s, mgr ); 
 
-    s->ReadSwap( &fCmd );
-    s->ReadSwap( &fX );
-    s->ReadSwap( &fY );
+    s->ReadLE( &fCmd );
+    s->ReadLE( &fX );
+    s->ReadLE( &fY );
 
-    s->ReadSwap( &fLeft );
-    s->ReadSwap( &fTop );
-    s->ReadSwap( &fRight );
-    s->ReadSwap( &fBottom );
+    s->ReadLE( &fLeft );
+    s->ReadLE( &fTop );
+    s->ReadLE( &fRight );
+    s->ReadLE( &fBottom );
 
     fClearColor.Read( s );
     fColor.Read( s );
@@ -225,10 +225,10 @@ void    plDynamicTextMsg::Read( hsStream *s, hsResMgr *mgr )
     fString = s->ReadSafeWString();
     fImageKey = mgr->ReadKey( s );
 
-    s->ReadSwap( &fFlags );
+    s->ReadLE( &fFlags );
 
-    s->ReadSwap( &fBlockRGB );
-    s->ReadSwap( &fLineSpacing );
+    s->ReadLE( &fBlockRGB );
+    s->ReadLE( &fLineSpacing );
 }
 void    plDynamicTextMsg::Write( hsStream *s, hsResMgr *mgr ) 
 { 
@@ -241,14 +241,14 @@ void    plDynamicTextMsg::Write( hsStream *s, hsResMgr *mgr )
     }
 #endif
 
-    s->WriteSwap( fCmd );
-    s->WriteSwap( fX );
-    s->WriteSwap( fY );
+    s->WriteLE( fCmd );
+    s->WriteLE( fX );
+    s->WriteLE( fY );
     
-    s->WriteSwap( fLeft );
-    s->WriteSwap( fTop );
-    s->WriteSwap( fRight );
-    s->WriteSwap( fBottom );
+    s->WriteLE( fLeft );
+    s->WriteLE( fTop );
+    s->WriteLE( fRight );
+    s->WriteLE( fBottom );
 
     fClearColor.Write( s );
     fColor.Write( s );
@@ -256,10 +256,10 @@ void    plDynamicTextMsg::Write( hsStream *s, hsResMgr *mgr )
     s->WriteSafeWString( fString );
     mgr->WriteKey( s, fImageKey );
 
-    s->WriteSwap( fFlags );
+    s->WriteLE( fFlags );
 
-    s->WriteSwap( fBlockRGB );
-    s->WriteSwap( fLineSpacing );
+    s->WriteLE( fBlockRGB );
+    s->WriteLE( fLineSpacing );
 }
 
 enum DynamicTextMsgFlags
@@ -288,19 +288,19 @@ void plDynamicTextMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kDynTextMsgCmd))
-        s->ReadSwap( &fCmd );
+        s->ReadLE( &fCmd );
     if (contentFlags.IsBitSet(kDynTextMsgX))
-        s->ReadSwap( &fX );
+        s->ReadLE( &fX );
     if (contentFlags.IsBitSet(kDynTextMsgY))
-        s->ReadSwap( &fY );
+        s->ReadLE( &fY );
     if (contentFlags.IsBitSet(kDynTextMsgLeft))
-        s->ReadSwap( &fLeft );
+        s->ReadLE( &fLeft );
     if (contentFlags.IsBitSet(kDynTextMsgTop))
-        s->ReadSwap( &fTop );
+        s->ReadLE( &fTop );
     if (contentFlags.IsBitSet(kDynTextMsgRight))
-        s->ReadSwap( &fRight );
+        s->ReadLE( &fRight );
     if (contentFlags.IsBitSet(kDynTextMsgBottom))
-        s->ReadSwap( &fBottom );
+        s->ReadLE( &fBottom );
     if (contentFlags.IsBitSet(kDynTextMsgClearColor))
         fClearColor.Read( s );
     if (contentFlags.IsBitSet(kDynTextMsgColor))
@@ -310,11 +310,11 @@ void plDynamicTextMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kDynTextMsgImageKey))
         fImageKey = mgr->ReadKey( s );
     if (contentFlags.IsBitSet(kDynTextMsgFlags))
-        s->ReadSwap( &fFlags );
+        s->ReadLE( &fFlags );
     if (contentFlags.IsBitSet(kDynTextMsgBlockRGB))
-        s->ReadSwap( &fBlockRGB );
+        s->ReadLE( &fBlockRGB );
     if (contentFlags.IsBitSet(kDynTextMsgLineSpacing))
-        s->ReadSwap( &fLineSpacing );
+        s->ReadLE( &fLineSpacing );
 }
 
 void plDynamicTextMsg::WriteVersion(hsStream* s, hsResMgr* mgr) 
@@ -339,20 +339,20 @@ void plDynamicTextMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kDynTextMsgCmd
-    s->WriteSwap( fCmd );
+    s->WriteLE( fCmd );
     // kDynTextMsgX
-    s->WriteSwap( fX );
+    s->WriteLE( fX );
     // kDynTextMsgY
-    s->WriteSwap( fY );
+    s->WriteLE( fY );
     
     // kDynTextMsgLeft
-    s->WriteSwap( fLeft );
+    s->WriteLE( fLeft );
     // kDynTextMsgTop
-    s->WriteSwap( fTop );
+    s->WriteLE( fTop );
     // kDynTextMsgRight
-    s->WriteSwap( fRight );
+    s->WriteLE( fRight );
     // kDynTextMsgBottom
-    s->WriteSwap( fBottom );
+    s->WriteLE( fBottom );
 
     // kDynTextMsgClearColor
     fClearColor.Write( s );
@@ -365,12 +365,12 @@ void plDynamicTextMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey( s, fImageKey );
 
     // kDynTextMsgFlags
-    s->WriteSwap( fFlags );
+    s->WriteLE( fFlags );
 
     // kDynTextMsgBlockRGB
-    s->WriteSwap( fBlockRGB );
+    s->WriteLE( fBlockRGB );
     // kDynTextMsgLineSpacing
-    s->WriteSwap( fLineSpacing );
+    s->WriteLE( fLineSpacing );
 
 }
 

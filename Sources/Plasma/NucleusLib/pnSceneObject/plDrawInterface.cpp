@@ -146,19 +146,19 @@ void plDrawInterface::Read(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Read(s, mgr);
 
-    int nDrawables = s->ReadSwap32();
+    int nDrawables = s->ReadLE32();
     if (nDrawables > 0) 
         ICheckDrawableIndex(nDrawables-1);
     int i;
     for( i = 0; i < fDrawables.GetCount(); i++ )
     {
-        fDrawableIndices[i] = s->ReadSwap32();
+        fDrawableIndices[i] = s->ReadLE32();
 
         plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, i, plIntRefMsg::kDrawable);
         mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef);
     }
 
-    int nReg = s->ReadSwap32();
+    int nReg = s->ReadLE32();
     fRegions.SetCountAndZero(nReg);
     for( i = 0; i < nReg; i++ )
     {
@@ -171,16 +171,16 @@ void plDrawInterface::Write(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Write(s, mgr);
 
-    s->WriteSwap32(fDrawables.GetCount());
+    s->WriteLE32(fDrawables.GetCount());
     int i;
     for( i = 0; i < fDrawables.GetCount(); i++ )
     {
-        s->WriteSwap32(fDrawableIndices[i]);
+        s->WriteLE32(fDrawableIndices[i]);
         
         mgr->WriteKey(s, fDrawables[i]);
     }
     
-    s->WriteSwap32(fRegions.GetCount());
+    s->WriteLE32(fRegions.GetCount());
     for( i = 0; i < fRegions.GetCount(); i++ )
     {
         mgr->WriteKey(s, fRegions[i]);

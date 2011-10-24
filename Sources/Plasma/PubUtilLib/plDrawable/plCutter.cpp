@@ -62,18 +62,18 @@ void plCutter::Read(hsStream* stream, hsResMgr* mgr)
 {
     plCreatable::Read(stream, mgr);
 
-    fLengthU = stream->ReadSwapScalar();
-    fLengthV = stream->ReadSwapScalar();
-    fLengthW = stream->ReadSwapScalar();
+    fLengthU = stream->ReadLEScalar();
+    fLengthV = stream->ReadLEScalar();
+    fLengthW = stream->ReadLEScalar();
 }
 
 void plCutter::Write(hsStream* stream, hsResMgr* mgr)
 {
     plCreatable::Write(stream, mgr);
 
-    stream->WriteSwapScalar(fLengthU);
-    stream->WriteSwapScalar(fLengthV);
-    stream->WriteSwapScalar(fLengthW);
+    stream->WriteLEScalar(fLengthU);
+    stream->WriteLEScalar(fLengthV);
+    stream->WriteLEScalar(fLengthW);
 }
 
 

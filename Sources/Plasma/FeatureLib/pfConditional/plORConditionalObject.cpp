@@ -108,7 +108,7 @@ void plORConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
     plConditionalObject::Read(stream, mgr);
     
     plCondRefMsg* refMsg;
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     fChildren.SetCountAndZero(n);
     for(int i = 0; i < n; i++ )
     {   
@@ -121,7 +121,7 @@ void plORConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
     
-    stream->WriteSwap32(fChildren.GetCount());
+    stream->WriteLE32(fChildren.GetCount());
     for( int i = 0; i < fChildren.GetCount(); i++ )
         mgr->WriteKey(stream, fChildren[i]);
 }

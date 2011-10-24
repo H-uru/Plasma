@@ -80,17 +80,17 @@ public:
     virtual void Read(hsStream* s, hsResMgr* mgr) 
     { 
         plMessageWithCallbacks::Read(s, mgr); 
-        s->ReadSwap(&fEffect);
-        s->ReadSwap(&fLengthInSecs);
-        s->ReadSwap(&fHoldUntilNext);
+        s->ReadLE(&fEffect);
+        s->ReadLE(&fLengthInSecs);
+        s->ReadLE(&fHoldUntilNext);
     }
     
     virtual void Write(hsStream* s, hsResMgr* mgr) 
     { 
         plMessageWithCallbacks::Write(s, mgr); 
-        s->WriteSwap(fEffect);
-        s->WriteSwap(fLengthInSecs);
-        s->WriteSwap(fHoldUntilNext);
+        s->WriteLE(fEffect);
+        s->WriteLE(fLengthInSecs);
+        s->WriteLE(fHoldUntilNext);
     }
 };
 

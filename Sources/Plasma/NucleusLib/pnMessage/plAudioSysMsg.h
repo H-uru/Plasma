@@ -94,14 +94,14 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgRead(stream, mgr);
-        stream->WriteSwap(fAudFlag);
+        stream->WriteLE(fAudFlag);
         mgr->WriteKey(stream, pObj);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
-        stream->ReadSwap(&fAudFlag);
+        stream->ReadLE(&fAudFlag);
         pObj = mgr->ReadKey(stream);
     }
 };

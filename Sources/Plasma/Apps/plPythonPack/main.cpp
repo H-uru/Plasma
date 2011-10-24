@@ -187,13 +187,13 @@ void WritePythonFile(std::string fileName, std::string path, hsStream *s)
             printf(errmsg);
             printf("\n");
         }
-        s->WriteSwap32(size);
+        s->WriteLE32(size);
         s->Write(size, pycode);
     }
     else
     {
         printf("......blast! Compile error!\n");
-        s->WriteSwap32(0);
+        s->WriteLE32(0);
 
         PyErr_Print();
         PyErr_Clear();
@@ -378,13 +378,13 @@ void PackDirectory(std::string dir, std::string rootPath, std::string pakName, s
     if (!s.Open(pakName.c_str(), "wb"))
         return;
 
-    s.WriteSwap32(fileNames.size());
+    s.WriteLE32(fileNames.size());
 
     int i;
     for (i = 0; i < fileNames.size(); i++)
     {
         s.WriteSafeString(fileNames[i].c_str());
-        s.WriteSwap32(0);
+        s.WriteLE32(0);
     }
 
     PythonInterface::initPython(rootPath);
@@ -412,7 +412,7 @@ void PackDirectory(std::string dir, std::string rootPath, std::string pakName, s
     for (i = 0; i < fileNames.size(); i++)
     {
         s.WriteSafeString(fileNames[i].c_str());
-        s.WriteSwap32(filePositions[i]);
+        s.WriteLE32(filePositions[i]);
     }
 
     s.Close();

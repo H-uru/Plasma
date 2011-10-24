@@ -53,7 +53,7 @@ void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
     
     // read agename
     UInt8 len;
-    stream->ReadSwap(&len);
+    stream->ReadLE(&len);
     if (len)
     {
         fAgeFilename=TRACKED_NEW char[len+1];
@@ -61,7 +61,7 @@ void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
         fAgeFilename[len]=0;
     }
     fUnload = stream->ReadBool();
-    stream->ReadSwap(&fPlayerID);
+    stream->ReadLE(&fPlayerID);
     fAgeGuid.Read(stream);
 }
 
@@ -71,13 +71,13 @@ void plLoadAgeMsg::Write(hsStream* stream, hsResMgr* mgr)
 
     // write agename
     UInt8 len=fAgeFilename?hsStrlen(fAgeFilename):0;
-    stream->WriteSwap(len);
+    stream->WriteLE(len);
     if (len)
     {
         stream->Write(len, fAgeFilename);
     }
     stream->WriteBool(fUnload);
-    stream->WriteSwap(fPlayerID);
+    stream->WriteLE(fPlayerID);
     fAgeGuid.Write(stream);
 }
 
@@ -107,7 +107,7 @@ void plLoadAgeMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
         fUnload = s->ReadBool();
 
     if (contentFlags.IsBitSet(kLoadAgePlayerID))
-        s->ReadSwap(&fPlayerID);
+        s->ReadLE(&fPlayerID);
 
     if (contentFlags.IsBitSet(kLoadAgeAgeGuid))
         fAgeGuid.Read(s);
@@ -129,7 +129,7 @@ void plLoadAgeMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     // kLoadAgeUnload
     s->WriteBool(fUnload);
     // kLoadAgePlayerID
-    s->WriteSwap(fPlayerID);
+    s->WriteLE(fPlayerID);
     // kLoadAgeAgeGuid
     fAgeGuid.Write(s);
 }

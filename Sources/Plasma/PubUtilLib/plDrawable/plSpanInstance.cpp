@@ -49,13 +49,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plSpanEncoding::Read(hsStream* s)
 {
     fCode = s->ReadByte();
-    fPosScale = s->ReadSwapScalar();
+    fPosScale = s->ReadLEScalar();
 }
 
 void plSpanEncoding::Write(hsStream* s) const
 {
     s->WriteByte((UInt8)fCode);
-    s->WriteSwapScalar(fPosScale);
+    s->WriteLEScalar(fPosScale);
 }
 
 

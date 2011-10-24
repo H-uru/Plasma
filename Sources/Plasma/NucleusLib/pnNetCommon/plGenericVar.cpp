@@ -174,7 +174,7 @@ const char &    plGenericType::IToChar( void ) const
 void    plGenericType::Read(hsStream* s)
 {
     IDeallocString();
-    s->ReadSwap(&fType);
+    s->ReadLE(&fType);
 
     switch ( fType )
     {
@@ -184,23 +184,23 @@ void    plGenericType::Read(hsStream* s)
         break;
     case kBool:
         {Int8 b;
-        s->ReadSwap( &b );
+        s->ReadLE( &b );
         fB = b?true:false;}
         break;
     case kChar:
-        s->ReadSwap( &fC );
+        s->ReadLE( &fC );
         break;
     case kInt   :
-        s->ReadSwap( &fI );
+        s->ReadLE( &fI );
         break;
     case kUInt:
-        s->ReadSwap( &fU );
+        s->ReadLE( &fU );
         break;
     case kFloat:
-        s->ReadSwap( &fF );
+        s->ReadLE( &fF );
         break;
     case kDouble:
-        s->ReadSwap( &fD );
+        s->ReadLE( &fD );
         break;
     case kNone :
         break;
@@ -209,7 +209,7 @@ void    plGenericType::Read(hsStream* s)
 
 void    plGenericType::Write(hsStream* s)
 {
-    s->WriteSwap(fType);
+    s->WriteLE(fType);
 
     switch ( fType )
     {
@@ -219,22 +219,22 @@ void    plGenericType::Write(hsStream* s)
         break;
     case kBool:
         {Int8 b = fB?1:0;
-        s->WriteSwap( b );}
+        s->WriteLE( b );}
         break;
     case kChar:
-        s->WriteSwap( fC );
+        s->WriteLE( fC );
         break;
     case kInt   :
-        s->WriteSwap( fI );
+        s->WriteLE( fI );
         break;
     case kUInt:
-        s->WriteSwap( fU );
+        s->WriteLE( fU );
         break;
     case kFloat:
-        s->WriteSwap( fF );
+        s->WriteLE( fF );
         break;
     case kDouble:
-        s->WriteSwap( fD );
+        s->WriteLE( fD );
         break;
     case kNone :
         break;

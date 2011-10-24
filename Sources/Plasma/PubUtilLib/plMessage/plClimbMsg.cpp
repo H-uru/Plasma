@@ -68,8 +68,8 @@ void plClimbMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
     plMessage::IMsgRead(stream, mgr);
 
-    fCommand = static_cast<Command>(stream->ReadSwap32());
-    fDirection = static_cast<Direction>(stream->ReadSwap32());
+    fCommand = static_cast<Command>(stream->ReadLE32());
+    fDirection = static_cast<Direction>(stream->ReadLE32());
     fStatus = stream->ReadBool();
     fTarget = mgr->ReadKey(stream);
 }
@@ -77,8 +77,8 @@ void plClimbMsg::Read(hsStream *stream, hsResMgr *mgr)
 void plClimbMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteSwap32(static_cast<UInt32>(fCommand));
-    stream->WriteSwap32(static_cast<UInt32>(fDirection));
+    stream->WriteLE32(static_cast<UInt32>(fCommand));
+    stream->WriteLE32(static_cast<UInt32>(fDirection));
     stream->WriteBool(fStatus);
     mgr->WriteKey(stream, fTarget);
 }

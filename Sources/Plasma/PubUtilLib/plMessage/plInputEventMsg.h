@@ -165,23 +165,23 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadSwap((Int32*)&fKeyCode);
-        stream->ReadSwap(&fKeyDown);
-        stream->ReadSwap(&fCapsLockKeyDown);
-        stream->ReadSwap(&fShiftKeyDown);
-        stream->ReadSwap(&fCtrlKeyDown);
-        stream->ReadSwap(&fRepeat);
+        stream->ReadLE((Int32*)&fKeyCode);
+        stream->ReadLE(&fKeyDown);
+        stream->ReadLE(&fCapsLockKeyDown);
+        stream->ReadLE(&fShiftKeyDown);
+        stream->ReadLE(&fCtrlKeyDown);
+        stream->ReadLE(&fRepeat);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteSwap((Int32)fKeyCode);
-        stream->WriteSwap(fKeyDown);
-        stream->WriteSwap(fCapsLockKeyDown);
-        stream->WriteSwap(fShiftKeyDown);
-        stream->WriteSwap(fCtrlKeyDown);
-        stream->WriteSwap(fRepeat);
+        stream->WriteLE((Int32)fKeyCode);
+        stream->WriteLE(fKeyDown);
+        stream->WriteLE(fCapsLockKeyDown);
+        stream->WriteLE(fShiftKeyDown);
+        stream->WriteLE(fCtrlKeyDown);
+        stream->WriteLE(fRepeat);
     }
 };
 
@@ -224,21 +224,21 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadSwap((Int32*)&fKeyCode);
-        stream->ReadSwap(&fKeyDown);
-        stream->ReadSwap(&fCapsLockKeyDown);
-        stream->ReadSwap(&fShiftKeyDown);
-        stream->ReadSwap(&fCtrlKeyDown);
+        stream->ReadLE((Int32*)&fKeyCode);
+        stream->ReadLE(&fKeyDown);
+        stream->ReadLE(&fCapsLockKeyDown);
+        stream->ReadLE(&fShiftKeyDown);
+        stream->ReadLE(&fCtrlKeyDown);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteSwap((Int32)fKeyCode);
-        stream->WriteSwap(fKeyDown);
-        stream->WriteSwap(fCapsLockKeyDown);
-        stream->WriteSwap(fShiftKeyDown);
-        stream->WriteSwap(fCtrlKeyDown);
+        stream->WriteLE((Int32)fKeyCode);
+        stream->WriteLE(fKeyDown);
+        stream->WriteLE(fCapsLockKeyDown);
+        stream->WriteLE(fShiftKeyDown);
+        stream->WriteLE(fCtrlKeyDown);
     }
 };
 
@@ -262,15 +262,15 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadSwap(&fX);
-        stream->ReadSwap(&fWx);
+        stream->ReadLE(&fX);
+        stream->ReadLE(&fWx);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteSwap(fX);
-        stream->WriteSwap(fWx);
+        stream->WriteLE(fX);
+        stream->WriteLE(fWx);
     }
 
 };
@@ -295,15 +295,15 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadSwap(&fY);
-        stream->ReadSwap(&fWy);
+        stream->ReadLE(&fY);
+        stream->ReadLE(&fWy);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteSwap(fY);
-        stream->WriteSwap(fWy);
+        stream->WriteLE(fY);
+        stream->WriteLE(fWy);
     }
 
 };
@@ -326,13 +326,13 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadSwap(&fButton);
+        stream->ReadLE(&fButton);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteSwap(fButton);
+        stream->WriteLE(fButton);
     }
 
 };
@@ -379,23 +379,23 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadSwap(&fXPos);
-        stream->ReadSwap(&fYPos);
-        stream->ReadSwap(&fDX);
-        stream->ReadSwap(&fDY);
-        stream->ReadSwap(&fButton);
-        stream->ReadSwap(&fWheelDelta);
+        stream->ReadLE(&fXPos);
+        stream->ReadLE(&fYPos);
+        stream->ReadLE(&fDX);
+        stream->ReadLE(&fDY);
+        stream->ReadLE(&fButton);
+        stream->ReadLE(&fWheelDelta);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteSwap(fXPos);
-        stream->WriteSwap(fYPos);
-        stream->WriteSwap(fDX);
-        stream->WriteSwap(fDY);
-        stream->WriteSwap(fButton);
-        stream->WriteSwap(fWheelDelta);
+        stream->WriteLE(fXPos);
+        stream->WriteLE(fYPos);
+        stream->WriteLE(fDX);
+        stream->WriteLE(fDY);
+        stream->WriteLE(fButton);
+        stream->WriteLE(fWheelDelta);
     }
 };
 

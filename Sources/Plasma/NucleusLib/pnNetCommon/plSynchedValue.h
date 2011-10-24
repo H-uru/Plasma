@@ -339,7 +339,7 @@ void plSynchedTArray<T>::ISaveOrLoad(hsBool32 save, hsStream* stream, hsResMgr* 
     {
         // write out size of array
         Int32 i, num = fValueList.GetCount();
-        stream->WriteSwap(num);
+        stream->WriteLE(num);
         for(i=0;i<num;i++)
         {
             plSynchedValueBase::ISaveOrLoad(fValueList[i], save, stream, mgr);
@@ -351,7 +351,7 @@ void plSynchedTArray<T>::ISaveOrLoad(hsBool32 save, hsStream* stream, hsResMgr* 
         fValueList.Reset();
         // read in size of array
         Int32 i, num;
-        stream->ReadSwap(&num);
+        stream->ReadLE(&num);
 
         for(i=0;i<num;i++)
         {

@@ -151,7 +151,7 @@ UInt32 hsStream::WriteFmtV(const char * fmt, va_list av)
 UInt32 hsStream::WriteSafeStringLong(const char *string)
 {
     UInt32 len = hsStrlen(string);      
-    WriteSwap32(len);
+    WriteLE32(len);
     if (len > 0)
     {   
         char *buff = TRACKED_NEW char[len+1];
@@ -172,16 +172,16 @@ UInt32 hsStream::WriteSafeStringLong(const char *string)
 UInt32 hsStream::WriteSafeWStringLong(const wchar_t *string)
 {
     UInt32 len = wcslen(string);
-    WriteSwap32(len);
+    WriteLE32(len);
     if (len > 0)
     {
         int i;
         for (i=0; i<len; i++)
         {
             wchar_t buff = ~string[i];
-            WriteSwap16((UInt16)buff);
+            WriteLE16((UInt16)buff);
         }
-        WriteSwap16((UInt16)L'\0');
+        WriteLE16((UInt16)L'\0');
     }
     return 0;
 }
@@ -189,7 +189,7 @@ UInt32 hsStream::WriteSafeWStringLong(const wchar_t *string)
 char *hsStream::ReadSafeStringLong()
 {
     char *name = nil;
-    UInt32 numChars = ReadSwap32();
+    UInt32 numChars = ReadLE32();
     if (numChars > 0 && numChars <= GetSizeLeft())
     {
         name = TRACKED_NEW char[numChars+1];
@@ -211,14 +211,14 @@ char *hsStream::ReadSafeStringLong()
 wchar_t *hsStream::ReadSafeWStringLong()
 {
     wchar_t *retVal = nil;
-    UInt32 numChars = ReadSwap32();
+    UInt32 numChars = ReadLE32();
     if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
     {
         retVal = TRACKED_NEW wchar_t[numChars+1];
         int i;
         for (i=0; i<numChars; i++)
-            retVal[i] = (wchar_t)ReadSwap16();
-        retVal[numChars] = (wchar_t)ReadSwap16(); // we wrote the null out, read it back in
+            retVal[i] = (wchar_t)ReadLE16();
+        retVal[numChars] = (wchar_t)ReadLE16(); // we wrote the null out, read it back in
 
         if (retVal[0]* 0x80)
         {
@@ -237,7 +237,7 @@ UInt32 hsStream::WriteSafeString(const char *string)
     hsAssert(len<0xf000, xtl::format("string len of %d is too long for WriteSafeString %s, use WriteSafeStringLong", 
         string, len).c_str() );
 
-    WriteSwap16(len | 0xf000);
+    WriteLE16(len | 0xf000);
     if (len > 0)
     {
         char *buff = TRACKED_NEW char[len+1];
@@ -261,16 +261,16 @@ UInt32 hsStream::WriteSafeWString(const wchar_t *string)
     hsAssert(len<0xf000, xtl::format("string len of %d is too long for WriteSafeWString, use WriteSafeWStringLong",
         len).c_str() );
 
-    WriteSwap16(len | 0xf000);
+    WriteLE16(len | 0xf000);
     if (len > 0)
     {
         int i;
         for (i=0; i<len; i++)
         {
             wchar_t buff = ~string[i];
-            WriteSwap16((UInt16)buff);
+            WriteLE16((UInt16)buff);
         }
-        WriteSwap16((UInt16)L'\0');
+        WriteLE16((UInt16)L'\0');
     }
     return 0;
 }
@@ -278,13 +278,13 @@ UInt32 hsStream::WriteSafeWString(const wchar_t *string)
 char *hsStream::ReadSafeString()
 {
     char *name = nil;
-    UInt16 numChars = ReadSwap16();
+    UInt16 numChars = ReadLE16();
 
 #ifndef REMOVE_ME_SOON
     // Backward compat hack - remove in a week or so (from 6/30/03)
     hsBool oldFormat = !(numChars & 0xf000);
     if (oldFormat)
-        ReadSwap16();
+        ReadLE16();
 #endif
 
     numChars &= ~0xf000;
@@ -310,7 +310,7 @@ char *hsStream::ReadSafeString()
 wchar_t *hsStream::ReadSafeWString()
 {
     wchar_t *retVal = nil;
-    UInt32 numChars = ReadSwap16();
+    UInt32 numChars = ReadLE16();
     
     numChars &= ~0xf000;
     hsAssert(numChars <= GetSizeLeft()/2, "Bad string");
@@ -319,8 +319,8 @@ wchar_t *hsStream::ReadSafeWString()
         retVal = TRACKED_NEW wchar_t[numChars+1];
         int i;
         for (i=0; i<numChars; i++)
-            retVal[i] = (wchar_t)ReadSwap16();
-        retVal[numChars] = (wchar_t)ReadSwap16(); // we wrote the null out, read it back in
+            retVal[i] = (wchar_t)ReadLE16();
+        retVal[numChars] = (wchar_t)ReadLE16(); // we wrote the null out, read it back in
 
         if (retVal[0]* 0x80)
         {
@@ -499,81 +499,81 @@ hsBool hsStream::ReadLn(char *s, UInt32 maxLen, const char beginComment, const c
     return true;
 }
 
-UInt16 hsStream::ReadSwap16()
+UInt16 hsStream::ReadLE16()
 {
     UInt16  value;
     this->Read(sizeof(UInt16), &value);
-    value = hsSWAP16(value);
+    value = hsToLE16(value);
     return value;
 }
 
-void hsStream::ReadSwap16(int count, UInt16 values[])
+void hsStream::ReadLE16(int count, UInt16 values[])
 {
     this->Read(count * sizeof(UInt16), values);
     for (int i = 0; i < count; i++)
-        values[i] = hsSWAP16(values[i]);
+        values[i] = hsToLE16(values[i]);
 }
 
-UInt32 hsStream::ReadSwap32()
+UInt32 hsStream::ReadLE32()
 {
     UInt32  value;
     Read4Bytes(&value);
-    value = hsSWAP32(value);
+    value = hsToLE32(value);
     return value;
 }
 
-void hsStream::ReadSwap32(int count, UInt32 values[])
+void hsStream::ReadLE32(int count, UInt32 values[])
 {
     this->Read(count * sizeof(UInt32), values);
     for (int i = 0; i < count; i++)
-        values[i] = hsSWAP32(values[i]);
+        values[i] = hsToLE32(values[i]);
 }
 
-UInt32 hsStream::ReadUnswap32()
+UInt32 hsStream::ReadBE32()
 {
     UInt32  value;
     Read4Bytes(&value);
-    value = hsUNSWAP32(value);
+    value = hsToBE32(value);
     return value;
 }
 
 #if HS_CAN_USE_FLOAT
-    double hsStream::ReadSwapDouble()
+    double hsStream::ReadLEDouble()
     {
         double  value;
         Read8Bytes(&value);
-        value = hsSWAPDouble(value);
+        value = hsToLEDouble(value);
         return value;
     }
 
-    void hsStream::ReadSwapDouble(int count, double values[])
+    void hsStream::ReadLEDouble(int count, double values[])
     {
         this->Read(count * sizeof(double), values);
         for (int i = 0; i < count; i++)
-            values[i] = hsSWAPDouble(values[i]);
+            values[i] = hsToLEDouble(values[i]);
     }
 
 
-    float hsStream::ReadSwapFloat()
+    float hsStream::ReadLEFloat()
     {
         float   value;
         Read4Bytes(&value);
-        value = hsSWAPFloat(value);
+        value = hsToLEFloat(value);
         return value;
     }
 
-    void hsStream::ReadSwapFloat(int count, float values[])
+    void hsStream::ReadLEFloat(int count, float values[])
     {
         this->Read(count * sizeof(float), values);
         for (int i = 0; i < count; i++)
-            values[i] = hsSWAPFloat(values[i]);
+            values[i] = hsToLEFloat(values[i]);
     }
 
-    float hsStream::ReadUnswapFloat()
+    float hsStream::ReadBEFloat()
     {
         float   value;
         this->Read(sizeof(float), &value);
-        value = hsUNSWAPFloat(value);
+        value = hsToBEFloat(value);
         return value;
     }
 #endif
@@ -612,78 +612,78 @@ void hsStream::WriteByte(UInt8 value)
     this->Write(sizeof(UInt8), &value);
 }
 
-void  hsStream::WriteSwap16(UInt16 value)
+void  hsStream::WriteLE16(UInt16 value)
 {
-    value = hsSWAP16(value);
+    value = hsToLE16(value);
     this->Write(sizeof(Int16), &value);
 }
 
-void  hsStream::WriteSwap16(int count, const UInt16 values[])
+void  hsStream::WriteLE16(int count, const UInt16 values[])
 {
     for (int i = 0; i < count; i++)
-        this->WriteSwap16(values[i]);
+        this->WriteLE16(values[i]);
 }
 
-void  hsStream::WriteSwap32(UInt32 value)
+void  hsStream::WriteLE32(UInt32 value)
 {
-    value = hsSWAP32(value);
+    value = hsToLE32(value);
     this->Write(sizeof(Int32), &value);
 }
 
-void  hsStream::WriteSwap32(int count, const UInt32 values[])
+void  hsStream::WriteLE32(int count, const UInt32 values[])
 {
     for (int i = 0; i < count; i++)
-        this->WriteSwap32(values[i]);
+        this->WriteLE32(values[i]);
 }
 
-void hsStream::WriteUnswap32(UInt32 value)
+void hsStream::WriteBE32(UInt32 value)
 {
-    value = hsUNSWAP32(value);
+    value = hsToBE32(value);
     this->Write(sizeof(Int32), &value);
 }
 
 #if HS_CAN_USE_FLOAT
-    void hsStream::WriteSwapDouble(double value)
+    void hsStream::WriteLEDouble(double value)
     {
-        value = hsSWAPDouble(value);
+        value = hsToLEDouble(value);
         this->Write(sizeof(double), &value);
     }
 
-    void hsStream::WriteSwapDouble(int count, const double values[])
+    void hsStream::WriteLEDouble(int count, const double values[])
     {
         for (int i = 0; i < count; i++)
-            this->WriteSwapDouble(values[i]);
+            this->WriteLEDouble(values[i]);
     }
 
-    void hsStream::WriteSwapFloat(float value)
+    void hsStream::WriteLEFloat(float value)
     {
-        value = hsSWAPFloat(value);
+        value = hsToLEFloat(value);
         this->Write(sizeof(float), &value);
     }
 
-    void hsStream::WriteSwapFloat(int count, const float values[])
+    void hsStream::WriteLEFloat(int count, const float values[])
     {
         for (int i = 0; i < count; i++)
-            this->WriteSwapFloat(values[i]);
+            this->WriteLEFloat(values[i]);
     }
 
-    void hsStream::WriteUnswapFloat(float value)
+    void hsStream::WriteBEFloat(float value)
     {
-        value = hsUNSWAPFloat(value);
+        value = hsToBEFloat(value);
         this->Write(sizeof(float), &value);
     }
 #endif
 
-void hsStream::WriteSwapAtom(UInt32 tag, UInt32 size)
+void hsStream::WriteLEAtom(UInt32 tag, UInt32 size)
 {
-    this->WriteSwap32(tag);
-    this->WriteSwap32(size);
+    this->WriteLE32(tag);
+    this->WriteLE32(size);
 }
 
-UInt32 hsStream::ReadSwapAtom(UInt32* sizePtr)
+UInt32 hsStream::ReadLEAtom(UInt32* sizePtr)
 {
-    UInt32  tag = this->ReadSwap32();
-    UInt32  size = this->ReadSwap32();
+    UInt32  tag = this->ReadLE32();
+    UInt32  size = this->ReadLE32();
 
     if (sizePtr)
         *sizePtr = size;

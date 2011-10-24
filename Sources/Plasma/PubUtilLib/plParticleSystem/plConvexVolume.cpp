@@ -188,22 +188,22 @@ hsBool plConvexVolume::BouncePoint(hsPoint3 &pos, hsVector3 &velocity, hsScalar 
 
 void plConvexVolume::Read(hsStream* s, hsResMgr *mgr)
 {
-    SetNumPlanesAndClear(s->ReadSwap32());
+    SetNumPlanesAndClear(s->ReadLE32());
     int i;
     for (i = 0; i < fNumPlanes; i++)
     {
         fLocalPlanes[i].Read(s);
-        //fFlags[i] = s->ReadSwap32();
+        //fFlags[i] = s->ReadLE32();
     }
 }
 
 void plConvexVolume::Write(hsStream* s, hsResMgr *mgr)
 {
-    s->WriteSwap32(fNumPlanes);
+    s->WriteLE32(fNumPlanes);
     int i;
     for (i = 0; i < fNumPlanes; i++)
     {
         fLocalPlanes[i].Write(s);
-        //s->WriteSwap32(fFlags[i]);
+        //s->WriteLE32(fFlags[i]);
     }
 }

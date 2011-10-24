@@ -201,18 +201,18 @@ void    pfGUIButtonMod::Read( hsStream *s, hsResMgr *mgr )
     pfGUIControlMod::Read(s, mgr);
 
     fAnimationKeys.Reset();
-    UInt32 i, count = s->ReadSwap32();
+    UInt32 i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
     fAnimName = s->ReadSafeString();
 
     fMouseOverAnimKeys.Reset();
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fMouseOverAnimKeys.Append( mgr->ReadKey( s ) );
     fMouseOverAnimName = s->ReadSafeString();
 
-    fNotifyType = s->ReadSwap32();
+    fNotifyType = s->ReadLE32();
     mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDraggable ), plRefFlags::kActiveRef );
 }
 
@@ -221,18 +221,18 @@ void    pfGUIButtonMod::Write( hsStream *s, hsResMgr *mgr )
     pfGUIControlMod::Write( s, mgr );
 
     UInt32 i, count = fAnimationKeys.GetCount();
-    s->WriteSwap32( count );
+    s->WriteLE32( count );
     for( i = 0; i < count; i++ )
         mgr->WriteKey( s, fAnimationKeys[ i ] );
     s->WriteSafeString( fAnimName );
 
     count = fMouseOverAnimKeys.GetCount();
-    s->WriteSwap32( count );
+    s->WriteLE32( count );
     for( i = 0; i < count; i++ )
         mgr->WriteKey( s, fMouseOverAnimKeys[ i ] );
     s->WriteSafeString( fMouseOverAnimName );
 
-    s->WriteSwap32( fNotifyType );
+    s->WriteLE32( fNotifyType );
 
     mgr->WriteKey( s, fDraggable != nil ? fDraggable->GetKey() : nil );
 

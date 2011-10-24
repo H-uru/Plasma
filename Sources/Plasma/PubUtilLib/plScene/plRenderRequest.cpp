@@ -90,28 +90,28 @@ void plRenderRequest::Read(hsStream* s, hsResMgr* mgr)
     fRenderTarget = nil;
     fPageMgr = nil;
 
-    fDrawableMask = s->ReadSwap32();
-    fSubDrawableMask = s->ReadSwap32();
+    fDrawableMask = s->ReadLE32();
+    fSubDrawableMask = s->ReadLE32();
 
-    fRenderState = s->ReadSwap32();
+    fRenderState = s->ReadLE32();
 
     fLocalToWorld.Read(s);
     fWorldToLocal.Read(s);
 
-    fPriority = s->ReadSwapScalar();
+    fPriority = s->ReadLEScalar();
 }
 
 void plRenderRequest::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteSwap32(fDrawableMask);
-    s->WriteSwap32(fSubDrawableMask);
+    s->WriteLE32(fDrawableMask);
+    s->WriteLE32(fSubDrawableMask);
 
-    s->WriteSwap32(fRenderState);
+    s->WriteLE32(fRenderState);
 
     fLocalToWorld.Write(s);
     fWorldToLocal.Write(s);
 
-    s->WriteSwapScalar(fPriority);
+    s->WriteLEScalar(fPriority);
 }
 
 void plRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)

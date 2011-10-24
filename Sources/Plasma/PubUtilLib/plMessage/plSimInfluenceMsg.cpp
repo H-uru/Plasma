@@ -154,14 +154,14 @@ void plDampMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
     plSimInfluenceMsg::Read(stream, mgr);
 
-    stream->WriteSwapScalar(fDamp);
+    stream->WriteLEScalar(fDamp);
 }
 
 void plDampMsg::Write(hsStream * stream, hsResMgr *mgr)
 {
     plSimInfluenceMsg::Write(stream, mgr);
 
-    fDamp = stream->ReadSwapScalar();
+    fDamp = stream->ReadLEScalar();
 }
 
 

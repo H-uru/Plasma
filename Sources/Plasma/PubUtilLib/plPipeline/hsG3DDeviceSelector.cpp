@@ -107,15 +107,15 @@ void hsG3DDeviceMode::Read( hsStream* s )
 {
     Clear();
 
-    fFlags = s->ReadSwap32();
-    fWidth = s->ReadSwap32();
-    fHeight = s->ReadSwap32();
-    fDepth = s->ReadSwap32();
+    fFlags = s->ReadLE32();
+    fWidth = s->ReadLE32();
+    fHeight = s->ReadLE32();
+    fDepth = s->ReadLE32();
 
     fZStencilDepths.Reset();
     UInt8   count= s->ReadByte();
     while( count-- )
-        fZStencilDepths.Append( s->ReadSwap16() );
+        fZStencilDepths.Append( s->ReadLE16() );
 
     /// Version 9
     fFSAATypes.Reset();
@@ -128,15 +128,15 @@ void hsG3DDeviceMode::Read( hsStream* s )
 
 void hsG3DDeviceMode::Write( hsStream* s ) const
 {
-    s->WriteSwap32(fFlags);
-    s->WriteSwap32(fWidth);
-    s->WriteSwap32(fHeight);
-    s->WriteSwap32(fDepth);
+    s->WriteLE32(fFlags);
+    s->WriteLE32(fWidth);
+    s->WriteLE32(fHeight);
+    s->WriteLE32(fDepth);
 
     UInt8   i, count = (UInt8)fZStencilDepths.GetCount();
     s->WriteByte( count );
     for( i = 0; i < count; i++ )
-        s->WriteSwap16( fZStencilDepths[ i ] );
+        s->WriteLE16( fZStencilDepths[ i ] );
 
     /// Version 9
     count = (UInt8)fFSAATypes.GetCount();
@@ -330,11 +330,11 @@ void hsG3DDeviceRecord::Read(hsStream* s)
     Clear();
 
     /// Read version
-    fRecordVersion = s->ReadSwap32();
+    fRecordVersion = s->ReadLE32();
     hsAssert( fRecordVersion <= kCurrRecordVersion, "Invalid version number in hsG3DDeviceRecord::Read()" );
     if( fRecordVersion == kCurrRecordVersion )
     {
-        fFlags = s->ReadSwap32();
+        fFlags = s->ReadLE32();
     }
     else
     {
@@ -346,53 +346,53 @@ void hsG3DDeviceRecord::Read(hsStream* s)
     }
 
     /// Now read everything else in as normal
-    fG3DDeviceType = s->ReadSwap32();
+    fG3DDeviceType = s->ReadLE32();
 
     int len;
 
-    len = s->ReadSwap32();
+    len = s->ReadLE32();
     fG3DDriverDesc = TRACKED_NEW char[len + 1];
     s->Read(len, fG3DDriverDesc);
     fG3DDriverDesc[len] = 0;
 
-    len = s->ReadSwap32();
+    len = s->ReadLE32();
     fG3DDriverName = TRACKED_NEW char[len + 1];
     s->Read(len, fG3DDriverName);
     fG3DDriverName[len] = 0;
 
-    len = s->ReadSwap32();
+    len = s->ReadLE32();
     fG3DDriverVersion = TRACKED_NEW char[len + 1];
     s->Read(len, fG3DDriverVersion);
     fG3DDriverVersion[len] = 0;
 
-    len = s->ReadSwap32();
+    len = s->ReadLE32();
     fG3DDeviceDesc = TRACKED_NEW char[len + 1];
     s->Read(len, fG3DDeviceDesc);
     fG3DDeviceDesc[len] = 0;
 
 
     fCaps.Read(s);
-    fLayersAtOnce = s->ReadSwap32();
-    fMemoryBytes = s->ReadSwap32();
+    fLayersAtOnce = s->ReadLE32();
+    fMemoryBytes = s->ReadLE32();
 
-    len = s->ReadSwap32();
+    len = s->ReadLE32();
     fModes.SetCount(len);
     int i;
     for( i = 0; i < len; i++ )
         fModes[i].Read( s );
 
     /// Version 3 stuff
-    fZBiasRating = s->ReadSwapFloat();
-    fLODBiasRating = s->ReadSwapFloat();
-    fFogExpApproxStart = s->ReadSwapFloat();
-    fFogExp2ApproxStart = s->ReadSwapFloat();
-    fFogEndBias = s->ReadSwapFloat();
+    fZBiasRating = s->ReadLEFloat();
+    fLODBiasRating = s->ReadLEFloat();
+    fFogExpApproxStart = s->ReadLEFloat();
+    fFogExp2ApproxStart = s->ReadLEFloat();
+    fFogEndBias = s->ReadLEFloat();
 
     /// Version 7 stuff
     float       knee, kneeVal;
-    knee = s->ReadSwapFloat(); kneeVal = s->ReadSwapFloat();
+    knee = s->ReadLEFloat(); kneeVal = s->ReadLEFloat();
     SetFogKneeParams( kFogExp, knee, kneeVal );
-    knee = s->ReadSwapFloat(); kneeVal = s->ReadSwapFloat();
+    knee = s->ReadLEFloat(); kneeVal = s->ReadLEFloat();
     SetFogKneeParams( kFogExp2, knee, kneeVal );
 
     /// Version 9 stuff
@@ -407,51 +407,51 @@ void hsG3DDeviceRecord::Read(hsStream* s)
 
 void hsG3DDeviceRecord::Write(hsStream* s) const
 {
-    s->WriteSwap32( fRecordVersion );
+    s->WriteLE32( fRecordVersion );
 
-    s->WriteSwap32(fFlags);
+    s->WriteLE32(fFlags);
 
-    s->WriteSwap32(fG3DDeviceType);
+    s->WriteLE32(fG3DDeviceType);
 
     int len;
 
     len = hsStrlen(fG3DDriverDesc);
-    s->WriteSwap32(len);
+    s->WriteLE32(len);
     s->Write(len, fG3DDriverDesc);
 
     len = hsStrlen(fG3DDriverName);
-    s->WriteSwap32(len);
+    s->WriteLE32(len);
     s->Write(len, fG3DDriverName);
 
     len = hsStrlen(fG3DDriverVersion);
-    s->WriteSwap32(len);
+    s->WriteLE32(len);
     s->Write(len, fG3DDriverVersion);
 
     len = hsStrlen(fG3DDeviceDesc);
-    s->WriteSwap32(len);
+    s->WriteLE32(len);
     s->Write(len, fG3DDeviceDesc);
 
     fCaps.Write(s);
-    s->WriteSwap32(fLayersAtOnce);
-    s->WriteSwap32(fMemoryBytes);
+    s->WriteLE32(fLayersAtOnce);
+    s->WriteLE32(fMemoryBytes);
 
-    s->WriteSwap32(fModes.GetCount());
+    s->WriteLE32(fModes.GetCount());
     int i;
     for( i = 0; i < fModes.GetCount(); i++ )
         fModes[i].Write( s );
 
     /// Version 3 data
-    s->WriteSwapFloat( fZBiasRating );
-    s->WriteSwapFloat( fLODBiasRating );
-    s->WriteSwapFloat( fFogExpApproxStart );
-    s->WriteSwapFloat( fFogExp2ApproxStart );
-    s->WriteSwapFloat( fFogEndBias );
+    s->WriteLEFloat( fZBiasRating );
+    s->WriteLEFloat( fLODBiasRating );
+    s->WriteLEFloat( fFogExpApproxStart );
+    s->WriteLEFloat( fFogExp2ApproxStart );
+    s->WriteLEFloat( fFogEndBias );
 
     /// Version 7 data
-    s->WriteSwapFloat( fFogKnees[ kFogExp ] );
-    s->WriteSwapFloat( fFogKneeVals[ kFogExp ] );
-    s->WriteSwapFloat( fFogKnees[ kFogExp2 ] );
-    s->WriteSwapFloat( fFogKneeVals[ kFogExp2 ] );
+    s->WriteLEFloat( fFogKnees[ kFogExp ] );
+    s->WriteLEFloat( fFogKneeVals[ kFogExp ] );
+    s->WriteLEFloat( fFogKnees[ kFogExp2 ] );
+    s->WriteLEFloat( fFogKneeVals[ kFogExp2 ] );
 
     /// Version 9 data
     s->WriteByte( fAASetting );

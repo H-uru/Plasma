@@ -65,22 +65,22 @@ void plSoftVolume::Read(hsStream* s, hsResMgr* mgr)
 {
     plRegionBase::Read(s, mgr);
 
-    fListenState = s->ReadSwap32();
+    fListenState = s->ReadLE32();
 
     SetCheckListener(0 != (fListenState & kListenCheck));
 
-    fInsideStrength = s->ReadSwapScalar();
-    fOutsideStrength = s->ReadSwapScalar();
+    fInsideStrength = s->ReadLEScalar();
+    fOutsideStrength = s->ReadLEScalar();
 }
 
 void plSoftVolume::Write(hsStream* s, hsResMgr* mgr)
 {
     plRegionBase::Write(s, mgr);
 
-    s->WriteSwap32(fListenState);
+    s->WriteLE32(fListenState);
 
-    s->WriteSwapScalar(fInsideStrength);
-    s->WriteSwapScalar(fOutsideStrength);
+    s->WriteLEScalar(fInsideStrength);
+    s->WriteLEScalar(fOutsideStrength);
 }
 
 hsScalar plSoftVolume::GetStrength(const hsPoint3& pos) const 

@@ -73,7 +73,7 @@ void plMorphArray::Apply(hsTArray<plAccessSpan>& dst, hsTArray<hsScalar>* weight
 
 void plMorphArray::Read(hsStream* s, hsResMgr* mgr)
 {
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     fDeltas.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -82,7 +82,7 @@ void plMorphArray::Read(hsStream* s, hsResMgr* mgr)
 
 void plMorphArray::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteSwap32(fDeltas.GetCount());
+    s->WriteLE32(fDeltas.GetCount());
 
     int i;
     for( i = 0; i < fDeltas.GetCount(); i++ )

@@ -71,11 +71,11 @@ plProxyDrawMsg::~plProxyDrawMsg()
 void plProxyDrawMsg::Read(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgRead(s, mgr);
-    fProxyFlags = s->ReadSwap16();
+    fProxyFlags = s->ReadLE16();
 }
 
 void plProxyDrawMsg::Write(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(s, mgr);
-    s->WriteSwap16(fProxyFlags);
+    s->WriteLE16(fProxyFlags);
 }
