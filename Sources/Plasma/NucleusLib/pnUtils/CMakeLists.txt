@@ -22,8 +22,6 @@ set(pnUtils_PRIVATE
     Private/pnUtCoreLib.h
     Private/pnUtCrypt.h
     Private/pnUtCrypt.cpp
-    Private/pnUtEndian.h
-    Private/pnUtEndian.cpp
     Private/pnUtHash.h
     Private/pnUtHash.cpp
     Private/pnUtList.h
