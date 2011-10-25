@@ -492,11 +492,11 @@ public:
     virtual void   Skip(UInt32 deltaByteCount) { hsAssert(0, "Not supported"); }
     virtual void   Rewind() { hsAssert(0, "Not supported"); }
 
-    virtual UInt32  GetEOF() { return fLoad->CurChunkLength(); }
+    virtual UInt32  GetEOF() { return (UInt32)fLoad->CurChunkLength(); }
 
     virtual UInt32 Read(UInt32 byteCount, void * buffer)
     {
-        UInt32 numRead = 0;
+        ULONG numRead = 0;
         hsAssert(fLoad, "No Max ILoad!");
         if (fLoad)
             fLoad->Read(buffer, byteCount, &numRead);
@@ -505,7 +505,7 @@ public:
     }
     virtual UInt32 Write(UInt32 byteCount, const void* buffer)
     {
-        UInt32 numWritten;
+        ULONG numWritten;
         hsAssert(fSave, "No Max ISave!");
         if (fSave)
             fSave->Write(buffer, byteCount, &numWritten);

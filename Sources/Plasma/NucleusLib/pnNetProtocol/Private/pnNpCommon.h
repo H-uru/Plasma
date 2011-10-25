@@ -470,8 +470,7 @@ public:
     void * Alloc (unsigned bytes);
     void AddData (const void * ptr, unsigned bytes);
     void AddString (const wchar str[]);
-    void AddDWordArray (const dword * arr, unsigned count);
-    void AddDWordArray (const unsigned * arr, unsigned count);
+    void AddDWordArray (const UInt32 * arr, unsigned count);
     // add new "Add..." methods here as needed
 
     unsigned Size ();
