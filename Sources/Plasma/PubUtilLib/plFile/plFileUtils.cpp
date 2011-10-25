@@ -105,6 +105,7 @@ hsBool  plFileUtils::CreateDir( const wchar *path )
 #elif HS_BUILD_FOR_UNIX
     const char* cpath = hsWStringToString(path);
     CreateDir(cpath);
+    delete[] cpath; /* Free the string */
 #endif
 }
 
@@ -156,6 +157,7 @@ bool plFileUtils::RemoveFile(const wchar* filename, bool delReadOnly)
 #elif HS_BUILD_FOR_UNIX
     const char* cfilename = hsWStringToString(filename);
     RemoveFile(cfilename, delReadOnly);
+    delete[] cfilename; /* Free the string */
 #endif
 }
 
@@ -179,6 +181,8 @@ bool plFileUtils::FileCopy(const wchar* existingFile, const wchar* newFile)
     const char* cnew = hsWStringToString(newFile);
     FILE* fp = fopen(cexisting, "rb");
     FILE* fw = fopen(cnew, "w");
+    delete[] cexisting;
+    delete[] cnew;
     int num = 0;
     bool retVal =  true;
     if (fp && fw){
