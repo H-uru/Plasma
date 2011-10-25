@@ -88,7 +88,7 @@ plEncryptedStream::~plEncryptedStream()
 //
 void plEncryptedStream::IEncipher(UInt32* const v)
 {
-    register unsigned long y=v[0], z=v[1], sum=0, delta=0x9E3779B9, n=32;
+    register UInt32 y=v[0], z=v[1], sum=0, delta=0x9E3779B9, n=32;
 
     while (n-- > 0)
     {
@@ -102,7 +102,7 @@ void plEncryptedStream::IEncipher(UInt32* const v)
 
 void plEncryptedStream::IDecipher(UInt32* const v)
 {
-    register unsigned long y=v[0], z=v[1], sum=0xC6EF3720, delta=0x9E3779B9, n=32;
+    register UInt32 y=v[0], z=v[1], sum=0xC6EF3720, delta=0x9E3779B9, n=32;
 
     // sum = delta<<5, in general sum = delta * n
 

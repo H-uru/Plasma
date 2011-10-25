@@ -280,7 +280,7 @@ hsBool hsNamedPipeStream::ICheckOverlappedResult(BOOL result, UInt32 &numTransfe
     {
         if (WaitForSingleObject(fOverlap.hEvent, fTimeout) == WAIT_OBJECT_0)
         {
-            BOOL oResult = GetOverlappedResult(fPipe, &fOverlap, &numTransferred, FALSE);
+            BOOL oResult = GetOverlappedResult(fPipe, &fOverlap, (LPDWORD)&numTransferred, FALSE);
             if (oResult)
                 return true;
             hsAssert(oResult, "GetOverlappedResult failed");
@@ -300,7 +300,7 @@ hsBool hsNamedPipeStream::IRead(UInt32 byteCount, void *buffer, UInt32 &numRead)
 
     if (fPipe != INVALID_HANDLE_VALUE && fReadMode)
     {
-        BOOL result = ReadFile(fPipe, buffer, byteCount, &numRead, &fOverlap);
+        BOOL result = ReadFile(fPipe, buffer, byteCount, (LPDWORD)&numRead, &fOverlap);
         if (ICheckOverlappedResult(result, numRead))
             return true;
     }
@@ -318,7 +318,7 @@ hsBool hsNamedPipeStream::IWrite(UInt32 byteCount, const void *buffer, UInt32 &n
 
     if (fPipe != INVALID_HANDLE_VALUE && !fReadMode)
     {
-        BOOL result = WriteFile(fPipe, buffer, byteCount, &numWritten, &fOverlap);
+        BOOL result = WriteFile(fPipe, buffer, byteCount, (LPDWORD)&numWritten, &fOverlap);
         if (ICheckOverlappedResult(result, numWritten))
             return true;
     }

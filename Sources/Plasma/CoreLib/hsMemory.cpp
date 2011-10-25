@@ -99,11 +99,11 @@ void HSMemory::Clear(void* m, UInt32 byteLen)
     UInt8*  memStop = mem + byteLen;
 
     if (byteLen > 8)
-    {   while (UInt32(mem) & 3)
+    {   while (unsigned_ptr(mem) & 3)
             *mem++ = 0;
         
         UInt32* mem32 = (UInt32*)mem;
-        UInt32* mem32Stop = (UInt32*)(UInt32(memStop) & ~3);
+        UInt32* mem32Stop = (UInt32*)(unsigned_ptr(memStop) & ~3);
         do {
             *mem32++ = 0;
         } while (mem32 < mem32Stop);
