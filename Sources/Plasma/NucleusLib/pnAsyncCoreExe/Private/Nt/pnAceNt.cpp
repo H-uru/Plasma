@@ -251,7 +251,7 @@ static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
 
         // process I/O operations
         {
-            dword bytes;
+            DWORD bytes;
             NtObject *  ntObj;
             Operation * op;
             (void) GetQueuedCompletionStatus(

@@ -827,7 +827,7 @@ UInt32 hsFileStream::Read(UInt32 bytes,  void* buffer)
 
 #elif HS_BUILD_FOR_WIN32
     UInt32 rBytes;
-    ReadFile((HANDLE)fRef, buffer, bytes, &rBytes, nil);
+    ReadFile((HANDLE)fRef, buffer, bytes, (LPDWORD)&rBytes, nil);
     if(bytes == rBytes)
         return bytes;
     else
@@ -867,7 +867,7 @@ UInt32 hsFileStream::Write(UInt32 bytes, const void* buffer)
       return 0;
 #elif HS_BUILD_FOR_WIN32
     UInt32 wBytes;
-    WriteFile((HANDLE)fRef, buffer, bytes, &wBytes, nil);
+    WriteFile((HANDLE)fRef, buffer, bytes, (LPDWORD)&wBytes, nil);
     if(bytes == wBytes)
         return bytes;
     else
@@ -904,7 +904,7 @@ hsBool hsFileStream::AtEnd()
     
 #elif HS_BUILD_FOR_WIN32
     UInt32 bytes;
-    PeekNamedPipe((void*)fRef, nil, 0, nil, &bytes, nil);
+    PeekNamedPipe((void*)fRef, nil, 0, nil, (LPDWORD)&bytes, nil);
     return bytes>0;
 #else
     hsAssert(0,"No hsStream::AtEnd() implemented for this stream class");

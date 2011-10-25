@@ -299,7 +299,7 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
         }
 
         UInt8 *bufferAddr = jpgBuffer;
-        UInt32 bufferSize = jpgBufferSize;
+        unsigned long bufferSize = jpgBufferSize;
         jpeg_mem_dest( &cinfo, &bufferAddr, &bufferSize );
 
         cinfo.image_width = source->GetWidth();
