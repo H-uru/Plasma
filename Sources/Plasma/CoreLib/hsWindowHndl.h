@@ -45,17 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 // decide what hsWindowHndl is
-#if HS_BUILD_FOR_MAC
-#include <QuickDraw.h>
-#ifdef HS_MAC_CARBON
-typedef WindowPtr hsWindowHndl;
-#else
-typedef GrafPtr hsWindowHndl;
-#endif
-#endif
 #if HS_BUILD_FOR_WIN32
 typedef struct HWND__ * hsWindowHndl;
-#elif HS_BUILD_FOR_PS2 || HS_BUILD_FOR_UNIX
+#elif HS_BUILD_FOR_UNIX
 typedef int* hsWindowHndl;
 #endif
 

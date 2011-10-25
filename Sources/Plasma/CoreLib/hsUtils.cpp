@@ -40,9 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsUtils.h"
-#if HS_BUILD_FOR_MAC
-#include <Gestalt.h>
-#endif
 #if HS_BUILD_FOR_WIN32
 extern "C" {
 #endif
@@ -50,14 +47,6 @@ extern "C" {
 #include <stdarg.h>
 #if HS_BUILD_FOR_WIN32
 };
-#endif
-#if __MWERKS__
-#include <ctype.h>
-#endif
-#if HS_BUILD_FOR_PS2
-#include <ctype.h>
-#include "eekernel.h"
-#include "sifdev.h"
 #endif
 
 #if HS_BUILD_FOR_WIN32
@@ -153,12 +142,6 @@ int hsMessageBoxWithOwner(void * owner, const char message[], const char caption
     }
 
 #endif
-#if HS_BUILD_FOR_MACPPC
-    DebugStr(message);
-#endif
-#if HS_BUILD_FOR_PS2
-    printf("Cap:%s Message:%s\n",caption, message);
-#endif
 }
 
 int hsMessageBoxWithOwner(void * owner, const wchar_t message[], const wchar_t caption[], int kind, int icon)
@@ -212,12 +195,6 @@ int hsMessageBoxWithOwner(void * owner, const wchar_t message[], const wchar_t c
     default:            return hsMBoxCancel;
     }
     
-#endif
-#if HS_BUILD_FOR_MACPPC
-    DebugStr(message);
-#endif
-#if HS_BUILD_FOR_PS2
-    printf("Cap:%s Message:%s\n",caption, message);
 #endif
 }
 
@@ -442,16 +419,6 @@ void hsCPathToMacPath(char* dst, char* fname)
 
 int hsRemove(const char * fname)
 {
-#if HS_BUILD_FOR_MACPPC
-    char buf[500];
-    hsStrcpy(buf,":");
-    hsStrcat(buf,fname);
-    int i;
-    for(i =0; i < hsStrlen(buf); i++)
-        if(buf[i] == '\\')
-            buf[i] = ':';
-    return remove(buf);
-#endif
     return remove(fname);
     
 }
@@ -464,12 +431,6 @@ UInt32 hsPhysicalMemory()
     MEMORYSTATUS ms;
     GlobalMemoryStatus(&ms);
     return (ms.dwTotalPhys / HS_ONE_MEGABYTE);
-#elif HS_BUILD_FOR_MAC
-    // Silver, figure out the physical memory here (in MB)  
-    OSErr err;
-    SInt32 TotPhysicalRAM;
-    err = Gestalt(gestaltPhysicalRAMSize, &TotPhysicalRAM);
-    return (TotPhysicalRAM / HS_ONE_MEGABYTE);
 #endif
 }
 
@@ -487,128 +448,6 @@ MemSpec hsMemorySpec()
     else
         return kOptimal;
 }
-
-#if HS_BUILD_FOR_MAC
-FILE *hsFopen(const char *fname, const char *mode)
-{
-    char buf[500];
-#if 0
-    FILE *f;
-
-    hsStrcpy(buf,":");
-    hsStrcat(buf,fname);
-    int i;
-    for(i =0; i < hsStrlen(buf); i++)
-        if(buf[i] == '\\')
-            buf[i] = ':';
-    
-#endif
-    hsCPathToMacPath(buf, (char*)fname);
-    return fopen(buf,mode);
-}
-
-#endif
-#if HS_BUILD_FOR_PS2
-int hsPS2Open(const char name[], const char mode[])
-{
-  char buf[500];
-  int newMode;
-  int i;
-  hsStrcpy(buf,"sim:");
-//hsStrcpy(buf,"");
-  hsStrcat(buf,name);
-  for(i =0; i < hsStrlen(buf); i++)
-    if(buf[i] == '\\')
-        buf[i] = '/';
-  printf("Opening File %s\n",buf);
-  if(mode[0] == 'r')
-    newMode = SCE_RDONLY;
-  else if(mode[0] == 'w')
-    newMode = SCE_WRONLY|SCE_CREAT;
-  else
-    hsAssert(0,"Bad mode in hsPS2Open\n");
-
-  printf("Opening File %s mode =%d\n",buf,newMode);
-   return  sceOpen(buf,newMode);
-}
-
-void hsPS2Close( int file )
-{
-    if( file != -1 )
-        sceClose( file );
-}
-
-//FILE *hsFopen(const char *fname, const char *mode)
-//{ 
-//  FILE *f;
-//  char buf[500];
-//  char newMode[10];
-//  hsStrcpy(buf,"sim:");
-//  //hsStrcpy(buf,"");
-//  hsStrcat(buf,fname);
-//  int i;
-//  for(i =0; i < hsStrlen(buf); i++)
-//      if(buf[i] == '\\')
-//          buf[i] = '/';
-//  printf("Opening File %s\n",buf);
-//  if(!strcmp("rt",mode))
-//    {
-//      strcpy(newMode, "r");
-//    }
-//  else
-//    strcpy(newMode, mode);
-//
-//  printf("Opening File %s mode =%s\n",buf,newMode);
-//  f= fopen(buf,newMode);
-//  if(f)
-//      return f;
-//  else
-//      return nil;
-//}
-#endif
-
-// Compare lexigraphically two strings
-
-#if !(HS_BUILD_FOR_WIN32 || HS_BUILD_FOR_UNIX)
-
-int hsStrcasecmp(const char *s1, const char *s2)
-{
-    if (s1 && s2)
-    {
-        char c1, c2;
-        while (1)
-        {
-            c1 = tolower(*s1++);
-            c2 = tolower(*s2++);
-            if (c1 < c2) return -1;
-            if (c1 > c2) return 1;
-            if (c1 == '\0') return 0;
-        }
-    }
-    return !s1 ? -1 : 1;
-}
-
-// Compare lexigraphically two strings up to a max length
-
-int hsStrncasecmp(const char *s1, const char *s2, int n)
-{
-    if (s1 && s2)
-    {
-        int i;
-        char c1, c2;
-        for (i=0; i<n; i++)
-        {
-            c1 = tolower(*s1++);
-            c2 = tolower(*s2++);
-            if (c1 < c2) return -1;
-            if (c1 > c2) return 1;
-            if (!c1) return 0;
-        }
-        return 0;
-    }
-    return !s1 ? -1 : 1;
-}
-#endif
 
 //
 // Microsoft SAMPLE CODE

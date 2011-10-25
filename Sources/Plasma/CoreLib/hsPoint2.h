@@ -44,12 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsScalar.h"
 
-#if __MWERKS__
-    //  This guy disables MetroWerks' desire to only include a file once, which obviously gets
-    //  in the way of our little HS_POINT2.inc trick
-    #pragma once off
-#endif
-
 #define HS_POINT2_NAME  hsIntPoint2
 #define HS_POINT2_TYPE      Int32
 #include "HS_POINT2.inc"

@@ -320,17 +320,6 @@ public:
 class hsFileStream: public hsStream
 {   
     UInt32      fRef;
-#if HS_BUILD_FOR_PS2
-    enum {
-        kBufferSize = 2*1024
-    };
-    UInt32      fFileSize;
-    char        fBuffer[kBufferSize];
-    Int32       fVirtualFilePointer;
-    Int32       fBufferBase;            // offset to top of fBuffer
-    hsBool      fBufferIsEmpty;
-    hsBool      fWriteBufferUsed;       // In write mode. fBuffer must be flush, when file was closed.
-#endif
 
 public:
                 hsFileStream();
