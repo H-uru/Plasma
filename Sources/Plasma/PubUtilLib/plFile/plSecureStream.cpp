@@ -187,6 +187,7 @@ hsBool plSecureStream::Open(const wchar* name, const wchar* mode)
 #elif HS_BUILD_FOR_UNIX
         const char* cname = hsWStringToString(name);
         fRef = fopen(cname, "rb");
+        delete[] cname;
 
         fPosition = 0;
 
@@ -632,6 +633,7 @@ bool plSecureStream::IsSecureFile(const wchar* fileName)
 #elif HS_BUILD_FOR_UNIX
     const char* cfile = hsWStringToString(fileName);
     fp = fopen(cfile, "rb");
+    delete[] cfile;
 #endif
 
     if (fp == INVALID_HANDLE_VALUE)
