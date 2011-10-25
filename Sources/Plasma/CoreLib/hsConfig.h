@@ -62,11 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ////////////////////  Specific Compiler Stuff This Section is computed  ////////////
 
-#if defined(macintosh) && defined(__POWERPC__)
-    #define HS_BUILD_FOR_MACPPC         1
-#elif defined(macintosh)
-    #define HS_BUILD_FOR_MAC68K         1
-#elif defined(_WIN32)
+#if defined(_WIN32)
     #define HS_BUILD_FOR_WIN32          1
 #elif defined(__unix__)
     #define HS_BUILD_FOR_UNIX           1

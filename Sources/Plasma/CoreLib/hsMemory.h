@@ -48,11 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class HSMemory {
 public:
-#if HS_BUILD_FOR_MAC
     static void BlockMove(const void* src, void* dst, UInt32 length);
-#else
-    static void BlockMove(const void* src, void* dst, UInt32 length);
-#endif
     static void Clear(void *m, UInt32 byteLen);
     static void ClearMemory(void *m, UInt32 byteLen) { HSMemory::Clear(m, byteLen); }
 

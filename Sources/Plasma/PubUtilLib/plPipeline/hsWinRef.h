@@ -49,10 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 typedef HWND hsWinRef;
 
-#elif HS_BUILD_FOR_MACPPC
-
-typedef WindowRef hsWinRef;
-
 #else // Whatever
 
 typedef void* hsWinRef;

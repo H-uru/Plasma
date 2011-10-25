@@ -39,11 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#if HS_BUILD_FOR_MAC
-    #include <Memory.h>
-#else
-    #include <string.h>
-#endif
+
+#include <string.h>
 
 #include "hsMemory.h"
 #include "hsExceptions.h"
@@ -52,17 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-#if HS_BUILD_FOR_MAC
-    void HSMemory::BlockMove(const void* src, void* dst, UInt32 length)
-    {
-        ::BlockMoveData(src, dst, length);
-    }
-#else
-    void HSMemory::BlockMove(const void* src, void* dst, UInt32 length)
-    {
-        memmove(dst, src, length);
-    }
-#endif
+void HSMemory::BlockMove(const void* src, void* dst, UInt32 length)
+{
+    memmove(dst, src, length);
+}
 
 hsBool HSMemory::EqualBlocks(const void* block1, const void* block2, UInt32 length)
 {

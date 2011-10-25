@@ -123,9 +123,6 @@ hsMatrix44 operator*(const hsMatrix44& a, const hsMatrix44& b)
     if( b.fFlags & hsMatrix44::kIsIdent )
         return a;
 
-#if HS_BUILD_FOR_PS2
-    MulMatrixVU0(a.fMap, b.fMap, c.fMap);
-#else
     c.fMap[0][0] = hsScalarMul(a.fMap[0][0], b.fMap[0][0]) + hsScalarMul(a.fMap[0][1], b.fMap[1][0]) + hsScalarMul(a.fMap[0][2], b.fMap[2][0]) + hsScalarMul(a.fMap[0][3], b.fMap[3][0]);
     c.fMap[0][1] = hsScalarMul(a.fMap[0][0], b.fMap[0][1]) + hsScalarMul(a.fMap[0][1], b.fMap[1][1]) + hsScalarMul(a.fMap[0][2], b.fMap[2][1]) + hsScalarMul(a.fMap[0][3], b.fMap[3][1]);
     c.fMap[0][2] = hsScalarMul(a.fMap[0][0], b.fMap[0][2]) + hsScalarMul(a.fMap[0][1], b.fMap[1][2]) + hsScalarMul(a.fMap[0][2], b.fMap[2][2]) + hsScalarMul(a.fMap[0][3], b.fMap[3][2]);
@@ -145,7 +142,6 @@ hsMatrix44 operator*(const hsMatrix44& a, const hsMatrix44& b)
     c.fMap[3][1] = hsScalarMul(a.fMap[3][0], b.fMap[0][1]) + hsScalarMul(a.fMap[3][1], b.fMap[1][1]) + hsScalarMul(a.fMap[3][2], b.fMap[2][1]) + hsScalarMul(a.fMap[3][3], b.fMap[3][1]);
     c.fMap[3][2] = hsScalarMul(a.fMap[3][0], b.fMap[0][2]) + hsScalarMul(a.fMap[3][1], b.fMap[1][2]) + hsScalarMul(a.fMap[3][2], b.fMap[2][2]) + hsScalarMul(a.fMap[3][3], b.fMap[3][2]);
     c.fMap[3][3] = hsScalarMul(a.fMap[3][0], b.fMap[0][3]) + hsScalarMul(a.fMap[3][1], b.fMap[1][3]) + hsScalarMul(a.fMap[3][2], b.fMap[2][3]) + hsScalarMul(a.fMap[3][3], b.fMap[3][3]);
-#endif
 
     return c;
 }
@@ -157,13 +153,9 @@ hsVector3 operator*(const hsMatrix44& m, const hsVector3& p)
 
     hsVector3 rVal;
 
-#if HS_BUILD_FOR_PS2
-    MulVectorVU0(m.fMap, (MATRIX4) &p, (MATRIX4) &rVal);
-#else
     rVal.fX = hsScalarMul(p.fX, m.fMap[0][0]) + hsScalarMul(p.fY, m.fMap[0][1]) + hsScalarMul(p.fZ, m.fMap[0][2]);
     rVal.fY = hsScalarMul(p.fX, m.fMap[1][0]) + hsScalarMul(p.fY, m.fMap[1][1]) + hsScalarMul(p.fZ, m.fMap[1][2]);
     rVal.fZ = hsScalarMul(p.fX, m.fMap[2][0]) + hsScalarMul(p.fY, m.fMap[2][1]) + hsScalarMul(p.fZ, m.fMap[2][2]);
-#endif
 
     return rVal;
 }
@@ -183,9 +175,6 @@ hsMatrix44 hsMatrix44::operator*(const hsMatrix44& b) const
     if( b.fFlags & hsMatrix44::kIsIdent )
         return *this;
 
-#if HS_BUILD_FOR_PS2
-    MulMatrixVU0(fMap, b.fMap, c.fMap);
-#else
     c.fMap[0][0] = hsScalarMul(fMap[0][0], b.fMap[0][0]) + hsScalarMul(fMap[0][1], b.fMap[1][0]) + hsScalarMul(fMap[0][2], b.fMap[2][0]) + hsScalarMul(fMap[0][3], b.fMap[3][0]);
     c.fMap[0][1] = hsScalarMul(fMap[0][0], b.fMap[0][1]) + hsScalarMul(fMap[0][1], b.fMap[1][1]) + hsScalarMul(fMap[0][2], b.fMap[2][1]) + hsScalarMul(fMap[0][3], b.fMap[3][1]);
     c.fMap[0][2] = hsScalarMul(fMap[0][0], b.fMap[0][2]) + hsScalarMul(fMap[0][1], b.fMap[1][2]) + hsScalarMul(fMap[0][2], b.fMap[2][2]) + hsScalarMul(fMap[0][3], b.fMap[3][2]);
@@ -205,7 +194,6 @@ hsMatrix44 hsMatrix44::operator*(const hsMatrix44& b) const
     c.fMap[3][1] = hsScalarMul(fMap[3][0], b.fMap[0][1]) + hsScalarMul(fMap[3][1], b.fMap[1][1]) + hsScalarMul(fMap[3][2], b.fMap[2][1]) + hsScalarMul(fMap[3][3], b.fMap[3][1]);
     c.fMap[3][2] = hsScalarMul(fMap[3][0], b.fMap[0][2]) + hsScalarMul(fMap[3][1], b.fMap[1][2]) + hsScalarMul(fMap[3][2], b.fMap[2][2]) + hsScalarMul(fMap[3][3], b.fMap[3][2]);
     c.fMap[3][3] = hsScalarMul(fMap[3][0], b.fMap[0][3]) + hsScalarMul(fMap[3][1], b.fMap[1][3]) + hsScalarMul(fMap[3][2], b.fMap[2][3]) + hsScalarMul(fMap[3][3], b.fMap[3][3]);
-#endif
 
     return c;
 }
@@ -217,13 +205,9 @@ hsVector3 hsMatrix44::operator*(const hsVector3& p) const
 
     hsVector3 rVal;
 
-#if HS_BUILD_FOR_PS2
-    MulVectorVU0(fMap, (MATRIX4) &p, (MATRIX4) &rVal);
-#else
     rVal.fX = hsScalarMul(p.fX, fMap[0][0]) + hsScalarMul(p.fY, fMap[0][1]) + hsScalarMul(p.fZ, fMap[0][2]);
     rVal.fY = hsScalarMul(p.fX, fMap[1][0]) + hsScalarMul(p.fY, fMap[1][1]) + hsScalarMul(p.fZ, fMap[1][2]);
     rVal.fZ = hsScalarMul(p.fX, fMap[2][0]) + hsScalarMul(p.fY, fMap[2][1]) + hsScalarMul(p.fZ, fMap[2][2]);
-#endif
 
     return rVal;
 }
@@ -271,9 +255,6 @@ int hsMatrix44::operator==(const hsMatrix44& ss) const
 
 hsMatrix44& hsMatrix44::Scale(const hsVector3* scale)
 {
-#if HS_BUILD_FOR_PS2
-    MulScaleVU0(fMap, (MATRIX4 *) scale);
-#else
     fMap[0][0] *= scale->fX;
     fMap[0][1] *= scale->fX;
     fMap[0][2] *= scale->fX;
@@ -288,7 +269,7 @@ hsMatrix44& hsMatrix44::Scale(const hsVector3* scale)
     fMap[2][1] *= scale->fZ;
     fMap[2][2] *= scale->fZ;
     fMap[2][3] *= scale->fZ;
-#endif
+
     NotIdentity();
     return *this;
 }
@@ -318,14 +299,10 @@ hsVector3 hsMatrix44::RemoveScale()
 
 hsMatrix44& hsMatrix44::Translate(const hsVector3* pt)
 {
-#if HS_BUILD_FOR_PS2
-    TranslateVU0(fMap, (MATRIX4 *) pt);         /* SUNSOFT */
-#else
     for (int i =0; i < 3; i++)
     {
         fMap[i][3] += (*pt)[i];
     }
-#endif
     NotIdentity();
     return *this;
 }
@@ -686,9 +663,6 @@ static inline hsScalar Determinant3(hsScalar a, hsScalar b, hsScalar c,
 
 hsScalar hsMatrix44::GetDeterminant() const
 {
-#if HS_BUILD_FOR_PS2
-    return (GetDeterminantVU0(fMap));
-#else
     return (fMap[0][0]*Determinant3(fMap[1][1], fMap[2][1], fMap[3][1],
                                       fMap[1][2], fMap[2][2], fMap[3][2],
                                       fMap[1][3], fMap[2][3], fMap[3][3]) - 
@@ -701,15 +675,11 @@ hsScalar hsMatrix44::GetDeterminant() const
             fMap[3][0]*Determinant3(fMap[0][1], fMap[1][1], fMap[2][1],
                                       fMap[0][2], fMap[1][2], fMap[2][2],
                                       fMap[0][3], fMap[1][3], fMap[2][3]));
-#endif
 }
 
 
 hsMatrix44 *hsMatrix44::GetAdjoint(hsMatrix44 *adj) const
 {
-#if HS_BUILD_FOR_PS2
-    GetAdjointVU0(fMap, adj->fMap);
-#else
     float   a1, a2, a3, a4, b1, b2, b3, b4;
     float   c1, c2, c3, c4, d1, d2, d3, d4;
 /*
@@ -774,7 +744,7 @@ hsMatrix44 *hsMatrix44::GetAdjoint(hsMatrix44 *adj) const
     adj->fMap[1][3] = Determinant3(a1, a2, a3, c1, c2, c3, d1, d2, d3);
     adj->fMap[2][3] = -Determinant3(a1, a2, a3, b1, b2, b3, d1, d2, d3);
     adj->fMap[3][3] = Determinant3(a1, a2, a3, b1, b2, b3, c1, c2, c3);
-#endif
+
     adj->NotIdentity();
     return adj;
 }
@@ -792,13 +762,11 @@ hsMatrix44* hsMatrix44::GetInverse(hsMatrix44* inverse) const
 
     det = hsScalarInvert(det);
     GetAdjoint(inverse);
-#if HS_BUILD_FOR_PS2
-    MatMulVU0(inverse->fMap, det);
-#else
+
     for (i=0; i<4; i++)
         for (j=0; j<4; j++)
             inverse->fMap[i][j] *= det;
-#endif
+
     return inverse;
 }
 

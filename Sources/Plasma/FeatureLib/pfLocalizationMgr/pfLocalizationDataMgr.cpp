@@ -62,10 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <stack>
 
-#if HS_BUILD_FOR_MAC
-#include <bxwchar.h>
-#endif
-
 // MinGW sucks
 #if defined(_WIN32) && !defined(_MSC_VER)
 #   define swprintf _snwprintf
@@ -183,28 +179,12 @@ XML_Memory_Handling_Suite gHeapAllocator = {
 //metmet remove static
 void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *element, const XML_Char **attributes)
 {
-#if !HS_BUILD_FOR_MAC
     std::wstring wElement = element;
-#else
-    // jfim
-    wchar_t buf[2048], buf2[2048];
-    BX_Char16ToWchar(element, buf);
-    std::wstring wElement = buf;    // jfim: element;
-#endif
     LocalizationXMLFile *file = (LocalizationXMLFile*)userData;
     std::map<std::wstring, std::wstring> wAttributes;
 
     for (int i = 0; attributes[i]; i += 2)
-#if !HS_BUILD_FOR_MAC
         wAttributes[attributes[i]] = attributes[i+1];
-#else
-    {
-        // jfim
-        BX_Char16ToWchar(attributes[i], buf);
-        BX_Char16ToWchar(attributes[i+1], buf2);
-        wAttributes[buf] = buf2;
-    }
-#endif
 
     LocalizationXMLFile::tagInfo parentTag;
     if (!file->fTagStack.empty())
@@ -236,14 +216,7 @@ void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *eleme
 //metmet remove static and include the function inside LocalizationXMLFile
 void XMLCALL LocalizationXMLFile::EndTag(void *userData, const XML_Char *element)
 {
-#if !HS_BUILD_FOR_MAC
     std::wstring wElement = element;
-#else
-    // jfim
-    wchar_t buf[2048], buf2[2048];
-    BX_Char16ToWchar(element, buf);
-    std::wstring wElement = buf;    // jfim: element;
-#endif
     LocalizationXMLFile *file = (LocalizationXMLFile*)userData;
 
     if (file->fSkipDepth != -1) // we're currently skipping
@@ -447,14 +420,7 @@ bool LocalizationXMLFile::Parse(const std::string & fileName)
             fLastError += L"ERROR: Parse error at line ";
             fLastError += lineNumber;
             fLastError += L": ";
-#if !HS_BUILD_FOR_MAC
             fLastError += XML_ErrorString(XML_GetErrorCode(fParser));
-#else
-            // jfim
-            wchar_t buf[2048];
-            BX_Utf8ToWchar(XML_ErrorString(XML_GetErrorCode(fParser)), buf);
-            fLastError += buf;
-#endif
             fLastError += L"\n";
             XML_ParserFree(fParser);
             fParser = nil;

@@ -53,11 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "structmember.h"
 #include "pyGlueHelpers.h"
 
-#if HS_BUILD_FOR_MAC
-#include <stdio.h>
-#include <bxString.h>
-#endif
-
 struct EnumValue {
     PyObject_HEAD
     long value;

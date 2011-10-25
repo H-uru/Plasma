@@ -39,14 +39,6 @@ if(UNIX)
         hsThread_Unix.cpp
     )
 endif(UNIX)
-
-# for now we use the Unix file on mac... I think this is Carbon code, which
-# we don't want to use. I don't think it's worth support OS9 anymore
-#if(APPLE)
-#   set(CoreLib_SOURCES ${CoreLib_SOURCES}
-#       hsThread_Mac.cpp
-#   )
-#endif(APPLE)
     
 
 set(CoreLib_HEADERS

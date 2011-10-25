@@ -47,9 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 typedef UInt32 hsMilliseconds;
 
 
-#if HS_BUILD_FOR_MAC
-    #include <Multiprocessing.h>
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     #include "hsWindows.h"
 #elif HS_BUILD_FOR_UNIX
     #include <pthread.h>
@@ -66,9 +64,7 @@ typedef UInt32 hsMilliseconds;
 class hsThread 
 {
 public:
-#if HS_BUILD_FOR_MAC
-    typedef MPTaskId ThreadId;
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     typedef DWORD ThreadId;
 #elif HS_BUILD_FOR_UNIX
     typedef pthread_t ThreadId;
@@ -76,10 +72,7 @@ public:
 private:
     hsBool      fQuit;
     UInt32      fStackSize;
-#if HS_BUILD_FOR_MAC
-    ThreadId    fTaskId;
-    MPQueueId   fNotifyQ;
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     ThreadId    fThreadId;
     HANDLE      fThreadH;
     HANDLE      fQuitSemaH;
@@ -94,10 +87,7 @@ protected:
 public:
     hsThread(UInt32 stackSize = 0);
     virtual     ~hsThread();    // calls Stop()
-#if HS_BUILD_FOR_MAC
-    ThreadId        GetThreadId() { return fTaskId; }
-#error "Mac is Depricated"
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     ThreadId        GetThreadId() { return fThreadId; }
     static ThreadId GetMyThreadId() { return GetCurrentThreadId(); }
 #elif HS_BUILD_FOR_UNIX
@@ -123,9 +113,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 
 class hsMutex {
-#if HS_BUILD_FOR_MAC
-    MPCriticalRegionId  fCriticalRegion;
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     HANDLE  fMutexH;
 #elif HS_BUILD_FOR_UNIX
     pthread_mutex_t fPMutex;
@@ -159,9 +147,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 
 class hsSemaphore {
-#if HS_BUILD_FOR_MAC
-    MPSemaphoreId   fSemaId;
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     HANDLE  fSemaH;
 #elif HS_BUILD_FOR_UNIX
 #ifdef USE_SEMA
@@ -185,7 +171,6 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-#if !HS_BUILD_FOR_MAC
 class hsEvent
 {
 #if HS_BUILD_FOR_UNIX
@@ -209,10 +194,8 @@ public:
     hsBool  Wait(hsMilliseconds timeToWait = kPosInfinity32);
     void        Signal();
 };
-#endif  // HS_BUILD_FOR_MAC
 
 //////////////////////////////////////////////////////////////////////////////
-#if !HS_BUILD_FOR_MAC
 class hsSleep
 {
 public:
@@ -224,8 +207,6 @@ public:
 
 #endif
 };
-#endif  // HS_BUILD_FOR_MAC
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Allows multiple readers, locks out readers for writing.

@@ -46,10 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsFastMath.h"
 
-#if defined(__MWERKS__) && !defined(HS_DEBUGGING)
-#pragma optimization_level 2
-#endif
-
 const hsScalar hsBounds::kRealSmall = 1.0e-5f;
 
 ///////////////////////////////////////////////////////////////////////////////////////
