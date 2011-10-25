@@ -46,8 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 /************************** Other Includes *****************************/
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
         
 #if HS_CAN_USE_FLOAT
     #include <math.h>
@@ -64,17 +64,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /************************** Basic Types *****************************/
 
-typedef unsigned char       byte;
-typedef unsigned short      word;
-typedef unsigned long       dword;
-
 #ifdef _MSC_VER
-typedef unsigned __int64    qword;
+  typedef signed __int8     int8_t;
+  typedef unsigned __int8   uint8_t;
+  typedef signed __int16    int16_t;
+  typedef unsigned __int16  uint16_t;
+  typedef signed __int32    int32_t;
+  typedef unsigned __int32  uint32_t;
+  typedef signed __int64    int64_t;
+  typedef unsigned __int64  uint64_t;
 #else
-typedef unsigned long long  qword;
+  #include <stdint.h>
 #endif
 
-typedef size_t              unsigned_ptr;
+typedef uint8_t       byte;
+typedef uint16_t      word;
+typedef uint32_t      dword;
+typedef uint64_t      qword;
+
+typedef uintptr_t           unsigned_ptr;
 
 typedef wchar_t             wchar;
 
@@ -84,50 +92,30 @@ typedef wchar_t             wchar;
 #define kPosInfinity32      (0x7fffffff)
 #define kNegInfinity32      (0x80000000)
 
-#if HS_BUILD_FOR_PS2
-typedef int         Int32;
-#else
-typedef long            Int32;
+typedef int8_t     Int8;
+typedef int16_t    Int16;
+typedef int32_t    Int32;
+typedef int64_t    Int64;
+
+typedef uint8_t   UInt8;
+typedef uint16_t  UInt16;
+typedef uint32_t  UInt32;
+typedef uint64_t  UInt64;
+
+#ifndef Byte
+    typedef uint8_t Byte;
 #endif
 
-typedef short           Int16;
-typedef signed char     Int8;
-
-#if !(HS_BUILD_FOR_MAC)
-    typedef unsigned char   UInt8;
-    typedef unsigned short  UInt16;
-#if HS_BUILD_FOR_PS2
-    typedef unsigned int    UInt32;
-#else
-    typedef unsigned long   UInt32;
+#ifndef false
+    #define false       0
+#endif
+#ifndef true
+    #define true        1
+#endif
+#ifndef Boolean
+    typedef uint8_t     Boolean;
 #endif
 
-    #ifndef Byte
-        typedef UInt8       Byte;
-    #endif
-
-    #ifndef false
-        #define false       0
-    #endif
-    #ifndef true
-        #define true        1
-    #endif
-    #ifndef Boolean
-        #if HS_BUILD_FOR_UNIX
-            typedef char    Boolean;
-        #else
-            typedef UInt8   Boolean;
-        #endif
-    #endif
-#endif
-
-#if HS_BUILD_FOR_WIN32
-    typedef __int64             Int64;
-    typedef unsigned __int64    UInt64;
-#else
-    typedef long long           Int64;
-    typedef unsigned long long  UInt64;
-#endif
 
 typedef Int32           hsFixed;
 typedef Int32           hsFract;

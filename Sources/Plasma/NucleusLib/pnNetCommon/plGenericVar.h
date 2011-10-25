@@ -113,8 +113,6 @@ public:
     operator bool() const { return IToBool(); }
     operator const CharPtr() const { return IToString(); }
     operator char() const { return IToChar(); }
-    operator unsigned int() const { return IToUInt(); }
-    operator int() const { return IToInt(); }
 
     void    SetType(Types t)        { fType=t; }
     UInt8   GetType( void ) const   { return fType; }

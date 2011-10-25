@@ -1125,15 +1125,7 @@ void CSrvPackBuffer::AddString (const wchar str[]) {
 }
 
 //============================================================================
-void CSrvPackBuffer::AddDWordArray (const dword * arr, unsigned count) {
-    // Don't let large counts cause pointer wrap
-    count &= 0x00ffffff;
-    AddData(arr, count * sizeof(arr[0]));
-}
-
-//============================================================================
-void CSrvPackBuffer::AddDWordArray (const unsigned * arr, unsigned count) {
-    COMPILER_ASSERT(sizeof(unsigned) == sizeof(dword));
+void CSrvPackBuffer::AddDWordArray (const UInt32 * arr, unsigned count) {
     // Don't let large counts cause pointer wrap
     count &= 0x00ffffff;
     AddData(arr, count * sizeof(arr[0]));
