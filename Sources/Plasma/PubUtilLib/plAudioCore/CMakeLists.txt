@@ -3,11 +3,13 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-if(WIN32)
-    include_directories(${DirectX_INCLUDE_DIR})
-endif(WIN32)
 include_directories(${Ogg_INCLUDE_DIR})
 include_directories(${Vorbis_INCLUDE_DIR})
+# We only need DirectX if we're building the Max plugin
+# TODO: Check if we actually need this at all
+if(3dsm_BUILD_PLUGIN)
+    include_directories(${DirectX_INCLUDE_DIR})
+endif(3dsm_BUILD_PLUGIN)
 
 set(plAudioCore_SOURCES
     plAudioFileReader.cpp
