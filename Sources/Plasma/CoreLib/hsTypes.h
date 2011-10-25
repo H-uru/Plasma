@@ -74,7 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
   typedef signed __int64    int64_t;
   typedef unsigned __int64  uint64_t;
 #else
-  #include <cstdint>
+  #include <stdint.h>
 #endif
 
 typedef uint8_t       byte;
@@ -82,7 +82,7 @@ typedef uint16_t      word;
 typedef uint32_t      dword;
 typedef uint64_t      qword;
 
-typedef size_t              unsigned_ptr;
+typedef uintptr_t           unsigned_ptr;
 
 typedef wchar_t             wchar;
 

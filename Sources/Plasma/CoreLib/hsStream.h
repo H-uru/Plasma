@@ -200,8 +200,6 @@ public:
     void        ReadSwap(int count, Int16 values[]) { this->ReadSwap16(count, (UInt16*)values); }
     void        ReadSwap(Int32* value) { *value = (Int32)this->ReadSwap32(); }
     void        ReadSwap(int count, Int32 values[]) { this->ReadSwap32(count, (UInt32*)values); }
-    void        ReadSwap(int* value) { *value = (Int32)this->ReadSwap32(); }
-    void        ReadSwap(int count, int values[]) { this->ReadSwap32(count, (UInt32*)values); }
 #ifdef STREAM_LOGGER
                 // Begin LogReadSwaps
     virtual void    LogReadSwap(Int8* value, const char* desc) { this->ReadSwap(value); }
@@ -224,8 +222,6 @@ public:
     void            WriteSwap(int count, const Int16 values[]) { this->WriteSwap16(count, (UInt16*)values); }
     void            WriteSwap(Int32 value) { this->WriteSwap32((UInt32)value); }
     void            WriteSwap(int count, const  Int32 values[]) { this->WriteSwap32(count, (UInt32*)values); }
-    void            WriteSwap(int value) { this->WriteSwap32((UInt32)value); }
-    void            WriteSwap(int count, const  int values[]) { this->WriteSwap32(count, (UInt32*)values); }
     /* Overloaded  End */
 
 
