@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plUUID_h_inc
-#define plUUID_h_inc
+#ifndef pnUUID_h_inc
+#define pnUUID_h_inc
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
@@ -107,4 +107,4 @@ public:
 };
 
 
-#endif // plUUID_h_inc
+#endif // pnUUID_h_inc

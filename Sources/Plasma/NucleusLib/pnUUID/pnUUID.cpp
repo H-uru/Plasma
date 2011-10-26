@@ -39,29 +39,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plNetCommonCreatable_inc
-#define plNetCommonCreatable_inc
+#include "pnUUID.h"
+#include "hsStream.h"
 
-#include "pnFactory/plCreator.h"
+plUUID::plUUID()
+{
+    Clear();
+}
 
-#ifndef SERVER
-#include "plNetMember.h"
-REGISTER_NONCREATABLE( plNetMember );
-#endif // SERVER
+plUUID::plUUID( const char * s )
+{
+    FromString( s );
+}
 
-#include "plNetCommonHelpers.h"
-#ifndef SERVER
-REGISTER_CREATABLE( plNetCoreStatsSummary );
-#endif // SERVER
-REGISTER_CREATABLE( plCreatableListHelper );
+plUUID::plUUID( const plUUID & other )
+{
+    CopyFrom( &other );
+}
 
-#include "plClientGuid.h"
-REGISTER_CREATABLE( plClientGuid );
-#include "plNetServerSessionInfo.h"
-REGISTER_CREATABLE( plNetServerSessionInfo );
-REGISTER_CREATABLE( plAgeInfoStruct );
-REGISTER_CREATABLE( plAgeLinkStruct );
+void plUUID::Read( hsStream * s)
+{
+    s->LogSubStreamPushDesc("plUUID");
+    s->Read( sizeof( fData ), (void*)fData );
+}
 
-#endif // plNetCommonCreatable_inc
+void plUUID::Write( hsStream * s)
+{
+    s->Write( sizeof( fData ), (const void*)fData );
+}
 
+const char * plUUID::AsString() const {
+    static std::string str;
+    ToStdString(str);
+    return str.c_str();
+}
 
+/*****************************************************************************
+*
+*   plCreatableUuid
+*
+***/
+
+//============================================================================
+plCreatableUuid::plCreatableUuid () {
+}
+
+//============================================================================
+plCreatableUuid::plCreatableUuid (const plCreatableUuid & other)
+: plUUID(other)
+{
+}
+
+//============================================================================
+plCreatableUuid::plCreatableUuid (const plUUID & other)
+: plUUID(other)
+{
+}

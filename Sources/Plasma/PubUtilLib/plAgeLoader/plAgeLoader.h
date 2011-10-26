@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAgeDescription/plAgeDescription.h"
 
-#include "plUUID/plUUID.h"
+#include "pnUUID/pnUUID.h"
 
 //
 // A singleton class which manages loading and unloading ages and operations associated with that

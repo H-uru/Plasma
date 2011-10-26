@@ -12,6 +12,6 @@ set(plFileEncrypt_SOURCES
 )
 
 add_executable(plFileEncrypt ${plFileEncrypt_SOURCES})
-target_link_libraries(plFileEncrypt CoreLib CoreLibExe plFile plUnifiedTime pnProduct plUUID)
+target_link_libraries(plFileEncrypt CoreLib CoreLibExe plFile plUnifiedTime pnUUID pnProduct)
 
 source_group("Source Files" FILES ${plFileEncrypt_SOURCES})
