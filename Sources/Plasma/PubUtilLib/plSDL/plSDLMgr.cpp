@@ -146,7 +146,7 @@ int plSDLMgr::Write(hsStream* s, const plSDL::DescriptorList* dl)
         dl=&fDescriptors;
 
     UInt16 num=dl->size();
-    s->WriteSwap(num);
+    s->WriteLE(num);
 
     plSDL::DescriptorList::const_iterator it;
     for(it=dl->begin(); it!= dl->end(); it++)
@@ -178,7 +178,7 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
     try
     {       
         // read dtor list
-        s->ReadSwap(&num);
+        s->ReadLE(&num);
 
         int i;
         for(i=0;i<num;i++)

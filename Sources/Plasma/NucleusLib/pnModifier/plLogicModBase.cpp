@@ -318,7 +318,7 @@ void plLogicModBase::AddNotifyReceiver(plKey receiver)
 void plLogicModBase::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     fCommandList.SetCountAndZero(n);
     for(int i = 0; i < n; i++ )
     {   
@@ -339,7 +339,7 @@ void plLogicModBase::Read(hsStream* stream, hsResMgr* mgr)
 void plLogicModBase::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
-    stream->WriteSwap32(fCommandList.GetCount());
+    stream->WriteLE32(fCommandList.GetCount());
     for(int i = 0; i < fCommandList.GetCount(); i++ )
         mgr->WriteCreatable( stream, fCommandList[i] );
     mgr->WriteCreatable( stream, fNotify );

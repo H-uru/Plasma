@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plAgeInfoStruct::Read( hsStream * s, hsResMgr* )
 {
     s->LogSubStreamStart("push me");
-    s->LogReadSwap( &fFlags ,"AgeInfoStruct Flags");
+    s->LogReadLE( &fFlags ,"AgeInfoStruct Flags");
     if ( IsFlagSet( kHasAgeFilename ) ) {
         s->LogSubStreamPushDesc("AgeFilename");
         plMsgStdStringHelper::Peek(fAgeFilename,s);
@@ -78,14 +78,14 @@ void plAgeInfoStruct::Read( hsStream * s, hsResMgr* )
         plMsgStdStringHelper::Peek(fAgeUserDefinedName,s);
     }
     if ( IsFlagSet( kHasAgeSequenceNumber ) ) {
-        s->LogReadSwap( &fAgeSequenceNumber ,"AgeSequenceNumber");
+        s->LogReadLE( &fAgeSequenceNumber ,"AgeSequenceNumber");
     }
     if ( IsFlagSet( kHasAgeDescription ) ) {
         s->LogSubStreamPushDesc("AgeDescription");
         plMsgStdStringHelper::Peek(fAgeDescription,s);
     }
     if ( IsFlagSet( kHasAgeLanguage ) ) {
-        s->LogReadSwap( &fAgeLanguage ,"AgeLanguage");
+        s->LogReadLE( &fAgeLanguage ,"AgeLanguage");
     }
     UpdateFlags();
     s->LogSubStreamEnd();
@@ -94,7 +94,7 @@ void plAgeInfoStruct::Read( hsStream * s, hsResMgr* )
 void plAgeInfoStruct::Write( hsStream * s, hsResMgr* )
 {
     UpdateFlags();
-    s->WriteSwap( fFlags );
+    s->WriteLE( fFlags );
     if ( IsFlagSet( kHasAgeFilename ) )
         plMsgStdStringHelper::Poke(fAgeFilename,s);
     if ( IsFlagSet( kHasAgeInstanceName ) )
@@ -104,11 +104,11 @@ void plAgeInfoStruct::Write( hsStream * s, hsResMgr* )
     if ( IsFlagSet( kHasAgeUserDefinedName ) )
         plMsgStdStringHelper::Poke(fAgeUserDefinedName,s);
     if ( IsFlagSet( kHasAgeSequenceNumber ) )
-        s->WriteSwap( fAgeSequenceNumber );
+        s->WriteLE( fAgeSequenceNumber );
     if ( IsFlagSet( kHasAgeDescription ) )
         plMsgStdStringHelper::Poke(fAgeDescription,s);
     if ( IsFlagSet( kHasAgeLanguage ) )
-        s->WriteSwap( fAgeLanguage );
+        s->WriteLE( fAgeLanguage );
 }
 
 bool plAgeInfoStruct::IsEqualTo( const plAgeInfoStruct * other ) const
@@ -379,13 +379,13 @@ plAgeLinkStruct::plAgeLinkStruct()
 void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
 {
     s->LogSubStreamStart("push me");
-    s->LogReadSwap( &fFlags ,"AgeLinkStruct Flags");
+    s->LogReadLE( &fFlags ,"AgeLinkStruct Flags");
     if ( IsFlagSet( kHasAgeInfo ) ) {
         s->LogSubStreamPushDesc("AgeInfo");
         fAgeInfo.Read( s,m );
     }
     if ( IsFlagSet( kHasLinkingRules ) )
-        s->LogReadSwap( &fLinkingRules ,"LinkingRules");
+        s->LogReadLE( &fLinkingRules ,"LinkingRules");
     if ( IsFlagSet( kHasSpawnPt_DEAD ) )
     {
         std::string str;
@@ -412,7 +412,7 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
         fSpawnPoint.Read( s );
     }
     if ( IsFlagSet( kHasAmCCR ) )
-        s->LogReadSwap( &fAmCCR ,"AmCCR");
+        s->LogReadLE( &fAmCCR ,"AmCCR");
 
     if ( IsFlagSet( kHasParentAgeFilename ) )
     {
@@ -423,15 +423,15 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
 
 void plAgeLinkStruct::Write( hsStream * s, hsResMgr* m)
 {
-    s->WriteSwap( fFlags );
+    s->WriteLE( fFlags );
     if ( IsFlagSet( kHasAgeInfo ) )
         fAgeInfo.Write( s,m );
     if ( IsFlagSet( kHasLinkingRules ) )
-        s->WriteSwap( fLinkingRules );
+        s->WriteLE( fLinkingRules );
     if ( IsFlagSet( kHasSpawnPt ) )
         fSpawnPoint.Write( s );
     if ( IsFlagSet( kHasAmCCR ) )
-        s->WriteSwap( fAmCCR );
+        s->WriteLE( fAmCCR );
     if ( IsFlagSet( kHasParentAgeFilename ) )
         plMsgStdStringHelper::Poke(fParentAgeFilename,s);
 }
@@ -543,19 +543,19 @@ void plNetServerSessionInfo::Read(hsStream* s, hsResMgr*)
 {
     Clear();
     s->LogSubStreamStart("push me");
-    s->LogReadSwap(&fFlags,"ServerSessionInfo Flags");
+    s->LogReadLE(&fFlags,"ServerSessionInfo Flags");
     if (IsFlagSet(kHasServerName)){
         s->LogSubStreamPushDesc("ServerName");
         plMsgStdStringHelper::Peek(fServerName,s);
     }
     if (IsFlagSet(kHasServerType))
-        s->LogReadSwap(&fServerType,"ServerType");
+        s->LogReadLE(&fServerType,"ServerType");
     if (IsFlagSet(kHasServerAddr)){
         s->LogSubStreamPushDesc("ServerAddr");
         plMsgStdStringHelper::Peek(fServerAddr,s);
     }
     if (IsFlagSet(kHasServerPort))
-        s->LogReadSwap(&fServerPort,"ServerPort");
+        s->LogReadLE(&fServerPort,"ServerPort");
     if (IsFlagSet(kHasServerGuid)){
         s->LogSubStreamPushDesc("ServerGuid");
         fServerGuid.Read(s);
@@ -564,15 +564,15 @@ void plNetServerSessionInfo::Read(hsStream* s, hsResMgr*)
 
 void plNetServerSessionInfo::Write(hsStream* s, hsResMgr*)
 {
-    s->WriteSwap(fFlags);
+    s->WriteLE(fFlags);
     if (IsFlagSet(kHasServerName))
         plMsgStdStringHelper::Poke(fServerName,s);
     if (IsFlagSet(kHasServerType))
-        s->WriteSwap(fServerType);
+        s->WriteLE(fServerType);
     if (IsFlagSet(kHasServerAddr))
         plMsgStdStringHelper::Poke(fServerAddr,s);
     if (IsFlagSet(kHasServerPort))
-        s->WriteSwap(fServerPort);
+        s->WriteLE(fServerPort);
     if (IsFlagSet(kHasServerGuid))
         fServerGuid.Write(s);
 }

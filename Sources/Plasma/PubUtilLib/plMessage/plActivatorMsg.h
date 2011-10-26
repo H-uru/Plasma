@@ -68,14 +68,14 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgRead(stream, mgr);
-        fTriggerType = stream->ReadSwap32();
+        fTriggerType = stream->ReadLE32();
         fHitPoint.Read(stream);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
-        stream->WriteSwap32( fTriggerType );
+        stream->WriteLE32( fTriggerType );
         fHitPoint.Write(stream);
     }
 

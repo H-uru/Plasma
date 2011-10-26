@@ -287,10 +287,10 @@ void plOccluder::Read(hsStream* s, hsResMgr* mgr)
     plObjInterface::Read(s, mgr);
 
     fWorldBounds.Read(s);
-    fPriority = s->ReadSwapScalar();
+    fPriority = s->ReadLEScalar();
 
     hsTArray<plCullPoly>& localPolys = IGetLocalPolyList();
-    UInt16 n = s->ReadSwap16();
+    UInt16 n = s->ReadLE16();
     localPolys.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -299,7 +299,7 @@ void plOccluder::Read(hsStream* s, hsResMgr* mgr)
     plKey nodeKey = mgr->ReadKey(s);
     ISetSceneNode(nodeKey);
 
-    n = s->ReadSwap16();
+    n = s->ReadLE16();
     fVisRegions.SetCountAndZero(n);
     for( i = 0; i < n; i++ )
         mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisRegion), plRefFlags::kActiveRef);
@@ -310,17 +310,17 @@ void plOccluder::Write(hsStream* s, hsResMgr* mgr)
     plObjInterface::Write(s, mgr);
 
     fWorldBounds.Write(s);
-    s->WriteSwapScalar(fPriority);
+    s->WriteLEScalar(fPriority);
 
     const hsTArray<plCullPoly>& localPolys = IGetLocalPolyList();
-    s->WriteSwap16(localPolys.GetCount());
+    s->WriteLE16(localPolys.GetCount());
     int i;
     for( i = 0; i < localPolys.GetCount(); i++ )
         localPolys[i].Write(s, mgr);
 
     mgr->WriteKey(s, fSceneNode);
 
-    s->WriteSwap16(fVisRegions.GetCount());
+    s->WriteLE16(fVisRegions.GetCount());
     for( i = 0; i < fVisRegions.GetCount(); i++ )
         mgr->WriteKey(s, fVisRegions[i]);
 }

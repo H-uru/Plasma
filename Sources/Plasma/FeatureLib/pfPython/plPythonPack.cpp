@@ -144,7 +144,7 @@ bool plPythonPack::Open()
             delete [] tempFilename;
 
             // read the index data
-            int numFiles = fPackStream->ReadSwap32();
+            int numFiles = fPackStream->ReadLE32();
             UInt32 streamIndex = (UInt32)(fPackStreams.size());
             for (int i = 0; i < numFiles; i++)
             {
@@ -152,7 +152,7 @@ bool plPythonPack::Open()
                 char* buf = fPackStream->ReadSafeString();
                 std::string pythonName = buf; // reading a "string" from a hsStream directly into a stl string causes memory loss
                 delete [] buf;
-                UInt32 offset = fPackStream->ReadSwap32();
+                UInt32 offset = fPackStream->ReadLE32();
 
                 plPackOffsetInfo offsetInfo;
                 offsetInfo.fOffset = offset;
@@ -209,7 +209,7 @@ PyObject* plPythonPack::OpenPacked(const char* fileName)
         
         fPackStream->SetPosition(offsetInfo.fOffset);
 
-        Int32 size = fPackStream->ReadSwap32();
+        Int32 size = fPackStream->ReadLE32();
         if (size > 0)
         {
             char *buf = TRACKED_NEW char[size];

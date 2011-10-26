@@ -145,14 +145,14 @@ void plActivatorConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Read(stream, mgr);
     fActivators.Reset();
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     for (int i = 0; i < n; i++)
         fActivators.Append(mgr->ReadKey(stream));
 }
 void plActivatorConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteSwap32(fActivators.Count());
+    stream->WriteLE32(fActivators.Count());
     for (int i = 0; i < fActivators.Count(); i++)
         mgr->WriteKey(stream, fActivators[i]);
 }

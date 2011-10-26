@@ -86,7 +86,7 @@ plVarDescriptor* plStateDescriptor::FindVar(const char* name, int* idx) const
 bool plStateDescriptor::Read(hsStream* s)
 {
     UInt8 rwVersion;
-    s->ReadSwap(&rwVersion);
+    s->ReadLE(&rwVersion);
     if (rwVersion != kVersion)
     {
         plNetApp::StaticWarningMsg("StateDescriptor Read/Write version mismatch, mine %d, read %d", kVersion, rwVersion);
@@ -98,10 +98,10 @@ bool plStateDescriptor::Read(hsStream* s)
     delete [] fName;
     fName = s->ReadSafeString();
 
-    UInt16 version=s->ReadSwap16();
+    UInt16 version=s->ReadLE16();
     fVersion=version;
 
-    UInt16 numVars=s->ReadSwap16();
+    UInt16 numVars=s->ReadLE16();
     fVarsList.reserve(numVars);
 
     int i;
@@ -126,15 +126,15 @@ bool plStateDescriptor::Read(hsStream* s)
 // 
 void plStateDescriptor::Write(hsStream* s) const
 {
-    s->WriteSwap(kVersion);
+    s->WriteLE(kVersion);
     
     s->WriteSafeString(fName);
 
     UInt16 version=fVersion;
-    s->WriteSwap(version);
+    s->WriteLE(version);
 
     UInt16 numVars=fVarsList.size();
-    s->WriteSwap(numVars);
+    s->WriteLE(numVars);
 
     VarsList::const_iterator it;
     for(it=fVarsList.begin(); it!=fVarsList.end(); it++)

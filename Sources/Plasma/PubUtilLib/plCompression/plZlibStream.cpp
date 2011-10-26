@@ -211,7 +211,7 @@ int plZlibStream::IValidateGzHeader(UInt32 byteCount, const void* buffer)
     if ((flags & EXTRA_FIELD) != 0)
     {
         // skip the extra field
-        UInt16 len = s.ReadSwap16();
+        UInt16 len = s.ReadLE16();
         while (len-- != 0 && s.ReadByte())
         {
             CheckForEnd();
@@ -241,7 +241,7 @@ int plZlibStream::IValidateGzHeader(UInt32 byteCount, const void* buffer)
     // skip the header crc
     if ((flags & HEAD_CRC) != 0)
     {
-        s.ReadSwap16();
+        s.ReadLE16();
         CheckForEnd();
     }
     

@@ -597,7 +597,7 @@ void plParticleSystem::IReadEffectsArray(hsTArray<plParticleEffect *> &effects, 
 {
     plGenRefMsg *msg;
     effects.Reset();
-    UInt32 count = s->ReadSwap32();
+    UInt32 count = s->ReadLE32();
     int i;
     for (i = 0; i < count; i++)
     {
@@ -620,18 +620,18 @@ void plParticleSystem::Read(hsStream *s, hsResMgr *mgr)
     fWidthCtl = plController::ConvertNoRef(mgr->ReadCreatable(s));
     fHeightCtl = plController::ConvertNoRef(mgr->ReadCreatable(s));
 
-    UInt32 xTiles = s->ReadSwap32();
-    UInt32 yTiles = s->ReadSwap32();
-    UInt32 maxTotal = s->ReadSwap32();
-    UInt32 maxEmitters = s->ReadSwap32();
+    UInt32 xTiles = s->ReadLE32();
+    UInt32 yTiles = s->ReadLE32();
+    UInt32 maxTotal = s->ReadLE32();
+    UInt32 maxEmitters = s->ReadLE32();
     Init(xTiles, yTiles, maxTotal, maxEmitters, fAmbientCtl, fDiffuseCtl, fOpacityCtl, fWidthCtl, fHeightCtl);
 
-    fPreSim = s->ReadSwapScalar();
+    fPreSim = s->ReadLEScalar();
     fAccel.Read(s);
-    fDrag = s->ReadSwapScalar();
-    fWindMult = s->ReadSwapScalar();
+    fDrag = s->ReadLEScalar();
+    fWindMult = s->ReadLEScalar();
 
-    fNumValidEmitters = s->ReadSwap32();
+    fNumValidEmitters = s->ReadLE32();
     int i;
     for (i = 0; i < fNumValidEmitters; i++)
     {
@@ -643,7 +643,7 @@ void plParticleSystem::Read(hsStream *s, hsResMgr *mgr)
     IReadEffectsArray(fEffects, kEffectMisc, s, mgr);
     IReadEffectsArray(fConstraints, kEffectConstraint, s, mgr);
 
-    int count = s->ReadSwap32();
+    int count = s->ReadLE32();
     fPermaLights.SetCount(count);
     for( i = 0; i < count; i++ )
     {
@@ -666,17 +666,17 @@ void plParticleSystem::Write(hsStream *s, hsResMgr *mgr)
     mgr->WriteCreatable(s, fWidthCtl);
     mgr->WriteCreatable(s, fHeightCtl);
     
-    s->WriteSwap32(fXTiles);
-    s->WriteSwap32(fYTiles);
-    s->WriteSwap32(fMaxTotalParticles);
-    s->WriteSwap32(fMaxEmitters);
+    s->WriteLE32(fXTiles);
+    s->WriteLE32(fYTiles);
+    s->WriteLE32(fMaxTotalParticles);
+    s->WriteLE32(fMaxEmitters);
 
-    s->WriteSwapScalar(fPreSim);
+    s->WriteLEScalar(fPreSim);
     fAccel.Write(s);
-    s->WriteSwapScalar(fDrag);
-    s->WriteSwapScalar(fWindMult);
+    s->WriteLEScalar(fDrag);
+    s->WriteLEScalar(fWindMult);
 
-    s->WriteSwap32(fNumValidEmitters);
+    s->WriteLE32(fNumValidEmitters);
     for (i = 0; i < fNumValidEmitters; i++)
     {
         mgr->WriteCreatable(s, fEmitters[i]);
@@ -684,22 +684,22 @@ void plParticleSystem::Write(hsStream *s, hsResMgr *mgr)
 
     int count;
     count = fForces.GetCount();
-    s->WriteSwap32(count);
+    s->WriteLE32(count);
     for (i = 0; i < count; i++)
         mgr->WriteKey(s, fForces.Get(i));
 
     count = fEffects.GetCount();
-    s->WriteSwap32(count);
+    s->WriteLE32(count);
     for (i = 0; i < count; i++)
         mgr->WriteKey(s, fEffects.Get(i));
 
     count = fConstraints.GetCount();
-    s->WriteSwap32(count);
+    s->WriteLE32(count);
     for (i = 0; i < count; i++)
         mgr->WriteKey(s, fConstraints.Get(i));
 
     count = fPermaLights.GetCount();
-    s->WriteSwap32(count);
+    s->WriteLE32(count);
     for( i = 0; i < count; i++ )
         mgr->WriteKey(s, fPermaLights[i]);
 }

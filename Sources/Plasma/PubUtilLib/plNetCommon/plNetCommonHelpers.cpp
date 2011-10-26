@@ -68,27 +68,27 @@ fDLDroppedPackets(0)
 void plNetCoreStatsSummary::Read(hsStream* s, hsResMgr*)
 {
     UInt8 streamVer;
-    s->ReadSwap(&streamVer);
+    s->ReadLE(&streamVer);
     hsAssert(streamVer==StreamVersion,"plNetCoreStatsSummary invalid stream version.");
-    s->ReadSwap(&fULBitsPS);
-    s->ReadSwap(&fDLBitsPS);
-    s->ReadSwap(&fULPeakBitsPS);
-    s->ReadSwap(&fDLPeakBitsPS);
-    s->ReadSwap(&fULPeakPktsPS);
-    s->ReadSwap(&fDLPeakPktsPS);
-    s->ReadSwap(&fDLDroppedPackets);
+    s->ReadLE(&fULBitsPS);
+    s->ReadLE(&fDLBitsPS);
+    s->ReadLE(&fULPeakBitsPS);
+    s->ReadLE(&fDLPeakBitsPS);
+    s->ReadLE(&fULPeakPktsPS);
+    s->ReadLE(&fDLPeakPktsPS);
+    s->ReadLE(&fDLDroppedPackets);
 }
 
 void plNetCoreStatsSummary::Write(hsStream* s, hsResMgr*)
 {
-    s->WriteSwap(StreamVersion);
-    s->WriteSwap(fULBitsPS);
-    s->WriteSwap(fDLBitsPS);
-    s->WriteSwap(fULPeakBitsPS);
-    s->WriteSwap(fDLPeakBitsPS);
-    s->WriteSwap(fULPeakPktsPS);
-    s->WriteSwap(fDLPeakPktsPS);
-    s->WriteSwap(fDLDroppedPackets);
+    s->WriteLE(StreamVersion);
+    s->WriteLE(fULBitsPS);
+    s->WriteLE(fDLBitsPS);
+    s->WriteLE(fULPeakBitsPS);
+    s->WriteLE(fDLPeakBitsPS);
+    s->WriteLE(fULPeakPktsPS);
+    s->WriteLE(fDLPeakPktsPS);
+    s->WriteLE(fDLDroppedPackets);
 }
 #endif // SERVER
 
@@ -224,19 +224,19 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
 
     s->LogSubStreamStart("CreatableListHelper");
 
-    s->LogReadSwap( &fFlags, "Flags" );
+    s->LogReadLE( &fFlags, "Flags" );
 
     fFlags &= ~kWritten;
 
     UInt32 bufSz;
-    s->LogReadSwap( &bufSz, "BufSz" );
+    s->LogReadLE( &bufSz, "BufSz" );
     std::string buf;
     buf.resize( bufSz );
 
     if ( fFlags&kCompressed )
     {
         UInt32 zBufSz;
-        s->LogReadSwap( &zBufSz, "Compressed BufSz" );
+        s->LogReadLE( &zBufSz, "Compressed BufSz" );
         std::string zBuf;
         zBuf.resize( zBufSz );
         s->LogSubStreamPushDesc("Compressed Data");
@@ -258,13 +258,13 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
     hsReadOnlyStream ram( bufSz, (void*)buf.data() );
 
     UInt16 nItems;
-    ram.ReadSwap( &nItems );
+    ram.ReadLE( &nItems );
     for ( int i=0; i<nItems; i++ )
     {
         UInt16 id;
         UInt16 classIdx;
-        ram.ReadSwap( &id );
-        ram.ReadSwap( &classIdx );
+        ram.ReadLE( &id );
+        ram.ReadLE( &classIdx );
         plCreatable * object = plFactory::Create( classIdx );
         hsAssert( object,"plCreatableListHelper: Failed to create plCreatable object (invalid class index?)" );
         if ( object )
@@ -283,14 +283,14 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
         // write items to ram stream
         hsRAMStream ram;
         UInt16 nItems = fItems.size();
-        ram.WriteSwap( nItems );
+        ram.WriteLE( nItems );
         for ( std::map<UInt16,plCreatable*>::iterator ii=fItems.begin(); ii!=fItems.end(); ++ii )
         {
             UInt16 id = ii->first;
             plCreatable * item = ii->second;
             UInt16 classIdx = item->ClassIndex();
-            ram.WriteSwap( id );
-            ram.WriteSwap( classIdx );
+            ram.WriteLE( id );
+            ram.WriteLE( classIdx );
             item->Write( &ram, mgr );
         }
 
@@ -322,13 +322,13 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
 
         ram.Truncate();
 
-        ram.WriteSwap( fFlags );
-        ram.WriteSwap( bufSz );
+        ram.WriteLE( fFlags );
+        ram.WriteLE( bufSz );
 
         if ( fFlags&kCompressed )
         {
             UInt32 zBufSz = buf.size();
-            ram.WriteSwap( zBufSz );
+            ram.WriteLE( zBufSz );
         }
 
         ram.Write( buf.size(), buf.data() );

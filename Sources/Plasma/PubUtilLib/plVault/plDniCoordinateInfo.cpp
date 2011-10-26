@@ -74,21 +74,21 @@ void plDniCoordinateInfo::CopyFrom( const plDniCoordinateInfo * other )
 void plDniCoordinateInfo::Read( hsStream* s, hsResMgr* mgr )
 {
     UInt8 streamVer;
-    s->ReadSwap( &streamVer );
+    s->ReadLE( &streamVer );
     if ( streamVer==StreamVersion )
     {
-        s->ReadSwap( &fHSpans );
-        s->ReadSwap( &fVSpans );
-        s->ReadSwap( &fTorans );
+        s->ReadLE( &fHSpans );
+        s->ReadLE( &fVSpans );
+        s->ReadLE( &fTorans );
     }
 }
 
 void plDniCoordinateInfo::Write( hsStream* s, hsResMgr* mgr )
 {
-    s->WriteSwap( StreamVersion );
-    s->WriteSwap( fHSpans );
-    s->WriteSwap( fVSpans );
-    s->WriteSwap( fTorans );
+    s->WriteLE( StreamVersion );
+    s->WriteLE( fHSpans );
+    s->WriteLE( fVSpans );
+    s->WriteLE( fTorans );
 }
 
 std::string plDniCoordinateInfo::AsStdString( int level ) const

@@ -175,7 +175,7 @@ void    pfGUIRadioGroupCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    UInt32  i, count = s->ReadSwap32();
+    UInt32  i, count = s->ReadLE32();
     fControls.SetCountAndZero( count );
 
     for( i = 0; i < count; i++ )
@@ -183,7 +183,7 @@ void    pfGUIRadioGroupCtrl::Read( hsStream *s, hsResMgr *mgr )
         mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefControl ), plRefFlags::kActiveRef );
     }
 
-    fValue = fDefaultValue = s->ReadSwap16();
+    fValue = fDefaultValue = s->ReadLE16();
     if( fValue != -1 && fControls[ fValue ] != nil )
         fControls[ fValue ]->SetChecked( true );
 }
@@ -195,11 +195,11 @@ void    pfGUIRadioGroupCtrl::Write( hsStream *s, hsResMgr *mgr )
 
     pfGUIControlMod::Write( s, mgr );
 
-    s->WriteSwap32( fControls.GetCount() );
+    s->WriteLE32( fControls.GetCount() );
     for( i = 0; i < fControls.GetCount(); i++ )
         mgr->WriteKey( s, fControls[ i ]->GetKey() );
 
-    s->WriteSwap16( (UInt16)fDefaultValue );
+    s->WriteLE16( (UInt16)fDefaultValue );
 }
 
 //// SetValue ////////////////////////////////////////////////////////////////

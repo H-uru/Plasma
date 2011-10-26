@@ -2124,7 +2124,7 @@ hsG3DDeviceModeRecord plClient::ILoadDevMode(const char* devModeFile)
             /// Read the rest in
             selMode.Read(&stream);
 
-            UInt16 performance = stream.ReadSwap16();
+            UInt16 performance = stream.ReadLE16();
 
             if( performance < 25 )
                 plBitmap::SetGlobalLevelChopCount( 2 );
@@ -2158,7 +2158,7 @@ hsG3DDeviceModeRecord plClient::ILoadDevMode(const char* devModeFile)
         {
             dmr.GetDevice()->Write(&stream);
             dmr.GetMode()->Write(&stream);
-            stream.WriteSwap16((UInt16)(0*100));
+            stream.WriteLE16((UInt16)(0*100));
             stream.Close();
         }
 

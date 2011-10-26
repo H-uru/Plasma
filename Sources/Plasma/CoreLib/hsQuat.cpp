@@ -240,18 +240,18 @@ hsQuat hsQuat::operator*(const hsQuat &in) const
 // I/O
 void hsQuat::Read(hsStream *stream)
 {
-     fX = stream->ReadSwapFloat();
-     fY = stream->ReadSwapFloat();
-     fZ = stream->ReadSwapFloat();
-     fW = stream->ReadSwapFloat();
+     fX = stream->ReadLEFloat();
+     fY = stream->ReadLEFloat();
+     fZ = stream->ReadLEFloat();
+     fW = stream->ReadLEFloat();
 }
 
 void hsQuat::Write(hsStream *stream)
 {
-     stream->WriteSwapFloat(fX);
-     stream->WriteSwapFloat(fY);
-     stream->WriteSwapFloat(fZ);
-     stream->WriteSwapFloat(fW);
+     stream->WriteLEFloat(fX);
+     stream->WriteLEFloat(fY);
+     stream->WriteLEFloat(fZ);
+     stream->WriteLEFloat(fW);
 }
 
 

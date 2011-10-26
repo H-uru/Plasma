@@ -88,9 +88,9 @@ void plShadowCaster::Read(hsStream* stream, hsResMgr* mgr)
 //  else
         fCastFlags &= ~kPerspective;
 
-    fBoost = stream->ReadSwapScalar();
-    fAttenScale = stream->ReadSwapScalar();
-    fBlurScale = stream->ReadSwapScalar();
+    fBoost = stream->ReadLEScalar();
+    fAttenScale = stream->ReadLEScalar();
+    fBlurScale = stream->ReadLEScalar();
 
     Activate();
 }
@@ -101,9 +101,9 @@ void plShadowCaster::Write(hsStream* stream, hsResMgr* mgr)
 
     stream->WriteByte(fCastFlags);
 
-    stream->WriteSwapScalar(fBoost);
-    stream->WriteSwapScalar(fAttenScale);
-    stream->WriteSwapScalar(fBlurScale);
+    stream->WriteLEScalar(fBoost);
+    stream->WriteLEScalar(fAttenScale);
+    stream->WriteLEScalar(fBlurScale);
 }
 
 void plShadowCaster::Activate() const

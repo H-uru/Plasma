@@ -98,13 +98,13 @@ void    plWin32GroupedSound::SetPositionArray( UInt16 numSounds, UInt32 *posArra
 void plWin32GroupedSound::IRead( hsStream *s, hsResMgr *mgr )
 {
     plWin32StaticSound::IRead( s, mgr );
-    UInt16 i, n = s->ReadSwap16();
+    UInt16 i, n = s->ReadLE16();
     fStartPositions.SetCountAndZero( n );
     fVolumes.SetCountAndZero( n );
     for( i = 0; i < n; i++ )
     {
-        fStartPositions[ i ] = s->ReadSwap32();
-        fVolumes[ i ] = s->ReadSwapScalar();
+        fStartPositions[ i ] = s->ReadLE32();
+        fVolumes[ i ] = s->ReadLEScalar();
     }
 }
 
@@ -112,12 +112,12 @@ void plWin32GroupedSound::IWrite( hsStream *s, hsResMgr *mgr )
 {
     plWin32StaticSound::IWrite( s, mgr );
 
-    s->WriteSwap16( fStartPositions.GetCount() );
+    s->WriteLE16( fStartPositions.GetCount() );
     UInt16 i;
     for( i = 0; i < fStartPositions.GetCount(); i++ )
     {
-        s->WriteSwap32( fStartPositions[ i ] );
-        s->WriteSwapScalar( fVolumes[ i ] );
+        s->WriteLE32( fStartPositions[ i ] );
+        s->WriteLEScalar( fVolumes[ i ] );
     }
 }
 

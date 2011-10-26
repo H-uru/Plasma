@@ -60,11 +60,11 @@ void plMaintainersMarkerModifier::RemoveTarget(plSceneObject* so)
 void plMaintainersMarkerModifier::Read(hsStream *stream, hsResMgr *mgr)
 {
     plMultiModifier::Read(stream, mgr);
-    stream->ReadSwap(&fCalibrated);
+    stream->ReadLE(&fCalibrated);
 }
 
 void plMaintainersMarkerModifier::Write(hsStream *stream, hsResMgr *mgr)
 {
     plMultiModifier::Write(stream, mgr);
-    stream->WriteSwap(fCalibrated);
+    stream->WriteLE(fCalibrated);
 }

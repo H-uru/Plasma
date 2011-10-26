@@ -82,7 +82,7 @@ void plLoadMask::Read(hsStream* s)
 {
     // read as packed byte
     UInt8 qc;
-    s->LogReadSwap(&qc,"Quality|Capabilty");
+    s->LogReadLE(&qc,"Quality|Capabilty");
 
     fQuality[0] = (qc & 0xf0) >> 4;
     fQuality[1] = (qc & 0x0f);
@@ -96,7 +96,7 @@ void plLoadMask::Write(hsStream* s) const
 {
     // write packed into 1 byte
     UInt8 qc = (fQuality[0]<<4) | (fQuality[1] & 0xf);
-    s->WriteSwap(qc);
+    s->WriteLE(qc);
 }
 
 UInt32 plLoadMask::ValidateReps(int num, const int quals[], const int caps[])

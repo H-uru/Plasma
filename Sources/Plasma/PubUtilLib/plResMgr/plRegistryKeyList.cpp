@@ -318,7 +318,7 @@ void plRegistryKeyList::PrepForWrite()
 
 void plRegistryKeyList::Read(hsStream* s)
 {
-    UInt32 keyListLen = s->ReadSwap32();
+    UInt32 keyListLen = s->ReadLE32();
     if (!fStaticKeys.empty())
     {
         s->Skip(keyListLen);
@@ -327,7 +327,7 @@ void plRegistryKeyList::Read(hsStream* s)
 
     fFlags = s->ReadByte();
 
-    UInt32 numKeys = s->ReadSwap32();
+    UInt32 numKeys = s->ReadLE32();
     fStaticKeys.resize(numKeys);
 
     for (int i = 0; i < numKeys; i++)
@@ -342,11 +342,11 @@ void plRegistryKeyList::Write(hsStream* s)
 {
     // Save space for the length of our data
     UInt32 beginPos = s->GetPosition();
-    s->WriteSwap32(0);
+    s->WriteLE32(0);
     s->WriteByte(fFlags);
 
     int numKeys = fStaticKeys.size();
-    s->WriteSwap32(numKeys);
+    s->WriteLE32(numKeys);
 
     // Write out all our keys (anything in dynamic is unused, so just ignore those)
     for (int i = 0; i < numKeys; i++)
@@ -358,6 +358,6 @@ void plRegistryKeyList::Write(hsStream* s)
     // Go back to the start and write the length of our data
     UInt32 endPos = s->GetPosition();
     s->SetPosition(beginPos);
-    s->WriteSwap32(endPos-beginPos-sizeof(UInt32));
+    s->WriteLE32(endPos-beginPos-sizeof(UInt32));
     s->SetPosition(endPos);
 }

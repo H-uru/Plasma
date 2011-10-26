@@ -282,15 +282,15 @@ hsBool plVolumeSensorConditionalObject::Satisfied()
 void plVolumeSensorConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Read(stream, mgr);
-    fTrigNum = stream->ReadSwap32();
-    fType = stream->ReadSwap32();
+    fTrigNum = stream->ReadLE32();
+    fType = stream->ReadLE32();
     fFirst = stream->ReadBool();
 }
 void plVolumeSensorConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteSwap32(fTrigNum);
-    stream->WriteSwap32(fType);
+    stream->WriteLE32(fTrigNum);
+    stream->WriteLE32(fType);
     stream->WriteBool(fFirst);
 }
 #include "pnMessage/plPlayerPageMsg.h"

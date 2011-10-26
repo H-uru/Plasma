@@ -192,9 +192,9 @@ void    plFogEnvironment::Read( hsStream *s, hsResMgr *mgr )
     hsKeyedObject::Read( s, mgr );
 
     fType = s->ReadByte();
-    fStart = s->ReadSwapFloat();
-    fEnd = s->ReadSwapFloat();
-    fDensity = s->ReadSwapFloat();
+    fStart = s->ReadLEFloat();
+    fEnd = s->ReadLEFloat();
+    fDensity = s->ReadLEFloat();
     fColor.Read( s );
 }
 
@@ -205,9 +205,9 @@ void    plFogEnvironment::Write( hsStream *s, hsResMgr *mgr )
     hsKeyedObject::Write( s, mgr );
 
     s->WriteByte( fType );
-    s->WriteSwapFloat( fStart );
-    s->WriteSwapFloat( fEnd );
-    s->WriteSwapFloat( fDensity );
+    s->WriteLEFloat( fStart );
+    s->WriteLEFloat( fEnd );
+    s->WriteLEFloat( fDensity );
     fColor.Write( s );
 }
 

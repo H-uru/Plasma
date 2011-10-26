@@ -58,7 +58,7 @@ plInterfaceInfoModifier::~plInterfaceInfoModifier()
 void plInterfaceInfoModifier::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
-    int i = s->ReadSwap32();
+    int i = s->ReadLE32();
     for (int x = 0; x < i; x++)
         fKeyList.Append(mgr->ReadKey(s));
 }
@@ -66,7 +66,7 @@ void plInterfaceInfoModifier::Read(hsStream* s, hsResMgr* mgr)
 void plInterfaceInfoModifier::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
-    s->WriteSwap32(fKeyList.Count());
+    s->WriteLE32(fKeyList.Count());
     for (int i = 0; i < fKeyList.Count(); i++)
         mgr->WriteKey(s, fKeyList[i]);
 }

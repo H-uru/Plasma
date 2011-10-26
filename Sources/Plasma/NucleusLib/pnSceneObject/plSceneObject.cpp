@@ -124,7 +124,7 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
 
     int i;
 
-    int nGen = stream->ReadSwap32();
+    int nGen = stream->ReadLE32();
     fGenerics.SetCount(0);
     for( i = 0; i < nGen; i++ )
     {
@@ -134,7 +134,7 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
     plObjRefMsg* refMsg;
 
     int nOldMods=fModifiers.GetCount();     // existng modifiers created during interface loading
-    int nNewMods = stream->ReadSwap32();
+    int nNewMods = stream->ReadLE32();
     fModifiers.ExpandAndZero(nOldMods+nNewMods);    // reserve space for new modifiers+existing modifiers
     for( i = nOldMods; i < nOldMods+nNewMods; i++ )
     {
@@ -159,7 +159,7 @@ void plSceneObject::Write(hsStream* stream, hsResMgr* mgr)
 
     int i;
 
-    stream->WriteSwap32(fGenerics.GetCount());
+    stream->WriteLE32(fGenerics.GetCount());
     for( i = 0; i < fGenerics.GetCount(); i++ )
         mgr->WriteKey(stream, fGenerics[i]);
 
@@ -167,7 +167,7 @@ void plSceneObject::Write(hsStream* stream, hsResMgr* mgr)
         if (fModifiers[i]->GetKey() == nil)
             RemoveModifier(fModifiers[i]);
 
-    stream->WriteSwap32(fModifiers.GetCount());
+    stream->WriteLE32(fModifiers.GetCount());
     for( i = 0; i < fModifiers.GetCount(); i++ )
         mgr->WriteKey(stream,fModifiers[i]);
 

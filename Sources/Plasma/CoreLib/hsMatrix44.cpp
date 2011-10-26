@@ -940,10 +940,10 @@ void hsMatrix44::Read(hsStream *stream)
         for(i=0; i<4; i++)
             for(j=0; j<4; j++)
 #if HS_SCALAR_IS_FIXED
-                fMap[i][j] = stream->ReadSwap32();
+                fMap[i][j] = stream->ReadLE32();
 #endif
 #if HS_SCALAR_IS_FLOAT
-                fMap[i][j] = stream->ReadSwapFloat();
+                fMap[i][j] = stream->ReadLEFloat();
 #endif
         IsIdentity();
     }
@@ -961,10 +961,10 @@ void hsMatrix44::Write(hsStream *stream)
         for(i=0; i<4; i++)
             for(j=0; j<4; j++)
 #if HS_SCALAR_IS_FIXED
-                stream->WriteSwap32(fMap[i][j]);
+                stream->WriteLE32(fMap[i][j]);
 #endif
 #if HS_SCALAR_IS_FLOAT
-                stream->WriteSwapFloat(fMap[i][j]);         
+                stream->WriteLEFloat(fMap[i][j]);         
 #endif
     }
 }

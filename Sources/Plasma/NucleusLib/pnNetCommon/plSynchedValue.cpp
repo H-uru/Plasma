@@ -52,9 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define ISaveOrLoadSimpleType() \
 { \
     if (save) \
-        stream->WriteSwap(v); \
+        stream->WriteLE(v); \
     else \
-        stream->ReadSwap(&v); \
+        stream->ReadLE(&v); \
     return v; \
 }
 
@@ -101,7 +101,7 @@ const plKey plSynchedValueBase::ISaveOrLoad(const plKey key, hsBool32 save, hsSt
             // I need to write a key to MY stream...
 #if 0       // DEBUG
             Int32 len = hsStrlen(key->GetName());
-            stream->WriteSwap32(len);
+            stream->WriteLE32(len);
             stream->Write(len, key->GetName());
 #endif
             key->GetUoid().Write(stream);
@@ -119,7 +119,7 @@ const plKey plSynchedValueBase::ISaveOrLoad(const plKey key, hsBool32 save, hsSt
         {
             // read a key from MY stream
 #if 0       // DEBUG
-            Int32 len = stream->ReadSwap32();
+            Int32 len = stream->ReadLE32();
             char tmp[256];
             hsAssert(len<256, "key name overflow");
             stream->Read(len, tmp);

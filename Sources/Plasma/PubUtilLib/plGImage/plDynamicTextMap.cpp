@@ -272,18 +272,18 @@ UInt32  plDynamicTextMap::Read( hsStream *s )
     // The funny thing is that we don't read anything like a mipmap; we just
     // keep the width and height and call Create() after we read those in
 
-    fVisWidth = (UInt16)(s->ReadSwap32());
-    fVisHeight = (UInt16)(s->ReadSwap32());
+    fVisWidth = (UInt16)(s->ReadLE32());
+    fVisHeight = (UInt16)(s->ReadLE32());
     fHasAlpha = s->ReadBool();
     totalRead += 2 * 4;
 
-    UInt32 initSize = s->ReadSwap32();
+    UInt32 initSize = s->ReadLE32();
     totalRead += 4;
     if( initSize > 0 )
     {
         fInitBuffer = TRACKED_NEW UInt32[ initSize ];
 
-        s->ReadSwap32( initSize, fInitBuffer );
+        s->ReadLE32( initSize, fInitBuffer );
         totalRead += initSize * 4;
     }
     else
@@ -303,14 +303,14 @@ UInt32  plDynamicTextMap::Write( hsStream *s )
 {
     UInt32 totalWritten = plBitmap::Write( s );
 
-    s->WriteSwap32( fVisWidth );
-    s->WriteSwap32( fVisHeight );
+    s->WriteLE32( fVisWidth );
+    s->WriteLE32( fVisHeight );
     s->WriteBool( fHasAlpha );
 
-    s->WriteSwap32( fInitBuffer != nil ? fVisWidth * fVisHeight * sizeof( UInt32 ) : 0 );
+    s->WriteLE32( fInitBuffer != nil ? fVisWidth * fVisHeight * sizeof( UInt32 ) : 0 );
     if( fInitBuffer != nil )
     {
-        s->WriteSwap32( fVisWidth * fVisHeight, fInitBuffer );
+        s->WriteLE32( fVisWidth * fVisHeight, fInitBuffer );
     }
 
     return totalWritten;

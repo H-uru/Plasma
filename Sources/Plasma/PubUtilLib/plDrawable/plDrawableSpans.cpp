@@ -934,12 +934,12 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     
     plDrawable::Read(s, mgr);
 
-    fProps = s->ReadSwap32();
-    fCriteria = s->ReadSwap32();
-    fRenderLevel.fLevel = s->ReadSwap32();
+    fProps = s->ReadLE32();
+    fCriteria = s->ReadLE32();
+    fRenderLevel.fLevel = s->ReadLE32();
 
     /// Read in the material keys
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     fMaterials.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
     {
@@ -948,7 +948,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     }
 
     /// Read the icicles in
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     fIcicles.SetCount( count );
     for( i = 0; i < count; i++ )
     {
@@ -960,15 +960,15 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     /// Read the patches in
     // FIXME MAJOR VERSION
     // no more patches, remove this line
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
 
     /// Now read the index array in and use it to create a pointer table
     fSpanSourceIndices.Reset();
     fSpans.Reset();
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     for( i = 0; i < count; i++ )
     {
-        j = s->ReadSwap32();
+        j = s->ReadLE32();
         switch( j & kSpanTypeMask )
         {
             case kSpanTypeIcicle:       fSpans.Append( (plSpan *)&fIcicles[ j & kSpanIDMask ] ); break;
@@ -1013,7 +1013,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     {
         if( fSpans[i]->fProps & plSpan::kPropHasPermaLights )
         {
-            UInt32 lcnt = s->ReadSwap32();
+            UInt32 lcnt = s->ReadLE32();
             int j;
             for( j = 0; j < lcnt; j++ )
             {
@@ -1022,7 +1022,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
         }
         if( fSpans[i]->fProps & plSpan::kPropHasPermaProjs )
         {
-            UInt32 lcnt = s->ReadSwap32();
+            UInt32 lcnt = s->ReadLE32();
             int j;
             for( j = 0; j < lcnt; j++ )
             {
@@ -1032,7 +1032,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     }
 
     /// Read in the source spans if necessary
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     if( count > 0 )
     {
         fSourceSpans.SetCount( count );
@@ -1049,7 +1049,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
         fSourceSpans.Reset();
 
     /// Read in the matrix palette (if any)
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     fLocalToWorlds.SetCount(count);
     fWorldToLocals.SetCount(count);
     fLocalToBones.SetCount(count);
@@ -1064,21 +1064,21 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     }
 
     /// Read in the drawInterface index arrays
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     fDIIndices.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
     {
         fDIIndices[ i ] = TRACKED_NEW plDISpanIndex;
         
-        fDIIndices[ i ]->fFlags = (UInt8)(s->ReadSwap32());
-        count2 = s->ReadSwap32();
+        fDIIndices[ i ]->fFlags = (UInt8)(s->ReadLE32());
+        count2 = s->ReadLE32();
         fDIIndices[ i ]->SetCountAndZero( count2 );
         for( j = 0; j < count2; j++ )
-            (*fDIIndices[ i ])[ j ] = s->ReadSwap32();
+            (*fDIIndices[ i ])[ j ] = s->ReadLE32();
     }
 
     /// Read the groups in
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     while( count-- )
     {
         group = TRACKED_NEW plGBufferGroup(0, fProps & kPropVolatile, fProps & kPropSortFaces);

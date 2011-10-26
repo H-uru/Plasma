@@ -366,18 +366,18 @@ void plWaveSet7::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMultiModifier::Read(stream, mgr);
 
-    fMaxLen = stream->ReadSwapScalar();
+    fMaxLen = stream->ReadLEScalar();
 
     fState.Read(stream);
     IUpdateWindDir(0);
 
-    int n = stream->ReadSwap32();
+    int n = stream->ReadLE32();
     int i;
     for( i = 0; i < n; i++ )
     {
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefShore), plRefFlags::kPassiveRef);
     }
-    n = stream->ReadSwap32();
+    n = stream->ReadLE32();
     for( i = 0; i < n; i++ )
     {
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDecal), plRefFlags::kPassiveRef);
@@ -407,17 +407,17 @@ void plWaveSet7::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMultiModifier::Write(stream, mgr);
 
-    stream->WriteSwapScalar(fMaxLen);
+    stream->WriteLEScalar(fMaxLen);
 
     fState.Write(stream);
 
-    stream->WriteSwap32(fShores.GetCount());
+    stream->WriteLE32(fShores.GetCount());
     int i;
     for( i = 0; i < fShores.GetCount(); i++ )
     {
         mgr->WriteKey(stream, fShores[i]);
     }
-    stream->WriteSwap32(fDecals.GetCount());
+    stream->WriteLE32(fDecals.GetCount());
     for( i = 0; i < fDecals.GetCount(); i++ )
     {
         mgr->WriteKey(stream, fDecals[i]);

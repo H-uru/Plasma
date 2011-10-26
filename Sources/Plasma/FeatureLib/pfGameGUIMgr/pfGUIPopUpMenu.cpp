@@ -240,9 +240,9 @@ void    pfGUIPopUpMenu::Read( hsStream *s, hsResMgr *mgr )
 
     fOriginX = fOriginY = -1.f;
 
-    fMargin = s->ReadSwap16();
+    fMargin = s->ReadLE16();
 
-    UInt32 i, count = s->ReadSwap32();
+    UInt32 i, count = s->ReadLE32();
     fMenuItems.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
     {
@@ -271,9 +271,9 @@ void    pfGUIPopUpMenu::Write( hsStream *s, hsResMgr *mgr )
     pfGUIDialogMod::Write( s, mgr );
 
 
-    s->WriteSwap16( fMargin );
+    s->WriteLE16( fMargin );
 
-    s->WriteSwap32( fMenuItems.GetCount() );
+    s->WriteLE32( fMenuItems.GetCount() );
     UInt32 i;
     for( i = 0; i < fMenuItems.GetCount(); i++ )
     {
@@ -892,11 +892,11 @@ void    pfGUISkin::Read( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Read( s, mgr );
 
-    s->ReadSwap( &fItemMargin );
-    s->ReadSwap( &fBorderMargin );
+    s->ReadLE( &fItemMargin );
+    s->ReadLE( &fBorderMargin );
 
     UInt32 i, count;
-    s->ReadSwap( &count );
+    s->ReadLE( &count );
 
     for( i = 0; i < count; i++ )
         fElements[ i ].Read( s );
@@ -911,11 +911,11 @@ void    pfGUISkin::Write( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Write( s, mgr );
 
-    s->WriteSwap( fItemMargin );
-    s->WriteSwap( fBorderMargin );
+    s->WriteLE( fItemMargin );
+    s->WriteLE( fBorderMargin );
 
     UInt32 i = kNumElements;
-    s->WriteSwap( i );
+    s->WriteLE( i );
 
     for( i = 0; i < kNumElements; i++ )
         fElements[ i ].Write( s );
@@ -941,16 +941,16 @@ hsBool  pfGUISkin::MsgReceive( plMessage *msg )
 
 void    pfGUISkin::pfSRect::Read( hsStream *s )
 {
-    s->ReadSwap( &fX );
-    s->ReadSwap( &fY );
-    s->ReadSwap( &fWidth );
-    s->ReadSwap( &fHeight );
+    s->ReadLE( &fX );
+    s->ReadLE( &fY );
+    s->ReadLE( &fWidth );
+    s->ReadLE( &fHeight );
 }
 
 void    pfGUISkin::pfSRect::Write( hsStream *s )
 {
-    s->WriteSwap( fX );
-    s->WriteSwap( fY );
-    s->WriteSwap( fWidth );
-    s->WriteSwap( fHeight );
+    s->WriteLE( fX );
+    s->WriteLE( fY );
+    s->WriteLE( fWidth );
+    s->WriteLE( fHeight );
 }

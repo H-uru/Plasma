@@ -356,32 +356,32 @@ public:
     {
         SetToNone();
 
-        fID = stream->ReadSwap32();
-        fValueType = stream->ReadSwap32();
+        fID = stream->ReadLE32();
+        fValueType = stream->ReadLE32();
 
         // read the different types of data
         int count;
         switch ( fValueType )
         {
             case kInt:
-                datarecord.fIntNumber = stream->ReadSwap32();
+                datarecord.fIntNumber = stream->ReadLE32();
                 break;
 
             case kFloat:
-                stream->ReadSwap(&datarecord.fFloatNumber);
+                stream->ReadLE(&datarecord.fFloatNumber);
                 break;
 
             case kBoolean:
-                datarecord.fBool = stream->ReadSwap32();
+                datarecord.fBool = stream->ReadLE32();
                 break;
 
             case kString:
             case kAnimationName:
-                count = stream->ReadSwap32();
+                count = stream->ReadLE32();
                 if ( count != 0 )
                 {
                     datarecord.fString = TRACKED_NEW char[count+1];
-                    stream->ReadSwap(count,datarecord.fString);
+                    stream->ReadLE(count,datarecord.fString);
                 }
                 else
                     datarecord.fString = nil;
@@ -412,20 +412,20 @@ public:
     void Write(hsStream * stream, hsResMgr* mgr)
     {
         int count;
-        stream->WriteSwap32(fID);
-        stream->WriteSwap32(fValueType);
+        stream->WriteLE32(fID);
+        stream->WriteLE32(fValueType);
         switch ( fValueType )
         {
             case kInt:
-                stream->WriteSwap32(datarecord.fIntNumber);
+                stream->WriteLE32(datarecord.fIntNumber);
                 break;
 
             case kFloat:
-                stream->WriteSwap(datarecord.fFloatNumber);
+                stream->WriteLE(datarecord.fFloatNumber);
                 break;
 
             case kBoolean:
-                stream->WriteSwap32(datarecord.fBool);
+                stream->WriteLE32(datarecord.fBool);
                 break;
 
             case kString:
@@ -434,9 +434,9 @@ public:
                     count = hsStrlen(datarecord.fString)+1;
                 else
                     count = 0;
-                stream->WriteSwap(count);
+                stream->WriteLE(count);
                 if ( count != 0 )
-                    stream->WriteSwap(count,datarecord.fString);
+                    stream->WriteLE(count,datarecord.fString);
                 break;
 
             case kSceneObject:

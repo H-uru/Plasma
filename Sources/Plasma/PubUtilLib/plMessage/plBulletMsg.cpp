@@ -55,9 +55,9 @@ void plBulletMsg::Read(hsStream* stream, hsResMgr* mgr)
 
     fFrom.Read(stream);
     fDir.Read(stream);
-    fRange = stream->ReadSwapScalar();
-    fRadius = stream->ReadSwapScalar();
-    fPartyTime = stream->ReadSwapScalar();
+    fRange = stream->ReadLEScalar();
+    fRadius = stream->ReadLEScalar();
+    fPartyTime = stream->ReadLEScalar();
 }
 
 void plBulletMsg::Write(hsStream* stream, hsResMgr* mgr) 
@@ -68,9 +68,9 @@ void plBulletMsg::Write(hsStream* stream, hsResMgr* mgr)
 
     fFrom.Write(stream);
     fDir.Write(stream);
-    stream->WriteSwapScalar(fRange);
-    stream->WriteSwapScalar(fRadius);
-    stream->WriteSwapScalar(fPartyTime);
+    stream->WriteLEScalar(fRange);
+    stream->WriteLEScalar(fRadius);
+    stream->WriteLEScalar(fPartyTime);
 }
 
 void plBulletMsg::FireShot(const hsPoint3& from, const hsVector3& dir, hsScalar radius, hsScalar range, hsScalar psecs)

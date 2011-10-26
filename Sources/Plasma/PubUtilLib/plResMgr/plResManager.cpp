@@ -951,7 +951,7 @@ hsBool plResManager::Unload(const plKey& objKey)
 
 plCreatable* plResManager::IReadCreatable(hsStream* s) const
 {
-    UInt16 hClass = s->ReadSwap16();
+    UInt16 hClass = s->ReadLE16();
     plCreatable* pCre = plFactory::Create(hClass);
     if (!pCre)
         hsAssert( hClass == 0x8000, "Invalid creatable index" );
@@ -979,7 +979,7 @@ inline void IWriteCreatable(hsStream* s, plCreatable* pCre)
 {
     Int16 hClass = pCre ? pCre->ClassIndex() : 0x8000;
     hsAssert(pCre == nil || plFactory::IsValidClassIndex(hClass), "Invalid class index on write");
-    s->WriteSwap16(hClass);
+    s->WriteLE16(hClass);
 }
 
 void plResManager::WriteCreatable(hsStream* s, plCreatable* pCre)
