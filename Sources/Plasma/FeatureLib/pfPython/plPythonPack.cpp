@@ -251,13 +251,13 @@ hsBool plPythonPack::IsPackedFile(const char* fileName)
     return false;
 }
  
-void ToLower(std::wstring& str)
+static void ToLower(std::wstring& str)
 {
     for (unsigned i = 0; i < str.length(); i++)
         str[i] = towlower(str[i]);
 }
 
-void ReplaceSlashes(std::wstring& path, wchar replaceWith)
+static void ReplaceSlashes(std::wstring& path, wchar replaceWith)
 {
     for (unsigned i = 0; i < path.length(); i++)
     {
