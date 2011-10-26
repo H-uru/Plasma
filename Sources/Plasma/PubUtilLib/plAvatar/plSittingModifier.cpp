@@ -98,7 +98,7 @@ void plSittingModifier::Read(hsStream *stream, hsResMgr *mgr)
 
     fMiscFlags = stream->ReadByte();
 
-    int keyCount = stream->ReadSwap32();
+    int keyCount = stream->ReadLE32();
     for (int i = 0; i < keyCount; i++ )
         fNotifyKeys.Append(mgr->ReadKey(stream));
 }
@@ -111,7 +111,7 @@ void plSittingModifier::Write(hsStream *stream, hsResMgr *mgr)
 
     stream->WriteByte(fMiscFlags);
     
-    stream->WriteSwap32(fNotifyKeys.GetCount());
+    stream->WriteLE32(fNotifyKeys.GetCount());
     for (int i = 0; i < fNotifyKeys.GetCount(); i++)
         mgr->WriteKey(stream, fNotifyKeys[i]);
 }

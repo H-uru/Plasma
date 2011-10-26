@@ -176,7 +176,7 @@ char *hsReadOnlyLoggingStream::LogReadSafeString()
 {
     LogSubStreamStart("push me");
     UInt16 numChars; 
-    LogReadSwap(&numChars,"NumChars");
+    LogReadLE(&numChars,"NumChars");
 
     numChars &= ~0xf000; // XXX: remove when hsStream no longer does this.
     if (numChars > 0)
@@ -200,7 +200,7 @@ char *hsReadOnlyLoggingStream::LogReadSafeStringLong()
 {
     LogSubStreamStart("push me");
     UInt32 numChars; 
-    LogReadSwap(&numChars,"NumChars");
+    LogReadLE(&numChars,"NumChars");
     if (numChars > 0)
     {
         char *name = TRACKED_NEW char[numChars+1];

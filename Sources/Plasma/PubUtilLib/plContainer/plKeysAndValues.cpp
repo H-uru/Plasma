@@ -228,20 +228,20 @@ bool plKeysAndValues::GetValueIterators(const xtl::istring & key, Values::const_
 void plKeysAndValues::Read(hsStream * s)
 {
     UInt16 nkeys;
-    s->ReadSwap(&nkeys);
+    s->ReadLE(&nkeys);
     for (int ki=0; ki<nkeys; ki++)
     {
         UInt16 strlen;
-        s->ReadSwap(&strlen);
+        s->ReadLE(&strlen);
         std::string key;
         key.assign(strlen+1,'\0');
         s->Read(strlen,(void*)key.data());
         key.resize(strlen);
         UInt16 nvalues;
-        s->ReadSwap(&nvalues);
+        s->ReadLE(&nvalues);
         for (int vi=0; vi<nvalues; vi++)
         {
-            s->ReadSwap(&strlen);
+            s->ReadLE(&strlen);
             std::string value;
             value.assign(strlen+1,'\0');
             s->Read(strlen,(void*)value.data());
@@ -255,24 +255,24 @@ void plKeysAndValues::Read(hsStream * s)
 void plKeysAndValues::Write(hsStream * s)
 {
     // write nkeys
-    s->WriteSwap((UInt16)fKeys.size());
+    s->WriteLE((UInt16)fKeys.size());
     // iterate through keys
     Keys::const_iterator ki,ke;
     GetKeyIterators(ki,ke);
     for (ki;ki!=ke;++ki)
     {
         // write key string
-        s->WriteSwap((UInt16)ki->first.size());
+        s->WriteLE((UInt16)ki->first.size());
         s->Write(ki->first.size(),ki->first.c_str());
         // write nvalues for this key
-        s->WriteSwap((UInt16)ki->second.size());
+        s->WriteLE((UInt16)ki->second.size());
         // iterate through values for this key
         Values::const_iterator vi,ve;
         GetValueIterators(ki->first,vi,ve);
         for (vi;vi!=ve;++vi)
         {
             // write value string
-            s->WriteSwap((UInt16)vi->size());
+            s->WriteLE((UInt16)vi->size());
             s->Write(vi->size(),vi->c_str());
         }
     }

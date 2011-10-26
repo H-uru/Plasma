@@ -297,10 +297,10 @@ void plAvSeekMsg::Read(hsStream *stream, hsResMgr *mgr)
         fTargetLookAt.Read(stream);
     }
 
-    fDuration = stream->ReadSwapScalar();
+    fDuration = stream->ReadLEScalar();
     fSmartSeek = stream->ReadBool();
     fAnimName = stream->ReadSafeString();
-    fAlignType = static_cast<plAvAlignment>(stream->ReadSwap16());
+    fAlignType = static_cast<plAvAlignment>(stream->ReadLE16());
     fNoSeek = stream->ReadBool();
     fFlags = stream->ReadByte();
     fFinishKey = mgr->ReadKey(stream);
@@ -318,10 +318,10 @@ void plAvSeekMsg::Write(hsStream *stream, hsResMgr *mgr)
         fTargetLookAt.Write(stream);
     }
 
-    stream->WriteSwapScalar(fDuration);
+    stream->WriteLEScalar(fDuration);
     stream->WriteBool(fSmartSeek);
     stream->WriteSafeString(fAnimName);
-    stream->WriteSwap16(static_cast<UInt16>(fAlignType));
+    stream->WriteLE16(static_cast<UInt16>(fAlignType));
     stream->WriteBool(fNoSeek);
     stream->WriteByte(fFlags);
     mgr->WriteKey(stream, fFinishKey);
@@ -461,25 +461,25 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(plKey sender, plKey receiver,
 void plAvBrainGenericMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     plAvatarMsg::Write(stream, mgr);
-    stream->WriteSwap32(fType);
-    stream->WriteSwap32(fWhichStage);
+    stream->WriteLE32(fType);
+    stream->WriteLE32(fWhichStage);
     stream->WriteBool(fSetTime);
-    stream->WriteSwapScalar(fNewTime);
+    stream->WriteLEScalar(fNewTime);
     stream->WriteBool(fSetDirection);
     stream->WriteBool(fNewDirection);
-    stream->WriteSwapScalar(fTransitionTime);
+    stream->WriteLEScalar(fTransitionTime);
 }
 
 void plAvBrainGenericMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAvatarMsg::Read(stream, mgr);
-    fType = static_cast<plAvBrainGenericMsg::Type>(stream->ReadSwap32());
-    fWhichStage = stream->ReadSwap32();
+    fType = static_cast<plAvBrainGenericMsg::Type>(stream->ReadLE32());
+    fWhichStage = stream->ReadLE32();
     fSetTime = stream->ReadBool();
-    fNewTime = stream->ReadSwapScalar();
+    fNewTime = stream->ReadLEScalar();
     fSetDirection = stream->ReadBool();
     fNewDirection = stream->ReadBool();
-    fTransitionTime = stream->ReadSwapScalar();
+    fTransitionTime = stream->ReadLEScalar();
 }
 
 enum AvBrainGenericFlags
@@ -508,19 +508,19 @@ void plAvBrainGenericMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kAvBrainGenericType
-    s->WriteSwap32(fType);
+    s->WriteLE32(fType);
     // kAvBrainGenericWhich 
-    s->WriteSwap32(fWhichStage);
+    s->WriteLE32(fWhichStage);
     // kAvBrainGenericSetTime   
     s->WriteBool(fSetTime);
     // kAvBrainGenericNewTime   
-    s->WriteSwapScalar(fNewTime);
+    s->WriteLEScalar(fNewTime);
     // kAvBrainGenericSetDir    
     s->WriteBool(fSetDirection);
     // kAvBrainGenericNewDir    
     s->WriteBool(fNewDirection);
     // kAvBrainGenericTransTime 
-    s->WriteSwapScalar(fTransitionTime);
+    s->WriteLEScalar(fTransitionTime);
 }
 
 void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
@@ -531,19 +531,19 @@ void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kAvBrainGenericType))
-        fType = static_cast<plAvBrainGenericMsg::Type>(s->ReadSwap32());
+        fType = static_cast<plAvBrainGenericMsg::Type>(s->ReadLE32());
     if (contentFlags.IsBitSet(kAvBrainGenericWhich))
-        fWhichStage = s->ReadSwap32();
+        fWhichStage = s->ReadLE32();
     if (contentFlags.IsBitSet(kAvBrainGenericSetTime))
         fSetTime = s->ReadBool();
     if (contentFlags.IsBitSet(kAvBrainGenericNewTime))
-        fNewTime = s->ReadSwapScalar();
+        fNewTime = s->ReadLEScalar();
     if (contentFlags.IsBitSet(kAvBrainGenericSetDir))
         fSetDirection = s->ReadBool();
     if (contentFlags.IsBitSet(kAvBrainGenericNewDir))
         fNewDirection = s->ReadBool();
     if (contentFlags.IsBitSet(kAvBrainGenericTransTime))
-        fTransitionTime = s->ReadSwapScalar();
+        fTransitionTime = s->ReadLEScalar();
 }
 
 ///////////////////

@@ -211,7 +211,7 @@ void plMultistageBehMod::Read(hsStream *stream, hsResMgr *mgr)
 
     IDeleteStageVec();
     fStages = TRACKED_NEW plAnimStageVec;
-    int numStages = stream->ReadSwap32();
+    int numStages = stream->ReadLE32();
     fStages->reserve(numStages);
 
     int i;
@@ -223,7 +223,7 @@ void plMultistageBehMod::Read(hsStream *stream, hsResMgr *mgr)
         fStages->push_back(stage);
     }
 
-    int numReceivers = stream->ReadSwap32();
+    int numReceivers = stream->ReadLE32();
     fReceivers.clear();
     fReceivers.reserve(numReceivers);
     for (i = 0; i < numReceivers; i++)
@@ -242,7 +242,7 @@ void plMultistageBehMod::Write(hsStream *stream, hsResMgr *mgr)
     stream->Writebool(fReverseFBControlsOnRelease);
 
     int numStages = fStages->size();
-    stream->WriteSwap32(numStages);
+    stream->WriteLE32(numStages);
 
     int i;
     for (i = 0; i < numStages; i++)
@@ -252,7 +252,7 @@ void plMultistageBehMod::Write(hsStream *stream, hsResMgr *mgr)
     }
 
     int numReceivers = fReceivers.size();
-    stream->WriteSwap32(numReceivers);
+    stream->WriteLE32(numReceivers);
     for (i = 0; i < numReceivers; i++)
     {
         plKey key = fReceivers[i];

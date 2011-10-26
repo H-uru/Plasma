@@ -48,26 +48,26 @@ void plDynamicEnvMapMsg::Read(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgRead(s, mgr);
 
-    fCmd = s->ReadSwap32();
+    fCmd = s->ReadLE32();
     
     fPos.Read(s);
-    fHither = s->ReadSwapScalar();
-    fYon = s->ReadSwapScalar();
-    fFogStart = s->ReadSwapScalar();
+    fHither = s->ReadLEScalar();
+    fYon = s->ReadLEScalar();
+    fFogStart = s->ReadLEScalar();
     fColor.Read(s);
-    fRefresh = s->ReadSwapScalar();
+    fRefresh = s->ReadLEScalar();
 }
 
 void plDynamicEnvMapMsg::Write(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(s, mgr);
 
-    s->WriteSwap32(fCmd);
+    s->WriteLE32(fCmd);
 
     fPos.Write(s);
-    s->WriteSwapScalar(fHither);
-    s->WriteSwapScalar(fYon);
-    s->WriteSwapScalar(fFogStart);
+    s->WriteLEScalar(fHither);
+    s->WriteLEScalar(fYon);
+    s->WriteLEScalar(fFogStart);
     fColor.Write(s);
-    s->WriteSwapScalar(fRefresh);
+    s->WriteLEScalar(fRefresh);
 }

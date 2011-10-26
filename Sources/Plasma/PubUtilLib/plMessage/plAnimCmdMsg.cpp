@@ -102,13 +102,13 @@ void plAnimCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessageWithCallbacks::Read(stream, mgr);
 
     fCmd.Read(stream);
-    stream->ReadSwap(&fBegin);
-    stream->ReadSwap(&fEnd);
-    stream->ReadSwap(&fLoopEnd);
-    stream->ReadSwap(&fLoopBegin);
-    stream->ReadSwap(&fSpeed);
-    stream->ReadSwap(&fSpeedChangeRate);
-    stream->ReadSwap(&fTime);
+    stream->ReadLE(&fBegin);
+    stream->ReadLE(&fEnd);
+    stream->ReadLE(&fLoopEnd);
+    stream->ReadLE(&fLoopBegin);
+    stream->ReadLE(&fSpeed);
+    stream->ReadLE(&fSpeedChangeRate);
+    stream->ReadLE(&fTime);
 
     fAnimName = stream->ReadSafeString();
     fLoopName = stream->ReadSafeString();
@@ -119,13 +119,13 @@ void plAnimCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessageWithCallbacks::Write(stream, mgr);
 
     fCmd.Write(stream);
-    stream->WriteSwap(fBegin);
-    stream->WriteSwap(fEnd);
-    stream->WriteSwap(fLoopEnd);
-    stream->WriteSwap(fLoopBegin);
-    stream->WriteSwap(fSpeed);
-    stream->WriteSwap(fSpeedChangeRate);
-    stream->WriteSwap(fTime);
+    stream->WriteLE(fBegin);
+    stream->WriteLE(fEnd);
+    stream->WriteLE(fLoopEnd);
+    stream->WriteLE(fLoopBegin);
+    stream->WriteLE(fSpeed);
+    stream->WriteLE(fSpeedChangeRate);
+    stream->WriteLE(fTime);
 
     stream->WriteSafeString(fAnimName);
     stream->WriteSafeString(fLoopName);
@@ -155,10 +155,10 @@ void plAGCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead(stream, mgr);
 
     fCmd.Read(stream);
-    stream->ReadSwap(&fBlend);
-    stream->ReadSwap(&fBlendRate);
-    stream->ReadSwap(&fAmp);
-    stream->ReadSwap(&fAmpRate);
+    stream->ReadLE(&fBlend);
+    stream->ReadLE(&fBlendRate);
+    stream->ReadLE(&fAmp);
+    stream->ReadLE(&fAmpRate);
 
     fAnimName = stream->ReadSafeString();
 }
@@ -168,10 +168,10 @@ void plAGCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);
 
     fCmd.Write(stream);
-    stream->WriteSwap(fBlend);
-    stream->WriteSwap(fBlendRate);
-    stream->WriteSwap(fAmp);
-    stream->WriteSwap(fAmpRate);
+    stream->WriteLE(fBlend);
+    stream->WriteLE(fBlendRate);
+    stream->WriteLE(fAmp);
+    stream->WriteLE(fAmpRate);
 
     stream->WriteSafeString(fAnimName);
 }

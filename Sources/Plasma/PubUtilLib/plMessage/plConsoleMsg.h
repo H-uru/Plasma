@@ -84,7 +84,7 @@ public:
     virtual void Read(hsStream* s, hsResMgr* mgr) 
     { 
         plMessage::IMsgRead(s, mgr); 
-        s->ReadSwap(&fCmd);
+        s->ReadLE(&fCmd);
         // read string
         plMsgCStringHelper::Peek(fString, s);               
     }
@@ -92,7 +92,7 @@ public:
     virtual void Write(hsStream* s, hsResMgr* mgr) 
     { 
         plMessage::IMsgWrite(s, mgr);
-        s->WriteSwap(fCmd);
+        s->WriteLE(fCmd);
         // write cmd/string
         plMsgCStringHelper::Poke(fString, s);       
     }

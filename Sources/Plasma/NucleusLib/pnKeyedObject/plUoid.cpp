@@ -59,14 +59,14 @@ plLocation::plLocation(const plLocation& toCopyFrom)
 
 void plLocation::Read(hsStream* s)
 {
-    s->LogReadSwap(&fSequenceNumber, "Location Sequence Number");
-    s->LogReadSwap(&fFlags, "Location Flags");
+    s->LogReadLE(&fSequenceNumber, "Location Sequence Number");
+    s->LogReadLE(&fFlags, "Location Flags");
 }
 
 void plLocation::Write(hsStream* s) const
 {
-    s->WriteSwap(fSequenceNumber);
-    s->WriteSwap(fFlags);
+    s->WriteLE(fSequenceNumber);
+    s->WriteLE(fFlags);
 }
 
 plLocation& plLocation::operator=(const plLocation& rhs)
@@ -175,18 +175,18 @@ void plUoid::Read(hsStream* s)
     else
         fLoadMask.SetAlways();
 
-    s->LogReadSwap(&fClassType, "ClassType");
-    s->LogReadSwap(&fObjectID, "ObjectID");
+    s->LogReadLE(&fClassType, "ClassType");
+    s->LogReadLE(&fObjectID, "ObjectID");
     s->LogSubStreamPushDesc("ObjectName");
     fObjectName = s->LogReadSafeString();
 
     // conditional cloneIDs read
     if (contents & kHasCloneIDs)
     {       
-        s->LogReadSwap( &fCloneID ,"CloneID");
+        s->LogReadLE( &fCloneID ,"CloneID");
         UInt16 dummy;
-        s->LogReadSwap(&dummy, "dummy"); // To avoid breaking format
-        s->LogReadSwap( &fClonePlayerID ,"ClonePlayerID");
+        s->LogReadLE(&dummy, "dummy"); // To avoid breaking format
+        s->LogReadLE( &fClonePlayerID ,"ClonePlayerID");
     }
     else
     {
@@ -209,17 +209,17 @@ void plUoid::Write(hsStream* s) const
     if (contents & kHasLoadMask)
         fLoadMask.Write(s);
 
-    s->WriteSwap( fClassType );
-    s->WriteSwap( fObjectID );
+    s->WriteLE( fClassType );
+    s->WriteLE( fObjectID );
     s->WriteSafeString( fObjectName );
 
     // conditional cloneIDs write
     if (contents & kHasCloneIDs)
     {
-        s->WriteSwap(fCloneID);
+        s->WriteLE(fCloneID);
         UInt16 dummy = 0;
-        s->WriteSwap(dummy); // to avoid breaking format
-        s->WriteSwap(fClonePlayerID);
+        s->WriteLE(dummy); // to avoid breaking format
+        s->WriteLE(fClonePlayerID);
     }
 }
 

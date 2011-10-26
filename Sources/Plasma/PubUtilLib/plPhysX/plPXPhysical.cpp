@@ -1025,13 +1025,13 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
     ClearMatrix(fCachedLocal2World);
 
     PhysRecipe recipe;
-    recipe.mass = stream->ReadSwapScalar();
-    recipe.friction = stream->ReadSwapScalar();
-    recipe.restitution = stream->ReadSwapScalar();
+    recipe.mass = stream->ReadLEScalar();
+    recipe.friction = stream->ReadLEScalar();
+    recipe.restitution = stream->ReadLEScalar();
     recipe.bounds = (plSimDefs::Bounds)stream->ReadByte();
     recipe.group = (plSimDefs::Group)stream->ReadByte();
-    recipe.reportsOn = stream->ReadSwap32();
-    fLOSDBs = stream->ReadSwap16();
+    recipe.reportsOn = stream->ReadLE32();
+    fLOSDBs = stream->ReadLE16();
     //hack for swim regions currently they are labeled as static av blockers
     if(fLOSDBs==plSimDefs::kLOSDBSwimRegion)
     {
@@ -1055,7 +1055,7 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
 
     if (recipe.bounds == plSimDefs::kSphereBounds)
     {
-        recipe.radius = stream->ReadSwapScalar();
+        recipe.radius = stream->ReadLEScalar();
         recipe.offset.Read(stream);
     }
     else if (recipe.bounds == plSimDefs::kBoxBounds)
@@ -1142,13 +1142,13 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
     float friction = mat->getStaticFriction();
     float restitution = mat->getRestitution();
 
-    stream->WriteSwapScalar(fActor->getMass());
-    stream->WriteSwapScalar(friction);
-    stream->WriteSwapScalar(restitution);
+    stream->WriteLEScalar(fActor->getMass());
+    stream->WriteLEScalar(friction);
+    stream->WriteLEScalar(restitution);
     stream->WriteByte(fBoundsType);
     stream->WriteByte(fGroup);
-    stream->WriteSwap32(fReportsOn);
-    stream->WriteSwap16(fLOSDBs);
+    stream->WriteLE32(fReportsOn);
+    stream->WriteLE16(fLOSDBs);
     mgr->WriteKey(stream, fObjectKey);
     mgr->WriteKey(stream, fSceneNode);
     mgr->WriteKey(stream, fWorldKey);
@@ -1166,7 +1166,7 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
     if (fBoundsType == plSimDefs::kSphereBounds)
     {
         const NxSphereShape* sphereShape = shape->isSphere();
-        stream->WriteSwapScalar(sphereShape->getRadius());
+        stream->WriteLEScalar(sphereShape->getRadius());
         hsPoint3 localPos = plPXConvert::Point(sphereShape->getLocalPosition());
         localPos.Write(stream);
     }

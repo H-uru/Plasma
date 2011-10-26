@@ -102,10 +102,10 @@ void plAvCoopMsg::Read(hsStream *stream, hsResMgr *mgr)
     if(stream->Readbool())
         fCoordinator = reinterpret_cast<plCoopCoordinator *>(mgr->ReadCreatable(stream));
 
-    fInitiatorID = stream->ReadSwap32();
-    fInitiatorSerial = stream->ReadSwap16();
+    fInitiatorID = stream->ReadLE32();
+    fInitiatorSerial = stream->ReadLE16();
 
-    fCommand = static_cast<Command>(stream->ReadSwap16());
+    fCommand = static_cast<Command>(stream->ReadLE16());
 }
 
 // Write -----------------------------------------------
@@ -118,10 +118,10 @@ void plAvCoopMsg::Write(hsStream *stream, hsResMgr *mgr)
     if(fCoordinator)
         mgr->WriteCreatable(stream, fCoordinator);
 
-    stream->WriteSwap32(fInitiatorID);
-    stream->WriteSwap16(fInitiatorSerial);
+    stream->WriteLE32(fInitiatorID);
+    stream->WriteLE16(fInitiatorSerial);
 
-    stream->WriteSwap16(fCommand);
+    stream->WriteLE16(fCommand);
 }
 
 #endif // ndef NO_AV_MSGS

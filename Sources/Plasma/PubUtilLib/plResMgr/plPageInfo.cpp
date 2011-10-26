@@ -135,7 +135,7 @@ void plPageInfo::Read( hsStream *s )
     // 5 is the earliest version since we began working again on the P20 codebase in Sep 2005,
     // after Uru's online component was cancelled in Feb 2004, so I've removed support for
     // anything prior to that to clean things up a bit.
-    UInt32 version = s->ReadSwap32();
+    UInt32 version = s->ReadLE32();
     if (version > sCurrPageInfoVersion || version < 5)
     {
         hsAssert( false, "Invalid header version in plPageInfo::Read()" );
@@ -149,32 +149,32 @@ void plPageInfo::Read( hsStream *s )
             delete s->ReadSafeString(); // fChapter was never used, and always "District".
         fPage = s->ReadSafeString();
 
-        s->ReadSwap( &fMajorVersion );
+        s->ReadLE( &fMajorVersion );
 
         if (version < 6)
         {
             UInt16 unusedMinorVersion;
-            s->ReadSwap(&unusedMinorVersion);
+            s->ReadLE(&unusedMinorVersion);
             Int32 unusedReleaseVersion;
-            s->ReadSwap(&unusedReleaseVersion); // This was always zero... yanked.
+            s->ReadLE(&unusedReleaseVersion); // This was always zero... yanked.
             UInt32 unusedFlags;
-            s->ReadSwap(&unusedFlags);
+            s->ReadLE(&unusedFlags);
         }
 
-        s->ReadSwap( &fChecksum );
-        s->ReadSwap( &fDataStart );
-        s->ReadSwap( &fIndexStart );
+        s->ReadLE( &fChecksum );
+        s->ReadLE( &fDataStart );
+        s->ReadLE( &fIndexStart );
     }
 
     if (version >= 6)
     {
-        UInt16 numClassVersions = s->ReadSwap16();
+        UInt16 numClassVersions = s->ReadLE16();
         fClassVersions.reserve(numClassVersions);
         for (UInt16 i = 0; i < numClassVersions; i++)
         {
             ClassVersion cv;
-            cv.Class = s->ReadSwap16();
-            cv.Version = s->ReadSwap16();
+            cv.Class = s->ReadLE16();
+            cv.Version = s->ReadLE16();
             fClassVersions.push_back(cv);
         }
     }
@@ -182,21 +182,21 @@ void plPageInfo::Read( hsStream *s )
 
 void    plPageInfo::Write( hsStream *s )
 {
-    s->WriteSwap32( sCurrPageInfoVersion );
+    s->WriteLE32( sCurrPageInfoVersion );
     fLocation.Write( s );
     s->WriteSafeString( fAge );
     s->WriteSafeString( fPage );
-    s->WriteSwap( fMajorVersion );
-    s->WriteSwap( fChecksum );
-    s->WriteSwap( fDataStart );
-    s->WriteSwap( fIndexStart );
+    s->WriteLE( fMajorVersion );
+    s->WriteLE( fChecksum );
+    s->WriteLE( fDataStart );
+    s->WriteLE( fIndexStart );
     UInt16 numClassVersions = UInt16(fClassVersions.size());
-    s->WriteSwap16(numClassVersions);
+    s->WriteLE16(numClassVersions);
     for (UInt16 i = 0; i < numClassVersions; i++)
     {
         ClassVersion& cv = fClassVersions[i];
-        s->WriteSwap16(cv.Class);
-        s->WriteSwap16(cv.Version);
+        s->WriteLE16(cv.Class);
+        s->WriteLE16(cv.Version);
     }
 }
 

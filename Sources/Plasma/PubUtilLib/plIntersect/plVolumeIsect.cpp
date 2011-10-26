@@ -153,7 +153,7 @@ void plSphereIsect::Read(hsStream* s, hsResMgr* mgr)
 {
     fCenter.Read(s);
     fWorldCenter.Read(s);
-    fRadius = s->ReadSwapScalar();
+    fRadius = s->ReadLEScalar();
     fMins.Read(s);
     fMaxs.Read(s);
 }
@@ -162,7 +162,7 @@ void plSphereIsect::Write(hsStream* s, hsResMgr* mgr)
 {
     fCenter.Write(s);
     fWorldCenter.Write(s);
-    s->WriteSwapScalar(fRadius);
+    s->WriteLEScalar(fRadius);
     fMins.Write(s);
     fMaxs.Write(s);
 }
@@ -333,10 +333,10 @@ void plConeIsect::SetLength(hsScalar d)
 
 void plConeIsect::Read(hsStream* s, hsResMgr* mgr)
 {
-    fCapped = s->ReadSwap32();
+    fCapped = s->ReadLE32();
 
-    fRadAngle = s->ReadSwapScalar();
-    fLength = s->ReadSwapScalar();
+    fRadAngle = s->ReadLEScalar();
+    fLength = s->ReadLEScalar();
 
     fWorldTip.Read(s);
     fWorldNorm.Read(s);
@@ -349,16 +349,16 @@ void plConeIsect::Read(hsStream* s, hsResMgr* mgr)
     for(i = 0; i < n; i++ )
     {
         fNorms[i].Read(s);
-        fDists[i] = s->ReadSwapScalar();
+        fDists[i] = s->ReadLEScalar();
     }
 }
 
 void plConeIsect::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteSwap32(fCapped);
+    s->WriteLE32(fCapped);
 
-    s->WriteSwapScalar(fRadAngle);
-    s->WriteSwapScalar(fLength);
+    s->WriteLEScalar(fRadAngle);
+    s->WriteLEScalar(fLength);
 
     fWorldTip.Write(s);
     fWorldNorm.Write(s);
@@ -371,7 +371,7 @@ void plConeIsect::Write(hsStream* s, hsResMgr* mgr)
     for(i = 0; i < n; i++ )
     {
         fNorms[i].Write(s);
-        s->WriteSwapScalar(fDists[i]);
+        s->WriteLEScalar(fDists[i]);
     }
 }
 
@@ -515,26 +515,26 @@ void plCylinderIsect::Read(hsStream* s, hsResMgr* mgr)
 {
     fTop.Read(s);
     fBot.Read(s);
-    fRadius = s->ReadSwapScalar();
+    fRadius = s->ReadLEScalar();
 
     fWorldBot.Read(s);
     fWorldNorm.Read(s);
-    fLength = s->ReadSwapScalar();
-    fMin = s->ReadSwapScalar();
-    fMax = s->ReadSwapScalar();
+    fLength = s->ReadLEScalar();
+    fMin = s->ReadLEScalar();
+    fMax = s->ReadLEScalar();
 }
 
 void plCylinderIsect::Write(hsStream* s, hsResMgr* mgr)
 {
     fTop.Write(s);
     fBot.Write(s);
-    s->WriteSwapScalar(fRadius);
+    s->WriteLEScalar(fRadius);
 
     fWorldBot.Write(s);
     fWorldNorm.Write(s);
-    s->WriteSwapScalar(fLength);
-    s->WriteSwapScalar(fMin);
-    s->WriteSwapScalar(fMax);
+    s->WriteLEScalar(fLength);
+    s->WriteLEScalar(fMin);
+    s->WriteLEScalar(fMax);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -634,15 +634,15 @@ hsScalar plParallelIsect::Test(const hsPoint3& pos) const
 
 void plParallelIsect::Read(hsStream* s, hsResMgr* mgr)
 {
-    int n = s->ReadSwap16();
+    int n = s->ReadLE16();
 
     fPlanes.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
     {
         fPlanes[i].fNorm.Read(s);
-        fPlanes[i].fMin = s->ReadSwapScalar();
-        fPlanes[i].fMax = s->ReadSwapScalar();
+        fPlanes[i].fMin = s->ReadLEScalar();
+        fPlanes[i].fMax = s->ReadLEScalar();
 
         fPlanes[i].fPosOne.Read(s);
         fPlanes[i].fPosTwo.Read(s);
@@ -651,14 +651,14 @@ void plParallelIsect::Read(hsStream* s, hsResMgr* mgr)
 
 void plParallelIsect::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteSwap16(fPlanes.GetCount());
+    s->WriteLE16(fPlanes.GetCount());
 
     int i;
     for( i = 0; i < fPlanes.GetCount(); i++ )
     {
         fPlanes[i].fNorm.Write(s);
-        s->WriteSwapScalar(fPlanes[i].fMin);
-        s->WriteSwapScalar(fPlanes[i].fMax);
+        s->WriteLEScalar(fPlanes[i].fMin);
+        s->WriteLEScalar(fPlanes[i].fMax);
 
         fPlanes[i].fPosOne.Write(s);
         fPlanes[i].fPosTwo.Write(s);
@@ -777,7 +777,7 @@ hsScalar plConvexIsect::Test(const hsPoint3& pos) const
 
 void plConvexIsect::Read(hsStream* s, hsResMgr* mgr)
 {
-    Int16 n = s->ReadSwap16();
+    Int16 n = s->ReadLE16();
 
     fPlanes.SetCount(n);
     int i;
@@ -785,26 +785,26 @@ void plConvexIsect::Read(hsStream* s, hsResMgr* mgr)
     {
         fPlanes[i].fNorm.Read(s);
         fPlanes[i].fPos.Read(s);
-        fPlanes[i].fDist = s->ReadSwapScalar();
+        fPlanes[i].fDist = s->ReadLEScalar();
 
         fPlanes[i].fWorldNorm.Read(s);
-        fPlanes[i].fWorldDist = s->ReadSwapScalar();
+        fPlanes[i].fWorldDist = s->ReadLEScalar();
     }
 }
 
 void plConvexIsect::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteSwap16(fPlanes.GetCount());
+    s->WriteLE16(fPlanes.GetCount());
 
     int i;
     for( i = 0; i < fPlanes.GetCount(); i++ )
     {
         fPlanes[i].fNorm.Write(s);
         fPlanes[i].fPos.Write(s);
-        s->WriteSwapScalar(fPlanes[i].fDist);
+        s->WriteLEScalar(fPlanes[i].fDist);
 
         fPlanes[i].fWorldNorm.Write(s);
-        s->WriteSwapScalar(fPlanes[i].fWorldDist);
+        s->WriteLEScalar(fPlanes[i].fWorldDist);
     }
 }
 
@@ -889,7 +889,7 @@ void plComplexIsect::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 
 void plComplexIsect::Read(hsStream* s, hsResMgr* mgr)
 {
-    int n = s->ReadSwap16();
+    int n = s->ReadLE16();
     fVolumes.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -901,7 +901,7 @@ void plComplexIsect::Read(hsStream* s, hsResMgr* mgr)
 
 void plComplexIsect::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteSwap16(fVolumes.GetCount());
+    s->WriteLE16(fVolumes.GetCount());
     int i;
     for( i = 0; i < fVolumes.GetCount(); i++ )
         mgr->WriteCreatable(s, fVolumes[i]);

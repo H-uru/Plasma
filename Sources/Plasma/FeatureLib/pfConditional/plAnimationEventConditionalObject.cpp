@@ -86,13 +86,13 @@ void plAnimationEventConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Read(stream, mgr);
     fTarget = mgr->ReadKey(stream);
-    fAction = (CallbackEvent)stream->ReadSwap32();
+    fAction = (CallbackEvent)stream->ReadLE32();
 }
 
 void plAnimationEventConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
     mgr->WriteKey(stream, fTarget);
-    stream->WriteSwap32(fAction); 
+    stream->WriteLE32(fAction); 
 }
     

@@ -75,7 +75,7 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plSingleModifier::Read(stream, mgr);
-        int n = stream->ReadSwap32();
+        int n = stream->ReadLE32();
         fReceivers.Reset();
         for(int i = 0; i < n; i++ )
         {   
@@ -88,7 +88,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plSingleModifier::Write(stream, mgr);
-        stream->WriteSwap32(fReceivers.GetCount());
+        stream->WriteLE32(fReceivers.GetCount());
         for( int i = 0; i < fReceivers.GetCount(); i++ )
             mgr->WriteKey(stream, fReceivers[i]);
         

@@ -64,23 +64,23 @@ plRandomSoundModGroup::~plRandomSoundModGroup()
 
 void plRandomSoundModGroup::Read(hsStream *s)
 {
-    fNumSounds = s->ReadSwap16();
-    fGroupedIdx = s->ReadSwap16();
+    fNumSounds = s->ReadLE16();
+    fGroupedIdx = s->ReadLE16();
     fIndices = TRACKED_NEW UInt16[fNumSounds];
 
     int i;
     for (i = 0; i < fNumSounds; i++)
-        fIndices[i] = s->ReadSwap16();
+        fIndices[i] = s->ReadLE16();
 }
 
 void plRandomSoundModGroup::Write(hsStream *s)
 {
-    s->WriteSwap16(fNumSounds);
-    s->WriteSwap16(fGroupedIdx);
+    s->WriteLE16(fNumSounds);
+    s->WriteLE16(fGroupedIdx);
     
     int i;
     for (i = 0; i < fNumSounds; i++)
-        s->WriteSwap16(fIndices[i]);
+        s->WriteLE16(fIndices[i]);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -294,7 +294,7 @@ void plRandomSoundMod::Read(hsStream *s, hsResMgr *mgr)
 {
     plRandomCommandMod::Read(s, mgr);
 
-    fNumGroups = s->ReadSwap16();
+    fNumGroups = s->ReadLE16();
     if (fNumGroups > 0)
     {
         fGroups = TRACKED_NEW plRandomSoundModGroup[fNumGroups];
@@ -308,7 +308,7 @@ void plRandomSoundMod::Write(hsStream *s, hsResMgr *mgr)
 {
     plRandomCommandMod::Write(s, mgr);
 
-    s->WriteSwap16(fNumGroups);
+    s->WriteLE16(fNumGroups);
     if (fNumGroups > 0)
     {
         int i;

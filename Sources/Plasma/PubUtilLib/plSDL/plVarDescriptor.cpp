@@ -169,7 +169,7 @@ void plVarDescriptor::CopyFrom(const plVarDescriptor* other)
 bool plVarDescriptor::Read(hsStream* s) 
 {
     UInt8 version;
-    s->ReadSwap(&version);
+    s->ReadLE(&version);
     if (version != kVersion)
     {
         if (plSDLMgr::GetInstance()->GetNetApp())
@@ -183,14 +183,14 @@ bool plVarDescriptor::Read(hsStream* s)
 
     plMsgStdStringHelper::Peek(fDisplayOptions, s);
 
-    fCount=s->ReadSwap32();
+    fCount=s->ReadLE32();
 
     fType=(Type)s->ReadByte();
 
     delete [] fDefault;
     fDefault = s->ReadSafeString();
 
-    fFlags = s->ReadSwap32();
+    fFlags = s->ReadLE32();
     return true;
 }
 
@@ -199,13 +199,13 @@ bool plVarDescriptor::Read(hsStream* s)
 //
 void plVarDescriptor::Write(hsStream* s) const
 {
-    s->WriteSwap(kVersion);
+    s->WriteLE(kVersion);
     s->WriteSafeString(fName);
     plMsgStdStringHelper::Poke(fDisplayOptions, s);
-    s->WriteSwap32(fCount);
+    s->WriteLE32(fCount);
     s->WriteByte((UInt8)fType);
     s->WriteSafeString(fDefault);
-    s->WriteSwap32(fFlags);
+    s->WriteLE32(fFlags);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -363,7 +363,7 @@ bool plSimpleVarDescriptor::Read(hsStream* s)
     if (!plVarDescriptor::Read(s))
         return false;
 
-    fAtomicCount=s->ReadSwap16();
+    fAtomicCount=s->ReadLE16();
     fAtomicType=(Type)s->ReadByte();
     return true;
 }
@@ -375,7 +375,7 @@ void plSimpleVarDescriptor::Write(hsStream* s) const
 {
     plVarDescriptor::Write(s);
 
-    s->WriteSwap16((Int16)fAtomicCount);    
+    s->WriteLE16((Int16)fAtomicCount);    
     s->WriteByte((UInt8)fAtomicType);
 }
 
@@ -399,7 +399,7 @@ bool plSDVarDescriptor::Read(hsStream* s)
         return false;
 
     char* sdName=s->ReadSafeString();
-    UInt16 version = s->ReadSwap16();
+    UInt16 version = s->ReadLE16();
     plStateDescriptor* sd=plSDLMgr::GetInstance()->FindDescriptor(sdName, version);
     hsAssert( sd, xtl::format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", sdName, version ).c_str() );
     SetStateDesc(sd);
@@ -416,5 +416,5 @@ void plSDVarDescriptor::Write(hsStream* s) const
 
     s->WriteSafeString(GetStateDescriptor()->GetName());
     UInt16 version=GetStateDescriptor()->GetVersion();
-    s->WriteSwap(version);
+    s->WriteLE(version);
 }

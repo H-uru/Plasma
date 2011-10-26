@@ -501,17 +501,17 @@ void plCameraBrain1::Read(hsStream* stream, hsResMgr* mgr)
             
         plgDispatch::Dispatch()->RegisterForExactType(plPlayerPageMsg::Index(), GetKey());
     }
-    fAccel = stream->ReadSwapFloat();
-    fDecel = stream->ReadSwapFloat();
-    fVelocity = stream->ReadSwapFloat();
-    fPOAAccel = stream->ReadSwapFloat();
-    fPOADecel = stream->ReadSwapFloat();
-    fPOAVelocity = stream->ReadSwapFloat();
-    fXPanLimit = stream->ReadSwapFloat();
-    fZPanLimit = stream->ReadSwapFloat();
-    fZoomRate = stream->ReadSwapFloat();
-    fZoomMin = stream->ReadSwapFloat();
-    fZoomMax = stream->ReadSwapFloat();
+    fAccel = stream->ReadLEFloat();
+    fDecel = stream->ReadLEFloat();
+    fVelocity = stream->ReadLEFloat();
+    fPOAAccel = stream->ReadLEFloat();
+    fPOADecel = stream->ReadLEFloat();
+    fPOAVelocity = stream->ReadLEFloat();
+    fXPanLimit = stream->ReadLEFloat();
+    fZPanLimit = stream->ReadLEFloat();
+    fZoomRate = stream->ReadLEFloat();
+    fZoomMin = stream->ReadLEFloat();
+    fZoomMax = stream->ReadLEFloat();
 
 }
 
@@ -522,17 +522,17 @@ void plCameraBrain1::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, GetSubject());
     mgr->WriteKey(stream, fRail);
     fFlags.Write(stream);
-    stream->WriteSwapFloat(fAccel);
-    stream->WriteSwapFloat(fDecel);
-    stream->WriteSwapFloat(fVelocity);
-    stream->WriteSwapFloat(fPOAAccel);
-    stream->WriteSwapFloat(fPOADecel);
-    stream->WriteSwapFloat(fPOAVelocity);
-    stream->WriteSwapFloat(fXPanLimit);
-    stream->WriteSwapFloat(fZPanLimit);
-    stream->WriteSwapFloat(fZoomRate);
-    stream->WriteSwapFloat(fZoomMin);
-    stream->WriteSwapFloat(fZoomMax);
+    stream->WriteLEFloat(fAccel);
+    stream->WriteLEFloat(fDecel);
+    stream->WriteLEFloat(fVelocity);
+    stream->WriteLEFloat(fPOAAccel);
+    stream->WriteLEFloat(fPOADecel);
+    stream->WriteLEFloat(fPOAVelocity);
+    stream->WriteLEFloat(fXPanLimit);
+    stream->WriteLEFloat(fZPanLimit);
+    stream->WriteLEFloat(fZoomRate);
+    stream->WriteLEFloat(fZoomMin);
+    stream->WriteLEFloat(fZoomMax);
 }
 hsBool plCameraBrain1::MsgReceive(plMessage* msg)
 {
@@ -1759,18 +1759,18 @@ hsPoint3 plCameraBrain1_Circle::GetCenterPoint()
 void plCameraBrain1_Circle::Write(hsStream* stream, hsResMgr* mgr)
 {
     plCameraBrain1::Write(stream, mgr);
-    stream->WriteSwap32(GetCircleFlags());
+    stream->WriteLE32(GetCircleFlags());
     fCenter.Write(stream);
-    stream->WriteSwapScalar(GetRadius());
+    stream->WriteLEScalar(GetRadius());
     mgr->WriteKey(stream, fCenterObject);
     mgr->WriteKey(stream, fPOAObj);
-    stream->WriteSwapScalar(fCirPerSec);
+    stream->WriteLEScalar(fCirPerSec);
 }
 
 void plCameraBrain1_Circle::Read(hsStream* stream, hsResMgr* mgr)
 {
     plCameraBrain1::Read(stream, mgr);
-    SetCircleFlags(stream->ReadSwap32());
+    SetCircleFlags(stream->ReadLE32());
     if (GetCircleFlags() & kCircleLocalAvatar)
     {
         if (plNetClientApp::GetInstance() && plNetClientApp::GetInstance()->GetLocalPlayer())
@@ -1780,12 +1780,12 @@ void plCameraBrain1_Circle::Read(hsStream* stream, hsResMgr* mgr)
     }
 
     fCenter.Read(stream);
-    SetRadius(stream->ReadSwapScalar());
+    SetRadius(stream->ReadLEScalar());
     plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kCircleTarget ); // SceneObject
     mgr->ReadKeyNotifyMe( stream, msg, plRefFlags::kActiveRef );
     plGenRefMsg* msg2 = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnRequest, 0, kPOAObject ); // SceneObject
     mgr->ReadKeyNotifyMe( stream, msg2, plRefFlags::kActiveRef );
-    fCirPerSec = stream->ReadSwapScalar();
+    fCirPerSec = stream->ReadLEScalar();
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 

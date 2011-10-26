@@ -624,7 +624,7 @@ hsBool plSpeex::Encode(short *data, int numFrames, int *packedLength, hsRAMStrea
         frameLength = speex_bits_write(fBits, (char *)frameData, fFrameSize);
 
         // write data - length and bytes
-        out->WriteSwap(frameLength);
+        out->WriteLE(frameLength);
         *packedLength += sizeof(frameLength);   // add length of encoded frame                      
         out->Write(frameLength, frameData);
         *packedLength += frameLength;           // update length
@@ -654,7 +654,7 @@ hsBool plSpeex::Decode(UInt8 *data, int size, int numFrames, int *numOutputBytes
     // Decode data
     for (int i = 0; i < numFrames; i++)
     {
-        stream.ReadSwap( &frameLen );           // read the length of the current frame to be decoded
+        stream.ReadLE( &frameLen );           // read the length of the current frame to be decoded
         stream.Read( frameLen, frameData );     // read the data
 
         memset(speexOutput, 0, fFrameSize * sizeof(float));

@@ -91,33 +91,33 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     // Parent write
     plDrawable::Write(s, mgr);
 
-    s->WriteSwap32( fProps );
-    s->WriteSwap32( fCriteria );
-    s->WriteSwap32( fRenderLevel.fLevel );
+    s->WriteLE32( fProps );
+    s->WriteLE32( fCriteria );
+    s->WriteLE32( fRenderLevel.fLevel );
 
     /// Write out the material keys
-    s->WriteSwap32( fMaterials.GetCount() );
+    s->WriteLE32( fMaterials.GetCount() );
     for( i = 0; i < fMaterials.GetCount(); i++ )
         mgr->WriteKey( s, fMaterials[ i ] );
 
     /// Write out the icicles
-    s->WriteSwap32( fIcicles.GetCount() );
+    s->WriteLE32( fIcicles.GetCount() );
     for( i = 0; i < fIcicles.GetCount(); i++ )
         fIcicles[ i ].Write( s );
 
     /// Write out the patches
     // FIXME MAJOR VERSION
     // no more patches, remove this line
-    s->WriteSwap32(0);
+    s->WriteLE32(0);
 
     /// Write out the index table based on the pointer array
     count = fSpans.GetCount();
-    s->WriteSwap32( count );
+    s->WriteLE32( count );
     for( i = 0; i < count; i++ )
     {
         UInt8   *icicle = (UInt8 *)fSpans[ i ], *base = (UInt8 *)fIcicles.AcquireArray();
         j = (UInt32)( icicle - base ) / sizeof( plIcicle );
-        s->WriteSwap32( j );
+        s->WriteLE32( j );
     }
 
     /// Write out the common keys
@@ -140,7 +140,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
         if( fSpans[i]->fProps & plSpan::kPropHasPermaLights )
         {
             UInt32 lcnt = fSpans[i]->fPermaLights.GetCount();
-            s->WriteSwap32(lcnt);
+            s->WriteLE32(lcnt);
             int j;
             for( j = 0; j < lcnt; j++ )
                 mgr->WriteKey( s, fSpans[i]->fPermaLights[j]);
@@ -148,7 +148,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
         if( fSpans[i]->fProps & plSpan::kPropHasPermaProjs )
         {
             UInt32 lcnt = fSpans[i]->fPermaProjs.GetCount();
-            s->WriteSwap32(lcnt);
+            s->WriteLE32(lcnt);
             int j;
             for( j = 0; j < lcnt; j++ )
                 mgr->WriteKey( s, fSpans[i]->fPermaProjs[j]);
@@ -156,7 +156,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     }
 
     /// Write out the source spans if necessary
-    s->WriteSwap32( fSourceSpans.GetCount() );
+    s->WriteLE32( fSourceSpans.GetCount() );
     if( fSourceSpans.GetCount() > 0 )
     {
         for( i = 0; i < fSourceSpans.GetCount(); i++ )
@@ -164,7 +164,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     }
 
     count = fLocalToWorlds.GetCount();
-    s->WriteSwap32(count);
+    s->WriteLE32(count);
     for( i = 0; i < count; i++ )
     {
         fLocalToWorlds[i].Write(s);
@@ -175,21 +175,21 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     }
 
     // Write out the drawInterface index arrays
-    s->WriteSwap32( fDIIndices.GetCount() );
+    s->WriteLE32( fDIIndices.GetCount() );
     for( i = 0; i < fDIIndices.GetCount(); i++ )
     {
         plDISpanIndex   *array = fDIIndices[ i ];
 
-        s->WriteSwap32( array->fFlags );
-        s->WriteSwap32( array->GetCount() );
+        s->WriteLE32( array->fFlags );
+        s->WriteLE32( array->GetCount() );
         for( j = 0; j < array->GetCount(); j++ )
-            s->WriteSwap32( (*array)[ j ] );
+            s->WriteLE32( (*array)[ j ] );
     }
 
     // Write the groups out
     count = fGroups.GetCount();
 
-    s->WriteSwap( count );
+    s->WriteLE( count );
     for( i = 0; i < count; i++ )
     {
 #ifdef VERT_LOG

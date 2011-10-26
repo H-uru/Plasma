@@ -188,7 +188,7 @@ void plAnimPath::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 
 void plAnimPath::Read(hsStream* stream, hsResMgr* mgr)
 {
-    fAnimPathFlags=stream->ReadSwap32();
+    fAnimPathFlags=stream->ReadLE32();
 
     delete fController;
     fController = plCompoundController::ConvertNoRef(mgr->ReadCreatable(stream));
@@ -200,15 +200,15 @@ void plAnimPath::Read(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Read(stream);
     fWorldToLocal.Read(stream);
 
-    fLength = stream->ReadSwapScalar();
-    fMinDistSq = stream->ReadSwapScalar();
+    fLength = stream->ReadLEScalar();
+    fMinDistSq = stream->ReadLEScalar();
     
     Reset();
 }
 
 void plAnimPath::Write(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteSwap32(fAnimPathFlags);
+    stream->WriteLE32(fAnimPathFlags);
 
     mgr->WriteCreatable(stream, fController);
     
@@ -217,8 +217,8 @@ void plAnimPath::Write(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Write(stream);
     fWorldToLocal.Write(stream);
 
-    stream->WriteSwapScalar(fLength);
-    stream->WriteSwapScalar(fMinDistSq);
+    stream->WriteLEScalar(fLength);
+    stream->WriteLEScalar(fMinDistSq);
 }
 
 hsBool plAnimPath::OutOfRange(hsPoint3 &worldPt, hsScalar range) const

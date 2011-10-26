@@ -81,7 +81,7 @@ plRefMsg& plRefMsg::SetOldRef(hsKeyedObject* oldRef)
 void plRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    stream->ReadSwap(&fContext);
+    stream->ReadLE(&fContext);
 
     plKey key;
     key = mgr->ReadKey(stream);
@@ -93,7 +93,7 @@ void plRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 void plRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteSwap(fContext);
+    stream->WriteLE(fContext);
 
     mgr->WriteKey(stream, (fRef ? fRef->GetKey() : nil));
     mgr->WriteKey(stream, (fOldRef ? fOldRef->GetKey() : nil));
@@ -103,13 +103,13 @@ void plRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 void plGenRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Read(stream, mgr);
-    stream->ReadSwap(&fType);
-    fWhich = stream->ReadSwap32();
+    stream->ReadLE(&fType);
+    fWhich = stream->ReadLE32();
 }
 
 void plGenRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Write(stream, mgr);
-    stream->WriteSwap(fType);
-    stream->WriteSwap32(fWhich);
+    stream->WriteLE(fType);
+    stream->WriteLE32(fWhich);
 }

@@ -98,13 +98,13 @@ public:
 #define LogSetList(l) LogVoidFunc()
 #else
 
-#define LOG_READ_SWAP(type, enumtype) \
-    void LogReadSwap(type* value, const char* desc) \
-            { ILogEntryWaiting(); ReadSwap(value); LogEntry(plGenericType::enumtype,sizeof(type),value, desc);}
+#define LOG_READ_LE(type, enumtype) \
+    void LogReadLE(type* value, const char* desc) \
+            { ILogEntryWaiting(); ReadLE(value); LogEntry(plGenericType::enumtype,sizeof(type),value, desc);}
 
-#define LOG_READ_SWAP_ARRAY(type, enumtype) \
-    void LogReadSwapV(int count, type values[], const char* desc) \
-            { ILogEntryWaiting(); ReadSwap(count,values); int i; for (i=0; i < count; i++) LogEntry(plGenericType::enumtype,sizeof(type),&(values[i]), desc);}
+#define LOG_READ_LE_ARRAY(type, enumtype) \
+    void LogReadLEV(int count, type values[], const char* desc) \
+            { ILogEntryWaiting(); ReadLE(count,values); int i; for (i=0; i < count; i++) LogEntry(plGenericType::enumtype,sizeof(type),&(values[i]), desc);}
 
 class hsReadOnlyLoggingStream : public hsReadOnlyStream, public plStreamLogger
 {
@@ -127,29 +127,29 @@ public:
     void    LogSubStreamEnd();
     void    LogSubStreamPushDesc(const char* desc);
 
-    LOG_READ_SWAP(bool, kBool)
-    LOG_READ_SWAP(UInt8, kUInt)
-    LOG_READ_SWAP(UInt16, kUInt)
-    LOG_READ_SWAP(UInt32, kUInt)
-    LOG_READ_SWAP_ARRAY(UInt8, kUInt)
-    LOG_READ_SWAP_ARRAY(UInt16, kUInt)
-    LOG_READ_SWAP_ARRAY(UInt32, kUInt)
+    LOG_READ_LE(bool, kBool)
+    LOG_READ_LE(UInt8, kUInt)
+    LOG_READ_LE(UInt16, kUInt)
+    LOG_READ_LE(UInt32, kUInt)
+    LOG_READ_LE_ARRAY(UInt8, kUInt)
+    LOG_READ_LE_ARRAY(UInt16, kUInt)
+    LOG_READ_LE_ARRAY(UInt32, kUInt)
 
-    LOG_READ_SWAP(Int8, kInt)
-    LOG_READ_SWAP(char, kChar)
-    LOG_READ_SWAP(Int16, kInt)
-    LOG_READ_SWAP(Int32, kInt)
-    LOG_READ_SWAP(int, kInt)
-    LOG_READ_SWAP_ARRAY(Int8, kInt)
-    LOG_READ_SWAP_ARRAY(char, kChar)
-    LOG_READ_SWAP_ARRAY(Int16, kInt)
-    LOG_READ_SWAP_ARRAY(Int32, kInt)
-    LOG_READ_SWAP_ARRAY(int, kInt)
+    LOG_READ_LE(Int8, kInt)
+    LOG_READ_LE(char, kChar)
+    LOG_READ_LE(Int16, kInt)
+    LOG_READ_LE(Int32, kInt)
+    LOG_READ_LE(int, kInt)
+    LOG_READ_LE_ARRAY(Int8, kInt)
+    LOG_READ_LE_ARRAY(char, kChar)
+    LOG_READ_LE_ARRAY(Int16, kInt)
+    LOG_READ_LE_ARRAY(Int32, kInt)
+    LOG_READ_LE_ARRAY(int, kInt)
 
-    LOG_READ_SWAP(float, kFloat)
-    LOG_READ_SWAP(double, kDouble)
-    LOG_READ_SWAP_ARRAY(float, kFloat)
-    LOG_READ_SWAP_ARRAY(double, kDouble)
+    LOG_READ_LE(float, kFloat)
+    LOG_READ_LE(double, kDouble)
+    LOG_READ_LE_ARRAY(float, kFloat)
+    LOG_READ_LE_ARRAY(double, kDouble)
 
 };
 

@@ -100,31 +100,31 @@ public:
 template <class T>
 void hsTimedValue<T>::WriteScalar(hsStream* s, hsScalar currSecs)
 {
-    s->WriteSwap32(fFlags);
+    s->WriteLE32(fFlags);
 
-    s->WriteSwapScalar(fValue);
+    s->WriteLEScalar(fValue);
     
     if( !(fFlags & kIdle) )
     {
-        s->WriteSwapScalar(fDuration);
-        s->WriteSwapScalar(currSecs - fStartTime);
+        s->WriteLEScalar(fDuration);
+        s->WriteLEScalar(currSecs - fStartTime);
 
-        s->WriteSwapScalar(fGoal);
-        s->WriteSwapScalar(fFrom);
+        s->WriteLEScalar(fGoal);
+        s->WriteLEScalar(fFrom);
     }
 }
 
 template <class T>
 void hsTimedValue<T>::Write(hsStream* s, hsScalar currSecs)
 {
-    s->WriteSwap32(fFlags);
+    s->WriteLE32(fFlags);
 
     fValue.Write(s);
     
     if( !(fFlags & kIdle) )
     {
-        s->WriteSwapScalar(fDuration);
-        s->WriteSwapScalar(currSecs - fStartTime);
+        s->WriteLEScalar(fDuration);
+        s->WriteLEScalar(currSecs - fStartTime);
 
         fGoal.Write(s);
         fFrom.Write(s);
@@ -134,31 +134,31 @@ void hsTimedValue<T>::Write(hsStream* s, hsScalar currSecs)
 template <class T>
 void hsTimedValue<T>::ReadScalar(hsStream* s, hsScalar currSecs)
 {
-    fFlags = s->ReadSwap32();
+    fFlags = s->ReadLE32();
 
-    fValue = s->ReadSwapScalar();
+    fValue = s->ReadLEScalar();
 
     if( !(fFlags & kIdle) )
     {
-        fDuration = s->ReadSwapScalar();
-        fStartTime = currSecs - s->ReadSwapScalar();
+        fDuration = s->ReadLEScalar();
+        fStartTime = currSecs - s->ReadLEScalar();
 
-        fGoal = s->ReadSwapScalar();
-        fFrom = s->ReadSwapScalar();
+        fGoal = s->ReadLEScalar();
+        fFrom = s->ReadLEScalar();
     }
 }
 
 template <class T>
 void hsTimedValue<T>::Read(hsStream* s, hsScalar currSecs)
 {
-    fFlags = s->ReadSwap32();
+    fFlags = s->ReadLE32();
 
     fValue.Read(s);
 
     if( !(fFlags & kIdle) )
     {
-        fDuration = s->ReadSwapScalar();
-        fStartTime = currSecs - s->ReadSwapScalar();
+        fDuration = s->ReadLEScalar();
+        fStartTime = currSecs - s->ReadLEScalar();
 
         fGoal.Read(s);
         fFrom.Read(s);

@@ -56,15 +56,15 @@ plVaultNotifyMsg::~plVaultNotifyMsg()
 
 void plVaultNotifyMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-    stream->ReadSwap( &fType );
-    stream->ReadSwap( &fResultCode );
+    stream->ReadLE( &fType );
+    stream->ReadLE( &fResultCode );
     fArgs.Read( stream, mgr );
 }
 
 void plVaultNotifyMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteSwap( fType );
-    stream->WriteSwap( fResultCode );
+    stream->WriteLE( fType );
+    stream->WriteLE( fResultCode );
     fArgs.Write( stream, mgr );
 }
 

@@ -61,8 +61,8 @@ struct FileEntry;
 #define LogReadSafeString() ReadSafeString();
 #define LogReadSafeStringLong() ReadSafeStringLong();
 #define LogSkip(deltaByteCount, desc) Skip(deltaByteCount)
-#define LogReadSwap(value, desc) ReadSwap(value)
-#define LogReadSwapArray(count, values, desc) ReadSwap(count, values)
+#define LogReadLE(value, desc) ReadLE(value)
+#define LogReadLEArray(count, values, desc) ReadLE(count, values)
 #define LogSubStreamStart(desc) LogVoidFunc()
 #define LogSubStreamPushDesc(desc) LogVoidFunc()
 #define LogSubStreamEnd() LogVoidFunc()
@@ -110,10 +110,10 @@ public:
     virtual void    LogSkip(UInt32 deltaByteCount, const char* desc) { Skip(deltaByteCount); }
 
     // Stream Notes for Logging 
-    virtual void LogStringString(const char* s) { }
-    virtual void LogSubStreamStart(const char* desc) { }
-    virtual void LogSubStreamEnd() { }
-    virtual void LogSubStreamPushDesc(const char* desc) { }
+    virtual void    LogStringString(const char* s) { }
+    virtual void    LogSubStreamStart(const char* desc) { }
+    virtual void    LogSubStreamEnd() { }
+    virtual void    LogSubStreamPushDesc(const char* desc) { }
 #endif
     void LogVoidFunc() { }
 
@@ -132,178 +132,178 @@ public:
     UInt32          WriteFmt(const char * fmt, ...);
     UInt32          WriteFmtV(const char * fmt, va_list av);
 
-    UInt32      WriteSafeStringLong(const char *string);    // uses 4 bytes for length
-    UInt32      WriteSafeWStringLong(const wchar_t *string);
-    char *      ReadSafeStringLong();
-    wchar_t *   ReadSafeWStringLong();
+    UInt32          WriteSafeStringLong(const char *string);    // uses 4 bytes for length
+    UInt32          WriteSafeWStringLong(const wchar_t *string);
+    char *          ReadSafeStringLong();
+    wchar_t *       ReadSafeWStringLong();
 
-    UInt32      WriteSafeString(const char *string);        // uses 2 bytes for length
-    UInt32      WriteSafeWString(const wchar_t *string);
-    char *      ReadSafeString();
-    wchar_t *   ReadSafeWString();
+    UInt32          WriteSafeString(const char *string);        // uses 2 bytes for length
+    UInt32          WriteSafeWString(const wchar_t *string);
+    char *          ReadSafeString();
+    wchar_t *       ReadSafeWString();
 
-    hsBool      GetToken(char *s, UInt32 maxLen=UInt32(-1), const char beginComment=kComment, const char endComment=kEolnCode);
-    hsBool      ReadLn(char* s, UInt32 maxLen=UInt32(-1), const char beginComment=kComment, const char endComment=kEolnCode);
+    hsBool          GetToken(char *s, UInt32 maxLen=UInt32(-1), const char beginComment=kComment, const char endComment=kEolnCode);
+    hsBool          ReadLn(char* s, UInt32 maxLen=UInt32(-1), const char beginComment=kComment, const char endComment=kEolnCode);
     
-    bool        Readbool();
-    hsBool      ReadBool();
-    void        ReadBool(int count, hsBool values[]);
-    UInt16      ReadSwap16();
-    void        ReadSwap16(int count, UInt16 values[]);
-    UInt32      ReadSwap32();
-    void        ReadSwap32(int count, UInt32 values[]);
-    UInt32      ReadUnswap32();
+    bool            Readbool();
+    hsBool          ReadBool();
+    void            ReadBool(int count, hsBool values[]);
+    UInt16          ReadLE16();
+    void            ReadLE16(int count, UInt16 values[]);
+    UInt32          ReadLE32();
+    void            ReadLE32(int count, UInt32 values[]);
+    UInt32          ReadBE32();
 
     void            Writebool(bool value);
     void            WriteBool(hsBool value);
     void            WriteBool(int count, const hsBool values[]);
     void            WriteByte(UInt8 value);
-    void            WriteSwap16(UInt16 value);
-    void            WriteSwap16(int count, const UInt16 values[]);
-    void            WriteSwap32(UInt32 value);
-    void            WriteSwap32(int count, const  UInt32 values[]);
-    void            WriteUnswap32(UInt32 value);
+    void            WriteLE16(UInt16 value);
+    void            WriteLE16(int count, const UInt16 values[]);
+    void            WriteLE32(UInt32 value);
+    void            WriteLE32(int count, const  UInt32 values[]);
+    void            WriteBE32(UInt32 value);
 
 
     /* Overloaded  Begin (8 & 16 & 32 int)*/
     /* yes, swapping an 8 bit value does nothing, just useful*/
-    void        ReadSwap(bool* value) { *value = this->ReadByte() ? true : false; }
-    void        ReadSwap(UInt8* value) { *value = this->ReadByte(); }
-    void        ReadSwap(int count, UInt8 values[]) { this->Read(count, values); }
-    void        ReadSwap(UInt16* value) { *value = this->ReadSwap16(); }
-    void        ReadSwap(int count, UInt16 values[]) { this->ReadSwap16(count, values); }
-    void        ReadSwap(UInt32* value) { *value = this->ReadSwap32(); }
-    void        ReadSwap(int count, UInt32 values[]) { this->ReadSwap32(count, values); }
+    void            ReadLE(bool* value) { *value = this->ReadByte() ? true : false; }
+    void            ReadLE(UInt8* value) { *value = this->ReadByte(); }
+    void            ReadLE(int count, UInt8 values[]) { this->Read(count, values); }
+    void            ReadLE(UInt16* value) { *value = this->ReadLE16(); }
+    void            ReadLE(int count, UInt16 values[]) { this->ReadLE16(count, values); }
+    void            ReadLE(UInt32* value) { *value = this->ReadLE32(); }
+    void            ReadLE(int count, UInt32 values[]) { this->ReadLE32(count, values); }
 #ifdef STREAM_LOGGER
-                // Begin LogReadSwaps
-    virtual void    LogReadSwap(bool* value, const char* desc) { this->ReadSwap(value); }
-    virtual void    LogReadSwap(UInt8* value, const char* desc) { this->ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, UInt8 values[], const char* desc) { this->ReadSwap(count, values); }
-    virtual void    LogReadSwap(UInt16* value, const char* desc) { this->ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, UInt16 values[], const char* desc) { this->ReadSwap(count, values); }
-    virtual void    LogReadSwap(UInt32* value, const char* desc) { this->ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, UInt32 values[], const char* desc) { this->ReadSwap(count, values); }
-                // End LogReadSwaps
+                // Begin LogReadLEs
+    virtual void    LogReadLE(bool* value, const char* desc) { this->ReadLE(value); }
+    virtual void    LogReadLE(UInt8* value, const char* desc) { this->ReadLE(value); }
+    virtual void    LogReadLEArray(int count, UInt8 values[], const char* desc) { this->ReadLE(count, values); }
+    virtual void    LogReadLE(UInt16* value, const char* desc) { this->ReadLE(value); }
+    virtual void    LogReadLEArray(int count, UInt16 values[], const char* desc) { this->ReadLE(count, values); }
+    virtual void    LogReadLE(UInt32* value, const char* desc) { this->ReadLE(value); }
+    virtual void    LogReadLEArray(int count, UInt32 values[], const char* desc) { this->ReadLE(count, values); }
+                // End LogReadLEs
 #endif
-    void            WriteSwap(bool value) { this->Write(1,&value); }
-    void            WriteSwap(UInt8 value) { this->Write(1,&value); }
-    void            WriteSwap(int count, const UInt8 values[]) { this->Write(count, values); }
-    void            WriteSwap(UInt16 value) { this->WriteSwap16(value); }
-    void            WriteSwap(int count, const UInt16 values[]) { this->WriteSwap16(count, values); }
-    void            WriteSwap(UInt32 value) { this->WriteSwap32(value); }
-    void            WriteSwap(int count, const  UInt32 values[]) { this->WriteSwap32(count, values); }
-    void        ReadSwap(Int8* value) { *value = this->ReadByte(); }
-    void        ReadSwap(int count, Int8 values[]) { this->Read(count, values); }
-    void        ReadSwap(char* value) { *value = (char)this->ReadByte(); }
-    void        ReadSwap(int count, char values[]) { this->Read(count, values); }
-    void        ReadSwap(Int16* value) { *value = (Int16)this->ReadSwap16(); }
-    void        ReadSwap(int count, Int16 values[]) { this->ReadSwap16(count, (UInt16*)values); }
-    void        ReadSwap(Int32* value) { *value = (Int32)this->ReadSwap32(); }
-    void        ReadSwap(int count, Int32 values[]) { this->ReadSwap32(count, (UInt32*)values); }
+    void            WriteLE(bool value) { this->Write(1,&value); }
+    void            WriteLE(UInt8 value) { this->Write(1,&value); }
+    void            WriteLE(int count, const UInt8 values[]) { this->Write(count, values); }
+    void            WriteLE(UInt16 value) { this->WriteLE16(value); }
+    void            WriteLE(int count, const UInt16 values[]) { this->WriteLE16(count, values); }
+    void            WriteLE(UInt32 value) { this->WriteLE32(value); }
+    void            WriteLE(int count, const  UInt32 values[]) { this->WriteLE32(count, values); }
+    void            ReadLE(Int8* value) { *value = this->ReadByte(); }
+    void            ReadLE(int count, Int8 values[]) { this->Read(count, values); }
+    void            ReadLE(char* value) { *value = (char)this->ReadByte(); }
+    void            ReadLE(int count, char values[]) { this->Read(count, values); }
+    void            ReadLE(Int16* value) { *value = (Int16)this->ReadLE16(); }
+    void            ReadLE(int count, Int16 values[]) { this->ReadLE16(count, (UInt16*)values); }
+    void            ReadLE(Int32* value) { *value = (Int32)this->ReadLE32(); }
+    void            ReadLE(int count, Int32 values[]) { this->ReadLE32(count, (UInt32*)values); }
 #ifdef STREAM_LOGGER
-                // Begin LogReadSwaps
-    virtual void    LogReadSwap(Int8* value, const char* desc) { this->ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, Int8 values[], const char* desc) { this->ReadSwap(count, values); }
-    virtual void    LogReadSwap(char* value, const char* desc) { this->ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, char values[], const char* desc) { this->ReadSwap(count, values); }
-    virtual void    LogReadSwap(Int16* value, const char* desc) { this->ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, Int16 values[], const char* desc) { this->ReadSwap(count, (UInt16*)values); }
-    virtual void    LogReadSwap(Int32* value, const char* desc) { this->ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, Int32 values[], const char* desc) { this->ReadSwap(count, (UInt32*)values); }
-    virtual void    LogReadSwap(int* value, const char* desc) { this->ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, int values[], const char* desc) { this->ReadSwap(count, (UInt32*)values); }
-                // End LogReadSwaps
+                // Begin LogReadLEs
+    virtual void    LogReadLE(Int8* value, const char* desc) { this->ReadLE(value); }
+    virtual void    LogReadLEArray(int count, Int8 values[], const char* desc) { this->ReadLE(count, values); }
+    virtual void    LogReadLE(char* value, const char* desc) { this->ReadLE(value); }
+    virtual void    LogReadLEArray(int count, char values[], const char* desc) { this->ReadLE(count, values); }
+    virtual void    LogReadLE(Int16* value, const char* desc) { this->ReadLE(value); }
+    virtual void    LogReadLEArray(int count, Int16 values[], const char* desc) { this->ReadLE(count, (UInt16*)values); }
+    virtual void    LogReadLE(Int32* value, const char* desc) { this->ReadLE(value); }
+    virtual void    LogReadLEArray(int count, Int32 values[], const char* desc) { this->ReadLE(count, (UInt32*)values); }
+    virtual void    LogReadLE(int* value, const char* desc) { this->ReadLE(value); }
+    virtual void    LogReadLEArray(int count, int values[], const char* desc) { this->ReadLE(count, (UInt32*)values); }
+                // End LogReadLEs
 #endif
-    void            WriteSwap(Int8 value) { this->Write(1,&value); }
-    void            WriteSwap(int count, const Int8 values[]) { this->Write(count, values); }
-    void            WriteSwap(char value) { this->Write(1,(UInt8*)&value); }
-    void            WriteSwap(int count, const char values[]) { this->Write(count, (UInt8*)values); }
-    void            WriteSwap(Int16 value) { this->WriteSwap16((UInt16)value); }
-    void            WriteSwap(int count, const Int16 values[]) { this->WriteSwap16(count, (UInt16*)values); }
-    void            WriteSwap(Int32 value) { this->WriteSwap32((UInt32)value); }
-    void            WriteSwap(int count, const  Int32 values[]) { this->WriteSwap32(count, (UInt32*)values); }
+    void            WriteLE(Int8 value) { this->Write(1,&value); }
+    void            WriteLE(int count, const Int8 values[]) { this->Write(count, values); }
+    void            WriteLE(char value) { this->Write(1,(UInt8*)&value); }
+    void            WriteLE(int count, const char values[]) { this->Write(count, (UInt8*)values); }
+    void            WriteLE(Int16 value) { this->WriteLE16((UInt16)value); }
+    void            WriteLE(int count, const Int16 values[]) { this->WriteLE16(count, (UInt16*)values); }
+    void            WriteLE(Int32 value) { this->WriteLE32((UInt32)value); }
+    void            WriteLE(int count, const  Int32 values[]) { this->WriteLE32(count, (UInt32*)values); }
     /* Overloaded  End */
 
 
 #if HS_CAN_USE_FLOAT
-    float           ReadSwapFloat();
-    void            ReadSwapFloat(int count, float values[]);
-    double          ReadSwapDouble();
-    void            ReadSwapDouble(int count, double values[]);
-    float           ReadUnswapFloat();
-    void            WriteSwapFloat(float value);
-    void            WriteSwapFloat(int count, const float values[]);
-    void            WriteSwapDouble(double value);
-    void            WriteSwapDouble(int count, const double values[]);
-    void            WriteUnswapFloat(float value);
+    float           ReadLEFloat();
+    void            ReadLEFloat(int count, float values[]);
+    double          ReadLEDouble();
+    void            ReadLEDouble(int count, double values[]);
+    float           ReadBEFloat();
+    void            WriteLEFloat(float value);
+    void            WriteLEFloat(int count, const float values[]);
+    void            WriteLEDouble(double value);
+    void            WriteLEDouble(int count, const double values[]);
+    void            WriteBEFloat(float value);
 
 
     /* Overloaded  Begin (Float)*/
-    void            ReadSwap(float* value) { *value = ReadSwapFloat(); }
-    void            ReadSwap(int count, float values[]) { ReadSwapFloat(count, values); }
-    void            ReadSwap(double* value) { *value = ReadSwapDouble(); }
-    void            ReadSwap(int count, double values[]) { ReadSwapDouble(count, values); }
+    void            ReadLE(float* value) { *value = ReadLEFloat(); }
+    void            ReadLE(int count, float values[]) { ReadLEFloat(count, values); }
+    void            ReadLE(double* value) { *value = ReadLEDouble(); }
+    void            ReadLE(int count, double values[]) { ReadLEDouble(count, values); }
 #ifdef STREAM_LOGGER
-                    // Begin LogReadSwaps
-    virtual void    LogReadSwap(float* value, const char* desc) { ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, float values[], const char* desc) { ReadSwap(count, values); }
-    virtual void    LogReadSwap(double* value, const char* desc) { ReadSwap(value); }
-    virtual void    LogReadSwapArray(int count, double values[], const char* desc) { ReadSwap(count, values); }
-                    // End LogReadSwaps
+                    // Begin LogReadLEs
+    virtual void    LogReadLE(float* value, const char* desc) { ReadLE(value); }
+    virtual void    LogReadLEArray(int count, float values[], const char* desc) { ReadLE(count, values); }
+    virtual void    LogReadLE(double* value, const char* desc) { ReadLE(value); }
+    virtual void    LogReadLEArray(int count, double values[], const char* desc) { ReadLE(count, values); }
+                    // End LogReadLEs
 #endif
-    void            WriteSwap(float value) { WriteSwapFloat(value); }
-    void            WriteSwap(int count, const float values[]) { WriteSwapFloat(count, values); }
-    void            WriteSwap(double value) { WriteSwapDouble(value); }
-    void            WriteSwap(int count, const double values[]) { WriteSwapDouble(count, values); }
+    void            WriteLE(float value) { WriteLEFloat(value); }
+    void            WriteLE(int count, const float values[]) { WriteLEFloat(count, values); }
+    void            WriteLE(double value) { WriteLEDouble(value); }
+    void            WriteLE(int count, const double values[]) { WriteLEDouble(count, values); }
     /* Overloaded End */
 #endif
 
 #if HS_SCALAR_IS_FIXED
-    hsFixed     ReadSwapScalar() { return (hsFixed)this->ReadSwap32(); }
-    void            ReadSwapScalar(int count, hsFixed values[])
-                {
-                    this->ReadSwap32(count, (UInt32*)values);
-                }
-    hsFixed     ReadUnswapScalar() { return (hsFixed)this->ReadUnswap32(); }
+    hsFixed         ReadLEScalar() { return (hsFixed)this->ReadLE32(); }
+    void            ReadLEScalar(int count, hsFixed values[])
+                    {
+                        this->ReadLE32(count, (UInt32*)values);
+                    }
+    hsFixed         ReadBEScalar() { return (hsFixed)this->ReadBE32(); }
 
 
-    void            WriteSwapScalar(hsFixed value) { this->WriteSwap32(value); }
-    void            WriteSwapScalar(int count, const hsFixed values[])
-                {
-                    this->WriteSwap32(count, (UInt32*)values);
-                }
-    void            WriteUnswapScalar(hsFixed value) { this->WriteUnswap32(value); }
+    void            WriteLEScalar(hsFixed value) { this->WriteLE32(value); }
+    void            WriteLEScalar(int count, const hsFixed values[])
+                    {
+                        this->WriteLE32(count, (UInt32*)values);
+                    }
+    void            WriteBEScalar(hsFixed value) { this->WriteBE32(value); }
 
 
     /* Overloaded Begin (Scalar) */
-    void        ReadSwap(hsFixed* value) { this->ReadSwap((UInt32*)value); }
-    void            ReadSwap(int count, hsFixed values[]) { this->ReadSwap(count, (UInt32*)values); }
-    void            WriteSwap(hsFixed value) { this->WriteSwap((UInt32)value); }
-    void            WriteSwap(int count, const hsFixed values[]) { this->WriteSwap(count, (UInt32*)values); }
+    void            ReadLE(hsFixed* value) { this->ReadLE((UInt32*)value); }
+    void            ReadLE(int count, hsFixed values[]) { this->ReadLE(count, (UInt32*)values); }
+    void            WriteLE(hsFixed value) { this->WriteLE((UInt32)value); }
+    void            WriteLE(int count, const hsFixed values[]) { this->WriteLE(count, (UInt32*)values); }
     /* Overloaded End */
 
 #else
-    float           ReadSwapScalar() { return (float)this->ReadSwapFloat(); }
-    void            ReadSwapScalar(int count, float values[])
-                {
-                    this->ReadSwapFloat(count, (float*)values);
-                }
-    float           ReadUnswapScalar() { return (float)this->ReadUnswapFloat(); }
-    void            WriteSwapScalar(float value) { this->WriteSwapFloat(value); }
-    void            WriteSwapScalar(int count, const float values[])
-                {
-                    this->WriteSwapFloat(count, (float*)values);
-                }
-    void            WriteUnswapScalar(float value) { this->WriteUnswapFloat(value); }
+    float           ReadLEScalar() { return (float)this->ReadLEFloat(); }
+    void            ReadLEScalar(int count, float values[])
+                    {
+                        this->ReadLEFloat(count, (float*)values);
+                    }
+    float           ReadBEScalar() { return (float)this->ReadBEFloat(); }
+    void            WriteLEScalar(float value) { this->WriteLEFloat(value); }
+    void            WriteLEScalar(int count, const float values[])
+                    {
+                        this->WriteLEFloat(count, (float*)values);
+                    }
+    void            WriteBEScalar(float value) { this->WriteBEFloat(value); }
 #endif
 
-    void            WriteSwapAtom(UInt32 tag, UInt32 size);
-    UInt32      ReadSwapAtom(UInt32* size);
+    void            WriteLEAtom(UInt32 tag, UInt32 size);
+    UInt32          ReadLEAtom(UInt32* size);
 
 
     /* Overloaded  Begin (Atom)*/
-    void            WriteSwap(UInt32* tag, UInt32 size) { WriteSwapAtom(*tag, size); }
-    void            ReadSwap(UInt32* tag, UInt32 *size) { *tag = ReadSwapAtom(size); }
+    void            WriteLE(UInt32* tag, UInt32 size) { WriteLEAtom(*tag, size); }
+    void            ReadLE(UInt32* tag, UInt32 *size) { *tag = ReadLEAtom(size); }
     /* Overloaded  End */
     virtual void    VirtualSetPosition(UInt32 pos, VDB_Type ){ SetPosition(pos); };
     virtual hsPackFileSys::FileEntry *GetFileEntry() { return nil; }  // Streams from Packfiles can return a FileEntry

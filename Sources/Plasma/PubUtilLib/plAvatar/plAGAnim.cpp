@@ -226,10 +226,10 @@ void plAGAnim::Read(hsStream *stream, hsResMgr *mgr)
     // read in the name of the animation itself
     fName = stream->ReadSafeString();
 
-    fStart = stream->ReadSwapScalar();
-    fEnd = stream->ReadSwapScalar();
+    fStart = stream->ReadLEScalar();
+    fEnd = stream->ReadLEScalar();
 
-    int numApps = stream->ReadSwap32();
+    int numApps = stream->ReadLE32();
 
     fApps.reserve(numApps);             // pre-allocate for performance
     int i;
@@ -250,12 +250,12 @@ void plAGAnim::Write(hsStream *stream, hsResMgr *mgr)
 
     stream->WriteSafeString(fName);
 
-    stream->WriteSwapScalar(fStart);
-    stream->WriteSwapScalar(fEnd);
+    stream->WriteLEScalar(fStart);
+    stream->WriteLEScalar(fEnd);
 
     int numApps = fApps.size();
 
-    stream->WriteSwap32(numApps);
+    stream->WriteLE32(numApps);
 
     int i;
     for (i = 0; i < numApps; i++)
@@ -404,42 +404,42 @@ void plATCAnim::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAGAnim::Read(stream, mgr);
 
-    fInitial = stream->ReadSwapScalar();
+    fInitial = stream->ReadLEScalar();
     fAutoStart = stream->Readbool();
-    fLoopStart = stream->ReadSwapScalar();
-    fLoopEnd = stream->ReadSwapScalar();
+    fLoopStart = stream->ReadLEScalar();
+    fLoopEnd = stream->ReadLEScalar();
     fLoop = stream->Readbool();
 
     fEaseInType = stream->ReadByte();
-    fEaseInMin = stream->ReadSwapScalar();
-    fEaseInMax = stream->ReadSwapScalar();
-    fEaseInLength = stream->ReadSwapScalar();
+    fEaseInMin = stream->ReadLEScalar();
+    fEaseInMax = stream->ReadLEScalar();
+    fEaseInLength = stream->ReadLEScalar();
     fEaseOutType = stream->ReadByte();
-    fEaseOutMin = stream->ReadSwapScalar();
-    fEaseOutMax = stream->ReadSwapScalar();
-    fEaseOutLength = stream->ReadSwapScalar();
+    fEaseOutMin = stream->ReadLEScalar();
+    fEaseOutMax = stream->ReadLEScalar();
+    fEaseOutLength = stream->ReadLEScalar();
 
     int i;
-    int numMarkers = stream->ReadSwap32();
+    int numMarkers = stream->ReadLE32();
     for (i = 0; i < numMarkers; i++)
     {
         char *name = stream->ReadSafeString();
-        float time = stream->ReadSwapFloat();
+        float time = stream->ReadLEFloat();
         fMarkers[name] = time;
     }
 
-    int numLoops = stream->ReadSwap32();
+    int numLoops = stream->ReadLE32();
     for (i = 0; i < numLoops; i++)
     {
         char *name = stream->ReadSafeString();
-        float begin = stream->ReadSwapScalar();
-        float end = stream->ReadSwapScalar();
+        float begin = stream->ReadLEScalar();
+        float end = stream->ReadLEScalar();
         fLoops[name] = std::pair<float,float>(begin,end);
     }
 
-    int numStops = stream->ReadSwap32();
+    int numStops = stream->ReadLE32();
     for (i = 0; i < numStops; i++)
-        fStopPoints.push_back(stream->ReadSwapScalar());
+        fStopPoints.push_back(stream->ReadLEScalar());
 }
 
 // Write ---------------------------------------------
@@ -448,41 +448,41 @@ void plATCAnim::Write(hsStream *stream, hsResMgr *mgr)
 {
     plAGAnim::Write(stream, mgr);
 
-    stream->WriteSwapScalar(fInitial);
+    stream->WriteLEScalar(fInitial);
     stream->Writebool(fAutoStart);
-    stream->WriteSwapScalar(fLoopStart);
-    stream->WriteSwapScalar(fLoopEnd);
+    stream->WriteLEScalar(fLoopStart);
+    stream->WriteLEScalar(fLoopEnd);
     stream->Writebool(fLoop);
 
     stream->WriteByte(fEaseInType);
-    stream->WriteSwapScalar(fEaseInMin);
-    stream->WriteSwapScalar(fEaseInMax);
-    stream->WriteSwapScalar(fEaseInLength);
+    stream->WriteLEScalar(fEaseInMin);
+    stream->WriteLEScalar(fEaseInMax);
+    stream->WriteLEScalar(fEaseInLength);
     stream->WriteByte(fEaseOutType);
-    stream->WriteSwapScalar(fEaseOutMin);
-    stream->WriteSwapScalar(fEaseOutMax);
-    stream->WriteSwapScalar(fEaseOutLength);
+    stream->WriteLEScalar(fEaseOutMin);
+    stream->WriteLEScalar(fEaseOutMax);
+    stream->WriteLEScalar(fEaseOutLength);
 
-    stream->WriteSwap32(fMarkers.size());
+    stream->WriteLE32(fMarkers.size());
     for (MarkerMap::iterator it = fMarkers.begin(); it != fMarkers.end(); it++)
     {
         stream->WriteSafeString(it->first);
-        stream->WriteSwapFloat(it->second);
+        stream->WriteLEFloat(it->second);
     }
 
-    stream->WriteSwap32(fLoops.size());
+    stream->WriteLE32(fLoops.size());
     for (LoopMap::iterator loopIt = fLoops.begin(); loopIt != fLoops.end(); loopIt++)
     {
         stream->WriteSafeString(loopIt->first);
         std::pair<float,float>& loop = loopIt->second;
-        stream->WriteSwapFloat(loop.first);
-        stream->WriteSwapFloat(loop.second);
+        stream->WriteLEFloat(loop.first);
+        stream->WriteLEFloat(loop.second);
     }
 
     int i;
-    stream->WriteSwap32(fStopPoints.size());
+    stream->WriteLE32(fStopPoints.size());
     for (i = 0; i < fStopPoints.size(); i++)
-        stream->WriteSwapScalar(fStopPoints[i]);
+        stream->WriteLEScalar(fStopPoints[i]);
 }
 
 // CheckLoop --------------
@@ -629,8 +629,8 @@ void plEmoteAnim::Read(hsStream *stream, hsResMgr *mgr)
     plATCAnim::Read(stream, mgr);
 
     // plAGAnim::RegisterEmote(fName, this);
-    fFadeIn = stream->ReadSwapScalar();
-    fFadeOut = stream->ReadSwapScalar();
+    fFadeIn = stream->ReadLEScalar();
+    fFadeOut = stream->ReadLEScalar();
     fBodyUsage = static_cast<BodyUsage>(stream->ReadByte());
 
 }
@@ -640,8 +640,8 @@ void plEmoteAnim::Read(hsStream *stream, hsResMgr *mgr)
 void plEmoteAnim::Write(hsStream *stream, hsResMgr *mgr)
 {
     plATCAnim::Write(stream, mgr);
-    stream->WriteSwapScalar(fFadeIn);
-    stream->WriteSwapScalar(fFadeOut);
+    stream->WriteLEScalar(fFadeIn);
+    stream->WriteLEScalar(fFadeOut);
     stream->WriteByte(static_cast<UInt8>(fBodyUsage));
 }
 
