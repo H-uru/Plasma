@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plUUID.h"
 #include "hsStream.h"
 
-COMPILER_ASSERT(msizeof(Uuid, data) == msizeof(plUUID, fData));
-
 plUUID::plUUID()
 {
     Clear();
@@ -59,11 +57,6 @@ plUUID::plUUID( const plUUID & other )
     CopyFrom( &other );
 }
 
-plUUID::plUUID( const Uuid & uuid )
-{
-    MemCopy(fData, uuid.data, sizeof(fData));
-}
-
 void plUUID::Read( hsStream * s)
 {
     s->LogSubStreamPushDesc("plUUID");
@@ -75,27 +68,10 @@ void plUUID::Write( hsStream * s)
     s->Write( sizeof( fData ), (const void*)fData );
 }
 
-plUUID::operator Uuid () const {
-    Uuid uuid;
-    MemCopy(uuid.data, fData, sizeof(uuid.data));
-    return uuid;
-}
-
 const char * plUUID::AsString() const {
     static std::string str;
     ToStdString(str);
     return str.c_str();
-}
-
-void plUUID::CopyFrom( const plUUID * v ) {
-    if (!v)
-        Clear();
-    else
-        CopyFrom(*v);
-}
-
-void plUUID::CopyFrom( const plUUID & v ) {
-    MemCopy(fData, v.fData, sizeof(fData));
 }
 
 /*****************************************************************************

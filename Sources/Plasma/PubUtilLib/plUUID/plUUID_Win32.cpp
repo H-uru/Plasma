@@ -47,6 +47,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include <rpc.h>
 
+COMPILER_ASSERT(msizeof(Uuid, data) == msizeof(plUUID, fData));
+
+plUUID::plUUID( const Uuid & uuid )
+{
+    MemCopy(fData, uuid.data, sizeof(fData));
+}
+
 void plUUID::Clear()
 {
     UuidCreateNil( (GUID *)this );
@@ -67,6 +74,23 @@ bool plUUID::IsNull() const
 {
     RPC_STATUS s;
     return 1 == UuidIsNil( (GUID *)this, &s );
+}
+
+void plUUID::CopyFrom( const plUUID * v ) {
+    if (!v)
+        Clear();
+    else
+        CopyFrom(*v);
+}
+
+void plUUID::CopyFrom( const plUUID & v ) {
+    MemCopy(fData, v.fData, sizeof(fData));
+}
+
+plUUID::operator Uuid () const {
+    Uuid uuid;
+    MemCopy(uuid.data, fData, sizeof(uuid.data));
+    return uuid;
 }
 
 bool plUUID::FromString( const char * str )

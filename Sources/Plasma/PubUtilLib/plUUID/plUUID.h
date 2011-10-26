@@ -44,7 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
+#ifdef HS_BUILD_FOR_WIN32
 #include "pnUtils/pnUtils.h"
+#endif
 #include "pnFactory/plCreatable.h"
 
 class hsStream;
@@ -64,7 +66,9 @@ public:
     plUUID();
     plUUID( const char * s );
     plUUID( const plUUID & other );
+#ifdef HS_BUILD_FOR_WIN32
     plUUID( const Uuid & uuid );
+#endif
     void    Clear();
     bool    IsNull() const;
     bool    IsSet() const { return !IsNull(); }
@@ -82,7 +86,9 @@ public:
     bool    operator==( const plUUID & other ) const { return IsEqualTo( &other ); }
     bool    operator!=( const plUUID & other ) const { return !IsEqualTo( &other ); }
     int     operator <( const plUUID & other ) const { return CompareTo( &other ); }
+#ifdef HS_BUILD_FOR_WIN32
     operator Uuid () const;
+#endif
 
     static plUUID Generate();
 };

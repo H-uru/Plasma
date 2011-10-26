@@ -17,6 +17,10 @@ set(plUUID_HEADERS
 )
 
 add_library(plUUID STATIC ${plUUID_SOURCES} ${plUUID_HEADERS})
+target_link_libraries(plUUID pnFactory)
+if(NOT WIN32)
+    target_link_libraries(plUUID uuid)
+endif(NOT WIN32)
 
 source_group("Source Files" FILES ${plUUID_SOURCES})
 source_group("Header Files" FILES ${plUUID_HEADERS})
