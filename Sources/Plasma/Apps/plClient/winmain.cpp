@@ -833,19 +833,6 @@ void DebugMsgF(const char* format, ...)
 #endif
 }
 
-static bool IsMachineLittleEndian() {
-   int i = 1;
-   char *p = (char *) &i;
-   if (p[0] == 1) // Lowest address contains the least significant byte
-      return true;
-   else
-      return false;
-}
-
-inline static dword ToBigEndian (dword value) {
-    return ((value) << 24) | ((value & 0x0000ff00) << 8) | ((value & 0x00ff0000) >> 8) | ((value) >> 24);
-}
-
 static void AuthFailedStrings (ENetError authError,
                                          const char **ppStr1, const char **ppStr2,
                                          const wchar **ppWStr)
@@ -1007,13 +994,11 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
                 password
                 );
 
-            if (IsMachineLittleEndian()) {
-                pLoginParam->namePassHash.data[0] = ToBigEndian(pLoginParam->namePassHash.data[0]);
-                pLoginParam->namePassHash.data[1] = ToBigEndian(pLoginParam->namePassHash.data[1]);
-                pLoginParam->namePassHash.data[2] = ToBigEndian(pLoginParam->namePassHash.data[2]);
-                pLoginParam->namePassHash.data[3] = ToBigEndian(pLoginParam->namePassHash.data[3]);
-                pLoginParam->namePassHash.data[4] = ToBigEndian(pLoginParam->namePassHash.data[4]);
-            }
+                pLoginParam->namePassHash.data[0] = hsToBE32(pLoginParam->namePassHash.data[0]);
+                pLoginParam->namePassHash.data[1] = hsToBE32(pLoginParam->namePassHash.data[1]);
+                pLoginParam->namePassHash.data[2] = hsToBE32(pLoginParam->namePassHash.data[2]);
+                pLoginParam->namePassHash.data[3] = hsToBE32(pLoginParam->namePassHash.data[3]);
+                pLoginParam->namePassHash.data[4] = hsToBE32(pLoginParam->namePassHash.data[4]);
         }
         else
             CryptHashPassword(wusername, wpassword, &pLoginParam->namePassHash);
