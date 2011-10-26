@@ -276,7 +276,7 @@ UInt32 plSecureStream::IRead(UInt32 bytes, void* buffer)
         return 0;
     UInt32 numItems;
 #if HS_BUILD_FOR_WIN32
-    bool success = (ReadFile(fRef, buffer, bytes, &numItems, NULL) != 0);
+    bool success = (ReadFile(fRef, buffer, bytes, (LPDWORD)&numItems, NULL) != 0);
 #elif HS_BUILD_FOR_UNIX
     numItems = fread(buffer, bytes, 1, fRef);
     bool success = numItems != 0;
