@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLoadAgeMsg_INC
 
 #include "pnMessage/plMessage.h"
-#include "plUUID/plUUID.h"
+#include "pnUUID/pnUUID.h"
 #include "hsUtils.h"
 
 //

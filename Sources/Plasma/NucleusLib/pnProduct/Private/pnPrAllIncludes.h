@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 //#include "pnUtils/pnUtils.h"
-#include "plUUID/plUUID.h"
+#include "pnUUID/pnUUID.h"
 
 #include "pnPrBuildId.h"
 #include "pnPrBranchId.h"

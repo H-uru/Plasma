@@ -44,12 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include "pnUtils/pnUtils.h"
 #include "pnProduct/pnProduct.h"
 #include "hsUtils.h"
-
-/* Hack so that we can pull in the product info */
-#include "pnFactory/plCreator.h"
-#include "plUUID/plUUID.h"
-REGISTER_CREATABLE( plCreatableUuid);
-
+#include "pnUUID/pnUUIDCreatable.h"
 
 void EncryptFiles(const char* dir, const char* ext, bool encrypt);
 

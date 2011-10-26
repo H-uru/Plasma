@@ -1,6 +1,5 @@
 include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
 
 set(pnProduct_HEADERS
     Pch.h
@@ -20,6 +19,8 @@ set(pnProduct_PRIVATE
 )
 
 add_library(pnProduct STATIC ${pnProduct_HEADERS} ${pnProduct_PRIVATE})
+
+target_link_libraries(pnProduct pnUUID)
 
 source_group("Header Files" FILES ${pnProduct_HEADERS})
 source_group("Private" FILES ${pnProduct_PRIVATE})

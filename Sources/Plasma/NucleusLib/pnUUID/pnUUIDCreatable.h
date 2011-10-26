@@ -39,59 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plUUID.h"
-#include "hsStream.h"
 
-plUUID::plUUID()
-{
-    Clear();
-}
+#ifndef pnUUIDCreatable_inc
+#define pnUUIDCreatable_inc
 
-plUUID::plUUID( const char * s )
-{
-    FromString( s );
-}
+#include "pnFactory/plCreator.h"
 
-plUUID::plUUID( const plUUID & other )
-{
-    CopyFrom( &other );
-}
 
-void plUUID::Read( hsStream * s)
-{
-    s->LogSubStreamPushDesc("plUUID");
-    s->Read( sizeof( fData ), (void*)fData );
-}
+#include "pnUUID.h"
 
-void plUUID::Write( hsStream * s)
-{
-    s->Write( sizeof( fData ), (const void*)fData );
-}
+REGISTER_CREATABLE( plCreatableUuid );
 
-const char * plUUID::AsString() const {
-    static std::string str;
-    ToStdString(str);
-    return str.c_str();
-}
+#endif // pnUUIDCreatable_inc
 
-/*****************************************************************************
-*
-*   plCreatableUuid
-*
-***/
-
-//============================================================================
-plCreatableUuid::plCreatableUuid () {
-}
-
-//============================================================================
-plCreatableUuid::plCreatableUuid (const plCreatableUuid & other)
-: plUUID(other)
-{
-}
-
-//============================================================================
-plCreatableUuid::plCreatableUuid (const plUUID & other)
-: plUUID(other)
-{
-}
