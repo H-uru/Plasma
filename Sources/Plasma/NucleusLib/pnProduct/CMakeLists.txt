@@ -1,5 +1,6 @@
 include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
+include_directories("../../PubUtilLib")
 
 set(pnProduct_HEADERS
     Pch.h

@@ -61,7 +61,7 @@ namespace Uru {
     static const wchar kCoreName[]  = L"UruLive";
     static const wchar kShortName[] = L"UruLive";
     static const wchar kLongName[]  = L"Uru Live";
-    static const Uuid  kId(L"ea489821-6c35-4bd0-9dae-bb17c585e680");
+    static const plUUID  kId("ea489821-6c35-4bd0-9dae-bb17c585e680");
 }
 
 // @@@: add your product namespace here
@@ -96,7 +96,7 @@ namespace Uru {
 ***/
 
 //============================================================================
-const Uuid & ProductId () {
+const plUUID& ProductId () {
     return PRODUCT_ID;
 }
 
@@ -119,7 +119,7 @@ const wchar * ProductLongName () {
 //============================================================================
 void ProductString (wchar * dest, unsigned destChars) {
     // Example: "UruLive.2.214 - External.Release"
-    StrPrintf(
+    swprintf(
         dest,
         destChars,
         L"%s.%u.%u - %s.%s",
