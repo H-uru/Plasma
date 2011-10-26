@@ -889,23 +889,23 @@ void plAnimTimeConvert::Read(hsStream* s, hsResMgr* mgr)
 {
     plCreatable::Read(s, mgr);
 
-    fFlags = (UInt16)(s->ReadSwap32());
+    fFlags = (UInt16)(s->ReadLE32());
 
-    fBegin = fInitialBegin = s->ReadSwapScalar();
-    fEnd = fInitialEnd = s->ReadSwapScalar();
-    fLoopEnd = s->ReadSwapScalar();
-    fLoopBegin = s->ReadSwapScalar();
-    fSpeed = s->ReadSwapScalar();
+    fBegin = fInitialBegin = s->ReadLEScalar();
+    fEnd = fInitialEnd = s->ReadLEScalar();
+    fLoopEnd = s->ReadLEScalar();
+    fLoopBegin = s->ReadLEScalar();
+    fSpeed = s->ReadLEScalar();
 
     fEaseInCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
     fEaseOutCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
     fSpeedEaseCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
 
-    fCurrentAnimTime = s->ReadSwapScalar();
-    fLastEvalWorldTime = s->ReadSwapDouble();
+    fCurrentAnimTime = s->ReadLEScalar();
+    fLastEvalWorldTime = s->ReadLEDouble();
 
     // load other non-synched data;
-    int count = s->ReadSwap32();
+    int count = s->ReadLE32();
     fCallbackMsgs.SetCountAndZero(count);
 
     int i;
@@ -915,10 +915,10 @@ void plAnimTimeConvert::Read(hsStream* s, hsResMgr* mgr)
         fCallbackMsgs[i] = msg;
     }
 
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     for (i = 0; i < count; i++)
     {
-        fStopPoints.Append(s->ReadSwapScalar());
+        fStopPoints.Append(s->ReadLEScalar());
     }
     IProcessStateChange(0, fBegin);
 }
@@ -927,31 +927,31 @@ void plAnimTimeConvert::Write(hsStream* s, hsResMgr* mgr)
 {
     plCreatable::Write(s, mgr);
 
-    s->WriteSwap32(fFlags);
+    s->WriteLE32(fFlags);
 
-    s->WriteSwapScalar(fBegin);
-    s->WriteSwapScalar(fEnd);
-    s->WriteSwapScalar(fLoopEnd);
-    s->WriteSwapScalar(fLoopBegin);
-    s->WriteSwapScalar(fSpeed);
+    s->WriteLEScalar(fBegin);
+    s->WriteLEScalar(fEnd);
+    s->WriteLEScalar(fLoopEnd);
+    s->WriteLEScalar(fLoopBegin);
+    s->WriteLEScalar(fSpeed);
 
     mgr->WriteCreatable(s, fEaseInCurve);
     mgr->WriteCreatable(s, fEaseOutCurve);
     mgr->WriteCreatable(s, fSpeedEaseCurve);
 
-    s->WriteSwapScalar(fCurrentAnimTime);
-    s->WriteSwapDouble(fLastEvalWorldTime);
+    s->WriteLEScalar(fCurrentAnimTime);
+    s->WriteLEDouble(fLastEvalWorldTime);
 
     // save out other non-synched important data
-    s->WriteSwap32(fCallbackMsgs.Count());
+    s->WriteLE32(fCallbackMsgs.Count());
     int i;
     for (i = 0; i < fCallbackMsgs.Count(); i++)
         mgr->WriteCreatable(s, fCallbackMsgs[i]);
 
-    s->WriteSwap32(fStopPoints.GetCount());
+    s->WriteLE32(fStopPoints.GetCount());
     for (i = 0; i < fStopPoints.GetCount(); i++)
     {
-        s->WriteSwapScalar(fStopPoints.Get(i));
+        s->WriteLEScalar(fStopPoints.Get(i));
     }
 }
 
@@ -1347,30 +1347,30 @@ void plAnimTimeConvert::EnableCallbacks(hsBool val)
 
 void plATCState::Read(hsStream *s, hsResMgr *mgr)
 {
-    fStartWorldTime = s->ReadSwapDouble();
-    fStartAnimTime = s->ReadSwapScalar();
+    fStartWorldTime = s->ReadLEDouble();
+    fStartAnimTime = s->ReadLEScalar();
 
-    fFlags = (UInt8)(s->ReadSwap32());
-    fEnd = s->ReadSwapScalar();
-    fLoopBegin = s->ReadSwapScalar();
-    fLoopEnd = s->ReadSwapScalar();
-    fSpeed = s->ReadSwapScalar();
-    fWrapTime = s->ReadSwapScalar();
+    fFlags = (UInt8)(s->ReadLE32());
+    fEnd = s->ReadLEScalar();
+    fLoopBegin = s->ReadLEScalar();
+    fLoopEnd = s->ReadLEScalar();
+    fSpeed = s->ReadLEScalar();
+    fWrapTime = s->ReadLEScalar();
     if (s->ReadBool())
         fEaseCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
 }
 
 void plATCState::Write(hsStream *s, hsResMgr *mgr)
 {
-    s->WriteSwapDouble(fStartWorldTime);
-    s->WriteSwapScalar(fStartAnimTime);
+    s->WriteLEDouble(fStartWorldTime);
+    s->WriteLEScalar(fStartAnimTime);
 
-    s->WriteSwap32(fFlags);
-    s->WriteSwapScalar(fEnd);
-    s->WriteSwapScalar(fLoopBegin);
-    s->WriteSwapScalar(fLoopEnd);
-    s->WriteSwapScalar(fSpeed);
-    s->WriteSwapScalar(fWrapTime);
+    s->WriteLE32(fFlags);
+    s->WriteLEScalar(fEnd);
+    s->WriteLEScalar(fLoopBegin);
+    s->WriteLEScalar(fLoopEnd);
+    s->WriteLEScalar(fSpeed);
+    s->WriteLEScalar(fWrapTime);
     if (fEaseCurve != nil)
     {
         s->WriteBool(true);

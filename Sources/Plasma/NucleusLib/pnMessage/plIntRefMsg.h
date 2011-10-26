@@ -78,17 +78,17 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plRefMsg::Read(stream, mgr);
-        stream->ReadSwap(&fType);
-        stream->ReadSwap(&fWhich);
-        stream->ReadSwap(&fIdx);
+        stream->ReadLE(&fType);
+        stream->ReadLE(&fWhich);
+        stream->ReadLE(&fIdx);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plRefMsg::Write(stream, mgr);
-        stream->WriteSwap(fType);
-        stream->WriteSwap(fWhich);
-        stream->WriteSwap(fIdx);
+        stream->WriteLE(fType);
+        stream->WriteLE(fWhich);
+        stream->WriteLE(fIdx);
     }
 };
 

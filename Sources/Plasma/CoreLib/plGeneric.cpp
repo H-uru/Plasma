@@ -153,11 +153,11 @@ int plGeneric::Write(hsStream* stream)
         break;
 
     case kInt:
-        stream->WriteSwap(fIntVal);
+        stream->WriteLE(fIntVal);
         break;
 
     case kFloat:
-        stream->WriteSwap(fFloatVal);
+        stream->WriteLE(fFloatVal);
         break;
 
     case kString:
@@ -181,11 +181,11 @@ int plGeneric::Read(hsStream* stream)
         break;
 
     case kInt:
-        stream->ReadSwap(&fIntVal);
+        stream->ReadLE(&fIntVal);
         break;
 
     case kFloat:
-        stream->ReadSwap(&fFloatVal);
+        stream->ReadLE(&fFloatVal);
         break;
 
     case kString:

@@ -349,7 +349,7 @@ void plViewTransform::GetViewPort(int& loX, int& loY, int& hiX, int& hiY) const
 
 void plViewTransform::Read(hsStream* s)
 {
-    fFlags = s->ReadSwap32();
+    fFlags = s->ReadLE32();
     fFlags &= ~kSetMask;
 
     fCameraToWorld.Read(s);
@@ -358,8 +358,8 @@ void plViewTransform::Read(hsStream* s)
     fMin.Read(s);
     fMax.Read(s);
 
-    fWidth = s->ReadSwap16();
-    fHeight = s->ReadSwap16();
+    fWidth = s->ReadLE16();
+    fHeight = s->ReadLE16();
 
     fViewPortX.Read(s);
     fViewPortY.Read(s);
@@ -370,7 +370,7 @@ void plViewTransform::Read(hsStream* s)
 
 void plViewTransform::Write(hsStream* s)
 {
-    s->WriteSwap32(fFlags & ~kSetMask);
+    s->WriteLE32(fFlags & ~kSetMask);
 
     fCameraToWorld.Write(s);
     fWorldToCamera.Write(s);
@@ -378,8 +378,8 @@ void plViewTransform::Write(hsStream* s)
     fMin.Write(s);
     fMax.Write(s);
 
-    s->WriteSwap16(fWidth);
-    s->WriteSwap16(fHeight);
+    s->WriteLE16(fWidth);
+    s->WriteLE16(fHeight);
 
     fViewPortX.Write(s);
     fViewPortY.Write(s);

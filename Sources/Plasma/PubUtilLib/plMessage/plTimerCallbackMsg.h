@@ -64,15 +64,15 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgRead(stream, mgr);
-        fID = stream->ReadSwap32();
-        fTime = stream->ReadSwapScalar();
+        fID = stream->ReadLE32();
+        fTime = stream->ReadLEScalar();
     }
 
     virtual void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
-        stream->WriteSwap32(fID);
-        stream->WriteSwapScalar(fTime);
+        stream->WriteLE32(fID);
+        stream->WriteLEScalar(fTime);
     }
 };
 

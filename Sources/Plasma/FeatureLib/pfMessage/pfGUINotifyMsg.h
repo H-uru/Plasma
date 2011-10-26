@@ -126,14 +126,14 @@ public:
     {
         plMessage::IMsgRead(stream, mgr);
         fControlKey = mgr->ReadKey(stream);
-        fEvent = stream->ReadSwap32();
+        fEvent = stream->ReadLE32();
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
         mgr->WriteKey(stream, fControlKey);
-        stream->WriteSwap32(fEvent);
+        stream->WriteLE32(fEvent);
     }
 };
 

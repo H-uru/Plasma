@@ -96,16 +96,16 @@ public:
     {
         plMessage::IMsgRead(stream, mgr);
 
-        fParamID = stream->ReadSwap32();
-        stream->ReadSwap(&fParamValue);
+        fParamID = stream->ReadLE32();
+        stream->ReadLE(&fParamValue);
     }
 
     virtual void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
 
-        stream->WriteSwap32(fParamID);
-        stream->WriteSwap(fParamValue);
+        stream->WriteLE32(fParamID);
+        stream->WriteLE(fParamValue);
     }
 };
 
@@ -134,7 +134,7 @@ public:
         plMessage::IMsgRead(stream, mgr);
         
         fSysSOKey = mgr->ReadKey(stream);
-        fNumToTransfer = stream->ReadSwap16();
+        fNumToTransfer = stream->ReadLE16();
     }
     
     virtual void Write(hsStream *stream, hsResMgr *mgr)
@@ -142,7 +142,7 @@ public:
         plMessage::IMsgWrite(stream, mgr);
         
         mgr->WriteKey(stream, fSysSOKey);
-        stream->WriteSwap16(fNumToTransfer);
+        stream->WriteLE16(fNumToTransfer);
     }
     
 };
@@ -177,16 +177,16 @@ public:
     virtual void Read(hsStream *stream, hsResMgr *mgr) 
     {
         plMessage::IMsgRead(stream,mgr);
-        fNumToKill = stream->ReadSwapScalar();
-        fTimeLeft = stream->ReadSwapScalar();
-        stream->ReadSwap(&fFlags);
+        fNumToKill = stream->ReadLEScalar();
+        fTimeLeft = stream->ReadLEScalar();
+        stream->ReadLE(&fFlags);
     }
     virtual void Write(hsStream *stream, hsResMgr *mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
-        stream->WriteSwapScalar(fNumToKill);
-        stream->WriteSwapScalar(fTimeLeft);
-        stream->WriteSwap(fFlags);
+        stream->WriteLEScalar(fNumToKill);
+        stream->WriteLEScalar(fTimeLeft);
+        stream->WriteLE(fFlags);
     }
 };
 

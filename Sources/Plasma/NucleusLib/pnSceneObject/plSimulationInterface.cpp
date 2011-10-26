@@ -97,7 +97,7 @@ void plSimulationInterface::Read(hsStream* s, hsResMgr* mgr)
     // avoid breaking the format
     fProps.Read(s);
     // Also unnecessary
-    int poop = s->ReadSwap32();
+    int poop = s->ReadLE32();
 
     plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kPhysical, 0);
     mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
@@ -109,7 +109,7 @@ void plSimulationInterface::Write(hsStream* s, hsResMgr* mgr)
 
     // Legacy crap
     fProps.Write(s);
-    s->WriteSwap32(0);
+    s->WriteLE32(0);
 
     mgr->WriteKey(s, fPhysical);
 }

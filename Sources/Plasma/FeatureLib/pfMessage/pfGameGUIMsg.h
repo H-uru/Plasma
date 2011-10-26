@@ -78,7 +78,7 @@ class pfGameGUIMsg : public plMessage
         virtual void Read(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgRead( s, mgr ); 
-            s->ReadSwap( &fCommand );
+            s->ReadLE( &fCommand );
             s->Read( sizeof( fString ), fString );
             fAge = s->ReadSafeString();
         }
@@ -86,7 +86,7 @@ class pfGameGUIMsg : public plMessage
         virtual void Write(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgWrite( s, mgr ); 
-            s->WriteSwap( fCommand );
+            s->WriteLE( fCommand );
             s->Write( sizeof( fString ), fString );
             s->WriteSafeString( fAge );
         }

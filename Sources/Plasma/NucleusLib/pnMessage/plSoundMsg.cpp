@@ -62,16 +62,16 @@ void plSoundMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessageWithCallbacks::Read(stream, mgr);
 
     fCmd.Read(stream);
-    stream->ReadSwap(&fBegin);
-    stream->ReadSwap(&fEnd);
+    stream->ReadLE(&fBegin);
+    stream->ReadLE(&fEnd);
     fLoop = stream->ReadBool();
     fPlaying = stream->ReadBool();
-    stream->ReadSwap(&fSpeed);
-    stream->ReadSwap(&fTime);
-    stream->ReadSwap(&fIndex);
-    stream->ReadSwap(&fRepeats);
-    stream->ReadSwap(&fNameStr);
-    stream->ReadSwap(&fVolume);
+    stream->ReadLE(&fSpeed);
+    stream->ReadLE(&fTime);
+    stream->ReadLE(&fIndex);
+    stream->ReadLE(&fRepeats);
+    stream->ReadLE(&fNameStr);
+    stream->ReadLE(&fVolume);
     fFadeType = (plSoundMsg::FadeType)stream->ReadByte();
 }
 
@@ -80,15 +80,15 @@ void plSoundMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessageWithCallbacks::Write(stream, mgr);
 
     fCmd.Write(stream);
-    stream->WriteSwap(fBegin);
-    stream->WriteSwap(fEnd);
+    stream->WriteLE(fBegin);
+    stream->WriteLE(fEnd);
     stream->WriteBool(fLoop);
     stream->WriteBool(fPlaying);
-    stream->WriteSwap(fSpeed);
-    stream->WriteSwap(fTime);
-    stream->WriteSwap(fIndex);
-    stream->WriteSwap(fRepeats);
-    stream->WriteSwap(fNameStr);
-    stream->WriteSwap(fVolume);
+    stream->WriteLE(fSpeed);
+    stream->WriteLE(fTime);
+    stream->WriteLE(fIndex);
+    stream->WriteLE(fRepeats);
+    stream->WriteLE(fNameStr);
+    stream->WriteLE(fVolume);
     stream->WriteByte( (UInt8)fFadeType );
 }

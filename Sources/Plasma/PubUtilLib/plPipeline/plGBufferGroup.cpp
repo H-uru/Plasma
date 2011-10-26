@@ -76,19 +76,19 @@ const UInt32 plGBufferGroup::kMaxNumIndicesPerBuffer = 32000;
 
 void    plGBufferTriangle::Read( hsStream *s )
 {
-    fIndex1 = s->ReadSwap16();
-    fIndex2 = s->ReadSwap16();
-    fIndex3 = s->ReadSwap16();
-    fSpanIndex = s->ReadSwap16();
+    fIndex1 = s->ReadLE16();
+    fIndex2 = s->ReadLE16();
+    fIndex3 = s->ReadLE16();
+    fSpanIndex = s->ReadLE16();
     fCenter.Read( s );
 }
 
 void    plGBufferTriangle::Write( hsStream *s )
 {
-    s->WriteSwap16( fIndex1 );
-    s->WriteSwap16( fIndex2 );
-    s->WriteSwap16( fIndex3 );
-    s->WriteSwap16( fSpanIndex );
+    s->WriteLE16( fIndex1 );
+    s->WriteLE16( fIndex2 );
+    s->WriteLE16( fIndex3 );
+    s->WriteLE16( fSpanIndex );
     fCenter.Write( s );
 }
 
@@ -96,16 +96,16 @@ void    plGBufferTriangle::Write( hsStream *s )
     
 void    plGBufferCell::Read( hsStream *s )
 {
-    fVtxStart = s->ReadSwap32();
-    fColorStart = s->ReadSwap32();
-    fLength = s->ReadSwap32();
+    fVtxStart = s->ReadLE32();
+    fColorStart = s->ReadLE32();
+    fLength = s->ReadLE32();
 }
 
 void    plGBufferCell::Write( hsStream *s )
 {
-    s->WriteSwap32( fVtxStart );
-    s->WriteSwap32( fColorStart );
-    s->WriteSwap32( fLength );
+    s->WriteLE32( fVtxStart );
+    s->WriteLE32( fColorStart );
+    s->WriteLE32( fLength );
 }
 
 //// Constructor //////////////////////////////////////////////////////////////
@@ -367,8 +367,8 @@ void    plGBufferGroup::Read( hsStream *s )
     plGBufferColor  *cData;
 
 
-    s->ReadSwap( &fFormat );
-    totalDynSize = s->ReadSwap32();
+    s->ReadLE( &fFormat );
+    totalDynSize = s->ReadLE32();
     fStride = ICalcVertexSize( fLiteStride );
 
     fVertBuffSizes.Reset();
@@ -383,12 +383,12 @@ void    plGBufferGroup::Read( hsStream *s )
 
     plVertCoder coder;
     /// Create buffers and read in as we go
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     for( i = 0; i < count; i++ )
     {
         if( fFormat & kEncoded )
         {
-            const UInt16 numVerts = s->ReadSwap16();
+            const UInt16 numVerts = s->ReadLE16();
             const UInt32 size = numVerts * fStride;
 
             fVertBuffSizes.Append(size);
@@ -407,7 +407,7 @@ void    plGBufferGroup::Read( hsStream *s )
         }
         else
         {
-            temp = s->ReadSwap32();
+            temp = s->ReadLE32();
     
             fVertBuffSizes.Append( temp );
             fVertBuffStarts.Append(0);
@@ -419,7 +419,7 @@ void    plGBufferGroup::Read( hsStream *s )
             fVertBuffStorage.Append( vData );
             plProfile_NewMem(MemBufGrpVertex, temp);
             
-            temp = s->ReadSwap32();
+            temp = s->ReadLE32();
             fColorBuffCounts.Append( temp );
             
             if( temp > 0 )
@@ -435,17 +435,17 @@ void    plGBufferGroup::Read( hsStream *s )
         }
     }
 
-    count = s->ReadSwap32();
+    count = s->ReadLE32();
     for( i = 0; i < count; i++ )
     {
-        temp = s->ReadSwap32();
+        temp = s->ReadLE32();
         fIdxBuffCounts.Append( temp );
         fIdxBuffStarts.Append(0);
         fIdxBuffEnds.Append(-1);
 
         iData = TRACKED_NEW UInt16[ temp ];
         hsAssert( iData != nil, "Not enough memory to read in indices" );
-        s->ReadSwap16( temp, (UInt16 *)iData );
+        s->ReadLE16( temp, (UInt16 *)iData );
         fIdxBuffStorage.Append( iData );
         plProfile_NewMem(MemBufGrpIndex, temp * sizeof(UInt16));
     }
@@ -453,7 +453,7 @@ void    plGBufferGroup::Read( hsStream *s )
     /// Read in cell arrays, one per vBuffer
     for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
     {
-        temp = s->ReadSwap32();
+        temp = s->ReadLE32();
 
         fCells.Append( TRACKED_NEW hsTArray<plGBufferCell> );
         fCells[ i ]->SetCount( temp );
@@ -487,20 +487,20 @@ void    plGBufferGroup::Write( hsStream *s )
     for( i = 0; i < fIdxBuffCounts.GetCount(); i++ )
         totalDynSize += sizeof( UInt16 ) * fIdxBuffCounts[ i ];
 
-    s->WriteSwap( fFormat );
-    s->WriteSwap32( totalDynSize );
+    s->WriteLE( fFormat );
+    s->WriteLE32( totalDynSize );
 
     plVertCoder coder;
 
     /// Write out dyanmic data
-    s->WriteSwap32( (UInt32)fVertBuffStorage.GetCount() );
+    s->WriteLE32( (UInt32)fVertBuffStorage.GetCount() );
     for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
     {
 #ifdef MF_VERTCODE_ENABLED
 
         hsAssert(fCells[i]->GetCount() == 1, "Data must be interleaved for compression");
         UInt32 numVerts = fVertBuffSizes[i] / fStride;
-        s->WriteSwap16((UInt16)numVerts);
+        s->WriteLE16((UInt16)numVerts);
         coder.Write(s, fVertBuffStorage[i], fFormat, fStride, (UInt16)numVerts);
 
 #ifdef VERT_LOG
@@ -518,27 +518,27 @@ void    plGBufferGroup::Write( hsStream *s )
 
 #else // MF_VERTCODE_ENABLED
         
-        s->WriteSwap32( fVertBuffSizes[ i ] );
+        s->WriteLE32( fVertBuffSizes[ i ] );
         s->Write( fVertBuffSizes[ i ], (void *)fVertBuffStorage[ i ] );
         
 
-        s->WriteSwap32( fColorBuffCounts[ i ] );
+        s->WriteLE32( fColorBuffCounts[ i ] );
         s->Write( fColorBuffCounts[ i ] * sizeof( plGBufferColor ), (void *)fColorBuffStorage[ i ] );
 
 #endif // MF_VERTCODE_ENABLED
     }
 
-    s->WriteSwap32( (UInt32)fIdxBuffCounts.GetCount() );
+    s->WriteLE32( (UInt32)fIdxBuffCounts.GetCount() );
     for( i = 0; i < fIdxBuffStorage.GetCount(); i++ )
     {
-        s->WriteSwap32( fIdxBuffCounts[ i ] );
-        s->WriteSwap16( fIdxBuffCounts[ i ], fIdxBuffStorage[ i ] );
+        s->WriteLE32( fIdxBuffCounts[ i ] );
+        s->WriteLE16( fIdxBuffCounts[ i ], fIdxBuffStorage[ i ] );
     }
 
     /// Write out cell arrays
     for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
     {
-        s->WriteSwap32( fCells[ i ]->GetCount() );
+        s->WriteLE32( fCells[ i ]->GetCount() );
         for( j = 0; j < fCells[ i ]->GetCount(); j++ )
             (*fCells[ i ])[ j ].Write( s );
     }

@@ -131,15 +131,15 @@ plCullPoly& plCullPoly::Transform(const hsMatrix44& l2w, const hsMatrix44& w2l, 
 
 void plCullPoly::Read(hsStream* s, hsResMgr* mgr)
 {
-    fFlags = s->ReadSwap32();
+    fFlags = s->ReadLE32();
 
     fNorm.Read(s);
-    fDist = s->ReadSwapScalar();
+    fDist = s->ReadLEScalar();
     fCenter.Read(s);
 
-    fRadius = s->ReadSwapScalar();
+    fRadius = s->ReadLEScalar();
 
-    int n = s->ReadSwap32();
+    int n = s->ReadLE32();
     fVerts.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -148,15 +148,15 @@ void plCullPoly::Read(hsStream* s, hsResMgr* mgr)
 
 void plCullPoly::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteSwap32(fFlags);
+    s->WriteLE32(fFlags);
 
     fNorm.Write(s);
-    s->WriteSwapScalar(fDist);
+    s->WriteLEScalar(fDist);
     fCenter.Write(s);
 
-    s->WriteSwapScalar(fRadius);
+    s->WriteLEScalar(fRadius);
 
-    s->WriteSwap32(fVerts.GetCount());
+    s->WriteLE32(fVerts.GetCount());
     int i;
     for( i = 0; i < fVerts.GetCount(); i++ )
         fVerts[i].Write(s);

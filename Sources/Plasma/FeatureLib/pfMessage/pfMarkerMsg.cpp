@@ -62,7 +62,7 @@ void pfMarkerMsg::Read(hsStream* stream, hsResMgr* mgr)
     fType = (Type)stream->ReadByte();
 
     if (fType == kMarkerCaptured)
-        fMarkerID = stream->ReadSwap32();
+        fMarkerID = stream->ReadLE32();
 }
 
 void pfMarkerMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -72,7 +72,7 @@ void pfMarkerMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteByte(fType);
 
     if (fType == kMarkerCaptured)
-        stream->WriteSwap32(fMarkerID);
+        stream->WriteLE32(fMarkerID);
 }
 
 void pfMarkerMsg::PrintDebug(char* buf)

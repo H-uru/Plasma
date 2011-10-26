@@ -69,7 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtCmd.h"
 #include "pnUtMisc.h"
 #include "pnUtCrypt.h"
-#include "pnUtEndian.h"
 #include "pnUtSpareList.h"
 #include "pnUtSubst.h"
 #include "pnUtRand.h"

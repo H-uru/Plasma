@@ -266,13 +266,6 @@ static void BufferedSendData (
     #define ASSERT_MSG_VALID(expr)          \
         ASSERTMSG(expr, "Invalid message definition");
 
-    #define WRITE_SWAPPED_INT(t,c) {        \
-        ASSERT(sizeof(t) == sizeof(c));     \
-        t endianCount = Endian((t)c);       \
-        AddToSendBuffer(cli, sizeof(t), (const void *) &endianCount);   \
-    }
-
-
     ASSERT(cli);
     ASSERT(msg);
     ASSERT(fieldCount);
@@ -287,8 +280,8 @@ static void BufferedSendData (
     ASSERT(fieldCount-1 == sendMsg->msg.count);
 
     // insert messageId into command stream
-    const word msgId = (word) msg[0];
-    WRITE_SWAPPED_INT(word, msgId);
+    const word msgId = hsToLE16((word)msg[0]);
+    AddToSendBuffer(cli, sizeof(word), (const void*)&msgId);
     ++msg;
     ASSERT_MSG_VALID(msg < msgEnd);
 
@@ -305,11 +298,33 @@ static void BufferedSendData (
                 void * temp = ALLOCA(byte, bytes);
                 
                 if (count == 1)
+                {
                     // Single values are passed by value
-                    EndianCopy(temp, (const byte *) msg, count, cmd->size);
+                    if (cmd->size == sizeof(byte)) {
+                        *(byte*)temp = *(byte*)msg;
+                    } else if (cmd->size == sizeof(word)) {
+                        *(word*)temp = hsToLE16(*(word*)msg);
+                    } else if (cmd->size == sizeof(dword)) {
+                        *(dword*)temp = hsToLE32(*(dword*)msg);
+                    } else if (cmd->size == sizeof(qword)) {
+                        *(qword*)temp = hsToLE64(*(qword*)msg);
+                    }
+                }
                 else
+                {
                     // Value arrays are passed in by ptr
-                    EndianCopy(temp, (const byte *) *msg, count, cmd->size);
+                    for (int i = 0; i < count; i++) {
+                        if (cmd->size == sizeof(byte)) {
+                            ((byte*)temp)[i] = ((byte*)*msg)[i];
+                        } else if (cmd->size == sizeof(word)) {
+                            ((word*)temp)[i] = hsToLE16(((word*)*msg)[i]);
+                        } else if (cmd->size == sizeof(dword)) {
+                            ((dword*)temp)[i] = hsToLE32(((dword*)*msg)[i]);
+                        } else if (cmd->size == sizeof(qword)) {
+                            ((qword*)temp)[i] = hsToLE64(((qword*)*msg)[i]);
+                        }
+                    }
+                }
                 
                 // Write values to send buffer
                 AddToSendBuffer(cli, bytes, temp);
@@ -335,7 +350,8 @@ static void BufferedSendData (
                 const word length = (word) StrLen((const wchar *) *msg);
                 ASSERT_MSG_VALID(length < cmd->count);
                 // Write actual string length
-                WRITE_SWAPPED_INT(word, length);
+                word size = hsToLE16(length);
+                AddToSendBuffer(cli, sizeof(word), (const void*)&size);
                 // Write string data
                 AddToSendBuffer(cli, length * sizeof(wchar), (const void *) *msg);
             }
@@ -354,8 +370,8 @@ static void BufferedSendData (
                 // remember the element size
                 varSize  = cmd->size;
                 // write the actual element count
-                varCount = (dword) *msg;
-                WRITE_SWAPPED_INT(dword, varCount);
+                varCount = hsToLE32((dword)*msg);
+                AddToSendBuffer(cli, sizeof(dword), (const void*)&varCount);
             }
             break;
 
@@ -396,7 +412,7 @@ static bool DispatchData (NetCli * cli, void * param) {
             if (!cli->input.Get(sizeof(msgId), &msgId))
                 goto NEED_MORE_DATA;
 
-            msgId = Endian(msgId);
+            msgId = hsToLE16(msgId);
 
             if (nil == (cli->recvMsg = NetMsgChannelFindRecvMessage(cli->channel, msgId)))
                 goto ERR_NO_HANDLER;
@@ -434,11 +450,16 @@ static bool DispatchData (NetCli * cli, void * param) {
                     }
 
                     // Byte-swap integers
-                    EndianConvert(
-                        data,
-                        count,
-                        cli->recvField->size
-                    );
+                    // This is so screwed up >.<
+                    for (int i = 0; i < count; i++) {
+                        if (cli->recvField->size == sizeof(word)) {
+                            ((word*)data)[i] = hsToLE16(((word*)data)[i]);
+                        } else if (cli->recvField->size == sizeof(dword)) {
+                            ((dword*)data)[i] = hsToLE32(((dword*)data)[i]);
+                        } else if (cli->recvField->size == sizeof(qword)) {
+                            ((qword*)data)[i] = hsToLE64(((qword*)data)[i]);
+                        }
+                    }
 
                     // Field complete
                 }
@@ -486,10 +507,10 @@ static bool DispatchData (NetCli * cli, void * param) {
                     }
 
                     // Byte-swap value
-                    EndianConvert((dword *) data, 1);
+                    dword val = hsToLE32(*(dword*)data);
 
                     // Prepare to read var-length field
-                    cli->recvFieldBytes = *(dword *)data * cli->recvField->size;
+                    cli->recvFieldBytes = val * cli->recvField->size;
 
                     // Field complete
                 }
@@ -516,7 +537,7 @@ static bool DispatchData (NetCli * cli, void * param) {
                         word length;
                         if (!cli->input.Get(sizeof(word), &length))
                             goto NEED_MORE_DATA;
-                        cli->recvFieldBytes = Endian(length) * sizeof(wchar);
+                        cli->recvFieldBytes = hsToLE16(length) * sizeof(wchar);
 
                         // Validate size. Use >= instead of > to leave room for the NULL terminator.
                         if (cli->recvFieldBytes >= cli->recvField->count * cli->recvField->size)

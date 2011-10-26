@@ -68,28 +68,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void    plSpan::Read( hsStream *stream )
 {
-    fSubType = (UInt16)(stream->ReadSwap32());
+    fSubType = (UInt16)(stream->ReadLE32());
     fFogEnvironment = nil;
 
-    fMaterialIdx = stream->ReadSwap32();
+    fMaterialIdx = stream->ReadLE32();
     fLocalToWorld.Read( stream );
     fWorldToLocal.Read( stream );
-    fProps = stream->ReadSwap32();
+    fProps = stream->ReadLE32();
     fLocalBounds.Read( stream );
     fWorldBounds.Read( stream );
 
-    fNumMatrices = (UInt8)(stream->ReadSwap32());
-    fBaseMatrix = stream->ReadSwap32();
+    fNumMatrices = (UInt8)(stream->ReadLE32());
+    fBaseMatrix = stream->ReadLE32();
 
-    fLocalUVWChans = stream->ReadSwap16();
-    fMaxBoneIdx = stream->ReadSwap16();
-    fPenBoneIdx = stream->ReadSwap16();
+    fLocalUVWChans = stream->ReadLE16();
+    fMaxBoneIdx = stream->ReadLE16();
+    fPenBoneIdx = stream->ReadLE16();
 
-    fMinDist = stream->ReadSwapScalar();
-    fMaxDist = stream->ReadSwapScalar();
+    fMinDist = stream->ReadLEScalar();
+    fMaxDist = stream->ReadLEScalar();
 
     if( fProps & kWaterHeight )
-        fWaterHeight = stream->ReadSwapScalar();
+        fWaterHeight = stream->ReadLEScalar();
 
 #ifdef HS_DEBUGGING
     fOwnerKey = nil;
@@ -100,28 +100,28 @@ void    plSpan::Read( hsStream *stream )
 
 void    plSpan::Write( hsStream *stream )
 {
-    stream->WriteSwap32(fSubType);
+    stream->WriteLE32(fSubType);
 
-    stream->WriteSwap32( fMaterialIdx );
+    stream->WriteLE32( fMaterialIdx );
 
     fLocalToWorld.Write( stream );
     fWorldToLocal.Write( stream );
-    stream->WriteSwap32( fProps );
+    stream->WriteLE32( fProps );
     fLocalBounds.Write( stream );
     fWorldBounds.Write( stream );
 
-    stream->WriteSwap32( fNumMatrices );
-    stream->WriteSwap32( fBaseMatrix );
+    stream->WriteLE32( fNumMatrices );
+    stream->WriteLE32( fBaseMatrix );
 
-    stream->WriteSwap16( fLocalUVWChans );
-    stream->WriteSwap16( fMaxBoneIdx );
-    stream->WriteSwap16( fPenBoneIdx );
+    stream->WriteLE16( fLocalUVWChans );
+    stream->WriteLE16( fMaxBoneIdx );
+    stream->WriteLE16( fPenBoneIdx );
 
-    stream->WriteSwapScalar( fMinDist );
-    stream->WriteSwapScalar( fMaxDist );
+    stream->WriteLEScalar( fMinDist );
+    stream->WriteLEScalar( fMaxDist );
 
     if( fProps & kWaterHeight )
-        stream->WriteSwapScalar(fWaterHeight);
+        stream->WriteLEScalar(fWaterHeight);
 }
 
 void plSpan::RemoveAuxSpan(plAuxSpan* aux)
@@ -355,24 +355,24 @@ void    plVertexSpan::Read( hsStream* stream )
 {
     plSpan:: Read( stream );
 
-    fGroupIdx = stream->ReadSwap32();
-    fVBufferIdx = stream->ReadSwap32();
-    fCellIdx = stream->ReadSwap32();
-    fCellOffset = stream->ReadSwap32();
-    fVStartIdx = stream->ReadSwap32();
-    fVLength = stream->ReadSwap32();
+    fGroupIdx = stream->ReadLE32();
+    fVBufferIdx = stream->ReadLE32();
+    fCellIdx = stream->ReadLE32();
+    fCellOffset = stream->ReadLE32();
+    fVStartIdx = stream->ReadLE32();
+    fVLength = stream->ReadLE32();
 }
 
 void    plVertexSpan::Write( hsStream* stream )
 {
     plSpan::Write( stream );
 
-    stream->WriteSwap32( fGroupIdx );
-    stream->WriteSwap32( fVBufferIdx );
-    stream->WriteSwap32( fCellIdx );
-    stream->WriteSwap32( fCellOffset );
-    stream->WriteSwap32( fVStartIdx );
-    stream->WriteSwap32( fVLength );
+    stream->WriteLE32( fGroupIdx );
+    stream->WriteLE32( fVBufferIdx );
+    stream->WriteLE32( fCellIdx );
+    stream->WriteLE32( fCellOffset );
+    stream->WriteLE32( fVStartIdx );
+    stream->WriteLE32( fVLength );
 }
 
 hsBool  plVertexSpan::CanMergeInto( plSpan *other )
@@ -422,9 +422,9 @@ void    plIcicle::Read( hsStream *stream )
 {
     plVertexSpan::Read( stream );
 
-    fIBufferIdx = stream->ReadSwap32();
-    fIPackedIdx = fIStartIdx = stream->ReadSwap32();
-    fILength = stream->ReadSwap32();
+    fIBufferIdx = stream->ReadLE32();
+    fIPackedIdx = fIStartIdx = stream->ReadLE32();
+    fILength = stream->ReadLE32();
 
     if( fProps & kPropFacesSortable )
     {
@@ -446,9 +446,9 @@ void    plIcicle::Write( hsStream *stream )
 {
     plVertexSpan::Write( stream );
 
-    stream->WriteSwap32( fIBufferIdx );
-    stream->WriteSwap32( fIStartIdx );
-    stream->WriteSwap32( fILength );
+    stream->WriteLE32( fIBufferIdx );
+    stream->WriteLE32( fIStartIdx );
+    stream->WriteLE32( fILength );
 
     if( fProps & kPropFacesSortable )
     {

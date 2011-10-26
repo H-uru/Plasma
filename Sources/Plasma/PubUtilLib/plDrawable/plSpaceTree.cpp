@@ -60,10 +60,10 @@ void plSpaceTreeNode::Read(hsStream* s)
 {
     fWorldBounds.Read(s);
 
-    fFlags = s->ReadSwap16();
-    fParent = s->ReadSwap16();
-    fChildren[0] = s->ReadSwap16();
-    fChildren[1] = s->ReadSwap16();
+    fFlags = s->ReadLE16();
+    fParent = s->ReadLE16();
+    fChildren[0] = s->ReadLE16();
+    fChildren[1] = s->ReadLE16();
 
 }
 
@@ -71,14 +71,14 @@ void plSpaceTreeNode::Write(hsStream* s)
 {
     fWorldBounds.Write(s);
 
-    s->WriteSwap16(fFlags);
-    s->WriteSwap16(fParent);
-    s->WriteSwap16(fChildren[0]);
+    s->WriteLE16(fFlags);
+    s->WriteLE16(fParent);
+    s->WriteLE16(fChildren[0]);
     if( fFlags & kIsLeaf )
         // Temp for now to play nice with binary patches
-        s->WriteSwap16( 0 );
+        s->WriteLE16( 0 );
     else
-        s->WriteSwap16(fChildren[1]);
+        s->WriteLE16(fChildren[1]);
 }
 
 plSpaceTree::plSpaceTree()
@@ -545,11 +545,11 @@ void plSpaceTree::Read(hsStream* s, hsResMgr* mgr)
 {
     plCreatable::Read(s, mgr);
 
-    fRoot = s->ReadSwap16();
+    fRoot = s->ReadLE16();
 
-    fNumLeaves = UInt16(s->ReadSwap32());
+    fNumLeaves = UInt16(s->ReadLE32());
 
-    UInt32 n = s->ReadSwap32();
+    UInt32 n = s->ReadLE32();
     fTree.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -560,11 +560,11 @@ void plSpaceTree::Write(hsStream* s, hsResMgr* mgr)
 {
     plCreatable::Write(s, mgr);
 
-    s->WriteSwap16(fRoot);
+    s->WriteLE16(fRoot);
 
-    s->WriteSwap32(fNumLeaves);
+    s->WriteLE32(fNumLeaves);
 
-    s->WriteSwap32(fTree.GetCount());
+    s->WriteLE32(fTree.GetCount());
     int i;
     for( i = 0; i < fTree.GetCount(); i++ )
     {

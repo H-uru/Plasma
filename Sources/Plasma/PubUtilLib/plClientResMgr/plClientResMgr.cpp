@@ -88,13 +88,13 @@ void plClientResMgr::ILoadResources(const char* resfile)
     hsUNIXStream in;
 
     if (in.Open(wFilename, L"rb")) {
-        UInt32 header = in.ReadSwap32();
-        UInt32 version = in.ReadSwap32();
+        UInt32 header = in.ReadLE32();
+        UInt32 version = in.ReadLE32();
         UInt32 num_resources = 0;
 
         switch (version) {
             case 1:
-                num_resources = in.ReadSwap32();
+                num_resources = in.ReadLE32();
 
                 for (int i = 0; i < num_resources; i++) {
                     plMipmap* res_data = NULL;
@@ -109,7 +109,7 @@ void plClientResMgr::ILoadResources(const char* resfile)
                     if (res_type == ".png") {
                         // Read resource stream size, but the PNG has that info in the header
                         // so it's not needed
-                        res_size = in.ReadSwap32();
+                        res_size = in.ReadLE32();
                         res_data = plPNG::Instance().ReadFromStream(&in);
                     } else if (res_type == ".jpg") {
                         // Don't read resource stream size, as plJPEG's reader will need it
@@ -119,7 +119,7 @@ void plClientResMgr::ILoadResources(const char* resfile)
                         // so default fallback is targa
                         // TODO - Add plTarga::ReadFromStream()
                         // for now, just skip the unknown resource and put NULL into the map
-                        res_size = in.ReadSwap32();
+                        res_size = in.ReadLE32();
                         in.Skip(res_size);
                     }
 

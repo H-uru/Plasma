@@ -323,7 +323,7 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
     hsKeyedObject::Read(stream, mgr);
     fBrain = nil;
     mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefBrain), plRefFlags::kActiveRef);
-    int count = stream->ReadSwap32();
+    int count = stream->ReadLE32();
     int i;
     for (i = 0; i < count; i++)
     {
@@ -332,12 +332,12 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
         hsBool cutpos = stream->ReadBool();
         hsBool cutpoa = stream->ReadBool();
         hsBool ignore = stream->ReadBool();
-        hsScalar v = stream->ReadSwapScalar();
-        hsScalar a = stream->ReadSwapScalar();
-        hsScalar d = stream->ReadSwapScalar();
-        hsScalar pV = stream->ReadSwapScalar();
-        hsScalar pA = stream->ReadSwapScalar();
-        hsScalar pD = stream->ReadSwapScalar();
+        hsScalar v = stream->ReadLEScalar();
+        hsScalar a = stream->ReadLEScalar();
+        hsScalar d = stream->ReadLEScalar();
+        hsScalar pV = stream->ReadLEScalar();
+        hsScalar pA = stream->ReadLEScalar();
+        hsScalar pD = stream->ReadLEScalar();
 
         CamTrans* camTrans = TRACKED_NEW CamTrans(key);
         camTrans->fAccel = a;
@@ -352,9 +352,9 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
 
         fTrans.Append(camTrans);
     }
-    fFOVw = stream->ReadSwapFloat();
-    fFOVh = stream->ReadSwapFloat();
-    int n = stream->ReadSwap32();
+    fFOVw = stream->ReadLEFloat();
+    fFOVh = stream->ReadLEFloat();
+    int n = stream->ReadLE32();
     fMessageQueue.SetCountAndZero(n);
     for(i = 0; i < n; i++ )
     {   
@@ -366,7 +366,7 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kRefCallbackMsg), plRefFlags::kActiveRef);
     }
 
-    n = stream->ReadSwap32();
+    n = stream->ReadLE32();
     fFOVInstructions.SetCountAndZero(n);
     for(i = 0; i < n; i++ )
     {   
@@ -387,23 +387,23 @@ void plCameraModifier1::Write(hsStream* stream, hsResMgr* mgr)
         mgr->WriteKey(stream, fBrain );
     
     int i = fTrans.Count();
-    stream->WriteSwap32(i);
+    stream->WriteLE32(i);
     for (i = 0; i < fTrans.Count(); i++)
     {   
         mgr->WriteKey(stream, fTrans[i]->fTransTo);
         stream->WriteBool(fTrans[i]->fCutPos);
         stream->WriteBool(fTrans[i]->fCutPOA);
         stream->WriteBool(fTrans[i]->fIgnore);
-        stream->WriteSwapScalar(fTrans[i]->fVelocity);
-        stream->WriteSwapScalar(fTrans[i]->fAccel);
-        stream->WriteSwapScalar(fTrans[i]->fDecel);
-        stream->WriteSwapScalar(fTrans[i]->fPOAVelocity);
-        stream->WriteSwapScalar(fTrans[i]->fPOAAccel);
-        stream->WriteSwapScalar(fTrans[i]->fPOADecel);
+        stream->WriteLEScalar(fTrans[i]->fVelocity);
+        stream->WriteLEScalar(fTrans[i]->fAccel);
+        stream->WriteLEScalar(fTrans[i]->fDecel);
+        stream->WriteLEScalar(fTrans[i]->fPOAVelocity);
+        stream->WriteLEScalar(fTrans[i]->fPOAAccel);
+        stream->WriteLEScalar(fTrans[i]->fPOADecel);
     }
-    stream->WriteSwapFloat(fFOVw);
-    stream->WriteSwapFloat(fFOVh);
-    stream->WriteSwap32(fMessageQueue.Count());
+    stream->WriteLEFloat(fFOVw);
+    stream->WriteLEFloat(fFOVh);
+    stream->WriteLE32(fMessageQueue.Count());
     for (i = 0; i < fMessageQueue.Count(); i++)
     {
         mgr->WriteCreatable(stream, fMessageQueue[i]);
@@ -412,7 +412,7 @@ void plCameraModifier1::Write(hsStream* stream, hsResMgr* mgr)
     {
         mgr->WriteKey(stream, fMessageQueue[i]->GetSender());
     }
-    stream->WriteSwap32(fFOVInstructions.Count());
+    stream->WriteLE32(fFOVInstructions.Count());
     for (i = 0; i < fFOVInstructions.Count(); i++)
     {
         mgr->WriteCreatable(stream, fFOVInstructions[i]);

@@ -2942,7 +2942,7 @@ void plPythonFileMod::Read(hsStream* stream, hsResMgr* mgr)
     fPythonFile = stream->ReadSafeString();
 
     // then read in the list of receivers that want to be notified
-    int nRcvs = stream->ReadSwap32();
+    int nRcvs = stream->ReadLE32();
     fReceivers.Reset();
     int m;
     for( m=0; m<nRcvs; m++ )
@@ -2951,7 +2951,7 @@ void plPythonFileMod::Read(hsStream* stream, hsResMgr* mgr)
     }
 
     // then read in the list of parameters
-    int nParms = stream->ReadSwap32();
+    int nParms = stream->ReadLE32();
     fParameters.SetCountAndZero(nParms);
     int i;
     for( i=0; i<nParms; i++ )
@@ -2969,13 +2969,13 @@ void plPythonFileMod::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteSafeString(fPythonFile);
 
     // then write out the list of receivers that want to be notified
-    stream->WriteSwap32(fReceivers.GetCount());
+    stream->WriteLE32(fReceivers.GetCount());
     int m;
     for( m=0; m<fReceivers.GetCount(); m++ )
         mgr->WriteKey(stream, fReceivers[m]);
 
     // then write out the list of parameters
-    stream->WriteSwap32(fParameters.GetCount());
+    stream->WriteLE32(fParameters.GetCount());
     int i;
     for( i=0; i<fParameters.GetCount(); i++ )
         fParameters[i].Write(stream,mgr);

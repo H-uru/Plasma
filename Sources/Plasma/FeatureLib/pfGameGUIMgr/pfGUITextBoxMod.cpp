@@ -154,7 +154,7 @@ void    pfGUITextBoxMod::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    UInt32 len = s->ReadSwap32();
+    UInt32 len = s->ReadLE32();
     if( len > 0 )
     {
         char *text = TRACKED_NEW char[ len + 1 ];
@@ -181,11 +181,11 @@ void    pfGUITextBoxMod::Write( hsStream *s, hsResMgr *mgr )
     pfGUIControlMod::Write( s, mgr );
 
     if( fText == nil )
-        s->WriteSwap32( 0 );
+        s->WriteLE32( 0 );
     else
     {
         char *text = hsWStringToString(fText);
-        s->WriteSwap32( strlen( text ) );
+        s->WriteLE32( strlen( text ) );
         s->Write( strlen( text ), text );
         delete [] text;
     }

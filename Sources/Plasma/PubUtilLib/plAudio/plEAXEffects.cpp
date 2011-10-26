@@ -462,23 +462,23 @@ void    plEAXSourceSettings::Read( hsStream *s )
     fEnabled = s->ReadBool();
     if( fEnabled )
     {
-        fRoom = s->ReadSwap16();
-        fRoomHF = s->ReadSwap16();
+        fRoom = s->ReadLE16();
+        fRoomHF = s->ReadLE16();
         fRoomAuto = s->ReadBool();
         fRoomHFAuto = s->ReadBool();
 
-        fOutsideVolHF = s->ReadSwap16();
+        fOutsideVolHF = s->ReadLE16();
         
-        fAirAbsorptionFactor = s->ReadSwapFloat();
-        fRoomRolloffFactor = s->ReadSwapFloat();
-        fDopplerFactor = s->ReadSwapFloat();
-        fRolloffFactor = s->ReadSwapFloat();
+        fAirAbsorptionFactor = s->ReadLEFloat();
+        fRoomRolloffFactor = s->ReadLEFloat();
+        fDopplerFactor = s->ReadLEFloat();
+        fRolloffFactor = s->ReadLEFloat();
 
         fSoftStarts.Read( s );
         fSoftEnds.Read( s );
 
         fOcclusionSoftValue = -1.f;
-        SetOcclusionSoftValue( s->ReadSwapFloat() );
+        SetOcclusionSoftValue( s->ReadLEFloat() );
 
         fDirtyParams = kAll;
     }
@@ -491,22 +491,22 @@ void    plEAXSourceSettings::Write( hsStream *s )
     s->WriteBool( fEnabled );
     if( fEnabled )
     {
-        s->WriteSwap16( fRoom );
-        s->WriteSwap16( fRoomHF );
+        s->WriteLE16( fRoom );
+        s->WriteLE16( fRoomHF );
         s->WriteBool( fRoomAuto );
         s->WriteBool( fRoomHFAuto );
 
-        s->WriteSwap16( fOutsideVolHF );
+        s->WriteLE16( fOutsideVolHF );
         
-        s->WriteSwapFloat( fAirAbsorptionFactor );
-        s->WriteSwapFloat( fRoomRolloffFactor );
-        s->WriteSwapFloat( fDopplerFactor );
-        s->WriteSwapFloat( fRolloffFactor );
+        s->WriteLEFloat( fAirAbsorptionFactor );
+        s->WriteLEFloat( fRoomRolloffFactor );
+        s->WriteLEFloat( fDopplerFactor );
+        s->WriteLEFloat( fRolloffFactor );
 
         fSoftStarts.Write( s );
         fSoftEnds.Write( s );
 
-        s->WriteSwapFloat( fOcclusionSoftValue );
+        s->WriteLEFloat( fOcclusionSoftValue );
     }
 }
 
@@ -607,18 +607,18 @@ void    plEAXSourceSoftSettings::Reset( void )
 
 void    plEAXSourceSoftSettings::Read( hsStream *s )
 {
-    s->ReadSwap( &fOcclusion );
-    s->ReadSwap( &fOcclusionLFRatio );
-    s->ReadSwap( &fOcclusionRoomRatio );
-    s->ReadSwap( &fOcclusionDirectRatio );
+    s->ReadLE( &fOcclusion );
+    s->ReadLE( &fOcclusionLFRatio );
+    s->ReadLE( &fOcclusionRoomRatio );
+    s->ReadLE( &fOcclusionDirectRatio );
 }
 
 void    plEAXSourceSoftSettings::Write( hsStream *s )
 {
-    s->WriteSwap( fOcclusion );
-    s->WriteSwap( fOcclusionLFRatio );
-    s->WriteSwap( fOcclusionRoomRatio );
-    s->WriteSwap( fOcclusionDirectRatio );
+    s->WriteLE( fOcclusion );
+    s->WriteLE( fOcclusionLFRatio );
+    s->WriteLE( fOcclusionRoomRatio );
+    s->WriteLE( fOcclusionDirectRatio );
 }
 
 void    plEAXSourceSoftSettings::SetOcclusion( Int16 occ, hsScalar lfRatio, hsScalar roomRatio, hsScalar directRatio )

@@ -79,8 +79,8 @@ public:
         fObj = mgr->ReadKey(stream);
         fHitPoint.Read(stream);
         fNoHit = stream->ReadBool();
-        stream->ReadSwap(&fRequestID);
-        stream->ReadSwap(&fHitFlags);
+        stream->ReadLE(&fRequestID);
+        stream->ReadLE(&fHitFlags);
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
@@ -89,8 +89,8 @@ public:
         mgr->WriteKey(stream, fObj);
         fHitPoint.Write(stream);
         stream->WriteBool(fNoHit);
-        stream->WriteSwap(fRequestID);
-        stream->WriteSwap(fHitFlags);
+        stream->WriteLE(fRequestID);
+        stream->WriteLE(fHitFlags);
     }
 };
 

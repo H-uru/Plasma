@@ -91,15 +91,15 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgRead(stream, mgr);
-        fType = stream->ReadSwap32();
-        fPriority = stream->ReadSwap32();
+        fType = stream->ReadLE32();
+        fPriority = stream->ReadLE32();
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
-        stream->WriteSwap32(fType);
-        stream->WriteSwap32(fPriority);
+        stream->WriteLE32(fType);
+        stream->WriteLE32(fPriority);
     }
 
 };

@@ -515,29 +515,29 @@ void    plGeometrySpan::Read( hsStream *stream )
     fOBBToLocal.Read(stream);
     fLocalToOBB.Read(stream);
 
-    fBaseMatrix = stream->ReadSwap32();
+    fBaseMatrix = stream->ReadLE32();
     fNumMatrices = stream->ReadByte();
-    fLocalUVWChans = stream->ReadSwap16();
-    fMaxBoneIdx = stream->ReadSwap16();
-    fPenBoneIdx = stream->ReadSwap16();
+    fLocalUVWChans = stream->ReadLE16();
+    fMaxBoneIdx = stream->ReadLE16();
+    fPenBoneIdx = stream->ReadLE16();
 
-    fMinDist = stream->ReadSwapScalar();
-    fMaxDist = stream->ReadSwapScalar();
+    fMinDist = stream->ReadLEScalar();
+    fMaxDist = stream->ReadLEScalar();
 
     fFormat = stream->ReadByte();
-    fProps = stream->ReadSwap32();
-    fNumVerts = stream->ReadSwap32();
-    fNumIndices = stream->ReadSwap32();
+    fProps = stream->ReadLE32();
+    fNumVerts = stream->ReadLE32();
+    fNumIndices = stream->ReadLE32();
 
     // FIXME MAJOR VERSION
     // remove these two lines. No more patches.
-    stream->ReadSwap32();
+    stream->ReadLE32();
     stream->ReadByte();
 
-    fDecalLevel = stream->ReadSwap32();
+    fDecalLevel = stream->ReadLE32();
 
     if( fProps & kWaterHeight )
-        fWaterHeight = stream->ReadSwapScalar();
+        fWaterHeight = stream->ReadLEScalar();
 
     if( fNumVerts > 0 )
     {
@@ -556,8 +556,8 @@ void    plGeometrySpan::Read( hsStream *stream )
 
         fDiffuseRGBA = TRACKED_NEW UInt32[ fNumVerts ];
         fSpecularRGBA = TRACKED_NEW UInt32[ fNumVerts ];
-        stream->ReadSwap32( fNumVerts, fDiffuseRGBA );
-        stream->ReadSwap32( fNumVerts, fSpecularRGBA );
+        stream->ReadLE32( fNumVerts, fDiffuseRGBA );
+        stream->ReadLE32( fNumVerts, fSpecularRGBA );
     }
     else
     {
@@ -571,16 +571,16 @@ void    plGeometrySpan::Read( hsStream *stream )
     if( fNumIndices > 0 )
     {
         fIndexData = TRACKED_NEW UInt16[ fNumIndices ];
-        stream->ReadSwap16( fNumIndices, fIndexData );
+        stream->ReadLE16( fNumIndices, fIndexData );
     }
     else
         fIndexData = nil;
 
     // Read the group ID, then look up our instanceRef array from it
-    fInstanceGroupID = stream->ReadSwap32();
+    fInstanceGroupID = stream->ReadLE32();
     if( fInstanceGroupID != kNoGroupID )
     {
-        UInt32  count = stream->ReadSwap32();
+        UInt32  count = stream->ReadLE32();
 
         fInstanceRefs = IGetInstanceGroup( fInstanceGroupID, count );
         fInstanceRefs->Append( this );
@@ -607,29 +607,29 @@ void    plGeometrySpan::Write( hsStream *stream )
     fOBBToLocal.Write(stream);
     fLocalToOBB.Write(stream);
 
-    stream->WriteSwap32( fBaseMatrix );
+    stream->WriteLE32( fBaseMatrix );
     stream->WriteByte( fNumMatrices );
-    stream->WriteSwap16(fLocalUVWChans);
-    stream->WriteSwap16(fMaxBoneIdx);
-    stream->WriteSwap16((UInt16)fPenBoneIdx);
+    stream->WriteLE16(fLocalUVWChans);
+    stream->WriteLE16(fMaxBoneIdx);
+    stream->WriteLE16((UInt16)fPenBoneIdx);
 
-    stream->WriteSwapScalar(fMinDist);
-    stream->WriteSwapScalar(fMaxDist);
+    stream->WriteLEScalar(fMinDist);
+    stream->WriteLEScalar(fMaxDist);
 
     stream->WriteByte( fFormat );
-    stream->WriteSwap32( fProps );
-    stream->WriteSwap32( fNumVerts );
-    stream->WriteSwap32( fNumIndices );
+    stream->WriteLE32( fProps );
+    stream->WriteLE32( fNumVerts );
+    stream->WriteLE32( fNumIndices );
 
     // FIXME MAJOR VERSION
     // Remove these two lines.
-    stream->WriteSwap32(0);
+    stream->WriteLE32(0);
     stream->WriteByte(0);
 
-    stream->WriteSwap32( fDecalLevel );
+    stream->WriteLE32( fDecalLevel );
 
     if( fProps & kWaterHeight )
-        stream->WriteSwapScalar(fWaterHeight);
+        stream->WriteLEScalar(fWaterHeight);
 
     if( fNumVerts > 0 )
     {
@@ -642,19 +642,19 @@ void    plGeometrySpan::Write( hsStream *stream )
             fMultColor[ i ].Write( stream );
             fAddColor[ i ].Write( stream );
         }
-        stream->WriteSwap32( fNumVerts, fDiffuseRGBA );
-        stream->WriteSwap32( fNumVerts, fSpecularRGBA );
+        stream->WriteLE32( fNumVerts, fDiffuseRGBA );
+        stream->WriteLE32( fNumVerts, fSpecularRGBA );
     }
 
     if( fNumIndices > 0 )
     {
-        stream->WriteSwap16( fNumIndices, fIndexData );
+        stream->WriteLE16( fNumIndices, fIndexData );
     }
 
     // Write the groupID as well as the count for instanceRefs. This way
-    stream->WriteSwap32( fInstanceGroupID );
+    stream->WriteLE32( fInstanceGroupID );
     if( fInstanceGroupID != kNoGroupID )
-        stream->WriteSwap32( fInstanceRefs->GetCount() );
+        stream->WriteLE32( fInstanceRefs->GetCount() );
     else
     {
         hsAssert( fInstanceRefs == nil, "Nil instanceRefs array but no group ID, non sequitur" );

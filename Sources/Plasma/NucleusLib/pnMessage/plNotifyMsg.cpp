@@ -840,11 +840,11 @@ void plNotifyMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
     // read in the static data
-    fType = stream->ReadSwap32();
-    stream->ReadSwap(&fState);
-    fID = stream->ReadSwap32();
+    fType = stream->ReadLE32();
+    stream->ReadLE(&fState);
+    fID = stream->ReadLE32();
     // read in the variable part of the message
-    Int32 numberEDs = stream->ReadSwap32();
+    Int32 numberEDs = stream->ReadLE32();
     fEvents.SetCountAndZero(numberEDs);
     if ( numberEDs > 0 )
     {
@@ -869,12 +869,12 @@ void plNotifyMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
     // write static data
-    stream->WriteSwap32(fType);
-    stream->WriteSwap(fState);
-    stream->WriteSwap32(fID);
+    stream->WriteLE32(fType);
+    stream->WriteLE(fState);
+    stream->WriteLE32(fID);
     // then write the variable data
     Int32 numberEDs = fEvents.Count();
-    stream->WriteSwap32(numberEDs);
+    stream->WriteLE32(numberEDs);
     if ( numberEDs > 0 )
     {
         // write out each record
@@ -903,18 +903,18 @@ void plNotifyMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kNotifyMsgType))
-        fType = s->ReadSwap32();
+        fType = s->ReadLE32();
 
     if (contentFlags.IsBitSet(kNotifyMsgState))
-        s->ReadSwap(&fState);
+        s->ReadLE(&fState);
 
     if (contentFlags.IsBitSet(kNotifyMsgID))
-        fID = s->ReadSwap32();
+        fID = s->ReadLE32();
 
     if (contentFlags.IsBitSet(kNotifyMsgEDs))
     {
         // read in the variable part of the message
-        Int32 numberEDs = s->ReadSwap32();
+        Int32 numberEDs = s->ReadLE32();
         fEvents.SetCountAndZero(numberEDs);
         if (numberEDs > 0)
         {
@@ -946,17 +946,17 @@ void plNotifyMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kNotifyMsgType
-    s->WriteSwap32(fType);
+    s->WriteLE32(fType);
 
     // kNotifyMsgState
-    s->WriteSwap(fState);
+    s->WriteLE(fState);
 
     // kNotifyMsgID
-    s->WriteSwap32(fID);
+    s->WriteLE32(fID);
 
     // kNotifyMsgEDs
     Int32 numberEDs = fEvents.Count();
-    s->WriteSwap32(numberEDs);
+    s->WriteLE32(numberEDs);
     if (numberEDs > 0)
     {
         // write out each record
@@ -1028,7 +1028,7 @@ proEventData* proEventData::ICreateEventDataType(Int32 type)
 
 proEventData* proEventData::Read( hsStream *stream, hsResMgr *mgr )
 {
-    Int32 evtType = stream->ReadSwap32();
+    Int32 evtType = stream->ReadLE32();
 
     proEventData* data = ICreateEventDataType(evtType);
 
@@ -1040,7 +1040,7 @@ proEventData* proEventData::Read( hsStream *stream, hsResMgr *mgr )
 
 void proEventData::Write(hsStream *stream, hsResMgr *mgr)
 {
-    stream->WriteSwap32(fEventType);
+    stream->WriteLE32(fEventType);
     IWrite(stream, mgr);
 }
 
@@ -1056,7 +1056,7 @@ proEventData* proEventData::ReadVersion(hsStream* s, hsResMgr* mgr)
 
     if (contentFlags.IsBitSet(kProEventDataType))
     {
-        Int32 evtType = s->ReadSwap32();
+        Int32 evtType = s->ReadLE32();
 
         proEventData* data = ICreateEventDataType(evtType);
 
@@ -1076,7 +1076,7 @@ void proEventData::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kProEventDataType
-    s->WriteSwap32(fEventType);
+    s->WriteLE32(fEventType);
 
     IWriteVersion(s, mgr);
 }
@@ -1233,12 +1233,12 @@ void proSpawnedEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
 
 void proControlKeyEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
-    fControlKey = stream->ReadSwap32();
+    fControlKey = stream->ReadLE32();
     fDown = stream->ReadBool();
 }
 void proControlKeyEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteSwap32(fControlKey);
+    stream->WriteLE32(fControlKey);
     stream->WriteBool(fDown);
 }
 
@@ -1254,7 +1254,7 @@ void proControlKeyEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kProControlKey))
-        fControlKey = s->ReadSwap32();
+        fControlKey = s->ReadLE32();
     if (contentFlags.IsBitSet(kProControlDown))
         fDown = s->ReadBool();
 }
@@ -1266,7 +1266,7 @@ void proControlKeyEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kProControlKey
-    s->WriteSwap32(fControlKey);
+    s->WriteLE32(fControlKey);
     // kProControlDown
     s->WriteBool(fDown);
 }
@@ -1286,16 +1286,16 @@ void proVariableEventData::IDestruct()
 void proVariableEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
     fName = stream->ReadSafeString();
-    fDataType = stream->ReadSwap32();
-    fNumber = stream->ReadSwapScalar();
+    fDataType = stream->ReadLE32();
+    fNumber = stream->ReadLEScalar();
     fKey = mgr->ReadKey(stream);
 }
 
 void proVariableEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
     stream->WriteSafeString(fName);
-    stream->WriteSwap32(fDataType);
-    stream->WriteSwapScalar(fNumber);
+    stream->WriteLE32(fDataType);
+    stream->WriteLEScalar(fNumber);
     mgr->WriteKey(stream, fKey);
 }
 
@@ -1315,9 +1315,9 @@ void proVariableEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kProVariableName))
         fName = s->ReadSafeString();
     if (contentFlags.IsBitSet(kProVariableDataType))
-        fDataType = s->ReadSwap32();
+        fDataType = s->ReadLE32();
     if (contentFlags.IsBitSet(kProVariableNumber))
-        fNumber = s->ReadSwapScalar();
+        fNumber = s->ReadLEScalar();
     if (contentFlags.IsBitSet(kProVariableKey))
         fKey = mgr->ReadKey(s);
 }
@@ -1334,9 +1334,9 @@ void proVariableEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     // kProVariableName
     s->WriteSafeString(fName);
     // kProVariableDataType
-    s->WriteSwap32(fDataType);
+    s->WriteLE32(fDataType);
     // kProVariableNumber
-    s->WriteSwapScalar(fNumber);
+    s->WriteLEScalar(fNumber);
     // kProVariableKey
     mgr->WriteKey(s, fKey);
 }
@@ -1345,7 +1345,7 @@ void proFacingEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
     fFacer = mgr->ReadKey(stream);
     fFacee = mgr->ReadKey(stream);
-    dot = stream->ReadSwapScalar();
+    dot = stream->ReadLEScalar();
     enabled = stream->ReadBool();
 }
 
@@ -1353,7 +1353,7 @@ void proFacingEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
     mgr->WriteKey(stream, fFacer);
     mgr->WriteKey(stream, fFacee);
-    stream->WriteSwapScalar(dot);
+    stream->WriteLEScalar(dot);
     stream->WriteBool(enabled);
 }
 
@@ -1375,7 +1375,7 @@ void proFacingEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kProFacingFacee))
         fFacee = mgr->ReadKey(s);
     if (contentFlags.IsBitSet(kProFacingDot))
-        dot = s->ReadSwapScalar();
+        dot = s->ReadLEScalar();
     if (contentFlags.IsBitSet(kProFacingEnabled))
         enabled = s->ReadBool();
 }
@@ -1394,7 +1394,7 @@ void proFacingEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     // kProFacingFacee  
     mgr->WriteKey(s, fFacee);
     // kProFacingDot    
-    s->WriteSwapScalar(dot);
+    s->WriteLEScalar(dot);
     // kProFacingEnabled
     s->WriteBool(enabled);
 }
@@ -1493,12 +1493,12 @@ void proActivateEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
 
 void proCallbackEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
-    fEventType = stream->ReadSwap32();
+    fEventType = stream->ReadLE32();
 }
 
 void proCallbackEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteSwap32(fEventType);
+    stream->WriteLE32(fEventType);
 }
 
 enum ProCallbackFlags
@@ -1512,7 +1512,7 @@ void proCallbackEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kProCallbackEventType))
-        fEventType = s->ReadSwap32();
+        fEventType = s->ReadLE32();
 }
 
 void proCallbackEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
@@ -1522,17 +1522,17 @@ void proCallbackEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kProCallbackEventType
-    s->WriteSwap32(fEventType);
+    s->WriteLE32(fEventType);
 }
 
 void proResponderStateEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
-    fState = stream->ReadSwap32();
+    fState = stream->ReadLE32();
 }
 
 void proResponderStateEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteSwap32(fState);
+    stream->WriteLE32(fState);
 }
 
 enum ProResponderFlags
@@ -1546,7 +1546,7 @@ void proResponderStateEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kProResponderState))
-        fState = s->ReadSwap32();
+        fState = s->ReadLE32();
 }
 
 void proResponderStateEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
@@ -1556,20 +1556,20 @@ void proResponderStateEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kProResponderState
-    s->WriteSwap32(fState);
+    s->WriteLE32(fState);
 }
 
 void proMultiStageEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
-    fStage = stream->ReadSwap32();
-    fEvent = stream->ReadSwap32();
+    fStage = stream->ReadLE32();
+    fEvent = stream->ReadLE32();
     fAvatar = mgr->ReadKey(stream);
 }
 
 void proMultiStageEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteSwap32(fStage);
-    stream->WriteSwap32(fEvent);
+    stream->WriteLE32(fStage);
+    stream->WriteLE32(fEvent);
     mgr->WriteKey(stream, fAvatar);
 }
 
@@ -1586,9 +1586,9 @@ void proMultiStageEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kProMultiStageStage))
-        fStage = s->ReadSwap32();
+        fStage = s->ReadLE32();
     if (contentFlags.IsBitSet(kProMultiStageEvent))
-        fEvent = s->ReadSwap32();
+        fEvent = s->ReadLE32();
     if (contentFlags.IsBitSet(kProMultiStageAvatar))
         fAvatar = mgr->ReadKey(s);
 }
@@ -1602,23 +1602,23 @@ void proMultiStageEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kProMultiStageStage
-    s->WriteSwap32(fStage);
+    s->WriteLE32(fStage);
     // kProMultiStageEvent
-    s->WriteSwap32(fEvent);
+    s->WriteLE32(fEvent);
     // kProMultiStageAvatar
     mgr->WriteKey(s, fAvatar);
 }
 
 void proCoopEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
-    fID = stream->ReadSwap32();
-    fSerial = stream->ReadSwap16();
+    fID = stream->ReadLE32();
+    fSerial = stream->ReadLE16();
 }
 
 void proCoopEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteSwap32(fID);
-    stream->WriteSwap16(fSerial);
+    stream->WriteLE32(fID);
+    stream->WriteLE16(fSerial);
 }
 
 enum ProCoopFlags
@@ -1633,9 +1633,9 @@ void proCoopEventData::IReadVersion(hsStream* stream, hsResMgr* mgr)
     contentFlags.Read(stream);
 
     if(contentFlags.IsBitSet(kProCoopID))
-        fID = stream->ReadSwap32();
+        fID = stream->ReadLE32();
     if(contentFlags.IsBitSet(kProCoopSerial))
-        fSerial = stream->ReadSwap16();
+        fSerial = stream->ReadLE16();
 }
 
 void proCoopEventData::IWriteVersion(hsStream* stream, hsResMgr* mgr)
@@ -1645,23 +1645,23 @@ void proCoopEventData::IWriteVersion(hsStream* stream, hsResMgr* mgr)
     contentFlags.SetBit(kProCoopSerial);
     contentFlags.Write(stream);
 
-    stream->WriteSwap32(fID);
-    stream->WriteSwap16(fSerial);
+    stream->WriteLE32(fID);
+    stream->WriteLE16(fSerial);
     
 }
 
 void proOfferLinkingBookEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
     mgr->WriteKey(stream, offerer);
-    stream->WriteSwap32(targetAge);
-    stream->WriteSwap32(offeree);
+    stream->WriteLE32(targetAge);
+    stream->WriteLE32(offeree);
 }
 
 void proOfferLinkingBookEventData::IRead(hsStream* stream,  hsResMgr* mgr)
 {
     offerer = mgr->ReadKey(stream);
-    targetAge = stream->ReadSwap32();
-    offeree = stream->ReadSwap32();
+    targetAge = stream->ReadLE32();
+    offeree = stream->ReadLE32();
 }
 
 enum ProOfferFlags
@@ -1680,8 +1680,8 @@ void proOfferLinkingBookEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     mgr->WriteKey(s, offerer);
-    s->WriteSwap32(targetAge);
-    s->WriteSwap32(offeree);
+    s->WriteLE32(targetAge);
+    s->WriteLE32(offeree);
 }
 
 void proOfferLinkingBookEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
@@ -1692,21 +1692,21 @@ void proOfferLinkingBookEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     if(contentFlags.IsBitSet(kProOfferOfferer))
         offerer = mgr->ReadKey(s);
     if(contentFlags.IsBitSet(kProOfferTargetAge))
-        targetAge = s->ReadSwap32();
+        targetAge = s->ReadLE32();
     if(contentFlags.IsBitSet(kProOfferOfferee))
-        offeree = s->ReadSwap32();
+        offeree = s->ReadLE32();
 }
 
 void proBookEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteSwap32(fEvent);
-    stream->WriteSwap32(fLinkID);
+    stream->WriteLE32(fEvent);
+    stream->WriteLE32(fLinkID);
 }
 
 void proBookEventData::IRead(hsStream* stream,  hsResMgr* mgr)
 {
-    fEvent = stream->ReadSwap32();
-    fLinkID = stream->ReadSwap32();
+    fEvent = stream->ReadLE32();
+    fLinkID = stream->ReadLE32();
 }
 
 enum ProBookFlags
@@ -1722,8 +1722,8 @@ void proBookEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.SetBit(kProBookLinkID);
     contentFlags.Write(s);
 
-    s->WriteSwap32( fEvent );
-    s->WriteSwap32( fLinkID );
+    s->WriteLE32( fEvent );
+    s->WriteLE32( fLinkID );
 }
 
 void proBookEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
@@ -1732,9 +1732,9 @@ void proBookEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if(contentFlags.IsBitSet(kProBookEvent))
-        fEvent = s->ReadSwap32();
+        fEvent = s->ReadLE32();
     if(contentFlags.IsBitSet(kProBookLinkID))
-        fLinkID = s->ReadSwap32();
+        fLinkID = s->ReadLE32();
 }
 
 

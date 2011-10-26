@@ -60,12 +60,12 @@ const hsScalar hsBounds::kRealSmall = 1.0e-5f;
 
 void hsBounds::Read(hsStream *s)
 {
-    fType =(hsBoundsType) s->ReadSwap32();
+    fType =(hsBoundsType) s->ReadLE32();
 }
 
 void hsBounds::Write(hsStream *s) 
 {
-    s->WriteSwap32((Int32)fType);
+    s->WriteLE32((Int32)fType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -620,8 +620,8 @@ void hsBoundsOriented::Write(hsStream *stream)
 {
     hsBounds::Write(stream);
     fCenter.Write(stream);
-    stream->WriteSwap32(fCenterValid);
-    stream->WriteSwap32(fNumPlanes);
+    stream->WriteLE32(fCenterValid);
+    stream->WriteLE32(fNumPlanes);
     int i;
     for( i = 0; i < fNumPlanes; i++ )
     {
@@ -633,8 +633,8 @@ void hsBoundsOriented::Read(hsStream *stream)
 {
     hsBounds::Read(stream);
     fCenter.Read(stream);
-    fCenterValid = (hsBool)stream->ReadSwap32();
-    fNumPlanes = stream->ReadSwap32();
+    fCenterValid = (hsBool)stream->ReadLE32();
+    fNumPlanes = stream->ReadLE32();
     if (fPlanes)
         delete [] fPlanes;
     fPlanes = TRACKED_NEW hsPlane3[fNumPlanes];
@@ -2592,7 +2592,7 @@ hsBool hsBounds3Ext::ISectRayBS(const hsPoint3& from, const hsPoint3& to, hsPoin
 
 void hsBounds3Ext::Read(hsStream *s)
 {
-    fExtFlags = s->ReadSwap32();
+    fExtFlags = s->ReadLE32();
     hsBounds3::Read(s);
     if( !(fExtFlags & kAxisAligned) )
     {
@@ -2601,8 +2601,8 @@ void hsBounds3Ext::Read(hsStream *s)
         for( i = 0; i < 3; i++ )
         {
             fAxes[i].Read(s);
-            fDists[i].fX = s->ReadSwapScalar();
-            fDists[i].fY = s->ReadSwapScalar();
+            fDists[i].fX = s->ReadLEScalar();
+            fDists[i].fY = s->ReadLEScalar();
         }
         IMakeMinsMaxs();
         IMakeDists();
@@ -2611,7 +2611,7 @@ void hsBounds3Ext::Read(hsStream *s)
 }
 void hsBounds3Ext::Write(hsStream *s)
 {
-    s->WriteSwap32(fExtFlags);
+    s->WriteLE32(fExtFlags);
     hsBounds3::Write(s);
     if( !(fExtFlags & kAxisAligned) )
     {
@@ -2622,14 +2622,14 @@ void hsBounds3Ext::Write(hsStream *s)
             fAxes[i].Write(s);
             if( fExtFlags & kDistsSet )
             {
-                s->WriteSwapScalar(fDists[i].fX);
-                s->WriteSwapScalar(fDists[i].fY);
+                s->WriteLEScalar(fDists[i].fX);
+                s->WriteLEScalar(fDists[i].fY);
             }
             else
             {
                 // Playing nice with binary patches--writing uninited values BAD!
-                s->WriteSwapScalar( 0.f );
-                s->WriteSwapScalar( 0.f );
+                s->WriteLEScalar( 0.f );
+                s->WriteLEScalar( 0.f );
             }
         }
     }

@@ -98,7 +98,7 @@ void    pfGUICheckBoxCtrl::Read( hsStream *s, hsResMgr *mgr )
     pfGUIControlMod::Read(s, mgr);
 
     fAnimationKeys.Reset();
-    UInt32 i, count = s->ReadSwap32();
+    UInt32 i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
 
@@ -111,7 +111,7 @@ void    pfGUICheckBoxCtrl::Write( hsStream *s, hsResMgr *mgr )
     pfGUIControlMod::Write( s, mgr );
 
     UInt32 i, count = fAnimationKeys.GetCount();
-    s->WriteSwap32( count );
+    s->WriteLE32( count );
     for( i = 0; i < count; i++ )
         mgr->WriteKey( s, fAnimationKeys[ i ] );
 

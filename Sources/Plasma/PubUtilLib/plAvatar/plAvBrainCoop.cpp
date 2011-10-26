@@ -199,8 +199,8 @@ void plAvBrainCoop::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAvBrainGeneric::Read(stream, mgr);
 
-    fInitiatorID = stream->ReadSwap32();
-    fInitiatorSerial = stream->ReadSwap16();
+    fInitiatorID = stream->ReadLE32();
+    fInitiatorSerial = stream->ReadLE16();
 
     if(stream->Readbool())
     {
@@ -212,7 +212,7 @@ void plAvBrainCoop::Read(hsStream *stream, hsResMgr *mgr)
     }
     fWaitingForClick = stream->Readbool();
 
-    unsigned numRecipients = stream->ReadSwap16();
+    unsigned numRecipients = stream->ReadLE16();
     for (unsigned i = 0; i < numRecipients; i++)
         fRecipients.push_back(mgr->ReadKey(stream));
 }
@@ -223,8 +223,8 @@ void plAvBrainCoop::Write(hsStream *stream, hsResMgr *mgr)
 {
     plAvBrainGeneric::Write(stream, mgr);
 
-    stream->WriteSwap32(fInitiatorID);
-    stream->WriteSwap16(fInitiatorSerial);
+    stream->WriteLE32(fInitiatorID);
+    stream->WriteLE16(fInitiatorSerial);
 
     bool hasHostKey = (fHostKey != nil);
     bool hasGuestKey = (fGuestKey != nil);
@@ -239,7 +239,7 @@ void plAvBrainCoop::Write(hsStream *stream, hsResMgr *mgr)
 
     stream->Writebool(fWaitingForClick);
 
-    stream->WriteSwap16(fRecipients.size());
+    stream->WriteLE16(fRecipients.size());
     for (unsigned i = 0; i < fRecipients.size(); i++)
         mgr->WriteKey(stream, fRecipients[i]);
 }

@@ -71,9 +71,9 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgRead(stream, mgr);
-        stream->ReadSwap(&fWeight);
-        stream->ReadSwap(&fRadius);
-        stream->ReadSwap(&fSize);
+        stream->ReadLE(&fWeight);
+        stream->ReadLE(&fRadius);
+        stream->ReadLE(&fSize);
         fPos.Read(stream);
         fObj = mgr->ReadKey(stream);
     }
@@ -81,9 +81,9 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plMessage::IMsgWrite(stream, mgr);
-        stream->WriteSwap(fWeight);
-        stream->WriteSwap(fRadius);
-        stream->WriteSwap(fSize);
+        stream->WriteLE(fWeight);
+        stream->WriteLE(fRadius);
+        stream->WriteLE(fSize);
         fPos.Write(stream);
         mgr->WriteKey(stream, fObj);
     }

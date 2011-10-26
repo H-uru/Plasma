@@ -118,7 +118,7 @@ void plStateVarNotificationInfo::Read(hsStream* s, UInt32 readOptions)
 void plStateVarNotificationInfo::Write(hsStream* s, UInt32 writeOptions) const
 {
     UInt8 saveFlags=0;              // unused   
-    s->WriteSwap(saveFlags);
+    s->WriteLE(saveFlags);
     s->WriteSafeString(fHintString.c_str());
 }
 
@@ -128,7 +128,7 @@ void plStateVarNotificationInfo::Write(hsStream* s, UInt32 writeOptions) const
 bool plStateVariable::ReadData(hsStream* s, float timeConvert, UInt32 readOptions)
 {
     UInt8 saveFlags;
-    s->ReadSwap(&saveFlags);
+    s->ReadLE(&saveFlags);
     if (saveFlags & plSDL::kHasNotificationInfo)
     {
         GetNotificationInfo().Read(s, readOptions);
@@ -144,7 +144,7 @@ bool plStateVariable::WriteData(hsStream* s, float timeConvert, UInt32 writeOpti
     if (writeNotificationInfo)
         saveFlags |= plSDL::kHasNotificationInfo;
 
-    s->WriteSwap(saveFlags);
+    s->WriteLE(saveFlags);
     if (writeNotificationInfo)
     {
         GetNotificationInfo().Write(s, writeOptions);
@@ -1814,11 +1814,11 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
         break;
     case plVarDescriptor::kInt:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            s->WriteSwap32(fI[j+i]);
+            s->WriteLE32(fI[j+i]);
         break;
     case plVarDescriptor::kShort:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            s->WriteSwap16(fS[j+i]);
+            s->WriteLE16(fS[j+i]);
         break;
     case plVarDescriptor::kByte:
         for(i=0;i<fVar.GetAtomicCount();i++)
@@ -1826,7 +1826,7 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
         break;
     case plVarDescriptor::kFloat:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            s->WriteSwapScalar(fF[j+i]);
+            s->WriteLEScalar(fF[j+i]);
         break;
     case plVarDescriptor::kTime:
         for(i=0;i<fVar.GetAtomicCount();i++)
@@ -1846,7 +1846,7 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
         break;
     case plVarDescriptor::kDouble:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            s->WriteSwapDouble(fD[j+i]);
+            s->WriteLEDouble(fD[j+i]);
         break;
     case plVarDescriptor::kBool:
         for(i=0;i<fVar.GetAtomicCount();i++)
@@ -1864,12 +1864,12 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
         {
             hsAssert(fVar.GetAtomicCount()==1, "invalid atomic count");
             plCreatable* cre = fC[j];
-            s->WriteSwap16(cre ? cre->ClassIndex() : 0x8000);   // creatable class index
+            s->WriteLE16(cre ? cre->ClassIndex() : 0x8000);   // creatable class index
             if (cre)
             {
                 hsRAMStream ramStream;
                 cre->Write(&ramStream, hsgResMgr::ResMgr());
-                s->WriteSwap32(ramStream.GetEOF());     // write length
+                s->WriteLE32(ramStream.GetEOF());     // write length
                 cre->Write(s, hsgResMgr::ResMgr());     // write data
             }
         }
@@ -1889,11 +1889,11 @@ bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, U
         break;
     case plVarDescriptor::kInt:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            fI[j+i]=s->ReadSwap32();
+            fI[j+i]=s->ReadLE32();
         break;
     case plVarDescriptor::kShort:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            fS[j+i]=s->ReadSwap16();
+            fS[j+i]=s->ReadLE16();
         break;
     case plVarDescriptor::kByte:
         for(i=0;i<fVar.GetAtomicCount();i++)
@@ -1901,7 +1901,7 @@ bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, U
         break;
     case plVarDescriptor::kFloat:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            fF[j+i]=s->ReadSwapScalar();
+            fF[j+i]=s->ReadLEScalar();
         break;
     case plVarDescriptor::kTime:
         for(i=0;i<fVar.GetAtomicCount();i++)
@@ -1919,7 +1919,7 @@ bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, U
         break;
     case plVarDescriptor::kDouble:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            fD[j+i]=s->ReadSwapDouble();
+            fD[j+i]=s->ReadLEDouble();
         break;
     case plVarDescriptor::kBool:
         for(i=0;i<fVar.GetAtomicCount();i++)
@@ -1939,10 +1939,10 @@ bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, U
     case plVarDescriptor::kCreatable:
         {
             hsAssert(fVar.GetAtomicCount()==1, "invalid atomic count");
-            UInt16 hClass = s->ReadSwap16();    // class index
+            UInt16 hClass = s->ReadLE16();    // class index
             if (hClass != 0x8000)
             {               
-                UInt32 len = s->ReadSwap32();   // length   
+                UInt32 len = s->ReadLE32();   // length   
                 if (plFactory::CanCreate(hClass))
                 {
                     delete fC[j];
@@ -2007,7 +2007,7 @@ bool plSimpleStateVariable::WriteData(hsStream* s, float timeConvert, UInt32 wri
 
     if (sameAsDefaults)
         saveFlags |= plSDL::kSameAsDefault;
-    s->WriteSwap(saveFlags);
+    s->WriteLE(saveFlags);
     
     if (needTimeStamp) {
         // timestamp on write
@@ -2024,7 +2024,7 @@ bool plSimpleStateVariable::WriteData(hsStream* s, float timeConvert, UInt32 wri
     {
         // list size
         if (GetVarDescriptor()->IsVariableLength())
-            s->WriteSwap32(GetVarDescriptor()->GetCount());     // have to write out as long since we don't know how big the list is
+            s->WriteLE32(GetVarDescriptor()->GetCount());     // have to write out as long since we don't know how big the list is
 
         // list
         int i;
@@ -2046,7 +2046,7 @@ bool plSimpleStateVariable::ReadData(hsStream* s, float timeConvert, UInt32 read
     ut.ToEpoch();
     
     UInt8 saveFlags;
-    s->ReadSwap(&saveFlags);
+    s->ReadLE(&saveFlags);
 
     bool isDirty = ( saveFlags & plSDL::kHasDirtyFlag )!=0;
     bool setDirty = ( isDirty && ( readOptions & plSDL::kKeepDirty ) ) || ( readOptions & plSDL::kMakeDirty );
@@ -2068,7 +2068,7 @@ bool plSimpleStateVariable::ReadData(hsStream* s, float timeConvert, UInt32 read
         if (GetVarDescriptor()->IsVariableLength())
         {
             UInt32 cnt;
-            s->ReadSwap(&cnt);      // have to read as long since we don't know how big the list is
+            s->ReadLE(&cnt);      // have to read as long since we don't know how big the list is
 
             if (cnt>=0 && cnt<plSDL::kMaxListSize)
                 fVar.SetCount(cnt);
@@ -2602,13 +2602,13 @@ bool plSDStateVariable::ReadData(hsStream* s, float timeConvert, UInt32 readOpti
     plStateVariable::ReadData(s, timeConvert, readOptions);
 
     UInt8 saveFlags;
-    s->ReadSwap(&saveFlags);    // unused
+    s->ReadLE(&saveFlags);    // unused
 
     // read total list size
     if (GetVarDescriptor()->IsVariableLength())
     {
         UInt32 total;
-        s->ReadSwap(&total);
+        s->ReadLE(&total);
         Resize(total);
     }
     
@@ -2647,12 +2647,12 @@ bool plSDStateVariable::WriteData(hsStream* s, float timeConvert, UInt32 writeOp
     plStateVariable::WriteData(s, timeConvert, writeOptions);
 
     UInt8 saveFlags=0;  // unused   
-    s->WriteSwap(saveFlags);
+    s->WriteLE(saveFlags);
 
     // write total list size
     UInt32 total=GetCount();
     if (GetVarDescriptor()->IsVariableLength())
-        s->WriteSwap(total);
+        s->WriteLE(total);
 
     // write dirty list size
     bool dirtyOnly = (writeOptions & plSDL::kDirtyOnly) != 0;

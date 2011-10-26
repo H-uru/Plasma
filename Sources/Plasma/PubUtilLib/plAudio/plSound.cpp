@@ -1262,11 +1262,11 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
 {
     fPlaying = s->ReadBool();
     fVirtualStartTime = hsTimer::GetSysSeconds();   // Need if we're autostart
-    fTime = s->ReadSwapDouble();
-    fMaxFalloff = s->ReadSwap32();
-    fMinFalloff = s->ReadSwap32();
-    s->ReadSwap( &fCurrVolume );
-    s->ReadSwap( &fDesiredVol );
+    fTime = s->ReadLEDouble();
+    fMaxFalloff = s->ReadLE32();
+    fMinFalloff = s->ReadLE32();
+    s->ReadLE( &fCurrVolume );
+    s->ReadLE( &fDesiredVol );
 
     /// mcn debugging - Thanks to some of my older sound code, it's possible that a few volumes
     /// will come in too large. This will only happen with scenes that were exported with that intermediate
@@ -1279,11 +1279,11 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
         fCurrVolume = 1.f;
     fMaxVolume = fDesiredVol;
 
-    fOuterVol = s->ReadSwap32();
-    fInnerCone = s->ReadSwap32();
-    fOuterCone = s->ReadSwap32();
-    s->ReadSwap( &fFadedVolume );
-    s->ReadSwap( &fProperties );
+    fOuterVol = s->ReadLE32();
+    fInnerCone = s->ReadLE32();
+    fOuterCone = s->ReadLE32();
+    s->ReadLE( &fFadedVolume );
+    s->ReadLE( &fProperties );
 
     fType = s->ReadByte();
     fPriority = s->ReadByte();
@@ -1312,16 +1312,16 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
 void plSound::IWrite( hsStream *s, hsResMgr *mgr )
 {
     s->WriteBool(fPlaying);
-    s->WriteSwapDouble(fTime);
-    s->WriteSwap32(fMaxFalloff);
-    s->WriteSwap32(fMinFalloff);
-    s->WriteSwap( fCurrVolume );
-    s->WriteSwap( fDesiredVol );
-    s->WriteSwap32(fOuterVol);
-    s->WriteSwap32(fInnerCone);
-    s->WriteSwap32(fOuterCone);
-    s->WriteSwap( fFadedVolume );
-    s->WriteSwap( fProperties );
+    s->WriteLEDouble(fTime);
+    s->WriteLE32(fMaxFalloff);
+    s->WriteLE32(fMinFalloff);
+    s->WriteLE( fCurrVolume );
+    s->WriteLE( fDesiredVol );
+    s->WriteLE32(fOuterVol);
+    s->WriteLE32(fInnerCone);
+    s->WriteLE32(fOuterCone);
+    s->WriteLE( fFadedVolume );
+    s->WriteLE( fProperties );
     s->WriteByte( fType );
     s->WriteByte( fPriority );
     
@@ -1347,24 +1347,24 @@ void plSound::IWrite( hsStream *s, hsResMgr *mgr )
 
 void plSound::plFadeParams::Read( hsStream *s )
 {
-    s->ReadSwap( &fLengthInSecs );
-    s->ReadSwap( &fVolStart );
-    s->ReadSwap( &fVolEnd );
-    s->ReadSwap( &fType );
-    s->ReadSwap( &fCurrTime );
-    s->ReadSwap( &fStopWhenDone );
-    s->ReadSwap( &fFadeSoftVol );
+    s->ReadLE( &fLengthInSecs );
+    s->ReadLE( &fVolStart );
+    s->ReadLE( &fVolEnd );
+    s->ReadLE( &fType );
+    s->ReadLE( &fCurrTime );
+    s->ReadLE( &fStopWhenDone );
+    s->ReadLE( &fFadeSoftVol );
 }
 
 void plSound::plFadeParams::Write( hsStream *s )
 {
-    s->WriteSwap( fLengthInSecs );
-    s->WriteSwap( fVolStart );
-    s->WriteSwap( fVolEnd );
-    s->WriteSwap( fType );
-    s->WriteSwap( fCurrTime );
-    s->WriteSwap( fStopWhenDone );
-    s->WriteSwap( fFadeSoftVol );
+    s->WriteLE( fLengthInSecs );
+    s->WriteLE( fVolStart );
+    s->WriteLE( fVolEnd );
+    s->WriteLE( fType );
+    s->WriteLE( fCurrTime );
+    s->WriteLE( fStopWhenDone );
+    s->WriteLE( fFadeSoftVol );
 }
 
 hsScalar plSound::plFadeParams::InterpValue( void )
@@ -1534,11 +1534,11 @@ plAGApplicator *plSoundVolumeApplicator::CloneWithChannel( plAGChannel *channel 
 void plSoundVolumeApplicator::Write( hsStream *stream, hsResMgr *mgr )
 {
     plAGApplicator::Write( stream, mgr );
-    stream->WriteSwap32( fIndex );
+    stream->WriteLE32( fIndex );
 }
 
 void plSoundVolumeApplicator::Read( hsStream *s, hsResMgr *mgr )
 {
     plAGApplicator::Read( s, mgr );
-    fIndex = s->ReadSwap32();
+    fIndex = s->ReadLE32();
 }

@@ -101,7 +101,7 @@ void plCreatableStream::Write( hsStream* stream, hsResMgr* mgr )
     fStream.Rewind();
     std::string buf;
     UInt32 len = fStream.GetEOF();
-    stream->WriteSwap( len );
+    stream->WriteLE( len );
     buf.resize( len );
     fStream.Read( len, (void*)buf.data() );
     stream->Write( len, (const void*)buf.data() );
@@ -113,7 +113,7 @@ void plCreatableStream::Read( hsStream* stream, hsResMgr* mgr )
     fStream.Rewind();
     std::string buf;
     UInt32 len;
-    stream->LogReadSwap( &len,"CreatableStream Len");
+    stream->LogReadLE( &len,"CreatableStream Len");
     buf.resize( len );
     stream->LogRead( len, (void*)buf.data(),"CreatableStream Data");
     fStream.Write( len, (const void*)buf.data() );
