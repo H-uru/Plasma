@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAgeLoadedMsg_INC
 #define plAgeLoadedMsg_INC
 
-#include "pnUtils/pnUtils.h"
 #include "pnMessage/plMessage.h"
 
 //
