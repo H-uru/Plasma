@@ -205,8 +205,10 @@ void plCluster::UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& w
             }
         }
     }
-    wBnd.Reset(&hsPoint3(minX, minY, minZ));
-    wBnd.Union(&hsPoint3(maxX, maxY, maxZ));
+    hsPoint3 min(minX, minY, minZ);
+    wBnd.Reset(&min);
+    hsPoint3 max(maxX, maxY, maxZ);
+    wBnd.Union(&max);
 }
 
 
