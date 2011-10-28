@@ -439,13 +439,34 @@ void plFileUtils::AddSlash(char* path)
 {
     char lastChar = path[strlen(path)-1];
     if (lastChar != '\\' && lastChar != '/')
+#if HS_BUILD_FOR_WIN32
         strcat(path, "\\");
+#else
+        strcat(path, "/");
+#endif
+}
+
+void plFileUtils::AddSlash(wchar* path)
+{
+    wchar lastChar = path[wcslen(path)-1];
+    if (lastChar != L'\\' && lastChar != L'/')
+#if HS_BUILD_FOR_WIN32
+        wcscat(path, L"\\");
+#else
+        wcscat(path, L"/");
+#endif
 }
 
 void plFileUtils::ConcatFileName(char* path, const char* fileName)
 {
     AddSlash(path);
     strcat(path, fileName);
+}
+
+void plFileUtils::ConcatFileName(wchar* path, const wchar* fileName)
+{
+    AddSlash(path);
+    wcscat(path, fileName);
 }
 
 //// GetFileSize /////////////////////////////////////////////////////////////

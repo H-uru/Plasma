@@ -107,9 +107,11 @@ namespace plFileUtils
 
     // Adds a slash to the end of a filename (or does nothing if it's already there)
     void AddSlash(char* path);
+    void AddSlash(wchar* path);
 
     // Concatenates fileName onto path, making sure to add a slash if necessary
     void ConcatFileName(char* path, const char* fileName);
+    void ConcatFileName(wchar* path, const wchar* fileName);
 
     // searches the parent directory of filename for the encryption key file, and reads it
     // into the key passed in. Returns false if the key file didn't exist (and sets key to
