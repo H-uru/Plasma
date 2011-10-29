@@ -3549,8 +3549,9 @@ plParticleSpan  *plDrawableSpans::ICreateParticleIcicle( hsGMaterial *material, 
     icicle->fLocalBounds.MakeEmpty();
     icicle->fWorldBounds.MakeEmpty();
 
-    icicle->fLocalBounds.Union( &hsPoint3(0,0,0) );
-    icicle->fWorldBounds.Union( &hsPoint3(0,0,0) );
+    hsPoint3 zero(0, 0, 0);
+    icicle->fLocalBounds.Union( &zero );
+    icicle->fWorldBounds.Union( &zero );
 
     icicle->fGroupIdx = set->fGroupIdx;
     icicle->fVBufferIdx = set->fVBufferIdx;

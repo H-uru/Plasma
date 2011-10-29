@@ -94,7 +94,7 @@ hsBool plDynaPuddleMgr::MsgReceive(plMessage* msg)
             const plPrintShape* shape = IGetPrintShape(armMod, fPartIDs[i]);
             if( shape )
             {
-                plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+                plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
                 if( IRippleFromShape(shape, true) )
                 {
                     INotifyActive(info, armMod->GetKey(), fPartIDs[i]);

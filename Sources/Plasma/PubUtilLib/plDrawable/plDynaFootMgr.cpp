@@ -115,7 +115,7 @@ hsBool plDynaFootMgr::MsgReceive(plMessage* msg)
         const plPrintShape* shape = IGetPrintShape(armMod, id);
         if( shape )
         {
-            plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+            plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
             if( IPrintFromShape(shape, footMsg->IsLeft()) )
             {
                 INotifyActive(info, armMod->GetKey(), id);
@@ -138,7 +138,7 @@ hsBool plDynaFootMgr::IPrintFromShape(const plPrintShape* shape, hsBool flip)
 
     if( shape )
     {
-        plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+        plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
 
         double secs = hsTimer::GetSysSeconds();
         hsScalar wetness = IHowWet(info, secs);
