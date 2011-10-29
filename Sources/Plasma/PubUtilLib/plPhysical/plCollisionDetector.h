@@ -93,7 +93,7 @@ class plObjectInVolumeDetector : public plCollisionDetector
 public:
     class plCollisionBookKeepingInfo
     {
-        friend plObjectInVolumeDetector;
+        friend class plObjectInVolumeDetector;
         public:
             plCollisionBookKeepingInfo(plKey& hit)
             {
