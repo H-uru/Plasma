@@ -17,7 +17,7 @@ set(pnUUID_HEADERS
 )
 
 add_library(pnUUID STATIC ${pnUUID_SOURCES} ${pnUUID_HEADERS})
-target_link_libraries(pnUUID pnFactory)
+target_link_libraries(pnUUID CoreLib pnFactory)
 if(WIN32)
     target_link_libraries(pnUUID pnUtils)
     target_link_libraries(pnUUID Rpcrt4)

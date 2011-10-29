@@ -42,9 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/hsFiles.h"
 #include "plFile/plFileUtils.h"
 #include "plFile/plSecureStream.h"
-#include "pnUtils/pnUtils.h"
 #include "pnProduct/pnProduct.h"
 #include "hsUtils.h"
+
+#include "pnUUID/pnUUIDCreatable.h"
 
 #include <time.h>
 #include <string>

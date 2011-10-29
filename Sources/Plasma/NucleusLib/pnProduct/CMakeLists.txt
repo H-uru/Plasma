@@ -20,7 +20,7 @@ set(pnProduct_PRIVATE
 
 add_library(pnProduct STATIC ${pnProduct_HEADERS} ${pnProduct_PRIVATE})
 
-target_link_libraries(pnProduct pnUUID)
+target_link_libraries(pnProduct CoreLib pnUUID)
 
 source_group("Header Files" FILES ${pnProduct_HEADERS})
 source_group("Private" FILES ${pnProduct_PRIVATE})
