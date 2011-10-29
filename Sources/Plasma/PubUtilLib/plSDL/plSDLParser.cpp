@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static const int kTokenLen=256;
 
-void plSDLParser::DebugMsg(char* fmt, ...) const
+void plSDLParser::DebugMsg(const char* fmt, ...) const
 {
     return;
     plNetApp* netApp = plSDLMgr::GetInstance()->GetNetApp();
@@ -66,7 +66,7 @@ void plSDLParser::DebugMsg(char* fmt, ...) const
     va_end(args);
 }
 
-void plSDLParser::DebugMsgV(char* fmt, va_list args) const
+void plSDLParser::DebugMsgV(const char* fmt, va_list args) const
 {
     if (strlen(fmt)==nil)
         return;

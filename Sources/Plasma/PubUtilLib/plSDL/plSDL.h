@@ -516,8 +516,8 @@ private:
         plVarDescriptor*& curVar) const;
     bool IParseStateDesc(const char* fileName, hsStream* stream, char token[], plStateDescriptor*& curDesc) const;
 
-    void DebugMsg(char* fmt, ...) const;
-    void DebugMsgV(char* fmt, va_list args) const;
+    void DebugMsg(const char* fmt, ...) const;
+    void DebugMsgV(const char* fmt, va_list args) const;
 
 public:
 
