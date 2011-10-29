@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_UNIX
     #include <limits.h>
     #define kFolderIterator_MaxPath     PATH_MAX
-    #include <unistd.h>
     #define SetCurrentDirectory chdir
 #elif !HS_BUILD_FOR_PS2
     #define kFolderIterator_MaxPath     _MAX_PATH
