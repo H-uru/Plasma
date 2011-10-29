@@ -39,16 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef pnCreatableUUID_h_inc
+#define pnCreatableUUID_h_inc
 
-#ifndef pnUUIDCreatable_inc
-#define pnUUIDCreatable_inc
+#include "pnUUID/pnUUID.h"
+#include "pnFactory/plCreatable.h"
 
-#include "pnFactory/plCreator.h"
+class plCreatableUuid : public plUUID, public plCreatable {
+public:
+    CLASSNAME_REGISTER( plCreatableUuid );
+    GETINTERFACE_ANY( plCreatableUuid, plCreatable );
 
+    plCreatableUuid() { }
+    plCreatableUuid(const plCreatableUuid& other) : plUUID(other) { }
+    plCreatableUuid(const plUUID& other) : plUUID(other) { }
 
-#include "pnUUID.h"
+    void    Read( hsStream * s, hsResMgr* ) { plUUID::Read(s); }
+    void    Write( hsStream * s, hsResMgr* ) { plUUID::Write(s); }
+};
 
-REGISTER_CREATABLE( plCreatableUuid );
-
-#endif // pnUUIDCreatable_inc
-
+#endif //pnCreatableUUID_h_inc

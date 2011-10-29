@@ -57,6 +57,9 @@ REGISTER_CREATABLE( plCreatableGenericValue );
 #include "pnNetCommon.h"
 REGISTER_CREATABLE( plCreatableStream );
 
+#include "plCreatableUuid.h"
+REGISTER_CREATABLE( plCreatableUuid );
+
 
 #endif // pnNetCommonCreatable_inc
 

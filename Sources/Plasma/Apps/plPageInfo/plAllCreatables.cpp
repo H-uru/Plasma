@@ -61,7 +61,6 @@ REGISTER_NONCREATABLE( plDispatchBase );
 #include "pnModifier/pnModifierCreatable.h"
 #include "pnNetCommon/pnNetCommonCreatable.h"
 #include "pnTimer/pnTimerCreatable.h"
-#include "pnUUID/pnUUIDCreatable.h"
 
 #include "plResMgr/plResMgrCreatable.h"
 

@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/plEncryptedStream.h"
 #include "pnProduct/pnProduct.h"
 #include "hsUtils.h"
-#include "pnUUID/pnUUIDCreatable.h"
 
 void EncryptFiles(const char* dir, const char* ext, bool encrypt);
 

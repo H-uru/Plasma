@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plCameraMsg.h"
 #include "pnTimer/plTimerCallbackManager.h"
 #include "plVault/plVault.h"
+#include "pnNetCommon/plCreatableUuid.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plNetTransport/plNetTransport.h"
