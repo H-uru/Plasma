@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef HS_BUILD_FOR_WIN32
 #include "pnUtils/pnUtils.h"
 #endif
-#include "pnFactory/plCreatable.h"
 
 class hsStream;
 
@@ -92,19 +91,5 @@ public:
 
     static plUUID Generate();
 };
-
-class plCreatableUuid : public plUUID, public plCreatable {
-public:
-    CLASSNAME_REGISTER( plCreatableUuid );
-    GETINTERFACE_ANY( plCreatableUuid, plCreatable );
-
-    plCreatableUuid ();
-    plCreatableUuid (const plCreatableUuid & other);
-    plCreatableUuid (const plUUID & other);
-
-    void    Read( hsStream * s, hsResMgr* ) { plUUID::Read(s); }
-    void    Write( hsStream * s, hsResMgr* ) { plUUID::Write(s); }
-};
-
 
 #endif // pnUUID_h_inc

@@ -73,25 +73,3 @@ const char * plUUID::AsString() const {
     ToStdString(str);
     return str.c_str();
 }
-
-/*****************************************************************************
-*
-*   plCreatableUuid
-*
-***/
-
-//============================================================================
-plCreatableUuid::plCreatableUuid () {
-}
-
-//============================================================================
-plCreatableUuid::plCreatableUuid (const plCreatableUuid & other)
-: plUUID(other)
-{
-}
-
-//============================================================================
-plCreatableUuid::plCreatableUuid (const plUUID & other)
-: plUUID(other)
-{
-}
