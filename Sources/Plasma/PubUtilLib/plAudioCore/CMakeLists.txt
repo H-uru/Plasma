@@ -36,7 +36,8 @@ set(plAudioCore_HEADERS
 )
 
 add_library(plAudioCore STATIC ${plAudioCore_SOURCES} ${plAudioCore_HEADERS})
-target_link_libraries(plAudioCore ogg vorbis vorbisfile)
+target_link_libraries(plAudioCore ${Ogg_LIBRARIES})
+target_link_libraries(plAudioCore ${Vorbis_LIBRARIES})
 
 source_group("Source Files" FILES ${plAudioCore_SOURCES})
 source_group("Header Files" FILES ${plAudioCore_HEADERS})
