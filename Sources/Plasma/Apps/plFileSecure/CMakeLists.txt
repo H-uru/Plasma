@@ -12,7 +12,6 @@ set(plFileSecure_SOURCES
 )
 
 add_executable(plFileSecure ${plFileSecure_SOURCES})
-target_link_libraries(plFileSecure CoreLib CoreLibExe plFile plUnifiedTime pnProduct pnUtils)
-target_link_libraries(plFileSecure Rpcrt4)
+target_link_libraries(plFileSecure CoreLib CoreLibExe pnProduct plFile)
 
 source_group("Source Files" FILES ${plFileSecure_SOURCES})

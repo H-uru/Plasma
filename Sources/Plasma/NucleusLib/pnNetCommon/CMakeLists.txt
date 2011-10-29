@@ -33,6 +33,7 @@ set(pnNetCommon_SOURCES
 )
 
 add_library(pnNetCommon STATIC ${pnNetCommon_HEADERS} ${pnNetCommon_SOURCES})
+target_link_libraries(pnNetCommon pnAddrInfo plStatusLog)
 
 source_group("Header Files" FILES ${pnNetCommon_HEADERS})
 source_group("Source Files" FILES ${pnNetCommon_SOURCES})

@@ -34,6 +34,7 @@ set(plResMgr_HEADERS
 )
 
 add_library(plResMgr STATIC ${plResMgr_SOURCES} ${plResMgr_HEADERS})
+target_link_libraries(plResMgr CoreLib pnDispatch pnFactory pnKeyedObject pnMessage pnTimer plFile plStatusLog)
 
 source_group("Source Files" FILES ${plResMgr_SOURCES})
 source_group("Header Files" FILES ${plResMgr_HEADERS})
