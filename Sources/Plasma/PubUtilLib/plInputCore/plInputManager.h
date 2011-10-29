@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_INPUT_MANAGER_H
 #define PL_INPUT_MANAGER_H
 
-#include <windows.h>
+#include "hsWindows.h"
 #include "hsTypes.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
