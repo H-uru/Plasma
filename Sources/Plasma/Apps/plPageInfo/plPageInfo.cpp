@@ -41,21 +41,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsUtils.h"
 #include "hsTimer.h"
-#include "../plFile/hsFiles.h"
-#include "../plFile/plFileUtils.h"
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plResMgrSettings.h"
+#include "plFile/hsFiles.h"
+#include "plFile/plFileUtils.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plResMgrSettings.h"
 
-#include "../plAgeDescription/plAgeManifest.h"
+#include "plAgeDescription/plAgeManifest.h"
 
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plRegistryNode.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plRegistryNode.h"
 
-#include "../plAudioCore/plSoundBuffer.h"
+#include "plAudioCore/plSoundBuffer.h"
 #include "hsStream.h"
 
-#include "../pnUtils/pnUtils.h"
-#include "../pnProduct/pnProduct.h"
+#include "pnProduct/pnProduct.h"
 
 
 //// Globals /////////////////////////////////////////////////////////////////
@@ -70,7 +69,7 @@ void PrintVersion()
 {
     wchar productString[256];
     ProductString(productString, arrsize(productString));
-    _putws(productString);
+    printf("%S\n\n", productString);
 }
 
 //// PrintHelp ///////////////////////////////////////////////////////////////
