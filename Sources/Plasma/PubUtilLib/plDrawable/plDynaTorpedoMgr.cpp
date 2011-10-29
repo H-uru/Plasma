@@ -124,7 +124,7 @@ hsBool plDynaTorpedoMgr::IHandleShot(plBulletMsg* bull)
         fCutter->SetLength(hsVector3(scaleX, scaleY, bull->Range()));
         fCutter->Set(pos, up, -bull->Dir());
 
-        plDynaDecalInfo& info = IGetDecalInfo(UInt32(this), GetKey());
+        plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(this), GetKey());
 
         if( bull->PartyTime() > 0 )
             fPartyTime = bull->PartyTime();

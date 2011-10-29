@@ -173,7 +173,7 @@ hsBool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, hsBool force)
 
     hsBool retVal = false;
 
-    plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+    plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
 
     const hsMatrix44& shapeL2W = shape->GetOwner()->GetLocalToWorld();
 
@@ -182,7 +182,8 @@ hsBool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, hsBool force)
     double t = hsTimer::GetSysSeconds();
     hsScalar dt = hsScalar(t - info.fLastTime) * sRand.RandZeroToOne();
     hsBool longEnough = (dt >= kMinTime);
-    hsBool farEnough = (hsVector3(&info.fLastPos, &shapeL2W.GetTranslate()).Magnitude() > kMinDist);
+    hsPoint3 xlate = shapeL2W.GetTranslate();
+    hsBool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
     if( force || longEnough || farEnough )
     {
         hsPoint3 pos = shapeL2W.GetTranslate();
