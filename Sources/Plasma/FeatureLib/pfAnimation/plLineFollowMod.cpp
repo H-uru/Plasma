@@ -572,7 +572,8 @@ void plLineFollowMod::ISetTargetTransform(int iTarg, const hsMatrix44& unclTgtXf
             xlate.Reset();
             xlate.SetTranslate(&oldPos);
             w2l = w2l * xlate;
-            xlate.SetTranslate(&-pos);
+            hsPoint3 neg = -pos;
+            xlate.SetTranslate(&neg);
             w2l = w2l * xlate;
 
             ci->SetTransform(l2w, w2l);
