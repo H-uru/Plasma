@@ -97,16 +97,11 @@ set(MaxPlasmaMtls_SOURCES
 set(MaxPlasmaMtls_SOURCES_Layers
     Layers/plAngleAttenLayer.cpp
     Layers/plDynamicEnvLayer.cpp
-    Layers/plDynamicEnvLayerBitmapPB.cpp
     Layers/plDynamicTextLayer.cpp
-    Layers/plDynamicTextLayerBitmapPB.cpp
     Layers/plLayerTex.cpp
-    Layers/plLayerTexBasicPB.cpp
-    Layers/plLayerTexBitmapPB.cpp
     Layers/plMAXCameraLayer.cpp
     Layers/plPlasmaMAXLayer.cpp
     Layers/plStaticEnvLayer.cpp
-    Layers/plStaticEnvLayerBitmapPB.cpp
 )
 
 set(MaxPlasmaMtls_SOURCES_Materials
@@ -119,7 +114,6 @@ set(MaxPlasmaMtls_SOURCES_Materials
     Materials/plDecalMtl.cpp
     Materials/plMultipassMtl.cpp
     Materials/plMultipassMtlDlg.cpp
-    Materials/plMultipassMtlPB.cpp
     Materials/plNoteTrackWatcher.cpp
     Materials/plParticleMtl.cpp
     Materials/plPassAnimDlgProc.cpp
