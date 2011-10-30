@@ -201,23 +201,6 @@ hsBool plLayerBink::IGetCurrentFrame()
             0, 0,
             BINKSURFACE32A | BINKCOPYALL
     );
-
-#if HS_BUILD_FOR_MAC
-    UInt32  numPix = GetTexture()->GetBitmap()->GetWidth() * GetTexture()->GetBitmap()->GetHeight(); 
-    UInt32  h = GetTexture()->GetBitmap()->GetHeight(); 
-    UInt32* pix = (UInt32*)GetTexture()->GetBitmap()->GetImage();
-    UInt32  i = 0;
-    while( i < numPix )
-    {
-        unsigned char r = (*pix >> 0);  unsigned char g = (*pix >> 8);
-        unsigned char b = (*pix >> 16); unsigned char a = (*pix >> 24);
-            
-        *pix = ((b << 24) | (g << 16) | (r << 8) | a);
-        
-        pix++;
-        i++;
-    }
-#endif
 #endif /* BINK_SDK_AVAILABLE */
 
     return false;

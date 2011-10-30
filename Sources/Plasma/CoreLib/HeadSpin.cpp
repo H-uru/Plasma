@@ -46,12 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 
 
-#if HS_BUILD_FOR_MAC
-    #include <Events.h>
-    #include <ToolUtils.h>
-    #include <Windows.h>
-#endif
-
 #if HS_BUILD_FOR_WIN32
 #ifdef _MSC_VER
 # include <crtdbg.h>        /* for _RPT_BASE */
@@ -108,9 +102,7 @@ void hsDebugMessage (const char message[], long val)
     if (gHSDebugProc)
         gHSDebugProc(&s[1]);
     else
-#if HS_BUILD_FOR_MAC
-        DebugStr((unsigned char*)s);
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     {   OutputDebugString(&s[1]);
         OutputDebugString("\n");
     }
@@ -118,8 +110,6 @@ void hsDebugMessage (const char message[], long val)
     {   fprintf(stderr, "%s\n", &s[1]);
 //      hsThrow(&s[1]);
     }
-#elif HS_BUILD_FOR_PS2
-    fprintf(stderr, "%s\n", &s[1]); 
 #else
     hsThrow(&s[1]);
 #endif
@@ -160,7 +150,7 @@ void hsStatusMessage(const char message[])
   if (gHSStatusProc) {
     gHSStatusProc(message);
   } else {
-#if HS_BUILD_FOR_PS2 || HS_BUILD_FOR_UNIX
+#if HS_BUILD_FOR_UNIX
     printf("%s",message);
     int len = strlen(message);
     if (len>0 && message[len-1]!='\n')
@@ -170,7 +160,7 @@ void hsStatusMessage(const char message[])
     int len = strlen(message);
     if (len>0 && message[len-1]!='\n')
         OutputDebugString("\n");
-#endif  // MAC ??????  TODO
+#endif
   }
 }
 

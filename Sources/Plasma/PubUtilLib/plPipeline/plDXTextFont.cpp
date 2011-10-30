@@ -57,10 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <ddraw.h>
 #include <d3dx9mesh.h>
 
-#if HS_BUILD_FOR_MAC
-#include <QuickDraw.h>
-#endif
-
 #include "hsWinRef.h"
 #include "hsTypes.h"
 #include "plDXTextFont.h"

@@ -51,17 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unistd.h>
 #endif
 
-#if HS_BUILD_FOR_MAC
-    #include <Files.h>
-    #include <stdio.h>
-    #include <unistd.h>
-#endif
-
-#if HS_BUILD_FOR_PS2
-#include <eekernel.h>
-#include <sifdev.h>
-#endif
-
 #include "hsWindows.h"
 #if HS_BUILD_FOR_WIN32
 #include <io.h>
@@ -696,26 +685,8 @@ UInt32 hsStream::ReadLEAtom(UInt32* sizePtr)
 
 hsBool hsFileStream::Open(const char *name, const char *mode)
 {
-#ifdef HS_BUILD_FOR_PS2
-    hsAssert(fRef == kFileStream_Uninitialized, "hsFileStream:Open  Stream already opened");
-
-    Int32 ref = hsPS2Open(name, mode);
-    if (ref == -1)
-        return false;
-
-    fRef = (UInt32) ref;
-    fFileSize = sceLseek(fRef, 0, SCE_SEEK_END);
-    sceLseek(fRef, 0, SCE_SEEK_SET);
-    fBufferIsEmpty = true;
-    fWriteBufferUsed = false;
-    fVirtualFilePointer = 0;
-    fBufferBase = 0;
-
-    return true;
-#else
     hsAssert(0, "hsFileStream::Open  NotImplemented");
     return false;
-#endif
 }
 
 hsBool hsFileStream::Open(const wchar *name, const wchar *mode)
@@ -726,17 +697,8 @@ hsBool hsFileStream::Open(const wchar *name, const wchar *mode)
 
 hsBool hsFileStream::Close ()
 {
-#ifdef HS_BUILD_FOR_PS2
-    if (fRef != kFileStream_Uninitialized)
-    {
-        hsPS2Close(fRef);
-        fRef = kFileStream_Uninitialized;
-    }
-    return true;
-#else
     hsAssert(0, "hsFileStream::Close  NotImplemented");
     return false;
-#endif
 }
 
 UInt32 hsFileStream::GetFileRef()
@@ -748,23 +710,11 @@ void hsFileStream::SetFileRef(UInt32 ref)
 {
     hsAssert(ref != kFileStream_Uninitialized, "bad ref");
     fRef = ref;
-#if HS_BUILD_FOR_PS2
-    fFileSize = sceLseek(fRef, 0, SCE_SEEK_END);
-    sceLseek(fRef, 0, SCE_SEEK_SET);
-    fBufferIsEmpty= true;
-    fWriteBufferUsed= false;
-    fVirtualFilePointer= 0;
-    fBufferBase= 0;
-#endif
 }
 
 hsFileStream::hsFileStream()
 {
     fRef = kFileStream_Uninitialized;
-#if HS_BUILD_FOR_PS2
-    fBufferIsEmpty= true;
-    fWriteBufferUsed= false;
-#endif
 }
 
 hsFileStream::~hsFileStream()
@@ -778,54 +728,7 @@ UInt32 hsFileStream::Read(UInt32 bytes,  void* buffer)
     fBytesRead += bytes;
     fPosition += bytes;
 
-#if HS_BUILD_FOR_MAC
-    Int16   err;
-
-    err = FSRead(fRef, (long*)&bytes, buffer);
-    if (err == noErr)
-        return bytes;
-    else
-        return 0;
-#elif HS_BUILD_FOR_PS2
-    Int32 ret;
-    Int32 nReadBytes= 0;
-    while(bytes){
-        if( !fBufferIsEmpty ){  // read at already chatched.
-            Int32 DataBytesInBuffer= fBufferBase + kBufferSize - fVirtualFilePointer;
-            Int32 ChatchedReadSize= DataBytesInBuffer < bytes ? DataBytesInBuffer : bytes;
-            memcpy( buffer, &fBuffer[fVirtualFilePointer-fBufferBase], ChatchedReadSize );
-            nReadBytes += ChatchedReadSize;
-            buffer= (void *)(((char*)buffer) + ChatchedReadSize);
-            fVirtualFilePointer += ChatchedReadSize;
-            bytes -= ChatchedReadSize;
-            fBufferIsEmpty= (fBufferBase + kBufferSize <= fVirtualFilePointer);
-        }
-        if( kBufferSize <= bytes ){ // read directry, for Large block read.
-            hsAssert( fBufferIsEmpty, "read buffer was not used.");
-            Int32 DirectReadSize= bytes - bytes % kBufferSize;
-            ret= sceRead(fRef, buffer, DirectReadSize);
-            if( ret == -1 ){
-                return 0;
-            }
-            hsAssert( ret == DirectReadSize, "require read size != return size");
-            nReadBytes += DirectReadSize;
-            buffer= (void *)(((char*)buffer) + DirectReadSize);
-            fVirtualFilePointer += DirectReadSize;
-            bytes -= DirectReadSize;
-        }
-        if( 0 < bytes && fBufferIsEmpty ){  // fill buffer
-            hsAssert( fVirtualFilePointer % kBufferSize == 0 , "read buffer is not alignment.");
-            ret= sceRead(fRef, fBuffer, kBufferSize );
-            if( ret == -1 ){
-                return 0;
-            }
-            fBufferBase= fVirtualFilePointer;
-            fBufferIsEmpty= false;
-        }
-    }
-    return nReadBytes;
-
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     UInt32 rBytes;
     ReadFile((HANDLE)fRef, buffer, bytes, (LPDWORD)&rBytes, nil);
     if(bytes == rBytes)
@@ -844,28 +747,7 @@ UInt32 hsFileStream::Write(UInt32 bytes, const void* buffer)
     fBytesRead += bytes;
     fPosition += bytes;
 
-#if HS_BUILD_FOR_MAC
-    Int16   err;
-
-    err = FSWrite(fRef, (long*)&bytes, buffer);
-    if (err == noErr)
-        return bytes;
-    else
-    {   
-        hsDebugMessage("hsFileStream::Write failed", err);
-        return 0;
-    }
-#elif HS_BUILD_FOR_PS2
-       Int32 ret;
-    
-    fWriteBufferUsed =true; // buffered write was not implement, not yet.
-    
-    ret = sceWrite(fRef, (void*)buffer ,bytes);
-    if(ret != -1)
-      return ret;
-    else
-      return 0;
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     UInt32 wBytes;
     WriteFile((HANDLE)fRef, buffer, bytes, (LPDWORD)&wBytes, nil);
     if(bytes == wBytes)
@@ -885,24 +767,7 @@ UInt32 hsFileStream::Write(UInt32 bytes, const void* buffer)
 
 hsBool hsFileStream::AtEnd()
 {
-#if HS_BUILD_FOR_MAC
-    Int32 eof;
-    Int32 pos;
-    ::GetEOF(fRef, &eof);
-    ::GetFPos(fRef, &pos);
-    return pos >= eof;
-#elif HS_BUILD_FOR_PS2
-    Int32 rVal = 0;
-    if( fWriteBufferUsed || fVirtualFilePointer == 0 ){
-        // bufferd write was not implement, yiet.
-        rVal = sceLseek(fRef, 0, SCE_SEEK_CUR);
-        return rVal >= fFileSize;
-    }
-    else{   // bufferd read
-        return fVirtualFilePointer >= fFileSize;
-    }
-    
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     UInt32 bytes;
     PeekNamedPipe((void*)fRef, nil, 0, nil, (LPDWORD)&bytes, nil);
     return bytes>0;
@@ -917,41 +782,7 @@ void hsFileStream::Skip(UInt32 delta)
     fBytesRead += delta;
     fPosition += delta;
 
-#if HS_BUILD_FOR_MAC
-    short err = SetFPos(fRef, fsFromMark, delta);
-    hsAssert(err == noErr, "SetFPos failed");
-#elif HS_BUILD_FOR_PS2
-    const Int32 NewPointer= fVirtualFilePointer+delta;
-    if( fWriteBufferUsed || fVirtualFilePointer == 0 ){
-        // bufferd write was not implement, yiet.
-        sceLseek(fRef, delta, SCE_SEEK_CUR);
-    }
-    else{   // bufferd read.
-        if( !fBufferIsEmpty ){
-            Int32 CurBlock= fVirtualFilePointer / kBufferSize;
-            Int32 NewBlock= NewPointer / kBufferSize;
-            if( CurBlock == NewBlock ){
-                fVirtualFilePointer += delta;
-                return;
-            }
-            fBufferIsEmpty= false;
-        }
-        Int32 NewBaseMod= NewPointer % kBufferSize;
-        Int32 NewBase= NewPointer - NewBaseMod;
-        if( NewBaseMod ){
-            sceLseek( fRef, NewBase, SCE_SEEK_SET );
-            sceRead( fRef, fBuffer, kBufferSize );
-            fVirtualFilePointer= NewPointer;
-            fBufferBase= NewBase;
-            fBufferIsEmpty= false;
-        }
-        else{
-            // just block border.
-            fVirtualFilePointer= NewPointer;
-            fBufferBase= NewBase;
-        }
-    }
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     hsDebugMessage("hsFileStream::Skip unimplemented", 0);
 #endif
 }
@@ -961,21 +792,7 @@ void hsFileStream::Rewind()
     fBytesRead = 0;
     fPosition = 0;
 
-#if HS_BUILD_FOR_MAC
-    short err = SetFPos(fRef, fsFromStart, 0);
-    hsAssert(err == noErr, "SetFPos failed");
-#elif HS_BUILD_FOR_PS2
-    if( fWriteBufferUsed || fVirtualFilePointer == 0 ){
-        // bufferd write was not implement, yiet.
-        sceLseek(fRef,0,SCE_SEEK_SET);
-    }
-    else{   // bufferd read.
-        sceLseek(fRef, 0, SCE_SEEK_SET);
-        fBufferIsEmpty= true;
-        fVirtualFilePointer= 0;
-        fBufferBase= 0;
-    }
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     hsDebugMessage("hsFileStream::Rewind unimplemented", 0);
 #endif
 }

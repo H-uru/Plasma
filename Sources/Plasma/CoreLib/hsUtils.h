@@ -185,20 +185,7 @@ inline float hsRandNorm() { return 1.f / 32767.f; } // multiply by hsRand to get
 int hsRand(void);
 void hsRandSeed(int seed);
 
-
-#if HS_BUILD_FOR_MAC
-FILE* hsFopen(const char name[], const char mode[]);    // handles path names with /s
-
-#elif HS_BUILD_FOR_PS2 // HS_BUILD_FOR_MAC
-
-int hsPS2Open(const char name[], const char mode[]);
-void hsPS2Close( int file );
-
-#else // HS_BUILD_FOR_MAC
-
 #define hsFopen(name, mode) fopen(name, mode)
-
-#endif // HS_BUILD_FOR_MAC
 
 char** DisplaySystemVersion();
 

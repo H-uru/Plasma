@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsExceptions.h"
 
-#if HS_BUILD_FOR_MAC
-    #define kDirChar        ':'
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     #define kDirChar        '\\'
 #else
     #define kDirChar        '/'
@@ -64,7 +62,6 @@ static const char* FindNameInPath(const char path[])
 }
 
 ///////////////////////////////////////////////////////////////////////
-#if !HS_BUILD_FOR_PS2
 
 hsFile::hsFile() : fPathAndName(nil), fFILE(nil)
 {
@@ -141,7 +138,6 @@ void hsFile::Close()
         fFILE = nil;
     }
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 

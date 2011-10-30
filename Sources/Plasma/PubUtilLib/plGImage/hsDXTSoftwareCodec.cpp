@@ -667,13 +667,8 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16( plMipmap *destBMap, plMip
         colors[ 2 ] = IMixTwoThirdsRGB4444( colors[ 0 ], colors[ 1 ] );
         colors[ 3 ] = IMixTwoThirdsRGB4444( colors[ 1 ], colors[ 0 ] );
         
-        cBitSrc1 = srcData[ 2 ];
-        cBitSrc2 = srcData[ 3 ];
-
-#ifdef HS_BUILD_FOR_MAC
-        cBitSrc1 = ISwapWordOrder( cBitSrc1 );
-        cBitSrc2 = ISwapWordOrder( cBitSrc2 );
-#endif
+        cBitSrc1 = hsToLE16( srcData[ 2 ] );
+        cBitSrc2 = hsToLE16( srcData[ 3 ] );
         
         for( j = 0; j < 8; j++ )
         {
@@ -683,10 +678,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16( plMipmap *destBMap, plMip
             destBlock[ j + 8 ] = alphas[ aBitSrc2 & 0x07 ] | colors[ cBitSrc2 & 0x03 ];
             aBitSrc2 >>= 3;
             cBitSrc2 >>= 2;
-#ifdef HS_BUILD_FOR_MAC
-            destBlock[ j ] = ISwapWordOrder( destBlock[ j ] );
-            destBlock[ j + 8 ] = ISwapWordOrder( destBlock[ j + 8 ] );
-#endif
+
+            destBlock[ j ] = hsToLE16( destBlock[ j ] );
+            destBlock[ j + 8 ] = hsToLE16( destBlock[ j + 8 ] );
         }
         
         /// Now copy the block to the destination bitmap
@@ -828,13 +822,8 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16Weird( plMipmap *destBMap, 
         colors[ 2 ] = IMixTwoThirdsRGB4444( colors[ 0 ], colors[ 1 ] );
         colors[ 3 ] = IMixTwoThirdsRGB4444( colors[ 1 ], colors[ 0 ] );
         
-        cBitSrc1 = srcData[ 2 ];
-        cBitSrc2 = srcData[ 3 ];
-
-#ifdef HS_BUILD_FOR_MAC
-        cBitSrc1 = ISwapWordOrder( cBitSrc1 );
-        cBitSrc2 = ISwapWordOrder( cBitSrc2 );
-#endif
+        cBitSrc1 = hsToLE16( srcData[ 2 ] );
+        cBitSrc2 = hsToLE16( srcData[ 3 ] );
         
         for( j = 0; j < 8; j++ )
         {
@@ -844,10 +833,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16Weird( plMipmap *destBMap, 
             destBlock[ j + 8 ] = alphas[ aBitSrc2 & 0x07 ] | colors[ cBitSrc2 & 0x03 ];
             aBitSrc2 >>= 3;
             cBitSrc2 >>= 2;
-#ifdef HS_BUILD_FOR_MAC
-            destBlock[ j ] = ISwapWordOrder( destBlock[ j ] );
-            destBlock[ j + 8 ] = ISwapWordOrder( destBlock[ j + 8 ] );
-#endif
+
+            destBlock[ j ] = hsToLE16( destBlock[ j ] );
+            destBlock[ j + 8 ] = hsToLE16( destBlock[ j + 8 ] );
         }
         
         /// Now copy the block to the destination bitmap
@@ -1000,13 +988,8 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To32( plMipmap *destBMap, plMip
         colors[ 2 ] = IMixTwoThirdsRGB32( colors[ 0 ], colors[ 1 ] );
         colors[ 3 ] = IMixTwoThirdsRGB32( colors[ 1 ], colors[ 0 ] );
         
-        cBitSrc1 = srcData[ 2 ];
-        cBitSrc2 = srcData[ 3 ];
-
-#ifdef HS_BUILD_FOR_MAC
-        cBitSrc1 = ( cBitSrc1 >> 8 ) | ( ( cBitSrc1 & 0xff ) << 8 );
-        cBitSrc2 = ( cBitSrc2 >> 8 ) | ( ( cBitSrc2 & 0xff ) << 8 );
-#endif
+        cBitSrc1 = hsToLE16( srcData[ 2 ] );
+        cBitSrc2 = hsToLE16( srcData[ 3 ] );
         
         for( j = 0; j < 8; j++ )
         {
@@ -1016,10 +999,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To32( plMipmap *destBMap, plMip
             destBlock[ j + 8 ] = alphas[ aBitSrc2 & 0x07 ] | colors[ cBitSrc2 & 0x03 ];
             aBitSrc2 >>= 3;
             cBitSrc2 >>= 2;
-#ifdef HS_BUILD_FOR_MAC
-            destBlock[ j ] = ISwapDwordOrder( destBlock[ j ] );
-            destBlock[ j + 8 ] = ISwapDwordOrder( destBlock[ j + 8 ] );
-#endif
+
+            destBlock[ j ] = hsToLE32( destBlock[ j ] );
+            destBlock[ j + 8 ] = hsToLE32( destBlock[ j + 8 ] );
         }
         
         /// Now copy the block to the destination bitmap
@@ -1153,13 +1135,8 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5ToAInten( plMipmap *destBMap, p
         colors[ 2 ] = IMixTwoThirdsInten( colors[ 0 ], colors[ 1 ] );
         colors[ 3 ] = IMixTwoThirdsInten( colors[ 1 ], colors[ 0 ] );
         
-        cBitSrc1 = srcData[ 2 ];
-        cBitSrc2 = srcData[ 3 ];
-
-#ifdef HS_BUILD_FOR_MAC
-        cBitSrc1 = ( cBitSrc1 >> 8 ) | ( ( cBitSrc1 & 0xff ) << 8 );
-        cBitSrc2 = ( cBitSrc2 >> 8 ) | ( ( cBitSrc2 & 0xff ) << 8 );
-#endif
+        cBitSrc1 = hsToLE16( srcData[ 2 ] );
+        cBitSrc2 = hsToLE16( srcData[ 3 ] );
         
         for( j = 0; j < 8; j++ )
         {
@@ -1169,10 +1146,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5ToAInten( plMipmap *destBMap, p
             destBlock[ j + 8 ] = alphas[ aBitSrc2 & 0x07 ] | (UInt16)colors[ cBitSrc2 & 0x03 ];
             aBitSrc2 >>= 3;
             cBitSrc2 >>= 2;
-#ifdef HS_BUILD_FOR_MAC
-            destBlock[ j ] = ISwapWordOrder( destBlock[ j ] );
-            destBlock[ j + 8 ] = ISwapWordOrder( destBlock[ j + 8 ] );
-#endif
+
+            destBlock[ j ] = hsToLE16( destBlock[ j ] );
+            destBlock[ j + 8 ] = hsToLE16( destBlock[ j + 8 ] );
         }
         
         /// Now copy the block to the destination bitmap
@@ -1246,13 +1222,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16( plMipmap *destBMap, plMip
         colors[ 0 ] = IRGB565To1555( srcData[ 0 ] ) | 0x8000;       // Make sure alpha is set
         colors[ 1 ] = IRGB565To1555( srcData[ 1 ] ) | 0x8000;       // Make sure alpha is set
 
-#ifdef HS_BUILD_FOR_MAC
-        tempW1 = ISwapWordOrder( srcData[ 0 ] );
-        tempW2 = ISwapWordOrder( srcData[ 1 ] );
-#else 
-        tempW1 = srcData[ 0 ]; 
-        tempW2 = srcData[ 1 ];
-#endif      
+        tempW1 = hsToLE16( srcData[ 0 ] );
+        tempW2 = hsToLE16( srcData[ 1 ] );
+
         if( tempW1 > tempW2 )
         {
             /// Four-color block--mix the other two
@@ -1266,13 +1238,8 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16( plMipmap *destBMap, plMip
             colors[ 3 ] = 0;
         }
 
-        bitSource = srcData[ 2 ];
-        bitSource2 = srcData[ 3 ];
-
-#ifdef HS_BUILD_FOR_MAC
-        bitSource = ( bitSource >> 8 ) | ( ( bitSource & 0xff ) << 8 );
-        bitSource2 = ( bitSource2 >> 8 ) | ( ( bitSource2 & 0xff ) << 8 );      
-#endif
+        bitSource = hsToLE16( srcData[ 2 ] );
+        bitSource2 = hsToLE16( srcData[ 3 ] );
 
         for( j = 0; j < 8; j++ )
         {
@@ -1280,10 +1247,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16( plMipmap *destBMap, plMip
             bitSource >>= 2;
             destBlock[ j + 8 ] = colors[ bitSource2 & 0x03 ];
             bitSource2 >>= 2;
-#ifdef HS_BUILD_FOR_MAC
-            destBlock[ j ] = ISwapWordOrder( destBlock[ j ] );
-            destBlock[ j + 8 ] = ISwapWordOrder( destBlock[ j + 8 ] );
-#endif
+
+            destBlock[ j ] = hsToLE16( destBlock[ j ] );
+            destBlock[ j + 8 ] = hsToLE16( destBlock[ j + 8 ] );
         }
         
         /// Now copy the block to the destination bitmap
@@ -1358,13 +1324,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16Weird( plMipmap *destBMap,
         colors[ 0 ] = IRGB565To5551( srcData[ 0 ] ) | 0x0001;       // Make sure alpha is set
         colors[ 1 ] = IRGB565To5551( srcData[ 1 ] ) | 0x0001;       // Make sure alpha is set
 
-#ifdef HS_BUILD_FOR_MAC
-        tempW1 = ISwapWordOrder( srcData[ 0 ] );
-        tempW2 = ISwapWordOrder( srcData[ 1 ] );
-#else 
-        tempW1 = srcData[ 0 ]; 
-        tempW2 = srcData[ 1 ];
-#endif      
+        tempW1 = hsToLE16( srcData[ 0 ] );
+        tempW2 = hsToLE16( srcData[ 1 ] );
+
         if( tempW1 > tempW2 )
         {
             /// Four-color block--mix the other two
@@ -1378,13 +1340,8 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16Weird( plMipmap *destBMap,
             colors[ 3 ] = 0;
         }
 
-        bitSource = srcData[ 2 ];
-        bitSource2 = srcData[ 3 ];
-
-#ifdef HS_BUILD_FOR_MAC
-        bitSource = ( bitSource >> 8 ) | ( ( bitSource & 0xff ) << 8 );
-        bitSource2 = ( bitSource2 >> 8 ) | ( ( bitSource2 & 0xff ) << 8 );      
-#endif
+        bitSource = hsToLE16( srcData[ 2 ] );
+        bitSource2 = hsToLE16( srcData[ 3 ] );
 
         for( j = 0; j < 8; j++ )
         {
@@ -1392,10 +1349,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16Weird( plMipmap *destBMap,
             bitSource >>= 2;
             destBlock[ j + 8 ] = colors[ bitSource2 & 0x03 ];
             bitSource2 >>= 2;
-#ifdef HS_BUILD_FOR_MAC
-            destBlock[ j ] = ISwapWordOrder( destBlock[ j ] );
-            destBlock[ j + 8 ] = ISwapWordOrder( destBlock[ j + 8 ] );
-#endif
+
+            destBlock[ j ] = hsToLE16( destBlock[ j ] );
+            destBlock[ j + 8 ] = hsToLE16( destBlock[ j + 8 ] );
         }
         
         /// Now copy the block to the destination bitmap
@@ -1470,13 +1426,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To32( plMipmap *destBMap,
         colors[ 0 ] = IRGB16To32Bit( srcData[ 0 ] ) | 0xff000000;
         colors[ 1 ] = IRGB16To32Bit( srcData[ 1 ] ) | 0xff000000;
 
-#ifdef HS_BUILD_FOR_MAC
-        tempW1 = ISwapWordOrder( srcData[ 0 ] );
-        tempW2 = ISwapWordOrder( srcData[ 1 ] );
-#else 
-        tempW1 = srcData[ 0 ]; 
-        tempW2 = srcData[ 1 ];
-#endif      
+        tempW1 = hsToLE16( srcData[ 0 ] );
+        tempW2 = hsToLE16( srcData[ 1 ] );
+
         if( tempW1 > tempW2 )
         {
             /// Four-color block--mix the other two
@@ -1490,13 +1442,8 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To32( plMipmap *destBMap,
             colors[ 3 ] = 0;
         }
 
-        bitSource = srcData[ 2 ];
-        bitSource2 = srcData[ 3 ];
-
-#ifdef HS_BUILD_FOR_MAC
-        bitSource = ( bitSource >> 8 ) | ( ( bitSource & 0xff ) << 8 );
-        bitSource2 = ( bitSource2 >> 8 ) | ( ( bitSource2 & 0xff ) << 8 );      
-#endif
+        bitSource = hsToLE16( srcData[ 2 ] );
+        bitSource2 = hsToLE16( srcData[ 3 ] );
 
         for( j = 0; j < 8; j++ )
         {
@@ -1504,10 +1451,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To32( plMipmap *destBMap,
             bitSource >>= 2;
             destBlock[ j + 8 ] = colors[ bitSource2 & 0x03 ];
             bitSource2 >>= 2;
-#ifdef HS_BUILD_FOR_MAC
-            destBlock[ j ] = ISwapDwordOrder( destBlock[ j ] );
-            destBlock[ j + 8 ] = ISwapDwordOrder( destBlock[ j + 8 ] );
-#endif
+
+            destBlock[ j ] = hsToLE32( destBlock[ j ] );
+            destBlock[ j + 8 ] = hsToLE32( destBlock[ j + 8 ] );
         }
         
         /// Now copy the block to the destination bitmap
@@ -1580,13 +1526,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1ToInten( plMipmap *destBMap,
         colors[ 0 ] = (UInt8)IRGB16To32Bit( srcData[ 0 ] );
         colors[ 1 ] = (UInt8)IRGB16To32Bit( srcData[ 1 ] );
 
-#ifdef HS_BUILD_FOR_MAC
-        tempW1 = ISwapWordOrder( srcData[ 0 ] );
-        tempW2 = ISwapWordOrder( srcData[ 1 ] );
-#else 
-        tempW1 = srcData[ 0 ]; 
-        tempW2 = srcData[ 1 ];
-#endif      
+        tempW1 = hsToLE16( srcData[ 0 ] );
+        tempW2 = hsToLE16( srcData[ 1 ] );
+
         if( tempW1 > tempW2 )
         {
             /// Four-color block--mix the other two
@@ -1600,13 +1542,8 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1ToInten( plMipmap *destBMap,
             colors[ 3 ] = 0;
         }
 
-        bitSource = srcData[ 2 ];
-        bitSource2 = srcData[ 3 ];
-
-#ifdef HS_BUILD_FOR_MAC
-        bitSource = ( bitSource >> 8 ) | ( ( bitSource & 0xff ) << 8 );
-        bitSource2 = ( bitSource2 >> 8 ) | ( ( bitSource2 & 0xff ) << 8 );      
-#endif
+        bitSource = hsToLE16( srcData[ 2 ] );
+        bitSource2 = hsToLE16( srcData[ 3 ] );
 
         for( j = 0; j < 8; j++ )
         {
@@ -1650,27 +1587,6 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1ToInten( plMipmap *destBMap,
     }
 }
 
-//// ISwapDwordOrder //////////////////////////////////////////////////////////
-
-UInt32  hsDXTSoftwareCodec::ISwapDwordOrder( UInt32 color )
-{
-    UInt8   a, r, g, b;
-
-
-    a = (UInt8)( color >> 24 );
-    r = (UInt8)( color >> 16 ) & 0xff;
-    g = (UInt8)( color >> 8 ) & 0xff;
-    b = (UInt8)( color & 0xff );
-    return( ( b << 24 ) | ( g << 16 ) | ( r << 8 ) | a );
-}
-
-//// ISwapWordOrder ///////////////////////////////////////////////////////////
-
-UInt16  hsDXTSoftwareCodec::ISwapWordOrder( UInt16 color )
-{
-    return( ( color >> 8 ) | ( color << 8 ) );
-}
-
 //// IRGB16To32Bit ////////////////////////////////////////////////////////////
 //
 //  Converts a RGB565 16-bit color into a RGB888 32-bit color. Alpha (upper 8
@@ -1681,9 +1597,7 @@ UInt32  hsDXTSoftwareCodec::IRGB16To32Bit( UInt16 color )
 {
     UInt32      r, g, b;
 
-#ifdef HS_BUILD_FOR_MAC
-    color = ( ( color >> 8 ) | ( ( color & 0xff ) << 8 ) );
-#endif
+    color = hsToLE16(color);
     
     b = ( color & 31 ) << 3;
     color >>= 5;
@@ -1706,9 +1620,7 @@ UInt16  hsDXTSoftwareCodec::IRGB565To4444( UInt16 color )
 {
     UInt16      r, g, b;
 
-#ifdef HS_BUILD_FOR_MAC
-    color = ISwapWordOrder( color );
-#endif
+    color = hsToLE16( color );
     
     b = ( color & 31 ) >> 1;
     color >>= 5;
@@ -1733,9 +1645,7 @@ UInt16  hsDXTSoftwareCodec::IRGB565To4444Rev( UInt16 color )
 {
     UInt16      r, g, b;
 
-#ifdef HS_BUILD_FOR_MAC
-    color = ISwapWordOrder( color );
-#endif
+    color = hsToLE16( color );
     
     r = ( color & 31 ) >> 1;
     color >>= 5;
@@ -1760,9 +1670,7 @@ UInt16  hsDXTSoftwareCodec::IRGB565To1555( UInt16 color )
 {
     UInt16      r, g, b;
 
-#ifdef HS_BUILD_FOR_MAC
-    color = ISwapWordOrder( color );
-#endif
+    color = hsToLE16( color );
     
     b = ( color & 31 );
     color >>= 5;
@@ -1787,9 +1695,7 @@ UInt16  hsDXTSoftwareCodec::IRGB565To5551( UInt16 color )
 {
     UInt16      rg, b;
 
-#ifdef HS_BUILD_FOR_MAC
-    color = ISwapWordOrder( color );
-#endif
+    color = hsToLE16( color );
     
     rg = color & 0xffc0;        /// Masks off red and green
     b = ( color & 31 );
@@ -2418,13 +2324,8 @@ hsBool hsDXTSoftwareCodec::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colo
     {
         /// Get the two colors to colorize (our decompression scheme will do the rest...
         /// handy, eh? :)
-#if HS_BUILD_FOR_MAC
-        color1 = ISwapWordOrder( srcData[ 0 ] );
-        color2 = ISwapWordOrder( srcData[ 1 ] );
-#else
-        color1 = srcData[ 0 ];
-        color2 = srcData[ 1 ];
-#endif
+        color1 = hsToLE16( srcData[ 0 ] );
+        color2 = hsToLE16( srcData[ 1 ] );
 
         /// Now colorize using our age-old formula (see hsGMipmap::ColorLevel for details)
         gray = ( ( color1 >> 11 ) & 0x1f ) + ( ( color1 >> 6 ) & 0x1f ) + ( color1 & 0x1f );
@@ -2484,13 +2385,9 @@ hsBool hsDXTSoftwareCodec::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colo
         }
 
         /// Write back and go!
-#if HS_BUILD_FOR_MAC
-        srcData[ 0 ] = ISwapWordOrder( color1 );
-        srcData[ 1 ] = ISwapWordOrder( color2 );
-#else
-        srcData[ 0 ] = color1;
-        srcData[ 1 ] = color2;
-#endif
+        srcData[ 0 ] = hsToLE16( color1 );
+        srcData[ 1 ] = hsToLE16( color2 );
+
         srcData += blockSize;
     }
 
