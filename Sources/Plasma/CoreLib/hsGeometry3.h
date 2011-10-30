@@ -196,13 +196,6 @@ struct hsVector3 : public hsScalarTriple {
 
     void            Normalize()
                 {
-#if HS_BUILD_FOR_PS2
-                    hsScalar    length = this->Magnitude();
-                     hsIfDebugMessage(length == 0, "Err: Normalizing hsVector3 of length 0", 0);
-                    if (length == 0)
-                        return;
-                    NormalizeVU0(length, (MATRIX4)this);
-#else
                     hsScalar    length = this->Magnitude();
 //                   hsIfDebugMessage(length == 0, "Err: Normalizing hsVector3 of length 0", 0);
                     if (length == 0)
@@ -212,7 +205,6 @@ struct hsVector3 : public hsScalarTriple {
                     fX = hsScalarMul(fX, invMag);
                     fY = hsScalarMul(fY, invMag);
                     fZ = hsScalarMul(fZ, invMag);
-#endif
                 }
     inline void     Renormalize()       // if the vector is already close to unit length
                 {

@@ -50,15 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #define kFolderIterator_MaxPath     PATH_MAX
     #include <unistd.h>
     #define SetCurrentDirectory chdir
-#elif !HS_BUILD_FOR_PS2
-    #define kFolderIterator_MaxPath     _MAX_PATH
 #else
-    #define kFolderIterator_MaxPath     255
-#endif
-
-#if HS_BUILD_FOR_MAC
-    #include <Files.h>
-    #include <Script.h>
+    #define kFolderIterator_MaxPath     _MAX_PATH
 #endif
 
 
@@ -76,7 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 ///////////////////////////////////////////////////////////////////////
-#if !HS_BUILD_FOR_PS2
 
 class hsFile {
     hsFile&     operator=(const hsFile&);       // disallow assignment
@@ -98,41 +90,8 @@ public:
     virtual void    Close();    // called automatically in the destructor
 };
 typedef hsFile  hsUnixFile; // for compatibility
+typedef hsFile  hsOSFile;
 
-#if HS_BUILD_FOR_MAC
-    class hsMacFile : public hsFile {
-        enum {
-            kRefNum_Dirty,
-            kPathName_Dirty
-        };
-        FSSpec      fSpec;
-        Int16       fRefNum;
-        UInt16      fFlags;
-
-        void            SetSpecFromName();
-        void            SetNameFromSpec();
-    public:
-                    hsMacFile();
-                    hsMacFile(const FSSpec* spec);
-                    hsMacFile(const char pathAndName[]);
-        virtual     ~hsMacFile();
-
-        const FSSpec*   GetSpec() const { return &fSpec; }
-        void            SetSpec(const FSSpec* spec);
-        hsBool      Create(OSType creator, OSType fileType, ScriptCode scriptCode = smSystemScript);
-        hsBool      OpenDataFork(SInt8 permission, Int16* refnum);
-
-        //  Overrides
-        virtual const char* GetPathAndName();
-        virtual void    SetPathAndName(const char pathAndName[]);
-        virtual hsStream* OpenStream(const char mode[], hsBool throwIfFailure = false);
-        virtual void    Close();
-    };
-    typedef hsMacFile   hsOSFile;
-#else
-    typedef hsFile      hsOSFile;
-#endif
-#endif // HS_BUILD_FOR_PS2
 ///////////////////////////////////////////////////////////////////////
 
 class hsFolderIterator {
@@ -160,15 +119,7 @@ public:
 
     FILE*       OpenFILE(const char mode[]);
 
-#if HS_BUILD_FOR_MAC
-    void            SetMacFolder(const char path[]);
-    void            SetMacFolder(OSType folderType);
-    void            SetMacFolder(Int16 vRefNum, Int32 dirID);
-    hsBool      NextMacFile(OSType targetFileType, OSType targetCreator);
-    const struct FSSpec* GetMacSpec() const;
-    OSType      GetMacFileType() const;
-    OSType      GetMacCreator() const;
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     void        SetWinSystemDir(const char subdir[]);   // e.g. "Fonts"
     void        SetFileFilterStr(const char filterStr[]);   // e.g. "*.*"
 #endif

@@ -42,10 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "hsUtils.h"
 
-#if HS_BUILD_FOR_MAC
-#include <Timer.h>
-#endif
-
 #include "plTweak.h"
 
 //
@@ -241,34 +237,6 @@ hsWide hsTimer::IInitRawBase()
     return base;
 }
 
-#elif HS_BUILD_FOR_MAC
-
-#include <Events.h>
-#include <DriverServices.h>
-
-//#define HS_USE_TICKCOUNT
-hsWide* plTimerShare::GetRawTicks(hsWide* ticks)
-{   
-#ifndef HS_USE_TICKCOUNT
-    UnsignedWide ns = AbsoluteToNanoseconds(UpTime());
-    ticks->Set(ns.hi, ns.lo);
-#else
-    ticks->Set(0, TickCount());
-#endif
-    return FactorInTimeZero(ticks);
-}
-
-hsWide plTimerShare::IInitRawBase()
-{
-    hsWide base;
-#ifndef HS_USE_TICKCOUNT
-    base.Set(0, 1000000000L);
-#else
-    base.Set(0, 60);
-#endif
-    return base;
-}
-
 #elif HS_BUILD_FOR_UNIX
 
 #include <sys/time.h>
@@ -292,29 +260,6 @@ hsWide hsTimer::IInitRawBase()
 {
     hsWide base;
     base.Set(0, kMicroSecondsUnit);
-    return base;
-}
-
-
-#elif HS_BUILD_FOR_PS2
-
-extern unsigned long psTimerGetCount();
-//#define kTickMul (150000000)      // kTickMul/kTickDiv :: 4577.636719
-#define kTickMul (100000000)    // kTickMul/kTickDiv :: 3051.757813 // for debugger
-#define kTickDiv (256*128)
-
-
-hsWide* plTimerShare::GetRawTicks(hsWide* ticks)
-{
-    unsigned long t= psTimerGetCount();
-    ticks->Set( (Int32)(t>>32), (Int32)(t&((1ul<<32)-1)));
-    return ticks;
-}
-
-hsWide plTimerShare::IInitRawBase()
-{
-    hsWide base;
-    base.Set(0, kTickMul/kTickDiv );
     return base;
 }
 
@@ -351,12 +296,6 @@ double hsTimer::GetPrecTicksPerSec()
     }
     return ((double) freq.LowPart);
 #endif
-#if HS_BUILD_FOR_MAC
-    return 1000.f;
-#endif
-#if HS_BUILD_FOR_PS2
-    return 1000.f;
-#endif
     
     return 1;
 }
@@ -369,13 +308,6 @@ UInt32 hsTimer::GetPrecTickCount()
         return GetTickCount();
 
     return ti.LowPart;
-#endif
-#if HS_BUILD_FOR_MACPPC
-    return hsTimer::GetMSeconds();
-#endif
-
-#if HS_BUILD_FOR_PS2
-    return hsTimer::GetMSeconds();
 #endif
 }
 UInt32 hsTimer::PrecSecsToTicks(hsScalar secs)

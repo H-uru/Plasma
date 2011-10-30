@@ -5367,13 +5367,11 @@ void plDXPipeline::ISetFogParameters(const plSpan* span, const plLayerInterface*
     bool forceLoad = false;
     D3DRENDERSTATETYPE  d3dFogType = D3DRS_FOGTABLEMODE;        // Use VERTEXMODE for vertex fog
 
-#if !HS_BUILD_FOR_XBOX
     if (!(fSettings.fD3DCaps & kCapsPixelFog) || isShader)
     {
         d3dFogType = D3DRS_FOGVERTEXMODE;
         isVertex = true;
     }
-#endif
 
     // Quick check
     if ((fCurrFog.fEnvPtr == fog) && (fCurrFog.fIsVertex == isVertex) && (fCurrFog.fIsShader == isShader))

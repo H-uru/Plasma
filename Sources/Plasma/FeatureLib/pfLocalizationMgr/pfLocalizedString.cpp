@@ -52,10 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfLocalizedString.h"
 
-#if HS_BUILD_FOR_MAC
-#include <bxwchar.h>
-#endif
-
 // MinGW sucks
 #if defined(_WIN32) && !defined(_MSC_VER)
 #   define swprintf _snwprintf
