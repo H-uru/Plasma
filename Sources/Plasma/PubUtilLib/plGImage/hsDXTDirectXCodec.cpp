@@ -51,13 +51,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#if HS_BUILD_FOR_WIN32
 
 #include "hsConfig.h"
 #include "hsWindows.h"
 
+#if HS_BUILD_FOR_WIN32
 #include <ddraw.h>
 #include <d3d9.h>
+#endif
 
 #include "hsTypes.h"
 #include "hsDXTDirectXCodec.h"
@@ -65,6 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsCodecManager.h"
 #include "plPipeline/hsGDDrawDllLoad.h"
 
+#if HS_BUILD_FOR_WIN32
 namespace {
     typedef HRESULT(WINAPI * DIRECTDRAWCREATEEX)( GUID*, VOID**, REFIID, IUnknown* );
 }
@@ -75,6 +77,7 @@ enum
     D3DTEXTURE_FMT_FOURCC_DXT1                  = 0x00002000,       // No.14: DXTn FourCC (DXT1), format.
     D3DTEXTURE_FMT_FOURCC_DXT5                  = 0x00020000,       // No.18: DXTn FourCC (DXT5), format.
 };
+#endif
 
 hsBool hsDXTDirectXCodec::fRegistered = false;
 
@@ -93,6 +96,7 @@ hsDXTDirectXCodec::hsDXTDirectXCodec() : fDirectDraw( nil ), fDDLibraryInstance(
 
 hsDXTDirectXCodec::~hsDXTDirectXCodec()
 {
+#if HS_BUILD_FOR_WIN32
     if ((fFlags & kExternalInit) == 0)
     {
         if (fDirectDraw)
@@ -108,6 +112,7 @@ hsDXTDirectXCodec::~hsDXTDirectXCodec()
 
     fDirectDraw = nil;
     fDDLibraryInstance = nil;
+#endif
 }
 
 hsBool hsDXTDirectXCodec::Register()
@@ -115,6 +120,7 @@ hsBool hsDXTDirectXCodec::Register()
     return hsCodecManager::Instance().Register( &(Instance()), plMipmap::kDirectXCompression, 500 );
 }
 
+#if HS_BUILD_FOR_WIN32
 //// Initialize ///////////////////////////////////////////////////////////////
 
 void hsDXTDirectXCodec::Initialize( IDirect3DDevice8 *directDraw )
@@ -161,6 +167,7 @@ hsBool  hsDXTDirectXCodec::IInitialize()
 
     return true;
 }
+#endif
 
 //// CreateCompressedMipmap ///////////////////////////////////////////////////
 //  Updated 8.15.2000 mcn to generate uncompressed mipmaps down to 1x1 (the
@@ -169,6 +176,7 @@ hsBool  hsDXTDirectXCodec::IInitialize()
 
 plMipmap *hsDXTDirectXCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 {
+#if HS_BUILD_FOR_WIN32
     const plMipmap  *b = uncompressed;
     plMipmap        *compressed = nil;
 
@@ -273,6 +281,9 @@ plMipmap *hsDXTDirectXCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 
     /// All done!
     return compressed;
+#else
+    return nil;
+#endif
 }
 
 //// CreateUncompressedMipmap /////////////////////////////////////////////////
@@ -418,6 +429,7 @@ plMipmap *hsDXTDirectXCodec::CreateUncompressedMipmap( plMipmap *compressed,
 */
 }
 
+#if HS_BUILD_FOR_WIN32
 UInt32 hsDXTDirectXCodec::ICompressedFormat(const plMipmap *uncompressed)
 {
     if( uncompressed->GetFlags() & plMipmap::kAlphaChannelFlag )
@@ -1236,10 +1248,9 @@ void hsDXTDirectXCodec::CheckErrorCode(HRESULT res)
             break;
     }
 }
+#endif
 
 hsBool hsDXTDirectXCodec::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask )
 {
     return false;
 }
-
-#endif

@@ -39,14 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#if HS_BUILD_FOR_WIN32
 
 #include "plAVIWriter.h"
 
 #include "hsTypes.h"
 
 #include "hsWindows.h"
+#if HS_BUILD_FOR_WIN32
 #include <vfw.h>
+#endif
 
 #include "hsTimer.h"
 #include "plMipmap.h"
@@ -57,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 bool plAVIWriter::fInitialized = false;
 
+#if HS_BUILD_FOR_WIN32
 class plAVIWriterImp : public plAVIWriter
 {
 protected:
@@ -86,6 +88,21 @@ public:
     virtual bool Open(const char* fileName, plPipeline* pipeline);
     virtual void Close();
 };
+#else
+class plAVIWriterImp : public plAVIWriter
+{
+public:
+    plAVIWriterImp();
+    virtual ~plAVIWriterImp();
+
+    virtual hsBool MsgReceive(plMessage* msg);
+
+    virtual void Shutdown();
+
+    virtual bool Open(const char* fileName, plPipeline* pipeline);
+    virtual void Close();
+}
+#endif
 
 plAVIWriter::~plAVIWriter()
 {
@@ -106,6 +123,7 @@ plAVIWriter& plAVIWriter::Instance()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#if HS_BUILD_FOR_WIN32
 plAVIWriterImp::plAVIWriterImp() :
     fStartTime(0),
     fOldRealTime(false),
@@ -115,6 +133,9 @@ plAVIWriterImp::plAVIWriterImp() :
 {
     AVIFileInit();
 }
+#else
+plAVIWriterImp::plAVIWriterImp() { }
+#endif
 
 plAVIWriterImp::~plAVIWriterImp()
 {
@@ -134,7 +155,7 @@ plProfile_CreateTimer("AviCapture", "RenderSetup", AviCapture);
 
 hsBool plAVIWriterImp::MsgReceive(plMessage* msg)
 {
-
+#if HS_BUILD_FOR_WIN32
     plRenderMsg* renderMsg = plRenderMsg::ConvertNoRef(msg);
     if (renderMsg)
     {
@@ -144,12 +165,14 @@ hsBool plAVIWriterImp::MsgReceive(plMessage* msg)
         plProfile_EndTiming(AviCapture);
 
     }
+#endif
 
     return hsKeyedObject::MsgReceive(msg);
 }
 
 static const int kFramesPerSec = 30;
 
+#if HS_BUILD_FOR_WIN32
 bool plAVIWriterImp::Open(const char* fileName, plPipeline* pipeline)
 {
     // Already writing, fail
@@ -232,11 +255,13 @@ bool plAVIWriterImp::Open(const char* fileName, plPipeline* pipeline)
 
     return true;
 }
+#endif
 
 void plAVIWriterImp::Close()
 {
     plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
 
+#if HS_BUILD_FOR_WIN32
     hsTimer::SetRealTime(fOldRealTime);
 
     if (fStreamHandle)
@@ -258,8 +283,10 @@ void plAVIWriterImp::Close()
     }
 
     AVIFileExit();
+#endif
 }
 
+#if HS_BUILD_FOR_WIN32
 void plAVIWriterImp::IFillStreamInfo(AVISTREAMINFO* inf, plPipeline* pipeline)
 {
     memset(inf, 0, sizeof(AVISTREAMINFO));
