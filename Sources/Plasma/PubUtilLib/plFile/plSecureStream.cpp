@@ -602,7 +602,8 @@ bool plSecureStream::ICheckMagicString(hsFD fp)
 {
     char magicString[kMagicStringLen+1];
 #ifdef HS_BUILD_FOR_WIN32
-    ReadFile(fp, &magicString, kMagicStringLen, NULL, NULL);
+    DWORD numread;
+    ReadFile(fp, &magicString, kMagicStringLen, &numread, NULL);
 #elif HS_BUILD_FOR_UNIX
     fread(&magicString, kMagicStringLen, 1, fp);
 #endif
