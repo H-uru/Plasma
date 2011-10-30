@@ -39,6 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#if HS_BUILD_FOR_WIN32
+
 #include "plAVIWriter.h"
 
 #include "hsTypes.h"
@@ -308,3 +310,4 @@ bool plAVIWriterImp::ICaptureFrame(plPipeline* pipeline)
 
     return (err == AVIERR_OK);
 }
+#endif

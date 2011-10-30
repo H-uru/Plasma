@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsDXTDirectXCodec_inc
 #define hsDXTDirectXCodec_inc
 
+#if HS_BUILD_FOR_WIN32
+
 #include "hsWindows.h"
 #include "hsCodec.h"
 
@@ -103,5 +105,6 @@ private:
     static hsBool Register();
     static hsBool fRegistered;
 };
+#endif
 
 #endif // hsDXTDirectXCodec_inc
