@@ -243,7 +243,7 @@ plActionTableMgr theActionTableMgr(actionInfo, DoAction);
 
 MenuContextId kMyMenuContextId=0xcff95f6c;  //<random number>
 static char *kMenuName = "Plasma";
-static int kMenuVersion = 10;   // Increment this number if you add an entry to the menu
+static int kMenuVersion = 11;   // Increment this number if you add an entry to the menu
 
 extern TCHAR *GetString(int id);
 
@@ -308,7 +308,9 @@ void AddPlasmaExportMenu()
 
 void plCreateMenu()
 {
+#if MAX_VERSION_MAJOR <= 11
     AddPlasmaExportMenu();
+#endif
 
     IMenuManager* pMenuMan = GetCOREInterface()->GetMenuManager();
     bool newlyRegistered = pMenuMan->RegisterMenuBarContext(kMyMenuContextId, kMenuName);
@@ -354,9 +356,17 @@ void plCreateMenu()
         /////////////////////////////////////////////////
         // Add the menu items
         //
+        IMenuItem* pMenuItem;
+ 
+#if MAX_VERSION_MAJOR >= 12
+        // Add the export action to the menu
+        pMenuItem = GetIMenuItem();
+        pMenuItem->SetActionItem(pActionTable->GetAction(kActionExport));
+        pPlasmaMenu->AddItem(pMenuItem);
+#endif
 
         // Add the save selected action to the menu
-        IMenuItem* pMenuItem = GetIMenuItem();
+        pMenuItem = GetIMenuItem();
         pMenuItem->SetActionItem(pActionTable->GetAction(kActionSaveSel));
         pPlasmaMenu->AddItem(pMenuItem);
 
