@@ -134,7 +134,7 @@ protected:
 
     hsPoint3    fCurrListenerPos;//, fCommittedListenerPos;
     hsBool      fActive, fUsingEAX, fRestartOnDestruct, fWaitingForShutdown;
-    __int64     fStartTime;
+    Int64     fStartTime;
 
     hsTArray<hsKeyedObject *>       fMyRefs;
     hsTArray<plEAXListenerMod *>    fEAXRegions;

@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#if HS_BUILD_FOR_WIN32
+
 #include "hsTypes.h"
 #include "plWinMicLevel.h"
 #include "hsWindows.h"
@@ -375,3 +377,4 @@ MIXERLINE   *IGetMixerSubLineByType( MIXERCONTROL *mux, DWORD type )
     return nil;
 }
 
+#endif
