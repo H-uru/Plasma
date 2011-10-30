@@ -410,7 +410,11 @@ void plParticleEmitter::IUpdateParticles(hsScalar delta)
 
         // This is the only orientation option (so far) that requires an update here
         if (fMiscFlags & (kOrientationVelocityBased | kOrientationVelocityStretch | kOrientationVelocityFlow))
-            fParticleCores[i].fOrientation.Set(&(*currVelocity * delta)); // mf - want the orientation to be a delposition
+        {
+            // mf - want the orientation to be a delposition
+            hsVector3 tmp = *currVelocity * delta;
+            fParticleCores[i].fOrientation.Set(&tmp);
+        }
         else if( fParticleExts[i].fRadsPerSec != 0 )
         {
             hsScalar sinX, cosX;

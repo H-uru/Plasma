@@ -39,83 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plUUID.h"
-#include "hsStream.h"
+#ifndef pnCreatableUUID_h_inc
+#define pnCreatableUUID_h_inc
 
-COMPILER_ASSERT(msizeof(Uuid, data) == msizeof(plUUID, fData));
+#include "pnUUID/pnUUID.h"
+#include "pnFactory/plCreatable.h"
 
-plUUID::plUUID()
-{
-    Clear();
-}
+class plCreatableUuid : public plUUID, public plCreatable {
+public:
+    CLASSNAME_REGISTER( plCreatableUuid );
+    GETINTERFACE_ANY( plCreatableUuid, plCreatable );
 
-plUUID::plUUID( const char * s )
-{
-    FromString( s );
-}
+    plCreatableUuid() { }
+    plCreatableUuid(const plCreatableUuid& other) : plUUID(other) { }
+    plCreatableUuid(const plUUID& other) : plUUID(other) { }
 
-plUUID::plUUID( const plUUID & other )
-{
-    CopyFrom( &other );
-}
+    void    Read( hsStream * s, hsResMgr* ) { plUUID::Read(s); }
+    void    Write( hsStream * s, hsResMgr* ) { plUUID::Write(s); }
+};
 
-plUUID::plUUID( const Uuid & uuid )
-{
-    MemCopy(fData, uuid.data, sizeof(fData));
-}
-
-void plUUID::Read( hsStream * s)
-{
-    s->LogSubStreamPushDesc("plUUID");
-    s->Read( sizeof( fData ), (void*)fData );
-}
-
-void plUUID::Write( hsStream * s)
-{
-    s->Write( sizeof( fData ), (const void*)fData );
-}
-
-plUUID::operator Uuid () const {
-    Uuid uuid;
-    MemCopy(uuid.data, fData, sizeof(uuid.data));
-    return uuid;
-}
-
-const char * plUUID::AsString() const {
-    static std::string str;
-    ToStdString(str);
-    return str.c_str();
-}
-
-void plUUID::CopyFrom( const plUUID * v ) {
-    if (!v)
-        Clear();
-    else
-        CopyFrom(*v);
-}
-
-void plUUID::CopyFrom( const plUUID & v ) {
-    MemCopy(fData, v.fData, sizeof(fData));
-}
-
-/*****************************************************************************
-*
-*   plCreatableUuid
-*
-***/
-
-//============================================================================
-plCreatableUuid::plCreatableUuid () {
-}
-
-//============================================================================
-plCreatableUuid::plCreatableUuid (const plCreatableUuid & other)
-: plUUID(other)
-{
-}
-
-//============================================================================
-plCreatableUuid::plCreatableUuid (const plUUID & other)
-: plUUID(other)
-{
-}
+#endif //pnCreatableUUID_h_inc

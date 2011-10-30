@@ -66,7 +66,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStlUtils.h"
 #include "plFile/hsFiles.h"
 #include "plUnifiedTime/plUnifiedTime.h"
-#include "pnUtils/pnUtils.h"
 #include "pnProduct/pnProduct.h"
 
 #include "plEncryptLogLine.h"
@@ -91,7 +90,8 @@ plStatusLogMgr::plStatusLogMgr()
     fDrawer = nil;
     fLastLogChangeTime = 0;
 
-    PathGetLogDirectory(fBasePath, arrsize(fBasePath));
+    plFileUtils::ConcatFileName(fBasePath, L"log");
+    plFileUtils::EnsureFilePathExists(fBasePath);
 }
 
 plStatusLogMgr::~plStatusLogMgr()
@@ -352,6 +352,7 @@ bool plStatusLogMgr::DumpLogs( const wchar *newFolderName )
         newPath = newFolderName;
     IEnsurePathExists(newPath.c_str());
 
+#if HS_BUILD_FOR_WIN32
     hsWFolderIterator folderIterator;
     if (fBasePath)
         folderIterator.SetPath(fBasePath);
@@ -382,6 +383,7 @@ bool plStatusLogMgr::DumpLogs( const wchar *newFolderName )
         bool succeeded = (CopyFileW(source.c_str(), destination.c_str(), FALSE) != 0);
         retVal = retVal && succeeded;
     }
+#endif
     return retVal;
 }
 
@@ -468,21 +470,21 @@ bool plStatusLog::IReOpen( void )
         {
             wchar work[MAX_PATH], work2[MAX_PATH];
             swprintf(work, MAX_PATH, L"%s.3%s",fileNoExt,ext);
-            _wremove(work);
+            plFileUtils::RemoveFile(work);
             swprintf(work2, MAX_PATH, L"%s.2%s",fileNoExt,ext);
-            _wrename(work2, work);
+            plFileUtils::FileMove(work2, work);
             swprintf(work, MAX_PATH, L"%s.1%s",fileNoExt,ext);
-            _wrename(work, work2);
-            _wrename(fileToOpen, work);
+            plFileUtils::FileMove(work, work2);
+            plFileUtils::FileMove(fileToOpen, work);
         }
         
         if (fFlags & kAppendToLast)
         {
-            fFileHandle = _wfopen( fileToOpen, fEncryptMe ? L"ab" : L"at" );
+            fFileHandle = hsWFopen( fileToOpen, fEncryptMe ? L"ab" : L"at" );
         }
         else
         {
-            fFileHandle = _wfopen( fileToOpen, fEncryptMe ? L"wb" : L"wt" );
+            fFileHandle = hsWFopen( fileToOpen, fEncryptMe ? L"wb" : L"wt" );
             // if we need to reopen lets just append
             fFlags |= kAppendToLast;
         }
@@ -542,7 +544,7 @@ void plStatusLog::IParseFileName(wchar* file, size_t fnsize, wchar* fileNoExt, w
     else
     {
         wcscpy(fileNoExt, file);
-        *ext = L"";
+        *ext = L'\0';
     }
     
 }
@@ -649,7 +651,7 @@ bool plStatusLog::AddLine( const char *line, UInt32 color )
     for( str = (char *)line; ( c = strchr( str, '\n' ) ) != nil; str = c + 1 )
     {
         // So if we got here, c points to a carriage return...
-        ret = IAddLine( str, (UInt32)c - (UInt32)str, color );
+        ret = IAddLine( str, (unsigned_ptr)c - (unsigned_ptr)str, color );
     }
 
     /// We might have some left over
@@ -789,49 +791,44 @@ bool plStatusLog::IPrintLineToFile( const char *line, UInt32 count )
         {
             if ( fFlags & kTimestamp )
             {
-                StrPrintf(work, arrsize(work), "(%s) ", plUnifiedTime(kNow).Format("%m/%d %H:%M:%S").c_str());
-                StrPack(buf, work, arrsize(buf));
+                snprintf(work, arrsize(work), "(%s) ", plUnifiedTime(kNow).Format("%m/%d %H:%M:%S").c_str());
+                strncat(buf, work, arrsize(work));
             }
             if ( fFlags & kTimestampGMT )
             {
-                StrPrintf(work, arrsize(work), "(%s) ", plUnifiedTime::GetCurrentTime().Format("%m/%d %H:%M:%S UTC").c_str());
-                StrPack(buf, work, arrsize(buf));
+                snprintf(work, arrsize(work), "(%s) ", plUnifiedTime::GetCurrentTime().Format("%m/%d %H:%M:%S UTC").c_str());
+                strncat(buf, work, arrsize(work));
             }
             if ( fFlags & kTimeInSeconds )
             {
-                StrPrintf(work, arrsize(work), "(%lu) ", (unsigned long)plUnifiedTime(kNow).GetSecs());
-                StrPack(buf, work, arrsize(buf));
+                snprintf(work, arrsize(work), "(%lu) ", (unsigned long)plUnifiedTime(kNow).GetSecs());
+                strncat(buf, work, arrsize(work));
             }
             if ( fFlags & kTimeAsDouble )
             {
-                StrPrintf(work, arrsize(work), "(%f) ", plUnifiedTime(kNow).GetSecsDouble());
-                StrPack(buf, work, arrsize(buf));
+                snprintf(work, arrsize(work), "(%f) ", plUnifiedTime(kNow).GetSecsDouble());
+                strncat(buf, work, arrsize(work));
             }
             if (fFlags & kRawTimeStamp)
             {
-                StrPrintf(work, arrsize(work), "[t=%10u] ", hsTimer::GetSeconds());
-                StrPack(buf, work, arrsize(buf));
+                snprintf(work, arrsize(work), "[t=%10u] ", hsTimer::GetSeconds());
+                strncat(buf, work, arrsize(work));
             }
             if (fFlags & kThreadID)
             {
-                StrPrintf(work, arrsize(work), "[t=%u] ", hsThread::GetMyThreadId());
-                StrPack(buf, work, arrsize(buf));
+                snprintf(work, arrsize(work), "[t=%u] ", hsThread::GetMyThreadId());
+                strncat(buf, work, arrsize(work));
             }
 
-            // find the size of the buf plus the size of the line and only pack that much
-            unsigned BufAndLine = StrLen(buf)+count+1;
-            if ( BufAndLine > arrsize(buf) )
-                BufAndLine = arrsize(buf);
-            
-            StrPack(buf, line, BufAndLine );
+            strncat(buf, line, arrsize(line));
 
             if(!fEncryptMe )
             {
-                StrPack(buf, "\n", arrsize(buf));
+                strncat(buf, "\n", 1);
             }
         }
 
-        unsigned length = StrLen(buf);
+        unsigned length = strlen(buf);
 
 #ifdef PLASMA_EXTERNAL_RELEASE
         // Print to a separate line, since we have to encrypt it

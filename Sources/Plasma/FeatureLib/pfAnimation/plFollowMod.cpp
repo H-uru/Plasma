@@ -81,8 +81,9 @@ hsBool plFollowMod::MsgReceive(plMessage* msg)
     {
         hsVector3 pos;
         pos.Set(list->GetPosition().fX, list->GetPosition().fY, list->GetPosition().fZ);
+        hsVector3 neg = -pos;
         fLeaderL2W.MakeTranslateMat(&pos);
-        fLeaderW2L.MakeTranslateMat(&-pos);
+        fLeaderW2L.MakeTranslateMat(&neg);
         fLeaderSet = true;
 
         return true;

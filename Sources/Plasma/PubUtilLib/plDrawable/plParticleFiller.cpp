@@ -104,7 +104,8 @@ void inline IInlSetParticlePathFollow( const plParticleCore &particle, const hsM
 
     /// Follow path specified by interpreting orientation as a velocity vector.
 
-    hsVector3 viewDir(&particle.fPos, &viewToWorld.GetTranslate());
+    hsPoint3 xlate = viewToWorld.GetTranslate();
+    hsVector3 viewDir(&particle.fPos, &xlate);
     hsFastMath::NormalizeAppr(viewDir);
 
     zVec = viewDir;
@@ -152,7 +153,8 @@ void inline IInlSetParticlePathStretch( const plParticleCore &particle, const hs
     // Note that we could probably slim away a normalize or two, but the actual number
     // of normalizes we're doing hasn't gone up, I've just moved them up from IInlSetParticlePoints().
 
-    hsVector3 viewDir(&particle.fPos, &viewToWorld.GetTranslate());
+    hsPoint3 xlate = viewToWorld.GetTranslate();
+    hsVector3 viewDir(&particle.fPos, &xlate);
     hsScalar invD = hsFastMath::InvSqrtAppr(viewDir.MagnitudeSquared());
     viewDir *= invD;
 
@@ -191,7 +193,8 @@ void inline IInlSetParticlePathFlow( const plParticleCore &particle, const hsMat
     // difference is that we're going to keep the area of the particle constant,
     // so the longer it stretches, the narrower it gets orthogonal to the velocity.
 
-    hsVector3 viewDir(&particle.fPos, &viewToWorld.GetTranslate());
+    hsPoint3 xlate = viewToWorld.GetTranslate();
+    hsVector3 viewDir(&particle.fPos, &xlate);
     hsScalar invD = hsFastMath::InvSqrtAppr(viewDir.MagnitudeSquared());
     viewDir *= invD;
 
@@ -242,10 +245,12 @@ void inline IInlSetParticleExplicit( const hsMatrix44 &viewToWorld, const plPart
     // to calculate the vector from camera to particle and normalize it than
     // to transform the vector (0,0,-1) (though not as fast as pulling the
     // camera direction directly from the viewToWorld).
-    hsVector3 del(&particle.fPos, &viewToWorld.GetTranslate());
+    hsPoint3 xlate = viewToWorld.GetTranslate();
+    hsVector3 del(&particle.fPos, &xlate);
     hsFastMath::NormalizeAppr(del);
     zVec = del;
-    yVec.Set(&(viewToWorld * orientation));
+    hsVector3 tmp = viewToWorld * orientation;
+    yVec.Set(&tmp);
     xVec = yVec % zVec;
 #endif // See notes below - mf
 
@@ -320,7 +325,8 @@ void inline IInlSetNormalStrongestLight( hsVector3 &partNorm, const plParticleCo
 {
     if( omniLight != nil )
     {
-        partNorm.Set( &particle.fPos, &omniLight->GetWorldPosition() );
+        hsPoint3 pos = omniLight->GetWorldPosition();
+        partNorm.Set( &particle.fPos, &pos );
         partNorm = -partNorm;
     }
     else if( directionLight != nil )

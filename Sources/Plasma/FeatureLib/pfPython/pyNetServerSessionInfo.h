@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
-#include "plUUID/plUUID.h"
+#include "pnUUID/pnUUID.h"
 
 #include <Python.h>
 #include "pyGlueHelpers.h"

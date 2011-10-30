@@ -80,4 +80,23 @@ void CCritSect::Enter () {
 void CCritSect::Leave () {
     LeaveCriticalSection(&m_handle);
 }
+#elif HS_BUILD_FOR_UNIX
+//===========================================================================
+CCritSect::CCritSect () {
+    m_handle = PTHREAD_MUTEX_INITIALIZER;
+}
+
+//===========================================================================
+CCritSect::~CCritSect () {
+}
+
+//===========================================================================
+void CCritSect::Enter () {
+    pthread_mutex_lock(&m_handle);
+}
+
+//===========================================================================
+void CCritSect::Leave () {
+    pthread_mutex_unlock(&m_handle);
+}
 #endif

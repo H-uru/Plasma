@@ -43,7 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSecureStream_h_inc
 
 #include "hsStream.h"
-#include <windows.h>
+
+#if HS_BUILD_FOR_WIN32
+#    include <windows.h>
+#    define hsFD HANDLE
+#else
+#    define hsFD FILE*
+#endif
 
 // A slightly more secure stream then plEncryptedStream in that it uses windows file functions
 // to prevent other processes from accessing the file it is working with. It also can be set
@@ -53,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSecureStream: public hsStream
 {
 protected:
-    HANDLE fRef;
+    hsFD fRef;
     UInt32 fKey[4];
 
     UInt32 fActualFileSize;
@@ -78,7 +84,7 @@ protected:
 
     bool IWriteEncrypted(hsStream* sourceStream, const wchar* outputFile);
 
-    static bool ICheckMagicString(HANDLE fp);
+    static bool ICheckMagicString(hsFD fp);
 
 public:
     plSecureStream(hsBool deleteOnExit = false, UInt32* key = nil); // uses default key if you don't pass one in

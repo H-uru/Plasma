@@ -39,13 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plUUID_h_inc
-#define plUUID_h_inc
+#ifndef pnUUID_h_inc
+#define pnUUID_h_inc
 
 #include "hsTypes.h"
 #include "hsStlUtils.h"
+#ifdef HS_BUILD_FOR_WIN32
 #include "pnUtils/pnUtils.h"
-#include "pnFactory/plCreatable.h"
+#endif
 
 class hsStream;
 
@@ -64,7 +65,9 @@ public:
     plUUID();
     plUUID( const char * s );
     plUUID( const plUUID & other );
+#ifdef HS_BUILD_FOR_WIN32
     plUUID( const Uuid & uuid );
+#endif
     void    Clear();
     bool    IsNull() const;
     bool    IsSet() const { return !IsNull(); }
@@ -82,23 +85,11 @@ public:
     bool    operator==( const plUUID & other ) const { return IsEqualTo( &other ); }
     bool    operator!=( const plUUID & other ) const { return !IsEqualTo( &other ); }
     int     operator <( const plUUID & other ) const { return CompareTo( &other ); }
+#ifdef HS_BUILD_FOR_WIN32
     operator Uuid () const;
+#endif
 
     static plUUID Generate();
 };
 
-class plCreatableUuid : public plUUID, public plCreatable {
-public:
-    CLASSNAME_REGISTER( plCreatableUuid );
-    GETINTERFACE_ANY( plCreatableUuid, plCreatable );
-
-    plCreatableUuid ();
-    plCreatableUuid (const plCreatableUuid & other);
-    plCreatableUuid (const plUUID & other);
-
-    void    Read( hsStream * s, hsResMgr* ) { plUUID::Read(s); }
-    void    Write( hsStream * s, hsResMgr* ) { plUUID::Write(s); }
-};
-
-
-#endif // plUUID_h_inc
+#endif // pnUUID_h_inc

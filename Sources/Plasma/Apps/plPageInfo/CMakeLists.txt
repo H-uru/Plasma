@@ -7,11 +7,12 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib/inc")
 include_directories("../../PubUtilLib")
 
-set(plFileSecure_SOURCES
-    main.cpp
+set(plPageInfo_SOURCES
+    plAllCreatables.cpp
+    plPageInfo.cpp
 )
 
-add_executable(plFileSecure ${plFileSecure_SOURCES})
-target_link_libraries(plFileSecure CoreLib CoreLibExe pnProduct plFile)
+add_executable(plPageInfo ${plPageInfo_SOURCES})
+target_link_libraries(plPageInfo CoreLib CoreLibExe pnProduct plResMgr plAudioCore)
 
-source_group("Source Files" FILES ${plFileSecure_SOURCES})
+source_group("Source Files" FILES ${plPageInfo_SOURCES})

@@ -168,8 +168,9 @@ void plBlower::ISetTargetTransform()
         hsPoint3 pos = l2p.GetTranslate();
         pos += fCurrDel;
 
+        hsPoint3 neg = -pos;
         l2p.SetTranslate(&pos);
-        p2l.SetTranslate(&-pos);
+        p2l.SetTranslate(&neg);
     
         ci->SetLocalToParent(l2p, p2l);
     }

@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGAnimInstance.h"
 #include "plMatrixChannel.h"
 #include "plAvBrainGeneric.h"
-#include "plMultiStageBehMod.h"
+#include "plMultistageBehMod.h"
 
 // global
 #include "hsUtils.h"

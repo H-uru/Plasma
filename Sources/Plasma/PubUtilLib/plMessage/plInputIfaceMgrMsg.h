@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "pnMessage/plMessage.h"
-#include "pnUtils/pnUtils.h"
+#include "pnUUID/pnUUID.h"
 
 class plInputInterface;
 class plInputIfaceMgrMsg : public plMessage
@@ -65,7 +65,7 @@ class plInputIfaceMgrMsg : public plMessage
         const char* ageName;
         const char* ageFileName;
         const char* spawnPoint;
-        Uuid ageInstanceGuid;
+        plUUID ageInstanceGuid;
         plKey fAvKey;
     public:
 
@@ -125,8 +125,8 @@ class plInputIfaceMgrMsg : public plMessage
         const char* GetAgeFileName() { return ageFileName; }
         void        SetSpawnPoint(const char* s) { spawnPoint = s; }
         const char* GetSpawnPoint() { return spawnPoint; }
-        void        SetAgeInstanceGuid(const Uuid& guid) { ageInstanceGuid = guid; }
-        const Uuid& GetAgeInstanceGuid() { return ageInstanceGuid; }
+        void        SetAgeInstanceGuid(const plUUID& guid) { ageInstanceGuid = guid; }
+        const plUUID& GetAgeInstanceGuid() { return ageInstanceGuid; }
         UInt8       GetCommand( void ) { return fCommand; }
         UInt32      GetPageID( void ) { return fPageID; }       
         void                SetIFace( plInputInterface *iface );

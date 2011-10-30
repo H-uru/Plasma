@@ -797,7 +797,8 @@ bool plIniSectionConfigSource::ReadSubSource( const char * name )
     std::vector<std::string> sections;
     for ( int i=0; i<fSections.size(); i++ )
         sections.push_back( fSections[i].c_str() );
-    return fConfigInfo->ReadFrom(&plIniSectionConfigSource( name, sections ));
+    plIniSectionConfigSource src(name, sections);
+    return fConfigInfo->ReadFrom(&src);
 }
 
 /////////////////////////////////////////////////

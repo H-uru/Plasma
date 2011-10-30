@@ -46,6 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEncryptedStream.h"
 #include "plFileUtils.h"
 
+#if HS_BUILD_FOR_UNIX
+#    include <wctype.h>
+#endif
+
 void ToLower(std::wstring& str)
 {
     for (unsigned i = 0; i < str.length(); i++)

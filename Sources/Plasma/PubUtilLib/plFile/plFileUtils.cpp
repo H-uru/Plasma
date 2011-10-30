@@ -103,7 +103,9 @@ hsBool  plFileUtils::CreateDir( const wchar *path )
 #if HS_BUILD_FOR_WIN32
     return ( _wmkdir( path ) == 0 ) ? true : ( errno==EEXIST );
 #elif HS_BUILD_FOR_UNIX
-    return ( mkdir( path, 0777 ) == 0 ) ? true : ( errno==EEXIST );
+    const char* cpath = hsWStringToString(path);
+    CreateDir(cpath);
+    delete[] cpath; /* Free the string */
 #endif
 }
 
@@ -148,9 +150,15 @@ bool plFileUtils::RemoveFile(const char* filename, bool delReadOnly)
 
 bool plFileUtils::RemoveFile(const wchar* filename, bool delReadOnly)
 {
+#ifdef HS_BUILD_FOR_WIN32
     if (delReadOnly)
         _wchmod(filename, S_IWRITE);
     return (_wunlink(filename) == 0);
+#elif HS_BUILD_FOR_UNIX
+    const char* cfilename = hsWStringToString(filename);
+    RemoveFile(cfilename, delReadOnly);
+    delete[] cfilename; /* Free the string */
+#endif
 }
 
 bool plFileUtils::FileCopy(const char* existingFile, const char* newFile)
@@ -169,8 +177,12 @@ bool plFileUtils::FileCopy(const wchar* existingFile, const wchar* newFile)
     return (::CopyFileW(existingFile, newFile, FALSE) != 0);
 #elif HS_BUILD_FOR_UNIX
     char data[1500];
-    FILE* fp = fopen(existingFile, "rb");
-    FILE* fw = fopen(newFile, "w");
+    const char* cexisting = hsWStringToString(existingFile);
+    const char* cnew = hsWStringToString(newFile);
+    FILE* fp = fopen(cexisting, "rb");
+    FILE* fw = fopen(cnew, "w");
+    delete[] cexisting;
+    delete[] cnew;
     int num = 0;
     bool retVal =  true;
     if (fp && fw){
@@ -427,13 +439,34 @@ void plFileUtils::AddSlash(char* path)
 {
     char lastChar = path[strlen(path)-1];
     if (lastChar != '\\' && lastChar != '/')
+#if HS_BUILD_FOR_WIN32
         strcat(path, "\\");
+#else
+        strcat(path, "/");
+#endif
+}
+
+void plFileUtils::AddSlash(wchar* path)
+{
+    wchar lastChar = path[wcslen(path)-1];
+    if (lastChar != L'\\' && lastChar != L'/')
+#if HS_BUILD_FOR_WIN32
+        wcscat(path, L"\\");
+#else
+        wcscat(path, L"/");
+#endif
 }
 
 void plFileUtils::ConcatFileName(char* path, const char* fileName)
 {
     AddSlash(path);
     strcat(path, fileName);
+}
+
+void plFileUtils::ConcatFileName(wchar* path, const wchar* fileName)
+{
+    AddSlash(path);
+    wcscat(path, fileName);
 }
 
 //// GetFileSize /////////////////////////////////////////////////////////////

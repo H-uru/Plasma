@@ -348,7 +348,7 @@ hsBool plDynaDecalMgr::IWetParts(const plDynaDecalEnableMsg* enaMsg)
         const plPrintShape* shape = IGetPrintShape(enaMsg->GetShapeKey());
         if( shape )
         {
-            plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+            plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
             IWetInfo(info, enaMsg);
         }
     }
@@ -362,7 +362,7 @@ hsBool plDynaDecalMgr::IWetParts(const plDynaDecalEnableMsg* enaMsg)
             const plPrintShape* shape = IGetPrintShape(avMod, fPartIDs[i]);
             if( shape )
             {
-                plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+                plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
                 IWetInfo(info, enaMsg);
             }
         }
@@ -381,7 +381,7 @@ hsBool plDynaDecalMgr::IWetPart(UInt32 id, const plDynaDecalEnableMsg* enaMsg)
     const plPrintShape* shape = IGetPrintShape(avMod, id);
     if( shape )
     {
-        plDynaDecalInfo& info = IGetDecalInfo(UInt32(shape), shape->GetKey());
+        plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
         IWetInfo(info, enaMsg);
     }
     return true;
@@ -484,7 +484,7 @@ hsBool plDynaDecalMgr::MsgReceive(plMessage* msg)
             return true;
         case kRefAvatar:
             if( refMsg->GetContext() & (plRefMsg::kOnRemove|plRefMsg::kOnDestroy) )
-                IRemoveDecalInfo(UInt32(refMsg->GetRef()));
+                IRemoveDecalInfo(unsigned_ptr(refMsg->GetRef()));
             return true;
         }
     }
@@ -537,7 +537,7 @@ plDynaDecalInfo& plDynaDecalInfo::Init(const plKey& key)
     return *this;
 }
 
-plDynaDecalInfo& plDynaDecalMgr::IGetDecalInfo(UInt32 id, const plKey& key)
+plDynaDecalInfo& plDynaDecalMgr::IGetDecalInfo(unsigned_ptr id, const plKey& key)
 {
     plDynaDecalMap::iterator iter = fDecalMap.find(id);
     if( iter == fDecalMap.end() )

@@ -103,7 +103,7 @@ hsBool plDynaBulletMgr::IHandleShot(plBulletMsg* bull)
     fCutter->SetLength(hsVector3(bull->Radius() * fScale.fX, bull->Radius() * fScale.fY, bull->Range()));
     fCutter->Set(pos, up, -bull->Dir());
 
-    plDynaDecalInfo& info = IGetDecalInfo(UInt32(this), GetKey());
+    plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(this), GetKey());
 
     if( bull->PartyTime() > 0 )
         fPartyTime = bull->PartyTime();
