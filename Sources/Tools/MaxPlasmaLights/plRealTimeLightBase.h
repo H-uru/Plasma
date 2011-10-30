@@ -491,12 +491,12 @@ public:
     BOOL GetAttenNearDisplay() {return false;}
     ExclList& GetExclusionList() {return exclList;}
     void SetExclusionList(ExclList & a) {}
-    BOOL SetHotSpotControl(Control* a) {fLightPB->SetController(ParamID(kHotSpot),0, a); return true;}
-    BOOL SetFalloffControl(Control* a) {fLightPB->SetController(ParamID(kFallOff),0, a); return true;}
-    Control* GetHotSpotControl() {return fLightPB->GetController(ParamID(kHotSpot));}
-    Control* GetFalloffControl() {return fLightPB->GetController(ParamID(kFallOff));}
-    BOOL SetColorControl(Control * a) {fLightPB->SetController(ParamID(kLightColor),0, a); return true;}
-    Control* GetColorControl() {return fLightPB->GetController(ParamID(kLightColor)); }
+    BOOL SetHotSpotControl(Control* a) {SetParamBlock2Controller(fLightPB, ParamID(kHotSpot),0, a); return true;}
+    BOOL SetFalloffControl(Control* a) {SetParamBlock2Controller(fLightPB, ParamID(kFallOff),0, a); return true;}
+    Control* GetHotSpotControl() {return GetParamBlock2Controller(fLightPB, ParamID(kHotSpot));}
+    Control* GetFalloffControl() {return GetParamBlock2Controller(fLightPB, ParamID(kFallOff));}
+    BOOL SetColorControl(Control * a) {SetParamBlock2Controller(fLightPB, ParamID(kLightColor),0, a); return true;}
+    Control* GetColorControl() {return GetParamBlock2Controller(fLightPB, ParamID(kLightColor)); }
 
     BOOL GetDecayType() { return fLightPB->GetInt(kAttenTypeRadio, 0) + 1;} //Offset for the radio.
     void SetDecayType(BOOL onOff) {if (!onOff) return; else {fLightPB->SetValue(kAttenTypeRadio, 0, ((int) onOff - 1)); return;} } 

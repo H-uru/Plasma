@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Layers/plLayerTex.h"
 #include "../Layers/plStaticEnvLayer.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/MaxCompat.h"
 
 extern HINSTANCE hInstance;
 
@@ -665,7 +666,7 @@ Control *plBumpMtl::GetPreshadeColorController() { return nil; }
 Control *plBumpMtl::GetAmbColorController() { return nil; }
 Control *plBumpMtl::GetOpacityController() { return nil; }
 Control *plBumpMtl::GetSpecularColorController() { return nil; }
-Control *plBumpMtl::GetRuntimeColorController() { return fBasicPB->GetController(ParamID(kBumpBasRunColor)); }
+Control *plBumpMtl::GetRuntimeColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kBumpBasRunColor)); }
 
 // Layer block
 Texmap *plBumpMtl::GetBaseLayer() { return fBasicPB->GetTexmap(kBumpBasLayer); }

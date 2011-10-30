@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "stdmat.h"
 #include "../Layers/plLayerTex.h"
 #include "../Layers/plLayerTexBitmapPB.h"
+#include "MaxMain/MaxCompat.h"
 
 extern HINSTANCE hInstance;
 
@@ -629,8 +630,8 @@ Interval plParticleMtl::DisplacementValidity(TimeValue t)
     return iv;  
 }
 
-Control *plParticleMtl::GetAmbColorController() { return fBasicPB->GetController(ParamID(kColorAmb)); }
-Control *plParticleMtl::GetColorController() { return fBasicPB->GetController(ParamID(kColor)); }
-Control *plParticleMtl::GetOpacityController() { return fBasicPB->GetController(ParamID(kOpacity)); }
-Control *plParticleMtl::GetWidthController() { return fBasicPB->GetController(ParamID(kWidth)); }
-Control *plParticleMtl::GetHeightController() { return fBasicPB->GetController(ParamID(kHeight)); }
+Control *plParticleMtl::GetAmbColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kColorAmb)); }
+Control *plParticleMtl::GetColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kColor)); }
+Control *plParticleMtl::GetOpacityController() { return GetParamBlock2Controller(fBasicPB, ParamID(kOpacity)); }
+Control *plParticleMtl::GetWidthController() { return GetParamBlock2Controller(fBasicPB, ParamID(kWidth)); }
+Control *plParticleMtl::GetHeightController() { return GetParamBlock2Controller(fBasicPB, ParamID(kHeight)); }

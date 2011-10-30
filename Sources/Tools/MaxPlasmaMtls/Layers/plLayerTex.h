@@ -59,7 +59,6 @@ class plLayerTex : public plPlasmaMAXLayer
 protected:
     // Parameter block
     IParamBlock2    *fBitmapPB;
-    IParamBlock2    *fBasicPB;
     UVGen           *fUVGen;
 
     IMtlParams      *fMtlParams;
@@ -78,14 +77,12 @@ public:
     enum
     {
         kRefUVGen,
-        kRefBasic, // DEAD, but left in for backwards compatability
         kRefBitmap,
     };
 
     // Block ID's
     enum
     {
-        kBlkBasic, // DEAD
         kBlkBitmap,
     };
 

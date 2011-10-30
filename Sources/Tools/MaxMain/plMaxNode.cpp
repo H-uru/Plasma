@@ -2945,19 +2945,19 @@ bool plMaxNode::IsAnimatedLight()
     hsControlConverter& cc = hsControlConverter::Instance();
 
     // Is the color animated?
-    Control *colorCtl = pb->GetController( ParamID( plRTLightBase::kLightColor ) );
+    Control *colorCtl = GetParamBlock2Controller(pb,  ParamID( plRTLightBase::kLightColor ) );
     if (colorCtl && cc.HasKeyTimes(colorCtl))
         return true;
 
     // Is the specularity animated?
-    Control *specCtl = pb->GetController( ParamID( plRTLightBase::kSpecularColorSwatch ) );
+    Control *specCtl = GetParamBlock2Controller(pb,  ParamID( plRTLightBase::kSpecularColorSwatch ) );
     if (specCtl && cc.HasKeyTimes(specCtl))
         return true;
 
     // Is the attenuation animated?  (Spot and Omni lights only)
     if (cid == RTSPOT_LIGHT_CLASSID || cid == RTOMNI_LIGHT_CLASSID)
     {
-        Control *falloffCtl = pb->GetController( ParamID( plRTLightBase::kAttenMaxFalloffEdit ) );
+        Control *falloffCtl = GetParamBlock2Controller(pb,  ParamID( plRTLightBase::kAttenMaxFalloffEdit ) );
         if (falloffCtl && cc.HasKeyTimes(falloffCtl))
             return true;
     }
@@ -2965,11 +2965,11 @@ bool plMaxNode::IsAnimatedLight()
     // Is the cone animated? (Spot only)
     if (cid == RTSPOT_LIGHT_CLASSID)
     {
-        Control *innerCtl = pb->GetController( ParamID( plRTLightBase::kHotSpot ) );
+        Control *innerCtl = GetParamBlock2Controller(pb,  ParamID( plRTLightBase::kHotSpot ) );
         if (innerCtl && cc.HasKeyTimes(innerCtl))
             return true;
 
-        Control *outerCtl = pb->GetController( ParamID( plRTLightBase::kFallOff ) );
+        Control *outerCtl = GetParamBlock2Controller(pb,  ParamID( plRTLightBase::kFallOff ) );
         if (outerCtl && cc.HasKeyTimes(outerCtl))
             return true;
     }
@@ -2982,7 +2982,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
 {
     if( ProperPB->GetInt(plRTLightBase::kUseAttenuationBool, TimeValue(0)) )
     {
-        Control* falloffCtl = ProperPB->GetController(ParamID(plRTLightBase::kAttenMaxFalloffEdit));
+        Control* falloffCtl = GetParamBlock2Controller(ProperPB, ParamID(plRTLightBase::kAttenMaxFalloffEdit));
         if( falloffCtl )
         {
             plLeafController* subCtl;
@@ -3118,8 +3118,8 @@ void plMaxNode::IAdjustRTColorByIntensity(plController* ctl, IParamBlock2* Prope
 void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
 {
     Control* ambientCtl = nil; // Ambient not currently supported
-    Control* colorCtl = ProperPB->GetController(ParamID(plRTLightBase::kLightColor));
-    Control* specCtl = ProperPB->GetController(ParamID(plRTLightBase::kSpecularColorSwatch));
+    Control* colorCtl = GetParamBlock2Controller(ProperPB, ParamID(plRTLightBase::kLightColor));
+    Control* specCtl = GetParamBlock2Controller(ProperPB, ParamID(plRTLightBase::kSpecularColorSwatch));
     plPointControllerChannel *chan;
 
     if( ambientCtl )
@@ -3184,8 +3184,8 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
 
 void plMaxNode::GetRTConeAnim(IParamBlock2* ProperPB, plAGAnim *anim)
 {
-    Control* innerCtl = ProperPB->GetController(ParamID(plRTLightBase::kHotSpot));
-    Control* outerCtl = ProperPB->GetController(ParamID(plRTLightBase::kFallOff));
+    Control* innerCtl = GetParamBlock2Controller(ProperPB, ParamID(plRTLightBase::kHotSpot));
+    Control* outerCtl = GetParamBlock2Controller(ProperPB, ParamID(plRTLightBase::kFallOff));
     plScalarControllerChannel *chan;
 
     if( innerCtl )
