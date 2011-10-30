@@ -26,7 +26,6 @@ set(MaxPlasmaMtls_HEADERS_Layers
     Layers/plDynamicEnvLayer.h
     Layers/plDynamicTextLayer.h
     Layers/plLayerTex.h
-    Layers/plLayerTexBasicPB.h
     Layers/plLayerTexBitmapPB.h
     Layers/plMAXCameraLayer.h
     Layers/plPlasmaMAXLayer.h
