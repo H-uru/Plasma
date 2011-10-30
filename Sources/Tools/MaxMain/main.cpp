@@ -154,7 +154,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
         controlsInit = TRUE;
         
         // jaguar controls
-        InitCustomControls(hInstance);
+        INIT_CUSTOM_CONTROLS(hInstance);
 
         // initialize Chicago controls
         InitCommonControls();
