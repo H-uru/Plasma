@@ -70,4 +70,18 @@ typedef TCHAR MCHAR;
     maxObject->DoEnumDependents(proc);
 #endif //MAX_VERSION_MAJOR
 
+#if MAX_VERSION_MAJOR <= 13
+#define GetParamBlock2Controller(pb, id) pb->GetController(id)
+#define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetController(id, tab, ctl)
+#else
+#define GetParamBlock2Controller(pb, id) pb->GetControllerByID(id)
+#define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetControllerByID(id, tab, ctl)
+#endif // MAX_VERSION_MAJOR
+
+#if MAX_VERSION_MAJOR <= 11 // max 2009. Just a guess, really. 2010 doesn't need this function.
+#define INIT_CUSTOM_CONTROLLS(instance) InitCustomControls(instance)
+#else
+#define INIT_CUSTOM_CONTROLS(instance)
+#endif
+
 #endif // _PLASMA_MAXCOMPAT_H

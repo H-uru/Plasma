@@ -69,10 +69,8 @@ ClassDesc2* GetLayerTexDesc() { return &plLayerTexDesc; }
 ParamDlg* plLayerTex::fUVGenDlg = NULL;
 
 // For initializing paramblock descriptor
-//ParamBlockDesc2 *GetBasicBlk();
 ParamBlockDesc2 *GetBitmapBlk();
 
-//#include "plLayerTexBasicPB.cpp"
 #include "plLayerTexBitmapPB.cpp"
 
 void    plLayerTex::GetClassName( TSTR &s )
@@ -82,7 +80,6 @@ void    plLayerTex::GetClassName( TSTR &s )
 
 plLayerTex::plLayerTex() :
     fBitmapPB(NULL),
-    //fBasicPB(NULL),
     fUVGen(NULL),
     fTexHandle(NULL),
     fTexTime(0),
@@ -95,7 +92,6 @@ plLayerTex::plLayerTex() :
     if (!descInit)
     {
         descInit = true;
-        //GetBasicBlk()->SetClassDesc(GetLayerTexDesc());
         GetBitmapBlk()->SetClassDesc(GetLayerTexDesc());
     }
 #endif
@@ -159,7 +155,6 @@ Interval plLayerTex::Validity(TimeValue t)
     // No warranty on this not being stupid.
     Interval v = FOREVER;
     fBitmapPB->GetValidity(t, v);
-    //fBasicPB->GetValidity(t, v);
     v &= fUVGen->Validity(t);
     return v;
 }
@@ -199,7 +194,6 @@ RefTargetHandle plLayerTex::GetReference(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        //case kRefBasic:       return fBasicPB;
         default: return NULL;
     }
 }
@@ -235,7 +229,6 @@ IParamBlock2* plLayerTex::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fBitmapPB;
-    //case 1:   return fBasicPB;
     default: return NULL;
     }
 }
@@ -244,8 +237,6 @@ IParamBlock2* plLayerTex::GetParamBlockByID(BlockID id)
 {
     if (fBitmapPB->ID() == id)
         return fBitmapPB;
-    //else if (fBasicPB->ID() == id)
-    //  return fBasicPB;
     else
         return NULL;
 }
@@ -255,7 +246,6 @@ RefTargetHandle plLayerTex::Clone(RemapDir &remap)
 {
     plLayerTex *mnew = TRACKED_NEW plLayerTex();
     *((MtlBase*)mnew) = *((MtlBase*)this); // copy superclass stuff
-    //mnew->ReplaceReference(kRefBasic, remap.CloneRef(fBasicPB));
     mnew->ReplaceReference(kRefBitmap, remap.CloneRef(fBitmapPB));
     mnew->ReplaceReference(kRefUVGen, remap.CloneRef(fUVGen));
     BaseClone(this, mnew, remap);
@@ -274,7 +264,6 @@ Animatable* plLayerTex::SubAnim(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        //case kRefBasic:       return fBasicPB;
         default: return NULL;
     }
 }
@@ -285,7 +274,6 @@ TSTR plLayerTex::SubAnimName(int i)
     {
         case kRefUVGen:     return "UVGen";
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        //case kRefBasic:       return fBasicPB->GetLocalName();
         default: return "";
     }
 }

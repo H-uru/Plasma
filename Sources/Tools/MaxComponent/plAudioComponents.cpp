@@ -71,6 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxConvert/hsControlConverter.h"
 #include "plInterp/plController.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxCompat.h"
 #include "pnKeyedObject/plKey.h"
 
 //Physics Related
@@ -924,7 +925,7 @@ hsBool  plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
         end = anim->GetEnd();
     }
 
-    ctl = cc.MakeScalarController( fCompPB->GetController( (ParamID)kSoundVolumeSlider ), node, start, end );
+    ctl = cc.MakeScalarController( GetParamBlock2Controller(fCompPB,  (ParamID)kSoundVolumeSlider ), node, start, end );
     if( ctl != nil )
     {
         // Better only do this when the sound component is applied to only one object...
