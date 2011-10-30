@@ -93,11 +93,13 @@ hsBool gHasMouse = false;
 
 extern hsBool gDataServerLocal;
 extern hsBool gUseBackgroundDownloader;
+extern hsBool gUseExternPython;
 
 enum
 {
     kArgSkipLoginDialog,
     kArgServerIni,
+    kArgLocalPython,
     kArgLocalData,
     kArgBackgroundDownloader,
 };
@@ -105,6 +107,7 @@ enum
 static const CmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeBool,       L"SkipLoginDialog", kArgSkipLoginDialog },
     { kCmdArgFlagged  | kCmdTypeString,     L"ServerIni",       kArgServerIni },
+    { kCmdArgFlagged  | kCmdTypeBool,       L"LocalPython",     kArgLocalPython },
     { kCmdArgFlagged  | kCmdTypeBool,       L"LocalData",       kArgLocalData   },
     { kCmdArgFlagged  | kCmdTypeBool,       L"BGDownload",      kArgBackgroundDownloader    },
 };
@@ -1433,6 +1436,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     const wchar *serverIni = L"server.ini";
     if (cmdParser.IsSpecified(kArgServerIni))
         serverIni = cmdParser.GetString(kArgServerIni);
+    if (cmdParser.IsSpecified(kArgLocalPython))
+        gUseExternPython = true;
 
     // check to see if we were launched from the patcher
     bool eventExists = false;

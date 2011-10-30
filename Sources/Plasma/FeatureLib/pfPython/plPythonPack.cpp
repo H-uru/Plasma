@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "marshal.h"
 
 static const char* kPackFilePath = ".\\Python\\";
+hsBool gUseExternPython = false;
 
 struct plPackOffsetInfo
 {
@@ -268,45 +269,45 @@ static void ReplaceSlashes(std::wstring& path, wchar replaceWith)
 
 std::vector<std::wstring> plPythonPack::GetAllPackFiles()
 {
-#ifdef PLASMA_LOCAL_PYTHON_PAK
-    std::wstring dir = L"python";
-    std::string searchStr = "python/*.pak";
-    std::vector<std::wstring> retVal;
-
-    hsFolderIterator folderIter(searchStr.c_str(), true);
-    while (folderIter.NextFile())
+    if (gUseExternPython)
     {
-        const char* filename = folderIter.GetFileName();
-        wchar_t* wTemp = hsStringToWString(filename);
-        std::wstring wFilename = dir + L'/' + wTemp;
-        delete [] wTemp;
-        ToLower(wFilename);
-        
-        retVal.push_back(wFilename);
-    }
+        std::wstring dir = L"python";
+        std::string searchStr = "python/*.pak";
+        std::vector<std::wstring> retVal;
 
-    return retVal;
-#else
-    return plStreamSource::GetInstance()->GetListOfNames(L"python", L".pak");
-#endif
+        hsFolderIterator folderIter(searchStr.c_str(), true);
+        while (folderIter.NextFile())
+        {
+            const char* filename = folderIter.GetFileName();
+            wchar_t* wTemp = hsStringToWString(filename);
+            std::wstring wFilename = dir + L'/' + wTemp;
+            delete [] wTemp;
+            ToLower(wFilename);
+        
+            retVal.push_back(wFilename);
+        }
+
+        return retVal;
+    } else
+        return plStreamSource::GetInstance()->GetListOfNames(L"python", L".pak");
 }
 
 hsStream* plPythonPack::GetPackFile(std::wstring name)
 {
-#ifdef PLASMA_LOCAL_PYTHON_PAK
-    ToLower(name);
-    ReplaceSlashes(name, L'/');
-
-    char* temp = hsWStringToString(name.c_str());
-    std::string sFilename = temp;
-    delete [] temp;
-
-    if (plFileUtils::FileExists(sFilename.c_str()))
+    if (gUseExternPython)
     {
-        return plEncryptedStream::OpenEncryptedFile(sFilename.c_str());
-    }
-    return nil;
-#else
-    return plStreamSource::GetInstance()->GetFile(name);
-#endif
+        ToLower(name);
+        ReplaceSlashes(name, L'/');
+
+        char* temp = hsWStringToString(name.c_str());
+        std::string sFilename = temp;
+        delete [] temp;
+
+        if (plFileUtils::FileExists(sFilename.c_str()))
+        {
+            return plEncryptedStream::OpenEncryptedFile(sFilename.c_str());
+        }
+        return nil;
+    } else
+        return plStreamSource::GetInstance()->GetFile(name);
 }
