@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plWinMicLevel_h
 #define _plWinMicLevel_h
 
-#if HS_BUILD_FOR_WIN32
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
 //  plWinMicLevel - Annoying class to deal with the annoying problem of     //
@@ -77,6 +76,5 @@ protected:
     static plWinMicLevel    &IGetInstance( void );
     void    IShutdown( void );
 };
-#endif // HS_BUILD_FOR_WIN32
 
 #endif // _plWinMicLevel_h

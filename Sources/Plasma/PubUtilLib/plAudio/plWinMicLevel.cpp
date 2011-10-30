@@ -51,11 +51,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#if HS_BUILD_FOR_WIN32
 
 #include "hsTypes.h"
 #include "plWinMicLevel.h"
 #include "hsWindows.h"
+
+#if HS_BUILD_FOR_WIN32
 #include <mmsystem.h>
 
 
@@ -81,7 +82,7 @@ MIXERLINE       *IGetLineByType( DWORD type );
 MIXERLINE       *IGetLineByID( DWORD id );
 MIXERCONTROL    *IGetControlByType( MIXERLINE *line, DWORD type );
 MIXERLINE       *IGetMixerSubLineByType( MIXERCONTROL *mux, DWORD type );
-
+#endif
 
 //// The Publics /////////////////////////////////////////////////////////////
 
@@ -90,11 +91,15 @@ hsScalar    plWinMicLevel::GetLevel( void )
     if( !CanSetLevel() )
         return -1;
 
+#if HS_BUILD_FOR_WIN32
     DWORD   rawValue;
     if( !IGetControlValue( rawValue ) ) 
         return -1;
 
     return (hsScalar)( rawValue - sMinValue ) / (hsScalar)( sMaxValue - sMinValue );
+#else
+    return -1;
+#endif
 }
 
 void    plWinMicLevel::SetLevel( hsScalar level )
@@ -102,9 +107,11 @@ void    plWinMicLevel::SetLevel( hsScalar level )
     if( !CanSetLevel() )
         return;
 
+#if HS_BUILD_FOR_WIN32
     DWORD   rawValue = (DWORD)(( level * ( sMaxValue - sMinValue ) ) + sMinValue);
 
     ISetControlValue( rawValue );
+#endif
 }
 
 hsBool  plWinMicLevel::CanSetLevel( void )
@@ -112,7 +119,11 @@ hsBool  plWinMicLevel::CanSetLevel( void )
     // Just to init
     plWinMicLevel   &instance = IGetInstance();
 
+#if HS_BUILD_FOR_WIN32
     return ( sMixerHandle != nil ) ? true : false;
+#else
+    return false;
+#endif
 }
 
 
@@ -126,6 +137,7 @@ plWinMicLevel   &plWinMicLevel::IGetInstance( void )
 
 plWinMicLevel::plWinMicLevel()
 {
+#if HS_BUILD_FOR_WIN32
     sMixerHandle = nil;
     memset( &sMixerCaps, 0, sizeof( sMixerCaps ) );
 
@@ -159,6 +171,7 @@ plWinMicLevel::plWinMicLevel()
             return;
         }
     }
+#endif
 }
 
 plWinMicLevel::~plWinMicLevel()
@@ -168,12 +181,15 @@ plWinMicLevel::~plWinMicLevel()
 
 void    plWinMicLevel::IShutdown( void )
 {
+#if HS_BUILD_FOR_WIN32
     if( sMixerHandle != nil )
         ::mixerClose( sMixerHandle );
 
     sMixerHandle = nil;
+#endif
 }
 
+#if HS_BUILD_FOR_WIN32
 //// IGetMuxMicVolumeControl /////////////////////////////////////////////////
 //  Tries to get the volume control of the microphone subline of the MUX or
 //  mixer control of the WaveIn destination line of the audio system (whew!)
