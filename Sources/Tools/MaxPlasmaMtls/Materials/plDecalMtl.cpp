@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Layers/plLayerTex.h"
 #include "../Layers/plStaticEnvLayer.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
+#include "MaxMain/MaxCompat.h"
 
 extern HINSTANCE hInstance;
 
@@ -782,13 +783,13 @@ int     plDecalMtl::GetEmissive() { return fBasicPB->GetInt(kDecalBasEmissive); 
 int     plDecalMtl::GetUseSpec() { return fBasicPB->GetInt(kDecalBasUseSpec); }
 int     plDecalMtl::GetShine() { return fBasicPB->GetInt(kDecalBasShine); }
 Color   plDecalMtl::GetSpecularColor() { return fBasicPB->GetColor(kDecalBasSpecColor); }
-Control *plDecalMtl::GetPreshadeColorController() { return fBasicPB->GetController(ParamID(kDecalBasColor)); }
-Control *plDecalMtl::GetAmbColorController() { return fBasicPB->GetController(ParamID(kDecalBasColorAmb)); }
-Control *plDecalMtl::GetOpacityController() { return fBasicPB->GetController(ParamID(kDecalBasOpacity)); }
-Control *plDecalMtl::GetSpecularColorController() { return fBasicPB->GetController(ParamID(kDecalBasSpecColor)); }
+Control *plDecalMtl::GetPreshadeColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kDecalBasColor)); }
+Control *plDecalMtl::GetAmbColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kDecalBasColorAmb)); }
+Control *plDecalMtl::GetOpacityController() { return GetParamBlock2Controller(fBasicPB, ParamID(kDecalBasOpacity)); }
+Control *plDecalMtl::GetSpecularColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kDecalBasSpecColor)); }
 int     plDecalMtl::GetDiffuseColorLock() { return fBasicPB->GetInt(kDecalBasDiffuseLock); }
 Color   plDecalMtl::GetRuntimeColor() { return fBasicPB->GetColor(kDecalBasRunColor); }
-Control *plDecalMtl::GetRuntimeColorController() { return fBasicPB->GetController(ParamID(kDecalBasRunColor)); }
+Control *plDecalMtl::GetRuntimeColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kDecalBasRunColor)); }
 
 // Layer block
 Texmap *plDecalMtl::GetBaseLayer() { return fLayersPB->GetTexmap(kDecalLayBase); }

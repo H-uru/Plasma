@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "../Layers/plLayerTex.h"
 #include "../Layers/plStaticEnvLayer.h"
+#include "MaxMain/MaxCompat.h"
 
 #include "hsBitVector.h"
 
@@ -847,11 +848,11 @@ int     plPassMtl::GetShine() { return fBasicPB->GetInt(kPassBasShine); }
 Color   plPassMtl::GetSpecularColor() { return fBasicPB->GetColor(kPassBasSpecColor); }
 int     plPassMtl::GetDiffuseColorLock() { return fBasicPB->GetInt(kPassBasDiffuseLock); }
 Color   plPassMtl::GetRuntimeColor() { return fBasicPB->GetColor(kPassBasRunColor); }
-Control *plPassMtl::GetPreshadeColorController() { return fBasicPB->GetController(ParamID(kPassBasColor)); }
-Control *plPassMtl::GetAmbColorController() { return fBasicPB->GetController(ParamID(kPassBasColorAmb)); }
-Control *plPassMtl::GetOpacityController() { return fBasicPB->GetController(ParamID(kPassBasOpacity)); }
-Control *plPassMtl::GetSpecularColorController() { return fBasicPB->GetController(ParamID(kPassBasSpecColor)); }
-Control *plPassMtl::GetRuntimeColorController() { return fBasicPB->GetController(ParamID(kPassBasRunColor)); }
+Control *plPassMtl::GetPreshadeColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kPassBasColor)); }
+Control *plPassMtl::GetAmbColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kPassBasColorAmb)); }
+Control *plPassMtl::GetOpacityController() { return GetParamBlock2Controller(fBasicPB, ParamID(kPassBasOpacity)); }
+Control *plPassMtl::GetSpecularColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kPassBasSpecColor)); }
+Control *plPassMtl::GetRuntimeColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kPassBasRunColor)); }
 
 // Layer block
 Texmap *plPassMtl::GetBaseLayer() { return fLayersPB->GetTexmap(kPassLayBase); }
