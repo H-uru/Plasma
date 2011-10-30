@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAVIWriter_h_inc
 #define plAVIWriter_h_inc
 
-#if HS_BUILD_FOR_WIN32
-
 #include "pnKeyedObject/hsKeyedObject.h"
 
 class plPipeline;
@@ -69,6 +67,5 @@ public:
     virtual bool Open(const char* fileName, plPipeline* pipeline)=0;
     virtual void Close()=0;
 };
-#endif
 
 #endif // plAVIWriter_h_inc
