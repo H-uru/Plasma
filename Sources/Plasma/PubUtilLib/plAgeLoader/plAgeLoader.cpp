@@ -46,7 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include "hsTimer.h"
 #include "plResPatcher.h"
 #include "plBackgroundDownloader.h"
-#include "process.h"    // for getpid()
+#if HS_BUILD_FOR_WIN32
+#    include "process.h"    // for getpid()
+#else
+#    include <unistd.h>
+#endif
 
 #include "pnProduct/pnProduct.h"
 

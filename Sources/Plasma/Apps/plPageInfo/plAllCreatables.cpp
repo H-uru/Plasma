@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTypes.h"
 
-#include "../pnFactory/plCreator.h"
+#include "pnFactory/plCreator.h"
 
 #include "plAudible.h"
 REGISTER_NONCREATABLE( plAudible );
@@ -55,16 +55,16 @@ REGISTER_NONCREATABLE( plPhysical );
 #include "plgDispatch.h"
 REGISTER_NONCREATABLE( plDispatchBase );
 
-#include "../pnDispatch/pnDispatchCreatable.h"
-#include "../pnKeyedObject/pnKeyedObjectCreatable.h"
-#include "../pnMessage/pnMessageCreatable.h"
-#include "../pnModifier/pnModifierCreatable.h"
-#include "../pnNetCommon/pnNetCommonCreatable.h"
-#include "../pnTimer/pnTimerCreatable.h"
+#include "pnDispatch/pnDispatchCreatable.h"
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "pnModifier/pnModifierCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
+#include "pnTimer/pnTimerCreatable.h"
 
-#include "../plResMgr/plResMgrCreatable.h"
+#include "plResMgr/plResMgrCreatable.h"
 
-#include "../plMessage/plResMgrHelperMsg.h"
+#include "plMessage/plResMgrHelperMsg.h"
 REGISTER_CREATABLE(plResMgrHelperMsg);
 
-#include "../plAudioCore/plAudioCoreCreatable.h"
+#include "plAudioCore/plAudioCoreCreatable.h"

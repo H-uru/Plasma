@@ -55,10 +55,6 @@ REGISTER_CREATABLE( plNetCoreStatsSummary );
 #endif // SERVER
 REGISTER_CREATABLE( plCreatableListHelper );
 
-// HACK: plUUID should have it's own creatable include
-#include "../plUUID/plUUID.h"
-REGISTER_CREATABLE( plCreatableUuid );
-
 #include "plClientGuid.h"
 REGISTER_CREATABLE( plClientGuid );
 #include "plNetServerSessionInfo.h"

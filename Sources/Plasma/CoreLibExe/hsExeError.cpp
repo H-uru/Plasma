@@ -56,7 +56,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 static bool         s_skipBreak;
+#if HS_BUILD_FOR_WIN32
 static CCritSect *  s_critsect;
+#endif
 
 // User options
 static bool         s_options[kNumErrorOptions];
@@ -69,12 +71,14 @@ static bool         s_options[kNumErrorOptions];
 ***/
 
 //===========================================================================
+#if HS_BUILD_FOR_WIN32
 AUTO_INIT_FUNC(hsExeErrorInit) {
     // The critical section has to be initialized
     // before program startup and never freed
     static byte rawMemory[sizeof(CCritSect)];
     s_critsect = new(rawMemory) CCritSect;
 }
+#endif
 
 //============================================================================
 static void DoAssert (int line, const char file[], const char msg[]) {
@@ -118,7 +122,7 @@ static void DoAssert (int line, const char file[], const char msg[]) {
 
 //============================================================================
 #pragma auto_inline(off)
-void __cdecl ErrorFatal (int line, const char file[], const char fmt[], ...) {
+void CDECL ErrorFatal (int line, const char file[], const char fmt[], ...) {
     char buffer[256];
     va_list args;
     va_start(args, fmt);
@@ -135,7 +139,7 @@ void __cdecl ErrorFatal (int line, const char file[], const char fmt[], ...) {
 
 //============================================================================
 #pragma auto_inline(off)
-void __cdecl ErrorAssert (int line, const char file[], const char fmt[], ...) {
+void CDECL ErrorAssert (int line, const char file[], const char fmt[], ...) {
     char buffer[256];
     va_list args;
     va_start(args, fmt);
@@ -250,7 +254,7 @@ void DebugMsgV (const char fmt[], va_list args) {
 }
 
 //============================================================================
-void __cdecl DebugMsg (const char fmt[], ...) {
+void CDECL DebugMsg (const char fmt[], ...) {
 #ifdef HS_DEBUGGING
 
     va_list args;

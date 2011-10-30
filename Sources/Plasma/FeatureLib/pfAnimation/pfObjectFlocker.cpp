@@ -206,7 +206,7 @@ void pfVehicle::IMeasurePathCurvature(const float elapsedTime)
 {
     if (elapsedTime > 0)
     {
-        const hsVector3 deltaPosition(&fLastPos, &Position());
+        const hsVector3 deltaPosition(&fLastPos, &fPos);
         const hsVector3 deltaForward = (fLastForward - Forward()) / deltaPosition.Magnitude();
         const hsVector3 lateral = PerpendicularComponent(deltaForward, Forward());
         const float sign = ((lateral * Side()) < 0) ? 1.0f : -1.0f;
@@ -529,7 +529,9 @@ hsBool pfBoid::IInBoidNeighborhood(const pfVehicle &other, const float minDistan
         return false;
     else
     {
-        const hsVector3 offset(&(other.Position()), &Position());
+        hsPoint3 selfpos = Position();
+        hsPoint3 otherpos = other.Position();
+        const hsVector3 offset(&otherpos, &selfpos);
         const float distanceSquared = offset.MagnitudeSquared();
 
         // definitely in neighborhood if inside minDistance sphere
@@ -576,14 +578,17 @@ hsVector3 pfBoid::ISteerForSeek(const hsPoint3 &target)
     plDebugGeometry::Instance()->DrawLine(Position(), target, DEBUG_COLOR_RED);
 #endif
 
-    const hsVector3 desiredVelocity(&target, &Position());
+    hsPoint3 pos = Position();
+    const hsVector3 desiredVelocity(&target, &pos);
     return desiredVelocity - Velocity();
 }
 
 hsVector3 pfBoid::ISteerToGoal(pfBoidGoal &goal, float maxPredictionTime)
 {
     // offset from this to quarry, that distance, unit vector toward quarry
-    const hsVector3 offset(&goal.Position(), &Position());
+    hsPoint3 gpos = goal.Position();
+    hsPoint3 pos = Position();
+    const hsVector3 offset(&gpos, &pos);
     const float distance = offset.Magnitude();
     if (distance == 0) // nowhere to go
         return hsVector3(0, 0, 0);
@@ -680,7 +685,9 @@ hsVector3 pfBoid::ISteerForSeparation(const float maxDistance, const float cosMa
             // add in steering contribution
             // (opposite of the offset direction, divided once by distance
             // to normalize, divided another time to get 1/d falloff)
-            const hsVector3 offset(&((**other).Position()), &Position());
+            hsPoint3 pos = Position();
+            hsPoint3 otherpos = (**other).Position();
+            const hsVector3 offset(&otherpos, &pos);
             const float distanceSquared = offset * offset;
             steering += (offset / -distanceSquared);
 
@@ -727,7 +734,9 @@ hsVector3 pfBoid::ISteerForCohesion(const float maxDistance, const float cosMaxA
     // correcting direction, then normalize to pure direction
     if (neighbors > 0)
     {
-        hsVector3 posVector(&(Position()), &(hsPoint3(0,0,0))); // quick hack to turn a point into a vector
+        hsPoint3 pos = Position();
+        hsPoint3 zero(0, 0, 0);
+        hsVector3 posVector(&pos, &zero); // quick hack to turn a point into a vector
         steering = ((steering / (float)neighbors) - posVector);
         steering.Normalize();
     }

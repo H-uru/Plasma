@@ -120,7 +120,10 @@ void plAnimPath::SetCurTime(hsScalar t, UInt32 calcFlags)
         fVel.Set(pos+1, pos+0);
         fVel *= kInvSmallDelTime;
         fVel = fLocalToWorld * fVel;
-        fAccel.Set(&(pos[2] - pos[1]), &(pos[1] - pos[0]));
+
+        hsPoint3 first = pos[2] - pos[1];
+        hsPoint3 second = pos[1] - pos[0];
+        fAccel.Set(&first, &second);
         fAccel *= kInvSmallDelTime * kInvSmallDelTime;
         fAccel = fLocalToWorld * fAccel;
     }

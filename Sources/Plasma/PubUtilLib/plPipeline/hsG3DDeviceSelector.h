@@ -448,7 +448,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
-#include "headspin.h"
+#include "HeadSpin.h"
 
 class plDemoDebugFile
 {

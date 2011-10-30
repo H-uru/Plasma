@@ -218,7 +218,7 @@ hsBool plGrassShaderMod::IEval(double secs, hsScalar del, UInt32 dirty)
         fVShader->SetVector(plGrassVS::kAppConsts, float(hsTimer::GetSysSeconds()), 0.f, 0.f, 0.f);
     }
 
-    return TRUE;
+    return true;
 }
 
 void plGrassShaderMod::ISetupShaders()

@@ -547,7 +547,8 @@ plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( hsScalar radi
 
     direction.Set( 0, 0, height );
 
-    return GenerateConicalDrawable( hsPoint3( 0, 0, 0 ), direction, radius, material, localToWorld, blended,
+    hsPoint3 zero(0, 0, 0);
+    return GenerateConicalDrawable(zero, direction, radius, material, localToWorld, blended,
                                     multColor, retIndex, toAddTo );
 }
 

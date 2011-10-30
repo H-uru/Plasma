@@ -3,7 +3,9 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-include_directories(${DirectX_INCLUDE_DIR})
+if(WIN32)
+    include_directories(${DirectX_INCLUDE_DIR})
+endif(WIN32)
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${Speex_INCLUDE_DIR})
 

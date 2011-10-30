@@ -458,9 +458,9 @@ hsScalar plAGAnimInstance::ICalcFade(hsBool &fade, hsScalar curVal, hsScalar goa
     hsScalar newVal;
     hsScalar curStep = rate * elapsed;
     if(rate > 0) {
-        newVal = __min(goal, curVal + curStep);
+        newVal = std::min(goal, curVal + curStep);
     } else {
-        newVal = __max(goal, curVal + curStep);
+        newVal = std::max(goal, curVal + curStep);
     }
 
     if(newVal == goal)
@@ -593,7 +593,7 @@ void DumpAGAllocs()
         agAlloc * al = (*i).second;
         delete al;
 
-        i = gAGAllocs.erase(i);
+        gAGAllocs.erase(i++);
     }
     hsStatusMessage("FINISHED DUMPING AG ALLOCATIONS *********************************************");
 }

@@ -104,7 +104,8 @@ void plConvexVolume::Update(const hsMatrix44 &l2w)
     {
         // Since fN is an hsVector3, it will only apply the rotational aspect of the transform...
         fWorldPlanes[i].fN = l2w * fLocalPlanes[i].fN; 
-        planePt.Set(&(fLocalPlanes[i].fN * fLocalPlanes[i].fD));
+        hsVector3 tmp = fLocalPlanes[i].fN * fLocalPlanes[i].fD;
+        planePt.Set(&tmp);
         fWorldPlanes[i].fD = -(l2w * planePt).InnerProduct(fWorldPlanes[i].fN);
     }
 }

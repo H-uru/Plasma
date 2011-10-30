@@ -216,7 +216,8 @@ hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, f
         if( fPartRadsPerSecRange > 0 )
             radsPerSec = fPartRadsPerSecRange * sRandom.RandMinusOneToOne();
 
-        emitter->AddParticle(currStart, initDirection * initVelocity, tile, fXSize, fYSize, currSizeVar, 
+        hsVector3 tmp = initDirection * initVelocity;
+        emitter->AddParticle(currStart, tmp, tile, fXSize, fYSize, currSizeVar, 
                          invMass, initLife, orientation, miscFlags, radsPerSec);
     }
 

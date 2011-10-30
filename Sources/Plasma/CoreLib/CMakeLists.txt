@@ -87,6 +87,9 @@ set(CoreLib_HEADERS
 )
 
 add_library(CoreLib STATIC ${CoreLib_SOURCES} ${CoreLib_HEADERS})
+if(UNIX)
+    target_link_libraries(CoreLib pthread)
+endif(UNIX)
 
 source_group("Source Files" FILES ${CoreLib_SOURCES})
 source_group("Header Files" FILES ${CoreLib_HEADERS})
