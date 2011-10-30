@@ -79,4 +79,4 @@ public:
 */
 
 
-#endif plPickingDetector_inc
+#endif //plPickingDetector_inc
