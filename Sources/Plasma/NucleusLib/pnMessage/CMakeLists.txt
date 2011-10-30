@@ -59,6 +59,7 @@ set(pnMessage_SOURCES
 )
 
 add_library(pnMessage STATIC ${pnMessage_HEADERS} ${pnMessage_SOURCES})
+target_link_libraries(pnMessage CoreLib pnNetCommon)
 
 source_group("Header Files" FILES ${pnMessage_HEADERS})
 source_group("Source Files" FILES ${pnMessage_SOURCES})

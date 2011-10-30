@@ -12,7 +12,6 @@ set(plLogDecrypt_SOURCES
 )
 
 add_executable(plLogDecrypt ${plLogDecrypt_SOURCES})
-target_link_libraries(plLogDecrypt CoreLib CoreLibExe plFile plUnifiedTime plStatusLog pnProduct pnUtils)
-target_link_libraries(plLogDecrypt Rpcrt4)
+target_link_libraries(plLogDecrypt CoreLib CoreLibExe plStatusLog pnProduct)
 
 source_group("Source Files" FILES ${plLogDecrypt_SOURCES})

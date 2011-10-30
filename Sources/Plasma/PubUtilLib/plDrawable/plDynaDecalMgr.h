@@ -104,7 +104,7 @@ public:
     plDynaDecalInfo& Init(const plKey& key);
 };
 
-typedef std::map< UInt32, plDynaDecalInfo, std::less<UInt32> > plDynaDecalMap;
+typedef std::map< unsigned_ptr, plDynaDecalInfo, std::less<unsigned_ptr> > plDynaDecalMap;
 
 // plDynaDecalMgr
 // Primary responsibilities:
@@ -189,7 +189,7 @@ protected:
     hsBool              IWetPart(UInt32 id, const plDynaDecalEnableMsg* enaMsg);
     void                IWetInfo(plDynaDecalInfo& info, const plDynaDecalEnableMsg* enaMsg) const;
     hsScalar            IHowWet(plDynaDecalInfo& info, double t) const;
-    plDynaDecalInfo&    IGetDecalInfo(UInt32 id, const plKey& key);
+    plDynaDecalInfo&    IGetDecalInfo(unsigned_ptr id, const plKey& key);
     void                IRemoveDecalInfo(UInt32 id);
     void                IRemoveDecalInfos(const plKey& key);
 

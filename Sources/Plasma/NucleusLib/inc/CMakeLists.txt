@@ -30,6 +30,7 @@ set(pnNucleusInc_SOURCES
 )
 
 add_library(pnNucleusInc STATIC ${pnNucleusInc_HEADERS} ${pnNucleusInc_SOURCES})
+target_link_libraries(pnNucleusInc CoreLib pnTimer)
 
 source_group("Header Files" FILES ${pnNucleusInc_HEADERS})
 source_group("Source Files" FILES ${pnNucleusInc_SOURCES})

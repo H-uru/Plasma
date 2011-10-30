@@ -759,7 +759,8 @@ hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, Int3
         goal = fDissenterTarget;
     
     hsVector3 goalDir;
-    goalDir.Set(&(goal - pos));
+    hsPoint3 tmp = goal - pos;
+    goalDir.Set(&tmp);
     hsScalar distSq = goalDir.MagnitudeSquared();
     
     goalDir.Normalize();

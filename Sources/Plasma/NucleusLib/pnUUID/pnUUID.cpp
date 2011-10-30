@@ -39,57 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plOSMsg_inc
-#define plOSMsg_inc
+#include "pnUUID.h"
+#include "hsStream.h"
 
-#include "hsWindows.h"
-
-//
-// This enum wraps all of the OS messages
-// that we care about for this particular
-// platform - add as necessary...
-//
-
-// for Win32:
-
-enum plOSMsg
+plUUID::plUUID()
 {
-    KEYDOWN         = WM_KEYDOWN,
-    KEYUP           = WM_KEYUP,
-    MOUSEMOVE       = WM_MOUSEMOVE,
-    L_BUTTONDN      = WM_LBUTTONDOWN,
-    L_BUTTONUP      = WM_LBUTTONUP,
-    R_BUTTONDN      = WM_RBUTTONDOWN,
-    R_BUTTONUP      = WM_RBUTTONUP,
-    MOUSEWHEEL      = 0x020A,
-    L_BUTTONDBLCLK  = WM_LBUTTONDBLCLK,
-    R_BUTTONDBLCLK  = WM_RBUTTONDBLCLK,
-    SYSKEYDOWN      = WM_SYSKEYDOWN,
-    SYSKEYUP        = WM_SYSKEYUP,
-    M_BUTTONDN      = WM_MBUTTONDOWN,
-    M_BUTTONUP      = WM_MBUTTONUP,
-    CHAR_MSG        = WM_CHAR,
-};
+    Clear();
+}
 
-
-//
-// generic structure that we can use to describe
-// the state of the mouse on any platform.
-//
-//
-
-struct plMouseState
+plUUID::plUUID( const char * s )
 {
-    enum
-    {
-        kLeftButton     =   0x0001,
-        kRightButton    =   0x0002,
-        kMiddleButton   =   0x0004, 
-    };
-    float   fX;
-    float   fY;
-    UInt32  fButtonState;
-};
+    FromString( s );
+}
 
+plUUID::plUUID( const plUUID & other )
+{
+    CopyFrom( &other );
+}
 
-#endif // plOSMsg 
+void plUUID::Read( hsStream * s)
+{
+    s->LogSubStreamPushDesc("plUUID");
+    s->Read( sizeof( fData ), (void*)fData );
+}
+
+void plUUID::Write( hsStream * s)
+{
+    s->Write( sizeof( fData ), (const void*)fData );
+}
+
+const char * plUUID::AsString() const {
+    static std::string str;
+    ToStdString(str);
+    return str.c_str();
+}

@@ -6,9 +6,9 @@ include_directories(../../PubUtilLib)
 if(Bink_SDK_AVAILABLE)
     include_directories(${Bink_INCLUDE_DIR})
 endif()
-include_directories(${DirectX_INCLUDE_DIR})
 
 if(WIN32)
+    include_directories(${DirectX_INCLUDE_DIR})
     add_definitions(-DWIN32)
 endif(WIN32)
 

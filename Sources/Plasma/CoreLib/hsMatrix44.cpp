@@ -404,7 +404,8 @@ void hsMatrix44::MakeZRotation(hsScalar radians)
 //
 hsMatrix44& hsMatrix44::Make(const hsPoint3* f, const hsPoint3* at, const hsVector3* up)
 {
-    MakeTranslateMat(&hsVector3(f->fX, f->fY, f->fZ));
+    hsVector3 trans(f->fX, f->fY, f->fZ);
+    MakeTranslateMat(&trans);
 
     hsVector3 back (f,at);  // Z
     back.Normalize();
@@ -435,7 +436,8 @@ hsMatrix44& hsMatrix44::Make(const hsPoint3* f, const hsPoint3* at, const hsVect
 //
 hsMatrix44& hsMatrix44::MakeUpPreserving(const hsPoint3* f, const hsPoint3* at, const hsVector3* up)
 {
-    MakeTranslateMat(&hsVector3(f->fX, f->fY, f->fZ));
+    hsVector3 trans(f->fX, f->fY, f->fZ);
+    MakeTranslateMat(&trans);
 
     hsVector3 topHead = *up;
     topHead.Normalize();

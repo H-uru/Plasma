@@ -83,7 +83,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-const Uuid &  ProductId ();
+const plUUID&  ProductId ();
 const wchar * ProductCoreName ();   // e.g: L"Uru"
 const wchar * ProductShortName ();  // e.g: L"Uru"                      (filename/registry friendly)
 const wchar * ProductLongName ();   // e.g: L"Uru: Ages Beyond Myst"    (human friendly)

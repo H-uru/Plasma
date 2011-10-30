@@ -551,7 +551,8 @@ plSpaceTree* plSpaceTreeMaker::IMakeEmptyTree()
     plSpaceTree* tree = TRACKED_NEW plSpaceTree;
 
     tree->fTree.SetCount(1);
-    tree->fTree[0].fWorldBounds.Reset(&hsPoint3(0,0,0));
+    hsPoint3 zero(0, 0, 0);
+    tree->fTree[0].fWorldBounds.Reset(&zero);
     tree->fTree[0].fFlags = plSpaceTreeNode::kEmpty;
     tree->fRoot = 0;
     tree->fNumLeaves = 0;

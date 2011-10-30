@@ -185,7 +185,8 @@ plSpaceTree* plSceneNode::IBuildSpaceTree()
     maker.Reset();
     
     hsBounds3Ext bnd;
-    bnd.Reset(&hsPoint3(0,0,0));
+    hsPoint3 zero(0, 0, 0);
+    bnd.Reset(&zero);
     
     int i;
     for( i = 0; i < fDrawPool.GetCount(); i++ )
