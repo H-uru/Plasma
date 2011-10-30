@@ -64,6 +64,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
+#include "MaxMain/MaxCompat.h"
+
+#if MAX_VERSION_MAJOR >= 13
+#include <INamedSelectionSetManager.h>
+#endif
+
 const char hsConverterUtils::fTagSeps[] = " ,\t\n=:;";
 
 extern UserPropMgr gUserPropMgr;
@@ -416,11 +422,20 @@ Int32 hsConverterUtils::FindNamedSelSetFromName(const char *name)
 {
     hsGuardBegin("hsConverterUtils::FindNamedSelSetFromName");
 
+    #if MAX_VERSION_MAJOR <= 12
     for (Int32 i=0; i<fInterface->GetNumNamedSelSets(); i++)
     {
         if (!_stricmp(name, fInterface->GetNamedSelSetName(i)))
             return (i);
     }
+    #else
+    INamedSelectionSetManager* selSetMgr = INamedSelectionSetManager::GetInstance();
+    for (Int32 i=0; i<selSetMgr->GetNumNamedSelSets(); i++)
+    {
+        if (!_stricmp(name, selSetMgr->GetNamedSelSetName(i)))
+            return (i);
+    }
+    #endif
 
     return (-1);
     hsGuardEnd; 

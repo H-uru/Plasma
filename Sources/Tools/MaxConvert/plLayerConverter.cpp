@@ -101,7 +101,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
-#include "MaxPlasmaMtls/Layers/plLayerTexBasicPB.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
 #include "MaxPlasmaMtls/Layers/plStaticEnvLayer.h"
 #include "MaxPlasmaMtls/Layers/plDynamicEnvLayer.h"
