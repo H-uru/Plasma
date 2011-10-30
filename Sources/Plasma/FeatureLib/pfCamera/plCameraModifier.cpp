@@ -274,7 +274,8 @@ void plCameraModifier1::Update()
             // have to ask the avatar controller for the subworld key.
             if (!worldKey)
             {
-                plArmatureMod* armMod = plAvatarMgr::FindAvatar(plKey(GetBrain()->GetSubject()->GetKey()));
+                plKey subject = plKey(GetBrain()->GetSubject()->GetKey());
+                plArmatureMod* armMod = plAvatarMgr::FindAvatar(subject);
                 if (armMod && armMod->GetController() )
                     worldKey = armMod->GetController()->GetSubworld();
             }
