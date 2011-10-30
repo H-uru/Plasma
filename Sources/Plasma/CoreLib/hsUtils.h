@@ -72,6 +72,7 @@ char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible f
 #    define strnicmp    strncasecmp
 #    define wcsicmp     wcscasecmp
 #    define wcsnicmp    wcsncasecmp
+#    define strlwr      hsStrLower
 #endif
 
 

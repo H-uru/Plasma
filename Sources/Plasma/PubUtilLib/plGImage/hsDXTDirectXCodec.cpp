@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+#if HS_BUILD_FOR_WIN32
+
 #include "hsConfig.h"
 #include "hsWindows.h"
 
@@ -1240,3 +1242,4 @@ hsBool hsDXTDirectXCodec::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *color
     return false;
 }
 
+#endif
