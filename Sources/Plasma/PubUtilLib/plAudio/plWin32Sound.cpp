@@ -39,7 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <direct.h>
+#if HS_BUILD_FOR_WIN32
+#    include <direct.h>
+#else
+#    include <unistd.h>
+#endif
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "hsTimer.h"
