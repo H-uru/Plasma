@@ -101,7 +101,7 @@ public:
 
     virtual bool Open(const char* fileName, plPipeline* pipeline);
     virtual void Close();
-}
+};
 #endif
 
 plAVIWriter::~plAVIWriter()
@@ -172,9 +172,9 @@ hsBool plAVIWriterImp::MsgReceive(plMessage* msg)
 
 static const int kFramesPerSec = 30;
 
-#if HS_BUILD_FOR_WIN32
 bool plAVIWriterImp::Open(const char* fileName, plPipeline* pipeline)
 {
+#if HS_BUILD_FOR_WIN32
     // Already writing, fail
     if (fStreamHandle)
         return false;
@@ -250,12 +250,12 @@ bool plAVIWriterImp::Open(const char* fileName, plPipeline* pipeline)
         Close();
         return false;
     }
+#endif
 
     plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
 
     return true;
 }
-#endif
 
 void plAVIWriterImp::Close()
 {

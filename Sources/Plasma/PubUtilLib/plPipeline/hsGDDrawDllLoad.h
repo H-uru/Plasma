@@ -43,7 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsGDDrawDllLoad_inc
 #define hsGDDrawDllLoad_inc
 
+#include "hsConfig.h"
 
+#if HS_BUILD_FOR_WIN32
 class hsGDDrawDllLoad
 {
 private:
@@ -55,5 +57,6 @@ public:
 
     static HMODULE GetD3DDll();
 };
+#endif
 
 #endif // hsGDDrawDllLoad_inc
