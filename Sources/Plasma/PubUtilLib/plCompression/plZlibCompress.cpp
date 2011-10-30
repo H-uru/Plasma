@@ -46,20 +46,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool plZlibCompress::Uncompress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn)
 {
-	unsigned long buflen_out;
+    unsigned long buflen_out = *bufLenOut;
     bool result = (uncompress(bufOut, &buflen_out, bufIn, bufLenIn) == Z_OK);
-	*bufLenOut = buflen_out;
-	return result;
+    *bufLenOut = buflen_out;
+    return result;
 }
 
 hsBool plZlibCompress::Compress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn)
 {
     // according to compress doc, the bufOut buffer should be at least .1% larger than source buffer, plus 12 bytes.
     hsAssert(*bufLenOut>=(int)(bufLenIn*1.1+12), "bufOut compress buffer is not large enough");
-    unsigned long buflen_out;
+    unsigned long buflen_out = *bufLenOut;
     bool result = (compress(bufOut, &buflen_out, bufIn, bufLenIn) == Z_OK);
-	*bufLenOut = buflen_out;
-	return result;
+    *bufLenOut = buflen_out;
+    return result;
 }
 
 //
