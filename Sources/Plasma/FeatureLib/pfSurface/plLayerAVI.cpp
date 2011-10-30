@@ -71,8 +71,10 @@ struct plAVIFileInfo
 };
 #endif // HS_BUILD_FOR_WIN32
 
+#if HS_BUILD_FOR_WIN32
 static hsBool                       ICopySourceToTexture24(BITMAPINFO* bmi, plMipmap* t);
 static hsBool                       ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* t);
+#endif
 
 
 plLayerAVI::plLayerAVI()
@@ -123,12 +125,17 @@ hsBool plLayerAVI::IInit()
 
 Int32 plLayerAVI::ISecsToFrame(hsScalar secs)
 {
+#if HS_BUILD_FOR_WIN32
     float timeScale = float(fAVIInfo->fAVIStreamInfo.dwRate) / float(fAVIInfo->fAVIStreamInfo.dwScale);
+#else
+    float timeScale = 1.0f;
+#endif
     return Int32(secs * timeScale + 0.5f);
 }
 
 hsBool plLayerAVI::IGetCurrentFrame()
 {
+#if HS_BUILD_FOR_WIN32
     if( !fAVIInfo->fAVIStream )
         IInit();
 
@@ -149,9 +156,11 @@ hsBool plLayerAVI::IGetCurrentFrame()
     default:
         return ISetFault("Unknown AVI color depth");
     }
+#endif
     return true;
 }
 
+#if HS_BUILD_FOR_WIN32
 static hsBool ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* b)
 {
     hsAssert( b != nil, "nil mipmap passed to ICopySourceToTexture16()" );
@@ -224,9 +233,11 @@ static hsBool ICopySourceToTexture24(BITMAPINFO* bmi, plMipmap* b)
     
     return false;
 }
+#endif
 
 hsBool plLayerAVI::ICloseMovie()
 {
+#if HS_BUILD_FOR_WIN32
     if( fAVIInfo->fGetFrame )
         AVIStreamGetFrameClose(fAVIInfo->fGetFrame);
     fAVIInfo->fGetFrame = 0;
@@ -235,6 +246,7 @@ hsBool plLayerAVI::ICloseMovie()
         AVIStreamRelease(fAVIInfo->fAVIStream);
 
     fAVIInfo->fAVIStream = nil;
+#endif
 
     return false;
 }
