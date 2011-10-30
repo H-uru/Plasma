@@ -44,11 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 
-#if HS_BUILD_FOR_MAC
-    #include <ToolUtils.h>
-    #include <FixMath.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -86,21 +81,12 @@ extern "C" {
     #define hsFloatToFract(x)       hsFract((x) * hsFract1)
 #endif
 
-#if HS_BUILD_FOR_MAC68K && !(HS_PIN_MATH_OVERFLOW)
-    #define hsFixMul(a, b)  FixMul(a, b)
-#else
-    hsFixed hsFixMul(hsFixed a, hsFixed b);
-#endif
 
-#if HS_BUILD_FOR_MAC && !(HS_PIN_MATH_OVERFLOW) && !(HS_MP_SAFE)
-    #define hsFixDiv(a, b)  FixDiv(a, b)
-    #define hsFracMul(a, b) FracMul(a, b)
-    #define hsFracDiv(a, b) FracDiv(a, b)
-#else
-    hsFract hsFixDiv(hsFixed a, hsFixed b);
-    hsFract hsFracMul(hsFract a, hsFract b);
-    hsFract hsFracDiv(hsFract a, hsFract b);
-#endif
+hsFixed hsFixMul(hsFixed a, hsFixed b);
+
+hsFract hsFixDiv(hsFixed a, hsFixed b);
+hsFract hsFracMul(hsFract a, hsFract b);
+hsFract hsFracDiv(hsFract a, hsFract b);
 
 hsFract hsFracSqrt(hsFract value);
 #define hsFixSqrt(value)    (hsFracSqrt(value) >> 7)

@@ -44,32 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsPoint2.h"
 
-#if HS_BUILD_FOR_MAC
-    //  This guy disables MetroWerks' desire to only include a file once, which obviously gets
-    //  in the way of our little HS_RECT.inc trick
-    #pragma once off
-#endif
-
 #define HS_RECT_NAME        hsIntRect
 #define HS_RECT_POINT       hsIntPoint2
 #define HS_RECT_TYPE        Int32
 #define HS_RECT_EXTEND      1
 #include "HS_RECT.inc"
 
-#if HS_BUILD_FOR_MAC
-    Rect*       ToRect(Rect* r) const
-                {
-                    r->left = (Int16)this->fLeft;
-                    r->top = (Int16)this->fTop;
-                    r->right = (Int16)this->fRight;
-                    r->bottom = (Int16)this->fBottom;
-                    return r;
-                }
-    hsIntRect*  Set(const Rect* r)
-                {
-                    return this->Set(r->left, r->top, r->right, r->bottom);
-                }
-#endif
 #ifdef _WINDOWS_
     RECT*       ToRECT(RECT* r) const
                 {

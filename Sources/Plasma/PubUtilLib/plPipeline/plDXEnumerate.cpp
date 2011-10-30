@@ -217,7 +217,6 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDriver( DWORD dwFlags )
                 }
                 else
                 {
-#if !HS_BUILD_FOR_XBOX
                     if( dwFlags & D3DENUM_CANWINDOW )
                     {
                         if( (pDriver == &fDrivers[0])
@@ -229,7 +228,6 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDriver( DWORD dwFlags )
                         }
                     }
                     else
-#endif
                         if( dwFlags & D3DENUM_PRIMARYHAL )
                         {
                             if( pDriver == &fDrivers[0] )
@@ -292,7 +290,6 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
     /// New DX Enumeration
 
     // Get a pointer to the creation function
-#if !HS_BUILD_FOR_XBOX
     if( hsGDDrawDllLoad::GetD3DDll() == nil )
     {
         strcpy( fEnumeErrorStr, "Cannot load Direct3D driver!" );
@@ -308,10 +305,7 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
     }
 
     // Create a D3D object to use
-    IDirect3D9      *pD3D = procPtr( D3D_SDK_VERSION );
-#else
-    IDirect3D9      *pD3D = Direct3DCreate9( D3D_SDK_VERSION );
-#endif
+    IDirect3D9 *pD3D = procPtr( D3D_SDK_VERSION );
     if( pD3D == nil )
     {
         strcpy( fEnumeErrorStr, "Cannot load DirectX!" );
@@ -519,12 +513,8 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
 hsBool  hsGDirect3DTnLEnumerate::IFindDepthFormats( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
                                                    D3DEnum_ModeInfo *modeInfo )
 {
-#if HS_BUILD_FOR_XBOX
-    D3DFORMAT       formats[] = { D3DFMT_D16, D3DFMT_D24S8, D3DFMT_UNKNOWN };
-#else
     D3DFORMAT       formats[] = { D3DFMT_D16, D3DFMT_D24X8, D3DFMT_D32,
         D3DFMT_D15S1, D3DFMT_D24X4S4, D3DFMT_D24S8, D3DFMT_UNKNOWN };
-#endif
 
     /// Try 'em
     for( int i = 0; formats[ i ] != D3DFMT_UNKNOWN; i++ )

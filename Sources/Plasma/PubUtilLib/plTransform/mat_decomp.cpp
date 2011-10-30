@@ -46,9 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 #include <math.h>
 #include "mat_decomp.h"
-#ifdef __MWERKS__ 
-//#pragma optimization_level 0
-#endif
 
 /******* Matrix Preliminaries *******/
 

@@ -146,11 +146,6 @@ private:
     // Converts a color from RGB565 to RGB4444 reversed format, with alpha=0
     UInt16 inline IRGB565To4444Rev( UInt16 color );
 
-    // Swaps the bytes in a doubleword
-    UInt32 inline ISwapDwordOrder( UInt32 color );
-    // Swaps the bytes in a word
-    UInt16 inline ISwapWordOrder( UInt16 color );
-
     static hsBool Register();
     static hsBool fRegistered;
 };
