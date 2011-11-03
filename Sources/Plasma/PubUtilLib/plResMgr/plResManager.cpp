@@ -1193,6 +1193,9 @@ void plResManager::PageInRoom(const plLocation& page, UInt16 objClassToRef, plRe
         return;
     }
 
+    // Step 0.9: Open the stream on this page, so it remains open for the entire loading process
+    pageNode->OpenStream();
+
     // Step 1: We force a load on all the keys in the given page
     kResMgrLog(2, ILog(2, "...Loading page keys..."));
     LoadPageKeys(pageNode);
@@ -1211,6 +1214,7 @@ void plResManager::PageInRoom(const plLocation& page, UInt16 objClassToRef, plRe
         kResMgrLog(1, ILog(1, "...SceneNode not found to base page-in op on. Aborting..."));
         // This is coming up a lot lately; too intrusive to be an assert.
         // hsAssert( false, "No object found on which to base our PageInRoom()" );
+        pageNode->CloseStream();
         return;
     }
 
@@ -1228,6 +1232,9 @@ void plResManager::PageInRoom(const plLocation& page, UInt16 objClassToRef, plRe
     // Step 5: Ref the object
     kResMgrLog(2, ILog(2, "...Dispatching refMessage..."));
     AddViaNotify(objKey, refMsg, plRefFlags::kActiveRef);
+
+    // Step 5.9: Close the page stream
+    pageNode->CloseStream();
 
     // All done!
     kResMgrLog(1, ILog(1, "...Page in complete!"));
