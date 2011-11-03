@@ -80,7 +80,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 
 __declspec(dllexport) const TCHAR* LibDescription()
 {
-    return NULL;
+    return TEXT("MaxPlasmaLights");
 }
 
 __declspec(dllexport) int LibNumberClasses()
