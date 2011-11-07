@@ -90,6 +90,16 @@ plStatusLogMgr::plStatusLogMgr()
     fDrawer = nil;
     fLastLogChangeTime = 0;
 
+#if HS_BUILD_FOR_WIN32
+    SHGetSpecialFolderPathW(NULL, fBasePath, CSIDL_LOCAL_APPDATA, TRUE);
+//#elif HS_BUILD_FOR_DARWIN
+// Do some Mac specific thing here eventually
+#else
+    wchar* temp = hsStringToWString(getenv("HOME"));
+    swprintf(fBasePath, MAX_PATH, L"%S/.cache/Uru Live", temp);
+    delete[] temp;
+#endif
+
     plFileUtils::ConcatFileName(fBasePath, L"log");
     plFileUtils::EnsureFilePathExists(fBasePath);
 }
@@ -820,7 +830,11 @@ bool plStatusLog::IPrintLineToFile( const char *line, UInt32 count )
                 strncat(buf, work, arrsize(work));
             }
 
-            strncat(buf, line, arrsize(line));
+            if (count < arrsize(buf) - strlen(buf)) {
+                strncat(buf, line, count);
+            } else {
+                strncat(buf, line, arrsize(buf) - strlen(buf));
+            }
 
             if(!fEncryptMe )
             {
