@@ -73,6 +73,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_UNIX
     #include <limits.h>
     #define MAX_PATH PATH_MAX
+#elif HS_BUILD_FOR_WIN32
+    #include <Shlobj.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
