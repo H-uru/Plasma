@@ -830,10 +830,12 @@ bool plStatusLog::IPrintLineToFile( const char *line, UInt32 count )
                 strncat(buf, work, arrsize(work));
             }
 
-            if (count < arrsize(buf) - strlen(buf)) {
+            size_t remaining = arrsize(buf) - strlen(buf) - 1;
+            if (!fEncryptMe) remaining -= 1;
+            if (count <= remaining) {
                 strncat(buf, line, count);
             } else {
-                strncat(buf, line, arrsize(buf) - strlen(buf));
+                strncat(buf, line, remaining);
             }
 
             if(!fEncryptMe )
