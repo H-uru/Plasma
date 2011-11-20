@@ -94,6 +94,7 @@ plStatusLogMgr::plStatusLogMgr()
 
 #if HS_BUILD_FOR_WIN32
     SHGetSpecialFolderPathW(NULL, fBasePath, CSIDL_LOCAL_APPDATA, TRUE);
+    plFileUtils::ConcatFileName(fBasePath, L"Uru Live");
 //#elif HS_BUILD_FOR_DARWIN
 // Do some Mac specific thing here eventually
 #else
