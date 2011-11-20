@@ -103,7 +103,7 @@ plStatusLogMgr::plStatusLogMgr()
     delete[] temp;
 #endif
 
-    plFileUtils::ConcatFileName(fBasePath, L"log");
+    plFileUtils::ConcatFileName(fBasePath, L"Log");
     plFileUtils::EnsureFilePathExists(fBasePath);
 }
 
