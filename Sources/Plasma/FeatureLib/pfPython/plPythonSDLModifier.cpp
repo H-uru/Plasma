@@ -208,6 +208,22 @@ void plPythonSDLModifier::SetItemIdx(const char* key, int idx, PyObject* value, 
         return;
     }
 
+    if (pyTuple && pyTuple->ob_refcnt != 1)
+    {
+        // others already have references to the tuple and expect it to be immutable, must make a copy
+        int n = PyTuple_Size(pyTuple);
+        PyObject* newTuple = PyTuple_New(n);
+        for (int j = 0; j < n; j++)
+        {
+            PyObject* item = PyTuple_GetItem(pyTuple, j);
+            Py_INCREF(item);
+            PyTuple_SetItem(newTuple, j, item);
+        }
+        Py_DECREF(pyTuple);
+        pyTuple = newTuple;
+        it->second.obj = newTuple;
+    }
+
     if (pyTuple)
     {
         if (PyTuple_Size(pyTuple) <= idx)
@@ -221,6 +237,8 @@ void plPythonSDLModifier::SetItemIdx(const char* key, int idx, PyObject* value, 
                 Py_INCREF(Py_None);
                 PyTuple_SetItem(pyTuple, j, Py_None);
             }
+            // _PyTuple_Resize may have changed pyTuple
+            it->second.obj = pyTuple;
         }
     }
     else
