@@ -94,15 +94,15 @@ plStatusLogMgr::plStatusLogMgr()
 
 #if HS_BUILD_FOR_WIN32
     SHGetSpecialFolderPathW(NULL, fBasePath, CSIDL_LOCAL_APPDATA, TRUE);
-    plFileUtils::ConcatFileName(fBasePath, L"Uru Live");
 //#elif HS_BUILD_FOR_DARWIN
 // Do some Mac specific thing here eventually
 #else
     wchar* temp = hsStringToWString(getenv("HOME"));
-    swprintf(fBasePath, MAX_PATH, L"%S/.cache/Uru Live", temp);
+    swprintf(fBasePath, MAX_PATH, L"%S/.cache", temp);
     delete[] temp;
 #endif
 
+    plFileUtils::ConcatFileName(fBasePath, ProductLongName());
     plFileUtils::ConcatFileName(fBasePath, L"Log");
     plFileUtils::EnsureFilePathExists(fBasePath);
 }
