@@ -97,7 +97,9 @@ plStatusLogMgr::plStatusLogMgr()
 //#elif HS_BUILD_FOR_DARWIN
 // Do some Mac specific thing here eventually
 #else
-    wchar* temp = hsStringToWString(getenv("HOME"));
+    const char* home = getenv("HOME");
+    if (!home) home = "";
+    wchar* temp = hsStringToWString(home);
     swprintf(fBasePath, MAX_PATH, L"%S/.cache", temp);
     delete[] temp;
 #endif
