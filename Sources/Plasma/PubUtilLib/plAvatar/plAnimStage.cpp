@@ -425,6 +425,14 @@ bool plAnimStage::IMoveBackward(double time, float delta, float &overrun, plArma
     bool infiniteLoop = fLoops == -1;
     bool loopsRemain = fCurLoop > 0 || infiniteLoop;
 
+    // If we don't have this animation, just pretend to have worked.
+    // Otherwise, we crash the client.
+    if (!fAnimInstance)
+    {
+        hsAssert(false, "AnimInstance nil");
+        return true;
+    }
+
     // This must be here before we set the local time.
     if (fAnimInstance->GetTimeConvert())
         fAnimInstance->GetTimeConvert()->Backwards();
@@ -476,6 +484,14 @@ bool plAnimStage::IMoveForward(double time, float delta, float &overrun, plArmat
     
     // first get the target time in local time, ignoring overruns
     float target = fLocalTime + delta;
+
+    // If we don't have this animation, just pretend to have worked.
+    // Otherwise, we crash the client.
+    if (!fAnimInstance)
+    {
+        hsAssert(false, "AnimInstance nil");
+        return true;
+    }
 
     if (fAnimInstance->GetTimeConvert())
         fAnimInstance->GetTimeConvert()->Forewards();
