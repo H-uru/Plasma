@@ -73,6 +73,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_UNIX
     #include <limits.h>
     #define MAX_PATH PATH_MAX
+#elif HS_BUILD_FOR_WIN32
+    #include <Shlobj.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,7 +92,20 @@ plStatusLogMgr::plStatusLogMgr()
     fDrawer = nil;
     fLastLogChangeTime = 0;
 
-    plFileUtils::ConcatFileName(fBasePath, L"log");
+#if HS_BUILD_FOR_WIN32
+    SHGetSpecialFolderPathW(NULL, fBasePath, CSIDL_LOCAL_APPDATA, TRUE);
+//#elif HS_BUILD_FOR_DARWIN
+// Do some Mac specific thing here eventually
+#else
+    const char* home = getenv("HOME");
+    if (!home) home = "";
+    wchar* temp = hsStringToWString(home);
+    swprintf(fBasePath, MAX_PATH, L"%S/.cache", temp);
+    delete[] temp;
+#endif
+
+    plFileUtils::ConcatFileName(fBasePath, ProductLongName());
+    plFileUtils::ConcatFileName(fBasePath, L"Log");
     plFileUtils::EnsureFilePathExists(fBasePath);
 }
 
@@ -820,7 +835,13 @@ bool plStatusLog::IPrintLineToFile( const char *line, UInt32 count )
                 strncat(buf, work, arrsize(work));
             }
 
-            strncat(buf, line, arrsize(line));
+            size_t remaining = arrsize(buf) - strlen(buf) - 1;
+            if (!fEncryptMe) remaining -= 1;
+            if (count <= remaining) {
+                strncat(buf, line, count);
+            } else {
+                strncat(buf, line, remaining);
+            }
 
             if(!fEncryptMe )
             {

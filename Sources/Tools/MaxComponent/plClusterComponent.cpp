@@ -75,6 +75,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 
+#if MAX_VERSION_MAJOR >= 13
+#include <INamedSelectionSetManager.h>
+#endif
+
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 // Start with the component bookkeeping song and dance.
@@ -564,8 +568,13 @@ void plClusterComponent::Select()
             nodeTab.Append(1, &clust);
         }
     }
+#if MAX_VERSION_MAJOR <= 12
     GetCOREInterface()->RemoveNamedSelSet(TSTR(GetINode()->GetName()));
     GetCOREInterface()->AddNewNamedSelSet(nodeTab, TSTR(GetINode()->GetName()));
+#else
+    INamedSelectionSetManager::GetInstance()->RemoveNamedSelSet(TSTR(GetINode()->GetName()));
+    INamedSelectionSetManager::GetInstance()->AddNewNamedSelSet(nodeTab, TSTR(GetINode()->GetName()));
+#endif
 }
 
 void plClusterComponent::Clear()

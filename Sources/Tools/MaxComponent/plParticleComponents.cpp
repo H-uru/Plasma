@@ -72,6 +72,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInterp/hsInterp.h"
 #include "plInterp/plAnimEaseTypes.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxCompat.h"
 #include "pnKeyedObject/plKey.h"
 #include "plSurface/hsGMaterial.h"
 #include "plPipeline/plGBufferGroup.h"
@@ -222,7 +223,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     // Need to do this even when immortal, so that maxTotalParticles is computed correctly.
     partLifeMin = fUserInput.fLifeMin;
     partLifeMax = fUserInput.fLifeMax;
-    plLeafController *ppsCtl = cc.MakeScalarController(fCompPB->GetController(ParamID(kPPS)), node);
+    plLeafController *ppsCtl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kPPS)), node);
     if (ppsCtl != nil && ppsCtl->GetLength() > 0)
     {
         // Simulate just the birth across the curve and record the max
@@ -529,7 +530,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
 
     if (fCompPB->GetInt(kGenType) != kGenOnePerVertex)
     {
-        ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kLifeMin)), node, start, end);
+        ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kLifeMin)), node, start, end);
         if (ctl != nil)
         {
             plParticleLifeMinApplicator *app = TRACKED_NEW plParticleLifeMinApplicator();
@@ -538,7 +539,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
             result = true;      
         }
 
-        ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kLifeMax)), node, start, end);
+        ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kLifeMax)), node, start, end);
         if (ctl != nil)
         {
             plParticleLifeMaxApplicator *app = TRACKED_NEW plParticleLifeMaxApplicator();
@@ -547,7 +548,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
             result = true;      
         }
 
-        ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kPPS)), node, start, end);
+        ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kPPS)), node, start, end);
         if (ctl != nil)
         {
             plParticlePPSApplicator *app = TRACKED_NEW plParticlePPSApplicator();
@@ -556,7 +557,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
             result = true;      
         }
 
-        ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kConeAngle)), node, start, end);
+        ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kConeAngle)), node, start, end);
         if (ctl != nil)
         {
             plParticleAngleApplicator *app = TRACKED_NEW plParticleAngleApplicator();
@@ -565,7 +566,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
             result = true;      
         }
 
-        ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kVelocityMin)), node, start, end);
+        ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kVelocityMin)), node, start, end);
         if (ctl != nil)
         {
             plParticleVelMinApplicator *app = TRACKED_NEW plParticleVelMinApplicator();
@@ -574,7 +575,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
             result = true;      
         }
 
-        ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kVelocityMax)), node, start, end); 
+        ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kVelocityMax)), node, start, end);
         if (ctl != nil)
         {
             plParticleVelMaxApplicator *app = TRACKED_NEW plParticleVelMaxApplicator();
@@ -584,7 +585,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         }
         
         /*
-        ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kGravity)), node, start, end);
+        ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kGravity)), node, start, end);
         if (ctl != nil)
         {
             plParticleGravityApplicator *app = TRACKED_NEW plParticleGravityApplicator();
@@ -592,7 +593,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
             result = true;      
         }
 
-        ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kDrag)), node, start, end);
+        ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kDrag)), node, start, end);
         if (ctl != nil)
         {
             plParticleDragApplicator *app = TRACKED_NEW plParticleDragApplicator();
@@ -602,7 +603,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         */
     }
 
-    ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kScaleMin)), node, start, end);
+    ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kScaleMin)), node, start, end);
     if (ctl != nil)
     {
         plParticleScaleMinApplicator *app = TRACKED_NEW plParticleScaleMinApplicator();
@@ -611,7 +612,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         result = true;      
     }
 
-    ctl = cc.MakeScalarController(fCompPB->GetController(ParamID(kScaleMax)), node, start, end);
+    ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kScaleMax)), node, start, end);
     if (ctl != nil)
     {
         plParticleScaleMaxApplicator *app = TRACKED_NEW plParticleScaleMaxApplicator();

@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/pnKeyedObjectCreatable.h"
 #include "pnNetCommon/pnNetCommonCreatable.h"
 
+#include "MaxMain/MaxCompat.h"
+
 #include "plSurface/plLayerInterface.h"
 REGISTER_NONCREATABLE( plLayerInterface );
 
@@ -69,7 +71,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
         controlsInit = TRUE;
         // Note: InitCustomControls is deprecated
         //       New versions of 3dsm do this for us :)
-        InitCustomControls(hInstance);  // Initialize MAX's custom controls
+        INIT_CUSTOM_CONTROLS(hInstance);  // Initialize MAX's custom controls
         InitCommonControls();           // Initialize Win95 controls
     }
             
@@ -78,7 +80,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 
 __declspec(dllexport) const TCHAR* LibDescription()
 {
-    return NULL;
+    return TEXT("MaxPlasmaLights");
 }
 
 __declspec(dllexport) int LibNumberClasses()
