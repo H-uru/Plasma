@@ -484,16 +484,16 @@ hsBool plParticleSystem::MsgReceive(plMessage* msg)
     plRenderMsg *rend;
     plAgeLoadedMsg* ageLoaded;
 
-    if (rend = plRenderMsg::ConvertNoRef(msg))
+    if ((rend = plRenderMsg::ConvertNoRef(msg)))
     {
         plProfile_BeginLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName());
         IHandleRenderMsg(rend->Pipeline());
         plProfile_EndLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName());
         return true;
     }
-    else if (refMsg = plGenRefMsg::ConvertNoRef(msg))
+    else if ((refMsg = plGenRefMsg::ConvertNoRef(msg)))
     {
-        if (scene = plSceneObject::ConvertNoRef(refMsg->GetRef()))
+        if ((scene = plSceneObject::ConvertNoRef(refMsg->GetRef())))
         {
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 AddTarget(scene);
@@ -501,7 +501,7 @@ hsBool plParticleSystem::MsgReceive(plMessage* msg)
                 RemoveTarget(scene);
             return true;
         }
-        if (mat = hsGMaterial::ConvertNoRef(refMsg->GetRef()))
+        if ((mat = hsGMaterial::ConvertNoRef(refMsg->GetRef())))
         {
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 fTexture = mat;
@@ -509,7 +509,7 @@ hsBool plParticleSystem::MsgReceive(plMessage* msg)
                 fTexture = nil;
             return true;
         }
-        if (effect = plParticleEffect::ConvertNoRef(refMsg->GetRef()))
+        if ((effect = plParticleEffect::ConvertNoRef(refMsg->GetRef())))
         {
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 IAddEffect(effect, refMsg->fType);
@@ -518,12 +518,12 @@ hsBool plParticleSystem::MsgReceive(plMessage* msg)
             return true;
         }
     }
-    else if (partMsg = plParticleUpdateMsg::ConvertNoRef(msg))
+    else if ((partMsg = plParticleUpdateMsg::ConvertNoRef(msg)))
     {
         UpdateGenerator(partMsg->GetParamID(), partMsg->GetParamValue());
         return true;
     }
-    else if (killMsg = plParticleKillMsg::ConvertNoRef(msg)) 
+    else if ((killMsg = plParticleKillMsg::ConvertNoRef(msg)))
     {
         KillParticles(killMsg->fNumToKill, killMsg->fTimeLeft, killMsg->fFlags);
         return true;

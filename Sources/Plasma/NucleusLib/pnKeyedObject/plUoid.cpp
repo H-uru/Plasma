@@ -274,7 +274,7 @@ plUoid& plUoid::operator=(const plUoid& rhs)
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
 char* plUoid::StringIze(char* str) const // Format to displayable string
 {
-    sprintf(str, "(0x%x:0x%x:%s:C:[%lu,%lu])", 
+    sprintf(str, "(0x%x:0x%x:%s:C:[%u,%u])", 
         fLocation.GetSequenceNumber(), 
         int(fLocation.GetFlags()), 
         fObjectName, 

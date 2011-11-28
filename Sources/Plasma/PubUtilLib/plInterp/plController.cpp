@@ -76,7 +76,7 @@ void plControllerCacheInfo::SetATC(plAnimTimeConvert *atc)
 
 plLeafController::~plLeafController()
 {
-    delete [] fKeys;
+    delete[] fKeys;
 }
 
 void plLeafController::Interp(hsScalar time, hsScalar* result, plControllerCacheInfo *cache) const

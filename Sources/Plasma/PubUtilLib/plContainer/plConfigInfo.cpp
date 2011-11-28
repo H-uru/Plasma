@@ -670,14 +670,14 @@ bool plIniConfigSource::WriteOutOf(plConfigInfo & configInfo)
     plConfigInfo::Values::const_iterator    vi, ve;
 
     fConfigInfo->GetSectionIterators(si,se);
-    for (si; si!=se; ++si)
+    for (; si!=se; ++si)
     {
         file << std::endl << "[" << si->first.c_str() << "]"<< std::endl;
         if (fConfigInfo->GetKeyIterators(si->first, ki, ke))
-            for (ki; ki!=ke; ++ki)
+            for (; ki!=ke; ++ki)
             {
                 if (fConfigInfo->GetValueIterators(si->first, ki->first, vi, ve))
-                    for (vi; vi!=ve; ++vi)
+                    for (; vi!=ve; ++vi)
                     {
                         file << ki->first.c_str() << "=" << vi->c_str() << std::endl;
                     }
@@ -738,14 +738,14 @@ bool plIniStreamConfigSource::WriteOutOf(plConfigInfo & configInfo)
     plConfigInfo::Values::const_iterator    vi, ve;
 
     fConfigInfo->GetSectionIterators(si,se);
-    for (si; si!=se; ++si)
+    for (; si!=se; ++si)
     {
         ss << std::endl << "[" << si->first.c_str() << "]"<< std::endl;
         if (fConfigInfo->GetKeyIterators(si->first, ki, ke))
-            for (ki; ki!=ke; ++ki)
+            for (; ki!=ke; ++ki)
             {
                 if (fConfigInfo->GetValueIterators(si->first, ki->first, vi, ve))
-                    for (vi; vi!=ve; ++vi)
+                    for (; vi!=ve; ++vi)
                     {
                         ss << ki->first.c_str() << "=" << vi->c_str() << std::endl;
                     }
@@ -887,13 +887,13 @@ bool plIniNoSectionsConfigSource::WriteOutOf(plConfigInfo & configInfo)
     plConfigInfo::Values::const_iterator    vi, ve;
 
     fConfigInfo->GetSectionIterators(si,se);
-    for (si; si!=se; ++si)
+    for (; si!=se; ++si)
     {
         if (fConfigInfo->GetKeyIterators(si->first, ki, ke))
-            for (ki; ki!=ke; ++ki)
+            for (; ki!=ke; ++ki)
             {
                 if (fConfigInfo->GetValueIterators(si->first, ki->first, vi, ve))
-                    for (vi; vi!=ve; ++vi)
+                    for (; vi!=ve; ++vi)
                     {
                         file << ki->first.c_str() << "=" << vi->c_str() << std::endl;
                     }
@@ -919,15 +919,15 @@ bool plDebugConfigSource::WriteOutOf(plConfigInfo & configInfo)
 
     char buf[1024];
     fConfigInfo->GetSectionIterators(si,se);
-    for (si; si!=se; ++si)
+    for (; si!=se; ++si)
     {
         sprintf(buf,"\n[%s]\n",si->first.c_str());
         hsStatusMessage(buf);
         if (fConfigInfo->GetKeyIterators(si->first, ki, ke))
-            for (ki; ki!=ke; ++ki)
+            for (; ki!=ke; ++ki)
             {
                 if (fConfigInfo->GetValueIterators(si->first, ki->first, vi, ve))
-                    for (vi; vi!=ve; ++vi)
+                    for (; vi!=ve; ++vi)
                     {
                         sprintf(buf,"%s=%s\n",ki->first.c_str(),vi->c_str());
                         hsStatusMessage(buf);

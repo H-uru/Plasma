@@ -397,7 +397,7 @@ void plAnimTimeConvert::IFlushOldStates()
     plATCStateList::const_iterator i = fStates.begin();
     UInt32 count = 0;
 
-    for (i; i != fStates.end(); i++)
+    for (; i != fStates.end(); i++)
     {
         count++;
         state = *i;
@@ -426,7 +426,7 @@ plATCState *plAnimTimeConvert::IGetState(double wSecs) const
     plATCState *state;
     plATCStateList::const_iterator i = fStates.begin();
 
-    for (i; i != fStates.end(); i++)
+    for (; i != fStates.end(); i++)
     {
         state = *i;
         if (wSecs >= state->fStartWorldTime)
@@ -589,7 +589,7 @@ hsScalar plAnimTimeConvert::WorldToAnimTime(double wSecs)
             // 2. Same as #1, but in the backwards case.
             // 3. We started before the wrap point, now we're after it. Stop.
             // 4. Same as #3, backwards.
-            if ((wrapped && (forewards && secs >= fWrapTime) ||
+            if (((wrapped && (forewards && secs >= fWrapTime)) ||
                             (!forewards && secs <= fWrapTime)) ||
                 (forewards && fCurrentAnimTime < fWrapTime && secs >= fWrapTime) ||
                 (!forewards && fCurrentAnimTime > fWrapTime && secs <= fWrapTime))
@@ -700,7 +700,7 @@ hsScalar plAnimTimeConvert::IWorldToAnimTimeNoUpdate(double wSecs, plATCState *s
 
         if (state->fFlags & kWrap)
         {
-            if ((wrapped && (forewards && secs >= state->fWrapTime) ||
+            if (((wrapped && (forewards && secs >= state->fWrapTime)) ||
                 (!forewards && secs <= state->fWrapTime)) ||
                 (forewards && state->fStartAnimTime < state->fWrapTime && secs >= state->fWrapTime) ||
                 (!forewards && state->fStartAnimTime > state->fWrapTime && secs <= state->fWrapTime))

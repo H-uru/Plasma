@@ -308,6 +308,8 @@ UInt32 hsTimer::GetPrecTickCount()
         return GetTickCount();
 
     return ti.LowPart;
+#else
+    return 1;
 #endif
 }
 UInt32 hsTimer::PrecSecsToTicks(hsScalar secs)

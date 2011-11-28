@@ -286,7 +286,7 @@ void plDispatch::IMsgDispatch()
     fMsgCurrentMutex.Lock();
 
     plMsgWrap* origTail = fMsgTail;
-    while( fMsgCurrent = fMsgHead )
+    while((fMsgCurrent = fMsgHead))
     {
         IDequeue(&fMsgHead, &fMsgTail);
         fMsgCurrentMutex.Unlock();
@@ -460,7 +460,7 @@ hsBool plDispatch::MsgSend(plMessage* msg, hsBool async)
     plTimeMsg* timeMsg;
     if( msg->GetTimeStamp() > hsTimer::GetSysSeconds() )
         return ISortToDeferred(msg);
-    else if( timeMsg = plTimeMsg::ConvertNoRef(msg) )
+    else if((timeMsg = plTimeMsg::ConvertNoRef(msg)))
         ICheckDeferred(timeMsg->DSeconds());
 
     plMsgWrap* msgWrap = TRACKED_NEW plMsgWrap(msg);

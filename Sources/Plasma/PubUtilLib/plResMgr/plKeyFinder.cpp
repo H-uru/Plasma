@@ -376,7 +376,7 @@ class plPageFinder : public plRegistryPageIterator
             }
 
             // Try for full location
-            sprintf( str, "%s_%s_%s", info.GetAge(), info.GetPage() );
+            sprintf( str, "%s_%s", info.GetAge(), info.GetPage() );
             if( stricmp( str, fFindString ) == 0 )
             {
                 *fPagePtr = node;

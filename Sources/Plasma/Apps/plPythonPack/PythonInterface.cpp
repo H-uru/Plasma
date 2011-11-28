@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
 #include "PythonInterface.h"
 
 #include "compile.h"
@@ -139,7 +138,7 @@ void PythonInterface::finiPython()
 //
 //  PURPOSE    : run a python string in a specific module name
 //
-PyObject* PythonInterface::CompileString(char *command, char* filename)
+PyObject* PythonInterface::CompileString(const char *command, const char* filename)
 {
     PyObject* pycode = Py_CompileString(command, filename, Py_file_input);
     return pycode;
@@ -220,7 +219,7 @@ int PythonInterface::getOutputAndReset(char** line)
 //
 //  PURPOSE    : create a new module with built-ins
 //
-PyObject* PythonInterface::CreateModule(char* module)
+PyObject* PythonInterface::CreateModule(const char* module)
 {
     PyObject *m, *d;
 // first we must get rid of any old modules of the same name, we'll replace it
@@ -291,7 +290,7 @@ hsBool PythonInterface::RunPYC(PyObject* code, PyObject* module)
 //
 //  PURPOSE    : get an item (probably a function) from a specific module
 //
-PyObject* PythonInterface::GetModuleItem(char* item, PyObject* module)
+PyObject* PythonInterface::GetModuleItem(const char* item, PyObject* module)
 {
     if ( module )
     {

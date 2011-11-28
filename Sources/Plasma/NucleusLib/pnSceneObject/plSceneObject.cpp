@@ -488,7 +488,7 @@ hsBool plSceneObject::MsgReceive(plMessage* msg)
         return true;
     }
     else
-    if( trans = plTransformMsg::ConvertNoRef(msg) ) // also catches the derived plDelayedTransformMsg
+    if((trans = plTransformMsg::ConvertNoRef(msg))) // also catches the derived plDelayedTransformMsg
     {
         if( fCoordinateInterface )
         {
@@ -498,7 +498,7 @@ hsBool plSceneObject::MsgReceive(plMessage* msg)
         return true;
     }
     else
-    if( att = plAttachMsg::ConvertNoRef(msg) )
+    if((att = plAttachMsg::ConvertNoRef(msg)))
     {
         if( fCoordinateInterface )
         {

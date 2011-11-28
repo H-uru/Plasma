@@ -145,9 +145,9 @@ public:
     virtual void UnRegisterForType(UInt16 hClass, const plKey& receiver) {}
 
 
-    virtual hsBool MsgSend(plMessage* msg) {}
-    virtual void    MsgQueue(plMessage* msg){}
-    virtual void    MsgQueueProcess(){}
+    virtual hsBool MsgSend(plMessage* msg) { return true; }
+    virtual void    MsgQueue(plMessage* msg) {}
+    virtual void    MsgQueueProcess() {}
 
 };
 

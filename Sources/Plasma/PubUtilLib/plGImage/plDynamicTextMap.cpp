@@ -251,7 +251,7 @@ void    plDynamicTextMap::IDestroyOSSurface( void )
         IRemoveFromMemRecord( (UInt8 *)fImage );
 #endif
 
-    delete [] fImage;
+    delete[] (UInt32*)fImage;
     fImage = nil;
 
     plProfile_Dec(DynaTexts);
