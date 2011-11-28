@@ -51,10 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "plFontFreeType.h"
-#include "../plGImage/plFont.h"
-#include "../plGImage/plMipmap.h"
-#include "../pnKeyedObject/plUoid.h"
-#include "../pnKeyedObject/plKeyImp.h"
+#include "plGImage/plFont.h"
+#include "plGImage/plMipmap.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnKeyedObject/plKeyImp.h"
 
 
 extern HINSTANCE    gInstance;
