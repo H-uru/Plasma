@@ -602,7 +602,7 @@ hsBool plCoordinateInterface::MsgReceive(plMessage* msg)
             ITransformChanged(false, kReasonUnknown, false);
         return true;
     }
-    else if( intRefMsg = plIntRefMsg::ConvertNoRef(msg) )
+    else if((intRefMsg = plIntRefMsg::ConvertNoRef(msg)))
     {
         switch( intRefMsg->fType )
         {
@@ -641,7 +641,7 @@ hsBool plCoordinateInterface::MsgReceive(plMessage* msg)
             break;
         }
     }
-    else if( corrMsg = plCorrectionMsg::ConvertNoRef(msg) )
+    else if((corrMsg = plCorrectionMsg::ConvertNoRef(msg)))
     {
         SetTransformPhysical(corrMsg->fLocalToWorld, corrMsg->fWorldToLocal);
 

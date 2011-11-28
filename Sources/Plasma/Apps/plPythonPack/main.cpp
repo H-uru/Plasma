@@ -39,10 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "PythonInterface.h"
+
 #include "hsStream.h"
 #include "plFile/hsFiles.h"
-
-#include "PythonInterface.h"
 
 #include <vector>
 #include <string>
@@ -123,14 +123,14 @@ void WritePythonFile(std::string fileName, std::string path, hsStream *s)
     }
 
     // import the module first, to make packages work correctly
-    PyImport_ImportModule((char*)fileName.c_str());
-    PyObject* pythonCode = PythonInterface::CompileString(code, (char*)fileName.c_str());
+    PyImport_ImportModule(fileName.c_str());
+    PyObject* pythonCode = PythonInterface::CompileString(code, fileName.c_str());
     if (pythonCode)
     {
         // we need to find out if this is PythonFile module
         // create a module name... with the '.' as an X
         // and create a python file name that is without the ".py"
-        PyObject* fModule = PythonInterface::CreateModule((char*)fileName.c_str());
+        PyObject* fModule = PythonInterface::CreateModule(fileName.c_str());
         // run the code
         if (PythonInterface::RunPYC(pythonCode, fModule) )
         {
@@ -166,7 +166,7 @@ void WritePythonFile(std::string fileName, std::string path, hsStream *s)
                     // else
                     //   skip the CRs
                 }
-                pythonCode = PythonInterface::CompileString(code, (char*)fileName.c_str());
+                pythonCode = PythonInterface::CompileString(code, fileName.c_str());
                 hsAssert(pythonCode,"Not sure why this didn't compile the second time???");
                 printf("an import file ");
             }
@@ -181,8 +181,7 @@ void WritePythonFile(std::string fileName, std::string path, hsStream *s)
             int chars_read = PythonInterface::getOutputAndReset(&errmsg);
             if (chars_read > 0)
             {
-                printf(errmsg);
-                printf("\n");
+                printf("%s\n", errmsg);
             }
         }
     }
@@ -200,8 +199,7 @@ void WritePythonFile(std::string fileName, std::string path, hsStream *s)
         int chars_read = PythonInterface::getOutputAndReset(&errmsg);
         if (chars_read > 0)
         {
-            printf(errmsg);
-            printf("\n");
+            printf("%s\n", errmsg);
         }
         s->WriteLE32(size);
         s->Write(size, pycode);
@@ -218,7 +216,7 @@ void WritePythonFile(std::string fileName, std::string path, hsStream *s)
         int chars_read = PythonInterface::getOutputAndReset(&errmsg);
         if (chars_read > 0)
         {
-            printf(errmsg);
+            printf("%s\n", errmsg);
         }
     }
 
