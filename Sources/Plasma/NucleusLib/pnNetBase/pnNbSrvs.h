@@ -39,19 +39,70 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef pnNbSrvs_inc
+#define pnNbSrvs_inc
+
+#include "hsTypes.h"
+#include "pnNbConst.h"
+
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Pch.h
-*   
+*   Server types
+*
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Pch.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PCH_H
+// These codes may not be changed unless ALL servers and clients are
+// simultaneously replaced; so basically forget it =)
+enum ESrvType {
+    kSrvTypeNone        = 0,
+
+    kSrvTypeClient      = 1,
+    kSrvTypeAuth        = 2,
+    kSrvTypeGame        = 3,
+    kSrvTypeVault       = 4,
+    kSrvTypeDb          = 5,
+    kSrvTypeMcp         = 6,
+    kSrvTypeState       = 7,
+    kSrvTypeFile        = 8,
+    kSrvTypeLog         = 9,
+    kSrvTypeDll         = 10,
+    kSrvTypeScore       = 11,
+    kSrvTypeCsr         = 12,
+    kSrvTypeGateKeeper  = 13,
+
+    kNumSrvTypes,
+
+    // Enforce network message field size
+    kNetSrvForceDword = (unsigned)-1
+};
 
 
-#include "pnUtils/pnUtils.h"
-#include "pnProduct/pnProduct.h"
+/*****************************************************************************
+*
+*   Front-end server hostnames
+*
+***/
 
-#include "Private/pnNbAllIncludes.h"
+unsigned GetAuthSrvHostnames (const wchar *** addrs);   // returns addrCount
+void SetAuthSrvHostname (const wchar addr[]);
+
+unsigned GetFileSrvHostnames (const wchar *** addrs);   // returns addrCount
+void SetFileSrvHostname (const wchar addr[]);
+
+unsigned GetCsrSrvHostnames (const wchar *** addrs);    // returns addrCount
+void SetCsrSrvHostname (const wchar addr[]);
+
+unsigned GetGateKeeperSrvHostnames (const wchar *** addrs); // returns addrCount
+void SetGateKeeperSrvHostname (const wchar addr[]);
+
+const wchar *GetServerStatusUrl ();
+void SetServerStatusUrl (const wchar url[]);
+
+const wchar *GetServerSignupUrl ();
+void SetServerSignupUrl (const wchar url[]);
+
+const wchar *GetServerDisplayName ();
+void SetServerDisplayName (const wchar name[]);
+
+#endif // pnNbSrvs_inc

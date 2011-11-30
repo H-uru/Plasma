@@ -39,22 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbAllIncludes.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBALLINCLUDES_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBALLINCLUDES_H
-
-
-#include "pnProduct/pnProduct.h"
-
-#include "../pnNbConst.h"
-#include "pnNbError.h"
 #include "pnNbKeys.h"
-#include "pnNbProtocol.h"
-#include "pnNbSrvs.h"
 
-#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBALLINCLUDES_H
+// Auth Server
+byte kAuthDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+byte kAuthDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
+
+// CSR Server
+byte kCsrDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+byte kCsrDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
+
+// Game Server
+byte kGameDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+byte kGameDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
+
+// GateKeeper Server
+byte kGateKeeperDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+byte kGateKeeperDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
