@@ -750,6 +750,32 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtAvatarExitAFK, "Tells the local avatar 
     PYTHON_RETURN_BOOL(cyAvatar::ExitAFKMode());
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION(PtAvatarEnterAnimMode, args, "Params: animName\nEnter a custom anim loop (netpropagated)")
+{
+    char* animName;
+    if (!PyArg_ParseTuple(args, "s", &animName))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtAvatarEnterAnimMode expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+
+    cyAvatar::EnterAnimMode(animName);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_GLOBAL_METHOD_DEFINITION(PtAvatarExitAnimMode, args, "Params: animName\nExit a custom anim loop (netpropagated)")
+{
+    char* animName;
+    if (!PyArg_ParseTuple(args, "s", &animName))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtAvatarExitAnimMode expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+
+    cyAvatar::ExitAnimMode(animName);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtDisableMovementKeys, cyAvatar::DisableMovementControls, "Disable avatar movement input")
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtEnableMovementKeys, cyAvatar::EnableMovementControls, "Enable avatar movement input")
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtDisableMouseMovement, cyAvatar::DisableMouseMovement, "Disable avatar mouse movement input")
@@ -843,6 +869,8 @@ void cyAvatar::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarExitUsePersBook);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarEnterAFK);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarExitAFK);
+    PYTHON_GLOBAL_METHOD(methods, PtAvatarEnterAnimMode);
+    PYTHON_GLOBAL_METHOD(methods, PtAvatarExitAnimMode);
 
     // Suspend avatar input
     PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableMovementKeys);
