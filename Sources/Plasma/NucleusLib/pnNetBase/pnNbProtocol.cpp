@@ -39,54 +39,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbProtocol.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBPROTOCOL_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbProtocol.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBPROTOCOL_H
+#include "pnNbProtocol.h"
 
 
 /*****************************************************************************
 *
-*   Net protocols
+*   Exports
 *
 ***/
 
-const unsigned kNetProtocolServerBit = 0x80;
+//============================================================================
+const wchar * NetProtocolToString (ENetProtocol protocol) {
 
-// These codes may not be changed unless ALL servers and clients are
-// simultaneously replaced; so basically forget it =)
-enum ENetProtocol {
-    kNetProtocolNil                 = 0,
+    static struct { ENetProtocol protocol; const wchar *name; } s_protocols[] = {
+        { kNetProtocolNil,          L"kNetProtocolNil" },
 
-    // For test applications
-    kNetProtocolDebug               = 1,
-    
-    // Client connections
-    kNetProtocolCli2GateKeeper      = 2,
-    kNetProtocolCli2Csr             = 3,
-    kNetProtocolCli2Auth            = 4,
-    kNetProtocolCli2Game            = 5,
-    kNetProtocolCli2File            = 6,
-    kNetProtocolCli2Unused_01       = 7,
+        // For test applications
+        { kNetProtocolDebug,        L"kNetProtocolDebug" },
 
-    // Server connections
-    kNetProtocolSrvConn             = 0 | kNetProtocolServerBit,
-    kNetProtocolSrv2Mcp             = 1 | kNetProtocolServerBit,
-    kNetProtocolSrv2Vault           = 2 | kNetProtocolServerBit,
-    kNetProtocolSrv2Db              = 3 | kNetProtocolServerBit,
-    kNetProtocolSrv2State           = 4 | kNetProtocolServerBit,
-    kNetProtocolSrv2Log             = 5 | kNetProtocolServerBit,
-    kNetProtocolSrv2Score           = 6 | kNetProtocolServerBit,
-};
+        // Client connections
+        { kNetProtocolCli2Csr,      L"GateKeeper Server" },
+        { kNetProtocolCli2Csr,      L"Csr Server" },
+        { kNetProtocolCli2Auth,     L"Auth Server" },
+        { kNetProtocolCli2Game,     L"Game Server" },
+        { kNetProtocolCli2File,     L"File Server" },
+        { kNetProtocolCli2Unused_01, L"kNetProtocolCli2Unused_01" },
 
-// NOTE: When adding a new net protocol, be sure to update
-// NetProtocolToString as well.  Unfortunately, the compiler
-// cannot enforce this since the protocol values are not
-// numerically sequential.
-const wchar * NetProtocolToString (ENetProtocol protocol);
+        // Server connections
+        { kNetProtocolSrvConn,      L"kNetProtocolSrvConn" },
+        { kNetProtocolSrv2Mcp,      L"kNetProtocolSrv2Mcp" },
+        { kNetProtocolSrv2Vault,    L"kNetProtocolSrv2Vault" },
+        { kNetProtocolSrv2Db,       L"kNetProtocolSrv2Db" },
+        { kNetProtocolSrv2State,    L"kNetProtocolSrv2State" },
+        { kNetProtocolSrv2Log,      L"kNetProtocolSrv2Log" },
+        { kNetProtocolSrv2Score,    L"kNetProtocolSrv2Score" },
+    };
+
+    for (unsigned i = 0; i < arrsize(s_protocols); ++i)
+        if (s_protocols[i].protocol == protocol)
+            return s_protocols[i].name;
+
+    return L"Unknown protocol id";  
+}

@@ -39,17 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/pnNbConst.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PNNBCONST_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/pnNbConst.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PNNBCONST_H
-
+#ifndef pnNbConst_inc
+#define pnNbConst_inc
 
 /*****************************************************************************
 *
@@ -166,3 +158,5 @@ enum EScoreTimePeriods {
     kScoreTimePeriodMonth,
     kScoreTimePeriodDay
 };
+
+#endif //pnNbConst_inc

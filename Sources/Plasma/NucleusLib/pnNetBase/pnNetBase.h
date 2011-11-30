@@ -39,23 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/pnNetBase.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PNNETBASE_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PNNETBASE_H
+#ifndef pnNetBase_inc
+#define pnNetBase_inc
 
+#include "pnNbConst.h"
+#include "pnNbError.h"
+#include "pnNbKeys.h"
+#include "pnNbProtocol.h"
+#include "pnNbSrvs.h"
 
-/*****************************************************************************
-*
-*   Module includes
-*
-***/
-
-#include "Private/pnNbAllIncludes.h"
-
-
-#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PNNETBASE_H
+#endif // pnNetBase_inc
