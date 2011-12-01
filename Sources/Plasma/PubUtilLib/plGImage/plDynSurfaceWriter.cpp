@@ -394,8 +394,10 @@ void    plDynSurfaceWriter::IInit( void )
 
 void    plDynSurfaceWriter::Reset( void )
 {
+#if HS_BUILD_FOR_WIN32
     fRGBSurface.Release();
     fAlphaSurface.Release();
+#endif
     fCurrTarget = nil;
     fFlushed = true;
 
@@ -484,6 +486,7 @@ void    plDynSurfaceWriter::SwitchTarget( plDynamicTextMap *target )
 
     // Make sure our surfaces fit
     bool hadToAllocate = false;
+#if HS_BUILD_FOR_WIN32
     if( target != nil )
     {
         if( !fRGBSurface.WillFit( (UInt16)(target->GetWidth()), (UInt16)(target->GetHeight()) ) )
@@ -507,6 +510,7 @@ void    plDynSurfaceWriter::SwitchTarget( plDynamicTextMap *target )
         fAlphaSurface.Release();
         hadToAllocate = true;
     }
+#endif
 
     if( hadToAllocate )
     {
@@ -533,6 +537,7 @@ void    plDynSurfaceWriter::IEnsureSurfaceUpdated( void )
     {
         UInt32 *srcBits = (UInt32 *)fCurrTarget->GetImage();
 
+#if HS_BUILD_FOR_WIN32
         // Are we merging in the alpha bits?
         if( fFlags & kSupportAlpha )
         {
@@ -568,12 +573,14 @@ void    plDynSurfaceWriter::IEnsureSurfaceUpdated( void )
                 destBits += fRGBSurface.fWidth;
             }
         }       
+#endif
 
         // ALSO, we need to re-update our settings, since different targets
         // can have different fonts or justifications
         ISetFont( fCurrTarget->GetFontFace(), fCurrTarget->GetFontSize(), 0/*fCurrTarget->GetWriterFontFlags()*/, fCurrTarget->GetFontAARGB() );
         SetJustify( (Justify)fCurrTarget->GetFontJustify() );
-        ISetTextColor( fCurrTarget->GetFontColor(), fCurrTarget->GetFontBlockRGB() );
+        hsColorRGBA col = fCurrTarget->GetFontColor();
+        ISetTextColor( col, fCurrTarget->GetFontBlockRGB() );
 
         fFlushed = false;
     }
@@ -584,11 +591,13 @@ hsBool  plDynSurfaceWriter::IsValid( void ) const
     if( fCurrTarget == nil )
         return false;
 
+#if HS_BUILD_FOR_WIN32
     if( fRGBSurface.fDC == nil || fRGBSurface.fBitmap == nil )
         return false;
 
     if( ( fFlags & kSupportAlpha ) && ( fAlphaSurface.fDC == nil || fAlphaSurface.fBitmap == nil ) )
         return false;
+#endif
 
     return true;
 }
@@ -696,6 +705,7 @@ void    plDynSurfaceWriter::ISetFont( const char *face, UInt16 size, UInt8 fontF
 {
     fFlags = ( fFlags & ~kFontShadowed ) | ( fontFlags & kFontShadowed );
 
+#if HS_BUILD_FOR_WIN32
     if( !fRGBSurface.FontMatches( face, size, fontFlags, antiAliasRGB ) )
         fRGBSurface.SetFont( face, size, fontFlags, antiAliasRGB );
 
@@ -704,6 +714,7 @@ void    plDynSurfaceWriter::ISetFont( const char *face, UInt16 size, UInt8 fontF
         if( !fAlphaSurface.FontMatches( face, size, fontFlags, !antiAliasRGB ) )
             fAlphaSurface.SetFont( face, size, fontFlags, !antiAliasRGB );
     }
+#endif
 }
 
 //// SetTextColor /////////////////////////////////////////////////////////////
@@ -770,7 +781,8 @@ void    plDynSurfaceWriter::IRefreshOSJustify( void )
     if( !IsValid() )
         return;
 
-    UINT    justMode;
+#if HS_BUILD_FOR_WIN32
+    UInt32 justMode;
     switch( fJustify )
     {
         case kLeftJustify:  justMode = TA_LEFT; break;
@@ -780,6 +792,7 @@ void    plDynSurfaceWriter::IRefreshOSJustify( void )
     ::SetTextAlign( fRGBSurface.fDC, justMode );
     if( fFlags & kSupportAlpha )
         ::SetTextAlign( fAlphaSurface.fDC, justMode );
+#endif
 }
 
 //// DrawString ///////////////////////////////////////////////////////////////

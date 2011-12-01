@@ -83,7 +83,7 @@ void CCritSect::Leave () {
 #elif HS_BUILD_FOR_UNIX
 //===========================================================================
 CCritSect::CCritSect () {
-    m_handle = PTHREAD_MUTEX_INITIALIZER;
+    m_handle = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 }
 
 //===========================================================================

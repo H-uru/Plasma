@@ -48,6 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPerspDirSlave.h"
 
 #include <float.h>
+#include <math.h>
+
+#ifndef isnan
+#define isnan _isnan
+#endif
 
 void plPerspDirSlave::Init() 
 { 
@@ -183,9 +188,9 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
         // is probably data-side.  I take full responsibility for this
         // hack-around breaking the entire system, loosing data, causing
         // unauthorized credit card transactions, etc.      
-        if (_isnan(bnd.GetMins().fX) || _isnan(bnd.GetMins().fY))
+        if (isnan(bnd.GetMins().fX) || isnan(bnd.GetMins().fY))
             return false;
-        if (_isnan(bnd.GetMaxs().fX) || _isnan(bnd.GetMaxs().fY))
+        if (isnan(bnd.GetMaxs().fX) || isnan(bnd.GetMaxs().fY))
             return false;
 
         // THIS IS EVEN MORE WRONG
@@ -244,9 +249,9 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
         // is probably data-side.  I take full responsibility for this
         // hack-around breaking the entire system, loosing data, causing
         // unauthorized credit card transactions, etc.      
-        if (_isnan(bnd.GetMins().fX) || _isnan(bnd.GetMins().fY))
+        if (isnan(bnd.GetMins().fX) || isnan(bnd.GetMins().fY))
             return false;
-        if (_isnan(bnd.GetMaxs().fX) || _isnan(bnd.GetMaxs().fY))
+        if (isnan(bnd.GetMaxs().fX) || isnan(bnd.GetMaxs().fY))
             return false;
 
         plConst(hsScalar) kMinMinZ(1.f);

@@ -739,14 +739,14 @@ void pl2WayWinAudible::Read(hsStream* s, hsResMgr* mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, Int32 size, int numFrames, BYTE flags)
+void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, Int32 size, int numFrames, unsigned char flags)
 {
     if (fVoicePlayer)
     {
         if (!(flags & VOICE_ENCODED))
-            fVoicePlayer->PlaybackUncompressedVoiceMessage((BYTE*)addr, size);
+            fVoicePlayer->PlaybackUncompressedVoiceMessage((UInt8*)addr, size);
         else
-            fVoicePlayer->PlaybackVoiceMessage((BYTE*)addr, size, numFrames);
+            fVoicePlayer->PlaybackVoiceMessage((UInt8*)addr, size, numFrames);
     }
 }
 

@@ -582,7 +582,7 @@ void DebugMsgV (const char fmt[], va_list args);
 #ifdef PLASMA_EXTERNAL_RELEASE
 
     #define hsStatusMessage(x)                  NULL_STMT
-    #define hsStatusMessageF(x,y)               NULL_STMT
+    #define hsStatusMessageF(x, ...)            NULL_STMT
 
 #else   /* Not external release */
 
