@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef EAX_SDK_AVAILABLE
-#include <EFX-Util.h>
+#include "plEAXStructures.h"
 #endif
 #include "hsTypes.h"
 #include "plEAXListenerMod.h"
