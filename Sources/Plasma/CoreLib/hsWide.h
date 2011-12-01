@@ -58,8 +58,8 @@ struct hsWide {
 
 
     hsBool operator==(const hsWide& b) const { return fHi == b.fHi && fLo == b.fLo; }
-    hsBool operator<(const hsWide& b) const { return fHi < b.fHi || fHi == b.fHi && fLo < b.fLo; }
-    hsBool operator>( const hsWide& b) const { return fHi > b.fHi || fHi == b.fHi && fLo > b.fLo; }
+    hsBool operator<(const hsWide& b) const { return fHi < b.fHi || (fHi == b.fHi && fLo < b.fLo); }
+    hsBool operator>( const hsWide& b) const { return fHi > b.fHi || (fHi == b.fHi && fLo > b.fLo); }
     hsBool operator!=( const hsWide& b) const { return !( *this == b); }
     hsBool operator<=(const hsWide& b) const { return !(*this > b); }
     hsBool operator>=(const hsWide& b) const { return !(*this < b); }
@@ -187,11 +187,11 @@ inline hsWide* hsWide::RoundRight(unsigned shift)
 inline Int32 hsWide::AsLong() const
 {
 #if HS_PIN_MATH_OVERFLOW
-    if (fHi > 0 || fHi == 0 && (Int32)fLo < 0)
+    if (fHi > 0 || (fHi == 0 && (Int32)fLo < 0))
     {   hsSignalMathOverflow();
         return kPosInfinity32;
     }
-    if (fHi < -1L || fHi == -1L && (Int32)fLo >= 0)
+    if (fHi < -1L || (fHi == -1L && (Int32)fLo >= 0))
     {   hsSignalMathOverflow();
         return kNegInfinity32;
     }
@@ -201,7 +201,7 @@ inline Int32 hsWide::AsLong() const
 
 inline hsBool hsWide::IsWide() const
 {
-    return (fHi > 0 || fHi == 0 && (Int32)fLo < 0) || (fHi < -1L || fHi == -1L && (Int32)fLo >= 0);
+    return (fHi > 0 || (fHi == 0 && (Int32)fLo < 0)) || (fHi < -1L || (fHi == -1L && (Int32)fLo >= 0));
 }
 
 inline hsFixed hsWide::AsFixed() const

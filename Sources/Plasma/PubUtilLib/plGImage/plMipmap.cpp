@@ -180,7 +180,7 @@ void    plMipmap::Reset()
             IRemoveFromMemRecord( (UInt8 *)fImage );
 #endif
 
-        delete [] fImage;
+        delete[] (UInt8*)fImage;
         plProfile_DelMem(MemMipmaps, fTotalSize);
     }
     fImage = nil;
@@ -758,7 +758,7 @@ void    plMipmap::ClipToMaxSize( UInt32 maxDimension )
 #ifdef MEMORY_LEAK_TRACER
     IRemoveFromMemRecord( (UInt8 *)fImage );
 #endif
-    delete [] fImage;
+    delete[] (UInt8*)fImage;
     plProfile_DelMem(MemMipmaps, fTotalSize);
 
     fImage = destData;
@@ -789,7 +789,7 @@ void    plMipmap::RemoveMipping()
 #ifdef MEMORY_LEAK_TRACER
     IRemoveFromMemRecord( (UInt8 *)fImage );
 #endif
-    delete [] fImage;
+    delete[] (UInt8*)fImage;
     plProfile_DelMem(MemMipmaps, fTotalSize);
 
     fImage = destData;
@@ -1556,7 +1556,7 @@ void    plMipmap::CopyFrom( const plMipmap *source )
 #ifdef MEMORY_LEAK_TRACER
     IRemoveFromMemRecord( (UInt8 *)fImage );
 #endif
-    delete [] fImage;
+    delete[] (UInt8*)fImage;
 
     fWidth = source->fWidth;
     fHeight = source->fHeight;

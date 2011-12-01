@@ -297,7 +297,7 @@ void plBSDiffBuffer::GetBuffer( UInt32 &length, void *&bufferPtr )
     if (fPatchBuffer && fPatchLength)
     {
         length = fPatchLength;
-        if (bufferPtr = (void *)TRACKED_NEW unsigned char[ length ])
+        if ((bufferPtr = (void *)new unsigned char[ length ]))
             memcpy(bufferPtr, fPatchBuffer, length);
     }
     else
@@ -432,7 +432,7 @@ UInt32 plBSDiffBuffer::Patch( UInt32 oldLength, void *oldBuffer, UInt32 &newLeng
 
     if(newpos != newend)
     {
-        delete[] newBuffer;
+        delete[] (unsigned char*)newBuffer;
         newLength = 0;
     }
 

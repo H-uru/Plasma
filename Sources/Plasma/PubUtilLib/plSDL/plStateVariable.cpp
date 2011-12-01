@@ -92,12 +92,12 @@ public:
     int fDataLen;
 
     plSDLCreatableStub(UInt16 classIndex, int len) : fClassIndex(classIndex),fData(nil),fDataLen(len) {}
-    ~plSDLCreatableStub() { delete [] fData; }
+    ~plSDLCreatableStub() { delete[] (char*)fData; }
 
     const char*         ClassName() const { return "SDLCreatable";  }
     UInt16              ClassIndex() const { return fClassIndex;    }
 
-    void Read(hsStream* s, hsResMgr* mgr) { delete [] fData; fData = TRACKED_NEW char[fDataLen]; s->Read(fDataLen, fData); }
+    void Read(hsStream* s, hsResMgr* mgr) { delete[] (char*)fData; fData = new char[fDataLen]; s->Read(fDataLen, fData); }
     void Write(hsStream* s, hsResMgr* mgr) { s->Write(fDataLen, fData); }
 };
 
@@ -112,7 +112,7 @@ void plStateVarNotificationInfo::Read(hsStream* s, UInt32 readOptions)
     if (hint && !(readOptions & plSDL::kSkipNotificationInfo))
         fHintString = (const char*)hint;
     // we're done with it...
-    delete [] hint;
+    delete[] hint;
 }
 
 void plStateVarNotificationInfo::Write(hsStream* s, UInt32 writeOptions) const
@@ -1874,6 +1874,8 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
             }
         }
         break;
+    default:
+        break;
     }
     return true;
 }
@@ -2162,6 +2164,7 @@ void plSimpleStateVariable::NotifyStateChange(const plSimpleStateVariable* other
                     NOTIFY_CHECK(plVarDescriptor::kByte, fBy)
                     NOTIFY_CHECK(plVarDescriptor::kFloat, fF)
                     NOTIFY_CHECK(plVarDescriptor::kDouble, fD)
+                    default: break;
                 }           
             }
             if (notify)

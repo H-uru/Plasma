@@ -606,8 +606,8 @@ hsScalar hsFastMath::IATan2OverTwoPi(hsScalar y, hsScalar x)
         return 0;
 
     hsBool xNeg, yNeg;
-    if( yNeg = (y < 0) )y = -y;
-    if( xNeg = (x < 0) )x = -x;
+    if((yNeg = (y < 0)))y = -y;
+    if((xNeg = (x < 0)))x = -x;
     hsBool yBigger = y >= x;
     hsScalar div = yBigger ? x / y : y / x;
 
