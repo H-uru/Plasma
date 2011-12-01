@@ -402,10 +402,12 @@ plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plSha
     wBnd.TestPlane(castMsg->Pipeline()->GetViewDirWorld(), depth);
     hsScalar eyeDist = castMsg->Pipeline()->GetViewDirWorld().InnerProduct(castMsg->Pipeline()->GetViewPositionWorld());
 #else
-    hsVector3 dir(&wBnd.GetCenter(), &castMsg->Pipeline()->GetViewPositionWorld());
+    hsPoint3 centre = wBnd.GetCenter();
+    hsPoint3 vpos = castMsg->Pipeline()->GetViewPositionWorld();
+    hsVector3 dir(&centre, &vpos);
     hsFastMath::NormalizeAppr(dir);
     wBnd.TestPlane(dir, depth);
-    hsScalar eyeDist = dir.InnerProduct(castMsg->Pipeline()->GetViewPositionWorld());
+    hsScalar eyeDist = dir.InnerProduct(vpos);
 #endif
     hsScalar dist = depth.fX - eyeDist;
 
