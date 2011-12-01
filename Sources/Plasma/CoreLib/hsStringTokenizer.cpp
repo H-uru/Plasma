@@ -57,8 +57,8 @@ fLastTerminator(nil)
 
 hsStringTokenizer::~hsStringTokenizer() 
 {
-    delete [] fString;
-    delete [] fSeps;
+    delete[] fString;
+    delete[] fSeps;
 }
 
 hsBool hsStringTokenizer::HasMoreTokens() 
@@ -134,11 +134,11 @@ void    hsStringTokenizer::RestoreLastTerminator( void )
 void hsStringTokenizer::Reset(const char *string, const char *seps) 
 {
     if (fString)
-        delete [] fString;
+        delete[] fString;
     fString = string ? hsStrcpy(string) : nil;
 
     if (fSeps)
-        delete [] fSeps;
+        delete[] fSeps;
     fSeps = seps ? hsStrcpy(seps) : nil;
     fNumSeps = fSeps ? strlen(fSeps) : 0;
     fCheckAlphaNum = false;
@@ -181,8 +181,8 @@ hsWStringTokenizer::hsWStringTokenizer(const wchar *string, const wchar *seps) :
 
 hsWStringTokenizer::~hsWStringTokenizer() 
 {
-    delete [] fString;
-    delete [] fSeps;
+    delete[] fString;
+    delete[] fSeps;
 }
 
 hsBool hsWStringTokenizer::HasMoreTokens() 
@@ -259,11 +259,11 @@ void    hsWStringTokenizer::RestoreLastTerminator( void )
 void hsWStringTokenizer::Reset(const wchar *string, const wchar *seps) 
 {
     if (fString)
-        delete [] fString;
+        delete[] fString;
     if (string)
     {
         int count = wcslen(string);
-        fString = TRACKED_NEW(wchar[count + 1]);
+        fString = new wchar[count + 1];
         wcscpy(fString, string);
         fString[count] = L'\0';
     }
@@ -271,11 +271,11 @@ void hsWStringTokenizer::Reset(const wchar *string, const wchar *seps)
         fString = nil;
 
     if (fSeps)
-        delete [] fSeps;
+        delete[] fSeps;
     if (seps)
     {
         int count = wcslen(seps);
-        fSeps = TRACKED_NEW(wchar[count + 1]);
+        fSeps = new wchar[count + 1];
         wcscpy(fSeps, seps);
         fSeps[count] = L'\0';
     }

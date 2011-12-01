@@ -104,8 +104,10 @@ hsBool  plFileUtils::CreateDir( const wchar *path )
     return ( _wmkdir( path ) == 0 ) ? true : ( errno==EEXIST );
 #elif HS_BUILD_FOR_UNIX
     const char* cpath = hsWStringToString(path);
-    CreateDir(cpath);
+    bool ret = CreateDir(cpath);
     delete[] cpath; /* Free the string */
+
+    return ret;
 #endif
 }
 
@@ -156,8 +158,10 @@ bool plFileUtils::RemoveFile(const wchar* filename, bool delReadOnly)
     return (_wunlink(filename) == 0);
 #elif HS_BUILD_FOR_UNIX
     const char* cfilename = hsWStringToString(filename);
-    RemoveFile(cfilename, delReadOnly);
+    bool ret = RemoveFile(cfilename, delReadOnly);
     delete[] cfilename; /* Free the string */
+
+    return ret;
 #endif
 }
 
@@ -542,13 +546,11 @@ bool plFileUtils::GetSecureEncryptionKey(const wchar* filename, UInt32* key, uns
 
         return true;
     }
-    else
-    {
-        // file doesn't exist, use default key
-        unsigned memSize = min(length, arrsize(plSecureStream::kDefaultKey));
-        memSize *= sizeof(UInt32);
-        memcpy(key, plSecureStream::kDefaultKey, memSize);
 
-        return false;
-    }
+    // file doesn't exist, use default key
+    unsigned memSize = min(length, arrsize(plSecureStream::kDefaultKey));
+    memSize *= sizeof(UInt32);
+    memcpy(key, plSecureStream::kDefaultKey, memSize);
+
+    return false;
 }
