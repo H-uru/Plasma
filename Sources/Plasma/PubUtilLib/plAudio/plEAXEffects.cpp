@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "hsThread.h"
 #ifndef EAX_SDK_AVAILABLE
-#include <EFX-Util.h>
+#include "plEAXStructures.h"
 #endif
 #include "plEAXEffects.h"
 #include "plAudioCore/plAudioCore.h"
