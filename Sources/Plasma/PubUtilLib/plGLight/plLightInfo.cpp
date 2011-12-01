@@ -763,7 +763,8 @@ void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& str
     // Volume - Want to base this on the closest point on the bounds, instead of just the center.
     const hsPoint3& pos = bnd.GetCenter();
 
-    hsScalar dist = hsVector3(&pos, &GetWorldPosition()).MagnitudeSquared();
+    hsPoint3 wpos = GetWorldPosition();
+    hsScalar dist = hsVector3(&pos, &wpos).MagnitudeSquared();
     dist = 1.f / hsFastMath::InvSqrtAppr(dist);
     if( fAttenQuadratic > 0 )
     {
@@ -833,7 +834,9 @@ void plOmniLightInfo::IRefresh()
 
 hsVector3 plOmniLightInfo::GetNegativeWorldDirection(const hsPoint3& pos) const
 {
-    return hsFastMath::NormalizeAppr(hsVector3(&GetWorldPosition(), &pos));
+    hsPoint3 wpos = GetWorldPosition();
+    hsVector3 tmp(&wpos, &pos);
+    return hsFastMath::NormalizeAppr(tmp);
 }
 
 void plOmniLightInfo::Read(hsStream* s, hsResMgr* mgr)
@@ -903,7 +906,8 @@ void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& str
     const hsPoint3& pos = bnd.GetCenter();
     
     hsVector3 del;
-    del.Set(&pos, &GetWorldPosition());
+    hsPoint3 wpos = GetWorldPosition();
+    del.Set(&pos, &wpos);
     hsScalar invDist = del.MagnitudeSquared();
     invDist = hsFastMath::InvSqrtAppr(invDist);
 
