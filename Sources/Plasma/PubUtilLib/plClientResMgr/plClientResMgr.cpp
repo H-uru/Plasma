@@ -1,4 +1,4 @@
-﻿/*==LICENSE==*
+/*==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
 Copyright (C) 2011  Cyan Worlds, Inc.

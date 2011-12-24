@@ -583,7 +583,7 @@ hsBool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
             if (msg->HasLinkFlag(plLinkEffectBCMsg::kSendCallback))
             {
                 plLinkEffectsMgr *mgr;
-                if (mgr = plLinkEffectsMgr::ConvertNoRef(msg->GetSender()->ObjectIsLoaded()))
+                if ((mgr = plLinkEffectsMgr::ConvertNoRef(msg->GetSender()->ObjectIsLoaded())))
                     mgr->WaitForEffect(msg->fLinkKey, fTimeConvert.GetEnd() - fTimeConvert.GetBegin());
             }           
         }
@@ -603,7 +603,7 @@ hsBool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
         
         // add a callback for when it's done if it's in forward
         plLinkEffectsMgr *mgr;
-        if (mgr = plLinkEffectsMgr::ConvertNoRef(pMsg->GetSender()->ObjectIsLoaded()))
+        if ((mgr = plLinkEffectsMgr::ConvertNoRef(pMsg->GetSender()->ObjectIsLoaded())))
             if (pSeudoMsg->fForward)
                 mgr->WaitForPseudoEffect(fLinkKey, fTimeConvert.GetEnd() - fTimeConvert.GetBegin());
 

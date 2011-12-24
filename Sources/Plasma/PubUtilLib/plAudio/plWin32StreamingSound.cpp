@@ -39,12 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <direct.h>
 #include "HeadSpin.h"
 #include "hsTimer.h"
 #include "hsGeometry3.h"
 #include "plgDispatch.h"
 #include "plProfile.h"
+#include "plFile/hsFiles.h"
 
 #include "plWin32Sound.h"
 #include "plWin32StreamingSound.h"
@@ -57,6 +57,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plSoundMsg.h"
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plStatusLog/plStatusLog.h"
+
+#if HS_BUILD_FOR_WIN32
+#    include <direct.h>
+#else
+#    include <unistd.h>
+#endif
 
 #define STREAMING_UPDATE_MS 200
 
@@ -179,9 +185,9 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( hsBool play
             bool streamCompressed = (buffer->HasFlag(plSoundBuffer::kStreamCompressed) != 0);
 
             /// Open da file
-            CHAR strPath[ MAX_PATH ];
+            char strPath[ kFolderIterator_MaxPath ];
                 
-            _getcwd(strPath, MAX_PATH);
+            getcwd(strPath, kFolderIterator_MaxPath);
             if(sfxPath)
                 strcat( strPath, "\\sfx\\" );
             else

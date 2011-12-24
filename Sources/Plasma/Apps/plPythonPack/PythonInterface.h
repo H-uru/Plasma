@@ -39,7 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "Python.h"
+#include <Python.h>
+#include "hsTypes.h"
 
 #include <string>
 
@@ -50,10 +51,10 @@ namespace PythonInterface
     // So the Python packer can add extra paths
     void addPythonPath(std::string dir);
 
-    PyObject* CompileString(char *command, char* filename);
+    PyObject* CompileString(const char *command, const char* filename);
     hsBool DumpObject(PyObject* pyobj, char** pickle, Int32* size);
     int getOutputAndReset(char** line=nil);
-    PyObject* CreateModule(char* module);
+    PyObject* CreateModule(const char* module);
     hsBool RunPYC(PyObject* code, PyObject* module);
-    PyObject* GetModuleItem(char* item, PyObject* module);
+    PyObject* GetModuleItem(const char* item, PyObject* module);
 }

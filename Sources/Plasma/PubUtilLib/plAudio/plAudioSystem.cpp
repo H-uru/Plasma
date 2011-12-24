@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <al.h>
 #include <alc.h>
 #include <efx.h>
-#include <MMREG.H>
 #ifdef EAX_SDK_AVAILABLE
 #include <eax.h>
 #endif

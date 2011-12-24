@@ -524,6 +524,7 @@ public:
     UInt16 GetNumAlloc() const { return fTotalCount; }
 };
 
+template <class T> void hsTArray_CopyForward(const T src[], T dst[], int count);
 
 template <class T> class hsTArray : public hsTArrayBase 
 {

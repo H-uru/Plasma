@@ -102,7 +102,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #ifdef HS_BUILD_FOR_WIN32
-#   define CDECL __cdecl
+#    ifndef CDECL
+#        define CDECL __cdecl
+#    endif
 #else
 #   define CDECL
 #endif
