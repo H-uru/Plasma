@@ -54,13 +54,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsDXTDirectXCodec_inc
 #define hsDXTDirectXCodec_inc
 
+
 #include "hsWindows.h"
 #include "hsCodec.h"
 
 class plMipmap;
+#if HS_BUILD_FOR_WIN32
 struct IDirect3DDevice8;
 struct IDirectDrawSurface7;
 struct IDirectDraw7;
+#endif
 
 class hsDXTDirectXCodec : public hsCodec
 {
@@ -78,9 +81,12 @@ public:
     // Colorize a compressed mipmap
     hsBool  ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask );
 
+#if HS_BUILD_FOR_WIN32
     void        Initialize( IDirect3DDevice8 *directDraw );
+#endif
     hsBool      Initialized()           { return (fFlags & kInitialized) != 0; }
 
+#if HS_BUILD_FOR_WIN32
 private:
     UInt32 ICompressedFormat(const plMipmap *uncompressed);
     IDirectDrawSurface7     *IMakeDirect3DSurface( UInt32 formatType, UInt32 mipMapLevels, UInt32 width, UInt32 height );
@@ -89,9 +95,15 @@ private:
     void                    ICopySurface( IDirectDrawSurface7 *dest, IDirectDrawSurface7 *src, Int32 mipMapLevels );
     void                    CheckErrorCode(HRESULT res);
     hsBool                  IInitialize();
+#endif
 
+#if HS_BUILD_FOR_WIN32
     IDirectDraw7    *fDirectDraw;
     HINSTANCE       fDDLibraryInstance;
+#else
+    void*           fDirectDraw;
+    void*           fDDLibraryInstance;
+#endif
     UInt32          fFlags;
     
     enum

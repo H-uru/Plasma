@@ -111,6 +111,8 @@ bool plKeysAndValues::AddValue(const std::string & key, const std::string & valu
         if (HasKey(key))
             RemoveKey(key);
         break;
+    default:
+        break;
     }
     fKeys[key.c_str()].push_front(value.c_str());
     return true;
@@ -259,7 +261,7 @@ void plKeysAndValues::Write(hsStream * s)
     // iterate through keys
     Keys::const_iterator ki,ke;
     GetKeyIterators(ki,ke);
-    for (ki;ki!=ke;++ki)
+    for (;ki!=ke;++ki)
     {
         // write key string
         s->WriteLE((UInt16)ki->first.size());
@@ -269,7 +271,7 @@ void plKeysAndValues::Write(hsStream * s)
         // iterate through values for this key
         Values::const_iterator vi,ve;
         GetValueIterators(ki->first,vi,ve);
-        for (vi;vi!=ve;++vi)
+        for (;vi!=ve;++vi)
         {
             // write value string
             s->WriteLE((UInt16)vi->size());

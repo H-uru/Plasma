@@ -132,7 +132,8 @@ fOffsetPct(1.0f)
     fPOAGoal.Set(0,0,0);
     fGoal.Set(1,1,1);
     fPOAOffset.Set(0,0,0);
-    fTargetMatrix.Make(&fGoal, &fPOAGoal, &hsVector3(0,0,1));
+    hsVector3 up(0, 0, 1);
+    fTargetMatrix.Make(&fGoal, &fPOAGoal, &up);
     fFlags.Clear();
 }
 
@@ -758,8 +759,8 @@ void plCameraBrain1_Drive::Pop()
 //
 void plCameraBrain1_Drive::Update(hsBool forced)
 {
-    
-    fTargetMatrix.Make(&fGoal, &fPOAGoal, &(-1*fUp));
+    hsVector3 neg_up = -1 * fUp; 
+    fTargetMatrix.Make(&fGoal, &fPOAGoal, &neg_up);
     
     // update our desired position:
     double time = hsTimer::GetSeconds();
@@ -1628,14 +1629,15 @@ void plCameraBrain1_Circle::Update(hsBool forced)
     
     fPOAGoal += fPOAOffset;
     
+    hsPoint3 goalpos = fCamera->GetTargetPos();
     if (HasFlag(kCutPosOnce))
     {
-        fGoal = MoveTowardsFromGoal(&fCamera->GetTargetPos(), secs, true);
+        fGoal = MoveTowardsFromGoal(&goalpos, secs, true);
         fFlags.ClearBit(kCutPos);
     }
     else
     {   
-        fGoal = MoveTowardsFromGoal(&fCamera->GetTargetPos(), secs);
+        fGoal = MoveTowardsFromGoal(&goalpos, secs);
         fFlags.SetBit(kCutPos);
     }
     AdjustForInput(secs);

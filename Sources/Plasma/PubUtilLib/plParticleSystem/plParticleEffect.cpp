@@ -81,7 +81,7 @@ hsBool plParticleCollisionEffect::MsgReceive(plMessage* msg)
     plSceneObject *so;
     if (refMsg)
     {
-        if (so = plSceneObject::ConvertNoRef(refMsg->GetRef()))
+        if ((so = plSceneObject::ConvertNoRef(refMsg->GetRef())))
         {
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fSceneObj = so;

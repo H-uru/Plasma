@@ -1980,9 +1980,15 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
         hsVector3 dist;
         // figure out transition time
         if (transition->fCutPos)
-            dist.Set(&(fTransitionCamera->GetTargetPOA() - pCam->GetTargetPOA()));
+        {
+            hsPoint3 poadist = fTransitionCamera->GetTargetPOA() - pCam->GetTargetPOA();
+            dist.Set(&poadist);
+        }
         else
-            dist.Set(&(fTransitionCamera->GetTargetPos() - pCam->GetTargetPos()));
+        {
+            hsPoint3 posdist = fTransitionCamera->GetTargetPos() - pCam->GetTargetPos();
+            dist.Set(&posdist);
+        }
         
         time = (double)(dist.Magnitude() / pBrain->GetVelocity());
         

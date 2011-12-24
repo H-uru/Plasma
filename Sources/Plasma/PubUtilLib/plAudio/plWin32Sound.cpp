@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <direct.h>
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "hsTimer.h"
@@ -59,6 +58,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plPipeline/plPlates.h"
 #include "plStatusLog/plStatusLog.h"
+
+#if HS_BUILD_FOR_WIN32
+#    include <direct.h>
+#else
+#    include <unistd.h>
+#endif
 
 plProfile_CreateMemCounter("Sounds", "Memory", MemSounds);
 plProfile_Extern(SoundPlaying);

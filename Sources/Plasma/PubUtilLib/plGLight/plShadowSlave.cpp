@@ -46,6 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plTweak.h"
 
 #include <float.h>
+#include <math.h>
+
+#ifndef isnan
+#define isnan _isnan
+#endif
 
 static const hsScalar kMinMinZ = 1.f; // totally random arbitrary number (has to be > 0).
 
@@ -132,9 +137,9 @@ bool plShadowSlave::ISetupPerspViewTransform()
     // is probably data-side.  I take full responsibility for this
     // hack-around breaking the entire system, loosing data, causing
     // unauthorized credit card transactions, etc.      
-    if (_isnan(bnd.GetMins().fX) || _isnan(bnd.GetMins().fY))
+    if (isnan(bnd.GetMins().fX) || isnan(bnd.GetMins().fY))
         return false;
-    if (_isnan(bnd.GetMaxs().fX) || _isnan(bnd.GetMaxs().fY))
+    if (isnan(bnd.GetMaxs().fX) || isnan(bnd.GetMaxs().fY))
         return false;
 
     hsScalar cotX, cotY;

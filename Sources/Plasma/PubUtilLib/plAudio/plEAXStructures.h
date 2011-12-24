@@ -39,33 +39,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plAVIWriter_h_inc
-#define plAVIWriter_h_inc
 
-#include "pnKeyedObject/hsKeyedObject.h"
+#ifndef plEAXStructures_h_inc
+#define plEAXStructures_h_inc
 
-class plPipeline;
+typedef struct _EAXVECTOR {
+        float x;
+        float y;
+        float z;
+} EAXVECTOR;
 
-class plAVIWriter : public hsKeyedObject
+typedef struct _EAXREVERBPROPERTIES
 {
-protected:
-    static bool fInitialized;
+    unsigned long ulEnvironment;
+    float flEnvironmentSize;
+    float flEnvironmentDiffusion;
+    long lRoom;
+    long lRoomHF;
+    long lRoomLF;
+    float flDecayTime;
+    float flDecayHFRatio;
+    float flDecayLFRatio;
+    long lReflections;
+    float flReflectionsDelay;
+    EAXVECTOR vReflectionsPan;
+    long lReverb;
+    float flReverbDelay;
+    EAXVECTOR vReverbPan;
+    float flEchoTime;
+    float flEchoDepth;
+    float flModulationTime;
+    float flModulationDepth;
+    float flAirAbsorptionHF;
+    float flHFReference;
+    float flLFReference;
+    float flRoomRolloffFactor;
+    unsigned long ulFlags;
+} EAXREVERBPROPERTIES, *LPEAXREVERBPROPERTIES;
 
-    virtual ~plAVIWriter();
-
-public:
-    static plAVIWriter& Instance();
-
-    // If IsInitialized returns true, you need to call Shutdown before clearing
-    // the registry (dang key).
-    static bool IsInitialized() { return fInitialized; }
-    virtual void Shutdown()=0;
-
-    CLASSNAME_REGISTER(plAVIWriter);
-    GETINTERFACE_ANY(plAVIWriter, hsKeyedObject);
-
-    virtual bool Open(const char* fileName, plPipeline* pipeline)=0;
-    virtual void Close()=0;
-};
-
-#endif // plAVIWriter_h_inc
+#endif //plEAXStructures_h_inc

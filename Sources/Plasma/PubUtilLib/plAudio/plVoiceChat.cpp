@@ -361,8 +361,8 @@ void plVoicePlayer::PlaybackVoiceMessage(void* data, unsigned size, int numFrame
             return;
         }
         
-        BYTE* newBuff;
-        newBuff = (BYTE*)nBuff;         // Convert to byte data
+        UInt8* newBuff;
+        newBuff = (UInt8*)nBuff;         // Convert to byte data
         PlaybackUncompressedVoiceMessage(newBuff, numBytes);    // playback uncompressed data
         delete[] nBuff;
     }
@@ -411,7 +411,7 @@ plVoiceSound::plVoiceSound()
     fLastUpdate = 0;
 
     char keyName[32];
-    StrPrintf(keyName, arrsize(keyName), "VoiceSound_%d", fCount);
+    snprintf(keyName, arrsize(keyName), "VoiceSound_%d", fCount);
     fCount++;
     hsgResMgr::ResMgr()->NewKey(keyName, this, plLocation::kGlobalFixedLoc);
 }
@@ -431,7 +431,7 @@ hsBool plVoiceSound::LoadSound( hsBool is3D )
         return false;   // Don't set the failed flag, just return
 
     plWAVHeader header;
-    header.fFormatTag = WAVE_FORMAT_PCM;
+    header.fFormatTag = 0x1; // WAVE_FORMAT_PCM
     header.fBitsPerSample  = 16;
     header.fNumChannels = 1;
     header.fNumSamplesPerSec = FREQUENCY;
@@ -605,8 +605,8 @@ hsBool plSpeex::Encode(short *data, int numFrames, int *packedLength, hsRAMStrea
     
     short *pData = data;                        // pointer to input data
     float *input = TRACKED_NEW float[fFrameSize];       // input to speex - used as am intermediate array since speex requires float data
-    BYTE frameLength;                           // number of bytes speex compressed frame to
-    BYTE *frameData = TRACKED_NEW BYTE[fFrameSize];     // holds one frame of encoded data
+    UInt8 frameLength;                           // number of bytes speex compressed frame to
+    UInt8 *frameData = TRACKED_NEW UInt8[fFrameSize];     // holds one frame of encoded data
     
     // encode data
     for( int i = 0; i < numFrames; i++ )
@@ -647,8 +647,8 @@ hsBool plSpeex::Decode(UInt8 *data, int size, int numFrames, int *numOutputBytes
     short *pOut = out;                              // pointer to output short buffer
     
     // create buffer for input data
-    BYTE *frameData = TRACKED_NEW BYTE[fFrameSize];         // holds the current frames data to be decoded
-    BYTE frameLen;                                  // holds the length of the current frame being decoded.
+    UInt8 *frameData = TRACKED_NEW UInt8[fFrameSize];         // holds the current frames data to be decoded
+    UInt8 frameLen;                                  // holds the length of the current frame being decoded.
     
 
     // Decode data

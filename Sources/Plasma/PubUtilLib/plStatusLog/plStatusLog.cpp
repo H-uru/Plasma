@@ -826,12 +826,12 @@ bool plStatusLog::IPrintLineToFile( const char *line, UInt32 count )
             }
             if (fFlags & kRawTimeStamp)
             {
-                snprintf(work, arrsize(work), "[t=%10u] ", hsTimer::GetSeconds());
+                snprintf(work, arrsize(work), "[t=%10f] ", hsTimer::GetSeconds());
                 strncat(buf, work, arrsize(work));
             }
             if (fFlags & kThreadID)
             {
-                snprintf(work, arrsize(work), "[t=%u] ", hsThread::GetMyThreadId());
+                snprintf(work, arrsize(work), "[t=%lu] ", hsThread::GetMyThreadId());
                 strncat(buf, work, arrsize(work));
             }
 

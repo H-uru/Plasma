@@ -446,7 +446,7 @@ public:
     plSimpleStateVariable* FindVar(const char* name) const { return (plSimpleStateVariable*)IFindVar(fVarsList, name); }
     plSDStateVariable* FindSDVar(const char* name) const { return (plSDStateVariable*)IFindVar(fSDVarsList, name); }
     
-    plStateDataRecord& operator=(const plStateDataRecord& other) { CopyFrom(other); }
+    plStateDataRecord& operator=(const plStateDataRecord& other) { CopyFrom(other); return *this; }
     void CopyFrom(const plStateDataRecord& other, UInt32 writeOptions=0);
     void UpdateFrom(const plStateDataRecord& other, UInt32 writeOptions=0);
     void SetFromDefaults(bool timeStampNow);
