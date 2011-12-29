@@ -127,6 +127,7 @@ plNetMsgScreener::Answer plNetMsgScreener::IAllowMessageType(Int16 classIndex, c
     case CLASS_INDEX_SCOPED(plClothingMsg):
     case CLASS_INDEX_SCOPED(plEnableMsg):
     case CLASS_INDEX_SCOPED(plLinkToAgeMsg):
+    case CLASS_INDEX_SCOPED(plSubWorldMsg):
         return kYes;
         
         // definitely yes or no (based on whether sender is a CCR)
