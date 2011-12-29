@@ -39,54 +39,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbProtocol.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBPROTOCOL_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbProtocol.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBPROTOCOL_H
+#ifndef pfUtilBase64_inc
+#define pfUtilBase64_inc
 
+#include "hsTypes.h"
 
 /*****************************************************************************
 *
-*   Net protocols
+*   Base64 Codec API
 *
 ***/
 
-const unsigned kNetProtocolServerBit = 0x80;
+const unsigned kBase64EncodeBlock    = 4;
+const unsigned kBase64EncodeMultiple = 3;
 
-// These codes may not be changed unless ALL servers and clients are
-// simultaneously replaced; so basically forget it =)
-enum ENetProtocol {
-    kNetProtocolNil                 = 0,
+inline unsigned Base64EncodeSize (unsigned srcChars) {
+    return (srcChars + kBase64EncodeMultiple - 1) / kBase64EncodeMultiple
+         * kBase64EncodeBlock;
+}
+unsigned Base64Encode (
+    unsigned    srcChars,
+    const byte  srcData[],
+    unsigned    dstChars,
+    char *      dstData
+);
 
-    // For test applications
-    kNetProtocolDebug               = 1,
-    
-    // Client connections
-    kNetProtocolCli2GateKeeper      = 2,
-    kNetProtocolCli2Csr             = 3,
-    kNetProtocolCli2Auth            = 4,
-    kNetProtocolCli2Game            = 5,
-    kNetProtocolCli2File            = 6,
-    kNetProtocolCli2Unused_01       = 7,
+inline unsigned Base64DecodeSize (unsigned srcChars, const char srcData[]) {
+    return srcChars * kBase64EncodeMultiple / kBase64EncodeBlock
+         - ((srcChars >= 1 && srcData[srcChars - 1] == '=') ? 1 : 0)
+         - ((srcChars >= 2 && srcData[srcChars - 2] == '=') ? 1 : 0);
+}
+unsigned Base64Decode (
+    unsigned    srcChars,
+    const char  srcData[],
+    unsigned    dstChars,
+    byte *      dstData
+);
 
-    // Server connections
-    kNetProtocolSrvConn             = 0 | kNetProtocolServerBit,
-    kNetProtocolSrv2Mcp             = 1 | kNetProtocolServerBit,
-    kNetProtocolSrv2Vault           = 2 | kNetProtocolServerBit,
-    kNetProtocolSrv2Db              = 3 | kNetProtocolServerBit,
-    kNetProtocolSrv2State           = 4 | kNetProtocolServerBit,
-    kNetProtocolSrv2Log             = 5 | kNetProtocolServerBit,
-    kNetProtocolSrv2Score           = 6 | kNetProtocolServerBit,
-};
-
-// NOTE: When adding a new net protocol, be sure to update
-// NetProtocolToString as well.  Unfortunately, the compiler
-// cannot enforce this since the protocol values are not
-// numerically sequential.
-const wchar * NetProtocolToString (ENetProtocol protocol);
+#endif //pnUtilBase64_inc

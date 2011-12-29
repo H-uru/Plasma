@@ -39,14 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbError.cpp
-*   
-***/
 
-#include "../Pch.h"
-#pragma hdrstop
+#include "pnNbError.h"
 
 
 /*****************************************************************************
@@ -60,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // in release clients because they are not localized
 const wchar * NetErrorToString (ENetError code) {
 
-    static wchar * s_errors[] = {
+    static const wchar* s_errors[] = {
         L"Success",                         // kNetSuccess
         L"Internal Error",                  // kNetErrInternalError
         L"No Response From Server",         // kNetErrTimeout
@@ -127,66 +121,64 @@ const wchar * NetErrorToString (ENetError code) {
 // in release clients because they are not localized
 const wchar * NetErrorAsString (ENetError code) {
 
-    #define ERROR_STRING(e) L#e
-    static wchar * s_errors[] = {
-        ERROR_STRING(kNetSuccess),
-        ERROR_STRING(kNetErrInternalError),
-        ERROR_STRING(kNetErrTimeout),
-        ERROR_STRING(kNetErrBadServerData),
-        ERROR_STRING(kNetErrAgeNotFound),
-        ERROR_STRING(kNetErrConnectFailed),
-        ERROR_STRING(kNetErrDisconnected),
-        ERROR_STRING(kNetErrFileNotFound),
-        ERROR_STRING(kNetErrOldBuildId),
-        ERROR_STRING(kNetErrRemoteShutdown),
-        ERROR_STRING(kNetErrTimeoutOdbc),
-        ERROR_STRING(kNetErrAccountAlreadyExists),
-        ERROR_STRING(kNetErrPlayerAlreadyExists),
-        ERROR_STRING(kNetErrAccountNotFound),
-        ERROR_STRING(kNetErrPlayerNotFound),
-        ERROR_STRING(kNetErrInvalidParameter),
-        ERROR_STRING(kNetErrNameLookupFailed),
-        ERROR_STRING(kNetErrLoggedInElsewhere),
-        ERROR_STRING(kNetErrVaultNodeNotFound),
-        ERROR_STRING(kNetErrMaxPlayersOnAcct),
-        ERROR_STRING(kNetErrAuthenticationFailed),
-        ERROR_STRING(kNetErrStateObjectNotFound),
-        ERROR_STRING(kNetErrLoginDenied),
-        ERROR_STRING(kNetErrCircularReference),
-        ERROR_STRING(kNetErrAccountNotActivated),
-        ERROR_STRING(kNetErrKeyAlreadyUsed),
-        ERROR_STRING(kNetErrKeyNotFound),
-        ERROR_STRING(kNetErrActivationCodeNotFound),
-        ERROR_STRING(kNetErrPlayerNameInvalid),
-        ERROR_STRING(kNetErrNotSupported),
-        ERROR_STRING(kNetErrServiceForbidden),
-        ERROR_STRING(kNetErrAuthTokenTooOld),
-        ERROR_STRING(kNetErrMustUseGameTapClient),
-        ERROR_STRING(kNetErrTooManyFailedLogins),
-        ERROR_STRING(kNetErrGameTapConnectionFailed),
-        ERROR_STRING(kNetErrGTTooManyAuthOptions),
-        ERROR_STRING(kNetErrGTMissingParameter),
-        ERROR_STRING(kNetErrGTServerError),
-        ERROR_STRING(kNetErrAccountBanned),
-        ERROR_STRING(kNetErrKickedByCCR),
-        ERROR_STRING(kNetErrScoreWrongType),
-        ERROR_STRING(kNetErrScoreNotEnoughPoints),
-        ERROR_STRING(kNetErrScoreAlreadyExists),
-        ERROR_STRING(kNetErrScoreNoDataFound),
-        ERROR_STRING(kNetErrInviteNoMatchingPlayer),
-        ERROR_STRING(kNetErrInviteTooManyHoods),
-        ERROR_STRING(kNetErrNeedToPay),
-        ERROR_STRING(kNetErrServerBusy),
-        ERROR_STRING(kNetErrVaultNodeAccessViolation),
+    static const wchar* s_errors[] = {
+        L"kNetSuccess",
+        L"kNetErrInternalError",
+        L"kNetErrTimeout",
+        L"kNetErrBadServerData",
+        L"kNetErrAgeNotFound",
+        L"kNetErrConnectFailed",
+        L"kNetErrDisconnected",
+        L"kNetErrFileNotFound",
+        L"kNetErrOldBuildId",
+        L"kNetErrRemoteShutdown",
+        L"kNetErrTimeoutOdbc",
+        L"kNetErrAccountAlreadyExists",
+        L"kNetErrPlayerAlreadyExists",
+        L"kNetErrAccountNotFound",
+        L"kNetErrPlayerNotFound",
+        L"kNetErrInvalidParameter",
+        L"kNetErrNameLookupFailed",
+        L"kNetErrLoggedInElsewhere",
+        L"kNetErrVaultNodeNotFound",
+        L"kNetErrMaxPlayersOnAcct",
+        L"kNetErrAuthenticationFailed",
+        L"kNetErrStateObjectNotFound",
+        L"kNetErrLoginDenied",
+        L"kNetErrCircularReference",
+        L"kNetErrAccountNotActivated",
+        L"kNetErrKeyAlreadyUsed",
+        L"kNetErrKeyNotFound",
+        L"kNetErrActivationCodeNotFound",
+        L"kNetErrPlayerNameInvalid",
+        L"kNetErrNotSupported",
+        L"kNetErrServiceForbidden",
+        L"kNetErrAuthTokenTooOld",
+        L"kNetErrMustUseGameTapClient",
+        L"kNetErrTooManyFailedLogins",
+        L"kNetErrGameTapConnectionFailed",
+        L"kNetErrGTTooManyAuthOptions",
+        L"kNetErrGTMissingParameter",
+        L"kNetErrGTServerError",
+        L"kNetErrAccountBanned",
+        L"kNetErrKickedByCCR",
+        L"kNetErrScoreWrongType",
+        L"kNetErrScoreNotEnoughPoints",
+        L"kNetErrScoreAlreadyExists",
+        L"kNetErrScoreNoDataFound",
+        L"kNetErrInviteNoMatchingPlayer",
+        L"kNetErrInviteTooManyHoods",
+        L"kNetErrNeedToPay",
+        L"kNetErrServerBusy",
+        L"kNetErrVaultNodeAccessViolation",
     };
     COMPILER_ASSERT(arrsize(s_errors) == kNumNetErrors);
     
     if ((unsigned)code >= arrsize(s_errors)) {
         if (code == kNetPending)
-            return ERROR_STRING(kNetPending);
+            return L"kNetPending";
         return L"ErrUnknown";
     }
-    #undef ERROR_STRING
     
     return s_errors[code];
 }

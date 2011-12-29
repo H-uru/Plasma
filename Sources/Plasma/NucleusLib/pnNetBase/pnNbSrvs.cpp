@@ -39,14 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbSrvs.cpp
-*   
-***/
 
-#include "../Pch.h"
-#pragma hdrstop
+#include "pnNbSrvs.h"
+
+#if !HS_BUILD_FOR_WIN32
+#    include <wchar.h>
+#endif
 
 
 /*****************************************************************************
@@ -97,7 +95,7 @@ unsigned GetAuthSrvHostnames (const wchar *** addrs) {
 //============================================================================
 void SetAuthSrvHostname (const wchar addr[]) {
 
-    StrCopy(s_authAddrConsole, addr, arrsize(s_authAddrConsole));
+    wcsncpy(s_authAddrConsole, addr, arrsize(s_authAddrConsole));
 }
 
 //============================================================================
@@ -112,7 +110,7 @@ unsigned GetFileSrvHostnames (const wchar *** addrs) {
 //============================================================================
 void SetFileSrvHostname (const wchar addr[]) {
 
-    StrCopy(s_fileAddrConsole, addr, arrsize(s_fileAddrConsole));
+    wcsncpy(s_fileAddrConsole, addr, arrsize(s_fileAddrConsole));
 }
 
 //============================================================================
@@ -127,7 +125,7 @@ unsigned GetCsrSrvHostnames (const wchar *** addrs) {
 //============================================================================
 void SetCsrSrvHostname (const wchar addr[]) {
 
-    StrCopy(s_csrAddrConsole, addr, arrsize(s_csrAddrConsole));
+    wcsncpy(s_csrAddrConsole, addr, arrsize(s_csrAddrConsole));
 }
 
 
@@ -142,7 +140,7 @@ unsigned GetGateKeeperSrvHostnames (const wchar *** addrs) {
 
 //============================================================================
 void SetGateKeeperSrvHostname (const wchar addr[]) {
-    StrCopy(s_gateKeeperAddrConsole, addr, arrsize(s_gateKeeperAddrConsole));
+    wcsncpy(s_gateKeeperAddrConsole, addr, arrsize(s_gateKeeperAddrConsole));
 }
 
 
@@ -160,7 +158,7 @@ const wchar *GetServerStatusUrl () {
 
 //============================================================================
 void SetServerStatusUrl (const wchar url[]) {
-    StrCopy(s_serverStatusUrl, url, arrsize(s_serverStatusUrl));
+    wcsncpy(s_serverStatusUrl, url, arrsize(s_serverStatusUrl));
 }
 
 //============================================================================
@@ -170,7 +168,7 @@ const wchar *GetServerSignupUrl () {
 
 //============================================================================
 void SetServerSignupUrl (const wchar url[]) {
-    StrCopy(s_serverSignupUrl, url, arrsize(s_serverSignupUrl));
+    wcsncpy(s_serverSignupUrl, url, arrsize(s_serverSignupUrl));
 }
 
 //============================================================================
@@ -180,5 +178,5 @@ const wchar *GetServerDisplayName () {
 
 //============================================================================
 void SetServerDisplayName (const wchar name[]) {
-    StrCopy(s_serverName, name, arrsize(s_serverName));
+    wcsncpy(s_serverName, name, arrsize(s_serverName));
 }
