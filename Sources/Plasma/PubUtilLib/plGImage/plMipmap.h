@@ -234,11 +234,14 @@ class plMipmap : public plBitmap
 
         enum CompositeFlags
         {
-            kForceOpaque    = 0x0001,       // Copy src pixels raw, force dest alphas to opaque
-            kCopySrcAlpha   = 0x0002,       // Copy the src pixels raw, including alphas, overwrite dest
-            kBlendSrcAlpha  = 0x0004,       // Blend src pixels onto dest using src alpha, dest alpha = src alpha
-            kMaskSrcAlpha   = 0x0008,       // Same as copySrcAlpha, but dest is untouched when src alpha = 0
-            kBlendWriteAlpha= 0x0010        // Like default (0), but writes dest alpha values
+            kForceOpaque        = 0x0001,       // Copy src pixels raw, force dest alphas to opaque
+            kCopySrcAlpha       = 0x0002,       // Copy the src pixels raw, including alphas, overwrite dest
+            kBlendSrcAlpha      = 0x0004,       // Blend src pixels onto dest using src alpha, dest alpha = src alpha
+            kMaskSrcAlpha       = 0x0008,       // Same as copySrcAlpha, but dest is untouched when src alpha = 0
+            kBlendWriteAlpha    = 0x0010,       // Like default (0), but writes dest alpha values
+
+            kDestPremultiplied  = 0x0020,       // Dest has color premultiplied by alpha
+                                                // (src always assumed nonpremultiplied for now)
         };
 
         class CompositeOptions

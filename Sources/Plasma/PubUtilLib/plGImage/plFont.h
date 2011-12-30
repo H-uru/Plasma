@@ -116,6 +116,7 @@ class plFont : public hsKeyedObject
                                                 // value between the renderColor and the destColor and
                                                 // leave the alpha as-is
                                                 // This flag has no effect on monochrome fonts
+            kRenderAlphaPremultiplied = 0x00001000, // Destination has color values premultiplied by alpha
         };
 
         enum Flags
@@ -231,6 +232,7 @@ class plFont : public hsKeyedObject
         void    IRenderChar8To32( const plCharacter &c );
         void    IRenderChar8To32Alpha( const plCharacter &c );
         void    IRenderChar8To32FullAlpha( const plCharacter &c );
+        void    IRenderChar8To32AlphaPremultiplied( const plCharacter &c );
         void    IRenderCharNull( const plCharacter &c );
 
     public:

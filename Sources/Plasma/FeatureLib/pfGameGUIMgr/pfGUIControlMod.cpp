@@ -683,7 +683,7 @@ bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
     extraH -= height;
 
     fDynTextMap->Reset();
-    fDynTextMap->Create( width, height, HasFlag( kXparentBgnd ), extraW, extraH );
+    fDynTextMap->Create( width, height, HasFlag( kXparentBgnd ), extraW, extraH, true );
 
     fDynTextMap->SetFont( GetColorScheme()->fFontFace, GetColorScheme()->fFontSize, GetColorScheme()->fFontFlags,
                             HasFlag( kXparentBgnd ) ? false : true );
@@ -694,6 +694,7 @@ bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
     // out with 1:1 mapping from textel to pixel
     plLayer *layer = (plLayer *)fDynTextLayer;
     layer->SetTransform( fDynTextMap->GetLayerTransform() );
+    layer->SetBlendFlags( layer->GetBlendFlags() | hsGMatState::kBlendAlphaPremultiplied );
 
     // Let the derived classes do their things
     IPostSetUpDynTextMap();
