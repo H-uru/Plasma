@@ -39,17 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbError.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBERROR_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbError.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBERROR_H
+#ifndef pnNbError_inc
+#define pnNbError_inc
 
+#include "hsTypes.h"
+#include "pnNbConst.h"
 
 /*****************************************************************************
 *
@@ -130,3 +125,5 @@ enum ENetError {
 
 const wchar * NetErrorToString (ENetError code);    // user-friendly string
 const wchar * NetErrorAsString (ENetError code);    // string version of enum identifier
+
+#endif // pnNbError_inc

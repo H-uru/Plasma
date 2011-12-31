@@ -39,73 +39,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbSrvs.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBSRVS_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbSrvs.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBSRVS_H
+#ifndef pnNbProtocol_inc
+#define pnNbProtocol_inc
 
+#include "hsTypes.h"
+#include "pnNbConst.h"
 
 /*****************************************************************************
 *
-*   Server types
+*   Net protocols
 *
 ***/
+
+const unsigned kNetProtocolServerBit = 0x80;
 
 // These codes may not be changed unless ALL servers and clients are
 // simultaneously replaced; so basically forget it =)
-enum ESrvType {
-    kSrvTypeNone        = 0,
+enum ENetProtocol {
+    kNetProtocolNil                 = 0,
 
-    kSrvTypeClient      = 1,
-    kSrvTypeAuth        = 2,
-    kSrvTypeGame        = 3,
-    kSrvTypeVault       = 4,
-    kSrvTypeDb          = 5,
-    kSrvTypeMcp         = 6,
-    kSrvTypeState       = 7,
-    kSrvTypeFile        = 8,
-    kSrvTypeLog         = 9,
-    kSrvTypeDll         = 10,
-    kSrvTypeScore       = 11,
-    kSrvTypeCsr         = 12,
-    kSrvTypeGateKeeper  = 13,
+    // For test applications
+    kNetProtocolDebug               = 1,
+    
+    // Client connections
+    kNetProtocolCli2GateKeeper      = 2,
+    kNetProtocolCli2Csr             = 3,
+    kNetProtocolCli2Auth            = 4,
+    kNetProtocolCli2Game            = 5,
+    kNetProtocolCli2File            = 6,
+    kNetProtocolCli2Unused_01       = 7,
 
-    kNumSrvTypes,
-
-    // Enforce network message field size
-    kNetSrvForceDword = (unsigned)-1
+    // Server connections
+    kNetProtocolSrvConn             = 0 | kNetProtocolServerBit,
+    kNetProtocolSrv2Mcp             = 1 | kNetProtocolServerBit,
+    kNetProtocolSrv2Vault           = 2 | kNetProtocolServerBit,
+    kNetProtocolSrv2Db              = 3 | kNetProtocolServerBit,
+    kNetProtocolSrv2State           = 4 | kNetProtocolServerBit,
+    kNetProtocolSrv2Log             = 5 | kNetProtocolServerBit,
+    kNetProtocolSrv2Score           = 6 | kNetProtocolServerBit,
 };
 
+// NOTE: When adding a new net protocol, be sure to update
+// NetProtocolToString as well.  Unfortunately, the compiler
+// cannot enforce this since the protocol values are not
+// numerically sequential.
+const wchar * NetProtocolToString (ENetProtocol protocol);
 
-/*****************************************************************************
-*
-*   Front-end server hostnames
-*
-***/
-
-unsigned GetAuthSrvHostnames (const wchar *** addrs);   // returns addrCount
-void SetAuthSrvHostname (const wchar addr[]);
-
-unsigned GetFileSrvHostnames (const wchar *** addrs);   // returns addrCount
-void SetFileSrvHostname (const wchar addr[]);
-
-unsigned GetCsrSrvHostnames (const wchar *** addrs);    // returns addrCount
-void SetCsrSrvHostname (const wchar addr[]);
-
-unsigned GetGateKeeperSrvHostnames (const wchar *** addrs); // returns addrCount
-void SetGateKeeperSrvHostname (const wchar addr[]);
-
-const wchar *GetServerStatusUrl ();
-void SetServerStatusUrl (const wchar url[]);
-
-const wchar *GetServerSignupUrl ();
-void SetServerSignupUrl (const wchar url[]);
-
-const wchar *GetServerDisplayName ();
-void SetServerDisplayName (const wchar name[]);
+#endif // pnNbProtocol_inc

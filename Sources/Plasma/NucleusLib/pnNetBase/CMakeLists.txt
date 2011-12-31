@@ -2,26 +2,22 @@ include_directories("../../CoreLib")
 include_directories("../../NucleusLib")
 
 set(pnNetBase_HEADERS
-    Intern.h
-    Pch.h
     pnNbConst.h
+    pnNbError.h
+    pnNbKeys.h
+    pnNbProtocol.h
+    pnNbSrvs.h
     pnNetBase.h
 )
 
-set(pnNetBase_PRIVATE
-    Private/pnNbAllIncludes.h
-    Private/pnNbEchoMsgs.h
-    Private/pnNbError.h
-    Private/pnNbError.cpp
-    Private/pnNbProtocol.h
-    Private/pnNbProtocol.cpp
-    Private/pnNbSrvs.h
-    Private/pnNbSrvs.cpp
-    Private/pnNbKeys.h
-    Private/pnNbKeys.cpp
+set(pnNetBase_SOURCES
+    pnNbError.cpp
+    pnNbKeys.cpp
+    pnNbProtocol.cpp
+    pnNbSrvs.cpp
 )
 
-add_library(pnNetBase STATIC ${pnNetBase_HEADERS} ${pnNetBase_PRIVATE})
+add_library(pnNetBase STATIC ${pnNetBase_HEADERS} ${pnNetBase_SOURCES})
 
 source_group("Header Files" FILES ${pnNetBase_HEADERS})
-source_group("Private" FILES ${pnNetBase_PRIVATE})
+source_group("Source Files" FILES ${pnNetBase_SOURCES})
