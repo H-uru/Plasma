@@ -39,22 +39,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "pnNbProtocol.h"
+
+
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Private/pnNbAllIncludes.h
-*   
+*   Exports
+*
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBALLINCLUDES_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBALLINCLUDES_H
+//============================================================================
+const wchar * NetProtocolToString (ENetProtocol protocol) {
 
+    static struct { ENetProtocol protocol; const wchar *name; } s_protocols[] = {
+        { kNetProtocolNil,          L"kNetProtocolNil" },
 
-#include "pnProduct/pnProduct.h"
+        // For test applications
+        { kNetProtocolDebug,        L"kNetProtocolDebug" },
 
-#include "../pnNbConst.h"
-#include "pnNbError.h"
-#include "pnNbKeys.h"
-#include "pnNbProtocol.h"
-#include "pnNbSrvs.h"
+        // Client connections
+        { kNetProtocolCli2Csr,      L"GateKeeper Server" },
+        { kNetProtocolCli2Csr,      L"Csr Server" },
+        { kNetProtocolCli2Auth,     L"Auth Server" },
+        { kNetProtocolCli2Game,     L"Game Server" },
+        { kNetProtocolCli2File,     L"File Server" },
+        { kNetProtocolCli2Unused_01, L"kNetProtocolCli2Unused_01" },
 
-#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PRIVATE_PNNBALLINCLUDES_H
+        // Server connections
+        { kNetProtocolSrvConn,      L"kNetProtocolSrvConn" },
+        { kNetProtocolSrv2Mcp,      L"kNetProtocolSrv2Mcp" },
+        { kNetProtocolSrv2Vault,    L"kNetProtocolSrv2Vault" },
+        { kNetProtocolSrv2Db,       L"kNetProtocolSrv2Db" },
+        { kNetProtocolSrv2State,    L"kNetProtocolSrv2State" },
+        { kNetProtocolSrv2Log,      L"kNetProtocolSrv2Log" },
+        { kNetProtocolSrv2Score,    L"kNetProtocolSrv2Score" },
+    };
+
+    for (unsigned i = 0; i < arrsize(s_protocols); ++i)
+        if (s_protocols[i].protocol == protocol)
+            return s_protocols[i].name;
+
+    return L"Unknown protocol id";  
+}

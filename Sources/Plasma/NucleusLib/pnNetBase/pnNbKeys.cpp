@@ -39,19 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Pch.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetBase/Pch.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETBASE_PCH_H
+#include "pnNbKeys.h"
 
+// Auth Server
+byte kAuthDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+byte kAuthDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
 
-#include "pnUtils/pnUtils.h"
-#include "pnProduct/pnProduct.h"
+// CSR Server
+byte kCsrDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+byte kCsrDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
 
-#include "Private/pnNbAllIncludes.h"
+// Game Server
+byte kGameDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+byte kGameDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
+
+// GateKeeper Server
+byte kGateKeeperDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+byte kGateKeeperDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
