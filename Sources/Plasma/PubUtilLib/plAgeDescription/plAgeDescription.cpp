@@ -316,7 +316,7 @@ plLocation  plAgeDescription::CalcPageLocation( const char *page ) const
     {
         // Combine our sequence # together
         Int32 combined;
-        hsAssert(abs(fSeqPrefix) < 0xFF, "Age sequence prefex is out of range!"); // sequence prefix can NOT be larger or equal to 1-byte max value
+        hsAssert(fSeqPrefix > -255 && fSeqPrefix <= 0xFEFF, "Age sequence prefex is out of range!"); // sequence prefix can NOT be larger or equal to 1-byte max value
         UInt32 suffix = ap->GetSeqSuffix();
         hsAssert(suffix <= 0xFFFF, "Page sequence number is out of range!"); // page sequence number can NOT be larger then 2-byte max value
         if( fSeqPrefix < 0 ) // we are a global age
