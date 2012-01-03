@@ -326,8 +326,8 @@ plLocation  plAgeDescription::CalcPageLocation( const char *page ) const
 
         // Now, our 32 bit number looks like the following:
         // 0xRRAAPPPP
-        // - RR is FF when reserved, and 00 when normal
-        // - AA is the one byte for age sequence prefix (FF not allowed because 0xFFFFFFFFFF is reserved for invalid sequence number)
+        // - RR is FF when reserved, and 00-FE when normal
+        // - AA is the low byte of the age sequence prefix (FF not allowed on a negative prefix because 0xFFFFFFFFFF is reserved for invalid sequence number)
         // - PPPP is the two bytes for page sequence number
 
         if( IsGlobalAge() )
