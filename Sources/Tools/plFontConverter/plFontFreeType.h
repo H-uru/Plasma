@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "plFont.h"
+#include "plGImage/plFont.h"
 
 class plFontFreeType : public plFont
 {

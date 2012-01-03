@@ -1,7 +1,10 @@
 #add_subdirectory(Migration)
 #add_subdirectory(plDatMerger)
-#add_subdirectory(plFontConverter)
 add_subdirectory(plResBrowser)
+
+if(FREETYPE_FOUND)
+    add_subdirectory(plFontConverter)
+endif()
 
 # Max Stuff goes below here...
 if(3dsm_BUILD_PLUGIN)

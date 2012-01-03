@@ -19,6 +19,7 @@ find_package(CURL REQUIRED)
 if(WIN32)
     find_package(PhysX REQUIRED)  #TODO: Not required if we aren't building the client
     find_package(DirectX REQUIRED)
+    find_package(Freetype)
 endif(WIN32)
 
 find_package(MaxSDK)          #TODO: Only find this if we are building PlasmaMax
