@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 // for Win32:
+#ifdef HS_BUILD_FOR_WIN32
 
 enum plOSMsg
 {
@@ -70,6 +71,12 @@ enum plOSMsg
     M_BUTTONUP      = WM_MBUTTONUP,
     CHAR_MSG        = WM_CHAR,
 };
+
+#else
+
+enum plOSMsg { };
+
+#endif
 
 
 //
