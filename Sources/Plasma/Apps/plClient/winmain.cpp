@@ -709,6 +709,11 @@ bool    InitClient( HWND hWnd )
     resMgr->SetDataPath("dat");
     hsgResMgr::Init(resMgr);
 
+    if(!plFileUtils::FileExists("resource.dat"))
+    {
+        hsMessageBox("Required file 'resource.dat' not found.", "Error", hsMessageBoxNormal);
+        return false;
+    }
     plClientResMgr::Instance().ILoadResources("resource.dat");
 
     gClient = TRACKED_NEW plClient;
