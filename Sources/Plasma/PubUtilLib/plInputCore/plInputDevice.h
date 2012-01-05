@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#include "hsWindowHndl.h"
 //#include "pnInputCore/plControlDefinition.h"
 #include "pnInputCore/plOSMsg.h"
 #include "pnInputCore/plKeyDef.h"
@@ -75,7 +76,7 @@ public:
     void SetFlags(UInt32 f) { fFlags = f; }
     virtual void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat, wchar_t c = nil) {;}
     virtual void HandleMouseEvent(plOSMsg message, plMouseState state)  {;}
-    virtual void HandleWindowActivate(bool bActive, HWND hWnd) {;}
+    virtual void HandleWindowActivate(bool bActive, hsWindowHndl hWnd) {;}
     virtual hsBool MsgReceive(plMessage* msg) {return false;}
     virtual void Shutdown() {;}
 
@@ -116,7 +117,7 @@ public:
 
     const char* GetInputName() { return "keyboard"; }
     void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat, wchar_t c = nil);
-    virtual void HandleWindowActivate(bool bActive, HWND hWnd);
+    virtual void HandleWindowActivate(bool bActive, hsWindowHndl hWnd);
     virtual hsBool IsCapsLockKeyOn();
     virtual void Shutdown();
 
@@ -159,7 +160,7 @@ public:
     ~plMouseDevice();
 
     const char* GetInputName() { return "mouse"; }
-    void HandleWindowActivate(bool bActive, HWND hWnd);
+    void HandleWindowActivate(bool bActive, hsWindowHndl hWnd);
 
     hsBool  HasControlFlag(int f) const { return fControlFlags.IsBitSet(f); }
     void    SetControlFlag(int f) 
