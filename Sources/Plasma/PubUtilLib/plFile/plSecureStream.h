@@ -85,13 +85,16 @@ protected:
     bool IWriteEncrypted(hsStream* sourceStream, const wchar* outputFile);
 
     static bool ICheckMagicString(hsFD fp);
+    static bool ICheckMagicString(hsStream* s);
 
 public:
     plSecureStream(hsBool deleteOnExit = false, UInt32* key = nil); // uses default key if you don't pass one in
+    plSecureStream(hsStream* base, UInt32* key = nil);
     ~plSecureStream();
 
     virtual hsBool Open(const char* name, const char* mode = "rb");
     virtual hsBool Open(const wchar* name, const wchar* mode = L"rb");
+    hsBool         Open(hsStream* stream);
     virtual hsBool Close();
 
     virtual UInt32 Read(UInt32 byteCount, void* buffer);
