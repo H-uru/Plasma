@@ -432,18 +432,18 @@ hsBool plVisLOSMgr::CursorCheck(plVisHit& hit)
 /////////////////////////////////////////////////////////////////
 
 static plSceneObject* marker = nil;
-static plPipeline* pipe = nil;
+static plPipeline* fPipe = nil;
 
 
 void VisLOSHackBegin(plPipeline* p, plSceneObject* m)
 {
     marker = m;
-    pipe = p;
+    fPipe = p;
 }
 
 void VisLOSHackPulse()
 {
-    if( !pipe )
+    if( !fPipe )
         return;
 
     plVisHit hit;
