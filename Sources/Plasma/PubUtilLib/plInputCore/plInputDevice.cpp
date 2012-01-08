@@ -186,6 +186,10 @@ void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDo
             plAvatarInputInterface::GetInstance()->ForceAlwaysRun(fCapsLockLock);
         }
     }
+    if (key == KEY_ENTER)
+    {
+        c = '\n';
+    }
 
     // send a key event...
     plKeyEventMsg* pMsg = TRACKED_NEW plKeyEventMsg;
