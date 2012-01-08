@@ -4354,7 +4354,7 @@ class xKI(ptModifier):
             PtDebugPrint(U'xKI::OnScreenCaptureDone(): Unable to create "{0}" directory. Image not saved to disk.'.format(basePath))
             return
 
-        imageList = glob.iglob(os.path.join(basePath,"KIimage[0-9][0-9][0-9][0-9].{0}".format(preferredExtension)))
+        imageList = glob.iglob(os.path.join(basePath,"{0}[0-9][0-9][0-9][0-9].{1}".format(kImageFileNameTemplate, preferredExtension)))
         imageNumbers = [int(os.path.basename(img)[7:-4]) for img in imageList] + [0]
         missingNumbers = set(range(1, max(imageNumbers))).difference(set(imageNumbers))
         if len(missingNumbers) > 0:
