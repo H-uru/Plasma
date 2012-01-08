@@ -50,13 +50,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #    include <wctype.h>
 #endif
 
-void ToLower(std::wstring& str)
+static void ToLower(std::wstring& str)
 {
     for (unsigned i = 0; i < str.length(); i++)
         str[i] = towlower(str[i]);
 }
 
-void ReplaceSlashes(std::wstring& path, wchar replaceWith)
+static void ReplaceSlashes(std::wstring& path, wchar replaceWith)
 {
     for (unsigned i = 0; i < path.length(); i++)
     {

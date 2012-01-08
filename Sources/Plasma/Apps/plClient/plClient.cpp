@@ -2533,6 +2533,7 @@ void plClient::IHandlePreloaderMsg (plPreloaderMsg * msg) {
 }
 
 //============================================================================
+extern hsBool gUseExternPython;
 void plClient::IHandleNetCommAuthMsg (plNetCommAuthMsg * msg) {
 
     plgDispatch::Dispatch()->UnRegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
@@ -2555,7 +2556,8 @@ void plClient::IHandleNetCommAuthMsg (plNetCommAuthMsg * msg) {
     plgDispatch::Dispatch()->RegisterForExactType(plPreloaderMsg::Index(), GetKey());
 
     // Precache our secure files
-    pfSecurePreloader::GetInstance()->RequestFileGroup(L"Python", L"pak");
+    if (!gUseExternPython)
+        pfSecurePreloader::GetInstance()->RequestFileGroup(L"Python", L"pak");
     pfSecurePreloader::GetInstance()->RequestFileGroup(L"SDL", L"sdl");
     pfSecurePreloader::GetInstance()->Start();
 }
