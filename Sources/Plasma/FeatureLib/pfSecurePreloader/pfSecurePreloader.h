@@ -42,15 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __pfSecurePreloader_h__
 #define __pfSecurePreloader_h__
 
-#include "hsTypes.h"
-#include "hsStlUtils.h"
-#include "hsCritSect.h"
-#include "hsStream.h"
-#include "plFile/plSecureStream.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/hsKeyedObject.h"
-
+#include "plNetGameLib/plNetGameLib.h"
+#include <queue>
 
 class plOperationProgress;
+class hsRAMStream;
 
 ///////////////////////////////////////////////////////////////////////////////
 // pfSecurePreloader - a class for handling files we want downloaded from the
@@ -60,75 +58,40 @@ class plOperationProgress;
 class pfSecurePreloader : public hsKeyedObject
 {
 private:
-    static pfSecurePreloader * fInstance;
 
-    struct fileRequest
-    {
-        enum requestType {kSingleFile, kFileList};
-        requestType     fType;
-        std::wstring    fPath; // filename if kSingleFile, path if kFileList
-        std::wstring    fExt; // blank if kSingleFile, extension if kFileList
-    };
-    std::vector<fileRequest> fRequests;
+    static pfSecurePreloader*     fInstance;
+    std::queue<const wchar_t*>    fManifestEntries;
+    std::queue<const wchar_t*>    fDownloadEntries;
+    plOperationProgress*          fProgress;
+    UInt32                        fEncryptionKey[4];
+    bool                          fLegacyMode;
 
-    struct fileInfo
-    {
-        std::wstring    fOriginalNameAndPath; // the human-readable name
-        std::wstring    fGarbledNameAndPath; // the garbled temp name of the file on disk
-        UInt32          fSizeInBytes; // the total size of the file
-        bool            fDownloading; // is this file currently downloading?
-        bool            fDownloaded; // is this file completely downloaded?
-        bool            fLocal; // is the file a local copy?
-    };
-    std::map<std::wstring, fileInfo> fFileInfoMap; // key is human-readable name
-    std::map<std::wstring, hsStream*> fD2DStreams; // direct-to-disk streams, only used while downloading from the server
-
-    UInt32 fNumInfoRequestsRemaining; // the number of file info requests that are still pending
-    UInt32 fNumDownloadRequestsRemaining; // the number of file download requests that are still pending
-    UInt32 fTotalDataDownload; // the amount of data we need to download, for progress bar tracking
-    UInt32 fTotalDataReceived; // the amount of data we have already preloaded, for progress bar tracking
-    bool   fNetError;
-    bool   fInitialized;
-
-    UInt32 fEncryptionKey[4]; // encryption key for all the secure files
-
-    plOperationProgress* fProgressBar;
-
-    void IIssueDownloadRequests ();
-    void IPreloadComplete ();
-
-    void ICleanupStreams(); // closes and deletes all streams
-
-    void INotifyAuthReconnected ();
-    
-    pfSecurePreloader ();
+    hsRAMStream* LoadToMemory(const wchar_t* file) const;
+    void SaveFile(hsStream* file, const wchar_t* name) const;
+    bool IsZipped(const wchar_t* filename) const;
 
 public:
+    pfSecurePreloader();
+    ~pfSecurePreloader();
+
     CLASSNAME_REGISTER(pfSecurePreloader);
     GETINTERFACE_ANY(pfSecurePreloader, hsKeyedObject);
 
-    ~pfSecurePreloader ();
-    
-    void Init ();
-    void Shutdown ();
+    void Init();
+    void Start();
+    void Terminate();
+    void Finish();
+    void Shutdown();
 
-    // Client interface functions
-    void RequestSingleFile(std::wstring filename); // queues a single file to be preloaded (does nothing if already preloaded)
-    void RequestFileGroup(std::wstring dir, std::wstring ext); // queues a group of files to be preloaded (does nothing if already preloaded)
-    void Start(); // sends all queued requests (does nothing if already preloaded)
-    void Cleanup(); // closes all file pointers and cleans up after itself
+    void PreloadManifest(const NetCliFileManifestEntry manifestEntries[], UInt32 entryCount);
+    void PreloadManifest(const NetCliAuthFileInfo manifestEntries[], UInt32 entryCount);
+    void PreloadNextFile();
+    void FilePreloaded(const wchar_t* filename, hsStream* stream);
+   
+    plOperationProgress* GetProgressBar() { return fProgress; }
 
-    // Functions for the network callbacks
-    void RequestFinished(const std::vector<std::wstring> & filenames, const std::vector<UInt32> & sizes, bool succeeded);
-    void UpdateProgressBar(UInt32 bytesReceived);
-    void FinishedDownload(std::wstring filename, bool succeeded);
-
-    // Instance handling
-    static pfSecurePreloader * GetInstance ();
-    static bool IsInstanced ();
-
-    // hsKeyedObject
-    hsBool MsgReceive (plMessage * msg);
+    static pfSecurePreloader* GetInstance();
+    static void SetInstance(pfSecurePreloader* instance) { fInstance = instance; }
 };
 
 #endif // __pfSecurePreloader_h__

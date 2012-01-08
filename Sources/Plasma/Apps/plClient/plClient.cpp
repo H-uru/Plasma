@@ -317,10 +317,9 @@ hsBool plClient::Shutdown()
         plAgeLoader::SetInstance(nil);
     }
     
-    if (pfSecurePreloader::IsInstanced())
+    if (pfSecurePreloader::GetInstance())
     {
-        pfSecurePreloader::GetInstance()->Shutdown();
-        // pfSecurePreloader handles its own fixed key unregistration
+        pfSecurePreloader::GetInstance()->Shutdown(); // will unregister itself
     }
 
     if (fInputManager)
@@ -2517,6 +2516,8 @@ void plClient::ICompleteInit () {
 void plClient::IHandlePreloaderMsg (plPreloaderMsg * msg) {
 
     plgDispatch::Dispatch()->UnRegisterForExactType(plPreloaderMsg::Index(), GetKey());
+    if (pfSecurePreloader* sp = pfSecurePreloader::GetInstance())
+        sp->Shutdown();
     
     if (!msg->fSuccess) {
         char str[1024];
@@ -2555,7 +2556,5 @@ void plClient::IHandleNetCommAuthMsg (plNetCommAuthMsg * msg) {
     plgDispatch::Dispatch()->RegisterForExactType(plPreloaderMsg::Index(), GetKey());
 
     // Precache our secure files
-    pfSecurePreloader::GetInstance()->RequestFileGroup(L"Python", L"pak");
-    pfSecurePreloader::GetInstance()->RequestFileGroup(L"SDL", L"sdl");
     pfSecurePreloader::GetInstance()->Start();
 }
