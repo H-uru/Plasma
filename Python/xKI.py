@@ -4974,7 +4974,7 @@ class xKI(ptModifier):
                     return "Unknown"
             if ageInfo.getAgeInstanceName() == "Ae'gura":
                 return "D'ni-Ae'gura"
-            return self.IFilterAgeName(xLocTools.LocalizeAgeName(ageInfo.getAgeInstanceName()))
+            return self.IFilterAgeName(ageInfo.getAgeInstanceName())
         else:
             return "?UNKNOWN?"
 
@@ -8973,7 +8973,7 @@ class xKI(ptModifier):
                             contentDate.hide()
                             contentFrom.setForeColor(DniSelectableColor)
                             contentFrom.setFontSize(10)
-                            contentFrom.setString(self.IGetAgeInstanceName())
+                            contentFrom.setString(self.IGetAgeDisplayName())
                             contentFrom.show()
                             # find the button to enable it
                             lmbutton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((id-100)/10)+kBKIListModeCreateBtn))
