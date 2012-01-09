@@ -100,6 +100,7 @@ namespace plFileUtils
     void StripFile(char* pathAndName);
     void StripFile(wchar* pathAndName);
     void StripExt(char* fileName);
+    void StripExt(wchar* fileName);
 
     // Get the size of the given file in bytes
     UInt32      GetFileSize( const char *path );
