@@ -7,14 +7,12 @@ include_directories("../../PubUtilLib")
 set(plAgeLoader_SOURCES
     plAgeLoader.cpp
     plAgeLoaderPaging.cpp
-    plBackgroundDownloader.cpp
     plResPatcher.cpp
 )
 
 set(plAgeLoader_HEADERS
     plAgeLoader.h
     plAgeLoaderCreatable.h
-    plBackgroundDownloader.h
     plResPatcher.h
 )
 
