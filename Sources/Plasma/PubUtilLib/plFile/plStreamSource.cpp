@@ -128,7 +128,12 @@ hsStream* plStreamSource::GetFile(std::wstring filename)
             if (plSecureStream::IsSecureFile(sFilename.c_str()))
             {
                 UInt32 encryptionKey[4];
-                plFileUtils::GetSecureEncryptionKey(sFilename.c_str(), encryptionKey, 4);
+                if (!plFileUtils::GetSecureEncryptionKey(sFilename.c_str(), encryptionKey, 4))
+                {
+                    FATAL("Hey camper... You need an NTD key file!");
+                    return nil;
+                }
+
                 fFileData[filename].fStream = plSecureStream::OpenSecureFile(sFilename.c_str(), 0, encryptionKey);
             }
             else // otherwise it is an encrypted or plain stream, this call handles both
