@@ -77,6 +77,22 @@ fDeleteOnExit(deleteOnExit)
         memcpy(&fKey, &kDefaultKey, sizeof(kDefaultKey));
 }
 
+plSecureStream::plSecureStream(hsStream* base, UInt32* key) :
+fRef(INVALID_HANDLE_VALUE),
+fActualFileSize(0),
+fBufferedStream(false),
+fRAMStream(nil),
+fWriteFileName(nil),
+fOpenMode(kOpenFail),
+fDeleteOnExit(false)
+{
+    if (key)
+        memcpy(&fKey, key, sizeof(kDefaultKey));
+    else
+        memcpy(&fKey, &kDefaultKey, sizeof(kDefaultKey));
+    Open(base);
+}
+
 plSecureStream::~plSecureStream()
 {
 }
@@ -230,6 +246,39 @@ hsBool plSecureStream::Open(const wchar* name, const wchar* mode)
         fOpenMode = kOpenFail;
         return false;
     }
+}
+
+hsBool plSecureStream::Open(hsStream* stream)
+{
+    UInt32 pos = stream->GetPosition();
+    stream->Rewind();
+    if (!ICheckMagicString(stream))
+        return false;
+
+    fActualFileSize = stream->ReadLE32();
+    UInt32 trimSize = kMagicStringLen + sizeof(UInt32) + fActualFileSize;
+    fRAMStream = new hsRAMStream;
+    while (!stream->AtEnd())
+    {
+        // Don't write out any garbage
+        UInt32 size;
+        if ((trimSize - stream->GetPosition()) < kEncryptChunkSize)
+            size = (trimSize - stream->GetPosition());
+        else
+            size = kEncryptChunkSize;
+
+        UInt8 buf[kEncryptChunkSize];
+        stream->Read(kEncryptChunkSize, &buf);
+        IDecipher((UInt32*)&buf, kEncryptChunkSize / sizeof(UInt32));
+        fRAMStream->Write(size, &buf);
+    }
+
+    stream->SetPosition(pos);
+    fRAMStream->Rewind();
+    fPosition = 0;
+    fBufferedStream = true;
+    fOpenMode = kOpenRead;
+    return true;
 }
 
 hsBool plSecureStream::Close()
@@ -596,6 +645,14 @@ bool plSecureStream::FileDecrypt(const wchar* fileName, UInt32* key /* = nil */)
     plFileUtils::FileMove(L"crypt.dat", fileName);
 
     return true;
+}
+
+bool plSecureStream::ICheckMagicString(hsStream* s)
+{
+    char magicString[kMagicStringLen+1];
+    s->Read(kMagicStringLen, &magicString);
+    magicString[kMagicStringLen] = '\0';
+    return (hsStrEQ(magicString, kMagicString) != 0);
 }
 
 bool plSecureStream::ICheckMagicString(hsFD fp)

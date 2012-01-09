@@ -1054,10 +1054,7 @@ hsBool hsRAMStream::AtEnd()
 UInt32 hsRAMStream::Read(UInt32 byteCount, void * buffer)
 {
     if (fBytesRead + byteCount > fAppender.Count() * fAppender.ElemSize())
-    {
-        hsThrow("Attempting to read past end of stream");
         byteCount = (fAppender.Count() * fAppender.ElemSize()) - fBytesRead;
-    }
 
     fBytesRead += byteCount;
     fPosition += byteCount;

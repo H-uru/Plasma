@@ -39,608 +39,401 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsSTLStream.h"
-#include "hsResMgr.h"
-#include "plgDispatch.h"
-#include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "pnNetCli/pnNetCli.h"
-#include "plNetGameLib/plNetGameLib.h"
-#include "plFile/plFileUtils.h"
-#include "plFile/plStreamSource.h"
-#include "plNetCommon/plNetCommon.h"
-#include "plProgressMgr/plProgressMgr.h"
-#include "plMessage/plPreloaderMsg.h"
-#include "plMessage/plNetCommMsgs.h"
+
 #include "pfSecurePreloader.h"
 
-#include "plNetClientComm/plNetClientComm.h"
+#include "hsStream.h"
+#include "plgDispatch.h"
+#include "plCompression/plZlibStream.h"
+#include "plEncryption/plChecksum.h"
+#include "plFile/plFileUtils.h"
+#include "plFile/plSecureStream.h"
+#include "plFile/plStreamSource.h"
+#include "plMessage/plNetCommMsgs.h"
+#include "plMessage/plPreloaderMsg.h"
+#include "plProgressMgr/plProgressMgr.h"
 
-extern  hsBool  gDataServerLocal;
+extern hsBool gDataServerLocal;
+pfSecurePreloader* pfSecurePreloader::fInstance = nil;
 
+/////////////////////////////////////////////////////////////////////
 
-// Max number of concurrent file downloads
-static const unsigned kMaxConcurrency   = 1;
+typedef std::pair<const wchar_t*, const wchar_t*> WcharPair;
 
-pfSecurePreloader * pfSecurePreloader::fInstance;
-
-///////////////////////////////////////////////////////////////////////////////
-// Callback routines for the network code
-
-// Called when a file's info is retrieved from the server
-static void DefaultFileListRequestCallback(ENetError result, void* param, const NetCliAuthFileInfo infoArr[], unsigned infoCount)
+struct AuthRequestParams
 {
-    bool success = !IS_NET_ERROR(result);
-    
-    std::vector<std::wstring> filenames;
-    std::vector<UInt32> sizes;
-    if (success)
-    {
-        filenames.reserve(infoCount);
-        sizes.reserve(infoCount);
-        for (unsigned curFile = 0; curFile < infoCount; curFile++)
-        {
-            filenames.push_back(infoArr[curFile].filename);
-            sizes.push_back(infoArr[curFile].filesize);
-        }
-    }
-    ((pfSecurePreloader*)param)->RequestFinished(filenames, sizes, success);
-}
+    pfSecurePreloader* fThis;
+    std::queue<WcharPair> fFileGroups;
 
-// Called when a file download is either finished, or failed
-static void DefaultFileRequestCallback(ENetError result, void* param, const wchar filename[], hsStream* stream)
-{
-    // Retry download unless shutting down or file not found
-    switch (result) {
-        case kNetSuccess:
-            ((pfSecurePreloader*)param)->FinishedDownload(filename, true);
-        break;
-        
-        case kNetErrFileNotFound:
-        case kNetErrRemoteShutdown:
-            ((pfSecurePreloader*)param)->FinishedDownload(filename, false);
-        break;
-        
-        default:
-            stream->Rewind();
-            NetCliAuthFileRequest(
-                filename,
-                stream, 
-                &DefaultFileRequestCallback,
-                param
-            );
-        break;
-    }
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Our custom stream for writing directly to disk securely, and updating the
-//  progress bar. Does NOT support reading (cause it doesn't need to)
-class Direct2DiskStream : public hsUNIXStream
-{
-protected:
-    wchar *         fWriteFileName;
-
-    pfSecurePreloader* fPreloader;
-
-public:
-    Direct2DiskStream(pfSecurePreloader* preloader);
-    ~Direct2DiskStream();
-
-    virtual hsBool Open(const char* name, const char* mode = "wb");
-    virtual hsBool Open(const wchar* name, const wchar* mode = L"wb");
-    virtual hsBool Close();
-    virtual UInt32 Read(UInt32 byteCount, void* buffer);
-    virtual UInt32 Write(UInt32 byteCount, const void* buffer);
+    AuthRequestParams(pfSecurePreloader* parent)
+        : fThis(parent) { }
 };
 
+/////////////////////////////////////////////////////////////////////
 
-Direct2DiskStream::Direct2DiskStream(pfSecurePreloader* preloader) :
-fWriteFileName(nil),
-fPreloader(preloader)
-{}
+void ProcAuthDownloadParams(AuthRequestParams* params);
 
-Direct2DiskStream::~Direct2DiskStream()
-{
-    Close();
-}
-
-hsBool Direct2DiskStream::Open(const char* name, const char* mode)
-{
-    wchar* wName = hsStringToWString(name);
-    wchar* wMode = hsStringToWString(mode);
-    hsBool ret = Open(wName, wMode);
-    delete [] wName;
-    delete [] wMode;
-    return ret;
-}
-
-hsBool Direct2DiskStream::Open(const wchar* name, const wchar* mode)
-{
-    if (0 != wcscmp(mode, L"wb")) {
-        hsAssert(0, "Unsupported open mode");
-        return false;
-    }
-    
-    fWriteFileName = TRACKED_NEW(wchar[wcslen(name) + 1]);
-    wcscpy(fWriteFileName, name);
-    
-//  LogMsg(kLogPerf, L"Opening disk file %S", fWriteFileName);
-    return hsUNIXStream::Open(name, mode);
-}
-
-hsBool Direct2DiskStream::Close()
-{
-    delete [] fWriteFileName;
-    fWriteFileName = nil;
-    return hsUNIXStream::Close();
-}
-
-UInt32 Direct2DiskStream::Read(UInt32 bytes, void* buffer)
-{
-    hsAssert(0, "not implemented");
-    return 0; // we don't read
-}
-
-UInt32 Direct2DiskStream::Write(UInt32 bytes, const void* buffer)
-{
-//  LogMsg(kLogPerf, L"Writing %u bytes to disk file %S", bytes, fWriteFileName);
-    fPreloader->UpdateProgressBar(bytes);
-    return hsUNIXStream::Write(bytes, buffer);
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// secure preloader class implementation
-
-// closes and deletes all streams
-void pfSecurePreloader::ICleanupStreams()
-{
-    if (fD2DStreams.size() > 0)
+void GotAuthSrvManifest(
+    ENetError                   result,
+    void*                       param,
+    const NetCliAuthFileInfo    infoArr[],
+    UInt32                      infoCount
+) {
+    AuthRequestParams* arp = (AuthRequestParams*)param;
+    if (IS_NET_ERROR(result))
     {
-        std::map<std::wstring, hsStream*>::iterator curStream;
-        for (curStream = fD2DStreams.begin(); curStream != fD2DStreams.end(); curStream++)
-        {
-            curStream->second->Close();
-            delete curStream->second;
-            curStream->second = nil;
-        }
-        fD2DStreams.clear();
+        FATAL("Failed to get AuthSrv manifest!");
+        arp->fThis->Terminate();
+        delete arp;
+    } else {
+        arp->fThis->PreloadManifest(infoArr, infoCount);
+        ProcAuthDownloadParams(arp);
     }
 }
 
-// queues a single file to be preloaded (does nothing if already preloaded)
-void pfSecurePreloader::RequestSingleFile(std::wstring filename)
-{
-    fileRequest request;
-    ZERO(request);
-    request.fType = fileRequest::kSingleFile;
-    request.fPath = filename;
-    request.fExt = L"";
-
-    fRequests.push_back(request);
-}
-
-// queues a group of files to be preloaded (does nothing if already preloaded)
-void pfSecurePreloader::RequestFileGroup(std::wstring dir, std::wstring ext)
-{
-    fileRequest request;
-    ZERO(request);
-    request.fType = fileRequest::kFileList;
-    request.fPath = dir;
-    request.fExt = ext;
-
-    fRequests.push_back(request);
-}
-
-// preloads all requested files from the server (does nothing if already preloaded)
-void pfSecurePreloader::Start()
-{
-    if (gDataServerLocal) {
-        // using local data, don't do anything
-        plPreloaderMsg * msg = TRACKED_NEW plPreloaderMsg();
-        msg->fSuccess = true;
-        msg->Send();
+void GotFileSrvManifest(
+    ENetError                     result, 
+    void*                         param, 
+    const wchar_t                 group[], 
+    const NetCliFileManifestEntry manifest[], 
+    UInt32                        entryCount
+) {
+    pfSecurePreloader* sp = (pfSecurePreloader*)param;
+    if (result == kNetErrFileNotFound)
+    {
+        AuthRequestParams* params = new AuthRequestParams(sp);
+        params->fFileGroups.push(WcharPair(L"Python", L"pak"));
+        params->fFileGroups.push(WcharPair(L"SDL", L"sdl"));
+        ProcAuthDownloadParams(params);
+        return;
+    } else if (!entryCount) {
+        FATAL("SecurePreloader manifest empty!");
+        sp->Terminate();
         return;
     }
 
-    NetCliAuthGetEncryptionKey(fEncryptionKey, 4); // grab the encryption key from the server
+    sp->PreloadManifest(manifest, entryCount);
+}
 
-    fNetError = false;
-
-    // make sure we are all cleaned up
-    ICleanupStreams();
-    fTotalDataReceived = 0;
-
-    // update the progress bar for downloading
-    if (!fProgressBar)
-        fProgressBar = plProgressMgr::GetInstance()->RegisterOperation((hsScalar)(fRequests.size()), "Getting file info...", plProgressMgr::kUpdateText, false, true);
-    
-    for (unsigned curRequest = 0; curRequest < fRequests.size(); curRequest++)
+void FileDownloaded(
+    ENetError       result,
+    void*           param,
+    const wchar_t   filename[],
+    hsStream*       writer
+) {
+    pfSecurePreloader* sp = (pfSecurePreloader*)param;
+    if (IS_NET_ERROR(result))
     {
-        fNumInfoRequestsRemaining++; // increment the counter
-        if (fRequests[curRequest].fType == fileRequest::kSingleFile)
-        {
-#ifndef PLASMA_EXTERNAL_RELEASE
-            // in internal releases, we can use on-disk files if they exist
-            if (plFileUtils::FileExists(fRequests[curRequest].fPath.c_str()))
-            {
-                fileInfo info;
-                info.fOriginalNameAndPath = fRequests[curRequest].fPath;
-                info.fSizeInBytes = plFileUtils::GetFileSize(info.fOriginalNameAndPath.c_str());
-                info.fDownloading = false;
-                info.fDownloaded = false;
-                info.fLocal = true;
+        FATAL("SecurePreloader download failed");
+        sp->Terminate();
+    } else {
+        sp->FilePreloaded(filename, writer);
+    }
+}
 
-                // generate garbled name
-                wchar_t pathBuffer[MAX_PATH + 1];
-                wchar_t filename[arrsize(pathBuffer)];
-                GetTempPathW(arrsize(pathBuffer), pathBuffer);
-                GetTempFileNameW(pathBuffer, L"CYN", 0, filename);
-                info.fGarbledNameAndPath = filename;
+void ProcAuthDownloadParams(AuthRequestParams* params)
+{
+    // Request the "manifests" until there are none left, then download the files
+    if (params->fFileGroups.empty())
+    {
+        params->fThis->PreloadNextFile();
+        delete params;
+    } else {
+        WcharPair wp = params->fFileGroups.front();
+        params->fFileGroups.pop();
+        NetCliAuthFileListRequest(wp.first, wp.second, GotAuthSrvManifest, params);
+    }
+}
 
-                fTotalDataDownload += info.fSizeInBytes;
+/////////////////////////////////////////////////////////////////////
 
-                fFileInfoMap[info.fOriginalNameAndPath] = info;
-            }
-            // internal client will still request it, even if it exists locally,
-            // so that things get updated properly
-#endif // PLASMA_EXTERNAL_RELEASE
-            NetCliAuthFileListRequest(
-                fRequests[curRequest].fPath.c_str(),
-                nil,
-                &DefaultFileListRequestCallback,
-                (void*)this
-            );
-        }
+class pfSecurePreloaderStream : public plZlibStream
+{
+    plOperationProgress* fProgress;
+    bool                 fIsZipped;
+
+public:
+
+    pfSecurePreloaderStream(plOperationProgress* prog, bool zipped)
+        : fProgress(prog), fIsZipped(zipped), plZlibStream()
+    { 
+        fOutput = new hsRAMStream;
+    }
+
+    ~pfSecurePreloaderStream()
+    {
+        delete fOutput;
+        fOutput = nil;
+        plZlibStream::Close();
+    }
+
+    hsBool AtEnd() { return fOutput->AtEnd(); }
+    UInt32 GetEOF() { return fOutput->GetEOF(); }
+    UInt32 GetPosition() const { return fOutput->GetPosition(); }
+    UInt32 GetSizeLeft() const { return fOutput->GetSizeLeft(); }
+    UInt32 Read(UInt32 count, void* buf) { return fOutput->Read(count, buf); }
+    void Rewind() { fOutput->Rewind(); }
+    void SetPosition(UInt32 pos) { fOutput->SetPosition(pos); }
+    void Skip(UInt32 deltaByteCount) { fOutput->Skip(deltaByteCount); }
+
+    UInt32 Write(UInt32 count, const void* buf)
+    {
+        if (fProgress)
+            fProgress->Increment((hsScalar)count);
+        if (fIsZipped)
+            return plZlibStream::Write(count, buf);
         else
-        {
-#ifndef PLASMA_EXTERNAL_RELEASE
-            // in internal releases, we can use on-disk files if they exist
-            // Build the search string as "dir\\*.ext"
-            wchar searchStr[MAX_PATH];
+            return fOutput->Write(count, buf);
+    }
+};
 
-            PathAddFilename(searchStr, fRequests[curRequest].fPath.c_str(), L"*", arrsize(searchStr));
-            PathSetExtension(searchStr, searchStr, fRequests[curRequest].fExt.c_str(), arrsize(searchStr));
+/////////////////////////////////////////////////////////////////////
 
-            ARRAY(PathFind) paths;
-            PathFindFiles(&paths, searchStr, kPathFlagFile); // find all files that match
+pfSecurePreloader::pfSecurePreloader()
+    : fProgress(nil), fLegacyMode(false)
+{ }
 
-            // convert it to our little file info array
-            PathFind* curFile = paths.Ptr();
-            PathFind* lastFile = paths.Term();
-            while (curFile != lastFile) {
-                fileInfo info;
-                info.fOriginalNameAndPath = curFile->name;
-                info.fSizeInBytes = (UInt32)curFile->fileLength;
-                info.fDownloading = false;
-                info.fDownloaded = false;
-                info.fLocal = true;
+pfSecurePreloader::~pfSecurePreloader()
+{
+    while (fDownloadEntries.size())
+    {
+        free((void*)fDownloadEntries.front());
+        fDownloadEntries.pop();
+    }
 
-                // generate garbled name
-                wchar_t pathBuffer[MAX_PATH + 1];
-                wchar_t filename[arrsize(pathBuffer)];
-                GetTempPathW(arrsize(pathBuffer), pathBuffer);
-                GetTempFileNameW(pathBuffer, L"CYN", 0, filename);
-                info.fGarbledNameAndPath = filename;
-
-                fTotalDataDownload += info.fSizeInBytes;
-
-                fFileInfoMap[info.fOriginalNameAndPath] = info;
-                curFile++;
-            }
-#endif // PLASMA_EXTERNAL_RELEASE
-
-            NetCliAuthFileListRequest(
-                fRequests[curRequest].fPath.c_str(),
-                fRequests[curRequest].fExt.c_str(),
-                &DefaultFileListRequestCallback,
-                (void*)this
-            );
-        }
+    while (fManifestEntries.size())
+    {
+        free((void*)fManifestEntries.front());
+        fManifestEntries.pop();
     }
 }
 
-// closes all file pointers and cleans up after itself
-void pfSecurePreloader::Cleanup()
+hsRAMStream* pfSecurePreloader::LoadToMemory(const wchar_t* file) const
 {
-    ICleanupStreams();
+    if (!plFileUtils::FileExists(file))
+        return nil;
 
-    fRequests.clear();
-    fFileInfoMap.clear();
-
-    fNumInfoRequestsRemaining = 0;
-    fTotalDataDownload = 0;
-    fTotalDataReceived = 0;
-
-    DEL(fProgressBar);
-    fProgressBar = nil;
-}
-
-//============================================================================
-void pfSecurePreloader::RequestFinished(const std::vector<std::wstring> & filenames, const std::vector<UInt32> & sizes, bool succeeded)
-{
-    fNetError |= !succeeded;
+    hsUNIXStream s;
+    hsRAMStream* ram = new hsRAMStream;
+    s.Open(file);
     
-    if (succeeded)
-    {
-        unsigned count = 0;
-        for (int curFile = 0; curFile < filenames.size(); curFile++)
-        {
-            if (fFileInfoMap.find(filenames[curFile]) != fFileInfoMap.end())
-                continue; // if it is a duplicate, ignore it (the duplicate is probably one we found locally)
+    UInt32 loadLen = 1024 * 1024;
+    UInt8* buf = new UInt8[loadLen];
+    while (UInt32 read = s.Read(loadLen, buf))
+        ram->Write(read, buf);
+    delete[] buf;
 
-            fileInfo info;
-            info.fOriginalNameAndPath = filenames[curFile];
-            info.fSizeInBytes = sizes[curFile];
-            info.fDownloading = false;
-            info.fDownloaded = false;
-            info.fLocal = false; // if we get here, it was retrieved remotely
-
-            // generate garbled name
-            wchar_t pathBuffer[MAX_PATH + 1];
-            wchar_t filename[arrsize(pathBuffer)];
-            GetTempPathW(arrsize(pathBuffer), pathBuffer);
-            GetTempFileNameW(pathBuffer, L"CYN", 0, filename);
-            info.fGarbledNameAndPath = filename;
-
-            fTotalDataDownload += info.fSizeInBytes;
-
-            fFileInfoMap[info.fOriginalNameAndPath] = info;
-            ++count;
-        }
-        LogMsg(kLogPerf, "Added %u files to secure download queue", count);
-    }
-    if (fProgressBar)
-        fProgressBar->Increment(1.f);
-        
-    --fNumInfoRequestsRemaining;    // even if we fail, decrement the counter
-
-    if (succeeded) {
-        DEL(fProgressBar);
-        fProgressBar = plProgressMgr::GetInstance()->RegisterOperation((hsScalar)(fTotalDataDownload), "Downloading...", plProgressMgr::kUpdateText, false, true);
-
-        // Issue some file download requests (up to kMaxConcurrency)
-        IIssueDownloadRequests();
-    }
-    else {
-        IPreloadComplete();
-    }   
+    s.Close();
+    ram->Rewind();
+    return ram;
 }
 
-//============================================================================
-void pfSecurePreloader::IIssueDownloadRequests () {
+void pfSecurePreloader::SaveFile(hsStream* file, const wchar_t* name) const
+{
+    hsUNIXStream s;
+    s.Open(name, L"wb");
+    UInt32 pos = file->GetPosition();
+    file->Rewind();
 
-    std::map<std::wstring, fileInfo>::iterator curFile;
-    for (curFile = fFileInfoMap.begin(); curFile != fFileInfoMap.end(); curFile++)
+    UInt32 loadLen = 1024 * 1024;
+    UInt8* buf = new UInt8[loadLen];
+    while (UInt32 read = file->Read(loadLen, buf))
+        s.Write(read, buf);
+    file->SetPosition(pos);
+    s.Close();
+    delete[] buf;
+}
+
+bool pfSecurePreloader::IsZipped(const wchar_t* filename) const
+{
+    return wcscmp(plFileUtils::GetFileExt(filename), L"gz") == 0;
+}
+
+void pfSecurePreloader::PreloadNextFile()
+{
+    if (fManifestEntries.empty())
     {
-        // Skip files already downloaded or currently downloading
-        if (curFile->second.fDownloaded || curFile->second.fDownloading)
-            continue;
-            
-        std::wstring filename = curFile->second.fOriginalNameAndPath;
-#ifndef PLASMA_EXTERNAL_RELEASE
-        // in internal releases, we can use on-disk files if they exist
-        if (plFileUtils::FileExists(filename.c_str()))
-        {
-            // don't bother streaming, just make the secure stream using the local file
-
-            // a local key overrides the server-downloaded key
-            UInt32 localKey[4];
-            bool hasLocalKey = plFileUtils::GetSecureEncryptionKey(filename.c_str(), localKey, arrsize(localKey));
-            hsStream* stream = nil;
-            if (hasLocalKey)
-                stream = plSecureStream::OpenSecureFile(filename.c_str(), 0, localKey);
-            else
-                stream = plSecureStream::OpenSecureFile(filename.c_str(), 0, fEncryptionKey);
-
-            // add it to the stream source
-            bool added = plStreamSource::GetInstance()->InsertFile(filename.c_str(), stream);
-            if (!added)
-                DEL(stream); // wasn't added, so nuke our local copy
-
-            // and make sure the vars are set up right
-            curFile->second.fDownloaded = true;
-            curFile->second.fLocal = true;
-        }
-        else
-#endif
-        {
-            // Enforce concurrency limit
-            if (fNumDownloadRequestsRemaining >= kMaxConcurrency)
-                break;
-
-            curFile->second.fDownloading = true;
-            curFile->second.fDownloaded = false;
-            curFile->second.fLocal = false;
-
-            // create and setup the stream
-            Direct2DiskStream* fileStream = TRACKED_NEW Direct2DiskStream(this);
-            fileStream->Open(curFile->second.fGarbledNameAndPath.c_str(), L"wb");
-            fD2DStreams[filename] = (hsStream*)fileStream;
-
-            // request the file from the server
-            LogMsg(kLogPerf, L"Requesting secure file:%s", filename.c_str());
-            ++fNumDownloadRequestsRemaining;
-            NetCliAuthFileRequest(
-                filename.c_str(),
-                (hsStream*)fileStream, 
-                &DefaultFileRequestCallback,
-                this
-            );
-        }
+        Finish();
+        return;
     }
+
+    const wchar_t* filename = fDownloadEntries.front();
+    hsStream* s = new pfSecurePreloaderStream(fProgress, IsZipped(filename));
     
-    if (!fNumDownloadRequestsRemaining)
-        IPreloadComplete();
-}
-
-void pfSecurePreloader::UpdateProgressBar(UInt32 bytesReceived)
-{
-    fTotalDataReceived += bytesReceived;
-    if (fTotalDataReceived > fTotalDataDownload)
-        fTotalDataReceived = fTotalDataDownload; // shouldn't happen... but just in case
-
-    if (fProgressBar)
-        fProgressBar->Increment((hsScalar)bytesReceived);
-}
-
-void pfSecurePreloader::FinishedDownload(std::wstring filename, bool succeeded)
-{
-    for (;;)
-    {
-        if (fFileInfoMap.find(filename) == fFileInfoMap.end())
-        {
-            // file doesn't exist... abort
-            succeeded = false;
-            break;
-        }
-
-        fFileInfoMap[filename].fDownloading = false;
-
-        // close and delete the writer stream (even if we failed)
-        fD2DStreams[filename]->Close();
-        delete fD2DStreams[filename];
-        fD2DStreams.erase(fD2DStreams.find(filename));
-
-        if (succeeded)
-        {
-            // open a secure stream to that file
-            hsStream* stream = plSecureStream::OpenSecureFile(
-                fFileInfoMap[filename].fGarbledNameAndPath.c_str(),
-                plSecureStream::kRequireEncryption | plSecureStream::kDeleteOnExit, // force delete and encryption
-                fEncryptionKey
-            );
-
-            bool addedToSource = plStreamSource::GetInstance()->InsertFile(filename.c_str(), stream);
-            if (!addedToSource)
-                DEL(stream); // cleanup if it wasn't added
-
-            fFileInfoMap[filename].fDownloaded = true;
-            break;
-        }
-        
-        // file download failed, clean up after it
-
-        // delete the temporary file
-        if (plFileUtils::FileExists(fFileInfoMap[filename].fGarbledNameAndPath.c_str()))
-            plFileUtils::RemoveFile(fFileInfoMap[filename].fGarbledNameAndPath.c_str(), true);
-
-        // and remove it from the info map
-        fFileInfoMap.erase(fFileInfoMap.find(filename));
-        break;
-    }
-        
-    fNetError |= !succeeded;
-    --fNumDownloadRequestsRemaining;
-    LogMsg(kLogPerf, L"Received secure file:%s, success:%s", filename.c_str(), succeeded ? L"Yep" : L"Nope");
-
-    if (!succeeded)
-        IPreloadComplete();
+    // Thankfully, both callbacks have the same arguments
+    if (fLegacyMode)
+        NetCliAuthFileRequest(filename, s, FileDownloaded, this);
     else
-        // Issue some file download requests (up to kMaxConcurrency)
-        IIssueDownloadRequests();
+        NetCliFileDownloadRequest(filename, s, FileDownloaded, this);
 }
 
-//============================================================================
-void pfSecurePreloader::INotifyAuthReconnected () {
+void pfSecurePreloader::Init()
+{
+    RegisterAs(kSecurePreloader_KEY);
+    // TODO: If we're going to support reconnects, then let's do it right.
+    // Later...
+    //plgDispatch::Dispatch()->RegisterForExactType(plNetCommAuthConnectedMsg::Index(), GetKey());
+}
 
-    // The secure file download network protocol will now just pick up downloading
-    // where it left off before the reconnect, so no need to reset in-progress files.
+void pfSecurePreloader::Start()
+{
+#ifndef PLASMA_EXTERNAL_RELEASE
+    // Using local data? Move along, move along...
+    if (gDataServerLocal)
+    {
+        Finish();
+        return;
+    }
+#endif
+
+    NetCliAuthGetEncryptionKey(fEncryptionKey, 4);
     
-    /*
-    std::map<std::wstring, fileInfo>::iterator curFile;
-    for (curFile = fFileInfoMap.begin(); curFile != fFileInfoMap.end(); curFile++) {
+    // TODO: Localize
+    fProgress = plProgressMgr::GetInstance()->RegisterOperation(0.0f, "Checking for Updates", plProgressMgr::kUpdateText, false, true);
 
-        // Reset files that were currently downloading
-        if (curFile->second.fDownloading)
-            curFile->second.fDownloading = false;
-    }
-
-    if (fNumDownloadRequestsRemaining > 0) {
-
-        LogMsg(kLogPerf, L"pfSecurePreloader: Auth reconnected, resetting in-progress file downloads");
-
-        // Issue some file download requests (up to kMaxConcurrency)
-        IIssueDownloadRequests();
-    }
-    */
+    // Now, we need to fetch the "SecurePreloader" manifest from the file server, which will contain the python and SDL files.
+    // We're basically reimplementing plResPatcher here, except preferring to keep everything in memory, then flush to disk 
+    // when we're done. If this fails, then we shall download everything from the AuthSrv like in the old days.
+    NetCliFileManifestRequest(GotFileSrvManifest, this, L"SecurePreloader");
 }
 
-//============================================================================
-void pfSecurePreloader::IPreloadComplete () {
-    DEL(fProgressBar);
-    fProgressBar = nil;
-    
-    plPreloaderMsg * msg = TRACKED_NEW plPreloaderMsg();
-    msg->fSuccess = !fNetError;
-    msg->Send();
+void pfSecurePreloader::Terminate()
+{
+    FATAL("pfSecurePreloader failure");
+
+    plPreloaderMsg* msg = new plPreloaderMsg;
+    msg->fSuccess = false;
+    plgDispatch::Dispatch()->MsgSend(msg);
 }
 
-//============================================================================
-hsBool pfSecurePreloader::MsgReceive (plMessage * msg) {
-
-    if (plNetCommAuthConnectedMsg * authMsg = plNetCommAuthConnectedMsg::ConvertNoRef(msg)) {
-    
-        INotifyAuthReconnected();
-        return true;
-    }
-    
-    return hsKeyedObject::MsgReceive(msg);
+void pfSecurePreloader::Finish()
+{
+    plPreloaderMsg* msg = new plPreloaderMsg;
+    msg->fSuccess = true;
+    plgDispatch::Dispatch()->MsgSend(msg);
 }
 
-//============================================================================
-pfSecurePreloader * pfSecurePreloader::GetInstance () {
-
-    if (!fInstance) {
-    
-        fInstance = NEWZERO(pfSecurePreloader);
-        fInstance->RegisterAs(kSecurePreloader_KEY);
+void pfSecurePreloader::Shutdown()
+{
+    SetInstance(nil);
+    if (fProgress)
+    {
+        delete fProgress;
+        fProgress = nil;
     }
 
-    return fInstance;
+    // Takes care of UnReffing us
+    UnRegisterAs(kSecurePreloader_KEY);
 }
 
-//============================================================================
-bool pfSecurePreloader::IsInstanced () {
+void pfSecurePreloader::PreloadManifest(const NetCliAuthFileInfo manifestEntries[], UInt32 entryCount)
+{
+    UInt32 totalBytes = 0;
+    if (fProgress)
+        totalBytes = (UInt32)fProgress->GetMax();
+    fLegacyMode = true;
 
-    return fInstance != nil;
-}
+    for (UInt32 i = 0; i < entryCount; ++i)
+    {
+        const NetCliAuthFileInfo mfs = manifestEntries[i];
+        fDownloadEntries.push(wcsdup(mfs.filename));
+        if (IsZipped(mfs.filename))
+        {
+            wchar_t* name = wcsdup(mfs.filename);
+            plFileUtils::StripExt(name);
+            fManifestEntries.push(name);
+            
+        } else
+            fManifestEntries.push(wcsdup(mfs.filename));
 
-//============================================================================
-void pfSecurePreloader::Init () {
-
-    if (!fInitialized) {
-        
-        fInitialized = true;
-        plgDispatch::Dispatch()->RegisterForExactType(plNetCommAuthConnectedMsg::Index(), GetKey());
+        totalBytes += mfs.filesize;
     }
-}
 
-//============================================================================
-void pfSecurePreloader::Shutdown () {
-
-    if (fInitialized) {
-        
-        fInitialized = false;
-        plgDispatch::Dispatch()->UnRegisterForExactType(plNetCommAuthConnectedMsg::Index(), GetKey());
-    }
-
-    if (fInstance) {
-    
-        fInstance->UnRegister();
-        fInstance = nil;
+    if (fProgress)
+    {
+        fProgress->SetLength((hsScalar)totalBytes);
+        fProgress->SetTitle("Downloading...");
     }
 }
 
-//============================================================================
-pfSecurePreloader::pfSecurePreloader () {
+void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEntries[], UInt32 entryCount)
+{
+    UInt32 totalBytes = 0;
+    for (UInt32 i = 0; i < entryCount; ++i)
+    {
+        const NetCliFileManifestEntry mfs = manifestEntries[i];
+        bool fetchMe = true;
+        hsRAMStream* s = nil;
+
+        if (plFileUtils::FileExists(mfs.clientName))
+        {
+            s = LoadToMemory(mfs.clientName);
+            if (s)
+            {
+                // Damn this
+                const char* md5 = hsWStringToString(mfs.md5);
+                plMD5Checksum srvHash;
+                srvHash.SetFromHexString(md5);
+                delete[] md5;
+
+                // Now actually copare the hashes
+                plMD5Checksum lclHash;
+                lclHash.CalcFromStream(s);
+                fetchMe = (srvHash != lclHash);
+            }
+        }
+
+        if (fetchMe)
+        {
+            fManifestEntries.push(wcsdup(mfs.clientName));
+            fDownloadEntries.push(wcsdup(mfs.downloadName));
+            if (IsZipped(mfs.downloadName))
+                totalBytes += mfs.zipSize;
+            else
+                totalBytes += mfs.fileSize;
+        } else {
+            plSecureStream* ss = new plSecureStream(s, fEncryptionKey);
+            plStreamSource::GetInstance()->InsertFile(mfs.clientName, ss);
+        }
+
+        if (s)
+            delete s;
+    }
+
+    if (totalBytes && fProgress)
+    {
+        fProgress->SetLength((hsScalar)totalBytes);
+        fProgress->SetTitle("Downloading...");
+    }
+
+    // This method uses only one manifest, so we're good to go now!
+    PreloadNextFile();
 }
 
-//============================================================================
-pfSecurePreloader::~pfSecurePreloader () {
+void pfSecurePreloader::FilePreloaded(const wchar_t* file, hsStream* stream)
+{
+    // Clear out queue
+    fDownloadEntries.pop();
+    const wchar_t* clientName = fManifestEntries.front(); // Stolen by plStreamSource
+    fManifestEntries.pop();
 
-    Cleanup();
+    if (!fLegacyMode) // AuthSrv data caching is useless
+    {
+        plFileUtils::EnsureFilePathExists(clientName);
+        SaveFile(stream, clientName);
+    }
+
+    plSecureStream* ss = new plSecureStream(stream, fEncryptionKey);
+    plStreamSource::GetInstance()->InsertFile(clientName, ss);
+    delete stream;        // SecureStream holds its own decrypted buffer
+
+    // Continue down the warpath
+    PreloadNextFile();
+}
+
+pfSecurePreloader* pfSecurePreloader::GetInstance()
+{
+    if (!fInstance)
+        fInstance = new pfSecurePreloader;
+    return fInstance; 
 }
