@@ -59,7 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClientComm/plNetClientComm.h"
 #include "plAgeLoader/plAgeLoader.h"
-#include "plAgeLoader/plBackgroundDownloader.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plVault/plVault.h"
 
@@ -201,8 +200,6 @@ void plNCAgeJoiner::Complete (bool success, const char msg[]) {
         DEL(this);
     }
 
-    if (plBackgroundDownloader::GetInstance())
-        plBackgroundDownloader::GetInstance()->UnPause();
 }
 
 //============================================================================

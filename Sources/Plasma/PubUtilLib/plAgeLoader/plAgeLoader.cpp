@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 //#include "hsTimer.h"
 #include "plResPatcher.h"
-#include "plBackgroundDownloader.h"
 #if HS_BUILD_FOR_WIN32
 #    include "process.h"    // for getpid()
 #else
@@ -77,7 +76,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 extern  hsBool  gDataServerLocal;
-extern  hsBool  gUseBackgroundDownloader;
 
 // static 
 plAgeLoader* plAgeLoader::fInstance=nil;
@@ -120,9 +118,6 @@ void plAgeLoader::Init()
     RegisterAs( kAgeLoader_KEY );
     plgDispatch::Dispatch()->RegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
     plgDispatch::Dispatch()->RegisterForExactType(plClientMsg::Index(), GetKey());
-
-    if (!gDataServerLocal && gUseBackgroundDownloader)
-        plBackgroundDownloader::StartThread();
 }
 
 //
