@@ -91,31 +91,43 @@ plMD5Checksum::plMD5Checksum( const char *fileName )
     CalcFromFile( fileName );
 }
 
+plMD5Checksum::plMD5Checksum( hsStream* stream )
+{
+    CalcFromStream(stream);
+}
+
 void plMD5Checksum::Clear()
 {
     memset( fChecksum, 0, sizeof( fChecksum ) );
     fValid = false;
 }
 
-void    plMD5Checksum::CalcFromFile( const char *fileName)
+void    plMD5Checksum::CalcFromFile( const char *fileName )
 {
-    FILE *fp;
+    hsUNIXStream s;
     fValid = false;
     
-    if( fp = fopen(fileName, "rb" ) )
+    if( s.Open(fileName) )
     {
-        unsigned loadLen = 1024 * 1024;
-        Start();
-
-        UInt8 *buf = TRACKED_NEW UInt8[loadLen];
-    
-        while(int read = fread(buf, sizeof(UInt8), loadLen, fp))
-            AddTo( read, buf );
-        delete[] buf;
-
-        Finish();
-        fclose(fp);
+        CalcFromStream(&s);
+        s.Close();
     }
+}
+
+void plMD5Checksum::CalcFromStream( hsStream* stream )
+{
+    UInt32 sPos = stream->GetPosition();
+    unsigned loadLen = 1024 * 1024;
+    Start();
+
+    UInt8 *buf = TRACKED_NEW UInt8[loadLen];
+    
+    while(int read = stream->Read(loadLen, buf))
+        AddTo( read, buf );
+    delete[] buf;
+
+    Finish();
+    stream->SetPosition(sPos);
 }
 
 void    plMD5Checksum::Start( void )

@@ -413,6 +413,13 @@ void plFileUtils::StripExt(char* fileName)
         *(ext-1) = '\0';
 }
 
+void plFileUtils::StripExt(wchar* fileName)
+{
+    wchar* ext = (wchar*)GetFileExt(fileName);
+    if (ext)
+        *(ext-1) = L'\0';
+}
+
 const char* plFileUtils::GetFileExt(const char* pathAndName)
 {
     const char* fileName = GetFileName(pathAndName);
