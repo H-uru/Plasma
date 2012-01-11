@@ -58,6 +58,8 @@ public:
     SumStorage GetChecksum() { return fSum; }
 };
 
+class hsStream;
+
 class plMD5Checksum 
 {
     protected:
@@ -74,11 +76,13 @@ class plMD5Checksum
         plMD5Checksum();
         plMD5Checksum( const plMD5Checksum &rhs );
         plMD5Checksum( const char *fileName );
+        plMD5Checksum( hsStream* stream );
 
         hsBool  IsValid( void ) const { return fValid; }
         void    Clear();
 
         void    CalcFromFile( const char *fileName );
+        void    CalcFromStream( hsStream* stream );
 
         void    Start( void );
         void    AddTo( UInt32 size, const UInt8 *buffer );
