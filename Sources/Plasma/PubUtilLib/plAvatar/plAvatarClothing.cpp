@@ -1232,24 +1232,21 @@ hsBool plClothingOutfit::MsgReceive(plMessage* msg)
         if (fAvatar && fGroup != plClothingMgr::kClothingBaseNoOptions)
         {
             plDrawable *spans = fAvatar->FindDrawable();
-            const hsBounds3Ext &bnds = spans->GetWorldBounds();
-            if (bnds.GetType() == kBoundsNormal)
-            {
-                // This is a bit hacky... The drawable code has just run through and updated
-                // each span's bounds (see plDrawableSpans::IUpdateMatrixPaletteBoundsHack())
-                // but not the world bounds for the entire drawable. So we tell the space tree
-                // to refresh. However, the pageTreeMgr would then get confused because the
-                // space tree is no longer dirty (see plPageTreeMgr::IRefreshTree()), 
-                // causing the avatar to only draw if the origin is in view. 
-                // So we just force it dirty, and everyone's happy.
-                spans->GetSpaceTree()->Refresh();
-                spans->GetSpaceTree()->MakeDirty();
+            // This is a bit hacky... The drawable code has just run through and updated
+            // each span's bounds (see plDrawableSpans::IUpdateMatrixPaletteBoundsHack())
+            // but not the world bounds for the entire drawable. So we tell the space tree
+            // to refresh. However, the pageTreeMgr would then get confused because the
+            // space tree is no longer dirty (see plPageTreeMgr::IRefreshTree()), 
+            // causing the avatar to only draw if the origin is in view. 
+            // So we just force it dirty, and everyone's happy.
+            spans->GetSpaceTree()->Refresh();
+            spans->GetSpaceTree()->MakeDirty();
 
-                // Where were we? Oh yeah... if this avatar is in view it needs a texture. Tell
-                // the pipeline.
-                if (preMsg->Pipeline()->TestVisibleWorld(spans->GetSpaceTree()->GetWorldBounds()))
-                    preMsg->Pipeline()->SubmitClothingOutfit(this);             
-            }
+            // Where were we? Oh yeah... if this avatar is in view it needs a texture. Tell
+            // the pipeline.
+            const hsBounds3Ext &bnds = spans->GetSpaceTree()->GetWorldBounds();
+            if ((bnds.GetType() == kBoundsNormal) && preMsg->Pipeline()->TestVisibleWorld(bnds))
+                preMsg->Pipeline()->SubmitClothingOutfit(this);
         }
     }
  
