@@ -3439,38 +3439,6 @@ bool VaultHasChronicleEntry (const wchar entryName[], int entryType) {
 }
 
 //============================================================================
-void VaultAddChronicleEntry (const wchar entryName[], int entryType, const wchar entryValue[]) {
-    // Sometimes we try to create chrons in StartUp.
-    // This is bad...
-    if (GetPlayerNode() == nil)
-        return;
-
-    if (RelVaultNode* rvnChrn = VaultFindChronicleEntryIncRef(entryName, entryType)) {
-        VaultChronicleNode chrnNode(rvnChrn);
-        chrnNode.SetEntryValue(entryValue);
-        rvnChrn->DecRef();
-    } else {
-        NetVaultNode* templateNode = NEWZERO(NetVaultNode);
-        templateNode->IncRef();
-        templateNode->SetNodeType(plVault::kNodeType_Chronicle);
-        VaultChronicleNode chrnNode(templateNode);
-        chrnNode.SetEntryName(entryName);
-        chrnNode.SetEntryType(entryType);
-        chrnNode.SetEntryValue(entryValue);
-        VaultCreateNode(templateNode, (FVaultCreateNodeCallback)(_VaultAddChronicleEntryCB), nil, nil);
-        templateNode->DecRef();
-    }
-}
-
-void _VaultAddChronicleEntryCB(ENetError result, void* state, void * param, RelVaultNode*  node) {
-    if (result == kNetSuccess) {
-        RelVaultNode* rvnFldr = GetChildFolderNode(GetPlayerNode(), plVault::kChronicleFolder, 1);
-        if (rvnFldr != nil) 
-            VaultAddChildNode(rvnFldr->nodeId, node->nodeId, 0, nil, nil);
-    }
-}
-
-//============================================================================
 void VaultAddChronicleEntryAndWait (
     const wchar entryName[],
     int         entryType,
