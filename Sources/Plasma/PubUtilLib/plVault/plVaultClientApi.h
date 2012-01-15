@@ -356,8 +356,6 @@ bool            VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info);
 RelVaultNode *  VaultFindChronicleEntryIncRef (const wchar entryName[], int entryType = -1);
 bool            VaultHasChronicleEntry (const wchar entryName[], int entryType = -1);
 // if entry of same name and type already exists, value is updated
-void VaultAddChronicleEntry (const wchar entryName[], int entryType, const wchar entryValue[]);
-void _VaultAddChronicleEntryCB(ENetError result, void* state, void * param, RelVaultNode*  node);
 void            VaultAddChronicleEntryAndWait (
     const wchar entryName[],
     int         entryType,
