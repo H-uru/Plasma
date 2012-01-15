@@ -555,7 +555,7 @@ void pyVault::RegisterMTStation( const char * stationName, const char * backLink
 
 void pyVault::RegisterOwnedAge( const pyAgeLinkStruct & link )
 {
-    VaultRegisterOwnedAge(link.GetAgeLink());
+    VaultRegisterOwnedAgeAndWait(link.GetAgeLink());
 }
 
 void pyVault::UnRegisterOwnedAge( const char * ageFilename )
