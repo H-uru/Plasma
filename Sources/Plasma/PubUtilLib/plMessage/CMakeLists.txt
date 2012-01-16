@@ -29,7 +29,6 @@ set(plMessage_SOURCES
     plLOSRequestMsg.cpp
     plMatrixUpdateMsg.cpp
     plMultistageMsg.cpp
-    plNCAgeJoinerMsg.cpp
     plNetClientMgrMsg.cpp
     plNetCommMsgs.cpp
     plNetVoiceListMsg.cpp
@@ -92,7 +91,6 @@ set(plMessage_HEADERS
     plMessageCreatable.h
     plMovieMsg.h
     plMultistageMsg.h
-    plNCAgeJoinerMsg.h
     plNetClientMgrMsg.h
     plNetCommMsgs.h
     plNetOwnershipMsg.h
@@ -107,6 +105,7 @@ set(plMessage_HEADERS
     plRenderRequestMsg.h
     plReplaceGeometryMsg.h
     plResMgrHelperMsg.h
+    plResPatcherMsg.h
     plResponderMsg.h
     plRideAnimatedPhysMsg.h
     plRippleShapeMsg.h
