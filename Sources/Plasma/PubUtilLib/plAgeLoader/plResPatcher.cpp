@@ -39,454 +39,244 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plResPatcher.h"
 
-#include "hsResMgr.h"
-
-#include "plAgeDescription/plAgeManifest.h"
-#include "plResMgr/plResManager.h"
-#include "plFile/plFileUtils.h"
-#include "plFile/plEncryptedStream.h"
+#include "plAgeLoader/plAgeLoader.h"
 #include "plCompression/plZlibStream.h"
-#include "plAudioCore/plAudioFileReader.h"
-#include "plProgressMgr/plProgressMgr.h"
-
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "pnNetCli/pnNetCli.h"
+#include "plEncryption/plChecksum.h"
+#include "plFile/plFileUtils.h"
+#include "plMessage/plResPatcherMsg.h"
+#include "pnNetBase/pnNbError.h"
 #include "plNetGameLib/plNetGameLib.h"
-
-#include "pnDispatch/plDispatch.h"
+#include "plProgressMgr/plProgressMgr.h"
 #include "plStatusLog/plStatusLog.h"
 
-static const unsigned kMaxDownloadTries = 10;
+/////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////
-
-class plDownloadStream : public plZlibStream
+class plResDownloadStream : public plZlibStream
 {
-private:
     plOperationProgress* fProgress;
-    unsigned fBytesReceived;
+    bool fIsZipped;
+
 public:
-    plDownloadStream(plOperationProgress* progress) : fProgress(progress), fBytesReceived(0), plZlibStream() {}
-    virtual ~plDownloadStream() {}
-
-    virtual UInt32 Write(UInt32 byteCount, const void* buffer);
-
-    void RewindProgress() {fProgress->Increment(-(hsScalar)fBytesReceived);} // rewind the progress bar by as far as we got
-};
-
-UInt32 plDownloadStream::Write(UInt32 byteCount, const void* buffer)
-{
-    fProgress->Increment((hsScalar)byteCount);
-    fBytesReceived += byteCount;
-
-    return plZlibStream::Write(byteCount, buffer);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-static void DownloadFileCallback(ENetError result, void* param, const wchar filename[], hsStream* writer)
-{
-    plResPatcher* patcher = (plResPatcher*)param;
-
-    // Retry download unless shutting down or file not found
-    switch (result) {
-        case kNetSuccess:
-            writer->Close();
-            patcher->DoneWithFile(true);
-        break;
-        
-        case kNetErrFileNotFound:
-        case kNetErrRemoteShutdown:
-            writer->Close();
-            patcher->DoneWithFile(false);
-        break;
-        
-        default:
-            writer->Rewind();
-            NetCliFileDownloadRequest(
-                filename,
-                writer,
-                DownloadFileCallback,
-                param
-            );
-        break;
+    plResDownloadStream(plOperationProgress* prog, const wchar_t* reqFile)
+        : fProgress(prog) 
+    { 
+        fIsZipped = wcscmp(plFileUtils::GetFileExt(reqFile), L"gz") == 0;
     }
 
-}
+    UInt32 Write(UInt32 count, const void* buf)
+    {
+        fProgress->Increment((hsScalar)count);
+        if (fIsZipped)
+            return plZlibStream::Write(count, buf);
+        else
+            return fOutput->Write(count, buf);
+    }
+};
 
-static void ManifestCallback(ENetError result, void* param, const wchar group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+/////////////////////////////////////////////////////////////////////////////
+
+static void FileDownloaded(
+    ENetError       result,
+    void*           param,
+    const wchar_t   filename[],
+    hsStream*       writer) 
 {
     plResPatcher* patcher = (plResPatcher*)param;
-    patcher->DoneWithManifest(result == kNetSuccess, manifest, entryCount);
+    char* name = hsWStringToString(filename);
+    writer->Close();
+    delete writer;
+
+    switch (result)
+    {
+        case kNetSuccess:
+            PatcherLog(kStatus, "    Download Complete: %s", name);
+            patcher->IssueRequest();
+            delete[] name;
+            return;
+        case kNetErrFileNotFound:
+            PatcherLog(kError, "    Download Failed: %s not found", name);
+            break;
+        default:
+            char* error = hsWStringToString(NetErrorToString(result));
+            PatcherLog(kError, "    Download Failed: %s", error);
+            delete[] error;
+            break;
+    }
+
+    // Failure case
+    patcher->Finish(false);
+    delete[] name;
 }
 
-//// Constructor/Destructor //////////////////////////////////////////////////
-
-plResPatcher::plResPatcher(const char* ageToPatch, bool showAgeName)
+static void ManifestDownloaded(
+    ENetError                     result, 
+    void*                         param, 
+    const wchar_t                 group[], 
+    const NetCliFileManifestEntry manifest[], 
+    UInt32                        entryCount)
 {
-    fAgeToPatch = ageToPatch;
-    fAlwaysShowAgeName = showAgeName;
-    IInit();
+    plResPatcher* patcher = (plResPatcher*)param;
+    char* name = hsWStringToString(group);
+    if (IS_NET_SUCCESS(result))
+        PatcherLog(kInfo, "    Downloaded manifest %s", name);
+    else {
+        PatcherLog(kError, "    Failed to download manifest %s", name);
+        patcher->Finish(false);
+        delete[] name;
+        return;
+    }
+
+    for (UInt32 i = 0; i < entryCount; ++i)
+    {
+        const NetCliFileManifestEntry mfs = manifest[i];
+        char* fileName = hsWStringToString(mfs.clientName);
+
+        // See if the files are the same
+        // 1. Check file size before we do time consuming md5 operations
+        // 2. Do wasteful md5. We should consider implementing a CRC instead.
+        if (plFileUtils::GetFileSize(fileName) == mfs.fileSize)
+        {
+            plMD5Checksum cliMD5(fileName);
+            plMD5Checksum srvMD5;
+            char* eapSucksString = hsWStringToString(mfs.md5);
+            srvMD5.SetFromHexString(eapSucksString);
+            delete[] eapSucksString;
+
+            if (cliMD5 == srvMD5)
+            {
+                delete[] fileName;
+                continue;
+            } else
+                PatcherLog(kInfo, "    Enqueueing %s: MD5 Checksums Differ", fileName);
+        } else
+            PatcherLog(kInfo, "    Enqueueing %s: File Sizes Differ", fileName);
+
+        // If we're still here, then we need to update the file.
+        patcher->GetProgress()->SetLength((hsScalar)mfs.fileSize + patcher->GetProgress()->GetMax());
+        patcher->RequestFile(mfs.downloadName, mfs.clientName);
+    }
+
+    patcher->IssueRequest();
+    delete[] name;
 }
 
-void plResPatcher::IInit()
+/////////////////////////////////////////////////////////////////////////////
+
+static char*  sLastError              = nil;
+plResPatcher* plResPatcher::fInstance = nil;
+
+plResPatcher* plResPatcher::GetInstance()
 {
-    PatcherLog(kHeader, "--- Starting patch process for %s ---", fAgeToPatch.c_str());
+    if (!fInstance)
+        fInstance = new plResPatcher;
+    return fInstance;
 }
+
+void plResPatcher::Shutdown()
+{
+    // Better not call this while we're patching
+    delete fInstance;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+plResPatcher::plResPatcher()
+    : fPatching(false), fProgress(nil) { }
 
 plResPatcher::~plResPatcher()
 {
-    PatcherLog(kHeader, "--- Patch process done for %s ---", fAgeToPatch.c_str());
-
-    for (MfsFileVec::iterator i = fMfsVec.begin(); i != fMfsVec.end(); ++i)
-    {
-        plManifestFile* file = (*i);
-        delete file;
-    }
-    fMfsVec.clear();
+    if (fProgress)
+        delete fProgress;
 }
 
-UInt32 plResPatcher::IGetDownloadSize()
+void plResPatcher::IssueRequest()
 {
-    if (!IGetAgeManifest())
-        return 0;
+    if (!fPatching) return;
+    if (fRequests.empty())
+        // Wheee!
+        Finish();
+    else {
+        Request req = fRequests.front();
+        fRequests.pop();
 
-#ifdef PLASMA_EXTERNAL_RELEASE
-    bool showAgeName = fAlwaysShowAgeName;
-#else
-    bool showAgeName = true;
-#endif
-
-    char msg[128];
-    if (!fAgeToPatch.empty())
-    {
-        if (showAgeName)
-            sprintf(msg, "Checking age %s...", fAgeToPatch.c_str());
-        else
-            strcpy(msg, "Checking age...");
-    }
-    else
-        sprintf(msg, "Checking...");
-
-    plOperationProgress* progress = plProgressMgr::GetInstance()->RegisterOperation((hsScalar)(fMfsVec.size()), msg, plProgressMgr::kNone, false, true);
-
-    UInt32 downloadSize = 0;
-    UInt32 downloadFiles = 0;
-    for (MfsFileVec::iterator i = fMfsVec.begin(); i != fMfsVec.end(); ++i)
-    {
-        plManifestFile* mfsFile = (*i);
-        
-        if (!mfsFile->IsLocalUpToDate())
+        std::wstring title;
+        if (req.fType == kManifest)
         {
-            downloadFiles++;
-            downloadSize += mfsFile->GetDownloadSize();
-        }
+            char* eapSucksString = hsWStringToString(req.fFile.c_str());
+            PatcherLog(kMajorStatus, "    Downloading manifest... %s", eapSucksString);
+            xtl::format(title, L"Checking %s for updates...", req.fFile.c_str());
+            NetCliFileManifestRequest(ManifestDownloaded, this, req.fFile.c_str());
+            delete[] eapSucksString;
+        } else if (req.fType == kFile) {
+            char* eapSucksString = hsWStringToString(req.fFriendlyName.c_str());
+            PatcherLog(kMajorStatus, "    Downloading file... %s", eapSucksString);
+            xtl::format(title, L"Downloading... %s", plFileUtils::GetFileName(req.fFriendlyName.c_str()));
 
-        progress->Increment(1.f);
-    }
-
-    delete progress;
-
-    PatcherLog(kInfo, "Got download stats, %d files, %d bytes", downloadFiles, downloadSize);
-
-    return downloadSize;
-}
-
-bool plResPatcher::CheckFreeSpace(UInt32 bytesNeeded)
-{
-#ifdef HS_BUILD_FOR_WIN32
-    ULARGE_INTEGER freeBytesAvailable, totalNumberOfBytes, neededBytes;
-    if (GetDiskFreeSpaceEx(NULL, &freeBytesAvailable, &totalNumberOfBytes, NULL))
-    {
-        neededBytes.HighPart = 0;
-        neededBytes.LowPart = bytesNeeded;
-
-        if (neededBytes.QuadPart > freeBytesAvailable.QuadPart)
-        {
-            PatcherLog(kInfo, "Not enough disk space (asked for %d bytes)", bytesNeeded);
-            return false;
-        }
-    }
-#endif // HS_BUILD_FOR_WIN32
-
-    return true;
-}
-
-bool plResPatcher::IDecompressSound(plManifestFile* mfsFile, bool noOverwrite)
-{
-    UInt32 flags = mfsFile->GetFlags();
-
-    if ( (hsCheckBits(flags, plManifestFile::kSndFlagCacheSplit) || hsCheckBits(flags, plManifestFile::kSndFlagCacheStereo)) && stricmp(plFileUtils::GetFileExt(mfsFile->GetName()), "ogg") == 0)
-    {
-        plAudioFileReader* reader = plAudioFileReader::CreateReader(mfsFile->GetName(), plAudioCore::kAll, plAudioFileReader::kStreamNative);
-        if (!reader)
-        {
-            PatcherLog(kInfo, "Unable to create audio file reader for %s", mfsFile->GetName());
-            return false;
-        }
-
-        UInt32 size = reader->GetDataSize();
-        delete reader;
-
-        // Make sure we have enough free space
-        if (!CheckFreeSpace(size))
-            return false;
-
-        if (hsCheckBits(flags, plManifestFile::kSndFlagCacheSplit))
-            plAudioFileReader::CacheFile(mfsFile->GetName(), true, noOverwrite);
-        if (hsCheckBits(flags, plManifestFile::kSndFlagCacheStereo))
-            plAudioFileReader::CacheFile(mfsFile->GetName(), false, noOverwrite);
-    }
-
-    return true;
-}
-
-bool plResPatcher::Update()
-{
-    UInt32 downloadSize = IGetDownloadSize();
-    // if download size is 0, nothing to download, but we still need to tell the res manager about the files
-
-    plFileUtils::CreateDir("dat");
-    plFileUtils::CreateDir("sfx");
-
-    if (!CheckFreeSpace(downloadSize))
-        return false;
-
-#ifdef PLASMA_EXTERNAL_RELEASE
-    bool showAgeName = fAlwaysShowAgeName;
-#else
-    bool showAgeName = true;
-#endif
-
-    char msg[128];
-    if (!fAgeToPatch.empty())
-    {
-        if (showAgeName)
-            sprintf(msg, "Downloading %s data...", fAgeToPatch.c_str());
-        else
-            strcpy(msg, "Downloading age data...");
-    }
-    else
-        sprintf(msg, "Downloading...");
-
-    plOperationProgress* progress = plProgressMgr::GetInstance()->RegisterOverallOperation((hsScalar)downloadSize, msg, plProgressMgr::kUpdateText, true);
-
-    bool result = true;
-    plResManager* resMgr = ((plResManager*)hsgResMgr::ResMgr());
-
-    for (MfsFileVec::iterator i = fMfsVec.begin(); i != fMfsVec.end(); ++i)
-    {
-        plManifestFile* mfsFile = (*i);
-
-        if (!mfsFile->IsLocalUpToDate())
-        {
-            FileType type = IGetFile(mfsFile, progress);
-            if (type == kPrp)
-            {
-                // Checks for existence before attempting to remove
-                resMgr->RemoveSinglePage(mfsFile->GetName());
-            }
-            else if (type == kOther)
-            {
-                if (!IDecompressSound(mfsFile, false))
-                {
-                    char text[MAX_PATH];
-                    StrPrintf(text, arrsize(text), "%s could not be decompressed", mfsFile->GetName());
-                    PatcherLog(kInfo, text );
-                    hsAssert(false, text);
-                    result = false;
-                }
-            }
-            else
-            {
-                char text[MAX_PATH];
-                StrPrintf(text, arrsize(text), "Failed downloading file: %s", mfsFile->GetName());
-                PatcherLog(kInfo, text );
-                hsAssert(false, text);
-                result = false;
-            }
-        }
-        else
-        {
-            if (!IDecompressSound(mfsFile, true))
-            {
-                char text[MAX_PATH];
-                StrPrintf(text, arrsize(text), "%s could not be decompressed", mfsFile->GetName());
-                PatcherLog(kInfo, text );
-                hsAssert(false, text);
-                result = false;
-            }
-        }
-
-        if (!resMgr->FindSinglePage(mfsFile->GetName()) && stricmp(plFileUtils::GetFileExt(mfsFile->GetName()), "prp") == 0)
-        {
-            resMgr->AddSinglePage(mfsFile->GetName());
-        }
-    }
-
-    PatcherLog(kMajorStatus, "Cleaning up patcher..." );
-    delete progress;
-
-    return result;
-}
-
-plResPatcher::FileType plResPatcher::IGetFile(const plManifestFile* mfsFile, plOperationProgress* progressBar)
-{
-    PatcherLog(kInfo, "    Setting up to download file %s", mfsFile->GetName());
-
-    bool downloadDone = false;
-    wchar* wServerPath = hsStringToWString(mfsFile->GetServerPath());
-    int numTries = 0;
-
-    while (!downloadDone)
-    {
-        if (numTries >= kMaxDownloadTries)
-        {
-            PatcherLog(kInfo, "    Max download tries exceeded (%d). Aborting download...", kMaxDownloadTries);
-            return kFail;
-        }
-
-        plDownloadStream downloadStream(progressBar);
-        if (!downloadStream.Open(mfsFile->GetName(), "wb"))
-        {
-            PatcherLog(kInfo, "    Unable to create file. Aborting download...");
-            return kFail;
-        }
-
-        PatcherLog(kInfo, "    Downloading file %s...", mfsFile->GetName());
-        
-        fSuccess = false;   
-        fDoneWithFile = false;
-        NetCliFileDownloadRequest(
-            wServerPath,
-            &downloadStream,
-            DownloadFileCallback,
-            this
-        );
-
-        while (!fDoneWithFile) {
-            NetClientUpdate();
-            plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
-        }
-
-        if (!fSuccess) {
-            // remove partial file and die (server didn't have the file or server is shutting down)
-            downloadStream.RewindProgress();
-            plFileUtils::RemoveFile(mfsFile->GetName(), true);
-            PatcherLog(kError, "      File %s failed to download.", mfsFile->GetName());
-            downloadDone = true;
-        }
-        else {
-            if (downloadStream.DecompressedOk()) {
-                PatcherLog(kInfo, "      Decompress successful." );
-                // download and decompress successful, do a md5 check on the resulting file
-                plMD5Checksum localMD5(mfsFile->GetName());
-                if (localMD5 != mfsFile->GetChecksum()) {
-                    downloadStream.RewindProgress();
-                    downloadStream.Close();
-                    plFileUtils::RemoveFile(mfsFile->GetName(), true);
-                    PatcherLog(kError, "      File %s MD5 check FAILED.", mfsFile->GetName());
-                    // don't set downloadDone so we attempt to re-download from the server
-                }
-                else {
-                    downloadStream.Close();
-                    PatcherLog(kInfo, "      MD5 check succeeded.");
-                    downloadDone = true;
-                }
-            }
+            plFileUtils::EnsureFilePathExists(req.fFriendlyName.c_str());
+            plResDownloadStream* stream = new plResDownloadStream(fProgress, req.fFile.c_str());
+            if(stream->Open(eapSucksString, "wb"))
+                NetCliFileDownloadRequest(req.fFile.c_str(), stream, FileDownloaded, this);
             else {
-                downloadStream.RewindProgress();
-                downloadStream.Close();
-                plFileUtils::RemoveFile(mfsFile->GetName(), true);
-                PatcherLog(kError, "      File %s failed to decompress.", mfsFile->GetName());
-                // don't set downloadDone so we attempt to re-download from the server
+                PatcherLog(kError, "    Unable to create file %s", eapSucksString);
+                Finish(false);
             }
+            delete[] eapSucksString;
         }
-        ++numTries;
+
+        char* hack = hsWStringToString(title.c_str());
+        fProgress->SetTitle(hack);
+        delete[] hack;
     }
-    FREE(wServerPath);
-
-    if (!fSuccess)  
-        return kFail;
-    
-    if (stricmp(plFileUtils::GetFileExt(mfsFile->GetName()), "prp") == 0)
-        return kPrp;
-
-    return kOther;
 }
 
-bool plResPatcher::IGetAgeManifest()
+void plResPatcher::Finish(bool success)
 {
-    if (fMfsVec.size() > 0)
-        return true;
-
-    PatcherLog(kMajorStatus, "Downloading new manifest from data server..." );
-
-    fSuccess = false;
-    wchar* group = hsStringToWString(fAgeToPatch.c_str());
-    unsigned numTries = 0;
-    while (!fSuccess)
-    {
-        numTries++;
-        fDoneWithFile = false;
-        NetCliFileManifestRequest(ManifestCallback, this, group);
-        while (!fDoneWithFile)
-        {
-            NetClientUpdate();
-            plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
-        }
-
-        if (!fSuccess)
-        {
-            fMfsVec.clear(); // clear out any bad data
-            if (numTries > kMaxDownloadTries)
-                break; // abort
-        }
+    while (fRequests.size())
+        fRequests.pop();
+    if (fProgress) {
+        delete fProgress;
+        fProgress = nil;
     }
-    delete [] group;
 
-    if (fSuccess)
-        PatcherLog(kStatus, "New age manifest read; number of files: %d", fMfsVec.size() );
-    else
-        PatcherLog(kStatus, "Failed to download manifest after trying %d times", kMaxDownloadTries);
-
-    return fSuccess;
-}
-
-void plResPatcher::DoneWithManifest(bool success, const NetCliFileManifestEntry manifestEntires[], unsigned entryCount)
-{
-    PatcherLog(kStatus, "New age manifest received. Reading...");
-    
+    fPatching = false;
     if (success)
+        PatcherLog(kHeader, "--- Patch Completed Successfully ---");
+    else
+        PatcherLog(kHeader, "--- Patch Killed by Error ---");
+
+    plResPatcherMsg* pMsg = new plResPatcherMsg(success, sLastError);
+    pMsg->Send(); // whoosh... off it goes
+    if (sLastError)
     {
-        for (unsigned i = 0; i < entryCount; i++)
-        {
-            char* name = hsWStringToString(manifestEntires[i].clientName);
-            char* serverPath = hsWStringToString(manifestEntires[i].downloadName);
-            char* md5Str = hsWStringToString(manifestEntires[i].md5);
-            int size = manifestEntires[i].fileSize;
-            int zipsize = manifestEntires[i].zipSize;
-            int flags = manifestEntires[i].flags;
-            if (stricmp(plFileUtils::GetFileExt(name), "gz"))
-                flags |= plManifestFile::kFlagZipped; // add zipped flag if necessary
-
-            plMD5Checksum sum;
-            sum.SetFromHexString(md5Str);
-            fMfsVec.push_back(TRACKED_NEW plManifestFile(name, serverPath, sum, size, zipsize, flags));
-
-            delete [] name;
-            delete [] serverPath;
-            delete [] md5Str;
-        }
+        delete[] sLastError;
+        sLastError = nil;
     }
-
-    fDoneWithFile = true;
-    fSuccess = success;
 }
+
+void plResPatcher::RequestFile(const wchar_t* srvName, const wchar_t* cliName)
+{
+    fRequests.push(Request(srvName, kFile, cliName));
+}
+
+void plResPatcher::RequestManifest(const wchar_t* age)
+{
+    fRequests.push(Request(age, kManifest));
+}
+
+void plResPatcher::Start()
+{
+    hsAssert(!fPatching, "Too many calls to plResPatcher::Start");
+    fPatching = true;
+    PatcherLog(kHeader, "--- Patch Started (%i requests) ---", fRequests.size());
+    fProgress = plProgressMgr::GetInstance()->RegisterOperation(0.0, "Checking for updates...",
+        plProgressMgr::kUpdateText, false, true);
+    IssueRequest();
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 void PatcherLog(PatcherLogType type, const char* format, ...)
 {
@@ -512,7 +302,13 @@ void PatcherLog(PatcherLogType type, const char* format, ...)
     va_list args;
     va_start(args, format);
 
-    gStatusLog->AddLineV(color, format, args);
+    if (type == kError)
+    {
+        sLastError = new char[1024]; // Deleted by Finish(false)
+        vsprintf(sLastError, format, args);
+        gStatusLog->AddLine(sLastError, color);
+    } else
+        gStatusLog->AddLineV(color, format, args);
 
     va_end(args);
 }
