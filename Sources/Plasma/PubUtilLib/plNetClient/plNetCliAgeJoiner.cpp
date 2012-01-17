@@ -59,7 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClientComm/plNetClientComm.h"
 #include "plAgeLoader/plAgeLoader.h"
-#include "plAgeLoader/plBackgroundDownloader.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plVault/plVault.h"
 
@@ -69,6 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
 #include "plMessage/plNetClientMgrMsg.h"
+#include "plMessage/plResPatcherMsg.h"
 
 #include "plProgressMgr/plProgressMgr.h"
 #include "pnDispatch/plDispatch.h"
@@ -201,8 +201,6 @@ void plNCAgeJoiner::Complete (bool success, const char msg[]) {
         DEL(this);
     }
 
-    if (plBackgroundDownloader::GetInstance())
-        plBackgroundDownloader::GetInstance()->UnPause();
 }
 
 //============================================================================
@@ -226,13 +224,6 @@ void plNCAgeJoiner::Start () {
 
     plAgeLoader* al = plAgeLoader::GetInstance();
     al->UpdateAge(age.ageDatasetName);
-
-    nc->ResetServerTimeOffset();
-
-    NetCommLinkToAge(
-        age,
-        this
-    );
 }
 
 //============================================================================
@@ -375,6 +366,24 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
     plNetClientMgr *    nc = plNetClientMgr::GetInstance();
     plAvatarMgr *       am = plAvatarMgr::GetInstance();
     plAgeLoader *       al = plAgeLoader::GetInstance();
+
+    //========================================================================
+    // Finished updating the age from FileSrv
+    //========================================================================
+    if (plResPatcherMsg * resMsg = plResPatcherMsg::ConvertNoRef(msg)) {
+
+        if (resMsg->Success())
+        {
+            nc->ResetServerTimeOffset();
+            NetCommLinkToAge(
+                age,
+                this
+            );
+            LogMsg(kLogPerf, L"AgeJoiner: Next:kNoOp (age updated)");
+        } else
+            Complete(false, resMsg->GetError());
+        return true;
+    }
 
     //========================================================================
     // Connected to age instance

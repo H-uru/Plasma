@@ -565,7 +565,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plNetServerMsgFindVaultServer),
     CLASS_INDEX(plNetServerMsgFindVaultServerReply),
     CLASS_INDEX(plAvTaskSeekDoneMsg),
-    CLASS_INDEX(plNCAgeJoinerMsg),
+    CLASS_INDEX(plResPatcherMsg),
     CLASS_INDEX(plNetServerMsgVaultTask),
     CLASS_INDEX(plNetMsgVaultTask),
     CLASS_INDEX(plAgeLinkStruct),

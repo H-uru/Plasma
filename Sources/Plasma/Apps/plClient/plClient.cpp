@@ -78,6 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plPreloaderMsg.h"
 #include "plMessage/plNetCommMsgs.h"
 #include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plResPatcherMsg.h"
 
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfConsole/pfConsole.h"
@@ -199,8 +200,7 @@ plClient::plClient()
     fHoldLoadRequests(false),
     fNumLoadingRooms(0),
     fNumPostLoadMsgs(0),
-    fPostLoadMsgInc(0.f),
-    fPatchGlobalAges(false)
+    fPostLoadMsgInc(0.f)
 {
 #ifndef PLASMA_EXTERNAL_RELEASE
     bPythonDebugConnected = false;
@@ -861,6 +861,14 @@ hsBool plClient::MsgReceive(plMessage* msg)
     if (plPreloaderMsg * preloaderMsg = plPreloaderMsg::ConvertNoRef(msg)) {
         IHandlePreloaderMsg(preloaderMsg);
         return true;
+    }
+
+    //============================================================================
+    // plResPatcherMsg
+    //============================================================================
+    if (plResPatcherMsg * resMsg = plResPatcherMsg::ConvertNoRef(msg)) {
+        plgDispatch::Dispatch()->UnRegisterForExactType(plResPatcherMsg::Index(), GetKey());
+        IOnAsyncInitComplete();
     }
 
     return hsKeyedObject::MsgReceive(msg);
@@ -1578,26 +1586,19 @@ hsBool plClient::StartInit()
 //============================================================================
 void    plClient::IPatchGlobalAgeFiles( void )
 {
-    const char * ageFiles[] = {
-        "GlobalAnimations",
-        "GlobalAvatars",
-        "GlobalClothing",
-        "GlobalMarkers",
-        "GUI",
-        "CustomAvatars"
-    };
-
-    for (unsigned i = 0; i < arrsize(ageFiles); ++i) {
-        plResPatcher myPatcher(ageFiles[i], true);
-
-        if (gDataServerLocal)
-            break;
-            
-        if (!myPatcher.Update()) {
-            SetDone(true);
-            break;
-        }
+    plResPatcher* patcher = plResPatcher::GetInstance();
+    if (!gDataServerLocal)
+    {
+        patcher->RequestManifest(L"CustomAvatars");
+        patcher->RequestManifest(L"GlobalAnimations");
+        patcher->RequestManifest(L"GlobalAvatars");
+        patcher->RequestManifest(L"GlobalClothing");
+        patcher->RequestManifest(L"GlobalMarkers");
+        patcher->RequestManifest(L"GUI");
     }
+
+    plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
+    patcher->Start();
 }
 
 void plClient::InitDLLs()
@@ -1800,15 +1801,6 @@ hsBool plClient::IUpdate()
     cameras->SetBCastFlag(plMessage::kBCastByExactType);
     plgDispatch::MsgSend(cameras);
     plProfile_EndTiming(CameraMsg);
-
-    if (fPatchGlobalAges)
-    {
-        // Download or patch our global ages, if necessary
-        IPatchGlobalAgeFiles();
-        IOnAsyncInitComplete();
-
-        fPatchGlobalAges = false;
-    }
 
     return false;
 }
@@ -2530,7 +2522,7 @@ void plClient::IHandlePreloaderMsg (plPreloaderMsg * msg) {
         return;
     }
     
-    fPatchGlobalAges = true;
+    IPatchGlobalAgeFiles();
 }
 
 //============================================================================
