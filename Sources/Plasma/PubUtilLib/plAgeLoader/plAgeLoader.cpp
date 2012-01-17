@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plKeyFinder.h"
 #include "plAgeDescription/plAgeDescription.h"
 #include "plSDL/plSDL.h"
+#include "plMessage/plResPatcherMsg.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plRegistryNode.h"
@@ -110,7 +111,7 @@ plAgeLoader::~plAgeLoader()
 
 void plAgeLoader::Shutdown()
 {
-
+    plResPatcher::GetInstance()->Shutdown();
 }
 
 void plAgeLoader::Init()
@@ -170,17 +171,18 @@ bool plAgeLoader::LoadAge(const char ageName[])
 }
 
 //============================================================================
-bool plAgeLoader::UpdateAge(const char ageName[])
+void plAgeLoader::UpdateAge(const char ageName[])
 {
-    bool result = true;
-
-    if (!gDataServerLocal)
+    if (gDataServerLocal)
+        // We have to send this msg ourselves since we're not actually updating
+        plgDispatch::Dispatch()->MsgSend(new plResPatcherMsg);
+    else
     {
-        plResPatcher myPatcher(ageName);
-        result = myPatcher.Update();
+        wchar_t* wideAgeName = hsStringToWString(ageName);
+        plResPatcher::GetInstance()->RequestManifest(wideAgeName);
+        plResPatcher::GetInstance()->Start();
+        delete[] wideAgeName;
     }
-
-    return result;
 }
 
 //============================================================================

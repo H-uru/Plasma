@@ -152,8 +152,6 @@ protected:
     hsBool                  fQuitIntro;
     hsTArray<plBinkPlayer*> fMovies;
 
-    hsBool                  fPatchGlobalAges;
-
     plMessagePumpProc       fMessagePumpProc;
     
 #ifndef PLASMA_EXTERNAL_RELEASE

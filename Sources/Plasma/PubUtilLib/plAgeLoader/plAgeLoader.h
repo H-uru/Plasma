@@ -110,7 +110,7 @@ public:
     hsBool MsgReceive(plMessage* msg);
     bool LoadAge(const char ageName[]);
     bool UnloadAge()                              { return IUnloadAge(); }
-    bool UpdateAge(const char ageName[]);
+    void UpdateAge(const char ageName[]);
     void NotifyAgeLoaded( bool loaded );
 
     const plKeyVec& PendingPageOuts() const { return fPendingPageOuts; }
