@@ -1486,7 +1486,18 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 #endif
 
-    plLocalization::SetDefaultLanguage();
+    // Load an optional general.ini
+    wchar gipath[MAX_PATH];
+    PathGetInitDirectory(gipath, arrsize(gipath));
+    PathAddFilename(gipath, gipath, L"general.ini", arrsize(gipath));
+    FILE *generalini = _wfopen(gipath, L"rb");
+    if (generalini)
+    {
+        fclose(generalini);
+        pfConsoleEngine tempConsole;
+        tempConsole.ExecuteFile(gipath);
+    }
+
     // If another instance is running, exit.  We'll automatically release our
     // lock on the mutex when our process exits
     HANDLE hOneInstance = CreateMutex(nil, FALSE, "UruExplorer");
@@ -1500,13 +1511,13 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
             case plLocalization::kGerman:
                 hsMessageBox("URU wird bereits in einer anderen Instanz ausgeführt", "Fehler", hsMessageBoxNormal);
                 break;
-/*          case plLocalization::kSpanish:
+            case plLocalization::kSpanish:
                 hsMessageBox("En estos momentos se está ejecutando otra copia de URU", "Error", hsMessageBoxNormal);
                 break;
             case plLocalization::kItalian:
                 hsMessageBox("Un'altra copia di URU è già aperta", "Errore", hsMessageBoxNormal);
                 break;
-*/          // default is English
+            // default is English
             default:
                 hsMessageBox("Another copy of URU is already running", "Error", hsMessageBoxNormal);
                 break;

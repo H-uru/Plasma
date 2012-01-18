@@ -2581,7 +2581,6 @@ PF_CONSOLE_CMD(App,
 
 #endif // LIMIT_CONSOLE_COMMANDS
 
-#ifdef LIMIT_CONSOLE_COMMANDS // for now, disable languages in external clients
 PF_CONSOLE_CMD(App,
                SetLanguage,
                "string language",
@@ -2607,7 +2606,6 @@ PF_CONSOLE_CMD(App,
         plLocalization::SetLanguage(plLocalization::kJapanese);
 
 }
-#endif // LIMIT_CONSOLE_COMMANDS
 
 PF_CONSOLE_CMD(App,
                DemoMode,
