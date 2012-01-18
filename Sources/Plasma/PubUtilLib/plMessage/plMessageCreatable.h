@@ -337,8 +337,8 @@ REGISTER_CREATABLE(plPreloaderMsg);
 #include "plNetClientMgrMsg.h"
 REGISTER_CREATABLE(plNetClientMgrMsg);
 
-#include "plNCAgeJoinerMsg.h"
-REGISTER_CREATABLE(plNCAgeJoinerMsg);
+#include "plResPatcherMsg.h"
+REGISTER_CREATABLE(plResPatcherMsg);
 
 #include "plAccountUpdateMsg.h"
 REGISTER_CREATABLE(plAccountUpdateMsg);
