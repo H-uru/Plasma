@@ -151,7 +151,6 @@ protected:
     void IDrawDebugDisplay();
 #endif
     void IHandleResize();
-    hsTArray<plCollideMsg*> fQueuedCollideMsgs;
     hsScalar fPreferedRadius;
     hsScalar fPreferedHeight;
     // The global position and rotation of the avatar last time we set it (so we
