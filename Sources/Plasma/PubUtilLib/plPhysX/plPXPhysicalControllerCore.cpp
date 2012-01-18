@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plPXPhysicalControllerCore.h"
+#include "plgDispatch.h"
 #include "plSimulationMgr.h"
 #include "plPXPhysical.h"
 #include "plPXConvert.h"
@@ -372,13 +373,6 @@ void plPXPhysicalControllerCore::ISetGlobalLoc(const hsMatrix44& l2w)
 plPXPhysicalControllerCore::~plPXPhysicalControllerCore()
 {
     IDeleteController();
-    //need to make sure my queued messages are released
-    for(int j=0;j<fQueuedCollideMsgs.GetCount();j++)
-    {
-        delete fQueuedCollideMsgs[j];
-        fQueuedCollideMsgs[j]=nil;
-    }
-    fQueuedCollideMsgs.SetCount(0);
     for (int i = 0; i < gControllers.size(); i++)
     {
         if (gControllers[i] == this)
@@ -706,26 +700,19 @@ void plPXPhysicalControllerCore::IInformDetectors(bool entering,bool deferUntilN
                         msg->AddReceiver(physical->GetObjectKey());
                         if(!deferUntilNextSim)
                         {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                        DetectorLog("Sending an %s msg to %s" , entering? "entering":"exit", physical->GetObjectKey()->GetName());
-#endif                      
-                        msg->Send();
+                            DetectorLog("Sending an %s msg to %s" , entering? "entering":"exit", physical->GetObjectKey()->GetName());                    
+                            msg->Send();
                         }
                         else
                         {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                        DetectorLog("Queuing an %s msg to %s, which will be sent after the next simstep" , entering? "entering":"exit", physical->GetObjectKey()->GetName());
-#endif                      
-                        //these will be fired in update prestep on the next lap
-                        fQueuedCollideMsgs.Append(msg);
+                            DetectorLog("Queuing an %s msg to %s, which will be sent after the client update" , entering? "entering":"exit", physical->GetObjectKey()->GetName());    
+                            plgDispatch::Dispatch()->MsgQueue(msg);
                         }
                     }
                 }
             }
         }
-#ifndef PLASMA_EXTERNAL_RELEASE
         DetectorLog("Done informing from plPXPhysicalControllerCore::IInformDetectors");
-#endif
     }
 }
 void plPXPhysicalControllerCore::Move(hsVector3 displacement, unsigned int collideWith, unsigned int &collisionResults)
@@ -932,16 +919,6 @@ void plPXPhysicalControllerCore::UpdatePrestep(hsScalar delSecs)
         if(ac)
         {   
             if(ac->fNeedsResize)ac->IHandleResize();
-            int storedCollideMsgs=ac->fQueuedCollideMsgs.GetCount();
-            if(storedCollideMsgs)
-            {
-                plSimulationMgr* simMgr=plSimulationMgr::GetInstance();
-                for(int j=0; j<storedCollideMsgs;j++)
-                {
-                    simMgr->AddCollisionMsg(ac->fQueuedCollideMsgs[j]);
-                }
-                ac->fQueuedCollideMsgs.SetCount(0);
-            }
             ac->Apply(delSecs);
         }
 #ifndef PLASMA_EXTERNAL_RELEASE

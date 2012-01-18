@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void DetectorLog(const char* format, ...) {}
 void DetectorLogSpecial(const char* format, ...) {}
 void DetectorLogRed(const char* format, ...) {}
+void DetectorLogYellow(const char* format, ...) {}
 
 #else
 
@@ -90,5 +91,12 @@ void DetectorLogRed(const char* format, ...)
     va_end(args);
 }
 
+void DetectorLogYellow(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    gLog->AddLineV(plStatusLog::kYellow, format, args);
+    va_end(args);
+}
 
 #endif // PLASMA_EXTERNAL_RELEASE
