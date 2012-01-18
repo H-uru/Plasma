@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientComm/plNetClientComm.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plAgeLoader/plAgeLoader.h"
-#include "plAgeLoader/plBackgroundDownloader.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plVault/plVault.h"
 
@@ -126,9 +125,6 @@ plNCAgeLeaver::~plNCAgeLeaver () {
 
 //============================================================================
 void plNCAgeLeaver::Start () {
-    if (plBackgroundDownloader::GetInstance())
-        plBackgroundDownloader::GetInstance()->Pause();
-
     nextOp = kLinkOutFX;
 }
 

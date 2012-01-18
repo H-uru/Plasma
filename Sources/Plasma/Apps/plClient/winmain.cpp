@@ -92,21 +92,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 hsBool gHasMouse = false;
 
 extern hsBool gDataServerLocal;
-extern hsBool gUseBackgroundDownloader;
 
 enum
 {
     kArgSkipLoginDialog,
     kArgServerIni,
     kArgLocalData,
-    kArgBackgroundDownloader,
 };
 
 static const CmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeBool,       L"SkipLoginDialog", kArgSkipLoginDialog },
     { kCmdArgFlagged  | kCmdTypeString,     L"ServerIni",       kArgServerIni },
     { kCmdArgFlagged  | kCmdTypeBool,       L"LocalData",       kArgLocalData   },
-    { kCmdArgFlagged  | kCmdTypeBool,       L"BGDownload",      kArgBackgroundDownloader    },
 };
 
 /// Made globals now, so we can set them to zero if we take the border and 
@@ -1431,8 +1428,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         doIntroDialogs = false;
     if(cmdParser.IsSpecified(kArgLocalData))
         gDataServerLocal = true;
-    if(cmdParser.IsSpecified(kArgBackgroundDownloader))
-        gUseBackgroundDownloader = true;
 #endif
 
     const wchar *serverIni = L"server.ini";

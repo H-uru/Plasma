@@ -61,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
 #include "plFile/hsFiles.h"
-#include "plMessage/plNCAgeJoinerMsg.h"
 
 
 /*****************************************************************************

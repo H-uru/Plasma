@@ -42,52 +42,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plResPatcher_h_inc
 #define plResPatcher_h_inc
 
-#include "hsStlUtils.h"
+#include "HeadSpin.h"
+#include <queue>
+#include <string>
 
-#include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-#include "plEncryption/plChecksum.h"
-
-
-class plManifest;
-class plManifestFile;
 class plOperationProgress;
-struct NetCliFileManifestEntry;
 
 class plResPatcher
 {
-protected:
-    enum FileType {kFail, kPrp, kOther};
-    std::string     fAgeToPatch;
+    enum { kManifest, kFile };
+    struct Request
+    {
+        std::wstring fFile;
+        std::wstring fFriendlyName;
+        uint8_t      fType;
 
-    typedef std::vector<plManifestFile*> MfsFileVec;
-    MfsFileVec  fMfsVec;
+        Request(const wchar_t* file, uint8_t type, const wchar_t* friendly = nil)
+            : fFile(file), fType(type)
+        {
+            if (friendly)
+                fFriendlyName = std::wstring(friendly);
+        }
+    };
 
-    bool        fDoneWithFile;
-    bool        fSuccess;
-    bool        fAlwaysShowAgeName;
+    static plResPatcher*       fInstance;
+    std::queue<Request>        fRequests;
+    plOperationProgress*       fProgress;
+    bool                       fPatching;
 
-    void IInit();
-    static void ILog(UInt32 type, const char* format, ...);
-
-    FileType IGetFile(const plManifestFile* mfsFile, plOperationProgress* progressBar);
-    bool IGetAgeManifest();
-
-    UInt32 IGetDownloadSize();
-
-    bool IDecompressSound(plManifestFile* mfsFile, bool noOverwrite = false);
-
-public:
-    plResPatcher(const char* ageToPatch, bool showAgeName = false);
+    plResPatcher();
     ~plResPatcher();
 
-    bool Update();
+public:
+    static plResPatcher* GetInstance();
+    static void Shutdown();
 
-    static bool CheckFreeSpace(UInt32 bytesNeeded);
+    plOperationProgress* GetProgress() { return fProgress; }
 
-    // called by download callbacks to tell it we are done with the current file
-    void DoneWithFile(bool success) {fDoneWithFile = true; fSuccess = success;}
-    void DoneWithManifest(bool success, const NetCliFileManifestEntry manifestEntires[], unsigned entryCount);
+    void Finish(bool success = true);
+    void IssueRequest();
+    void RequestFile(const wchar_t* file, const wchar_t* friendlyName);
+    void RequestManifest(const wchar_t* age);
+    void Start();
 };
 
 enum PatcherLogType
@@ -99,5 +95,4 @@ enum PatcherLogType
     kError,
 };
 void PatcherLog(PatcherLogType type, const char* format, ...);
-
 #endif // _plResPatcher_h
