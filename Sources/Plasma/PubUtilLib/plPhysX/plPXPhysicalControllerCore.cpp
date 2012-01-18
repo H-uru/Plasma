@@ -401,7 +401,7 @@ void plPXPhysicalControllerCore::IMatchKinematicToController()
         kinPos.z = (NxReal)cPos.z;
         if (plSimulationMgr::fExtraProfile)
             SimLog("Match setting kinematic from %f,%f,%f to %f,%f,%f",prevKinPos.x,prevKinPos.y,prevKinPos.z,kinPos.x,kinPos.y,kinPos.z );
-        fKinematicActor->setGlobalPosition(kinPos);
+        fKinematicActor->moveGlobalPosition(kinPos);
     }
 }
 void plPXPhysicalControllerCore::UpdateControllerAndPhysicalRep()
@@ -412,7 +412,7 @@ void plPXPhysicalControllerCore::UpdateControllerAndPhysicalRep()
         {//this means we are moving the controller and then synchnig the kin
             NxExtendedVec3 ControllerPos= fController->getPosition();
             NxVec3 NewKinPos((NxReal)ControllerPos.x, (NxReal)ControllerPos.y, (NxReal)ControllerPos.z);
-            if (fEnabled || fKinematic)
+            if (fEnabled && fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Moving kinematic to %f,%f,%f",NewKinPos.x, NewKinPos.y, NewKinPos.z );
@@ -420,7 +420,7 @@ void plPXPhysicalControllerCore::UpdateControllerAndPhysicalRep()
                 fKinematicActor->moveGlobalPosition(NewKinPos);
 
             }
-            else
+            else if (fEnabled)
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Setting kinematic to %f,%f,%f", NewKinPos.x, NewKinPos.y, NewKinPos.z );
@@ -452,14 +452,14 @@ void plPXPhysicalControllerCore::MoveKinematicToController(hsPoint3& pos)
             newPos.x = (NxReal)pos.fX;
             newPos.y = (NxReal)pos.fY;
             newPos.z = (NxReal)pos.fZ+kPhysZOffset;
-            if ((fEnabled || fKinematic) && fBehavingLikeAnimatedPhys)
+            if (fEnabled && fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Moving kinematic from %f,%f,%f to %f,%f,%f",pos.fX,pos.fY,pos.fZ+kPhysZOffset,kinPos.x,kinPos.y,kinPos.z );
                 // use the position
                 fKinematicActor->moveGlobalPosition(newPos);
             }
-            else
+            else if (fEnabled)
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Setting kinematic from %f,%f,%f to %f,%f,%f",pos.fX,pos.fY,pos.fZ+kPhysZOffset,kinPos.x,kinPos.y,kinPos.z );
@@ -494,9 +494,9 @@ void plPXPhysicalControllerCore::ISetKinematicLoc(const hsMatrix44& l2w)
     // add z offset
     kPos.fZ += kPhysZOffset;
     // Update the physical position of kinematic
-    if (fEnabled|| fKinematic)
+    if (fEnabled && fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
         fKinematicActor->moveGlobalPosition(plPXConvert::Point(kPos));
-    else
+    else if (fEnabled)
         fKinematicActor->setGlobalPosition(plPXConvert::Point(kPos));
 }
 void plPXPhysicalControllerCore::IGetPositionSim(hsPoint3& pos) const
@@ -568,7 +568,7 @@ NxScene* scene = plSimulationMgr::GetInstance()->GetScene(fWorldKey);
     fKinematicActor->raiseActorFlag(NX_AF_DISABLE_COLLISION);
 #endif
     // set the matrix to be the same as the controller's actor... that should orient it to be the same
-    fKinematicActor->setGlobalPose(actor->getGlobalPose());
+    fKinematicActor->moveGlobalPose(actor->getGlobalPose());
 
     // the proxy for the debug display
     //hsAssert(!fProxyGen, "Already have proxy gen, double read?");
