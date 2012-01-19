@@ -1302,7 +1302,7 @@ hsBool plArmatureMod::MsgReceive(plMessage* msg)
                 if(spawnSO)
                 {
                     hsMatrix44 l2w = spawnSO->GetLocalToWorld();
-                    plWarpMsg *warpM = TRACKED_NEW plWarpMsg(nil, GetTarget(0)->GetKey(), 0, l2w);
+                    plWarpMsg *warpM = TRACKED_NEW plWarpMsg(nil, GetTarget(0)->GetKey(), plWarpMsg::kFlushTransform, l2w);
                     warpM->Send();
                     fWaitFlags &= ~kNeedSpawn;
                 }
