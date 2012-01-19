@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -44,22 +45,22 @@ This module contains all the strings that need to localized for the ACA
 """
 
 xGlassesName = "Lunettes"
-xQuitConfirm = "Êtes-vous sûr(e) de vouloir quitter Uru ?"
-#xQuitConfirm = "Personne n'a vu votre nouvelle tenue ! Êtes-vous sûr(e) de vouloir quitter ?"
-xResetConfirm = "Êtes-vous sûr(e) de vouloir réinitialiser vos choix ?"
+xQuitConfirm = "ÃŠtes-vous sÃ»r(e) de vouloir quitter UruÂ ?"
+#xQuitConfirm = "Personne n'a vu votre nouvelle tenueÂ ! ÃŠtes-vous sÃ»r(e) de vouloir quitterÂ ?"
+xResetConfirm = "ÃŠtes-vous sÃ»r(e) de vouloir rÃ©initialiser vos choixÂ ?"
 
 xClothesXRef = { # "name in max file": "translated name"***
                 # Hair
                 "Hair Tint": "Couleur de cheveux",
-                "Short Hair - Left Part": "Cheveux courts - Raie à gauche",
-                "Short Hair - Right Part": "Cheveux courts - Raie à droite",
+                "Short Hair - Left Part": "Cheveux courts - Raie Ã  gauche",
+                "Short Hair - Right Part": "Cheveux courts - Raie Ã  droite",
                 "Afro": "Afro",
                 "Pony Tail": "Queue de cheval",
                 "Ponytail": "Queue de cheval",
                 "Roman": "Raides",
                 "Bald": "Chauve",
-                "Balding": "Dégarni",
-                "Curly": "Frisés",
+                "Balding": "DÃ©garni",
+                "Curly": "FrisÃ©s",
                 "Hard Hat": "Chapeau",
                 "Golf Cap": "Casquette de golf",
                 "Cap": "Casquette",
@@ -80,18 +81,18 @@ xClothesXRef = { # "name in max file": "translated name"***
                 "Coat": "Manteau",
                 "Sweater": "Pull",
                 "T-Shirt": "T-Shirt",
-                "Long Sleeve Shirt": "T-Shirt à manches longues",
-                "Long Sleeve Shirt - Clock": "T-Shirt à manches longues - Horloge",
-                "Long Sleeve Shirt - Tower": "T-Shirt à manches longues - Tour",
-                "Long Sleeve T-Shirt": "T-Shirt à manches longues",
-                "Long Sleeve T-Shirt - Myst": "T-Shirt à manches longues - Myst",
-                "Long Sleeve T-Shirt - Riven": "T-Shirt à manches longues - Riven",
-                "Long Sleeve T-Shirt - Cosmic Osmo": "T-Shirt à manches longues - Cosmic Osmo",
+                "Long Sleeve Shirt": "T-Shirt Ã  manches longues",
+                "Long Sleeve Shirt - Clock": "T-Shirt Ã  manches longues - Horloge",
+                "Long Sleeve Shirt - Tower": "T-Shirt Ã  manches longues - Tour",
+                "Long Sleeve T-Shirt": "T-Shirt Ã  manches longues",
+                "Long Sleeve T-Shirt - Myst": "T-Shirt Ã  manches longues - Myst",
+                "Long Sleeve T-Shirt - Riven": "T-Shirt Ã  manches longues - Riven",
+                "Long Sleeve T-Shirt - Cosmic Osmo": "T-Shirt Ã  manches longues - Cosmic Osmo",
                 "Leather Jacket": "Veste en cuir",
                 "Leather Jacket - DRC": "Veste en cuir - CRD",
                 "Leather Jacket - Clock": "Veste en cuir - Horloge",
                 "Leather Jacket - Tower": "Veste en cuir - Tour",
-                "Shearling Coat": "Manteau à col en fourrure",
+                "Shearling Coat": "Manteau Ã  col en fourrure",
                 "Dress Shirt": "Chemise",
                 "Fleece Pullover": "Pull Vareuse",
                 "Zipper": "Gilet",
@@ -106,15 +107,15 @@ xClothesXRef = { # "name in max file": "translated name"***
                 "Leather": "Cuir",
                 "Highland Sweater": "Pull irlandais",
                 "Turtleneck": "Sous-pull",
-                "Short Sleeve T-Shirt": "T-Shirt à manches courtes",
-                "Short Sleeve T-Shirt - Myst": "T-Shirt à manches courtes - Myst",
-                "Short Sleeve T-Shirt - Riven": "T-Shirt à manches courtes - Riven",
-                "Short Sleeve T-Shirt - Cosmic Osmo": "T-Shirt à manches courtes - Cosmic Osmo",
+                "Short Sleeve T-Shirt": "T-Shirt Ã  manches courtes",
+                "Short Sleeve T-Shirt - Myst": "T-Shirt Ã  manches courtes - Myst",
+                "Short Sleeve T-Shirt - Riven": "T-Shirt Ã  manches courtes - Riven",
+                "Short Sleeve T-Shirt - Cosmic Osmo": "T-Shirt Ã  manches courtes - Cosmic Osmo",
                 "Knit Sweater": "Pull en laine",
-                "Yeesha Reward": "La récompense de Yeesha",
+                "Yeesha Reward": "La rÃ©compense de Yeesha",
                 "Work Shirt": "Bleu de travail",
                 "Polo Shirt": "Polo",
-                "Hooded Sweatshirt": "Sweat-shirt à capuche",
+                "Hooded Sweatshirt": "Sweat-shirt Ã  capuche",
                 "Sweatshirt": "Sweatshirt",
                 "Bomber Jacket": "Bomber",
                 "Sleeveless Shirt": "Chemise sans manches",
@@ -138,9 +139,9 @@ xClothesXRef = { # "name in max file": "translated name"***
                 "Sailor Pants": "Pantalon de marin",
                 "Khakis": "Khaki",
                 "Belt": "Ceinture",
-                "Cargo Pants": "Pantalon à poches",
+                "Cargo Pants": "Pantalon Ã  poches",
                 "Capris": "Capris",
-                "Cargo Shorts": "Short à poches",
+                "Cargo Shorts": "Short Ã  poches",
                 # Feet
                 "Sandal": "Sandale",
                 "Sandals": "Sandales",
@@ -156,7 +157,7 @@ xClothesXRef = { # "name in max file": "translated name"***
 }
 
 # and now for the control name localization strings:
-xAge = "Âge"
+xAge = "Ã‚ge"
 xWeight = "Carrure"
 xSkinColor = "Couleur de peau"
 xTexture1 = "Texture 1" # Texture 1, 2, and 3 are the ethnicity sliders

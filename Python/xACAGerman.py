@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -46,7 +47,7 @@ This module contains all the strings that need to localized for the ACA
 xGlassesName = "Brille"
 xQuitConfirm = "Uru wirklich verlassen?"
 #xQuitConfirm = "Keiner hat Ihr neues Outfit gesehen! Wollen Sie wirklich gehen?"
-xResetConfirm = "Wollen Sie Ihre ƒnderungen wirklich r¸ckg‰ngig machen?"
+xResetConfirm = "Wollen Sie Ihre √Ñnderungen wirklich r√ºckg√§ngig machen?"
 
 xClothesXRef = { # "name in max file": "translated name"
                 # Hair
@@ -65,7 +66,7 @@ xClothesXRef = { # "name in max file": "translated name"
                 "Cap": "Kappe",
                 "Hat": "Hut",
                 "Panama Hat": "Panama-Hut",
-                "Knit Hat": "Wollm¸tze",
+                "Knit Hat": "Wollm√ºtze",
                 "HardHat": "Bauhelm",
                 "Pith Helmet": "Tropenhelm",
                 # Face
@@ -80,13 +81,13 @@ xClothesXRef = { # "name in max file": "translated name"
                 "Coat": "Jacke",
                 "Sweater": "Sweatshirt",
                 "T-Shirt": "T-Shirt",
-                "Long Sleeve Shirt": "Lang‰rmeliges Hemd",
-                "Long Sleeve Shirt - Clock": "Lang‰rmeliges T-Shirt - Uhr",
-                "Long Sleeve Shirt - Tower": "Lang‰rmeliges T-Shirt - Turm",
-                "Long Sleeve T-Shirt": "Lang‰rmeliges T-Shirt",
-                "Long Sleeve T-Shirt - Myst": "Lang‰rmeliges T-Shirt - Myst",
-                "Long Sleeve T-Shirt - Riven": "Lang‰rmeliges T-Shirt - Riven",
-                "Long Sleeve T-Shirt - Cosmic Osmo": "Lang‰rmeliges T-Shirt - Cosmic Osmo",
+                "Long Sleeve Shirt": "Lang√§rmeliges Hemd",
+                "Long Sleeve Shirt - Clock": "Lang√§rmeliges T-Shirt - Uhr",
+                "Long Sleeve Shirt - Tower": "Lang√§rmeliges T-Shirt - Turm",
+                "Long Sleeve T-Shirt": "Lang√§rmeliges T-Shirt",
+                "Long Sleeve T-Shirt - Myst": "Lang√§rmeliges T-Shirt - Myst",
+                "Long Sleeve T-Shirt - Riven": "Lang√§rmeliges T-Shirt - Riven",
+                "Long Sleeve T-Shirt - Cosmic Osmo": "Lang√§rmeliges T-Shirt - Cosmic Osmo",
                 "Leather Jacket": "Lederjacke",
                 "Leather Jacket - DCR": "Lederjacke - DRC",
                 "Leather Jacket - Clock": "Lederjacke - Uhr",
@@ -94,8 +95,8 @@ xClothesXRef = { # "name in max file": "translated name"
                 "Shearling Coat": "Jacke",
                 "Dress Shirt": "Hemd",
                 "Fleece Pullover": "Fleece-Pullover",
-                "Zipper": "Reiﬂverschluss",
-                "zipper": "Reiﬂverschluss",
+                "Zipper": "Rei√üverschluss",
+                "zipper": "Rei√üverschluss",
                 "Pullover": "Pullover",
                 "Tie Dye T-Shirt": "Batik-Shirt",
                 "Tie Dye Shirt": "Batik-Shirt",
@@ -117,7 +118,7 @@ xClothesXRef = { # "name in max file": "translated name"
                 "Hooded Sweatshirt": "Kapuzenshirt",
                 "Sweatshirt": "Sweatshirt",
                 "Bomber Jacket": "Bomberjacke",
-                "Sleeveless Shirt": "ƒrmelloses Shirt",
+                "Sleeveless Shirt": "√Ñrmelloses Shirt",
                 "Windbreaker": "Windjacke",
                 "Color1": "Farbe 1",
                 "Color2": "Farbe 2",
@@ -125,8 +126,8 @@ xClothesXRef = { # "name in max file": "translated name"
                 "Vest": "Westw",
                 # Hands
                 "Hand": "Hand",
-                "Hands": "H‰nde",
-                "Nails": "N‰gel",
+                "Hands": "H√§nde",
+                "Nails": "N√§gel",
                 "Glove": "Handschuh",
                 "Gloves": "Handschuhe",
                 "Fingerless Gloves": "Fingerhandschuhe",
@@ -137,7 +138,7 @@ xClothesXRef = { # "name in max file": "translated name"
                 "Pants": "Hosen",
                 "Sailor Pants": "Schlaghosen",
                 "Khakis": "Stoffhose",
-                "Belt": "G¸rtel",
+                "Belt": "G√ºrtel",
                 "Cargo Pants": "Cargo-Hose",
                 "Capris": "Capri-Hose",
                 "Cargo Shorts": "Cargo-Shorts",
@@ -147,17 +148,17 @@ xClothesXRef = { # "name in max file": "translated name"
                 "Hiking Boots": "Wanderstiefel",
                 "Shoe": "Schuh",
                 "Shoes": "Schuhe",
-                "Laces": "Schn¸rsenkel",
+                "Laces": "Schn√ºrsenkel",
                 "Running Shoes": "Sportschuhe",
                 "Hiking Shoes": "Wanderschuhe",
                 "Boot": "Stiefel",
                 "Boots": "Stiefel",
-                "Bare Feet": "Barfuﬂ"
+                "Bare Feet": "Barfu√ü"
 }
 
 # and now for the control name localization strings:
 xAge = "Alter"
-xWeight = "Kˆrperbau"
+xWeight = "K√∂rperbau"
 xSkinColor = "Hautfarbe"
 xTexture1 = "Textur 1" # Texture 1, 2, and 3 are the ethnicity sliders
 xTexture2 = "Textur 2"
@@ -167,6 +168,6 @@ xNoseWidth = "Nasenbreite"
 xMouth = "Mund"
 xChinAngle = "Kinnwinkel"
 xEyebrows = "Augenbrauen"
-xNoseLength = "Nasenl‰nge"
+xNoseLength = "Nasenl√§nge"
 xCheeks = "Wangen"
 xChinWidth = "Kinnbreite"
