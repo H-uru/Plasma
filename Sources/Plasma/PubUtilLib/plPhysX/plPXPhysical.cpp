@@ -827,6 +827,7 @@ void plPXPhysical::ApplyHitForce()
 void plPXPhysical::ISetTransformGlobal(const hsMatrix44& l2w)
 {
     hsAssert(fActor->isDynamic(), "Shouldn't move a static actor");
+    fActor->wakeUp();
 
     NxMat34 mat;
 
@@ -1000,15 +1001,7 @@ plKey plPXPhysical::GetSceneNode() const
 
 void plPXPhysical::SetSceneNode(plKey newNode)
 {
-#ifdef HS_DEBUGGING
-    plKey oldNode = GetSceneNode();
-    char msg[1024];
-    if (newNode)
-        sprintf(msg,"Physical object %s cannot change scenes. Already in %s, trying to switch to %s.",fObjectKey->GetName(),oldNode->GetName(),newNode->GetName());
-    else
-        sprintf(msg,"Physical object %s cannot change scenes. Already in %s, trying to switch to <nil key>.",fObjectKey->GetName(),oldNode->GetName());
-    hsAssert(oldNode == newNode, msg);
-#endif  // HS_DEBUGGING
+    // Not Supported
 }
 
 /////////////////////////////////////////////////////////////////////
