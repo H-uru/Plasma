@@ -194,7 +194,7 @@ private:
         void *       param;
         union {
             struct {
-                byte connType;
+                uint8_t connType;
             } connect;
             struct {
                 const void * data;  // pointer to application's data
@@ -206,7 +206,7 @@ private:
     // These variables are protected by the critical section
     CCritSect               m_critSect;
     LISTDECL(Command, link) m_commandList;
-    ARRAY(byte)             m_sendQueue;
+    ARRAY(uint8_t)             m_sendQueue;
 
     // These variables are never modified outside the constructor and
     // destructor
@@ -218,7 +218,7 @@ private:
     // These variables are only ever touched during a callback from the
     // window procedure, which is single threaded
     unsigned                m_dispatched;
-    byte                    m_readBuffer[1460 * 2];
+    uint8_t                    m_readBuffer[1460 * 2];
     unsigned                m_readBytes;
     void *                  m_userState;
 
@@ -246,7 +246,7 @@ public:
     void ProcessQueue ();
     void QueueConnect (
         void * param,
-        byte   connType
+        uint8_t   connType
     );
     void QueueWrite (
         void *       param,
@@ -583,7 +583,7 @@ void CSocket::OnWriteReady () {
                 &m_sendQueue[result],
                 m_sendQueue.Bytes() - result
             );
-            COMPILER_ASSERT(sizeof(m_sendQueue[0]) == sizeof(byte));
+            COMPILER_ASSERT(sizeof(m_sendQueue[0]) == sizeof(uint8_t));
             m_sendQueue.SetCount(m_sendQueue.Count() - result);
         }
     
@@ -625,7 +625,7 @@ void CSocket::ProcessQueue () {
                 AsyncNotifySocketWrite notify;
                 notify.param          = command->param;
                 notify.asyncId        = 0;
-                notify.buffer         = (byte *)command->write.data;
+                notify.buffer         = (uint8_t *)command->write.data;
                 notify.bytes          = command->write.bytes;
                 notify.bytesProcessed = 0;
                 bool notifyResult = m_notifyProc(
@@ -652,7 +652,7 @@ void CSocket::ProcessQueue () {
 //===========================================================================
 void CSocket::QueueConnect (
     void * param,
-    byte   connType
+    uint8_t   connType
 ) {
     ASSERT(!IsConnected() && !IsDisconnected());
 
@@ -710,7 +710,7 @@ bool CSocket::Send (  // returns false if disconnected
     // If we were unable to send the entire message, queue the unsent portion
     if ((unsigned)result < bytes) {
         m_sendQueue.Add(
-            (const byte *)data + result,
+            (const uint8_t *)data + result,
             bytes - result
         );
     }
@@ -1037,7 +1037,7 @@ void W9xSocketConnect (
     // Queue a connect notification for the socket
     object->QueueConnect(
         param,
-        sendBytes ? ((const byte *)sendData)[0] : (byte)0
+        sendBytes ? ((const uint8_t *)sendData)[0] : (uint8_t)0
     );
 
     // Queue sending data

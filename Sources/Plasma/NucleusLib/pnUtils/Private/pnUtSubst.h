@@ -80,8 +80,8 @@ struct SubstParsedData {
 };
 
 bool ParseForSubst (
-    SubstParsedData<wchar> *    dest,
-    const wchar                 src[]
+    SubstParsedData<wchar_t> *    dest,
+    const wchar_t                 src[]
 );
 bool ParseForSubst (
     SubstParsedData<char> *     dest,
@@ -90,11 +90,11 @@ bool ParseForSubst (
 
 // Return value is for validation purposes only; it may be ignored
 bool VarSubstitute (
-    ARRAY(wchar) *  dst,
-    const wchar     src[],
+    ARRAY(wchar_t) *  dst,
+    const wchar_t     src[],
     unsigned        varCount,
-    const wchar *   varNames[],   // [varCount]
-    const wchar *   varValues[]   // [varCount]
+    const wchar_t *   varNames[],   // [varCount]
+    const wchar_t *   varValues[]   // [varCount]
 );
 bool VarSubstitute (
     ARRAY(char) *   dst,
@@ -104,11 +104,11 @@ bool VarSubstitute (
     const char *    varValues[]    // [varCount]
 );
 bool VarSubstitute (
-    ARRAY(wchar) *                      dst,
-    const SubstParsedData<wchar> *      src,
+    ARRAY(wchar_t) *                      dst,
+    const SubstParsedData<wchar_t> *      src,
     unsigned                            varCount,
-    const wchar *                       varNames[],   // [varCount]
-    const wchar *                       varValues[]   // [varCount]
+    const wchar_t *                       varNames[],   // [varCount]
+    const wchar_t *                       varValues[]   // [varCount]
 );
 bool VarSubstitute (
     ARRAY(char) *                       dst,

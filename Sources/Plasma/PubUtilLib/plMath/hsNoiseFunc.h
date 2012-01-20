@@ -54,7 +54,7 @@ public:
     hsNoiseFunc();
     virtual ~hsNoiseFunc();
     
-    virtual void Seed(UInt32 s);
+    virtual void Seed(uint32_t s);
     virtual hsScalar Noise(hsScalar lo=0, hsScalar hi=hsScalar1, hsScalar t=0) = 0; // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
 
     virtual hsScalar NoisePoint(const hsPoint3& p, hsScalar lo=0, hsScalar hi=hsScalar1, hsScalar t=0) = 0; // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
@@ -64,7 +64,7 @@ class hsTableNoise : public hsNoiseFunc // should inherit from keyed object
 {
 protected:
     hsScalar*       fTable;
-    UInt32          fTableLen;
+    uint32_t          fTableLen;
     
     
 public:

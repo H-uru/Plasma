@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void    plSpan::Read( hsStream *stream )
 {
-    fSubType = (UInt16)(stream->ReadLE32());
+    fSubType = (uint16_t)(stream->ReadLE32());
     fFogEnvironment = nil;
 
     fMaterialIdx = stream->ReadLE32();
@@ -78,7 +78,7 @@ void    plSpan::Read( hsStream *stream )
     fLocalBounds.Read( stream );
     fWorldBounds.Read( stream );
 
-    fNumMatrices = (UInt8)(stream->ReadLE32());
+    fNumMatrices = (uint8_t)(stream->ReadLE32());
     fBaseMatrix = stream->ReadLE32();
 
     fLocalUVWChans = stream->ReadLE16();
@@ -187,7 +187,7 @@ void    plSpan::AddLight( plLightInfo *li, hsScalar strength, hsScalar scale, hs
     }
     lights.Insert(i, li);
     strengths.Insert(i, strength);
-    scales.Insert(i, hsScalar(UInt32(scale * 127.9f)) / 127.f);
+    scales.Insert(i, hsScalar(uint32_t(scale * 127.9f)) / 127.f);
 }
 
 void    plSpan::ClearLights() const 
@@ -301,7 +301,7 @@ plSpan::plSpan()
 {
     fTypeMask = kSpan;
     fSubType = plDrawable::kSubNormal;
-    fMaterialIdx = (UInt32)-1;
+    fMaterialIdx = (uint32_t)-1;
     fFogEnvironment = nil;
     fProps = 0;
 
@@ -345,10 +345,10 @@ void plSpan::Destroy()
 plVertexSpan::plVertexSpan()
 {
     fTypeMask |= kVertexSpan;
-    fGroupIdx = (UInt32)-1;
-    fVBufferIdx = (UInt32)-1;
-    fCellIdx = (UInt32)-1;
-    fCellOffset = (UInt32)-1;
+    fGroupIdx = (uint32_t)-1;
+    fVBufferIdx = (uint32_t)-1;
+    fCellIdx = (uint32_t)-1;
+    fCellOffset = (uint32_t)-1;
 }
 
 void    plVertexSpan::Read( hsStream* stream )

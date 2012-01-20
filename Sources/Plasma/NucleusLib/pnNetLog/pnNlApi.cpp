@@ -64,7 +64,7 @@ struct EventHash {
         ESrvType    srvType
     );
 
-    inline dword GetHash () const;
+    inline uint32_t GetHash () const;
     inline bool operator== (const EventHash & rhs) const;
 };
 
@@ -117,7 +117,7 @@ inline EventHash::EventHash (
 }
 
 //============================================================================
-inline dword EventHash::GetHash () const {
+inline uint32_t EventHash::GetHash () const {
     CHashValue hash(this, sizeof(*this));
     return hash.GetHash();
 }

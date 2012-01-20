@@ -880,7 +880,7 @@ PF_CONSOLE_CMD( Avatar_Swim, Start, "", "")
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-// void WarpPlayerToAnother(hsBool iMove, UInt32 remoteID)
+// void WarpPlayerToAnother(hsBool iMove, uint32_t remoteID)
 PF_CONSOLE_CMD( Avatar_Warp, WarpToPlayer, "int PlayerID", "Warp our player to the same position as another player.")
 {
     plAvatarMgr::WarpPlayerToAnother(true, (int)params[0]);

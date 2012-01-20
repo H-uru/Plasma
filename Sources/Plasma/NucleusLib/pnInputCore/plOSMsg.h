@@ -95,7 +95,7 @@ struct plMouseState
     };
     float   fX;
     float   fY;
-    UInt32  fButtonState;
+    uint32_t  fButtonState;
 };
 
 

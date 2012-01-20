@@ -55,7 +55,7 @@ protected:
 
     hsScalar            fWetLength;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
 
 public:
     plDecalEnableMod();
@@ -73,7 +73,7 @@ public:
     hsScalar GetWetLength() const { return fWetLength; }
 
     void AddDecalKey(const plKey& k) { fDecalMgrs.Append(k); }
-    UInt32 GetNumDecalKeys() const { return fDecalMgrs.GetCount(); }
+    uint32_t GetNumDecalKeys() const { return fDecalMgrs.GetCount(); }
     const plKey& GetDecalKey(int i) const { return fDecalMgrs[i]; }
 };
 

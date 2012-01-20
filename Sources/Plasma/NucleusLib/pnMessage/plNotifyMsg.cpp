@@ -260,7 +260,7 @@ void plNotifyMsg::AddCollisionEvent( hsBool enter, const plKey &other, const plK
 //  PARAMETERS : event  - the event type, as enumerated in plEventCallbackMsg.h
 //
 //
-void plNotifyMsg::AddCallbackEvent( Int32 event )
+void plNotifyMsg::AddCallbackEvent( int32_t event )
 {
     // remove records that are like the one being added
     int num_recs = fEvents.GetCount();
@@ -295,7 +295,7 @@ void plNotifyMsg::AddCallbackEvent( Int32 event )
 //  PARAMETERS : state  - the state for the responder to switch to before triggering
 //
 //
-void plNotifyMsg::AddResponderStateEvent( Int32 state )
+void plNotifyMsg::AddResponderStateEvent( int32_t state )
 {
     // remove records that are like the one being added
     int num_recs = fEvents.GetCount();
@@ -331,7 +331,7 @@ void plNotifyMsg::AddResponderStateEvent( Int32 state )
 //             : event   - what was the event that happened
 //
 //
-void plNotifyMsg::AddMultiStageEvent( Int32 stage, Int32 event, const plKey& avatar )
+void plNotifyMsg::AddMultiStageEvent( int32_t stage, int32_t event, const plKey& avatar )
 {
     // we can have multi events of this type
     // create the mutlistage event record
@@ -342,7 +342,7 @@ void plNotifyMsg::AddMultiStageEvent( Int32 stage, Int32 event, const plKey& ava
     fEvents.Append(pED);    // then add it to the list of event records
 }
 
-void plNotifyMsg::AddCoopEvent(UInt32 id, UInt16 serial)
+void plNotifyMsg::AddCoopEvent(uint32_t id, uint16_t serial)
 {
     proCoopEventData *pED = TRACKED_NEW proCoopEventData;
     pED->fID = id;
@@ -546,7 +546,7 @@ void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, hsScala
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddControlKeyEvent( Int32 key, hsBool down )
+void plNotifyMsg::AddControlKeyEvent( int32_t key, hsBool down )
 {
     // remove records that are like the one being added
     int num_recs = fEvents.GetCount();
@@ -713,7 +713,7 @@ void plNotifyMsg::AddOfferBookEvent(const plKey& offerer, int targetAge, int off
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddBookEvent( UInt32 event, UInt32 linkID /*=0*/)
+void plNotifyMsg::AddBookEvent( uint32_t event, uint32_t linkID /*=0*/)
 {
     // remove records that are like the one being added
     int num_recs = fEvents.GetCount();
@@ -790,7 +790,7 @@ void plNotifyMsg::AddHitClimbingBlockerEvent(const plKey &blocker)
 //
 //  PURPOSE    : Find the first record in the event records that is of type eventtype
 //
-proEventData* plNotifyMsg::FindEventRecord( Int32 eventtype )
+proEventData* plNotifyMsg::FindEventRecord( int32_t eventtype )
 {
     // make sure that its a legal event type
     if ( eventtype >= 0 && eventtype < proEventData::kNone )
@@ -844,7 +844,7 @@ void plNotifyMsg::Read(hsStream* stream, hsResMgr* mgr)
     stream->ReadLE(&fState);
     fID = stream->ReadLE32();
     // read in the variable part of the message
-    Int32 numberEDs = stream->ReadLE32();
+    int32_t numberEDs = stream->ReadLE32();
     fEvents.SetCountAndZero(numberEDs);
     if ( numberEDs > 0 )
     {
@@ -873,7 +873,7 @@ void plNotifyMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE(fState);
     stream->WriteLE32(fID);
     // then write the variable data
-    Int32 numberEDs = fEvents.Count();
+    int32_t numberEDs = fEvents.Count();
     stream->WriteLE32(numberEDs);
     if ( numberEDs > 0 )
     {
@@ -914,7 +914,7 @@ void plNotifyMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kNotifyMsgEDs))
     {
         // read in the variable part of the message
-        Int32 numberEDs = s->ReadLE32();
+        int32_t numberEDs = s->ReadLE32();
         fEvents.SetCountAndZero(numberEDs);
         if (numberEDs > 0)
         {
@@ -955,7 +955,7 @@ void plNotifyMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     s->WriteLE32(fID);
 
     // kNotifyMsgEDs
-    Int32 numberEDs = fEvents.Count();
+    int32_t numberEDs = fEvents.Count();
     s->WriteLE32(numberEDs);
     if (numberEDs > 0)
     {
@@ -998,7 +998,7 @@ plKey plNotifyMsg::GetAvatarKey()
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-proEventData* proEventData::ICreateEventDataType(Int32 type)
+proEventData* proEventData::ICreateEventDataType(int32_t type)
 {
     switch (type)
     {
@@ -1028,7 +1028,7 @@ proEventData* proEventData::ICreateEventDataType(Int32 type)
 
 proEventData* proEventData::Read( hsStream *stream, hsResMgr *mgr )
 {
-    Int32 evtType = stream->ReadLE32();
+    int32_t evtType = stream->ReadLE32();
 
     proEventData* data = ICreateEventDataType(evtType);
 
@@ -1056,7 +1056,7 @@ proEventData* proEventData::ReadVersion(hsStream* s, hsResMgr* mgr)
 
     if (contentFlags.IsBitSet(kProEventDataType))
     {
-        Int32 evtType = s->ReadLE32();
+        int32_t evtType = s->ReadLE32();
 
         proEventData* data = ICreateEventDataType(evtType);
 

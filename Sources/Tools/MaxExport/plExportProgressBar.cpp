@@ -65,7 +65,7 @@ plExportProgressBar::~plExportProgressBar()
    fInterface->ProgressEnd();
 }
 
-void plExportProgressBar::Start(char *name, UInt32 steps)
+void plExportProgressBar::Start(char *name, uint32_t steps)
 {
     fTotalSteps = steps;
     fCurStep = 0;
@@ -81,7 +81,7 @@ void plExportProgressBar::Start(char *name, UInt32 steps)
    }   
 }
 
-bool plExportProgressBar::Update(char *name, UInt32 inc)
+bool plExportProgressBar::Update(char *name, uint32_t inc)
 {
     fCurStep += inc;
 
@@ -119,14 +119,14 @@ bool plExportProgressBar::Update(char *name, UInt32 inc)
     return false;
 }
 
-UInt32 plExportProgressBar::CountNodes()
+uint32_t plExportProgressBar::CountNodes()
 {
     return INodeCount(GetCOREInterface()->GetRootNode());
 }
 
-UInt32 plExportProgressBar::INodeCount(INode *node)
+uint32_t plExportProgressBar::INodeCount(INode *node)
 {
-    UInt32 count = 1;
+    uint32_t count = 1;
 
     for (int i = 0; i < node->NumberOfChildren(); i++)
     {

@@ -72,7 +72,7 @@ plAvCoopMsg::~plAvCoopMsg()
 
 // plAvCoopMsg -----------------------------------
 // ------------
-plAvCoopMsg::plAvCoopMsg(Command cmd, UInt32 id, UInt16 serial)
+plAvCoopMsg::plAvCoopMsg(Command cmd, uint32_t id, uint16_t serial)
 : plMessage(nil, plAvatarMgr::GetInstance()->GetKey(), nil),
   fInitiatorID(id),
   fInitiatorSerial(serial),

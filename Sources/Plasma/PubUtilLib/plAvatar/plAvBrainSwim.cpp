@@ -91,7 +91,7 @@ public:
     plSwimBehavior() : fAvMod(nil), fSwimBrain(nil) {}
     virtual ~plSwimBehavior() {}
     
-    void Init(plAGAnim *anim, hsBool loop, plAvBrainSwim *brain, plArmatureMod *body, UInt8 index)
+    void Init(plAGAnim *anim, hsBool loop, plAvBrainSwim *brain, plArmatureMod *body, uint8_t index)
     {
         plArmatureBehavior::Init(anim, loop, brain, body, index);
         fAvMod = body;

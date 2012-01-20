@@ -53,7 +53,7 @@ class plReplaceGeometryMsg : public plMessage
 public:
     plSharedMesh *fMesh;
     hsGMaterial *fMaterial;
-    UInt32 fFlags;
+    uint32_t fFlags;
     
     plReplaceGeometryMsg() : fMesh(nil), fMaterial(nil), fFlags(0) {}
     ~plReplaceGeometryMsg() {}
@@ -80,7 +80,7 @@ public:
     plDrawableSpans *fSpans;
 
     plSwapSpansRefMsg() : plGenRefMsg(), fSpans(nil) {}
-    plSwapSpansRefMsg(const plKey &r, UInt8 c, int which, int type) : plGenRefMsg(r, c, which, type) {}
+    plSwapSpansRefMsg(const plKey &r, uint8_t c, int which, int type) : plGenRefMsg(r, c, which, type) {}
     ~plSwapSpansRefMsg() {}
 
     CLASSNAME_REGISTER( plSwapSpansRefMsg );

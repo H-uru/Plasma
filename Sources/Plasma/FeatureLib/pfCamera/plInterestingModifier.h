@@ -61,13 +61,13 @@ protected:
         kTypeLookAtMod,
     };
 
-    UInt8       fType;
+    uint8_t       fType;
     hsScalar    fView;
 
     static hsScalar fInterestRadius;
     static hsScalar fInterestWeight;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
     
 public:
     plInterestingModifier(){ fType = kTypeInteresting;}
@@ -86,8 +86,8 @@ public:
     
     virtual void AddTarget(plSceneObject* so);
     
-    void    SetType(UInt8 type) { fType = type; }
-    UInt8   GetType() { return fType; }
+    void    SetType(uint8_t type) { fType = type; }
+    uint8_t   GetType() { return fType; }
 };
 
 

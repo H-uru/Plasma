@@ -66,10 +66,10 @@ public:
     };
 
     plSharedMesh*       fMesh;
-    hsTArray<Int32>     fCurrIdx;
+    hsTArray<int32_t>     fCurrIdx;
     plDrawable*         fCurrDraw;
     hsTArray<plMorphArrayWeights> fArrayWeights;
-    UInt8               fFlags;
+    uint8_t               fFlags;
 
     plSharedMeshInfo() : fMesh(nil), fCurrDraw(nil), fFlags(0) {}
 };
@@ -109,19 +109,19 @@ protected:
         kHaveShared         = 0x4,
         kDirtyIndices       = 0x8
     };
-    UInt32                      fMorphFlags;
+    uint32_t                      fMorphFlags;
 
     hsTArray<plMorphArray>      fMorphs;
 
-    //Int32                     fActiveMesh; // Doesn't appear to be used.
+    //int32_t                     fActiveMesh; // Doesn't appear to be used.
     hsTArray<plSharedMeshInfo>  fSharedMeshes;
     hsTArray<plMorphState>      fPendingStates;
     plMorphSequenceSDLMod*      fMorphSDLMod;
-    Int8                        fGlobalLayerRef;
+    int8_t                        fGlobalLayerRef;
 
     const plDrawInterface*      IGetDrawInterface() const;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
 
     void ISetHaveSnap(hsBool on) { if(on)fMorphFlags |= kHaveSnap; else fMorphFlags &= ~kHaveSnap; }
     void ISetDirty(hsBool on);
@@ -138,8 +138,8 @@ protected:
     void        IFindIndices(); // Refresh Indicies
     void        IApplyShared(); // Apply whatever morphs are active
 
-    Int32       IFindPendingStateIndex(plKey meshKey) const; // Do we have pending state for this mesh?
-    Int32       IFindSharedMeshIndex(plKey meshKey) const; // What's this mesh's index in our array?
+    int32_t       IFindPendingStateIndex(plKey meshKey) const; // Do we have pending state for this mesh?
+    int32_t       IFindSharedMeshIndex(plKey meshKey) const; // What's this mesh's index in our array?
     hsBool      IIsUsingDrawable(plDrawable *draw); // Are we actively looking at spans in this drawable?
 
     // Internal functions for maintaining that all meshes share the same global weight(s) (fGlobalLayerRef)

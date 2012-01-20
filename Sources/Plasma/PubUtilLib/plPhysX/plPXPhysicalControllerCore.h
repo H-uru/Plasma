@@ -116,13 +116,13 @@ public:
     static void UpdatePrestep(hsScalar delSecs);
     static void UpdatePoststep(hsScalar delSecs);
     static void UpdatePostSimStep(hsScalar delSecs);
-    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 #ifndef PLASMA_EXTERNAL_RELEASE
     static hsBool fDebugDisplay;
 #endif // PLASMA_EXTERNAL_RELEASE
     static void SetMaxNumberOfControllers(int max) { fPXControllersMax = max; }
     static int fPXControllersMax;
-    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, UInt32& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut);
+    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut);
     virtual void BehaveLikeAnimatedPhysical(hsBool actLikeAnAnimatedPhys);
     virtual hsBool BehavingLikeAnAnimatedPhysical();
     virtual const hsVector3& GetLinearVelocity();

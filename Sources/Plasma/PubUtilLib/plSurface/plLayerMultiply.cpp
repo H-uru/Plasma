@@ -124,10 +124,10 @@ plLayerInterface* plLayerMultiply::Attach(plLayerInterface* prev)
     return plLayerInterface::Attach(prev);
 }
 
-UInt32 plLayerMultiply::Eval(double wSecs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerMultiply::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 dirtyChannels = fDirtyChannels | plLayerInterface::Eval(wSecs, frame, ignore);
-    UInt32 evalChannels = dirtyChannels & fOwnedChannels;
+    uint32_t dirtyChannels = fDirtyChannels | plLayerInterface::Eval(wSecs, frame, ignore);
+    uint32_t evalChannels = dirtyChannels & fOwnedChannels;
 
     if (evalChannels & kPreshadeColor)
         *fPreshadeColor = fSrcPreshadeColor * fUnderLay->GetPreshadeColor();

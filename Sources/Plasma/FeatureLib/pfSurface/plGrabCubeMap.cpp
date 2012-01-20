@@ -87,7 +87,7 @@ void plGrabCubeRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
 }
 
 
-void plGrabCubeMap::GrabCube(plPipeline* pipe, plSceneObject* obj, const char* pref, const hsColorRGBA& clearColor, UInt8 q)
+void plGrabCubeMap::GrabCube(plPipeline* pipe, plSceneObject* obj, const char* pref, const hsColorRGBA& clearColor, uint8_t q)
 {
     hsPoint3 center;
     if( obj && !(obj->GetLocalToWorld().fFlags & hsMatrix44::kIsIdent) )
@@ -105,18 +105,18 @@ void plGrabCubeMap::GrabCube(plPipeline* pipe, plSceneObject* obj, const char* p
     ISetupRenderRequests(pipe, center, pref, clearColor, q);
 }
 
-void plGrabCubeMap::GrabCube(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, UInt8 q)
+void plGrabCubeMap::GrabCube(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, uint8_t q)
 {
     ISetupRenderRequests(pipe, center, pref, clearColor, q);
 }
 
-void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, UInt8 q) const
+void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, uint8_t q) const
 {
     hsMatrix44 worldToCameras[6];
     hsMatrix44 cameraToWorlds[6];
     hsMatrix44::MakeEnvMapMatrices(center, worldToCameras, cameraToWorlds);
 
-    UInt32 renderState 
+    uint32_t renderState 
         = plPipeline::kRenderNormal
         | plPipeline::kRenderClearColor
         | plPipeline::kRenderClearDepth;

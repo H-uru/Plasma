@@ -56,11 +56,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //===========================================================================
-static wchar * TrimWhitespace (wchar * name) {
+static wchar_t * TrimWhitespace (wchar_t * name) {
     while (isspace((char) *name))
         ++name;
 
-    for (wchar * term = name; *term; ++term) {
+    for (wchar_t * term = name; *term; ++term) {
         if (isspace((char) *term)) {
             *term = 0;
             break;
@@ -87,8 +87,8 @@ IniValue::IniValue (IniKey * key, unsigned lineNum)
 
 //===========================================================================
 IniValue::~IniValue () {
-    wchar ** cur = fArgs.Ptr();
-    wchar ** end = fArgs.Term();
+    wchar_t ** cur = fArgs.Ptr();
+    wchar_t ** end = fArgs.Term();
     for (; cur < end; ++cur)
         FREE(*cur);
 }
@@ -96,10 +96,10 @@ IniValue::~IniValue () {
 //===========================================================================
 static void AddValueString (
     IniValue *  value,
-    const wchar src[]
+    const wchar_t src[]
 ) {
     unsigned chars = StrLen(src) + 1;
-    wchar * dst = ALLOCA(wchar, chars);
+    wchar_t * dst = ALLOCA(wchar_t, chars);
     StrTokenize(&src, dst, chars, L" \t\r\n\"");
     value->fArgs.Add(StrDup(dst));
 }
@@ -112,7 +112,7 @@ static void AddValueString (
 ***/
 
 //===========================================================================
-IniKey::IniKey (IniSection * section, const wchar name[])
+IniKey::IniKey (IniSection * section, const wchar_t name[])
 :   fSection(section)
 {
     StrCopy(fName, name, (unsigned) -1);
@@ -140,7 +140,7 @@ inline bool IniKey::operator== (const CHashKeyStrPtrI & rhs) const {
 //===========================================================================
 static IniValue * AddKeyValue (
     IniSection *    section,
-    wchar *         string,
+    wchar_t *         string,
     unsigned        lineNum
 ) {
     string = TrimWhitespace(string);
@@ -165,7 +165,7 @@ static IniValue * AddKeyValue (
 ***/
 
 //===========================================================================
-IniSection::IniSection (const wchar name[]) {
+IniSection::IniSection (const wchar_t name[]) {
     StrCopy(fName, name, (unsigned) -1);
 }
 
@@ -187,7 +187,7 @@ inline bool IniSection::operator== (const CHashKeyStrPtrI & rhs) const {
 //===========================================================================
 static IniSection * AddSection (
     Ini *       ini,
-    wchar *     string
+    wchar_t *     string
 ) {
     // Find or create the section
     IniSection * section = ini->fSections.Find(string);
@@ -222,16 +222,16 @@ Ini::~Ini () {
 //===========================================================================
 static void ParseBuffer (
     Ini *       ini,
-    const wchar buffer[]
+    const wchar_t buffer[]
 ) {
 
-    const wchar SECTION_OPEN_CHAR  = '[';
-    const wchar SECTION_CLOSE_CHAR = ']';
-    const wchar EQUIVALENCE_CHAR   = '=';
-    const wchar VALUE_SEPARATOR    = ',';
-    const wchar COMMENT_CHAR       = ';';
-    const wchar QUOTE_CHAR         = '\"';
-    const wchar NEWLINE            = '\n';
+    const wchar_t SECTION_OPEN_CHAR  = '[';
+    const wchar_t SECTION_CLOSE_CHAR = ']';
+    const wchar_t EQUIVALENCE_CHAR   = '=';
+    const wchar_t VALUE_SEPARATOR    = ',';
+    const wchar_t COMMENT_CHAR       = ';';
+    const wchar_t QUOTE_CHAR         = '\"';
+    const wchar_t NEWLINE            = '\n';
 
     enum {
         STATE_BEGIN,
@@ -244,9 +244,9 @@ static void ParseBuffer (
 
     IniSection * section    = nil;
     IniValue * value        = nil;
-    const wchar * start     = nil;
+    const wchar_t * start     = nil;
     bool valInQuotes        = false;
-    wchar dst[512];
+    wchar_t dst[512];
     dst[0] = 0;
 
     for (unsigned lineNum = 1;; ++buffer) {
@@ -374,11 +374,11 @@ static void IniFileNotifyProc (
 //===========================================================================
 static bool ParseFile (
     Ini *       ini,
-    const wchar fileName[]
+    const wchar_t fileName[]
 ) {
     // Open file
-    qword fileSize;
-    qword fileLastWriteTime;
+    uint64_t fileSize;
+    uint64_t fileLastWriteTime;
     EFileError error;
     AsyncFile file = AsyncFileOpen(
         fileName,
@@ -402,19 +402,19 @@ static bool ParseFile (
         result = true;
     }
     else {
-        // Read entire file into memory and NULL terminate wchar
-        byte * buffer = (byte *) ALLOC((unsigned) fileSize + sizeof(wchar));
+        // Read entire file into memory and NULL terminate wchar_t
+        uint8_t * buffer = (uint8_t *) ALLOC((unsigned) fileSize + sizeof(wchar_t));
         AsyncFileRead(file, 0, buffer, (unsigned) fileSize, kAsyncFileRwSync, nil);
-        * (wchar *) &buffer[fileSize] = 0;
+        * (wchar_t *) &buffer[fileSize] = 0;
 
         // Convert to unicode if necessary
-        if (* (wchar *) buffer != UNICODE_BOM) {
-            byte * src  = buffer;
+        if (* (wchar_t *) buffer != UNICODE_BOM) {
+            uint8_t * src  = buffer;
             // Allocate two extra spaces for UNICODE_BOM and terminator
-            unsigned newBufferSize = ((unsigned) fileSize + 2) * sizeof(wchar);
+            unsigned newBufferSize = ((unsigned) fileSize + 2) * sizeof(wchar_t);
 
             // Allocate new buffer
-            wchar * dst = (wchar *) ALLOC(newBufferSize);
+            wchar_t * dst = (wchar_t *) ALLOC(newBufferSize);
             
             // If it's UTF-8 file,convert to Unicode
             if (StrCmpI((char *)buffer, UTF8_BOM, StrLen(UTF8_BOM)) == 0) {
@@ -431,10 +431,10 @@ static bool ParseFile (
             }
 
             FREE(src);
-            buffer = (byte *) dst;
+            buffer = (uint8_t *) dst;
         }
 
-        ParseBuffer(ini, (const wchar *) buffer);
+        ParseBuffer(ini, (const wchar_t *) buffer);
         FREE(buffer);
         result = true;
     }
@@ -452,7 +452,7 @@ static bool ParseFile (
 
 //===========================================================================
 Ini * IniOpen (
-    const wchar fileName[]
+    const wchar_t fileName[]
 ) {
     Ini * ini = NEW(Ini);
     if (!ParseFile(ini, fileName)) {
@@ -470,7 +470,7 @@ void IniClose (Ini * ini) {
 //===========================================================================
 const IniSection * IniGetFirstSection (
     const Ini *         ini,
-    wchar *             name,
+    wchar_t *             name,
     unsigned            chars
 ) {
     if (chars)
@@ -487,7 +487,7 @@ const IniSection * IniGetFirstSection (
 //===========================================================================
 const IniSection * IniGetNextSection (
     const IniSection *  section,
-    wchar *             name,
+    wchar_t *             name,
     unsigned            chars
 ) {
     if (chars)
@@ -504,7 +504,7 @@ const IniSection * IniGetNextSection (
 //===========================================================================
 const IniSection * IniGetSection (
     const Ini *         ini,
-    const wchar         name[]
+    const wchar_t         name[]
 ) {
     if (!ini)
         return nil;
@@ -517,7 +517,7 @@ const IniSection * IniGetSection (
 //===========================================================================
 const IniKey * IniGetFirstKey (
     const IniSection *  section,
-    wchar *             name,
+    wchar_t *             name,
     unsigned            chars
 ) {
     if (chars)
@@ -534,8 +534,8 @@ const IniKey * IniGetFirstKey (
 //============================================================================
 const IniKey * IniGetFirstKey (
     const Ini *         ini,
-    const wchar         sectionName[],
-    wchar *             name,
+    const wchar_t         sectionName[],
+    wchar_t *             name,
     unsigned            chars
 ) {
     if (const IniSection * section = IniGetSection(ini, sectionName))
@@ -547,7 +547,7 @@ const IniKey * IniGetFirstKey (
 //===========================================================================
 const IniKey * IniGetNextKey (
     const IniKey *      key,
-    wchar *             name,
+    wchar_t *             name,
     unsigned            chars
 ) {
     if (chars)
@@ -564,7 +564,7 @@ const IniKey * IniGetNextKey (
 //===========================================================================
 const IniKey * IniGetKey (
     const IniSection *  section,
-    const wchar         name[]
+    const wchar_t         name[]
 ) {
     if (!section)
         return nil;
@@ -599,7 +599,7 @@ const IniValue * IniGetFirstValue (
 //===========================================================================
 const IniValue * IniGetFirstValue (
     const IniSection *  section,
-    const wchar         keyName[],
+    const wchar_t         keyName[],
     unsigned *          lineNum
 ) {
     const IniValue * value = nil;
@@ -623,8 +623,8 @@ const IniValue * IniGetFirstValue (
 //===========================================================================
 const IniValue * IniGetFirstValue (
     const Ini *     ini,
-    const wchar     sectionName[],
-    const wchar     keyName[],
+    const wchar_t     sectionName[],
+    const wchar_t     keyName[],
     unsigned *      lineNum
 ) {
     const IniValue * value = nil;
@@ -680,7 +680,7 @@ bool IniGetUnsigned (
         if (!value)
             break;
             
-        wchar str[32];
+        wchar_t str[32];
         if (!IniGetString(value, str, arrsize(str), index, nil))
             break;
 
@@ -698,10 +698,10 @@ bool IniGetUnsigned (
 //===========================================================================
 bool IniGetString (
     const IniValue *    value,
-    wchar *             result,
+    wchar_t *             result,
     unsigned            resultChars,
     unsigned            index,
-    const wchar         defaultValue[]
+    const wchar_t         defaultValue[]
 ) {
     ASSERT(result);
 
@@ -722,7 +722,7 @@ bool IniGetUuid (
     unsigned            index,
     const Uuid &        defaultValue
 ) {
-    wchar str[128];
+    wchar_t str[128];
     if (IniGetString(value, str, arrsize(str), index, nil))
         return GuidFromString(str, uuid);
     else
@@ -734,8 +734,8 @@ bool IniGetUuid (
 //===========================================================================
 unsigned IniGetBoundedValue (
     const IniValue *    value,
-    const wchar         section[],
-    const wchar         key[],
+    const wchar_t         section[],
+    const wchar_t         key[],
     unsigned            index,
     unsigned            minVal,
     unsigned            maxVal,
@@ -756,8 +756,8 @@ unsigned IniGetBoundedValue (
 //===========================================================================
 unsigned IniGetBoundedValue (
     const Ini * ini,
-    const wchar section[],
-    const wchar key[],
+    const wchar_t section[],
+    const wchar_t key[],
     unsigned    index,
     unsigned    minVal,
     unsigned    maxVal,

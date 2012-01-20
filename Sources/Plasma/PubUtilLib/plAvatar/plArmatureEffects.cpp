@@ -157,12 +157,12 @@ hsBool plArmatureEffectsMgr::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-UInt32 plArmatureEffectsMgr::GetNumEffects()
+uint32_t plArmatureEffectsMgr::GetNumEffects()
 {
     return fEffects.GetCount();
 }
 
-plArmatureEffect *plArmatureEffectsMgr::GetEffect(UInt32 num)
+plArmatureEffect *plArmatureEffectsMgr::GetEffect(uint32_t num)
 {
     return fEffects[num];
 }
@@ -214,9 +214,9 @@ void plArmatureEffectFootSound::Read(hsStream* s, hsResMgr* mgr)
     }
 }
 
-UInt32 plArmatureEffectFootSound::IFindSurfaceByTrigger(plKey trigger)
+uint32_t plArmatureEffectFootSound::IFindSurfaceByTrigger(plKey trigger)
 {
-    UInt32 i;
+    uint32_t i;
 
     // Skip index 0. It's the special "NoSurface" that should always be at the stack bottom
     for (i = 1; i < fSurfaces.GetCount(); i++)
@@ -265,7 +265,7 @@ hsBool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
     plArmatureEffectMsg *eMsg = plArmatureEffectMsg::ConvertNoRef(msg);
     if (eMsg)
     {
-        UInt32 curSurfaceIndex = fSurfaces[fSurfaces.GetCount() - 1]->fID;
+        uint32_t curSurfaceIndex = fSurfaces[fSurfaces.GetCount() - 1]->fID;
 
         if (curSurfaceIndex < plArmatureEffectsMgr::kMaxSurface && fMods[curSurfaceIndex] != nil)
         {
@@ -302,7 +302,7 @@ hsBool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
         }
         else
         {
-            UInt32 index = IFindSurfaceByTrigger(sMsg->GetSender());
+            uint32_t index = IFindSurfaceByTrigger(sMsg->GetSender());
             if (index != -1)
             {
                 if (index == fSurfaces.GetCount() - 1) // It's the top on the stack
@@ -324,7 +324,7 @@ void plArmatureEffectFootSound::Reset()
         delete fSurfaces.Pop();
 }
 
-void plArmatureEffectFootSound::SetFootType(UInt8 type)
+void plArmatureEffectFootSound::SetFootType(uint8_t type)
 {
     if (type == kFootTypeBare)
     {

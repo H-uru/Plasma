@@ -65,11 +65,11 @@ private:
     {
         std::string fObjName;
         plLocation fLoc;
-        UInt32 fFlags;
+        uint32_t fFlags;
         bool StringMatches(const char* str) const;  // return true if string matches objName according to flags
         bool ObjectMatches(const hsKeyedObject* obj);
         bool ObjectMatches(const char* objName, const char* pageName);
-        DebugObject(const char* objName, plLocation& loc, UInt32 flags);
+        DebugObject(const char* objName, plLocation& loc, uint32_t flags);
     };
     typedef std::vector<DebugObject*> DebugObjectList;
     DebugObjectList fDebugObjects;

@@ -374,7 +374,7 @@ T * TSkipList<T,K,keyOffset,Cmp>::Tail (SkipListTag * tag) const {
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Link (T * object) {
 
-    const K * key = (const K *)((const byte *)object + keyOffset);
+    const K * key = (const K *)((const uint8_t *)object + keyOffset);
 
     // Find the node's insertion point
     m_stop->key = key;
@@ -418,7 +418,7 @@ void TSkipList<T,K,keyOffset,Cmp>::Link (T * object) {
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Unlink (T * object) {
 
-    const K * key = (const K *)((const byte *)object + keyOffset);
+    const K * key = (const K *)((const uint8_t *)object + keyOffset);
 
     Node * node = m_head;
     Node * update[kMaxLevels];

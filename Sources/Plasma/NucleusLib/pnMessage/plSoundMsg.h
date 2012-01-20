@@ -103,7 +103,7 @@ public:
     int      fIndex;
     int      fRepeats;
     hsBool   fPlaying;
-    UInt32   fNameStr;  
+    uint32_t   fNameStr;  
     hsScalar fVolume;   // Range: 0 - silence, 1.f - loudest
 
     enum FadeType

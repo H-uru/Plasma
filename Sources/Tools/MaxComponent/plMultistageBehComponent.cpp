@@ -487,14 +487,14 @@ public:
 
     // Don't support any of this
     virtual hsBool Open(const char *, const char * = "rb") { hsAssert(0, "Not supported"); return false; }
-    virtual hsBool Open(const wchar *, const wchar * = L"rb") { hsAssert(0, "Not supported"); return false; }
+    virtual hsBool Open(const wchar_t *, const wchar_t * = L"rb") { hsAssert(0, "Not supported"); return false; }
     virtual hsBool Close() {  hsAssert(0, "Not supported"); return false; }
-    virtual void   Skip(UInt32 deltaByteCount) { hsAssert(0, "Not supported"); }
+    virtual void   Skip(uint32_t deltaByteCount) { hsAssert(0, "Not supported"); }
     virtual void   Rewind() { hsAssert(0, "Not supported"); }
 
-    virtual UInt32  GetEOF() { return (UInt32)fLoad->CurChunkLength(); }
+    virtual uint32_t  GetEOF() { return (uint32_t)fLoad->CurChunkLength(); }
 
-    virtual UInt32 Read(UInt32 byteCount, void * buffer)
+    virtual uint32_t Read(uint32_t byteCount, void * buffer)
     {
         ULONG numRead = 0;
         hsAssert(fLoad, "No Max ILoad!");
@@ -503,7 +503,7 @@ public:
         fPosition += numRead;
         return numRead;
     }
-    virtual UInt32 Write(UInt32 byteCount, const void* buffer)
+    virtual uint32_t Write(uint32_t byteCount, const void* buffer)
     {
         ULONG numWritten;
         hsAssert(fSave, "No Max ISave!");

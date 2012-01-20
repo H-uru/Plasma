@@ -110,8 +110,8 @@ public:
     hsVector3           GetUp() const { return *((hsVector3*)&GetWorldToCamera().fMap[1]); }
     hsVector3           GetAcross() const { return *((hsVector3*)&GetWorldToCamera().fMap[0]); }
 
-    UInt16              GetScreenWidth() const { return fWidth; }
-    UInt16              GetScreenHeight() const { return fHeight; }
+    uint16_t              GetScreenWidth() const { return fWidth; }
+    uint16_t              GetScreenHeight() const { return fHeight; }
 
     void                GetViewPort(hsPoint2& mins, hsPoint2& maxs) const;
     void                GetViewPort(int& loX, int& loY, int& hiX, int& hiY) const;
@@ -149,16 +149,16 @@ public:
     void                SetPerspective(hsBool on) { SetOrthogonal(!on); }
 
     // Next, setting the scree/window/rendertarget size
-    void                SetWidth(UInt16 w) { fWidth = w; }
-    void                SetHeight(UInt16 h) { fHeight = h; }
-    void                SetScreenSize(UInt16 w, UInt16 h) { SetWidth(w); SetHeight(h); }
+    void                SetWidth(uint16_t w) { fWidth = w; }
+    void                SetHeight(uint16_t h) { fHeight = h; }
+    void                SetScreenSize(uint16_t w, uint16_t h) { SetWidth(w); SetHeight(h); }
 
     // Next, setting the viewport. You only need to do this if you want to use the screen functions above.
     // If you're passing in and getting out normalized device coordinates, skip this. If you don't set viewport,
     // Defaults to 0,0,width,height (i.e. the whole screen).
     void                SetViewPort(const hsPoint2& mins, const hsPoint2& maxs, hsBool relative=true);
     void                SetViewPort(float loX, float loY, float hiX, float hiY, hsBool relative=true) { SetViewPort(hsPoint2().Set(loX, loY), hsPoint2().Set(hiX, hiY), relative); }
-    void                SetViewPort(UInt16 left, UInt16 top, UInt16 right, UInt16 bottom) { SetViewPort(hsScalar(left), hsScalar(top), hsScalar(right), hsScalar(bottom), false); }
+    void                SetViewPort(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom) { SetViewPort(hsScalar(left), hsScalar(top), hsScalar(right), hsScalar(bottom), false); }
 
     void                SetMapping(const hsPoint3& mins, const hsPoint3& maxs) { SetMapMin(mins); SetMapMax(maxs); }
     void                SetMapMin(const hsPoint3& mins) { fMapMin = mins; }
@@ -292,7 +292,7 @@ protected:
         kViewPortRelative   = 0x10
     };
 
-    mutable UInt32          fFlags;
+    mutable uint32_t          fFlags;
 
     hsMatrix44              fCameraToWorld;
     hsMatrix44              fWorldToCamera;
@@ -301,8 +301,8 @@ protected:
     hsPoint3                fMax; // maxTanX/X, maxTanY/Y, yon
 
     // Screen (or rendertarget) dimensions in pixels.
-    UInt16                  fWidth; 
-    UInt16                  fHeight;
+    uint16_t                  fWidth; 
+    uint16_t                  fHeight;
 
     // Viewport can be stored as fraction of screen size, so the view transform's viewport
     // can be set up independent of the size of the window it's applied to. 
@@ -334,8 +334,8 @@ protected:
     void                InvalidateTransforms() { ISetFlag(kCameraToNDCSet|kWorldToNDCSet, false); }
 
     // Flags - generic
-    hsBool              IHasFlag(UInt32 f) const { return 0 != (fFlags & f); }
-    void                ISetFlag(UInt32 f, hsBool on=true) const { if(on) fFlags |= f; else fFlags &= ~f; }
+    hsBool              IHasFlag(uint32_t f) const { return 0 != (fFlags & f); }
+    void                ISetFlag(uint32_t f, hsBool on=true) const { if(on) fFlags |= f; else fFlags &= ~f; }
 
 };
 

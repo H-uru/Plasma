@@ -80,7 +80,7 @@ private:
     
     static plAgeLoader* fInstance;
 
-    UInt32  fFlags;
+    uint32_t  fFlags;
     plStringVec fPendingAgeFniFiles;        // list of age .fni files to be parsed 
     plStringVec fPendingAgeCsvFiles;        // list of age .csv files to be parsed 
     plKeyVec    fPendingPageIns;    // keys of rooms which are currently being paged in.

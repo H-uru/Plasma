@@ -188,7 +188,7 @@ public:
     {
         fAchievedLinearVelocity.Set(0.f,0.f,0.f);
     }
-    virtual int SweepControllerPath(const hsPoint3& startPos,const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, UInt32& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut)=0;
+    virtual int SweepControllerPath(const hsPoint3& startPos,const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut)=0;
     //this should only be used to force a move it could place your head into a wall and that would be good
     virtual hsScalar GetHeight() {return fHeight;}
     virtual hsScalar GetRadius() {return fRadius;}

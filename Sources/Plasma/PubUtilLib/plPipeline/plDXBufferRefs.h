@@ -67,17 +67,17 @@ class plDXVertexBufferRef : public plDXDeviceRef
 {
     public:
         IDirect3DVertexBuffer9* fD3DBuffer;
-        UInt32                  fCount;
-        UInt32                  fIndex;
-        UInt32                  fVertexSize;
-        Int32                   fOffset;
-        UInt8                   fFormat;
+        uint32_t                  fCount;
+        uint32_t                  fIndex;
+        uint32_t                  fVertexSize;
+        int32_t                   fOffset;
+        uint8_t                   fFormat;
 
         plGBufferGroup*         fOwner;
-        UInt8*                  fData;
+        uint8_t*                  fData;
         IDirect3DDevice9*       fDevice; // For releasing the VertexShader
 
-        UInt32                  fRefTime;
+        uint32_t                  fRefTime;
 
         enum {
             kRebuiltSinceUsed   = 0x10, // kDirty = 0x1 is in hsGDeviceRef
@@ -85,8 +85,8 @@ class plDXVertexBufferRef : public plDXDeviceRef
             kSkinned            = 0x40
         };
 
-        hsBool HasFlag(UInt32 f) const { return 0 != (fFlags & f); }
-        void SetFlag(UInt32 f, hsBool on) { if(on) fFlags |= f; else fFlags &= ~f; }
+        hsBool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
+        void SetFlag(uint32_t f, hsBool on) { if(on) fFlags |= f; else fFlags &= ~f; }
 
         hsBool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
         void SetRebuiltSinceUsed(hsBool b) { SetFlag(kRebuiltSinceUsed, b); }
@@ -97,8 +97,8 @@ class plDXVertexBufferRef : public plDXDeviceRef
         hsBool Skinned() const { return HasFlag(kSkinned); }
         void SetSkinned(hsBool b) { SetFlag(kSkinned, b); }
 
-        hsBool Expired(UInt32 t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
-        void SetRefTime(UInt32 t) { fRefTime = t; }
+        hsBool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
+        void SetRefTime(uint32_t t) { fRefTime = t; }
 
         void                    Link( plDXVertexBufferRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
         plDXVertexBufferRef*    GetNext() { return (plDXVertexBufferRef *)fNext; }
@@ -125,11 +125,11 @@ class plDXIndexBufferRef : public plDXDeviceRef
 {
     public:
         IDirect3DIndexBuffer9*  fD3DBuffer;
-        UInt32                  fCount;
-        UInt32                  fIndex;
-        Int32                   fOffset;
+        uint32_t                  fCount;
+        uint32_t                  fIndex;
+        int32_t                   fOffset;
         plGBufferGroup*         fOwner;
-        UInt32                  fRefTime;
+        uint32_t                  fRefTime;
         D3DPOOL                 fPoolType;
 
         enum {
@@ -137,8 +137,8 @@ class plDXIndexBufferRef : public plDXDeviceRef
             kVolatile           = 0x20
         };
 
-        hsBool HasFlag(UInt32 f) const { return 0 != (fFlags & f); }
-        void SetFlag(UInt32 f, hsBool on) { if(on) fFlags |= f; else fFlags &= ~f; }
+        hsBool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
+        void SetFlag(uint32_t f, hsBool on) { if(on) fFlags |= f; else fFlags &= ~f; }
 
         hsBool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
         void SetRebuiltSinceUsed(hsBool b) { SetFlag(kRebuiltSinceUsed, b); }
@@ -146,8 +146,8 @@ class plDXIndexBufferRef : public plDXDeviceRef
         hsBool Volatile() const { return HasFlag(kVolatile); }
         void SetVolatile(hsBool b) { SetFlag(kVolatile, b); }
 
-        hsBool Expired(UInt32 t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
-        void SetRefTime(UInt32 t) { fRefTime = t; }
+        hsBool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
+        void SetRefTime(uint32_t t) { fRefTime = t; }
 
         void                    Link( plDXIndexBufferRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
         plDXIndexBufferRef* GetNext() { return (plDXIndexBufferRef *)fNext; }

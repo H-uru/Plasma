@@ -88,7 +88,7 @@ plRenderRequestAck::plRenderRequestAck()
     hsAssert(false, "Improper usage, use argumented constructor");
 }
 
-plRenderRequestAck::plRenderRequestAck(plKey r, UInt32 userData)
+plRenderRequestAck::plRenderRequestAck(plKey r, uint32_t userData)
 :   plMessage(nil, r, nil),
     fUserData(userData)
 {

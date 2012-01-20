@@ -56,7 +56,7 @@ class hsStream;
 class plMessage : public plCreatable
 {
 public:
-    typedef UInt16  plStrLen;
+    typedef uint16_t  plStrLen;
 
     enum plBCastFlags {
         kBCastNone              = 0x0,
@@ -93,8 +93,8 @@ protected:
     hsTArray<plKey>         fReceivers;
     double                  fTimeStamp;
 
-    UInt32                  fBCastFlags;
-    std::vector<UInt32>*    fNetRcvrPlayerIDs;
+    uint32_t                  fBCastFlags;
+    std::vector<uint32_t>*    fNetRcvrPlayerIDs;
 
     void IMsgRead(hsStream* stream, hsResMgr* mgr);     // default read implementation
     void IMsgWrite(hsStream* stream, hsResMgr* mgr);    // default write implementation
@@ -123,7 +123,7 @@ public:
     plMessage&              SetSender(const plKey &s) { fSender = s; return *this; }
 
     plMessage&              SetNumReceivers(int n);
-    UInt32                  GetNumReceivers() const ;
+    uint32_t                  GetNumReceivers() const ;
     const plKey&            GetReceiver(int i) const;
     plMessage&              RemoveReceiver(int i);
 
@@ -137,15 +137,15 @@ public:
     const double GetTimeStamp() const { return fTimeStamp; }
     plMessage& SetTimeStamp(double t) { fTimeStamp = t; return *this; }
 
-    hsBool HasBCastFlag(UInt32 f) const { return 0 != (fBCastFlags & f); }
-    plMessage& SetBCastFlag(UInt32 f, hsBool on=true) { if( on )fBCastFlags |= f; else fBCastFlags &= ~f; return *this; }
+    hsBool HasBCastFlag(uint32_t f) const { return 0 != (fBCastFlags & f); }
+    plMessage& SetBCastFlag(uint32_t f, hsBool on=true) { if( on )fBCastFlags |= f; else fBCastFlags &= ~f; return *this; }
     
-    void SetAllBCastFlags(UInt32 f) { fBCastFlags=f; }
-    UInt32 GetAllBCastFlags() const { return fBCastFlags; }
+    void SetAllBCastFlags(uint32_t f) { fBCastFlags=f; }
+    uint32_t GetAllBCastFlags() const { return fBCastFlags; }
 
-    void AddNetReceiver( UInt32 plrID );
-    void AddNetReceivers( const std::vector<UInt32> & plrIDs );
-    std::vector<UInt32>* GetNetReceivers() const { return fNetRcvrPlayerIDs; }
+    void AddNetReceiver( uint32_t plrID );
+    void AddNetReceivers( const std::vector<uint32_t> & plrIDs );
+    std::vector<uint32_t>* GetNetReceivers() const { return fNetRcvrPlayerIDs; }
 
     // just before dispatching this message, drop into debugger 
     void SetBreakBeforeDispatch (bool on) { dispatchBreak = on; }
@@ -167,12 +167,12 @@ public:
 
 struct plMsgStdStringHelper
 {
-    static int Poke(const std::string & stringref, hsStream* stream, const UInt32 peekOptions=0);
-    static int PokeBig(const std::string & stringref, hsStream* stream, const UInt32 peekOptions=0);
-    static int Poke(const char * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions=0);
-    static int PokeBig(const char * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions=0);
-    static int Peek(std::string & stringref, hsStream* stream, const UInt32 peekOptions=0);
-    static int PeekBig(std::string & stringref, hsStream* stream, const UInt32 peekOptions=0);
+    static int Poke(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int PokeBig(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
+    static int PokeBig(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int PeekBig(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////
@@ -180,8 +180,8 @@ struct plMsgStdStringHelper
 
 struct plMsgXtlStringHelper
 {
-    static int Poke(const xtl::istring & stringref, hsStream* stream, const UInt32 peekOptions=0);
-    static int Peek(xtl::istring & stringref, hsStream* stream, const UInt32 peekOptions=0);
+    static int Poke(const xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////
@@ -189,20 +189,20 @@ struct plMsgXtlStringHelper
 
 struct plMsgCStringHelper
 {
-    static int Poke(const char * str, hsStream* stream, const UInt32 peekOptions=0);
+    static int Poke(const char * str, hsStream* stream, const uint32_t peekOptions=0);
     // deletes str and reallocates. you must delete [] str;
-    static int Peek(char *& str, hsStream* stream, const UInt32 peekOptions=0);
+    static int Peek(char *& str, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////
 // reads/writes your type [] field
-// don't use with byte ordered types like Int16,32.
-// fine for Int8, char, and IEEE formatted types like float, double.
+// don't use with uint8_t ordered types like int16_t,32.
+// fine for int8_t, char, and IEEE formatted types like float, double.
 
 struct plMsgCArrayHelper
 {
-    static int Poke(const void * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions=0);
-    static int Peek(void * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions=0);
+    static int Poke(const void * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(void * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 

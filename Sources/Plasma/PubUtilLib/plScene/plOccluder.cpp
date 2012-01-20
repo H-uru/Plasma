@@ -130,12 +130,12 @@ void plOccluder::IRemoveVisRegion(plVisRegion* reg)
     }
 }
 
-plDrawableSpans* plOccluder::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plOccluder::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     hsTArray<hsPoint3>      pos;
     hsTArray<hsVector3>     norm;
     hsTArray<hsColorRGBA>   color;
-    hsTArray<UInt16>        tris;
+    hsTArray<uint16_t>        tris;
 
     plLayer* lay = plLayer::ConvertNoRef(mat->GetLayer(0)->BottomOfStack());
     if( lay )
@@ -258,7 +258,7 @@ hsScalar plOccluder::IComputeSurfaceArea()
 
 void plOccluder::SetPolyList(const hsTArray<plCullPoly>& list)
 {
-    UInt16 n = list.GetCount();
+    uint16_t n = list.GetCount();
     fPolys.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -290,7 +290,7 @@ void plOccluder::Read(hsStream* s, hsResMgr* mgr)
     fPriority = s->ReadLEScalar();
 
     hsTArray<plCullPoly>& localPolys = IGetLocalPolyList();
-    UInt16 n = s->ReadLE16();
+    uint16_t n = s->ReadLE16();
     localPolys.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -360,7 +360,7 @@ void plMobileOccluder::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l
 
 void plMobileOccluder::SetPolyList(const hsTArray<plCullPoly>& list)
 {
-    UInt16 n = list.GetCount();
+    uint16_t n = list.GetCount();
     fOrigPolys.SetCount(n);
     fPolys.SetCount(n);
 

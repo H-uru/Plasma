@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plParticleGenerator *plParticleApplicator::IGetParticleGen(plSceneObject *so)
 {
-    UInt32 numMods = so->GetNumModifiers();
+    uint32_t numMods = so->GetNumModifiers();
     int i;
     for (i = 0; i < numMods; i++)
     {

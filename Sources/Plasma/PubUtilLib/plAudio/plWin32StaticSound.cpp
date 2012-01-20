@@ -133,7 +133,7 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
             fFailed = true;
             return false;
         }
-        UInt32 bufferSize = buffer->GetDataLength();
+        uint32_t bufferSize = buffer->GetDataLength();
 
         if( header.fNumChannels > 1 && is3D )
         {

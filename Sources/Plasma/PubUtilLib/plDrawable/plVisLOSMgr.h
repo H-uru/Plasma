@@ -85,7 +85,7 @@ protected:
     hsBool ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits);
     hsBool ICheckSceneNode(plSceneNode* node, plVisHit& hit);
     hsBool ICheckDrawable(plDrawable* d, plVisHit& hit);
-    hsBool ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hit);
+    hsBool ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& hit);
     
 public:
     hsBool Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& hit);

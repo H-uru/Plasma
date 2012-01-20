@@ -1075,7 +1075,7 @@ hsBool plSimpleRegionSensor::MsgReceive(plMessage *msg)
 }
 
 // IEVAL
-hsBool plSimpleRegionSensor::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plSimpleRegionSensor::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     return false;
 }

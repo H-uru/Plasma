@@ -232,7 +232,7 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
     if (fThumbnail != nil)
         mgr->WriteKey(s, fThumbnail->GetKey());
 
-    UInt32 texSkip = 0;
+    uint32_t texSkip = 0;
     for (i = 0; i < fTextures.GetCount(); i++)
         if (fTextures[i] == nil)
             texSkip++;
@@ -504,7 +504,7 @@ void plClothingOutfit::RemoveItem(plClothingItem *item, hsBool update /* = true 
 
 void plClothingOutfit::TintItem(plClothingItem *item, hsScalar red, hsScalar green, hsScalar blue,
                                 hsBool update /* = true */, hsBool broadcast /* = true */, hsBool netForce /* = false */,
-                                hsBool retry /* = true */, UInt8 layer /* = kLayerTint1 */)
+                                hsBool retry /* = true */, uint8_t layer /* = kLayerTint1 */)
 {
     plClothingMsg *msg = TRACKED_NEW plClothingMsg();
     msg->AddReceiver(GetKey());
@@ -541,7 +541,7 @@ void plClothingOutfit::TintSkin(hsScalar red, hsScalar green, hsScalar blue,
     plgDispatch::MsgSend(msg);
 }
 
-void plClothingOutfit::MorphItem(plClothingItem *item, UInt8 layer, UInt8 delta, hsScalar weight,
+void plClothingOutfit::MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, hsScalar weight,
                                  hsBool retry /* = true */)
 {
     plClothingMsg *msg = TRACKED_NEW plClothingMsg();
@@ -561,7 +561,7 @@ void plClothingOutfit::SetAge(hsScalar age, hsBool update /* = true */, hsBool b
     SetSkinBlend(age, plClothingElement::kLayerSkinBlend1, update, broadcast);
 }
 
-void plClothingOutfit::SetSkinBlend(hsScalar blend, UInt8 layer, hsBool update /* = true */, hsBool broadcast /* = true */)
+void plClothingOutfit::SetSkinBlend(hsScalar blend, uint8_t layer, hsBool update /* = true */, hsBool broadcast /* = true */)
 {
     plClothingMsg *msg = TRACKED_NEW plClothingMsg();
     msg->AddReceiver(GetKey());
@@ -576,7 +576,7 @@ void plClothingOutfit::SetSkinBlend(hsScalar blend, UInt8 layer, hsBool update /
     plgDispatch::MsgSend(msg);
 }
 
-hsScalar plClothingOutfit::GetSkinBlend(UInt8 layer)
+hsScalar plClothingOutfit::GetSkinBlend(uint8_t layer)
 {
     if (layer >= plClothingElement::kLayerSkinBlend1 && layer <= plClothingElement::kLayerSkinLast)
         return fSkinBlends[layer - plClothingElement::kLayerSkinBlend1];
@@ -651,7 +651,7 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
 void plClothingOutfit::IRemoveItem(plClothingItem *item)
 {
     // We may just be removing the ref...
-    UInt32 index = fItems.Find(item);
+    uint32_t index = fItems.Find(item);
     if (index != fItems.kMissingIndex)
     {
         fItems.Remove(index);
@@ -662,9 +662,9 @@ void plClothingOutfit::IRemoveItem(plClothingItem *item)
     }
 }
 
-hsBool plClothingOutfit::ITintItem(plClothingItem *item, hsColorRGBA color, UInt8 layer)
+hsBool plClothingOutfit::ITintItem(plClothingItem *item, hsColorRGBA color, uint8_t layer)
 {
-    UInt32 index = fItems.Find(item);
+    uint32_t index = fItems.Find(item);
     if (index != fItems.kMissingIndex)
     {
         if (layer == plClothingElement::kLayerTint1)
@@ -676,7 +676,7 @@ hsBool plClothingOutfit::ITintItem(plClothingItem *item, hsColorRGBA color, UInt
         if (fItems[index]->fAccessory)
         {
             plClothingItem *acc = fItems[index]->fAccessory;
-            UInt32 accIndex = fItems.Find(acc);
+            uint32_t accIndex = fItems.Find(acc);
             if (accIndex != fItems.kMissingIndex)
             {
                 if (layer == plClothingElement::kLayerTint1)
@@ -692,13 +692,13 @@ hsBool plClothingOutfit::ITintItem(plClothingItem *item, hsColorRGBA color, UInt
     return false;       
 }
 
-hsColorRGBA plClothingOutfit::GetItemTint(plClothingItem *item, UInt8 layer /* = kLayerTint1 */) const
+hsColorRGBA plClothingOutfit::GetItemTint(plClothingItem *item, uint8_t layer /* = kLayerTint1 */) const
 {
     if (layer >= plClothingElement::kLayerSkinFirst &&
         layer <= plClothingElement::kLayerSkinLast)
         return fSkinTint;
     
-    UInt32 index = fItems.Find(item);
+    uint32_t index = fItems.Find(item);
     if (index != fItems.kMissingIndex)
     {
         if (layer == plClothingElement::kLayerTint1)
@@ -712,9 +712,9 @@ hsColorRGBA plClothingOutfit::GetItemTint(plClothingItem *item, UInt8 layer /* =
     return color;
 }
 
-hsBool plClothingOutfit::IMorphItem(plClothingItem *item, UInt8 layer, UInt8 delta, hsScalar weight)
+hsBool plClothingOutfit::IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, hsScalar weight)
 {
-    UInt32 index = fItems.Find(item);
+    uint32_t index = fItems.Find(item);
     if (index != fItems.kMissingIndex)
     {
         int i;
@@ -790,7 +790,7 @@ void plClothingOutfit::IHandleMorphSDR(plStateDataRecord *sdr)
     if (!lodVar)
         return;
 
-    UInt8 lod;
+    uint8_t lod;
     lodVar->Get(&lod);
 
     const plSceneObject *so = fAvatar->GetClothingSO(lod);
@@ -1012,7 +1012,7 @@ void plClothingOutfit::WearDefaultClothing()
     cMgr->GetItemsByGroup(fGroup, items);
 
     // Wear one thing of each type
-    UInt32 i, j;
+    uint32_t i, j;
     for (i = 0; i < plClothingMgr::kMaxType; i++)
     {
         if (i == plClothingMgr::kTypeAccessory)
@@ -1043,13 +1043,13 @@ void plClothingOutfit::WearDefaultClothing()
     }
 }
 
-void plClothingOutfit::WearDefaultClothingType(UInt32 clothingType)
+void plClothingOutfit::WearDefaultClothingType(uint32_t clothingType)
 {
     plClothingMgr *cMgr = plClothingMgr::GetClothingMgr();
     hsTArray<plClothingItem *> items;
     cMgr->GetItemsByGroup(fGroup, items);
 
-    UInt32 i;
+    uint32_t i;
     for (i=0; i<items.GetCount(); i++)
     {
         if (items[i]->fType == clothingType)
@@ -1149,15 +1149,15 @@ void plClothingOutfit::WearRandomOutfit()
     hsTArray<plClothingItem *>items;
 
     // Wear one thing of each type
-    UInt32 i, j;
+    uint32_t i, j;
     for (i = 0; i < plClothingMgr::kMaxType; i++)
     {
         if (i == plClothingMgr::kTypeAccessory)
             continue;
 
         items.Reset();
-        cMgr->GetItemsByGroupAndType(fGroup, (UInt8)i, items);
-        j = (UInt32)(sRandom.RandZeroToOne() * items.GetCount());
+        cMgr->GetItemsByGroupAndType(fGroup, (uint8_t)i, items);
+        j = (uint32_t)(sRandom.RandZeroToOne() * items.GetCount());
 
         hsScalar r1 = sRandom.RandZeroToOne();
         hsScalar g1 = sRandom.RandZeroToOne();
@@ -1184,7 +1184,7 @@ void plClothingOutfit::WearRandomOutfit()
 hsBool plClothingOutfit::ReadItems(hsStream* s, hsResMgr* mgr, hsBool broadcast /* = true */)
 {
     hsBool result = true;
-    UInt32 numItems = s->ReadLE32();
+    uint32_t numItems = s->ReadLE32();
     int i;
     for (i = 0; i < numItems; i++)
     {
@@ -1410,7 +1410,7 @@ hsBool plClothingOutfit::MsgReceive(plMessage* msg)
 // TESTING SDL
 // Send clothing sendState msg to object's plClothingSDLModifier
 //
-hsBool plClothingOutfit::DirtySynchState(const char* SDLStateName, UInt32 synchFlags)
+hsBool plClothingOutfit::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
 {
     plSynchEnabler ps(true);    // make sure synching is enabled, since this happens during load
     synchFlags |= plSynchedObject::kForceFullSend;  // TEMP
@@ -1421,7 +1421,7 @@ hsBool plClothingOutfit::DirtySynchState(const char* SDLStateName, UInt32 synchF
     return fAvatar->GetTarget(0)->DirtySynchState(SDLStateName, synchFlags);
 }
 
-// Note: Currently the word "instance" is a lie. We just copy. In the future
+// Note: Currently the uint16_t "instance" is a lie. We just copy. In the future
 // we'll be good about this, but I wanted to get it working first.
 void plClothingOutfit::IInstanceSharedMeshes(plClothingItem *item)
 {
@@ -1670,7 +1670,7 @@ plClothingItem *plClothingMgr::FindItemByName(const char *name)
     return nil;
 }
 
-void plClothingMgr::GetItemsByGroup(UInt8 group, hsTArray<plClothingItem*> &out)
+void plClothingMgr::GetItemsByGroup(uint8_t group, hsTArray<plClothingItem*> &out)
 {
     int i;
     for (i = 0; i < fItems.GetCount(); i++)
@@ -1680,7 +1680,7 @@ void plClothingMgr::GetItemsByGroup(UInt8 group, hsTArray<plClothingItem*> &out)
     }
 }
 
-void plClothingMgr::GetItemsByGroupAndType(UInt8 group, UInt8 type, hsTArray<plClothingItem*> &out)
+void plClothingMgr::GetItemsByGroupAndType(uint8_t group, uint8_t type, hsTArray<plClothingItem*> &out)
 {
     int i;
     for (i = 0; i < fItems.GetCount(); i++)

@@ -72,7 +72,7 @@ plKey plOccluderProxy::IGetNode() const
     return fOwner ? fOwner->GetSceneNode() : nil; 
 }
 
-plDrawableSpans* plOccluderProxy::ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plOccluderProxy::ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     if( fOwner )
     {

@@ -210,7 +210,7 @@ plCullNode::plCullStatus plCullNode::TestSphere(const hsPoint3& center, hsScalar
 }
 
 // For this Cull Node, recur down the space hierarchy pruning out who to test for the next Cull Node.
-plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, Int16 who, hsLargeArray<Int16>& clear, hsLargeArray<Int16>& split, hsLargeArray<Int16>& culled) const
+plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsLargeArray<int16_t>& clear, hsLargeArray<int16_t>& split, hsLargeArray<int16_t>& culled) const
 {
     if( space->IsDisabled(who) || (space->GetNode(who).fWorldBounds.GetType() != kBoundsNormal) )
     {
@@ -263,21 +263,21 @@ plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, Int16 w
 // We reclaim the scratch indices in clear and split when we're done (SetCount(0)), but we can't
 // reclaim the culled, because our caller may be looking at who all we culled. See below in split.
 // If a node is disabled, we can just ignore we ever got called.
-void plCullNode::ITestNode(const plSpaceTree* space, Int16 who, hsBitVector& totList, hsBitVector& outList) const
+void plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsBitVector& totList, hsBitVector& outList) const
 {
     if( space->IsDisabled(who) )
         return;
 
-    UInt32 myClearStart = ScratchClear().GetCount();
-    UInt32 mySplitStart = ScratchSplit().GetCount();
-    UInt32 myCullStart = ScratchCulled().GetCount();
+    uint32_t myClearStart = ScratchClear().GetCount();
+    uint32_t mySplitStart = ScratchSplit().GetCount();
+    uint32_t myCullStart = ScratchCulled().GetCount();
 
     if( kPureSplit == ITestNode(space, who, ScratchClear(), ScratchSplit(), ScratchCulled()) )
         ScratchSplit().Append(who);
 
-    UInt32 myClearEnd = ScratchClear().GetCount();
-    UInt32 mySplitEnd = ScratchSplit().GetCount();
-    UInt32 myCullEnd = ScratchCulled().GetCount();
+    uint32_t myClearEnd = ScratchClear().GetCount();
+    uint32_t mySplitEnd = ScratchSplit().GetCount();
+    uint32_t myCullEnd = ScratchCulled().GetCount();
 
     int i;
     // If there's no OuterChild, everything in clear and split is visible. Everything in culled
@@ -368,7 +368,7 @@ void plCullNode::ITestNode(const plSpaceTree* space, Int16 who, hsBitVector& tot
     ScratchCulled().SetCount(myCullStart);
 }
 
-void plCullNode::IHarvest(const plSpaceTree* space, hsTArray<Int16>& outList) const
+void plCullNode::IHarvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const
 {
     ITestNode(space, space->GetRoot(), ScratchTotVec(), ScratchBitVec());
     space->BitVectorToList(outList, ScratchBitVec());
@@ -709,7 +709,7 @@ void plCullTree::AddPoly(const plCullPoly& poly)
 #endif // DEBUG_POINTERS
 }
 
-Int16 plCullTree::IAddPolyRecur(const plCullPoly& poly, Int16 iNode)
+int16_t plCullTree::IAddPolyRecur(const plCullPoly& poly, int16_t iNode)
 {
     if( poly.fVerts.GetCount() < 3 )
         return iNode;
@@ -759,9 +759,9 @@ Int16 plCullTree::IAddPolyRecur(const plCullPoly& poly, Int16 iNode)
     return iNode;
 }
 
-Int16 plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
+int16_t plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
 {
-    Int16 retINode = fNodeList.GetCount();
+    int16_t retINode = fNodeList.GetCount();
     plCullNode* nextNode = fNodeList.Push();
     hsVector3 a;
     hsVector3 b;
@@ -777,21 +777,21 @@ Int16 plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
     return retINode;
 }
 
-Int16 plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
+int16_t plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
 {
     if( fCapturePolys )
         IVisPoly(poly, true);
 
     int firstNode = fNodeList.GetCount();
 
-    Int16 iNode = -1;
+    int16_t iNode = -1;
 
     int i;
     for( i = 0; i < poly.fVerts.GetCount()-1; i++ )
     {
         if( !poly.fClipped.IsBitSet(i) )
         {
-            Int16 child = IMakePolyNode(poly, i, i+1);
+            int16_t child = IMakePolyNode(poly, i, i+1);
             if( iNode >= 0 )
                 IGetNode(iNode)->fOuterChild = child;
             iNode = child;
@@ -799,7 +799,7 @@ Int16 plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
     }
     if( !poly.fClipped.IsBitSet(i) )
     {
-        Int16 child = IMakePolyNode(poly, i, 0);
+        int16_t child = IMakePolyNode(poly, i, 0);
         if( iNode >= 0 )
             IGetNode(iNode)->fOuterChild = child;
         iNode = child;
@@ -813,7 +813,7 @@ Int16 plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
     return firstNode;
 }
 
-Int16 plCullTree::IMakePolySubTree(const plCullPoly& poly) const
+int16_t plCullTree::IMakePolySubTree(const plCullPoly& poly) const
 {
     poly.Validate();
 
@@ -825,14 +825,14 @@ Int16 plCullTree::IMakePolySubTree(const plCullPoly& poly) const
 
     int firstNode = fNodeList.GetCount();
 
-    Int16 iNode = -1;
+    int16_t iNode = -1;
 
     int i;
     for( i = 0; i < poly.fVerts.GetCount()-1; i++ )
     {
         if( !poly.fClipped.IsBitSet(i) )
         {
-            Int16 child = IMakePolyNode(poly, i, i+1);
+            int16_t child = IMakePolyNode(poly, i, i+1);
             if( iNode >= 0 )
                 IGetNode(iNode)->fInnerChild = child;
             iNode = child;
@@ -840,7 +840,7 @@ Int16 plCullTree::IMakePolySubTree(const plCullPoly& poly) const
     }
     if( !poly.fClipped.IsBitSet(i) )
     {
-        Int16 child = IMakePolyNode(poly, i, 0);
+        int16_t child = IMakePolyNode(poly, i, 0);
         if( iNode >= 0 )
             IGetNode(iNode)->fInnerChild = child;
         iNode = child;
@@ -971,7 +971,7 @@ void plCullTree::ReleaseCapture() const
 // End visualization section of the program
 ///////////////////////////////////////////////////////////////////
 
-void plCullTree::ISetupScratch(UInt16 nNodes)
+void plCullTree::ISetupScratch(uint16_t nNodes)
 {
     ScratchPolys().SetCount(nNodes << 1);
     ScratchPolys().SetCount(0);
@@ -996,7 +996,7 @@ void plCullTree::InitFrustum(const hsMatrix44& world2NDC)
     fNodeList.SetCount(6);
     fNodeList.SetCount(0);
 
-    Int16       lastIdx = -1;
+    int16_t       lastIdx = -1;
 
     plCullNode* node;
     hsVector3 norm;
@@ -1067,7 +1067,7 @@ void plCullTree::SetViewPos(const hsPoint3& p)
 //////////////////////////////////////////////////////////////////////
 // Use the tree
 //////////////////////////////////////////////////////////////////////
-void plCullTree::Harvest(const plSpaceTree* space, hsTArray<Int16>& outList) const
+void plCullTree::Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const
 {
     outList.SetCount(0);
     if (!space->IsEmpty())

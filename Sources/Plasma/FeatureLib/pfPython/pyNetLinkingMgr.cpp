@@ -86,17 +86,17 @@ void pyNetLinkingMgr::LinkToMyNeighborhoodAge()
     plNetLinkingMgr::GetInstance()->LinkToMyNeighborhoodAge();
 }
 
-void pyNetLinkingMgr::LinkPlayerHere( UInt32 playerID )
+void pyNetLinkingMgr::LinkPlayerHere( uint32_t playerID )
 {
     plNetLinkingMgr::GetInstance()->LinkPlayerHere( playerID );
 }
 
-void pyNetLinkingMgr::LinkPlayerToAge( pyAgeLinkStruct & link, UInt32 playerID )
+void pyNetLinkingMgr::LinkPlayerToAge( pyAgeLinkStruct & link, uint32_t playerID )
 {
     plNetLinkingMgr::GetInstance()->LinkPlayerToAge( link.GetAgeLink(), playerID );
 }
 
-void pyNetLinkingMgr::LinkToPlayersAge( UInt32 playerID )
+void pyNetLinkingMgr::LinkToPlayersAge( uint32_t playerID )
 {
     plNetLinkingMgr::GetInstance()->LinkToPlayersAge( playerID );
 }

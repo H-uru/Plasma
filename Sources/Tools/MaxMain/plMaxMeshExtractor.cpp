@@ -111,11 +111,11 @@ static bool MakeNormalMesh(plMaxNode *node, plMaxMeshExtractor::NeutralMesh& mes
     }
 
     mesh.fNumFaces = pMesh->numFaces;
-    mesh.fFaces = TRACKED_NEW UInt16[mesh.fNumFaces*3];
+    mesh.fFaces = TRACKED_NEW uint16_t[mesh.fNumFaces*3];
     for (int i = 0; i < mesh.fNumFaces; i++)
     {
         Face* pFace = &pMesh->faces[i];
-        UInt16* pNFace = &mesh.fFaces[i * 3];
+        uint16_t* pNFace = &mesh.fFaces[i * 3];
 
         pNFace[0] = pFace->v[ parity ? 2 : 0 ]; // reverse winding if parity backwards
         pNFace[1] = pFace->v[1];
@@ -136,7 +136,7 @@ static bool MakeNormalMesh(plMaxNode *node, plMaxMeshExtractor::NeutralMesh& mes
 static void MakeBoxMesh(plMaxNode* node, plMaxMeshExtractor::NeutralMesh& mesh, hsPoint3& minV, hsPoint3& maxV)
 {
     hsPoint3* newVerts = TRACKED_NEW hsPoint3[8];
-    UInt16* newFaces = TRACKED_NEW UInt16[12 * 3];
+    uint16_t* newFaces = TRACKED_NEW uint16_t[12 * 3];
 
     newVerts[0].Set(minV.fX, minV.fY, minV.fZ);
     newVerts[1].Set(maxV.fX, minV.fY, minV.fZ);
@@ -147,7 +147,7 @@ static void MakeBoxMesh(plMaxNode* node, plMaxMeshExtractor::NeutralMesh& mesh, 
     newVerts[6].Set(minV.fX, maxV.fY, maxV.fZ);
     newVerts[7].Set(maxV.fX, maxV.fY, maxV.fZ);
 
-    UInt16 standardFaces[] = { 0, 2, 1,
+    uint16_t standardFaces[] = { 0, 2, 1,
         1, 2, 3,
         0, 1, 4,
         1, 5, 4,

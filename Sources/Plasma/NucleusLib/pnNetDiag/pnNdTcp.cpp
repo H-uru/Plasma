@@ -86,7 +86,7 @@ struct FileConn : AtomicRef {
     void *                  param;
     AsyncSocket             sock;
     AsyncCancelId           cancelId;
-    ARRAY(byte)             recvBuffer;
+    ARRAY(uint8_t)             recvBuffer;
     long                    pingsInRoute;
     long                    pingsCompleted;
     bool                    done;
@@ -121,7 +121,7 @@ static long         s_authProtocolRegistered;
 static unsigned     s_transId;
 static CCritSect    s_critsect;
 static bool         s_shutdown;
-static byte         s_payload[32];
+static uint8_t         s_payload[32];
 static AsyncTimer * s_timer;
 
 static HASHTABLEDECL(
@@ -145,7 +145,7 @@ static HASHTABLEDECL(
 
 //============================================================================
 static bool Recv_PingReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -252,12 +252,12 @@ static void AuthPingProc (void * param) {
                 trans->SetValue(s_transId);
                 s_authTrans.Add(trans);
 
-                const unsigned_ptr msg[] = {
+                const uintptr_t msg[] = {
                     kCli2Auth_PingRequest,
                                     trans->pingAtMs,
                                     trans->GetValue(),
                                     sizeof(s_payload),
-                    (unsigned_ptr)  s_payload,
+                    (uintptr_t)  s_payload,
                 };
                 
                 NetCliSend(conn->cli, msg, arrsize(msg));
@@ -536,10 +536,10 @@ static bool NotifyFileConnSocketRead (FileConn * conn, AsyncNotifySocketRead * r
     read->bytesProcessed += read->bytes;
 
     for (;;) {
-        if (conn->recvBuffer.Count() < sizeof(dword))
+        if (conn->recvBuffer.Count() < sizeof(uint32_t))
             return true;
 
-        dword msgSize = *(dword *)conn->recvBuffer.Ptr();
+        uint32_t msgSize = *(uint32_t *)conn->recvBuffer.Ptr();
         if (conn->recvBuffer.Count() < msgSize)
             return true;
 
@@ -607,7 +607,7 @@ static void StartAuthTcpTest (
     if (0 == AtomicSet(&s_authProtocolRegistered, 1)) {
         MemSet(
             s_payload,
-            (byte)((unsigned_ptr)&s_payload >> 4),
+            (uint8_t)((uintptr_t)&s_payload >> 4),
             sizeof(s_payload)
         );
         NetMsgProtocolRegister(
@@ -621,7 +621,7 @@ static void StartAuthTcpTest (
         );
     }
 
-    wchar addrStr[128]; 
+    wchar_t addrStr[128]; 
     NetAddressToString(addr, addrStr, arrsize(addrStr), kNetAddressFormatAll);
     dump(L"[TCP] Connecting to SrvAuth at %s...", addrStr);
 
@@ -635,7 +635,7 @@ static void StartAuthTcpTest (
     conn->IncRef("Connecting");
 
     Cli2Auth_Connect connect;
-    connect.hdr.connType    = (byte) kConnTypeCliToAuth;
+    connect.hdr.connType    = (uint8_t) kConnTypeCliToAuth;
     connect.hdr.hdrBytes    = sizeof(connect.hdr);
     connect.hdr.buildId     = BuildId();
     connect.hdr.buildType   = BUILD_TYPE_LIVE;
@@ -664,7 +664,7 @@ static void StartFileTcpTest (
     FNetDiagTestCallback    callback,
     void *                  param
 ) {
-    wchar addrStr[128]; 
+    wchar_t addrStr[128]; 
     NetAddressToString(addr, addrStr, arrsize(addrStr), kNetAddressFormatAll);
     dump(L"[TCP] Connecting to SrvFile at %s...", addrStr);
 

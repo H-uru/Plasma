@@ -82,7 +82,7 @@ class plParticleCore
 {
 public:
     hsPoint3 fPos;
-    UInt32 fColor; // Particle opacity goes into the color's alpha.
+    uint32_t fColor; // Particle opacity goes into the color's alpha.
     hsPoint3 fOrientation; // fMiscFlags determines how this should be used.
     hsVector3 fNormal;
     hsScalar fHSize, fVSize; // distance from the heart of the particle to the borders of its poly.
@@ -101,13 +101,13 @@ public:
     hsScalar fStartLife;
     hsScalar fScale;
     hsScalar fRadsPerSec;
-    //UInt32 fOrigColor;
+    //uint32_t fOrigColor;
 
     enum // Miscellaneous flags for particles
     {
         kImmortal                   = 0x00000001,
     };
-    UInt32 fMiscFlags;  // I know... 32 bits for a single flag...
+    uint32_t fMiscFlags;  // I know... 32 bits for a single flag...
                         // Feel free to change this if you've got something to pack it against.
 };
 

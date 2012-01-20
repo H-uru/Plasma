@@ -186,7 +186,7 @@ plVirtualCam1::plVirtualCam1()
     // only open log file if logging is on
     if ( !plStatusLog::fLoggingOff )
     {
-        wchar fileAndPath[MAX_PATH];
+        wchar_t fileAndPath[MAX_PATH];
         PathGetLogDirectory(fileAndPath, arrsize(fileAndPath));
         PathAddFilename(fileAndPath, fileAndPath, L"camLog.txt", arrsize(fileAndPath));
         foutLog = _wfopen( fileAndPath, L"wt" );
@@ -490,7 +490,7 @@ void plVirtualCam1::ICreatePlate()
     plMipmap *ourMip = fEffectPlate->CreateMaterial( 16, 16, true );
     for( y = 0; y < ourMip->GetHeight(); y++ )
     {
-        UInt32  *pixels = ourMip->GetAddr32( 0, y );
+        uint32_t  *pixels = ourMip->GetAddr32( 0, y );
         for( x = 0; x < ourMip->GetWidth(); x++ )
             pixels[ x ] = 0xff000000;
     }

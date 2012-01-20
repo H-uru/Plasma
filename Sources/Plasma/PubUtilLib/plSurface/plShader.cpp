@@ -287,7 +287,7 @@ void plShader::Read(hsStream* s, hsResMgr* mgr)
 
     hsKeyedObject::Read(s, mgr);
 
-    UInt32 n = s->ReadLE32();
+    uint32_t n = s->ReadLE32();
     fConsts.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )

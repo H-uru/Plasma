@@ -66,7 +66,7 @@ public:
     plOccPlane                  fPlane;
 
     hsTArray<hsPoint3>          fVerts;
-    hsTArray<UInt8>             fEdgeFlags; // flag[i] => edge(fVerts[i], fVerts[(i+1)%n])
+    hsTArray<uint8_t>             fEdgeFlags; // flag[i] => edge(fVerts[i], fVerts[(i+1)%n])
 };
 
 class plOccNode
@@ -82,7 +82,7 @@ protected:
         kSplit          = 0x2
     };
 
-    UInt32              fFlags;
+    uint32_t              fFlags;
 
     plOccPlane          fPolyPlane; // Plane of the poly we came from
     plOccPlane          fViewPlane; // Plane perp to view dir. 
@@ -106,7 +106,7 @@ protected:
         kNeedsBuild     = 0x1
     };
 
-    UInt8                   fFlags;
+    uint8_t                   fFlags;
 
     // Temp pools for building our trees each frame.
     hsTArray<plOccPoly>     fPolyPool;

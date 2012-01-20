@@ -87,12 +87,12 @@ protected:
 
     char*       fFileName;
 
-    UInt16      fCmd;
+    uint16_t      fCmd;
 
     hsTArray<plMessage*>    fCallbacks;
 
 public:
-    plMovieMsg(const char* n, UInt16 cmd) 
+    plMovieMsg(const char* n, uint16_t cmd) 
         : plMessage(nil, nil, nil) 
     { 
         fFileName = hsStrcpy(n);
@@ -130,8 +130,8 @@ public:
     }
 
     // Make sure you set at least one command, and set appropriate params for the command
-    UInt16 GetCmd() const { return fCmd; }
-    plMovieMsg& SetCmd(UInt16 c) { fCmd = c; return *this; }
+    uint16_t GetCmd() const { return fCmd; }
+    plMovieMsg& SetCmd(uint16_t c) { fCmd = c; return *this; }
 
     // Center 0,0 is center of screen, 1,1 is Upper-Right, -1,-1 is Lower-Left, etc.
     const hsPoint2& GetCenter() const { return fCenter; }
@@ -186,7 +186,7 @@ public:
     plMovieMsg& SetVolume(hsScalar v) { fVolume = v; return *this; }
 
     plMovieMsg& AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.Append(msg); return *this; }
-    UInt32 GetNumCallbacks() const { return fCallbacks.GetCount(); }
+    uint32_t GetNumCallbacks() const { return fCallbacks.GetCount(); }
     plMessage* GetCallback(int i) const { return fCallbacks[i]; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr) { hsAssert(false, "Not for I/O"); plMessage::IMsgRead(s, mgr); }

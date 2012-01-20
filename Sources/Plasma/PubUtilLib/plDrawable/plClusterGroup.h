@@ -101,7 +101,7 @@ protected:
     plLODDist                       fLOD;
 
     hsTArray<plCluster*>            fClusters;
-    UInt32                          fUnPacked;
+    uint32_t                          fUnPacked;
 
     plKey                           fSceneNode;
     plKey                           fDrawable;
@@ -144,7 +144,7 @@ public:
 
     const plCluster* GetCluster(int i) const;
     int         GetNumClusters() const { return fClusters.GetCount(); }
-    UInt32      NumInst() const;
+    uint32_t      NumInst() const;
 
     // The drawable needs us to be able to convert our data
     // into, well, drawable stuff.

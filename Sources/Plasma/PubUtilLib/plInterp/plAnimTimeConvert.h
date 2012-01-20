@@ -63,7 +63,7 @@ class plAnimTimeConvert : public plCreatable
     friend class plAGAnimInstance;
 
 protected:
-    UInt16                  fFlags;
+    uint16_t                  fFlags;
     hsScalar                fBegin;
     hsScalar                fEnd;
     hsScalar                fLoopEnd;
@@ -105,14 +105,14 @@ protected:
     void        ISendCallback(int i);
 
     plAnimTimeConvert& IStop(double time, hsScalar animTime);
-    hsBool IIsStoppedAt(const double &wSecs, const UInt32 &flags, const plATCEaseCurve *curve) const;
+    hsBool IIsStoppedAt(const double &wSecs, const uint32_t &flags, const plATCEaseCurve *curve) const;
     plAnimTimeConvert& IProcessStateChange(double worldTime, hsScalar animTime = -1);
     void IFlushOldStates();
     void IClearAllStates();
     plATCState *IGetState(double wSecs) const;
     plATCState *IGetLatestState() const;
     
-    plAnimTimeConvert& SetFlag(UInt8 f, hsBool on) { if(on)fFlags |= f; else fFlags &= ~f; return *this; }
+    plAnimTimeConvert& SetFlag(uint8_t f, hsBool on) { if(on)fFlags |= f; else fFlags &= ~f; return *this; }
 
 public:
     plAnimTimeConvert();
@@ -142,7 +142,7 @@ public:
     void SetLoopPoints(hsScalar begin, hsScalar end) { SetLoopBegin(begin); SetLoopEnd(end); }
     void SetLoopBegin(hsScalar s) { fLoopBegin = s; }
     void SetLoopEnd(hsScalar s) { fLoopEnd = s; }
-    void SetEase(hsBool easeIn, UInt8 inType, hsScalar minLength, hsScalar maxLength, hsScalar inLength);
+    void SetEase(hsBool easeIn, uint8_t inType, hsScalar minLength, hsScalar maxLength, hsScalar inLength);
     void SetCurrentEaseCurve(int x);    // 0=nil, 1=easeIn, 2=easeOut, 3=speed
 
     hsScalar GetBegin() const { return fBegin; }
@@ -158,7 +158,7 @@ public:
     void ResetWrap();
 
     plAnimTimeConvert& ClearFlags() { fFlags = kNone; return *this; }
-    hsBool GetFlag(UInt8 f) const { return (fFlags & f) ? true : false; }
+    hsBool GetFlag(uint8_t f) const { return (fFlags & f) ? true : false; }
 
     plAnimTimeConvert& InitStop(); // Called when initializing an anim that doesn't autostart
     plAnimTimeConvert& Stop(hsBool on);
@@ -237,7 +237,7 @@ public:
     hsScalar fLength;
     hsScalar fSpeed; // The anim's target ("full") speed.
 
-    static plATCEaseCurve *CreateEaseCurve(UInt8 type, hsScalar minLength, hsScalar maxLength, hsScalar normLength, 
+    static plATCEaseCurve *CreateEaseCurve(uint8_t type, hsScalar minLength, hsScalar maxLength, hsScalar normLength, 
                                            hsScalar startSpeed, hsScalar goalSpeed);
 
     double GetEndWorldTime() const { return fBeginWorldTime + fLength; } 
@@ -309,7 +309,7 @@ public:
     double fStartWorldTime;
     hsScalar fStartAnimTime;
 
-    UInt8 fFlags;
+    uint8_t fFlags;
     hsScalar fBegin;
     hsScalar fEnd;
     hsScalar fLoopBegin;

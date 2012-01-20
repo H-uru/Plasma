@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plPlayerPageMsg.h"
 
 hsBool  plInputManager::fUseDInput = false;
-UInt8   plInputManager::bRecenterMouse = 0;
+uint8_t   plInputManager::bRecenterMouse = 0;
 HWND    plInputManager::fhWnd = nil;
 #define NUM_ACTIONS     17
 

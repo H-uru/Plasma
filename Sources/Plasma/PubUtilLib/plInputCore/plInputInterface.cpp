@@ -153,7 +153,7 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     /// We might have controls that are currently enabled that are triggered in part by 
     /// modifiers (ctrl or shift)...if that is true, then we want to disable them if either
     /// of those modifiers are up, no matter what key this message is for
-    hsTArray<Int16> enabledCtrls;
+    hsTArray<int16_t> enabledCtrls;
     fKeyControlFlags.Enumerate( enabledCtrls );
 
     for( i = 0; i < enabledCtrls.GetCount(); i++ )
@@ -223,7 +223,7 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     if (!binding)
         return false;
 
-    UInt32 codeFlags = binding->GetCodeFlags();
+    uint32_t codeFlags = binding->GetCodeFlags();
 
     // Filter out no-repeat messages
     if( ( codeFlags & kControlFlagNoRepeat ) && keyMsg->GetRepeat() )

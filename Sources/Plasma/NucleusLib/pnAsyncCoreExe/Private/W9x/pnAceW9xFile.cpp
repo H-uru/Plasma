@@ -98,22 +98,22 @@ public:
     ~CFile ();
 
     void Read (
-        qword    offset,
+        uint64_t    offset,
         void *   buffer,
         unsigned bytes
     );
 
-    void SetLastWriteTime (qword lastWriteTime);
+    void SetLastWriteTime (uint64_t lastWriteTime);
 
-    void Truncate (qword size);
+    void Truncate (uint64_t size);
 
     void Write (
-        qword        offset,
+        uint64_t        offset,
         const void * buffer,
         unsigned     bytes
     );
 
-    bool Seek (qword offset, EFileSeekFrom from);
+    bool Seek (uint64_t offset, EFileSeekFrom from);
 };
 
 //===========================================================================
@@ -195,7 +195,7 @@ void CFile::Delete (void * op) {
 
 //===========================================================================
 void CFile::Read (
-    qword    offset,
+    uint64_t    offset,
     void *   buffer,
     unsigned bytes
 ) {
@@ -215,7 +215,7 @@ void CFile::Read (
 
     // Handle errors
     if (bytesRead != bytes)
-        MemZero((byte *)buffer + bytesRead, bytes - bytesRead);
+        MemZero((uint8_t *)buffer + bytesRead, bytes - bytesRead);
     if ( (!result && (GetLastError() != ERROR_IO_PENDING)) ||
          (bytesRead != bytes) )
         LogMsg(kLogFatal, "failed: ReadFile");
@@ -223,15 +223,15 @@ void CFile::Read (
 }
 
 //===========================================================================
-bool CFile::Seek (qword offset, EFileSeekFrom from) {
+bool CFile::Seek (uint64_t offset, EFileSeekFrom from) {
     COMPILER_ASSERT(kFileSeekFromBegin == FILE_BEGIN);
     COMPILER_ASSERT(kFileSeekFromCurrent == FILE_CURRENT);
     COMPILER_ASSERT(kFileSeekFromEnd == FILE_END);
 
     LONG  low    = (LONG)(offset % 0x100000000ul);
     LONG  high   = (LONG)(offset / 0x100000000ul);
-    dword result = SetFilePointer(m_handle, low, &high, from);
-    if ((result == (dword)-1) && (GetLastError() != NO_ERROR)) {
+    uint32_t result = SetFilePointer(m_handle, low, &high, from);
+    if ((result == (uint32_t)-1) && (GetLastError() != NO_ERROR)) {
         LogMsg(kLogFatal, "failed: SetFilePointer");
         return false;
     }
@@ -240,13 +240,13 @@ bool CFile::Seek (qword offset, EFileSeekFrom from) {
 }
 
 //===========================================================================
-void CFile::SetLastWriteTime (qword lastWriteTime) {
+void CFile::SetLastWriteTime (uint64_t lastWriteTime) {
     COMPILER_ASSERT(sizeof(lastWriteTime) == sizeof(FILETIME));
     SetFileTime(m_handle, nil, nil, (const FILETIME *)&lastWriteTime);
 }
 
 //===========================================================================
-void CFile::Truncate (qword size) {
+void CFile::Truncate (uint64_t size) {
     ASSERT(size != kAsyncFileDontTruncate);
 
     if (Seek(size, kFileSeekFromBegin) && !SetEndOfFile(m_handle)) 
@@ -255,7 +255,7 @@ void CFile::Truncate (qword size) {
 
 //===========================================================================
 void CFile::Write (
-    qword        offset,
+    uint64_t        offset,
     const void * buffer,
     unsigned     bytes
 ) {
@@ -296,7 +296,7 @@ void CFile::Write (
 //===========================================================================
 void W9xFileClose (
     AsyncFile   file, 
-    qword       truncateSize
+    uint64_t       truncateSize
 ) {
 
     // Dereference the object
@@ -333,7 +333,7 @@ AsyncId W9xFileCreateSequence (
 //===========================================================================
 AsyncId W9xFileFlushBuffers (
     AsyncFile   file, 
-    qword       truncateSize,
+    uint64_t       truncateSize,
     bool        notify,
     void *      param
 ) {
@@ -354,15 +354,15 @@ AsyncId W9xFileFlushBuffers (
 
 //===========================================================================
 AsyncFile W9xFileOpen (
-    const wchar             fullPath[],
+    const wchar_t             fullPath[],
     FAsyncNotifyFileProc    notifyProc,
     EFileError *            error,
     unsigned                desiredAccess,
     unsigned                openMode,
     unsigned                shareModeFlags,
     void *                  userState,
-    qword *                 fileSize,
-    qword *                 fileLastWriteTime
+    uint64_t *                 fileSize,
+    uint64_t *                 fileLastWriteTime
 ) {
     HANDLE fileHandle = CreateFileW(
         fullPath,
@@ -394,9 +394,9 @@ AsyncFile W9xFileOpen (
         CloseHandle(fileHandle);
         return nil;
     }
-    const qword size = ((qword) sizeHi << (qword) 32) | (qword) sizeLo;
+    const uint64_t size = ((uint64_t) sizeHi << (uint64_t) 32) | (uint64_t) sizeLo;
 
-    qword lastWriteTime;
+    uint64_t lastWriteTime;
     ASSERT(sizeof(lastWriteTime) >= sizeof(FILETIME));
     GetFileTime(fileHandle, nil, nil, (FILETIME *) &lastWriteTime);
 
@@ -418,7 +418,7 @@ AsyncFile W9xFileOpen (
 //===========================================================================
 AsyncId W9xFileRead (
     AsyncFile   file,
-    qword       offset,
+    uint64_t       offset,
     void *      buffer,
     unsigned    bytes,
     unsigned    flags,
@@ -441,7 +441,7 @@ AsyncId W9xFileRead (
         op->notify = (flags & kAsyncFileRwNotify) != 0;
         op->data.read.param  = param;
         op->data.read.offset = offset;
-        op->data.read.buffer = (byte *)buffer;
+        op->data.read.buffer = (uint8_t *)buffer;
         op->data.read.bytes  = bytes;
         return object->Queue(op);
     }
@@ -451,7 +451,7 @@ AsyncId W9xFileRead (
 //===========================================================================
 void W9xFileSetLastWriteTime (
     AsyncFile   file, 
-    qword       lastWriteTime
+    uint64_t       lastWriteTime
 ) {
     
     // Dereference the object
@@ -463,18 +463,18 @@ void W9xFileSetLastWriteTime (
 }
 
 //===========================================================================
-qword W9xFileGetLastWriteTime (
-    const wchar fileName[]
+uint64_t W9xFileGetLastWriteTime (
+    const wchar_t fileName[]
 ) {
     WIN32_FILE_ATTRIBUTE_DATA info;
     bool f = GetFileAttributesExW(fileName, GetFileExInfoStandard, &info);
-    return f ? *((qword *) &info.ftLastWriteTime) : 0;
+    return f ? *((uint64_t *) &info.ftLastWriteTime) : 0;
 }
 
 //===========================================================================
 AsyncId W9xFileWrite (
     AsyncFile    file,
-    qword        offset,
+    uint64_t        offset,
     const void * buffer,
     unsigned     bytes,
     unsigned     flags,
@@ -497,7 +497,7 @@ AsyncId W9xFileWrite (
         op->notify = (flags & kAsyncFileRwNotify) != 0;
         op->data.write.param  = param;
         op->data.write.offset = offset;
-        op->data.write.buffer = (byte *)buffer;
+        op->data.write.buffer = (uint8_t *)buffer;
         op->data.write.bytes  = bytes;
         return object->Queue(op);
     }
@@ -507,7 +507,7 @@ AsyncId W9xFileWrite (
 //============================================================================
 bool W9xFileSeek (
     AsyncFile       file,
-    qword           distance,
+    uint64_t           distance,
     EFileSeekFrom   from
 ) {
     CFile * object = (CFile *)file;

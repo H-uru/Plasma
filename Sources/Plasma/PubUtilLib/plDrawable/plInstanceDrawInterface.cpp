@@ -113,7 +113,7 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
 
 #ifdef MF_NOSHADOW_ACC
     // TESTHACKERY FOLLOWS - GlassesNoShadow
-    UInt32 noShadHack = 0;
+    uint32_t noShadHack = 0;
     if( mesh->GetKey() && (strstr(mesh->GetKey()->GetName(), "lasses") || strstr(mesh->GetKey()->GetName(), "oggles")) )
         noShadHack = plGeometrySpan::kPropNoShadowCast;
 #endif // MF_NOSHADOW_ACC
@@ -136,11 +136,11 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
     }
             
     // Add the spans to the drawable
-    UInt32 index = (UInt32)-1;
+    uint32_t index = (uint32_t)-1;
     index = fDrawable->AppendDISpans(mesh->fSpans, index, false, true, addToFront, lod);
             
     // Tell the drawInterface what drawable and index it wants.
-    UInt8 iDraw = (UInt8)GetNumDrawables();
+    uint8_t iDraw = (uint8_t)GetNumDrawables();
     ISetDrawable(iDraw, fDrawable);
     SetDrawableMeshIndex(iDraw, index);
     SetSharedMesh(iDraw, mesh);
@@ -173,10 +173,10 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
 
 void plInstanceDrawInterface::RemoveSharedMesh(plSharedMesh *mesh)
 {
-    UInt32 geoIndex = fMeshes.Find(mesh);
+    uint32_t geoIndex = fMeshes.Find(mesh);
     if (geoIndex != fMeshes.kMissingIndex)
     {
-        IClearIndex((UInt8)geoIndex);
+        IClearIndex((uint8_t)geoIndex);
                 
         plSharedMeshBCMsg *smMsg = TRACKED_NEW plSharedMeshBCMsg;
         smMsg->SetSender(GetKey());
@@ -197,7 +197,7 @@ void plInstanceDrawInterface::RemoveSharedMesh(plSharedMesh *mesh)
     }
 }
 
-void plInstanceDrawInterface::ICheckDrawableIndex(UInt8 which)
+void plInstanceDrawInterface::ICheckDrawableIndex(uint8_t which)
 {
     if( which >= fMeshes.GetCount() )
     {
@@ -214,13 +214,13 @@ void plInstanceDrawInterface::ReleaseData()
     plDrawInterface::ReleaseData();
 }
 
-void plInstanceDrawInterface::SetSharedMesh(UInt8 which, plSharedMesh *mesh)
+void plInstanceDrawInterface::SetSharedMesh(uint8_t which, plSharedMesh *mesh)
 {
     ICheckDrawableIndex(which);
     fMeshes[which] = mesh;
 }
 
-void plInstanceDrawInterface::IClearIndex(UInt8 which)
+void plInstanceDrawInterface::IClearIndex(uint8_t which)
 {
     plDrawableSpans *drawable = plDrawableSpans::ConvertNoRef(fDrawables[which]);
     if (drawable != nil)
@@ -236,7 +236,7 @@ void plInstanceDrawInterface::IClearIndex(UInt8 which)
 }
 
 // Temp testing - not really ideal. Check with Bob for real soln.
-Int32 plInstanceDrawInterface::GetSharedMeshIndex(const plSharedMesh *mesh) const
+int32_t plInstanceDrawInterface::GetSharedMeshIndex(const plSharedMesh *mesh) const
 {
     int i;
     for( i = 0; i < fMeshes.GetCount(); i++ )

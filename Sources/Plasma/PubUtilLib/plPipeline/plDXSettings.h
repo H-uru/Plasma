@@ -77,12 +77,12 @@ class plDXIndexBufferRef;
 class plDXViewSettings
 {
 public:
-    UInt32                  fRenderState;
+    uint32_t                  fRenderState;
 
     plRenderRequest*        fRenderRequest;
 
-    UInt32                  fDrawableTypeMask;
-    UInt32                  fSubDrawableTypeMask;
+    uint32_t                  fDrawableTypeMask;
+    uint32_t                  fSubDrawableTypeMask;
 
     DWORD                   fClearColor;
     float                   fClearDepth;
@@ -91,7 +91,7 @@ public:
 
     plCullTree              fCullTree;
     hsBool                  fCullTreeDirty;
-    UInt16                  fCullMaxNodes;
+    uint16_t                  fCullMaxNodes;
 
     enum XformResets
     {
@@ -102,7 +102,7 @@ public:
         kResetAll           = 0x07
     };
 
-    UInt8                   fXformResetFlags;
+    uint8_t                   fXformResetFlags;
     hsBool                  fLocalToWorldLeftHanded;
     hsBool                  fWorldToCamLeftHanded;
 
@@ -134,17 +134,17 @@ class plDXGeneralSettings
 
         hsBool                  fFullscreen;
         hsWinRef                fHWnd;
-        UInt32                  fColorDepth;
-        UInt8                   fNumAASamples;
-        UInt32                  fD3DCaps, fBoardKluge, fStageEnd;
-        UInt32                  fMaxNumLights;
-        UInt32                  fMaxNumProjectors;
-        UInt32                  fMaxLayersAtOnce;
-        UInt32                  fMaxPiggyBacks;
-        Int32                   fBoundsDrawLevel;
-        UInt32                  fProperties;
+        uint32_t                  fColorDepth;
+        uint8_t                   fNumAASamples;
+        uint32_t                  fD3DCaps, fBoardKluge, fStageEnd;
+        uint32_t                  fMaxNumLights;
+        uint32_t                  fMaxNumProjectors;
+        uint32_t                  fMaxLayersAtOnce;
+        uint32_t                  fMaxPiggyBacks;
+        int32_t                   fBoundsDrawLevel;
+        uint32_t                  fProperties;
         DWORD                   fClearColor;
-        UInt8                   fMaxAnisotropicSamples;
+        uint8_t                   fMaxAnisotropicSamples;
         D3DPRESENT_PARAMETERS   fPresentParams;
         hsBool                  fVeryAnnoyingTextureInvalidFlag;
         hsBool                  fNoGammaCorrect;
@@ -166,7 +166,7 @@ class plDXGeneralSettings
         plDXDeviceRef                   *fCurrRenderTargetRef;
         plDXVertexBufferRef         *fCurrVertexBuffRef;
         plDXIndexBufferRef              *fCurrIndexBuffRef;
-        UInt32                          fOrigWidth, fOrigHeight;
+        uint32_t                          fOrigWidth, fOrigHeight;
 
         IDirect3DVertexShader9          *fCurrVertexShader;
         IDirect3DPixelShader9           *fCurrPixelShader;
@@ -218,9 +218,9 @@ class plDXFogSettings
     public:
         plFogEnvironment*   fEnvPtr;        // nil means no fog
         D3DFOGMODE          fMode;
-        UInt8               fIsVertex;
-        UInt8               fIsShader;
-        UInt32              fHexColor;
+        uint8_t               fIsVertex;
+        uint8_t               fIsShader;
+        uint32_t              fHexColor;
         float               fStart;
         float               fEnd;
         float               fDensity;
@@ -248,8 +248,8 @@ class plDXLightSettings
         hsBitVector             fUsedFlags;
         hsBitVector             fEnabledFlags;
         hsBitVector             fHoldFlags;
-        UInt32                  fNextIndex, fLastIndex;
-        UInt16                  fTime;
+        uint32_t                  fNextIndex, fLastIndex;
+        uint16_t                  fTime;
         plLightInfo*            fActiveList;
         plDXLightRef*           fRefList;
         plDXPipeline*           fPipeline;
@@ -259,7 +259,7 @@ class plDXLightSettings
         hsTArray<plLightInfo*>  fCharLights;
         hsTArray<plLightInfo*>  fVisLights;
 
-        UInt32                          fNextShadowLight;
+        uint32_t                          fNextShadowLight;
         hsTArray<plDXLightRef*>     fShadowLights;
 
         plDXLightSettings();
@@ -269,9 +269,9 @@ class plDXLightSettings
         // Releases/deletes anything associated with these settings
         void    Release( void );
         // Reserve a D3D light index
-        UInt32  ReserveD3DIndex( void );
+        uint32_t  ReserveD3DIndex( void );
         // Release a reserved D3D light index
-        void    ReleaseD3DIndex( UInt32 idx );
+        void    ReleaseD3DIndex( uint32_t idx );
 };
 
 //// Stencil Settings /////////////////////////////////////////////////////////
@@ -279,13 +279,13 @@ class plDXLightSettings
 class plDXStencilSettings
 {
     public:
-        UInt8   fDepth;
+        uint8_t   fDepth;
         hsBool  fEnabled;
-        UInt8   fCmpFunc;
-        UInt8   fFailOp, fPassOp, fPassButZFailOp;
-        UInt32  fRefValue;
-        UInt32  fMask;
-        UInt32  fWriteMask;
+        uint8_t   fCmpFunc;
+        uint8_t   fFailOp, fPassOp, fPassButZFailOp;
+        uint32_t  fRefValue;
+        uint32_t  fMask;
+        uint32_t  fWriteMask;
 
         void    Reset( void )
         {

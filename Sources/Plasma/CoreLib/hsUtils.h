@@ -76,9 +76,9 @@ char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible f
 #endif
 
 
-//  A pstring has a length byte at the beginning, and no trailing 0
-char*   hsP2CString(const UInt8 pstring[], char cstring[]);
-UInt8*  hsC2PString(const char cstring[], UInt8 pstring[]);
+//  A pstring has a length uint8_t at the beginning, and no trailing 0
+char*   hsP2CString(const uint8_t pstring[], char cstring[]);
+uint8_t*  hsC2PString(const char cstring[], uint8_t pstring[]);
 
 inline char* hsStrcpy(const char src[])
 {
@@ -178,7 +178,7 @@ enum MemSpec
     kOptimal        // 256 or greater
 };
 
-UInt32 hsPhysicalMemory();
+uint32_t hsPhysicalMemory();
 MemSpec hsMemorySpec();
 
 inline int hsRandMax() { return 32767; }

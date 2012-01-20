@@ -63,7 +63,7 @@ public:
     {
         Py_XDECREF( fPyObject );
     }
-    void VaultOperationStarted( UInt32 context )
+    void VaultOperationStarted( uint32_t context )
     {
         if ( fPyObject )
         {
@@ -79,7 +79,7 @@ public:
             }
         }
     }
-    void VaultOperationComplete( UInt32 context, int resultCode )
+    void VaultOperationComplete( uint32_t context, int resultCode )
     {
         if ( fPyObject )
         {
@@ -88,11 +88,11 @@ public:
 //          if ( pyArgs )
 //          {
 //              dict pyDict = dict();
-//              std::map<UInt16,plCreatable*>   args;
+//              std::map<uint16_t,plCreatable*>   args;
 //              fCbArgs.GetItems( args );
-//              for ( std::map<UInt16,plCreatable*>::iterator ii=args.begin(); ii!=args.end(); ++ii )
+//              for ( std::map<uint16_t,plCreatable*>::iterator ii=args.begin(); ii!=args.end(); ++ii )
 //              {
-//                  UInt16 key = ii->first;
+//                  uint16_t key = ii->first;
 //                  plCreatable* arg = ii->second;
 //                  plCreatableGenericValue * genValue = plCreatableGenericValue::ConvertNoRef( arg );
 //                  if ( genValue )
@@ -244,13 +244,13 @@ bool pyVNodeMgr::IIsThisMe( plVaultPlayerNode * node ) const
 }
 
 // ISendNetMsg ----------------------------------------------
-int pyVNodeMgr::ISendNetMsg( plNetMsgVault* msg, UInt32 sendFlags/*=0 */)
+int pyVNodeMgr::ISendNetMsg( plNetMsgVault* msg, uint32_t sendFlags/*=0 */)
 {
     return fMyComm->GetNetClientComm()->SendMsg( msg, sendFlags );
 }
 
 // IGetPlayerID ----------------------------------------------
-UInt32 pyVNodeMgr::IGetPlayerID() const
+uint32_t pyVNodeMgr::IGetPlayerID() const
 {
     return fMyComm->GetNetClientComm()->GetPlayerID();
 }
@@ -281,7 +281,7 @@ bool pyVNodeMgr::IsConnected()
 }
 
 // Disconnect ----------------------------------------------
-void pyVNodeMgr::Disconnect( PyObject* cb/*=nil*/, UInt32 cbContext/*=0 */)
+void pyVNodeMgr::Disconnect( PyObject* cb/*=nil*/, uint32_t cbContext/*=0 */)
 {
     // disconnect from allplayers and globalsdl folders
     plVaultNodeRef * out;
@@ -301,16 +301,16 @@ void pyVNodeMgr::Disconnect( PyObject* cb/*=nil*/, UInt32 cbContext/*=0 */)
 }
 
 // Connect ----------------------------------------------
-void pyVNodeMgr::Connect( int childFetchLevel/*=plVault::kFetchAllChildren*/, PyObject* cb/*=nil*/, UInt32 cbContext/*=0 */)
+void pyVNodeMgr::Connect( int childFetchLevel/*=plVault::kFetchAllChildren*/, PyObject* cb/*=nil*/, uint32_t cbContext/*=0 */)
 {
     plVNodeMgr::Connect( childFetchLevel, new pyVaultOperationCallback( cb ), cbContext );
 }
 
 // FetchNode ----------------------------------------------
-bool pyVNodeMgr::FetchNode( UInt32 nodeID,
+bool pyVNodeMgr::FetchNode( uint32_t nodeID,
     int childFetchLevel/*=plVault::kFetchAllChildren*/,
     PyObject* cb/*=nil*/,
-    UInt32 cbContext/*=0 */)
+    uint32_t cbContext/*=0 */)
 {
     return plVNodeMgr::FetchNode( nodeID, childFetchLevel, new pyVaultOperationCallback( cb ), cbContext );
 }
@@ -322,13 +322,13 @@ PyObject* pyVNodeMgr::GetRootNode() const
 }
 
 // GetClientID ----------------------------------------------
-UInt32 pyVNodeMgr::GetClientID() const
+uint32_t pyVNodeMgr::GetClientID() const
 {
     return plVNodeMgr::GetClientID();
 }
 
 // GetNode ----------------------------------------------
-PyObject* pyVNodeMgr::GetNode( UInt32 id ) const
+PyObject* pyVNodeMgr::GetNode( uint32_t id ) const
 {
     plVaultNode * tmp;
     if ( plVNodeMgr::GetNode( id, tmp ) )

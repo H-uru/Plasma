@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef BINK_SDK_AVAILABLE
 #include <bink.h>
 #else
-#define U32 UInt32
+#define U32 uint32_t
 #endif
 
 
@@ -69,10 +69,10 @@ class plBinkPlayer
         static hsBool Init( hsWindowHndl hWnd);
         static hsBool DeInit();
 
-        static void SetForeGroundTrack(UInt32 t);
-        static void SetBackGroundTrack(UInt32 t);
-        static UInt32 GetForeGroundTrack();
-        static UInt32 GetBackGroundTrack();
+        static void SetForeGroundTrack(uint32_t t);
+        static void SetBackGroundTrack(uint32_t t);
+        static uint32_t GetForeGroundTrack();
+        static uint32_t GetBackGroundTrack();
     
         plBinkPlayer();
         ~plBinkPlayer();
@@ -106,7 +106,7 @@ class plBinkPlayer
         hsScalar GetForeVolume() const { return IGetVolume(false); }
 
         void AddCallback(plMessage* msg);
-        UInt32 GetNumCallbacks() const { return fCallbacks.GetCount(); }
+        uint32_t GetNumCallbacks() const { return fCallbacks.GetCount(); }
         plMessage* GetCallback(int i) const { return fCallbacks[i]; }
 
         void SetFadeFromTime(hsScalar secs) { fFadeFromTime = secs; }
@@ -154,7 +154,7 @@ class plBinkPlayer
 
         hsPoint2            fPos;
         hsPoint2            fScale;
-        UInt16              fVolume[2];
+        uint16_t              fVolume[2];
         hsColorRGBA         fColor;
 
         static U32          fTracks[2];
@@ -169,9 +169,9 @@ class plBinkPlayer
         plDXPipeline*       fPipeline;
         IDirect3DTexture9*  fTexture;
         D3DVertex           fVerts[4];
-        UInt16              fNumPrimitives;
-        UInt32              fHandle;
-        UInt32              fTextureSize[2];
+        uint16_t              fNumPrimitives;
+        uint32_t              fHandle;
+        uint32_t              fTextureSize[2];
 
         double              fFadeStart;
         hsScalar            fFadeParm;

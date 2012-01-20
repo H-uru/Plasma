@@ -198,7 +198,7 @@ void    plLayerConverter::UnmuteWarnings( void )
         
 plLayerInterface    *plLayerConverter::ConvertTexmap( Texmap *texmap,
                                                         plMaxNode *maxNode,
-                                                        UInt32 blendFlags, hsBool preserveUVOffset,
+                                                        uint32_t blendFlags, hsBool preserveUVOffset,
                                                         hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::ConvertTexmap" );
@@ -275,7 +275,7 @@ void    plLayerConverter::IRegisterConversion( plPlasmaMAXLayer *origLayer, plLa
 //// IConvertLayerTex /////////////////////////////////////////////////////////
                             
 plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertLayerTex" );
@@ -332,7 +332,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     bd.fileName = bi->Name();
 
     // Create texture and add it to list if unique
-    Int32 texFlags = 0;//hsGTexture::kMipMap;
+    int32_t texFlags = 0;//hsGTexture::kMipMap;
 
     // Texture Alpha/Color
     if( bitmapPB->GetInt( kBmpInvertColor ) )
@@ -411,7 +411,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
 //// IConvertStaticEnvLayer ///////////////////////////////////////////////////
                             
 plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertStaticEnvLayer" );
@@ -451,7 +451,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
     bd.fileName = bi->Name();
 
     // Create texture and add it to list if unique
-    Int32 texFlags = 0;
+    int32_t texFlags = 0;
 
     // Texture Alpha/Color
     if( bitmapPB->GetInt( plStaticEnvLayer::kBmpInvertColor ) )
@@ -521,7 +521,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
 //// IConvertDynamicEnvLayer //////////////////////////////////////////////////
                             
 plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertDynamicEnvLayer" );
@@ -556,7 +556,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
     }
 
     // Create texture and add it to list if unique
-    Int32 texFlags = 0;
+    int32_t texFlags = 0;
 
     /// Since we're a cubic environMap, we don't care about the UV transform nor the uvwSrc
     plasmaLayer->SetUVWSrc( 0 );
@@ -588,7 +588,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
 }
 
 plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *layer, 
-                                                           plMaxNode *maxNode, UInt32 blendFlags, 
+                                                           plMaxNode *maxNode, uint32_t blendFlags, 
                                                            hsBool preserveUVOffset, hsBool upperLayer)
 {
     hsGuardBegin( "plLayerConverter::IConvertCameraLayer" );
@@ -612,7 +612,7 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
     plDynamicCamMap *map = plEnvMapComponent::GetCamMap(rootNode ? rootNode : maxNode);
     if (map)
     {
-        Int32 texFlags = 0;
+        int32_t texFlags = 0;
         if (!pb->GetInt(ParamID(plMAXCameraLayer::kExplicitCam)))
         {
             plasmaLayer->SetUVWSrc(plLayerInterface::kUVWPosition);
@@ -657,7 +657,7 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
 //// IConvertDynamicTextLayer /////////////////////////////////////////////////
                             
 plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertDynamicTextLayer" );
@@ -692,7 +692,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
                                                     maxNode );
 
     // Set the initial bitmap if necessary
-    UInt32 *initBuffer = IGetInitBitmapBuffer( maxLayer );
+    uint32_t *initBuffer = IGetInitBitmapBuffer( maxLayer );
     if( initBuffer != nil )
     {
         texture->SetInitBuffer( initBuffer );
@@ -712,11 +712,11 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
 //  Called to get a 32-bit uncompressed ARGB version of the init bitmap of
 //  a dynamic text layer
 
-UInt32  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) const
+uint32_t  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) const
 {
-    UInt32          *buffer;
+    uint32_t          *buffer;
     hsRGBAColor32   *buffPtr;
-    UInt16          width, height;
+    uint16_t          width, height;
 
 
     IParamBlock2 *bitmapPB = layer->GetParamBlockByID( plDynamicTextLayer::kBlkBitmap );
@@ -728,7 +728,7 @@ UInt32  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) con
     width = bitmapPB->GetInt( (ParamID)plDynamicTextLayer::kBmpExportWidth );
     height = bitmapPB->GetInt( (ParamID)plDynamicTextLayer::kBmpExportHeight );
 
-    buffer = TRACKED_NEW UInt32[ width * height ];
+    buffer = TRACKED_NEW uint32_t[ width * height ];
     if( buffer == nil )
         return nil;
 
@@ -762,12 +762,12 @@ UInt32  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) con
     return buffer;
 }
 
-static UInt32 MakeUInt32Color(float r, float g, float b, float a)
+static uint32_t MakeUInt32Color(float r, float g, float b, float a)
 {
-    return (UInt32(a * 255.9f) << 24)
-            |(UInt32(r * 255.9f) << 16)
-            |(UInt32(g * 255.9f) << 8)
-            |(UInt32(b * 255.9f) << 0);
+    return (uint32_t(a * 255.9f) << 24)
+            |(uint32_t(r * 255.9f) << 16)
+            |(uint32_t(g * 255.9f) << 8)
+            |(uint32_t(b * 255.9f) << 0);
 }
 
 plBitmap* plLayerConverter::IGetAttenRamp(plMaxNode *node, BOOL isAdd, int loClamp, int hiClamp)
@@ -789,7 +789,7 @@ plBitmap* plLayerConverter::IGetAttenRamp(plMaxNode *node, BOOL isAdd, int loCla
     // necessary. -mcn
     plMipmap *texture = plBitmapCreator::Instance().CreateBlankMipmap( kLUTWidth, kLUTHeight, plMipmap::kARGB32Config, 1, funkName, node->GetLocation() );
 
-    UInt32* pix = (UInt32*)texture->GetImage();
+    uint32_t* pix = (uint32_t*)texture->GetImage();
 
     if( isAdd )
     {
@@ -883,7 +883,7 @@ plLayer* plLayerConverter::ICreateAttenuationLayer(const char* name, plMaxNode *
     layer->SetRuntimeColor(hsColorRGBA().Set(0, 0, 0, 1.f));
 
     layer->SetZFlags(hsGMatState::kZNoZWrite);
-    UInt32 blendFlags = hsGMatState::kBlendAlpha | hsGMatState::kBlendNoTexColor | hsGMatState::kBlendAlphaMult;
+    uint32_t blendFlags = hsGMatState::kBlendAlpha | hsGMatState::kBlendNoTexColor | hsGMatState::kBlendAlphaMult;
     layer->SetBlendFlags(blendFlags);
     layer->SetClampFlags(hsGMatState::kClampTexture);
 
@@ -895,7 +895,7 @@ plLayer* plLayerConverter::ICreateAttenuationLayer(const char* name, plMaxNode *
 }
 
 plLayerInterface* plLayerConverter::IConvertAngleAttenLayer(plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer)
 {
     hsGuardBegin( "plPlasmaMAXLayer::IConvertAngleAttenLayer" );
@@ -967,7 +967,7 @@ void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *de
     }
 
     // UVW Src
-    Int32 uvwSrc = srcLayer->GetMapChannel() - 1;
+    int32_t uvwSrc = srcLayer->GetMapChannel() - 1;
 
     if( fErrorMsg->Set( !( fWarned & kWarnedTooManyUVs ) && 
                         ( ( uvwSrc < 0 ) || ( uvwSrc >= plGeometrySpan::kMaxNumUVChannels ) ), 
@@ -989,7 +989,7 @@ void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *de
 
 //// ICreateDynTextMap ////////////////////////////////////////////////////////
 
-plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const char *layerName, UInt32 width, UInt32 height,
+plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const char *layerName, uint32_t width, uint32_t height,
                                                         hsBool includeAlphaChannel, plMaxNode *node )
 {
     hsGuardBegin( "plPlasmaMAXLayer::ICreateDynTextMap" );
@@ -1030,7 +1030,7 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const char *layerName,
 ///////////////////////////////////////////////////////////////////////////////
 
 plBitmap *plLayerConverter::CreateSimpleTexture(const char *fileName, const plLocation &loc, 
-                                                UInt32 clipID /* = 0 */, UInt32 texFlags /* = 0 */, bool useJPEG /* = false */)
+                                                uint32_t clipID /* = 0 */, uint32_t texFlags /* = 0 */, bool useJPEG /* = false */)
 {
     plBitmapData bd;
     bd.fileName = fileName;

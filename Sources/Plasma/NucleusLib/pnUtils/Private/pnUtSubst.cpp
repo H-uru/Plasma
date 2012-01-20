@@ -243,8 +243,8 @@ bool IVarSubstPreParsed (
 
 //============================================================================
 bool ParseForSubst (
-    SubstParsedData<wchar> *    dest,
-    const wchar                 src[]
+    SubstParsedData<wchar_t> *    dest,
+    const wchar_t                 src[]
 ) {
     return IParseForSubst(dest, src);
 }
@@ -259,11 +259,11 @@ bool ParseForSubst (
 
 //============================================================================
 bool VarSubstitute (
-    ARRAY(wchar) *  dst,
-    const wchar     src[],
+    ARRAY(wchar_t) *  dst,
+    const wchar_t     src[],
     unsigned        varCount,
-    const wchar *   varNames[],   // [varCount]
-    const wchar *   varValues[]   // [varCount]
+    const wchar_t *   varNames[],   // [varCount]
+    const wchar_t *   varValues[]   // [varCount]
 ) {
     return IVarSubstitute(dst, src, varCount, varNames, varValues);
 }
@@ -281,11 +281,11 @@ bool VarSubstitute (
 
 //============================================================================
 bool VarSubstitute (
-    ARRAY(wchar) *                      dst,
-    const SubstParsedData<wchar> *      src,
+    ARRAY(wchar_t) *                      dst,
+    const SubstParsedData<wchar_t> *      src,
     unsigned                            varCount,
-    const wchar *                       varNames[],   // [varCount]
-    const wchar *                       varValues[]   // [varCount]
+    const wchar_t *                       varNames[],   // [varCount]
+    const wchar_t *                       varValues[]   // [varCount]
 ) {
     return IVarSubstPreParsed(dst, src, varCount, varNames, varValues);
 }

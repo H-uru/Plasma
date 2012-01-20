@@ -61,8 +61,8 @@ protected:
     typedef std::vector<plManifestFile*> FileVec;
     FileVec fFiles;
 
-    UInt32 fDownloadFiles;
-    UInt32 fDownloadBytes;
+    uint32_t fDownloadFiles;
+    uint32_t fDownloadBytes;
 
     bool fDirtySums;
 
@@ -86,8 +86,8 @@ public:
     void    DownloadUpdates(ProgressFunc progress, plFileGrabber* grabber);
 
     int     NumFiles() { return fFiles.size(); }
-    UInt32  NumDownloadFiles() { return fDownloadFiles; }
-    UInt32  DownloadSize() { return fDownloadBytes; }
+    uint32_t  NumDownloadFiles() { return fDownloadFiles; }
+    uint32_t  DownloadSize() { return fDownloadBytes; }
 };
 
 #endif // plManifest_h_inc

@@ -369,7 +369,7 @@ bool plNetLinkingMgr::IProcessLinkToAgeMsg( plLinkToAgeMsg * msg )
     GetAgeLink()->CopyFrom( msg->GetAgeLink() );
 
     // Actually do stuff...
-    UInt8 pre = IPreProcessLink();
+    uint8_t pre = IPreProcessLink();
     if (pre == kLinkImmediately)
     {
         msg->Ref();
@@ -443,7 +443,7 @@ bool plNetLinkingMgr::IProcessLinkingMgrMsg( plLinkingMgrMsg * msg )
     case kLinkPlayerHere:
         {
             // player wants to link to our age
-            UInt32 playerID = msg->GetArgs()->GetInt( 0 );
+            uint32_t playerID = msg->GetArgs()->GetInt( 0 );
             hsLogEntry( nc->DebugMsg( "Linking player %lu to this age.", playerID ) );
             LinkPlayerHere( playerID );
         }
@@ -529,7 +529,7 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
 
 ////////////////////////////////////////////////////////////////////
 
-bool plNetLinkingMgr::IDispatchMsg( plMessage * msg, UInt32 playerID )
+bool plNetLinkingMgr::IDispatchMsg( plMessage * msg, uint32_t playerID )
 {
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
 
@@ -550,12 +550,12 @@ bool plNetLinkingMgr::IDispatchMsg( plMessage * msg, UInt32 playerID )
 
 ////////////////////////////////////////////////////////////////////
 
-void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, UInt32 playerID )
+void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, uint32_t playerID )
 {
     LinkToAge(link, nil, playerID);
 }
 
-void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, UInt32 playerID )
+void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -570,7 +570,7 @@ void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, U
 }
 
 // link myself back to my last age
-void plNetLinkingMgr::LinkToPrevAge( UInt32 playerID )
+void plNetLinkingMgr::LinkToPrevAge( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -589,7 +589,7 @@ void plNetLinkingMgr::LinkToPrevAge( UInt32 playerID )
     }
 }
 
-void plNetLinkingMgr::LinkToMyPersonalAge( UInt32 playerID )
+void plNetLinkingMgr::LinkToMyPersonalAge( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -610,7 +610,7 @@ void plNetLinkingMgr::LinkToMyPersonalAge( UInt32 playerID )
     IDispatchMsg( pMsg, playerID );
 }
 
-void plNetLinkingMgr::LinkToMyNeighborhoodAge( UInt32 playerID )
+void plNetLinkingMgr::LinkToMyNeighborhoodAge( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -629,7 +629,7 @@ void plNetLinkingMgr::LinkToMyNeighborhoodAge( UInt32 playerID )
     IDispatchMsg( pMsg, playerID );
 }
 
-void plNetLinkingMgr::LinkPlayerHere( UInt32 playerID )
+void plNetLinkingMgr::LinkPlayerHere( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -644,7 +644,7 @@ void plNetLinkingMgr::LinkPlayerHere( UInt32 playerID )
     LinkPlayerToAge( &link, playerID );
 }
 
-void plNetLinkingMgr::LinkPlayerToAge( plAgeLinkStruct * link, UInt32 playerID )
+void plNetLinkingMgr::LinkPlayerToAge( plAgeLinkStruct * link, uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -662,7 +662,7 @@ void plNetLinkingMgr::LinkPlayerToAge( plAgeLinkStruct * link, UInt32 playerID )
 //
 // link the player back to his previous age
 //
-void plNetLinkingMgr::LinkPlayerToPrevAge( UInt32 playerID )
+void plNetLinkingMgr::LinkPlayerToPrevAge( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -678,7 +678,7 @@ void plNetLinkingMgr::LinkPlayerToPrevAge( UInt32 playerID )
     IDispatchMsg( pMsg, playerID );
 }
 
-void plNetLinkingMgr::LinkToPlayersAge( UInt32 playerID )
+void plNetLinkingMgr::LinkToPlayersAge( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -697,7 +697,7 @@ void plNetLinkingMgr::LinkToPlayersAge( UInt32 playerID )
 ////////////////////////////////////////////////////////////////////
 
 
-void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, UInt32 playerID )
+void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_t playerID )
 {
 
     plNetClientMgr *mgr = plNetClientMgr::GetInstance();
@@ -716,7 +716,7 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, UInt32 
     }
 }
 // my special version - cjp
-void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, UInt32 playerID, plKey replyKey )
+void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_t playerID, plKey replyKey )
 {
 
     plNetClientMgr *mgr = plNetClientMgr::GetInstance();
@@ -736,7 +736,7 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, UInt32 
 }
 
 // for backwards compatibility
-void plNetLinkingMgr::OfferLinkToPlayer( const plAgeInfoStruct * inInfo, UInt32 playerID )
+void plNetLinkingMgr::OfferLinkToPlayer( const plAgeInfoStruct * inInfo, uint32_t playerID )
 {
     plAgeLinkStruct *ageLink = TRACKED_NEW plAgeLinkStruct;
 
@@ -760,7 +760,7 @@ void plNetLinkingMgr::IPostProcessLink( void )
     // Update our online status 
     if (RelVaultNode* rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
-        wchar ageInstName[MAX_PATH];
+        wchar_t ageInstName[MAX_PATH];
         Uuid ageInstGuid = *info->GetAgeInstanceGuid();
         StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
         accInfo.SetAgeInstName(ageInstName);
@@ -836,7 +836,7 @@ void plNetLinkingMgr::IPostProcessLink( void )
 
 ////////////////////////////////////////////////////////////////////
 
-UInt8 plNetLinkingMgr::IPreProcessLink(void)
+uint8_t plNetLinkingMgr::IPreProcessLink(void)
 {
     // Grab some stuff we're gonna use extensively
     plNetClientMgr* nc = plNetClientMgr::GetInstance();
@@ -864,7 +864,7 @@ UInt8 plNetLinkingMgr::IPreProcessLink(void)
     // Update our online status 
     if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
-        wchar ageInstName[MAX_PATH];
+        wchar_t ageInstName[MAX_PATH];
         Uuid ageInstGuid = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
         StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
         accInfo.SetAgeInstName(ageInstName);
@@ -1066,7 +1066,7 @@ UInt8 plNetLinkingMgr::IPreProcessLink(void)
         case plNetCommon::LinkingRules::kChildAgeBook:
             {
                 plAgeLinkStruct childLink;
-                wchar parentAgeName[MAX_PATH];
+                wchar_t parentAgeName[MAX_PATH];
                 if (link->HasParentAgeFilename())
                     StrToUnicode(parentAgeName, link->GetParentAgeFilename(), arrsize(parentAgeName));
                 

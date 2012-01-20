@@ -427,7 +427,7 @@ void plAvatarInputInterface::ForceAlwaysRun(hsBool val)
 //// IEval ///////////////////////////////////////////////////////////////////
 //  Gets called once per IUpdate(), just like normal IEval()s
 
-hsBool plAvatarInputInterface::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool plAvatarInputInterface::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     fCursorTimeout += del;
     if( fCursorTimeout > fCursorFadeDelay )
@@ -727,7 +727,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
     plMouseEventMsg* pMouseMsg = plMouseEventMsg::ConvertNoRef(pMsg);
     if (pMouseMsg)
     {
-        UInt32 oldButtonState = fInputMap->fButtonState;
+        uint32_t oldButtonState = fInputMap->fButtonState;
 
         // check for button presses...
         if (fInputMap->fButtonState & kLeftButtonDown)

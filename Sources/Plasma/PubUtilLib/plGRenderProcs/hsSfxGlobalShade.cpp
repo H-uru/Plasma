@@ -123,7 +123,7 @@ hsColorRGBA hsSfxGlobalShade::ISumLights(hsPoint3& pos)
         if( proj->IsPerspective() ) // spot
         {
             hsPoint4 ang;
-            UInt32 clips;
+            uint32_t clips;
             proj->GetNdcPoints(1, &pos, sizeof(pos), &ang, kClipAll, &clips);
 
             if( !clips

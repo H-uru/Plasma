@@ -226,7 +226,7 @@ void plSceneObject::ISetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
     {
         if(fCoordinateInterface)
         {
-            UInt16 whyTransformed = fCoordinateInterface->GetReasons();
+            uint16_t whyTransformed = fCoordinateInterface->GetReasons();
             if(whyTransformed != plCoordinateInterface::kReasonPhysics)
             {
                 // if we were transformed by anything but physics, let physics know
@@ -357,7 +357,7 @@ void plSceneObject::ISetInterface(plObjInterface* iface)
         iface->ISetSceneNode(GetSceneNode());
 }
 
-void plSceneObject::IRemoveInterface(Int16 idx, plObjInterface* who)
+void plSceneObject::IRemoveInterface(int16_t idx, plObjInterface* who)
 {
     if( plFactory::DerivesFrom(plDrawInterface::Index(), idx) )
         ISetDrawInterface(nil);
@@ -391,7 +391,7 @@ hsBool plSceneObject::IPropagateToModifiers(plMessage* msg)
 
 hsBool plSceneObject::Eval(double secs, hsScalar delSecs)
 {
-    UInt32 dirty = ~0L;
+    uint32_t dirty = ~0L;
     hsBool retVal = false;
     int i;
     for( i = 0; i < fModifiers.GetCount(); i++ )
@@ -449,7 +449,7 @@ void plSceneObject::SetNetGroup(plNetGroupId netGroup)
         fCoordinateInterface->ISetNetGroupRecur(netGroup);
 }
 
-const plModifier* plSceneObject::GetModifierByType(UInt16 classIdx) const
+const plModifier* plSceneObject::GetModifierByType(uint16_t classIdx) const
 {
     int i;
     for (i = 0; i < fModifiers.GetCount(); i++)
@@ -740,7 +740,7 @@ void plSceneObject::IPropagateToGenerics(plMessage* msg)
     }
 }
 
-plObjInterface* plSceneObject::GetVolatileGenericInterface(UInt16 classIdx) const
+plObjInterface* plSceneObject::GetVolatileGenericInterface(uint16_t classIdx) const
 {
     int i;
     for( i = 0; i < fGenerics.GetCount(); i++ )

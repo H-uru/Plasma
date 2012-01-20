@@ -58,7 +58,7 @@ typedef struct plPythonParameter
 {
 public:
     // this is a unique (within one Python mod) id for this parameter
-    Int32   fID;
+    int32_t   fID;
 
     // then comes the value, which is a type followed by the data
 
@@ -66,7 +66,7 @@ public:
     {
         kInt=1,
         kFloat,
-        kBoolean,
+        kbool,
         kString,
         kSceneObject,
         kSceneObjectList,
@@ -89,12 +89,12 @@ public:
         kNone
     };
 
-    Int32       fValueType;     // what type of value (dataType enum)
+    int32_t       fValueType;     // what type of value (dataType enum)
 
     // the data of the value
     union
     {
-        Int32       fIntNumber;
+        int32_t       fIntNumber;
 
         hsScalar    fFloatNumber;
 
@@ -113,7 +113,7 @@ public:
         fValueType = kNone;
     }
 
-    plPythonParameter(Int32 id)
+    plPythonParameter(int32_t id)
     {
         fID = id;
         fValueType = kNone;
@@ -143,8 +143,8 @@ public:
             case kFloat:
                 SetToFloat(other.datarecord.fFloatNumber);
                 break;
-            case kBoolean:
-                SetToBoolean(other.datarecord.fBool);
+            case kbool:
+                SetTobool(other.datarecord.fBool);
                 break;
             case kString:
                 SetToString(other.datarecord.fString);
@@ -221,7 +221,7 @@ public:
         fValueType = kNone;
     }
 
-    void SetToInt(Int32 number)
+    void SetToInt(int32_t number)
     {
         SetToNone();
         fValueType = kInt;
@@ -233,10 +233,10 @@ public:
         fValueType = kFloat;
         datarecord.fFloatNumber = number;
     }
-    void SetToBoolean(hsBool state)
+    void SetTobool(hsBool state)
     {
         SetToNone();
-        fValueType = kBoolean;
+        fValueType = kbool;
         datarecord.fBool = state;
     }
     void SetToString(const char* string)
@@ -371,7 +371,7 @@ public:
                 stream->ReadLE(&datarecord.fFloatNumber);
                 break;
 
-            case kBoolean:
+            case kbool:
                 datarecord.fBool = stream->ReadLE32();
                 break;
 
@@ -424,7 +424,7 @@ public:
                 stream->WriteLE(datarecord.fFloatNumber);
                 break;
 
-            case kBoolean:
+            case kbool:
                 stream->WriteLE32(datarecord.fBool);
                 break;
 

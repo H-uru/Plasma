@@ -81,7 +81,7 @@ protected:
     hsScalar                            fMinIdle;
     hsScalar                            fMaxIdle;
 
-    Int32                               fTreeCnt;
+    int32_t                               fTreeCnt;
 
     hsExpander<hsSfxDfTableEntry>       fTable;
 

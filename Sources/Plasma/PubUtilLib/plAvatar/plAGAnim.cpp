@@ -522,7 +522,7 @@ bool plATCAnim::GetLoop(const char *name, float &start, float &end) const
 
 // GetLoop --------------------------------------------------------
 // --------
-bool plATCAnim::GetLoop(UInt32 num, float &start, float &end) const
+bool plATCAnim::GetLoop(uint32_t num, float &start, float &end) const
 {
     if (num >= fLoops.size())
         return false;
@@ -542,7 +542,7 @@ bool plATCAnim::GetLoop(UInt32 num, float &start, float &end) const
 
 // GetNumLoops ----------------------
 // ------------
-UInt32 plATCAnim::GetNumLoops() const
+uint32_t plATCAnim::GetNumLoops() const
 {
     return fLoops.size();
 }
@@ -585,14 +585,14 @@ void plATCAnim::AddStopPoint(hsScalar time)
 
 // NumStopPoints ----------------
 // --------------
-UInt32 plATCAnim::NumStopPoints()
+uint32_t plATCAnim::NumStopPoints()
 {
     return fStopPoints.size();
 }
 
 // GetStopPoint --------------------------
 // -------------
-hsScalar plATCAnim::GetStopPoint(UInt32 i)
+hsScalar plATCAnim::GetStopPoint(uint32_t i)
 {
     hsAssert(i < fStopPoints.size(), "Invalid index for GetStopPoint");
     return fStopPoints[i];
@@ -642,7 +642,7 @@ void plEmoteAnim::Write(hsStream *stream, hsResMgr *mgr)
     plATCAnim::Write(stream, mgr);
     stream->WriteLEScalar(fFadeIn);
     stream->WriteLEScalar(fFadeOut);
-    stream->WriteByte(static_cast<UInt8>(fBodyUsage));
+    stream->WriteByte(static_cast<uint8_t>(fBodyUsage));
 }
 
 // GetBodyUsage ----------------------------------------

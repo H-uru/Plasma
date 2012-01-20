@@ -64,7 +64,7 @@ public:
         kDisabled    = 0x1
     };
 protected:
-    UInt32 fFlags;
+    uint32_t fFlags;
 public:
     
     plInputDevice() {;}
@@ -72,8 +72,8 @@ public:
 
     virtual const char* GetInputName() = 0;
 
-    UInt32 GetFlags() { return fFlags; }
-    void SetFlags(UInt32 f) { fFlags = f; }
+    uint32_t GetFlags() { return fFlags; }
+    void SetFlags(uint32_t f) { fFlags = f; }
     virtual void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat, wchar_t c = nil) {;}
     virtual void HandleMouseEvent(plOSMsg message, plMouseState state)  {;}
     virtual void HandleWindowActivate(bool bActive, hsWindowHndl hWnd) {;}
@@ -172,7 +172,7 @@ public:
     void    SetCursorY(hsScalar y);
     hsScalar GetCursorX() { return fXPos; }
     hsScalar GetCursorY() { return fYPos; }
-    UInt32  GetButtonState() { return fButtonState; }
+    uint32_t  GetButtonState() { return fButtonState; }
     hsScalar GetCursorOpacity() { return fOpacity; }
     void SetDisplayResolution(hsScalar Width, hsScalar Height);
     
@@ -189,7 +189,7 @@ public:
     static bool GetInverted() { return plMouseDevice::bInverted; }
     static void SetInverted(bool inverted) { plMouseDevice::bInverted = inverted; }
     static void AddNameToCursor(const char* name);
-    static void AddIDNumToCursor(UInt32 idNum);
+    static void AddIDNumToCursor(uint32_t idNum);
     static void AddCCRToCursor();
     
 protected:
@@ -206,7 +206,7 @@ protected:
     hsScalar fYPos;
     int      fWXPos; // the windows coordinates of the cursor
     int      fWYPos;
-    UInt32   fButtonState;
+    uint32_t   fButtonState;
     hsScalar fOpacity;
     hsBitVector     fControlFlags;
     

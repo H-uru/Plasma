@@ -91,11 +91,11 @@ public:
     // Link to my Neighborhood Age
     void LinkToMyNeighborhoodAge();
     // Link player to my current age
-    void LinkPlayerHere( UInt32 playerID );
+    void LinkPlayerHere( uint32_t playerID );
     // Link player to specified age
-    void LinkPlayerToAge( pyAgeLinkStruct & link, UInt32 playerID );
+    void LinkPlayerToAge( pyAgeLinkStruct & link, uint32_t playerID );
     // Link to player's current age
-    void LinkToPlayersAge( UInt32 playerID );
+    void LinkToPlayersAge( uint32_t playerID );
 
     PyObject* GetCurrAgeLink(); // returns pyAgeLinkStructRef
     PyObject* GetPrevAgeLink(); // returns pyAgeLinkStructRef

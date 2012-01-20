@@ -101,7 +101,7 @@ public:
     // Now Complex specifics
     virtual hsBool MsgReceive(plMessage* msg);
 
-    UInt16          GetNumSubs() const { return fSubVolumes.GetCount(); }
+    uint16_t          GetNumSubs() const { return fSubVolumes.GetCount(); }
     const plSoftVolume* GetSub(int i) const { return fSubVolumes[i]; }
 };
 

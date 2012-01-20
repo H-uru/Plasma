@@ -67,7 +67,7 @@ bool DumpSounds();
 //// PrintVersion ///////////////////////////////////////////////////////////////
 void PrintVersion()
 {
-    wchar productString[256];
+    wchar_t productString[256];
     ProductString(productString, arrsize(productString));
     printf("%S\n\n", productString);
 }
@@ -185,7 +185,7 @@ bool DumpSounds()
             const char* filename = buffer->GetFileName();
             if (filename)
             {
-                UInt32 flags = 0;
+                uint32_t flags = 0;
 
                 if (stricmp(plFileUtils::GetFileExt(filename), "wav") != 0)
                 {

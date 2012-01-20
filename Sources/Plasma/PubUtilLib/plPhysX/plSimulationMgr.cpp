@@ -468,7 +468,7 @@ NxScene* plSimulationMgr::GetScene(plKey world)
 
     if (!scene)
     {
-        UInt32 maxSteps = (UInt32)hsCeil(fMaxDelta / fStepSize);
+        uint32_t maxSteps = (uint32_t)hsCeil(fMaxDelta / fStepSize);
 
         NxSceneDesc sceneDesc;
         sceneDesc.gravity.set(0, 0, -32.174049f);
@@ -556,7 +556,7 @@ void plSimulationMgr::UpdateDetectorsInScene(plKey world, plKey avatar, hsPoint3
     hsPoint3 soPos = ci->GetWorldPos();
     if (scene)
     {
-        UInt32 numActors = scene->getNbActors();
+        uint32_t numActors = scene->getNbActors();
         NxActor** actors = scene->getActors();
 
         for (int i = 0; i < numActors; i++)
@@ -584,7 +584,7 @@ void plSimulationMgr::UpdateAvatarInDetector(plKey world, plPXPhysical* detector
         NxScene* scene = GetScene(world);
         if (scene)
         {
-            UInt32 numActors = scene->getNbActors();
+            uint32_t numActors = scene->getNbActors();
             NxActor** actors = scene->getActors();
 
             for (int i = 0; i < numActors; i++)
@@ -629,7 +629,7 @@ void plSimulationMgr::Advance(float delSecs)
     plProfile_IncCount(StepLen, (int)(delSecs*1000));
 
 #ifndef PLASMA_EXTERNAL_RELASE
-    UInt32 stepTime = hsTimer::GetPrecTickCount();
+    uint32_t stepTime = hsTimer::GetPrecTickCount();
 #endif
     plProfile_BeginTiming(Step);
     plPXPhysicalControllerCore::UpdatePrestep(delSecs);
@@ -719,7 +719,7 @@ void plSimulationMgr::ISendUpdates()
     for (; it != fScenes.end(); it++)
     {
         NxScene* scene = it->second;
-        UInt32 numActors = scene->getNbActors();
+        uint32_t numActors = scene->getNbActors();
         NxActor** actors = scene->getActors();
 
         for (int i = 0; i < numActors; i++)
@@ -984,7 +984,7 @@ void plSimulationMgr::IDrawActiveActorList()
     plDebugText     &debugTxt = plDebugText::Instance();
     char            strBuf[ 2048 ];
     int             lineHeight = debugTxt.GetFontSize() + 4;
-    UInt32          scrnWidth, scrnHeight;
+    uint32_t          scrnWidth, scrnHeight;
 
     debugTxt.GetScreenSize( &scrnWidth, &scrnHeight );
     int y = 10;
@@ -1000,9 +1000,9 @@ void plSimulationMgr::IDrawActiveActorList()
         sprintf(strBuf, "Scene: %s",it->first->GetName());
         debugTxt.DrawString(x, y, strBuf);
         y += lineHeight;
-        UInt32 numActors =it->second->getNbActors();
+        uint32_t numActors =it->second->getNbActors();
         NxActor** actors =it->second->getActors();
-        for(UInt32 i=0;i<numActors;i++)
+        for(uint32_t i=0;i<numActors;i++)
         {
             if(!actors[i]->isSleeping())
             {

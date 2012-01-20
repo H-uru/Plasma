@@ -81,7 +81,7 @@ char *StringTokenizer::next() {
 };
 hsBool StringTokenizer::isSep(char c) {
     if (!qAsTok || !inQuote) {
-        for (Int32 i=0; i<numSeps; i++) {
+        for (int32_t i=0; i<numSeps; i++) {
             if (seps[i] == c) return true;
         }
     }

@@ -204,21 +204,21 @@ void plMaxBoneMap::FillBoneArray(plMaxNodeBase **boneArray)
         boneArray[(*boneIt).second] = (*boneIt).first;
 }
 
-UInt8 plMaxBoneMap::GetIndex(plMaxNodeBase *bone)
+uint8_t plMaxBoneMap::GetIndex(plMaxNodeBase *bone)
 {
     hsAssert(fBones.find(bone) != fBones.end(), "Bone missing in remap!");
     return fBones[bone];
 }
 
-UInt32 plMaxBoneMap::GetBaseMatrixIndex(plDrawable *draw)
+uint32_t plMaxBoneMap::GetBaseMatrixIndex(plDrawable *draw)
 {
     if (fBaseMatrices.find(draw) == fBaseMatrices.end())
-        return (UInt32)-1;
+        return (uint32_t)-1;
 
     return fBaseMatrices[draw];
 }
 
-void plMaxBoneMap::SetBaseMatrixIndex(plDrawable *draw, UInt32 idx)
+void plMaxBoneMap::SetBaseMatrixIndex(plDrawable *draw, uint32_t idx)
 {
     fBaseMatrices[draw] = idx;
 }
@@ -385,7 +385,7 @@ hsBool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settin
     if( CanMakeMesh( obj, pErrMsg, settings ) ) 
     {
         hsTArray<plMaxNode *> nodes;
-        UInt32 numInstances = IBuildInstanceList( GetObjectRef(), t, nodes );
+        uint32_t numInstances = IBuildInstanceList( GetObjectRef(), t, nodes );
         if( numInstances > 1 )
         {
             /// INSTANCED. Make sure to force local on us
@@ -486,7 +486,7 @@ void plMaxNode::CheckSynchOptions(plSynchedObject* so)
             bool isDynSim = GetPhysicalProps()->GetGroup() == plSimDefs::kGroupDynamic;
             bool hasPFC = false;
             int count = NumAttachedComponents();
-            for (UInt32 x = 0; x < count; x++)
+            for (uint32_t x = 0; x < count; x++)
             {
                 plComponentBase *comp = GetAttachedComponent(x);
                 if (comp->ClassID() == Class_ID(0x670d3629, 0x559e4f11))
@@ -1089,12 +1089,12 @@ int IsGeoSpanConvexExhaust(const plGeometrySpan* span)
 {
     // Brute force, check every point against every face
 
-    UInt16* idx = span->fIndexData;
+    uint16_t* idx = span->fIndexData;
     int numFaces = span->fNumIndices / 3;
 
-    UInt32 stride = span->GetVertexSize(span->fFormat);
+    uint32_t stride = span->GetVertexSize(span->fFormat);
 
-    UInt8* vertData = span->fVertexData;
+    uint8_t* vertData = span->fVertexData;
     int numVerts = span->fNumVerts;
 
     hsBool someIn = false;
@@ -1173,11 +1173,11 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
     hsTArray<hsVector3>* normList = TRACKED_NEW hsTArray<hsVector3> [numVerts];
     hsTArray<hsScalar>* distList = TRACKED_NEW hsTArray<hsScalar> [numVerts];
 
-    UInt16* idx = span->fIndexData;
+    uint16_t* idx = span->fIndexData;
 
-    UInt32 stride = span->GetVertexSize(span->fFormat);
+    uint32_t stride = span->GetVertexSize(span->fFormat);
 
-    UInt8* vertData = span->fVertexData;
+    uint8_t* vertData = span->fVertexData;
 
     // For each face
     int iFace;
@@ -1278,7 +1278,7 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     hsBool      gotMade = false;
     hsBool      haveAddedToSceneNode = false;
     hsGMesh     *myMesh = nil;
-    UInt32      i, triMeshIndex = (UInt32)-1;
+    uint32_t      i, triMeshIndex = (uint32_t)-1;
     const char  *dbgNodeName = GetName();
     TSTR sdata;
     hsStringTokenizer toker;
@@ -1296,7 +1296,7 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         }
     }
     
-    if( GetSwappableGeomTarget() != (UInt32)-1)
+    if( GetSwappableGeomTarget() != (uint32_t)-1)
     {
         // This node has no geometry on export, but will have some added at runtime,
         // so it needs a special drawInterface
@@ -1317,7 +1317,7 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     {
         hsTArray<plMaxNode *>   nodes;
         TimeValue   t = hsConverterUtils::Instance().GetTime(GetInterface());
-        UInt32      numInstances = IBuildInstanceList( GetObjectRef(), t, nodes, true );
+        uint32_t      numInstances = IBuildInstanceList( GetObjectRef(), t, nodes, true );
 
         /// Instanced, find an iNode in the list that's been converted already
         for( i = 0; i < numInstances; i++ )
@@ -1353,7 +1353,7 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     for( i = 0; i < spanArray.GetCount(); i++ )
         spanArray[i]->fMaxOwner = GetKey()->GetName();
 
-    UInt32 shadeFlags = 0;
+    uint32_t shadeFlags = 0;
     if( GetNoPreShade() )
         shadeFlags |= plGeometrySpan::kPropNoPreShade;
     if( GetRunTimeLight() )
@@ -1504,7 +1504,7 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
     plSceneNode *tmpNode = nil;
     hsMatrix44  l2w = GetLocalToWorld44();
     hsMatrix44  w2l = GetWorldToLocal44();
-    UInt32      oIndex = (UInt32)-1, bIndex = (UInt32)-1, sIndex = UInt32(-1);
+    uint32_t      oIndex = (uint32_t)-1, bIndex = (uint32_t)-1, sIndex = uint32_t(-1);
 
     tmpNode = IGetDrawableSceneNode(pErrMsg);
 /*
@@ -1588,21 +1588,21 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
     /// Now assign to the interface
     if( oSpans )
     {
-        UInt8 iDraw = di->GetNumDrawables();
+        uint8_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, oSpans );
         di->SetDrawableMeshIndex( iDraw, oIndex );
     }
 
     if( bSpans )
     {
-        UInt8 iDraw = di->GetNumDrawables();
+        uint8_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, bSpans );
         di->SetDrawableMeshIndex( iDraw, bIndex );
     }
 
     if( sSpans )
     {
-        UInt8 iDraw = di->GetNumDrawables();
+        uint8_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, sSpans );
         di->SetDrawableMeshIndex( iDraw, sIndex );
     }
@@ -1613,7 +1613,7 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
 //  Small utility function for IAssignSpansToDrawables, just does some of
 //  the low-down work that's identical for each drawable/spans/etc.
 
-void    plMaxNode::IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray, UInt32 &index,
+void    plMaxNode::IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray, uint32_t &index,
                                 hsMatrix44 &l2w, hsMatrix44 &w2l,
                                 plErrorMsg *pErrMsg, plConvertSettings *settings )
 {
@@ -1635,7 +1635,7 @@ void    plMaxNode::IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySp
 }
 
 // Tiny helper for the function below
-void SetSpansBoneInfo(hsTArray<plGeometrySpan *> &spanArray, UInt32 baseMatrix, UInt32 numMatrices)
+void SetSpansBoneInfo(hsTArray<plGeometrySpan *> &spanArray, uint32_t baseMatrix, uint32_t numMatrices)
 {
     int i;
     for( i = 0; i < spanArray.GetCount(); i++ )
@@ -1658,7 +1658,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
         return;
 
     plMaxBoneMap *boneMap = GetBoneMap();
-    if (boneMap && boneMap->GetBaseMatrixIndex(drawable) != (UInt32)-1)
+    if (boneMap && boneMap->GetBaseMatrixIndex(drawable) != (uint32_t)-1)
     {
         SetSpansBoneInfo(spanArray, boneMap->GetBaseMatrixIndex(drawable), boneMap->fNumBones);
         return;
@@ -1666,7 +1666,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
     
     int baseMatrix, i;
 
-    UInt8 numBones = (boneMap ? boneMap->fNumBones : NumBones()) + 1;
+    uint8_t numBones = (boneMap ? boneMap->fNumBones : NumBones()) + 1;
     plMaxNodeBase **boneArray = TRACKED_NEW plMaxNodeBase*[numBones];
 
     if (boneMap)
@@ -1729,7 +1729,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
     //      space, our transform is ident and we can share. This is the normal case
     //      in scene boning. So InitialBones have to match in count and matrix value.
     baseMatrix = drawable->FindBoneBaseMatrix(initialL2B, GetSwappableGeom() != nil);
-    if( baseMatrix != UInt32(-1) )
+    if( baseMatrix != uint32_t(-1) )
     {
         SetSpansBoneInfo(spanArray, baseMatrix, numBones);
         delete [] boneArray;
@@ -1748,7 +1748,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
         const char  *dbgBoneName = bone->GetName();
 
         // Pick which drawable to point the DI to
-        UInt8 iDraw = 0;
+        uint8_t iDraw = 0;
 
         /// Now create the actual bone DI, or grab it if it's already created
         plDrawInterface *di = obj->GetVolatileDrawInterface();
@@ -1770,7 +1770,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
 
         if( di->GetNumDrawables() <= iDraw )
         {
-            UInt32 diIndex = drawable->NewDIMatrixIndex();
+            uint32_t diIndex = drawable->NewDIMatrixIndex();
             di->SetDrawableMeshIndex(iDraw, diIndex);
 
             di->SetDrawable(iDraw, drawable);
@@ -1793,7 +1793,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
 hsBool  plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
                                        plErrorMsg *pErrMsg, plConvertSettings *settings )
 {
-    UInt8   iDraw;
+    uint8_t   iDraw;
     int     index, i;
 
     
@@ -1819,7 +1819,7 @@ hsBool  plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
         if( !dr )
             continue;
-        if( di->GetDrawableMeshIndex(iDraw) == (UInt32)-1 )
+        if( di->GetDrawableMeshIndex(iDraw) == (uint32_t)-1 )
             continue;
 
         plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
@@ -1903,7 +1903,7 @@ hsBool  plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
 //  For the given object, builds a list of all the iNodes that have that
 //  object as their object. Returns the total node count
 
-UInt32  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, hsBool beMoreAccurate )
+uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, hsBool beMoreAccurate )
 {
     Object              *thisObj = EvalWorldState( t ).obj;
     DependentIterator   di( obj );
@@ -2004,13 +2004,13 @@ hsBool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     if( !di )
         return true;
 
-    UInt8 iDraw;
+    uint8_t iDraw;
     for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
         if( !dr )
             continue;
-        if( di->GetDrawableMeshIndex(iDraw) == (UInt32)-1 )
+        if( di->GetDrawableMeshIndex(iDraw) == (uint32_t)-1 )
             continue;
 
         plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
@@ -2097,7 +2097,7 @@ hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool
 
     hsTArray<plCullPoly> polys;
 
-    UInt32 polyInitFlags = plCullPoly::kNone;
+    uint32_t polyInitFlags = plCullPoly::kNone;
     if( isHole )
         polyInitFlags |= plCullPoly::kHole;
     else
@@ -3247,10 +3247,10 @@ plXImposterComp* plMaxNode::GetXImposterComp()
 
 Point3 plMaxNode::GetFlexibility()
 {
-    UInt32 count = NumAttachedComponents();
+    uint32_t count = NumAttachedComponents();
 
     // Go through all the components attached to this node
-    for (UInt32 i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         // See if any are a flexibility component.
         plComponentBase *comp = GetAttachedComponent(i);
@@ -3265,10 +3265,10 @@ Point3 plMaxNode::GetFlexibility()
 
 plLightMapComponent* plMaxNode::GetLightMapComponent()
 {
-    UInt32 count = NumAttachedComponents();
+    uint32_t count = NumAttachedComponents();
 
     // Go through all the components attached to this node
-    for (UInt32 i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         // See if any are a flexibility component.
         plComponentBase *comp = GetAttachedComponent(i);
@@ -3288,7 +3288,7 @@ plDrawableCriteria plMaxNode::GetDrawableCriteria(hsBool needBlending, hsBool ne
     if( GetSortAsOpaque() )
         level.Set(plRenderLevel::kOpaqueMajorLevel, level.Minor());
 
-    UInt32 crit = 0;
+    uint32_t crit = 0;
     if( needBlending )
     {
         if( needSorting && !GetNoFaceSort() )
@@ -3353,7 +3353,7 @@ plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, hsBool needBl
         sprintf( tmpName, "%s_%8.8x_%xSpans", node->GetKeyName(), crit.fLevel.fLevel, crit.fCriteria);
     }
 
-    if (GetSwappableGeomTarget() != (UInt32)-1 || GetSwappableGeom()) // We intend to swap geometry with this node... flag the drawable as volatile
+    if (GetSwappableGeomTarget() != (uint32_t)-1 || GetSwappableGeom()) // We intend to swap geometry with this node... flag the drawable as volatile
     {
         if( GetItinerant() )
             spans->SetNativeProperty(plDrawable::kPropCharacter, true);
@@ -3382,10 +3382,10 @@ hsBool plMaxNode::SetupPropertiesPass(plErrorMsg *pErrMsg, plConvertSettings *se
 
     hsBool ret = true;
     
-        UInt32 count = NumAttachedComponents();
+        uint32_t count = NumAttachedComponents();
 
     // Go through all the components attached to this node
-    for (UInt32 i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         // For each one, call the requested function.  If any of the attached components
         // return false this function will return false.
@@ -3459,10 +3459,10 @@ hsBool plMaxNode::FirstComponentPass(plErrorMsg *pErrMsg, plConvertSettings *set
     
     if (!CanConvert())
         return ret;
-    UInt32 count = NumAttachedComponents();
+    uint32_t count = NumAttachedComponents();
 
     // Go through all the components attached to this node
-    for (UInt32 i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         // For each one, call the requested function.  If any of the attached components
         // return false this function will return false.
@@ -3496,10 +3496,10 @@ hsBool plMaxNode::ConvertComponents(plErrorMsg *pErrMsg, plConvertSettings *sett
     if (!CanConvert())
         return ret;
 
-    UInt32 count = NumAttachedComponents();
+    uint32_t count = NumAttachedComponents();
 
     // Go through all the components attached to this node
-    for (UInt32 i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         // For each one, call the requested function.  If any of the attached components
         // return false this function will return false.
@@ -3533,10 +3533,10 @@ hsBool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *setti
     if (!CanConvert())
         return ret;
 
-    UInt32 count = NumAttachedComponents();
+    uint32_t count = NumAttachedComponents();
 
     // Go through all the components attached to this node
-    for (UInt32 i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         // For each one, call the requested function.  If any of the attached components
         // return false this function will return false.
@@ -4016,9 +4016,9 @@ TriObject* plMaxNode::GetTriObject(hsBool& deleteIt)
 //  Starting at 0, returns an incrementing index for each maxNode. Useful for 
 //  assigning indices to sound objects attached to the node.
 
-UInt32  plMaxNode::GetNextSoundIdx( void )
+uint32_t  plMaxNode::GetNextSoundIdx( void )
 {
-    UInt32  idx = GetSoundIdxCounter();
+    uint32_t  idx = GetSoundIdxCounter();
     SetSoundIdxCounter( idx + 1 );
     return idx;
 }
@@ -4049,7 +4049,7 @@ plPhysicalProps *plMaxNode::GetPhysicalProps()
 //// FindPageKey /////////////////////////////////////////////////////////////
 //  Little helper function. Calls FindKey() in the resManager using the location (page) of this node
 
-plKey   plMaxNode::FindPageKey( UInt16 classIdx, const char *name )
+plKey   plMaxNode::FindPageKey( uint16_t classIdx, const char *name )
 {
     return hsgResMgr::ResMgr()->FindKey( plUoid( GetLocation(), classIdx, name ) );
 }
@@ -4081,11 +4081,11 @@ hsBool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *se
     if (!CanConvert())
         return ret;
     
-    UInt32 count = GetSceneObject()->GetNumModifiers();
+    uint32_t count = GetSceneObject()->GetNumModifiers();
     hsTArray<plKey> keys;
     // Go through all the modifiers attached to this node's scene object
     // and grab keys for objects who we would need to send interface messages to
-    for (UInt32 i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         const plModifier* pMod = GetSceneObject()->GetModifier(i);
         // right now all we care about are these, but I guarentee you we will

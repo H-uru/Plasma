@@ -245,7 +245,7 @@ hsBool plVisLOSMgr::ICheckDrawable(plDrawable* d, plVisHit& hit)
     return retVal;
 }
 
-hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hit)
+hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& hit)
 {
     if( !(dr->GetSpan(spanIdx)->fTypeMask & plSpan::kIcicleSpan) )
         return false;
@@ -418,8 +418,8 @@ hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, hsScalar& closest)
 
 hsBool plVisLOSMgr::CursorCheck(plVisHit& hit)
 {
-    Int32 sx= Int32(plMouseDevice::Instance()->GetCursorX() * fPipe->Width());
-    Int32 sy= Int32(plMouseDevice::Instance()->GetCursorY() * fPipe->Height());
+    int32_t sx= int32_t(plMouseDevice::Instance()->GetCursorX() * fPipe->Width());
+    int32_t sy= int32_t(plMouseDevice::Instance()->GetCursorY() * fPipe->Height());
 
     hsPoint3 from = fPipe->GetViewPositionWorld();
     plConst(hsScalar) dist(1.e5f);

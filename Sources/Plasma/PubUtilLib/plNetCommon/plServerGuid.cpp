@@ -57,19 +57,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Taken from plUnifiedTime, in turn taken from python source.
 // TODO: Move this down to CoreLib someday (and rename it maybe).
 #define MAGICWINDOWSOFFSET ((__int64)11644473600)
-static UInt32 SecsSinceUNIXEpoch()
+static uint32_t SecsSinceUNIXEpoch()
 {
     FILETIME ft;
     GetSystemTimeAsFileTime(&ft);   /* 100 ns blocks since 01-Jan-1641 */
     __int64 ff,ffsecs;
     ff = *(__int64*)(&ft);
     ffsecs = ff/(__int64)10000000;
-    return (UInt32)(ffsecs-MAGICWINDOWSOFFSET);
+    return (uint32_t)(ffsecs-MAGICWINDOWSOFFSET);
 }
 
 #else
 
-static UInt32 SecsSinceUNIXEpoch()
+static uint32_t SecsSinceUNIXEpoch()
 {
     struct timeval tv;
     gettimeofday(&tv, nil);
@@ -81,7 +81,7 @@ static UInt32 SecsSinceUNIXEpoch()
 
 ////////////////////////////////////////////////////////////////////
 
-UInt32  plServerGuid::fGuidSeed = 0;
+uint32_t  plServerGuid::fGuidSeed = 0;
 
 plServerGuid::plServerGuid()
 {
@@ -244,7 +244,7 @@ void plServerGuid::Clear()
     memset(N,0,kGuidBytes);
 }
 
-void plServerGuid::SetGuidSeed(UInt32 seed)
+void plServerGuid::SetGuidSeed(uint32_t seed)
 {
     fGuidSeed = seed;
 }
@@ -261,7 +261,7 @@ plServerGuid plServerGuid::GenerateGuid()
 //  Current Time:   24 bits (seconds. ~8.5 year cycle)
 //  Counter:        16 bits (always increasing per process)
 
-    static UInt16   StaticCounter = 0;
+    static uint16_t   StaticCounter = 0;
     if (!fGuidSeed)
     {
         hsStatusMessage( "fGuidSeed not set yet. Cannot generate a reliable guid! Setting fGuidSeed=getpid()." );
@@ -269,15 +269,15 @@ plServerGuid plServerGuid::GenerateGuid()
         fGuidSeed = getpid();
     }
 
-    UInt32 currTime = SecsSinceUNIXEpoch();
+    uint32_t currTime = SecsSinceUNIXEpoch();
 
     plServerGuid guid;
-    guid.N[0] = (UInt8)((fGuidSeed & 0x00FF0000)>>16);
-    guid.N[1] = (UInt8)((fGuidSeed & 0x0000FF00)>> 8);
-    guid.N[2] = (UInt8)(fGuidSeed & 0x000000FF);
-    guid.N[3] = (UInt8)((currTime  & 0x00FF0000)>>16);
-    guid.N[4] = (UInt8)((currTime  & 0x0000FF00)>> 8);
-    guid.N[5] = (UInt8)(currTime  & 0x000000FF);
+    guid.N[0] = (uint8_t)((fGuidSeed & 0x00FF0000)>>16);
+    guid.N[1] = (uint8_t)((fGuidSeed & 0x0000FF00)>> 8);
+    guid.N[2] = (uint8_t)(fGuidSeed & 0x000000FF);
+    guid.N[3] = (uint8_t)((currTime  & 0x00FF0000)>>16);
+    guid.N[4] = (uint8_t)((currTime  & 0x0000FF00)>> 8);
+    guid.N[5] = (uint8_t)(currTime  & 0x000000FF);
     guid.N[6] = (StaticCounter & 0xFF00)>> 8;
     guid.N[7] = (StaticCounter & 0x00FF);
 

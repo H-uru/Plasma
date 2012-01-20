@@ -170,7 +170,7 @@ void plVoiceRecorder::SetComplexity(int c)
         plgDispatch::MsgSend( cMsg );
         return;
     }
-    plSpeex::GetInstance()->SetComplexity((UInt8) c);
+    plSpeex::GetInstance()->SetComplexity((uint8_t) c);
 }
 
 void plVoiceRecorder::SetENH(hsBool b)
@@ -286,10 +286,10 @@ void plVoiceRecorder::Update(double time)
             }
             else  // use the speex voice compression lib
             {
-                UInt8 *packet = TRACKED_NEW UInt8[totalSamples];      // packet to send encoded data in
+                uint8_t *packet = TRACKED_NEW uint8_t[totalSamples];      // packet to send encoded data in
                 int packedLength = 0;                                     // the size of the packet that will be sent
                 hsRAMStream ram;                                          // ram stream to hold output data from speex
-                UInt8 numFrames = totalSamples / EncoderFrameSize;        // number of frames to be encoded
+                uint8_t numFrames = totalSamples / EncoderFrameSize;        // number of frames to be encoded
                 
                 // encode the data using speex
                 plSpeex::GetInstance()->Encode(buffer, numFrames, &packedLength, &ram);
@@ -355,14 +355,14 @@ void plVoicePlayer::PlaybackVoiceMessage(void* data, unsigned size, int numFrame
         memset(nBuff, 0, bufferSize);
 
         // Decode the encoded voice data using speex
-        if(!plSpeex::GetInstance()->Decode((UInt8 *)data, size, numFramesInBuffer, &numBytes, nBuff))
+        if(!plSpeex::GetInstance()->Decode((uint8_t *)data, size, numFramesInBuffer, &numBytes, nBuff))
         {
             delete[] nBuff;
             return;
         }
         
-        UInt8* newBuff;
-        newBuff = (UInt8*)nBuff;         // Convert to byte data
+        uint8_t* newBuff;
+        newBuff = (uint8_t*)nBuff;         // Convert to uint8_t data
         PlaybackUncompressedVoiceMessage(newBuff, numBytes);    // playback uncompressed data
         delete[] nBuff;
     }
@@ -605,8 +605,8 @@ hsBool plSpeex::Encode(short *data, int numFrames, int *packedLength, hsRAMStrea
     
     short *pData = data;                        // pointer to input data
     float *input = TRACKED_NEW float[fFrameSize];       // input to speex - used as am intermediate array since speex requires float data
-    UInt8 frameLength;                           // number of bytes speex compressed frame to
-    UInt8 *frameData = TRACKED_NEW UInt8[fFrameSize];     // holds one frame of encoded data
+    uint8_t frameLength;                           // number of bytes speex compressed frame to
+    uint8_t *frameData = TRACKED_NEW uint8_t[fFrameSize];     // holds one frame of encoded data
     
     // encode data
     for( int i = 0; i < numFrames; i++ )
@@ -637,7 +637,7 @@ hsBool plSpeex::Encode(short *data, int numFrames, int *packedLength, hsRAMStrea
     return true;
 }
 
-hsBool plSpeex::Decode(UInt8 *data, int size, int numFrames, int *numOutputBytes, short *out)
+hsBool plSpeex::Decode(uint8_t *data, int size, int numFrames, int *numOutputBytes, short *out)
 {
     if(!fInitialized) return false;
     *numOutputBytes = 0;
@@ -647,8 +647,8 @@ hsBool plSpeex::Decode(UInt8 *data, int size, int numFrames, int *numOutputBytes
     short *pOut = out;                              // pointer to output short buffer
     
     // create buffer for input data
-    UInt8 *frameData = TRACKED_NEW UInt8[fFrameSize];         // holds the current frames data to be decoded
-    UInt8 frameLen;                                  // holds the length of the current frame being decoded.
+    uint8_t *frameData = TRACKED_NEW uint8_t[fFrameSize];         // holds the current frames data to be decoded
+    uint8_t frameLen;                                  // holds the length of the current frame being decoded.
     
 
     // Decode data
@@ -688,14 +688,14 @@ void plSpeex::VBR(hsBool b)
 
 
 // Sets the average bit rate
-void plSpeex::SetABR(UInt32 abr) 
+void plSpeex::SetABR(uint32_t abr) 
 {
     fAverageBitrate = abr;
     speex_encoder_ctl(fEncoderState, SPEEX_SET_ABR, &fAverageBitrate); 
 }
 
 // Sets the quality of encoding
-void plSpeex::SetQuality(UInt32 quality) 
+void plSpeex::SetQuality(uint32_t quality) 
 { 
     fQuality = quality;
     speex_encoder_ctl(fEncoderState, SPEEX_SET_QUALITY, &fQuality); 
@@ -707,7 +707,7 @@ void plSpeex::SetENH(hsBool b)
     speex_decoder_ctl(fDecoderState, SPEEX_SET_ENH, &fENH); 
 }
 
-void plSpeex::SetComplexity(UInt8 c)
+void plSpeex::SetComplexity(uint8_t c)
 {
     fComplexity = c;
     speex_encoder_ctl(fEncoderState, SPEEX_SET_COMPLEXITY, &fComplexity);   

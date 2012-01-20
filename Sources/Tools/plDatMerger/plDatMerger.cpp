@@ -169,7 +169,7 @@ class plStrFilter
 
         static hsBool   Passes( const char *string, hsTArray<plStrFilter *> &filters )
         {
-            UInt32  i;
+            uint32_t  i;
 
 
             for( i = 0; i < filters.GetCount(); i++ )
@@ -183,7 +183,7 @@ class plStrFilter
 
         static hsBool   Passes( const plPageInfo &page, hsTArray<plStrFilter *> &filters )
         {
-            UInt32  i;
+            uint32_t  i;
 
 
             for( i = 0; i < filters.GetCount(); i++ )
@@ -322,7 +322,7 @@ class plPageStuffer : public plRegistryPageIterator
 
 void    IShutdown( int retCode )
 {
-    UInt32  i;
+    uint32_t  i;
 
     for( i = 0; i < fPageFilters.GetCount(); i++ )
         delete fPageFilters[ i ];
@@ -383,10 +383,10 @@ int main( int argc, char *argv[] )
 
     // Open the dest merged streams and write out our initial, incorrect, entry table so we can get positions right
     hsStream *destIdxStream = gDestMergeData->WriteEntries( true );
-    hsStream *destDatStream = gDestMergeData->OpenData( (UInt32)-1, "wb" );
+    hsStream *destDatStream = gDestMergeData->OpenData( (uint32_t)-1, "wb" );
 
-    UInt32 i, bytesRead;
-    static UInt8    scratchBuffer[ 1024 * 64 ];     // 32k in size
+    uint32_t i, bytesRead;
+    static uint8_t    scratchBuffer[ 1024 * 64 ];     // 32k in size
     for( i = 0; i < fSourcePages.GetCount(); i++ )
     {
         printf( "  Merging %s>%s...\n", fSourcePages[ i ]->GetPageInfo().GetAge(), fSourcePages[ i ]->GetPageInfo().GetPage() );
@@ -403,7 +403,7 @@ int main( int argc, char *argv[] )
 
         // Idx first
         hsStream *srcStream = srcSource->OpenIndexStream( fSourcePages[ i ] );
-        UInt32 size = srcStream->GetEOF();
+        uint32_t size = srcStream->GetEOF();
         do
         {
             bytesRead = srcStream->Read( size > sizeof( scratchBuffer ) ? sizeof( scratchBuffer ) : size, scratchBuffer );

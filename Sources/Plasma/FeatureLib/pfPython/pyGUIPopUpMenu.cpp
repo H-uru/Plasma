@@ -220,7 +220,7 @@ PyObject* pyGUIPopUpMenu::getObjPyKey()
 
 
 // interface functions
-UInt32  pyGUIPopUpMenu::GetTagID()
+uint32_t  pyGUIPopUpMenu::GetTagID()
 {
     kGetMenuPtr( 0 );
     return menu->GetTagID();
@@ -246,7 +246,7 @@ const char* pyGUIPopUpMenu::GetName( void )
 }
 
 
-UInt32 pyGUIPopUpMenu::GetVersion(void)
+uint32_t pyGUIPopUpMenu::GetVersion(void)
 {
     kGetMenuPtr( 0 );
     return menu->GetVersion();

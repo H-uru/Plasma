@@ -259,7 +259,7 @@ void plNetTransport::ClearMembers()
 //
 // return array index or -1
 //
-int plNetTransport::FindMember(UInt32 playerID) const
+int plNetTransport::FindMember(uint32_t playerID) const
 {
     int i;
     for( i=0 ;i<GetNumMembers() ;i++  )

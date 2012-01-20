@@ -107,8 +107,8 @@ plProfile_CreateTimerNoReset("Callback", "DynaDecal", Callback);
 
 static plRandom sRand;
 static const int    kBinBlockSize = 20;
-static const UInt16 kDefMaxNumVerts = 1000;
-static const UInt16 kDefMaxNumIdx = kDefMaxNumVerts;
+static const uint16_t kDefMaxNumVerts = 1000;
+static const uint16_t kDefMaxNumIdx = kDefMaxNumVerts;
 
 static const hsScalar kDefLifeSpan = 30.f;
 static const hsScalar kDefDecayStart = kDefLifeSpan * 0.5f;
@@ -211,8 +211,8 @@ void plDynaDecalMgr::Read(hsStream* stream, hsResMgr* mgr)
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefPartyObject), plRefFlags::kPassiveRef);
     }
 
-    fMaxNumVerts = (UInt16)(stream->ReadLE32());
-    fMaxNumIdx = (UInt16)(stream->ReadLE32());
+    fMaxNumVerts = (uint16_t)(stream->ReadLE32());
+    fMaxNumIdx = (uint16_t)(stream->ReadLE32());
 
     fWaitOnEnable = stream->ReadLE32();
 
@@ -321,7 +321,7 @@ const plPrintShape* plDynaDecalMgr::IGetPrintShape(const plKey& objKey) const
     return shape;
 }
 
-const plPrintShape* plDynaDecalMgr::IGetPrintShape(plArmatureMod* avMod, UInt32 id) const
+const plPrintShape* plDynaDecalMgr::IGetPrintShape(plArmatureMod* avMod, uint32_t id) const
 {
     const plPrintShape* shape = nil;
     const plSceneObject* part = avMod->FindBone(id);
@@ -348,12 +348,12 @@ hsBool plDynaDecalMgr::IWetParts(const plDynaDecalEnableMsg* enaMsg)
         const plPrintShape* shape = IGetPrintShape(enaMsg->GetShapeKey());
         if( shape )
         {
-            plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+            plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
             IWetInfo(info, enaMsg);
         }
     }
     else
-    if( enaMsg->GetID() == UInt32(-1) )
+    if( enaMsg->GetID() == uint32_t(-1) )
     {
         plArmatureMod* avMod = plArmatureMod::ConvertNoRef(enaMsg->GetArmKey()->ObjectIsLoaded());
         int i;
@@ -362,7 +362,7 @@ hsBool plDynaDecalMgr::IWetParts(const plDynaDecalEnableMsg* enaMsg)
             const plPrintShape* shape = IGetPrintShape(avMod, fPartIDs[i]);
             if( shape )
             {
-                plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+                plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
                 IWetInfo(info, enaMsg);
             }
         }
@@ -374,14 +374,14 @@ hsBool plDynaDecalMgr::IWetParts(const plDynaDecalEnableMsg* enaMsg)
     return true;
 }
 
-hsBool plDynaDecalMgr::IWetPart(UInt32 id, const plDynaDecalEnableMsg* enaMsg)
+hsBool plDynaDecalMgr::IWetPart(uint32_t id, const plDynaDecalEnableMsg* enaMsg)
 {
     plArmatureMod* avMod = plArmatureMod::ConvertNoRef(enaMsg->GetArmKey()->ObjectIsLoaded());
 
     const plPrintShape* shape = IGetPrintShape(avMod, id);
     if( shape )
     {
-        plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+        plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
         IWetInfo(info, enaMsg);
     }
     return true;
@@ -484,7 +484,7 @@ hsBool plDynaDecalMgr::MsgReceive(plMessage* msg)
             return true;
         case kRefAvatar:
             if( refMsg->GetContext() & (plRefMsg::kOnRemove|plRefMsg::kOnDestroy) )
-                IRemoveDecalInfo(unsigned_ptr(refMsg->GetRef()));
+                IRemoveDecalInfo(uintptr_t(refMsg->GetRef()));
             return true;
         }
     }
@@ -494,7 +494,7 @@ hsBool plDynaDecalMgr::MsgReceive(plMessage* msg)
 
 //////////////////////////////////////////////////////////////////////////////////
 //
-void plDynaDecalMgr::INotifyActive(plDynaDecalInfo& info, const plKey& armKey, UInt32 id) const
+void plDynaDecalMgr::INotifyActive(plDynaDecalInfo& info, const plKey& armKey, uint32_t id) const
 {
     if( !(info.fFlags & plDynaDecalInfo::kActive) )
     {
@@ -509,7 +509,7 @@ void plDynaDecalMgr::INotifyActive(plDynaDecalInfo& info, const plKey& armKey, U
     }
 }
 
-void plDynaDecalMgr::INotifyInactive(plDynaDecalInfo& info, const plKey& armKey, UInt32 id) const
+void plDynaDecalMgr::INotifyInactive(plDynaDecalInfo& info, const plKey& armKey, uint32_t id) const
 {
     if( info.fFlags & plDynaDecalInfo::kActive )
     {
@@ -537,7 +537,7 @@ plDynaDecalInfo& plDynaDecalInfo::Init(const plKey& key)
     return *this;
 }
 
-plDynaDecalInfo& plDynaDecalMgr::IGetDecalInfo(unsigned_ptr id, const plKey& key)
+plDynaDecalInfo& plDynaDecalMgr::IGetDecalInfo(uintptr_t id, const plKey& key)
 {
     plDynaDecalMap::iterator iter = fDecalMap.find(id);
     if( iter == fDecalMap.end() )
@@ -555,7 +555,7 @@ plDynaDecalInfo& plDynaDecalMgr::IGetDecalInfo(unsigned_ptr id, const plKey& key
     return iter->second;
 }
 
-void plDynaDecalMgr::IRemoveDecalInfo(UInt32 id)
+void plDynaDecalMgr::IRemoveDecalInfo(uint32_t id)
 {
     plDynaDecalMap::iterator iter = fDecalMap.find(id);
     if( iter != fDecalMap.end() )
@@ -613,7 +613,7 @@ hsScalar plDynaDecalMgr::IHowWet(plDynaDecalInfo& info, double t) const
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
-plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, UInt16 numVerts, UInt16 numIdx)
+plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, uint16_t numVerts, uint16_t numIdx)
 {
     // Some of this code just assumes you get the number of verts you ask for.
     // Which was causing errors when you asked for more than the max and didn't
@@ -718,7 +718,7 @@ void plDynaDecalMgr::InitAuxSpans()
     }
 }
 
-void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, UInt32 maxNumVerts, UInt32 maxNumIdx)
+void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_t maxNumIdx)
 {
     int iGrp = fGroups.GetCount();
     plGBufferGroup* grp = TRACKED_NEW plGBufferGroup(kDecalVtxFormat, true, false);
@@ -735,7 +735,7 @@ void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, UInt32 maxNumVerts, UInt32 ma
     aux->fVStartIdx = grp->GetVertStartFromCell(aux->fVBufferIdx, aux->fCellIdx, aux->fCellOffset);
     aux->fVLength = 0;
 
-    UInt16* dataPtr = nil;
+    uint16_t* dataPtr = nil;
     grp->ReserveIndexStorage(maxNumIdx, &aux->fIBufferIdx, &aux->fIStartIdx, &dataPtr);
     aux->fIStartIdx;
 
@@ -816,13 +816,13 @@ hsGMaterial* plDynaDecalMgr::ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, h
 
 //////////////////////////////////////////////////////////////////////////////////
 
-plDynaDecal* plDynaDecalMgr::IInitDecal(plAuxSpan* aux, double t, UInt16 numVerts, UInt16 numIdx)
+plDynaDecal* plDynaDecalMgr::IInitDecal(plAuxSpan* aux, double t, uint16_t numVerts, uint16_t numIdx)
 {
     int idx = INewDecal();
 
-    fDecals[idx]->fStartVtx = (UInt16)(aux->fVStartIdx + aux->fVLength);
+    fDecals[idx]->fStartVtx = (uint16_t)(aux->fVStartIdx + aux->fVLength);
     fDecals[idx]->fNumVerts = numVerts;
-    fDecals[idx]->fStartIdx = (UInt16)(aux->fIStartIdx + aux->fILength);
+    fDecals[idx]->fStartIdx = (uint16_t)(aux->fIStartIdx + aux->fILength);
     fDecals[idx]->fNumIdx = numIdx;
 
     fDecals[idx]->fBirth = t;
@@ -931,7 +931,7 @@ void plDynaDecalMgr::IUpdateDecals(double t)
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void plDynaDecalMgr::ICountIncoming(hsTArray<plCutoutPoly>& src, UInt16& numVerts, UInt16& numIdx) const
+void plDynaDecalMgr::ICountIncoming(hsTArray<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const
 {
     numVerts = 0;
     numIdx = 0;
@@ -952,7 +952,7 @@ plDecalVtxFormat* plDynaDecalMgr::IGetBaseVtxPtr(const plAuxSpan* auxSpan) const
     plGBufferGroup* grp = auxSpan->fGroup;
     plGBufferCell* cell = grp->GetCell(auxSpan->fVBufferIdx, auxSpan->fCellIdx);
 
-    UInt8* ptr = grp->GetVertBufferData(auxSpan->fVBufferIdx);
+    uint8_t* ptr = grp->GetVertBufferData(auxSpan->fVBufferIdx);
     
     ptr += cell->fVtxStart + auxSpan->fCellOffset;
 
@@ -960,7 +960,7 @@ plDecalVtxFormat* plDynaDecalMgr::IGetBaseVtxPtr(const plAuxSpan* auxSpan) const
 
 }
 
-UInt16* plDynaDecalMgr::IGetBaseIdxPtr(const plAuxSpan* auxSpan) const
+uint16_t* plDynaDecalMgr::IGetBaseIdxPtr(const plAuxSpan* auxSpan) const
 {
     plGBufferGroup* grp = auxSpan->fGroup;
 
@@ -978,7 +978,7 @@ hsBool plDynaDecalMgr::IConvertFlatGrid(plAuxSpan* auxSpan,
     hsPoint3* origPos = &auxSpan->fOrigPos[decal->fStartVtx];
     hsPoint3* origUVW = &auxSpan->fOrigUVW[decal->fStartVtx];
 
-    UInt32 initColor = decal->fFlags & plDynaDecal::kAttenColor
+    uint32_t initColor = decal->fFlags & plDynaDecal::kAttenColor
         ? 0xff000000
         : 0x00ffffff;
     int iv;
@@ -1001,12 +1001,12 @@ hsBool plDynaDecalMgr::IConvertFlatGrid(plAuxSpan* auxSpan,
         origUVW++;
     }
 
-    UInt16* idx = IGetBaseIdxPtr(auxSpan);
+    uint16_t* idx = IGetBaseIdxPtr(auxSpan);
     idx += decal->fStartIdx;
 
     hsAssert(grid.fIdx.GetCount() == decal->fNumIdx, "Mismatch on dynamic indices");
 
-    UInt16 base = decal->fStartVtx;
+    uint16_t base = decal->fStartVtx;
     int ii;
     for( ii = 0; ii < grid.fIdx.GetCount(); ii++ )
     {
@@ -1137,14 +1137,14 @@ hsBool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
     }
     hsAssert(vtx <= IGetBaseVtxPtr(auxSpan) + auxSpan->fVBufferLimit, "Vtx pointer gone wild");
 
-    UInt16* idx = IGetBaseIdxPtr(auxSpan);
+    uint16_t* idx = IGetBaseIdxPtr(auxSpan);
     idx += decal->fStartIdx;
 
-    UInt16 base = decal->fStartVtx;
+    uint16_t base = decal->fStartVtx;
     int j;
     for( j = 0; j < src.GetCount(); j++ )
     {
-        UInt16 next = base+1;
+        uint16_t next = base+1;
         int k;
         for( k = 2; k < src[j].fVerts.GetCount(); k++ )
         {
@@ -1230,14 +1230,14 @@ hsBool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
     }
     hsAssert(vtx <= IGetBaseVtxPtr(auxSpan) + auxSpan->fVBufferLimit, "Vtx pointer gone wild");
 
-    UInt16* idx = IGetBaseIdxPtr(auxSpan);
+    uint16_t* idx = IGetBaseIdxPtr(auxSpan);
     idx += decal->fStartIdx;
 
-    UInt16 base = decal->fStartVtx;
+    uint16_t base = decal->fStartVtx;
     int j;
     for( j = 0; j < src.GetCount(); j++ )
     {
-        UInt16 next = base+1;
+        uint16_t next = base+1;
         int k;
         for( k = 2; k < src[j].fVerts.GetCount(); k++ )
         {
@@ -1312,14 +1312,14 @@ hsBool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
     }
     hsAssert(vtx <= IGetBaseVtxPtr(auxSpan) + auxSpan->fVBufferLimit, "Vtx pointer gone wild");
 
-    UInt16* idx = IGetBaseIdxPtr(auxSpan);
+    uint16_t* idx = IGetBaseIdxPtr(auxSpan);
     idx += decal->fStartIdx;
 
-    UInt16 base = decal->fStartVtx;
+    uint16_t base = decal->fStartVtx;
     int j;
     for( j = 0; j < src.GetCount(); j++ )
     {
-        UInt16 next = base+1;
+        uint16_t next = base+1;
         int k;
         for( k = 2; k < src[j].fVerts.GetCount(); k++ )
         {
@@ -1371,7 +1371,7 @@ hsBool plDynaDecalMgr::IHitTestPolys(hsTArray<plCutoutPoly>& src) const
 hsBool plDynaDecalMgr::IProcessPolys(plDrawableSpans* targ, int iSpan, double t, hsTArray<plCutoutPoly>& src)
 {
     // Figure out how many verts and idxs are coming in.
-    UInt16 numVerts, numIdx;
+    uint16_t numVerts, numIdx;
     ICountIncoming(src, numVerts, numIdx);
     if( !numVerts )
         return false;

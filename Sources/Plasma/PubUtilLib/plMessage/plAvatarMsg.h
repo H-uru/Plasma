@@ -190,7 +190,7 @@ public:
     plAvSeekMsg();
     plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, hsBool smartSeek,
                 plAvAlignment align = kAlignHandle, char *animName = nil, hsBool noSeek = false, 
-                UInt8 flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
+                uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
     
     // plasma protocol
     CLASSNAME_REGISTER( plAvSeekMsg );
@@ -214,7 +214,7 @@ public:
     hsBool fNoSeek;
     char *fAnimName;
     plAvAlignment fAlignType;
-    UInt8 fFlags;
+    uint8_t fFlags;
     plKey fFinishKey;
 };
 
@@ -389,7 +389,7 @@ public:
         kStealthCloaked,
         kStealthCloakedButSeen,
     };
-    UInt8 fMode;
+    uint8_t fMode;
     int fLevel;     // you are invisible to other players/CCRs of lower level
     
     CLASSNAME_REGISTER(plAvatarStealthModeMsg);
@@ -402,7 +402,7 @@ public:
 class plAvatarBehaviorNotifyMsg : public plMessage
 {
 public:
-    UInt32 fType;
+    uint32_t fType;
     hsBool state;
     
     plAvatarBehaviorNotifyMsg() : fType(0),state(false) {}
@@ -419,7 +419,7 @@ class plAvatarOpacityCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarOpacityCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarOpacityCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plAvatarOpacityCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, int16_t repeats=-1, uint16_t user=0) :
                                plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarOpacityCallbackMsg );
@@ -449,7 +449,7 @@ class plAvatarPhysicsEnableCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarPhysicsEnableCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarPhysicsEnableCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plAvatarPhysicsEnableCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, int16_t repeats=-1, uint16_t user=0) :
                                      plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarPhysicsEnableCallbackMsg );

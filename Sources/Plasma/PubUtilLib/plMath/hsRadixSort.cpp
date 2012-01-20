@@ -135,7 +135,7 @@ void hsRadixSort::IReverse()
     }
 }
 
-hsRadixSort::Elem* hsRadixSort::Sort(Elem* inList, UInt32 flags)
+hsRadixSort::Elem* hsRadixSort::Sort(Elem* inList, uint32_t flags)
 {
     if( !(inList && inList->fNext) )
         return inList;

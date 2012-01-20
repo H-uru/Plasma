@@ -351,7 +351,7 @@ pfGameCli * pfGameMgr::GetGameCli (unsigned gameId) const {
 }
 
 //============================================================================
-const wchar * pfGameMgr::GetGameNameByTypeId (const Uuid & gameTypeId) const {
+const wchar_t * pfGameMgr::GetGameNameByTypeId (const Uuid & gameTypeId) const {
 
     if (Factory * factory = s_factories.Find(gameTypeId))
         return factory->reg.name;
@@ -491,7 +491,7 @@ const Uuid & pfGameCli::GetGameTypeId () const {
 }
 
 //============================================================================
-const wchar * pfGameCli::GetName () const {
+const wchar_t * pfGameCli::GetName () const {
 
     return internal->factory->reg.name;
 }

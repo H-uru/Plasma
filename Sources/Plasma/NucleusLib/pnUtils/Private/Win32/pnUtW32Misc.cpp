@@ -62,12 +62,12 @@ static MEMORYSTATUSEX s_memstatus;
 ***/
 
 //============================================================================
-const wchar * AppGetCommandLine () {
+const wchar_t * AppGetCommandLine () {
     return GetCommandLineW();
 }
 
 //============================================================================
-void MachineGetName (wchar *computerName, unsigned int length) {
+void MachineGetName (wchar_t *computerName, unsigned int length) {
     DWORD len = length;
     GetComputerNameW(computerName, &len);
 }
@@ -84,7 +84,7 @@ void MemoryGetStatus (MemoryStatus * status) {
     mem.dwLength = sizeof(mem);
     GlobalMemoryStatusEx(&mem);
 
-    const qword BYTES_PER_MB = 1024 * 1024;
+    const uint64_t BYTES_PER_MB = 1024 * 1024;
     status->totalPhysMB         = unsigned(mem.ullTotalPhys     / BYTES_PER_MB);
     status->availPhysMB         = unsigned(mem.ullAvailPhys     / BYTES_PER_MB);
     status->totalPageFileMB     = unsigned(mem.ullTotalPageFile / BYTES_PER_MB);
@@ -101,7 +101,7 @@ void DiskGetStatus (ARRAY(DiskStatus) * disks) {
         if (!length || length > 2048)
             break;
 
-        wchar * buffer = ALLOCA(wchar, length + 1);
+        wchar_t * buffer = ALLOCA(wchar_t, length + 1);
         if (!GetLogicalDriveStringsW(length, buffer))
             break;
 
@@ -118,7 +118,7 @@ void DiskGetStatus (ARRAY(DiskStatus) * disks) {
             DiskStatus status;
             StrCopy(status.name, buffer, arrsize(status.name));
 
-            const qword BYTES_PER_MB = 1024 * 1024;
+            const uint64_t BYTES_PER_MB = 1024 * 1024;
             status.totalSpaceMB = unsigned(totalBytes.QuadPart / BYTES_PER_MB);
             status.freeSpaceMB  = unsigned(freeBytes.QuadPart  / BYTES_PER_MB);
 
@@ -131,13 +131,13 @@ void DiskGetStatus (ARRAY(DiskStatus) * disks) {
 //============================================================================
 // Loosely taken from MS's cpuid code sample
 void CpuGetInfo (
-    word *  cpuCaps,
-    dword * cpuVendor,
-    word *  cpuSignature
+    uint16_t *  cpuCaps,
+    uint32_t * cpuVendor,
+    uint16_t *  cpuSignature
 ) {
-    dword signature = 0;
-    dword extended  = 0;
-    dword flags[2]  = { 0, 0 };
+    uint32_t signature = 0;
+    uint32_t extended  = 0;
+    uint32_t flags[2]  = { 0, 0 };
     cpuVendor[0]    = 0;
 
     _asm {
@@ -189,9 +189,9 @@ DONE:
 
     // Decode capability flags
     const static struct CpuCap {
-        word    cpuFlag;
-        byte    field;
-        byte    bit;
+        uint16_t    cpuFlag;
+        uint8_t    field;
+        uint8_t    bit;
     } s_caps[] = {
         // feature      field   bit
         // -------      -----   ---
@@ -212,7 +212,7 @@ DONE:
     }
 
     // Copy signature
-    *cpuSignature = word(signature & 0xfff);
+    *cpuSignature = uint16_t(signature & 0xfff);
 
     // If this is an AMD CPU, check for 3DNow support
     const char * vendorAmd = "AuthenticAMD";

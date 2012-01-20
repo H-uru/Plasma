@@ -68,7 +68,7 @@ protected:
 
     hsPoint3                fListenPos;
     mutable hsScalar        fListenStrength;
-    mutable UInt32          fListenState;
+    mutable uint32_t          fListenState;
 
     hsScalar                fInsideStrength;
     hsScalar                fOutsideStrength;
@@ -93,7 +93,7 @@ public:
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 
-    virtual Int32   GetNumProperties() const { return 1; } // This is stupid.
+    virtual int32_t   GetNumProperties() const { return 1; } // This is stupid.
 
     virtual hsScalar    GetListenerStrength() const;
     virtual void        UpdateListenerPosition(const hsPoint3& p);

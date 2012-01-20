@@ -64,7 +64,7 @@ void plBulletMsg::Write(hsStream* stream, hsResMgr* mgr)
 { 
     IMsgWrite(stream, mgr); 
 
-    stream->WriteByte(UInt8(fCmd));
+    stream->WriteByte(uint8_t(fCmd));
 
     fFrom.Write(stream);
     fDir.Write(stream);

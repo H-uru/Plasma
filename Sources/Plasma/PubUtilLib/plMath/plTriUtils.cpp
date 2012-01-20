@@ -107,7 +107,7 @@ plTriUtils::Bary plTriUtils::ComputeBarycentric(const hsPoint3& p0, const hsPoin
 
 plTriUtils::Bary plTriUtils::IComputeBarycentric(const hsVector3& v12, hsScalar invLenSq12, const hsVector3& v0, const hsVector3& v1, hsPoint3& out)
 {
-    UInt32  state = 0;
+    uint32_t  state = 0;
 
     hsScalar lenSq0 = v0.MagnitudeSquared();
     if( lenSq0 < kAlmostZeroSquared )

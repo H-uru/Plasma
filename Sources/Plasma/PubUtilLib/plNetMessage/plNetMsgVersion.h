@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     9  07/01/02 rje     Changed Authentication Scheme
     10  10/16/02    eap Removed low-level KI. Replaced with plVault.
     11  07/03/03    MT  Optimized plNetMessage headers for size
-    12  09/17/03    eap Removed UInt32 acctID. Added Uuid acctUUID. Changed PlayerUpdate enum values.
+    12  09/17/03    eap Removed uint32_t acctID. Added Uuid acctUUID. Changed PlayerUpdate enum values.
 */
 
 
@@ -100,7 +100,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     1   10/15/02    thamer  minor changes for CCR
     2   11/04/02    eap     Changed plNetMsgVault format.
     3   12/04/02    eap     Moved compression into plNetMsgStreamHelper. Changed plNetMsgVault format.
-    4   12/04/02    eap     Changed plNetMsgStreamHelper fUncompressedSize type to UInt32.
+    4   12/04/02    eap     Changed plNetMsgStreamHelper fUncompressedSize type to uint32_t.
     5   12/05/02    eap     Added PlayerName and AvatarShape to CreatePlayer msg.
     6   12/11/02    thamer  Moved PlayerID into the base class
     7   12/18/02    thamer  Changed SDL format
@@ -111,7 +111,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     12  02/05/03    thamer  Added initial age state to joinAck
     13  02/10/03    eap     Changed format of vault FetchNodes msg to support bundling of multiple nodes into one msg.
     14  02/12/03    eap     Changed the way ages are (un)registered. client used to do it. now vault server does it.
-    15  02/24/03    eap     Added a byte to plNetMsgLeave to specify the reason for leaving.
+    15  02/24/03    eap     Added a uint8_t to plNetMsgLeave to specify the reason for leaving.
     16  02/25/03    thamer  Changed the auth response generation
     17  02/26/03    thamer  again
     18  02/28/03    eap     Support for multiple spawn points for vault age link nodes.

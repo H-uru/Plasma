@@ -133,7 +133,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #define hsScalarToFloat(x)  float(x)
 
     #define hsIntToScalar(x)        float(x)
-    #define hsScalarToInt(x)        Int32(x)
+    #define hsScalarToInt(x)        int32_t(x)
 
 
     #define hsFixedToScalar(x)  ((hsScalar)(x) / float(hsFixed1))
@@ -154,15 +154,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifndef HS_DEBUGGING    /* mf horse testing defines vs inlines for VC++5.0 performance */
 
-    #define hsScalarRound(x)            Int32((x) + ((x) < 0 ? -hsScalarHalf : hsScalarHalf))
+    #define hsScalarRound(x)            int32_t((x) + ((x) < 0 ? -hsScalarHalf : hsScalarHalf))
 
 #else /* HS_DEBUGGING - use inlines for type-checking etc...and all */
-    inline Int32 hsScalarRound(float x)
+    inline int32_t hsScalarRound(float x)
     {
         float half = hsScalarHalf;
         if (x < 0)
             half = -half;
-        return Int32(x + half);
+        return int32_t(x + half);
     }
 #endif /* HS_DEBUGGING - use inlines for type-checking etc...and all */
 

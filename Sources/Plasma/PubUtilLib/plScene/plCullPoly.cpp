@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsFastMath.h"
 
-plCullPoly& plCullPoly::InitFromVerts(UInt32 f)
+plCullPoly& plCullPoly::InitFromVerts(uint32_t f)
 {
     fFlags = f;
 

@@ -86,7 +86,7 @@ public:
     //========================================================================
     // Game methods
     //-------------
-    void PlayGame           (unsigned position, dword points, const wchar name[]);
+    void PlayGame           (unsigned position, uint32_t points, const wchar_t name[]);
     void LeaveGame          ();
     void Choose             (EHeekChoice choice);
     void SequenceFinished   (EHeekSeqFinished seq);

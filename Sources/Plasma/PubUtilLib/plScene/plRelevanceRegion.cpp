@@ -87,9 +87,9 @@ hsBool plRelevanceRegion::MsgReceive(plMessage* msg)
 }
 
 
-void plRelevanceRegion::SetMgrIndex(UInt32 index)
+void plRelevanceRegion::SetMgrIndex(uint32_t index)
 {
-    if (fMgrIdx != (UInt32)-1)
+    if (fMgrIdx != (uint32_t)-1)
         fRegionsICareAbout.SetBit(fMgrIdx, false);
 
     fMgrIdx = index;

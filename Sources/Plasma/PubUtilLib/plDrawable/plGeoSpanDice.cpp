@@ -123,10 +123,10 @@ hsBool plGeoSpanDice::IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out,
 
     hsScalar midPoint = src->fLocalBounds.GetCenter()[iAxis];
 
-    hsTArray<UInt32>        loTris;
-    hsTArray<UInt32>        hiTris;
+    hsTArray<uint32_t>        loTris;
+    hsTArray<uint32_t>        hiTris;
 
-    UInt16* indexData = src->fIndexData;
+    uint16_t* indexData = src->fIndexData;
 
     int numTris = src->fNumIndices / 3;
 
@@ -189,21 +189,21 @@ int plGeoSpanDice::ISelectAxis(int exclAxis, plGeometrySpan* src) const
     return iAxis;
 }
 
-plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<UInt32>& tris) const
+plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<uint32_t>& tris) const
 {
     // First off, find out how many and which vers we're talking here.
     // Easiest way is while we're building the LUTs we'll want later anyway.
-    hsTArray<Int16> fwdLUT;
+    hsTArray<int16_t> fwdLUT;
     fwdLUT.SetCount(src->fNumVerts);
     memset(fwdLUT.AcquireArray(), -1, src->fNumVerts * sizeof(*fwdLUT.AcquireArray()));
 
-    hsTArray<UInt16>    bckLUT;
+    hsTArray<uint16_t>    bckLUT;
     bckLUT.SetCount(0);
 
     int i;
     for( i = 0; i < tris.GetCount(); i++ )
     {
-        UInt16* idx = src->fIndexData + tris[i] * 3;
+        uint16_t* idx = src->fIndexData + tris[i] * 3;
         
         if( fwdLUT[*idx] < 0 )
         {
@@ -234,7 +234,7 @@ plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<UInt32
     plGeometrySpan* dst = IAllocSpace(src, numVerts, numTris);
 
     // Okay, set the index data.
-    UInt16* idxTrav = dst->fIndexData;
+    uint16_t* idxTrav = dst->fIndexData;
     for( i = 0; i < tris.GetCount(); i++ )
     {
         *idxTrav++ = fwdLUT[src->fIndexData[ tris[i] * 3 + 0] ];
@@ -248,7 +248,7 @@ plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<UInt32
 
     hsBounds3Ext localBnd;
     localBnd.MakeEmpty();
-    UInt8* vtxTrav = dst->fVertexData;
+    uint8_t* vtxTrav = dst->fVertexData;
     for( i = 0; i < numVerts; i++ )
     {
         memcpy(vtxTrav, src->fVertexData + bckLUT[i] * stride, stride);     
@@ -308,10 +308,10 @@ plGeometrySpan* plGeoSpanDice::IAllocSpace(plGeometrySpan* src, int numVerts, in
     int stride = src->GetVertexSize(src->fFormat);
 
     dst->fNumIndices = numTris * 3;
-    dst->fIndexData = TRACKED_NEW UInt16[dst->fNumIndices];
+    dst->fIndexData = TRACKED_NEW uint16_t[dst->fNumIndices];
 
     dst->fNumVerts = numVerts;
-    dst->fVertexData = TRACKED_NEW UInt8[numVerts * stride];
+    dst->fVertexData = TRACKED_NEW uint8_t[numVerts * stride];
 
     if( src->fMultColor )
     {
@@ -323,11 +323,11 @@ plGeometrySpan* plGeoSpanDice::IAllocSpace(plGeometrySpan* src, int numVerts, in
     }
     if( src->fDiffuseRGBA )
     {
-        dst->fDiffuseRGBA = TRACKED_NEW UInt32[numVerts];
+        dst->fDiffuseRGBA = TRACKED_NEW uint32_t[numVerts];
     }
     if( src->fSpecularRGBA )
     {
-        dst->fSpecularRGBA = TRACKED_NEW UInt32[numVerts];
+        dst->fSpecularRGBA = TRACKED_NEW uint32_t[numVerts];
     }
 
     return dst;

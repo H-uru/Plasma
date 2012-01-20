@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-const wchar UNICODE_BOM = 0xfeff;  // Unicode byte-order mark
+const wchar_t UNICODE_BOM = 0xfeff;  // Unicode byte-order mark
 const char  UTF8_BOM[]  = "\xef\xbb\xbf";
 
 
@@ -77,7 +77,7 @@ void * ModuleGetInstance ();
 *
 ***/
 
-const wchar * AppGetCommandLine ();
+const wchar_t * AppGetCommandLine ();
 
 
 /*****************************************************************************
@@ -85,7 +85,7 @@ const wchar * AppGetCommandLine ();
 *   System info functions
 *
 ***/
-void MachineGetName (wchar * computerName, unsigned length = 32);
+void MachineGetName (wchar_t * computerName, unsigned length = 32);
 
 
 /*****************************************************************************
@@ -97,7 +97,7 @@ void MachineGetName (wchar * computerName, unsigned length = 32);
 // used to dump the internal state of a module
 typedef void (CDECL * FStateDump)(
     void *      param,
-    const wchar fmt[],
+    const wchar_t fmt[],
     ...
 );
 
@@ -133,7 +133,7 @@ struct MemoryStatus {
 void MemoryGetStatus (MemoryStatus * status);
 
 struct DiskStatus {
-    wchar       name[16];
+    wchar_t       name[16];
     unsigned    totalSpaceMB;
     unsigned    freeSpaceMB;
 };
@@ -142,9 +142,9 @@ void DiskGetStatus (ARRAY(DiskStatus) * disks);
 
 
 void CpuGetInfo (
-    word *  cpuCaps,
-    dword * cpuVendor,
-    word *  cpuSignature
+    uint16_t *  cpuCaps,
+    uint32_t * cpuVendor,
+    uint16_t *  cpuSignature
 );
 
 // CPU capability flags

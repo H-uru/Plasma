@@ -316,9 +316,9 @@ void plClusterGroup::SetVisible(bool visible)
     }
 }
 
-UInt32 plClusterGroup::NumInst() const
+uint32_t plClusterGroup::NumInst() const
 {
-    UInt32 numInst = 0;
+    uint32_t numInst = 0;
     int i;
     for( i = 0; i < fClusters.GetCount(); i++ )
         numInst += fClusters[i]->NumInsts();

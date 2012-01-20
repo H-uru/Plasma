@@ -114,13 +114,13 @@ public:
     virtual const hsTArray<plCullPoly>& GetWorldPolyList() const { return fPolys; }
     virtual const hsTArray<plCullPoly>& GetLocalPolyList() const { return fPolys; }
 
-    virtual Int32   GetNumProperties() const { return kNumProps; }
+    virtual int32_t   GetNumProperties() const { return kNumProps; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 
     // Export only function to initialize.
     virtual void ComputeFromPolys();

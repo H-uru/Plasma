@@ -454,7 +454,7 @@ static const NetMsgField kAcctActivateReplyFields[] = {
 static const NetMsgField kFileListReplyFields[] = {
     kNetMsgFieldTransId,                                    // transId
     kNetMsgFieldENetError,                                  // result
-    NET_MSG_FIELD_VAR_COUNT(sizeof(wchar), 1024 * 1024),    // wcharCount
+    NET_MSG_FIELD_VAR_COUNT(sizeof(wchar_t), 1024 * 1024),    // wchar_tCount
     NET_MSG_FIELD_VAR_PTR(),                                // fileData
 };
 
@@ -548,7 +548,7 @@ static const NetMsgField kVaultInitAgeReplyFields[] = {
 static const NetMsgField kVaultNodeFindReplyFields[] = {
     kNetMsgFieldTransId,                                    // transId
     kNetMsgFieldENetError,                                  // result
-    NET_MSG_FIELD_VAR_COUNT(sizeof(dword), 512),            // nodeIdCount
+    NET_MSG_FIELD_VAR_COUNT(sizeof(uint32_t), 512),            // nodeIdCount
     NET_MSG_FIELD_VAR_PTR(),                                // nodeIds
 };
 

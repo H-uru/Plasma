@@ -227,7 +227,7 @@ hsBool plWinAudible::AddSound( plSound *pSnd, int index, hsBool is3D )
 }
 
 /* Unused
-int plWinAudible::AddSoundFromResource(plSound *pSnd, void* addr, Int32 size, hsBool is3D )
+int plWinAudible::AddSoundFromResource(plSound *pSnd, void* addr, int32_t size, hsBool is3D )
 {
     //plWin32Sound* pSnd = TRACKED_NEW plWin32Sound;
     //IAssignSoundKey( pSnd, GetKey() ? GetKeyName() : "", fSoundObjs.Count() - 1 );    
@@ -471,7 +471,7 @@ void plWinAudible::Read(hsStream* s, hsResMgr* mgr)
     mgr->AddViaNotify(GetKey(), refMsg, plRefFlags::kPassiveRef);
 }
 
-void plWinAudible::IAssignSoundKey( plSound *sound, const char *name, UInt32 i )
+void plWinAudible::IAssignSoundKey( plSound *sound, const char *name, uint32_t i )
 {
     char    keyName[ 256 ];
 
@@ -621,7 +621,7 @@ plSound* plWinAudible::GetSound(int i) const
 }
 
 // Visualization
-plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
     int i;
@@ -739,14 +739,14 @@ void pl2WayWinAudible::Read(hsStream* s, hsResMgr* mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, Int32 size, int numFrames, unsigned char flags)
+void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, int32_t size, int numFrames, unsigned char flags)
 {
     if (fVoicePlayer)
     {
         if (!(flags & VOICE_ENCODED))
-            fVoicePlayer->PlaybackUncompressedVoiceMessage((UInt8*)addr, size);
+            fVoicePlayer->PlaybackUncompressedVoiceMessage((uint8_t*)addr, size);
         else
-            fVoicePlayer->PlaybackVoiceMessage((UInt8*)addr, size, numFrames);
+            fVoicePlayer->PlaybackVoiceMessage((uint8_t*)addr, size, numFrames);
     }
 }
 
@@ -773,7 +773,7 @@ void pl2WayWinAudible::SetVelocity(const hsVector3 vel,int index)
         fVoicePlayer->SetVelocity( vel );
 }
 
-void pl2WayWinAudible::SetTalkIcon(int index, UInt32 str)
+void pl2WayWinAudible::SetTalkIcon(int index, uint32_t str)
 {
     if (fVoicePlayer)
         fVoicePlayer->SetTalkIcon(index,str);

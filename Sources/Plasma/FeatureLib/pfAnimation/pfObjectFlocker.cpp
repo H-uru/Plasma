@@ -924,7 +924,7 @@ pfObjectFlocker::~pfObjectFlocker()
     plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-void pfObjectFlocker::SetNumBoids(UInt8 val)
+void pfObjectFlocker::SetNumBoids(uint8_t val)
 {
     fNumBoids = val;
 }
@@ -979,7 +979,7 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-hsBool pfObjectFlocker::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool pfObjectFlocker::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     fFlock.Update(fTarget, del);
 

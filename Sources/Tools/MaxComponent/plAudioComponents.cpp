@@ -229,10 +229,10 @@ enum
     kSndFadeTypeExponential
 };
 
-UInt32  plBaseSoundEmitterComponent::fWarningFlags = 0;
+uint32_t  plBaseSoundEmitterComponent::fWarningFlags = 0;
 //bool  plBaseSoundEmitterComponent::fAllowUnhide = false;
 
-void    plBaseSoundEmitterComponent::IShowError( UInt32 type, const char *errMsg, const char *nodeName, plErrorMsg *pErrMsg )
+void    plBaseSoundEmitterComponent::IShowError( uint32_t type, const char *errMsg, const char *nodeName, plErrorMsg *pErrMsg )
 {
     if( !( fWarningFlags & (1 << type) ) )
     {
@@ -310,7 +310,7 @@ IOResult plBaseSoundEmitterComponent::Save(ISave *isave)
     isave->BeginChunk(MAX_ASS_CHUNK);
     ULONG nwrite;
 
-    UInt64 id = fSoundAssetId;
+    uint64_t id = fSoundAssetId;
     res = isave->Write(&id, sizeof(id), &nwrite);
     if (res != IO_OK)
         return res;
@@ -346,7 +346,7 @@ IOResult plBaseSoundEmitterComponent::Load(ILoad *iload)
         else if (iload->CurChunkID() == MAX_ASS_CHUNK)
         {
             ULONG nread;
-            UInt64 id;
+            uint64_t id;
             res = iload->Read(&id, sizeof(id), &nread);
             fSoundAssetId = id;
             res = iload->Read(&id, sizeof(id), &nread);
@@ -569,9 +569,9 @@ void    plBaseSoundEmitterComponent::IGrabSoftRegion( plSound *sound, plErrorMsg
     }
 }
 
-UInt32  plBaseSoundEmitterComponent::ICalcSourceBufferFlags( void ) const
+uint32_t  plBaseSoundEmitterComponent::ICalcSourceBufferFlags( void ) const
 {
-    UInt32 bufferFlags = 0;
+    uint32_t bufferFlags = 0;
 
     if( IHasWaveformProps() )
     {
@@ -587,7 +587,7 @@ UInt32  plBaseSoundEmitterComponent::ICalcSourceBufferFlags( void ) const
     return bufferFlags;
 }
 
-plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const char *fileName, plMaxNode *srcNode, UInt32 srcBufferFlags )
+plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const char *fileName, plMaxNode *srcNode, uint32_t srcBufferFlags )
 {
     plSoundBuffer* sb = IGetSourceBuffer(fileName, srcNode, srcBufferFlags);
 
@@ -611,7 +611,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const char *fileN
     return sb;
 }
 
-plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *fileName, plMaxNode *srcNode, UInt32 srcBufferFlags )
+plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *fileName, plMaxNode *srcNode, uint32_t srcBufferFlags )
 {
     plKey       key;
     char        keyName[ MAX_PATH ];
@@ -1391,7 +1391,7 @@ class plEAXPropsDlgProc : public plSingleCompSelProc
     {
         public:
             char    *fName;
-            Int16   fOcc;
+            int16_t   fOcc;
             float   fLFRatio;
             float   fRoomRatio;
     };
@@ -1426,13 +1426,13 @@ public:
         // Annoyingly, the EAX headers don't have a convenient array, just some #defines
         static char occNames[][ 64 ] = { "Single window", "Double window", "Thin door", "Thick door",
                                     "Wood wall", "Brick wall", "Stone wall", "Curtain" };
-        Int16   occValues[] = { EAX_MATERIAL_SINGLEWINDOW, EAX_MATERIAL_DOUBLEWINDOW, EAX_MATERIAL_THINDOOR,
+        int16_t   occValues[] = { EAX_MATERIAL_SINGLEWINDOW, EAX_MATERIAL_DOUBLEWINDOW, EAX_MATERIAL_THINDOOR,
                                 EAX_MATERIAL_THICKDOOR, EAX_MATERIAL_WOODWALL, EAX_MATERIAL_BRICKWALL,
                                 EAX_MATERIAL_STONEWALL, EAX_MATERIAL_CURTAIN };
         float   occLFValues[] = { EAX_MATERIAL_SINGLEWINDOWLF, EAX_MATERIAL_DOUBLEWINDOWLF, EAX_MATERIAL_THINDOORLF,
                                 EAX_MATERIAL_THICKDOORLF, EAX_MATERIAL_WOODWALLLF, EAX_MATERIAL_BRICKWALLLF,
                                 EAX_MATERIAL_STONEWALLLF, EAX_MATERIAL_CURTAINLF };
-        Int16   occRoomValues[] = { EAX_MATERIAL_SINGLEWINDOWROOMRATIO, EAX_MATERIAL_DOUBLEWINDOWROOMRATIO, EAX_MATERIAL_THINDOORROOMRATIO,
+        int16_t   occRoomValues[] = { EAX_MATERIAL_SINGLEWINDOWROOMRATIO, EAX_MATERIAL_DOUBLEWINDOWROOMRATIO, EAX_MATERIAL_THINDOORROOMRATIO,
                                 EAX_MATERIAL_THICKDOORROOMRATIO, EAX_MATERIAL_WOODWALLROOMRATIO, EAX_MATERIAL_BRICKWALLROOMRATIO,
                                 EAX_MATERIAL_STONEWALLROOMRATIO, EAX_MATERIAL_CURTAINROOMRATIO };
 
@@ -2232,9 +2232,9 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     // allocate it here).
     // Also also also build up a volume array parallel to startPoses that represents the individual volume
     // setting for each sound in the group
-    hsTArray<UInt32>        startPoses;
+    hsTArray<uint32_t>        startPoses;
     hsTArray<hsScalar>      volumes;
-    hsLargeArray<UInt8>     mergedData;
+    hsLargeArray<uint8_t>     mergedData;
     int                     i;
     plWAVHeader             mergedHeader;
 
@@ -2323,7 +2323,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         // Grab the data from this buffer and merge it
         // HACK: SetCount() won't copy the old data over, Expand() won't up the use count, so do
         // an expand-and-setCount combo.
-        UInt32 pos = mergedData.GetCount();
+        uint32_t pos = mergedData.GetCount();
         startPoses.Append( pos );
         mergedData.Expand( pos + buffer->GetDataLength() );
         mergedData.SetCount( pos + buffer->GetDataLength() );
@@ -2402,7 +2402,7 @@ public:
     virtual hsBool  IsLocalOnly( void ) const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
 
 protected:
-    virtual UInt32 ICalcSourceBufferFlags() const;
+    virtual uint32_t ICalcSourceBufferFlags() const;
 
     bool IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
     virtual hsBool  IGetCategoryList( char **&catList, int *&catKonstantList );
@@ -2471,9 +2471,9 @@ hsBool plBackgroundMusicComponent::SetupProperties(plMaxNode *pNode, plErrorMsg 
     return plBaseSoundEmitterComponent::SetupProperties( pNode, pErrMsg );
 }
 
-UInt32 plBackgroundMusicComponent::ICalcSourceBufferFlags() const
+uint32_t plBackgroundMusicComponent::ICalcSourceBufferFlags() const
 {
-    UInt32 ourFlags = 0;
+    uint32_t ourFlags = 0;
     if (fCompPB->GetInt(kSndStreamCompressed))
         ourFlags |= plSoundBuffer::kStreamCompressed;
 
@@ -3035,7 +3035,7 @@ void    plEAXListenerComponent::SetCustFile( const char *path )
     {
         char    *fKeyword;
         ParamID fParamID;
-        UInt8   fType;  // 0 is int, 1 is float for now
+        uint8_t   fType;  // 0 is int, 1 is float for now
     } myMap[] = { 
         { "flEnvironmentSize", kRefEnvironmentSize, 1 },
         { "flEnvironmentDiffusion", kRefEnvironmentDiffusion, 1 },
@@ -3379,7 +3379,7 @@ hsBool plRandomSoundComponent::ICheckForSounds(plMaxNode* node)
         return false;
 
     int nSounds = 0;
-    UInt32 numComp = node->NumAttachedComponents(false);
+    uint32_t numComp = node->NumAttachedComponents(false);
     for(int i = 0; i < numComp; i++)
     {
         plComponentBase* comp = node->GetAttachedComponent(i);
@@ -3409,7 +3409,7 @@ hsBool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     else
         mod->SetState(plRandomSoundMod::kStopped);
 
-    UInt8 mode = plRandomSoundMod::kNormal;
+    uint8_t mode = plRandomSoundMod::kNormal;
     switch( fCompPB->GetInt((ParamID)kSelectMode) )
     {
     // random, repeats okay, play until stopped             - Normal
@@ -3482,9 +3482,9 @@ hsBool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 continue;
             }
 
-            groups[i].fIndices = TRACKED_NEW UInt16[numSounds];
+            groups[i].fIndices = TRACKED_NEW uint16_t[numSounds];
 
-            hsTArray<UInt16> indices;
+            hsTArray<uint16_t> indices;
             int j;
 
             if( !fCompPB->GetInt( (ParamID)kCombineSounds ) )

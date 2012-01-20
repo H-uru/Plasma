@@ -93,14 +93,14 @@ public:
     virtual plMipmap*   Clone() const { return fBase->Clone(); }
     virtual void        CopyFrom(const plMipmap *source);
 
-    virtual void    Composite(plMipmap *source, UInt16 x, UInt16 y, CompositeOptions *options = nil);
+    virtual void    Composite(plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nil);
 
-    virtual void    ScaleNicely(UInt32 *destPtr, UInt16 destWidth, UInt16 destHeight,
-                            UInt16 destStride, plMipmap::ScaleFilter filter) const;
+    virtual void    ScaleNicely(uint32_t *destPtr, uint16_t destWidth, uint16_t destHeight,
+                            uint16_t destStride, plMipmap::ScaleFilter filter) const;
 
-    virtual hsBool  ResizeNicely(UInt16 newWidth, UInt16 newHeight, plMipmap::ScaleFilter filter);
+    virtual hsBool  ResizeNicely(uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter);
 
-    virtual void    SetCurrLevel(UInt8 level);
+    virtual void    SetCurrLevel(uint8_t level);
 
     const plMipmap* GetBase() const { return fBase; }
 };

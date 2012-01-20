@@ -97,7 +97,7 @@ protected:
     bool                        fActive, fFirstActivated;       
 
     hsScalar                    fMouseScale;
-    static UInt8                bRecenterMouse;
+    static uint8_t                bRecenterMouse;
     static HWND                 fhWnd;
     
 public:

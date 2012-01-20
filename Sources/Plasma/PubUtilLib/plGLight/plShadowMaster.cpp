@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plTweak.h"
 
-UInt32 plShadowMaster::fGlobalMaxSize = 512;
+uint32_t plShadowMaster::fGlobalMaxSize = 512;
 hsScalar plShadowMaster::fGlobalMaxDist = 160.f; // PERSPTEST
 // hsScalar plShadowMaster::fGlobalMaxDist = 100000.f; // PERSPTEST
 hsScalar plShadowMaster::fGlobalVisParm = 1.f;
@@ -76,10 +76,10 @@ void plShadowMaster::SetGlobalShadowQuality(hsScalar s)
     fGlobalVisParm = s;
 }
 
-void plShadowMaster::SetGlobalMaxSize(UInt32 s) 
+void plShadowMaster::SetGlobalMaxSize(uint32_t s) 
 { 
-    const UInt32 kMaxMaxGlobalSize = 512;
-    const UInt32 kMinMaxGlobalSize = 32;
+    const uint32_t kMaxMaxGlobalSize = 512;
+    const uint32_t kMinMaxGlobalSize = 32;
 
     // Make sure it's a power of two.
     if( ((s-1) & ~s) != (s-1) )
@@ -215,7 +215,7 @@ hsBool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
         || fLightInfo->InVisNot(plGlobalVisMgr::Instance()->GetVisNot()) )
         return false;
 
-    const UInt8 shadowQuality = UInt8(plShadowMaster::GetGlobalShadowQuality() * 3.9f);
+    const uint8_t shadowQuality = uint8_t(plShadowMaster::GetGlobalShadowQuality() * 3.9f);
     if( !GetKey()->GetUoid().GetLoadMask().MatchesQuality(shadowQuality) )
         return false;
 
@@ -258,10 +258,10 @@ hsBool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
     //      That's the distance used for culling ShadowReceivers
     // The ShadowSlaveYon is used directly in the 
 
-    slave->fIndex = UInt32(-1);
+    slave->fIndex = uint32_t(-1);
     castMsg->Pipeline()->SubmitShadowSlave(slave);
     
-    if( slave->fIndex == UInt32(-1) )
+    if( slave->fIndex == uint32_t(-1) )
     {
         IRecycleSlave(slave);
         return false;
@@ -294,7 +294,7 @@ void plShadowMaster::IComputeCasterBounds(const plShadowCaster* caster, hsBounds
     for( i = 0; i < castSpans.GetCount(); i++ )
     {
         plDrawableSpans* dr = castSpans[i].fDraw;
-        UInt32 index = castSpans[i].fIndex;
+        uint32_t index = castSpans[i].fIndex;
 
         // Right now, the generic world bounds seems close enough, even when skinned.
         // It gets a little off on the lower LODs, but, hey, they're the lower LODs.
@@ -716,7 +716,7 @@ protected:
     public:
         plDrawableSpans*    fDraw;
         plSpan*             fSpan;
-        UInt32              fIndex;
+        uint32_t              fIndex;
     };
 
     hsTArray<plDrawSpan> fSpans;
@@ -803,7 +803,7 @@ public:
     CLASSNAME_REGISTER( plShadowCaster );
     GETINTERFACE_ANY( plShadowCaster, plMultiModifier );
     
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {}
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) {}
 
     virtual hsBool MsgReceive(plMessage* msg);
 
@@ -1015,8 +1015,8 @@ public:
 
     plVolumeIsect*      fISect;
 
-    UInt32              fWidth;
-    UInt32              fHeight;
+    uint32_t              fWidth;
+    uint32_t              fHeight;
 };
 
 BeginScene (on EvalMsg?)

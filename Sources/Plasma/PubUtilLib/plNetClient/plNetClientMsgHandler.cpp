@@ -110,10 +110,10 @@ int plNetClientMsgHandler::PeekMsg(plNetMessage * netMsg)
 void plNetClientMsgHandler::IFillInTransportMember(const plNetMsgMemberInfoHelper* mbi, plNetTransportMember* mbr)
 {
     const plNetClientMgr* nc=IGetNetClientMgr();
-    UInt16 port = mbi->GetClientGuid()->GetSrcPort();
-    UInt32 addr = mbi->GetClientGuid()->GetSrcAddr();       
-    UInt32 flags = mbi->GetFlags();
-    UInt32 plrID = mbi->GetClientGuid()->GetPlayerID();
+    uint16_t port = mbi->GetClientGuid()->GetSrcPort();
+    uint32_t addr = mbi->GetClientGuid()->GetSrcAddr();       
+    uint32_t flags = mbi->GetFlags();
+    uint32_t plrID = mbi->GetClientGuid()->GetPlayerID();
     plUoid avUoid = mbi->GetAvatarUoid();
     plKey avKey=hsgResMgr::ResMgr()->FindKey(avUoid);
 
@@ -211,7 +211,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
         m->ClassName(), m->AsStdString().c_str(), m->GetNetCoreMsgLen()) );
 */
 
-    UInt32 rwFlags = 0;
+    uint32_t rwFlags = 0;
 
     if ( m->IsInitialState() )
     {

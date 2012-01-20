@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "pnKeyedObject/plUoid.h"
 
-UInt32  pyJournalBook::fNextKeyID = 0;
+uint32_t  pyJournalBook::fNextKeyID = 0;
 
 void    pyJournalBook::IMakeNewKey( void )
 {
@@ -173,7 +173,7 @@ void    pyJournalBook::Hide( void )
         fBook->Hide();
 }
 
-void    pyJournalBook::Open( UInt32 startingPage )
+void    pyJournalBook::Open( uint32_t startingPage )
 {
     if( fBook != nil )
         fBook->Open( startingPage );
@@ -203,7 +203,7 @@ void    pyJournalBook::PreviousPage( void )
         fBook->PreviousPage();
 }
 
-void    pyJournalBook::GoToPage( UInt32 page )
+void    pyJournalBook::GoToPage( uint32_t page )
 {
     if( fBook != nil )
         fBook->GoToPage( page );
@@ -215,7 +215,7 @@ void    pyJournalBook::SetSize( hsScalar width, hsScalar height )
         fBook->SetBookSize( width, height );
 }
 
-UInt32  pyJournalBook::GetCurrentPage( void ) const
+uint32_t  pyJournalBook::GetCurrentPage( void ) const
 {
     if( fBook != nil )
         return fBook->GetCurrentPage();
@@ -223,7 +223,7 @@ UInt32  pyJournalBook::GetCurrentPage( void ) const
     return 0;
 }
 
-void    pyJournalBook::SetPageMargin( UInt32 margin )
+void    pyJournalBook::SetPageMargin( uint32_t margin )
 {
     if( fBook != nil )
         fBook->SetPageMargin( margin );
@@ -256,7 +256,7 @@ void    pyJournalBook::UnloadAllGUIs()
     pfJournalBook::UnloadAllGUIs();
 }
 
-PyObject *pyJournalBook::GetMovie(UInt8 index)
+PyObject *pyJournalBook::GetMovie(uint8_t index)
 {
     if (fBook != nil)
     {

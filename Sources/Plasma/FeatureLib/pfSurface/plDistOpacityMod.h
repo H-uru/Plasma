@@ -67,7 +67,7 @@ protected:
     };
 
     // Volatile flag, whether we're setup yet or not.
-    UInt8           fSetup;
+    uint8_t           fSetup;
 
     enum {
         kNearTrans,
@@ -84,7 +84,7 @@ protected:
     hsTArray<plFadeOpacityLay*> fFadeLays;
 
     // We only act in response to messages.
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
 
     hsScalar ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const;
     void ISetOpacity();

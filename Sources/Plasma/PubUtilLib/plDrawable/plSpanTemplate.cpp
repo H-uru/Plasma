@@ -58,7 +58,7 @@ plSpanTemplate::plSpanTemplate()
 {
 }
 
-UInt32 plSpanTemplate::CalcStride() 
+uint32_t plSpanTemplate::CalcStride() 
 {
     fStride = 0;
     if( NumPos() )
@@ -66,31 +66,31 @@ UInt32 plSpanTemplate::CalcStride()
     if( NumNorm() )
         fStride += sizeof(hsVector3);
     if( NumColor() )
-        fStride += sizeof(UInt32);
+        fStride += sizeof(uint32_t);
     if( NumColor2() )
-        fStride += sizeof(UInt32);
+        fStride += sizeof(uint32_t);
     if( NumWgtIdx() )
-        fStride += sizeof(UInt32);
+        fStride += sizeof(uint32_t);
     if( NumUVWs() )
-        fStride += (UInt8)(sizeof(hsPoint3) * NumUVWs());
+        fStride += (uint8_t)(sizeof(hsPoint3) * NumUVWs());
     if( NumWeights() )
-        fStride += (UInt8)(sizeof(hsScalar) * NumWeights());
+        fStride += (uint8_t)(sizeof(hsScalar) * NumWeights());
 
-    return UInt32(fStride);
+    return uint32_t(fStride);
 }
 
-void plSpanTemplate::Alloc(UInt16 format, UInt32 numVerts, UInt32 numTris)
+void plSpanTemplate::Alloc(uint16_t format, uint32_t numVerts, uint32_t numTris)
 {
     DeAlloc();
-    fNumVerts = (UInt16)numVerts;
+    fNumVerts = (uint16_t)numVerts;
     fFormat = format;
     CalcStride();
 
-    fNumTris = (UInt16)numTris;
+    fNumTris = (uint16_t)numTris;
 
-    fData = TRACKED_NEW UInt8[VertSize()];
+    fData = TRACKED_NEW uint8_t[VertSize()];
 
-    fIndices = TRACKED_NEW UInt16[NumIndices()];
+    fIndices = TRACKED_NEW uint16_t[NumIndices()];
 }
 
 void plSpanTemplate::DeAlloc()

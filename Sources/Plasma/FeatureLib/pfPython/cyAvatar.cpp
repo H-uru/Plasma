@@ -451,7 +451,7 @@ void cyAvatar::PreviousStage(pyKey &behKey, hsScalar transTime, hsBool setTime, 
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::GoToStage(pyKey &behKey, Int32 stage, hsScalar transTime, hsBool setTime, hsScalar newTime,
+void cyAvatar::GoToStage(pyKey &behKey, int32_t stage, hsScalar transTime, hsBool setTime, hsScalar newTime,
                         hsBool setDirection, bool isForward, hsBool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
@@ -479,15 +479,15 @@ void cyAvatar::GoToStage(pyKey &behKey, Int32 stage, hsScalar transTime, hsBool 
 }
 
 
-void cyAvatar::SetLoopCount(pyKey &behKey, Int32 stage, Int32 loopCount, hsBool netForce)
+void cyAvatar::SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, hsBool netForce)
 {
     // if it is a Multistage guy
     if ( plMultistageBehMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
     {
         plMultistageModMsg* pMsg = TRACKED_NEW plMultistageModMsg((plKey)nil, behKey.getKey());
         pMsg->SetCommand(plMultistageModMsg::kSetLoopCount);
-        pMsg->fStageNum = (UInt8)stage;
-        pMsg->fNumLoops = (UInt8)loopCount;
+        pMsg->fStageNum = (uint8_t)stage;
+        pMsg->fNumLoops = (uint8_t)loopCount;
 
         if ( netForce )
             pMsg->SetBCastFlag(plMessage::kNetForce | plMessage::kNetPropagate);
@@ -543,7 +543,7 @@ void cyAvatar::Seek(pyKey &seekKey, float duration, hsBool usePhysics)
 //
 //  PURPOSE    : Return what clothing group the avatar is in
 //
-Int32 cyAvatar::GetAvatarClothingGroup()
+int32_t cyAvatar::GetAvatarClothingGroup()
 {
     // find the avatar's armature modifier
     const plArmatureMod *avMod = nil;
@@ -572,7 +572,7 @@ Int32 cyAvatar::GetAvatarClothingGroup()
 //
 //  PURPOSE    : Return a list of the wearable items for this avatar of that clothing_type
 //
-std::vector<std::string> cyAvatar::GetEntireClothingList(Int32 clothing_type)
+std::vector<std::string> cyAvatar::GetEntireClothingList(int32_t clothing_type)
 {
     // Currently, just all the clothing available will be returned
     hsTArray<plClothingItem*> clothingList = plClothingMgr::GetClothingMgr()->GetItemList();
@@ -594,7 +594,7 @@ std::vector<std::string> cyAvatar::GetEntireClothingList(Int32 clothing_type)
 //
 //  PURPOSE    : Return a list of the wearable items for this avatar of that clothing_type
 //
-std::vector<PyObject*> cyAvatar::GetClosetClothingList(Int32 clothing_type)
+std::vector<PyObject*> cyAvatar::GetClosetClothingList(int32_t clothing_type)
 {
     std::vector<PyObject*> retVal;
 
@@ -816,7 +816,7 @@ void cyAvatar::AddWardrobeClothingItem(const char* clothing_name,pyColor& tint1,
 //  PURPOSE    : Return a list of unique clothing items (each has a different mesh)
 //             : that belong to the specific type
 //
-std::vector<PyObject*> cyAvatar::GetUniqueMeshList(Int32 clothing_type)
+std::vector<PyObject*> cyAvatar::GetUniqueMeshList(int32_t clothing_type)
 {
     std::vector<PyObject*> retVal;
 
@@ -1049,7 +1049,7 @@ hsBool cyAvatar::TintClothingItem(const char* clothing_name, pyColor& tint)
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-hsBool cyAvatar::TintClothingItemLayer(const char* clothing_name, pyColor& tint, UInt8 layer)
+hsBool cyAvatar::TintClothingItemLayer(const char* clothing_name, pyColor& tint, uint8_t layer)
 {
     return TintClothingItemLayerU(clothing_name,tint,layer,true);
 }
@@ -1164,7 +1164,7 @@ hsBool cyAvatar::TintClothingItemU(const char* clothing_name, pyColor& tint, hsB
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-hsBool cyAvatar::TintClothingItemLayerU(const char* clothing_name, pyColor& tint, UInt8 layer, hsBool update)
+hsBool cyAvatar::TintClothingItemLayerU(const char* clothing_name, pyColor& tint, uint8_t layer, hsBool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1246,7 +1246,7 @@ PyObject* cyAvatar::GetTintClothingItem(const char* clothing_name)
 //
 //  PURPOSE    : Get the tint a clothing item, i.e. change the color of it
 //
-PyObject* cyAvatar::GetTintClothingItemL(const char* clothing_name, UInt8 layer)
+PyObject* cyAvatar::GetTintClothingItemL(const char* clothing_name, uint8_t layer)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1379,7 +1379,7 @@ plMorphSequence* cyAvatar::LocalMorphSequence()
 //
 //  PURPOSE    : Set the morph value of a specific layer of clothing
 //
-void cyAvatar::SetMorph(const char* clothing_name, UInt8 layer, float value)
+void cyAvatar::SetMorph(const char* clothing_name, uint8_t layer, float value)
 {
     plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(clothing_name);
     if( !item )
@@ -1430,7 +1430,7 @@ void cyAvatar::SetMorph(const char* clothing_name, UInt8 layer, float value)
 //
 //  PURPOSE    : Returns the current morph value of the specific layer of clothing
 //
-float cyAvatar::GetMorph(const char* clothing_name, UInt8 layer)
+float cyAvatar::GetMorph(const char* clothing_name, uint8_t layer)
 {
     plMorphSequence* seq = LocalMorphSequence();
     if( !seq )
@@ -1474,7 +1474,7 @@ float cyAvatar::GetMorph(const char* clothing_name, UInt8 layer)
 //
 //  PURPOSE    : Set the skin blend for the specified layer
 //
-void cyAvatar::SetSkinBlend(UInt8 layer, float value)
+void cyAvatar::SetSkinBlend(uint8_t layer, float value)
 {
     if (value < 0.0) value = 0.0;
     if (value > 1.0) value = 1.0;
@@ -1494,7 +1494,7 @@ void cyAvatar::SetSkinBlend(UInt8 layer, float value)
 //
 //  PURPOSE    : Returns the current layer's skin blend
 //
-float cyAvatar::GetSkinBlend(UInt8 layer)
+float cyAvatar::GetSkinBlend(uint8_t layer)
 {
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
     
@@ -1616,7 +1616,7 @@ void cyAvatar::ChangeAvatar(const char* genderName)
 #ifndef PLASMA_EXTERNAL_RELEASE
     plClothingMgr::ChangeAvatar((char*)genderName);
     
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, genderName, arrsize(wStr));
     
     RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef();
@@ -1637,7 +1637,7 @@ void cyAvatar::ChangeAvatar(const char* genderName)
 //
 void cyAvatar::ChangePlayerName(const char* playerName)
 {
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, playerName, arrsize(wStr));
     
     RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef();

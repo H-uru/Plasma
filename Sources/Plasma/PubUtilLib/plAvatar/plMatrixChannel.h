@@ -173,7 +173,7 @@ public:
     virtual plAGChannel * MakeBlend(plAGChannel *newChannel, plScalarChannel *channelBias, int blendPriority);
 
     // you cannot blend on top of a channel that has higher priority than you do.
-    virtual UInt16 GetPriority();
+    virtual uint16_t GetPriority();
 
     // SPECIFICS
     const plMatrixChannel * GetChannelA() const { return fChannelA; }

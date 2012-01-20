@@ -87,7 +87,7 @@ protected:
     bool fLinkedToSingleAge;
     bool fJustLinkToAges;
 
-    UInt64 fLinkTime;
+    uint64_t fLinkTime;
 
     std::string fStatusMessage;
 
@@ -176,8 +176,8 @@ void plAutoProfileImp::IShutdown()
     // KLUDGE - Copy the load timing log, in case we used it
     #define kTimingLog L"readtimings.0.log"
     #define kAgeTimingLog L"agetimings.0.log"
-    wchar destPath[MAX_PATH];
-    wchar sourcePath[MAX_PATH];
+    wchar_t destPath[MAX_PATH];
+    wchar_t sourcePath[MAX_PATH];
 
     PathAddFilename(destPath, plProfileManagerFull::Instance().GetProfilePath(), kTimingLog, arrsize(destPath));
     PathGetLogDirectory(sourcePath, arrsize(sourcePath));

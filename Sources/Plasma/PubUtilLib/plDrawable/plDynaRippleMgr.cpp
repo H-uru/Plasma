@@ -66,8 +66,8 @@ static plRandom sRand;
 
 #include "plTweak.h"
 
-static const UInt32 kNumPrintIDs = 5;
-static const UInt32 kPrintIDs[kNumPrintIDs] =
+static const uint32_t kNumPrintIDs = 5;
+static const uint32_t kPrintIDs[kNumPrintIDs] =
 {
     plAvBrainHuman::TrunkPrint,
     plAvBrainHuman::LHandPrint,
@@ -146,7 +146,7 @@ hsBool plDynaRippleMgr::MsgReceive(plMessage* msg)
             const plPrintShape* shape = IGetPrintShape(armMsg->fArmature, fPartIDs[i]);
             if( shape )
             {
-                plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+                plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
                 if( IRippleFromShape(shape, false) )
                 {
                     INotifyActive(info, armMsg->fArmature->GetKey(), fPartIDs[i]);
@@ -182,7 +182,7 @@ hsBool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, hsBool force
 
     hsBool retVal = false;
 
-    plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+    plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
 
     const hsMatrix44& shapeL2W = shape->GetOwner()->GetLocalToWorld();
 

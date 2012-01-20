@@ -59,11 +59,11 @@ protected:
     plKey                   fKey;
     double                  fConTime;
     hsScalar                fWetLength;
-    UInt32                  fFlags;
-    UInt32                  fID;
+    uint32_t                  fFlags;
+    uint32_t                  fID;
 public:
     plDynaDecalEnableMsg();
-    plDynaDecalEnableMsg(const plKey& r, const plKey& armOrShapeKey, double conTime, hsScalar wetLength, hsBool end, UInt32 id=UInt32(-1), hsBool isArm=true);
+    plDynaDecalEnableMsg(const plKey& r, const plKey& armOrShapeKey, double conTime, hsScalar wetLength, hsBool end, uint32_t id=uint32_t(-1), hsBool isArm=true);
     ~plDynaDecalEnableMsg();
 
     CLASSNAME_REGISTER( plDynaDecalEnableMsg );
@@ -91,8 +91,8 @@ public:
     hsBool                  AtEnd() const { return 0 != (fFlags & kAtEnd); }
     void                    SetAtEnd(hsBool b) { if(b)fFlags |= kAtEnd; else fFlags &= ~kAtEnd; }
 
-    UInt32                  GetID() const { return fID; }
-    void                    SetID(UInt32 n) { fID = n; }
+    uint32_t                  GetID() const { return fID; }
+    void                    SetID(uint32_t n) { fID = n; }
 };
 
 #endif // plDynaDecalEnableMsg_inc

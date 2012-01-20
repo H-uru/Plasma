@@ -96,10 +96,10 @@ hsFixed hsFixedCos(hsFixed s);
 hsFixed hsFixedASin(hsFixed s);
 hsFixed hsFixedACos(hsFixed s);
 
-UInt16  hsSqrt32(UInt32 value);
-UInt16  hsCubeRoot32(UInt32 value);
-Int32   hsMulDiv32(Int32 numer1, Int32 numer2, Int32 denom);
-Int32   hsMagnitude32(Int32 x, Int32 y);
+uint16_t  hsSqrt32(uint32_t value);
+uint16_t  hsCubeRoot32(uint32_t value);
+int32_t   hsMulDiv32(int32_t numer1, int32_t numer2, int32_t denom);
+int32_t   hsMagnitude32(int32_t x, int32_t y);
 
 #ifdef __cplusplus
 }
@@ -112,8 +112,8 @@ Int32   hsMagnitude32(Int32 x, Int32 y);
         void        Set(hsFixed a, hsFixed b, hsFixed c) { fA = a; fB = b; fC = c; }
 
         hsFixed FixEval(hsFixed x, hsFixed y) const { return hsFixMul(fA, x) + hsFixMul(fB, y) + fC; }
-        Int32   IntEval(Int32 x, Int32 y) const { return fA * x + fB * y + fC; }
-        void        ShiftDown(UInt32 i) { fA >>= i; fB >>= i; fC >>= i;}
+        int32_t   IntEval(int32_t x, int32_t y) const { return fA * x + fB * y + fC; }
+        void        ShiftDown(uint32_t i) { fA >>= i; fB >>= i; fC >>= i;}
     };
 #endif
 

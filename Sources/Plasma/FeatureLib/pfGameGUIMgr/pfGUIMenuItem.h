@@ -73,12 +73,12 @@ class pfGUIMenuItem : public pfGUIButtonMod
         HowToSkin       fHowToSkin;
         hsBool          fSkinBuffersUpdated;
 
-        virtual void    IGrowDTMDimsToDesiredSize( UInt16 &width, UInt16 &height );
+        virtual void    IGrowDTMDimsToDesiredSize( uint16_t &width, uint16_t &height );
         virtual void    IPostSetUpDynTextMap( void );
         virtual void    IUpdate( void );
 
         void            IUpdateSkinBuffers( void );
-        void            IUpdateSingleSkinBuffer( UInt16 y, hsBool sel );
+        void            IUpdateSingleSkinBuffer( uint16_t y, hsBool sel );
 
     public:
 
@@ -108,10 +108,10 @@ class pfGUIMenuItem : public pfGUIButtonMod
 
         virtual void    SetInteresting( hsBool i );
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers );
 
         virtual void    PurgeDynaTextMapImage();
 
@@ -120,7 +120,7 @@ class pfGUIMenuItem : public pfGUIButtonMod
         void        SetName( const wchar_t *name );
         const wchar_t   *GetName( void ) const { return fName; }
     
-        void    GetTextExtents( UInt16 &width, UInt16 &height );
+        void    GetTextExtents( uint16_t &width, uint16_t &height );
 
         void    SetSkin( pfGUISkin *skin, HowToSkin s );
 };

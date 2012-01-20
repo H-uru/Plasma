@@ -76,16 +76,16 @@ plRegistryPageNode  *plRawResManager::CreatePage( const plPageInfo &info )
     return page;
 }
 
-UInt8   *plRawResManager::ReadObjectBuffer( plKeyImp *pKey, UInt32 &retBuffLength )
+uint8_t   *plRawResManager::ReadObjectBuffer( plKeyImp *pKey, uint32_t &retBuffLength )
 {
-    UInt8   *buffer = nil;
+    uint8_t   *buffer = nil;
 
 
     hsAssert( pKey, "Null Key" );
-    hsAssert( pKey->GetStartPos() != (UInt32)-1, "Missing StartPos" );
-    hsAssert( pKey->GetDataLen() != (UInt32)-1, "Missing Data Length" );
+    hsAssert( pKey->GetStartPos() != (uint32_t)-1, "Missing StartPos" );
+    hsAssert( pKey->GetDataLen() != (uint32_t)-1, "Missing Data Length" );
 
-    if( pKey->GetStartPos() == (UInt32)-1 || pKey->GetDataLen() == (UInt32)-1 )
+    if( pKey->GetStartPos() == (uint32_t)-1 || pKey->GetDataLen() == (uint32_t)-1 )
     {
         // Try to recover from this by just not reading an object
         retBuffLength = 0;
@@ -98,14 +98,14 @@ UInt8   *plRawResManager::ReadObjectBuffer( plKeyImp *pKey, UInt32 &retBuffLengt
     {
         hsStream *stream = dataStream->GetStream();
 
-        UInt32 oldPos = stream->GetPosition();
+        uint32_t oldPos = stream->GetPosition();
         stream->SetPosition( pKey->GetStartPos() );
 
-        buffer = new UInt8[ pKey->GetDataLen() ];
+        buffer = new uint8_t[ pKey->GetDataLen() ];
         if( buffer != nil )
         {
-            *( (UInt32 *)buffer ) = pKey->GetDataLen();
-            stream->Read( pKey->GetDataLen(), (UInt8 *)buffer );
+            *( (uint32_t *)buffer ) = pKey->GetDataLen();
+            stream->Read( pKey->GetDataLen(), (uint8_t *)buffer );
             retBuffLength = pKey->GetDataLen();
         }
         else

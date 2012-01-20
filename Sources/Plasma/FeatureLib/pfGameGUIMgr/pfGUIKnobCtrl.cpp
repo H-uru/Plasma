@@ -90,7 +90,7 @@ pfGUIKnobCtrl::~pfGUIKnobCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIKnobCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIKnobCtrl::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
@@ -109,7 +109,7 @@ void    pfGUIKnobCtrl::Read( hsStream *s, hsResMgr *mgr )
     pfGUIValueCtrl::Read(s, mgr);
 
     fAnimationKeys.Reset();
-    UInt32 i, count = s->ReadLE32();
+    uint32_t i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
     fAnimName = s->ReadSafeString();
@@ -124,7 +124,7 @@ void    pfGUIKnobCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Write( s, mgr );
 
-    UInt32 i, count = fAnimationKeys.GetCount();
+    uint32_t i, count = fAnimationKeys.GetCount();
     s->WriteLE32( count );
     for( i = 0; i < count; i++ )
         mgr->WriteKey( s, fAnimationKeys[ i ] );
@@ -145,7 +145,7 @@ void    pfGUIKnobCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void    pfGUIKnobCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIKnobCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     fDragStart = mousePt;
     fDragValue = fValue;
@@ -202,13 +202,13 @@ void    pfGUIKnobCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
         fDragRangeMin = -1;
 }
 
-void    pfGUIKnobCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIKnobCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
     fDragging = false;
     HandleMouseDrag( mousePt, modifiers );
 }
 
-void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
     hsScalar oldValue = fValue, newValue = fDragValue;
 
@@ -364,7 +364,7 @@ void    pfGUIKnobCtrl::SetCurrValue( hsScalar v )
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32      pfGUIKnobCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUIKnobCtrl::IGetDesiredCursor( void ) const
 {
     if( HasFlag( kLeftRightOrientation ) )
     {

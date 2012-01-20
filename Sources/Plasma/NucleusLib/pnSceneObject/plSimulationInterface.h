@@ -89,7 +89,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
     
     void    SetProperty(int prop, hsBool on);
-    Int32   GetNumProperties() const { return kNumProps; }
+    int32_t   GetNumProperties() const { return kNumProps; }
 
     // Transform settable only, if you want it get it from the coordinate interface.
     void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);

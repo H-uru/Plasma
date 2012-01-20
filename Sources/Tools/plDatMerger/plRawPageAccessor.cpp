@@ -99,9 +99,9 @@ class plRawReaderIter : public plRegistryKeyIterator
         {
             plRawResManager *mgr = (plRawResManager *)hsgResMgr::ResMgr();
 
-            UInt32 len;
+            uint32_t len;
             plKeyImp *imp = (plKeyImp *)key;
-            UInt8 *buffer = mgr->ReadObjectBuffer( imp, len );
+            uint8_t *buffer = mgr->ReadObjectBuffer( imp, len );
 
             // This will also set the object ptr in the key
             plRawKeyedObject *obj = new plRawKeyedObject( key, len, buffer );

@@ -183,7 +183,7 @@ class plAGInstanceCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAGInstanceCallbackMsg() : plEventCallbackMsg(), fInstance(nil) {}
-    plAGInstanceCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plAGInstanceCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, int16_t repeats=-1, uint16_t user=0) :
       plEventCallbackMsg(receiver, e, idx, t, repeats, user), fInstance(nil) {}
 
     CLASSNAME_REGISTER( plAGInstanceCallbackMsg );
@@ -203,7 +203,7 @@ protected:
 
 public:
     plAGDetachCallbackMsg() : plEventCallbackMsg(), fAnimName(nil) {}
-    plAGDetachCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plAGDetachCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, int16_t repeats=-1, uint16_t user=0) :
                           plEventCallbackMsg(receiver, e, idx, t, repeats, user), fAnimName(nil) {}
     virtual ~plAGDetachCallbackMsg();
 

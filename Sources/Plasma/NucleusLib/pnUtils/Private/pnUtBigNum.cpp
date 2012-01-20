@@ -102,7 +102,7 @@ BigNum::~BigNum ()
 }
 
 //===========================================================================
-int BigNum::Compare (dword a) const {
+int BigNum::Compare (uint32_t a) const {
     // -1 if (this <  a)
     //  0 if (this == a)
     //  1 if (this >  a)
@@ -110,7 +110,7 @@ int BigNum::Compare (dword a) const {
     if (BN_is_word(&m_number, a))
         return 0;
 
-    // This returns 0xFFFFFFFFL if the number is bigger than one word, so
+    // This returns 0xFFFFFFFFL if the number is bigger than one uint16_t, so
     // it doesn't need any size check
     if (BN_get_word(&m_number) < a)
         return -1;
@@ -153,9 +153,9 @@ void BigNum::Rand (unsigned bits, BigNum * seed)
 {
     // this = random number with bits or fewer bits
 
-    unsigned seedBytes;
-    unsigned char * seedData = seed->GetData_BE(&seedBytes);
-    RAND_seed(seedData, seedBytes);
+    unsigned seedbytes;
+    unsigned char * seedData = seed->GetData_BE(&seedbytes);
+    RAND_seed(seedData, seedbytes);
     BN_rand(&m_number, bits, 0, 0);
     delete [] seedData;
 }

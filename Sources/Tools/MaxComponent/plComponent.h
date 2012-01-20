@@ -133,7 +133,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 **      BlockParameter 2: 
 **                  The internal name string.  This name is not localized. Internal names are meant
 **                  to be parsable as identifiers.  As such they should begin with an alpha character, have only 
-**                  alphanumerics, and have no spaces, punctuations, etc.  The convention for multi-word names 
+**                  alphanumerics, and have no spaces, punctuations, etc.  The convention for multi-uint16_t names 
 **                  is to use studly-caps, eg, paintRadius.  THIS IS A REQUIRED FIELD.
 **
 **      BlockParameter 3:  
@@ -158,7 +158,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 **                          Indicates the parameter block2 will be constructed and referenced automatically 
 **                          to its owner in the call to ClassDesc2::MakeAutoParamBlocks().  If this flag is 
 **                          set, the parameter block's reference number in the owning object should be given 
-**                          immediately following the flag word in the descriptor constructor.  See 
+**                          immediately following the flag uint16_t in the descriptor constructor.  See 
 **                          <auto_construct_block_refno>.
 **                    
 **                  P_AUTO_UI

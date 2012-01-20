@@ -72,7 +72,7 @@ void hsInterp::LinInterp(const hsScalarTriple* k1, const hsScalarTriple* k2, hsS
 }
 
 void hsInterp::LinInterp(const hsColorRGBA* k1, const hsColorRGBA* k2, hsScalar t, 
-                      hsColorRGBA* result, UInt32 flags)
+                      hsColorRGBA* result, uint32_t flags)
 {
     if (t==0.0)
     {
@@ -103,7 +103,7 @@ void hsInterp::LinInterp(const hsColorRGBA* k1, const hsColorRGBA* k2, hsScalar 
 }
 
 void hsInterp::LinInterp(const hsMatrix33* k1, const hsMatrix33* k2, hsScalar t, 
-                      hsMatrix33* result, UInt32 flags)
+                      hsMatrix33* result, uint32_t flags)
 {
     if (t==0.0)
     {
@@ -163,7 +163,7 @@ void hsInterp::LinInterp(const hsMatrix33* k1, const hsMatrix33* k2, hsScalar t,
 //
 //
 void hsInterp::LinInterp(const hsMatrix44* mat1, const hsMatrix44* mat2, hsScalar t, 
-                      hsMatrix44* out, UInt32 flags)
+                      hsMatrix44* out, uint32_t flags)
 {
     if (flags == 0)
     {
@@ -255,7 +255,7 @@ void hsInterp::LinInterp(const hsScaleValue* k1, const hsScaleValue* k2, hsScala
 }
 
 void hsInterp::LinInterp(const hsAffineParts* k1, const hsAffineParts* k2, hsScalar t, 
-                      hsAffineParts* result, UInt32 flags)
+                      hsAffineParts* result, uint32_t flags)
 {       
     if (t==0.0)
     {
@@ -387,7 +387,7 @@ void hsInterp::BezInterp(const hsBezScaleKey* k1, const hsBezScaleKey* k2, const
 //
 // Get an element from an array of unknown type
 //
-static inline hsKeyFrame* GetKey(Int32 i, void *keys, Int32 size)
+static inline hsKeyFrame* GetKey(int32_t i, void *keys, int32_t size)
 {
     return (hsKeyFrame*) ((char*)keys + size * i);
 }
@@ -399,12 +399,12 @@ static inline hsKeyFrame* GetKey(Int32 i, void *keys, Int32 size)
 // Returns the index of the first key which can be passed in as a hint (lastKeyIdx)
 // for the next search.
 //
-void hsInterp::GetBoundaryKeyFrames(hsScalar time, UInt32 numKeys, void *keys, UInt32 size,
-                                    hsKeyFrame **kF1, hsKeyFrame **kF2, UInt32 *lastKeyIdx, hsScalar *p, hsBool forwards)
+void hsInterp::GetBoundaryKeyFrames(hsScalar time, uint32_t numKeys, void *keys, uint32_t size,
+                                    hsKeyFrame **kF1, hsKeyFrame **kF2, uint32_t *lastKeyIdx, hsScalar *p, hsBool forwards)
 {
     hsAssert(numKeys>1, "Must have more than 1 keyframe");
     int k1, k2;
-    UInt16 frame = (UInt16)(time * MAX_FRAMES_PER_SEC);
+    uint16_t frame = (uint16_t)(time * MAX_FRAMES_PER_SEC);
 
     // boundary case, past end
     if (frame > GetKey(numKeys-1, keys, size)->fFrame)

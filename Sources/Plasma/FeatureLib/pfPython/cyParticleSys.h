@@ -63,7 +63,7 @@ protected:
     hsTArray<plKey> fRecvr;
     hsBool          fNetForce;
 
-    virtual void    ISendParticleSysMsg(UInt32 param, hsScalar value);
+    virtual void    ISendParticleSysMsg(uint32_t param, hsScalar value);
 
     cyParticleSys(const plKey sender=nil,const plKey recvr=nil);
 

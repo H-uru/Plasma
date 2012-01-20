@@ -173,7 +173,7 @@ protected:
     void IFixBounds();
     hsBool IGetProxy(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    UInt32 IGetEventGroup(ParamID paramID);
+    uint32_t IGetEventGroup(ParamID paramID);
 };
 
 class plSwim2DComponent : public plPhysicCoreComponent

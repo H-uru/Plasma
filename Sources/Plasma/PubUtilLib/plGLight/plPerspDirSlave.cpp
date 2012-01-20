@@ -322,7 +322,7 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
 
     hsScalar tanX = 1.f / cotX;
     hsScalar tanY = 1.f / cotY;
-    fView.SetScreenSize((UInt16)fWidth, (UInt16)fHeight);
+    fView.SetScreenSize((uint16_t)fWidth, (uint16_t)fHeight);
     fView.SetCameraTransform(pipe->GetViewTransform().GetWorldToCamera(), pipe->GetViewTransform().GetCameraToWorld());
     fView.SetPerspective(true);
     fView.SetViewPort(0, 0, (float)fWidth, (float)fHeight, false);

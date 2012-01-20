@@ -96,8 +96,8 @@ class plStencilCaps
         };
 
         hsBool      fIsSupported;
-        UInt8       fSupportedDepths;
-        UInt8       fSupportedOps;
+        uint8_t       fSupportedDepths;
+        uint8_t       fSupportedOps;
 };
 
 #endif // _plStencil_h

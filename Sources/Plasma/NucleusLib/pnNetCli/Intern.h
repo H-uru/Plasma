@@ -94,7 +94,7 @@ void NetMsgChannelGetDhConstants (
 void NetMsgCryptClientStart (
     NetMsgChannel * channel,
     unsigned        seedBytes,
-    const byte      seedData[],
+    const uint8_t      seedData[],
     BigNum *        clientSeed,
     BigNum *        serverSeed
 );
@@ -102,7 +102,7 @@ void NetMsgCryptClientStart (
 void NetMsgCryptServerConnect (
     NetMsgChannel * channel,
     unsigned        seedBytes,
-    const byte      seedData[],
+    const uint8_t      seedData[],
     BigNum *        clientSeed
 );
 
@@ -114,12 +114,12 @@ void NetMsgCryptServerConnect (
 ***/
 
 class CInputAccumulator {
-    ARRAY(byte) buffer;
-    byte *      curr;
+    ARRAY(uint8_t) buffer;
+    uint8_t *      curr;
 
 public:
     CInputAccumulator ();
-    void Add (unsigned count, const byte * data);
+    void Add (unsigned count, const uint8_t * data);
     bool Get (unsigned count, void * dest); // returns false if request cannot be fulfilled
     bool Eof () const;
     void Clear ();

@@ -76,9 +76,9 @@ const unsigned kPathFlagRecurse     = 1<<4;   // also set if "**" used in filesp
 
 struct PathFind {
     unsigned    flags;
-    qword       fileLength;
-    qword       lastWriteTime;
-    wchar       name[MAX_PATH];
+    uint64_t       fileLength;
+    uint64_t       lastWriteTime;
+    wchar_t       name[MAX_PATH];
 };
 
 
@@ -90,49 +90,49 @@ struct PathFind {
 
 void PathFindFiles (
     ARRAY(PathFind) *   paths,
-    const wchar         fileSpec[],
+    const wchar_t         fileSpec[],
     unsigned            pathFlags
 );
 void PathGetProgramName (
-    wchar *     dst,
+    wchar_t *     dst,
     unsigned    dstChars
 );
 void PathGetModuleName (
-    wchar *     dst,
+    wchar_t *     dst,
     unsigned    dstChars
 );
 
 // this function will use the current directory if <src> is a relative path
 // (see PathSetCurrentDirectory/PathGetCurrentDirectory)
 bool PathFromString (
-    wchar *     dst,
-    const wchar src[],
+    wchar_t *     dst,
+    const wchar_t src[],
     unsigned    dstChars
 );
 bool PathFromString (
-    wchar *     dst,
-    const wchar src[],
+    wchar_t *     dst,
+    const wchar_t src[],
     unsigned    dstChars,
-    const wchar baseDir[]
+    const wchar_t baseDir[]
 );
 
 bool PathDoesFileExist (
-    const wchar fileName[]
+    const wchar_t fileName[]
 );
 bool PathDoesDirectoryExist (
-    const wchar directory[]
+    const wchar_t directory[]
 );
 
 bool PathDeleteFile (
-    const wchar file[]
+    const wchar_t file[]
 );
 bool PathMoveFile (
-    const wchar src[],
-    const wchar dst[]
+    const wchar_t src[],
+    const wchar_t dst[]
 );
 bool PathCopyFile (
-    const wchar src[],
-    const wchar dst[]
+    const wchar_t src[],
+    const wchar_t dst[]
 );
 
 
@@ -143,41 +143,41 @@ bool PathCopyFile (
 ***/
 
 void PathSplitPath (
-    const wchar     path[],
-    wchar *         drive,
-    wchar *         dir,
-    wchar *         fname,
-    wchar *         ext
+    const wchar_t     path[],
+    wchar_t *         drive,
+    wchar_t *         dir,
+    wchar_t *         fname,
+    wchar_t *         ext
 );
 
 void PathMakePath (
-    wchar *         path,
+    wchar_t *         path,
     unsigned        chars,
-    const wchar     drive[],
-    const wchar     dir[],
-    const wchar     fname[],
-    const wchar     ext[]
+    const wchar_t     drive[],
+    const wchar_t     dir[],
+    const wchar_t     fname[],
+    const wchar_t     ext[]
 );
 
 // c:\dir1 + dir2\file.txt => c:\dir1\dir2\file.txt
 void PathAddFilename (
-    wchar *      dst,
-    const wchar  src[], 
-    const wchar  fname[],
+    wchar_t *      dst,
+    const wchar_t  src[], 
+    const wchar_t  fname[],
     unsigned     dstChars
 );
 
 // c:\dir1\dir2\file.txt => c:\dir1\dir2\    * note trailing backslash
 void PathRemoveFilename (
-    wchar *      dst,
-    const wchar  src[],
+    wchar_t *      dst,
+    const wchar_t  src[],
     unsigned     dstChars
 );
 
 // c:\file.txt => c:\dir1\dir2\file
 void PathRemoveExtension (
-    wchar *      dst,
-    const wchar  src[],
+    wchar_t *      dst,
+    const wchar_t  src[],
     unsigned     dstChars
 );
 
@@ -185,9 +185,9 @@ void PathRemoveExtension (
 // c:\file.     + .out => c:\file.out
 // c:\file.txt  + .out => c:\file.out
 void PathSetExtension (
-    wchar *      dst,
-    const wchar  src[],
-    const wchar  ext[],
+    wchar_t *      dst,
+    const wchar_t  src[],
+    const wchar_t  ext[],
     unsigned     dstChars
 );
 
@@ -195,41 +195,41 @@ void PathSetExtension (
 // c:\file.     + .out => c:\file.
 // c:\file.txt  + .out => c:\file.txt
 void PathAddExtension (
-    wchar *      dst,
-    const wchar  src[],
-    const wchar  ext[],
+    wchar_t *      dst,
+    const wchar_t  src[],
+    const wchar_t  ext[],
     unsigned     dstChars
 );
 
 // c:\dir1\dir2\file.txt => file.txt
 void PathRemoveDirectory (
-    wchar *      dst,
-    const wchar  src[],
+    wchar_t *      dst,
+    const wchar_t  src[],
     unsigned     dstChars
 );
 
 // c:\dir1\dir2\file.txt - c:\dir1 => .\dir2\file.txt
 // c:\dir1\dir2\file1.txt - c:\dir1\dir4\file2.txt => ..\dir4\file2.txt
 bool PathMakeRelative (
-    wchar *     dst,
+    wchar_t *     dst,
     unsigned    fromFlags,
-    const wchar from[],
+    const wchar_t from[],
     unsigned    toFlags,
-    const wchar to[],
+    const wchar_t to[],
     unsigned    dstChars
 );
 bool PathIsRelative (
-    const wchar src[]
+    const wchar_t src[]
 );
 
-const wchar * PathFindFilename (const wchar path[]);
-inline wchar * PathFindFilename (wchar * path) {
-    return const_cast<wchar *>(PathFindFilename(const_cast<const wchar *>(path)));
+const wchar_t * PathFindFilename (const wchar_t path[]);
+inline wchar_t * PathFindFilename (wchar_t * path) {
+    return const_cast<wchar_t *>(PathFindFilename(const_cast<const wchar_t *>(path)));
 }
 
-const wchar * PathFindExtension (const wchar path[]);
-inline wchar * PathFindExtension (wchar * path) {
-    return const_cast<wchar *>(PathFindExtension(const_cast<const wchar *>(path)));
+const wchar_t * PathFindExtension (const wchar_t path[]);
+inline wchar_t * PathFindExtension (wchar_t * path) {
+    return const_cast<wchar_t *>(PathFindExtension(const_cast<const wchar_t *>(path)));
 }
 
 
@@ -260,46 +260,46 @@ const unsigned kPathCreateDirFlagCreateNew  = 1<<1;
 
 
 EPathCreateDirError PathCreateDirectory (
-    const wchar path[],
+    const wchar_t path[],
     unsigned    flags
 );
 void PathDeleteDirectory (
-    const wchar path[],
+    const wchar_t path[],
     unsigned    flags
 );
 
 
 // Set directory
-bool PathSetCurrentDirectory (const wchar path[]);
+bool PathSetCurrentDirectory (const wchar_t path[]);
 void PathSetProgramDirectory ();
 
 
 // Get directory
 void PathGetProgramDirectory (
-    wchar *     dst,
+    wchar_t *     dst,
     unsigned    dstChars
 );
 void PathGetCurrentDirectory (
-    wchar *     dst,
+    wchar_t *     dst,
     unsigned    dstChars
 );
 void PathGetTempDirectory (
-    wchar *     dst,
+    wchar_t *     dst,
     unsigned    dstChars
 );
 
 
 // Product and user-specific common directory locations
 void PathGetUserDirectory (
-    wchar *     dst,
+    wchar_t *     dst,
     unsigned    dstChars
 );
 void PathGetLogDirectory (
-    wchar *     dst,
+    wchar_t *     dst,
     unsigned    dstChars
 );
 void PathGetInitDirectory (
-    wchar *     dst,
+    wchar_t *     dst,
     unsigned    dstChars
 );
 
@@ -312,14 +312,14 @@ void PathGetInitDirectory (
 
 // you may send nil for any fields you don't care about
 void PathSplitEmail (
-    const wchar emailAddr[],
-    wchar *     user,
+    const wchar_t emailAddr[],
+    wchar_t *     user,
     unsigned    userChars,
-    wchar *     domain,
+    wchar_t *     domain,
     unsigned    domainChars,
-    wchar *     tld,
+    wchar_t *     tld,
     unsigned    tldChars,
-    wchar *     subDomains,     // (wchar *)&subs   --> wchar subs[16][256];
+    wchar_t *     subDomains,     // (wchar_t *)&subs   --> wchar_t subs[16][256];
     unsigned    subDomainChars, // arrsize(subs[0]) --> 256
     unsigned    subDomainCount  // arrsize(subs)    --> 16
 );

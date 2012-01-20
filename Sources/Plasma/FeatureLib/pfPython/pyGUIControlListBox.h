@@ -89,40 +89,40 @@ public:
     // ...this allows the listbox to be used without being selectable
     virtual void    Clickable( void );
     virtual void    Unclickable( void );
-    virtual Int32   GetSelection( void );
-    virtual void    SetSelection( Int32 item );
+    virtual int32_t   GetSelection( void );
+    virtual void    SetSelection( int32_t item );
     virtual void    Refresh( void );
-    virtual void    SetElement( UInt16 idx, const char* text );
-    virtual void    SetElementW( UInt16 idx, std::wstring text );
-    virtual void    RemoveElement( UInt16 index );
+    virtual void    SetElement( uint16_t idx, const char* text );
+    virtual void    SetElementW( uint16_t idx, std::wstring text );
+    virtual void    RemoveElement( uint16_t index );
     virtual void    ClearAllElements( void );
-    virtual UInt16  GetNumElements( void );
-    virtual std::string GetElement( UInt16 idx );
-    virtual std::wstring GetElementW( UInt16 idx );
-    virtual Int16   AddString( const char *string );
-    virtual Int16   AddStringW( std::wstring string );
-    virtual Int16   AddImage( pyImage& image, hsBool respectAlpha );
-    virtual Int16   AddImageInBox( pyImage& image, UInt32 x, UInt32 y, UInt32 width, UInt32 height, hsBool respectAlpha );
-    virtual Int16   AddImageAndSwatchesInBox( pyImage& image, UInt32 x, UInt32 y, UInt32 width, UInt32 height, hsBool respectAlpha,
+    virtual uint16_t  GetNumElements( void );
+    virtual std::string GetElement( uint16_t idx );
+    virtual std::wstring GetElementW( uint16_t idx );
+    virtual int16_t   AddString( const char *string );
+    virtual int16_t   AddStringW( std::wstring string );
+    virtual int16_t   AddImage( pyImage& image, hsBool respectAlpha );
+    virtual int16_t   AddImageInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, hsBool respectAlpha );
+    virtual int16_t   AddImageAndSwatchesInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, hsBool respectAlpha,
                                                         pyColor &primary, pyColor &secondary );
-    virtual void    SetSwatchSize( UInt32 size );
-    virtual void    SetSwatchEdgeOffset( UInt32 size );
-    virtual void    SetStringJustify( UInt16 idx, UInt32 justify);
-    virtual Int16   FindString( const char *toCompareTo );
-    virtual Int16   FindStringW( std::wstring toCompareTo );
-    virtual Int16   AddTextWColor( const char *str, pyColor& textcolor, UInt32 inheritalpha);
-    virtual Int16   AddTextWColorW( std::wstring str, pyColor& textcolor, UInt32 inheritalpha);
-    virtual Int16   AddTextWColorWSize( const char *str, pyColor& textcolor, UInt32 inheritalpha, Int32 fontsize);
-    virtual Int16   AddTextWColorWSizeW( std::wstring str, pyColor& textcolor, UInt32 inheritalpha, Int32 fontsize);
-    virtual void    Add2TextWColor( const char *str1, pyColor& textcolor1,const char *str2, pyColor& textcolor2, UInt32 inheritalpha);
-    virtual void    Add2TextWColorW( std::wstring str1, pyColor& textcolor1, std::wstring str2, pyColor& textcolor2, UInt32 inheritalpha);
-    virtual Int16   AddStringInBox( const char *string, UInt32 min_width, UInt32 min_height );
-    virtual Int16   AddStringInBoxW( std::wstring string, UInt32 min_width, UInt32 min_height );
+    virtual void    SetSwatchSize( uint32_t size );
+    virtual void    SetSwatchEdgeOffset( uint32_t size );
+    virtual void    SetStringJustify( uint16_t idx, uint32_t justify);
+    virtual int16_t   FindString( const char *toCompareTo );
+    virtual int16_t   FindStringW( std::wstring toCompareTo );
+    virtual int16_t   AddTextWColor( const char *str, pyColor& textcolor, uint32_t inheritalpha);
+    virtual int16_t   AddTextWColorW( std::wstring str, pyColor& textcolor, uint32_t inheritalpha);
+    virtual int16_t   AddTextWColorWSize( const char *str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
+    virtual int16_t   AddTextWColorWSizeW( std::wstring str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
+    virtual void    Add2TextWColor( const char *str1, pyColor& textcolor1,const char *str2, pyColor& textcolor2, uint32_t inheritalpha);
+    virtual void    Add2TextWColorW( std::wstring str1, pyColor& textcolor1, std::wstring str2, pyColor& textcolor2, uint32_t inheritalpha);
+    virtual int16_t   AddStringInBox( const char *string, uint32_t min_width, uint32_t min_height );
+    virtual int16_t   AddStringInBoxW( std::wstring string, uint32_t min_width, uint32_t min_height );
     virtual void    ScrollToBegin( void );
     virtual void    ScrollToEnd( void );
-    virtual void    SetScrollPos( Int32 pos );
-    virtual Int32   GetScrollPos( void );
-    virtual Int32   GetScrollRange( void );
+    virtual void    SetScrollPos( int32_t pos );
+    virtual int32_t   GetScrollPos( void );
+    virtual int32_t   GetScrollRange( void );
 
     virtual void    LockList( void );
     virtual void    UnlockList( void );
@@ -133,8 +133,8 @@ public:
     void            AddBranchW( std::wstring name, hsBool initiallyOpen );
     void            CloseBranch( void );
 
-    void            RemoveSelection( Int32 item );
-    void            AddSelection( Int32 item );
+    void            RemoveSelection( int32_t item );
+    void            AddSelection( int32_t item );
     PyObject*       GetSelectionList();
     PyObject*       GetBranchList();
     

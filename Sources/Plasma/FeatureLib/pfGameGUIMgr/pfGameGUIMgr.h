@@ -79,7 +79,7 @@ class plPostEffectMod;
 class pfGUITag
 {
     public:
-        UInt32  fID;
+        uint32_t  fID;
         char    fName[ 128 ];
 };
 
@@ -142,12 +142,12 @@ class pfGameGUIMgr : public hsKeyedObject
         hsTArray<pfDialogNameSetKey *>  fDlgsPendingUnload;
 
         hsBool  fActivated;
-        UInt32  fActiveDlgCount;
+        uint32_t  fActiveDlgCount;
 
         pfGameUIInputInterface      *fInputConfig;
-        UInt32                      fInputCtlIndex;
+        uint32_t                      fInputCtlIndex;
 
-        UInt32                      fDefaultCursor;
+        uint32_t                      fDefaultCursor;
         hsScalar                    fCursorOpacity;
         hsScalar                fAspectRatio;
 
@@ -167,9 +167,9 @@ class pfGameGUIMgr : public hsKeyedObject
 
         void    IActivateGUI( hsBool activate );
 
-        hsBool  IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers, UInt32 *desiredCursor );
-        hsBool  IHandleKeyEvt( EventType event, plKeyDef key, UInt8 modifiers );
-        hsBool  IHandleKeyPress( wchar_t key, UInt8 modifiers );
+        hsBool  IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, uint8_t modifiers, uint32_t *desiredCursor );
+        hsBool  IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers );
+        hsBool  IHandleKeyPress( wchar_t key, uint8_t modifiers );
 
         hsBool  IModalBlocking( void );
 
@@ -210,8 +210,8 @@ class pfGameGUIMgr : public hsKeyedObject
         void    SetDialogToNotify(const char *name, plKey recvrKey);
         void    SetDialogToNotify(pfGUIDialogMod *dlg, plKey recvrKey);
 
-        void    SetDefaultCursor(UInt32 defaultCursor) { fDefaultCursor = defaultCursor; }
-        UInt32  GetDefaultCursor() { return fDefaultCursor; }
+        void    SetDefaultCursor(uint32_t defaultCursor) { fDefaultCursor = defaultCursor; }
+        uint32_t  GetDefaultCursor() { return fDefaultCursor; }
         void    SetCursorOpacity(hsScalar opacity) { fCursorOpacity = opacity; }
         hsScalar    GetCursorOpacity() { return fCursorOpacity; }
 
@@ -221,12 +221,12 @@ class pfGameGUIMgr : public hsKeyedObject
         hsBool  IsModalBlocking( void ) {return IModalBlocking();}
 
         // Tag ID stuff
-        pfGUIDialogMod  *GetDialogFromTag( UInt32 tagID );
-        pfGUIControlMod *GetControlFromTag( pfGUIDialogMod *dlg, UInt32 tagID );
+        pfGUIDialogMod  *GetDialogFromTag( uint32_t tagID );
+        pfGUIControlMod *GetControlFromTag( pfGUIDialogMod *dlg, uint32_t tagID );
 
-        static UInt32       GetNumTags( void );
-        static pfGUITag     *GetTag( UInt32 tagIndex );
-        static UInt32       GetHighestTag( void );
+        static uint32_t       GetNumTags( void );
+        static pfGUITag     *GetTag( uint32_t tagIndex );
+        static uint32_t       GetHighestTag( void );
         void SetAspectRatio(hsScalar aspectratio);
         hsScalar GetAspectRatio() { return fAspectRatio; }
  

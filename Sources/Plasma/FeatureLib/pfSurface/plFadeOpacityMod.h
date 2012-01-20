@@ -80,7 +80,7 @@ protected:
 
     double          fStart;
     FadeState       fFade;
-    UInt8           fSetup;
+    uint8_t           fSetup;
 
     hsPoint3        fLastEye;
 
@@ -101,7 +101,7 @@ protected:
     void        ISetup(plSceneObject* so);
 
     // We only act in response to messages.
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
 
 public:
     plFadeOpacityMod();

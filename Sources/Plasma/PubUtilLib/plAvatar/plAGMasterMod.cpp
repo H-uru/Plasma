@@ -218,7 +218,7 @@ plProfile_CreateTimer("AnimatingPhysicals", "Animation", AnimatingPhysicals);
 plProfile_CreateTimer("StoppedAnimPhysicals", "Animation", StoppedAnimPhysicals);
 
 // IEVAL
-hsBool plAGMasterMod::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plAGMasterMod::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     if (fFirstEval)
     {
@@ -388,7 +388,7 @@ plAGModifier * plAGMasterMod::IFindChannelMod(const plSceneObject *SO, const cha
 // ATTACHANIMATIONBLENDED(anim, blend)
 plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
                                                          hsScalar blendFactor /* = 0 */,
-                                                         UInt16 blendPriority /* plAGMedBlendPriority */,
+                                                         uint16_t blendPriority /* plAGMedBlendPriority */,
                                                          hsBool cache /* = false */)
 {
     plAGAnimInstance *instance = nil;
@@ -421,7 +421,7 @@ plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
 }
 
 // ATTACHANIMATIONBLENDED(name, blend)
-plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const char *name, hsScalar blendFactor /* = 0 */, UInt16 blendPriority, hsBool cache /* = false */)
+plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const char *name, hsScalar blendFactor /* = 0 */, uint16_t blendPriority, hsBool cache /* = false */)
 {
     plAGAnimInstance *instance = nil;
     plAGAnim *anim = plAGAnim::FindAnim(name);
@@ -442,7 +442,7 @@ void plAGMasterMod::PlaySimpleAnim(const char *name)
         if (FindAnimInstance(name))
             return;
 
-        instance = AttachAnimationBlended(anim, 1.f, (UInt16)kAGMaxBlendPriority, false);
+        instance = AttachAnimationBlended(anim, 1.f, (uint16_t)kAGMaxBlendPriority, false);
     }
 
     if (instance)
@@ -798,7 +798,7 @@ hsBool plAGMasterMod::HasRunningAnims()
 //
 // Send SDL sendState msg to object's plAGMasterSDLModifier
 //
-hsBool plAGMasterMod::DirtySynchState(const char* SDLStateName, UInt32 synchFlags)
+hsBool plAGMasterMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
 {
     if(GetNumTargets() > 0 && (!fIsGrouped || fIsGroupMaster))
     {

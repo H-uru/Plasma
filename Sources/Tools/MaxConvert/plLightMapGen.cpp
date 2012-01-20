@@ -117,12 +117,12 @@ public:
 
 static int kDefaultSize = 64;
 
-static UInt32 MakeUInt32Color(float r, float g, float b, float a)
+static uint32_t MakeUInt32Color(float r, float g, float b, float a)
 {
-    return (UInt32(a * 255.9f) << 24)
-            |(UInt32(r * 255.9f) << 16)
-            |(UInt32(g * 255.9f) << 8)
-            |(UInt32(b * 255.9f) << 0);
+    return (uint32_t(a * 255.9f) << 24)
+            |(uint32_t(r * 255.9f) << 16)
+            |(uint32_t(g * 255.9f) << 8)
+            |(uint32_t(b * 255.9f) << 0);
 }
 
 plLightMapGen& plLightMapGen::Instance()
@@ -308,8 +308,8 @@ void DumpMipmap(plMipmap* mipmap, const char* prefix)
     {
         mipmap->SetCurrLevel(i);
 
-        UInt32 width = mipmap->GetCurrWidth();
-        UInt32 height = mipmap->GetCurrHeight();
+        uint32_t width = mipmap->GetCurrWidth();
+        uint32_t height = mipmap->GetCurrHeight();
 
         sprintf(buf, "----- Level %d (%dx%d) -----\n", i, width, height);
         dump.WriteString(buf);
@@ -318,11 +318,11 @@ void DumpMipmap(plMipmap* mipmap, const char* prefix)
         {
             for (int x = 0; x < width; x++)
             {
-                UInt32 color = *(mipmap->GetAddr32(x, y));
-                UInt8 r = ((UInt8)((color)>>16));
-                UInt8 g = ((UInt8)((color)>>8));
-                UInt8 b = ((UInt8)((color)>>0));
-                UInt8 a = ((UInt8)((color)>>24));
+                uint32_t color = *(mipmap->GetAddr32(x, y));
+                uint8_t r = ((uint8_t)((color)>>16));
+                uint8_t g = ((uint8_t)((color)>>8));
+                uint8_t b = ((uint8_t)((color)>>0));
+                uint8_t a = ((uint8_t)((color)>>24));
                 sprintf(buf, "[%3d,%3d,%3d,%3d]", r, g, b, a);
                 dump.WriteString(buf);
             }
@@ -596,24 +596,24 @@ hsBool plLightMapGen::IAddToLightMap(plLayerInterface* lay, plMipmap* src) const
     {
         for( i = 0; i < dst->GetWidth(); i++ )
         {
-            UInt32 srcRed = (*src->GetAddr32(i, j) >> 16) & 0xff;
-            UInt32 dstRed = (*dst->GetAddr32(i, j) >> 16) & 0xff;
+            uint32_t srcRed = (*src->GetAddr32(i, j) >> 16) & 0xff;
+            uint32_t dstRed = (*dst->GetAddr32(i, j) >> 16) & 0xff;
 //          dstRed += srcRed;
             if( dstRed < srcRed )
                 dstRed = srcRed;
             if( dstRed > 0xff )
                 dstRed = 0xff;
 
-            UInt32 srcGreen = (*src->GetAddr32(i, j) >> 8) & 0xff;
-            UInt32 dstGreen = (*dst->GetAddr32(i, j) >> 8) & 0xff;
+            uint32_t srcGreen = (*src->GetAddr32(i, j) >> 8) & 0xff;
+            uint32_t dstGreen = (*dst->GetAddr32(i, j) >> 8) & 0xff;
 //          dstGreen += srcGreen;
             if( dstGreen < srcGreen )
                 dstGreen = srcGreen;
             if( dstGreen > 0xff )
                 dstGreen = 0xff;
 
-            UInt32 srcBlue = (*src->GetAddr32(i, j) >> 0) & 0xff;
-            UInt32 dstBlue = (*dst->GetAddr32(i, j) >> 0) & 0xff;
+            uint32_t srcBlue = (*src->GetAddr32(i, j) >> 0) & 0xff;
+            uint32_t dstBlue = (*dst->GetAddr32(i, j) >> 0) & 0xff;
 //          dstBlue += srcBlue;
             if( dstBlue < srcBlue )
                 dstBlue = srcBlue;
@@ -785,7 +785,7 @@ hsBool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, cons
 
                 hsFastMath::NormalizeAppr(n);
 
-                UInt32 color = IShadePoint(ctx, amb, p, n);
+                uint32_t color = IShadePoint(ctx, amb, p, n);
                 *bitmap->GetAddr32(uMid, i) = color;
 
             }
@@ -1208,9 +1208,9 @@ hsBool plLightMapGen::IValidateUVWSrc(hsTArray<plGeometrySpan *>& spans) const
 
 void plLightMapGen::IInitBitmapColor(plMipmap* bitmap, const hsColorRGBA& col) const
 {
-    UInt32 initColor = MakeUInt32Color(col.r, col.g, col.b, col.a);
-    UInt32* pix = (UInt32*)bitmap->GetImage();
-    UInt32* pixEnd = ((UInt32*)bitmap->GetImage()) + bitmap->GetWidth() * bitmap->GetHeight();
+    uint32_t initColor = MakeUInt32Color(col.r, col.g, col.b, col.a);
+    uint32_t* pix = (uint32_t*)bitmap->GetImage();
+    uint32_t* pixEnd = ((uint32_t*)bitmap->GetImage()) + bitmap->GetWidth() * bitmap->GetHeight();
     while( pix < pixEnd )
         *pix++ = initColor;
 }
@@ -1450,7 +1450,7 @@ Color plLightMapGen::ShadePoint(plMaxLightContext& ctx, const hsPoint3& p, const
 
 }
 
-UInt32 plLightMapGen::IShadePoint(plMaxLightContext& ctx, const Color& amb, const hsPoint3& p, const hsVector3& n)
+uint32_t plLightMapGen::IShadePoint(plMaxLightContext& ctx, const Color& amb, const hsPoint3& p, const hsVector3& n)
 {
     ctx.globContext = fRGC;
     ctx.SetPoint(p, n);
@@ -1459,7 +1459,7 @@ UInt32 plLightMapGen::IShadePoint(plMaxLightContext& ctx, const Color& amb, cons
     accum += amb;
     accum.ClampMinMax();
 
-    UInt32 retVal;
+    uint32_t retVal;
 
     retVal = MakeUInt32Color(accum.r, accum.g, accum.b, 1.f);
 

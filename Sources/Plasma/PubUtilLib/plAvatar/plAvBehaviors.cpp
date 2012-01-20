@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeline/plDebugText.h"
 
-plArmatureBehavior::plArmatureBehavior() : fAnim(nil), fArmature(nil), fBrain(nil), fIndex((UInt8)-1), fFlags(0) {}
+plArmatureBehavior::plArmatureBehavior() : fAnim(nil), fArmature(nil), fBrain(nil), fIndex((uint8_t)-1), fFlags(0) {}
 
 plArmatureBehavior::~plArmatureBehavior() 
 {
@@ -55,7 +55,7 @@ plArmatureBehavior::~plArmatureBehavior()
         fAnim->Detach();
 }
 
-void plArmatureBehavior::Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature, UInt8 index)
+void plArmatureBehavior::Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature, uint8_t index)
 {
     fArmature = armature;
     fBrain = brain;

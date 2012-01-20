@@ -70,7 +70,7 @@ void plAnimPath::Reset()
     SetCurTime(0);
 }
 
-void plAnimPath::SetCurTime(hsScalar t, UInt32 calcFlags)
+void plAnimPath::SetCurTime(hsScalar t, uint32_t calcFlags)
 {
     fTime = t;
     if( !fController )
@@ -502,7 +502,7 @@ hsScalar plAnimPath::IShiftFore(hsPoint3 &pt) const
 // doesn't use any fancy subdivision or curvature measure when drawing.
 // Changes current time.
 //
-void plAnimPath::IMakeSegment(hsTArray<UInt16>& idx, hsTArray<hsPoint3>& pos,
+void plAnimPath::IMakeSegment(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos,
                               hsPoint3& p1, hsPoint3& p2)
 {
     hsVector3 del(&p2, &p1);
@@ -576,7 +576,7 @@ void plAnimPath::IMakeSegment(hsTArray<UInt16>& idx, hsTArray<hsPoint3>& pos,
     }
 }
 
-void plAnimPath::MakeDrawList(hsTArray<UInt16>& idx, hsTArray<hsPoint3>& pos)
+void plAnimPath::MakeDrawList(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos)
 {
     hsMatrix44 resetL2W = GetLocalToWorld();
     hsMatrix44 resetW2L = GetWorldToLocal();
@@ -623,7 +623,7 @@ void plAnimPath::MakeDrawList(hsTArray<UInt16>& idx, hsTArray<hsPoint3>& pos)
 // Precompute array of arclen deltas for lookahead ability.
 // Changes current time!
 //
-void plAnimPath::ComputeArcLenDeltas(Int32 numSamples)
+void plAnimPath::ComputeArcLenDeltas(int32_t numSamples)
 {
     if (fArcLenDeltas.GetCount() >= numSamples)
         return;     // already computed enough samples
@@ -636,7 +636,7 @@ void plAnimPath::ComputeArcLenDeltas(Int32 numSamples)
     hsScalar time=0;
     hsPoint3 p1, p2;
 
-    Int32 cnt=0;
+    int32_t cnt=0;
 
     // prime initial point
     SetCurTime(0, kCalcPosOnly);
@@ -672,7 +672,7 @@ void plAnimPath::ComputeArcLenDeltas(Int32 numSamples)
 // Also sets strtSrchIdx for incremental searching.
 //
 hsScalar plAnimPath::GetLookAheadTime(hsScalar startTime, hsScalar arcLengthIn, hsBool bwd,
-                                      Int32* startSrchIdx)
+                                      int32_t* startSrchIdx)
 {
     if (arcLengthIn==0)
         return startTime;   // default is no look ahead
@@ -695,7 +695,7 @@ hsScalar plAnimPath::GetLookAheadTime(hsScalar startTime, hsScalar arcLengthIn, 
 
     // find nearest (forward) arcLen sample point, use starting srch index provided
     hsBool found=false;
-    Int32 i;
+    int32_t i;
     for(i=(*startSrchIdx); i<fArcLenDeltas.GetCount()-1; i++)
     {
         if (fArcLenDeltas[i].fT<=startTime && startTime<fArcLenDeltas[i+1].fT)
@@ -729,7 +729,7 @@ hsScalar plAnimPath::GetLookAheadTime(hsScalar startTime, hsScalar arcLengthIn, 
     }
 
     // find distance to nearest arcLen sample point
-    Int32 nearestIdx = bwd ? *startSrchIdx : *startSrchIdx+1;
+    int32_t nearestIdx = bwd ? *startSrchIdx : *startSrchIdx+1;
     hsAssert(found, "couldn't find arcLength sample");
 
     hsPoint3 pos;
@@ -744,7 +744,7 @@ hsScalar plAnimPath::GetLookAheadTime(hsScalar startTime, hsScalar arcLengthIn, 
     hsScalar curTime=0;
     hsBool quit=false;
     hsScalar timeOut = 0;
-    Int32 inc = bwd ? -1 : 1;
+    int32_t inc = bwd ? -1 : 1;
     // now sum distance deltas until we exceed the desired arcLen
     if (curArcLen<arcLengthIn)
     {

@@ -262,8 +262,8 @@ void pfGmTicTacToe::MakeMove (unsigned row, unsigned col) {
     msg.messageBytes    = sizeof(msg);
     msg.recvGameId      = GetGameId();  // send to GameSrv on server
     msg.transId         = 0;
-    msg.row             = (byte)row;
-    msg.col             = (byte)col;
+    msg.row             = (uint8_t)row;
+    msg.col             = (uint8_t)col;
     
     GameMgrSend(&msg);
 }

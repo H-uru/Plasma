@@ -61,8 +61,8 @@ public:
     };
 
     const char *fileName;
-    UInt32 texFlags;
-    UInt32 createFlags;
+    uint32_t texFlags;
+    uint32_t createFlags;
     hsScalar detailDropoffStart;
     hsScalar detailDropoffStop;
     hsScalar detailMax;
@@ -71,8 +71,8 @@ public:
     hsBool  isStaticCubicEnvMap;
     hsBool  invertAlpha;
     const char  *faceNames[ 6 ];
-    UInt32  maxDimension;
-    UInt8   clampFlags;
+    uint32_t  maxDimension;
+    uint8_t   clampFlags;
     bool    useJPEG;
 
     plBitmapData()
@@ -100,7 +100,7 @@ class plBitmapCreator
         static plBitmapCreator  &Instance();
 
         plBitmap    *CreateTexture( plBitmapData *bd, const plLocation &loc, int clipID = -1 );
-        plMipmap    *CreateBlankMipmap( UInt32 width, UInt32 height, unsigned config, UInt8 numLevels, const char *keyName, const plLocation &keyLocation );
+        plMipmap    *CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, const char *keyName, const plLocation &keyLocation );
 
         void    Init( hsBool save, plErrorMsg *msg );
         void    DeInit( void );

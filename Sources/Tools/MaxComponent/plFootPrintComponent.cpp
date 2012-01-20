@@ -484,7 +484,7 @@ hsBool plFootPrintComponent::ICreateDecalMaterials(plMaxNode* node, plErrorMsg* 
 
 hsBool plFootPrintComponent::ISetupColorDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg)
 {
-    UInt32 blendFlags = 0;
+    uint32_t blendFlags = 0;
     switch( fCompPB->GetInt(kBlend) )
     {
     case kMADD:

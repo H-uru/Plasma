@@ -129,7 +129,7 @@ void plViewFaceModifier::SetTarget(plSceneObject* so)
         plgDispatch::Dispatch()->RegisterForExactType(plArmatureUpdateMsg::Index(), GetKey());
 }
 
-hsBool plViewFaceModifier::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plViewFaceModifier::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     return false;
 }

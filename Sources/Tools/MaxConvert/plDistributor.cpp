@@ -92,7 +92,7 @@ static inline Matrix3 Transpose(const Matrix3& m)
 plDistributor::plDistributor()
 {
     IClear();
-    fRand.SetSeed(UInt32(this));
+    fRand.SetSeed(uint32_t(this));
 }
 
 plDistributor::~plDistributor()
@@ -303,14 +303,14 @@ void plDistributor::IMakeMeshTree() const
     }
 }
 
-void plDistributor::IFindFaceSet(const Box3& box, Tab<Int32>& faces) const
+void plDistributor::IFindFaceSet(const Box3& box, Tab<int32_t>& faces) const
 {
-    Tab<Int32> distNodes;
+    Tab<int32_t> distNodes;
     fMeshTree.HarvestBox(box, distNodes);
     int i;
     for( i = 0; i < distNodes.Count(); i++ )
     {
-        Int32 iFace = Int32(fMeshTree.GetBox(distNodes[i]).fIData);
+        int32_t iFace = int32_t(fMeshTree.GetBox(distNodes[i]).fIData);
         faces.Append(1, &iFace);
     }
 }
@@ -1001,7 +1001,7 @@ void plDistributor::AddReplicateNode(INode* node)
     fRepNodes.Append(1, &node); 
 }
 
-BOOL plDistributor::IProjectVertex(const Point3& pt, const Point3& dir, float maxDist, Tab<Int32>&faces, Point3& projPt) const
+BOOL plDistributor::IProjectVertex(const Point3& pt, const Point3& dir, float maxDist, Tab<int32_t>&faces, Point3& projPt) const
 {
     BOOL retVal = false;
     plTriUtils triUtil;
@@ -1050,7 +1050,7 @@ BOOL plDistributor::IConformCheck(Matrix3& l2w, int iRepNode, plMeshCacheTab& ca
     Box3 bnd = mesh->getBoundingBox() * OTM;
     bnd = Box3(Point3(bnd.Min().x, bnd.Min().y, -bnd.Max().z), bnd.Max());
     bnd = bnd * l2w;
-    Tab<Int32> faces;
+    Tab<int32_t> faces;
     IFindFaceSet(bnd, faces);
 
     int i;
@@ -1084,7 +1084,7 @@ BOOL plDistributor::IConformAll(Matrix3& l2w, int iRepNode, plMeshCacheTab& cach
     Box3 bnd = mesh->getBoundingBox() * OTM;
     bnd = Box3(Point3(bnd.Min().x, bnd.Min().y, -bnd.Max().z), bnd.Max());
     bnd = bnd * l2w;
-    Tab<Int32> faces;
+    Tab<int32_t> faces;
     IFindFaceSet(bnd, faces);
 
     // l2w, iRepNode, cache, &iCache, maxScaledDist, dir
@@ -1143,7 +1143,7 @@ BOOL plDistributor::IConformHeight(Matrix3& l2w, int iRepNode, plMeshCacheTab& c
     Box3 bnd = mesh->getBoundingBox() * OTM;
     bnd = Box3(Point3(bnd.Min().x, bnd.Min().y, -bnd.Max().z), bnd.Max());
     bnd = bnd * l2w;
-    Tab<Int32> faces;
+    Tab<int32_t> faces;
     IFindFaceSet(bnd, faces);
 
     // l2w, iRepNode, cache, &iCache, maxScaledDist, dir
@@ -1212,7 +1212,7 @@ BOOL plDistributor::IConformBase(Matrix3& l2w, int iRepNode, plMeshCacheTab& cac
     Box3 bnd = mesh->getBoundingBox() * OTM;
     bnd = Box3(Point3(bnd.Min().x, bnd.Min().y, -bnd.Max().z), bnd.Max());
     bnd = bnd * l2w;
-    Tab<Int32> faces;
+    Tab<int32_t> faces;
     IFindFaceSet(bnd, faces);
 
     // l2w, iRepNode, cache, &iCache, maxScaledDist, dir
@@ -1452,7 +1452,7 @@ void plDistributor::IReserveSpace(const Box3& clearBox) const
         fDistTree->AddBox(clearBox, fFade);
 }
 
-UInt32 plDistributor::GetRandSeed() const
+uint32_t plDistributor::GetRandSeed() const
 {
     return fRand.GetSeed();
 }

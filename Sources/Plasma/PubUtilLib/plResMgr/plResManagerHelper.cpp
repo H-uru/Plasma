@@ -214,7 +214,7 @@ class plResMgrDebugInterface : public plInputInterface
 
         plResMgrDebugInterface( plResManagerHelper * const mgr ) : fParent( mgr ) { SetEnabled( true ); }
 
-        virtual UInt32  GetPriorityLevel( void ) const { return kGUISystemPriority + 10; }
+        virtual uint32_t  GetPriorityLevel( void ) const { return kGUISystemPriority + 10; }
         virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plKeyEventMsg *pKeyMsg = plKeyEventMsg::ConvertNoRef( pMsg );
@@ -268,7 +268,7 @@ class plResMgrDebugInterface : public plInputInterface
             return false;
         }
 
-        virtual UInt32  GetCurrentCursorID( void ) const { return 0; }
+        virtual uint32_t  GetCurrentCursorID( void ) const { return 0; }
         virtual hsBool  HasInterestingCursorID( void ) const { return false; }
 };
 
@@ -322,14 +322,14 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
 {   
     public:
         plStatusLog *fLog;
-        UInt8       fStep, fLines;
-        UInt32      &fLoadedCount, &fHoldingCount, fPageCount, fAgeIndex;
+        uint8_t       fStep, fLines;
+        uint32_t      &fLoadedCount, &fHoldingCount, fPageCount, fAgeIndex;
         char        fCurrAge[ 128 ];
-        UInt32      fLoadedKeys, fTotalKeys, fTotalSize, fLoadedSize;
+        uint32_t      fLoadedKeys, fTotalKeys, fTotalSize, fLoadedSize;
 
         plResManagerHelper  *fParent;
 
-        plDebugPrintIterator( plResManagerHelper *parent, plStatusLog *log, UInt32 &loadedCount, UInt32 &holdingCount ) 
+        plDebugPrintIterator( plResManagerHelper *parent, plStatusLog *log, uint32_t &loadedCount, uint32_t &holdingCount ) 
                     : fParent( parent ), fLog( log ), fStep( 0 ), fLines( 0 ), fLoadedCount( loadedCount ), fHoldingCount( holdingCount )
         {
             fLoadedCount = fHoldingCount = 0;
@@ -368,7 +368,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                     {
                         if( fLines < kLogSize - 4 )
                         {
-                            UInt32 color = plStatusLog::kWhite;
+                            uint32_t color = plStatusLog::kWhite;
                             if( fParent->fCurrAge == fAgeIndex )
                                 color = plStatusLog::kYellow;
 
@@ -491,7 +491,7 @@ void    plResManagerHelper::IUpdateDebugScreen( hsBool force )
         return;
 
     plRegistry *reg = fResManager->IGetRegistry();
-    UInt32      loadedCnt, holdingCnt;
+    uint32_t      loadedCnt, holdingCnt;
 
     fDebugScreen->Clear();
 

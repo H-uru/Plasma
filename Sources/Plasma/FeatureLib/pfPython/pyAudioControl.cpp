@@ -355,22 +355,22 @@ void pyAudioControl::SquelchLevel( hsScalar level )
 
 
 // Adjust voice packet frame size
-void pyAudioControl::RecordFrame( Int32 size )
+void pyAudioControl::RecordFrame( int32_t size )
 {
 }
 
 
 // Set the sample rate for recording
-void pyAudioControl::RecordSampleRate( Int32 sample_rate )
+void pyAudioControl::RecordSampleRate( int32_t sample_rate )
 {
 }
 
-UInt8 pyAudioControl::GetPriorityCutoff( void )
+uint8_t pyAudioControl::GetPriorityCutoff( void )
 {
     return plgAudioSys::GetPriorityCutoff();
 }
 
-void pyAudioControl::SetPriorityCutoff( UInt8 cut )
+void pyAudioControl::SetPriorityCutoff( uint8_t cut )
 {
     plgAudioSys::SetPriorityCutoff( cut );
 }

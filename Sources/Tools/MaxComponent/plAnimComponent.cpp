@@ -617,7 +617,7 @@ const char *plAnimComponentBase::GetAnimName()
 
 bool IsSubworld(plMaxNode* node)
 {
-    UInt32 numComps = node->NumAttachedComponents();
+    uint32_t numComps = node->NumAttachedComponents();
     for (int i = 0; i < numComps; i++)
     {
         plComponentBase* comp = node->GetAttachedComponent(i);

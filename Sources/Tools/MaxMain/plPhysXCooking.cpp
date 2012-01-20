@@ -108,14 +108,14 @@ void plPhysXCooking::Shutdown()
     fSkipErrors = false;
 }
 
-hsVectorStream* plPhysXCooking::CookTrimesh(int nVerts, hsPoint3* verts, int nFaces, UInt16* faces)
+hsVectorStream* plPhysXCooking::CookTrimesh(int nVerts, hsPoint3* verts, int nFaces, uint16_t* faces)
 {
     NxTriangleMeshDesc triDesc;
     triDesc.numVertices         = nVerts;
     triDesc.pointStrideBytes    = sizeof(hsPoint3);
     triDesc.points              = verts;
     triDesc.numTriangles        = nFaces;   
-    triDesc.triangleStrideBytes = sizeof(UInt16) * 3;
+    triDesc.triangleStrideBytes = sizeof(uint16_t) * 3;
     triDesc.triangles           = faces;
     triDesc.flags               = NX_MF_16_BIT_INDICES;
 
@@ -163,7 +163,7 @@ bool plPhysXCooking::TestIfConvex(NxConvexMesh* convexMesh, int nVerts, hsPoint3
     int i;
     for ( i = 0; i < desc.numTriangles; i++)
     {
-        UInt32* triangle = (UInt32*)(((char*)desc.triangles) + desc.triangleStrideBytes*i);
+        uint32_t* triangle = (uint32_t*)(((char*)desc.triangles) + desc.triangleStrideBytes*i);
         float* vertex1 = (float*)(((char*)desc.points) + desc.pointStrideBytes*triangle[0]);
         float* vertex2 = (float*)(((char*)desc.points) + desc.pointStrideBytes*triangle[1]);
         float* vertex3 = (float*)(((char*)desc.points) + desc.pointStrideBytes*triangle[2]);
@@ -231,7 +231,7 @@ NxTriangleMesh* ReadExplicit(hsStream* stream)
     triDesc.pointStrideBytes    = sizeof(hsPoint3);
     triDesc.points              = pVertices;
     triDesc.numTriangles        = nFaces;   
-    triDesc.triangleStrideBytes = sizeof(UInt16) * 3;
+    triDesc.triangleStrideBytes = sizeof(uint16_t) * 3;
     triDesc.triangles           = pTriangles;
     triDesc.flags               = NX_MF_16_BIT_INDICES;// | NX_MF_FLIPNORMALS;
 

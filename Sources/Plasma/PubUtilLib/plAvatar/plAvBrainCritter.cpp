@@ -83,7 +83,7 @@ public:
         fAvMod(nil), fCritterBrain(nil), fName(name), fRandomStartPoint(randomStart), fFadeInLength(fadeInLength), fFadeOutLength(fadeOutLength) {}
     virtual ~CritterBehavior() {}
 
-    void Init(plAGAnim* anim, hsBool loop, plAvBrainCritter* brain, plArmatureMod* body, UInt8 index)
+    void Init(plAGAnim* anim, hsBool loop, plAvBrainCritter* brain, plArmatureMod* body, uint8_t index)
     {
         plArmatureBehavior::Init(anim, loop, brain, body, index);
         fAvMod = body;

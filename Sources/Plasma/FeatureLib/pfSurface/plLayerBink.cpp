@@ -57,11 +57,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef BINK_SDK_AVAILABLE
 #if HS_BUILD_FOR_WIN32
 typedef HBINK (CALLBACK *BINKOPEN)(char *,int);
-typedef Int32 (CALLBACK *BINKCOPYTOBUFFER)(HBINK, void*, s32,u32,u32,u32, int);
+typedef int32_t (CALLBACK *BINKCOPYTOBUFFER)(HBINK, void*, s32,u32,u32,u32, int);
 typedef char * (CALLBACK *BINKGETERROR)(void);
 typedef void (CALLBACK *BINKONLY) (HBINK);
 typedef s32 (CALLBACK *BINKDOFRAME) (HBINK);
-typedef void (CALLBACK *BINKGOTO)(HBINK, UInt32, int);
+typedef void (CALLBACK *BINKGOTO)(HBINK, uint32_t, int);
 #endif // HS_BUILD_FOR_WIN32
 
 #if HS_BUILD_FOR_WIN32
@@ -154,10 +154,10 @@ hsBool plLayerBink::IInit()
 #endif
 }
 
-Int32 plLayerBink::ISecsToFrame(hsScalar secs)
+int32_t plLayerBink::ISecsToFrame(hsScalar secs)
 {
     // Calculate and set the current frame
-    Int32 frame = (Int32)(secs * fFPS);
+    int32_t frame = (int32_t)(secs * fFPS);
     return frame;
 }
 
@@ -174,7 +174,7 @@ hsBool plLayerBink::IGetCurrentFrame()
 #ifdef BINK_SDK_AVAILABLE
     ICheckBitmap();
 
-    Int32 frame = fCurrentFrame + 1; // Bink Counts frames from frame 1
+    int32_t frame = fCurrentFrame + 1; // Bink Counts frames from frame 1
     
     if(frame > GetBink()->Frames)
         frame = GetBink()->Frames;

@@ -78,11 +78,11 @@ void NetDiagDelete (NetDiag * diag);
 void NetDiagSetHost (
     NetDiag *       diag,
     ENetProtocol    protocol,
-    const wchar     name[]
+    const wchar_t     name[]
 );
 
 typedef void ( __cdecl * FNetDiagDumpProc)(
-    const wchar fmt[],
+    const wchar_t fmt[],
     ...
 );
 typedef void (*FNetDiagTestCallback)(

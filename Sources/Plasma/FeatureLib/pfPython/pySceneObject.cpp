@@ -841,7 +841,7 @@ void pySceneObject::Animate()
     }
 }
 
-Int8 pySceneObject::GetResponderState()
+int8_t pySceneObject::GetResponderState()
 {
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )

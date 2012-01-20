@@ -74,11 +74,11 @@ public:
     hsScalar    fPreSim;
     hsScalar    fHSize;
     hsScalar    fVSize;
-    UInt32      fGenType;
-    UInt32      fXTiles;
-    UInt32      fYTiles;
-    UInt32      fNormal;
-    UInt32      fOrientation;
+    uint32_t      fGenType;
+    uint32_t      fXTiles;
+    uint32_t      fYTiles;
+    uint32_t      fNormal;
+    uint32_t      fOrientation;
     hsBool      fImmortal;
     
     ParticleStats() : fConeAngle(0.5), fVelocityMin(30.0), fVelocityMax(50.0), fLifeMin(5.0), fLifeMax(10.0), fPPS(20.0),

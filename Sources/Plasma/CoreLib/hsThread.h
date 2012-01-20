@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTypes.h"
 
-typedef UInt32 hsMilliseconds;
+typedef uint32_t hsMilliseconds;
 
 
 #if HS_BUILD_FOR_WIN32
@@ -71,7 +71,7 @@ public:
 #endif
 private:
     hsBool      fQuit;
-    UInt32      fStackSize;
+    uint32_t      fStackSize;
 #if HS_BUILD_FOR_WIN32
     ThreadId    fThreadId;
     HANDLE      fThreadH;
@@ -85,7 +85,7 @@ protected:
     hsBool      GetQuit() const { return hsBool(fQuit); }
     void        SetQuit(hsBool value) { fQuit = value; }
 public:
-    hsThread(UInt32 stackSize = 0);
+    hsThread(uint32_t stackSize = 0);
     virtual     ~hsThread();    // calls Stop()
 #if HS_BUILD_FOR_WIN32
     ThreadId        GetThreadId() { return fThreadId; }
@@ -155,7 +155,7 @@ class hsSemaphore {
 #else
     pthread_mutex_t fPMutex;
     pthread_cond_t  fPCond;
-    Int32       fCounter;
+    int32_t       fCounter;
 #endif
 #endif
 public:
@@ -200,10 +200,10 @@ class hsSleep
 {
 public:
 #if HS_BUILD_FOR_UNIX
-    static void Sleep(UInt32 millis);
+    static void Sleep(uint32_t millis);
 
 #elif HS_BUILD_FOR_WIN32
-    static void Sleep(UInt32 millis) { ::Sleep(millis); }
+    static void Sleep(uint32_t millis) { ::Sleep(millis); }
 
 #endif
 };

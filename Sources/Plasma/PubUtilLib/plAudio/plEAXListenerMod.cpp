@@ -120,7 +120,7 @@ void    plEAXListenerMod::IUnRegister( void )
     fRegistered = false;
 }
 
-hsBool plEAXListenerMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool plEAXListenerMod::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     IRegister();
     return false;
@@ -237,7 +237,7 @@ void plEAXListenerMod::Write( hsStream* s, hsResMgr* mgr )
 }
 
 
-void    plEAXListenerMod::SetFromPreset( UInt32 preset )
+void    plEAXListenerMod::SetFromPreset( uint32_t preset )
 {
 #ifdef EAX_SDK_AVAILABLE
     memcpy( fListenerProps, &REVERB_ORIGINAL_PRESETS[ preset ], sizeof( EAXREVERBPROPERTIES ) );

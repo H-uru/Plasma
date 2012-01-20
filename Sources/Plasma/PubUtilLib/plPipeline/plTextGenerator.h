@@ -69,61 +69,61 @@ class plTextGenerator : public hsKeyedObject
     protected:
     
         plMipmap    *fHost;
-        UInt16      fWidth, fHeight;
+        uint16_t      fWidth, fHeight;
 
 #if HS_BUILD_FOR_WIN32
         HDC         fWinRGBDC;
         HBITMAP     fWinRGBBitmap;
         HFONT       fWinFont;
-        UInt32      *fWinRGBBits;
+        uint32_t      *fWinRGBBits;
 
         HFONT       fWinAlphaFont;
         HDC         fWinAlphaDC;
         HBITMAP     fWinAlphaBitmap;
-        UInt8       *fWinAlphaBits;
+        uint8_t       *fWinAlphaBits;
 #endif
 
-        UInt32      *IAllocateOSSurface( UInt16 width, UInt16 height );
+        uint32_t      *IAllocateOSSurface( uint16_t width, uint16_t height );
         void        IDestroyOSSurface( void );
 
     public:
 
         plTextGenerator();
-        plTextGenerator( plMipmap *host, UInt16 width, UInt16 height );
+        plTextGenerator( plMipmap *host, uint16_t width, uint16_t height );
         virtual ~plTextGenerator();
 
-        void    Attach( plMipmap *host, UInt16 width, UInt16 height );
+        void    Attach( plMipmap *host, uint16_t width, uint16_t height );
         void    Detach( void );
 
         /// Operations to perform on the text block
         
         void    ClearToColor( hsColorRGBA &color );
 
-        void    SetFont( const char *face, UInt16 size, hsBool antiAliasRGB = true );
+        void    SetFont( const char *face, uint16_t size, hsBool antiAliasRGB = true );
         void    SetTextColor( hsColorRGBA &color, hsBool blockRGB = false );
 
-        void        DrawString( UInt16 x, UInt16 y, const char *text );
-        void        DrawString( UInt16 x, UInt16 y, const wchar_t *text );
-        void        DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 width, UInt16 height );
-        void        DrawClippedString( Int16 x, Int16 y, const wchar_t *text, UInt16 width, UInt16 height );
-        void        DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height );
-        void        DrawClippedString( Int16 x, Int16 y, const wchar_t *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height );
-        void        DrawWrappedString( UInt16 x, UInt16 y, const char *text, UInt16 width, UInt16 height );
-        void        DrawWrappedString( UInt16 x, UInt16 y, const wchar_t *text, UInt16 width, UInt16 height );
-        UInt16      CalcStringWidth( const char *text, UInt16 *height = nil );
-        UInt16      CalcStringWidth( const wchar_t *text, UInt16 *height = nil );
-        void        CalcWrappedStringSize( const char *text, UInt16 *width, UInt16 *height );
-        void        CalcWrappedStringSize( const wchar_t *text, UInt16 *width, UInt16 *height );
-        void        FillRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color );
-        void        FrameRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color );
+        void        DrawString( uint16_t x, uint16_t y, const char *text );
+        void        DrawString( uint16_t x, uint16_t y, const wchar_t *text );
+        void        DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t width, uint16_t height );
+        void        DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t width, uint16_t height );
+        void        DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height );
+        void        DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height );
+        void        DrawWrappedString( uint16_t x, uint16_t y, const char *text, uint16_t width, uint16_t height );
+        void        DrawWrappedString( uint16_t x, uint16_t y, const wchar_t *text, uint16_t width, uint16_t height );
+        uint16_t      CalcStringWidth( const char *text, uint16_t *height = nil );
+        uint16_t      CalcStringWidth( const wchar_t *text, uint16_t *height = nil );
+        void        CalcWrappedStringSize( const char *text, uint16_t *width, uint16_t *height );
+        void        CalcWrappedStringSize( const wchar_t *text, uint16_t *width, uint16_t *height );
+        void        FillRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
+        void        FrameRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
 
         void    FlushToHost( void );
 
-        UInt16  GetTextWidth( void );
-        UInt16  GetTextHeight( void );
+        uint16_t  GetTextWidth( void );
+        uint16_t  GetTextHeight( void );
 
-        UInt16  GetWidth( void ) { return fWidth; }
-        UInt16  GetHeight( void ) { return fHeight; }
+        uint16_t  GetWidth( void ) { return fWidth; }
+        uint16_t  GetHeight( void ) { return fHeight; }
 
         // Since the textGen can actually create a texture bigger than you were expecting,
         // you want to be able to apply a layer texture transform that will compensate. This

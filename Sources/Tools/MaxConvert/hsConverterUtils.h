@@ -95,7 +95,7 @@ public:
     char* MangleRefWithRoom(char *mangName, const char *nodeName, const char* roomName);
     char* UnMangleReference(char *dest, const char *name);
     hsBool IsMangled(const char *name);
-    Int32 FindNamedSelSetFromName(const char *name);
+    int32_t FindNamedSelSetFromName(const char *name);
     char* StripMangledReference(char* dest, const char* name);
 
     hsBool IsInstanced(Object* maxObject);
@@ -120,7 +120,7 @@ private:
     plErrorMsg  *fErrorMsg;
 
     hsBool      fSuppressMangling;
-    UInt32      fWarned;
+    uint32_t      fWarned;
     hsBool      fSave;
 
     struct CacheNode
@@ -140,7 +140,7 @@ private:
         void SetCaseSensitive(hsBool b) { fCaseSensitive = b; }
         hsBool GetCaseSensitive() { return fCaseSensitive; }
 
-        UInt32 GetHash() const;
+        uint32_t GetHash() const;
         bool operator==(const CacheNode& other) const;
     };
     hsHashTable<CacheNode>* fNodeSearchCache;

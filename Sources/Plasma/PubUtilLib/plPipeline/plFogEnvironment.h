@@ -62,7 +62,7 @@ class plFogEnvironment : public hsKeyedObject
 {
     protected:
 
-        UInt8       fType;
+        uint8_t       fType;
         hsScalar    fStart;         // Used for linear fog only
         hsScalar    fEnd, fDensity; // Always used!
         hsColorRGBA fColor;
@@ -98,7 +98,7 @@ class plFogEnvironment : public hsKeyedObject
         void    Clear( void ) { fType = kNoFog; }
 
         // Gets the type
-        UInt8   GetType( void ) { return fType; }
+        uint8_t   GetType( void ) { return fType; }
 
         // Gets the color
         hsColorRGBA &GetColor( void ) { return fColor; }

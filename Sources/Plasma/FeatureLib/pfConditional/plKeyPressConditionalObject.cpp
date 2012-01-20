@@ -78,7 +78,7 @@ void plKeyPressConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 void plKeyPressConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteLE32((UInt32)fKeyEvent);
+    stream->WriteLE32((uint32_t)fKeyEvent);
 
 }
 

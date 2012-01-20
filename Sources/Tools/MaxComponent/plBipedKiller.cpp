@@ -104,11 +104,11 @@ void ProcessBipedNodeRecurse(INode *bipNode, INode *newParent, Interface *theInt
 void ProcessNonBipedNodeRecurse(INode *node, INode *parent, Interface *theInterface);
 
 int LimitTransform(INode* node, Matrix3* nodeTM);
-void GetParts(Int32 i, std::vector<nodeTMInfo *>& mat3Array,  hsAffineParts* parts);
+void GetParts(int32_t i, std::vector<nodeTMInfo *>& mat3Array,  hsAffineParts* parts);
 
-Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
-Point3 GetPosKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
-ScaleValue GetScaleKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
+Quat GetRotKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
+Point3 GetPosKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
+ScaleValue GetScaleKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
 
 Quat MakeRotKey(INode *node, INode *parent, TimeValue t);
 Point3 MakePosKey(INode *node, INode *parent, TimeValue t);
@@ -118,7 +118,7 @@ AffineParts GetLocalNodeParts(INode *node, INode *parent, TimeValue t);
 
 bool ExportableAnimationController(INode* node);
 bool HasBipController(INode* node);
-Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array);
+Quat GetRotKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array);
 
 
 plSampleVec * SampleNodeMotion(INode* node, INode* parent, int sampleRate, Interface *theInterface);
@@ -597,7 +597,7 @@ void SampleTreeMotionRecurse(INode * node, INode* parent, int sampleRate,
 }
 
 // GETPARTS
-void GetParts(Int32 i, std::vector<nodeTMInfo *>& mat3Array,  hsAffineParts* parts)
+void GetParts(int32_t i, std::vector<nodeTMInfo *>& mat3Array,  hsAffineParts* parts)
 {
     hsAssert(parts, "nil parts");
 
@@ -627,7 +627,7 @@ Quat MakeRotKey(INode *node, INode *parent, TimeValue t)
     return q;
 }
 
-Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array)
+Quat GetRotKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array)
 {
     Matrix3 m = mat3Array[i]->fMat3;
     AffineParts parts;
@@ -641,7 +641,7 @@ Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array)
 
 
 // GETROTKEY
-Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
+Quat GetRotKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
 {
     hsAffineParts myParts;
     if (!parts)
@@ -684,7 +684,7 @@ Point3 MakePosKey(INode *node, INode *parent, TimeValue t)
 
 
 // GETPOSKEY
-Point3 GetPosKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
+Point3 GetPosKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
 {
     hsAffineParts myParts;
     if (!parts)
@@ -729,7 +729,7 @@ ScaleValue MakeScaleKey(INode *node, INode *parent, TimeValue t)
 }
 
 // GETSCALEKEY
-ScaleValue GetScaleKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
+ScaleValue GetScaleKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
 {
     hsAffineParts myParts;
     if (!parts)

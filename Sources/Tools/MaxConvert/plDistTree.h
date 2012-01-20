@@ -51,16 +51,16 @@ public:
     enum {
         kIsLeaf = 0x1
     };
-    UInt32      fFlags;
+    uint32_t      fFlags;
 
-    Int32       fChildren[8];
+    int32_t       fChildren[8];
     Box3        fBox;
     Box3        fFade;
 
     union
     {
         void*       fPData;
-        UInt32      fIData;
+        uint32_t      fIData;
     };
 
     const Box3& GetBox() const { return fBox; }
@@ -73,26 +73,26 @@ class plDistTree
 {
 protected:
     
-    Int32                           fRoot;
+    int32_t                           fRoot;
 
     hsLargeArray<plDistNode>        fNodes;
 
-    Int32   IAddNodeRecur(Int32 iNode, const Box3& box, const Box3& fade, UInt32 iData);
+    int32_t   IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData);
 
-    Int32   IMergeNodes(Int32 iNode, const Box3& box, const Box3& fade, UInt32 iData);
-    Int32   INextNode(const Box3& box, const Box3& fade, UInt32 iData);
+    int32_t   IMergeNodes(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData);
+    int32_t   INextNode(const Box3& box, const Box3& fade, uint32_t iData);
 
-    Int32   IGetChild(const Box3& parent, const Box3& child) const;
+    int32_t   IGetChild(const Box3& parent, const Box3& child) const;
 
     inline BOOL IBoxesClear(const Box3& box0, const Box3& box1) const;
     inline BOOL IFadesClear(const Box3& fade0, const Box3& fade1) const;
 
     BOOL    IBox0ContainsBox1(const Box3& box0, const Box3& box1, const Box3& fade0, const Box3& fade1) const;
 
-    BOOL    IBoxClearRecur(Int32 iNode, const Box3& box, const Box3& fade) const;
-    BOOL    IPointClearRecur(Int32 iNode, const Point3& pt, const Box3& fade) const;
+    BOOL    IBoxClearRecur(int32_t iNode, const Box3& box, const Box3& fade) const;
+    BOOL    IPointClearRecur(int32_t iNode, const Point3& pt, const Box3& fade) const;
 
-    void    IHarvestBoxRecur(Int32 iNode, const Box3& box, Tab<Int32>& out) const;
+    void    IHarvestBoxRecur(int32_t iNode, const Box3& box, Tab<int32_t>& out) const;
 
 public:
     plDistTree();
@@ -100,8 +100,8 @@ public:
 
     void Reset();
 
-    void AddBoxPData(const Box3& box, const Box3& fade, void* pData=nil) { AddBoxIData(box, fade, UInt32(pData)); }
-    void AddBoxIData(const Box3& box, const Box3& fade, UInt32 iData=0);
+    void AddBoxPData(const Box3& box, const Box3& fade, void* pData=nil) { AddBoxIData(box, fade, uint32_t(pData)); }
+    void AddBoxIData(const Box3& box, const Box3& fade, uint32_t iData=0);
     void AddBox(const Box3& box, const Box3& fade=NonFade()) { AddBoxIData(box, fade, 0); }
 
     BOOL BoxClear(const Box3& box, const Box3& fade) const;
@@ -111,9 +111,9 @@ public:
 
     static Box3 NonFade() { return Box3(Point3(0,0,0), Point3(0,0,0)); }
 
-    void HarvestBox(const Box3& box, Tab<Int32>& out) const;
+    void HarvestBox(const Box3& box, Tab<int32_t>& out) const;
 
-    const plDistNode& GetBox(Int32 i) const { return fNodes[i]; }
+    const plDistNode& GetBox(int32_t i) const { return fNodes[i]; }
 };
 
 #endif // plDistTree_inc

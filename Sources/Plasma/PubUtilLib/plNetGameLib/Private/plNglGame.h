@@ -90,7 +90,7 @@ void NetCliGameJoinAgeRequest (
 typedef void (*FNetCliGameRecvBufferHandler)(
     unsigned                        type,
     unsigned                        bytes,
-    const byte                      buffer[]
+    const uint8_t                      buffer[]
 );
 void NetCliGameSetRecvBufferHandler (
     FNetCliGameRecvBufferHandler    handler
@@ -98,7 +98,7 @@ void NetCliGameSetRecvBufferHandler (
 void NetCliGamePropagateBuffer (
     unsigned                        type,
     unsigned                        bytes,
-    const byte                      buffer[]
+    const uint8_t                      buffer[]
 );
 
 //============================================================================

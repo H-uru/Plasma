@@ -119,7 +119,7 @@ pfGUIUpDownPairMod::~pfGUIUpDownPairMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIUpDownPairMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIUpDownPairMod::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }

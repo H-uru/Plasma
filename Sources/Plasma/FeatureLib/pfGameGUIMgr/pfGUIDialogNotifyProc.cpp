@@ -73,7 +73,7 @@ pfGUIDialogNotifyProc::pfGUIDialogNotifyProc( plKey &r )
 }
 
 
-void pfGUIDialogNotifyProc::ISendNotify( plKey ctrlKey, UInt32 event )
+void pfGUIDialogNotifyProc::ISendNotify( plKey ctrlKey, uint32_t event )
 {
     pfGUINotifyMsg  *notify = TRACKED_NEW pfGUINotifyMsg( fDialog->GetKey(), fReceiver, nil );
     notify->SetEvent( ctrlKey, event );

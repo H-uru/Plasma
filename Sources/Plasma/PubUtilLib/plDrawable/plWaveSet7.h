@@ -180,7 +180,7 @@ protected:
     plStatusLog*    fStatusLog;
     plGraphPlate*   fStatusGraph;
 
-    UInt32          fTrialUpdate;
+    uint32_t          fTrialUpdate;
 
     plFixedWaterState7      fState;
 
@@ -233,7 +233,7 @@ protected:
     plShader*                       fBiasPShader;
 
     plBitmap*                       fEnvMap;
-    UInt32                          fEnvSize;
+    uint32_t                          fEnvSize;
     hsScalar                        fEnvRefresh;
 
     plLayer*                        fFixedLayers[4];
@@ -413,10 +413,10 @@ protected:
     void                ICheckTargetMaterials();
 
     plDrawableSpans*    ICreateGraphDrawable(plDrawableSpans* drawable, hsGMaterial* mat, int nWid);
-    plDrawableSpans*    ICreateEmptyGraphDrawable(const char* name, UInt32 ref, int wich);
-    hsGMaterial*        ICreateEmptyMaterial(const char* name, UInt32 ref, int which);
+    plDrawableSpans*    ICreateEmptyGraphDrawable(const char* name, uint32_t ref, int wich);
+    hsGMaterial*        ICreateEmptyMaterial(const char* name, uint32_t ref, int which);
     plLayer*            ICreateBlankLayer(const char* name, int suff);
-    plMipmap*           ICreateBlankTex(const char* name, int width, int height, UInt32 ref);
+    plMipmap*           ICreateBlankTex(const char* name, int width, int height, uint32_t ref);
     plMipmap*           ICreateGraphShoreTex(int width, int height);
     plMipmap*           ICreateBubbleShoreTex(int width, int height);
     void                IRefillBubbleShoreTex();
@@ -445,7 +445,7 @@ protected:
     void                IShuffleDownGraphs(int iPass);
 
     // type is either plLayRefMsg::kVertexShader or plLayRefMsg::kPixelShader.
-    void                IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, UInt8 type, plShader* shader);
+    void                IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, uint8_t type, plShader* shader);
 
     void                IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, int iLast);
     void                IAddBumpVertexShader(hsGMaterial* mat, int iShader, int iFirst, int iLast);
@@ -482,7 +482,7 @@ protected:
     virtual int IDecalRef() const { return kRefDecal; }
 
     inline void LogF(const char *format, ...) const;
-    inline void LogF(UInt32 color, const char *format, ...) const;
+    inline void LogF(uint32_t color, const char *format, ...) const;
     inline void IRestartLog() const;
     inline void GraphLen(hsScalar len) const;
     inline void IRestartGraph() const;
@@ -496,9 +496,9 @@ public:
 
     virtual hsBool MsgReceive(plMessage* msg);
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
 
-    Int32       GetNumProperties() const { return kNumProps; }
+    int32_t       GetNumProperties() const { return kNumProps; }
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
@@ -644,8 +644,8 @@ public:
     const plFixedWaterState7& State() const { return fState; }
     void            SetState(const plFixedWaterState7& state, hsScalar dur);
 
-    void            SetEnvSize(UInt32 s) { fEnvSize = s; }
-    UInt32          GetEnvSize() const { return fEnvSize; }
+    void            SetEnvSize(uint32_t s) { fEnvSize = s; }
+    uint32_t          GetEnvSize() const { return fEnvSize; }
 
     void StopLog();
     void StartLog();

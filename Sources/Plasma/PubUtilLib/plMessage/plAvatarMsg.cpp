@@ -250,7 +250,7 @@ plAvSeekMsg::plAvSeekMsg()
 plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
                          const plKey &seekKey, float duration, hsBool smartSeek,
                          plAvAlignment alignType, char *animName, hsBool noSeek, 
-                         UInt8 flags, plKey finishKey)
+                         uint8_t flags, plKey finishKey)
 : plAvTaskMsg(sender, receiver),
   fSeekPoint(seekKey),
   fTargetPos(0, 0, 0),
@@ -321,7 +321,7 @@ void plAvSeekMsg::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEScalar(fDuration);
     stream->WriteBool(fSmartSeek);
     stream->WriteSafeString(fAnimName);
-    stream->WriteLE16(static_cast<UInt16>(fAlignType));
+    stream->WriteLE16(static_cast<uint16_t>(fAlignType));
     stream->WriteBool(fNoSeek);
     stream->WriteByte(fFlags);
     mgr->WriteKey(stream, fFinishKey);

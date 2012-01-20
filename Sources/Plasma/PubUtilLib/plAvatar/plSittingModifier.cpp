@@ -198,7 +198,7 @@ hsBool plSittingModifier::MsgReceive(plMessage *msg)
                 plSceneObject * obj = plSceneObject::ConvertNoRef(avatarKey->ObjectIsLoaded());
                 plArmatureMod * avMod = (plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
 
-                UInt32 flags = kBCastToClients | kUseRelevanceRegions | kForceFullSend;
+                uint32_t flags = kBCastToClients | kUseRelevanceRegions | kForceFullSend;
                 avMod->DirtyPhysicalSynchState(flags);
             }
         }
@@ -308,7 +308,7 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
     hsMatrix44 sitGoal = seekObj->GetLocalToWorld();
     hsMatrix44 candidateGoal;
     hsScalar closestDist = 0.0f;
-    UInt8 closestApproach = 0;
+    uint8_t closestApproach = 0;
     hsPoint3 curPosition = avatar->GetTarget(0)->GetLocalToWorld().GetTranslate();
     char * sitAnimName = nil;
     char * standAnimName = "StandUpFront";      // always prefer to stand facing front
@@ -341,7 +341,7 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
 
         if(sitAnimName)
         {
-            UInt32 exitFlags = plAvBrainGeneric::kExitNormal;   // SOME stages can be interrupted, but not the brain itself
+            uint32_t exitFlags = plAvBrainGeneric::kExitNormal;   // SOME stages can be interrupted, but not the brain itself
             brain = TRACKED_NEW plAvBrainGeneric(nil, enterNotify, exitNotify, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
                                          plAvBrainGeneric::kDefaultFadeOut, plAvBrainGeneric::kMoveRelative);
 

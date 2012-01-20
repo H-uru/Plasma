@@ -264,8 +264,8 @@ public:
         to make an animation slow down gradually when you stop it.
         The types are defined in plAnimEaseTypes.h
         */
-    virtual UInt8 GetEaseInType() const { return fEaseInType; }
-    void SetEaseInType(UInt8 type) { fEaseInType = type; }
+    virtual uint8_t GetEaseInType() const { return fEaseInType; }
+    void SetEaseInType(uint8_t type) { fEaseInType = type; }
 
     /** Set the length of time the ease-in should take. */
     virtual hsScalar GetEaseInLength() const { return fEaseInLength; }
@@ -283,9 +283,9 @@ public:
     void SetEaseInMax(hsScalar length) { fEaseInMax = length; }
 
     /** The curve type for the ease out. */
-    virtual UInt8 GetEaseOutType() const { return fEaseOutType; }
+    virtual uint8_t GetEaseOutType() const { return fEaseOutType; }
     /** The curve type for the ease out. */
-    void SetEaseOutType(UInt8 type) { fEaseOutType = type; }
+    void SetEaseOutType(uint8_t type) { fEaseOutType = type; }
     
     /** The length of time for the ease out. */
     virtual hsScalar GetEaseOutLength() const { return fEaseOutLength; }
@@ -311,9 +311,9 @@ public:
         \param end will hold the end time of the loop */
     bool GetLoop(const char *name, float &start, float &end) const;
     /** Lets you get a loop by index instead of name. */
-    bool GetLoop(UInt32 num, float &start, float &end) const;
+    bool GetLoop(uint32_t num, float &start, float &end) const;
     /** Returns the number of loops defined on this anim. */
-    UInt32 GetNumLoops() const;
+    uint32_t GetNumLoops() const;
 
     /** Add a marker to the animation. Markers can be used
         for callbacks or for goto comands. A marker is a simple
@@ -329,10 +329,10 @@ public:
         at the defined time. */
     void AddStopPoint(hsScalar time);
     /** Return the number of stop points defined for this animation. */
-    UInt32 NumStopPoints();
+    uint32_t NumStopPoints();
     /** Get the time corresponding to the given stop point. Stop points
         are numbered in the order they were added. */
-    hsScalar GetStopPoint(UInt32 i);
+    hsScalar GetStopPoint(uint32_t i);
     /** Function to check for a zero-length loop, and set it to
         the anim's start/end instead */
     void CheckLoop();
@@ -353,8 +353,8 @@ protected:
     hsScalar fLoopEnd;          /// when you reach this point, loop back
     bool fLoop;                 /// do we loop?
 
-    UInt8 fEaseInType;          /// the type (none/linear/spline) of our ease-in curve, if any
-    UInt8 fEaseOutType;         /// the type (none/linear/spline) of our ease-out curve, if any
+    uint8_t fEaseInType;          /// the type (none/linear/spline) of our ease-in curve, if any
+    uint8_t fEaseOutType;         /// the type (none/linear/spline) of our ease-out curve, if any
     hsScalar fEaseInLength;     /// the length of time our ease-in curve takes
     hsScalar fEaseInMin;        /// minimum (initial) value of our ease-in
     hsScalar fEaseInMax;        /// maximum (final) value of our ease-in 

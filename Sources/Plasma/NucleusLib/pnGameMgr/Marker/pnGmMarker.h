@@ -124,10 +124,10 @@ enum {
     // Message parameters
     //========================================================================
     struct Marker_CreateParam {
-        byte        gameType;       // member of EMarkerGameType
-        wchar       gameName[256];
-        dword       timeLimit;
-        wchar       templateID[80]; // empty if creating a new game, guid if a quest game and we need to grab the data from the state server
+        uint8_t        gameType;       // member of EMarkerGameType
+        wchar_t       gameName[256];
+        uint32_t       timeLimit;
+        wchar_t       templateID[80]; // empty if creating a new game, guid if a quest game and we need to grab the data from the state server
     };
 
     //========================================================================
@@ -145,10 +145,10 @@ enum {
         // nothing
     };
     struct Cli2Srv_Marker_ChangeGameName : GameMsgHeader {
-        wchar       gameName[256];
+        wchar_t       gameName[256];
     };
     struct Cli2Srv_Marker_ChangeTimeLimit : GameMsgHeader {
-        dword       timeLimit;
+        uint32_t       timeLimit;
     };
     struct Cli2Srv_Marker_DeleteGame : GameMsgHeader {
         // nothing
@@ -157,35 +157,35 @@ enum {
         double      x;
         double      y;
         double      z;
-        wchar       name[256];
-        wchar       age[80];
+        wchar_t       name[256];
+        wchar_t       age[80];
     };
     struct Cli2Srv_Marker_DeleteMarker : GameMsgHeader {
-        dword       markerID;
+        uint32_t       markerID;
     };
     struct Cli2Srv_Marker_ChangeMarkerName : GameMsgHeader {
-        dword       markerID;
-        wchar       markerName[256];
+        uint32_t       markerID;
+        wchar_t       markerName[256];
     };
     struct Cli2Srv_Marker_CaptureMarker : GameMsgHeader {
-        dword       markerID;
+        uint32_t       markerID;
     };
 
     // Srv2Cli
     struct Srv2Cli_Marker_TemplateCreated : GameMsgHeader {
-        wchar       templateID[80];
+        wchar_t       templateID[80];
     };
     struct Srv2Cli_Marker_TeamAssigned : GameMsgHeader {
-        byte        teamNumber; // 1 or 2
+        uint8_t        teamNumber; // 1 or 2
     };
     struct Srv2Cli_Marker_GameType : GameMsgHeader {
-        byte        gameType; // member of EMarkerGameType
+        uint8_t        gameType; // member of EMarkerGameType
     };
     struct Srv2Cli_Marker_GameStarted : GameMsgHeader {
         // nothing
     };
     struct Srv2Cli_Marker_GamePaused : GameMsgHeader {
-        dword       timeLeft;   // 0 if quest game, since they don't have a timer
+        uint32_t       timeLeft;   // 0 if quest game, since they don't have a timer
     };
     struct Srv2Cli_Marker_GameReset : GameMsgHeader {
         // nothing
@@ -194,10 +194,10 @@ enum {
         // nothing
     };
     struct Srv2Cli_Marker_GameNameChanged : GameMsgHeader {
-        wchar       newName[256];
+        wchar_t       newName[256];
     };
     struct Srv2Cli_Marker_TimeLimitChanged : GameMsgHeader {
-        dword       newTimeLimit;
+        uint32_t       newTimeLimit;
     };
     struct Srv2Cli_Marker_GameDeleted : GameMsgHeader {
         bool        failed; // did the delete fail?
@@ -206,20 +206,20 @@ enum {
         double      x;
         double      y;
         double      z;
-        dword       markerID;
-        wchar       name[256];
-        wchar       age[80];
+        uint32_t       markerID;
+        wchar_t       name[256];
+        wchar_t       age[80];
     };
     struct Srv2Cli_Marker_MarkerDeleted : GameMsgHeader {
-        dword       markerID;
+        uint32_t       markerID;
     };
     struct Srv2Cli_Marker_MarkerNameChanged : GameMsgHeader {
-        dword       markerID;
-        wchar       newName[256];
+        uint32_t       markerID;
+        wchar_t       newName[256];
     };
     struct Srv2Cli_Marker_MarkerCaptured : GameMsgHeader {
-        dword       markerID;
-        byte        team;       // 0 for no team, or for quest games
+        uint32_t       markerID;
+        uint8_t        team;       // 0 for no team, or for quest games
     };
 
 

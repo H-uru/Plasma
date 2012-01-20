@@ -83,7 +83,7 @@ public:
     virtual void Pop(pyKey& oldCamKey);
 
     // Send controlKey commands to the virtual camera (should be like a pass thru)
-    virtual void ControlKey(Int32 controlKey, hsBool activated);
+    virtual void ControlKey(int32_t controlKey, hsBool activated);
 
 
     /////////////////////////////////////////////////////////////////////////////

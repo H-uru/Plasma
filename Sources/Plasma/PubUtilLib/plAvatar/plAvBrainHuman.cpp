@@ -966,7 +966,7 @@ plHBehavior::~plHBehavior()
 
 void plHBehavior::Init(plAGAnim *anim, hsBool loop, plAvBrainHuman *brain,
                        plArmatureMod *body, float fadeIn, float fadeOut,
-                       UInt8 index, UInt32 type /* = 0 */)
+                       uint8_t index, uint32_t type /* = 0 */)
 {
     plArmatureBehavior::Init(anim, loop, brain, body, index);
     fAvMod = body;

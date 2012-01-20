@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 
 // static 
-UInt32 plStateChangeNotifier::fCurrentPlayerID = 0;
+uint32_t plStateChangeNotifier::fCurrentPlayerID = 0;
 
 plStateChangeNotifier::plStateChangeNotifier() :
 fDelta(0)

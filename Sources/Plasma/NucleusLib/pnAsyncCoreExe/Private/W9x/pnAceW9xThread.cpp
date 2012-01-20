@@ -245,7 +245,7 @@ static unsigned CALLBACK W9xThreadProc (AsyncThread *) {
         // Consume events, check for destruction, and block if we have
         // nothing to do.
         HANDLE events[] = {s_destroyEvent, s_signalEvent};
-        dword  result   = WaitForMultipleObjects(
+        uint32_t  result   = WaitForMultipleObjects(
             arrsize(events),
             events,
             FALSE,

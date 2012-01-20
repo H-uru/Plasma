@@ -108,7 +108,7 @@ private:
     {
         kDirty  = 0x1
     };
-    UInt32 fFlags;
+    uint32_t fFlags;
 public:
     plNetTalkList() : fFlags(0) {}
     ~plNetTalkList() {}

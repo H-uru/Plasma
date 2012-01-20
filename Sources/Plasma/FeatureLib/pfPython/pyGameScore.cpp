@@ -66,7 +66,7 @@ int pyGameScore::GetScoreID()
     return 0;
 }
 
-UInt32 pyGameScore::GetCreatedTime()
+uint32_t pyGameScore::GetCreatedTime()
 {
     if (fScore)
         return fScore->createdTime;

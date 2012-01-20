@@ -72,12 +72,12 @@ public:
     };
     
     char *fName;
-    UInt32 fXPos;
-    UInt32 fYPos;
-    UInt32 fWidth;
-    UInt32 fHeight;
+    uint32_t fXPos;
+    uint32_t fYPos;
+    uint32_t fWidth;
+    uint32_t fHeight;
 
-    plClothingElement(const char *name, UInt32 xPos, UInt32 yPos, UInt32 width, UInt32 height)
+    plClothingElement(const char *name, uint32_t xPos, uint32_t yPos, uint32_t width, uint32_t height)
     {
         fName = hsStrcpy(name);
         fXPos = xPos;
@@ -127,11 +127,11 @@ public:
 class plClothingLayout
 {
 public:
-    plClothingLayout(char *name, UInt32 origWidth) { fName = hsStrcpy(name); fOrigWidth = origWidth; }
+    plClothingLayout(char *name, uint32_t origWidth) { fName = hsStrcpy(name); fOrigWidth = origWidth; }
     ~plClothingLayout() { delete [] fName; }
 
     char *fName;
-    UInt32 fOrigWidth;
+    uint32_t fOrigWidth;
     hsTArray<plClothingElement*> fElements;
 /*
     enum

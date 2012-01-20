@@ -72,7 +72,7 @@ pfGUIDynDisplayCtrl::~pfGUIDynDisplayCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDynDisplayCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIDynDisplayCtrl::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -116,7 +116,7 @@ hsBool  pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
 
 void    pfGUIDynDisplayCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
-    UInt32  count, i;
+    uint32_t  count, i;
 
 
     pfGUIControlMod::Read(s, mgr);
@@ -139,7 +139,7 @@ void    pfGUIDynDisplayCtrl::Read( hsStream *s, hsResMgr *mgr )
 
 void    pfGUIDynDisplayCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
-    UInt32  i;
+    uint32_t  i;
 
 
     pfGUIControlMod::Write( s, mgr );

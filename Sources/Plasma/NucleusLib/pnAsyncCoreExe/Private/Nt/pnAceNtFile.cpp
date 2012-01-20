@@ -83,7 +83,7 @@ struct NtFile : NtObject {
     LINK(NtFile)            pendLink;       // protected by s_fileCrit
     unsigned                queueWrites;
     unsigned                sectorSizeMask;
-    wchar                   fullPath[MAX_PATH];
+    wchar_t                   fullPath[MAX_PATH];
 
     NtFile ();
     ~NtFile ();
@@ -179,8 +179,8 @@ static void HandleFailedOp (
         for (; position < op->rw.bytes; ++subOperations) {
             NtOpFileReadWrite * childOp     = NEW(NtOpFileReadWrite);
             childOp->overlapped.hEvent      = op->overlapped.hEvent ? CreateEvent(nil, true, false, nil) : nil;
-            childOp->overlapped.Offset      = (dword) ((op->rw.offset + position) & 0xffffffff);
-            childOp->overlapped.OffsetHigh  = (dword) ((op->rw.offset + position) >> 32);
+            childOp->overlapped.Offset      = (uint32_t) ((op->rw.offset + position) & 0xffffffff);
+            childOp->overlapped.OffsetHigh  = (uint32_t) ((op->rw.offset + position) >> 32);
             childOp->opType                 = op->opType;
             childOp->asyncId                = 0;
             childOp->notify                 = false;
@@ -312,9 +312,9 @@ static void HandleFailedOp (
 }
 
 //===========================================================================
-static void InternalFileSetSize (NtObject * file, qword size) {
+static void InternalFileSetSize (NtObject * file, uint64_t size) {
     LONG sizeHigh = (long) (size >> 32);
-    DWORD seek = SetFilePointer(file->handle, (dword) size, &sizeHigh, FILE_BEGIN);
+    DWORD seek = SetFilePointer(file->handle, (uint32_t) size, &sizeHigh, FILE_BEGIN);
     if ((seek != (DWORD) -1) || (GetLastError() == NO_ERROR))
         SetEndOfFile(file->handle);
 }
@@ -547,15 +547,15 @@ void INtFileOpCompleteSequence (
 
 //===========================================================================
 AsyncFile NtFileOpen (
-    const wchar             fullPath[],
+    const wchar_t             fullPath[],
     FAsyncNotifyFileProc    notifyProc,
     EFileError *            error,
     unsigned                desiredAccess,
     unsigned                openMode,
     unsigned                shareModeFlags,
     void *                  userState,
-    qword *                 fileSize,
-    qword *                 fileLastWriteTime
+    uint64_t *                 fileSize,
+    uint64_t *                 fileLastWriteTime
 ) {
     unsigned attributeFlags = 0;
     attributeFlags |= FILE_FLAG_OVERLAPPED;
@@ -590,9 +590,9 @@ AsyncFile NtFileOpen (
         CloseHandle(handle);
         return nil;
     }
-    const qword size = ((qword) sizeHi << (qword) 32) | (qword) sizeLo;
+    const uint64_t size = ((uint64_t) sizeHi << (uint64_t) 32) | (uint64_t) sizeLo;
 
-    qword lastWriteTime;
+    uint64_t lastWriteTime;
     ASSERT(sizeof(lastWriteTime) >= sizeof(FILETIME));
     GetFileTime(handle, nil, nil, (FILETIME *) &lastWriteTime);
 
@@ -632,7 +632,7 @@ AsyncFile NtFileOpen (
 //===========================================================================
 AsyncId NtFileRead (
     AsyncFile   conn,
-    qword       offset,
+    uint64_t       offset,
     void *      buffer,
     unsigned    bytes,
     unsigned    flags,
@@ -644,7 +644,7 @@ AsyncId NtFileRead (
     ASSERT((flags & (kAsyncFileRwNotify|kAsyncFileRwSync)) != (kAsyncFileRwNotify|kAsyncFileRwSync));
     ASSERT(! (offset & file->sectorSizeMask));
     ASSERT(! (bytes & file->sectorSizeMask));
-    ASSERT(! ((unsigned_ptr) buffer & file->sectorSizeMask));
+    ASSERT(! ((uintptr_t) buffer & file->sectorSizeMask));
 
     // Normally, I/O events do not complete until both the WIN32 operation has completed
     // and the callback notification has occurred. A deadlock can occur if a thread attempts
@@ -655,8 +655,8 @@ AsyncId NtFileRead (
     // into the Overlapped structure, because the event will be signaled prior to the
     // potentially deadlocking callback notification.
     NtOpFileReadWrite * op      = NEW(NtOpFileReadWrite);
-    op->overlapped.Offset       = (dword) (offset & 0xffffffff);
-    op->overlapped.OffsetHigh   = (dword) (offset >> 32);
+    op->overlapped.Offset       = (uint32_t) (offset & 0xffffffff);
+    op->overlapped.OffsetHigh   = (uint32_t) (offset >> 32);
     op->overlapped.hEvent       = (flags & kAsyncFileRwSync) ? CreateEvent(nil, true, false, nil) : nil;
     op->opType                  = kOpFileRead;
     op->notify                  = (flags & kAsyncFileRwNotify) != 0;
@@ -666,7 +666,7 @@ AsyncId NtFileRead (
     op->win32Bytes              = bytes;
     op->rw.param                = param;
     op->rw.offset               = offset;
-    op->rw.buffer               = (byte *) buffer;
+    op->rw.buffer               = (uint8_t *) buffer;
     op->rw.bytes                = bytes;
 
     InterlockedIncrement(&file->ioCount);
@@ -686,7 +686,7 @@ AsyncId NtFileRead (
 // buffer must stay valid until I/O is completed
 AsyncId NtFileWrite (
     AsyncFile       conn,
-    qword           offset,
+    uint64_t           offset,
     const void *    buffer,
     unsigned        bytes,
     unsigned        flags,
@@ -698,7 +698,7 @@ AsyncId NtFileWrite (
     ASSERT((flags & (kAsyncFileRwNotify|kAsyncFileRwSync)) != (kAsyncFileRwNotify|kAsyncFileRwSync));
     ASSERT(! (offset & file->sectorSizeMask));
     ASSERT(! (bytes & file->sectorSizeMask));
-    ASSERT(! ((unsigned_ptr) buffer & file->sectorSizeMask));
+    ASSERT(! ((uintptr_t) buffer & file->sectorSizeMask));
 
     // Normally, I/O events do not complete until both the WIN32 operation has completed
     // and the callback notification has occurred. A deadlock can occur if a thread attempts
@@ -709,8 +709,8 @@ AsyncId NtFileWrite (
     // into the Overlapped structure, because the event will be signaled prior to the
     // potentially deadlocking callback notification.
     NtOpFileReadWrite * op      = NEW(NtOpFileReadWrite);
-    op->overlapped.Offset       = (dword) (offset & 0xffffffff);
-    op->overlapped.OffsetHigh   = (dword) (offset >> 32);
+    op->overlapped.Offset       = (uint32_t) (offset & 0xffffffff);
+    op->overlapped.OffsetHigh   = (uint32_t) (offset >> 32);
     op->overlapped.hEvent       = (flags & kAsyncFileRwSync) ? CreateEvent(nil, true, false, nil) : nil;
     op->opType                  = kOpFileWrite;
     op->notify                  = (flags & kAsyncFileRwNotify) != 0;
@@ -720,7 +720,7 @@ AsyncId NtFileWrite (
     op->win32Bytes              = bytes;
     op->rw.param                = param;
     op->rw.offset               = offset;
-    op->rw.buffer               = (byte *) buffer;
+    op->rw.buffer               = (uint8_t *) buffer;
     op->rw.bytes                = bytes;
 
     InterlockedIncrement(&file->ioCount);
@@ -745,7 +745,7 @@ AsyncId NtFileWrite (
 //===========================================================================
 AsyncId NtFileFlushBuffers (
     AsyncFile      conn, 
-    qword       truncateSize,
+    uint64_t    truncateSize,
     bool        notify,
     void *      param
 ) {
@@ -799,7 +799,7 @@ AsyncId NtFileFlushBuffers (
 //===========================================================================
 void NtFileClose (
     AsyncFile   conn,
-    qword       truncateSize
+    uint64_t       truncateSize
 ) {
     NtFile * file = (NtFile *) conn;
     ASSERT(file);
@@ -853,7 +853,7 @@ void NtFileClose (
 //===========================================================================
 void NtFileSetLastWriteTime (
     AsyncFile   conn,
-    qword       lastWriteTime
+    uint64_t       lastWriteTime
 ) {
     NtFile * file = (NtFile *) conn;
     ASSERT(file);
@@ -866,12 +866,12 @@ void NtFileSetLastWriteTime (
 }
 
 //===========================================================================
-qword NtFileGetLastWriteTime (
-    const wchar fileName[]
+uint64_t NtFileGetLastWriteTime (
+    const wchar_t fileName[]
 ) {
     WIN32_FILE_ATTRIBUTE_DATA info;
     bool f = GetFileAttributesExW(fileName, GetFileExInfoStandard, &info);
-    return f ? *((qword *) &info.ftLastWriteTime) : 0;
+    return f ? *((uint64_t *) &info.ftLastWriteTime) : 0;
 }
 
 //===========================================================================
@@ -988,7 +988,7 @@ bool NtFileWaitId (AsyncFile conn, AsyncId asyncId, unsigned  timeoutMs) {
 //============================================================================
 bool NtFileSeek (
     AsyncFile       conn,
-    qword           distance,
+    uint64_t           distance,
     EFileSeekFrom   from
 ) {
     COMPILER_ASSERT(kFileSeekFromBegin == FILE_BEGIN);
@@ -998,8 +998,8 @@ bool NtFileSeek (
     NtFile * file = (NtFile *) conn;
     LONG  low    = (LONG)(distance % 0x100000000ul);
     LONG  high   = (LONG)(distance / 0x100000000ul);
-    dword result = SetFilePointer(file->handle, low, &high, from);
-    if ((result == (dword)-1) && (GetLastError() != NO_ERROR)) {
+    uint32_t result = SetFilePointer(file->handle, low, &high, from);
+    if ((result == (uint32_t)-1) && (GetLastError() != NO_ERROR)) {
         LogMsg(kLogFatal, "failed: SetFilePointer");
         return false;
     }

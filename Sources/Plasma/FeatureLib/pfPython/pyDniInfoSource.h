@@ -74,7 +74,7 @@ public:
     // current coords of the player in current age as a pyDniCoordinates
     PyObject* GetAgeCoords( void ); // returns pyDniCoordinates
     // current time in current age (tbd)
-    UInt32          GetAgeTime( void ) const;
+    uint32_t          GetAgeTime( void ) const;
     // name of current age
     const char *    GetAgeName( void ) const;
     // unique identifier for this age instance

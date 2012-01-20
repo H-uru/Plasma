@@ -165,7 +165,7 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadLE((Int32*)&fKeyCode);
+        stream->ReadLE((int32_t*)&fKeyCode);
         stream->ReadLE(&fKeyDown);
         stream->ReadLE(&fCapsLockKeyDown);
         stream->ReadLE(&fShiftKeyDown);
@@ -176,7 +176,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteLE((Int32)fKeyCode);
+        stream->WriteLE((int32_t)fKeyCode);
         stream->WriteLE(fKeyDown);
         stream->WriteLE(fCapsLockKeyDown);
         stream->WriteLE(fShiftKeyDown);
@@ -224,7 +224,7 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadLE((Int32*)&fKeyCode);
+        stream->ReadLE((int32_t*)&fKeyCode);
         stream->ReadLE(&fKeyDown);
         stream->ReadLE(&fCapsLockKeyDown);
         stream->ReadLE(&fShiftKeyDown);
@@ -234,7 +234,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteLE((Int32)fKeyCode);
+        stream->WriteLE((int32_t)fKeyCode);
         stream->WriteLE(fKeyDown);
         stream->WriteLE(fCapsLockKeyDown);
         stream->WriteLE(fShiftKeyDown);
@@ -402,7 +402,7 @@ public:
 class plAvatarInputStateMsg : public plMessage
 {
 public:
-    UInt16 fState;
+    uint16_t fState;
 
     plAvatarInputStateMsg() : plMessage(), fState(0) {}
     ~plAvatarInputStateMsg() {}
@@ -418,7 +418,7 @@ public:
 
     // Mapping of bits to the control events we care about
     static const ControlEventCode fCodeMap[];
-    static const UInt8 fMapSize;
+    static const uint8_t fMapSize;
 
     static hsBool IsCodeInMap(ControlEventCode code);
 };

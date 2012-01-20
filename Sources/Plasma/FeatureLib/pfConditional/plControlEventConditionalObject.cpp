@@ -78,7 +78,7 @@ void plControlEventConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 void plControlEventConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteLE32((UInt32)fControlEvent);
+    stream->WriteLE32((uint32_t)fControlEvent);
 
 }
 

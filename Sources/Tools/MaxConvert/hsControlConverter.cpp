@@ -134,8 +134,8 @@ void hsControlConverter::ReduceKeys(Control *control, hsScalar threshold)
             IKeyControl *keyCont = GetKeyControlInterface(control);
             if (keyCont->GetNumKeys() > 2)
             {
-                IKey *key1 = (IKey*)TRACKED_NEW UInt8[keyCont->GetKeySize()];
-                IKey *key2 = (IKey*)TRACKED_NEW UInt8[keyCont->GetKeySize()];
+                IKey *key1 = (IKey*)TRACKED_NEW uint8_t[keyCont->GetKeySize()];
+                IKey *key2 = (IKey*)TRACKED_NEW uint8_t[keyCont->GetKeySize()];
                 keyCont->GetKey(0, key1);
                 keyCont->GetKey(keyCont->GetNumKeys() - 1, key2);
 
@@ -158,8 +158,8 @@ void hsControlConverter::ReduceKeys(Control *control, hsScalar threshold)
                     Interval interval(start, end);
                     ApplyKeyReduction(control, interval, threshold, GetTicksPerFrame(), &status);
                 }
-                delete [] (UInt8*)key1;
-                delete [] (UInt8*)key2;
+                delete [] (uint8_t*)key1;
+                delete [] (uint8_t*)key2;
             }
         }
     }
@@ -748,7 +748,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
 {
     hsGuardBegin("hsControlConverter::ICreateQuatController");
 
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     IKeyControl* ikeys = GetKeyControlInterface(control);
     if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
     {
@@ -759,11 +759,11 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
             return NULL;
         }
 
-        IKey* key=(IKey*)(new byte[ikeys->GetKeySize()]);
+        IKey* key=(IKey*)(new uint8_t[ikeys->GetKeySize()]);
         plLeafController* pc = TRACKED_NEW plLeafController;
 
-        UInt8 compressLevel = node->GetAnimCompress();
-        UInt8 keyType;
+        uint8_t compressLevel = node->GetAnimCompress();
+        uint8_t keyType;
         if (compressLevel == plAnimCompressComp::kCompressionHigh)
             keyType = hsKeyFrame::kCompressedQuatKeyFrame32;
         else if (compressLevel == plAnimCompressComp::kCompressionLow)
@@ -828,7 +828,7 @@ plLeafController* hsControlConverter::ICreateScaleValueController(plMaxNode* nod
     hsGuardBegin("hsControlConverter::ICreateScaleValueController");
 
     //plMaxNode* xformParent = GetXformParent(node);
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     IKeyControl* ikeys = GetKeyControlInterface(control);
     if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
     {
@@ -839,7 +839,7 @@ plLeafController* hsControlConverter::ICreateScaleValueController(plMaxNode* nod
             return NULL;
         }
 
-        IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
+        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
         plLeafController* pc = TRACKED_NEW plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
@@ -869,7 +869,7 @@ plLeafController* hsControlConverter::ICreateScalarController(plMaxNode* node, C
 {
     hsGuardBegin("hsControlConverter::ICreateScalarController");
 
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     IKeyControl* ikeys = GetKeyControlInterface(control);
     if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
     {
@@ -880,7 +880,7 @@ plLeafController* hsControlConverter::ICreateScalarController(plMaxNode* node, C
             return NULL;
         }
 
-        IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
+        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
         plLeafController* pc = TRACKED_NEW plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
@@ -912,7 +912,7 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
     hsGuardBegin("hsControlConverter::ICreateSimplePosController");
 
     IKeyControl* ikeys = GetKeyControlInterface(control);
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
     {
         if(!(control->IsKeyable()))
@@ -922,7 +922,7 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
             return NULL;
         }
 
-        IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
+        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
         plLeafController* pc = TRACKED_NEW plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
@@ -955,7 +955,7 @@ int hsControlConverter::IAddPartsKeys(Control* control,
 {
     hsGuardBegin("hsControlConverter::IAddPartsKeys");
 
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     if (control->IsLeaf())
     {
         IKeyControl* ikeys = GetKeyControlInterface(control);
@@ -978,7 +978,7 @@ int hsControlConverter::IAddPartsKeys(Control* control,
         //
         // Traverse all keys of controller
         //
-        IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
+        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
         hsBool mb=false;
         plMaxNode* xformParent = GetXformParent(node);
         for(i = startIdx; i <= endIdx; i++)
@@ -1098,8 +1098,8 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
 
 
     IKeyControl* ikeys = GetKeyControlInterface(control);
-    IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
-    IKey* lastKey=(IKey*)(new byte [ikeys->GetKeySize()]);
+    IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+    IKey* lastKey=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
 
     int i;
     for( i = iLo; i < iHi; i++ )
@@ -1244,7 +1244,7 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
 //
 // Create an hsKeyFrame from a 3DSMax key
 //
-Int32 hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node, hsBool rotQuat)
+int32_t hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node, hsBool rotQuat)
 {
     hsGuardBegin("hsControlConverter::ICreateHSInterpKey");
 
@@ -1371,7 +1371,7 @@ Int32 hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, TimeV
     hsGuardEnd;
 }
 
-UInt8 hsControlConverter::GetKeyType(Control* control, hsBool rotQuat)
+uint8_t hsControlConverter::GetKeyType(Control* control, hsBool rotQuat)
 {
     Class_ID cID = control->ClassID();
     SClass_ID sID = control->SuperClassID();
@@ -1428,7 +1428,7 @@ UInt8 hsControlConverter::GetKeyType(Control* control, hsBool rotQuat)
 //
 //
 //
-Int32 hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* cont, Int32 &start, Int32 &end)
+int32_t hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* cont, int32_t &start, int32_t &end)
 {
     hsGuardBegin("hsControlConverter::IGetRangeCoverKeyIndices");
 
@@ -1442,7 +1442,7 @@ Int32 hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* cont
     if (numKeys == 0)
         return 0;
 
-    IKey* key=(IKey*)(new byte [keys->GetKeySize()]);
+    IKey* key=(IKey*)(new uint8_t [keys->GetKeySize()]);
 
     start = numKeys;
     for (int i=0; i<numKeys; i++)

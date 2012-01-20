@@ -405,7 +405,7 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pAxis->GetNotify()->AddReceiver(receivers[i]);
 
     pAxis->SetNotificationKey(logicKey);
-    UInt32 count = node->NumAttachedComponents();
+    uint32_t count = node->NumAttachedComponents();
     hsBool bHasAnim = false;
     plAnimComponentBase* pAnim = nil;
 
@@ -484,9 +484,9 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         
         // verify that there is a physical proxy attached to this scene object:
-        UInt32 count = ((plMaxNodeBase*)pProxyNode)->NumAttachedComponents();
+        uint32_t count = ((plMaxNodeBase*)pProxyNode)->NumAttachedComponents();
         hsBool bHasPhys = false;
-//      for (UInt32 i = 0; i < count; i++)
+//      for (uint32_t i = 0; i < count; i++)
         //      {
         //          plComponentBase *comp = ((plMaxNodeBase*)pProxyNode)->GetAttachedComponent(i);
         //          if (comp->ClassID() == Class_ID(0x11e81ee4, 0x36b81450))
@@ -531,9 +531,9 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (pProxyRegNode)
     {
         // verify that there is a physical detector attached to this scene object:
-        UInt32 count = ((plMaxNodeBase*)pProxyRegNode)->NumAttachedComponents();
+        uint32_t count = ((plMaxNodeBase*)pProxyRegNode)->NumAttachedComponents();
         hsBool bHasPhys = false;
-//      for (UInt32 i = 0; i < count; i++)
+//      for (uint32_t i = 0; i < count; i++)
         //      {
         //          plComponentBase *comp = ((plMaxNodeBase*)pProxyRegNode)->GetAttachedComponent(i);
         //          if (comp->ClassID() == Class_ID(0x33b60376, 0x7e5163e0))

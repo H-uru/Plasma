@@ -106,17 +106,17 @@ public:
 private:
     bool IValidateUVs(plMaxNode* node);
 
-    void    ISetBumpUvs(Int16 uvChan, hsTArray<plMAXVertNormal>& vertDPosDuvCache, TVFace* tvFace, UInt32 smGroup, 
+    void    ISetBumpUvs(int16_t uvChan, hsTArray<plMAXVertNormal>& vertDPosDuvCache, TVFace* tvFace, uint32_t smGroup, 
                                       hsPoint3* uvs1, hsPoint3* uvs2, hsPoint3* uvs3);
     void    ISetBumpUvSrcs(hsTArray<hsTArray<plExportMaterialData> *>& ourMaterials, 
-                                        hsTArray<Int16>& bumpLayIdx, hsTArray<Int16>& bumpLayChan, hsTArray<Int16>& bumpDuChan, hsTArray<Int16>& bumpDvChan);
+                                        hsTArray<int16_t>& bumpLayIdx, hsTArray<int16_t>& bumpLayChan, hsTArray<int16_t>& bumpDuChan, hsTArray<int16_t>& bumpDvChan);
     void    ISetWaterDecEnvUvSrcs(hsTArray<hsTArray<plExportMaterialData> *>& ourMaterials, 
-                                        hsTArray<Int16>& bumpLayIdx, hsTArray<Int16>& bumpLayChan, hsTArray<Int16>& bumpDuChan, hsTArray<Int16>& bumpDvChan);
+                                        hsTArray<int16_t>& bumpLayIdx, hsTArray<int16_t>& bumpLayChan, hsTArray<int16_t>& bumpDuChan, hsTArray<int16_t>& bumpDvChan);
     void    ISmoothUVGradients(plMaxNode* node, Mesh* mesh, 
                                         hsTArray<hsTArray<plExportMaterialData> *>& ourMaterials, 
-                                        hsTArray<Int16>& bumpLayIdx, hsTArray<Int16>& bumpLayChan,
+                                        hsTArray<int16_t>& bumpLayIdx, hsTArray<int16_t>& bumpLayChan,
                                         hsTArray<plMAXVertNormal>* vertDPosDuCache, hsTArray<plMAXVertNormal>* vertDPosDvCache);
-    Point3  IGetUvGradient(plMaxNode* node, const hsMatrix44& uvXform44, Int16 bmpUvwSrc,
+    Point3  IGetUvGradient(plMaxNode* node, const hsMatrix44& uvXform44, int16_t bmpUvwSrc,
                                         Mesh *mesh, int faceIdx, 
                                         int iUV);
 
@@ -124,8 +124,8 @@ private:
                           hsPoint3 *uvs1, hsPoint3 *uvs2, hsPoint3 *uvs3 );
     void    IGetUVTransform( plMaxNode *node, Mtl *mtl, Matrix3 *uvTransform, int which );
 
-    UInt32  ICreateHexColor( float r, float g, float b );
-    UInt32  ISetHexAlpha( UInt32 color, float alpha );
+    uint32_t  ICreateHexColor( float r, float g, float b );
+    uint32_t  ISetHexAlpha( uint32_t color, float alpha );
 
     Mesh*       IGetNodeMesh(plMaxNode *node);
     void        IDeleteTempGeometry();

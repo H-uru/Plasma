@@ -84,11 +84,11 @@ public:
     virtual void    SetTextW( std::wstring text );
     virtual std::string GetText();
     virtual std::wstring GetTextW();
-    virtual void    SetFontSize( UInt8 size );
+    virtual void    SetFontSize( uint8_t size );
     virtual void    SetForeColor( pyColor& color );
     virtual void    SetBackColor( pyColor& color );
-    virtual void    SetJustify( UInt8 justify );
-    virtual UInt8   GetJustify();
+    virtual void    SetJustify( uint8_t justify );
+    virtual uint8_t   GetJustify();
     virtual PyObject* GetForeColor(); // returns pyColor
 };
 

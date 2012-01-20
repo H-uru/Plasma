@@ -57,9 +57,9 @@ public:
     virtual hsBool  Close()             { hsAssert(0, "hsMMIOStream::Close  NotImplemented"); return false; }
 
     virtual hsBool  AtEnd();
-    virtual UInt32  Read(UInt32 byteCount, void* buffer);
-    virtual UInt32  Write(UInt32 byteCount, const void* buffer);
-    virtual void    Skip(UInt32 deltaByteCount);
+    virtual uint32_t  Read(uint32_t byteCount, void* buffer);
+    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
+    virtual void    Skip(uint32_t deltaByteCount);
     virtual void    Rewind();
     virtual void    FastFwd();
     virtual void    Truncate();

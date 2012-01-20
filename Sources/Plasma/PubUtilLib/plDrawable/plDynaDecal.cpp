@@ -83,7 +83,7 @@ hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 
         while( n-- )
         {
-            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            uint32_t diff = uint32_t(origUVW->fZ * atten * 255.99f);
             vtx->fDiffuse = 0xff000000 
                 | (diff << 16)
                 | (diff << 8)
@@ -161,7 +161,7 @@ hsBool plDynaRipple::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 
         while( n-- )
         {
-            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            uint32_t diff = uint32_t(origUVW->fZ * atten * 255.99f);
             vtx->fDiffuse = 0xff000000 
                 | (diff << 16)
                 | (diff << 8)
@@ -241,7 +241,7 @@ hsBool plDynaWake::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 
         while( n-- )
         {
-            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            uint32_t diff = uint32_t(origUVW->fZ * atten * 255.99f);
             vtx->fDiffuse = 0xff000000 
                 | (diff << 16)
                 | (diff << 8)
@@ -321,7 +321,7 @@ hsBool plDynaWave::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 
         while( n-- )
         {
-            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            uint32_t diff = uint32_t(origUVW->fZ * atten * 255.99f);
             vtx->fDiffuse = 0xff000000 
                 | (diff << 16)
                 | (diff << 8)

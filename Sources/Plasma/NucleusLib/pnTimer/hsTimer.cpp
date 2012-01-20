@@ -85,8 +85,8 @@ hsWide plTimerShare::DSecondsToRawTicks(double secs)
     double ticks = secs * hsTimer::GetRawBase().AsDouble();
     double hi = ticks / double(65536) / double(65536);
     ticks -= hi;
-    retVal.fHi = Int32(hi);
-    retVal.fLo = Int32(ticks);
+    retVal.fHi = int32_t(hi);
+    retVal.fLo = int32_t(ticks);
     return retVal;
 }
 
@@ -242,7 +242,7 @@ hsWide hsTimer::IInitRawBase()
 #include <sys/time.h>
 
 #define kMicroSecondsUnit   1000000
-static UInt32   gBaseTime = 0;
+static uint32_t   gBaseTime = 0;
 
 hsWide* plTimerShare::GetRawTicks(hsWide* ticks) const
 {
@@ -300,7 +300,7 @@ double hsTimer::GetPrecTicksPerSec()
     return 1;
 }
 
-UInt32 hsTimer::GetPrecTickCount()
+uint32_t hsTimer::GetPrecTickCount()
 {
 #if HS_BUILD_FOR_WIN32
     LARGE_INTEGER ti;
@@ -312,20 +312,20 @@ UInt32 hsTimer::GetPrecTickCount()
     return 1;
 #endif
 }
-UInt32 hsTimer::PrecSecsToTicks(hsScalar secs)
+uint32_t hsTimer::PrecSecsToTicks(hsScalar secs)
 {
-    return (UInt32)(((double)secs) * fPrecTicksPerSec);
+    return (uint32_t)(((double)secs) * fPrecTicksPerSec);
 }
-double hsTimer::PrecTicksToSecs(UInt32 ticks)
+double hsTimer::PrecTicksToSecs(uint32_t ticks)
 {
     return ((double)ticks) / fPrecTicksPerSec;
 }
-double hsTimer::PrecTicksToHz(UInt32 ticks)
+double hsTimer::PrecTicksToHz(uint32_t ticks)
 {
     return fPrecTicksPerSec / ((double)ticks);
 }
 
-UInt64 hsTimer::GetFullTickCount()
+uint64_t hsTimer::GetFullTickCount()
 {
 #if HS_BUILD_FOR_WIN32
     LARGE_INTEGER ticks;
@@ -336,10 +336,10 @@ UInt64 hsTimer::GetFullTickCount()
 #endif
 }
 
-float hsTimer::FullTicksToMs(UInt64 ticks)
+float hsTimer::FullTicksToMs(uint64_t ticks)
 {
 #ifdef HS_BUILD_FOR_WIN32
-    static UInt64 ticksPerTenthMs = 0;
+    static uint64_t ticksPerTenthMs = 0;
 
     if (ticksPerTenthMs == 0)
     {

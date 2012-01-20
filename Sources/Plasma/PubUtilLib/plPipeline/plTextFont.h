@@ -67,14 +67,14 @@ class plTextFont
 
         struct plDXCharInfo
         {
-            UInt16      fW, fH;
+            uint16_t      fW, fH;
             hsPoint3    fUVs[ 2 ];
         };
 
         struct plFontVertex
         {
             hsPoint3    fPoint;
-            UInt32      fColor;
+            uint32_t      fColor;
             hsPoint3    fUV;
 
             plFontVertex& operator=(const int zero)
@@ -87,13 +87,13 @@ class plTextFont
             }
         };
 
-        UInt32  fMaxNumIndices;
-        UInt32  fTextureWidth, fTextureHeight;
+        uint32_t  fMaxNumIndices;
+        uint32_t  fTextureWidth, fTextureHeight;
 
         char    fFace[ 128 ];
-        UInt16  fSize;
+        uint16_t  fSize;
         hsBool  fInitialized;
-        UInt16  fFontHeight;
+        uint16_t  fFontHeight;
         
         plPipeline  *fPipe;
 
@@ -104,12 +104,12 @@ class plTextFont
 
 
         virtual void    IInitObjects( void );
-        virtual void    ICreateTexture( UInt16 *data ) = 0;
+        virtual void    ICreateTexture( uint16_t *data ) = 0;
         virtual void    IInitStateBlocks( void ) = 0;
-        virtual void    IDrawPrimitive( UInt32 count, plFontVertex *array ) = 0;
-        virtual void    IDrawLines( UInt32 count, plFontVertex *array ) = 0;
+        virtual void    IDrawPrimitive( uint32_t count, plFontVertex *array ) = 0;
+        virtual void    IDrawLines( uint32_t count, plFontVertex *array ) = 0;
         
-        UInt16  *IInitFontTexture( void );
+        uint16_t  *IInitFontTexture( void );
 
         void    IUnlink( void )
         {
@@ -127,14 +127,14 @@ class plTextFont
         plTextFont( plPipeline *pipe );
         virtual ~plTextFont();
 
-        void    Create( char *face, UInt16 size );
-        void    DrawString( const char *string, int x, int y, UInt32 hexColor, UInt8 style, UInt32 rightEdge = 0 );
-        void    DrawRect( int left, int top, int right, int bottom, UInt32 hexColor );
-        void    Draw3DBorder( int left, int top, int right, int bottom, UInt32 hexColor1, UInt32 hexColor2 );
-        UInt32  CalcStringWidth( const char *string );
-        UInt32  GetFontSize( void ) { return fSize; }
+        void    Create( char *face, uint16_t size );
+        void    DrawString( const char *string, int x, int y, uint32_t hexColor, uint8_t style, uint32_t rightEdge = 0 );
+        void    DrawRect( int left, int top, int right, int bottom, uint32_t hexColor );
+        void    Draw3DBorder( int left, int top, int right, int bottom, uint32_t hexColor1, uint32_t hexColor2 );
+        uint32_t  CalcStringWidth( const char *string );
+        uint32_t  GetFontSize( void ) { return fSize; }
 
-        UInt16  GetFontHeight() { return fFontHeight; }
+        uint16_t  GetFontHeight() { return fFontHeight; }
 
         virtual void    DestroyObjects( void ) = 0;
         virtual void    SaveStates( void ) = 0;

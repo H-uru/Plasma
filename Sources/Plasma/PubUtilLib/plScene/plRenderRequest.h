@@ -64,7 +64,7 @@ class plRenderRequest : public plRenderRequestBase
 {
 public:
 protected:
-    UInt32                  fRenderState; // Or'ed from plPipeline::RenderStateSettings::kRender*
+    uint32_t                  fRenderState; // Or'ed from plPipeline::RenderStateSettings::kRender*
 
     plDrawable*             fClearDrawable;
     plRenderTarget*         fRenderTarget;
@@ -77,8 +77,8 @@ protected:
 
     hsScalar                fPriority;
 
-    UInt32                  fDrawableMask;
-    UInt32                  fSubDrawableMask;
+    uint32_t                  fDrawableMask;
+    uint32_t                  fSubDrawableMask;
 
     hsColorRGBA             fClearColor;
     hsScalar                fClearDepth;
@@ -92,7 +92,7 @@ protected:
 
     hsBitVector             fVisForce;
 
-    UInt32                  fUserData;
+    uint32_t                  fUserData;
     hsBool                  fIgnoreOccluders;
 
 public:
@@ -102,14 +102,14 @@ public:
     hsBool          GetRenderSelect() const { return !fVisForce.Empty(); }
     hsBool          GetRenderCharacters() const;
 
-    void            SetRenderState(UInt32 st) { fRenderState = st; }
-    UInt32          GetRenderState() const { return fRenderState; }
+    void            SetRenderState(uint32_t st) { fRenderState = st; }
+    uint32_t          GetRenderState() const { return fRenderState; }
 
-    void            SetDrawableMask(UInt32 m) { fDrawableMask = m; }
-    UInt32          GetDrawableMask() const { return fDrawableMask; }
+    void            SetDrawableMask(uint32_t m) { fDrawableMask = m; }
+    uint32_t          GetDrawableMask() const { return fDrawableMask; }
 
-    void            SetSubDrawableMask(UInt32 m) { fSubDrawableMask = m; }
-    UInt32          GetSubDrawableMask() const { return fSubDrawableMask; }
+    void            SetSubDrawableMask(uint32_t m) { fSubDrawableMask = m; }
+    uint32_t          GetSubDrawableMask() const { return fSubDrawableMask; }
 
     void            RequestAck(plKey key) { fAck = key; }
     plKey           GetAck() const { return fAck; }
@@ -148,8 +148,8 @@ public:
     hsScalar GetSizeX() const { return fViewTransform.GetOrthoWidth(); }
     hsScalar GetSizeY() const { return fViewTransform.GetOrthoHeight(); }
 
-    UInt16 GetScreenWidth() const { return fViewTransform.GetScreenWidth(); }
-    UInt16 GetScreenHeight() const { return fViewTransform.GetScreenHeight(); }
+    uint16_t GetScreenWidth() const { return fViewTransform.GetScreenWidth(); }
+    uint16_t GetScreenHeight() const { return fViewTransform.GetScreenHeight(); }
 
     const hsColorRGBA& GetClearColor() const { return fClearColor; }
     hsScalar GetClearDepth() const { return fClearDepth; }
@@ -194,8 +194,8 @@ public:
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
-    void SetUserData(UInt32 n) { fUserData = n; }
-    UInt32 GetUserData() const { return fUserData; }
+    void SetUserData(uint32_t n) { fUserData = n; }
+    uint32_t GetUserData() const { return fUserData; }
     
     void SetIgnoreOccluders(hsBool b) { fIgnoreOccluders = b; }
     hsBool GetIgnoreOccluders() { return fIgnoreOccluders; }

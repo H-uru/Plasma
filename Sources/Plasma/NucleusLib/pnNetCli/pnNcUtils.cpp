@@ -62,7 +62,7 @@ CInputAccumulator::CInputAccumulator () {
 }
 
 //============================================================================
-void CInputAccumulator::Add (unsigned count, const byte * data) {
+void CInputAccumulator::Add (unsigned count, const uint8_t * data) {
 //  LogMsg(kLogPerf, L"Adding %u bytes to accumulator %p", count, this);
     unsigned offset =  curr - buffer.Ptr();
     buffer.Add(data, count);

@@ -158,7 +158,7 @@ inline void plWaveSet7::GraphLen(hsScalar len) const
     if( fStatusGraph )
     {
         hsScalar maxLen = TexState().fMaxLength * kCompositeSize / State().fRippleScale;
-        Int32 val = Int32(len / maxLen * 100.f);
+        int32_t val = int32_t(len / maxLen * 100.f);
         fStatusGraph->AddData(val);
     }
 }
@@ -196,7 +196,7 @@ inline void plWaveSet7::LogF(const char *format, ...) const
     }
 }
 
-inline void plWaveSet7::LogF(UInt32 color, const char *format, ...) const
+inline void plWaveSet7::LogF(uint32_t color, const char *format, ...) const
 {
     if( fStatusLog )
     {
@@ -246,7 +246,7 @@ inline void plWaveSet7::LogF(const char *format, ...) const
 {
 }
 
-inline void plWaveSet7::LogF(UInt32 color, const char *format, ...) const
+inline void plWaveSet7::LogF(uint32_t color, const char *format, ...) const
 {
 }
 
@@ -1630,12 +1630,12 @@ plMipmap* plWaveSet7::ICreateBiasNoiseMap()
             hsScalar x = fRand.RandMinusOneToOne();
             hsScalar y = fRand.RandMinusOneToOne();
 
-            UInt8 r = UInt8((x * 0.5f + 0.5f) * 255.999f);
-            UInt8 g = UInt8((y * 0.5f + 0.5f) * 255.999f);
+            uint8_t r = uint8_t((x * 0.5f + 0.5f) * 255.999f);
+            uint8_t g = uint8_t((y * 0.5f + 0.5f) * 255.999f);
 
 //          r = g = 0xff; // SATURATE
 
-            UInt32* val = mipMap->GetAddr32(i, j);
+            uint32_t* val = mipMap->GetAddr32(i, j);
             *val = (0xff << 24)
                 | (r << 16)
                 | (g << 8)
@@ -1689,11 +1689,11 @@ plMipmap* plWaveSet7::ICreateBumpMipmapPS()
             s += 0.5f;
             s = hsScalar(pow(s, TexState().fChop));
             c *= s;
-            UInt8 cosDist = UInt8((c * 0.5 + 0.5) * 255.999f);
+            uint8_t cosDist = uint8_t((c * 0.5 + 0.5) * 255.999f);
             int j;
             for( j = 0; j < sizeV; j++ )
             {
-                UInt32* val = fCosineLUT->GetAddr32(i, j);
+                uint32_t* val = fCosineLUT->GetAddr32(i, j);
                 *val = (0xff << 24)
                     | (cosDist << 16)
                     | (cosDist << 8)
@@ -2097,7 +2097,7 @@ plDrawableSpans* plWaveSet7::ICreateClearDrawable(plDrawableSpans* drawable, hsG
     uvw[3] = uvw[0];
     uvw[3].fX += 1.f;
 
-    UInt16 idx[6];
+    uint16_t idx[6];
     idx[0] = 1;
     idx[1] = 0;
     idx[2] = 2;
@@ -2148,10 +2148,10 @@ plRenderRequest* plWaveSet7::ICreateRenderRequest(plRenderTarget* rt, plDrawable
 
 plRenderTarget* plWaveSet7::ICreateTransferRenderTarget(const char* name, int size)
 {
-    UInt16 flags = plRenderTarget::kIsTexture | plRenderTarget::kIsOrtho;
-    UInt8 bitDepth = 32;
-    UInt8 zDepth = 0;
-    UInt8 stencilDepth = 0;
+    uint16_t flags = plRenderTarget::kIsTexture | plRenderTarget::kIsOrtho;
+    uint8_t bitDepth = 32;
+    uint8_t zDepth = 0;
+    uint8_t stencilDepth = 0;
     
     plRenderTarget* rt = TRACKED_NEW plRenderTarget(flags, size, size, bitDepth, zDepth, stencilDepth);
 
@@ -2281,7 +2281,7 @@ void plWaveSet7::ICreateFixedMat(hsGMaterial* mat, const int numUVWs)
 
     if( !fEnvMap )
     {
-        plDynamicEnvMap* env = TRACKED_NEW plDynamicEnvMap((UInt16)fEnvSize, (UInt16)fEnvSize, 32);
+        plDynamicEnvMap* env = TRACKED_NEW plDynamicEnvMap((uint16_t)fEnvSize, (uint16_t)fEnvSize, 32);
         hsgResMgr::ResMgr()->NewKey(GetKey()->GetName(), env, GetKey()->GetUoid().GetLocation());
         fEnvMap = env;
         env->SetPosition(hsPoint3(0, 0, 50.f));
@@ -2425,11 +2425,11 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
 }
 
 // type is either plLayRefMsg::kVertexShader or plLayRefMsg::kPixelShader.
-void plWaveSet7::IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, UInt8 type, plShader* shader)
+void plWaveSet7::IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, uint8_t type, plShader* shader)
 {
     if( iFirst < 0 )
         iFirst = 0;
-    if( UInt32(iLast) >= mat->GetNumLayers() )
+    if( uint32_t(iLast) >= mat->GetNumLayers() )
         iLast = mat->GetNumLayers()-1;
     int i;
     for( i = iFirst; i <= iLast; i++ )
@@ -2850,7 +2850,7 @@ void plWaveSet7::IUpdateShaders(plPipeline* pipe, const hsMatrix44& l2w, const h
 
 void plWaveSet7::IUpdateBumpPShader(plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
-    plCONST(Int32)      skip(0);
+    plCONST(int32_t)      skip(0);
     int i;
     for( i = 0; i < kNumBumpShaders; i++ )
     {
@@ -3660,10 +3660,10 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 
     const int nTris = (nWid-1) * 2;
 
-    hsTArray<UInt16> idxArr;
+    hsTArray<uint16_t> idxArr;
     idxArr.SetCount(nTris * 3);
 
-    UInt16* idx = idxArr.AcquireArray();
+    uint16_t* idx = idxArr.AcquireArray();
 
     int iBase = 0;
     for( i = 0; i < nTris; i += 2 )
@@ -3695,19 +3695,19 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
     return drawable;
 }
 
-plDrawableSpans* plWaveSet7::ICreateEmptyGraphDrawable(const char* name, UInt32 ref, int which)
+plDrawableSpans* plWaveSet7::ICreateEmptyGraphDrawable(const char* name, uint32_t ref, int which)
 {
     plDrawableSpans* drawable = TRACKED_NEW plDrawableSpans;
     char buff[256];
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), name, which);
     hsgResMgr::ResMgr()->NewKey(buff, drawable, GetKey()->GetUoid().GetLocation());
 
-    hsgResMgr::ResMgr()->SendRef(drawable->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (Int8)ref), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(drawable->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
 
     return drawable;
 }
 
-hsGMaterial* plWaveSet7::ICreateEmptyMaterial(const char* name, UInt32 ref, int which)
+hsGMaterial* plWaveSet7::ICreateEmptyMaterial(const char* name, uint32_t ref, int which)
 {
     hsGMaterial* mat = TRACKED_NEW hsGMaterial;
 
@@ -3715,7 +3715,7 @@ hsGMaterial* plWaveSet7::ICreateEmptyMaterial(const char* name, UInt32 ref, int 
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), name, which);
     hsgResMgr::ResMgr()->NewKey(buff, mat, GetKey()->GetUoid().GetLocation());
 
-    hsgResMgr::ResMgr()->SendRef(mat->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (Int8)ref), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(mat->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
 
     return mat;
 }
@@ -3730,7 +3730,7 @@ plLayer* plWaveSet7::ICreateBlankLayer(const char* name, int suff)
     return lay;
 }
 
-plMipmap* plWaveSet7::ICreateBlankTex(const char* name, int width, int height, UInt32 ref)
+plMipmap* plWaveSet7::ICreateBlankTex(const char* name, int width, int height, uint32_t ref)
 {
     plMipmap* mipMap = TRACKED_NEW plMipmap(
         width, height,
@@ -3743,7 +3743,7 @@ plMipmap* plWaveSet7::ICreateBlankTex(const char* name, int width, int height, U
     sprintf(buff, "%s_%s", GetKey()->GetName(), name);
     hsgResMgr::ResMgr()->NewKey(buff, mipMap, GetKey()->GetUoid().GetLocation());
 
-    hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, (Int8)ref), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, (int8_t)ref), plRefFlags::kActiveRef);
 
     return mipMap;
 }
@@ -3771,7 +3771,7 @@ plMipmap* plWaveSet7::ICreateGraphShoreTex(int width, int height)
         int j;
         for( j = 0; j < height; j++ )
         {
-            UInt32 alpha = 255;
+            uint32_t alpha = 255;
             plConst(int) kRampStart(4);
             if( j <= kRampStart )
             {
@@ -3786,7 +3786,7 @@ plMipmap* plWaveSet7::ICreateGraphShoreTex(int width, int height)
             {
                 alpha = 0;
             }
-            UInt32 color = (alpha << 24)
+            uint32_t color = (alpha << 24)
                     | (0xff << 16)
                     | (0xff << 8)
                     | 0xff;
@@ -3794,7 +3794,7 @@ plMipmap* plWaveSet7::ICreateGraphShoreTex(int width, int height)
             int i;
             for( i = 0; i < width; i++ )
             {
-                UInt32* val = mipMap->GetAddr32(i, j);
+                uint32_t* val = mipMap->GetAddr32(i, j);
                 *val = color;
             }
         }
@@ -3812,7 +3812,7 @@ void plWaveSet7::IRefillBubbleShoreTex()
     const int height = mipMap->GetHeight();
 
     // Initialize to white opaque. 
-    memset(mipMap->GetAddr32(0,0), 0xff, width*height*sizeof(UInt32));
+    memset(mipMap->GetAddr32(0,0), 0xff, width*height*sizeof(uint32_t));
 
     plConst(int) kMinNumBub(1024);
     plConst(int) kMaxNumBub(6000);
@@ -3857,9 +3857,9 @@ void plWaveSet7::IRefillBubbleShoreTex()
                 f *= (kMaxAlpha - kMinAlpha);
                 f += kMinAlpha;
 
-                UInt32* val = mipMap->GetAddr32(ii, jj);
-                UInt32 alpha = (*val) >> 24;
-                alpha = UInt32(hsScalar(alpha) * f);
+                uint32_t* val = mipMap->GetAddr32(ii, jj);
+                uint32_t alpha = (*val) >> 24;
+                alpha = uint32_t(hsScalar(alpha) * f);
                 *val &= 0x00ffffff;
                 *val |= (alpha << 24);
             }
@@ -3874,7 +3874,7 @@ void plWaveSet7::IRefillBubbleShoreTex()
         int i;
         for( i = 0; i < width; i++ )
         {
-            UInt32* val = mipMap->GetAddr32(i, j);
+            uint32_t* val = mipMap->GetAddr32(i, j);
             hsColorRGBA col;
             col.FromARGB32(*val);
             hsScalar alpha = col.a;
@@ -3932,7 +3932,7 @@ void plWaveSet7::IRefillEdgeShoreTex()
     int j;
     for( j = 0; j < height; j++ )
     {
-        UInt32 alpha = 0;
+        uint32_t alpha = 0;
         if( (j > bot)&&(j < top) )
         {
 #if 0 // like x^2
@@ -3956,13 +3956,13 @@ void plWaveSet7::IRefillEdgeShoreTex()
             a *= 0.5f;
 #endif
 
-            alpha = UInt32(a * maxAlpha);
+            alpha = uint32_t(a * maxAlpha);
         }
 
         int i;
         for( i = 0; i < width; i++ )
         {
-            UInt32* val = mipMap->GetAddr32(i, j);
+            uint32_t* val = mipMap->GetAddr32(i, j);
             *val = (alpha << 24)
                 | (alpha << 16)
                 | (alpha << 8)

@@ -148,16 +148,16 @@ public:
     ///////////////////////////
     // Precision timer routines - these are stateless and implemented as statics.
     ///////////////////////////
-    static UInt32   GetPrecTickCount();
+    static uint32_t   GetPrecTickCount();
     static double   GetPrecTicksPerSec();
-    static UInt32   PrecSecsToTicks(hsScalar secs);
-    static double   PrecTicksToSecs(UInt32 ticks);
-    static double   PrecTicksToHz(UInt32 ticks);
+    static uint32_t   PrecSecsToTicks(hsScalar secs);
+    static double   PrecTicksToSecs(uint32_t ticks);
+    static double   PrecTicksToHz(uint32_t ticks);
 
     // If you need to time something longer than 20 seconds, use this instead of
     // the precision timer.  It works the same, it just gives you full resolution.
-    static UInt64   GetFullTickCount();
-    static float    FullTicksToMs(UInt64 ticks);
+    static uint64_t   GetFullTickCount();
+    static float    FullTicksToMs(uint64_t ticks);
 
     //
     // Pass GetTheTimer() into other process space, and then call SetTheTimer() on it.

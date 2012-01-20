@@ -62,8 +62,8 @@ plAutoUIBase::~plAutoUIBase()
     {
         // The internal names are just pointers Max keeps to OUR copy of the string.
         // We'll free them here to prevent leaks
-        UInt16 count = fDesc->Count();
-        for (UInt16 i = 0; i < count; i++)
+        uint16_t count = fDesc->Count();
+        for (uint16_t i = 0; i < count; i++)
         {
             ParamID id = fDesc->IndextoID(i);
             ParamDef& def = fDesc->GetParamDef(id);
@@ -84,8 +84,8 @@ plAutoUIBase::~plAutoUIBase()
         fDesc = nil;
     }
 
-    UInt32 count = fParams.size();
-    for (UInt32 i = 0; i < count; i++)
+    uint32_t count = fParams.size();
+    for (uint32_t i = 0; i < count; i++)
         delete fParams[i];
     fParams.clear();
 
@@ -125,7 +125,7 @@ char *plAutoUIBase::IMakeScriptName(const char *fullName)
 // Setup control
 //
 
-void plAutoUIBase::AddCheckBox(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, hsBool def)
+void plAutoUIBase::AddCheckBox(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, hsBool def)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -137,7 +137,7 @@ void plAutoUIBase::AddCheckBox(Int16 id, const char *scriptName, const char *nam
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddFloatSpinner(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, hsScalar def, hsScalar min, hsScalar max)
+void plAutoUIBase::AddFloatSpinner(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, hsScalar def, hsScalar min, hsScalar max)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -151,7 +151,7 @@ void plAutoUIBase::AddFloatSpinner(Int16 id, const char *scriptName, const char 
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddIntSpinner(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, int def, int min, int max)
+void plAutoUIBase::AddIntSpinner(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, int def, int min, int max)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -165,7 +165,7 @@ void plAutoUIBase::AddIntSpinner(Int16 id, const char *scriptName, const char *n
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddEditBox(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, const char *def, int lines)
+void plAutoUIBase::AddEditBox(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, const char *def, int lines)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -177,7 +177,7 @@ void plAutoUIBase::AddEditBox(Int16 id, const char *scriptName, const char *name
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickNodeList(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<Class_ID>* filter)
+void plAutoUIBase::AddPickNodeList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<Class_ID>* filter)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -189,7 +189,7 @@ void plAutoUIBase::AddPickNodeList(Int16 id, const char *scriptName, const char 
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickNodeButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<Class_ID>* filter, bool canConvertToType)
+void plAutoUIBase::AddPickNodeButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<Class_ID>* filter, bool canConvertToType)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -201,7 +201,7 @@ void plAutoUIBase::AddPickNodeButton(Int16 id, const char *scriptName, const cha
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickComponentButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<Class_ID>* filter, bool canConvertToType)
+void plAutoUIBase::AddPickComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<Class_ID>* filter, bool canConvertToType)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -213,7 +213,7 @@ void plAutoUIBase::AddPickComponentButton(Int16 id, const char *scriptName, cons
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickComponentList(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<Class_ID>* filter)
+void plAutoUIBase::AddPickComponentList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<Class_ID>* filter)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -225,7 +225,7 @@ void plAutoUIBase::AddPickComponentList(Int16 id, const char *scriptName, const 
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickActivatorButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickActivatorButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -237,7 +237,7 @@ void plAutoUIBase::AddPickActivatorButton(Int16 id, const char *scriptName, cons
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickActivatorList(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickActivatorList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -249,7 +249,7 @@ void plAutoUIBase::AddPickActivatorList(Int16 id, const char *scriptName, const 
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickDynamicTextButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickDynamicTextButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -261,7 +261,7 @@ void plAutoUIBase::AddPickDynamicTextButton(Int16 id, const char *scriptName, co
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickGUIDialogButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickGUIDialogButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -273,7 +273,7 @@ void plAutoUIBase::AddPickGUIDialogButton(Int16 id, const char *scriptName, cons
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickExcludeRegionButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickExcludeRegionButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -285,7 +285,7 @@ void plAutoUIBase::AddPickExcludeRegionButton(Int16 id, const char *scriptName, 
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickWaterComponentButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickWaterComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -297,7 +297,7 @@ void plAutoUIBase::AddPickWaterComponentButton(Int16 id, const char *scriptName,
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickSwimCurrentInterfaceButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickSwimCurrentInterfaceButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -309,7 +309,7 @@ void plAutoUIBase::AddPickSwimCurrentInterfaceButton(Int16 id, const char *scrip
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickClusterComponentButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickClusterComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -321,7 +321,7 @@ void plAutoUIBase::AddPickClusterComponentButton(Int16 id, const char *scriptNam
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickAnimationButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickAnimationButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -333,7 +333,7 @@ void plAutoUIBase::AddPickAnimationButton(Int16 id, const char *scriptName, cons
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickBehaviorButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickBehaviorButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -345,7 +345,7 @@ void plAutoUIBase::AddPickBehaviorButton(Int16 id, const char *scriptName, const
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickMaterialButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickMaterialButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -357,7 +357,7 @@ void plAutoUIBase::AddPickMaterialButton(Int16 id, const char *scriptName, const
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickMaterialAnimationButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickMaterialAnimationButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -369,7 +369,7 @@ void plAutoUIBase::AddPickMaterialAnimationButton(Int16 id, const char *scriptNa
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickGUIPopUpMenuButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickGUIPopUpMenuButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -381,7 +381,7 @@ void plAutoUIBase::AddPickGUIPopUpMenuButton(Int16 id, const char *scriptName, c
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickGUISkinButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickGUISkinButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -393,7 +393,7 @@ void plAutoUIBase::AddPickGUISkinButton(Int16 id, const char *scriptName, const 
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddDropDownList(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<std::string>* options)
+void plAutoUIBase::AddDropDownList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<std::string>* options)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -405,7 +405,7 @@ void plAutoUIBase::AddDropDownList(Int16 id, const char *scriptName, const char 
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddPickGrassComponentButton(Int16 id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
+void plAutoUIBase::AddPickGrassComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 
@@ -443,8 +443,8 @@ BOOL plAutoUIBase::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         PostMessage(fhDlg, WM_SIZE_PANEL, 0, 0);
     }
 
-    UInt32 count = fParams.size();
-    for (UInt32 i = 0; i < count; i++)
+    uint32_t count = fParams.size();
+    for (uint32_t i = 0; i < count; i++)
     {
         if (fParams[i]->IsMyMessage(msg, wParam, lParam, fPBlock))
         {
@@ -457,7 +457,7 @@ BOOL plAutoUIBase::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 
                 // We now have the id and current state of the drop-down list that changed
                 // so now we need to update the visible state of the controls
-                for (UInt32 idx = 0; idx < fParams.size(); idx++)
+                for (uint32_t idx = 0; idx < fParams.size(); idx++)
                 {
                     plAutoUIParam* par = fParams[idx];
 
@@ -490,7 +490,7 @@ BOOL plAutoUIBase::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         // Ok, this sucks but I don't know of a better way at this point
         // We need to intialize the visible state of the controls, and the only way to do this
         // is by looping through and finding all of the drop-down lists
-        for (UInt32 i = 0; i < fParams.size(); i++)
+        for (uint32_t i = 0; i < fParams.size(); i++)
         {
             if (fParams[i]->GetParamType() == plAutoUIParam::kTypeDropDownList)
             {
@@ -505,7 +505,7 @@ BOOL plAutoUIBase::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 
                 // We now have the id and current state of the drop-down list that changed
                 // so now we need to update the visible state of the controls
-                for (UInt32 idx = 0; idx < fParams.size(); idx++)
+                for (uint32_t idx = 0; idx < fParams.size(); idx++)
                 {
                     if (fParams[idx]->CheckVisibility(id, str))
                     {
@@ -538,8 +538,8 @@ void plAutoUIBase::ICreateControls()
 {
     int yOffset = 10;
 
-    UInt32 count = fParams.size();
-    for (UInt32 i = 0; i < count; i++)
+    uint32_t count = fParams.size();
+    for (uint32_t i = 0; i < count; i++)
         yOffset = fParams[i]->Create(fhDlg, fPBlock, yOffset)+5;
         //yOffset = fParams[i]->CreateControls(fhDlg, fPBlock, yOffset)+5;
 

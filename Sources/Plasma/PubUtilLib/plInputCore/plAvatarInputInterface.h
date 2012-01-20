@@ -86,7 +86,7 @@ class plAvatarInputMap
         virtual hsBool IsBasic() { return false; }
 
         plMouseMap      *fMouseMap;
-        UInt32          fButtonState;
+        uint32_t          fButtonState;
 };
 
 // Basic avatar mappings, for when the avatar is in "suspended input" mode.
@@ -178,7 +178,7 @@ class plAvatarInputInterface : public plInputInterface
 {
     protected:
 
-        UInt32      fCurrentCursor;
+        uint32_t      fCurrentCursor;
         hsScalar    fCursorOpacity, fCursorTimeout, fCursorFadeDelay;
 
         plAvatarInputMap        *fInputMap;
@@ -188,7 +188,7 @@ class plAvatarInputInterface : public plInputInterface
         virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd );
 
         // Gets called once per IUpdate(), just like normal IEval()s
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
+        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty );
 
         void    IDeactivateCommand(plMouseInfo *info);
         void    IChangeInputMaps(plAvatarInputMap *newMap);
@@ -228,8 +228,8 @@ class plAvatarInputInterface : public plInputInterface
     
         // Always return true, since the cursor should be representing how we control the avatar
         virtual hsBool      HasInterestingCursorID( void ) const { return true; }
-        virtual UInt32      GetPriorityLevel( void ) const { return kAvatarInputPriority; }
-        virtual UInt32      GetCurrentCursorID( void ) const { return fCurrentCursor; }
+        virtual uint32_t      GetPriorityLevel( void ) const { return kAvatarInputPriority; }
+        virtual uint32_t      GetCurrentCursorID( void ) const { return fCurrentCursor; }
         virtual hsScalar    GetCurrentCursorOpacity( void ) const { return fCursorOpacity; }
         const char*         GetInputMapName() { return fInputMap ? fInputMap->GetName() : ""; }
 

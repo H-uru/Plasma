@@ -67,7 +67,7 @@ hsBool pyGUIControlEditBox::IsGUIControlEditBox(pyKey& gckey)
     return false;
 }
 
-void pyGUIControlEditBox::SetBufferSize( UInt32 size )
+void pyGUIControlEditBox::SetBufferSize( uint32_t size )
 {
     if ( fGCkey )
     {
@@ -211,7 +211,7 @@ void pyGUIControlEditBox::SetSpecialCaptureKeyMode(hsBool state)
     }
 }
 
-UInt32 pyGUIControlEditBox::GetLastKeyCaptured()
+uint32_t pyGUIControlEditBox::GetLastKeyCaptured()
 {
     if ( fGCkey )
     {
@@ -223,26 +223,26 @@ UInt32 pyGUIControlEditBox::GetLastKeyCaptured()
     return 0;
 }
 
-UInt32 pyGUIControlEditBox::GetLastModifiersCaptured()
+uint32_t pyGUIControlEditBox::GetLastModifiersCaptured()
 {
     if ( fGCkey )
     {
         // get the pointer to the modifier
         pfGUIEditBoxMod* pebmod = pfGUIEditBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pebmod )
-            return (UInt32)(pebmod->GetLastModifiersCaptured());
+            return (uint32_t)(pebmod->GetLastModifiersCaptured());
     }
     return 0;
 }
 
-void pyGUIControlEditBox::SetLastKeyCapture(UInt32 key, UInt32 modifiers)
+void pyGUIControlEditBox::SetLastKeyCapture(uint32_t key, uint32_t modifiers)
 {
     if ( fGCkey )
     {
         // get the pointer to the modifier
         pfGUIEditBoxMod* pebmod = pfGUIEditBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pebmod )
-            pebmod->SetLastKeyCapture(key,(UInt8)modifiers);
+            pebmod->SetLastKeyCapture(key,(uint8_t)modifiers);
     }
 }
 

@@ -903,11 +903,11 @@ void        plAnimStealthNode::SetLoop( bool b, const char *name )
         fParamBlock->SetValue( (ParamID)kPBLoopName, 0, (char *)name );
 }
 
-UInt8       plAnimStealthNode::GetEaseInType( void ) const      { return (UInt8)fParamBlock->GetInt( (ParamID)kPBEaseInType ); }
+uint8_t       plAnimStealthNode::GetEaseInType( void ) const      { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseInType ); }
 hsScalar    plAnimStealthNode::GetEaseInLength( void ) const    { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseInLength ); }
 hsScalar    plAnimStealthNode::GetEaseInMin( void ) const       { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseInMin ); }
 hsScalar    plAnimStealthNode::GetEaseInMax( void ) const       { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseInMax ); }
-void        plAnimStealthNode::SetEaseIn( UInt8 type, hsScalar length, hsScalar min, hsScalar max )
+void        plAnimStealthNode::SetEaseIn( uint8_t type, hsScalar length, hsScalar min, hsScalar max )
 {
     fParamBlock->SetValue( (ParamID)kPBEaseInType, 0, (int)type );
     fParamBlock->SetValue( (ParamID)kPBEaseInLength, 0, (float)length );
@@ -915,11 +915,11 @@ void        plAnimStealthNode::SetEaseIn( UInt8 type, hsScalar length, hsScalar 
     fParamBlock->SetValue( (ParamID)kPBEaseInMax, 0, (float)max );
 }
 
-UInt8       plAnimStealthNode::GetEaseOutType( void ) const     { return (UInt8)fParamBlock->GetInt( (ParamID)kPBEaseOutType ); }
+uint8_t       plAnimStealthNode::GetEaseOutType( void ) const     { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseOutType ); }
 hsScalar    plAnimStealthNode::GetEaseOutLength( void ) const   { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseOutLength ); }
 hsScalar    plAnimStealthNode::GetEaseOutMin( void ) const      { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseOutMin ); }
 hsScalar    plAnimStealthNode::GetEaseOutMax( void ) const      { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseOutMax ); }
-void        plAnimStealthNode::SetEaseOut( UInt8 type, hsScalar length, hsScalar min, hsScalar max )
+void        plAnimStealthNode::SetEaseOut( uint8_t type, hsScalar length, hsScalar min, hsScalar max )
 {
     fParamBlock->SetValue( (ParamID)kPBEaseOutType, 0, (int)type );
     fParamBlock->SetValue( (ParamID)kPBEaseOutLength, 0, (float)length );

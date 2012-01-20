@@ -74,8 +74,8 @@ public:
 
     static hsBool IsGUIControlRadioGroup(pyKey& gckey);
 
-    virtual Int32   GetValue( void );
-    virtual void    SetValue( Int32 value );
+    virtual int32_t   GetValue( void );
+    virtual void    SetValue( int32_t value );
 
 };
 

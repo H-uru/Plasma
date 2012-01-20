@@ -93,7 +93,7 @@ class pfGUIButtonDragProc : public pfGUICtrlProcObject
                 fParent->StopDragging( false );
         }
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, UInt32 event )
+        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
         {
             if( event == pfGUIDraggableMod::kDragging )
             {
@@ -113,7 +113,7 @@ class pfGUIButtonDragProc : public pfGUICtrlProcObject
                 fOrigProc->HandleExtendedEvent( ctrl, event );
         }
 
-        virtual void    UserCallback( UInt32 userValue )
+        virtual void    UserCallback( uint32_t userValue )
         {
             if( fOrigProc != nil )
                 fOrigProc->UserCallback( userValue );
@@ -169,7 +169,7 @@ pfGUIButtonMod::~pfGUIButtonMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIButtonMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIButtonMod::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -201,7 +201,7 @@ void    pfGUIButtonMod::Read( hsStream *s, hsResMgr *mgr )
     pfGUIControlMod::Read(s, mgr);
 
     fAnimationKeys.Reset();
-    UInt32 i, count = s->ReadLE32();
+    uint32_t i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
     fAnimName = s->ReadSafeString();
@@ -220,7 +220,7 @@ void    pfGUIButtonMod::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    UInt32 i, count = fAnimationKeys.GetCount();
+    uint32_t i, count = fAnimationKeys.GetCount();
     s->WriteLE32( count );
     for( i = 0; i < count; i++ )
         mgr->WriteKey( s, fAnimationKeys[ i ] );
@@ -249,7 +249,7 @@ void    pfGUIButtonMod::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void    pfGUIButtonMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIButtonMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     fClicking = true;
     if( fAnimationKeys.GetCount() > 0 )
@@ -274,7 +274,7 @@ void    pfGUIButtonMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
     }
 }
 
-void    pfGUIButtonMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIButtonMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
 
     // make sure that we got the down click first
@@ -305,7 +305,7 @@ void    pfGUIButtonMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
     fTriggering = false;
 }
 
-void    pfGUIButtonMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIButtonMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
     if( !fClicking )
         return;
@@ -327,12 +327,12 @@ void    pfGUIButtonMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
     }
 }
 
-void    pfGUIButtonMod::SetNotifyType(Int32 kind)
+void    pfGUIButtonMod::SetNotifyType(int32_t kind)
 {
     fNotifyType = kind;
 }
 
-Int32   pfGUIButtonMod::GetNotifyType()
+int32_t   pfGUIButtonMod::GetNotifyType()
 {
     return fNotifyType;
 }
@@ -395,7 +395,7 @@ void    pfGUIButtonMod::SetMouseOverAnimKeys( hsTArray<plKey> &keys, const char 
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32      pfGUIButtonMod::IGetDesiredCursor( void ) const
+uint32_t      pfGUIButtonMod::IGetDesiredCursor( void ) const
 {
     if( fHandler == nil )
         return 0;

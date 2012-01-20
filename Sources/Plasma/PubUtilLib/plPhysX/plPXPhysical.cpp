@@ -269,7 +269,7 @@ void plPXPhysical::IMakeHull(NxConvexMesh* convexMesh, hsMatrix44 l2w)
 
     for (int i = 0; i < desc.numTriangles; i++)
     {
-        UInt32* triangle = (UInt32*)(((char*)desc.triangles) + desc.triangleStrideBytes*i);
+        uint32_t* triangle = (uint32_t*)(((char*)desc.triangles) + desc.triangleStrideBytes*i);
         float* vertex1 = (float*)(((char*)desc.points) + desc.pointStrideBytes*triangle[0]);
         float* vertex2 = (float*)(((char*)desc.points) + desc.pointStrideBytes*triangle[1]);
         float* vertex3 = (float*)(((char*)desc.points) + desc.pointStrideBytes*triangle[2]);
@@ -612,7 +612,7 @@ hsBool plPXPhysical::MsgReceive( plMessage* msg )
 // right now, we're only worrying about the subworlds
 hsBool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
 {
-    UInt8 refCtxt = refMsg->GetContext();
+    uint8_t refCtxt = refMsg->GetContext();
     plKey refKey = refMsg->GetRef()->GetKey();
     plKey ourKey = GetKey();
     PhysRefType refType = PhysRefType(refMsg->fType);
@@ -1190,7 +1190,7 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
 // TESTING SDL
 // Send phys sendState msg to object's plPhysicalSDLModifier
 //
-hsBool plPXPhysical::DirtySynchState(const char* SDLStateName, UInt32 synchFlags )
+hsBool plPXPhysical::DirtySynchState(const char* SDLStateName, uint32_t synchFlags )
 {
     if (GetObjectKey())
     {
@@ -1272,21 +1272,21 @@ inline hsPoint3& GetTrimeshVert(NxTriangleMeshDesc& desc, int idx)
     return *((hsPoint3*)(((char*)desc.points)+desc.pointStrideBytes*idx));
 }
 
-void GetTrimeshTri(NxTriangleMeshDesc& desc, int idx, UInt16* out)
+void GetTrimeshTri(NxTriangleMeshDesc& desc, int idx, uint16_t* out)
 {
     if (hsCheckBits(desc.flags, NX_MF_16_BIT_INDICES))
     {
-        UInt16* descTris = ((UInt16*)(((char*)desc.triangles)+desc.pointStrideBytes*idx));
+        uint16_t* descTris = ((uint16_t*)(((char*)desc.triangles)+desc.pointStrideBytes*idx));
         out[0] = descTris[0];
         out[1] = descTris[1];
         out[2] = descTris[2];
     }
     else
     {
-        UInt32* descTris = ((UInt32*)(((char*)desc.triangles)+desc.pointStrideBytes*idx));
-        out[0] = (UInt16)descTris[0];
-        out[1] = (UInt16)descTris[1];
-        out[2] = (UInt16)descTris[2];
+        uint32_t* descTris = ((uint32_t*)(((char*)desc.triangles)+desc.pointStrideBytes*idx));
+        out[0] = (uint16_t)descTris[0];
+        out[1] = (uint16_t)descTris[1];
+        out[2] = (uint16_t)descTris[2];
     }
 }
 
@@ -1296,26 +1296,26 @@ inline hsPoint3& GetConvexVert(NxConvexMeshDesc& desc, int idx)
     return *((hsPoint3*)(((char*)desc.points)+desc.pointStrideBytes*idx));
 }
 
-void GetConvexTri(NxConvexMeshDesc& desc, int idx, UInt16* out)
+void GetConvexTri(NxConvexMeshDesc& desc, int idx, uint16_t* out)
 {
     if (hsCheckBits(desc.flags, NX_MF_16_BIT_INDICES))
     {
-        UInt16* descTris = ((UInt16*)(((char*)desc.triangles)+desc.pointStrideBytes*idx));
+        uint16_t* descTris = ((uint16_t*)(((char*)desc.triangles)+desc.pointStrideBytes*idx));
         out[0] = descTris[0];
         out[1] = descTris[1];
         out[2] = descTris[2];
     }
     else
     {
-        UInt32* descTris = ((UInt32*)(((char*)desc.triangles)+desc.pointStrideBytes*idx));
-        out[0] = (UInt16)descTris[0];
-        out[1] = (UInt16)descTris[1];
-        out[2] = (UInt16)descTris[2];
+        uint32_t* descTris = ((uint32_t*)(((char*)desc.triangles)+desc.pointStrideBytes*idx));
+        out[0] = (uint16_t)descTris[0];
+        out[1] = (uint16_t)descTris[1];
+        out[2] = (uint16_t)descTris[2];
     }
 }
 
 // Make a visible object that can be viewed by users for debugging purposes.
-plDrawableSpans* plPXPhysical::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plPXPhysical::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
     hsMatrix44 l2w, unused;
@@ -1332,7 +1332,7 @@ plDrawableSpans* plPXPhysical::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& i
         trimeshShape->getTriangleMesh().saveToDesc(desc);
 
         hsTArray<hsPoint3>  pos;
-        hsTArray<UInt16>    tris;
+        hsTArray<uint16_t>    tris;
 
         const int kMaxTris = 10000;
         const int kMaxVerts = 32000;
@@ -1411,7 +1411,7 @@ plDrawableSpans* plPXPhysical::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& i
         convexShape->getConvexMesh().saveToDesc(desc);
 
         hsTArray<hsPoint3>  pos;
-        hsTArray<UInt16>    tris;
+        hsTArray<uint16_t>    tris;
 
         pos.SetCount(desc.numVertices);
         tris.SetCount(desc.numTriangles * 3);

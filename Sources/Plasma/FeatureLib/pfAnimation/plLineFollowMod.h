@@ -81,7 +81,7 @@ public:
     };
 protected:
     FollowMode          fFollowMode;
-    UInt16              fFollowFlags;
+    uint16_t              fFollowFlags;
 
     plAnimPath*         fPath;
     plSceneObject*      fPathParent;
@@ -97,7 +97,7 @@ protected:
     hsScalar            fOffsetClamp;
     hsScalar            fSpeedClamp;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
     
     virtual hsBool      IGetSearchPos();
     virtual void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm);

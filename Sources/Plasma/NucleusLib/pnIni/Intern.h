@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct IniValue {
-    ARRAY(wchar *)  fArgs;
+    ARRAY(wchar_t *)  fArgs;
     IniKey *        fKey;
     unsigned        fIndex;
     unsigned        fLineNum;
@@ -71,10 +71,10 @@ struct IniKey {
     HASHLINK(IniKey)  fLink;
     ARRAY(IniValue *) fValues;
     IniSection *      fSection;
-    wchar             fName[1]; // variable length
+    wchar_t             fName[1]; // variable length
     // no more fields
 
-    IniKey (IniSection * section, const wchar name[]);
+    IniKey (IniSection * section, const wchar_t name[]);
     ~IniKey ();
 
     unsigned GetHash () const;
@@ -84,10 +84,10 @@ struct IniKey {
 struct IniSection {
     HASHTABLEDECL(IniKey, CHashKeyStrPtrI, fLink) fKeys;
     HASHLINK(IniSection)  fLink;
-    wchar                 fName[1]; // variable length
+    wchar_t                 fName[1]; // variable length
     // no more fields
 
-    IniSection (const wchar name[]);
+    IniSection (const wchar_t name[]);
     ~IniSection ();
 
     unsigned GetHash () const;

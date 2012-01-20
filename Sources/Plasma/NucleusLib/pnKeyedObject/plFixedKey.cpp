@@ -63,7 +63,7 @@ struct plKeySeed
     plFixedKeyId  feFixedKey;
     // NOTE: The following fields are broken out to make adding to the fixed key list easier.
     // However, what they really are, are just the fields of plUoid (including plLocation)
-    UInt16      fType;
+    uint16_t      fType;
     const char  *fObj;
    
     hsBool Match( plKeySeed *p ) 

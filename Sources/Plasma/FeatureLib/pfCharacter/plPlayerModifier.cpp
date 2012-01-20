@@ -277,7 +277,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //hsPoint3 forceRight(-200,0,0);
 //hsPoint3 forceUp(0,0,15);
 //
-//hsBool plPlayerModifier::IEval(double secs, hsScalar del, UInt32 dirty)
+//hsBool plPlayerModifier::IEval(double secs, hsScalar del, uint32_t dirty)
 //{
 //  // setup for local player if necessary
 //  if (HasFlag(kNeedsLocalSetup))

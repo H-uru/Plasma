@@ -79,7 +79,7 @@ class plAxisInputInterface : public plInputInterface
 
         plAxisInputInterface( plAxisAnimModifier *owner ) { fOwner = owner; SetEnabled( true ); }
 
-        virtual UInt32  GetPriorityLevel( void ) const { return kSceneInteractionPriority + 10; }
+        virtual uint32_t  GetPriorityLevel( void ) const { return kSceneInteractionPriority + 10; }
         virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plMouseEventMsg* pMMsg = plMouseEventMsg::ConvertNoRef( pMsg );
@@ -99,7 +99,7 @@ class plAxisInputInterface : public plInputInterface
             return false;
         }
 
-        virtual UInt32  GetCurrentCursorID( void ) const { return kCursorGrab; }
+        virtual uint32_t  GetCurrentCursorID( void ) const { return kCursorGrab; }
         virtual hsBool  HasInterestingCursorID( void ) const { return true; }
 };
 
@@ -122,7 +122,7 @@ plAxisAnimModifier::~plAxisAnimModifier()
 }
 
 
-hsBool plAxisAnimModifier::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plAxisAnimModifier::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     if (!fActive)
         return true;

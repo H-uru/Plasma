@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-plATCEaseCurve *plATCEaseCurve::CreateEaseCurve(UInt8 type, hsScalar minLength, hsScalar maxLength, hsScalar length, 
+plATCEaseCurve *plATCEaseCurve::CreateEaseCurve(uint8_t type, hsScalar minLength, hsScalar maxLength, hsScalar length, 
                                                 hsScalar startSpeed, hsScalar goalSpeed)
 {
     if (type == plAnimEaseTypes::kConstAccel)

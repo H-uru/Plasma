@@ -162,7 +162,7 @@ hsBool plParticleCoreComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg
 
 hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {   
-    Int32 i, j, k;
+    int32_t i, j, k;
 
     plLocation nodeLoc = node->GetKey()->GetUoid().GetLocation();
     const char *objName = node->GetKey()->GetName();
@@ -215,10 +215,10 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     hsScalar massRange      = fUserInput.fMassRange;
     hsScalar rotRange       = fUserInput.fRotRange * PI / 180.f;
 
-    UInt32 xTiles = fUserInput.fXTiles; 
-    UInt32 yTiles = fUserInput.fYTiles; 
-    UInt32 maxEmitters = 1 + GetEmitterReserve();
-    UInt32 maxTotalParticles = 0;   
+    uint32_t xTiles = fUserInput.fXTiles; 
+    uint32_t yTiles = fUserInput.fYTiles; 
+    uint32_t maxEmitters = 1 + GetEmitterReserve();
+    uint32_t maxTotalParticles = 0;   
 
     // Need to do this even when immortal, so that maxTotalParticles is computed correctly.
     partLifeMin = fUserInput.fLifeMin;
@@ -229,8 +229,8 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         // Simulate just the birth across the curve and record the max
         hsScalar frameDelta = (1.f / MAX_FRAMES_PER_SEC); 
         hsScalar avgLife = (partLifeMax + partLifeMin) / 2;
-        UInt32 count = node->NumAttachedComponents();
-        UInt32 lifeTicks = avgLife / frameDelta;
+        uint32_t count = node->NumAttachedComponents();
+        uint32_t lifeTicks = avgLife / frameDelta;
         hsScalar *birth = TRACKED_NEW hsScalar[lifeTicks];
 
         // Find any anim components attached to the same node.
@@ -251,7 +251,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
                 hsScalar loopStart, loopEnd;
 
-                for (j = -1; j < (Int32)anim->GetNumLoops(); j++)
+                for (j = -1; j < (int32_t)anim->GetNumLoops(); j++)
                 {
                     // Initialize our birth counters
                     for (k = 0; k < lifeTicks; k++)
@@ -270,10 +270,10 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     if (loopLength == 0) // It's the default "(Entire Animation)"
                         loopLength = ppsCtl->GetLength();
 
-                    UInt32 loopTicks = loopLength * MAX_FRAMES_PER_SEC;
+                    uint32_t loopTicks = loopLength * MAX_FRAMES_PER_SEC;
 
-                    UInt32 startTick = loopStart * MAX_FRAMES_PER_SEC;
-                    UInt32 tick;
+                    uint32_t startTick = loopStart * MAX_FRAMES_PER_SEC;
+                    uint32_t tick;
                     for (tick = 0; tick < loopTicks + lifeTicks; tick++)
                     {
                         curAnimParticles -= birth[tick % lifeTicks] * frameDelta;
@@ -310,7 +310,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             }
             
             if (maxTotalParticles < maxAnimParticles)
-                maxTotalParticles = (UInt32)maxAnimParticles;
+                maxTotalParticles = (uint32_t)maxAnimParticles;
         }
         delete [] birth;
     }
@@ -323,7 +323,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     delete ppsCtl;
     ppsCtl = nil;
     
-    UInt32 maxAllowedParticles = plGBufferGroup::kMaxNumIndicesPerBuffer / 6;
+    uint32_t maxAllowedParticles = plGBufferGroup::kMaxNumIndicesPerBuffer / 6;
     if (maxTotalParticles > maxAllowedParticles)
     {
         char text[512];
@@ -350,7 +350,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     // Figure out the appropriate generator to add
     plParticleGenerator *generator = nil;
-    UInt32 sources;
+    uint32_t sources;
     hsScalar *pitchArray;
     hsScalar *yawArray;
     hsPoint3 *pointArray;
@@ -419,7 +419,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     hsgResMgr::ResMgr()->AddViaNotify( sys->GetKey(), TRACKED_NEW plObjRefMsg( sObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
 
     // Set up normals and orientation
-    UInt32 miscFlags = 0;
+    uint32_t miscFlags = 0;
     switch(fUserInput.fNormal)
     {
     case plParticleMtl::kNormalViewFacing:
@@ -656,9 +656,9 @@ public:
     ParticleCompDlgProc() {}
     ~ParticleCompDlgProc() {}
 
-    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, UInt32 id)
+    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, uint32_t id)
     {
-        UInt32 minIndex, maxIndex;
+        uint32_t minIndex, maxIndex;
         hsBool adjustMin;
         switch(id)
         {
@@ -1422,9 +1422,9 @@ public:
     ParticleFlockEffectDlgProc() {}
     ~ParticleFlockEffectDlgProc() {}
 
-    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, UInt32 id)
+    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, uint32_t id)
     {
-        UInt32 minIndex, maxIndex;
+        uint32_t minIndex, maxIndex;
         hsBool adjustMin;
         switch(id)
         {

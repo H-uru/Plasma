@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define HS_RECT_NAME        hsIntRect
 #define HS_RECT_POINT       hsIntPoint2
-#define HS_RECT_TYPE        Int32
+#define HS_RECT_TYPE        int32_t
 #define HS_RECT_EXTEND      1
 #include "HS_RECT.inc"
 

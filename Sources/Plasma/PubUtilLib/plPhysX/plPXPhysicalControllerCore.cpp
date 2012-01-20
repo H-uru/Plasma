@@ -876,7 +876,7 @@ void plPXPhysicalControllerCore::GetKinematicPosition(hsPoint3& pos)
 void plPXPhysicalControllerCore::UpdatePoststep( hsScalar delSecs)
 {
     // Apparently the user data field of the controllers is broken
-//  UInt32 count = gControllerMgr.getNbControllers();
+//  uint32_t count = gControllerMgr.getNbControllers();
 //  NxController* controllers = (NxController*)gControllerMgr.getControllers();
 // 
 //  for (int i = 0; i < count; i++)
@@ -981,7 +981,7 @@ void plPXPhysicalControllerCore::HandleKinematicEnableNextUpdate()
 void plPXPhysicalControllerCore::IHandleResize()
 {
 
-    UInt32 collideFlags =
+    uint32_t collideFlags =
         1<<plSimDefs::kGroupStatic |
         1<<plSimDefs::kGroupAvatarBlocker |
         1<<plSimDefs::kGroupDynamic;
@@ -1033,7 +1033,7 @@ void plPXPhysicalControllerCore::LeaveAge()
     this->fMovementInterface->LeaveAge();
 }
 int plPXPhysicalControllerCore::SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, 
-                            UInt32& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut)
+                            uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut)
 {
     NxCapsule tempCap;
     tempCap.p0 =plPXConvert::Point( startPos);
@@ -1165,7 +1165,7 @@ const hsVector3& plPXPhysicalControllerCore::GetLinearVelocity()
 }
 
 // Make a visible object that can be viewed by users for debugging purposes.
-plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
     hsBool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
@@ -1194,7 +1194,7 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay()
     plDebugText     &debugTxt = plDebugText::Instance();
     char            strBuf[ 2048 ];
     int             lineHeight = debugTxt.GetFontSize() + 4;
-    UInt32          scrnWidth, scrnHeight;
+    uint32_t          scrnWidth, scrnHeight;
 
     debugTxt.GetScreenSize( &scrnWidth, &scrnHeight );
     int y = 10;

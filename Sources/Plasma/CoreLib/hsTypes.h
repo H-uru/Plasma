@@ -64,27 +64,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /************************** Basic Types *****************************/
 
-#ifdef _MSC_VER
-  typedef signed __int8     int8_t;
-  typedef unsigned __int8   uint8_t;
-  typedef signed __int16    int16_t;
-  typedef unsigned __int16  uint16_t;
-  typedef signed __int32    int32_t;
-  typedef unsigned __int32  uint32_t;
-  typedef signed __int64    int64_t;
-  typedef unsigned __int64  uint64_t;
+#if defined(_MSC_VER) && _MSC_VER < 1600
+  typedef signed char           int8_t;
+  typedef unsigned char         uint8_t;
+  typedef signed short int      int16_t;
+  typedef unsigned short int    uint16_t;
+  typedef signed int            int32_t;
+  typedef unsigned int          uint32_t;
+  typedef signed long long      int64_t;
+  typedef unsigned long long    uint64_t;
 #else
   #include <stdint.h>
 #endif
-
-typedef uint8_t       byte;
-typedef uint16_t      word;
-typedef uint32_t      dword;
-typedef uint64_t      qword;
-
-typedef uintptr_t           unsigned_ptr;
-
-typedef wchar_t             wchar;
 
 #define kPosInfinity16      (32767)
 #define kNegInfinity16      (-32768)
@@ -92,33 +83,9 @@ typedef wchar_t             wchar;
 #define kPosInfinity32      (0x7fffffff)
 #define kNegInfinity32      (0x80000000)
 
-typedef int8_t     Int8;
-typedef int16_t    Int16;
-typedef int32_t    Int32;
-typedef int64_t    Int64;
 
-typedef uint8_t   UInt8;
-typedef uint16_t  UInt16;
-typedef uint32_t  UInt32;
-typedef uint64_t  UInt64;
-
-#ifndef Byte
-    typedef uint8_t Byte;
-#endif
-
-#ifndef false
-    #define false       0
-#endif
-#ifndef true
-    #define true        1
-#endif
-#ifndef Boolean
-    typedef uint8_t     Boolean;
-#endif
-
-
-typedef Int32           hsFixed;
-typedef Int32           hsFract;
+typedef int32_t           hsFixed;
+typedef int32_t           hsFract;
 
 #ifdef __cplusplus
 
@@ -136,8 +103,8 @@ typedef int     hsBool;
 #define nil (0)
 #endif
 
-typedef Int32   hsError;
-typedef UInt32  hsGSeedValue;
+typedef int32_t   hsError;
+typedef uint32_t  hsGSeedValue;
 
 #define hsOK                0
 #define hsFail              -1
@@ -153,24 +120,24 @@ typedef UInt32  hsGSeedValue;
 
 #define hsBitTst2Bool(value, mask)      (((value) & (mask)) != 0)
 
-#define hsFourByteTag(a, b, c, d)       (((UInt32)(a) << 24) | ((UInt32)(b) << 16) | ((UInt32)(c) << 8) | (d))
+#define hsFourByteTag(a, b, c, d)       (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | (d))
 
 
 /************************** Swap Macros *****************************/
 
 #ifdef __cplusplus
-    inline UInt16 hsSwapEndian16(UInt16 value)
+    inline uint16_t hsSwapEndian16(uint16_t value)
     {
         return (value >> 8) | (value << 8);
     }
-    inline UInt32 hsSwapEndian32(UInt32 value)
+    inline uint32_t hsSwapEndian32(uint32_t value)
     {
         return ((value)              << 24) | 
                ((value & 0x0000ff00) << 8)  |
                ((value & 0x00ff0000) >> 8)  |
                ((value)              >> 24);
     }
-    inline UInt64 hsSwapEndian64(UInt64 value)
+    inline uint64_t hsSwapEndian64(uint64_t value)
     {
         return ((value)                      << 56) |
                ((value & 0x000000000000ff00) << 40) |
@@ -184,13 +151,13 @@ typedef UInt32  hsGSeedValue;
     #if HS_CAN_USE_FLOAT
     inline float hsSwapEndianFloat(float fvalue)
     {
-        UInt32 value = *(UInt32*)&fvalue;
+        uint32_t value = *(uint32_t*)&fvalue;
         value = hsSwapEndian32(value);
         return *(float*)&value;
     }
     inline double hsSwapEndianDouble(double dvalue)
     {
-        UInt64 value = *(UInt64*)&dvalue;
+        uint64_t value = *(uint64_t*)&dvalue;
         value = hsSwapEndian64(value);
         return *(double*)&value;
     }
@@ -220,16 +187,16 @@ typedef UInt32  hsGSeedValue;
         #define hsToLEDouble(n)     hsSwapEndianDouble(n)
     #endif
 
-    inline void hsSwap(Int32& a, Int32& b)
+    inline void hsSwap(int32_t& a, int32_t& b)
     {
-        Int32   c = a;
+        int32_t   c = a;
         a = b;
         b = c;
     }
 
-    inline void hsSwap(UInt32& a, UInt32& b)
+    inline void hsSwap(uint32_t& a, uint32_t& b)
     {
-        UInt32  c = a;
+        uint32_t  c = a;
         a = b;
         b = c;
     }
@@ -248,20 +215,20 @@ typedef UInt32  hsGSeedValue;
 
 struct hsColor32 {
 
-    UInt8   b, g, r, a;
+    uint8_t   b, g, r, a;
 
 #ifdef __cplusplus
-    void        SetARGB(UInt8 aa, UInt8 rr, UInt8 gg, UInt8 bb)
+    void        SetARGB(uint8_t aa, uint8_t rr, uint8_t gg, uint8_t bb)
             {
                 this->a = aa; this->r = rr; this->g = gg; this->b = bb;
             }
 
     //  Compatibility inlines, should be depricated
-    void        Set(UInt8 rr, UInt8 gg, UInt8 bb)
+    void        Set(uint8_t rr, uint8_t gg, uint8_t bb)
             {
                 this->r = rr; this->g = gg; this->b = bb;
             }
-    void        Set(UInt8 aa, UInt8 rr, UInt8 gg, UInt8 bb)
+    void        Set(uint8_t aa, uint8_t rr, uint8_t gg, uint8_t bb)
             {
                 this->SetARGB(aa, rr, gg, bb);
             }
@@ -269,13 +236,13 @@ struct hsColor32 {
 #if 0
     friend int  operator==(const hsColor32& a, const hsColor32& b)
             {
-                return *(UInt32*)&a == *(UInt32*)&b;
+                return *(uint32_t*)&a == *(uint32_t*)&b;
             }
     friend int  operator!=(const hsColor32& a, const hsColor32& b) { return !(a == b); }
 #else
     int operator==(const hsColor32& aa) const
     {
-            return *(UInt32*)&aa == *(UInt32*)this;
+            return *(uint32_t*)&aa == *(uint32_t*)this;
     }
     int operator!=(const hsColor32& aa) { return !(aa == *this); }
 #endif
@@ -436,7 +403,7 @@ void SWAP (T & a, T & b) {
 *
 ***/
 
-#define CONTAINING_STRUCT(a, t, f)  ((t *) ((byte *)(a) - (unsigned_ptr)(&((t *)0)->f)))
+#define CONTAINING_STRUCT(a, t, f)  ((t *) ((uint8_t *)(a) - (uintptr_t)(&((t *)0)->f)))
 
 
 /****************************************************************************
@@ -469,7 +436,7 @@ void SWAP (T & a, T & b) {
 #define  offsetof(s,m)  (size_t)&(((s *)0)->m)
 #endif   // ifndef offsetof
 
-#define  moffsetof(v,f)  (((byte *) &((v)->f)) - ((byte *) v))
+#define  moffsetof(v,f)  (((uint8_t *) &((v)->f)) - ((uint8_t *) v))
 
 
 /****************************************************************************

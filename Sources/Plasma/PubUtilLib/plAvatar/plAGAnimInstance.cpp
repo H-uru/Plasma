@@ -91,7 +91,7 @@ extern const char *gGlobalChannelName = nil;
 // ctor -------------------------------------------------------------------
 // -----
 plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
-                                   hsScalar blend, UInt16 blendPriority, hsBool cache,
+                                   hsScalar blend, uint16_t blendPriority, hsBool cache,
                                    bool useAmplitude)
 : fAnimation(anim),
   fMaster(master),
@@ -480,14 +480,14 @@ void plAGAnimInstance::FadeAndDetach(hsScalar goal, hsScalar rate)
 
 // Fade --------------------------------------------------------------------------------
 // -----
-void plAGAnimInstance::Fade(hsScalar goal, hsScalar rate, UInt8 type /* = kFadeBlend */)
+void plAGAnimInstance::Fade(hsScalar goal, hsScalar rate, uint8_t type /* = kFadeBlend */)
 {
     ISetupFade(goal, rate, false, type);
 }
 
 // ISetupFade --------------------------------------------------------------------------
 // -----------
-void plAGAnimInstance::ISetupFade(hsScalar goal, hsScalar rate, bool detach, UInt8 type)
+void plAGAnimInstance::ISetupFade(hsScalar goal, hsScalar rate, bool detach, uint8_t type)
 {
     if (rate == 0)
     {
@@ -542,7 +542,7 @@ void plAGAnimInstance::ISetupFade(hsScalar goal, hsScalar rate, bool detach, UIn
 class agAlloc
 {
 public:
-    agAlloc(plAGChannel *object, const char *chanName, const char *animName, UInt16 classIndex)
+    agAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex)
         : fObject(object),
           fClassIndex(classIndex)
     {
@@ -559,13 +559,13 @@ public:
     plAGChannel *fObject;
     char *fChannelName;
     char *fAnimName;
-    UInt16 fClassIndex;
+    uint16_t fClassIndex;
 };
 
 typedef std::map<plAGChannel *, agAlloc *> agAllocMap;
 static agAllocMap gAGAllocs;
 
-void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, UInt16 classIndex)
+void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex)
 {
     gAGAllocs[object] = TRACKED_NEW agAlloc(object, chanName, animName, classIndex);
 }
@@ -581,7 +581,7 @@ void DumpAGAllocs()
     {
         agAlloc * al = (*i).second;
 
-        UInt16 realClassIndex = al->fObject->ClassIndex();
+        uint16_t realClassIndex = al->fObject->ClassIndex();
 
         hsStatusMessageF("agAlloc: an: %s ch: %s, cl: %s", al->fAnimName, al->fChannelName, plFactory::GetNameOfClass(realClassIndex));
 

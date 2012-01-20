@@ -767,7 +767,7 @@ hsBool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // check for overriden transitions and special animation commands
     int count = node->NumAttachedComponents();
-    for (UInt32 x = 0; x < count; x++)
+    for (uint32_t x = 0; x < count; x++)
     {
         plComponentBase *comp = node->GetAttachedComponent(x);
         if (comp->ClassID() == TRANSCAM_CID)
@@ -881,7 +881,7 @@ void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrai
 {
     plComponentBase* LimitPanComp = 0;
 
-    for (UInt32 x = 0; x < pNode->NumAttachedComponents(); x++)
+    for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == LIMITPAN_CID)
@@ -910,7 +910,7 @@ void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBra
 {
     plComponentBase* LimitZoomComp = 0;
 
-    for (UInt32 x = 0; x < pNode->NumAttachedComponents(); x++)
+    for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == CAMERAZOOM_CID)
@@ -931,7 +931,7 @@ void plCameraBaseComponent::ISetIgnoreSubworld(plMaxNode* pNode, plCameraBrain1*
 {
     plComponentBase* subComp = 0;
 
-    for (UInt32 x = 0; x < pNode->NumAttachedComponents(); x++)
+    for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == CAM_IGNORE_SUB_CID)
@@ -977,7 +977,7 @@ hsBool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, 
     hsBool bPOAObject = false;
     plComponentBase* objPOAComp = 0;
 
-    for (UInt32 x = 0; x < pNode->NumAttachedComponents(); x++)
+    for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == OBJECT_POA_CID)
@@ -2097,7 +2097,7 @@ hsBool plCameraDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             pMsg->SetNewCam(((plMaxNode*)pCamNode)->GetSceneObject()->GetKey());
 
             int count = ((plMaxNode*)pCamNode)->NumAttachedComponents();
-            for (UInt32 x = 0; x < count; x++)
+            for (uint32_t x = 0; x < count; x++)
             {
                 plComponentBase *comp = ((plMaxNode*)pCamNode)->GetAttachedComponent(x);
                 if (comp->ClassID() == DEFAULTCAM_CID)

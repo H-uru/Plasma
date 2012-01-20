@@ -96,7 +96,7 @@ public:
 
     virtual void    SetMuted( hsBool muted, int index = -1 ) {;}
     virtual void    ToggleMuted( int index = -1 ) {;}
-    virtual void    SetTalkIcon(int index, UInt32 str){;}
+    virtual void    SetTalkIcon(int index, uint32_t str){;}
     virtual void    ClearTalkIcon(){;}
 
     virtual void        SetFadeIn( const int type, const float length, int index = -1 ) {}

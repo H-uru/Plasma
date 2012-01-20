@@ -437,7 +437,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
 // IGetStageFrom ----------------------------------------------------------------------------------------
 plAnimStage * plAvatarSDLModifier::IGetStageFrom(plArmatureMod *avMod, const plStateDataRecord* srcState)
 {
-    UInt32 notifyFlags=0;
+    uint32_t notifyFlags=0;
     
     bool notifyEnter, notifyLoop, notifyAdv, notifyRegress;
     if (srcState->FindVar(StandardStageVarNames::kStrNotifyEnter)->Get(&notifyEnter))
@@ -500,7 +500,7 @@ plAnimStage * plAvatarSDLModifier::IGetStageFrom(plArmatureMod *avMod, const plS
     // ***!!! need to capture "advanceTo" and "regressTo" values!!!
     bool hackAdvanceToWrong = false, hackRegressToWrong = false;
     plAnimStage *newStage = TRACKED_NEW plAnimStage(name,
-                                            (UInt8)notifyFlags,
+                                            (uint8_t)notifyFlags,
                                             static_cast<plAnimStage::ForwardType>(fwd),
                                             static_cast<plAnimStage::BackType>(bwd),
                                             static_cast<plAnimStage::AdvanceType>(adv),
@@ -526,7 +526,7 @@ bool plAvatarSDLModifier::IPutStageIn(plArmatureMod *avMod, plAnimStage *stage, 
         dstState->FindVar(StandardStageVarNames::kStrStageAdvance)->Set((int)stage->GetAdvanceType());
         dstState->FindVar(StandardStageVarNames::kStrStageRegress)->Set((int)stage->GetRegressType());
         
-        UInt32 notifies = stage->GetNotifyFlags();
+        uint32_t notifies = stage->GetNotifyFlags();
         dstState->FindVar(StandardStageVarNames::kStrNotifyEnter)->Set((notifies & plAnimStage::kNotifyEnter) ? true : false);
         dstState->FindVar(StandardStageVarNames::kStrNotifyLoop)->Set((notifies & plAnimStage::kNotifyLoop) ? true : false);
         dstState->FindVar(StandardStageVarNames::kStrNotifyStageAdvance)->Set((notifies & plAnimStage::kNotifyAdvance) ? true : false);

@@ -70,9 +70,9 @@ public:
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     
-    void AddType(UInt16 t) { fTypes.SetBit(t); }
-    void RemoveType(UInt16 t) { fTypes.ClearBit(t); }
-    hsBool Type(UInt16 t) const { return fTypes.IsBitSet(t); }
+    void AddType(uint16_t t) { fTypes.SetBit(t); }
+    void RemoveType(uint16_t t) { fTypes.ClearBit(t); }
+    hsBool Type(uint16_t t) const { return fTypes.IsBitSet(t); }
     const hsBitVector& Types() const { return fTypes; }
 
     plEnableMsg() { }

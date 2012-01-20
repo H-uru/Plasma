@@ -100,7 +100,7 @@ public:
 };
 
 #define MAXFILE_DATA_CHUNK  1001
-static const UInt8 kVersion = 1;
+static const uint8_t kVersion = 1;
 
 IOResult plMaxFileDataControl::Load(ILoad *iload)
 {
@@ -110,8 +110,8 @@ IOResult plMaxFileDataControl::Load(ILoad *iload)
     {
         if (iload->CurChunkID() == MAXFILE_DATA_CHUNK)
         {
-            UInt8 version = 0;
-            res = iload->Read(&version, sizeof(UInt8), &nb);
+            uint8_t version = 0;
+            res = iload->Read(&version, sizeof(uint8_t), &nb);
             res = iload->Read(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
 
             int branchLen = 0;

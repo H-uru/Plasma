@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void EncryptFiles(const char* dir, const char* ext, bool encrypt);
 
 void print_version(){
-    wchar productString[256];
+    wchar_t productString[256];
     ProductString(productString, arrsize(productString));
     printf("%S\n\n", productString);
 }

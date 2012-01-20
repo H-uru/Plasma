@@ -558,14 +558,14 @@ hsBool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, pl
     plDynamicEnvMap* env = plEnvMapComponent::GetEnvMap((plMaxNode*)ref);
     if( !env )
     {
-        UInt32 size = fCompPB->GetInt(kEnvSize);
-        UInt32 i;
+        uint32_t size = fCompPB->GetInt(kEnvSize);
+        uint32_t i;
         for( i = 9; i > 5; i-- )
         {
             if( (1UL << i) <= size )
                 break;
         }
-        size = UInt32(1 << i);
+        size = uint32_t(1 << i);
 
         env = TRACKED_NEW plDynamicEnvMap(size, size, 32);
         hsgResMgr::ResMgr()->NewKey(ref->GetName(), env, node->GetLocation(), node->GetLoadMask());
@@ -1273,13 +1273,13 @@ plRenderTarget* plEnvMapComponent::IGetMap()
 
     if( !fMap )
     {
-        UInt32 size = fCompPB->GetInt(kEnvSize);
+        uint32_t size = fCompPB->GetInt(kEnvSize);
         for( i = 9; i > 5; i-- )
         {
-            if( (1UL << UInt32(i)) <= size )
+            if( (1UL << uint32_t(i)) <= size )
                 break;
         }
-        size = 1 << UInt32(i);
+        size = 1 << uint32_t(i);
 
         plDynamicEnvMap* env = nil;
         plDynamicCamMap* cam = nil;
@@ -1352,7 +1352,7 @@ plRenderTarget* plEnvMapComponent::IGetMap()
 
         // Right now, the envMap doesn't use this, but I plan to make it do so, so I'm
         // going ahead and adding the ref regardless of which type of map we made.
-        UInt8 refType = cam ? plDynamicCamMap::kRefRootNode : plDynamicEnvMap::kRefRootNode;
+        uint8_t refType = cam ? plDynamicCamMap::kRefRootNode : plDynamicEnvMap::kRefRootNode;
         hsgResMgr::ResMgr()->AddViaNotify(firstTarg->GetSceneObject()->GetKey(), TRACKED_NEW plGenRefMsg(fMap->GetKey(), plRefMsg::kOnCreate, -1, refType), plRefFlags::kPassiveRef);
     }
     return fMap;

@@ -57,11 +57,11 @@ public:
     plAvBrainCoop();
 
     // use this constructor for a host brain; it sets up the unique ID
-    plAvBrainCoop(UInt32 exitFlags, float fadeIn, float fadeOut, MoveMode moveMode, plKey guestKey);
+    plAvBrainCoop(uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode, plKey guestKey);
     
     // use this constructor for the guest brain, when you already have the unique ID
-    plAvBrainCoop(UInt32 exitFlags, float fadeIn, float fadeOut, MoveMode moveMode,
-                  UInt32 initiatorID, UInt16 initiatorSerial, plKey hostKey);
+    plAvBrainCoop(uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode,
+                  uint32_t initiatorID, uint16_t initiatorSerial, plKey hostKey);
 
     hsBool MsgReceive(plMessage *msg);
     virtual bool RelayNotifyMsg(plNotifyMsg *msg);
@@ -76,15 +76,15 @@ public:
     virtual void Write(hsStream *stream, hsResMgr *mgr);
 
     // stuff
-    UInt32 GetInitiatorID();
-    UInt16 GetInitiatorSerial();
+    uint32_t GetInitiatorID();
+    uint16_t GetInitiatorSerial();
 
     virtual plKey GetRecipient();
     virtual void SetRecipient(plKey &recipient);
     
 private:
-    UInt32 fInitiatorID;
-    UInt16 fInitiatorSerial;
+    uint32_t fInitiatorID;
+    uint16_t fInitiatorSerial;
 
     plKey fGuestKey;    // only filled out if we are the host
     plKey fHostKey;     // only filled out if we are the guest

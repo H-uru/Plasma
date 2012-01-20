@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // plRef count addes refcount abilities to any plCreatable
 
 class plRefCnt
-{   UInt32 fRefCnt;
+{   uint32_t fRefCnt;
 public:
     plRefCnt() : fRefCnt(1){}
     ~plRefCnt(){}
@@ -63,12 +63,12 @@ public:
 /*
 class hsRefCnt {
 private:
-    Int32       fRefCnt;
+    int32_t       fRefCnt;
 public:
                 hsRefCnt() : fRefCnt(1) {}
     virtual     ~hsRefCnt();
 
-    Int32       RefCnt() const { return fRefCnt; }
+    int32_t       RefCnt() const { return fRefCnt; }
     virtual void    UnRef();
     virtual void    Ref();
 };

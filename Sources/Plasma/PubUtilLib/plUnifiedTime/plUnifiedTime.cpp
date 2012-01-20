@@ -76,7 +76,7 @@ hsBool plUnifiedTime::SetFromWinFileTime(const FILETIME ft)
     if (ffsecs >= MAGICWINDOWSOFFSET)  // make sure we won't end up negatice
     {
         fSecs = (time_t)(ffsecs-MAGICWINDOWSOFFSET);
-        fMicros = (UInt32)(ff % 10000000)/10;
+        fMicros = (uint32_t)(ff % 10000000)/10;
         return true;
     }
     else
@@ -248,7 +248,7 @@ void plUnifiedTime::SetSecsDouble(double secs)
     double x,y;
     x = modf(secs,&y);
     fSecs = (time_t)y;
-    fMicros = (UInt32)(x*1000000);
+    fMicros = (uint32_t)(x*1000000);
 }
 
 
@@ -380,7 +380,7 @@ double plUnifiedTime::GetSecsDouble() const
 void plUnifiedTime::Read(hsStream* s)
 {
     s->LogSubStreamStart("UnifiedTime");
-    UInt32 secs;
+    uint32_t secs;
     s->LogReadLE(&secs,"Seconds");
     fSecs = (time_t)secs;
     s->LogReadLE(&fMicros,"MicroSeconds");
@@ -390,7 +390,7 @@ void plUnifiedTime::Read(hsStream* s)
 
 void plUnifiedTime::Write(hsStream* s) const
 {
-    s->WriteLE((UInt32)fSecs);
+    s->WriteLE((uint32_t)fSecs);
     s->WriteLE(fMicros);
     // preserve fMode
 }
@@ -1004,9 +1004,9 @@ bool plUnifiedTime::FromString(const char * buf, const char * fmt)
 
 /// Local time zone offset stuff
 
-Int32   plUnifiedTime::fLocalTimeZoneOffset = -1;
+int32_t   plUnifiedTime::fLocalTimeZoneOffset = -1;
 
-Int32   plUnifiedTime::IGetLocalTimeZoneOffset( void )
+int32_t   plUnifiedTime::IGetLocalTimeZoneOffset( void )
 {
     static bool     inited = false;
 
@@ -1026,7 +1026,7 @@ Int32   plUnifiedTime::IGetLocalTimeZoneOffset( void )
 
         double diffInSecs = difftime( utc, currLocalTime );
 
-        fLocalTimeZoneOffset = (Int32)diffInSecs;
+        fLocalTimeZoneOffset = (int32_t)diffInSecs;
     }
 
     return fLocalTimeZoneOffset;

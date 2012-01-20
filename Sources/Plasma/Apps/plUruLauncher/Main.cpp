@@ -151,7 +151,7 @@ static CEvent                   s_dialogCreateEvent(kEventManualReset);
 static CCritSect                s_critsect;
 static LISTDECL(WndEvent, link) s_eventQ;
 static CEvent                   s_shutdownEvent(kEventManualReset);
-static wchar                    s_workingDir[MAX_PATH];
+static wchar_t                  s_workingDir[MAX_PATH];
 static CEvent                   s_statusEvent(kEventManualReset);
 static char                     s_curlError[CURL_ERROR_SIZE];
 
@@ -202,8 +202,8 @@ static void PostEvent (WndEvent *event) {
 }
 
 //============================================================================
-static void LogV (ELogSev sev, const wchar fmt[], va_list args) {
-    static struct { FILE * file; const wchar * pre; } s_log[] = {
+static void LogV (ELogSev sev, const wchar_t fmt[], va_list args) {
+    static struct { FILE * file; const wchar_t * pre; } s_log[] = {
         { stdout, L"Inf" },
         { stderr, L"Err" },
     };
@@ -218,7 +218,7 @@ static void LogV (ELogSev sev, const wchar fmt[], va_list args) {
 }
 
 //============================================================================
-static void Log (ELogSev sev, const wchar fmt[], ...) {
+static void Log (ELogSev sev, const wchar_t fmt[], ...) {
     va_list args;
     va_start(args, fmt);
     LogV(sev, fmt, args);
@@ -227,7 +227,7 @@ static void Log (ELogSev sev, const wchar fmt[], ...) {
 
 //============================================================================
 // NOTE: Must use LocalFree() on the return value of this function when finished with the string
-static wchar *TranslateErrorCode(DWORD errorCode) {
+static wchar_t *TranslateErrorCode(DWORD errorCode) {
     LPVOID lpMsgBuf;
                     
     FormatMessageW(
@@ -236,11 +236,11 @@ static wchar *TranslateErrorCode(DWORD errorCode) {
         NULL,
         errorCode,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        (wchar *) &lpMsgBuf,
+        (wchar_t *) &lpMsgBuf,
         0, 
         NULL 
     );
-    return (wchar *)lpMsgBuf;
+    return (wchar_t *)lpMsgBuf;
 }
 
 //============================================================================
@@ -531,7 +531,7 @@ static void WindowThreadProc(void *) {
     SetTimer(s_dialog, kEventTimer, 250, 0);
     
     char productString[256];
-    wchar productStringW[256];
+    wchar_t productStringW[256];
     ProductString(productStringW, arrsize(productStringW));
     StrToAnsi(productString, productStringW, arrsize(productString));
     SendMessage(GetDlgItem(s_dialog, IDC_PRODUCTSTRING), WM_SETTEXT, 0, (LPARAM) productString);
@@ -740,8 +740,8 @@ int __stdcall WinMain (
 ){
     PF_CONSOLE_INITIALIZE(Core)
 
-    wchar token[256];
-    const wchar *appCmdLine = AppGetCommandLine();
+    wchar_t token[256];
+    const wchar_t *appCmdLine = AppGetCommandLine();
     StrTokenize(&appCmdLine, token, arrsize(token), WHITESPACE);
     while(!StrStr(token, L".exe") && !StrStr(token, L".tmp"))   
     {
@@ -750,8 +750,8 @@ int __stdcall WinMain (
     while (*appCmdLine == L' ')
         ++appCmdLine;
 
-    wchar curPatcherFile[MAX_PATH];
-    wchar newPatcherFile[MAX_PATH];
+    wchar_t curPatcherFile[MAX_PATH];
+    wchar_t newPatcherFile[MAX_PATH];
     bool isTempPatcher = false;
 
     PathGetProgramName(curPatcherFile, arrsize(curPatcherFile));
@@ -780,7 +780,7 @@ int __stdcall WinMain (
 
     curl_global_init(CURL_GLOBAL_ALL);
 
-    const wchar *serverIni = L"server.ini";
+    const wchar_t *serverIni = L"server.ini";
     if(cmdParser.IsSpecified(kArgServerIni))
         serverIni = cmdParser.GetString(kArgServerIni);
 
@@ -835,9 +835,9 @@ int __stdcall WinMain (
             Sleep(1000);
             
             if (!PathDeleteFile(newPatcherFile)) {
-                wchar error[256];
+                wchar_t error[256];
                 DWORD errorCode = GetLastError();
-                wchar *msg = TranslateErrorCode(errorCode);
+                wchar_t *msg = TranslateErrorCode(errorCode);
                 
                 StrPrintf(error, arrsize(error), L"Failed to delete old patcher executable. %s", msg);
                 MessageBoxW(GetTopWindow(nil), error, L"Error", MB_OK);
@@ -845,9 +845,9 @@ int __stdcall WinMain (
                 break;
             }
             if (!PathMoveFile(curPatcherFile, newPatcherFile)) {
-                wchar error[256];
+                wchar_t error[256];
                 DWORD errorCode = GetLastError();
-                wchar *msg = TranslateErrorCode(errorCode);
+                wchar_t *msg = TranslateErrorCode(errorCode);
 
                 StrPrintf(error, arrsize(error), L"Failed to replace old patcher executable. %s", msg);
                 MessageBoxW(GetTopWindow(nil), error, L"Error", MB_OK);
@@ -864,7 +864,7 @@ int __stdcall WinMain (
             ZERO(pi);
             si.cb = sizeof(si);
 
-            wchar cmdline[MAX_PATH];
+            wchar_t cmdline[MAX_PATH];
             StrPrintf(cmdline, arrsize(cmdline), L"%s %s", newPatcherFile, s_launcherInfo.cmdLine);
             
             // we have only successfully patched if we actually launch the new version of the patcher
@@ -891,7 +891,7 @@ int __stdcall WinMain (
 
         // Clean up old temp files
         ARRAY(PathFind) paths;
-        wchar fileSpec[MAX_PATH];
+        wchar_t fileSpec[MAX_PATH];
         PathGetProgramDirectory(fileSpec, arrsize(fileSpec));
         PathAddFilename(fileSpec, fileSpec, L"*.tmp", arrsize(fileSpec));
         PathFindFiles(&paths, fileSpec, kPathFlagFile);
@@ -937,7 +937,7 @@ int __stdcall WinMain (
             // Self-patch failed
             SetText("Self-patch failed. Exiting...");
             if (!s_shutdown) { 
-                wchar str[256];
+                wchar_t str[256];
                 StrPrintf(str, arrsize(str), L"Patcher update failed. Error %u, %s", selfPatchResult, NetErrorToString(selfPatchResult));
                 MessageBoxW(GetTopWindow(nil), str, L"Error", MB_OK);
             }

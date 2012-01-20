@@ -309,7 +309,7 @@ void plMouseDevice::AddCCRToCursor()
         txt.DrawString(fInstance->fWXPos + 12, fInstance->fWYPos - 17, "CCR");
     }
 }
-void plMouseDevice::AddIDNumToCursor(UInt32 idNum)
+void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
 {
     if (fInstance && idNum)
     {

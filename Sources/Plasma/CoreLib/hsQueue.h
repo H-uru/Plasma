@@ -341,7 +341,7 @@ class hsMsgQueue {
     mqd_t   fMQ;
 #else
     class hsPrivateMQ*  fMQ;
-    UInt32  fAccess;
+    uint32_t  fAccess;
 #endif
 public:
     enum {
@@ -353,8 +353,8 @@ public:
         hsMsgQueue();
     virtual ~hsMsgQueue();
 
-    hsBool  Create(const char name[], int maxSize, UInt32 access);
-    hsBool  Open(const char name[], UInt32 access);
+    hsBool  Create(const char name[], int maxSize, uint32_t access);
+    hsBool  Open(const char name[], uint32_t access);
     void    Close();
 
     int GetMaxSize() const { return fMaxSize; }

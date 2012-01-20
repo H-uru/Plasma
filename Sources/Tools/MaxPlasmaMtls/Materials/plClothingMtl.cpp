@@ -108,7 +108,7 @@ const char *plClothingMtl::LayerStrings[] =
     "Tint 2"
 };
 
-const UInt8 plClothingMtl::LayerToPBIdx[] =
+const uint8_t plClothingMtl::LayerToPBIdx[] =
 {
     kTexmapBase,
     kTexmapSkin,

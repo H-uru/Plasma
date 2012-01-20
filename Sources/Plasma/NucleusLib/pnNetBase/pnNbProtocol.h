@@ -84,6 +84,6 @@ enum ENetProtocol {
 // NetProtocolToString as well.  Unfortunately, the compiler
 // cannot enforce this since the protocol values are not
 // numerically sequential.
-const wchar * NetProtocolToString (ENetProtocol protocol);
+const wchar_t * NetProtocolToString (ENetProtocol protocol);
 
 #endif // pnNbProtocol_inc

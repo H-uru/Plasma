@@ -72,12 +72,12 @@ plComponentMgr &plComponentMgr::Inst()
     return theInstance;
 }
 
-UInt32 plComponentMgr::Count()
+uint32_t plComponentMgr::Count()
 {
     return fDescs.size();
 }
 
-ClassDesc *plComponentMgr::Get(UInt32 i)
+ClassDesc *plComponentMgr::Get(uint32_t i)
 {
     if (i < fDescs.size())
         return fDescs[i];
@@ -88,7 +88,7 @@ ClassDesc *plComponentMgr::Get(UInt32 i)
     }
 }
 
-UInt32 plComponentMgr::FindClassID(Class_ID id)
+uint32_t plComponentMgr::FindClassID(Class_ID id)
 {
     for (unsigned int i = 0; i < fDescs.size(); i++)
     {

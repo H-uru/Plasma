@@ -89,7 +89,7 @@ void plMorphDataSet::Write(hsStream* s, hsResMgr* mgr)
 
 ///////////////////////////////////////////////////////////////////////////
 
-const UInt32 kChanMask = plAccessVtxSpan::kPositionMask
+const uint32_t kChanMask = plAccessVtxSpan::kPositionMask
                         | plAccessVtxSpan::kNormalMask
                         | plAccessVtxSpan::kUVWMask;
 
@@ -103,8 +103,8 @@ plConst(hsScalar)   kMorphTime(0.5);
 class plMorphTarget
 {
 public:
-    UInt16      fLayer;
-    UInt16      fDelta;
+    uint16_t      fLayer;
+    uint16_t      fDelta;
     hsScalar    fWeight;
 };
 
@@ -642,17 +642,17 @@ hsBool plMorphSequence::IFindIndices(int iShare)
     if( !di )
         return false;
 
-    Int32 meshIdx = di->GetSharedMeshIndex(mInfo.fMesh);
+    int32_t meshIdx = di->GetSharedMeshIndex(mInfo.fMesh);
     if( meshIdx < 0 )
         return false;
 
-    plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable((UInt8)meshIdx));
+    plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable((uint8_t)meshIdx));
     if( !dr )
         return false;
 
     mInfo.fCurrDraw = dr;
 
-    plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex((UInt8)meshIdx));
+    plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex((uint8_t)meshIdx));
 
     hsAssert(mInfo.fMesh->fSpans.GetCount() == diIndex.GetCount(), "Mismatch between geometry and indices");
 
@@ -671,7 +671,7 @@ void plMorphSequence::IReleaseIndices(int iShare)
     mInfo.fCurrDraw = nil;
 }
 
-Int32 plMorphSequence::IFindSharedMeshIndex(plKey meshKey) const
+int32_t plMorphSequence::IFindSharedMeshIndex(plKey meshKey) const
 {
     int i;
     for( i = 0; i < fSharedMeshes.GetCount(); i++ )
@@ -683,7 +683,7 @@ Int32 plMorphSequence::IFindSharedMeshIndex(plKey meshKey) const
     return -1;
 }
 
-Int32 plMorphSequence::IFindPendingStateIndex(plKey meshKey) const
+int32_t plMorphSequence::IFindPendingStateIndex(plKey meshKey) const
 {
     int i;
     for( i = 0; i < fPendingStates.GetCount(); i++ )

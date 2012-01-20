@@ -123,7 +123,7 @@ void plUpdatableClient::IGetUpdate()
         fLog->AddLineF(plStatusLog::kBlue, "SceneViewer Update #%d", numUpdates);
 #endif // LOG_SCENEVIWER
 
-        UInt8 type = s.ReadByte();
+        uint8_t type = s.ReadByte();
 
         if (type == ClientUpdate::kShutdown)
         {

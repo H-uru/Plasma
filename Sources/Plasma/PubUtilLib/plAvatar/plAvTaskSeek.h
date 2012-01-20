@@ -62,7 +62,7 @@ public:
         kSeekRunNormal,
         kSeekAbort,
     };
-    UInt8 fState;
+    uint8_t fState;
 
     enum 
     {
@@ -183,7 +183,7 @@ protected:
     hsScalar fMaxBackAngle;         // in fwd . goal
     
     double   fStartTime;
-    UInt8    fFlags;
+    uint8_t    fFlags;
     plKey    fNotifyFinishedKey;    // Send a message to this key when we're done.
 };
 

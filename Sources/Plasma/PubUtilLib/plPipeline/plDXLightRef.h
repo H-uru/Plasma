@@ -69,7 +69,7 @@ class plDXLightRef : public plDXDeviceRef
         plLightInfo         *fOwner;
 
         D3DLIGHT9   fD3DInfo;
-        UInt32      fD3DIndex;
+        uint32_t      fD3DIndex;
         hsScalar    fScale;
 
         plDXLightSettings   *fParentSettings;

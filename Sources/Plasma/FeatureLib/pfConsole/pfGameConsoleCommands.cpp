@@ -122,7 +122,7 @@ PF_CONSOLE_CMD( Game, TakeScreenshot, "...", "Takes a shot of the current frame 
 
     plMipmap        myMipmap;
     char            fileName[ 512 ];
-    UInt32          uniqueNumber;   
+    uint32_t          uniqueNumber;   
 
 
     if( numParams > 1 )
