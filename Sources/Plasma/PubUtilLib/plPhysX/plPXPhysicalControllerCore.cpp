@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plPXPhysicalControllerCore.h"
+#include "plgDispatch.h"
 #include "plSimulationMgr.h"
 #include "plPXPhysical.h"
 #include "plPXConvert.h"
@@ -372,13 +373,6 @@ void plPXPhysicalControllerCore::ISetGlobalLoc(const hsMatrix44& l2w)
 plPXPhysicalControllerCore::~plPXPhysicalControllerCore()
 {
     IDeleteController();
-    //need to make sure my queued messages are released
-    for(int j=0;j<fQueuedCollideMsgs.GetCount();j++)
-    {
-        delete fQueuedCollideMsgs[j];
-        fQueuedCollideMsgs[j]=nil;
-    }
-    fQueuedCollideMsgs.SetCount(0);
     for (int i = 0; i < gControllers.size(); i++)
     {
         if (gControllers[i] == this)
@@ -401,7 +395,7 @@ void plPXPhysicalControllerCore::IMatchKinematicToController()
         kinPos.z = (NxReal)cPos.z;
         if (plSimulationMgr::fExtraProfile)
             SimLog("Match setting kinematic from %f,%f,%f to %f,%f,%f",prevKinPos.x,prevKinPos.y,prevKinPos.z,kinPos.x,kinPos.y,kinPos.z );
-        fKinematicActor->setGlobalPosition(kinPos);
+        fKinematicActor->moveGlobalPosition(kinPos);
     }
 }
 void plPXPhysicalControllerCore::UpdateControllerAndPhysicalRep()
@@ -412,7 +406,7 @@ void plPXPhysicalControllerCore::UpdateControllerAndPhysicalRep()
         {//this means we are moving the controller and then synchnig the kin
             NxExtendedVec3 ControllerPos= fController->getPosition();
             NxVec3 NewKinPos((NxReal)ControllerPos.x, (NxReal)ControllerPos.y, (NxReal)ControllerPos.z);
-            if (fEnabled || fKinematic)
+            if (fEnabled && fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Moving kinematic to %f,%f,%f",NewKinPos.x, NewKinPos.y, NewKinPos.z );
@@ -420,7 +414,7 @@ void plPXPhysicalControllerCore::UpdateControllerAndPhysicalRep()
                 fKinematicActor->moveGlobalPosition(NewKinPos);
 
             }
-            else
+            else if (fEnabled)
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Setting kinematic to %f,%f,%f", NewKinPos.x, NewKinPos.y, NewKinPos.z );
@@ -452,14 +446,14 @@ void plPXPhysicalControllerCore::MoveKinematicToController(hsPoint3& pos)
             newPos.x = (NxReal)pos.fX;
             newPos.y = (NxReal)pos.fY;
             newPos.z = (NxReal)pos.fZ+kPhysZOffset;
-            if ((fEnabled || fKinematic) && fBehavingLikeAnimatedPhys)
+            if (fEnabled && fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Moving kinematic from %f,%f,%f to %f,%f,%f",pos.fX,pos.fY,pos.fZ+kPhysZOffset,kinPos.x,kinPos.y,kinPos.z );
                 // use the position
                 fKinematicActor->moveGlobalPosition(newPos);
             }
-            else
+            else if (fEnabled)
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Setting kinematic from %f,%f,%f to %f,%f,%f",pos.fX,pos.fY,pos.fZ+kPhysZOffset,kinPos.x,kinPos.y,kinPos.z );
@@ -494,9 +488,9 @@ void plPXPhysicalControllerCore::ISetKinematicLoc(const hsMatrix44& l2w)
     // add z offset
     kPos.fZ += kPhysZOffset;
     // Update the physical position of kinematic
-    if (fEnabled|| fKinematic)
+    if (fEnabled && fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
         fKinematicActor->moveGlobalPosition(plPXConvert::Point(kPos));
-    else
+    else if (fEnabled)
         fKinematicActor->setGlobalPosition(plPXConvert::Point(kPos));
 }
 void plPXPhysicalControllerCore::IGetPositionSim(hsPoint3& pos) const
@@ -568,7 +562,7 @@ NxScene* scene = plSimulationMgr::GetInstance()->GetScene(fWorldKey);
     fKinematicActor->raiseActorFlag(NX_AF_DISABLE_COLLISION);
 #endif
     // set the matrix to be the same as the controller's actor... that should orient it to be the same
-    fKinematicActor->setGlobalPose(actor->getGlobalPose());
+    fKinematicActor->moveGlobalPose(actor->getGlobalPose());
 
     // the proxy for the debug display
     //hsAssert(!fProxyGen, "Already have proxy gen, double read?");
@@ -706,26 +700,19 @@ void plPXPhysicalControllerCore::IInformDetectors(bool entering,bool deferUntilN
                         msg->AddReceiver(physical->GetObjectKey());
                         if(!deferUntilNextSim)
                         {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                        DetectorLog("Sending an %s msg to %s" , entering? "entering":"exit", physical->GetObjectKey()->GetName());
-#endif                      
-                        msg->Send();
+                            DetectorLog("Sending an %s msg to %s" , entering? "entering":"exit", physical->GetObjectKey()->GetName());                    
+                            msg->Send();
                         }
                         else
                         {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                        DetectorLog("Queuing an %s msg to %s, which will be sent after the next simstep" , entering? "entering":"exit", physical->GetObjectKey()->GetName());
-#endif                      
-                        //these will be fired in update prestep on the next lap
-                        fQueuedCollideMsgs.Append(msg);
+                            DetectorLog("Queuing an %s msg to %s, which will be sent after the client update" , entering? "entering":"exit", physical->GetObjectKey()->GetName());    
+                            plgDispatch::Dispatch()->MsgQueue(msg);
                         }
                     }
                 }
             }
         }
-#ifndef PLASMA_EXTERNAL_RELEASE
         DetectorLog("Done informing from plPXPhysicalControllerCore::IInformDetectors");
-#endif
     }
 }
 void plPXPhysicalControllerCore::Move(hsVector3 displacement, unsigned int collideWith, unsigned int &collisionResults)
@@ -932,16 +919,6 @@ void plPXPhysicalControllerCore::UpdatePrestep(hsScalar delSecs)
         if(ac)
         {   
             if(ac->fNeedsResize)ac->IHandleResize();
-            int storedCollideMsgs=ac->fQueuedCollideMsgs.GetCount();
-            if(storedCollideMsgs)
-            {
-                plSimulationMgr* simMgr=plSimulationMgr::GetInstance();
-                for(int j=0; j<storedCollideMsgs;j++)
-                {
-                    simMgr->AddCollisionMsg(ac->fQueuedCollideMsgs[j]);
-                }
-                ac->fQueuedCollideMsgs.SetCount(0);
-            }
             ac->Apply(delSecs);
         }
 #ifndef PLASMA_EXTERNAL_RELEASE

@@ -151,6 +151,7 @@ void pfMarkerInfo::Show(bool show)
         plEnableMsg* msg = TRACKED_NEW plEnableMsg;
         msg->SetBCastFlag(plMessage::kPropagateToChildren);
         msg->SetCmd(plEnableMsg::kDrawable);
+        msg->SetCmd(plEnableMsg::kPhysical);
         msg->SetCmd(show ? plEnableMsg::kEnable : plEnableMsg::kDisable);
         msg->SetSender(pfMarkerMgr::Instance()->GetKey());
         msg->Send(fKey);

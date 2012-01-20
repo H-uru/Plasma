@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void DetectorLog(const char* format, ...);
 void DetectorLogSpecial(const char* format, ...);
 void DetectorLogRed(const char* format, ...);
+void DetectorLogYellow(const char* format, ...);
 void DetectorDoLogfile();
 
 #endif // plDetectorLog_h_inc
