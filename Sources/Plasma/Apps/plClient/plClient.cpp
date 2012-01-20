@@ -1309,8 +1309,6 @@ void plClient::IIncProgress (hsScalar byHowMuch, const char * text)
 //============================================================================
 void    plClient::IStartProgress( const char *title, hsScalar len )
 {
-    plInputManager::SetRecenterMouse(false);
-
     if (fProgressBar)
     {
         fProgressBar->SetLength(fProgressBar->GetMax()+len);
@@ -1555,6 +1553,7 @@ hsBool plClient::StartInit()
 
     pfGameGUIMgr::GetInstance()->SetAspectRatio( aspectratio );
     plMouseDevice::Instance()->SetDisplayResolution((float)fPipeline->Width(), (float)fPipeline->Height());
+    plInputManager::SetRecenterMouse(false);
 
     // create the listener for the audio system:
     plListener* pLMod = TRACKED_NEW plListener;
