@@ -44,9 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 
-# for save/load
-import cPickle
-
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
@@ -57,12 +54,11 @@ failedExitExclude = ptAttribExcludeRegion(3,"failed exit exclude")
 
 crackOpenEvent = ptAttribActivator(4,"open crack event")
 crackCloseEvent = ptAttribActivator(5,"close crack event")
-
 exitOpenEvent = ptAttribActivator(6,"exit open event")
 exitCloseEvent = ptAttribActivator(7,"exit close event")
 
-gearEnterRegion = ptAttribActivator(8,"trigger subworld entry")
-gearExitRegion = ptAttribActivator(9,"exit subworld at gear")
+gearEnterRegion = ptAttribActivator(8,"trigger subworld entry",netForce=True)
+gearExitRegion = ptAttribActivator(9,"exit subworld at gear",netForce=True)
 
 gearSubWorld = ptAttribSceneobject(10,"gear niche subworld")
 
@@ -73,7 +69,7 @@ safetyRegion3 = ptAttribActivator(13,"safety region 3")
 enterSafePoint = ptAttribSceneobject(14,"enter safe point")
 exitSafePoint = ptAttribSceneobject(15,"exit safe point")
 
-gearExitCrackRegion = ptAttribActivator(16,"exit subworld at crack")
+gearExitCrackRegion = ptAttribActivator(16,"exit subworld at crack",netForce=True)
 
 rideCamera = ptAttribSceneobject(17,"ride camera")
 gearExitCamera = ptAttribSceneobject(18,"exit at gear camera")
@@ -92,285 +88,157 @@ keepAwayOff = ptAttribActivator(26,"keep away region off")
 
 gearTeleportSpot = ptAttribSceneobject(27,"gear room teleport point")
 
-AgeStartedIn = None
-
-##############################################################
-# grsnGearRide    
-##############################################################
 class grsnGearRide(ptResponder):
-    "subworld transition test"
-    
-    # constants
-    
     def __init__(self):
-        "construction"
-        PtDebugPrint("grsnGearRide::init begin")
         ptResponder.__init__(self)
         self.id = 50113
-        self.version = 3
-        PtDebugPrint("grsnGearRide::init end")        
-
-    def clearExcludeRegions(self):
+        self.version = 4
+        PtDebugPrint("grsnGearRide.__init__():\tversion %i" % self.version)
+        self._canChangeSubworld = False
+    
+    def _ClearExcludeRegions(self):
         gearEnterExclude.clear(self.key)
         failedEnterExclude.clear(self.key)
         failedExitExclude.clear(self.key)
-
-    def releaseExcludeRegions(self):
+    
+    def _ReleaseExcludeRegions(self):
         gearEnterExclude.release(self.key)
         failedEnterExclude.release(self.key)
         failedExitExclude.release(self.key)
-
-    def EnableSafetyRegions(self):
-        safetyRegion1.enable()
-        safetyRegion2.enable()
-        safetyRegion3.enable()
-
-    def DisableSafetyRegions(self):
-        safetyRegion1.disable()
-        safetyRegion2.disable()
-        safetyRegion3.disable()
-        
-    def OnFirstUpdate(self):
-        global AgeStartedIn
-        AgeStartedIn = PtGetAgeName()
-        
-        self.SDL.setDefault("exitOpen",(0,))
-        self.SDL.setDefault("crackOpen",(0,))
-        self.SDL.setDefault("avatarRidingGear",(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1))
-        self.SDL.setDefault("avatarWithExitCam",(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1))
-        self.clearExcludeRegions()
-
+    
     def OnServerInitComplete(self):
-
-        # fix up our region detectors to fire on every enter
-       
+        """Sets up the gear ride's initial state"""
+        ageSDL = PtGetAgeSDL()
+        if ageSDL[stringSDLVarPower.value][0]:
+            keepAwayFromGear.clear(self.key)
+        else:
+            keepAwayFromGear.release(self.key)
         
-        if self.SDL["exitOpen"][0]:
-            PtDebugPrint("opening gear niche at load")
-            self.releaseExcludeRegions()
-        else:
-            PtDebugPrint("closing gear niche at load")
-            self.clearExcludeRegions()
-            
-        if self.SDL["crackOpen"][0]:
-            PtDebugPrint("opening gear exit at load")
-            gearExitRegion.enable()
-            gearEnterExclude.release(self.key)
-            failedExitExclude.release(self.key)
-        else:
-            PtDebugPrint("closing gear exit at load")
-            self.clearExcludeRegions()
-            gearExitRegion.disable()
-
-        gearEnterRegion.volumeSensorIgnoreExtraEnters(0)
-        gearExitRegion.volumeSensorIgnoreExtraEnters(0)
-        gearExitCrackRegion.volumeSensorIgnoreExtraEnters(0)
+        # Set some default states
+        gearEnterRegion.disable()
+        gearExitRegion.disable()
+        gearExitCrackRegion.disable()
+        self._ClearExcludeRegions()
+        self._inNiche = False
+        self._canChangeSubworld = False
+        
+        # This sets up the regions to continuously fire notifications to us...
+        # Useful, given the niche only opens up for a few frames.
+        gearEnterRegion.volumeSensorIgnoreExtraEnters(False)
+        gearExitRegion.volumeSensorIgnoreExtraEnters(False)
+        gearExitCrackRegion.volumeSensorIgnoreExtraEnters(False)
     
-    def OnNotify(self,state,id,events):
-
-        #for event in events:
-        #    PtDebugPrint("new event:")
-        #    PtDebugPrint("event[0] " + `event[0]`)
-        #    PtDebugPrint("event[1] " + `event[1]`)
-        #    PtDebugPrint("event[2] " + `event[2]`)
+    def OnNotify(self, state, id, events):
+        """Performs basic event processing"""
         
+        # Prevent dupe notifies
+        if not state:
+            return
+        
+        # Process the crack (2nd floor <-> niche) open/close event
         if id == crackOpenEvent.id:
-            for event in events:
-                if event[0] == kPickedEvent and event[1] == 1 and self.SDL["crackOpen"][0] == 0:
-                    #PtDebugPrint("opening gear niche")
-                    gearEnterRegion.enable()
-                    gearExitCrackRegion.enable()
-                    self.releaseExcludeRegions()
-                    self.SDL["crackOpen"] = (1,)
-                    return
-                
+            PtDebugPrint("grsnGearRide.OnNotify():\tCrack opened", level=kWarningLevel)
+            self._ReleaseExcludeRegions()
+            self._canChangeSubworld = True
+            gearEnterRegion.enable()
+            gearExitCrackRegion.enable()
+            return
         if id == crackCloseEvent.id:
-            for event in events:
-                if event[0] == kPickedEvent and event[1] == 1 and self.SDL["crackOpen"][0] == 1:
-                    #PtDebugPrint("closing gear niche")
-                    gearEnterRegion.disable()
-                    gearExitCrackRegion.disable()
-                    self.clearExcludeRegions()
-                    self.SDL["crackOpen"] = (0,)
-                    return
-
-        if id == exitOpenEvent.id:
-            for event in events:
-                if event[0] == kPickedEvent and event[1] == 1 and self.SDL["exitOpen"][0] == 0:
-                    print"opening gear exit"
-                    self.DisableSafetyRegions()
-                    gearExitRegion.enable()
-                    gearEnterRegion.enable()
-                    gearEnterExclude.release(self.key)
-                    failedExitExclude.release(self.key)
-                    self.SDL["exitOpen"] = (1,)
-                    return
-
-        if id == keepAwayOn.id:
-            for event in events:
-                if event[0] == kPickedEvent and event[1] == 1 and self.SDL["exitOpen"][0] == 0:
-                    print"back off"
-                    keepAwayFromGear.clear(self.key)
-                    return
+            PtDebugPrint("grsnGearRide.OnNotify():\tCrack closed", level=kWarningLevel)
+            self._ClearExcludeRegions()
+            self._canChangeSubworld = False # You can't change subworlds while the niche is closed
+            gearEnterRegion.disable()
+            gearExitCrackRegion.disable()
+            return
         
-        if id == keepAwayOff.id:
-            for event in events:
-                if event[0] == kPickedEvent and event[1] == 1 and self.SDL["exitOpen"][0] == 0:
-                    print"back off"
-                    keepAwayFromGear.release(self.key)
-                    return
-
+        # Process the exit (power room <-> niche) open/close event
+        if id == exitOpenEvent.id:
+            PtDebugPrint("grsnGearRide.OnNotify():\tPower room exit opened", level=kWarningLevel)
+            if self._inNiche: # bad things happen without this
+                self._ReleaseExcludeRegions()
+            self._canChangeSubworld = True
+            gearEnterRegion.enable()
+            gearExitRegion.enable()
+            return
         if id == exitCloseEvent.id:
-            for event in events:
-                if event[0] == kPickedEvent and event[1] == 1 and self.SDL["exitOpen"][0] == 1:
-                    print"closing gear exit"
-                    self.clearExcludeRegions()
-                    gearExitRegion.disable()
-                    gearEnterRegion.disable()
-                    self.SDL["exitOpen"] = (0,)
-                    self.EnableSafetyRegions()
-                    return
-
-        if id == safetyRegion1.id or id == safetyRegion2.id or id == safetyRegion3.id:
-            avatarRidingGear = PtFindAvatar(events)
-            avatarID = PtGetClientIDFromAvatarKey(avatarRidingGear.getKey())
-            for event in events:
-                if event[0] == kCollisionEvent:
-                    if event[1] == 1:
-                        for count in [0,1,2,3,4,5,6,7,8,9]:
-                            if self.SDL["avatarRidingGear"][count] == avatarID:
-                                rgn = 0
-                                if id == safetyRegion1.id:
-                                    rgn = 1
-                                elif id == safetyRegion2.id:
-                                    rgn = 2
-                                elif id == safetyRegion3.id:
-                                    rgn = 3
-                                PtDebugPrint("avatar ID " + `avatarID` + " entered safe region " + `rgn`)
-                                gearExitRegion.disable()
-                                avatarRidingGear.avatar.enterSubWorld(gearSubWorld.value)
-                                avatarRidingGear.physics.warpObj(enterSafePoint.value.getKey())
-                                cam = ptCamera()
-                                cam.disableFirstPersonOverride()
-                                cam.undoFirstPerson()
-                                rideCamera.value.pushCutsceneCamera(1,avatarRidingGear.getKey())
-                                self.SDL.setIndex("avatarRidingGear",count,avatarID)
-                                
-                                return
-                        for count in [0,1,2,3,4,5,6,7,8,9]:
-                            if self.SDL["avatarRidingGear"][count] == -1:
-                                PtDebugPrint("avatar ID " + `avatarID` + " entered gear subworld")
-                                gearExitRegion.disable()
-                                avatarRidingGear.avatar.enterSubWorld(gearSubWorld.value)
-                                avatarRidingGear.physics.warpObj(enterSafePoint.value.getKey())
-                                cam = ptCamera()
-                                cam.disableFirstPersonOverride()
-                                cam.undoFirstPerson()
-                                rideCamera.value.pushCutsceneCamera(1,avatarRidingGear.getKey())
-                                self.SDL.setIndex("avatarRidingGear",count,avatarID)
-                                return
-                            elif self.SDL["avatarRidingGear"][count] == avatarID:
-                                return
-                        PtDebugPrint("error - more than 10 people in gear niche?!?")    
-
-#        if id == safetyRegion4.id or id == safetyRegion5.id:
-#            avatarEntering = PtFindAvatar(events)
-#            avatarEntering.avatar.exitSubWorld()
-#            avatarEntering.avatar.warpObj(exitSafePoint.value.getKey())
-#            return
-
-       
-        if id == gearEnterRegion.id:
-            avatarRidingGear = PtFindAvatar(events)
-            avatarID = PtGetClientIDFromAvatarKey(avatarRidingGear.getKey())
-            for event in events:
-                if event[0] == kCollisionEvent:
-                    if event[1] == 1:
-                        for count in [0,1,2,3,4,5,6,7,8,9]:
-                            if self.SDL["avatarRidingGear"][count] == avatarID:
-                                PtDebugPrint("avatar ID " + `avatarID` + " entered gear subworld TWICE?!?")
-                                PtDebugPrint("avatar ID " + `avatarID` + " entered gear subworld")
-                                gearExitRegion.disable()
-                                avatarRidingGear.avatar.enterSubWorld(gearSubWorld.value)
-                                avatarRidingGear.physics.warpObj(enterSafePoint.value.getKey())
-                                cam = ptCamera()
-                                cam.disableFirstPersonOverride()
-                                cam.undoFirstPerson()
-                                avatarRidingGear.draw.enable()
-                                PtFadeLocalAvatar(0)
-                                rideCamera.value.pushCutsceneCamera(1,avatarRidingGear.getKey())
-                                self.SDL.setIndex("avatarRidingGear",count,avatarID)
-                                return
-                        for count in [0,1,2,3,4,5,6,7,8,9]:
-                            if self.SDL["avatarRidingGear"][count] == -1:
-                                PtDebugPrint("avatar ID " + `avatarID` + " entered gear subworld")
-                                gearExitRegion.disable()
-                                avatarRidingGear.avatar.enterSubWorld(gearSubWorld.value)
-                                avatarRidingGear.physics.warpObj(enterSafePoint.value.getKey())
-                                cam = ptCamera()
-                                cam.disableFirstPersonOverride()
-                                cam.undoFirstPerson()
-                                avatarRidingGear.draw.enable()
-                                PtFadeLocalAvatar(0)
-                                rideCamera.value.pushCutsceneCamera(1,avatarRidingGear.getKey())
-                                self.SDL.setIndex("avatarRidingGear",count,avatarID)
-                                return
-                            elif self.SDL["avatarRidingGear"][count] == avatarID:
-                                return
-                        PtDebugPrint("error - more than 10 people in gear niche?!?")
-                        
-        if id == gearExitRegion.id:
-            avatarExitingGear = PtFindAvatar(events)
-            avatarID = PtGetClientIDFromAvatarKey(avatarExitingGear.getKey())
-            for event in events:
-                if event[0] == kCollisionEvent:
-                    if event[1] == 1:    
-                        for count in [0,1,2,3,4,5,6,7,8,9]:
-                            if self.SDL["avatarRidingGear"][count] == avatarID:
-                                PtDebugPrint("avatar ID " + `avatarID` + " entered exit region at gear room")
-                                cam = ptCamera()
-                                gearExitCamera.value.pushCamera(avatarExitingGear.getKey())
-                                rideCamera.value.popCutsceneCamera(avatarExitingGear.getKey())
-                                avatarExitingGear.avatar.exitSubWorld()
-                                avatarExitingGear.physics.warpObj(gearTeleportSpot.value.getKey())
-                                cam.enableFirstPersonOverride()
-                                avatarExitingGear.draw.enable()
-                                self.SDL.setIndex("avatarRidingGear",count,-1)
-                                return
-                        PtDebugPrint("avatar ID " + `avatarID` + " entered gear exit region but wasn't in the niche?!?")
-
+            PtDebugPrint("grsnGearRide.OnNotify():\tPower room exit closed", level=kWarningLevel)
+            self._ClearExcludeRegions()
+            self._canChangeSubworld = False # You can't change subworlds while the niche is closed
+            gearExitRegion.disable()
+            gearEnterRegion.disable()
+            return
+        
+        # KEEP AWAY!!! :D
+        # No, more like "we're generating power, so don't stand on the gear, asshole"
+        if id == keepAwayOn.id:
+            keepAwayFromGear.clear(self.key)
+            return
+        if id == keepAwayOff.id:
+            keepAwayFromGear.release(self.key)
+            return
+        
+        # Only the local avatar should continue past this point...
+        avatar = PtFindAvatar(events)
+        if PtFindAvatar(events):
+            isLocal = PtFindAvatar(events) == avatar
+        else:
+            isLocal = PtWasLocallyNotified(self.key)
+        if not isLocal or not avatar:
+            return
+        kiNum  = PtGetClientIDFromAvatarKey(avatar.getKey())
+        
         if id == gearExitCrackRegion.id:
-            avatarExitingGear = PtFindAvatar(events)
-            avatarID = PtGetClientIDFromAvatarKey(avatarExitingGear.getKey())
-            for event in events:
-                if event[0] == kCollisionEvent:
-                    if event[1] == 1:    
-                        for count in [0,1,2,3,4,5,6,7,8,9]:
-                            if self.SDL["avatarRidingGear"][count] == avatarID:
-                                PtDebugPrint("avatar ID " + `avatarID` + " entered exit region at crack")
-                                avatarExitingGear.avatar.exitSubWorld()
-                                avatarExitingGear.physics.warpObj(exitSafePoint.value.getKey())
-                                cam = ptCamera()
-                                cam.enableFirstPersonOverride()
-                                crackExitCamera.value.pushCutsceneCamera(1,avatarExitingGear.getKey())
-                                avatarExitingGear.draw.enable()
-                                self.SDL.setIndex("avatarRidingGear",count,-1)
-                                self.SDL.setIndex("avatarWithExitCam",count,avatarID)
-                                return
-                        PtDebugPrint("avatar ID " + `avatarID` + " entered gear exit region but wasn't in the niche?!?")
-
+            if not self._canChangeSubworld:
+                PtDebugPrint("grsnGearRide.OnNotify():\tTossing region race condition", level=kDebugDumpLevel)
+                return
+            self._canChangeSubworld = False
+            self._inNiche = False
+            
+            PtDebugPrint("grsnGearRide.OnNotify():\t%i exited niche subworld into the 2nd floor hall" % kiNum, level=kWarningLevel)
+            avatar.avatar.exitSubWorld()
+            avatar.physics.warpObj(exitSafePoint.value.getKey())
+            ptCamera().enableFirstPersonOverride()
+            crackExitCamera.value.pushCutsceneCamera(1, avatar.getKey())
+            return
+        
+        if id == gearExitRegion.id:
+            if not self._canChangeSubworld:
+                PtDebugPrint("grsnGearRide.OnNotify():\tTossing region race condition", level=kDebugDumpLevel)
+                return
+            self._canChangeSubworld = False
+            self._inNiche = False
+            
+            PtDebugPrint("grsnGearRide.OnNotify():\t%i exited niche subworld into the power room" % kiNum, level=kWarningLevel)
+            ptCamera().enableFirstPersonOverride()
+            gearExitCamera.value.pushCamera(avatar.getKey())
+            rideCamera.value.popCutsceneCamera(avatar.getKey())
+            avatar.avatar.exitSubWorld()
+            avatar.physics.warpObj(gearTeleportSpot.value.getKey())
+            return
+        
+        # Trying to enter the niche
+        if id in (safetyRegion1.id, safetyRegion2.id, safetyRegion3.id, gearEnterRegion.id):
+            if not self._canChangeSubworld:
+                PtDebugPrint("grsnGearRide.OnNotify():\tTossing region race condition", level=kDebugDumpLevel)
+                return
+            self._canChangeSubworld = False
+            self._inNiche = True
+            
+            PtDebugPrint("grsnGearRide.OnNotify():\t%i entered niche subworld" % kiNum, level=kWarningLevel)
+            avatar.avatar.enterSubWorld(gearSubWorld.value)
+            avatar.physics.warpObj(enterSafePoint.value.getKey())
+            cam = ptCamera()
+            cam.disableFirstPersonOverride()
+            cam.undoFirstPerson()
+            rideCamera.value.pushCutsceneCamera(1, avatar.getKey())
+            return
+        
+        # Happens after the user exits the crack after exiting the niche...
+        # Convoluted, indeed.
         if id == popExitCrackCamera.id:
-            avatarExitingCrack = PtFindAvatar(events)
-            avatarID = PtGetClientIDFromAvatarKey(avatarExitingCrack.getKey())
-            for event in events:
-                if event[0] == kCollisionEvent:
-                    if event[1] == 1:    
-                        for count in [0,1,2,3,4,5,6,7,8,9]:
-                            if self.SDL["avatarWithExitCam"][count] == avatarID:
-                                PtDebugPrint("avatar ID " + `avatarID` + " exiting crack after exiting niche - popping camera")
-                                cam = ptCamera()
-                                cam.enableFirstPersonOverride()
-                                crackExitCamera.value.popCutsceneCamera(avatarExitingCrack.getKey())
-                                self.SDL.setIndex("avatarWithExitCam",count,-1)
-                                return
-    
+            ptCamera().enableFirstPersonOverride()
+            crackExitCamera.value.popCutsceneCamera(avatar.getKey())
+            return
+        
+        # Debug output for anyone who cares (not me)
+        PtDebugPrint("grsnGearRide.OnNotify():\tid %i unhandled" % id, level=kDebugDumpLevel)
