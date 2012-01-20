@@ -83,9 +83,6 @@ protected:
     static hsBool IGetLocalized(const char* name, Language lang, char* localizedName);
 
 public:
-    // Sets the default language, as determined by the installer
-    static void SetDefaultLanguage();
-    
     static void SetLanguage(Language lang) { fLanguage = lang; }
     static Language GetLanguage() { return fLanguage; }
 
