@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -44,9 +45,9 @@ This module contains all the strings that need to localized for the ACA
 """
 
 xGlassesName = "Gafas"
-xQuitConfirm = "øEst·s seguro de querer salir de Uru?"
-#xQuitConfirm = "°Nadie ha visto tu nuevo aspecto! øSeguro que quieres salir?"
-xResetConfirm = "øQuieres reiniciar tus cambios?"
+xQuitConfirm = "¬øEst√°s seguro de querer salir de Uru?"
+#xQuitConfirm = "¬°Nadie ha visto tu nuevo aspecto! ¬øSeguro que quieres salir?"
+xResetConfirm = "¬øQuieres reiniciar tus cambios?"
 
 xClothesXRef = { # "name in max file": "nombre traducido"
                 # Pelo
@@ -101,15 +102,15 @@ xClothesXRef = { # "name in max file": "nombre traducido"
                 "Dye 1": "Tinte 1",
                 "Dye 2": "Tinte 2",
                 "Blouse": "Blusa",
-                "Undershirt": "El·stica",
+                "Undershirt": "El√°stica",
                 "Leather": "Cuero",
-                "Highland Sweater": "Jersey escocÈs",
+                "Highland Sweater": "Jersey escoc√©s",
                 "Turtleneck": "Cuello alto",
                 "Short Sleeve T-Shirt": "Camiseta de manga corta",
                 "Short Sleeve T-Shirt - Myst": "Camiseta de manga corta - Myst",
                 "Short Sleeve T-Shirt - Riven": "Camiseta de manga corta - Riven",
                 "Short Sleeve T-Shirt - Cosmic Osmo": "Camiseta de manga corta - Cosmic Osmo",
-                "Knit Sweater": "SuÈter de punto",
+                "Knit Sweater": "Su√©ter de punto",
                 "Yeesha Reward": "Premio de Yeesha",
                 "Work Shirt": "S:Work Shirt",               # NEW #
                 "Polo Shirt": "S:Polo Shirt",               # NEW #
@@ -125,7 +126,7 @@ xClothesXRef = { # "name in max file": "nombre traducido"
                 # Manos
                 "Hand": "Mano",
                 "Hands": "Manos",
-                "Nails": "UÒas",
+                "Nails": "U√±as",
                 "Glove": "Guante",
                 "Gloves": "Guantes",
                 "Fingerless Gloves": "Guantes sin dedos",
@@ -136,19 +137,19 @@ xClothesXRef = { # "name in max file": "nombre traducido"
                 "Pants": "Pantalones",
                 "Sailor Pants": "Pantalones de marinero",
                 "Khakis": "Chinos",
-                "Belt": "CinturÛn",
+                "Belt": "Cintur√≥n",
                 "Cargo Pants": "Pantalones de faena",
-                "Capris": "Pantalones media caÒa",
+                "Capris": "Pantalones media ca√±a",
                 "Cargo Shorts": "Pantalones cortos de faena",
                 # Pies
                 "Sandal": "Sandalia",
                 "Sandals": "Sandalias",
-                "Hiking Boots": "Botas de montaÒa",
+                "Hiking Boots": "Botas de monta√±a",
                 "Shoe": "Zapato",
                 "Shoes": "Zapatos",
                 "Laces": "Cordones",
                 "Running Shoes": "Zapatillas de deporte",
-                "Hiking Shoes": "Zapatos de montaÒa",
+                "Hiking Shoes": "Zapatos de monta√±a",
                 "Boot": "Bota",
                 "Boots": "Botas",
                 "Bare Feet": "S:Bare Feet"                    # NEW #
@@ -158,13 +159,13 @@ xClothesXRef = { # "name in max file": "nombre traducido"
 xAge = "Edad"
 xWeight = "Peso"
 xSkinColor = "Piel"
-xTexture1 = "Textura 1" # Textura 1, 2, y 3 son los deslizadores del componente Ètnico
+xTexture1 = "Textura 1" # Textura 1, 2, y 3 son los deslizadores del componente √©tnico
 xTexture2 = "Textura 2"
 xTexture3 = "Textura 3"
-xNoseAngle = "¡ng. nariz"
+xNoseAngle = "√Ång. nariz"
 xNoseWidth = "Anch nariz"
 xMouth = "Boca"
-xChinAngle = "¡ng. barb."
+xChinAngle = "√Ång. barb."
 xEyebrows = "Cejas"
 xNoseLength = "Tam. nariz"
 xCheeks = "Mejillas"

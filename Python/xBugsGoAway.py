@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -49,17 +50,17 @@ xFolderIDToFolderName = {    PtVaultStandardNodes.kUserDefinedNode:"Usuario defi
                             PtVaultStandardNodes.kBuddyListFolder:"Amigos", \
                             PtVaultStandardNodes.kIgnoreListFolder:"Ignorar lista",\
                             PtVaultStandardNodes.kPeopleIKnowAboutFolder:"Recientes",\
-                            PtVaultStandardNodes.kChronicleFolder:"Cr髇icas",\
+                            PtVaultStandardNodes.kChronicleFolder:"Cr贸nicas",\
                             PtVaultStandardNodes.kAvatarOutfitFolder:"Armario",\
-                            PtVaultStandardNodes.kAgeTypeJournalFolder:"Documentaci髇 de las Eras",\
+                            PtVaultStandardNodes.kAgeTypeJournalFolder:"Documentaci贸n de las Eras",\
                             PtVaultStandardNodes.kSubAgesFolder:"Eras secundarias",\
                             PtVaultStandardNodes.kHoodMembersFolder:"Sectores",\
                             PtVaultStandardNodes.kAllPlayersFolder:"Todos los jugadores",\
                             PtVaultStandardNodes.kAgeMembersFolder:"Jugadores de la Era",\
-                            PtVaultStandardNodes.kAgeJournalsFolder:"Carpeta de documentaci髇 de las Eras",\
+                            PtVaultStandardNodes.kAgeJournalsFolder:"Carpeta de documentaci贸n de las Eras",\
                             PtVaultStandardNodes.kCanVisitFolder:"Gente que puede visitar",\
                             PtVaultStandardNodes.kAgeOwnersFolder:"Propietarios",\
-                            PtVaultStandardNodes.kPublicAgesFolder:"Sectores p鷅licos",\
+                            PtVaultStandardNodes.kPublicAgesFolder:"Sectores p煤blicos",\
                             PtVaultStandardNodes.kAgesIOwnFolder:"Eras que poseo",\
                             PtVaultStandardNodes.kAgesICanVisitFolder:"Eras que puedo visitar",\
                             PtVaultStandardNodes.kAvatarClosetFolder:"Armario del avatar",\
@@ -72,7 +73,7 @@ xMemberOfNeighborhood = "Miembro"
 
 #--- neighborhood status strings
 xNeighborhoodPrivate = "privado"
-xNeighborhoodPublic = "p鷅lico"
+xNeighborhoodPublic = "p煤blico"
 
 #--- date and time display Formats (as described by time.strftime python standard module)
 xDateTimeFormat = "%d/%m/%y  %H:%M"
@@ -82,11 +83,11 @@ xDateFormat = "%d/%m/%y"
 xImagerMessage = "De: %s\nAsunto: %s\n\n%s"
 
 # --- Hood welcome message
-xHoodWelcome = "Bienvenido a %s Para m醩 informaci髇 ve al aula"
+xHoodWelcome = "Bienvenido a %s Para m谩s informaci贸n ve al aula"
 
 # --- Bookshelf deletion messages
-xDeleteNeighborhoodBook = "縀st醩 seguro de querer eliminar este libro y perder tu adhesi髇 a este sector?"
-xDeleteBook = "縀st醩 seguro de querer eliminar este libro y perder tus progresos en la Era?"
+xDeleteNeighborhoodBook = "驴Est谩s seguro de querer eliminar este libro y perder tu adhesi贸n a este sector?"
+xDeleteBook = "驴Est谩s seguro de querer eliminar este libro y perder tus progresos en la Era?"
 
 # Spanish and Italian are defaulting to engish versions in MP, since this is MP only, we will default to the english translation
 def LocalizeAgeName(displayName):

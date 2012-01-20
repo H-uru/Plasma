@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -503,8 +504,8 @@ class xSimpleImager(ptModifier):
                                     textsubject = "Imager Transmission"
                                 PtDebugPrint("simpleImager: now showing textnote %s" % (textsubject),level=kDebugDumpLevel)
                                 message = PtGetLocalizedString("Neighborhood.Messages.Imager", [textfrom, textsubject, textbody])
-                                message = xCensor.xCensor(str(message),theCensorLevel) # HACK to convert to str, could be a problem with Japanese, and similar
-                                ImagerMap.textmap.drawText(kTextXStart,kTextYStart,message)
+                                message = xCensor.xCensor(message,theCensorLevel)
+                                ImagerMap.textmap.drawTextW(kTextXStart,kTextYStart,message)
                                 ImagerMap.textmap.flush()
                         else:
                             PtDebugPrint("xSimpleImager[%s]: Can't display element type %d" % (ImagerName.value,elemType),level=kWarningLevel)

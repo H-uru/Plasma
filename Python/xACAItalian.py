@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -155,7 +156,7 @@ xClothesXRef = { # "name in max file": "translated name"
 }
 
 # and now for the control name localization strings:
-xAge = "Et‡"
+xAge = "Et√†"
 xWeight = "Corporatura"
 xSkinColor = "Colore pelle"
 xTexture1 = "Volto 1" # Texture 1, 2, and 3 are the ethnicity sliders

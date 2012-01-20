@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -4209,7 +4210,7 @@ class xKI(ptModifier):
                 if IKIDisabled or PtGetLocalAvatar().avatar.getCurrentMode() == PtBrainModes.kAFK and cflags.private and not cflags.toSelf:
                     plist = [player]
                     myself = PtGetLocalPlayer()
-                    afkself = ptPlayer(myself.getPlayerName()+str(PtGetLocalizedString("KI.Chat.AFK")),myself.getPlayerID())
+                    afkself = ptPlayer(myself.getPlayerName()+PtGetLocalizedString("KI.Chat.AFK"),myself.getPlayerID())
                     PtSendRTChat(afkself, plist, " ",cflags.flags)
             except NameError:
                 pass
@@ -4566,7 +4567,7 @@ class xKI(ptModifier):
         elif msgtype == kCCRChat:
             self.IAddRTChat(None,message,kChatCCRMessage)
         elif msgtype == kCCRReturnChatMsg:
-            daPlayer = ptPlayer(str(PtGetLocalizedString("KI.Chat.CCRFromPlayer", [str(ccrplayerid)])),ccrplayerid)
+            daPlayer = ptPlayer(PtGetLocalizedString("KI.Chat.CCRFromPlayer", [str(ccrplayerid)]),ccrplayerid)
             self.IAddRTChat(daPlayer,message,kChatCCRMessageFromPlayer)
         else:
             PtDebugPrint("xKI - unknown CCR message of type %d" % (msgtype),level=kWarningLevel)
@@ -4973,7 +4974,7 @@ class xKI(ptModifier):
                     return "Unknown"
             if ageInfo.getAgeInstanceName() == "Ae'gura":
                 return "D'ni-Ae'gura"
-            return self.IFilterAgeName(xLocTools.LocalizeAgeName(ageInfo.getAgeInstanceName()))
+            return self.IFilterAgeName(ageInfo.getAgeInstanceName())
         else:
             return "?UNKNOWN?"
 
@@ -6003,7 +6004,7 @@ class xKI(ptModifier):
         selPlyrList = []
 
 
-        if message.startswith(str(PtGetLocalizedString("KI.Commands.ChatAllAge"))):
+        if message.startswith(PtGetLocalizedString("KI.Commands.ChatAllAge")):
             listenerOnly = 0
             selPlyrList = []
             message = message[len(PtGetLocalizedString("KI.Commands.ChatAllAge"))+1:]
@@ -6051,12 +6052,12 @@ class xKI(ptModifier):
             if ToReplyToLastPrivatePlayerID[2]:
                 cflags.interAge = 1
                 message = "<<"+self.IGetAgeDisplayName()+">>"+message
-        elif message.startswith(str(PtGetLocalizedString("KI.Commands.ChatPrivate"))):
+        elif message.startswith(PtGetLocalizedString("KI.Commands.ChatPrivate")):
             # then parse for sending private message
             pwords = message.split()
             foundBuddy = 0
             # make sure its still just a /p
-            if len(pwords) > 1 and pwords[0] == str(PtGetLocalizedString("KI.Commands.ChatPrivate")):
+            if len(pwords) > 1 and pwords[0] == PtGetLocalizedString("KI.Commands.ChatPrivate"):
                 # try to find their buddy in the DPL online lists
                 for daPlayer in BKPlayerList:
                     if isinstance(daPlayer, ptPlayer):
@@ -6115,7 +6116,7 @@ class xKI(ptModifier):
                 PtDebugPrint("xKI:SendRTChat: /p command can't find player %s"%(pwords[1]),level=kDebugDumpLevel)
                 self.IAddRTChat(None,PtGetLocalizedString("KI.Chat.CannotFindBuddy", [pwords[1]]),kChatSystemMessage)
                 return
-        elif message.startswith(str(PtGetLocalizedString("KI.Commands.ChatNeighbors"))):
+        elif message.startswith(PtGetLocalizedString("KI.Commands.ChatNeighbors")):
             cflags.neighbors = 1
             message = message[len(PtGetLocalizedString("KI.Commands.ChatNeighbors"))+1:]
             neighbors = self.IGetNeighbors()
@@ -6132,7 +6133,7 @@ class xKI(ptModifier):
                 # add age where we came from
                 message = "<<"+self.IGetAgeDisplayName()+">>"+message
                 goesToFolder = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kHoodMembersFolder)
-        elif message.startswith(str(PtGetLocalizedString("KI.Commands.ChatBuddies"))):
+        elif message.startswith(PtGetLocalizedString("KI.Commands.ChatBuddies")):
             vault = ptVault()
             buddies = vault.getBuddyListFolder()
             message = message[len(PtGetLocalizedString("KI.Commands.ChatBuddies"))+1:]
@@ -6266,7 +6267,7 @@ class xKI(ptModifier):
         global gFeather
         # if we are a CCR then look for CCR special commands
         if AmICCR:
-            if string.lower(chatmessage).startswith("//begin"):
+            if chatmessage.lower().startswith("//begin"):
                 pid,ccrmsg = self.IGetPIDMsg(chatmessage[len("//begin"):])
                 if pid:
                     res = ptCCRMgr().beginCommunication(pid,ccrmsg)
@@ -6277,7 +6278,7 @@ class xKI(ptModifier):
                 else:
                     self.IAddRTChat(None,"Player ID needed",kChatSystemMessage)
                 return None
-            if string.lower(chatmessage).startswith("//send"):
+            if chatmessage.lower().startswith("//send"):
                 pid,ccrmsg = self.IGetPIDMsg(chatmessage[len("//send"):])
                 if pid:
                     res = ptCCRMgr().sendCommunication(pid,ccrmsg)
@@ -6288,7 +6289,7 @@ class xKI(ptModifier):
                 else:
                     self.IAddRTChat(None,"Player ID needed",kChatSystemMessage)
                 return None
-            if string.lower(chatmessage).startswith("//end"):
+            if chatmessage.lower().startswith("//end"):
                 pid,ccrmsg = self.IGetPIDMsg(chatmessage[len("//end"):])
                 if pid:
                     res = ptCCRMgr().endCommunication(pid)
@@ -6299,14 +6300,14 @@ class xKI(ptModifier):
                 else:
                     self.IAddRTChat(None,"Player ID needed",kChatSystemMessage)
                 return None
-            if string.lower(chatmessage).startswith("//system"):
+            if chatmessage.lower(chatmessage).startswith("//system"):
                 ccrmsg = chatmessage[len("//system"):]
                 ptCCRMgr().systemMessage(ccrmsg)
                 self.IAddRTChat(None,"<SYSTEM>"+ccrmsg,kChatCCRMessageSelf)
                 return None
         for petCommand in kChatPetitionCommands.keys():
             try:
-                if string.lower(chatmessage).startswith(petCommand):
+                if chatmessage.lower().startswith(petCommand):
                     #petmessage = chatmessage[len(petCommand):]
                     #PtSendPetitionToCCR(petmessage,str(kChatPetitionCommands[petCommand]),str(PtGetLocalizedString("KI.CCR.PetitionTitle")))
                     #self.IAddRTChat(None,PtGetLocalizedString("KI.CCR.PetitionSent", [string.capitalize(petCommand[1:]),petmessage]),kChatCCRMessageSelf)
@@ -6318,7 +6319,7 @@ class xKI(ptModifier):
                 PtDebugPrint(detail)
                 self.IAddRTChat(None,PtGetLocalizedString("KI.Errors.TextOnly"),kChatSystemMessage)
                 return None
-        if string.lower(chatmessage).startswith(str(PtGetLocalizedString("KI.Commands.CCR"))):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.CCR")):
             if CCRConversationInProgress:
                 ccrmessage = chatmessage[len(PtGetLocalizedString("KI.Commands.CCR")):]
                 # CCRConversationInProgress also holds the CCR playerid
@@ -6328,25 +6329,25 @@ class xKI(ptModifier):
             else:
                 self.IAddRTChat(None,PtGetLocalizedString("KI.CCR.NoCCR"),kChatSystemMessage)
                 return None
-        if string.lower(chatmessage) == str(PtGetLocalizedString("KI.Commands.ChatClearAll")):
+        if chatmessage.lower() == PtGetLocalizedString("KI.Commands.ChatClearAll"):
             chatareaU = ptGUIControlMultiLineEdit(KIMicro.dialog.getControlFromTag(kChatDisplayArea))
             chatareaM = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kChatDisplayArea))
             chatareaU.clearBuffer()
             chatareaM.clearBuffer()
             return None
-        if string.lower(chatmessage).startswith(PtGetLocalizedString("KI.Commands.ChatStartLog")):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.ChatStartLog")):
             if type(ChatLogFile) == type(None):
                 ChatLogFile = ptStatusLog()
             ChatLogFile.open("Chat.log",30, int(PtStatusLogFlags.kAppendToLast) + int(PtStatusLogFlags.kTimestamp))
             self.IDoStatusChatMessage(PtGetLocalizedString("KI.Chat.LogStarted"),netPropagate=0)
             return None
-        if string.lower(chatmessage).startswith(PtGetLocalizedString("KI.Commands.ChatStopLog")):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.ChatStopLog")):
             if type(ChatLogFile) != type(None):
                 if ChatLogFile.isOpen():
                     self.IDoStatusChatMessage(PtGetLocalizedString("KI.Chat.LogStopped"),netPropagate=0)
                 ChatLogFile.close()
             return None
-        if string.lower(chatmessage).startswith(PtGetLocalizedString("KI.Commands.AddBuddy")):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.AddBuddy")):
             pid,msg = self.IGetPIDMsg(chatmessage[len(PtGetLocalizedString("KI.Commands.AddBuddy")):])
             if pid:
                 localplayer = PtGetLocalPlayer()
@@ -6364,7 +6365,7 @@ class xKI(ptModifier):
             else:
                 self.IAddRTChat(None,PtGetLocalizedString("KI.Player.NumberOnly"),kChatSystemMessage)
             return None
-        if string.lower(chatmessage).startswith(PtGetLocalizedString("KI.Commands.RemoveBuddy")):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.RemoveBuddy")):
             pid,ccrmsg = self.IGetPIDMsg(chatmessage[len(PtGetLocalizedString("KI.Commands.RemoveBuddy")):])
             if pid:
                 vault = ptVault()
@@ -6395,7 +6396,7 @@ class xKI(ptModifier):
                                     return None
                 self.IAddRTChat(None,PtGetLocalizedString("KI.Player.NumberOnly"),kChatSystemMessage)
             return None
-        if string.lower(chatmessage).startswith(PtGetLocalizedString("KI.Commands.Ignore")):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.Ignore")):
             pid,ccrmsg = self.IGetPIDMsg(chatmessage[len(PtGetLocalizedString("KI.Commands.Ignore")):])
             if pid:
                 localplayer = PtGetLocalPlayer()
@@ -6413,7 +6414,7 @@ class xKI(ptModifier):
             else:
                 self.IAddRTChat(None,PtGetLocalizedString("KI.Player.NumberOnly"),kChatSystemMessage)
             return None
-        if string.lower(chatmessage).startswith(str(PtGetLocalizedString("KI.Commands.Unignore"))):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.Unignore")):
             pid,ccrmsg = self.IGetPIDMsg(chatmessage[len(PtGetLocalizedString("KI.Commands.Unignore")):])
             if pid:
                 vault = ptVault()
@@ -6444,14 +6445,14 @@ class xKI(ptModifier):
                                     return None
                 self.IAddRTChat(None,PtGetLocalizedString("KI.Player.NumberOnly"),kChatSystemMessage)
             return None
-        if string.lower(chatmessage).startswith(str(PtGetLocalizedString("KI.Commands.AutoShout"))):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.AutoShout")):
             self.autoShout = abs(self.autoShout - 1)
             if self.autoShout:
                 self.IAddRTChat(None, PtGetLocalizedString("KI.Messages.AutoShoutEnabled"), kChatBroadcastMsg)
             else:
                 self.IAddRTChat(None, PtGetLocalizedString("KI.Messages.AutoShoutDisabled"), kChatBroadcastMsg)
             return None
-        if string.lower(chatmessage).startswith(str(PtGetLocalizedString("KI.Commands.DumpLogs"))):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.DumpLogs")):
             destination = chatmessage[len(PtGetLocalizedString("KI.Commands.DumpLogs")):]
             destination = destination.strip() # remove whitespace
             if destination == "":
@@ -6463,7 +6464,7 @@ class xKI(ptModifier):
             self.logDumpDest = destination # so the timer can get at it
             PtAtTimeCallback(self.key,0.25,kDumpLogsTimer)
             return None
-        if string.lower(chatmessage).startswith(str(PtGetLocalizedString("KI.Commands.DumpLog"))):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.DumpLog")):
             # cause people are too damn lazy to type the s character
             destination = chatmessage[len(PtGetLocalizedString("KI.Commands.DumpLog")):]
             destination = destination.strip() # remove whitespace
@@ -6476,7 +6477,7 @@ class xKI(ptModifier):
             self.logDumpDest = destination # so the timer can get at it
             PtAtTimeCallback(self.key,0.25,kDumpLogsTimer)
             return None
-        if string.lower(chatmessage).startswith(str(PtGetLocalizedString("KI.Commands.ChangePassword"))):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.ChangePassword")):
             newpassword = chatmessage[len(PtGetLocalizedString("KI.Commands.ChangePassword")):].strip()
             if newpassword == "":
                 self.IAddRTChat(None, PtGetLocalizedString("KI.Errors.BadPassword"), kChatSystemMessage)
@@ -6486,7 +6487,7 @@ class xKI(ptModifier):
                 return None
             PtChangePassword(newpassword)
             return None
-        if string.lower(chatmessage).startswith(str(PtGetLocalizedString("KI.Commands.SendFriendInvite"))):
+        if chatmessage.lower().startswith(PtGetLocalizedString("KI.Commands.SendFriendInvite")):
             commands = chatmessage[len(PtGetLocalizedString("KI.Commands.SendFriendInvite")):].strip().split(" ", 1)
             emailaddr = commands[0]
             toName = None
@@ -6506,7 +6507,7 @@ class xKI(ptModifier):
                 PtSendFriendInvite(emailaddr)
 
             return None
-        if string.lower(chatmessage).startswith(str("/savecolumns")) and AgeName == "Jalak":
+        if chatmessage.lower().startswith(str("/savecolumns")) and AgeName == "Jalak":
             fName = chatmessage[13:].strip()
             if fName:
                 fName = fName + ".txt"
@@ -6514,7 +6515,7 @@ class xKI(ptModifier):
                 fName = "JalakColumns.txt"
             self.SendNote("SaveColumns;" + fName)
             return None
-        if string.lower(chatmessage).startswith(str("/loadcolumns")) and AgeName == "Jalak":
+        if chatmessage.lower().startswith(str("/loadcolumns")) and AgeName == "Jalak":
             fName = chatmessage[13:].strip()
             if fName:
                 fName = fName + ".txt"
@@ -6594,10 +6595,10 @@ class xKI(ptModifier):
                 people = "an old man. Ok, maybe he's not standing. BTW, wasn't he on M*A*S*H?"
             self.IAddRTChat(None,"%s:\n%s  Standing near you is %s.\n  There are exits to the %s."%(self.IGetAgeDisplayName(),see,people,exits),0)
             return None
-        if string.lower(chatmessage).startswith("/go ") or chatmessage == "/go":
+        if chatmessage.lower().startswith("/go ") or chatmessage == "/go":
             self.IAddRTChat(None,"Put one foot in front of the other and eventually you will get there.",0)
             return None
-        if string.lower(chatmessage).startswith("/get feather"):
+        if chatmessage.lower().startswith("/get feather"):
             loc = self.IGetAgeFileName()
             if loc == "Gira":
                 if gFeather < 7:
@@ -6731,10 +6732,10 @@ class xKI(ptModifier):
             else:
                 self.IAddRTChat(None,"There is nothing there but lint.",0)
             return None
-        if string.lower(chatmessage).startswith("/fly"):
+        if chatmessage.lower().startswith("/fly"):
             self.IAddRTChat(None,"You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)",0)
             return None
-        if string.lower(chatmessage).startswith("/get "):
+        if chatmessage.lower().startswith("/get "):
             if chatmessage[-1:] == "s":
                 v = "are"
             else:
@@ -6914,7 +6915,7 @@ class xKI(ptModifier):
                     if message[:2] == "<<":
                         try:
                             idx = message.index(">>")
-                            player = ptPlayer(str(PtGetLocalizedString("KI.Chat.InterAgePlayerRecvd", [player.getPlayerName(),message[2:idx]])),player.getPlayerID())
+                            player = ptPlayer(PtGetLocalizedString("KI.Chat.InterAgePlayerRecvd", [player.getPlayerName(),message[2:idx]]),player.getPlayerID())
                             message = message[idx+2:]
                         except ValueError:
                             pass
@@ -8325,10 +8326,10 @@ class xKI(ptModifier):
         if dnitime:
             tuptime = time.gmtime(dnitime)
             if TimeBlinker:
-                curtime = unicode(time.strftime(str(PtGetLocalizedString("Global.Formats.DateTime")),tuptime))
+                curtime = unicode(time.strftime(PtGetLocalizedString("Global.Formats.DateTime"),tuptime))
                 TimeBlinker = 0
             else:
-                curtime = unicode(time.strftime(str(PtGetLocalizedString("Global.Formats.DateTime")),tuptime))
+                curtime = unicode(time.strftime(PtGetLocalizedString("Global.Formats.DateTime"),tuptime))
                 TimeBlinker = 1
         else:
             curtime = PtGetLocalizedString("KI.Errors.TimeBroke")
@@ -8972,7 +8973,7 @@ class xKI(ptModifier):
                             contentDate.hide()
                             contentFrom.setForeColor(DniSelectableColor)
                             contentFrom.setFontSize(10)
-                            contentFrom.setString(self.IGetAgeInstanceName())
+                            contentFrom.setString(self.IGetAgeDisplayName())
                             contentFrom.show()
                             # find the button to enable it
                             lmbutton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((id-100)/10)+kBKIListModeCreateBtn))
@@ -9072,7 +9073,7 @@ class xKI(ptModifier):
                                     contentTitle.show()
                                     try:
                                         tuptime = time.gmtime(PtGMTtoDniTime(element.getModifyTime()))
-                                        curtime = time.strftime(str(PtGetLocalizedString("Global.Formats.Date")),tuptime)
+                                        curtime = time.strftime(PtGetLocalizedString("Global.Formats.Date"),tuptime)
                                     except:
                                         curtime = ""
 
@@ -9179,7 +9180,7 @@ class xKI(ptModifier):
                     jrnAgeName.setString(self.IConvertAgeName(xCensor.xCensor(element.getCreateAgeName(),theCensorLevel)))
                     jrnAgeName.show()
                     tuptime = time.gmtime(PtGMTtoDniTime(element.getModifyTime()))
-                    curtime = time.strftime(str(PtGetLocalizedString("Global.Formats.Date")),tuptime)
+                    curtime = time.strftime(PtGetLocalizedString("Global.Formats.Date"),tuptime)
                     jrnDate.setString(curtime)
                     jrnDate.show()
                     if BKInEditMode and BKEditField == kBKEditFieldJRNTitle:
@@ -9235,7 +9236,7 @@ class xKI(ptModifier):
                     picAgeName.setString(self.IConvertAgeName(xCensor.xCensor(element.getCreateAgeName(),theCensorLevel)))
                     picAgeName.show()
                     tuptime = time.gmtime(PtGMTtoDniTime(element.getModifyTime()))
-                    curtime = time.strftime(str(PtGetLocalizedString("Global.Formats.Date")),tuptime)
+                    curtime = time.strftime(PtGetLocalizedString("Global.Formats.Date"),tuptime)
                     picDate.setString(curtime)
                     picDate.show()
                     if BKInEditMode and BKEditField == kBKEditFieldPICTitle:
@@ -10166,8 +10167,8 @@ class xKI(ptModifier):
         "Send an email invitation or revokatation"
         localPlayer = PtGetLocalPlayer()
         invite = ptVaultTextNoteNode(0)
-        invite.noteSetText(str(PtGetLocalizedString(message, [ageName,localPlayer.getPlayerName()])))
-        invite.noteSetTitle(str(PtGetLocalizedString(title, [ageName])))
+        invite.noteSetText(PtGetLocalizedString(message, [ageName,localPlayer.getPlayerName()]))
+        invite.noteSetTitle(PtGetLocalizedString(title, [ageName]))
         invite.sendTo(playerID)
 
     def IShowSelectedConfig(self):
@@ -10716,15 +10717,15 @@ class MarkerGame:
         # add time stuff and remainings
         if MarkerGameState == kMGGameOn:
             gametime = self.timeLeft()
-            self.timeLeftDPL = DPLStatusLine( str(PtGetLocalizedString("KI.MarkerGame.TimeRemaining", [str(int(gametime/60)),str(gametime%60)])),AgenBlueDk)
+            self.timeLeftDPL = DPLStatusLine( PtGetLocalizedString("KI.MarkerGame.TimeRemaining", [str(int(gametime/60)),str(gametime%60)]),AgenBlueDk)
         else:
-            self.timeLeftDPL = DPLStatusLine( str(PtGetLocalizedString("KI.MarkerGame.WaitingForStart")),AgenBlueDk)
+            self.timeLeftDPL = DPLStatusLine( PtGetLocalizedString("KI.MarkerGame.WaitingForStart"),AgenBlueDk)
         if self.gameType == PtMarkerMsgGameType.kGameTypeCapture:
-            self.markersRemainingDPL = DPLStatusLine(str(PtGetLocalizedString("KI.MarkerGame.MarkersRemaining", [str(self.markersRemaining)])),AgenBlueDk)
+            self.markersRemainingDPL = DPLStatusLine(PtGetLocalizedString("KI.MarkerGame.MarkersRemaining", [str(self.markersRemaining)]),AgenBlueDk)
         else:
-            self.markersRemainingDPL = DPLStatusLine(str(PtGetLocalizedString("KI.MarkerGame.MarkersUnclaimed", [str(self.markersRemaining)])),AgenBlueDk)
-        self.greenTeamDPL = DPLBranchStatusLine(str(PtGetLocalizedString("KI.MarkerGame.GreenTeamScore", [str(self.greenTeamScore)])))
-        self.redTeamDPL = DPLBranchStatusLine(str(PtGetLocalizedString("KI.MarkerGame.RedTeamScore", [str(self.redTeamScore)])),closePrev=1)
+            self.markersRemainingDPL = DPLStatusLine(PtGetLocalizedString("KI.MarkerGame.MarkersUnclaimed", [str(self.markersRemaining)]),AgenBlueDk)
+        self.greenTeamDPL = DPLBranchStatusLine(PtGetLocalizedString("KI.MarkerGame.GreenTeamScore", [str(self.greenTeamScore)]))
+        self.redTeamDPL = DPLBranchStatusLine(PtGetLocalizedString("KI.MarkerGame.RedTeamScore", [str(self.redTeamScore)]),closePrev=1)
         DPList.append(self.timeLeftDPL)
         DPList.append(self.markersRemainingDPL)
         DPList.append(self.greenTeamDPL)
@@ -10736,9 +10737,9 @@ class MarkerGame:
         if type(self.timeLeftDPL) != type(None):
             if MarkerGameState == kMGGameOn:
                 gametime = self.timeLeft()
-                self.timeLeftDPL.updateText(str(PtGetLocalizedString("KI.MarkerGame.TimeRemaining", [str(int(gametime/60)),str(gametime%60)])))
+                self.timeLeftDPL.updateText(PtGetLocalizedString("KI.MarkerGame.TimeRemaining", [str(int(gametime/60)),str(gametime%60)]))
             else:
-                self.timeLeftDPL.updateText(str(PtGetLocalizedString("KI.MarkerGame.WaitingForStart")))
+                self.timeLeftDPL.updateText(PtGetLocalizedString("KI.MarkerGame.WaitingForStart"))
 
 class DPLStatusLine:
     def __init__(self,text,color=None):
