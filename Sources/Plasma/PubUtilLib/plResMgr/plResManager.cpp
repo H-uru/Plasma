@@ -532,7 +532,7 @@ inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
     const char* objectName = uoid.GetObjectName();
 
     // If we're running localized, try to find a localized version first
-    if (plLocalization::IsLocalized())
+    if ((objectName != nil) && plLocalization::IsLocalized())
     {
         char localName[256];
         if (plLocalization::GetLocalized(objectName, localName))
