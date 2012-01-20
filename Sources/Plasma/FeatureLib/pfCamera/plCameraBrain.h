@@ -362,7 +362,7 @@ public:
         kCircleLocalAvatar = 0x40,
     };
 protected:
-    UInt32          fCircleFlags;
+    uint32_t          fCircleFlags;
     hsPoint3        fCenter;
     plSceneObject*  fCenterObject;  // optional, use instead of fCenter
     hsScalar        fRadius;
@@ -386,14 +386,14 @@ public:
     virtual void        Update(hsBool forced = false);
     virtual hsBool      MsgReceive(plMessage* msg);
     
-    UInt32 GetCircleFlags() { return fCircleFlags; }
+    uint32_t GetCircleFlags() { return fCircleFlags; }
     hsPoint3* GetCenter() { return &fCenter; }      // use GetCenterPoint
     hsPoint3  GetCenterPoint();
     hsScalar GetRadius() { return fRadius; }
     plSceneObject* GetCenterObject() { return fCenterObject; }
 
     void SetCircumferencePerSec(hsScalar h) { fCirPerSec = h; }
-    void SetCircleFlags(UInt32 f) { fCircleFlags|=f; }
+    void SetCircleFlags(uint32_t f) { fCircleFlags|=f; }
     void SetCenter(hsPoint3* ctr) { fCenter = *ctr; }       // Circle lies in the plane z = ctr->z
     void SetRadius(hsScalar radius) {   fRadius = radius; }
     void SetFarCircleCam(hsBool farType) { if (farType) fCircleFlags |= kFarthest; else fCircleFlags &= ~kFarthest; }

@@ -99,7 +99,7 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
     if( rr == nil )
         rr = fRequests[ face ] = TRACKED_NEW plRenderRequest;
 
-    UInt32 renderState 
+    uint32_t renderState 
         = plPipeline::kRenderNormal
         | plPipeline::kRenderClearColor
         | plPipeline::kRenderClearDepth;
@@ -124,7 +124,7 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
 
 //// IEval ////////////////////////////////////////////////////////////////////
 
-hsBool  plCubicRenderTargetModifier::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  plCubicRenderTargetModifier::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     hsPoint3    center;
     hsMatrix44  mtx, invMtx;

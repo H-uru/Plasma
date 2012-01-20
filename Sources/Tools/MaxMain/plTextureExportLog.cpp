@@ -91,7 +91,7 @@ plTextureExportLog::~plTextureExportLog()
 
 //// Other Ones //////////////////////////////////////////////////////////////
 
-void    plTextureExportLog::IAddBMapNode( UInt32 rank, plBitmap *bMap )
+void    plTextureExportLog::IAddBMapNode( uint32_t rank, plBitmap *bMap )
 {
     plBMapNode  *node = TRACKED_NEW plBMapNode, **nodeHdl;
 
@@ -123,7 +123,7 @@ void    plTextureExportLog::Write( void )
     plBMapNode      *node;
     hsUNIXStream    *stream = TRACKED_NEW hsUNIXStream;
     char            str[ 128 ];
-    UInt32          size;
+    uint32_t          size;
 
 
     stream->Open( fFileName, "wt" );
@@ -250,7 +250,7 @@ void    plTextureExportLog::Write( void )
     fFileName = nil;
 }
 
-void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *string, Int8 numTabs )
+void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *string, int8_t numTabs )
 {
     static char tabs[ 64 ];
     int         i;

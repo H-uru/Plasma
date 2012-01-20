@@ -83,18 +83,18 @@ plPostEffectMod::~plPostEffectMod()
 
 void plPostEffectMod::ISetupRenderRequest()
 {
-    UInt32 rtFlags = 0;
+    uint32_t rtFlags = 0;
 
     // If we go to rendering to sub-window, we'll want to explicitly set width and height
-    UInt32 width = 0;
-    UInt32 height = 0;
+    uint32_t width = 0;
+    uint32_t height = 0;
 
-    UInt32 colorDepth = 0;
-    UInt32 zDepth = 0;
-    UInt32 stencilDepth = 0;
+    uint32_t colorDepth = 0;
+    uint32_t zDepth = 0;
+    uint32_t stencilDepth = 0;
 
     fRenderRequest = TRACKED_NEW plRenderRequest;
-    UInt32 renderState = plPipeline::kRenderNormal
+    uint32_t renderState = plPipeline::kRenderNormal
         | plPipeline::kRenderNoProjection
         | plPipeline::kRenderNoLights
         | plPipeline::kRenderClearDepth;
@@ -157,7 +157,7 @@ hsBool plPostEffectMod::IIsEnabled() const
     return /*GetTarget() &&*/ !fPageMgr->Empty() && fState.IsBitSet(kEnabled);
 }
 
-hsBool plPostEffectMod::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plPostEffectMod::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     return false;
 }

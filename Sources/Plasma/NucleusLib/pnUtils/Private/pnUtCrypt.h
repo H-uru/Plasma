@@ -69,7 +69,7 @@ enum ECryptAlgorithm {
 };
 
 struct ShaDigest {
-    dword data[5];
+    uint32_t data[5];
 };
 
 
@@ -116,8 +116,8 @@ void CryptKeyGenerate (
     unsigned        keyBits,    // used for algorithms with variable key strength
     unsigned        randomBytes,
     const void *    randomData,
-    ARRAY(byte) *   privateData,
-    ARRAY(byte) *   publicData  // only for public key cryptography
+    ARRAY(uint8_t) *   privateData,
+    ARRAY(uint8_t) *   publicData  // only for public key cryptography
 );
 
 unsigned CryptKeyGetBlockSize (
@@ -126,12 +126,12 @@ unsigned CryptKeyGetBlockSize (
 
 void CryptCreateRandomSeed (
     unsigned        bytes,
-    byte *          data
+    uint8_t *          data
 );
 
 void CryptHashPassword (
-    const wchar username[],
-    const wchar password[],
+    const wchar_t username[],
+    const wchar_t password[],
     ShaDigest * namePassHash
 );
 
@@ -157,7 +157,7 @@ void CryptCreateFastWeakChallenge (
 
 void CryptEncrypt (
     CryptKey *      key,
-    ARRAY(byte) *   dest,
+    ARRAY(uint8_t) *   dest,
     unsigned        sourceBytes,
     const void *    sourceData
 );
@@ -170,7 +170,7 @@ void CryptEncrypt (
 
 void CryptDecrypt (
     CryptKey *      key,
-    ARRAY(byte) *   dest,       // padded out to the algorithm's block size
+    ARRAY(uint8_t) *   dest,       // padded out to the algorithm's block size
     unsigned        sourceBytes,
     const void *    sourceData
 );

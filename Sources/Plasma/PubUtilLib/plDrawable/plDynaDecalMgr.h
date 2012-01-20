@@ -99,12 +99,12 @@ public:
     hsPoint3    fLastPos;
     double      fWetTime;
     hsScalar    fWetLength;
-    UInt32      fFlags;
+    uint32_t      fFlags;
 
     plDynaDecalInfo& Init(const plKey& key);
 };
 
-typedef std::map< unsigned_ptr, plDynaDecalInfo, std::less<unsigned_ptr> > plDynaDecalMap;
+typedef std::map< uintptr_t, plDynaDecalInfo, std::less<uintptr_t> > plDynaDecalMap;
 
 // plDynaDecalMgr
 // Primary responsibilities:
@@ -152,10 +152,10 @@ protected:
 
     hsScalar                    fPartyTime;
 
-    UInt16                      fMaxNumVerts;
-    UInt16                      fMaxNumIdx;
+    uint16_t                      fMaxNumVerts;
+    uint16_t                      fMaxNumIdx;
 
-    UInt32                      fWaitOnEnable;
+    uint32_t                      fWaitOnEnable;
     
     hsScalar                    fWetLength;
     hsScalar                    fRampEnd;
@@ -176,37 +176,37 @@ protected:
     hsScalar                    fMaxDepth;
     hsScalar                    fMaxDepthRange;
 
-    hsTArray<UInt32>            fPartIDs;
+    hsTArray<uint32_t>            fPartIDs;
     hsTArray<plKey>             fNotifies;
 
     const plPrintShape* IGetPrintShape(const plKey& objKey) const;
-    const plPrintShape* IGetPrintShape(plArmatureMod* avMod, UInt32 id) const;
+    const plPrintShape* IGetPrintShape(plArmatureMod* avMod, uint32_t id) const;
 
     virtual hsBool      IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg);
-    void                INotifyActive(plDynaDecalInfo& info, const plKey& armKey, UInt32 id) const;
-    void                INotifyInactive(plDynaDecalInfo& info, const plKey& armKey, UInt32 id) const;
+    void                INotifyActive(plDynaDecalInfo& info, const plKey& armKey, uint32_t id) const;
+    void                INotifyInactive(plDynaDecalInfo& info, const plKey& armKey, uint32_t id) const;
     hsBool              IWetParts(const plDynaDecalEnableMsg* enaMsg);
-    hsBool              IWetPart(UInt32 id, const plDynaDecalEnableMsg* enaMsg);
+    hsBool              IWetPart(uint32_t id, const plDynaDecalEnableMsg* enaMsg);
     void                IWetInfo(plDynaDecalInfo& info, const plDynaDecalEnableMsg* enaMsg) const;
     hsScalar            IHowWet(plDynaDecalInfo& info, double t) const;
-    plDynaDecalInfo&    IGetDecalInfo(unsigned_ptr id, const plKey& key);
-    void                IRemoveDecalInfo(UInt32 id);
+    plDynaDecalInfo&    IGetDecalInfo(uintptr_t id, const plKey& key);
+    void                IRemoveDecalInfo(uint32_t id);
     void                IRemoveDecalInfos(const plKey& key);
 
     hsGMaterial*        ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, hsBool rtLit);
-    void                IAllocAuxSpan(plAuxSpan* aux, UInt32 maxNumVerts, UInt32 maxNumIdx);
-    plAuxSpan*          IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, UInt16 numVerts, UInt16 numIdx);
+    void                IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_t maxNumIdx);
+    plAuxSpan*          IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, uint16_t numVerts, uint16_t numIdx);
     hsBool              IMakeAuxRefs(plPipeline* pipe);
 
-    UInt16*             IGetBaseIdxPtr(const plAuxSpan* auxSpan) const;
+    uint16_t*             IGetBaseIdxPtr(const plAuxSpan* auxSpan) const;
     plDecalVtxFormat*   IGetBaseVtxPtr(const plAuxSpan* auxSpan) const;
 
     virtual int         INewDecal() = 0;
-    plDynaDecal*        IInitDecal(plAuxSpan* aux, double t, UInt16 numVerts, UInt16 numIdx);
+    plDynaDecal*        IInitDecal(plAuxSpan* aux, double t, uint16_t numVerts, uint16_t numIdx);
     void                IKillDecal(int i);
     void                IUpdateDecals(double t);
 
-    void                ICountIncoming(hsTArray<plCutoutPoly>& src, UInt16& numVerts, UInt16& numIdx) const;
+    void                ICountIncoming(hsTArray<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const;
     hsBool              IConvertPolysColor(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
     hsBool              IConvertPolysAlpha(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
     hsBool              IConvertPolysVS(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
@@ -277,7 +277,7 @@ public:
     const plMipmap* GetMipmap() const;
 
     void AddNotify(const plKey& k) { fNotifies.Append(k); }
-    UInt32 GetNumNotifies() const { return fNotifies.GetCount(); }
+    uint32_t GetNumNotifies() const { return fNotifies.GetCount(); }
     const plKey& GetNotify(int i) const { return fNotifies[i]; }
 
     static void SetDisableAccumulate(hsBool on) { fDisableAccumulate = on; }

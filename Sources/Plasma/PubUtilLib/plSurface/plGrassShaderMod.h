@@ -99,7 +99,7 @@ public:
     plGrassWave fWaves[kNumWaves];
 
 protected:
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
     virtual void IApplyDynamic() {};    // dummy function required by base class
     void ISetupShaders();
     void IRefreshWaves(plShader *vShader);

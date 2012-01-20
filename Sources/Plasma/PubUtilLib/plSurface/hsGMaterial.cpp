@@ -72,17 +72,17 @@ hsGMaterial::~hsGMaterial()
     IClearLayers();
 }
 
-plLayerInterface* hsGMaterial::GetPiggyBack(UInt32 which)
+plLayerInterface* hsGMaterial::GetPiggyBack(uint32_t which)
 {
     return fPiggyBacks[which];
 }
 
-plLayerInterface* hsGMaterial::GetLayer(UInt32 which)
+plLayerInterface* hsGMaterial::GetLayer(uint32_t which)
 {
     return fLayers[which];
 }
 
-UInt32 hsGMaterial::IMakeExtraLayer()
+uint32_t hsGMaterial::IMakeExtraLayer()
 {
     fLayers.ExpandAndZero(GetNumLayers()+1);
     return fLayers.GetCount();
@@ -145,7 +145,7 @@ plLayer* hsGMaterial::MakeBaseLayer()
     return newLay;
 }
 
-UInt32 hsGMaterial::AddLayerViaNotify(plLayerInterface* layer)
+uint32_t hsGMaterial::AddLayerViaNotify(plLayerInterface* layer)
 {
     int idx = GetNumLayers();
 
@@ -190,14 +190,14 @@ void hsGMaterial::RemoveLayer(plLayerInterface* lay, hsBool piggyBack)
     layers.Remove(i);
 }
 
-void hsGMaterial::InsertLayer(plLayerInterface* layer, Int32 which, hsBool piggyBack)
+void hsGMaterial::InsertLayer(plLayerInterface* layer, int32_t which, hsBool piggyBack)
 {
     hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
     hsAssert(which <= layers.GetCount(), "Material layers Exceeding test depth");
     layers.InsertAtIndex(which, layer);
 }
 
-void hsGMaterial::SetLayer(plLayerInterface* layer, Int32 which, hsBool insert, hsBool piggyBack)
+void hsGMaterial::SetLayer(plLayerInterface* layer, int32_t which, hsBool insert, hsBool piggyBack)
 {
     if( insert )
     {
@@ -276,7 +276,7 @@ void hsGMaterial::Read(hsStream *stream, hsResMgr *group)
     }
 }
 
-void hsGMaterial::Eval(double secs, UInt32 frame)
+void hsGMaterial::Eval(double secs, uint32_t frame)
 {
     plProfile_BeginLap(MaterialAnims, GetKeyName());
 

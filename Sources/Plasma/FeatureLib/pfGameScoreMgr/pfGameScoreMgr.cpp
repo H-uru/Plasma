@@ -58,7 +58,7 @@ pfGameScore::~pfGameScore()
 void pfGameScore::Init(
     unsigned sid,
     unsigned oid,
-    UInt32 createTime,
+    uint32_t createTime,
     const char gname[],
     unsigned gType,
     int val
@@ -145,7 +145,7 @@ static void CreateScoreCallback(
     ENetError   result,
     void *      param,
     unsigned    scoreId,
-    UInt32      createdTime,
+    uint32_t      createdTime,
     unsigned    ownerId,
     const char* gameName,
     unsigned    gameType,

@@ -105,7 +105,7 @@ plAvBrainGeneric::plAvBrainGeneric(plAnimStageVec *stages,
                                    plMessage *startMessage,
                                    plMessage *endMessage,
                                    plKey recipient,
-                                   UInt32 exitFlags,
+                                   uint32_t exitFlags,
                                    float fadeIn,
                                    float fadeOut,
                                    MoveMode moveMode)
@@ -128,7 +128,7 @@ plAvBrainGeneric::plAvBrainGeneric(plAnimStageVec *stages,
 }
 
 // plAvBrainGeneric 
-plAvBrainGeneric::plAvBrainGeneric(UInt32 exitFlags, float fadeIn, float fadeOut, MoveMode moveMode)
+plAvBrainGeneric::plAvBrainGeneric(uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode)
 : fRecipient(nil),
   fStages(nil),
   fCurStage(0),

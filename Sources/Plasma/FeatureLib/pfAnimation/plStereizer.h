@@ -82,7 +82,7 @@ protected:
     hsVector3       fListDirection;
     hsVector3       fListUp;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
 
     hsPoint3    IGetLocalizedPos(const hsVector3& posToList, hsScalar distToList) const;
     hsPoint3    IGetAmbientPos() const;

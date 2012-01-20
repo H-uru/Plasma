@@ -98,14 +98,14 @@ int plNetClientMgr::ISendDirtyState(double secs)
 {
     std::vector<plSynchedObject::StateDefn> carryOvers;
 
-    Int32 num=plSynchedObject::GetNumDirtyStates();
+    int32_t num=plSynchedObject::GetNumDirtyStates();
 #if 0
     if (num)
     {
         DebugMsg("%d dirty sdl state msgs queued, t=%f", num, secs);
     }
 #endif
-    Int32 i;
+    int32_t i;
     for(i=0;i<num;i++)
     {
         plSynchedObject::StateDefn* state=plSynchedObject::GetDirtyState(i);
@@ -141,7 +141,7 @@ int plNetClientMgr::ISendDirtyState(double secs)
 void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
 {
     // petition msg info
-    UInt8 type = petMsg->GetType();
+    uint8_t type = petMsg->GetType();
     const char* title = petMsg->GetTitle();
     const char* note = petMsg->GetNote();
 
@@ -170,7 +170,7 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     buf.resize( size );
     ram.CopyToMem( (void*)buf.data() );
     
-    wchar * wStr = StrDupToUnicode(buf.c_str());
+    wchar_t * wStr = StrDupToUnicode(buf.c_str());
     NetCliAuthSendCCRPetition(wStr);
     FREE(wStr);
 }
@@ -286,7 +286,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
         int i;
         for(i=0;i<dstIDs->size();i++)
         {
-            UInt32 playerID = (*dstIDs)[i];
+            uint32_t playerID = (*dstIDs)[i];
             if (playerID == NetCommGetPlayer()->playerInt)
                 continue;
             hsLogEntry( DebugMsg( "\tAdding receiver: %lu" , playerID ) );
@@ -383,7 +383,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
         netMsgWrap->SetBit(plNetMessage::kNeedsReliableSend, 0);    // clear reliable net send bit
     
 #ifdef HS_DEBUGGING
-    Int16 type=*(Int16*)netMsgWrap->StreamInfo()->GetStreamBuf();
+    int16_t type=*(int16_t*)netMsgWrap->StreamInfo()->GetStreamBuf();
     hsAssert(type>=0 && type<plCreatableIndex::plNumClassIndices, "garbage type out");
 #endif
                                 
@@ -444,7 +444,7 @@ int plNetClientMgr::SendMsg(plNetMessage* msg)
 
 
 void plNetClientMgr::StoreSDLState(const plStateDataRecord* sdRec, const plUoid& uoid, 
-                                    UInt32 sendFlags, UInt32 writeOptions)
+                                    uint32_t sendFlags, uint32_t writeOptions)
 {
     // send to server
     plNetMsgSDLState* msg = sdRec->PrepNetMsg(0, writeOptions);

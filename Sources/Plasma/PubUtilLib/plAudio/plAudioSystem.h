@@ -128,13 +128,13 @@ protected:
     plSoftSoundNode     *fActiveSofts;
     plStatusLog         *fDebugActiveSoundDisplay;
 
-    static Int32        fMaxNumSounds, fNumSoundsSlop;      // max number of sounds the engine is allowed to audibly play. Different than fMaxNumSources. That is the max number of sounds the audio card can play
+    static int32_t        fMaxNumSounds, fNumSoundsSlop;      // max number of sounds the engine is allowed to audibly play. Different than fMaxNumSources. That is the max number of sounds the audio card can play
     plSoftSoundNode     *fCurrDebugSound;
     hsTArray<plKey>     fPendingRegisters;
 
     hsPoint3    fCurrListenerPos;//, fCommittedListenerPos;
     hsBool      fActive, fUsingEAX, fRestartOnDestruct, fWaitingForShutdown;
-    Int64     fStartTime;
+    int64_t     fStartTime;
 
     hsTArray<hsKeyedObject *>       fMyRefs;
     hsTArray<plEAXListenerMod *>    fEAXRegions;
@@ -154,7 +154,7 @@ protected:
     void    RegisterSoftSound( const plKey soundKey );
     void    UnregisterSoftSound( const plKey soundKey );
     void    IUpdateSoftSounds( const hsPoint3 &newPosition );
-    UInt32  IScaleVolume(float volume);
+    uint32_t  IScaleVolume(float volume);
     void    IEnumerateDevices();
 
 public:
@@ -214,15 +214,15 @@ public:
     static void     SetGlobalFadeVolume( hsScalar vol );
     static hsScalar GetGlobalFadeVolume( void ) { return fGlobalFadeVolume; }
 
-    static void     SetDebugFlag( UInt32 flag, hsBool set = true ) { if( set ) fDebugFlags |= flag; else fDebugFlags &= ~flag; }
-    static hsBool   IsDebugFlagSet( UInt32 flag ) { return fDebugFlags & flag; }
+    static void     SetDebugFlag( uint32_t flag, hsBool set = true ) { if( set ) fDebugFlags |= flag; else fDebugFlags &= ~flag; }
+    static hsBool   IsDebugFlagSet( uint32_t flag ) { return fDebugFlags & flag; }
     static void     ClearDebugFlags( void ) { fDebugFlags = 0; }
 
     static hsScalar GetStreamingBufferSize( void ) { return fStreamingBufferSize; }
     static void     SetStreamingBufferSize( hsScalar size ) { fStreamingBufferSize = size; }
 
-    static UInt8    GetPriorityCutoff( void ) { return fPriorityCutoff; }
-    static void     SetPriorityCutoff( UInt8 cut ) { fPriorityCutoff = cut;  if(fSys) fSys->SetMaxNumberOfActiveSounds(); }
+    static uint8_t    GetPriorityCutoff( void ) { return fPriorityCutoff; }
+    static void     SetPriorityCutoff( uint8_t cut ) { fPriorityCutoff = cut;  if(fSys) fSys->SetMaxNumberOfActiveSounds(); }
 
     static hsBool   AreExtendedLogsEnabled( void ) { return fEnableExtendedLogs; }
     static void     EnableExtendedLogs( hsBool e ) { fEnableExtendedLogs = e; }
@@ -263,10 +263,10 @@ private:
     static hsBool               fDelayedActivate;
     static hsScalar             fChannelVolumes[ kNumChannels ];
     static hsScalar             fGlobalFadeVolume;
-    static UInt32               fDebugFlags;
+    static uint32_t               fDebugFlags;
     static hsBool               fEnableEAX;
     static hsScalar             fStreamingBufferSize;
-    static UInt8                fPriorityCutoff;
+    static uint8_t                fPriorityCutoff;
     static hsBool               fEnableExtendedLogs;
     static hsScalar             fStreamFromRAMCutoff;
     static hsScalar             f2D3DBias;

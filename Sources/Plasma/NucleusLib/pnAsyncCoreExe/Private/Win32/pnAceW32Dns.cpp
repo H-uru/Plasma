@@ -69,7 +69,7 @@ struct Lookup {
     FAsyncLookupProc    lookupProc;
     unsigned            port;
     void *              param;
-    wchar               name[kMaxLookupName];
+    wchar_t               name[kMaxLookupName];
     char                buffer[MAXGETHOSTSTRUCT];
 };
 
@@ -113,7 +113,7 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
         MemZero(addrs, sizeof(*addrs) * count);
 
         // fill in address data
-        const word port = htons((word) lookup->port);
+        const uint16_t port = htons((uint16_t) lookup->port);
         for (unsigned i = 0; i < count; ++i) {
             sockaddr_in * inetaddr = (sockaddr_in *) &addrs[i];
             inetaddr->sin_family    = AF_INET;
@@ -270,7 +270,7 @@ void DnsDestroy (unsigned exitThreadWaitMs) {
 void AsyncAddressLookupName (
     AsyncCancelId *     cancelId,   // out
     FAsyncLookupProc    lookupProc,
-    const wchar         name[], 
+    const wchar_t         name[], 
     unsigned            port, 
     void *              param
 ) {

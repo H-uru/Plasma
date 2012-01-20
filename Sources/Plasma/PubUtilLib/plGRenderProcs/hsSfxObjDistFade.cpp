@@ -280,7 +280,7 @@ void hsSfxObjDistFade::Read(hsStream* s)
         fMaxIdle = s->ReadSwapScalar();
     }
 
-    Int32 cnt = s->ReadSwap32();
+    int32_t cnt = s->ReadSwap32();
 
     if( cnt )
     {

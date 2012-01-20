@@ -406,7 +406,7 @@ public:
         kRefCurrIDSel = 64      // So we can share it among other components
     };
 
-    static UInt32 GetTagIDOnNode( plMaxNode *node );
+    static uint32_t GetTagIDOnNode( plMaxNode *node );
 };
 
 //Max desc stuff necessary below.
@@ -435,7 +435,7 @@ void    plGUITagProc::ILoadTags( HWND hWnd, IParamBlock2 *pb )
     idx2 = idx = SendMessage( hWnd, CB_ADDSTRING, 0, (LPARAM)str );
     SendMessage( hWnd, CB_SETITEMDATA, (WPARAM)idx, (LPARAM)0 );
 
-    for( UInt32 i = 0; i < pfGameGUIMgr::GetNumTags(); i++ )
+    for( uint32_t i = 0; i < pfGameGUIMgr::GetNumTags(); i++ )
     {
         pfGUITag *tag = pfGameGUIMgr::GetTag( i );
         idx = SendMessage( hWnd, CB_ADDSTRING, 0, (LPARAM)tag->fName );
@@ -612,9 +612,9 @@ hsBool plGUITagComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-UInt32 plGUITagComponent::GetTagIDOnNode( plMaxNode *node )
+uint32_t plGUITagComponent::GetTagIDOnNode( plMaxNode *node )
 {
-    UInt32  i;
+    uint32_t  i;
 
 
     for( i = 0; i < node->NumAttachedComponents( false ); i++ )
@@ -1213,14 +1213,14 @@ hsBool plGUIDialogComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrM
     }
 
     const char *ageName = fCompPB->GetStr(kRefAgeName);
-    Int32 seqNum = plPageInfoUtils::GetSeqNumFromAgeDesc( ageName, dialogName );
-    Int32 newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, ageName, dialogName );
+    int32_t seqNum = plPageInfoUtils::GetSeqNumFromAgeDesc( ageName, dialogName );
+    int32_t newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, ageName, dialogName );
     if( newNum != seqNum )
     {
         if( !fSeqNumValidated )
         {
             plLocation pageLoc = plPluginResManager::ResMgr()->FindLocation( ageName, dialogName );
-            Int32 pageSeqNum = pageLoc.GetSequenceNumber();
+            int32_t pageSeqNum = pageLoc.GetSequenceNumber();
             char errMsg[ 512 ];
             sprintf( errMsg, "The sequence number stored by the resource manager (0x%X) for page %s, District, %s does not match\n"
                             "the sequence number stored in the .age file (0x%X). Forcing it to use the one in the .age file", 
@@ -1305,7 +1305,7 @@ hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     // Should already be created from SetupProperties...
     // Note: can't just grab the node's room key, 'cause we might not be on the right node!
     plKey sceneNodeKey = plPluginResManager::ResMgr()->NameToLoc( fCompPB->GetStr( kRefAgeName ), 
-                                                        fCompPB->GetStr( kRefDialogName ), (UInt32)-1 );
+                                                        fCompPB->GetStr( kRefDialogName ), (uint32_t)-1 );
     mod->SetNodeKey( sceneNodeKey );
 
 //  node->AddModifier(mod);
@@ -1357,7 +1357,7 @@ hsBool plGUIDialogComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 
         // Note: can't just grab the node's room key, 'cause we might not be on the right node!
         plKey sceneNodeKey = plPluginResManager::ResMgr()->NameToLoc( fCompPB->GetStr( kRefAgeName ),
-                                                            fCompPB->GetStr( kRefDialogName ), (UInt32)-1 );
+                                                            fCompPB->GetStr( kRefDialogName ), (uint32_t)-1 );
 
         plLocation nodeLoc = sceneNodeKey->GetUoid().GetLocation();
         plKey dlgKey = hsgResMgr::ResMgr()->NewKey( fCompPB->GetStr( kRefDialogName ), fDialogMod, nodeLoc );
@@ -1365,7 +1365,7 @@ hsBool plGUIDialogComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
         fDialogMod->SetSceneNodeKey( sceneNodeKey );
 
         // See if there's a tag to be had
-        UInt32 id = fCompPB->GetInt( plGUITagComponent::kRefCurrIDSel );
+        uint32_t id = fCompPB->GetInt( plGUITagComponent::kRefCurrIDSel );
         if( id > 0 )
             fDialogMod->SetTagID( id );
 
@@ -1422,7 +1422,7 @@ bool    plGUIDialogComponent::SetNotifyReceiver( plKey key )
 
 pfGUIDialogMod  *plGUIDialogComponent::GetNodeDialog( plMaxNode *childNode )
 {
-    UInt32 i, numComp = childNode->NumAttachedComponents( false );
+    uint32_t i, numComp = childNode->NumAttachedComponents( false );
     for( i = 0; i < numComp; i++ )
     {
         plComponentBase *comp = childNode->GetAttachedComponent( i );
@@ -1544,7 +1544,7 @@ void    plGUIControlBase::CollectNonDrawables( INodeTab &nonDrawables )
 
 pfGUIDialogMod  *plGUIControlBase::IGetDialogMod( plMaxNode *node )
 {
-    UInt32      i;
+    uint32_t      i;
 
 
     for( i = 0; i < node->NumAttachedComponents( false ); i++ )
@@ -1582,12 +1582,12 @@ hsBool plGUIControlBase::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
     node->AddModifier( fControl, IGetUniqueName(node) );
 
     // Look for any tag IDs
-    UInt32 id = plGUITagComponent::GetTagIDOnNode( node );
+    uint32_t id = plGUITagComponent::GetTagIDOnNode( node );
     if( id > 0 )
         fControl->SetTagID( id );
 
     // Now add it to our list of converted nodes
-    UInt32 i = fTargetNodes.Find( node );
+    uint32_t i = fTargetNodes.Find( node );
     if( i == fTargetNodes.kMissingIndex )
     {
         fTargetNodes.Append( node );
@@ -1626,7 +1626,7 @@ hsBool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     // Grab fControl from the modifier list on the node, since fControl isn't valid
     // between PreConvert() and Convert() (it might get called multiple times, once per node applied)
-    UInt32 i = fTargetNodes.Find( node );
+    uint32_t i = fTargetNodes.Find( node );
     if( i == fTargetNodes.kMissingIndex )
     {
         pErrMsg->Set( true, "GUI Control Component Error", "The object %s somehow skipped the GUI control Pre-convert stage. Inform a programmer immediately and seek shelter.", node->GetName() ).Show(); 
@@ -1674,7 +1674,7 @@ hsBool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         Mtl *maxMaterial = hsMaterialConverter::Instance().GetBaseMtl( node );
         hsTArray<plExportMaterialData> *mtlArray = hsMaterialConverter::Instance().CreateMaterialArray( maxMaterial, node, 0 );
         
-        UInt32 i, j;
+        uint32_t i, j;
         plDynamicTextMap *dynText = nil;
         plLayerInterface *layerIFace = nil;
 
@@ -1715,7 +1715,7 @@ hsBool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 pfGUIControlMod *plGUIControlBase::GrabControlFromObject( INode *node )
 {
-    UInt32  i;
+    uint32_t  i;
     plMaxNodeBase   *maxNode = (plMaxNodeBase *)node;
 
 
@@ -1788,7 +1788,7 @@ pfGUIControlMod *plGUIControlBase::ConvertCompToControl( plComponentBase *comp, 
         }
         else
         {
-            UInt32 i = base->fTargetNodes.Find( (plMaxNode *)sceneObjectNode );
+            uint32_t i = base->fTargetNodes.Find( (plMaxNode *)sceneObjectNode );
             if( i == base->fTargetNodes.kMissingIndex )
                 return nil;
 
@@ -1799,7 +1799,7 @@ pfGUIControlMod *plGUIControlBase::ConvertCompToControl( plComponentBase *comp, 
     return nil;
 }
 
-const char  *plGUIControlBase::ISetSoundIndex( ParamID checkBoxID, ParamID sndCompID, UInt8 guiCtrlEvent, plMaxNode *maxNode )
+const char  *plGUIControlBase::ISetSoundIndex( ParamID checkBoxID, ParamID sndCompID, uint8_t guiCtrlEvent, plMaxNode *maxNode )
 {
     if( fCompPB->GetInt( checkBoxID ) )
     {
@@ -4045,7 +4045,7 @@ hsBool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     
     const hsTArray<hsMaterialConverter::DoneMaterialData> &materials = hsMaterialConverter::Instance().DoneMaterials();
 
-    UInt32 i,count = pLayer->GetNumConversionTargets();
+    uint32_t i,count = pLayer->GetNumConversionTargets();
     for( i = 0; i < count; i++ )
     {
         plLayerInterface *layIface = pLayer->GetConversionTarget( i );
@@ -4056,12 +4056,12 @@ hsBool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         if( map != nil )
             ctrl->AddMap( map );
 
-        UInt32 mat;
+        uint32_t mat;
         bool found = false;
         for (mat=0; mat<materials.GetCount(); mat++)
         {
             hsGMaterial *curMaterial = materials[mat].fHsMaterial;
-            UInt32 lay;
+            uint32_t lay;
             for (lay=0; lay<curMaterial->GetNumLayers(); lay++)
             {
                 if (layIface->BottomOfStack() == curMaterial->GetLayer(lay))
@@ -4695,12 +4695,12 @@ plKey   plGUISkinComp::GetConvertedSkinKey( void ) const
     return nil;
 }
 
-UInt32  plGUISkinComp::GetNumMtls( void ) const
+uint32_t  plGUISkinComp::GetNumMtls( void ) const
 {
     return 1;
 }
 
-Texmap  *plGUISkinComp::GetMtl( UInt32 idx )
+Texmap  *plGUISkinComp::GetMtl( uint32_t idx )
 {
     return (Texmap *)GetSkinBitmap();
 }
@@ -4773,7 +4773,7 @@ hsBool plGUISkinComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     fConvertedSkin->SetMargins( fCompPB->GetInt( kRefItemMargin ), fCompPB->GetInt( kRefBorderMargin ) );
 
-    UInt32  i;
+    uint32_t  i;
     for( i = 0; i < pfGUISkin::kNumElements; i++ )
     {
         ParamID     id = ( i * 4 ) + kRefUpLeftCorner;
@@ -5033,8 +5033,8 @@ hsBool plGUIMenuComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
         return true;        // Only convert once, since we don't care what node we're on
 
     /// Create an entirely new sceneNode for us
-    Int32 seqNum = plPageInfoUtils::GetSeqNumFromAgeDesc( fCompPB->GetStr( kRefAgeName ), fCompPB->GetStr( kRefDialogName ) );
-    Int32 newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, fCompPB->GetStr( kRefAgeName ), fCompPB->GetStr( kRefDialogName ) );
+    int32_t seqNum = plPageInfoUtils::GetSeqNumFromAgeDesc( fCompPB->GetStr( kRefAgeName ), fCompPB->GetStr( kRefDialogName ) );
+    int32_t newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, fCompPB->GetStr( kRefAgeName ), fCompPB->GetStr( kRefDialogName ) );
     if( newNum != seqNum )
     {
         if( !fSeqNumValidated )

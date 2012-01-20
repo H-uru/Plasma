@@ -71,7 +71,7 @@ protected:
     friend class plClient;
 public:
 
-    static hsBool       Capture(const plKey& ack, UInt16 width=800, UInt16 height=600);
+    static hsBool       Capture(const plKey& ack, uint16_t width=800, uint16_t height=600);
 
 };
 
@@ -89,8 +89,8 @@ protected:
     {
     public:
         plKey       fAck;
-        UInt16      fWidth;
-        UInt16      fHeight;
+        uint16_t      fWidth;
+        uint16_t      fHeight;
     };
 
     static hsTArray<CapInfo>        fCapReqs;
@@ -100,7 +100,7 @@ protected:
     friend class plClient;
 public:
 
-    static hsBool       Capture(const plKey& ack, UInt16 width=800, UInt16 height=600);
+    static hsBool       Capture(const plKey& ack, uint16_t width=800, uint16_t height=600);
 
 };
 

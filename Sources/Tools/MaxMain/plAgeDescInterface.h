@@ -122,8 +122,8 @@ protected:
     void INewPage();
 
 
-    UInt32  IGetNextFreeSequencePrefix( hsBool getReservedPrefix );
-    UInt32  IGetFreePageSeqSuffix( HWND pageCombo );
+    uint32_t  IGetNextFreeSequencePrefix( hsBool getReservedPrefix );
+    uint32_t  IGetFreePageSeqSuffix( HWND pageCombo );
 
     void    ICheckOutCurrentAge( void );
     void    ICheckInCurrentAge( void );

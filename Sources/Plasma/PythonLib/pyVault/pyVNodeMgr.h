@@ -86,8 +86,8 @@ protected:
     bool IAmOnline() const;
     bool IIsThisMe( plVaultPlayerInfoNode* node ) const;
     bool IIsThisMe( plVaultPlayerNode * node ) const;
-    int ISendNetMsg( plNetMsgVault* msg, UInt32 sendFlags=0 );
-    UInt32 IGetPlayerID() const;
+    int ISendNetMsg( plNetMsgVault* msg, uint32_t sendFlags=0 );
+    uint32_t IGetPlayerID() const;
 
     pyVNodeMgr(): fMyComm(nil) {fMsgHandler.setMgr(this);} // for python glue only, do NOT call
     pyVNodeMgr( PyObject* thaComm );
@@ -120,11 +120,11 @@ public:
     bool IsConnected();
     void Disconnect(
         PyObject* cb=nil,
-        UInt32 cbContext=0 );
+        uint32_t cbContext=0 );
     void Connect(
         int childFetchLevel=plVault::kFetchAllChildren,
         PyObject* cb=nil,
-        UInt32 cbContext=0 );
+        uint32_t cbContext=0 );
     // TODO: Glue this.
     // Fetch matching node from server and hold onto it.
     // Note: You won't receive notifications about the fetched node or
@@ -135,19 +135,19 @@ public:
 //      int childFetchLevel=plVault::kFetchAllChildren,
 //      bool allowCreate = false,
 //      PyObject* cb=nil,
-//      UInt32 cbContext=0 );
-    bool FetchNode( UInt32 nodeID,
+//      uint32_t cbContext=0 );
+    bool FetchNode( uint32_t nodeID,
         int childFetchLevel=plVault::kFetchAllChildren,
         PyObject* cb=nil,
-        UInt32 cbContext=0 );
+        uint32_t cbContext=0 );
 
     // get our root node
     PyObject* GetRootNode() const; // returns pyVaultNode
     // get the client node ID returned to us by the server ( if we didn't
     //  fetch when we connected then we have to use this to identify ourselves ).
-    UInt32  GetClientID() const;
+    uint32_t  GetClientID() const;
     // search all nodes in client locally
-    PyObject* GetNode( UInt32 id ) const; // returns pyVaultNode
+    PyObject* GetNode( uint32_t id ) const; // returns pyVaultNode
     // TODO: Glue these.
     PyObject* FindNode( pyVaultNode* templateNode ) const; // returns pyVaultNode
 //  bool    FindNodes( const pyVaultNode* templateNode, PyObject * out ) const;

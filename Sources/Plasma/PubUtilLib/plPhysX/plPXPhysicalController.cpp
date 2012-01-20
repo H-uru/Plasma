@@ -187,7 +187,7 @@ int plPXPhysicalController::GetNumberOfControllersInThisSubWorld(plKey world)
 void plPXPhysicalController::Update(bool prestep, hsScalar delSecs)
 {
     // Apparently the user data field of the controllers is broken
-//  UInt32 count = gControllerMgr.getNbControllers();
+//  uint32_t count = gControllerMgr.getNbControllers();
 //  NxController* controllers = (NxController*)gControllerMgr.getControllers();
 // 
 //  for (int i = 0; i < count; i++)
@@ -705,11 +705,11 @@ void plPXPhysicalController::GetKinematicPosition(hsPoint3& pos)
 
 void plPXPhysicalController::IApply(hsScalar delSecs)
 {
-    /*static const UInt32 collideFlags =
+    /*static const uint32_t collideFlags =
         1<<plSimDefs::kGroupStatic |
         1<<plSimDefs::kGroupAvatarBlocker |
         1<<plSimDefs::kGroupDynamic;*/
-    UInt32 collideFlags =
+    uint32_t collideFlags =
         1<<plSimDefs::kGroupStatic |
         1<<plSimDefs::kGroupAvatarBlocker |
         1<<plSimDefs::kGroupDynamic;
@@ -1219,7 +1219,7 @@ void plPXPhysicalController::IDeleteController()
 }
 
 // Make a visible object that can be viewed by users for debugging purposes.
-plDrawableSpans* plPXPhysicalController::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plPXPhysicalController::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
 
@@ -1250,7 +1250,7 @@ void plPXPhysicalController::IDrawDebugDisplay()
     plDebugText     &debugTxt = plDebugText::Instance();
     char            strBuf[ 2048 ];
     int             lineHeight = debugTxt.GetFontSize() + 4;
-    UInt32          scrnWidth, scrnHeight;
+    uint32_t          scrnWidth, scrnHeight;
 
     debugTxt.GetScreenSize( &scrnWidth, &scrnHeight );
     int y = 10;

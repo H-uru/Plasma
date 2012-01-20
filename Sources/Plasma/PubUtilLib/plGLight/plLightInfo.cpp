@@ -215,7 +215,7 @@ void plLightInfo::GetAffected(const plSpaceTree* space, hsBitVector& list, hsBoo
     }
 }
 
-const hsTArray<Int16>& plLightInfo::GetAffected(plSpaceTree* space, const hsTArray<Int16>& visList, hsTArray<Int16>& litList, hsBool charac)
+const hsTArray<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, hsBool charac)
 {
     Refresh();
 
@@ -712,7 +712,7 @@ void plLimitedDirLightInfo::IMakeIsect()
 //  Creates a new box drawable for showing the light's
 //  influence.
 
-plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     hsPoint3 corner;
     corner.Set(-fWidth*0.5f, -fHeight*0.5f, -fDepth);
@@ -864,7 +864,7 @@ void plOmniLightInfo::Write(hsStream* s, hsResMgr* mgr)
 //  Creates a new sphere drawable for showing the omnilight's
 //  sphere (haha) of influence.
 
-plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     float   rad = GetRadius();
     if( rad == 0 )
@@ -1000,7 +1000,7 @@ hsVector3 plSpotLightInfo::GetWorldDirection() const
 //  Generates a new drawable for showing the spotlight's
 //  sphere of influence.
 
-plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     float   rad = GetRadius();
     float   x, y;

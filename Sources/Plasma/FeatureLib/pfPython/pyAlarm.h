@@ -55,7 +55,7 @@ public:
     ~pyAlarmMgr();
     static pyAlarmMgr * GetInstance();
     void    Update( double secs );
-    void    SetAlarm( float secs, PyObject * cb, UInt32 cbContext );
+    void    SetAlarm( float secs, PyObject * cb, uint32_t cbContext );
     void    Clear();
 };
 

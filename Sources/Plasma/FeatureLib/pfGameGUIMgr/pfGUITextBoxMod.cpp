@@ -80,7 +80,7 @@ pfGUITextBoxMod::~pfGUITextBoxMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUITextBoxMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUITextBoxMod::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -154,7 +154,7 @@ void    pfGUITextBoxMod::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    UInt32 len = s->ReadLE32();
+    uint32_t len = s->ReadLE32();
     if( len > 0 )
     {
         char *text = TRACKED_NEW char[ len + 1 ];
@@ -201,15 +201,15 @@ void    pfGUITextBoxMod::Write( hsStream *s, hsResMgr *mgr )
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void    pfGUITextBoxMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUITextBoxMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
 }
 
-void    pfGUITextBoxMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUITextBoxMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
 }
 
-void    pfGUITextBoxMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUITextBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
 }
 

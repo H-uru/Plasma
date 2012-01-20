@@ -426,11 +426,11 @@ void plPhysTerrainComponent::CollectNonDrawables(INodeTab& nonDrawables)
 
 void ValidateGroups(IParamBlock2* pb, int memberID, int bounceID, plComponent* comp, plErrorMsg* pErrMsg)
 {
-    UInt32 defMember = pb->GetParamDef(memberID).def.i;
-    UInt32 member = pb->GetInt(memberID);
+    uint32_t defMember = pb->GetParamDef(memberID).def.i;
+    uint32_t member = pb->GetInt(memberID);
 
-    UInt32 defCollide = pb->GetParamDef(bounceID).def.i;
-    UInt32 collide = pb->GetInt(bounceID);
+    uint32_t defCollide = pb->GetParamDef(bounceID).def.i;
+    uint32_t collide = pb->GetInt(bounceID);
 
     if (defMember != member || defCollide != collide)
     {
@@ -1075,9 +1075,9 @@ public:
     Swim2DDlgProc() {}
     ~Swim2DDlgProc() {}
     
-    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, UInt32 id)
+    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, uint32_t id)
     {
-        UInt32 minIndex, maxIndex;
+        uint32_t minIndex, maxIndex;
         hsBool adjustMin;
         switch(id)
         {
@@ -1633,7 +1633,7 @@ void plPhysSubWorldComponent::IAddChildren(plMaxNode* node, plMaxNode* subworld)
 
         bool hasSubworld = false;
 
-        UInt32 numComps = child->NumAttachedComponents();
+        uint32_t numComps = child->NumAttachedComponents();
         for (int j = 0; j < numComps; j++)
         {
             plComponentBase* comp = child->GetAttachedComponent(j);

@@ -73,7 +73,7 @@ public:
     // master list ops
     void GetMemberListDistSorted(plNetTransportMember**& listPtr) const;    // allocates and sorts array
     int FindMember(const plKey avKey) const;                    // return array index or -1
-    int FindMember(UInt32 playerID) const;                      // return array index or -1
+    int FindMember(uint32_t playerID) const;                      // return array index or -1
     int FindMember(const plNetTransportMember* mbr);            // return array index or -1
     int AddMember(plNetTransportMember* mbr);                   // to master list, if not there
     hsBool RemoveMember(plNetTransportMember* mbr);             // from master list and all channels

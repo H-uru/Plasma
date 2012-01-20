@@ -99,7 +99,7 @@ void plLogicModBase::AddTarget(plSceneObject* so)
     plSingleModifier::AddTarget(so);
 }
 
-void plLogicModBase::RegisterForMessageType(UInt16 hClass)
+void plLogicModBase::RegisterForMessageType(uint16_t hClass)
 {
     plgDispatch::Dispatch()->RegisterForExactType( hClass, GetKey() ); 
 }

@@ -66,7 +66,7 @@ plSoundEvent::plSoundEvent( Types type, plSound *owner )
     fCallbackEndingFlags.Reset();
 }
 
-plSoundEvent::plSoundEvent( Types type, UInt32 bytePos, plSound *owner )
+plSoundEvent::plSoundEvent( Types type, uint32_t bytePos, plSound *owner )
 {
     fType = type;
     fBytePosTime = bytePos;
@@ -165,7 +165,7 @@ void    plSoundEvent::SendCallbacks( void )
     }
 }
 
-UInt32  plSoundEvent::GetNumCallbacks( void ) const
+uint32_t  plSoundEvent::GetNumCallbacks( void ) const
 {
     return fCallbacks.GetCount();
 }
@@ -180,7 +180,7 @@ void    plSoundEvent::SetType( Types type )
     fType = type;
 }
 
-UInt32  plSoundEvent::GetTime( void ) const
+uint32_t  plSoundEvent::GetTime( void ) const
 {
     return fBytePosTime;
 }

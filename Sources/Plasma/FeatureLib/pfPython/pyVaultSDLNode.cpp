@@ -107,7 +107,7 @@ void pyVaultSDLNode::InitStateDataRecord( const char* agename, int flags)
     if (!fNode)
         return;
 
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, agename, arrsize(wStr)); 
     VaultSDLNode sdl(fNode);
     sdl.InitStateDataRecord(wStr, flags);

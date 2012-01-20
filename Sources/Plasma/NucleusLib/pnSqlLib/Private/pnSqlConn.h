@@ -63,7 +63,7 @@ struct SqlTrans;
 
 typedef void (* FSqlBindPrepare)(
     SqlStmt *       stmt,
-    ARRAY(byte) *   bindData
+    ARRAY(uint8_t) *   bindData
 );
 
 
@@ -74,7 +74,7 @@ typedef void (* FSqlBindPrepare)(
 ***/
 
 SqlConn * SqlConnCreate (
-    const wchar     connectStr[],
+    const wchar_t     connectStr[],
     unsigned        maxConnections,
     unsigned        transTimeoutMs
 );
@@ -120,7 +120,7 @@ void SqlStmtSetAttr (
 SqlStmt * SqlConnAllocStmt (
     SqlConn *       conn,
     FSqlBindPrepare prepare,
-    byte **         bindData    // [OUT]
+    uint8_t **         bindData    // [OUT]
 );
 
 
@@ -132,8 +132,8 @@ SqlStmt * SqlConnAllocStmt (
 
 typedef void (* FSqlConnErrorHandler)(
     int         result,
-    const wchar function[],
-    const wchar command[],
+    const wchar_t function[],
+    const wchar_t command[],
     const char  diagnostics[],  // double-null terminated
     void *      userParam
 );
@@ -238,11 +238,11 @@ void SqlConnBindParameterStringA (
 
 int SqlConnExecDirect (
     SqlStmt *       stmt,
-    const wchar     string[]
+    const wchar_t     string[]
 );
 int SqlConnPrepare (
     SqlStmt *       stmt,
-    const wchar     string[]
+    const wchar_t     string[]
 );
 int SqlConnExecute (
     SqlStmt *       stmt

@@ -54,7 +54,7 @@ class Texmap;
 
 extern ClassDesc* GetGUPDesc();
 
-typedef void (*TextureSetFunc)(Texmap* texmap, int iBmp, UInt64 assetId);
+typedef void (*TextureSetFunc)(Texmap* texmap, int iBmp, uint64_t assetId);
 
 struct TexInfo
 {

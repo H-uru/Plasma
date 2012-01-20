@@ -88,7 +88,7 @@ protected:
 
 public:
     static plConvert& Instance();
-    UInt32 fWarned; 
+    uint32_t fWarned; 
     enum {
         kWarnedDecalOnBlendObj          = 0x1,
         kWarnedBadMaterialOnParticle    = 0x2,

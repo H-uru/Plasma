@@ -258,7 +258,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayer
         int size = PyUnicode_GetSize(message);
         wchar_t* msg = TRACKED_NEW wchar_t[size + 1]; msg[size] = 0;
         PyUnicode_AsWideChar((PyUnicodeObject*)message, msg, size);
-        UInt32 retval = cyMisc::SendRTChat(*fromPlayer, toPlayerList, msg, msgFlags);
+        uint32_t retval = cyMisc::SendRTChat(*fromPlayer, toPlayerList, msg, msgFlags);
         DEL(msg);
         return PyLong_FromUnsignedLong(retval);
     }
@@ -314,7 +314,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessage, args, "Params: command,value\nS
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessageInt, args, "Params: command,value\nSame as PtSendKIMessage except the value is guaranteed to be a UInt32\n"
+PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessageInt, args, "Params: command,value\nSame as PtSendKIMessage except the value is guaranteed to be a uint32_t\n"
             "(for things like player IDs)")
 {
     unsigned long command;

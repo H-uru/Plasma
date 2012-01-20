@@ -67,7 +67,7 @@ static FLogHandler      s_asyncHandlers[kMaxHandlers];
 ***/
 
 //===========================================================================
-static void Dispatch (ELogSeverity severity, const wchar msg[]) {
+static void Dispatch (ELogSeverity severity, const wchar_t msg[]) {
 
     // Dispatch to default debug handler
     char dbg[1024];
@@ -132,7 +132,7 @@ void __cdecl LogMsg (ELogSeverity severity, const char format[], ...) {
 }
 
 //===========================================================================
-void __cdecl LogMsg (ELogSeverity severity, const wchar format[], ...) {
+void __cdecl LogMsg (ELogSeverity severity, const wchar_t format[], ...) {
     ASSERT(format);
 
     va_list args;
@@ -148,18 +148,18 @@ void LogMsgV (ELogSeverity severity, const char format[], va_list args) {
     char msg[1024];
     StrPrintfV(msg, arrsize(msg), format, args);
 
-    wchar uniMsg[1024];
+    wchar_t uniMsg[1024];
     StrToUnicode(uniMsg, msg, arrsize(uniMsg));
 
     Dispatch(severity, uniMsg);
 }
 
 //===========================================================================
-void LogMsgV (ELogSeverity severity, const wchar format[], va_list args) {
+void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args) {
     ASSERT(format);
     ASSERT(args);
 
-    wchar msg[1024];
+    wchar_t msg[1024];
     StrPrintfV(msg, arrsize(msg), format, args);
 
     Dispatch(severity, msg);
@@ -179,7 +179,7 @@ void LogMsgDebug (const char  format[], ...) {
 
 //============================================================================
 #ifdef HS_DEBUGGING
-void LogMsgDebug (const wchar format[], ...) {
+void LogMsgDebug (const wchar_t format[], ...) {
     ASSERT(format);
 
     va_list args;

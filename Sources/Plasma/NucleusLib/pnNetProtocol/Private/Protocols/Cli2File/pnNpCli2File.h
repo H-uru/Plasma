@@ -107,8 +107,8 @@ static const unsigned   kFileSrvBuildId = 0;
 ***/
 
 struct Cli2File_ConnData {
-    dword       dataBytes;
-    dword       buildId;
+    uint32_t       dataBytes;
+    uint32_t       buildId;
     unsigned    serverType;
 };
 struct Cli2File_Connect {
@@ -117,8 +117,8 @@ struct Cli2File_Connect {
 };
 
 struct Cli2File_MsgHeader {
-    dword       messageBytes;
-    dword       messageId;
+    uint32_t       messageBytes;
+    uint32_t       messageId;
 };
 
 
@@ -130,34 +130,34 @@ struct Cli2File_MsgHeader {
 
 // PingRequest
 struct Cli2File_PingRequest : Cli2File_MsgHeader {
-    dword       pingTimeMs;
+    uint32_t       pingTimeMs;
 };
 
 // BuildIdRequest
 struct Cli2File_BuildIdRequest : Cli2File_MsgHeader {
-    dword       transId;
+    uint32_t       transId;
 };
 
 // ManifestRequest
 struct Cli2File_ManifestRequest : Cli2File_MsgHeader {
-    dword       transId;
-    wchar       group[MAX_PATH];
+    uint32_t       transId;
+    wchar_t       group[MAX_PATH];
     unsigned    buildId; // 0 = newest
 };
 struct Cli2File_ManifestEntryAck : Cli2File_MsgHeader {
-    dword       transId;
-    dword       readerId;
+    uint32_t       transId;
+    uint32_t       readerId;
 };
 
 // FileDownloadRequest
 struct Cli2File_FileDownloadRequest : Cli2File_MsgHeader {
-    dword       transId;
-    wchar       filename[MAX_PATH];
+    uint32_t       transId;
+    wchar_t       filename[MAX_PATH];
     unsigned    buildId; // 0 = newest
 };
 struct Cli2File_FileDownloadChunkAck : Cli2File_MsgHeader {
-    dword       transId;
-    dword       readerId;
+    uint32_t       transId;
+    uint32_t       readerId;
 };
 
 
@@ -169,12 +169,12 @@ struct Cli2File_FileDownloadChunkAck : Cli2File_MsgHeader {
 
 // PingReply
 struct File2Cli_PingReply : Cli2File_MsgHeader {
-    dword       pingTimeMs;
+    uint32_t       pingTimeMs;
 };
 
 // BuildIdReply
 struct File2Cli_BuildIdReply : Cli2File_MsgHeader {
-    dword       transId;
+    uint32_t       transId;
     ENetError   result;
     unsigned    buildId;
 };
@@ -186,22 +186,22 @@ struct File2Cli_BuildIdUpdate : Cli2File_MsgHeader {
 
 // ManifestReply
 struct File2Cli_ManifestReply : Cli2File_MsgHeader {
-    dword       transId;
+    uint32_t       transId;
     ENetError   result;
-    dword       readerId;
-    dword       numFiles;           // total number of files
-    dword       wcharCount;         // size of the buffer
-    wchar       manifestData[1];    // manifestData[wcharCount], actually
+    uint32_t       readerId;
+    uint32_t       numFiles;           // total number of files
+    uint32_t       wchar_tCount;         // size of the buffer
+    wchar_t       manifestData[1];    // manifestData[wchar_tCount], actually
 };
 
 // FileDownloadReply
 struct File2Cli_FileDownloadReply : Cli2File_MsgHeader {
-    dword       transId;
+    uint32_t       transId;
     ENetError   result;
-    dword       readerId;
-    dword       totalFileSize;
-    dword       byteCount;
-    byte        fileData[1];        // fileData[byteCount], actually
+    uint32_t       readerId;
+    uint32_t       totalFileSize;
+    uint32_t       byteCount;
+    uint8_t        fileData[1];        // fileData[byteCount], actually
 };
 
 

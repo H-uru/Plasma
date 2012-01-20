@@ -51,7 +51,7 @@ class plTransitionMsg : public plMessageWithCallbacks
 {
 protected:
 
-    UInt32      fEffect;
+    uint32_t      fEffect;
     hsScalar    fLengthInSecs;
     hsBool      fHoldUntilNext;
 public:
@@ -64,7 +64,7 @@ public:
     };
 
     plTransitionMsg() : plMessageWithCallbacks(nil, nil, nil), fEffect( 0 ) { SetBCastFlag(kBCastByExactType);  }
-    plTransitionMsg( UInt32 type, hsScalar lengthInSecs, hsBool holdUntilNext = false ) : 
+    plTransitionMsg( uint32_t type, hsScalar lengthInSecs, hsBool holdUntilNext = false ) : 
                 plMessageWithCallbacks(nil, nil, nil), fEffect( type ), fLengthInSecs( lengthInSecs ), fHoldUntilNext( holdUntilNext )
                 { SetBCastFlag( kBCastByExactType );  }
     
@@ -73,7 +73,7 @@ public:
     CLASSNAME_REGISTER( plTransitionMsg );
     GETINTERFACE_ANY( plTransitionMsg, plMessageWithCallbacks );
 
-    UInt32      GetEffect( void ) const { return fEffect; }
+    uint32_t      GetEffect( void ) const { return fEffect; }
     hsScalar    GetLengthInSecs( void ) const { return fLengthInSecs; }
     hsBool      GetHoldState( void ) const { return fHoldUntilNext; }
 

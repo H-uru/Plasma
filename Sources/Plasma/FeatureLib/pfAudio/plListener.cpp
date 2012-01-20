@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool      plListener::fPrintDbgInfo = false;
 
-hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plListener::IEval(double secs, hsScalar del, uint32_t dirty)
 {
 //  if (!plgAudioSys::Active())
 //      return true;
@@ -69,7 +69,7 @@ hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
 
     int y = 16 + 12, x = 400;
     if( fPrintDbgInfo ) 
-        plDebugText::Instance().DrawString( x, 16, "Listener:", (UInt32)0xffffffff, plDebugText::kStyleBold );
+        plDebugText::Instance().DrawString( x, 16, "Listener:", (uint32_t)0xffffffff, plDebugText::kStyleBold );
 
     // Get the avatar's SceneObject
     plKey key = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
@@ -80,7 +80,7 @@ hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
     {
         // We don't have a position to init by, so do NOT eval yet!!!
         if( fPrintDbgInfo ) 
-            plDebugText::Instance().DrawString( x, y, "Not eval-ing yet", (UInt32)0xffffffff );
+            plDebugText::Instance().DrawString( x, y, "Not eval-ing yet", (uint32_t)0xffffffff );
         return true;
     }
 
@@ -165,7 +165,7 @@ hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
     if( facingType == kInvalid || posType == kInvalid || velType == kInvalid )
     {
         if( fPrintDbgInfo ) 
-            plDebugText::Instance().DrawString( x, y, "Not eval-ing: missing one or more parameter bases", (UInt32)0xff0000ff );
+            plDebugText::Instance().DrawString( x, y, "Not eval-ing: missing one or more parameter bases", (uint32_t)0xff0000ff );
         return true;
     }
 
@@ -184,19 +184,19 @@ hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
     {
         char str[ 256 ];
         sprintf( str, "Direction: (%3.2f,%3.2f,%3.2f) from %s", dir.fX, dir.fY, dir.fZ, ( facingType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (UInt32)0xffffffff );
+        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
         y += 12;
 
         sprintf( str, "Up: (%3.2f,%3.2f,%3.2f) from %s", up.fX, up.fY, up.fZ, ( facingType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (UInt32)0xffffffff );
+        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
         y += 12;
 
         sprintf( str, "Position: (%3.2f,%3.2f,%3.2f) from %s", position.fX, position.fY, position.fZ, ( posType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (UInt32)0xffffffff );
+        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
         y += 12;
 
         sprintf( str, "Velocity: (%3.2f,%3.2f,%3.2f) from %s", velocity.fX, velocity.fY, velocity.fZ, ( velType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (UInt32)0xffffffff );
+        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
         y += 12;
     }
     plgDispatch::MsgSend( msg );

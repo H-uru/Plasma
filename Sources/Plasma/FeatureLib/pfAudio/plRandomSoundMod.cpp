@@ -66,7 +66,7 @@ void plRandomSoundModGroup::Read(hsStream *s)
 {
     fNumSounds = s->ReadLE16();
     fGroupedIdx = s->ReadLE16();
-    fIndices = TRACKED_NEW UInt16[fNumSounds];
+    fIndices = TRACKED_NEW uint16_t[fNumSounds];
 
     int i;
     for (i = 0; i < fNumSounds; i++)
@@ -127,7 +127,7 @@ void plRandomSoundMod::IStop()
     else
     {
         if(fCurrent == -1) return;
-        UInt16 currentSndIdx = ( fGroups != nil ) ? fGroups[fCurrentGroup].fIndices[fCurrent] : fActiveList[fCurrent];
+        uint16_t currentSndIdx = ( fGroups != nil ) ? fGroups[fCurrentGroup].fIndices[fCurrent] : fActiveList[fCurrent];
         plSoundMsg* snd = TRACKED_NEW plSoundMsg(GetKey(), GetTarget()->GetKey(), nil);
         snd->SetCmd(plSoundMsg::kStop);
         snd->fIndex = currentSndIdx;
@@ -151,7 +151,7 @@ void plRandomSoundMod::IPlayNext()
     }
 
     int i;
-    UInt16 currentSndIdx;
+    uint16_t currentSndIdx;
     int nSounds = (fGroups == nil ? ai->GetNumSounds() : fGroups[fCurrentGroup].fNumSounds);
     fEndTimes.ExpandAndZero(nSounds);
     plSound *pSound = nil;
@@ -276,7 +276,7 @@ void plRandomSoundMod::IPlayNext()
     }
 }
 
-void plRandomSoundMod::SetCurrentGroup(UInt16 group)
+void plRandomSoundMod::SetCurrentGroup(uint16_t group)
 {
     hsAssert(group < fNumGroups, "Setting an invalid group on a random sound modifier");
 
@@ -319,7 +319,7 @@ void plRandomSoundMod::Write(hsStream *s, hsResMgr *mgr)
 
 void    plRandomSoundMod::ForceSoundLoadState( hsBool loaded )
 {
-    UInt16  i, j;
+    uint16_t  i, j;
 
     plAudioInterface* ai = IGetTargetAudioInterface(0);
     if( ai == nil )

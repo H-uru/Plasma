@@ -69,8 +69,8 @@ struct hsColorRGBA {
     friend inline hsColorRGBA operator*(const hsScalar s, const hsColorRGBA& c);
     hsColorRGBA& operator*=(const hsScalar s);
 
-    hsColorRGBA&    FromARGB32(UInt32 c);
-    UInt32          ToARGB32() const;
+    hsColorRGBA&    FromARGB32(uint32_t c);
+    uint32_t          ToARGB32() const;
 
     void Read(hsStream *stream);
     void Write(hsStream *stream) const;
@@ -91,7 +91,7 @@ inline void hsColorRGBA::Write(hsStream *s) const
     s->WriteLEScalar(a);
 }
 
-inline hsColorRGBA& hsColorRGBA::FromARGB32(UInt32 c)
+inline hsColorRGBA& hsColorRGBA::FromARGB32(uint32_t c)
 {
     const hsScalar oo255 = 1.f / 255.f;
     a = hsScalar((c >> 24) & 0xff) * oo255;
@@ -101,12 +101,12 @@ inline hsColorRGBA& hsColorRGBA::FromARGB32(UInt32 c)
     return *this;
 }
 
-inline UInt32 hsColorRGBA::ToARGB32() const
+inline uint32_t hsColorRGBA::ToARGB32() const
 {
-    return (UInt32(a * 255.99f) << 24)
-        | (UInt32(r * 255.99f) << 16)
-        | (UInt32(g * 255.99f) << 8)
-        | (UInt32(b * 255.99f) << 0);
+    return (uint32_t(a * 255.99f) << 24)
+        | (uint32_t(r * 255.99f) << 16)
+        | (uint32_t(g * 255.99f) << 8)
+        | (uint32_t(b * 255.99f) << 0);
 }
 
 inline hsColorRGBA operator+(const hsColorRGBA& s, const hsColorRGBA& t)

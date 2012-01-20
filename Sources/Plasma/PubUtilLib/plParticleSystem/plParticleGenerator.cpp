@@ -102,7 +102,7 @@ plSimpleParticleGenerator::~plSimpleParticleGenerator()
 }
 
 void plSimpleParticleGenerator::Init(hsScalar genLife, hsScalar partLifeMin, hsScalar partLifeMax,
-                                     hsScalar particlesPerSecond, UInt32 numSources, hsPoint3 *initPos,
+                                     hsScalar particlesPerSecond, uint32_t numSources, hsPoint3 *initPos,
                                      hsScalar *initPitch, hsScalar *initYaw, hsScalar angleRange, 
                                      hsScalar initVelMin, hsScalar initVelMax,
                                      hsScalar xSize, hsScalar ySize, 
@@ -135,9 +135,9 @@ void plSimpleParticleGenerator::Init(hsScalar genLife, hsScalar partLifeMin, hsS
     if (fGenLife < 0) fMiscFlags |= kImmortal;
 }
 
-hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, float dt, UInt32 numForced /* = 0 */)
+hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced /* = 0 */)
 {
-    Int32 numNewParticles;
+    int32_t numNewParticles;
 
     if (numForced == 0)
     {
@@ -146,7 +146,7 @@ hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, f
             return true; // Leave it around so that a message can bring it back to life.
 
         fParticleSum += fParticlesPerSecond * dt;
-        numNewParticles = (Int32)fParticleSum;
+        numNewParticles = (int32_t)fParticleSum;
     
         if (numNewParticles <= 0 || fParticlesPerSecond == 0)
             return true;
@@ -156,7 +156,7 @@ hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, f
         numNewParticles = numForced;
     }
 
-    UInt32 miscFlags = 0; 
+    uint32_t miscFlags = 0; 
     hsPoint3 currStart;
     fParticleSum -= numNewParticles;
 
@@ -172,8 +172,8 @@ hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, f
     hsScalar scale = (fScaleMax + fScaleMin) * 0.5f;
     hsScalar scaleRange = scale - fScaleMin;
     hsScalar radsPerSec = 0;
-    UInt32 tile;
-    UInt32 sourceIndex;
+    uint32_t tile;
+    uint32_t sourceIndex;
 
     const hsScalar lifeDiff = dt / numNewParticles;
     hsScalar lifeSoFar;
@@ -189,7 +189,7 @@ hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, f
         if (initLife <= 0 && initLife + lifeSoFar >= 0)
             continue;
 
-        sourceIndex = (UInt32)(sRandom.RandZeroToOne() * fNumSources);
+        sourceIndex = (uint32_t)(sRandom.RandZeroToOne() * fNumSources);
 
         ComputeDirection(fInitPitch[sourceIndex] + fAngleRange * sRandom.RandMinusOneToOne(), 
                          fInitYaw[sourceIndex] + fAngleRange * sRandom.RandMinusOneToOne(), initDirection);
@@ -205,7 +205,7 @@ hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, f
         else
             orientation.Set(&initDirection);
 
-        tile = (UInt32)(sRandom.RandZeroToOne() * emitter->GetNumTiles());
+        tile = (uint32_t)(sRandom.RandZeroToOne() * emitter->GetNumTiles());
         currSizeVar = scale + scaleRange * sRandom.RandMinusOneToOne();
 
         hsScalar invMass = fPartInvMassMin;
@@ -224,7 +224,7 @@ hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, f
     return true;
 }
 
-void plSimpleParticleGenerator::UpdateParam(UInt32 paramID, hsScalar paramValue)
+void plSimpleParticleGenerator::UpdateParam(uint32_t paramID, hsScalar paramValue)
 {
     switch (paramID)
     {
@@ -300,7 +300,7 @@ void plSimpleParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
     hsScalar partLifeMin = s->ReadLEScalar();
     hsScalar partLifeMax = s->ReadLEScalar();
     hsScalar pps = s->ReadLEScalar();
-    UInt32 numSources = s->ReadLE32();
+    uint32_t numSources = s->ReadLE32();
     hsPoint3 *pos = TRACKED_NEW hsPoint3[numSources];
     hsScalar *pitch = TRACKED_NEW hsScalar[numSources];
     hsScalar *yaw = TRACKED_NEW hsScalar[numSources];
@@ -378,7 +378,7 @@ void plOneTimeParticleGenerator::Init(hsScalar count, hsPoint3 *pointArray, hsVe
 }
 
 // The numForced param is required by the parent class, but ignored by this particular generator
-hsBool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, float dt, UInt32 numForced /* = 0 */)
+hsBool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced /* = 0 */)
 {
     hsScalar currSizeVar;
     hsScalar scale = (fScaleMax + fScaleMin) / 2;
@@ -408,7 +408,7 @@ hsBool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, 
         if( fPartRadsPerSecRange > 0 )
             radsPerSec = fPartRadsPerSecRange * sRandom.RandMinusOneToOne();
 
-        emitter->AddParticle(currStart, zeroVel, (UInt32)tile, fXSize, fYSize, currSizeVar, 
+        emitter->AddParticle(currStart, zeroVel, (uint32_t)tile, fXSize, fYSize, currSizeVar, 
                              DEFAULT_INVERSE_MASS, -1, orientation, 0, radsPerSec);
     }
     emitter->fMiscFlags &= ~plParticleEmitter::kNeedsUpdate;
@@ -417,7 +417,7 @@ hsBool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, 
 
 void plOneTimeParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 {
-    UInt32 count = s->ReadLE32();
+    uint32_t count = s->ReadLE32();
     hsScalar xSize = s->ReadLEScalar();
     hsScalar ySize = s->ReadLEScalar();
     hsScalar scaleMin = s->ReadLEScalar();
@@ -439,7 +439,7 @@ void plOneTimeParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 
 void plOneTimeParticleGenerator::Write(hsStream* s, hsResMgr *mgr)
 {
-    s->WriteLE32((UInt32)fCount);
+    s->WriteLE32((uint32_t)fCount);
     s->WriteLEScalar(fXSize);
     s->WriteLEScalar(fYSize);
     s->WriteLEScalar(fScaleMin);

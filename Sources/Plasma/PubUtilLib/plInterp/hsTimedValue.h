@@ -53,7 +53,7 @@ public:
         kInstant        = 0x2
     };
 protected:
-    UInt32                  fFlags;
+    uint32_t                  fFlags;
     hsScalar                fDuration;
     hsScalar                fStartTime;
 
@@ -65,7 +65,7 @@ public:
     hsTimedValue() : fFlags(kIdle|kInstant), fDuration(0) {}
     hsTimedValue(const T& v) : fFlags(kIdle|kInstant), fDuration(0) { SetValue(v); }
 
-    UInt32 GetFlags() { return fFlags; }
+    uint32_t GetFlags() { return fFlags; }
 
     void SetDuration(hsScalar duration);
     hsScalar GetDuration() const { return fDuration; }

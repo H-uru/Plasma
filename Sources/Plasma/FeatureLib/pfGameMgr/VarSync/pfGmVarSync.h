@@ -86,11 +86,11 @@ public:
     //========================================================================
     // Game methods
     //-------------
-    void SetStringVar   (unsigned long id, const wchar* val);
+    void SetStringVar   (unsigned long id, const wchar_t* val);
     void SetNumericVar  (unsigned long id, double val);
     void RequestAllVars ();
-    void CreateStringVar    (const wchar* name, const wchar* val);
-    void CreateNumericVar   (const wchar* name, double val);
+    void CreateStringVar    (const wchar_t* name, const wchar_t* val);
+    void CreateNumericVar   (const wchar_t* name, double val);
     //========================================================================
 };
 

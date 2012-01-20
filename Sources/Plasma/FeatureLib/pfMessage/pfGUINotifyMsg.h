@@ -62,7 +62,7 @@ class pfGUINotifyMsg : public plMessage
 {
 protected:
     plKey       fControlKey;        // who start this mess
-    UInt32      fEvent;             // what was the event that happened
+    uint32_t      fEvent;             // what was the event that happened
 
 public:
     pfGUINotifyMsg() : plMessage() {}
@@ -112,14 +112,14 @@ public:
 // kTextBox
 // kDragBar
 
-    void SetEvent( plKey &key, UInt32 event)
+    void SetEvent( plKey &key, uint32_t event)
     {
         fControlKey = key;
         fEvent = event;
     }
 
     plKey GetControlKey() { return fControlKey; }
-    UInt32 GetEvent() { return fEvent; }
+    uint32_t GetEvent() { return fEvent; }
 
     // IO 
     void Read(hsStream* stream, hsResMgr* mgr)

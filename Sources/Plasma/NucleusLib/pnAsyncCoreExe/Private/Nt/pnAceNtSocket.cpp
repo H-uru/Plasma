@@ -97,7 +97,7 @@ struct NtOpConnAttempt : Operation {
     SOCKET                  hSocket;
     unsigned                failTimeMs;
     unsigned                sendBytes;
-    byte                    sendData[1];    // actually [sendBytes]
+    uint8_t                 sendData[1];    // actually [sendBytes]
     // no additional fields
 };
 
@@ -121,7 +121,7 @@ struct NtSock : NtObject {
     NtOpSocketRead          opRead;
     unsigned                backlogAlloc;
     unsigned                initTimeMs;
-    byte                    buffer[kAsyncSocketBufferSize];
+    uint8_t                    buffer[kAsyncSocketBufferSize];
 
     NtSock ();
     ~NtSock ();
@@ -291,7 +291,7 @@ static bool SocketDispatchRead (NtSock * sock) {
 //===========================================================================
 static NtOpSocketWrite * SocketQueueAsyncWrite (
     NtSock *        sock,
-    const byte *    data,
+    const uint8_t * data,
     unsigned        bytes
 ) {
     // check for data backlog
@@ -367,7 +367,7 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
     op->bytesAlloc              = bytesAlloc;
     op->write.param             = nil;
     op->write.asyncId           = asyncId;
-    op->write.buffer            = (byte *) (op + 1);
+    op->write.buffer            = (uint8_t *) (op + 1);
     op->write.bytes             = bytes;
     op->write.bytesProcessed    = bytes;
     MemCopy(op->write.buffer, data, bytes);
@@ -546,11 +546,11 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         // bind socket to port
         sockaddr_in addr;
         addr.sin_family = AF_INET;
-        addr.sin_port   = htons((word)port);
+        addr.sin_port   = htons((uint16_t)port);
         addr.sin_addr.S_un.S_addr = htonl(node);
         MemZero(addr.sin_zero, sizeof(addr.sin_zero));
         if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
-            wchar str[32];
+            wchar_t str[32];
             NetAddressToString(*listenAddr, str, arrsize(str), kNetAddressFormatAll);
             LogMsg(kLogError, "bind to addr %s failed (err %u)", str, WSAGetLastError());
             break;
@@ -630,7 +630,7 @@ static SOCKET ConnectSocket (unsigned localPort, const NetAddress & addr) {
         if (localPort) {
             sockaddr_in addr;
             addr.sin_family = AF_INET;
-            addr.sin_port   = htons((word) localPort);
+            addr.sin_port   = htons((uint16_t) localPort);
             addr.sin_addr.S_un.S_addr = INADDR_ANY;
             MemZero(addr.sin_zero, sizeof(addr.sin_zero));
             if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
@@ -800,13 +800,13 @@ static void StartListenThread () {
 #ifdef HS_DEBUGGING
 #include <StdIo.h>
 static void __cdecl DumpInvalidData (
-    const wchar filename[],
+    const wchar_t filename[],
     unsigned    bytes,
-    const byte  data[],
+    const uint8_t  data[],
     const char  fmt[],
     ...
 ) {
-    wchar path[MAX_PATH];
+    wchar_t path[MAX_PATH];
     PathGetProgramDirectory(path, arrsize(path));
     PathAddFilename(path, path, L"Log", arrsize(path));
     PathAddFilename(path, path, filename, arrsize(path));
@@ -1351,7 +1351,7 @@ bool NtSocketSend (
                     break;
 
                 // subtract the data we already sent
-                data = (const byte *) data + bytesSent;
+                data = (const uint8_t *) data + bytesSent;
                 bytes -= bytesSent;
                 // and queue it below
             }
@@ -1363,7 +1363,7 @@ bool NtSocketSend (
             }
         }
 
-        NtOpSocketWrite * op = SocketQueueAsyncWrite(sock, (const byte *) data, bytes);
+        NtOpSocketWrite * op = SocketQueueAsyncWrite(sock, (const uint8_t *) data, bytes);
         if (op && !dataQueued)
             result = INtSocketOpCompleteQueuedSocketWrite(sock, op);
         else
@@ -1415,7 +1415,7 @@ bool NtSocketWrite (
         op->bytesAlloc              = bytes;
         op->write.param             = param;
         op->write.asyncId           = op->asyncId;
-        op->write.buffer            = (byte *) buffer;
+        op->write.buffer            = (uint8_t *) buffer;
         op->write.bytes             = bytes;
         op->write.bytesProcessed    = bytes;
         PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);

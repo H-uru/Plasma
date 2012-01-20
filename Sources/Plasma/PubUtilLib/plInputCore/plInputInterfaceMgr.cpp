@@ -249,7 +249,7 @@ void plInputInterfaceMgr::ResetClickableState()
 
 //// IUpdateCursor ///////////////////////////////////////////////////////////
 
-void    plInputInterfaceMgr::IUpdateCursor( Int32 newCursor )
+void    plInputInterfaceMgr::IUpdateCursor( int32_t newCursor )
 {
     char*     mouseCursorResID;
 
@@ -297,7 +297,7 @@ void    plInputInterfaceMgr::IUpdateCursor( Int32 newCursor )
 //// IEval ///////////////////////////////////////////////////////////////////
 //  Inherited from plSingleModifier, gets called once per IUpdate() loop. 
 
-hsBool plInputInterfaceMgr::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool plInputInterfaceMgr::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     const char *inputEval = "Eval";
     plProfile_BeginLap(Input, inputEval);
@@ -432,7 +432,7 @@ hsBool  plInputInterfaceMgr::MsgReceive( plMessage *msg )
         const char *inputIEM = "InputEventMsg";
         plProfile_BeginLap(Input, inputIEM);
         hsBool handled = false;
-        UInt32 missedInputStartIdx = 0;
+        uint32_t missedInputStartIdx = 0;
         plInputInterface *oldCurrentFocus = fCurrentFocus;
 
         // Current focus (if there is one) gets first crack

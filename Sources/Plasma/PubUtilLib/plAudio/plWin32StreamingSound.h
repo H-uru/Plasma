@@ -73,7 +73,7 @@ protected:
     hsScalar            fTimeAtBufferStart;
     plAudioFileReader   *fDataStream;
     hsScalar            fBufferLengthInSecs;
-    UInt8               fBlankBufferFillCounter;
+    uint8_t               fBlankBufferFillCounter;
     plSoundDeswizzler   *fDeswizzler;
     char                fSrcFilename[ 256 ];
     StreamType          fStreamType;

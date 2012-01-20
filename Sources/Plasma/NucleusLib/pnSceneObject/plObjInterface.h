@@ -105,7 +105,7 @@ public:
     
     // shouldn't need to override GetProperty()
     hsBool  GetProperty(int prop) const { return fProps.IsBitSet(prop); }
-    virtual Int32   GetNumProperties() const = 0;
+    virtual int32_t   GetNumProperties() const = 0;
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 

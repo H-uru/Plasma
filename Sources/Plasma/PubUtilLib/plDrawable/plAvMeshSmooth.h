@@ -75,7 +75,7 @@ public:
     };
 
 protected:
-    UInt32          fFlags;
+    uint32_t          fFlags;
 
     hsScalar        fMinNormDot;
     hsScalar        fDistTolSq;
@@ -87,8 +87,8 @@ protected:
     hsPoint3        IPositionToSpan(XfmSpan& span, const hsPoint3& wPos) const;
     hsVector3       INormalToSpan(XfmSpan& span, const hsVector3& wNorm) const;
 
-    void            FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxList, hsTArray<UInt16>& edgeVerts);
-    void            FindEdges(hsTArray<XfmSpan>& spans, hsTArray<UInt16>* edgeVerts);
+    void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts);
+    void            FindEdges(hsTArray<XfmSpan>& spans, hsTArray<uint16_t>* edgeVerts);
 
 public:
     plAvMeshSmooth() : fFlags(kSmoothNorm), fMinNormDot(0.25f), fDistTolSq(1.e-4f), fAccGeom() {}
@@ -101,8 +101,8 @@ public:
 
     void        Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstSpans);
 
-    void        SetFlags(UInt32 f) { fFlags = f; }
-    UInt32      GetFlags() const { return fFlags; }
+    void        SetFlags(uint32_t f) { fFlags = f; }
+    uint32_t      GetFlags() const { return fFlags; }
 };
 
 #endif // plAvMeshSmooth_inc

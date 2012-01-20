@@ -61,14 +61,14 @@ namespace pnUtilsExe {
 *
 ***/
 
-static dword s_adjustment;
+static uint32_t s_adjustment;
 
 //===========================================================================
 static void InitializeAdjustment () {
     ASSERT(!s_adjustment);
-    dword currTime  = TimeGetTickCount();
-    dword startBits = (currTime & 0x80) ? 0x7fff0000 : 0xffff0000;
-    dword startMask = 0xffff0000;
+    uint32_t currTime  = TimeGetTickCount();
+    uint32_t startBits = (currTime & 0x80) ? 0x7fff0000 : 0xffff0000;
+    uint32_t startMask = 0xffff0000;
     s_adjustment = (((currTime & ~startMask) | startBits) - currTime) | 1;
     ASSERT(s_adjustment);
 }
@@ -89,7 +89,7 @@ AUTO_INIT_FUNC(AutoInitializeAdjustment) {
 ***/
 
 //============================================================================
-dword TimeGetMs () {
+uint32_t TimeGetMs () {
 #ifdef HS_DEBUGGING
 
     // For debug builds, return an adjusted timer value

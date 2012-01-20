@@ -164,11 +164,11 @@ void plAudioFileReader::ICacheFile(const char* path, bool noOverwrite, plAudioCo
             return;
         }
 
-        UInt8 buffer[4096];
-        UInt32 numLeft;
+        uint8_t buffer[4096];
+        uint32_t numLeft;
         while ((numLeft = reader->NumBytesLeft()) > 0)
         {
-            UInt32 toRead = (numLeft < sizeof(buffer)) ? numLeft : sizeof(buffer);
+            uint32_t toRead = (numLeft < sizeof(buffer)) ? numLeft : sizeof(buffer);
             reader->Read(toRead, buffer);
             writer->Write(toRead, buffer);
         }

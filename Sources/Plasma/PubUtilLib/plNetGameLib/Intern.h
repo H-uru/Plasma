@@ -329,7 +329,7 @@ struct NetTrans : AtomicRef {
     virtual bool Send () = 0;
     virtual void Post () = 0;
     virtual bool Recv ( // return false to disconnect from server
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     ) = 0;
 };
@@ -391,7 +391,7 @@ struct NetNotifyTrans : NetTrans {
     bool CanStart () const { return true; }
     bool Send () { m_state = kTransStateComplete; return true; }
     bool Recv (
-        const byte [],
+        const uint8_t [],
         unsigned
     ) { return true; }
 };
@@ -402,7 +402,7 @@ void NetTransSetTimeoutMs (unsigned ms);
 unsigned NetTransGetTimeoutMs ();
 
 void NetTransSend (NetTrans * trans);
-bool NetTransRecv (unsigned transId, const byte msg[], unsigned bytes);
+bool NetTransRecv (unsigned transId, const uint8_t msg[], unsigned bytes);
 void NetTransCancel (unsigned transId, ENetError error);
 void NetTransCancelByProtocol (ENetProtocol protocol, ENetError error);
 void NetTransCancelByConnId (unsigned connId, ENetError error);

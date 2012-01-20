@@ -368,7 +368,7 @@ static int __cdecl CrtAllocHook (
 AUTO_INIT_FUNC(hsExeMallocInit) {
     // The critical section has to be initialized
     // before program startup and never freed
-    static byte rawMemory[sizeof CCritSect];
+    static uint8_t rawMemory[sizeof CCritSect];
     s_critsect = new(rawMemory) CCritSect;
     SET_CRT_DEBUG_FIELD(_CRTDBG_LEAK_CHECK_DF);
     _CrtSetAllocHook(CrtAllocHook);
@@ -487,7 +487,7 @@ void * MemAlloc (unsigned bytes, unsigned flags, const char file[], int line) {
     // In debug mode ensure that memory is initialized to some freaky value
     #ifdef HS_DEBUGGING
         if (! (flags & kMemZero))
-            MemSet(ptr, (byte) ((unsigned_ptr)ptr >> 4), bytes);
+            MemSet(ptr, (uint8_t) ((uintptr_t)ptr >> 4), bytes);
     #endif
 
 #ifdef _MSC_VER
@@ -575,14 +575,14 @@ void * MemRealloc (void * ptr, unsigned bytes, unsigned flags, const char file[]
      * the memory block may be initialized with garbage instead of zeroes, and the
      * realloc call actually copied that memory.
     if ((bytes > oldBytes) && (flags & kMemZero))
-        MemZero((byte *)newPtr + oldBytes, bytes - oldBytes);
+        MemZero((uint8_t *)newPtr + oldBytes, bytes - oldBytes);
     */
     ASSERT(!(flags & kMemZero));
 
     // In debug mode ensure that memory is initialized to some freaky value
     #ifdef HS_DEBUGGING
     if ((bytes > oldBytes) && !(flags & kMemZero))
-        MemSet((byte *)newPtr + oldBytes, (byte) ((unsigned_ptr) newPtr >> 4), bytes - oldBytes);
+        MemSet((uint8_t *)newPtr + oldBytes, (uint8_t) ((uintptr_t) newPtr >> 4), bytes - oldBytes);
     #endif
 
     return newPtr;

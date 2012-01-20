@@ -105,7 +105,7 @@ public:
     virtual void        SetVolume(const float volume,int index = -1) = 0;
     virtual void        SetMuted( hsBool muted, int index = -1 ) = 0;
     virtual void        ToggleMuted( int index = -1 ) = 0;
-    virtual void        SetTalkIcon(int index, UInt32 str) = 0;
+    virtual void        SetTalkIcon(int index, uint32_t str) = 0;
     virtual void        ClearTalkIcon() = 0;
     virtual void        SetFilename(int index, const char *filename, hsBool isCompressed) = 0;  // set filename for a streaming sound
     virtual void        SetFadeIn( const int type, const float length, int index = -1 ) = 0;

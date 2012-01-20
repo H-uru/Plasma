@@ -145,7 +145,7 @@ plLayerInterface* plLayerAnimationBase::Attach(plLayerInterface* prev)
     return plLayerInterface::Attach(prev);
 }
 
-void plLayerAnimationBase::IEvalConvertedTime(hsScalar secs, UInt32 passChans, UInt32 evalChans, UInt32 &dirty)
+void plLayerAnimationBase::IEvalConvertedTime(hsScalar secs, uint32_t passChans, uint32_t evalChans, uint32_t &dirty)
 {
     if( evalChans & kPreshadeColor )
     {
@@ -349,13 +349,13 @@ plLayerInterface* plLayerAnimation::Attach(plLayerInterface* prev)
     return plLayerAnimationBase::Attach(prev);
 }
 
-UInt32 plLayerAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 dirty = plLayerInterface::Eval(wSecs, frame, ignore);
+    uint32_t dirty = plLayerInterface::Eval(wSecs, frame, ignore);
     if( wSecs != fEvalTime )
     {
-        UInt32 evalChans = 0;
-        UInt32 passChans = dirty | fPassThruChannels;
+        uint32_t evalChans = 0;
+        uint32_t passChans = dirty | fPassThruChannels;
         hsScalar secs = fTimeConvert.WorldToAnimTime(wSecs);
         if( secs != fCurrentTime )
         {
@@ -463,13 +463,13 @@ void plLayerLinkAnimation::Write(hsStream* s, hsResMgr* mgr)
     s->WriteBool(fLeavingAge);
 }
 
-UInt32 plLayerLinkAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerLinkAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 dirty = plLayerInterface::Eval(wSecs, frame, ignore);
+    uint32_t dirty = plLayerInterface::Eval(wSecs, frame, ignore);
     if (wSecs != fEvalTime)
     {
-        UInt32 evalChans = 0;
-        UInt32 passChans = dirty | fPassThruChannels;
+        uint32_t evalChans = 0;
+        uint32_t passChans = dirty | fPassThruChannels;
         hsScalar oldAnimTime = fTimeConvert.CurrentAnimTime();
         hsScalar secs = oldAnimTime;
         
@@ -540,7 +540,7 @@ UInt32 plLayerLinkAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
     return dirty;
 }
 
-void plLayerLinkAnimation::SetFadeFlag(UInt8 flag, hsBool val)
+void plLayerLinkAnimation::SetFadeFlag(uint8_t flag, hsBool val)
 {
     if (val)
         fFadeFlags |= flag;
@@ -681,13 +681,13 @@ plLayerSDLAnimation::~plLayerSDLAnimation()
     delete [] fVarName;
 }
 
-UInt32 plLayerSDLAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 dirty = plLayerInterface::Eval(wSecs, frame, ignore);
+    uint32_t dirty = plLayerInterface::Eval(wSecs, frame, ignore);
     if( wSecs != fEvalTime )
     {
-        UInt32 evalChans = 0;
-        UInt32 passChans = dirty | fPassThruChannels;
+        uint32_t evalChans = 0;
+        uint32_t passChans = dirty | fPassThruChannels;
 
         if (fEvalTime < 0)
         {

@@ -70,26 +70,26 @@ How to create a message sender/receiver:
 
     #include <PshPack1.h>
     struct MoveObject {
-        dword   messageId;
-        dword   objectId;
+        uint32_t   messageId;
+        uint32_t   objectId;
         float   newPos[3];
     };
     struct PlayerJoin {
-        dword   messageId;
-        dword   playerId;
-        wchar   name[kPlayerNameMaxLength];
-        byte    data[kPlayerDataMaxLength];
-        dword   vaultDataLen;
-        byte    vaultData[1];   // vaultData[vaultDataLen], actually
+        uint32_t   messageId;
+        uint32_t   playerId;
+        wchar_t   name[kPlayerNameMaxLength];
+        uint8_t    data[kPlayerDataMaxLength];
+        uint32_t   vaultDataLen;
+        uint8_t    vaultData[1];   // vaultData[vaultDataLen], actually
         // no more fields after variable-length data
     };
     struct Ping {
-        dword   messageId;
-        dword   pingTimeMs;
+        uint32_t   messageId;
+        uint32_t   pingTimeMs;
     };
     struct PingReply {
-        dword   messageId;
-        dword   pingTimeMs;
+        uint32_t   messageId;
+        uint32_t   pingTimeMs;
     }
     #include <PopPack.h>
 
@@ -170,16 +170,16 @@ How to create a message sender/receiver:
 5. Send messages
 
     static void SendMoveObject (NetCli client, const Object * obj) {
-        const unsigned_ptr msgMoveObject[] = {
+        const uintptr_t msgMoveObject[] = {
             kMsgMoveObject,
             obj->id,
-            3, (unsigned_ptr) &obj->pos,
+            3, (uintptr_t) &obj->pos,
         };
         NetCliSend(client, msgMoveObject, arrsize(msgMoveObject));
     }
 
     static void SendPlayerJoin (NetCli client, const Player * player) {
-        const unsigned_ptr msgPlayerJoin[] = {
+        const uintptr_t msgPlayerJoin[] = {
             kMsgPlayerJoin,
             player->name,
             player->data,
@@ -190,7 +190,7 @@ How to create a message sender/receiver:
     };
 
     static void SendPing (NetCli player) {
-        const unsigned_ptr msgPing[] = {
+        const uintptr_t msgPing[] = {
             kMsgPing,
             TimeGetMs(),
         };
@@ -200,10 +200,10 @@ How to create a message sender/receiver:
 
 6. Receive messages
 
-    bool RecvMsgPing (const byte msg[], NetCli * from, void * param) {
+    bool RecvMsgPing (const uint8_t msg[], NetCli * from, void * param) {
         Player * player = (Player *) param;
         const Ping * ping = (const Ping *) msg;
-        const unsigned_ptr msgPingReply[] = {
+        const uintptr_t msgPingReply[] = {
             kMsgPingReply,
             ping->pingTimeMs,
         };
@@ -233,12 +233,12 @@ enum ENetMsgFieldType {
     kNetMsgFieldInteger,
     kNetMsgFieldReal,
     kNetMsgFieldString,             // variable length unicode string
-    kNetMsgFieldData,               // data with length <= sizeof(dword)
+    kNetMsgFieldData,               // data with length <= sizeof(uint32_t)
     kNetMsgFieldPtr,                // pointer to fixed length data
     kNetMsgFieldVarPtr,             // pointer to variable length data
 
     // Non-compressible fields (images, sounds, encrypted data, etc)
-    kNetMsgFieldRawData,            // data with length <= sizeof(dword)
+    kNetMsgFieldRawData,            // data with length <= sizeof(uint32_t)
     kNetMsgFieldRawPtr,             // pointer to fixed length data
     kNetMsgFieldRawVarPtr,          // pointer to variable length data
 
@@ -276,21 +276,21 @@ struct NetCliQueue;
 
 #define NET_MSG_FIELD(type, count, size)        { type, count, size }
 
-#define NET_MSG_FIELD_BYTE()                    NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(byte))
-#define NET_MSG_FIELD_WORD()                    NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(word))
-#define NET_MSG_FIELD_DWORD()                   NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(dword))
-#define NET_MSG_FIELD_QWORD()                   NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(qword))
+#define NET_MSG_FIELD_BYTE()                    NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint8_t))
+#define NET_MSG_FIELD_WORD()                    NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint16_t))
+#define NET_MSG_FIELD_DWORD()                   NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint32_t))
+#define NET_MSG_FIELD_QWORD()                   NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint64_t))
 #define NET_MSG_FIELD_FLOAT()                   NET_MSG_FIELD(kNetMsgFieldReal, 0, sizeof(float))
 #define NET_MSG_FIELD_DOUBLE()                  NET_MSG_FIELD(kNetMsgFieldReal, 0, sizeof(double))
 
-#define NET_MSG_FIELD_BYTE_ARRAY(maxCount)      NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(byte))
-#define NET_MSG_FIELD_WORD_ARRAY(maxCount)      NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(word))
-#define NET_MSG_FIELD_DWORD_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(dword))
-#define NET_MSG_FIELD_QWORD_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(qword))
+#define NET_MSG_FIELD_BYTE_ARRAY(maxCount)      NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint8_t))
+#define NET_MSG_FIELD_WORD_ARRAY(maxCount)      NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint16_t))
+#define NET_MSG_FIELD_DWORD_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint32_t))
+#define NET_MSG_FIELD_QWORD_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint64_t))
 #define NET_MSG_FIELD_FLOAT_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldReal, maxCount, sizeof(float))
 #define NET_MSG_FIELD_DOUBLE_ARRAY(maxCount)    NET_MSG_FIELD(kNetMsgFieldReal, maxCount, sizeof(double))
 
-#define NET_MSG_FIELD_STRING(maxLength)         NET_MSG_FIELD(kNetMsgFieldString, maxLength, sizeof(wchar))
+#define NET_MSG_FIELD_STRING(maxLength)         NET_MSG_FIELD(kNetMsgFieldString, maxLength, sizeof(wchar_t))
 
 #define NET_MSG_FIELD_DATA(maxBytes)            NET_MSG_FIELD(kNetMsgFieldData,     maxBytes, 1)
 #define NET_MSG_FIELD_PTR(maxBytes)             NET_MSG_FIELD(kNetMsgFieldPtr,      maxBytes, 1)
@@ -314,7 +314,7 @@ struct NetMsgInitSend {
 };
 struct NetMsgInitRecv {
     NetMsg  msg;
-    bool (* recv)(const byte msg[], unsigned bytes, void * param);
+    bool (* recv)(const uint8_t msg[], unsigned bytes, void * param);
 };
 
 void NetMsgProtocolRegister (
@@ -376,7 +376,7 @@ NetCli * NetCliConnectAccept (
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
     unsigned            seedBytes,      // optional
-    const byte          seedData[],     // optional
+    const uint8_t          seedData[],     // optional
     void *              encryptParam    // optional
 );
 
@@ -387,7 +387,7 @@ NetCli * NetCliListenAccept (
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
     unsigned            seedBytes,      // optional
-    const byte          seedData[],     // optional
+    const uint8_t          seedData[],     // optional
     void *              encryptParam    // optional
 );
 #endif
@@ -424,13 +424,13 @@ void NetCliFlush (
 
 void NetCliSend (
     NetCli *            cli,
-    const unsigned_ptr  msg[], 
+    const uintptr_t  msg[], 
     unsigned            count
 );
 
 bool NetCliDispatch (
     NetCli *        cli,
-    const byte      buffer[],
+    const uint8_t      buffer[],
     unsigned        bytes,
     void *          param
 );

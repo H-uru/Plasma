@@ -110,19 +110,19 @@ static bool                 s_loginComplete = false;
 static bool                 s_hasAuthSrvIpAddress = false;
 static bool                 s_hasFileSrvIpAddress = false;
 static ENetError            s_authResult = kNetErrAuthenticationFailed;
-static wchar                s_authSrvAddr[256];
-static wchar                s_fileSrvAddr[256];
+static wchar_t                s_authSrvAddr[256];
+static wchar_t                s_fileSrvAddr[256];
 
-static wchar                s_iniServerAddr[256];
-static wchar                s_iniFileServerAddr[256];
-static wchar                s_iniAccountUsername[kMaxAccountNameLength];
+static wchar_t                s_iniServerAddr[256];
+static wchar_t                s_iniFileServerAddr[256];
+static wchar_t                s_iniAccountUsername[kMaxAccountNameLength];
 static ShaDigest            s_namePassHash;
-static wchar                s_iniAuthToken[kMaxPublisherAuthKeyLength];
-static wchar                s_iniOS[kMaxGTOSIdLength];
+static wchar_t                s_iniAuthToken[kMaxPublisherAuthKeyLength];
+static wchar_t                s_iniOS[kMaxGTOSIdLength];
 static bool                 s_iniReadAccountInfo = true;
-static wchar                s_iniStartupAgeName[kMaxAgeNameLength];
+static wchar_t                s_iniStartupAgeName[kMaxAgeNameLength];
 static Uuid                 s_iniStartupAgeInstId;
-static wchar                s_iniStartupPlayerName[kMaxPlayerNameLength];
+static wchar_t                s_iniStartupPlayerName[kMaxPlayerNameLength];
 static bool                 s_netError = false;
 
 
@@ -154,7 +154,7 @@ static NetCommMsgHandler    s_preHandler(0, nil, nil);
 //============================================================================
 static void INetLogCallback (
     ELogSeverity    severity,
-    const wchar     msg[]
+    const wchar_t     msg[]
 ) {
     // Use the async log facility
     AsyncLogWriteMsg(ProductShortName(), severity, msg);
@@ -216,7 +216,7 @@ static void IPreInitNetErrorCallback (
 static void INetBufferCallback (
     unsigned        type,
     unsigned        bytes,
-    const byte      buffer[]
+    const uint8_t      buffer[]
 ) {
     if (!plFactory::IsValidClassIndex(type)) {
         LogMsg(kLogError, "NetComm: received junk propagated buffer");
@@ -572,7 +572,7 @@ static void INetAuthFileListRequestCallback (
 static void INetCliAuthFileRequestCallback (
     ENetError       result,
     void *          param,
-    const wchar     filename[],
+    const wchar_t     filename[],
     hsStream *      writer
 ) {
     plNetCommFileDownloadMsg * msg = NEW(plNetCommFileDownloadMsg);
@@ -606,8 +606,8 @@ static void INetCliAuthAgeRequestCallback (
         s_age.ageInstId = ageInstId;
         s_age.ageVaultId = ageVaultId;
         
-        wchar gameAddrStr[64];
-        wchar ageInstIdStr[64];
+        wchar_t gameAddrStr[64];
+        wchar_t ageInstIdStr[64];
         NetAddressNodeToString(gameAddr, gameAddrStr, arrsize(gameAddrStr));
         LogMsg(
             kLogPerf,
@@ -667,23 +667,23 @@ static void INetCliAuthSendFriendInviteCallback (
     void *          param
 ) {
     pfKIMsg* kiMsg = TRACKED_NEW pfKIMsg(pfKIMsg::kFriendInviteSent);
-    kiMsg->SetIntValue((Int32)result);
+    kiMsg->SetIntValue((int32_t)result);
     kiMsg->Send();
 }
 
 
 //============================================================================
 static void IReadNetIni() {
-    wchar filename[MAX_PATH];
+    wchar_t filename[MAX_PATH];
     StrPrintf(filename, arrsize(filename), L"%s.cfg", ProductCoreName());
 
-    wchar pathAndName[MAX_PATH];
+    wchar_t pathAndName[MAX_PATH];
     PathGetInitDirectory(pathAndName, arrsize(pathAndName));
     PathAddFilename(pathAndName, pathAndName, filename, arrsize(pathAndName));
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal dev build will override user-based setting with local folder if it's there
-    wchar localPathAndName[MAX_PATH];
+    wchar_t localPathAndName[MAX_PATH];
     PathAddFilename(localPathAndName, L"init", filename, arrsize(localPathAndName));
     if (PathDoesFileExist(localPathAndName))
             StrCopy(pathAndName, localPathAndName, arrsize(pathAndName));
@@ -691,7 +691,7 @@ static void IReadNetIni() {
 
     Ini * ini = IniOpen(pathAndName);
 
-    wchar password[kMaxPasswordLength];
+    wchar_t password[kMaxPasswordLength];
 
     if (ini) {
         // Read [Net.Server] section
@@ -786,8 +786,8 @@ static void IReadNetIni() {
     // @@@: Internal build only: Drop a default version of the file if not found    
     if (!ini) {
         EFileError  fileError;
-        qword       fileSize;
-        qword       lastWrite;      
+        uint64_t       fileSize;
+        uint64_t       lastWrite;      
         AsyncFile file = AsyncFileOpen(
             pathAndName,
             nil,
@@ -851,7 +851,7 @@ static void IReadNetIni() {
 static void AuthSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const wchar     addr[]
+    const wchar_t     addr[]
 ) {
     StrCopy(s_authSrvAddr, addr, arrsize(s_authSrvAddr)); 
     s_hasAuthSrvIpAddress = true;
@@ -861,7 +861,7 @@ static void AuthSrvIpAddressCallback (
 static void FileSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const wchar     addr[]
+    const wchar_t     addr[]
 ) {
     StrCopy(s_fileSrvAddr, addr, arrsize(s_fileSrvAddr)); 
     s_hasFileSrvIpAddress = true;
@@ -922,7 +922,7 @@ void NetCommSetAvatarLoaded (bool loaded /* = true */) {
 
 //============================================================================
 void NetCommChangeMyPassword (
-    const wchar password[]
+    const wchar_t password[]
 ) {
     NetCliAuthAccountChangePasswordRequest(s_account.accountName, password, INetCliAuthChangePasswordCallback, nil);
 }
@@ -934,7 +934,7 @@ void NetCommStartup () {
     LogRegisterHandler(INetLogCallback);
     AsyncCoreInitialize();
     AsyncLogInitialize(L"Log", false);
-    wchar productString[256];
+    wchar_t productString[256];
     ProductString(productString, arrsize(productString));
     LogMsg(kLogPerf, L"Client: %s", productString);
 
@@ -1005,7 +1005,7 @@ void NetCommUpdate () {
 //============================================================================
 void NetCommConnect () {
 
-    const wchar ** addrs;
+    const wchar_t ** addrs;
     unsigned count;
     hsBool connectedToKeeper = false;
 
@@ -1028,7 +1028,7 @@ void NetCommConnect () {
             AsyncSleep(10);
         }
             
-        const wchar * authSrv[] = {
+        const wchar_t * authSrv[] = {
             s_authSrvAddr
         };
         NetCliAuthStartConnect(authSrv, 1);
@@ -1057,7 +1057,7 @@ void NetCommConnect () {
                 AsyncSleep(10);
             }
             
-            const wchar * fileSrv[] = {
+            const wchar_t * fileSrv[] = {
                 s_fileSrvAddr
             };
             NetCliFileStartConnect(fileSrv, 1);
@@ -1084,7 +1084,7 @@ void NetCommSendMsg (
     msg->SetPlayerID(NetCommGetPlayer()->playerInt);
 
     unsigned msgSize = msg->GetPackSize();
-    byte * buf = ALLOCA(byte, msgSize);
+    uint8_t * buf = ALLOCA(uint8_t, msgSize);
     msg->PokeBuffer((char *)buf, msgSize);
 
     switch (msg->GetNetProtocol()) {
@@ -1204,7 +1204,7 @@ void NetCommSetMsgPreHandler (
 
 //============================================================================
 void NetCommSetAccountUsernamePassword (
-    wchar               username[],
+    wchar_t               username[],
     const ShaDigest &   namePassHash
 ) {
     StrCopy(s_iniAccountUsername, username, arrsize(s_iniAccountUsername));
@@ -1215,8 +1215,8 @@ void NetCommSetAccountUsernamePassword (
 
 //============================================================================
 void NetCommSetAuthTokenAndOS (
-    wchar               authToken[],
-    wchar               os[]
+    wchar_t               authToken[],
+    wchar_t               os[]
 ) {
     if (authToken)
         StrCopy(s_iniAuthToken, authToken, arrsize(s_iniAuthToken));
@@ -1278,7 +1278,7 @@ void NetCommLinkToAge (     // --> plNetCommLinkToAgeMsg
         return;
     }
 
-    wchar wAgeName[kMaxAgeNameLength];
+    wchar_t wAgeName[kMaxAgeNameLength];
     StrToUnicode(wAgeName, s_age.ageDatasetName, arrsize(wAgeName));
     
     NetCliAuthAgeRequest(
@@ -1342,9 +1342,9 @@ void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
     unsigned                createFlags,
     void *                  param
 ) {
-    wchar wplayerName[kMaxPlayerNameLength];
-    wchar wavatarShape[MAX_PATH];
-    wchar wfriendInvite[MAX_PATH];
+    wchar_t wplayerName[kMaxPlayerNameLength];
+    wchar_t wavatarShape[MAX_PATH];
+    wchar_t wfriendInvite[MAX_PATH];
 
     StrToUnicode(wplayerName, playerName, arrsize(wplayerName));
     StrToUnicode(wavatarShape, avatarShape, arrsize(wavatarShape));
@@ -1361,9 +1361,9 @@ void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
 
 //============================================================================
 void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
-    const wchar             playerName[],
-    const wchar             avatarShape[],
-    const wchar             friendInvite[],
+    const wchar_t             playerName[],
+    const wchar_t             avatarShape[],
+    const wchar_t             friendInvite[],
     unsigned                createFlags,
     void *                  param
 ) {
@@ -1401,7 +1401,7 @@ void NetCommGetPublicAgeList (//-> plNetCommPublicAgeListMsg
     cp->param   = param;
     cp->type    = ptype;
     
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, ageName, arrsize(wStr));
     NetCliAuthGetPublicAgeList(
         wStr,
@@ -1510,8 +1510,8 @@ void NetCommSetCCRLevel (
 
 //============================================================================
 void NetCommSendFriendInvite (
-    const wchar     emailAddress[],
-    const wchar     toName[],
+    const wchar_t     emailAddress[],
+    const wchar_t     toName[],
     const Uuid&     inviteUuid
 ) {
     NetCliAuthSendFriendInvite(
@@ -1545,7 +1545,7 @@ plNetClientComm::~plNetClientComm()
 }
 
 // AddMsgHandlerForType ----------------------------------------------
-void plNetClientComm::AddMsgHandlerForType( UInt16 msgClassIdx, MsgHandler* handler )
+void plNetClientComm::AddMsgHandlerForType( uint16_t msgClassIdx, MsgHandler* handler )
 {
     int i;
     for( i = 0; i < plFactory::GetNumClasses(); i++ )
@@ -1556,7 +1556,7 @@ void plNetClientComm::AddMsgHandlerForType( UInt16 msgClassIdx, MsgHandler* hand
 }
 
 // AddMsgHandlerForExactType ----------------------------------------------
-void plNetClientComm::AddMsgHandlerForExactType( UInt16 msgClassIdx, MsgHandler* handler )
+void plNetClientComm::AddMsgHandlerForExactType( uint16_t msgClassIdx, MsgHandler* handler )
 {
     NetCommAddMsgHandlerForExactType(msgClassIdx, MsgHandler::StaticMsgHandler, handler);
 }

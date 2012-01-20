@@ -72,7 +72,7 @@ pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
 {
     pfGUICtrlProcWriteableObject    *obj;
 
-    UInt32 type = s->ReadLE32();
+    uint32_t type = s->ReadLE32();
 
     switch( type )
     {

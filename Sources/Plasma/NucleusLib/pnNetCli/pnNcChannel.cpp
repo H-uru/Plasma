@@ -129,7 +129,7 @@ static unsigned ValidateMsg (const NetMsg & msg) {
     ASSERT(msg.fields);
     ASSERT(msg.count);
 
-    unsigned maxBytes = sizeof(word);    // for message id
+    unsigned maxBytes = sizeof(uint16_t);    // for message id
     bool prevFieldWasVarCount = false;
 
     for (unsigned i = 0; i < msg.count; i++) {
@@ -160,7 +160,7 @@ static unsigned ValidateMsg (const NetMsg & msg) {
         prevFieldWasVarCount = false;
         switch (field.type) {
             case kNetMsgFieldInteger:
-                maxBytes += sizeof(qword);
+                maxBytes += sizeof(uint64_t);
             break;
 
             case kNetMsgFieldReal:

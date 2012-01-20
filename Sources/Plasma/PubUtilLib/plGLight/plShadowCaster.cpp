@@ -162,7 +162,7 @@ hsBool plShadowCaster::IOnRenderMsg(plRenderMsg* msg)
     if( ShadowCastDisabled() )
         return true;
 
-    const UInt8 shadowQuality = UInt8(plShadowMaster::GetGlobalShadowQuality() * 3.9f);
+    const uint8_t shadowQuality = uint8_t(plShadowMaster::GetGlobalShadowQuality() * 3.9f);
     if( !GetKey()->GetUoid().GetLoadMask().MatchesQuality(shadowQuality) )
         return true;
 

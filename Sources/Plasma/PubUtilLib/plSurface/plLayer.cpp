@@ -85,7 +85,7 @@ plLayer::plLayer()
     fState = TRACKED_NEW hsGMatState;
     fState->Reset();
 
-    fUVWSrc = TRACKED_NEW UInt32;
+    fUVWSrc = TRACKED_NEW uint32_t;
     fLODBias = TRACKED_NEW hsScalar;
     fSpecularPower = TRACKED_NEW hsScalar;
 
@@ -106,9 +106,9 @@ plLayer::~plLayer()
 {
 }
 
-UInt32 plLayer::Eval(double secs, UInt32 frame, UInt32 ignore) 
+uint32_t plLayer::Eval(double secs, uint32_t frame, uint32_t ignore) 
 { 
-    return UInt32(0); 
+    return uint32_t(0); 
 }
 
 void plLayer::Read(hsStream* s, hsResMgr* mgr)

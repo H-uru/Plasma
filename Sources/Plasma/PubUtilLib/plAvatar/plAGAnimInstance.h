@@ -98,7 +98,7 @@ public:
         This attaches the animation channels to the channels of
         the master modifier and creates all the bookkeeping structures
         necessary to undo it later. */
-    plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master, hsScalar blend, UInt16 blendPriority, hsBool cache, bool useAmplitude);
+    plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master, hsScalar blend, uint16_t blendPriority, hsBool cache, bool useAmplitude);
 
     /** Destructor. Removes the animation from the scene objects it's attached to. */
     virtual ~plAGAnimInstance();
@@ -172,7 +172,7 @@ public:
         \param goal is the desired blend strength
         \param rate is in blend units per second
         \type is either kFadeBlend or kFadeAmp */
-    void Fade(hsScalar goal, hsScalar rate, UInt8 type = kFadeBlend);
+    void Fade(hsScalar goal, hsScalar rate, uint8_t type = kFadeBlend);
 
     /** Fade the animation and detach it after the fade is complete.
         Extremely useful for situations where the controlling logic
@@ -222,7 +222,7 @@ public:
     void SearchForGlobals(); // Util function to setup SDL channels
 protected:
     /** Set up bookkeeping for a fade. */
-    void ISetupFade(hsScalar goal, hsScalar rate, bool detach, UInt8 type);
+    void ISetupFade(hsScalar goal, hsScalar rate, bool detach, uint8_t type);
 
     void IRegisterDetach(const char *channelName, plAGChannel *channel);
 
@@ -264,7 +264,7 @@ protected:
 extern const char *gGlobalAnimName;
 extern const char *gGlobalChannelName;
 
-void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, UInt16 classIndex);
+void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex);
 void UnRegisterAGAlloc(plAGChannel *object);
 void DumpAGAllocs();
 

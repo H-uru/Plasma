@@ -81,7 +81,7 @@ void * CBaseSpareList::Alloc (unsigned objectSize, const char typeName[]) {
 
     // initialize memory to a freaky value in debug mode
     #ifdef HS_DEBUGGING
-    MemSet(object, (byte) ((unsigned) object >> 4), objectSize);
+    MemSet(object, (uint8_t) ((unsigned) object >> 4), objectSize);
     #endif
 
     return object;
@@ -91,7 +91,7 @@ void * CBaseSpareList::Alloc (unsigned objectSize, const char typeName[]) {
 void CBaseSpareList::Free (void * object, unsigned objectSize) {
     // initialize memory to a freaky value in debug mode
     #ifdef HS_DEBUGGING
-    MemSet(object, (byte) ((unsigned) object >> 4), objectSize);
+    MemSet(object, (uint8_t) ((unsigned) object >> 4), objectSize);
     #endif
 
     // link memory block onto head of spare list
@@ -129,11 +129,11 @@ void CBaseSpareList::GrowSpareList (unsigned objectSize, const char typeName[]) 
 
     // chain newly created raw memory units together onto the spare list
     SpareNode * spareCurr = (SpareNode *) (allocNode + 1);
-    SpareNode * spareEnd  = (SpareNode *) ((byte *) spareCurr + objectSize * m_chunkSize);
+    SpareNode * spareEnd  = (SpareNode *) ((uint8_t *) spareCurr + objectSize * m_chunkSize);
     do {
         spareCurr->spareNext = m_spareHead;
         m_spareHead = spareCurr;
-        spareCurr = (SpareNode *) ((byte *) spareCurr + objectSize);
+        spareCurr = (SpareNode *) ((uint8_t *) spareCurr + objectSize);
     } while (spareCurr < spareEnd);
 }
 

@@ -49,10 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static const hsScalar kRealSmall = 1.e-5f;
 
 // Find the closest point on a line (or segment) to a point.
-UInt32 plClosest::PointOnLine(const hsPoint3& p0,
+uint32_t plClosest::PointOnLine(const hsPoint3& p0,
                   const hsPoint3& p1, const hsVector3& v1,
                   hsPoint3& cp,
-                  UInt32 clamp)
+                  uint32_t clamp)
 {
     hsScalar invV1Sq = v1.MagnitudeSquared();
     // v1 is also zero length. The two input points are the only options for output.
@@ -79,10 +79,10 @@ UInt32 plClosest::PointOnLine(const hsPoint3& p0,
 }
 
 // Find closest points to each other from two lines (or segments).
-UInt32 plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0, 
+uint32_t plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0, 
                   const hsPoint3& p1, const hsVector3& v1,
                   hsPoint3& cp0, hsPoint3& cp1,
-                  UInt32 clamp)
+                  uint32_t clamp)
 {
     hsScalar invV0Sq = v0.MagnitudeSquared();
     // First handle degenerate cases.
@@ -147,12 +147,12 @@ UInt32 plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0,
         // If both are clamped, well, both are clamped. The distance between
         //      points will no longer be the distance between lines.
         // In any case, the distance between the points should be correct.
-        UInt32 clamp1 = PointOnLine(p0, p1, v1, cp1, clamp);
-        UInt32 clamp0 = PointOnLine(cp1, p0, v0, cp0, clamp >> 1);
+        uint32_t clamp1 = PointOnLine(p0, p1, v1, cp1, clamp);
+        uint32_t clamp0 = PointOnLine(cp1, p0, v0, cp0, clamp >> 1);
         return clamp1 | (clamp0 << 1);
     }
 
-    UInt32 retVal = 0;
+    uint32_t retVal = 0;
 
     hsScalar t1 = - (CV0.InnerProduct(DV0)) / DV0dotDV0;
     if( (clamp & kClampLower1) && (t1 <= 0) )
@@ -226,7 +226,7 @@ hsBool plClosest::PointOnBox(const hsPoint3& p0,
                              const hsVector3& axis2,
                              hsPoint3& cp)
 {
-    UInt32 clamps = 0;
+    uint32_t clamps = 0;
     hsPoint3 currPt = corner;
     clamps |= PointOnLine(p0, currPt, axis0, cp, kClamp);
     currPt = cp;
@@ -240,7 +240,7 @@ hsBool plClosest::PointOnBox(const hsPoint3& p0,
 hsBool plClosest::PointOnSphere(const hsPoint3& p0, const hsVector3& v0,
                             const hsPoint3& center, hsScalar rad,
                             hsPoint3& cp,
-                            UInt32 clamp)
+                            uint32_t clamp)
 {
     // Does the line hit the sphere? If it does, we return the entry point in cp,
     // otherwise we find the closest point on the sphere to the line.
@@ -327,9 +327,9 @@ hsBool plClosest::PointOnBox(const hsPoint3& p0, const hsVector3& v0,
                             const hsVector3& axis1,
                             const hsVector3& axis2,
                             hsPoint3& cp,
-                            UInt32 clamp)
+                            uint32_t clamp)
 {
-    UInt32 clampRes = 0;
+    uint32_t clampRes = 0;
 
     hsPoint3 cp0, cp1;
     hsPoint3 currPt = corner;
@@ -365,7 +365,7 @@ hsBool plClosest::PointOnPlane(const hsPoint3& p0,
 hsBool plClosest::PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
                                const hsPoint3& pPln, const hsVector3& n,
                                hsPoint3& cp,
-                               UInt32 clamp)
+                               uint32_t clamp)
 {
     /*
         p0 + v0*t is on plane, i.e.

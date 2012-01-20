@@ -512,7 +512,7 @@ void    plEAXSourceSettings::Write( hsStream *s )
     }
 }
 
-void    plEAXSourceSettings::SetRoomParams( Int16 room, Int16 roomHF, hsBool roomAuto, hsBool roomHFAuto )
+void    plEAXSourceSettings::SetRoomParams( int16_t room, int16_t roomHF, hsBool roomAuto, hsBool roomHFAuto )
 {
     fRoom = room;
     fRoomHF = roomHF;
@@ -551,7 +551,7 @@ void    plEAXSourceSettings::Enable( hsBool e )
     }
 }
 
-void    plEAXSourceSettings::SetOutsideVolHF( Int16 vol )
+void    plEAXSourceSettings::SetOutsideVolHF( int16_t vol )
 {
     fOutsideVolHF = vol;
     fDirtyParams |= kOutsideVolHF;
@@ -576,7 +576,7 @@ void    plEAXSourceSettings::SetOcclusionSoftValue( hsScalar value )
     }
 }
 
-void    plEAXSourceSettings::IRecalcSofts( UInt8 whichOnes )
+void    plEAXSourceSettings::IRecalcSofts( uint8_t whichOnes )
 {
     hsScalar    percent, invPercent;
 
@@ -585,7 +585,7 @@ void    plEAXSourceSettings::IRecalcSofts( UInt8 whichOnes )
         percent = fOcclusionSoftValue;
         invPercent = 1.f - percent;
 
-        Int16       occ = (Int16)( ( (float)fSoftStarts.GetOcclusion() * invPercent ) + ( (float)fSoftEnds.GetOcclusion() * percent ) );
+        int16_t       occ = (int16_t)( ( (float)fSoftStarts.GetOcclusion() * invPercent ) + ( (float)fSoftEnds.GetOcclusion() * percent ) );
         hsScalar    lfRatio = (hsScalar)( ( fSoftStarts.GetOcclusionLFRatio() * invPercent ) + ( fSoftEnds.GetOcclusionLFRatio() * percent ) );
         hsScalar    roomRatio = (hsScalar)( ( fSoftStarts.GetOcclusionRoomRatio() * invPercent ) + ( fSoftEnds.GetOcclusionRoomRatio() * percent ) );
         hsScalar    directRatio = (hsScalar)( ( fSoftStarts.GetOcclusionDirectRatio() * invPercent ) + ( fSoftEnds.GetOcclusionDirectRatio() * percent ) );
@@ -623,7 +623,7 @@ void    plEAXSourceSoftSettings::Write( hsStream *s )
     s->WriteLE( fOcclusionDirectRatio );
 }
 
-void    plEAXSourceSoftSettings::SetOcclusion( Int16 occ, hsScalar lfRatio, hsScalar roomRatio, hsScalar directRatio )
+void    plEAXSourceSoftSettings::SetOcclusion( int16_t occ, hsScalar lfRatio, hsScalar roomRatio, hsScalar directRatio )
 {
     fOcclusion = occ;
     fOcclusionLFRatio = lfRatio;
@@ -668,7 +668,7 @@ hsBool  plEAXSource::IsValid( void ) const
 
 void    plEAXSource::SetFrom( plEAXSourceSettings *settings, unsigned source, hsBool force )
 {
-    UInt32 dirtyParams;
+    uint32_t dirtyParams;
     if(source == 0 || !fInit) 
         return;
 

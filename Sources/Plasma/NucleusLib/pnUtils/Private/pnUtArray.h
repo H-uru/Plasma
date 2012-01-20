@@ -97,7 +97,7 @@ public:
     inline void Clear ();
     inline unsigned Count () const;
     inline T * Detach ();
-    inline void Fill (byte value);
+    inline void Fill (uint8_t value);
     inline T * Ptr ();
     inline const T * Ptr () const;
     inline void Set (const T * source, unsigned count);
@@ -217,7 +217,7 @@ T * TBuffer<T>::Detach () {
 
 //===========================================================================
 template<class T>
-void TBuffer<T>::Fill (byte value) {
+void TBuffer<T>::Fill (uint8_t value) {
     if (m_data)
         MemSet(m_data, value, Bytes());
 }
@@ -265,7 +265,7 @@ void TBuffer<T>::Zero () {
         MemZero(m_data, Bytes());
 }
 
-typedef TBuffer<byte> CBuffer;
+typedef TBuffer<uint8_t> CBuffer;
 
 
 /****************************************************************************
@@ -420,7 +420,7 @@ public:
     inline void Clear ();
     inline unsigned Count () const;
     inline T * Detach ();
-    inline void Fill (byte value);
+    inline void Fill (uint8_t value);
     inline T * Ptr ();
     inline const T * Ptr () const;
     inline void Set (const T * source, unsigned count);
@@ -610,7 +610,7 @@ T * TFArray<T,C>::Detach () {
 
 //===========================================================================
 template<class T, class C>
-void TFArray<T,C>::Fill (byte value) {
+void TFArray<T,C>::Fill (uint8_t value) {
     C::Destruct(m_data, m_count);
     MemSet(m_data, value, m_count * sizeof(T));
     C::Construct(m_data, m_count);
@@ -991,8 +991,8 @@ void TArray<T,C>::Trim () {
 template<class T, class C, class K, unsigned OFFSET>
 class TSortArray : public TArray<T,C> {
 private:
-    inline static K & SortKey (T & rec) { return *(K *)((byte *)&rec + OFFSET); }
-    inline static const K & SortKey (const T & rec) { return *(const K *)((const byte *)&rec + OFFSET); }
+    inline static K & SortKey (T & rec) { return *(K *)((uint8_t *)&rec + OFFSET); }
+    inline static const K & SortKey (const T & rec) { return *(const K *)((const uint8_t *)&rec + OFFSET); }
 
 public:
     inline bool      Delete (K sortKey);

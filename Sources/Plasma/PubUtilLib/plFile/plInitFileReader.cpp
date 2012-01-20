@@ -60,7 +60,7 @@ plInitSectionTokenReader::plInitSectionTokenReader( const char *separators ) : f
 {
 }
 
-hsBool      plInitSectionTokenReader::ParseLine( const char *line, UInt32 userData )
+hsBool      plInitSectionTokenReader::ParseLine( const char *line, uint32_t userData )
 {
     hsStringTokenizer izer( line, fSeparators );
 
@@ -70,7 +70,7 @@ hsBool      plInitSectionTokenReader::ParseLine( const char *line, UInt32 userDa
 
 void    plInitFileReader::IInitReaders( plInitSectionReader **readerArray )
 {
-    UInt32      i;
+    uint32_t      i;
 
 
     for( i = 0; readerArray[ i ] != nil; i++ )
@@ -81,7 +81,7 @@ void    plInitFileReader::IInitReaders( plInitSectionReader **readerArray )
     fCurrSection = fSections[ 0 ];
 }
 
-plInitFileReader::plInitFileReader( plInitSectionReader **readerArray, UInt16 lineSize )
+plInitFileReader::plInitFileReader( plInitSectionReader **readerArray, uint16_t lineSize )
 {
     fRequireEncrypted = true;
     fCurrLine = nil;
@@ -91,7 +91,7 @@ plInitFileReader::plInitFileReader( plInitSectionReader **readerArray, UInt16 li
     fUnhandledSection = nil;
 }
 
-plInitFileReader::plInitFileReader( const char *fileName, plInitSectionReader **readerArray, UInt16 lineSize )
+plInitFileReader::plInitFileReader( const char *fileName, plInitSectionReader **readerArray, uint16_t lineSize )
 {
     fRequireEncrypted = true;
     fCurrLine = nil;
@@ -103,7 +103,7 @@ plInitFileReader::plInitFileReader( const char *fileName, plInitSectionReader **
     fUnhandledSection = nil;
 }
 
-plInitFileReader::plInitFileReader( hsStream *stream, plInitSectionReader **readerArray, UInt16 lineSize )
+plInitFileReader::plInitFileReader( hsStream *stream, plInitSectionReader **readerArray, uint16_t lineSize )
 {
     fRequireEncrypted = true;
     fCurrLine = nil;
@@ -151,7 +151,7 @@ hsBool  plInitFileReader::Open( hsStream *stream )
     return true;
 }
 
-hsBool  plInitFileReader::Parse( UInt32 userData )
+hsBool  plInitFileReader::Parse( uint32_t userData )
 {
     hsAssert( fStream != nil, "Nil stream in initFileReader::Parse(); file not yet open?" );
 
@@ -171,7 +171,7 @@ hsBool  plInitFileReader::Parse( UInt32 userData )
             if( end != nil )
                 *end = 0;
 
-            UInt32      i;
+            uint32_t      i;
 
             bool foundSection = false;
             for( i = 0; i < fSections.GetCount(); i++ )

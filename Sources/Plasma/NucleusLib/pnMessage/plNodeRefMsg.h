@@ -60,7 +60,7 @@ public:
     };
 
     plNodeRefMsg() {}
-    plNodeRefMsg(const plKey &r, UInt8 flags, Int8 which, Int8 type) : plGenRefMsg(r, flags, which, type) {}
+    plNodeRefMsg(const plKey &r, uint8_t flags, int8_t which, int8_t type) : plGenRefMsg(r, flags, which, type) {}
 
     CLASSNAME_REGISTER( plNodeRefMsg );
     GETINTERFACE_ANY( plNodeRefMsg, plGenRefMsg );

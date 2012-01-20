@@ -86,8 +86,8 @@ public:
     ReportType GetReportType() const { return fReportType; }
 
     /** An ID invented by the caller for their own bookkeeping. */
-    void SetRequestID(UInt32 id) { fRequestID = id; }
-    UInt32 GetRequestID() { return fRequestID; }
+    void SetRequestID(uint32_t id) { fRequestID = id; }
+    uint32_t GetRequestID() { return fRequestID; }
 
     /** If we get a hit on the first pass, we'll then double-check the remaining
         segment (start->first hit) against the "cull db". If *any* hit is found,
@@ -111,7 +111,7 @@ private:
     plSimDefs::plLOSDB      fCullDB;            // if we find a hit, see if anything in this DB blocks it.
     TestType                fTestType;          // testing closest hit or just any?
     ReportType              fReportType;        // reporting hits, misses, or both?
-    UInt32                  fRequestID;
+    uint32_t                  fRequestID;
 };
 
 #endif // plLOSRequestMsg_inc

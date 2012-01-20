@@ -52,11 +52,11 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptPlayer)
 PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
 {
     // we have two sets of arguments we can use, hence the generic PyObject* pointers
-    // argument set 1: pyKey, string, UInt32, hsScalar
-    // argument set 2: string, UInt32
+    // argument set 1: pyKey, string, uint32_t, hsScalar
+    // argument set 2: string, uint32_t
     PyObject* firstObj = NULL; // can be a pyKey or a string
-    PyObject* secondObj = NULL; // can be a string or a UInt32
-    PyObject* thirdObj = NULL; // UInt32
+    PyObject* secondObj = NULL; // can be a string or a uint32_t
+    PyObject* thirdObj = NULL; // uint32_t
     PyObject* fourthObj = NULL; // hsScalar
     if (!PyArg_ParseTuple(args, "OO|OO", &firstObj, &secondObj, &thirdObj, &fourthObj))
     {
@@ -193,21 +193,21 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_CUSTOM_TYPE(ptPlayer, "Params: avkey,name,playerID,distanceSq\nAnd optionally __init__(name,playerID)");
 
 // required functions for PyObject interoperability
-PyObject *pyPlayer::New(pyKey& avKey, const char* pname, UInt32 pid, hsScalar distsq)
+PyObject *pyPlayer::New(pyKey& avKey, const char* pname, uint32_t pid, hsScalar distsq)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, NULL, NULL);
     newObj->fThis->Init(avKey.getKey(), pname, pid, distsq);
     return (PyObject*)newObj;
 }
 
-PyObject *pyPlayer::New(plKey avKey, const char* pname, UInt32 pid, hsScalar distsq)
+PyObject *pyPlayer::New(plKey avKey, const char* pname, uint32_t pid, hsScalar distsq)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, NULL, NULL);
     newObj->fThis->Init(avKey, pname, pid, distsq);
     return (PyObject*)newObj;
 }
 
-PyObject *pyPlayer::New(const char* pname, UInt32 pid)
+PyObject *pyPlayer::New(const char* pname, uint32_t pid)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, NULL, NULL);
     newObj->fThis->Init(nil, pname, pid, -1);

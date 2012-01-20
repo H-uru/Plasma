@@ -108,8 +108,8 @@ public:
     //      then take the snapshot if you are going to be performing more modifications.
     // In ALL MODIFICATION CASES, if the modified data is paged out, and the original paged back in, you will
     //      need to perform your operation again - your modifications aren't saved anywhere.
-    void    OpenRO(plDrawable* drawable, UInt32 spanIdx, plAccessSpan& acc, hsBool useSnapShot=true) const;
-    void    OpenRW(plDrawable* drawable, UInt32 spanIdx, plAccessSpan& acc, hsBool idxToo=false) const;
+    void    OpenRO(plDrawable* drawable, uint32_t spanIdx, plAccessSpan& acc, hsBool useSnapShot=true) const;
+    void    OpenRW(plDrawable* drawable, uint32_t spanIdx, plAccessSpan& acc, hsBool idxToo=false) const;
 
     // What do we need to close up here?
     void    Close(plAccessSpan& acc) const;
@@ -147,12 +147,12 @@ public:
     //      the state when the snapshot was taken. Note that channels not SnapShotted might have been modified
     //      via OpenRW.
     // 
-    void    TakeSnapShot(plDrawable* drawable, UInt32 spanIdx, UInt32 channels) const;
-    void    RestoreSnapShot(plDrawable* drawable, UInt32 spanIdx, UInt32 channels) const;
-    void    ReleaseSnapShot(plDrawable* drawable, UInt32 spanIdx) const;
+    void    TakeSnapShot(plDrawable* drawable, uint32_t spanIdx, uint32_t channels) const;
+    void    RestoreSnapShot(plDrawable* drawable, uint32_t spanIdx, uint32_t channels) const;
+    void    ReleaseSnapShot(plDrawable* drawable, uint32_t spanIdx) const;
 
-    void    TakeSnapShot(const plDrawInterface* di, UInt32 channels) const;
-    void    RestoreSnapShot(const plDrawInterface* di, UInt32 channels) const;
+    void    TakeSnapShot(const plDrawInterface* di, uint32_t channels) const;
+    void    RestoreSnapShot(const plDrawInterface* di, uint32_t channels) const;
     void    ReleaseSnapShot(const plDrawInterface* di) const;
 
     // We often have geometry spans just sitting around devoid of any DI's, drawables or sceneobjects.
@@ -169,7 +169,7 @@ protected:
     void    IAccessSpanFromParticle(plAccessSpan& dst, plDrawableSpans* drawable, const plParticleSpan* span, hsBool readOnly) const;
     void    IAccessSpanFromSnap(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* src) const;
 
-    void    IOpen(plDrawable* d, UInt32 spanIdx, plAccessSpan& acc, hsBool useSnap, hsBool readOnly, hsBool idxToo=true) const;
+    void    IOpen(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc, hsBool useSnap, hsBool readOnly, hsBool idxToo=true) const;
 };
 
 #endif // plAccessGeometry_inc

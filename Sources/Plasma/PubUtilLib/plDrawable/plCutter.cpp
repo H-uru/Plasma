@@ -1043,7 +1043,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
     hsBool newDrawable = !drawable;
     hsBool haveNormal = true;
 
-    hsTArray<UInt32> retIndex;
+    hsTArray<uint32_t> retIndex;
 
     hsTArray<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src);
@@ -1190,12 +1190,12 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
             }
         }
 
-        hsTArray<UInt16> idx;
+        hsTArray<uint16_t> idx;
 
-        UInt16 base = 0;
+        uint16_t base = 0;
         for( j = 0; j < dst.GetCount(); j++ )
         {
-            UInt16 next = base+1;
+            uint16_t next = base+1;
             int k;
             for( k = 2; k < dst[j].fVerts.GetCount(); k++ )
             {
@@ -1249,7 +1249,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, h
     hsBool newDrawable = !drawable;
     hsBool haveNormal = true;
 
-    hsTArray<UInt32> retIndex;
+    hsTArray<uint32_t> retIndex;
 
     hsTArray<plDrawVisList> drawVis;
     node->Harvest(&cutter.GetIsect(), drawVis);
@@ -1345,12 +1345,12 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, h
             }
         }
 
-        hsTArray<UInt16> idx;
+        hsTArray<uint16_t> idx;
 
-        UInt16 base = 0;
+        uint16_t base = 0;
         for( j = 0; j < dst.GetCount(); j++ )
         {
-            UInt16 next = base+1;
+            uint16_t next = base+1;
             int k;
             for( k = 2; k < dst[j].fVerts.GetCount(); k++ )
             {

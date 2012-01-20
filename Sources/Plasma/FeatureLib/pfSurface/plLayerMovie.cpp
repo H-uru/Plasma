@@ -143,7 +143,7 @@ hsBool plLayerMovie::IMovieIsIdle()
 hsBool plLayerMovie::ICurrentFrameDirty(double wSecs)
 {
     hsScalar secs = fTimeConvert.WorldToAnimTime(wSecs);
-    UInt32 frame = ISecsToFrame(secs);
+    uint32_t frame = ISecsToFrame(secs);
     if( frame == fCurrentFrame )
         return false;
     fCurrentFrame = frame;
@@ -151,9 +151,9 @@ hsBool plLayerMovie::ICurrentFrameDirty(double wSecs)
     return true;
 }
 
-UInt32 plLayerMovie::Eval(double wSecs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerMovie::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 dirty = plLayerAnimation::Eval(wSecs, frame, ignore);
+    uint32_t dirty = plLayerAnimation::Eval(wSecs, frame, ignore);
 
     if( !IGetFault() && !(ignore & kTexture) )
     {

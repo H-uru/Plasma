@@ -220,7 +220,7 @@ plMipmap *plBitmapCreator::ICreateBitmap(plBitmapData *bd)
 
     hBitmap = hMipmap;
         
-    UInt32  flagsToSet = 0;
+    uint32_t  flagsToSet = 0;
 
     if( bd->texFlags & plMipmap::kNoMaxSize )
         flagsToSet |= plMipmap::kNoMaxSize;
@@ -671,7 +671,7 @@ void    plBitmapCreator::IAddBitmap( plBitmap *bitmap, hsBool dontRef )
 //  Simple mipmap creator, but importantly, it also adds the mipmap to the list
 //  of "converted" maps to clean up at the end of export.
 
-plMipmap    *plBitmapCreator::CreateBlankMipmap( UInt32 width, UInt32 height, unsigned config, UInt8 numLevels, 
+plMipmap    *plBitmapCreator::CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, 
                                                  const char *keyName, const plLocation &keyLocation )
 {
     hsGuardBegin( "plBitmapCreator::CreateBlankMipmap" );

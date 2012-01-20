@@ -177,7 +177,7 @@ hsBool hsCompressedQuatKey32::CompareValue(hsCompressedQuatKey32 *key)
 void hsCompressedQuatKey32::SetQuat(hsQuat &q)
 {
     q.Normalize();
-    UInt32 maxElement = kCompQuatNukeX;
+    uint32_t maxElement = kCompQuatNukeX;
     hsScalar maxVal = hsABS(q.fX);
     if (hsABS(q.fY) > maxVal)
     {
@@ -204,9 +204,9 @@ void hsCompressedQuatKey32::SetQuat(hsQuat &q)
                 q = -q;
 
             fData = (maxElement << 30) |
-                (((UInt32)(k10BitScaleRange * (q.fY + kOneOverRootTwo))) << 20) |
-                (((UInt32)(k10BitScaleRange * (q.fZ + kOneOverRootTwo))) << 10) |
-                (((UInt32)(k10BitScaleRange * (q.fW + kOneOverRootTwo))));
+                (((uint32_t)(k10BitScaleRange * (q.fY + kOneOverRootTwo))) << 20) |
+                (((uint32_t)(k10BitScaleRange * (q.fZ + kOneOverRootTwo))) << 10) |
+                (((uint32_t)(k10BitScaleRange * (q.fW + kOneOverRootTwo))));
             break;
         }
     case kCompQuatNukeY:
@@ -215,9 +215,9 @@ void hsCompressedQuatKey32::SetQuat(hsQuat &q)
                 q = -q;
 
             fData = (maxElement << 30) |
-                (((UInt32)(k10BitScaleRange * (q.fX + kOneOverRootTwo))) << 20) |
-                (((UInt32)(k10BitScaleRange * (q.fZ + kOneOverRootTwo))) << 10) |
-                (((UInt32)(k10BitScaleRange * (q.fW + kOneOverRootTwo))));
+                (((uint32_t)(k10BitScaleRange * (q.fX + kOneOverRootTwo))) << 20) |
+                (((uint32_t)(k10BitScaleRange * (q.fZ + kOneOverRootTwo))) << 10) |
+                (((uint32_t)(k10BitScaleRange * (q.fW + kOneOverRootTwo))));
             break;
         }
     case kCompQuatNukeZ:
@@ -226,9 +226,9 @@ void hsCompressedQuatKey32::SetQuat(hsQuat &q)
                 q = -q;
 
             fData = (maxElement << 30) |
-                (((UInt32)(k10BitScaleRange * (q.fX + kOneOverRootTwo))) << 20) |
-                (((UInt32)(k10BitScaleRange * (q.fY + kOneOverRootTwo))) << 10) |
-                (((UInt32)(k10BitScaleRange * (q.fW + kOneOverRootTwo))));
+                (((uint32_t)(k10BitScaleRange * (q.fX + kOneOverRootTwo))) << 20) |
+                (((uint32_t)(k10BitScaleRange * (q.fY + kOneOverRootTwo))) << 10) |
+                (((uint32_t)(k10BitScaleRange * (q.fW + kOneOverRootTwo))));
             break;
         }
     case kCompQuatNukeW:
@@ -238,9 +238,9 @@ void hsCompressedQuatKey32::SetQuat(hsQuat &q)
                 q = -q;
 
             fData = (maxElement << 30) |
-                (((UInt32)(k10BitScaleRange * (q.fX + kOneOverRootTwo))) << 20) |
-                (((UInt32)(k10BitScaleRange * (q.fY + kOneOverRootTwo))) << 10) |
-                (((UInt32)(k10BitScaleRange * (q.fZ + kOneOverRootTwo))));
+                (((uint32_t)(k10BitScaleRange * (q.fX + kOneOverRootTwo))) << 20) |
+                (((uint32_t)(k10BitScaleRange * (q.fY + kOneOverRootTwo))) << 10) |
+                (((uint32_t)(k10BitScaleRange * (q.fZ + kOneOverRootTwo))));
             break;
         }
     }
@@ -248,7 +248,7 @@ void hsCompressedQuatKey32::SetQuat(hsQuat &q)
 
 void hsCompressedQuatKey32::GetQuat(hsQuat &q)
 {
-    UInt32 maxElement = fData >> 30;
+    uint32_t maxElement = fData >> 30;
     switch (maxElement)
     {
     case kCompQuatNukeX:
@@ -320,7 +320,7 @@ hsBool hsCompressedQuatKey64::CompareValue(hsCompressedQuatKey64 *key)
 void hsCompressedQuatKey64::SetQuat(hsQuat &q)
 {
     q.Normalize();
-    UInt32 maxElement = kCompQuatNukeX;
+    uint32_t maxElement = kCompQuatNukeX;
     hsScalar maxVal = hsABS(q.fX);
     if (hsABS(q.fY) > maxVal)
     {
@@ -347,11 +347,11 @@ void hsCompressedQuatKey64::SetQuat(hsQuat &q)
                 q = -q;
 
             fData[0] = (maxElement << 30) |
-                (((UInt32)(k20BitScaleRange * (q.fY + kOneOverRootTwo))) << 10) |
-                (((UInt32)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))) >> 11);
+                (((uint32_t)(k20BitScaleRange * (q.fY + kOneOverRootTwo))) << 10) |
+                (((uint32_t)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))) >> 11);
             fData[1] =
-                (((UInt32)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))) << 21) |
-                (((UInt32)(k21BitScaleRange * (q.fW + kOneOverRootTwo))));
+                (((uint32_t)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))) << 21) |
+                (((uint32_t)(k21BitScaleRange * (q.fW + kOneOverRootTwo))));
             break;
         }
     case kCompQuatNukeY:
@@ -360,11 +360,11 @@ void hsCompressedQuatKey64::SetQuat(hsQuat &q)
                 q = -q;
 
             fData[0] = (maxElement << 30) |
-                (((UInt32)(k20BitScaleRange * (q.fX + kOneOverRootTwo))) << 10) |
-                (((UInt32)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))) >> 11);
+                (((uint32_t)(k20BitScaleRange * (q.fX + kOneOverRootTwo))) << 10) |
+                (((uint32_t)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))) >> 11);
             fData[1] =
-                (((UInt32)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))) << 21) |
-                (((UInt32)(k21BitScaleRange * (q.fW + kOneOverRootTwo))));
+                (((uint32_t)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))) << 21) |
+                (((uint32_t)(k21BitScaleRange * (q.fW + kOneOverRootTwo))));
             break;
         }
     case kCompQuatNukeZ:
@@ -373,11 +373,11 @@ void hsCompressedQuatKey64::SetQuat(hsQuat &q)
                 q = -q;
 
             fData[0] = (maxElement << 30) |
-                (((UInt32)(k20BitScaleRange * (q.fX + kOneOverRootTwo))) << 10) |
-                (((UInt32)(k21BitScaleRange * (q.fY + kOneOverRootTwo))) >> 11);
+                (((uint32_t)(k20BitScaleRange * (q.fX + kOneOverRootTwo))) << 10) |
+                (((uint32_t)(k21BitScaleRange * (q.fY + kOneOverRootTwo))) >> 11);
             fData[1] =
-                (((UInt32)(k21BitScaleRange * (q.fY + kOneOverRootTwo))) << 21) |
-                (((UInt32)(k21BitScaleRange * (q.fW + kOneOverRootTwo))));
+                (((uint32_t)(k21BitScaleRange * (q.fY + kOneOverRootTwo))) << 21) |
+                (((uint32_t)(k21BitScaleRange * (q.fW + kOneOverRootTwo))));
             break;
         }
     case kCompQuatNukeW:
@@ -387,11 +387,11 @@ void hsCompressedQuatKey64::SetQuat(hsQuat &q)
                 q = -q;
 
             fData[0] = (maxElement << 30) |
-                (((UInt32)(k20BitScaleRange * (q.fX + kOneOverRootTwo))) << 10) |
-                (((UInt32)(k21BitScaleRange * (q.fY + kOneOverRootTwo))) >> 11);
+                (((uint32_t)(k20BitScaleRange * (q.fX + kOneOverRootTwo))) << 10) |
+                (((uint32_t)(k21BitScaleRange * (q.fY + kOneOverRootTwo))) >> 11);
             fData[1] =
-                (((UInt32)(k21BitScaleRange * (q.fY + kOneOverRootTwo))) << 21) |
-                (((UInt32)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))));
+                (((uint32_t)(k21BitScaleRange * (q.fY + kOneOverRootTwo))) << 21) |
+                (((uint32_t)(k21BitScaleRange * (q.fZ + kOneOverRootTwo))));
             break;
         }
     }
@@ -399,7 +399,7 @@ void hsCompressedQuatKey64::SetQuat(hsQuat &q)
 
 void hsCompressedQuatKey64::GetQuat(hsQuat &q)
 {
-    UInt32 maxElement = fData[0] >> 30;
+    uint32_t maxElement = fData[0] >> 30;
     switch (maxElement)
     {
     case kCompQuatNukeX:
@@ -494,7 +494,7 @@ hsBool hsBezScaleKey::CompareValue(hsBezScaleKey *key)
 
 //////////////////////
 
-void hsG3DSMaxKeyFrame::Set(hsMatrix44 *mat, UInt16 frame)
+void hsG3DSMaxKeyFrame::Set(hsMatrix44 *mat, uint16_t frame)
 {
     fFrame = frame;
     gemAffineParts parts;
@@ -502,7 +502,7 @@ void hsG3DSMaxKeyFrame::Set(hsMatrix44 *mat, UInt16 frame)
     AP_SET(fParts, parts);
 }
 
-void hsG3DSMaxKeyFrame::Set(const hsAffineParts &parts, UInt16 frame)
+void hsG3DSMaxKeyFrame::Set(const hsAffineParts &parts, uint16_t frame)
 {
     fFrame = frame;
     fParts = parts;
@@ -530,7 +530,7 @@ hsBool hsG3DSMaxKeyFrame::CompareValue(hsG3DSMaxKeyFrame *key)
 void hsMatrix33Key::Read(hsStream *stream)
 {
     fFrame = stream->ReadLE16();
-    Int32 i,j;
+    int32_t i,j;
     for(i=0;i<3;i++)
         for(j=0;j<3;j++)
             fValue.fMap[j][i] = stream->ReadLEScalar();
@@ -539,7 +539,7 @@ void hsMatrix33Key::Read(hsStream *stream)
 void hsMatrix33Key::Write(hsStream *stream)
 {
     stream->WriteLE16(fFrame);
-    Int32 i,j;
+    int32_t i,j;
     for(i=0;i<3;i++)
         for(j=0;j<3;j++)
             stream->WriteLEScalar(fValue.fMap[j][i]);

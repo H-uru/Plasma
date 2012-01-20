@@ -52,13 +52,13 @@ class plTimerCallbackMsg : public plMessage
 public:
     plTimerCallbackMsg(){;}
     plTimerCallbackMsg(const plKey &s, const plKey &r, const double* t){;}
-    plTimerCallbackMsg(const plKey &r, UInt32 id = 0) { AddReceiver(r); fID = id;}
+    plTimerCallbackMsg(const plKey &r, uint32_t id = 0) { AddReceiver(r); fID = id;}
     ~plTimerCallbackMsg(){;}
 
     CLASSNAME_REGISTER( plTimerCallbackMsg );
     GETINTERFACE_ANY( plTimerCallbackMsg, plMessage );
     
-    UInt32 fID;
+    uint32_t fID;
     hsScalar fTime;
 
     virtual void Read(hsStream* stream, hsResMgr* mgr)

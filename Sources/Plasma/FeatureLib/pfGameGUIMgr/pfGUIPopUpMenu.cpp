@@ -86,7 +86,7 @@ class pfPopUpKeyGenerator
 {
     public:
         char        fPrefix[ 128 ];
-        UInt32      fKeyCount;
+        uint32_t      fKeyCount;
         plLocation  fLoc;
 
         pfPopUpKeyGenerator( const char *p, const plLocation &loc )
@@ -111,11 +111,11 @@ class pfGUIMenuItemProc : public pfGUICtrlProcObject
     protected:
 
         pfGUIPopUpMenu      *fParent;
-        UInt32              fIndex;
+        uint32_t              fIndex;
 
     public:
 
-        pfGUIMenuItemProc( pfGUIPopUpMenu *parent, UInt32 idx )
+        pfGUIMenuItemProc( pfGUIPopUpMenu *parent, uint32_t idx )
         {
             fParent = parent;
             fIndex = idx;
@@ -126,9 +126,9 @@ class pfGUIMenuItemProc : public pfGUICtrlProcObject
             fParent->IHandleMenuSomething( fIndex, ctrl );
         }
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, UInt32 event )
+        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
         {
-            fParent->IHandleMenuSomething( fIndex, ctrl, (Int32)event );
+            fParent->IHandleMenuSomething( fIndex, ctrl, (int32_t)event );
         }
 };
 
@@ -242,7 +242,7 @@ void    pfGUIPopUpMenu::Read( hsStream *s, hsResMgr *mgr )
 
     fMargin = s->ReadLE16();
 
-    UInt32 i, count = s->ReadLE32();
+    uint32_t i, count = s->ReadLE32();
     fMenuItems.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
     {
@@ -274,7 +274,7 @@ void    pfGUIPopUpMenu::Write( hsStream *s, hsResMgr *mgr )
     s->WriteLE16( fMargin );
 
     s->WriteLE32( fMenuItems.GetCount() );
-    UInt32 i;
+    uint32_t i;
     for( i = 0; i < fMenuItems.GetCount(); i++ )
     {
         char writeTemp[ 256 ];
@@ -299,7 +299,7 @@ void    pfGUIPopUpMenu::Write( hsStream *s, hsResMgr *mgr )
     mgr->WriteKey( s, fOriginAnchor );
     mgr->WriteKey( s, fOriginContext );
 
-    s->WriteByte( (UInt8)fAlignment );
+    s->WriteByte( (uint8_t)fAlignment );
 }
 
 void    pfGUIPopUpMenu::SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *context )
@@ -347,7 +347,7 @@ void    pfGUIPopUpMenu::Show( hsScalar x, hsScalar y )
 void    pfGUIPopUpMenu::ISeekToOrigin( void )
 {
 #if 0
-    UInt32 i;
+    uint32_t i;
     float   x = 0.5f/*fOriginX*/, y = fOriginY;
 
     for( i = 0; i < fControls.GetCount(); i++ )
@@ -380,7 +380,7 @@ void    pfGUIPopUpMenu::ISeekToOrigin( void )
 //// IHandleMenuSomething ////////////////////////////////////////////////////
 //  Handles a normal event from one of the item controls.
 
-void    pfGUIPopUpMenu::IHandleMenuSomething( UInt32 idx, pfGUIControlMod *ctrl, Int32 extended )
+void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctrl, int32_t extended )
 {
     if( extended != -1 )
     {
@@ -477,7 +477,7 @@ hsBool  pfGUIPopUpMenu::IBuildMenu( void )
     scratch->SetFont( scheme->fFontFace, scheme->fFontSize, scheme->fFontFlags, true );
     for( i = 0; i < fMenuItems.GetCount(); i++ )
     {
-        UInt16  thisW, thisH;
+        uint16_t  thisW, thisH;
         thisW = scratch->CalcStringWidth( fMenuItems[ i ].fName.c_str(), &thisH );
         if( fMenuItems[ i ].fSubMenu != nil )
         {
@@ -505,7 +505,7 @@ hsBool  pfGUIPopUpMenu::IBuildMenu( void )
 
     width += 4; // give us a little space, just in case
 
-    UInt32 scrnWidth, scrnHeight;
+    uint32_t scrnWidth, scrnHeight;
     // A cheat here, I know, but I'm lazy
     plDebugText::Instance().GetScreenSize( &scrnWidth, &scrnHeight );
 
@@ -623,7 +623,7 @@ void    pfGUIPopUpMenu::ITearDownMenu( void )
 //// HandleMouseEvent ////////////////////////////////////////////////////////
 
 hsBool      pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY,
-                                                UInt8 modifiers )
+                                                uint8_t modifiers )
 {
     hsBool r = pfGUIDialogMod::HandleMouseEvent( event, mouseX, mouseY, modifiers );
     if( r == false && event == pfGameGUIMgr::kMouseUp )
@@ -880,7 +880,7 @@ void    pfGUISkin::SetTexture( plMipmap *tex )
     }
 }
 
-void    pfGUISkin::SetElement( UInt32 idx, UInt16 x, UInt16 y, UInt16 w, UInt16 h )
+void    pfGUISkin::SetElement( uint32_t idx, uint16_t x, uint16_t y, uint16_t w, uint16_t h )
 {
     fElements[ idx ].fX = x;
     fElements[ idx ].fY = y;
@@ -895,7 +895,7 @@ void    pfGUISkin::Read( hsStream *s, hsResMgr *mgr )
     s->ReadLE( &fItemMargin );
     s->ReadLE( &fBorderMargin );
 
-    UInt32 i, count;
+    uint32_t i, count;
     s->ReadLE( &count );
 
     for( i = 0; i < count; i++ )
@@ -914,7 +914,7 @@ void    pfGUISkin::Write( hsStream *s, hsResMgr *mgr )
     s->WriteLE( fItemMargin );
     s->WriteLE( fBorderMargin );
 
-    UInt32 i = kNumElements;
+    uint32_t i = kNumElements;
     s->WriteLE( i );
 
     for( i = 0; i < kNumElements; i++ )

@@ -56,9 +56,9 @@ class plParticleGenerator : public plCreatable
 
 public:
     // returns false if it's done generating particles and is safe to delete.
-    virtual hsBool AddAutoParticles(plParticleEmitter *emitter, float dt, UInt32 numForced = 0) = 0;
+    virtual hsBool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0) = 0;
 
-    virtual void UpdateParam(UInt32 paramID, hsScalar paramValue) = 0;
+    virtual void UpdateParam(uint32_t paramID, hsScalar paramValue) = 0;
 
     CLASSNAME_REGISTER( plParticleGenerator );
     GETINTERFACE_ANY( plParticleGenerator, plCreatable );
@@ -74,7 +74,7 @@ public:
     plSimpleParticleGenerator();
     ~plSimpleParticleGenerator();
     void Init(hsScalar genLife, hsScalar partLifeMin, hsScalar partLifeMax, hsScalar particlesPerSecond, 
-              UInt32 numSources, hsPoint3 *pos, hsScalar *initPitch, hsScalar *initYaw, hsScalar angleRange,
+              uint32_t numSources, hsPoint3 *pos, hsScalar *initPitch, hsScalar *initYaw, hsScalar angleRange,
               hsScalar initVelMin, hsScalar initVelMax, hsScalar xSize, hsScalar ySize, 
               hsScalar scaleMin, hsScalar scaleMax,
               hsScalar massRange, hsScalar radsPerSecRange);
@@ -82,15 +82,15 @@ public:
     CLASSNAME_REGISTER( plSimpleParticleGenerator );
     GETINTERFACE_ANY( plSimpleParticleGenerator, plParticleGenerator);
     
-    virtual hsBool AddAutoParticles(plParticleEmitter *emitter, float dt, UInt32 numForced);
-    virtual void UpdateParam(UInt32 paramID, hsScalar paramValue);
+    virtual hsBool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced);
+    virtual void UpdateParam(uint32_t paramID, hsScalar paramValue);
 
     virtual void Read(hsStream* s, hsResMgr *mgr); 
     virtual void Write(hsStream* s, hsResMgr *mgr);
 
 protected:
     hsScalar fParticlesPerSecond;
-    UInt32 fNumSources;
+    uint32_t fNumSources;
     hsPoint3 *fInitPos;
     hsScalar *fInitPitch, *fInitYaw;
     hsScalar fAngleRange;
@@ -116,7 +116,7 @@ protected:
         kImmortal   = 0x1,
         kDisabled   = 0x2,
     };
-    UInt32 fMiscFlags;
+    uint32_t fMiscFlags;
 };
 
 class plOneTimeParticleGenerator : public plParticleGenerator
@@ -131,8 +131,8 @@ public:
     CLASSNAME_REGISTER( plOneTimeParticleGenerator );
     GETINTERFACE_ANY( plOneTimeParticleGenerator, plParticleGenerator);
 
-    virtual hsBool AddAutoParticles(plParticleEmitter *emitter, float dt, UInt32 numForced = 0);
-    virtual void UpdateParam(UInt32 paramID, hsScalar paramValue) {}
+    virtual hsBool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0);
+    virtual void UpdateParam(uint32_t paramID, hsScalar paramValue) {}
 
     virtual void Read(hsStream* s, hsResMgr *mgr); 
     virtual void Write(hsStream* s, hsResMgr *mgr);

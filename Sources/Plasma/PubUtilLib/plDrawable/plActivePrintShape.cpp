@@ -65,7 +65,7 @@ void plActivePrintShape::Read(hsStream* stream, hsResMgr* mgr)
 {
     plPrintShape::Read(stream, mgr);
 
-    UInt32 n = stream->ReadLE32();
+    uint32_t n = stream->ReadLE32();
     fDecalMgrs.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )

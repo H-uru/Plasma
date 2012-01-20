@@ -168,7 +168,7 @@ hsBool plClothingComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg
             if (!LODNode->GetSwappableGeom())
                 LODNode->SetSwappableGeom(new plSharedMesh);
 
-            //UInt32 targetID = fCompPB->GetInt(kType);
+            //uint32_t targetID = fCompPB->GetInt(kType);
             //((plMaxNode *)LODNode->GetParentNode())->SetSwappableGeomTarget(targetID);
         }
     }

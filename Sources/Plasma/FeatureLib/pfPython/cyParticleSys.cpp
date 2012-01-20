@@ -79,7 +79,7 @@ void cyParticleSys::SetNetForce(hsBool state)
 //
 //  PURPOSE    : send the message to the Particle System
 //
-void cyParticleSys::ISendParticleSysMsg(UInt32 param, hsScalar value)
+void cyParticleSys::ISendParticleSysMsg(uint32_t param, hsScalar value)
 {
     plParticleUpdateMsg* pMsg = TRACKED_NEW plParticleUpdateMsg(fSender, nil, nil, param, value);
     // check if this needs to be network forced to all clients

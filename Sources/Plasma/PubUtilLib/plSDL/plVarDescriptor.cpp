@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plUnifiedTime/plUnifiedTime.h"
 
-const UInt8 plVarDescriptor::kVersion=3;        // for Read/Write format
+const uint8_t plVarDescriptor::kVersion=3;        // for Read/Write format
 
 /////////////////////////////////////////////////////////////////////////////////
 // State Var
@@ -168,7 +168,7 @@ void plVarDescriptor::CopyFrom(const plVarDescriptor* other)
 //
 bool plVarDescriptor::Read(hsStream* s) 
 {
-    UInt8 version;
+    uint8_t version;
     s->ReadLE(&version);
     if (version != kVersion)
     {
@@ -203,7 +203,7 @@ void plVarDescriptor::Write(hsStream* s) const
     s->WriteSafeString(fName);
     plMsgStdStringHelper::Poke(fDisplayOptions, s);
     s->WriteLE32(fCount);
-    s->WriteByte((UInt8)fType);
+    s->WriteByte((uint8_t)fType);
     s->WriteSafeString(fDefault);
     s->WriteLE32(fFlags);
 }
@@ -227,7 +227,7 @@ int plSimpleVarDescriptor::GetAtomicSize() const
     case kInt:
         return sizeof(int)*GetAtomicCount();
     case kByte:
-        return sizeof(byte)*GetAtomicCount();
+        return sizeof(uint8_t)*GetAtomicCount();
     case kShort:
         return sizeof(short)*GetAtomicCount();
     case kAgeTimeOfDay:
@@ -375,8 +375,8 @@ void plSimpleVarDescriptor::Write(hsStream* s) const
 {
     plVarDescriptor::Write(s);
 
-    s->WriteLE16((Int16)fAtomicCount);    
-    s->WriteByte((UInt8)fAtomicType);
+    s->WriteLE16((int16_t)fAtomicCount);    
+    s->WriteByte((uint8_t)fAtomicType);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -399,7 +399,7 @@ bool plSDVarDescriptor::Read(hsStream* s)
         return false;
 
     char* sdName=s->ReadSafeString();
-    UInt16 version = s->ReadLE16();
+    uint16_t version = s->ReadLE16();
     plStateDescriptor* sd=plSDLMgr::GetInstance()->FindDescriptor(sdName, version);
     hsAssert( sd, xtl::format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", sdName, version ).c_str() );
     SetStateDesc(sd);
@@ -415,6 +415,6 @@ void plSDVarDescriptor::Write(hsStream* s) const
     plVarDescriptor::Write(s);
 
     s->WriteSafeString(GetStateDescriptor()->GetName());
-    UInt16 version=GetStateDescriptor()->GetVersion();
+    uint16_t version=GetStateDescriptor()->GetVersion();
     s->WriteLE(version);
 }

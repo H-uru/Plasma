@@ -56,7 +56,7 @@ hsScalar plInterestingModifier::fInterestRadius     = 100.0f;
 hsScalar plInterestingModifier::fInterestWeight     = 1.0f;
 
 
-hsBool plInterestingModifier::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plInterestingModifier::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     for (int i=0; i < GetNumTargets(); i++)
     {

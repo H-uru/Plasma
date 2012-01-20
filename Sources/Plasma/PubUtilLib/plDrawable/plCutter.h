@@ -95,7 +95,7 @@ class plFlatGridMesh
 {
 public:
     hsTArray<plCutoutMiniVtx>   fVerts;
-    hsTArray<UInt16>            fIdx;
+    hsTArray<uint16_t>            fIdx;
 
     void Reset() { fVerts.SetCount(0); fIdx.SetCount(0); }
 };

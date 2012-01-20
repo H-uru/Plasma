@@ -94,10 +94,10 @@ protected:
     {
         public:
             plSceneNode *fNode;
-            UInt32      fFlags;
+            uint32_t      fFlags;
 
             plRoomRec() { fNode = nil; fFlags = 0; }
-            plRoomRec( plSceneNode *n, UInt32 f ) : fNode( n ), fFlags( f ) {}
+            plRoomRec( plSceneNode *n, uint32_t f ) : fNode( n ), fFlags( f ) {}
 
             enum Flags
             {
@@ -293,7 +293,7 @@ public:
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false);
     void ResizeDisplayDevice(int Width, int Height, hsBool Windowed);
     void IDetectAudioVideoSettings();
-    void IWriteDefaultGraphicsSettings(const wchar* destFile);
+    void IWriteDefaultGraphicsSettings(const wchar_t* destFile);
 
     plAnimDebugList *fAnimDebugList;
 

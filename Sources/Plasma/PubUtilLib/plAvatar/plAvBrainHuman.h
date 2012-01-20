@@ -180,7 +180,7 @@ protected:
     
     plAGModifier    *fHandleAGMod;      // the ag modifier that's attached to our top object
     double fStartedTurning;         // when did we start turning?   
-    UInt32 fPreconditions;
+    uint32_t fPreconditions;
     bool fIsActor; // are we an actor with special privileges?
     static float fWalkTimeToMaxTurn;
     static float fRunTimeToMaxTurn;
@@ -237,9 +237,9 @@ public:
     ~plHBehavior();
 
     void Init(plAGAnim *anim, hsBool loop, plAvBrainHuman *brain, plArmatureMod *body,
-              float fadeIn, float fadeOut, UInt8 index, UInt32 type = 0);
+              float fadeIn, float fadeOut, uint8_t index, uint32_t type = 0);
     virtual hsBool PreCondition(double time, float elapsed) { return true; }
-    UInt32 GetType() const { return fType; }
+    uint32_t GetType() const { return fType; }
 
 protected:
     virtual void IStart();
@@ -250,7 +250,7 @@ protected:
     float fFadeIn;                      // speed at which the animation fades in, in blend units per second
     float fFadeOut;                     // speed at which the animation fades out, in blend units per second
     float fMaxBlend;                    // the maximum blend the animation should reach
-    UInt32 fType;                       // (see the behaviorType enum)
+    uint32_t fType;                       // (see the behaviorType enum)
 
     bool fStartMsgSent;                 // flags to prevent multiple start and stop messages from being sent
     bool fStopMsgSent;

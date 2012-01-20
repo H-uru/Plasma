@@ -153,7 +153,7 @@ void hsEuler::GetMatrix44(hsMatrix44* mat)
 //
 // Convert matrix to Euler angles (in radians)
 //
-void hsEuler::SetFromMatrix44(const hsMatrix44* mat, UInt32 order)
+void hsEuler::SetFromMatrix44(const hsMatrix44* mat, uint32_t order)
 {
     int i,j,k,h,n,s,f;
 
@@ -203,7 +203,7 @@ void hsEuler::SetFromMatrix44(const hsMatrix44* mat, UInt32 order)
 //
 // Convert quaternion to Euler angles (in radians)
 //
-void hsEuler::SetFromQuat(const hsQuat* q, UInt32 order)
+void hsEuler::SetFromQuat(const hsQuat* q, uint32_t order)
 {
     hsMatrix44 mat;
     double Nq = q->fX*q->fX+q->fY*q->fY+q->fZ*q->fZ+q->fW*q->fW;

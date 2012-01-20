@@ -50,14 +50,14 @@ template <class T> class hsTempPointer {
 private:
     T**         fArray;
 
-    UInt32      fCurrBlock;
-    UInt32      fNumBlockAlloc;
+    uint32_t      fCurrBlock;
+    uint32_t      fNumBlockAlloc;
     
-    UInt32      fCurrElem;
-    UInt32      fNumElemAlloc;
+    uint32_t      fCurrElem;
+    uint32_t      fNumElemAlloc;
 
-    UInt32      fGrowBy; // def = 0, to double
-    UInt32      fMinSize; // def = 1
+    uint32_t      fGrowBy; // def = 0, to double
+    uint32_t      fMinSize; // def = 1
 
     hsTempPointer<T>& operator=(const hsTempPointer<T>&);
 
@@ -65,7 +65,7 @@ private:
     void        IGrow();
 
 public:
-    hsTempPointer(UInt32 minSize = 1, UInt32 growBy = 0);
+    hsTempPointer(uint32_t minSize = 1, uint32_t growBy = 0);
     ~hsTempPointer();
 
     void        Reset();
@@ -84,7 +84,7 @@ hsTempPointer<T>::~hsTempPointer()
 }
 
 template <class T>
-hsTempPointer<T>::hsTempPointer(UInt32 minSize, UInt32 growBy)
+hsTempPointer<T>::hsTempPointer(uint32_t minSize, uint32_t growBy)
 {
     fGrowBy = growBy;
     fMinSize = minSize;
@@ -105,9 +105,9 @@ void hsTempPointer<T>::IConsolidate()
 {
     hsAssert(fCurrBlock > 0, "Shouldn't consolidate when nothing to do");
 
-    UInt32 numUsed = fCurrBlock * fNumElemAlloc + fCurrElem;
+    uint32_t numUsed = fCurrBlock * fNumElemAlloc + fCurrElem;
 
-    UInt32 newSize = fNumElemAlloc;
+    uint32_t newSize = fNumElemAlloc;
     if( !fGrowBy )
     {
         while( newSize <= numUsed )
@@ -155,7 +155,7 @@ template <class T>
 T* hsTempPointer<T>::Array(int n)
 {
     // minSize (on constructor) should be greater than max n
-    hsDebugCode(hsThrowIfBadParam((UInt32)n > (UInt32)fNumElemAlloc);)
+    hsDebugCode(hsThrowIfBadParam((uint32_t)n > (uint32_t)fNumElemAlloc);)
     if( fCurrElem + n >= fNumElemAlloc )
         IGrow();
     int idx = fCurrElem;

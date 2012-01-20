@@ -114,7 +114,7 @@ hsBool plLayerAVI::IInit()
         return ISetFault("Can't get first frame");
     ISetSize(bmi->bmiHeader.biWidth, bmi->bmiHeader.biHeight);
 
-    Int32 endFrame = fAVIInfo->fAVIStreamInfo.dwLength-1;
+    int32_t endFrame = fAVIInfo->fAVIStreamInfo.dwLength-1;
     hsScalar length = float(endFrame) * float(fAVIInfo->fAVIStreamInfo.dwScale) 
                         / float(fAVIInfo->fAVIStreamInfo.dwRate);
     ISetLength(length);
@@ -123,14 +123,14 @@ hsBool plLayerAVI::IInit()
     return false;
 }
 
-Int32 plLayerAVI::ISecsToFrame(hsScalar secs)
+int32_t plLayerAVI::ISecsToFrame(hsScalar secs)
 {
 #if HS_BUILD_FOR_WIN32
     float timeScale = float(fAVIInfo->fAVIStreamInfo.dwRate) / float(fAVIInfo->fAVIStreamInfo.dwScale);
 #else
     float timeScale = 1.0f;
 #endif
-    return Int32(secs * timeScale + 0.5f);
+    return int32_t(secs * timeScale + 0.5f);
 }
 
 hsBool plLayerAVI::IGetCurrentFrame()
@@ -165,9 +165,9 @@ static hsBool ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* b)
 {
     hsAssert( b != nil, "nil mipmap passed to ICopySourceToTexture16()" );
 
-    UInt16* pSrc = (UInt16*)( bmi->bmiHeader.biSize + (BYTE*)bmi );
+    uint16_t* pSrc = (uint16_t*)( bmi->bmiHeader.biSize + (BYTE*)bmi );
 
-    UInt32* pix = (UInt32*)b->GetImage();
+    uint32_t* pix = (uint32_t*)b->GetImage();
     pix += b->GetWidth() * b->GetHeight();
 
     int width = bmi->bmiHeader.biWidth;
@@ -178,11 +178,11 @@ static hsBool ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* b)
     int i;
     for( i = 0; i < useHeight; i++ )
     {
-        UInt16* src = pSrc;
+        uint16_t* src = pSrc;
         pSrc += width;
 
         pix -= b->GetWidth();
-        UInt32* tPix = pix;
+        uint32_t* tPix = pix;
         int j;
         for( j = 0; j < useWidth; j++ )
         {

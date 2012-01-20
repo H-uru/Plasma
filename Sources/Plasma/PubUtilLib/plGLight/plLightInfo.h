@@ -104,7 +104,7 @@ protected:
         kVolEmpty       = 0x2,
         kVolZero        = 0x4
     };
-    UInt8                       fVolFlags;
+    uint8_t                       fVolFlags;
 
     hsBitVector                 fVisSet;
     hsBitVector                 fVisNot;
@@ -188,7 +188,7 @@ public:
     hsBool AffectsBound(const hsBounds3Ext& bnd) { return IGetIsect() ? IGetIsect()->Test(bnd) != kVolumeCulled : true; }
     void GetAffectedForced(const plSpaceTree* space, hsBitVector& list, hsBool charac);
     void GetAffected(const plSpaceTree* space, hsBitVector& list, hsBool charac);
-    const hsTArray<Int16>& GetAffected(plSpaceTree* space, const hsTArray<Int16>& visList, hsTArray<Int16>& litList, hsBool charac);
+    const hsTArray<int16_t>& GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, hsBool charac);
     hsBool InVisSet(const hsBitVector& visSet) const { return fVisSet.Overlap(visSet); }
     hsBool InVisNot(const hsBitVector& visNot) const { return fVisNot.Overlap(visNot); }
 
@@ -210,7 +210,7 @@ public:
     virtual const hsMatrix44& GetLightToWorld() const;
     virtual const hsMatrix44& GetWorldToLight() const;
 
-    virtual Int32   GetNumProperties() const { return kNumProps; }
+    virtual int32_t   GetNumProperties() const { return kNumProps; }
 
     const plSoftVolume* GetSoftVolume() const { return fSoftVolume; }
 
@@ -238,7 +238,7 @@ public:
     void                SetLocalToLight(const hsMatrix44& l2lt, const hsMatrix44& lt2l);
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo) { return addTo; }
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) { return addTo; }
 
 };
 
@@ -302,7 +302,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 };
 
 class plOmniLightInfo : public plLightInfo
@@ -351,7 +351,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 
 };
 
@@ -398,7 +398,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 
 };
 

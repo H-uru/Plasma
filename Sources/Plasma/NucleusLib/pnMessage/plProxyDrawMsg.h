@@ -56,12 +56,12 @@ class hsResMgr;
 class plProxyDrawMsg : public plMessage
 {
 protected:
-    UInt16      fProxyFlags;
+    uint16_t      fProxyFlags;
 
 public:
     plProxyDrawMsg();
-    plProxyDrawMsg(UInt16 flags); // for broadcast
-    plProxyDrawMsg(plKey &rcv, UInt16 flags); // send yourself an ack
+    plProxyDrawMsg(uint16_t flags); // for broadcast
+    plProxyDrawMsg(plKey &rcv, uint16_t flags); // send yourself an ack
     ~plProxyDrawMsg();
 
     CLASSNAME_REGISTER( plProxyDrawMsg );
@@ -88,8 +88,8 @@ public:
                         | kCamera
     };
 
-    UInt16  GetProxyFlags() const { return fProxyFlags; }
-    void    SetProxyFlags(UInt16 f) { fProxyFlags = f; }
+    uint16_t  GetProxyFlags() const { return fProxyFlags; }
+    void    SetProxyFlags(uint16_t f) { fProxyFlags = f; }
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

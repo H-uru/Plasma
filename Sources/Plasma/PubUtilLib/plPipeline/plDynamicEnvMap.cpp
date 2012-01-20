@@ -87,7 +87,7 @@ plDynamicEnvMap::plDynamicEnvMap()
     SetPosition(fPos);
 }
 
-plDynamicEnvMap::plDynamicEnvMap(UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth, UInt8 sDepth)
+plDynamicEnvMap::plDynamicEnvMap(uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth, uint8_t sDepth)
 :   fPos(0,0,0),
     fHither(0.3f),
     fYon(0.f), // yon < hither means ignore and use current settings
@@ -183,7 +183,7 @@ void plDynamicEnvMap::SetRefreshRate(hsScalar secs)
 
 void plDynamicEnvMap::ISetupRenderRequests()
 {
-    UInt32 renderState 
+    uint32_t renderState 
         = plPipeline::kRenderNormal
         | plPipeline::kRenderClearColor
         | plPipeline::kRenderClearDepth;
@@ -415,7 +415,7 @@ void plDynamicEnvMap::AddVisRegion(plVisRegion* reg)
 void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Read(s, mgr);
-    UInt32 sz = plCubicRenderTarget::Read(s);
+    uint32_t sz = plCubicRenderTarget::Read(s);
 
     fPos.Read(s);
     fHither = s->ReadLEScalar();
@@ -455,7 +455,7 @@ void plDynamicEnvMap::Write(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    UInt32 sz = plCubicRenderTarget::Write(s);
+    uint32_t sz = plCubicRenderTarget::Write(s);
 
     fPos.Write(s);
     s->WriteLEScalar(fHither);
@@ -484,7 +484,7 @@ void plDynamicEnvMap::Write(hsStream* s, hsResMgr* mgr)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-UInt8 plDynamicCamMap::fFlags = kReflectionEnabled | kReflectionCapable;
+uint8_t plDynamicCamMap::fFlags = kReflectionEnabled | kReflectionCapable;
 
 plDynamicCamMap::plDynamicCamMap() :
 fHither(0.3f),
@@ -502,7 +502,7 @@ fDisableTexture(nil)
     fReqMsg = TRACKED_NEW plRenderRequestMsg(nil, &fReq);
 }
 
-plDynamicCamMap::plDynamicCamMap(UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth, UInt8 sDepth) :
+plDynamicCamMap::plDynamicCamMap(uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth, uint8_t sDepth) :
 fHither(0.3f),
 fYon(-1.f),
 fFogStart(-1.f),
@@ -919,7 +919,7 @@ void plDynamicCamMap::Read(hsStream* s, hsResMgr* mgr)
 
     mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefDisableTexture), plRefFlags::kActiveRef);
     
-    UInt8 numLayers = s->ReadByte();
+    uint8_t numLayers = s->ReadByte();
     for (i = 0; i < numLayers; i++)
     {
         mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatLayer), plRefFlags::kPassiveRef);

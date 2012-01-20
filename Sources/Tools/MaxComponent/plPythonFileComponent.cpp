@@ -442,7 +442,7 @@ hsBool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         switch (param->GetParamType())
         {
         case plAutoUIParam::kTypeBool:
-            pyParam.SetToBoolean(param->GetBool(pb));
+            pyParam.SetTobool(param->GetBool(pb));
             mod->AddParameter(pyParam);
             break;
 

@@ -249,7 +249,7 @@ plVolumeCullResult plConeIsect::Test(const hsBounds3Ext& bnd) const
 
 hsScalar plConeIsect::Test(const hsPoint3& pos) const
 {
-    UInt32 clampFlags = fCapped ? plClosest::kClamp : plClosest::kClampLower;
+    uint32_t clampFlags = fCapped ? plClosest::kClamp : plClosest::kClampLower;
     hsPoint3 cp;
 
     plClosest::PointOnLine(pos,
@@ -777,7 +777,7 @@ hsScalar plConvexIsect::Test(const hsPoint3& pos) const
 
 void plConvexIsect::Read(hsStream* s, hsResMgr* mgr)
 {
-    Int16 n = s->ReadLE16();
+    int16_t n = s->ReadLE16();
 
     fPlanes.SetCount(n);
     int i;

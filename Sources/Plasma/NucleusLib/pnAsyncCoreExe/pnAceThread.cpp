@@ -107,7 +107,7 @@ void ThreadDestroy (unsigned exitThreadWaitMs) {
 void * AsyncThreadCreate (
     FAsyncThreadProc    threadProc,
     void *              argument,
-    const wchar         name[]
+    const wchar_t         name[]
 ) {
     AsyncThread * thread    = NEW(AsyncThread);
     thread->proc            = threadProc;

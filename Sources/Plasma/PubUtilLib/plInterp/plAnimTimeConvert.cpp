@@ -362,7 +362,7 @@ plAnimTimeConvert& plAnimTimeConvert::IProcessStateChange(double worldTime, hsSc
 
     state->fStartWorldTime = fLastStateChange;
     state->fStartAnimTime = (animTime < 0 ? WorldToAnimTimeNoUpdate(fLastStateChange) : animTime);
-    state->fFlags = (UInt8)fFlags;
+    state->fFlags = (uint8_t)fFlags;
     state->fBegin = fBegin;
     state->fEnd = fEnd;
     state->fLoopBegin = fLoopBegin;
@@ -395,7 +395,7 @@ void plAnimTimeConvert::IFlushOldStates()
 {
     plATCState *state;
     plATCStateList::const_iterator i = fStates.begin();
-    UInt32 count = 0;
+    uint32_t count = 0;
 
     for (; i != fStates.end(); i++)
     {
@@ -446,7 +446,7 @@ void plAnimTimeConvert::SetOwner(plSynchedObject* o)
     fOwner = o; 
 }
 
-hsBool plAnimTimeConvert::IIsStoppedAt(const double &wSecs, const UInt32 &flags, 
+hsBool plAnimTimeConvert::IIsStoppedAt(const double &wSecs, const uint32_t &flags, 
                                        const plATCEaseCurve *curve) const       
 {
     if (flags & kStopped)
@@ -743,7 +743,7 @@ void plAnimTimeConvert::SetCurrentAnimTime(hsScalar s, hsBool jump /* = false */
     IProcessStateChange(hsTimer::GetSysSeconds(), fCurrentAnimTime);
 }
 
-void plAnimTimeConvert::SetEase(hsBool easeIn, UInt8 type, hsScalar minLength, hsScalar maxLength, hsScalar normLength) 
+void plAnimTimeConvert::SetEase(hsBool easeIn, uint8_t type, hsScalar minLength, hsScalar maxLength, hsScalar normLength) 
 { 
     if (easeIn)
     {
@@ -889,7 +889,7 @@ void plAnimTimeConvert::Read(hsStream* s, hsResMgr* mgr)
 {
     plCreatable::Read(s, mgr);
 
-    fFlags = (UInt16)(s->ReadLE32());
+    fFlags = (uint16_t)(s->ReadLE32());
 
     fBegin = fInitialBegin = s->ReadLEScalar();
     fEnd = fInitialEnd = s->ReadLEScalar();
@@ -1350,7 +1350,7 @@ void plATCState::Read(hsStream *s, hsResMgr *mgr)
     fStartWorldTime = s->ReadLEDouble();
     fStartAnimTime = s->ReadLEScalar();
 
-    fFlags = (UInt8)(s->ReadLE32());
+    fFlags = (uint8_t)(s->ReadLE32());
     fEnd = s->ReadLEScalar();
     fLoopBegin = s->ReadLEScalar();
     fLoopEnd = s->ReadLEScalar();

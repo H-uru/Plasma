@@ -211,7 +211,7 @@ void plGrassShaderMod::Read(hsStream *stream, hsResMgr *mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
 }
 
-hsBool plGrassShaderMod::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plGrassShaderMod::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     if (fVShader)
     {

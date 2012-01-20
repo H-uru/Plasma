@@ -146,7 +146,7 @@ public:
     };
 
     static const char *kUVStrings[];
-    static const UInt8 kMaxUVSrc;
+    static const uint8_t kMaxUVSrc;
 
     // Pure virtual accessors for the various bitmap related elements
     virtual Bitmap *GetMaxBitmap(int index = 0) { hsAssert(false, "Function call not valid on this type of layer."); return nil; }

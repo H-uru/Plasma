@@ -61,7 +61,7 @@ plDrawInterface::~plDrawInterface()
 
 }
 
-void plDrawInterface::SetDrawableMeshIndex( UInt8 which, UInt32 index ) 
+void plDrawInterface::SetDrawableMeshIndex( uint8_t which, uint32_t index ) 
 {
     ICheckDrawableIndex(which);
 
@@ -196,19 +196,19 @@ void    plDrawInterface::ReleaseData( void )
     int i;
     for( i = 0; i < fDrawables.GetCount(); i++ )
     {
-        if( fDrawables[i] && (fDrawableIndices[i] != UInt32(-1)) )
+        if( fDrawables[i] && (fDrawableIndices[i] != uint32_t(-1)) )
         {
             plDISpansMsg* diMsg = TRACKED_NEW plDISpansMsg(fDrawables[i]->GetKey(), plDISpansMsg::kRemovingSpan, fDrawableIndices[i], 0);
             diMsg->SetSender(GetKey());
             diMsg->Send();
         }
-        //fDrawableIndices[i] = UInt32(-1);
+        //fDrawableIndices[i] = uint32_t(-1);
         fDrawables.Reset();
         fDrawableIndices.Reset();
     }
 }
 
-void plDrawInterface::ICheckDrawableIndex(UInt8 which)
+void plDrawInterface::ICheckDrawableIndex(uint8_t which)
 {
     if( which >= fDrawableIndices.GetCount() )
     {
@@ -218,11 +218,11 @@ void plDrawInterface::ICheckDrawableIndex(UInt8 which)
         fDrawableIndices.ExpandAndZero(which+1);
         int i;
         for( i = n; i <= which; i++ )
-            fDrawableIndices[i] = UInt32(-1);
+            fDrawableIndices[i] = uint32_t(-1);
     }
 }
 
-void plDrawInterface::ISetDrawable(UInt8 which, plDrawable* dr)
+void plDrawInterface::ISetDrawable(uint8_t which, plDrawable* dr)
 {
     ICheckDrawableIndex(which);
     fDrawables[which] = dr;
@@ -235,7 +235,7 @@ void plDrawInterface::ISetDrawable(UInt8 which, plDrawable* dr)
     ISetVisRegions(which);
     
 #ifdef HS_DEBUGGING
-    if( fDrawableIndices[which] != (UInt32)-1 )
+    if( fDrawableIndices[which] != (uint32_t)-1 )
     {
         plDISpansMsg* diMsg = TRACKED_NEW plDISpansMsg(dr->GetKey(), plDISpansMsg::kAddingSpan, fDrawableIndices[which], 0);
         diMsg->SetSender(GetKey());
@@ -250,7 +250,7 @@ void plDrawInterface::IRemoveDrawable(plDrawable *dr)
     if( fDrawables.kMissingIndex != idx )
     {
         fDrawables[idx] = nil;
-        fDrawableIndices[idx] = UInt32(-1);
+        fDrawableIndices[idx] = uint32_t(-1);
     }
     else
     {
@@ -263,7 +263,7 @@ void plDrawInterface::ISetVisRegion(hsKeyedObject* reg, hsBool on)
     int i;
     for( i = 0; i < fDrawables.GetCount(); i++ )
     {
-        if( fDrawables[i] && (fDrawableIndices[i] != UInt32(-1)) )
+        if( fDrawables[i] && (fDrawableIndices[i] != uint32_t(-1)) )
         {
             fDrawables[i]->SetDISpanVisSet(fDrawableIndices[i], reg, on);
         }
@@ -284,7 +284,7 @@ void plDrawInterface::ISetVisRegion(hsKeyedObject* reg, hsBool on)
 
 void plDrawInterface::ISetVisRegions(int iDraw)
 {
-    if( fDrawables[iDraw] && (fDrawableIndices[iDraw] != UInt32(-1)) )
+    if( fDrawables[iDraw] && (fDrawableIndices[iDraw] != uint32_t(-1)) )
     {
         int i;
         for( i = 0; i < fRegions.GetCount(); i++ )
@@ -295,7 +295,7 @@ void plDrawInterface::ISetVisRegions(int iDraw)
 }
 
 // Export only. Use messages for runtime
-void plDrawInterface::SetDrawable(UInt8 which, plDrawable *dr)
+void plDrawInterface::SetDrawable(uint8_t which, plDrawable *dr)
 {
     if( dr )
     {
@@ -325,7 +325,7 @@ hsBool plDrawInterface::MsgReceive(plMessage* msg)
             }
             else
             {
-                ISetDrawable((UInt8)intRefMsg->fWhich, plDrawable::ConvertNoRef(intRefMsg->GetRef()));
+                ISetDrawable((uint8_t)intRefMsg->fWhich, plDrawable::ConvertNoRef(intRefMsg->GetRef()));
             }
             return true;
         default:
@@ -359,7 +359,7 @@ hsBool plDrawInterface::MsgReceive(plMessage* msg)
     return plObjInterface::MsgReceive(msg);
 }
 
-void    plDrawInterface::SetUpForParticleSystem( UInt32 maxNumEmitters, UInt32 maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights )
+void    plDrawInterface::SetUpForParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights )
 {
     hsAssert( fDrawables[0] != nil, "No drawable to use for particle system!" );
     SetDrawableMeshIndex( 0, fDrawables[0]->CreateParticleSystem( maxNumEmitters, maxNumParticles, material ) );

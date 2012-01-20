@@ -83,7 +83,7 @@ char *hsScalarToStr(hsScalar s)
     #if HS_CAN_USE_FLOAT
         sprintf(hsStrBuf, "%f", hsScalarToFloat(s));
     #else
-        sprintf(hsStrBuf, "%d:%lu", hsFixedToInt(s), (UInt16)s);
+        sprintf(hsStrBuf, "%d:%lu", hsFixedToInt(s), (uint16_t)s);
     #endif
     return hsStrBuf;
 }
@@ -96,7 +96,7 @@ int hsMessageBoxWithOwner(void * owner, const char message[], const char caption
         return hsMBoxOk;
 
 #if HS_BUILD_FOR_WIN32
-    UInt32 flags = 0;
+    uint32_t flags = 0;
 
     if (kind == hsMessageBoxNormal)
         flags |= MB_OK;
@@ -150,7 +150,7 @@ int hsMessageBoxWithOwner(void * owner, const wchar_t message[], const wchar_t c
         return hsMBoxOk;
 
 #if HS_BUILD_FOR_WIN32
-    UInt32 flags = 0;
+    uint32_t flags = 0;
     
     if (kind == hsMessageBoxNormal)
         flags |= MB_OK;
@@ -256,7 +256,7 @@ char* hsStrcpy(char dst[], const char src[])
             return dst;
         }
 
-        Int32 i;
+        int32_t i;
         for (i = 0; src[i] != 0; i++)
             dst[i] = src[i];
         dst[i] = 0;
@@ -312,10 +312,10 @@ void hsStrLower(char *s)
     }
 }
 
-char* hsP2CString(const UInt8 pstring[], char cstring[])
+char* hsP2CString(const uint8_t pstring[], char cstring[])
 {
     char*        cstr = cstring;
-    const UInt8* stop = &pstring[1] + pstring[0];
+    const uint8_t* stop = &pstring[1] + pstring[0];
     
     pstring += 1;   //  skip length byte
     while (pstring < stop)
@@ -324,7 +324,7 @@ char* hsP2CString(const UInt8 pstring[], char cstring[])
     return cstring;
 }
 
-UInt8* hsC2PString(const char cstring[], UInt8 pstring[])
+uint8_t* hsC2PString(const char cstring[], uint8_t pstring[])
 {
     int i;
 
@@ -394,7 +394,7 @@ void hsCPathToMacPath(char* dst, char* fname)
     else if(strstr(fname, "\\\\"))
     {
         prefix = 0;
-        offset = 2;         // copy fname from 2-bytes in. This removes 
+        offset = 2;         // copy fname from 2-Bytes in. This removes 
                             // the first two chars...
     }
 
@@ -423,7 +423,7 @@ int hsRemove(const char * fname)
     
 }
 
-UInt32 hsPhysicalMemory()
+uint32_t hsPhysicalMemory()
 {
 #define HS_ONE_MEGABYTE 1048576 // 1024 * 1024
 
@@ -436,7 +436,7 @@ UInt32 hsPhysicalMemory()
 
 MemSpec hsMemorySpec()
 {
-    UInt32 mem = hsPhysicalMemory();
+    uint32_t mem = hsPhysicalMemory();
 
     // Currently adding a little margin of error here
     // due to the fact that Windows doesn't seem to

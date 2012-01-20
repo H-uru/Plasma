@@ -92,7 +92,7 @@ AUTO_INIT_FUNC(InitSrvRightsIni) {
 }
 
 //============================================================================
-static EServerRights GetServerRightsFromString(const wchar string[]) {
+static EServerRights GetServerRightsFromString(const wchar_t string[]) {
     if (StrCmpI(string, L"Server") == 0)
         return kSrvRightsServer;
     else if (StrCmpI(string, L"Basic") == 0)
@@ -173,7 +173,7 @@ void SrvIniParseServerRights (Ini * ini) {
 
     // add ini file address blocks
     while (value) {
-        wchar valStr[20];
+        wchar_t valStr[20];
         NetAddressNode start;
         NetAddressNode end;
         EServerRights rights;

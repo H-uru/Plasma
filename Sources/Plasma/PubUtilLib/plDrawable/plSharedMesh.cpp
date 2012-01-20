@@ -59,7 +59,7 @@ plSharedMesh::~plSharedMesh()
         delete fSpans.Pop();
 }
 /*
-void plSharedMesh::CreateInstance(plSceneObject *so, UInt8 boneIndex)
+void plSharedMesh::CreateInstance(plSceneObject *so, uint8_t boneIndex)
 {   
 plDrawInterface *di = so->GetVolatileDrawInterface();
 

@@ -133,7 +133,7 @@ plPlasmaMAXLayer    *plPlasmaMAXLayer::GetPlasmaMAXLayer( Texmap *map )
 
 class plLayerTargetContainer : public hsKeyedObject
 {
-    static UInt32       fKeyCount;
+    static uint32_t       fKeyCount;
 
     public:
         hsTArray<plLayerInterface *>    fLayers;
@@ -162,7 +162,7 @@ class plLayerTargetContainer : public hsKeyedObject
         }
 };
 
-UInt32  plLayerTargetContainer::fKeyCount = 0;
+uint32_t  plLayerTargetContainer::fKeyCount = 0;
 
 
 void    plPlasmaMAXLayer::IAddConversionTarget( plLayerInterface *target )

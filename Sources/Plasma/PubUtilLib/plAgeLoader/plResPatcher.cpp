@@ -66,7 +66,7 @@ public:
         fIsZipped = wcscmp(plFileUtils::GetFileExt(reqFile), L"gz") == 0;
     }
 
-    UInt32 Write(UInt32 count, const void* buf)
+    uint32_t Write(uint32_t count, const void* buf)
     {
         fProgress->Increment((hsScalar)count);
         if (fIsZipped)
@@ -116,7 +116,7 @@ static void ManifestDownloaded(
     void*                         param, 
     const wchar_t                 group[], 
     const NetCliFileManifestEntry manifest[], 
-    UInt32                        entryCount)
+    uint32_t                        entryCount)
 {
     plResPatcher* patcher = (plResPatcher*)param;
     char* name = hsWStringToString(group);
@@ -129,7 +129,7 @@ static void ManifestDownloaded(
         return;
     }
 
-    for (UInt32 i = 0; i < entryCount; ++i)
+    for (uint32_t i = 0; i < entryCount; ++i)
     {
         const NetCliFileManifestEntry mfs = manifest[i];
         char* fileName = hsWStringToString(mfs.clientName);
@@ -280,7 +280,7 @@ void plResPatcher::Start()
 
 void PatcherLog(PatcherLogType type, const char* format, ...)
 {
-    UInt32 color = 0;
+    uint32_t color = 0;
     switch (type)
     {
     case kHeader:       color = plStatusLog::kWhite;    break;

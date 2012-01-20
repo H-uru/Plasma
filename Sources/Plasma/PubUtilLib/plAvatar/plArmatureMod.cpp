@@ -184,7 +184,7 @@ void plArmatureModBase::RemoveTarget(plSceneObject* so)
     plAGMasterMod::RemoveTarget(so);
 }
 
-hsBool plArmatureModBase::IEval(double time, hsScalar elapsed, UInt32 dirty)
+hsBool plArmatureModBase::IEval(double time, hsScalar elapsed, uint32_t dirty)
 {
     if (IsFinal())
     {
@@ -507,12 +507,12 @@ int plArmatureModBase::AppendBoneVec(plKeyVector *boneVec)
     return fUnusedBones.size() - 1;
 }
 
-UInt8 plArmatureModBase::GetNumLOD() const
+uint8_t plArmatureModBase::GetNumLOD() const
 {
     return fMeshKeys.size();
 }
 
-void plArmatureModBase::EnablePhysics(hsBool status, UInt16 reason /* = kDisableReasonUnknown */)
+void plArmatureModBase::EnablePhysics(hsBool status, uint16_t reason /* = kDisableReasonUnknown */)
 {
     if (status)
         fDisabledPhysics &= ~reason;
@@ -538,7 +538,7 @@ void plArmatureModBase::EnablePhysicsKinematic(hsBool status)
         fController->Kinematic(status);
 }
 
-void plArmatureModBase::EnableDrawing(hsBool status, UInt16 reason /* = kDisableReasonUnknown */)
+void plArmatureModBase::EnableDrawing(hsBool status, uint16_t reason /* = kDisableReasonUnknown */)
 {
     hsBool oldStatus = !fDisabledDraw;
     if (status)
@@ -758,7 +758,7 @@ const plSceneObject *plArmatureMod::FindBone(const char * name) const
     return result;
 }
 
-const plSceneObject *plArmatureMod::FindBone(UInt32 id) const
+const plSceneObject *plArmatureMod::FindBone(uint32_t id) const
 {
     if(fBoneMap)
         return fBoneMap->FindBone(id);
@@ -766,7 +766,7 @@ const plSceneObject *plArmatureMod::FindBone(UInt32 id) const
         return nil;
 }
 
-void plArmatureMod::AddBoneMapping(UInt32 id, const plSceneObject *bone)
+void plArmatureMod::AddBoneMapping(uint32_t id, const plSceneObject *bone)
 {
     if(!fBoneMap)
         fBoneMap = TRACKED_NEW plAvBoneMap();
@@ -932,7 +932,7 @@ void plArmatureMod::UnRegisterForBehaviorNotify(plKey key)
     fNotifyKeys.RemoveItem(key);
 }
 
-void plArmatureMod::IFireBehaviorNotify(UInt32 type, hsBool behaviorStart)
+void plArmatureMod::IFireBehaviorNotify(uint32_t type, hsBool behaviorStart)
 {
     if (fNotifyKeys.GetCount() > 0)
     {
@@ -1495,7 +1495,7 @@ hsBool plArmatureMod::IHandleControlMsg(plControlEventMsg* pMsg)
 void plArmatureMod::IHandleInputStateMsg(plAvatarInputStateMsg *msg)
 {
     int i;
-    UInt32 curBit;
+    uint32_t curBit;
     for (i = 0, curBit = 0x1; i < plAvatarInputStateMsg::fMapSize; i++, curBit <<= 1)
     {
         SetInputFlag(msg->fCodeMap[i], msg->fState & curBit);
@@ -1503,14 +1503,14 @@ void plArmatureMod::IHandleInputStateMsg(plAvatarInputStateMsg *msg)
     
 }
 
-void plArmatureMod::SynchInputState(UInt32 rcvID /* = kInvalidPlayerID */)
+void plArmatureMod::SynchInputState(uint32_t rcvID /* = kInvalidPlayerID */)
 {
     if (plAvatarMgr::GetInstance()->GetLocalAvatar() != this)
         return;
     
     plAvatarInputStateMsg *msg = TRACKED_NEW plAvatarInputStateMsg();
     int i;
-    UInt32 curBit;
+    uint32_t curBit;
     for (i = 0, curBit = 0x1; i < plAvatarInputStateMsg::fMapSize; i++, curBit <<= 1)
     {
         if (GetInputFlag(msg->fCodeMap[i]))
@@ -1548,7 +1548,7 @@ void plArmatureMod::ILinkToPersonalAge()
     pMsg->Send();   
 }
 
-hsBool plArmatureMod::IEval(double time, hsScalar elapsed, UInt32 dirty)
+hsBool plArmatureMod::IEval(double time, hsScalar elapsed, uint32_t dirty)
 {
     if (IsFinal())
     {
@@ -1843,7 +1843,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarStealthModeMsg::Index(), GetKey());
 }
 
-hsBool plArmatureMod::DirtySynchState(const char* SDLStateName, UInt32 synchFlags)
+hsBool plArmatureMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
 {
     // skip requests to synch non-avatar state
     if (SDLStateName && stricmp(SDLStateName, kSDLAvatar))
@@ -1862,7 +1862,7 @@ hsBool plArmatureMod::DirtySynchState(const char* SDLStateName, UInt32 synchFlag
     return false;
 }
 
-hsBool plArmatureMod::DirtyPhysicalSynchState(UInt32 synchFlags)
+hsBool plArmatureMod::DirtyPhysicalSynchState(uint32_t synchFlags)
 {
     synchFlags |= plSynchedObject::kForceFullSend;  // TEMP
     synchFlags |= plSynchedObject::kBCastToClients;
@@ -1931,7 +1931,7 @@ void plArmatureMod::ICustomizeApplicator()
     }       
 }   
 
-const plSceneObject *plArmatureMod::GetClothingSO(UInt8 lod) const 
+const plSceneObject *plArmatureMod::GetClothingSO(uint8_t lod) const 
 {
     if (fClothToSOMap.GetCount() <= lod)
         return nil;
@@ -1947,7 +1947,7 @@ void plArmatureMod::NetworkSynch(double timeNow, int force)
     {
         // make sure state change gets sent out over the network
         // avatar state should use relevance region filtering
-        UInt32 flags = kBCastToClients | kUseRelevanceRegions;
+        uint32_t flags = kBCastToClients | kUseRelevanceRegions;
         if (force)
             flags |= kForceFullSend;
         DirtyPhysicalSynchState(flags);
@@ -2094,7 +2094,7 @@ int plArmatureMod::GetBrainCount()
     return fBrains.size();
 }
 
-plArmatureBrain * plArmatureMod::FindBrainByClass(UInt32 classID) const
+plArmatureBrain * plArmatureMod::FindBrainByClass(uint32_t classID) const
 {
     int n = fBrains.size();
 
@@ -2474,10 +2474,10 @@ const char *plArmatureMod::GetAnimRootName(const char *name)
     return name + fAnimationPrefix.length();
 }
 
-Int8 plArmatureMod::AnimNameToIndex(const char *name)
+int8_t plArmatureMod::AnimNameToIndex(const char *name)
 {
     const char *rootName = GetAnimRootName(name);
-    Int8 result = -1;
+    int8_t result = -1;
     
     if (!strcmp(rootName, "Walk") || !strcmp(rootName, "WalkBack") ||
         !strcmp(rootName, "LadderDown") || !strcmp(rootName, "LadderDownOn") ||
@@ -2655,7 +2655,7 @@ int plArmatureMod::RefreshDebugDisplay()
     plDebugText     &debugTxt = plDebugText::Instance();
     char            strBuf[ 2048 ];
     int             lineHeight = debugTxt.GetFontSize() + 4;
-    UInt32          scrnWidth, scrnHeight;
+    uint32_t          scrnWidth, scrnHeight;
 
     debugTxt.GetScreenSize( &scrnWidth, &scrnHeight );
     int y = 10;
@@ -2784,7 +2784,7 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *str
 class plAvBoneMap::BoneMapImp 
 {
 public: 
-    typedef std::map<UInt32, const plSceneObject *> id2SceneObjectMap;
+    typedef std::map<uint32_t, const plSceneObject *> id2SceneObjectMap;
     id2SceneObjectMap fMap;
 };
 
@@ -2798,7 +2798,7 @@ plAvBoneMap::~plAvBoneMap()
     delete fImp;
 }
 
-const plSceneObject * plAvBoneMap::FindBone(UInt32 boneID)
+const plSceneObject * plAvBoneMap::FindBone(uint32_t boneID)
 {
     BoneMapImp::id2SceneObjectMap::iterator i = fImp->fMap.find(boneID);
     const plSceneObject *result = nil;
@@ -2810,7 +2810,7 @@ const plSceneObject * plAvBoneMap::FindBone(UInt32 boneID)
     return result;
 }
 
-void plAvBoneMap::AddBoneMapping(UInt32 boneID, const plSceneObject *SO)
+void plAvBoneMap::AddBoneMapping(uint32_t boneID, const plSceneObject *SO)
 {
     (fImp->fMap)[boneID] = SO;
 }

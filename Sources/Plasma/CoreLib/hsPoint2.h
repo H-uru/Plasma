@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsScalar.h"
 
 #define HS_POINT2_NAME  hsIntPoint2
-#define HS_POINT2_TYPE      Int32
+#define HS_POINT2_TYPE      int32_t
 #include "HS_POINT2.inc"
 };
 

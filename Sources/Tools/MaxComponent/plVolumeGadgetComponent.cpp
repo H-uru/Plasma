@@ -314,7 +314,7 @@ hsBool plVolumeGadgetComponent::SetupProperties(plMaxNode *node, plErrorMsg *pEr
 //  physProps->SetAllowLOS(true, node, pErrMsg);
     physProps->SetGroup(plSimDefs::kGroupDetector, node, pErrMsg);
 
-    UInt32 reportOn = fCompPB->GetInt(kVolumeReportOn);
+    uint32_t reportOn = fCompPB->GetInt(kVolumeReportOn);
     physProps->SetReportGroup(reportOn, node, pErrMsg);
 
     return true;

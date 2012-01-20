@@ -68,7 +68,7 @@ bool Srv2LogValidateConnect (
     const Srv2Log_ConnData & connect = * (const Srv2Log_ConnData *) listen->buffer;
 
     // Validate message size
-    const unsigned kMinStructSize = sizeof(dword) * 3;
+    const unsigned kMinStructSize = sizeof(uint32_t) * 3;
     if (listen->bytes < kMinStructSize)
         return false;
     if (listen->bytes < connect.dataBytes)

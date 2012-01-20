@@ -175,7 +175,7 @@ void plNPCSpawnMod::Write(hsStream *stream, hsResMgr *mgr)
 
 // IEVAL
 // attack of the bogons
-hsBool plNPCSpawnMod::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plNPCSpawnMod::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     return true;
 }

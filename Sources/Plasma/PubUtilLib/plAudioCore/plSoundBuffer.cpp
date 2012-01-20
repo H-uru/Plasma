@@ -166,7 +166,7 @@ plSoundBuffer::plSoundBuffer()
     IInitBuffer();
 }
 
-plSoundBuffer::plSoundBuffer( const char *fileName, UInt32 flags ) 
+plSoundBuffer::plSoundBuffer( const char *fileName, uint32_t flags ) 
 {
     IInitBuffer();
     SetFileName( fileName );
@@ -237,7 +237,7 @@ void    plSoundBuffer::Read( hsStream *s, hsResMgr *mgr )
     fValid = false;
     if( !( fFlags & kIsExternal ) )
     {
-        fData = TRACKED_NEW UInt8[ fDataLength ];
+        fData = TRACKED_NEW uint8_t[ fDataLength ];
         if( fData == nil )
             fFlags |= kIsExternal;
         else
@@ -360,7 +360,7 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::AsyncLoad(plAudioFileReader::Stream
         fStreamType = type;
         if(fData == nil )
         {
-            fData = TRACKED_NEW UInt8[ fAsyncLoadLength ? fAsyncLoadLength : fDataLength ];
+            fData = TRACKED_NEW uint8_t[ fAsyncLoadLength ? fAsyncLoadLength : fDataLength ];
             if( fData == nil )
                 return kError;
         }
@@ -418,9 +418,9 @@ void    plSoundBuffer::UnLoad( void )
 
 //// IRoundDataPos ///////////////////////////////////////////////////////////
 
-void    plSoundBuffer::RoundDataPos( UInt32 &pos )
+void    plSoundBuffer::RoundDataPos( uint32_t &pos )
 {
-    UInt32 extra = pos & ( fHeader.fBlockAlign - 1 );
+    uint32_t extra = pos & ( fHeader.fBlockAlign - 1 );
     pos -= extra;
 }
 
@@ -457,7 +457,7 @@ void plSoundBuffer::SetLoaded(bool loaded)
 
 //// SetInternalData /////////////////////////////////////////////////////////
 
-void    plSoundBuffer::SetInternalData( plWAVHeader &header, UInt32 length, UInt8 *data )
+void    plSoundBuffer::SetInternalData( plWAVHeader &header, uint32_t length, uint8_t *data )
 {
     if(fLoading) return;
     fFileName = nil;
@@ -465,7 +465,7 @@ void    plSoundBuffer::SetInternalData( plWAVHeader &header, UInt32 length, UInt
     fFlags = 0;
 
     fDataLength = length;
-    fData = TRACKED_NEW UInt8[ length ];
+    fData = TRACKED_NEW uint8_t[ length ];
     memcpy( fData, data, length );
     
     fValid = true;
@@ -477,7 +477,7 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::EnsureInternal()
 {   
     if( fData == nil )
     {
-        fData = TRACKED_NEW UInt8[fDataLength ];
+        fData = TRACKED_NEW uint8_t[fDataLength ];
         if( fData == nil )
             return kError;
     }

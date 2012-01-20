@@ -59,7 +59,7 @@ public:
     CLASSNAME_REGISTER( plFadeOpacityLay );
     GETINTERFACE_ANY( plFadeOpacityLay, plLayerInterface );
 
-    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
 
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);

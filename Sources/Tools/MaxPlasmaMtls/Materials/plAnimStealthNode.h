@@ -206,17 +206,17 @@ public:
     const char  *GetLoopName( void ) const;
     void        SetLoop( bool b, const char *name );
 
-    UInt8       GetEaseInType( void ) const;
+    uint8_t       GetEaseInType( void ) const;
     hsScalar    GetEaseInLength( void ) const;
     hsScalar    GetEaseInMin( void ) const;
     hsScalar    GetEaseInMax( void ) const;
-    void        SetEaseIn( UInt8 type, hsScalar length, hsScalar min, hsScalar max );
+    void        SetEaseIn( uint8_t type, hsScalar length, hsScalar min, hsScalar max );
 
-    UInt8       GetEaseOutType( void ) const;
+    uint8_t       GetEaseOutType( void ) const;
     hsScalar    GetEaseOutLength( void ) const;
     hsScalar    GetEaseOutMin( void ) const;
     hsScalar    GetEaseOutMax( void ) const;
-    void        SetEaseOut( UInt8 type, hsScalar length, hsScalar min, hsScalar max );
+    void        SetEaseOut( uint8_t type, hsScalar length, hsScalar min, hsScalar max );
 
     // Conversion stuff
     void        GetAllStopPoints( hsTArray<hsScalar> &out );

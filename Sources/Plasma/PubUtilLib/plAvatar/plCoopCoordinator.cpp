@@ -95,7 +95,7 @@ plCoopCoordinator::plCoopCoordinator()
 plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
                                      plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
                                      const char *synchBone,
-                                     UInt32 hostOfferStage, UInt32 guestAcceptStage,
+                                     uint32_t hostOfferStage, uint32_t guestAcceptStage,
                                      plMessage *guestAcceptMsg,
                                      bool autoStartGuest)
 : fHostKey(host),
@@ -168,7 +168,7 @@ hsBool plCoopCoordinator::MsgReceive(plMessage *msg)
         if(mtevt)
         {
             int stageNum = mtevt->fStage;
-            UInt32 stageState = mtevt->fEvent;
+            uint32_t stageState = mtevt->fEvent;
 
             plKey noteSender = notify->GetSender();
             bool isFromHost = (noteSender == fHostKey);
@@ -253,7 +253,7 @@ hsBool plCoopCoordinator::MsgReceive(plMessage *msg)
         DebugMsg("COOP: Received avatar seek finished msg: aborted = %d", seekDone->fAborted ? 1 : 0);
         if ( seekDone->fAborted )
         {
-            plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestSeekAbort,fInitiatorID,(UInt16)fInitiatorSerial);
+            plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestSeekAbort,fInitiatorID,(uint16_t)fInitiatorSerial);
             coopM->SetBCastFlag(plMessage::kNetPropagate);
             coopM->SetBCastFlag(plMessage::kNetForce);
             coopM->AddReceiver(GetKey());
@@ -262,7 +262,7 @@ hsBool plCoopCoordinator::MsgReceive(plMessage *msg)
         }
         else
         {
-            plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestSeeked,fInitiatorID,(UInt16)fInitiatorSerial);
+            plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestSeeked,fInitiatorID,(uint16_t)fInitiatorSerial);
             coopM->SetBCastFlag(plMessage::kNetPropagate);
             coopM->SetBCastFlag(plMessage::kNetForce);
             coopM->AddReceiver(GetKey());
@@ -293,15 +293,15 @@ bool plCoopCoordinator::IsActiveForReal()
 
 // GetInitiatorID ------------------------
 // ---------------
-UInt32 plCoopCoordinator::GetInitiatorID()
+uint32_t plCoopCoordinator::GetInitiatorID()
 {
     return fInitiatorID;
 }
 
 // GetInitiatorSerial ------------------------
-UInt16 plCoopCoordinator::GetInitiatorSerial()
+uint16_t plCoopCoordinator::GetInitiatorSerial()
 {
-    return (UInt16)fInitiatorSerial;
+    return (uint16_t)fInitiatorSerial;
 }
 
 // IStartHost ----------------------
@@ -430,8 +430,8 @@ void plCoopCoordinator::Write(hsStream *stream, hsResMgr *mgr)
     mgr->WriteCreatable(stream, fHostBrain);
     mgr->WriteCreatable(stream, fGuestBrain);
 
-    stream->WriteByte((UInt8)fHostOfferStage);
-    stream->WriteByte((UInt8)fGuestAcceptStage);
+    stream->WriteByte((uint8_t)fHostOfferStage);
+    stream->WriteByte((uint8_t)fGuestAcceptStage);
 
     stream->Writebool(fGuestAcceptMsg != nil);
     if(fGuestAcceptMsg)

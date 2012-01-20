@@ -49,7 +49,7 @@ extern "C" {
     }
 }
 
-hsThread::hsThread(UInt32 stackSize) : fTaskId(0), fStackSize(stackSize), fQuit(false)
+hsThread::hsThread(uint32_t stackSize) : fTaskId(0), fStackSize(stackSize), fQuit(false)
 {
     if (MPLibraryIsLoaded() == false)
         throw "MPLibraryIsLoaded() returned false";

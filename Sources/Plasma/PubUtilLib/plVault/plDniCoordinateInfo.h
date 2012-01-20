@@ -54,7 +54,7 @@ class hsResMgr;
 
 class plDniCoordinateInfo : public plCreatable
 {
-    static const UInt8 StreamVersion;
+    static const uint8_t StreamVersion;
 
 protected:
     // spherical coords (rho,theta,phi)

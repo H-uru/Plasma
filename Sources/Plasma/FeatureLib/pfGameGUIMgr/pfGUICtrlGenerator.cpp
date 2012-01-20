@@ -124,7 +124,7 @@ pfGUICtrlGenerator  &pfGUICtrlGenerator::Instance( void )
 
 void    pfGUICtrlGenerator::IGetNextKeyName( char *name, const char *prefix )
 {
-    static UInt32 keyCount = 0;
+    static uint32_t keyCount = 0;
 
 
     sprintf( name, "%s%d", prefix, keyCount++ );
@@ -143,7 +143,7 @@ plKey pfGUICtrlGenerator::IAddKey( hsKeyedObject *ko, const char *prefix )
 
 //// SetFont /////////////////////////////////////////////////////////////////
 
-void    pfGUICtrlGenerator::SetFont( const char *face, UInt16 size )
+void    pfGUICtrlGenerator::SetFont( const char *face, uint16_t size )
 {
     strcpy( fFontFace, face );
     fFontSize = size;
@@ -177,14 +177,14 @@ hsGMaterial *pfGUICtrlGenerator::ICreateSolidMaterial( hsColorRGBA &color )
 hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const char *text, hsColorRGBA &bgColor, 
                                                      hsColorRGBA &textColor, float objWidth, float objHeight )
 {
-    UInt16          pixWidth, pixHeight, strWidth, strHeight;
+    uint16_t          pixWidth, pixHeight, strWidth, strHeight;
     hsColorRGBA     black, white;
 
 
     // Guess at some pixel width and heights we want. We're guessing b/c we want it to look reasonably
     // good on the screen, but we don't know exactly how big is big, so we guess
-    pixWidth = (UInt16)(objWidth * 64.f);
-    pixHeight = (UInt16)(objHeight * 64.f);
+    pixWidth = (uint16_t)(objWidth * 64.f);
+    pixHeight = (uint16_t)(objHeight * 64.f);
 
     // Create blank mipmap
     plMipmap *bitmap = TRACKED_NEW plMipmap( 1, 1, plMipmap::kRGB32Config, 1 );
@@ -192,7 +192,7 @@ hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const char *text, hsColorR
 
     // Create textGen to write string with
     plTextGenerator *textGen = TRACKED_NEW plTextGenerator( bitmap, pixWidth, pixHeight );
-    textGen->SetFont( fFontFace, (UInt16)fFontSize );
+    textGen->SetFont( fFontFace, (uint16_t)fFontSize );
     textGen->ClearToColor( bgColor );
     textGen->SetTextColor( textColor );
     strWidth = textGen->CalcStringWidth( text, &strHeight );

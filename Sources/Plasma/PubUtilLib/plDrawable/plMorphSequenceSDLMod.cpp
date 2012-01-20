@@ -117,7 +117,7 @@ void plMorphSequenceSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
                           // store both in a single byte
 
             // Translate the range [-1.0, 1.0] into a 0-255 byte
-            UInt8 weight = (UInt8)((1.f + morphMod->GetWeight(j, 0, meshKey) - morphMod->GetWeight(j, 1, meshKey)) * 255 / 2);
+            uint8_t weight = (uint8_t)((1.f + morphMod->GetWeight(j, 0, meshKey) - morphMod->GetWeight(j, 1, meshKey)) * 255 / 2);
 
             weights->Set(&weight, j);
         }
@@ -167,7 +167,7 @@ void plMorphSequenceSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcSta
         // of plMorphSequence only has to resize the array once.
         for (j = weights->GetCount() - 1; j >= 0; j--)
         {           
-            UInt8 weight;
+            uint8_t weight;
             weights->Get(&weight, j);
             hsScalar posWeight = weight * 2.f / 255.f - 1.f;
             hsScalar negWeight = 0;

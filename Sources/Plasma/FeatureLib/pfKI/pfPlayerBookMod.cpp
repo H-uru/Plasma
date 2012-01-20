@@ -81,7 +81,7 @@ pfPlayerBookMod::~pfPlayerBookMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfPlayerBookMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfPlayerBookMod::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     return false;
 }

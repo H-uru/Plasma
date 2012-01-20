@@ -52,9 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //============================================================================
 // These errors should only be used in debugging.  They should not be shown
 // in release clients because they are not localized
-const wchar * NetErrorToString (ENetError code) {
+const wchar_t * NetErrorToString (ENetError code) {
 
-    static const wchar* s_errors[] = {
+    static const wchar_t* s_errors[] = {
         L"Success",                         // kNetSuccess
         L"Internal Error",                  // kNetErrInternalError
         L"No Response From Server",         // kNetErrTimeout
@@ -119,9 +119,9 @@ const wchar * NetErrorToString (ENetError code) {
 //============================================================================
 // These errors should only be used in debugging.  They should not be shown
 // in release clients because they are not localized
-const wchar * NetErrorAsString (ENetError code) {
+const wchar_t * NetErrorAsString (ENetError code) {
 
-    static const wchar* s_errors[] = {
+    static const wchar_t* s_errors[] = {
         L"kNetSuccess",
         L"kNetErrInternalError",
         L"kNetErrTimeout",

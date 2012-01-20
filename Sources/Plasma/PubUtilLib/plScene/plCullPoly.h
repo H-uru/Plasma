@@ -62,7 +62,7 @@ public:
         kTwoSided   = 0x2
     };
 
-    UInt32                  fFlags;
+    uint32_t                  fFlags;
     mutable hsBitVector     fClipped; // fClipped[i] => edge(fVerts[i], fVerts[(i+1)%n])
 
     hsTArray<hsPoint3>      fVerts;
@@ -82,7 +82,7 @@ public:
 
     plCullPoly&             Init(const plCullPoly& p) { fClipped.Clear(); fVerts.SetCount(0); fFlags = p.fFlags; fNorm = p.fNorm; fDist = p.fDist; fCenter = p.fCenter; return *this; }
     plCullPoly&             Flip(const plCullPoly& p);
-    plCullPoly&             InitFromVerts(UInt32 f=kNone);
+    plCullPoly&             InitFromVerts(uint32_t f=kNone);
     hsScalar                ICalcRadius() const;
 
     plCullPoly&             Transform(const hsMatrix44& l2w, const hsMatrix44& w2l, plCullPoly& dst) const;

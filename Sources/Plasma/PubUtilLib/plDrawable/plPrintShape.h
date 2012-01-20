@@ -59,7 +59,7 @@ public:
     GETINTERFACE_ANY( plPrintShape, plObjInterface );
 
 
-    virtual Int32   GetNumProperties() const { return 1; }
+    virtual int32_t   GetNumProperties() const { return 1; }
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);

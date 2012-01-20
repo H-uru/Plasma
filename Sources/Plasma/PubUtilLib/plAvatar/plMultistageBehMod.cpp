@@ -169,7 +169,7 @@ hsBool plMultistageBehMod::MsgReceive(plMessage* msg)
 
                         // these (currently unused) callbacks are for the brain itself, not any of the stages
                         plMessage *exitCallback = nil, *enterCallback = nil;
-                        UInt32 exitFlags = plAvBrainGeneric::kExitNormal;
+                        uint32_t exitFlags = plAvBrainGeneric::kExitNormal;
 
                         plAvBrainGeneric *brain = TRACKED_NEW plAvBrainGeneric(stages, exitCallback, enterCallback, sender, exitFlags, 
                                                                        plAvBrainGeneric::kDefaultFadeIn, plAvBrainGeneric::kDefaultFadeOut, 

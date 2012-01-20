@@ -129,7 +129,7 @@ void    plTransitionMgr::ICreatePlate( void )
     plMipmap *ourMip = fEffectPlate->CreateMaterial( 16, 16, true );
     for( y = 0; y < ourMip->GetHeight(); y++ )
     {
-        UInt32  *pixels = ourMip->GetAddr32( 0, y );
+        uint32_t  *pixels = ourMip->GetAddr32( 0, y );
         for( x = 0; x < ourMip->GetWidth(); x++ )
             pixels[ x ] = 0xff000000;
     }
@@ -139,7 +139,7 @@ void    plTransitionMgr::ICreatePlate( void )
 
 //// IStartFadeOut ///////////////////////////////////////////////////////////
 
-void    plTransitionMgr::IStartFadeOut( hsScalar lengthInSecs, UInt8 effect )
+void    plTransitionMgr::IStartFadeOut( hsScalar lengthInSecs, uint8_t effect )
 {
     fCurrentEffect = effect; // default - kFadeOut;
     fEffectLength = lengthInSecs;
@@ -177,7 +177,7 @@ void    plTransitionMgr::IStartFadeOut( hsScalar lengthInSecs, UInt8 effect )
 
 //// IStartFadeIn ////////////////////////////////////////////////////////////
 
-void    plTransitionMgr::IStartFadeIn( hsScalar lengthInSecs, UInt8 effect )
+void    plTransitionMgr::IStartFadeIn( hsScalar lengthInSecs, uint8_t effect )
 {
     fCurrentEffect = effect; // default - kFadeIn;
     fEffectLength = lengthInSecs;

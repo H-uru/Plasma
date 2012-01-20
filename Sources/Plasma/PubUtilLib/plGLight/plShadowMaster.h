@@ -71,7 +71,7 @@ public:
 
 protected:
     // Global clamp on shadow map size and stuff
-    static UInt32                   fGlobalMaxSize;
+    static uint32_t                   fGlobalMaxSize;
     static hsScalar                 fGlobalMaxDist;
     static hsScalar                 fGlobalVisParm;
 
@@ -80,8 +80,8 @@ protected:
     hsScalar                        fMaxDist;
     hsScalar                        fMinDist;
 
-    UInt32                          fMaxSize;
-    UInt32                          fMinSize;
+    uint32_t                          fMaxSize;
+    uint32_t                          fMinSize;
 
     hsScalar                        fPower;
 
@@ -128,7 +128,7 @@ public:
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
 
-    Int32       GetNumProperties() const { return kNumProps; }
+    int32_t       GetNumProperties() const { return kNumProps; }
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
@@ -147,16 +147,16 @@ public:
     hsScalar GetMinDist() const { return fMinDist; }
     void SetMaxDist(hsScalar m);
 
-    UInt32 GetMaxSize() const { return fMaxSize; }
-    UInt32 GetMinSize() const { return fMinSize; }
-    void SetMaxSize(UInt32 s) { fMaxSize = s; }
-    void SetMinSize(UInt32 s) { fMinSize = s; }
+    uint32_t GetMaxSize() const { return fMaxSize; }
+    uint32_t GetMinSize() const { return fMinSize; }
+    void SetMaxSize(uint32_t s) { fMaxSize = s; }
+    void SetMinSize(uint32_t s) { fMinSize = s; }
 
     hsScalar GetPower() const { return fPower; }
     void SetPower(hsScalar f) { fPower = f; }
 
-    static void SetGlobalMaxSize(UInt32 s) ;
-    static UInt32 GetGlobalMaxSize() { return fGlobalMaxSize; }
+    static void SetGlobalMaxSize(uint32_t s) ;
+    static uint32_t GetGlobalMaxSize() { return fGlobalMaxSize; }
 
     static void SetGlobalMaxDist(hsScalar s) { fGlobalMaxDist = s; }
     static hsScalar GetGlobalMaxDist() { return fGlobalMaxDist; }

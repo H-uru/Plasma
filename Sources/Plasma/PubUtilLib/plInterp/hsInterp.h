@@ -78,16 +78,16 @@ public:
     // simple linear interpolation
     static void LinInterp(const hsScalar k1, const hsScalar k2, const hsScalar t, hsScalar *result);
     static void LinInterp(const hsScalarTriple *k1, const hsScalarTriple *k2, const hsScalar t, hsScalarTriple *result);
-    static void LinInterp(const hsColorRGBA *k1, const hsColorRGBA *k2, const hsScalar t, hsColorRGBA *result, UInt32 ignoreFlags=0);
-    static void LinInterp(const hsMatrix33 *k1, const hsMatrix33 *k2, const hsScalar t, hsMatrix33 *result, UInt32 ignoreFlags=0);
-    static void LinInterp(const hsMatrix44 *mat1, const hsMatrix44 *mat2, const hsScalar t, hsMatrix44 *out, UInt32 ignoreFlags=0);
+    static void LinInterp(const hsColorRGBA *k1, const hsColorRGBA *k2, const hsScalar t, hsColorRGBA *result, uint32_t ignoreFlags=0);
+    static void LinInterp(const hsMatrix33 *k1, const hsMatrix33 *k2, const hsScalar t, hsMatrix33 *result, uint32_t ignoreFlags=0);
+    static void LinInterp(const hsMatrix44 *mat1, const hsMatrix44 *mat2, const hsScalar t, hsMatrix44 *out, uint32_t ignoreFlags=0);
     static void LinInterp(const hsQuat *k1, const hsQuat *k2, const hsScalar t, hsQuat *result);
     static void LinInterp(const hsScaleValue *k1, const hsScaleValue *k2, const hsScalar t, hsScaleValue *result);
-    static void LinInterp(const hsAffineParts *k1, const hsAffineParts *k2, const hsScalar t, hsAffineParts *result, UInt32 ignoreFlags=0);
+    static void LinInterp(const hsAffineParts *k1, const hsAffineParts *k2, const hsScalar t, hsAffineParts *result, uint32_t ignoreFlags=0);
 
     // Given a time value, find the enclosing keyframes and normalize time (0-1)
-    static void GetBoundaryKeyFrames(hsScalar time, UInt32 numKeys, void *keys, 
-        UInt32 keySize, hsKeyFrame **kF1, hsKeyFrame **kF2, UInt32 *lastKeyIdx, hsScalar *p, hsBool forwards);
+    static void GetBoundaryKeyFrames(hsScalar time, uint32_t numKeys, void *keys, 
+        uint32_t keySize, hsKeyFrame **kF1, hsKeyFrame **kF2, uint32_t *lastKeyIdx, hsScalar *p, hsBool forwards);
 
 };
 

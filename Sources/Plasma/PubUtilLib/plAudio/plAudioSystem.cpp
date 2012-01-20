@@ -162,8 +162,8 @@ class plSoftSoundNode
 
 // plAudioSystem //////////////////////////////////////////////////////////////////////////
 
-Int32   plAudioSystem::fMaxNumSounds = 16;
-Int32   plAudioSystem::fNumSoundsSlop = 8;
+int32_t   plAudioSystem::fMaxNumSounds = 16;
+int32_t   plAudioSystem::fNumSoundsSlop = 8;
 
 plAudioSystem::plAudioSystem() :
 fStartTime(0),
@@ -512,7 +512,7 @@ void plAudioSystem::SetDistanceModel(int i)
 // Set the number of active sounds the audio system is allowed to play, based on the priority cutoff
 void plAudioSystem::SetMaxNumberOfActiveSounds()
 {
-    UInt16 priorityCutoff = plgAudioSys::GetPriorityCutoff();
+    uint16_t priorityCutoff = plgAudioSys::GetPriorityCutoff();
     int maxNumSounds = 24;
     
     // Keep this to a reasonable amount based on the users hardware, since we want the sounds to be played in hardware
@@ -634,7 +634,7 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
     plSoftSoundNode *node, *myNode;
     hsScalar        distSquared, rank;
     plSoftSoundNode *sortedList = nil;
-    Int32           i;
+    int32_t           i;
     
     plProfile_BeginTiming(SoundSoftUpdate);
     
@@ -779,7 +779,7 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
         /// Notify sound that it really is still enabled
         sound->UpdateSoftVolume( true );
         
-        UInt32 color = plStatusLog::kGreen;
+        uint32_t color = plStatusLog::kGreen;
         switch (sound->GetStreamType())
         {
             case plSound::kStreamFromDisk:      color = plStatusLog::kYellow;   break;
@@ -998,10 +998,10 @@ hsBool          plgAudioSys::fEnableEAX = false;
 hsWindowHndl    plgAudioSys::fWnd = nil;
 hsScalar        plgAudioSys::fChannelVolumes[ kNumChannels ] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
 hsScalar        plgAudioSys::f2D3DBias = 0.75f;
-UInt32          plgAudioSys::fDebugFlags = 0;
+uint32_t          plgAudioSys::fDebugFlags = 0;
 hsScalar        plgAudioSys::fStreamingBufferSize = 2.f;
 hsScalar        plgAudioSys::fStreamFromRAMCutoff = 10.f;
-UInt8           plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds above this priority
+uint8_t           plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds above this priority
 hsBool          plgAudioSys::fEnableExtendedLogs = false;
 hsScalar        plgAudioSys::fGlobalFadeVolume = 1.f;
 hsBool          plgAudioSys::fLogStreamingUpdates = false;

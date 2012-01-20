@@ -54,7 +54,7 @@ class plUUID
 {
     // must be first field in class
 public:
-    UInt8   fData[16];
+    uint8_t   fData[16];
     struct Match
     {
         const plUUID * fGuid;

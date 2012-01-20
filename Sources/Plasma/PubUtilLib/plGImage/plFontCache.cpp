@@ -92,9 +92,9 @@ void    plFontCache::Clear( void )
 {
 }
 
-plFont  *plFontCache::GetFont( const char *face, UInt8 size, UInt32 fontFlags )
+plFont  *plFontCache::GetFont( const char *face, uint8_t size, uint32_t fontFlags )
 {
-    UInt32  i, currIdx = (UInt32)-1;
+    uint32_t  i, currIdx = (uint32_t)-1;
     int     currDeltaSize = 100000;
     char    toFind[ 256 ];
 
@@ -121,7 +121,7 @@ plFont  *plFontCache::GetFont( const char *face, UInt8 size, UInt32 fontFlags )
         }
     }
 
-    if( currIdx != (UInt32)-1 )
+    if( currIdx != (uint32_t)-1 )
     {
         //if( currDeltaSize > 0 )
         //  plStatusLog::AddLineS( "pipeline.log", "Warning: plFontCache is matching %s %d (requested %s %d)", fCache[ currIdx ]->GetFace(), fCache[ currIdx ]->GetSize(), face, size );
@@ -129,7 +129,7 @@ plFont  *plFontCache::GetFont( const char *face, UInt8 size, UInt32 fontFlags )
     }
 
     // If we failed, it's possible we have a face saved as "Times", for example, and someone's 
-    // asking for "Times New Roman", so strip all but the first word from our font and try the search again
+    // asking for "Times New Roman", so strip all but the first uint16_t from our font and try the search again
     char *c = strchr( toFind, ' ' );
     if( c != nil )
     {
@@ -208,7 +208,7 @@ hsBool  plFontCache::MsgReceive( plMessage* pMsg )
         else
         {
             plFont *font = plFont::ConvertNoRef( ref->GetRef() );
-            UInt32 idx = fCache.Find( font );
+            uint32_t idx = fCache.Find( font );
             if( idx != fCache.kMissingIndex )
                 fCache.Remove( idx );
         }

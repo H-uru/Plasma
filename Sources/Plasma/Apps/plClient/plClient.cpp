@@ -231,7 +231,7 @@ plClient::plClient()
     plAgeLoader::SetInstance(TRACKED_NEW plAgeLoader);
 
     // Use it to parse the init directory
-    wchar initFolder[MAX_PATH];
+    wchar_t initFolder[MAX_PATH];
     PathGetInitDirectory(initFolder, arrsize(initFolder));
     pfConsoleDirSrc     dirSrc( fConsoleEngine, initFolder, L"*.ini" );
     
@@ -469,7 +469,7 @@ void plClient::InitInputs()
 void plClient::ISetGraphicsDefaults()
 {
     // couldn't find display mode set defaults write to ini file
-    wchar graphicsIniFile[MAX_PATH];
+    wchar_t graphicsIniFile[MAX_PATH];
     PathGetInitDirectory(graphicsIniFile, arrsize(graphicsIniFile));
     PathAddFilename(graphicsIniFile, graphicsIniFile, L"graphics.ini", arrsize(graphicsIniFile));
     IWriteDefaultGraphicsSettings(graphicsIniFile);
@@ -990,7 +990,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
     bool allSameAge = true;
     const char* lastAgeName = nil;
 
-    UInt32 numRooms = 0;
+    uint32_t numRooms = 0;
     for (int i = 0; i < locs.size(); i++)
     {
         const plLocation& loc = locs[i];
@@ -1109,7 +1109,7 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
             }
             GetKey()->Release(nodeKey);     // release notify interest in scene node
         
-            UInt32 recFlags = 0;
+            uint32_t recFlags = 0;
             if (roomIdx != -1)
             {
                 recFlags = fRooms[roomIdx].fFlags;
@@ -1376,11 +1376,11 @@ public:
     LoginNetClientCommCallback() : plNetClientComm::Callback(), fNumCurrentOps(0)
     {}
 
-    virtual void OperationStarted( UInt32 context )
+    virtual void OperationStarted( uint32_t context )
     {
         fNumCurrentOps++;
     }
-    virtual void OperationComplete( UInt32 context, int resultCode )
+    virtual void OperationComplete( uint32_t context, int resultCode )
     {
         if (context == kAuth)
         {
@@ -1393,14 +1393,14 @@ public:
         {
             if ( hsSucceeded( resultCode ) )
             {
-                UInt32 numPlayers = fCbArgs.GetInt(0);
-                UInt32 pId = -1;
+                uint32_t numPlayers = fCbArgs.GetInt(0);
+                uint32_t pId = -1;
                 std::string pName;
 
-                for (UInt32 i = 0; i < numPlayers; i++)
+                for (uint32_t i = 0; i < numPlayers; i++)
                 {
-                    pId = fCbArgs.GetInt((UInt16)(i*3+1));
-                    pName = fCbArgs.GetString((UInt16)(i*3+2));
+                    pId = fCbArgs.GetInt((uint16_t)(i*3+1));
+                    pName = fCbArgs.GetString((uint16_t)(i*3+2));
 
                     if (pName == plClient::GetInstance()->fUsername)
                     {
@@ -2114,7 +2114,7 @@ hsG3DDeviceModeRecord plClient::ILoadDevMode(const char* devModeFile)
             /// Read the rest in
             selMode.Read(&stream);
 
-            UInt16 performance = stream.ReadLE16();
+            uint16_t performance = stream.ReadLE16();
 
             if( performance < 25 )
                 plBitmap::SetGlobalLevelChopCount( 2 );
@@ -2148,7 +2148,7 @@ hsG3DDeviceModeRecord plClient::ILoadDevMode(const char* devModeFile)
         {
             dmr.GetDevice()->Write(&stream);
             dmr.GetMode()->Write(&stream);
-            stream.WriteLE16((UInt16)(0*100));
+            stream.WriteLE16((uint16_t)(0*100));
             stream.Close();
         }
 
@@ -2180,7 +2180,7 @@ void plClient::ResizeDisplayDevice(int Width, int Height, hsBool Windowed)
         pfGameGUIMgr::GetInstance()->SetAspectRatio( aspectratio );
 
 
-    UInt32 winStyle, winExStyle;
+    uint32_t winStyle, winExStyle;
     if( Windowed )
     {
         winStyle = WS_OVERLAPPEDWINDOW;
@@ -2193,8 +2193,8 @@ void plClient::ResizeDisplayDevice(int Width, int Height, hsBool Windowed)
     SetWindowLong(fWindowHndl, GWL_EXSTYLE, winExStyle);
 
 
-    UInt32 flags = SWP_NOCOPYBITS | SWP_SHOWWINDOW | SWP_FRAMECHANGED;
-    UInt32 OutsideWidth, OutsideHeight;
+    uint32_t flags = SWP_NOCOPYBITS | SWP_SHOWWINDOW | SWP_FRAMECHANGED;
+    uint32_t OutsideWidth, OutsideHeight;
     HWND insertAfter;
     if( Windowed )
     {
@@ -2313,7 +2313,7 @@ void plClient::IDetectAudioVideoSettings()
     int val = 0;
     hsStream *stream = nil;
     hsUNIXStream s;
-    wchar audioIniFile[MAX_PATH], graphicsIniFile[MAX_PATH];
+    wchar_t audioIniFile[MAX_PATH], graphicsIniFile[MAX_PATH];
     PathGetInitDirectory(audioIniFile, arrsize(audioIniFile));
     StrCopy(graphicsIniFile, audioIniFile, arrsize(audioIniFile));
     PathAddFilename(audioIniFile, audioIniFile, L"audio.ini", arrsize(audioIniFile));
@@ -2372,7 +2372,7 @@ void plClient::IDetectAudioVideoSettings()
     }
 }
 
-void plClient::IWriteDefaultGraphicsSettings(const wchar* destFile)
+void plClient::IWriteDefaultGraphicsSettings(const wchar_t* destFile)
 {
     hsStream *stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
 
@@ -2450,7 +2450,7 @@ void plClient::IOnAsyncInitComplete () {
 
     /// Now parse final init files (*.fni). These are files just like ini files, only to be run
     /// after all hell has broken loose in the client.
-    wchar initFolder[MAX_PATH];
+    wchar_t initFolder[MAX_PATH];
     PathGetInitDirectory(initFolder, arrsize(initFolder));
     pfConsoleDirSrc     dirSrc( fConsoleEngine, initFolder, L"net*.fni" );  // connect to net first
 #ifndef PLASMA_EXTERNAL_RELEASE

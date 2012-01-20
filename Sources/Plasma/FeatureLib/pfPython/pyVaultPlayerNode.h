@@ -114,8 +114,8 @@ public:
     void SetDisabled(bool value);
     bool IsDisabled();
 
-    void SetOnlineTime(UInt32 value);
-    UInt32 GetOnlineTime();
+    void SetOnlineTime(uint32_t value);
+    uint32_t GetOnlineTime();
 
     void    SetExplorer (bool b);
     hsBool  IsExplorer ();

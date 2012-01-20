@@ -126,7 +126,7 @@ bool plNetShareFileGrabber::FileToStream(const char* path, hsStream* stream)
     if (fileStream.Open(filePath.c_str()))
     {
         char* buffer = new char[BUFFER_SIZE];
-        UInt32 streamSize = fileStream.GetSizeLeft();
+        uint32_t streamSize = fileStream.GetSizeLeft();
         while (streamSize > (BUFFER_SIZE))
         {
             fileStream.Read(BUFFER_SIZE, buffer);

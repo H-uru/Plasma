@@ -77,18 +77,18 @@ public:
 
     virtual void    Close( void );
 
-    virtual UInt32  GetDataSize( void ) { return fDataSize / fChannelAdjust; }
+    virtual uint32_t  GetDataSize( void ) { return fDataSize / fChannelAdjust; }
     virtual float   GetLengthInSecs( void );
 
-    virtual hsBool  SetPosition( UInt32 numBytes );
-    virtual hsBool  Read( UInt32 numBytes, void *buffer );
-    virtual UInt32  NumBytesLeft( void );
+    virtual hsBool  SetPosition( uint32_t numBytes );
+    virtual hsBool  Read( uint32_t numBytes, void *buffer );
+    virtual uint32_t  NumBytesLeft( void );
 
     virtual hsBool  IsValid( void ) { return ( fOggFile != nil ) ? true : false; }
 
     static void     SetDecodeFormat( DecodeFormat f ) { fDecodeFormat = f; }
-    static void     SetDecodeFlag( UInt8 flag, hsBool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }
-    static UInt8    GetDecodeFlags( void ) { return fDecodeFlags; }
+    static void     SetDecodeFlag( uint8_t flag, hsBool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }
+    static uint8_t    GetDecodeFlags( void ) { return fDecodeFlags; }
     void            ResetWaveHeaderRef() { fCurHeaderPos = 0; }
     void            BuildActualWaveHeader();
     bool            ReadFromHeader(int numBytes, void *data); // read from Actual wave header
@@ -105,14 +105,14 @@ protected:
     OggVorbis_File  *fOggFile;
 
     plWAVHeader     fHeader, fFakeHeader;
-    UInt32          fDataStartPos, fCurrDataPos, fDataSize;
+    uint32_t          fDataStartPos, fCurrDataPos, fDataSize;
 
     plAudioCore::ChannelSelect  fWhichChannel;
-    UInt32                      fChannelAdjust, fChannelOffset;
+    uint32_t                      fChannelAdjust, fChannelOffset;
 
     static DecodeFormat fDecodeFormat;
-    static UInt8        fDecodeFlags;
-    UInt8 *             fHeadBuf;
+    static uint8_t        fDecodeFlags;
+    uint8_t *             fHeadBuf;
     int                 fCurHeaderPos;
 
     void    IError( const char *msg );

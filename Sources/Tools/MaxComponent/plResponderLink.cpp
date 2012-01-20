@@ -1098,7 +1098,7 @@ plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *p
         throw "No Camera Specified";
     hsBool fail = true;
     int count = pCamNode->NumAttachedComponents();
-    for (UInt32 x = 0; x < count; x++)
+    for (uint32_t x = 0; x < count; x++)
     {
         plComponentBase *comp = ((plMaxNode*)pCamNode)->GetAttachedComponent(x);
         if (comp->ClassID() == AUTOCAM_CID ||
@@ -1127,7 +1127,7 @@ plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *p
         pMsg->SetNewCam(((plMaxNode*)pCamNode)->GetSceneObject()->GetKey());
 
         int count = ((plMaxNode*)pCamNode)->NumAttachedComponents();
-        for (UInt32 x = 0; x < count; x++)
+        for (uint32_t x = 0; x < count; x++)
         {
             plComponentBase *comp = ((plMaxNode*)pCamNode)->GetAttachedComponent(x);
             if (comp->ClassID() == DEFAULTCAM_CID)
@@ -1243,7 +1243,7 @@ plMessage *plResponderCmdDelay::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, 
 
     plTimerCallbackMsg *msg = TRACKED_NEW plTimerCallbackMsg;
     msg->fTime = time;
-    msg->fID = UInt32(-1);
+    msg->fID = uint32_t(-1);
 
     return msg;
 }
@@ -1253,7 +1253,7 @@ void plResponderCmdDelay::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IPara
     plTimerCallbackMsg *timerMsg = plTimerCallbackMsg::ConvertNoRef(waitInfo.msg);
     hsAssert(timerMsg, "Somebody is crazy");
 
-    if (timerMsg->fID != UInt32(-1))
+    if (timerMsg->fID != uint32_t(-1))
     {
         pErrMsg->Set(true,
                     "Responder Delay",

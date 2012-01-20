@@ -55,9 +55,9 @@ plFadeOpacityLay::~plFadeOpacityLay()
 {
 }
 
-UInt32 plFadeOpacityLay::Eval(double secs, UInt32 frame, UInt32 ignore)
+uint32_t plFadeOpacityLay::Eval(double secs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
+    uint32_t ret = plLayerInterface::Eval(secs, frame, ignore);
 
     if( fUnderLay )
     {

@@ -207,7 +207,7 @@ void plSceneInputInterface::ResetClickableState()
 }
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool plSceneInputInterface::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool plSceneInputInterface::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     // this needs to always go no matter what...
     // ...unless we have cliclability disabled (as in the case of certain multistage behaviors)
@@ -1157,8 +1157,8 @@ void    plSceneInputInterface::IRequestLOSCheck( hsScalar xPos, hsScalar yPos, i
         return;
     
 
-    Int32 x=(Int32) ( xPos * fPipe->Width() );
-    Int32 y=(Int32) ( yPos * fPipe->Height() );
+    int32_t x=(int32_t) ( xPos * fPipe->Width() );
+    int32_t y=(int32_t) ( yPos * fPipe->Height() );
 
     hsPoint3 endPos, startPos;
     
@@ -1197,8 +1197,8 @@ hsBool  plSceneInputInterface::IWorldPosMovedSinceLastLOSCheck( void )
     if( fPipe == nil )
         return false;
 
-    Int32 x=(Int32) ( plMouseDevice::Instance()->GetCursorX() * fPipe->Width() );
-    Int32 y=(Int32) ( plMouseDevice::Instance()->GetCursorY() * fPipe->Height() );
+    int32_t x=(int32_t) ( plMouseDevice::Instance()->GetCursorX() * fPipe->Width() );
+    int32_t y=(int32_t) ( plMouseDevice::Instance()->GetCursorY() * fPipe->Height() );
 
     hsPoint3 endPos, startPos;
     
@@ -1215,7 +1215,7 @@ hsBool  plSceneInputInterface::IWorldPosMovedSinceLastLOSCheck( void )
 
 //// GetCurrentCursorID ///////////////////////////////////////////////////////
 
-UInt32 plSceneInputInterface::SetCurrentCursorID(UInt32 id)
+uint32_t plSceneInputInterface::SetCurrentCursorID(uint32_t id)
 { 
     if (fBookMode == kOfferBook || fBookMode == kBookOffered)
     {

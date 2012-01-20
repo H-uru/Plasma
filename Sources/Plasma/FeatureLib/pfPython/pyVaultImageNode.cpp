@@ -114,7 +114,7 @@ void pyVaultImageNode::Image_SetTitle( const char * text )
     if (!fNode)
         return;
         
-    wchar * wStr = hsStringToWString(text);
+    wchar_t * wStr = hsStringToWString(text);
 
     VaultImageNode image(fNode);
     image.SetImageTitle(wStr);
@@ -210,7 +210,7 @@ void pyVaultImageNode::SetImageFromBuf( PyObject * pybuf )
         fMipmap = nil;
     }
 
-    byte * buffer = nil;
+    uint8_t * buffer = nil;
     int bytes;
     PyObject_AsReadBuffer(pybuf, (const void **)&buffer, &bytes);
     if (buffer) {

@@ -67,7 +67,7 @@ public:
     //      context (invalidating anything cached).
     // Defaults for Prepare and End are no-ops.
     virtual void PrepareEffect(const plEffectTargetInfo& target) {}
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i) = 0;
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i) = 0;
     virtual void EndEffect(const plEffectTargetInfo& target) {}
 };
 
@@ -102,7 +102,7 @@ public:
     CLASSNAME_REGISTER( plParticleCollisionEffectBeat );
     GETINTERFACE_ANY( plParticleCollisionEffectBeat, plParticleCollisionEffect );
 
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i);
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 };
 
 // This particle blocker just kills any particles that hit it.
@@ -114,7 +114,7 @@ public:
     CLASSNAME_REGISTER( plParticleCollisionEffectDie );
     GETINTERFACE_ANY( plParticleCollisionEffectDie, plParticleCollisionEffect );
 
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i);
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 };
 
 class plParticleCollisionEffectBounce : public plParticleCollisionEffect
@@ -128,7 +128,7 @@ public:
     CLASSNAME_REGISTER( plParticleCollisionEffectBounce );
     GETINTERFACE_ANY( plParticleCollisionEffectBounce, plParticleCollisionEffect );
 
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i);
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
@@ -157,7 +157,7 @@ public:
     GETINTERFACE_ANY( plParticleFadeVolumeEffect, plParticleEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i);
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
@@ -193,7 +193,7 @@ public:
     GETINTERFACE_ANY( plParticleWindEffect, plParticleEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i) = 0;
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i) = 0;
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
@@ -232,7 +232,7 @@ public:
     GETINTERFACE_ANY( plParticleLocalWind, plParticleWindEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i);
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 
     void                SetScale(const hsVector3& v) { fScale = v; }
     const hsVector3&    GetScale() const { return fScale; }
@@ -266,7 +266,7 @@ public:
     GETINTERFACE_ANY( plParticleUniformWind, plParticleWindEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i);
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 
     void        SetFrequencyRange(hsScalar minSecsPerCycle, hsScalar maxSecsPerCycle);
     void        SetFrequencyRate(hsScalar secsPerCycle);
@@ -300,7 +300,7 @@ protected:
     hsScalar fMaxOrbitSpeed;
     hsScalar fMaxChaseSpeed;
 
-    UInt16 fMaxParticles;
+    uint16_t fMaxParticles;
     hsScalar *fDistSq;          // Table of distances from particle to particle
     plParticleInfluenceInfo *fInfluences; 
 
@@ -315,7 +315,7 @@ public:
     GETINTERFACE_ANY( plParticleFlockEffect, plParticleEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i);  
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);  
 
     void SetTargetOffset(const hsPoint3 &offset) { fTargetOffset = offset; }
     void SetDissenterTarget(const hsPoint3 &target) { fDissenterTarget = target; }
@@ -329,7 +329,7 @@ public:
     void SetGoalChaseStr(hsScalar val) { fGoalChaseStr = val; }
     void SetMaxOrbitSpeed(hsScalar val) { fMaxOrbitSpeed = val; }
     void SetMaxChaseSpeed(hsScalar val) { fMaxChaseSpeed = val; }
-    void SetMaxParticles(UInt16 num);
+    void SetMaxParticles(uint16_t num);
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
@@ -345,7 +345,7 @@ public:
     plParticleFollowSystemEffect();
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, Int32 i);
+    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
     virtual void EndEffect(const plEffectTargetInfo& target);
     
 protected:

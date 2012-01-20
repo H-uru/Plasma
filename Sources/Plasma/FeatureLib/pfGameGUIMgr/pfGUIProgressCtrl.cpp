@@ -83,7 +83,7 @@ pfGUIProgressCtrl::~pfGUIProgressCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIProgressCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIProgressCtrl::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
@@ -111,7 +111,7 @@ void    pfGUIProgressCtrl::Read( hsStream *s, hsResMgr *mgr )
     pfGUIValueCtrl::Read(s, mgr);
 
     fAnimationKeys.Reset();
-    UInt32 i, count = s->ReadLE32();
+    uint32_t i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
     fAnimName = s->ReadSafeString();
@@ -123,7 +123,7 @@ void    pfGUIProgressCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Write( s, mgr );
 
-    UInt32 i, count = fAnimationKeys.GetCount();
+    uint32_t i, count = fAnimationKeys.GetCount();
     s->WriteLE32( count );
     for( i = 0; i < count; i++ )
         mgr->WriteKey( s, fAnimationKeys[ i ] );

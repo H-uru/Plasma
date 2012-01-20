@@ -172,7 +172,7 @@ hsBool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, hsBool for
 
     hsBool retVal = false;
 
-    plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+    plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
 
     const hsMatrix44& shapeL2W = shape->GetOwner()->GetLocalToWorld();
 

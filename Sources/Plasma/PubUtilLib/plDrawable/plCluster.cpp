@@ -113,7 +113,7 @@ inline void inlTESTPOINT(const hsPoint3& destP,
         maxZ = destP.fZ;
 }
 
-void plCluster::UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& wBnd) const
+void plCluster::UnPack(uint8_t* vDst, uint16_t* iDst, int idxOffset, hsBounds3Ext& wBnd) const
 {
     hsScalar minX = 1.e33f;
     hsScalar minY = 1.e33f;
@@ -129,7 +129,7 @@ void plCluster::UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& w
     for( i = 0; i < fInsts.GetCount(); i++ )
     {
         // First, just copy our template, offsetting by prescribed amount.
-        const UInt16* iSrc = templ.IndexData();
+        const uint16_t* iSrc = templ.IndexData();
         int n = templ.NumIndices();
         while( n-- )
         {
@@ -173,7 +173,7 @@ void plCluster::UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& w
                 *norm = w2l * *norm;
                 hsFastMath::NormalizeAppr(*norm);
 
-                UInt32* color = (UInt32*)(vDst + colOff);
+                uint32_t* color = (uint32_t*)(vDst + colOff);
                 *color = iter.Color(*color);
 
                 vDst += stride;

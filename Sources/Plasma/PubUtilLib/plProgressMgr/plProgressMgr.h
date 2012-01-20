@@ -76,10 +76,10 @@ class plOperationProgress
         hsScalar    fValue, fMax;
         char        fStatusText[ 256 ];
         char        fTitle[ 256 ];
-        UInt32      fContext;
+        uint32_t      fContext;
         double      fStartTime;
 
-        UInt32 fElapsedSecs, fRemainingSecs;
+        uint32_t fElapsedSecs, fRemainingSecs;
         hsScalar fAmtPerSec;
 
         enum Flags
@@ -93,7 +93,7 @@ class plOperationProgress
             kOverall        = 0x40,
             kAlwaysDrawText = 0x80,
         };
-        UInt8 fFlags;
+        uint8_t fFlags;
 
         plOperationProgress *fNext, *fBack;
 
@@ -113,9 +113,9 @@ class plOperationProgress
         hsScalar GetProgress( void ) const { return fValue; }
         const char * GetTitle( void ) const { return fTitle; }
         const char * GetStatusText( void ) const { return fStatusText; }
-        UInt32  GetContext( void ) const { return fContext; }
-        UInt32 GetElapsedSecs() { return fElapsedSecs; }
-        UInt32 GetRemainingSecs() { return fRemainingSecs; }
+        uint32_t  GetContext( void ) const { return fContext; }
+        uint32_t GetElapsedSecs() { return fElapsedSecs; }
+        uint32_t GetRemainingSecs() { return fRemainingSecs; }
         hsScalar GetAmtPerSec() { return fAmtPerSec; }
 
         // Adds on to current value
@@ -134,7 +134,7 @@ class plOperationProgress
         void    SetTitle( const char *title );
 
         // Application data
-        void    SetContext( UInt32 context ) { fContext = context;}
+        void    SetContext( uint32_t context ) { fContext = context;}
 
         hsBool  IsDone( void ) { return ( fValue < fMax ) ? false : true; }
 

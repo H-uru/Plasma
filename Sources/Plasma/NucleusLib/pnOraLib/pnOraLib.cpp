@@ -68,15 +68,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct OraInitData {
     unsigned    OraStmtCacheSize;
-    wchar       OraUsername[128]; 
-    wchar       OraPassword[128]; 
-    wchar       OraConnectString[256];
+    wchar_t       OraUsername[128]; 
+    wchar_t       OraPassword[128]; 
+    wchar_t       OraConnectString[256];
     
     OraInitData(
         unsigned    stmtCacheSize, 
-        const wchar username[], 
-        const wchar password[], 
-        const wchar connectString[] 
+        const wchar_t username[], 
+        const wchar_t password[], 
+        const wchar_t connectString[] 
     );
 };
 
@@ -97,13 +97,13 @@ struct OraConnPool {
     void ReInitialize_CS ();    
     
     void Initialize (
-        const wchar username[], 
-        const wchar password[], 
-        const wchar connectString[],
+        const wchar_t username[], 
+        const wchar_t password[], 
+        const wchar_t connectString[],
         unsigned    stmtCacheSize
     );
     void Shutdown ();
-    OraConn * GetConn (const wchar tag[]);
+    OraConn * GetConn (const wchar_t tag[]);
     void FreeConn (OraConn *& conn);
     
     long GetPerf (long index);
@@ -144,9 +144,9 @@ static long         s_perf[kNumPerf];
 //============================================================================
 OraInitData::OraInitData (
     unsigned    stmtCacheSize, 
-    const wchar username[], 
-    const wchar password[], 
-    const wchar connectString[] 
+    const wchar_t username[], 
+    const wchar_t password[], 
+    const wchar_t connectString[] 
 ) {
     OraStmtCacheSize = stmtCacheSize;
     StrCopy(OraUsername, username, arrsize(OraUsername));
@@ -237,9 +237,9 @@ void OraConnPool::Shutdown_CS () {
 
 //============================================================================
 void OraConnPool::Initialize (
-    const wchar username[], 
-    const wchar password[], 
-    const wchar connectString[],
+    const wchar_t username[], 
+    const wchar_t password[], 
+    const wchar_t connectString[],
     unsigned    stmtCacheSize
 ) {
     data = NEW(OraInitData)(stmtCacheSize, username, password, connectString);
@@ -264,7 +264,7 @@ void OraConnPool::Shutdown () {
 }
 
 //============================================================================
-OraConn * OraConnPool::GetConn (const wchar tag[]) {
+OraConn * OraConnPool::GetConn (const wchar_t tag[]) {
 
     OraConn * oraConn = NEWZERO(OraConn);
     if (tag)
@@ -373,14 +373,14 @@ long OraConnPool::GetPerf (long index) {
 ***/
 
 //============================================================================
-void OraLogError (const wchar sql[], const exception & e) {
+void OraLogError (const wchar_t sql[], const exception & e) {
 
-    wchar buffer[1024];
+    wchar_t buffer[1024];
     const char * tmp = e.what();
     
     // Some exceptions we catch are actually unicode strings in a char buffer, but others aren't.
     if (tmp[0] && !tmp[1]) {
-        const wchar * wtmp = (const wchar *)tmp;
+        const wchar_t * wtmp = (const wchar_t *)tmp;
         StrCopy(buffer, wtmp, arrsize(buffer));
     }
     else {
@@ -398,7 +398,7 @@ void OraGetShaDigest (
     occi::Bytes bytes = oraStmt->getBytes(index);
     const unsigned length = bytes.length();
     ASSERT(length == msizeof(ShaDigest, data));
-    bytes.getBytes((byte *)digest->data, length);
+    bytes.getBytes((uint8_t *)digest->data, length);
 }
 
 //============================================================================
@@ -407,7 +407,7 @@ void OraSetShaDigest (
     unsigned                index,
     const ShaDigest &       digest
 ) {
-    occi::Bytes bytes((byte *)&digest, sizeof(digest));
+    occi::Bytes bytes((uint8_t *)&digest, sizeof(digest));
     oraStmt->setBytes(index, bytes);
 }
 
@@ -415,7 +415,7 @@ void OraSetShaDigest (
 void OraBindString (
     occi::Statement *   oraStmt,
     unsigned            index,
-    wchar *             buffer,
+    wchar_t *             buffer,
     unsigned            chars,
     ub2 *               length,
     sb2 *               indicator
@@ -434,7 +434,7 @@ void OraBindString (
 void OraBindString (
     occi::ResultSet *   rs,
     unsigned            index,
-    wchar *             buffer,
+    wchar_t *             buffer,
     unsigned            chars,
     ub2 *               length,
     sb2 *               indicator
@@ -458,7 +458,7 @@ void OraGetUuid (
     occi::Bytes bytes = oraStmt->getBytes(index);
     if (const unsigned length = bytes.length()) {
         ASSERT(length == msizeof(Uuid, data));
-        byte * buf = ALLOCA(byte, length);
+        uint8_t * buf = ALLOCA(uint8_t, length);
         bytes.getBytes(buf, length);
         GuidFromHex(buf, length, uuid);
     }
@@ -473,12 +473,12 @@ void OraSetUuid (
     unsigned            index,
     const Uuid &        uuid
 ) {
-    occi::Bytes bytes((byte *)&uuid, sizeof(uuid));
+    occi::Bytes bytes((uint8_t *)&uuid, sizeof(uuid));
     oraStmt->setBytes(index, bytes);
 }
 
 //============================================================================
-OraConn * OraGetConn (const wchar tag[]) {
+OraConn * OraGetConn (const wchar_t tag[]) {
     
     // grabs a cached connection if available, otherwise creates a new one on-the-fly
     return s_connPool.GetConn(tag);
@@ -493,7 +493,7 @@ void OraFreeConn (OraConn *& oraConn) {
 //============================================================================
 occi::Statement * OraGetStmt (
     OraConn *       oraConn,
-    const wchar     sql[]
+    const wchar_t     sql[]
 ) {
     occi::Statement * oraStmt = nil;
     try {
@@ -538,9 +538,9 @@ occi::Statement * OraGetStmt (
 
 //============================================================================
 void OraInitialize (    
-    const wchar username[], 
-    const wchar password[], 
-    const wchar connectString[],
+    const wchar_t username[], 
+    const wchar_t password[], 
+    const wchar_t connectString[],
     unsigned    stmtCacheSize
 ) {
     // Connect to the database

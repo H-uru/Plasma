@@ -239,7 +239,7 @@ void plTextureSearch::IUpdateTextures(plTextureSearch::Update update)
     if (update == kUpdateSetSize)
     {
         int sel = ComboBox_GetCurSel(hCombo);
-        UInt32 data = ComboBox_GetItemData(hCombo, sel);
+        uint32_t data = ComboBox_GetItemData(hCombo, sel);
         sizeX = LOWORD(data);
         sizeY = HIWORD(data);
     }

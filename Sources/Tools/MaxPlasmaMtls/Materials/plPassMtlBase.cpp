@@ -536,11 +536,11 @@ void    plPassMtlBase::PostLoadAnimPBFixup( void )
             myNew->SetAutoStart( (bool)fAnimPB->GetInt( (ParamID)kPBAnimAutoStart ) );
             myNew->SetLoop( (bool)fAnimPB->GetInt( (ParamID)kPBAnimLoop ),
                             (char *)fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) );
-            myNew->SetEaseIn( (UInt8)fAnimPB->GetInt( (ParamID)kPBAnimEaseInType ),
+            myNew->SetEaseIn( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseInType ),
                                 (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInLength ),
                                 (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMin ),
                                 (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMax ) );
-            myNew->SetEaseOut( (UInt8)fAnimPB->GetInt( (ParamID)kPBAnimEaseOutType ),
+            myNew->SetEaseOut( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseOutType ),
                                 (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutLength ),
                                 (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMin ),
                                 (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMax ) );

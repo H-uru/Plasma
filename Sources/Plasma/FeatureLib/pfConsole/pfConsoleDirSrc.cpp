@@ -67,8 +67,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool  pfConsoleDirSrc::ParseDirectory(const std::string& path, const std::string& mask /* = "*.*" */)
 {
-    wchar* wPath = hsStringToWString(path.c_str());
-    wchar* wMask = hsStringToWString(mask.c_str());
+    wchar_t* wPath = hsStringToWString(path.c_str());
+    wchar_t* wMask = hsStringToWString(mask.c_str());
     hsBool ret = ParseDirectory(wPath, wMask);
     delete [] wPath;
     delete [] wMask;
@@ -104,8 +104,8 @@ hsBool  pfConsoleDirSrc::ParseDirectory(const std::wstring& path, const std::wst
                 // errors in the parsing
                 std::wstringstream error;
                 std::wstringstream caption;
-                wchar* errorMsg = hsStringToWString(fEngine->GetErrorMsg());
-                wchar* errorLine = hsStringToWString(fEngine->GetLastErrorLine());
+                wchar_t* errorMsg = hsStringToWString(fEngine->GetErrorMsg());
+                wchar_t* errorLine = hsStringToWString(fEngine->GetLastErrorLine());
 
                 caption << L"Error parsing " << findInfo.cFileName;
                 error << errorMsg << L":\n\nCommand: '" << errorLine << L"'\n\nPress OK to continue parsing files.";

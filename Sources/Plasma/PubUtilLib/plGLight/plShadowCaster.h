@@ -67,11 +67,11 @@ public:
     class DrawSpan
     {
     public:
-        DrawSpan& Set(plDrawableSpans* dr, const plSpan* sp, UInt32 idx) { fDraw = (dr); fSpan = (sp); fIndex = (idx); return *this; }
+        DrawSpan& Set(plDrawableSpans* dr, const plSpan* sp, uint32_t idx) { fDraw = (dr); fSpan = (sp); fIndex = (idx); return *this; }
 
         plDrawableSpans*    fDraw;
         const plSpan*       fSpan;
-        UInt32              fIndex;
+        uint32_t              fIndex;
     };
 protected:
 
@@ -85,7 +85,7 @@ protected:
     // never expected to change. Anything that might be
     // triggered should go into plMultiModifier::fProps,
     // to be network synced.
-    UInt8               fCastFlags;
+    uint8_t               fCastFlags;
 
     hsScalar            fBoost;
     hsScalar            fAttenScale;
@@ -110,7 +110,7 @@ public:
     CLASSNAME_REGISTER( plShadowCaster );
     GETINTERFACE_ANY( plShadowCaster, plMultiModifier );
     
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return true; }
 
     virtual hsBool MsgReceive(plMessage* msg);
 

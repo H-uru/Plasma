@@ -77,7 +77,7 @@ pyVaultPlayerInfoNode::~pyVaultPlayerInfoNode () {
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-void pyVaultPlayerInfoNode::Player_SetPlayerID( UInt32 plyrid )
+void pyVaultPlayerInfoNode::Player_SetPlayerID( uint32_t plyrid )
 {
     if (!fNode)
         return;
@@ -86,7 +86,7 @@ void pyVaultPlayerInfoNode::Player_SetPlayerID( UInt32 plyrid )
     playerInfo.SetPlayerId(plyrid);
 }
 
-UInt32 pyVaultPlayerInfoNode::Player_GetPlayerID( void )
+uint32_t pyVaultPlayerInfoNode::Player_GetPlayerID( void )
 {
     if (!fNode)
         return 0;
@@ -100,7 +100,7 @@ void pyVaultPlayerInfoNode::Player_SetPlayerName( const char * name )
     if (!fNode)
         return;
 
-    wchar * wStr = StrDupToUnicode(name);
+    wchar_t * wStr = StrDupToUnicode(name);
     VaultPlayerInfoNode playerInfo(fNode);      
     playerInfo.SetPlayerName(wStr);
     FREE(wStr);
@@ -126,7 +126,7 @@ void pyVaultPlayerInfoNode::Player_SetAgeInstanceName( const char * agename )
     if (!fNode)
         return;
 
-    wchar * wStr = StrDupToUnicode(agename);
+    wchar_t * wStr = StrDupToUnicode(agename);
     VaultPlayerInfoNode playerInfo(fNode);      
     playerInfo.SetAgeInstName(wStr);
     FREE(wStr);

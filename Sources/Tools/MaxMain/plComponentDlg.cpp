@@ -492,8 +492,8 @@ void plComponentDlg::ICreateMenu()
     const char *lastCat = nil;
     HMENU hCurType = nil;
 
-    UInt32 count = plComponentMgr::Inst().Count();
-    for (UInt32 i = 0; i < count; i++)
+    uint32_t count = plComponentMgr::Inst().Count();
+    for (uint32_t i = 0; i < count; i++)
     {
         plComponentClassDesc *desc = (plComponentClassDesc*)plComponentMgr::Inst().Get(i);
 

@@ -129,7 +129,7 @@ public:
 
     void    ReduceKeys(Control *control, hsScalar threshold);
     hsBool  HasKeyTimes(Control* ctl);
-    UInt8       GetKeyType(Control* ctl, hsBool rotQuat = false);
+    uint8_t       GetKeyType(Control* ctl, hsBool rotQuat = false);
 
     plMaxNode* GetXformParent(plMaxNode* node);
     hsBool ForceWorldSpace(plMaxNode* node);
@@ -163,8 +163,8 @@ private:
     void    IEnableEaseCurves(Animatable* control, bool enable);
     void    IGetControlSampleTimes(Control* control, int iLo, int iHi, Tab<TimeValue>& kTimes, float maxRads);
     int     IAddPartsKeys(Control* control, hsTArray <hsG3DSMaxKeyFrame>* kfArray, plMaxNode* node);
-    Int32   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nil, hsBool rotQuat = false);
-    Int32   IGetRangeCoverKeyIndices(char* nodeName, Control* cont, Int32 &start, Int32 &end);
+    int32_t   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nil, hsBool rotQuat = false);
+    int32_t   IGetRangeCoverKeyIndices(char* nodeName, Control* cont, int32_t &start, int32_t &end);
     ControllerType IGetControlType(TSTR ctrlName);
     bool    IIsKeyTimeInRange(TimeValue time);
     bool    IIsKeyInRange(IKey* key);
@@ -183,12 +183,12 @@ private:
     hsConverterUtils& fConverterUtils;
     plErrorMsg * fErrorMsg;
 
-    Int32       fTicksPerFrame;
-    Int32       fFrameRate;
-    Int32       fTicksPerSec;
-    Int32       fStartFrame;
-    Int32       fEndFrame;
-    Int32       fNumFrames;
+    int32_t       fTicksPerFrame;
+    int32_t       fFrameRate;
+    int32_t       fTicksPerSec;
+    int32_t       fStartFrame;
+    int32_t       fEndFrame;
+    int32_t       fNumFrames;
     hsScalar    fAnimLength;
     hsBool    fWarned;
 

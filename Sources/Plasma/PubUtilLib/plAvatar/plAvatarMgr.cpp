@@ -372,8 +372,8 @@ hsBool plAvatarMgr::HandleCoopMsg(plAvCoopMsg *msg)
 {
     plAvCoopMsg::Command cmd = msg->fCommand;
     
-    UInt32 id = msg->fInitiatorID;
-    UInt16 serial = msg->fInitiatorSerial;
+    uint32_t id = msg->fInitiatorID;
+    uint16_t serial = msg->fInitiatorSerial;
 
     if(cmd == plAvCoopMsg::kStartNew)
     {
@@ -407,14 +407,14 @@ hsBool plAvatarMgr::HandleNotifyMsg(plNotifyMsg *msg)
     proCoopEventData *ed = static_cast<proCoopEventData *>(msg->FindEventRecord(proEventData::kCoop));
     if(ed)
     {
-        UInt32 id = ed->fID;
-        UInt16 serial = ed->fSerial;
+        uint32_t id = ed->fID;
+        uint16_t serial = ed->fSerial;
         return IPassMessageToActiveCoop(msg, id, serial);
     }
     return false;
 }
 
-hsBool plAvatarMgr::IPassMessageToActiveCoop(plMessage *msg, UInt32 id, UInt16 serial)
+hsBool plAvatarMgr::IPassMessageToActiveCoop(plMessage *msg, uint32_t id, uint16_t serial)
 {
     plCoopMap::iterator i = fActiveCoops.find(id);
     while(i != fActiveCoops.end() && (*i).first == id)
@@ -738,7 +738,7 @@ plArmatureMod* plAvatarMgr::FindAvatar(plKey& avatarKey)
     return nil;
 }
 
-plArmatureMod* plAvatarMgr::FindAvatarByPlayerID(UInt32 pid)
+plArmatureMod* plAvatarMgr::FindAvatarByPlayerID(uint32_t pid)
 {
     plAvatarVec::iterator it;
     for (it = fAvatars.begin(); it != fAvatars.end(); ++it)
@@ -815,7 +815,7 @@ int plAvatarMgr::FindSpawnPoint( const char *name ) const
     return -1;
 }
 
-int plAvatarMgr::WarpPlayerToAnother(hsBool iMove, UInt32 remoteID)
+int plAvatarMgr::WarpPlayerToAnother(hsBool iMove, uint32_t remoteID)
 {
     plNetTransport &mgr = plNetClientMgr::GetInstance()->TransportMgr();
     plNetTransportMember *mbr = mgr.GetMember(mgr.FindMember(remoteID));
@@ -1020,13 +1020,13 @@ void plAvatarMgr::OfferLinkingBook(plKey hostKey, plKey guestKey, plMessage *lin
             brainH->AddStage(hostIdle);
             brainH->AddStage(hostFinish);
 
-            UInt32 hostID = brainH->GetInitiatorID();
-            UInt32 hostSerial = brainH->GetInitiatorSerial();
+            uint32_t hostID = brainH->GetInitiatorID();
+            uint32_t hostSerial = brainH->GetInitiatorSerial();
 
 
             // make the guest brain
             plAvBrainCoop * brainG = TRACKED_NEW plAvBrainCoop(plAvBrainGeneric::kExitNormal, 3.0, 3.0, plAvBrainGeneric::kMoveRelative,
-                                                       hostID, (UInt16)hostSerial, hostKey);
+                                                       hostID, (uint16_t)hostSerial, hostKey);
 
             plAnimStage *guestAccept = TRACKED_NEW plAnimStage("BookAccept", plAnimStage::kNotifyAdvance);
             plAnimStage *guestAcceptIdle = TRACKED_NEW plAnimStage("BookAcceptIdle", plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone,

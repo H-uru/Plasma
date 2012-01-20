@@ -73,7 +73,7 @@ protected:
     hsScalar                    fTime; // presumably seconds
 
     // The paramters (and options) for this curve.
-    UInt32                      fAnimPathFlags;     // currently set at runtime only
+    uint32_t                      fAnimPathFlags;     // currently set at runtime only
     hsScalar                    fMinDistSq;
     hsScalar                    fLength; // presumably seconds
 
@@ -116,7 +116,7 @@ protected:
                                                             : fNextTime); }
 
     // Visualization helper
-    void IMakeSegment(hsTArray<UInt16>& idx, hsTArray<hsPoint3>& pos,
+    void IMakeSegment(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos,
                                   hsPoint3& p1, hsPoint3& p2);
     
     // For computing arclen
@@ -142,10 +142,10 @@ public:
     const hsMatrix44& GetWorldToLocal() const { return fWorldToLocal; }
 
     // Visualization helper
-    void MakeDrawList(hsTArray<UInt16>& idx, hsTArray<hsPoint3>& pos);
+    void MakeDrawList(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos);
 
-    void SetAnimPathFlags(UInt32 f) { fAnimPathFlags=f; }
-    UInt32 GetAnimPathFlags() const { return fAnimPathFlags; }
+    void SetAnimPathFlags(uint32_t f) { fAnimPathFlags=f; }
+    uint32_t GetAnimPathFlags() const { return fAnimPathFlags; }
 
     void SetWrap(hsBool on) { if(on)fAnimPathFlags |= kWrap; else fAnimPathFlags &= ~kWrap; }
     hsBool GetWrap() const { return 0 != (fAnimPathFlags & kWrap); }
@@ -153,7 +153,7 @@ public:
     void SetFarthest(hsBool on) { if(on)fAnimPathFlags |= kFarthest; else fAnimPathFlags &= ~kFarthest; }
     hsBool GetFarthest() const { return 0 != (fAnimPathFlags & kFarthest); }
 
-    void SetCurTime(hsScalar t, UInt32 calcFlags=0);
+    void SetCurTime(hsScalar t, uint32_t calcFlags=0);
     hsScalar GetCurTime() const { return fTime; }
 
     void SetController(plCompoundController* tmc);
@@ -178,8 +178,8 @@ public:
     hsScalar GetExtremePoint(hsScalar lastTime, hsScalar delTime, hsPoint3 &worldPt) const; // Incremental search
 
     // for arclen usage
-    void ComputeArcLenDeltas(Int32 numSamples=256);
-    hsScalar GetLookAheadTime(hsScalar startTime, hsScalar arcLength, hsBool bwd, Int32* startSrchIdx);
+    void ComputeArcLenDeltas(int32_t numSamples=256);
+    hsScalar GetLookAheadTime(hsScalar startTime, hsScalar arcLength, hsBool bwd, int32_t* startSrchIdx);
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);

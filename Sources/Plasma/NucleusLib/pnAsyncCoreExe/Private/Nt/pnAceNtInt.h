@@ -229,36 +229,36 @@ void NtSignalShutdown ();
 void NtWaitForShutdown ();
 void NtSleep (unsigned sleepMs);
 AsyncFile NtFileOpen (
-    const wchar             fullPath[],
+    const wchar_t           fullPath[],
     FAsyncNotifyFileProc    notifyProc,
     EFileError *            error,
     unsigned                desiredAccess,
     unsigned                openMode,
     unsigned                shareModeFlags,
     void *                  userState,
-    qword *                 fileSize,
-    qword *                 fileLastWriteTime
+    uint64_t *              fileSize,
+    uint64_t *              fileLastWriteTime
 );
 void NtFileClose (
     AsyncFile   file,
-    qword       truncateSize
+    uint64_t    truncateSize
 );
 void NtFileSetLastWriteTime (
     AsyncFile   file,
-    qword       lastWriteTime
+    uint64_t    lastWriteTime
 );
-qword NtFileGetLastWriteTime (
-    const wchar fileName[]
+uint64_t NtFileGetLastWriteTime (
+    const wchar_t fileName[]
 );
 AsyncId NtFileFlushBuffers (
     AsyncFile   file, 
-    qword       truncateSize,
+    uint64_t    truncateSize,
     bool        notify,
     void *      param
 );
 AsyncId NtFileRead (
     AsyncFile   file,
-    qword       offset,
+    uint64_t    offset,
     void *      buffer,
     unsigned    bytes,
     unsigned    flags,
@@ -266,7 +266,7 @@ AsyncId NtFileRead (
 );
 AsyncId NtFileWrite (
     AsyncFile   file,
-    qword       offset,
+    uint64_t    offset,
     const void *buffer,
     unsigned    bytes,
     unsigned    flags,
@@ -279,7 +279,7 @@ AsyncId NtFileCreateSequence (
 );
 bool NtFileSeek (
     AsyncFile       file,
-    qword           distance,
+    uint64_t        distance,
     EFileSeekFrom   from
 );
 void NtSocketConnect (

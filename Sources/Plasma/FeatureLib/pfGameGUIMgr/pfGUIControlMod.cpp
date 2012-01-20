@@ -107,7 +107,7 @@ pfGUIColorScheme::pfGUIColorScheme( hsColorRGBA &foreColor, hsColorRGBA &backCol
     fBackColor = backColor;
 }
 
-pfGUIColorScheme::pfGUIColorScheme( const char *face, UInt8 size, UInt8 fontFlags )
+pfGUIColorScheme::pfGUIColorScheme( const char *face, uint8_t size, uint8_t fontFlags )
 {
     IReset();
     fFontFace = hsStrcpy( face );
@@ -180,7 +180,7 @@ pfGUIControlMod::~pfGUIControlMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIControlMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIControlMod::IEval( double secs, hsScalar del, uint32_t dirty )
 {
 //  UpdateBounds();
     return false;
@@ -336,7 +336,7 @@ static void GetObjectPoints( plSceneObject *so, hsTArray<hsPoint3> &outPoints )
         return;
 
     // The following uses mf's spiffy plAccessGeometry/Spans stuff, which, in 
-    // one word, kicksAss.
+    // one uint16_t, kicksAss.
     hsTArray<plAccessSpan> spans;
     plAccessGeometry::Instance()->OpenRO( di, spans );
 
@@ -656,7 +656,7 @@ hsBool  pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
     if( fDynTextLayer == nil || fInitialBounds.GetType() == kBoundsUninitialized )//|| fDialog == nil )
         return false;
 
-    UInt32 scrnWidth, scrnHeight;
+    uint32_t scrnWidth, scrnHeight;
     if( !HasFlag( kScaleTextWithResolution ) )
     {
         // Scale so that there is a 1:1 pixel:textel ratio
@@ -677,12 +677,12 @@ hsBool  pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
     }
 
     const hsBounds3 &bounds = fInitialBounds;//GetBounds();
-    UInt16 width = (UInt16)(( bounds.GetMaxs().fX - bounds.GetMins().fX ) * scrnWidth);
-    UInt16 height = (UInt16)(( bounds.GetMaxs().fY - bounds.GetMins().fY ) * scrnHeight);
+    uint16_t width = (uint16_t)(( bounds.GetMaxs().fX - bounds.GetMins().fX ) * scrnWidth);
+    uint16_t height = (uint16_t)(( bounds.GetMaxs().fY - bounds.GetMins().fY ) * scrnHeight);
 
     // Allow derived controls to allocate some extra scratch space if desired
     // (Do it this way so we can pass in our current calculated dimensions for them to play with)
-    UInt16 extraW = width, extraH = height;
+    uint16_t extraW = width, extraH = height;
     IGrowDTMDimsToDesiredSize( extraW, extraH );
     extraW -= width;
     extraH -= height;
@@ -835,7 +835,7 @@ void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
     }
 
     // Read in our sound indices
-    UInt8 i, count = s->ReadByte();
+    uint8_t i, count = s->ReadByte();
     if( count == 0 )
         fSoundIndices.Reset();
     else
@@ -883,7 +883,7 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
 
     // Write out our sound indices
     s->WriteByte( fSoundIndices.GetCount() );
-    UInt8 i;
+    uint8_t i;
     for( i = 0; i < fSoundIndices.GetCount(); i++ )
         s->WriteLE32( fSoundIndices[ i ] );
 
@@ -895,12 +895,12 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
 
 //// HandleKeyPress/Event ////////////////////////////////////////////////////
 
-hsBool  pfGUIControlMod::HandleKeyPress( wchar_t key, UInt8 modifiers ) 
+hsBool  pfGUIControlMod::HandleKeyPress( wchar_t key, uint8_t modifiers ) 
 {
     return false; 
 }
 
-hsBool  pfGUIControlMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, UInt8 modifiers ) 
+hsBool  pfGUIControlMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers ) 
 {
     return false; 
 }
@@ -942,7 +942,7 @@ void    pfGUIControlMod::DoSomething( void )
 
 //// HandleExtendedEvent /////////////////////////////////////////////////////
 
-void    pfGUIControlMod::HandleExtendedEvent( UInt32 event )
+void    pfGUIControlMod::HandleExtendedEvent( uint32_t event )
 {
     if( fEnabled && fHandler != nil )
         fHandler->HandleExtendedEvent( this, event );
@@ -964,7 +964,7 @@ void    pfGUIControlMod::SetDropTargetHdlr( pfGUIDropTargetProc *h )
 //  Associates the given GUI event with an index of a sound on the target SO's
 //  audioInterface. The guiCtrlEvent is specific to each type of control.
 
-void    pfGUIControlMod::SetSoundIndex( UInt8 guiCtrlEvent, int soundIndex )
+void    pfGUIControlMod::SetSoundIndex( uint8_t guiCtrlEvent, int soundIndex )
 {
     if( fSoundIndices.GetCount() < guiCtrlEvent + 1 )
         fSoundIndices.ExpandAndZero( guiCtrlEvent + 1 );
@@ -976,7 +976,7 @@ void    pfGUIControlMod::SetSoundIndex( UInt8 guiCtrlEvent, int soundIndex )
 //  Sends a sound play message with the soundIndex associated with the given
 //  event.
 
-void    pfGUIControlMod::IPlaySound( UInt8 guiCtrlEvent, hsBool loop /* = false */ )
+void    pfGUIControlMod::IPlaySound( uint8_t guiCtrlEvent, hsBool loop /* = false */ )
 {
     if( guiCtrlEvent >= fSoundIndices.GetCount() || fSoundIndices[ guiCtrlEvent ] == 0 )
         return;
@@ -997,7 +997,7 @@ void    pfGUIControlMod::IPlaySound( UInt8 guiCtrlEvent, hsBool loop /* = false 
     msg->Send( GetTarget()->GetAudioInterface()->GetKey() );
 }
 
-void    pfGUIControlMod::IStopSound(UInt8 guiCtrlEvent)
+void    pfGUIControlMod::IStopSound(uint8_t guiCtrlEvent)
 {
     if (guiCtrlEvent >= fSoundIndices.GetCount() || fSoundIndices[guiCtrlEvent] == 0)
         return;

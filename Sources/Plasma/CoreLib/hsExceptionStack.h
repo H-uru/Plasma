@@ -62,8 +62,8 @@ public:
 
     static hsExceptionStack& Instance();
 
-    Int32 GetNumEntries() const             { return fEntries.Count(); }
-    const char* GetEntry(Int32 i) const     { return fEntries[i]; }
+    int32_t GetNumEntries() const             { return fEntries.Count(); }
+    const char* GetEntry(int32_t i) const     { return fEntries[i]; }
 
     void Push(const char* str);
 

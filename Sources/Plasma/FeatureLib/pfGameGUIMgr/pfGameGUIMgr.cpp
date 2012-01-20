@@ -87,10 +87,10 @@ class pfGameUIInputInterface : public plInputInterface
     protected:
         pfGameGUIMgr    * const fGUIManager;
 
-        UInt8   fModifiers;
-        UInt8   fButtonState;
+        uint8_t   fModifiers;
+        uint8_t   fButtonState;
         hsBool  fHaveInterestingCursor;
-        UInt32  fCurrentCursor;
+        uint32_t  fCurrentCursor;
 
         virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd );
         virtual hsBool  IControlCodeEnabled( ControlEventCode code );
@@ -99,9 +99,9 @@ class pfGameUIInputInterface : public plInputInterface
 
         pfGameUIInputInterface( pfGameGUIMgr * const mgr );
 
-        virtual UInt32  GetPriorityLevel( void ) const { return kGUISystemPriority; }
+        virtual uint32_t  GetPriorityLevel( void ) const { return kGUISystemPriority; }
         virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg );
-        virtual UInt32  GetCurrentCursorID( void ) const;
+        virtual uint32_t  GetCurrentCursorID( void ) const;
         virtual hsScalar GetCurrentCursorOpacity( void ) const;
         virtual hsBool  HasInterestingCursorID( void ) const { return fHaveInterestingCursor; }
         virtual hsBool  SwitchInterpretOrder( void ) const { return true; }
@@ -561,7 +561,7 @@ void    pfGameGUIMgr::IActivateGUI( hsBool activate )
 //// IHandleMouse ////////////////////////////////////////////////////////////
 //  Distributes mouse events to the dialogs currently active
 
-hsBool  pfGameGUIMgr::IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers, UInt32 *desiredCursor ) 
+hsBool  pfGameGUIMgr::IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, uint8_t modifiers, uint32_t *desiredCursor ) 
 {
     pfGUIDialogMod  *dlg;
 
@@ -592,7 +592,7 @@ hsBool  pfGameGUIMgr::IHandleMouse( EventType event, hsScalar mouseX, hsScalar m
 //// IHandleKeyEvt ///////////////////////////////////////////////////////////
 //  Distributes mouse events to the dialogs currently active
 
-hsBool  pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, UInt8 modifiers ) 
+hsBool  pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers ) 
 {
     pfGUIDialogMod  *dlg;
 
@@ -610,7 +610,7 @@ hsBool  pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, UInt8 modifi
 //  Like IHandleKeyPress, but takes in a char for distributing actual 
 //  characters typed.
 
-hsBool  pfGameGUIMgr::IHandleKeyPress( wchar_t key, UInt8 modifiers ) 
+hsBool  pfGameGUIMgr::IHandleKeyPress( wchar_t key, uint8_t modifiers ) 
 {
     pfGUIDialogMod  *dlg;
 
@@ -837,7 +837,7 @@ hsBool  pfGameUIInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
     return false;
 }   
 
-UInt32  pfGameUIInputInterface::GetCurrentCursorID( void ) const
+uint32_t  pfGameUIInputInterface::GetCurrentCursorID( void ) const
 {
     if( fCurrentCursor == 0 )
     {
@@ -866,7 +866,7 @@ extern pfGUITag gGUITags[];     // From pfGUITagDefs.cpp
 
 //// GetDialogFromTag ////////////////////////////////////////////////////////
 
-pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromTag( UInt32 tagID )
+pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromTag( uint32_t tagID )
 {
     int     i;
 
@@ -898,16 +898,16 @@ pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromString( const char *name )
 
 //// GetControlFromTag ///////////////////////////////////////////////////////
 
-pfGUIControlMod *pfGameGUIMgr::GetControlFromTag( pfGUIDialogMod *dlg, UInt32 tagID )
+pfGUIControlMod *pfGameGUIMgr::GetControlFromTag( pfGUIDialogMod *dlg, uint32_t tagID )
 {
     return dlg->GetControlFromTag( tagID );
 }
 
 //// GetNumTags //////////////////////////////////////////////////////////////
 
-UInt32          pfGameGUIMgr::GetNumTags( void )
+uint32_t          pfGameGUIMgr::GetNumTags( void )
 {
-    UInt32      count;
+    uint32_t      count;
 
 
     for( count = 0; gGUITags[ count ].fID != 0; count++ );
@@ -916,9 +916,9 @@ UInt32          pfGameGUIMgr::GetNumTags( void )
 
 //// GetTag //////////////////////////////////////////////////////////////////
 
-pfGUITag        *pfGameGUIMgr::GetTag( UInt32 tagIndex )
+pfGUITag        *pfGameGUIMgr::GetTag( uint32_t tagIndex )
 {
-    UInt32      count;
+    uint32_t      count;
 
     
     for( count = 0; gGUITags[ count ].fID != 0; count++ );
@@ -927,9 +927,9 @@ pfGUITag        *pfGameGUIMgr::GetTag( UInt32 tagIndex )
     return &gGUITags[ tagIndex ];
 }
 
-UInt32      pfGameGUIMgr::GetHighestTag( void )
+uint32_t      pfGameGUIMgr::GetHighestTag( void )
 {
-    UInt32  i, id = 1;
+    uint32_t  i, id = 1;
 
 
     for( i = 0; gGUITags[ i ].fID != 0; i++ )

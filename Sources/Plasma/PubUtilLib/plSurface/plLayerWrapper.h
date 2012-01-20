@@ -60,7 +60,7 @@ public:
     virtual void            Init(const plLayerInterface* prev) {} // Init(layer) currently handles all this
     void                    Init(hsGLayer* lay);
 
-    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 dirty, plLayerInterface* prev)
+    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t dirty, plLayerInterface* prev)
     {
         return dirty;
     }

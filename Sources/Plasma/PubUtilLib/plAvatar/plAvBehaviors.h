@@ -60,7 +60,7 @@ public:
     plArmatureBehavior();
     virtual ~plArmatureBehavior();
 
-    void Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature,  UInt8 index);
+    void Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature,  uint8_t index);
     virtual void Process(double time, float elapsed);
     virtual void SetStrength(hsScalar val, hsScalar rate = 0.f); // default instant change
     virtual hsScalar GetStrength();
@@ -71,14 +71,14 @@ public:
     {
         kBehaviorFlagNotifyOnStop = 0x01,
     };
-    UInt32 fFlags;
+    uint32_t fFlags;
     
 protected:
     plAGAnimInstance *fAnim;
     plArmatureModBase *fArmature;
     plArmatureBrain *fBrain;
     plTimedValue<hsScalar> fStrength;
-    UInt8 fIndex;
+    uint8_t fIndex;
 
     virtual void IStart();
     virtual void IStop();

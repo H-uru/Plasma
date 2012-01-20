@@ -76,7 +76,7 @@ public:
     static void     AddPlasmaClasses(PyObject *m);
 
     int             GetScoreID();
-    UInt32          GetCreatedTime();
+    uint32_t          GetCreatedTime();
     int             GetOwnerID();
     int             GetGameType();
     int             GetValue();

@@ -167,7 +167,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
 // Cause a player to respawn. This is typically called on the local player when he links to a new age.
 // or for unspawn:
 //
-void plNetClientMgr::IPlayerChangeAge(hsBool exitAge, Int32 spawnPt)
+void plNetClientMgr::IPlayerChangeAge(hsBool exitAge, int32_t spawnPt)
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     

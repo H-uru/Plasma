@@ -141,7 +141,7 @@ plGeneric& plGeneric::operator=(const std::wstring& val)
 
 int plGeneric::Write(hsStream* stream)
 {
-    stream->WriteByte((UInt8)fType);
+    stream->WriteByte((uint8_t)fType);
 
     switch (fType)
     {

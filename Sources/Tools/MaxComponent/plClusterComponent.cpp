@@ -447,7 +447,7 @@ void plClusterComponent::IBuildDistribTab()
         plMaxNodeBase* targ = GetTarget(i);
         if( targ )
         {
-            UInt32 count = targ->NumAttachedComponents();
+            uint32_t count = targ->NumAttachedComponents();
             int j;
             for( j = 0; j < count; j++ )
             // For each DistribComponent
@@ -1150,7 +1150,7 @@ BOOL plClusterComponent::IGetLocation()
         plMaxNodeBase* targ = GetTarget(i);
         if( targ )
         {
-            UInt32 numComp = targ->NumAttachedComponents(false);
+            uint32_t numComp = targ->NumAttachedComponents(false);
             int j;
             for( j = 0; j < numComp; j++ )
             {

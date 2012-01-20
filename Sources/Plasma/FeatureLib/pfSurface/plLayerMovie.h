@@ -57,11 +57,11 @@ protected:
 
 //  plAnimTimeConvert           fTimeConvert;
 
-    Int32                       fCurrentFrame;
+    int32_t                       fCurrentFrame;
     hsScalar                    fLength;
-    UInt32                      fWidth, fHeight;
+    uint32_t                      fWidth, fHeight;
 
-    virtual Int32               ISecsToFrame(hsScalar secs) = 0;
+    virtual int32_t               ISecsToFrame(hsScalar secs) = 0;
 
     hsBool                      IGetFault() const { return !(fMovieName &&  *fMovieName); }
     hsBool                      ISetFault(const char* errStr);
@@ -82,7 +82,7 @@ public:
     CLASSNAME_REGISTER( plLayerMovie );
     GETINTERFACE_ANY( plLayerMovie, plLayerAnimation );
 
-    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
 
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);

@@ -79,7 +79,7 @@ hsBool plConvexVolume::AddPlane(const hsPlane3 &plane)
     }
     fNumPlanes++;
     //delete [] fFlags;
-    //fFlags = TRACKED_NEW UInt32[fNumPlanes];
+    //fFlags = TRACKED_NEW uint32_t[fNumPlanes];
 
     hsPlane3 *tempPlanes = TRACKED_NEW hsPlane3[fNumPlanes];
     for (i = 0; i < fNumPlanes - 1; i++)
@@ -110,16 +110,16 @@ void plConvexVolume::Update(const hsMatrix44 &l2w)
     }
 }
 
-void plConvexVolume::SetNumPlanesAndClear(const UInt32 num)
+void plConvexVolume::SetNumPlanesAndClear(const uint32_t num)
 {
     IClear();
-    //fFlags = TRACKED_NEW UInt32[num];
+    //fFlags = TRACKED_NEW uint32_t[num];
     fLocalPlanes = TRACKED_NEW hsPlane3[num];
     fWorldPlanes = TRACKED_NEW hsPlane3[num];
     fNumPlanes = num;
 }
 
-void plConvexVolume::SetPlane(const hsPlane3 &plane, const UInt32 index)
+void plConvexVolume::SetPlane(const hsPlane3 &plane, const uint32_t index)
 {
     fLocalPlanes[index] = plane;
 }
@@ -139,7 +139,7 @@ hsBool plConvexVolume::IsInside(const hsPoint3 &pos) const
 hsBool plConvexVolume::ResolvePoint(hsPoint3 &pos) const
 {
     hsScalar minDist = 1.e33f;
-    Int32 minIndex = -1;
+    int32_t minIndex = -1;
 
     hsScalar currDist;
     int i;
@@ -162,7 +162,7 @@ hsBool plConvexVolume::ResolvePoint(hsPoint3 &pos) const
 hsBool plConvexVolume::BouncePoint(hsPoint3 &pos, hsVector3 &velocity, hsScalar bounce, hsScalar friction) const
 {
     hsScalar minDist = 1.e33f;
-    Int32 minIndex = -1;
+    int32_t minIndex = -1;
 
     hsScalar currDist;
     int i;

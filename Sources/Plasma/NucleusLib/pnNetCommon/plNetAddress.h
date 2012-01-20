@@ -73,7 +73,7 @@ class plNetAddress
 
 public:
     plNetAddress();
-    plNetAddress(UInt32 addr, int port);
+    plNetAddress(uint32_t addr, int port);
     plNetAddress(const char * addr, int port);
     virtual ~plNetAddress(){}
 
@@ -82,10 +82,10 @@ public:
     bool SetAnyPort();
     bool SetPort(int port);
     bool SetHost(const char * hostname);
-    bool SetHost(UInt32 ip4addr);
+    bool SetHost(uint32_t ip4addr);
     int GetPort() const;
     std::string GetHostString() const;
-    UInt32 GetHost() const;
+    uint32_t GetHost() const;
     std::string GetHostWithPort() const; 
     const AddressType & GetAddressInfo() const { return fAddr; }
     AddressType & GetAddressInfo() { return fAddr; }

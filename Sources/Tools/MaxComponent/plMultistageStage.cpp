@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 char* MyReadSafeString(hsStream* s)
 {
     char *name = nil;
-    UInt16 numChars = s->ReadLE16();
+    uint16_t numChars = s->ReadLE16();
 
     bool oldFormat = !(numChars & 0xf000);
     if (oldFormat)
@@ -186,7 +186,7 @@ void plStandardStage::Read(hsStream *stream)
 {
     plBaseStage::Read(stream);
 
-    UInt16 version = stream->ReadLE16();
+    uint16_t version = stream->ReadLE16();
 
     delete [] fAnimName;
     fAnimName = MyReadSafeString(stream);

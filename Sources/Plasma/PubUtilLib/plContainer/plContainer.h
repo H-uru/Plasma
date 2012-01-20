@@ -48,21 +48,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 template < class T >
 class plDataContainerT
 {
-    typedef std::map<UInt32,T*> Items;
+    typedef std::map<uint32_t,T*> Items;
     Items       fItems;
-    UInt32      fNextKey;
+    uint32_t      fNextKey;
 public:
     plDataContainerT()
     : fNextKey( 1 )
     {}
-    UInt32 Add( T* data )
+    uint32_t Add( T* data )
     {
-        UInt32 key = fNextKey;
+        uint32_t key = fNextKey;
         fItems[ key ] = data;
         fNextKey++;
         return key;
     }
-    bool Get( UInt32 key, T*& outItem, bool remove=true )
+    bool Get( uint32_t key, T*& outItem, bool remove=true )
     {
         outItem = nil;
         Items::iterator ii = fItems.find( key );

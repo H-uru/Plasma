@@ -135,7 +135,7 @@ public:
     //---------------------------
     void LoadAgeKeys(const char* age);
     void DropAgeKeys(const char* age);
-    void PageInRoom(const plLocation& page, UInt16 objClassToRef, plRefMsg* refMsg);
+    void PageInRoom(const plLocation& page, uint16_t objClassToRef, plRefMsg* refMsg);
     void PageInAge(const char* age);
 
     // Usually, a page file is kept open during load because the first keyed object
@@ -161,7 +161,7 @@ public:
 
     // Helpers for key iterators
     void LoadPageKeys(plRegistryPageNode* pageNode);
-    void UnloadPageObjects(plRegistryPageNode* pageNode, UInt16 classIndexHint);
+    void UnloadPageObjects(plRegistryPageNode* pageNode, uint16_t classIndexHint);
     void DumpUnusedKeys(plRegistryPageNode* page) const;
     plRegistryPageNode* FindPage(const plLocation& location) const;
     plRegistryPageNode* FindPage(const char* age, const char* page) const;
@@ -179,7 +179,7 @@ protected:
     virtual hsBool  IReadObject(plKeyImp* pKey, hsStream *stream);  
 
     plCreatable*    IReadCreatable(hsStream* s) const;
-    plKey           ICloneKey(const plUoid& objUoid, UInt32 playerID, UInt32 cloneID);
+    plKey           ICloneKey(const plUoid& objUoid, uint32_t playerID, uint32_t cloneID);
 
     virtual void    IKeyReffed(plKeyImp* key);
     virtual void    IKeyUnreffed(plKeyImp* key);
@@ -209,7 +209,7 @@ protected:
     plRegistryPageNode* CreatePage(const plLocation& location, const char* age, const char* page);
 
     hsBool          fInited;
-    UInt16          fPageOutHint;
+    uint16_t          fPageOutHint;
 
     // True if we're reading in an object. We only read one object at a time
     hsBool          fReadingObject;
@@ -219,9 +219,9 @@ protected:
 
     plDispatch*     fDispatch;
 
-    UInt32 fCurCloneID;     // Current clone ID.  If it isn't zero, we're cloning
-    UInt32 fCurClonePlayerID;
-    UInt32 fCloningCounter; // Next clone ID to use.
+    uint32_t fCurCloneID;     // Current clone ID.  If it isn't zero, we're cloning
+    uint32_t fCurClonePlayerID;
+    uint32_t fCloningCounter; // Next clone ID to use.
 
     typedef std::map<std::string,plResAgeHolder*>   HeldAgeKeyMap;
     HeldAgeKeyMap   fHeldAgeKeys;
@@ -231,7 +231,7 @@ protected:
 
     hsBool fLogReadTimes;
 
-    UInt8 fPageListLock;    // Number of locks on the page lists.  If it's greater than zero, they can't be modified
+    uint8_t fPageListLock;    // Number of locks on the page lists.  If it's greater than zero, they can't be modified
     hsBool fPagesNeedCleanup;   // True if something modified the page lists while they were locked.
 
     typedef std::set<plRegistryPageNode*> PageSet;

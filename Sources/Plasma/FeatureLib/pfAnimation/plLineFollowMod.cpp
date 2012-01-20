@@ -165,10 +165,10 @@ void plLineFollowMod::Read(hsStream* stream, hsResMgr* mgr)
         mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefStereizer), plRefFlags::kPassiveRef);
     }
 
-    UInt32 f = stream->ReadLE32();
+    uint32_t f = stream->ReadLE32();
     SetFollowMode(FollowMode(f & 0xffff));
 
-    fFollowFlags = (UInt16)((f >> 16) & 0xffff);
+    fFollowFlags = (uint16_t)((f >> 16) & 0xffff);
 
     if( fFollowFlags & kOffset )
     {
@@ -203,7 +203,7 @@ void plLineFollowMod::Write(hsStream* stream, hsResMgr* mgr)
     for( i = 0; i < fStereizers.GetCount(); i++ )
         mgr->WriteKey(stream, fStereizers[i]->GetKey());
 
-    UInt32 f = UInt32(fFollowMode) | (UInt32(fFollowFlags) << 16);
+    uint32_t f = uint32_t(fFollowMode) | (uint32_t(fFollowFlags) << 16);
     stream->WriteLE32(f);
 
     if( fFollowFlags & kOffset )
@@ -337,7 +337,7 @@ void plLineFollowMod::IRegister()
     }
 }
 
-hsBool plLineFollowMod::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plLineFollowMod::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     if( !fPath )
         return false;

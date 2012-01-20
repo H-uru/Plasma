@@ -152,13 +152,13 @@ public:
     virtual void SquelchLevel( hsScalar level );
 
     // Adjust voice packet frame size
-    virtual void RecordFrame( Int32 size );
+    virtual void RecordFrame( int32_t size );
 
     // Set the sample rate for recording
-    virtual void RecordSampleRate( Int32 sample_rate );
+    virtual void RecordSampleRate( int32_t sample_rate );
 
-    virtual UInt8 GetPriorityCutoff( void );
-    virtual void  SetPriorityCutoff( UInt8 cut );
+    virtual uint8_t GetPriorityCutoff( void );
+    virtual void  SetPriorityCutoff( uint8_t cut );
 
     // does the device specified support EAX
     virtual hsBool SupportEAX(const char *deviceName);

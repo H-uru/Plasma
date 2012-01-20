@@ -64,7 +64,7 @@ struct SimpleNetConn : AtomicRef {
     struct ConnectParam *       connectParam;
 
     SimpleNet_MsgHeader *       oversizeMsg;
-    ARRAY(byte)                 oversizeBuffer;
+    ARRAY(uint8_t)                 oversizeBuffer;
 
     ~SimpleNetConn () {
         ASSERT(!link.IsLinked());
@@ -199,8 +199,8 @@ static bool NotifyConnSocketRead (SimpleNetConn * conn, AsyncNotifySocketRead * 
         
     bool result = true;
 
-    const byte * curr = read->buffer;
-    const byte * term = curr + read->bytes;
+    const uint8_t * curr = read->buffer;
+    const uint8_t * term = curr + read->bytes;
 
     while (curr < term) {
         // Reading oversize msg?
@@ -249,7 +249,7 @@ static bool NotifyConnSocketRead (SimpleNetConn * conn, AsyncNotifySocketRead * 
         }
         
         // Wait until we have received the entire message
-        const byte * msgTerm = (const byte *) curr + msg->messageBytes;
+        const uint8_t * msgTerm = (const uint8_t *) curr + msg->messageBytes;
         if (msgTerm > term)
             break;
         curr = msgTerm;
@@ -408,7 +408,7 @@ static void Connect (const NetAddress & addr, ConnectParam * cp) {
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar         name[],
+    const wchar_t         name[],
     unsigned            addrCount,
     const NetAddress    addrs[]
 ) {
@@ -558,7 +558,7 @@ void SimpleNetDestroyChannel (unsigned channelId) {
 //============================================================================
 void SimpleNetStartConnecting (
     unsigned            channelId,
-    const wchar         addr[],
+    const wchar_t         addr[],
     FSimpleNetOnConnect onConnect,
     void *              param
 ) {
@@ -579,7 +579,7 @@ void SimpleNetStartConnecting (
     ASSERT(cp->channel);
 
     // Do we need to lookup the address?
-    const wchar * name = addr;
+    const wchar_t * name = addr;
     while (unsigned ch = *name) {
         ++name;
         if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -633,7 +633,7 @@ void SimpleNetSend (
 ) {
     ASSERT(s_running);
     ASSERT(msg);
-    ASSERT(msg->messageBytes != (dword)-1);
+    ASSERT(msg->messageBytes != (uint32_t)-1);
     ASSERT(conn);
     
     s_critsect.Enter();

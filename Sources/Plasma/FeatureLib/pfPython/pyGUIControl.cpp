@@ -108,7 +108,7 @@ PyObject* pyGUIControl::getObjPyKey()
 
 
 // interface functions
-UInt32  pyGUIControl::GetTagID()
+uint32_t  pyGUIControl::GetTagID()
 {
     if ( fGCkey )
     {
@@ -334,7 +334,7 @@ PyObject* pyGUIControl::GetBackSelColor()
     PYTHON_RETURN_NONE;
 }
 
-UInt32 pyGUIControl::GetFontSize()
+uint32_t pyGUIControl::GetFontSize()
 {
     if ( fGCkey )
     {
@@ -432,7 +432,7 @@ void pyGUIControl::SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar
 }
 
 
-void pyGUIControl::SetFontSize(UInt32 fontsize)
+void pyGUIControl::SetFontSize(uint32_t fontsize)
 {
     if ( fGCkey )
     {
@@ -440,7 +440,7 @@ void pyGUIControl::SetFontSize(UInt32 fontsize)
         if ( pdmod )
         {
             pfGUIColorScheme* color = pdmod->GetColorScheme();
-            color->fFontSize = (UInt8)fontsize;
+            color->fFontSize = (uint8_t)fontsize;
         }
     }
 }

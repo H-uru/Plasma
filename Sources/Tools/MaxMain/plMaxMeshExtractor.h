@@ -55,7 +55,7 @@ public:
         int fNumVerts;
         hsPoint3* fVerts;
         int fNumFaces;
-        UInt16* fFaces;
+        uint16_t* fFaces;
 
         hsMatrix44 fL2W;
     };

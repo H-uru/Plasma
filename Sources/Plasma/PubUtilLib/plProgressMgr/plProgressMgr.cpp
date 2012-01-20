@@ -298,9 +298,9 @@ void plOperationProgress::IUpdateStats()
         fAmtPerSec = progress / hsScalar(elapsed);
     else
         fAmtPerSec = 0;
-    fElapsedSecs = (UInt32)elapsed;
+    fElapsedSecs = (uint32_t)elapsed;
     if (progress < fMax)
-        fRemainingSecs = (UInt32)((fMax - progress) / fAmtPerSec);
+        fRemainingSecs = (uint32_t)((fMax - progress) / fAmtPerSec);
     else
         fRemainingSecs = 0;
 }

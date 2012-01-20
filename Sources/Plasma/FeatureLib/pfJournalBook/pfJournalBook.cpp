@@ -112,16 +112,16 @@ class pfEsHTMLChunk
 
         std::wstring fText; // Paragraph text, or face name
         plKey   fImageKey;  // Key of image
-        UInt8   fFontSize;
-        UInt32  fFlags;
-        UInt8   fType;
-        UInt32  fEventID;
+        uint8_t   fFontSize;
+        uint32_t  fFlags;
+        uint8_t   fType;
+        uint32_t  fEventID;
 
         pcSmallRect fLinkRect;      // Used only for image chunks, and only when stored in the fVisibleLinks array
 
         hsColorRGBA fColor;
 
-        UInt16      fAbsoluteX, fAbsoluteY;
+        uint16_t      fAbsoluteX, fAbsoluteY;
 
         hsScalar    fCurrOpacity;   // For SFX images
         hsScalar    fSFXTime;       // For SFX images
@@ -131,11 +131,11 @@ class pfEsHTMLChunk
         hsColorRGBA fOffColor, fOnColor;
 
         bool    fNoResizeImg;
-        Int16   fLineSpacing;
+        int16_t   fLineSpacing;
         bool    fTintDecal;
         bool    fLoopMovie;
         bool    fOnCover; // if true, the movie is on the cover
-        UInt8   fMovieIndex; // the index of the movie in the source code, used for identification
+        uint8_t   fMovieIndex; // the index of the movie in the source code, used for identification
 
         enum Flags
         {
@@ -204,7 +204,7 @@ class pfEsHTMLChunk
         }
 
         // Image constructor (used for decals and movies too)
-        pfEsHTMLChunk( plKey imageKey, UInt32 alignFlags )
+        pfEsHTMLChunk( plKey imageKey, uint32_t alignFlags )
         {
             fType = kImage;
             fText = L"";
@@ -248,7 +248,7 @@ class pfEsHTMLChunk
         }
 
         // Font change constructor
-        pfEsHTMLChunk( const wchar_t *face, UInt8 size, UInt32 fontFlags )
+        pfEsHTMLChunk( const wchar_t *face, uint8_t size, uint32_t fontFlags )
         {
             fType = kFontChange;
             if (face)
@@ -384,7 +384,7 @@ class pfJournalDlgProc : public pfGUIDialogProc
             }
         }
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, UInt32 event )
+        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
         {
             if (fBook)
             {
@@ -395,7 +395,7 @@ class pfJournalDlgProc : public pfGUIDialogProc
                         if (fBook->fCurrBook)
                         {
                             // Update our custom cursor on the map
-                            Int32 idx = fBook->fCurrBook->IFindCurrVisibleLink( false, true );
+                            int32_t idx = fBook->fCurrBook->IFindCurrVisibleLink( false, true );
                             if( idx != -1 )
                                 fBook->fLeftPageMap->SetCustomCursor( plInputInterface::kCursorPoised/*Hand*/ );
                             else if(( fBook->fCurrBook->fCurrentPage > 1 )&&( fBook->fCurrBook->fAllowTurning ))
@@ -414,7 +414,7 @@ class pfJournalDlgProc : public pfGUIDialogProc
                         if (fBook->fCurrBook)
                         {
                             // Update our custom cursor on the map
-                            Int32 idx = fBook->fCurrBook->IFindCurrVisibleLink( true, true );
+                            int32_t idx = fBook->fCurrBook->IFindCurrVisibleLink( true, true );
                             if( idx != -1 )
                                 fBook->fRightPageMap->SetCustomCursor( plInputInterface::kCursorPoised/*Hand*/ );
                             else if((fBook->fCurrBook->fAreWeShowing) && ( fBook->fCurrBook->fCurrentPage + 2 <= fBook->fCurrBook->fLastPage )&&( fBook->fCurrBook->fAllowTurning ))
@@ -440,8 +440,8 @@ public:
     pfBookMultiLineEditProc(pfBookData *owner) { bookData = owner; }
     virtual ~pfBookMultiLineEditProc() {}
 
-    virtual void OnEndOfControlList(Int32 cursorPos) { bookData->HitEndOfControlList(cursorPos); }
-    virtual void OnBeginningOfControlList(Int32 cursorPos) { bookData->HitBeginningOfControlList(cursorPos); }
+    virtual void OnEndOfControlList(int32_t cursorPos) { bookData->HitEndOfControlList(cursorPos); }
+    virtual void OnBeginningOfControlList(int32_t cursorPos) { bookData->HitBeginningOfControlList(cursorPos); }
 };
 
 //// Book data class /////////////////////////////////////////////////////////
@@ -454,7 +454,7 @@ pfBookData::pfBookData(const char *guiName /* = nil */)
     fLeftPageMap = fRightPageMap = nil;
     fCoverLayer = nil;
     fCoverMaterial = nil;
-    UInt16 i;
+    uint16_t i;
     for (i=0; i<4; i++)
         fPageMaterials[i] = nil;
     fLeftCorner = fRightCorner = nil;
@@ -665,7 +665,7 @@ void pfBookData::IInitTemplate(pfGUIDialogMod *templateDlg)
 //// IGetDTMap ///////////////////////////////////////////////////////////////
 // Just a quick helper 
 
-plDynamicTextMap *pfBookData::GetDTMap(UInt32 which)
+plDynamicTextMap *pfBookData::GetDTMap(uint32_t which)
 {
     pfGUIDynDisplayCtrl *display = pfGUIDynDisplayCtrl::ConvertNoRef(fDialog->GetControlFromTag(which));
     return display->GetMap(0);
@@ -673,7 +673,7 @@ plDynamicTextMap *pfBookData::GetDTMap(UInt32 which)
 
 //// GetEditCtrl /////////////////////////////////////////////////////////////
 
-pfGUIMultiLineEditCtrl *pfBookData::GetEditCtrl(UInt32 which)
+pfGUIMultiLineEditCtrl *pfBookData::GetEditCtrl(uint32_t which)
 {
     switch (which)
     {
@@ -739,7 +739,7 @@ void pfBookData::IHandleSFX(hsScalar currTime, WhichSide whichSide /*= kNoSides*
     // Update all SFX images for this page first
     hsScalar deltaT = currTime - fBaseSFXTime;
 
-    UInt32 idx, inc = (whichSide == kLeftSide) ? 0 : 1;
+    uint32_t idx, inc = (whichSide == kLeftSide) ? 0 : 1;
     if(fCurrBook->fPageStarts.GetCount() <= fCurrBook->fCurrentPage + inc + 1)
         return;
 
@@ -751,7 +751,7 @@ void pfBookData::IHandleSFX(hsScalar currTime, WhichSide whichSide /*= kNoSides*
         if(chunk->fFlags & pfEsHTMLChunk::kGlowing)
         {
             // Glow SFX: animate opacity based on time offset
-            UInt8 isOdd = 0;
+            uint8_t isOdd = 0;
             hsScalar newDelta = deltaT;
             while(newDelta > chunk->fSFXTime)
             {
@@ -957,7 +957,7 @@ void pfBookData::IFinishTriggeredFlip(hsBool wasBackwards)
         if (!wasBackwards)
         {
             // adjust the starting point of the control (not needed if we weren't backwards since that was done when we started turning
-            Int32 newStart = fRightEditCtrl->GetLastVisibleLine();
+            int32_t newStart = fRightEditCtrl->GetLastVisibleLine();
             fLeftEditCtrl->SetGlobalStartLine(newStart);
         }
         if (fAdjustCursorTo >= 0)
@@ -1106,14 +1106,14 @@ void pfBookData::PlayBookCloseAnim(hsBool closeIt /*= true*/, hsBool immediate /
 
 //// Event routines from a linked multi-line edit control ////////////////////
 
-void pfBookData::HitEndOfControlList(Int32 cursorPos)
+void pfBookData::HitEndOfControlList(int32_t cursorPos)
 {
     fAdjustCursorTo = cursorPos;
     if (fCurrBook)
         fCurrBook->NextPage();
 }
 
-void pfBookData::HitBeginningOfControlList(Int32 cursorPos)
+void pfBookData::HitBeginningOfControlList(int32_t cursorPos)
 {
     fAdjustCursorTo = cursorPos;
     if (fCurrBook)
@@ -1412,7 +1412,7 @@ void    pfJournalBook::Hide( void )
 //// Open ////////////////////////////////////////////////////////////////////
 // Opens the book, optionally to the given page
 
-void    pfJournalBook::Open( UInt32 startingPage /*= 0 */)
+void    pfJournalBook::Open( uint32_t startingPage /*= 0 */)
 {
     if( !fBookGUIs[fCurBookGUI]->CurrentlyOpen() )
     {
@@ -1584,7 +1584,7 @@ void    pfJournalBook::PreviousPage( void )
             pfGUIMultiLineEditCtrl *turnFront = fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl);
             pfGUIMultiLineEditCtrl *turnBack = fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl);
             // adjust the starting position of the left control to the new start
-            Int32 newStartLine = left->GetFirstVisibleLine() - ((left->GetNumVisibleLines()-1)*2);
+            int32_t newStartLine = left->GetFirstVisibleLine() - ((left->GetNumVisibleLines()-1)*2);
             left->SetGlobalStartLine(newStartLine);
             // re-link the controls with the turn page in the middle
             left->SetNext(turnFront);
@@ -1639,7 +1639,7 @@ void    pfJournalBook::PreviousPage( void )
 //// IFindCurrVisibleLink ////////////////////////////////////////////////////
 // Find the current moused link, if any
 
-Int32   pfJournalBook::IFindCurrVisibleLink( hsBool rightNotLeft, hsBool hoverNotUp )
+int32_t   pfJournalBook::IFindCurrVisibleLink( hsBool rightNotLeft, hsBool hoverNotUp )
 {
     pfGUIClickMapCtrl *ctrl = ( rightNotLeft ) ? fBookGUIs[fCurBookGUI]->RightPageMap() : fBookGUIs[fCurBookGUI]->LeftPageMap();
 
@@ -1657,13 +1657,13 @@ Int32   pfJournalBook::IFindCurrVisibleLink( hsBool rightNotLeft, hsBool hoverNo
     }
 
     // Search through the list of visible hotspots
-    UInt32 i;
+    uint32_t i;
     for( i = 0; i < fVisibleLinks.GetCount(); i++ )
     {
-        if( fVisibleLinks[ i ]->fLinkRect.Contains( (Int16)pt.fX, (Int16)pt.fY ) )
+        if( fVisibleLinks[ i ]->fLinkRect.Contains( (int16_t)pt.fX, (int16_t)pt.fY ) )
         {
             // Found a visible link
-            return (Int32)i;
+            return (int32_t)i;
         }
     }
 
@@ -1677,7 +1677,7 @@ void    pfJournalBook::IHandleLeftSideClick( void )
     if( fBookGUIs[fCurBookGUI]->CurrentlyTurning() )
         return;
 
-    Int32 idx = IFindCurrVisibleLink( false, false );
+    int32_t idx = IFindCurrVisibleLink( false, false );
     if( idx != -1 )
     {
         if( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kActAsCB )
@@ -1696,7 +1696,7 @@ void    pfJournalBook::IHandleRightSideClick( void )
     if( fBookGUIs[fCurBookGUI]->CurrentlyTurning() )
         return;
 
-    Int32 idx = IFindCurrVisibleLink( true, false );
+    int32_t idx = IFindCurrVisibleLink( true, false );
     if( idx != -1 )
     {
         if( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kActAsCB )
@@ -1713,7 +1713,7 @@ void    pfJournalBook::IHandleRightSideClick( void )
 //// IHandleCheckClick ///////////////////////////////////////////////////////
 // Process a click on the given "check box" image
 
-void    pfJournalBook::IHandleCheckClick( UInt32 idx, pfBookData::WhichSide which )
+void    pfJournalBook::IHandleCheckClick( uint32_t idx, pfBookData::WhichSide which )
 {
     // Special processing for checkboxes--toggle our state, switch our opacity
     // and then send a notify about our new state
@@ -1741,7 +1741,7 @@ void    pfJournalBook::IHandleCheckClick( UInt32 idx, pfBookData::WhichSide whic
 //// GoToPage ////////////////////////////////////////////////////////////////
 // For completeness...
 
-void    pfJournalBook::GoToPage( UInt32 pageNumber )
+void    pfJournalBook::GoToPage( uint32_t pageNumber )
 {
     // Put us here, but only on an even page (odd pages go on the right, y'know)
     if (pageNumber < fPageStarts.Count())
@@ -1779,9 +1779,9 @@ void    pfJournalBook::ForceCacheCalculations( void )
 }
 
 // Tiny helper to convert hex values the *right* way
-static UInt32   IConvertHex( const wchar_t *str )
+static uint32_t   IConvertHex( const wchar_t *str )
 {
-    UInt32 value = 0;
+    uint32_t value = 0;
     while( *str != 0 )
     {
         value <<= 4;
@@ -1822,7 +1822,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
     const wchar_t   *c, *start;
     wchar_t name[ 128 ], option[ 256 ];
     float bookWidth=1.0, bookHeight=1.0;
-    UInt8 movieIndex = 0; // the index of a movie in the source (used for id purposes)
+    uint8_t movieIndex = 0; // the index of a movie in the source (used for id purposes)
 
     plKey anotherKey;
 
@@ -1831,7 +1831,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
     for( start = c = source; *c != 0; )
     {
         // Are we on a tag?
-        UInt8 type = IGetTagType( c );
+        uint8_t type = IGetTagType( c );
         if( type != pfEsHTMLChunk::kEmpty )
         {
             // First, end the current paragraph chunk, which is a special case 'cause its 
@@ -1844,7 +1844,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
             }
             else if( lastParChunk != nil )
             {
-                UInt32 count = ((UInt32)c - (UInt32)start)/2; // wchar_t is 2 bytes
+                uint32_t count = ((uint32_t)c - (uint32_t)start)/2; // wchar_t is 2 bytes
                 
                 wchar_t *temp = TRACKED_NEW wchar_t[ count + 1 ];
                 wcsncpy( temp, start, count );
@@ -1968,13 +1968,13 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                                         chunk->fFlags |= pfEsHTMLChunk::kChecked;
                                     *comma2 = 0;
                                 }
-                                UInt32 c = IConvertHex( comma + 1 );
+                                uint32_t c = IConvertHex( comma + 1 );
                                 if( wcslen( comma + 1 ) <= 6 )
                                     c |= 0xff000000;    // Add in full alpha if none specified
                                 chunk->fOffColor.FromARGB32( c );
                                 *comma = 0;
                             }
-                            UInt32 c = IConvertHex( option );
+                            uint32_t c = IConvertHex( option );
                             if( wcslen( option ) <= 6 )
                                 c |= 0xff000000;    // Add in full alpha if none specified
                             chunk->fOnColor.FromARGB32( c );
@@ -2050,7 +2050,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                     {
                         if( wcsicmp( name, L"style" ) == 0 )
                         {
-                            UInt8 guiFlags = 0;
+                            uint8_t guiFlags = 0;
                             if( wcsicmp( option, L"b" ) == 0 )
                             {
                                 chunk->fFlags = pfEsHTMLChunk::kFontBold;
@@ -2339,7 +2339,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
     }
     else if( lastParChunk != nil )
     {
-        UInt32 count = (UInt32)c - (UInt32)start;
+        uint32_t count = (uint32_t)c - (uint32_t)start;
         
         wchar_t *temp = TRACKED_NEW wchar_t[ count + 1 ];
         wcsncpy( temp, start, count + 1 );
@@ -2364,7 +2364,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
     return true;
 }
 
-UInt8   pfJournalBook::IGetTagType( const wchar_t *string )
+uint8_t   pfJournalBook::IGetTagType( const wchar_t *string )
 {
     if( string[ 0 ] != '<' )
         return pfEsHTMLChunk::kEmpty;
@@ -2372,7 +2372,7 @@ UInt8   pfJournalBook::IGetTagType( const wchar_t *string )
     struct TagRec
     {
         const wchar_t *fTag;
-        UInt8       fType;
+        uint8_t       fType;
     } tags[] = { { L"p", pfEsHTMLChunk::kParagraph },
                 { L"img", pfEsHTMLChunk::kImage },
                 { L"pb", pfEsHTMLChunk::kPageBreak },
@@ -2386,7 +2386,7 @@ UInt8   pfJournalBook::IGetTagType( const wchar_t *string )
                 { nil, pfEsHTMLChunk::kEmpty } };
                 
 
-    UInt32 i;
+    uint32_t i;
     for( i = 0; tags[ i ].fTag != nil; i++ )
     {
         if( wcsnicmp( string + 1, tags[ i ].fTag, wcslen( tags[ i ].fTag ) ) == 0 )
@@ -2425,7 +2425,7 @@ hsBool  pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
         return false;
 
     // Copy name
-    UInt32 len = ((UInt32)string - (UInt32)c)/2; // divide length by 2 because each character is two bytes
+    uint32_t len = ((uint32_t)string - (uint32_t)c)/2; // divide length by 2 because each character is two bytes
     wcsncpy( name, c, len );
     name[len] = L'\0';
 
@@ -2445,7 +2445,7 @@ hsBool  pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
         while( *string != L'>' && *string != L'\"' && *string != L'\0' )
             string++;
 
-        len = ((UInt32)string - (UInt32)c)/2; // divide length by 2 because each character is two bytes
+        len = ((uint32_t)string - (uint32_t)c)/2; // divide length by 2 because each character is two bytes
         wcsncpy( option, c, len );
         option[len] = L'\0';
         
@@ -2460,7 +2460,7 @@ hsBool  pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
     while( *string != L' ' && *string != L'>' && *string != L'\0' )
         string++;
 
-    len = ((UInt32)string - (UInt32)c)/2; // divide length by 2 because each character is two bytes
+    len = ((uint32_t)string - (uint32_t)c)/2; // divide length by 2 because each character is two bytes
     wcsncpy( option, c, len );
     option[len] = L'\0';
     
@@ -2469,7 +2469,7 @@ hsBool  pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
 
 void    pfJournalBook::IFreeSource( void )
 {
-    UInt32 i;
+    uint32_t i;
     
     for( i = 0; i < fHTMLSource.GetCount(); i++ )
         delete fHTMLSource[ i ];
@@ -2563,7 +2563,7 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
 //  DTMap (by GUI tag ID). If no page is cached after this one, also updates
 //  the various cached info about page endings, etc.
 
-void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppressRendering /*= false*/ )
+void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, hsBool suppressRendering /*= false*/ )
 {
     if (fAreEditing)
         return; // we don't render if we are editing the book
@@ -2614,13 +2614,13 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
     if( page <= fLastPage 
         && page < fPageStarts.GetCount())   // Added this as a crash-prevention bandaid - MT
     {
-        UInt32 idx;
-        UInt16 width, height, y, x, ascent, lastX, lastY;
+        uint32_t idx;
+        uint16_t width, height, y, x, ascent, lastX, lastY;
         
-        UInt8       fontFlags, fontSize;
+        uint8_t       fontFlags, fontSize;
         const wchar_t *fontFace;
         hsColorRGBA fontColor;
-        Int16       fontSpacing;
+        int16_t       fontSpacing;
         hsBool      needSFX = false;
 
         // Find and set initial font properties
@@ -2629,8 +2629,8 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
         dtMap->SetTextColor( fontColor, true );
         dtMap->SetLineSpacing(fontSpacing);
 
-        for( idx = fPageStarts[ page ], x = (UInt16)fPageLMargin, y = (UInt16)fPageTMargin;
-            y < (UInt16)(512 - fPageTMargin - fPageBMargin) && idx < fHTMLSource.GetCount(); idx++ )
+        for( idx = fPageStarts[ page ], x = (uint16_t)fPageLMargin, y = (uint16_t)fPageTMargin;
+            y < (uint16_t)(512 - fPageTMargin - fPageBMargin) && idx < fHTMLSource.GetCount(); idx++ )
         {
             if( fPageStarts.GetCount() > page + 1 && idx == fPageStarts[ page + 1 ] )
                 break;  // Just go ahead and break at the start of the next page, since we already found it
@@ -2643,27 +2643,27 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
                     if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kLeft )
                     {
                         dtMap->SetJustify( plDynamicTextMap::kLeftJustify );
-                        x = (UInt16)fPageLMargin; // reset X if our justification changes
+                        x = (uint16_t)fPageLMargin; // reset X if our justification changes
                     }
                     else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kRight )
                     {
                         dtMap->SetJustify( plDynamicTextMap::kRightJustify );
-                        x = (UInt16)fPageLMargin; // reset X if our justification changes
+                        x = (uint16_t)fPageLMargin; // reset X if our justification changes
                     }
                     else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kCenter )
                     {
                         dtMap->SetJustify( plDynamicTextMap::kCenter );
-                        x = (UInt16)fPageLMargin; // reset X if our justification changes
+                        x = (uint16_t)fPageLMargin; // reset X if our justification changes
                     }
 
-                    dtMap->SetFirstLineIndent( (Int16)(x - fPageLMargin) );
-                    width = (UInt16)(512 - fPageLMargin - fPageRMargin);
-                    height = (UInt16)(512 - fPageBMargin - y);
-                    UInt32 lastChar;
+                    dtMap->SetFirstLineIndent( (int16_t)(x - fPageLMargin) );
+                    width = (uint16_t)(512 - fPageLMargin - fPageRMargin);
+                    height = (uint16_t)(512 - fPageBMargin - y);
+                    uint32_t lastChar;
                     dtMap->CalcWrappedStringSize( chunk->fText.c_str(), &width, &height, &lastChar, &ascent, &lastX, &lastY );
-                    width = (UInt16)(512 - fPageLMargin - fPageRMargin);
+                    width = (uint16_t)(512 - fPageLMargin - fPageRMargin);
                     if( !suppressRendering )
-                        dtMap->DrawWrappedString( (UInt16)fPageLMargin, y, chunk->fText.c_str(), width, (UInt16)(512 - fPageBMargin - y), &lastX, &lastY );
+                        dtMap->DrawWrappedString( (uint16_t)fPageLMargin, y, chunk->fText.c_str(), width, (uint16_t)(512 - fPageBMargin - y), &lastX, &lastY );
 
                     if( lastChar == 0 )
                     {
@@ -2705,12 +2705,12 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
                     }
                     
                     x = lastX;
-                    y = (UInt16)(lastY - dtMap->GetCurrFont()->GetAscent());    // Since our text is top-justified
+                    y = (uint16_t)(lastY - dtMap->GetCurrFont()->GetAscent());    // Since our text is top-justified
 
                     if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) != pfEsHTMLChunk::kLeft )
                     {
                         // Ending X is not guaranteed to be anything useful if we're not left justified
-                        x = (UInt16)fPageLMargin;
+                        x = (uint16_t)fPageLMargin;
                     }
 
                     break;
@@ -2744,7 +2744,7 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
                                     // end up marking the page break here (note that, unlike paragraphs, we
                                     // can't really break the mipmap into two...well, OK, we could, but it 
                                     // wouldn't make much sense :)
-                                    y += (UInt16)(mip->GetHeight());
+                                    y += (uint16_t)(mip->GetHeight());
 
                                     // Wonderful, the break breaks us from the switch(), which means the for()
                                     // loops runs once more and increments idx. So this is to counter that.
@@ -2755,16 +2755,16 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
                                     break;
                                 }
                                 if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kLeft )
-                                    x = (UInt16)fPageLMargin;
+                                    x = (uint16_t)fPageLMargin;
                                 else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kRight )
-                                    x = (UInt16)(512 - fPageRMargin - mip->GetWidth());
+                                    x = (uint16_t)(512 - fPageRMargin - mip->GetWidth());
                                 else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kCenter )
-                                    x = (UInt16)(256 - ( mip->GetWidth() >> 1 ));
+                                    x = (uint16_t)(256 - ( mip->GetWidth() >> 1 ));
 
                                 IDrawMipmap( chunk, x, y, mip, dtMap, whichDTMap, suppressRendering );
 
-                                y += (UInt16)(mip->GetHeight());
-                                x = (UInt16)fPageLMargin;
+                                y += (uint16_t)(mip->GetHeight());
+                                x = (uint16_t)fPageLMargin;
                             }
                         }
                     }
@@ -2784,8 +2784,8 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
                             continue;
                         }
                     }
-                    y = (UInt16)(512 - fPageTMargin - fPageBMargin);
-                    x = (UInt16)fPageLMargin;
+                    y = (uint16_t)(512 - fPageTMargin - fPageBMargin);
+                    x = (uint16_t)fPageLMargin;
                     break;
 
                 case pfEsHTMLChunk::kFontChange:                
@@ -2801,7 +2801,7 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
                     if (movieLayer)
                     {
                         // adjust the starting height of the movie if we are keeping it inline with the text
-                        UInt32 movieHeight = 0, movieWidth = 0;
+                        uint32_t movieHeight = 0, movieWidth = 0;
                         movieHeight = movieLayer->GetHeight();
                         movieWidth = movieLayer->GetWidth();
                         if(!(chunk->fFlags & pfEsHTMLChunk::kFloating ))
@@ -2811,7 +2811,7 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
                                 // Movie overlaps the bottom of this page, so forcibly break so we'll
                                 // end up marking the page break here (note that, unlike paragraphs, we
                                 // can't really break the Movie into two)
-                                y += (UInt16)movieHeight;
+                                y += (uint16_t)movieHeight;
 
                                 // Wonderful, the break breaks us from the switch(), which means the for()
                                 // loops runs once more and increments idx. So this is to counter that.
@@ -2821,8 +2821,8 @@ void    pfJournalBook::IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppr
                                     idx--;
                                 break;
                             }
-                            y += (UInt16)movieHeight;
-                            x = (UInt16)fPageLMargin;
+                            y += (uint16_t)movieHeight;
+                            x = (uint16_t)fPageLMargin;
                         }
                         if (!movieAlreadyLoaded) // if the movie wasn't already cached, cache it
                         {
@@ -2899,7 +2899,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
 
 //// IDrawMipmap /////////////////////////////////////////////////////////////
 
-void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, plMipmap *mip, plDynamicTextMap *dtMap, UInt32 whichDTMap, hsBool dontRender )
+void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, hsBool dontRender )
 {
     plMipmap *copy = TRACKED_NEW plMipmap();
     copy->CopyFrom(mip);
@@ -2910,25 +2910,25 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, pl
         float xScale = (fWidthScale == 0) ? 1 : 1/(1-fWidthScale);
         float yScale = (fHeightScale == 0) ? 1 : 1/(1-fHeightScale);
         yScale *= 0.7; // adjust because the book isn't square
-        UInt32 width = (UInt32)(mip->GetWidth()*xScale);
-        UInt32 height = (UInt32)(mip->GetHeight()*yScale);
-        UInt16 xShift;
-        UInt16 yShift;
+        uint32_t width = (uint32_t)(mip->GetWidth()*xScale);
+        uint32_t height = (uint32_t)(mip->GetHeight()*yScale);
+        uint16_t xShift;
+        uint16_t yShift;
 
         if (dtMap->GetWidth() < width) width = dtMap->GetWidth();
         if (dtMap->GetHeight() < height) height = dtMap->GetHeight();
 
         if (height < mip->GetHeight())
         {
-            yShift = (UInt16)((mip->GetHeight()-height)/2);
+            yShift = (uint16_t)((mip->GetHeight()-height)/2);
             if (y+yShift+height > dtMap->GetHeight())
-                y = (UInt16)(dtMap->GetHeight()-height);
+                y = (uint16_t)(dtMap->GetHeight()-height);
             else
                 y += yShift;
         }
         else
         {
-            yShift = (UInt16)((height-mip->GetHeight())/2);
+            yShift = (uint16_t)((height-mip->GetHeight())/2);
             if (yShift > y)
                 y = 0;
             else
@@ -2937,15 +2937,15 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, pl
 
         if (width < mip->GetWidth())
         {
-            xShift = (UInt16)((mip->GetWidth()-width)/2);
+            xShift = (uint16_t)((mip->GetWidth()-width)/2);
             if (x+xShift+width > dtMap->GetWidth())
-                x = (UInt16)(dtMap->GetWidth()-width);
+                x = (uint16_t)(dtMap->GetWidth()-width);
             else
                 x += xShift;
         }
         else
         {
-            xShift = (UInt16)((width-mip->GetWidth())/2);
+            xShift = (uint16_t)((width-mip->GetWidth())/2);
             if (xShift > x)
                 x = 0;
             else
@@ -2953,7 +2953,7 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, pl
         }
         
         copy->SetCurrLevel(0); // resize the image so it will look unchanged when rendered on the altered book
-        copy->ResizeNicely((UInt16)width,(UInt16)height,plMipmap::kDefaultFilter);
+        copy->ResizeNicely((uint16_t)width,(uint16_t)height,plMipmap::kDefaultFilter);
     }
     if( !dontRender )
     {
@@ -2964,7 +2964,7 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, pl
             opts.fRedTint = chunk->fCurrColor.r;
             opts.fGreenTint = chunk->fCurrColor.g;
             opts.fBlueTint = chunk->fCurrColor.b;
-            opts.fOpacity = (UInt8)(chunk->fCurrColor.a * 255.f);
+            opts.fOpacity = (uint8_t)(chunk->fCurrColor.a * 255.f);
         }
         else 
         {
@@ -2974,7 +2974,7 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, pl
                 opts.fFlags = plMipmap::kMaskSrcAlpha;
             else
                 opts.fFlags = ( chunk->fFlags & pfEsHTMLChunk::kBlendAlpha ) ? plMipmap::kCopySrcAlpha : plMipmap::kForceOpaque;
-            opts.fOpacity = (UInt8)(chunk->fCurrOpacity * 255.f);
+            opts.fOpacity = (uint8_t)(chunk->fCurrOpacity * 255.f);
         }
         dtMap->Composite( copy, x, y, &opts );
     }
@@ -2982,12 +2982,12 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, pl
     if( chunk->fFlags & pfEsHTMLChunk::kCanLink )
     {
         if( whichDTMap == pfJournalDlgProc::kTagRightDTMap || whichDTMap == pfJournalDlgProc::kTagTurnFrontDTMap )
-            x += (UInt16)(dtMap->GetWidth());   // Right page rects are offsetted to differentiate
+            x += (uint16_t)(dtMap->GetWidth());   // Right page rects are offsetted to differentiate
 
         if (dontRender) // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
             chunk->fLinkRect.Set(0,0,0,0);
         else
-            chunk->fLinkRect.Set( x, y, (Int16)(copy->GetWidth()), (Int16)(copy->GetHeight()) );
+            chunk->fLinkRect.Set( x, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()) );
         fVisibleLinks.Append( chunk );
     }
     delete copy;
@@ -3004,7 +3004,7 @@ pfJournalBook::loadedMovie *pfJournalBook::IMovieAlreadyLoaded(pfEsHTMLChunk *ch
     return nil;
 }
 
-plKey pfJournalBook::GetMovie(UInt8 index)
+plKey pfJournalBook::GetMovie(uint8_t index)
 {
     loadedMovie *movie = IGetMovieByIndex(index);
     if (movie)
@@ -3012,7 +3012,7 @@ plKey pfJournalBook::GetMovie(UInt8 index)
     return plKey(nil);
 }
 
-pfJournalBook::loadedMovie *pfJournalBook::IGetMovieByIndex(UInt8 index)
+pfJournalBook::loadedMovie *pfJournalBook::IGetMovieByIndex(uint8_t index)
 {
     int i;
     for (i=0; i<fLoadedMovies.GetCount(); i++)
@@ -3023,13 +3023,13 @@ pfJournalBook::loadedMovie *pfJournalBook::IGetMovieByIndex(UInt8 index)
     return nil;
 }
 
-plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, plMipmap *baseMipmap, UInt32 whichDTMap, hsBool dontRender)
+plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, hsBool dontRender)
 {
     // see if it's already loaded
     loadedMovie *movie = IMovieAlreadyLoaded(chunk);
     plLayer* layer = nil;
     plLayerBink* movieLayer = nil;
-    UInt16 movieWidth=0,movieHeight=0;
+    uint16_t movieWidth=0,movieHeight=0;
     if (movie)
     {
         movieLayer = movie->movieLayer;
@@ -3105,11 +3105,11 @@ plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, UInt16 x, UInt
         }
 
         if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kLeft )
-            x = (UInt16)fPageLMargin;
+            x = (uint16_t)fPageLMargin;
         else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kRight )
-            x = (UInt16)(baseMipmap->GetWidth() - fPageRMargin - movieWidth);
+            x = (uint16_t)(baseMipmap->GetWidth() - fPageRMargin - movieWidth);
         else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kCenter )
-            x = (UInt16)((baseMipmap->GetWidth() >> 1) - (movieWidth >> 1));
+            x = (uint16_t)((baseMipmap->GetWidth() >> 1) - (movieWidth >> 1));
 
         // x and y are in pixels, need to convert to a range of 0 to 1
         float xRel = (float)x/(float)baseMipmap->GetWidth();
@@ -3164,7 +3164,7 @@ plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, UInt16 x, UInt
     if( chunk->fFlags & pfEsHTMLChunk::kCanLink )
     {
         if( whichDTMap == pfJournalDlgProc::kTagRightDTMap || whichDTMap == pfJournalDlgProc::kTagTurnFrontDTMap )
-            x += (UInt16)(baseMipmap->GetWidth());  // Right page rects are offsetted to differentiate
+            x += (uint16_t)(baseMipmap->GetWidth());  // Right page rects are offsetted to differentiate
 
         if (dontRender) // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
             chunk->fLinkRect.Set(0,0,0,0);
@@ -3281,16 +3281,16 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
     layer->SetUVWSrc(0);
 
     // Set up the transform.
-    UInt16 x,y;
+    uint16_t x,y;
     x = decalChunk->fAbsoluteX;
     y = decalChunk->fAbsoluteY;
 
     if((decalChunk->fFlags & pfEsHTMLChunk::kAlignMask) == pfEsHTMLChunk::kLeft)
-        x = (UInt16)fPageLMargin;
+        x = (uint16_t)fPageLMargin;
     else if((decalChunk->fFlags & pfEsHTMLChunk::kAlignMask) == pfEsHTMLChunk::kRight)
-        x = (UInt16)(baseMipmap->GetWidth() - decal->GetWidth());
+        x = (uint16_t)(baseMipmap->GetWidth() - decal->GetWidth());
     else if((decalChunk->fFlags & pfEsHTMLChunk::kAlignMask) == pfEsHTMLChunk::kCenter)
-        x = (UInt16)((baseMipmap->GetWidth() >> 1) - (decal->GetWidth() >> 1));
+        x = (uint16_t)((baseMipmap->GetWidth() >> 1) - (decal->GetWidth() >> 1));
 
     // x and y are in pixels, need to convert to a range of 0 to 1
     float xRel = (float)x/(float)baseMipmap->GetWidth();
@@ -3350,7 +3350,7 @@ void pfJournalBook::ISetDecalLayers(hsGMaterial *material,hsTArray<plLayerInterf
 // Starting at the given chunk, works backwards to determine the full set of current
 // font properties at that point, or assigns defaults if none were specified
 
-void    pfJournalBook::IFindFontProps( UInt32 chunkIdx, const wchar_t *&face, UInt8 &size, UInt8 &flags, hsColorRGBA &color, Int16 &spacing )
+void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, const wchar_t *&face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing )
 {
     enum Which
     {
@@ -3364,7 +3364,7 @@ void    pfJournalBook::IFindFontProps( UInt32 chunkIdx, const wchar_t *&face, UI
     };
 
     // Start empty
-    UInt8   found = 0;
+    uint8_t   found = 0;
 
     // Work backwards and fill in our properties
     chunkIdx++;
@@ -3428,15 +3428,15 @@ void    pfJournalBook::IFindFontProps( UInt32 chunkIdx, const wchar_t *&face, UI
 //// IFindLastAlignment //////////////////////////////////////////////////////
 // Find the last paragraph chunk and thus the last par alignment settings
 
-UInt8   pfJournalBook::IFindLastAlignment( void ) const
+uint8_t   pfJournalBook::IFindLastAlignment( void ) const
 {
-    Int32 idx;
+    int32_t idx;
 
 
     for( idx = fHTMLSource.GetCount() - 1; idx >= 0; idx-- )
     {
         if( fHTMLSource[ idx ]->fType == pfEsHTMLChunk::kParagraph && fHTMLSource[ idx ]->fFlags != 0 )
-            return (UInt8)(fHTMLSource[ idx ]->fFlags);
+            return (uint8_t)(fHTMLSource[ idx ]->fFlags);
     }
 
     return pfEsHTMLChunk::kLeft;
@@ -3445,9 +3445,9 @@ UInt8   pfJournalBook::IFindLastAlignment( void ) const
 //// IRecalcPageStarts ///////////////////////////////////////////////////////
 // Ensures that all the page starts are calced up to the given page (but not including it)
 
-void    pfJournalBook::IRecalcPageStarts( UInt32 upToPage )
+void    pfJournalBook::IRecalcPageStarts( uint32_t upToPage )
 {
-    UInt32 page;
+    uint32_t page;
 
 
     // Well, sadly, we can't really calc the page starts without at least a DTMap
@@ -3464,7 +3464,7 @@ void    pfJournalBook::IRecalcPageStarts( UInt32 upToPage )
         // actually draw them all (even in large journals), we're just going to do it
         IRenderPage( page, pfJournalDlgProc::kTagTurnBackDTMap, false );
         // Reset any "visible" links since they aren't really visible
-        UInt16 i;
+        uint16_t i;
         for (i=0; i<fVisibleLinks.Count(); i++)
         {
             fVisibleLinks[i]->fLinkRect.Set(0,0,0,0);
@@ -3475,7 +3475,7 @@ void    pfJournalBook::IRecalcPageStarts( UInt32 upToPage )
 //// ISendNotify /////////////////////////////////////////////////////////////
 // Just sends out a notify to our currently set receiver key
 
-void    pfJournalBook::ISendNotify( UInt32 type, UInt32 linkID )
+void    pfJournalBook::ISendNotify( uint32_t type, uint32_t linkID )
 {
     if( fCallbackKey != nil )
     {
@@ -3505,7 +3505,7 @@ void    pfJournalBook::SetBookSize( hsScalar width, hsScalar height )
 
 void    pfJournalBook::ILoadAllImages( hsBool unload )
 {
-    UInt32  i;
+    uint32_t  i;
 
     // load the cover
     if( fCoverFromHTML && fCoverMipKey != nil )

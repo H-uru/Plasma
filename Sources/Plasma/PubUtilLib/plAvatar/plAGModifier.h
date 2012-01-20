@@ -144,7 +144,7 @@ protected:
     hsBool  fEnabled;           // if not enabled, we don't eval any of our anims
 
     // APPLYING THE ANIMATION
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
 
     virtual hsBool IHandleCmd(plAnimCmdMsg* modMsg) { return false; } // only plAGMasterMod should handle these
     virtual void IApplyDynamic() {};    // dummy function required by base class
@@ -154,13 +154,13 @@ protected:
     plCoordinateInterface * LeakCI() const { return IGetTargetCoordinateInterface(0); };
     plDrawInterface * LeakDI() const { return IGetTargetDrawInterface(0); };
     plSimulationInterface * LeakSI() const { return IGetTargetSimulationInterface(0); };
-    plObjInterface * LeakGI(UInt32 classIdx) const { return IGetTargetGenericInterface(0, classIdx); }
+    plObjInterface * LeakGI(uint32_t classIdx) const { return IGetTargetGenericInterface(0, classIdx); }
 
     friend plAudioInterface * plAGApplicator::IGetAI(const plAGModifier * modifier) const;
     friend plCoordinateInterface * plAGApplicator::IGetCI(const plAGModifier * modifier) const;
     friend plDrawInterface * plAGApplicator::IGetDI(const plAGModifier * modifier) const;
     friend plSimulationInterface * plAGApplicator::IGetSI(const plAGModifier * modifier) const;
-    friend plObjInterface * plAGApplicator::IGetGI(const plAGModifier * modifier, UInt16 classIdx) const;
+    friend plObjInterface * plAGApplicator::IGetGI(const plAGModifier * modifier, uint16_t classIdx) const;
 
 };
 const plModifier * FindModifierByClass(const plSceneObject *obj, int classID);

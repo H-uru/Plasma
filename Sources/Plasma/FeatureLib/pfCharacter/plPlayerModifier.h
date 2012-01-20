@@ -129,7 +129,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  virtual void    RemoveTarget(plSceneObject* so);
 //
 //  hsBool HandleControlInput(plControlEventMsg* pMsg);
-//  virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+//  virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
 //
 //  void SetMoving(hsBool b);
 //  hsBool IsMoving() { return bMoving; }

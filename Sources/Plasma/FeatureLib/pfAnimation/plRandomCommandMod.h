@@ -66,11 +66,11 @@ protected:
 
     // These are only lightly synched, the only synched state is whether
     // they are currently active.
-    UInt8                           fState;
+    uint8_t                           fState;
 
     hsBitVector                     fExcluded;
-    Int8                            fCurrent;
-    UInt8                           fMode; // static, if it becomes dynamic, move to SynchedValue
+    int8_t                            fCurrent;
+    uint8_t                           fMode; // static, if it becomes dynamic, move to SynchedValue
     hsTArray<double>                fEndTimes;
 
     hsScalar                        fMinDelay;
@@ -94,7 +94,7 @@ protected:
     virtual void        IPlayNext() = 0;
 
     // We only act in response to messages.
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
 
 public:
     plRandomCommandMod();
@@ -109,11 +109,11 @@ public:
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
     // Export only
-    void    SetMode(UInt8 m) { fMode = m; }
-    UInt8   GetMode() const { return fMode; }
+    void    SetMode(uint8_t m) { fMode = m; }
+    uint8_t   GetMode() const { return fMode; }
 
-    void    SetState(UInt8 s) { fState = s; }
-    UInt8   GetState() const { return fState; }
+    void    SetState(uint8_t s) { fState = s; }
+    uint8_t   GetState() const { return fState; }
 
     void        SetMinDelay(hsScalar f) { fMinDelay = f; }
     hsScalar    GetMinDelay() const { return fMinDelay; }

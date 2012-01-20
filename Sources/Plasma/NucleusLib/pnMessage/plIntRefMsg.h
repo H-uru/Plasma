@@ -65,14 +65,14 @@ public:
     };
 
     plIntRefMsg() : fType(-1), fWhich(-1), fIdx(-1) {}
-    plIntRefMsg(const plKey &r, UInt8 flags, Int32 which, Int8 type, Int8 idx=-1) : plRefMsg(r, flags), fWhich((Int16)which), fType(type), fIdx(idx) {}
+    plIntRefMsg(const plKey &r, uint8_t flags, int32_t which, int8_t type, int8_t idx=-1) : plRefMsg(r, flags), fWhich((int16_t)which), fType(type), fIdx(idx) {}
 
     CLASSNAME_REGISTER( plIntRefMsg );
     GETINTERFACE_ANY( plIntRefMsg, plRefMsg );
 
-    Int8        fType;
-    Int8        fIdx;
-    Int16       fWhich;
+    int8_t        fType;
+    int8_t        fIdx;
+    int16_t       fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
     void Read(hsStream* stream, hsResMgr* mgr)

@@ -51,13 +51,13 @@ class plGeometrySpan;
 class plGeoSpanDice
 {
 protected:
-    UInt32      fMinFaces;
-    UInt32      fMaxFaces;
+    uint32_t      fMinFaces;
+    uint32_t      fMaxFaces;
     hsPoint3    fMaxSize;
 
     hsBool              INeedSplitting(plGeometrySpan* src) const;
     plGeometrySpan*     IAllocSpace(plGeometrySpan* src, int numVerts, int numTris) const;
-    plGeometrySpan*     IExtractTris(plGeometrySpan* src, hsTArray<UInt32>& tris) const;
+    plGeometrySpan*     IExtractTris(plGeometrySpan* src, hsTArray<uint32_t>& tris) const;
     int                 ISelectAxis(int exclAxis, plGeometrySpan* src) const;
     hsBool              IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, int exclAxis=0) const;
 

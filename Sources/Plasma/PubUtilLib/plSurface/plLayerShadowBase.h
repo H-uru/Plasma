@@ -61,7 +61,7 @@ public:
 
     virtual plLayerInterface*   Attach(plLayerInterface* prev);
 
-    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
 
 
 };
@@ -81,7 +81,7 @@ public:
 
     virtual plLayerInterface*   Attach(plLayerInterface* prev);
 
-    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
 
 
 };

@@ -168,10 +168,10 @@ void plSound::IUpdateDebugPlate( void )
         }
 
         fDebugPlate->SetVisible( true );
-        fDebugPlate->AddData( (Int32)( fDesiredVol * 100.f ), 
-                              (Int32)( fCurrVolume * 100.f ),
-                              (Int32)( fSoftVolume * 100.f ),
-                              (Int32)( fDistAttenuation * 100.f ) );
+        fDebugPlate->AddData( (int32_t)( fDesiredVol * 100.f ), 
+                              (int32_t)( fCurrVolume * 100.f ),
+                              (int32_t)( fSoftVolume * 100.f ),
+                              (int32_t)( fDistAttenuation * 100.f ) );
     }
 }
 
@@ -1416,7 +1416,7 @@ void plSound::SetFadeOutEffect( plSound::plFadeParams::Type type, hsScalar lengt
     fFadeOutParams.fStopWhenDone = true;
 }
 
-plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
 
@@ -1480,7 +1480,7 @@ plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, h
 
 
 // call when state has changed
-hsBool plSound::DirtySynchState(const char* sdlName /* kSDLSound */, UInt32 sendFlags)
+hsBool plSound::DirtySynchState(const char* sdlName /* kSDLSound */, uint32_t sendFlags)
 {
     /*
     if( sdlName == nil )

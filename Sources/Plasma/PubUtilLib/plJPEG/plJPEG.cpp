@@ -118,8 +118,8 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
     MemPushDisableTracking();
 
     plMipmap    *newMipmap = nil;
-    UInt8       *jpegSourceBuffer = nil;
-    UInt32      jpegSourceSize;
+    uint8_t       *jpegSourceBuffer = nil;
+    uint32_t      jpegSourceSize;
     
     struct jpeg_decompress_struct   cinfo;
     struct jpeg_error_mgr       jerr;
@@ -143,7 +143,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         /// JPEG stream into a separate buffer before we can decode it. Which means we ALSO
         /// have to write/read a length of said buffer. Such is life, I guess...
         jpegSourceSize = inStream->ReadLE32();
-        jpegSourceBuffer = TRACKED_NEW UInt8[ jpegSourceSize ];
+        jpegSourceBuffer = TRACKED_NEW uint8_t[ jpegSourceSize ];
         if( jpegSourceBuffer == nil )
         {
             // waah.
@@ -196,7 +196,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         int out_stride = cinfo.output_width * 4;  // Decompress to RGBA
         jbuffer = TRACKED_NEW JSAMPLE[row_stride];
 
-        UInt8 *destp = (UInt8 *)newMipmap->GetImage();
+        uint8_t *destp = (uint8_t *)newMipmap->GetImage();
         while( cinfo.output_scanline < cinfo.output_height )
         {
             (void) jpeg_read_scanlines( &cinfo, &jbuffer, 1 );
@@ -216,7 +216,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         delete [] jbuffer;
 
         // Sometimes life just sucks
-        ISwapRGBAComponents( (UInt32 *)newMipmap->GetImage(), newMipmap->GetWidth() * newMipmap->GetHeight() );
+        ISwapRGBAComponents( (uint32_t *)newMipmap->GetImage(), newMipmap->GetWidth() * newMipmap->GetHeight() );
     }
     catch( ... )
     {
@@ -237,13 +237,13 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
 
 plMipmap*   plJPEG::ReadFromFile( const char *fileName )
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     plMipmap* retVal = ReadFromFile(wFilename);
     delete [] wFilename;
     return retVal;
 }
 
-plMipmap*   plJPEG::ReadFromFile( const wchar *fileName )
+plMipmap*   plJPEG::ReadFromFile( const wchar_t *fileName )
 {
     // we use a stream because the IJL can't handle unicode
     hsRAMStream tempstream;
@@ -254,8 +254,8 @@ plMipmap*   plJPEG::ReadFromFile( const wchar *fileName )
     // The stream reader for JPEGs expects a 32-bit size at the start,
     // so insert that into the stream before passing it on
     in.FastFwd();
-    UInt32 fsize = in.GetPosition();
-    UInt8 *tempbuffer = TRACKED_NEW UInt8[fsize];
+    uint32_t fsize = in.GetPosition();
+    uint8_t *tempbuffer = TRACKED_NEW uint8_t[fsize];
     in.Rewind();
     in.Read(fsize, tempbuffer);
     tempstream.WriteLE32(fsize);
@@ -274,8 +274,8 @@ plMipmap*   plJPEG::ReadFromFile( const wchar *fileName )
 hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 {
     hsBool  result = true, swapped = false;
-    UInt8   *jpgBuffer = nil;
-    UInt32  jpgBufferSize = 0;
+    uint8_t   *jpgBuffer = nil;
+    uint32_t  jpgBufferSize = 0;
 
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr       jerr;
@@ -292,13 +292,13 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 
         // Create a buffer to hold the data
         jpgBufferSize = source->GetWidth() * source->GetHeight() * 3;
-        jpgBuffer = TRACKED_NEW UInt8[ jpgBufferSize ];
+        jpgBuffer = TRACKED_NEW uint8_t[ jpgBufferSize ];
         if( jpgBuffer == nil )
         {
             ERREXIT1( &cinfo, JERR_OUT_OF_MEMORY, 0 );
         }
 
-        UInt8 *bufferAddr = jpgBuffer;
+        uint8_t *bufferAddr = jpgBuffer;
         unsigned long bufferSize = jpgBufferSize;
         jpeg_mem_dest( &cinfo, &bufferAddr, &bufferSize );
 
@@ -318,7 +318,7 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
         jpeg_start_compress( &cinfo, TRUE );
 
         // Sometimes life just sucks
-        ISwapRGBAComponents( (UInt32 *)source->GetImage(), source->GetWidth() * source->GetHeight() );
+        ISwapRGBAComponents( (uint32_t *)source->GetImage(), source->GetWidth() * source->GetHeight() );
         swapped = true;
 
         // Write it!
@@ -327,7 +327,7 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
         int row_stride = cinfo.image_width * cinfo.input_components;
         jbuffer = TRACKED_NEW JSAMPLE[row_stride];
 
-        UInt8 *srcp = (UInt8 *)source->GetImage();
+        uint8_t *srcp = (uint8_t *)source->GetImage();
         while( cinfo.next_scanline < cinfo.image_height )
         {
             for( size_t pixel = 0; pixel < cinfo.image_width; ++pixel )
@@ -358,20 +358,20 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
     jpeg_destroy_compress( &cinfo );
 
     if( swapped )
-        ISwapRGBAComponents( (UInt32 *)source->GetImage(), source->GetWidth() * source->GetHeight() );
+        ISwapRGBAComponents( (uint32_t *)source->GetImage(), source->GetWidth() * source->GetHeight() );
 
     return result;
 }
 
 hsBool  plJPEG::WriteToFile( const char *fileName, plMipmap *sourceData )
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     hsBool retVal = WriteToFile(wFilename, sourceData);
     delete [] wFilename;
     return retVal;
 }
 
-hsBool  plJPEG::WriteToFile( const wchar *fileName, plMipmap *sourceData )
+hsBool  plJPEG::WriteToFile( const wchar_t *fileName, plMipmap *sourceData )
 {
     // we use a stream because the IJL can't handle unicode
     hsRAMStream tempstream;
@@ -384,8 +384,8 @@ hsBool  plJPEG::WriteToFile( const wchar *fileName, plMipmap *sourceData )
         // The stream writer for JPEGs prepends a 32-bit size,
         // so remove that from the stream before saving to a file
         tempstream.Rewind();
-        UInt32 fsize = tempstream.ReadLE32();
-        UInt8 *tempbuffer = TRACKED_NEW UInt8[fsize];
+        uint32_t fsize = tempstream.ReadLE32();
+        uint8_t *tempbuffer = TRACKED_NEW uint8_t[fsize];
         tempstream.Read(fsize, tempbuffer);
         out.Write(fsize, tempbuffer);
 
@@ -397,7 +397,7 @@ hsBool  plJPEG::WriteToFile( const wchar *fileName, plMipmap *sourceData )
 
 //// ISwapRGBAComponents //////////////////////////////////////////////////////
 
-void    plJPEG::ISwapRGBAComponents( UInt32 *data, UInt32 count )
+void    plJPEG::ISwapRGBAComponents( uint32_t *data, uint32_t count )
 {
     while( count-- )
     {

@@ -145,7 +145,7 @@ void plBlower::IBlow(double secs, hsScalar delSecs)
     fCurrDel = del;
 }
 
-hsBool plBlower::IEval(double secs, hsScalar delSecs, UInt32 dirty)
+hsBool plBlower::IEval(double secs, hsScalar delSecs, uint32_t dirty)
 {
     const hsScalar kMaxDelSecs = 0.1f;
     if( delSecs > kMaxDelSecs )

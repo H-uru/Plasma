@@ -78,7 +78,7 @@ public:
     CLASSNAME_REGISTER( hsFogControl );
     GETINTERFACE_ANY( hsFogControl, plCreatable );
 
-    virtual UInt32      GetType() = 0;
+    virtual uint32_t      GetType() = 0;
 
 //  virtual hsGEnvironment* GetHomeEnv() = 0;
     virtual void Init(hsSceneNode* node);
@@ -122,7 +122,7 @@ protected:
     hsDynamicArray<plKey>       fPortals;
     hsScalar                                fDefRadius;
 
-    UInt32                                  fStatus;
+    uint32_t                                  fStatus;
 
     void                    IFindFogNodes();
     virtual hsScalar        IGetStrength(hsSceneNode* node);
@@ -134,7 +134,7 @@ public:
 
     hsPortal* GetPortal(int i);
 
-    virtual UInt32      GetType() { return kFogCtlPortal; }
+    virtual uint32_t      GetType() { return kFogCtlPortal; }
 
     virtual void Init(hsSceneNode* node);
     virtual void Blend();

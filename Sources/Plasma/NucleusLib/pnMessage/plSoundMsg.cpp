@@ -90,5 +90,5 @@ void plSoundMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE(fRepeats);
     stream->WriteLE(fNameStr);
     stream->WriteLE(fVolume);
-    stream->WriteByte( (UInt8)fFadeType );
+    stream->WriteByte( (uint8_t)fFadeType );
 }

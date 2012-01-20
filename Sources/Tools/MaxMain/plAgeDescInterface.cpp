@@ -333,7 +333,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
             {
                 if( MessageBox( hDlg, "Are you sure you wish to reassign the sequence prefix for this age?", "WARNING", MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
                 {
-                    Int32 prefix = (Int32)IGetNextFreeSequencePrefix( IsDlgButtonChecked( hDlg, IDC_RSVDCHECK ) );
+                    int32_t prefix = (int32_t)IGetNextFreeSequencePrefix( IsDlgButtonChecked( hDlg, IDC_RSVDCHECK ) );
                     fSeqPrefixSpin->SetValue( ( prefix >= 0 ) ? prefix : -prefix, false );
                     fDirty = true;
                 }
@@ -1098,10 +1098,10 @@ void plAgeDescInterface::INewPage()
     fDirty = true;
 }
 
-UInt32  plAgeDescInterface::IGetFreePageSeqSuffix( HWND pageCombo )
+uint32_t  plAgeDescInterface::IGetFreePageSeqSuffix( HWND pageCombo )
 {
     int     i, count = ListBox_GetCount( pageCombo );
-    UInt32  searchSeq = 1;
+    uint32_t  searchSeq = 1;
 
     do
     {
@@ -1253,7 +1253,7 @@ void plAgeDescInterface::ILoadAge( const char *path, hsBool checkSeqNum )
     }
     fCapSpin->SetValue(maxCap, FALSE);
 
-    Int32 seqPrefix = aged.GetSequencePrefix();
+    int32_t seqPrefix = aged.GetSequencePrefix();
     if( seqPrefix < 0 )
     {
         // Reserved prefix
@@ -1282,9 +1282,9 @@ void plAgeDescInterface::ILoadAge( const char *path, hsBool checkSeqNum )
     }
 }
 
-UInt32  plAgeDescInterface::IGetNextFreeSequencePrefix( hsBool getReservedPrefix )
+uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( hsBool getReservedPrefix )
 {
-    Int32               searchSeq = getReservedPrefix ? -1 : 1;
+    int32_t               searchSeq = getReservedPrefix ? -1 : 1;
     hsTArray<char *>    ageList;
     int                 i;
 

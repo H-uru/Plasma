@@ -194,13 +194,13 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
 class sortData
 {
 public:
-    UInt16          fIdx0;
-    UInt16          fIdx1;
-    UInt16          fIdx2;
+    uint16_t          fIdx0;
+    uint16_t          fIdx1;
+    uint16_t          fIdx2;
     hsScalar        fDist;
 
     sortData() {}
-    sortData(UInt16 idx0, UInt16 idx1, UInt16 idx2, hsScalar dist)
+    sortData(uint16_t idx0, uint16_t idx1, uint16_t idx2, hsScalar dist)
         : fIdx0(idx0), fIdx1(idx1), fIdx2(idx2), fDist(dist)
     {
     }
@@ -213,7 +213,7 @@ public:
 
 void plClusterUtil::ISortTemplate(plSpanTemplateB* templ) const
 {
-    UInt16* indexData = templ->fIndices;
+    uint16_t* indexData = templ->fIndices;
     const int numTris = templ->NumTris();
     typedef std::vector<sortData> sortVec;
     sortVec vec;
@@ -258,7 +258,7 @@ void plClusterUtil::ISortTemplate(plSpanTemplateB* templ) const
 
 void plClusterUtil::ITemplateFromGeo(plSpanTemplateB* templ, plGeometrySpan* geo)
 {
-    UInt16 format = plSpanTemplate::MakeFormat(
+    uint16_t format = plSpanTemplate::MakeFormat(
         true, // hasColor
         geo->GetNumUVs(), // UVW count
         geo->fFormat & plGeometrySpan::kSkinIndices, // hasWgtIdx
@@ -268,20 +268,20 @@ void plClusterUtil::ITemplateFromGeo(plSpanTemplateB* templ, plGeometrySpan* geo
         );
     
 
-    UInt32 numVerts = geo->fNumVerts;
-    UInt32 numTris = geo->fNumIndices / 3;
+    uint32_t numVerts = geo->fNumVerts;
+    uint32_t numTris = geo->fNumIndices / 3;
     
     // Alloc it.
     templ->Alloc(format, numVerts, numTris);
     templ->AllocColors();
 
-    UInt32 numPos = templ->NumPos();
-    UInt32 numNorm = templ->NumNorm();
-    UInt32 numUVWs = templ->NumUVWs();
-    UInt32 numWeights = templ->NumWeights();
-    UInt32 numColor = templ->NumColor();
-    UInt32 numColor2 = templ->NumColor2();
-    UInt32 numWgtIdx = templ->NumWgtIdx();
+    uint32_t numPos = templ->NumPos();
+    uint32_t numNorm = templ->NumNorm();
+    uint32_t numUVWs = templ->NumUVWs();
+    uint32_t numWeights = templ->NumWeights();
+    uint32_t numColor = templ->NumColor();
+    uint32_t numColor2 = templ->NumColor2();
+    uint32_t numWgtIdx = templ->NumWgtIdx();
 
     // Fill in the data.
     memcpy(templ->fIndices, geo->fIndexData, templ->IndexSize());
@@ -290,7 +290,7 @@ void plClusterUtil::ITemplateFromGeo(plSpanTemplateB* templ, plGeometrySpan* geo
     for( i = 0; i < templ->NumVerts(); i++ )
     {
         float wgt[4];
-        UInt32 wgtIdx;
+        uint32_t wgtIdx;
 
         geo->ExtractInitColor(i, templ->MultColor(i), templ->AddColor(i));
 
@@ -520,7 +520,7 @@ void plClusterUtil::IFreeClustersRecur(plL2WTabTab& dst) const
         delete dst[i];
 }
 
-inline hsScalar inlGetAlpha(UInt32* color)
+inline hsScalar inlGetAlpha(uint32_t* color)
 {
     return hsScalar(*color >> 24) / 255.99f;
 }
@@ -563,7 +563,7 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
             plColorTab& color = *colorsTab[i];
             for( j = 0; j < color.Count(); j++ )
             {
-                UInt32 col = color[j];
+                uint32_t col = color[j];
                 if( (col & 0x00ffffff) != 0x00ffffff )
                     hasColor = true;
                 if( (col & 0xff000000) != 0xff000000 )
@@ -572,7 +572,7 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
         }
     }
 
-    UInt32 code = 0;
+    uint32_t code = 0;
     hsScalar posScale = 1.f;
 
     if( hasColor && hasAlpha )
@@ -770,7 +770,7 @@ void plClusterUtil::IDelPosAndColor(plSpanTemplateB* templ,
 
 
 
-        // Make the stored colors the actual output UInt32.
+        // Make the stored colors the actual output uint32_t.
         // templ has the mult and add colors, apply them here.
         if( doCol )
         {

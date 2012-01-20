@@ -55,8 +55,8 @@ class plSpacePrepNode
 public:
     hsBounds3Ext        fWorldBounds;
 
-    Int16               fIndex;
-    Int16               fDataIndex;
+    int16_t               fIndex;
+    int16_t               fDataIndex;
 
     plSpacePrepNode*    fChildren[2];
 };
@@ -71,7 +71,7 @@ protected:
     hsBitVector                     fDisabled;
 
     plSpacePrepNode*                fPrepTree;
-    Int16                           fTreeSize;
+    int16_t                           fTreeSize;
 
     plSpacePrepNode*                INewSubRoot(const hsBounds3Ext& bnd);
     void                            IFindBigList(hsTArray<plSpacePrepNode*>& nodes, hsScalar length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimp);
@@ -98,7 +98,7 @@ public:
     void                            Cleanup();
 
     void                            Reset();
-    Int32                           AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable=false);
+    int32_t                           AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable=false);
     plSpaceTree*                    MakeTree();
 
     void                            TestTree(); // development only - NUKE ME mf horse

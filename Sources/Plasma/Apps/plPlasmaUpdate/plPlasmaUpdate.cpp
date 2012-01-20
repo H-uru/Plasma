@@ -360,7 +360,7 @@ void plPlasmaUpdate::IUpdateServer()
     // Get the manifests
     //
     bool gotManifests = IGetManifests(serverRoot, external);
-    UInt32 dlSize = 0;
+    uint32_t dlSize = 0;
 
     fProgressType = kValidating;
 
@@ -368,7 +368,7 @@ void plPlasmaUpdate::IUpdateServer()
     {
         int i;
 
-        UInt32 numFiles = 0;
+        uint32_t numFiles = 0;
         for (i = 0; i < fManifests.size(); i++)
             numFiles += fManifests[i]->NumFiles();
 
@@ -413,7 +413,7 @@ void plPlasmaUpdate::IDownloadUpdates()
 
     int i;
 
-    UInt32 dlSize = 0;
+    uint32_t dlSize = 0;
     for (i = 0; i < fManifests.size(); i++)
         dlSize += fManifests[i]->DownloadSize();
 

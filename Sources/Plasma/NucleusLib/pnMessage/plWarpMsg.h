@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plWarpMsg : public plMessage
 {
 private:
-    UInt32  fWarpFlags;
+    uint32_t  fWarpFlags;
     hsMatrix44 fTransform;
 public:
     enum WarpFlags
@@ -64,7 +64,7 @@ public:
     plWarpMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t) { Clear(); }
-    plWarpMsg(const plKey &s, const plKey &r, UInt32 flags, const hsMatrix44 &mat)
+    plWarpMsg(const plKey &s, const plKey &r, uint32_t flags, const hsMatrix44 &mat)
         : fWarpFlags(flags), fTransform(mat), plMessage(s, r, nil)
     {  };
     
@@ -75,8 +75,8 @@ public:
 
     void Clear() { fWarpFlags=0; }
 
-    UInt32 GetWarpFlags() { return fWarpFlags; }
-    void SetWarpFlags(UInt32 f) { fWarpFlags=f; }
+    uint32_t GetWarpFlags() { return fWarpFlags; }
+    void SetWarpFlags(uint32_t f) { fWarpFlags=f; }
 
     void SetTransform(const hsMatrix44& mat) { fTransform=mat;  }
     hsMatrix44& GetTransform() { return fTransform; }

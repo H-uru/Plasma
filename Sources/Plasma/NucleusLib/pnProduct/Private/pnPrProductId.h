@@ -84,11 +84,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 const plUUID&  ProductId ();
-const wchar * ProductCoreName ();   // e.g: L"Uru"
-const wchar * ProductShortName ();  // e.g: L"Uru"                      (filename/registry friendly)
-const wchar * ProductLongName ();   // e.g: L"Uru: Ages Beyond Myst"    (human friendly)
+const wchar_t * ProductCoreName ();   // e.g: L"Uru"
+const wchar_t * ProductShortName ();  // e.g: L"Uru"                      (filename/registry friendly)
+const wchar_t * ProductLongName ();   // e.g: L"Uru: Ages Beyond Myst"    (human friendly)
 
 
 // Returns: "<ProductCoreName>.<BranchId>.<BuildId> - <External|Internal>.<Debug|Release>"
 // Example: "Uru.3.204 - External.Release"
-void ProductString (wchar * dest, unsigned destChars);
+void ProductString (wchar_t * dest, unsigned destChars);

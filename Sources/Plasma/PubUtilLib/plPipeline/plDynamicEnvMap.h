@@ -99,7 +99,7 @@ protected:
 
 public:
     plDynamicEnvMap();
-    plDynamicEnvMap(UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth = -1, UInt8 sDepth = -1);
+    plDynamicEnvMap(uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth = -1, uint8_t sDepth = -1);
 
     virtual ~plDynamicEnvMap();
 
@@ -177,7 +177,7 @@ protected:
     // Extra info for swapping around textures when reflections are disabled.
     plBitmap*                   fDisableTexture;
     hsTArray<plLayer*>          fMatLayers;
-    static UInt8                fFlags;
+    static uint8_t                fFlags;
     enum 
     {
         kReflectionCapable  = 0x01,
@@ -196,7 +196,7 @@ protected:
 
 public:
     plDynamicCamMap();
-    plDynamicCamMap(UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth = -1, UInt8 sDepth = -1);
+    plDynamicCamMap(uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth = -1, uint8_t sDepth = -1);
 
     virtual ~plDynamicCamMap();
 

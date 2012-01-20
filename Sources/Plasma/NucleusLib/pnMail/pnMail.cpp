@@ -359,7 +359,7 @@ static void DestroyTransaction (MailTransaction * transaction) {
 //===========================================================================
 static void MailLookupProc (
     void *              param,
-    const wchar *       ,
+    const wchar_t *       ,
     unsigned            addrCount,
     const NetAddress    addrs[]
 ) {
@@ -554,7 +554,7 @@ static void IMail (
 
     // Start the transaction with a dns lookup
     const unsigned kSmtpPort = 25;
-    wchar smtpName[256];
+    wchar_t smtpName[256];
     StrToUnicode(smtpName, smtp, arrsize(smtpName));
 
     // Add transaction to global list
@@ -619,7 +619,7 @@ void MailEncodePassword (
     // Encode data and move it back to the front of the array
     dstChars = Base64Encode(
         srcChars,
-        (const byte *) emailAuth->Ptr(),
+        (const uint8_t *) emailAuth->Ptr(),
         dstChars,
         dstData
     );
@@ -716,7 +716,7 @@ bool MailQueued () {
 }
 
 //============================================================================
-const wchar * MailErrorToString (EMailError error) {
+const wchar_t * MailErrorToString (EMailError error) {
 
     switch (error) {
         case kMailSuccess:              return L"kMailSuccess";

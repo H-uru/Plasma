@@ -201,7 +201,7 @@ public:
     GETINTERFACE_ANY( plParallelIsect, plVolumeIsect );
 
     void SetNumPlanes(int n); // each plane is really two parallel planes
-    UInt16 GetNumPlanes() const { return fPlanes.GetCount(); }
+    uint16_t GetNumPlanes() const { return fPlanes.GetCount(); }
 
     void SetPlane(int which, const hsPoint3& locPosOne, const hsPoint3& locPosTwo);
 
@@ -240,7 +240,7 @@ public:
     void ClearPlanes() { fPlanes.SetCount(0); }
     void AddPlaneUnchecked(const hsVector3& n, hsScalar dist); // no validation here
     void AddPlane(const hsVector3& n, const hsPoint3& p);
-    UInt16 GetNumPlanes() const { return fPlanes.GetCount(); }
+    uint16_t GetNumPlanes() const { return fPlanes.GetCount(); }
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
@@ -287,7 +287,7 @@ public:
     GETINTERFACE_ANY( plComplexIsect, plVolumeIsect );
 
     void AddVolume(plVolumeIsect* v); // Will capture pointer
-    UInt16 GetNumVolumes() const { return fVolumes.GetCount(); }
+    uint16_t GetNumVolumes() const { return fVolumes.GetCount(); }
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 

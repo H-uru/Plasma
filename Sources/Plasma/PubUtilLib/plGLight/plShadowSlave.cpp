@@ -108,7 +108,7 @@ bool plShadowSlave::ISetupOrthoViewTransform()
 
 
     fView.SetView(hsPoint3(minX, minY, minZ), hsPoint3(maxX, maxY, maxZ));
-    fView.SetScreenSize((UInt16)fWidth, (UInt16)fHeight);
+    fView.SetScreenSize((uint16_t)fWidth, (uint16_t)fHeight);
     fView.SetCameraTransform(fWorldToLight, fLightToWorld);
     fView.SetPerspective(false);
     fView.SetViewPort(0, 0, hsScalar(fWidth), hsScalar(fHeight), false);
@@ -209,7 +209,7 @@ bool plShadowSlave::ISetupPerspViewTransform()
     hsScalar tanX = 1.f / cotX;
     hsScalar tanY = 1.f / cotY;
     fView.SetView(hsPoint3(-tanX, -tanY, minZ), hsPoint3(tanX, tanY, maxZ));
-    fView.SetScreenSize((UInt16)fWidth, (UInt16)fHeight);
+    fView.SetScreenSize((uint16_t)fWidth, (uint16_t)fHeight);
     fView.SetCameraTransform(fWorldToLight, fLightToWorld);
     fView.SetPerspective(true);
     fView.SetViewPort(0, 0, hsScalar(fWidth), hsScalar(fHeight), false);

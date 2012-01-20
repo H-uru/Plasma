@@ -113,7 +113,7 @@ void hsG3DDeviceMode::Read( hsStream* s )
     fDepth = s->ReadLE32();
 
     fZStencilDepths.Reset();
-    UInt8   count= s->ReadByte();
+    uint8_t   count= s->ReadByte();
     while( count-- )
         fZStencilDepths.Append( s->ReadLE16() );
 
@@ -133,13 +133,13 @@ void hsG3DDeviceMode::Write( hsStream* s ) const
     s->WriteLE32(fHeight);
     s->WriteLE32(fDepth);
 
-    UInt8   i, count = (UInt8)fZStencilDepths.GetCount();
+    uint8_t   i, count = (uint8_t)fZStencilDepths.GetCount();
     s->WriteByte( count );
     for( i = 0; i < count; i++ )
         s->WriteLE16( fZStencilDepths[ i ] );
 
     /// Version 9
-    count = (UInt8)fFSAATypes.GetCount();
+    count = (uint8_t)fFSAATypes.GetCount();
     s->WriteByte( count );
     for( i = 0; i < count; i++ )
         s->WriteByte( fFSAATypes[ i ] );
@@ -252,7 +252,7 @@ const char* hsG3DDeviceRecord::GetG3DDeviceTypeName() const
         "OpenGL"
     };
 
-    UInt32 devType = GetG3DDeviceType();
+    uint32_t devType = GetG3DDeviceType();
     if( devType > hsG3DDeviceSelector::kNumDevTypes )
         devType = hsG3DDeviceSelector::kDevTypeUnknown;
     
@@ -570,7 +570,7 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(hsBool bTough)
         else if( fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3D ||
                  fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3DTnL )
         {
-            UInt32      totalMem;
+            uint32_t      totalMem;
             char        devDesc[ 256 ];
 
 
@@ -631,7 +631,7 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(hsBool bTough)
 //  Microsoft, the best way to do this is to add in the memory necessary for
 //  the entire desktop. Okay, whatever...
 
-UInt32  hsG3DDeviceSelector::IAdjustDirectXMemory( UInt32 cardMem )
+uint32_t  hsG3DDeviceSelector::IAdjustDirectXMemory( uint32_t cardMem )
 {
 #if HS_BUILD_FOR_WIN32
     HDC         deskDC;
@@ -677,7 +677,7 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
     tempClass.hInstance = GetModuleHandle( nil );
     tempClass.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
     tempClass.lpszClassName = fTempWinClass;
-    UInt16 ret = RegisterClass(&tempClass);
+    uint16_t ret = RegisterClass(&tempClass);
     hsAssert(ret, "Cannot create temporary window class to test for device modes" );
 #endif
 
@@ -698,7 +698,7 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
 
 hsBool hsG3DDeviceSelector::GetDefault (hsG3DDeviceModeRecord *dmr)
 {
-    Int32 iTnL, iD3D, iOpenGL, device, mode, i;
+    int32_t iTnL, iD3D, iOpenGL, device, mode, i;
     device = iTnL = iD3D = iOpenGL = mode = -1;
 
     if (device == -1)
@@ -1117,7 +1117,7 @@ void    hsG3DDeviceSelector::IGetExtOpenGLInfo( hsG3DDeviceRecord &devRec )
             } while( c2 >= extString && ( isdigit( *c2 ) || isspace( *c2 ) ) );
             c2++;
             
-            strncpy( str, c2, (UInt32)c - (UInt32)c2 );
+            strncpy( str, c2, (uint32_t)c - (uint32_t)c2 );
             j = atoi( str );
             sprintf( str, "ITryOpenGL():   Device has %d MB texture memory\n", j );
             hsStatusMessage( str );
@@ -1169,7 +1169,7 @@ void    hsG3DDeviceSelector::IGetExtOpenGLInfo( hsG3DDeviceRecord &devRec )
 #ifdef HS_OPEN_GL
 #if HS_BUILD_FOR_WIN32
 
-UInt32  hsG3DDeviceSelector::ICreateTempOpenGLContext( HDC hDC, hsBool32 makeItFull )
+uint32_t  hsG3DDeviceSelector::ICreateTempOpenGLContext( HDC hDC, hsBool32 makeItFull )
 {
     DEVMODE     modeInfo;
     int         pixFmt;
@@ -1213,7 +1213,7 @@ UInt32  hsG3DDeviceSelector::ICreateTempOpenGLContext( HDC hDC, hsBool32 makeItF
 
     pixFmt = ChoosePixelFormat( hDC, &pfd );
     if( pixFmt > 0 && SetPixelFormat( hDC, pixFmt, &pfd ) )
-        return (UInt32)wglCreateContext( hDC );
+        return (uint32_t)wglCreateContext( hDC );
 
     return 0;
 }
@@ -1298,27 +1298,27 @@ namespace
 
 
     typedef struct {
-        UInt8           fType;              // Our chipset ID
-        UInt32          *fFlagsToSet;       
-        UInt32          *fFlagsToClear;
+        uint8_t           fType;              // Our chipset ID
+        uint32_t          *fFlagsToSet;       
+        uint32_t          *fFlagsToClear;
         hsScalar        fZSuckiness;        // See above
-        UInt32          fForceMaxLayers;    // The max # of layers we REALLY want (0 to not force)
+        uint32_t          fForceMaxLayers;    // The max # of layers we REALLY want (0 to not force)
         hsScalar        fLODRating;
         FogTweakTable   *fFogTweaks;
     } CFTable;
 
-    UInt32  dsSavageCapsClr[] = {
+    uint32_t  dsSavageCapsClr[] = {
                     4,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsCompressTextures,
                     hsG3DDeviceSelector::kCapsFogExp,
                     hsG3DDeviceSelector::kCapsFogExp2,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsSavageCapsSet[] = {
+    uint32_t  dsSavageCapsSet[] = {
                     1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsBadYonStuff };
                     
-    UInt32  dsSavage2kCapsClr[] = {
+    uint32_t  dsSavage2kCapsClr[] = {
                     5,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsCompressTextures,
                     hsG3DDeviceSelector::kCapsPixelFog,
@@ -1326,45 +1326,45 @@ namespace
                     hsG3DDeviceSelector::kCapsFogExp2,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsS3GenerCapsClr[] = {
+    uint32_t  dsS3GenerCapsClr[] = {
                     4,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsCompressTextures,
                     hsG3DDeviceSelector::kCapsFogExp,
                     hsG3DDeviceSelector::kCapsFogExp2,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsATIFuryCapsClr[] = {
+    uint32_t  dsATIFuryCapsClr[] = {
                     3,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsFogExp,
                     hsG3DDeviceSelector::kCapsFogExp2,
                     hsG3DDeviceSelector::kCapsPixelFog };
 
-    UInt32  dsATIRageCapsClr[] = {
+    uint32_t  dsATIRageCapsClr[] = {
                     4,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsFogExp,
                     hsG3DDeviceSelector::kCapsFogExp2,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures,
                     hsG3DDeviceSelector::kCapsPixelFog };
 
-    UInt32  dsATIGenerCapsClr[] = {
+    uint32_t  dsATIGenerCapsClr[] = {
                     4,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsPixelFog,
                     hsG3DDeviceSelector::kCapsFogExp,
                     hsG3DDeviceSelector::kCapsFogExp2,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsATIRadeonCapsSet[] = {
+    uint32_t  dsATIRadeonCapsSet[] = {
                     2,              // First integer is always the length
                         hsG3DDeviceSelector::kCapsBadManaged,
                         hsG3DDeviceSelector::kCapsShareDepth
                     };
 
-    UInt32  dsATIRadeonCapsClr[] = {
+    uint32_t  dsATIRadeonCapsClr[] = {
                     2,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsWBuffer,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsATIR7X00CapsSet[] = {
+    uint32_t  dsATIR7X00CapsSet[] = {
                     4,              // First integer is always the length
                         hsG3DDeviceSelector::kCapsCantShadow,
                         hsG3DDeviceSelector::kCapsBadManaged,
@@ -1372,7 +1372,7 @@ namespace
                         hsG3DDeviceSelector::kCapsNoAniso
                     };
 
-    UInt32  dsATIR7500CapsSet[] = {
+    uint32_t  dsATIR7500CapsSet[] = {
                     5,              // First integer is always the length
                         hsG3DDeviceSelector::kCapsMaxUVWSrc2,
                         hsG3DDeviceSelector::kCapsCantShadow,
@@ -1381,70 +1381,70 @@ namespace
                         hsG3DDeviceSelector::kCapsNoAniso
                     };
 
-    UInt32  dsATIR7X00CapsClr[] = {
+    uint32_t  dsATIR7X00CapsClr[] = {
                     2,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsWBuffer,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsATIR8X00CapsSet[] = {
+    uint32_t  dsATIR8X00CapsSet[] = {
                     2,              // First integer is always the length
                         hsG3DDeviceSelector::kCapsBadManaged,
                         hsG3DDeviceSelector::kCapsShareDepth
                     };
 
-    UInt32  dsATIR8X00CapsClr[] = {
+    uint32_t  dsATIR8X00CapsClr[] = {
                     2,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsWBuffer,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsTNTCapsClr[] = {
+    uint32_t  dsTNTCapsClr[] = {
                     1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsDefaultCapsClr[] = {
+    uint32_t  dsDefaultCapsClr[] = {
                     1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsMG400CapsClr[] = {
+    uint32_t  dsMG400CapsClr[] = {
                     1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    UInt32  dsKYROCapsClr[] = {
+    uint32_t  dsKYROCapsClr[] = {
                     2,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsDoesSmallTextures,
                     hsG3DDeviceSelector::kCapsPixelFog };
 
-    UInt32  dsKYROCapsSet[] = {
+    uint32_t  dsKYROCapsSet[] = {
                     1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsNoKindaSmallTexs };
 
-    UInt32  ds3dfxV5CapsClr[] = {
+    uint32_t  ds3dfxV5CapsClr[] = {
                     2,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsFogExp,
                     hsG3DDeviceSelector::kCapsFogExp2 };
 
-    UInt32  dsMatroxParheliaSet[] = {
+    uint32_t  dsMatroxParheliaSet[] = {
                     1,
                         hsG3DDeviceSelector::kCapsNoAA };
 
-    UInt32  dsGeForceSet[] = {
+    uint32_t  dsGeForceSet[] = {
                     2,
                         hsG3DDeviceSelector::kCapsCantProj,
                         hsG3DDeviceSelector::kCapsDoubleFlush };
 
-    UInt32  dsGeForce2Set[] = {
+    uint32_t  dsGeForce2Set[] = {
                     1,
                         hsG3DDeviceSelector::kCapsDoubleFlush };
 
-    UInt32  dsGeForce3Set[] = {
+    uint32_t  dsGeForce3Set[] = {
                     1,
                         hsG3DDeviceSelector::kCapsSingleFlush };
 
-    UInt32  dsGeForce4MXSet[] = {
+    uint32_t  dsGeForce4MXSet[] = {
                     1,
                         hsG3DDeviceSelector::kCapsSingleFlush };
 
-    UInt32  dsGeForce4Set[] = {
+    uint32_t  dsGeForce4Set[] = {
                     1,
                         hsG3DDeviceSelector::kCapsSingleFlush
                     };
@@ -1802,7 +1802,7 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
 //  Given a chipset ID, looks the values up in the CFT and sets the appropriate
 //  values.
 
-void    hsG3DDeviceSelector::ISetFudgeFactors( UInt8 chipsetID, hsG3DDeviceRecord &record )
+void    hsG3DDeviceSelector::ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRecord &record )
 {
     int     i, maxIDs, j;
 
@@ -1971,7 +1971,7 @@ void    plDemoDebugFile::Write( char *string1, char *string2 )
 #endif
 }
 
-void    plDemoDebugFile::Write( char *string1, Int32 value )
+void    plDemoDebugFile::Write( char *string1, int32_t value )
 {
 #if M3DDEMOINFO // Demo Debug Build
     if( !fIsOpen )

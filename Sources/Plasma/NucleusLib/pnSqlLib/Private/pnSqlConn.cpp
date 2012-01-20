@@ -74,7 +74,7 @@ struct SqlStmtHash {
 
     SqlStmtHash ();
     SqlStmtHash (FSqlBindPrepare prepare);
-    dword GetHash () const;
+    uint32_t GetHash () const;
     bool operator== (const SqlStmtHash & rhs) const;
 };
 
@@ -97,13 +97,13 @@ struct SqlStmt : SqlStmtHash {
     void *                  errHandlerParam;
     unsigned                sequence;
     unsigned                timeoutSecs;
-    byte *                  data;
-    wchar                   debug[128];
+    uint8_t *                  data;
+    wchar_t                   debug[128];
 
     SqlStmt (SqlConn * conn);
     ~SqlStmt ();
     SqlStmt & operator= (const SqlStmt &); // not impl.
-    bool Initialize (const wchar connectStr[]);
+    bool Initialize (const wchar_t connectStr[]);
     void Reset ();
     bool QueryDead (unsigned method);
 };
@@ -121,7 +121,7 @@ struct SqlConn {
     unsigned                sequence;
     unsigned                timeoutSecs;
     AsyncThreadTaskList *   taskList;
-    wchar *                 connectStr;
+    wchar_t *                 connectStr;
 
     LISTDECL(
         SqlStmt,
@@ -135,7 +135,7 @@ struct SqlConn {
     ) freeStmts;
 
     SqlConn (
-        const wchar connectStr[],
+        const wchar_t connectStr[],
         SQLHENV     henv
     );
     ~SqlConn ();
@@ -202,8 +202,8 @@ static void LogErr (
     int         result,
     SQLSMALLINT handleType,
     SQLHANDLE   handle,
-    const wchar function[],
-    const wchar command[]
+    const wchar_t function[],
+    const wchar_t command[]
 ) {
     if (SQL_SUCCEEDED(result) && result != SQL_SUCCESS_WITH_INFO)
         return;
@@ -243,7 +243,7 @@ static void LogErr (
 static void LogStmtError (
     int         result,
     SqlStmt *   stmt,
-    const wchar function[]
+    const wchar_t function[]
 ) {
     if (result == SQL_SUCCESS)
         return;
@@ -315,8 +315,8 @@ inline SqlStmtHash::SqlStmtHash (FSqlBindPrepare prepare)
 {}
 
 //============================================================================
-inline dword SqlStmtHash::GetHash () const {
-    return (dword) prepare;
+inline uint32_t SqlStmtHash::GetHash () const {
+    return (uint32_t) prepare;
 }
 
 //============================================================================
@@ -385,7 +385,7 @@ SqlStmt::~SqlStmt () {
 }
 
 //============================================================================
-bool SqlStmt::Initialize (const wchar connectStr[]) {
+bool SqlStmt::Initialize (const wchar_t connectStr[]) {
     ASSERT(!hdbc);
 
     for (;;) {
@@ -544,7 +544,7 @@ bool SqlStmt::QueryDead (unsigned method) {
 
 //============================================================================
 SqlConn::SqlConn (
-    const wchar connectStr[],
+    const wchar_t connectStr[],
     SQLHENV     henv
 ) : henv(henv)
 ,   flags(0)
@@ -751,7 +751,7 @@ void SqlConn::AsyncCheckDead_CS () {
 
 //============================================================================
 SqlConn * SqlConnCreate (
-    const wchar connectStr[],
+    const wchar_t connectStr[],
     unsigned    maxConnections,
     unsigned    transTimeoutSeconds
 ) {
@@ -915,7 +915,7 @@ SqlStmt * SqlConnAllocStmt (SqlConn * conn) {
 SqlStmt * SqlConnAllocStmt (
     SqlConn *       conn,
     FSqlBindPrepare prepare,
-    byte **         bindData    // [OUT]
+    uint8_t **         bindData    // [OUT]
 ) {
     ASSERT(prepare || !bindData);
     if (!conn)
@@ -1026,7 +1026,7 @@ SqlStmt * SqlConnAllocStmt (
     }
 
     if (prepare) {
-        ARRAY(byte) data;
+        ARRAY(uint8_t) data;
         prepare(stmt, &data);
         stmt->prepare = prepare;
         stmt->data    = data.Detach();
@@ -1289,13 +1289,13 @@ void SqlConnBindParameterStringA (
 //============================================================================
 int SqlConnExecDirect (
     SqlStmt *       stmt,
-    const wchar     string[]
+    const wchar_t     string[]
 ) {
     #ifdef LOG_SQL_STMTS
     LogMsg(kLogDebug, L"SQL: %s", string);
     #endif
     StrCopy(stmt->debug, string, arrsize(stmt->debug));
-    int result = SQLExecDirectW(stmt->hstmt, const_cast<wchar *>(string), SQL_NTS);
+    int result = SQLExecDirectW(stmt->hstmt, const_cast<wchar_t *>(string), SQL_NTS);
     LogStmtError(result, stmt, L"SqlExecute");
     return result;
 }
@@ -1303,7 +1303,7 @@ int SqlConnExecDirect (
 //============================================================================
 int SqlConnPrepare (
     SqlStmt *       stmt,
-    const wchar     string[]
+    const wchar_t     string[]
 ) {
     // Using {call ...} or {?= call ...} with SqlPrepare doesn't allow
     // the ODBC expression parser to perform escape sequence fixup for
@@ -1314,7 +1314,7 @@ int SqlConnPrepare (
     #endif
 
     StrCopy(stmt->debug, string, arrsize(stmt->debug));
-    int result = SQLPrepareW(stmt->hstmt, const_cast<wchar *>(string), SQL_NTS);
+    int result = SQLPrepareW(stmt->hstmt, const_cast<wchar_t *>(string), SQL_NTS);
     LogStmtError(result, stmt, L"SqlPrepare");
     return result;
 }

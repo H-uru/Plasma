@@ -76,7 +76,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    virtual hsBool Open(const wchar* fileName, const wchar* flags);
+    virtual hsBool Open(const wchar_t* fileName, const wchar_t* flags);
     virtual std::vector<std::string> ReadLines();
     virtual hsBool WriteLines(const std::vector<std::string> & lines);
     virtual void Close();

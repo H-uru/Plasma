@@ -90,8 +90,8 @@ public:
     const char * Chronicle_GetName( void );
     void Chronicle_SetValue( const char * text );
     const char * Chronicle_GetValue( void );
-    void Chronicle_SetType( UInt32 type );
-    UInt32 Chronicle_GetType( void );
+    void Chronicle_SetType( uint32_t type );
+    uint32_t Chronicle_GetType( void );
 };
 
 #endif // _pyVaultChronicleNode_h_

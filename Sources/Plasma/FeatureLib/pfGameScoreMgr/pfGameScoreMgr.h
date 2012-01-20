@@ -58,7 +58,7 @@ struct pfGameScore : AtomicRef
 {
     unsigned    scoreId;
     unsigned    ownerId;
-    UInt32      createdTime;
+    uint32_t      createdTime;
     char        gameName[kMaxGameScoreNameLength];
     unsigned    gameType;
     int         value;
@@ -69,7 +69,7 @@ struct pfGameScore : AtomicRef
     void Init(
         unsigned sid,
         unsigned oid,
-        UInt32 createTime,
+        uint32_t createTime,
         const char gname[],
         unsigned gType,
         int val

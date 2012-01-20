@@ -119,7 +119,7 @@ hsBool plStereizer::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-hsBool plStereizer::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plStereizer::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     return false;
 }

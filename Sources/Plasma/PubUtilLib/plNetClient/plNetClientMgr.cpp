@@ -1181,7 +1181,7 @@ unsigned plNetClientMgr::GetPlayerIdByName (const char name[]) const {
     return 0;
 }
 
-UInt32 plNetClientMgr::GetPlayerID() const
+uint32_t plNetClientMgr::GetPlayerID() const
 {
     return NetCommGetPlayer()->playerInt;
 }
@@ -1412,7 +1412,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
 }
 
 // for debugging purposes
-bool plNetClientMgr::IFindModifier(plSynchedObject* obj, Int16 classIdx)
+bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
 {
     plLayerAnimation* layer = plLayerAnimation::ConvertNoRef(obj);
     if (layer)

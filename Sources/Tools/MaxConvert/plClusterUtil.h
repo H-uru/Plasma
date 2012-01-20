@@ -84,7 +84,7 @@ class plL2WTabTab : public Tab<plL2WTab*> {};
 class plPoint3Tab : public Tab<hsVector3> {};
 class plPoint3TabTab : public Tab<plPoint3Tab*> {};
 
-class plColorTab : public Tab<UInt32> {};
+class plColorTab : public Tab<uint32_t> {};
 class plColorTabTab : public Tab<plColorTab*> {};
 
 class plSpanTemplTab : public Tab<plSpanTemplateB*> {};
@@ -92,7 +92,7 @@ class plSpanTemplTab : public Tab<plSpanTemplateB*> {};
 class plClusterUtil
 {
 protected:
-    UInt32                  fIdx;
+    uint32_t                  fIdx;
     plClusterGroup*         fGroup;
     plMaxNode*              fTemplNode;
     plSpanTemplateB*        fTemplate;

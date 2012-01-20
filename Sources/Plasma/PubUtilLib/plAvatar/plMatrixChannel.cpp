@@ -370,7 +370,7 @@ plAGChannel * plMatrixBlend::MakeBlend(plAGChannel *newChannel,
     return result;
 }
 
-UInt16 plMatrixBlend::GetPriority() {
+uint16_t plMatrixBlend::GetPriority() {
     return fPriority;
 }
 

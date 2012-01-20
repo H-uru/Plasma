@@ -128,13 +128,13 @@ void plCaptureRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
 hsTArray<plCaptureRenderMsg*>   plCaptureRender::fProcessed;
 
 // plCaptureRender::Capture
-hsBool plCaptureRender::Capture(const plKey& ack, UInt16 width, UInt16 height)
+hsBool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
 {
     // Create our render target
-    const UInt16 flags = plRenderTarget::kIsOffscreen;
-    const UInt8 bitDepth(32);
-    const UInt8 zDepth(-1);
-    const UInt8 stencilDepth(-1);
+    const uint16_t flags = plRenderTarget::kIsOffscreen;
+    const uint8_t bitDepth(32);
+    const uint8_t zDepth(-1);
+    const uint8_t stencilDepth(-1);
     plRenderTarget* rt = TRACKED_NEW plRenderTarget(flags, width, height, bitDepth, zDepth, stencilDepth);
 
     static int idx=0;
@@ -151,7 +151,7 @@ hsBool plCaptureRender::Capture(const plKey& ack, UInt16 width, UInt16 height)
 
     req->SetRenderTarget(rt);
 
-    const UInt32 renderState 
+    const uint32_t renderState 
         = plPipeline::kRenderNormal
         | plPipeline::kRenderClearColor
         | plPipeline::kRenderClearDepth;
@@ -226,7 +226,7 @@ void plCaptureRender::Update(plPipeline* pipe)
     fCapReqs.Reset();
 }
 
-hsBool plCaptureRender::Capture(const plKey& ack, UInt16 width, UInt16 height)
+hsBool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
 {
     CapInfo capInfo;
     capInfo.fAck = ack;

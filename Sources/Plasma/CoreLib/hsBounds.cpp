@@ -61,7 +61,7 @@ void hsBounds::Read(hsStream *s)
 
 void hsBounds::Write(hsStream *s) 
 {
-    s->WriteLE32((Int32)fType);
+    s->WriteLE32((int32_t)fType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -230,9 +230,9 @@ void hsBounds3::InscribeSphere()
 }
 
 // neg, pos, zero == disjoint, I contain other, overlap
-Int32 hsBounds3::TestBound(const hsBounds3& other) const
+int32_t hsBounds3::TestBound(const hsBounds3& other) const
 {
-    Int32 retVal = 1;
+    int32_t retVal = 1;
     int i;
     for( i = 0; i < 3; i++ )
     {
@@ -348,7 +348,7 @@ void hsBounds3::MakeTriMeshSphere(hsGTriMesh* tMesh, hsPoint3* cornersIn) const
 //
 // Allocate and create mesh from bounding box
 //
-void hsBounds3::MakeTriMesh(hsGTriMesh* tMesh, UInt32 triFlags, hsPoint3* cornersIn) const
+void hsBounds3::MakeTriMesh(hsGTriMesh* tMesh, uint32_t triFlags, hsPoint3* cornersIn) const
 {
     hsAssert(cornersIn || fType == kBoundsNormal, 
         "Invalid bounds type for hsBounds3::MakeTriMesh ");
@@ -551,13 +551,13 @@ hsBool hsBoundsOriented::IsInside(const hsPoint3* pos) const
     return true;
 }
 
-void hsBoundsOriented::SetNumberPlanes(UInt32 n)
+void hsBoundsOriented::SetNumberPlanes(uint32_t n)
 {
     delete [] fPlanes;
     fPlanes = TRACKED_NEW hsPlane3[fNumPlanes = n];
 }
 
-void hsBoundsOriented::SetPlane(UInt32 i, hsPlane3 *pln)
+void hsBoundsOriented::SetPlane(uint32_t i, hsPlane3 *pln)
 {
     fType = kBoundsNormal;
     if( i >= fNumPlanes )
@@ -1030,7 +1030,7 @@ hsBool hsBounds3Ext::IsInside(const hsPoint3 *p) const
 }
 
 // neg, pos, zero == disjoint, I contain other, overlap
-Int32 hsBounds3Ext::TestBound(const hsBounds3Ext& other) const
+int32_t hsBounds3Ext::TestBound(const hsBounds3Ext& other) const
 {
     if( fExtFlags & kAxisAligned )
         return hsBounds3::TestBound(other);
@@ -1038,7 +1038,7 @@ Int32 hsBounds3Ext::TestBound(const hsBounds3Ext& other) const
     if( !(fExtFlags & kDistsSet) )
         IMakeDists();
 
-    Int32 retVal = 1;
+    int32_t retVal = 1;
     int i;
     for( i = 0; i < 3; i++ )
     {
@@ -1151,11 +1151,11 @@ void hsBounds3Ext::TestPlane(const hsVector3 &n, const hsVector3 &myVel, hsPoint
     }
 }
 
-Int32 hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &ptVel) const
+int32_t hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &ptVel) const
 {
     if( fExtFlags & kAxisAligned )
     {
-        Int32 retVal = -1;
+        int32_t retVal = -1;
         int i;
         for( i = 0; i < 3; i++ )
         {
@@ -1167,8 +1167,8 @@ Int32 hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &pt
                 effMin -= ptVel[i];
 
             int j;
-            const UInt32 low = 0x1, hi = 0x2;
-            UInt32 mask = low | hi;
+            const uint32_t low = 0x1, hi = 0x2;
+            uint32_t mask = low | hi;
             for( j = 0; j < n; j++ )
             {
                 if( pList[j][i] > effMin )
@@ -1185,7 +1185,7 @@ Int32 hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &pt
     }
     else // non-axis aligned case
     {
-        Int32 retVal = -1; // all inside
+        int32_t retVal = -1; // all inside
         if( !(fExtFlags & kDistsSet) )
             IMakeDists();
         int i;
@@ -1228,7 +1228,7 @@ Int32 hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &pt
     }
 }
 
-Int32 hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList) const
+int32_t hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList) const
 {
     hsBool someIn = false;
     hsBool someOut = false;
@@ -1397,7 +1397,7 @@ static hsBool ITestDepth(const hsPoint2& other, const hsPoint2& mine,
     return true;
 }
 
-Int32 hsBounds3Ext::IClosestISect(const hsBounds3Ext& other, const hsVector3& myVel,
+int32_t hsBounds3Ext::IClosestISect(const hsBounds3Ext& other, const hsVector3& myVel,
                               hsScalar* tClose, hsScalar* tImpact) const
 {
     // Should assert both have their spheres set.
@@ -1704,8 +1704,8 @@ hsBool hsBounds3Ext::ISectTriABB(hsBounds3Tri &tri, const hsVector3 &myVel) cons
             effMax += myVel[i];
 
         int j;
-        const UInt32 low = 0x1, hi = 0x2;
-        UInt32 mask = low | hi;
+        const uint32_t low = 0x1, hi = 0x2;
+        uint32_t mask = low | hi;
         for( j = 0; j < 3; j++ )
         {
             if( tri.fVerts[j][i] > effMin )
@@ -2940,7 +2940,7 @@ hsBounds3Tri::hsBounds3Tri(hsTriangle3* t, const hsMatrix44& x)
         t, x);
 }
 
-void hsBounds3Tri::Set(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, UInt32 triFlags, hsTriangle3 *t)
+void hsBounds3Tri::Set(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, uint32_t triFlags, hsTriangle3 *t)
 {
     fTriFlags = 0;
 
@@ -2958,7 +2958,7 @@ void hsBounds3Tri::Set(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, U
     fDist = fNormal.InnerProduct(fVerts[0]);
 }
 
-hsBounds3Tri::hsBounds3Tri(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, UInt32 triFlags, hsTriangle3 *t)
+hsBounds3Tri::hsBounds3Tri(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, uint32_t triFlags, hsTriangle3 *t)
 {
     Set(v0, v1, v2, n, triFlags, t);
 }
@@ -2995,9 +2995,9 @@ hsBool hsBounds3Tri::ISectCone(const hsPoint3& from, const hsPoint3& to, hsScala
     hsScalar radiusSq = distASq * (1-cosThetaSq)/cosThetaSq;
 
     hsScalar minDistSq = 0;
-    Int32 minVert = 0;
+    int32_t minVert = 0;
     hsBool sect = false;
-    for (Int32 i=0; i<3; i++)
+    for (int32_t i=0; i<3; i++)
     {
         hsPoint3 onLine;
         hsScalar t = hsBounds3::ClosestPointToLine(&fVerts[i], &from, &to, &onLine);

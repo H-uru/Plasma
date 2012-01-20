@@ -52,7 +52,7 @@ hsNoiseFunc::~hsNoiseFunc()
 {
 }
 
-void hsNoiseFunc::Seed(UInt32 s)
+void hsNoiseFunc::Seed(uint32_t s)
 {
     srand(s);
 }
@@ -101,7 +101,7 @@ hsScalar hsTableNoise::Noise(hsScalar lo, hsScalar hi, hsScalar t)
         t = hsScalar1;
 
     hsScalar tIdx = t * fTableLen;
-    UInt32 idx = UInt32(tIdx);
+    uint32_t idx = uint32_t(tIdx);
     hsScalar frac = tIdx - hsScalar(idx);
     hsAssert((idx >= 0)&&(idx <= fTableLen), "Noise parm t out of range [0..1]");
 
@@ -116,21 +116,21 @@ hsScalar hsTableNoise::NoisePoint(const hsPoint3& p, hsScalar lo, hsScalar hi, h
 {
     hsAssert(fTableLen, "Badly initialized table noise function");
 
-    UInt32 sX = *((UInt32*)&p.fX);
-    UInt32 sY = *((UInt32*)&p.fY);
-    UInt32 sZ = *((UInt32*)&p.fZ);
+    uint32_t sX = *((uint32_t*)&p.fX);
+    uint32_t sY = *((uint32_t*)&p.fY);
+    uint32_t sZ = *((uint32_t*)&p.fZ);
 
-    UInt32 sAll = ((((sX & 0x07800000) >> 16) | ((sX & 0x007fffff) >> 17)) << 20)
+    uint32_t sAll = ((((sX & 0x07800000) >> 16) | ((sX & 0x007fffff) >> 17)) << 20)
                 | ((((sY & 0x07800000) >> 16) | ((sY & 0x007fffff) >> 17)) << 10)
                 | ((((sZ & 0x07800000) >> 16) | ((sZ & 0x007fffff) >> 17))      );
 
-    const UInt32 kExp = 0x3f800000;
-    const UInt32 kMsk = 0x007fffff;
+    const uint32_t kExp = 0x3f800000;
+    const uint32_t kMsk = 0x007fffff;
 
-    const UInt32 kA = 1665636L;
-    const UInt32 kC = 1013904223L;
+    const uint32_t kA = 1665636L;
+    const uint32_t kC = 1013904223L;
 
-    UInt32 iR = kA * sAll + kC;
+    uint32_t iR = kA * sAll + kC;
     iR &= kMsk;
     iR |= kExp;
 
@@ -144,7 +144,7 @@ hsScalar hsTableNoise::NoisePoint(const hsPoint3& p, hsScalar lo, hsScalar hi, h
         t = hsScalar1;
 
     hsScalar tIdx = t * fTableLen;
-    UInt32 idx = UInt32(tIdx);
+    uint32_t idx = uint32_t(tIdx);
     hsScalar frac = tIdx - hsScalar(idx);
     hsAssert((idx >= 0)&&(idx <= fTableLen), "Noise parm t out of range [0..1]");
 

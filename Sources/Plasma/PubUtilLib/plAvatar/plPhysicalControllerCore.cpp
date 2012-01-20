@@ -239,7 +239,7 @@ void plWalkingStrategy::Apply(hsScalar delSecs)
 {
     //Apply Should Only be Called from a PhysicalControllerCore
     hsAssert(fCore,"No Core shouldn't be Applying");
-    UInt32 collideFlags =
+    uint32_t collideFlags =
         1<<plSimDefs::kGroupStatic |
         1<<plSimDefs::kGroupAvatarBlocker |
         1<<plSimDefs::kGroupDynamic;
@@ -400,7 +400,7 @@ void plWalkingStrategy::Apply(hsScalar delSecs)
             //Did you hit your head on a dynamic?
             //with Physx's wonderful controller hit report vs flags issues we need to actually sweep to see
             std::multiset< plControllerSweepRecord > HitsDynamic;
-            UInt32 testFlag=1<<plSimDefs::kGroupDynamic;
+            uint32_t testFlag=1<<plSimDefs::kGroupDynamic;
             hsPoint3 startPos;
             hsPoint3 endPos;
             fCore->GetPositionSim(startPos);
@@ -613,7 +613,7 @@ void plSwimStrategy::IAdjustBuoyancy()
 void plSwimStrategy::Apply(hsScalar delSecs)
 {
     hsAssert(fCore,"PlSwimStrategy::Apply No Core shouldn't be Applying");
-    UInt32 collideFlags =
+    uint32_t collideFlags =
         1<<plSimDefs::kGroupStatic |
         1<<plSimDefs::kGroupAvatarBlocker |
         1<<plSimDefs::kGroupDynamic;
@@ -772,7 +772,7 @@ void plRidingAnimatedPhysicalStrategy::Apply(hsScalar delSecs)
     plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
     hsPoint3 startPos, desiredDestination, endPos;
     fCore->GetPositionSim(startPos);
-    UInt32 collideFlags =
+    uint32_t collideFlags =
     1<<plSimDefs::kGroupStatic |
     1<<plSimDefs::kGroupAvatarBlocker |
     1<<plSimDefs::kGroupDynamic;
@@ -884,7 +884,7 @@ bool plRidingAnimatedPhysicalStrategy::ICheckMove(const hsPoint3& startPos, cons
     //returns false if it believes the end result can't be obtained by pure application of velocity (collides into somthing that it can't climb up)
     //used as a way to check if it needs to hack getting there like in jumping
     
-    UInt32 collideFlags =
+    uint32_t collideFlags =
     1<<plSimDefs::kGroupStatic |
     1<<plSimDefs::kGroupAvatarBlocker |
     1<<plSimDefs::kGroupDynamic;

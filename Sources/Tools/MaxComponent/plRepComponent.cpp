@@ -439,7 +439,7 @@ hsBool plRepGroupComp::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 hsBool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int caps[], plLoadMask masks[])
 {
     const int numReps = fCompPB->Count(kReps);
-    UInt32 preVal = plLoadMask::ValidateReps(numReps, quals, caps);
+    uint32_t preVal = plLoadMask::ValidateReps(numReps, quals, caps);
 
     if( preVal )
     {
@@ -459,7 +459,7 @@ hsBool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int 
 
     hsBool val = plLoadMask::ComputeRepMasks(numReps, quals, caps, masks);
 
-    UInt32 postVal = plLoadMask::ValidateMasks(numReps, masks);
+    uint32_t postVal = plLoadMask::ValidateMasks(numReps, masks);
 
     if( postVal )
     {

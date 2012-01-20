@@ -214,7 +214,7 @@ PF_CONSOLE_FILE_DUMMY(Main)
 //        name isn't obvious (i.e. SetFogColor doesn't really need one)
 //  
 //  The actual C code prototype looks like:
-//      void    pfConsoleCmd_groupName_functionName( UInt32 numParams, pfConsoleCmdParam *params, 
+//      void    pfConsoleCmd_groupName_functionName( uint32_t numParams, pfConsoleCmdParam *params, 
 //                                                      void (*PrintString)( char * ) );
 //
 //  numParams is exactly what it sounds like. params is an array of console
@@ -723,7 +723,7 @@ PF_CONSOLE_CMD( Console, EnableFX, "bool enable", "Enables flashy console effect
 PF_CONSOLE_CMD( Console, SetTextColor, "int r, int g, int b", 
                 "Sets the color of normal console text" )
 {
-    UInt32      color = 0xff000000 | ( (int)params[ 0 ] << 16 ) | ( (int)params[ 1 ] << 8 ) | ( (int)params[ 2 ] );
+    uint32_t      color = 0xff000000 | ( (int)params[ 0 ] << 16 ) | ( (int)params[ 1 ] << 8 ) | ( (int)params[ 2 ] );
 
     pfConsole::SetTextColor( color );
 }
@@ -865,7 +865,7 @@ PF_CONSOLE_CMD( Console, PrintVar, "string name", "Prints the value of a given g
 {
     pfConsoleContext &ctx = pfConsoleContext::GetRootContext();
 
-    Int32 idx = ctx.FindVar( params[ 0 ] );
+    int32_t idx = ctx.FindVar( params[ 0 ] );
     if( idx == -1 )
         PrintString( "Variable not found" );
     else
@@ -878,7 +878,7 @@ PF_CONSOLE_CMD( Console, PrintAllVars, "", "Prints the values of all global cons
 {
     pfConsoleContext &ctx = pfConsoleContext::GetRootContext();
 
-    UInt32  i;
+    uint32_t  i;
 
     PrintString( "Global console variables:" );
     for( i = 0; i < ctx.GetNumVars(); i++ )
@@ -958,14 +958,14 @@ PF_CONSOLE_CMD( Graphics,           // Group name
 \tonlyProjLights - Turns off runtime non-projected lights\n\
 \tnoFog - Disable all fog" )    // Help string
 {
-    UInt32      flag;
+    uint32_t      flag;
     bool        on;
     char        string[ 128 ], name[ 64 ];
     int         i;
 
     struct 
     { 
-        char name[ 64 ]; UInt32 flag; 
+        char name[ 64 ]; uint32_t flag; 
     } flags[] = { { "reloadTextures", plPipeDbg::kFlagReload },
                     { "noPreShade", plPipeDbg::kFlagNoPreShade},
                     { "noMultitexture", plPipeDbg::kFlagNoMultitexture },
@@ -1081,7 +1081,7 @@ PF_CONSOLE_CMD( Graphics, AllowWBuffering, "", "Enables the use of w-buffering\n
 {
     PF_SANITY_CHECK( pfConsole::GetPipeline() == nil, "This command MUST be used in an .ini file (before pipeline initialization)" );
 
-    extern UInt32 fDbgSetupInitFlags;
+    extern uint32_t fDbgSetupInitFlags;
 
 
     fDbgSetupInitFlags |= 0x00000001;
@@ -1092,7 +1092,7 @@ PF_CONSOLE_CMD( Graphics, ForceGeForce2Quality, "", "Forces higher-level hardwar
 {
     PF_SANITY_CHECK( pfConsole::GetPipeline() == nil, "This command MUST be used in an .ini file (before pipeline initialization)" );
 
-    extern UInt32 fDbgSetupInitFlags;
+    extern uint32_t fDbgSetupInitFlags;
 
 
     fDbgSetupInitFlags |= 0x00000004;
@@ -1262,7 +1262,7 @@ PF_CONSOLE_CMD( Graphics_DebugText,         // Group name
                 "string face, int size",    // Params
                 "Sets the font face and size used for drawing debug text" ) // Help string
 {
-    plDebugText::Instance().SetFont( params[ 0 ], (UInt16)(int)params[ 1 ] );
+    plDebugText::Instance().SetFont( params[ 0 ], (uint16_t)(int)params[ 1 ] );
 }
 
 PF_CONSOLE_CMD( Graphics_DebugText,         // Group name
@@ -1349,7 +1349,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
 {
     hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
 
-    hsTArray<UInt16> ramp;
+    hsTArray<uint16_t> ramp;
     ramp.SetCount(256);
 
     hsScalar g = params[0];
@@ -1366,7 +1366,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
         else if( remap > 1.f )
             remap = 1.f;
 
-        ramp[i] = UInt16(remap * hsScalar(UInt16(-1)) + 0.5f);
+        ramp[i] = uint16_t(remap * hsScalar(uint16_t(-1)) + 0.5f);
     }
 
     pfConsole::GetPipeline()->SetGamma(ramp.AcquireArray());
@@ -1453,7 +1453,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Overwire, "...", "Turn on (off) overlay wire 
     hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
 
     hsBool on = false;
-    UInt32 flag = plPipeDbg::kFlagOverlayWire;
+    uint32_t flag = plPipeDbg::kFlagOverlayWire;
     if( !numParams )
         on = !pfConsole::GetPipeline()->IsDebugFlagSet( flag );
     else
@@ -1569,7 +1569,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, ResetDevice,
 
 static bool MakeUniqueFileName(const char* prefix, const char* ext, char* fileName)
 {
-    for (UInt32 uniqueNumber = 1; uniqueNumber < 1000; uniqueNumber++)
+    for (uint32_t uniqueNumber = 1; uniqueNumber < 1000; uniqueNumber++)
     {
         sprintf(fileName, "%s%03d.%s", prefix, uniqueNumber, ext);
 
@@ -1687,7 +1687,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, TakeJPEGScreenshot, "...", "Takes a shot of t
     else
     {
         char    str[ 512 ];
-        UInt8   quality = 75;
+        uint8_t   quality = 75;
 
 
         if( numParams == 2 )
@@ -1930,7 +1930,7 @@ PF_CONSOLE_CMD( Graphics_Show, SoundOnly, "", "Toggle only sound fields visible"
     static hsBool on = false;
     plProxyDrawMsg* msg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kAudible | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
-    static UInt32 oldMask = plDrawableSpans::kNormal;
+    static uint32_t oldMask = plDrawableSpans::kNormal;
     if( on )
     {
         oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
@@ -1947,7 +1947,7 @@ PF_CONSOLE_CMD( Graphics_Show, SoundOnly, "", "Toggle only sound fields visible"
 
 PF_CONSOLE_CMD( Graphics_Show, OccSnap, "", "Take snapshot of current occlusion and render (or toggle)")
 {
-    UInt32 flag = plPipeDbg::kFlagOcclusionSnap;
+    uint32_t flag = plPipeDbg::kFlagOcclusionSnap;
     hsBool on = !pfConsole::GetPipeline()->IsDebugFlagSet(flag);
 
     pfConsole::GetPipeline()->SetDebugFlag( flag, on );
@@ -1963,10 +1963,10 @@ PF_CONSOLE_CMD( Graphics_Show, OccSnap, "", "Take snapshot of current occlusion 
 
 PF_CONSOLE_CMD( Graphics_Show, OccSnapOnly, "", "Take snapshot of current occlusion and render (or toggle)")
 {
-    UInt32 flag = plPipeDbg::kFlagOcclusionSnap;
+    uint32_t flag = plPipeDbg::kFlagOcclusionSnap;
     hsBool on = !pfConsole::GetPipeline()->IsDebugFlagSet(flag);
 
-    static UInt32 oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
+    static uint32_t oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
 
     pfConsole::GetPipeline()->SetDebugFlag( flag, on );
     if( on )
@@ -2000,7 +2000,7 @@ PF_CONSOLE_CMD( Graphics_Show, OccludersOnly, "", "Toggle only occluder geometry
     static hsBool on = false;
     plProxyDrawMsg* msg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kOccluder | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
-    static UInt32 oldMask = plDrawableSpans::kNormal;
+    static uint32_t oldMask = plDrawableSpans::kNormal;
     if( on )
     {
         oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
@@ -2035,7 +2035,7 @@ PF_CONSOLE_CMD( Graphics_Show, PhysicalsOnly, "", "Toggle only Physical geometry
     static hsBool on = false;
     plProxyDrawMsg* msg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kPhysical | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
-    static UInt32 oldMask = plDrawableSpans::kNormal;
+    static uint32_t oldMask = plDrawableSpans::kNormal;
     if( on )
     {
         oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
@@ -2066,7 +2066,7 @@ PF_CONSOLE_CMD( Graphics_Show, Normal, "", "Toggle normal geometry visible")
 PF_CONSOLE_CMD( Graphics_Show, NormalOnly, "", "Toggle only normal geometry visible")
 {
     static hsBool on = false;
-    static UInt32 oldMask = plDrawableSpans::kNormal;
+    static uint32_t oldMask = plDrawableSpans::kNormal;
     if( on = !on )
     {
         oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
@@ -2101,7 +2101,7 @@ PF_CONSOLE_CMD( Graphics_Show, LightsOnly, "", "Toggle visible proxies for light
     static hsBool on = false;
     plProxyDrawMsg* msg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kLight | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
-    static UInt32 oldMask = plDrawableSpans::kNormal;
+    static uint32_t oldMask = plDrawableSpans::kNormal;
     if( on )
     {
         oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
@@ -2137,7 +2137,7 @@ PF_CONSOLE_CMD( Graphics_Show, ClickOnly, "", "Toggle visible proxies for click 
     static hsBool on = false;
     plProxyDrawMsg* msg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kCamera | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
-    static UInt32 oldMask = plDrawableSpans::kNormal;
+    static uint32_t oldMask = plDrawableSpans::kNormal;
     if( on )
     {
         oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
@@ -2746,7 +2746,7 @@ PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level 
         return;
     }
 
-    plResMgrSettings::Get().SetLoggingLevel( (UInt8)newLevel );
+    plResMgrSettings::Get().SetLoggingLevel( (uint8_t)newLevel );
     {
         char msg[ 128 ];
         sprintf( msg, "Registry logging set to %s", ( newLevel == 0 ) ? "none" : ( newLevel == 1 ) ? "basic" : 
@@ -2759,7 +2759,7 @@ PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level 
 class plActiveRefPeekerKey : public plKeyImp
 {
     public:
-        UInt16      PeekNumNotifies() { return GetNumNotifyCreated(); }
+        uint16_t      PeekNumNotifies() { return GetNumNotifyCreated(); }
         plRefMsg*   PeekNotifyCreated(int i) { return GetNotifyCreated(i); }
         hsBool      PeekIsActiveRef(int i) const { return IsActiveRef(i); }
 };
@@ -2781,7 +2781,7 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
     if( peeker->PeekNumNotifies() == 0 )
         return;
 
-    UInt32 a, i, j, limit = 30, count = 0;
+    uint32_t a, i, j, limit = 30, count = 0;
     for( a = 0; a < 2; a++ )
     {
         PrintString( ( a == 0 ) ? "  Active:" : "  Passive:" );
@@ -2830,7 +2830,7 @@ PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the g
     plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
     if( peeker->GetNumClones() > 0 )
     {
-        UInt32 i;
+        uint32_t i;
         for( i = 0; i < peeker->GetNumClones(); i++ )
         {
             MyHandyPrintFunction( peeker->GetCloneByIdx( i ), PrintString );
@@ -3749,7 +3749,7 @@ PF_CONSOLE_CMD( Listener, UsePlayerVelocity, "", "Use the player's velocity to s
 
 PF_CONSOLE_CMD( Listener, XMode, "bool b", "Sets velocity and position to avatar, and orientation to camera")
 {
-    static UInt32 oldPosType = 0, oldFacingType = 0, oldVelType = 0;
+    static uint32_t oldPosType = 0, oldFacingType = 0, oldVelType = 0;
     
     plSetListenerMsg *set = nil;
     plKey pKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
@@ -4705,8 +4705,8 @@ PF_CONSOLE_CMD( Access,
 
     hsPoint3 from = pfConsole::GetPipeline()->GetViewPositionWorld();
 
-    Int32 sx = pfConsole::GetPipeline()->Width() / 2;
-    Int32 sy = pfConsole::GetPipeline()->Height() / 2;
+    int32_t sx = pfConsole::GetPipeline()->Width() / 2;
+    int32_t sy = pfConsole::GetPipeline()->Height() / 2;
     hsPoint3 targ;
     pfConsole::GetPipeline()->ScreenToWorldPoint(1, 0, &sx, &sy, dist, 0, &targ);
 
@@ -6238,7 +6238,7 @@ PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set t
 
 PF_CONSOLE_GROUP( ParticleSystem ) // Defines a main command group
 
-void UpdateParticleParam(char *objName, Int32 paramID, hsScalar value, void (*PrintString)(const char *))
+void UpdateParticleParam(char *objName, int32_t paramID, hsScalar value, void (*PrintString)(const char *))
 {
     char str[256];
     plKey key = FindSceneObjectByName(objName, nil, str);
@@ -6394,7 +6394,7 @@ PF_CONSOLE_CMD( ParticleSystem,
     const plParticleSystem *sys = plParticleSystem::ConvertNoRef(so->GetModifierByType(plParticleSystem::Index()));
     if (sys != nil)
     {
-        UInt8 flags = (params[3] ? plParticleKillMsg::kParticleKillPercentage : 0);
+        uint8_t flags = (params[3] ? plParticleKillMsg::kParticleKillPercentage : 0);
         (TRACKED_NEW plParticleKillMsg(nil, sys->GetKey(), 0, params[2], params[1], flags))->Send();
     }
 }
@@ -6766,7 +6766,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
 {
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();    
     plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
-    UInt8 layer;
+    uint8_t layer;
     if ((int)params[4] == 2)
         layer = plClothingElement::kLayerTint2;
     else

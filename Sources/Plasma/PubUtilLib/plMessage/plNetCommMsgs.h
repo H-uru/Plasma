@@ -100,7 +100,7 @@ public:
 
 class plNetCommFileDownloadMsg : public plNetCommReplyMsg {
 public:
-    wchar       filename[MAX_PATH];
+    wchar_t       filename[MAX_PATH];
     hsStream *  writer;
 
     CLASSNAME_REGISTER(plNetCommFileDownloadMsg);

@@ -66,7 +66,7 @@ public:
 protected:
     static int fLogLevel;
     static plStatusLog* IGetLog();
-    void ILogState(const plStateDataRecord* state, bool useDirty, const char* prefix, UInt32 color);
+    void ILogState(const plStateDataRecord* state, bool useDirty, const char* prefix, uint32_t color);
 
     plPhysical* IGetPhysical();
     virtual void IPutCurrentStateIn(plStateDataRecord* dstState);

@@ -114,7 +114,7 @@ void plSimpleModifier::IEnd()
     }
 }
 
-hsBool plSimpleModifier::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plSimpleModifier::IEval(double secs, hsScalar del, uint32_t dirty)
 {
     return IHandleTime(secs, del);
 }

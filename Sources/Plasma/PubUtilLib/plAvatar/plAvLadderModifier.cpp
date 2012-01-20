@@ -310,7 +310,7 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
                 plNotifyMsg* enterNotify = TRACKED_NEW plNotifyMsg(GetKey(), GetKey());
                 enterNotify->fID = kNotifyAvatarOnLadder;
 
-                UInt32 exitFlags = plAvBrainGeneric::kExitNormal;
+                uint32_t exitFlags = plAvBrainGeneric::kExitNormal;
 
                 plAvBrainGeneric *ladBrain = TRACKED_NEW plAvBrainGeneric(v, enterNotify, nil, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
                                                                   plAvBrainGeneric::kDefaultFadeOut, plAvBrainGeneric::kMoveRelative);

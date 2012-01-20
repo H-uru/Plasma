@@ -60,7 +60,7 @@ struct hsMatrix44 {
         kView
     };
     hsScalar            fMap[4][4];
-    UInt32              fFlags;
+    uint32_t              fFlags;
 
     hsMatrix44() : fFlags(0) {}
     hsMatrix44(const hsScalarTriple &translate, const hsQuat &rotate);

@@ -62,7 +62,7 @@ public:
         kNumProps // last
     };
     
-    virtual Int32 GetNumProperties() const { return kNumProps; }    
+    virtual int32_t GetNumProperties() const { return kNumProps; }    
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

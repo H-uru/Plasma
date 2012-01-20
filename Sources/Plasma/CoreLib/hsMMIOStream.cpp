@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsExceptions.h"
 
-UInt32 hsMMIOStream::Read(UInt32 bytes,  void* buffer)
+uint32_t hsMMIOStream::Read(uint32_t bytes,  void* buffer)
 {
     fBytesRead += bytes;
     fPosition += bytes;
@@ -73,13 +73,13 @@ hsBool  hsMMIOStream::AtEnd()
     return (::mmioSeek(fHmfr,0,SEEK_CUR)==::mmioSeek(fHmfr,0,SEEK_END));
 }
 
-UInt32 hsMMIOStream::Write(UInt32 bytes, const void* buffer)
+uint32_t hsMMIOStream::Write(uint32_t bytes, const void* buffer)
 {
     fPosition += bytes;
     return ::mmioWrite(fHmfr,(const char*)buffer,bytes);
 }
 
-void hsMMIOStream::Skip(UInt32 delta)
+void hsMMIOStream::Skip(uint32_t delta)
 {
     fBytesRead += delta;
     fPosition += delta;

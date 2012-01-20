@@ -104,14 +104,14 @@ public:
     virtual PyObject* getObjPyKey(); // returns pyKey
 
     // interface functions
-    virtual UInt32  GetTagID();
+    virtual uint32_t  GetTagID();
 
     virtual void    SetEnabled( hsBool e );
     virtual void    Enable() { SetEnabled(true); }
     virtual void    Disable() { SetEnabled(false); }
     virtual hsBool      IsEnabled( void );
     virtual const char  *GetName( void );
-    virtual UInt32      GetVersion(void);
+    virtual uint32_t      GetVersion(void);
 
     virtual void        Show( void );
     virtual void        Hide( void );

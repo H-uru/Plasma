@@ -58,7 +58,7 @@ hsBool plLightSpace::MsgReceive(plMessage* msg)
         // which is entering and leaving, and whether it is entering or leaving.
         plKey otherKey = nil;
         hsBool enter = true; 
-        UInt8 ctx = enter ? plRefMsg::kOnRequest : plRefMsg::kOnRemove;
+        uint8_t ctx = enter ? plRefMsg::kOnRequest : plRefMsg::kOnRemove;
         plLightRefMsg* liMsg = TRACKED_NEW plLightRefMsg(GetKey(), otherKey, IGetLightInfo(), ctx);
         plgDispatch::MsgSend(liMsg);
         return true;

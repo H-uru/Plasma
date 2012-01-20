@@ -140,7 +140,7 @@ void cyCamera::Pop(pyKey& oldCamKey)
 //
 //  PURPOSE    : Send controlKey commands to the virtual camera (should be like a pass thru)
 //
-void cyCamera::ControlKey(Int32 controlKey, hsBool activated)
+void cyCamera::ControlKey(int32_t controlKey, hsBool activated)
 {
     // make sure that we have a virtual camera to send this to
     if ( fTheCam )

@@ -63,7 +63,7 @@ class plRawResManager : public plResManager
         plRegistryPageNode  *FindPage( const char *age, const char *chapter, const char *page );
         plRegistryPageNode  *CreatePage( const plPageInfo &info );
 
-        UInt8               *ReadObjectBuffer( plKeyImp *key, UInt32 &retLength );
+        uint8_t               *ReadObjectBuffer( plKeyImp *key, uint32_t &retLength );
 
         plKey               NewBlankKey( const plUoid &newUoid );
 };

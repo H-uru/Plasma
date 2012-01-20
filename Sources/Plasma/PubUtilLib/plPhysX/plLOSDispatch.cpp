@@ -85,7 +85,7 @@ private:
         plPXPhysical* phys = (plPXPhysical*)hitActor.userData;
 
         plKey objKey = nil;
-        UInt16 objDB = plSimDefs::kLOSDBNone;
+        uint16_t objDB = plSimDefs::kLOSDBNone;
 
         if (phys)
         {

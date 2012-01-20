@@ -64,7 +64,7 @@ public:
         kSetRefresh     = 0x40
     };
 
-    UInt32              fCmd;
+    uint32_t              fCmd;
 
     hsPoint3            fPos;
     hsScalar            fHither;

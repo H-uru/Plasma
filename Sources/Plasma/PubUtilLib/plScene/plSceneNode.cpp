@@ -96,7 +96,7 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    UInt32 n;
+    uint32_t n;
     int i;
 
     n = s->ReadLE32();
@@ -133,10 +133,10 @@ void plSceneNode::Write(hsStream* s, hsResMgr* mgr)
 
 void plSceneNode::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList)
 {
-    static hsTArray<Int16> visList;
+    static hsTArray<int16_t> visList;
     visList.SetCount(0);
     GetSpaceTree()->HarvestLeaves(isect, visList);
-    static hsTArray<Int16> visSpans;
+    static hsTArray<int16_t> visSpans;
     visSpans.SetCount(0);
 
     int i;
@@ -155,10 +155,10 @@ void plSceneNode::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList
 
 void plSceneNode::CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& levList, plVisMgr* visMgr)
 {
-    static hsTArray<Int16> visList;
+    static hsTArray<int16_t> visList;
     visList.SetCount(0);
     pipe->HarvestVisible(GetSpaceTree(), visList);
-    static hsTArray<Int16> visSpans;
+    static hsTArray<int16_t> visSpans;
     visSpans.SetCount(0);
 
     int i;

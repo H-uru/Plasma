@@ -60,7 +60,7 @@ private:
     hsTArray<plLightInfo*>      fLightInfos;
 
     hsBool      IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool      ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, UInt32 diIndex);
+    hsBool      ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, uint32_t diIndex);
     hsBool      IGetLightInfos();
 
 public:

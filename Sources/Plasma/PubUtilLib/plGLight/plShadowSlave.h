@@ -56,7 +56,7 @@ class plShadowSlave
 {
 public:
 
-    UInt32              fIndex;
+    uint32_t              fIndex;
 
     hsMatrix44          fWorldToLight;
     hsMatrix44          fLightToWorld;
@@ -78,14 +78,14 @@ public:
 
     plVolumeIsect*      fIsect;
 
-    UInt32              fWidth;
-    UInt32              fHeight;
+    uint32_t              fWidth;
+    uint32_t              fHeight;
 
     hsScalar            fAttenDist;
 
     hsScalar            fPriority;
 
-    UInt32              fFlags;
+    uint32_t              fFlags;
 
     enum SlaveFlag
     {

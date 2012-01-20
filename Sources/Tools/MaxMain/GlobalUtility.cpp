@@ -247,7 +247,7 @@ void PlasmaMax::Stop()
 #include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
 #endif
 
-void TextureSet(Texmap* texmap, int iBmp, UInt64 assetId)
+void TextureSet(Texmap* texmap, int iBmp, uint64_t assetId)
 {
     plPlasmaMAXLayer* layer = plPlasmaMAXLayer::GetPlasmaMAXLayer(texmap);
     if (layer)

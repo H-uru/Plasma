@@ -77,7 +77,7 @@ public:
     virtual void Suspend() {}
     virtual void Resume() {}
     virtual void Spawn(double timeNow) {}
-    virtual void OnBehaviorStop(UInt8 index) {}
+    virtual void OnBehaviorStop(uint8_t index) {}
     virtual hsBool LeaveAge();
     virtual hsBool IsRunningTask() const;
     virtual void QueueTask(plAvTask *task);

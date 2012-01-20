@@ -68,12 +68,12 @@ public:
     virtual void    Open();
     virtual void    Close( void );
 
-    virtual UInt32  GetDataSize( void ) { return fDataSize / fChannelAdjust; }
+    virtual uint32_t  GetDataSize( void ) { return fDataSize / fChannelAdjust; }
     virtual float   GetLengthInSecs( void );
 
-    virtual hsBool  SetPosition( UInt32 numBytes );
-    virtual hsBool  Read( UInt32 numBytes, void *buffer );
-    virtual UInt32  NumBytesLeft( void );
+    virtual hsBool  SetPosition( uint32_t numBytes );
+    virtual hsBool  Read( uint32_t numBytes, void *buffer );
+    virtual uint32_t  NumBytesLeft( void );
 
     virtual hsBool  IsValid( void ) { return ( fFileHandle != nil ) ? true : false; }
 
@@ -86,10 +86,10 @@ protected:
     char            fFilename[ 512 ];
     FILE *          fFileHandle;
     plWAVHeader     fHeader, fFakeHeader;
-    UInt32          fDataStartPos, fCurrDataPos, fDataSize;
-    UInt32          fChunkStart;
+    uint32_t          fDataStartPos, fCurrDataPos, fDataSize;
+    uint32_t          fChunkStart;
     plAudioCore::ChannelSelect  fWhichChannel;
-    UInt32                      fChannelAdjust, fChannelOffset;
+    uint32_t                      fChannelAdjust, fChannelOffset;
 
     void    IError( const char *msg );
     bool    ISeekToChunk( const char *type, plRIFFChunk *c );

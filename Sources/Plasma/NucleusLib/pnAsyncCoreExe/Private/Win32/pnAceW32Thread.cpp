@@ -65,7 +65,7 @@ struct ThreadTask {
     AsyncThreadTaskList *   taskList;
     FAsyncThreadTask        callback;
     void *                  param;
-    wchar                   debugStr[256];
+    wchar_t                   debugStr[256];
 };
 
 static HANDLE   s_taskPort;
@@ -257,7 +257,7 @@ void AsyncThreadTaskAdd (
     AsyncThreadTaskList *   taskList,
     FAsyncThreadTask        callback,
     void *                  param,
-    const wchar             debugStr[],
+    const wchar_t             debugStr[],
     EThreadTaskPriority     priority /* = kThreadTaskPriorityNormal */
 ) {
     ASSERT(s_taskPort);

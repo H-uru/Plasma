@@ -95,7 +95,7 @@ protected:
     hsBool              fInited;
     
     // Cache info
-    Int32               fLastModCount;
+    int32_t               fLastModCount;
     hsBool              fLastWasEmpty;
     hsScalar            fLastSingleStrength;
     plEAXListenerMod    *fLastBigRegion;
@@ -110,14 +110,14 @@ class hsStream;
 class plEAXSourceSoftSettings
 {
 public:
-        Int16       fOcclusion;
+        int16_t       fOcclusion;
         hsScalar    fOcclusionLFRatio, fOcclusionRoomRatio, fOcclusionDirectRatio;
 
         void        Read( hsStream *s );
         void        Write( hsStream *s );
 
-        void        SetOcclusion( Int16 occ, hsScalar lfRatio, hsScalar roomRatio, hsScalar directRatio );
-        Int16       GetOcclusion( void ) const { return fOcclusion; }
+        void        SetOcclusion( int16_t occ, hsScalar lfRatio, hsScalar roomRatio, hsScalar directRatio );
+        int16_t       GetOcclusion( void ) const { return fOcclusion; }
         hsScalar    GetOcclusionLFRatio( void ) const { return fOcclusionLFRatio; }
         hsScalar    GetOcclusionRoomRatio( void ) const { return fOcclusionRoomRatio; }
         hsScalar    GetOcclusionDirectRatio( void ) const { return fOcclusionDirectRatio; }
@@ -141,14 +141,14 @@ class plEAXSourceSettings
         void    Enable( hsBool e );
         hsBool  IsEnabled( void ) const { return fEnabled; }
 
-        void    SetRoomParams( Int16 room, Int16 roomHF, hsBool roomAuto, hsBool roomHFAuto );
-        Int16   GetRoom( void ) const   { return fRoom; }
-        Int16   GetRoomHF( void )  const  { return fRoomHF; }
+        void    SetRoomParams( int16_t room, int16_t roomHF, hsBool roomAuto, hsBool roomHFAuto );
+        int16_t   GetRoom( void ) const   { return fRoom; }
+        int16_t   GetRoomHF( void )  const  { return fRoomHF; }
         hsBool  GetRoomAuto( void ) const   { return fRoomAuto; }
         hsBool  GetRoomHFAuto( void ) const  { return fRoomHFAuto; }
 
-        void    SetOutsideVolHF( Int16 vol );
-        Int16   GetOutsideVolHF( void ) const { return fOutsideVolHF; }
+        void    SetOutsideVolHF( int16_t vol );
+        int16_t   GetOutsideVolHF( void ) const { return fOutsideVolHF; }
 
         void        SetFactors( hsScalar airAbsorption, hsScalar roomRolloff, hsScalar doppler, hsScalar rolloff );
         hsScalar    GetAirAbsorptionFactor( void ) const { return fAirAbsorptionFactor; }
@@ -171,13 +171,13 @@ class plEAXSourceSettings
         friend class plEAXSourceSoftSettings;
 
         hsBool      fEnabled;
-        Int16       fRoom, fRoomHF;
+        int16_t       fRoom, fRoomHF;
         hsBool      fRoomAuto, fRoomHFAuto;
-        Int16       fOutsideVolHF;
+        int16_t       fOutsideVolHF;
         hsScalar    fAirAbsorptionFactor, fRoomRolloffFactor, fDopplerFactor, fRolloffFactor;
         plEAXSourceSoftSettings fSoftStarts, fSoftEnds, fCurrSoftValues;
         hsScalar    fOcclusionSoftValue;
-        mutable UInt32      fDirtyParams;
+        mutable uint32_t      fDirtyParams;
 
         enum ParamSets
         {
@@ -188,7 +188,7 @@ class plEAXSourceSettings
             kAll            = 0xff
         };
 
-        void    IRecalcSofts( UInt8 whichOnes );
+        void    IRecalcSofts( uint8_t whichOnes );
 };
 
 //// Source Class Definition //////////////////////////////////////////////////

@@ -69,7 +69,7 @@ public:
         kNoSubMtls = 0x10,
     };
 
-    static void GetMtls(MtlSet* mtls, TexSet* texmaps, UInt32 flags=0);
+    static void GetMtls(MtlSet* mtls, TexSet* texmaps, uint32_t flags=0);
 
     static void GetMtlLayers(Mtl *mtl, LayerSet& layers);
 

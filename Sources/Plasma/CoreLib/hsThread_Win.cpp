@@ -58,7 +58,7 @@ static unsigned int __stdcall gEntryPointBT(void* param)
     return ((hsThread*)param)->WinRun();
 }
 
-hsThread::hsThread(UInt32 stackSize) : fStackSize(stackSize), fQuit(false), fThreadH(nil), fQuitSemaH(nil)
+hsThread::hsThread(uint32_t stackSize) : fStackSize(stackSize), fQuit(false), fThreadH(nil), fQuitSemaH(nil)
 {
 }
 

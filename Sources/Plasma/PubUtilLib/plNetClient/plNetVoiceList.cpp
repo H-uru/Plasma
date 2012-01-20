@@ -134,7 +134,7 @@ void plNetListenList::AddMember(plNetTransportMember* e)
             pMsg->AddReceiver(pMod->GetTarget(0)->GetKey());
         pMsg->SetCmd(plSoundMsg::kSetTalkIcon);
         pMsg->fIndex = GetNumMembers();
-        pMsg->fNameStr = (UInt32)e->GetName();
+        pMsg->fNameStr = (uint32_t)e->GetName();
         plgDispatch::MsgSend(pMsg);
 #endif  
     }

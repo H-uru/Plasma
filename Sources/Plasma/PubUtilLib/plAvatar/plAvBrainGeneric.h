@@ -133,14 +133,14 @@ public:
         \param recipient Callbacks from the brain *and* the stages is sent to this key.
         \param exitFlags A combination of exit conditions from the ExitFlag enum */
     plAvBrainGeneric(plAnimStageVec *stages, plMessage *enterMessage, plMessage *exitMessage,
-                     plKey recipient, UInt32 exitFlags, float fadeIn, float fadeOut, MoveMode moveMode);
+                     plKey recipient, uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode);
 
     /** Simplified constructor
         \param exitFlags Indicates which conditions will cause the brain to exit.
         \param fadeIn Rate (in blend units per second) of initial animation fade in.
         \param fadeOut Rate (in blend units per second) of final animation fade out.
         */
-    plAvBrainGeneric(UInt32 exitFlags, float fadeIn, float fadeOut, MoveMode moveMode); 
+    plAvBrainGeneric(uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode); 
 
     /** Virtual destructor */
     virtual ~plAvBrainGeneric();
@@ -239,7 +239,7 @@ public:
 
     /** Returns the bitvector holding our exit conditions.
         /sa plAvBrainGeneric::ExitFlags */
-    UInt32 GetExitFlags() const { return fExitFlags; }
+    uint32_t GetExitFlags() const { return fExitFlags; }
 
     plAGAnim::BodyUsage GetBodyUsage();
     void SetBodyUsage(plAGAnim::BodyUsage bodyUsage);
@@ -299,7 +299,7 @@ protected:
     plAnimStageVec *fStages;        // all the stages in our animation
     int fCurStage;                  // which stage are we playing? (zero-based)
     BrainType fType;                // what type of brain are we?
-    UInt32 fExitFlags;              // what will cause us to exit?
+    uint32_t fExitFlags;              // what will cause us to exit?
     plHorizontalFreezeAction *fCallbackAction;
 
     bool fForward;                  // are we currently moving forward or backward through the stages?

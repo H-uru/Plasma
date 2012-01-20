@@ -58,7 +58,7 @@ public:
     static void Init();
     static void Shutdown();
 
-    static hsVectorStream* CookTrimesh(int nVerts, hsPoint3* verts, int nFaces, UInt16* faces);
+    static hsVectorStream* CookTrimesh(int nVerts, hsPoint3* verts, int nFaces, uint16_t* faces);
     static bool TestIfConvex(NxConvexMesh* convexMesh, int nVerts, hsPoint3* verts);
     static hsVectorStream* CookHull(int nVerts, hsPoint3* verts,bool inflate);
     static bool IsPointInsideHull(hsPlane3* hull, int nPlanes, const hsPoint3& pos);

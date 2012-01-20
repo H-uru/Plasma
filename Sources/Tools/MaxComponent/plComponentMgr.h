@@ -82,10 +82,10 @@ public:
     virtual void SelectionSetChanged(Interface *ip,IUtil *iu) {}
     virtual void DeleteThis() {}
 
-    virtual UInt32 Count();
-    virtual ClassDesc *Get(UInt32 i);
+    virtual uint32_t Count();
+    virtual ClassDesc *Get(uint32_t i);
 
-    virtual UInt32 FindClassID(Class_ID id);
+    virtual uint32_t FindClassID(Class_ID id);
 
     // Registers a component.  Only used by the classdesc macro.
     virtual void Register(ClassDesc *desc);
