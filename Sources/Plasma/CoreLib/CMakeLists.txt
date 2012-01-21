@@ -12,7 +12,6 @@ set(CoreLib_SOURCES
     hsMatrix33.cpp
     hsMatrix44.cpp
     hsMemory.cpp
-    hsMMIOStream.cpp
     hsQuat.cpp
     hsSafeRefCnt.cpp
     hsSTLStream.cpp
@@ -56,10 +55,8 @@ set(CoreLib_HEADERS
     hsMalloc.h
     hsMatrix44.h
     hsMemory.h
-    hsMMIOStream.h
     hsPoint2.h
     hsQuat.h
-    hsQueue.h
     hsRefCnt.h
     hsSafeRefCnt.h
     hsStlSortUtils.h
@@ -68,7 +65,6 @@ set(CoreLib_HEADERS
     hsStream.h
     hsStringTokenizer.h
     hsTemplates.h
-    hsTempPointer.h
     hsThread.h
     hsTypes.h
     hsUtils.h
