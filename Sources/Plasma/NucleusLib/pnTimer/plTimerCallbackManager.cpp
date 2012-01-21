@@ -82,7 +82,7 @@ hsBool plTimerCallbackManager::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-plTimerCallback* plTimerCallbackManager::NewTimer(hsScalar time, plMessage* pMsg)
+plTimerCallback* plTimerCallbackManager::NewTimer(float time, plMessage* pMsg)
 {
     plTimerCallback* t = TRACKED_NEW plTimerCallback( hsTimer::GetSysSeconds() + time, pMsg );
     fCallbacks.Append(t); 
@@ -92,8 +92,8 @@ plTimerCallback* plTimerCallbackManager::NewTimer(hsScalar time, plMessage* pMsg
         for (int j = i + 1; j < fCallbacks.Count(); j++)
         {
 #if 0
-            hsScalar a = fCallbacks[i]->fTime;
-            hsScalar b = fCallbacks[j]->fTime;
+            float a = fCallbacks[i]->fTime;
+            float b = fCallbacks[j]->fTime;
 #endif
             if (fCallbacks[i]->fTime < fCallbacks[j]->fTime)
             {

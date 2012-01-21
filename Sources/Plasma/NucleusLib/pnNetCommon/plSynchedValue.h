@@ -110,7 +110,7 @@ protected:
     uint32_t ISaveOrLoad(uint32_t v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     bool ISaveOrLoad(bool v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     int ISaveOrLoad(int v, hsBool32 save, hsStream* stream, hsResMgr* mgr);     // or hsBool32
-    hsScalar ISaveOrLoad(hsScalar v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
+    float ISaveOrLoad(float v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     double ISaveOrLoad(double v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     hsBitVector ISaveOrLoad(hsBitVector& v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     plCoordinateInterface* ISaveOrLoad(const plCoordinateInterface* cInt, hsBool32 save, hsStream* stream, hsResMgr* mgr);

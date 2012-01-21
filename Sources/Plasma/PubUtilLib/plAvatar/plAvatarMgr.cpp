@@ -843,7 +843,7 @@ int plAvatarMgr::WarpPlayerToAnother(hsBool iMove, uint32_t remoteID)
     return hsOK;
 }
 
-int plAvatarMgr::WarpPlayerToXYZ(hsScalar x, hsScalar y, hsScalar z)
+int plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
 {
     plSceneObject *localSO = plSceneObject::ConvertNoRef(plNetClientMgr::GetInstance()->GetLocalPlayer());
     if (!localSO)
@@ -860,7 +860,7 @@ int plAvatarMgr::WarpPlayerToXYZ(hsScalar x, hsScalar y, hsScalar z)
     return hsOK;
 }
 
-int plAvatarMgr::WarpPlayerToXYZ(int pid, hsScalar x, hsScalar y, hsScalar z)
+int plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
 {
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
     plNetTransportMember* mbr=nc->TransportMgr().GetMember(nc->TransportMgr().FindMember(pid));
@@ -962,10 +962,10 @@ void plAvatarMgr::PointToDniCoordinate(hsPoint3 pt, plDniCoordinateInfo* ret)
                 hsVector3 retVec(pt - retPoint);
                 retVec.Normalize();
 
-                hsScalar dotView = retVec * zeroVec;
-                hsScalar dotRight = retVec * zeroRight;
+                float dotView = retVec * zeroVec;
+                float dotRight = retVec * zeroRight;
 
-                hsScalar deg = acosf(dotView);
+                float deg = acosf(dotView);
                 deg*=(180/3.141592);
                 // account for being > 180
                 if (dotRight < 0.0f) 

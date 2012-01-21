@@ -392,7 +392,7 @@ uint32_t pyGUIDialog::GetFontSize()
 
 
     // set color scheme
-void pyGUIDialog::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIDialog::SetForeColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -412,7 +412,7 @@ void pyGUIDialog::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
     }
 }
 
-void pyGUIDialog::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIDialog::SetSelColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -432,7 +432,7 @@ void pyGUIDialog::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
     }
 }
 
-void pyGUIDialog::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIDialog::SetBackColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -452,7 +452,7 @@ void pyGUIDialog::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
     }
 }
 
-void pyGUIDialog::SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIDialog::SetBackSelColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {

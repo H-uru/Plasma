@@ -100,7 +100,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
 
         // Array of info to rebuild our menu from. Note that this is ONLY used when rebuilding
         hsBool                  fNeedsRebuilding, fWaitingForSkin;
-        hsScalar                fOriginX, fOriginY;
+        float                fOriginX, fOriginY;
         uint16_t                  fMargin;
         hsTArray<pfMenuItem>    fMenuItems;
         int32_t                   fSubMenuOpen;
@@ -153,9 +153,9 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
         virtual void    SetEnabled( hsBool e );
-        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY, uint8_t modifiers );
+        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
 
-        void            Show( hsScalar x, hsScalar y );
+        void            Show( float x, float y );
 
         void    SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *context );
         void    SetAlignment( Alignment a ) { fAlignment = a; }
@@ -164,7 +164,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         void    AddItem( const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
         void    SetSkin( pfGUISkin *skin );
 
-        static pfGUIPopUpMenu   *Build( const char *name, pfGUIDialogMod *parent, hsScalar x, hsScalar y, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
+        static pfGUIPopUpMenu   *Build( const char *name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
 
 };
 

@@ -130,7 +130,7 @@ public:
     static void     EnableNetVoice(hsBool b) { fNetVoice = b; }
     static void     EnableCompression(hsBool b) { fCompress = b; }
     static void     SetSampleRate(short s) { fSampleRate = s; }
-    static void     SetSquelch(hsScalar f) { fRecordThreshhold = f; }
+    static void     SetSquelch(float f) { fRecordThreshhold = f; }
 
     static void IncreaseRecordingThreshhold();
     static void DecreaseRecordingThreshhold();
@@ -154,7 +154,7 @@ private:
     static short            fSampleRate;
     plPlate*                fDisabledIcon;
     plPlate*                fTalkIcon;
-    static hsScalar         fRecordThreshhold;
+    static float         fRecordThreshhold;
 };
 
 

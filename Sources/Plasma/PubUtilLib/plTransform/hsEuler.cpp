@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////
 //
 #include <float.h>  // for FLT_EPSILON
+#include <math.h>
 #include "hsEuler.h"
 #include "hsQuat.h"
 #include "hsMatrix44.h"
@@ -67,7 +68,7 @@ void hsEuler::GetQuat(hsQuat* qu)
     EulGetOrd(ea.fOrder,i,j,k,h,n,s,f);
     if (f==EulFrmR) 
     {
-        hsScalar t = ea.fX; ea.fX = ea.fZ; ea.fZ = t;
+        float t = ea.fX; ea.fX = ea.fZ; ea.fZ = t;
     }
     if (n==EulParOdd) 
         ea.fY = -ea.fY;
@@ -108,7 +109,7 @@ void hsEuler::GetMatrix44(hsMatrix44* mat)
     EulGetOrd(ea.fOrder,i,j,k,h,n,s,f);
     if (f==EulFrmR) 
     {
-        hsScalar t = ea.fX; ea.fX = ea.fZ; ea.fZ = t;
+        float t = ea.fX; ea.fX = ea.fZ; ea.fZ = t;
     }
     if (n==EulParOdd) 
     {
@@ -195,7 +196,7 @@ void hsEuler::SetFromMatrix44(const hsMatrix44* mat, uint32_t order)
     }
     if (f==EulFrmR) 
     {
-        hsScalar t = fX; fX = fZ; fZ = t;
+        float t = fX; fX = fZ; fZ = t;
     }
     fOrder = order;
 }

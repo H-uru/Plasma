@@ -124,7 +124,7 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
 
 //// IEval ////////////////////////////////////////////////////////////////////
 
-hsBool  plCubicRenderTargetModifier::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dirty )
 {
     hsPoint3    center;
     hsMatrix44  mtx, invMtx;
@@ -178,7 +178,7 @@ hsBool  plCubicRenderTargetModifier::MsgReceive( plMessage* msg )
     if( eval )
     {
         const double secs = eval->DSeconds();
-        const hsScalar del = eval->DelSeconds();
+        const float del = eval->DelSeconds();
         IEval( secs, del, 0 );
         return true;
     }

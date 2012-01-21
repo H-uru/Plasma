@@ -60,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsGDeviceRef.h"
 #include "plProfile.h"
 #include "plJPEG/plJPEG.h"
+#include <math.h>
 
 plProfile_CreateMemCounter("Mipmaps", "Memory", MemMipmaps);
 
@@ -814,7 +815,7 @@ void    plMipmap::RemoveMipping()
 
 namespace {
     const uint32_t kVersion           = 1;
-    const hsScalar kDefaultSigma    = 1.f;
+    const float kDefaultSigma    = 1.f;
     const uint32_t kDefaultDetailBias = 5;
 
     // Color masks (out of 0-2)
@@ -842,33 +843,33 @@ class plFilterMask
 {
     protected:
         int             fExt;
-        hsScalar        **fMask;
+        float        **fMask;
 
     public:
 
-        plFilterMask( hsScalar sig );
+        plFilterMask( float sig );
         virtual ~plFilterMask();
 
         int     Begin() const { return -fExt; }
         int     End() const { return fExt; }
 
-        hsScalar    Mask( int i, int j ) const { return fMask[ i ][ j ]; }
+        float    Mask( int i, int j ) const { return fMask[ i ][ j ]; }
 };
 
-plFilterMask::plFilterMask( hsScalar sig )
+plFilterMask::plFilterMask( float sig )
 {
     fExt = (int)( sig * 2.f );
     if( fExt < 1 )
         fExt = 1;
 
-    hsScalar **m = TRACKED_NEW hsScalar *[ ( fExt << 1 ) + 1 ];
+    float **m = TRACKED_NEW float *[ ( fExt << 1 ) + 1 ];
     m += fExt;
     int i, j;
-    hsScalar ooSigSq = 1.f / ( sig * sig );
+    float ooSigSq = 1.f / ( sig * sig );
 
     for( i = -fExt; i <= fExt; i++ )
     {
-        m[ i ] = ( TRACKED_NEW hsScalar[ ( fExt << 1 ) + 1] ) + fExt;
+        m[ i ] = ( TRACKED_NEW float[ ( fExt << 1 ) + 1] ) + fExt;
         for( j = -fExt; j <= fExt; j++ )
         {
             m[ i ][ j ] = expf( -( i*i + j*j ) * ooSigSq );
@@ -890,9 +891,9 @@ plFilterMask::~plFilterMask()
 //// Some More Functions //////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-plMipmap::plMipmap( plMipmap *bm, hsScalar sig, uint32_t createFlags, 
-        hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-        hsScalar detailMax, hsScalar detailMin)
+plMipmap::plMipmap( plMipmap *bm, float sig, uint32_t createFlags, 
+        float detailDropoffStart, float detailDropoffStop, 
+        float detailMax, float detailMin)
 {
     int     i;
 
@@ -985,9 +986,9 @@ plMipmap::plMipmap( plMipmap *bm, hsScalar sig, uint32_t createFlags,
 //  Given the detail range and the current level, returns the detail's alpha
 //  value at that level.
 
-hsScalar plMipmap::IGetDetailLevelAlpha( uint8_t level, hsScalar dropStart, hsScalar dropStop, hsScalar min, hsScalar max )
+float plMipmap::IGetDetailLevelAlpha( uint8_t level, float dropStart, float dropStop, float min, float max )
 {
-    hsScalar detailAlpha;
+    float detailAlpha;
 
 
     detailAlpha = ( level - dropStart ) * ( min - max ) / ( dropStop - dropStart ) + max;
@@ -1000,9 +1001,9 @@ hsScalar plMipmap::IGetDetailLevelAlpha( uint8_t level, hsScalar dropStart, hsSc
     return detailAlpha;
 }
 
-void plMipmap::SetBitmapAsLevel(uint8_t iDst, plMipmap *bm, hsScalar sig, uint32_t createFlags, 
-                                      hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                      hsScalar detailMax, hsScalar detailMin)
+void plMipmap::SetBitmapAsLevel(uint8_t iDst, plMipmap *bm, float sig, uint32_t createFlags, 
+                                      float detailDropoffStart, float detailDropoffStop, 
+                                      float detailMax, float detailMin)
 {
     SetCurrLevel( iDst );
 
@@ -1083,8 +1084,8 @@ void    plMipmap::ICreateLevelNoDetail( uint8_t iDst, const plFilterMask& mask )
                 uint32_t chan;
                 for( chan = 0; chan < 4; chan++ )
                 {
-                    hsScalar w = 0;
-                    hsScalar a = 0;
+                    float w = 0;
+                    float a = 0;
 
                     for( ii = mask.Begin(); ii <= mask.End(); ii++ )
                     {
@@ -1094,7 +1095,7 @@ void    plMipmap::ICreateLevelNoDetail( uint8_t iDst, const plFilterMask& mask )
                               &&(jj + (j << 1) >= 0)&&(jj + (j << 1) < srcWidth) )
                             {
                                 w += mask.Mask(ii, jj);
-                                a += (hsScalar(center[ii*srcRowBytes + (jj<<2) + chan]) + 0.5f) * mask.Mask(ii, jj);
+                                a += (float(center[ii*srcRowBytes + (jj<<2) + chan]) + 0.5f) * mask.Mask(ii, jj);
                             }
                         }
                     }
@@ -1186,8 +1187,8 @@ void plMipmap::ICarryColor(uint8_t iDst, uint32_t col)
 //  standard detail map blending.
 
 void    plMipmap::IBlendLevelDetailAlpha( uint8_t iDst, const plFilterMask& mask, 
-                                          hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                          hsScalar detailMax, hsScalar detailMin )
+                                          float detailDropoffStart, float detailDropoffStop, 
+                                          float detailMax, float detailMin )
 {
     hsAssert(fPixelSize == 32, "Only 32 bit implemented");
     ASSERT_UNCOMPRESSED();
@@ -1200,7 +1201,7 @@ void    plMipmap::IBlendLevelDetailAlpha( uint8_t iDst, const plFilterMask& mask
 
     uint8_t *dst = (uint8_t *)GetLevelPtr(iDst);
 
-    hsScalar detailAlpha = IGetDetailLevelAlpha( iDst, detailDropoffStart, detailDropoffStop, detailMin, detailMax );
+    float detailAlpha = IGetDetailLevelAlpha( iDst, detailDropoffStart, detailDropoffStop, detailMin, detailMax );
 
     for( i = 0; i < fCurrLevelHeight; i++ )
     {
@@ -1220,8 +1221,8 @@ void    plMipmap::IBlendLevelDetailAlpha( uint8_t iDst, const plFilterMask& mask
 //  detail map blending. (Shesh, gotta hate C sometimes....)
 
 void    plMipmap::IBlendLevelDetailAdd( uint8_t iDst, const plFilterMask& mask, 
-                                          hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                          hsScalar detailMax, hsScalar detailMin )
+                                          float detailDropoffStart, float detailDropoffStop, 
+                                          float detailMax, float detailMin )
 {
     hsAssert(fPixelSize == 32, "Only 32 bit implemented");
     ASSERT_UNCOMPRESSED();
@@ -1234,7 +1235,7 @@ void    plMipmap::IBlendLevelDetailAdd( uint8_t iDst, const plFilterMask& mask,
 
     uint8_t *dst = (uint8_t *)GetLevelPtr(iDst);
 
-    hsScalar detailAlpha = IGetDetailLevelAlpha( iDst, detailDropoffStart, detailDropoffStop, detailMin, detailMax );
+    float detailAlpha = IGetDetailLevelAlpha( iDst, detailDropoffStart, detailDropoffStop, detailMin, detailMax );
 
     for( i = 0; i < fCurrLevelHeight; i++ )
     {
@@ -1259,8 +1260,8 @@ void    plMipmap::IBlendLevelDetailAdd( uint8_t iDst, const plFilterMask& mask,
 //  multiplicitive detail map blending. (Shesh, gotta hate C sometimes....)
 
 void    plMipmap::IBlendLevelDetailMult( uint8_t iDst, const plFilterMask& mask, 
-                                          hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                          hsScalar detailMax, hsScalar detailMin )
+                                          float detailDropoffStart, float detailDropoffStop, 
+                                          float detailMax, float detailMin )
 {
     hsAssert(fPixelSize == 32, "Only 32 bit implemented");
     ASSERT_UNCOMPRESSED();
@@ -1273,8 +1274,8 @@ void    plMipmap::IBlendLevelDetailMult( uint8_t iDst, const plFilterMask& mask,
 
     uint8_t *dst = (uint8_t *)GetLevelPtr(iDst);
 
-    hsScalar    detailAlpha = IGetDetailLevelAlpha( iDst, detailDropoffStart, detailDropoffStop, detailMin, detailMax );
-    hsScalar    invDetailAlpha = ( 1.f - detailAlpha ) * 255.f;
+    float    detailAlpha = IGetDetailLevelAlpha( iDst, detailDropoffStart, detailDropoffStop, detailMin, detailMax );
+    float    invDetailAlpha = ( 1.f - detailAlpha ) * 255.f;
 
     for( i = 0; i < fCurrLevelHeight; i++ )
     {
@@ -1416,7 +1417,7 @@ void    plMipmap::ISetCurrLevelVBorder( uint32_t color )
     }
 }
 
-void plMipmap::Filter(hsScalar sig)
+void plMipmap::Filter(float sig)
 {
     hsAssert(fPixelSize == 32, "Only 32 bit implemented");
     ASSERT_UNCOMPRESSED();
@@ -1448,8 +1449,8 @@ void plMipmap::Filter(hsScalar sig)
                 uint32_t chan;
                 for( chan = 0; chan < 4; chan++ )
                 {
-                    hsScalar w = 0;
-                    hsScalar a = 0;
+                    float w = 0;
+                    float a = 0;
 
                     for( ii = mask.Begin(); ii <= mask.End(); ii++ )
                     {
@@ -1459,7 +1460,7 @@ void plMipmap::Filter(hsScalar sig)
                               &&(jj + j >= 0)&&(jj + j < srcWidth) )
                             {
                                 w += mask.Mask(ii, jj);
-                                a += (hsScalar(center[ii*srcRowBytes + (jj<<2) + chan]) + 0.5f) * mask.Mask(ii, jj);
+                                a += (float(center[ii*srcRowBytes + (jj<<2) + chan]) + 0.5f) * mask.Mask(ii, jj);
                             }
                         }
                     }

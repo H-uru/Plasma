@@ -58,7 +58,7 @@ static hsTArray<plDrawableSpans*>   fProxyDrawables;
 static hsTArray<hsGMaterial*>   fProxyMaterials;
 static uint32_t                   fProxyKeyCounter = 0;
 
-plProxyGen::plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac)
+plProxyGen::plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
 :   fProxyMsgType(0),
     fProxyDraw(nil),
     fProxyMat(nil)
@@ -153,7 +153,7 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
 {
     const hsColorRGBA& amb = fAmbient;
     const hsColorRGBA& dif = fColor;
-    hsScalar opac = fAmbient.a;
+    float opac = fAmbient.a;
 
     hsGMaterial* retVal = TRACKED_NEW hsGMaterial();
 

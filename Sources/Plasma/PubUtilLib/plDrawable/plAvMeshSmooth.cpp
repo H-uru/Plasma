@@ -194,7 +194,7 @@ void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstS
             else
                 dstDiff.Set(1.f, 1.f, 1.f, 1.f);
 
-            hsScalar maxDot = fMinNormDot;
+            float maxDot = fMinNormDot;
 
             hsPoint3 smoothPos = dstPos;
             hsVector3 smoothNorm = dstNorm;
@@ -209,12 +209,12 @@ void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstS
                     hsPoint3 srcPos = IPositionToNeutral(srcSpans[k], srcEdgeVerts[k][m]);
                     hsVector3 srcNorm = INormalToNeutral(srcSpans[k], srcEdgeVerts[k][m]);
 
-                    hsScalar dist = hsVector3(&dstPos, &srcPos).MagnitudeSquared();
+                    float dist = hsVector3(&dstPos, &srcPos).MagnitudeSquared();
                     if( dist <= fDistTolSq )
                     {
                         smoothPos = srcPos;
 
-                        hsScalar currDot = srcNorm.InnerProduct(dstNorm);
+                        float currDot = srcNorm.InnerProduct(dstNorm);
                         if( currDot > maxDot )
                         {
                             maxDot = currDot;
@@ -265,22 +265,22 @@ hsVector3 plAvMeshSmooth::INormalToSpan(XfmSpan& span, const hsVector3& wNorm) c
     return ret;
 }
 
-void plAvMeshSmooth::SetAngle(hsScalar degs)
+void plAvMeshSmooth::SetAngle(float degs)
 {
-    fMinNormDot = hsCosine(hsScalarDegToRad(degs));
+    fMinNormDot = cos(hsDegreesToRadians(degs));
 }
 
-hsScalar plAvMeshSmooth::GetAngle() const
+float plAvMeshSmooth::GetAngle() const
 {
-    return hsScalarRadToDeg(hsACosine(fMinNormDot));
+    return hsRadiansToDegrees(acos(fMinNormDot));
 }
 
-void plAvMeshSmooth::SetDistTol(hsScalar dist)
+void plAvMeshSmooth::SetDistTol(float dist)
 {
     fDistTolSq = dist * dist;
 }
 
-hsScalar plAvMeshSmooth::GetDistTol() const
+float plAvMeshSmooth::GetDistTol() const
 {
-    return hsSquareRoot(fDistTolSq);
+    return sqrt(fDistTolSq);
 }

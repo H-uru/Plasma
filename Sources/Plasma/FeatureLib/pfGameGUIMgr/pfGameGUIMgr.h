@@ -148,8 +148,8 @@ class pfGameGUIMgr : public hsKeyedObject
         uint32_t                      fInputCtlIndex;
 
         uint32_t                      fDefaultCursor;
-        hsScalar                    fCursorOpacity;
-        hsScalar                fAspectRatio;
+        float                    fCursorOpacity;
+        float                fAspectRatio;
 
         // This is an array of the dialogs (by name) that need their
         // receiver key set once they are loaded.
@@ -167,7 +167,7 @@ class pfGameGUIMgr : public hsKeyedObject
 
         void    IActivateGUI( hsBool activate );
 
-        hsBool  IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, uint8_t modifiers, uint32_t *desiredCursor );
+        hsBool  IHandleMouse( EventType event, float mouseX, float mouseY, uint8_t modifiers, uint32_t *desiredCursor );
         hsBool  IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers );
         hsBool  IHandleKeyPress( wchar_t key, uint8_t modifiers );
 
@@ -212,8 +212,8 @@ class pfGameGUIMgr : public hsKeyedObject
 
         void    SetDefaultCursor(uint32_t defaultCursor) { fDefaultCursor = defaultCursor; }
         uint32_t  GetDefaultCursor() { return fDefaultCursor; }
-        void    SetCursorOpacity(hsScalar opacity) { fCursorOpacity = opacity; }
-        hsScalar    GetCursorOpacity() { return fCursorOpacity; }
+        void    SetCursorOpacity(float opacity) { fCursorOpacity = opacity; }
+        float    GetCursorOpacity() { return fCursorOpacity; }
 
         pfGUIPopUpMenu  *FindPopUpMenu( const char *name );
 
@@ -227,8 +227,8 @@ class pfGameGUIMgr : public hsKeyedObject
         static uint32_t       GetNumTags( void );
         static pfGUITag     *GetTag( uint32_t tagIndex );
         static uint32_t       GetHighestTag( void );
-        void SetAspectRatio(hsScalar aspectratio);
-        hsScalar GetAspectRatio() { return fAspectRatio; }
+        void SetAspectRatio(float aspectratio);
+        float GetAspectRatio() { return fAspectRatio; }
  
         static pfGameGUIMgr *GetInstance( void ) { return fInstance; }
 };

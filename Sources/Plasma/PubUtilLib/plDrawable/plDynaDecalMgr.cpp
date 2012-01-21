@@ -110,11 +110,11 @@ static const int    kBinBlockSize = 20;
 static const uint16_t kDefMaxNumVerts = 1000;
 static const uint16_t kDefMaxNumIdx = kDefMaxNumVerts;
 
-static const hsScalar kDefLifeSpan = 30.f;
-static const hsScalar kDefDecayStart = kDefLifeSpan * 0.5f;
-static const hsScalar kDefRampEnd = kDefLifeSpan * 0.1f;
+static const float kDefLifeSpan = 30.f;
+static const float kDefDecayStart = kDefLifeSpan * 0.5f;
+static const float kDefRampEnd = kDefLifeSpan * 0.1f;
 
-static const hsScalar kInitAuxSpans = 5;
+static const float kInitAuxSpans = 5;
 
 #define MF_NO_INIT_ALLOC
 #define MF_NEVER_RUN_OUT
@@ -582,7 +582,7 @@ void plDynaDecalMgr::IRemoveDecalInfos(const plKey& key)
     }
 }
 
-hsScalar plDynaDecalMgr::IHowWet(plDynaDecalInfo& info, double t) const
+float plDynaDecalMgr::IHowWet(plDynaDecalInfo& info, double t) const
 {
     // We aren't playing this wet/dry/enable/disable thing.
     if( !fWaitOnEnable )
@@ -601,7 +601,7 @@ hsScalar plDynaDecalMgr::IHowWet(plDynaDecalInfo& info, double t) const
         return 0;
 
     // We're wet, let's see how wet.
-    hsScalar wet = (hsScalar)(1.f - (t - info.fWetTime) / info.fWetLength);
+    float wet = (float)(1.f - (t - info.fWetTime) / info.fWetLength);
     if( wet > 1.f ) // This should never happen. It means t < info.fWetTime (we get wet in the future).
         return fIntensity;
     if( wet < 0 )
@@ -1024,14 +1024,14 @@ hsBool plDynaDecalMgr::IConvertFlatGrid(plAuxSpan* auxSpan,
 
 void plDynaDecalMgr::ISetDepthFalloff()
 {
-    const hsScalar totalDepth = fCutter->GetLengthW();
+    const float totalDepth = fCutter->GetLengthW();
 
     // Currently all constants, but these could be set per DecalMgr.
-    plConst(hsScalar) kMinFeet(3.f);
-    plConst(hsScalar) kMaxFeet(10.f);
+    plConst(float) kMinFeet(3.f);
+    plConst(float) kMaxFeet(10.f);
 
-    plConst(hsScalar) kMinDepth(0.25f);
-    plConst(hsScalar) kMaxDepth(0.75f);
+    plConst(float) kMinDepth(0.25f);
+    plConst(float) kMaxDepth(0.75f);
 
     fMinDepth = kMinFeet / totalDepth;
     if( fMinDepth > kMinDepth )
@@ -1099,15 +1099,15 @@ hsBool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
 
         hsColorRGBA col = src[iPoly].fVerts[iVert].fColor;
 
-        hsScalar depth = vtx->fUVW[0].fZ;
+        float depth = vtx->fUVW[0].fZ;
 
-        hsScalar opac = depth < fMinDepth
+        float opac = depth < fMinDepth
             ? depth * fMinDepthRange
             : depth > fMaxDepth
                 ? (1.f - depth) * fMaxDepthRange
                 : 1.f;
 
-        hsScalar normOpac = 1.f - vtx->fNorm.InnerProduct(backDir);
+        float normOpac = 1.f - vtx->fNorm.InnerProduct(backDir);
         opac *= 1.f - normOpac * normOpac;
         if( opac < 0 )
             opac = 0;
@@ -1197,14 +1197,14 @@ hsBool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
         else
             hiV = true;
 
-        hsScalar depth = vtx->fUVW[0].fZ;
-        hsScalar opac = depth < fMinDepth
+        float depth = vtx->fUVW[0].fZ;
+        float opac = depth < fMinDepth
             ? depth * fMinDepthRange
             : depth > fMaxDepth
                 ? (1.f - depth) * fMaxDepthRange
                 : 1.f;
 
-        hsScalar normOpac = 1.f - vtx->fNorm.InnerProduct(backDir);
+        float normOpac = 1.f - vtx->fNorm.InnerProduct(backDir);
         opac *= 1.f - normOpac * normOpac;
         if( opac < 0 )
             opac = 0;
@@ -1292,7 +1292,7 @@ hsBool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
         origUVW->fX = vtx->fUVW[0].fX;
         origUVW->fY = vtx->fUVW[0].fY;
 
-        origUVW->fZ = vtx->fUVW[0].fZ = (hsScalar)decal->fBirth;
+        origUVW->fZ = vtx->fUVW[0].fZ = (float)decal->fBirth;
 
         vtx->fUVW[1].Set(0, 0, 0);
 
@@ -1582,7 +1582,7 @@ hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap
     sprintf(buff, "%s_%s", GetKey()->GetName(), "EnvMat");
     hsgResMgr::ResMgr()->NewKey(buff, newMat, GetKey()->GetUoid().GetLocation());
 
-    static plTweak<hsScalar> kSmooth(1.f);
+    static plTweak<float> kSmooth(1.f);
     plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nil, oldMip, 0xffffffff, plBumpMapGen::kBubbleTest, kSmooth);
 //  plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nil, oldMip, 0xffffffff, plBumpMapGen::kNormalize, kSmooth);
 //  plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nil, oldMip, 0xffffffff, 0, 0);
@@ -1676,11 +1676,11 @@ hsVector3 plDynaDecalMgr::IRandomUp(hsVector3 dir) const
     // Only problem here is that our random scalings might wind us up with
     // a zero vector. Unlikely, which means almost certain to happen. So
     // we keep trying till we get a non-zero vector.
-    hsScalar lenSq(-1.f);
+    float lenSq(-1.f);
     do {
-        hsScalar ranXx = sRand.RandMinusOneToOne();
-        hsScalar ranXy = sRand.RandMinusOneToOne();
-        hsScalar ranXz = sRand.RandMinusOneToOne();
+        float ranXx = sRand.RandMinusOneToOne();
+        float ranXy = sRand.RandMinusOneToOne();
+        float ranXz = sRand.RandMinusOneToOne();
         retVal.fX = -dir.fZ * ranXy + dir.fY * ranXz;
         retVal.fY = dir.fZ * ranXx + -dir.fX * ranXz;
         retVal.fZ = -dir.fY * ranXx + dir.fX * ranXy;
@@ -1706,11 +1706,11 @@ hsVector3 plDynaDecalMgr::IReflectDir(hsVector3 dir) const
     // Simplifying gives (2*K*(N dot B) + (1-K)) * N + K*B
     // Or something.
 
-    plConst(hsScalar) parm(0.5f);
+    plConst(float) parm(0.5f);
 
     hsVector3 b = -fCutter->GetBackDir();
 
-    hsScalar t = dir.InnerProduct(b);
+    float t = dir.InnerProduct(b);
     t *= -2.f * parm;
     t += (1.f - parm);
 
@@ -1755,7 +1755,7 @@ hsMatrix44 plDynaDecalMgr::IL2WFromHit(hsPoint3 pos, hsVector3 dir) const
     return l2w;
 }
 
-void plDynaDecalMgr::ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, hsBool hasWaterHeight, hsScalar waterHeight)
+void plDynaDecalMgr::ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, hsBool hasWaterHeight, float waterHeight)
 {
     hsTArray<plCutoutHit> hits;
 

@@ -58,10 +58,10 @@ protected:
 //  plAnimTimeConvert           fTimeConvert;
 
     int32_t                       fCurrentFrame;
-    hsScalar                    fLength;
+    float                         fLength;
     uint32_t                      fWidth, fHeight;
 
-    virtual int32_t               ISecsToFrame(hsScalar secs) = 0;
+    virtual int32_t               ISecsToFrame(float secs) = 0;
 
     hsBool                      IGetFault() const { return !(fMovieName &&  *fMovieName); }
     hsBool                      ISetFault(const char* errStr);
@@ -69,7 +69,7 @@ protected:
     hsBool                      IMovieIsIdle(); // will call IRelease();
     hsBool                      ISetupBitmap();
     hsBool                      ISetSize(int w, int h);
-    hsBool                      ISetLength(hsScalar secs);
+    hsBool                      ISetLength(float secs);
     hsBool                      ICurrentFrameDirty(double wSecs);
 
     virtual hsBool              IInit() = 0; // Load header etc, must call ISetSize(w, h), ISetLength(s)
@@ -97,7 +97,7 @@ public:
     // Movie specific
     int                     GetWidth() const;
     int                     GetHeight() const;
-    hsScalar                GetLength() const { return fLength; }
+    float                   GetLength() const { return fLength; }
 
     virtual void            DefaultMovie();
 };

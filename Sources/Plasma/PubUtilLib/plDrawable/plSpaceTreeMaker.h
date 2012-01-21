@@ -74,12 +74,12 @@ protected:
     int16_t                           fTreeSize;
 
     plSpacePrepNode*                INewSubRoot(const hsBounds3Ext& bnd);
-    void                            IFindBigList(hsTArray<plSpacePrepNode*>& nodes, hsScalar length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimp);
+    void                            IFindBigList(hsTArray<plSpacePrepNode*>& nodes, float length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimp);
     void                            ISortList(hsTArray<plSpacePrepNode*>& nodes, const hsVector3& axis);
     void                            ISplitList(hsTArray<plSpacePrepNode*>& nodes, const hsVector3& axis, hsTArray<plSpacePrepNode*>& lower, hsTArray<plSpacePrepNode*>& upper);
-    hsBounds3Ext                    IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, hsScalar& length, hsVector3& axis);
+    hsBounds3Ext                    IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis);
     plSpacePrepNode*                IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>& nodes);
-    hsBounds3Ext                    IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, hsScalar& length, hsVector3& axis);
+    hsBounds3Ext                    IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis);
     plSpacePrepNode*                IMakeTreeRecur(hsTArray<plSpacePrepNode*>& nodes);
 
     void                            IMakeTree();

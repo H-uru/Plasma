@@ -78,7 +78,7 @@ void plDynaTorpedoMgr::Read(hsStream* stream, hsResMgr* mgr)
 
 hsBool plDynaTorpedoMgr::IHandleShot(plBulletMsg* bull)
 {
-    hsScalar partyTime = fPartyTime;
+    float partyTime = fPartyTime;
 
     plConst(int) kNumShots(3);
     int i;
@@ -87,8 +87,8 @@ hsBool plDynaTorpedoMgr::IHandleShot(plBulletMsg* bull)
         hsVector3 up = IRandomUp(bull->Dir());
         hsVector3 pert = bull->Dir() % up;
 
-        plConst(hsScalar) kMaxPert(1.f);
-        hsScalar maxPert = i ? kMaxPert * bull->Radius() : 0;
+        plConst(float) kMaxPert(1.f);
+        float maxPert = i ? kMaxPert * bull->Radius() : 0;
         pert *= sRand.RandMinusOneToOne() * maxPert * fScale.fX;
 
         pert += up * (sRand.RandMinusOneToOne() * maxPert * fScale.fY);
@@ -96,26 +96,26 @@ hsBool plDynaTorpedoMgr::IHandleShot(plBulletMsg* bull)
         hsPoint3 pos = bull->From() + bull->Dir() * (bull->Range() * 0.5f);
         pos += pert;
 
-        hsScalar scaleX = bull->Radius() * fScale.fX * fInitUVW.fX;
-        hsScalar scaleY = bull->Radius() * fScale.fY * fInitUVW.fY;
+        float scaleX = bull->Radius() * fScale.fX * fInitUVW.fX;
+        float scaleY = bull->Radius() * fScale.fY * fInitUVW.fY;
 
 #if 0
-        plConst(hsScalar) kMinScale(0.5f);
+        plConst(float) kMinScale(0.5f);
         if( i )
         {
             scaleX *= sRand.RandRangeF(kMinScale, 1.f);
             scaleY *= sRand.RandRangeF(kMinScale, 1.f);
         }
 #elif 0
-        hsScalar div = 1.f / (1.f + hsScalar(i));
+        float div = 1.f / (1.f + float(i));
         scaleX *= div;
         scaleY *= div;
 #else
-        plConst(hsScalar) kMinScale(0.25f);
-        plConst(hsScalar) kMaxScale(0.75f);
+        plConst(float) kMinScale(0.25f);
+        plConst(float) kMaxScale(0.75f);
         if( i ) 
         {
-            hsScalar scale = sRand.RandRangeF(kMinScale, kMaxScale);
+            float scale = sRand.RandRangeF(kMinScale, kMaxScale);
             scaleX *= scale;
             scaleY *= scale;
         }

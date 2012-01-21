@@ -74,9 +74,9 @@ class PhysRecipe
 public:
     PhysRecipe();
 
-    hsScalar mass;
-    hsScalar friction;
-    hsScalar restitution;
+    float mass;
+    float friction;
+    float restitution;
     plSimDefs::Bounds bounds;
     plSimDefs::Group group;
     uint32_t reportsOn;
@@ -91,7 +91,7 @@ public:
     NxTriangleMesh* triMesh;
 
     // For spheres only
-    hsScalar radius;
+    float radius;
     hsPoint3 offset;
 
     // For Boxes
@@ -191,7 +191,7 @@ public:
     //this partially for exclude regions vs avatar capsule
     virtual hsBool OverlapWithCapsule(NxCapsule& cap);
 
-    virtual hsScalar GetMass() {return fMass;}
+    virtual float GetMass() {return fMass;}
 protected:
     void IGetPositionSim(hsPoint3& pos) const;
     void IGetRotationSim(hsQuat& rot) const;
@@ -259,7 +259,7 @@ protected:
     void ISetHullToWorldWTriangles();
     inline hsBool ITestPlane(const hsPoint3 &pos, const hsPlane3 &plane)
     {
-        hsScalar dis = plane.fN.InnerProduct(pos);
+        float dis = plane.fN.InnerProduct(pos);
         dis += plane.fD;
         if (dis == 0.f)
             return false;

@@ -303,7 +303,7 @@ void    plDXLightRef::UpdateD3DInfo( IDirect3DDevice9 *dev, plDXLightSettings *s
 
             fD3DInfo.Falloff = spotOwner->GetFalloff();
             fD3DInfo.Theta = spotOwner->GetSpotInner() * 2;
-//          fD3DInfo.Phi = spotOwner->GetProjection() ? hsScalarPI : spotOwner->GetSpotOuter() * 2;
+//          fD3DInfo.Phi = spotOwner->GetProjection() ? M_PI : spotOwner->GetSpotOuter() * 2;
             // D3D doesn't seem to like a Phi of PI, even though that's supposed to be the
             // largest legal value. Symptom is an erratic, intermitant, unpredictable failure
             // of the light to light, with bizarreness like lighting one object but not the object

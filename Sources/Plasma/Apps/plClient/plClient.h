@@ -189,13 +189,13 @@ protected:
     void                    IProcessRenderRequests(hsTArray<plRenderRequest*>& reqs);
     void                    IAddRenderRequest(plRenderRequest* req);
 
-    hsBool                  IPlayIntroBink(const char* movieName, hsScalar endDelay, hsScalar posX, hsScalar posY, hsScalar scaleX, hsScalar scaleY, hsScalar volume = 1.0);
+    hsBool                  IPlayIntroBink(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume = 1.0);
     hsBool                  IHandleMovieMsg(plMovieMsg* mov);
     void                    IKillMovies();
     void                    IServiceMovies();
 
-    void    IStartProgress( const char *title, hsScalar len );
-    void    IIncProgress( hsScalar byHowMuch, const char *text );
+    void    IStartProgress( const char *title, float len );
+    void    IIncProgress( float byHowMuch, const char *text );
     void    IStopProgress( void );
 
     static void IDispatchMsgReceiveCallback();

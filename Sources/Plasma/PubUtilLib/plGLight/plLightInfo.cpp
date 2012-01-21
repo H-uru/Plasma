@@ -74,8 +74,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // heinous
 #include "plNetClient/plNetClientMgr.h"
 #include "pnMessage/plEnableMsg.h"
-static hsScalar kMaxYon = 1000.f;
-static hsScalar kMinHither = 1.f;
+static float kMaxYon = 1000.f;
+static float kMinHither = 1.f;
 
 #include "plLightProxy.h"
 
@@ -141,9 +141,9 @@ void plLightInfo::IRefresh()
 
 void plLightInfo::ICheckMaxStrength()
 {
-    hsScalar r = GetDiffuse().r >= 0 ? GetDiffuse().r : -GetDiffuse().r;
-    hsScalar g = GetDiffuse().g >= 0 ? GetDiffuse().g : -GetDiffuse().g;
-    hsScalar b = GetDiffuse().b >= 0 ? GetDiffuse().b : -GetDiffuse().b;
+    float r = GetDiffuse().r >= 0 ? GetDiffuse().r : -GetDiffuse().r;
+    float g = GetDiffuse().g >= 0 ? GetDiffuse().g : -GetDiffuse().g;
+    float b = GetDiffuse().b >= 0 ? GetDiffuse().b : -GetDiffuse().b;
     fMaxStrength = 
         r > g 
         ?   (
@@ -157,11 +157,11 @@ void plLightInfo::ICheckMaxStrength()
                 : b
             );
 
-    const hsScalar kMinMaxStrength = 1.e-2f;
+    const float kMinMaxStrength = 1.e-2f;
     SetZero(fMaxStrength < kMinMaxStrength);
 }
 
-void plLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     if( IsIdle() )
     {
@@ -592,7 +592,7 @@ plDirectionalLightInfo::~plDirectionalLightInfo()
 {
 }
 
-void plDirectionalLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plDirectionalLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     plLightInfo::GetStrengthAndScale(bnd, strength, scale);
 }
@@ -637,8 +637,8 @@ void plLimitedDirLightInfo::IRefresh()
         hsMatrix44 l2ndc;
         l2ndc.Reset();
 
-        hsScalar width = fWidth;
-        hsScalar height = fHeight;
+        float width = fWidth;
+        float height = fHeight;
 
         l2ndc.fMap[0][0] = 1.f / width;
         l2ndc.fMap[0][3] = 0.5f;
@@ -658,7 +658,7 @@ void plLimitedDirLightInfo::IRefresh()
     }
 }
 
-void plLimitedDirLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plLimitedDirLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     // If we haven't culled the object, return that we're full strength.
     plLightInfo::GetStrengthAndScale(bnd, strength, scale);
@@ -691,8 +691,8 @@ void plLimitedDirLightInfo::IMakeIsect()
     
     hsPoint3 p0, p1;
 
-    hsScalar width = fWidth;
-    hsScalar height = fHeight;
+    float width = fWidth;
+    float height = fHeight;
     p0.Set(-width*0.5f, 0, 0);
     p1.Set(width*0.5f, 0, 0);
     fParPlanes->SetPlane(0, p0, p1);
@@ -756,7 +756,7 @@ void plOmniLightInfo::IMakeIsect()
     fSphere->SetTransform(fLightToWorld, fWorldToLight);
 }
 
-void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     plLightInfo::GetStrengthAndScale(bnd, strength, scale);
 
@@ -764,7 +764,7 @@ void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& str
     const hsPoint3& pos = bnd.GetCenter();
 
     hsPoint3 wpos = GetWorldPosition();
-    hsScalar dist = hsVector3(&pos, &wpos).MagnitudeSquared();
+    float dist = hsVector3(&pos, &wpos).MagnitudeSquared();
     dist = 1.f / hsFastMath::InvSqrtAppr(dist);
     if( fAttenQuadratic > 0 )
     {
@@ -785,16 +785,16 @@ void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& str
     }
 }
 
-hsScalar plOmniLightInfo::GetRadius() const
+float plOmniLightInfo::GetRadius() const
 {
-    hsScalar radius = 0;
+    float radius = 0;
     if( fAttenQuadratic > 0 )
     {
-        hsScalar mult = fDiffuse.a >= 0 ? fDiffuse.a : -fDiffuse.a;
-        hsScalar det = fAttenLinear*fAttenLinear - 4.f * fAttenQuadratic * fAttenConst * (1.f - mult * plSillyLightKonstants::GetFarPowerKonst());
+        float mult = fDiffuse.a >= 0 ? fDiffuse.a : -fDiffuse.a;
+        float det = fAttenLinear*fAttenLinear - 4.f * fAttenQuadratic * fAttenConst * (1.f - mult * plSillyLightKonstants::GetFarPowerKonst());
         if( det > 0 )
         {
-            det = hsSquareRoot(det);
+            det = sqrt(det);
 
             radius = -fAttenLinear + det;
             radius /= fAttenQuadratic * 2.f;
@@ -804,7 +804,7 @@ hsScalar plOmniLightInfo::GetRadius() const
     }
     else if( fAttenLinear > 0 )
     {
-        hsScalar mult = fDiffuse.a >= 0 ? fDiffuse.a : -fDiffuse.a;
+        float mult = fDiffuse.a >= 0 ? fDiffuse.a : -fDiffuse.a;
         radius = (mult * plSillyLightKonstants::GetFarPowerKonst() - 1.f ) * fAttenConst / fAttenLinear;
     }
     else if( fAttenCutoff > 0 )
@@ -887,8 +887,8 @@ plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_
 // Spot
 plSpotLightInfo::plSpotLightInfo()
 :   fFalloff(1.f),
-    fSpotInner(hsScalarPI * 0.125f),
-    fSpotOuter(hsScalarPI * 0.25f),
+    fSpotInner(M_PI * 0.125f),
+    fSpotOuter(M_PI * 0.25f),
     fCone(nil)
 {
 }
@@ -898,7 +898,7 @@ plSpotLightInfo::~plSpotLightInfo()
     delete fCone;
 }
 
-void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     plOmniLightInfo::GetStrengthAndScale(bnd, strength, scale);
 
@@ -908,13 +908,13 @@ void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& str
     hsVector3 del;
     hsPoint3 wpos = GetWorldPosition();
     del.Set(&pos, &wpos);
-    hsScalar invDist = del.MagnitudeSquared();
+    float invDist = del.MagnitudeSquared();
     invDist = hsFastMath::InvSqrtAppr(invDist);
 
-    hsScalar dot = del.InnerProduct(GetWorldDirection());
+    float dot = del.InnerProduct(GetWorldDirection());
     dot *= invDist;
 
-    hsScalar cosInner, cosOuter, t;
+    float cosInner, cosOuter, t;
     hsFastMath::SinCosInRangeAppr(fSpotInner, t, cosInner);
     hsFastMath::SinCosInRangeAppr(fSpotOuter, t, cosOuter);
     if( dot < cosOuter )
@@ -936,7 +936,7 @@ void plSpotLightInfo::IRefresh()
     if( !fCone )
         IMakeIsect();
 
-    hsScalar effFOV = fSpotOuter;
+    float effFOV = fSpotOuter;
     fCone->SetAngle(effFOV);
     
 
@@ -948,12 +948,12 @@ void plSpotLightInfo::IRefresh()
 
     if( GetProjection() )
     {
-        hsScalar yon = GetRadius();
+        float yon = GetRadius();
         if( yon < kMinHither )
             yon = kMaxYon;
-        hsScalar hither = hsMinimum(kMinHither, yon * 0.5f);
+        float hither = hsMinimum(kMinHither, yon * 0.5f);
 
-        hsScalar sinFOV, cosFOV;
+        float sinFOV, cosFOV;
         hsFastMath::SinCos(effFOV, sinFOV, cosFOV);
 
         hsMatrix44 l2ndc;

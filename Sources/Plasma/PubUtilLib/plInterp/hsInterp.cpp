@@ -50,12 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // linear interpolation
 ///////////////////////////////////////////////////////
 //
-void hsInterp::LinInterp(hsScalar k1, hsScalar k2, hsScalar t, hsScalar* result)
+void hsInterp::LinInterp(float k1, float k2, float t, float* result)
 {
     *result = k1 + t * (k2 - k1);
 }
 
-void hsInterp::LinInterp(const hsScalarTriple* k1, const hsScalarTriple* k2, hsScalar t, 
+void hsInterp::LinInterp(const hsScalarTriple* k1, const hsScalarTriple* k2, float t, 
                       hsScalarTriple* result)
 {
     if (t==0.0)
@@ -71,7 +71,7 @@ void hsInterp::LinInterp(const hsScalarTriple* k1, const hsScalarTriple* k2, hsS
     }
 }
 
-void hsInterp::LinInterp(const hsColorRGBA* k1, const hsColorRGBA* k2, hsScalar t, 
+void hsInterp::LinInterp(const hsColorRGBA* k1, const hsColorRGBA* k2, float t, 
                       hsColorRGBA* result, uint32_t flags)
 {
     if (t==0.0)
@@ -102,7 +102,7 @@ void hsInterp::LinInterp(const hsColorRGBA* k1, const hsColorRGBA* k2, hsScalar 
         LinInterp(k1->a, k2->a, t, &result->a);
 }
 
-void hsInterp::LinInterp(const hsMatrix33* k1, const hsMatrix33* k2, hsScalar t, 
+void hsInterp::LinInterp(const hsMatrix33* k1, const hsMatrix33* k2, float t, 
                       hsMatrix33* result, uint32_t flags)
 {
     if (t==0.0)
@@ -162,7 +162,7 @@ void hsInterp::LinInterp(const hsMatrix33* k1, const hsMatrix33* k2, hsScalar t,
 
 //
 //
-void hsInterp::LinInterp(const hsMatrix44* mat1, const hsMatrix44* mat2, hsScalar t, 
+void hsInterp::LinInterp(const hsMatrix44* mat1, const hsMatrix44* mat2, float t, 
                       hsMatrix44* out, uint32_t flags)
 {
     if (flags == 0)
@@ -173,7 +173,7 @@ void hsInterp::LinInterp(const hsMatrix44* mat1, const hsMatrix44* mat2, hsScala
             return;
         }
 
-        if( hsScalar1 == t )
+        if( 1.f == t )
         {
             *out = *mat2;
             return;
@@ -234,7 +234,7 @@ void hsInterp::LinInterp(const hsMatrix44* mat1, const hsMatrix44* mat2, hsScala
     }
 }
 
-void hsInterp::LinInterp(const hsQuat* k1, const hsQuat* k2, hsScalar t, hsQuat* result)
+void hsInterp::LinInterp(const hsQuat* k1, const hsQuat* k2, float t, hsQuat* result)
 {
     if (t==0.0)
         *result = *k1;
@@ -247,14 +247,14 @@ void hsInterp::LinInterp(const hsQuat* k1, const hsQuat* k2, hsScalar t, hsQuat*
     }
 }
 
-void hsInterp::LinInterp(const hsScaleValue* k1, const hsScaleValue* k2, hsScalar t, 
+void hsInterp::LinInterp(const hsScaleValue* k1, const hsScaleValue* k2, float t, 
                       hsScaleValue* result)
 {
     LinInterp(&k1->fS, &k2->fS, t, &result->fS);    // Stretch rotation 
     LinInterp(&k1->fQ, &k2->fQ, t, &result->fQ);    // Stretch factor   
 }
 
-void hsInterp::LinInterp(const hsAffineParts* k1, const hsAffineParts* k2, hsScalar t, 
+void hsInterp::LinInterp(const hsAffineParts* k1, const hsAffineParts* k2, float t, 
                       hsAffineParts* result, uint32_t flags)
 {       
     if (t==0.0)
@@ -329,28 +329,28 @@ void hsInterp::LinInterp(const hsAffineParts* k1, const hsAffineParts* k2, hsSca
 ///////////////////////////////////////////////////////
 //
 
-void hsInterp::BezScalarEval(const hsScalar value1, const hsScalar outTan,
-                             const hsScalar value2, const hsScalar inTan,
-                             const hsScalar t, const hsScalar tanScale, hsScalar *result)
+void hsInterp::BezScalarEval(const float value1, const float outTan,
+                             const float value2, const float inTan,
+                             const float t, const float tanScale, float *result)
 {
 #if 0
     // If the tangents were what you'd expect them to be... Hermite splines, than this code
     // would make sense. But no, Max likes to store them in a scaled form based on the
     // time of each frame. If we ever optimize this further, we could do the scaling on export,
     // but I need this to work right now before all the artists hate me too much.
-    const hsScalar t2 = t * t;
-    const hsScalar t3 = t2 * t;
+    const float t2 = t * t;
+    const float t3 = t2 * t;
 
-    const hsScalar term1 = 2 * t3 - 3 * t2;
+    const float term1 = 2 * t3 - 3 * t2;
 
     *result = ((term1 + 1) * value1) +
         (-term1 * value2) +
         ((t3 - 2 * t2 + 1) * outTan) +
         ((t3 - t2) * inTan);
 #else
-    const hsScalar oneMinusT = (1.0f - t);
-    const hsScalar tSq = t * t;
-    const hsScalar oneMinusTSq = oneMinusT * oneMinusT;
+    const float oneMinusT = (1.0f - t);
+    const float tSq = t * t;
+    const float oneMinusTSq = oneMinusT * oneMinusT;
 
     *result = (oneMinusT * oneMinusTSq * value1) +
         (3.f * t * oneMinusTSq * (value1 + outTan * tanScale)) +
@@ -359,23 +359,23 @@ void hsInterp::BezScalarEval(const hsScalar value1, const hsScalar outTan,
 #endif
 }
 
-void hsInterp::BezInterp(const hsBezPoint3Key* k1, const hsBezPoint3Key* k2, const hsScalar t, hsScalarTriple* result)
+void hsInterp::BezInterp(const hsBezPoint3Key* k1, const hsBezPoint3Key* k2, const float t, hsScalarTriple* result)
 {
-    hsScalar scale = (k2->fFrame - k1->fFrame) * MAX_TICKS_PER_FRAME / 3.f;
+    float scale = (k2->fFrame - k1->fFrame) * MAX_TICKS_PER_FRAME / 3.f;
     BezScalarEval(k1->fValue.fX, k1->fOutTan.fX, k2->fValue.fX, k2->fInTan.fX, t, scale, &result->fX);
     BezScalarEval(k1->fValue.fY, k1->fOutTan.fY, k2->fValue.fY, k2->fInTan.fY, t, scale, &result->fY);
     BezScalarEval(k1->fValue.fZ, k1->fOutTan.fZ, k2->fValue.fZ, k2->fInTan.fZ, t, scale, &result->fZ);
 }
 
-void hsInterp::BezInterp(const hsBezScalarKey* k1, const hsBezScalarKey* k2, const hsScalar t, hsScalar* result)
+void hsInterp::BezInterp(const hsBezScalarKey* k1, const hsBezScalarKey* k2, const float t, float* result)
 {
-    hsScalar scale = (k2->fFrame - k1->fFrame) * MAX_TICKS_PER_FRAME / 3.f;
+    float scale = (k2->fFrame - k1->fFrame) * MAX_TICKS_PER_FRAME / 3.f;
     BezScalarEval(k1->fValue, k1->fOutTan, k2->fValue, k2->fInTan, t, scale, result);
 }
 
-void hsInterp::BezInterp(const hsBezScaleKey* k1, const hsBezScaleKey* k2, const hsScalar t, hsScaleValue* result)
+void hsInterp::BezInterp(const hsBezScaleKey* k1, const hsBezScaleKey* k2, const float t, hsScaleValue* result)
 {
-    hsScalar scale = (k2->fFrame - k1->fFrame) * MAX_TICKS_PER_FRAME / 3.f;
+    float scale = (k2->fFrame - k1->fFrame) * MAX_TICKS_PER_FRAME / 3.f;
     BezScalarEval(k1->fValue.fS.fX, k1->fOutTan.fX, k2->fValue.fS.fX, k2->fInTan.fX, t, scale, &result->fS.fX);
     BezScalarEval(k1->fValue.fS.fY, k1->fOutTan.fY, k2->fValue.fS.fY, k2->fInTan.fY, t, scale, &result->fS.fY);
     BezScalarEval(k1->fValue.fS.fZ, k1->fOutTan.fZ, k2->fValue.fS.fZ, k2->fInTan.fZ, t, scale, &result->fS.fZ); 
@@ -399,8 +399,8 @@ static inline hsKeyFrame* GetKey(int32_t i, void *keys, int32_t size)
 // Returns the index of the first key which can be passed in as a hint (lastKeyIdx)
 // for the next search.
 //
-void hsInterp::GetBoundaryKeyFrames(hsScalar time, uint32_t numKeys, void *keys, uint32_t size,
-                                    hsKeyFrame **kF1, hsKeyFrame **kF2, uint32_t *lastKeyIdx, hsScalar *p, hsBool forwards)
+void hsInterp::GetBoundaryKeyFrames(float time, uint32_t numKeys, void *keys, uint32_t size,
+                                    hsKeyFrame **kF1, hsKeyFrame **kF2, uint32_t *lastKeyIdx, float *p, hsBool forwards)
 {
     hsAssert(numKeys>1, "Must have more than 1 keyframe");
     int k1, k2;

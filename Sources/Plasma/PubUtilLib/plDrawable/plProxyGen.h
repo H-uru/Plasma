@@ -116,7 +116,7 @@ protected:
     virtual void                IRemoveProxy(uint32_t drawIdx) const; 
     virtual void                IDestroyProxy();
 public:
-    plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac);
+    plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac);
     virtual ~plProxyGen();
 
     virtual void                SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);

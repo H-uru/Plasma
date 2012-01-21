@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsKeys.h"
 #include "hsStream.h"
+#include <math.h>
 
 const int hsKeyFrame::kMaxFrameNumber = 65535;
 
@@ -149,8 +150,8 @@ hsBool hsQuatKey::CompareValue(hsQuatKey *key)
 
 //////////////////////////////////////////////////////////////////////////////
 
-const hsScalar hsCompressedQuatKey32::kOneOverRootTwo = 0.70710678;
-const hsScalar hsCompressedQuatKey32::k10BitScaleRange = 1023 / (2 * kOneOverRootTwo);
+const float hsCompressedQuatKey32::kOneOverRootTwo = 0.70710678;
+const float hsCompressedQuatKey32::k10BitScaleRange = 1023 / (2 * kOneOverRootTwo);
 
 void hsCompressedQuatKey32::Read(hsStream *stream)
 {
@@ -178,7 +179,7 @@ void hsCompressedQuatKey32::SetQuat(hsQuat &q)
 {
     q.Normalize();
     uint32_t maxElement = kCompQuatNukeX;
-    hsScalar maxVal = hsABS(q.fX);
+    float maxVal = hsABS(q.fX);
     if (hsABS(q.fY) > maxVal)
     {
         maxElement = kCompQuatNukeY;
@@ -256,7 +257,7 @@ void hsCompressedQuatKey32::GetQuat(hsQuat &q)
             q.fY = (fData >> 20 & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
             q.fZ = (fData >> 10 & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
             q.fW = (fData & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
-            q.fX = hsSquareRoot(1 - q.fY * q.fY - q.fZ * q.fZ - q.fW *q.fW);
+            q.fX = sqrt(1 - q.fY * q.fY - q.fZ * q.fZ - q.fW *q.fW);
             break;
         }
     case kCompQuatNukeY:
@@ -264,7 +265,7 @@ void hsCompressedQuatKey32::GetQuat(hsQuat &q)
             q.fX = (fData >> 20 & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
             q.fZ = (fData >> 10 & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
             q.fW = (fData & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
-            q.fY = hsSquareRoot(1 - q.fX * q.fX - q.fZ * q.fZ - q.fW *q.fW);
+            q.fY = sqrt(1 - q.fX * q.fX - q.fZ * q.fZ - q.fW *q.fW);
             break;
         }
     case kCompQuatNukeZ:
@@ -272,7 +273,7 @@ void hsCompressedQuatKey32::GetQuat(hsQuat &q)
             q.fX = (fData >> 20 & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
             q.fY = (fData >> 10 & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
             q.fW = (fData & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
-            q.fZ = hsSquareRoot(1 - q.fX * q.fX - q.fY * q.fY - q.fW *q.fW);
+            q.fZ = sqrt(1 - q.fX * q.fX - q.fY * q.fY - q.fW *q.fW);
             break;
         }
     case kCompQuatNukeW:
@@ -281,7 +282,7 @@ void hsCompressedQuatKey32::GetQuat(hsQuat &q)
             q.fX = (fData >> 20 & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
             q.fY = (fData >> 10 & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
             q.fZ = (fData & 0x000003ff) / k10BitScaleRange - kOneOverRootTwo;
-            q.fW = hsSquareRoot(1 - q.fX * q.fX - q.fY * q.fY - q.fZ * q.fZ);
+            q.fW = sqrt(1 - q.fX * q.fX - q.fY * q.fY - q.fZ * q.fZ);
             break;
         }
     }
@@ -289,9 +290,9 @@ void hsCompressedQuatKey32::GetQuat(hsQuat &q)
 
 /////////////////////////////////////////////////////////////////////////////
 
-const hsScalar hsCompressedQuatKey64::kOneOverRootTwo = 0.70710678;
-const hsScalar hsCompressedQuatKey64::k20BitScaleRange = 1048575 / (2 * kOneOverRootTwo);
-const hsScalar hsCompressedQuatKey64::k21BitScaleRange = 2097151 / (2 * kOneOverRootTwo);
+const float hsCompressedQuatKey64::kOneOverRootTwo = 0.70710678;
+const float hsCompressedQuatKey64::k20BitScaleRange = 1048575 / (2 * kOneOverRootTwo);
+const float hsCompressedQuatKey64::k21BitScaleRange = 2097151 / (2 * kOneOverRootTwo);
 
 void hsCompressedQuatKey64::Read(hsStream *stream)
 {
@@ -321,7 +322,7 @@ void hsCompressedQuatKey64::SetQuat(hsQuat &q)
 {
     q.Normalize();
     uint32_t maxElement = kCompQuatNukeX;
-    hsScalar maxVal = hsABS(q.fX);
+    float maxVal = hsABS(q.fX);
     if (hsABS(q.fY) > maxVal)
     {
         maxElement = kCompQuatNukeY;
@@ -407,7 +408,7 @@ void hsCompressedQuatKey64::GetQuat(hsQuat &q)
             q.fY = ((fData[0] >> 10) & 0x000fffff) / k20BitScaleRange - kOneOverRootTwo;
             q.fZ = (((fData[0] & 0x000003ff) << 11) | (fData[1] >> 21)) / k21BitScaleRange - kOneOverRootTwo;
             q.fW = (fData[1] & 0x001fffff) / k21BitScaleRange - kOneOverRootTwo;
-            q.fX = hsSquareRoot(1 - q.fY * q.fY - q.fZ * q.fZ - q.fW *q.fW);
+            q.fX = sqrt(1 - q.fY * q.fY - q.fZ * q.fZ - q.fW *q.fW);
             break;
         }
     case kCompQuatNukeY:
@@ -415,7 +416,7 @@ void hsCompressedQuatKey64::GetQuat(hsQuat &q)
             q.fX = ((fData[0] >> 10) & 0x000fffff) / k20BitScaleRange - kOneOverRootTwo;
             q.fZ = (((fData[0] & 0x000003ff) << 11) | (fData[1] >> 21)) / k21BitScaleRange - kOneOverRootTwo;
             q.fW = (fData[1] & 0x001fffff) / k21BitScaleRange - kOneOverRootTwo;
-            q.fY = hsSquareRoot(1 - q.fX * q.fX - q.fZ * q.fZ - q.fW *q.fW);
+            q.fY = sqrt(1 - q.fX * q.fX - q.fZ * q.fZ - q.fW *q.fW);
             break;
         }
     case kCompQuatNukeZ:
@@ -423,7 +424,7 @@ void hsCompressedQuatKey64::GetQuat(hsQuat &q)
             q.fX = ((fData[0] >> 10) & 0x000fffff) / k20BitScaleRange - kOneOverRootTwo;
             q.fY = (((fData[0] & 0x000003ff) << 11) | (fData[1] >> 21)) / k21BitScaleRange - kOneOverRootTwo;
             q.fW = (fData[1] & 0x001fffff) / k21BitScaleRange - kOneOverRootTwo;
-            q.fZ = hsSquareRoot(1 - q.fX * q.fX - q.fY * q.fY - q.fW *q.fW);
+            q.fZ = sqrt(1 - q.fX * q.fX - q.fY * q.fY - q.fW *q.fW);
             break;
         }
     case kCompQuatNukeW:
@@ -432,7 +433,7 @@ void hsCompressedQuatKey64::GetQuat(hsQuat &q)
             q.fX = ((fData[0] >> 10) & 0x000fffff) / k20BitScaleRange - kOneOverRootTwo;
             q.fY = (((fData[0] & 0x000003ff) << 11) | (fData[1] >> 21)) / k21BitScaleRange - kOneOverRootTwo;
             q.fZ = (fData[1] & 0x001fffff) / k21BitScaleRange - kOneOverRootTwo;
-            q.fW = hsSquareRoot(1 - q.fX * q.fX - q.fY * q.fY - q.fZ * q.fZ);
+            q.fW = sqrt(1 - q.fX * q.fX - q.fY * q.fY - q.fZ * q.fZ);
             break;
         }
     }

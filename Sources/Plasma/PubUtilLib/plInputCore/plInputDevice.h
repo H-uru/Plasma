@@ -168,13 +168,13 @@ public:
         fControlFlags.SetBit(f); 
     }
     void    ClearControlFlag(int which) { fControlFlags.ClearBit( which ); }
-    void    SetCursorX(hsScalar x);
-    void    SetCursorY(hsScalar y);
-    hsScalar GetCursorX() { return fXPos; }
-    hsScalar GetCursorY() { return fYPos; }
+    void    SetCursorX(float x);
+    void    SetCursorY(float y);
+    float GetCursorX() { return fXPos; }
+    float GetCursorY() { return fYPos; }
     uint32_t  GetButtonState() { return fButtonState; }
-    hsScalar GetCursorOpacity() { return fOpacity; }
-    void SetDisplayResolution(hsScalar Width, hsScalar Height);
+    float GetCursorOpacity() { return fOpacity; }
+    void SetDisplayResolution(float Width, float Height);
     
     virtual hsBool MsgReceive(plMessage* msg);
     
@@ -185,7 +185,7 @@ public:
     static void NewCursor(char* cursor);
     static void HideCursor(hsBool override = false);
     static bool GetHideCursor() { return plMouseDevice::bCursorHidden; }
-    static void SetCursorOpacity( hsScalar opacity = 1.f );
+    static void SetCursorOpacity( float opacity = 1.f );
     static bool GetInverted() { return plMouseDevice::bInverted; }
     static void SetInverted(bool inverted) { plMouseDevice::bInverted = inverted; }
     static void AddNameToCursor(const char* name);
@@ -202,12 +202,12 @@ protected:
     plInputEventMsg*    fRightBMsg[2];
     plInputEventMsg*    fMiddleBMsg[2];
 
-    hsScalar fXPos;
-    hsScalar fYPos;
+    float fXPos;
+    float fYPos;
     int      fWXPos; // the windows coordinates of the cursor
     int      fWYPos;
     uint32_t   fButtonState;
-    hsScalar fOpacity;
+    float fOpacity;
     hsBitVector     fControlFlags;
     
     
@@ -222,7 +222,7 @@ protected:
     static bool bCursorHidden;
     static bool bCursorOverride;
     static bool bInverted;
-    static hsScalar fWidth, fHeight;
+    static float fWidth, fHeight;
 };
 
 

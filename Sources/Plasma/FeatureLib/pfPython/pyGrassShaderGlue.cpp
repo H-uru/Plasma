@@ -85,7 +85,7 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDistortion, args)
     }
 
     int len = PyTuple_Size(tupleObject);
-    std::vector<hsScalar> vecArgs;
+    std::vector<float> vecArgs;
     for (int curArg = 0; curArg < len; curArg++)
     {
         PyObject *arg = PyTuple_GetItem(tupleObject, curArg);
@@ -94,7 +94,7 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDistortion, args)
             PyErr_SetString(PyExc_TypeError, "setWaveDistortion expects a integer and tuple of floats");
             PYTHON_RETURN_ERROR;
         }
-        vecArgs.push_back((hsScalar)PyFloat_AsDouble(arg));
+        vecArgs.push_back((float)PyFloat_AsDouble(arg));
     }
 
     self->fThis->SetWaveDistortion(waveNum, vecArgs);
@@ -117,7 +117,7 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDirection, args)
     }
 
     int len = PyTuple_Size(tupleObject);
-    std::vector<hsScalar> vecArgs;
+    std::vector<float> vecArgs;
     for (int curArg = 0; curArg < len; curArg++)
     {
         PyObject *arg = PyTuple_GetItem(tupleObject, curArg);
@@ -126,7 +126,7 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDirection, args)
             PyErr_SetString(PyExc_TypeError, "setWaveDirection expects a integer and tuple of floats");
             PYTHON_RETURN_ERROR;
         }
-        vecArgs.push_back((hsScalar)PyFloat_AsDouble(arg));
+        vecArgs.push_back((float)PyFloat_AsDouble(arg));
     }
 
     self->fThis->SetWaveDirection(waveNum, vecArgs);
@@ -155,7 +155,7 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, getWaveDistortion, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::vector<hsScalar> vecArgs = self->fThis->GetWaveDistortion(waveNum);
+    std::vector<float> vecArgs = self->fThis->GetWaveDistortion(waveNum);
     PyObject *retVal = PyTuple_New(vecArgs.size());
     for (int curArg = 0; curArg < vecArgs.size(); curArg++)
         PyTuple_SetItem(retVal, curArg, PyFloat_FromDouble((double)vecArgs[curArg]));
@@ -171,7 +171,7 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, getWaveDirection, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::vector<hsScalar> vecArgs = self->fThis->GetWaveDirection(waveNum);
+    std::vector<float> vecArgs = self->fThis->GetWaveDirection(waveNum);
     PyObject *retVal = PyTuple_New(vecArgs.size());
     for (int curArg = 0; curArg < vecArgs.size(); curArg++)
         PyTuple_SetItem(retVal, curArg, PyFloat_FromDouble((double)vecArgs[curArg]));

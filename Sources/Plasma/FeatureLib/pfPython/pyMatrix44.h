@@ -78,15 +78,15 @@ public:
     PyObject* Copy() { return pyMatrix44::New(fMatrix); } // returns pyMatrix44
     void Translate(pyVector3 v) { fMatrix.Translate(&v.fVector); }
     void Scale(pyVector3 v) { fMatrix.Scale(&v.fVector); }
-    void Rotate(int axis, hsScalar radians) { fMatrix.Rotate(axis,radians); }
+    void Rotate(int axis, float radians) { fMatrix.Rotate(axis,radians); }
     void Reset() { fMatrix.Reset(); }
     void MakeTranslateMat(pyVector3 trans) { fMatrix.MakeTranslateMat(&trans.fVector); }
     void MakeScaleMat(pyVector3 scale) { fMatrix.MakeScaleMat(&scale.fVector); }
-    void MakeRotateMat(int axis, hsScalar radians) { fMatrix.MakeRotateMat(axis,radians); }
+    void MakeRotateMat(int axis, float radians) { fMatrix.MakeRotateMat(axis,radians); }
     void Make(pyPoint3 from,pyPoint3 at,pyVector3 up) { fMatrix.Make(&from.fPoint,&at.fPoint,&up.fVector); }
     void MakeUpPreserving(pyPoint3 from,pyPoint3 at,pyVector3 up) { fMatrix.MakeUpPreserving(&from.fPoint,&at.fPoint,&up.fVector); }
     hsBool GetParity() { return fMatrix.GetParity(); }
-    hsScalar GetDeterminant() { return fMatrix.GetDeterminant(); }
+    float GetDeterminant() { return fMatrix.GetDeterminant(); }
     PyObject* GetInverse(PyObject* inverse); // returns (and accepts) pyMatrix44
     PyObject* GetTranspose(PyObject* inverse); // returns (and accepts) pyMatrix44
     PyObject* GetAdjoint(PyObject* adjoint); // returns (and accepts) pyMatrix44
@@ -95,8 +95,8 @@ public:
     PyObject* GetUpAxis() { return pyVector3::New(fMatrix.GetAxis(hsMatrix44::kUp)); } // returns pyVector3
     PyObject* GetRightAxis() { return pyVector3::New(fMatrix.GetAxis(hsMatrix44::kRight)); } // returns pyVector3
 
-    hsScalar* GetData();
-    void SetData(const hsScalar mat[]);
+    float* GetData();
+    void SetData(const float mat[]);
 };
 
 

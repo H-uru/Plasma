@@ -98,7 +98,7 @@ struct hsBezPoint3Key : public hsKeyFrame
 
 struct hsScalarKey : public hsKeyFrame
 {
-    hsScalar    fValue;
+    float    fValue;
 
     void Read(hsStream *stream);
     void Write(hsStream *stream);
@@ -108,9 +108,9 @@ struct hsScalarKey : public hsKeyFrame
 
 struct hsBezScalarKey : public hsKeyFrame
 {
-    hsScalar    fInTan;
-    hsScalar    fOutTan;
-    hsScalar    fValue;
+    float    fInTan;
+    float    fOutTan;
+    float    fValue;
 
     void Read(hsStream *stream);
     void Write(hsStream *stream);
@@ -138,8 +138,8 @@ struct hsCompressedQuatKey32 : public hsKeyFrame
         kCompQuatNukeW,
     };
 
-    static const hsScalar kOneOverRootTwo;
-    static const hsScalar k10BitScaleRange;
+    static const float kOneOverRootTwo;
+    static const float k10BitScaleRange;
 
     void SetQuat(hsQuat &q);
     void GetQuat(hsQuat &q);
@@ -163,9 +163,9 @@ struct hsCompressedQuatKey64 : public hsKeyFrame
         kCompQuatNukeW,
     };
 
-    static const hsScalar kOneOverRootTwo;
-    static const hsScalar k20BitScaleRange;
-    static const hsScalar k21BitScaleRange;
+    static const float kOneOverRootTwo;
+    static const float k20BitScaleRange;
+    static const float k21BitScaleRange;
 
     void SetQuat(hsQuat &q);
     void GetQuat(hsQuat &q);

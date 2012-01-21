@@ -280,7 +280,7 @@ PLASMA_CUSTOM_TYPE(ptColor, "Params: red=0, green=0, blue=0, alpha=0\nPlasma col
 // required functions for PyObject interoperability
 PYTHON_CLASS_NEW_IMPL(ptColor, pyColor)
 
-PyObject *pyColor::New(hsScalar red, hsScalar green, hsScalar blue, hsScalar alpha)
+PyObject *pyColor::New(float red, float green, float blue, float alpha)
 {
     ptColor *newObj = (ptColor*)ptColor_type.tp_new(&ptColor_type, NULL, NULL);
     newObj->fThis->setRed(red);

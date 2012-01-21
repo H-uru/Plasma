@@ -502,7 +502,7 @@ PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpo
             plKey targetKey = seekTarget->GetKey();
             
             plKey avKey = avatar->GetKey();
-            hsScalar unused = 0.0f;
+            float unused = 0.0f;
             plAvSeekMsg *msg = TRACKED_NEW plAvSeekMsg(nil, avKey, targetKey, unused, false);
             
             plgDispatch::MsgSend(msg);

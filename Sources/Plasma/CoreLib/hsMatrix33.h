@@ -47,7 +47,7 @@ class hsStream;
 
 struct hsMatrix33
 {
-    hsScalar            fMap[3][3];
+    float            fMap[3][3];
 
     hsMatrix33* Reset();
 

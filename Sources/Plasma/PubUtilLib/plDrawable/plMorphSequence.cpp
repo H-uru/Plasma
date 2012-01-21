@@ -98,14 +98,14 @@ const uint32_t kChanMask = plAccessVtxSpan::kPositionMask
 // that's what got loaded from disk.
 // Use Access RW. That might already be handled in the customization stuff.
 
-plConst(hsScalar)   kMorphTime(0.5);
+plConst(float)   kMorphTime(0.5);
 
 class plMorphTarget
 {
 public:
     uint16_t      fLayer;
     uint16_t      fDelta;
-    hsScalar    fWeight;
+    float    fWeight;
 };
 
 hsTArray<plMorphTarget> fTgtWgts;
@@ -131,11 +131,11 @@ hsBool plMorphSequence::MsgReceive(plMessage* msg)
         // Can always add it in later if desired.
         if( fTgtWgts.GetCount() )
         {
-            hsScalar delWgt = hsTimer::GetDelSysSeconds() / (kMorphTime > 0 ? kMorphTime : 1.e-3f);
+            float delWgt = hsTimer::GetDelSysSeconds() / (kMorphTime > 0 ? kMorphTime : 1.e-3f);
             int i;
             for( i = 0; i < fTgtWgts.GetCount(); i++ )
             {
-                hsScalar currWgt = GetWeight(fTgtWgts[i].fLayer, fTgtWgts[i].fDelta);
+                float currWgt = GetWeight(fTgtWgts[i].fLayer, fTgtWgts[i].fDelta);
                 if( fTgtWgts[i].fWeight < currWgt )
                 {
                     if( fTgtWgts[i].fWeight >= (currWgt -= delWgt) )
@@ -233,7 +233,7 @@ int plMorphSequence::GetNumDeltas(int iLay, plKey meshKey /* = nil */) const
         return fSharedMeshes[index].fMesh->fMorphSet->fMorphs[iLay].GetNumDeltas();
 }
 
-hsScalar plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = nil */) const 
+float plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = nil */) const 
 { 
     int index = IFindSharedMeshIndex(meshKey);
     if (index == -1)
@@ -242,7 +242,7 @@ hsScalar plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = nil *
         return fSharedMeshes[index].fArrayWeights[iLay].fDeltaWeights[iDel];
 }
 
-void plMorphSequence::SetWeight(int iLay, int iDel, hsScalar w, plKey meshKey /* = nil */)
+void plMorphSequence::SetWeight(int iLay, int iDel, float w, plKey meshKey /* = nil */)
 {
     int index = IFindSharedMeshIndex(meshKey);
 

@@ -92,16 +92,16 @@ public:
     virtual void AddReceiver(pyKey* key);
     virtual void SetNetPropagate(hsBool propagate);
     virtual void SetNetForce(hsBool state);
-    virtual void SetActivateState(hsScalar state);
+    virtual void SetActivateState(float state);
     virtual void SetType(int32_t type);
 
     // add event record helpers
     virtual void AddCollisionEvent( hsBool enter, pyKey* other, pyKey* self );
     virtual void AddPickEvent(hsBool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint);
     virtual void AddControlKeyEvent( int32_t key, hsBool down );
-    virtual void AddVarNumber(const char* name, hsScalar number);
+    virtual void AddVarNumber(const char* name, float number);
     virtual void AddVarKey(const char* name, pyKey* key);
-    virtual void AddFacingEvent( hsBool enabled, pyKey* other, pyKey* self, hsScalar dot);
+    virtual void AddFacingEvent( hsBool enabled, pyKey* other, pyKey* self, float dot);
     virtual void AddContainerEvent( hsBool entering, pyKey* container, pyKey* contained);
     virtual void AddActivateEvent( hsBool active, hsBool activate );
     virtual void AddCallbackEvent( int32_t event );

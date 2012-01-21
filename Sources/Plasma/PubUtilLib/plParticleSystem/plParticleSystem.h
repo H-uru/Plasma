@@ -72,7 +72,7 @@ class plParticleSystem : public plModifier
     friend class plSimpleParticleGenerator;
 
 protected:
-    static const hsScalar GRAVITY_ACCEL_FEET_PER_SEC2;
+    static const float GRAVITY_ACCEL_FEET_PER_SEC2;
     plSceneObject *fTarget;
 
     hsGMaterial *fTexture;          // One texture per system (Tiling is your friend!)  
@@ -81,9 +81,9 @@ protected:
     double fCurrTime;
     double fLastTime;
     hsVector3 fAccel;
-    hsScalar fPreSim;
-    hsScalar fDrag;
-    hsScalar fWindMult;
+    float fPreSim;
+    float fDrag;
+    float fWindMult;
     bool    fAttachedToAvatar;
 
     uint32_t fMaxTotalParticles;
@@ -113,7 +113,7 @@ protected:
     plParticleSDLMod *fParticleSDLMod;
 
     hsBool IShouldUpdate(plPipeline* pipe) const;
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty); // required by plModifier
+    virtual hsBool IEval(double secs, float del, uint32_t dirty); // required by plModifier
     void IHandleRenderMsg(plPipeline* pipe);
     plDrawInterface* ICheckDrawInterface();
     void IAddEffect(plParticleEffect *effect, uint32_t type);
@@ -152,11 +152,11 @@ public:
     // These are just public wrappers to the equivalent plParticleEmitter functions, provided for the purpose
     // of adding particles to a system explicitly.
     void AddParticle(hsPoint3 &pos, hsVector3 &velocity, uint32_t tileIndex, 
-        hsScalar hSize, hsScalar vSize, hsScalar scale, hsScalar invMass, hsScalar life, 
-        hsPoint3 &orientation, uint32_t miscFlags, hsScalar radsPerSec=0.f);
-    void GenerateParticles(uint32_t num, hsScalar dt = 0.f);
+        float hSize, float vSize, float scale, float invMass, float life, 
+        hsPoint3 &orientation, uint32_t miscFlags, float radsPerSec=0.f);
+    void GenerateParticles(uint32_t num, float dt = 0.f);
     void WipeExistingParticles(); // Instant nuke
-    void KillParticles(hsScalar num, hsScalar timeToDie, uint8_t flags); // Sets a death timer. They'll get removed on the next update (if time has run out)
+    void KillParticles(float num, float timeToDie, uint8_t flags); // Sets a death timer. They'll get removed on the next update (if time has run out)
     uint16_t StealParticlesFrom(plParticleSystem *victim, uint16_t num); // Returns the number of particles actually stolen     
     void TranslateAllParticles(hsPoint3 &amount); // Used to recenter the system when linking between ages. 
     
@@ -168,16 +168,16 @@ public:
     
     const hsMatrix44 &GetLocalToWorld() const;
     void SetAccel(const hsVector3& a) { fAccel = GRAVITY_ACCEL_FEET_PER_SEC2 * a; }
-    void SetGravity(hsScalar pct) { fAccel.Set(0, 0, -GRAVITY_ACCEL_FEET_PER_SEC2 * pct); }
-    void SetDrag(hsScalar d) { fDrag = -d; }
-    void SetWindMult(hsScalar m) { fWindMult = m; }
-    void SetPreSim(hsScalar time) { fPreSim = time; }
-    void UpdateGenerator(uint32_t paramID, hsScalar value);
+    void SetGravity(float pct) { fAccel.Set(0, 0, -GRAVITY_ACCEL_FEET_PER_SEC2 * pct); }
+    void SetDrag(float d) { fDrag = -d; }
+    void SetWindMult(float m) { fWindMult = m; }
+    void SetPreSim(float time) { fPreSim = time; }
+    void UpdateGenerator(uint32_t paramID, float value);
     plParticleGenerator *GetExportedGenerator() const;
     
     const hsVector3& GetAccel() const { return fAccel; }
-    hsScalar GetDrag() const { return fDrag; }
-    hsScalar GetWindMult() const { return fWindMult; }
+    float GetDrag() const { return fDrag; }
+    float GetWindMult() const { return fWindMult; }
     plParticleEffect *GetEffect(uint16_t type) const;
     
     plParticleSDLMod* GetSDLMod() {return fParticleSDLMod;}

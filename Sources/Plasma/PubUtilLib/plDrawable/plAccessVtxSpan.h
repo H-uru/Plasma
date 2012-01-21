@@ -131,8 +131,8 @@ public:
     hsPoint3&       Position(int i) const { return *(hsPoint3*)(fChannels[kPosition] + i*fStrides[kPosition]); }
     hsVector3&      Normal(int i) const { return *(hsVector3*)(fChannels[kNormal] + i*fStrides[kNormal]); }
 
-    hsScalar&       Weight(int iVtx, int iWgt) const { return *(hsScalar*)(fChannels[kWeight] + iVtx*fStrides[kWeight] + iWgt*sizeof(hsScalar)); }
-    hsScalar*       Weights(int i) const { return (hsScalar*)(fChannels[kWeight] + i*fStrides[kWeight]); }
+    float&       Weight(int iVtx, int iWgt) const { return *(float*)(fChannels[kWeight] + iVtx*fStrides[kWeight] + iWgt*sizeof(float)); }
+    float*       Weights(int i) const { return (float*)(fChannels[kWeight] + i*fStrides[kWeight]); }
     uint32_t&         WgtIndices(int i) const { return *(uint32_t*)(fChannels[kWgtIndex] + i * fStrides[kWgtIndex]); }
     uint8_t&          WgtIndex(int iVtx, int iWgt) const { return *(fChannels[kWgtIndex] + iVtx*fStrides[kWgtIndex] + iWgt); }
 
@@ -153,10 +153,10 @@ public:
     hsPoint3&       PositionOff(int i) const { return *(hsPoint3*)(fChannels[kPosition] + i*fStrides[kPosition] + fOffsets[kPosition]); }
     hsVector3&      NormalOff(int i) const { return *(hsVector3*)(fChannels[kNormal] + i*fStrides[kNormal] + fOffsets[kNormal]); }
 
-    hsScalar&       WeightOff(int iVtx, int iWgt) const { return *(hsScalar*)(fChannels[kWeight] + iVtx*fStrides[kWeight] + fOffsets[kWeight] + iWgt*sizeof(hsScalar)); }
-    hsScalar*       WeightsOff(int i) const { return (hsScalar*)(fChannels[kWeight] + i*fStrides[kWeight] + fOffsets[kWeight]); }
-    uint32_t&       WgtIndicesOff(int i) const { return *(uint32_t*)(fChannels[kWgtIndex] + i * fStrides[kWgtIndex] + fOffsets[kWgtIndex]); }
-    uint8_t&        WgtIndexOff(int iVtx, int iWgt) const { return *(fChannels[kWgtIndex] + iVtx*fStrides[kWgtIndex] + fOffsets[kWgtIndex] + iWgt); }
+    float&       WeightOff(int iVtx, int iWgt) const { return *(float*)(fChannels[kWeight] + iVtx*fStrides[kWeight] + fOffsets[kWeight] + iWgt*sizeof(float)); }
+    float*       WeightsOff(int i) const { return (float*)(fChannels[kWeight] + i*fStrides[kWeight] + fOffsets[kWeight]); }
+    uint32_t&    WgtIndicesOff(int i) const { return *(uint32_t*)(fChannels[kWgtIndex] + i * fStrides[kWgtIndex] + fOffsets[kWgtIndex]); }
+    uint8_t&     WgtIndexOff(int iVtx, int iWgt) const { return *(fChannels[kWgtIndex] + iVtx*fStrides[kWgtIndex] + fOffsets[kWgtIndex] + iWgt); }
 
     uint32_t&       Diffuse32Off(int i) const { return *(uint32_t*)(fChannels[kDiffuse] + i*fStrides[kDiffuse] + fOffsets[kDiffuse]); }
     uint32_t&       Specular32Off(int i) const { return *(uint32_t*)(fChannels[kSpecular] + i*fStrides[kSpecular] + fOffsets[kSpecular]); }
@@ -410,7 +410,7 @@ class plAccVertexIterator
 {
 protected:
     plAccIterator<hsPoint3>     fPosition;
-    plAccIterator<hsScalar>     fWeight;
+    plAccIterator<float>     fWeight;
     plAccIterator<uint8_t>        fWgtIndex;
     plAccIterator<hsVector3>    fNormal;
     plAccIterator<uint32_t>       fDiffuse;
@@ -440,8 +440,8 @@ public:
     }
 
     hsPoint3*           Position() const { return fPosition.Value(); }
-    hsScalar*           Weights() const { return fWeight.Value(); }
-    hsScalar*           Weight(int i) const { return fWeight.Value() + i; }
+    float*           Weights() const { return fWeight.Value(); }
+    float*           Weight(int i) const { return fWeight.Value() + i; }
     uint32_t*             WgtIndices() const { return (uint32_t*)(fWgtIndex.Value()); }
     uint8_t*              WgtIndex(int i) const { return fWgtIndex.Value() + i; }
     hsVector3*          Normal() const { return fNormal.Value(); }

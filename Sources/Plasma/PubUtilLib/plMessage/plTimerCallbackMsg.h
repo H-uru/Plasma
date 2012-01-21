@@ -59,7 +59,7 @@ public:
     GETINTERFACE_ANY( plTimerCallbackMsg, plMessage );
     
     uint32_t fID;
-    hsScalar fTime;
+    float fTime;
 
     virtual void Read(hsStream* stream, hsResMgr* mgr)
     {

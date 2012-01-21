@@ -115,7 +115,7 @@ public:
     virtual void    SetPageMargin( uint32_t margin );
     virtual void    AllowPageTurning( bool allow );
 
-    virtual void    SetSize( hsScalar width, hsScalar height );
+    virtual void    SetSize( float width, float height );
 
     virtual void    SetGUI( const char *guiName );
 

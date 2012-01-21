@@ -76,11 +76,11 @@ class plTransitionMgr : public hsKeyedObject
 
         uint8_t       fCurrentEffect;
         hsBool      fRegisteredForTime, fHoldAtEnd, fPlaying, fNoSoundFade;
-        hsScalar    fEffectLength, fCurrOpacity, fOpacDelta;
-        hsScalar    fLastTime;
+        float    fEffectLength, fCurrOpacity, fOpacDelta;
+        float    fLastTime;
 
-        void    IStartFadeIn( hsScalar lengthInSecs, uint8_t effect = kFadeIn );
-        void    IStartFadeOut( hsScalar lengthInSecs, uint8_t effect = kFadeOut );
+        void    IStartFadeIn( float lengthInSecs, uint8_t effect = kFadeIn );
+        void    IStartFadeOut( float lengthInSecs, uint8_t effect = kFadeOut );
 
         void    ICreatePlate( void );
 

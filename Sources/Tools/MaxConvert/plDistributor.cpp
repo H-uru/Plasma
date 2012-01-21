@@ -140,7 +140,7 @@ void plDistributor::IClear()
 
     fPolarRange = 0;
     fTanPolarRange = 0;
-    fAzimuthRange = hsScalarPI;
+    fAzimuthRange = M_PI;
 
     fOverallProb = 1.f;
 
@@ -219,26 +219,26 @@ void plDistributor::ISetAngProbCosines() const
     float maxAng, minAng;
     if( fAngProbHi > fAngProbLo )
     {
-        maxAng = hsScalarDegToRad(fAngProbHi);
-        minAng = hsScalarDegToRad(fAngProbLo);
+        maxAng = hsDegreesToRadians(fAngProbHi);
+        minAng = hsDegreesToRadians(fAngProbLo);
     }
     else
     {
-        maxAng = hsScalarDegToRad(fAngProbLo);
-        minAng = hsScalarDegToRad(fAngProbHi);
+        maxAng = hsDegreesToRadians(fAngProbLo);
+        minAng = hsDegreesToRadians(fAngProbHi);
     }
 
-    float transAng = hsScalarDegToRad(fAngProbTrans);
+    float transAng = hsDegreesToRadians(fAngProbTrans);
     if( transAng > (maxAng - minAng) * 0.5f )
         transAng = (maxAng - minAng) * 0.5f;
 
-    float transAngMax = maxAng < hsScalarPI ? transAng : 0;
+    float transAngMax = maxAng < M_PI ? transAng : 0;
     float transAngMin = minAng > 0 ? transAng : 0;
 
-    fCosAngProbHi = hsCosine(minAng);
-    fCosAngProbLo = hsCosine(maxAng);
-    fCosAngProbHiTrans = hsCosine(minAng + transAngMin);
-    fCosAngProbLoTrans = hsCosine(maxAng - transAngMax);
+    fCosAngProbHi = cos(minAng);
+    fCosAngProbLo = cos(maxAng);
+    fCosAngProbHiTrans = cos(minAng + transAngMin);
+    fCosAngProbLoTrans = cos(maxAng - transAngMax);
 }
 
 BOOL plDistributor::ISetSurfaceNode(INode* surfNode) const
@@ -375,15 +375,15 @@ Box3 plDistributor::ISetupGrid(const Point3& p0, const Point3& p1, const Point3&
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsScalar t = box.Min()[i];
+        float t = box.Min()[i];
         t /= fSpacing;
-        t = hsFloor(t);
+        t = floor(t);
         t *= fSpacing;
         mins[i] = t;
 
         t = box.Max()[i];
         t /= fSpacing;
-        t = hsCeil(t);
+        t = ceil(t);
         t *= fSpacing;
         maxs[i] = t + fSpacing*0.5f;
     }
@@ -643,7 +643,7 @@ hsBool plDistributor::IProbablyDoIt(int iFace, Point3& del, const Point3& bary) 
 
 Point3 plDistributor::IPerpAxis(const Point3& p) const
 {
-    const hsScalar kMinLengthSquared = 1.e-1f;
+    const float kMinLengthSquared = 1.e-1f;
 
     int minAx = p.MinComponent();
     Point3 ax(0,0,0);
@@ -721,7 +721,7 @@ Matrix3 plDistributor::IGenerateTransform(int iRepNode, int iFace, const Point3&
     Point3 rndDir = IPerpAxis(norm);
     Point3 rndOut = rndDir ^ norm;
     rndDir *= fRand.RandMinusOneToOne();
-    float len = hsSquareRoot(1.f - rndDir.LengthSquared());
+    float len = sqrt(1.f - rndDir.LengthSquared());
     rndOut *= len;
     if( fRand.RandMinusOneToOne() < 0 )
         rndOut *= -1.f;
@@ -742,7 +742,7 @@ Matrix3 plDistributor::IGenerateTransform(int iRepNode, int iFace, const Point3&
     Point3 out = dir ^ norm;
     if( out.LengthSquared() < kMinVecLengthSq )
     {
-        if( fAzimuthRange < hsScalarPI * 0.5f )
+        if( fAzimuthRange < M_PI * 0.5f )
         {
             l2w.IdentityMatrix();
             return l2w;
@@ -1311,9 +1311,9 @@ void plDistributor::IDistributeOverFace(int iFace, plDistribInstTab& reps, plMes
 
     Box3 grid = ISetupGrid(p0, p1, p2);
 
-    hsScalar delta = fSpacing;
+    float delta = fSpacing;
 
-    hsScalar x, y, z;
+    float x, y, z;
     for( x = grid.Min().x; x < grid.Max().x; x += delta )
     {
         for( y = grid.Min().y; y < grid.Max().y; y += delta )
@@ -1464,7 +1464,7 @@ void plDistributor::SetRandSeed(int seed)
 
 void plDistributor::SetPolarRange(float deg) 
 { 
-    fPolarRange = hsScalarDegToRad(deg); 
+    fPolarRange = hsDegreesToRadians(deg); 
     fTanPolarRange = tan(fPolarRange); 
 }
 

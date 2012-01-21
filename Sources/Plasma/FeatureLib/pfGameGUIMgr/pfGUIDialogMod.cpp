@@ -117,7 +117,7 @@ pfGUIDialogMod::~pfGUIDialogMod()
 //  Sometimes it just sucks not having access to the pipeline at just the
 //  right time.
 
-void    pfGUIDialogMod::ScreenToWorldPoint( hsScalar x, hsScalar y, hsScalar z, hsPoint3 &outPt )
+void    pfGUIDialogMod::ScreenToWorldPoint( float x, float y, float z, hsPoint3 &outPt )
 {
     plViewTransform view = fRenderMod->GetViewTransform();
     view.SetScreenSize( 1, 1 );
@@ -141,7 +141,7 @@ hsPoint3    pfGUIDialogMod::WorldToScreenPoint( const hsPoint3 &inPt )
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDialogMod::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUIDialogMod::IEval( double secs, float del, uint32_t dirty )
 {
     return false;
 }
@@ -364,7 +364,7 @@ plKey   pfGUIDialogMod::GetSceneNodeKey( void )
 //  Really. We go through and make sure every control marked as interesting
 //  still has the mouse inside it and vice versa.
 
-void    pfGUIDialogMod::UpdateInterestingThings( hsScalar mouseX, hsScalar mouseY, uint8_t modifiers, hsBool modalPreset )
+void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, hsBool modalPreset )
 {
     int         i;
     hsPoint3    mousePoint;
@@ -405,14 +405,14 @@ void    pfGUIDialogMod::UpdateInterestingThings( hsScalar mouseX, hsScalar mouse
 #include "plPipeline/plDebugText.h"
 #endif
 
-hsBool      pfGUIDialogMod::HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY,
+hsBool      pfGUIDialogMod::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
                                                 uint8_t modifiers )
 {
     hsPoint3    mousePoint;
     uint32_t      i;
 
     pfGUIControlMod *oldInterestingCtrl = nil;
-    hsScalar        smallestZ;
+    float        smallestZ;
 
 #ifdef HS_DEBUGGING  // Debugging bounds rects
 static bool     showBounds = false;
@@ -787,7 +787,7 @@ void    pfGUIDialogMod::EnterDragMode( pfGUIControlMod *source )
 void    pfGUIDialogMod::IHandleDrag( hsPoint3 &mousePoint, pfGameGUIMgr::EventType event, uint8_t modifiers )
 {
     int             i;
-    hsScalar        smallestZ;
+    float        smallestZ;
 
 
     // First, see if our target control has changed

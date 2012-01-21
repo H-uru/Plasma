@@ -148,7 +148,7 @@ hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorM
     return false;
 }
 
-hsBool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, hsScalar priority)
+hsBool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, float priority)
 {
     int32_t i, j;
     for (i = 0; i < fCodecTable.Count(); i++)

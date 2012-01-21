@@ -229,8 +229,8 @@ hsBool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
             if (loopName)
             {
                 anim->SetLoop(true);
-                hsScalar loopStart = info.GetLoopStart(loopName);
-                hsScalar loopEnd = info.GetLoopEnd(loopName);
+                float loopStart = info.GetLoopStart(loopName);
+                float loopEnd = info.GetLoopEnd(loopName);
                 anim->SetLoopStart(loopStart == -1 ? anim->GetStart() : loopStart);
                 anim->SetLoopEnd(loopEnd == -1 ? anim->GetEnd() : loopEnd);
             }

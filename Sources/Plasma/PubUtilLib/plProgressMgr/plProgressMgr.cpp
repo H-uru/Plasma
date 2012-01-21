@@ -107,17 +107,17 @@ plProgressMgr::~plProgressMgr()
 
 //// RegisterOperation ///////////////////////////////////////////////////////
 
-plOperationProgress* plProgressMgr::RegisterOperation(hsScalar length, const char *title, StaticText staticTextType, bool isRetry, bool alwaysDrawText)
+plOperationProgress* plProgressMgr::RegisterOperation(float length, const char *title, StaticText staticTextType, bool isRetry, bool alwaysDrawText)
 {
     return IRegisterOperation(length, title, staticTextType, isRetry, false, alwaysDrawText);
 }
 
-plOperationProgress* plProgressMgr::RegisterOverallOperation(hsScalar length, const char *title, StaticText staticTextType, bool alwaysDrawText)
+plOperationProgress* plProgressMgr::RegisterOverallOperation(float length, const char *title, StaticText staticTextType, bool alwaysDrawText)
 {
     return IRegisterOperation(length, title, staticTextType, false, true, alwaysDrawText);
 }
 
-plOperationProgress* plProgressMgr::IRegisterOperation(hsScalar length, const char *title, StaticText staticTextType, bool isRetry, bool isOverall, bool alwaysDrawText)
+plOperationProgress* plProgressMgr::IRegisterOperation(float length, const char *title, StaticText staticTextType, bool isRetry, bool isOverall, bool alwaysDrawText)
 {
     if (fOperations == nil)
     {
@@ -259,7 +259,7 @@ const char*   plProgressMgr::GetStaticTextID(StaticText staticTextType)
 //// plOperationProgress ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-plOperationProgress::plOperationProgress( hsScalar length ) :
+plOperationProgress::plOperationProgress( float length ) :
     fMax(length),
     fValue(0),
     fNext(nil),
@@ -292,10 +292,10 @@ void plOperationProgress::IUpdateStats()
     else
         elapsed = fStartTime - curTime;
 
-    hsScalar progress = GetProgress();
+    float progress = GetProgress();
 
     if (elapsed > 0)
-        fAmtPerSec = progress / hsScalar(elapsed);
+        fAmtPerSec = progress / float(elapsed);
     else
         fAmtPerSec = 0;
     fElapsedSecs = (uint32_t)elapsed;
@@ -328,7 +328,7 @@ void plOperationProgress::IChildUpdateEnd(plOperationProgress* child)
 
 //// Increment ///////////////////////////////////////////////////////////////
 
-void    plOperationProgress::Increment( hsScalar byHowMuch )
+void    plOperationProgress::Increment( float byHowMuch )
 {
     fValue += byHowMuch;
     if( fValue > fMax )
@@ -340,7 +340,7 @@ void    plOperationProgress::Increment( hsScalar byHowMuch )
 
 //// SetHowMuch //////////////////////////////////////////////////////////////
 
-void    plOperationProgress::SetHowMuch( hsScalar howMuch )
+void    plOperationProgress::SetHowMuch( float howMuch )
 {
     fValue = howMuch;
     if( fValue > fMax )
@@ -374,7 +374,7 @@ void    plOperationProgress::SetTitle( const char *text )
 
 //// SetLength ///////////////////////////////////////////////////////////////
 
-void    plOperationProgress::SetLength( hsScalar length )
+void    plOperationProgress::SetLength( float length )
 {
     fMax = length;
     if( fValue > fMax )

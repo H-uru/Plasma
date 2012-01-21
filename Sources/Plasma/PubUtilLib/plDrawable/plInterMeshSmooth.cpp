@@ -237,12 +237,12 @@ hsVector3& plInterMeshSmooth::GetNormal(plSpanHandle& set, uint16_t idx)
     return set.fDrawable->CvtGetNormal(set.fSpanIdx, idx);
 }
 
-void plInterMeshSmooth::SetAngle(hsScalar degs)
+void plInterMeshSmooth::SetAngle(float degs)
 {
-    fMinNormDot = hsCosine(hsScalarDegToRad(degs));
+    fMinNormDot = cos(hsDegreesToRadians(degs));
 }
 
-hsScalar plInterMeshSmooth::GetAngle() const
+float plInterMeshSmooth::GetAngle() const
 {
-    return hsScalarRadToDeg(hsACosine(fMinNormDot));
+    return hsRadiansToDegrees(acos(fMinNormDot));
 }

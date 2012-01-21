@@ -191,7 +191,7 @@ void plAGMasterSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcSta
 
         if (objAGMaster->fIsGrouped && objAGMaster->fMsgForwarder)
         {
-            hsScalar animTimeFromWorldTime = (objAGMaster->GetNumATCAnimations() > 0) ? objAGMaster->GetATCAnimInstance(0)->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) : 0.0f;
+            float animTimeFromWorldTime = (objAGMaster->GetNumATCAnimations() > 0) ? objAGMaster->GetATCAnimInstance(0)->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) : 0.0f;
 
             plAGCmdMsg *msg = TRACKED_NEW plAGCmdMsg();
             msg->SetCmd(plAGCmdMsg::kSetAnimTime);

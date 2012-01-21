@@ -72,7 +72,7 @@ protected:
 
     plPythonSDLModifier* fSDLMod;
 
-    hsBool IEval(double secs, hsScalar del, uint32_t dirty);
+    hsBool IEval(double secs, float del, uint32_t dirty);
 
     void IMakeModuleName(char* modulename,plSceneObject* sobj);
 

@@ -170,7 +170,7 @@ public:
     uint8_t fGroup;
     bool fSynchClients;     // set true if the next synch should be bcast
     hsColorRGBA fSkinTint;
-    hsScalar fSkinBlends[plClothingElement::kLayerSkinLast - plClothingElement::kLayerSkinFirst]; // Controls the opacity between skin textures.
+    float fSkinBlends[plClothingElement::kLayerSkinLast - plClothingElement::kLayerSkinFirst]; // Controls the opacity between skin textures.
 
     plClothingOutfit();
     ~plClothingOutfit();
@@ -181,16 +181,16 @@ public:
     void SaveCustomizations(hsBool retry = true);
     void AddItem(plClothingItem *item, hsBool update = true, hsBool broadcast = true, hsBool netForce=false);
     void RemoveItem(plClothingItem *item, hsBool update = true, hsBool netForce=false);
-    void TintItem(plClothingItem *item, hsScalar red, hsScalar green, hsScalar blue, hsBool update = true, hsBool broadcast = true, 
+    void TintItem(plClothingItem *item, float red, float green, float blue, hsBool update = true, hsBool broadcast = true, 
                   hsBool netForce = false, hsBool retry = true, uint8_t fLayer = plClothingElement::kLayerTint1);
-    void TintSkin(hsScalar red, hsScalar green, hsScalar blue,
+    void TintSkin(float red, float green, float blue,
                   hsBool update = true, hsBool broadcast = true);
-    void MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, hsScalar weight, hsBool retry = true);
-    void SetAge(hsScalar age, hsBool update = true, hsBool broadcast = true);
-    void SetSkinBlend(hsScalar blend, uint8_t layer, hsBool update = true, hsBool broadcast = true);
-    hsScalar GetSkinBlend(uint8_t layer);     
+    void MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight, hsBool retry = true);
+    void SetAge(float age, hsBool update = true, hsBool broadcast = true);
+    void SetSkinBlend(float blend, uint8_t layer, hsBool update = true, hsBool broadcast = true);
+    float GetSkinBlend(uint8_t layer);     
     hsColorRGBA GetItemTint(plClothingItem *item, uint8_t layer = 2) const;
-    hsScalar GetAge() const { return fSkinBlends[0]; }
+    float GetAge() const { return fSkinBlends[0]; }
     hsTArray<plClothingItem*> &GetItemList() { return fItems; }
     hsTArray<plClothingItemOptions*> &GetOptionList() { return fOptions; }
 
@@ -232,7 +232,7 @@ protected:
     void IAddItem(plClothingItem *item);
     void IRemoveItem(plClothingItem *item);
     hsBool ITintItem(plClothingItem *item, hsColorRGBA color, uint8_t layer);
-    hsBool IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, hsScalar weight);
+    hsBool IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight);
     void IHandleMorphSDR(plStateDataRecord *sdr);
         
     void IUpdate();

@@ -98,18 +98,18 @@ public:
     CLASSNAME_REGISTER( plController );
     GETINTERFACE_ANY( plController, plCreatable );
 
-    virtual void Interp(hsScalar time, hsScalar* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(hsScalar time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(hsScalar time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(hsScalar time, hsQuat* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(hsScalar time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(hsScalar time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(hsScalar time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(hsScalar time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, float* result, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const {}
 
     virtual plControllerCacheInfo* CreateCache() const { return nil; } // Caller must handle deleting the pointer.
-    virtual hsScalar GetLength() const = 0;
-    virtual void GetKeyTimes(hsTArray<hsScalar> &keyTimes) const = 0;
+    virtual float GetLength() const = 0;
+    virtual void GetKeyTimes(hsTArray<float> &keyTimes) const = 0;
     virtual hsBool AllKeysMatch() const = 0;
 
     // Checks each of our subcontrollers (if we have any) and deletes any that
@@ -138,16 +138,16 @@ public:
     CLASSNAME_REGISTER( plLeafController );
     GETINTERFACE_ANY( plLeafController, plController );
 
-    void Interp(hsScalar time, hsScalar* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(hsScalar time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(hsScalar time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(hsScalar time, hsQuat* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(hsScalar time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(hsScalar time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(hsScalar time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, float* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const;
 
     virtual plControllerCacheInfo* CreateCache() const;
-    hsScalar GetLength() const;
+    float GetLength() const;
     uint32_t GetStride() const;
 
     hsPoint3Key *GetPoint3Key(uint32_t i) const;
@@ -166,9 +166,9 @@ public:
     uint8_t GetType() const { return fType; }
     uint32_t GetNumKeys() const { return fNumKeys; }
     void *GetKeyBuffer() const { return fKeys; }
-    void GetKeyTimes(hsTArray<hsScalar> &keyTimes) const;
+    void GetKeyTimes(hsTArray<float> &keyTimes) const;
     void AllocKeys(uint32_t n, uint8_t type);
-    void QuickScalarController(int numKeys, hsScalar* times, hsScalar* values, uint32_t valueStrides);
+    void QuickScalarController(int numKeys, float* times, float* values, uint32_t valueStrides);
     hsBool AllKeysMatch() const;
     hsBool PurgeRedundantSubcontrollers();
 
@@ -196,10 +196,10 @@ public:
     CLASSNAME_REGISTER( plCompoundController );
     GETINTERFACE_ANY( plCompoundController, plController );
 
-    void Interp(hsScalar time, hsQuat* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(hsScalar time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(hsScalar time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const;
-    void Interp(hsScalar time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const;
 
     plControllerCacheInfo* CreateCache() const;
     plController *GetXController() const { return fXController; }
@@ -209,8 +209,8 @@ public:
     plController *GetRotController() const { return fYController; }
     plController *GetScaleController() const { return fZController; }
     plController *GetController(int32_t i) const;
-    hsScalar GetLength() const;
-    void GetKeyTimes(hsTArray<hsScalar> &keyTimes) const;
+    float GetLength() const;
+    void GetKeyTimes(hsTArray<float> &keyTimes) const;
     hsBool AllKeysMatch() const;
     hsBool PurgeRedundantSubcontrollers();
 

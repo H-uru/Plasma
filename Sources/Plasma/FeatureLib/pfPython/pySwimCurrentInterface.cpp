@@ -52,7 +52,7 @@ pySwimCurrentInterface::pySwimCurrentInterface(pyKey& key)
     fSwimCurrentKey = key.getKey();
 }
 
-hsScalar pySwimCurrentInterface::getNearDist()
+float pySwimCurrentInterface::getNearDist()
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
@@ -70,7 +70,7 @@ hsScalar pySwimCurrentInterface::getNearDist()
     }
 }
 
-void pySwimCurrentInterface::setNearDist(hsScalar val)
+void pySwimCurrentInterface::setNearDist(float val)
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
@@ -84,7 +84,7 @@ void pySwimCurrentInterface::setNearDist(hsScalar val)
     }
 }
 
-hsScalar pySwimCurrentInterface::getFarDist()
+float pySwimCurrentInterface::getFarDist()
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
@@ -102,7 +102,7 @@ hsScalar pySwimCurrentInterface::getFarDist()
     }
 }
 
-void pySwimCurrentInterface::setFarDist(hsScalar val)
+void pySwimCurrentInterface::setFarDist(float val)
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
@@ -116,7 +116,7 @@ void pySwimCurrentInterface::setFarDist(hsScalar val)
     }
 }
 
-hsScalar pySwimCurrentInterface::getNearVel()
+float pySwimCurrentInterface::getNearVel()
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
@@ -134,7 +134,7 @@ hsScalar pySwimCurrentInterface::getNearVel()
     }
 }
 
-void pySwimCurrentInterface::setNearVel(hsScalar val)
+void pySwimCurrentInterface::setNearVel(float val)
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
@@ -148,7 +148,7 @@ void pySwimCurrentInterface::setNearVel(hsScalar val)
     }
 }
 
-hsScalar pySwimCurrentInterface::getFarVel()
+float pySwimCurrentInterface::getFarVel()
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
@@ -166,7 +166,7 @@ hsScalar pySwimCurrentInterface::getFarVel()
     }
 }
 
-void pySwimCurrentInterface::setFarVel(hsScalar val)
+void pySwimCurrentInterface::setFarVel(float val)
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
@@ -180,7 +180,7 @@ void pySwimCurrentInterface::setFarVel(hsScalar val)
     }
 }
 
-hsScalar pySwimCurrentInterface::getRotation()
+float pySwimCurrentInterface::getRotation()
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 
@@ -194,7 +194,7 @@ hsScalar pySwimCurrentInterface::getRotation()
     }
 }
 
-void pySwimCurrentInterface::setRotation(hsScalar val)
+void pySwimCurrentInterface::setRotation(float val)
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();
 

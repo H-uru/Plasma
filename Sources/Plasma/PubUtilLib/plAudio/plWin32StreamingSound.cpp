@@ -364,7 +364,7 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
     plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s", fDataStream->GetLengthInSecs(), GetKey()->GetUoid().GetObjectName() );
 
     // Get pertinent info
-    SetLength( (hsScalar)fDataStream->GetLengthInSecs() );
+    SetLength( (float)fDataStream->GetLengthInSecs() );
 
     // Set up our deswizzler, if necessary
     delete fDeswizzler;

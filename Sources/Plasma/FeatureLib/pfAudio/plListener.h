@@ -83,12 +83,12 @@ protected:
 
     plVirtualCam1*      fVCam;
 
-    hsScalar            fPosRatio, fFacingRatio, fVelRatio;  // 0 is vCam, 1 is refObject
+    float            fPosRatio, fFacingRatio, fVelRatio;  // 0 is vCam, 1 is refObject
     hsBool              fInitMe;
 
     static hsBool       fPrintDbgInfo;
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
     void            ISetRef( const plKey &ref, hsBool binding, int type );
     void            ICheckAudio( void ) const;
 

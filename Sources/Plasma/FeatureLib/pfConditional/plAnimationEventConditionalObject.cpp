@@ -67,7 +67,7 @@ hsBool plAnimationEventConditionalObject::MsgReceive(plMessage* msg)
 }
     
 
-void plAnimationEventConditionalObject::SetEvent(const CallbackEvent b, hsScalar time)
+void plAnimationEventConditionalObject::SetEvent(const CallbackEvent b, float time)
 {
     plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
     pMsg->AddReceiver(fTarget);

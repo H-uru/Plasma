@@ -502,7 +502,7 @@ void plNotifyMsg::AddContainerEvent( const plKey &container, const plKey &contai
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, hsScalar dot, hsBool enabled )
+void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, float dot, hsBool enabled )
 {
 
     // remove records that are like the one being added
@@ -583,7 +583,7 @@ void plNotifyMsg::AddControlKeyEvent( int32_t key, hsBool down )
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent( const char* name, hsScalar number )
+void plNotifyMsg::AddVariableEvent( const char* name, float number )
 {
     // create the control key event record
     proVariableEventData* pED = TRACKED_NEW proVariableEventData;
@@ -628,7 +628,7 @@ void plNotifyMsg::AddVariableEvent( const char* name, const plKey &key )
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddClickDragEvent( const plKey& dragger, const plKey& dragee, hsScalar animPos )
+void plNotifyMsg::AddClickDragEvent( const plKey& dragger, const plKey& dragee, float animPos )
 {
     // remove records that are like the one being added
     int num_recs = fEvents.GetCount();

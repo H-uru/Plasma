@@ -72,18 +72,18 @@ public:
 protected:
     // Global clamp on shadow map size and stuff
     static uint32_t                   fGlobalMaxSize;
-    static hsScalar                 fGlobalMaxDist;
-    static hsScalar                 fGlobalVisParm;
+    static float                 fGlobalMaxDist;
+    static float                 fGlobalVisParm;
 
     // Constant parameter(s) for this master.
-    hsScalar                        fAttenDist;
-    hsScalar                        fMaxDist;
-    hsScalar                        fMinDist;
+    float                        fAttenDist;
+    float                        fMaxDist;
+    float                        fMinDist;
 
     uint32_t                          fMaxSize;
     uint32_t                          fMinSize;
 
-    hsScalar                        fPower;
+    float                        fPower;
 
     // Temp data used for one frame and recycled.
     hsTArray<plShadowSlave*>        fSlavePool;
@@ -102,11 +102,11 @@ protected:
     virtual void IComputeCasterBounds(const plShadowCaster* caster, hsBounds3Ext& casterBnd);
     virtual void IComputeWidthAndHeight(plShadowCastMsg* castMsg, plShadowSlave* slave) const;
     virtual void IComputeLUT(plShadowCastMsg* castMsg, plShadowSlave* slave) const;
-    virtual hsScalar IComputePower(const plShadowCaster* caster, const hsBounds3Ext& casterBnd) const;
+    virtual float IComputePower(const plShadowCaster* caster, const hsBounds3Ext& casterBnd) const;
 
     virtual plShadowSlave* ILastChanceToBail(plShadowCastMsg* castMsg, plShadowSlave* slave);
 
-    virtual plShadowSlave* ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, hsScalar power);
+    virtual plShadowSlave* ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, float power);
 
     virtual plShadowSlave* INewSlave(const plShadowCaster* caster) = 0;
     virtual plShadowSlave* INextSlave(const plShadowCaster* caster);
@@ -140,29 +140,29 @@ public:
     void Activate() const;
 
     // These should only be useful on scene conversion.
-    hsScalar GetAttenDist() const { return fAttenDist; }
-    void SetAttenDist(hsScalar d) { fAttenDist = d; }
+    float GetAttenDist() const { return fAttenDist; }
+    void SetAttenDist(float d) { fAttenDist = d; }
 
-    hsScalar GetMaxDist() const { return fMaxDist; }
-    hsScalar GetMinDist() const { return fMinDist; }
-    void SetMaxDist(hsScalar m);
+    float GetMaxDist() const { return fMaxDist; }
+    float GetMinDist() const { return fMinDist; }
+    void SetMaxDist(float m);
 
     uint32_t GetMaxSize() const { return fMaxSize; }
     uint32_t GetMinSize() const { return fMinSize; }
     void SetMaxSize(uint32_t s) { fMaxSize = s; }
     void SetMinSize(uint32_t s) { fMinSize = s; }
 
-    hsScalar GetPower() const { return fPower; }
-    void SetPower(hsScalar f) { fPower = f; }
+    float GetPower() const { return fPower; }
+    void SetPower(float f) { fPower = f; }
 
     static void SetGlobalMaxSize(uint32_t s) ;
     static uint32_t GetGlobalMaxSize() { return fGlobalMaxSize; }
 
-    static void SetGlobalMaxDist(hsScalar s) { fGlobalMaxDist = s; }
-    static hsScalar GetGlobalMaxDist() { return fGlobalMaxDist; }
+    static void SetGlobalMaxDist(float s) { fGlobalMaxDist = s; }
+    static float GetGlobalMaxDist() { return fGlobalMaxDist; }
 
-    static void SetGlobalShadowQuality(hsScalar s);
-    static hsScalar GetGlobalShadowQuality() { return fGlobalVisParm; }
+    static void SetGlobalShadowQuality(float s);
+    static float GetGlobalShadowQuality() { return fGlobalVisParm; }
 };
 
 

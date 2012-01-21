@@ -77,7 +77,7 @@ class plPlate
         hsMatrix44      fXformMatrix;
         hsGMaterial     *fMaterial;
         plMipmap        *fMipmap;
-        hsScalar        fDepth, fOpacity;
+        float        fDepth, fOpacity;
         uint32_t          fFlags;
         char            fTitle[ 64 ];
 
@@ -131,16 +131,16 @@ class plPlate
         void    SetVisible( hsBool vis ) { if( vis ) fFlags |= kFlagVisible; else fFlags &= ~kFlagVisible; }
         hsBool  IsVisible( void );
 
-        void    SetOpacity( hsScalar opacity = 1.f );
+        void    SetOpacity( float opacity = 1.f );
 
         plPlate *GetNext( void ) { return fNext; }
 
 
         /// Helper functions
         
-        void    SetDepth( hsScalar depth) { fDepth = depth; }
-        void    SetPosition( hsScalar x, hsScalar y, hsScalar z = -1.0f );
-        void    SetSize( hsScalar width, hsScalar height, bool adjustByAspectRatio = false );
+        void    SetDepth( float depth) { fDepth = depth; }
+        void    SetPosition( float x, float y, float z = -1.0f );
+        void    SetSize( float width, float height, bool adjustByAspectRatio = false );
 
         plMipmap        *CreateMaterial( uint32_t width, uint32_t height, hsBool withAlpha, plMipmap* texture = NULL );
         void            CreateFromResource( const char *resName );
@@ -227,8 +227,8 @@ class plPlateManager
         static bool InstanceValid( void ) { return fInstance != nil; }
 
         void        CreatePlate( plPlate **handle );
-        void        CreatePlate( plPlate **handle, hsScalar width, hsScalar height );
-        void        CreatePlate( plPlate **handle, hsScalar x, hsScalar y, hsScalar width, hsScalar height );
+        void        CreatePlate( plPlate **handle, float width, float height );
+        void        CreatePlate( plPlate **handle, float x, float y, float width, float height );
 
         void        CreateGraphPlate( plGraphPlate **handle );
 

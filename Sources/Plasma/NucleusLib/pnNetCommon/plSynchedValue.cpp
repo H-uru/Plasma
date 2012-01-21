@@ -70,7 +70,7 @@ hsBitVector plSynchedValueBase::ISaveOrLoad(hsBitVector& v, hsBool32 save, hsStr
     return v;
 }
 
-hsScalar plSynchedValueBase::ISaveOrLoad(hsScalar v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
+float plSynchedValueBase::ISaveOrLoad(float v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
     ISaveOrLoadSimpleType();
 
 double plSynchedValueBase::ISaveOrLoad(double v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 

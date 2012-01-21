@@ -64,7 +64,7 @@ public:
     static bool IsPointInsideHull(hsPlane3* hull, int nPlanes, const hsPoint3& pos);
     static inline bool ITestPlane(const hsPoint3 &pos, const hsPlane3 &plane)
     {
-        hsScalar dis = plane.fN.InnerProduct(pos);
+        float dis = plane.fN.InnerProduct(pos);
         dis += plane.fD;
         if( dis > 0.f ) 
             return false;   

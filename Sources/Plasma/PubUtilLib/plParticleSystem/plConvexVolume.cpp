@@ -138,10 +138,10 @@ hsBool plConvexVolume::IsInside(const hsPoint3 &pos) const
 
 hsBool plConvexVolume::ResolvePoint(hsPoint3 &pos) const
 {
-    hsScalar minDist = 1.e33f;
+    float minDist = 1.e33f;
     int32_t minIndex = -1;
 
-    hsScalar currDist;
+    float currDist;
     int i;
     for (i = 0; i < fNumPlanes; i++)
     {
@@ -159,12 +159,12 @@ hsBool plConvexVolume::ResolvePoint(hsPoint3 &pos) const
     return true;
 }
 
-hsBool plConvexVolume::BouncePoint(hsPoint3 &pos, hsVector3 &velocity, hsScalar bounce, hsScalar friction) const
+hsBool plConvexVolume::BouncePoint(hsPoint3 &pos, hsVector3 &velocity, float bounce, float friction) const
 {
-    hsScalar minDist = 1.e33f;
+    float minDist = 1.e33f;
     int32_t minIndex = -1;
 
-    hsScalar currDist;
+    float currDist;
     int i;
     for (i = 0; i < fNumPlanes; i++)
     {

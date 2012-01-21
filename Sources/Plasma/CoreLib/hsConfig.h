@@ -52,9 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //////////////////// Change the 1s and 0s //////////////////////
 
-#define HS_CAN_USE_FLOAT            1
-#define HS_SCALAR_IS_FLOAT          1
-
 #define HS_PIN_MATH_OVERFLOW        0       // This forces hsWide versions of FixMath routines
 #define HS_DEBUG_MATH_OVERFLOW      0       // This calls hsDebugMessage on k[Pos,Neg]Infinity
 
@@ -66,13 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #define HS_BUILD_FOR_WIN32          1
 #elif defined(__unix__)
     #define HS_BUILD_FOR_UNIX           1
-#endif
-
-#define HS_SCALAR_IS_FIXED          !(HS_SCALAR_IS_FLOAT)
-#define HS_NEVER_USE_FLOAT          !(HS_CAN_USE_FLOAT)
-
-#if HS_DEBUG_MATH_OVERFLOW && !(HS_PIN_MATH_OVERFLOW)
-    #error "Can't debug overflow unless HS_PIN_MATH_OVERFLOW is ON"
 #endif
 
 

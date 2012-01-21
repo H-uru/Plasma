@@ -54,7 +54,7 @@ protected:
 
     hsTArray<plBitmap *>    fImages;
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
 
 public:
     plImageLibMod();

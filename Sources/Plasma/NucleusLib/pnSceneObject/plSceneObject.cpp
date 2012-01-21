@@ -389,7 +389,7 @@ hsBool plSceneObject::IPropagateToModifiers(plMessage* msg)
     return retVal;
 }
 
-hsBool plSceneObject::Eval(double secs, hsScalar delSecs)
+hsBool plSceneObject::Eval(double secs, float delSecs)
 {
     uint32_t dirty = ~0L;
     hsBool retVal = false;

@@ -79,22 +79,22 @@ public:
     const hsMatrix44 &GetLocalToWorld() const;
 
     void AddParticle(hsPoint3 &pos, hsVector3 &velocity, uint32_t tileIndex, 
-                     hsScalar hSize, hsScalar vSize, hsScalar scale, hsScalar invMass, hsScalar life,
-                     hsPoint3 &orientation, uint32_t miscFlags, hsScalar radsPerSec=0);
+                     float hSize, float vSize, float scale, float invMass, float life,
+                     hsPoint3 &orientation, uint32_t miscFlags, float radsPerSec=0);
     void WipeExistingParticles();
-    void KillParticles(hsScalar num, hsScalar timeToDie, uint8_t flags);  
+    void KillParticles(float num, float timeToDie, uint8_t flags);  
     uint16_t StealParticlesFrom(plParticleEmitter *victim, uint16_t num); // returns the number actually stolen
     void TranslateAllParticles(hsPoint3 &amount); // Used to recenter the system when linking between ages. 
-    void UpdateGenerator(uint32_t paramID, hsScalar paramValue);
+    void UpdateGenerator(uint32_t paramID, float paramValue);
 
     static uint32_t CreateHexColor(const hsColorRGBA &color);
-    static uint32_t CreateHexColor(const hsScalar r, const hsScalar g, const hsScalar b, const hsScalar a);
+    static uint32_t CreateHexColor(const float r, const float g, const float b, const float a);
 
     void OverrideLocalToWorld(const hsMatrix44& l2w);
     void UnOverrideLocalToWorld() { fMiscFlags &= ~kOverrideLocalToWorld; }
     hsBool LocalToWorldOverridden() const { return 0 != (fMiscFlags & kOverrideLocalToWorld); }
-    void SetTimeToLive(hsScalar dt) { fTimeToLive = dt; }
-    hsScalar GetTimeToLive() const { return fTimeToLive; } // 0 time to live is never turn off.
+    void SetTimeToLive(float dt) { fTimeToLive = dt; }
+    float GetTimeToLive() const { return fTimeToLive; } // 0 time to live is never turn off.
 
     CLASSNAME_REGISTER( plParticleEmitter );
     GETINTERFACE_ANY( plParticleEmitter, plCreatable);
@@ -145,14 +145,14 @@ protected:
     hsColorRGBA fColor;
 
     hsMatrix44 fLocalToWorld;
-    hsScalar fTimeToLive;
+    float fTimeToLive;
 
     void IClear();
     void ISetupParticleMem();
     void ISetSystem(plParticleSystem *sys) { fSystem = sys; }
-    hsBool IUpdate(hsScalar delta);
-    void IUpdateParticles(hsScalar delta);
-    void IUpdateBoundsAndNormals(hsScalar delta);
+    hsBool IUpdate(float delta);
+    void IUpdateParticles(float delta);
+    void IUpdateBoundsAndNormals(float delta);
     void IRemoveParticle(uint32_t index);
 };
 

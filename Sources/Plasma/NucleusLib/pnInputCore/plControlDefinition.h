@@ -132,7 +132,7 @@ struct plMouseInfo
         fBox = _box;
         fControlDescription = _desc;
     }
-    plMouseInfo(ControlEventCode _code, uint32_t _flags, hsScalar pt1, hsScalar pt2, hsScalar pt3, hsScalar pt4, char* _desc)
+    plMouseInfo(ControlEventCode _code, uint32_t _flags, float pt1, float pt2, float pt3, float pt4, char* _desc)
     {
         fCode = _code;
         fControlFlags = _flags;

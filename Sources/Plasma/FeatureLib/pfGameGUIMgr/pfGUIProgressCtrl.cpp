@@ -83,7 +83,7 @@ pfGUIProgressCtrl::~pfGUIProgressCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIProgressCtrl::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUIProgressCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
@@ -163,7 +163,7 @@ hsBool  pfGUIProgressCtrl::ICalcAnimTimes( void )
     if( fAnimTimesCalced )
         return true;
 
-    hsScalar tBegin = 1e30, tEnd = -1e30;
+    float tBegin = 1e30, tEnd = -1e30;
     bool     foundOne = false;
 
     for( int i = 0; i < fAnimationKeys.GetCount(); i++ )
@@ -174,8 +174,8 @@ hsBool  pfGUIProgressCtrl::ICalcAnimTimes( void )
         {
             for( int j = 0; j < mod->GetNumAnimations(); j++ )
             {
-                hsScalar begin = mod->GetAnimInstance( j )->GetTimeConvert()->GetBegin();
-                hsScalar end = mod->GetAnimInstance( j )->GetTimeConvert()->GetEnd();
+                float begin = mod->GetAnimInstance( j )->GetTimeConvert()->GetBegin();
+                float end = mod->GetAnimInstance( j )->GetTimeConvert()->GetEnd();
                 if( begin < tBegin )
                     tBegin = begin;
                 if( end > tEnd )
@@ -187,8 +187,8 @@ hsBool  pfGUIProgressCtrl::ICalcAnimTimes( void )
         plLayerAnimation *layer = plLayerAnimation::ConvertNoRef( fAnimationKeys[ i ]->ObjectIsLoaded() );
         if( layer != nil )
         {
-            hsScalar begin = layer->GetTimeConvert().GetBegin();
-            hsScalar end = layer->GetTimeConvert().GetEnd();
+            float begin = layer->GetTimeConvert().GetBegin();
+            float end = layer->GetTimeConvert().GetEnd();
             if( begin < tBegin )
                 tBegin = begin;
             if( end > tEnd )
@@ -210,7 +210,7 @@ hsBool  pfGUIProgressCtrl::ICalcAnimTimes( void )
 
 //// SetCurrValue ////////////////////////////////////////////////////////////
 
-void    pfGUIProgressCtrl::SetCurrValue( hsScalar v )
+void    pfGUIProgressCtrl::SetCurrValue( float v )
 {
     int old = (int)fValue;
 
@@ -223,8 +223,8 @@ void    pfGUIProgressCtrl::SetCurrValue( hsScalar v )
     {
         ICalcAnimTimes();
 
-        hsScalar tLength = fAnimEnd - fAnimBegin;
-        hsScalar newTime;
+        float tLength = fAnimEnd - fAnimBegin;
+        float newTime;
 
         if( HasFlag( kReverseValues ) )
             newTime = ( ( fMax - fValue ) / ( fMax - fMin ) ) * tLength + fAnimBegin;
@@ -240,7 +240,7 @@ void    pfGUIProgressCtrl::SetCurrValue( hsScalar v )
     }
 }
 
-void pfGUIProgressCtrl::AnimateToPercentage( hsScalar percent )
+void pfGUIProgressCtrl::AnimateToPercentage( float percent )
 {
     // percent should be a value in range 0.0 to 1.0
     if (percent >= 0.0f && percent <= 1.0f)
@@ -262,7 +262,7 @@ void pfGUIProgressCtrl::AnimateToPercentage( hsScalar percent )
                 PlaySound(kAnimateSound, true);
 
                 // setup a timer to call back when we finish animating
-                hsScalar elapsedTime = (fAnimEnd - fAnimBegin) * percent;
+                float elapsedTime = (fAnimEnd - fAnimBegin) * percent;
                 plTimerCallbackMsg *timerMsg = TRACKED_NEW plTimerCallbackMsg(GetKey(), fStopSoundTimer);
                 plgTimerCallbackMgr::NewTimer(elapsedTime, timerMsg);
             }

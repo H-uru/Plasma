@@ -735,9 +735,9 @@ hsBool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         plAnimInfo info = noteAnim.GetAnimInfo(animName);
         ATCAnim->SetAutoStart(fCompPB->GetInt(kAnimAutoStart));
 
-        hsScalar start = info.GetAnimStart();
-        hsScalar end = info.GetAnimEnd();
-        hsScalar initial = info.GetAnimInitial();
+        float start = info.GetAnimStart();
+        float end = info.GetAnimEnd();
+        float initial = info.GetAnimInitial();
         if (start != -1)
             ATCAnim->SetStart(start);
         if (end != -1)
@@ -749,8 +749,8 @@ hsBool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         {
             ATCAnim->SetLoop(true);
             const char *loopName = fCompPB->GetStr(kAnimLoopName);
-            hsScalar loopStart = info.GetLoopStart(loopName);
-            hsScalar loopEnd = info.GetLoopEnd(loopName);
+            float loopStart = info.GetLoopStart(loopName);
+            float loopEnd = info.GetLoopEnd(loopName);
 
             ATCAnim->SetLoopStart(loopStart == -1 ? ATCAnim->GetStart() : loopStart);
             ATCAnim->SetLoopEnd(loopEnd == -1 ? ATCAnim->GetEnd() : loopEnd);

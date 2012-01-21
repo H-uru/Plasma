@@ -184,7 +184,7 @@ void plArmatureModBase::RemoveTarget(plSceneObject* so)
     plAGMasterMod::RemoveTarget(so);
 }
 
-hsBool plArmatureModBase::IEval(double time, hsScalar elapsed, uint32_t dirty)
+hsBool plArmatureModBase::IEval(double time, float elapsed, uint32_t dirty)
 {
     if (IsFinal())
     {
@@ -436,7 +436,7 @@ void plArmatureModBase::AdjustLOD()
         hsMatrix44  l2w = SO->GetLocalToWorld();
         hsPoint3 ourPos = l2w.GetTranslate();
         hsPoint3 delta = ourPos - camPos;
-        hsScalar distanceSquared = delta.MagnitudeSquared();
+        float distanceSquared = delta.MagnitudeSquared();
         if (distanceSquared < fLODDistance * fLODDistance)
             SetLOD(__max(0, fMinLOD));
         else if (distanceSquared < fLODDistance * fLODDistance * 4.0) 
@@ -628,8 +628,8 @@ void plArmatureModBase::IEnableBones(int lod, hsBool enable)
 
 const char *plArmatureMod::BoneStrings[] = {"Male", "Female", "Critter", "Actor"};
 
-const hsScalar plArmatureMod::kAvatarInputSynchThreshold = 10.f;
-hsScalar plArmatureMod::fMouseTurnSensitivity = 1.f;
+const float plArmatureMod::kAvatarInputSynchThreshold = 10.f;
+float plArmatureMod::fMouseTurnSensitivity = 1.f;
 hsBool plArmatureMod::fClickToTurn = true;
 
 void plArmatureMod::IInitDefaults()
@@ -1548,7 +1548,7 @@ void plArmatureMod::ILinkToPersonalAge()
     pMsg->Send();   
 }
 
-hsBool plArmatureMod::IEval(double time, hsScalar elapsed, uint32_t dirty)
+hsBool plArmatureMod::IEval(double time, float elapsed, uint32_t dirty)
 {
     if (IsFinal())
     {
@@ -2285,12 +2285,12 @@ void plArmatureMod::SetJumpKeyDown()
     SetInputFlag(B_CONTROL_JUMP, true);
 }
 
-hsScalar plArmatureMod::GetTurnStrength() const
+float plArmatureMod::GetTurnStrength() const
 {
     return GetKeyTurnStrength() + GetAnalogTurnStrength();
 }
 
-hsScalar plArmatureMod::GetKeyTurnStrength() const
+float plArmatureMod::GetKeyTurnStrength() const
 {
     if (StrafeKeyDown())
         return 0.f; 
@@ -2298,12 +2298,12 @@ hsScalar plArmatureMod::GetKeyTurnStrength() const
     return (TurnLeftKeyDown() ? 1.f : 0.f) + (TurnRightKeyDown() ? -1.f: 0.f);
 }
 
-hsScalar plArmatureMod::GetAnalogTurnStrength() const
+float plArmatureMod::GetAnalogTurnStrength() const
 {
     if (StrafeKeyDown())
         return 0.f;
 
-    hsScalar elapsed = hsTimer::GetDelSysSeconds();
+    float elapsed = hsTimer::GetDelSysSeconds();
     if (elapsed > 0)
         return fMouseFrameTurnStrength / elapsed;
     else
@@ -2425,7 +2425,7 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
     for (i = 0; i < markers.size(); i++)
     {
         
-        hsScalar time = -1;
+        float time = -1;
         hsBool isLeft = false;
         if (strstr(markers[i], "SndLeftFootDown") == markers[i])
         {

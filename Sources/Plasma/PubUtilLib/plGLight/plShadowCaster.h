@@ -87,12 +87,12 @@ protected:
     // to be network synced.
     uint8_t               fCastFlags;
 
-    hsScalar            fBoost;
-    hsScalar            fAttenScale;
-    hsScalar            fBlurScale;
+    float            fBoost;
+    float            fAttenScale;
+    float            fBlurScale;
 
     // Casting attributes calculated each frame.
-    hsScalar            fMaxOpacity;
+    float            fMaxOpacity;
     hsTArray<DrawSpan>  fSpans;
 
     friend class plShadowMaster;
@@ -110,14 +110,14 @@ public:
     CLASSNAME_REGISTER( plShadowCaster );
     GETINTERFACE_ANY( plShadowCaster, plMultiModifier );
     
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return true; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     virtual hsBool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    hsScalar MaxOpacity() const { return fMaxOpacity; }
+    float MaxOpacity() const { return fMaxOpacity; }
     const hsTArray<DrawSpan>& Spans() const { return fSpans; }
 
     hsBool  GetSelfShadow() const { return 0 != (fCastFlags & kSelfShadow); }
@@ -129,14 +129,14 @@ public:
     hsBool  GetLimitRes() const { return 0 != (fCastFlags & kLimitRes); }
     void    SetLimitRes(hsBool on) { if(on) fCastFlags |= kLimitRes; else fCastFlags &= ~kLimitRes; }
 
-    hsScalar GetAttenScale() const { return fAttenScale; }
-    void SetAttenScale(hsScalar s) { fAttenScale = s; }
+    float GetAttenScale() const { return fAttenScale; }
+    void SetAttenScale(float s) { fAttenScale = s; }
 
-    hsScalar GetBlurScale() const { return fBlurScale; }
-    void SetBlurScale(hsScalar s) { fBlurScale = s; }
+    float GetBlurScale() const { return fBlurScale; }
+    void SetBlurScale(float s) { fBlurScale = s; }
 
-    hsScalar GetBoost() const { return fBoost; }
-    void SetBoost(hsScalar s) { fBoost = s; }
+    float GetBoost() const { return fBoost; }
+    void SetBoost(float s) { fBoost = s; }
 
     // These are usually handled internally, activating on read and deactivating
     // on destruct. Made public in case they need to be manually handled, like

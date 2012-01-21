@@ -282,9 +282,9 @@ public:
                 }
         fType;
     int fWhichStage;                // used only by goto stage
-    hsScalar fTransitionTime;       // for crossfade between stages
+    float fTransitionTime;       // for crossfade between stages
     hsBool fSetTime;
-    hsScalar fNewTime;
+    float fNewTime;
     hsBool fSetDirection;
     hsBool fNewDirection;
     int fNewLoopCount;
@@ -293,7 +293,7 @@ public:
 
     //! Older constructor version, allowing simple rewinding only
     plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                        Type type, int stage, hsBool rewind, hsScalar transitionTime);
+                        Type type, int stage, hsBool rewind, float transitionTime);
 
     /** Canonical constructor, allowing full control over time and direction of new stage.
         \param sender Message sender
@@ -307,8 +307,8 @@ public:
         \param transitionTime Time in seconds to transition between stages.
     */  
     plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                        Type type, int stage, hsBool setTime, hsScalar newTime,
-                        hsBool setDirection, bool isForward, hsScalar transitiontime);
+                        Type type, int stage, hsBool setTime, float newTime,
+                        hsBool setDirection, bool isForward, float transitiontime);
     
     /** Constructor for setting the loop count in a particular stage.
         \param sender The sender of this message.
@@ -419,7 +419,7 @@ class plAvatarOpacityCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarOpacityCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarOpacityCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, int16_t repeats=-1, uint16_t user=0) :
+    plAvatarOpacityCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                                plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarOpacityCallbackMsg );
@@ -449,7 +449,7 @@ class plAvatarPhysicsEnableCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarPhysicsEnableCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarPhysicsEnableCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, int16_t repeats=-1, uint16_t user=0) :
+    plAvatarPhysicsEnableCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                                      plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarPhysicsEnableCallbackMsg );

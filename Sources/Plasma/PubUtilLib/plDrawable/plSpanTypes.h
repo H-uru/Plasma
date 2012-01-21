@@ -137,10 +137,10 @@ class plSpan
         plFogEnvironment    *fFogEnvironment;
 
         // Use setter/getters below.
-        hsScalar            fMinDist;
-        hsScalar            fMaxDist;
+        float            fMinDist;
+        float            fMaxDist;
 
-        hsScalar            fWaterHeight;
+        float            fWaterHeight;
 
         hsBitVector         fVisSet;
         hsBitVector         fVisNot;
@@ -149,11 +149,11 @@ class plSpan
 
 //      mutable hsBitVector                 fLightBits;
         mutable hsTArray<plLightInfo*>      fLights;
-        mutable hsTArray<hsScalar>          fLightStrengths;
-        mutable hsTArray<hsScalar>          fLightScales;
+        mutable hsTArray<float>          fLightStrengths;
+        mutable hsTArray<float>          fLightScales;
         mutable hsTArray<plLightInfo*>      fProjectors;
-        mutable hsTArray<hsScalar>          fProjStrengths;
-        mutable hsTArray<hsScalar>          fProjScales;
+        mutable hsTArray<float>          fProjStrengths;
+        mutable hsTArray<float>          fProjScales;
 
         mutable hsBitVector                 fShadowBits;
         mutable hsBitVector                 fShadowSlaveBits;
@@ -177,14 +177,14 @@ class plSpan
         hsBool          IsShadowBitSet(uint32_t idx) const { return fShadowBits.IsBitSet(idx); }
         void            ClearLights() const;
 
-        void            AddLight( plLightInfo* li, hsScalar strength, hsScalar scale, hsBool proj ) const;
+        void            AddLight( plLightInfo* li, float strength, float scale, hsBool proj ) const;
 
         hsTArray<plLightInfo*>& GetLightList(hsBool proj) const { return proj ? fProjectors : fLights; }
 
         uint32_t          GetNumLights(hsBool proj) const { return proj ? fProjectors.GetCount() : fLights.GetCount(); }
         plLightInfo*    GetLight(int i, hsBool proj) const { return proj ? fProjectors[i] : fLights[i]; }
-        hsScalar        GetLightStrength(int i, hsBool proj) const { return proj ? fProjStrengths[i] : fLightStrengths[i]; }
-        hsScalar        GetLightScale(int i, hsBool proj) const { return proj ? fProjScales[i] : fLightScales[i]; }
+        float        GetLightStrength(int i, hsBool proj) const { return proj ? fProjStrengths[i] : fLightStrengths[i]; }
+        float        GetLightScale(int i, hsBool proj) const { return proj ? fProjScales[i] : fLightScales[i]; }
         
         void            AddPermaLight(plLightInfo* li, hsBool proj);
         void            RemovePermaLight(plLightInfo* li, hsBool proj);
@@ -206,10 +206,10 @@ class plSpan
         virtual void    MergeInto( plSpan* other );
         virtual void    Destroy( void );
 
-        void            SetMinDist(hsScalar minDist) { fMinDist = minDist; }
-        void            SetMaxDist(hsScalar maxDist) { fMaxDist = maxDist; }
-        hsScalar        GetMinDist() const { return fMinDist; }
-        hsScalar        GetMaxDist() const { return fMaxDist; }
+        void            SetMinDist(float minDist) { fMinDist = minDist; }
+        void            SetMaxDist(float maxDist) { fMaxDist = maxDist; }
+        float        GetMinDist() const { return fMinDist; }
+        float        GetMaxDist() const { return fMaxDist; }
 };
 
 //// plVertexSpan Definition

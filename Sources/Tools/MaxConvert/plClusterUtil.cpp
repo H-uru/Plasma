@@ -85,7 +85,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plConst(int) kDefMinFaces(200);
 plConst(int) kDefMaxFaces(1000);
-plConst(hsScalar) kDefMinSize(50.f);
+plConst(float) kDefMinSize(50.f);
 
 plClusterUtil::plClusterUtil()
 :   fGroup(nil),
@@ -159,11 +159,11 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
     }
     if( templ->HasFade() )
     {
-        hsScalar maxDist = 0;
-        hsScalar minDist = 0;
+        float maxDist = 0;
+        float minDist = 0;
 
         Box3 fade = templ->GetFade();
-        const hsScalar kMaxMaxDist = 1.e10f;
+        const float kMaxMaxDist = 1.e10f;
         if( fade.Min()[2] < 0 )
         {
             minDist = fade.Min()[0];
@@ -197,10 +197,10 @@ public:
     uint16_t          fIdx0;
     uint16_t          fIdx1;
     uint16_t          fIdx2;
-    hsScalar        fDist;
+    float        fDist;
 
     sortData() {}
-    sortData(uint16_t idx0, uint16_t idx1, uint16_t idx2, hsScalar dist)
+    sortData(uint16_t idx0, uint16_t idx1, uint16_t idx2, float dist)
         : fIdx0(idx0), fIdx1(idx1), fIdx2(idx2), fDist(dist)
     {
     }
@@ -520,19 +520,19 @@ void plClusterUtil::IFreeClustersRecur(plL2WTabTab& dst) const
         delete dst[i];
 }
 
-inline hsScalar inlGetAlpha(uint32_t* color)
+inline float inlGetAlpha(uint32_t* color)
 {
-    return hsScalar(*color >> 24) / 255.99f;
+    return float(*color >> 24) / 255.99f;
 }
 
 plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColorTabTab& colorsTab)
 {
     hsBool hasColor = false;
     hsBool hasAlpha = false;
-    hsScalar maxLenSq = 0;
-    hsScalar maxX = 0;
-    hsScalar maxY = 0;
-    hsScalar maxZ = 0;
+    float maxLenSq = 0;
+    float maxX = 0;
+    float maxY = 0;
+    float maxZ = 0;
     int i;
     for( i = 0; i < delPosTab.Count(); i++ )
     {
@@ -542,10 +542,10 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
             plPoint3Tab& delPos = *delPosTab[i];
             for( j = 0; j < delPos.Count(); j++ )
             {
-                hsScalar lenSq = delPos[j].MagnitudeSquared();
+                float lenSq = delPos[j].MagnitudeSquared();
                 if( lenSq > maxLenSq )
                     maxLenSq = lenSq;
-                hsScalar d = fabs(delPos[j].fX);
+                float d = fabs(delPos[j].fX);
                 if( d > maxX )
                     maxX = d;
                 d = fabs(delPos[j].fY);
@@ -573,7 +573,7 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
     }
 
     uint32_t code = 0;
-    hsScalar posScale = 1.f;
+    float posScale = 1.f;
 
     if( hasColor && hasAlpha )
         code |= plSpanEncoding::kColAI88;
@@ -582,8 +582,8 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
     else if( hasAlpha )
         code |= plSpanEncoding::kColA8;
 
-    plConst(hsScalar) kPosQuantum(0.5 / 12.f); // 1/2 inch.
-    hsScalar maxLen = hsSquareRoot(maxLenSq);
+    plConst(float) kPosQuantum(0.5 / 12.f); // 1/2 inch.
+    float maxLen = sqrt(maxLenSq);
     if( maxLen > kPosQuantum )
     {
         if( (maxX < kPosQuantum) && (maxY < kPosQuantum) )
@@ -596,15 +596,15 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
             code |= plSpanEncoding::kPos888;
             posScale = maxLen / 255.9f;
         }
-        else if( (maxLen / hsScalar(1 << 10)) < kPosQuantum )
+        else if( (maxLen / float(1 << 10)) < kPosQuantum )
         {
             code |= plSpanEncoding::kPos101010;
-            posScale = maxLen / hsScalar(1 << 10);
+            posScale = maxLen / float(1 << 10);
         }
         else
         {
             code |= plSpanEncoding::kPos161616;
-            posScale = maxLen / hsScalar(1 << 16);
+            posScale = maxLen / float(1 << 16);
         }
     }
     return plSpanEncoding(code, posScale);
@@ -615,8 +615,8 @@ static int CompTemplates(const void *elem1, const void *elem2)
     plSpanTemplateB* templA = *((plSpanTemplateB**)elem1);
     plSpanTemplateB* templB = *((plSpanTemplateB**)elem2);
 
-    hsScalar hA = templA->GetLocalBounds().GetMaxs().fZ;
-    hsScalar hB = templB->GetLocalBounds().GetMaxs().fZ;
+    float hA = templA->GetLocalBounds().GetMaxs().fZ;
+    float hB = templB->GetLocalBounds().GetMaxs().fZ;
 
     if( hA < hB )
         return -1;

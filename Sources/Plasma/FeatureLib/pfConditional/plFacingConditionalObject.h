@@ -50,7 +50,7 @@ class plSceneObject;
 class plFacingConditionalObject : public plConditionalObject
 {
 protected:
-    hsScalar            fTolerance;
+    float            fTolerance;
     hsBool              fDirectional;
 
 public:
@@ -63,7 +63,7 @@ public:
     
     hsBool MsgReceive(plMessage* msg);
 
-    void SetTolerance(hsScalar d) { fTolerance = d; }
+    void SetTolerance(float d) { fTolerance = d; }
     void SetDirectional(hsBool d) { fDirectional = d; }
 
     virtual hsBool Verify(plMessage* msg);

@@ -164,7 +164,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define MSG_LOADING_BAR
 
-// static hsVector3 gAbsDown(0,0,-hsScalar1);
+// static hsVector3 gAbsDown(0,0,-1.f);
 
 static plDispatchBase* gDisp = nil;
 static plTimerCallbackManager* gTimerMgr = nil;
@@ -571,7 +571,7 @@ hsBool plClient::InitPipeline()
 
     float   yon = 500.0f;
 
-    pipe->SetFOV( 60.f, hsIntToScalar( 60.f * pipe->Height() / pipe->Width() ) );
+    pipe->SetFOV( 60.f, int32_t( 60.f * pipe->Height() / pipe->Width() ) );
     pipe->SetDepth( 0.3f, yon );
 
     hsMatrix44 id;
@@ -1296,7 +1296,7 @@ void plClient::IProgressMgrCallbackProc(plOperationProgress * progress)
 }
 
 //============================================================================
-void plClient::IIncProgress (hsScalar byHowMuch, const char * text)
+void plClient::IIncProgress (float byHowMuch, const char * text)
 {
     if (fProgressBar) {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1307,7 +1307,7 @@ void plClient::IIncProgress (hsScalar byHowMuch, const char * text)
 }
 
 //============================================================================
-void    plClient::IStartProgress( const char *title, hsScalar len )
+void    plClient::IStartProgress( const char *title, float len )
 {
     if (fProgressBar)
     {
@@ -1519,7 +1519,7 @@ hsBool plClient::StartInit()
 
     plgAudioSys::Activate(true);
 
-    plConst(hsScalar) delay(2.f);
+    plConst(float) delay(2.f);
     //commenting out publisher splash for MORE
     //IPlayIntroBink("avi/intro0.bik", delay, 0.f, 0.f, 1.f, 1.f, 0.75);
     //if( GetDone() ) return false;
@@ -1731,7 +1731,7 @@ hsBool plClient::IUpdate()
     // Time may have been clamped in IncSysSeconds, depending on hsTimer's current mode.
 
     double currTime = hsTimer::GetSysSeconds();
-    hsScalar delSecs = hsTimer::GetDelSysSeconds();
+    float delSecs = hsTimer::GetDelSysSeconds();
 
     // do not change this ordering
 
@@ -1971,7 +1971,7 @@ void plClient::IKillMovies()
     fMovies.Reset();
 }
 
-hsBool plClient::IPlayIntroBink(const char* movieName, hsScalar endDelay, hsScalar posX, hsScalar posY, hsScalar scaleX, hsScalar scaleY, hsScalar volume /* = 1.0 */)
+hsBool plClient::IPlayIntroBink(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume /* = 1.0 */)
 {
     SetQuitIntro(false);
     plBinkPlayer player;

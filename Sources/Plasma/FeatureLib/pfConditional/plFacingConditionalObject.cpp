@@ -96,7 +96,7 @@ hsBool plFacingConditionalObject::Verify(plMessage* msg)
                 ourView = v;
                 ourView.Normalize();
             }
-            hsScalar dot = playerView * ourView;
+            float dot = playerView * ourView;
             if (dot >= fTolerance)
             {
                 fLogicMod->GetNotify()->AddFacingEvent( pActivateMsg->fHitterObj, fLogicMod->GetTarget()->GetKey(), dot, true);
@@ -129,7 +129,7 @@ hsBool plFacingConditionalObject::Verify(plMessage* msg)
                 ourView.fZ = playerView.fZ;
                 ourView.Normalize();
             }
-            hsScalar dot = playerView * ourView;
+            float dot = playerView * ourView;
             if (dot >= fTolerance)
             {
                 return true;            

@@ -218,7 +218,7 @@ void plFollowMod::IMoveTarget()
     GetTarget()->SetTransform(l2w, w2l);
 }
 
-hsBool plFollowMod::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plFollowMod::IEval(double secs, float del, uint32_t dirty)
 {
     if( ICheckLeader() )
         IMoveTarget();

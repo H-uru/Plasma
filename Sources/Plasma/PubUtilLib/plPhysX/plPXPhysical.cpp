@@ -212,7 +212,7 @@ static void MakeBoxFromHull(NxConvexMesh* convexMesh, NxBoxShapeDesc& box)
     NxConvexMeshDesc desc;
     convexMesh->saveToDesc(desc);
 
-    hsScalar minX, minY, minZ, maxX, maxY, maxZ;
+    float minX, minY, minZ, maxX, maxY, maxZ;
     minX = minY = minZ = FLT_MAX;
     maxX = maxY = maxZ = -FLT_MAX;
 
@@ -1071,7 +1071,7 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
     hsAssert(!fProxyGen, "Already have proxy gen, double read?");
 
     hsColorRGBA physColor;
-    hsScalar opac = 1.0f;
+    float opac = 1.0f;
 
     if (fGroup == plSimDefs::kGroupAvatar)
     {

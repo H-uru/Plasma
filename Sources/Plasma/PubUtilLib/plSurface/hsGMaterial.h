@@ -88,7 +88,7 @@ protected:
     uint32_t                  fCompFlags;
     uint32_t                  fLoadFlags;
 
-    hsScalar                fLastUpdateTime;
+    float                fLastUpdateTime;
 
     void                IClearLayers();
     uint32_t              IMakeExtraLayer();
@@ -120,9 +120,9 @@ public:
     uint32_t                  GetCompositeFlags() const   { return fCompFlags; }
     uint32_t                  GetLoadFlags() const        { return fLoadFlags; }
 
-    hsScalar                GetLastUpdateTime() const   { return fLastUpdateTime; }
-    void                    SetLastUpdateTime(hsScalar f) { fLastUpdateTime = f; }
-    hsBool                  IShouldUpdate(hsScalar secs, uint32_t flags) { return GetLastUpdateTime() != secs || (flags & kUpdateAgain); }
+    float                GetLastUpdateTime() const   { return fLastUpdateTime; }
+    void                    SetLastUpdateTime(float f) { fLastUpdateTime = f; }
+    hsBool                  IShouldUpdate(float secs, uint32_t flags) { return GetLastUpdateTime() != secs || (flags & kUpdateAgain); }
 
     hsBool                  IsDynamic() const           { return (fCompFlags & kCompDynamic); }
     hsBool                  IsDecal() const             { return (fCompFlags & kCompDecal); }

@@ -336,7 +336,7 @@ void    pfGUIPopUpMenu::SetEnabled( hsBool e )
     pfGUIDialogMod::SetEnabled( e );
 }
 
-void    pfGUIPopUpMenu::Show( hsScalar x, hsScalar y )
+void    pfGUIPopUpMenu::Show( float x, float y )
 {
     fOriginX = x;
     fOriginY = y;
@@ -622,7 +622,7 @@ void    pfGUIPopUpMenu::ITearDownMenu( void )
 
 //// HandleMouseEvent ////////////////////////////////////////////////////////
 
-hsBool      pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY,
+hsBool      pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
                                                 uint8_t modifiers )
 {
     hsBool r = pfGUIDialogMod::HandleMouseEvent( event, mouseX, mouseY, modifiers );
@@ -733,7 +733,7 @@ hsGMaterial *pfGUIPopUpMenu::ICreateDynMaterial( void )
 
 #include "plJPEG/plJPEG.h"
 
-pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent, hsScalar x, hsScalar y, const plLocation &destLoc )
+pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc )
 {
     float           fovX, fovY;
     
@@ -778,8 +778,8 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
     fovX = atan( scrnWidth / ( 2.f * 100.f ) ) * 2.f;
     fovY = fovX;// * 3.f / 4.f;
 
-    renderMod->SetFovX( fovX * 180.f / hsScalarPI );
-    renderMod->SetFovY( fovY * 180.f / hsScalarPI );
+    renderMod->SetFovX( fovX * 180.f / M_PI );
+    renderMod->SetFovY( fovY * 180.f / M_PI );
 
     // Create the sceneNode to go with it
     menu->fParentNode= TRACKED_NEW plSceneNode;

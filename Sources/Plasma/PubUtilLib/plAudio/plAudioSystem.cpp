@@ -88,7 +88,7 @@ class plSoftSoundNode
 {
     public:
         const plKey fSoundKey;
-        hsScalar    fRank;
+        float    fRank;
 
         plSoftSoundNode *fNext;
         plSoftSoundNode **fPrev;
@@ -120,7 +120,7 @@ class plSoftSoundNode
             }
         }
 
-        void    SortedLink( plSoftSoundNode **prev, hsScalar rank )
+        void    SortedLink( plSoftSoundNode **prev, float rank )
         {
             fRank = rank;
 
@@ -132,7 +132,7 @@ class plSoftSoundNode
         }
 
         // Larger values are first in the list
-        void    AddToSortedLink( plSoftSoundNode *toAdd, hsScalar rank )
+        void    AddToSortedLink( plSoftSoundNode *toAdd, float rank )
         {
             if( fRank > rank )
             {
@@ -632,7 +632,7 @@ void    plAudioSystem::UnregisterSoftSound( const plKey soundKey )
 void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
 {
     plSoftSoundNode *node, *myNode;
-    hsScalar        distSquared, rank;
+    float        distSquared, rank;
     plSoftSoundNode *sortedList = nil;
     int32_t           i;
     
@@ -896,7 +896,7 @@ hsBool plAudioSystem::MsgReceive(plMessage* msg)
             }
             else
             {
-                plgAudioSys::SetGlobalFadeVolume( (hsScalar)((currTime-fStartFade) / fFadeLength) );
+                plgAudioSys::SetGlobalFadeVolume( (float)((currTime-fStartFade) / fFadeLength) );
             }
         }
         return true;
@@ -996,14 +996,14 @@ hsBool          plgAudioSys::fMuted = true;
 hsBool          plgAudioSys::fDelayedActivate = false;
 hsBool          plgAudioSys::fEnableEAX = false;
 hsWindowHndl    plgAudioSys::fWnd = nil;
-hsScalar        plgAudioSys::fChannelVolumes[ kNumChannels ] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
-hsScalar        plgAudioSys::f2D3DBias = 0.75f;
+float        plgAudioSys::fChannelVolumes[ kNumChannels ] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
+float        plgAudioSys::f2D3DBias = 0.75f;
 uint32_t          plgAudioSys::fDebugFlags = 0;
-hsScalar        plgAudioSys::fStreamingBufferSize = 2.f;
-hsScalar        plgAudioSys::fStreamFromRAMCutoff = 10.f;
+float        plgAudioSys::fStreamingBufferSize = 2.f;
+float        plgAudioSys::fStreamFromRAMCutoff = 10.f;
 uint8_t           plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds above this priority
 hsBool          plgAudioSys::fEnableExtendedLogs = false;
-hsScalar        plgAudioSys::fGlobalFadeVolume = 1.f;
+float        plgAudioSys::fGlobalFadeVolume = 1.f;
 hsBool          plgAudioSys::fLogStreamingUpdates = false;
 std::string     plgAudioSys::fDeviceName;
 hsBool          plgAudioSys::fRestarting = false;
@@ -1183,12 +1183,12 @@ void plgAudioSys::Activate(hsBool b)
     fInit = false;
 }
 
-void    plgAudioSys::SetChannelVolume( ASChannel chan, hsScalar vol )
+void    plgAudioSys::SetChannelVolume( ASChannel chan, float vol )
 {
     fChannelVolumes[ chan ] = vol;
 }
 
-void    plgAudioSys::SetGlobalFadeVolume( hsScalar vol )
+void    plgAudioSys::SetGlobalFadeVolume( float vol )
 {
     if(!fMuted)
         fGlobalFadeVolume = vol;
@@ -1196,7 +1196,7 @@ void    plgAudioSys::SetGlobalFadeVolume( hsScalar vol )
         fGlobalFadeVolume = 0;
 }
 
-hsScalar    plgAudioSys::GetChannelVolume( ASChannel chan )
+float    plgAudioSys::GetChannelVolume( ASChannel chan )
 {
     return fChannelVolumes[ chan ];
 }
@@ -1206,12 +1206,12 @@ void    plgAudioSys::NextDebugSound( void )
     fSys->NextDebugSound();
 }
 
-void plgAudioSys::Set2D3DBias( hsScalar bias )
+void plgAudioSys::Set2D3DBias( float bias )
 {
     f2D3DBias = bias;
 }
 
-hsScalar plgAudioSys::Get2D3Dbias()
+float plgAudioSys::Get2D3Dbias()
 {
     return f2D3DBias;
 }

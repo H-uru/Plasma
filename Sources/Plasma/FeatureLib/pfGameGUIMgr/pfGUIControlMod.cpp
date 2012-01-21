@@ -180,7 +180,7 @@ pfGUIControlMod::~pfGUIControlMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIControlMod::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUIControlMod::IEval( double secs, float del, uint32_t dirty )
 {
 //  UpdateBounds();
     return false;
@@ -205,13 +205,13 @@ void    pfGUIControlMod::SetTransform( const hsMatrix44 &l2w, const hsMatrix44 &
 
 //// GetVectorAngle //////////////////////////////////////////////////////////
 
-static hsScalar GetVectorAngle( const hsPoint3 &basePt, const hsPoint3 &pointA, const hsPoint3 &pointB )
+static float GetVectorAngle( const hsPoint3 &basePt, const hsPoint3 &pointA, const hsPoint3 &pointB )
 {
     hsVector3   vectorA( &pointA, &basePt ), vectorB( &pointB, &basePt );
 
-    hsScalar dot = vectorA * vectorB;
+    float dot = vectorA * vectorB;
     hsVector3 cross = vectorA % vectorB;
-    hsScalar crossLen = cross.fZ;
+    float crossLen = cross.fZ;
 
     return atan2( crossLen, dot );
 }
@@ -225,7 +225,7 @@ static hsScalar GetVectorAngle( const hsPoint3 &basePt, const hsPoint3 &pointA, 
 static hsBool   CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
 {
     int         i, j, pointA, pointB, pointC;
-    hsScalar    *angles;
+    float    *angles;
 
     if( numPoints < 3 )
         return false;
@@ -246,7 +246,7 @@ static hsBool   CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
     // Step 2: Sort all the in points by the angle to the X axis (vector <1,0>).
     //   Step A: Calculate all the angles
 
-    angles = TRACKED_NEW hsScalar[ numPoints ];
+    angles = TRACKED_NEW float[ numPoints ];
     hsPoint3    xAxisPoint( avgPoint.fX + 1, avgPoint.fY, avgPoint.fZ );
     for( i = 0; i < numPoints; i++ )
         angles[ i ] = GetVectorAngle( avgPoint, inPoints[ i ], xAxisPoint );
@@ -258,7 +258,7 @@ static hsBool   CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
         {
             if( angles[ j ] < angles[ i ] )
             {
-                hsScalar tempAngle = angles[ j ];
+                float tempAngle = angles[ j ];
                 angles[ j ] = angles[ i ];
                 angles[ i ] = tempAngle;
 
@@ -283,12 +283,12 @@ static hsBool   CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
             pointB += numPoints;
 
         // For points A, B, and C, find the interior angle between them
-        hsScalar angle = GetVectorAngle( inPoints[ pointB ], inPoints[ pointA ], inPoints[ pointC ] );
+        float angle = GetVectorAngle( inPoints[ pointB ], inPoints[ pointA ], inPoints[ pointC ] );
         
         // If the angle is < 180, then it's a good angle and we can advance all our points by 1...
         // Note: we have a tolerance so that we don't get points that form edges that are pretty darned close...
-        const hsScalar tolerance = hsScalarPI / 90.f;
-        if( angle > tolerance && angle < hsScalarPI - tolerance )
+        const float tolerance = M_PI / 90.f;
+        if( angle > tolerance && angle < M_PI - tolerance )
         {
             pointA++;
             pointB++;
@@ -526,7 +526,7 @@ void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force 
 //  Given the x/y coordinates in 0..1 space, recalcs the sceneObject position
 //  and moves the object to match, retaining the stored fCenterZ coordinate
 
-void    pfGUIControlMod::SetObjectCenter( hsScalar x, hsScalar y )
+void    pfGUIControlMod::SetObjectCenter( float x, float y )
 {
     hsMatrix44  xformMatrix, l2p, p2l;
     hsPoint3    center, corners[ 8 ];

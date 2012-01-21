@@ -55,7 +55,7 @@ plPhysicalProxy::plPhysicalProxy()
 {
 }
 
-plPhysicalProxy::plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac)
+plPhysicalProxy::plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
 :   plProxyGen(amb, dif, opac),
     fOwner(nil),
     fController(nil)

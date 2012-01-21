@@ -48,10 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /************************** Other Includes *****************************/
 #include <cstdlib>
 #include <cstdio>
-        
-#if HS_CAN_USE_FLOAT
-    #include <math.h>
-#endif
 
 
 /************************** Basic Macros *****************************/
@@ -83,20 +79,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define kPosInfinity32      (0x7fffffff)
 #define kNegInfinity32      (0x80000000)
 
-
-typedef int32_t           hsFixed;
-typedef int32_t           hsFract;
+#ifndef M_PI
+#   define M_PI       3.14159265358979323846
+#endif
 
 #ifdef __cplusplus
 
 typedef int     hsBool;
 
-#endif
-
-#include "hsScalar.h"
-
-#if HS_CAN_USE_FLOAT
-    #define HS_PI       3.1415927
 #endif
 
 #ifndef nil
@@ -148,7 +138,6 @@ typedef uint32_t  hsGSeedValue;
                ((value & 0x00ff000000000000) >> 40) |
                ((value)                      >> 56);
     }
-    #if HS_CAN_USE_FLOAT
     inline float hsSwapEndianFloat(float fvalue)
     {
         uint32_t value = *(uint32_t*)&fvalue;
@@ -161,7 +150,6 @@ typedef uint32_t  hsGSeedValue;
         value = hsSwapEndian64(value);
         return *(double*)&value;
     }
-    #endif
 
     #if LITTLE_ENDIAN
         #define hsToBE16(n)         hsSwapEndian16(n)
@@ -201,14 +189,12 @@ typedef uint32_t  hsGSeedValue;
         b = c;
     }
 
-    #if HS_CAN_USE_FLOAT
         inline void hsSwap(float& a, float& b)
         {
             float   c = a;
             a = b;
             b = c;
         }
-    #endif
 #endif
 
 /************************** Color32 Type *****************************/

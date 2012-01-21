@@ -140,7 +140,7 @@ void plParticleEmitter::ISetupParticleMem()
 
     fTargetInfo.fVelocity = (uint8_t *)fParticleExts;
     fTargetInfo.fInvMass = fTargetInfo.fVelocity + sizeof(hsVector3);
-    fTargetInfo.fAcceleration = fTargetInfo.fInvMass + sizeof(hsScalar);
+    fTargetInfo.fAcceleration = fTargetInfo.fInvMass + sizeof(float);
     fTargetInfo.fMiscFlags = (uint8_t *)&(fParticleExts[0].fMiscFlags);   
     fTargetInfo.fRadsPerSec = (uint8_t *)&(fParticleExts[0].fRadsPerSec);
     fTargetInfo.fVelocityStride 
@@ -162,8 +162,8 @@ const hsMatrix44 &plParticleEmitter::GetLocalToWorld() const
 }
 
 void plParticleEmitter::AddParticle(hsPoint3 &pos, hsVector3 &velocity, uint32_t tileIndex, 
-                                    hsScalar hSize, hsScalar vSize, hsScalar scale, hsScalar invMass, hsScalar life,
-                                    hsPoint3 &orientation, uint32_t miscFlags, hsScalar radsPerSec)
+                                    float hSize, float vSize, float scale, float invMass, float life,
+                                    hsPoint3 &orientation, uint32_t miscFlags, float radsPerSec)
 {
     plParticleCore *core;
     plParticleExt *ext;
@@ -185,8 +185,8 @@ void plParticleEmitter::AddParticle(hsPoint3 &pos, hsVector3 &velocity, uint32_t
     //if (core->fMiscFlags & kNormalUp != 0)
         core->fNormal.Set(0, 0, 1);
 
-    hsScalar xOff = (tileIndex % fSystem->fXTiles) / (float)fSystem->fXTiles;
-    hsScalar yOff = (tileIndex / fSystem->fXTiles) / (float)fSystem->fYTiles;
+    float xOff = (tileIndex % fSystem->fXTiles) / (float)fSystem->fXTiles;
+    float yOff = (tileIndex / fSystem->fXTiles) / (float)fSystem->fYTiles;
 
     core->fUVCoords[0].fX = xOff;
     core->fUVCoords[0].fY = yOff + 1.0f / fSystem->fYTiles;
@@ -220,7 +220,7 @@ void plParticleEmitter::WipeExistingParticles()
 }
 
 // This method is called from a network received message. Don't trust the args without checking.
-void plParticleEmitter::KillParticles(hsScalar num, hsScalar timeToDie, uint8_t flags)
+void plParticleEmitter::KillParticles(float num, float timeToDie, uint8_t flags)
 {
     if (flags & plParticleKillMsg::kParticleKillPercentage)
     {
@@ -252,7 +252,7 @@ void plParticleEmitter::KillParticles(hsScalar num, hsScalar timeToDie, uint8_t 
     }
 }
 
-void plParticleEmitter::UpdateGenerator(uint32_t paramID, hsScalar paramValue)
+void plParticleEmitter::UpdateGenerator(uint32_t paramID, float paramValue)
 {
     if (fGenerator != nil)
         fGenerator->UpdateParam(paramID, paramValue);
@@ -285,7 +285,7 @@ void plParticleEmitter::TranslateAllParticles(hsPoint3 &amount)
         fParticleCores[i].fPos += amount;
 }
 
-hsBool plParticleEmitter::IUpdate(hsScalar delta)
+hsBool plParticleEmitter::IUpdate(float delta)
 {
     if (fMiscFlags & kNeedsUpdate)
     {
@@ -303,7 +303,7 @@ hsBool plParticleEmitter::IUpdate(hsScalar delta)
         return true;
 }
 
-void plParticleEmitter::IUpdateParticles(hsScalar delta)
+void plParticleEmitter::IUpdateParticles(float delta)
 {
 
     int i, j;
@@ -343,7 +343,7 @@ void plParticleEmitter::IUpdateParticles(hsScalar delta)
     hsVector3 *currVelocity;
     hsVector3 *currAccel;
     hsPoint3 color(fColor.r, fColor.g, fColor.b);
-    hsScalar alpha = fColor.a;
+    float alpha = fColor.a;
     plController *colorCtl;
 
     // Allow effects a chance to cache any upfront calculations
@@ -365,7 +365,7 @@ void plParticleEmitter::IUpdateParticles(hsScalar delta)
     {
         if (!( fParticleExts[i].fMiscFlags & plParticleExt::kImmortal ))
         {           
-            hsScalar percent = (1.0f - fParticleExts[i].fLife / fParticleExts[i].fStartLife);
+            float percent = (1.0f - fParticleExts[i].fLife / fParticleExts[i].fStartLife);
             colorCtl = (fMiscFlags & kMatIsEmissive ? fSystem->fAmbientCtl : fSystem->fDiffuseCtl);
             if (colorCtl != nil)
                 colorCtl->Interp(colorCtl->GetLength() * percent, &color);
@@ -417,8 +417,8 @@ void plParticleEmitter::IUpdateParticles(hsScalar delta)
         }
         else if( fParticleExts[i].fRadsPerSec != 0 )
         {
-            hsScalar sinX, cosX;
-            hsFastMath::SinCos(fParticleExts[i].fLife * fParticleExts[i].fRadsPerSec * 2.f * hsScalarPI, sinX, cosX);
+            float sinX, cosX;
+            hsFastMath::SinCos(fParticleExts[i].fLife * fParticleExts[i].fRadsPerSec * 2.f * M_PI, sinX, cosX);
             fParticleCores[i].fOrientation.Set(sinX, -cosX, 0);
         }
 
@@ -431,7 +431,7 @@ void plParticleEmitter::IUpdateParticles(hsScalar delta)
         // V = V + -k*(V * delta)
         // V *= (1 + -k * delta)
         // Giving the change in velocity.
-        hsScalar drag = 1.f + fSystem->fDrag * delta;
+        float drag = 1.f + fSystem->fDrag * delta;
         // Clamp it at 0. Drag should never cause a reversal in velocity direction.
         if( drag < 0.f )
             drag = 0.f;
@@ -478,7 +478,7 @@ void plParticleEmitter::IUpdateParticles(hsScalar delta)
 plProfile_CreateTimer("Bound", "Particles", ParticleBound);
 plProfile_CreateTimer("Normal", "Particles", ParticleNormal);
 
-void plParticleEmitter::IUpdateBoundsAndNormals(hsScalar delta)
+void plParticleEmitter::IUpdateBoundsAndNormals(float delta)
 {
     plProfile_BeginTiming(ParticleBound);
     fBoundBox.MakeEmpty();
@@ -576,7 +576,7 @@ uint32_t plParticleEmitter::CreateHexColor(const hsColorRGBA &color)
     return CreateHexColor(color.r, color.g, color.b, color.a);
 }
 
-uint32_t plParticleEmitter::CreateHexColor(const hsScalar r, const hsScalar g, const hsScalar b, const hsScalar a)
+uint32_t plParticleEmitter::CreateHexColor(const float r, const float g, const float b, const float a)
 {
     uint32_t      ru, gu, bu, au;
 

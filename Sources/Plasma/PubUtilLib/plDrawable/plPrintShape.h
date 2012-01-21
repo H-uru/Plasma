@@ -48,9 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plPrintShape : public plObjInterface
 {
 protected:
-    hsScalar            fWidth;
-    hsScalar            fLength;
-    hsScalar            fHeight;
+    float            fWidth;
+    float            fLength;
+    float            fHeight;
 public:
     plPrintShape();
     virtual ~plPrintShape();
@@ -65,13 +65,13 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    hsScalar GetWidth() const { return fWidth; }
-    hsScalar GetLength() const { return fLength; }
-    hsScalar GetHeight() const { return fHeight; }
+    float GetWidth() const { return fWidth; }
+    float GetLength() const { return fLength; }
+    float GetHeight() const { return fHeight; }
 
-    void SetWidth(hsScalar f) { fWidth = f; }
-    void SetLength(hsScalar f) { fLength = f; }
-    void SetHeight(hsScalar f) { fHeight = f; }
+    void SetWidth(float f) { fWidth = f; }
+    void SetLength(float f) { fLength = f; }
+    void SetHeight(float f) { fHeight = f; }
 };
 
 #endif // plPrintShape_inc

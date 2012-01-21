@@ -81,7 +81,7 @@ class plRenderTarget : public plBitmap
             } fAbsolute;
             struct 
             {
-                hsScalar    fLeft, fTop, fRight, fBottom;
+                float    fLeft, fTop, fRight, fBottom;
             } fProportional;
         } fViewport;
 
@@ -136,7 +136,7 @@ class plRenderTarget : public plBitmap
         }
 
         // Render-to-Screen constructor
-        plRenderTarget( uint16_t flags, hsScalar left, hsScalar top, hsScalar right, hsScalar bottom, uint8_t bitDepth, uint8_t zDepth = 0xff, uint8_t stencilDepth = 0xff )
+        plRenderTarget( uint16_t flags, float left, float top, float right, float bottom, uint8_t bitDepth, uint8_t zDepth = 0xff, uint8_t stencilDepth = 0xff )
         {
             fWidth = 0; // Can't really set these, at least not yet
             fHeight = 0;
@@ -166,7 +166,7 @@ class plRenderTarget : public plBitmap
             fViewport.fAbsolute.fBottom = bottom;
         }
 
-        virtual void            SetViewport( hsScalar left, hsScalar top, hsScalar right, hsScalar bottom )
+        virtual void            SetViewport( float left, float top, float right, float bottom )
         {
             ASSERT_PROPORTIONAL;
             fViewport.fProportional.fLeft = left; 
@@ -185,10 +185,10 @@ class plRenderTarget : public plBitmap
         uint16_t      GetVPRight( void )  { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fRight; }
         uint16_t      GetVPBottom( void ) { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fBottom; }
 
-        hsScalar    GetVPLeftProp( void )   { ASSERT_PROPORTIONAL; return fViewport.fProportional.fLeft; }
-        hsScalar    GetVPTopProp( void )    { ASSERT_PROPORTIONAL; return fViewport.fProportional.fTop; }
-        hsScalar    GetVPRightProp( void )  { ASSERT_PROPORTIONAL; return fViewport.fProportional.fRight; }
-        hsScalar    GetVPBottomProp( void ) { ASSERT_PROPORTIONAL; return fViewport.fProportional.fBottom; }
+        float    GetVPLeftProp( void )   { ASSERT_PROPORTIONAL; return fViewport.fProportional.fLeft; }
+        float    GetVPTopProp( void )    { ASSERT_PROPORTIONAL; return fViewport.fProportional.fTop; }
+        float    GetVPRightProp( void )  { ASSERT_PROPORTIONAL; return fViewport.fProportional.fRight; }
+        float    GetVPBottomProp( void ) { ASSERT_PROPORTIONAL; return fViewport.fProportional.fBottom; }
 
         hsBool      ViewIsProportional( void ) const { return fProportionalViewport; }
 

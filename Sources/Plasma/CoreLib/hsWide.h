@@ -73,21 +73,20 @@ struct hsWide {
     inline hsWide*  RoundRight(unsigned shift);
 
     inline int32_t    AsLong() const;             // return bits 31-0, checking for over/under flow
-    inline hsFixed  AsFixed() const;            // return bits 47-16, checking for over/under flow
-    inline hsFract  AsFract() const;            // return bits 61-30, checking for over/under flow
+    inline int32_t  AsFixed() const;            // return bits 47-16, checking for over/under flow
+    inline int32_t  AsFract() const;            // return bits 61-30, checking for over/under flow
 
     hsWide* Mul(int32_t a);                   // this updates the wide
     hsWide* Mul(int32_t a, int32_t b);          // this sets the wide
     hsWide* Div(int32_t denom);               // this updates the wide
     hsWide* Div(const hsWide* denom);       // this updates the wide
 
-    hsFixed FixDiv(const hsWide* denom) const;
-    hsFract FracDiv(const hsWide* denom) const;
+    int32_t FixDiv(const hsWide* denom) const;
+    int32_t FracDiv(const hsWide* denom) const;
 
     int32_t   Sqrt() const;
     int32_t   CubeRoot() const;
 
-#if HS_CAN_USE_FLOAT
     double  AsDouble() const { return fHi * double(65536) * double(65536) + fLo; }
     hsWide* Set(double d) 
     { 
@@ -95,7 +94,6 @@ struct hsWide {
         int32_t lo = int32_t(d - double(hi));
         return Set(hi, lo);
     }
-#endif
 
 };
 
@@ -107,13 +105,8 @@ const hsWide kNegInfinity64 = { kNegInfinity32, 0 };
 #define TOP2BITS(n) (uint32_t(n) >> 30)
 #define TOP3BITS(n) (uint32_t(n) >> 29)
 
-#if HS_PIN_MATH_OVERFLOW && HS_DEBUG_MATH_OVERFLOW
-    #define hsSignalMathOverflow()  hsDebugMessage("Math overflow", 0)
-    #define hsSignalMathUnderflow() hsDebugMessage("Math underflow", 0)
-#else
     #define hsSignalMathOverflow()
     #define hsSignalMathUnderflow()
-#endif
 
 #define WIDE_ISNEG(hi, lo)                      (int32_t(hi) < 0)
 #define WIDE_LESSTHAN(hi, lo, hi2, lo2)             ((hi) < (hi2) || (hi) == (hi2) && (lo) < (lo2))
@@ -186,16 +179,6 @@ inline hsWide* hsWide::RoundRight(unsigned shift)
 
 inline int32_t hsWide::AsLong() const
 {
-#if HS_PIN_MATH_OVERFLOW
-    if (fHi > 0 || (fHi == 0 && (int32_t)fLo < 0))
-    {   hsSignalMathOverflow();
-        return kPosInfinity32;
-    }
-    if (fHi < -1L || (fHi == -1L && (int32_t)fLo >= 0))
-    {   hsSignalMathOverflow();
-        return kNegInfinity32;
-    }
-#endif
     return (int32_t)fLo;
 }
 
@@ -204,14 +187,14 @@ inline hsBool hsWide::IsWide() const
     return (fHi > 0 || (fHi == 0 && (int32_t)fLo < 0)) || (fHi < -1L || (fHi == -1L && (int32_t)fLo >= 0));
 }
 
-inline hsFixed hsWide::AsFixed() const
+inline int32_t hsWide::AsFixed() const
 {
     hsWide tmp = *this;
 
     return tmp.RoundRight(16)->AsLong();
 }
 
-inline hsFract hsWide::AsFract() const
+inline int32_t hsWide::AsFract() const
 {
     hsWide tmp = *this;
 

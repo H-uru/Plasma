@@ -54,7 +54,7 @@ protected:
     uint16_t fPlaceSndIdx;
     uint16_t fHitSndIdx;
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return true; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     plKey IFindCloneKey(plKey baseKey);
     

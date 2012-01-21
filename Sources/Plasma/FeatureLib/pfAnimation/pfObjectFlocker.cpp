@@ -949,9 +949,9 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
             plKey newKey = cloneMsg->GetCloneKey();
             cloneMsg->Send();
 
-            hsScalar xAdjust = (2 * RAND()) - 1; // produces a random number between -1 and 1
-            hsScalar yAdjust = (2 * RAND()) - 1;
-            hsScalar zAdjust = (2 * RAND()) - 1;
+            float xAdjust = (2 * RAND()) - 1; // produces a random number between -1 and 1
+            float yAdjust = (2 * RAND()) - 1;
+            float zAdjust = (2 * RAND()) - 1;
             hsPoint3 boidPos(pos.fX + xAdjust, pos.fY + yAdjust, pos.fZ + zAdjust);
             fFlock.AddBoid(this, newKey, boidPos);
         }
@@ -979,7 +979,7 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-hsBool pfObjectFlocker::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool pfObjectFlocker::IEval(double secs, float del, uint32_t dirty)
 {
     fFlock.Update(fTarget, del);
 

@@ -337,8 +337,8 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
         throw "No material specified";
 
     const char *animName = pb->GetStr(kMtlAnim);
-    hsScalar begin=-1.f;
-    hsScalar end = -1.f;
+    float begin=-1.f;
+    float end = -1.f;
 
     SegmentMap *segMap = GetAnimSegmentMap(maxMtl, pErrMsg);
 

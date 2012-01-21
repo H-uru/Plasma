@@ -89,9 +89,9 @@ void plDistOpacityMod::SetKey(plKey k)
 }
 
 
-hsScalar plDistOpacityMod::ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const
+float plDistOpacityMod::ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const
 {
-    hsScalar dist = hsVector3(&targPos, &refPos).Magnitude();
+    float dist = hsVector3(&targPos, &refPos).Magnitude();
 
     if( dist > fDists[kFarTrans] )
         return 0;
@@ -129,7 +129,7 @@ void plDistOpacityMod::ISetOpacity()
     if( !fSetup )
         ISetup();
 
-    hsScalar opacity = ICalcOpacity(GetTarget()->GetLocalToWorld().GetTranslate(), fRefPos);
+    float opacity = ICalcOpacity(GetTarget()->GetLocalToWorld().GetTranslate(), fRefPos);
 
     const int num = fFadeLays.GetCount();
     int i;
@@ -209,7 +209,7 @@ void plDistOpacityMod::SetTarget(plSceneObject* so)
     fSetup = false;
 }
 
-void plDistOpacityMod::SetFarDist(hsScalar opaque, hsScalar transparent)
+void plDistOpacityMod::SetFarDist(float opaque, float transparent)
 {
     fDists[kFarOpaq] = opaque;
     fDists[kFarTrans] = transparent;
@@ -217,7 +217,7 @@ void plDistOpacityMod::SetFarDist(hsScalar opaque, hsScalar transparent)
     ICheckDists();
 }
 
-void plDistOpacityMod::SetNearDist(hsScalar transparent, hsScalar opaque)
+void plDistOpacityMod::SetNearDist(float transparent, float opaque)
 {
     fDists[kNearOpaq] = opaque;
     fDists[kNearTrans] = transparent;

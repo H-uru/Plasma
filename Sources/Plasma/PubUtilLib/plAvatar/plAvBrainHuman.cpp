@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTimer.h"
 #include "hsGeometry3.h"
-#include "float.h"
+
 #include "plPipeline.h"
 #include "plgDispatch.h"
 #include "hsQuat.h"
@@ -98,7 +98,7 @@ float plAvBrainHuman::fRunMaxTurnSpeed = 1.7;
 plAvBrainHuman::TurnCurve plAvBrainHuman::fWalkTurnCurve = plAvBrainHuman::kTurnExponential;
 plAvBrainHuman::TurnCurve plAvBrainHuman::fRunTurnCurve = plAvBrainHuman::kTurnExponential;
 
-const hsScalar plAvBrainHuman::kAirTimePanicThreshold = 10; // seconds
+const float plAvBrainHuman::kAirTimePanicThreshold = 10; // seconds
 
 void plAvBrainHuman::SetTimeToMaxTurn(float time, hsBool walk)
 {
@@ -148,7 +148,7 @@ plAvBrainHuman::plAvBrainHuman(bool isActor /* = false */) :
 {
 }
 
-hsBool plAvBrainHuman::Apply(double timeNow, hsScalar elapsed)
+hsBool plAvBrainHuman::Apply(double timeNow, float elapsed)
 {
 #ifndef _DEBUG
     try
@@ -532,7 +532,7 @@ hsBool plAvBrainHuman::IHandleClimbMsg(plClimbMsg *msg)
     return true;
 }
 
-hsScalar plAvBrainHuman::IGetTurnStrength(double timeNow)
+float plAvBrainHuman::IGetTurnStrength(double timeNow)
 {
     float result = 0.f;
     float timeToMaxTurn, maxTurnSpeed;
@@ -553,8 +553,8 @@ hsScalar plAvBrainHuman::IGetTurnStrength(double timeNow)
     plArmatureBehavior * turnLeft  = fBehaviors.Count() >= kMovingTurnLeft  ? fBehaviors[kMovingTurnLeft]  : nil;
     plArmatureBehavior * turnRight = fBehaviors.Count() >= kMovingTurnRight ? fBehaviors[kMovingTurnRight] : nil;
     
-    hsScalar turnLeftStrength = turnLeft ? turnLeft->GetStrength() : 0.f;
-    hsScalar turnRightStrength = turnRight ? turnRight->GetStrength() : 0.f;
+    float turnLeftStrength = turnLeft ? turnLeft->GetStrength() : 0.f;
+    float turnRightStrength = turnRight ? turnRight->GetStrength() : 0.f;
     
     
     // Turning based on keypress
@@ -653,7 +653,7 @@ void plAvBrainHuman::IdleOnly(bool instantOff)
     if (!fCallbackAction)
         return;
 
-    hsScalar rate = instantOff ? 0.f : 1.f;
+    float rate = instantOff ? 0.f : 1.f;
 
     int i;
     for (i = kWalk; i < fBehaviors.GetCount(); i++)
@@ -1009,7 +1009,7 @@ void Idle::IStart()
     plHBehavior::IStart();
     if (fAnim)
     {       
-        hsScalar newStart = sRandom.RandZeroToOne() * fAnim->GetAnimation()->GetLength();
+        float newStart = sRandom.RandZeroToOne() * fAnim->GetAnimation()->GetLength();
         fAnim->SetCurrentTime(newStart, true);
     }
 }
@@ -1329,12 +1329,12 @@ void Push::Process(double time, float elapsed)
     hsPoint3 lookAt;
     fHuBrain->fCallbackAction->GetPushingPhysical()->GetPositionSim(lookAt);
     hsVector3 up(0.f, 0.f, 1.f);
-    hsScalar angle = hsATan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + hsScalarPI / 2;
+    float angle = atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + M_PI / 2;
     hsQuat targRot(angle, &up);
     
-    const hsScalar kTurnSpeed = 3.f;
-    hsScalar angDiff = QuatAngleDiff(rot, targRot);
-    hsScalar turnSpeed = (angDiff > elapsed * kTurnSpeed ? kTurnSpeed : angDiff / elapsed);
+    const float kTurnSpeed = 3.f;
+    float angDiff = QuatAngleDiff(rot, targRot);
+    float turnSpeed = (angDiff > elapsed * kTurnSpeed ? kTurnSpeed : angDiff / elapsed);
 
     hsQuat invRot = targRot.Conjugate();
     hsPoint3 globFwd = invRot.Rotate(&kAvatarForward);

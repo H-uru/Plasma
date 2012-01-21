@@ -56,7 +56,7 @@ protected:
 
         hsVector3           fWorldNorm;
         hsPoint3            fWorldPos;
-        hsScalar            fWorldDist;
+        float            fWorldDist;
     };
     hsTArray<HardPlane>         fPlanes;
 

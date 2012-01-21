@@ -53,29 +53,29 @@ struct hsMatrix44;
 class hsQuat {
 
 public:
-    hsScalar fX,fY,fZ,fW;   
+    float fX,fY,fZ,fW;   
 
     // Constructors
     hsQuat(){}
-    hsQuat(hsScalar X, hsScalar Y, hsScalar Z, hsScalar W) : 
+    hsQuat(float X, float Y, float Z, float W) : 
         fX(X), fY(Y), fZ(Z), fW(W) {}
     hsQuat(const hsQuat& a) { fX = a.fX; fY = a.fY; fZ = a.fZ; fW = a.fW; } 
-    hsQuat(hsScalar af[4]) { fX = af[0]; fY = af[1]; fZ = af[2]; fW = af[3]; }
-    hsQuat(hsScalar rad, const hsVector3* axis);
+    hsQuat(float af[4]) { fX = af[0]; fY = af[1]; fZ = af[2]; fW = af[3]; }
+    hsQuat(float rad, const hsVector3* axis);
 
     static hsQuat   QuatFromMatrix44(const hsMatrix44& mat);
     hsQuat& SetFromMatrix44(const hsMatrix44& mat);
     void SetFromMatrix(const hsMatrix44 *mat);
-    void SetFromSlerp(const hsQuat &q1, const hsQuat &q2, hsScalar t, int spin=0);
-    void Set(hsScalar X, hsScalar Y, hsScalar Z, hsScalar W)  
+    void SetFromSlerp(const hsQuat &q1, const hsQuat &q2, float t, int spin=0);
+    void Set(float X, float Y, float Z, float W)  
         { fX = X; fY = Y; fZ = Z; fW = W; }
-    void GetAngleAxis(hsScalar *rad, hsVector3 *axis) const;
-    void SetAngleAxis(const hsScalar rad, const hsVector3 &axis);
+    void GetAngleAxis(float *rad, hsVector3 *axis) const;
+    void SetAngleAxis(const float rad, const hsVector3 &axis);
     hsPoint3 Rotate(const hsScalarTriple* v);
     
     // Access operators
-    hsScalar& operator[](int i) { return (&fX)[i]; }     
-    const hsScalar& operator[](int i) const { return (&fX)[i]; }  
+    float& operator[](int i) { return (&fX)[i]; }     
+    const float& operator[](int i) const { return (&fX)[i]; }  
 
     // Unary operators
     hsQuat operator-() const { return(hsQuat(-fX,-fY,-fZ,-fW)); } 
@@ -84,14 +84,14 @@ public:
     // Comparison
     int operator==(const hsQuat& a) const
         { return (fX==a.fX && fY==a.fY && fZ==a.fZ && fW==a.fW); }
-    void Identity() { fX = fY = fZ = (hsScalar)0.0; fW = (hsScalar) 1.0; }
+    void Identity() { fX = fY = fZ = (float)0.0; fW = (float) 1.0; }
     int IsIdentity() const
         { return (fX==0.0 && fY==0.0 && fZ==0.0 && fW==1.0); }
     void Normalize();  
     void NormalizeIfNeeded();  
     void MakeMatrix(hsMatrix44 *mat) const;
-    hsScalar Magnitude();
-    hsScalar MagnitudeSquared();
+    float Magnitude();
+    float MagnitudeSquared();
     hsQuat Conjugate() const
         { return hsQuat(-fX,-fY,-fZ,fW); }
     hsQuat Inverse();
@@ -99,13 +99,13 @@ public:
     hsQuat operator-(const hsQuat&) const;
     hsQuat operator+(const hsQuat&) const;
     hsQuat operator*(const hsQuat&) const;
-    hsQuat operator*(hsScalar f) const
+    hsQuat operator*(float f) const
         { return hsQuat(fX*f,fY*f,fZ*f,fW*f); }
-    hsQuat operator/(hsScalar f) const
+    hsQuat operator/(float f) const
         { return hsQuat(fX/f,fY/f,fZ/f,fW/f); }
     hsQuat operator/(const hsQuat&) const;
 
-    hsScalar Dot(const hsQuat &q2) const
+    float Dot(const hsQuat &q2) const
         {   return (fX*q2.fX + fY*q2.fY + fZ*q2.fZ + fW*q2.fW); }
 
     // I/O

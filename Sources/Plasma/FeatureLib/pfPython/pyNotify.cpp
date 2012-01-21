@@ -112,7 +112,7 @@ void pyNotify::SetNetForce(hsBool state)
 }
 
 
-void pyNotify::SetActivateState(hsScalar state)
+void pyNotify::SetActivateState(float state)
 {
     fBuildMsg.SetState(state);
 }
@@ -146,7 +146,7 @@ void pyNotify::AddControlKeyEvent( int32_t key, hsBool down )
     fBuildMsg.AddControlKeyEvent(key,down);
 }
 
-void pyNotify::AddVarNumber(const char* name, hsScalar number)
+void pyNotify::AddVarNumber(const char* name, float number)
 {
     fBuildMsg.AddVariableEvent(name,number);
 }
@@ -156,7 +156,7 @@ void pyNotify::AddVarKey(const char* name, pyKey* key)
     fBuildMsg.AddVariableEvent(name, key ? key->getKey() : plKey() );
 }
 
-void pyNotify::AddFacingEvent( hsBool enabled, pyKey* other, pyKey* self, hsScalar dot)
+void pyNotify::AddFacingEvent( hsBool enabled, pyKey* other, pyKey* self, float dot)
 {
     fBuildMsg.AddFacingEvent( other ? other->getKey() : plKey(),
                                 self ? self->getKey() : plKey(),

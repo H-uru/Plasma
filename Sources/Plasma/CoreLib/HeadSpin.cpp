@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsUtils.h"
 #include "hsStlUtils.h"
 #include "hsExceptions.h"
+#include <math.h>
 
 
 #if HS_BUILD_FOR_WIN32

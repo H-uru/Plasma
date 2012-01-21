@@ -93,8 +93,8 @@ public:
 
     virtual hsBool PreCondition(double time, float elapsed) {return true;}
 
-    hsScalar GetAnimLength() {return (fAnim->GetAnimation()->GetLength());}
-    void SetAnimTime(hsScalar time) {fAnim->SetCurrentTime(time, true);}
+    float GetAnimLength() {return (fAnim->GetAnimation()->GetLength());}
+    void SetAnimTime(float time) {fAnim->SetCurrentTime(time, true);}
 
     std::string Name() const {return fName;}
     std::string AnimName() const {return fAnimName;}
@@ -131,7 +131,7 @@ plAvBrainCritter::plAvBrainCritter(): fCallbackAction(nil), fCurMode(kIdle), fNe
     fLocallyControlled(false), fAvoidingAvatars(false), fFinalGoalPos(0, 0, 0), fImmediateGoalPos(0, 0, 0), fDotGoal(0),
     fAngRight(0)
 {
-    SightCone(hsScalarPI/2); // 90deg
+    SightCone(M_PI/2); // 90deg
     StopDistance(1);
     SightDistance(10);
     HearingDistance(10);
@@ -154,7 +154,7 @@ plAvBrainCritter::~plAvBrainCritter()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-hsBool plAvBrainCritter::Apply(double time, hsScalar elapsed)
+hsBool plAvBrainCritter::Apply(double time, float elapsed)
 {
     // update internal pathfinding variables
     IEvalGoal();
@@ -327,7 +327,7 @@ bool plAvBrainCritter::AtGoal() const
     return (finalGoalVec.MagnitudeSquared() <= fStopDistanceSquared);
 }
 
-void plAvBrainCritter::SightCone(hsScalar coneRad)
+void plAvBrainCritter::SightCone(float coneRad)
 {
     fSightConeAngle = coneRad;
 
@@ -339,7 +339,7 @@ void plAvBrainCritter::SightCone(hsScalar coneRad)
     fSightConeDotMin = straightVector * viewVector;
 }
 
-void plAvBrainCritter::HearingDistance(hsScalar hearDis)
+void plAvBrainCritter::HearingDistance(float hearDis)
 {
     fHearingDistance = hearDis;
     fHearingDistanceSquared = fHearingDistance * fHearingDistance;
@@ -533,7 +533,7 @@ void plAvBrainCritter::IStartBehavior()
     // if we start at a random point, do so
     if (behavior->RandomStartPoint())
     {
-        hsScalar newStart = sRandom.RandZeroToOne() * behavior->GetAnimLength();
+        float newStart = sRandom.RandZeroToOne() * behavior->GetAnimLength();
         behavior->SetAnimTime(newStart);
     }
 
@@ -584,7 +584,7 @@ void plAvBrainCritter::IEvalGoal()
             hsVector3 avVec(creaturePos - avPos);
             avVec.Normalize();
 
-            hsScalar dotAv = avVec * goalVec;
+            float dotAv = avVec * goalVec;
             if (dotAv > 0.5f) // within a 45deg angle in front of us
             {
                 // a player is in the way, so we will change our "goal" to a 90deg angle from the player
@@ -616,7 +616,7 @@ void plAvBrainCritter::IEvalGoal()
     }
 }
 
-hsScalar plAvBrainCritter::IGetTurnStrength(double time) const
+float plAvBrainCritter::IGetTurnStrength(double time) const
 {
     if (!RunningBehavior(kDefaultRunBehName))
         return 0.0f;
@@ -673,7 +673,7 @@ bool plAvBrainCritter::ICanSeeAvatar(plArmatureMod* avatar) const
     
     const plSceneObject* creatureObj = fArmature->GetTarget(0);
     hsVector3 view(creatureObj->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView));
-    hsScalar avDot = view * avVec;
+    float avDot = view * avVec;
     if (avDot < fSightConeDotMin)
         return false; // out of our cone of view
     return true;
@@ -701,7 +701,7 @@ bool plAvBrainCritter::ICanHearAvatar(plArmatureMod* avatar) const
     fAvMod->GetPositionAndRotationSim(&creaturePos, &creatureRot);
 
     hsVector3 avVec(creaturePos - avPos);
-    hsScalar distSq = avVec.MagnitudeSquared();
+    float distSq = avVec.MagnitudeSquared();
     if (distSq <= fHearingDistanceSquared)
         return true; // within our normal hearing distance
     else if (isLoud && (distSq <= fLoudHearingDistanceSquared))

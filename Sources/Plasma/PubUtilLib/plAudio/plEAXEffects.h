@@ -90,14 +90,14 @@ protected:
     void    IFail( const char *msg, hsBool major );
     void    IRelease( void );
 
-    void    IMuteProperties( EAXREVERBPROPERTIES *props, hsScalar percent );
+    void    IMuteProperties( EAXREVERBPROPERTIES *props, float percent );
 
     hsBool              fInited;
     
     // Cache info
     int32_t               fLastModCount;
     hsBool              fLastWasEmpty;
-    hsScalar            fLastSingleStrength;
+    float            fLastSingleStrength;
     plEAXListenerMod    *fLastBigRegion;
 
 };
@@ -111,16 +111,16 @@ class plEAXSourceSoftSettings
 {
 public:
         int16_t       fOcclusion;
-        hsScalar    fOcclusionLFRatio, fOcclusionRoomRatio, fOcclusionDirectRatio;
+        float    fOcclusionLFRatio, fOcclusionRoomRatio, fOcclusionDirectRatio;
 
         void        Read( hsStream *s );
         void        Write( hsStream *s );
 
-        void        SetOcclusion( int16_t occ, hsScalar lfRatio, hsScalar roomRatio, hsScalar directRatio );
+        void        SetOcclusion( int16_t occ, float lfRatio, float roomRatio, float directRatio );
         int16_t       GetOcclusion( void ) const { return fOcclusion; }
-        hsScalar    GetOcclusionLFRatio( void ) const { return fOcclusionLFRatio; }
-        hsScalar    GetOcclusionRoomRatio( void ) const { return fOcclusionRoomRatio; }
-        hsScalar    GetOcclusionDirectRatio( void ) const { return fOcclusionDirectRatio; }
+        float    GetOcclusionLFRatio( void ) const { return fOcclusionLFRatio; }
+        float    GetOcclusionRoomRatio( void ) const { return fOcclusionRoomRatio; }
+        float    GetOcclusionDirectRatio( void ) const { return fOcclusionDirectRatio; }
 
         void        Reset( void );
 };
@@ -150,19 +150,19 @@ class plEAXSourceSettings
         void    SetOutsideVolHF( int16_t vol );
         int16_t   GetOutsideVolHF( void ) const { return fOutsideVolHF; }
 
-        void        SetFactors( hsScalar airAbsorption, hsScalar roomRolloff, hsScalar doppler, hsScalar rolloff );
-        hsScalar    GetAirAbsorptionFactor( void ) const { return fAirAbsorptionFactor; }
-        hsScalar    GetRoomRolloffFactor( void ) const { return fRoomRolloffFactor; }
-        hsScalar    GetDopplerFactor( void ) const { return fDopplerFactor; }
-        hsScalar    GetRolloffFactor( void ) const { return fRolloffFactor; }
+        void        SetFactors( float airAbsorption, float roomRolloff, float doppler, float rolloff );
+        float    GetAirAbsorptionFactor( void ) const { return fAirAbsorptionFactor; }
+        float    GetRoomRolloffFactor( void ) const { return fRoomRolloffFactor; }
+        float    GetDopplerFactor( void ) const { return fDopplerFactor; }
+        float    GetRolloffFactor( void ) const { return fRolloffFactor; }
 
         plEAXSourceSoftSettings &GetSoftStarts( void ) { return fSoftStarts; }
         plEAXSourceSoftSettings &GetSoftEnds( void ) { return fSoftEnds; }
         
         plEAXSourceSoftSettings &GetCurrSofts( void )  { return fCurrSoftValues; }
 
-        void        SetOcclusionSoftValue( hsScalar value );
-        hsScalar    GetOcclusionSoftValue( void ) const { return fOcclusionSoftValue; }
+        void        SetOcclusionSoftValue( float value );
+        float    GetOcclusionSoftValue( void ) const { return fOcclusionSoftValue; }
 
         void        ClearDirtyParams( void ) const { fDirtyParams = 0; }
 
@@ -174,9 +174,9 @@ class plEAXSourceSettings
         int16_t       fRoom, fRoomHF;
         hsBool      fRoomAuto, fRoomHFAuto;
         int16_t       fOutsideVolHF;
-        hsScalar    fAirAbsorptionFactor, fRoomRolloffFactor, fDopplerFactor, fRolloffFactor;
+        float    fAirAbsorptionFactor, fRoomRolloffFactor, fDopplerFactor, fRolloffFactor;
         plEAXSourceSoftSettings fSoftStarts, fSoftEnds, fCurrSoftValues;
-        hsScalar    fOcclusionSoftValue;
+        float    fOcclusionSoftValue;
         mutable uint32_t      fDirtyParams;
 
         enum ParamSets

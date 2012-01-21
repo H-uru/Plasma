@@ -171,7 +171,7 @@ void plPhysicalSndGroup::PlayImpactSound(uint32_t against)
     animMsg->Send(fImpactSounds[against]);
 }
 
-void plPhysicalSndGroup::SetSlideSoundVolume(uint32_t against, hsScalar volume)
+void plPhysicalSndGroup::SetSlideSoundVolume(uint32_t against, float volume)
 {
     if(against >= fSlideSounds.Count())
         return;

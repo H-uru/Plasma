@@ -50,7 +50,7 @@ class plFadeOpacityLay : public plLayerInterface
 {
 protected:
 
-    hsScalar        fOpScale;
+    float        fOpScale;
 public:
 
     plFadeOpacityLay();
@@ -64,8 +64,8 @@ public:
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);
 
-    void SetOpacity(hsScalar f) { fOpScale = f; }
-    hsScalar GetOpacity() const { return fOpScale; }
+    void SetOpacity(float f) { fOpScale = f; }
+    float GetOpacity() const { return fOpScale; }
 };
 
 #endif // plFadeOpacityLay_inc

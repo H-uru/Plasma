@@ -185,7 +185,7 @@ void plRandomSoundMod::IPlayNext()
         fFirstTimePlay = false;
         if( !(fMode & kOneCmd) )
         {
-            hsScalar delay = IGetDelay(0);
+            float delay = IGetDelay(0);
             double t = hsTimer::GetSysSeconds() + delay;
 
             plAnimCmdMsg* anim = TRACKED_NEW plAnimCmdMsg(GetKey(), GetKey(), &t);
@@ -203,7 +203,7 @@ void plRandomSoundMod::IPlayNext()
 
     // We don't want random sounds to synch, since we don't synch the randomness. So force this next
     // sound to not synch
-    hsScalar currLen;
+    float currLen;
     if( fGroups != nil && fGroups[ fCurrentGroup ].fGroupedIdx != -1 )
     {
         currentSndIdx = fGroups[ fCurrentGroup ].fIndices[ fCurrent ];
@@ -245,7 +245,7 @@ void plRandomSoundMod::IPlayNext()
         }
 
         if (ai->GetSound(currentSndIdx))
-            currLen = (hsScalar)(ai->GetSound(currentSndIdx)->GetLength());
+            currLen = (float)(ai->GetSound(currentSndIdx)->GetLength());
         else
             currLen = 0;
     }
@@ -262,7 +262,7 @@ void plRandomSoundMod::IPlayNext()
 
     if( !(fMode & kOneCmd) )
     {
-        hsScalar delay = IGetDelay(currLen);
+        float delay = IGetDelay(currLen);
 
         double t = hsTimer::GetSysSeconds() + delay;
 
@@ -386,7 +386,7 @@ hsBool plRandomSoundMod::MsgReceive(plMessage* msg)
     return plRandomCommandMod::MsgReceive(msg);
 }
 
-void plRandomSoundMod::ISetVolume(hsScalar volume)
+void plRandomSoundMod::ISetVolume(float volume)
 {
     plSound *pSound = nil;
     

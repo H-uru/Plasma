@@ -113,13 +113,13 @@ public:
     };
 
     uint32_t          fCode;
-    hsScalar        fPosScale;
+    float        fPosScale;
 
     plSpanEncoding() : fCode(kPosNone|kColNone), fPosScale(0) {}
-    plSpanEncoding(uint32_t c, hsScalar s) : fCode(c), fPosScale(s) {}
+    plSpanEncoding(uint32_t c, float s) : fCode(c), fPosScale(s) {}
 
     uint32_t      Code() const { return fCode; }
-    hsScalar    Scale() const { return fPosScale; }
+    float    Scale() const { return fPosScale; }
 
     void Read(hsStream* s);
     void Write(hsStream* s) const;
@@ -131,7 +131,7 @@ protected:
     uint8_t*          fPosDelta;
     uint8_t*          fCol;
 
-    hsScalar        fL2W[3][4];
+    float        fL2W[3][4];
 
     friend class plSpanInstanceIter;
 public:

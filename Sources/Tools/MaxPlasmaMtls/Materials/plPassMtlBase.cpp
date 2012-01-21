@@ -537,13 +537,13 @@ void    plPassMtlBase::PostLoadAnimPBFixup( void )
             myNew->SetLoop( (bool)fAnimPB->GetInt( (ParamID)kPBAnimLoop ),
                             (char *)fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) );
             myNew->SetEaseIn( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseInType ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInLength ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMin ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMax ) );
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInLength ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMin ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMax ) );
             myNew->SetEaseOut( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseOutType ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutLength ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMin ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMax ) );
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutLength ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMin ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMax ) );
 #pragma warning( pop )
         }               
     }

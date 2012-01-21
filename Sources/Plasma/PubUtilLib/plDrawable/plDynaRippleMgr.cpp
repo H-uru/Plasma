@@ -92,7 +92,7 @@ int plDynaRippleMgr::INewDecal()
     fDecals.Append(rip);
 #else
     plDynaWave* wave = TRACKED_NEW plDynaWave();
-    static hsScalar kDefScrollRate = 0.1f;
+    static float kDefScrollRate = 0.1f;
     wave->fScrollRate = kDefScrollRate;
     fDecals.Append(wave);
 #endif
@@ -186,10 +186,10 @@ hsBool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, hsBool force
 
     const hsMatrix44& shapeL2W = shape->GetOwner()->GetLocalToWorld();
 
-    plConst(hsScalar) kMinDist(2.0f);
-    plConst(hsScalar) kMinTime(1.5f);
+    plConst(float) kMinDist(2.0f);
+    plConst(float) kMinTime(1.5f);
     double t = hsTimer::GetSysSeconds();
-    hsScalar dt = hsScalar(t - info.fLastTime) * sRand.RandZeroToOne();
+    float dt = float(t - info.fLastTime) * sRand.RandZeroToOne();
     hsBool longEnough = (dt >= kMinTime);
     hsPoint3 xlate = shapeL2W.GetTranslate();
     hsBool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
@@ -203,12 +203,12 @@ hsBool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, hsBool force
         randPert.Normalize();
         if( !farEnough )
         {
-            plConst(hsScalar) kRandPert = 0.5f;
+            plConst(float) kRandPert = 0.5f;
             randPert *= kRandPert;
         }
         else
         {
-            plConst(hsScalar) kRandPert = 0.15f;
+            plConst(float) kRandPert = 0.15f;
             randPert *= kRandPert;
         }
         pos += randPert;
@@ -216,10 +216,10 @@ hsBool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, hsBool force
         hsVector3 dir(0.f, 1.f, 0.f);
         hsVector3 up(0.f, 0.f, 1.f);
 
-        plConst(hsScalar) kHeightScale = 1.f;
+        plConst(float) kHeightScale = 1.f;
         pos.fZ += (shape->GetHeight() * fScale.fZ * kHeightScale) * 0.25f;
 
-        hsScalar wid = hsMaximum(shape->GetWidth(), shape->GetLength());
+        float wid = hsMaximum(shape->GetWidth(), shape->GetLength());
         hsVector3 size(wid * fScale.fX, wid * fScale.fY, shape->GetHeight() * fScale.fZ * kHeightScale);
         fCutter->SetLength(size);
         fCutter->Set(pos, dir, up);

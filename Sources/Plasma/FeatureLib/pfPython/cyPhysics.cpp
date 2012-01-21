@@ -283,7 +283,7 @@ void cyPhysics::WarpMat(pyMatrix44& mat)
 //             : if the object is physical then warp it
 //             : otherwise just use the coordinate interface and set the transform
 //
-void cyPhysics::Move(pyVector3& direction, hsScalar distance)
+void cyPhysics::Move(pyVector3& direction, float distance)
 {
     //move each receiver (object) separately
     int i;
@@ -352,7 +352,7 @@ void cyPhysics::Move(pyVector3& direction, hsScalar distance)
 //             : if the object is physical then warp it
 //             : otherwise just use the coordinate interface and set the transform
 //
-void cyPhysics::Rotate(hsScalar rad, pyVector3& axis)
+void cyPhysics::Rotate(float rad, pyVector3& axis)
 {
     // rotate each receiver (object) separately
     int i;
@@ -655,7 +655,7 @@ void cyPhysics::AngularImpulse(pyVector3& impulse)
 //             : A damp factor of 1 leaves them alone.
 //
 //
-void cyPhysics::Damp(hsScalar damp)
+void cyPhysics::Damp(float damp)
 {
     hsAssert(0, "Who uses this?");
     // must have a receiver!

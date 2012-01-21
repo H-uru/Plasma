@@ -196,24 +196,24 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         heightCtl = cc.MakeScalarController(particleMtl->GetHeightController(), node);
     }
 
-    hsScalar genLife        = -1;
-    hsScalar partLifeMin, partLifeMax;
-    hsScalar pps            = fUserInput.fPPS; 
+    float genLife        = -1;
+    float partLifeMin, partLifeMax;
+    float pps            = fUserInput.fPPS; 
     hsPoint3 pos(0, 0, 0);
-    hsScalar pitch          = PI;
-    hsScalar yaw            = 0; 
-    hsScalar angleRange     = fUserInput.fConeAngle * PI / 180.f;
-    hsScalar velMin         = fUserInput.fVelocityMin;
-    hsScalar velMax         = fUserInput.fVelocityMax;
-    hsScalar xSize          = fUserInput.fHSize;
-    hsScalar ySize          = fUserInput.fVSize;
-    hsScalar scaleMin       = fUserInput.fScaleMin / 100.0f;
-    hsScalar scaleMax       = fUserInput.fScaleMax / 100.0f;
-    hsScalar gravity        = fUserInput.fGravity / 100.0f;
-    hsScalar drag           = fUserInput.fDrag / 100.f;
-    hsScalar windMult       = fUserInput.fWindMult / 100.f;
-    hsScalar massRange      = fUserInput.fMassRange;
-    hsScalar rotRange       = fUserInput.fRotRange * PI / 180.f;
+    float pitch          = PI;
+    float yaw            = 0; 
+    float angleRange     = fUserInput.fConeAngle * PI / 180.f;
+    float velMin         = fUserInput.fVelocityMin;
+    float velMax         = fUserInput.fVelocityMax;
+    float xSize          = fUserInput.fHSize;
+    float ySize          = fUserInput.fVSize;
+    float scaleMin       = fUserInput.fScaleMin / 100.0f;
+    float scaleMax       = fUserInput.fScaleMax / 100.0f;
+    float gravity        = fUserInput.fGravity / 100.0f;
+    float drag           = fUserInput.fDrag / 100.f;
+    float windMult       = fUserInput.fWindMult / 100.f;
+    float massRange      = fUserInput.fMassRange;
+    float rotRange       = fUserInput.fRotRange * PI / 180.f;
 
     uint32_t xTiles = fUserInput.fXTiles; 
     uint32_t yTiles = fUserInput.fYTiles; 
@@ -227,11 +227,11 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (ppsCtl != nil && ppsCtl->GetLength() > 0)
     {
         // Simulate just the birth across the curve and record the max
-        hsScalar frameDelta = (1.f / MAX_FRAMES_PER_SEC); 
-        hsScalar avgLife = (partLifeMax + partLifeMin) / 2;
+        float frameDelta = (1.f / MAX_FRAMES_PER_SEC); 
+        float avgLife = (partLifeMax + partLifeMin) / 2;
         uint32_t count = node->NumAttachedComponents();
         uint32_t lifeTicks = avgLife / frameDelta;
-        hsScalar *birth = TRACKED_NEW hsScalar[lifeTicks];
+        float *birth = TRACKED_NEW float[lifeTicks];
 
         // Find any anim components attached to the same node.
         for (i = 0; i < count; i++)
@@ -239,7 +239,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             if (!plAnimComponentBase::IsAnimComponent(node->GetAttachedComponent(i)))
                 continue;
 
-            hsScalar maxAnimParticles = 0;
+            float maxAnimParticles = 0;
 
             plAnimComponentBase *comp = (plAnimComponentBase *)node->GetAttachedComponent(i);
             plATCAnim *anim = plATCAnim::ConvertNoRef(comp->fAnims[node]);
@@ -247,9 +247,9 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             // If it's an ATC anim, we can be aggressive in determining the max
             if (anim)
             {           
-                hsScalar curAnimParticles = 0;
+                float curAnimParticles = 0;
 
-                hsScalar loopStart, loopEnd;
+                float loopStart, loopEnd;
 
                 for (j = -1; j < (int32_t)anim->GetNumLoops(); j++)
                 {
@@ -265,7 +265,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     else
                         anim->GetLoop(j, loopStart, loopEnd);
 
-                    hsScalar loopLength = loopEnd - loopStart;
+                    float loopLength = loopEnd - loopStart;
 
                     if (loopLength == 0) // It's the default "(Entire Animation)"
                         loopLength = ppsCtl->GetLength();
@@ -277,8 +277,8 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     for (tick = 0; tick < loopTicks + lifeTicks; tick++)
                     {
                         curAnimParticles -= birth[tick % lifeTicks] * frameDelta;
-                        hsScalar birthStart = 0.f;
-                        hsScalar birthEnd = 0.f;
+                        float birthStart = 0.f;
+                        float birthEnd = 0.f;
                         ppsCtl->Interp(((tick % loopTicks) + startTick) * frameDelta, &birthStart);
                         ppsCtl->Interp(((tick % loopTicks) + startTick + 1) * frameDelta, &birthEnd);
                         birth[tick % lifeTicks] = (birthStart + birthEnd) / 2;
@@ -290,11 +290,11 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             }
             else // No info on the animation. Assume the worst.
             {
-                hsScalar maxPps = 0;
+                float maxPps = 0;
                 int i;
                 for (i = 1; i < ppsCtl->GetNumKeys(); i++)
                 {
-                    hsScalar curVal = 0;
+                    float curVal = 0;
                     hsScalarKey *key = ppsCtl->GetScalarKey(i);
                     if (key)
                         curVal = key->fValue;
@@ -351,15 +351,15 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     // Figure out the appropriate generator to add
     plParticleGenerator *generator = nil;
     uint32_t sources;
-    hsScalar *pitchArray;
-    hsScalar *yawArray;
+    float *pitchArray;
+    float *yawArray;
     hsPoint3 *pointArray;
     hsVector3 *dirArray;
     if (fUserInput.fGenType == kGenPoint)
     {
         sources = 1;
-        pitchArray = TRACKED_NEW hsScalar[sources];
-        yawArray = TRACKED_NEW hsScalar[sources];
+        pitchArray = TRACKED_NEW float[sources];
+        yawArray = TRACKED_NEW float[sources];
         pointArray = TRACKED_NEW hsPoint3[sources];
         pitchArray[0] = pitch;
         yawArray[0] = yaw;
@@ -375,8 +375,8 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         hsTArray<hsPoint3> pos;
         plMeshConverter::Instance().StuffPositionsAndNormals(node, &pos, &normals);
         sources = normals.GetCount();
-        pitchArray = TRACKED_NEW hsScalar[sources];
-        yawArray = TRACKED_NEW hsScalar[sources];
+        pitchArray = TRACKED_NEW float[sources];
+        yawArray = TRACKED_NEW float[sources];
         pointArray = TRACKED_NEW hsPoint3[sources];
         int i;
         for (i = 0; i < sources; i++)
@@ -517,7 +517,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
     plController *ctl;
     hsControlConverter& cc = hsControlConverter::Instance();
 
-    hsScalar start, end;
+    float start, end;
     if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
     {
         start = end = -1;
@@ -1156,7 +1156,7 @@ static hsVector3 IGetRefDir(plMaxNode* node, INode* refNode, float clampAngDeg)
     float vecLen = 100.f;
     if( clampAngDeg > 1.f )
     {
-        float rads = hsScalarDegToRad(clampAngDeg);
+        float rads = hsDegreesToRadians(clampAngDeg);
         float sinAng = sinf(rads);
 
         hsAssert(sinAng > 0.01, "Trig confusion?");
@@ -1492,8 +1492,8 @@ void plParticleFlockComponent::AddToParticleSystem(plParticleSystem *sys, plMaxN
         effect->SetInfluenceAvgRadius(fCompPB->GetFloat(ParamID(kInfAvgDist)));
         effect->SetInfluenceRepelRadius(fCompPB->GetFloat(ParamID(kInfRepDist)));
 
-        hsScalar goalDist = fCompPB->GetFloat(ParamID(kGoalDist));
-        hsScalar fcDist = fCompPB->GetFloat(ParamID(kFullChaseDist));   
+        float goalDist = fCompPB->GetFloat(ParamID(kGoalDist));
+        float fcDist = fCompPB->GetFloat(ParamID(kFullChaseDist));   
         effect->SetGoalRadius(goalDist);
         effect->SetFullChaseRadius(goalDist > fcDist ? goalDist : fcDist); // Fix old data
 

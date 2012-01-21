@@ -123,7 +123,7 @@ double plTimerShare::IncSysSeconds()
     else if( fSmoothingClampSecs >= 0 )
     {
         double t = GetSeconds();
-        hsScalar delSys = hsScalar(t - fRealSeconds);
+        float delSys = float(t - fRealSeconds);
         fClamping = ( (fTimeClampSecs > 0) && (delSys > fTimeClampSecs) );
         if (fClamping)
         {
@@ -132,8 +132,8 @@ double plTimerShare::IncSysSeconds()
         delSys *= fSysTimeScale;
         if( fDelSysSeconds > 0 && fDelSysSeconds < fSmoothingClampSecs )
         {
-            const hsScalar kFrac = 0.1f;
-            const hsScalar kOneMinusFrac = 1.f-kFrac;
+            const float kFrac = 0.1f;
+            const float kOneMinusFrac = 1.f-kFrac;
             delSys *= kFrac;
             delSys += fDelSysSeconds * kOneMinusFrac;
         }
@@ -146,7 +146,7 @@ double plTimerShare::IncSysSeconds()
             {
                 fRealSeconds = t;
                 t = GetSeconds();
-                delSys = hsScalar(t - fRealSeconds);
+                delSys = float(t - fRealSeconds);
                 count--;
             }
 #endif
@@ -182,12 +182,12 @@ double plTimerShare::IncSysSeconds()
         }
         avg /= double(kSmoothBuffUsed);
 
-        plCONST(hsScalar) kMaxSmoothable(0.15f);
-        fDelSysSeconds = hsScalar(avg - fRealSeconds) * fSysTimeScale;
+        plCONST(float) kMaxSmoothable(0.15f);
+        fDelSysSeconds = float(avg - fRealSeconds) * fSysTimeScale;
         if( fDelSysSeconds > kMaxSmoothable * fSysTimeScale )
         {
             avg = t;
-            fDelSysSeconds = hsScalar(avg - fRealSeconds) * fSysTimeScale;
+            fDelSysSeconds = float(avg - fRealSeconds) * fSysTimeScale;
             fResetSmooth = true;
         }
         fSysSeconds += fDelSysSeconds;
@@ -312,7 +312,7 @@ uint32_t hsTimer::GetPrecTickCount()
     return 1;
 #endif
 }
-uint32_t hsTimer::PrecSecsToTicks(hsScalar secs)
+uint32_t hsTimer::PrecSecsToTicks(float secs)
 {
     return (uint32_t)(((double)secs) * fPrecTicksPerSec);
 }

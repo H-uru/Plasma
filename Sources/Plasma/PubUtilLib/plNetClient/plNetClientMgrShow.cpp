@@ -105,7 +105,7 @@ void plNetClientMgr::IShowLists()
             mbr->GetTransportFlags() & plNetTransportMember::kSendingActions ? "A" : " ",
             mbr->AsStdString().c_str(),
             mbr->IsPeerToPeer(),
-            mbr->GetDistSq() != hsScalarMax ? hsSquareRoot(mbr->GetDistSq()) :-1.f);
+            mbr->GetDistSq() != FLT_MAX ? sqrt(mbr->GetDistSq()) :-1.f);
         txt.DrawString(x,y,str);
         y+=yOff;
         mbr->SetTransportFlags(mbr->GetTransportFlags() & 

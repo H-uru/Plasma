@@ -90,7 +90,7 @@ pfGUIKnobCtrl::~pfGUIKnobCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIKnobCtrl::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUIKnobCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
@@ -210,7 +210,7 @@ void    pfGUIKnobCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 
 void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    hsScalar oldValue = fValue, newValue = fDragValue;
+    float oldValue = fValue, newValue = fDragValue;
 
     if( fDragRangeMin != -1 )
     {
@@ -242,7 +242,7 @@ void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
     }
     else
     {
-        hsScalar diff;
+        float diff;
         if( HasFlag( kLeftRightOrientation ) )
             diff = ( mousePt.fX - fDragStart.fX ) * 20.f;
         else
@@ -284,7 +284,7 @@ hsBool  pfGUIKnobCtrl::ICalcAnimTimes( void )
     if( fAnimTimesCalced )
         return true;
 
-    hsScalar tBegin = 1e30, tEnd = -1e30;
+    float tBegin = 1e30, tEnd = -1e30;
     bool     foundOne = false;
 
     for( int i = 0; i < fAnimationKeys.GetCount(); i++ )
@@ -295,8 +295,8 @@ hsBool  pfGUIKnobCtrl::ICalcAnimTimes( void )
         {
             for( int j = 0; j < mod->GetNumAnimations(); j++ )
             {
-                hsScalar begin = mod->GetAnimInstance( j )->GetTimeConvert()->GetBegin();
-                hsScalar end = mod->GetAnimInstance( j )->GetTimeConvert()->GetEnd();
+                float begin = mod->GetAnimInstance( j )->GetTimeConvert()->GetBegin();
+                float end = mod->GetAnimInstance( j )->GetTimeConvert()->GetEnd();
                 if( begin < tBegin )
                     tBegin = begin;
                 if( end > tEnd )
@@ -308,8 +308,8 @@ hsBool  pfGUIKnobCtrl::ICalcAnimTimes( void )
         plLayerAnimation *layer = plLayerAnimation::ConvertNoRef( fAnimationKeys[ i ]->ObjectIsLoaded() );
         if( layer != nil )
         {
-            hsScalar begin = layer->GetTimeConvert().GetBegin();
-            hsScalar end = layer->GetTimeConvert().GetEnd();
+            float begin = layer->GetTimeConvert().GetBegin();
+            float end = layer->GetTimeConvert().GetEnd();
             if( begin < tBegin )
                 tBegin = begin;
             if( end > tEnd )
@@ -331,7 +331,7 @@ hsBool  pfGUIKnobCtrl::ICalcAnimTimes( void )
 
 //// SetCurrValue ////////////////////////////////////////////////////////////
 
-void    pfGUIKnobCtrl::SetCurrValue( hsScalar v )
+void    pfGUIKnobCtrl::SetCurrValue( float v )
 {
     int old = (int)fValue;
     pfGUIValueCtrl::SetCurrValue( v );
@@ -343,8 +343,8 @@ void    pfGUIKnobCtrl::SetCurrValue( hsScalar v )
     {
         ICalcAnimTimes();
 
-        hsScalar tLength = fAnimEnd - fAnimBegin;
-        hsScalar newTime = fMin;
+        float tLength = fAnimEnd - fAnimBegin;
+        float newTime = fMin;
 
         if (fMin != fMax) // Protect against div by zero
         {

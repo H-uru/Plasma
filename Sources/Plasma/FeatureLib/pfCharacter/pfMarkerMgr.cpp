@@ -168,7 +168,7 @@ void pfMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool just
         DEL(fMarkers[id]);
     }
 
-    hsPoint3 pos((hsScalar)x, (hsScalar)y, (hsScalar)z);
+    hsPoint3 pos((float)x, (float)y, (float)z);
     fMarkers[id] = TRACKED_NEW pfMarkerInfo(pos, justCreated);
     fMarkers[id]->Spawn(pfMarkerInfo::kMarkerOpen);
 }

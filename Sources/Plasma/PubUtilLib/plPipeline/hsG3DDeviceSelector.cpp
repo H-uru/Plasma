@@ -1230,7 +1230,7 @@ namespace
     /// The table consists of entries for each of our supported chipsets in the table,
     /// plus, flags to be forced set and flags to be forced cleared. Also included
     /// is a Z-buffer suckiness rating, which represents how badly we need to bias
-    /// the z and w values to avoid z-buffer artifacts, stored as an hsScalar (i.e
+    /// the z and w values to avoid z-buffer artifacts, stored as an float (i.e
     /// a float). A rating of 0 means very good/default (read: Nvidia), while, say, 
     /// a 9.0 (i.e. shift the scale 9 times above normal) means s****y, like, say, 
     /// a Savage4. Also also included is a forced value for max # of layers (0 means 
@@ -1281,13 +1281,13 @@ namespace
 
     typedef struct
     {
-        hsScalar    fFogExpApproxStart;
-        hsScalar    fFogExp2ApproxStart;
-        hsScalar    fFogEndBias;
-        hsScalar    fFogExpKnee;        // Fog knees
-        hsScalar    fFogExpKneeVal;
-        hsScalar    fFogExp2Knee;
-        hsScalar    fFogExp2KneeVal;
+        float    fFogExpApproxStart;
+        float    fFogExp2ApproxStart;
+        float    fFogEndBias;
+        float    fFogExpKnee;        // Fog knees
+        float    fFogExpKneeVal;
+        float    fFogExp2Knee;
+        float    fFogExp2KneeVal;
     } FogTweakTable;
 
     FogTweakTable   dsDefaultFogVals =  { 0,    0,      254.0 / 255.0,  0.5f, 0.15f, 0.5f, 0.15f };
@@ -1301,9 +1301,9 @@ namespace
         uint8_t           fType;              // Our chipset ID
         uint32_t          *fFlagsToSet;       
         uint32_t          *fFlagsToClear;
-        hsScalar        fZSuckiness;        // See above
+        float        fZSuckiness;        // See above
         uint32_t          fForceMaxLayers;    // The max # of layers we REALLY want (0 to not force)
-        hsScalar        fLODRating;
+        float        fLODRating;
         FogTweakTable   *fFogTweaks;
     } CFTable;
 

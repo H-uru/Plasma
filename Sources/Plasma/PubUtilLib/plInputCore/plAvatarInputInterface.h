@@ -179,7 +179,7 @@ class plAvatarInputInterface : public plInputInterface
     protected:
 
         uint32_t      fCurrentCursor;
-        hsScalar    fCursorOpacity, fCursorTimeout, fCursorFadeDelay;
+        float    fCursorOpacity, fCursorTimeout, fCursorFadeDelay;
 
         plAvatarInputMap        *fInputMap;
 
@@ -188,7 +188,7 @@ class plAvatarInputInterface : public plInputInterface
         virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd );
 
         // Gets called once per IUpdate(), just like normal IEval()s
-        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty );
+        virtual hsBool IEval( double secs, float del, uint32_t dirty );
 
         void    IDeactivateCommand(plMouseInfo *info);
         void    IChangeInputMaps(plAvatarInputMap *newMap);
@@ -209,7 +209,7 @@ class plAvatarInputInterface : public plInputInterface
         
         void    Reset();
 
-        void    RequestCursorToWorldPos(hsScalar xPos, hsScalar yPos, int ID);
+        void    RequestCursorToWorldPos(float xPos, float yPos, int ID);
 
         hsBitVector     fControlFlags;
         hsBool          fMouseDisabled;
@@ -230,7 +230,7 @@ class plAvatarInputInterface : public plInputInterface
         virtual hsBool      HasInterestingCursorID( void ) const { return true; }
         virtual uint32_t      GetPriorityLevel( void ) const { return kAvatarInputPriority; }
         virtual uint32_t      GetCurrentCursorID( void ) const { return fCurrentCursor; }
-        virtual hsScalar    GetCurrentCursorOpacity( void ) const { return fCursorOpacity; }
+        virtual float    GetCurrentCursorOpacity( void ) const { return fCursorOpacity; }
         const char*         GetInputMapName() { return fInputMap ? fInputMap->GetName() : ""; }
 
         virtual hsBool      InterpretInputEvent( plInputEventMsg *pMsg );
@@ -256,7 +256,7 @@ class plAvatarInputInterface : public plInputInterface
         
         void    SetControlFlag(int f, hsBool val = true)            { fControlFlags.SetBit(f, val); }
 
-        void    SetCursorFadeDelay( hsScalar delay ) { fCursorFadeDelay = delay; }
+        void    SetCursorFadeDelay( float delay ) { fCursorFadeDelay = delay; }
 
         hsBool  IsEnterChatModeBound();
 

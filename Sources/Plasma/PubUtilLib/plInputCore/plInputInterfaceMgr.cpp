@@ -297,7 +297,7 @@ void    plInputInterfaceMgr::IUpdateCursor( int32_t newCursor )
 //// IEval ///////////////////////////////////////////////////////////////////
 //  Inherited from plSingleModifier, gets called once per IUpdate() loop. 
 
-hsBool plInputInterfaceMgr::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
 {
     const char *inputEval = "Eval";
     plProfile_BeginLap(Input, inputEval);

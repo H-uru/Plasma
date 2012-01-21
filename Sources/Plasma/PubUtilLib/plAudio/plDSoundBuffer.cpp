@@ -703,16 +703,16 @@ hsBool  plDSoundBuffer::IsEAXAccelerated( void ) const
 
 uint32_t  plDSoundBuffer::bytePosToMSecs( uint32_t bytePos ) const
 {
-    return (uint32_t)(bytePos * 1000 / (hsScalar)fBufferDesc->fAvgBytesPerSec);
+    return (uint32_t)(bytePos * 1000 / (float)fBufferDesc->fAvgBytesPerSec);
 }
 
 //// GetBufferBytePos ////////////////////////////////////////////////////////
 
-uint32_t  plDSoundBuffer::GetBufferBytePos( hsScalar timeInSecs ) const
+uint32_t  plDSoundBuffer::GetBufferBytePos( float timeInSecs ) const
 {
     hsAssert( fBufferDesc != nil, "Nil buffer description when calling GetBufferBytePos()" );
 
-    uint32_t  uint8_t = (uint32_t)( timeInSecs * (hsScalar)fBufferDesc->fNumSamplesPerSec );
+    uint32_t  uint8_t = (uint32_t)( timeInSecs * (float)fBufferDesc->fNumSamplesPerSec );
     uint8_t *= fBufferDesc->fBlockAlign;
 
     return uint8_t;
@@ -742,7 +742,7 @@ uint8_t   plDSoundBuffer::GetBlockAlign( void ) const
 //// SetScalarVolume /////////////////////////////////////////////////////////
 // Sets the volume, but on a range from 0 to 1
 
-void    plDSoundBuffer::SetScalarVolume( hsScalar volume )
+void    plDSoundBuffer::SetScalarVolume( float volume )
 {
     if(source)
     {

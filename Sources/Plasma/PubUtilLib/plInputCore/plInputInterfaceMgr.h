@@ -88,14 +88,14 @@ class plInputInterfaceMgr : public plSingleModifier
 
         hsBool      fClickEnabled;
         int32_t       fCurrentCursor;
-        hsScalar    fCursorOpacity;
+        float    fCursorOpacity;
         hsBool      fForceCursorHidden;
         int32_t       fForceCursorHiddenCount;
         plInputInterface        *fCurrentFocus;
         plDefaultKeyCatcher     *fDefaultCatcher;
 
         
-        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty );
+        virtual hsBool IEval( double secs, float del, uint32_t dirty );
 
         void    IAddInterface( plInputInterface *iface );
         void    IRemoveInterface( plInputInterface *iface );
@@ -170,7 +170,7 @@ class plCtrlCmd
         ControlEventCode    fControlCode;
         hsBool              fControlActivated;
         hsPoint3            fPt;
-        hsScalar            fPct;
+        float            fPct;
 
         hsBool              fNetPropagateToPlayers;
 

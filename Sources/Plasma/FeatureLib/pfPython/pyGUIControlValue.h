@@ -75,13 +75,13 @@ public:
 
     static hsBool IsGUIControlValue(pyKey& gckey);
 
-    virtual hsScalar    GetValue();
-    virtual void        SetValue( hsScalar v );
-    virtual hsScalar    GetMin( void );
-    virtual hsScalar    GetMax( void );
-    virtual hsScalar    GetStep( void );
-    virtual void        SetRange( hsScalar min, hsScalar max );
-    virtual void        SetStep( hsScalar step );
+    virtual float    GetValue();
+    virtual void        SetValue( float v );
+    virtual float    GetMin( void );
+    virtual float    GetMax( void );
+    virtual float    GetStep( void );
+    virtual void        SetRange( float min, float max );
+    virtual void        SetStep( float step );
 };
 
 class pyGUIControlKnob : public pyGUIControlValue

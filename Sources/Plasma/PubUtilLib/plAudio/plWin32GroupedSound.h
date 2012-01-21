@@ -70,15 +70,15 @@ public:
     
     virtual hsBool  LoadSound( hsBool is3D );
     virtual hsBool  MsgReceive( plMessage *pMsg );
-    void            SetPositionArray( uint16_t numSounds, uint32_t *posArray, hsScalar *volumeArray );
-    hsScalar        GetSoundLength( int16_t soundIndex );
+    void            SetPositionArray( uint16_t numSounds, uint32_t *posArray, float *volumeArray );
+    float        GetSoundLength( int16_t soundIndex );
     virtual double  GetLength() { return GetSoundLength( fCurrentSound ); }
 
 protected:
     uint16_t              fCurrentSound;
     uint32_t              fCurrentSoundLength;
     hsTArray<uint32_t>    fStartPositions;    // In bytes
-    hsTArray<hsScalar>  fVolumes;
+    hsTArray<float>  fVolumes;
 
     // Some extra handy info for us
     uint8_t               fNumDestChannels, fNumDestBytesPerSample;

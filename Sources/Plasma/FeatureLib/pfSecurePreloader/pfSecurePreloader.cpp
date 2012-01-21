@@ -179,7 +179,7 @@ public:
     uint32_t Write(uint32_t count, const void* buf)
     {
         if (fProgress)
-            fProgress->Increment((hsScalar)count);
+            fProgress->Increment((float)count);
         if (fIsZipped)
             return plZlibStream::Write(count, buf);
         else
@@ -351,7 +351,7 @@ void pfSecurePreloader::PreloadManifest(const NetCliAuthFileInfo manifestEntries
 
     if (fProgress)
     {
-        fProgress->SetLength((hsScalar)totalBytes);
+        fProgress->SetLength((float)totalBytes);
         fProgress->SetTitle("Downloading...");
     }
 }
@@ -402,7 +402,7 @@ void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEn
 
     if (totalBytes && fProgress)
     {
-        fProgress->SetLength((hsScalar)totalBytes);
+        fProgress->SetLength((float)totalBytes);
         fProgress->SetTitle("Downloading...");
     }
 

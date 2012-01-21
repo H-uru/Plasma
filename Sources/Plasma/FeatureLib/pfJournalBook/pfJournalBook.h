@@ -252,7 +252,7 @@ public:
     pfGUIMultiLineEditCtrl *GetEditCtrl(uint32_t which);
 
     // Seeks the width and height animations to set the desired book size. Sizes are in % across the animation
-    void SetCurrSize(hsScalar w, hsScalar h);
+    void SetCurrSize(float w, float h);
 
     // Enables or disables the left and right page corners, to indicate current turnage state
     void UpdatePageCorners(WhichSide which);
@@ -317,7 +317,7 @@ protected:
     WhichSide   fCurrSFXPages;
 
     // Base time to calc SFX anim positions from
-    hsScalar    fBaseSFXTime;
+    float    fBaseSFXTime;
     hsBool      fResetSFXFlag;
     hsBool      fSFXUpdateFlip;     // So we only update alternating pages every frame, to save processor time
 
@@ -331,7 +331,7 @@ protected:
     void IInitTemplate(pfGUIDialogMod *templateDlg);
 
     // Process SFX for this frame
-    void IHandleSFX(hsScalar currTime, WhichSide whichSide = kNoSides);
+    void IHandleSFX(float currTime, WhichSide whichSide = kNoSides);
 
     // Yet another step in the page flip, to make SURE we're already showing the turning page before we fill in the page behind it
     void IFillUncoveringPage(hsBool rightSide);
@@ -424,7 +424,7 @@ class pfJournalBook : public hsKeyedObject
         void    CloseAndHide( void );
 
         // Sets the book size scaling. 1,1 would be full size, 0,0 is the smallest size possible
-        void    SetBookSize( hsScalar width, hsScalar height );
+        void    SetBookSize( float width, float height );
 
         // What page are we on?
         uint32_t  GetCurrentPage( void ) const { return fCurrentPage; }
@@ -494,7 +494,7 @@ class pfJournalBook : public hsKeyedObject
         uint32_t  fLastPage;
 
         // Per book size
-        hsScalar    fWidthScale, fHeightScale;
+        float    fWidthScale, fHeightScale;
 
         // Per book margin around the edge (defaults to 16 pixels)
         uint32_t      fPageTMargin, fPageLMargin, fPageBMargin, fPageRMargin;

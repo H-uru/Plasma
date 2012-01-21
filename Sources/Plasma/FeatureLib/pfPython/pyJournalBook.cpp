@@ -209,7 +209,7 @@ void    pyJournalBook::GoToPage( uint32_t page )
         fBook->GoToPage( page );
 }
 
-void    pyJournalBook::SetSize( hsScalar width, hsScalar height )
+void    pyJournalBook::SetSize( float width, float height )
 {
     if( fBook != nil )
         fBook->SetBookSize( width, height );

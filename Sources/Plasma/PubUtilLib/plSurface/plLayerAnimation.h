@@ -62,8 +62,8 @@ class plLayerAnimationBase : public plLayerInterface
 protected:
     char*                       fSegmentID;
     double                      fEvalTime;
-    hsScalar                    fCurrentTime;
-    hsScalar                    fLength;
+    float                    fCurrentTime;
+    float                    fLength;
 
     plController*   fPreshadeColorCtl;
     plController*   fRuntimeColorCtl;
@@ -72,8 +72,8 @@ protected:
     plController*   fOpacityCtl;
     plController*   fTransformCtl;
 
-    hsScalar IMakeUniformLength();
-    void IEvalConvertedTime(hsScalar secs, uint32_t passChans, uint32_t evalChans, uint32_t &dirty);
+    float IMakeUniformLength();
+    void IEvalConvertedTime(float secs, uint32_t passChans, uint32_t evalChans, uint32_t &dirty);
 
 public:
     plLayerAnimationBase();
@@ -91,7 +91,7 @@ public:
     virtual void                        Write(hsStream* s, hsResMgr* mgr);
 
     // Specialized
-    hsScalar GetLength() const { return fLength; }
+    float GetLength() const { return fLength; }
     char *GetSegmentID() const { return fSegmentID; }
     void SetSegmentID(char *ID) { delete fSegmentID; fSegmentID = hsStrcpy(ID); }
 

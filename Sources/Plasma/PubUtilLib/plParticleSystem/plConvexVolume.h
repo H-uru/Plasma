@@ -75,7 +75,7 @@ public:
 
     // returns true if the point was inside and pos and velocity updated to bounce off offending plane.
     // input bounce==1.f for perfect bounce, bounce==0 to slide.
-    hsBool BouncePoint(hsPoint3 &pos, hsVector3 &velocity, hsScalar bounce, hsScalar friction) const;
+    hsBool BouncePoint(hsPoint3 &pos, hsVector3 &velocity, float bounce, float friction) const;
 
     inline hsBool TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const; // Is the point inside the plane?
     virtual void Read(hsStream* s, hsResMgr *mgr);
@@ -92,7 +92,7 @@ protected:
 
 inline hsBool plConvexVolume::TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const
 {
-    hsScalar dis = plane.fN.InnerProduct(pos);
+    float dis = plane.fN.InnerProduct(pos);
     dis += plane.fD;
     if( dis >= 0.f )    
         return false;   

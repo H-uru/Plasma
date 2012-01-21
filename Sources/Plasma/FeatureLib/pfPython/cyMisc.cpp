@@ -272,7 +272,7 @@ void cyMisc::PopUpConsole(const char* command)
 //
 //  PURPOSE    : Execute a console command from a python script
 //
-void cyMisc::TimerCallback(pyKey& selfkey, hsScalar time, uint32_t id)
+void cyMisc::TimerCallback(pyKey& selfkey, float time, uint32_t id)
 {
     // setup the message to come back to whoever the pyKey is pointing to
     plTimerCallbackMsg* pTimerMsg = TRACKED_NEW plTimerCallbackMsg(selfkey.getKey(),id);
@@ -757,7 +757,7 @@ double cyMisc::GetSysSeconds()
 //
 //  PURPOSE    : Return the frame delta seconds
 //
-hsScalar cyMisc::GetDelSysSeconds()
+float cyMisc::GetDelSysSeconds()
 {
     return hsTimer::GetDelSysSeconds();
 }
@@ -1061,7 +1061,7 @@ uint32_t cyMisc::GetMaxListenListSize()
     return plNetListenList::kMaxListenListSize;
 }
 
-hsScalar cyMisc::GetMaxListenDistSq()
+float cyMisc::GetMaxListenDistSq()
 {
     return plNetListenList::kMaxListenDistSq;
 }
@@ -1157,7 +1157,7 @@ uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolis
 //
 //  RETURNS    : nothing
 //
-void cyMisc::SendKIMessage(uint32_t command, hsScalar value)
+void cyMisc::SendKIMessage(uint32_t command, float value)
 {
     // create the mesage to send
     pfKIMsg *msg = TRACKED_NEW pfKIMsg( (uint8_t)command );
@@ -1911,7 +1911,7 @@ int cyMisc::GetNumParticles(pyKey& host)
 }
 
 
-void cyMisc::SetLightColorValue(pyKey& light, std::string lightName, hsScalar r, hsScalar g, hsScalar b, hsScalar a)
+void cyMisc::SetLightColorValue(pyKey& light, std::string lightName, float r, float g, float b, float a)
 {
     // lightName is the name of the light object attached to the light that we want to talk to
     // for the bug lights, this would be "RTOmni-BugLightTest"
@@ -2052,7 +2052,7 @@ void cyMisc::RegisterForControlEventMessages(hsBool on, pyKey& k)
 // PURPOSE    : To request an LOS from a point on the screen
 //
 #include "plMessage/plLOSRequestMsg.h"
-bool cyMisc::RequestLOSScreen(pyKey &selfkey, int32_t ID, hsScalar xPos, hsScalar yPos, hsScalar distance, int what, int reportType)
+bool cyMisc::RequestLOSScreen(pyKey &selfkey, int32_t ID, float xPos, float yPos, float distance, int what, int reportType)
 {
     plPipeline* pipe = selfkey.GetPipeline();
     if (pipe)
@@ -2203,7 +2203,7 @@ bool cyMisc::IsEnterChatModeKeyBound()
 // PURPOSE    : Shoots from screen coordinates, a bullet and makes a mark on objects that know about bullet holes
 //
 #include "plMessage/plBulletMsg.h"
-void cyMisc::ShootBulletFromScreen(pyKey &selfkey, hsScalar xPos, hsScalar yPos, hsScalar radius, hsScalar range)
+void cyMisc::ShootBulletFromScreen(pyKey &selfkey, float xPos, float yPos, float radius, float range)
 {
     plPipeline* pipe = selfkey.GetPipeline();
     if (pipe)
@@ -2234,7 +2234,7 @@ void cyMisc::ShootBulletFromScreen(pyKey &selfkey, hsScalar xPos, hsScalar yPos,
 //
 // PURPOSE    : Shoots from an object, a bullet and makes a mark on objects that know about bullet holes
 //
-void cyMisc::ShootBulletFromObject(pyKey &selfkey, pySceneObject* sobj, hsScalar radius, hsScalar range)
+void cyMisc::ShootBulletFromObject(pyKey &selfkey, pySceneObject* sobj, float radius, float range)
 {
     plSceneObject* so = plSceneObject::ConvertNoRef(sobj->getObjKey()->ObjectIsLoaded());
     if( so )

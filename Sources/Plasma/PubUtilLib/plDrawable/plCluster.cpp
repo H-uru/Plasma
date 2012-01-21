@@ -94,8 +94,8 @@ void plCluster::Write(hsStream* s) const
 }
 
 inline void inlTESTPOINT(const hsPoint3& destP, 
-                         hsScalar& minX, hsScalar& minY, hsScalar& minZ, 
-                         hsScalar& maxX, hsScalar& maxY, hsScalar& maxZ)
+                         float& minX, float& minY, float& minZ, 
+                         float& maxX, float& maxY, float& maxZ)
 {
     if( destP.fX < minX )
         minX = destP.fX;
@@ -115,13 +115,13 @@ inline void inlTESTPOINT(const hsPoint3& destP,
 
 void plCluster::UnPack(uint8_t* vDst, uint16_t* iDst, int idxOffset, hsBounds3Ext& wBnd) const
 {
-    hsScalar minX = 1.e33f;
-    hsScalar minY = 1.e33f;
-    hsScalar minZ = 1.e33f;
+    float minX = 1.e33f;
+    float minY = 1.e33f;
+    float minZ = 1.e33f;
 
-    hsScalar maxX = -1.e33f;
-    hsScalar maxY = -1.e33f;
-    hsScalar maxZ = -1.e33f;
+    float maxX = -1.e33f;
+    float maxY = -1.e33f;
+    float maxZ = -1.e33f;
 
     hsAssert(fGroup->GetTemplate(), "Can't unpack without a template");
     const plSpanTemplate& templ = *fGroup->GetTemplate();

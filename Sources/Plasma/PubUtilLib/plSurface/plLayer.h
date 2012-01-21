@@ -79,11 +79,11 @@ public:
     void SetRuntimeColor( const hsColorRGBA& col ) { *fRuntimeColor = col; }
     void SetAmbientColor(const hsColorRGBA& col) { *fAmbientColor = col; }
     void SetSpecularColor(const hsColorRGBA& col) { *fSpecularColor = col; }
-    void SetOpacity(hsScalar a) { *fOpacity = a; }
+    void SetOpacity(float a) { *fOpacity = a; }
     void SetTransform(const hsMatrix44& xfm);
     void SetUVWSrc(uint32_t chan) { *fUVWSrc = chan; }
-    void SetLODBias(hsScalar f) { *fLODBias = f; }
-    void SetSpecularPower(hsScalar f) { *fSpecularPower = f; }
+    void SetLODBias(float f) { *fLODBias = f; }
+    void SetSpecularPower(float f) { *fSpecularPower = f; }
 
     void SetVertexShader(plShader* shader) { *fVertexShader = shader; }
     void SetPixelShader(plShader* shader) { *fPixelShader = shader; }

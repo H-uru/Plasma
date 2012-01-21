@@ -60,7 +60,7 @@ class plDebugInputInterface : public plInputInterface
 {
     protected:
 
-        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty );
+        virtual hsBool IEval( double secs, float del, uint32_t dirty );
         hsBool CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box);
 
         plMouseMap  fMouseMap;

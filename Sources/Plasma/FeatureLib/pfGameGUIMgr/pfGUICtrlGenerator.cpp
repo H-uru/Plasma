@@ -466,8 +466,8 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float sc
     fovX = atan( scrnWidth / ( 2.f * 100.f ) ) * 2.f;
     fovY = fovX;// * 3.f / 4.f;
 
-    renderMod->SetFovX( fovX * 180.f / hsScalarPI );
-    renderMod->SetFovY( fovY * 180.f / hsScalarPI );
+    renderMod->SetFovX( fovX * 180.f / M_PI );
+    renderMod->SetFovY( fovY * 180.f / M_PI );
 
     // Create the sceneNode to go with it
     node = TRACKED_NEW plSceneNode;

@@ -99,7 +99,7 @@ public:
         plPXPhysicalControllerCore* ac = plPXPhysicalControllerCore::FindController(hit.controller);
         NxActor& actor = hit.shape->getActor();
         plPXPhysical* phys = (plPXPhysical*)actor.userData;
-        static hsScalar SlopeLimit = kSLOPELIMIT;
+        static float SlopeLimit = kSLOPELIMIT;
         hsVector3 normal = plPXConvert::Vector(hit.worldNormal);
         ac->fMovementInterface->IAddContactNormals(normal);
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -127,9 +127,9 @@ public:
         // If the avatar hit a movable physical, apply some force to it.
         hsVector3 dir = plPXConvert::Vector(hit.dir);
         float dirdotup=dir.fZ;
-        hsPoint3 pos((hsScalar)hit.worldPos.x, (hsScalar)hit.worldPos.y, (hsScalar)hit.worldPos.z);
+        hsPoint3 pos((float)hit.worldPos.x, (float)hit.worldPos.y, (float)hit.worldPos.z);
         NxExtendedVec3 controllerPos=hit.controller->getPosition();
-        hsVector3 bottomOfTheCapsule((hsScalar)controllerPos.x,(hsScalar)controllerPos.y,(hsScalar)controllerPos.z);
+        hsVector3 bottomOfTheCapsule((float)controllerPos.x,(float)controllerPos.y,(float)controllerPos.z);
         bottomOfTheCapsule.fZ=bottomOfTheCapsule.fZ-(ac->fHeight/2.0f + ac->fRadius);
         if (actor.isDynamic() )
         {
@@ -167,10 +167,10 @@ public:
                 hsVector3 vel=ac->GetLinearVelocity()- plPXConvert::Vector( actor.getLinearVelocity());
                 if(dirdotup>=0)vel.fZ=0.001f;
                 else vel.fZ=0.0f;
-                static hsScalar kAvieMass = 140.f/32.f;         
+                static float kAvieMass = 140.f/32.f;         
                 if (!vel.IsEmpty())
                 {
-                    static hsScalar kForceScale = 140.0f;
+                    static float kForceScale = 140.0f;
                     NxF32 coeff;
                     NxExtendedVec3 norm2=hit.controller->getPosition();
                     norm2.x=hit.worldPos.x-bottomOfTheCapsule.fX;
@@ -195,9 +195,9 @@ public:
                     
                     float proj=(float)(norm2.x*dir.fX+dir.fY*norm2.y+dir.fZ*norm2.z);
                     coeff =abs(proj*kForceScale*vel.Magnitude());
-                    vel.fZ=(hsScalar)norm2.z;
-                    vel.fY=(hsScalar)norm2.y;
-                    vel.fX=(hsScalar)norm2.x;
+                    vel.fZ=(float)norm2.z;
+                    vel.fY=(float)norm2.y;
+                    vel.fX=(float)norm2.x;
                     phys->SetHitForce(vel*coeff, pos);
                 }
             }
@@ -223,13 +223,13 @@ public:
 } gMyReport;
 
 
-plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, hsScalar height, hsScalar width)
+plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float height, float width)
 {
     // Test to see how many controller there already is
     if ( !plPXPhysicalControllerCore::fPXControllersMax || plPXPhysicalControllerCore::NumControllers() < plPXPhysicalControllerCore::fPXControllersMax )
     {
-        hsScalar radius = width / 2.f;
-        hsScalar realHeight = height - width + kPhysicalHeightFudge;
+        float radius = width / 2.f;
+        float realHeight = height - width + kPhysicalHeightFudge;
         return TRACKED_NEW plPXPhysicalControllerCore(ownerSO, realHeight,radius);
     }
     return nil;
@@ -326,7 +326,7 @@ int plPXPhysicalControllerCore::GetNumberOfControllersInThisSubWorld(plKey world
     return i;
 }
 //
-plPXPhysicalControllerCore::plPXPhysicalControllerCore(plKey ownerSO, hsScalar height, hsScalar radius)
+plPXPhysicalControllerCore::plPXPhysicalControllerCore(plKey ownerSO, float height, float radius)
     : plPhysicalControllerCore(ownerSO,height,radius)
     , fController(nil)
     , fProxyGen(nil)
@@ -499,12 +499,12 @@ void plPXPhysicalControllerCore::IGetPositionSim(hsPoint3& pos) const
     if(this->fBehavingLikeAnimatedPhys)
     {
         const NxExtendedVec3& nxPos = fController->getPosition();
-        pos.Set(hsScalar(nxPos.x), hsScalar(nxPos.y), hsScalar(nxPos.z) - kPhysZOffset);
+        pos.Set(float(nxPos.x), float(nxPos.y), float(nxPos.z) - kPhysZOffset);
     }
     else
     {
         NxVec3 Pos = fKinematicActor->getGlobalPosition();
-        pos.Set(hsScalar(Pos.x), hsScalar(Pos.y), hsScalar(Pos.z) - kPhysZOffset);
+        pos.Set(float(Pos.x), float(Pos.y), float(Pos.z) - kPhysZOffset);
     }
 }
 void plPXPhysicalControllerCore::ICreateController()
@@ -568,7 +568,7 @@ NxScene* scene = plSimulationMgr::GetInstance()->GetScene(fWorldKey);
     //hsAssert(!fProxyGen, "Already have proxy gen, double read?");
 
     hsColorRGBA physColor;
-    hsScalar opac = 1.0f;
+    float opac = 1.0f;
 
     // local avatar is light purple and transparent
     physColor.Set(.2f, .1f, .2f, 1.f);
@@ -638,7 +638,7 @@ void plPXPhysicalControllerCore::ICreateController(const hsPoint3& pos)
     //hsAssert(!fProxyGen, "Already have proxy gen, double read?");
 
     hsColorRGBA physColor;
-    hsScalar opac = 1.0f;
+    float opac = 1.0f;
 
     // local avatar is light purple and transparent
     physColor.Set(.2f, .1f, .2f, 1.f);
@@ -809,7 +809,7 @@ void plPXPhysicalControllerCore::GetState(hsPoint3& pos, float& zRot)
     fLocalRotation.GetAngleAxis(&zRot, (hsVector3*)&pos);
 
     if (pos.fZ < 0)
-        zRot = (2 * hsScalarPI) - zRot; // axis is backwards, so reverse the angle too
+        zRot = (2 * M_PI) - zRot; // axis is backwards, so reverse the angle too
 
     pos = fLocalPosition;
 
@@ -870,10 +870,10 @@ void plPXPhysicalControllerCore::GetKinematicPosition(hsPoint3& pos)
     if ( fKinematicActor )
     {
         NxVec3 klPos = fKinematicActor->getGlobalPosition();
-        pos.Set(hsScalar(klPos.x), hsScalar(klPos.y), hsScalar(klPos.z) - kPhysZOffset);
+        pos.Set(float(klPos.x), float(klPos.y), float(klPos.z) - kPhysZOffset);
     }
 }
-void plPXPhysicalControllerCore::UpdatePoststep( hsScalar delSecs)
+void plPXPhysicalControllerCore::UpdatePoststep( float delSecs)
 {
     // Apparently the user data field of the controllers is broken
 //  uint32_t count = gControllerMgr.getNbControllers();
@@ -901,7 +901,7 @@ void plPXPhysicalControllerCore::UpdatePoststep( hsScalar delSecs)
             }
     }
 }
-void plPXPhysicalControllerCore::UpdatePrestep(hsScalar delSecs)
+void plPXPhysicalControllerCore::UpdatePrestep(float delSecs)
 {
     for (int i = 0; i < gControllers.size(); i++)
     {
@@ -928,7 +928,7 @@ void plPXPhysicalControllerCore::UpdatePrestep(hsScalar delSecs)
     }
     gRebuildCache = false;
 }
-void plPXPhysicalControllerCore::UpdatePostSimStep(hsScalar delSecs)
+void plPXPhysicalControllerCore::UpdatePostSimStep(float delSecs)
 {
     for (int i = 0; i < gControllers.size(); i++)
     {
@@ -1011,7 +1011,7 @@ void plPXPhysicalControllerCore::IHandleResize()
 
 //  delete[] response;
 }
-void plPXPhysicalControllerCore::SetControllerDimensions(hsScalar radius, hsScalar height)
+void plPXPhysicalControllerCore::SetControllerDimensions(float radius, float height)
 {
     fNeedsResize=false;
     if(fRadius!=radius)
@@ -1129,7 +1129,7 @@ void plPXPhysicalControllerCore::SetLinearVelocity(const hsVector3& linearVel)
         fKinematicActor->setLinearVelocity(vel);
     }
 }
-void plPXPhysicalControllerCore::SetAngularVelocity(const hsScalar angvel)
+void plPXPhysicalControllerCore::SetAngularVelocity(const float angvel)
 {
     plPhysicalControllerCore::SetAngularVelocity(angvel);
     if(fKinematicActor && !fBehavingLikeAnimatedPhys)
@@ -1138,7 +1138,7 @@ void plPXPhysicalControllerCore::SetAngularVelocity(const hsScalar angvel)
         fKinematicActor->setAngularVelocity(vel);
     }
 }
-void plPXPhysicalControllerCore::SetVelocities(const hsVector3& linearVel, hsScalar angVel)
+void plPXPhysicalControllerCore::SetVelocities(const hsVector3& linearVel, float angVel)
 {
     SetLinearVelocity(linearVel);
     SetAngularVelocity(angVel);
@@ -1212,7 +1212,7 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay()
     {
         hsVector3 normal = fDbgCollisionInfo[i].fNormal;
         char *overlapStr = fDbgCollisionInfo[i].fOverlap ? "yes" : "no";
-        hsScalar angle = hsScalarRadToDeg(hsACosine(normal * hsVector3(0, 0, 1)));
+        float angle = hsRadiansToDegrees(acos(normal * hsVector3(0, 0, 1)));
         sprintf(strBuf, "    Obj: %s, Normal: (%.2f, %.2f, %.2f), Angle(%.1f), Overlap(%3s)",
                 fDbgCollisionInfo[i].fSO->GetKeyName(),
                 normal.fX, normal.fY, normal.fZ, angle, overlapStr);

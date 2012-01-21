@@ -52,11 +52,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 
-hsScalar plInterestingModifier::fInterestRadius     = 100.0f;
-hsScalar plInterestingModifier::fInterestWeight     = 1.0f;
+float plInterestingModifier::fInterestRadius     = 100.0f;
+float plInterestingModifier::fInterestWeight     = 1.0f;
 
 
-hsBool plInterestingModifier::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plInterestingModifier::IEval(double secs, float del, uint32_t dirty)
 {
     for (int i=0; i < GetNumTargets(); i++)
     {

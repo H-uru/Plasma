@@ -468,7 +468,7 @@ NxScene* plSimulationMgr::GetScene(plKey world)
 
     if (!scene)
     {
-        uint32_t maxSteps = (uint32_t)hsCeil(fMaxDelta / fStepSize);
+        uint32_t maxSteps = (uint32_t)ceil(fMaxDelta / fStepSize);
 
         NxSceneDesc sceneDesc;
         sceneDesc.gravity.set(0, 0, -32.174049f);
@@ -802,7 +802,7 @@ int plSimulationMgr::GetStepsPerSecond()
     return (int)((1.0 / fStepSize) + 0.5f); // round to nearest int
 }
 
-int plSimulationMgr::GetMaterialIdx(NxScene* scene, hsScalar friction, hsScalar restitution)
+int plSimulationMgr::GetMaterialIdx(NxScene* scene, float friction, float restitution)
 {
     if (friction == 0.5f && restitution == 0.5f)
         return 0;

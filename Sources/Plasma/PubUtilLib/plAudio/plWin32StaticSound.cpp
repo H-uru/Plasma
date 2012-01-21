@@ -182,7 +182,7 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
         plProfile_NewMem(MemSounds, fTotalBytes);
 
         // get pertinent info
-        hsScalar length = (hsScalar)bufferSize / (hsScalar)header.fAvgBytesPerSec;
+        float length = (float)bufferSize / (float)header.fAvgBytesPerSec;
         SetLength(length);
 
         if( fLoadFromDiskOnDemand && !IsPropertySet( kPropLoadOnlyOnCall ) )

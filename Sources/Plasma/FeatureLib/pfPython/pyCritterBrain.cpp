@@ -172,56 +172,56 @@ bool pyCritterBrain::AtGoal() const
     return fBrain->AtGoal();
 }
 
-void pyCritterBrain::StopDistance(hsScalar stopDistance)
+void pyCritterBrain::StopDistance(float stopDistance)
 {
     if (!fBrain)
         return;
     fBrain->StopDistance(stopDistance);
 }
 
-hsScalar pyCritterBrain::StopDistance() const
+float pyCritterBrain::StopDistance() const
 {
     if (!fBrain)
         return 0;
     return fBrain->StopDistance();
 }
 
-void pyCritterBrain::SightCone(hsScalar coneRad)
+void pyCritterBrain::SightCone(float coneRad)
 {
     if (!fBrain)
         return;
     fBrain->SightCone(coneRad);
 }
 
-hsScalar pyCritterBrain::SightCone() const
+float pyCritterBrain::SightCone() const
 {
     if (!fBrain)
         return 0;
     return fBrain->SightCone();
 }
 
-void pyCritterBrain::SightDistance(hsScalar sightDis)
+void pyCritterBrain::SightDistance(float sightDis)
 {
     if (!fBrain)
         return;
     fBrain->SightDistance(sightDis);
 }
 
-hsScalar pyCritterBrain::SightDistance() const
+float pyCritterBrain::SightDistance() const
 {
     if (!fBrain)
         return 0;
     return fBrain->SightDistance();
 }
 
-void pyCritterBrain::HearingDistance(hsScalar hearDis)
+void pyCritterBrain::HearingDistance(float hearDis)
 {
     if (!fBrain)
         return;
     fBrain->HearingDistance(hearDis);
 }
 
-hsScalar pyCritterBrain::HearingDistance() const
+float pyCritterBrain::HearingDistance() const
 {
     if (!fBrain)
         return 0;

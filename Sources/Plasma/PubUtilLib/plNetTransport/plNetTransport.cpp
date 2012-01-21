@@ -349,8 +349,8 @@ int compare( const void* arg1, const void *arg2 )
 {
     plNetTransportMember** m1 = (plNetTransportMember**)arg1;
     plNetTransportMember** m2 = (plNetTransportMember**)arg2;
-    float d1=m1 ? (*m1)->GetDistSq() : hsScalarMax;
-    float d2=m2 ? (*m2)->GetDistSq() : hsScalarMax;
+    float d1=m1 ? (*m1)->GetDistSq() : FLT_MAX;
+    float d2=m2 ? (*m2)->GetDistSq() : FLT_MAX;
     return (int)(d1-d2);
 }
 

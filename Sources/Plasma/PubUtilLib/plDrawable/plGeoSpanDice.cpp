@@ -121,7 +121,7 @@ hsBool plGeoSpanDice::IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out,
     if( iAxis < 0 )
         return false;
 
-    hsScalar midPoint = src->fLocalBounds.GetCenter()[iAxis];
+    float midPoint = src->fLocalBounds.GetCenter()[iAxis];
 
     hsTArray<uint32_t>        loTris;
     hsTArray<uint32_t>        hiTris;
@@ -170,7 +170,7 @@ hsBool plGeoSpanDice::IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out,
 int plGeoSpanDice::ISelectAxis(int exclAxis, plGeometrySpan* src) const
 {
     int iAxis = -1;
-    hsScalar maxDim = 0;
+    float maxDim = 0;
 
     int i;
     for( i = 0; i < 3; i++ )
@@ -179,7 +179,7 @@ int plGeoSpanDice::ISelectAxis(int exclAxis, plGeometrySpan* src) const
         if( exclAxis & (1 << i) )
             continue;
 
-        hsScalar dim = src->fLocalBounds.GetMaxs()[i] - src->fLocalBounds.GetMins()[i];
+        float dim = src->fLocalBounds.GetMaxs()[i] - src->fLocalBounds.GetMins()[i];
         if( dim > maxDim )
         {
             maxDim = dim;

@@ -51,7 +51,7 @@ pyPlayer::pyPlayer() // only used by python glue, do NOT call
     fIsServer = false;
 }
 
-pyPlayer::pyPlayer(pyKey& avKey, const char* pname, uint32_t pid, hsScalar distsq)
+pyPlayer::pyPlayer(pyKey& avKey, const char* pname, uint32_t pid, float distsq)
 {
     fAvatarKey = avKey.getKey();
     fPlayerName = pname;
@@ -61,7 +61,7 @@ pyPlayer::pyPlayer(pyKey& avKey, const char* pname, uint32_t pid, hsScalar dists
     fIsServer = false;
 }
 
-pyPlayer::pyPlayer(plKey avKey, const char* pname, uint32_t pid, hsScalar distsq)
+pyPlayer::pyPlayer(plKey avKey, const char* pname, uint32_t pid, float distsq)
 {
     fAvatarKey = avKey;
     fPlayerName = pname;
@@ -82,7 +82,7 @@ pyPlayer::pyPlayer(const char* pname, uint32_t pid)
     fIsServer = false;
 }
 
-void pyPlayer::Init(plKey avKey, const char* pname, uint32_t pid, hsScalar distsq) // used by python glue, do NOT call
+void pyPlayer::Init(plKey avKey, const char* pname, uint32_t pid, float distsq) // used by python glue, do NOT call
 {
     fAvatarKey = avKey;
     fPlayerName = pname;

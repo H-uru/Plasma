@@ -377,7 +377,7 @@ hsBool plFootPrintComponent::ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg
     float intensity = fCompPB->GetFloat(kIntensity) * 1.e-2f;
     float partyTime = fCompPB->GetFloat(kPartyTime);
 
-    const hsScalar kHeightHack = 1.f;
+    const float kHeightHack = 1.f;
     fDecalMgr->SetScale(hsVector3(width, length, kHeightHack));
 
     const float kMinFadeOut = 1.e-2f;

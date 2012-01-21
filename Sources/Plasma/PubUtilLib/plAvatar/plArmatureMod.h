@@ -112,7 +112,7 @@ public:
     virtual hsBool  MsgReceive(plMessage* msg);
     virtual void    AddTarget(plSceneObject* so);   
     virtual void    RemoveTarget(plSceneObject* so);
-    virtual hsBool  IEval(double secs, hsScalar del, uint32_t dirty);
+    virtual hsBool  IEval(double secs, float del, uint32_t dirty);
     virtual void    Read(hsStream *stream, hsResMgr *mgr);
     virtual void    Write(hsStream *stream, hsResMgr *mgr);
     
@@ -207,7 +207,7 @@ public:
     virtual hsBool  MsgReceive(plMessage* msg);
     virtual void    AddTarget(plSceneObject* so);
     virtual void    RemoveTarget(plSceneObject* so);
-    virtual hsBool  IEval(double secs, hsScalar del, uint32_t dirty);
+    virtual hsBool  IEval(double secs, float del, uint32_t dirty);
     virtual void    Read(hsStream *stream, hsResMgr *mgr);
     virtual void    Write(hsStream *stream, hsResMgr *mgr);
 
@@ -253,9 +253,9 @@ public:
     void        SetInputFlag(int which, hsBool status);
     void        ClearInputFlags(bool saveAlwaysRun, bool clearBackup);
     hsBool      HasMovementFlag() const; // Is any *movement* input flag on?
-    hsScalar    GetTurnStrength() const;
-    hsScalar    GetKeyTurnStrength() const;
-    hsScalar    GetAnalogTurnStrength() const;
+    float    GetTurnStrength() const;
+    float    GetKeyTurnStrength() const;
+    float    GetAnalogTurnStrength() const;
     void        SetReverseFBOnIdle(bool val);
     hsBool      IsFBReversed();
 
@@ -324,8 +324,8 @@ public:
     void SendBehaviorNotify(uint32_t type, hsBool start = true) { IFireBehaviorNotify(type,start); }
     // Discovered a bug which makes these values horribly out of scale. So we do the rescale
     // in the Get/Set functions for backwards compatability.
-    static void     SetMouseTurnSensitivity(hsScalar val) { fMouseTurnSensitivity = val / 150.f; }
-    static hsScalar GetMouseTurnSensitivity() { return fMouseTurnSensitivity * 150.f; } 
+    static void     SetMouseTurnSensitivity(float val) { fMouseTurnSensitivity = val / 150.f; }
+    static float GetMouseTurnSensitivity() { return fMouseTurnSensitivity * 150.f; } 
     
     static void SetSpawnPointOverride( const char *overrideObjName );
     static void WindowActivate(bool active);
@@ -361,11 +361,11 @@ public:
     };
     plMatrixDelayedCorrectionApplicator *fBoneRootAnimator;
 
-    static const hsScalar kAvatarInputSynchThreshold;
+    static const float kAvatarInputSynchThreshold;
     static hsBool fClickToTurn;
     static const char *BoneStrings[];
     
-    void SetPhysicalDims(hsScalar height, hsScalar width) { fPhysHeight = height; fPhysWidth = width; }
+    void SetPhysicalDims(float height, float width) { fPhysHeight = height; fPhysWidth = width; }
 
     void SetBodyAgeName(const char* ageName) {if (ageName) fBodyAgeName = ageName; else fBodyAgeName = "";}
     void SetBodyFootstepSoundPage(const char* pageName) {if (pageName) fBodyFootstepSoundPage = pageName; else fBodyFootstepSoundPage = "";}
@@ -393,11 +393,11 @@ protected:
     hsBitVector         fMoveFlagsBackup;   // a copy of fMoveFlags
     typedef std::vector<plControlEventMsg*> CtrlMessageVec;
     CtrlMessageVec      fQueuedCtrlMessages;    // input messages we haven't processed
-    hsScalar            fMouseFrameTurnStrength; // Sum turnage from mouse delta messages since last eval.
+    float            fMouseFrameTurnStrength; // Sum turnage from mouse delta messages since last eval.
     plKey               fFootSoundSOKey;    // The Scene Object we attach to targets for footstep sounds
     plKey               fLinkSoundSOKey;    // Same thing for linking... wwwwawAWAWAwawa...
     plKey               fLinkInAnimKey;     // Set when we link out, this is the anim to play (backwards) when we link in.
-    static hsScalar     fMouseTurnSensitivity;
+    static float     fMouseTurnSensitivity;
     plArmatureUpdateMsg *fUpdateMsg;    
     
     // Trying to be a good lad here and align all our bools and bytes...
@@ -481,6 +481,6 @@ protected:
     BoneMapImp *fImp;       // the thing that actually holds our map
 };
 
-#define TWO_PI (hsScalarPI * 2)
+#define TWO_PI (M_PI * 2)
 
 #endif //plArmatureMod_inc

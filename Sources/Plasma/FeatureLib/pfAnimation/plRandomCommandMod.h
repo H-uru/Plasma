@@ -73,18 +73,18 @@ protected:
     uint8_t                           fMode; // static, if it becomes dynamic, move to SynchedValue
     hsTArray<double>                fEndTimes;
 
-    hsScalar                        fMinDelay;
-    hsScalar                        fMaxDelay;
+    float                        fMinDelay;
+    float                        fMaxDelay;
     
     void            IStart();
     virtual void    IStop();
     hsBool          IStopped() const;
-    void            IRetry(hsScalar secs);
+    void            IRetry(float secs);
     virtual void    IPlayNextIfMaster();
 
     void            IReset();
     
-    hsScalar        IGetDelay(hsScalar len) const;      
+    float        IGetDelay(float len) const;      
     
     int             IExcludeSelections(int ncmds);
     hsBool          ISelectNext(int nAnim); // return false if we should stop, else set fCurrent to next index
@@ -94,7 +94,7 @@ protected:
     virtual void        IPlayNext() = 0;
 
     // We only act in response to messages.
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
 
 public:
     plRandomCommandMod();
@@ -115,11 +115,11 @@ public:
     void    SetState(uint8_t s) { fState = s; }
     uint8_t   GetState() const { return fState; }
 
-    void        SetMinDelay(hsScalar f) { fMinDelay = f; }
-    hsScalar    GetMinDelay() const { return fMinDelay; }
+    void        SetMinDelay(float f) { fMinDelay = f; }
+    float    GetMinDelay() const { return fMinDelay; }
 
-    void        SetMaxDelay(hsScalar f) { fMaxDelay = f; }
-    hsScalar    GetMaxDelay() const { return fMaxDelay; }
+    void        SetMaxDelay(float f) { fMaxDelay = f; }
+    float    GetMaxDelay() const { return fMaxDelay; }
 };
 
 

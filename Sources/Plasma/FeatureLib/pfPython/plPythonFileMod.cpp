@@ -1131,7 +1131,7 @@ void plPythonFileMod::IFindActivatorAndAdd(const char *activatorName, int32_t id
 //    Tasks:
 //      - Call the Python code's Update function (if there)
 //
-hsBool plPythonFileMod::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
 {
     if ( fModule )
     {

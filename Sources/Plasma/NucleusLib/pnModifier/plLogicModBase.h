@@ -69,13 +69,13 @@ protected:
     hsTArray<plMessage*>            fCommandList;
     hsTArray<plKey>                 fReceiverList;
     uint32_t                          fCounterLimit;
-    hsScalar                        fTimer;
+    float                        fTimer;
     hsBitVector                     fFlags;
     uint32_t                          fCounter;
     plNotifyMsg*                    fNotify;
     bool                            fDisabled;
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) {return false;}
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return false;}
     void IUpdateSharedState(bool triggered) const;
     hsBool IEvalCounter();
     virtual void PreTrigger(hsBool netRequest);

@@ -82,7 +82,7 @@ hsBool plLayerMovie::ISetFault(const char* errStr)
     return true;
 }
 
-hsBool plLayerMovie::ISetLength(hsScalar secs)
+hsBool plLayerMovie::ISetLength(float secs)
 {
     fLength = secs;
     return false;
@@ -142,7 +142,7 @@ hsBool plLayerMovie::IMovieIsIdle()
 
 hsBool plLayerMovie::ICurrentFrameDirty(double wSecs)
 {
-    hsScalar secs = fTimeConvert.WorldToAnimTime(wSecs);
+    float secs = fTimeConvert.WorldToAnimTime(wSecs);
     uint32_t frame = ISecsToFrame(secs);
     if( frame == fCurrentFrame )
         return false;

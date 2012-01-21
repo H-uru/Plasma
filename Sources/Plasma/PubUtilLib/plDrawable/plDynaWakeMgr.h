@@ -54,8 +54,8 @@ protected:
     hsVector3           fDefaultDir;
     plAnimPath*         fAnimPath;
 
-    hsScalar            fAnimWgt;
-    hsScalar            fVelWgt;
+    float            fAnimWgt;
+    float            fVelWgt;
 
     virtual hsVector3   IGetDirection(const plDynaDecalInfo& info, const hsPoint3& pos) const;
 
@@ -78,11 +78,11 @@ public:
     void                SetDefaultDir(const hsVector3& v);
     const hsVector3&    GetDefaultDir() const { return fDefaultDir; }
 
-    void                SetAnimWeight(hsScalar f) { fAnimWgt = f; }
-    hsScalar            GetAnimWeight() const { return fAnimWgt; }
+    void                SetAnimWeight(float f) { fAnimWgt = f; }
+    float            GetAnimWeight() const { return fAnimWgt; }
 
-    void                SetVelocityWeight(hsScalar f) { fVelWgt = f; }
-    hsScalar            GetVelocityWeight() const { return fVelWgt; }
+    void                SetVelocityWeight(float f) { fVelWgt = f; }
+    float            GetVelocityWeight() const { return fVelWgt; }
 };
 
 

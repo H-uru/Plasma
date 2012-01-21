@@ -185,7 +185,7 @@ uint32_t plAccessSnapShot::CopyFrom(const plAccessVtxSpan& src, uint32_t chanMas
     // mask that we already have.
     chanMask = ICheckAlloc(src, chanMask, kPosition, sizeof(hsPoint3));
 
-    chanMask = ICheckAlloc(src, chanMask, kWeight, sizeof(hsScalar) * src.fNumWeights);
+    chanMask = ICheckAlloc(src, chanMask, kWeight, sizeof(float) * src.fNumWeights);
     if( fChanSize[kWeight] )
         fNumWeights = src.fNumWeights;
 

@@ -66,7 +66,7 @@ hsBool plAutoUIComp::GetCheckBox(int16_t id, plComponentBase *comp)
     return pblock->GetInt(id);
 }
 
-hsScalar plAutoUIComp::GetFloatSpinner(int16_t id, plComponentBase *comp)
+float plAutoUIComp::GetFloatSpinner(int16_t id, plComponentBase *comp)
 {
     IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
     return pblock->GetFloat(id);

@@ -975,15 +975,15 @@ hsBool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings
                     switch( nGot )
                     {
                     case 0:
-                        scale.fZ = hsScalar(atof(token));
+                        scale.fZ = float(atof(token));
                         break;
                     case 1:
                         scale.fX = scale.fZ;
-                        scale.fY = hsScalar(atof(token));
+                        scale.fY = float(atof(token));
                         scale.fZ = 1.f;
                         break;
                     case 2:
-                        scale.fZ = hsScalar(atof(token));
+                        scale.fZ = float(atof(token));
                         break;
                     }
                     nGot++;
@@ -1114,7 +1114,7 @@ int IsGeoSpanConvexExhaust(const plGeometrySpan* span)
 
         hsVector3 faceNorm = edge01 % edge02;
         hsFastMath::NormalizeAppr(faceNorm);
-        hsScalar faceDist = faceNorm.InnerProduct(pos[0]);
+        float faceDist = faceNorm.InnerProduct(pos[0]);
 
         int j;
         for( j = 0; j < numVerts; j++ )
@@ -1122,9 +1122,9 @@ int IsGeoSpanConvexExhaust(const plGeometrySpan* span)
             hsPoint3* p = (hsPoint3*)(vertData + idx[0] * stride);
 
 
-            hsScalar dist = p->InnerProduct(faceNorm) - faceDist;
+            float dist = p->InnerProduct(faceNorm) - faceDist;
 
-            const hsScalar kSmall = 1.e-3f;
+            const float kSmall = 1.e-3f;
             if( dist < -kSmall )
                 someIn = true;
             else if( dist > kSmall )
@@ -1171,7 +1171,7 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
     hsTArray<int>*  vertList = TRACKED_NEW hsTArray<int> [numVerts];
 
     hsTArray<hsVector3>* normList = TRACKED_NEW hsTArray<hsVector3> [numVerts];
-    hsTArray<hsScalar>* distList = TRACKED_NEW hsTArray<hsScalar> [numVerts];
+    hsTArray<float>* distList = TRACKED_NEW hsTArray<float> [numVerts];
 
     uint16_t* idx = span->fIndexData;
 
@@ -1194,7 +1194,7 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
 
         hsVector3 faceNorm = edge01 % edge02;
         hsFastMath::NormalizeAppr(faceNorm);
-        hsScalar faceDist = faceNorm.InnerProduct(pos[0]);
+        float faceDist = faceNorm.InnerProduct(pos[0]);
 
 
         // For each vert
@@ -1230,9 +1230,9 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
             for( j = 0; j < vertList[i].GetCount(); j++ )
             {
                 hsPoint3* pos = (hsPoint3*)(vertData + vertList[i][j] * stride);
-                hsScalar dist = pos->InnerProduct(normList[i][k]) - distList[i][k];
+                float dist = pos->InnerProduct(normList[i][k]) - distList[i][k];
 
-                const hsScalar kSmall = 1.e-3f;
+                const float kSmall = 1.e-3f;
                 if( dist < -kSmall )
                     someIn = true;
                 else if( dist > kSmall )
@@ -1806,7 +1806,7 @@ hsBool  plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
         return false;
 
     hsBool setVisDists = false;
-    hsScalar minDist, maxDist;
+    float minDist, maxDist;
     if( hsMaterialConverter::HasVisDists(this, 0, minDist, maxDist) )
     {
         setVisDists = true;
@@ -2113,8 +2113,8 @@ hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool
 
             Mesh mesh(meshObj->mesh);
             
-            const float kNormThresh = hsScalarPI / 20.f;
-            const float kEdgeThresh = hsScalarPI / 20.f;
+            const float kNormThresh = M_PI / 20.f;
+            const float kEdgeThresh = M_PI / 20.f;
             const float kBias = 0.1f;
             const float kMaxEdge = -1.f;
             const DWORD kOptFlags = OPTIMIZE_SAVESMOOTHBOUNDRIES; 
@@ -2137,7 +2137,7 @@ hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool
 //          mnMesh.MakeConvexPolyMesh();
             mnMesh.MakePolyMesh();
             mnMesh.MakeConvex();
-//          mnMesh.MakePlanar(1.f * hsScalarPI / 180.f); // Completely ineffective. Winding up with majorly non-planar polys.
+//          mnMesh.MakePlanar(1.f * M_PI / 180.f); // Completely ineffective. Winding up with majorly non-planar polys.
 
             mnMesh.Transform(maxV2L);
 
@@ -2204,13 +2204,13 @@ hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool
                     hsFastMath::Normalize(bXc);
 
 
-                    hsScalar dotSq = aXb.InnerProduct(bXc);
+                    float dotSq = aXb.InnerProduct(bXc);
                     dotSq *= dotSq;
 
-                    const hsScalar kMinLenSq = 1.e-8f;
-                    const hsScalar kMinDotFracSq = 0.998f * 0.998f;
+                    const float kMinLenSq = 1.e-8f;
+                    const float kMinDotFracSq = 0.998f * 0.998f;
 
-                    hsScalar lenSq = aXb.MagnitudeSquared() * bXc.MagnitudeSquared();
+                    float lenSq = aXb.MagnitudeSquared() * bXc.MagnitudeSquared();
                     if( lenSq < kMinLenSq )
                         continue;
 
@@ -2358,7 +2358,7 @@ void plMaxNode::IGetLightAttenuation(plOmniLightInfo* liInfo, LightObject* light
 {
     TimeValue timeVal = hsConverterUtils::Instance().GetTime(GetInterface());
 
-    hsScalar attenConst, attenLinear, attenQuadratic;
+    float attenConst, attenLinear, attenQuadratic;
 
     float intens = ls.intens >= 0 ? ls.intens : -ls.intens;
     float attenEnd = ls.attenEnd;
@@ -2399,7 +2399,7 @@ void plMaxNode::IGetLightAttenuation(plOmniLightInfo* liInfo, LightObject* light
 
 }
 
-hsBool plMaxNode::IGetRTLightAttenValues(IParamBlock2* ProperPB, hsScalar& attenConst, hsScalar& attenLinear, hsScalar& attenQuadratic, hsScalar &attenCutoff )
+hsBool plMaxNode::IGetRTLightAttenValues(IParamBlock2* ProperPB, float& attenConst, float& attenLinear, float& attenQuadratic, float &attenCutoff )
 {
     TimeValue timeVal = hsConverterUtils::Instance().GetTime(GetInterface());
 
@@ -2455,7 +2455,7 @@ hsBool plMaxNode::IGetRTLightAttenValues(IParamBlock2* ProperPB, hsScalar& atten
 
 void plMaxNode::IGetRTLightAttenuation(plOmniLightInfo* liInfo, IParamBlock2* ProperPB)
 {
-    hsScalar attenConst, attenLinear, attenQuadratic, attenCutoff;
+    float attenConst, attenLinear, attenQuadratic, attenCutoff;
 
     if( IGetRTLightAttenValues(ProperPB, attenConst, attenLinear, attenQuadratic, attenCutoff) )
     {
@@ -2513,8 +2513,8 @@ void plMaxNode::IGetRTLightColors(plLightInfo* liInfo, IParamBlock2* ProperPB)
 void plMaxNode::IGetCone(plSpotLightInfo* liInfo, LightObject* light, LightState& ls)
 {
 
-    hsScalar inner = hsScalarDegToRad(ls.hotsize);
-    hsScalar outer = hsScalarDegToRad(ls.fallsize);
+    float inner = hsDegreesToRadians(ls.hotsize);
+    float outer = hsDegreesToRadians(ls.fallsize);
 
     /// 4.26.2001 mcn - MAX gives us full angles, but we want to store half angles
     liInfo->SetSpotInner( inner / 2.0f );
@@ -2527,10 +2527,10 @@ void plMaxNode::IGetRTCone(plSpotLightInfo* liInfo, IParamBlock2* ProperPB)
 
     //TimeValue timeVal = hsConverterUtils::Instance().GetTime(GetInterface());
     TimeValue timeVal = hsConverterUtils::Instance().GetTime(GetInterface());
-    hsScalar inner, outer;
+    float inner, outer;
 
-    inner = hsScalarDegToRad(ProperPB->GetFloat(plRTLightBase::kHotSpot, timeVal)); //ls.hotsize);
-    outer = hsScalarDegToRad(ProperPB->GetFloat(plRTLightBase::kFallOff, timeVal)); //ls.fallsize);
+    inner = hsDegreesToRadians(ProperPB->GetFloat(plRTLightBase::kHotSpot, timeVal)); //ls.hotsize);
+    outer = hsDegreesToRadians(ProperPB->GetFloat(plRTLightBase::kFallOff, timeVal)); //ls.fallsize);
 
     /// 4.26.2001 mcn - MAX gives us full angles, but we want to store half angles
     liInfo->SetSpotInner( inner / 2.0f );
@@ -3015,10 +3015,10 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                         hsScalarKey *key = subCtl->GetScalarKey(i);
                         if (key)
                         {
-                            hsScalar attenEnd = key->fValue;
+                            float attenEnd = key->fValue;
                             TimeValue tv = key->fFrame * MAX_TICKS_PER_FRAME;
-                            hsScalar intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
-                            hsScalar newVal = (intens * plSillyLightKonstants::GetFarPowerKonst() - 1.f) / attenEnd;
+                            float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
+                            float newVal = (intens * plSillyLightKonstants::GetFarPowerKonst() - 1.f) / attenEnd;
                             if( distSq )
                                 newVal /= attenEnd;
 
@@ -3027,10 +3027,10 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                         hsBezScalarKey *bezKey = subCtl->GetBezScalarKey(i);
                         if (bezKey)
                         {
-                            hsScalar attenEnd = bezKey->fValue;
+                            float attenEnd = bezKey->fValue;
                             TimeValue tv = bezKey->fFrame * MAX_TICKS_PER_FRAME;
-                            hsScalar intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
-                            hsScalar newVal = (intens * plSillyLightKonstants::GetFarPowerKonst() - 1.f) / attenEnd;
+                            float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
+                            float newVal = (intens * plSillyLightKonstants::GetFarPowerKonst() - 1.f) / attenEnd;
                             if( distSq )
                                 newVal /= attenEnd;
 
@@ -3059,7 +3059,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                     if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
                         anim->ExtendToLength(subCtl->GetLength());
 
-                    hsScalar attenConst, attenLinear, attenQuadratic, attenCutoff;
+                    float attenConst, attenLinear, attenQuadratic, attenCutoff;
                     IGetRTLightAttenValues(ProperPB, attenConst, attenLinear, attenQuadratic, attenCutoff);
 
                     plOmniLightInfo *info = plOmniLightInfo::ConvertNoRef(GetSceneObject()->GetGenericInterface(plOmniLightInfo::Index()));
@@ -3091,14 +3091,14 @@ void plMaxNode::IAdjustRTColorByIntensity(plController* ctl, IParamBlock2* Prope
             if (key)
             {
                 TimeValue tv = key->fFrame * MAX_TICKS_PER_FRAME;
-                hsScalar intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
+                float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                 key->fValue *= intens;
             }
             hsBezPoint3Key* bezKey = simp->GetBezPoint3Key(i);
             if (bezKey)
             {
                 TimeValue tv = bezKey->fFrame * MAX_TICKS_PER_FRAME;
-                hsScalar intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
+                float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                 bezKey->fInTan *= intens;
                 bezKey->fOutTan *= intens;
                 bezKey->fValue *= intens;

@@ -144,7 +144,7 @@ protected:
     hsBool  fEnabled;           // if not enabled, we don't eval any of our anims
 
     // APPLYING THE ANIMATION
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 
     virtual hsBool IHandleCmd(plAnimCmdMsg* modMsg) { return false; } // only plAGMasterMod should handle these
     virtual void IApplyDynamic() {};    // dummy function required by base class

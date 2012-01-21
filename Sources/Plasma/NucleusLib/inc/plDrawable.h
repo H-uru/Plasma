@@ -177,7 +177,7 @@ public:
 
     // Taking span index. DI Index doesn't make sense here, because one object's DI can dereference into many materials etc.
     virtual hsGMaterial*    GetSubMaterial(int index) const = 0;
-    virtual hsBool          GetSubVisDists(int index, hsScalar& minDist, hsScalar& maxDist) const = 0; // return true if span invisible before minDist and/or after maxDist
+    virtual hsBool          GetSubVisDists(int index, float& minDist, float& maxDist) const = 0; // return true if span invisible before minDist and/or after maxDist
 
     // Should implement hsKeyedObject Read/Write/Save/Load as well
 

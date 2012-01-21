@@ -1019,7 +1019,7 @@ void plGeometrySpan::AdjustBounds(hsBounds3Ext& bnd) const
     hsBounds3Ext wBnd = bnd;
     wBnd.Transform(&fLocalToWorld);
 
-    const hsScalar kMaxWaveHeight(5.f);
+    const float kMaxWaveHeight(5.f);
     hsBounds3Ext rebound;
     rebound.MakeEmpty();
     hsPoint3 pos = wBnd.GetMins();

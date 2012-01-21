@@ -498,7 +498,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
             return true;
         }
 
-        const hsScalar kMaxTimeForLinkTrigger = 30.f;
+        const float kMaxTimeForLinkTrigger = 30.f;
 
         // If we're not loading state, we're in the age. So this avatar coming in must be linking in.
         // If the player is us, no prep is necessary.
@@ -529,7 +529,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-void plLinkEffectsMgr::WaitForEffect(plKey linkKey, hsScalar time)
+void plLinkEffectsMgr::WaitForEffect(plKey linkKey, float time)
 {
     plLinkEffectsTriggerMsg *msg = IFindLinkTriggerMsg(linkKey);
     if (msg == nil)
@@ -567,7 +567,7 @@ plMessage *plLinkEffectsMgr::WaitForEffect(plKey linkKey)
     return callback;
 }
 
-void plLinkEffectsMgr::WaitForPseudoEffect(plKey linkKey, hsScalar time)
+void plLinkEffectsMgr::WaitForPseudoEffect(plKey linkKey, float time)
 {
     plPseudoLinkEffectMsg* msg = IFindPseudo(linkKey);
     if (msg == nil)

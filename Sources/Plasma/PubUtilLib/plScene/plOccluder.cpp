@@ -238,9 +238,9 @@ void plOccluder::IComputeBounds()
     }
 }
 
-hsScalar plOccluder::IComputeSurfaceArea()
+float plOccluder::IComputeSurfaceArea()
 {
-    hsScalar area = 0;
+    float area = 0;
     const hsTArray<plCullPoly>& polys = GetLocalPolyList();
     int i;
     for( i =0 ; i < polys.GetCount(); i++ )

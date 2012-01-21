@@ -85,7 +85,7 @@ protected:
     uint16_t      fNumIdx;
 
     double      fBirth;
-    hsScalar    fInitAtten;
+    float    fInitAtten;
     hsBool      fFlags;
 
     plDecalVtxFormat*   fVtxBase; // Safe pointer, the buffer data will outlive this decal
@@ -95,7 +95,7 @@ protected:
     friend class plDynaDecalMgr;
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life) = 0;
+    virtual hsBool      Age(double t, float ramp, float decay, float life) = 0;
 };
 
 // No expansion
@@ -105,7 +105,7 @@ protected:
 
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 };
 
 // Expands radially from center
@@ -113,13 +113,13 @@ class plDynaRipple : public plDynaDecal
 {
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 
-    hsScalar fC1U;
-    hsScalar fC2U;
+    float fC1U;
+    float fC2U;
 
-    hsScalar fC1V;
-    hsScalar fC2V;
+    float fC1V;
+    float fC2V;
 
 };
 
@@ -128,13 +128,13 @@ class plDynaWake : public plDynaDecal
 {
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 
-    hsScalar fC1U;
-    hsScalar fC2U;
+    float fC1U;
+    float fC2U;
 
-    hsScalar fC1V;
-    hsScalar fC2V;
+    float fC1V;
+    float fC2V;
 
 };
 
@@ -143,9 +143,9 @@ class plDynaWave : public plDynaDecal
 {
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 
-    hsScalar fScrollRate;
+    float fScrollRate;
 };
 
 // About the same as a DynaRipple, but implemented with vertex/pixel shaders.
@@ -154,7 +154,7 @@ class plDynaRippleVS : public plDynaRipple
 {
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 };
 
 #endif // plDynaDecal_inc

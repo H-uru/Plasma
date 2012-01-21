@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Requires class T to have the following members
 // T& operator+=(const class T& t);
 // T& operator-=(const class T& t);
-// T& operator*=(hsScalar scale);
+// T& operator*=(float scale);
 // T& operator=(const class T&); // unless builtin = is adequate.
 //
 template <class T> class plTimedInterp
@@ -72,7 +72,7 @@ protected:
 
     const T& IEnd();
     const T& IBegin();
-    const T& IEval(hsScalar parm);
+    const T& IEval(float parm);
 public:
     plTimedInterp();
     plTimedInterp(const T& t);
@@ -110,7 +110,7 @@ plTimedInterp<T>::Update(double t)
     if( fDuration <= 0 )
         return IEnd();
 
-    hsScalar parm = hsScalar((fEnd - t) / fDuration);
+    float parm = float((fEnd - t) / fDuration);
     if( parm <= 0 )
         return IEnd();
     else if( parm >= 1.f )
@@ -150,7 +150,7 @@ plTimedInterp<T>::IBegin()
 
 template <class T>
 const T& 
-plTimedInterp<T>::IEval(hsScalar parm)
+plTimedInterp<T>::IEval(float parm)
 {
     fCurr = fInit;
     fCurr -= fTarg;

@@ -130,7 +130,7 @@ hsBool          plMaxNodeBase::GetReverseSort()         { GetMD; return (pMD) ? 
 hsBool          plMaxNodeBase::GetSortAsOpaque()        { GetMD; return (pMD) ? pMD->GetSortAsOpaque() : nil;}
 hsBool          plMaxNodeBase::GetVS()                  { GetMD; return (pMD) ? pMD->GetVS() : nil;}
 hsBool          plMaxNodeBase::GetHasWaterHeight()      { GetMD; return (pMD) ? pMD->GetHasWaterHeight() : nil; }
-hsScalar        plMaxNodeBase::GetWaterHeight()         { GetMD; return (pMD) ? pMD->GetWaterHeight() : nil; }
+float        plMaxNodeBase::GetWaterHeight()         { GetMD; return (pMD) ? pMD->GetWaterHeight() : nil; }
 hsBool          plMaxNodeBase::GetSmoothAll()           { GetMD; return (pMD) ? pMD->GetSmoothAll() : nil;}
 hsBool          plMaxNodeBase::GetForceSortable()       { GetMD; return (pMD) ? pMD->GetForceSortable() : nil;}
 hsBool          plMaxNodeBase::GetConcave()             { GetMD; return (pMD) ? pMD->GetConcave() : nil;}
@@ -178,7 +178,7 @@ uint32_t          plMaxNodeBase::GetSwappableGeomTarget()     { GetMD; return (p
 plMaxBoneMap*   plMaxNodeBase::GetBoneMap()                 { GetMD; return (pMD) ? pMD->GetBoneMap() : nil; }
 hsBool          plMaxNodeBase::GetOverrideHighLevelSDL()    { GetMD; return (pMD) ? pMD->GetOverrideHighLevelSDL() : false; }
 uint8_t           plMaxNodeBase::GetAnimCompress()                    { GetMD; return (pMD) ? pMD->GetAnimCompress() : false; }
-hsScalar        plMaxNodeBase::GetKeyReduceThreshold()              { GetMD; return (pMD) ? pMD->GetKeyReduceThreshold() : 0; }
+float        plMaxNodeBase::GetKeyReduceThreshold()              { GetMD; return (pMD) ? pMD->GetKeyReduceThreshold() : 0; }
 int             plMaxNodeBase::NumRenderDependencies()              { GetMD; return (pMD) ? pMD->NumRenderDependencies() : 0; }
 plMaxNodeBase*  plMaxNodeBase::GetRenderDependency(int i)           { GetMD; return (pMD) ? pMD->GetRenderDependency(i) : nil; }
 
@@ -203,7 +203,7 @@ void            plMaxNodeBase::SetReverseSort(hsBool b)             { GetMD; pMD
 void            plMaxNodeBase::SetSortAsOpaque(hsBool b)            { GetMD; pMD->SetSortAsOpaque(b); }
 void            plMaxNodeBase::SetVS(hsBool b)                      { GetMD; pMD->SetVS(b); }
 void            plMaxNodeBase::SetHasWaterHeight(hsBool b)          { GetMD; pMD->SetHasWaterHeight(b); }
-void            plMaxNodeBase::SetWaterHeight(hsScalar h)           { GetMD; pMD->SetWaterHeight(h); }
+void            plMaxNodeBase::SetWaterHeight(float h)           { GetMD; pMD->SetWaterHeight(h); }
 void            plMaxNodeBase::SetSmoothAll(hsBool b)               { GetMD; pMD->SetSmoothAll(b); }
 void            plMaxNodeBase::SetForceSortable(hsBool b)           { GetMD; pMD->SetForceSortable(b); }
 void            plMaxNodeBase::SetConcave(hsBool b)                 { GetMD; pMD->SetConcave(b); }
@@ -242,7 +242,7 @@ void            plMaxNodeBase::SetSwappableGeomTarget(uint32_t id)    { GetMD; p
 void            plMaxNodeBase::SetBoneMap(plMaxBoneMap *bones)      { GetMD; pMD->SetBoneMap(bones);    }
 void            plMaxNodeBase::SetOverrideHighLevelSDL(hsBool b)    { GetMD; pMD->SetOverrideHighLevelSDL(b); }
 void            plMaxNodeBase::SetAnimCompress(uint8_t v)             { GetMD; pMD->SetAnimCompress(v); }
-void            plMaxNodeBase::SetKeyReduceThreshold(hsScalar v)    { GetMD; pMD->SetKeyReduceThreshold(v); }
+void            plMaxNodeBase::SetKeyReduceThreshold(float v)    { GetMD; pMD->SetKeyReduceThreshold(v); }
 void            plMaxNodeBase::ClearRenderDependencies()            { GetMD; pMD->ClearRenderDependencies(); }
 
 void            plMaxNodeBase::AddBone(plMaxNodeBase* m)            { GetMD; if(pMD) pMD->AddBone(m);       }
@@ -877,7 +877,7 @@ hsBool plMaxNodeBase::Contains(const Box3& bnd, const Matrix3& l2w)
     return true;
 }
 
-hsScalar plMaxNodeBase::BoxVolume(const Box3& bnd, const Matrix3& l2w)
+float plMaxNodeBase::BoxVolume(const Box3& bnd, const Matrix3& l2w)
 {
     Point3 corner = l2w * bnd[0]; // min, min, min
     float len[3];
@@ -889,7 +889,7 @@ hsScalar plMaxNodeBase::BoxVolume(const Box3& bnd, const Matrix3& l2w)
     return len[0] * len[1] * len[2];
 }
 
-hsScalar plMaxNodeBase::RegionPriority()
+float plMaxNodeBase::RegionPriority()
 {
     TimeValue currTime = 0;//hsConverterUtils::Instance().GetTime(GetInterface());
     Object *obj = EvalWorldState(currTime).obj;

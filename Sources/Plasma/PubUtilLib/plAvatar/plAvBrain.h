@@ -71,7 +71,7 @@ public:
     CLASSNAME_REGISTER( plArmatureBrain );
     GETINTERFACE_ANY( plArmatureBrain, plCreatable );   
     
-    virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    virtual hsBool Apply(double timeNow, float elapsed);
     virtual void Activate(plArmatureModBase *armature);
     virtual void Deactivate() {}
     virtual void Suspend() {}
@@ -88,7 +88,7 @@ public:
     virtual hsBool MsgReceive(plMessage *msg);
     
 protected:
-    virtual void IProcessTasks(double time, hsScalar elapsed);
+    virtual void IProcessTasks(double time, float elapsed);
     virtual hsBool IHandleTaskMsg(plAvTaskMsg *msg);
         
     typedef std::deque<plAvTask *> plAvTaskQueue;

@@ -229,7 +229,7 @@ void plWin32Sound::SetConeAngles( int inner, int outer )
     }
 }
 
-void plWin32Sound::SetConeOrientation( hsScalar x, hsScalar y, hsScalar z )
+void plWin32Sound::SetConeOrientation( float x, float y, float z )
 {
     plSound::SetConeOrientation(x, y, z);
     if(fDSoundBuffer)

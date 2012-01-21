@@ -234,9 +234,9 @@ plParticleFadeVolumeEffect::~plParticleFadeVolumeEffect()
 // The shorter the distance, the more noticable the fade out.
 // Note the wierdness between the fractions, because kFadeFrac is fraction
 // of fLength, but kFadeParm and kInvFadeFrac are fraction of 2.f*fLength. Sorry.
-const hsScalar kFadeFrac = 0.5f;
-const hsScalar kFadeParm = 1.f - kFadeFrac * 0.5f;
-const hsScalar kInvFadeFrac = 1.f / (kFadeFrac * 0.5f);
+const float kFadeFrac = 0.5f;
+const float kFadeParm = 1.f - kFadeFrac * 0.5f;
+const float kInvFadeFrac = 1.f / (kFadeFrac * 0.5f);
 
 void plParticleFadeVolumeEffect::PrepareEffect(const plEffectTargetInfo &target)
 {
@@ -269,9 +269,9 @@ hsBool plParticleFadeVolumeEffect::ApplyEffect(const plEffectTargetInfo& target,
 {
     hsPoint3 *currPos = (hsPoint3 *)(target.fPos + i * target.fPosStride);
 
-    hsScalar parm;
+    float parm;
 
-    hsScalar fade = 1.f;
+    float fade = 1.f;
 
     parm = (currPos->fX - fMin.fX) * fNorm.fX;
     if( parm < 0 )
@@ -409,7 +409,7 @@ void plParticleWindEffect::Write(hsStream *s, hsResMgr *mgr)
 void plParticleWindEffect::SetRefDirection(const hsVector3& v)
 {
     fRefDir = v;
-    hsScalar lenSq = fRefDir.MagnitudeSquared();
+    float lenSq = fRefDir.MagnitudeSquared();
     if( lenSq > 1.e-1f )
     {
         fDir = fRefDir * hsFastMath::InvSqrtAppr(lenSq);
@@ -489,7 +489,7 @@ hsBool plParticleLocalWind::ApplyEffect(const plEffectTargetInfo& target, int32_
     const hsPoint3& pos = *(hsPoint3 *)(target.fPos + i * target.fPosStride);
     hsVector3& vel = *(hsVector3*)(target.fVelocity + i * target.fVelocityStride);
 
-    const hsScalar kMinToBother = 0;
+    const float kMinToBother = 0;
 
     float strength = 1.f / ( (1.f + fConstancy) * (1.f + fConstancy) );
     float s, c, t;
@@ -516,7 +516,7 @@ hsBool plParticleLocalWind::ApplyEffect(const plEffectTargetInfo& target, int32_
     strength *= c;
 #endif
 
-    const hsScalar& invMass = *(hsScalar*)(target.fInvMass + i * target.fInvMassStride);
+    const float& invMass = *(float*)(target.fInvMass + i * target.fInvMassStride);
     strength *= invMass;
 
     vel += fWindVec * strength;
@@ -569,9 +569,9 @@ void plParticleUniformWind::Write(hsStream *s, hsResMgr *mgr)
     s->WriteLEScalar(fFreqRate);
 }
 
-void plParticleUniformWind::SetFrequencyRange(hsScalar minSecsPerCycle, hsScalar maxSecsPerCycle)
+void plParticleUniformWind::SetFrequencyRange(float minSecsPerCycle, float maxSecsPerCycle)
 {
-    const hsScalar kMinSecsPerCycle = 1.f;
+    const float kMinSecsPerCycle = 1.f;
     if( minSecsPerCycle < kMinSecsPerCycle )
         minSecsPerCycle = kMinSecsPerCycle;
     if( minSecsPerCycle < kMinSecsPerCycle )
@@ -589,9 +589,9 @@ void plParticleUniformWind::SetFrequencyRange(hsScalar minSecsPerCycle, hsScalar
     }
 }
 
-void plParticleUniformWind::SetFrequencyRate(hsScalar secsPerCycle)
+void plParticleUniformWind::SetFrequencyRate(float secsPerCycle)
 {
-    const hsScalar kMinSecsPerCycle = 1.f;
+    const float kMinSecsPerCycle = 1.f;
     if( secsPerCycle < kMinSecsPerCycle )
         secsPerCycle = kMinSecsPerCycle;
     fFreqRate = 1.f / secsPerCycle;
@@ -606,9 +606,9 @@ void plParticleUniformWind::PrepareEffect(const plEffectTargetInfo& target)
     {
         static plRandom random;
 
-        const double kTwoPi = hsScalarPI * 2.0;
+        const double kTwoPi = M_PI * 2.0;
         double t0 = fFreqCurr * fLastFreqSecs + fCurrPhase;
-        hsScalar t1 = (hsScalar)fmod(t0, kTwoPi);
+        float t1 = (float)fmod(t0, kTwoPi);
         fCurrPhase -= t0 - t1;
 
         fFreqCurr += fFreqRate * target.fContext.fDelSecs * random.RandZeroToOne();
@@ -624,11 +624,11 @@ void plParticleUniformWind::PrepareEffect(const plEffectTargetInfo& target)
             fFreqRate = -fFreqRate;
         }
         
-        hsScalar phaseDel = (hsScalar)(t1 - (fFreqCurr * fLastFreqSecs + fCurrPhase));
+        float phaseDel = (float)(t1 - (fFreqCurr * fLastFreqSecs + fCurrPhase));
         fCurrPhase += phaseDel;
         
-        hsScalar t = hsScalar(fFreqCurr * target.fContext.fSecs + fCurrPhase);
-        hsScalar s;
+        float t = float(fFreqCurr * target.fContext.fSecs + fCurrPhase);
+        float s;
         hsFastMath::SinCosAppr(t, s, fCurrentStrength);
         fCurrentStrength += fConstancy;
         fCurrentStrength /= (1.f + fConstancy);
@@ -645,7 +645,7 @@ hsBool plParticleUniformWind::ApplyEffect(const plEffectTargetInfo& target, int3
 {
     hsVector3& vel = *(hsVector3*)(target.fVelocity + i * target.fVelocityStride);
     
-    const hsScalar& invMass = *(hsScalar*)(target.fInvMass + i * target.fInvMassStride);
+    const float& invMass = *(float*)(target.fInvMass + i * target.fInvMassStride);
     
     vel += fWindVec * (invMass * fCurrentStrength);
     
@@ -729,9 +729,9 @@ void plParticleFlockEffect::IUpdateInfluences(const plEffectTargetInfo &target)
         }
 
         if (numAvg > 0)
-            fInfluences[i].fAvgVel /= (hsScalar)numAvg;
+            fInfluences[i].fAvgVel /= (float)numAvg;
         if (numRep > 0)
-            fInfluences[i].fRepDir /= (hsScalar)numRep;
+            fInfluences[i].fRepDir /= (float)numRep;
     }
 }
 
@@ -751,7 +751,7 @@ hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, int3
     const hsPoint3 &pos = *(hsPoint3*)(target.fPos + i * target.fPosStride);
     hsVector3 &vel = *(hsVector3*)(target.fVelocity + i * target.fVelocityStride);
     
-    hsScalar curSpeed = vel.Magnitude();
+    float curSpeed = vel.Magnitude();
     hsPoint3 goal;
     if (*(uint32_t*)(target.fMiscFlags + i * target.fMiscFlagsStride) & plParticleExt::kImmortal)
         goal = target.fContext.fSystem->GetTarget(0)->GetLocalToWorld().GetTranslate() + fTargetOffset;
@@ -761,13 +761,13 @@ hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, int3
     hsVector3 goalDir;
     hsPoint3 tmp = goal - pos;
     goalDir.Set(&tmp);
-    hsScalar distSq = goalDir.MagnitudeSquared();
+    float distSq = goalDir.MagnitudeSquared();
     
     goalDir.Normalize();
     
-    hsScalar goalStr;
-    hsScalar maxSpeed;
-    hsScalar maxSpeedSq;
+    float goalStr;
+    float maxSpeed;
+    float maxSpeedSq;
     if (distSq <= fGoalDistSq)
     {       
         goalStr = fGoalOrbitStr;
@@ -785,7 +785,7 @@ hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, int3
     }
     else
     {
-        hsScalar pct = (distSq - fGoalDistSq) / (fFullChaseDistSq - fGoalDistSq);
+        float pct = (distSq - fGoalDistSq) / (fFullChaseDistSq - fGoalDistSq);
         goalStr = fGoalOrbitStr + (fGoalChaseStr - fGoalOrbitStr) * pct;
         maxSpeed = fMaxOrbitSpeed + (fMaxChaseSpeed - fMaxOrbitSpeed) * pct;
     }
@@ -812,7 +812,7 @@ void plParticleFlockEffect::SetMaxParticles(const uint16_t num)
 
     if (num > 0)
     {
-        fDistSq = TRACKED_NEW hsScalar[num * num];
+        fDistSq = TRACKED_NEW float[num * num];
         fInfluences = TRACKED_NEW plParticleInfluenceInfo[num];
     }
 }

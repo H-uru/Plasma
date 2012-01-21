@@ -128,7 +128,7 @@ class plBaseSoundEmitterComponent : public plComponent
         void            SetCreateGrouped( plMaxNode *baseNode, int commonSoundIdx );
 
         // Grabs the current sound volume
-        virtual hsScalar    GetSoundVolume( void ) const;
+        virtual float    GetSoundVolume( void ) const;
 
     protected:
 #ifdef MAXASS_AVAILABLE

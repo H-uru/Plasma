@@ -56,7 +56,7 @@ class plParticleUpdateMsg : public plMessage
 public:
     plParticleUpdateMsg()
         : plMessage(nil, nil, nil) {}
-    plParticleUpdateMsg(const plKey &s, const plKey &r, const double* t, uint32_t paramID, hsScalar paramValue )
+    plParticleUpdateMsg(const plKey &s, const plKey &r, const double* t, uint32_t paramID, float paramValue )
         : plMessage(s, r, t) { fParamID = paramID; fParamValue = paramValue; }
     virtual ~plParticleUpdateMsg() {}
 
@@ -86,10 +86,10 @@ public:
     };
 
     uint32_t fParamID;
-    hsScalar fParamValue;
+    float fParamValue;
 
     uint32_t GetParamID() { return fParamID; }
-    hsScalar GetParamValue() { return fParamValue; }
+    float GetParamValue() { return fParamValue; }
 
     // IO
     virtual void Read(hsStream* stream, hsResMgr* mgr)
@@ -155,8 +155,8 @@ public:
 class plParticleKillMsg : public plMessage
 {
 public:
-    hsScalar fNumToKill;
-    hsScalar fTimeLeft;
+    float fNumToKill;
+    float fTimeLeft;
 
     uint8_t fFlags;
     enum
@@ -166,7 +166,7 @@ public:
     };
 
     plParticleKillMsg() : plMessage(nil, nil, nil), fNumToKill(0.f), fTimeLeft(0.f), fFlags(kParticleKillImmortalOnly) {}
-    plParticleKillMsg(const plKey &s, const plKey &r, const double* t, hsScalar numToKill, hsScalar timeLeft, uint8_t flags = kParticleKillImmortalOnly )
+    plParticleKillMsg(const plKey &s, const plKey &r, const double* t, float numToKill, float timeLeft, uint8_t flags = kParticleKillImmortalOnly )
         : plMessage(s, r, t) { fNumToKill = numToKill; fTimeLeft = timeLeft; fFlags = flags; }
     virtual ~plParticleKillMsg() {} 
     
@@ -196,7 +196,7 @@ public:
 class plParticleFlockMsg : public plMessage
 {
 public:
-    hsScalar fX, fY, fZ;
+    float fX, fY, fZ;
     uint8_t fCmd;
     enum
     {
@@ -205,7 +205,7 @@ public:
     };
 
     plParticleFlockMsg() : plMessage(nil, nil, nil), fCmd(0), fX(0.f), fY(0.f), fZ(0.f) {}
-    plParticleFlockMsg(const plKey &s, const plKey &r, const double* t, uint8_t cmd, hsScalar x, hsScalar y, hsScalar z)
+    plParticleFlockMsg(const plKey &s, const plKey &r, const double* t, uint8_t cmd, float x, float y, float z)
         : plMessage(s, r, t), fCmd(cmd), fX(x), fY(y), fZ(z) {}
     virtual ~plParticleFlockMsg() {}
 

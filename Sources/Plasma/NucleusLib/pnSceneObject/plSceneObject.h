@@ -147,7 +147,7 @@ public:
     const plModifier*       GetModifierByType(uint16_t classIdx) const;
 
     virtual hsBool MsgReceive(plMessage* msg);
-    virtual hsBool Eval(double secs, hsScalar del);
+    virtual hsBool Eval(double secs, float del);
 
     void                    SetSceneNode(plKey newNode);
     plKey                   GetSceneNode() const;

@@ -74,7 +74,7 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         plKeyDef        fSavedKey;
         uint8_t           fSavedModifiers;
 
-        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual void    IPostSetUpDynTextMap( void );
         virtual void    IUpdate( void );

@@ -57,7 +57,7 @@ class plTelescopeInputInterface : public plInputInterface
 {
     protected:
 
-        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty );
+        virtual hsBool IEval( double secs, float del, uint32_t dirty );
 
     public:
 
@@ -80,7 +80,7 @@ class plTelescopeInputInterface : public plInputInterface
         virtual uint32_t      GetCurrentCursorID( void ) const { return kCursorUp; }
 
         // Returns the current opacity that this layer wants the cursor to be, from 0 (xparent) to 1 (opaque)
-        virtual hsScalar    GetCurrentCursorOpacity( void ) const { return 1.f; }
+        virtual float    GetCurrentCursorOpacity( void ) const { return 1.f; }
 
         // Returns true if this layer is wanting to change the mouse, false if it isn't interested
         virtual hsBool      HasInterestingCursorID( void ) const { return false; }

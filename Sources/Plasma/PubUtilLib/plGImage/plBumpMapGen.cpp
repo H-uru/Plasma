@@ -196,7 +196,7 @@ plMipmap* plBumpMapGen::QikBumpMap(plMipmap* dst, const plMipmap* origSrc, uint3
     return dst;
 }
 
-plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, uint32_t mask, uint32_t flags, hsScalar smooth)
+plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, uint32_t mask, uint32_t flags, float smooth)
 {
     dst = QikBumpMap(dst, src, mask, flags & ~kBias);
 
@@ -215,12 +215,12 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, uint32_
         {
             for( i = 0; i < width; i++ )
             {
-                hsScalar x = hsScalar(i) / hsScalar(width-1) * 2.f - 1.f;
-                hsScalar y = hsScalar(j) / hsScalar(height-1) * 2.f - 1.f;
+                float x = float(i) / float(width-1) * 2.f - 1.f;
+                float y = float(j) / float(height-1) * 2.f - 1.f;
 
-                hsScalar z = 1.f - x*x - y*y;
+                float z = 1.f - x*x - y*y;
                 if( z > 0 )
-                    z = hsSquareRoot(z);
+                    z = sqrt(z);
                 else
                 {
                     x = 0;
@@ -228,7 +228,7 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, uint32_
                     z = 1.f;
                 }
                 z *= smooth;
-                hsScalar invLen = hsFastMath::InvSqrt(x*x + y*y + z*z) * 127.00f;
+                float invLen = hsFastMath::InvSqrt(x*x + y*y + z*z) * 127.00f;
 
 
                 pDst[2] = int8_t(x * invLen);
@@ -260,7 +260,7 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, uint32_
                 if( y )
                     y *= 1;
 
-                hsScalar invLen = hsFastMath::InvSqrt((hsScalar)(x*x + y*y + nZ*nZ)) * 127.0f;
+                float invLen = hsFastMath::InvSqrt((float)(x*x + y*y + nZ*nZ)) * 127.0f;
                 pDst[2] = int8_t(x * invLen);
                 pDst[1] = int8_t(y * invLen);
                 pDst[0] = int8_t(nZ * invLen);

@@ -1834,9 +1834,7 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
             if (timeConvert != 0.0)
             {
                 double utDouble=fT[j+i].GetSecsDouble();
-                hsDoublePrecBegin
                 utDouble += timeConvert;
-                hsDoublePrecEnd
                 plUnifiedTime ut(utDouble);
                 ut.Write(s);
             }
@@ -1911,9 +1909,7 @@ bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, u
             fT[j+i].Read(s);
             if (timeConvert != 0.0)
             {
-                hsDoublePrecBegin
                 double newUt = (fT[j+i].GetSecsDouble() + timeConvert);
-                hsDoublePrecEnd
                 hsAssert(newUt>=0, "negative unified time");
                 fT[j+i].SetSecsDouble(newUt);
             }

@@ -106,10 +106,10 @@ class plSceneInputInterface : public plInputInterface
         hsPoint3    fLastStartPt, fLastEndPt;
         plPipeline  *fPipe;
 
-        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty );
+        virtual hsBool IEval( double secs, float del, uint32_t dirty );
 
         
-        void    IRequestLOSCheck( hsScalar xPos, hsScalar yPos, int ID );
+        void    IRequestLOSCheck( float xPos, float yPos, int ID );
         void    ISetLastClicked( plKey obj, hsPoint3 hitPoint );
         void    IHalfFadeAvatar(hsBool out);
 

@@ -103,7 +103,7 @@ protected:
 
     int8_t ICmdFromWait(int8_t waitIdx);
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return true; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     static bool fDebugAnimBox;  // Draws a box on screen when an animation is started
     static void IDebugAnimBox(bool start);

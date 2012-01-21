@@ -73,7 +73,7 @@ void plBulletMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLEScalar(fPartyTime);
 }
 
-void plBulletMsg::FireShot(const hsPoint3& from, const hsVector3& dir, hsScalar radius, hsScalar range, hsScalar psecs)
+void plBulletMsg::FireShot(const hsPoint3& from, const hsVector3& dir, float radius, float range, float psecs)
 {
     fFrom = from;
     fDir = dir;
@@ -84,13 +84,13 @@ void plBulletMsg::FireShot(const hsPoint3& from, const hsVector3& dir, hsScalar 
     fCmd = kShot;
 }
 
-void plBulletMsg::FireShot(const hsPoint3& from, const hsPoint3& at, hsScalar radius, hsScalar psecs)
+void plBulletMsg::FireShot(const hsPoint3& from, const hsPoint3& at, float radius, float psecs)
 {
     hsVector3 dir(&at, &from);
-    hsScalar invLen = hsFastMath::InvSqrt(dir.MagnitudeSquared());
+    float invLen = hsFastMath::InvSqrt(dir.MagnitudeSquared());
     hsAssert(invLen > 0, "degenerate from and at to fire bullet");
     dir *= invLen;
-    hsScalar range = 1.f / invLen;
+    float range = 1.f / invLen;
 
     FireShot(from, dir, radius, range, psecs);
 }

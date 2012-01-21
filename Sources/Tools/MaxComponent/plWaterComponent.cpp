@@ -71,7 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plVisRegion.h"
 
 static const float kPercentToFrac(1.e-2f);
-static const float kDegreeToRad(hsScalarPI/180.f);
+static const float kDegreeToRad(M_PI/180.f);
 
 
 // Preliminary setup bookkeeping
@@ -411,17 +411,17 @@ void plWaterComponent::CheckForObsoleteParams()
         //      SpecEnd = kEnvRadius * 2.f
 
         // Okay, here we go.
-        hsScalar dispersion = fCompPB->GetFloat(kDispersion) / 100.f;
-        plConst(hsScalar) kMinAng(5.f);
-        plConst(hsScalar) kMaxAng(180.f);
+        float dispersion = fCompPB->GetFloat(kDispersion) / 100.f;
+        plConst(float) kMinAng(5.f);
+        plConst(float) kMaxAng(180.f);
         
-        hsScalar angleDev = kMinAng + dispersion * (kMaxAng - kMinAng);
+        float angleDev = kMinAng + dispersion * (kMaxAng - kMinAng);
         fCompPB->SetValue(kGeoAngleDev, TimeValue(0), angleDev);
         fCompPB->SetValue(kTexAngleDev, TimeValue(0), angleDev);
 
-        hsScalar windSpeed = fCompPB->GetFloat(kWindSpeed);
-        const hsScalar kGravConst(32.f); // ft/s^2
-        hsScalar waveLen = windSpeed * windSpeed / kGravConst;
+        float windSpeed = fCompPB->GetFloat(kWindSpeed);
+        const float kGravConst(32.f); // ft/s^2
+        float waveLen = windSpeed * windSpeed / kGravConst;
         waveLen /= 2.f;
         if( waveLen < 1.f )
             waveLen = 1.f;
@@ -429,14 +429,14 @@ void plWaterComponent::CheckForObsoleteParams()
         fCompPB->SetValue(kGeoMaxLen, TimeValue(0), waveLen*2.f);
         fCompPB->SetValue(kGeoAmpOverLen, TimeValue(0), 10.f);
 
-        hsScalar rippleScale = fCompPB->GetFloat(kRippleScale);
+        float rippleScale = fCompPB->GetFloat(kRippleScale);
         fCompPB->SetValue(kTexMinLen, TimeValue(0), 4.f / 256.f * rippleScale);
         fCompPB->SetValue(kTexMaxLen, TimeValue(0), 32.f / 256.f * rippleScale);
-        hsScalar amp = 0.01f;
-        hsScalar specMute = 0.5f;
+        float amp = 0.01f;
+        float specMute = 0.5f;
         if( windSpeed < 15.f )
         {
-            hsScalar p = windSpeed / 15.f;
+            float p = windSpeed / 15.f;
             amp += p * (0.1f - 0.01f);
 
             specMute += (1-p)* 0.5f;
@@ -446,9 +446,9 @@ void plWaterComponent::CheckForObsoleteParams()
 
         fCompPB->SetValue(kNoise, TimeValue(0), 50.f);
 
-        hsScalar envRad = fCompPB->GetFloat(kEnvRadius);
-        hsScalar specStart = envRad / 2.f;
-        hsScalar specEnd = envRad * 2.f;
+        float envRad = fCompPB->GetFloat(kEnvRadius);
+        float specStart = envRad / 2.f;
+        float specEnd = envRad * 2.f;
         fCompPB->SetValue(kSpecStart, TimeValue(0), specStart);
         fCompPB->SetValue(kSpecEnd, TimeValue(0), specEnd);
         
@@ -685,7 +685,7 @@ hsBool plWaterComponent::IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsScalar plWaterComponent::IGetWaterHeight()
+float plWaterComponent::IGetWaterHeight()
 {
     plMaxNodeBase* node = nil;
     
@@ -703,7 +703,7 @@ hsScalar plWaterComponent::IGetWaterHeight()
     return ws.fWaterHeight;
 }
 
-hsScalar plWaterComponent::GetWaterHeight(INode* node)
+float plWaterComponent::GetWaterHeight(INode* node)
 {
     if( !node )
         return 0.f;

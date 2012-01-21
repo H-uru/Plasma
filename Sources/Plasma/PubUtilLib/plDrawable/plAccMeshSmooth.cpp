@@ -336,22 +336,22 @@ void plAccMeshSmooth::SetDiffuse(plAccessSpan& span, hsTArray<uint16_t>& shareVt
         triSpan.Diffuse32(shareVtx[i]) = diff.ToARGB32();
 }
 
-void plAccMeshSmooth::SetAngle(hsScalar degs)
+void plAccMeshSmooth::SetAngle(float degs)
 {
-    fMinNormDot = hsCosine(hsScalarDegToRad(degs));
+    fMinNormDot = cos(hsDegreesToRadians(degs));
 }
 
-hsScalar plAccMeshSmooth::GetAngle() const
+float plAccMeshSmooth::GetAngle() const
 {
-    return hsScalarRadToDeg(hsACosine(fMinNormDot));
+    return hsRadiansToDegrees(acos(fMinNormDot));
 }
 
-void plAccMeshSmooth::SetDistTol(hsScalar dist)
+void plAccMeshSmooth::SetDistTol(float dist)
 {
     fDistTolSq = dist * dist;
 }
 
-hsScalar plAccMeshSmooth::GetDistTol() const
+float plAccMeshSmooth::GetDistTol() const
 {
-    return hsSquareRoot(fDistTolSq);
+    return sqrt(fDistTolSq);
 }

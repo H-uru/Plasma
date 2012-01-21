@@ -189,7 +189,7 @@ pfGUIMultiLineEditCtrl::~pfGUIMultiLineEditCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIMultiLineEditCtrl::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUIMultiLineEditCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -240,7 +240,7 @@ void    pfGUIMultiLineEditCtrl::SetScrollPosition( int32_t topLine )
 
     if( fScrollControl != nil ) 
         // Scroll control values are reversed
-        fScrollControl->SetCurrValue( fScrollControl->GetMax() - (hsScalar)fScrollPos );
+        fScrollControl->SetCurrValue( fScrollControl->GetMax() - (float)fScrollPos );
 
     HandleExtendedEvent( pfGUIMultiLineEditCtrl::kScrollPosChanged );
 
@@ -267,16 +267,16 @@ void    pfGUIMultiLineEditCtrl::IUpdateScrollRange( void )
     {
         // +1 here because the last visible line is only a partial, but we want to be able to view
         // full lines all the way to the end.
-        hsScalar newMax = (hsScalar)( fLineStarts.GetCount() - ICalcNumVisibleLines() + 1 );
+        float newMax = (float)( fLineStarts.GetCount() - ICalcNumVisibleLines() + 1 );
 
         if( newMax != fScrollControl->GetMax() )
         {
-            fScrollControl->SetRange( 0, (hsScalar)(fLineStarts.GetCount() - ICalcNumVisibleLines() + 1) );
+            fScrollControl->SetRange( 0, (float)(fLineStarts.GetCount() - ICalcNumVisibleLines() + 1) );
             fScrollControl->SetEnabled( true );
             if( fScrollPos > fLineStarts.GetCount() - ICalcNumVisibleLines() + 1 )
             {
                 fScrollPos = fLineStarts.GetCount() - ICalcNumVisibleLines() + 1;
-                fScrollControl->SetCurrValue( fScrollControl->GetMax() - (hsScalar)fScrollPos );
+                fScrollControl->SetCurrValue( fScrollControl->GetMax() - (float)fScrollPos );
             }
 
             // All bets are off on scrolling, so refresh the whole area

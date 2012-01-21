@@ -111,7 +111,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         static wchar_t  fColorCodeChar, fStyleCodeChar;
         static uint32_t   fColorCodeSize, fStyleCodeSize;
 
-        virtual hsBool  IEval( double secs, hsScalar del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual hsBool  IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual void    IPostSetUpDynTextMap( void );
         virtual void    IUpdate( void );

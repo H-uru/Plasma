@@ -230,7 +230,7 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
 
     int i;
     uint8_t tint[3];
-    hsScalar tintScalar[3];
+    float tintScalar[3];
     if (!strcmp(sdr->GetDescriptor()->GetName(), kStrClothingDescName))
     {
         // get item from clothesItem
@@ -302,7 +302,7 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
             {
                 uint8_t blend;
                 faceBlends->Get(&blend, i);
-                clothing->fSkinBlends[i] = (hsScalar)blend / 255;
+                clothing->fSkinBlends[i] = (float)blend / 255;
             }
         }       
     }

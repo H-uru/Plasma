@@ -60,7 +60,7 @@ void plLayerMultiply::Read(hsStream* s, hsResMgr* mgr)
     fOwnedChannels = s->ReadLE32();
     if (fOwnedChannels & kOpacity)
     {
-        fOpacity = TRACKED_NEW hsScalar;
+        fOpacity = TRACKED_NEW float;
         *fOpacity = fSrcOpacity = s->ReadLEScalar();
         fDirtyChannels |= kOpacity;
     }
@@ -171,7 +171,7 @@ void plLayerMultiply::SetAmbientColor(const hsColorRGBA& col)
     fDirtyChannels |= kAmbientColor;
 }
 
-void plLayerMultiply::SetOpacity(hsScalar a)
+void plLayerMultiply::SetOpacity(float a)
 {
     fSrcOpacity = a;
     fDirtyChannels |= kOpacity;

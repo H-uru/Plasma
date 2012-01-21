@@ -80,7 +80,7 @@ public:
     
     virtual void    SetMin(const int m); // sets minimum falloff distance
     virtual void    SetMax(const int m); // sets maximum falloff distance
-    virtual void    SetConeOrientation(hsScalar x, hsScalar y, hsScalar z);
+    virtual void    SetConeOrientation(float x, float y, float z);
     virtual void    SetOuterVolume( const int v ); // volume for the outer cone (if applicable)
     virtual void    SetConeAngles( int inner, int outer );
     virtual void    SetPosition(const hsPoint3 pos);

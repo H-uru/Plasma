@@ -51,7 +51,6 @@ set(CoreLib_HEADERS
     hsCritSect.h
     hsExceptions.h
     hsFastMath.h
-    hsFixedTypes.h
     hsGeometry3.h
     hsHashTable.h
     hsMalloc.h
@@ -63,7 +62,6 @@ set(CoreLib_HEADERS
     hsQueue.h
     hsRefCnt.h
     hsSafeRefCnt.h
-    hsScalar.h
     hsStlSortUtils.h
     hsSTLStream.h
     hsStlUtils.h
