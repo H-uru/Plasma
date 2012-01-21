@@ -61,17 +61,17 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
         char            *fAnimName;
 
         hsPoint3        fDragStart;
-        hsScalar        fDragValue;
+        float        fDragValue;
         hsBool          fDragging;
 
         hsPoint3        fAnimStartPos, fAnimEndPos; // Calculated at export time for kMapToScreenRange
-        hsScalar        fDragRangeMin, fDragRangeMax;
+        float        fDragRangeMin, fDragRangeMax;
 
                         // Computed once, once an anim is loaded that we can compute this with
-        hsScalar        fAnimBegin, fAnimEnd;
+        float        fAnimBegin, fAnimEnd;
         hsBool          fAnimTimesCalced;
 
-        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
@@ -106,7 +106,7 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
 
         virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
 
-        virtual void    SetCurrValue( hsScalar v );
+        virtual void    SetCurrValue( float v );
 
         // Export only
         void    SetAnimationKeys( hsTArray<plKey> &keys, const char *name );

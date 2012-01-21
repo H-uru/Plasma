@@ -137,14 +137,14 @@ plSceneObject* plCameraModifier1::GetSubject()
         return fSubObj;
 }   
 
-void plCameraModifier1::SetFOVw(hsScalar f, hsBool fUpdateVCam) 
+void plCameraModifier1::SetFOVw(float f, hsBool fUpdateVCam) 
 { 
     fFOVw = f; 
     if (plVirtualCam1::Instance() && fUpdateVCam)
         plVirtualCam1::SetFOV(fFOVw, fFOVh, this); 
 }
 
-void plCameraModifier1::SetFOVh(hsScalar f, hsBool fUpdateVCam) 
+void plCameraModifier1::SetFOVh(float f, hsBool fUpdateVCam) 
 { 
     fFOVh = f; 
     if (plVirtualCam1::Instance() && fUpdateVCam)
@@ -191,7 +191,7 @@ hsBool plCameraModifier1::MsgReceive(plMessage* msg)
         double time = (double)fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fAccel;
         double time2 = (double)pEventMsg->fEventTime;
         time = hsABS(time - time2);
-        hsScalar h = fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fFOVh;
+        float h = fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fFOVh;
         if (GetBrain())
             GetBrain()->SetFOVGoal(h, time);
     }
@@ -333,12 +333,12 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
         hsBool cutpos = stream->ReadBool();
         hsBool cutpoa = stream->ReadBool();
         hsBool ignore = stream->ReadBool();
-        hsScalar v = stream->ReadLEScalar();
-        hsScalar a = stream->ReadLEScalar();
-        hsScalar d = stream->ReadLEScalar();
-        hsScalar pV = stream->ReadLEScalar();
-        hsScalar pA = stream->ReadLEScalar();
-        hsScalar pD = stream->ReadLEScalar();
+        float v = stream->ReadLEScalar();
+        float a = stream->ReadLEScalar();
+        float d = stream->ReadLEScalar();
+        float pV = stream->ReadLEScalar();
+        float pA = stream->ReadLEScalar();
+        float pD = stream->ReadLEScalar();
 
         CamTrans* camTrans = TRACKED_NEW CamTrans(key);
         camTrans->fAccel = a;

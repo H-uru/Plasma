@@ -120,8 +120,8 @@ public:
 class plParticleCollisionEffectBounce : public plParticleCollisionEffect
 {
 protected:
-    hsScalar    fBounce;
-    hsScalar    fFriction;
+    float    fBounce;
+    float    fFriction;
 public:
     plParticleCollisionEffectBounce();
 
@@ -133,11 +133,11 @@ public:
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
 
-    void SetBounce(hsScalar b) { fBounce = b; }
-    hsScalar GetBounce() const { return fBounce; }
+    void SetBounce(float b) { fBounce = b; }
+    float GetBounce() const { return fBounce; }
 
-    void SetFriction(hsScalar f) { fFriction = f; }
-    hsScalar GetFriction() const { return fFriction; }
+    void SetFriction(float f) { fFriction = f; }
+    float GetFriction() const { return fFriction; }
 };
 
 class plParticleFadeVolumeEffect : public plParticleEffect
@@ -163,7 +163,7 @@ public:
     virtual void Write(hsStream *s, hsResMgr *mgr);
     //virtual hsBool MsgReceive(plMessage *msg);
 
-    hsScalar fLength;
+    float fLength;
     hsBool fIgnoreZ;
 };
 
@@ -171,9 +171,9 @@ class plParticleWindEffect : public plParticleEffect
 {
 protected:
     // The properties that define the wind. These might/should be animatable.
-    hsScalar    fStrength;
-    hsScalar    fConstancy;
-    hsScalar    fSwirl;
+    float    fStrength;
+    float    fConstancy;
+    float    fSwirl;
     hsBool      fHorizontal;
     hsVector3   fRefDir;
 
@@ -198,14 +198,14 @@ public:
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
 
-    void                SetStrength(hsScalar v) { fStrength = v; }
-    hsScalar            GetStrength() const { return fStrength; }
+    void                SetStrength(float v) { fStrength = v; }
+    float            GetStrength() const { return fStrength; }
 
-    void                SetConstancy(hsScalar c) { fConstancy = c; }
-    hsScalar            GetConstancy() const { return fConstancy; }
+    void                SetConstancy(float c) { fConstancy = c; }
+    float            GetConstancy() const { return fConstancy; }
 
-    void                SetSwirl(hsScalar s) { fSwirl = s; }
-    hsScalar            GetSwirl() const { return fSwirl; }
+    void                SetSwirl(float s) { fSwirl = s; }
+    float            GetSwirl() const { return fSwirl; }
 
     void                SetHorizontal(hsBool on) { fHorizontal = on; }
     hsBool              GetHorizontal() const { return fHorizontal; }
@@ -218,7 +218,7 @@ class plParticleLocalWind : public plParticleWindEffect
 {
 protected:
     hsVector3   fScale;
-    hsScalar    fSpeed;
+    float    fSpeed;
 
     hsVector3   fPhase;
     hsVector3   fInvScale;
@@ -237,8 +237,8 @@ public:
     void                SetScale(const hsVector3& v) { fScale = v; }
     const hsVector3&    GetScale() const { return fScale; }
 
-    void                SetSpeed(hsScalar v) { fSpeed = v; }
-    hsScalar            GetSpeed() const { return fSpeed; }
+    void                SetSpeed(float v) { fSpeed = v; }
+    float            GetSpeed() const { return fSpeed; }
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
@@ -249,15 +249,15 @@ class plParticleUniformWind : public plParticleWindEffect
 {
 protected:
 
-    hsScalar    fFreqMin;
-    hsScalar    fFreqMax;
-    hsScalar    fFreqCurr;
-    hsScalar    fFreqRate;
+    float    fFreqMin;
+    float    fFreqMax;
+    float    fFreqCurr;
+    float    fFreqRate;
     double      fCurrPhase;
 
     double      fLastFreqSecs;
 
-    hsScalar    fCurrentStrength;
+    float    fCurrentStrength;
 public:
     plParticleUniformWind();
     ~plParticleUniformWind();
@@ -268,8 +268,8 @@ public:
     virtual void PrepareEffect(const plEffectTargetInfo& target);
     virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 
-    void        SetFrequencyRange(hsScalar minSecsPerCycle, hsScalar maxSecsPerCycle);
-    void        SetFrequencyRate(hsScalar secsPerCycle);
+    void        SetFrequencyRange(float minSecsPerCycle, float maxSecsPerCycle);
+    void        SetFrequencyRate(float secsPerCycle);
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
@@ -289,19 +289,19 @@ class plParticleFlockEffect : public plParticleEffect
 protected:
     hsPoint3 fTargetOffset;     // Worldspace offset from our target to get the true goal
     hsPoint3 fDissenterTarget;  // Where to particles go when they get scared and leave us?
-    hsScalar fInfAvgRadSq;      // Square of the radius of influence for average velocity matching.
-    hsScalar fInfRepRadSq;      // Same, for repelling from neighbors.
-    hsScalar fAvgVelStr;        // How strongly are we influenced by average dir?
-    hsScalar fRepDirStr;        // Same for repelling
-    hsScalar fGoalOrbitStr;     // Same for the goal (when we're within the desired distance)
-    hsScalar fGoalChaseStr;     // Same for the goal (when we're too far away, and chasing it)
-    hsScalar fGoalDistSq;
-    hsScalar fFullChaseDistSq;
-    hsScalar fMaxOrbitSpeed;
-    hsScalar fMaxChaseSpeed;
+    float fInfAvgRadSq;      // Square of the radius of influence for average velocity matching.
+    float fInfRepRadSq;      // Same, for repelling from neighbors.
+    float fAvgVelStr;        // How strongly are we influenced by average dir?
+    float fRepDirStr;        // Same for repelling
+    float fGoalOrbitStr;     // Same for the goal (when we're within the desired distance)
+    float fGoalChaseStr;     // Same for the goal (when we're too far away, and chasing it)
+    float fGoalDistSq;
+    float fFullChaseDistSq;
+    float fMaxOrbitSpeed;
+    float fMaxChaseSpeed;
 
     uint16_t fMaxParticles;
-    hsScalar *fDistSq;          // Table of distances from particle to particle
+    float *fDistSq;          // Table of distances from particle to particle
     plParticleInfluenceInfo *fInfluences; 
 
     void IUpdateDistances(const plEffectTargetInfo &target);
@@ -319,16 +319,16 @@ public:
 
     void SetTargetOffset(const hsPoint3 &offset) { fTargetOffset = offset; }
     void SetDissenterTarget(const hsPoint3 &target) { fDissenterTarget = target; }
-    void SetInfluenceAvgRadius(hsScalar val) { fInfAvgRadSq = val * val; }
-    void SetInfluenceRepelRadius(hsScalar val) { fInfRepRadSq = val * val; }
-    void SetGoalRadius(hsScalar val) { fGoalDistSq = val * val; }
-    void SetFullChaseRadius(hsScalar val) { fFullChaseDistSq = val * val; }
-    void SetConformStr(hsScalar val) { fAvgVelStr = val; }
-    void SetRepelStr(hsScalar val) { fRepDirStr = val; }
-    void SetGoalOrbitStr(hsScalar val) { fGoalOrbitStr = val; }
-    void SetGoalChaseStr(hsScalar val) { fGoalChaseStr = val; }
-    void SetMaxOrbitSpeed(hsScalar val) { fMaxOrbitSpeed = val; }
-    void SetMaxChaseSpeed(hsScalar val) { fMaxChaseSpeed = val; }
+    void SetInfluenceAvgRadius(float val) { fInfAvgRadSq = val * val; }
+    void SetInfluenceRepelRadius(float val) { fInfRepRadSq = val * val; }
+    void SetGoalRadius(float val) { fGoalDistSq = val * val; }
+    void SetFullChaseRadius(float val) { fFullChaseDistSq = val * val; }
+    void SetConformStr(float val) { fAvgVelStr = val; }
+    void SetRepelStr(float val) { fRepDirStr = val; }
+    void SetGoalOrbitStr(float val) { fGoalOrbitStr = val; }
+    void SetGoalChaseStr(float val) { fGoalChaseStr = val; }
+    void SetMaxOrbitSpeed(float val) { fMaxOrbitSpeed = val; }
+    void SetMaxChaseSpeed(float val) { fMaxChaseSpeed = val; }
     void SetMaxParticles(uint16_t num);
 
     virtual void Read(hsStream *s, hsResMgr *mgr);

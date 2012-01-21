@@ -53,7 +53,7 @@ char*   hsStrcpy(char dstOrNil[], const char src[]);
 void    hsStrcat(char dst[], const char src[]);
 hsBool  hsStrEQ(const char s1[], const char s2[]);
 hsBool  hsStrCaseEQ(const char* s1, const char* s2);
-char*   hsScalarToStr(hsScalar);
+char*   hsScalarToStr(float);
 int     hsRemove(const char* filename);
 void    hsCPathToMacPath(char* dst, char* fname);   
 void    hsStrLower(char *s);
@@ -127,10 +127,7 @@ int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int
 int hsMessageBoxWithOwner(void* owner, const char message[], const char caption[], int kind, int icon=hsMessageBoxIconAsterisk);
 int hsMessageBoxWithOwner(void* owner, const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
 
-inline hsBool hsCompare(hsScalar a, hsScalar b, hsScalar delta=0.0001)
-{
-    return (fabs(a - b) < delta);
-}
+inline hsBool hsCompare(float a, float b, float delta=0.0001);
 
 // flag testing / clearing
 #define hsCheckBits(f,c) ((f & c)==c)
@@ -166,6 +163,11 @@ inline hsBool hsCompare(hsScalar a, hsScalar b, hsScalar delta=0.0001)
 
 #   define hsWFopen(name, mode)     fopen(hsWStringToString(name), hsWStringToString(mode))
 #endif
+
+// Useful floating point utilities
+inline float hsDegreesToRadians(float deg) { return float(deg * (M_PI / 180)); }
+inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
+#define hsInvert(a) (1 / (a))
 
 
 /////////////////////////////

@@ -98,7 +98,7 @@ void plLayerAnimationBase::Read(hsStream* s, hsResMgr* mgr)
     if( fOpacityCtl )
     {
         fOwnedChannels |= kOpacity;
-        fOpacity = TRACKED_NEW hsScalar;
+        fOpacity = TRACKED_NEW float;
     }
     if( fPreshadeColorCtl )
     {
@@ -145,7 +145,7 @@ plLayerInterface* plLayerAnimationBase::Attach(plLayerInterface* prev)
     return plLayerInterface::Attach(prev);
 }
 
-void plLayerAnimationBase::IEvalConvertedTime(hsScalar secs, uint32_t passChans, uint32_t evalChans, uint32_t &dirty)
+void plLayerAnimationBase::IEvalConvertedTime(float secs, uint32_t passChans, uint32_t evalChans, uint32_t &dirty)
 {
     if( evalChans & kPreshadeColor )
     {
@@ -264,7 +264,7 @@ void plLayerAnimationBase::SetOpacityCtl(plController* opaCtl)
     if( fOpacityCtl )
         delete fOpacityCtl;
     else
-        fOpacity = TRACKED_NEW hsScalar;
+        fOpacity = TRACKED_NEW float;
 
     fOwnedChannels |= kOpacity;
     fOpacityCtl = opaCtl;
@@ -281,7 +281,7 @@ void plLayerAnimationBase::SetTransformCtl(plController* xfmCtl)
     fTransformCtl = xfmCtl;
 }
 
-hsScalar plLayerAnimationBase::IMakeUniformLength()
+float plLayerAnimationBase::IMakeUniformLength()
 {
     fLength = 0;
     if( fPreshadeColorCtl && (fPreshadeColorCtl->GetLength() > fLength) )
@@ -356,7 +356,7 @@ uint32_t plLayerAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
     {
         uint32_t evalChans = 0;
         uint32_t passChans = dirty | fPassThruChannels;
-        hsScalar secs = fTimeConvert.WorldToAnimTime(wSecs);
+        float secs = fTimeConvert.WorldToAnimTime(wSecs);
         if( secs != fCurrentTime )
         {
             evalChans = fOwnedChannels & ~ignore & ~fPassThruChannels;
@@ -470,19 +470,19 @@ uint32_t plLayerLinkAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignor
     {
         uint32_t evalChans = 0;
         uint32_t passChans = dirty | fPassThruChannels;
-        hsScalar oldAnimTime = fTimeConvert.CurrentAnimTime();
-        hsScalar secs = oldAnimTime;
+        float oldAnimTime = fTimeConvert.CurrentAnimTime();
+        float secs = oldAnimTime;
         
         if (fFadeFlagsDirty)
         {
-            hsScalar goal = 0.f;
+            float goal = 0.f;
 
             if (fFadeFlags & kFadeLinkPrep)
                 secs = goal = fLength;
             else
             {
-                hsScalar rate = 0.f;
-                hsScalar delta = (hsScalar)(wSecs - fEvalTime);
+                float rate = 0.f;
+                float delta = (float)(wSecs - fEvalTime);
                 
                 if (fFadeFlags & kFadeLinking)
                 {
@@ -703,7 +703,7 @@ uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore
                 }
             }
         }
-        hsScalar secs;
+        float secs;
         if (fVar)
             fVar->Get(&secs);
         else

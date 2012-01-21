@@ -206,7 +206,7 @@ protected:
     void            IGetRTLightColors(plLightInfo* liInfo, IParamBlock2* ProperPB);
     void            IGetRTLightAttenuation(plOmniLightInfo* liInfo, IParamBlock2* ProperPB);
     // RunTime Light animation builders
-    hsBool          IGetRTLightAttenValues(IParamBlock2* ProperPB, hsScalar& attenConst, hsScalar& attenLinear, hsScalar& attenQuadratic,hsScalar &attenCutoff);
+    hsBool          IGetRTLightAttenValues(IParamBlock2* ProperPB, float& attenConst, float& attenLinear, float& attenQuadratic,float &attenCutoff);
     void            IAdjustRTColorByIntensity(plController* ctl, IParamBlock2* ProperPB);
     hsBool          IAttachRTLightModifier(plLightModifier* liMod);
 

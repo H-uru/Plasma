@@ -502,7 +502,7 @@ void plClothingOutfit::RemoveItem(plClothingItem *item, hsBool update /* = true 
     plgDispatch::MsgSend(msg);
 }
 
-void plClothingOutfit::TintItem(plClothingItem *item, hsScalar red, hsScalar green, hsScalar blue,
+void plClothingOutfit::TintItem(plClothingItem *item, float red, float green, float blue,
                                 hsBool update /* = true */, hsBool broadcast /* = true */, hsBool netForce /* = false */,
                                 hsBool retry /* = true */, uint8_t layer /* = kLayerTint1 */)
 {
@@ -526,7 +526,7 @@ void plClothingOutfit::TintItem(plClothingItem *item, hsScalar red, hsScalar gre
     plgDispatch::MsgSend(msg);
 }
 
-void plClothingOutfit::TintSkin(hsScalar red, hsScalar green, hsScalar blue,
+void plClothingOutfit::TintSkin(float red, float green, float blue,
                                 hsBool update /* = true */, hsBool broadcast /* = true */)
 {
     plClothingMsg *msg = TRACKED_NEW plClothingMsg();
@@ -541,7 +541,7 @@ void plClothingOutfit::TintSkin(hsScalar red, hsScalar green, hsScalar blue,
     plgDispatch::MsgSend(msg);
 }
 
-void plClothingOutfit::MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, hsScalar weight,
+void plClothingOutfit::MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight,
                                  hsBool retry /* = true */)
 {
     plClothingMsg *msg = TRACKED_NEW plClothingMsg();
@@ -556,12 +556,12 @@ void plClothingOutfit::MorphItem(plClothingItem *item, uint8_t layer, uint8_t de
     plgDispatch::MsgSend(msg);
 }
 
-void plClothingOutfit::SetAge(hsScalar age, hsBool update /* = true */, hsBool broadcast /* = true */)
+void plClothingOutfit::SetAge(float age, hsBool update /* = true */, hsBool broadcast /* = true */)
 {
     SetSkinBlend(age, plClothingElement::kLayerSkinBlend1, update, broadcast);
 }
 
-void plClothingOutfit::SetSkinBlend(hsScalar blend, uint8_t layer, hsBool update /* = true */, hsBool broadcast /* = true */)
+void plClothingOutfit::SetSkinBlend(float blend, uint8_t layer, hsBool update /* = true */, hsBool broadcast /* = true */)
 {
     plClothingMsg *msg = TRACKED_NEW plClothingMsg();
     msg->AddReceiver(GetKey());
@@ -576,7 +576,7 @@ void plClothingOutfit::SetSkinBlend(hsScalar blend, uint8_t layer, hsBool update
     plgDispatch::MsgSend(msg);
 }
 
-hsScalar plClothingOutfit::GetSkinBlend(uint8_t layer)
+float plClothingOutfit::GetSkinBlend(uint8_t layer)
 {
     if (layer >= plClothingElement::kLayerSkinBlend1 && layer <= plClothingElement::kLayerSkinLast)
         return fSkinBlends[layer - plClothingElement::kLayerSkinBlend1];
@@ -712,7 +712,7 @@ hsColorRGBA plClothingOutfit::GetItemTint(plClothingItem *item, uint8_t layer /*
     return color;
 }
 
-hsBool plClothingOutfit::IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, hsScalar weight)
+hsBool plClothingOutfit::IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight)
 {
     uint32_t index = fItems.Find(item);
     if (index != fItems.kMissingIndex)
@@ -1159,12 +1159,12 @@ void plClothingOutfit::WearRandomOutfit()
         cMgr->GetItemsByGroupAndType(fGroup, (uint8_t)i, items);
         j = (uint32_t)(sRandom.RandZeroToOne() * items.GetCount());
 
-        hsScalar r1 = sRandom.RandZeroToOne();
-        hsScalar g1 = sRandom.RandZeroToOne();
-        hsScalar b1 = sRandom.RandZeroToOne();
-        hsScalar r2 = sRandom.RandZeroToOne();
-        hsScalar g2 = sRandom.RandZeroToOne();
-        hsScalar b2 = sRandom.RandZeroToOne();
+        float r1 = sRandom.RandZeroToOne();
+        float g1 = sRandom.RandZeroToOne();
+        float b1 = sRandom.RandZeroToOne();
+        float r2 = sRandom.RandZeroToOne();
+        float g2 = sRandom.RandZeroToOne();
+        float b2 = sRandom.RandZeroToOne();
 
         AddItem(items[j], false, false);
         TintItem(items[j], r1, g1, b1, false, false, false, true, 1);
@@ -1360,7 +1360,7 @@ hsBool plClothingOutfit::MsgReceive(plMessage* msg)
 
         if (cMsg->GetCommand(plClothingMsg::kBlendSkin))
         {
-            hsScalar blend = cMsg->fColor.a;
+            float blend = cMsg->fColor.a;
             if (blend > 1.f)
                 blend = 1.f;
             if (blend < 0.f)

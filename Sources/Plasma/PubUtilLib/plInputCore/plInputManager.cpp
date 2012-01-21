@@ -208,7 +208,7 @@ void plInputManager::Update()
         fDInputMgr->Update();
 }
 
-void plInputManager::SetMouseScale( hsScalar s )
+void plInputManager::SetMouseScale( float s )
 {
 /*  RECT    rect;
     POINT   currPos;

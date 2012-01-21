@@ -113,7 +113,7 @@ protected:
     plAvBrainGeneric * IBuildSitBrain(plKey avModKey, plKey seekKey,char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
 
     /** Unused. */
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return true; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     /** An array of keys to objects that are interested in receiving our sit messages. */
     hsTArray<plKey> fNotifyKeys;

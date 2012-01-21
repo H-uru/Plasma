@@ -98,7 +98,7 @@ public:
     double      fLastTime;
     hsPoint3    fLastPos;
     double      fWetTime;
-    hsScalar    fWetLength;
+    float    fWetLength;
     uint32_t      fFlags;
 
     plDynaDecalInfo& Init(const plKey& key);
@@ -150,31 +150,31 @@ protected:
     hsTArray<plSceneObject*>    fPartyObjects;
     hsTArray<plParticleSystem*> fParticles;
 
-    hsScalar                    fPartyTime;
+    float                    fPartyTime;
 
     uint16_t                      fMaxNumVerts;
     uint16_t                      fMaxNumIdx;
 
     uint32_t                      fWaitOnEnable;
     
-    hsScalar                    fWetLength;
-    hsScalar                    fRampEnd;
-    hsScalar                    fDecayStart;
-    hsScalar                    fLifeSpan;
-    hsScalar                    fIntensity;
+    float                    fWetLength;
+    float                    fRampEnd;
+    float                    fDecayStart;
+    float                    fLifeSpan;
+    float                    fIntensity;
 
-    hsScalar                    fGridSizeU;
-    hsScalar                    fGridSizeV;
+    float                    fGridSizeU;
+    float                    fGridSizeV;
 
     hsVector3                   fScale;
 
     // some temp calculated stuff
-    hsScalar                    fInitAtten; 
+    float                    fInitAtten; 
     // These 4 are in normalized units [0..1], not feet.
-    hsScalar                    fMinDepth;
-    hsScalar                    fMinDepthRange;
-    hsScalar                    fMaxDepth;
-    hsScalar                    fMaxDepthRange;
+    float                    fMinDepth;
+    float                    fMinDepthRange;
+    float                    fMaxDepth;
+    float                    fMaxDepthRange;
 
     hsTArray<uint32_t>            fPartIDs;
     hsTArray<plKey>             fNotifies;
@@ -188,7 +188,7 @@ protected:
     hsBool              IWetParts(const plDynaDecalEnableMsg* enaMsg);
     hsBool              IWetPart(uint32_t id, const plDynaDecalEnableMsg* enaMsg);
     void                IWetInfo(plDynaDecalInfo& info, const plDynaDecalEnableMsg* enaMsg) const;
-    hsScalar            IHowWet(plDynaDecalInfo& info, double t) const;
+    float            IHowWet(plDynaDecalInfo& info, double t) const;
     plDynaDecalInfo&    IGetDecalInfo(uintptr_t id, const plKey& key);
     void                IRemoveDecalInfo(uint32_t id);
     void                IRemoveDecalInfos(const plKey& key);
@@ -225,7 +225,7 @@ protected:
 
     void                ISetDepthFalloff(); // Sets from current cutter settings.
 
-    virtual void        ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, hsBool hasWaterHeight=false, hsScalar waterHeight=0.f);
+    virtual void        ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, hsBool hasWaterHeight=false, float waterHeight=0.f);
 
     hsGMaterial*        IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap);
 
@@ -259,19 +259,19 @@ public:
     void SetWaitOnEnable(hsBool on) { fWaitOnEnable = on; }
     hsBool GetWaitOnEnable() const { return fWaitOnEnable; }
 
-    void SetWetLength(hsScalar f) { fWetLength = f; }
-    void SetRampEnd(hsScalar f) { fRampEnd = f; }
-    void SetDecayStart(hsScalar f) { fDecayStart = f; }
-    void SetLifeSpan(hsScalar f) { fLifeSpan = f; }
-    void SetIntensity(hsScalar f) { fIntensity = f; }
-    hsScalar GetWetLength() const { return fWetLength; }
-    hsScalar GetRampEnd() const { return fRampEnd; }
-    hsScalar GetDecayStart() const { return fDecayStart; }
-    hsScalar GetLifeSpan() const { return fLifeSpan; }
-    hsScalar GetIntensity() const { return fIntensity; }
+    void SetWetLength(float f) { fWetLength = f; }
+    void SetRampEnd(float f) { fRampEnd = f; }
+    void SetDecayStart(float f) { fDecayStart = f; }
+    void SetLifeSpan(float f) { fLifeSpan = f; }
+    void SetIntensity(float f) { fIntensity = f; }
+    float GetWetLength() const { return fWetLength; }
+    float GetRampEnd() const { return fRampEnd; }
+    float GetDecayStart() const { return fDecayStart; }
+    float GetLifeSpan() const { return fLifeSpan; }
+    float GetIntensity() const { return fIntensity; }
 
-    void        SetPartyTime(hsScalar secs) { fPartyTime = secs; } // Duration of particle spewage
-    hsScalar    GetPartyTime() const { return fPartyTime; }
+    void        SetPartyTime(float secs) { fPartyTime = secs; } // Duration of particle spewage
+    float    GetPartyTime() const { return fPartyTime; }
 
     void ConvertToEnvMap(plBitmap* envMap);
     const plMipmap* GetMipmap() const;

@@ -305,8 +305,8 @@ public:
 
     hsBool          GetHasWaterHeight()                 { return MaxDatBF.CanBF(MaxDatBF.kWaterHeight); }
     void            SetHasWaterHeight(hsBool b)         { MaxDatBF.SetBF(b, MaxDatBF.kWaterHeight); }
-    hsScalar        GetWaterHeight()                    { return fWaterHeight; }
-    void            SetWaterHeight(hsScalar f)          { SetHasWaterHeight(true); fWaterHeight = f; }
+    float        GetWaterHeight()                    { return fWaterHeight; }
+    void            SetWaterHeight(float f)          { SetHasWaterHeight(true); fWaterHeight = f; }
 
     hsBool          GetSmoothAll()                      {return MaxDatBF.CanBF(MaxDatBF.kSmoothAll);    }
     void            SetSmoothAll(hsBool b)              { MaxDatBF.SetBF(b, MaxDatBF.kSmoothAll);       }
@@ -414,8 +414,8 @@ public:
     void            SetOverrideHighLevelSDL(hsBool b)   { MaxDatBF.SetBF(b, MaxDatBF.kOverrideHighLevelSDL); }
     uint8_t           GetAnimCompress()                   { return fAnimCompression; }
     void            SetAnimCompress(uint8_t v)            { fAnimCompression = v; }
-    hsScalar        GetKeyReduceThreshold()             { return fKeyReduceThreshold; }
-    void            SetKeyReduceThreshold(hsScalar v)   { fKeyReduceThreshold = v; }
+    float        GetKeyReduceThreshold()             { return fKeyReduceThreshold; }
+    void            SetKeyReduceThreshold(float v)   { fKeyReduceThreshold = v; }
 
 protected:
     plKey           fpKey;
@@ -441,9 +441,9 @@ protected:
     plSharedMesh    *fSwapMesh;
     plMaxBoneMap    *fBoneMap;
     plLoadMask      fLoadMask;
-    hsScalar        fWaterHeight;
+    float        fWaterHeight;
     uint8_t           fAnimCompression;
-    hsScalar        fKeyReduceThreshold;
+    float        fKeyReduceThreshold;
     DataBF  MaxDatBF;
 };
 

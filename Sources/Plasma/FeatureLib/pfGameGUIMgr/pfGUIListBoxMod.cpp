@@ -140,7 +140,7 @@ pfGUIListBoxMod::~pfGUIListBoxMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIListBoxMod::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUIListBoxMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -242,7 +242,7 @@ void    pfGUIListBoxMod::IUpdate( void )
                 {
                     // Shit. Move the scrollPos up to this item at the very least
                     fScrollPos = j;
-                    fScrollControl->SetCurrValue( (hsScalar)( (int)fScrollControl->GetMax() - fScrollPos ) );
+                    fScrollControl->SetCurrValue( (float)( (int)fScrollControl->GetMax() - fScrollPos ) );
                     fCheckScroll = false;
                     break;
                 }
@@ -345,7 +345,7 @@ void    pfGUIListBoxMod::IUpdate( void )
             if( anySelected )
             {
                 fScrollPos = j;
-                fScrollControl->SetCurrValue( (hsScalar)( (int)fScrollControl->GetMax() - fScrollPos ) );
+                fScrollControl->SetCurrValue( (float)( (int)fScrollControl->GetMax() - fScrollPos ) );
                 IUpdate();      // Gotta update again, since we just changed the scrollPos after the fact
                 return;
             }
@@ -495,9 +495,9 @@ void    pfGUIListBoxMod::ICalcScrollRange( void )
             // Smaller than the viewing area, so we don't scroll at all
             fScrollControl->SetRange( 0.f, 0.f );
         else
-            fScrollControl->SetRange( 0.f, (hsScalar)( i + 1 ) );
+            fScrollControl->SetRange( 0.f, (float)( i + 1 ) );
 
-        fScrollControl->SetCurrValue( (hsScalar)( (int)fScrollControl->GetMax() - fScrollPos ) );
+        fScrollControl->SetCurrValue( (float)( (int)fScrollControl->GetMax() - fScrollPos ) );
     }
 }
 
@@ -1044,7 +1044,7 @@ void pfGUIListBoxMod::SetScrollPos( int32_t pos )
 {
     if ( pos >= (int)fScrollControl->GetMin() && pos <= (int)fScrollControl->GetMax() )
     {
-        fScrollControl->SetCurrValue( (hsScalar)pos );
+        fScrollControl->SetCurrValue( (float)pos );
         fScrollPos = (int)fScrollControl->GetMax() - pos;
     }
     IUpdate();

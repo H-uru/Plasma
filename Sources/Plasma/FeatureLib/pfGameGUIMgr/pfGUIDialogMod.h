@@ -91,7 +91,7 @@ class pfGUIDialogMod : public plSingleModifier
         plKey           fSceneNodeKey;
 
 
-        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         void    IHandleDrag( hsPoint3 &mousePt, pfGameGUIMgr::EventType event, uint8_t modifiers );
 
@@ -130,13 +130,13 @@ class pfGUIDialogMod : public plSingleModifier
 
         const char  *GetName( void ) { return fName; }
 
-        void        ScreenToWorldPoint( hsScalar x, hsScalar y, hsScalar z, hsPoint3 &outPt );
+        void        ScreenToWorldPoint( float x, float y, float z, hsPoint3 &outPt );
         hsPoint3    WorldToScreenPoint( const hsPoint3 &inPt );
 
-        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY, uint8_t modifiers );
+        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
         hsBool          HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
         hsBool          HandleKeyPress( wchar_t key, uint8_t modifiers );
-        void            UpdateInterestingThings( hsScalar mouseX, hsScalar mouseY, uint8_t modifiers, hsBool modalPreset );
+        void            UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, hsBool modalPreset );
 
         void            SetControlOfInterest( pfGUIControlMod *c );
         pfGUIControlMod *GetControlOfInterest( void ) const { return fControlOfInterest; }

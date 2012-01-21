@@ -80,14 +80,14 @@ plLayer::plLayer()
     fRuntimeColor = TRACKED_NEW hsColorRGBA;
     fAmbientColor = TRACKED_NEW hsColorRGBA;
     fSpecularColor = TRACKED_NEW hsColorRGBA;
-    fOpacity = TRACKED_NEW hsScalar;
+    fOpacity = TRACKED_NEW float;
     
     fState = TRACKED_NEW hsGMatState;
     fState->Reset();
 
     fUVWSrc = TRACKED_NEW uint32_t;
-    fLODBias = TRACKED_NEW hsScalar;
-    fSpecularPower = TRACKED_NEW hsScalar;
+    fLODBias = TRACKED_NEW float;
+    fSpecularPower = TRACKED_NEW float;
 
     fTexture = TRACKED_NEW plBitmap*;
     *fTexture = nil;

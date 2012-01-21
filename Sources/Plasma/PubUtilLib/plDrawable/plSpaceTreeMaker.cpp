@@ -172,7 +172,7 @@ void plSpaceTreeMaker::ISplitList(hsTArray<plSpacePrepNode*>& nodes, const hsVec
         upper[i] = nodes[i + lowerCount];
 }
 
-hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, hsScalar& length, hsVector3& axis)
+hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis)
 {
     hsBounds3Ext bnd;
     bnd.MakeEmpty();
@@ -189,14 +189,14 @@ hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>&
     {
         hsVector3 sep;
         sep.Set(&bnd.GetCenter(), &nodes[i]->fWorldBounds.GetCenter());
-        hsScalar len = sep.MagnitudeSquared();
+        float len = sep.MagnitudeSquared();
         if( len > length )
         {
             axis = sep;
             length = len;
         }
     }
-    length = hsSquareRoot(length);
+    length = sqrt(length);
     if( length > 1.e-3f )
         axis /= length;
     else
@@ -231,7 +231,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>&
     
     // Find the maximum length vector from nodes[i] center to list center.
     // If that length is zero, just use the maximum dimension of overall bounds.
-    hsScalar length;
+    float length;
     hsVector3 axis;
     hsBounds3Ext bnd = IFindDistToCenterAxis(nodes, length, axis);
 
@@ -249,7 +249,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>&
     return subRoot;
 }
 
-hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, hsScalar& length, hsVector3& axis)
+hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis)
 {
     hsBounds3Ext bnd;
     bnd.MakeEmpty();
@@ -258,7 +258,7 @@ hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes,
     {
         bnd.Union(&nodes[i]->fWorldBounds);
     }
-    hsScalar maxLen = bnd.GetMaxs()[0] - bnd.GetMins()[0];
+    float maxLen = bnd.GetMaxs()[0] - bnd.GetMins()[0];
     int maxAxis = 0;
 
     if( bnd.GetMaxs()[1] - bnd.GetMins()[1] > maxLen )
@@ -290,9 +290,9 @@ hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes,
     return bnd;
 }
 
-void plSpaceTreeMaker::IFindBigList(hsTArray<plSpacePrepNode*>& nodes, hsScalar length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimps)
+void plSpaceTreeMaker::IFindBigList(hsTArray<plSpacePrepNode*>& nodes, float length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimps)
 {
-    const hsScalar kCutoffFrac = 0.5f;
+    const float kCutoffFrac = 0.5f;
 
     giants.SetCount(0);
     strimps.SetCount(0);
@@ -332,7 +332,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(hsTArray<plSpacePrepNode*>& no
     StartTimer(kMakeTree);
 
     // Find the maximum bounds dimension
-    hsScalar length;
+    float length;
     hsVector3 axis;
     hsBounds3Ext bnd = IFindSplitAxis(nodes, length, axis);
 
@@ -487,7 +487,7 @@ void plSpaceTreeMaker::TestTree()
     tree->SetViewPos(*hsPoint3().Set(0,0,0));
 
     plConeIsect cone;
-    cone.SetAngle(hsScalarPI*0.25f);
+    cone.SetAngle(M_PI*0.25f);
     cone.SetTransform(liX, invLiX);
 
     StartTimer(kHarvestCone);
@@ -498,7 +498,7 @@ void plSpaceTreeMaker::TestTree()
     StopTimer(kHarvestCone);
 
     plConeIsect capped;
-    capped.SetAngle(hsScalarPI*0.25f);
+    capped.SetAngle(M_PI*0.25f);
     capped.SetLength(0.5f);
     capped.SetTransform(liX, invLiX);
 

@@ -76,8 +76,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 hsBool plAvBrainGeneric::fForce3rdPerson = true;
-const hsScalar plAvBrainGeneric::kDefaultFadeIn = 6.f; // 1/6th of a second to fade in
-const hsScalar plAvBrainGeneric::kDefaultFadeOut = 0.f; // instant fade out.
+const float plAvBrainGeneric::kDefaultFadeIn = 6.f; // 1/6th of a second to fade in
+const float plAvBrainGeneric::kDefaultFadeOut = 0.f; // instant fade out.
 
 // plAvBrainGeneric ----------------
 // -----------------
@@ -248,7 +248,7 @@ bool plAvBrainGeneric::MatchAnimNames(const char *names[], int count)
 
 // Apply ----------------------------------------------------
 // ------
-hsBool plAvBrainGeneric::Apply(double time, hsScalar elapsed)
+hsBool plAvBrainGeneric::Apply(double time, float elapsed)
 {
     hsBool result = false;
 
@@ -491,7 +491,7 @@ hsBool plAvBrainGeneric::IProcessFadeOut(double time, float elapsed)
 // ISwitchStages ---------------------------------------------------------------------------------------------------
 // --------------
 hsBool plAvBrainGeneric::ISwitchStages(int oldStageNum, int newStageNum, float delta, hsBool setTime, float newTime,
-                                       float fadeNew, hsScalar fadeOld, double worldTime)
+                                       float fadeNew, float fadeOld, double worldTime)
 {
 #ifdef DEBUG_MULTISTAGE
     char sbuf[256];

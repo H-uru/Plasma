@@ -242,7 +242,7 @@ plPointBlend::~plPointBlend()
 // ------------
 hsBool plPointBlend::IsStoppedAt(double time)
 {
-    hsScalar blend = fChannelBias->Value(time);
+    float blend = fChannelBias->Value(time);
     if (blend == 0)
         return fPointA->IsStoppedAt(time);
     if (blend == 1)
@@ -257,7 +257,7 @@ const hsPoint3 &plPointBlend::Value(double time)
 {
     if (fPointA && fPointB)
     {
-        hsScalar curBlend = fChannelBias->Value(time);
+        float curBlend = fChannelBias->Value(time);
         if(curBlend == 0) {
             fPointA->Value(fResult, time);
         } else {
@@ -360,7 +360,7 @@ const hsPoint3 & plPointControllerChannel::Value(double time)
 // VALUE(time)
 const hsPoint3 & plPointControllerChannel::Value(double time, plControllerCacheInfo *cache)
 {
-    fController->Interp((hsScalar)time, &fResult, cache);
+    fController->Interp((float)time, &fResult, cache);
     return fResult;
 }
 

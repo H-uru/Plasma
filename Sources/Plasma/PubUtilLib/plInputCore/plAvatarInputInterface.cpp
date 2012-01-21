@@ -427,7 +427,7 @@ void plAvatarInputInterface::ForceAlwaysRun(hsBool val)
 //// IEval ///////////////////////////////////////////////////////////////////
 //  Gets called once per IUpdate(), just like normal IEval()s
 
-hsBool plAvatarInputInterface::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool plAvatarInputInterface::IEval( double secs, float del, uint32_t dirty )
 {
     fCursorTimeout += del;
     if( fCursorTimeout > fCursorFadeDelay )
@@ -848,7 +848,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
                     pCmd->fControlActivated = true;
                     pCmd->fControlCode = mouseMap->fMap[i]->fCode;
-                    hsScalar pct = 0.0f;
+                    float pct = 0.0f;
                     if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangePos)
                     {
                         if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
@@ -878,7 +878,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
                     pCmd->fControlActivated = true;
                     pCmd->fControlCode = mouseMap->fMap[i]->fCode;
-                    hsScalar pct = 0.0f;
+                    float pct = 0.0f;
 
                     if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
                         pct = pMouseMsg->GetDX();
@@ -959,7 +959,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     pCmd->fNetPropagateToPlayers = mouseMap->fMap[i]->fControlFlags & kControlFlagNetPropagate;
 
                     // figure out what percent (if any)
-                    hsScalar pct = 0.0f;
+                    float pct = 0.0f;
                     if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangePos)
                     {
                         if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)

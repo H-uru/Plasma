@@ -82,13 +82,13 @@ public:
     int             fType;
 
     hsPoint3        fOffset;
-    hsScalar        fAccel;
-    hsScalar        fDecel;
-    hsScalar        fVel;
-    hsScalar        fFPAccel;
-    hsScalar        fFPDecel;
-    hsScalar        fFPVel;
-    hsScalar        fFOVw, fFOVh;   
+    float        fAccel;
+    float        fDecel;
+    float        fVel;
+    float        fFPAccel;
+    float        fFPDecel;
+    float        fFPVel;
+    float        fFOVw, fFOVh;   
     hsBool          fWorldspace;
 
     void Read(hsStream* stream);

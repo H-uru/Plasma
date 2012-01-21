@@ -115,7 +115,7 @@ hsBool plLayerAVI::IInit()
     ISetSize(bmi->bmiHeader.biWidth, bmi->bmiHeader.biHeight);
 
     int32_t endFrame = fAVIInfo->fAVIStreamInfo.dwLength-1;
-    hsScalar length = float(endFrame) * float(fAVIInfo->fAVIStreamInfo.dwScale) 
+    float length = float(endFrame) * float(fAVIInfo->fAVIStreamInfo.dwScale) 
                         / float(fAVIInfo->fAVIStreamInfo.dwRate);
     ISetLength(length);
 #endif
@@ -123,7 +123,7 @@ hsBool plLayerAVI::IInit()
     return false;
 }
 
-int32_t plLayerAVI::ISecsToFrame(hsScalar secs)
+int32_t plLayerAVI::ISecsToFrame(float secs)
 {
 #if HS_BUILD_FOR_WIN32
     float timeScale = float(fAVIInfo->fAVIStreamInfo.dwRate) / float(fAVIInfo->fAVIStreamInfo.dwScale);

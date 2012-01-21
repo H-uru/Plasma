@@ -120,7 +120,7 @@ void    plEAXListenerMod::IUnRegister( void )
     fRegistered = false;
 }
 
-hsBool plEAXListenerMod::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool plEAXListenerMod::IEval( double secs, float del, uint32_t dirty )
 {
     IRegister();
     return false;

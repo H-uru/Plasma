@@ -210,7 +210,7 @@ void plAvBrainClimb::Deactivate()
 }
 
 // APPLY
-hsBool plAvBrainClimb::Apply(double time, hsScalar elapsed)
+hsBool plAvBrainClimb::Apply(double time, float elapsed)
 {
     hsBool result = true;
 

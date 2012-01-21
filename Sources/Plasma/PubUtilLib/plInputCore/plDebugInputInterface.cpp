@@ -139,7 +139,7 @@ void    plDebugInputInterface::RestoreDefaultKeyMappings( void )
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool plDebugInputInterface::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool plDebugInputInterface::IEval( double secs, float del, uint32_t dirty )
 {
     return true;
 }
@@ -244,7 +244,7 @@ hsBool  plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
                     pCmd->fControlActivated = true;
                     pCmd->fControlCode = fMouseMap.fMap[i]->fCode;
-                    hsScalar pct = 0.0f;
+                    float pct = 0.0f;
                     if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRangePos)
                     {
                         if (fMouseMap.fMap[i]->fControlFlags & kControlFlagXAxisEvent)
@@ -319,7 +319,7 @@ hsBool  plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     pCmd->fNetPropagateToPlayers = fMouseMap.fMap[i]->fControlFlags & kControlFlagNetPropagate;
 
                     // figure out what percent (if any)
-                    hsScalar pct = 0.0f;
+                    float pct = 0.0f;
                     if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRangePos)
                     {
                         if (fMouseMap.fMap[i]->fControlFlags & kControlFlagXAxisEvent)

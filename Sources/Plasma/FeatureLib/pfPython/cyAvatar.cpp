@@ -372,7 +372,7 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, hsBool netFor
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::NextStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsScalar newTime,
+void cyAvatar::NextStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
@@ -411,7 +411,7 @@ void cyAvatar::NextStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsSc
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::PreviousStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsScalar newTime,
+void cyAvatar::PreviousStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
@@ -451,7 +451,7 @@ void cyAvatar::PreviousStage(pyKey &behKey, hsScalar transTime, hsBool setTime, 
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::GoToStage(pyKey &behKey, int32_t stage, hsScalar transTime, hsBool setTime, hsScalar newTime,
+void cyAvatar::GoToStage(pyKey &behKey, int32_t stage, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
@@ -1847,12 +1847,12 @@ bool cyAvatar::LocalAvatarIsMoving()
     return false;
 }
 
-void cyAvatar::SetMouseTurnSensitivity(hsScalar val)
+void cyAvatar::SetMouseTurnSensitivity(float val)
 {
     plArmatureMod::SetMouseTurnSensitivity(val);
 }
 
-hsScalar cyAvatar::GetMouseTurnSensitivity()
+float cyAvatar::GetMouseTurnSensitivity()
 {
     return plArmatureMod::GetMouseTurnSensitivity();
 }

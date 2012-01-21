@@ -140,7 +140,7 @@ public:
     uint8_t   PositionOffset() const { return uint8_t(0); }
     uint8_t   WgtIdxOffset() const { return uint8_t(PositionOffset() + NumPos() * sizeof(hsPoint3)); }
     uint8_t   WeightOffset() const { return uint8_t(WgtIdxOffset() + NumWgtIdx() * sizeof(uint32_t)); }
-    uint8_t   NormalOffset() const { return uint8_t(WeightOffset() + NumWeights() * sizeof(hsScalar)); }
+    uint8_t   NormalOffset() const { return uint8_t(WeightOffset() + NumWeights() * sizeof(float)); }
     uint8_t   ColorOffset() const { return uint8_t(NormalOffset() + NumNorm() * sizeof(hsVector3)); }
     uint8_t   Color2Offset() const { return uint8_t(ColorOffset() + NumColor() * sizeof(uint32_t)); }
     uint8_t   UVWOffset() const { return uint8_t(Color2Offset() + NumColor2() * sizeof(uint32_t)); }
@@ -160,7 +160,7 @@ public:
     uint32_t*             Color2(int i) const { return (uint32_t*)GetData(kColor2, i); }
     uint32_t*             WgtIdx(int i) const { return (uint32_t*)GetData(kWgtIdx, i); }
     hsPoint3*           UVWs(int iv, int iuv) const { return (hsPoint3*)GetData(kUVW, iv, iuv); }
-    hsScalar*           Weight(int iv, int iw) const { return (hsScalar*)GetData(kWeight, iv, iw); }
+    float*           Weight(int iv, int iw) const { return (float*)GetData(kWeight, iv, iw); }
 
     uint8_t*              GetData(Channel chan, int i, int j=0) const
     {
@@ -173,33 +173,33 @@ public:
         case kWeight:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + j * sizeof(hsScalar);
+                + j * sizeof(float);
         case kWgtIdx:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar);
+                + NumWeights() * sizeof(float);
         case kNormal:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar)
+                + NumWeights() * sizeof(float)
                 + NumWgtIdx() * sizeof(uint32_t);
         case kColor:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar)
+                + NumWeights() * sizeof(float)
                 + NumWgtIdx() * sizeof(uint32_t)
                 + NumNorm() * sizeof(hsVector3);
         case kColor2:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar)
+                + NumWeights() * sizeof(float)
                 + NumWgtIdx() * sizeof(uint32_t)
                 + NumNorm() * sizeof(hsVector3)
                 + NumColor() * sizeof(uint32_t);
         case kUVW:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar)
+                + NumWeights() * sizeof(float)
                 + NumWgtIdx() * sizeof(uint32_t)
                 + NumNorm() * sizeof(hsVector3)
                 + NumColor() * sizeof(uint32_t)

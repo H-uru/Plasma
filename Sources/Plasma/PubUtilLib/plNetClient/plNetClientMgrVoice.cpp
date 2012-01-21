@@ -245,7 +245,7 @@ hsBool plNetClientMgr::IUpdateListenList(double secs)
                 int i;
                 for(i=0;i<fTransport.GetNumMembers();i++)
                 {
-                    fTransport.GetMember(i)->SetDistSq(hsScalarMax);
+                    fTransport.GetMember(i)->SetDistSq(FLT_MAX);
 
                     if (fTransport.GetMember(i)->IsServer())
                         continue;

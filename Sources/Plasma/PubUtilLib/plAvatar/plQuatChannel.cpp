@@ -246,7 +246,7 @@ plQuatBlend::~plQuatBlend()
 
 hsBool plQuatBlend::IsStoppedAt(double time)
 {
-    hsScalar blend = fChannelBias->Value(time);
+    float blend = fChannelBias->Value(time);
     if (blend == 0)
         return fQuatA->IsStoppedAt(time);
     if (blend == 1)

@@ -169,8 +169,8 @@ void plMorphSequenceSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcSta
         {           
             uint8_t weight;
             weights->Get(&weight, j);
-            hsScalar posWeight = weight * 2.f / 255.f - 1.f;
-            hsScalar negWeight = 0;
+            float posWeight = weight * 2.f / 255.f - 1.f;
+            float negWeight = 0;
 
             if (posWeight < 0)
             {

@@ -83,8 +83,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool plFadeOpacityMod::fLOSCheckDisabled = false;
 
-const hsScalar kDefFadeUp(5.f);
-const hsScalar kDefFadeDown(1.f);
+const float kDefFadeUp(5.f);
+const float kDefFadeDown(1.f);
 
 plFadeOpacityMod::plFadeOpacityMod()
 :   fFadeUp(kDefFadeUp),
@@ -178,7 +178,7 @@ void plFadeOpacityMod::IOnRenderMsg(plRenderMsg* rend)
         {
             // If we've moved more than 3 feet in a frame, we'll consider this a 
             // camera cut. In that case, don't fade up or down, just go there.
-            const hsScalar kCutMagSquared = 3.f * 3.f;
+            const float kCutMagSquared = 3.f * 3.f;
             if( hsVector3(&eyePos, &fLastEye).MagnitudeSquared() > kCutMagSquared )
                 fFade = kImmediate;
         }
@@ -237,7 +237,7 @@ void plFadeOpacityMod::ICalcOpacity()
     switch( fFade )
     {
     case kFadeUp:
-        fOpCurrent = (hsScalar)(t - fStart);
+        fOpCurrent = (float)(t - fStart);
         if( fOpCurrent > fFadeUp )
         {
             fOpCurrent = 1.f;
@@ -249,7 +249,7 @@ void plFadeOpacityMod::ICalcOpacity()
         }
         break;
     case kFadeDown:
-        fOpCurrent = (hsScalar)(t - fStart);
+        fOpCurrent = (float)(t - fStart);
         if( fOpCurrent > fFadeDown )
         {
             fOpCurrent = 0.f;

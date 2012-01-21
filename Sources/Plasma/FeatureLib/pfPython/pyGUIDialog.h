@@ -142,10 +142,10 @@ public:
     virtual PyObject*   GetBackSelColor(); // returns pyColor
     virtual uint32_t      GetFontSize();
     // set color scheme
-    virtual void        SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
+    virtual void        SetForeColor( float r, float g, float b, float a );
+    virtual void        SetSelColor( float r, float g, float b, float a );
+    virtual void        SetBackColor( float r, float g, float b, float a );
+    virtual void        SetBackSelColor( float r, float g, float b, float a );
     virtual void        SetFontSize(uint32_t fontsize);
 
     virtual void        UpdateAllBounds( void );

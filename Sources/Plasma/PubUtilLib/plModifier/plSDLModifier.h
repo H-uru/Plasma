@@ -60,7 +60,7 @@ protected:
     virtual void IPutCurrentStateIn(plStateDataRecord* dstState) = 0;
     virtual void ISetCurrentStateFrom(const plStateDataRecord* srcState) = 0;
     virtual void ISentState(const plStateDataRecord* sentState) {}
-    hsBool IEval(double secs, hsScalar del, uint32_t dirty) {return false;}
+    hsBool IEval(double secs, float del, uint32_t dirty) {return false;}
     
     virtual uint32_t IApplyModFlags(uint32_t sendFlags);
     

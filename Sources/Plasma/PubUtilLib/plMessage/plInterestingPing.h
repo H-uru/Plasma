@@ -60,9 +60,9 @@ public:
     CLASSNAME_REGISTER( plInterestingModMsg );
     GETINTERFACE_ANY( plInterestingModMsg, plMessage );
     
-    hsScalar    fWeight;
-    hsScalar    fRadius;
-    hsScalar    fSize;
+    float    fWeight;
+    float    fRadius;
+    float    fSize;
     hsPoint3    fPos;
     plKey       fObj;
     uint8_t       fType;

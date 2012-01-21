@@ -77,7 +77,7 @@ protected:
     virtual void    IPlayNext();
     virtual void    IPlayNextIfMaster();
     virtual void    IStop();
-    void            ISetVolume(hsScalar volume);
+    void            ISetVolume(float volume);
     void            ISetPosition(hsPoint3);
     plSound         *IGetSoundPtr(); 
     

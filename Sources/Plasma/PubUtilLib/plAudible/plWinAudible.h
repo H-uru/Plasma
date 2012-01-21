@@ -82,11 +82,11 @@ public:
     void        Stop(int index = -1);
     void        FastForwardPlay(int index = -1);
     void        FastForwardToggle(int index = -1);
-    void        SetMin(const hsScalar m,int index = -1); // sets minimum falloff distance
-    void        SetMax(const hsScalar m,int index = -1); // sets maximum falloff distance
+    void        SetMin(const float m,int index = -1); // sets minimum falloff distance
+    void        SetMax(const float m,int index = -1); // sets maximum falloff distance
     void        SetPosition(const hsPoint3 p, int index = -1);
-    hsScalar    GetMin(int index = -1) const;
-    hsScalar    GetMax(int index = -1) const;
+    float    GetMin(int index = -1) const;
+    float    GetMax(int index = -1) const;
     virtual void SetVelocity(const hsVector3 vel,int index = -1);
     hsVector3   GetVelocity(int index = -1) const;
     hsPoint3    GetPosition(int index = -1);

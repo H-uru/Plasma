@@ -121,7 +121,7 @@ class KRStatus : public KeyReduceStatus
     int Progress(int p) { return KEYREDUCE_CONTINUE; }
 };
 
-void hsControlConverter::ReduceKeys(Control *control, hsScalar threshold)
+void hsControlConverter::ReduceKeys(Control *control, float threshold)
 {
     if (control == nil || threshold <= 0)
         return;
@@ -172,7 +172,7 @@ void hsControlConverter::ReduceKeys(Control *control, hsScalar threshold)
 }
 
 plController *hsControlConverter::ConvertTMAnim(plSceneObject *obj, plMaxNode *node, hsAffineParts *parts, 
-                                                hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                float start /* = -1 */, float end /* = -1 */)
 {
     Control* maxTm = node->GetTMController();
     plController *tmc = hsControlConverter::Instance().MakeTransformController(maxTm, node, start, end);
@@ -249,7 +249,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, co
     CompositeKeyTimes(vAngCtl, kTimes);
     CompositeKeyTimes(wAngCtl, kTimes);
 
-    const float kMaxRads = 30.f * hsScalarPI / 180.f;
+    const float kMaxRads = 30.f * M_PI / 180.f;
     MaxSampleAngles(nodeName, uAngCtl, kTimes, kMaxRads);
     MaxSampleAngles(nodeName, vAngCtl, kTimes, kMaxRads);
     MaxSampleAngles(nodeName, wAngCtl, kTimes, kMaxRads);
@@ -339,7 +339,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(Control* prsControl
 // Create a plScalarController and store the nodes parm behavior in it.
 //
 plLeafController* hsControlConverter::MakeScalarController(Control* control, plMaxNode* node, 
-                                                           hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                           float start /* = -1 */, float end /* = -1 */)
 {
     hsGuardBegin("hsControlConverter::MakeScalarController");
 
@@ -354,7 +354,7 @@ plLeafController* hsControlConverter::MakeScalarController(Control* control, plM
 }
 
 plController* hsControlConverter::MakeColorController(Control* control, plMaxNode* node, 
-                                                      hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                      float start /* = -1 */, float end /* = -1 */)
 {
     return MakePosController(control, node, start, end);
 }
@@ -362,7 +362,7 @@ plController* hsControlConverter::MakeColorController(Control* control, plMaxNod
 // Create a plPosController and store the nodes parm behavior in it.
 //
 plController* hsControlConverter::MakePosController(Control* control, plMaxNode* node, 
-                                                    hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                    float start /* = -1 */, float end /* = -1 */)
 {
     hsGuardBegin("hsControlConverter::MakePosController");
 
@@ -412,7 +412,7 @@ plController* hsControlConverter::MakePosController(Control* control, plMaxNode*
 }
 
 plController *hsControlConverter::MakeScaleController(Control *control, plMaxNode* node, 
-                                                      hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                      float start /* = -1 */, float end /* = -1 */)
 {
     ISetSegRange(start, end);
 
@@ -435,7 +435,7 @@ plController *hsControlConverter::MakeScaleController(Control *control, plMaxNod
 }
 
 plController *hsControlConverter::MakeRotController(Control *control, plMaxNode *node, hsBool camRot /* = false */, 
-                                                    hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                    float start /* = -1 */, float end /* = -1 */)
 {
     ISetSegRange(start, end);
 
@@ -532,7 +532,7 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
     return NULL;
 }
 
-void hsControlConverter::ScalePositionController(plController* ctl, hsScalar scale)
+void hsControlConverter::ScalePositionController(plController* ctl, float scale)
 {
     plLeafController* simp = plLeafController::ConvertNoRef(ctl);
     plCompoundController* comp;
@@ -565,7 +565,7 @@ void hsControlConverter::ScalePositionController(plController* ctl, hsScalar sca
     }
 }
 
-void hsControlConverter::MaxSampleAngles(const char* nodeName, Control* ctl, Tab<TimeValue>& kTimes, hsScalar maxRads)
+void hsControlConverter::MaxSampleAngles(const char* nodeName, Control* ctl, Tab<TimeValue>& kTimes, float maxRads)
 {
     hsGuardBegin("hsControlConverter::MaxSampleAngles");
 
@@ -596,7 +596,7 @@ void hsControlConverter::MaxSampleAngles(const char* nodeName, Control* ctl, Tab
 }
 
 plCompoundController *hsControlConverter::MakeTransformController(Control *control, plMaxNode *node, 
-                                                                  hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                                  float start /* = -1 */, float end /* = -1 */)
 {
     hsGuardBegin("hsControlConverter::MakeTransformController");
 
@@ -658,7 +658,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
     hsGuardEnd;
 }
 
-void hsControlConverter::ISetSegRange(hsScalar start, hsScalar end)
+void hsControlConverter::ISetSegRange(float start, float end)
 {
     fSegStart = (start >= 0 ? fTicksPerSec * start : fInterface->GetAnimRange().Start());
     fSegEnd = (end >= 0 ? fTicksPerSec * end : fInterface->GetAnimRange().End());
@@ -666,7 +666,7 @@ void hsControlConverter::ISetSegRange(hsScalar start, hsScalar end)
 
 
 void hsControlConverter::IConvertSubTransform(Control *control, char *ctlName, plMaxNode *node, plCompoundController *tmc,
-                                              hsScalar start, hsScalar end)
+                                              float start, float end)
 {
     if (control)
     {
@@ -776,7 +776,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
         {
             // Get key
             ikeys->GetKey(i, key);
-            const float kMaxRads = hsScalarPI*  0.5f;
+            const float kMaxRads = M_PI*  0.5f;
             Tab<TimeValue> kTimes;
             kTimes.ZeroCount();
             if( rotation )
@@ -985,7 +985,7 @@ int hsControlConverter::IAddPartsKeys(Control* control,
         {
             // Get key
             ikeys->GetKey(i, key);
-            hsScalar frameTime = key->time / GetTicksPerSec();
+            float frameTime = key->time / GetTicksPerSec();
             int frameNum = key->time / GetTicksPerFrame();
             hsAssert(frameNum <= hsKeyFrame::kMaxFrameNumber, "Anim is too long.");
 
@@ -1067,7 +1067,7 @@ bool hsControlConverter::StdUVGenToHsMatrix44(hsMatrix44* hsMat, StdUVGen* uvGen
         for( i = 0; i < 2; i++ )
         {
             if( fabsf(hsMat->fMap[i][3]) > 1.f )
-                hsMat->fMap[i][3] -= hsScalar(int(hsMat->fMap[i][3]));
+                hsMat->fMap[i][3] -= float(int(hsMat->fMap[i][3]));
         }
     }
 
@@ -2095,8 +2095,8 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     plConvert::Instance().AddMessageToQueue(pCamMsg);
     Object* obj = node->EvalWorldState(hsConverterUtils::Instance().GetTime(node->GetInterface())).obj;
     GenCamera* theCam;
-    hsTArray<hsScalar> fovW;
-    hsTArray<hsScalar> fovH;
+    hsTArray<float> fovW;
+    hsTArray<float> fovH;
     for (i=0; i < kfArray->Count(); i++)
     {
         TimeValue t = TimeValue(GetTicksPerFrame() * (kfArray[0][i].fFrame));
@@ -2107,7 +2107,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         // convert
         FOVvalue = FOVvalue*(180/3.141592);
         int FOVType = theCam->GetFOVType();
-        hsScalar wDeg, hDeg;
+        float wDeg, hDeg;
         switch(FOVType)
         {
         case 0: // FOV_W

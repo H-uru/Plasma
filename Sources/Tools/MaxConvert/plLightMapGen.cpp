@@ -101,7 +101,7 @@ void getRGC(void* param, NotifyInfo* info)
 class LMGScanPoint
 {
 public:
-    hsScalar            fU;
+    float            fU;
     hsPoint3            fBary;
 };
 
@@ -191,7 +191,7 @@ hsBool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
         vp.yon = 30.f;
         vp.distance = 1.f;
         vp.zoom = 1.f;
-        vp.fov = hsScalarPI / 4.f;
+        vp.fov = M_PI / 4.f;
         vp.nearRange = 1.f;
         vp.farRange = 30.f;
 
@@ -344,7 +344,7 @@ hsBool plLightMapGen::ICompressLightMaps()
 
         if( orig )
         {
-            const hsScalar kFilterSigma = 1.0f;
+            const float kFilterSigma = 1.0f;
 
             if( IsFresh(orig) )
             {
@@ -478,7 +478,7 @@ hsBool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const h
     if( !(span.fProps & plGeometrySpan::kDiffuseFoldedIn) )
     {
         hsBool foldin = 0 != (span.fProps & plGeometrySpan::kLiteVtxNonPreshaded);
-        hsScalar opacity = 1.f;
+        float opacity = 1.f;
         hsColorRGBA dif = hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f);
         if( foldin )
         {
@@ -584,7 +584,7 @@ hsBool plLightMapGen::IAddToLightMap(plLayerInterface* lay, plMipmap* src) const
     dst->SetCurrLevel( 0 );
 
     // BLURLATER
-//  static hsScalar kFilterSigma = 0.5f;
+//  static float kFilterSigma = 0.5f;
 //  src->Filter(kFilterSigma);
 
     // What we really want to do here is antialias our rasterization, so we can
@@ -711,8 +711,8 @@ hsBool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, cons
         i1 = i0 == 2 ? 0 : i0+1;
         i2 = i1 == 2 ? 0 : i1+1;
 
-        hsScalar v0 = uv[i0].fY;
-        hsScalar v1 = uv[i1].fY;
+        float v0 = uv[i0].fY;
+        float v1 = uv[i1].fY;
 
         int vStart = int(v0);
         int vEnd = int(v1);
@@ -731,7 +731,7 @@ hsBool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, cons
             bary[i0] = (v1 - float(vMid)) / (v1 - v0);
             bary[i1] = 1.f - bary[i0];
             bary[i2] = 0;
-            hsScalar u = uv[i0].fX * bary[i0]
+            float u = uv[i0].fX * bary[i0]
                         + uv[i1].fX * bary[i1];
             if( scanline[vMid].fEmpty )
             {
@@ -776,7 +776,7 @@ hsBool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, cons
             int uMid;
             for( uMid = uStart; uMid <= uEnd; uMid++ )
             {
-                hsScalar t = (scanline[i].fFar.fU - float(uMid)) / (scanline[i].fFar.fU - scanline[i].fNear.fU);
+                float t = (scanline[i].fFar.fU - float(uMid)) / (scanline[i].fFar.fU - scanline[i].fNear.fU);
                 hsPoint3 bary = scanline[i].fNear.fBary * t;
                 bary += scanline[i].fFar.fBary * (1.f - t);
 
@@ -931,8 +931,8 @@ hsBool plLightMapGen::IDirAffectsNode(plLightMapInfo* liInfo, LightObject* liObj
     LightState ls;
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
 
-    hsScalar radX = ls.fallsize;
-    hsScalar radY = radX;
+    float radX = ls.fallsize;
+    float radY = radX;
     if( ls.shape == RECT_LIGHT )
         radY /= ls.aspect;
 
@@ -968,8 +968,8 @@ hsBool plLightMapGen::ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liOb
     LightState ls;
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
 
-    hsScalar coneRad[2];
-    coneRad[0] = ls.fallsize * hsScalarPI / 180.f;
+    float coneRad[2];
+    coneRad[0] = ls.fallsize * M_PI / 180.f;
     coneRad[1] = coneRad[0];
     if( ls.shape == RECT_LIGHT )
         coneRad[1] /= ls.aspect;
@@ -981,13 +981,13 @@ hsBool plLightMapGen::ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liOb
     int j;
     for( j = 0; j < 8; j++ )
     {
-        hsScalar rad;
-        rad = hsScalar(atan2(corners[j].fX, -corners[j].fZ));
+        float rad;
+        rad = float(atan2(corners[j].fX, -corners[j].fZ));
         if( rad > coneRad[0] )
             numPos[0]++;
         if( rad < -coneRad[0] )
             numPos[2]++;
-        rad = hsScalar(atan2(corners[j].fY, -corners[j].fZ));
+        rad = float(atan2(corners[j].fY, -corners[j].fZ));
         if( rad > coneRad[1] )
             numPos[1]++;
         if( rad < -coneRad[1] )
@@ -1021,7 +1021,7 @@ hsBool plLightMapGen::IOmniAffectsNode(plLightMapInfo* liInfo, LightObject* liOb
     if( bnd.GetType() != kBoundsNormal )
         return false;
 
-    hsScalar radius = ls.attenEnd;
+    float radius = ls.attenEnd;
 
     int i;
     for( i = 0; i < 3; i++ )

@@ -172,11 +172,11 @@ void plSpan::RemovePermaLight(plLightInfo* li, hsBool proj)
 //// AddLight ////////////////////////////////////////////////////////////////
 //  Smart function for maintaining the sorted list of lights for a plSpan.
 
-void    plSpan::AddLight( plLightInfo *li, hsScalar strength, hsScalar scale, hsBool proj ) const
+void    plSpan::AddLight( plLightInfo *li, float strength, float scale, hsBool proj ) const
 {
     hsTArray<plLightInfo*>& lights = proj ? fProjectors : fLights;
-    hsTArray<hsScalar>& strengths = proj ? fProjStrengths : fLightStrengths;
-    hsTArray<hsScalar>& scales = proj ? fProjScales : fLightScales;
+    hsTArray<float>& strengths = proj ? fProjStrengths : fLightStrengths;
+    hsTArray<float>& scales = proj ? fProjScales : fLightScales;
 
     int         i;
 
@@ -187,7 +187,7 @@ void    plSpan::AddLight( plLightInfo *li, hsScalar strength, hsScalar scale, hs
     }
     lights.Insert(i, li);
     strengths.Insert(i, strength);
-    scales.Insert(i, hsScalar(uint32_t(scale * 127.9f)) / 127.f);
+    scales.Insert(i, float(uint32_t(scale * 127.9f)) / 127.f);
 }
 
 void    plSpan::ClearLights() const 
@@ -266,14 +266,14 @@ hsBool  plSpan::CanMergeInto( plSpan *other )
     {
         if( !HSMemory::EqualBlocks(fLights.AcquireArray(), other->fLights.AcquireArray(), fLights.GetCount() * sizeof(plLightInfo*)) )
             return false;
-        if( !HSMemory::EqualBlocks(fLightScales.AcquireArray(), other->fLightScales.AcquireArray(), fLights.GetCount() * sizeof(hsScalar)) )
+        if( !HSMemory::EqualBlocks(fLightScales.AcquireArray(), other->fLightScales.AcquireArray(), fLights.GetCount() * sizeof(float)) )
             return false;
     }
     if( fProjectors.GetCount() )
     {
         if( !HSMemory::EqualBlocks(fProjectors.AcquireArray(), other->fProjectors.AcquireArray(), fProjectors.GetCount() * sizeof(plLightInfo*)) )
             return false;
-        if( !HSMemory::EqualBlocks(fProjScales.AcquireArray(), other->fProjScales.AcquireArray(), fProjectors.GetCount() * sizeof(hsScalar)) )
+        if( !HSMemory::EqualBlocks(fProjScales.AcquireArray(), other->fProjScales.AcquireArray(), fProjectors.GetCount() * sizeof(float)) )
             return false;
     }
 

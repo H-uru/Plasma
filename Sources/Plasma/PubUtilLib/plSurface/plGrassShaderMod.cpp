@@ -211,7 +211,7 @@ void plGrassShaderMod::Read(hsStream *stream, hsResMgr *mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
 }
 
-hsBool plGrassShaderMod::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plGrassShaderMod::IEval(double secs, float del, uint32_t dirty)
 {
     if (fVShader)
     {
@@ -235,7 +235,7 @@ void plGrassShaderMod::ISetupShaders()
 
         vShader->SetNumConsts(plGrassVS::kNumConsts);
         vShader->SetVector(plGrassVS::kNumericConsts, 0.f, 0.5f, 1.f, 2.f);
-        vShader->SetVector(plGrassVS::kPiConsts, 1.f / (8.f*hsScalarPI*4.f*4.f), hsScalarPI/2.f, hsScalarPI, hsScalarPI*2.f);
+        vShader->SetVector(plGrassVS::kPiConsts, 1.f / (8.f*M_PI*4.f*4.f), M_PI/2.f, M_PI, M_PI*2.f);
         vShader->SetVector(plGrassVS::kSinConsts, -1.f/6.f, 1.f/120.f, -1.f/5040.f, 1.f/362880.f);
 
         IRefreshWaves(vShader);

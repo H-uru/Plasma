@@ -207,7 +207,7 @@ void plSceneInputInterface::ResetClickableState()
 }
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool plSceneInputInterface::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool plSceneInputInterface::IEval( double secs, float del, uint32_t dirty )
 {
     // this needs to always go no matter what...
     // ...unless we have cliclability disabled (as in the case of certain multistage behaviors)
@@ -395,10 +395,10 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
                                 {
                                     hsVector3 ourView = locPlayer->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
                                     hsVector3 theirView = pObj->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView);
-                                    hsScalar viewdot = ourView * theirView;
+                                    float viewdot = ourView * theirView;
                                     hsVector3 towards(locPlayer->GetCoordinateInterface()->GetLocalToWorld().GetTranslate() - pObj->GetCoordinateInterface()->GetLocalToWorld().GetTranslate());
                                     towards.Normalize();
-                                    hsScalar towardsdot = ourView * towards;
+                                    float towardsdot = ourView * towards;
                                     if (viewdot > SHARE_FACING_TOLERANCE || towardsdot > SHARE_FACING_TOLERANCE )
                                     {
                                         ResetClickableState();
@@ -1151,7 +1151,7 @@ void plSceneInputInterface::ISendAvatarDisabledNotification(hsBool enabled)
 
 //// IRequestLOSCheck ////////////////////////////////////////////////////////
 
-void    plSceneInputInterface::IRequestLOSCheck( hsScalar xPos, hsScalar yPos, int ID )
+void    plSceneInputInterface::IRequestLOSCheck( float xPos, float yPos, int ID )
 {
     if( fPipe == nil )
         return;

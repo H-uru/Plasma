@@ -135,7 +135,7 @@ void plAvatarPhysicalSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* 
             if ((rotVar->IsDirty() || posVar->IsDirty()) && avMod->GetController())
             {
                 hsPoint3 pos;
-                hsScalar zRot;
+                float zRot;
                 posVar->Get(&pos.fX);
                 rotVar->Get(&zRot);
                 avMod->GetController()->SetState(pos, zRot);
@@ -155,7 +155,7 @@ void plAvatarPhysicalSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState
     if(avMod && avMod->GetController())
     {
         hsPoint3 pos;
-        hsScalar zRot;
+        float zRot;
         avMod->GetController()->GetState(pos, zRot);
         dstState->FindVar(kStrRotation)->Set(zRot);
         dstState->FindVar(kStrPosition)->Set(&pos.fX);

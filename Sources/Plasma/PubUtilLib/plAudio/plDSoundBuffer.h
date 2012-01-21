@@ -76,7 +76,7 @@ public:
     void        Rewind() ;
     
     uint32_t      GetLengthInBytes( void ) const;
-    void        SetScalarVolume( hsScalar volume ); // Sets the volume, but on a range from 0 to 1
+    void        SetScalarVolume( float volume ); // Sets the volume, but on a range from 0 to 1
 
     unsigned    GetSource() { return source; }
     void        SetPosition(float x, float y, float z);
@@ -109,7 +109,7 @@ public:
 
     
     unsigned    GetByteOffset();
-    uint32_t      GetBufferBytePos( hsScalar timeInSecs ) const;
+    uint32_t      GetBufferBytePos( float timeInSecs ) const;
     uint32_t      bytePosToMSecs( uint32_t bytePos ) const;
 
     void            SetEAXSettings(  plEAXSourceSettings *settings, hsBool force = false );
@@ -156,7 +156,7 @@ protected:
     static float        fDefaultMinDistance;
 
     unsigned            fNumQueuedBuffers;
-    hsScalar            fPrevVolume;
+    float            fPrevVolume;
 
     void    IAllocate( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool tryStatic );
     void    IRelease( void );

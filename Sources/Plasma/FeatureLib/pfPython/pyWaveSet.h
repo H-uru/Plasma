@@ -111,108 +111,108 @@ public:
     // Geometric wave parameters. These are all safe to twiddle at any time or speed.
     // The new settings take effect as new waves are spawned.
     
-    void SetGeoMaxLength(hsScalar s, hsScalar secs=0);
-    void SetGeoMinLength(hsScalar s, hsScalar secs=0);
-    void SetGeoAmpOverLen(hsScalar s, hsScalar secs=0);
-    void SetGeoChop(hsScalar s, hsScalar secs=0);
-    void SetGeoAngleDev(hsScalar s, hsScalar secs=0);
+    void SetGeoMaxLength(float s, float secs=0);
+    void SetGeoMinLength(float s, float secs=0);
+    void SetGeoAmpOverLen(float s, float secs=0);
+    void SetGeoChop(float s, float secs=0);
+    void SetGeoAngleDev(float s, float secs=0);
 
     // Texture wave parameters. Safe to twiddle any time or speed.
     // The new settings take effect as new waves are spawned.
 
-    void SetTexMaxLength(hsScalar s, hsScalar secs=0);
-    void SetTexMinLength(hsScalar s, hsScalar secs=0);
-    void SetTexAmpOverLen(hsScalar s, hsScalar secs=0);
-    void SetTexChop(hsScalar s, hsScalar secs=0);
-    void SetTexAngleDev(hsScalar s, hsScalar secs=0);
+    void SetTexMaxLength(float s, float secs=0);
+    void SetTexMinLength(float s, float secs=0);
+    void SetTexAmpOverLen(float s, float secs=0);
+    void SetTexChop(float s, float secs=0);
+    void SetTexAngleDev(float s, float secs=0);
 
     // The size in feet of one tile of the ripple texture. If you change this (I don't 
     // recommend it), you need to change it very slowly or it will look very stupid.
-    void SetRippleScale(hsScalar s, hsScalar secs=0);
+    void SetRippleScale(float s, float secs=0);
 
     // The direction the wind is blowing (waves will be more or less perpindicular to wind dir).
     // Change somewhat slowly, like over 30 seconds.
-    void SetWindDir(const pyVector3& s, hsScalar secs=0);
+    void SetWindDir(const pyVector3& s, float secs=0);
 
     // Change these gently, effect is immediate.
-    void SetSpecularNoise(hsScalar s, hsScalar secs=0);
-    void SetSpecularStart(hsScalar s, hsScalar secs=0);
-    void SetSpecularEnd(hsScalar s, hsScalar secs=0);
+    void SetSpecularNoise(float s, float secs=0);
+    void SetSpecularStart(float s, float secs=0);
+    void SetSpecularEnd(float s, float secs=0);
 
     // Water Height is overriden if the ref object is animated.
-    void SetWaterHeight(hsScalar s, hsScalar secs=0);
+    void SetWaterHeight(float s, float secs=0);
 
     // Water Offset and DepthFalloff are complicated, and not immediately interesting to animate.
-    void SetWaterOffset(const pyVector3& s, hsScalar secs=0);
-        void SetOpacOffset(hsScalar s, hsScalar secs=0);
-        void SetReflOffset(hsScalar s, hsScalar secs=0);
-        void SetWaveOffset(hsScalar s, hsScalar secs=0);
-    void SetDepthFalloff(const pyVector3& s, hsScalar secs=0);
-        void SetOpacFalloff(hsScalar s, hsScalar secs=0);
-        void SetReflFalloff(hsScalar s, hsScalar secs=0);
-        void SetWaveFalloff(hsScalar s, hsScalar secs=0);
+    void SetWaterOffset(const pyVector3& s, float secs=0);
+        void SetOpacOffset(float s, float secs=0);
+        void SetReflOffset(float s, float secs=0);
+        void SetWaveOffset(float s, float secs=0);
+    void SetDepthFalloff(const pyVector3& s, float secs=0);
+        void SetOpacFalloff(float s, float secs=0);
+        void SetReflFalloff(float s, float secs=0);
+        void SetWaveFalloff(float s, float secs=0);
 
     // Max and Min Atten aren't very interesting, and will probably go away.
-    void SetMaxAtten(const pyVector3& s, hsScalar secs=0);
-    void SetMinAtten(const pyVector3& s, hsScalar secs=0);
+    void SetMaxAtten(const pyVector3& s, float secs=0);
+    void SetMinAtten(const pyVector3& s, float secs=0);
 
     // Water colors, adjust slowly, effect is immediate.
-    void SetWaterTint(pyColor& s, hsScalar secs=0);
-    void SetWaterOpacity(hsScalar s, hsScalar secs=0);
-    void SetSpecularTint(pyColor& s, hsScalar secs=0);
-    void SetSpecularMute(hsScalar s, hsScalar secs=0);
+    void SetWaterTint(pyColor& s, float secs=0);
+    void SetWaterOpacity(float s, float secs=0);
+    void SetSpecularTint(pyColor& s, float secs=0);
+    void SetSpecularMute(float s, float secs=0);
 
     // The environment map is essentially projected onto a sphere. Moving the center of
     // the sphere north will move the reflections north, changing the radius of the
     // sphere effects parallax in the obvious way.
-    void SetEnvCenter(const pyPoint3& s, hsScalar secs=0);
-    void SetEnvRadius(hsScalar s, hsScalar secs=0);
+    void SetEnvCenter(const pyPoint3& s, float secs=0);
+    void SetEnvRadius(float s, float secs=0);
 
     // ==============================================================================
     // Get functions
     // ==============================================================================
 
-    hsScalar GetGeoMaxLength() const;
-    hsScalar GetGeoMinLength() const;
-    hsScalar GetGeoAmpOverLen() const;
-    hsScalar GetGeoChop() const;
-    hsScalar GetGeoAngleDev() const;
+    float GetGeoMaxLength() const;
+    float GetGeoMinLength() const;
+    float GetGeoAmpOverLen() const;
+    float GetGeoChop() const;
+    float GetGeoAngleDev() const;
 
-    hsScalar GetTexMaxLength() const;
-    hsScalar GetTexMinLength() const;
-    hsScalar GetTexAmpOverLen() const;
-    hsScalar GetTexChop() const;
-    hsScalar GetTexAngleDev() const;
+    float GetTexMaxLength() const;
+    float GetTexMinLength() const;
+    float GetTexAmpOverLen() const;
+    float GetTexChop() const;
+    float GetTexAngleDev() const;
 
-    hsScalar GetRippleScale() const;
+    float GetRippleScale() const;
 
     PyObject* GetWindDir() const; // returns pyVector3
 
-    hsScalar GetSpecularNoise() const;
-    hsScalar GetSpecularStart() const;
-    hsScalar GetSpecularEnd() const;
+    float GetSpecularNoise() const;
+    float GetSpecularStart() const;
+    float GetSpecularEnd() const;
 
-    hsScalar GetWaterHeight() const;
+    float GetWaterHeight() const;
 
     PyObject* GetWaterOffset() const; // returns pyVector3
-        hsScalar GetOpacOffset() const;
-        hsScalar GetReflOffset() const;
-        hsScalar GetWaveOffset() const;
+        float GetOpacOffset() const;
+        float GetReflOffset() const;
+        float GetWaveOffset() const;
     PyObject* GetDepthFalloff() const; // returns pyVector3
-        hsScalar GetOpacFalloff() const;
-        hsScalar GetReflFalloff() const;
-        hsScalar GetWaveFalloff() const;
+        float GetOpacFalloff() const;
+        float GetReflFalloff() const;
+        float GetWaveFalloff() const;
 
     PyObject* GetMaxAtten() const; // returns pyVector3
     PyObject* GetMinAtten() const; // returns pyVector3
 
     PyObject* GetWaterTint() const; // returns pyColor
-    hsScalar GetWaterOpacity() const;
+    float GetWaterOpacity() const;
     PyObject* GetSpecularTint() const; // returns pyColor
-    hsScalar GetSpecularMute() const;
+    float GetSpecularMute() const;
 
     PyObject* GetEnvCenter() const; // returns pyPoint3
-    hsScalar GetEnvRadius() const;
+    float GetEnvRadius() const;
 };
 
 

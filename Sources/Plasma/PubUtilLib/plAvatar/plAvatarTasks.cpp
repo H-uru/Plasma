@@ -89,20 +89,20 @@ plAvTask::plAvTask()
 }
 
 // START
-hsBool plAvTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     return true;    // true indicates the task has started succesfully
 }
 
 // PROCESS
-hsBool plAvTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     return false;
 }
 
 // Finish -----------------------------------------------------------------------------------
 // -------
-void plAvTask::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+void plAvTask::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
 }
 
@@ -214,7 +214,7 @@ void GetPositionAndRotation(hsMatrix44 transform, hsScalarTriple *position, hsQu
 
 // START
 // Adjust our goal time based on our duration and the current time
-hsBool plAvSeekTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvSeekTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     fTargetTime = time + fDuration;     // clock starts now....
     fPhysicalAtStart = avatar->IsPhysicsEnabled();
@@ -281,7 +281,7 @@ void CalcHandleTargetPosition(hsMatrix44 &result, plSceneObject *insert, plScene
 
 // PROCESS
 // Move closer to the goal position and orientation
-hsBool plAvSeekTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvSeekTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     hsQuat rotation;
     hsPoint3 position;
@@ -349,10 +349,10 @@ plAvAnimTask::plAvAnimTask()
 
 // CTOR animName, initialBlend, targetBlend, fadeSpeed, start, loop, attach
 plAvAnimTask::plAvAnimTask(const char *animName,
-                           hsScalar initialBlend,
-                           hsScalar targetBlend,
-                           hsScalar fadeSpeed,
-                           hsScalar setTime,
+                           float initialBlend,
+                           float targetBlend,
+                           float fadeSpeed,
+                           float setTime,
                            hsBool start,
                            hsBool loop,
                            hsBool attach)
@@ -370,7 +370,7 @@ plAvAnimTask::plAvAnimTask(const char *animName,
 }
 
 // CTOR animName, fadeSpeed, attach
-plAvAnimTask::plAvAnimTask(const char *animName, hsScalar fadeSpeed, hsBool attach)
+plAvAnimTask::plAvAnimTask(const char *animName, float fadeSpeed, hsBool attach)
 : fInitialBlend(0.0f),
   fTargetBlend(0.0f),
   fFadeSpeed(fadeSpeed),
@@ -398,7 +398,7 @@ plAvAnimTask::~plAvAnimTask()
 }
 
 // START
-hsBool plAvAnimTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvAnimTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     hsBool result = false;
     if(fAttach)
@@ -440,7 +440,7 @@ hsBool plAvAnimTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double
 }
 
 // PROCESS
-hsBool plAvAnimTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvAnimTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     // the only reason we need this function is to watch the animation until it fades out
     hsBool result = false;
@@ -579,7 +579,7 @@ plAvOneShotTask::~plAvOneShotTask()
 
 
 // START
-hsBool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     hsBool result = false;
 
@@ -664,7 +664,7 @@ hsBool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, dou
 }
 
 // PROCESS
-hsBool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     // *** if we are under mouse control, adjust it here
 
@@ -675,7 +675,7 @@ hsBool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, d
         {
             const plAGAnim * animation = fAnimInstance->GetAnimation();
             double endTime = (fBackwards ? animation->GetStart() : animation->GetEnd());
-            fAnimInstance->SetCurrentTime((hsScalar)endTime);
+            fAnimInstance->SetCurrentTime((float)endTime);
             avatar->ApplyAnimations(time, elapsed);
 
             if(--fWaitFrames == 0)
@@ -778,7 +778,7 @@ plAvOneShotLinkTask::~plAvOneShotLinkTask()
 }
 
 // task protocol
-hsBool plAvOneShotLinkTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvOneShotLinkTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     hsBool result = plAvOneShotTask::Start(avatar, brain, time, elapsed);
     fStartTime = time;
@@ -795,7 +795,7 @@ hsBool plAvOneShotLinkTask::Start(plArmatureMod *avatar, plArmatureBrain *brain,
     return result;
 }
 
-hsBool plAvOneShotLinkTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvOneShotLinkTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     hsBool result = plAvOneShotTask::Process(avatar, brain, time, elapsed);
     if (fIgnore)

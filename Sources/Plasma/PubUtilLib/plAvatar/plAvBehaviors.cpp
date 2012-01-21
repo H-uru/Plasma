@@ -72,9 +72,9 @@ void plArmatureBehavior::Process(double time, float elapsed)
 {
 }
 
-void plArmatureBehavior::SetStrength(hsScalar val, hsScalar rate /* = 0.f */)
+void plArmatureBehavior::SetStrength(float val, float rate /* = 0.f */)
 {
-    hsScalar oldStrength = GetStrength();
+    float oldStrength = GetStrength();
     if (rate == 0)
         fStrength.Set(val);
     else
@@ -88,7 +88,7 @@ void plArmatureBehavior::SetStrength(hsScalar val, hsScalar rate /* = 0.f */)
         IStop();
 }
 
-hsScalar plArmatureBehavior::GetStrength()
+float plArmatureBehavior::GetStrength()
 {
     return fStrength.Value();
 }
@@ -101,7 +101,7 @@ void plArmatureBehavior::Rewind()
 
 void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt)
 {
-    hsScalar strength = GetStrength();
+    float strength = GetStrength();
     const char *onOff = strength > 0 ? "on" : "off";
     char blendBar[11] = "||||||||||";
     int bars = (int)__min(10 * strength, 10);

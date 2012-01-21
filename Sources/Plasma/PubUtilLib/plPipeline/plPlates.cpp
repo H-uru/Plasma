@@ -107,7 +107,7 @@ plPlate::~plPlate()
 
 //// SetPosition /////////////////////////////////////////////////////////////
 
-void    plPlate::SetPosition( hsScalar x, hsScalar y, hsScalar z )
+void    plPlate::SetPosition( float x, float y, float z )
 {
     hsVector3   triple;
 
@@ -130,14 +130,14 @@ void    plPlate::SetPosition( hsScalar x, hsScalar y, hsScalar z )
 
 //// SetSize /////////////////////////////////////////////////////////////////
 
-void    plPlate::SetSize( hsScalar width, hsScalar height, bool adjustByAspectRation )
+void    plPlate::SetSize( float width, float height, bool adjustByAspectRation )
 {
     hsVector3   size;
 
     width *= fDepth / 1.0f;
     height *= fDepth / 1.0f;
 
-    size.fX = adjustByAspectRation ? (width * ((hsScalar)plPlateManager::Instance().GetPipeHeight() / (hsScalar)plPlateManager::Instance().GetPipeWidth())) : width;
+    size.fX = adjustByAspectRation ? (width * ((float)plPlateManager::Instance().GetPipeHeight() / (float)plPlateManager::Instance().GetPipeWidth())) : width;
     size.fY = height;
     size.fZ = 1.0f;
 
@@ -183,7 +183,7 @@ void plPlate::SetTexture(plBitmap *texture)
 
 //// SetOpacity //////////////////////////////////////////////////////////////
 
-void    plPlate::SetOpacity( hsScalar opacity )
+void    plPlate::SetOpacity( float opacity )
 {
     if( fMaterial != nil && fMaterial->GetLayer( 0 ) != nil )
     {
@@ -706,13 +706,13 @@ void    plPlateManager::CreatePlate( plPlate **handle )
     *handle = plate;
 }
 
-void    plPlateManager::CreatePlate( plPlate **handle, hsScalar width, hsScalar height )
+void    plPlateManager::CreatePlate( plPlate **handle, float width, float height )
 {
     CreatePlate( handle );
     (*handle)->SetSize( width, height );
 }
 
-void    plPlateManager::CreatePlate( plPlate **handle, hsScalar x, hsScalar y, hsScalar width, hsScalar height )
+void    plPlateManager::CreatePlate( plPlate **handle, float x, float y, float width, float height )
 {
     CreatePlate( handle );
     (*handle)->SetPosition( x, y );

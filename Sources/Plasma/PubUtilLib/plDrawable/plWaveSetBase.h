@@ -61,12 +61,12 @@ public:
     CLASSNAME_REGISTER( plWaveSetBase );
     GETINTERFACE_ANY( plWaveSetBase, plMultiModifier );
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
 
     int32_t       GetNumProperties() const { return 0; }
 
     virtual hsBool      SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts) = 0;
-    virtual hsScalar    GetHeight() const = 0;
+    virtual float    GetHeight() const = 0;
     virtual hsVector3   GetWindDir() const = 0;
 
 

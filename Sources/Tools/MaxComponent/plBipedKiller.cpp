@@ -660,7 +660,7 @@ Quat GetRotKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* p
             Point3 ax;
             float ang;
             AngAxisFromQ(q, &ang, ax);
-            //ang -= hsScalarPI;
+            //ang -= M_PI;
             ax = -ax;
             q = QFromAngAxis(ang, ax);
         }

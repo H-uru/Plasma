@@ -63,10 +63,10 @@ public:
     const char *fileName;
     uint32_t texFlags;
     uint32_t createFlags;
-    hsScalar detailDropoffStart;
-    hsScalar detailDropoffStop;
-    hsScalar detailMax;
-    hsScalar detailMin;
+    float detailDropoffStart;
+    float detailDropoffStop;
+    float detailMax;
+    float detailMin;
     float sig;
     hsBool  isStaticCubicEnvMap;
     hsBool  invertAlpha;

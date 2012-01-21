@@ -70,7 +70,7 @@ class pfKIMsg : public plMessage
         std::wstring    fString;
 
         // for the SetChatFadeDelay
-        hsScalar fDelay;
+        float fDelay;
 
         // other values
         int32_t   fValue;
@@ -231,8 +231,8 @@ class pfKIMsg : public plMessage
         void        SetFlags( uint32_t flags ) { fFlags = flags; }
         uint32_t      GetFlags( void ) const { return fFlags; }
 
-        void        SetDelay( hsScalar delay ) { fDelay = delay; }
-        hsScalar    GetDelay( void ) { return fDelay; }
+        void        SetDelay( float delay ) { fDelay = delay; }
+        float    GetDelay( void ) { return fDelay; }
 
         void        SetIntValue( int32_t value ) { fValue = value; }
         int32_t       GetIntValue( void ) { return fValue; }

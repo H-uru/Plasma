@@ -68,7 +68,7 @@ class hsBounds
 protected:
     hsBoundsType fType;
 public:
-    static const hsScalar kRealSmall;
+    static const float kRealSmall;
 
     hsBounds() : fType(kBoundsUninitialized) { };
 
@@ -130,7 +130,7 @@ public:
     virtual void GetCorners(hsPoint3 *b) const;
     const hsPoint3& GetMins() const;
     const hsPoint3& GetMaxs() const;
-    hsScalar GetMaxDim() const;     // Computes the answer
+    float GetMaxDim() const;     // Computes the answer
     const hsPoint3&  GetCenter() const; // Computes the answer if not already there
     virtual hsBool IsInside(const hsPoint3* pos) const; // ok for full/empty
     virtual void TestPlane(const hsVector3 &n, hsPoint2 &depth) const;
@@ -141,8 +141,8 @@ public:
     // neg, pos, zero == disjoint, I contain other, overlap
     virtual int32_t TestBound(const hsBounds3& other) const; 
 
-    static hsScalar ClosestPointToLine(const hsPoint3 *p, const hsPoint3 *v0, const hsPoint3 *v1, hsPoint3 *out);
-    static hsScalar ClosestPointToInfiniteLine(const hsPoint3* p, const hsVector3* v, hsPoint3* out);
+    static float ClosestPointToLine(const hsPoint3 *p, const hsPoint3 *v0, const hsPoint3 *v1, hsPoint3 *out);
+    static float ClosestPointToInfiniteLine(const hsPoint3* p, const hsVector3* v, hsPoint3* out);
 
     virtual void Read(hsStream*);
     virtual void Write(hsStream*);
@@ -183,7 +183,7 @@ inline const hsPoint3& hsBounds3::GetCenter() const
     return fCenter; 
 }
 
-inline hsScalar hsBounds3::GetMaxDim() const
+inline float hsBounds3::GetMaxDim() const
 { 
     hsAssert(kBoundsNormal == fType, "Invalid type for GetMaxDim");
     return hsMaximum(hsMaximum(fMaxs.fX-fMins.fX, fMaxs.fY-fMins.fY), fMaxs.fZ-fMins.fZ);
@@ -245,7 +245,7 @@ protected:
     hsPoint3        fCorner;
     hsVector3       fAxes[3];
     mutable hsPoint2        fDists[3];
-    mutable hsScalar        fRadius;
+    mutable float        fRadius;
 
     hsBool IAxisIsZero(uint32_t i) const { return (fExtFlags & (1 << (20+i))) != 0; };
     void IMakeSphere() const;
@@ -276,7 +276,7 @@ public:
     virtual void Transform(const hsMatrix44 *m);
     virtual void Translate(const hsVector3 &v);
 
-    virtual hsScalar GetRadius() const;
+    virtual float GetRadius() const;
     virtual void GetAxes(hsVector3 *fAxis0, hsVector3 *fAxis1, hsVector3 *fAxis2) const;
     virtual hsPoint3 *GetCorner(hsPoint3 *c) const { *c = (fExtFlags & kAxisAligned ? fMins : fCorner); return c; }
     virtual void GetCorners(hsPoint3 *b) const;
@@ -300,21 +300,21 @@ public:
     virtual hsBool ISectBS(const hsBounds3Ext &other, const hsVector3 &myVel) const;
 
     virtual int32_t IClosestISect(const hsBounds3Ext& other, const hsVector3& myVel,
-                                  hsScalar* tClose, hsScalar* tImpact) const;
+                                  float* tClose, float* tImpact) const;
     virtual hsBool ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const;
     virtual hsBool ISectBSBox(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const;
     virtual hsBool ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVel) const;
     virtual hsBool ISectBSBS(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const;
 
     virtual hsBool ISectLine(const hsPoint3* from, const hsPoint3* to) const;
-    virtual hsBool ISectCone(const hsPoint3* from, const hsPoint3* to, hsScalar radius) const;
+    virtual hsBool ISectCone(const hsPoint3* from, const hsPoint3* to, float radius) const;
     virtual hsBool ISectRayBS(const hsPoint3& from, const hsPoint3& to, hsPoint3& at) const;
 
     virtual void Read(hsStream *s);
     virtual void Write(hsStream *s);
 };
 
-inline hsScalar hsBounds3Ext::GetRadius() const
+inline float hsBounds3Ext::GetRadius() const
 {
     if( !(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -323,7 +323,7 @@ inline hsScalar hsBounds3Ext::GetRadius() const
 
 class hsHitInfoExt {
 public:
-    hsScalar        fDepth;
+    float        fDepth;
     hsVector3       fNormal;
     hsVector3       fDelPos;
 
@@ -333,9 +333,9 @@ public:
 
     hsHitInfoExt(const hsPoint3 *ctr, const hsVector3& offset) { fRootCenter=ctr; fDelPos=offset; };
 
-    void Set(const hsBounds3Ext *m, const hsVector3* n, hsScalar d)
+    void Set(const hsBounds3Ext *m, const hsVector3* n, float d)
     { fDepth = d; fBoxBnd = m; fNormal = *n; fOtherBoxBnd = nil; }
-    void Set(const hsBounds3Ext *m, const hsBounds3Ext *o, const hsVector3 &norm, hsScalar d)
+    void Set(const hsBounds3Ext *m, const hsBounds3Ext *o, const hsVector3 &norm, float d)
     { fDepth = d; fBoxBnd = m, fOtherBoxBnd = o; fNormal = norm; }
 };
 #endif // hsBounds_inc

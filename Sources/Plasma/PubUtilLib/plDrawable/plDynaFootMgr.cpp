@@ -141,7 +141,7 @@ hsBool plDynaFootMgr::IPrintFromShape(const plPrintShape* shape, hsBool flip)
         plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
 
         double secs = hsTimer::GetSysSeconds();
-        hsScalar wetness = IHowWet(info, secs);
+        float wetness = IHowWet(info, secs);
         fInitAtten = wetness;
 
         if( wetness <= 0 )

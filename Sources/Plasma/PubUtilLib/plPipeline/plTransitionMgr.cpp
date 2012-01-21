@@ -139,7 +139,7 @@ void    plTransitionMgr::ICreatePlate( void )
 
 //// IStartFadeOut ///////////////////////////////////////////////////////////
 
-void    plTransitionMgr::IStartFadeOut( hsScalar lengthInSecs, uint8_t effect )
+void    plTransitionMgr::IStartFadeOut( float lengthInSecs, uint8_t effect )
 {
     fCurrentEffect = effect; // default - kFadeOut;
     fEffectLength = lengthInSecs;
@@ -177,7 +177,7 @@ void    plTransitionMgr::IStartFadeOut( hsScalar lengthInSecs, uint8_t effect )
 
 //// IStartFadeIn ////////////////////////////////////////////////////////////
 
-void    plTransitionMgr::IStartFadeIn( hsScalar lengthInSecs, uint8_t effect )
+void    plTransitionMgr::IStartFadeIn( float lengthInSecs, uint8_t effect )
 {
     fCurrentEffect = effect; // default - kFadeIn;
     fEffectLength = lengthInSecs;
@@ -265,17 +265,17 @@ hsBool  plTransitionMgr::MsgReceive( plMessage* msg )
             // So instead we don't start the clock until we get our first plTimeMsg.
 
             
-            fLastTime = (hsScalar)(time->DSeconds());
+            fLastTime = (float)(time->DSeconds());
             return false;
         }
 
-        fEffectLength -= (hsScalar)( time->DSeconds() - fLastTime );//*/time->DelSeconds();
+        fEffectLength -= (float)( time->DSeconds() - fLastTime );//*/time->DelSeconds();
         if( fEffectLength < 0 )
             IStop();
         else
         {
             // Grab the layer so we can set the opacity
-            fCurrOpacity += (hsScalar)(fOpacDelta * ( time->DSeconds() - fLastTime ));//*/time->DelSeconds();
+            fCurrOpacity += (float)(fOpacDelta * ( time->DSeconds() - fLastTime ));//*/time->DelSeconds();
             if( fEffectPlate == nil )
                 ICreatePlate();
 
@@ -290,7 +290,7 @@ hsBool  plTransitionMgr::MsgReceive( plMessage* msg )
                 plgAudioSys::SetGlobalFadeVolume( 1.f - fCurrOpacity );
             
 
-            fLastTime = (hsScalar)(time->DSeconds());
+            fLastTime = (float)(time->DSeconds());
         }
         
         return false;

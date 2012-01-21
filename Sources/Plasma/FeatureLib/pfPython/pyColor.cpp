@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pyColor.h"
 
-pyColor::pyColor(hsScalar r, hsScalar g, hsScalar b, hsScalar a)
+pyColor::pyColor(float r, float g, float b, float a)
 {
     fColor.Set(r, g, b ,a);
 }

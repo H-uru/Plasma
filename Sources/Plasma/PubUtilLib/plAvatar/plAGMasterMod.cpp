@@ -218,7 +218,7 @@ plProfile_CreateTimer("AnimatingPhysicals", "Animation", AnimatingPhysicals);
 plProfile_CreateTimer("StoppedAnimPhysicals", "Animation", StoppedAnimPhysicals);
 
 // IEVAL
-hsBool plAGMasterMod::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plAGMasterMod::IEval(double secs, float del, uint32_t dirty)
 {
     if (fFirstEval)
     {
@@ -239,7 +239,7 @@ hsBool plAGMasterMod::IEval(double secs, hsScalar del, uint32_t dirty)
 }
 
 // APPLYANIMATIONS
-void plAGMasterMod::ApplyAnimations(double time, hsScalar elapsed)
+void plAGMasterMod::ApplyAnimations(double time, float elapsed)
 {
     plProfile_BeginLap(ApplyAnimation, this->GetKey()->GetUoid().GetObjectName());
 
@@ -387,7 +387,7 @@ plAGModifier * plAGMasterMod::IFindChannelMod(const plSceneObject *SO, const cha
 
 // ATTACHANIMATIONBLENDED(anim, blend)
 plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
-                                                         hsScalar blendFactor /* = 0 */,
+                                                         float blendFactor /* = 0 */,
                                                          uint16_t blendPriority /* plAGMedBlendPriority */,
                                                          hsBool cache /* = false */)
 {
@@ -421,7 +421,7 @@ plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
 }
 
 // ATTACHANIMATIONBLENDED(name, blend)
-plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const char *name, hsScalar blendFactor /* = 0 */, uint16_t blendPriority, hsBool cache /* = false */)
+plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const char *name, float blendFactor /* = 0 */, uint16_t blendPriority, hsBool cache /* = false */)
 {
     plAGAnimInstance *instance = nil;
     plAGAnim *anim = plAGAnim::FindAnim(name);
@@ -482,7 +482,7 @@ plAGAnimInstance * plAGMasterMod::FindAnimInstance(const char *name)
 }
 
 // FINDORATTACHINSTANCE
-plAGAnimInstance * plAGMasterMod::FindOrAttachInstance(const char *name, hsScalar blendFactor)
+plAGAnimInstance * plAGMasterMod::FindOrAttachInstance(const char *name, float blendFactor)
 {
     plAGAnimInstance *result = FindAnimInstance(name);
     if(result)

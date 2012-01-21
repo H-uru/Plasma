@@ -198,7 +198,7 @@ void    plDTProgressMgr::IDrawTheStupidThing( plPipeline *p, plOperationProgress
         uint16_t rightX       = drawX + drawWidth;
 
         if (prog->GetProgress() <= prog->GetMax())
-            drawWidth = (uint16_t)( (hsScalar)width * prog->GetProgress() / prog->GetMax() );
+            drawWidth = (uint16_t)( (float)width * prog->GetProgress() / prog->GetMax() );
 
         rightX = drawX + drawWidth;
 

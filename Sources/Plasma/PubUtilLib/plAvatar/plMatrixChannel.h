@@ -348,7 +348,7 @@ public:
     virtual hsBool CanBlend(plAGApplicator *app);
 
     hsBool fIgnoreNextCorrection;
-    static const hsScalar fDelayLength; // static var for now.  
+    static const float fDelayLength; // static var for now.  
 };
 
 // PLMATRIXDIFFERENCEAPP

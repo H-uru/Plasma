@@ -588,10 +588,10 @@ hsBool plStereizeComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     stereo->SetAmbientDist(fCompPB->GetFloat(kAmbientDist));
     stereo->SetTransition(fCompPB->GetFloat(kTransition));
 
-    hsScalar ang = fCompPB->GetFloat(kSepAngle);
+    float ang = fCompPB->GetFloat(kSepAngle);
     if( ang > 80.f )
         ang = 80.f;
-    stereo->SetSepAngle(hsScalarDegToRad(ang));
+    stereo->SetSepAngle(hsDegreesToRadians(ang));
 
     stereo->SetMaxSepDist(fCompPB->GetFloat(kMaxDist));
     stereo->SetMinSepDist(fCompPB->GetFloat(kMinDist));

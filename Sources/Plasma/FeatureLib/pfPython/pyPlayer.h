@@ -63,22 +63,22 @@ protected:
     plKey           fAvatarKey;
     std::string     fPlayerName;
     uint32_t          fPlayerID;
-    hsScalar        fDistSq;            // from local player, temp
+    float        fDistSq;            // from local player, temp
     hsBool          fIsCCR;
     hsBool          fIsServer;
 
     pyPlayer(); // only used by python glue, do NOT call
-    pyPlayer(pyKey& avKey, const char* pname, uint32_t pid, hsScalar distsq);
-    pyPlayer(plKey avKey, const char* pname, uint32_t pid, hsScalar distsq);
+    pyPlayer(pyKey& avKey, const char* pname, uint32_t pid, float distsq);
+    pyPlayer(plKey avKey, const char* pname, uint32_t pid, float distsq);
     // another way to create a player with just a name and number
     pyPlayer(const char* pname, uint32_t pid);
 public:
-    void Init(plKey avKey, const char* pname, uint32_t pid, hsScalar distsq); // used by python glue, do NOT call
+    void Init(plKey avKey, const char* pname, uint32_t pid, float distsq); // used by python glue, do NOT call
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptPlayer);
-    static PyObject *New(pyKey& avKey, const char* pname, uint32_t pid, hsScalar distsq);
-    static PyObject *New(plKey avKey, const char* pname, uint32_t pid, hsScalar distsq);
+    static PyObject *New(pyKey& avKey, const char* pname, uint32_t pid, float distsq);
+    static PyObject *New(plKey avKey, const char* pname, uint32_t pid, float distsq);
     static PyObject *New(const char* pname, uint32_t pid);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyPlayer object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyPlayer); // converts a PyObject to a pyPlayer (throws error if not correct type)
@@ -106,7 +106,7 @@ public:
         return fPlayerID;
     }
 
-    hsScalar GetDistSq() const { return fDistSq; }
+    float GetDistSq() const { return fDistSq; }
 
     void SetCCRFlag(hsBool state);
     hsBool IsCCR();

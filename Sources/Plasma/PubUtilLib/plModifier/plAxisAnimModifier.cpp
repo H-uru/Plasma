@@ -122,7 +122,7 @@ plAxisAnimModifier::~plAxisAnimModifier()
 }
 
 
-hsBool plAxisAnimModifier::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plAxisAnimModifier::IEval(double secs, float del, uint32_t dirty)
 {
     if (!fActive)
         return true;
@@ -144,7 +144,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
     if (pCall)
     {
         // Send our notification to whomever cares;
-        hsScalar time = 0.0f;
+        float time = 0.0f;
         if (pCall->fEvent == kEnd)
             time = 1.0f;
         fNotify->ClearEvents();

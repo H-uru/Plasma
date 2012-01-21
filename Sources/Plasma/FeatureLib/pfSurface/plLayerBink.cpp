@@ -145,7 +145,7 @@ hsBool plLayerBink::IInit()
         return ISetFault("Failed to open Bink");
 
 #ifdef BINK_SDK_AVAILABLE
-    hsScalar nSecs = (GetBink()->Frames-1)*(hsScalar)(GetBink()->FrameRateDiv)/(hsScalar)(GetBink()->FrameRate);
+    float nSecs = (GetBink()->Frames-1)*(float)(GetBink()->FrameRateDiv)/(float)(GetBink()->FrameRate);
     ISetLength(nSecs);
     ISetSize(GetBink()->Width, GetBink()->Height);
     fFPS = float(GetBink()->FrameRate) / float(GetBink()->FrameRateDiv) + 0.5f;
@@ -154,7 +154,7 @@ hsBool plLayerBink::IInit()
 #endif
 }
 
-int32_t plLayerBink::ISecsToFrame(hsScalar secs)
+int32_t plLayerBink::ISecsToFrame(float secs)
 {
     // Calculate and set the current frame
     int32_t frame = (int32_t)(secs * fFPS);

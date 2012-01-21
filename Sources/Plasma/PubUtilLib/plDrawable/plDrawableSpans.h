@@ -332,7 +332,7 @@ class plDrawableSpans : public plDrawable
 
         // Taking span index. DI Index doesn't make sense here, because one object's DI can dereference into many materials etc.
         virtual hsGMaterial*    GetSubMaterial(int index) const;
-        virtual hsBool          GetSubVisDists(int index, hsScalar& minDist, hsScalar& maxDist) const; // return true if span invisible before minDist and/or after maxDist
+        virtual hsBool          GetSubVisDists(int index, float& minDist, float& maxDist) const; // return true if span invisible before minDist and/or after maxDist
 
         // Used by the pipeline to keep from reskinning on multiple renders per frame.
         uint32_t GetSkinTime() const { return fSkinTime; }

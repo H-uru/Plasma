@@ -64,8 +64,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plPostEffectMod::plPostEffectMod()
 :   fHither(1.f),
     fYon(100.f),
-    fFovX(hsScalarPI * 0.25f),
-    fFovY(hsScalarPI * 0.25f * 0.75f),
+    fFovX(M_PI * 0.25f),
+    fFovY(M_PI * 0.25f * 0.75f),
     fPageMgr(nil),
     fRenderTarget(nil),
     fRenderRequest(nil)
@@ -157,7 +157,7 @@ hsBool plPostEffectMod::IIsEnabled() const
     return /*GetTarget() &&*/ !fPageMgr->Empty() && fState.IsBitSet(kEnabled);
 }
 
-hsBool plPostEffectMod::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plPostEffectMod::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }

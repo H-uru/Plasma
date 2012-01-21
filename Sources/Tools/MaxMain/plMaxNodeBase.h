@@ -101,7 +101,7 @@ public:
     hsBool          GetWaterDecEnv();
     hsBool          GetVS();
     hsBool          GetHasWaterHeight();
-    hsScalar        GetWaterHeight();
+    float        GetWaterHeight();
     hsBool          GetSmoothAll();
     hsBool          GetForceSortable();
     hsBool          GetConcave();
@@ -144,7 +144,7 @@ public:
     plMaxBoneMap*   GetBoneMap();
     hsBool          GetOverrideHighLevelSDL();
     uint8_t           GetAnimCompress();
-    hsScalar        GetKeyReduceThreshold();
+    float        GetKeyReduceThreshold();
     int             NumRenderDependencies();
     plMaxNodeBase*  GetRenderDependency(int i);
 
@@ -170,7 +170,7 @@ public:
     void            SetSortAsOpaque(hsBool b);
     void            SetVS(hsBool b);
     void            SetHasWaterHeight(hsBool b);
-    void            SetWaterHeight(hsScalar h);
+    void            SetWaterHeight(float h);
     void            SetSmoothAll(hsBool b);
     void            SetForceSortable(hsBool b);
     void            SetConcave(hsBool b);
@@ -208,7 +208,7 @@ public:
     void            SetBoneMap(plMaxBoneMap *bones);
     void            SetOverrideHighLevelSDL(hsBool b);
     void            SetAnimCompress(uint8_t v);
-    void            SetKeyReduceThreshold(hsScalar v);
+    void            SetKeyReduceThreshold(float v);
     hsBool          AddRenderDependency(plMaxNodeBase* m);
     hsBool          RenderDependsOn(plMaxNodeBase* m);
     void            ClearRenderDependencies();
@@ -253,8 +253,8 @@ public:
 
     hsBool      Contains(const Point3& worldPt); // is the world space point inside my (CONVEX) geometry or dummy box?
     hsBool      Contains(const Box3& bnd, const Matrix3& l2w); // is the box contained entirely inside my (CONVEX) geometry or dummy box?
-    hsScalar    BoxVolume(const Box3& bnd, const Matrix3& l2w);
-    hsScalar    RegionPriority();   // returns a dominance factor. If a point is in more than one environmental
+    float    BoxVolume(const Box3& bnd, const Matrix3& l2w);
+    float    RegionPriority();   // returns a dominance factor. If a point is in more than one environmental
                                     // region, the region with highest priority wins.
 
     Interface *GetInterface() { return ::GetCOREInterface(); }

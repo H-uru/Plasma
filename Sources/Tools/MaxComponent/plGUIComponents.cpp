@@ -1281,7 +1281,7 @@ hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float fov = cam->GetFOV(timeVal);
     // convert
     int FOVType = cam->GetFOVType();
-    hsScalar fovX, fovY;
+    float fovX, fovY;
     switch(FOVType)
     {
     case 0: // FOV_W
@@ -1297,8 +1297,8 @@ hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         break;
     }
-    fovX *= 180.f / hsScalarPI;
-    fovY *= 180.f / hsScalarPI;
+    fovX *= 180.f / M_PI;
+    fovY *= 180.f / M_PI;
     mod->SetFovX(fovX);
     mod->SetFovY(fovY);
 
@@ -2651,7 +2651,7 @@ hsBool  plGUIKnobCtrlComponent::IGrabAnimationRange( plMaxNode *node, plErrorMsg
     {
         plMatrixControllerChannel *channel = TRACKED_NEW plMatrixControllerChannel(tmc, parts);
 
-        hsScalar length = tmc->GetLength();
+        float length = tmc->GetLength();
 
         startL2W = channel->Value( 0.f );
         endL2W = channel->Value( length );
@@ -4988,8 +4988,8 @@ hsBool plGUIMenuComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float fovX = atan( scrnWidth / ( 2.f * 100.f ) ) * 2.f;
     float fovY = fovX;// * 3.f / 4.f;
 
-    renderMod->SetFovX( fovX * 180.f / hsScalarPI );
-    renderMod->SetFovY( fovY * 180.f / hsScalarPI );
+    renderMod->SetFovX( fovX * 180.f / M_PI );
+    renderMod->SetFovY( fovY * 180.f / M_PI );
 
 
     hsgResMgr::ResMgr()->AddViaNotify( renderMod->GetKey(), TRACKED_NEW plNodeRefMsg( fConvertedNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric ), plRefFlags::kActiveRef );

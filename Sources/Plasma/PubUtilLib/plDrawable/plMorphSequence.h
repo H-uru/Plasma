@@ -54,7 +54,7 @@ class plMorphSequenceSDLMod;
 class plMorphArrayWeights
 {
 public:
-    hsTArray<hsScalar> fDeltaWeights;
+    hsTArray<float> fDeltaWeights;
 };
 
 class plSharedMeshInfo
@@ -121,7 +121,7 @@ protected:
 
     const plDrawInterface*      IGetDrawInterface() const;
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty) { return false; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
 
     void ISetHaveSnap(hsBool on) { if(on)fMorphFlags |= kHaveSnap; else fMorphFlags &= ~kHaveSnap; }
     void ISetDirty(hsBool on);
@@ -173,8 +173,8 @@ public:
     void AddLayer(const plMorphArray& ma) { fMorphs.Append(ma); }
 
     int GetNumDeltas(int iLay, plKey meshKey = nil) const;
-    hsScalar GetWeight(int iLay, int iDel, plKey meshKey = nil) const;
-    void SetWeight(int iLay, int iDel, hsScalar w, plKey meshKey = nil);
+    float GetWeight(int iLay, int iDel, plKey meshKey = nil) const;
+    void SetWeight(int iLay, int iDel, float w, plKey meshKey = nil);
 
     hsBool GetHaveSnap() const { return 0 != (fMorphFlags & kHaveSnap); }
     hsBool GetDirty() const { return 0 != (fMorphFlags & kDirty); }

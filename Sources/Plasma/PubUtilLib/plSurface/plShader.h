@@ -225,8 +225,8 @@ public:
     hsColorRGBA             GetColor(int i) const;
     hsPoint3                GetPosition(int i) const;
     hsVector3               GetVector(int i) const;
-    void                    GetVector(int i, hsScalar& x, hsScalar& y, hsScalar& z, hsScalar& w) const;
-    hsScalar                GetFloat(int i, int chan) const;
+    void                    GetVector(int i, float& x, float& y, float& z, float& w) const;
+    float                GetFloat(int i, int chan) const;
     const float* const      GetFloat4(int i) const;
 
     void                    SetMatrix(int i, const plFloat44& xfm); // Will transpose
@@ -236,8 +236,8 @@ public:
     void                    SetMatrix24(int i, const hsMatrix44& xfm);
     void                    SetColor(int i, const hsColorRGBA& col);
     void                    SetVector(int i, const hsScalarTriple& vec); /* Doesn't touch .fW */
-    void                    SetVectorW(int i, const hsScalarTriple& vec, hsScalar w=1.f) { SetVector(i, vec.fX, vec.fY, vec.fZ, w); }
-    void                    SetVector(int i, hsScalar x, hsScalar y, hsScalar z, hsScalar w);
+    void                    SetVectorW(int i, const hsScalarTriple& vec, float w=1.f) { SetVector(i, vec.fX, vec.fY, vec.fZ, w); }
+    void                    SetVector(int i, float x, float y, float z, float w);
     void                    SetFloat(int i, int chan, float v);
     void                    SetFloat4(int i, const float* const f);
 

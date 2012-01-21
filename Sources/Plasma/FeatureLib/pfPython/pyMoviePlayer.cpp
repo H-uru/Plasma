@@ -93,7 +93,7 @@ void pyMoviePlayer::MakeMovie(const char* movieName, pyKey& selfKey)
     }
 }
 
-void pyMoviePlayer::SetCenter(hsScalar x, hsScalar y)
+void pyMoviePlayer::SetCenter(float x, float y)
 {
     if ( fMovieName)
     {
@@ -105,7 +105,7 @@ void pyMoviePlayer::SetCenter(hsScalar x, hsScalar y)
     }
 }
 
-void pyMoviePlayer::SetScale(hsScalar width, hsScalar height)
+void pyMoviePlayer::SetScale(float width, float height)
 {
     if ( fMovieName)
     {
@@ -128,7 +128,7 @@ void pyMoviePlayer::SetColor(pyColor color)
     }
 }
 
-void pyMoviePlayer::SetVolume(hsScalar volume)
+void pyMoviePlayer::SetVolume(float volume)
 {
     if ( fMovieName)
     {
@@ -139,7 +139,7 @@ void pyMoviePlayer::SetVolume(hsScalar volume)
     }
 }
 
-void pyMoviePlayer::SetOpacity(hsScalar opacity)
+void pyMoviePlayer::SetOpacity(float opacity)
 {
     if ( fMovieName)
     {

@@ -48,7 +48,7 @@ class plArmatureEffectMsg : public plEventCallbackMsg
 {
 public:
     plArmatureEffectMsg() : plEventCallbackMsg(), fTriggerIdx(-1) {}
-    plArmatureEffectMsg(const plKey &receiver, CallbackEvent e, int idx=0, hsScalar t=0, int16_t repeats=-1, uint16_t user=0) :
+    plArmatureEffectMsg(const plKey &receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
         plEventCallbackMsg(receiver, e, idx, t, repeats, user), fTriggerIdx(-1) {}
 
     CLASSNAME_REGISTER( plArmatureEffectMsg );

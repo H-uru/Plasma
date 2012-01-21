@@ -71,8 +71,8 @@ protected:
 
     uint32_t          fFlags;
 
-    hsScalar        fMinNormDot;
-    hsScalar        fDistTolSq;
+    float        fMinNormDot;
+    float        fDistTolSq;
 
     plAccessGeometry            fAccGeom;
     hsTArray<plAccessSpan>      fSpans;
@@ -92,11 +92,11 @@ protected:
 public:
     plAccMeshSmooth() : fFlags(kSmoothNorm), fMinNormDot(0.25f), fDistTolSq(1.e-4f), fAccGeom() {}
 
-    void        SetAngle(hsScalar degs);
-    hsScalar    GetAngle() const; // returns degrees
+    void        SetAngle(float degs);
+    float    GetAngle() const; // returns degrees
 
-    void        SetDistTol(hsScalar dist);
-    hsScalar    GetDistTol() const;
+    void        SetDistTol(float dist);
+    float    GetDistTol() const;
 
     void        Smooth(hsTArray<plGeometrySpan*>& sets);
 

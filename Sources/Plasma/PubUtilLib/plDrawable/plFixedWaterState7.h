@@ -55,13 +55,13 @@ public:
     class WaveState
     {
     public:
-        plTimedSimple<hsScalar>     fMaxLength;
-        plTimedSimple<hsScalar>     fMinLength;
-        plTimedSimple<hsScalar>     fAmpOverLen;
-        plTimedSimple<hsScalar>     fChop;
-        plTimedSimple<hsScalar>     fAngleDev;
+        plTimedSimple<float>     fMaxLength;
+        plTimedSimple<float>     fMinLength;
+        plTimedSimple<float>     fAmpOverLen;
+        plTimedSimple<float>     fChop;
+        plTimedSimple<float>     fAngleDev;
 
-        void Set(const WaveState& w, hsScalar secs);
+        void Set(const WaveState& w, float secs);
 
         void Read(hsStream* s);
         void Write(hsStream* s) const;
@@ -73,7 +73,7 @@ public:
 
     // Texture waves
     WaveState                   fTexState;
-    plTimedSimple<hsScalar>     fRippleScale;
+    plTimedSimple<float>     fRippleScale;
 
     // Geometric and Texture share wind direction
     plTimedCompound<hsVector3>      fWindDir;
@@ -89,7 +89,7 @@ public:
     // Depth parameters. Affect how the depth of
     // the water vertex is interpreted into water
     // surface properties.
-    plTimedSimple<hsScalar>         fWaterHeight;
+    plTimedSimple<float>         fWaterHeight;
     plTimedCompound<hsVector3>      fWaterOffset;
     plTimedCompound<hsVector3>      fMaxAtten;
     plTimedCompound<hsVector3>      fMinAtten;
@@ -98,17 +98,17 @@ public:
     // Shore parameters
 
     // Appearance
-    plTimedSimple<hsScalar>     fWispiness;
+    plTimedSimple<float>     fWispiness;
     plTimedCompound<hsColorRGBA>        fShoreTint;
     // Next two only used in generation of bubble layer
     plTimedCompound<hsColorRGBA>        fMaxColor;
     plTimedCompound<hsColorRGBA>        fMinColor;
-    plTimedSimple<hsScalar>     fEdgeOpac;
-    plTimedSimple<hsScalar>     fEdgeRadius;
+    plTimedSimple<float>     fEdgeOpac;
+    plTimedSimple<float>     fEdgeRadius;
 
     // Simulation
-    plTimedSimple<hsScalar>     fPeriod;
-    plTimedSimple<hsScalar>     fFingerLength;
+    plTimedSimple<float>     fPeriod;
+    plTimedSimple<float>     fFingerLength;
 
     // The rest aren't really part of the state, that is they are normally controlled
     // by something exterior to the state. They are included here to allow a convenient
@@ -119,10 +119,10 @@ public:
     plTimedCompound<hsColorRGBA>        fSpecularTint;
 
     plTimedCompound<hsPoint3>       fEnvCenter;
-    plTimedSimple<hsScalar>     fEnvRefresh;
-    plTimedSimple<hsScalar>     fEnvRadius;
+    plTimedSimple<float>     fEnvRefresh;
+    plTimedSimple<float>     fEnvRadius;
 
-    void Set(const plFixedWaterState7& s, hsScalar secs);
+    void Set(const plFixedWaterState7& s, float secs);
 
     void Read(hsStream* s);
     void Write(hsStream* s) const;

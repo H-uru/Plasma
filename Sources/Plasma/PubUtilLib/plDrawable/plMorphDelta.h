@@ -75,7 +75,7 @@ class plMorphDelta : public plCreatable
 protected:
     hsTArray<plMorphSpan>   fSpans;
 
-    hsScalar                fWeight;
+    float                fWeight;
 public:
     plMorphDelta();
     virtual ~plMorphDelta();
@@ -86,10 +86,10 @@ public:
     CLASSNAME_REGISTER( plMorphDelta );
     GETINTERFACE_ANY( plMorphDelta, plCreatable );
 
-    void        SetWeight(hsScalar w) { fWeight = w; }
-    hsScalar    GetWeight() const { return fWeight; }
+    void        SetWeight(float w) { fWeight = w; }
+    float    GetWeight() const { return fWeight; }
 
-    void        Apply(hsTArray<plAccessSpan>& dst, hsScalar weight = -1.f) const;
+    void        Apply(hsTArray<plAccessSpan>& dst, float weight = -1.f) const;
 
     void        ComputeDeltas(const hsTArray<plAccessSpan>& base, const hsTArray<plAccessSpan>& moved);
     void        ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hsTArray<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv);

@@ -53,7 +53,7 @@ class plPhysicalProxy : public plProxyGen
 {
 public:
     plPhysicalProxy();
-    plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac);
+    plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac);
     virtual ~plPhysicalProxy();
 
     bool Init(plPhysical* phys);

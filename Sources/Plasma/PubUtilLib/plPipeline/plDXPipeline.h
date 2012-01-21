@@ -382,7 +382,7 @@ protected:
 
     // Lighting
     hsGDeviceRef    *IMakeLightRef( plLightInfo *owner );
-    void            IScaleD3DLight( plDXLightRef *ref, hsScalar scale);
+    void            IScaleD3DLight( plDXLightRef *ref, float scale);
     void            ICalcLighting( const plLayerInterface *currLayer, const plSpan *currSpan );
     void            IDisableSpanLights();
     void            IRestoreSpanLights();
@@ -593,7 +593,7 @@ protected:
     // Postprocess (blurring)
     hsBool              ISetBlurQuadToRender(plRenderTarget* smap);
     void                IRenderBlurBackToShadowMap(plRenderTarget* smap, plRenderTarget* scratch, plRenderTarget* dst);
-    void                IRenderBlurFromShadowMap(plRenderTarget* scratchRT, plRenderTarget* smap, hsScalar scale);
+    void                IRenderBlurFromShadowMap(plRenderTarget* scratchRT, plRenderTarget* smap, float scale);
     void                IBlurSetRenderTarget(plRenderTarget* rt);
     int                 IGetScratchRenderTarget(plRenderTarget* smap);
     void                IBlurShadowMap(plShadowSlave* slave);
@@ -609,7 +609,7 @@ protected:
     plRenderTarget*         IGetNextAvRT();
     void                    IFreeAvRT(plRenderTarget* tex);
     void                    IPreprocessAvatarTextures();
-    void                    IDrawClothingQuad(hsScalar x, hsScalar y, hsScalar w, hsScalar h, hsScalar uOff, hsScalar vOff, plMipmap *tex);
+    void                    IDrawClothingQuad(float x, float y, float w, float h, float uOff, float vOff, plMipmap *tex);
     void                    IClearClothingOutfits(hsTArray<plClothingOutfit*>* outfits);
 
     void IPrintDeviceInitError();
@@ -637,10 +637,10 @@ public:
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false );
 
     virtual void                        ClearRenderTarget( plDrawable* d );
-    virtual void                        ClearRenderTarget( const hsColorRGBA* col = nil, const hsScalar* depth = nil );
-    virtual void                        SetClear(const hsColorRGBA* col=nil, const hsScalar* depth=nil);
+    virtual void                        ClearRenderTarget( const hsColorRGBA* col = nil, const float* depth = nil );
+    virtual void                        SetClear(const hsColorRGBA* col=nil, const float* depth=nil);
     virtual hsColorRGBA                 GetClearColor() const;
-    virtual hsScalar                    GetClearDepth() const;
+    virtual float                    GetClearDepth() const;
     virtual hsGDeviceRef*               MakeRenderTargetRef( plRenderTarget *owner );
     virtual hsGDeviceRef*               SharedRenderTargetRef(plRenderTarget* sharer, plRenderTarget *owner);
     virtual void                        PushRenderTarget( plRenderTarget *target );
@@ -725,17 +725,17 @@ public:
     virtual hsVector3                   GetViewDirWorld() const { return GetViewTransform().GetDirection(); }
     virtual void                        GetViewAxesWorld(hsVector3 axes[3] /* ac,up,at */ ) const;
 
-    virtual void                        GetFOV(hsScalar& fovX, hsScalar& fovY) const;
-    virtual void                        SetFOV(hsScalar fovX, hsScalar fovY);
+    virtual void                        GetFOV(float& fovX, float& fovY) const;
+    virtual void                        SetFOV(float fovX, float fovY);
 
-    virtual void                        GetSize(hsScalar& width, hsScalar& height) const;
-    virtual void                        SetSize(hsScalar width, hsScalar height);
+    virtual void                        GetSize(float& width, float& height) const;
+    virtual void                        SetSize(float width, float height);
 
-    virtual void                        GetDepth(hsScalar& hither, hsScalar& yon) const;
-    virtual void                        SetDepth(hsScalar hither, hsScalar yon);
+    virtual void                        GetDepth(float& hither, float& yon) const;
+    virtual void                        SetDepth(float hither, float yon);
 
-    virtual hsScalar                    GetZBiasScale() const;
-    virtual void                        SetZBiasScale(hsScalar scale);
+    virtual float                    GetZBiasScale() const;
+    virtual void                        SetZBiasScale(float scale);
 
     virtual const hsMatrix44&           GetWorldToCamera() const;
     virtual const hsMatrix44&           GetCameraToWorld() const;
@@ -748,7 +748,7 @@ public:
     virtual const hsMatrix44&           GetLocalToWorld() const;
 
     virtual void                        ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, 
-                                                    hsScalar dist, uint32_t strideOut, hsPoint3 *worldOut );
+                                                    float dist, uint32_t strideOut, hsPoint3 *worldOut );
     
     virtual void                        RefreshMatrices();
     virtual void                        RefreshScreenMatrices();
@@ -782,7 +782,7 @@ public:
     virtual void                        SubmitShadowSlave(plShadowSlave* slave);
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co);
 
-    virtual hsBool                      SetGamma(hsScalar eR, hsScalar eG, hsScalar eB);
+    virtual hsBool                      SetGamma(float eR, float eG, float eB);
     virtual hsBool                      SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB);
 
     virtual hsBool                      CaptureScreen( plMipmap *dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0 );

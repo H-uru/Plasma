@@ -360,8 +360,8 @@ hsBool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisLi
         if( drawable->GetNativeProperty(plDrawable::kPropSortAsOne) )
         {
             const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(drawable->GetSpaceTree()->GetRoot()).fWorldBounds;
-            plConst(hsScalar) kDistFudge(1.e-1f);
-            listTrav->fKey.fFloat = -(bnd.GetCenter() - viewPos).MagnitudeSquared() + hsScalar(pairs[i].fSpan) * kDistFudge;
+            plConst(float) kDistFudge(1.e-1f);
+            listTrav->fKey.fFloat = -(bnd.GetCenter() - viewPos).MagnitudeSquared() + float(pairs[i].fSpan) * kDistFudge;
         }
         else
         {
@@ -632,7 +632,7 @@ hsBool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
     {
         if( pipe->TestVisibleWorld(fOccluders[i]->GetWorldBounds()) )
         {
-            hsScalar invDist = -hsFastMath::InvSqrtAppr((viewPos - fOccluders[i]->GetWorldBounds().GetCenter()).MagnitudeSquared());
+            float invDist = -hsFastMath::InvSqrtAppr((viewPos - fOccluders[i]->GetWorldBounds().GetCenter()).MagnitudeSquared());
             listTrav = &scratchList[numSubmit++];
             listTrav->fBody = (void*)fOccluders[i];
             listTrav->fNext = listTrav+1;

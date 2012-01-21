@@ -621,7 +621,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         {
             sharedSpanProps |= plGeometrySpan::kPropNoPreShade;
         }
-        hsScalar waterHeight = 0;
+        float waterHeight = 0;
         if( node->GetHasWaterHeight() )
         {
             sharedSpanProps |= plGeometrySpan::kWaterHeight;
@@ -1214,7 +1214,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
 
                 span->EndCreate();
 
-                hsScalar minDist, maxDist;
+                float minDist, maxDist;
                 if( hsMaterialConverter::HasVisDists(node, i, minDist, maxDist) )
                 {
                     span->fMinDist = (minDist);
@@ -2177,8 +2177,8 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
         }
     }
     
-    hsScalar maxWgt = 0;
-    hsScalar penWgt = 0;
+    float maxWgt = 0;
+    float penWgt = 0;
     int16_t maxIdx = -1;
     int16_t penIdx = -1;
     // Find the highest two weighted bones. We'll use just these two to calculate our bounds.
@@ -2327,7 +2327,7 @@ void    plMAXVertexAccumulator::IFindSkinWeights( ISkinContextData *skinData,
 
     if( boneCount )
     {
-        hsScalar defWgt = 1.f;
+        float defWgt = 1.f;
         for( i = 0; i < boneCount; i++ )
         {
             /// Grab the weight and index for this bone
@@ -2444,12 +2444,12 @@ void SetWaterColor(plGeometrySpan* span)
 
     const int nVerts = tri.VertCount();
     // Now, set up our accumulators
-    hsTArray<hsScalar> lens;
+    hsTArray<float> lens;
     lens.SetCount(nVerts);
-    memset(lens.AcquireArray(), 0, nVerts * sizeof(hsScalar));
-    hsTArray<hsScalar> wgts;
+    memset(lens.AcquireArray(), 0, nVerts * sizeof(float));
+    hsTArray<float> wgts;
     wgts.SetCount(nVerts);
-    memset(wgts.AcquireArray(), 0, nVerts * sizeof(hsScalar));
+    memset(wgts.AcquireArray(), 0, nVerts * sizeof(float));
 
     // For each triangle
     for( triIter.Begin(); triIter.More(); triIter.Advance() )
@@ -2461,15 +2461,15 @@ void SetWaterColor(plGeometrySpan* span)
         // Actually, I just realized that the area way kind of sucks, because, 
         // as a parallelogram gets less and less rectangular, the area goes down
         // even as the longest edge (the diagonal) gets longer.
-        hsScalar lenSq20 = hsVector3(&triIter.Position(2), &triIter.Position(0)).MagnitudeSquared();
-        hsScalar lenSq10 = hsVector3(&triIter.Position(1), &triIter.Position(0)).MagnitudeSquared();
-        hsScalar lenSq21 = hsVector3(&triIter.Position(2), &triIter.Position(1)).MagnitudeSquared();
-        hsScalar len = lenSq20;
+        float lenSq20 = hsVector3(&triIter.Position(2), &triIter.Position(0)).MagnitudeSquared();
+        float lenSq10 = hsVector3(&triIter.Position(1), &triIter.Position(0)).MagnitudeSquared();
+        float lenSq21 = hsVector3(&triIter.Position(2), &triIter.Position(1)).MagnitudeSquared();
+        float len = lenSq20;
         if( len < lenSq10 )
             len = lenSq10;
         if( len < lenSq21 )
             len = lenSq21;
-        len = hsSquareRoot(len);
+        len = sqrt(len);
 
         lens[triIter.RawIndex(0)] += len;
         wgts[triIter.RawIndex(0)] += 1.f;
@@ -2492,9 +2492,9 @@ void SetWaterColor(plGeometrySpan* span)
     }
     // Now we might want to smooth this out some
     // This can be repeated for any degree of smoothing
-    hsTArray<hsScalar> smLens;
+    hsTArray<float> smLens;
     smLens.SetCount(nVerts);
-    memset(smLens.AcquireArray(), 0, nVerts * sizeof(hsScalar));
+    memset(smLens.AcquireArray(), 0, nVerts * sizeof(float));
     // For each triangle
     for( triIter.Begin(); triIter.More(); triIter.Advance() )
     {
@@ -2508,7 +2508,7 @@ void SetWaterColor(plGeometrySpan* span)
             smLens[iVert] += lens[iVert];
             wgts[iVert] += 1.f;
 
-            const hsScalar kSmooth(8.f);
+            const float kSmooth(8.f);
             smLens[iVertNext] += lens[iVert] * kSmooth;
             wgts[iVertNext] += kSmooth;
 
@@ -2526,7 +2526,7 @@ void SetWaterColor(plGeometrySpan* span)
         wgts[iVert] = 0.f; // We'll use them again on smoothing.
     }
 
-    plConst(hsScalar) kNumLens(4.f);
+    plConst(float) kNumLens(4.f);
     // Okay, we have smoothed lengths. We just need to 
     // iterate over the vertices and stuff 1/len into the alpha channel
     // For each vert

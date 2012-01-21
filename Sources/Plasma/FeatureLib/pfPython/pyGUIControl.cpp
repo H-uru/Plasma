@@ -351,7 +351,7 @@ uint32_t pyGUIControl::GetFontSize()
 
 
     // set color scheme
-void pyGUIControl::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIControl::SetForeColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -371,7 +371,7 @@ void pyGUIControl::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a 
     }
 }
 
-void pyGUIControl::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIControl::SetSelColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -391,7 +391,7 @@ void pyGUIControl::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
     }
 }
 
-void pyGUIControl::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIControl::SetBackColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -411,7 +411,7 @@ void pyGUIControl::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a 
     }
 }
 
-void pyGUIControl::SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIControl::SetBackSelColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {

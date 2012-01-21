@@ -72,7 +72,7 @@ public:
     CLASSNAME_REGISTER( plAvBrainHuman );
     GETINTERFACE_ANY( plAvBrainHuman, plArmatureBrain );
 
-    virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    virtual hsBool Apply(double timeNow, float elapsed);
     virtual void Activate(plArmatureModBase *avMod);
     virtual void Deactivate();
     virtual void Suspend();
@@ -161,9 +161,9 @@ public:
     static void SetTurnCurve(TurnCurve curve, hsBool walk);
     static TurnCurve GetTurnCurve(hsBool walk);
     
-    static const hsScalar kControlledFlightThreshold;
-    static const hsScalar kAirTimeThreshold;
-    static const hsScalar kAirTimePanicThreshold;
+    static const float kControlledFlightThreshold;
+    static const float kAirTimeThreshold;
+    static const float kAirTimePanicThreshold;
     plWalkingController* fCallbackAction;
     
 protected:
@@ -173,7 +173,7 @@ protected:
     virtual hsBool IHandleTaskMsg(plAvTaskMsg *msg);
     virtual hsBool IInitAnimations();
     virtual void IInitBoneMap();
-    hsScalar IGetTurnStrength(double timeNow);
+    float IGetTurnStrength(double timeNow);
     void IChatOn();
     void IChatOff();
     hsBool IValidateAnimations();

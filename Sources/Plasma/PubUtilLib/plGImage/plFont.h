@@ -156,8 +156,8 @@ class plFont : public hsKeyedObject
                 int32_t   fBaseline;      // Number of pixels down from the top of 
                                         // the char bitmap to the baseline.
                 
-                hsScalar    fLeftKern;  // Kerning values for this char, in pixels
-                hsScalar    fRightKern; // Note that the right kern is relative to 
+                float    fLeftKern;  // Kerning values for this char, in pixels
+                float    fRightKern; // Note that the right kern is relative to 
                                         // the right side of the bitmap area, which
                                         // is the width of the font bitmap, so
                                         // basically each character is the same width,
@@ -208,7 +208,7 @@ class plFont : public hsKeyedObject
                 plMipmap    *fMipmap;
                 uint32_t      fFlags;
                 pcSmallRect fClipRect;
-                hsScalar    fFloatWidth;
+                float    fFloatWidth;
 
                 const wchar_t   *fVolatileStringPtr;    // Just so we know where we clipped
 
@@ -249,8 +249,8 @@ class plFont : public hsKeyedObject
         uint16_t      GetFirstChar( void ) const { return fFirstChar; }
         uint16_t      GetNumChars( void ) const { return fCharacters.GetCount(); }
         uint32_t      GetFlags( void ) const { return fFlags; }
-        hsScalar    GetDescent( void ) const { return (hsScalar)fFontDescent; }
-        hsScalar    GetAscent( void ) const { return (hsScalar)fFontAscent; }
+        float    GetDescent( void ) const { return (float)fFontDescent; }
+        float    GetAscent( void ) const { return (float)fFontAscent; }
 
         uint32_t      GetBitmapWidth( void ) const { return fWidth; }
         uint32_t      GetBitmapHeight( void ) const { return fHeight; }

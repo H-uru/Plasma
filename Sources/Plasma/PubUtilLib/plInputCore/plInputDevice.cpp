@@ -225,8 +225,8 @@ bool plMouseDevice::bMsgAlways = true;
 bool plMouseDevice::bCursorHidden = false;
 bool plMouseDevice::bCursorOverride = false;
 bool plMouseDevice::bInverted = false;
-hsScalar plMouseDevice::fWidth = BASE_WIDTH;
-hsScalar plMouseDevice::fHeight = BASE_HEIGHT;
+float plMouseDevice::fWidth = BASE_WIDTH;
+float plMouseDevice::fHeight = BASE_HEIGHT;
 plMouseDevice* plMouseDevice::fInstance = 0;
 
 plMouseDevice::plMouseDevice()
@@ -259,7 +259,7 @@ plMouseDevice::~plMouseDevice()
     fCursor = nil;
     plMouseDevice::fInstance = nil;
 }
-void plMouseDevice::SetDisplayResolution(hsScalar Width, hsScalar Height)
+void plMouseDevice::SetDisplayResolution(float Width, float Height)
 {
     fWidth = Width;
     fHeight = Height;
@@ -321,7 +321,7 @@ void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
 }
         
 
-void plMouseDevice::SetCursorX(hsScalar x)
+void plMouseDevice::SetCursorX(float x)
 {
     /// Set the cursor position
     if( fCursor == nil  && !plMouseDevice::bCursorHidden)
@@ -335,7 +335,7 @@ void plMouseDevice::SetCursorX(hsScalar x)
 //  txt.DrawString(fWXPos + 20,fWYPos - 5,"test");
 
 }
-void plMouseDevice::SetCursorY(hsScalar y)
+void plMouseDevice::SetCursorY(float y)
 {
     /// Set the cursor position
     if( fCursor == nil && !plMouseDevice::bCursorHidden)
@@ -387,7 +387,7 @@ void plMouseDevice::NewCursor(char* cursor)
         fInstance->fCursor->SetVisible( true );
 }
 
-void    plMouseDevice::SetCursorOpacity( hsScalar opacity )
+void    plMouseDevice::SetCursorOpacity( float opacity )
 {
     fInstance->fOpacity = opacity;
     if( fInstance->fCursor != nil )

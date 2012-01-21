@@ -102,7 +102,7 @@ class pfGameUIInputInterface : public plInputInterface
         virtual uint32_t  GetPriorityLevel( void ) const { return kGUISystemPriority; }
         virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg );
         virtual uint32_t  GetCurrentCursorID( void ) const;
-        virtual hsScalar GetCurrentCursorOpacity( void ) const;
+        virtual float GetCurrentCursorOpacity( void ) const;
         virtual hsBool  HasInterestingCursorID( void ) const { return fHaveInterestingCursor; }
         virtual hsBool  SwitchInterpretOrder( void ) const { return true; }
 
@@ -561,7 +561,7 @@ void    pfGameGUIMgr::IActivateGUI( hsBool activate )
 //// IHandleMouse ////////////////////////////////////////////////////////////
 //  Distributes mouse events to the dialogs currently active
 
-hsBool  pfGameGUIMgr::IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, uint8_t modifiers, uint32_t *desiredCursor ) 
+hsBool  pfGameGUIMgr::IHandleMouse( EventType event, float mouseX, float mouseY, uint8_t modifiers, uint32_t *desiredCursor ) 
 {
     pfGUIDialogMod  *dlg;
 
@@ -850,7 +850,7 @@ uint32_t  pfGameUIInputInterface::GetCurrentCursorID( void ) const
     return fCurrentCursor;
 }
 
-hsScalar pfGameUIInputInterface::GetCurrentCursorOpacity( void ) const
+float pfGameUIInputInterface::GetCurrentCursorOpacity( void ) const
 {
     if ( pfGameGUIMgr::GetInstance() )
         return pfGameGUIMgr::GetInstance()->GetCursorOpacity();
@@ -942,12 +942,12 @@ uint32_t      pfGameGUIMgr::GetHighestTag( void )
 }
 
 
-void pfGameGUIMgr::SetAspectRatio(hsScalar aspectratio)
+void pfGameGUIMgr::SetAspectRatio(float aspectratio)
 {
-    hsScalar oldAspectRatio = fAspectRatio;
+    float oldAspectRatio = fAspectRatio;
 
     // don't allow the aspectratio below 4:3
-    hsScalar fourThree = 4.0f/3.0f;
+    float fourThree = 4.0f/3.0f;
     fAspectRatio = aspectratio < fourThree ? fourThree : aspectratio;
 
     if (fAspectRatio != oldAspectRatio)

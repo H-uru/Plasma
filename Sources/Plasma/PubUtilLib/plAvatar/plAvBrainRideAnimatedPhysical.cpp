@@ -184,7 +184,7 @@ hsBool plAvBrainRideAnimatedPhysical::LeaveAge()
 {
     return plArmatureBrain::LeaveAge();
 }
-hsBool plAvBrainRideAnimatedPhysical::Apply(double timeNow, hsScalar elapsed)
+hsBool plAvBrainRideAnimatedPhysical::Apply(double timeNow, float elapsed)
 {
     if(this->fMode==kAbort) return false;
     else return plAvBrainHuman::Apply(timeNow, elapsed);

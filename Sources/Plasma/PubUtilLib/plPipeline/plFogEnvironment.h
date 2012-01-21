@@ -63,8 +63,8 @@ class plFogEnvironment : public hsKeyedObject
     protected:
 
         uint8_t       fType;
-        hsScalar    fStart;         // Used for linear fog only
-        hsScalar    fEnd, fDensity; // Always used!
+        float    fStart;         // Used for linear fog only
+        float    fEnd, fDensity; // Always used!
         hsColorRGBA fColor;
 
     public:
@@ -81,15 +81,15 @@ class plFogEnvironment : public hsKeyedObject
         };
 
         plFogEnvironment();
-        plFogEnvironment( hsScalar start, hsScalar end, hsScalar density, hsColorRGBA &color );
-        plFogEnvironment( FogType type, hsScalar end, hsScalar density, hsColorRGBA &color );
+        plFogEnvironment( float start, float end, float density, hsColorRGBA &color );
+        plFogEnvironment( FogType type, float end, float density, hsColorRGBA &color );
         ~plFogEnvironment();
 
         // Sets the parameters for linear fog
-        void    Set( hsScalar start, hsScalar end, hsScalar density, const hsColorRGBA *color = nil );
+        void    Set( float start, float end, float density, const hsColorRGBA *color = nil );
 
         // Sets the parameters for exp or exp^2 fog
-        void    SetExp( FogType type, hsScalar end, hsScalar density, const hsColorRGBA *color = nil );
+        void    SetExp( FogType type, float end, float density, const hsColorRGBA *color = nil );
 
         // Sets the color
         void    SetColor( hsColorRGBA &color ) { fColor = color; }
@@ -104,13 +104,13 @@ class plFogEnvironment : public hsKeyedObject
         hsColorRGBA &GetColor( void ) { return fColor; }
 
         // Gets the parameters. Sets start to 0 if the type is not linear (can be nil)
-        void    GetParameters( hsScalar *start, hsScalar *end, hsScalar *density, hsColorRGBA *color );
+        void    GetParameters( float *start, float *end, float *density, hsColorRGBA *color );
 
         // Gets linear pipeline (DX) specific parameters.
-        void    GetPipelineParams( hsScalar *start, hsScalar *end, hsColorRGBA *color );
+        void    GetPipelineParams( float *start, float *end, hsColorRGBA *color );
 
         // Gets exp or exp^2 pipeline (DX) specific parameters.
-        void    GetPipelineParams( hsScalar *density, hsColorRGBA *color );
+        void    GetPipelineParams( float *density, hsColorRGBA *color );
 
         virtual void Read(hsStream *s, hsResMgr *mgr);
         virtual void Write(hsStream *s, hsResMgr *mgr);

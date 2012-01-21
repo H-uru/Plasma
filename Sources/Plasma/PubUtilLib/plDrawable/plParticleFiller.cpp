@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSystem/plParticleEmitter.h"
 #include "plParticleSystem/plParticle.h"
 
-static hsScalar sInvDelSecs;
+static float sInvDelSecs;
 
 //// Local Static Stuff ///////////////////////////////////////////////////////
 
@@ -85,7 +85,7 @@ static hsScalar sInvDelSecs;
                                       uint = dPtr[ 0 ]; ptr += sizeof( uint32_t ); }
 
 
-static hsScalar sCurrMinWidth = 0;
+static float sCurrMinWidth = 0;
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Particles ////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ void inline IInlSetParticlePathStretch( const plParticleCore &particle, const hs
 
     hsPoint3 xlate = viewToWorld.GetTranslate();
     hsVector3 viewDir(&particle.fPos, &xlate);
-    hsScalar invD = hsFastMath::InvSqrtAppr(viewDir.MagnitudeSquared());
+    float invD = hsFastMath::InvSqrtAppr(viewDir.MagnitudeSquared());
     viewDir *= invD;
 
     zVec = viewDir;
@@ -172,12 +172,12 @@ void inline IInlSetParticlePathStretch( const plParticleCore &particle, const hs
 
     xVec = yVec % viewDir; // cross product of two orthonormal vectors, no need to normalize.
 
-    hsScalar xLen = particle.fHSize;
+    float xLen = particle.fHSize;
     if( xLen * invD < sCurrMinWidth )
         xLen = sCurrMinWidth / invD;
     xVec *= xLen;
 
-    hsScalar len = yVec.InnerProduct(orientation);
+    float len = yVec.InnerProduct(orientation);
     // Might want to give it a little boost to overlap itself (and compensate for the massive
     // transparent border the artists love). But they can do that themselves with the VSize.
 //  len *= 1.5f; 
@@ -195,7 +195,7 @@ void inline IInlSetParticlePathFlow( const plParticleCore &particle, const hsMat
 
     hsPoint3 xlate = viewToWorld.GetTranslate();
     hsVector3 viewDir(&particle.fPos, &xlate);
-    hsScalar invD = hsFastMath::InvSqrtAppr(viewDir.MagnitudeSquared());
+    float invD = hsFastMath::InvSqrtAppr(viewDir.MagnitudeSquared());
     viewDir *= invD;
 
     zVec = viewDir;
@@ -212,9 +212,9 @@ void inline IInlSetParticlePathFlow( const plParticleCore &particle, const hsMat
 
     xVec = yVec % viewDir; // cross product of two orthonormal vectors, no need to normalize.
 
-    hsScalar len = yVec.InnerProduct(orientation);
+    float len = yVec.InnerProduct(orientation);
 
-    hsScalar xLen = particle.fHSize * hsFastMath::InvSqrtAppr(1.f + len * sInvDelSecs);
+    float xLen = particle.fHSize * hsFastMath::InvSqrtAppr(1.f + len * sInvDelSecs);
     if( xLen * invD < sCurrMinWidth )
         xLen = sCurrMinWidth / invD;
     xVec *= xLen;

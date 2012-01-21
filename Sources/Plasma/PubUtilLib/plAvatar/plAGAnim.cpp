@@ -82,8 +82,8 @@ plAGAnim::plAGAnim()
 // ctor ------------------------------------------------------
 // -----
 plAGAnim::plAGAnim(const char *name, double start, double end)
-: fStart((hsScalar)start),
-  fEnd((hsScalar)end)
+: fStart((float)start),
+  fEnd((float)end)
 {
     if (name == nil)
         name = "";
@@ -197,7 +197,7 @@ hsBool plAGAnim::RemoveApplicator(int index)
 
 // ExtendToLength ----------------------------
 // ---------------
-void plAGAnim::ExtendToLength(hsScalar length)
+void plAGAnim::ExtendToLength(float length)
 {
     if (length > GetEnd())
         SetEnd(length);
@@ -371,8 +371,8 @@ plATCAnim::plATCAnim(const char *name, double start, double end)
 : plAGAnim(name, start, end),
   fInitial(-1),
   fAutoStart(true),
-  fLoopStart((hsScalar)start),
-  fLoopEnd((hsScalar)end),
+  fLoopStart((float)start),
+  fLoopEnd((float)end),
   fLoop(false),
   fEaseInType(plAnimEaseTypes::kNoEase),
   fEaseOutType(plAnimEaseTypes::kNoEase),
@@ -578,7 +578,7 @@ void plATCAnim::CopyMarkerNames(std::vector<char*> &out)
 
 // AddStopPoint ---------------------------
 // -------------
-void plATCAnim::AddStopPoint(hsScalar time)
+void plATCAnim::AddStopPoint(float time)
 {
     fStopPoints.push_back(time);
 }
@@ -592,7 +592,7 @@ uint32_t plATCAnim::NumStopPoints()
 
 // GetStopPoint --------------------------
 // -------------
-hsScalar plATCAnim::GetStopPoint(uint32_t i)
+float plATCAnim::GetStopPoint(uint32_t i)
 {
     hsAssert(i < fStopPoints.size(), "Invalid index for GetStopPoint");
     return fStopPoints[i];

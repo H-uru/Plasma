@@ -77,10 +77,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //#include "../plHavok1/plHKPhysical.h"
 //
-//hsScalar plPlayerModifier::fTurnRate = 1.0f;
-//hsScalar plPlayerModifier::fAcceleration = 80.0f;
-//hsScalar plPlayerModifier::fDeceleration = 80.0f;
-//hsScalar plPlayerModifier::fMaxVelocity = 200.0f;
+//float plPlayerModifier::fTurnRate = 1.0f;
+//float plPlayerModifier::fAcceleration = 80.0f;
+//float plPlayerModifier::fDeceleration = 80.0f;
+//float plPlayerModifier::fMaxVelocity = 200.0f;
 //
 //plPlayerModifier::plPlayerModifier() :
 //bUseDesiredFacing(false),
@@ -277,7 +277,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //hsPoint3 forceRight(-200,0,0);
 //hsPoint3 forceUp(0,0,15);
 //
-//hsBool plPlayerModifier::IEval(double secs, hsScalar del, uint32_t dirty)
+//hsBool plPlayerModifier::IEval(double secs, float del, uint32_t dirty)
 //{
 //  // setup for local player if necessary
 //  if (HasFlag(kNeedsLocalSetup))
@@ -371,8 +371,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //      return true;
 //
 //  // update our desired position:
-////    hsScalar eTime = secs - fLastTime;
-//  hsScalar eTime = hsTimer::GetDelSysSeconds();
+////    float eTime = secs - fLastTime;
+//  float eTime = hsTimer::GetDelSysSeconds();
 //  
 //  hsPoint3    newLinearForce(0,0,0);
 //
@@ -385,8 +385,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  hsVector3 view, up, right;
 //  targetMatrix.GetAxis(&view, &up, &right);
 //  
-//  hsScalar speed = fMaxVelocity;
-//  hsScalar turn = fTurnRate;
+//  float speed = fMaxVelocity;
+//  float turn = fTurnRate;
 //
 //  if (HasMovementFlag(B_CONTROL_MODIFIER_FAST))
 //  {
@@ -437,7 +437,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  hsPoint3 newPos;
 //
 //  hsVector3 dir(fDesiredPosition - curPos);
-//  hsScalar distToGoal=dir.Magnitude();
+//  float distToGoal=dir.Magnitude();
 //
 //  if (dir.MagnitudeSquared() > 0.0f)
 //      dir.Normalize();
@@ -447,7 +447,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  IAdjustVelocity(fAcceleration, fDeceleration, &dir, &vel, fMaxVelocity, distToGoal, eTime);
 //  fCurSpeed = vel.Magnitude();
 //  
-//  hsScalar distMoved = IClampVelocity(&vel, fMaxVelocity, eTime);
+//  float distMoved = IClampVelocity(&vel, fMaxVelocity, eTime);
 //
 //  // compute final pos
 //  if (distMoved > distToGoal)
@@ -471,8 +471,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //      // compute degrees needed to turn left/right        
 //      hsVector3 cross = fPlayerViewGoal % view;
-//      hsScalar dot = fPlayerViewGoal * view;
-//      hsScalar rad = hsACosine(dot);
+//      float dot = fPlayerViewGoal * view;
+//      float rad = acos(dot);
 //      fRotationScalar = 1.0f;
 //      
 //      if (cross.fZ<0)
@@ -491,7 +491,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //      }
 //  }
 //  
-//  hsScalar angle = 0;
+//  float angle = 0;
 //
 //  if ( HasMovementFlag( B_CONTROL_ROTATE_RIGHT ) )
 //  {
@@ -561,15 +561,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ////
 //// vector version.  dir vector should be normalized
 ////
-//void plPlayerModifier::IAdjustVelocity(hsScalar adjAccelRate, hsScalar adjDecelRate, 
-//                                     hsVector3* dir, hsVector3* vel, hsScalar maxSpeed, 
-//                                     hsScalar distToGoal, double elapsedTime)
+//void plPlayerModifier::IAdjustVelocity(float adjAccelRate, float adjDecelRate, 
+//                                     hsVector3* dir, hsVector3* vel, float maxSpeed, 
+//                                     float distToGoal, double elapsedTime)
 //{
-//  hsScalar speed = vel->Magnitude();      // save current speed
+//  float speed = vel->Magnitude();      // save current speed
 //  *vel = *dir * speed;                    // change vel to correct dir
 //
 //  // compute accel/decel
-//  hsScalar finalAccelRate;
+//  float finalAccelRate;
 //  if (IShouldDecelerate(adjDecelRate, speed, distToGoal))
 //  {
 //      finalAccelRate = -adjDecelRate;
@@ -594,13 +594,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  }
 //}
 //
-//hsScalar plPlayerModifier::IClampVelocity(hsVector3* vel, hsScalar maxSpeed, double elapsedTime)
+//float plPlayerModifier::IClampVelocity(hsVector3* vel, float maxSpeed, double elapsedTime)
 //{
 //  *vel = *vel * elapsedTime;
 //  maxSpeed *= elapsedTime;
 //
 //  // clamp speed  (clamp if going negative?)
-//  hsScalar distMoved = vel->Magnitude();
+//  float distMoved = vel->Magnitude();
 //  if (distMoved > maxSpeed)
 //  {
 //      vel->Normalize();
@@ -610,16 +610,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  return distMoved;
 //}
 //
-//hsBool32 plPlayerModifier::IShouldDecelerate(hsScalar decelSpeed, hsScalar curSpeed, hsScalar distToGoal)
+//hsBool32 plPlayerModifier::IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal)
 //{
 //  if (decelSpeed == 0)
 //      // no deceleration
 //      return false;
 //
 //  // compute distance required to stop, given decel speed (in units/sec sq)
-//  hsScalar stopTime = curSpeed / decelSpeed;      
-//  hsScalar avgSpeed = curSpeed * .5f;
-//  hsScalar stopDist = avgSpeed * stopTime;
+//  float stopTime = curSpeed / decelSpeed;      
+//  float avgSpeed = curSpeed * .5f;
+//  float stopDist = avgSpeed * stopTime;
 //
 //  return (hsABS(distToGoal) <= hsABS(stopDist));  // stopDist+avgSpeed?   
 //}

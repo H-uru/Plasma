@@ -114,7 +114,7 @@ protected:
     hsColorRGBA*            fRuntimeColor;      // Diffuse color to be used with runtime lights vs. static preshading
     hsColorRGBA*            fAmbientColor;
     hsColorRGBA*            fSpecularColor;
-    hsScalar*               fOpacity;
+    float*               fOpacity;
     
     // Would like to abstract out the mipmap, but we'll bring it
     // along for now.
@@ -123,8 +123,8 @@ protected:
     // (Currently) unanimatables.
     hsGMatState*            fState;
     uint32_t*                 fUVWSrc;
-    hsScalar*               fLODBias;
-    hsScalar*               fSpecularPower;
+    float*               fLODBias;
+    float*               fSpecularPower;
 
     plShader**              fVertexShader;
     plShader**              fPixelShader;
@@ -153,14 +153,14 @@ public:
     const hsColorRGBA&      GetRuntimeColor() const { return *fRuntimeColor; }
     const hsColorRGBA&      GetAmbientColor() const { return *fAmbientColor; }
     const hsColorRGBA&      GetSpecularColor() const { return *fSpecularColor; }
-    hsScalar                GetOpacity() const { return *fOpacity; }
+    float                GetOpacity() const { return *fOpacity; }
 
     plBitmap*               GetTexture() const { return *fTexture; }
 
     // (Currently) unanimatables
     uint32_t                  GetUVWSrc() const { return *fUVWSrc; }
-    hsScalar                GetLODBias() const { return *fLODBias; }
-    hsScalar                GetSpecularPower() const { return *fSpecularPower; }
+    float                GetLODBias() const { return *fLODBias; }
+    float                GetSpecularPower() const { return *fSpecularPower; }
 
     const hsGMatState&      GetState() const { return *fState; }
     uint32_t                  GetBlendFlags() const { return fState->fBlendFlags; }

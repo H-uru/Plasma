@@ -87,7 +87,7 @@ protected:
     hsBool ICheckLeader();
     void IMoveTarget();
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 
 public:
     plFollowMod();

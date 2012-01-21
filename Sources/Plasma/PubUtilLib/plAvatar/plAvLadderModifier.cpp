@@ -105,7 +105,7 @@ plAvLadderMod::plAvLadderMod(bool goingUp, int type, int loops, bool enabled, hs
 }
 
 // Must be facing within 45 degrees of the ladder
-static const hsScalar kTolerance = hsCosine(hsScalarDegToRad(45));
+static const float kTolerance = cos(hsDegreesToRadians(45));
 
 bool plAvLadderMod::IIsReadyToClimb()
 {
@@ -120,7 +120,7 @@ bool plAvLadderMod::IIsReadyToClimb()
         playerView.fZ = 0;
 
         // Are we facing towards the ladder?
-        hsScalar dot = playerView * fLadderView;
+        float dot = playerView * fLadderView;
 
         bool movingForward = false;
 
@@ -135,12 +135,12 @@ bool plAvLadderMod::IIsReadyToClimb()
 
         if (dot >= kTolerance && movingForward)
         {
-            DetectorLogSpecial("%s: Ladder starting climb (%f)", GetKeyName(), hsScalarRadToDeg(hsACosine(dot)));
+            DetectorLogSpecial("%s: Ladder starting climb (%f)", GetKeyName(), hsRadiansToDegrees(acos(dot)));
             return true;
         }
         else if (movingForward)
         {
-//          DetectorLog("%s: Ladder rejecting climb (%f)", GetKeyName(), hsScalarRadToDeg(hsACosine(dot)));
+//          DetectorLog("%s: Ladder rejecting climb (%f)", GetKeyName(), hsRadiansToDegrees(acos(dot)));
             return false;
         }
     }

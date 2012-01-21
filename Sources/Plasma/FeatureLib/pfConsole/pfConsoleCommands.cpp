@@ -1237,10 +1237,10 @@ PF_CONSOLE_CMD( Graphics_Shadow,
                "...", 
                "Max shadowmap blur size." )
 {
-    extern hsScalar blurScale;
+    extern float blurScale;
     if( numParams > 0 )
     {
-        blurScale = (hsScalar)atof( params[ 0 ] );
+        blurScale = (float)atof( params[ 0 ] );
     }
     else
     {
@@ -1317,7 +1317,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma, "float g, ...", "Set gamma value (g or
 {
     hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
 
-    hsScalar g = params[0];
+    float g = params[0];
 
     if( numParams == 1 )
     {
@@ -1329,9 +1329,9 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma, "float g, ...", "Set gamma value (g or
     }
     else
     {
-        hsScalar eR = g;
-        hsScalar eG = g;
-        hsScalar eB = g;
+        float eR = g;
+        float eG = g;
+        float eB = g;
 
         if( numParams > 2 )
             eB = params[2];
@@ -1352,21 +1352,21 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
     hsTArray<uint16_t> ramp;
     ramp.SetCount(256);
 
-    hsScalar g = params[0];
+    float g = params[0];
 
     int i;
     for( i = 0; i < 256; i++ )
     {
-        hsScalar t = hsScalar(i) / 255.f;
-        hsScalar sinT = sin(t * hsScalarPI / 2.f);
+        float t = float(i) / 255.f;
+        float sinT = sin(t * M_PI / 2.f);
 
-        hsScalar remap = t + (sinT - t) * g;
+        float remap = t + (sinT - t) * g;
         if( remap < 0 )
             remap = 0;
         else if( remap > 1.f )
             remap = 1.f;
 
-        ramp[i] = uint16_t(remap * hsScalar(uint16_t(-1)) + 0.5f);
+        ramp[i] = uint16_t(remap * float(uint16_t(-1)) + 0.5f);
     }
 
     pfConsole::GetPipeline()->SetGamma(ramp.AcquireArray());
@@ -1405,7 +1405,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, SetYon, "float yon, ...", "Sets the view yon"
 {
     hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
 
-    hsScalar        hither, yon;
+    float        hither, yon;
 
 
     pfConsole::GetPipeline()->GetDepth( hither, yon );
@@ -1424,7 +1424,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, TweakZBiasScale, "float deltaScale", "Adjusts
 {
     hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
 
-    hsScalar        scale;
+    float        scale;
 
     scale = pfConsole::GetPipeline()->GetZBiasScale();
     scale += (float)params[ 0 ];
@@ -2862,7 +2862,7 @@ PF_CONSOLE_CMD( Camera, AvatarVisible1stPerson, "bool b", "turn avatar visibilit
 
 PF_CONSOLE_CMD( Camera, FallTimerDelay, "float b", "fall timer delay")
 {
-    hsScalar f = params[0];
+    float f = params[0];
     plVirtualCam1::fFallTimerDelay = f;
 }
 
@@ -3380,7 +3380,7 @@ PF_CONSOLE_CMD( Audio, SetAllChannelVolumes, "float soundFX, float music, float 
 
     for( i = 0; i < 5; i++ )
     {
-        hsScalar    vol = (hsScalar)(float)params[ i ];
+        float    vol = (float)(float)params[ i ];
         if( vol > 1.f )
             vol = 1.f;
         else if( vol < 0.f )
@@ -3414,7 +3414,7 @@ Valid channels are: SoundFX, BgndMusic, Voice, GUI, NPCVoice and Ambience.")
         return;
     }
 
-    hsScalar    vol = (hsScalar)(float)params[ 1 ];
+    float    vol = (float)(float)params[ 1 ];
     if( vol > 1.f )
         vol = 1.f;
     else if( vol < 0.f )
@@ -3438,7 +3438,7 @@ Valid channels are: SoundFX, BgndMusic, Voice, GUI, NPCVoice and Ambience.")
 PF_CONSOLE_CMD( Audio, Set2D3DBias, "float bias", "Sets the 2D/3D bias when not using hardware acceleration.")
 {
 
-    hsScalar    bias = (hsScalar)(float)params[ 0 ];
+    float    bias = (float)(float)params[ 0 ];
     plgAudioSys::Set2D3DBias( bias );
 
 }
@@ -4735,8 +4735,8 @@ PF_CONSOLE_CMD( Access,
 #include "plMessage/plBulletMsg.h"
 
 plSceneObject* gunObj = nil;
-hsScalar gunRadius = 1.f;
-hsScalar gunRange = 5000.f;
+float gunRadius = 1.f;
+float gunRange = 5000.f;
 
 PF_CONSOLE_CMD( Access,
                     Gun,
@@ -4778,9 +4778,9 @@ PF_CONSOLE_CMD( Access,
     dir.Normalize();
     hsPoint3 pos = l2w.GetTranslate();
 
-    hsScalar radius = gunRadius;
+    float radius = gunRadius;
 
-    hsScalar range = gunRange;
+    float range = gunRange;
 
     plBulletMsg* bull = TRACKED_NEW plBulletMsg(nil, nil, nil);
     bull->FireShot(pos, dir, radius, range);
@@ -4807,9 +4807,9 @@ PF_CONSOLE_CMD( Access,
     dir.Normalize();
     hsPoint3 pos = l2w.GetTranslate();
 
-    hsScalar radius = gunRadius;
+    float radius = gunRadius;
 
-    hsScalar range = gunRange;
+    float range = gunRange;
 
     plBulletMsg* bull = TRACKED_NEW plBulletMsg(nil, nil, nil);
     bull->FireShot(pos, dir, radius, range);
@@ -4898,11 +4898,11 @@ namespace plWaveCmd {
 
 typedef void PrintFunk(const char* str);
 
-static inline hsScalar FracToPercent(hsScalar f) { return (hsScalar)(1.e2 * f); }
-static inline hsScalar PercentToFrac(hsScalar f) { return (hsScalar)(1.e-2 * f); }
+static inline float FracToPercent(float f) { return (float)(1.e2 * f); }
+static inline float PercentToFrac(float f) { return (float)(1.e-2 * f); }
 
-static inline hsScalar RadToDeg(hsScalar r) { return r * 180.f / hsScalarPI; }
-static inline hsScalar DegToRad(hsScalar d) { return d * hsScalarPI / 180.f; }
+static inline float RadToDeg(float r) { return r * 180.f / M_PI; }
+static inline float DegToRad(float d) { return d * M_PI / 180.f; }
 
 static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::Cmd cmd)
 {
@@ -5062,7 +5062,7 @@ static plWaveSet7* ICheckWaveParams(PrintFunk PrintString, const char* name, int
     return waveSet;
 }
 
-static hsScalar LimitVal(hsScalar val, hsScalar lo, hsScalar hi, PrintFunk PrintString)
+static float LimitVal(float val, float lo, float hi, PrintFunk PrintString)
 {
     if( val < lo )
     {
@@ -5091,7 +5091,7 @@ static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int
 
     float val = params[1];
 
-    hsScalar secs = ( numParams > 2 ) ? params[2] : 0.f;
+    float secs = ( numParams > 2 ) ? params[2] : 0.f;
 
     switch( cmd )
     {
@@ -5168,7 +5168,7 @@ static bool ISendWaveCmd2f(PrintFunk PrintString, pfConsoleCmdParam* params, int
 
     using namespace plWaveCmd;
 
-    hsScalar secs = ( numParams > 3 ) ? params[3] : 0.f;
+    float secs = ( numParams > 3 ) ? params[3] : 0.f;
 
     hsVector3 vec;
     plFixedWaterState7 state = wave->State();
@@ -5217,7 +5217,7 @@ static bool ISendWaveCmd3f(PrintFunk PrintString, pfConsoleCmdParam* params, int
     hsVector3 vec(x, y, z);
     hsPoint3 pos(x, y, z);
 
-    hsScalar secs = ( numParams > 4 ) ? params[4] : 0.f;
+    float secs = ( numParams > 4 ) ? params[4] : 0.f;
 
     switch( cmd )
     {
@@ -5253,7 +5253,7 @@ static bool ISendWaveCmd4c(PrintFunk PrintString, pfConsoleCmdParam* params, int
     float g = params[2];
     float b = params[3];
 
-    hsScalar secs = ( numParams > 4 ) ? params[4] : 0.f;
+    float secs = ( numParams > 4 ) ? params[4] : 0.f;
 
     hsColorRGBA col;
     col.Set(r / 255.f, g / 255.f, b / 255.f, 1.f);
@@ -6034,7 +6034,7 @@ PF_CONSOLE_CMD( Mouse, UnInvert, nil, "un-invert the mouse")
 
 PF_CONSOLE_CMD( Mouse, SetDeadZone, "float zone", "Sets the dead zone for the mouse - range is from 0.0 to 1.0")
 {
-    hsScalar f = params[0];
+    float f = params[0];
 }
 
 PF_CONSOLE_CMD( Mouse, Enable, nil, "Enable mouse input")
@@ -6238,7 +6238,7 @@ PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set t
 
 PF_CONSOLE_GROUP( ParticleSystem ) // Defines a main command group
 
-void UpdateParticleParam(char *objName, int32_t paramID, hsScalar value, void (*PrintString)(const char *))
+void UpdateParticleParam(char *objName, int32_t paramID, float value, void (*PrintString)(const char *))
 {
     char str[256];
     plKey key = FindSceneObjectByName(objName, nil, str);

@@ -212,9 +212,9 @@ void plSoundBuffer::IInitBuffer()
 
 //// GetDataLengthInSecs /////////////////////////////////////////////////////
 
-hsScalar    plSoundBuffer::GetDataLengthInSecs( void ) const
+float    plSoundBuffer::GetDataLengthInSecs( void ) const
 {
-    return (hsScalar)fDataLength / (hsScalar)fHeader.fAvgBytesPerSec;
+    return (float)fDataLength / (float)fHeader.fAvgBytesPerSec;
 }
 
 //// Read/Write //////////////////////////////////////////////////////////////

@@ -68,7 +68,7 @@ protected:
     BITMAPINFOHEADER fBitmapInfo;
 
     hsBool fOldRealTime;
-    hsScalar fOldFrameTimeInc;
+    float fOldFrameTimeInc;
 
     double fStartTime;
 

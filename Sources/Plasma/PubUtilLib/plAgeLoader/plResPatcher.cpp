@@ -68,7 +68,7 @@ public:
 
     uint32_t Write(uint32_t count, const void* buf)
     {
-        fProgress->Increment((hsScalar)count);
+        fProgress->Increment((float)count);
         if (fIsZipped)
             return plZlibStream::Write(count, buf);
         else
@@ -155,7 +155,7 @@ static void ManifestDownloaded(
             PatcherLog(kInfo, "    Enqueueing %s: File Sizes Differ", fileName);
 
         // If we're still here, then we need to update the file.
-        patcher->GetProgress()->SetLength((hsScalar)mfs.fileSize + patcher->GetProgress()->GetMax());
+        patcher->GetProgress()->SetLength((float)mfs.fileSize + patcher->GetProgress()->GetMax());
         patcher->RequestFile(mfs.downloadName, mfs.clientName);
     }
 

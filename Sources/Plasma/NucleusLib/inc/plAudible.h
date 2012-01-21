@@ -83,10 +83,10 @@ public:
     virtual void        Stop(int index = -1) = 0;
     virtual void        FastForwardPlay(int index = -1) = 0;
     virtual void        FastForwardToggle( int index = -1) = 0;
-    virtual void        SetMin(const hsScalar m,int index = -1) = 0; // sets minimum falloff distance
-    virtual void        SetMax(const hsScalar m,int index = -1) = 0; // sets maximum falloff distance
-    virtual hsScalar    GetMin(int index = -1) const  = 0;
-    virtual hsScalar    GetMax(int index = -1) const = 0;
+    virtual void        SetMin(const float m,int index = -1) = 0; // sets minimum falloff distance
+    virtual void        SetMax(const float m,int index = -1) = 0; // sets maximum falloff distance
+    virtual float    GetMin(int index = -1) const  = 0;
+    virtual float    GetMax(int index = -1) const = 0;
     virtual void        SetVelocity(const hsVector3 vel,int index = -1) = 0;
     virtual hsVector3   GetVelocity(int index = -1) const = 0;
     virtual hsPoint3    GetPosition(int index = -1) = 0;

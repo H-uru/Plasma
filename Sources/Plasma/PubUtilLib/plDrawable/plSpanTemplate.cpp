@@ -74,7 +74,7 @@ uint32_t plSpanTemplate::CalcStride()
     if( NumUVWs() )
         fStride += (uint8_t)(sizeof(hsPoint3) * NumUVWs());
     if( NumWeights() )
-        fStride += (uint8_t)(sizeof(hsScalar) * NumWeights());
+        fStride += (uint8_t)(sizeof(float) * NumWeights());
 
     return uint32_t(fStride);
 }

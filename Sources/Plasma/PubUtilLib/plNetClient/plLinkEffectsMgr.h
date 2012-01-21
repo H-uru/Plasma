@@ -86,8 +86,8 @@ public:
     CLASSNAME_REGISTER( plLinkEffectsMgr );
     GETINTERFACE_ANY( plLinkEffectsMgr, hsKeyedObject );
 
-    void WaitForEffect(plKey linkKey, hsScalar time);
-    void WaitForPseudoEffect(plKey linkKey, hsScalar time);
+    void WaitForEffect(plKey linkKey, float time);
+    void WaitForPseudoEffect(plKey linkKey, float time);
     
     plMessage *WaitForEffect(plKey linkKey);
 

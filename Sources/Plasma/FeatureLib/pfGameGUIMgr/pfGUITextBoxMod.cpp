@@ -80,7 +80,7 @@ pfGUITextBoxMod::~pfGUITextBoxMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUITextBoxMod::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUITextBoxMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }

@@ -176,7 +176,7 @@ hsBool plInterestingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     plInterestingModifier* pMod = TRACKED_NEW plInterestingModifier;
     
-    hsScalar loader = fCompPB->GetFloat(kCamInterestRadius);
+    float loader = fCompPB->GetFloat(kCamInterestRadius);
     pMod->SetInterestRadius(loader);
     loader = fCompPB->GetFloat(kCamInterestWeight);
     pMod->SetInterestWeight(loader);
@@ -1398,7 +1398,7 @@ hsBool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float fov = cam->GetFOV(timeVal);
     // convert
     int FOVType = cam->GetFOVType();
-    hsScalar fovX, fovY;
+    float fovX, fovY;
     switch(FOVType)
     {
     case 0: // FOV_W
@@ -1414,8 +1414,8 @@ hsBool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         break;
     }
-    fovX *= 180.f / hsScalarPI;
-    fovY *= 180.f / hsScalarPI;
+    fovX *= 180.f / M_PI;
+    fovY *= 180.f / M_PI;
     mod->SetFovX(fovX);
     mod->SetFovY(fovY);
 

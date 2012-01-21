@@ -98,7 +98,7 @@ void plSpanInstance::Read(hsStream* stream, const plSpanEncoding& encoding, uint
 {
     Alloc(encoding, numVerts);
 
-    stream->Read(12 * sizeof(hsScalar), fL2W[0]);
+    stream->Read(12 * sizeof(float), fL2W[0]);
     if( fPosDelta )
     {
         stream->Read(numVerts * PosStrideFromEncoding(encoding), fPosDelta);
@@ -112,7 +112,7 @@ void plSpanInstance::Read(hsStream* stream, const plSpanEncoding& encoding, uint
 
 void plSpanInstance::Write(hsStream* stream, const plSpanEncoding& encoding, uint32_t numVerts) const
 {
-    stream->Write(12 * sizeof(hsScalar), fL2W[0]);
+    stream->Write(12 * sizeof(float), fL2W[0]);
     if( fPosDelta )
     {
         stream->Write(numVerts * PosStrideFromEncoding(encoding), fPosDelta);

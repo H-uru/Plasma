@@ -88,7 +88,7 @@ public:
     void PlaySlideSound(uint32_t against);
     void StopSlideSound(uint32_t against);
     void PlayImpactSound(uint32_t against);
-    void SetSlideSoundVolume(uint32_t against, hsScalar volume);
+    void SetSlideSoundVolume(uint32_t against, float volume);
     bool HasSlideSound(uint32_t against);
     bool HasImpactSound(uint32_t against);
 

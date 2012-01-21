@@ -509,7 +509,7 @@ void    plBaseSoundEmitterComponent::IGrabFadeValues( plSound *sound )
         // Fade in is enabled; set the params
         plSound::plFadeParams::Type     type;
 
-        hsScalar len = (hsScalar)fCompPB->GetFloat( (ParamID)kSndFadeInLength, 0 );
+        float len = (float)fCompPB->GetFloat( (ParamID)kSndFadeInLength, 0 );
 
         switch( fCompPB->GetInt( (ParamID)kSndFadeInType, 0 ) )
         {
@@ -526,7 +526,7 @@ void    plBaseSoundEmitterComponent::IGrabFadeValues( plSound *sound )
         // Fade out is enabled; set the params
         plSound::plFadeParams::Type     type;
 
-        hsScalar len = (hsScalar)fCompPB->GetFloat( (ParamID)kSndFadeOutLength, 0 );
+        float len = (float)fCompPB->GetFloat( (ParamID)kSndFadeOutLength, 0 );
 
         switch( fCompPB->GetInt( (ParamID)kSndFadeOutType, 0 ) )
         {
@@ -538,7 +538,7 @@ void    plBaseSoundEmitterComponent::IGrabFadeValues( plSound *sound )
         sound->SetFadeOutEffect( type, len );
     }
 
-//  sound->SetFadedVolume( (hsScalar)fCompPB->GetFloat( kSndFadedVolume, 0 ) );
+//  sound->SetFadedVolume( (float)fCompPB->GetFloat( kSndFadedVolume, 0 ) );
 }
 
 void    plBaseSoundEmitterComponent::IGrabSoftRegion( plSound *sound, plErrorMsg *pErrMsg )
@@ -790,7 +790,7 @@ void    plBaseSoundEmitterComponent::UpdateSoundFileSelection( void )
         delete baseBuffer;
 }
 
-hsScalar    plBaseSoundEmitterComponent::GetSoundVolume( void ) const
+float    plBaseSoundEmitterComponent::GetSoundVolume( void ) const
 {
     return IGetDigitalVolume();
 }
@@ -914,7 +914,7 @@ hsBool  plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
     plController *ctl;
     hsControlConverter& cc = hsControlConverter::Instance();
 
-    hsScalar start, end;
+    float start, end;
     if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
     {
         start = end = -1;
@@ -2233,7 +2233,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     // Also also also build up a volume array parallel to startPoses that represents the individual volume
     // setting for each sound in the group
     hsTArray<uint32_t>        startPoses;
-    hsTArray<hsScalar>      volumes;
+    hsTArray<float>      volumes;
     hsLargeArray<uint8_t>     mergedData;
     int                     i;
     plWAVHeader             mergedHeader;

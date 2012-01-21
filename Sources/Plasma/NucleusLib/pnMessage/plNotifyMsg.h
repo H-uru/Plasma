@@ -181,7 +181,7 @@ proEventType(Variable)
     int32_t   fDataType;      // type of data
 
     // Can't be a union, sadly, but it isn't that much of a waste of space...
-    hsScalar    fNumber;    // if its a number
+    float    fNumber;    // if its a number
     plKey       fKey;       // if its a plKey (pointer to something)
 
 
@@ -198,7 +198,7 @@ protected:
 proEventType(Facing)
     plKey       fFacer; // what was facing
     plKey       fFacee; // what was being faced
-    hsScalar    dot;     // the dot prod of their view vectors
+    float    dot;     // the dot prod of their view vectors
     hsBool      enabled; // Now meets facing requirement (true) or no longer meets requirement (false)
 
 protected:
@@ -284,7 +284,7 @@ protected:
 proEventType(ClickDrag)
     plKey picker; // always the local avatar in this case
     plKey picked;
-    hsScalar animPos; // 0.0 to 1.0 animation percentage
+    float animPos; // 0.0 to 1.0 animation percentage
 };
 
 proEventType(OfferLinkingBook)
@@ -355,21 +355,21 @@ public:
         kResponderChangeState,  // Change state without triggering
     };
     int32_t       fType;              // what type of notification
-    hsScalar    fState;             // state of the notifier 0.0=false, 1.0=true
+    float    fState;             // state of the notifier 0.0=false, 1.0=true
     int32_t       fID;                // special ID mostly for responder State transitions
     hsTArray<proEventData*> fEvents;// list of events with data
 
     void SetType(notificationType type) { fType = type; }
-    void SetState(hsScalar state) { fState = state; }
+    void SetState(float state) { fState = state; }
 
     // event records for the notify message
     void AddEvent( proEventData* ed);
     void AddCollisionEvent( hsBool enter, const plKey &other, const plKey &self, hsBool onlyOneCollision=true );
     void AddPickEvent( const plKey &other, const plKey& self, hsBool enabled, hsPoint3 hitPoint );
     void AddControlKeyEvent( int32_t key, hsBool down );
-    void AddVariableEvent( const char* name, hsScalar number );
+    void AddVariableEvent( const char* name, float number );
     void AddVariableEvent( const char *name, const plKey &key);
-    void AddFacingEvent( const plKey &other, const plKey &self, hsScalar dot, hsBool enabled);
+    void AddFacingEvent( const plKey &other, const plKey &self, float dot, hsBool enabled);
     void AddContainerEvent( const plKey &container, const plKey &contained, hsBool entering);
     void AddActivateEvent( hsBool activate );
     void AddCallbackEvent( int32_t event );
@@ -377,7 +377,7 @@ public:
     void AddMultiStageEvent( int32_t stage, int32_t event, const plKey& avatar );
     void AddCoopEvent(uint32_t id, uint16_t serial);
     void AddSpawnedEvent (const plKey &spawner, const plKey &spawned);
-    void AddClickDragEvent(const plKey& dragger, const plKey& dragee, hsScalar animPos);
+    void AddClickDragEvent(const plKey& dragger, const plKey& dragee, float animPos);
     void AddOfferBookEvent(const plKey& offerer, int targetAge, int offeree);
     void AddBookEvent( uint32_t event, uint32_t linkID = 0 );
     void AddHitClimbingBlockerEvent(const plKey &blocker);

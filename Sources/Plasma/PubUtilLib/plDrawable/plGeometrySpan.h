@@ -142,10 +142,10 @@ class plGeometrySpan
         uint16_t          fMaxBoneIdx;
         uint32_t          fPenBoneIdx;
 
-        hsScalar        fMinDist;
-        hsScalar        fMaxDist;
+        float        fMinDist;
+        float        fMaxDist;
 
-        hsScalar        fWaterHeight;
+        float        fWaterHeight;
 
         uint8_t           fFormat;
         uint32_t          fProps;

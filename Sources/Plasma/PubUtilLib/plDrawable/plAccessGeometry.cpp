@@ -468,7 +468,7 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
         {
             acc.SetNumWeights(numWgts);
             acc.WeightStream(ptr, (uint16_t)stride, offset);
-            ptr += numWgts * sizeof(hsScalar);
+            ptr += numWgts * sizeof(float);
             if( grp->GetVertexFormat() & plGBufferGroup::kSkinIndices )
             {
                 acc.WgtIndexStream(ptr, (uint16_t)stride, offset);
@@ -513,7 +513,7 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
         {
             acc.SetNumWeights(numWgts);
             acc.WeightStream(ptr, (uint16_t)stride, posOffset);
-            ptr += numWgts * sizeof(hsScalar);
+            ptr += numWgts * sizeof(float);
             if( grp->GetVertexFormat() & plGBufferGroup::kSkinIndices )
             {
                 acc.WgtIndexStream(ptr, (uint16_t)stride, posOffset);

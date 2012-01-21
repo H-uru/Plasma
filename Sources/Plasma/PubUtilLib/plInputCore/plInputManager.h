@@ -84,8 +84,8 @@ public:
 
     void    Activate( bool activating );
 
-    hsScalar    GetMouseScale( void ) const { return fMouseScale; }
-    void        SetMouseScale( hsScalar s );
+    float    GetMouseScale( void ) const { return fMouseScale; }
+    void        SetMouseScale( float s );
     
     static plKeyDef UntranslateKey(plKeyDef key, hsBool extended);
     
@@ -96,7 +96,7 @@ protected:
     plInputInterfaceMgr         *fInterfaceMgr;
     bool                        fActive, fFirstActivated;       
 
-    hsScalar                    fMouseScale;
+    float                    fMouseScale;
     static uint8_t                bRecenterMouse;
     static HWND                 fhWnd;
     

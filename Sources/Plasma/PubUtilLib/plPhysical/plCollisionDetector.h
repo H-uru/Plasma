@@ -147,7 +147,7 @@ public:
 class plObjectInVolumeAndFacingDetector : public plObjectInVolumeDetector
 {
 protected:
-    hsScalar fFacingTolerance;
+    float fFacingTolerance;
     bool fNeedWalkingForward;
 
     bool fAvatarInVolume;
@@ -271,7 +271,7 @@ public:
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream *stream, hsResMgr *mgr);
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 protected:
     plMessage *fEnterMsg;
     plMessage *fExitMsg;

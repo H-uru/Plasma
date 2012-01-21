@@ -217,10 +217,10 @@ public:
     virtual void                        PopRenderRequest(plRenderRequest* req) = 0;
 
     virtual void                        ClearRenderTarget( plDrawable* d ) = 0; // nil d reverts to ClearRenderTarget(nil, nil).
-    virtual void                        ClearRenderTarget(const hsColorRGBA* col = nil, const hsScalar* depth = nil) = 0; // col/depth are overrides for current default.
-    virtual void                        SetClear(const hsColorRGBA* col=nil, const hsScalar* depth=nil) = 0; // sets the default clear for current render target.
+    virtual void                        ClearRenderTarget(const hsColorRGBA* col = nil, const float* depth = nil) = 0; // col/depth are overrides for current default.
+    virtual void                        SetClear(const hsColorRGBA* col=nil, const float* depth=nil) = 0; // sets the default clear for current render target.
     virtual hsColorRGBA                 GetClearColor() const = 0;
-    virtual hsScalar                    GetClearDepth() const = 0;
+    virtual float                    GetClearDepth() const = 0;
     virtual hsGDeviceRef                *MakeRenderTargetRef( plRenderTarget *owner ) = 0;
     virtual void                        PushRenderTarget( plRenderTarget *target ) = 0;
     virtual plRenderTarget              *PopRenderTarget( void ) = 0;
@@ -279,17 +279,17 @@ public:
     virtual hsVector3                   GetViewDirWorld() const = 0;
     virtual void                        GetViewAxesWorld(hsVector3 axes[3] /* ac,up,at */ ) const = 0;
 
-    virtual void                        GetFOV(hsScalar& fovX, hsScalar& fovY) const = 0;
-    virtual void                        SetFOV(hsScalar fovX, hsScalar fovY) = 0;
+    virtual void                        GetFOV(float& fovX, float& fovY) const = 0;
+    virtual void                        SetFOV(float fovX, float fovY) = 0;
 
-    virtual void                        GetSize(hsScalar& width, hsScalar& height) const = 0;
-    virtual void                        SetSize(hsScalar width, hsScalar height) = 0;
+    virtual void                        GetSize(float& width, float& height) const = 0;
+    virtual void                        SetSize(float width, float height) = 0;
 
-    virtual void                        GetDepth(hsScalar& hither, hsScalar& yon) const = 0;
-    virtual void                        SetDepth(hsScalar hither, hsScalar yon) = 0;
+    virtual void                        GetDepth(float& hither, float& yon) const = 0;
+    virtual void                        SetDepth(float hither, float yon) = 0;
 
-    virtual void                        SetZBiasScale( hsScalar scale ) = 0;
-    virtual hsScalar                    GetZBiasScale( void ) const = 0;
+    virtual void                        SetZBiasScale( float scale ) = 0;
+    virtual float                    GetZBiasScale( void ) const = 0;
 
     virtual const hsMatrix44&           GetWorldToCamera() const = 0;
     virtual const hsMatrix44&           GetCameraToWorld() const = 0;
@@ -301,7 +301,7 @@ public:
     virtual const plViewTransform&      GetViewTransform() const = 0;
 
     virtual void                        ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, 
-                                                    hsScalar dist, uint32_t strideOut, hsPoint3 *worldOut ) = 0;
+                                                    float dist, uint32_t strideOut, hsPoint3 *worldOut ) = 0;
 
     virtual void                        RefreshMatrices( void ) = 0;
     virtual void                        RefreshScreenMatrices( void ) = 0;
@@ -330,9 +330,9 @@ public:
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co) = 0;
 
     // These all return true if the gamma was successfully set.
-    virtual hsBool                      SetGamma(hsScalar eR, hsScalar eG, hsScalar eB) = 0;
+    virtual hsBool                      SetGamma(float eR, float eG, float eB) = 0;
     virtual hsBool                      SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) = 0; // len table = 256.
-    virtual hsBool                      SetGamma(hsScalar e) { return SetGamma(e, e, e); }
+    virtual hsBool                      SetGamma(float e) { return SetGamma(e, e, e); }
     virtual hsBool                      SetGamma(const uint16_t* const table) { return SetGamma(table, table, table); } 
 
     // flipVertical is for the AVI writer, which wants it's frames upside down

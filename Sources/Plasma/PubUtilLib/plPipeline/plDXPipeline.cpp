@@ -260,7 +260,7 @@ static const enum _D3DTRANSFORMSTATETYPE    sTextureStages[ 8 ] =
 static const float kPerspLayerScale  = 0.00001f;
 static const float kPerspLayerScaleW = 0.001f;
 static const float kPerspLayerTrans  = 0.00002f;
-static const hsScalar kAvTexPoolShrinkThresh = 30.f; // seconds
+static const float kAvTexPoolShrinkThresh = 30.f; // seconds
 
 // This caps the number of D3D lights we use. We'll use up to the max allowed
 // or this number, whichever is smaller. (This is to prevent us going haywire
@@ -1255,12 +1255,12 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
 //// Get/SetZBiasScale ////////////////////////////////////////////////////////
 // If the board really doesn't support Z-biasing, we adjust the perspective matrix in IGetCameraToNDC
 // The layer scale and translation are tailored to the current hardware.
-hsScalar    plDXPipeline::GetZBiasScale() const
+float    plDXPipeline::GetZBiasScale() const
 {
     return ( fTweaks.fPerspLayerScale / fTweaks.fDefaultPerspLayerScale ) - 1.0f;
 }
 
-void    plDXPipeline::SetZBiasScale( hsScalar scale )
+void    plDXPipeline::SetZBiasScale( float scale )
 {
     scale += 1.0f;
     fTweaks.fPerspLayerScale = fTweaks.fDefaultPerspLayerScale * scale;
@@ -2655,7 +2655,7 @@ hsBool  plDXPipeline::PreRender( plDrawable* drawable, hsTArray<int16_t>& visLis
 struct plSortFace
 {
     uint16_t      fIdx[3];
-    hsScalar    fDist;
+    float    fDist;
 };
 
 struct plCompSortFace : public std::binary_function<plSortFace, plSortFace, bool>
@@ -2743,8 +2743,8 @@ hsBool plDXPipeline::IAvatarSort(plDrawableSpans* d, const hsTArray<int16_t>& vi
                 uint16_t idx = *indices++;
                 sortScratch[j].fIdx[0] = idx;
                 hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-                hsScalar dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                hsScalar minDist = dist;
+                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                float minDist = dist;
 
                 idx = *indices++;
                 sortScratch[j].fIdx[1] = idx;
@@ -2765,8 +2765,8 @@ hsBool plDXPipeline::IAvatarSort(plDrawableSpans* d, const hsTArray<int16_t>& vi
                 uint16_t idx = *indices++;
                 sortScratch[j].fIdx[0] = idx;
                 hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-                hsScalar dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                hsScalar maxDist = dist;
+                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                float maxDist = dist;
 
                 idx = *indices++;
                 sortScratch[j].fIdx[1] = idx;
@@ -3178,7 +3178,7 @@ void plDXPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
                 if( !(currProj && (span->fProps & plSpan::kPropSkipProjection)) )
                 {
                     plDXLightRef    *ref = (plDXLightRef *)light->GetDeviceRef();
-                    hsScalar        strength, scale;
+                    float        strength, scale;
                     
                     light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
                     
@@ -3226,7 +3226,7 @@ void plDXPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
                 if( !(currProj && (span->fProps & plSpan::kPropSkipProjection)) )
                 {
                     plDXLightRef    *ref = (plDXLightRef *)light->GetDeviceRef();
-                    hsScalar        strength, scale;
+                    float        strength, scale;
                     
                     light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
                     
@@ -3273,7 +3273,7 @@ void plDXPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
                 if( !(currProj && (span->fProps & plSpan::kPropSkipProjection)) )
                 {
                     plDXLightRef    *ref = (plDXLightRef *)light->GetDeviceRef();
-                    hsScalar        strength, scale;
+                    float        strength, scale;
                     
                     light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
                     
@@ -3343,7 +3343,7 @@ void plDXPipeline::IGetVisibleSpans( plDrawableSpans* drawable, hsTArray<int16_t
     if( fView.fCullTreeDirty )
         IRefreshCullTree();
 
-    const hsScalar viewDist = GetViewDirWorld().InnerProduct(GetViewPositionWorld());
+    const float viewDist = GetViewDirWorld().InnerProduct(GetViewPositionWorld());
 
     const hsTArray<plSpan *>    &spans = drawable->GetSpanArray();
 
@@ -3389,7 +3389,7 @@ void plDXPipeline::IGetVisibleSpans( plDrawableSpans* drawable, hsTArray<int16_t
                 // We'll check here for spans we can discard because they've completely distance faded out.
                 // Note this is based on view direction distance (because the fade is), rather than the
                 // preferrable distance to camera we sort by.
-                hsScalar minDist, maxDist;
+                float minDist, maxDist;
                 if( drawable->GetSubVisDists(tmpVis[i], minDist, maxDist) )
                 {
                     const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(tmpVis[i]).fWorldBounds;
@@ -4066,7 +4066,7 @@ hsBool plDXPipeline::EndRender()
 // SetGamma ////////////////////////////////////////////////////////////
 // Create and set a gamma table based on the input exponent values for
 // R, G, and B. Can also set explicit table using the other SetGamma().
-hsBool plDXPipeline::SetGamma(hsScalar eR, hsScalar eG, hsScalar eB)
+hsBool plDXPipeline::SetGamma(float eR, float eG, float eB)
 {
     if( fSettings.fNoGammaCorrect )
         return false;
@@ -4075,7 +4075,7 @@ hsBool plDXPipeline::SetGamma(hsScalar eR, hsScalar eG, hsScalar eB)
 
     ramp.red[0] = ramp.green[0] = ramp.blue[0] = 0L;
 
-    plConst(hsScalar) kMinE(0.1f);
+    plConst(float) kMinE(0.1f);
     if( eR > kMinE )
         eR = 1.f / eR;
     else 
@@ -4092,19 +4092,19 @@ hsBool plDXPipeline::SetGamma(hsScalar eR, hsScalar eG, hsScalar eB)
     int i;
     for( i = 1; i < 256; i++ )
     {
-        hsScalar orig = hsScalar(i) / 255.f;
+        float orig = float(i) / 255.f;
 
-        hsScalar gamm;
+        float gamm;
         gamm = pow(orig, eR);
-        gamm *= hsScalar(uint16_t(-1));
+        gamm *= float(uint16_t(-1));
         ramp.red[i] = uint16_t(gamm);
 
         gamm = pow(orig, eG);
-        gamm *= hsScalar(uint16_t(-1));
+        gamm *= float(uint16_t(-1));
         ramp.green[i] = uint16_t(gamm);
 
         gamm = pow(orig, eB);
-        gamm *= hsScalar(uint16_t(-1));
+        gamm *= float(uint16_t(-1));
         ramp.blue[i] = uint16_t(gamm);
     }
 
@@ -5166,7 +5166,7 @@ void    plDXPipeline::ISetRenderTarget( plRenderTarget *target )
 
 // SetClear /////////////////////////////////////////////////////////////////////
 // Set the color and depth clear values.
-void plDXPipeline::SetClear(const hsColorRGBA* col, const hsScalar* depth)
+void plDXPipeline::SetClear(const hsColorRGBA* col, const float* depth)
 {
     if( col )
         fView.fClearColor = inlGetD3DColor(*col);
@@ -5183,7 +5183,7 @@ hsColorRGBA plDXPipeline::GetClearColor() const
 
 // GetClearDepth ////////////////////////////////////////////////////////////////
 // Return the current clear depth.
-hsScalar plDXPipeline::GetClearDepth() const
+float plDXPipeline::GetClearDepth() const
 {
     return fView.fClearDepth;
 }
@@ -5263,12 +5263,12 @@ hsBool plDXPipeline::IGetClearViewPort(D3DRECT& r)
 
 // ClearRenderTarget //////////////////////////////////////////////////////////////////////////////
 // Flat fill the current render target with the specified color and depth values.
-void    plDXPipeline::ClearRenderTarget( const hsColorRGBA *col, const hsScalar* depth )
+void    plDXPipeline::ClearRenderTarget( const hsColorRGBA *col, const float* depth )
 {
     if( fView.fRenderState & (kRenderClearColor | kRenderClearDepth) )
     {
         DWORD clearColor = inlGetD3DColor(col ? *col : GetClearColor());
-        hsScalar clearDepth = depth ? *depth : fView.fClearDepth;
+        float clearDepth = depth ? *depth : fView.fClearDepth;
 
         DWORD   dwFlags = 0;//fStencil.fDepth > 0 ? D3DCLEAR_STENCIL : 0;
         if( fView.fRenderState & kRenderClearColor )
@@ -5309,8 +5309,8 @@ void plDXPipeline::IGetVSFogSet(float* const set) const
     if( fCurrFog.fEnvPtr )
     {
         hsColorRGBA colorTrash;
-        hsScalar start;
-        hsScalar end;
+        float start;
+        float end;
         fCurrFog.fEnvPtr->GetPipelineParams(&start, &end, &colorTrash);
         if( end > start )
         {
@@ -5405,7 +5405,7 @@ void plDXPipeline::ISetFogParameters(const plSpan* span, const plLayerInterface*
     fCurrFog.fIsShader = isShader;
     fCurrFog.fIsVertex = isVertex;
 
-    hsScalar    startOrDensity, end;
+    float    startOrDensity, end;
     hsColorRGBA color;
 
     /// Get params
@@ -5922,7 +5922,7 @@ void plDXPipeline::IRestoreSpanLights()
 //// IScaleD3DLight ///////////////////////////////////////////////////////////
 // Scale the D3D light by the given scale factor, used for fading lights
 // in and out by importance.
-void    plDXPipeline::IScaleD3DLight( plDXLightRef *ref, hsScalar scale )
+void    plDXPipeline::IScaleD3DLight( plDXLightRef *ref, float scale )
 {
     scale = int(scale * 1.e1f) * 1.e-1f;
     if( ref->fScale != scale )
@@ -6011,8 +6011,8 @@ static inline D3DCOLORVALUE ColorMul(const D3DCOLORVALUE& c0, const hsColorRGBA&
 void    plDXPipeline::ICalcLighting( const plLayerInterface *currLayer, const plSpan *currSpan )
 {
     D3DMATERIAL9    mat;
-    static hsScalar diffScale = 1.f;
-    static hsScalar ambScale = 1.f;
+    static float diffScale = 1.f;
+    static float ambScale = 1.f;
     uint32_t          props;
 
 
@@ -7630,15 +7630,15 @@ void plDXPipeline::ISetBumpMatrices(const plLayerInterface* layer, const plSpan*
     hsVector3 liDir(0,0,0);
     int i;
     const hsTArray<plLightInfo*>& spanLights = span->GetLightList(false);
-    hsScalar maxStrength = 0;
+    float maxStrength = 0;
     for( i = 0; i < spanLights.GetCount(); i++ )
     {
-        hsScalar liWgt = span->GetLightStrength(i, false);
+        float liWgt = span->GetLightStrength(i, false);
         // A light strength of 2.f means it's from a light group, and we haven't actually calculated
         // the strength. So calculate it now.
         if( liWgt == 2.f )
         {
-            hsScalar scale;
+            float scale;
             spanLights[i]->GetStrengthAndScale(span->fWorldBounds, liWgt, scale);
         }
         if( liWgt > maxStrength )
@@ -7647,16 +7647,16 @@ void plDXPipeline::ISetBumpMatrices(const plLayerInterface* layer, const plSpan*
     }
     hsFastMath::NormalizeAppr(liDir);
 
-    static hsScalar kUVWScale = 1.f;
-    hsScalar uvwScale = kUVWScale;
+    static float kUVWScale = 1.f;
+    float uvwScale = kUVWScale;
     if( fLayerState[0].fBlendFlags & hsGMatState::kBlendAdd )
     {
         hsVector3 cam2span(&GetViewPositionWorld(), &spanPos);
         hsFastMath::NormalizeAppr(cam2span);
         liDir += cam2span;
         hsFastMath::NormalizeAppr(liDir);
-        static hsScalar kSpecularMax = 0.1f;
-        static hsScalar kSpecularMaxUV = 0.5f;
+        static float kSpecularMax = 0.1f;
+        static float kSpecularMaxUV = 0.5f;
         if (IsDebugFlagSet(plPipeDbg::kFlagBumpUV))
             uvwScale *= kSpecularMaxUV;
         else
@@ -7680,11 +7680,11 @@ void plDXPipeline::ISetBumpMatrices(const plLayerInterface* layer, const plSpan*
         maxStrength = 1.f;
     liDir *= uvwScale * maxStrength;
 
-    const hsScalar kUVWOffset = 0.5f;
+    const float kUVWOffset = 0.5f;
 
-    hsScalar kOffsetToRed;
-    hsScalar kOffsetToGreen;
-    hsScalar kOffsetToBlue;
+    float kOffsetToRed;
+    float kOffsetToGreen;
+    float kOffsetToBlue;
 
     if (IsDebugFlagSet(plPipeDbg::kFlagBumpUV) || IsDebugFlagSet(plPipeDbg::kFlagBumpW))
     {
@@ -7807,7 +7807,7 @@ void    plDXPipeline::IHandleStageTransform( int stage, plLayerInterface *layer 
 
                 // This is just a rotation about X of Pi/2 (y = z, z = -y), 
                 // followed by flipping Z to reflect back towards us (z = -z).
-                hsScalar t = c2env.fMap[1][0];
+                float t = c2env.fMap[1][0];
                 c2env.fMap[1][0] = c2env.fMap[2][0];
                 c2env.fMap[2][0] = t;
 
@@ -7831,7 +7831,7 @@ void    plDXPipeline::IHandleStageTransform( int stage, plLayerInterface *layer 
                 // This is just a rotation about X of Pi/2 (y = z, z = -y), 
                 // followed by NOT flipping Z to reflect back towards us (z = -z).
                 // In other words, same as reflection, but then c2env = c2env * scaleMatNegateZ.
-                hsScalar t = c2env.fMap[1][0];
+                float t = c2env.fMap[1][0];
                 c2env.fMap[1][0] = c2env.fMap[2][0];
                 c2env.fMap[2][0] = t;
 
@@ -7848,7 +7848,7 @@ void    plDXPipeline::IHandleStageTransform( int stage, plLayerInterface *layer 
                 c2env.fMap[2][2] = -c2env.fMap[2][2];
 
 #if 0
-                const hsScalar kFishEyeScale = 0.5f;
+                const float kFishEyeScale = 0.5f;
                 // You can adjust the fish-eye-ness of this by scaling
                 // X and Y as well. Eventually, you wind up with the same
                 // as c2env * scaleMatXYAndNegateZ, but this is shorter.
@@ -7883,7 +7883,7 @@ void    plDXPipeline::IHandleStageTransform( int stage, plLayerInterface *layer 
             // The scale and trans move us from NDC to Screen space. We need to swap
             // the Z and W coordinates so that the texture projection will divide by W
             // and give us projected 2D coordinates.
-            hsScalar temp = p2s.fMap[2][2];
+            float temp = p2s.fMap[2][2];
             p2s.fMap[2][2] = p2s.fMap[3][2];
             p2s.fMap[3][2] = temp;
 
@@ -8251,7 +8251,7 @@ hsBool  plDXPipeline::ICanEatLayer( plLayerInterface* lay )
         return false;
 
     if( (lay->GetBlendFlags() & hsGMatState::kBlendAlpha )
-        &&(lay->GetAmbientColor().a < hsScalar1) )
+        &&(lay->GetAmbientColor().a < 1.f) )
         return false;
 
     if( !(lay->GetZFlags() & hsGMatState::kZNoZWrite) )
@@ -9091,7 +9091,7 @@ void    plDXPipeline::GetViewAxesWorld(hsVector3 axes[3] /* ac,up,at */ ) const
 
 //// GetFOV ///////////////////////////////////////////////////////////////////
 // Get the current FOV in degrees.
-void    plDXPipeline::GetFOV(hsScalar& fovX, hsScalar& fovY) const
+void    plDXPipeline::GetFOV(float& fovX, float& fovY) const
 {
     fovX = GetViewTransform().GetFovXDeg();
     fovY = GetViewTransform().GetFovYDeg();
@@ -9099,14 +9099,14 @@ void    plDXPipeline::GetFOV(hsScalar& fovX, hsScalar& fovY) const
 
 //// SetFOV ///////////////////////////////////////////////////////////////////
 // Set the current FOV in degrees. Forces perspective rendering to be true.
-void    plDXPipeline::SetFOV( hsScalar fovX, hsScalar fovY )
+void    plDXPipeline::SetFOV( float fovX, float fovY )
 {
     IGetViewTransform().SetFovDeg(fovX, fovY);
     IGetViewTransform().SetPerspective(true);
 }
 
 // Get the orthogonal projection view size in world units (e.g. feet).
-void    plDXPipeline::GetSize( hsScalar& width, hsScalar& height ) const
+void    plDXPipeline::GetSize( float& width, float& height ) const
 {
     width = GetViewTransform().GetScreenWidth();
     height = GetViewTransform().GetScreenHeight();
@@ -9114,7 +9114,7 @@ void    plDXPipeline::GetSize( hsScalar& width, hsScalar& height ) const
 
 // Set the orthogonal projection view size in world units (e.g. feet).
 // Forces projection to orthogonal if it wasn't.
-void    plDXPipeline::SetSize( hsScalar width, hsScalar height )
+void    plDXPipeline::SetSize( float width, float height )
 {
     IGetViewTransform().SetWidth(width);
     IGetViewTransform().SetHeight(height);
@@ -9123,14 +9123,14 @@ void    plDXPipeline::SetSize( hsScalar width, hsScalar height )
 
 //// GetDepth /////////////////////////////////////////////////////////////////
 // Get the current hither and yon.
-void plDXPipeline::GetDepth(hsScalar& hither, hsScalar& yon) const
+void plDXPipeline::GetDepth(float& hither, float& yon) const
 {
     GetViewTransform().GetDepth(hither, yon);
 }
 
 //// SetDepth /////////////////////////////////////////////////////////////////
 // Set the current hither and yon.
-void plDXPipeline::SetDepth(hsScalar hither, hsScalar yon)
+void plDXPipeline::SetDepth(float hither, float yon)
 {
     IGetViewTransform().SetDepth(hither, yon);
 }
@@ -9141,7 +9141,7 @@ void plDXPipeline::SetDepth(hsScalar hither, hsScalar yon)
 // Obsolete since we don't support the Savage4 chipset any more.
 void    plDXPipeline::ISavageYonHack()
 {
-    hsScalar yon = GetViewTransform().GetYon();
+    float yon = GetViewTransform().GetYon();
     
 
     if( ( yon > 128.f - 5.0f ) && ( yon < 128.f + 1.01f ) )
@@ -9284,7 +9284,7 @@ hsBool  plDXPipeline::IIsViewLeftHanded()
 // Given a screen space pixel position, and a world space distance from the camera, return a
 // full world space position. I.e. cast a ray through a screen pixel dist feet, and where
 // is it.
-void    plDXPipeline::ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, hsScalar dist, uint32_t strideOut, hsPoint3 *worldOut )
+void    plDXPipeline::ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, float dist, uint32_t strideOut, hsPoint3 *worldOut )
 {
     while( n-- )
     {
@@ -9978,7 +9978,7 @@ hsBool plDXPipeline::OpenAccess(plAccessSpan& dst, plDrawableSpans* drawable, co
     {
         acc.SetNumWeights(numWgts);
         acc.WeightStream(ptr, (uint16_t)stride, offset);
-        ptr += numWgts * sizeof(hsScalar);
+        ptr += numWgts * sizeof(float);
         if( grp->GetVertexFormat() & plGBufferGroup::kSkinIndices )
         {
             acc.WgtIndexStream(ptr, (uint16_t)stride, offset);
@@ -10556,8 +10556,8 @@ void plDXPipeline::LoadResources()
 // inlTESTPOINT /////////////////////////////////////////
 // Update mins and maxs if destP is outside.
 inline void inlTESTPOINT(const hsPoint3& destP, 
-                         hsScalar& minX, hsScalar& minY, hsScalar& minZ, 
-                         hsScalar& maxX, hsScalar& maxY, hsScalar& maxZ)
+                         float& minX, float& minY, float& minZ, 
+                         float& maxX, float& maxY, float& maxZ)
 {
     if( destP.fX < minX )
         minX = destP.fX;
@@ -10607,13 +10607,13 @@ void    plDXPipeline::IBlendVertsIntoBuffer( plSpan* span,
 
 //#define MF_RECALC_BOUNDS
 #ifdef MF_RECALC_BOUNDS
-    hsScalar minX = 1.e33f;
-    hsScalar minY = 1.e33f;
-    hsScalar minZ = 1.e33f;
+    float minX = 1.e33f;
+    float minY = 1.e33f;
+    float minZ = 1.e33f;
 
-    hsScalar maxX = -1.e33f;
-    hsScalar maxY = -1.e33f;
-    hsScalar maxZ = -1.e33f;
+    float maxX = -1.e33f;
+    float maxY = -1.e33f;
+    float maxZ = -1.e33f;
 #endif // MF_RECALC_BOUNDS
 
     // localUVWChans is bump mapping tangent space vectors, which need to
@@ -12240,7 +12240,7 @@ void plDXPipeline::SubmitShadowSlave(plShadowSlave* slave)
     fShadows.Insert(i, slave);
 }
 
-hsScalar blurScale = -1.f;
+float blurScale = -1.f;
 static  const int kL2NumSamples = 3; // Log2(4)
 
 // IBlurShadowMap //////////////////////////////////////////////////////////////////
@@ -12275,7 +12275,7 @@ static  const int kL2NumSamples = 3; // Log2(4)
 void plDXPipeline::IBlurShadowMap(plShadowSlave* slave)
 {
     plRenderTarget* smap = (plRenderTarget*)slave->fPipeData;
-    hsScalar scale = slave->fBlurScale;
+    float scale = slave->fBlurScale;
 
     // Find a scratch rendertarget which matches the input.
     int which = IGetScratchRenderTarget(smap);
@@ -12406,7 +12406,7 @@ void plDXPipeline::IBlurSetRenderTarget(plRenderTarget* rt)
 // Render a shadow map into a scratch render target multiple times offset slightly to create a blur
 // in the color, preserving alpha exactly. It's just rendering a single quad with slight offsets
 // in the UVW transform.
-void plDXPipeline::IRenderBlurFromShadowMap(plRenderTarget* scratchRT, plRenderTarget* smap, hsScalar scale)
+void plDXPipeline::IRenderBlurFromShadowMap(plRenderTarget* scratchRT, plRenderTarget* smap, float scale)
 {
     // Quad is set up in camera space.
     fD3DDevice->SetTransform(D3DTS_VIEW, &d3dIdentityMatrix);
@@ -12416,7 +12416,7 @@ void plDXPipeline::IRenderBlurFromShadowMap(plRenderTarget* scratchRT, plRenderT
     // Figure out how many passes we'll need.
 //  const int kNumSamples = 1 << kL2NumSamples; // HACKSAMPLE
     const int kNumSamples = mfCurrentTest > 101 ? 8 : 4;
-    int nPasses = (int)hsCeil(float(kNumSamples) / fSettings.fMaxLayersAtOnce);
+    int nPasses = (int)ceil(float(kNumSamples) / fSettings.fMaxLayersAtOnce);
     int nSamplesPerPass = kNumSamples / nPasses;
 
     // Attenuate by number of passes, to average as we sum.
@@ -13121,7 +13121,7 @@ hsBool plDXPipeline::IPushShadowCastState(plShadowSlave* slave)
     if( slave->fBlurScale > 0 )
     {
         const int kNumSamples = mfCurrentTest > 101 ? 8 : 4;
-        int nPasses = (int)hsCeil(float(kNumSamples) / fSettings.fMaxLayersAtOnce);
+        int nPasses = (int)ceil(float(kNumSamples) / fSettings.fMaxLayersAtOnce);
         int nSamplesPerPass = kNumSamples / nPasses;
         DWORD k = int(128.f / float(nSamplesPerPass));
         intens = (0xff << 24)
@@ -13324,7 +13324,7 @@ void plDXPipeline::IMakeRenderTargetPools()
     // These numbers were set with multi-player in mind, so should be reconsidered.
     // But do keep in mind that there are many things in production assets that cast
     // shadows besides the avatar.
-    plConst(hsScalar)   kCount[kMaxRenderTargetNext] = {
+    plConst(float)   kCount[kMaxRenderTargetNext] = {
         0, // 1x1
         0, // 2x2
         0, // 4x4
@@ -13645,8 +13645,8 @@ void plDXPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const 
                 // the surface casting the shadow (because they are the same object).
                 if( selfShadowNow )
                 {
-                    plConst(hsScalar) kMaxSelfPower = 0.3f;
-                    hsScalar power = fShadows[i]->fPower > kMaxSelfPower ? kMaxSelfPower : fShadows[i]->fPower;
+                    plConst(float) kMaxSelfPower = 0.3f;
+                    float power = fShadows[i]->fPower > kMaxSelfPower ? kMaxSelfPower : fShadows[i]->fPower;
                     lRef->fD3DInfo.Diffuse.r 
                         = lRef->fD3DInfo.Diffuse.g 
                         = lRef->fD3DInfo.Diffuse.b
@@ -14278,8 +14278,8 @@ void plDXPipeline::IPreprocessAvatarTextures()
         D3DVIEWPORT9 vp = {0, 0, rt->GetWidth(), rt->GetHeight(), 0.f, 1.f};
         WEAK_ERROR_CHECK(fD3DDevice->SetViewport(&vp));
 
-        hsScalar uOff = 0.5f / rt->GetWidth();
-        hsScalar vOff = 0.5f / rt->GetHeight();
+        float uOff = 0.5f / rt->GetWidth();
+        float vOff = 0.5f / rt->GetHeight();
 
         // Copy over the base
         fD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
@@ -14322,10 +14322,10 @@ void plDXPipeline::IPreprocessAvatarTextures()
                     }
                     fD3DDevice->SetRenderState(D3DRS_TEXTUREFACTOR, tint.ToARGB32());
                     fLayerState[0].fBlendFlags = uint32_t(-1);
-                    hsScalar screenW = (hsScalar)item->fElements[j]->fWidth / layout->fOrigWidth * 2.f;
-                    hsScalar screenH = (hsScalar)item->fElements[j]->fHeight / layout->fOrigWidth * 2.f;                
-                    hsScalar screenX = (hsScalar)item->fElements[j]->fXPos / layout->fOrigWidth * 2.f - 1.f;
-                    hsScalar screenY = (1.f - (hsScalar)item->fElements[j]->fYPos / layout->fOrigWidth) * 2.f - 1.f - screenH;
+                    float screenW = (float)item->fElements[j]->fWidth / layout->fOrigWidth * 2.f;
+                    float screenH = (float)item->fElements[j]->fHeight / layout->fOrigWidth * 2.f;                
+                    float screenX = (float)item->fElements[j]->fXPos / layout->fOrigWidth * 2.f - 1.f;
+                    float screenY = (1.f - (float)item->fElements[j]->fYPos / layout->fOrigWidth) * 2.f - 1.f - screenH;
                     IDrawClothingQuad(screenX, screenY, screenW, screenH, uOff, vOff, itemBufferTex);
                 }
             }
@@ -14340,8 +14340,8 @@ void plDXPipeline::IPreprocessAvatarTextures()
     fClothingOutfits.Swap(fPrevClothingOutfits);
 }
 
-void plDXPipeline::IDrawClothingQuad(hsScalar x, hsScalar y, hsScalar w, hsScalar h, 
-                                     hsScalar uOff, hsScalar vOff, plMipmap *tex)
+void plDXPipeline::IDrawClothingQuad(float x, float y, float w, float h, 
+                                     float uOff, float vOff, plMipmap *tex)
 {
     const uint32_t kVSize = sizeof(plAVTexVert);
     plDXTextureRef* ref = (plDXTextureRef*)tex->GetDeviceRef();

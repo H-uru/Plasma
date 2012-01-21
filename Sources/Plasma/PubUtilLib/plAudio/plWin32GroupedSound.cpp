@@ -79,7 +79,7 @@ plWin32GroupedSound::~plWin32GroupedSound()
     DeActivate();
 }
 
-void    plWin32GroupedSound::SetPositionArray( uint16_t numSounds, uint32_t *posArray, hsScalar *volumeArray )
+void    plWin32GroupedSound::SetPositionArray( uint16_t numSounds, uint32_t *posArray, float *volumeArray )
 {
     uint16_t  i;
 
@@ -260,12 +260,12 @@ hsBool  plWin32GroupedSound::LoadSound( hsBool is3D )
 //// GetSoundLength //////////////////////////////////////////////////////////
 //  Gets the length (in seconds) of the given sound index from the group.
 
-hsScalar    plWin32GroupedSound::GetSoundLength( int16_t soundIndex )
+float    plWin32GroupedSound::GetSoundLength( int16_t soundIndex )
 {
     plSoundBuffer *buffer = (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded();
     if(buffer)
     {
-        return (hsScalar)IGetSoundbyteLength( soundIndex ) / buffer->GetHeader().fAvgBytesPerSec;
+        return (float)IGetSoundbyteLength( soundIndex ) / buffer->GetHeader().fAvgBytesPerSec;
     }
     
     return 0;

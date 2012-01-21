@@ -264,7 +264,7 @@ void plSittingModifier::Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNo
 
 // IIsClosestAnim -------------------------------------------------------------------
 // ---------------
-bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, hsScalar &closestDist,
+bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDist,
                     hsPoint3 curPosition, const plArmatureMod *avatar)
 {
     plAGAnim *anim = avatar->FindCustomAnim(animName);
@@ -283,7 +283,7 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, hsScalar &closest
         hsMatrix44 candidateGoal = sitGoal * animEndToStart;
         hsPoint3 distP = candidateGoal.GetTranslate() - curPosition;
         hsVector3 distV(distP.fX, distP.fY, distP.fZ);
-        hsScalar dist = distP.Magnitude();
+        float dist = distP.Magnitude();
         if(closestDist == 0.0 || dist < closestDist)
         {
             closestDist = dist;
@@ -307,7 +307,7 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
     hsMatrix44 animEndToStart;
     hsMatrix44 sitGoal = seekObj->GetLocalToWorld();
     hsMatrix44 candidateGoal;
-    hsScalar closestDist = 0.0f;
+    float closestDist = 0.0f;
     uint8_t closestApproach = 0;
     hsPoint3 curPosition = avatar->GetTarget(0)->GetLocalToWorld().GetTranslate();
     char * sitAnimName = nil;

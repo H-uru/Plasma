@@ -62,15 +62,15 @@ class plDrawableSpans;
 class plLODDist
 {
 public:
-    hsScalar fMinDist;
-    hsScalar fMaxDist;
+    float fMinDist;
+    float fMaxDist;
 
-    plLODDist(hsScalar minDist, hsScalar maxDist) : fMinDist(minDist), fMaxDist(maxDist) {}
+    plLODDist(float minDist, float maxDist) : fMinDist(minDist), fMaxDist(maxDist) {}
     plLODDist() : fMinDist(0), fMaxDist(0) {}
 
     plLODDist& Set(float minDist, float maxDist) { fMinDist = minDist; fMaxDist = maxDist; return *this; }
 
-    plLODDist& operator=(int d) { fMinDist = hsScalar(d); fMaxDist = hsScalar(d); return *this; }
+    plLODDist& operator=(int d) { fMinDist = float(d); fMaxDist = float(d); return *this; }
 
     int operator==(const plLODDist& d) const { return (fMinDist == d.fMinDist)&&(fMaxDist == d.fMaxDist); }
 

@@ -58,7 +58,7 @@ public:
     };
     static      plMipmap* QikBumpMap(plMipmap* dst, const plMipmap* src, uint32_t mask, uint32_t flags);
 
-    static      plMipmap* QikNormalMap(plMipmap* dst, const plMipmap* src, uint32_t mask, uint32_t flags, hsScalar smooth=1.f); // higher smooth means less bumpy, valid range [0..inf].
+    static      plMipmap* QikNormalMap(plMipmap* dst, const plMipmap* src, uint32_t mask, uint32_t flags, float smooth=1.f); // higher smooth means less bumpy, valid range [0..inf].
 
     static      plMipmap* TwosCompToBias(plMipmap* dst);
     static      plMipmap* MakeCompatibleBlank(const plMipmap* src);

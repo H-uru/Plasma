@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool      plListener::fPrintDbgInfo = false;
 
-hsBool plListener::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plListener::IEval(double secs, float del, uint32_t dirty)
 {
 //  if (!plgAudioSys::Active())
 //      return true;

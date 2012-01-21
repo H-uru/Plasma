@@ -96,7 +96,7 @@ public:
     {
         int32_t       fIntNumber;
 
-        hsScalar    fFloatNumber;
+        float    fFloatNumber;
 
         hsBool      fBool;
 
@@ -227,7 +227,7 @@ public:
         fValueType = kInt;
         datarecord.fIntNumber = number;
     }
-    void SetToFloat(hsScalar number)
+    void SetToFloat(float number)
     {
         SetToNone();
         fValueType = kFloat;

@@ -405,7 +405,7 @@ hsBool plDrawableSpans::IBoundsInvalid(const hsBounds3Ext& bnd) const
     int i;
     for( i = 0; i < 3; i++ )
     {
-        const hsScalar kLimit(1.e5f);
+        const float kLimit(1.e5f);
 
         if( bnd.GetMaxs()[i] > kLimit )
             return true;
@@ -1512,7 +1512,7 @@ hsGMaterial* plDrawableSpans::GetSubMaterial(int index) const
 }
 
 // return true if span invisible before minDist and/or after maxDist
-hsBool plDrawableSpans::GetSubVisDists(int index, hsScalar& minDist, hsScalar& maxDist) const
+hsBool plDrawableSpans::GetSubVisDists(int index, float& minDist, float& maxDist) const
 {
     return (minDist = fSpans[index]->GetMinDist()) < (maxDist = fSpans[index]->GetMaxDist());
 }
@@ -1540,7 +1540,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     uint32_t              numTris;
     int                 i;
     hsMatrix44          w2cMatrix = pipe->GetWorldToCamera() * pipe->GetLocalToWorld();
-    hsScalar            dist;
+    float            dist;
 
     ICheckSpanForSortable(index);
 
@@ -1566,7 +1566,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     plProfile_BeginLap(FaceSort, "1");
 
     hsVector3 vec(w2cMatrix.fMap[2][0], w2cMatrix.fMap[2][1], w2cMatrix.fMap[2][2]);
-    hsScalar trans = w2cMatrix.fMap[2][3];
+    float trans = w2cMatrix.fMap[2][3];
 
     // Fill out the radix sort elements with our data
     for( i = 0; i < numTris; i++ )
@@ -1720,7 +1720,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
         int j;
         for( j = 0; j < nTris; j++ )
         {
-            hsScalar dist = -(viewPos - list[j].fCenter).MagnitudeSquared();
+            float dist = -(viewPos - list[j].fCenter).MagnitudeSquared();
             elem[cnt].fKey.fFloat = dist;
             elem[cnt].fBody = &list[j];
             elem[cnt].fNext = elem + cnt + 1;
@@ -1919,7 +1919,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
             int j;
             for( j = 0; j < nTris; j++ )
             {
-                hsScalar dist = -(viewPos - list[j].fCenter).MagnitudeSquared();
+                float dist = -(viewPos - list[j].fCenter).MagnitudeSquared();
                 elem[cnt].fKey.fFloat = dist;
                 elem[cnt].fBody = &list[j];
                 elem[cnt].fNext = elem + cnt + 1;
@@ -2113,7 +2113,7 @@ void plDrawableSpans::SortVisibleSpansUnit(const hsTArray<int16_t>& visList, plP
         uint16_t      fIndex0;
         uint16_t      fIndex1;
         uint16_t      fIndex2;
-        hsScalar    fDist;
+        float    fDist;
     };
     static hsLargeArray<sortFace>   sortList;
 
@@ -2126,7 +2126,7 @@ void plDrawableSpans::SortVisibleSpansUnit(const hsTArray<int16_t>& visList, plP
     };
     hsPoint3 viewPos = fSpans[visList[0]]->fWorldToLocal * pipe->GetViewPositionWorld();
 
-            hsScalar dist1 = (fViewPos - face1->fCenter).MagnitudeSquared();
+            float dist1 = (fViewPos - face1->fCenter).MagnitudeSquared();
 
     // First figure out the total number of tris to deal with.
     sortList.SetCount(0);

@@ -287,8 +287,8 @@ hsBool hsMaterialConverter::PreserveUVOffset(Mtl* mtl)
 void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
 {
     const int numKeys = 2;
-    hsScalar times[] = {0.f, 1.5f};
-    hsScalar values[numKeys] = {100.f, 0.f};
+    float times[] = {0.f, 1.5f};
+    float values[numKeys] = {100.f, 0.f};
     hsBool leaving[] = {true, false};
     char *animName = "_link_anim";
 
@@ -304,7 +304,7 @@ void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
         sprintf(suff, "%d", k);
         
         opaCtl = TRACKED_NEW plLeafController;
-        opaCtl->QuickScalarController(numKeys, times, values, sizeof(hsScalar));
+        opaCtl->QuickScalarController(numKeys, times, values, sizeof(float));
         animLayer = TRACKED_NEW plLayerLinkAnimation;
         animLayer->SetLinkKey(node->GetAvatarSO()->GetKey());
         //animLayer->fLeavingAge = leaving[x];
@@ -1344,9 +1344,9 @@ hsGMaterial *hsMaterialConverter::IAddDefaultMaterial(plMaxNode *node)
     hsgResMgr::ResMgr()->NewKey(TSTR(hMat->GetKeyName()) + TSTR("_DefLay"), layer, loc);
 
     DWORD color = node->GetWireColor();
-    hsScalar r = hsScalar(GetRValue(color)) / 255.f;
-    hsScalar g = hsScalar(GetGValue(color)) / 255.f;
-    hsScalar b = hsScalar(GetBValue(color)) / 255.f;
+    float r = float(GetRValue(color)) / 255.f;
+    float g = float(GetGValue(color)) / 255.f;
+    float b = float(GetBValue(color)) / 255.f;
     layer->SetRuntimeColor(hsColorRGBA().Set(r, g, b, 1.f));
     layer->SetPreshadeColor(hsColorRGBA().Set(r, g, b, 1.f));
     layer->SetOpacity(1.f);
@@ -1793,8 +1793,8 @@ hsGMaterial *hsMaterialConverter::IProcessParticleMtl(Mtl *mtl, plMaxNode *node,
         baseLay->SetSpecularColor( hsColorRGBA().Set(0,0,0,1.f) );
         baseLay->SetSpecularPower( 0 );
 
-        baseLay->SetAmbientColor(hsColorRGBA().Set(amb.r, amb.g, amb.b, hsScalar1));
-        baseLay->SetRuntimeColor(hsColorRGBA().Set(col.r, col.g, col.b, hsScalar1));
+        baseLay->SetAmbientColor(hsColorRGBA().Set(amb.r, amb.g, amb.b, 1.f));
+        baseLay->SetRuntimeColor(hsColorRGBA().Set(col.r, col.g, col.b, 1.f));
         baseLay->SetPreshadeColor(hsColorRGBA().Set(0.f,0.f,0.f,1.f));
         baseLay->SetOpacity( opac );        // Don't scale the material color by this if we're add blending; do that later
 
@@ -1870,8 +1870,8 @@ void ISetDefaultAnim(plPassMtlBase* mtl, plAnimTimeConvert& tc, SegmentMap* segM
     if (mtl->GetLoop())
     {
         // Default to the entire anim
-        hsScalar loopStart = tc.GetBegin();
-        hsScalar loopEnd = tc.GetEnd();
+        float loopStart = tc.GetBegin();
+        float loopEnd = tc.GetEnd();
 
         // If there's a loop, use it
         const char *loopName = mtl->GetAnimLoopName();
@@ -1885,7 +1885,7 @@ void ISetDefaultAnim(plPassMtlBase* mtl, plAnimTimeConvert& tc, SegmentMap* segM
         tc.Loop(false);
 }
 
-void StuffStopPoints(SegmentMap *segMap, hsTArray<hsScalar> &out)
+void StuffStopPoints(SegmentMap *segMap, hsTArray<float> &out)
 {
     if (segMap == nil)
         return;
@@ -2111,7 +2111,7 @@ plLayerInterface* IProcessAnimation(plPassMtlBase *mtl, plMaxNode *node, const c
 {
     hsControlConverter& cc = hsControlConverter::Instance();
 
-    hsScalar maxLength = 0;
+    float maxLength = 0;
     //
     // Look for animations. These will get tacked onto the base pass layer
     Control *maxColCtl = mtl->GetPreshadeColorController();
@@ -2451,13 +2451,13 @@ hsBool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hs
 
         if (baseLay->GetShadeFlags() & hsGMatState::kShadeSpecular) 
         {
-            baseLay->SetSpecularColor( hsColorRGBA().Set( specColor.r, specColor.g, specColor.b, hsScalar1 ) );
+            baseLay->SetSpecularColor( hsColorRGBA().Set( specColor.r, specColor.g, specColor.b, 1.f ) );
             baseLay->SetSpecularPower(shine);
         }
 
-        baseLay->SetAmbientColor(hsColorRGBA().Set(amb.r, amb.g, amb.b, hsScalar1));
-        baseLay->SetPreshadeColor(hsColorRGBA().Set(col.r, col.g, col.b, hsScalar1));
-        baseLay->SetRuntimeColor(hsColorRGBA().Set(runDif.r, runDif.g, runDif.b, hsScalar1));
+        baseLay->SetAmbientColor(hsColorRGBA().Set(amb.r, amb.g, amb.b, 1.f));
+        baseLay->SetPreshadeColor(hsColorRGBA().Set(col.r, col.g, col.b, 1.f));
+        baseLay->SetRuntimeColor(hsColorRGBA().Set(runDif.r, runDif.g, runDif.b, 1.f));
         baseLay->SetOpacity( opac );        // Don't scale the material color by this if we're add blending; do that later
 
         uint32_t blendType = 0;
@@ -2550,13 +2550,13 @@ hsBool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hs
 
                 if (hLay->GetShadeFlags() & hsGMatState::kShadeSpecular) 
                 {
-                    hLay->SetSpecularColor( hsColorRGBA().Set( specColor.r, specColor.g, specColor.b, hsScalar1 ) );
+                    hLay->SetSpecularColor( hsColorRGBA().Set( specColor.r, specColor.g, specColor.b, 1.f ) );
                     hLay->SetSpecularPower(shine);
                 }
 
-                hLay->SetAmbientColor(hsColorRGBA().Set(amb.r, amb.g, amb.b, hsScalar1));
-                hLay->SetPreshadeColor(hsColorRGBA().Set(col.r, col.g, col.b, hsScalar1));
-                hLay->SetRuntimeColor(hsColorRGBA().Set(runDif.r, runDif.g, runDif.b, hsScalar1));
+                hLay->SetAmbientColor(hsColorRGBA().Set(amb.r, amb.g, amb.b, 1.f));
+                hLay->SetPreshadeColor(hsColorRGBA().Set(col.r, col.g, col.b, 1.f));
+                hLay->SetRuntimeColor(hsColorRGBA().Set(runDif.r, runDif.g, runDif.b, 1.f));
                 hLay->SetOpacity( opac );
 
                 if( IsBumpLayer(texMap) || IsBumpMtl( mtl ) )
@@ -2713,7 +2713,7 @@ hsBool hsMaterialConverter::IUVGenHasDynamicScale(plMaxNode* node, StdUVGen *uvG
     hsGuardEnd; 
 }
 
-void hsMaterialConverter::IScaleLayerOpacity(plLayer* hLay, hsScalar scale)
+void hsMaterialConverter::IScaleLayerOpacity(plLayer* hLay, float scale)
 {
     hsGuardBegin("hsMaterialConverter::IScaleLayerOpacity");
 
@@ -2724,7 +2724,7 @@ void hsMaterialConverter::IScaleLayerOpacity(plLayer* hLay, hsScalar scale)
             hLay->SetBlendFlags(hLay->GetBlendFlags() | hsGMatState::kBlendAlpha);
         }
 
-        hsScalar opac = hLay->GetOpacity();
+        float opac = hLay->GetOpacity();
         opac *= scale;
         hLay->SetOpacity(scale);
     }
@@ -2894,7 +2894,7 @@ static float IClampToRange(float v, float lo, float hi)
     return v;
 }
 
-uint32_t hsMaterialConverter::IGetOpacityRanges(plMaxNode* node, Texmap* texMap, hsScalar& tr0, hsScalar& op0, hsScalar& op1, hsScalar& tr1)
+uint32_t hsMaterialConverter::IGetOpacityRanges(plMaxNode* node, Texmap* texMap, float& tr0, float& op0, float& op1, float& tr1)
 {
     if( node->HasFade() )
     {
@@ -2984,7 +2984,7 @@ uint32_t hsMaterialConverter::IGetOpacityRanges(plMaxNode* node, Texmap* texMap,
     }
     if( tr0 > tr1 )
     {
-        hsScalar t;
+        float t;
         t = tr0;
         tr0 = tr1;
         tr1 = t;
@@ -3010,16 +3010,16 @@ uint32_t hsMaterialConverter::IGetOpacityRanges(plMaxNode* node, Texmap* texMap,
         break;
     case kFunkyNormal:
     case kFunkyUp:
-        tr0 = hsCosine(hsScalarDegToRad(tr0));
-        op0 = hsCosine(hsScalarDegToRad(op0));
-        op1 = hsCosine(hsScalarDegToRad(op1));
-        tr1 = hsCosine(hsScalarDegToRad(tr1));
+        tr0 = cos(hsDegreesToRadians(tr0));
+        op0 = cos(hsDegreesToRadians(op0));
+        op1 = cos(hsDegreesToRadians(op1));
+        tr1 = cos(hsDegreesToRadians(tr1));
         break;
     case kFunkyReflect:
-        tr0 = hsCosine(hsScalarDegToRad(tr0));
-        op0 = hsCosine(hsScalarDegToRad(op0));
-        op1 = hsCosine(hsScalarDegToRad(op1));
-        tr1 = hsCosine(hsScalarDegToRad(tr1));
+        tr0 = cos(hsDegreesToRadians(tr0));
+        op0 = cos(hsDegreesToRadians(op0));
+        op1 = cos(hsDegreesToRadians(op1));
+        tr1 = cos(hsDegreesToRadians(tr1));
         break;
     }
     return funkyType;
@@ -3267,14 +3267,14 @@ void hsMaterialConverter::IAppendWetLayer(plMaxNode* node, hsGMaterial* mat)
 
 }
 
-hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, int iSubMtl, hsScalar& minDist, hsScalar& maxDist)
+hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, int iSubMtl, float& minDist, float& maxDist)
 {
     const char* dbgNodeName = node->GetName();
     const char* dbgMatName = node->GetMtl() ? node->GetMtl()->GetName() : "Dunno";
 
     if( node->HasFade() )
     {
-        const hsScalar kMaxMaxDist = 1.e10f;
+        const float kMaxMaxDist = 1.e10f;
         Box3 fade = node->GetFade();
         minDist = maxDist = 0;
         if( fade.Min()[2] < 0 )
@@ -3300,7 +3300,7 @@ hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, int iSubMtl, hsScalar& 
     return HasVisDists(node, mtl, minDist, maxDist);
 }
 
-hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, Mtl* mtl, hsScalar& minDist, hsScalar& maxDist)
+hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, Mtl* mtl, float& minDist, float& maxDist)
 {
     const char* dbgNodeName = node->GetName();
     const char* dbgMatName = node->GetMtl() ? node->GetMtl()->GetName() : "Dunno";
@@ -3328,7 +3328,7 @@ hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, Mtl* mtl, hsScalar& min
         hsBool baseFunky = false;
         hsBool topFunky = true;
         plPassMtl* passMtl = (plPassMtl*)mtl;
-        hsScalar tr0, op0, op1, tr1;
+        float tr0, op0, op1, tr1;
         uint32_t funkyType = IGetOpacityRanges(node, mtl->GetSubTexmap(0), tr0, op0, op1, tr1);
 
         if( kFunkyDistance == (funkyType & kFunkyMask) )
@@ -3375,7 +3375,7 @@ hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, Mtl* mtl, hsScalar& min
         int i;
         for( i = 0; i < mtl->NumSubMtls(); i++ )
         {
-            hsScalar minD, maxD;
+            float minD, maxD;
             if( !HasVisDists(node, mtl->GetSubMtl(i), minD, maxD) )
                 return false;
 
@@ -3995,22 +3995,22 @@ BMM_Color_64 hsMaterialConverter::ICubeSample(Bitmap *bitmap[6], double phi, dou
     }
     else
     {
-        if( (theta <= (hsScalarPI / 2.0 - hsScalarPI/4.0))
-            ||(theta >= (hsScalarPI * 2.0 - hsScalarPI/4.0)) )
+        if( (theta <= (M_PI / 2.0 - M_PI/4.0))
+            ||(theta >= (M_PI * 2.0 - M_PI/4.0)) )
         {
             map = bitmap[VIEW_FR];
             xMap = x / y;
             yMap = -z / y;
         }
         else
-        if( theta <= (hsScalarPI - hsScalarPI/4.0) )
+        if( theta <= (M_PI - M_PI/4.0) )
         {
             map = bitmap[VIEW_LF];
             xMap = -y / x;
             yMap = -z / x;
         }
         else
-        if( theta <= (hsScalarPI * 3.0/2.0 - hsScalarPI/4.0) )
+        if( theta <= (M_PI * 3.0/2.0 - M_PI/4.0) )
         {
             map = bitmap[VIEW_BK];
             xMap = x / y;

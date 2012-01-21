@@ -365,8 +365,8 @@ hsBool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     int deg = fCompPB->GetInt(kClickableDegrees);
     if (deg > 180)
         deg = 180;
-    hsScalar rad = hsScalarDegToRad(deg);
-    facingCond->SetTolerance(hsCosine(rad));
+    float rad = hsDegreesToRadians(deg);
+    facingCond->SetTolerance(cos(rad));
     plKey facingKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), facingCond, loc);
     
     detector->AddLogicObj(logicKey);     // send messages to this logic component

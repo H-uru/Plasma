@@ -92,9 +92,9 @@ class plMipmap : public plBitmap
 
         plMipmap();
         plMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels = 0, uint8_t compType = kUncompressed, uint8_t format = UncompressedInfo::kRGB8888 );
-        plMipmap( plMipmap *bm, hsScalar sig, uint32_t createFlags, 
-                            hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                            hsScalar detailMax, hsScalar detailMin );
+        plMipmap( plMipmap *bm, float sig, uint32_t createFlags, 
+                            float detailDropoffStart, float detailDropoffStop, 
+                            float detailMax, float detailMin );
         virtual ~plMipmap();
 
         CLASSNAME_REGISTER( plMipmap );
@@ -210,20 +210,20 @@ class plMipmap : public plBitmap
             kAlphaDataRLE   = 0x2
         };
 
-        void    SetBitmapAsLevel(uint8_t iDst, plMipmap *bm, hsScalar sig, uint32_t createFlags, 
-                                              hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                              hsScalar detailMax, hsScalar detailMin);
+        void    SetBitmapAsLevel(uint8_t iDst, plMipmap *bm, float sig, uint32_t createFlags, 
+                                              float detailDropoffStart, float detailDropoffStop, 
+                                              float detailMax, float detailMin);
         void    ICreateLevelNoDetail(uint8_t iDst, const plFilterMask& mask);
         void    IBlendLevelDetailAlpha(uint8_t iDst, const plFilterMask& mask, 
-                                          hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                          hsScalar detailMax, hsScalar detailMin);
+                                          float detailDropoffStart, float detailDropoffStop, 
+                                          float detailMax, float detailMin);
         void    IBlendLevelDetailAdd(uint8_t iDst, const plFilterMask& mask, 
-                                          hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                          hsScalar detailMax, hsScalar detailMin);
+                                          float detailDropoffStart, float detailDropoffStop, 
+                                          float detailMax, float detailMin);
         void    IBlendLevelDetailMult(uint8_t iDst, const plFilterMask& mask, 
-                                          hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                          hsScalar detailMax, hsScalar detailMin);
-        void    Filter(hsScalar sig);
+                                          float detailDropoffStart, float detailDropoffStop, 
+                                          float detailMax, float detailMin);
+        void    Filter(float sig);
         uint32_t  CopyOutPixels(uint32_t destXSize, uint32_t destYSize, uint32_t dstFormat, void *destPixels, uint32_t copyOptions);
 
         void    ClipToMaxSize( uint32_t maxDimension );
@@ -247,15 +247,15 @@ class plMipmap : public plBitmap
                 uint16_t      fFlags;
                 uint8_t       fSrcLevelsToSkip;
                 uint8_t       fOpacity;
-                hsScalar    fRedTint, fGreenTint, fBlueTint;
+                float    fRedTint, fGreenTint, fBlueTint;
                 uint16_t      fSrcClipX, fSrcClipY;           // Clipping is applied AFTER levelSkip
                 uint16_t      fSrcClipWidth, fSrcClipHeight;  // 0 means max width/height
 
                 CompositeOptions() { fFlags = 0; fSrcLevelsToSkip = 0; fRedTint = fGreenTint = fBlueTint = 1.f;
                                     fSrcClipX = fSrcClipY = fSrcClipWidth = fSrcClipHeight = 0; fOpacity = 255;}
 
-                CompositeOptions( uint16_t flags, uint8_t srcLevelsToSkip = 0, hsScalar red = 1.f, hsScalar green = 1.f,
-                                    hsScalar blue = 1.f, uint16_t srcClipX = 0, uint16_t srcClipY = 0, 
+                CompositeOptions( uint16_t flags, uint8_t srcLevelsToSkip = 0, float red = 1.f, float green = 1.f,
+                                    float blue = 1.f, uint16_t srcClipX = 0, uint16_t srcClipY = 0, 
                                     uint16_t srcClipWidth = 0, uint16_t srcClipHeight = 0, uint8_t opacity = 255 ) 
                 {
                     fFlags = flags;
@@ -311,7 +311,7 @@ class plMipmap : public plBitmap
 
         void    IColorLevel( uint8_t level, const uint8_t *colorMask );
 
-        hsScalar    IGetDetailLevelAlpha( uint8_t level, hsScalar dropStart, hsScalar dropStop, hsScalar min, hsScalar max );
+        float    IGetDetailLevelAlpha( uint8_t level, float dropStart, float dropStop, float min, float max );
 
         void        ICarryZeroAlpha(uint8_t iDst);
         void        ICarryColor(uint8_t iDst, uint32_t col);

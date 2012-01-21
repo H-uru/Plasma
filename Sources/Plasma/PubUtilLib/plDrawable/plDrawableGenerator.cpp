@@ -94,7 +94,7 @@ void    plDrawableGenerator::IQuickShadeVerts( uint32_t count, hsVector3 *normal
         scale = ( normals[ count ] * lightDir );
         // pretend there are two opposing directional lights, but the
         // one pointing downish is a little stronger.
-        const hsScalar kReverseLight = -0.8f;
+        const float kReverseLight = -0.8f;
         if( scale < 0 )
             scale = kReverseLight * scale;
         colors[ count ] = fLiteColor * scale + fDarkColor * ( 1.f - scale );
@@ -286,11 +286,11 @@ plDrawableSpans *plDrawableGenerator::GenerateDrawable( uint32_t vertCount, hsPo
 
 //// GenerateSphericalDrawable ///////////////////////////////////////////////
 
-plDrawableSpans     *plDrawableGenerator::GenerateSphericalDrawable( const hsPoint3& pos, hsScalar radius, hsGMaterial *material, 
+plDrawableSpans     *plDrawableGenerator::GenerateSphericalDrawable( const hsPoint3& pos, float radius, hsGMaterial *material, 
                                                                     const hsMatrix44 &localToWorld, hsBool blended,
                                                                     const hsColorRGBA* multColor,
                                                                     hsTArray<uint32_t> *retIndex, plDrawableSpans *toAddTo, 
-                                                                    hsScalar qualityScalar )
+                                                                    float qualityScalar )
 {
     hsTArray<hsPoint3>      points;
     hsTArray<hsVector3>     normals;
@@ -314,13 +314,13 @@ plDrawableSpans     *plDrawableGenerator::GenerateSphericalDrawable( const hsPoi
     /// Generate points
     for( i = 0; i <= numDivisions; i++ )
     {
-        angle = (float)i * ( hsScalarPI ) / (float)numDivisions;
+        angle = (float)i * ( M_PI ) / (float)numDivisions;
         hsFastMath::SinCosInRange( angle, internRad, z );
         internRad *= radius;
                 
         for( j = 0; j < numDivisions; j++ )
         {
-            angle = (float)j * ( 2 * hsScalarPI ) / (float)numDivisions;
+            angle = (float)j * ( 2 * M_PI ) / (float)numDivisions;
             hsFastMath::SinCosInRange( angle, x, y );
 
             point.Set( pos.fX + x * internRad, pos.fY + y * internRad, pos.fZ + z * radius );
@@ -367,7 +367,7 @@ plDrawableSpans     *plDrawableGenerator::GenerateSphericalDrawable( const hsPoi
 
 //// GenerateBoxDrawable /////////////////////////////////////////////////////
 
-plDrawableSpans     *plDrawableGenerator::GenerateBoxDrawable( hsScalar width, hsScalar height, hsScalar depth, 
+plDrawableSpans     *plDrawableGenerator::GenerateBoxDrawable( float width, float height, float depth, 
                                                                 hsGMaterial *material, const hsMatrix44 &localToWorld, hsBool blended,
                                                                 const hsColorRGBA* multColor,
                                                                 hsTArray<uint32_t> *retIndex, plDrawableSpans *toAddTo )
@@ -537,7 +537,7 @@ plDrawableSpans     *plDrawableGenerator::GenerateBoundsDrawable( hsBounds3Ext *
 
 //// GenerateConicalDrawable /////////////////////////////////////////////////
 
-plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( hsScalar radius, hsScalar height, hsGMaterial *material, 
+plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( float radius, float height, hsGMaterial *material, 
                                                                     const hsMatrix44 &localToWorld, hsBool blended,
                                                                     const hsColorRGBA* multColor,
                                                                     hsTArray<uint32_t> *retIndex, plDrawableSpans *toAddTo )
@@ -555,7 +555,7 @@ plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( hsScalar radi
 
 //// GenerateConicalDrawable /////////////////////////////////////////////////
 
-plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( hsPoint3 &apex, hsVector3 &direction, hsScalar radius, hsGMaterial *material, 
+plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( hsPoint3 &apex, hsVector3 &direction, float radius, hsGMaterial *material, 
                                                                     const hsMatrix44 &localToWorld, hsBool blended,
                                                                     const hsColorRGBA* multColor,
                                                                     hsTArray<uint32_t> *retIndex, plDrawableSpans *toAddTo )
@@ -604,7 +604,7 @@ plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( hsPoint3 &ape
     normals.Append( -direction );
     for( i = 0; i < numDivisions; i++ )
     {
-        angle = (float)i * ( hsScalarPI * 2.f ) / (float)numDivisions;
+        angle = (float)i * ( M_PI * 2.f ) / (float)numDivisions;
         hsFastMath::SinCosInRange( angle, x, y );
 
         points.Append( baseCenter + ( xVec * x * radius ) + ( yVec * y * radius ) );

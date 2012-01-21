@@ -58,22 +58,22 @@ class ParticleStats
 {   
 
 public:
-    hsScalar    fConeAngle;
-    hsScalar    fVelocityMin;
-    hsScalar    fVelocityMax;
-    hsScalar    fLifeMin;
-    hsScalar    fLifeMax;
-    hsScalar    fPPS;
-    hsScalar    fScaleMin;
-    hsScalar    fScaleMax;
-    hsScalar    fGravity;
-    hsScalar    fDrag;
-    hsScalar    fWindMult;
-    hsScalar    fMassRange;
-    hsScalar    fRotRange;
-    hsScalar    fPreSim;
-    hsScalar    fHSize;
-    hsScalar    fVSize;
+    float    fConeAngle;
+    float    fVelocityMin;
+    float    fVelocityMax;
+    float    fLifeMin;
+    float    fLifeMax;
+    float    fPPS;
+    float    fScaleMin;
+    float    fScaleMax;
+    float    fGravity;
+    float    fDrag;
+    float    fWindMult;
+    float    fMassRange;
+    float    fRotRange;
+    float    fPreSim;
+    float    fHSize;
+    float    fVSize;
     uint32_t      fGenType;
     uint32_t      fXTiles;
     uint32_t      fYTiles;

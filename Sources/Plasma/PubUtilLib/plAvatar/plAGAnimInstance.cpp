@@ -91,7 +91,7 @@ extern const char *gGlobalChannelName = nil;
 // ctor -------------------------------------------------------------------
 // -----
 plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
-                                   hsScalar blend, uint16_t blendPriority, hsBool cache,
+                                   float blend, uint16_t blendPriority, hsBool cache,
                                    bool useAmplitude)
 : fAnimation(anim),
   fMaster(master),
@@ -214,7 +214,7 @@ void plAGAnimInstance::IRegisterDetach(const char *channelName, plAGChannel *cha
 
 // SetCurrentTime ---------------------------------------------------------------
 // ---------------
-void plAGAnimInstance::SetCurrentTime(hsScalar localT, hsBool jump /* = false */)
+void plAGAnimInstance::SetCurrentTime(float localT, hsBool jump /* = false */)
 {
     if (fTimeConvert)
         fTimeConvert->SetCurrentAnimTime(localT, jump);
@@ -222,11 +222,11 @@ void plAGAnimInstance::SetCurrentTime(hsScalar localT, hsBool jump /* = false */
 
 // SeekRelative ------------------------------------
 // -------------
-void plAGAnimInstance::SeekRelative (hsScalar delta, hsBool jump)
+void plAGAnimInstance::SeekRelative (float delta, hsBool jump)
 {
     if(fTimeConvert)
     {
-        hsScalar now = fTimeConvert->CurrentAnimTime();
+        float now = fTimeConvert->CurrentAnimTime();
         fTimeConvert->SetCurrentAnimTime (now + delta, jump);
     }
 }
@@ -281,7 +281,7 @@ void plAGAnimInstance::DetachChannels()
 
 // SetBlend ---------------------------------------
 // ---------
-hsScalar plAGAnimInstance::SetBlend(hsScalar blend)
+float plAGAnimInstance::SetBlend(float blend)
 {
     float oldBlend = fBlend.Value(0.0, true);
     if(oldBlend != blend &&
@@ -298,14 +298,14 @@ hsScalar plAGAnimInstance::SetBlend(hsScalar blend)
 
 // GetBlend -------------------------
 // ---------
-hsScalar plAGAnimInstance::GetBlend()
+float plAGAnimInstance::GetBlend()
 {
     return fBlend.Value(0);
 }
 
 // SetAmplitude -------------------------------------
 // -------------
-hsScalar plAGAnimInstance::SetAmplitude(hsScalar amp)
+float plAGAnimInstance::SetAmplitude(float amp)
 {
     if(fAmplitude.Get() != -1.0f)
     {
@@ -316,7 +316,7 @@ hsScalar plAGAnimInstance::SetAmplitude(hsScalar amp)
 
 // GetAmplitude -------------------------
 // -------------
-hsScalar plAGAnimInstance::GetAmplitude()
+float plAGAnimInstance::GetAmplitude()
 {
     return fAmplitude.Value(0);
 }
@@ -431,10 +431,10 @@ void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
 
 // ProcessFade -------------------------------------
 // ------------
-void plAGAnimInstance::ProcessFade(hsScalar elapsed)
+void plAGAnimInstance::ProcessFade(float elapsed)
 {
     if (fFadeBlend) {
-        hsScalar newBlend = ICalcFade(fFadeBlend, GetBlend(), fFadeBlendGoal, fFadeBlendRate, elapsed);
+        float newBlend = ICalcFade(fFadeBlend, GetBlend(), fFadeBlendGoal, fFadeBlendRate, elapsed);
         SetBlend(newBlend);
         if(fFadeDetach && (newBlend == fFadeBlendGoal) && (fFadeBlendGoal == 0.0f) )
         {
@@ -444,19 +444,19 @@ void plAGAnimInstance::ProcessFade(hsScalar elapsed)
     }
 
     if (fFadeAmp && fAmplitude.Get() != -1.0f) {
-        hsScalar curAmp = GetAmplitude();
-        hsScalar newAmp = ICalcFade(fFadeAmp, curAmp, fFadeAmpGoal, fFadeAmpRate, elapsed);
+        float curAmp = GetAmplitude();
+        float newAmp = ICalcFade(fFadeAmp, curAmp, fFadeAmpGoal, fFadeAmpRate, elapsed);
         SetAmplitude(newAmp);
     }
 }
 
 // ICalcFade ---------------------------------------------------------------------
 // ----------
-hsScalar plAGAnimInstance::ICalcFade(hsBool &fade, hsScalar curVal, hsScalar goal,
-                                     hsScalar rate, hsScalar elapsed)
+float plAGAnimInstance::ICalcFade(hsBool &fade, float curVal, float goal,
+                                     float rate, float elapsed)
 {
-    hsScalar newVal;
-    hsScalar curStep = rate * elapsed;
+    float newVal;
+    float curStep = rate * elapsed;
     if(rate > 0) {
         newVal = std::min(goal, curVal + curStep);
     } else {
@@ -473,21 +473,21 @@ hsScalar plAGAnimInstance::ICalcFade(hsBool &fade, hsScalar curVal, hsScalar goa
 
 // FadeAndDetach -------------------------------------------------
 // --------------
-void plAGAnimInstance::FadeAndDetach(hsScalar goal, hsScalar rate)
+void plAGAnimInstance::FadeAndDetach(float goal, float rate)
 {
     ISetupFade(goal, rate, true, kFadeBlend);
 }
 
 // Fade --------------------------------------------------------------------------------
 // -----
-void plAGAnimInstance::Fade(hsScalar goal, hsScalar rate, uint8_t type /* = kFadeBlend */)
+void plAGAnimInstance::Fade(float goal, float rate, uint8_t type /* = kFadeBlend */)
 {
     ISetupFade(goal, rate, false, type);
 }
 
 // ISetupFade --------------------------------------------------------------------------
 // -----------
-void plAGAnimInstance::ISetupFade(hsScalar goal, hsScalar rate, bool detach, uint8_t type)
+void plAGAnimInstance::ISetupFade(float goal, float rate, bool detach, uint8_t type)
 {
     if (rate == 0)
     {
@@ -509,7 +509,7 @@ void plAGAnimInstance::ISetupFade(hsScalar goal, hsScalar rate, bool detach, uin
 
     rate = (rate > 0 ? rate : -rate); // For old code that sends negative values
     
-    hsScalar curVal = 0;
+    float curVal = 0;
     switch (type)
     {
     case kFadeBlend:

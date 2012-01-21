@@ -146,7 +146,7 @@ hsBool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t heigh
     // Create a render request and render request message
     plCaptureRenderRequest* req = TRACKED_NEW plCaptureRenderRequest;
 
-    const hsScalar pri(-100.f);
+    const float pri(-100.f);
     req->SetPriority(pri);
 
     req->SetRenderTarget(rt);

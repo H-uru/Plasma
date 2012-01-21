@@ -370,9 +370,7 @@ int plUnifiedTime::GetMillis() const
 #pragma optimize( "g", off )    // disable global optimizations
 double plUnifiedTime::GetSecsDouble() const
 {
-    hsDoublePrecBegin
     double ret = GetSecs() + GetMicros() / 1000000.0;
-    hsDoublePrecEnd
     return ret;
 }
 #pragma optimize( "", on )  // restore optimizations to their defaults

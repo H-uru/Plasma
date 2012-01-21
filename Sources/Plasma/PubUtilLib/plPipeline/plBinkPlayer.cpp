@@ -293,7 +293,7 @@ hsBool plBinkPlayer::ICheckFadingFrom()
 {
     if( fFadeState == kFadeFrom )
     {
-        fFadeParm = (hsScalar)((hsTimer::GetSeconds() - fFadeStart) / fFadeFromTime);
+        fFadeParm = (float)((hsTimer::GetSeconds() - fFadeStart) / fFadeFromTime);
         if( fFadeParm >= 1.f )
         {
             // We're done, go into normal mode
@@ -339,7 +339,7 @@ hsBool plBinkPlayer::ICheckFadingTo()
         }
         else
         {
-            fFadeParm = (hsScalar)((hsTimer::GetSeconds() - fFadeStart) / fFadeToTime);
+            fFadeParm = (float)((hsTimer::GetSeconds() - fFadeStart) / fFadeToTime);
             if( fFadeParm >= 1.f )
             {
                 fFadeState = kFadeNone;
@@ -485,27 +485,27 @@ void plBinkPlayer::SetColor(const hsColorRGBA& color)
     fColor = color;
 }
 
-void plBinkPlayer::SetPosition(hsScalar x, hsScalar y)
+void plBinkPlayer::SetPosition(float x, float y)
 {
     fPos.Set(x, y);
     if( fBink )
         ISetVerts();
 }
 
-void plBinkPlayer::SetScale(hsScalar x, hsScalar y)
+void plBinkPlayer::SetScale(float x, float y)
 {
     fScale.Set(x, y);
     if( fBink )
         ISetVerts();
 }
 
-hsScalar plBinkPlayer::IGetVolume(int background) const
+float plBinkPlayer::IGetVolume(int background) const
 {
     int t = background ? kBackTrack : kForeTrack;
-    return hsScalar(fVolume[t]) / hsScalar(kMaxVolume);
+    return float(fVolume[t]) / float(kMaxVolume);
 }
 
-void plBinkPlayer::ISetVolume(hsScalar v, int background)
+void plBinkPlayer::ISetVolume(float v, int background)
 {
     int track = background ? kBackTrack : kForeTrack;
     uint16_t volume;

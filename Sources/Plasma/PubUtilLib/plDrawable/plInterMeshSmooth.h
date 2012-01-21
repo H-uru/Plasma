@@ -59,7 +59,7 @@ public:
 class plInterMeshSmooth
 {
 protected:
-    hsScalar        fMinNormDot;
+    float        fMinNormDot;
 
     void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts);
     void            FindEdges(hsTArray<plSpanHandle>& sets, hsTArray<uint16_t>* edgeVerts);
@@ -71,8 +71,8 @@ protected:
 public:
     plInterMeshSmooth() : fMinNormDot(0.25f) {}
 
-    void        SetAngle(hsScalar degs);
-    hsScalar    GetAngle() const; // returns degrees
+    void        SetAngle(float degs);
+    float    GetAngle() const; // returns degrees
 
     void        SmoothNormals(hsTArray<plSpanHandle>& sets);
 };

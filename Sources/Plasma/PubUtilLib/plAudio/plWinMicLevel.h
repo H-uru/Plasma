@@ -63,10 +63,10 @@ public:
 
     ~plWinMicLevel();
     // Gets the microphone volume, range 0-1, -1 if error
-    static hsScalar GetLevel( void );
+    static float GetLevel( void );
 
     // Sets the microphone volume, range 0-1
-    static void     SetLevel( hsScalar level );
+    static void     SetLevel( float level );
 
     // Returns whether we can set the level
     static hsBool   CanSetLevel( void );

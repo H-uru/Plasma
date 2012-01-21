@@ -62,12 +62,12 @@ protected:
     };
 
     uint8_t       fType;
-    hsScalar    fView;
+    float    fView;
 
-    static hsScalar fInterestRadius;
-    static hsScalar fInterestWeight;
+    static float fInterestRadius;
+    static float fInterestWeight;
 
-    virtual hsBool IEval(double secs, hsScalar del, uint32_t dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
     
 public:
     plInterestingModifier(){ fType = kTypeInteresting;}
@@ -78,11 +78,11 @@ public:
     CLASSNAME_REGISTER( plInterestingModifier );
     GETINTERFACE_ANY( plInterestingModifier, plSingleModifier );
 
-    hsScalar GetInterestWeight() { return fInterestWeight; }
-    hsScalar GetInterestRadius() { return fInterestRadius; }
+    float GetInterestWeight() { return fInterestWeight; }
+    float GetInterestRadius() { return fInterestRadius; }
 
-    void SetInterestWeight(hsScalar _InterestRadius) { fInterestWeight =_InterestRadius; }
-    void SetInterestRadius(hsScalar _InterestWeight) { fInterestRadius =_InterestWeight; }
+    void SetInterestWeight(float _InterestRadius) { fInterestWeight =_InterestRadius; }
+    void SetInterestRadius(float _InterestWeight) { fInterestRadius =_InterestWeight; }
     
     virtual void AddTarget(plSceneObject* so);
     

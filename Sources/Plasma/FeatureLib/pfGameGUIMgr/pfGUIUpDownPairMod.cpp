@@ -119,7 +119,7 @@ pfGUIUpDownPairMod::~pfGUIUpDownPairMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIUpDownPairMod::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUIUpDownPairMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
@@ -228,13 +228,13 @@ void    pfGUIUpDownPairMod::Write( hsStream *s, hsResMgr *mgr )
 }
 
 
-void    pfGUIUpDownPairMod::SetRange( hsScalar min, hsScalar max )
+void    pfGUIUpDownPairMod::SetRange( float min, float max )
 {
     pfGUIValueCtrl::SetRange( min, max );
     IUpdate();
 }
 
-void    pfGUIUpDownPairMod::SetCurrValue( hsScalar v )
+void    pfGUIUpDownPairMod::SetCurrValue( float v )
 {
     pfGUIValueCtrl::SetCurrValue( v );
     IUpdate();

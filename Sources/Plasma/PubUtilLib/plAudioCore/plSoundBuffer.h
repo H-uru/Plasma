@@ -98,7 +98,7 @@ public:
     void        *GetData( void ) const          { return fData; }
     const char  *GetFileName( void ) const      { return fFileName; }
     hsBool      IsValid( void ) const           { return fValid; }
-    hsScalar    GetDataLengthInSecs( void ) const;
+    float    GetDataLengthInSecs( void ) const;
 
     void                SetFileName( const char *name );
     hsBool              HasFlag( uint32_t flag ) { return ( fFlags & flag ) ? true : false; }

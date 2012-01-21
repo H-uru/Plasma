@@ -233,7 +233,7 @@ void cyCamera::UndoFirstPerson()
 }
 
 
-hsScalar cyCamera::GetFOV()
+float cyCamera::GetFOV()
 {
     if ( fTheCam )
     {
@@ -250,7 +250,7 @@ hsScalar cyCamera::GetFOV()
     return 0.0;
 }
 
-void cyCamera::SetFOV(hsScalar fov, double t)
+void cyCamera::SetFOV(float fov, double t)
 {
     if ( fTheCam )
     {

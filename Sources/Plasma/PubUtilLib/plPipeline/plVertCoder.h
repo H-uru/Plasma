@@ -60,7 +60,7 @@ protected:
     class FloatCode
     {
     public:
-        hsScalar    fOffset;
+        float    fOffset;
         hsBool      fAllSame;
         uint16_t      fCount;
     };
@@ -82,7 +82,7 @@ protected:
     static uint32_t   fRawBytes;
     static uint32_t   fSkippedBytes;
 
-    inline void ICountFloats(const uint8_t* src, uint16_t maxCnt, const hsScalar quant, const uint32_t stride, hsScalar& lo, hsBool& allSame, uint16_t& count);
+    inline void ICountFloats(const uint8_t* src, uint16_t maxCnt, const float quant, const uint32_t stride, float& lo, hsBool& allSame, uint16_t& count);
     inline void IEncodeFloat(hsStream* s, const uint32_t vertsLeft, const int field, const int chan, const uint8_t*& src, const uint32_t stride);
     inline void IDecodeFloat(hsStream* s, const int field, const int chan, uint8_t*& dst, const uint32_t stride);
 

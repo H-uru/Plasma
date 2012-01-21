@@ -150,8 +150,8 @@ public:
     static hsBool       HasBumpLayer(plMaxNode* node, Mtl* mtl);
     static BitmapTex*   GetBumpLayer(plMaxNode* node, Mtl* mtl);
 
-    static hsBool       HasVisDists(plMaxNode* node, Mtl* subMtl, hsScalar& minDist, hsScalar& maxDist);
-    static hsBool       HasVisDists(plMaxNode* node, int iSubMtl, hsScalar& minDist, hsScalar& maxDist);
+    static hsBool       HasVisDists(plMaxNode* node, Mtl* subMtl, float& minDist, float& maxDist);
+    static hsBool       HasVisDists(plMaxNode* node, int iSubMtl, float& minDist, float& maxDist);
 
     static hsBool   IMustBeUniqueMaterial( Mtl *mtl );
     static hsBool   IMustBeUniqueLayer( Texmap *layer );
@@ -303,7 +303,7 @@ private:
 #endif
     // ... and so forth
     hsBool IUVGenHasDynamicScale(plMaxNode* node, StdUVGen *uvGen);
-    void IScaleLayerOpacity(plLayer* hLay, hsScalar scale);
+    void IScaleLayerOpacity(plLayer* hLay, float scale);
 
     hsGMaterial *ICheckForProjectedTexture(plMaxNode *node);
     hsGMaterial *IWrapTextureInMaterial(Texmap *texMap, plMaxNode *node);
@@ -329,7 +329,7 @@ private:
     static void             IAppendFunkyLayer(plMaxNode* node, Texmap* texMap, hsGMaterial* mat);
     static hsBool           IHasFunkyOpacity(plMaxNode* node, Texmap* texMap);
     static uint32_t           IGetFunkyType(Texmap* texMap);
-    static uint32_t           IGetOpacityRanges(plMaxNode* node, Texmap* texMap, hsScalar& tr0, hsScalar& op0, hsScalar& op1, hsScalar& tr1);
+    static uint32_t           IGetOpacityRanges(plMaxNode* node, Texmap* texMap, float& tr0, float& op0, float& op1, float& tr1);
 
     Interface           *fInterface;
     hsConverterUtils&   fConverterUtils;

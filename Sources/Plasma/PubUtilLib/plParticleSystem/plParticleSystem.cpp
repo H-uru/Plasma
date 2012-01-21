@@ -67,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plProfile_CreateCounter("Num Particles", "Particles", NumParticles);
 
-const hsScalar plParticleSystem::GRAVITY_ACCEL_FEET_PER_SEC2 = 32.0f;
+const float plParticleSystem::GRAVITY_ACCEL_FEET_PER_SEC2 = 32.0f;
 
 plParticleSystem::plParticleSystem() : fParticleSDLMod(nil), fAttachedToAvatar(false)
 {
@@ -147,7 +147,7 @@ plParticleEmitter* plParticleSystem::GetAvailEmitter()
     if( !fNumValidEmitters ) // got to start with at least one.
         return nil;
 
-    hsScalar minTTL = 1.e33;
+    float minTTL = 1.e33;
     int iMinTTL = -1;
     int i;
     for( i = 0; i < fNumValidEmitters; i++ )
@@ -217,8 +217,8 @@ uint32_t plParticleSystem::AddEmitter(uint32_t maxParticles, plParticleGenerator
 }
 
 void plParticleSystem::AddParticle(hsPoint3 &pos, hsVector3 &velocity, uint32_t tileIndex, 
-                                   hsScalar hSize, hsScalar vSize, hsScalar scale, hsScalar invMass, hsScalar life,
-                                   hsPoint3 &orientation, uint32_t miscFlags, hsScalar radsPerSec)
+                                   float hSize, float vSize, float scale, float invMass, float life,
+                                   hsPoint3 &orientation, uint32_t miscFlags, float radsPerSec)
 {
     hsAssert(fNumValidEmitters > 0, "Trying to explicitly add particles to a system with no valid emitters.");
     if (fNumValidEmitters == 0)
@@ -227,7 +227,7 @@ void plParticleSystem::AddParticle(hsPoint3 &pos, hsVector3 &velocity, uint32_t 
     fEmitters[0]->AddParticle(pos, velocity, tileIndex, hSize, vSize, scale, invMass, life, orientation, miscFlags, radsPerSec);
 }
 
-void plParticleSystem::GenerateParticles(uint32_t num, hsScalar dt /* = 0.f */)
+void plParticleSystem::GenerateParticles(uint32_t num, float dt /* = 0.f */)
 {
     if (num <= 0)
         return;
@@ -245,7 +245,7 @@ void plParticleSystem::WipeExistingParticles()
         fEmitters[i]->WipeExistingParticles();
 }
 
-void plParticleSystem::KillParticles(hsScalar num, hsScalar timeToDie, uint8_t flags)
+void plParticleSystem::KillParticles(float num, float timeToDie, uint8_t flags)
 {
     if (fEmitters[0])
         fEmitters[0]->KillParticles(num, timeToDie, flags);
@@ -332,7 +332,7 @@ const hsMatrix44 &plParticleSystem::GetLocalToWorld() const
     return fTarget->GetCoordinateInterface()->GetLocalToWorld(); 
 }
 
-hsBool plParticleSystem::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plParticleSystem::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }
@@ -367,7 +367,7 @@ hsBool plParticleSystem::IShouldUpdate(plPipeline* pipe) const
     // Now, are we visible?
     hsBool isVisible = pipe->TestVisibleWorld(wBnd);
 
-    hsScalar delta = fLastTime > 0 ? hsScalar(fCurrTime - fLastTime) : hsTimer::GetDelSysSeconds();
+    float delta = fLastTime > 0 ? float(fCurrTime - fLastTime) : hsTimer::GetDelSysSeconds();
     if( isVisible )
     {
         // If we know how fast the fastest particle is moving, then we can
@@ -382,13 +382,13 @@ hsBool plParticleSystem::IShouldUpdate(plPipeline* pipe) const
         // We're in view, but how close are we to the camera? Look at closest point.
         hsPoint2 depth;
         wBnd.TestPlane(pipe->GetViewDirWorld(), depth);
-        hsScalar eyeDist = pipe->GetViewDirWorld().InnerProduct(pipe->GetViewPositionWorld());
-        hsScalar dist = depth.fX - eyeDist;
+        float eyeDist = pipe->GetViewDirWorld().InnerProduct(pipe->GetViewPositionWorld());
+        float dist = depth.fX - eyeDist;
 
-        static hsScalar kUpdateCutoffDist = 100.f;
+        static float kUpdateCutoffDist = 100.f;
         if( dist > kUpdateCutoffDist )
         {
-            static hsScalar kDistantUpdateSecs = 0.1f;
+            static float kDistantUpdateSecs = 0.1f;
             return delta >= kDistantUpdateSecs;
         }
 #endif // ALWAYS_IF_VISIBLE
@@ -397,7 +397,7 @@ hsBool plParticleSystem::IShouldUpdate(plPipeline* pipe) const
     }
     
 
-    static hsScalar kOffscreenUpdateSecs = 1.f;
+    static float kOffscreenUpdateSecs = 1.f;
     return delta >= kOffscreenUpdateSecs;
 }
 
@@ -419,10 +419,10 @@ plDrawInterface* plParticleSystem::ICheckDrawInterface()
 void plParticleSystem::IHandleRenderMsg(plPipeline* pipe)
 {   
     fCurrTime = hsTimer::GetSysSeconds(); 
-    hsScalar delta = hsScalar(fCurrTime - fLastTime);
+    float delta = float(fCurrTime - fLastTime);
     if (delta == 0)
         return;
-    plConst(hsScalar) kMaxDelta(0.3f);
+    plConst(float) kMaxDelta(0.3f);
     if( delta > kMaxDelta )
         delta = kMaxDelta;
 
@@ -536,7 +536,7 @@ hsBool plParticleSystem::MsgReceive(plMessage* msg)
     return plModifier::MsgReceive(msg);
 }
 
-void plParticleSystem::UpdateGenerator(uint32_t paramID, hsScalar value)
+void plParticleSystem::UpdateGenerator(uint32_t paramID, float value)
 {
     int i;
     for (i = 0; i < fNumValidEmitters; i++)
@@ -585,7 +585,7 @@ void plParticleSystem::IPreSim()
         double secs = fPreSim;
         while (secs > 0)
         {
-            fEmitters[i]->IUpdateParticles((hsScalar)PRESIM_UPDATE_TICK);
+            fEmitters[i]->IUpdateParticles((float)PRESIM_UPDATE_TICK);
             secs -= PRESIM_UPDATE_TICK;
         }
     }

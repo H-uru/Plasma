@@ -89,11 +89,11 @@ class plBinkPlayer
         
         void SetFileName(const char* filename); // will copy
         void SetColor(const hsColorRGBA& c);
-        void SetPosition(hsScalar x, hsScalar y);
-        void SetScale(hsScalar x, hsScalar y);
-        void SetVolume(hsScalar v) { ISetVolume(v, false); ISetVolume(v, true); }
-        void SetForeVolume(hsScalar v) { ISetVolume(v, false); }
-        void SetBackVolume(hsScalar v) { ISetVolume(v, true); }
+        void SetPosition(float x, float y);
+        void SetScale(float x, float y);
+        void SetVolume(float v) { ISetVolume(v, false); ISetVolume(v, true); }
+        void SetForeVolume(float v) { ISetVolume(v, false); }
+        void SetBackVolume(float v) { ISetVolume(v, true); }
 
         void SetPosition(const hsPoint2& p) { SetPosition(p.fX, p.fY); }
         void SetScale(const hsPoint2& s) { SetScale(s.fX, s.fY); }
@@ -102,22 +102,22 @@ class plBinkPlayer
         const hsColorRGBA& GetColor() const { return fColor; }
         const hsPoint2& GetPosition() const { return fPos; }
         const hsPoint2& GetScale() const { return fScale; }
-        hsScalar GetBackVolume() const { return IGetVolume(true); }
-        hsScalar GetForeVolume() const { return IGetVolume(false); }
+        float GetBackVolume() const { return IGetVolume(true); }
+        float GetForeVolume() const { return IGetVolume(false); }
 
         void AddCallback(plMessage* msg);
         uint32_t GetNumCallbacks() const { return fCallbacks.GetCount(); }
         plMessage* GetCallback(int i) const { return fCallbacks[i]; }
 
-        void SetFadeFromTime(hsScalar secs) { fFadeFromTime = secs; }
+        void SetFadeFromTime(float secs) { fFadeFromTime = secs; }
         void SetFadeFromColor(hsColorRGBA c) { fFadeFromColor = c; }
 
-        void SetFadeToTime(hsScalar secs) { fFadeToTime = secs; }
+        void SetFadeToTime(float secs) { fFadeToTime = secs; }
         void SetFadeToColor(hsColorRGBA c) { fFadeToColor = c; }
 
-        hsScalar GetFadeFromTime() const { return fFadeFromTime; }
+        float GetFadeFromTime() const { return fFadeFromTime; }
         const hsColorRGBA& GetFadeFromColor() const { return fFadeFromColor; }
-        hsScalar GetFadeToTime() const { return fFadeToTime; }
+        float GetFadeToTime() const { return fFadeToTime; }
         const hsColorRGBA& GetFadeToColor() const { return fFadeToColor; }
 
     private:
@@ -139,8 +139,8 @@ class plBinkPlayer
         hsBool              ISetRenderState();
         void                ISetVerts();
 
-        hsScalar            IGetVolume(int background) const;
-        void                ISetVolume(hsScalar v, int background);
+        float            IGetVolume(int background) const;
+        void                ISetVolume(float v, int background);
         void                ISendCallbacks();
 
         hsBool              IFadeFromColor();
@@ -174,7 +174,7 @@ class plBinkPlayer
         uint32_t              fTextureSize[2];
 
         double              fFadeStart;
-        hsScalar            fFadeParm;
+        float            fFadeParm;
         enum FadeState {
             kFadeNone,
             kFadeFrom,
@@ -184,10 +184,10 @@ class plBinkPlayer
         };
         FadeState           fFadeState;
 
-        hsScalar            fFadeFromTime;
+        float            fFadeFromTime;
         hsColorRGBA         fFadeFromColor;
 
-        hsScalar            fFadeToTime;
+        float            fFadeToTime;
         hsColorRGBA         fFadeToColor;
 
         hsColorRGBA         fCurrColor;

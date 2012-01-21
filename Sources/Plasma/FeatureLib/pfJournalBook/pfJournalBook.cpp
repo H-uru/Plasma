@@ -123,9 +123,9 @@ class pfEsHTMLChunk
 
         uint16_t      fAbsoluteX, fAbsoluteY;
 
-        hsScalar    fCurrOpacity;   // For SFX images
-        hsScalar    fSFXTime;       // For SFX images
-        hsScalar    fMinOpacity, fMaxOpacity;   
+        float    fCurrOpacity;   // For SFX images
+        float    fSFXTime;       // For SFX images
+        float    fMinOpacity, fMaxOpacity;   
 
         hsColorRGBA fCurrColor;
         hsColorRGBA fOffColor, fOnColor;
@@ -563,7 +563,7 @@ hsBool pfBookData::MsgReceive(plMessage *pMsg)
     plTimeMsg *time = plTimeMsg::ConvertNoRef( pMsg );
     if( time != nil && fCurrSFXPages != kNoSides && !fCurrentlyTurning && fCurrentlyOpen )
     {
-        IHandleSFX( (hsScalar)time->DSeconds() );
+        IHandleSFX( (float)time->DSeconds() );
         return true;        
     }
 
@@ -714,7 +714,7 @@ void pfBookData::RegisterForSFX(WhichSide whichPages)
 // calced, pointers bad, etc) just bail, since the SFX are just for visual
 // flair and not really needed.
 
-void pfBookData::IHandleSFX(hsScalar currTime, WhichSide whichSide /*= kNoSides*/)
+void pfBookData::IHandleSFX(float currTime, WhichSide whichSide /*= kNoSides*/)
 {
     if(fCurrBook == nil)
         return;
@@ -737,7 +737,7 @@ void pfBookData::IHandleSFX(hsScalar currTime, WhichSide whichSide /*= kNoSides*
     }
 
     // Update all SFX images for this page first
-    hsScalar deltaT = currTime - fBaseSFXTime;
+    float deltaT = currTime - fBaseSFXTime;
 
     uint32_t idx, inc = (whichSide == kLeftSide) ? 0 : 1;
     if(fCurrBook->fPageStarts.GetCount() <= fCurrBook->fCurrentPage + inc + 1)
@@ -752,7 +752,7 @@ void pfBookData::IHandleSFX(hsScalar currTime, WhichSide whichSide /*= kNoSides*
         {
             // Glow SFX: animate opacity based on time offset
             uint8_t isOdd = 0;
-            hsScalar newDelta = deltaT;
+            float newDelta = deltaT;
             while(newDelta > chunk->fSFXTime)
             {
                 isOdd = ~isOdd;
@@ -1080,7 +1080,7 @@ void pfBookData::UpdatePageCorners(WhichSide which)
 //// SetCurrSize ////////////////////////////////////////////////////////////
 // Seeks the width and height animations to set the desired book size. Sizes are in % across the animation
 
-void pfBookData::SetCurrSize(hsScalar w, hsScalar h)
+void pfBookData::SetCurrSize(float w, float h)
 {
     fWidthCtrl->SetCurrValue(w);
     fHeightCtrl->SetCurrValue(h);
@@ -1647,8 +1647,8 @@ int32_t   pfJournalBook::IFindCurrVisibleLink( hsBool rightNotLeft, hsBool hover
 
     // This should be 0-1 in the context of the control, so scale to our DTMap size
     plDynamicTextMap *dtMap = fBookGUIs[fCurBookGUI]->GetDTMap( rightNotLeft ? pfJournalDlgProc::kTagRightDTMap : pfJournalDlgProc::kTagLeftDTMap );
-    pt.fX *= (hsScalar)dtMap->GetWidth();
-    pt.fY *= (hsScalar)dtMap->GetHeight();
+    pt.fX *= (float)dtMap->GetWidth();
+    pt.fY *= (float)dtMap->GetHeight();
     if( rightNotLeft )
     {
         // Clicks on the right side are offsetted in x by the left side's width
@@ -1937,20 +1937,20 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                                 char *comma2 = strchr( comma + 1, ',' );
                                 if( comma2 != nil )
                                 {
-                                    chunk->fMaxOpacity = (hsScalar)atof( comma2 + 1 );
+                                    chunk->fMaxOpacity = (float)atof( comma2 + 1 );
                                     *comma2 = 0;
                                 }
-                                chunk->fMinOpacity = (hsScalar)atof( comma + 1 );
+                                chunk->fMinOpacity = (float)atof( comma + 1 );
                                 *comma = 0;
                             }
-                            chunk->fSFXTime = (hsScalar)atof( cOption );
+                            chunk->fSFXTime = (float)atof( cOption );
                             delete [] cOption;
                         }
                         else if( wcsicmp( name, L"opacity" ) == 0 )
                         {
                             chunk->fFlags |= pfEsHTMLChunk::kTranslucent;
                             char *cOption = hsWStringToString(option);
-                            chunk->fCurrOpacity = (hsScalar)atof( cOption );
+                            chunk->fCurrOpacity = (float)atof( cOption );
                             delete [] cOption;
                         }
                         else if( wcsicmp( name, L"check" ) == 0 )
@@ -3491,7 +3491,7 @@ void    pfJournalBook::ISendNotify( uint32_t type, uint32_t linkID )
 // Note: internally we store these as the seek positions on our animations,
 // so the incoming parameters are actually inverse of what we finally want
 
-void    pfJournalBook::SetBookSize( hsScalar width, hsScalar height )
+void    pfJournalBook::SetBookSize( float width, float height )
 {
     fWidthScale = 1.f - width;
     fHeightScale = 1.f - height;

@@ -207,23 +207,23 @@ public:
     void        SetLoop( bool b, const char *name );
 
     uint8_t       GetEaseInType( void ) const;
-    hsScalar    GetEaseInLength( void ) const;
-    hsScalar    GetEaseInMin( void ) const;
-    hsScalar    GetEaseInMax( void ) const;
-    void        SetEaseIn( uint8_t type, hsScalar length, hsScalar min, hsScalar max );
+    float    GetEaseInLength( void ) const;
+    float    GetEaseInMin( void ) const;
+    float    GetEaseInMax( void ) const;
+    void        SetEaseIn( uint8_t type, float length, float min, float max );
 
     uint8_t       GetEaseOutType( void ) const;
-    hsScalar    GetEaseOutLength( void ) const;
-    hsScalar    GetEaseOutMin( void ) const;
-    hsScalar    GetEaseOutMax( void ) const;
-    void        SetEaseOut( uint8_t type, hsScalar length, hsScalar min, hsScalar max );
+    float    GetEaseOutLength( void ) const;
+    float    GetEaseOutMin( void ) const;
+    float    GetEaseOutMax( void ) const;
+    void        SetEaseOut( uint8_t type, float length, float min, float max );
 
     // Conversion stuff
-    void        GetAllStopPoints( hsTArray<hsScalar> &out );
-    hsScalar    GetSegStart( void ) const;
-    hsScalar    GetSegEnd( void ) const;
-    void        GetLoopPoints( hsScalar &start, hsScalar &end ) const;
-    void        StuffToTimeConvert( plAnimTimeConvert &convert, hsScalar maxLength );
+    void        GetAllStopPoints( hsTArray<float> &out );
+    float    GetSegStart( void ) const;
+    float    GetSegEnd( void ) const;
+    void        GetLoopPoints( float &start, float &end ) const;
+    void        StuffToTimeConvert( plAnimTimeConvert &convert, float maxLength );
 
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );

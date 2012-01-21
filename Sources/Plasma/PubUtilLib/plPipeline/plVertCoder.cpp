@@ -44,19 +44,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVertCoder.h"
 
 #include "hsStream.h"
-
+#include <math.h>
 #include "plGBufferGroup.h"
 
-const hsScalar kPosQuantum = 1.f / hsScalar(1 << 10);
-const hsScalar kWeightQuantum = 1.f / hsScalar(1 << 15);
-const hsScalar kUVWQuantum = 1.f / hsScalar(1 << 16);
+const float kPosQuantum = 1.f / float(1 << 10);
+const float kWeightQuantum = 1.f / float(1 << 15);
+const float kUVWQuantum = 1.f / float(1 << 16);
 
 uint32_t  plVertCoder::fCodedVerts = 0;
 uint32_t  plVertCoder::fCodedBytes = 0;
 uint32_t  plVertCoder::fRawBytes = 0;
 uint32_t  plVertCoder::fSkippedBytes = 0;
 
-static const hsScalar kQuanta[plVertCoder::kNumFloatFields] =
+static const float kQuanta[plVertCoder::kNumFloatFields] =
 {
     kPosQuantum,
     kWeightQuantum,
@@ -73,24 +73,24 @@ static const hsScalar kQuanta[plVertCoder::kNumFloatFields] =
 };
 
 
-inline void plVertCoder::ICountFloats(const uint8_t* src, uint16_t maxCnt, const hsScalar quant, const uint32_t stride, 
-                                      hsScalar& lo, hsBool &allSame, uint16_t& count)
+inline void plVertCoder::ICountFloats(const uint8_t* src, uint16_t maxCnt, const float quant, const uint32_t stride, 
+                                      float& lo, hsBool &allSame, uint16_t& count)
 {
-    lo = *(hsScalar*)src;
+    lo = *(float*)src;
     lo = floor(lo / quant + 0.5f) * quant;
     allSame = false;
-    hsScalar hi = lo;
+    float hi = lo;
     
     count = 1;
 
-    const hsScalar maxRange = hsScalar(uint16_t(0xffff)) * quant;
+    const float maxRange = float(uint16_t(0xffff)) * quant;
 
     src += stride;
     maxCnt--;
 
     while( maxCnt-- )
     {
-        hsScalar val = *(hsScalar*)src;
+        float val = *(float*)src;
         val = floor(val / quant + 0.5f) * quant;
         if( val < lo )
         {
@@ -110,12 +110,12 @@ inline void plVertCoder::ICountFloats(const uint8_t* src, uint16_t maxCnt, const
     allSame = (lo == hi);
 }
 
-static inline void IWriteFloat(hsStream* s, const uint8_t*& src, const hsScalar offset, const hsScalar quantum)
+static inline void IWriteFloat(hsStream* s, const uint8_t*& src, const float offset, const float quantum)
 {
     float fval = *(float*)src;
     fval -= offset;
     fval /= quantum;
-//  hsAssert(fval < hsScalar(uint16_t(0xffff)), "Bad offset?");
+//  hsAssert(fval < float(uint16_t(0xffff)), "Bad offset?");
 
     const uint16_t ival = uint16_t(floor(fval + 0.5f));
     s->WriteLE16(ival);
@@ -123,13 +123,13 @@ static inline void IWriteFloat(hsStream* s, const uint8_t*& src, const hsScalar 
     src += 4;
 }
 
-static inline void IReadFloat(hsStream* s, uint8_t*& dst, const hsScalar offset, const hsScalar quantum)
+static inline void IReadFloat(hsStream* s, uint8_t*& dst, const float offset, const float quantum)
 {
     const uint16_t ival = s->ReadLE16();
     float fval = float(ival) * quantum;
     fval += offset;
 
-    hsScalar* val = (hsScalar*)dst;
+    float* val = (float*)dst;
     *val = fval;
 
     dst += 4;
@@ -167,7 +167,7 @@ inline void plVertCoder::IDecodeFloat(hsStream* s, const int field, const int ch
         IReadFloat(s, dst, fFloats[field][chan].fOffset, kQuanta[field]);
     else
     {
-        *((hsScalar*)dst) = fFloats[field][chan].fOffset;
+        *((float*)dst) = fFloats[field][chan].fOffset;
         dst += 4;
     }
 
@@ -179,21 +179,21 @@ static inline int INumWeights(const uint8_t format)
     return (format & plGBufferGroup::kSkinWeightMask) >> 4;
 }
 
-static const hsScalar kNormalScale(int16_t(0x7fff));
-static const hsScalar kInvNormalScale(1.f / kNormalScale);
+static const float kNormalScale(int16_t(0x7fff));
+static const float kInvNormalScale(1.f / kNormalScale);
 
 inline void plVertCoder::IEncodeNormal(hsStream* s, const uint8_t*& src, const uint32_t stride)
 {
 
-    hsScalar x = *(hsScalar*)src;
+    float x = *(float*)src;
     s->WriteByte((uint8_t)((x / 2.f + .5f) * 255.9f));
     src += 4;
 
-    x = *(hsScalar*)src;
+    x = *(float*)src;
     s->WriteByte((uint8_t)((x / 2.f + .5f) * 255.9f));
     src += 4;
 
-    x = *(hsScalar*)src;
+    x = *(float*)src;
     s->WriteByte((uint8_t)((x / 2.f + .5f) * 255.9f));
     src += 4;
 }
@@ -202,17 +202,17 @@ inline void plVertCoder::IDecodeNormal(hsStream* s, uint8_t*& dst, const uint32_
 {
 
     uint8_t ix = s->ReadByte();
-    hsScalar* x = (hsScalar*)dst;
+    float* x = (float*)dst;
     *x = (ix / 255.9f - .5f) * 2.f;
     dst += 4;
 
     ix = s->ReadByte();
-    x = (hsScalar*)dst;
+    x = (float*)dst;
     *x = (ix / 255.9f - .5f) * 2.f;
     dst += 4;
 
     ix = s->ReadByte();
-    x = (hsScalar*)dst;
+    x = (float*)dst;
     *x = (ix / 255.9f - .5f) * 2.f;
     dst += 4;
 }

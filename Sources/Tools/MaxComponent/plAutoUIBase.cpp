@@ -137,7 +137,7 @@ void plAutoUIBase::AddCheckBox(int16_t id, const char *scriptName, const char *n
     fParams.push_back(param);
 }
 
-void plAutoUIBase::AddFloatSpinner(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, hsScalar def, hsScalar min, hsScalar max)
+void plAutoUIBase::AddFloatSpinner(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, float def, float min, float max)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 

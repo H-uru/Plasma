@@ -115,10 +115,10 @@ class hsQuat;
 class hsEuler 
 {
 public:
-    hsScalar fX,fY,fZ;
+    float fX,fY,fZ;
     uint32_t fOrder;
 
-    hsEuler(hsScalar ai, hsScalar aj, hsScalar ah, uint32_t order) : fX(ai),fY(aj),fZ(ah),fOrder(order) {}
+    hsEuler(float ai, float aj, float ah, uint32_t order) : fX(ai),fY(aj),fZ(ah),fOrder(order) {}
     
     // getters, converters
     void GetQuat(hsQuat* res );

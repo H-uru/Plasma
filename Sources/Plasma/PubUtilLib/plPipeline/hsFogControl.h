@@ -62,14 +62,14 @@ protected:
     hsDynamicArray<plKey>   fFogNodes;
 //  hsGEnvironment::FogState            fAvgFog;
 
-    virtual hsScalar    IGetStrength(hsSceneNode* node) = 0;
+    virtual float    IGetStrength(hsSceneNode* node) = 0;
 
     void                IPopNodes();
     void                IPushNodes();
 
     void                IZeroAvgFog();
     void                IAverageNodes();
-//  void                IAccumFog(hsGEnvironment* env, hsScalar wgt);
+//  void                IAccumFog(hsGEnvironment* env, float wgt);
 
 public:
     hsFogControl() {}
@@ -120,17 +120,17 @@ protected:
     };
 
     hsDynamicArray<plKey>       fPortals;
-    hsScalar                                fDefRadius;
+    float                                fDefRadius;
 
     uint32_t                                  fStatus;
 
     void                    IFindFogNodes();
-    virtual hsScalar        IGetStrength(hsSceneNode* node);
+    virtual float        IGetStrength(hsSceneNode* node);
 public:
     hsPortalFogControl();
 
-    void SetDefaultRadius(hsScalar r) { fDefRadius = r; }
-    hsScalar GetDefaultRadius() { return fDefRadius; }
+    void SetDefaultRadius(float r) { fDefRadius = r; }
+    float GetDefaultRadius() { return fDefRadius; }
 
     hsPortal* GetPortal(int i);
 

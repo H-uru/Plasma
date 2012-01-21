@@ -71,7 +71,7 @@ public:
     plMipmap    *CreateUncompressedMipmap( plMipmap *compressed, uint8_t bitDepth = 0 );
     hsBool      ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
 
-    hsBool      Register(hsCodec *codec, uint32_t compressionFormat, hsScalar priority);
+    hsBool      Register(hsCodec *codec, uint32_t compressionFormat, float priority);
 
     /// Decompression flags
     enum {
@@ -92,9 +92,9 @@ private:
     struct hsCodecEntry
     {
         hsCodecEntry() : fPriority(0), fCodec(nil) { }
-        hsCodecEntry(hsScalar p, hsCodec *c) : fPriority(p), fCodec(c) { }
+        hsCodecEntry(float p, hsCodec *c) : fPriority(p), fCodec(c) { }
 
-        hsScalar                fPriority;
+        float                fPriority;
         hsCodec                 *fCodec;
     };
 

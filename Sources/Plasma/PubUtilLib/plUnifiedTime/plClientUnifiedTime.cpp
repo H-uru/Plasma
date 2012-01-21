@@ -70,11 +70,9 @@ void plClientUnifiedTime::SetSysTime()
 #pragma optimize( "g", off )    // disable global optimizations
 void plClientUnifiedTime::SetFromGameTime(double gameTime, double curGameSecs)
 {
-    hsDoublePrecBegin;
     //double gameTimeOff = curGameSecs-gameTime;    // when did this happen relative to our currrent sysTime
     //*this = GetFrameStartTime() - plUnifiedTime(gameTimeOff);
     SetSecsDouble(gameTime - fSysTimeOffset);
-    hsDoublePrecEnd;
 
 #if 0
     extern bool gMooseDump;
@@ -96,11 +94,9 @@ void plClientUnifiedTime::SetFromGameTime(double gameTime, double curGameSecs)
 //
 void plClientUnifiedTime::ConvertToGameTime(double* gameTimeOut, double curGameSecs)
 {
-    hsDoublePrecBegin;
     //plUnifiedTime utOff = GetFrameStartTime() - GetAsUnifiedTime();   // compute offset relative to current startFrame time
     //*gameTimeOut = curGameSecs - utOff.GetSecsDouble();
     *gameTimeOut = GetSecsDouble() + fSysTimeOffset;
-    hsDoublePrecEnd;
 
 #if 0
     extern bool gMooseDump;

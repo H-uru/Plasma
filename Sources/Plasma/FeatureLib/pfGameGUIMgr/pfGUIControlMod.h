@@ -119,7 +119,7 @@ class pfGUIControlMod : public plSingleModifier
         pfGUIDialogMod      *fDialog;
 
         hsBounds3           fBounds, fInitialBounds;        // Z component is 0-1
-        hsScalar            fScreenMinZ;    // Closest Z coordinate in screen space
+        float            fScreenMinZ;    // Closest Z coordinate in screen space
         hsPoint3            fScreenCenter;
         hsBool              fBoundsValid, fCenterValid;
         hsMatrix44          fXformMatrix;   // Only used for doing drag work, etc.
@@ -144,7 +144,7 @@ class pfGUIControlMod : public plSingleModifier
         virtual void    IPostSetUpDynTextMap( void ) {}
         virtual void    IGrowDTMDimsToDesiredSize( uint16_t &width, uint16_t &height ) { }
 
-        virtual hsBool  IEval( double secs, hsScalar del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual hsBool  IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         void            ISetDialog( pfGUIDialogMod *mod ) { fDialog = mod; }
         void            IScreenToLocalPt( hsPoint3 &pt );
@@ -190,9 +190,9 @@ class pfGUIControlMod : public plSingleModifier
         virtual void    Refresh( void );
 
         virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
-        void            SetObjectCenter( hsScalar x, hsScalar y );
+        void            SetObjectCenter( float x, float y );
         virtual hsPoint3 GetObjectCenter() { return fScreenCenter; }
-        hsScalar        GetScreenMinZ( void ) { return fScreenMinZ; }
+        float        GetScreenMinZ( void ) { return fScreenMinZ; }
         void            CalcInitialBounds( void );
 
         const hsBounds3 &GetBounds( void );

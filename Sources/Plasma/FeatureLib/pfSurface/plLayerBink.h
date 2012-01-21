@@ -50,7 +50,7 @@ protected:
     void* fHBink;
     float fFPS;
 
-    virtual int32_t ISecsToFrame(hsScalar secs);
+    virtual int32_t ISecsToFrame(float secs);
     hsBool IInit();
     hsBool IGetCurrentFrame();
     hsBool IRelease();

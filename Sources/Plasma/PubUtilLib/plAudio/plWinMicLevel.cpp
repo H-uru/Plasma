@@ -86,7 +86,7 @@ MIXERLINE       *IGetMixerSubLineByType( MIXERCONTROL *mux, DWORD type );
 
 //// The Publics /////////////////////////////////////////////////////////////
 
-hsScalar    plWinMicLevel::GetLevel( void )
+float    plWinMicLevel::GetLevel( void )
 {
     if( !CanSetLevel() )
         return -1;
@@ -96,13 +96,13 @@ hsScalar    plWinMicLevel::GetLevel( void )
     if( !IGetControlValue( rawValue ) ) 
         return -1;
 
-    return (hsScalar)( rawValue - sMinValue ) / (hsScalar)( sMaxValue - sMinValue );
+    return (float)( rawValue - sMinValue ) / (float)( sMaxValue - sMinValue );
 #else
     return -1;
 #endif
 }
 
-void    plWinMicLevel::SetLevel( hsScalar level )
+void    plWinMicLevel::SetLevel( float level )
 {
     if( !CanSetLevel() )
         return;

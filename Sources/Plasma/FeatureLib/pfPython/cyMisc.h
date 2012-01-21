@@ -161,7 +161,7 @@ public:
     //
     //  PURPOSE    : Execute a console command from a python script
     //
-    static void TimerCallback(pyKey& selfkey, hsScalar time, uint32_t id);
+    static void TimerCallback(pyKey& selfkey, float time, uint32_t id);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -335,7 +335,7 @@ public:
     //
     //  PURPOSE    : Return the frame delta seconds
     //
-    static hsScalar GetDelSysSeconds();
+    static float GetDelSysSeconds();
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -424,7 +424,7 @@ public:
     static std::vector<PyObject*> GetPlayerListDistanceSorted(); // list of pyPlayer
 
     static uint32_t GetMaxListenListSize();
-    static hsScalar GetMaxListenDistSq();
+    static float GetMaxListenDistSq();
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -452,7 +452,7 @@ public:
     //
     //  RETURNS    : nothing
     //
-    static void SendKIMessage(uint32_t command, hsScalar value);
+    static void SendKIMessage(uint32_t command, float value);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -676,7 +676,7 @@ public:
     //
     // PURPOSE    : To request an LOS from a point on the screen
     //
-    static bool RequestLOSScreen(pyKey &selfkey, int32_t ID, hsScalar xPos, hsScalar yPos, hsScalar distance, int what, int reportType);
+    static bool RequestLOSScreen(pyKey &selfkey, int32_t ID, float xPos, float yPos, float distance, int what, int reportType);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -697,7 +697,7 @@ public:
     static void SetParticleOffset(float x, float y, float z, pyKey& particles);
     static void KillParticles(float time, float pct, pyKey& particles);
     static int  GetNumParticles(pyKey& host);
-    static void SetLightColorValue(pyKey& light, std::string lightName, hsScalar r, hsScalar g, hsScalar b, hsScalar a);
+    static void SetLightColorValue(pyKey& light, std::string lightName, float r, float g, float b, float a);
     static void SetLightAnimationOn(pyKey& light, std::string lightName, hsBool start);
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -745,7 +745,7 @@ public:
     //
     // PURPOSE    : Shoots from screen coordinates, a bullet and makes a mark on objects that know about bullet holes
     //
-    static void ShootBulletFromScreen(pyKey &selfkey, hsScalar xPos, hsScalar yPos, hsScalar radius, hsScalar range);
+    static void ShootBulletFromScreen(pyKey &selfkey, float xPos, float yPos, float radius, float range);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -754,7 +754,7 @@ public:
     //
     // PURPOSE    : Shoots from an object, a bullet and makes a mark on objects that know about bullet holes
     //
-    static void ShootBulletFromObject(pyKey &selfkey, pySceneObject* sobj, hsScalar radius, hsScalar range);
+    static void ShootBulletFromObject(pyKey &selfkey, pySceneObject* sobj, float radius, float range);
 
     //////////////////////////////////////////////////////////////////////////////
     //

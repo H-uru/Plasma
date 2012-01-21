@@ -65,7 +65,7 @@ public:
     void SetPreshadeColor(const hsColorRGBA& col);
     void SetRuntimeColor(const hsColorRGBA& col);
     void SetAmbientColor(const hsColorRGBA& col);
-    void SetOpacity(hsScalar a);
+    void SetOpacity(float a);
     void SetTransform(const hsMatrix44& xfm);
 
 protected:
@@ -73,7 +73,7 @@ protected:
     hsColorRGBA     fSrcPreshadeColor;
     hsColorRGBA     fSrcRuntimeColor;
     hsColorRGBA     fSrcAmbientColor;
-    hsScalar        fSrcOpacity;
+    float        fSrcOpacity;
     hsMatrix44      fSrcTransform;
 };
 

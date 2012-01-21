@@ -125,12 +125,12 @@ struct PreTrans
     hsBool  fCutPos;
     hsBool  fCutPOA;
     hsBool  fIgnore;
-    hsScalar fAccel;
-    hsScalar fDecel;
-    hsScalar fVelocity;
-    hsScalar fPOAAccel;
-    hsScalar fPOADecel;
-    hsScalar fPOAVelocity;
+    float fAccel;
+    float fDecel;
+    float fVelocity;
+    float fPOAAccel;
+    float fPOADecel;
+    float fPOAVelocity;
 
     
 };
@@ -853,7 +853,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
     // convert
     FOVvalue = FOVvalue*(180/3.141592);
     int FOVType = theCam->GetFOVType();
-    hsScalar wDeg, hDeg;
+    float wDeg, hDeg;
     switch(FOVType)
     {
     case 0: // FOV_W
@@ -893,14 +893,14 @@ void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrai
         IParamBlock2* pBlk = LimitPanComp->GetParamBlock(plComponentBase::kRefComp);
         if ( pBlk && pBlk->GetInt(kLimitPanX) )
         {
-            hsScalar deg = pBlk->GetFloat(kPanZDeg);
-            hsScalar rad = hsScalarDegToRad(deg);
+            float deg = pBlk->GetFloat(kPanZDeg);
+            float rad = hsDegreesToRadians(deg);
             pBrain->SetXPanLimit( rad * 0.5f );
         }
         if ( pBlk && pBlk->GetInt(kLimitPanZ) )
         {
-            hsScalar deg = pBlk->GetFloat(kPanXDeg);
-            hsScalar rad = hsScalarDegToRad(deg);
+            float deg = pBlk->GetFloat(kPanXDeg);
+            float rad = hsDegreesToRadians(deg);
             pBrain->SetZPanLimit( rad * 0.5f );
         }
     }
@@ -920,9 +920,9 @@ void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBra
     {
         // set this camera to limit panning x degrees
         IParamBlock2* pBlk = LimitZoomComp->GetParamBlock(plComponentBase::kRefComp);
-        hsScalar max = pBlk->GetFloat(kZoomMaxDeg);
-        hsScalar min = pBlk->GetFloat(kZoomMinDeg);
-        hsScalar rate = pBlk->GetFloat(kZoomRate);
+        float max = pBlk->GetFloat(kZoomMaxDeg);
+        float min = pBlk->GetFloat(kZoomMinDeg);
+        float rate = pBlk->GetFloat(kZoomRate);
         pBrain->SetZoomParams(max / 1.33333333, min / 1.33333333, rate);
     }
 }

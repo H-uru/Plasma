@@ -743,7 +743,7 @@ plObjectInVolumeAndFacingDetector::~plObjectInVolumeAndFacingDetector()
 
 void plObjectInVolumeAndFacingDetector::SetFacingTolerance(int degrees)
 {
-    fFacingTolerance = hsCosine(hsScalarDegToRad(degrees));
+    fFacingTolerance = cos(hsDegreesToRadians(degrees));
 }
 
 void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
@@ -760,7 +760,7 @@ void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
         playerView.Normalize();
         objView.Normalize();
 
-        hsScalar dot = playerView * objView;
+        float dot = playerView * objView;
 //      hsStatusMessageF("Dot: %f Tolerance: %f", dot, fFacingTolerance);
         bool facing = dot >= fFacingTolerance;
 
@@ -1075,7 +1075,7 @@ hsBool plSimpleRegionSensor::MsgReceive(plMessage *msg)
 }
 
 // IEVAL
-hsBool plSimpleRegionSensor::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plSimpleRegionSensor::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }

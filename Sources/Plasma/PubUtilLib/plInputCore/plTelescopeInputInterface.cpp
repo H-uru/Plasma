@@ -100,7 +100,7 @@ void    plTelescopeInputInterface::Init( plInputInterfaceMgr *manager )
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool plTelescopeInputInterface::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool plTelescopeInputInterface::IEval( double secs, float del, uint32_t dirty )
 {
     return true;
 }

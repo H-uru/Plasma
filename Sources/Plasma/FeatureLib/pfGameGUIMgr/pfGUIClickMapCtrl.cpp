@@ -72,7 +72,7 @@ pfGUIClickMapCtrl::~pfGUIClickMapCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIClickMapCtrl::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUIClickMapCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }

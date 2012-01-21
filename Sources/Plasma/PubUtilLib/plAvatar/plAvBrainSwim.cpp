@@ -234,7 +234,7 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-const hsScalar plAvBrainSwim::kMinSwimDepth = 4.0f;
+const float plAvBrainSwim::kMinSwimDepth = 4.0f;
 
 plAvBrainSwim::plAvBrainSwim() : 
     fCallbackAction(nil),
@@ -263,7 +263,7 @@ plAvBrainSwim::~plAvBrainSwim()
         delete fBehaviors[i];
 }
 
-hsBool plAvBrainSwim::Apply(double time, hsScalar elapsed)
+hsBool plAvBrainSwim::Apply(double time, float elapsed)
 {
     IProbeSurface();
     if (fMode == kWalking)
@@ -278,12 +278,12 @@ hsBool plAvBrainSwim::Apply(double time, hsScalar elapsed)
             {
                 // We're jumping in! Trigger splash effect (sound)              
                 plArmatureEffectMsg *msg = TRACKED_NEW plArmatureEffectMsg(fAvMod->GetArmatureEffects()->GetKey(), kTime);
-                msg->fEventTime = (hsScalar)time;
+                msg->fEventTime = (float)time;
                 msg->fTriggerIdx = plArmatureMod::kImpact;
 
                 plEventCallbackInterceptMsg *iMsg = TRACKED_NEW plEventCallbackInterceptMsg;
                 iMsg->AddReceiver(fAvMod->GetArmatureEffects()->GetKey());
-                iMsg->fEventTime = (hsScalar)time;
+                iMsg->fEventTime = (float)time;
                 iMsg->fEvent = kTime;
                 iMsg->SetMessage(msg);
                 iMsg->Send();
@@ -687,7 +687,7 @@ void plAvBrainSwim::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *str
 //  fAvMod->GetPhysical()->GetLinearVelocitySim(linV);
 //  hsVector3 angV;
 //  fAvMod->GetPhysical()->GetAngularVelocitySim(angV);
-//  hsScalar angle = angV.fZ > 0 ? angV.Magnitude() : -angV.Magnitude();
+//  float angle = angV.fZ > 0 ? angV.Magnitude() : -angV.Magnitude();
 //  sprintf(strBuf, "Velocity: Linear (%5.2f, %5.2f, %5.2f), Angular %5.2f", linV.fX, linV.fY, linV.fZ, angle);
 //  debugTxt.DrawString(x, y, strBuf);
 //  y += lineHeight;

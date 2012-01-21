@@ -52,7 +52,7 @@ class plTransitionMsg : public plMessageWithCallbacks
 protected:
 
     uint32_t      fEffect;
-    hsScalar    fLengthInSecs;
+    float    fLengthInSecs;
     hsBool      fHoldUntilNext;
 public:
     enum 
@@ -64,7 +64,7 @@ public:
     };
 
     plTransitionMsg() : plMessageWithCallbacks(nil, nil, nil), fEffect( 0 ) { SetBCastFlag(kBCastByExactType);  }
-    plTransitionMsg( uint32_t type, hsScalar lengthInSecs, hsBool holdUntilNext = false ) : 
+    plTransitionMsg( uint32_t type, float lengthInSecs, hsBool holdUntilNext = false ) : 
                 plMessageWithCallbacks(nil, nil, nil), fEffect( type ), fLengthInSecs( lengthInSecs ), fHoldUntilNext( holdUntilNext )
                 { SetBCastFlag( kBCastByExactType );  }
     
@@ -74,7 +74,7 @@ public:
     GETINTERFACE_ANY( plTransitionMsg, plMessageWithCallbacks );
 
     uint32_t      GetEffect( void ) const { return fEffect; }
-    hsScalar    GetLengthInSecs( void ) const { return fLengthInSecs; }
+    float    GetLengthInSecs( void ) const { return fLengthInSecs; }
     hsBool      GetHoldState( void ) const { return fHoldUntilNext; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr) 

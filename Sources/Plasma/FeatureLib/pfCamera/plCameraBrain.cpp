@@ -73,12 +73,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClient/plNetClientMgr.h"
 
 hsBool plCameraBrain1_FirstPerson::fDontFade = false;
-hsScalar plCameraBrain1::fFallAccel         = 20.0f;
-hsScalar plCameraBrain1::fFallDecel         = 5.0f;
-hsScalar plCameraBrain1::fFallVelocity      = 50.0f;
-hsScalar plCameraBrain1::fFallPOAAccel      = 10.0f;
-hsScalar plCameraBrain1::fFallPOADecel      = 10.0f;
-hsScalar plCameraBrain1::fFallPOAVelocity   = 50.0f;
+float plCameraBrain1::fFallAccel         = 20.0f;
+float plCameraBrain1::fFallDecel         = 5.0f;
+float plCameraBrain1::fFallVelocity      = 50.0f;
+float plCameraBrain1::fFallPOAAccel      = 10.0f;
+float plCameraBrain1::fFallPOADecel      = 10.0f;
+float plCameraBrain1::fFallPOAVelocity   = 50.0f;
 
 // basic camera brain now is a fixed brain by default.
 // if it doesn't have a subject (an object) it will just look straight ahead.
@@ -176,13 +176,13 @@ void plCameraBrain1::Pop()
 }
 
 // set the goal to which we want to animate the fov
-void plCameraBrain1::SetFOVGoal(hsScalar h, double t)
+void plCameraBrain1::SetFOVGoal(float h, double t)
 { 
     if (fFOVGoal == h || h == fCamera->GetFOVh())
         return;
     
-    hsScalar dif = h - fCamera->GetFOVh();
-    fFOVAnimRate = dif / ((hsScalar)t);
+    float dif = h - fCamera->GetFOVh();
+    fFOVAnimRate = dif / ((float)t);
 
     fFOVGoal = h; 
     fFOVStartTime = hsTimer::GetSysSeconds();
@@ -192,7 +192,7 @@ void plCameraBrain1::SetFOVGoal(hsScalar h, double t)
 }
 
 // set parameters for how this camera zooms FOV based on user input (mostly for telescopes)
-void plCameraBrain1::SetZoomParams(hsScalar max, hsScalar min, hsScalar rate)
+void plCameraBrain1::SetZoomParams(float max, float min, float rate)
 {
     fZoomRate = rate;
     fZoomMax = max;
@@ -240,7 +240,7 @@ void plCameraBrain1::Update(hsBool forced)
 // adjust FOV based on elapsed time
 void plCameraBrain1::IAnimateFOV(double time)
 {
-    hsScalar dH = fFOVAnimRate * hsTimer::GetDelSysSeconds();
+    float dH = fFOVAnimRate * hsTimer::GetDelSysSeconds();
     
     dH += fCamera->GetFOVh();
 
@@ -251,7 +251,7 @@ void plCameraBrain1::IAnimateFOV(double time)
         dH = fFOVGoal;
     }
 
-    fCamera->SetFOVw( (hsScalar)(dH * plVirtualCam1::Instance()->GetAspectRatio()) );
+    fCamera->SetFOVw( (float)(dH * plVirtualCam1::Instance()->GetAspectRatio()) );
     fCamera->SetFOVh( dH );
 
 }
@@ -274,13 +274,13 @@ void plCameraBrain1::IMoveTowardGoal(double elapsedTime)
         return;
     }
     hsVector3 dir(fGoal - fCamera->GetTargetPos());
-    hsScalar distToGoal=dir.Magnitude();
+    float distToGoal=dir.Magnitude();
     
     //smooth out stoppage...
-    hsScalar adjMaxVel = fVelocity;
+    float adjMaxVel = fVelocity;
     if (distToGoal <= 5.0f && distToGoal > 0.1f)
     {   
-        hsScalar mult = (distToGoal - 5.0f)*0.1f;
+        float mult = (distToGoal - 5.0f)*0.1f;
         adjMaxVel = fVelocity - hsABS(fVelocity*mult);
     }   
 
@@ -306,7 +306,7 @@ void plCameraBrain1::IMoveTowardGoal(double elapsedTime)
         
     fCurCamSpeed = vel.Magnitude();
 
-    hsScalar distMoved;
+    float distMoved;
     if (fFlags.IsBitSet(kPanicVelocity))
         distMoved = IClampVelocity(&vel, 1000.0f, elapsedTime);
     else
@@ -350,16 +350,16 @@ void plCameraBrain1::IPointTowardGoal(double elapsedTime)
 
 
     hsVector3 dir(fPOAGoal - fCamera->GetTargetPOA());
-    hsScalar distToGoal=dir.Magnitude();
+    float distToGoal=dir.Magnitude();
     
     if (distToGoal > 0.0f)
         dir.Normalize();
 
     // smooth out stoppage
-    hsScalar adjMaxVel = fPOAVelocity;
+    float adjMaxVel = fPOAVelocity;
     if (distToGoal <= 5.0f && distToGoal > 0.1f)
     {   
-        hsScalar mult = (distToGoal - 5.0f)*0.1f;
+        float mult = (distToGoal - 5.0f)*0.1f;
         adjMaxVel = fPOAVelocity - hsABS(fPOAVelocity*mult);
     }   
     
@@ -382,7 +382,7 @@ void plCameraBrain1::IPointTowardGoal(double elapsedTime)
     
     fCurViewSpeed = vel.Magnitude();
     
-    hsScalar distMoved;
+    float distMoved;
     if (fFlags.IsBitSet(kPanicVelocity))
         distMoved = IClampVelocity(&vel, 1000.0f, elapsedTime);
     else
@@ -402,15 +402,15 @@ void plCameraBrain1::IPointTowardGoal(double elapsedTime)
 }
 
 
-void plCameraBrain1::IAdjustVelocity(hsScalar adjAccelRate, hsScalar adjDecelRate, 
-                                       hsVector3* dir, hsVector3* vel, hsScalar maxSpeed, 
-                                       hsScalar distToGoal, double elapsedTime)
+void plCameraBrain1::IAdjustVelocity(float adjAccelRate, float adjDecelRate, 
+                                       hsVector3* dir, hsVector3* vel, float maxSpeed, 
+                                       float distToGoal, double elapsedTime)
 {
-    hsScalar speed = vel->Magnitude();      // save current speed
+    float speed = vel->Magnitude();      // save current speed
     *vel = *dir * speed;                    // change vel to correct dir
 
     // compute accel/decel
-    hsScalar finalAccelRate;
+    float finalAccelRate;
 
     if (IShouldDecelerate(adjDecelRate, speed, distToGoal))
     {
@@ -425,7 +425,7 @@ void plCameraBrain1::IAdjustVelocity(hsScalar adjAccelRate, hsScalar adjDecelRat
     {
         // compute accel vector in the direction of the goal
         hsVector3 accelVec = *dir * finalAccelRate;
-        accelVec = accelVec * (hsScalar)elapsedTime;
+        accelVec = accelVec * (float)elapsedTime;
 
         // add acceleration to velocity
         *vel = *vel + accelVec;
@@ -436,13 +436,13 @@ void plCameraBrain1::IAdjustVelocity(hsScalar adjAccelRate, hsScalar adjDecelRat
     }
 }
 
-hsScalar plCameraBrain1::IClampVelocity(hsVector3* vel, hsScalar maxSpeed, double elapsedTime)
+float plCameraBrain1::IClampVelocity(hsVector3* vel, float maxSpeed, double elapsedTime)
 {
-    *vel = *vel * (hsScalar)elapsedTime;
-    maxSpeed *= (hsScalar)elapsedTime;
+    *vel = *vel * (float)elapsedTime;
+    maxSpeed *= (float)elapsedTime;
 
     // clamp speed  (clamp if going negative?)
-    hsScalar distMoved = vel->Magnitude();
+    float distMoved = vel->Magnitude();
     if (distMoved > maxSpeed)
     {
         vel->Normalize();
@@ -452,16 +452,16 @@ hsScalar plCameraBrain1::IClampVelocity(hsVector3* vel, hsScalar maxSpeed, doubl
     return distMoved;
 }
 
-hsBool plCameraBrain1::IShouldDecelerate(hsScalar decelSpeed, hsScalar curSpeed, hsScalar distToGoal)
+hsBool plCameraBrain1::IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal)
 {
     if (decelSpeed == 0)
         // no deceleration
         return false;
 
     // compute distance required to stop, given decel speed (in units/sec sq)
-    hsScalar stopTime = curSpeed / decelSpeed;      
-    hsScalar avgSpeed = curSpeed * .5f;
-    hsScalar stopDist = avgSpeed * stopTime;
+    float stopTime = curSpeed / decelSpeed;      
+    float avgSpeed = curSpeed * .5f;
+    float stopDist = avgSpeed * stopTime;
 
     return (hsABS(distToGoal) <= hsABS(stopDist));  // stopDist+avgSpeed?   
 }
@@ -476,7 +476,7 @@ void plCameraBrain1::AdjustForInput(double secs)
     if (fOffsetPct < 1.0f)
     {
         hsVector3 v(fPOAGoal - fGoal);
-        hsScalar len = v.Magnitude();
+        float len = v.Magnitude();
         len = len - (len * fOffsetPct);
         v.Normalize();
         fGoal = fGoal + (v * len);
@@ -710,10 +710,10 @@ void plCameraBrain1::SetSubject(plSceneObject* sub)
 //
 
 
-hsScalar plCameraBrain1_Drive::fTurnRate = 100.0f;
-hsScalar plCameraBrain1_Drive::fAcceleration = 200.0f;
-hsScalar plCameraBrain1_Drive::fDeceleration = 200.0f;
-hsScalar plCameraBrain1_Drive::fMaxVelocity = 100.0f;
+float plCameraBrain1_Drive::fTurnRate = 100.0f;
+float plCameraBrain1_Drive::fAcceleration = 200.0f;
+float plCameraBrain1_Drive::fDeceleration = 200.0f;
+float plCameraBrain1_Drive::fMaxVelocity = 100.0f;
 
 
 // constructor
@@ -764,7 +764,7 @@ void plCameraBrain1_Drive::Update(hsBool forced)
     
     // update our desired position:
     double time = hsTimer::GetSeconds();
-    hsScalar eTime = (hsScalar)(time-fLastTime);
+    float eTime = (float)(time-fLastTime);
     if(eTime > 0.01f)
         eTime = 0.01f;
     fLastTime = time;
@@ -772,7 +772,7 @@ void plCameraBrain1_Drive::Update(hsBool forced)
     hsVector3 view, up, right;
         
     fTargetMatrix.GetAxis(&view,&up,&right);
-    hsScalar delta = 5.0f * eTime;
+    float delta = 5.0f * eTime;
 
     // adjust speed
     if (HasMovementFlag(B_CAMERA_DRIVE_SPEED_UP))
@@ -805,8 +805,8 @@ void plCameraBrain1_Drive::Update(hsBool forced)
         fMaxVelocity = plVirtualCam1::Instance()->fVel;
     }
 
-    hsScalar speed = fMaxVelocity;
-    hsScalar turn = 1.0f;
+    float speed = fMaxVelocity;
+    float turn = 1.0f;
     
     if (HasMovementFlag(B_CONTROL_MODIFIER_FAST))
     {
@@ -1583,7 +1583,7 @@ hsBool plCameraBrain1_Fixed::MsgReceive(plMessage* msg)
 //
 //
 // circle camera crap
-static const hsScalar kTwoPI    = 2.0f*hsScalarPI;
+static const float kTwoPI    = 2.0f*M_PI;
 
 plCameraBrain1_Circle::plCameraBrain1_Circle() : plCameraBrain1_Fixed()
 { 
@@ -1656,17 +1656,17 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
 
     if (fCurRad != fGoalRad)
     {
-        hsScalar dist = hsABS(fGoalRad-fCurRad);
+        float dist = hsABS(fGoalRad-fCurRad);
     
         hsAssert(dist>=0 && dist<=kTwoPI, "illegal radian diff");
-        hsBool mustWrap = (dist > hsScalarPI);  // go opposite direction for shortcut and wrap
+        hsBool mustWrap = (dist > M_PI);  // go opposite direction for shortcut and wrap
 
         // compute speed
-        hsScalar speed; 
+        float speed; 
         if (warp)
-            speed = (hsScalar)(kTwoPI * 100 * secs);
+            speed = (float)(kTwoPI * 100 * secs);
         else
-            speed = (hsScalar)(kTwoPI * fCirPerSec * secs);
+            speed = (float)(kTwoPI * fCirPerSec * secs);
 
         // move towards goalRad
         hsAssert(fCurRad>=0 && fCurRad<=kTwoPI, "illegal radian value");
@@ -1717,7 +1717,7 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
     hsAssert(fCurRad>=0 && fCurRad<=kTwoPI, "illegal radian value");
     
     hsPoint3 x;
-    x = GetCenterPoint() + hsVector3((hsScalar)hsCosine(fCurRad)*fRadius, (hsScalar)hsSine(fCurRad)*fRadius, 0.0f);
+    x = GetCenterPoint() + hsVector3((float)cos(fCurRad)*fRadius, (float)sin(fCurRad)*fRadius, 0.0f);
     x.fZ = fCamera->GetTargetPos().fZ;
     return x;
 }
@@ -1737,8 +1737,8 @@ hsPoint3 plCameraBrain1_Circle::IGetClosestPointOnCircle(const hsPoint3* toThis)
         v = hsVector3(&center, &p);
     }
     v.Normalize();
-    fGoalRad = (hsScalar)atan2(v.fY, v.fX); // -pi to pi
-    hsAssert(fGoalRad>=-hsScalarPI && fGoalRad<=hsScalarPI, "Illegal atan2 val");
+    fGoalRad = (float)atan2(v.fY, v.fX); // -pi to pi
+    hsAssert(fGoalRad>=-M_PI && fGoalRad<=M_PI, "Illegal atan2 val");
     if (fGoalRad<0)
         fGoalRad = kTwoPI + fGoalRad;   // 0 to 2pi
     hsAssert(fGoalRad>=0 && fGoalRad<=kTwoPI, "Illegal atan2 val");

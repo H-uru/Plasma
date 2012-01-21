@@ -150,8 +150,8 @@ public:
     int FindSpawnPoint( const char *name ) const;
     // \}
     static int WarpPlayerToAnother(hsBool iMove, uint32_t remoteID);
-    static int WarpPlayerToXYZ(hsScalar x, hsScalar y, hsScalar z);
-    static int WarpPlayerToXYZ(int pid, hsScalar x, hsScalar y, hsScalar z);
+    static int WarpPlayerToXYZ(float x, float y, float z);
+    static int WarpPlayerToXYZ(int pid, float x, float y, float z);
 
     static plAvatarMgr *GetInstance();
     static void ShutDown();

@@ -119,8 +119,8 @@ void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, in
         // it's an include list and we didn't find it
         return;
 
-    static hsScalar lastTime=0;
-    hsScalar curTime = (hsScalar)hsTimer::GetSysSeconds();
+    static float lastTime=0;
+    float curTime = (float)hsTimer::GetSysSeconds();
 
     if (lastTime!=curTime)
     {

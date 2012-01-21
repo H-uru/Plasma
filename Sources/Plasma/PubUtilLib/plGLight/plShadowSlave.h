@@ -70,8 +70,8 @@ public:
 
     plViewTransform     fView;
 
-    hsScalar            fPower;
-    hsScalar            fBlurScale;
+    float            fPower;
+    float            fBlurScale;
 
     hsBounds3Ext        fCasterWorldBounds;
     hsBounds3Ext        fWorldBounds;
@@ -81,9 +81,9 @@ public:
     uint32_t              fWidth;
     uint32_t              fHeight;
 
-    hsScalar            fAttenDist;
+    float            fAttenDist;
 
-    hsScalar            fPriority;
+    float            fPriority;
 
     uint32_t              fFlags;
 

@@ -121,7 +121,7 @@ public:
     virtual void GetSyncState(hsPoint3& pos, hsQuat& rot, hsVector3& linV, hsVector3& angV) = 0;
     virtual void SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsVector3* angV) = 0;
 
-    virtual hsScalar GetMass() = 0;
+    virtual float GetMass() = 0;
     // I wish I could think of a better way to do this, but this is how it's
     // going to be for now.
     virtual void ExcludeRegionHack(hsBool cleared) = 0;

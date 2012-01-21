@@ -99,7 +99,7 @@ protected:
 
     int                     fMinFaces;
     int                     fMaxFaces;
-    hsScalar                fMinSize;
+    float                fMinSize;
 
     int                     fMinInsts;
     int                     fMaxInsts;

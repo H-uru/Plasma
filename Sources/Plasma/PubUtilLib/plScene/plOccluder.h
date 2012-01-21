@@ -75,12 +75,12 @@ protected:
     hsTArray<plVisRegion*>      fVisRegions;
     hsBitVector                 fVisNot;
 
-    hsScalar                    fPriority;
+    float                    fPriority;
     hsBounds3Ext                fWorldBounds;
 
     plKey                       fSceneNode;
 
-    virtual hsScalar            IComputeSurfaceArea();
+    virtual float            IComputeSurfaceArea();
     virtual void                IComputeBounds();
 
     virtual hsTArray<plCullPoly>& IGetLocalPolyList() { return fPolys; }
@@ -99,7 +99,7 @@ public:
 
     virtual hsBool      MsgReceive(plMessage* msg);
 
-    virtual hsScalar GetPriority() const { return fPriority; }
+    virtual float GetPriority() const { return fPriority; }
 
     hsBool InVisSet(const hsBitVector& visSet) const { return fVisSet.Overlap(visSet); }
     hsBool InVisNot(const hsBitVector& visNot) const { return fVisNot.Overlap(visNot); }

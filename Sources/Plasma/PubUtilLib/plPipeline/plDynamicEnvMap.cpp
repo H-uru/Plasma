@@ -155,17 +155,17 @@ void plDynamicEnvMap::IUpdatePosition()
         SetCameraMatrix(fPos);
 }
 
-void plDynamicEnvMap::SetHither(hsScalar f)
+void plDynamicEnvMap::SetHither(float f)
 {
     fHither = f;
 }
 
-void plDynamicEnvMap::SetYon(hsScalar f)
+void plDynamicEnvMap::SetYon(float f)
 {
     fYon = f;
 }
 
-void plDynamicEnvMap::SetFogStart(hsScalar f)
+void plDynamicEnvMap::SetFogStart(float f)
 {
     fFogStart = f;
 }
@@ -175,7 +175,7 @@ void plDynamicEnvMap::SetColor(const hsColorRGBA& col)
     fColor = col;
 }
 
-void plDynamicEnvMap::SetRefreshRate(hsScalar secs)
+void plDynamicEnvMap::SetRefreshRate(float secs)
 {
     fRefreshRate = secs / 6.f;
     plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
@@ -539,7 +539,7 @@ void plDynamicCamMap::Init()
     plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
 }
 
-void plDynamicCamMap::SetRefreshRate(hsScalar secs)
+void plDynamicCamMap::SetRefreshRate(float secs)
 {
     fRefreshRate = secs;
     plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());

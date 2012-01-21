@@ -55,6 +55,7 @@ extern "C" {
 #endif
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
+#include <math.h>
 
 
 char * hsFormatStr(const char * fmt, ...)
@@ -75,16 +76,9 @@ char * hsFormatStrV(const char * fmt, va_list args)
 
 static char hsStrBuf[100];
 
-char *hsScalarToStr(hsScalar s)
+char *hsScalarToStr(float s)
 {
-    if (s == hsIntToScalar(hsScalarToInt(s)))
-        sprintf(hsStrBuf, "%d", hsScalarToInt(s));
-    else
-    #if HS_CAN_USE_FLOAT
-        sprintf(hsStrBuf, "%f", hsScalarToFloat(s));
-    #else
-        sprintf(hsStrBuf, "%d:%lu", hsFixedToInt(s), (uint16_t)s);
-    #endif
+    sprintf(hsStrBuf, "%f", s);
     return hsStrBuf;
 }
 
@@ -214,6 +208,11 @@ int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int
 #else
     return hsMessageBoxWithOwner(nil,message,caption,kind,icon);
 #endif
+}
+
+inline hsBool hsCompare(float a, float b, float delta)
+{
+    return (fabs(a - b) < delta);
 }
 
 

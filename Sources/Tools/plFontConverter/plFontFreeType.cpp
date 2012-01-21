@@ -225,8 +225,8 @@ hsBool  plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
             }
 
             // Set these now, since setting them before would've changed the IGetFreeCharData results
-            ch->fLeftKern = (hsScalar)ftBitmap->left;
-            ch->fRightKern = (hsScalar)ftAdvances[ i ].x / 64.f - (hsScalar)fWidth - ch->fLeftKern;//ftBitmap->bitmap.width;
+            ch->fLeftKern = (float)ftBitmap->left;
+            ch->fRightKern = (float)ftAdvances[ i ].x / 64.f - (float)fWidth - ch->fLeftKern;//ftBitmap->bitmap.width;
             ch->fBaseline = ftBitmap->top;
             ch->fHeight = ftBitmap->bitmap.rows;
 

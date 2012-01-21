@@ -46,16 +46,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plRipVSConsts
 {
 public:
-    hsScalar        fC1U;
-    hsScalar        fC2U;
-    hsScalar        fC1V;
-    hsScalar        fC2V;
+    float        fC1U;
+    float        fC2U;
+    float        fC1V;
+    float        fC2V;
 
-    hsScalar        fInitAtten;
-    hsScalar        fLife;
-    hsScalar        fDecay;
+    float        fInitAtten;
+    float        fLife;
+    float        fDecay;
 
-    hsScalar        fRamp;
+    float        fRamp;
 };
 
 

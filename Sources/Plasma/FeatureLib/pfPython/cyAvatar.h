@@ -110,11 +110,11 @@ public:
     virtual void RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, hsBool netForce, hsBool netProp);
 
     // for the multistage behaviors
-    virtual void NextStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsScalar newTime,
+    virtual void NextStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce);
-    virtual void PreviousStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsScalar newTime,
+    virtual void PreviousStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce);
-    virtual void GoToStage(pyKey &behKey, int32_t stage, hsScalar transTime, hsBool setTime, hsScalar newTime,
+    virtual void GoToStage(pyKey &behKey, int32_t stage, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce);
 
     // static behavior functions:
@@ -542,8 +542,8 @@ public:
     static bool LocalAvatarRunKeyDown();
     static bool LocalAvatarIsMoving();
     
-    static void SetMouseTurnSensitivity(hsScalar val);
-    static hsScalar GetMouseTurnSensitivity();
+    static void SetMouseTurnSensitivity(float val);
+    static float GetMouseTurnSensitivity();
 
     static void SpawnNext();
     /////////////////////////////////////////////////////////////////////////////

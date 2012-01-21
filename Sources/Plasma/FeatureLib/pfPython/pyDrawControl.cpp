@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #endif
 
-void pyDrawControl::SetGamma2(hsScalar gamma)
+void pyDrawControl::SetGamma2(float gamma)
 {
 #ifndef BUILDING_PYPLASMA
     char command[256];
@@ -77,14 +77,14 @@ void pyDrawControl::SetGamma2(hsScalar gamma)
 #include "plGLight/plShadowMaster.h"
 #endif
 
-void pyDrawControl::SetShadowVisDistance(hsScalar distance)
+void pyDrawControl::SetShadowVisDistance(float distance)
 {
 #ifndef BUILDING_PYPLASMA
     plShadowMaster::SetGlobalShadowQuality(distance);
 #endif
 }
 
-hsScalar pyDrawControl::GetShadowVisDistance()
+float pyDrawControl::GetShadowVisDistance()
 {
 #ifndef BUILDING_PYPLASMA
     return plShadowMaster::GetGlobalShadowQuality();

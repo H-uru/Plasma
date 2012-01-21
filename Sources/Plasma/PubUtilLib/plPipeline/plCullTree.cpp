@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define MF_DEBUG_NORM
 #ifdef MF_DEBUG_NORM
 
-#define IDEBUG_NORMALIZE( a, b ) { hsScalar len = hsFastMath::InvSqrtAppr((a).MagnitudeSquared()); a *= len; b *= len; }
+#define IDEBUG_NORMALIZE( a, b ) { float len = hsFastMath::InvSqrtAppr((a).MagnitudeSquared()); a *= len; b *= len; }
 
 #else // MF_DEBUG_NORM
 #define IDEBUG_NORMALIZE( a, b )
@@ -60,10 +60,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define CULL_SMALL_TOLERANCE
 #ifdef CULL_SMALL_TOLERANCE
-//static const hsScalar kTolerance = 1.e-5f;
-static const hsScalar kTolerance = 1.e-3f;
+//static const float kTolerance = 1.e-5f;
+static const float kTolerance = 1.e-3f;
 #else //CULL_SMALL_TOLERANCE
-static const hsScalar kTolerance = 1.e-1f;
+static const float kTolerance = 1.e-1f;
 #endif // CULL_SMALL_TOLERANCE
 
 plProfile_CreateCounter("Harvest Nodes", "Draw", HarvestNodes);
@@ -128,8 +128,8 @@ plCullNode::plCullStatus plCullNode::TestBounds(const hsBounds3Ext& bnd) const
     // side timings to be sure. Still looking for some reasonably constructed real data sets. mf
 #define MF_TEST_SPHERE_FIRST
 #ifdef MF_TEST_SPHERE_FIRST
-    hsScalar dist = fNorm.InnerProduct(bnd.GetCenter()) + fDist;
-    hsScalar rad = bnd.GetRadius();
+    float dist = fNorm.InnerProduct(bnd.GetCenter()) + fDist;
+    float rad = bnd.GetRadius();
     if( dist < -rad )
         return kCulled;
     if( dist > rad )
@@ -139,7 +139,7 @@ plCullNode::plCullStatus plCullNode::TestBounds(const hsBounds3Ext& bnd) const
     hsPoint2 depth;
     bnd.TestPlane(fNorm, depth);
 
-    const hsScalar kSafetyDist = -0.1f;
+    const float kSafetyDist = -0.1f;
     if( depth.fY + fDist < kSafetyDist )
         return kCulled;
 
@@ -149,7 +149,7 @@ plCullNode::plCullStatus plCullNode::TestBounds(const hsBounds3Ext& bnd) const
     return kSplit;
 }
 
-plCullNode::plCullStatus plCullNode::ITestSphereRecur(const hsPoint3& center, hsScalar rad) const
+plCullNode::plCullStatus plCullNode::ITestSphereRecur(const hsPoint3& center, float rad) const
 {
     plCullNode::plCullStatus retVal = TestSphere(center, rad);
 
@@ -198,9 +198,9 @@ plCullNode::plCullStatus plCullNode::ITestSphereRecur(const hsPoint3& center, hs
     return kCulled;
 }
 
-plCullNode::plCullStatus plCullNode::TestSphere(const hsPoint3& center, hsScalar rad) const
+plCullNode::plCullStatus plCullNode::TestSphere(const hsPoint3& center, float rad) const
 {
-    hsScalar dist = fNorm.InnerProduct(center) + fDist;
+    float dist = fNorm.InnerProduct(center) + fDist;
     if( dist < -rad )
         return kCulled;
     if( dist > rad )
@@ -384,7 +384,7 @@ void plCullNode::IHarvest(const plSpaceTree* space, hsTArray<int16_t>& outList) 
 // This section builds the tree from the input cullpoly's
 //////////////////////////////////////////////////////////////////////
 
-void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<hsScalar>& depths,
+void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<float>& depths,
                             hsBitVector& inVerts,
                             hsBitVector& outVerts,
                             hsBitVector& onVerts,
@@ -415,7 +415,7 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<hsScalar>& de
             if( outVerts.IsBitSet(outPoly.fVerts.GetCount()-1) )
             {
                 hsPoint3 interp;
-                hsScalar t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
+                float t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
                 // add interp
                 onVerts.SetBit(outPoly.fVerts.GetCount());
                 if( poly.fClipped.IsBitSet(i-1) )
@@ -429,7 +429,7 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<hsScalar>& de
             if( inVerts.IsBitSet(outPoly.fVerts.GetCount()-1) )
             {
                 hsPoint3 interp;
-                hsScalar t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
+                float t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
                 // add interp
                 onVerts.SetBit(outPoly.fVerts.GetCount());
                 if( poly.fClipped.IsBitSet(i-1) )
@@ -451,7 +451,7 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<hsScalar>& de
         ||(outVerts.IsBitSet(outPoly.fVerts.GetCount()-1) && inVerts.IsBitSet(0)) )
     {
         hsPoint3 interp;
-        hsScalar t = IInterpVert(poly.fVerts[poly.fVerts.GetCount()-1], poly.fVerts[0], interp);
+        float t = IInterpVert(poly.fVerts[poly.fVerts.GetCount()-1], poly.fVerts[0], interp);
         onVerts.SetBit(outPoly.fVerts.GetCount());
         if( poly.fClipped.IsBitSet(poly.fVerts.GetCount()-1) )
             outPoly.fClipped.SetBit(outPoly.fVerts.GetCount());
@@ -477,7 +477,7 @@ void plCullNode::ITakeHalfPoly(const plCullPoly& srcPoly,
             if( onVerts.IsBitSet(vtxIdx[i]) && onVerts.IsBitSet(vtxIdx[last]) && onVerts.IsBitSet(vtxIdx[next]) )
             {
 #if 0 // FISH
-                hsScalar dot = hsVector3(&srcPoly.fVerts[vtxIdx[last]], &srcPoly.fVerts[vtxIdx[i]]).InnerProduct(hsVector3(&srcPoly.fVerts[vtxIdx[next]], &srcPoly.fVerts[vtxIdx[i]]));
+                float dot = hsVector3(&srcPoly.fVerts[vtxIdx[last]], &srcPoly.fVerts[vtxIdx[i]]).InnerProduct(hsVector3(&srcPoly.fVerts[vtxIdx[next]], &srcPoly.fVerts[vtxIdx[i]]));
                 if( dot <= 0 )
 #endif // FISH
                     continue;
@@ -512,7 +512,7 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
                                                 plCullPoly*& innerPoly, 
                                                 plCullPoly*& outerPoly) const
 {
-    static hsTArray<hsScalar> depths;
+    static hsTArray<float> depths;
     depths.SetCount(poly.fVerts.GetCount());
 
     static hsBitVector onVerts;
@@ -597,12 +597,12 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
     return kSplit;
 }
 
-hsScalar plCullNode::IInterpVert(const hsPoint3& p0, const hsPoint3& p1, hsPoint3& out) const
+float plCullNode::IInterpVert(const hsPoint3& p0, const hsPoint3& p1, hsPoint3& out) const
 {
     hsVector3 oneToOh;
     oneToOh.Set(&p0, &p1);
 
-    hsScalar t = -(fNorm.InnerProduct(p1) + fDist) / fNorm.InnerProduct(oneToOh);
+    float t = -(fNorm.InnerProduct(p1) + fDist) / fNorm.InnerProduct(oneToOh);
     if( t >= 1.f )
     {
         out = p0;
@@ -658,8 +658,8 @@ void plCullTree::AddPoly(const plCullPoly& poly)
 
     hsVector3 cenToEye(&fViewPos, &poly.fCenter);
     hsFastMath::NormalizeAppr(cenToEye);
-    hsScalar camDist = cenToEye.InnerProduct(poly.fNorm);
-    plConst(hsScalar) kTol(0.1f);
+    float camDist = cenToEye.InnerProduct(poly.fNorm);
+    plConst(float) kTol(0.1f);
     hsBool backFace = camDist < -kTol;
     if( !backFace && (camDist < kTol) )
         return;
@@ -768,7 +768,7 @@ int16_t plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
     a.Set(&poly.fVerts[i0], &fViewPos);
     b.Set(&poly.fVerts[i1], &fViewPos);
     hsVector3 n = a % b;
-    hsScalar d = -n.InnerProduct(fViewPos);
+    float d = -n.InnerProduct(fViewPos);
 
     IDEBUG_NORMALIZE(n, d);
 
@@ -1000,7 +1000,7 @@ void plCullTree::InitFrustum(const hsMatrix44& world2NDC)
 
     plCullNode* node;
     hsVector3 norm;
-    hsScalar dist;
+    float dist;
 
     int i;
     for( i = 0; i < 2; i++ )
@@ -1080,7 +1080,7 @@ hsBool plCullTree::BoundsVisible(const hsBounds3Ext& bnd) const
     return plCullNode::kCulled != IGetRoot()->ITestBoundsRecur(bnd);
 }
 
-hsBool plCullTree::SphereVisible(const hsPoint3& center, hsScalar rad) const
+hsBool plCullTree::SphereVisible(const hsPoint3& center, float rad) const
 {
     return plCullNode::kCulled != IGetRoot()->ITestSphereRecur(center, rad);
 }

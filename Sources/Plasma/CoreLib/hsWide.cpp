@@ -240,7 +240,7 @@ inline int MaxLeftShift(const hsWide* w)
     }
 }
 
-hsFixed hsWide::FixDiv(const hsWide* denom) const
+int32_t hsWide::FixDiv(const hsWide* denom) const
 {
     hsWide  num = *this;
     hsWide  den = *denom;
@@ -256,7 +256,7 @@ hsFixed hsWide::FixDiv(const hsWide* denom) const
     return num.Div(&den)->AsLong();
 }
 
-hsFract hsWide::FracDiv(const hsWide* denom) const
+int32_t hsWide::FracDiv(const hsWide* denom) const
 {
     hsWide  num = *this;
     hsWide  den = *denom;
@@ -297,10 +297,6 @@ int32_t hsWide::Sqrt() const
         }
     } while (--bits);
 
-#if HS_PIN_MATH_OVERFLOW
-    if ((int32_t)root < 0)
-        return kPosInfinity32;
-#endif
     return (int32_t)root;
 }
 

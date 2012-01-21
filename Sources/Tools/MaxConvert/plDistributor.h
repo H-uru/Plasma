@@ -325,10 +325,10 @@ public:
     float               GetAlignmentWeight() const { return fAlignWgt * 100.f; }
 
     void                SetPolarRange(float deg);
-    float               GetPolarRange() const { return hsScalarRadToDeg(fPolarRange); }
+    float               GetPolarRange() const { return hsRadiansToDegrees(fPolarRange); }
 
-    void                SetAzimuthRange(float deg) { fAzimuthRange = hsScalarDegToRad(deg); }
-    float               GetAzimuthRange() const { return hsScalarRadToDeg(fAzimuthRange); }
+    void                SetAzimuthRange(float deg) { fAzimuthRange = hsDegreesToRadians(deg); }
+    float               GetAzimuthRange() const { return hsRadiansToDegrees(fAzimuthRange); }
 
     void                SetOverallProb(float percent) { fOverallProb = percent/100.f; }
     float               GetOverallProb() const { return fOverallProb * 100.f; }

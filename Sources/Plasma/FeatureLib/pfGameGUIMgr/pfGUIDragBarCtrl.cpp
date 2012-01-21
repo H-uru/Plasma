@@ -78,7 +78,7 @@ pfGUIDragBarCtrl::~pfGUIDragBarCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDragBarCtrl::IEval( double secs, hsScalar del, uint32_t dirty )
+hsBool  pfGUIDragBarCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }

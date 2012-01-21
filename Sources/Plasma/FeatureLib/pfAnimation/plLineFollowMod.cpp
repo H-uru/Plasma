@@ -79,7 +79,7 @@ plLineFollowMod::~plLineFollowMod()
     delete fPath;
 }
 
-void plLineFollowMod::SetSpeedClamp(hsScalar fps)
+void plLineFollowMod::SetSpeedClamp(float fps)
 {
     fSpeedClamp = fps;
     if( fSpeedClamp > 0 )
@@ -93,7 +93,7 @@ void plLineFollowMod::SetSpeedClamp(hsScalar fps)
 
 }
 
-void plLineFollowMod::SetOffsetFeet(hsScalar f)
+void plLineFollowMod::SetOffsetFeet(float f)
 {
     fOffset = f;
     if( fOffset != 0 )
@@ -115,9 +115,9 @@ void plLineFollowMod::SetForceToLine(hsBool on)
         fFollowFlags &= ~kForceToLine;
 }
 
-void plLineFollowMod::SetOffsetDegrees(hsScalar f)
+void plLineFollowMod::SetOffsetDegrees(float f)
 {
-    fOffset = hsScalarDegToRad(f);
+    fOffset = hsDegreesToRadians(f);
     if( fOffset != 0 )
     {
         fFollowFlags &= ~kOffsetFeet;
@@ -130,7 +130,7 @@ void plLineFollowMod::SetOffsetDegrees(hsScalar f)
     }
 }
 
-void plLineFollowMod::SetOffsetClamp(hsScalar f)
+void plLineFollowMod::SetOffsetClamp(float f)
 {
     fOffsetClamp = f;
     if( fOffsetClamp > 0 )
@@ -337,7 +337,7 @@ void plLineFollowMod::IRegister()
     }
 }
 
-hsBool plLineFollowMod::IEval(double secs, hsScalar del, uint32_t dirty)
+hsBool plLineFollowMod::IEval(double secs, float del, uint32_t dirty)
 {
     if( !fPath )
         return false;
@@ -366,7 +366,7 @@ hsBool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
     hsPoint3 tgtPos = tgtXfm.GetTranslate();
 
     hsVector3 tgt2src(&fSearchPos, &tgtPos);
-    hsScalar t2sLen = tgt2src.Magnitude();
+    float t2sLen = tgt2src.Magnitude();
     hsFastMath::NormalizeAppr(tgt2src);
 
     hsVector3 out;
@@ -374,7 +374,7 @@ hsBool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
 
     if( fFollowFlags & kOffsetAng )
     {
-        hsScalar del = t2sLen * fTanOffset;
+        float del = t2sLen * fTanOffset;
         if( fFollowFlags & kOffsetClamp ) 
         {
             if( del > fOffsetClamp )
@@ -409,7 +409,7 @@ hsBool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
 
 hsBool plLineFollowMod::IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm)
 {
-    hsScalar t = fPath->GetExtremePoint(searchPos);
+    float t = fPath->GetExtremePoint(searchPos);
     if( fFollowFlags & kFullMatrix )
     {
         fPath->SetCurTime(t, plAnimPath::kNone);
@@ -441,12 +441,12 @@ void plLineFollowMod::ICheckForPop(const hsPoint3& oldPos, const hsPoint3& newPo
 {
     hsVector3 del(&oldPos, &newPos);
 
-    hsScalar elapsed = hsTimer::GetDelSysSeconds();
-    hsScalar speedSq = 0.f;
+    float elapsed = hsTimer::GetDelSysSeconds();
+    float speedSq = 0.f;
     if (elapsed > 0.f)
         speedSq = del.MagnitudeSquared() / elapsed;
 
-    const hsScalar kMaxSpeedSq = 30.f * 30.f; // (feet per sec)^2
+    const float kMaxSpeedSq = 30.f * 30.f; // (feet per sec)^2
     if( speedSq > kMaxSpeedSq )
         fFollowFlags |= kSearchPosPop;
     else
@@ -497,7 +497,7 @@ hsBool plLineFollowMod::IGetSearchPos()
     return true;
 }
 
-hsMatrix44 plLineFollowMod::IInterpMatrices(const hsMatrix44& m0, const hsMatrix44& m1, hsScalar parm)
+hsMatrix44 plLineFollowMod::IInterpMatrices(const hsMatrix44& m0, const hsMatrix44& m1, float parm)
 {
     hsMatrix44 retVal;
     int i, j;
@@ -524,14 +524,14 @@ hsMatrix44 plLineFollowMod::ISpeedClamp(plCoordinateInterface* ci, const hsMatri
     const hsPoint3 oldPos = currL2W.GetTranslate();
     const hsPoint3 newPos = unclTgtXfm.GetTranslate();
     const hsVector3 del(&newPos, &oldPos);
-    hsScalar elapsed = hsTimer::GetDelSysSeconds();
-    hsScalar speed = 0.f;
+    float elapsed = hsTimer::GetDelSysSeconds();
+    float speed = 0.f;
     if (elapsed > 0.f)
         speed = del.Magnitude() / elapsed;
 
     if( speed > fSpeedClamp )
     {
-        hsScalar parm = fSpeedClamp / speed;
+        float parm = fSpeedClamp / speed;
 
         hsMatrix44 clTgtXfm = IInterpMatrices(currL2W, unclTgtXfm, parm);
 
@@ -658,9 +658,9 @@ hsBool  plRailCameraMod::IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tg
     return true;
 }
 
-hsPoint3 plRailCameraMod::GetGoal(double secs, hsScalar speed)
+hsPoint3 plRailCameraMod::GetGoal(double secs, float speed)
 {
-    hsScalar delTime;
+    float delTime;
     int dir;
     if (fTargetTime == fCurrentTime)
         return fGoal;
@@ -681,7 +681,7 @@ hsPoint3 plRailCameraMod::GetGoal(double secs, hsScalar speed)
     if (delTime <= (secs * speed))
         fCurrentTime = fTargetTime;
     else
-        fCurrentTime += (hsScalar)((secs * speed) * dir);
+        fCurrentTime += (float)((secs * speed) * dir);
 
     if (fPath->GetWrap())
     {

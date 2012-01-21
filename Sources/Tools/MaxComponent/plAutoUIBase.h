@@ -91,7 +91,7 @@ public:
     void AddCheckBox    (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
                         hsBool def=false);
     void AddFloatSpinner(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        hsScalar def=0.f, hsScalar min=0.f, hsScalar max=1.f);
+                        float def=0.f, float min=0.f, float max=1.f);
     void AddIntSpinner  (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
                         int def=1, int min=0, int max=1);
     void AddEditBox     (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,

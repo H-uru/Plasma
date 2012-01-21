@@ -261,7 +261,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
     fRenderInfo.fX = x;
     fRenderInfo.fY = y;
     fRenderInfo.fNumCols = (int16_t)(( fBPP <= 8 ) ? ( ( fWidth * fBPP ) >> 3 ) : 0);
-    fRenderInfo.fFloatWidth = (hsScalar)fWidth;
+    fRenderInfo.fFloatWidth = (float)fWidth;
     fRenderInfo.fFarthestX = x;
     fRenderInfo.fMaxAscent = 0;
     fRenderInfo.fVolatileStringPtr = string;
@@ -1258,7 +1258,7 @@ hsBool  plFont::LoadFromFNTStream( hsStream *stream )
             outChar.fHeight = ( charEntries[ i ].offset == 0 ) ? 0 : height;
             outChar.fBaseline = fntInfo.ascent;
             outChar.fLeftKern = 0.f;
-            outChar.fRightKern = (hsScalar)(charEntries[ i ].width - fWidth);
+            outChar.fRightKern = (float)(charEntries[ i ].width - fWidth);
             fCharacters.Append( outChar );
 
             if( outChar.fHeight > fMaxCharHeight )
@@ -1415,9 +1415,9 @@ class plLineParser
             return atoi( IGetNextToken() );
         }
 
-        hsScalar    GetFloat( void )
+        float    GetFloat( void )
         {
-            return (hsScalar)atof( IGetNextToken() );
+            return (float)atof( IGetNextToken() );
         }
 };
 
@@ -1601,7 +1601,7 @@ class plBDFCharsParser : public plBDFSectParser
                 }
 
                 // Set these now, since setting them before would've changed the IGetFreeCharData results
-                fCharacter->fLeftKern = (hsScalar)xOff;
+                fCharacter->fLeftKern = (float)xOff;
                 fCharacter->fBaseline = yOff + pixH;
                 fCharacter->fHeight = fRowsLeft = pixH;
 

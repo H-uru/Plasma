@@ -62,8 +62,8 @@ public:
 
     void Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature,  uint8_t index);
     virtual void Process(double time, float elapsed);
-    virtual void SetStrength(hsScalar val, hsScalar rate = 0.f); // default instant change
-    virtual hsScalar GetStrength();
+    virtual void SetStrength(float val, float rate = 0.f); // default instant change
+    virtual float GetStrength();
     virtual void Rewind();
     void DumpDebug(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
 
@@ -77,7 +77,7 @@ protected:
     plAGAnimInstance *fAnim;
     plArmatureModBase *fArmature;
     plArmatureBrain *fBrain;
-    plTimedValue<hsScalar> fStrength;
+    plTimedValue<float> fStrength;
     uint8_t fIndex;
 
     virtual void IStart();

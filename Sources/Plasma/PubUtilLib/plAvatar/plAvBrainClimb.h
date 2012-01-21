@@ -98,7 +98,7 @@ public:
 
     virtual void Activate(plArmatureModBase *avMod);
     virtual void Deactivate();
-    virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    virtual hsBool Apply(double timeNow, float elapsed);
 
     virtual void SaveToSDL(plStateDataRecord *sdl);
     virtual void LoadFromSDL(const plStateDataRecord *sdl);

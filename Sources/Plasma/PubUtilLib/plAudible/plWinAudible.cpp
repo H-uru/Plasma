@@ -328,12 +328,12 @@ void plWinAudible::Stop(int index)
     SND_APPLY_LOOP( index, Stop(), ; );
 }
 
-void plWinAudible::SetMin(const hsScalar m,int index)
+void plWinAudible::SetMin(const float m,int index)
 {
     SND_APPLY_LOOP( index, SetMin( (int)m ), ; );
 }
 
-void plWinAudible::SetMax(const hsScalar m,int index)
+void plWinAudible::SetMax(const float m,int index)
 {
     SND_APPLY_LOOP( index, SetMax( (int)m ), ; );
 }
@@ -367,14 +367,14 @@ void    plWinAudible::ToggleMuted( int index )
     }
 }
 
-hsScalar plWinAudible::GetMin(int index) const
+float plWinAudible::GetMin(int index) const
 {
-    return (hsScalar)(fSoundObjs[index]->GetMin());
+    return (float)(fSoundObjs[index]->GetMin());
 }
 
-hsScalar plWinAudible::GetMax(int index) const
+float plWinAudible::GetMax(int index) const
 {
-    return (hsScalar)(fSoundObjs[index]->GetMax());
+    return (float)(fSoundObjs[index]->GetMax());
 }
 
 void plWinAudible::SetVelocity(const hsVector3 vel,int index)

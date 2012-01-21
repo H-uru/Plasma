@@ -225,7 +225,6 @@ public:
     /* Overloaded  End */
 
 
-#if HS_CAN_USE_FLOAT
     float           ReadLEFloat();
     void            ReadLEFloat(int count, float values[]);
     double          ReadLEDouble();
@@ -256,33 +255,7 @@ public:
     void            WriteLE(double value) { WriteLEDouble(value); }
     void            WriteLE(int count, const double values[]) { WriteLEDouble(count, values); }
     /* Overloaded End */
-#endif
 
-#if HS_SCALAR_IS_FIXED
-    hsFixed         ReadLEScalar() { return (hsFixed)this->ReadLE32(); }
-    void            ReadLEScalar(int count, hsFixed values[])
-                    {
-                        this->ReadLE32(count, (uint32_t*)values);
-                    }
-    hsFixed         ReadBEScalar() { return (hsFixed)this->ReadBE32(); }
-
-
-    void            WriteLEScalar(hsFixed value) { this->WriteLE32(value); }
-    void            WriteLEScalar(int count, const hsFixed values[])
-                    {
-                        this->WriteLE32(count, (uint32_t*)values);
-                    }
-    void            WriteBEScalar(hsFixed value) { this->WriteBE32(value); }
-
-
-    /* Overloaded Begin (Scalar) */
-    void            ReadLE(hsFixed* value) { this->ReadLE((uint32_t*)value); }
-    void            ReadLE(int count, hsFixed values[]) { this->ReadLE(count, (uint32_t*)values); }
-    void            WriteLE(hsFixed value) { this->WriteLE((uint32_t)value); }
-    void            WriteLE(int count, const hsFixed values[]) { this->WriteLE(count, (uint32_t*)values); }
-    /* Overloaded End */
-
-#else
     float           ReadLEScalar() { return (float)this->ReadLEFloat(); }
     void            ReadLEScalar(int count, float values[])
                     {
@@ -295,7 +268,6 @@ public:
                         this->WriteLEFloat(count, (float*)values);
                     }
     void            WriteBEScalar(float value) { this->WriteBEFloat(value); }
-#endif
 
     void            WriteLEAtom(uint32_t tag, uint32_t size);
     uint32_t          ReadLEAtom(uint32_t* size);

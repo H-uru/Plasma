@@ -244,7 +244,7 @@ void hsAffineParts::ComposeMatrix(hsMatrix44 *out) const
     hsVector3 R[3];
     QuatTo3Vectors(fQ, R);
 
-    hsScalar f = fF < 0 ? -1.f : 1.f;
+    float f = fF < 0 ? -1.f : 1.f;
     for( i = 0; i < 3; i++ )
     {
         for( j = 0; j < 3; j++ )
@@ -274,7 +274,7 @@ void hsAffineParts::ComposeInverseMatrix(hsMatrix44 *out) const
     // Build scale factor matrix
     hsMatrix44 K;
     hsVector3 invK;
-    invK.Set(hsScalarInvert(fK.fX),hsScalarInvert(fK.fY),hsScalarInvert(fK.fZ));
+    invK.Set(hsInvert(fK.fX),hsInvert(fK.fY),hsInvert(fK.fZ));
     K.MakeScaleMat(&invK);
 
     // Build Utranspose matrix
@@ -357,7 +357,7 @@ void hsAffineParts::ComposeInverseMatrix(hsMatrix44 *out) const
     int i, j;
 
     hsVector3 invK;
-    invK.Set(hsScalarInvert(fK.fX),hsScalarInvert(fK.fY),hsScalarInvert(fK.fZ));
+    invK.Set(hsInvert(fK.fX),hsInvert(fK.fY),hsInvert(fK.fZ));
     hsVector3 UK[3];
     for( i = 0; i < 3; i++ )
     {
@@ -378,7 +378,7 @@ void hsAffineParts::ComposeInverseMatrix(hsMatrix44 *out) const
     hsVector3 Rt[3];
     QuatTo3VectorsTranspose(fQ.Conjugate(), Rt);
 
-    hsScalar f = fF < 0 ? -1.f : 1.f;
+    float f = fF < 0 ? -1.f : 1.f;
     for( i = 0; i < 3; i++ )
     {
         for( j = 0; j < 3; j++ )

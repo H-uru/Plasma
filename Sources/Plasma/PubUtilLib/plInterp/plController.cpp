@@ -79,7 +79,7 @@ plLeafController::~plLeafController()
     delete[] fKeys;
 }
 
-void plLeafController::Interp(hsScalar time, hsScalar* result, plControllerCacheInfo *cache) const
+void plLeafController::Interp(float time, float* result, plControllerCacheInfo *cache) const
 {
     hsAssert(fType == hsKeyFrame::kScalarKeyFrame || fType == hsKeyFrame::kBezScalarKeyFrame, kInvalidInterpString);
     
@@ -87,7 +87,7 @@ void plLeafController::Interp(hsScalar time, hsScalar* result, plControllerCache
     if (fType == hsKeyFrame::kScalarKeyFrame)
     {
         hsScalarKey *k1, *k2;
-        hsScalar t;
+        float t;
         uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
         hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsScalarKey), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
         hsInterp::LinInterp(k1->fValue, k2->fValue, t, result);
@@ -95,14 +95,14 @@ void plLeafController::Interp(hsScalar time, hsScalar* result, plControllerCache
     else
     {
         hsBezScalarKey *k1, *k2;
-        hsScalar t;
+        float t;
         uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
         hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsBezScalarKey), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
         hsInterp::BezInterp(k1, k2, t, result);
     }
 }
 
-void plLeafController::Interp(hsScalar time, hsScalarTriple* result, plControllerCacheInfo *cache) const
+void plLeafController::Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache) const
 {
     hsAssert(fType == hsKeyFrame::kPoint3KeyFrame || fType == hsKeyFrame::kBezPoint3KeyFrame, kInvalidInterpString);
 
@@ -110,7 +110,7 @@ void plLeafController::Interp(hsScalar time, hsScalarTriple* result, plControlle
     if (fType == hsKeyFrame::kPoint3KeyFrame)
     {
         hsPoint3Key *k1, *k2;
-        hsScalar t;
+        float t;
         uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
         hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsPoint3Key), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
         hsInterp::LinInterp(&k1->fValue, &k2->fValue, t, result);
@@ -118,14 +118,14 @@ void plLeafController::Interp(hsScalar time, hsScalarTriple* result, plControlle
     else
     {
         hsBezPoint3Key *k1, *k2;
-        hsScalar t;
+        float t;
         uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
         hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsBezPoint3Key), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
         hsInterp::BezInterp(k1, k2, t, result);
     }
 }
 
-void plLeafController::Interp(hsScalar time, hsScaleValue* result, plControllerCacheInfo *cache) const
+void plLeafController::Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache) const
 {
     hsAssert(fType == hsKeyFrame::kScaleKeyFrame || fType == hsKeyFrame::kBezScaleKeyFrame, kInvalidInterpString);
 
@@ -133,7 +133,7 @@ void plLeafController::Interp(hsScalar time, hsScaleValue* result, plControllerC
     if (fType == hsKeyFrame::kScaleKeyFrame)
     {
         hsScaleKey *k1, *k2;
-        hsScalar t;
+        float t;
         uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
         hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsScaleKey), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
         hsInterp::LinInterp(&k1->fValue, &k2->fValue, t, result);
@@ -141,14 +141,14 @@ void plLeafController::Interp(hsScalar time, hsScaleValue* result, plControllerC
     else
     {
         hsBezScaleKey *k1, *k2;
-        hsScalar t;
+        float t;
         uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
         hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsBezScaleKey), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
         hsInterp::BezInterp(k1, k2, t, result);
     }
 }
 
-void plLeafController::Interp(hsScalar time, hsQuat* result, plControllerCacheInfo *cache) const
+void plLeafController::Interp(float time, hsQuat* result, plControllerCacheInfo *cache) const
 {
     hsAssert(fType == hsKeyFrame::kQuatKeyFrame || 
              fType == hsKeyFrame::kCompressedQuatKeyFrame32 ||
@@ -158,7 +158,7 @@ void plLeafController::Interp(hsScalar time, hsQuat* result, plControllerCacheIn
     if (fType == hsKeyFrame::kQuatKeyFrame)
     {
         hsQuatKey *k1, *k2;
-        hsScalar t;
+        float t;
         uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
         hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsQuatKey), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
         hsInterp::LinInterp(&k1->fValue, &k2->fValue, t, result);
@@ -166,7 +166,7 @@ void plLeafController::Interp(hsScalar time, hsQuat* result, plControllerCacheIn
     else if (fType == hsKeyFrame::kCompressedQuatKeyFrame32)
     {
         hsCompressedQuatKey32 *k1, *k2;
-        hsScalar t;
+        float t;
         uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
         hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsCompressedQuatKey32), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
 
@@ -178,7 +178,7 @@ void plLeafController::Interp(hsScalar time, hsQuat* result, plControllerCacheIn
     else // (fType == hsKeyFrame::kCompressedQuatKeyFrame64)
     {
         hsCompressedQuatKey64 *k1, *k2;
-        hsScalar t;
+        float t;
         uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
         hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsCompressedQuatKey64), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
 
@@ -189,31 +189,31 @@ void plLeafController::Interp(hsScalar time, hsQuat* result, plControllerCacheIn
     }
 }
 
-void plLeafController::Interp(hsScalar time, hsMatrix33* result, plControllerCacheInfo *cache) const
+void plLeafController::Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache) const
 {
     hsAssert(fType == hsKeyFrame::kMatrix33KeyFrame, kInvalidInterpString);
 
     hsBool tryForward = (cache? cache->fAtc->IsForewards() : true);
     hsMatrix33Key *k1, *k2;
-    hsScalar t;
+    float t;
     uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
     hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsMatrix33Key), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
     hsInterp::LinInterp(&k1->fValue, &k2->fValue, t, result);
 }
 
-void plLeafController::Interp(hsScalar time, hsMatrix44* result, plControllerCacheInfo *cache) const
+void plLeafController::Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache) const
 {
     hsAssert(fType == hsKeyFrame::kMatrix44KeyFrame, kInvalidInterpString);
 
     hsBool tryForward = (cache? cache->fAtc->IsForewards() : true);
     hsMatrix44Key *k1, *k2;
-    hsScalar t;
+    float t;
     uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
     hsInterp::GetBoundaryKeyFrames(time, fNumKeys, fKeys, sizeof(hsMatrix44Key), (hsKeyFrame**)&k1, (hsKeyFrame**)&k2, idxStore, &t, tryForward);
     hsInterp::LinInterp(&k1->fValue, &k2->fValue, t, result);
 }
 
-void plLeafController::Interp(hsScalar time, hsColorRGBA* result, plControllerCacheInfo *cache) const
+void plLeafController::Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache) const
 {
     hsPoint3 value;
     Interp(time, &value, cache);
@@ -229,7 +229,7 @@ plControllerCacheInfo *plLeafController::CreateCache() const
     return cache;
 }
 
-hsScalar plLeafController::GetLength() const
+float plLeafController::GetLength() const
 {
     uint32_t stride = GetStride();
     if (stride == 0 || fNumKeys == 0)
@@ -369,7 +369,7 @@ hsMatrix44Key *plLeafController::GetMatrix44Key(uint32_t i) const
     return (hsMatrix44Key *)((uint8_t *)fKeys + i * sizeof(hsMatrix44Key));
 }
 
-void plLeafController::GetKeyTimes(hsTArray<hsScalar> &keyTimes) const
+void plLeafController::GetKeyTimes(hsTArray<float> &keyTimes) const
 {
     int cIdx;
     int kIdx;
@@ -377,8 +377,8 @@ void plLeafController::GetKeyTimes(hsTArray<hsScalar> &keyTimes) const
     uint8_t *keyPtr = (uint8_t *)fKeys;
     for (cIdx = 0, kIdx = 0; cIdx < fNumKeys, kIdx < keyTimes.GetCount();)
     {
-        hsScalar kTime = keyTimes[kIdx];
-        hsScalar cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
+        float kTime = keyTimes[kIdx];
+        float cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
         if (cTime < kTime)
         {
             keyTimes.InsertAtIndex(kIdx, cTime);
@@ -399,7 +399,7 @@ void plLeafController::GetKeyTimes(hsTArray<hsScalar> &keyTimes) const
     // All remaining times in the controller are later than the original keyTimes set
     for (; cIdx < fNumKeys; cIdx++)
     {
-        hsScalar cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
+        float cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
         keyTimes.Append(cTime);
     }
 }
@@ -467,7 +467,7 @@ void plLeafController::AllocKeys(uint32_t numKeys, uint8_t type)
     }
 }
 
-void plLeafController::QuickScalarController(int numKeys, hsScalar* times, hsScalar* values, uint32_t valueStrides)
+void plLeafController::QuickScalarController(int numKeys, float* times, float* values, uint32_t valueStrides)
 {
     AllocKeys(numKeys, hsKeyFrame::kScalarKeyFrame);
     int i;
@@ -475,7 +475,7 @@ void plLeafController::QuickScalarController(int numKeys, hsScalar* times, hsSca
     {
         ((hsScalarKey*)fKeys)[i].fFrame = (uint16_t)(*times++ * MAX_FRAMES_PER_SEC);
         ((hsScalarKey*)fKeys)[i].fValue = *values;
-        values = (hsScalar *)((uint8_t *)values + valueStrides);
+        values = (float *)((uint8_t *)values + valueStrides);
     }
 }
 
@@ -764,7 +764,7 @@ plCompoundController::~plCompoundController()
     delete fZController;
 }
 
-void plCompoundController::Interp(hsScalar time, hsScalarTriple* result, plControllerCacheInfo *cache) const
+void plCompoundController::Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache) const
 {
     if (fXController)
         fXController->Interp(time, &result->fX, (cache ? cache->fSubControllers[0] : nil));
@@ -774,7 +774,7 @@ void plCompoundController::Interp(hsScalar time, hsScalarTriple* result, plContr
         fZController->Interp(time, &result->fZ, (cache ? cache->fSubControllers[2] : nil));
 }
 
-void plCompoundController::Interp(hsScalar time, hsQuat* result, plControllerCacheInfo *cache) const
+void plCompoundController::Interp(float time, hsQuat* result, plControllerCacheInfo *cache) const
 {
     hsEuler eul(0,0,0,EulOrdXYZs);
 
@@ -785,7 +785,7 @@ void plCompoundController::Interp(hsScalar time, hsQuat* result, plControllerCac
     eul.GetQuat(result);
 }
 
-void plCompoundController::Interp(hsScalar time, hsAffineParts* parts, plControllerCacheInfo *cache) const
+void plCompoundController::Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache) const
 {
     if (fXController)
         fXController->Interp(time, &parts->fT, (cache ? cache->fSubControllers[0] : nil));
@@ -802,16 +802,16 @@ void plCompoundController::Interp(hsScalar time, hsAffineParts* parts, plControl
     }
 }
 
-void plCompoundController::Interp(hsScalar time, hsColorRGBA* result, plControllerCacheInfo *cache) const
+void plCompoundController::Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache) const
 {
     fXController->Interp(time, &result->r, (cache ? cache->fSubControllers[0] : nil));
     fYController->Interp(time, &result->g, (cache ? cache->fSubControllers[1] : nil));
     fZController->Interp(time, &result->b, (cache ? cache->fSubControllers[2] : nil));
 }
 
-hsScalar plCompoundController::GetLength() const
+float plCompoundController::GetLength() const
 {
-    hsScalar len=0;
+    float len=0;
     int i;
     for(i=0; i<3; i++)
     {
@@ -821,7 +821,7 @@ hsScalar plCompoundController::GetLength() const
     return len;
 }
 
-void plCompoundController::GetKeyTimes(hsTArray<hsScalar> &keyTimes) const
+void plCompoundController::GetKeyTimes(hsTArray<float> &keyTimes) const
 {
     if (fXController)
         fXController->GetKeyTimes(keyTimes);

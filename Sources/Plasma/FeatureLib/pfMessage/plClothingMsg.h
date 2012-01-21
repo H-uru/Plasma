@@ -58,7 +58,7 @@ public:
     hsColorRGBA fColor;
     uint8_t fLayer;
     uint8_t fDelta;
-    hsScalar fWeight;
+    float fWeight;
 
     plClothingMsg() : fCommands(0), fItemKey(nil), fLayer(0), fDelta(0), fWeight(0) { fColor.Set(1.f, 1.f, 1.f, 1.f); }
     ~plClothingMsg() {}

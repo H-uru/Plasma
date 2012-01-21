@@ -87,7 +87,7 @@ protected:
 
     void            IRegister( void );
     void            IUnRegister( void );
-    virtual hsBool  IEval( double secs, hsScalar del, uint32_t dirty ); // called only by owner object's Eval()
+    virtual hsBool  IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 };
 
 #endif // _plEAXListenerMod_h

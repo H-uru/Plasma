@@ -118,8 +118,8 @@ public:
         kModeSize   = 0xff
     } fMode;
 
-    static const hsScalar kDefaultFadeIn;
-    static const hsScalar kDefaultFadeOut;
+    static const float kDefaultFadeIn;
+    static const float kDefaultFadeOut;
 
     /** Default constructor for the class factory and descendants. */
     plAvBrainGeneric();
@@ -154,7 +154,7 @@ public:
     virtual void Activate(plArmatureModBase *avMod);
 
     /** Advance the current stage and swap in a new stage if necessary. */
-    virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    virtual hsBool Apply(double timeNow, float elapsed);
 
     /** Remove all our stages and release control of the armature. */
     virtual void Deactivate();
@@ -283,8 +283,8 @@ protected:
     hsBool IProcessFadeIn(double time, float elapsed);
     hsBool IProcessFadeOut(double time, float elapsed);
 
-    hsBool ISwitchStages(int oldStage, int newStage, float delta, hsBool setTime, hsScalar newTime,
-                         float fadeNew, hsScalar fadeOld, double worldTime);
+    hsBool ISwitchStages(int oldStage, int newStage, float delta, hsBool setTime, float newTime,
+                         float fadeNew, float fadeOld, double worldTime);
 
     void IEnterMoveMode(double time);       // we've just entered and we're about to begin animating.
     void IExitMoveMode();                   // we're done animating; clean up

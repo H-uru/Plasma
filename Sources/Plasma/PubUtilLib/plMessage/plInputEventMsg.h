@@ -89,7 +89,7 @@ protected:
     ControlEventCode    fControlCode;
     hsBool              fControlActivated;
     hsPoint3            fTurnToPt;
-    hsScalar            fControlPct;
+    float            fControlPct;
 public:
 
     plControlEventMsg();
@@ -105,12 +105,12 @@ public:
     void SetControlCode(ControlEventCode c) { fControlCode = c; }
     void SetControlActivated(hsBool b)      { fControlActivated = b; }
     void SetTurnToPt(hsPoint3 pt)           { fTurnToPt = pt; }
-    void SetControlPct(hsScalar p)          { fControlPct = p; }
+    void SetControlPct(float p)          { fControlPct = p; }
 
     ControlEventCode    GetControlCode()    const { return fControlCode; }
     hsBool              ControlActivated()  { return fControlActivated; }
     hsPoint3            GetTurnToPt()       { return fTurnToPt; }
-    hsScalar            GetPct()            { return fControlPct; }
+    float            GetPct()            { return fControlPct; }
     char*               GetCmdString()      { return fCmd; }
 
     // IO

@@ -58,7 +58,7 @@ public:
     plPipeline*         fPipeline;
     plParticleSystem*   fSystem;
     double              fSecs;
-    hsScalar            fDelSecs;
+    float            fDelSecs;
 };
 
 

@@ -65,7 +65,7 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
         hsBool          fChecked;
         hsBool          fPlaySound;
 
-        virtual hsBool IEval( double secs, hsScalar del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
