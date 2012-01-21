@@ -163,8 +163,6 @@ inline void CDECL operator delete (void *, void *) {}
 *
 ***/
 
-#define ALLOCZERO(b)            MemAlloc(b, kMemZero, __FILE__, __LINE__)
-
 #ifdef __cplusplus
 
 #define NEWZERO(t)              new(MemAlloc(sizeof(t), kMemZero, __FILE__, __LINE__)) t
