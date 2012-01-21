@@ -215,7 +215,7 @@ void CFile::Read (
 
     // Handle errors
     if (bytesRead != bytes)
-        MemZero((uint8_t *)buffer + bytesRead, bytes - bytesRead);
+        memset((uint8_t *)buffer + bytesRead, 0, bytes - bytesRead);
     if ( (!result && (GetLastError() != ERROR_IO_PENDING)) ||
          (bytesRead != bytes) )
         LogMsg(kLogFatal, "failed: ReadFile");

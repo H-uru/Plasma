@@ -487,7 +487,7 @@ void * MemAlloc (unsigned bytes, unsigned flags, const char file[], int line) {
     // In debug mode ensure that memory is initialized to some freaky value
     #ifdef HS_DEBUGGING
         if (! (flags & kMemZero))
-            MemSet(ptr, (uint8_t) ((uintptr_t)ptr >> 4), bytes);
+            memset(ptr, (uint8_t) ((uintptr_t)ptr >> 4), bytes);
     #endif
 
 #ifdef _MSC_VER
@@ -618,16 +618,6 @@ void MemCopy (void * dest, const void * source, unsigned bytes) {
 //===========================================================================
 void MemMove (void * dest, const void * source, unsigned bytes) {
     memmove(dest, source, bytes);
-}
-
-//===========================================================================
-void MemSet (void * dest, unsigned value, unsigned bytes) {
-    memset(dest, value, bytes);
-}
-
-//===========================================================================
-void MemZero (void * dest, unsigned bytes) {
-    memset(dest, 0, bytes);
 }
 
 //===========================================================================

@@ -84,8 +84,6 @@ unsigned MemSize (void * ptr);
 int  MemCmp (const void * buf1, const void * buf2, unsigned bytes);
 void MemCopy (void * dest, const void * source, unsigned bytes);
 void MemMove (void * dest, const void * source, unsigned bytes);
-void MemSet (void * dest, unsigned value, unsigned bytes);
-void MemZero (void * dest, unsigned bytes);
 
 
 /*****************************************************************************

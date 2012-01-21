@@ -448,7 +448,7 @@ bool INtFileOpCompleteReadWrite (
         if (!file->sectorSizeMask)
             ErrorFatal(__LINE__, __FILE__, "Disk %s failed", op->opType == kOpFileRead ? "read" : "write");
         if (op->opType == kOpFileRead)
-            MemZero(op->rw.buffer + bytes, op->win32Bytes - bytes);
+            memset(op->rw.buffer + bytes, 0, op->win32Bytes - bytes);
     }
 
     if (op->masterOp) {

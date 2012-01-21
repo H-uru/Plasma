@@ -548,7 +548,7 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         addr.sin_family = AF_INET;
         addr.sin_port   = htons((uint16_t)port);
         addr.sin_addr.S_un.S_addr = htonl(node);
-        MemZero(addr.sin_zero, sizeof(addr.sin_zero));
+        memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
         if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
             wchar_t str[32];
             NetAddressToString(*listenAddr, str, arrsize(str), kNetAddressFormatAll);
@@ -632,7 +632,7 @@ static SOCKET ConnectSocket (unsigned localPort, const NetAddress & addr) {
             addr.sin_family = AF_INET;
             addr.sin_port   = htons((uint16_t) localPort);
             addr.sin_addr.S_un.S_addr = INADDR_ANY;
-            MemZero(addr.sin_zero, sizeof(addr.sin_zero));
+            memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
             if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
                 LogMsg(kLogError, "bind(port %u) failed (%u)", localPort, WSAGetLastError());
                 break;
