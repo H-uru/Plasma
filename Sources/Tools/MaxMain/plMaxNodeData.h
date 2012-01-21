@@ -129,7 +129,7 @@ public:
 
     DataBF()                                            
     { 
-        fBitVector = TRACKED_NEW hsBitVector;   
+        fBitVector = new hsBitVector;   
         fBitVector->SetBit(kDrawable); 
         fBitVector->SetBit(kPhysical); 
     }
@@ -142,13 +142,13 @@ public:
     }
     DataBF(const DataBF& ot)
     {
-        fBitVector = TRACKED_NEW hsBitVector;
+        fBitVector = new hsBitVector;
         *fBitVector = *ot.fBitVector;
     }
 
     void Init()                                         
     { 
-        fBitVector = TRACKED_NEW hsBitVector; 
+        fBitVector = new hsBitVector; 
         fBitVector->SetBit(kDrawable); 
         fBitVector->SetBit(kPhysical); 
     }

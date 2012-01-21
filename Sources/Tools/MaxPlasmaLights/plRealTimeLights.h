@@ -76,7 +76,7 @@ class plRTOmniLight : public plRTLightBase
         plRTOmniLight();
             
         ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuf= FALSE);
-        GenLight* NewLight(int type) {return TRACKED_NEW plRTOmniLight();} 
+        GenLight* NewLight(int type) {return new plRTOmniLight();} 
         RefTargetHandle Clone(RemapDir &remap);
 
         virtual void            InitNodeName( TSTR &s ) { s = _T( "RTOmniLight" ); }
@@ -95,7 +95,7 @@ class plRTOmniLightDesc : public ClassDesc2
 {
     public:
     int             IsPublic()                      { return TRUE; }
-    void*           Create(BOOL loading)            { return TRACKED_NEW plRTOmniLight; }
+    void*           Create(BOOL loading)            { return new plRTOmniLight; }
     const TCHAR*    ClassName()                     { return GetString(IDS_DB_OMNI); }
     SClass_ID       SuperClassID()                  { return LIGHT_CLASS_ID; }
     Class_ID        ClassID()                       { return RTOMNI_LIGHT_CLASSID; }
@@ -127,7 +127,7 @@ class plRTSpotLight : public plRTLightBase
 
         int CanConvertToType(Class_ID obtype) { return (obtype ==  RTSPOT_LIGHT_CLASSID ) ? 1 : 0; }
         ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuf= FALSE);
-        GenLight* NewLight(int type) {return TRACKED_NEW plRTSpotLight();}
+        GenLight* NewLight(int type) {return new plRTSpotLight();}
         RefTargetHandle Clone(RemapDir &remap);
         
         virtual Texmap  *GetProjMap();
@@ -150,7 +150,7 @@ class plRTSpotLightDesc : public ClassDesc2
 {
     public:
     int             IsPublic()                      { return TRUE; }
-    void*           Create(BOOL loading = FALSE)    { return TRACKED_NEW plRTSpotLight; }
+    void*           Create(BOOL loading = FALSE)    { return new plRTSpotLight; }
     const TCHAR*    ClassName()                     { return GetString(IDS_DB_FREE_SPOT); }
     SClass_ID       SuperClassID()                  { return LIGHT_CLASS_ID; }
     Class_ID        ClassID()                       { return RTSPOT_LIGHT_CLASSID; }
@@ -179,7 +179,7 @@ class plRTDirLight : public plRTLightBase
         SClass_ID SuperClassID() { return LIGHT_CLASS_ID; }
 
         ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuf= FALSE);
-        GenLight* NewLight(int type) {return TRACKED_NEW plRTDirLight();}
+        GenLight* NewLight(int type) {return new plRTDirLight();}
         RefTargetHandle Clone(RemapDir &remap);
 
         int CanConvertToType(Class_ID obtype) { return (obtype ==  RTDIR_LIGHT_CLASSID ) ? 1 : 0; }
@@ -201,7 +201,7 @@ class plRTDirLightDesc : public ClassDesc2
 {
     public:
     int             IsPublic()                      { return TRUE; }
-    void*           Create(BOOL loading)            { return TRACKED_NEW plRTDirLight; }
+    void*           Create(BOOL loading)            { return new plRTDirLight; }
     const TCHAR*    ClassName()                     { return GetString(IDS_DB_DIRECTIONAL); }
     SClass_ID       SuperClassID()                  { return LIGHT_CLASS_ID; }
     Class_ID        ClassID()                       { return RTDIR_LIGHT_CLASSID; }

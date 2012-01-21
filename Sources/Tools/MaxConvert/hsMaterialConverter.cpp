@@ -303,9 +303,9 @@ void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
         char suff[10];
         sprintf(suff, "%d", k);
         
-        opaCtl = TRACKED_NEW plLeafController;
+        opaCtl = new plLeafController;
         opaCtl->QuickScalarController(numKeys, times, values, sizeof(float));
-        animLayer = TRACKED_NEW plLayerLinkAnimation;
+        animLayer = new plLayerLinkAnimation;
         animLayer->SetLinkKey(node->GetAvatarSO()->GetKey());
         //animLayer->fLeavingAge = leaving[x];
         TSTR fullAnimName = TSTR(oldLayer->GetKeyName()) + TSTR("_") + TSTR(animName) + TSTR("_") + TSTR(suff);
@@ -317,7 +317,7 @@ void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
         animLayer->AttachViaNotify(currLayer);
         currLayer = animLayer;
         
-        plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnReplace, k, plMatRefMsg::kLayer);
+        plMatRefMsg* msg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnReplace, k, plMatRefMsg::kLayer);
         msg->SetOldRef(oldLayer);
         msg->SetRef(currLayer);
         hsgResMgr::ResMgr()->AddViaNotify(msg, plRefFlags::kActiveRef);
@@ -749,7 +749,7 @@ void hsMaterialConverter::GetNodesByMaterial(Mtl *mtl, hsTArray<plMaxNode*> &out
 hsTArray<plExportMaterialData> *
 hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint32_t multiIndex)
 {
-    hsTArray<plExportMaterialData> *ourMaterials = TRACKED_NEW hsTArray<plExportMaterialData>;
+    hsTArray<plExportMaterialData> *ourMaterials = new hsTArray<plExportMaterialData>;
 
     const char* dbgNodeName = node->GetName();
 
@@ -910,7 +910,7 @@ hsGMaterial* hsMaterialConverter::NonAlphaHackPrint(plMaxNode* node, Texmap* bas
 
     // Search done materials for it
 
-    hsGMaterial* mat = TRACKED_NEW hsGMaterial;
+    hsGMaterial* mat = new hsGMaterial;
     hsgResMgr::ResMgr()->NewKey(name, mat, node->GetLocation());
 
     // If plasmaLayer is nil, the artist has some other wierd (unsupported) layer type in the slot.
@@ -953,7 +953,7 @@ hsGMaterial* hsMaterialConverter::AlphaHackPrint(plMaxNode* node, Texmap* baseTe
 
     // Search done materials for it
 
-    hsGMaterial* mat = TRACKED_NEW hsGMaterial;
+    hsGMaterial* mat = new hsGMaterial;
     hsgResMgr::ResMgr()->NewKey(name, mat, node->GetLocation());
 
     // If plasmaLayer is nil, the artist has some other wierd (unsupported) layer type in the slot.
@@ -1153,7 +1153,7 @@ hsGMaterial *hsMaterialConverter::IProcessMaterial(Mtl *mtl, plMaxNode *node, co
     }
     else if (IsHsMaxMat(mtl) || IsDecalMat(mtl) || IsBumpMtl( mtl ) ) 
     {
-        hMat = TRACKED_NEW hsGMaterial;
+        hMat = new hsGMaterial;
         hsgResMgr::ResMgr()->NewKey(name, hMat,nodeLoc);
         IProcessPlasmaMaterial(mtl, node, hMat, hMat->GetKey()->GetName());
     }
@@ -1185,7 +1185,7 @@ hsGMaterial *hsMaterialConverter::IProcessMaterial(Mtl *mtl, plMaxNode *node, co
             if (fErrorMsg->Set((fWarned & kWarnedNoLayers) == 0, node->GetName(), "Material has no layers. (%s)", mtl->GetName()).CheckAndAsk())
                 fWarned |= kWarnedNoLayers;
             
-            plLayer* hLay = TRACKED_NEW plLayer;
+            plLayer* hLay = new plLayer;
             hLay->InitToDefault();
             hsgResMgr::ResMgr()->NewKey(TSTR(name) + TSTR("_DefLay"), hLay, nodeLoc);
             IAddLayerToMaterial(hMat, hLay);
@@ -1336,10 +1336,10 @@ hsGMaterial *hsMaterialConverter::IAddDefaultMaterial(plMaxNode *node)
 
     plLocation loc = node->GetLocation();
 
-    hsGMaterial *hMat = TRACKED_NEW hsGMaterial;
+    hsGMaterial *hMat = new hsGMaterial;
     hsgResMgr::ResMgr()->NewKey(TSTR(node->GetName()) + TSTR("_DefMat"), hMat, loc);
     
-    plLayer *layer = TRACKED_NEW plLayer;
+    plLayer *layer = new plLayer;
     layer->InitToDefault();
     hsgResMgr::ResMgr()->NewKey(TSTR(hMat->GetKeyName()) + TSTR("_DefLay"), layer, loc);
 
@@ -1413,10 +1413,10 @@ void hsMaterialConverter::IInsertSingleBlendLayer(plMipmap *texture, hsGMaterial
     mat->SetCompositeFlags(mat->GetCompositeFlags() | hsGMaterial::kCompNeedsBlendChannel);
 
     
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     layer->InitToDefault();
     hsgResMgr::ResMgr()->NewKey(TSTR(underLay->GetKeyName()) + TSTR("_AlphaBlend"), layer, node->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(texture->GetKey(), TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(texture->GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
     layer->SetAmbientColor(hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f));
 //  layer->SetZFlags(hsGMatState::kZNoZWrite | hsGMatState::kZIncLayer);
     // The inclayer prop probably wouldn't hurt here, because this layer should only get drawn as
@@ -1429,7 +1429,7 @@ void hsMaterialConverter::IInsertSingleBlendLayer(plMipmap *texture, hsGMaterial
     layer->SetMiscFlags(0);
 
     // Insert it in the right spot.
-    hsgResMgr::ResMgr()->AddViaNotify(layer->GetKey(), TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
+    hsgResMgr::ResMgr()->AddViaNotify(layer->GetKey(), new plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
                                                                        layerIdx, plMatRefMsg::kLayer | plMatRefMsg::kInsert), plRefFlags::kActiveRef);
 }
 
@@ -1574,11 +1574,11 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
 {
     if (!mtl || mtl->ClassID() != COMP_MTL_CLASS_ID)
         return nil;
-    uint32_t *layerCounts = TRACKED_NEW uint32_t[mtl->NumSubMtls()];
+    uint32_t *layerCounts = new uint32_t[mtl->NumSubMtls()];
     IParamBlock2 *pb = mtl->GetParamBlockByID(plCompositeMtl::kBlkPasses);
     char suff[10];
     sprintf(suff, "_%d", subMtlFlags);
-    hsGMaterial *mat = TRACKED_NEW hsGMaterial;
+    hsGMaterial *mat = new hsGMaterial;
     hsgResMgr::ResMgr()->NewKey(TSTR(name) + TSTR(suff), mat, node->GetLocation());
     
     int multiIndex = IFindSubIndex(node, mtl);
@@ -1678,8 +1678,8 @@ hsGMaterial *hsMaterialConverter::IProcessMultipassMtl(Mtl *mtl, plMaxNode *node
     if (!mtl || mtl->ClassID() != MULTIMTL_CLASS_ID)
         return nil;
 
-    hsGMaterial *mat = TRACKED_NEW hsGMaterial;
-    uint32_t *layerCounts = TRACKED_NEW uint32_t[mtl->NumSubMtls()];
+    hsGMaterial *mat = new hsGMaterial;
+    uint32_t *layerCounts = new uint32_t[mtl->NumSubMtls()];
     hsgResMgr::ResMgr()->NewKey(name, mat, node->GetLocation());
 
     IParamBlock2 *pb = mtl->GetParamBlockByID(plMultipassMtl::kBlkPasses);
@@ -1712,7 +1712,7 @@ hsGMaterial *hsMaterialConverter::IProcessParticleMtl(Mtl *mtl, plMaxNode *node,
     plLocation nodeLoc = node->GetLocation(); 
     char* dbgNodeName = node->GetName();
 
-    hsGMaterial *mat = TRACKED_NEW hsGMaterial;
+    hsGMaterial *mat = new hsGMaterial;
     hsgResMgr::ResMgr()->NewKey(name, mat,nodeLoc);
 
     
@@ -1826,7 +1826,7 @@ plLayerAnimation *IConvertNoteTrackAnims(plLayerAnimation *animLayer, SegmentMap
         SegmentSpec *spec = it->second;
         if (spec->fType == SegmentSpec::kAnim)
         {
-            plLayerAnimation *noteAnim = TRACKED_NEW plLayerAnimation;
+            plLayerAnimation *noteAnim = new plLayerAnimation;
             TSTR animName = TSTR(name) + TSTR("_anim_") + TSTR(spec->fName);
             hsgResMgr::ResMgr()->NewKey(animName, noteAnim, node->GetLocation());
 
@@ -2002,12 +2002,12 @@ static plLayerInterface* IProcessLayerMovie(plPassMtlBase* mtl, plLayerTex* layT
 
         if (isBink)
         {
-            movieLayer = TRACKED_NEW plLayerBink;
+            movieLayer = new plLayerBink;
             moviePostfix = "_bink";
         }
         else if (isAvi)
         {
-            movieLayer = TRACKED_NEW plLayerAVI;
+            movieLayer = new plLayerAVI;
             moviePostfix = "_avi";
         }
 
@@ -2054,7 +2054,7 @@ plLayerInterface* IProcessLayerAnimation(plPassMtlBase* mtl, plLayerTex* layTex,
 
     if( mtl->GetUseGlobal() )
     {
-        plLayerSDLAnimation *SDLLayer = TRACKED_NEW plLayerSDLAnimation;
+        plLayerSDLAnimation *SDLLayer = new plLayerSDLAnimation;
         TSTR animName = TSTR(name) + TSTR("_anim_") + TSTR(mtl->GetGlobalVarName());
         hsgResMgr::ResMgr()->NewKey(animName, SDLLayer, node->GetLocation());
 
@@ -2075,7 +2075,7 @@ plLayerInterface* IProcessLayerAnimation(plPassMtlBase* mtl, plLayerTex* layTex,
     {
         plAnimStealthNode *stealth = mtl->GetStealth( i );
 
-        plLayerAnimation *noteAnim = TRACKED_NEW plLayerAnimation;
+        plLayerAnimation *noteAnim = new plLayerAnimation;
         node->CheckSynchOptions(noteAnim);
 
         const char *segName = stealth->GetSegmentName();
@@ -2154,7 +2154,7 @@ plLayerInterface* IProcessAnimation(plPassMtlBase *mtl, plMaxNode *node, const c
         //if (!hsMaterialConverter::Instance().CheckValidityOfSDLVarAnim(mtl, mtl->GetGlobalVarName(), node))
         //  return layerIFace;
         
-        plLayerSDLAnimation *SDLLayer = TRACKED_NEW plLayerSDLAnimation;
+        plLayerSDLAnimation *SDLLayer = new plLayerSDLAnimation;
         TSTR animName = TSTR(name) + TSTR("_anim_") + TSTR(mtl->GetGlobalVarName());
         hsgResMgr::ResMgr()->NewKey(animName, SDLLayer, node->GetLocation());
 
@@ -2190,7 +2190,7 @@ plLayerInterface* IProcessAnimation(plPassMtlBase *mtl, plMaxNode *node, const c
     {
         plAnimStealthNode *stealth = mtl->GetStealth( i );
 
-        plLayerAnimation *noteAnim = TRACKED_NEW plLayerAnimation;
+        plLayerAnimation *noteAnim = new plLayerAnimation;
         node->CheckSynchOptions(noteAnim);
 
         const char *segName = stealth->GetSegmentName();
@@ -2627,7 +2627,7 @@ hsBool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hs
 
 void hsMaterialConverter::IAddLayerToMaterial(hsGMaterial *mat, plLayerInterface *layer)
 {
-    plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kLayer);
+    plMatRefMsg* msg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kLayer);
     hsgResMgr::ResMgr()->AddViaNotify(layer->GetKey(), msg, plRefFlags::kActiveRef);
 }
 
@@ -2792,9 +2792,9 @@ hsGMaterial *hsMaterialConverter::IWrapTextureInMaterial(Texmap *texMap, plMaxNo
         return hMat;
     }
 
-    hMat = TRACKED_NEW hsGMaterial;
+    hMat = new hsGMaterial;
 
-    plLayer* hLay = TRACKED_NEW plLayer;
+    plLayer* hLay = new plLayer;
     hLay->InitToDefault();
 
     hsgResMgr::ResMgr()->NewKey(txtFileName, hLay,nodeLoc);
@@ -3093,10 +3093,10 @@ void hsMaterialConverter::IAppendFunkyLayer(plMaxNode* node, Texmap* texMap, hsG
     char name[512];
     sprintf(name, "%s_funkRamp", prevLay->GetKey()->GetName());
 
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     layer->InitToDefault();
     hsgResMgr::ResMgr()->NewKey(name, layer, node->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(funkRamp->GetKey(), TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(funkRamp->GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
 
     layer->SetAmbientColor(hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f));
     layer->SetPreshadeColor(hsColorRGBA().Set(0, 0, 0, 1.f));
@@ -3127,7 +3127,7 @@ void hsMaterialConverter::IAppendFunkyLayer(plMaxNode* node, Texmap* texMap, hsG
         break;
     }
 
-    hsgResMgr::ResMgr()->AddViaNotify(layer->GetKey(), TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
+    hsgResMgr::ResMgr()->AddViaNotify(layer->GetKey(), new plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
                                                                        -1, plMatRefMsg::kLayer), plRefFlags::kActiveRef);
 
 }
@@ -3239,13 +3239,13 @@ void hsMaterialConverter::IAppendWetLayer(plMaxNode* node, hsGMaterial* mat)
         layer = plLayer::ConvertNoRef(key->GetObjectPtr());
     if( !layer )
     {
-        layer = TRACKED_NEW plLayer;
+        layer = new plLayer;
         layer->InitToDefault();
 
         hsgResMgr::ResMgr()->NewKey(name, layer, node->GetLocation());
 
         plBitmap* funkRamp = IGetFunkyRamp(node, kFunkyUp);
-        hsgResMgr::ResMgr()->AddViaNotify(funkRamp->GetKey(), TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(funkRamp->GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
     }
 
     layer->SetAmbientColor(hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f));
@@ -3262,7 +3262,7 @@ void hsMaterialConverter::IAppendWetLayer(plMaxNode* node, hsGMaterial* mat)
     layer->SetUVWSrc(plLayerInterface::kUVWNormal);
     layer->SetMiscFlags(layer->GetMiscFlags() | hsGMatState::kMiscOrthoProjection);
 
-    hsgResMgr::ResMgr()->AddViaNotify(layer->GetKey(), TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
+    hsgResMgr::ResMgr()->AddViaNotify(layer->GetKey(), new plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
                                                                        -1, plMatRefMsg::kLayer), plRefFlags::kActiveRef);
 
 }
@@ -3718,10 +3718,10 @@ plLayer* hsMaterialConverter::IMakeBumpLayer(plMaxNode* node, const char* nameBa
 
     plMipmap* bumpLutTexture = IGetBumpLutTexture(node);
 
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     layer->InitToDefault();
     hsgResMgr::ResMgr()->NewKey(name, layer, node->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(bumpLutTexture->GetKey(), TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(bumpLutTexture->GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
 
     layer->SetAmbientColor(hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f));
     layer->SetPreshadeColor(hsColorRGBA().Set(0, 0, 0, 1.f));
@@ -3797,11 +3797,11 @@ void hsMaterialConverter::IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat, i
         layerDu->SetBlendFlags((layerDu->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAdd);
 
     // Insert it in the right spot.
-    hsgResMgr::ResMgr()->AddViaNotify(layerDv->GetKey(), TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
+    hsgResMgr::ResMgr()->AddViaNotify(layerDv->GetKey(), new plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
                                                                        bumpLayerIdx, plMatRefMsg::kLayer | plMatRefMsg::kInsert), plRefFlags::kActiveRef);
-    hsgResMgr::ResMgr()->AddViaNotify(layerDw->GetKey(), TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
+    hsgResMgr::ResMgr()->AddViaNotify(layerDw->GetKey(), new plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
                                                                        bumpLayerIdx, plMatRefMsg::kLayer | plMatRefMsg::kInsert), plRefFlags::kActiveRef);
-    hsgResMgr::ResMgr()->AddViaNotify(layerDu->GetKey(), TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
+    hsgResMgr::ResMgr()->AddViaNotify(layerDu->GetKey(), new plMatRefMsg(mat->GetKey(), plRefMsg::kOnCreate, 
                                                                        bumpLayerIdx, plMatRefMsg::kLayer | plMatRefMsg::kInsert), plRefFlags::kActiveRef);
 }
 
@@ -4533,7 +4533,7 @@ void hsMaterialConverter::CollectConvertedMaterials(Mtl *mtl, hsTArray<hsGMateri
 plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, const plLocation &loc)
 {
     char clothKeyName[256];
-    plClothingItem *cloth = TRACKED_NEW plClothingItem();
+    plClothingItem *cloth = new plClothingItem();
     cloth->SetName(mtl->GetName());
     cloth->fSortOrder = (mtl->GetDefault() ? 0 : 1);
 
@@ -4553,7 +4553,7 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
     sprintf(clothKeyName, "CItm_%s", cloth->fName);
     hsgResMgr::ResMgr()->NewKey(clothKeyName, cloth, loc);
     
-    plNodeRefMsg* nodeRefMsg = TRACKED_NEW plNodeRefMsg(plKeyFinder::Instance().FindSceneNodeKey(loc), 
+    plNodeRefMsg* nodeRefMsg = new plNodeRefMsg(plKeyFinder::Instance().FindSceneNodeKey(loc), 
                                                 plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kGeneric);
     hsgResMgr::ResMgr()->AddViaNotify(cloth->GetKey(), nodeRefMsg, plRefFlags::kActiveRef);
 
@@ -4589,7 +4589,7 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
                 }
                 continue;
             }
-            plElementRefMsg *eMsg = TRACKED_NEW plElementRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, i, -1, elementName, j);
+            plElementRefMsg *eMsg = new plElementRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, i, -1, elementName, j);
             hsgResMgr::ResMgr()->AddViaNotify(tex->GetKey(), eMsg, plRefFlags::kActiveRef);
         }
     }
@@ -4606,7 +4606,7 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
     }
     if (thumbnail != nil)
     {
-        plGenRefMsg *msg= TRACKED_NEW plGenRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, -1, -1);
+        plGenRefMsg *msg= new plGenRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, -1, -1);
         hsgResMgr::ResMgr()->AddViaNotify(thumbnail->GetKey(), msg, plRefFlags::kActiveRef); 
     }
     cloth->fDescription = hsStrcpy(mtl->GetDescription());

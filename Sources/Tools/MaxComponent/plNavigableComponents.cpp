@@ -272,7 +272,7 @@ hsBool plAvLadderComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     int ladderType = fCompPB->GetInt(kTypeCombo);
     bool enabled = (fCompPB->GetInt(kEnabled) != 0);
 
-    plAvLadderMod* ladMod = TRACKED_NEW plAvLadderMod(goingUp, ladderType, loops, enabled, ladderView);
+    plAvLadderMod* ladMod = new plAvLadderMod(goingUp, ladderType, loops, enabled, ladderView);
     plKey modKey = node->AddModifier(ladMod, IGetUniqueName(node));
     fKeys.Append(modKey);
 

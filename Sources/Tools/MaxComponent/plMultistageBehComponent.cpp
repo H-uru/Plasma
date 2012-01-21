@@ -189,7 +189,7 @@ void plMultistageBehComponent::IGetReceivers(plMaxNode* node, std::vector<plKey>
 hsBool plMultistageBehComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     //create the modifier here so that other components can find it
-    plMultistageBehMod *mod = TRACKED_NEW plMultistageBehMod;
+    plMultistageBehMod *mod = new plMultistageBehMod;
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), mod, node->GetLocation());
     fMods[node] = mod;
 
@@ -199,7 +199,7 @@ hsBool plMultistageBehComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
 hsBool plMultistageBehComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // Create the stage vector
-    plAnimStageVec* animStages = TRACKED_NEW plAnimStageVec;
+    plAnimStageVec* animStages = new plAnimStageVec;
     int numStages = fStages.size();
     animStages->reserve(numStages);
 
@@ -349,7 +349,7 @@ BOOL plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
             if (LOWORD(wParam) == IDC_ADD)
             {
                 // Create the new stage and give it a default name.
-                plBaseStage* stage = TRACKED_NEW plStandardStage;
+                plBaseStage* stage = new plStandardStage;
                 int count = fStages.size();
                 fStages.push_back(stage);
                 char buf[64];
@@ -571,7 +571,7 @@ IOResult plMultistageBehComponent::Load(ILoad* iload)
             break;
 
         case kStandard:
-            stage = TRACKED_NEW plStandardStage;
+            stage = new plStandardStage;
             break;
         }
 

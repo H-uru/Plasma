@@ -433,14 +433,14 @@ plRTOmniLight::plRTOmniLight()
 
 ObjLightDesc *plRTOmniLight::CreateLightDesc(INode *n, BOOL forceShadowBuf)
 {
-    return TRACKED_NEW OmniLight( n, forceShadowBuf );
+    return new OmniLight( n, forceShadowBuf );
 }
 
 
 RefTargetHandle plRTOmniLight::Clone(RemapDir &remap)
 {
 
-    plRTOmniLight *obj = TRACKED_NEW plRTOmniLight;//(plRTLightBase*) fClassDesc->Create(false);
+    plRTOmniLight *obj = new plRTOmniLight;//(plRTLightBase*) fClassDesc->Create(false);
     obj->ReplaceReference(kRefSpotLight, fLightPB->Clone(remap));
     BaseClone(this, obj, remap);
 
@@ -607,14 +607,14 @@ plRTSpotLight::plRTSpotLight()
 
 ObjLightDesc *plRTSpotLight::CreateLightDesc(INode *n, BOOL forceShadowBuf)
 {
-    return TRACKED_NEW SpotLight( n, forceShadowBuf );
+    return new SpotLight( n, forceShadowBuf );
 }
 
 
 RefTargetHandle plRTSpotLight::Clone(RemapDir &remap)
 {
 
-    plRTSpotLight *obj = TRACKED_NEW plRTSpotLight;//(plRTLightBase*) fClassDesc->Create(false);
+    plRTSpotLight *obj = new plRTSpotLight;//(plRTLightBase*) fClassDesc->Create(false);
     obj->ReplaceReference(kRefSpotLight, fLightPB->Clone(remap));
     BaseClone(this, obj, remap);
     return obj;
@@ -813,14 +813,14 @@ plRTDirLight::plRTDirLight()
 
 ObjLightDesc *plRTDirLight::CreateLightDesc(INode *n, BOOL forceShadowBuf)
 {
-    return TRACKED_NEW DirLight( n, forceShadowBuf );
+    return new DirLight( n, forceShadowBuf );
 }
 
 
 RefTargetHandle plRTDirLight::Clone(RemapDir &remap)
 {
 
-    plRTDirLight *obj = TRACKED_NEW plRTDirLight;//(plRTLightBase*) fClassDesc->Create(false);
+    plRTDirLight *obj = new plRTDirLight;//(plRTLightBase*) fClassDesc->Create(false);
     obj->ReplaceReference(kRefDirLight, fLightPB->Clone(remap));
     BaseClone(this, obj, remap);
     return obj;

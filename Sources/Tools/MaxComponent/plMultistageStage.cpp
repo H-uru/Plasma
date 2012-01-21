@@ -64,7 +64,7 @@ char* MyReadSafeString(hsStream* s)
     hsAssert(numChars <= s->GetSizeLeft(), "Bad string");
     if (numChars > 0)
     {
-        name = TRACKED_NEW char[numChars+1];
+        name = new char[numChars+1];
         s->Read(numChars, name);
         name[numChars] = '\0';      
     }
@@ -456,7 +456,7 @@ void plStandardStage::IInitDlg()
 plAnimStage* plStandardStage::CreateStage()
 {
     int loopCount = fLoopForever ? -1 : fNumLoops;
-    plAnimStage* stage = TRACKED_NEW plAnimStage(fAnimName,
+    plAnimStage* stage = new plAnimStage(fAnimName,
                                         fNotify,
                                         (plAnimStage::ForwardType)fForward,
                                         (plAnimStage::BackType)fBackward,
@@ -473,7 +473,7 @@ plAnimStage* plStandardStage::CreateStage()
 
 plBaseStage* plStandardStage::Clone()
 {
-    plStandardStage* clone = TRACKED_NEW plStandardStage;
+    plStandardStage* clone = new plStandardStage;
     clone->fAnimName = hsStrcpy(fAnimName);
     clone->fNumLoops = fNumLoops;
     clone->fLoopForever = fLoopForever;

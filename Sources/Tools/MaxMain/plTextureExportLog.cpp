@@ -93,7 +93,7 @@ plTextureExportLog::~plTextureExportLog()
 
 void    plTextureExportLog::IAddBMapNode( uint32_t rank, plBitmap *bMap )
 {
-    plBMapNode  *node = TRACKED_NEW plBMapNode, **nodeHdl;
+    plBMapNode  *node = new plBMapNode, **nodeHdl;
 
 
     node->fBitmap = bMap;
@@ -121,7 +121,7 @@ void    plTextureExportLog::AddTexture( plBitmap *texture )
 void    plTextureExportLog::Write( void )
 {
     plBMapNode      *node;
-    hsUNIXStream    *stream = TRACKED_NEW hsUNIXStream;
+    hsUNIXStream    *stream = new hsUNIXStream;
     char            str[ 128 ];
     uint32_t          size;
 

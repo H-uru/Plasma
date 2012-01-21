@@ -131,7 +131,7 @@ bool SceneViewer::ISetRunning(bool running)
         strcat(path, "dat\\");
 
         // Start the client
-        char *options = TRACKED_NEW char[strlen(path)+2+strlen(kSemaphoreName)+strlen(kPipeName)+6];
+        char *options = new char[strlen(path)+2+strlen(kSemaphoreName)+strlen(kPipeName)+6];
         sprintf(options, "-s %s %s \"%s\"", kSemaphoreName, kPipeName, path);
 
         int ret = (int)ShellExecute(NULL,

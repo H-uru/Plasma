@@ -64,7 +64,7 @@ protected:
         int len = GetWindowTextLength(hCtrl)+1;
         if (len > 1)
         {
-            char *buf = TRACKED_NEW char[len];
+            char *buf = new char[len];
             GetWindowText(hCtrl, buf, len);
 
             // If the old value is different from the current one, update
@@ -176,7 +176,7 @@ public:
         layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plClothingMtl::kThumbnail));
         if (layer == nil)
         {
-            layer = TRACKED_NEW plLayerTex;
+            layer = new plLayerTex;
             pb->SetValue(ParamID(plClothingMtl::kThumbnail), 0, layer);
         }
         pbbm = layer->GetPBBitmap();
@@ -298,7 +298,7 @@ public:
                 layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(layerIdx), 0, buttonIdx);
                 if (layer == nil)
                 { // First time we've set a layer on this spot
-                    layer = TRACKED_NEW plLayerTex;
+                    layer = new plLayerTex;
                     pb->SetValue(ParamID(layerIdx), 0, layer, buttonIdx);
                 }
 

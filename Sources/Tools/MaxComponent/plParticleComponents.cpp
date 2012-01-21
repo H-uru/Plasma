@@ -152,9 +152,9 @@ hsBool plParticleCoreComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg
     // Moving this from Convert so the DrawInterface will appear sooner. Other components expect
     // the interfaces to be fully set up by the Convert pass.
     plSceneNode *sNode = plSceneNode::ConvertNoRef( pNode->GetRoomKey()->GetObjectPtr() );
-    plDrawInterface *di = TRACKED_NEW plDrawInterface;
+    plDrawInterface *di = new plDrawInterface;
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), di, pNode->GetLocation(), pNode->GetLoadMask());
-    hsgResMgr::ResMgr()->AddViaNotify( di->GetKey(), TRACKED_NEW plObjRefMsg(pNode->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( di->GetKey(), new plObjRefMsg(pNode->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
     pNode->SetDISceneNodeSpans(di, true);
 
     return true;
@@ -168,7 +168,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     const char *objName = node->GetKey()->GetName();
 
     plSceneObject *sObj = node->GetSceneObject();
-    plParticleSystem *sys = TRACKED_NEW plParticleSystem();
+    plParticleSystem *sys = new plParticleSystem();
 
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), sys, nodeLoc, node->GetLoadMask());   
 
@@ -231,7 +231,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         float avgLife = (partLifeMax + partLifeMin) / 2;
         uint32_t count = node->NumAttachedComponents();
         uint32_t lifeTicks = avgLife / frameDelta;
-        float *birth = TRACKED_NEW float[lifeTicks];
+        float *birth = new float[lifeTicks];
 
         // Find any anim components attached to the same node.
         for (i = 0; i < count; i++)
@@ -358,13 +358,13 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (fUserInput.fGenType == kGenPoint)
     {
         sources = 1;
-        pitchArray = TRACKED_NEW float[sources];
-        yawArray = TRACKED_NEW float[sources];
-        pointArray = TRACKED_NEW hsPoint3[sources];
+        pitchArray = new float[sources];
+        yawArray = new float[sources];
+        pointArray = new hsPoint3[sources];
         pitchArray[0] = pitch;
         yawArray[0] = yaw;
         pointArray[0].Set(0, 0, 0);
-        plSimpleParticleGenerator *gen = TRACKED_NEW plSimpleParticleGenerator();
+        plSimpleParticleGenerator *gen = new plSimpleParticleGenerator();
         gen->Init(genLife, partLifeMin, partLifeMax, pps, sources, pointArray, pitchArray, yawArray, angleRange, 
                   velMin, velMax, xSize, ySize, scaleMin, scaleMax, massRange, rotRange);
         generator = gen;
@@ -375,16 +375,16 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         hsTArray<hsPoint3> pos;
         plMeshConverter::Instance().StuffPositionsAndNormals(node, &pos, &normals);
         sources = normals.GetCount();
-        pitchArray = TRACKED_NEW float[sources];
-        yawArray = TRACKED_NEW float[sources];
-        pointArray = TRACKED_NEW hsPoint3[sources];
+        pitchArray = new float[sources];
+        yawArray = new float[sources];
+        pointArray = new hsPoint3[sources];
         int i;
         for (i = 0; i < sources; i++)
         {
             plParticleGenerator::ComputePitchYaw(pitchArray[i], yawArray[i], normals.Get(i));
             pointArray[i] = pos.Get(i);
         }
-        plSimpleParticleGenerator *gen = TRACKED_NEW plSimpleParticleGenerator();
+        plSimpleParticleGenerator *gen = new plSimpleParticleGenerator();
         gen->Init(genLife, partLifeMin, partLifeMax, pps, sources, pointArray, pitchArray, yawArray, angleRange, 
                   velMin, velMax, xSize, ySize, scaleMin, scaleMax, massRange, rotRange);
         generator = gen;
@@ -396,8 +396,8 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plMeshConverter::Instance().StuffPositionsAndNormals(node, &pos, &normals);
         sources = normals.GetCount();
 
-        pointArray = TRACKED_NEW hsPoint3[sources];
-        dirArray = TRACKED_NEW hsVector3[sources];
+        pointArray = new hsPoint3[sources];
+        dirArray = new hsVector3[sources];
         int i;
         for (i = 0; i < sources; i++)
         {
@@ -405,7 +405,7 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             pointArray[i] = pos.Get(i);
         }
 
-        plOneTimeParticleGenerator *gen = TRACKED_NEW plOneTimeParticleGenerator();
+        plOneTimeParticleGenerator *gen = new plOneTimeParticleGenerator();
         gen->Init(sources, pointArray, dirArray, xSize, ySize, scaleMin, scaleMax, rotRange);
         generator = gen;
         maxTotalParticles = sources;
@@ -415,8 +415,8 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     // Init and attach to the scene object
     sys->Init(xTiles, yTiles, maxTotalParticles, maxEmitters, ambientCtl, diffuseCtl, opacityCtl, 
               widthCtl, heightCtl);
-    hsgResMgr::ResMgr()->AddViaNotify( particleMat->GetKey(), TRACKED_NEW plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kActiveRef );
-    hsgResMgr::ResMgr()->AddViaNotify( sys->GetKey(), TRACKED_NEW plObjRefMsg( sObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( particleMat->GetKey(), new plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( sys->GetKey(), new plObjRefMsg( sObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
 
     // Set up normals and orientation
     uint32_t miscFlags = 0;
@@ -493,9 +493,9 @@ hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     
     if (fCompPB->GetInt(ParamID(kFollowSystem)))
     {
-        plParticleFollowSystemEffect *effect = TRACKED_NEW plParticleFollowSystemEffect;
+        plParticleFollowSystemEffect *effect = new plParticleFollowSystemEffect;
         hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effect, node->GetLocation(), node->GetLoadMask());
-        hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), TRACKED_NEW plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectMisc ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), new plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectMisc ), plRefFlags::kActiveRef );
     }
 
     return true;
@@ -533,7 +533,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kLifeMin)), node, start, end);
         if (ctl != nil)
         {
-            plParticleLifeMinApplicator *app = TRACKED_NEW plParticleLifeMinApplicator();
+            plParticleLifeMinApplicator *app = new plParticleLifeMinApplicator();
             app->SetChannelName(node->GetName());
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
             result = true;      
@@ -542,7 +542,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kLifeMax)), node, start, end);
         if (ctl != nil)
         {
-            plParticleLifeMaxApplicator *app = TRACKED_NEW plParticleLifeMaxApplicator();
+            plParticleLifeMaxApplicator *app = new plParticleLifeMaxApplicator();
             app->SetChannelName(node->GetName());
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
             result = true;      
@@ -551,7 +551,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kPPS)), node, start, end);
         if (ctl != nil)
         {
-            plParticlePPSApplicator *app = TRACKED_NEW plParticlePPSApplicator();
+            plParticlePPSApplicator *app = new plParticlePPSApplicator();
             app->SetChannelName(node->GetName());
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
             result = true;      
@@ -560,7 +560,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kConeAngle)), node, start, end);
         if (ctl != nil)
         {
-            plParticleAngleApplicator *app = TRACKED_NEW plParticleAngleApplicator();
+            plParticleAngleApplicator *app = new plParticleAngleApplicator();
             app->SetChannelName(node->GetName());
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
             result = true;      
@@ -569,7 +569,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kVelocityMin)), node, start, end);
         if (ctl != nil)
         {
-            plParticleVelMinApplicator *app = TRACKED_NEW plParticleVelMinApplicator();
+            plParticleVelMinApplicator *app = new plParticleVelMinApplicator();
             app->SetChannelName(node->GetName());
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
             result = true;      
@@ -578,7 +578,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kVelocityMax)), node, start, end);
         if (ctl != nil)
         {
-            plParticleVelMaxApplicator *app = TRACKED_NEW plParticleVelMaxApplicator();
+            plParticleVelMaxApplicator *app = new plParticleVelMaxApplicator();
             app->SetChannelName(node->GetName());
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
             result = true;      
@@ -588,7 +588,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kGravity)), node, start, end);
         if (ctl != nil)
         {
-            plParticleGravityApplicator *app = TRACKED_NEW plParticleGravityApplicator();
+            plParticleGravityApplicator *app = new plParticleGravityApplicator();
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
             result = true;      
         }
@@ -596,7 +596,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kDrag)), node, start, end);
         if (ctl != nil)
         {
-            plParticleDragApplicator *app = TRACKED_NEW plParticleDragApplicator();
+            plParticleDragApplicator *app = new plParticleDragApplicator();
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
             result = true;      
         }
@@ -606,7 +606,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
     ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kScaleMin)), node, start, end);
     if (ctl != nil)
     {
-        plParticleScaleMinApplicator *app = TRACKED_NEW plParticleScaleMinApplicator();
+        plParticleScaleMinApplicator *app = new plParticleScaleMinApplicator();
         app->SetChannelName(node->GetName());
         plAnimComponentBase::SetupCtl(anim, ctl, app, node);
         result = true;      
@@ -615,7 +615,7 @@ hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
     ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kScaleMax)), node, start, end);
     if (ctl != nil)
     {
-        plParticleScaleMaxApplicator *app = TRACKED_NEW plParticleScaleMaxApplicator();
+        plParticleScaleMaxApplicator *app = new plParticleScaleMaxApplicator();
         app->SetChannelName(node->GetName());
         plAnimComponentBase::SetupCtl(anim, ctl, app, node);
         result = true;      
@@ -964,7 +964,7 @@ void plParticleFadeComponent::AddToParticleSystem(plParticleSystem *sys, plMaxNo
     plParticleFadeVolumeEffect *effect = nil;
     if( !fEffect )
     {
-        effect = TRACKED_NEW plParticleFadeVolumeEffect();
+        effect = new plParticleFadeVolumeEffect();
         hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effect, node->GetLocation(), node->GetLoadMask());
         effect->fLength = (float)fCompPB->GetInt(kFadeDistance);
         if (fCompPB->GetInt(kFadeZ))
@@ -977,7 +977,7 @@ void plParticleFadeComponent::AddToParticleSystem(plParticleSystem *sys, plMaxNo
         effect = plParticleFadeVolumeEffect::ConvertNoRef(fEffect);
     }
     hsAssert(effect, "Our effect pointer was wrong type?");
-    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), TRACKED_NEW plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectMisc ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), new plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectMisc ), plRefFlags::kActiveRef );
 }
 
 CLASS_DESC(plParticleFadeComponent, gParticleFadeDesc, "Fade Volume Effect",  "Fade Volume Effect", COMP_TYPE_PARTICLE, PARTICLE_FADE_COMPONENT_CLASS_ID)
@@ -1050,10 +1050,10 @@ void plParticleVolumeComponent::BuildVolume(plMaxNode *node)
     if (fBound != nil)
         return; // already converted it
 
-    fBound = TRACKED_NEW plBoundInterface;
+    fBound = new plBoundInterface;
     hsgResMgr::ResMgr()->NewKey(node->GetName(), fBound, node->GetLocation(), node->GetLoadMask());
     fBound->Init(plMeshConverter::Instance().CreateConvexVolume(node));
-    hsgResMgr::ResMgr()->AddViaNotify(fBound->GetKey(), TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(fBound->GetKey(), new plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 }
 
 
@@ -1072,14 +1072,14 @@ void plParticleVolumeComponent::AddToParticleSystem(plParticleSystem *sys, plMax
         {
         default:
         case kImpDefault:
-            effect = TRACKED_NEW plParticleCollisionEffectBeat();
+            effect = new plParticleCollisionEffectBeat();
             break;
         case kImpDie:
-            effect = TRACKED_NEW plParticleCollisionEffectDie();
+            effect = new plParticleCollisionEffectDie();
             break;
         case kImpBounce:
             {
-                plParticleCollisionEffectBounce* bnc = TRACKED_NEW plParticleCollisionEffectBounce();
+                plParticleCollisionEffectBounce* bnc = new plParticleCollisionEffectBounce();
                 bnc->SetBounce(fCompPB->GetFloat(kBounceAmt) * 1.e-2f);
                 bnc->SetFriction(fCompPB->GetFloat(kFrictionAmt) * 1.e-2f);
                 effect = bnc;
@@ -1089,7 +1089,7 @@ void plParticleVolumeComponent::AddToParticleSystem(plParticleSystem *sys, plMax
 
         hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effect, node->GetLocation(), node->GetLoadMask());    
         plSceneObject *sObj = source->GetSceneObject();
-        hsgResMgr::ResMgr()->AddViaNotify( sObj->GetKey(), TRACKED_NEW plGenRefMsg( effect->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kPassiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( sObj->GetKey(), new plGenRefMsg( effect->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kPassiveRef );
 
         fEffect = effect;
     }
@@ -1098,7 +1098,7 @@ void plParticleVolumeComponent::AddToParticleSystem(plParticleSystem *sys, plMax
         effect = plParticleCollisionEffect::ConvertNoRef(fEffect);
     }
     hsAssert(effect, "Our effect pointer was wrong type?");
-    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), TRACKED_NEW plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectConstraint ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), new plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectConstraint ), plRefFlags::kActiveRef );
 }
 
 CLASS_DESC(plParticleVolumeComponent, gParticleVolumeDesc, "Collision Volume Effect",  "Collision Volume Effect", COMP_TYPE_PARTICLE, PARTICLE_VOLUME_COMPONENT_CLASS_ID)
@@ -1190,7 +1190,7 @@ void plParticleWindComponent::AddToParticleSystem(plParticleSystem *sys, plMaxNo
     plParticleLocalWind* effect = nil;
     if( !fEffect )
     {
-        effect = TRACKED_NEW plParticleLocalWind();
+        effect = new plParticleLocalWind();
         effect->SetScale(hsVector3(fCompPB->GetFloat(kScaleX), fCompPB->GetFloat(kScaleY), fCompPB->GetFloat(kScaleZ)));
         effect->SetSpeed(fCompPB->GetFloat(kSpeed));
 
@@ -1210,7 +1210,7 @@ void plParticleWindComponent::AddToParticleSystem(plParticleSystem *sys, plMaxNo
         effect = plParticleLocalWind::ConvertNoRef(fEffect);
     }
     hsAssert(effect, "Our effect pointer was wrong type?");
-    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), TRACKED_NEW plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectForce ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), new plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectForce ), plRefFlags::kActiveRef );
 }
 
 CLASS_DESC(plParticleWindComponent, gParticleWindDesc, "Wind Effect",  "WindEffect", COMP_TYPE_PARTICLE, PARTICLE_WIND_COMPONENT_CLASS_ID)
@@ -1311,7 +1311,7 @@ void plParticleUniWindComponent::AddToParticleSystem(plParticleSystem *sys, plMa
     plParticleUniformWind* effect = nil;
     if( !fEffect )
     {
-        effect = TRACKED_NEW plParticleUniformWind();
+        effect = new plParticleUniformWind();
         hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effect, node->GetLocation(), node->GetLoadMask());
 
         effect->SetStrength(fCompPB->GetFloat(kStrength));
@@ -1331,7 +1331,7 @@ void plParticleUniWindComponent::AddToParticleSystem(plParticleSystem *sys, plMa
         effect = plParticleUniformWind::ConvertNoRef(fEffect);
     }
     hsAssert(effect, "Our effect pointer was wrong type?");
-    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), TRACKED_NEW plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectForce ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), new plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectForce ), plRefFlags::kActiveRef );
 }
 
 CLASS_DESC(plParticleUniWindComponent, gParticleUniWindDesc, "Uniform Wind",  "UniWind", COMP_TYPE_PARTICLE, PARTICLE_UNIWIND_COMPONENT_CLASS_ID)
@@ -1482,7 +1482,7 @@ void plParticleFlockComponent::AddToParticleSystem(plParticleSystem *sys, plMaxN
     plParticleFlockEffect* effect = nil;
     if( !fEffect )
     {
-        effect = TRACKED_NEW plParticleFlockEffect();
+        effect = new plParticleFlockEffect();
         hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effect, node->GetLocation(), node->GetLoadMask());
 
         hsPoint3 offset(fCompPB->GetFloat(ParamID(kOffsetX)),
@@ -1512,7 +1512,7 @@ void plParticleFlockComponent::AddToParticleSystem(plParticleSystem *sys, plMaxN
         effect = plParticleFlockEffect::ConvertNoRef(fEffect);
     }
     hsAssert(effect, "Our effect pointer was wrong type?");
-    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), TRACKED_NEW plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectForce ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( effect->GetKey(), new plGenRefMsg( sys->GetKey(), plRefMsg::kOnCreate, 0, plParticleSystem::kEffectForce ), plRefFlags::kActiveRef );
 }
 
 CLASS_DESC(plParticleFlockComponent, gParticleFlockDesc, "Particle Flock",  "Flock", COMP_TYPE_PARTICLE, PARTICLE_FLOCK_COMPONENT_CLASS_ID)

@@ -301,7 +301,7 @@ DWORD PlasmaMax::Control(DWORD parameter)
         }
 
 #ifdef MAXASS_AVAILABLE
-        jvArray<TexInfo>* textures = TRACKED_NEW jvArray<TexInfo>(texInfo.size());
+        jvArray<TexInfo>* textures = new jvArray<TexInfo>(texInfo.size());
         for (int i = 0; i < texInfo.size(); i++)
             (*textures)[i] = texInfo[i];
         return DWORD(textures);

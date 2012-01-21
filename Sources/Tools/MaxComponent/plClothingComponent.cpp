@@ -198,7 +198,7 @@ hsBool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     for (i = 0; i < fCompPB->Count(kMeshNodeTab); i++)
     {
         spanArray.Reset();
-        //plSharedMesh *mesh = TRACKED_NEW plSharedMesh;
+        //plSharedMesh *mesh = new plSharedMesh;
         LODNode = (plMaxNode *)fCompPB->GetINode(kMeshNodeTab, 0, i);
         if (LODNode != nil)
         {
@@ -240,7 +240,7 @@ hsBool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         {
             if (keys[j] != nil)
             {
-                refMsg = TRACKED_NEW plGenRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, j, -1);
+                refMsg = new plGenRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, j, -1);
                 hsgResMgr::ResMgr()->AddViaNotify(keys[j], refMsg, plRefFlags::kActiveRef);
             }
         }

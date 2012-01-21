@@ -119,7 +119,7 @@ hsVectorStream* plPhysXCooking::CookTrimesh(int nVerts, hsPoint3* verts, int nFa
     triDesc.triangles           = faces;
     triDesc.flags               = NX_MF_16_BIT_INDICES;
 
-    hsVectorStream* ram = TRACKED_NEW hsVectorStream;
+    hsVectorStream* ram = new hsVectorStream;
     plPXStream buf(ram);
     bool status = NxCookTriangleMesh(triDesc, buf);
     hsAssert(status, "Trimesh failed to cook");
@@ -158,7 +158,7 @@ bool plPhysXCooking::TestIfConvex(NxConvexMesh* convexMesh, int nVerts, hsPoint3
     NxConvexMeshDesc desc;
     convexMesh->saveToDesc(desc);
 
-    hsPlane3* planes = TRACKED_NEW hsPlane3[desc.numTriangles];
+    hsPlane3* planes = new hsPlane3[desc.numTriangles];
 
     int i;
     for ( i = 0; i < desc.numTriangles; i++)
@@ -199,7 +199,7 @@ hsVectorStream* plPhysXCooking::CookHull(int nVerts, hsPoint3* verts, bool infla
 
         convexDesc.flags|= NX_CF_INFLATE_CONVEX ;
     }
-    hsVectorStream* ram = TRACKED_NEW hsVectorStream;
+    hsVectorStream* ram = new hsVectorStream;
     plPXStream buf(ram);
     bool status = NxCookConvexMesh(convexDesc, buf);
     hsAssert(status, "Convex mesh failed to cook");
@@ -219,11 +219,11 @@ hsVectorStream* plPhysXCooking::CookHull(int nVerts, hsPoint3* verts, bool infla
 NxTriangleMesh* ReadExplicit(hsStream* stream)
 {
     const int nVertices = stream->ReadLE32();
-    hsPoint3* pVertices = TRACKED_NEW hsPoint3[nVertices];
+    hsPoint3* pVertices = new hsPoint3[nVertices];
     stream->ReadLEScalar(nVertices*3, (float*)pVertices);
 
     const int nFaces = stream->ReadLE32();
-    unsigned short* pTriangles = TRACKED_NEW unsigned short[nFaces * 3];
+    unsigned short* pTriangles = new unsigned short[nFaces * 3];
     stream->ReadLE16(nFaces * 3, pTriangles);
 
     NxTriangleMeshDesc triDesc;
@@ -257,7 +257,7 @@ NxTriangleMesh* ReadExplicit(hsStream* stream)
 NxConvexMesh* ReadConvexHull(hsStream* stream)
 {
     const int nVertices = stream->ReadLE32();
-    hsPoint3* pVertices = TRACKED_NEW hsPoint3[nVertices];
+    hsPoint3* pVertices = new hsPoint3[nVertices];
     stream->ReadLEScalar(nVertices*3, (float*)pVertices);
 
     NxConvexMeshDesc convexDesc;
@@ -287,7 +287,7 @@ NxConvexMesh* ReadConvexHull(hsStream* stream)
 void ReadBoxFromHull(hsStream* stream, NxBoxShapeDesc& box)
 {
     const int nVertices = stream->ReadLE32();
-    hsPoint3* pVertices = TRACKED_NEW hsPoint3[nVertices];
+    hsPoint3* pVertices = new hsPoint3[nVertices];
     stream->ReadLEScalar(nVertices*3, (float*)pVertices);
 
     float minX, minY, minZ, maxX, maxY, maxZ;
@@ -385,7 +385,7 @@ hsVectorStream* plPhysXCooking::IMakePolytope(const plMaxMeshExtractor::NeutralM
     hsPoint3 AABBMin(FLT_MAX,FLT_MAX,FLT_MAX);
     hsPoint3 AABBMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
     //prep
-    NxVec3* vectors = TRACKED_NEW NxVec3[26];
+    NxVec3* vectors = new NxVec3[26];
     
     int curvec=0;
     for(int xcomp= -1;xcomp<2;xcomp++)
@@ -503,7 +503,7 @@ hsVectorStream* plPhysXCooking::IMakePolytope(const plMaxMeshExtractor::NeutralM
     offset=centroid;
 
     delete[] vectors;
-        hsPoint3* pointages=TRACKED_NEW hsPoint3[outCloud.size()];
+        hsPoint3* pointages=new hsPoint3[outCloud.size()];
     for(int x=0;x<outCloud.size();x++)pointages[x]=outCloud[x];
     hsVectorStream* vectorstrm;
     vectorstrm= CookHull(outCloud.size(),pointages,true);

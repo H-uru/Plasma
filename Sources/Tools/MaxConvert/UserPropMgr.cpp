@@ -754,7 +754,7 @@ void UserPropMgr::OpenQuickTable()
 {
         if (!fQuickTable)
         {
-        fQuickTable = TRACKED_NEW hsHashTable<QuickPair>(kQuickSize);
+        fQuickTable = new hsHashTable<QuickPair>(kQuickSize);
         }
     fQuickNode = nil;
 }

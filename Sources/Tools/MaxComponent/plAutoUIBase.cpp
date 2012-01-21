@@ -132,7 +132,7 @@ void plAutoUIBase::AddCheckBox(int16_t id, const char *scriptName, const char *n
     fDesc->AddParam(id, scriptNameNew, TYPE_BOOL, 0, 0,
         p_default, def, end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plCheckBoxParam(id, name);
+    plAutoUIParam* param = new plCheckBoxParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -146,7 +146,7 @@ void plAutoUIBase::AddFloatSpinner(int16_t id, const char *scriptName, const cha
         p_range, min, max,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plSpinnerParam(id, name, true);
+    plAutoUIParam* param = new plSpinnerParam(id, name, true);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -160,7 +160,7 @@ void plAutoUIBase::AddIntSpinner(int16_t id, const char *scriptName, const char 
         p_range, min, max,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plSpinnerParam(id, name, false);
+    plAutoUIParam* param = new plSpinnerParam(id, name, false);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -172,7 +172,7 @@ void plAutoUIBase::AddEditBox(int16_t id, const char *scriptName, const char *na
     fDesc->AddParam(id, scriptNameNew, TYPE_STRING, 0, 0,
         p_default, def ? hsStrcpy(def) : nil, end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plEditParam(id, name, lines);
+    plAutoUIParam* param = new plEditParam(id, name, lines);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -184,7 +184,7 @@ void plAutoUIBase::AddPickNodeList(int16_t id, const char *scriptName, const cha
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE_TAB, 0, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickListParam(id, name, filter);
+    plAutoUIParam* param = new plPickListParam(id, name, filter);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -196,7 +196,7 @@ void plAutoUIBase::AddPickNodeButton(int16_t id, const char *scriptName, const c
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickButtonParam(id, name, filter, canConvertToType);
+    plAutoUIParam* param = new plPickButtonParam(id, name, filter, canConvertToType);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -208,7 +208,7 @@ void plAutoUIBase::AddPickComponentButton(int16_t id, const char *scriptName, co
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickComponentButtonParam(id, name, filter, canConvertToType);
+    plAutoUIParam* param = new plPickComponentButtonParam(id, name, filter, canConvertToType);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -220,7 +220,7 @@ void plAutoUIBase::AddPickComponentList(int16_t id, const char *scriptName, cons
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE_TAB, 0, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickComponentListParam(id, name, filter);
+    plAutoUIParam* param = new plPickComponentListParam(id, name, filter);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -232,7 +232,7 @@ void plAutoUIBase::AddPickActivatorButton(int16_t id, const char *scriptName, co
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickActivatorButtonParam(id, name);
+    plAutoUIParam* param = new plPickActivatorButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -244,7 +244,7 @@ void plAutoUIBase::AddPickActivatorList(int16_t id, const char *scriptName, cons
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE_TAB, 0, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickActivatorListParam(id, name);
+    plAutoUIParam* param = new plPickActivatorListParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -256,7 +256,7 @@ void plAutoUIBase::AddPickDynamicTextButton(int16_t id, const char *scriptName, 
     fDesc->AddParam(id, scriptNameNew, TYPE_REFTARG, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickDynamicTextButtonParam(id, name);
+    plAutoUIParam* param = new plPickDynamicTextButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -268,7 +268,7 @@ void plAutoUIBase::AddPickGUIDialogButton(int16_t id, const char *scriptName, co
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickSingleComponentButtonParam(id, name,plAutoUIParam::kTypeGUIDialog,GUI_DIALOG_COMP_CLASS_ID);
+    plAutoUIParam* param = new plPickSingleComponentButtonParam(id, name,plAutoUIParam::kTypeGUIDialog,GUI_DIALOG_COMP_CLASS_ID);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -280,7 +280,7 @@ void plAutoUIBase::AddPickExcludeRegionButton(int16_t id, const char *scriptName
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickExcludeRegionButtonParam(id, name);
+    plAutoUIParam* param = new plPickExcludeRegionButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -292,7 +292,7 @@ void plAutoUIBase::AddPickWaterComponentButton(int16_t id, const char *scriptNam
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickWaterComponentButtonParam(id, name);
+    plAutoUIParam* param = new plPickWaterComponentButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -304,7 +304,7 @@ void plAutoUIBase::AddPickSwimCurrentInterfaceButton(int16_t id, const char *scr
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickSwimCurrentInterfaceButtonParam(id, name);
+    plAutoUIParam* param = new plPickSwimCurrentInterfaceButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -316,7 +316,7 @@ void plAutoUIBase::AddPickClusterComponentButton(int16_t id, const char *scriptN
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickClusterComponentButtonParam(id, name);
+    plAutoUIParam* param = new plPickClusterComponentButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -328,7 +328,7 @@ void plAutoUIBase::AddPickAnimationButton(int16_t id, const char *scriptName, co
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickAnimationButtonParam(id, name);
+    plAutoUIParam* param = new plPickAnimationButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -340,7 +340,7 @@ void plAutoUIBase::AddPickBehaviorButton(int16_t id, const char *scriptName, con
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickBehaviorButtonParam(id, name);
+    plAutoUIParam* param = new plPickBehaviorButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -352,7 +352,7 @@ void plAutoUIBase::AddPickMaterialButton(int16_t id, const char *scriptName, con
     fDesc->AddParam(id, scriptNameNew, TYPE_REFTARG, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickMaterialButtonParam(id, name);
+    plAutoUIParam* param = new plPickMaterialButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -364,7 +364,7 @@ void plAutoUIBase::AddPickMaterialAnimationButton(int16_t id, const char *script
     fDesc->AddParam(id, scriptNameNew, TYPE_REFTARG, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickMaterialAnimationButtonParam(id, name);
+    plAutoUIParam* param = new plPickMaterialAnimationButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -376,7 +376,7 @@ void plAutoUIBase::AddPickGUIPopUpMenuButton(int16_t id, const char *scriptName,
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickSingleComponentButtonParam(id, name,plAutoUIParam::kTypeGUIPopUpMenu,GUI_MENUANCHOR_CLASSID);
+    plAutoUIParam* param = new plPickSingleComponentButtonParam(id, name,plAutoUIParam::kTypeGUIPopUpMenu,GUI_MENUANCHOR_CLASSID);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -388,7 +388,7 @@ void plAutoUIBase::AddPickGUISkinButton(int16_t id, const char *scriptName, cons
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickSingleComponentButtonParam(id, name,plAutoUIParam::kTypeGUISkin,GUI_SKIN_CLASSID);
+    plAutoUIParam* param = new plPickSingleComponentButtonParam(id, name,plAutoUIParam::kTypeGUISkin,GUI_SKIN_CLASSID);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -400,7 +400,7 @@ void plAutoUIBase::AddDropDownList(int16_t id, const char *scriptName, const cha
     fDesc->AddParam(id, scriptNameNew, TYPE_STRING, 0, 0,
         p_default, nil, end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plDropDownListParam(id, name, options);
+    plAutoUIParam* param = new plDropDownListParam(id, name, options);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }
@@ -412,7 +412,7 @@ void plAutoUIBase::AddPickGrassComponentButton(int16_t id, const char *scriptNam
     fDesc->AddParam(id, scriptNameNew, TYPE_INODE, 0, 0,
         end,
         end);
-    plAutoUIParam* param = TRACKED_NEW plPickGrassComponentButtonParam(id, name);
+    plAutoUIParam* param = new plPickGrassComponentButtonParam(id, name);
     param->SetVisInfo(vid, vstates);
     fParams.push_back(param);
 }

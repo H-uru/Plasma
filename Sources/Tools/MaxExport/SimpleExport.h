@@ -91,7 +91,7 @@ class HSClassDesc2 : public ClassDesc
 {
 public:
     int             IsPublic() { return 1; }
-    void *          Create(BOOL loading = FALSE) { return TRACKED_NEW HSExport2; }
+    void *          Create(BOOL loading = FALSE) { return new HSExport2; }
     const TCHAR *   ClassName() { return "Plasma 2.0 Scene Exporter"; }
     SClass_ID       SuperClassID() { return SCENE_EXPORT_CLASS_ID; }
 #ifdef HS_DEBUGGING

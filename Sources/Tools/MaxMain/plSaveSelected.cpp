@@ -317,7 +317,7 @@ void plMerge()
         size += strlen(nodeNames[i]) + 1;
 
     // Put all the component names in a list and show it to the user
-    char *buf = TRACKED_NEW char[size+25];
+    char *buf = new char[size+25];
     strcpy(buf, "Components Merged:\n\n");
 
     for (i = 0; i < nodeNames.Count(); i++)

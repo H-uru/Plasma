@@ -205,7 +205,7 @@ void plComponentDlg::IGetComment()
         int len = GetWindowTextLength(GetDlgItem(fhDlg, IDC_COMMENTS))+1;
         if (len != 0)
         {
-            char *buf = TRACKED_NEW char[len];
+            char *buf = new char[len];
             GetDlgItemText(fhDlg, IDC_COMMENTS, buf, len);
             fCommentNode->SetUserPropBuffer(buf);
             delete [] buf;

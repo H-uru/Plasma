@@ -133,8 +133,8 @@ void hsControlConverter::ReduceKeys(Control *control, float threshold)
             IKeyControl *keyCont = GetKeyControlInterface(control);
             if (keyCont->GetNumKeys() > 2)
             {
-                IKey *key1 = (IKey*)TRACKED_NEW uint8_t[keyCont->GetKeySize()];
-                IKey *key2 = (IKey*)TRACKED_NEW uint8_t[keyCont->GetKeySize()];
+                IKey *key1 = (IKey*)new uint8_t[keyCont->GetKeySize()];
+                IKey *key2 = (IKey*)new uint8_t[keyCont->GetKeySize()];
                 keyCont->GetKey(0, key1);
                 keyCont->GetKey(keyCont->GetNumKeys() - 1, key2);
 
@@ -258,7 +258,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, co
         return nil;
     }
 
-    plLeafController* ctrl = TRACKED_NEW plLeafController;
+    plLeafController* ctrl = new plLeafController;
     ctrl->AllocKeys(kTimes.Count(), hsKeyFrame::kMatrix44KeyFrame);
     TimeValue resetTime = fConverterUtils.GetTime(fInterface);
     for( i=0; i < kTimes.Count(); i++)
@@ -309,7 +309,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(Control* prsControl
         return nil;
     }
 
-    plLeafController* ctrl = TRACKED_NEW plLeafController;
+    plLeafController* ctrl = new plLeafController;
     ctrl->AllocKeys(kTimes.Count(), hsKeyFrame::kMatrix44KeyFrame);
     TimeValue resetTime = fConverterUtils.GetTime(fInterface);;
     for( i=0; i < kTimes.Count(); i++)
@@ -378,7 +378,7 @@ plController* hsControlConverter::MakePosController(Control* control, plMaxNode*
     }
     else
     {
-        hsCont = TRACKED_NEW plCompoundController;
+        hsCont = new plCompoundController;
         fErrorMsg->Set(control->NumSubs()!=3, node->GetName(), "compound should have 3 subs").Check();
 
         if (control->ClassID() == Class_ID(POSITIONNOISE_CONTROL_CLASS_ID,0) )
@@ -462,7 +462,7 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
             if (fErrorMsg->Set(control->NumSubs() != 3, node->GetName(), "Rot compound controller should have 3 subcontrollers").CheckAndAsk())
                 return nil;
 
-            plCompoundController* rc = TRACKED_NEW plCompoundController;
+            plCompoundController* rc = new plCompoundController;
             int i;
             for (i=0; i<3; i++)
             {
@@ -616,7 +616,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
             return NULL;
         }
 
-        plCompoundController *tmc = TRACKED_NEW plCompoundController;
+        plCompoundController *tmc = new plCompoundController;
         for (int i=0; i<n; i++)
         {
             Control* sub = (Control*)control->SubAnim(i);
@@ -759,7 +759,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
         }
 
         IKey* key=(IKey*)(new uint8_t[ikeys->GetKeySize()]);
-        plLeafController* pc = TRACKED_NEW plLeafController;
+        plLeafController* pc = new plLeafController;
 
         uint8_t compressLevel = node->GetAnimCompress();
         uint8_t keyType;
@@ -839,7 +839,7 @@ plLeafController* hsControlConverter::ICreateScaleValueController(plMaxNode* nod
         }
 
         IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
-        plLeafController* pc = TRACKED_NEW plLeafController;
+        plLeafController* pc = new plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
         {
@@ -880,7 +880,7 @@ plLeafController* hsControlConverter::ICreateScalarController(plMaxNode* node, C
         }
 
         IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
-        plLeafController* pc = TRACKED_NEW plLeafController;
+        plLeafController* pc = new plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
         {
@@ -922,7 +922,7 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
         }
 
         IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
-        plLeafController* pc = TRACKED_NEW plLeafController;
+        plLeafController* pc = new plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
         {
@@ -2088,7 +2088,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
             break;
             
     }
-    plCameraMsg* pCamMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pCamMsg = new plCameraMsg;
     pCamMsg->SetCmd(plCameraMsg::kSetAnimated);
     pCamMsg->AddReceiver(pCamMod->GetKey());
     plConvert::Instance().AddMessageToQueue(pCamMsg);
@@ -2129,7 +2129,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     for (i=0; i < kfArray->Count(); i++)
     {
         
-        plCameraMsg* pFOVMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pFOVMsg = new plCameraMsg;
         plCameraConfig* pCfg = pFOVMsg->GetConfig();
 
         if (i == kfArray->Count() - 1)
@@ -2149,12 +2149,12 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         pFOVMsg->SetCmd(plCameraMsg::kAddFOVKeyframe);
         pFOVMsg->AddReceiver(pCamMod->GetKey());
         
-        plEventCallbackMsg* pCall = TRACKED_NEW plEventCallbackMsg;
+        plEventCallbackMsg* pCall = new plEventCallbackMsg;
         pCall->fEvent = kTime;
         pCall->fEventTime = kfArray[0][i].fFrame / MAX_FRAMES_PER_SEC;
         pCall->fIndex = i;
         pCall->AddReceiver(pCamMod->GetKey());
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         pMsg->AddReceiver(pCamMod->GetKey());
         pMsg->SetSender(pAnim->GetModKey(node));
         pMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);

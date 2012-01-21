@@ -967,7 +967,7 @@ void plClusterComponent::IClusterBins(plDistribInstTab& nodes, Box3& box)
     }
 
     int totSize = IGetBinCount();
-    fClusterBins = TRACKED_NEW plDistribInstTab*[totSize];
+    fClusterBins = new plDistribInstTab*[totSize];
 
     memset(fClusterBins, 0, sizeof(*fClusterBins) * totSize);
 
@@ -1010,7 +1010,7 @@ plDistribInstTab* plClusterComponent::IGetClusterBin(const Box3& box, const Poin
     }
     int idx = coord[0] * fSizes[1] * fSizes[2] + coord[1] * fSizes[2] + coord[2];
     if( !fClusterBins[idx] )
-        fClusterBins[idx] = TRACKED_NEW plDistribInstTab;
+        fClusterBins[idx] = new plDistribInstTab;
     return fClusterBins[idx];
 }
 

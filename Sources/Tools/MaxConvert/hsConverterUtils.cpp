@@ -525,7 +525,7 @@ void hsConverterUtils::CreateNodeSearchCache()
 {
     if (!fNodeSearchCache)
     {
-        fNodeSearchCache = TRACKED_NEW hsHashTable<CacheNode>();
+        fNodeSearchCache = new hsHashTable<CacheNode>();
     }
     fNodeSearchCache->clear();
 

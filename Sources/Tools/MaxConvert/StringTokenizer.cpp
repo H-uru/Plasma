@@ -53,10 +53,10 @@ StringTokenizer::StringTokenizer() {
 StringTokenizer::StringTokenizer(const char *string, const char *seps) {
     qAsTok = true;
     inQuote = false;
-    this->string = TRACKED_NEW char[strlen(string)+1];
+    this->string = new char[strlen(string)+1];
     strcpy(this->string,string);
     numSeps = strlen(seps);
-    this->seps = TRACKED_NEW char[numSeps+1];
+    this->seps = new char[numSeps+1];
     strcpy(this->seps,seps);
     this->tok = this->string;
     if (isSep(*tok)) next();
@@ -93,11 +93,11 @@ hsBool StringTokenizer::isSep(char c) {
 };
 void StringTokenizer::reset(const char *string, const char *seps) {
     if (this->string) delete this->string;
-    this->string = TRACKED_NEW char[strlen(string)+1];
+    this->string = new char[strlen(string)+1];
     strcpy(this->string,string);
     if (this->seps) delete this->seps;
     numSeps = strlen(seps);
-    this->seps = TRACKED_NEW char[numSeps+1];
+    this->seps = new char[numSeps+1];
     strcpy(this->seps,seps);
     this->tok = this->string;
     if (isSep(*tok)) next();

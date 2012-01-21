@@ -512,7 +512,7 @@ hsBool plWaterComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     if( !fWaveSet )
         return true;
 
-    plObjRefMsg* refMsg = TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
+    plObjRefMsg* refMsg = new plObjRefMsg(node->GetKey(), plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
     hsgResMgr::ResMgr()->AddViaNotify(fWaveSet->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return true;
@@ -567,7 +567,7 @@ hsBool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, pl
         }
         size = uint32_t(1 << i);
 
-        env = TRACKED_NEW plDynamicEnvMap(size, size, 32);
+        env = new plDynamicEnvMap(size, size, 32);
         hsgResMgr::ResMgr()->NewKey(ref->GetName(), env, node->GetLocation(), node->GetLoadMask());
 
         Point3 pos = ref->GetNodeTM(TimeValue(0)).GetTrans();
@@ -584,7 +584,7 @@ hsBool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, pl
     fWaveSet->SetEnvSize(env->GetWidth());
 
 
-    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(fWaveSet->GetKey(), plRefMsg::kOnCreate, -1, plWaveSet7::kRefEnvMap);
+    plGenRefMsg* refMsg = new plGenRefMsg(fWaveSet->GetKey(), plRefMsg::kOnCreate, -1, plWaveSet7::kRefEnvMap);
     hsgResMgr::ResMgr()->SendRef(env->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     ws.fEnvRadius = fCompPB->GetFloat(kEnvRadius);
@@ -614,7 +614,7 @@ hsBool plWaterComponent::IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     // Go ahead and create the WaveSet modifier. There will be just
     // one created by this component, everyone has to share.
-    fWaveSet = TRACKED_NEW plWaveSet7;
+    fWaveSet = new plWaveSet7;
     hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), fWaveSet, node->GetLocation(), node->GetLoadMask());
 
     // Set up the parameters
@@ -1285,9 +1285,9 @@ plRenderTarget* plEnvMapComponent::IGetMap()
         plDynamicCamMap* cam = nil;
         fMap = nil;
         if (fCompPB->GetInt((ParamID(kMapType))) == kMapCubic)
-            fMap = env = TRACKED_NEW plDynamicEnvMap(size, size, 32);
+            fMap = env = new plDynamicEnvMap(size, size, 32);
         else if (fCompPB->GetInt((ParamID(kMapType))) == kMapSingle)
-            fMap = cam = TRACKED_NEW plDynamicCamMap(size, size, 32);
+            fMap = cam = new plDynamicCamMap(size, size, 32);
 
         // Need to assign the key before we call all the setup functions.
         hsgResMgr::ResMgr()->NewKey(GetINode()->GetName(), fMap, firstTarg->GetLocation(), firstTarg->GetLoadMask());
@@ -1326,7 +1326,7 @@ plRenderTarget* plEnvMapComponent::IGetMap()
                 plVisRegion* effReg = effComp->GetVisRegion(firstTarg);
                 if( effReg )
                 {
-                    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(fMap->GetKey(), plRefMsg::kOnCreate, -1, plDynamicEnvMap::kRefVisSet);
+                    plGenRefMsg* refMsg = new plGenRefMsg(fMap->GetKey(), plRefMsg::kOnCreate, -1, plDynamicEnvMap::kRefVisSet);
                     hsgResMgr::ResMgr()->SendRef(effReg->GetKey(), refMsg, plRefFlags::kPassiveRef);
 
                     visGot++;
@@ -1353,7 +1353,7 @@ plRenderTarget* plEnvMapComponent::IGetMap()
         // Right now, the envMap doesn't use this, but I plan to make it do so, so I'm
         // going ahead and adding the ref regardless of which type of map we made.
         uint8_t refType = cam ? plDynamicCamMap::kRefRootNode : plDynamicEnvMap::kRefRootNode;
-        hsgResMgr::ResMgr()->AddViaNotify(firstTarg->GetSceneObject()->GetKey(), TRACKED_NEW plGenRefMsg(fMap->GetKey(), plRefMsg::kOnCreate, -1, refType), plRefFlags::kPassiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(firstTarg->GetSceneObject()->GetKey(), new plGenRefMsg(fMap->GetKey(), plRefMsg::kOnCreate, -1, refType), plRefFlags::kPassiveRef);
     }
     return fMap;
 }

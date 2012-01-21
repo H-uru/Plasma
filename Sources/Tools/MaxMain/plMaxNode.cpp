@@ -227,7 +227,7 @@ void plMaxBoneMap::SetBaseMatrixIndex(plDrawable *draw, uint32_t idx)
 // you'll be hosed (duh).
 void plMaxBoneMap::SortBones()
 {
-    plMaxNodeBase **tempBones = TRACKED_NEW plMaxNodeBase*[fNumBones];  
+    plMaxNodeBase **tempBones = new plMaxNodeBase*[fNumBones];  
     FillBoneArray(tempBones);
 
     // Look ma! An n^2 bubble sort!
@@ -263,7 +263,7 @@ plKey plMaxNode::AddModifier(plModifier *pMod, const char* name)
     plKey modKey = pMod->GetKey();
     if (!modKey)
         modKey = hsgResMgr::ResMgr()->NewKey(name, pMod, GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(modKey, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(modKey, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
     return modKey;
 }
 
@@ -538,7 +538,7 @@ hsBool plMaxNode::MakeSceneObject(plErrorMsg *pErrMsg, plConvertSettings *settin
     plKey objKey;
 
     // Handle this as a SceneObject
-    pso = TRACKED_NEW plSceneObject;
+    pso = new plSceneObject;
     objKey = hsgResMgr::ResMgr()->NewKey(GetName(), pso, nodeLoc, GetLoadMask());
 
     // Remember info in MaxNodeData block for later
@@ -824,7 +824,7 @@ hsBool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     //
     // Create the physical
     //
-    plPXPhysical* physical = TRACKED_NEW plPXPhysical;
+    plPXPhysical* physical = new plPXPhysical;
 
     // add the object to the resource manager, keyed to the new name
     plLocation nodeLoc = GetKey()->GetUoid().GetLocation();
@@ -860,14 +860,14 @@ hsBool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     if(physProps->GetLOSSwimRegion())
         physical->AddLOSDB(plSimDefs::kLOSDBSwimRegion);
     
-    plSimulationInterface* si = TRACKED_NEW plSimulationInterface;
+    plSimulationInterface* si = new plSimulationInterface;
     plKey pSiKey = hsgResMgr::ResMgr()->NewKey(objName, si, nodeLoc, GetLoadMask());
 
     // link the simulation interface to the scene object
-    hsgResMgr::ResMgr()->AddViaNotify(pSiKey, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(pSiKey, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     // add the physical to the simulation interface
-    hsgResMgr::ResMgr()->AddViaNotify(physKey , TRACKED_NEW plIntRefMsg(pSiKey, plRefMsg::kOnCreate, 0, plIntRefMsg::kPhysical), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(physKey , new plIntRefMsg(pSiKey, plRefMsg::kOnCreate, 0, plIntRefMsg::kPhysical), plRefFlags::kActiveRef);
 
     return true;
 }
@@ -909,9 +909,9 @@ hsBool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings
         hsMatrix44 loc2Par = GetLocalToParent44();
         hsMatrix44 par2Loc = GetParentToLocal44();
         if( GetFilterInherit() )
-            ci = TRACKED_NEW plFilterCoordInterface;
+            ci = new plFilterCoordInterface;
         else
-            ci = TRACKED_NEW plCoordinateInterface;
+            ci = new plCoordinateInterface;
         //-------------------------
         // Get data from Node, then its key, then its name
         //-------------------------
@@ -927,7 +927,7 @@ hsBool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings
         ci->SetProperty(plCoordinateInterface::kCanEverDelayTransform, !usesPhysics);
         ci->SetProperty(plCoordinateInterface::kDelayedTransformEval, !usesPhysics);
 
-        hsgResMgr::ResMgr()->AddViaNotify(pCiKey, TRACKED_NEW plObjRefMsg(pNodeKey, plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(pCiKey, new plObjRefMsg(pNodeKey, plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     }
     return true;
 }
@@ -950,7 +950,7 @@ hsBool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings
         // mf horse hack testing ViewFace which is already obsolete
         if ( UserPropExists("ViewFacing") )
         {
-            plViewFaceModifier* pMod = TRACKED_NEW plViewFaceModifier;
+            plViewFaceModifier* pMod = new plViewFaceModifier;
             if( UserPropExists("VFPivotFavorY") )
                 pMod->SetFlag(plViewFaceModifier::kPivotFavorY);
             else if( UserPropExists("VFPivotY") )
@@ -1011,12 +1011,12 @@ hsBool plMaxNode::MakeParentOrRoomConnection(plErrorMsg *pErrMsg, plConvertSetti
         hsAssert(ci,"Missing CI");
 
 
-        plIntRefMsg* msg = TRACKED_NEW plIntRefMsg(parKey, plRefMsg::kOnCreate, -1, plIntRefMsg::kChildObject);
+        plIntRefMsg* msg = new plIntRefMsg(parKey, plRefMsg::kOnCreate, -1, plIntRefMsg::kChildObject);
         msg->SetRef(pso);
         hsgResMgr::ResMgr()->AddViaNotify(msg, plRefFlags::kPassiveRef);
     }
 
-    hsgResMgr::ResMgr()->AddViaNotify(pso->GetKey(), TRACKED_NEW plNodeRefMsg(GetRoomKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kObject), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(pso->GetKey(), new plNodeRefMsg(GetRoomKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kObject), plRefFlags::kActiveRef);
     return true;
 }
 
@@ -1168,10 +1168,10 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
     if( numFaces <= kSmallNumFaces )
         return IsGeoSpanConvexExhaust(span);
 
-    hsTArray<int>*  vertList = TRACKED_NEW hsTArray<int> [numVerts];
+    hsTArray<int>*  vertList = new hsTArray<int> [numVerts];
 
-    hsTArray<hsVector3>* normList = TRACKED_NEW hsTArray<hsVector3> [numVerts];
-    hsTArray<float>* distList = TRACKED_NEW hsTArray<float> [numVerts];
+    hsTArray<hsVector3>* normList = new hsTArray<hsVector3> [numVerts];
+    hsTArray<float>* distList = new hsTArray<float> [numVerts];
 
     uint16_t* idx = span->fIndexData;
 
@@ -1301,12 +1301,12 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         // This node has no geometry on export, but will have some added at runtime,
         // so it needs a special drawInterface
 
-        plInstanceDrawInterface *newDI = TRACKED_NEW plInstanceDrawInterface;
+        plInstanceDrawInterface *newDI = new plInstanceDrawInterface;
         newDI->fTargetID = GetSwappableGeomTarget();
         plKey pDiKey = hsgResMgr::ResMgr()->NewKey( GetKey()->GetName(), newDI, nodeLoc, GetLoadMask() );
-        hsgResMgr::ResMgr()->AddViaNotify(pDiKey, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(pDiKey, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
-        plSwapSpansRefMsg *sMsg = TRACKED_NEW plSwapSpansRefMsg(pDiKey, plRefMsg::kOnCreate, -1, -1);
+        plSwapSpansRefMsg *sMsg = new plSwapSpansRefMsg(pDiKey, plRefMsg::kOnCreate, -1, -1);
         plDrawableSpans *drawable = IGetSceneNodeSpans(IGetDrawableSceneNode(pErrMsg), true, true);
         hsgResMgr::ResMgr()->AddViaNotify(drawable->GetKey(), sMsg, plRefFlags::kActiveRef);
 
@@ -1416,7 +1416,7 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         color.Set( 0.5, 0.5, 1, 1 );
 
         // Exp fog
-        myFog = TRACKED_NEW plFogEnvironment( plFogEnvironment::kExpFog, 700.f, 1.f, color );
+        myFog = new plFogEnvironment( plFogEnvironment::kExpFog, 700.f, 1.f, color );
         myFogKey = hsgResMgr::ResMgr()->NewKey( "HACK_FOG", myFog, nodeLoc );
         hsgResMgr::ResMgr()->AddExportAlias( "HACK_FOG", plFogEnvironment::Index(), myFogKey );
     }
@@ -1468,9 +1468,9 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
         {
             /// Make a new drawInterface (will assign stuff to it later)
-            newDI = TRACKED_NEW plDrawInterface;
+            newDI = new plDrawInterface;
             plKey pDiKey = hsgResMgr::ResMgr()->NewKey( GetKey()->GetName(), newDI, nodeLoc, GetLoadMask() );
-            hsgResMgr::ResMgr()->AddViaNotify(pDiKey, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(pDiKey, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
             /// Attach the processed spans to the DI (through drawables)
             IAssignSpansToDrawables( spanArray, newDI, pErrMsg, settings );
@@ -1667,7 +1667,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
     int baseMatrix, i;
 
     uint8_t numBones = (boneMap ? boneMap->fNumBones : NumBones()) + 1;
-    plMaxNodeBase **boneArray = TRACKED_NEW plMaxNodeBase*[numBones];
+    plMaxNodeBase **boneArray = new plMaxNodeBase*[numBones];
 
     if (boneMap)
         boneMap->FillBoneArray(boneArray);
@@ -1763,9 +1763,9 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
         else
         {
             plLocation nodeLoc = bone->GetLocation();
-            di = TRACKED_NEW plDrawInterface;
+            di = new plDrawInterface;
             plKey diKey = hsgResMgr::ResMgr()->NewKey(GetKey()->GetName(), di, nodeLoc, GetLoadMask());
-            hsgResMgr::ResMgr()->AddViaNotify(diKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(diKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
         }
 
         if( di->GetNumDrawables() <= iDraw )
@@ -1827,7 +1827,7 @@ hsBool  plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
         spanArray.ExpandAndZero( spanArray.GetCount() + disi.fIndices.GetCount() );
         for( i = 0; i < disi.fIndices.GetCount(); i++ )
         {
-            spanArray[ index ] = TRACKED_NEW plGeometrySpan;
+            spanArray[ index ] = new plGeometrySpan;
             spanArray[ index ]->MakeInstanceOf( dr->GetGeometrySpan( disi.fIndices[ i ] ) );
 
             if( setVisDists )
@@ -2243,12 +2243,12 @@ hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool
         plMobileOccluder* mob = nil;
         if( moving )
         {
-            mob = TRACKED_NEW plMobileOccluder;
+            mob = new plMobileOccluder;
             occ = mob;
         }
         else
         {
-            occ = TRACKED_NEW plOccluder;
+            occ = new plOccluder;
         }
 
         occ->SetPolyList(polys);
@@ -2267,7 +2267,7 @@ hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool
         }
         plKey key = hsgResMgr::ResMgr()->NewKey( tmpName, occ, nodeLoc, GetLoadMask() );
 
-        hsgResMgr::ResMgr()->AddViaNotify(occ->GetKey(), TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(occ->GetKey(), new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     }
     return true;
@@ -2310,7 +2310,7 @@ hsBool plMaxNode::MakeLight(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
         plKey key = hsgResMgr::ResMgr()->NewKey( GetKey()->GetName(), liInfo, nodeLoc, GetLoadMask() );
 
-        hsgResMgr::ResMgr()->AddViaNotify(liInfo->GetKey(), TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(liInfo->GetKey(), new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
 
         // Only support projection for spots and dir lights for now.
@@ -2554,7 +2554,7 @@ plLightInfo* plMaxNode::IMakeSpot(plErrorMsg* pErrMsg, plConvertSettings* settin
         return nil;
     }
 
-    plSpotLightInfo* spot = TRACKED_NEW plSpotLightInfo;
+    plSpotLightInfo* spot = new plSpotLightInfo;
 
     IGetLightColors(spot, light, ls);
 
@@ -2583,7 +2583,7 @@ plLightInfo* plMaxNode::IMakeOmni(plErrorMsg* pErrMsg, plConvertSettings* settin
         return nil;
     }
 
-    plOmniLightInfo* omni = TRACKED_NEW plOmniLightInfo;
+    plOmniLightInfo* omni = new plOmniLightInfo;
 
     IGetLightAttenuation(omni, light, ls);
 
@@ -2614,7 +2614,7 @@ plLightInfo* plMaxNode::IMakeDirectional(plErrorMsg* pErrMsg, plConvertSettings*
     plLightInfo* plasLight = nil;
     if( light->GetProjMap() )
     {
-        plLimitedDirLightInfo* ldl = TRACKED_NEW plLimitedDirLightInfo;
+        plLimitedDirLightInfo* ldl = new plLimitedDirLightInfo;
 
         float sz = light->GetFallsize(timeVal, FOREVER);
         float depth = 1000.f;
@@ -2627,7 +2627,7 @@ plLightInfo* plMaxNode::IMakeDirectional(plErrorMsg* pErrMsg, plConvertSettings*
     else
     {
 
-        plDirectionalLightInfo* direct = TRACKED_NEW plDirectionalLightInfo;
+        plDirectionalLightInfo* direct = new plDirectionalLightInfo;
         plasLight = direct;
     }
 
@@ -2654,7 +2654,7 @@ plLightInfo* plMaxNode::IMakeRTSpot(plErrorMsg* pErrMsg, plConvertSettings* sett
 
     }
 
-    plSpotLightInfo* spot = TRACKED_NEW plSpotLightInfo;
+    plSpotLightInfo* spot = new plSpotLightInfo;
 
     if(!ThisObjPB->GetInt(plRTLightBase::kLightOn))
         spot->SetProperty(plLightInfo::kDisable, true); 
@@ -2665,7 +2665,7 @@ plLightInfo* plMaxNode::IMakeRTSpot(plErrorMsg* pErrMsg, plConvertSettings* sett
 
     IGetRTCone(spot, ThisObjPB);
 
-    //plSpotModifier* liMod = TRACKED_NEW plSpotModifier;
+    //plSpotModifier* liMod = new plSpotModifier;
 
     //GetRTLightColAnim(ThisObjPB, liMod);
     //GetRTLightAttenAnim(ThisObjPB, liMod);
@@ -2689,7 +2689,7 @@ plLightInfo* plMaxNode::IMakeRTOmni(plErrorMsg* pErrMsg, plConvertSettings* sett
     Object *ThisObj = ((INode*)this)->GetObjectRef();
     IParamBlock2* ThisObjPB = ThisObj->GetParamBlockByID(plRTLightBase::kBlkOmniLight);
 
-    plOmniLightInfo* omni = TRACKED_NEW plOmniLightInfo;
+    plOmniLightInfo* omni = new plOmniLightInfo;
 
     if(!ThisObjPB->GetInt(plRTLightBase::kLightOn))
         omni->SetProperty(plLightInfo::kDisable, true); 
@@ -2698,7 +2698,7 @@ plLightInfo* plMaxNode::IMakeRTOmni(plErrorMsg* pErrMsg, plConvertSettings* sett
 
     IGetRTLightColors(omni, ThisObjPB);
 
-    //plOmniModifier* liMod = TRACKED_NEW plOmniModifier;
+    //plOmniModifier* liMod = new plOmniModifier;
 
     //GetRTLightColAnim(ThisObjPB, liMod);
     //GetRTLightAttenAnim(ThisObjPB, liMod);
@@ -2722,14 +2722,14 @@ plLightInfo* plMaxNode::IMakeRTDirectional(plErrorMsg* pErrMsg, plConvertSetting
     IParamBlock2* ThisObjPB = ThisObj->GetParamBlockByID(plRTLightBase::kBlkTSpotLight);
 
 
-    plDirectionalLightInfo* direct = TRACKED_NEW plDirectionalLightInfo;
+    plDirectionalLightInfo* direct = new plDirectionalLightInfo;
 
     if(!ThisObjPB->GetInt(plRTLightBase::kLightOn))
         direct->SetProperty(plLightInfo::kDisable, true); 
 
     IGetRTLightColors(direct, ThisObjPB);
 
-    //plLightModifier* liMod = TRACKED_NEW plLightModifier;
+    //plLightModifier* liMod = new plLightModifier;
 
     //GetRTLightColAnim(ThisObjPB, liMod);
 
@@ -2755,7 +2755,7 @@ plLightInfo *plMaxNode::IMakeRTProjDirectional( plErrorMsg *pErrMsg, plConvertSe
     IParamBlock2    *mainPB = ThisObj->GetParamBlockByID( plRTLightBase::kBlkMain );
     IParamBlock2    *projPB = ThisObj->GetParamBlockByID( plRTProjDirLight::kBlkProj );
 
-    plLimitedDirLightInfo *light = TRACKED_NEW plLimitedDirLightInfo;
+    plLimitedDirLightInfo *light = new plLimitedDirLightInfo;
 
     light->SetWidth( projPB->GetFloat( plRTProjDirLight::kWidth ) );
     light->SetHeight( projPB->GetFloat( plRTProjDirLight::kHeight ) );
@@ -2766,7 +2766,7 @@ plLightInfo *plMaxNode::IMakeRTProjDirectional( plErrorMsg *pErrMsg, plConvertSe
 
     IGetRTLightColors( light, mainPB );
 
-    //plLightModifier *liMod = TRACKED_NEW plLightModifier;
+    //plLightModifier *liMod = new plLightModifier;
 
     //GetRTLightColAnim( mainPB, liMod );
 
@@ -2860,7 +2860,7 @@ hsBool plMaxNode::IGetProjection(plLightInfo* li, plErrorMsg* pErrMsg)
             break;
             }
 
-            hsgResMgr::ResMgr()->AddViaNotify(proj->GetKey(), TRACKED_NEW plGenRefMsg(li->GetKey(), plRefMsg::kOnCreate, 0, 0), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(proj->GetKey(), new plGenRefMsg(li->GetKey(), plRefMsg::kOnCreate, 0, 0), plRefFlags::kActiveRef);
 
             li->SetShadowCaster(false);
 
@@ -2997,9 +2997,9 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                 if( ProperPB->GetInt(plRTLightBase::kAttenTypeRadio, TimeValue(0)) == 2 )
                 {
                     // Animation of a cutoff attenuation, which only needs a scalar channel
-                    plOmniCutoffApplicator *app = TRACKED_NEW plOmniCutoffApplicator();
+                    plOmniCutoffApplicator *app = new plOmniCutoffApplicator();
                     app->SetChannelName(GetName());
-                    plScalarControllerChannel *chan = TRACKED_NEW plScalarControllerChannel(subCtl);
+                    plScalarControllerChannel *chan = new plScalarControllerChannel(subCtl);
                     app->SetChannel(chan);
                     anim->AddApplicator(app);
                     if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
@@ -3048,12 +3048,12 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                     }
                     plAGApplicator *app;
                     if (distSq)
-                        app = TRACKED_NEW plOmniSqApplicator;
+                        app = new plOmniSqApplicator;
                     else
-                        app = TRACKED_NEW plOmniApplicator;
+                        app = new plOmniApplicator;
 
                     app->SetChannelName(GetName());
-                    plScalarControllerChannel *chan = TRACKED_NEW plScalarControllerChannel(subCtl);
+                    plScalarControllerChannel *chan = new plScalarControllerChannel(subCtl);
                     app->SetChannel(chan);
                     anim->AddApplicator(app);
                     if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
@@ -3132,9 +3132,9 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
 
         if( ctl )
         {
-            plLightAmbientApplicator *app = TRACKED_NEW plLightAmbientApplicator();
+            plLightAmbientApplicator *app = new plLightAmbientApplicator();
             app->SetChannelName(GetName());
-            chan = TRACKED_NEW plPointControllerChannel(ctl);
+            chan = new plPointControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
             if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
@@ -3152,9 +3152,9 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
         if( ctl )
         {
             IAdjustRTColorByIntensity(ctl, ProperPB);
-            plLightDiffuseApplicator *app = TRACKED_NEW plLightDiffuseApplicator();
+            plLightDiffuseApplicator *app = new plLightDiffuseApplicator();
             app->SetChannelName(GetName());
-            chan = TRACKED_NEW plPointControllerChannel(ctl);
+            chan = new plPointControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
             if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
@@ -3171,9 +3171,9 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
         
         if( ctl )
         {
-            plLightSpecularApplicator *app = TRACKED_NEW plLightSpecularApplicator();
+            plLightSpecularApplicator *app = new plLightSpecularApplicator();
             app->SetChannelName(GetName());
-            chan = TRACKED_NEW plPointControllerChannel(ctl);
+            chan = new plPointControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
             if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
@@ -3198,9 +3198,9 @@ void plMaxNode::GetRTConeAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             
         if( ctl )
         {
-            plSpotInnerApplicator *app = TRACKED_NEW plSpotInnerApplicator();
+            plSpotInnerApplicator *app = new plSpotInnerApplicator();
             app->SetChannelName(GetName());
-            chan = TRACKED_NEW plScalarControllerChannel(ctl);
+            chan = new plScalarControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
             if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
@@ -3217,9 +3217,9 @@ void plMaxNode::GetRTConeAnim(IParamBlock2* ProperPB, plAGAnim *anim)
 
         if( ctl )
         {
-            plSpotOuterApplicator *app = TRACKED_NEW plSpotOuterApplicator();
+            plSpotOuterApplicator *app = new plSpotOuterApplicator();
             app->SetChannelName(GetName());
-            chan = TRACKED_NEW plScalarControllerChannel(ctl);
+            chan = new plScalarControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
             if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
@@ -3339,7 +3339,7 @@ plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, hsBool needBl
 
 
     /// Couldn't find--create and return it
-    spans = TRACKED_NEW plDrawableSpans;
+    spans = new plDrawableSpans;
     if( needBlending )
     {
         /// Blending (deferred) spans
@@ -3690,12 +3690,12 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
             plUoid* uoid = hsgResMgr::ResMgr()->FindAlias(aliasName, plSceneObject::Index());
             if( !uoid )
             {
-                plAliasModifier* pAlMod = TRACKED_NEW plAliasModifier;
+                plAliasModifier* pAlMod = new plAliasModifier;
                 pAlMod->SetAlias(aliasName);
                 AddModifier(pAlMod);
             }
         */
-            plAGModifier *mod = TRACKED_NEW plAGModifier(nameToUse);
+            plAGModifier *mod = new plAGModifier(nameToUse);
             AddModifier(mod, GetName());
         }
     }
@@ -3798,7 +3798,7 @@ void plMaxNode::SetupBoneHierarchyPalette(plMaxBoneMap *bones /* = nil */)
     
     if (bones == nil)
     {
-        bones = TRACKED_NEW plMaxBoneMap();
+        bones = new plMaxBoneMap();
         bones->fOwner = this;
     }
     
@@ -3924,7 +3924,7 @@ void    plMaxNode::ISetCachedAlphaHackValue( int iSubMtl, int value )
     hsTArray<int>   *cache = pDat->GetAlphaHackLayersCache();
     if( cache == nil )
     {
-        cache = TRACKED_NEW hsTArray<int>;
+        cache = new hsTArray<int>;
         pDat->SetAlphaHackLayersCache( cache );
     }
 
@@ -4107,10 +4107,10 @@ hsBool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *se
     // the list in a handy form
     if (keys.Count())
     {
-        plInterfaceInfoModifier* pMod = TRACKED_NEW plInterfaceInfoModifier;
+        plInterfaceInfoModifier* pMod = new plInterfaceInfoModifier;
         
         plKey modifierKey = hsgResMgr::ResMgr()->NewKey(GetName(), pMod, GetLocation(), GetLoadMask());
-        hsgResMgr::ResMgr()->AddViaNotify(modifierKey, TRACKED_NEW plObjRefMsg(GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(modifierKey, new plObjRefMsg(GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
         
         for(int i = 0; i < keys.Count(); i++)
             pMod->AddRefdKey(keys[i]);

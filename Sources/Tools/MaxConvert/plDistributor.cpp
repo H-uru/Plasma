@@ -969,7 +969,7 @@ BOOL plDistributor::IReadyRepNodes(plMeshCacheTab& cache) const
             int iCache = cache.Count();
             cache.SetCount(iCache + 1);
 
-            cache[iCache].fMesh = TRACKED_NEW Mesh(*mesh);
+            cache[iCache].fMesh = new Mesh(*mesh);
             cache[iCache].fFlex = repNode->GetFlexibility();
             
             if( obj )
@@ -1091,7 +1091,7 @@ BOOL plDistributor::IConformAll(Matrix3& l2w, int iRepNode, plMeshCacheTab& cach
     iCache = cache.Count();
     cache.SetCount(iCache + 1);
     cache[iCache] = cache[iRepNode];
-    cache[iCache].fMesh = TRACKED_NEW Mesh(*mesh);
+    cache[iCache].fMesh = new Mesh(*mesh);
 
     mesh = cache[iCache].fMesh;
 
@@ -1150,7 +1150,7 @@ BOOL plDistributor::IConformHeight(Matrix3& l2w, int iRepNode, plMeshCacheTab& c
     iCache = cache.Count();
     cache.SetCount(iCache + 1);
     cache[iCache] = cache[iRepNode];
-    cache[iCache].fMesh = TRACKED_NEW Mesh(*mesh);
+    cache[iCache].fMesh = new Mesh(*mesh);
 
     mesh = cache[iCache].fMesh;
 
@@ -1219,7 +1219,7 @@ BOOL plDistributor::IConformBase(Matrix3& l2w, int iRepNode, plMeshCacheTab& cac
     iCache = cache.Count();
     cache.SetCount(iCache + 1);
     cache[iCache] = cache[iRepNode];
-    cache[iCache].fMesh = TRACKED_NEW Mesh(*mesh);
+    cache[iCache].fMesh = new Mesh(*mesh);
 
     mesh = cache[iCache].fMesh;
 

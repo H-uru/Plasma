@@ -55,7 +55,7 @@ class plLayerTexClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return TRACKED_NEW plLayerTex(); }
+    void*           Create(BOOL loading = FALSE) { return new plLayerTex(); }
     const TCHAR*    ClassName()     { return GetString(IDS_LAYER); }
     SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
     Class_ID        ClassID()       { return LAYER_TEX_CLASS_ID; }
@@ -244,7 +244,7 @@ IParamBlock2* plLayerTex::GetParamBlockByID(BlockID id)
 //From ReferenceTarget 
 RefTargetHandle plLayerTex::Clone(RemapDir &remap) 
 {
-    plLayerTex *mnew = TRACKED_NEW plLayerTex();
+    plLayerTex *mnew = new plLayerTex();
     *((MtlBase*)mnew) = *((MtlBase*)this); // copy superclass stuff
     mnew->ReplaceReference(kRefBitmap, remap.CloneRef(fBitmapPB));
     mnew->ReplaceReference(kRefUVGen, remap.CloneRef(fUVGen));

@@ -104,7 +104,7 @@ plClusterUtil::~plClusterUtil()
 
 plClusterGroup* plClusterUtil::CreateGroup(plMaxNode* templNode, const char* name)
 {
-    plClusterGroup* retVal = TRACKED_NEW plClusterGroup;
+    plClusterGroup* retVal = new plClusterGroup;
     
     char buff[256];
     sprintf(buff, "%s_%s_%d", name, templNode->GetName(), fIdx++);
@@ -113,7 +113,7 @@ plClusterGroup* plClusterUtil::CreateGroup(plMaxNode* templNode, const char* nam
     plKey sceneNode = templNode->GetRoomKey();
     retVal->SetSceneNode(sceneNode);
 
-    plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(sceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
+    plNodeRefMsg* refMsg = new plNodeRefMsg(sceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
     hsgResMgr::ResMgr()->AddViaNotify(retVal->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return retVal;
@@ -331,7 +331,7 @@ plSpanTemplateB* plClusterUtil::IAddTemplate(plMaxNode* templNode, plGeometrySpa
     // STUB
 
     // Create our blank template
-    plSpanTemplateB* templ = TRACKED_NEW plSpanTemplateB(templNode);
+    plSpanTemplateB* templ = new plSpanTemplateB(templNode);
 
     templ->fRenderLevel = templNode->GetRenderLevel(!templNode->GetNoDeferDraw());
 
@@ -508,7 +508,7 @@ void plClusterUtil::IFindClustersRecur(plSpanTemplateB* templ, plL2WTab& src, pl
     }
     else
     {
-        plL2WTab* tab = TRACKED_NEW plL2WTab(src);
+        plL2WTab* tab = new plL2WTab(src);
         dst.Append(1, &tab);
     }
 }
@@ -692,7 +692,7 @@ void plClusterUtil::IAddInstsToCluster(plCluster* cluster, plSpanTemplateB* temp
     int i;
     for( i = 0; i < insts.Count(); i++ )
     {
-        plSpanInstance* span = TRACKED_NEW plSpanInstance;
+        plSpanInstance* span = new plSpanInstance;
         span->Alloc(cluster->GetEncoding(), templ->NumVerts());
 
         span->SetLocalToWorld(plMaxNodeBase::Matrix3ToMatrix44(insts[i]));
@@ -754,7 +754,7 @@ void plClusterUtil::IDelPosAndColor(plSpanTemplateB* templ,
         {
             def->Begin(templ->GetSrcNode(), wBnd);
 
-            delPos[i] = TRACKED_NEW plPoint3Tab;
+            delPos[i] = new plPoint3Tab;
             delPos[i]->SetCount(templ->NumVerts());
             int j;
             for( j = 0; j < templ->NumVerts(); j++ )
@@ -776,7 +776,7 @@ void plClusterUtil::IDelPosAndColor(plSpanTemplateB* templ,
         {
             shade->Begin(templ->GetSrcNode(), wBnd);
 
-            colors[i] = TRACKED_NEW plColorTab;
+            colors[i] = new plColorTab;
             colors[i]->SetCount(templ->NumVerts());
             int j;
             for( j = 0; j < templ->NumVerts(); j++ )

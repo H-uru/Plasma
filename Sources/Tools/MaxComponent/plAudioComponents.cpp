@@ -480,17 +480,17 @@ hsBool plBaseSoundEmitterComponent::PreConvert( plMaxNode *node, plErrorMsg *pEr
     const plAudioInterface *ai = node->GetSceneObject()->GetAudioInterface();
     if (!ai)
     {
-        ai = TRACKED_NEW plAudioInterface;
+        ai = new plAudioInterface;
         plKey pAiKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), (hsKeyedObject*)ai,node->GetKey()->GetUoid().GetLocation(), node->GetLoadMask());
-        hsgResMgr::ResMgr()->AddViaNotify(pAiKey, TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(pAiKey, new plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     }
     if (!ai->GetAudible())
     {
-        plAudible *pAudible = TRACKED_NEW plWinAudible;
+        plAudible *pAudible = new plWinAudible;
         // Add a key for it
         plKey key = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), pAudible, node->GetKey()->GetUoid().GetLocation(), node->GetLoadMask());
         
-        plIntRefMsg* pMsg = TRACKED_NEW plIntRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kAudible);
+        plIntRefMsg* pMsg = new plIntRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kAudible);
         hsgResMgr::ResMgr()->AddViaNotify(pAudible->GetKey(), pMsg, plRefFlags::kActiveRef );
 
         pAudible->SetSceneNode(node->GetRoomKey());
@@ -557,7 +557,7 @@ void    plBaseSoundEmitterComponent::IGrabSoftRegion( plSound *sound, plErrorMsg
                 if( vol != nil )
                 {
                     vol->SetCheckListener();
-                    hsgResMgr::ResMgr()->AddViaNotify( softKey, TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, 0, plSound::kSoftRegion ), plRefFlags::kActiveRef );
+                    hsgResMgr::ResMgr()->AddViaNotify( softKey, new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, 0, plSound::kSoftRegion ), plRefFlags::kActiveRef );
                 }
             }
         }
@@ -673,7 +673,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
         return plSoundBuffer::ConvertNoRef( key->GetObjectPtr() );
 
     // Not yet created, so make a new one
-    plSoundBuffer   *buffer = TRACKED_NEW plSoundBuffer( fileName, srcBufferFlags );
+    plSoundBuffer   *buffer = new plSoundBuffer( fileName, srcBufferFlags );
     if( !buffer->IsValid() )
     {
         // Invalid, so delete and return nil
@@ -767,7 +767,7 @@ void    plBaseSoundEmitterComponent::UpdateSoundFileSelection( void )
         }
         else
         {
-            baseBuffer = TRACKED_NEW plSoundBuffer( GetSoundFileName( kBaseSound ) );
+            baseBuffer = new plSoundBuffer( GetSoundFileName( kBaseSound ) );
             if( baseBuffer != nil && baseBuffer->IsValid() )
             {
                 // Update our stereo channel selection if necessary
@@ -936,7 +936,7 @@ hsBool  plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
         }
 
         std::map<plMaxNode*, int>::iterator i = fIndices.begin();
-        plSoundVolumeApplicator *app = TRACKED_NEW plSoundVolumeApplicator( (*i).second );
+        plSoundVolumeApplicator *app = new plSoundVolumeApplicator( (*i).second );
         app->SetChannelName(node->GetName());
         plAnimComponentBase::SetupCtl( anim, ctl, app, node );
         result = true;      
@@ -1699,7 +1699,7 @@ void    plBaseSoundEmitterComponent::IGrabEAXParams( plSound *sound, plErrorMsg 
                     if( vol != nil )
                     {
                         vol->SetCheckListener();
-                        hsgResMgr::ResMgr()->AddViaNotify( softKey, TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, 0, plSound::kRefSoftOcclusionRegion ), plRefFlags::kActiveRef );
+                        hsgResMgr::ResMgr()->AddViaNotify( softKey, new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, 0, plSound::kRefSoftOcclusionRegion ), plRefFlags::kActiveRef );
                     }
                 }
             }
@@ -2191,22 +2191,22 @@ hsBool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plWin32Sound *sound = nil;
 
     if (!strcmp(node->GetName(), "LinkSoundSource"))
-        sound = TRACKED_NEW plWin32LinkSound;
+        sound = new plWin32LinkSound;
     else
     {
 #if 0
-        sound = TRACKED_NEW plWin32StaticSound;
+        sound = new plWin32StaticSound;
 #else
         /// New method, still in testing: any sounds over 4 seconds get made into streaming sounds
         if( srcBuffer->GetDataLengthInSecs() > 4.f )
-            sound = TRACKED_NEW plWin32StreamingSound;
+            sound = new plWin32StreamingSound;
         else
-            sound = TRACKED_NEW plWin32StaticSound;
+            sound = new plWin32StaticSound;
     }
 #endif
 
     hsgResMgr::ResMgr()->NewKey(keyName, sound, node->GetLocation(), node->GetLoadMask());
-    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
     
     if( pAudible->AddSound( sound, fIndex, true ) )
     {
@@ -2257,7 +2257,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         // Grab the buffer for this sound directly from the original source
         const char *fileName = groupArray[ i ]->GetSoundFileName( kBaseSound );
 
-        plSoundBuffer   *buffer = TRACKED_NEW plSoundBuffer( fileName );
+        plSoundBuffer   *buffer = new plSoundBuffer( fileName );
         if( !buffer->IsValid() || !buffer->EnsureInternal() )
         {
             // OK, because some *cough* machines are completely stupid and don't load AssetMan scenes with 
@@ -2281,7 +2281,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
 
                 // Got a path to try, so try it!
                 delete buffer;
-                buffer = TRACKED_NEW plSoundBuffer( newPath );
+                buffer = new plSoundBuffer( newPath );
                 if( buffer->IsValid() && buffer->EnsureInternal() )
                     worked = true;
             }
@@ -2347,7 +2347,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         plPluginResManager::ResMgr()->NukeKeyAndObject( buffKey );
 
     // Create a new one...
-    plSoundBuffer   *mergedBuffer = TRACKED_NEW plSoundBuffer();
+    plSoundBuffer   *mergedBuffer = new plSoundBuffer();
     mergedBuffer->SetInternalData( mergedHeader, mergedData.GetCount(), mergedData.AcquireArray() );
     mergedData.Reset();
     // The buffer may be shared across multiple sources. We could or together the LoadMasks of all
@@ -2362,12 +2362,12 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     plWinAudible* pAudible = (plWinAudible*)ai->GetAudible();
 
     sprintf( keyName, "%s", GetINode()->GetName());
-    plWin32GroupedSound *sound = TRACKED_NEW plWin32GroupedSound;
+    plWin32GroupedSound *sound = new plWin32GroupedSound;
     sound->SetPositionArray( startPoses.GetCount(), startPoses.AcquireArray(), volumes.AcquireArray() );
     sound->SetProperty( plSound::kPropLoadOnlyOnCall, true );
 
     hsgResMgr::ResMgr()->NewKey( keyName, sound, baseNode->GetLocation(), baseNode->GetLoadMask() );
-    hsgResMgr::ResMgr()->AddViaNotify( mergedBuffer->GetKey(), TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( mergedBuffer->GetKey(), new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
     
     if( pAudible->AddSound( sound, index, true ) )
     {
@@ -2513,14 +2513,14 @@ hsBool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plWin32Sound *sound = nil;
 
     if( srcBuffer->GetDataLengthInSecs() > 4.f )
-        sound = TRACKED_NEW plWin32StreamingSound;
+        sound = new plWin32StreamingSound;
     else
-        sound = TRACKED_NEW plWin32StaticSound;
+        sound = new plWin32StaticSound;
 
     hsgResMgr::ResMgr()->NewKey(keyName, sound, node->GetLocation(), node->GetLoadMask());
 
     srcBuffer->SetFlag( plSoundBuffer::kAlwaysExternal );
-    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
     
     if (pAudible->AddSound( sound, fIndex, false))
     {
@@ -2670,10 +2670,10 @@ hsBool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     char    keyName[ 256 ];
     sprintf( keyName, "%s_Win32GUISound", GetINode()->GetName() );
 
-    plWin32StaticSound *sound = TRACKED_NEW plWin32StaticSound;
+    plWin32StaticSound *sound = new plWin32StaticSound;
     hsgResMgr::ResMgr()->NewKey(keyName, sound, node->GetLocation(), node->GetLoadMask());
 
-    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
     
     if (pAudible->AddSound( sound, fIndex, false))
     {
@@ -2959,11 +2959,11 @@ hsBool plEAXListenerComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
         return true;
 
     // Create a listener mod to handle these things
-    plEAXListenerMod *listener = TRACKED_NEW plEAXListenerMod();
+    plEAXListenerMod *listener = new plEAXListenerMod();
     node->AddModifier( listener, IGetUniqueName(node) );
 
     // Add the soft region
-    hsgResMgr::ResMgr()->AddViaNotify( softKey, TRACKED_NEW plGenRefMsg( listener->GetKey(), plRefMsg::kOnCreate, 0, plEAXListenerMod::kRefSoftRegion ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( softKey, new plGenRefMsg( listener->GetKey(), plRefMsg::kOnCreate, 0, plEAXListenerMod::kRefSoftRegion ), plRefFlags::kActiveRef );
 
 #ifdef EAX_SDK_AVAILABLE
     // Set up the parameters of the listener mod
@@ -3468,7 +3468,7 @@ hsBool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pAudible = (plWinAudible*)ai->GetAudible();
         hsTArray<plBaseSoundEmitterComponent *> comps;
 
-        plRandomSoundModGroup *groups = TRACKED_NEW plRandomSoundModGroup[kMaxGroups];
+        plRandomSoundModGroup *groups = new plRandomSoundModGroup[kMaxGroups];
         int i;
         int numSoFar = 0;
         for (i = 0; i < kMaxGroups; i++)
@@ -3482,7 +3482,7 @@ hsBool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 continue;
             }
 
-            groups[i].fIndices = TRACKED_NEW uint16_t[numSounds];
+            groups[i].fIndices = new uint16_t[numSounds];
 
             hsTArray<uint16_t> indices;
             int j;
@@ -3584,7 +3584,7 @@ hsBool plRandomSoundComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *pErrMsg
 {
     if (ICheckForSounds(pNode))
     {
-        plRandomSoundMod* mod = TRACKED_NEW plRandomSoundMod;
+        plRandomSoundMod* mod = new plRandomSoundMod;
         hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), mod, pNode->GetLocation());
         fSoundMods[pNode] = mod;
     }
@@ -3942,7 +3942,7 @@ hsBool plPhysicsSndGroupComp::Convert( plMaxNode *node, plErrorMsg *pErrMsg )
         if (si)
         {
             // Create a new sound group
-            plPhysicalSndGroup *grp = TRACKED_NEW plPhysicalSndGroup( fCompPB->GetInt( (ParamID)kRefGroup ) );
+            plPhysicalSndGroup *grp = new plPhysicalSndGroup( fCompPB->GetInt( (ParamID)kRefGroup ) );
             hsgResMgr::ResMgr()->NewKey( IGetUniqueName( node ), grp, node->GetLocation(), node->GetLoadMask() );
 
             // Convert each sound into a plWin32StaticSound and store onto the sound group
@@ -4006,7 +4006,7 @@ hsBool plPhysicsSndGroupComp::Convert( plMaxNode *node, plErrorMsg *pErrMsg )
             }
 
             // Attach the sound group to the physical
-            hsgResMgr::ResMgr()->AddViaNotify( grp->GetKey(), TRACKED_NEW plGenRefMsg( si->GetPhysical()->GetKey(), plRefMsg::kOnCreate, 0, plPXPhysical::kPhysRefSndGroup ), plRefFlags::kActiveRef );
+            hsgResMgr::ResMgr()->AddViaNotify( grp->GetKey(), new plGenRefMsg( si->GetPhysical()->GetKey(), plRefMsg::kOnCreate, 0, plPXPhysical::kPhysRefSndGroup ), plRefFlags::kActiveRef );
         }
     }
 

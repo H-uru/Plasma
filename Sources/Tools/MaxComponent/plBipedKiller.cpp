@@ -448,7 +448,7 @@ plSampleVec * SampleNodeMotion(INode* node, INode* parent, int sampleRate, Inter
 // intended for use in the context of a full tree traversal
 plSampleVec * SampleNodeMotion(INode * node, INode* parent, int sampleRate, TimeValue start, TimeValue end)
 {
-    plSampleVec *result = TRACKED_NEW plSampleVec;
+    plSampleVec *result = new plSampleVec;
 
     bool done = false;
     
@@ -462,7 +462,7 @@ plSampleVec * SampleNodeMotion(INode * node, INode* parent, int sampleRate, Time
         int frameNum= keyTime / GetTicksPerFrame();
 
         // get localTM
-        nodeTMInfo * nti = TRACKED_NEW nodeTMInfo;
+        nodeTMInfo * nti = new nodeTMInfo;
         nti->fTime = keyTime;
         Matrix3 localTM = node->GetNodeTM(keyTime);
 
@@ -564,7 +564,7 @@ plSampleVecMap *SampleTreeMotion(INode* node, INode* parent, int sampleRate, Int
     Interval interval = theInterface->GetAnimRange();
     TimeValue start = interval.Start();             // in ticks
     TimeValue end = interval.End();
-    plSampleVecMap *ourMap = TRACKED_NEW plSampleVecMap();
+    plSampleVecMap *ourMap = new plSampleVecMap();
 
     sampleRate *= GetTicksPerFrame();                   // convert sample rate to ticks
 
@@ -581,7 +581,7 @@ void SampleTreeMotionRecurse(INode * node, INode* parent, int sampleRate,
     if(!HasBipController(node))
     {
         char *nodeName = node->GetName();
-        char *nameCopy = TRACKED_NEW char[strlen(nodeName) + 1];
+        char *nameCopy = new char[strlen(nodeName) + 1];
         strcpy(nameCopy, nodeName);
 
         plSampleVec *branch = SampleNodeMotion(node, parent, sampleRate, start, end);
