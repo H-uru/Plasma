@@ -196,8 +196,8 @@ static void SocketGetAddresses (
     NetAddress *    remoteAddr
 ) {
     // NetAddress may be bigger than sockaddr_in so start by zeroing the whole thing
-    ZEROPTR(localAddr);
-    ZEROPTR(remoteAddr);
+    memset(localAddr, 0, sizeof(*localAddr));
+    memset(remoteAddr, 0, sizeof(*remoteAddr));
 
     // don't have to enter critsect or validate socket before referencing it
     // because this routine is called before the user has a chance to close it

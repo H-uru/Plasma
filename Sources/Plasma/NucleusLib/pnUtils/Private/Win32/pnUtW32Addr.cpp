@@ -229,7 +229,7 @@ bool NetAddressFromString (NetAddress * addr, const wchar_t str[], unsigned defa
     ASSERT(str);
 
     // NetAddress is bigger than sockaddr_in so start by zeroing the whole thing
-    ZEROPTR(addr);
+    memset(addr, 0, sizeof(*addr));
     
     for (;;) {
         NetAddressNode node = NodeFromString(&str);
@@ -278,7 +278,7 @@ void NetAddressFromNode (
     unsigned        port,
     NetAddress *    addr
 ) {
-    ZEROPTR(addr);
+    memset(addr, 0, sizeof(*addr));
     sockaddr_in * inetaddr          = (sockaddr_in *) addr;
     inetaddr->sin_family            = AF_INET;
     inetaddr->sin_addr.S_un.S_addr  = htonl(node);

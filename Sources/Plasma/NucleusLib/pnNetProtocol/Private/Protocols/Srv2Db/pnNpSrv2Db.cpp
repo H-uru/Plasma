@@ -83,7 +83,7 @@ bool Srv2DbValidateConnect (
         return false;
     }
 
-    ZEROPTR(connectPtr);
+    memset(connectPtr, 0, sizeof(*connectPtr));
     MemCopy(connectPtr, &connect, min(sizeof(*connectPtr), connect.dataBytes));
 
     listen->bytesProcessed += connect.dataBytes;

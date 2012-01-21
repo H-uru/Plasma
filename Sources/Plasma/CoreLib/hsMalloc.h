@@ -166,8 +166,6 @@ inline void CDECL operator delete (void *, void *) {}
 
 #define ALLOCZERO(b)            MemAlloc(b, kMemZero, __FILE__, __LINE__)
 #define ZERO(s)                 MemSet(&s, 0, sizeof(s))
-#define ZEROPTR(p)              MemSet(p, 0, sizeof(*p))
-
 
 #ifdef __cplusplus
 
