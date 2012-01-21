@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "HeadSpin.h"
 #include "plVirtualCamNeu.h"
 #include "plCameraModifier.h"
 #include "plCameraBrain.h"
@@ -83,7 +84,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvatarMgr.h"
 
 #include "hsGeometry3.h"
-#include "hsConfig.h"
 #include "hsQuat.h"
 
 float plVirtualCam1::fFOVw           =  45.0f;

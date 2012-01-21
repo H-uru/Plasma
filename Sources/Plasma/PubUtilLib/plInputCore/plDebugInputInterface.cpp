@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsConfig.h"
-#include "hsWindows.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDebugInputInterface.h"
 
 #include "plInputInterfaceMgr.h"
@@ -61,7 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "plPipeline.h"
-#include "hsConfig.h"
 
 
 plDebugInputInterface   *plDebugInputInterface::fInstance = nil;

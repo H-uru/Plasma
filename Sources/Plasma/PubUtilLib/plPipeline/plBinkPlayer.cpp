@@ -39,9 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
-#include "hsWindows.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #ifdef BINK_SDK_AVAILABLE
 #include <BINK.h>
 #endif

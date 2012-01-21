@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "max.h"
 #include "resource.h"
-#include "hsConfig.h"
 #include <map>
 #include "hsResMgr.h"
 #include "MaxMain/plPlasmaRefMsgs.h"

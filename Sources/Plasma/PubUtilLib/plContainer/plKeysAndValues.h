@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plKeysAndValues_h_inc
 #define plKeysAndValues_h_inc
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 #include "hsUtils.h"
 #include "hsStlUtils.h"
 #include "hsStream.h"

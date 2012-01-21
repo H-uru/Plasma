@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAvatarSDLModifier_inc
 #define plAvatarSDLModifier_inc
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plModifier/plSDLModifier.h"
 

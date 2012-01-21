@@ -46,7 +46,6 @@ set(CoreLib_HEADERS
     hsBitVector.h
     hsBounds.h
     hsColorRGBA.h
-    hsConfig.h
     hsCritSect.h
     hsExceptions.h
     hsFastMath.h

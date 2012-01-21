@@ -58,6 +58,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #define hsCTypeDefStruct(foo)       typedef struct foo foo;
 #endif
 
+#ifdef HS_BUILD_FOR_WIN32
+#    ifndef CDECL
+#        define CDECL __cdecl
+#    endif
+#else
+#   define CDECL
+#endif
+
 /************************** Basic Types *****************************/
 
 #if defined(_MSC_VER) && _MSC_VER < 1600

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClientGuid_h_inc
 #define plClientGuid_h_inc
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "pnFactory/plCreatable.h"
 #include "pnUUID/pnUUID.h"
