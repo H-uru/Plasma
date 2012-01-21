@@ -69,7 +69,7 @@ class plStealthClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return FALSE; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plAnimStealthNode(loading); }
+    void*           Create(BOOL loading) { return new plAnimStealthNode(loading); }
     const TCHAR*    ClassName()     { return GetString( IDS_STEALTH_NAME ); }
     SClass_ID       SuperClassID()  { return HELPER_CLASS_ID; }
     Class_ID        ClassID()       { return ANIMSTEALTH_CLASSID; }

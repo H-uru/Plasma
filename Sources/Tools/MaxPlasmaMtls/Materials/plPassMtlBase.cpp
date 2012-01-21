@@ -126,7 +126,7 @@ bool plPostLoadHandler::fLoading = false;
 plPassMtlBase::plPassMtlBase( BOOL loading ) : fNTWatcher( nil ), fBasicPB(NULL), fAdvPB(NULL), fLayersPB(NULL), fAnimPB(NULL),
                                  fLoading( loading )
 {
-    fNTWatcher = TRACKED_NEW plNoteTrackWatcher( this );
+    fNTWatcher = new plNoteTrackWatcher( this );
     Reset();
 }
 

@@ -345,7 +345,7 @@ public:
 
     // plug-in mouse creation callback
     CreateMouseCallBack* GetCreateMouseCallBack();
-    RefTargetHandle Clone(RemapDir &remap = DEFAULTREMAP){ plRTLightBase* thisObj = TRACKED_NEW plRTLightBase(); BaseClone(this, thisObj, remap); return thisObj;}
+    RefTargetHandle Clone(RemapDir &remap = DEFAULTREMAP){ plRTLightBase* thisObj = new plRTLightBase(); BaseClone(this, thisObj, remap); return thisObj;}
     
     virtual void BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev);
     virtual void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next);

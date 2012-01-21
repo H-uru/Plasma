@@ -168,7 +168,7 @@ plMipmap *plBitmapCreator::ICreateBitmap(plBitmapData *bd)
     //
     // Create a plMipmap 
     //
-    plMipmap *hBitmap = TRACKED_NEW plMipmap;
+    plMipmap *hBitmap = new plMipmap;
     if( (bm->Width() ^ (bm->Width() & -bm->Width()))
         ||(bm->Height() ^ (bm->Height() & -bm->Height())) )
     {
@@ -191,12 +191,12 @@ plMipmap *plBitmapCreator::ICreateBitmap(plBitmapData *bd)
     plMipmap *hMipmap = nil;
     if (sigma > 0.f)
     {
-        hMipmap = TRACKED_NEW plMipmap(hBitmap, sigma, bd->createFlags, bd->detailDropoffStart, 
+        hMipmap = new plMipmap(hBitmap, sigma, bd->createFlags, bd->detailDropoffStart, 
                                 bd->detailDropoffStop, bd->detailMax, bd->detailMin);
     }
     else
     {
-        hMipmap = TRACKED_NEW plMipmap(hBitmap, -1.f, bd->createFlags, bd->detailDropoffStart, 
+        hMipmap = new plMipmap(hBitmap, -1.f, bd->createFlags, bd->detailDropoffStart, 
                                 bd->detailDropoffStop, bd->detailMax, bd->detailMin);
     }
     delete hBitmap;
@@ -587,7 +587,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
         // If it hasn't been used before, make a new texture
         if( bd->isStaticCubicEnvMap )
         {
-            plCubicEnvironmap *cubic = TRACKED_NEW plCubicEnvironmap;
+            plCubicEnvironmap *cubic = new plCubicEnvironmap;
             
             plMipmap    *face;
 
@@ -685,7 +685,7 @@ plMipmap    *plBitmapCreator::CreateBlankMipmap( uint32_t width, uint32_t height
         return plMipmap::ConvertNoRef( key->GetObjectPtr() );
 
     // Create
-    plMipmap    *mip = TRACKED_NEW plMipmap( width, height, config, numLevels );
+    plMipmap    *mip = new plMipmap( width, height, config, numLevels );
 
     // Assign key
     hsgResMgr::ResMgr()->NewKey( keyName, mip, textureLoc );

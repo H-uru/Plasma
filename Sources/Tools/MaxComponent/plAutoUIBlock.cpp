@@ -53,7 +53,7 @@ plAutoUIBlock::plAutoUIBlock(plComponentClassDesc *cd, int blockID, const char *
 {
     fName = hsStrcpy(name);
     fVersion = version;
-    fDesc = TRACKED_NEW ParamBlockDesc2(blockID, "Auto", IDS_COMP_AUTO, cd, 0, end);
+    fDesc = new ParamBlockDesc2(blockID, "Auto", IDS_COMP_AUTO, cd, 0, end);
     fIsMultiModifier = false;
 }
 

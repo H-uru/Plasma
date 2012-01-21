@@ -174,7 +174,7 @@ plInterestingComponent::plInterestingComponent()
 hsBool plInterestingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
 
-    plInterestingModifier* pMod = TRACKED_NEW plInterestingModifier;
+    plInterestingModifier* pMod = new plInterestingModifier;
     
     float loader = fCompPB->GetFloat(kCamInterestRadius);
     pMod->SetInterestRadius(loader);
@@ -806,7 +806,7 @@ plAgeDescription    *plPageInfoUtils::GetAgeDesc( const char *ageName )
         return nil;
 
     // Create and read the age desc
-    plAgeDescription *aged = TRACKED_NEW plAgeDescription;
+    plAgeDescription *aged = new plAgeDescription;
     aged->Read( &s );
     s.Close();
 
@@ -1109,7 +1109,7 @@ static hsBool FindMaxBounds(plMaxNode* node, hsBounds3Ext& bnd)
 hsBool plViewFacingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
 
-    plViewFaceModifier* pMod = TRACKED_NEW plViewFaceModifier;
+    plViewFaceModifier* pMod = new plViewFaceModifier;
 
     hsBounds3Ext maxBnd;
     if( FindMaxBounds(node, maxBnd) )
@@ -1201,7 +1201,7 @@ plSpriteComponent::plSpriteComponent()
 
 hsBool plSpriteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plViewFaceModifier* pMod = TRACKED_NEW plViewFaceModifier;
+    plViewFaceModifier* pMod = new plViewFaceModifier;
 
     hsBounds3Ext maxBnd;
     if( FindMaxBounds(node, maxBnd) )
@@ -1385,7 +1385,7 @@ hsBool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         return false;
     }
 
-    plPostEffectMod* mod = TRACKED_NEW plPostEffectMod;
+    plPostEffectMod* mod = new plPostEffectMod;
 
     float hither = cam->GetEnvRange(timeVal, ENV_NEAR_RANGE); 
     if( hither < 0.5f )
@@ -1635,7 +1635,7 @@ plFollowMod* plFollowComponent::IMakeFollowMod(plMaxNode* pNode, plErrorMsg* pEr
 {
     plFollowMod::FollowLeaderType lType = plFollowMod::FollowLeaderType(fCompPB->GetInt(kLeaderTypeRadio));
 
-    plFollowMod* follow = TRACKED_NEW plFollowMod;
+    plFollowMod* follow = new plFollowMod;
 
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), follow, pNode->GetLocation());
 
@@ -1650,7 +1650,7 @@ plFollowMod* plFollowComponent::IMakeFollowMod(plMaxNode* pNode, plErrorMsg* pEr
                 plSceneObject* targObj = targNode->GetSceneObject();
                 if( targObj )
                 {
-                    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(follow->GetKey(), plRefMsg::kOnCreate, 0, plFollowMod::kRefLeader);
+                    plGenRefMsg* refMsg = new plGenRefMsg(follow->GetKey(), plRefMsg::kOnCreate, 0, plFollowMod::kRefLeader);
                     hsgResMgr::ResMgr()->AddViaNotify(targObj->GetKey(), refMsg, plRefFlags::kPassiveRef);
 
                     follow->SetType(plFollowMod::kObject);
@@ -2398,7 +2398,7 @@ public:
             case WM_COMMAND:
                 if( LOWORD( wParam ) == IDC_IMAGE_ADD )
                 {
-                    plLayerTex *newLayer = TRACKED_NEW plLayerTex;
+                    plLayerTex *newLayer = new plLayerTex;
 
                     if( newLayer->HandleBitmapSelection() )
                     {
@@ -2497,7 +2497,7 @@ plLayerTex  *pfImageLibComponent::GetBitmap( int idx )
     plLayerTex  *layer = (plLayerTex *)fCompPB->GetTexmap( (ParamID)kRefImageList, 0, idx );
     if( layer == nil || layer->ClassID() != LAYER_TEX_CLASS_ID )
     {
-        layer = TRACKED_NEW plLayerTex;
+        layer = new plLayerTex;
         fCompPB->SetValue( (ParamID)kRefImageList, 0, (Texmap *)layer, idx );
     }
 
@@ -2539,7 +2539,7 @@ hsBool pfImageLibComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrM
 
 hsBool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plImageLibMod *lib = TRACKED_NEW plImageLibMod;
+    plImageLibMod *lib = new plImageLibMod;
     node->AddModifier( lib, IGetUniqueName(node) );
 
     int i;
@@ -2563,7 +2563,7 @@ hsBool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     bMap = plLayerConverter::Instance().CreateSimpleTexture( texture->bi.Name(), lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
                 if( bMap != nil )
                 {
-                    hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), TRACKED_NEW plGenRefMsg( lib->GetKey(), 
+                    hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), new plGenRefMsg( lib->GetKey(), 
                                             plRefMsg::kOnCreate, lib->GetNumImages(), plImageLibMod::kRefImage ), plRefFlags::kActiveRef );
                 }
             }

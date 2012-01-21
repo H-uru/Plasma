@@ -288,7 +288,7 @@ bool plPythonMgr::IQueryPythonFile(char *fileName)
 
         if (PyCallable_Check(getParamFunc))
         {
-            plAutoUIBlock *autoUI = TRACKED_NEW plAutoUIBlock(PythonFile::GetClassDesc(), blockID, className, version);
+            plAutoUIBlock *autoUI = new plAutoUIBlock(PythonFile::GetClassDesc(), blockID, className, version);
             // test to see if it is a multi-modifier type class
             if (isMulti)
                 autoUI->SetMultiModifierFlag(true);

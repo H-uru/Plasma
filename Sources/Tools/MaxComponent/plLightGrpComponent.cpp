@@ -171,7 +171,7 @@ hsBool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* dra
     if( !fCompPB->GetInt(kTest) )
     {
         uint8_t liMsgType = liInfo->GetProjection() ? plDrawable::kMsgPermaProjDI : plDrawable::kMsgPermaLightDI;
-        plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(drawable->GetKey(), plRefMsg::kOnCreate, diIndex, liMsgType);
+        plGenRefMsg* refMsg = new plGenRefMsg(drawable->GetKey(), plRefMsg::kOnCreate, diIndex, liMsgType);
         hsgResMgr::ResMgr()->AddViaNotify(liInfo->GetKey(), refMsg, plRefFlags::kPassiveRef);
     }
     else
@@ -186,7 +186,7 @@ hsBool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* dra
         {
             if( litSpans.IsBitSet(spans[i]) )
             {
-                plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(drawable->GetKey(), plRefMsg::kOnCreate, spans[i], liMsgType);
+                plGenRefMsg* refMsg = new plGenRefMsg(drawable->GetKey(), plRefMsg::kOnCreate, spans[i], liMsgType);
                 hsgResMgr::ResMgr()->AddViaNotify(liInfo->GetKey(), refMsg, plRefFlags::kPassiveRef);
             }
         }

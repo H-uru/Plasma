@@ -574,7 +574,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
 
     plBitmap *texture = (plBitmap *)IMakeCubicRenderTarget( texName, maxNode, anchor );
     if( texture )
-        hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), TRACKED_NEW plLayRefMsg( plasmaLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), new plLayRefMsg( plasmaLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 
     // Tag this layer as reflective cubic environmentmapping
     if( bitmapPB->GetInt(plDynamicEnvLayer::kBmpRefract) )
@@ -617,12 +617,12 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
         {
             plasmaLayer->SetUVWSrc(plLayerInterface::kUVWPosition);
             plasmaLayer->SetMiscFlags(hsGMatState::kMiscCam2Screen | hsGMatState::kMiscPerspProjection);
-            hsgResMgr::ResMgr()->AddViaNotify(rootNode->GetSceneObject()->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefRootNode), plRefFlags::kActiveRef);
-            hsgResMgr::ResMgr()->AddViaNotify(plasmaLayer->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefMatLayer), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(rootNode->GetSceneObject()->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefRootNode), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(plasmaLayer->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefMatLayer), plRefFlags::kActiveRef);
             if (!pb->GetInt(ParamID(plMAXCameraLayer::kForce)))
             {
                 plBitmap *disableTexture = hsMaterialConverter::Instance().GetStaticColorTexture(pb->GetColor(ParamID(plMAXCameraLayer::kDisableColor)), loc);
-                hsgResMgr::ResMgr()->AddViaNotify(disableTexture->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefDisableTexture), plRefFlags::kActiveRef);
+                hsgResMgr::ResMgr()->AddViaNotify(disableTexture->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefDisableTexture), plRefFlags::kActiveRef);
             }
         }
         else
@@ -632,7 +632,7 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
             {
                 const plCameraModifier1 *mod = plCameraModifier1::ConvertNoRef(camNode->GetSceneObject()->GetModifierByType(plCameraModifier1::Index()));
                 if (mod)
-                    hsgResMgr::ResMgr()->AddViaNotify(mod->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefCamera), plRefFlags::kActiveRef);
+                    hsgResMgr::ResMgr()->AddViaNotify(mod->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefCamera), plRefFlags::kActiveRef);
             }
 
             plasmaLayer->SetUVWSrc(pb->GetInt(ParamID(plMAXCameraLayer::kUVSource)));
@@ -643,9 +643,9 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
         int i;
         for (i = 0; i < nodeList.GetCount(); i++)
         {
-            hsgResMgr::ResMgr()->AddViaNotify(nodeList[i]->GetSceneObject()->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefTargetNode), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(nodeList[i]->GetSceneObject()->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefTargetNode), plRefFlags::kActiveRef);
         }
-        hsgResMgr::ResMgr()->AddViaNotify(map->GetKey(), TRACKED_NEW plLayRefMsg(plasmaLayer->GetKey(), plRefMsg::kOnCreate, -1, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(map->GetKey(), new plLayRefMsg(plasmaLayer->GetKey(), plRefMsg::kOnCreate, -1, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
 
     }
 
@@ -700,7 +700,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
     }
 
     // Add the texture in
-    hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), TRACKED_NEW plLayRefMsg( plasmaLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), new plLayRefMsg( plasmaLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 
     // All done!
     return (plLayerInterface *)plasmaLayer;
@@ -728,7 +728,7 @@ uint32_t  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) c
     width = bitmapPB->GetInt( (ParamID)plDynamicTextLayer::kBmpExportWidth );
     height = bitmapPB->GetInt( (ParamID)plDynamicTextLayer::kBmpExportHeight );
 
-    buffer = TRACKED_NEW uint32_t[ width * height ];
+    buffer = new uint32_t[ width * height ];
     if( buffer == nil )
         return nil;
 
@@ -873,10 +873,10 @@ plLayer* plLayerConverter::ICreateAttenuationLayer(const char* name, plMaxNode *
     }
     plBitmap* funkRamp = IGetAttenRamp(node, chanAdd, loClamp, hiClamp);
 
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     layer->InitToDefault();
     hsgResMgr::ResMgr()->NewKey(name, layer, node->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(funkRamp->GetKey(), TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(funkRamp->GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
 
     layer->SetAmbientColor(hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f));
     layer->SetPreshadeColor(hsColorRGBA().Set(0, 0, 0, 1.f));
@@ -929,7 +929,7 @@ plLayer     *plLayerConverter::ICreateLayer( const char *name, hsBool upperLayer
 {
     hsGuardBegin( "plPlasmaMAXLayer::ICreateLayer" );
 
-    plLayer *layer = TRACKED_NEW plLayer;
+    plLayer *layer = new plLayer;
     layer->InitToDefault();
 
     hsgResMgr::ResMgr()->NewKey( name, layer, loc );
@@ -1013,7 +1013,7 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const char *layerName,
     }
 
     // Create
-    map = TRACKED_NEW plDynamicTextMap();
+    map = new plDynamicTextMap();
     map->SetNoCreate( width, height, includeAlphaChannel );
 
     /// Add a key for it
@@ -1077,7 +1077,7 @@ plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode,
         }
     }
     else
-        hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), TRACKED_NEW plLayRefMsg( destLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), new plLayRefMsg( destLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 
     return destLayer;
 }
@@ -1115,19 +1115,19 @@ plCubicRenderTarget *plLayerConverter::IMakeCubicRenderTarget( const char *name,
         return nil;
 
     /// Create
-    cubic = TRACKED_NEW plCubicRenderTarget( plRenderTarget::kIsTexture, 256, 256, 32 );
+    cubic = new plCubicRenderTarget( plRenderTarget::kIsTexture, 256, 256, 32 );
     hsAssert( cubic != nil, "Cannot create cubic render target!" );
 
     /// Add a key
     key = hsgResMgr::ResMgr()->NewKey( name, cubic, node->GetLocation() );
 
     /// Now make a modifier
-    plCubicRenderTargetModifier *mod = TRACKED_NEW plCubicRenderTargetModifier();
+    plCubicRenderTargetModifier *mod = new plCubicRenderTargetModifier();
     sprintf( modName, "%s_mod", name );
 
     hsgResMgr::ResMgr()->NewKey( modName, mod, node->GetLocation() );
-    hsgResMgr::ResMgr()->AddViaNotify( cubic->GetKey(), TRACKED_NEW plGenRefMsg( mod->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kPassiveRef );
-    hsgResMgr::ResMgr()->AddViaNotify( mod->GetKey(), TRACKED_NEW plObjRefMsg( sObjKey, plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( cubic->GetKey(), new plGenRefMsg( mod->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kPassiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( mod->GetKey(), new plObjRefMsg( sObjKey, plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
 
     return cubic;
 }

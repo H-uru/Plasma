@@ -395,7 +395,7 @@ void plConvert::DeInit()
     // to work without loading in the entire age worth of reffing objects. - 5.30.2002 mcn
 //  plBitmapCreator::Instance().DeInit();
 
-    plNodeCleanupMsg *clean = TRACKED_NEW plNodeCleanupMsg();
+    plNodeCleanupMsg *clean = new plNodeCleanupMsg();
     plgDispatch::MsgSend( clean );
 }
 

@@ -187,7 +187,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
 
 #ifdef MAXASS_AVAILABLE
         if( fAssetManIface == nil )
-            fAssetManIface = TRACKED_NEW MaxAssBranchAccess();
+            fAssetManIface = new MaxAssBranchAccess();
 #endif
 
         // Make our bold font by getting the normal font and bolding
@@ -853,7 +853,7 @@ void plAgeDescInterface::IGetAgeFiles(vector<plAgeFile*>& ageFiles)
         {
             ageFolder.GetPathAndName(agePath);
 
-            plAgeFile* age = TRACKED_NEW plAgeFile(plAgeFile::kLocalFile, agePath);
+            plAgeFile* age = new plAgeFile(plAgeFile::kLocalFile, agePath);
             ageFiles.push_back(age);
         }
     }
@@ -873,7 +873,7 @@ void plAgeDescInterface::IGetAgeFiles(vector<plAgeFile*>& ageFiles)
             {
                 if (assetMan->GetLatestVersionFile((*assets)[i], agePath, sizeof(agePath)))
                 {
-                    plAgeFile* age = TRACKED_NEW plAgeFile(plAgeFile::kAssetFile, agePath, (*assets)[i]);
+                    plAgeFile* age = new plAgeFile(plAgeFile::kAssetFile, agePath, (*assets)[i]);
 
                     int existing = IFindAge(age->fAgeName.c_str(), ageFiles);
                     // Remove it from our "local" list if there, since it's a duplicate
@@ -1092,7 +1092,7 @@ void plAgeDescInterface::INewPage()
     int idx = ListBox_AddString(hPages, name);
 
     // Choose a new sequence suffix for it
-    plAgePage *newPage = TRACKED_NEW plAgePage( name, IGetFreePageSeqSuffix( hPages ), 0 );
+    plAgePage *newPage = new plAgePage( name, IGetFreePageSeqSuffix( hPages ), 0 );
     ListBox_SetItemData( hPages, idx, (LPARAM)newPage );
    
     fDirty = true;

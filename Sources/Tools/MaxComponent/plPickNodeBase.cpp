@@ -179,7 +179,7 @@ void plPickNodeBase::IGetSelNode(HWND hList)
     else
     {
         int len = ListBox_GetTextLen(hList, sel);
-        char* buf = TRACKED_NEW char[len+1];
+        char* buf = new char[len+1];
         ListBox_GetText(hList, sel, buf);
 
 /*      if (!strcmp(buf, kUserTypeNone))

@@ -106,11 +106,11 @@ plSeekPointComponent::plSeekPointComponent()
 hsBool plSeekPointComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     const char *objName = node->GetName();
-    char *name = TRACKED_NEW char[strlen(objName) + 1];
+    char *name = new char[strlen(objName) + 1];
 
     strcpy(name, objName);
 
-    plSeekPointMod* pointMod = TRACKED_NEW plSeekPointMod(name);
+    plSeekPointMod* pointMod = new plSeekPointMod(name);
     node->AddModifier(pointMod, IGetUniqueName(node));
     return true;
 }

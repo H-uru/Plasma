@@ -71,7 +71,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
     plResMgrSettings::Get().SetFilterOlderPageVersions( false );
 
     gCommandLine = (char *)lpCmdLine;
-    plResManager *rMgr = TRACKED_NEW plResManager;
+    plResManager *rMgr = new plResManager;
     hsgResMgr::Init( rMgr );
 
     if( !WinInit( hInstance, nCmdShow ) )

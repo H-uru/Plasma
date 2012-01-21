@@ -498,7 +498,7 @@ void plResTreeView::SaveSelectedObject(HWND treeCtrl)
             return;
 
         hsStream    *dataStream = stream->GetStream();
-        uint8_t       *buffer = TRACKED_NEW uint8_t[ keyImp->GetDataLen() ];
+        uint8_t       *buffer = new uint8_t[ keyImp->GetDataLen() ];
         if( buffer != nil )
         {
             dataStream->SetPosition( keyImp->GetStartPos() );

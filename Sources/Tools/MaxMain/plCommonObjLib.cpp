@@ -117,7 +117,7 @@ plCommonObjLib::plCommonObjLib()
 {
     // Make sure we have a list to add ourselves to
     if( fLibList == nil )
-        fLibList = TRACKED_NEW plCommonObjLibList();
+        fLibList = new plCommonObjLibList();
 
     // Add ourselves to the list of libs
     fLibList->Add( this );

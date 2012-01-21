@@ -76,7 +76,7 @@ plKey plPluginResManager::NameToLoc(const char* age, const char* page, int32_t s
     if (snKey == nil)
     {
         // Not found, create a new one
-        plSceneNode *newSceneNode = TRACKED_NEW plSceneNode;
+        plSceneNode *newSceneNode = new plSceneNode;
         snKey = NewKey(keyName, newSceneNode, pageNode->GetPageInfo().GetLocation());
 
         // Call init after it gets a key

@@ -405,7 +405,7 @@ extern PlasmaToHavokQuat(Havok::Quaternion &a, hsQuat &b);
 
 hsBool plPhysHingeConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plHingeConstraintMod* HMod = TRACKED_NEW plHingeConstraintMod;
+    plHingeConstraintMod* HMod = new plHingeConstraintMod;
 
 
         plMaxNode* ParentNode = (plMaxNode*)fCompPB->GetINode(kParent);
@@ -493,8 +493,8 @@ hsBool plPhysHingeConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErr
         
         node->AddModifier(HMod, IGetUniqueName(node));
         if(ParentKey)
-            hsgResMgr::ResMgr()->AddViaNotify( ParentKey, TRACKED_NEW plGenRefMsg( HMod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kParentIdx, 0 ), plRefFlags::kPassiveRef );
-        hsgResMgr::ResMgr()->AddViaNotify( node->GetKey(), TRACKED_NEW plGenRefMsg( HMod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kChildIdx, 0 ), plRefFlags::kPassiveRef );
+            hsgResMgr::ResMgr()->AddViaNotify( ParentKey, new plGenRefMsg( HMod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kParentIdx, 0 ), plRefFlags::kPassiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( node->GetKey(), new plGenRefMsg( HMod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kChildIdx, 0 ), plRefFlags::kPassiveRef );
 
 
 
@@ -696,7 +696,7 @@ hsBool plPhysBridgeComponent::Convert(plMaxNode* node, plErrorMsg* errMsg)
     if (!parent)
         return false;
 
-    plHingeConstraintMod* mod = TRACKED_NEW plHingeConstraintMod;
+    plHingeConstraintMod* mod = new plHingeConstraintMod;
 
 //  mod->SetHCFriction(0, 1.f);
     mod->SetRR(fCompPB->GetFloat(kStrength));//1.f / sqrt(float(count)));
@@ -724,8 +724,8 @@ hsBool plPhysBridgeComponent::Convert(plMaxNode* node, plErrorMsg* errMsg)
     mod->SetRotationAxis(-1*hingeVector);
 
     node->AddModifier(mod, IGetUniqueName(node));
-    hsgResMgr::ResMgr()->AddViaNotify(parent->GetKey(), TRACKED_NEW plGenRefMsg(mod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kParentIdx, 0), plRefFlags::kPassiveRef);
-    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), TRACKED_NEW plGenRefMsg(mod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kChildIdx, 0), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(parent->GetKey(), new plGenRefMsg(mod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kParentIdx, 0), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), new plGenRefMsg(mod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kChildIdx, 0), plRefFlags::kPassiveRef);
 
     return true;
 }
@@ -1042,7 +1042,7 @@ hsBool plStrongSpringConstraintComponent::SetupProperties(plMaxNode *pNode, plEr
 
 hsBool plStrongSpringConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plStrongSpringConstraintMod* HMod = TRACKED_NEW plStrongSpringConstraintMod;
+    plStrongSpringConstraintMod* HMod = new plStrongSpringConstraintMod;
 
     HMod->SetDamp(fCompPB->GetFloat(kStrength));
     HMod->SetRR(fCompPB->GetFloat(kRebound));
@@ -1081,8 +1081,8 @@ hsBool plStrongSpringConstraintComponent::Convert(plMaxNode *node, plErrorMsg *p
 
 
     node->AddModifier(HMod, IGetUniqueName(node));
-    hsgResMgr::ResMgr()->AddViaNotify( ParentKey, TRACKED_NEW plGenRefMsg( HMod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kParentIdx, 0 ), plRefFlags::kPassiveRef );
-    hsgResMgr::ResMgr()->AddViaNotify( node->GetKey(), TRACKED_NEW plGenRefMsg( HMod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kChildIdx, 0 ), plRefFlags::kPassiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( ParentKey, new plGenRefMsg( HMod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kParentIdx, 0 ), plRefFlags::kPassiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( node->GetKey(), new plGenRefMsg( HMod->GetKey(), plRefMsg::kOnCreate, plHavokConstraintsMod::kChildIdx, 0 ), plRefFlags::kPassiveRef );
 
 
 

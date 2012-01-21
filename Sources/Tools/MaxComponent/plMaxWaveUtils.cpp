@@ -52,7 +52,7 @@ SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)
     if (numMarkers == 0)
         return nil;
 
-    SegmentMap *segMap = TRACKED_NEW SegmentMap();
+    SegmentMap *segMap = new SegmentMap();
 
     for (int i = 0; i < waveFile.GetNumMarkers(); i++)
     {

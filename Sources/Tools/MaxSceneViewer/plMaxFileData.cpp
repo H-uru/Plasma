@@ -81,7 +81,7 @@ public:
     void GetClassName(TSTR& s) {s = "blah";}
 
     // Control methods
-    RefTargetHandle Clone(RemapDir& remap) { return TRACKED_NEW plMaxFileDataControl(); }
+    RefTargetHandle Clone(RemapDir& remap) { return new plMaxFileDataControl(); }
     void Copy(Control *from) {}
     virtual BOOL IsReplaceable() { return FALSE; }
 
@@ -147,7 +147,7 @@ class MaxFileDataClassDesc : public ClassDesc
 {
 public:
     int             IsPublic()              { return FALSE; }
-    void*           Create(BOOL loading)    { return TRACKED_NEW plMaxFileDataControl; }
+    void*           Create(BOOL loading)    { return new plMaxFileDataControl; }
     const TCHAR*    ClassName()             { return _T("MaxFileData"); }
     SClass_ID       SuperClassID()          { return CTRL_FLOAT_CLASS_ID; }
     Class_ID        ClassID()               { return PLASMA_FILE_DATA_CID; }

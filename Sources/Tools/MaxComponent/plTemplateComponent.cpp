@@ -224,7 +224,7 @@ hsBool plSpawnComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (!templateName)
         return false;
 
-    plCloneSpawnModifier* mod = TRACKED_NEW plCloneSpawnModifier;
+    plCloneSpawnModifier* mod = new plCloneSpawnModifier;
     mod->SetExportTime();
     mod->SetTemplateName(templateName);
     node->AddModifier(mod, IGetUniqueName(node));

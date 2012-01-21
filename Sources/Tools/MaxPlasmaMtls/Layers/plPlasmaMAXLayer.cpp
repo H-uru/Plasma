@@ -170,7 +170,7 @@ void    plPlasmaMAXLayer::IAddConversionTarget( plLayerInterface *target )
     if( fConversionTargets == nil )
     {
         // Create us a new container
-        fConversionTargets = TRACKED_NEW plLayerTargetContainer;
+        fConversionTargets = new plLayerTargetContainer;
         fConversionTargets->GetKey()->RefObject();
     }
 

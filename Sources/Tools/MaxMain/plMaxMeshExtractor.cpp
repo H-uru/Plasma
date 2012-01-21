@@ -97,7 +97,7 @@ static bool MakeNormalMesh(plMaxNode *node, plMaxMeshExtractor::NeutralMesh& mes
     int parity = fullTM.Parity();
 
     mesh.fNumVerts = pMesh->numVerts;
-    mesh.fVerts = TRACKED_NEW hsPoint3[mesh.fNumVerts];
+    mesh.fVerts = new hsPoint3[mesh.fNumVerts];
 
     for (int i = 0; i < mesh.fNumVerts; i++)
     {
@@ -111,7 +111,7 @@ static bool MakeNormalMesh(plMaxNode *node, plMaxMeshExtractor::NeutralMesh& mes
     }
 
     mesh.fNumFaces = pMesh->numFaces;
-    mesh.fFaces = TRACKED_NEW uint16_t[mesh.fNumFaces*3];
+    mesh.fFaces = new uint16_t[mesh.fNumFaces*3];
     for (int i = 0; i < mesh.fNumFaces; i++)
     {
         Face* pFace = &pMesh->faces[i];
@@ -135,8 +135,8 @@ static bool MakeNormalMesh(plMaxNode *node, plMaxMeshExtractor::NeutralMesh& mes
 // MODIFIES *all* the input parameters.
 static void MakeBoxMesh(plMaxNode* node, plMaxMeshExtractor::NeutralMesh& mesh, hsPoint3& minV, hsPoint3& maxV)
 {
-    hsPoint3* newVerts = TRACKED_NEW hsPoint3[8];
-    uint16_t* newFaces = TRACKED_NEW uint16_t[12 * 3];
+    hsPoint3* newVerts = new hsPoint3[8];
+    uint16_t* newFaces = new uint16_t[12 * 3];
 
     newVerts[0].Set(minV.fX, minV.fY, minV.fZ);
     newVerts[1].Set(maxV.fX, minV.fY, minV.fZ);

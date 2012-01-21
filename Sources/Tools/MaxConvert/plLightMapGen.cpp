@@ -171,7 +171,7 @@ hsBool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
         fInterface = ip;
         fTime = t;
 
-        fRP = TRACKED_NEW RendParams;
+        fRP = new RendParams;
         fRP->SetRenderElementMgr(fInterface->GetRenderElementMgr(RS_Production));
 
 #ifdef MF_NEW_RGC
@@ -239,7 +239,7 @@ hsBool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
 
 #else MF_NEW_RGC
 
-        fRGC = TRACKED_NEW plRenderGlobalContext(fInterface, fTime);
+        fRGC = new plRenderGlobalContext(fInterface, fTime);
         fRGC->MakeRenderInstances((plMaxNode*)fInterface->GetRootNode(), fTime);
 
 #endif // MF_NEW_RGC
@@ -380,7 +380,7 @@ hsBool plLightMapGen::ICompressLightMaps()
                         if( orig == fCreatedLayers[j]->GetTexture() )
                         {
                             fCreatedLayers[j]->GetKey()->Release(orig->GetKey());
-                            hsgResMgr::ResMgr()->AddViaNotify(compressed->GetKey(), TRACKED_NEW plLayRefMsg(fCreatedLayers[j]->GetKey(), plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                            hsgResMgr::ResMgr()->AddViaNotify(compressed->GetKey(), new plLayRefMsg(fCreatedLayers[j]->GetKey(), plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
                         }
                     }
 
@@ -569,7 +569,7 @@ plMipmap* plLightMapGen::IMakeAccumBitmap(plLayerInterface* lay) const
     int height = dst->GetHeight();
 
     // Temporary mipmap here, so we don't have to worry about using plBitmapCreator
-    plMipmap* bitmap = TRACKED_NEW plMipmap( width, height, plMipmap::kRGB32Config, 1 );
+    plMipmap* bitmap = new plMipmap( width, height, plMipmap::kRGB32Config, 1 );
     HSMemory::Clear(bitmap->GetImage(), bitmap->GetHeight() * bitmap->GetRowBytes() );
 
     return bitmap;
@@ -1279,11 +1279,11 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
     }
     else
     {
-        objMat = TRACKED_NEW hsGMaterial;
+        objMat = new hsGMaterial;
         hsgResMgr::ResMgr()->NewKey(newMatName, objMat, nodeLoc);
 
         for( i = 0; i < mat->GetNumLayers(); i++ )
-            hsgResMgr::ResMgr()->AddViaNotify(mat->GetLayer(i)->GetKey(), TRACKED_NEW plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kLayer), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(mat->GetLayer(i)->GetKey(), new plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kLayer), plRefFlags::kActiveRef);
     }
 
     objMat->SetCompositeFlags(objMat->GetCompositeFlags() | hsGMaterial::kCompIsLightMapped);
@@ -1365,10 +1365,10 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
             }
         }
 
-        plLayer* layer = TRACKED_NEW plLayer;
+        plLayer* layer = new plLayer;
         layer->InitToDefault();
         layKey = hsgResMgr::ResMgr()->NewKey(layName, layer, nodeLoc);
-        hsgResMgr::ResMgr()->AddViaNotify(mipKey, TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(mipKey, new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
         layer->SetAmbientColor(hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f));
         layer->SetZFlags(hsGMatState::kZNoZWrite);
         layer->SetBlendFlags(hsGMatState::kBlendMult);
@@ -1377,7 +1377,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
         layer->SetMiscFlags(hsGMatState::kMiscLightMap);
     }
 
-    hsgResMgr::ResMgr()->AddViaNotify(layKey, TRACKED_NEW plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kPiggyBack), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(layKey, new plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kPiggyBack), plRefFlags::kActiveRef);
 
     span.fMaterial = objMat;
 

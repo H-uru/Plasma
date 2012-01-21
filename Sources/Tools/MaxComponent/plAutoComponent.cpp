@@ -66,7 +66,7 @@ plAutoUIComp *gAutoUI;
 
 void DummyCode()
 {
-    gAutoUI = TRACKED_NEW plAutoUIComp(&gAutoDesc);
+    gAutoUI = new plAutoUIComp(&gAutoDesc);
 
     gAutoUI->AddCheckBox(0, "test", "Test", true);
     gAutoUI->AddFloatSpinner(1, "t2", "T2", 0.5, 0.f, 100.f);

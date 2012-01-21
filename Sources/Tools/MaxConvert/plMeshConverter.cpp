@@ -188,7 +188,7 @@ class plMAXVertNormal
                 if( fNext )
                     fNext->AddNormal( n, s );
                 else
-                    fNext = TRACKED_NEW plMAXVertNormal( ::Normalize(n), s );
+                    fNext = new plMAXVertNormal( ::Normalize(n), s );
             }
             else
             {
@@ -358,7 +358,7 @@ plConvexVolume *plMeshConverter::CreateConvexVolume(plMaxNode *node)
     numFaces = mesh->getNumFaces();
     numVerts = mesh->getNumVerts();
 
-    plConvexVolume *bounds = TRACKED_NEW plConvexVolume();
+    plConvexVolume *bounds = new plConvexVolume();
 
     /// Get transforms
     l2wMatrix = node->GetLocalToWorld44();
@@ -458,7 +458,7 @@ bool plMeshConverter::IValidateUVs(plMaxNode* node)
     // Cache the original UV verts
     int numVerts = mesh->getNumMapVerts(1);
     int vertBufSize = sizeof(UVVert)*numVerts;
-    UVVert* origVerts = TRACKED_NEW UVVert[vertBufSize];
+    UVVert* origVerts = new UVVert[vertBufSize];
     memcpy(origVerts, mesh->mapVerts(1), vertBufSize);
 
     IDeleteTempGeometry();
@@ -646,7 +646,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         {
             if (mesh->vertCol != nil)
             {
-                colorArray = TRACKED_NEW hsColorRGBA[ mesh->numCVerts ];
+                colorArray = new hsColorRGBA[ mesh->numCVerts ];
                 for( i = 0; i < mesh->numCVerts; i++ )  
                 {   
                     colorArray[i].Set(mesh->vertCol[ i ].x, mesh->vertCol[ i ].y, mesh->vertCol[ i ].z, 1.f);
@@ -666,7 +666,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         if (illumMap != nil)
         {
             // MF_HORSE CARNAGE
-            illumArray = TRACKED_NEW hsColorRGBA[numIllumVerts];
+            illumArray = new hsColorRGBA[numIllumVerts];
             for( i = 0; i < numIllumVerts; i++ )
             {
                 illumArray[i].Set(illumMap[ i ].x, illumMap[ i ].y, illumMap[ i ].z, 1.f);
@@ -783,7 +783,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 continue;
             }
 
-            hsTArray<plMAXVertexAccumulator *> *currAccum = TRACKED_NEW hsTArray<plMAXVertexAccumulator *>;
+            hsTArray<plMAXVertexAccumulator *> *currAccum = new hsTArray<plMAXVertexAccumulator *>;
             int currNumSubMtls = ourMaterials[i]->GetCount();
             currAccum->Reset();
             ourAccumulators[i] = currAccum;
@@ -873,8 +873,8 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         for( i = 0; i < vertNormalCache.GetCount(); i++ )
             vertNormalCache[ i ].Normalize();
 
-        vertDPosDuCache = TRACKED_NEW hsTArray<plMAXVertNormal>[numMaterials];
-        vertDPosDvCache = TRACKED_NEW hsTArray<plMAXVertNormal>[numMaterials];
+        vertDPosDuCache = new hsTArray<plMAXVertNormal>[numMaterials];
+        vertDPosDvCache = new hsTArray<plMAXVertNormal>[numMaterials];
 
         hsTArray<int16_t>                 bumpLayIdx;
         hsTArray<int16_t>                 bumpLayChan;
@@ -1189,7 +1189,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 if (accum->GetVertexCount() == 0)
                     continue;
 
-                plGeometrySpan      *span = TRACKED_NEW plGeometrySpan;
+                plGeometrySpan      *span = new plGeometrySpan;
 
                 span->BeginCreate( subMats->Get(j).fMaterial, l2wMatrix, ourFormat );
                 span->fLocalToOBB = node->GetLocalToOBB44();
@@ -1429,7 +1429,7 @@ Mesh    *plMeshConverter::IGetNodeMesh( plMaxNode *node )
 
 Mesh* plMeshConverter::IDuplicate2Sided(plMaxNode* node, Mesh* mesh)
 {
-    mesh = TRACKED_NEW Mesh(*mesh);
+    mesh = new Mesh(*mesh);
 
     Mtl* mtl = node->GetMtl();
 
@@ -2032,7 +2032,7 @@ plMAXVertexAccumulator::plMAXVertexAccumulator( int numOrigPoints, int numChanne
     fNumPoints = numOrigPoints;
     fNumChannels = numChannels;
 
-    fPointList = TRACKED_NEW plMAXVertexAccNodePtr[ fNumPoints ];
+    fPointList = new plMAXVertexAccNodePtr[ fNumPoints ];
     memset( fPointList, 0, sizeof( plMAXVertexAccNode * ) * fNumPoints );
 
     fIndices.Reset();
@@ -2084,7 +2084,7 @@ void    plMAXVertexAccumulator::AddVertex( int index, hsPoint3 *point, hsVector3
 
 
     /// Adding new
-    node = TRACKED_NEW plMAXVertexAccNode( point, normal, color, illum, fNumChannels, uvs, fNumVertices );
+    node = new plMAXVertexAccNode( point, normal, color, illum, fNumChannels, uvs, fNumVertices );
     fInverseVertTable.Append( index );
     fIndices.Append( fNumVertices++ );
 
@@ -2106,7 +2106,7 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
     TempWeightInfo          *weights = nil;
 
     /// Precalculate the weights if necessary
-    weights = TRACKED_NEW TempWeightInfo[ fNumPoints ];
+    weights = new TempWeightInfo[ fNumPoints ];
     if( skinData != nil )
     {
         for( i = 0; i < fNumPoints; i++ )
