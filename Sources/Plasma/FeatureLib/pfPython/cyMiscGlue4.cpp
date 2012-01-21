@@ -679,10 +679,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendFriendInvite, args, "Params: emailAddress,
     }
 
     wchar_t emailAddr[kMaxEmailAddressLength];
-    MemSet(emailAddr, 0, sizeof(emailAddr));
+    memset(emailAddr, 0, sizeof(emailAddr));
 
     wchar_t toName[kMaxPlayerNameLength];
-    MemSet(toName, 0, sizeof(toName));
+    memset(toName, 0, sizeof(toName));
 
     // Check and see if the email address is ok
     int origStrLen = 0;

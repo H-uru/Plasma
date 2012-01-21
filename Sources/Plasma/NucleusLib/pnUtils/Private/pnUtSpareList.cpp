@@ -81,7 +81,7 @@ void * CBaseSpareList::Alloc (unsigned objectSize, const char typeName[]) {
 
     // initialize memory to a freaky value in debug mode
     #ifdef HS_DEBUGGING
-    MemSet(object, (uint8_t) ((unsigned) object >> 4), objectSize);
+    memset(object, (uint8_t) ((unsigned) object >> 4), objectSize);
     #endif
 
     return object;
@@ -91,7 +91,7 @@ void * CBaseSpareList::Alloc (unsigned objectSize, const char typeName[]) {
 void CBaseSpareList::Free (void * object, unsigned objectSize) {
     // initialize memory to a freaky value in debug mode
     #ifdef HS_DEBUGGING
-    MemSet(object, (uint8_t) ((unsigned) object >> 4), objectSize);
+    memset(object, (uint8_t) ((unsigned) object >> 4), objectSize);
     #endif
 
     // link memory block onto head of spare list
