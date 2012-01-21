@@ -67,8 +67,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define  SORTARRAYTYPE(type)                      TSortArray< type, TArrayCopyBits< type >, type, 0>
 #define  SORTARRAYTYPEOBJ(type)                   TSortArray< type, TArrayCopyObject< type >, type, 0>
 
-#define  ARR_MEMORY_FLAGS       0 /*| kMemIgnoreBlock*/
-
 
 /****************************************************************************
 *
@@ -449,7 +447,7 @@ template<class T, class C>
 TFArray<T,C>::TFArray (unsigned count) {
     m_alloc = m_count = count;
     if (count) {
-        m_data = (T *)ALLOCFLAGS(count * sizeof(T), ARR_MEMORY_FLAGS);
+        m_data = (T *)malloc(count * sizeof(T));
         C::Construct(m_data, count);
     }
     else
@@ -461,7 +459,7 @@ template<class T, class C>
 TFArray<T,C>::TFArray (const T * source, unsigned count) {
     m_alloc = m_count = count;
     if (count) {
-        m_data = (T *)ALLOCFLAGS(count * sizeof(T), ARR_MEMORY_FLAGS);
+        m_data = (T *)malloc(count * sizeof(T));
         C::CopyConstruct(m_data, source, count);
     }
     else
@@ -473,7 +471,7 @@ template<class T, class C>
 TFArray<T,C>::TFArray (const TFArray<T,C> & source) {
     m_alloc = m_count = source.m_count;
     if (m_count) {
-        m_data = (T *)ALLOCFLAGS(m_count * sizeof(T), ARR_MEMORY_FLAGS);
+        m_data = (T *)malloc(m_count * sizeof(T));
         C::CopyConstruct(m_data, source.m_data, m_count);
     }
     else

@@ -95,7 +95,7 @@ unsigned CBaseArray::CalcAllocGrowth (unsigned newAlloc, unsigned oldAlloc, unsi
 void * CBaseArray::ReallocPtr (void * ptr, unsigned bytes) {
     void * newPtr = nil;
     if (bytes) {
-        newPtr = ALLOCFLAGS(bytes, ARR_MEMORY_FLAGS);
+        newPtr = malloc(bytes);
     }
     return newPtr;
 }
